@@ -1,0 +1,632 @@
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD15=1&AVG=10&if_no_html=1&lat1=-35.0&lon1=-20.0&lat2=38.0&lon2=55.0
+ttl 3600
+force diffusion
+at sun 1.0
+format universal
+rows
+lat_key Site_Latitude(Degrees)
+lon_key Site_Longitude(Degrees)
+  field_in AOD_440nm AOD_440nm
+  field_in AOD_500nm AOD_500nm
+
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&AOD15=1&AVG=10&if_no_html=1&lat1=-35.0&lon1=-20.0&lat2=38.0&lon2=55.0
+ttl 3600
+force diffusion
+at sun 1
+format universal
+rows
+lat_key Site_Latitude(Degrees)
+lon_key Site_Longitude(Degrees)
+  field_in AOD_440nm AOD_440nm
+  field_in AOD_500nm AOD_500nm
+
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD15=1&AVG=10&if_no_html=1&lat1=-55.0&lon1=-130.0&lat2=60.0&lon2=-30.0
+ttl 3600
+force diffusion
+at sun 1.0
+format universal
+rows
+lat_key Site_Latitude(Degrees)
+lon_key Site_Longitude(Degrees)
+  field_in AOD_440nm AOD_440nm
+  field_in AOD_500nm AOD_500nm
+
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&AOD15=1&AVG=10&if_no_html=1
+ttl 3600
+force diffusion
+at sun 1
+format universal
+rows
+lat_key Site_Latitude(Degrees)
+lon_key Site_Longitude(Degrees)
+  field_in AOD_340nm AOD_340nm
+  field_in AOD_380nm AOD_380nm
+  field_in AOD_440nm AOD_440nm
+  field_in AOD_500nm AOD_500nm
+  field_in AOD_675nm AOD_675nm
+  field_in AOD_870nm AOD_870nm
+  field_in AOD_1020nm AOD_1020nm
+  field_in 440-870_Angstrom_Exponent 440-870_Angstrom_Exponent
+
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&INV15=1&AVG=10&if_no_html=1&lat1=-90&lon1=-180&lat2=90&lon2=180
+ttl 3600
+force diffusion
+at sun 1.0
+format text
+rows
+lat_key Site_Latitude(Degrees)
+lon_key Site_Longitude(Degrees)
+  field_in Real_part_of_Refractive_Index[440nm] Real_part_of_Refractive_Index
+  field_in Imaginary_part_of_Refractive_Index[440nm] Imaginary_part_of_Refractive_Index
+  field_in Asymmetry_Factor-Total[440nm] Asymmetry_Factor-Total
+
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&INV15=1&AVG=10&if_no_html=1
+ttl 3600
+force diffusion
+at sun 1
+format text
+rows
+lat_key Site_Latitude(Degrees)
+lon_key Site_Longitude(Degrees)
+  field_in Single_Scattering_Albedo[440nm] Single_Scattering_Albedo
+  field_in Single_Scattering_Albedo[675nm] Single_Scattering_Albedo
+  field_in Absorption_AOD[440nm] Absorption_AOD
+  field_in SSA_440nm SSA_440nm
+  field_in SSA_675nm SSA_675nm
+  field_in SSA_870nm SSA_870nm
+  field_in SSA_1020nm SSA_1020nm
+
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&SDA15=1&AVG=10&if_no_html=1
+ttl 3600
+force diffusion
+at sun 1
+format universal
+rows
+lat_key Site_Latitude(Degrees)
+lon_key Site_Longitude(Degrees)
+  field_in Total_AOD_500nm[tau_a] Total_AOD_500nm
+  field_in Fine_Mode_AOD_500nm[tau_f] Fine_Mode_AOD_500nm
+  field_in Coarse_Mode_AOD_500nm[tau_c] Coarse_Mode_AOD_500nm
+
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&TOT15=1&AVG=10&if_no_html=1
+ttl 3600
+force diffusion
+at sun 1
+format universal
+rows
+lat_key Site_Latitude(Degrees)
+lon_key Site_Longitude(Degrees)
+  field_in Total_Optical_Depth_440nm Total_Optical_Depth_440nm
+  field_in Total_Optical_Depth_500nm Total_Optical_Depth_500nm
+
+url https://air-quality-api.open-meteo.com/v1/air-quality?latitude={lat}&longitude={lon}&current=aerosol_optical_depth,dust,pm2_5,pm10
+ttl 3600
+force diffusion
+at sun 1.0
+pos atmosphere_lat atmosphere_lon
+  path latitude lat
+  path longitude lon
+  path current.aerosol_optical_depth aod
+  path current.dust dust_ugm3
+  path current.pm2_5 pm25_ugm3
+  path current.pm10 pm10_ugm3
+
+url https://api.open-meteo.com/v1/forecast?latitude=-3.47&longitude=-62.22&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+ttl 3600
+force em
+on earth -3.47 -62.22
+  path current.temperature_2m biome_tibet_temp_c
+  path current.precipitation biome_tibet_precip_mm
+  path current.relative_humidity_2m biome_tibet_humidity_pct
+  path current.surface_pressure biome_tibet_pressure_hpa
+  path current.wind_speed_10m biome_tibet_wind_ms
+  path current.weather_code biome_tibet_weather_code
+  path daily.temperature_2m_max.0 temperature_2m_max
+  path daily.temperature_2m_min.0 temperature_2m_min
+  path daily.precipitation_sum.0 precipitation_sum
+  path daily.sunshine_duration.0 sunshine_duration
+
+url https://api.open-meteo.com/v1/forecast?latitude=-80.0&longitude=100.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+ttl 3600
+force em
+on earth -80.0 100.0
+  path current.temperature_2m biome_tibet_temp_c
+  path current.precipitation biome_tibet_precip_mm
+  path current.relative_humidity_2m biome_tibet_humidity_pct
+  path current.surface_pressure biome_tibet_pressure_hpa
+  path current.wind_speed_10m biome_tibet_wind_ms
+  path current.weather_code biome_tibet_weather_code
+  path daily.temperature_2m_max.0 temperature_2m_max
+  path daily.temperature_2m_min.0 temperature_2m_min
+  path daily.precipitation_sum.0 precipitation_sum
+  path daily.sunshine_duration.0 sunshine_duration
+
+url https://api.open-meteo.com/v1/forecast?latitude=-24.0&longitude=-69.5&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+ttl 3600
+force em
+on earth -24.0 -69.5
+  path current.temperature_2m biome_tibet_temp_c
+  path current.precipitation biome_tibet_precip_mm
+  path current.relative_humidity_2m biome_tibet_humidity_pct
+  path current.surface_pressure biome_tibet_pressure_hpa
+  path current.wind_speed_10m biome_tibet_wind_ms
+  path current.weather_code biome_tibet_weather_code
+  path daily.temperature_2m_max.0 temperature_2m_max
+  path daily.temperature_2m_min.0 temperature_2m_min
+  path daily.precipitation_sum.0 precipitation_sum
+  path daily.sunshine_duration.0 sunshine_duration
+
+url https://api.open-meteo.com/v1/forecast?latitude=0.5&longitude=114.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+ttl 3600
+force em
+on earth 0.5 114.0
+  path current.temperature_2m biome_tibet_temp_c
+  path current.precipitation biome_tibet_precip_mm
+  path current.relative_humidity_2m biome_tibet_humidity_pct
+  path current.surface_pressure biome_tibet_pressure_hpa
+  path current.wind_speed_10m biome_tibet_wind_ms
+  path current.weather_code biome_tibet_weather_code
+  path daily.temperature_2m_max.0 temperature_2m_max
+  path daily.temperature_2m_min.0 temperature_2m_min
+  path daily.precipitation_sum.0 precipitation_sum
+  path daily.sunshine_duration.0 sunshine_duration
+
+url https://api.open-meteo.com/v1/forecast?latitude=30.0&longitude=31.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+ttl 3600
+force em
+on earth 30.0 31.0
+  path current.temperature_2m biome_tibet_temp_c
+  path current.precipitation biome_tibet_precip_mm
+  path current.relative_humidity_2m biome_tibet_humidity_pct
+  path current.surface_pressure biome_tibet_pressure_hpa
+  path current.wind_speed_10m biome_tibet_wind_ms
+  path current.weather_code biome_tibet_weather_code
+  path daily.temperature_2m_max.0 temperature_2m_max
+  path daily.temperature_2m_min.0 temperature_2m_min
+  path daily.precipitation_sum.0 precipitation_sum
+  path daily.sunshine_duration.0 sunshine_duration
+
+url https://api.open-meteo.com/v1/forecast?latitude=-34.0&longitude=18.5&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+ttl 3600
+force em
+on earth -34.0 18.5
+  path current.temperature_2m biome_tibet_temp_c
+  path current.precipitation biome_tibet_precip_mm
+  path current.relative_humidity_2m biome_tibet_humidity_pct
+  path current.surface_pressure biome_tibet_pressure_hpa
+  path current.wind_speed_10m biome_tibet_wind_ms
+  path current.weather_code biome_tibet_weather_code
+  path daily.temperature_2m_max.0 temperature_2m_max
+  path daily.temperature_2m_min.0 temperature_2m_min
+  path daily.precipitation_sum.0 precipitation_sum
+  path daily.sunshine_duration.0 sunshine_duration
+
+url https://api.open-meteo.com/v1/forecast?latitude=0.0&longitude=18.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+ttl 3600
+force em
+on earth 0.0 18.0
+  path current.temperature_2m biome_tibet_temp_c
+  path current.precipitation biome_tibet_precip_mm
+  path current.relative_humidity_2m biome_tibet_humidity_pct
+  path current.surface_pressure biome_tibet_pressure_hpa
+  path current.wind_speed_10m biome_tibet_wind_ms
+  path current.weather_code biome_tibet_weather_code
+  path daily.temperature_2m_max.0 temperature_2m_max
+  path daily.temperature_2m_min.0 temperature_2m_min
+  path daily.precipitation_sum.0 precipitation_sum
+  path daily.sunshine_duration.0 sunshine_duration
+
+url https://api.open-meteo.com/v1/forecast?latitude=36.5&longitude=-117.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+ttl 3600
+force em
+on earth 36.5 -117.0
+  path current.temperature_2m biome_tibet_temp_c
+  path current.precipitation biome_tibet_precip_mm
+  path current.relative_humidity_2m biome_tibet_humidity_pct
+  path current.surface_pressure biome_tibet_pressure_hpa
+  path current.wind_speed_10m biome_tibet_wind_ms
+  path current.weather_code biome_tibet_weather_code
+  path daily.temperature_2m_max.0 temperature_2m_max
+  path daily.temperature_2m_min.0 temperature_2m_min
+  path daily.precipitation_sum.0 precipitation_sum
+  path daily.sunshine_duration.0 sunshine_duration
+
+url https://api.open-meteo.com/v1/forecast?latitude=-18.0&longitude=178.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+ttl 3600
+force em
+on earth -18.0 178.0
+  path current.temperature_2m biome_tibet_temp_c
+  path current.precipitation biome_tibet_precip_mm
+  path current.relative_humidity_2m biome_tibet_humidity_pct
+  path current.surface_pressure biome_tibet_pressure_hpa
+  path current.wind_speed_10m biome_tibet_wind_ms
+  path current.weather_code biome_tibet_weather_code
+  path daily.temperature_2m_max.0 temperature_2m_max
+  path daily.temperature_2m_min.0 temperature_2m_min
+  path daily.precipitation_sum.0 precipitation_sum
+  path daily.sunshine_duration.0 sunshine_duration
+
+url https://api.open-meteo.com/v1/forecast?latitude=44.0&longitude=105.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+ttl 3600
+force em
+on earth 44.0 105.0
+  path current.temperature_2m biome_tibet_temp_c
+  path current.precipitation biome_tibet_precip_mm
+  path current.relative_humidity_2m biome_tibet_humidity_pct
+  path current.surface_pressure biome_tibet_pressure_hpa
+  path current.wind_speed_10m biome_tibet_wind_ms
+  path current.weather_code biome_tibet_weather_code
+  path daily.temperature_2m_max.0 temperature_2m_max
+  path daily.temperature_2m_min.0 temperature_2m_min
+  path daily.precipitation_sum.0 precipitation_sum
+  path daily.sunshine_duration.0 sunshine_duration
+
+url https://api.open-meteo.com/v1/forecast?latitude=72.0&longitude=-40.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+ttl 3600
+force em
+on earth 72.0 -40.0
+  path current.temperature_2m biome_tibet_temp_c
+  path current.precipitation biome_tibet_precip_mm
+  path current.relative_humidity_2m biome_tibet_humidity_pct
+  path current.surface_pressure biome_tibet_pressure_hpa
+  path current.wind_speed_10m biome_tibet_wind_ms
+  path current.weather_code biome_tibet_weather_code
+  path daily.temperature_2m_max.0 temperature_2m_max
+  path daily.temperature_2m_min.0 temperature_2m_min
+  path daily.precipitation_sum.0 precipitation_sum
+  path daily.sunshine_duration.0 sunshine_duration
+
+url https://api.open-meteo.com/v1/forecast?latitude=64.0&longitude=-19.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+ttl 3600
+force em
+on earth 64.0 -19.0
+  path current.temperature_2m biome_tibet_temp_c
+  path current.precipitation biome_tibet_precip_mm
+  path current.relative_humidity_2m biome_tibet_humidity_pct
+  path current.surface_pressure biome_tibet_pressure_hpa
+  path current.wind_speed_10m biome_tibet_wind_ms
+  path current.weather_code biome_tibet_weather_code
+  path daily.temperature_2m_max.0 temperature_2m_max
+  path daily.temperature_2m_min.0 temperature_2m_min
+  path daily.precipitation_sum.0 precipitation_sum
+  path daily.sunshine_duration.0 sunshine_duration
+
+url https://api.open-meteo.com/v1/forecast?latitude=-49.5&longitude=69.5&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+ttl 3600
+force em
+on earth -49.5 69.5
+  path current.temperature_2m biome_tibet_temp_c
+  path current.precipitation biome_tibet_precip_mm
+  path current.relative_humidity_2m biome_tibet_humidity_pct
+  path current.surface_pressure biome_tibet_pressure_hpa
+  path current.wind_speed_10m biome_tibet_wind_ms
+  path current.weather_code biome_tibet_weather_code
+  path daily.temperature_2m_max.0 temperature_2m_max
+  path daily.temperature_2m_min.0 temperature_2m_min
+  path daily.precipitation_sum.0 precipitation_sum
+  path daily.sunshine_duration.0 sunshine_duration
+
+url https://api.open-meteo.com/v1/forecast?latitude=3.0&longitude=73.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+ttl 3600
+force em
+on earth 3.0 73.0
+  path current.temperature_2m biome_tibet_temp_c
+  path current.precipitation biome_tibet_precip_mm
+  path current.relative_humidity_2m biome_tibet_humidity_pct
+  path current.surface_pressure biome_tibet_pressure_hpa
+  path current.wind_speed_10m biome_tibet_wind_ms
+  path current.weather_code biome_tibet_weather_code
+  path daily.temperature_2m_max.0 temperature_2m_max
+  path daily.temperature_2m_min.0 temperature_2m_min
+  path daily.precipitation_sum.0 precipitation_sum
+  path daily.sunshine_duration.0 sunshine_duration
+
+url https://api.open-meteo.com/v1/forecast?latitude=-19.5&longitude=23.5&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+ttl 3600
+force em
+on earth -19.5 23.5
+  path current.temperature_2m biome_tibet_temp_c
+  path current.precipitation biome_tibet_precip_mm
+  path current.relative_humidity_2m biome_tibet_humidity_pct
+  path current.surface_pressure biome_tibet_pressure_hpa
+  path current.wind_speed_10m biome_tibet_wind_ms
+  path current.weather_code biome_tibet_weather_code
+  path daily.temperature_2m_max.0 temperature_2m_max
+  path daily.temperature_2m_min.0 temperature_2m_min
+  path daily.precipitation_sum.0 precipitation_sum
+  path daily.sunshine_duration.0 sunshine_duration
+
+url https://api.open-meteo.com/v1/forecast?latitude=-50.0&longitude=-72.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+ttl 3600
+force em
+on earth -50.0 -72.0
+  path current.temperature_2m biome_tibet_temp_c
+  path current.precipitation biome_tibet_precip_mm
+  path current.relative_humidity_2m biome_tibet_humidity_pct
+  path current.surface_pressure biome_tibet_pressure_hpa
+  path current.wind_speed_10m biome_tibet_wind_ms
+  path current.weather_code biome_tibet_weather_code
+  path daily.temperature_2m_max.0 temperature_2m_max
+  path daily.temperature_2m_min.0 temperature_2m_min
+  path daily.precipitation_sum.0 precipitation_sum
+  path daily.sunshine_duration.0 sunshine_duration
+
+url https://api.open-meteo.com/v1/forecast?latitude=23.0&longitude=5.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+ttl 3600
+force em
+on earth 23.0 5.0
+  path current.temperature_2m biome_tibet_temp_c
+  path current.precipitation biome_tibet_precip_mm
+  path current.relative_humidity_2m biome_tibet_humidity_pct
+  path current.surface_pressure biome_tibet_pressure_hpa
+  path current.wind_speed_10m biome_tibet_wind_ms
+  path current.weather_code biome_tibet_weather_code
+  path daily.temperature_2m_max.0 temperature_2m_max
+  path daily.temperature_2m_min.0 temperature_2m_min
+  path daily.precipitation_sum.0 precipitation_sum
+  path daily.sunshine_duration.0 sunshine_duration
+
+url https://api.open-meteo.com/v1/forecast?latitude=62.0&longitude=105.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+ttl 3600
+force em
+on earth 62.0 105.0
+  path current.temperature_2m biome_tibet_temp_c
+  path current.precipitation biome_tibet_precip_mm
+  path current.relative_humidity_2m biome_tibet_humidity_pct
+  path current.surface_pressure biome_tibet_pressure_hpa
+  path current.wind_speed_10m biome_tibet_wind_ms
+  path current.weather_code biome_tibet_weather_code
+  path daily.temperature_2m_max.0 temperature_2m_max
+  path daily.temperature_2m_min.0 temperature_2m_min
+  path daily.precipitation_sum.0 precipitation_sum
+  path daily.sunshine_duration.0 sunshine_duration
+
+url https://api.open-meteo.com/v1/forecast?latitude=32.0&longitude=86.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+ttl 3600
+force em
+on earth 32.0 86.0
+  path current.temperature_2m biome_tibet_temp_c
+  path current.precipitation biome_tibet_precip_mm
+  path current.relative_humidity_2m biome_tibet_humidity_pct
+  path current.surface_pressure biome_tibet_pressure_hpa
+  path current.wind_speed_10m biome_tibet_wind_ms
+  path current.weather_code biome_tibet_weather_code
+  path daily.temperature_2m_max.0 temperature_2m_max
+  path daily.temperature_2m_min.0 temperature_2m_min
+  path daily.precipitation_sum.0 precipitation_sum
+  path daily.sunshine_duration.0 sunshine_duration
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,uv_index_max&forecast_days=1
+ttl 3600
+force em
+on earth -25.0 135.0
+  path daily.0 daily
+  field daily.temperature_2m_max.0 bom_forecast_max_temp
+  field daily.temperature_2m_min.0 bom_forecast_min_temp
+  field daily.precipitation_sum.0 bom_forecast_precip_mm
+  field daily.uv_index_max.0 bom_forecast_uv_index
+
+url https://air-quality-api.open-meteo.com/v1/air-quality?latitude=19.5&longitude=-155.6&current=carbon_dioxide
+ttl 3600
+force diffusion
+on earth 19.5 -155.6
+  path current.carbon_dioxide co2_mauna_loa_ppm
+
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_weekly_mlo.txt
+ttl 3600
+force diffusion
+on earth 19.5362 -155.5763 3397
+format universal
+last_row (ppm) atmosphere_co2_weekly_ppm
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,precipitation_sum,windspeed_10m_max,windgusts_10m_max&timezone=auto
+ttl 3600
+force em
+at sun 1.0
+pos atmosphere_lat atmosphere_lon
+  path latitude lat
+  path longitude lon
+  path daily.temperature_2m_max.0 temperature_2m_max
+  path daily.temperature_2m_min.0 temperature_2m_min
+  path daily.precipitation_probability_max.0 precipitation_probability_max
+  path daily.windspeed_10m_max.0 windspeed_10m_max
+
+url https://ensemble-api.open-meteo.com/v1/ensemble?latitude={lat}&longitude={lon}&daily=temperature_2m_max,precipitation_sum&timezone=auto
+ttl 3600
+force em
+at sun 1.0
+pos atmosphere_lat atmosphere_lon
+  path latitude lat
+  path longitude lon
+  path daily.temperature_2m_max.0 temperature_2m_max
+  path daily.precipitation_sum.0 precipitation_sum
+
+url https://gml.noaa.gov/webdata/ccgg/trends/ch4/ch4_mm_gl.txt
+ttl 3600
+force diffusion
+at sun 1
+format universal
+last_row average atmosphere_gml_methane_global_ppb
+field_in 0 year
+field_in 1 month
+field_in 2 ch4_ppb_mean
+field_in 3 ch4_ppb_uncertainty
+  field 0 year
+  field 1 month
+  field 2 ch4_global_ppb
+  field 3 ch4_uncertainty_ppb
+  field 4 ch4_trend_ppb
+  field 5 trend_uncertainty
+
+url https://gml.noaa.gov/webdata/ccgg/trends/n2o/n2o_mm_gl.txt
+ttl 3600
+force diffusion
+at sun 1
+format universal
+last_row average atmosphere_gml_n2o_global_ppb
+field_in 0 year
+field_in 1 month
+field_in 2 n2o_ppb_mean
+field_in 3 n2o_ppb_uncertainty
+
+url https://www.hamqsl.com/solarxml.php
+ttl 3600
+force em
+on earth 35.0 -106.0
+  field solarterrestrialdata.solarflux.sflux sflux
+  field solarterrestrialdata.solarflux.Aindex Aindex
+  field solarterrestrialdata.solarflux.Kindex Kindex
+  field solarterrestrialdata.solarflux.MUF MUF
+
+url https://aviationweather.gov/api/data/metar?bbox=-90,-180,-60,180&format=json&hours=3
+ttl 3600
+force acoustic
+on earth 0 0
+map .
+lat_key lat
+lon_key lon
+  field_in icaoId icaoId
+  field_in temp temp
+  field_in wdir wdir
+  field_in wspd wspd
+  field_in altim altim
+
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-hourly&stations=USW00013739,USW00094728,USW00012918&startDate=2026-07-01&endDate=2026-07-27&format=json&dataTypes=TEMP,DEWP,WDSP,WND,SLP
+ttl 3600
+force thermal
+on earth 0.0 0.0
+map .
+  field_in STATION STATION
+  field_in DATE DATE
+  field_in TEMP TEMP
+  field_in DEWP DEWP
+  field_in WDSP WDSP
+  field_in WND WND
+  field_in SLP SLP
+
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-hourly&stations=USW00013739&startDate=2026-01-01&endDate=2026-07-27&format=json&dataTypes=TEMP,DEWP,WDSP,WND,SLP
+ttl 3600
+force thermal
+on earth 0.0 0.0
+map .
+  field_in STATION STATION
+  field_in DATE DATE
+  field_in TEMP TEMP
+  field_in DEWP DEWP
+  field_in WDSP WDSP
+  field_in WND WND
+  field_in SLP SLP
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=temperature_2m,precipitation,windspeed_10m,uv_index&models=bom_access_global&forecast_days=7&format=json
+ttl 3600
+force thermal
+at sun 1.0
+map hourly.time
+  field_in hourly.temperature_2m temperature_2m
+  field_in hourly.precipitation precipitation
+  field_in hourly.windspeed_10m windspeed_10m
+  field_in hourly.uv_index uv_index
+
+url https://air-quality-api.open-meteo.com/v1/air-quality?latitude={lat}&longitude={lon}&hourly=pm2_5,pm10,nitrogen_dioxide,ozone,european_aqi,us_aqi&forecast_days=5&format=json
+ttl 3600
+force diffusion
+at sun 1.0
+map hourly.time
+  field_in hourly.pm2_5 pm2_5
+  field_in hourly.pm10 pm10
+  field_in hourly.nitrogen_dioxide nitrogen_dioxide
+  field_in hourly.ozone ozone
+  field_in hourly.european_aqi european_aqi
+  field_in hourly.us_aqi us_aqi
+
+url https://api.open-meteo.com/v1/forecast?latitude=80.0&longitude=0.0&hourly=temperature_2m,snowfall,snow_depth,precipitation,wind_speed_10m&models=icon_seamless&forecast_days=3&format=json
+ttl 3600
+force thermal
+at sun 1.0
+map hourly.time
+  field_in hourly.temperature_2m temperature_2m
+  field_in hourly.snowfall snowfall
+  field_in hourly.snow_depth snow_depth
+  field_in hourly.precipitation precipitation
+  field_in hourly.wind_speed_10m wind_speed_10m
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=temperature_2m,precipitation,windspeed_10m,windgusts_10m,cape&models=meteofrance_arome_france&forecast_days=2&format=json
+ttl 3600
+force thermal
+body earth
+map hourly.time
+  field_in hourly.temperature_2m temperature_2m
+  field_in hourly.precipitation precipitation
+  field_in hourly.windspeed_10m windspeed_10m
+  field_in hourly.windgusts_10m windgusts_10m
+  field_in hourly.cape cape
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=temperature_2m,precipitation,windspeed_10m&models=italia_meteo_arpae_icon_2i&forecast_days=3&format=json
+ttl 3600
+force thermal
+body earth
+map hourly.time
+  field_in hourly.temperature_2m temperature_2m
+  field_in hourly.precipitation precipitation
+  field_in hourly.windspeed_10m windspeed_10m
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=cloudcover,shortwave_radiation,direct_radiation,diffuse_radiation,cloud_cover_low,cloud_cover_mid,cloud_cover_high&models=ecmwf_ifs025&forecast_days=10&format=json
+ttl 3600
+force em
+at sun 1.0
+map hourly.time
+  field_in hourly.cloudcover cloudcover
+  field_in hourly.shortwave_radiation shortwave_radiation
+  field_in hourly.direct_radiation direct_radiation
+  field_in hourly.diffuse_radiation diffuse_radiation
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&daily=et0_fao_evapotranspiration,precipitation,soil_moisture_0_to_7cm,soil_moisture_7_to_28cm&models=era5_seamless&forecast_days=1&format=json
+ttl 3600
+force diffusion
+at sun 1
+body earth
+map daily.time
+  field_in daily.et0_fao_evapotranspiration et0_fao_evapotranspiration
+  field_in daily.precipitation precipitation
+  field_in daily.soil_moisture_0_to_7cm soil_moisture_0_to_7cm
+  field_in daily.soil_moisture_7_to_28cm soil_moisture_7_to_28cm
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&daily=fire_danger_index,precipitation_sum,windspeed_10m_max,temperature_2m_max&models=best_match&forecast_days=7&format=json
+ttl 3600
+force thermal
+at sun 1
+body earth
+map daily.time
+  field_in daily.fire_danger_index fire_danger_index
+  field_in daily.precipitation_sum precipitation_sum
+  field_in daily.windspeed_10m_max windspeed_10m_max
+  field_in daily.temperature_2m_max temperature_2m_max
+
+url https://flood-api.open-meteo.com/v1/flood?latitude={lat}&longitude={lon}&daily=river_discharge,river_discharge_mean,river_discharge_max&forecast_days=16&format=json
+ttl 3600
+force diffusion
+at sun 1.0
+map daily.time
+  field_in daily.river_discharge river_discharge
+  field_in daily.river_discharge_mean river_discharge_mean
+  field_in daily.river_discharge_max river_discharge_max
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=temperature_2m,snow_depth,freezinglevel_height,precipitation&models=gem_global&forecast_days=7&format=json
+ttl 3600
+force thermal
+at sun 1.0
+map hourly.time
+  field_in hourly.temperature_2m temperature_2m
+  field_in hourly.snow_depth snow_depth
+  field_in hourly.freezinglevel_height freezinglevel_height
+  field_in hourly.precipitation precipitation
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=temperature_500hPa,temperature_700hPa,temperature_850hPa,geopotential_height_500hPa&models=gfs_seamless&forecast_days=5&format=json
+ttl 3600
+force thermal
+at sun 1.0
+map hourly.time
+  field_in hourly.temperature_500hPa temperature_500hPa
+  field_in hourly.temperature_700hPa temperature_700hPa
+  field_in hourly.temperature_850hPa temperature_850hPa
+  field_in hourly.geopotential_height_500hPa geopotential_height_500hPa

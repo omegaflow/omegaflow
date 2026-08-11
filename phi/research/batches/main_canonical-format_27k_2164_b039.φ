@@ -1,0 +1,443 @@
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KIR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+force em
+on earth 67.843 20.42
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KMH/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+force em
+on earth -26.54 18.11
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KNY/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+force em
+on earth 31.42 130.88
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KOU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+force em
+on earth 5.21 -52.73000000000002
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=LRM/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+force em
+on earth -22.22 114.1
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=LVV/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+force em
+on earth 49.9 23.75
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=LYC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+force em
+on earth 64.612 18.748
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MAB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+force em
+on earth 50.298 5.682
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MAW/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+force em
+on earth -67.6 62.88
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MCG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+force em
+on earth -54.5 158.95
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MCQG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+force em
+on earth -54.5 158.95
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MMB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+force em
+on earth 43.91 144.19
+path 1.0 0
+path 1.1 1
+path 1.2 2
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NAG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+force em
+on earth 61.167 -45.43299999999999
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NCK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+force em
+on earth 47.63 16.72
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NEW/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+force em
+on earth 48.27 -117.12
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NGK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+force em
+on earth 52.07 12.68
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NUR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+force em
+on earth 60.51 24.66
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NVS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+force em
+on earth 54.85 83.23
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ORC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+force em
+on earth -60.737 -44.73700000000002
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PAG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+force em
+on earth 42.515 24.177
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PEG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+force em
+on earth 38.1 23.9
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PHU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+force em
+on earth 21.03 105.96
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PIL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+force em
+on earth -31.667 -63.88099999999997
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PPT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+force em
+on earth -17.567 -149.574
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=REU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+force em
+on earth -21.206 55.576
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SBA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+force em
+on earth -77.829 166.671
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+
+url https://zenodo.org/records/15225820/files/NiNo_SR_params_2024.csv
+ttl 86400
+force gravity
+at sun 1.0
+format csv
+last_line atmos_schumann_last_val
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SFS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+force em
+on earth 36.667 -5.944999999999993
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SHE/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+force em
+on earth -15.961 -5.747000000000014
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SHU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+force em
+on earth 55.35 -160.46
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SIT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+force em
+on earth 57.06 -135.33
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SJG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+force em
+on earth 18.11 -66.14999999999998
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SOD/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+force em
+on earth 67.37 26.63
+path 1.0 0
+path 1.1 1
+path 1.2 2
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SPT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+force em
+on earth 39.55 -4.350000000000023
+path 1.0 0
+path 1.1 1
+path 2 2
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SUA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+force em
+on earth 44.68 26.25
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TDC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+force em
+on earth -37.067 -12.315999999999974
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=THL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+force em
+on earth 77.47 -69.22699999999998
+path 1.1 1
+path 1.2 2
+path 2 2
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=THY/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+force em
+on earth 46.9 17.89
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TIRM/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+force em
+on earth -22.22 114.1
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TLON/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+force em
+on earth 45.408 16.659
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TSU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+force em
+on earth -19.202 17.584
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TTB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+force em
+on earth -1.205 -48.51299999999998
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TUC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+force em
+on earth 32.17 -110.72999999999999
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=UPS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+force em
+on earth 59.903 17.353
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VALL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+force em
+on earth 51.933 -10.25
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VNA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+force em
+on earth -70.683 -8.281999999999982
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VOS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+force em
+on earth -78.464 106.835
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VSS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+force em
+on earth -22.4 -43.64999999999998
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WIC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+force em
+on earth 47.931 15.866
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WNG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+force em
+on earth 53.725 9.053
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2

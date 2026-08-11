@@ -1,0 +1,572 @@
+source magnetosphere_sua_hapi
+ttl 86400
+force em
+lat 44.68
+lon 26.25
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SUA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_sua_x_nt
+path 1.1 magnetosphere_sua_y_nt
+path 1.2 magnetosphere_sua_z_nt
+path 2 magnetosphere_sua_f_nt
+
+source magnetosphere_tdc_hapi
+ttl 86400
+force em
+lat -37.067
+lon -12.315999999999974 A
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TDC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_tdc_x_nt
+path 1.1 magnetosphere_tdc_y_nt
+path 1.2 magnetosphere_tdc_z_nt
+path 2 magnetosphere_tdc_f_nt
+
+source magnetosphere_thL
+ttl 86400
+force em
+lat 77.47
+lon -69.22699999999998
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=THL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.1 magnetosphere_thl_y_nt
+path 1.2 magnetosphere_thl_z_nt
+path 2 magnetosphere_thl_s_nt
+
+source magnetosphere_thy
+ttl 86400
+force em
+lat 46.9
+lon 17.89
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=THY/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_thy_x_nt
+path 1.1 magnetosphere_thy_y_nt
+path 1.2 magnetosphere_thy_z_nt
+path 2 magnetosphere_thy_s_nt
+
+source magnetosphere_tirm
+ttl 86400
+force em
+lat -22.22
+lon 114.1
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TIRM/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_lrm_x_nt
+path 1.1 magnetosphere_ltrm_y_nt
+path 1.2 magnetosphere_trm_z_nt
+path 2 magnetosphere_ltrm_s_nt
+
+source magnetosphere_tlon
+ttl 86400
+force em
+lat 45.408
+lon 16.659
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TLON/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_lon_x_nt
+path 1.1 magnetosphere_lon_y_nt
+path 1.2 magnetosphere_lon_z_nt
+path 2 magnetosphere_lon_s_nt
+
+source magnetosphere_tsu
+ttl 86400
+force em
+lat -19.202
+lon 17.584
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TSU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_tsu_x_nt
+path 1.1 magnetosphere_tsu_y_nt
+path 1.2 magnetosphere_tsu_z_nt
+path 2 magnetosphere_tsu_s_nt
+
+source magnetosphere_ttb
+ttl 86400
+force em
+lat -1.205
+lon -48.51299999999998
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TTB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_ttb_x_nt
+path 1.1 magnetosphere_ttb_y_nt
+path 1.2 magnetosphere_ttb_z_nt
+path 2 magnetosphere_ttb_s_nt
+
+source magnetosphere_ttb_hapi
+ttl 86400
+force em
+lat -1.205
+lon -48.51299999999998
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TTB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_ttb_x_nt
+path 1.1 magnetosphere_ttb_y_nt
+path 1.2 magnetosphere_ttb_z_nt
+path 2 magnetosphere_ttb_f_nt
+
+source magnetosphere_tuc
+ttl 86400
+force em
+lat 32.17
+lon -110.72999999999999
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TUC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_tuc_x_nt
+path 1.1 magnetosphere_tuc_y_nt
+path 1.2 magnetosphere_tuc_z_nt
+path 2 magnetosphere_tuc_s_nt
+
+source magnetosphere_tuc_hapi
+ttl 86400
+force em
+lat 32.17
+lon -110.72999999999999
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TUC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_tuc_x_nt
+path 1.1 magnetosphere_tuc_y_nt
+path 1.2 magnetosphere_tuc_z_nt
+path 2 magnetosphere_tuc_f_nt
+
+source magnetosphere_ups
+ttl 86400
+force em
+lat 59.903
+lon 17.353
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=UPS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_ups_x_nt
+path 1.1 magnetosphere_ups_y_nt
+path 1.2 magnetosphere_ups_z_nt
+path 2 magnetosphere_ups_s_nt
+
+source magnetosphere_valL
+ttl 86400
+force em
+lat 51.933
+lon -10.25
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VALL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_val_x_nt
+path 1.1 magnetosphere_val_y_nt
+path 1.2 magnetosphere_val_z_nt
+path 2 magnetosphere_val_s_nt
+
+source magnetosphere_vna
+ttl 86400
+force em
+lat -70.683
+lon -8.281999999999982
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VNA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_vna_x_nt
+path 1.1 magnetosphere_vna_y_nt
+path 1.2 magnetosphere_vna_z_nt
+path 2 magnetosphere_vna_s_nt
+
+source magnetosphere_vna_hapi
+ttl 86400
+force em
+lat -22.4
+lon -43.64999999999998
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VNA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_vna_x_nt
+path 1.1 magnetosphere_vna_y_nt
+path 1.2 magnetosphere_vna_z_nt
+path 2 magnetosphere_vna_f_nt
+path 1.0 magnetosphere_vss_x_nt
+path 1.2 magnetosphere_vss_z_nt
+path 2 magnetosphere_vss_f_nt
+
+source magnetosphere_vos
+ttl 86400
+force em
+lat -78.464
+lon 106.835
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VOS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_vos_x_nt
+path 1.1 magnetosphere_vos_y_nt
+path 1.2 magnetosphere_vos_z_nt
+path 2 magnetosphere_vos_s_nt
+
+source magnetosphere_vss
+ttl 86400
+force em
+lat -22.4
+lon -43.64999999999998
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VSS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_vss_x_nt
+path 1.1 magnetosphere_vss_y_nt
+path 1.2 magnetosphere_vss_z_nt
+path 2 magnetosphere_vss_s_nt
+
+source magnetosphere_wic
+ttl 86400
+force em
+lat 47.931
+lon 15.866
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WIC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_wic_x_nt
+path 1.1 magnetosphere_wic_y_nt
+path 1.2 magnetosphere_wic_z_nt
+path 2 magnetosphere_wic_s_
+
+source magnetosphere_wic_hapi
+ttl 86400
+force em
+lat 47.931
+lon 15.866
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WIC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_wic_x_nt
+path 1.1 magnetosphere_wic_y_nt
+path 1.2 magnetosphere_wic_z_nt
+path 2 magnetosphere_wic_f_nt
+
+source magnetosphere_wng
+ttl 86400
+force em
+lat 53.725
+lon 9.053
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WNG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_wng_x_nt
+path 1.1 magnetosphere_wng_y_nt
+path 1.2 magnetosphere_wng_z_nt
+path 2 magnetosphere_wng_s_nt
+
+source magnetosphere_wng_hapi
+ttl 86400
+force em
+lat 53.725
+lon 9.053
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WNG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+path 1.0 magnetosphere_wng_x_nt
+path 1.1 magnetosphere_wng_y_nt
+path 1.2 magnetosphere_wng_z_nt
+path 2 magnetosphere_wng_f_nt
+
+source mast_hst_public_observations
+ttl 86400
+force em
+url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?LANG=ADQL&REQUEST=doQuery&FORMAT=csv&QUERY=SELECT+TOP+3000+observationID,target_name,s_ra,s_dec,t_exptime,instrument_name,energy_bandpassName,em_min,em_max+FROM+dbo.caomobservation+WHERE+collection%3D'HST'+AND+calib_level%3D3+AND+t_exptime%3E3600+ORDER+BY+t_exptime+DESC
+format text
+rows
+ra_key s_ra
+dec_key s_dec
+field observationID obs_id
+field target_name target_name
+field t_exptime exposure_sec
+field instrument_name instrument
+field energy_bandpassName filter_name
+
+source mast_kepler_k2_legacy
+ttl 86400
+force em
+url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?LANG=ADQL&REQUEST=doQuery&FORMAT=csv&QUERY=SELECT+TOP+3000+observationID,target_name,s_ra,s_dec,t_exptime,instrument_name,t_min,t_max+FROM+dbo.caomobservation+WHERE+collection+IN+('Kepler','K2')+AND+calib_level%3D2+ORDER+BY+t_min+DESC
+format text
+rows
+ra_key s_ra
+dec_key s_dec
+field observationID obs_id
+field target_name target_name
+field t_exptime exposure_sec
+field instrument_name instrument
+
+source mast_tess_observations_public
+ttl 86400
+force em
+url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?LANG=ADQL&REQUEST=doQuery&FORMAT=csv&QUERY=SELECT+TOP+3000+observationID,target_name,s_ra,s_dec,t_exptime,instrument_name,t_min,t_max+FROM+dbo.caomobservation+WHERE+collection%3D'TESS'+AND+calib_level%3D2+ORDER+BY+t_min+DESC
+format text
+rows
+ra_key s_ra
+dec_key s_dec
+field observationID obs_id
+field target_name target_name
+field t_exptime exposure_sec
+field t_min tess_sector_start
+field t_max tess_sector_end
+
+source mast_tess_toi_official_release
+ttl 86400
+force em
+url https://tess.mit.edu/wp-content/uploads/all_targets_S001_v1.csv
+format text
+rows
+ra_key RA_deg
+dec_key Dec_deg
+field TIC tic_id
+field Sectors observed_sectors
+field T_mag tess_magnitude
+field Tmag_unc magnitude_uncertainty
+
+source mcgill_magnetar_catalog
+ttl 86400
+force em
+url https://www.physics.mcgill.ca/~pulsar/magnetar/TabO1.csv
+format text
+rows
+ra_key RA_J2000
+dec_key Dec_J2000
+field Name magnetar_name
+field P_dot p_dot
+field P0 spin_period_s
+field B_surf surface_field_gauss
+field Dist distance_kpc
+field Type magnetar_type
+field LX x_ray_luminosity
+
+source mcgill_magnetar_outburst_history
+ttl 86400
+force em
+url https://www.physics.mcgill.ca/~pulsar/magnetar/TabO1.csv
+format text
+rows
+ra_key RA_J2000
+dec_key Dec_J2000
+field Name magnetar_name
+field P0 spin_period_s
+field Pdot period_derivative
+field B_surf surface_B_field_gauss
+field Dist distance_kpc
+field Type sgr_or_axp
+field LX xray_luminosity_erg_s
+field LastBurst last_outburst_year
+
+source meteorite_landings_tidy
+ttl 86400
+force gravity
+url https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-06-11/meteorites.csv
+format text
+rows
+lat_key lat
+lon_key long
+field name meteorite_name
+field id meteorite_id
+field fall fall_type
+field year fall_year
+field recclass meteorite_class
+field mass mass_grams
+
+source minor_planet_center_asteroids_total
+ttl 86400
+force em
+lat 42.365
+lon -71.105
+url https://www.minorplanetcenter.net/data_service
+last_line orbital_mpc_asteroid_count
+
+source molecular_crystallography_xrd
+ttl 86400
+force em
+lat 54.683
+lon 25.287
+url https://www.crystallography.net/cod/result.php?format=json&element=Si&limit=1
+field a molecular_lattice_constant_a
+
+source molecular_protein_structures
+ttl 86400
+force em
+lat 40.500
+lon -74.450
+url https://data.rcsb.org/rest/v1/core/entry/1UBQ
+field rcsb_id biosphere_protein_structure_id
+
+source moon_phase
+ttl 86400
+force em
+lat 34.201
+lon -118.171
+url https://aa.usno.navy.mil/api/rstt/oneday?date={today}&coords=34.201,-118.171&tz=0
+path properties.data.curphase cosmic_moon_phase
+path properties.data.fracillum cosmic_moon_illumination_pct
+
+source mpc_observatory_codes
+ttl 86400
+force gravity
+url https://www.minorplanetcenter.net/iau/lists/ObsCodes.html
+format text
+rows
+lat_key lat
+lon_key lon
+field 0 obs_code
+field 1 longitude_deg
+field 2 rho_cos_phi
+field 3 rho_sin_phi
+field 4 observatory_name
+
+source mpc_tno_orbital_elements_database
+ttl 86400
+force gravity
+url https://www.minorplanetcenter.net/iau/MPCORB/Distant.txt
+format text
+rows
+ra_key RA
+dec_key Dec
+field designation designation
+field H absolute_mag
+field G slope_param
+
+source musicbrainz_artists_total
+ttl 86400
+force em
+lat 51.507
+lon -0.127
+url https://musicbrainz.org/ws/2/artist?query=*&limit=1&fmt=json
+field artists.0.id biosphere_music_artists_total
+
+source musicbrainz_recordings_total
+ttl 86400
+force em
+lat 51.507
+lon -0.127
+url https://musicbrainz.org/ws/2/recording?query=*&limit=1&fmt=json
+field recordings.0.id biosphere_music_recordings_total
+
+source musicbrainz_releases_total
+ttl 86400
+force em
+lat 51.507
+lon -0.127
+url https://musicbrainz.org/ws/2/release?query=*&limit=1&fmt=json
+field releases.0.id biosphere_music_releases_total
+
+source nasa_exoplanet_atmospheres
+ttl 86400
+force em
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+top+2000+ra,dec,pl_name,pl_rade,pl_bmasse,pl_orbsmax,pl_eqt,st_teff,st_spectype,sy_distan+from+pscomppars+where+ra+is+not+null+and+pl_eqt+is+not+null+order+by+sy_distan+asc&format=json
+map .
+ra_key ra
+dec_key dec
+field_in pl_name planet_name
+field_in pl_rade planet_radius_earth_radius
+field_in pl_eqt equilibrium_temp_k
+field_in st_teff host_star_temp_k
+dist_key sy_distan
+
+source nasa_exoplanet_confirmed
+ttl 86400
+force em
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=json&QUERY=SELECT+pl_name,ra,dec,sy_dist,pl_orbper,pl_rade,pl_bmasse,pl_eqt,disc_year+FROM+ps+WHERE+default_flag=1+AND+ra+IS+NOT+NULL+ORDER+BY+sy_dist+ASC
+map .
+ra_key ra
+dec_key dec
+field pl_name planet_name
+field pl_orbper orbital_period_days
+field pl_rade radius_earth
+field pl_bmasse mass_earth
+field pl_eqt eq_temperature_k
+field disc_year discovery_year
+dist_key sy_dist
+
+source nasa_exoplanet_toi
+ttl 86400
+force em
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=json&QUERY=SELECT+toi,ra,dec,sy_dist,pl_orbper,pl_rade,tfopwg_disp+FROM+toi+WHERE+ra+IS+NOT+NULL+AND+tfopwg_disp+IN+(%27PC%27,%27KP%27,%27CP%27)+ORDER+BY+sy_dist+ASC
+map .
+ra_key ra
+dec_key dec
+field toi toi_name
+field pl_orbper orbital_period_days
+field pl_rade radius_earth
+field tfopwg_disp disposition
+dist_key sy_dist
+
+source nasa_exoplanet_toi_catalog
+ttl 86400
+force em
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+toi,ra,dec,sy_dist,pl_orbper,pl_rade,pl_masse,pl_trandur,st_teff+FROM+TOI+WHERE+ra+IS+NOT+NULL
+map .
+lat_key ra
+lon_key dec
+field toi toi_id
+field pl_orbper orbital_period_days
+field pl_rade earth_radius
+field pl_masse earth_mass
+field pl_trandur transit_duration_hours
+field st_teff stellar_teff_K
+dist_key sy_dist
+
+source nasa_fermi_gamma_ray_sources_total
+ttl 86400
+force em
+lat 38.995
+lon -77.101
+url https://heasarc.gsfc.nasa.gov/db-perl/W3Browse/w3query.pl?tablehead=name%3Dfermigtrig&Action=More+Options&ResultRange=1&order=desc&field=from&field=0+1+2+3
+last_line exosphere_fermi_gamma_ray_sources_total
+
+source nasa_giss_gistemp_v4_global_temperature
+ttl 86400
+force thermal
+lat 0.0
+lon 0.0
+url https://data.giss.nasa.gov/gistemp/tabledata_v4/GLB.Ts+dSST.csv
+format text
+rows
+field 0 year
+field 13 j_d_annual_anomaly_c
+
+source nasa_gldas_soil_moisture_global
+ttl 86400
+force diffusion
+url https://hydro1.gesdisc.eosdis.nasa.gov/daac-bin/access/timeseries.cgi?variable=GLDAS2:GLDAS_NOAH025_3H_v2.1:SoilMoi0_10cm_inst&startDate={year}-{month}-{day}T00:00&endDate={year}-{month}-{day}T23:00&location=GEOM:POINT({lon}%20{lat})&type=asc2
+format text
+rows
+field_in 0 timestamp_utc
+field_in 1 soil_moisture_0_10cm_kgm2
+
+source nasa_merra2_dust_aod_global
+ttl 86400
+force diffusion
+url https://goldsmr4.gesdisc.eosdis.nasa.gov/opendap/MERRA2/M2T1NXFXR.5.12.4/2026/07/MERRA2_400.tavg1_2d_aer_Nx.20260727.SUB.nc4.ascii?DUSTTOTAL[0][0:72:30][0:144:30]
+format text
+rows
+lat_key lat
+lon_key lon
+field DUSTTOTAL dust_aod
+
+source nasa_meteorite_landings_all
+ttl 86400
+force gravity
+url https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2019/2019-06-11/meteorites.csv
+format text
+rows
+lat_key 7
+lon_key 8
+field 0 name meteorite_name
+field 1 id meteorite_id
+field 2 name_type classification_status
+field 3 class meteorite_class
+field 4 mass_g
+field 5 fall fall_or_find
+field 6 year year
+
+source nasa_mls_aura_stratospheric_ozone_profile
+ttl 86400
+force diffusion
+lat 0.0
+lon 0.0
+url https://acdisc.gesdisc.eosdis.nasa.gov/opendap/Aura_MLS_Level3/ML3DZO3.005/{year}/MLS-Aura_L3DM-O3_{year}d{day}.nc4.ascii?O3[0:1:0][0:1:35][0:1:60]
+format text
+rows
+field 0 latitude
+field 1 longitude
+field 2 ozone_mr_ppmv
+
+source nasa_mls_aura_stratospheric_temperature_profile
+ttl 86400
+force diffusion
+lat 0.0
+lon 0.0
+url https://acdisc.gesdisc.eosdis.nasa.gov/opendap/Aura_MLS_Level3/ML3DZT.005/{year}/MLS-Aura_L3DM-Temperature_{year}d{day}.nc4.ascii?T[0:1:0][0:1:35][0:1:60]
+format text
+rows
+field 0 latitude
+field 1 longitude
+field 2 temperature_k
+
+source nasa_modis_lst_monthly
+ttl 86400
+force thermal
+url https://e4ftl01.cr.usgs.gov/MOLT/MOD11C3.061/
+format text
+rows
+lat_key latitude
+lon_key longitude
+field LST_Day_1km mean_daytime_lst_k
+field LST_Night_1km mean_nighttime_lst_k
+field Day_clear_sky_cover clear_sky_pct_day
+field Night_clear_sky_cover clear_sky_pct_night
+
+source nasa_modis_vegetation_ndvi_global
+ttl 86400
+force em
+lat 0
+lon 0
+url https://modis.gsfc.nasa.gov/data/dataprod/mod13.php
+last_line biosphere_global_ndvi

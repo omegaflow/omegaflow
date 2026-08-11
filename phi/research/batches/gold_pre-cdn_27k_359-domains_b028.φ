@@ -1,0 +1,641 @@
+source heasarc_icecube_10yr_ps_catalog
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+name,ra,dec,ts,flux,p_value,sigma+FROM+icecube_ps_10y+WHERE+ra+IS+NOT+NULL+ORDER+BY+ts+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field ts test_statistic
+field flux neutrino_flux
+field p_value p_value
+field sigma significance_sigma
+
+source heasarc_integral_ibis
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+3000+name,ra,dec,sb_flux,hb_flux,source_type+FROM+intibisag2+WHERE+sb_flux+IS+NOT+NULL+ORDER+BY+sb_flux+DESC
+format text
+rows
+ra_key 1
+dec_key 2
+field_in 0 source_name
+field_in 3 soft_band_flux
+field_in 4 hard_band_flux
+field_in 5 source_type
+
+source heasarc_integral_ibis_grb_catalog
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+name,ra,dec,t90,fluence,peak_flux,time_trigger,error_radius+FROM+intgrb+WHERE+ra+IS+NOT+NULL+ORDER+BY+time_trigger+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field name burst_name
+field t90 duration_t90_s
+field fluence fluence_erg_cm2
+field peak_flux peak_flux
+field time_trigger trigger_time_utc
+field error_radius position_error_arcmin
+
+source heasarc_lmxb_catalog
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+300+name,ra,dec,class,period,lx,dist,compact_type+FROM+lmxbcat+WHERE+ra+IS+NOT+NULL+ORDER+BY+lx+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field name source_name
+field class source_class
+field period orbital_period_d
+field lx luminosity_erg_s
+field compact_type compact_object_type
+dist_key dist
+
+source heasarc_maxi_gsc7yr_xray
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&QUERY=SELECT+name,ra,dec,flux_4_10,flux_3_10,flux_10_20,object_type,redshift,error_radius,hardness_ratio_1+FROM+maxigsc7yr+WHERE+flux_4_10+IS+NOT+NULL+ORDER+BY+flux_4_10+DESC&FORMAT=text&limit=2000
+format text
+rows
+ra_key ra
+dec_key dec
+z_key redshift
+field name source_name
+field flux_4_10 flux_4_10_erg_cm2s
+field flux_3_10 flux_3_10_erg_cm2s
+field object_type object_class
+field error_radius pos_error_arcsec
+field hardness_ratio_1 hardness_ratio
+
+source heasarc_maxi_gsc_catalog
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+name,ra,dec,flux_4_10,flux_10_20,flux_20_40,n_sigma,type+FROM+maxigsc+WHERE+ra+IS+NOT+NULL+ORDER+BY+flux_4_10+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field name source_name
+field flux_4_10 flux_4to10_keV
+field flux_10_20 flux_10to20_keV
+field flux_20_40 flux_20to40_keV
+field type source_type
+
+source heasarc_mopitt_co_profile_l3
+ttl 86400
+force diffusion
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+latitude,longitude,co_total_column,co_surface,co_500hpa,co_300hpa,date+FROM+mopittl3m+WHERE+latitude+IS+NOT+NULL+ORDER+BY+co_total_column+DESC
+format text
+rows
+lat_key latitude
+lon_key longitude
+field co_total_column co_total_col
+field co_surface co_surface
+field co_500hpa co_500hpa
+field co_300hpa co_300hpa
+field date obs_date
+
+source heasarc_pulsar_wind_nebulae
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+100+name,ra,dec,dist,assoc_pulsar,luminosity_x,size_arcmin+FROM+pwncat+WHERE+ra+IS+NOT+NULL+ORDER+BY+luminosity_x+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field name pwn_name
+field dist distance_kpc
+field assoc_pulsar associated_pulsar
+field luminosity_x x_ray_luminosity
+field size_arcmin angular_size_arcmin
+
+source heasarc_rosat_2rxs
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+5000+name,ra,dec,count_rate,source_extent,hardness_ratio_1,hardness_ratio_2,detection_likelihood+FROM+rass2rxs+WHERE+detection_likelihood%3E6+ORDER+BY+count_rate+DESC
+format text
+rows
+ra_key 1
+dec_key 2
+field_in 0 source_name
+field_in 3 xray_count_rate_cts
+field_in 4 source_extent
+field_in 5 hardness_ratio_1
+field_in 6 hardness_ratio_2
+field_in 7 detection_likelihood
+
+source heasarc_rosat_bright_source_catalog
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,count_rate,hr1,hr2,ext+FROM+rassbsc+WHERE+count_rate%3E0.1+ORDER+BY+count_rate+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field count_rate xray_count_rate
+field hr1 hardness_ratio_1
+field hr2 hardness_ratio_2
+field ext source_extent
+
+source heasarc_rosat_bsc
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+5000+name,ra,dec,count_rate,hr1,hr2,ext+FROM+rassbsc+WHERE+count_rate%3E0.1+ORDER+BY+count_rate+DESC
+format text
+rows
+ra_key 1
+dec_key 2
+field_in 0 source_name
+field_in 3 xray_count_rate
+field_in 4 hardness_ratio_1
+field_in 5 hardness_ratio_2
+field_in 6 source_extent
+
+source heasarc_rosat_xclass_clusters
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+name,ra,dec,redshift,count_rate,flux_0_1_2_4,luminosity_0_1_2_4,ext+FROM+xcsunion+WHERE+redshift+IS+NOT+NULL+ORDER+BY+flux_0_1_2_4+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+z_key redshift
+field count_rate xray_count_rate
+field flux_0_1_2_4 xray_flux
+field luminosity_0_1_2_4 xray_luminosity
+field ext extent
+
+source heasarc_rxte_asm
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,Name,Avg_Rate,Rate_Err+FROM+public.rxte_asm+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+Avg_Rate+DESC&FORMAT=text
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field Name source_name
+field Avg_Rate average_rate_ct_s
+field Rate_Err rate_error
+
+source heasarc_rxte_asm_xray_sources
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+name,ra,dec,flux,flux_err,count_rate+FROM+rxmtasm+WHERE+ra+IS+NOT+NULL+ORDER+BY+flux+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field flux xray_flux
+field flux_err flux_error
+field count_rate count_rate
+
+source heasarc_sage2_aerosol_extinction
+ttl 86400
+force diffusion
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+latitude,longitude,date,altitude,ext525,ext1020+FROM+sage2l2+WHERE+latitude+IS+NOT+NULL+AND+date>%272020-01-01%27+ORDER+BY+date+DESC
+format text
+rows
+lat_key latitude
+lon_key longitude
+field date measurement_date
+field altitude altitude_km
+field ext525 extinction_525nm_km
+field ext1020 extinction_1020nm_km
+
+source heasarc_swift_bat105m
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+2000+name,ra,dec,flux,redshift,source_type+FROM+swbat105m+WHERE+flux+IS+NOT+NULL+ORDER+BY+flux+DESC
+format text
+rows
+ra_key 1
+dec_key 2
+z_key 4
+field_in 0 source_name
+field_in 3 hard_xray_flux
+field_in 5 source_type
+
+source heasarc_swift_bat_grb_catalog
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+name,ra,dec,t90,fluence,redshift,time_trigger,xrt_column,host_galaxy+FROM+swiftgrb+WHERE+ra+IS+NOT+NULL+ORDER+BY+time_trigger+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field name burst_name
+field t90 duration_t90_s
+field fluence fluence_erg_cm2
+field redshift redshift
+field time_trigger trigger_time_utc
+field host_galaxy host_galaxy_name
+
+source heasarc_tevcat_ground_based
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+name,ra,dec,energy_range,flux>100_mev,redshift,type,association+FROM+tevcat+WHERE+ra+IS+NOT+NULL+ORDER+BY+name+ASC
+format text
+rows
+ra_key ra
+dec_key dec
+z_key redshift
+field energy_range energy_range_tev
+field flux>100_mev gamma_flux
+field type source_type
+field association association
+
+source heasarc_threefhl
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,Source_Name,ASSOC1,TeV_Flag,GLON,GLAT,Energy_Flux_Band3,Power_Index+FROM+public.angel_threefhl+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+Energy_Flux_Band3+DESC&FORMAT=text
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field Source_Name source_name
+field ASSOC1 associated_source
+field Energy_Flux_Band3 energy_flux_10gev_2tev_erg_cm2s
+
+source heasarc_xmm_4xmm_catalog
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+5000+name,ra,dec,ep_flux,ep_flux_error+FROM+xmmssc+WHERE+ep_flux+IS+NOT+NULL+AND+ep_flux%3E0+ORDER+BY+ep_flux+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field name xmm_src_name
+field ep_flux xmm_flux_erg_cm2s
+
+source heasarc_xmm_4xmm_dr13
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+iauname,sc_ra,sc_dec,sc_flux8,sc_hr4,sc_var_flag,sc_sum_flag+FROM+xmmssc+WHERE+sc_flux8+IS+NOT+NULL+AND+sc_sum_flag%3C3+ORDER+BY+sc_flux8+DESC
+format text
+rows
+ra_key sc_ra
+dec_key sc_dec
+field sc_flux8 xray_flux
+field sc_hr4 hardness_ratio
+field sc_var_flag variability_flag
+
+source heasarc_xmm_obs
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+obsid,target_name,ra,dec,duration,revolution+FROM+xmmmaster+WHERE+pn_filter+IS+NOT+NULL+ORDER+BY+revolution+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field obsid observation_id
+field target_name target_name
+field duration exposure_s
+field revolution revolution
+
+source heasarc_xrb_catalog
+ttl 86400
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+name,ra,dec,dist,class,period,spinper,lx,donor_type+FROM+xrbcat+WHERE+ra+IS+NOT+NULL+ORDER+BY+lx+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field name source_name
+field class xrb_class
+field period orbital_period_d
+field spinper pulse_period_s
+field lx x_ray_luminosity
+field donor_type donor_star_type
+dist_key dist
+
+source hydrosphere_emodnet_vessel_density
+ttl 86400
+force em
+lat 51.231
+lon 2.928
+url https://ows.emodnet-humanactivities.eu/geoserver/emodnet/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=emodnet:vessel_density&outputFormat=application/json&bbox={lon_min},{lat_min},{lon_max},{lat_max}
+count features biosphere_vessel_density_feature_count
+
+source hydrosphere_gloss_tide_gauges
+ttl 86400
+force em
+terra 1
+url https://gloss-sealevel.org/api/stations?format=json
+map .
+lat_key latitude
+lon_key longitude
+field_in id hydrosphere_gloss_gauge_id
+field_in name hydrosphere_gloss_station_name
+field_in country hydrosphere_gloss_country
+field_in status hydrosphere_gloss_status
+
+source hydrosphere_oisst_sst
+ttl 86400
+force thermal
+url https://coastwatch.pfeg.noaa.gov/erddap/griddap/ncdcOisst21Agg_LonPM180.json?sst%5B(last)%5D%5B(0.0)%5D%5B(-89.875):20:(89.875)%5D%5B(-179.875):20:(179.875)%5D
+map table.rows
+lat_key 2
+lon_key 3
+field_in 4 hydrosphere_sst_c
+
+source hydrosphere_ooi_ga01sumo_pco2
+ttl 86400
+force em
+lat 46.05
+lon -125.00
+url https://erddap.dataexplorer.oceanobservatories.org/erddap/tabledap/ooi-ga01sumo-sbd12-04-pco2aa000.csv?time,sea_surface_temperature,surface_partial_pressure_of_carbon_dioxide_in_sea_water
+format csv
+last_row surface_partial_pressure_of_carbon_dioxide_in_sea_water hydrosphere_pco2_ooi_uatm
+last_row sea_surface_temperature hydrosphere_sst_ooi_c
+
+source hydrosphere_pmel_co2_air
+ttl 86400
+force em
+lat 47.606
+lon -122.335
+url https://data.pmel.noaa.gov/pmel/erddap/tabledap/all_pmel_co2_moorings.csv?pCO2_air&orderByMax(%22time%22)
+format csv
+last line hydrosphere_pmel_co2_mooring_raw
+
+source hydrosphere_pmel_co2_ph
+ttl 86400
+force em
+lat 47.6062
+lon -122.3321
+url https://data.pmel.noaa.gov/pmel/erddap/tabledap/all_pmel_co2_moorings.csv?station_id,longitude,latitude,time,pCO2_sw,pH_sw&orderByMax(%22station_id%2Ctime%22)
+format csv
+last_row pCO2_sw hydrosphere_pco2_pmel_uatm
+last_row pH_sw hydrosphere_ph_pmel
+
+source iaea_pris_nuclear_reactors
+ttl 86400
+force thermal
+url https://pris.iaea.org/api/reactors?format=json&limit=500&status=Operational
+map .
+lat_key latitude
+lon_key longitude
+field name reactor_name
+field country country
+field type reactor_type
+field status operational_status
+field netCapacity net_capacity_mwe
+field firstGridConnection first_power_date
+field owner operator_company
+
+source icos_fluxnet_tower_stations
+ttl 86400
+force diffusion
+url https://meta.icos-cp.eu/sparql?format=json&query=SELECT+?uri+?name+?lat+?lon+?alt+?country+?ecosys+WHERE+{?uri+a+<http://meta.icos-cp.eu/ontologies/cpmeta/ES>+;+<http://www.w3.org/2000/01/rdf-schema#label>+?name+;+<http://meta.icos-cp.eu/ontologies/cpmeta/hasLatitude>+?lat+;+<http://meta.icos-cp.eu/ontologies/cpmeta/hasLongitude>+?lon+}
+map results.bindings
+lat_key lat.value
+lon_key lon.value
+field name.value station_name
+field country.value country_code
+field alt.value altitude_m
+field ecosys.value ecosystem_type
+
+source iers_earth_orientation_parameters
+ttl 86400
+force gravity
+lat 0.0
+lon 0.0
+url https://datacenter.iers.org/data/latestVersion/6_BULLETIN_A_ERFAEOP_V2013_002.txt
+format text
+rows
+field_in 0 mjd
+field_in 4 x_pole_arcsec
+field_in 5 y_pole_arcsec
+field_in 6 ut1_utc_s
+
+source iers_eop_bulletinb_daily
+ttl 86400
+force em
+url https://hpiers.obspm.fr/iers/bul/bulb_new/bulletinb.dat
+format text
+pos 0 0
+field col2 mjd
+field col3 x_pole_coordinate_mas
+field col4 y_pole_coordinate_mas
+field col5 ut1_minus_utc_ms
+field col6 dX_celestial_pole_mas
+field col7 dY_celestial_pole_mas
+
+source iers_rapid_eop_c04
+ttl 86400
+force gravity
+lat 0.0
+lon 0.0
+url https://datacenter.iers.org/data/9/finals2000A.all
+format text
+rows
+field 0 mjd
+field 1 x_pole x_pole_arcsec
+field 2 y_pole y_pole_arcsec
+field 3 ut1_utc ut1_utc_offset_ms
+field 4 lod length_of_day_ms
+field 5 dpsi dpsi_arcsec
+field 6 deps deps_arcsec
+
+source iers_ut1_utc
+ttl 86400
+force em
+terra 1
+url https://maia.usno.navy.mil/ser7/finals2000A.daily
+last_line geosphere_ut1_utc_iers
+
+source igs_gnss_stations_global
+ttl 86400
+force seismic-surface
+url https://network.igs.org/api/public/stations?format=json
+map .
+lat_key lat
+lon_key lon
+field site_code station_code
+field name station_name
+field country country
+field is_active active_status
+field elevation elevation_m
+
+source illustristng_tng100_halo_catalog
+ttl 86400
+force gravity
+lat 0.0
+lon 0.0
+url https://www.tng-project.org/api/TNG100-1/snapshots/99/halos/?format=json&limit=500&order_by=-mass_log_msun
+map results
+field id halo_id
+field mass_log_msun log10_halo_mass_solar
+field vel_disp velocity_dispersion_km_s
+field spin spin_parameter
+field subhalo_count num_subhalos
+
+source illustristng_tng300_subhalo_catalog
+ttl 86400
+force gravity
+lat 0.0
+lon 0.0
+url https://www.tng-project.org/api/TNG300-1/snapshots/99/subhalos/?format=json&limit=500&order_by=-mass_log_msun&mass_log_msun__gte=10
+map results
+field id subhalo_id
+field mass_log_msun log10_mass_solar
+field stellar_mass_log_msun log10_stellar_mass_solar
+field sfr star_formation_rate_solar_yr
+field bh_mass_log_msun log10_bh_mass_solar
+
+source incois_erddap_oscar_currents_io
+ttl 86400
+force diffusion
+url https://erddap.incois.gov.in/erddap/griddap/INCOIS_OSCAR_CURRENTS.csv?u%5Blast%5D%5B0%5D%5B(-30.0):(30.0):3%5D%5B(40.0):(120.0):3%5D,v%5Blast%5D%5B0%5D%5B(-30.0):(30.0):3%5D%5B(40.0):(120.0):3%5D
+format text
+rows
+lat_key latitude
+lon_key longitude
+field u current_u_m_s
+field v current_v_m_s
+
+source intermagnet_global_geomagnetic_observatories
+ttl 86400
+force gravity
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/catalog
+map catalog
+field id dataset_id
+field title station_title
+
+source ionosphere_gnss_stations_epn
+ttl 86400
+force em
+terra 1
+url https://epncb.eu/json/stationlist.json
+map .
+lat_key latitude
+lon_key longitude
+field_in station ionosphere_gnss_station_code
+field_in name ionosphere_gnss_station_name
+field_in receiver ionosphere_gnss_receiver_type
+field_in antenna ionosphere_gnss_antenna_type
+
+source iris_fdsn_ic_au_regional_seismic_networks
+ttl 86400
+force seismic-body
+url https://service.iris.edu/fdsnws/station/1/query?network=IC,AU&level=station&format=json&nodata=404
+format text
+rows
+lat_key Latitude
+lon_key Longitude
+field Network network_code
+field Station station_code
+field Elevation elevation_m
+field SiteDescription location_name
+field StartTime deployment_start
+
+source iris_fdsn_ida_network_stations
+ttl 86400
+force seismic-body
+url https://service.iris.edu/fdsnws/station/1/query?network=II&level=station&format=json&nodata=404
+format text
+rows
+lat_key Latitude
+lon_key Longitude
+field Network network_code
+field Station station_code
+field Location location_code
+field Elevation elevation_m
+field SiteDescription site_name
+field StartTime start_date
+
+source iris_fdsn_iu_global_seismographic_network
+ttl 86400
+force seismic-body
+url https://service.iris.edu/fdsnws/station/1/query?network=IU&level=station&format=json&nodata=404
+format text
+rows
+lat_key Latitude
+lon_key Longitude
+field Network network_code
+field Station station_code
+field Elevation elevation_m
+field SiteDescription site_description
+field StartTime deployment_start
+
+source iris_ph5_stations
+ttl 86400
+force seismic-body
+url https://service.iris.edu/fdsnws/station/1/query?level=station&format=json&starttime=2020-01-01
+format text
+rows
+lat_key Latitude
+lon_key Longitude
+field Network network_code
+field Station station_code
+field Elevation elevation_m
+field SiteDescription station_name
+
+source iris_spud_moment_tensor_solutions
+ttl 86400
+force seismic-body
+url https://ds.iris.edu/spud/momenttensor?evlo=&evla=&evdp=&startTime={today}T00:00:00&endTime={today}T23:59:59&catalog=GCMT&format=json&nodata=404
+format text
+rows
+lat_key evla
+lon_key evlo
+field evdp depth_km
+field mag magnitude
+field tensor_name moment_tensor_name
+
+source irsa_2mass_point_source_catalog
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/cgi-bin/Gator/nph-query?catalog=fp_psc&spatial=box&ra=0.0&dec=0.0&size=14400&outfmt=1&selcols=designation,ra,dec,j_m,h_m,k_m,ph_qual,gal_contam
+format text
+rows
+ra_key ra
+dec_key dec
+field designation twomass_id
+field j_m j_mag
+field h_m h_mag
+field k_m k_mag
+field ph_qual photo_quality
+field gal_contam galactic_contamination
+
+source irsa_2mass_psc
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,j_m,h_m,k_m+FROM+fp_psc+WHERE+j_m+IS+NOT+NULL+AND+j_m%3C15
+format text
+rows
+ra_key ra
+dec_key dec
+field j_m mag_j
+field h_m mag_h
+field k_m mag_k
+
+source irsa_allwise_point_source_database
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/cgi-bin/Gator/nph-query?catalog=allwise_p3as_psd&spatial=box&ra=0.0&dec=0.0&size=14400&outfmt=1&selcols=designation,ra,dec,w1mpro,w2mpro,w3mpro,w4mpro,ph_qual
+format text
+rows
+ra_key ra
+dec_key dec
+field designation allwise_id
+field w1mpro w1_mag
+field w2mpro w2_mag
+field w3mpro w3_mag
+field w4mpro w4_mag
+field ph_qual photo_quality
+
+source irsa_allwise_psd
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,w1mpro,w2mpro,w3mpro,w4mpro+FROM+allwise_p3as_psd+WHERE+w1mpro+IS+NOT+NULL+AND+w1mpro%3C14
+format text
+rows
+ra_key ra
+dec_key dec
+field w1mpro mag_w1
+field w2mpro mag_w2
+field w3mpro mag_w3
+field w4mpro mag_w4

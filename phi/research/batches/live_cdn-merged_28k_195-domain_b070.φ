@@ -1,0 +1,99 @@
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/sdss_galaxies.json
+
+ttl 604800
+
+force em
+
+cmap data
+
+ra_key ra
+
+dec_key dec
+
+field_in zerr astro_sdss_galaxies_zerr
+
+field_in specObjID astro_sdss_galaxies_specObjID
+
+field_in mjd astro_sdss_galaxies_mjd
+
+field_in plate astro_sdss_galaxies_plate
+
+field_in fiberID astro_sdss_galaxies_fiberID
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/sdss_stars.json
+
+ttl 604800
+
+force em
+
+cmap data
+
+ra_key ra
+
+dec_key dec
+
+plx_key default_plx
+
+field_in g astro_sdss_stars_g
+
+field_in r astro_sdss_stars_r
+
+field_in i astro_sdss_stars_i
+
+field_in psfMag_r astro_sdss_stars_psfMag_r
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/swift_bat.json
+
+ttl 604800
+
+force em
+
+cmap data
+
+ra_key ra
+
+dec_key dec
+
+field_in source_number astro_swift_bat_source_number
+
+field_in name astro_swift_bat_name
+
+field_in lii astro_swift_bat_lii
+
+field_in bii astro_swift_bat_bii
+
+field_in snr astro_swift_bat_snr
+
+field_in ctrpart_name astro_swift_bat_ctrpart_name
+
+field_in ctrpart_ra astro_swift_bat_ctrpart_ra
+
+field_in ctrpart_dec astro_swift_bat_ctrpart_dec
+
+field_in flux astro_swift_bat_flux
+
+field_in flux_lower astro_swift_bat_flux_lower
+
+field_in flux_upper astro_swift_bat_flux_upper
+
+field_in spectral_index astro_swift_bat_spectral_index
+
+field_in spectral_index_lower astro_swift_bat_spectral_index_lower
+
+field_in spectral_index_upper astro_swift_bat_spectral_index_upper
+
+field_in chi_squared astro_swift_bat_chi_squared
+
+field_in log_lx astro_swift_bat_log_lx
+
+field_in ctrpart_class astro_swift_bat_ctrpart_class
+
+field_in source_type astro_swift_bat_source_type
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/swift_grb.json
+
+ttl 604800
+
+force em
+
+cmap data

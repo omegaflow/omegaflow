@@ -1,0 +1,99 @@
+field_in Kmag astro_twomass_psc_Kmag
+
+field_in Qflg astro_twomass_psc_Qflg
+
+field_in Rflg astro_twomass_psc_Rflg
+
+field_in Bflg astro_twomass_psc_Bflg
+
+field_in Cflg astro_twomass_psc_Cflg
+
+field_in Aflg astro_twomass_psc_Aflg
+
+url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/wise_allsky_{latest}.json
+
+ttl 604800
+
+force em
+
+at sun 1.0
+
+cmap data
+
+tau_key _dist_m
+
+ra_key ra
+
+dec_key dec
+
+plx_key default_plx
+
+field_in w1mpro astro_wise_allsky_w1mpro
+
+field_in w2mpro astro_wise_allsky_w2mpro
+
+field_in w3mpro astro_wise_allsky_w3mpro
+
+field_in w4mpro astro_wise_allsky_w4mpro
+
+url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/xmm_slew_{latest}.json
+
+ttl 604800
+
+force em
+
+at sun 1.0
+
+cmap data
+
+tau_key _dist_m
+
+ra_key ra
+
+dec_key dec
+
+plx_key default_plx
+
+field_in flux_b8 xmm_slew_flux_b8
+
+url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/xmm_sources_{latest}.json
+
+ttl 604800
+
+force em
+
+at sun 1.0
+
+cmap data
+
+tau_key _dist_m
+
+ra_key ra
+
+dec_key dec
+
+z_key redshift_zsp
+
+field_in srcid astro_xmm_sources_srcid
+
+field_in name astro_xmm_sources_name
+
+field_in obsid astro_xmm_sources_obsid
+
+field_in pps_srcnum astro_xmm_sources_pps_srcnum
+
+field_in n_obs astro_xmm_sources_n_obs
+
+field_in n_contrib astro_xmm_sources_n_contrib
+
+field_in n_exp astro_xmm_sources_n_exp
+
+field_in error_radius astro_xmm_sources_error_radius
+
+field_in error_ell_major astro_xmm_sources_error_ell_major
+
+field_in error_ell_minor astro_xmm_sources_error_ell_minor
+
+field_in error_ell_pa astro_xmm_sources_error_ell_pa
+
+field_in lii astro_xmm_sources_lii

@@ -1,0 +1,850 @@
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_white_dwarfs.json
+at sun 1.0
+ttl 604800
+force em
+cmap .
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag phot_g_mean_mag
+field_in bp_rp bp_rp
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_icecube.json
+at sun 1.0
+ttl 604800
+force em
+cmap .
+ra_key ra
+dec_key dec
+dist_key dist_mpc
+field_in energy_tev energy_tev
+field_in error_radius_deg error_radius_deg
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_integral_agn.json
+at sun 1.0
+ttl 604800
+force em
+cmap .
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in sb_flux sb_flux
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_integral_bsc.json
+at sun 1.0
+ttl 604800
+force em
+cmap .
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in isgri_soft_rate isgri_soft_rate
+field_in isgri_hard_rate isgri_hard_rate
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_integral_isgri4yr.json
+at sun 1.0
+ttl 604800
+force em
+cmap .
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in distance distance
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_integral_var.json
+at sun 1.0
+ttl 604800
+force em
+cmap .
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in flux_20_40kev flux_20_40kev
+field_in var_20_40kev var_20_40kev
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/jpl_asteroids.json
+at sun 1.0
+ttl 604800
+force gravity
+cmap .
+ra_key ra
+dec_key dec
+dist_key dist_au
+field_in e e
+field_in a_au a_au
+field_in i_deg i_deg
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_maxi_gsc7yr.json
+at sun 1.0
+ttl 604800
+force em
+cmap .
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in flux_4_10 flux_4_10
+field_in flux_3_4 flux_3_4
+field_in excess_variance excess_variance
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_maxi_master.json
+at sun 1.0
+ttl 604800
+force em
+cmap .
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in time time
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_maxi_ssc.json
+at sun 1.0
+ttl 604800
+force em
+cmap .
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in sb_flux sb_flux
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_nicer_master.json
+at sun 1.0
+ttl 604800
+force em
+cmap .
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in exposure exposure
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/nmdb_stations.json
+body earth
+ttl 604800
+force em
+map data
+lat_key latitude
+lon_key longitude
+alt_key altitude_m
+field_in rigidity_gv rigidity_gv
+field_in hist_min hist_min
+field_in hist_max hist_max
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/nsidc_arctic_seaice.json
+on earth 0 0
+ttl 604800
+force thermal
+path data.-1.extent_mkm2 extent_mkm2
+path data.-1.missing missing
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_rxte_master.json
+at sun 1.0
+ttl 604800
+force em
+cmap .
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in exposure exposure
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_rxte_slew.json
+at sun 1.0
+ttl 604800
+force em
+cmap .
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in stop_time stop_time
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/sdss_galaxies.json
+at sun 1.0
+ttl 604800
+force em
+cmap .
+ra_key ra
+dec_key dec
+field_in zerr zerr
+field_in specObjID specObjID
+field_in mjd mjd
+field_in plate plate
+field_in fiberID fiberID
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/sdss_stars.json
+at sun 1.0
+ttl 604800
+force em
+cmap .
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in g g
+field_in r r
+field_in i i
+field_in psfMag_r psfMag_r
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/swift_bat.json
+at sun 1.0
+ttl 604800
+force em
+cmap .
+ra_key ra
+dec_key dec
+field_in source_number source_number
+field_in name name
+field_in lii lii
+field_in bii bii
+field_in snr snr
+field_in ctrpart_name ctrpart_name
+field_in ctrpart_ra ctrpart_ra
+field_in ctrpart_dec ctrpart_dec
+field_in flux flux
+field_in flux_lower flux_lower
+field_in flux_upper flux_upper
+field_in spectral_index spectral_index
+field_in spectral_index_lower spectral_index_lower
+field_in spectral_index_upper spectral_index_upper
+field_in chi_squared chi_squared
+field_in log_lx log_lx
+field_in ctrpart_class ctrpart_class
+field_in source_type source_type
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/swift_grb.json
+at sun 1.0
+ttl 604800
+force em
+cmap .
+ra_key ra
+dec_key dec
+field_in name name
+field_in target_id target_id
+field_in other_id other_id
+field_in det_flag det_flag
+field_in slew_info slew_info
+field_in pos_err pos_err
+field_in lii lii
+field_in bii bii
+field_in pos_flag pos_flag
+field_in pos_ref pos_ref
+field_in start_time start_time
+field_in stop_time stop_time
+field_in duration duration
+field_in trigger_time trigger_time
+field_in trigger_ref trigger_ref
+field_in bat_detection bat_detection
+field_in bat_dettype bat_dettype
+field_in bat_ra bat_ra
+field_in bat_dec bat_dec
+field_in bat_pos_err bat_pos_err
+field_in bat_pos_ref bat_pos_ref
+field_in bat_theta bat_theta
+field_in bat_phi bat_phi
+field_in bat_imagesig bat_imagesig
+field_in bat_t90 bat_t90
+field_in bat_t50 bat_t50
+field_in bat_start bat_start
+field_in bat_stop bat_stop
+field_in bat_t100_start bat_t100_start
+field_in bat_t100_stop bat_t100_stop
+field_in bat_fluence_model bat_fluence_model
+field_in bat_fluence bat_fluence
+field_in bat_fluence_err bat_fluence_err
+field_in bat_fluence1 bat_fluence1
+field_in bat_fluence1_err bat_fluence1_err
+field_in bat_fluence2 bat_fluence2
+field_in bat_fluence2_err bat_fluence2_err
+field_in bat_fluence3 bat_fluence3
+field_in bat_fluence3_err bat_fluence3_err
+field_in bat_fluence4 bat_fluence4
+field_in bat_fluence4_err bat_fluence4_err
+field_in bat_peak_time bat_peak_time
+field_in bat_peak_model bat_peak_model
+field_in bat_peak_flux bat_peak_flux
+field_in bat_peak_flux_err bat_peak_flux_err
+field_in bat_peak_flux1 bat_peak_flux1
+field_in bat_peak_flux1_err bat_peak_flux1_err
+field_in bat_peak_flux2 bat_peak_flux2
+field_in bat_peak_flux2_err bat_peak_flux2_err
+field_in bat_peak_flux3 bat_peak_flux3
+field_in bat_peak_flux3_err bat_peak_flux3_err
+field_in bat_peak_flux4 bat_peak_flux4
+field_in bat_peak_flux4_err bat_peak_flux4_err
+field_in bat_peakfluxp bat_peakfluxp
+field_in bat_peakfluxp_err bat_peakfluxp_err
+field_in bat_peakfluxp1 bat_peakfluxp1
+field_in bat_peakfluxp1_err bat_peakfluxp1_err
+field_in bat_peakfluxp2 bat_peakfluxp2
+field_in bat_peakfluxp2_err bat_peakfluxp2_err
+field_in bat_peakfluxp3 bat_peakfluxp3
+field_in bat_peakfluxp3_err bat_peakfluxp3_err
+field_in bat_peakfluxp4 bat_peakfluxp4
+field_in bat_peakfluxp4_err bat_peakfluxp4_err
+field_in bat_plsl bat_plsl
+field_in bat_plsl_err bat_plsl_err
+field_in bat_pl_chi2 bat_pl_chi2
+field_in bat_pl_dof bat_pl_dof
+field_in bat_ctslope bat_ctslope
+field_in bat_ctslope_err bat_ctslope_err
+field_in bat_ctslope_n_err bat_ctslope_n_err
+field_in bat_ctezero bat_ctezero
+field_in bat_ctezero_err bat_ctezero_err
+field_in bat_ctezero_n_err bat_ctezero_n_err
+field_in bat_ct_chi2 bat_ct_chi2
+field_in bat_ct_dof bat_ct_dof
+field_in bat_epeak bat_epeak
+field_in bat_epeak_ref bat_epeak_ref
+field_in bat_eiso bat_eiso
+field_in bat_eiso1000 bat_eiso1000
+field_in bat_eiso_alpha bat_eiso_alpha
+field_in bat_eiso_beta bat_eiso_beta
+field_in bat_eiso_norm bat_eiso_norm
+field_in bat_eiso_dur bat_eiso_dur
+field_in bat_eiso_ref bat_eiso_ref
+field_in bat_redshift bat_redshift
+field_in bat_hrd1 bat_hrd1
+field_in bat_hrd1_err bat_hrd1_err
+field_in bat_hrd2 bat_hrd2
+field_in bat_hrd2_err bat_hrd2_err
+field_in bat_comment bat_comment
+field_in xrt_detection xrt_detection
+field_in xrt_ra xrt_ra
+field_in xrt_dec xrt_dec
+field_in xrt_pos_err xrt_pos_err
+field_in xrt_pos_ref xrt_pos_ref
+field_in xrt_onsource xrt_onsource
+field_in xrt_c100_rate xrt_c100_rate
+field_in xrt_c100_start xrt_c100_start
+field_in xrt_c100_stop xrt_c100_stop
+field_in xrt_c100_expo xrt_c100_expo
+field_in xrt_c100_mode xrt_c100_mode
+field_in xrt_e1_rate xrt_e1_rate
+field_in xrt_e1_rate_err xrt_e1_rate_err
+field_in xrt_e1_rate1 xrt_e1_rate1
+field_in xrt_e1_rate1_err xrt_e1_rate1_err
+field_in xrt_e1_rate2 xrt_e1_rate2
+field_in xrt_e1_rate2_err xrt_e1_rate2_err
+field_in xrt_e1_rate3 xrt_e1_rate3
+field_in xrt_e1_rate3_err xrt_e1_rate3_err
+field_in xrt_e1_start xrt_e1_start
+field_in xrt_e1_stop xrt_e1_stop
+field_in xrt_e1_expo xrt_e1_expo
+field_in xrt_hrd1 xrt_hrd1
+field_in xrt_hrd1_err xrt_hrd1_err
+field_in xrt_hrd2 xrt_hrd2
+field_in xrt_hrd2_err xrt_hrd2_err
+field_in xrt_e1_mode xrt_e1_mode
+field_in xrt_lcchange xrt_lcchange
+field_in xrt_flare xrt_flare
+field_in uvot_detection uvot_detection
+field_in uvot_ra uvot_ra
+field_in uvot_dec uvot_dec
+field_in uvot_pos_err uvot_pos_err
+field_in uvot_pos_ref uvot_pos_ref
+field_in uvot_onsource uvot_onsource
+field_in uvot_vv_flux uvot_vv_flux
+field_in uvot_vv_mag uvot_vv_mag
+field_in uvot_vv_mag_err uvot_vv_mag_err
+field_in uvot_vv_start uvot_vv_start
+field_in uvot_vv_stop uvot_vv_stop
+field_in uvot_vv_expo uvot_vv_expo
+field_in uvot_w1_flux uvot_w1_flux
+field_in uvot_w1_mag uvot_w1_mag
+field_in uvot_w1_mag_err uvot_w1_mag_err
+field_in uvot_w1_start uvot_w1_start
+field_in uvot_w1_stop uvot_w1_stop
+field_in uvot_w1_expo uvot_w1_expo
+field_in redshift_err redshift_err
+field_in redshift_type redshift_type
+field_in redshift_line redshift_line
+field_in redshift_from redshift_from
+field_in redshift_ref redshift_ref
+field_in galactic_nh galactic_nh
+field_in followup followup
+field_in radio_detection radio_detection
+field_in radio_ref radio_ref
+field_in infra_detection infra_detection
+field_in infra_ref infra_ref
+field_in opt_detection opt_detection
+field_in opt_ref opt_ref
+field_in ot_ra ot_ra
+field_in ot_dec ot_dec
+field_in ot_pos_err ot_pos_err
+field_in ot_pos_ref ot_pos_ref
+field_in other_obs other_obs
+field_in other_obs_ref other_obs_ref
+field_in other_obs2 other_obs2
+field_in other_obs2_ref other_obs2_ref
+field_in other_obs3 other_obs3
+field_in other_obs3_ref other_obs3_ref
+field_in other_obs4 other_obs4
+field_in other_obs4_ref other_obs4_ref
+field_in supernova_flag supernova_flag
+field_in galaxy_flag galaxy_flag
+field_in galaxy_name galaxy_name
+field_in galaxy_type galaxy_type
+field_in galaxy_ra galaxy_ra
+field_in galaxy_dec galaxy_dec
+field_in galaxy_pos_ref galaxy_pos_ref
+field_in galaxy_redshift galaxy_redshift
+field_in galaxy_ref galaxy_ref
+field_in galaxy_offset galaxy_offset
+field_in ground_counterpart ground_counterpart
+field_in web_page web_page
+field_in comments comments
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/tevcat.json
+at sun 1.0
+ttl 604800
+force em
+cmap .
+ra_key ra
+dec_key dec
+field_in source_number source_number
+field_in source_sample source_sample
+field_in name name
+field_in alt_name alt_name
+field_in lii lii
+field_in bii bii
+field_in source_type source_type
+field_in flux flux
+field_in spectral_index spectral_index
+field_in distance distance
+field_in discovery_date discovery_date
+field_in extended_flag extended_flag
+field_in x_size x_size
+field_in y_size y_size
+field_in tevcat_url tevcat_url
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/twomass_psc.json
+at sun 1.0
+ttl 604800
+force em
+cmap .
+ra_key RAJ2000
+dec_key DEJ2000
+plx_key default_plx
+field_in Jmag Jmag
+field_in Hmag Hmag
+field_in Kmag Kmag
+field_in Qflg Qflg
+field_in Rflg Rflg
+field_in Bflg Bflg
+field_in Cflg Cflg
+field_in Aflg Aflg
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_2qz.json
+at sun 1.0
+ttl 604800
+force em
+cmap .
+ra_key RAJ2000
+dec_key DEJ2000
+field_in recno recno
+field_in 2QZ 2QZ
+field_in intNo intNo
+field_in intName intName
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_6dfgs.json
+at sun 1.0
+ttl 604800
+force em
+cmap .
+ra_key RAJ2000
+dec_key DEJ2000
+field_in 6dFGS 6dFGS
+field_in Nm Nm
+field_in Nz Nz
+field_in bJmag bJmag
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_apass.json
+at sun 1.0
+ttl 604800
+force em
+cmap .
+ra_key RAJ2000
+dec_key DEJ2000
+field_in e_RAJ2000 e_RAJ2000
+field_in e_DEJ2000 e_DEJ2000
+field_in Field Field
+field_in nobs nobs
+field_in mobs mobs
+field_in B-V B-V
+field_in e_B-V e_B-V
+field_in Vmag Vmag
+field_in e_Vmag e_Vmag
+field_in u_e_Vmag u_e_Vmag
+field_in Bmag Bmag
+field_in e_Bmag e_Bmag
+field_in u_e_Bmag u_e_Bmag
+field_in g'mag g'mag
+field_in e_g'mag e_g'mag
+field_in u_e_g'mag u_e_g'mag
+field_in r'mag r'mag
+field_in e_r'mag e_r'mag
+field_in u_e_r'mag u_e_r'mag
+field_in i'mag i'mag
+field_in e_i'mag e_i'mag
+field_in u_e_i'mag u_e_i'mag
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_carmenes.json
+at sun 1.0
+ttl 604800
+force em
+cmap .
+ra_key RAJ2000
+dec_key DEJ2000
+field_in recno recno
+field_in MWSC MWSC
+field_in Name Name
+field_in Type Type
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_cosmic_voids.json
+at sun 1.0
+ttl 604800
+force em
+cmap .
+ra_key RAJ2000
+dec_key DEJ2000
+field_in recno recno
+field_in ID ID
+field_in r r
+field_in p-value p-value
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_distant_halo.json
+at sun 1.0
+ttl 604800
+force em
+cmap .
+ra_key RAJ2000
+dec_key DEJ2000
+plx_key default_plx
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_dla.json
+at sun 1.0
+ttl 604800
+force em
+cmap .
+ra_key _RA
+dec_key _DE
+plx_key default_plx
+field_in zabs zabs
+field_in NHI NHI
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_first.json
+at sun 1.0
+ttl 604800
+force em
+cmap .
+ra_key RAJ2000
+dec_key DEJ2000
+field_in recno recno
+field_in FIRST FIRST
+field_in p(S) p(S)
+field_in Fpeak Fpeak
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_gcvs_variables.json
+at sun 1.0
+ttl 604800
+force em
+cmap .
+ra_key RAJ2000
+dec_key DEJ2000
+field_in recno recno
+field_in VarNum VarNum
+field_in m_VarNum m_VarNum
+field_in GCVS GCVS
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_glade.json
+at sun 1.0
+ttl 604800
+force em
+cmap .
+ra_key RAJ2000
+dec_key DEJ2000
+dist_key Dist
+field_in recno recno
+field_in PGC PGC
+field_in GWGC GWGC
+field_in HyperLEDA HyperLEDA
+field_in 2MASS 2MASS
+field_in SDSS-DR12 SDSS-DR12
+field_in Flag1 Flag1
+field_in e_Dist e_Dist
+field_in Bmag Bmag
+field_in e_Bmag e_Bmag
+field_in BMAG BMAG
+field_in Jmag Jmag
+field_in e_Jmag e_Jmag
+field_in Hmag Hmag
+field_in e_Hmag e_Hmag
+field_in Kmag Kmag
+field_in e_Kmag e_Kmag
+field_in Flag2 Flag2
+field_in Flag3 Flag3
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_glade2.json
+at sun 1.0
+ttl 604800
+force em
+cmap .
+ra_key RAJ2000
+dec_key DEJ2000
+dist_key Dist
+field_in recno recno
+field_in PGC PGC
+field_in GWGC GWGC
+field_in HyperLEDA HyperLEDA
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_gleam.json
+at sun 1.0
+ttl 604800
+force em
+cmap .
+ra_key RAJ2000
+dec_key DEJ2000
+plx_key default_plx
+field_in bckwide bckwide
+field_in lrmswide lrmswide
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_hecate.json
+at sun 1.0
+ttl 604800
+force em
+cmap .
+ra_key RAJ2000
+dec_key DEJ2000
+field_in recno recno
+field_in PGC PGC
+field_in HyperLEDA HyperLEDA
+field_in NED NED
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_hi4pi.json
+at sun 1.0
+ttl 604800
+force em
+cmap .
+ra_key RAJ2000
+dec_key DEJ2000
+plx_key default_plx
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_lotss_dr3.json
+at sun 1.0
+ttl 604800
+force em
+cmap .
+ra_key RAJ2000
+dec_key DEJ2000
+field_in recno recno
+field_in Source Source
+field_in e_RAJ2000 e_RAJ2000
+field_in e_DEJ2000 e_DEJ2000
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_nvss.json
+at sun 1.0
+ttl 604800
+force em
+cmap .
+ra_key RAJ2000
+dec_key DEJ2000
+field_in recno recno
+field_in Field Field
+field_in Xpos Xpos
+field_in Ypos Ypos
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_orion_region.json
+at sun 1.0
+ttl 604800
+force em
+cmap .
+ra_key RAJ2000
+dec_key DEJ2000
+field_in recno recno
+field_in Seq Seq
+field_in ePos ePos
+field_in CTot CTot
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_prigozhin_pulsars.json
+at sun 1.0
+ttl 604800
+force em
+cmap .
+ra_key RAJ2000
+dec_key DEJ2000
+field_in recno recno
+field_in Name Name
+field_in imag imag
+field_in zphot zphot
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_qso_variable.json
+at sun 1.0
+ttl 604800
+force em
+cmap .
+ra_key _RA
+dec_key _DE
+plx_key default_plx
+field_in Mass Mass
+field_in Dist Dist
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_sdss_qso.json
+at sun 1.0
+ttl 604800
+force em
+cmap .
+ra_key RAJ2000
+dec_key DEJ2000
+field_in recno recno
+field_in SDSS SDSS
+field_in umag umag
+field_in e_umag e_umag
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_snrs.json
+at sun 1.0
+ttl 604800
+force em
+cmap .
+ra_key RAJ2000
+dec_key DEJ2000
+field_in recno recno
+field_in SNR SNR
+field_in MajDiam MajDiam
+field_in MinDiam MinDiam
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_tycho2.json
+at sun 1.0
+ttl 604800
+force em
+cmap .
+ra_key RAmdeg
+dec_key DEmdeg
+plx_key default_plx
+field_in recno recno
+field_in TYC1 TYC1
+field_in TYC2 TYC2
+field_in TYC3 TYC3
+field_in pflag pflag
+field_in RAmdeg RAmdeg
+field_in DEmdeg DEmdeg
+field_in pmRA pmRA
+field_in pmDE pmDE
+field_in e_RAmdeg e_RAmdeg
+field_in e_DEmdeg e_DEmdeg
+field_in e_pmRA e_pmRA
+field_in e_pmDE e_pmDE
+field_in EpRAm EpRAm
+field_in EpDEm EpDEm
+field_in Num Num
+field_in q_RAmdeg q_RAmdeg
+field_in q_DEmdeg q_DEmdeg
+field_in q_pmRA q_pmRA
+field_in q_pmDE q_pmDE
+field_in BTmag BTmag
+field_in e_BTmag e_BTmag
+field_in VTmag VTmag
+field_in e_VTmag e_VTmag
+field_in prox prox
+field_in TYC TYC
+field_in HIP HIP
+field_in CCDM CCDM
+field_in RA(ICRS) RA(ICRS)
+field_in DE(ICRS) DE(ICRS)
+field_in EpRA-1990 EpRA-1990
+field_in EpDE-1990 EpDE-1990
+field_in e_RAdeg e_RAdeg
+field_in e_DEdeg e_DEdeg
+field_in posflg posflg
+field_in corr corr
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_ucac5.json
+at sun 1.0
+ttl 604800
+force em
+cmap .
+ra_key RAJ2000
+dec_key DEJ2000
+field_in SrcIDgaia SrcIDgaia
+field_in RAgaia RAgaia
+field_in e_RAgaia e_RAgaia
+field_in DEgaia DEgaia
+field_in e_DEgaia e_DEgaia
+field_in Org Org
+field_in Nu Nu
+field_in EPucac EPucac
+field_in pmRA pmRA
+field_in e_pmRA e_pmRA
+field_in pmDE pmDE
+field_in e_pmDE e_pmDE
+field_in Gmag Gmag
+field_in f_mag f_mag
+field_in Rmag Rmag
+field_in Jmag Jmag
+field_in Hmag Hmag
+field_in Kmag Kmag
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_variable_stars.json
+at sun 1.0
+ttl 604800
+force em
+cmap .
+ra_key _RA
+dec_key _DE
+plx_key default_plx
+field_in a a
+field_in e e
+field_in i i
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_vsx_variables.json
+at sun 1.0
+ttl 604800
+force em
+cmap .
+ra_key RAJ2000
+dec_key DEJ2000
+field_in recno recno
+field_in OID OID
+field_in Name Name
+field_in V V
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_xmm4d13s.json
+at sun 1.0
+ttl 604800
+force em
+cmap .
+ra_key RA_ICRS
+dec_key DE_ICRS
+plx_key default_plx
+field_in Flux1 Flux1
+field_in Flux2 Flux2
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_young_stars.json
+at sun 1.0
+ttl 604800
+force em
+cmap .
+ra_key RAJ2000
+dec_key DEJ2000
+field_in recno recno
+field_in Name Name
+field_in FileName FileName
+field_in SName SName
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/wise_allsky.json
+at sun 1.0
+ttl 604800
+force em
+cmap .
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in w1mpro w1mpro
+field_in w2mpro w2mpro
+field_in w3mpro w3mpro
+field_in w4mpro w4mpro
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_xmm_slew.json
+at sun 1.0
+ttl 604800
+force em
+cmap .
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in flux_b8 flux_b8

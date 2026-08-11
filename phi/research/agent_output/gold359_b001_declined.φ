@@ -1,0 +1,210 @@
+# Block 1: iss_position — SKIP (ephemeris-superseded)
+# The wheretheiss.at API returns a single flat object {"latitude","longitude",
+# "altitude"} — not an array — so `map` extract (which iterates JsonVal::Arr)
+# yields zero samples. ISS orbital state is already served by the ephemeris CDN
+# (ephemeris_iss.bin, at iss). Decline as superseded-by-ephemeris.
+# Old block: https://api.wheretheiss.at/v1/satellites/25544 | force em | ttl 10
+
+# Block 3: universe_iss_history — SKIP (ephemeris-superseded)
+# Historical ISS positions are pure orbital ephemeris, fully determined by the
+# ISS state vector already tracked by the Archivar (ephemeris_iss.bin CDN). No
+# oscillator needed.
+# Old block: https://api.wheretheiss.at/v1/satellites/25544/positions?timestamps=1,2,3,4,5 | force em | ttl 10
+
+# Block 6: atmosphere_blitzortung_strikes — DECLINE (parser-def)
+# Force Gate passes — lightning IS an EM discharge. But api.blitzortung.org
+# /compressed/current_positions serves a compressed binary/text format, not
+# JSON; `map .` (lat_key lat, lon_key lon) cannot consume it. Same disposition
+# as the 2026-08-07 session (blitzortung declined: binary/HTML).
+# Old block: https://api.blitzortung.org/compressed/current_positions?lat={lat}&lon={lon}&range=500 | force em | ttl 60
+
+# Block 7: biosphere_etf_africa_broad — DECLINE (no physical force)
+# Yahoo Finance AFK ETF price. Stock price is an economic abstraction; HTTP is
+# the delivery medium, not a physical propagation mechanism. No organism senses
+# an ETF quote.
+# Old block: https://query1.finance.yahoo.com/v8/finance/chart/AFK?interval=1d&range=1d | force em | ttl 60
+
+# Block 8: biosphere_etf_brazil — DECLINE (no physical force)
+# Yahoo Finance EWZ ETF price. Stock price, no physical force.
+# Old block: https://query1.finance.yahoo.com/v8/finance/chart/EWZ?interval=1d&range=1d | force em | ttl 60
+
+# Block 9: biosphere_etf_china — DECLINE (no physical force)
+# Yahoo Finance FXI ETF price. Stock price, no physical force.
+# Old block: https://query1.finance.yahoo.com/v8/finance/chart/FXI?interval=1d&range=1d | force em | ttl 60
+
+# Block 10: biosphere_etf_dollar_index — DECLINE (no physical force)
+# Yahoo Finance DX-Y.NYB dollar index. Financial index, no physical force.
+# Old block: https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?interval=1d&range=1d | force em | ttl 60
+
+# Block 11: biosphere_etf_dry_bulk_shipping — DECLINE (no physical force)
+# Yahoo Finance BDRY ETF price. Stock price, no physical force.
+# Old block: https://query1.finance.yahoo.com/v8/finance/chart/BDRY?interval=1d&range=1d | force em | ttl 60
+
+# Block 12: biosphere_etf_emerging_markets — DECLINE (no physical force)
+# Yahoo Finance EEM ETF price. Stock price, no physical force.
+# Old block: https://query1.finance.yahoo.com/v8/finance/chart/EEM?interval=1d&range=1d | force em | ttl 60
+
+# Block 13: biosphere_etf_europe — DECLINE (no physical force)
+# Yahoo Finance VGK ETF price. Stock price, no physical force.
+# Old block: https://query1.finance.yahoo.com/v8/finance/chart/VGK?interval=1d&range=1d | force em | ttl 60
+
+# Block 14: biosphere_etf_frontier_markets — DECLINE (no physical force)
+# Yahoo Finance FM ETF price. Stock price, no physical force.
+# Old block: https://query1.finance.yahoo.com/v8/finance/chart/FM?interval=1d&range=1d | force em | ttl 60
+
+# Block 15: biosphere_etf_germany — DECLINE (no physical force)
+# Yahoo Finance EWG ETF price. Stock price, no physical force.
+# Old block: https://query1.finance.yahoo.com/v8/finance/chart/EWG?interval=1d&range=1d | force em | ttl 60
+
+# Block 16: biosphere_etf_gold — DECLINE (no physical force)
+# Yahoo Finance GC=F gold futures price. Commodity futures price is a market
+# abstraction, not the physical gold itself; no physical force.
+# Old block: https://query1.finance.yahoo.com/v8/finance/chart/GC%3DF?interval=1d&range=1d | force em | ttl 60
+
+# Block 17: biosphere_etf_india — DECLINE (no physical force)
+# Yahoo Finance INDA ETF price. Stock price, no physical force.
+# Old block: https://query1.finance.yahoo.com/v8/finance/chart/INDA?interval=1d&range=1d | force em | ttl 60
+
+# Block 18: biosphere_etf_japan — DECLINE (no physical force)
+# Yahoo Finance EWJ ETF price. Stock price, no physical force.
+# Old block: https://query1.finance.yahoo.com/v8/finance/chart/EWJ?interval=1d&range=1d | force em | ttl 60
+
+# Block 19: biosphere_etf_latin_america_broad — DECLINE (no physical force)
+# Yahoo Finance ILF ETF price. Stock price, no physical force.
+# Old block: https://query1.finance.yahoo.com/v8/finance/chart/ILF?interval=1d&range=1d | force em | ttl 60
+
+# Block 20: biosphere_etf_mexico — DECLINE (no physical force)
+# Yahoo Finance EWW ETF price. Stock price, no physical force.
+# Old block: https://query1.finance.yahoo.com/v8/finance/chart/EWW?interval=1d&range=1d | force em | ttl 60
+
+# Block 21: biosphere_etf_middle_east — DECLINE (no physical force)
+# Yahoo Finance KSA ETF price. Stock price, no physical force.
+# Old block: https://query1.finance.yahoo.com/v8/finance/chart/KSA?interval=1d&range=1d | force em | ttl 60
+
+# Block 22: biosphere_etf_oil — DECLINE (no physical force)
+# Yahoo Finance CL=F crude oil futures price. Commodity futures price is a
+# market abstraction, not the physical oil; no physical force.
+# Old block: https://query1.finance.yahoo.com/v8/finance/chart/CL%3DF?interval=1d&range=1d | force em | ttl 60
+
+# Block 23: biosphere_etf_sector_communication — DECLINE (no physical force)
+# Yahoo Finance XLC ETF price. Stock price, no physical force.
+# Old block: https://query1.finance.yahoo.com/v8/finance/chart/XLC?interval=1d&range=1d | force em | ttl 60
+
+# Block 24: biosphere_etf_sector_consumer_discretionary — DECLINE (no physical force)
+# Yahoo Finance XLY ETF price. Stock price, no physical force.
+# Old block: https://query1.finance.yahoo.com/v8/finance/chart/XLY?interval=1d&range=1d | force em | ttl 60
+
+# Block 25: biosphere_etf_sector_consumer_staples — DECLINE (no physical force)
+# Yahoo Finance XLP ETF price. Stock price, no physical force.
+# Old block: https://query1.finance.yahoo.com/v8/finance/chart/XLP?interval=1d&range=1d | force em | ttl 60
+
+# Block 26: biosphere_etf_sector_energy — DECLINE (no physical force)
+# Yahoo Finance XLE ETF price. Stock price, no physical force.
+# Old block: https://query1.finance.yahoo.com/v8/finance/chart/XLE?interval=1d&range=1d | force em | ttl 60
+
+# Block 27: biosphere_etf_sector_financials — DECLINE (no physical force)
+# Yahoo Finance XLF ETF price. Stock price, no physical force.
+# Old block: https://query1.finance.yahoo.com/v8/finance/chart/XLF?interval=1d&range=1d | force em | ttl 60
+
+# Block 28: biosphere_etf_sector_healthcare — DECLINE (no physical force)
+# Yahoo Finance XLV ETF price. Stock price, no physical force.
+# Old block: https://query1.finance.yahoo.com/v8/finance/chart/XLV?interval=1d&range=1d | force em | ttl 60
+
+# Block 29: biosphere_etf_sector_industrials — DECLINE (no physical force)
+# Yahoo Finance XLI ETF price. Stock price, no physical force.
+# Old block: https://query1.finance.yahoo.com/v8/finance/chart/XLI?interval=1d&range=1d | force em | ttl 60
+
+# Block 30: biosphere_etf_sector_materials — DECLINE (no physical force)
+# Yahoo Finance XLB ETF price. Stock price, no physical force.
+# Old block: https://query1.finance.yahoo.com/v8/finance/chart/XLB?interval=1d&range=1d | force em | ttl 60
+
+# Block 31: biosphere_etf_sector_real_estate — DECLINE (no physical force)
+# Yahoo Finance XLRE ETF price. Stock price, no physical force.
+# Old block: https://query1.finance.yahoo.com/v8/finance/chart/XLRE?interval=1d&range=1d | force em | ttl 60
+
+# Block 32: biosphere_etf_sector_technology — DECLINE (no physical force)
+# Yahoo Finance XLK ETF price. Stock price, no physical force.
+# Old block: https://query1.finance.yahoo.com/v8/finance/chart/XLK?interval=1d&range=1d | force em | ttl 60
+
+# Block 33: biosphere_etf_sector_utilities — DECLINE (no physical force)
+# Yahoo Finance XLU ETF price. Stock price, no physical force.
+# Old block: https://query1.finance.yahoo.com/v8/finance/chart/XLU?interval=1d&range=1d | force em | ttl 60
+
+# Block 34: biosphere_etf_semiconductors — DECLINE (no physical force)
+# Yahoo Finance SOXX ETF price. Stock price, no physical force.
+# Old block: https://query1.finance.yahoo.com/v8/finance/chart/SOXX?interval=1d&range=1d | force em | ttl 60
+
+# Block 35: biosphere_etf_south_africa — DECLINE (no physical force)
+# Yahoo Finance EZA ETF price. Stock price, no physical force.
+# Old block: https://query1.finance.yahoo.com/v8/finance/chart/EZA?interval=1d&range=1d | force em | ttl 60
+
+# Block 36: biosphere_etf_southeast_asia — DECLINE (no physical force)
+# Yahoo Finance ASEA ETF price. Stock price, no physical force.
+# Old block: https://query1.finance.yahoo.com/v8/finance/chart/ASEA?interval=1d&range=1d | force em | ttl 60
+
+# Block 37: biosphere_etf_transportation — DECLINE (no physical force)
+# Yahoo Finance IYT ETF price. Stock price, no physical force.
+# Old block: https://query1.finance.yahoo.com/v8/finance/chart/IYT?interval=1d&range=1d | force em | ttl 60
+
+# Block 38: biosphere_etf_treasury_yield_10y — DECLINE (no physical force)
+# Yahoo Finance ^TNX 10-year treasury yield. Interest rate is an economic
+# abstraction; no physical force.
+# Old block: https://query1.finance.yahoo.com/v8/finance/chart/%5ETNX?interval=1d&range=1d | force em | ttl 60
+
+# Block 39: biosphere_etf_usa — DECLINE (no physical force)
+# Yahoo Finance SPY ETF price. Stock price, no physical force.
+# Old block: https://query1.finance.yahoo.com/v8/finance/chart/SPY?interval=1d&range=1d | force em | ttl 60
+
+# Block 40: biosphere_etf_volatility — DECLINE (no physical force)
+# Yahoo Finance ^VIX volatility index. A derived financial metric; no physical
+# force.
+# Old block: https://query1.finance.yahoo.com/v8/finance/chart/%5EVIX?interval=1d&range=1d | force em | ttl 60
+
+# Block 41: biosphere_etf_world_all_country — DECLINE (no physical force)
+# Yahoo Finance ACWI ETF price. Stock price, no physical force.
+# Old block: https://query1.finance.yahoo.com/v8/finance/chart/ACWI?interval=1d&range=1d | force em | ttl 60
+
+# Block 42: biosphere_etf_world_developed — DECLINE (no physical force)
+# Yahoo Finance URTH ETF price. Stock price, no physical force.
+# Old block: https://query1.finance.yahoo.com/v8/finance/chart/URTH?interval=1d&range=1d | force em | ttl 60
+
+# Block 43: biosphere_github_public_events — DECLINE (bare count)
+# `count .` tallies GitHub API events. A bare count of infrastructure activity
+# with no individual event oscillators; no physical force.
+# Old block: https://api.github.com/events?per_page=100 | force em | ttl 60
+
+# Block 44: biosphere_inex_traffic — DECLINE (no physical force)
+# INEX internet exchange traffic in bits/s. Decoded information throughput is
+# not a raw physical field; the EM carrier is real but the measurement is of
+# information content, not field strength.
+# Old block: https://www.inex.ie/ixp/grapher/ixp?id=1&type=json | force em | ttl 60
+
+# Block 45: biosphere_irail_belgium — DECLINE (bare count)
+# `count departures.departure` tallies train departures at Brussels station. A
+# bare count with no physical force.
+# Old block: https://api.irail.be/liveboard/?station=Brussels&format=json | force em | ttl 60
+
+# Block 46: biosphere_irish_rail_realtime — DECLINE (bare count)
+# `xml_count ObjStationData` counts train-station records. A bare count with no
+# physical force.
+# Old block: https://api.irishrail.ie/realtime/realtime.asmx/getStationDataByCodeXML?StationCode=BROC | force em | ttl 60
+
+# Block 47: biosphere_ripe_bgp_default_route — DECLINE (bare count)
+# `count data.bgp_state` tallies BGP routing-table entries. Routing data is
+# information, not physics; bare count, no physical force.
+# Old block: https://stat.ripe.net/data/bgp-state/data.json?resource=0.0.0.0/0 | force em | ttl 60
+
+# Block 48: biosphere_ripe_bgp_updates — DECLINE (bare count)
+# `field data.nr_updates` reads the count of BGP routing updates in the last
+# hour. A derived information metric; no physical force.
+# Old block: https://stat.ripe.net/data/bgp-updates/data.json?resource=0.0.0.0/0&starttime={hour_ago}&endtime={today} | force em | ttl 60
+
+# Block 49: biosphere_transport_bern_departures — DECLINE (bare count)
+# `count stationboard` tallies departures at Bern station. A bare count with no
+# physical force.
+# Old block: https://transport.opendata.ch/v1/stationboard?station=Bern&limit=10 | force em | ttl 60
+
+# Block 50: biosphere_transport_zurich_departures — DECLINE (bare count)
+# `count stationboard` tallies departures at Zurich station. A bare count with
+# no physical force.
+# Old block: https://transport.opendata.ch/v1/stationboard?station=Zurich&limit=10 | force em | ttl 60

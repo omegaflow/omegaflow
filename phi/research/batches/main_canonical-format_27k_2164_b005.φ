@@ -1,0 +1,610 @@
+url https://www.ndbc.noaa.gov/data/realtime2/44020.txt
+ttl 300
+force acoustic
+on earth 41.497 -70.283
+format universal
+last_row WDIR WDIR
+last_row WSPD WSPD
+last_row WVHT WVHT
+last_row DPD DPD
+last_row PRES PRES
+last_row WTMP WTMP
+
+url https://www.ndbc.noaa.gov/data/realtime2/44025.txt
+ttl 300
+force acoustic
+on earth 40.25 -73.17
+format universal
+last_row WDIR WDIR
+last_row WSPD WSPD
+last_row WVHT WVHT
+last_row DPD DPD
+last_row PRES PRES
+last_row WTMP WTMP
+
+url https://www.ndbc.noaa.gov/data/realtime2/44027.txt
+ttl 300
+force acoustic
+on earth 44.284 -67.301
+format universal
+last_row WDIR WDIR
+last_row WSPD WSPD
+last_row WVHT WVHT
+last_row DPD DPD
+last_row PRES PRES
+last_row WTMP WTMP
+
+url https://www.ndbc.noaa.gov/data/realtime2/44029.txt
+ttl 300
+force acoustic
+on earth 42.523 -70.566
+format universal
+last_row WDIR WDIR
+last_row WSPD WSPD
+last_row GST GST
+last_row WVHT WVHT
+last_row DPD DPD
+last_row ATMP ATMP
+last_row WTMP WTMP
+
+url https://www.ndbc.noaa.gov/data/realtime2/44030.txt
+ttl 300
+force acoustic
+on earth 43.179 -70.426
+format universal
+last_row WDIR WDIR
+last_row WSPD WSPD
+last_row GST GST
+last_row WVHT WVHT
+last_row DPD DPD
+last_row ATMP ATMP
+last_row WTMP WTMP
+
+url https://www.ndbc.noaa.gov/data/realtime2/44032.txt
+ttl 300
+force acoustic
+on earth 43.715 -69.355
+format universal
+last_row WDIR WDIR
+last_row WSPD WSPD
+last_row GST GST
+last_row WVHT WVHT
+last_row DPD DPD
+last_row ATMP ATMP
+last_row WTMP WTMP
+last_row VIS VIS
+
+url https://www.ndbc.noaa.gov/data/realtime2/44033.txt
+ttl 300
+force acoustic
+on earth 44.055 -68.996
+format universal
+last_row WDIR WDIR
+last_row WSPD WSPD
+last_row GST GST
+last_row WVHT WVHT
+last_row DPD DPD
+last_row ATMP ATMP
+last_row WTMP WTMP
+last_row VIS VIS
+
+url https://www.ndbc.noaa.gov/data/realtime2/44034.txt
+ttl 300
+force acoustic
+on earth 44.103 -68.112
+format universal
+last_row WDIR WDIR
+last_row WSPD WSPD
+last_row GST GST
+last_row WVHT WVHT
+last_row DPD DPD
+last_row ATMP ATMP
+last_row WTMP WTMP
+
+url https://www.ndbc.noaa.gov/data/realtime2/44042.txt
+ttl 300
+force acoustic
+on earth 38.033 -76.335
+format universal
+last_row WDIR WDIR
+last_row WSPD WSPD
+last_row GST GST
+last_row WVHT WVHT
+last_row DPD DPD
+last_row ATMP ATMP
+last_row WTMP WTMP
+
+url https://www.ndbc.noaa.gov/data/realtime2/44056.txt
+ttl 300
+force acoustic
+on earth 36.2 -75.714
+format universal
+last_row WVHT WVHT
+last_row DPD DPD
+last_row APD APD
+last_row MWD MWD
+last_row ATMP ATMP
+last_row WTMP WTMP
+
+url https://www.ndbc.noaa.gov/data/realtime2/44058.txt
+ttl 300
+force acoustic
+on earth 37.567 -76.257
+format universal
+last_row WDIR WDIR
+last_row WSPD WSPD
+last_row GST GST
+last_row ATMP ATMP
+last_row WTMP WTMP
+
+url https://www.ndbc.noaa.gov/data/realtime2/44062.txt
+ttl 300
+force acoustic
+on earth 38.556 -76.415
+format universal
+last_row WDIR WDIR
+last_row WSPD WSPD
+last_row GST GST
+last_row WVHT WVHT
+last_row DPD DPD
+last_row ATMP ATMP
+last_row WTMP WTMP
+
+url https://www.ndbc.noaa.gov/data/realtime2/44063.txt
+ttl 300
+force acoustic
+on earth 38.963 -76.448
+format universal
+last_row WDIR WDIR
+last_row WSPD WSPD
+last_row GST GST
+last_row WVHT WVHT
+last_row DPD DPD
+last_row ATMP ATMP
+last_row WTMP WTMP
+
+url https://www.ndbc.noaa.gov/data/realtime2/44065.txt
+ttl 300
+force acoustic
+on earth 40.368 -73.701
+format universal
+last_row WDIR WDIR
+last_row WSPD WSPD
+last_row WVHT WVHT
+last_row DPD DPD
+last_row PRES PRES
+last_row WTMP WTMP
+
+url https://www.ndbc.noaa.gov/data/realtime2/44069.txt
+ttl 300
+force acoustic
+on earth 40.699 -73.087
+format universal
+last_row WDIR WDIR
+last_row WSPD WSPD
+last_row GST GST
+last_row ATMP ATMP
+last_row WTMP WTMP
+last_row DEWP DEWP
+
+url https://www.ndbc.noaa.gov/data/realtime2/44072.txt
+ttl 300
+force acoustic
+on earth 37.201 -76.266
+format universal
+last_row WDIR WDIR
+last_row WSPD WSPD
+last_row GST GST
+last_row WVHT WVHT
+last_row DPD DPD
+last_row ATMP ATMP
+last_row WTMP WTMP
+
+url https://www.ndbc.noaa.gov/data/realtime2/44073.txt
+ttl 300
+force acoustic
+on earth 43.02 -70.54
+format universal
+last_row WDIR WDIR
+last_row WSPD WSPD
+last_row ATMP ATMP
+last_row WTMP WTMP
+
+url https://www.ndbc.noaa.gov/data/realtime2/44074.txt
+ttl 300
+force acoustic
+on earth 43.071 -70.868
+format universal
+last_row WDIR WDIR
+last_row WSPD WSPD
+last_row GST GST
+last_row ATMP ATMP
+last_row WTMP WTMP
+
+url https://www.ndbc.noaa.gov/data/realtime2/44078.txt
+ttl 300
+force acoustic
+on earth 59.94 -39.52
+format universal
+last_row WDIR WDIR
+last_row WSPD WSPD
+last_row WVHT WVHT
+last_row DPD DPD
+last_row PRES PRES
+last_row WTMP WTMP
+
+url https://www.ndbc.noaa.gov/data/realtime2/44079.txt
+ttl 300
+force acoustic
+on earth 36.175 -74.827
+format universal
+last_row WDIR WDIR
+last_row WSPD WSPD
+last_row WVHT WVHT
+last_row DPD DPD
+last_row MWD MWD
+last_row PRES PRES
+last_row ATMP ATMP
+last_row PTDY PTDY
+
+url https://www.ndbc.noaa.gov/data/realtime2/44080.txt
+ttl 300
+force acoustic
+on earth 39.223 -76.528
+format universal
+last_row WDIR WDIR
+last_row WSPD WSPD
+last_row WVHT WVHT
+last_row DPD DPD
+last_row PRES PRES
+last_row WTMP WTMP
+
+url https://www.ndbc.noaa.gov/data/realtime2/44084.txt
+ttl 300
+force acoustic
+on earth 38.537 -75.044
+format universal
+last_row WVHT WVHT
+last_row DPD DPD
+last_row APD APD
+last_row MWD MWD
+last_row WTMP WTMP
+
+url https://www.ndbc.noaa.gov/data/realtime2/44085.txt
+ttl 300
+force acoustic
+on earth 41.387 -71.032
+format universal
+last_row WVHT WVHT
+last_row DPD DPD
+last_row APD APD
+last_row MWD MWD
+last_row ATMP ATMP
+last_row WTMP WTMP
+
+url https://www.ndbc.noaa.gov/data/realtime2/44086.txt
+ttl 300
+force acoustic
+on earth 36.001 -75.421
+format universal
+last_row WVHT WVHT
+last_row DPD DPD
+last_row APD APD
+last_row MWD MWD
+last_row ATMP ATMP
+last_row WTMP WTMP
+
+url https://www.ndbc.noaa.gov/data/realtime2/44088.txt
+ttl 300
+force acoustic
+on earth 36.612 -74.839
+format universal
+last_row WVHT WVHT
+last_row DPD DPD
+last_row APD APD
+last_row MWD MWD
+last_row ATMP ATMP
+last_row WTMP WTMP
+
+url https://www.ndbc.noaa.gov/data/realtime2/44090.txt
+ttl 300
+force acoustic
+on earth 41.84 -70.329
+format universal
+last_row WVHT WVHT
+last_row DPD DPD
+last_row APD APD
+last_row MWD MWD
+last_row ATMP ATMP
+last_row WTMP WTMP
+
+url https://www.ndbc.noaa.gov/data/realtime2/44091.txt
+ttl 300
+force acoustic
+on earth 39.772 -73.769
+format universal
+last_row WVHT WVHT
+last_row DPD DPD
+last_row APD APD
+last_row MWD MWD
+last_row ATMP ATMP
+last_row WTMP WTMP
+
+url https://www.ndbc.noaa.gov/data/realtime2/44095.txt
+ttl 300
+force acoustic
+on earth 35.75 -75.33
+format universal
+last_row WVHT WVHT
+last_row DPD DPD
+last_row APD APD
+last_row MWD MWD
+last_row WTMP WTMP
+
+url https://www.ndbc.noaa.gov/data/realtime2/44097.txt
+ttl 300
+force acoustic
+on earth 40.967 -71.124
+format universal
+last_row WVHT WVHT
+last_row DPD DPD
+last_row APD APD
+last_row MWD MWD
+last_row WTMP WTMP
+
+url https://www.ndbc.noaa.gov/data/realtime2/44098.txt
+ttl 300
+force acoustic
+on earth 42.8 -70.169
+format universal
+last_row WVHT WVHT
+last_row DPD DPD
+last_row APD APD
+last_row MWD MWD
+last_row ATMP ATMP
+last_row WTMP WTMP
+
+url https://www.ndbc.noaa.gov/data/realtime2/44099.txt
+ttl 300
+force acoustic
+on earth 36.915 -75.722
+format universal
+last_row WVHT WVHT
+last_row DPD DPD
+last_row APD APD
+last_row MWD MWD
+last_row WTMP WTMP
+
+url https://www.ndbc.noaa.gov/data/realtime2/44100.txt
+ttl 300
+force acoustic
+on earth 36.257 -75.593
+format universal
+last_row WVHT WVHT
+last_row DPD DPD
+last_row APD APD
+last_row MWD MWD
+last_row ATMP ATMP
+last_row WTMP WTMP
+
+url https://www.ndbc.noaa.gov/data/realtime2/44137.txt
+ttl 300
+force acoustic
+on earth 42.26 -62.03
+format universal
+last_row WDIR WDIR
+last_row WSPD WSPD
+last_row WVHT WVHT
+last_row DPD DPD
+last_row PRES PRES
+last_row WTMP WTMP
+
+url https://www.ndbc.noaa.gov/data/realtime2/44139.txt
+ttl 300
+force acoustic
+on earth 44.24 -57.1
+format universal
+last_row WDIR WDIR
+last_row WSPD WSPD
+last_row WVHT WVHT
+last_row DPD DPD
+last_row PRES PRES
+last_row WTMP WTMP
+
+url https://www.ndbc.noaa.gov/data/realtime2/44150.txt
+ttl 300
+force acoustic
+on earth 42.5 -64.02
+format universal
+last_row WDIR WDIR
+last_row WSPD WSPD
+last_row WVHT WVHT
+last_row DPD DPD
+last_row PRES PRES
+last_row WTMP WTMP
+
+url https://www.ndbc.noaa.gov/data/realtime2/44258.txt
+ttl 300
+force acoustic
+on earth 44.5 -63.4
+format universal
+last_row WDIR WDIR
+last_row WSPD WSPD
+last_row WVHT WVHT
+last_row DPD DPD
+last_row PRES PRES
+last_row WTMP WTMP
+
+url https://www.ndbc.noaa.gov/data/realtime2/44488.txt
+ttl 300
+force acoustic
+on earth 45.44 -60.95
+format universal
+last_row WDIR WDIR
+last_row WSPD WSPD
+last_row WVHT WVHT
+last_row DPD DPD
+last_row PRES PRES
+last_row WTMP WTMP
+
+url https://www.ndbc.noaa.gov/data/realtime2/44489.txt
+ttl 300
+force acoustic
+on earth 45.49 -61.14
+format universal
+last_row WDIR WDIR
+last_row WSPD WSPD
+last_row WVHT WVHT
+last_row DPD DPD
+last_row PRES PRES
+last_row WTMP WTMP
+
+url https://www.ndbc.noaa.gov/data/realtime2/45001.txt
+ttl 300
+force acoustic
+on earth 48.061 -87.793
+format universal
+last_row WDIR WDIR
+last_row WSPD WSPD
+last_row WVHT WVHT
+last_row DPD DPD
+last_row PRES PRES
+last_row WTMP WTMP
+
+url https://www.ndbc.noaa.gov/data/realtime2/45002.txt
+ttl 300
+force acoustic
+on earth 45.344 -86.411
+format universal
+last_row WDIR WDIR
+last_row WSPD WSPD
+last_row WVHT WVHT
+last_row DPD DPD
+last_row PRES PRES
+last_row WTMP WTMP
+
+url https://www.ndbc.noaa.gov/data/realtime2/45004.txt
+ttl 300
+force acoustic
+on earth 47.583 -86.586
+format universal
+last_row WDIR WDIR
+last_row WSPD WSPD
+last_row WVHT WVHT
+last_row DPD DPD
+last_row PRES PRES
+last_row WTMP WTMP
+
+url https://www.ndbc.noaa.gov/data/realtime2/45005.txt
+ttl 300
+force acoustic
+on earth 41.677 -82.398
+format universal
+last_row WDIR WDIR
+last_row WSPD WSPD
+last_row WVHT WVHT
+last_row DPD DPD
+last_row PRES PRES
+last_row WTMP WTMP
+
+url https://www.ndbc.noaa.gov/data/realtime2/45006.txt
+ttl 300
+force acoustic
+on earth 47.335 -89.793
+format universal
+last_row WDIR WDIR
+last_row WSPD WSPD
+last_row WVHT WVHT
+last_row DPD DPD
+last_row PRES PRES
+last_row WTMP WTMP
+
+url https://www.ndbc.noaa.gov/data/realtime2/45012.txt
+ttl 300
+force acoustic
+on earth 43.621 -77.401
+format universal
+last_row WDIR WDIR
+last_row WSPD WSPD
+last_row WVHT WVHT
+last_row DPD DPD
+last_row PRES PRES
+last_row WTMP WTMP
+
+url https://www.ndbc.noaa.gov/data/realtime2/45013.txt
+ttl 300
+force acoustic
+on earth 43.098 -87.85
+format universal
+last_row WDIR WDIR
+last_row WSPD WSPD
+last_row WVHT WVHT
+last_row DPD DPD
+last_row PRES PRES
+last_row WTMP WTMP
+
+url https://www.ndbc.noaa.gov/data/realtime2/45014.txt
+ttl 300
+force acoustic
+on earth 44.794 -87.758
+format universal
+last_row WDIR WDIR
+last_row WSPD WSPD
+last_row GST GST
+last_row WVHT WVHT
+last_row DPD DPD
+last_row MWD MWD
+last_row ATMP ATMP
+last_row WTMP WTMP
+
+url https://www.ndbc.noaa.gov/data/realtime2/45022.txt
+ttl 300
+force acoustic
+on earth 45.404 -85.088
+format universal
+last_row WDIR WDIR
+last_row WSPD WSPD
+last_row WVHT WVHT
+last_row DPD DPD
+last_row PRES PRES
+last_row WTMP WTMP
+
+url https://www.ndbc.noaa.gov/data/realtime2/45023.txt
+ttl 300
+force acoustic
+on earth 47.27 -88.607
+format universal
+last_row WDIR WDIR
+last_row WSPD WSPD
+last_row WVHT WVHT
+last_row DPD DPD
+last_row PRES PRES
+last_row WTMP WTMP
+
+url https://www.ndbc.noaa.gov/data/realtime2/45024.txt
+ttl 300
+force acoustic
+on earth 43.98 -86.56
+format universal
+last_row WDIR WDIR
+last_row WSPD WSPD
+last_row WVHT WVHT
+last_row DPD DPD
+last_row PRES PRES
+last_row WTMP WTMP
+
+url https://www.ndbc.noaa.gov/data/realtime2/45025.txt
+ttl 300
+force acoustic
+on earth 46.969 -88.398
+format universal
+last_row WDIR WDIR
+last_row WSPD WSPD
+last_row GST GST
+last_row WVHT WVHT
+last_row MWD MWD
+last_row PRES PRES
+last_row ATMP ATMP
+last_row WTMP WTMP
+last_row DEWP DEWP
+last_row PTDY PTDY

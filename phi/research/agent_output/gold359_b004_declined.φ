@@ -1,0 +1,145 @@
+# gold_pre-cdn_27k_359-domains_b004: 50 blocks, 29 accepted, 21 declined.
+# Declined under the Force Gate: grid/economics statistics (3), bare counts (1),
+# species-catalog text labels (1), text warnings/alerts (8), text circulars (2),
+# parser-def VOTable TAP (1), dead endpoints (3), positionless event catalog (1),
+# object-keyed quake feeds (2). Per-block disposition below.
+# Accepted: 29 (seismometers, magnetometers, weather, buoys, streamflow, GOES).
+
+# Block 1: bgs_british_earthquakes
+# DECLINE: Endpoint dead. The BGS FDSN event service at earthquakes.bgs.ac.uk
+# returns HTTP 404 for both /fdsnws/event/1/query and /ws/query paths. The
+# seismometer measurement is physical (seismic-body), but the endpoint must be
+# restored before it can manifest.
+# Old block: https://earthquakes.bgs.ac.uk/fdsnws/event/1/query?format=geojson&minmagnitude=1.0&limit=200&orderby=time&starttime={today}T00:00:00 | force seismic-body | ttl 300
+
+# Block 2: biosphere_energy_charts_renewable
+# DECLINE: No physical force. Renewable energy share percentage is a
+# grid/economics statistic — a fraction of electrical generation, not a physical
+# quantity an organism could evolve a sensory organ for. Same disposition as
+# batch_003 block 8.
+# Old block: https://api.energy-charts.info/ren_share | force em | ttl 300
+
+# Block 3: biosphere_inaturalist_observations
+# DECLINE: Bare count without individual events. `field total_results` counts the
+# total number of observations in a registry; a scalar count does not manifest
+# individual oscillators at their spatial positions. Catalog/registry metadata.
+# Same disposition as batch_003 block 9.
+# Old block: https://api.inaturalist.org/v1/observations?per_page=1 | force em | ttl 300
+
+# Block 5: biosphere_uk_carbon_intensity
+# DECLINE: No physical force. Grid carbon intensity (gCO2/kWh) is an
+# electricity-system statistic derived from generation mix, not a physical
+# measurement at a location. An organism senses CO2 concentration, not a national
+# grid average. Same disposition as batch_003 block 11.
+# Old block: https://api.carbonintensity.org.uk/intensity | force em | ttl 300
+
+# Block 6: bom_marine_warnings_atom
+# DECLINE: Text warnings. `map .` extracts marine warning rows — warning_type,
+# region, severity are textual advisory products, not physical measurements of
+# the sea state. Text warnings fail the Force Gate.
+# Old block: http://www.bom.gov.au/fwo/marine_warnings.json | force diffusion | ttl 300
+
+# Block 10: emsc_felt_earthquake_reports
+# DECLINE: Parser-def + text feed. The RSS/Atom felt-report feed carries
+# magnitude/depth only inside free-text title/description rows; the declared
+# `lat_key lat`/`lon_key lon` keys do not exist in RSS XML, and georss:point is a
+# text string. No structured numeric oscillator can be extracted.
+# Old block: https://www.emsc-csem.org/service/rss/rss.php?typ=felt&limit=100 | force seismic-body | ttl 300
+
+# Block 11: epa_radnet_gamma_dose
+# DECLINE: Endpoint dead. radnet_current_data.json now returns S3 AccessDenied
+# (an XML error body, not the JSON station array). The gamma-dose measurement is
+# physical (EM), but the endpoint must be restored before it can manifest.
+# Old block: https://www.epa.gov/sites/default/files/radnet/radnet_current_data.json | force em | ttl 300
+
+# Block 12: gbif_global_occurrence_search
+# DECLINE: Species catalog — `field species` extracts a taxonomic name string, a
+# classification label, not a physical quantity. GBIF occurrence records are
+# living beings but the extracted fields (species, kingdom, phylum, class, order,
+# family) are catalog entries, no numeric measurement. Same disposition as
+# batch_007 blocks 2/3.
+# Old block: https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month} | force diffusion | ttl 300
+
+# Block 13: gcn_grb_optical_afterglow_circulars
+# DECLINE: Text notices — `map items` extracts GCN circular text (subject,
+# submitter, id), a text bulletin with no position and no measurement. Same
+# disposition as batch_007 block 28 (gcn ligo circulars).
+# Old block: https://gcn.nasa.gov/api/v0.1/circulars?subject=GRB+optical&limit=100&format=json | force em | ttl 300
+
+# Block 14: gcn_icecube_neutrino_alerts
+# DECLINE: Text notices — `map items` extracts IceCube circular text (subject
+# line, submitter, id), a text bulletin. The neutrino direction/energy live only
+# inside the circular prose, not in extracted numeric fields. Same disposition as
+# batch_007 block 28.
+# Old block: https://gcn.nasa.gov/api/v0.1/circulars?subject=IceCube&limit=100&format=json | force em | ttl 300
+
+# Block 15: gdacs_disaster_alerts
+# DECLINE: Text warnings — RSS items are disaster alert bulletins (title,
+# description, pubDate), textual products, not physical measurements. Same
+# disposition as batch_009 blocks 44/45.
+# Old block: https://www.gdacs.org/xml/rss.xml | force seismic-body | ttl 300
+
+# Block 16: geonet_nz_tsunami_observations
+# DECLINE: Endpoint path returns `bad request: invalid path`; the tsunami
+# observation feed is not at /tsunami/observation. The wave-height measurement is
+# physical (acoustic), but the endpoint must be repaired before it can manifest.
+# Old block: https://api.geonet.org.nz/tsunami/observation | force acoustic | ttl 300
+
+# Block 17: geonet_nz_volcano_alerts
+# DECLINE: Text warnings + categorical status — alert_level/activity/hazards are
+# textual status products, not measurements of volcanic physics. No organism
+# senses an alert level; it reads a warning message.
+# Old block: https://api.geonet.org.nz/volcano/alert/level | force seismic-body | ttl 300
+
+# Block 18: geosphere_cenc_earthquakes
+# DECLINE: Parser-def — the wolfx.jp cenc_eqlist.json response is an
+# object-keyed record set ({"No1": {...}, "No2": {...}, ...}), not an array. The
+# `map .` extract iterates only JSON arrays; object-keyed quake lists yield zero
+# oscillators. The measurement is physical (seismic), but the extract grammar
+# cannot reach data-carried position in this structure.
+# Old block: https://api.wolfx.jp/cenc_eqlist.json | force em | ttl 300
+
+# Block 22: geosphere_jma_earthquakes
+# DECLINE: Parser-def — the wolfx.jp jma_eqlist.json response is an object-keyed
+# record set ({"No1": {...}, "No2": {...}, ...}), not an array. Same disposition
+# as Block 18 (CENC): the `map .` extract cannot iterate object-keyed quake lists.
+# Old block: https://api.wolfx.jp/jma_eqlist.json | force em | ttl 300
+
+# Block 23: geosphere_nws_alerts
+# DECLINE: Text warnings. `map features` counts active NWS alert messages —
+# textual warning products, not physical measurements. Same disposition as
+# batch_003 block 14.
+# Old block: https://api.weather.gov/alerts/active | force em | ttl 300
+
+# Block 24: geosphere_nws_tsunami_warnings
+# DECLINE: Text warnings. Active tsunami warning messages are textual products,
+# not physical measurements of the ocean surface. Same disposition as batch_003
+# block 15.
+# Old block: https://api.weather.gov/alerts/active?event=Tsunami%20Warning | force gravity | ttl 300
+
+# Block 25: geosphere_tsunami_alerts_ntwc
+# DECLINE: Text warnings. `xml_count entry` counts tsunami alert entries in the
+# NTWC ATOM feed — textual advisory products, not physical measurements.
+# Positionless. Same disposition as batch_003 block 16.
+# Old block: https://www.tsunami.gov/events/xml/PAAQAtom.xml | force gravity | ttl 300
+
+# Block 26: geosphere_tsunami_alerts_ptwc
+# DECLINE: Text warnings. `xml_count entry` counts tsunami alert entries in the
+# PTWC ATOM feed — textual advisory products, not physical measurements.
+# Positionless. Same disposition as batch_003 block 17.
+# Old block: https://www.tsunami.gov/events/xml/PHEBAtom.xml | force gravity | ttl 300
+
+# Block 31: gracedb_lvk_o4_public_superevents
+# DECLINE: Positionless event catalog — `map superevents` iterates GW event rows
+# that carry no lat/lon keys and the block declares no frame. A map extract needs
+# a surface frame; the `far`/distance/probability fields would manifest at no
+# spatial position. The strain measurement is physical (gravity), but the block
+# as declared cannot place a single oscillator. Same disposition as batch_007
+# block 29 (physics_ligo_gracedb_events).
+# Old block: https://gracedb.ligo.org/api/superevents/?format=json&category=Production&ordering=-created&public=True&per_page=200 | force gravity | ttl 300
+
+# Block 32: heasarc_integral_ibas_sgr_burst_alerts
+# DECLINE: Parser-def — HEASARC TAP returns VOTable XML for the integralburst
+# catalog regardless of FORMAT=csv; the Archivar has no VOTable row extract.
+# Known fact from source_curation.md: integralburst is a VOTable-only TAP.
+# Old block: https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+200+name,ra,dec,trigger_time,duration,peak_flux,fluence,type+FROM+integralburst+WHERE+(type+LIKE+'%25SGR%25'+OR+type+LIKE+'%25Magnetar%25')+AND+ra+IS+NOT+NULL+ORDER+BY+trigger_time+DESC | force em | ttl 300

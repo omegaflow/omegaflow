@@ -1,0 +1,99 @@
+tau_key _dist_m
+
+ra_key ra
+
+dec_key dec
+
+plx_key default_plx
+
+field_in name astro_fermi_4fgl_name
+
+field_in data_release astro_fermi_4fgl_data_release
+
+field_in lii astro_fermi_4fgl_lii
+
+field_in bii astro_fermi_4fgl_bii
+
+field_in semi_major_axis_68 astro_fermi_4fgl_semi_major_axis_68
+
+field_in semi_minor_axis_68 astro_fermi_4fgl_semi_minor_axis_68
+
+field_in position_angle_68 astro_fermi_4fgl_position_angle_68
+
+field_in semi_major_axis_95 astro_fermi_4fgl_semi_major_axis_95
+
+field_in semi_minor_axis_95 astro_fermi_4fgl_semi_minor_axis_95
+
+field_in position_angle_95 astro_fermi_4fgl_position_angle_95
+
+field_in detection_significance astro_fermi_4fgl_detection_significance
+
+field_in pivot_energy astro_fermi_4fgl_pivot_energy
+
+field_in flux_1_100_gev astro_fermi_4fgl_flux_1_100_gev
+
+field_in flux_1_100_gev_error astro_fermi_4fgl_flux_1_100_gev_error
+
+field_in energy_flux astro_fermi_4fgl_energy_flux
+
+field_in energy_flux_error astro_fermi_4fgl_energy_flux_error
+
+field_in spectrum_type astro_fermi_4fgl_spectrum_type
+
+field_in pl_flux_density astro_fermi_4fgl_pl_flux_density
+
+field_in pl_flux_density_error astro_fermi_4fgl_pl_flux_density_error
+
+field_in pl_index astro_fermi_4fgl_pl_index
+
+field_in pl_index_error astro_fermi_4fgl_pl_index_error
+
+field_in lp_flux_density astro_fermi_4fgl_lp_flux_density
+
+field_in lp_flux_density_error astro_fermi_4fgl_lp_flux_density_error
+
+field_in lp_index astro_fermi_4fgl_lp_index
+
+field_in lp_index_error astro_fermi_4fgl_lp_index_error
+
+field_in lp_beta astro_fermi_4fgl_lp_beta
+
+field_in lp_beta_error astro_fermi_4fgl_lp_beta_error
+
+field_in lp_curve_significance astro_fermi_4fgl_lp_curve_significance
+
+field_in lp_epeak astro_fermi_4fgl_lp_epeak
+
+field_in lp_epeak_error astro_fermi_4fgl_lp_epeak_error
+
+field_in plec_flux_density astro_fermi_4fgl_plec_flux_density
+
+field_in plec_flux_density_error astro_fermi_4fgl_plec_flux_density_error
+
+field_in plec_index_s astro_fermi_4fgl_plec_index_s
+
+field_in plec_index_s_error astro_fermi_4fgl_plec_index_s_error
+
+field_in plec_exp_factor_s astro_fermi_4fgl_plec_exp_factor_s
+
+field_in plec_exp_factor_s_error astro_fermi_4fgl_plec_exp_factor_s_error
+
+field_in plec_exp_index astro_fermi_4fgl_plec_exp_index
+
+field_in plec_exp_index_error astro_fermi_4fgl_plec_exp_index_error
+
+field_in plec_curve_significance astro_fermi_4fgl_plec_curve_significance
+
+field_in plec_epeak astro_fermi_4fgl_plec_epeak
+
+field_in plec_epeak_error astro_fermi_4fgl_plec_epeak_error
+
+field_in npred astro_fermi_4fgl_npred
+
+field_in variability_index astro_fermi_4fgl_variability_index
+
+field_in frac_variability astro_fermi_4fgl_frac_variability
+
+field_in frac_variability_error astro_fermi_4fgl_frac_variability_error
+
+field_in significance_peak astro_fermi_4fgl_significance_peak

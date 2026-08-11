@@ -1,0 +1,680 @@
+url https://gcn.nasa.gov/circulars?query=icecube
+ttl 300
+force em
+on earth -90.0 0.0 2835
+header User-Agent "omegaflow"
+regex ("totalItems":...,) cosmic_icecube_alert_circular_count
+
+url https://gracedb.ligo.org/api/superevents/?format=json
+ttl 300
+force em
+at sun 1.0
+map results
+  field_in gpstime gpstime
+  field_in far far
+  field_in significance significance
+  field_in p_astro p_astro
+  field_in group group
+  field_in pipeline pipeline
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8518750&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+ttl 360
+force acoustic
+at sun 1.0
+map data
+  field_in t t
+  field_in v v
+  field_in q q
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?date=latest&range=24&product=water_level&datum=MLLW&units=metric&time_zone=gmt&station=8518750&format=json
+at sun 1.0
+ttl 600
+force thermal
+body earth
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-96'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&VEC_TABLE='2'&REF_PLANE='ECLIPTIC'
+ttl 600
+force gravity
+at sun 1.0
+format universal
+rows
+field_in 2 x_au
+field_in 3 y_au
+field_in 4 z_au
+field_in 5 vx_au_d
+field_in 6 vy_au_d
+field_in 7 vz_au_d
+
+url https://www.minorplanetcenter.net/iau/NEO/neocp.txt
+ttl 600
+force gravity
+on earth 0.0 0.0
+format universal
+rows
+  field_in 0 designation
+  field_in 2 ra_hms
+  field_in 3 dec_dms
+  field_in 4 magnitude
+  field_in 5 filter_band
+  field_in 6 obs_date
+
+url https://eonet.gsfc.nasa.gov/api/v3/events?limit=200&open=true
+ttl 600
+force seismic-body
+at sun 1.0
+map events
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+  field_in title title
+  field_in categories.0.title title
+  field_in closed closed
+
+url https://firms.modaps.eosdis.nasa.gov/data/active_fire/noaa-20-viirs-c2/csv/J1_VIIRS_C2_Global_24h.csv
+ttl 600
+force thermal
+at sun 1.0
+format universal
+rows
+pos latitude longitude
+field_in 0 latitude
+field_in 1 longitude
+field_in 2 fire_brightness_k
+field_in 5 acq_date
+field_in 6 acq_time
+field_in 8 confidence
+field_in 11 fire_radiative_power
+
+url https://firms.modaps.eosdis.nasa.gov/data/active_fire/suomi-npp-viirs-c2/csv/SUOMI_VIIRS_C2_Global_24h.csv
+ttl 600
+force thermal
+at sun 1.0
+format universal
+rows
+pos latitude longitude
+field_in 0 latitude
+field_in 1 longitude
+field_in 2 fire_brightness_k
+field_in 5 acq_date
+field_in 6 acq_time
+field_in 8 confidence
+field_in 11 fire_radiative_power
+
+url https://epic.gsfc.nasa.gov/api/natural
+ttl 600
+force em
+at sun 1
+map .
+  field_in identifier identifier
+  field_in image image
+  field_in date date
+  field_in centroid_coordinates.lat lat
+  field_in centroid_coordinates.lon lon
+
+url https://services.swpc.noaa.gov/json/goes/primary/euvs-1-day.json
+ttl 600
+force em
+at sun 1.0
+last value solar_euv_flux_wm2
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=shortwave_radiation,direct_radiation,diffuse_radiation,direct_normal_irradiance,global_tilted_irradiance,vapour_pressure_deficit,cape,evapotranspiration,et0_fao_evapotranspiration,visibility,freezing_level_height,snow_depth,precipitation_probability,weather_code&timezone=auto
+ttl 600
+force thermal
+at sun 1.0
+pos atmosphere_lat atmosphere_lon
+  path latitude lat
+  path longitude lon
+  path current.shortwave_radiation sw_radiation_wm2
+  path current.direct_radiation direct_rad_wm2
+  path current.diffuse_radiation diffuse_rad_wm2
+  path current.direct_normal_irradiance dni_wm2
+  path current.vapour_pressure_deficit vpd_kpa
+  path current.cape cape_jkg
+  path current.evapotranspiration evapotranspiration_mm
+  path current.et0_fao_evapotranspiration et0_mm
+  path current.visibility openmeteo_visibility_m
+  path current.freezing_level_height freezing_level_m
+  path current.snow_depth snow_depth_m
+  path current.precipitation_probability precip_probability_pct
+  path current.weather_code wmo_code
+
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?site=GSFC&year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD15=1&AVG=10
+ttl 600
+force em
+on earth 38.99 -76.84
+tail
+format text
+field_in AOD_1640nm atmosphere_aerosol_optical_depth_gsfc
+
+url https://air-quality-api.open-meteo.com/v1/air-quality?latitude={lat}&longitude={lon}&current=pm10,pm2_5,carbon_monoxide,nitrogen_dioxide,sulphur_dioxide,ozone&timezone=auto
+ttl 600
+force diffusion
+at sun 1.0
+pos atmosphere_lat atmosphere_lon
+  path latitude lat
+  path longitude lon
+  field current.pm2_5 pm2_5
+  field current.pm10 pm10
+  field current.nitrogen_dioxide nitrogen_dioxide
+  field current.carbon_monoxide carbon_monoxide
+  field current.sulphur_dioxide sulphur_dioxide
+  field current.ozone ozone
+
+url https://air-quality-api.open-meteo.com/v1/air-quality?latitude={lat}&longitude={lon}&current=ammonia,dust,aerosol_optical_depth,formaldehyde
+ttl 600
+force diffusion
+at sun 1.0
+pos atmosphere_lat atmosphere_lon
+  path latitude lat
+  path longitude lon
+  field current.ammonia ammonia
+  field current.dust dust
+  field current.formaldehyde formaldehyde
+  field current.aerosol_optical_depth aerosol_optical_depth
+
+url https://air-quality-api.open-meteo.com/v1/air-quality?latitude={lat}&longitude={lon}&current=us_aqi,us_aqi_pm2_5&timezone=auto
+ttl 600
+force diffusion
+at sun 1.0
+pos atmosphere_lat atmosphere_lon
+  path latitude lat
+  path longitude lon
+  field current.us_aqi us_aqi
+
+url https://aviationweather.gov/api/data/pirep?bbox=-90,-180,90,180&hours=3&format=json
+ttl 600
+force acoustic
+at sun 1
+map .
+lat_key lat
+lon_key lon
+  field_in icaoId icaoId
+  field_in acType acType
+  field_in temp temp
+  field_in wdir wdir
+  field_in wspd wspd
+  field_in fltLvl fltLvl
+  field_in wxString wxString
+  field_in receiptTime receipTime
+  field_in obsTime obsTime
+  field_in rawOb rawOb
+
+url https://aviationweather.gov/api/data/airsigmet?format=json&hours=3
+ttl 600
+force acoustic
+at sun 1
+map .
+lat_key coords.0.lat
+lon_key coords.0.lon
+  field_in seriesId seriesId
+  field_in hazard hazard
+  field_in severity severity
+  field_in airSigmetType airSigmetType
+  field_in altitudeHi1 altitudeHi1
+  field_in altitudeLow1 altitudeLow1
+  field_in movementDir movementDir
+  field_in movementSpd movementSpd
+  field_in rawAirSigmet rawAirSigmet
+  field_in validTimeFrom validTimeFrom
+  field_in validTimeTo validTimeTo
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,wind_direction_10m
+ttl 600
+force em
+on earth -25.0 135.0
+  field current.temperature_2m temperature_2m
+  field current.apparent_temperature apparent_temperature
+  field current.relative_humidity_2m relative_humidity_2m
+  field current.wind_speed_10m wind_speed_10m
+  field current.wind_direction_10m wind_direction_10m
+  path current bom_obs_data
+
+url https://api.weather.bom.gov.au/v1/warnings/{lat},{lon}
+ttl 600
+force em
+on earth -25.0 135.0
+map data.warnings
+  field_in type type
+  field_in level level
+  field_in message message
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=wind_speed_10m,wind_direction_10m&hourly=windspeed_250hPa
+ttl 600
+force em
+at sun 1.0
+pos atmosphere_lat atmosphere_lon
+  path latitude lat
+  path longitude lon
+last hourly.windspeed_250hPa atmosphere_jetstream_250hpa_ms
+
+url https://aviationweather.gov/api/data/metar?format=json&bbox=-180,-90,180,90
+ttl 600
+force acoustic
+on earth 0 0
+map .
+lat_key lat
+lon_key lon
+  field_in temp temp
+  field_in altim altim
+  field_in wspd wspd
+  field_in visib visib
+alt_key elev
+
+url https://aviationweather.gov/api/data/airsigmet?format=json
+ttl 600
+force em
+on earth 0 0
+map .
+lat_key coords.0.lat
+lon_key coords.0.lon
+  field_in altitudeHi1 altitudeHi1
+  field_in movementDir movementDir
+  field_in movementSpd movementSpd
+
+url https://air-quality-api.open-meteo.com/v1/air-quality?latitude={lat}&longitude={lon}&current=pm10,pm2_5,carbon_monoxide,nitrogen_dioxide,sulphur_dioxide,ozone,aerosol_optical_depth&timezone=auto
+ttl 600
+force diffusion
+at sun 1.0
+pos atmosphere_lat atmosphere_lon
+  path latitude lat
+  path longitude lon
+  path current.pm10 pm10_ugm3
+  path current.pm2_5 pm25_ugm3
+  path current.carbon_monoxide co_ugm3
+  path current.nitrogen_dioxide no2_ugm3
+  path current.sulphur_dioxide so2_ugm3
+  path current.ozone o3_ugm3
+  path current.aerosol_optical_depth aod
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=temperature_1000hPa,temperature_950hPa,temperature_925hPa,temperature_900hPa,temperature_850hPa,temperature_800hPa,temperature_700hPa,temperature_600hPa,temperature_500hPa,temperature_400hPa,temperature_300hPa,temperature_250hPa,temperature_200hPa,temperature_150hPa,temperature_100hPa,temperature_70hPa,temperature_50hPa,relative_humidity_1000hPa,relative_humidity_950hPa,relative_humidity_925hPa,relative_humidity_850hPa,relative_humidity_700hPa,relative_humidity_500hPa,relative_humidity_300hPa,relative_humidity_200hPa,relative_humidity_100hPa,relative_humidity_50hPa,wind_speed_1000hPa,wind_speed_950hPa,wind_speed_925hPa,wind_speed_850hPa,wind_speed_700hPa,wind_speed_500hPa,wind_speed_300hPa,wind_speed_250hPa,wind_speed_200hPa,wind_speed_100hPa,wind_speed_70hPa,wind_speed_50hPa&timezone=auto
+ttl 600
+force em
+at sun 1.0
+pos atmosphere_lat atmosphere_lon
+  path latitude lat
+  path longitude lon
+  path hourly.temperature_1000hPa.0 temperature_1000hPa
+  path hourly.temperature_950hPa.0 temperature_950hPa
+  path hourly.temperature_925hPa.0 temperature_925hPa
+  path hourly.temperature_900hPa.0 temperature_900hPa
+  path hourly.temperature_850hPa.0 temperature_850hPa
+  path hourly.temperature_800hPa.0 temperature_800hPa
+  path hourly.temperature_700hPa.0 temperature_700hPa
+  path hourly.temperature_600hPa.0 temperature_600hPa
+  path hourly.temperature_500hPa.0 temperature_500hPa
+  path hourly.temperature_400hPa.0 temperature_400hPa
+  path hourly.temperature_300hPa.0 temperature_300hPa
+  path hourly.temperature_250hPa.0 temperature_250hPa
+  path hourly.temperature_200hPa.0 temperature_200hPa
+  path hourly.temperature_150hPa.0 temperature_150hPa
+  path hourly.temperature_100hPa.0 temperature_100hPa
+  path hourly.temperature_70hPa.0 temperature_70hPa
+  path hourly.temperature_50hPa.0 temperature_50hPa
+  path hourly.relative_humidity_1000hPa.0 relative_humidity_1000hPa
+  path hourly.relative_humidity_950hPa.0 relative_humidity_950hPa
+  path hourly.relative_humidity_925hPa.0 relative_humidity_925hPa
+  path hourly.relative_humidity_850hPa.0 relative_humidity_850hPa
+  path hourly.relative_humidity_700hPa.0 relative_humidity_700hPa
+  path hourly.relative_humidity_500hPa.0 relative_humidity_500hPa
+  path hourly.relative_humidity_300hPa.0 relative_humidity_300hPa
+  path hourly.relative_humidity_200hPa.0 relative_humidity_200hPa
+  path hourly.relative_humidity_100hPa.0 relative_humidity_100hPa
+  path hourly.relative_humidity_50hPa.0 relative_humidity_50hPa
+  path hourly.wind_speed_1000hPa.0 wind_speed_1000hPa
+  path hourly.wind_speed_950hPa.0 wind_speed_950hPa
+  path hourly.wind_speed_925hPa.0 wind_speed_925hPa
+  path hourly.wind_speed_850hPa.0 wind_speed_850hPa
+  path hourly.wind_speed_700hPa.0 wind_speed_700hPa
+  path hourly.wind_speed_500hPa.0 wind_speed_500hPa
+  path hourly.wind_speed_300hPa.0 wind_speed_300hPa
+  path hourly.wind_speed_250hPa.0 wind_speed_250hPa
+  path hourly.wind_speed_200hPa.0 wind_speed_200hPa
+  path hourly.wind_speed_100hPa.0 wind_speed_100hPa
+  path hourly.wind_speed_70hPa.0 wind_speed_70hPa
+  path hourly.wind_speed_50hPa.0 wind_speed_50hPa
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=lightning_potential&minutely_15=lightning_potential
+ttl 600
+force em
+at sun 1.0
+pos atmosphere_lat atmosphere_lon
+  path latitude lat
+  path longitude lon
+  field minutely_15.lightning_potential lightning_potential
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&daily=cape_max,wind_gusts_10m_max
+ttl 600
+force em
+at sun 1.0
+pos atmosphere_lat atmosphere_lon
+  path latitude lat
+  path longitude lon
+  field daily.cape_max.0 convective_potential_jkg
+  field daily.wind_gusts_10m_max.0 wind_gust_max_ms
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=visibility,freezing_level_height,snow_depth,precipitation_probability,weather_code,sunshine_duration,is_day
+ttl 600
+force em
+at sun 1.0
+pos atmosphere_lat atmosphere_lon
+  path latitude lat
+  path longitude lon
+  path current.visibility openmeteo_visibility_m
+  path current.sunshine_duration sunshine_duration_today_s
+  path current.is_day is_day
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,rain,showers,snowfall,weather_code,cloud_cover,pressure_msl,surface_pressure,wind_speed_10m,wind_direction_10m,wind_gusts_10m&timezone=auto
+ttl 600
+force em
+at sun 1.0
+pos atmosphere_lat atmosphere_lon
+  path latitude lat
+  path longitude lon
+  field current.temperature_2m temperature_2m
+  field current.relative_humidity_2m relative_humidity_2m
+  field current.pressure_msl pressure_msl
+  field current.wind_speed_10m wind_speed_10m
+  field current.wind_direction_10m wind_direction_10m
+  field current.cloud_cover cloud_cover
+  field current.precipitation precipitation
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,surface_pressure,wind_speed_10m,wind_direction_10m
+ttl 600
+force em
+at sun 1.0
+pos atmosphere_lat atmosphere_lon
+  path latitude lat
+  path longitude lon
+  path current.temperature_2m temp_c
+  path current.relative_humidity_2m humidity_pct
+  path current.precipitation precipitation_mm
+  path current.surface_pressure pressure_hpa
+  path current.wind_speed_10m wind_speed_ms
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=et0_fao_evapotranspiration,vapor_pressure_deficit,dew_point_2m,weather_code,is_day,rain,showers&timezone=auto
+ttl 600
+force em
+at sun 1.0
+pos atmosphere_lat atmosphere_lon
+  path latitude lat
+  path longitude lon
+  path current.et0_fao_evapotranspiration et0_evapotranspiration_mm
+  path current.vapor_pressure_deficit vapor_pressure_deficit_kpa
+  path current.dew_point_2m dewpoint_2m_c
+  path current.weather_code openmeteo_weather_code_wmo
+  path current.rain rain_mm
+  path current.showers showers_mm
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_500hPa,temperature_850hPa,geopotential_height_500hPa,geopotential_height_850hPa&timezone=auto
+ttl 600
+force em
+at sun 1.0
+pos atmosphere_lat atmosphere_lon
+  path latitude lat
+  path longitude lon
+  path current.temperature_500hPa temp_500hpa_c
+  path current.temperature_850hPa temp_850hpa_c
+  path current.geopotential_height_500hPa geopotential_500hpa_m
+  path current.geopotential_height_850hPa geopotential_850hpa_m
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=wind_speed_10m,wind_speed_80m,wind_speed_120m,wind_speed_180m,wind_direction_10m,wind_direction_80m,wind_direction_120m,wind_direction_180m,wind_gusts_10m,temperature_80m,temperature_120m,temperature_180m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,uv_index,uv_index_clear_sky,dew_point_2m,pressure_msl,surface_pressure&timezone=auto
+ttl 600
+force em
+at sun 1.0
+pos atmosphere_lat atmosphere_lon
+  path latitude lat
+  path longitude lon
+  path current.wind_speed_80m wind_80m_kmh
+  path current.wind_speed_120m wind_120m_kmh
+  path current.wind_speed_180m wind_180m_kmh
+  path current.wind_direction_80m winddir_80m_deg
+  path current.wind_direction_120m winddir_120m_deg
+  path current.wind_direction_180m winddir_180m_deg
+  path current.temperature_80m temp_80m_c
+  path current.temperature_120m temp_120m_c
+  path current.temperature_180m temp_180m_c
+  path current.cloud_cover_low cloud_low_pct
+  path current.cloud_cover_mid cloud_mid_pct
+  path current.cloud_cover_high cloud_high_pct
+  path current.uv_index uv_index
+  path current.uv_index_clear_sky uv_clearsky
+  path current.dew_point_2m dewpoint_c
+  path current.pressure_msl pressure_msl_hpa
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=snowfall,snow_depth
+ttl 600
+force em
+at sun 1.0
+pos atmosphere_lat atmosphere_lon
+  path latitude lat
+  path longitude lon
+  path current.snowfall openmeteo_snowfall_cm
+  path current.snow_depth snow_depth_m
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=snow_depth&timezone=auto
+ttl 600
+force em
+at sun 1.0
+pos atmosphere_lat atmosphere_lon
+  path latitude lat
+  path longitude lon
+  field current.snow_depth snow_depth
+
+url https://bmkg-restapi.vercel.app/v1/earthquake/recent
+ttl 600
+force em
+on earth 0 0
+map data
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+  field_in magnitude magnitude
+  field_in kedalaman kedalaman
+  field_in wilayah wilayah
+  field_in waktu waktu
+  field_in dirasakan dirasakan
+
+url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&minmag=3&limit=500
+ttl 600
+force em
+on earth 0 0
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+  field_in properties.mag mag
+  field_in properties.flynn_region flynn_region
+  field_in properties.time time
+  field_in properties.depth depth
+alt_key geometry.coordinates.2
+
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Active_Hurricanes_Sampler/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+ttl 600
+force advective
+on earth 0 0
+map features
+  field_in attributes.OBJECTID OBJECTID
+  field_in attributes.STORMNAME STORMNAME
+  field_in attributes.STORMTYPE STORMTYPE
+  field_in attributes.ADVDATE ADVDATE
+  field_in attributes.ADVISNUM ADVISNUM
+  field_in attributes.STORMNUM STORMNUM
+  field_in attributes.FCSTPRD FCSTPRD
+  field_in attributes.BASIN BASIN
+lat_key attributes.lat
+lon_key attributes.lon
+
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Active_Hurricanes_v1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+ttl 600
+force advective
+on earth 0 0
+map features
+  field_in attributes.OBJECTID OBJECTID
+  field_in attributes.STORMNAME STORMNAME
+  field_in attributes.STORMTYPE STORMTYPE
+  field_in attributes.ADVDATE ADVDATE
+  field_in attributes.ADVISNUM ADVISNUM
+  field_in attributes.STORMNUM STORMNUM
+  field_in attributes.FCSTPRD FCSTPRD
+  field_in attributes.BASIN BASIN
+lat_key attributes.lat
+lon_key attributes.lon
+
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Air_Quality_PM25_Latest_Results/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+ttl 600
+force diffusion
+at sun 1.0
+map features
+  field_in attributes.OBJECTID OBJECTID
+  field_in attributes.location_id location_id
+  field_in attributes.city city
+  field_in attributes.location location
+  field_in attributes.country country
+  field_in attributes.lastUpdated lastUpdated
+  field_in attributes.value value
+  field_in attributes.unit unit
+lat_key geometry.y
+lon_key geometry.x
+
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/ASAM_events_V1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+ttl 600
+force em
+at sun 1.0
+map features
+  field_in attributes.OBJECTID OBJECTID
+  field_in attributes.reference reference
+  field_in attributes.dateofocc dateofocc
+  field_in attributes.subreg subreg
+  field_in attributes.hostility_d hostility_d
+  field_in attributes.victim_d victim_d
+  field_in attributes.description description
+  field_in attributes.hostilitytype_l hostilitytype_l
+lat_key geometry.y
+lon_key geometry.x
+
+url https://services.arcgis.com/wjcPoefzjpzCgffS/arcgis/rest/services/AirQualityHealthIndexCanada/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+ttl 600
+force diffusion
+at sun 1.0
+map features
+  field_in attributes.id id
+  field_in attributes.aqhi_type aqhi_type
+  field_in attributes.location_name_en location_name_en
+  field_in attributes.location_name_fr location_name_fr
+lat_key geometry.y
+lon_key geometry.x
+
+url https://services.arcgis.com/txWDfZ2LIgzmw5Ts/arcgis/rest/services/Hotspots_(CWFIS)/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=1000
+ttl 600
+force thermal
+on earth 0 0
+map features
+  field_in attributes.lat lat
+  field_in attributes.lon lon
+  field_in attributes.rep_date rep_date
+  field_in attributes.source source
+lat_key attributes.lat
+lon_key attributes.lon
+
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Live_Stream_Gauges_v1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+ttl 600
+force advective
+at sun 1.0
+map features
+  field_in attributes.OBJECTID OBJECTID
+  field_in attributes.stationid stationid
+  field_in attributes.stationurl stationurl
+  field_in attributes.graphurl graphurl
+  field_in attributes.org org
+  field_in attributes.stage_ft stage_ft
+lat_key geometry.y
+lon_key geometry.x
+
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/MODIS_Thermal_v1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+ttl 600
+force thermal
+at sun 1.0
+map features
+  field_in attributes.OBJECTID OBJECTID
+  field_in attributes.BRIGHTNESS BRIGHTNESS
+  field_in attributes.SCAN SCAN
+  field_in attributes.TRACK TRACK
+  field_in attributes.SATELLITE SATELLITE
+  field_in attributes.CONFIDENCE CONFIDENCE
+  field_in attributes.VERSION VERSION
+  field_in attributes.BRIGHT_T31 BRIGHT_T31
+lat_key geometry.y
+lon_key geometry.x
+
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/NOAA_storm_reports_Sampler/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+ttl 600
+force seismic-body
+on earth 0 0
+map features
+  field_in attributes.OBJECTID OBJECTID
+  field_in attributes.UTC_DATETIME UTC_DATETIME
+  field_in attributes.HAIL_SIZE HAIL_SIZE
+  field_in attributes.LOCATION LOCATION
+  field_in attributes.COUNTY COUNTY
+  field_in attributes.STATE STATE
+  field_in attributes.LATITUDE LATITUDE
+  field_in attributes.LONGITUDE LONGITUDE
+lat_key attributes.lat
+lon_key attributes.lon
+
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/NOAA_storm_reports_v1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+ttl 600
+force seismic-body
+on earth 0 0
+map features
+  field_in attributes.OBJECTID OBJECTID
+  field_in attributes.UTC_DATETIME UTC_DATETIME
+  field_in attributes.HAIL_SIZE HAIL_SIZE
+  field_in attributes.LOCATION LOCATION
+  field_in attributes.COUNTY COUNTY
+  field_in attributes.STATE STATE
+  field_in attributes.LATITUDE LATITUDE
+  field_in attributes.LONGITUDE LONGITUDE
+lat_key attributes.lat
+lon_key attributes.lon
+
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Recent_Hurricanes_v1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+ttl 600
+force advective
+on earth 0 0
+map features
+  field_in attributes.OBJECTID OBJECTID
+  field_in attributes.STORMNAME STORMNAME
+  field_in attributes.DTG DTG
+  field_in attributes.YEAR YEAR
+  field_in attributes.MONTH MONTH
+  field_in attributes.DAY DAY
+  field_in attributes.HHMM HHMM
+  field_in attributes.TAU TAU
+lat_key attributes.lat
+lon_key attributes.lon
+
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/USA_Wildfires_v1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+ttl 600
+force thermal
+at sun 1.0
+map features
+  field_in attributes.OBJECTID OBJECTID
+  field_in attributes.IncidentName IncidentName
+  field_in attributes.IncidentTypeCategory IncidentTypeCategory
+  field_in attributes.DailyAcres DailyAcres
+lat_key geometry.y
+lon_key geometry.x
+
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/USGS_Seismic_Data_v1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+ttl 600
+force seismic-body
+on earth 0 0
+map features
+  field_in attributes.OBJECTID OBJECTID
+  field_in attributes.id id
+  field_in attributes.mag mag
+  field_in attributes.eventType eventType
+  field_in attributes.sig sig
+  field_in attributes.alert alert
+  field_in attributes.place place
+  field_in attributes.hoursOld hoursOld
+lat_key attributes.lat
+lon_key attributes.lon

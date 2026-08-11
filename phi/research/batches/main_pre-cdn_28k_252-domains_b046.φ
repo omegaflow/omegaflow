@@ -1,0 +1,406 @@
+source astro_simbad_symbiotic_stars
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_prigozhin_pulsars.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+source astro_simbad_ttauri_stars
+ttl 604800
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_nearby_plx10.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field phot_g_mean_mag star_g_mag
+
+source astro_simbad_variable_stars
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_gcvs_variables.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+source astro_simbad_white_dwarfs
+ttl 604800
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_nearby_plx10.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field phot_g_mean_mag star_g_mag
+
+source astro_simbad_wolf_rayet_stars
+ttl 604800
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_bright_vmag9.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field phot_g_mean_mag star_g_mag
+
+source astro_simbad_xray_sources
+ttl 604800
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_2qz.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+source astro_simbad_yellow_supergiants
+ttl 604800
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_bright_vmag9.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field phot_g_mean_mag star_g_mag
+
+source astro_simbad_young_stellar_objects
+ttl 604800
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_nearby_plx10.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field phot_g_mean_mag star_g_mag
+
+source astro_simbad_yso
+ttl 604800
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_nearby_plx10.json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field phot_g_mean_mag star_g_mag
+
+source technosphere_wri_global_power_plants
+ttl 604800
+force thermal
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/mirror_power_plants_wri.csv
+format csv
+map .
+lat_key latitude
+lon_key longitude
+field capacity_mw wri_plant_capacity_mw
+field primary_fuel wri_primary_fuel
+
+source astro_alfalfa_catalog
+ttl 2592000
+force em
+url https://egg.astro.cornell.edu/alfalfa/data/a40files/a40.datafile1.csv
+verify false
+format csv
+map data
+field_in 0 agc_nr
+field_in 1 name
+field_in 2 ra_deg_hi
+field_in 3 dec_deg_hi
+field_in 4 ra_deg_oc
+field_in 5 dec_deg_oc
+field_in 6 vhelio_km_s
+field_in 7 w50_km_s
+field_in 8 err_w50
+field_in 9 hi_flux_jy
+field_in 10 err_flux
+field_in 11 snr
+field_in 12 rms
+field_in 13 dist_mpc
+field_in 14 log_m_sun
+lat_key 2
+lon_key 3
+
+source atmosphere_climate_projection
+ttl 2592000
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_climate_projection.json
+pos atmosphere_lat atmosphere_lon
+path latitude atmosphere_lat
+path longitude atmosphere_lon
+first temperature_2m_max atmosphere_climate_temp_max_c
+first temperature_2m_min atmosphere_climate_temp_min_c
+first precipitation_sum atmosphere_climate_precip_mm
+
+source atmosphere_hadcrut5_temp
+ttl 2592000
+force em
+url https://www.metoffice.gov.uk/hadobs/hadcrut5/data/HadCRUT.5.1.0.0/analysis/diagnostics/HadCRUT.5.1.0.0.analysis.summary_series.global.annual.csv
+wgs84 50.727 -3.476
+format csv
+last line atmosphere_hadcrut5_temp_anomaly_raw
+
+source biosphere_globalforestwatch_tree_cover_loss
+ttl 2592000
+force em
+url https://data-api.globalforestwatch.org/dataset/umd_tree_cover_loss/latest
+wgs84 38.907 -77.036
+field data.0.areaHa biosphere_tree_cover_loss_ha_latest
+
+source biosphere_worldbank_birth_rate
+ttl 2592000
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_birth_rate.json
+wgs84 38.899 -77.043
+field 1.0.value biosphere_birth_rate_per_1000
+
+source biosphere_worldbank_co2_emissions
+ttl 2592000
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_co2_emissions.json
+wgs84 38.899 -77.043
+field 1.0.value worldbank_co2_emissions_value
+
+source biosphere_worldbank_death_rate
+ttl 2592000
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_death_rate.json
+wgs84 38.899 -77.043
+field 1.0.value biosphere_death_rate_per_1000
+
+source biosphere_worldbank_gdp_growth_afghanistan
+ttl 2592000
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_afghanistan.json
+wgs84 33.83 67.71
+field 1.0.value biosphere_gdp_growth_afghanistan_pct
+
+source biosphere_worldbank_gdp_growth_albania
+ttl 2592000
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_albania.json
+wgs84 41.33 19.82
+field 1.0.value biosphere_gdp_growth_albania_pct
+
+source biosphere_worldbank_gdp_growth_algeria
+ttl 2592000
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_algeria.json
+wgs84 36.75 3.06
+field 1.0.value biosphere_gdp_growth_algeria_pct
+
+source biosphere_worldbank_gdp_growth_american_samoa
+ttl 2592000
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_american_samoa.json
+wgs84 -14.28 -170.70
+field 1.0.value biosphere_gdp_growth_american_samoa_pct
+
+source biosphere_worldbank_gdp_growth_andorra
+ttl 2592000
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_andorra.json
+wgs84 42.51 1.52
+field 1.0.value biosphere_gdp_growth_andorra_pct
+
+source biosphere_worldbank_gdp_growth_angola
+ttl 2592000
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_angola.json
+wgs84 -8.84 13.23
+field 1.0.value biosphere_gdp_growth_angola_pct
+
+source biosphere_worldbank_gdp_growth_antigua_and_barbuda
+ttl 2592000
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_antigua_and_barbuda.json
+wgs84 17.12 -61.85
+field 1.0.value biosphere_gdp_growth_antigua_and_barbuda_pct
+
+source biosphere_worldbank_gdp_growth_argentina
+ttl 2592000
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_argentina.json
+wgs84 -34.60 -58.38
+field 1.0.value biosphere_gdp_growth_argentina_pct
+
+source biosphere_worldbank_gdp_growth_armenia
+ttl 2592000
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_armenia.json
+wgs84 40.18 44.51
+field 1.0.value biosphere_gdp_growth_armenia_pct
+
+source biosphere_worldbank_gdp_growth_aruba
+ttl 2592000
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_aruba.json
+wgs84 12.52 -70.03
+field 1.0.value biosphere_gdp_growth_aruba_pct
+
+source biosphere_worldbank_gdp_growth_australia
+ttl 2592000
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_australia.json
+wgs84 -35.28 149.13
+field 1.0.value biosphere_gdp_growth_australia_pct
+
+source biosphere_worldbank_gdp_growth_austria
+ttl 2592000
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_austria.json
+wgs84 48.21 16.37
+field 1.0.value biosphere_gdp_growth_austria_pct
+
+source biosphere_worldbank_gdp_growth_azerbaijan
+ttl 2592000
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_azerbaijan.json
+wgs84 40.40 49.87
+field 1.0.value biosphere_gdp_growth_azerbaijan_pct
+
+source biosphere_worldbank_gdp_growth_bahamas
+ttl 2592000
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_bahamas.json
+wgs84 25.06 -77.35
+field 1.0.value biosphere_gdp_growth_bahamas_pct
+
+source biosphere_worldbank_gdp_growth_bahrain
+ttl 2592000
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_bahrain.json
+wgs84 26.23 50.59
+field 1.0.value biosphere_gdp_growth_bahrain_pct
+
+source biosphere_worldbank_gdp_growth_bangladesh
+ttl 2592000
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_bangladesh.json
+wgs84 23.81 90.41
+field 1.0.value biosphere_gdp_growth_bangladesh_pct
+
+source biosphere_worldbank_gdp_growth_barbados
+ttl 2592000
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_barbados.json
+wgs84 13.10 -59.62
+field 1.0.value biosphere_gdp_growth_barbados_pct
+
+source biosphere_worldbank_gdp_growth_belarus
+ttl 2592000
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_belarus.json
+wgs84 53.90 27.57
+field 1.0.value biosphere_gdp_growth_belarus_pct
+
+source biosphere_worldbank_gdp_growth_belgium
+ttl 2592000
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_belgium.json
+wgs84 50.85 4.35
+field 1.0.value biosphere_gdp_growth_belgium_pct
+
+source biosphere_worldbank_gdp_growth_belize
+ttl 2592000
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_belize.json
+wgs84 17.25 -88.77
+field 1.0.value biosphere_gdp_growth_belize_pct
+
+source biosphere_worldbank_gdp_growth_benin
+ttl 2592000
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_benin.json
+wgs84 6.50 2.60
+field 1.0.value biosphere_gdp_growth_benin_pct
+
+source biosphere_worldbank_gdp_growth_bermuda
+ttl 2592000
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_bermuda.json
+wgs84 32.29 -64.78
+field 1.0.value biosphere_gdp_growth_bermuda_pct
+
+source biosphere_worldbank_gdp_growth_bhutan
+ttl 2592000
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_bhutan.json
+wgs84 27.47 89.64
+field 1.0.value biosphere_gdp_growth_bhutan_pct
+
+source biosphere_worldbank_gdp_growth_bolivia
+ttl 2592000
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_bolivia.json
+wgs84 -16.50 -68.15
+field 1.0.value biosphere_gdp_growth_bolivia_pct
+
+source biosphere_worldbank_gdp_growth_bosnia_and_herzegovina
+ttl 2592000
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_bosnia_and_herzegovina.json
+wgs84 43.85 18.41
+field 1.0.value biosphere_gdp_growth_bosnia_and_herzegovina_pct
+
+source biosphere_worldbank_gdp_growth_botswana
+ttl 2592000
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_botswana.json
+wgs84 -24.63 25.90
+field 1.0.value biosphere_gdp_growth_botswana_pct
+
+source biosphere_worldbank_gdp_growth_brazil
+ttl 2592000
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_brazil.json
+wgs84 -15.80 -47.88
+field 1.0.value biosphere_gdp_growth_brazil_pct
+
+source biosphere_worldbank_gdp_growth_british_virgin_islands
+ttl 2592000
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_british_virgin_islands.json
+wgs84 18.42 -64.62
+field 1.0.value biosphere_gdp_growth_british_virgin_islands_pct
+
+source biosphere_worldbank_gdp_growth_brunei_darussalam
+ttl 2592000
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_brunei_darussalam.json
+wgs84 4.94 114.94
+field 1.0.value biosphere_gdp_growth_brunei_darussalam_pct
+
+source biosphere_worldbank_gdp_growth_bulgaria
+ttl 2592000
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_bulgaria.json
+wgs84 42.70 23.32
+field 1.0.value biosphere_gdp_growth_bulgaria_pct
+
+source biosphere_worldbank_gdp_growth_burkina_faso
+ttl 2592000
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_burkina_faso.json
+wgs84 12.37 -1.52
+field 1.0.value biosphere_gdp_growth_burkina_faso_pct
+
+source biosphere_worldbank_gdp_growth_burundi
+ttl 2592000
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_burundi.json
+wgs84 -3.36 29.92
+field 1.0.value biosphere_gdp_growth_burundi_pct
+
+source biosphere_worldbank_gdp_growth_cabo_verde
+ttl 2592000
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_cabo_verde.json
+wgs84 14.93 -23.51
+field 1.0.value biosphere_gdp_growth_cabo_verde_pct

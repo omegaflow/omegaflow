@@ -1,0 +1,517 @@
+source biosphere_paleoclimate_neotoma_paleoecology
+ttl 86400
+force em
+url https://api.neotomadb.org/v2.0/data/occurrences?ageyounger=0&ageolder=50000&limit=1
+wgs84 43.073 -89.401
+field total paleoclimate_neotoma_occurrences
+
+source hydrosphere_pangaea_oai_geotraces_trace_metals
+ttl 86400
+force diffusion
+url https://ws.pangaea.de/oai/provider?verb=ListRecords&metadataPrefix=oai_dc&set=GEOTRACES
+wgs84 0.0 0.0
+map .
+
+source hydrosphere_pangaea_oai_gnip_oxygen_isotopes
+ttl 86400
+force diffusion
+url https://ws.pangaea.de/oai/provider?verb=ListRecords&metadataPrefix=oai_dc&set=GNIP
+wgs84 0.0 0.0
+map .
+
+source hydrosphere_pangaea_oai_gnir_river_isotopes
+ttl 86400
+force diffusion
+ecliptic 1
+url https://ws.pangaea.de/oai/provider?verb=ListRecords&metadataPrefix=oai_dc&set=GNIR
+map .
+
+source astro_pantheon_plus_sne
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/J_ApJ_938_110_table7.json
+cmap .
+tau_key _dist_m
+ra_key _RA
+dec_key _DE
+z_key zCMB
+field mBcorr pantheon_mBcorr
+
+source subatomic_particle_physics_papers_total
+ttl 86400
+force em
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=find+tc&fields=titles,citation_count
+wgs84 46.233 6.056
+field hits.total subatomic_papers_total
+
+source physics_crossref_dois
+ttl 86400
+force em
+url https://api.crossref.org/works?rows=0
+wgs84 42.530 -71.048
+field message.total-results biosphere_crossref_doi_count
+
+source physics_crossref_jwst_high_z_papers
+ttl 86400
+force em
+url https://api.crossref.org/works?query=JWST+high+redshift+galaxy+candidate&rows=0
+wgs84 39.328 -76.620
+field message.total-results cosmic_jwst_high_z_discovery_papers
+
+source physics_inspirehep_iter_fusion_papers
+ttl 86400
+force em
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=ITER+plasma+fusion&fields=titles,citation_count
+wgs84 43.709 5.777
+field hits.hits.0.metadata.citation_count physics_fusion_research_citations
+
+source physics_openalex_works
+ttl 86400
+force em
+url https://api.openalex.org/works?per-page=1
+wgs84 42.373 -71.110
+field meta.count biosphere_openalex_work_count
+
+source technosphere_pubchem_compounds_total
+ttl 86400
+force em
+url https://pubchem.ncbi.nlm.nih.gov/rest/pug/compounds/count/JSON
+wgs84 38.995 -77.101
+field PC_Compounds.0.properties.0.count molecular_compounds_total
+
+source technosphere_pubchem_substances_total
+ttl 86400
+force em
+url https://pubchem.ncbi.nlm.nih.gov/rest/pug/substances/count/JSON
+wgs84 38.995 -77.101
+field PC_Substances.0.properties.0.count molecular_substances_total
+
+source hydrosphere_rapid_amoc_26n_transport_monthly
+ttl 86400
+force diffusion
+url https://rapid.ac.uk/rapidmoc/rapid_data/datadl.php?data=moc_vertical
+wgs84 26.5 -75.0
+format text
+rows
+field 0 decimal_year
+field 1 moc_upper_sv
+field 2 moc_lower_sv
+field 3 florida_current_sv
+field 4 ekman_sv
+field 5 umo_sv
+
+source hydrosphere_rapid_florida_current_daily
+ttl 86400
+force diffusion
+url https://rapid.ac.uk/rapidmoc/rapid_data/datadl.php?data=fc
+wgs84 27.0 -79.5
+format text
+rows
+field 0 decimal_year
+field 1 florida_current_sv
+field 2 uncertainty_sv
+
+source biosphere_rcsb_pdb_structures_total
+ttl 86400
+force em
+url https://data.rcsb.org/graphql?query={graphStatistics{totalEntries}}
+wgs84 40.444 -74.494
+field data.graphStatistics.totalEntries molecular_pdb_structures_total
+
+source technosphere_ripe_atlas_probes
+ttl 86400
+force em
+url https://atlas.ripe.net/api/v2/probes/?status=1&page_size=500&format=json
+map results
+field id probe_id
+field description description
+field country_code country
+field asn_v4 asn
+field firmware_version fw_version
+field type probe_type
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+
+source astro_sdss_dr18_cone_search
+ttl 86400
+force em
+url https://skyserver.sdss.org/dr18/SkyServerWS/ConeSearch/ConeSearchService?ra={ra}&dec={dec}&sr=6&format=json
+map 0.Rows
+ra_key ra
+dec_key dec
+field objid sdss_objid
+field type source_type
+field u mag_u
+field g mag_g
+field r mag_r
+field i mag_i
+field z mag_z
+
+source astro_sdss_dr18_galaxies
+ttl 86400
+force em
+url https://skyserver.sdss.org/dr18/SearchTools/sql?cmd=SELECT+TOP+50000+ra,dec,z,r,g,i+FROM+SpecObj+WHERE+class%3D%27GALAXY%27+AND+z+BETWEEN+0.01+AND+0.3+AND+zWarning%3D0&format=json
+map .
+ra_key ra
+dec_key dec
+z_key z
+field r mag_r
+field g mag_g
+field i mag_i
+
+source astro_sdss_dr18_qso
+ttl 86400
+force em
+url https://skyserver.sdss.org/dr18/SearchTools/sql?cmd=SELECT+TOP+3000+ra,dec,z,psfMag_r,psfMag_g+FROM+SpecObj+WHERE+class%3D%27QSO%27+AND+z+BETWEEN+0.1+AND+3.0+AND+zWarning%3D0&format=json
+map .
+ra_key ra
+dec_key dec
+z_key z
+field psfMag_r mag_r
+field psfMag_g mag_g
+
+source astro_sdss_dr18_stars
+ttl 86400
+force em
+url https://skyserver.sdss.org/dr18/SearchTools/sql?cmd=SELECT+TOP+50000+ra,dec,r,g,u,i,z+FROM+Star+WHERE+(r-extinction_r)%3C20+AND+clean%3D1&format=json
+map .
+ra_key ra
+dec_key dec
+field r mag_r
+field g mag_g
+field u mag_u
+field i mag_i
+field z mag_z
+
+source geosphere_servir_smap_soil_moisture_global
+ttl 86400
+force diffusion
+url https://gis1.servirglobal.net/arcgis/rest/services/SMAP/SM_1km/MapServer/0/query?where=1%3D1&outFields=*&f=json&resultRecordCount=500
+map features
+lat_key geometry.y
+lon_key geometry.x
+field attributes.sm soil_moisture_pct
+
+source astro_sidc_international_sunspot_number
+ttl 86400
+force em
+ssb
+url https://www.sidc.be/SILSO/DATA/SN_d_tot_V2.0.txt
+format text
+rows
+field_in 0 year
+field_in 1 month
+field_in 2 day
+field_in 3 sunspot_number
+
+source astro_sidc_smoothed_monthly_sunspot_number
+ttl 86400
+force em
+url https://www.sidc.be/SILSO/DATA/SN_ms_tot_V2.0.txt
+wgs84 50.85 4.35
+format text
+rows
+field 0 year
+field 1 month
+field 2 decimal_date
+field 3 monthly_mean_ssn
+field 4 monthly_mean_std
+field 5 num_observations
+field 6 smoothed_ssn
+field 7 smoothed_std
+
+source astro_sidc_sunspot_number_daily
+ttl 86400
+force em
+url https://www.sidc.be/SILSO/DATA/SN_d_tot_V2.0.txt
+wgs84 50.85 4.35
+format text
+rows
+field 0 year
+field 1 month
+field 2 day
+field 3 decimal_year
+field 4 sunspot_number
+field 5 std_dev
+field 6 num_observations
+field 7 definitive_flag
+
+source solar_historical_surface
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/solar_historical_surface.json
+pos atmosphere_lat atmosphere_lon
+path latitude atmosphere_lat
+path longitude atmosphere_lon
+last shortwave_radiation atmosphere_hist_solar_radiation_wm2
+last et0_fao_evapotranspiration atmosphere_hist_evapotranspiration_mm
+
+source technosphere_stackoverflow_questions_total
+ttl 86400
+force em
+url https://api.stackexchange.com/2.3/questions?order=desc&sort=activity&site=stackoverflow&filter=total
+wgs84 37.774 -122.419
+field total biosphere_stackoverflow_questions_total
+
+source subatomic_particles
+ttl 86400
+force em
+ssb
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/mirror_particle2026.csv
+format csv
+last_row ID subatomare_last_pdg_id
+last_row Mass subatomare_last_mass_mev
+last_row Charge subatomare_last_charge
+
+source astro_sunspot_number_global
+ttl 86400
+force em
+ssb
+url https://www.sidc.be/silso/DATA/SN_d_tot_V2.0.txt
+last_line solar_sunspot_number_silso
+
+source astro_sunspot_number_monthly
+ttl 86400
+force em
+ssb
+url https://www.sidc.be/SILSO/DATA/SN_m_tot_V2.0.txt
+last_line solar_sunspot_number_silso
+
+source technosphere_technosphere_stackoverflow_questions
+ttl 86400
+force em
+url https://api.stackexchange.com/2.3/tags?pagesize=1&order=desc&sort=popular&site=stackoverflow
+wgs84 40.712 -74.006
+path items.0.count technosphere_stackoverflow_questions_total
+
+source astro_tess_exoplanet_candidates_total
+ttl 86400
+force em
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+COUNT(*)+FROM+ps+WHERE+pl_discmethod+like+'%25TESS%25'&format=json
+wgs84 42.365 -71.105
+last_line exosphere_tess_candidates_total
+
+source astro_tevcat2_sources
+ttl 86400
+force em
+url https://tevcat2.tevcat.org/api/sources
+map .
+ra_key ra
+dec_key dec
+field name source_name
+field type source_type
+field distance distance_kpc
+field flux flux_tev_crab
+field index spectral_index
+
+source astro_tns_transient_supernovae
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/B_sn_sncat.json
+cmap .
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+z_key z
+field MaxMag tns_max_mag
+field Type tns_sn_type
+
+source astro_twomass_psc_irsa_tap
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?query=SELECT+ra,dec,designation,j_m,h_m,k_m+FROM+fp_psc+WHERE+j_m+IS+NOT+NULL&format=csv&limit=5000
+format text
+rows
+ra_key ra
+dec_key dec
+field designation source_name
+field j_m mag_j
+field h_m mag_h
+field k_m mag_k
+
+source atmosphere_ucar_cosmic2_ro_level3_monthly
+ttl 86400
+force diffusion
+url https://data.cosmic.ucar.edu/gnss-ro/cosmic2/nrt/level3/
+wgs84 0.0 0.0
+format text
+rows
+field 0 file_name
+field 1 file_size
+field 2 last_modified
+
+source astro_uhecr_auger_host_galaxies
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/J_ApJ_935_170_table4.json
+cmap .
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+dist_key DLum 3.0857e22
+field Kmag uhecr_host_kmag
+
+source biosphere_uniprot_proteins_total
+ttl 86400
+force em
+url https://rest.uniprot.org/uniprotkb/statistics
+wgs84 46.233 6.056
+field statistics.0.value molecular_proteins_total
+
+source astro_exoplanet_hosts
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/exoplanets_full.json
+cmap .
+tau_key _dist_m
+ra_key ra
+dec_key dec
+field sy_dist universe_exoplanet_distance_pc
+dist_key 3 3.085677581e16
+
+source astro_exoplanet_params
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/exoplanets_full.json
+cmap .
+tau_key _dist_m
+ra_key ra
+dec_key dec
+field sy_dist universe_exoplanet_distance_pc
+field pl_orbper universe_exoplanet_period_d
+field pl_rade universe_exoplanet_radius_re
+dist_key 2 3.085677581e16
+
+source astro_first_radio
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_first.json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+field Fpeak peak_jy
+field Fint int_jy
+
+source astro_frb_catalog_aa
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_frb.json
+format json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+field Name tns_name
+field DM dm
+
+source astro_frb_catalog_pasa
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/J_other_PASA_33.45_frbcat.json
+cmap data
+tau_key _dist_m
+ra_key 10
+dec_key 11
+field_in 1 frb_name
+field_in 23 dm
+
+source astro_gaia_astrometric_binaries
+ttl 86400
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_gaia_astrometric_binaries.json
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+plx_key 3
+field_in 2 phot_g_mean_mag
+field_in 3 parallax_mas
+field_in 4 ruwe
+
+source astro_gaia_blue_stragglers
+ttl 86400
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_gaia_blue_stragglers.json
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+plx_key 3
+field_in 2 bp_rp
+
+source astro_gaia_bright_giants
+ttl 86400
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_gaia_bright_giants.json
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+plx_key 3
+field_in 2 par
+
+source astro_gaia_nearby_cmap
+ttl 315576000000
+reach_ttl 86400
+catalog_epoch 504921600.0
+flux_from_mag celestial_gaia_nearby_g_magnitude
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_nearby_plx10_cmap.json
+ssb
+format json
+cmap data
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+pmra_key pmra
+pmdec_key pmdec
+field phot_g_mean_mag celestial_gaia_nearby_g_magnitude
+
+source astro_gaia_bulge
+ttl 86400
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_gaia_bulge.json
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+plx_key 3
+field_in 2 mag_g
+
+source astro_gaia_cool_dwarfs
+ttl 86400
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_gaia_cool_dwarfs.json
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+plx_key 3
+field_in 2 mag_g
+
+source astro_gaia_deep_mag
+ttl 86400
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_gaia_deep_mag.json
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+plx_key 3
+field_in 2 mag_g
+field_in 3 par
+
+source astro_gaia_extreme_blue
+ttl 86400
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_gaia_extreme_blue.json
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+plx_key 3
+field_in 2 mag_g
+field_in 3 par
+field_in 4 bp_rp

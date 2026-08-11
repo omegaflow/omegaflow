@@ -1,0 +1,99 @@
+field_in stack_gamma_pos_err astro_xmm_sources_stack_gamma_pos_err
+
+field_in pn_1_ecf astro_xmm_sources_pn_1_ecf
+
+field_in pn_2_ecf astro_xmm_sources_pn_2_ecf
+
+field_in pn_3_ecf astro_xmm_sources_pn_3_ecf
+
+field_in pn_4_ecf astro_xmm_sources_pn_4_ecf
+
+field_in pn_5_ecf astro_xmm_sources_pn_5_ecf
+
+field_in m1_1_ecf astro_xmm_sources_m1_1_ecf
+
+field_in m1_2_ecf astro_xmm_sources_m1_2_ecf
+
+field_in m1_3_ecf astro_xmm_sources_m1_3_ecf
+
+field_in m1_4_ecf astro_xmm_sources_m1_4_ecf
+
+field_in m1_5_ecf astro_xmm_sources_m1_5_ecf
+
+field_in m2_1_ecf astro_xmm_sources_m2_1_ecf
+
+field_in m2_2_ecf astro_xmm_sources_m2_2_ecf
+
+field_in m2_3_ecf astro_xmm_sources_m2_3_ecf
+
+field_in m2_4_ecf astro_xmm_sources_m2_4_ecf
+
+field_in m2_5_ecf astro_xmm_sources_m2_5_ecf
+
+field_in ep_hr1 astro_xmm_sources_ep_hr1
+
+field_in ep_hr1_error astro_xmm_sources_ep_hr1_error
+
+field_in ep_hr2 astro_xmm_sources_ep_hr2
+
+field_in ep_hr2_error astro_xmm_sources_ep_hr2_error
+
+field_in ep_hr3 astro_xmm_sources_ep_hr3
+
+field_in ep_hr3_error astro_xmm_sources_ep_hr3_error
+
+field_in ep_hr4 astro_xmm_sources_ep_hr4
+
+field_in ep_hr4_error astro_xmm_sources_ep_hr4_error
+
+field_in pn_hr1 astro_xmm_sources_pn_hr1
+
+field_in pn_hr1_error astro_xmm_sources_pn_hr1_error
+
+field_in pn_hr2 astro_xmm_sources_pn_hr2
+
+field_in pn_hr2_error astro_xmm_sources_pn_hr2_error
+
+field_in pn_hr3 astro_xmm_sources_pn_hr3
+
+field_in pn_hr3_error astro_xmm_sources_pn_hr3_error
+
+field_in pn_hr4 astro_xmm_sources_pn_hr4
+
+field_in pn_hr4_error astro_xmm_sources_pn_hr4_error
+
+field_in m1_hr1 astro_xmm_sources_m1_hr1
+
+field_in m1_hr1_error astro_xmm_sources_m1_hr1_error
+
+field_in m1_hr2 astro_xmm_sources_m1_hr2
+
+field_in m1_hr2_error astro_xmm_sources_m1_hr2_error
+
+field_in m1_hr3 astro_xmm_sources_m1_hr3
+
+field_in m1_hr3_error astro_xmm_sources_m1_hr3_error
+
+field_in m1_hr4 astro_xmm_sources_m1_hr4
+
+field_in m1_hr4_error astro_xmm_sources_m1_hr4_error
+
+field_in m2_hr1 astro_xmm_sources_m2_hr1
+
+field_in m2_hr1_error astro_xmm_sources_m2_hr1_error
+
+field_in m2_hr2 astro_xmm_sources_m2_hr2
+
+field_in m2_hr2_error astro_xmm_sources_m2_hr2_error
+
+field_in m2_hr3 astro_xmm_sources_m2_hr3
+
+field_in m2_hr3_error astro_xmm_sources_m2_hr3_error
+
+field_in m2_hr4 astro_xmm_sources_m2_hr4
+
+field_in m2_hr4_error astro_xmm_sources_m2_hr4_error
+
+field_in pn_1_exposure astro_xmm_sources_pn_1_exposure
+
+field_in pn_2_exposure astro_xmm_sources_pn_2_exposure

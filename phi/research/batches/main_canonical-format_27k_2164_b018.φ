@@ -1,0 +1,733 @@
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+name,ra,dec,flux_10_1000,flux_10_30,flux_30_100,flux_100_1000,spectral_index,redshift,assoc_name+FROM+fermifhl+WHERE+flux_10_1000+IS+NOT+NULL+ORDER+BY+flux_10_1000+DESC
+ttl 86400
+force em
+body earth
+at sun 1.0
+format universal
+rows
+ra_key ra
+dec_key dec
+z_key redshift
+field_in flux_10_1000 flux_10_1000
+field_in spectral_index spectral_index
+field_in assoc_name assoc_name
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+name,ra,dec,flux_density,redshift,spectral_index,nu_synpeak,class1,assoc_name+FROM+fermilpsc+WHERE+class1+IN+('BLL','FSRQ')+AND+redshift+IS+NOT+NULL+ORDER+BY+flux_density+DESC
+ttl 86400
+force em
+body earth
+at sun 1.0
+format universal
+rows
+ra_key ra
+dec_key dec
+z_key redshift
+field_in flux_density flux_density
+field_in spectral_index spectral_index
+field_in class1 class1
+field_in assoc_name assoc_name
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+name,ra,dec,flux_density,spectral_index,signif_avg,class1,extended,assoc_name,redshift+FROM+fermilpsc+WHERE+redshift+IS+NOT+NULL+ORDER+BY+flux_density+DESC
+ttl 86400
+force em
+body earth
+at sun 1.0
+format universal
+rows
+ra_key ra
+dec_key dec
+z_key redshift
+field_in flux_density flux_density
+field_in spectral_index spectral_index
+field_in signif_avg signif_avg
+field_in class1 class1
+field_in assoc_name assoc_name
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2704+name,ra,dec,t90,fluence,peak_flux,time_trigger+FROM+batsegrb+WHERE+ra+IS+NOT+NULL+ORDER+BY+time_trigger+DESC
+ttl 86400
+force em
+body earth
+at sun 1.0
+format universal
+rows
+ra_key ra
+dec_key dec
+field_in name name
+field_in t90 t90
+field_in fluence fluence
+field_in peak_flux peak_flux
+field_in time_trigger time_trigger
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+200+name,ra,dec,type,period,mass_donor,mass_bh,dist,classification+FROM+blackholebin+WHERE+ra+IS+NOT+NULL+ORDER+BY+mass_bh+DESC
+ttl 86400
+force em
+body earth
+at sun 1.0
+format universal
+rows
+ra_key ra
+dec_key dec
+field_in name name
+field_in type type
+field_in period period
+field_in mass_donor mass_donor
+field_in mass_bh mass_bh
+field_in classification classification
+dist_key dist
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+50000+name,ra,dec,extent_flag,var_flag,conf_flag+FROM+csc+WHERE+conf_flag%3D0+ORDER+BY+name+ASC
+ttl 86400
+force em
+body earth
+at sun 1.0
+format universal
+rows
+ra_key ra
+dec_key dec
+field_in name name
+field_in extent_flag extent_flag
+field_in var_flag var_flag
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+700+name,ra,dec,soft_flux,hard_flux,full_flux,band_ratio,photon_index,redshift+FROM+cdfnchandra+WHERE+ra+IS+NOT+NULL+ORDER+BY+full_flux+DESC
+ttl 86400
+force em
+body earth
+at sun 1.0
+format universal
+rows
+ra_key ra
+dec_key dec
+z_key redshift
+field_in soft_flux soft_flux
+field_in hard_flux hard_flux
+field_in full_flux full_flux
+field_in photon_index photon_index
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+name,ra,dec,flux_s,flux_h,flux_f,photon_index_ap,z_ap+FROM+cdfs7ms+WHERE+ra+IS+NOT+NULL+ORDER+BY+flux_f+DESC
+ttl 86400
+force em
+body earth
+at sun 1.0
+format universal
+rows
+ra_key ra
+dec_key dec
+z_key z_ap
+field_in flux_s flux_s
+field_in flux_h flux_h
+field_in flux_f flux_f
+field_in photon_index_ap photon_index_ap
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+name,ra,dec,flux,flux_err,photon_index,exposure+FROM+chan_gc+WHERE+ra+IS+NOT+NULL+ORDER+BY+flux+DESC
+ttl 86400
+force em
+body earth
+at sun 1.0
+format universal
+rows
+ra_key ra
+dec_key dec
+field_in flux flux
+field_in photon_index photon_index
+field_in exposure exposure
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?request=doQuery&lang=ADQL&format=text&query=SELECT+TOP+100+ra,dec,exposure+FROM+chanmaster
+ttl 86400
+force em
+body earth
+at sun 1.0
+format universal
+map .
+field_in 2 2
+lat_key 0
+lon_key 1
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+obsid,name,ra,dec,exposure,instrument,obs_date+FROM+chanmaster+WHERE+status%3D'archived'+AND+exposure%3E10000+ORDER+BY+obs_date+DESC
+ttl 86400
+force em
+body earth
+at sun 1.0
+format universal
+map .
+ra_key ra
+lon_key dec
+field_in obsid obsid
+field_in exposure exposure
+field_in instrument instrument
+field_in obs_date obs_date
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+3000+obsid,name,ra,dec,exposure,detector,time+FROM+chanmaster+WHERE+status%3D%27archived%27+AND+exposure%3E10000+ORDER+BY+time+DESC
+ttl 86400
+force em
+body earth
+at sun 1.0
+format universal
+map .
+ra_key ra
+lon_key dec
+field_in obsid obsid
+field_in exposure exposure
+field_in detector detector
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+200+name,ra,dec,distance,age,type,obs_id+FROM+chansnr+WHERE+ra+IS+NOT+NULL+ORDER+BY+distance+ASC
+ttl 86400
+force em
+body earth
+at sun 1.0
+format universal
+rows
+ra_key ra
+dec_key dec
+field_in name name
+field_in distance distance
+field_in age age
+field_in type type
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+name,ra,dec,glat,glon,pivot_energy,flux_density,spectral_index,signif_avg,class1,assoc_name+FROM+fermilpsc+WHERE+signif_avg%3E10+ORDER+BY+signif_avg+DESC
+ttl 86400
+force em
+body earth
+at sun 1.0
+format universal
+rows
+ra_key ra
+dec_key dec
+field_in pivot_energy pivot_energy
+field_in flux_density flux_density
+field_in spectral_index spectral_index
+field_in signif_avg signif_avg
+field_in class1 class1
+field_in assoc_name assoc_name
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+3000+name,ra,dec,pl_flux_density,pl_index,detection_significance,source_type+FROM+fermilpsc+WHERE+detection_significance%3E10+AND+source_type+IN+(%27bll%27,%27fsrq%27,%27bcu%27)+ORDER+BY+pl_flux_density+DESC
+ttl 86400
+force em
+body earth
+at sun 1.0
+format universal
+rows
+ra_key ra
+dec_key dec
+field_in name name
+field_in pl_flux_density pl_flux_density
+field_in source_type source_type
+field_in flux_density flux_density
+field_in spectral_index spectral_index
+field_in signif_avg signif_avg
+field_in class1 class1
+field_in assoc_name assoc_name
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+50000+name,ra,dec,detection_significance,pl_flux_density,pl_index,source_type+FROM+fermilpsc+WHERE+detection_significance%3E10+ORDER+BY+detection_significance+DESC
+ttl 86400
+force em
+body earth
+at sun 1.0
+format universal
+rows
+ra_key ra
+dec_key dec
+field_in name name
+field_in pl_flux_density pl_flux_density
+field_in pl_index pl_index
+field_in source_type source_type
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+3500+name,ra,dec,redshift,flux_1_100_gev,source_type,nu_syn+FROM+fermilac+WHERE+redshift+IS+NOT+NULL+AND+redshift%3E0+ORDER+BY+flux_1_100_gev+DESC
+ttl 86400
+force em
+body earth
+at sun 1.0
+format universal
+rows
+ra_key ra
+dec_key dec
+z_key redshift
+field_in name name
+field_in flux_1_100_gev flux_1_100_gev
+field_in nu_syn nu_syn
+field_in source_type source_type
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+name,ra,dec,t90,fluence,peak_flux,redshift,trigger_time,classification+FROM+fermigbrst+WHERE+ra+IS+NOT+NULL+ORDER+BY+trigger_time+DESC
+ttl 86400
+force em
+body earth
+at sun 1.0
+format universal
+rows
+ra_key ra
+dec_key dec
+field_in name name
+field_in t90 t90
+field_in fluence fluence
+field_in peak_flux peak_flux
+field_in redshift redshift
+field_in trigger_time trigger_time
+field_in classification classification
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+name,lat,lon,trigger_time,duration,e_mean,counts+FROM+fermitgf+WHERE+lat+IS+NOT+NULL+ORDER+BY+counts+DESC
+ttl 86400
+force em
+body earth
+at sun 1.0
+format universal
+rows
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in name name
+field_in trigger_time trigger_time
+field_in duration duration
+field_in e_mean e_mean
+field_in counts counts
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,Source_Name,CLASS1,GLON,GLAT,nu_flux,nu_flux_1000,LP_Index,Pivot_Energy,TS+FROM+public.angel_fourfgl+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+nu_flux+DESC&FORMAT=text
+ttl 86400
+force em
+body earth
+at sun 1.0
+format universal
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field_in Source_Name Source_Name
+field_in CLASS1 CLASS1
+field_in nu_flux nu_flux
+field_in LP_Index LP_Index
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+300+name,ra,dec,class,period,lx,spinper,dist,optical_name+FROM+hmxbcat+WHERE+ra+IS+NOT+NULL+ORDER+BY+lx+DESC
+ttl 86400
+force em
+body earth
+at sun 1.0
+format universal
+rows
+ra_key ra
+dec_key dec
+field_in name name
+field_in class class
+field_in period period
+field_in spinper spinper
+field_in lx lx
+field_in optical_name optical_name
+dist_key dist
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,ts,flux,p_value,sigma+FROM+icecube_ps_10y+WHERE+ra+IS+NOT+NULL+ORDER+BY+ts+DESC
+ttl 86400
+force em
+body earth
+at sun 1.0
+format universal
+rows
+ra_key ra
+dec_key dec
+field_in ts ts
+field_in flux flux
+field_in p_value p_value
+field_in sigma sigma
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+3000+name,ra,dec,sb_flux,hb_flux,source_type+FROM+intibisag2+WHERE+sb_flux+IS+NOT+NULL+ORDER+BY+sb_flux+DESC
+ttl 86400
+force em
+body earth
+at sun 1.0
+format universal
+rows
+ra_key 1
+dec_key 2
+field_in 0 0
+field_in 3 3
+field_in 4 4
+field_in 5 5
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,t90,fluence,peak_flux,time_trigger,error_radius+FROM+intgrb+WHERE+ra+IS+NOT+NULL+ORDER+BY+time_trigger+DESC
+ttl 86400
+force em
+body earth
+at sun 1.0
+format universal
+rows
+ra_key ra
+dec_key dec
+field_in name name
+field_in t90 t90
+field_in fluence fluence
+field_in peak_flux peak_flux
+field_in time_trigger time_trigger
+field_in error_radius error_radius
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+300+name,ra,dec,class,period,lx,dist,compact_type+FROM+lmxbcat+WHERE+ra+IS+NOT+NULL+ORDER+BY+lx+DESC
+ttl 86400
+force em
+body earth
+at sun 1.0
+format universal
+rows
+ra_key ra
+dec_key dec
+field_in name name
+field_in class class
+field_in period period
+field_in lx lx
+field_in compact_type compact_type
+dist_key dist
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&QUERY=SELECT+name,ra,dec,flux_4_10,flux_3_10,flux_10_20,object_type,redshift,error_radius,hardness_ratio_1+FROM+maxigsc7yr+WHERE+flux_4_10+IS+NOT+NULL+ORDER+BY+flux_4_10+DESC&FORMAT=text&limit=2000
+ttl 86400
+force em
+body earth
+at sun 1.0
+format universal
+cmap .
+ra_key ra
+dec_key dec
+z_key redshift
+field_in name name
+field_in flux_4_10 flux_4_10
+field_in flux_3_10 flux_3_10
+field_in object_type object_type
+field_in error_radius error_radius
+field_in hardness_ratio_1 hardness_ratio_1
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,flux_4_10,flux_10_20,flux_20_40,n_sigma,type+FROM+maxigsc+WHERE+ra+IS+NOT+NULL+ORDER+BY+flux_4_10+DESC
+ttl 86400
+force em
+body earth
+at sun 1.0
+format universal
+rows
+ra_key ra
+dec_key dec
+field_in name name
+field_in flux_4_10 flux_4_10
+field_in flux_10_20 flux_10_20
+field_in flux_20_40 flux_20_40
+field_in type type
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+latitude,longitude,co_total_column,co_surface,co_500hpa,co_300hpa,date+FROM+mopittl3m+WHERE+latitude+IS+NOT+NULL+ORDER+BY+co_total_column+DESC
+ttl 86400
+force diffusion
+body earth
+at sun 1.0
+format universal
+rows
+lat_key latitude
+lon_key longitude
+field_in co_total_column co_total_column
+field_in co_surface co_surface
+field_in co_500hpa co_500hpa
+field_in co_300hpa co_300hpa
+field_in date date
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+100+name,ra,dec,dist,assoc_pulsar,luminosity_x,size_arcmin+FROM+pwncat+WHERE+ra+IS+NOT+NULL+ORDER+BY+luminosity_x+DESC
+ttl 86400
+force em
+body earth
+at sun 1.0
+format universal
+rows
+ra_key ra
+dec_key dec
+field_in name name
+field_in dist dist
+field_in assoc_pulsar assoc_pulsar
+field_in luminosity_x luminosity_x
+field_in size_arcmin size_arcmin
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+50000+name,ra,dec,count_rate,source_extent,hardness_ratio_1,hardness_ratio_2,detection_likelihood+FROM+rass2rxs+WHERE+detection_likelihood%3E6+ORDER+BY+count_rate+DESC
+ttl 86400
+force em
+body earth
+at sun 1.0
+format universal
+rows
+ra_key 1
+dec_key 2
+field_in 0 0
+field_in 3 3
+field_in 4 4
+field_in 5 5
+field_in 6 6
+field_in 7 7
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+name,ra,dec,count_rate,hr1,hr2,ext+FROM+rassbsc+WHERE+count_rate%3E0.1+ORDER+BY+count_rate+DESC
+ttl 86400
+force em
+body earth
+at sun 1.0
+format universal
+rows
+ra_key ra
+dec_key dec
+field_in count_rate count_rate
+field_in hr1 hr1
+field_in hr2 hr2
+field_in ext ext
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+50000+name,ra,dec,count_rate,hr1,hr2,ext+FROM+rassbsc+WHERE+count_rate%3E0.1+ORDER+BY+count_rate+DESC
+ttl 86400
+force em
+body earth
+at sun 1.0
+format universal
+rows
+ra_key 1
+dec_key 2
+field_in 0 0
+field_in 3 3
+field_in 4 4
+field_in 5 5
+field_in 6 6
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+name,ra,dec,redshift,count_rate,flux_0_1_2_4,luminosity_0_1_2_4,ext+FROM+xcsunion+WHERE+redshift+IS+NOT+NULL+ORDER+BY+flux_0_1_2_4+DESC
+ttl 86400
+force em
+body earth
+at sun 1.0
+format universal
+rows
+ra_key ra
+dec_key dec
+z_key redshift
+field_in count_rate count_rate
+field_in flux_0_1_2_4 flux_0_1_2_4
+field_in luminosity_0_1_2_4 luminosity_0_1_2_4
+field_in ext ext
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,Name,Avg_Rate,Rate_Err+FROM+public.rxte_asm+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+Avg_Rate+DESC&FORMAT=text
+ttl 86400
+force em
+body earth
+at sun 1.0
+format universal
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field_in Name Name
+field_in Avg_Rate Avg_Rate
+field_in Rate_Err Rate_Err
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+name,ra,dec,flux,flux_err,count_rate+FROM+rxmtasm+WHERE+ra+IS+NOT+NULL+ORDER+BY+flux+DESC
+ttl 86400
+force em
+body earth
+at sun 1.0
+format universal
+rows
+ra_key ra
+dec_key dec
+field_in flux flux
+field_in flux_err flux_err
+field_in count_rate count_rate
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+2000+name,ra,dec,flux,redshift,source_type+FROM+swbat105m+WHERE+flux+IS+NOT+NULL+ORDER+BY+flux+DESC
+ttl 86400
+force em
+body earth
+at sun 1.0
+format universal
+rows
+ra_key 1
+dec_key 2
+z_key 4
+field_in 0 0
+field_in 3 3
+field_in 5 5
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+name,ra,dec,t90,fluence,redshift,time_trigger,xrt_column,host_galaxy+FROM+swiftgrb+WHERE+ra+IS+NOT+NULL+ORDER+BY+time_trigger+DESC
+ttl 86400
+force em
+body earth
+at sun 1.0
+format universal
+rows
+ra_key ra
+dec_key dec
+field_in name name
+field_in t90 t90
+field_in fluence fluence
+field_in redshift redshift
+field_in time_trigger time_trigger
+field_in host_galaxy host_galaxy
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+50000+name,ra,dec,ep_flux,ep_flux_error+FROM+xmmssc+WHERE+ep_flux+IS+NOT+NULL+AND+ep_flux%3E0+ORDER+BY+ep_flux+DESC
+ttl 86400
+force em
+body earth
+at sun 1.0
+format universal
+rows
+ra_key ra
+dec_key dec
+field_in name name
+field_in ep_flux ep_flux
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+iauname,sc_ra,sc_dec,sc_flux8,sc_hr4,sc_var_flag,sc_sum_flag+FROM+xmmssc+WHERE+sc_flux8+IS+NOT+NULL+AND+sc_sum_flag%3C3+ORDER+BY+sc_flux8+DESC
+ttl 86400
+force em
+body earth
+at sun 1.0
+format universal
+rows
+ra_key sc_ra
+dec_key sc_dec
+field_in sc_flux8 sc_flux8
+field_in sc_hr4 sc_hr4
+field_in sc_var_flag sc_var_flag
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,dist,class,period,spinper,lx,donor_type+FROM+xrbcat+WHERE+ra+IS+NOT+NULL+ORDER+BY+lx+DESC
+ttl 86400
+force em
+body earth
+at sun 1.0
+format universal
+rows
+ra_key ra
+dec_key dec
+field_in name name
+field_in class class
+field_in period period
+field_in spinper spinper
+field_in lx lx
+field_in donor_type donor_type
+dist_key dist
+
+url https://network.igs.org/api/public/stations?format=json
+ttl 86400
+force seismic-surface
+at sun 1.0
+map .
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in site_code site_code
+field_in name name
+field_in country country
+field_in is_active is_active
+field_in elevation elevation
+
+url https://www.tng-project.org/api/TNG100-1/snapshots/99/halos/?format=json&limit=500&order_by=-mass_log_msun
+ttl 86400
+force gravity
+on earth 0.0 0.0
+map results
+field_in id id
+field_in mass_log_msun mass_log_msun
+field_in vel_disp vel_disp
+field_in spin spin
+field_in subhalo_count subhalo_count
+
+url https://irsa.ipac.caltech.edu/cgi-bin/Gator/nph-query?catalog=fp_psc&spatial=box&ra=0.0&dec=0.0&size=14400&outfmt=1&selcols=designation,ra,dec,j_m,h_m,k_m,ph_qual,gal_contam
+at sun 1.0
+ttl 86400
+force em
+cmap .
+rows
+ra_key ra
+dec_key dec
+field_in designation designation
+field_in j_m j_m
+field_in h_m h_m
+field_in k_m k_m
+field_in ph_qual ph_qual
+field_in gal_contam gal_contam
+field_in mag3_6 mag3_6
+field_in mag4_5 mag4_5
+field_in mag5_8 mag5_8
+field_in mag8_0 mag8_0
+field_in e_mag3_6 e_mag3_6
+field_in sqf_3_6 sqf_3_6
+cmap .
+ra_key 0
+dec_key 1
+field_in 3 3
+map data
+
+url https://irsa.ipac.caltech.edu/cgi-bin/Gator/nph-query?catalog=allwise_p3as_psd&spatial=box&ra=0.0&dec=0.0&size=14400&outfmt=1&selcols=designation,ra,dec,w1mpro,w2mpro,w3mpro,w4mpro,ph_qual
+ttl 86400
+force em
+at sun 1.0
+format universal
+rows
+ra_key ra
+dec_key dec
+field_in designation designation
+field_in w1mpro w1mpro
+field_in w2mpro w2mpro
+field_in w3mpro w3mpro
+field_in w4mpro w4mpro
+field_in ph_qual ph_qual
+
+url https://irsa.ipac.caltech.edu/cgi-bin/DUST/nph-dust?locstr={lat}+{lon}+gal&regSize=5&output_type=json
+ttl 86400
+force diffusion
+on earth 47.3769 8.5417
+field statistics.refPixelValueSandF refPixelValueSandF
+field statistics.meanValueSandF meanValueSandF
+field statistics.maxValueSandF maxValueSandF
+field statistics.minValueSandF minValueSandF
+field descriptionSandF descriptionSandF
+
+url https://irsa.ipac.caltech.edu/cgi-bin/Gator/nph-query?catalog=ztf_objects_dr20&spatial=none&outfmt=1&selcols=oid,ra,dec,gmag,rmag,imag,classtar,sharp
+ttl 86400
+force em
+at sun 1.0
+format text
+rows
+ra_key ra
+dec_key dec
+field_in oid oid
+field_in gmag gmag
+field_in rmag rmag
+field_in imag imag
+field_in classtar classtar
+field_in sharp sharp
+field_in filterid filterid
+field_in medianmag medianmag
+field_in magrms magrms
+
+url https://cddis.nasa.gov/archive/vlbi/ivsdata/db/sched/ns-codes.txt
+ttl 86400
+force gravity
+on earth 0.0 0.0
+format text
+rows
+field_in 0 0
+field_in 1 1
+field_in 2 2
+field_in 3 3
+
+url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=1LD&date-min={today}&date-max=%2B365&body=Earth&fullname=true&diameter=true&sort=date
+ttl 86400
+force gravity
+at sun 1.0
+map data
+field_in 0 0
+field_in 3 3
+field_in 4 4
+field_in 7 7
+field_in 17 17
+
+url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=1LD&date-min={today}&date-max=%2B365&body=Earth&fullname=true&diameter=true&limit=100
+ttl 86400
+force gravity
+at sun 1.0
+map data
+field_in 0 0
+field_in 1 1
+field_in 3 3
+field_in 4 4
+field_in 5 5
+field_in 7 7
+field_in 10 10
+field_in 11 11
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='99942'&OBJ_DATA='YES'&MAKE_EPHEM='YES'&EPHEM_TYPE='ELEMENTS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+d'&REF_PLANE='ECLIPTIC'
+ttl 86400
+force gravity
+on earth 0.0 0.0
+format universal
+rows
+field_in 1 1
+field_in 2 2
+field_in 3 3
+field_in 4 4
+field_in 5 5
+field_in 6 6
+field_in 7 7

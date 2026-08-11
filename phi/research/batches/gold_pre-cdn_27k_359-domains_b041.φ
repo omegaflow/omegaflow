@@ -1,0 +1,573 @@
+source universe_simbad_nebulae
+ttl 86400
+force em
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,rvz_redshift,flux_V,plx_value+FROM+basic+WHERE+otype+IN+(%27Neb%27,%27PN%27,%27HII%27,%27SNR%27,%27MolC%27)+AND+flux_V+IS+NOT+NULL
+cmap data
+ra_key 0
+dec_key 1
+z_key 2
+plx_key 4
+field_in 2 redshift
+field_in 3 mag_v
+
+source universe_simbad_novae
+ttl 86400
+force em
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27Nova%27+AND+flux_V+IS+NOT+NULL
+cmap data
+ra_key 0
+dec_key 1
+plx_key 3
+field_in 2 mag_v
+
+source universe_simbad_oh_maser
+ttl 86400
+force em
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20200%20ra%2Cdec%2Cflux_V%2Cplx_value%20FROM%20basic%20WHERE%20otype%3D%27OH%2A%27%20AND%20flux_V%20IS%20NOT%20NULL
+cmap data
+ra_key 0
+dec_key 1
+plx_key 3
+field_in 2 mag_v
+
+source universe_simbad_oh_masers
+ttl 86400
+force em
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27OH*%27+AND+flux_V+IS+NOT+NULL
+cmap data
+ra_key 0
+dec_key 1
+plx_key 3
+field_in 2 mag_v
+
+source universe_simbad_planetary_nebulae
+ttl 86400
+force em
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,rvz_redshift,flux_V,plx_value+FROM+basic+WHERE+otype=%27PN%27
+cmap data
+ra_key 0
+dec_key 1
+z_key 2
+plx_key 4
+field_in 2 redshift
+field_in 3 mag_v
+
+source universe_simbad_post_agb_stars
+ttl 86400
+force em
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,rvz_redshift,flux_V,plx_value+FROM+basic+WHERE+otype=%27pAGB%27
+cmap data
+ra_key 0
+dec_key 1
+z_key 2
+plx_key 4
+field_in 2 redshift
+field_in 3 mag_v
+
+source universe_simbad_pre_ms_stars
+ttl 86400
+force em
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27pr*%27+AND+flux_V+IS+NOT+NULL
+cmap data
+ra_key 0
+dec_key 1
+plx_key 3
+field_in 2 mag_v
+
+source universe_simbad_proper_motion
+ttl 86400
+force em
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27PM*%27+AND+flux_V+IS+NOT+NULL
+cmap data
+ra_key 0
+dec_key 1
+plx_key 3
+field_in 2 mag_v
+
+source universe_simbad_pulsars
+ttl 86400
+force em
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,rvz_redshift,flux_V,plx_value+FROM+basic+WHERE+otype=%27Pulsar%27
+cmap data
+ra_key 0
+dec_key 1
+z_key 2
+plx_key 4
+field_in 2 redshift
+field_in 3 mag_v
+
+source universe_simbad_pulsating_white_dwarfs
+ttl 86400
+force em
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,rvz_redshift,flux_V,plx_value+FROM+basic+WHERE+otype=%27WD%2A%27+AND+sp_type+LIKE+%27DAV%27+OR+sp_type+LIKE+%27DBV%27+OR+sp_type+LIKE+%27ZZ%27
+cmap data
+ra_key 0
+dec_key 1
+z_key 2
+plx_key 4
+field_in 2 redshift
+field_in 3 mag_v
+
+source universe_simbad_quasars
+ttl 86400
+force em
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,rvz_redshift,flux_V,plx_value+FROM+basic+WHERE+otype=%27QSO%27
+cmap data
+ra_key 0
+dec_key 1
+z_key 2
+plx_key 4
+field_in 2 redshift
+field_in 3 mag_v
+
+source universe_simbad_rcrb_variables
+ttl 86400
+force em
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,rvz_redshift,flux_V,plx_value+FROM+basic+WHERE+otype=%27RC%2A%27
+cmap data
+ra_key 0
+dec_key 1
+z_key 2
+plx_key 4
+field_in 2 redshift
+field_in 3 mag_v
+
+source universe_simbad_red_giants
+ttl 86400
+force em
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27RG*%27+AND+flux_V+IS+NOT+NULL
+cmap data
+ra_key 0
+dec_key 1
+plx_key 3
+field_in 2 mag_v
+
+source universe_simbad_red_supergiants
+ttl 86400
+force em
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27sg*%27+AND+flux_V+IS+NOT+NULL
+cmap data
+ra_key 0
+dec_key 1
+plx_key 3
+field_in 2 mag_v
+
+source universe_simbad_reflection_nebulae
+ttl 86400
+force em
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27RNeb%27+AND+flux_V+IS+NOT+NULL
+cmap data
+ra_key 0
+dec_key 1
+plx_key 3
+field_in 2 mag_v
+
+source universe_simbad_rr_lyrae
+ttl 86400
+force em
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27RR*%27+AND+flux_V+IS+NOT+NULL
+cmap data
+ra_key 0
+dec_key 1
+plx_key 3
+field_in 2 mag_v
+
+source universe_simbad_s_stars
+ttl 86400
+force em
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20200%20ra%2Cdec%2Cflux_V%2Cplx_value%20FROM%20basic%20WHERE%20otype%3D%27S%2A%27%20AND%20flux_V%20IS%20NOT%20NULL
+cmap data
+ra_key 0
+dec_key 1
+plx_key 3
+field_in 2 mag_v
+
+source universe_simbad_stellar_associations
+ttl 86400
+force em
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27Asoc*%27+AND+flux_V+IS+NOT+NULL
+cmap data
+ra_key 0
+dec_key 1
+plx_key 3
+field_in 2 mag_v
+
+source universe_simbad_supernova_remnants
+ttl 86400
+force em
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27SNR%27+AND+flux_V+IS+NOT+NULL
+cmap data
+ra_key 0
+dec_key 1
+plx_key 3
+field_in 2 mag_v
+
+source universe_simbad_supernovae
+ttl 86400
+force em
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,rvz_redshift,plx_value+FROM+basic+WHERE+otype=%27SN%27+AND+flux_V+IS+NOT+NULL
+cmap data
+ra_key 0
+dec_key 1
+z_key 3
+plx_key 4
+field_in 2 mag_v
+field_in 3 redshift
+
+source universe_simbad_symbiotic_stars
+ttl 86400
+force em
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27Sy*%27+AND+flux_V+IS+NOT+NULL
+cmap data
+ra_key 0
+dec_key 1
+plx_key 3
+field_in 2 mag_v
+
+source universe_simbad_ttauri_stars
+ttl 86400
+force em
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27TT*%27+AND+flux_V+IS+NOT+NULL
+cmap data
+ra_key 0
+dec_key 1
+plx_key 3
+field_in 2 mag_v
+
+source universe_simbad_variable_stars
+ttl 86400
+force em
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,rvz_redshift,plx_value+FROM+basic+WHERE+otype=%27V*%27+AND+rvz_redshift+IS+NOT+NULL
+cmap data
+ra_key 0
+dec_key 1
+z_key 2
+plx_key 3
+field_in 2 redshift
+
+source universe_simbad_white_dwarfs
+ttl 86400
+force em
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27WD*%27+AND+flux_V+IS+NOT+NULL
+cmap data
+ra_key 0
+dec_key 1
+plx_key 3
+field_in 2 mag_v
+
+source universe_simbad_wolf_rayet_stars
+ttl 86400
+force em
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27WR*%27+AND+flux_V+IS+NOT+NULL
+cmap data
+ra_key 0
+dec_key 1
+plx_key 3
+field_in 2 mag_v
+
+source universe_simbad_xray_sources
+ttl 86400
+force em
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27X%27+AND+flux_V+IS+NOT+NULL
+cmap data
+ra_key 0
+dec_key 1
+plx_key 3
+field_in 2 mag_v
+
+source universe_simbad_yellow_supergiants
+ttl 86400
+force em
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,rvz_redshift,flux_V,plx_value+FROM+basic+WHERE+otype=%27sgY%27
+cmap data
+ra_key 0
+dec_key 1
+z_key 2
+plx_key 4
+field_in 2 redshift
+field_in 3 mag_v
+
+source universe_simbad_young_stellar_objects
+ttl 86400
+force em
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27S*Y%27+AND+flux_V+IS+NOT+NULL
+cmap data
+ra_key 0
+dec_key 1
+plx_key 3
+field_in 2 mag_v
+
+source universe_simbad_yso
+ttl 86400
+force em
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20200%20ra%2Cdec%2Cflux_V%2Cplx_value%20FROM%20basic%20WHERE%20otype%3D%27YSO%27%20AND%20flux_V%20IS%20NOT%20NULL
+cmap data
+ra_key 0
+dec_key 1
+plx_key 3
+field_in 2 mag_v
+
+source universe_tess_sectors
+ttl 86400
+force em
+terra 1
+url https://archive.stsci.edu/missions/tess/sector/
+map .
+field_in sector universe_tess_sector
+field_in ra_min universe_tess_ra_min
+field_in ra_max universe_tess_ra_max
+field_in dec_min universe_tess_dec_min
+field_in dec_max universe_tess_dec_max
+
+source universe_vizier_2mass
+ttl 86400
+force em
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+500+g.ra,g.dec,g.parallax,g.phot_g_mean_mag+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.tmass_psc_xsc_best_neighbour+AS+x+ON+g.source_id=x.source_id+WHERE+g.parallax+>+0+AND+g.phot_g_mean_mag+<+14
+cmap data
+ra_key 0
+dec_key 1
+plx_key 2
+field_in 3 universe_2mass_gaia_g_mag
+
+source universe_vizier_apass
+ttl 86400
+force em
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+500+g.ra,g.dec,g.parallax,e.bmag,e.vmag+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.apassdr9_best_neighbour+AS+x+ON+g.source_id=x.source_id+JOIN+external.apassdr9+AS+e+ON+x.clean_apassdr9_oid=e.recno+WHERE+g.parallax+>+0+AND+e.bmag+<+13
+cmap data
+ra_key 0
+dec_key 1
+plx_key 2
+field_in 3 universe_vizier_bmag
+field_in 4 universe_vizier_vmag
+
+source universe_vizier_panstarrs
+ttl 86400
+force em
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+500+g.ra,g.dec,g.parallax,g.phot_g_mean_mag+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.panstarrs1_best_neighbour+AS+x+ON+g.source_id=x.source_id+WHERE+g.parallax+>+0+AND+g.phot_g_mean_mag+<+17
+cmap data
+ra_key 0
+dec_key 1
+plx_key 2
+field_in 3 universe_panstarrs_gaia_g_mag
+
+source universe_xmm_4xmm_dr13
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+500+Source,RA_ICRS,DE_ICRS+FROM+%22IX/69/xmm4d13s%22
+cmap data
+ra_key 1
+dec_key 2
+field_in 0 Source
+
+source usgs_earthquakes_hazard_layer
+ttl 86400
+force em
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=6.0&orderby=time&limit=20
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.mag magnitude
+field_in properties.place location_description
+field_in properties.time event_time
+field_in properties.tsunami tsunami_flag
+field_in properties.alert alert_level
+field_in properties.sig significance
+field_in properties.cdi instrumental_intensity
+field_in properties.mmi maximum_intensity
+field_in properties.felt felt_reports
+depth_key geometry.coordinates.2
+
+source usgs_landsat_lst
+ttl 86400
+force thermal
+url https://landsat.usgs.gov/landsat-api/v1/product?collection=landsat-c2l2&satellite=landsat-8,landsat-9&maxResults=100
+map results
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.product_id product_id
+field properties.acquisitionDate acquisition_date
+field properties.cloudCover cloud_cover_pct
+
+source usgs_nwis_peak_streamflow
+ttl 86400
+force diffusion
+url https://nwis.waterdata.usgs.gov/usa/nwis/peak?state_cd=all&format=rdb&date_format=YYYY-MM-DD&peak_begin_date={year}-01-01&peak_end_date={year}-12-31
+format text
+rows
+lat_key dec_lat_va
+lon_key dec_long_va
+field site_no site_code
+field station_nm station_name
+field peak_dt peak_date
+field peak_va peak_discharge_cfs
+field gage_ht gage_height_ft
+
+source usgs_quaternary_faults_usa
+ttl 86400
+force seismic-surface
+url https://earthquake.usgs.gov/static/lfs/nshm/qfaults/Qfaults_GIS_15.zip
+format text
+rows
+lat_key lat
+lon_key lon
+field fault_name fault_name
+field slip_sense slip_sense
+field slip_rate slip_rate_mm_yr
+field code fault_id
+field age age_yr
+
+source usgs_sciencebase_nlcd
+ttl 86400
+force diffusion
+url https://www.sciencebase.gov/catalog/items?format=json&q=National+Land+Cover+Database&max=50&fields=id,title,body,spatial,contacts,tags
+map items
+lat_key spatial.boundingBox.minY
+lon_key spatial.boundingBox.minX
+field title dataset_title
+field tags.0.name primary_tag
+field spatial.representationalPoint.coordinates.0 centroid_lon
+field spatial.representationalPoint.coordinates.1 centroid_lat
+
+source usgs_water_quality
+ttl 86400
+force diffusion
+url https://waterservices.usgs.gov/nwis/qwdata/?format=json&site=01646500&startDT=2026-01-01&endDT=2026-07-27
+map
+lat_key 38.949
+  lon_key -77.343
+  lat 38.949
+  lon -77.343
+field_in site_no station_number
+field_in sample_dt sample_date
+field_in sample_tm sample_time
+field_in parm_cd parameter_code
+field_in result_va result_value
+field_in lab_std_va lab_standard_value
+
+source uspto_patents_total
+ttl 86400
+force em
+lat 38.995
+lon -77.101
+url https://developer.uspto.gov/ptab-api/v2/patents?limit=1
+field totalResults biosphere_uspto_patents_total
+
+source viirs_lst_global
+ttl 86400
+force thermal
+url https://firms.modaps.eosdis.nasa.gov/api/country/csv/{nasa_key}/VIIRS_SNPP_NRT/USA
+format text
+rows
+lat_key latitude
+lon_key longitude
+field brightness viirs_lst_brightness_k
+field scan track_scan_km
+field frp fire_radiative_power_mw
+field satellite satellite
+
+source vizier_2dfgrs
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,bJmag,z,SpClass+FROM+"J/MNRAS/329/227/2dFGRS"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+bJmag+ASC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field bJmag bj_magnitude
+field z redshift
+
+source vizier_2mass_psc_bright
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,%222MASS%22,Jmag,Hmag,Kmag,Qflg+FROM+%22II/246/out%22+WHERE+Jmag<9+AND+RAJ2000+IS+NOT+NULL+ORDER+BY+Jmag+ASC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field 2MASS source_name
+field Jmag j_mag
+field Hmag h_mag
+field Kmag k_mag
+field Qflg quality_flag
+
+source vizier_2qz_qso
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+RAJ2000,DEJ2000,z1,bJmag,2QZ+FROM+"VII/241/2qz"+WHERE+RAJ2000+IS+NOT+NULL+AND+z1>0+ORDER+BY+z1+DESC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field z1 redshift
+field bJmag bj_magnitude
+
+source vizier_4xmm_dr13
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+RA_ICRS,DE_ICRS,Flux2,Flux3,%22HR1%22,%22HR2%22,4XMM+FROM+"IX/69/xmm4d13s"+WHERE+RA_ICRS+IS+NOT+NULL+ORDER+BY+Flux2+DESC
+format text
+rows
+ra_key RA_ICRS
+dec_key DE_ICRS
+field Flux2 flux_2to12_kev_erg_cm2s
+field HR1 hardness_ratio_1
+field HR2 hardness_ratio_2
+
+source vizier_6dfgs
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,cz,e_cz,bJmag,%22S%2FG%22+FROM+"VII/259/6dfgs"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+bJmag+ASC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field cz velocity_kms
+field bJmag bj_magnitude
+field S/G star_galaxy_flag
+
+source vizier_allwise_bright
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+AllWISE,RAJ2000,DEJ2000,W1mag,W2mag,W3mag,W4mag,var_flg,ex+FROM+%22II/328/allwise%22+WHERE+W1mag<9+AND+RAJ2000+IS+NOT+NULL+ORDER+BY+W1mag+ASC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field AllWISE source_name
+field W1mag w1_3_4um_mag
+field W2mag w2_4_6um_mag
+field W3mag w3_12um_mag
+field W4mag w4_22um_mag
+field var_flg variability_flag
+field ex extended_source_flag
+
+source vizier_apogee_dr17_stellar_params
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+APOGEE_ID,RA,DEC,Teff,logg,M_H,alpha_M,VHELIO_AVG,DIST_BPG+FROM+"III/286/allstars"+WHERE+RA+IS+NOT+NULL+AND+ASPCAPFLAG%3D0+AND+SNR>100+ORDER+BY+SNR+DESC
+format text
+rows
+ra_key RA
+dec_key DEC
+field APOGEE_ID apogee_id
+field Teff effective_temp_K
+field logg surface_gravity
+field M_H metallicity
+field alpha_M alpha_over_m
+field VHELIO_AVG radial_velocity_km_s
+dist_key DIST_BPG
+
+source vizier_asteroid_families_nesvorny
+ttl 86400
+force gravity
+lat 0.0
+lon 0.0
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+Family,n,e,sini,a,H+FROM+"J/Icarus/239/46/table3"+WHERE+n+IS+NOT+NULL+ORDER+BY+n+DESC
+format text
+rows
+field Family family_name
+field n family_members
+field a semimajor_axis_au
+field e eccentricity
+field sini sin_inclination
+field H abs_magnitude

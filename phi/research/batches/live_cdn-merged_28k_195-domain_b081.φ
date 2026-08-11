@@ -1,0 +1,99 @@
+field_in e_RAgaia astro_vizier_ucac5_e_RAgaia
+
+field_in DEgaia astro_vizier_ucac5_DEgaia
+
+field_in e_DEgaia astro_vizier_ucac5_e_DEgaia
+
+field_in Org astro_vizier_ucac5_Org
+
+field_in Nu astro_vizier_ucac5_Nu
+
+field_in EPucac astro_vizier_ucac5_EPucac
+
+field_in pmRA astro_vizier_ucac5_pmRA
+
+field_in e_pmRA astro_vizier_ucac5_e_pmRA
+
+field_in pmDE astro_vizier_ucac5_pmDE
+
+field_in e_pmDE astro_vizier_ucac5_e_pmDE
+
+field_in Gmag astro_vizier_ucac5_Gmag
+
+field_in f_mag astro_vizier_ucac5_f_mag
+
+field_in Rmag astro_vizier_ucac5_Rmag
+
+field_in Jmag astro_vizier_ucac5_Jmag
+
+field_in Hmag astro_vizier_ucac5_Hmag
+
+field_in Kmag astro_vizier_ucac5_Kmag
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_variable_stars.json
+
+ttl 604800
+
+force em
+
+cmap data
+
+ra_key _RA
+
+dec_key _DE
+
+plx_key default_plx
+
+field_in a variable_star_semimajor
+
+field_in e variable_star_eccentricity
+
+field_in i variable_star_inclination
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_vsx_variables.json
+
+ttl 604800
+
+force em
+
+cmap data
+
+ra_key RAJ2000
+
+dec_key DEJ2000
+
+field_in recno vizier_vsx_variables_recno
+
+field_in OID vizier_vsx_variables_OID
+
+field_in Name vizier_vsx_variables_Name
+
+field_in V vizier_vsx_variables_V
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_xmm4d13s.json
+
+ttl 604800
+
+force em
+
+cmap data
+
+ra_key RA_ICRS
+
+dec_key DE_ICRS
+
+plx_key default_plx
+
+field_in Flux1 xmm4d13_flux1
+
+field_in Flux2 xmm4d13_flux2
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_young_stars.json
+
+ttl 604800
+
+force em
+
+cmap data
+
+ra_key RAJ2000

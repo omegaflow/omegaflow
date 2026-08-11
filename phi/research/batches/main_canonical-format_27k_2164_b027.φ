@@ -1,0 +1,1125 @@
+url https://skyserver.sdss.org/dr18/SkyServerWS/ConeSearch/ConeSearchService?ra={ra}&dec={dec}&sr=6&format=json&spec=galaxy
+ttl 604800
+force em
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key ra
+dec_key dec
+z_key z
+field_in zerr zerr
+field_in specObjID specObjID
+field_in mjd mjd
+field_in plate plate
+field_in fiberID fiberID
+
+url https://skyserver.sdss.org/dr18/SkyServerWS/ConeSearch/ConeSearchService?ra={ra}&dec={dec}&sr=6&format=json&spec=star
+ttl 604800
+force em
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in g g
+field_in r r
+field_in i i
+field_in psfMag_r psfMag_r
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+ra,dec,main_id,otype,sp_type,plx_value,rv_value,pmra,pmdec,g_mag,v_mag+FROM+basic
+ttl 604800
+force em
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag phot_g_mean_mag
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+ra,dec,main_id,otype+FROM+basic+WHERE+otype='AGN'
+ttl 604800
+force em
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+VII%2F281%2Fglade2
+ttl 604800
+force em
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+z_key z
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+B%2Fgcvs%2Fgcvs_cat
+ttl 604800
+force em
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+field_in recno recno
+field_in VarNum VarNum
+field_in m_VarNum m_VarNum
+field_in GCVS GCVS
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+VII%2F272%2Fsnrcat
+ttl 604800
+force em
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+J%2FA%2FA%2F661%2Fa176%2Ftable1
+ttl 604800
+force em
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+RAJ2000%2CDEJ2000%2Cz%2CbJmag+FROM+VII%2F241%2F2qz
+ttl 604800
+force em
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+ra,dec,main_id,otype+FROM+basic+WHERE+otype='HVC'
+ttl 604800
+force em
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+z_key z
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+ra,dec,main_id,otype+FROM+basic+WHERE+otype='ISM'
+ttl 604800
+force em
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+ra,dec,main_id,otype+FROM+basic+WHERE+otype='Y*O'
+ttl 604800
+force em
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag phot_g_mean_mag
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+name%2Cra%2Cdec%2Cflux%2Credshift%2Csource_type+FROM+swbat105m
+ttl 604800
+force em
+body earth
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key ra
+dec_key dec
+z_key redshift
+field_in source_number source_number
+field_in name name
+field_in lii lii
+field_in bii bii
+field_in snr snr
+field_in ctrpart_name ctrpart_name
+field_in ctrpart_ra ctrpart_ra
+field_in ctrpart_dec ctrpart_dec
+field_in flux flux
+field_in flux_lower flux_lower
+field_in flux_upper flux_upper
+field_in spectral_index spectral_index
+field_in spectral_index_lower spectral_index_lower
+field_in spectral_index_upper spectral_index_upper
+field_in chi_squared chi_squared
+field_in log_lx log_lx
+field_in ctrpart_class ctrpart_class
+field_in source_type source_type
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+swiftgrb
+ttl 604800
+force em
+body earth
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key ra
+dec_key dec
+z_key redshift
+field_in name name
+field_in target_id target_id
+field_in other_id other_id
+field_in det_flag det_flag
+field_in slew_info slew_info
+field_in pos_err pos_err
+field_in lii lii
+field_in bii bii
+field_in pos_flag pos_flag
+field_in pos_ref pos_ref
+field_in start_time start_time
+field_in stop_time stop_time
+field_in duration duration
+field_in trigger_time trigger_time
+field_in trigger_ref trigger_ref
+field_in bat_detection bat_detection
+field_in bat_dettype bat_dettype
+field_in bat_ra bat_ra
+field_in bat_dec bat_dec
+field_in bat_pos_err bat_pos_err
+field_in bat_pos_ref bat_pos_ref
+field_in bat_theta bat_theta
+field_in bat_phi bat_phi
+field_in bat_imagesig bat_imagesig
+field_in bat_t90 bat_t90
+field_in bat_t50 bat_t50
+field_in bat_start bat_start
+field_in bat_stop bat_stop
+field_in bat_t100_start bat_t100_start
+field_in bat_t100_stop bat_t100_stop
+field_in bat_fluence_model bat_fluence_model
+field_in bat_fluence bat_fluence
+field_in bat_fluence_err bat_fluence_err
+field_in bat_fluence1 bat_fluence1
+field_in bat_fluence1_err bat_fluence1_err
+field_in bat_fluence2 bat_fluence2
+field_in bat_fluence2_err bat_fluence2_err
+field_in bat_fluence3 bat_fluence3
+field_in bat_fluence3_err bat_fluence3_err
+field_in bat_fluence4 bat_fluence4
+field_in bat_fluence4_err bat_fluence4_err
+field_in bat_peak_time bat_peak_time
+field_in bat_peak_model bat_peak_model
+field_in bat_peak_flux bat_peak_flux
+field_in bat_peak_flux_err bat_peak_flux_err
+field_in bat_peak_flux1 bat_peak_flux1
+field_in bat_peak_flux1_err bat_peak_flux1_err
+field_in bat_peak_flux2 bat_peak_flux2
+field_in bat_peak_flux2_err bat_peak_flux2_err
+field_in bat_peak_flux3 bat_peak_flux3
+field_in bat_peak_flux3_err bat_peak_flux3_err
+field_in bat_peak_flux4 bat_peak_flux4
+field_in bat_peak_flux4_err bat_peak_flux4_err
+field_in bat_peakfluxp bat_peakfluxp
+field_in bat_peakfluxp_err bat_peakfluxp_err
+field_in bat_peakfluxp1 bat_peakfluxp1
+field_in bat_peakfluxp1_err bat_peakfluxp1_err
+field_in bat_peakfluxp2 bat_peakfluxp2
+field_in bat_peakfluxp2_err bat_peakfluxp2_err
+field_in bat_peakfluxp3 bat_peakfluxp3
+field_in bat_peakfluxp3_err bat_peakfluxp3_err
+field_in bat_peakfluxp4 bat_peakfluxp4
+field_in bat_peakfluxp4_err bat_peakfluxp4_err
+field_in bat_plsl bat_plsl
+field_in bat_plsl_err bat_plsl_err
+field_in bat_pl_chi2 bat_pl_chi2
+field_in bat_pl_dof bat_pl_dof
+field_in bat_ctslope bat_ctslope
+field_in bat_ctslope_err bat_ctslope_err
+field_in bat_ctslope_n_err bat_ctslope_n_err
+field_in bat_ctezero bat_ctezero
+field_in bat_ctezero_err bat_ctezero_err
+field_in bat_ctezero_n_err bat_ctezero_n_err
+field_in bat_ct_chi2 bat_ct_chi2
+field_in bat_ct_dof bat_ct_dof
+field_in bat_epeak bat_epeak
+field_in bat_epeak_ref bat_epeak_ref
+field_in bat_eiso bat_eiso
+field_in bat_eiso1000 bat_eiso1000
+field_in bat_eiso_alpha bat_eiso_alpha
+field_in bat_eiso_beta bat_eiso_beta
+field_in bat_eiso_norm bat_eiso_norm
+field_in bat_eiso_dur bat_eiso_dur
+field_in bat_eiso_ref bat_eiso_ref
+field_in bat_redshift bat_redshift
+field_in bat_hrd1 bat_hrd1
+field_in bat_hrd1_err bat_hrd1_err
+field_in bat_hrd2 bat_hrd2
+field_in bat_hrd2_err bat_hrd2_err
+field_in bat_comment bat_comment
+field_in xrt_detection xrt_detection
+field_in xrt_ra xrt_ra
+field_in xrt_dec xrt_dec
+field_in xrt_pos_err xrt_pos_err
+field_in xrt_pos_ref xrt_pos_ref
+field_in xrt_onsource xrt_onsource
+field_in xrt_c100_rate xrt_c100_rate
+field_in xrt_c100_start xrt_c100_start
+field_in xrt_c100_stop xrt_c100_stop
+field_in xrt_c100_expo xrt_c100_expo
+field_in xrt_c100_mode xrt_c100_mode
+field_in xrt_e1_rate xrt_e1_rate
+field_in xrt_e1_rate_err xrt_e1_rate_err
+field_in xrt_e1_rate1 xrt_e1_rate1
+field_in xrt_e1_rate1_err xrt_e1_rate1_err
+field_in xrt_e1_rate2 xrt_e1_rate2
+field_in xrt_e1_rate2_err xrt_e1_rate2_err
+field_in xrt_e1_rate3 xrt_e1_rate3
+field_in xrt_e1_rate3_err xrt_e1_rate3_err
+field_in xrt_e1_start xrt_e1_start
+field_in xrt_e1_stop xrt_e1_stop
+field_in xrt_e1_expo xrt_e1_expo
+field_in xrt_hrd1 xrt_hrd1
+field_in xrt_hrd1_err xrt_hrd1_err
+field_in xrt_hrd2 xrt_hrd2
+field_in xrt_hrd2_err xrt_hrd2_err
+field_in xrt_e1_mode xrt_e1_mode
+field_in xrt_lcchange xrt_lcchange
+field_in xrt_flare xrt_flare
+field_in uvot_detection uvot_detection
+field_in uvot_ra uvot_ra
+field_in uvot_dec uvot_dec
+field_in uvot_pos_err uvot_pos_err
+field_in uvot_pos_ref uvot_pos_ref
+field_in uvot_onsource uvot_onsource
+field_in uvot_vv_flux uvot_vv_flux
+field_in uvot_vv_mag uvot_vv_mag
+field_in uvot_vv_mag_err uvot_vv_mag_err
+field_in uvot_vv_start uvot_vv_start
+field_in uvot_vv_stop uvot_vv_stop
+field_in uvot_vv_expo uvot_vv_expo
+field_in uvot_w1_flux uvot_w1_flux
+field_in uvot_w1_mag uvot_w1_mag
+field_in uvot_w1_mag_err uvot_w1_mag_err
+field_in uvot_w1_start uvot_w1_start
+field_in uvot_w1_stop uvot_w1_stop
+field_in uvot_w1_expo uvot_w1_expo
+field_in redshift_err redshift_err
+field_in redshift_type redshift_type
+field_in redshift_line redshift_line
+field_in redshift_from redshift_from
+field_in redshift_ref redshift_ref
+field_in galactic_nh galactic_nh
+field_in followup followup
+field_in radio_detection radio_detection
+field_in radio_ref radio_ref
+field_in infra_detection infra_detection
+field_in infra_ref infra_ref
+field_in opt_detection opt_detection
+field_in opt_ref opt_ref
+field_in ot_ra ot_ra
+field_in ot_dec ot_dec
+field_in ot_pos_err ot_pos_err
+field_in ot_pos_ref ot_pos_ref
+field_in other_obs other_obs
+field_in other_obs_ref other_obs_ref
+field_in other_obs2 other_obs2
+field_in other_obs2_ref other_obs2_ref
+field_in other_obs3 other_obs3
+field_in other_obs3_ref other_obs3_ref
+field_in other_obs4 other_obs4
+field_in other_obs4_ref other_obs4_ref
+field_in supernova_flag supernova_flag
+field_in galaxy_flag galaxy_flag
+field_in galaxy_name galaxy_name
+field_in galaxy_type galaxy_type
+field_in galaxy_ra galaxy_ra
+field_in galaxy_dec galaxy_dec
+field_in galaxy_pos_ref galaxy_pos_ref
+field_in galaxy_redshift galaxy_redshift
+field_in galaxy_ref galaxy_ref
+field_in galaxy_offset galaxy_offset
+field_in ground_counterpart ground_counterpart
+field_in web_page web_page
+field_in comments comments
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+*+FROM+tevcat
+ttl 604800
+force em
+body earth
+at sun 1.0
+format universal
+tau_key _dist_m
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+J%2FMNRAS%2F509%2F1662%2Ftable1
+ttl 604800
+force em
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+plx_key default_plx
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+xmmslew
+ttl 604800
+force em
+body earth
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in flux_b8 flux_b8
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+xmmssc
+ttl 604800
+force em
+body earth
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key ra
+dec_key dec
+z_key redshift_zsp
+field_in srcid srcid
+field_in name name
+field_in obsid obsid
+field_in pps_srcnum pps_srcnum
+field_in n_obs n_obs
+field_in n_contrib n_contrib
+field_in n_exp n_exp
+field_in error_radius error_radius
+field_in error_ell_major error_ell_major
+field_in error_ell_minor error_ell_minor
+field_in error_ell_pa error_ell_pa
+field_in lii lii
+field_in bii bii
+field_in x_pixel x_pixel
+field_in x_pixel_error x_pixel_error
+field_in x_pixel_neg_err x_pixel_neg_err
+field_in x_pixel_pos_err x_pixel_pos_err
+field_in y_pixel y_pixel
+field_in y_pixel_error y_pixel_error
+field_in y_pixel_neg_err y_pixel_neg_err
+field_in y_pixel_pos_err y_pixel_pos_err
+field_in ccdpn ccdpn
+field_in pn_rawx pn_rawx
+field_in pn_rawy pn_rawy
+field_in ccdm1 ccdm1
+field_in m1_rawx m1_rawx
+field_in m1_rawy m1_rawy
+field_in ccdm2 ccdm2
+field_in m2_rawx m2_rawx
+field_in m2_rawy m2_rawy
+field_in dist_nn dist_nn
+field_in n_blend n_blend
+field_in ep_flux ep_flux
+field_in ep_flux_error ep_flux_error
+field_in ep_1_flux ep_1_flux
+field_in ep_1_flux_error ep_1_flux_error
+field_in ep_2_flux ep_2_flux
+field_in ep_2_flux_error ep_2_flux_error
+field_in ep_3_flux ep_3_flux
+field_in ep_3_flux_error ep_3_flux_error
+field_in ep_4_flux ep_4_flux
+field_in ep_4_flux_error ep_4_flux_error
+field_in ep_5_flux ep_5_flux
+field_in ep_5_flux_error ep_5_flux_error
+field_in pn_flux pn_flux
+field_in pn_flux_error pn_flux_error
+field_in pn_1_flux pn_1_flux
+field_in pn_1_flux_error pn_1_flux_error
+field_in pn_2_flux pn_2_flux
+field_in pn_2_flux_error pn_2_flux_error
+field_in pn_3_flux pn_3_flux
+field_in pn_3_flux_error pn_3_flux_error
+field_in pn_4_flux pn_4_flux
+field_in pn_4_flux_error pn_4_flux_error
+field_in pn_5_flux pn_5_flux
+field_in pn_5_flux_error pn_5_flux_error
+field_in m1_flux m1_flux
+field_in m1_flux_error m1_flux_error
+field_in m1_1_flux m1_1_flux
+field_in m1_1_flux_error m1_1_flux_error
+field_in m1_2_flux m1_2_flux
+field_in m1_2_flux_error m1_2_flux_error
+field_in m1_3_flux m1_3_flux
+field_in m1_3_flux_error m1_3_flux_error
+field_in m1_4_flux m1_4_flux
+field_in m1_4_flux_error m1_4_flux_error
+field_in m1_5_flux m1_5_flux
+field_in m1_5_flux_error m1_5_flux_error
+field_in m2_flux m2_flux
+field_in m2_flux_error m2_flux_error
+field_in m2_1_flux m2_1_flux
+field_in m2_1_flux_error m2_1_flux_error
+field_in m2_2_flux m2_2_flux
+field_in m2_2_flux_error m2_2_flux_error
+field_in m2_3_flux m2_3_flux
+field_in m2_3_flux_error m2_3_flux_error
+field_in m2_4_flux m2_4_flux
+field_in m2_4_flux_error m2_4_flux_error
+field_in m2_5_flux m2_5_flux
+field_in m2_5_flux_error m2_5_flux_error
+field_in ep_rate ep_rate
+field_in ep_rate_error ep_rate_error
+field_in pn_rate pn_rate
+field_in pn_rate_error pn_rate_error
+field_in pn_1_rate pn_1_rate
+field_in pn_1_rate_error pn_1_rate_error
+field_in pn_2_rate pn_2_rate
+field_in pn_2_rate_error pn_2_rate_error
+field_in pn_3_rate pn_3_rate
+field_in pn_3_rate_error pn_3_rate_error
+field_in pn_4_rate pn_4_rate
+field_in pn_4_rate_error pn_4_rate_error
+field_in pn_5_rate pn_5_rate
+field_in pn_5_rate_error pn_5_rate_error
+field_in m1_rate m1_rate
+field_in m1_rate_error m1_rate_error
+field_in m1_1_rate m1_1_rate
+field_in m1_1_rate_error m1_1_rate_error
+field_in m1_2_rate m1_2_rate
+field_in m1_2_rate_error m1_2_rate_error
+field_in m1_3_rate m1_3_rate
+field_in m1_3_rate_error m1_3_rate_error
+field_in m1_4_rate m1_4_rate
+field_in m1_4_rate_error m1_4_rate_error
+field_in m1_5_rate m1_5_rate
+field_in m1_5_rate_error m1_5_rate_error
+field_in m2_rate m2_rate
+field_in m2_rate_error m2_rate_error
+field_in m2_1_rate m2_1_rate
+field_in m2_1_rate_error m2_1_rate_error
+field_in m2_2_rate m2_2_rate
+field_in m2_2_rate_error m2_2_rate_error
+field_in m2_3_rate m2_3_rate
+field_in m2_3_rate_error m2_3_rate_error
+field_in m2_4_rate m2_4_rate
+field_in m2_4_rate_error m2_4_rate_error
+field_in m2_5_rate m2_5_rate
+field_in m2_5_rate_error m2_5_rate_error
+field_in ep_cts ep_cts
+field_in ep_cts_error ep_cts_error
+field_in pn_cts pn_cts
+field_in pn_cts_error pn_cts_error
+field_in m1_cts m1_cts
+field_in m1_cts_error m1_cts_error
+field_in m2_cts m2_cts
+field_in m2_cts_error m2_cts_error
+field_in ep_det_ml ep_det_ml
+field_in pn_det_ml pn_det_ml
+field_in pn_1_det_ml pn_1_det_ml
+field_in pn_2_det_ml pn_2_det_ml
+field_in pn_3_det_ml pn_3_det_ml
+field_in pn_4_det_ml pn_4_det_ml
+field_in pn_5_det_ml pn_5_det_ml
+field_in m1_det_ml m1_det_ml
+field_in m1_1_det_ml m1_1_det_ml
+field_in m1_2_det_ml m1_2_det_ml
+field_in m1_3_det_ml m1_3_det_ml
+field_in m1_4_det_ml m1_4_det_ml
+field_in m1_5_det_ml m1_5_det_ml
+field_in m2_det_ml m2_det_ml
+field_in m2_1_det_ml m2_1_det_ml
+field_in m2_2_det_ml m2_2_det_ml
+field_in m2_3_det_ml m2_3_det_ml
+field_in m2_4_det_ml m2_4_det_ml
+field_in m2_5_det_ml m2_5_det_ml
+field_in extent extent
+field_in extent_error extent_error
+field_in extent_neg_err extent_neg_err
+field_in extent_pos_err extent_pos_err
+field_in extent_ml extent_ml
+field_in stack_det_ml stack_det_ml
+field_in stack_flux stack_flux
+field_in stack_flux_error stack_flux_error
+field_in stack_flux_neg_err stack_flux_neg_err
+field_in stack_flux_pos_err stack_flux_pos_err
+field_in stack_nh stack_nh
+field_in stack_nh_error stack_nh_error
+field_in stack_nh_neg_err stack_nh_neg_err
+field_in stack_nh_pos_err stack_nh_pos_err
+field_in stack_gamma stack_gamma
+field_in stack_gamma_error stack_gamma_error
+field_in stack_gamma_neg_err stack_gamma_neg_err
+field_in stack_gamma_pos_err stack_gamma_pos_err
+field_in pn_1_ecf pn_1_ecf
+field_in pn_2_ecf pn_2_ecf
+field_in pn_3_ecf pn_3_ecf
+field_in pn_4_ecf pn_4_ecf
+field_in pn_5_ecf pn_5_ecf
+field_in m1_1_ecf m1_1_ecf
+field_in m1_2_ecf m1_2_ecf
+field_in m1_3_ecf m1_3_ecf
+field_in m1_4_ecf m1_4_ecf
+field_in m1_5_ecf m1_5_ecf
+field_in m2_1_ecf m2_1_ecf
+field_in m2_2_ecf m2_2_ecf
+field_in m2_3_ecf m2_3_ecf
+field_in m2_4_ecf m2_4_ecf
+field_in m2_5_ecf m2_5_ecf
+field_in ep_hr1 ep_hr1
+field_in ep_hr1_error ep_hr1_error
+field_in ep_hr2 ep_hr2
+field_in ep_hr2_error ep_hr2_error
+field_in ep_hr3 ep_hr3
+field_in ep_hr3_error ep_hr3_error
+field_in ep_hr4 ep_hr4
+field_in ep_hr4_error ep_hr4_error
+field_in pn_hr1 pn_hr1
+field_in pn_hr1_error pn_hr1_error
+field_in pn_hr2 pn_hr2
+field_in pn_hr2_error pn_hr2_error
+field_in pn_hr3 pn_hr3
+field_in pn_hr3_error pn_hr3_error
+field_in pn_hr4 pn_hr4
+field_in pn_hr4_error pn_hr4_error
+field_in m1_hr1 m1_hr1
+field_in m1_hr1_error m1_hr1_error
+field_in m1_hr2 m1_hr2
+field_in m1_hr2_error m1_hr2_error
+field_in m1_hr3 m1_hr3
+field_in m1_hr3_error m1_hr3_error
+field_in m1_hr4 m1_hr4
+field_in m1_hr4_error m1_hr4_error
+field_in m2_hr1 m2_hr1
+field_in m2_hr1_error m2_hr1_error
+field_in m2_hr2 m2_hr2
+field_in m2_hr2_error m2_hr2_error
+field_in m2_hr3 m2_hr3
+field_in m2_hr3_error m2_hr3_error
+field_in m2_hr4 m2_hr4
+field_in m2_hr4_error m2_hr4_error
+field_in pn_1_exposure pn_1_exposure
+field_in pn_2_exposure pn_2_exposure
+field_in pn_3_exposure pn_3_exposure
+field_in pn_4_exposure pn_4_exposure
+field_in pn_5_exposure pn_5_exposure
+field_in m1_1_exposure m1_1_exposure
+field_in m1_2_exposure m1_2_exposure
+field_in m1_3_exposure m1_3_exposure
+field_in m1_4_exposure m1_4_exposure
+field_in m1_5_exposure m1_5_exposure
+field_in m2_1_exposure m2_1_exposure
+field_in m2_2_exposure m2_2_exposure
+field_in m2_3_exposure m2_3_exposure
+field_in m2_4_exposure m2_4_exposure
+field_in m2_5_exposure m2_5_exposure
+field_in pn_bg pn_bg
+field_in pn_1_bg pn_1_bg
+field_in pn_2_bg pn_2_bg
+field_in pn_3_bg pn_3_bg
+field_in pn_4_bg pn_4_bg
+field_in pn_5_bg pn_5_bg
+field_in m1_bg m1_bg
+field_in m1_1_bg m1_1_bg
+field_in m1_2_bg m1_2_bg
+field_in m1_3_bg m1_3_bg
+field_in m1_4_bg m1_4_bg
+field_in m1_5_bg m1_5_bg
+field_in m2_bg m2_bg
+field_in m2_1_bg m2_1_bg
+field_in m2_2_bg m2_2_bg
+field_in m2_3_bg m2_3_bg
+field_in m2_4_bg m2_4_bg
+field_in m2_5_bg m2_5_bg
+field_in ep_ontime ep_ontime
+field_in pn_ontime pn_ontime
+field_in m1_ontime m1_ontime
+field_in m2_ontime m2_ontime
+field_in pn_pileup pn_pileup
+field_in m1_pileup m1_pileup
+field_in m2_pileup m2_pileup
+field_in pn_maskfrac pn_maskfrac
+field_in m1_maskfrac m1_maskfrac
+field_in m2_maskfrac m2_maskfrac
+field_in dist_ref dist_ref
+field_in ep_offax ep_offax
+field_in pn_offax pn_offax
+field_in m1_offax m1_offax
+field_in m2_offax m2_offax
+field_in tseries_flag tseries_flag
+field_in spectra_flag spectra_flag
+field_in chi2prob chi2prob
+field_in fvar fvar
+field_in fvar_error fvar_error
+field_in var_flag var_flag
+field_in pn_1_vig pn_1_vig
+field_in pn_2_vig pn_2_vig
+field_in pn_3_vig pn_3_vig
+field_in pn_4_vig pn_4_vig
+field_in pn_5_vig pn_5_vig
+field_in m1_1_vig m1_1_vig
+field_in m1_2_vig m1_2_vig
+field_in m1_3_vig m1_3_vig
+field_in m1_4_vig m1_4_vig
+field_in m1_5_vig m1_5_vig
+field_in m2_1_vig m2_1_vig
+field_in m2_2_vig m2_2_vig
+field_in m2_3_vig m2_3_vig
+field_in m2_4_vig m2_4_vig
+field_in m2_5_vig m2_5_vig
+field_in sum_flag sum_flag
+field_in ep_flag ep_flag
+field_in pn_flag pn_flag
+field_in m1_flag m1_flag
+field_in m2_flag m2_flag
+field_in var_chi2 var_chi2
+field_in var_chi2_1 var_chi2_1
+field_in var_chi2_2 var_chi2_2
+field_in var_chi2_3 var_chi2_3
+field_in var_chi2_4 var_chi2_4
+field_in var_chi2_5 var_chi2_5
+field_in var_prob var_prob
+field_in var_prob_1 var_prob_1
+field_in var_prob_2 var_prob_2
+field_in var_prob_3 var_prob_3
+field_in var_prob_4 var_prob_4
+field_in var_prob_5 var_prob_5
+field_in fratio fratio
+field_in fratio_error fratio_error
+field_in fratio_1 fratio_1
+field_in fratio_1_error fratio_1_error
+field_in fratio_2 fratio_2
+field_in fratio_2_error fratio_2_error
+field_in fratio_3 fratio_3
+field_in fratio_3_error fratio_3_error
+field_in fratio_4 fratio_4
+field_in fratio_4_error fratio_4_error
+field_in fratio_5 fratio_5
+field_in fratio_5_error fratio_5_error
+field_in fluxvar fluxvar
+field_in fluxvar_1 fluxvar_1
+field_in fluxvar_2 fluxvar_2
+field_in fluxvar_3 fluxvar_3
+field_in fluxvar_4 fluxvar_4
+field_in fluxvar_5 fluxvar_5
+field_in time time
+field_in end_time end_time
+field_in xmm_revolution xmm_revolution
+field_in pn_submode pn_submode
+field_in m1_submode m1_submode
+field_in m2_submode m2_submode
+field_in pn_filter pn_filter
+field_in m1_filter m1_filter
+field_in m2_filter m2_filter
+field_in classx_class classx_class
+field_in classx_outlier classx_outlier
+field_in classx_prob_agn classx_prob_agn
+field_in classx_prob_star classx_prob_star
+field_in classx_prob_gal_xrb classx_prob_gal_xrb
+field_in classx_prob_gal_cv classx_prob_gal_cv
+field_in classx_prob_bkg_agn classx_prob_bkg_agn
+field_in classx_prob_extragal_xrb classx_prob_extragal_xrb
+field_in classx_prob_extended classx_prob_extended
+field_in om_srcid om_srcid
+field_in om_uvw2_ab_mag om_uvw2_ab_mag
+field_in om_uvw2_ab_mag_error om_uvw2_ab_mag_error
+field_in om_uvm2_ab_mag om_uvm2_ab_mag
+field_in om_uvm2_ab_mag_error om_uvm2_ab_mag_error
+field_in om_uvw1_ab_mag om_uvw1_ab_mag
+field_in om_uvw1_ab_mag_error om_uvw1_ab_mag_error
+field_in om_u_ab_mag om_u_ab_mag
+field_in om_u_ab_mag_error om_u_ab_mag_error
+field_in om_b_ab_mag om_b_ab_mag
+field_in om_b_ab_mag_error om_b_ab_mag_error
+field_in om_v_ab_mag om_v_ab_mag
+field_in om_v_ab_mag_error om_v_ab_mag_error
+field_in om_match_prob om_match_prob
+field_in om_uvw2_quality_flag om_uvw2_quality_flag
+field_in om_uvm2_quality_flag om_uvm2_quality_flag
+field_in om_uvw1_quality_flag om_uvw1_quality_flag
+field_in om_u_quality_flag om_u_quality_flag
+field_in om_b_quality_flag om_b_quality_flag
+field_in om_v_quality_flag om_v_quality_flag
+field_in om_uvw2_extended_flag om_uvw2_extended_flag
+field_in om_uvm2_extended_flag om_uvm2_extended_flag
+field_in om_uvw1_extended_flag om_uvw1_extended_flag
+field_in om_u_extended_flag om_u_extended_flag
+field_in om_b_extended_flag om_b_extended_flag
+field_in om_v_extended_flag om_v_extended_flag
+field_in om_uvw2_chisq om_uvw2_chisq
+field_in om_uvw2_chisq_dof om_uvw2_chisq_dof
+field_in om_uvm2_chisq om_uvm2_chisq
+field_in om_uvm2_chisq_dof om_uvm2_chisq_dof
+field_in om_uvw1_chisq om_uvw1_chisq
+field_in om_uvw1_chisq_dof om_uvw1_chisq_dof
+field_in om_u_chisq om_u_chisq
+field_in om_u_chisq_dof om_u_chisq_dof
+field_in om_b_chisq om_b_chisq
+field_in om_b_chisq_dof om_b_chisq_dof
+field_in om_v_chisq om_v_chisq
+field_in om_v_chisq_dof om_v_chisq_dof
+field_in wise_name wise_name
+field_in wise_w1mag wise_w1mag
+field_in wise_w1mag_error wise_w1mag_error
+field_in wise_w2mag wise_w2mag
+field_in wise_w2mag_error wise_w2mag_error
+field_in wise_w3mag wise_w3mag
+field_in wise_w3mag_error wise_w3mag_error
+field_in wise_w4mag wise_w4mag
+field_in wise_w4mag_error wise_w4mag_error
+field_in wise_match_prob wise_match_prob
+field_in gaiadr3_source_id gaiadr3_source_id
+field_in gaiadr3_parallax gaiadr3_parallax
+field_in gaiadr3_parallax_error gaiadr3_parallax_error
+field_in gaiadr3_parallax_overerr gaiadr3_parallax_overerr
+field_in gaiadr3_pm_ra gaiadr3_pm_ra
+field_in gaiadr3_pm_dec gaiadr3_pm_dec
+field_in gaiadr3_gmag gaiadr3_gmag
+field_in gaiadr3_bpmag gaiadr3_bpmag
+field_in gaiadr3_rpmag gaiadr3_rpmag
+field_in gaia_match_prob gaia_match_prob
+field_in info_counterparts info_counterparts
+field_in gaiadr3_dist gaiadr3_dist
+field_in classopt_class classopt_class
+field_in classopt_prob_star classopt_prob_star
+field_in classopt_prob_agn classopt_prob_agn
+field_in classopt_prob_galaxy classopt_prob_galaxy
+field_in spec_flux_pl spec_flux_pl
+field_in spec_flux_pl_neg_err spec_flux_pl_neg_err
+field_in spec_flux_pl_pos_err spec_flux_pl_pos_err
+field_in spec_nh_pl spec_nh_pl
+field_in spec_nh_pl_neg_err spec_nh_pl_neg_err
+field_in spec_nh_pl_pos_err spec_nh_pl_pos_err
+field_in spec_gamma_pl spec_gamma_pl
+field_in spec_gamma_pl_neg_err spec_gamma_pl_neg_err
+field_in spec_gamma_pl_pos_err spec_gamma_pl_pos_err
+field_in spec_iin_pl spec_iin_pl
+field_in spec_iin_pl_neg_err spec_iin_pl_neg_err
+field_in spec_iin_pl_pos_err spec_iin_pl_pos_err
+field_in spec_dof_pl spec_dof_pl
+field_in spec_pvalue_pl spec_pvalue_pl
+field_in spec_flag_pl spec_flag_pl
+field_in spec_info spec_info
+field_in approx_source_var approx_source_var
+field_in redshift_tpz_flag_zconf redshift_tpz_flag_zconf
+field_in redshift_lph_z_best redshift_lph_z_best
+field_in redshift_lph_flag_zconf redshift_lph_flag_zconf
+field_in redshift_info_distance redshift_info_distance
+
+url https://power.larc.nasa.gov/api/temporal/monthly/point?parameters=T2M,PRECTOTCORR,ALLSKY_SFC_SW_DWN&community=RE&longitude={lon}&latitude={lat}&start=2001&end=2020&format=JSON
+ttl 604800
+force em
+on earth 47.3769 8.5417
+path properties.parameter.T2M.01 01
+path properties.parameter.T2M.07 07
+path properties.parameter.PRECTOTCORR.01 01
+path properties.parameter.PRECTOTCORR.07 07
+map features
+
+url https://www.glims.org/geoserver/ows?service=wfs&version=2.0.0&request=GetFeature&typeName=GLIMS:GLIMS_Points&bbox={lon_min},{lat_min},{lon_max},{lat_max},EPSG:4326&count=500&outputFormat=application/json
+ttl 604800
+force thermal
+at sun 1.0
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+epoch_key properties.src_date
+field_in properties.db_area db_area
+
+url https://skyserver.sdss.org/dr18/SkyServerWS/SearchTools/SqlSearch?format=json&cmd=SELECT+TOP+1024+ra,dec,z,petroMag_g+FROM+SpecObj+WHERE+class=%27GALAXY%27+AND+z+BETWEEN+0.01+AND+2+AND+petroMag_g+<+19
+ttl 604800
+force em
+at sun 1.0
+cmap 0.Rows
+tau_key _dist_m
+ra_key ra
+dec_key dec
+z_key z
+field_in petroMag_g petroMag_g
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27BD*%27
+ttl 604800
+force em
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag phot_g_mean_mag
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27C*%27
+ttl 604800
+force em
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag phot_g_mean_mag
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27EB*%27
+ttl 604800
+force em
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='Galaxy'
+ttl 604800
+force em
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+z_key z
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27ClG%27
+ttl 604800
+force em
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+z_key z
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27Galaxy%27+AND+rvz_redshift+%3E+5
+ttl 604800
+force em
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+1+main_id,ra,dec,rvz_redshift+FROM+basic+WHERE+otype='QSO'+AND+rvz_redshift+IS+NOT+NULL+ORDER+BY+rvz_redshift+DESC
+ttl 604800
+force em
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27ms*%27
+ttl 604800
+force em
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='Nova'
+ttl 604800
+force em
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='Pulsar'
+ttl 604800
+force em
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='QSO'
+ttl 604800
+force em
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='SN'
+ttl 604800
+force em
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27Sy*%27
+ttl 604800
+force em
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='WD*'
+ttl 604800
+force em
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag phot_g_mean_mag
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27WR*%27
+ttl 604800
+force em
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag phot_g_mean_mag
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27S*Y%27
+ttl 604800
+force em
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key parallax
+field_in phot_g_mean_mag phot_g_mean_mag
+
+url https://services1.arcgis.com/YiULsZbgRKmBtdZN/arcgis/rest/services/Volcanoes_of_the_world/FeatureServer/0/query?where=1%3D1&outFields=LATX,LONGX,ELEV,NAME,STATUS&outSR=4326&f=geojson&resultRecordCount=1000
+ttl 604800
+force seismic-surface
+on earth 0 0
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.ELEV ELEV
+
+url https://raw.githubusercontent.com/arijguest/3D-meteorite-viewer/main/earth-impact-craters-v2.geojson
+ttl 604800
+force em
+on earth 0 0
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.Name Name
+
+url https://services7.arcgis.com/WSiUmUhlFx4CtMBB/arcgis/rest/services/SO2datanew/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 604800
+force diffusion
+on earth 0 0
+map features
+lat_key properties.Lat
+lon_key properties.Long
+field_in properties.SO2_Kilotons SO2_Kilotons
+
+url https://raw.githubusercontent.com/FreeCodeCamp/ProjectReferenceData/master/meteorite-strike-data.json
+ttl 604800
+force em
+on earth 0 0
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.mass mass
+field_in properties.name name
+
+url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_populated_places_simple.geojson
+ttl 604800
+force em
+at sun 1.0
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.pop_max pop_max
+field_in properties.scalerank scalerank
+
+url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_50m_glaciated_areas.geojson
+ttl 604800
+force em
+at sun 1.0
+map features
+lat_key geometry.coordinates.0.0.1
+lon_key geometry.coordinates.0.0.0
+field_in properties.name name
+field_in properties.scalerank scalerank
+
+url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_50m_lakes.geojson
+ttl 604800
+force em
+at sun 1.0
+map features
+lat_key geometry.coordinates.0.0.1
+lon_key geometry.coordinates.0.0.0
+field_in properties.name name
+field_in properties.scalerank scalerank
+
+url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_populated_places.geojson
+ttl 604800
+force em
+at sun 1.0
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.name name
+field_in properties.scalerank scalerank
+
+url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_rivers_lake_centerlines.geojson
+ttl 604800
+force em
+at sun 1.0
+map features
+lat_key geometry.coordinates.0.1
+lon_key geometry.coordinates.0.0
+field_in properties.name name
+
+url https://raw.githubusercontent.com/Bowserinator/Periodic-Table-JSON/master/PeriodicTableJSON.json
+ttl 604800
+force em
+at sun 1.0
+map elements
+field_in atomic_mass atomic_mass
+field_in density density
+field_in melt melt
+
+url https://raw.githubusercontent.com/cristianst85/GeoNuclearData/master/data/csv/denormalized/reactors.csv
+ttl 604800
+force thermal
+at sun 1.0
+format universal
+map .
+lat_key Latitude
+lon_key Longitude
+field_in Capacity Capacity
+
+url https://raw.githubusercontent.com/wri/global-power-plant-database/master/output_database/global_power_plant_database.csv
+ttl 604800
+force thermal
+at sun 1.0
+format universal
+map .
+lat_key latitude
+lon_key longitude
+field_in capacity_mw capacity_mw
+field_in primary_fuel primary_fuel
+
+url https://egg.astro.cornell.edu/alfalfa/data/a40files/a40.datafile1.csv
+body earth
+ttl 2592000
+force em
+map data
+field_in 0 0
+field_in 1 1
+field_in 2 2
+field_in 3 3
+field_in 4 4
+field_in 5 5
+field_in 6 6
+field_in 7 7
+field_in 8 8
+field_in 9 9
+field_in 10 10
+field_in 11 11
+field_in 12 12
+field_in 13 13
+field_in 14 14

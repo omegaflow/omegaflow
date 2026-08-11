@@ -1,0 +1,39 @@
+url https://api.wheretheiss.at/v1/satellites/25544
+ttl 60
+at earth
+lon solar_lon deg
+lat solar_lat deg
+lat latitude deg
+lon longitude deg
+alt altitude km
+field footprint em km
+field velocity advective km/s
+
+url https://www.ndbc.noaa.gov/data/realtime2/41002.txt
+ttl 300
+on earth 32.3 -75.3 0
+field WDIR advective deg
+field WSPD advective m/s
+field WVHT acoustic m
+field DPD acoustic m
+field APD acoustic m
+field MWD acoustic m
+field PRES advective hPa
+field ATMP thermal C
+field WTMP thermal C
+field DEWP thermal C
+field PTDY advective hPa
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson
+ttl 60
+at earth
+lon features.geometry.coordinates.0 deg
+lat features.geometry.coordinates.1 deg
+alt features.geometry.coordinates.2 km
+
+url https://services.swpc.noaa.gov/json/goes/primary/xrays-1-day.json
+ttl 60
+at sun
+field observed_flux em W/m2
+field flux em W/m2
+

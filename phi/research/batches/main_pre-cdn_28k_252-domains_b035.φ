@@ -1,0 +1,530 @@
+source nasa_sage3_iss_aerosol_cmr
+ttl 86400
+force diffusion
+url https://cmr.earthdata.nasa.gov/search/granules.json?collection_concept_id=C2565414058-GES_DISC&page_size=100&sort_key=-start_date
+wgs84 0.0 0.0
+map feed.entry
+field title granule_title
+field updated last_modified
+field boxes bounding_box
+
+source astro_ncei_enso_oni_index
+ttl 86400
+force thermal
+ecliptic 1
+url https://www.cpc.ncep.noaa.gov/data/indices/oni.ascii.txt
+format text
+rows
+field 0 season_year
+field 1 month
+field 2 anom_3month oni_anomaly_c
+
+source atmosphere_ncei_global_summary_weather
+ttl 86400
+wgs84 0.0 0.0
+force diffusion
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&stations=USW00013739&startDate=2026-01-01&endDate=2026-07-27&format=json
+map
+lat_key 40.74
+  lon_key -73.98
+  lat 40.74
+  lon -73.98
+field station station_id
+field date observation_date
+field TMAX temperature_max_celsius
+field TMIN temperature_min_celsius
+field PRCP precipitation_mm
+field SNOW snowfall_mm
+field AWND average_wind_speed_ms
+
+source astro_ncei_nao_monthly_index
+ttl 86400
+force thermal
+url https://www.cpc.ncep.noaa.gov/products/precip/CWlink/pna/norm.nao.monthly.b5001.current.ascii
+wgs84 0.0 0.0
+format text
+rows
+field 0 year
+field 1 month
+field 2 nao_index nao_value
+
+source geosphere_ncei_paleo_treering_parameters
+ttl 86400
+force diffusion
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/geosphere_ncei_paleo_treering_parameters.json
+wgs84 0.0 0.0
+map .
+field name parameter_name
+field id parameter_id
+field units parameter_units
+
+source geosphere_ncei_paleo_treering_studies
+ttl 86400
+force diffusion
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/geosphere_ncei_paleo_treering_studies.json
+map .
+lat_key site.latitude
+lon_key site.longitude
+field studyId study_id
+field title study_title
+field investigators.0.name investigator_name
+field site.name site_name
+field site.elevation elevation_m
+field abstract study_abstract
+field publication.0.title publication_title
+field publication.0.year publication_year
+
+source astro_ncei_pdo_monthly_index
+ttl 86400
+force thermal
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/astro_ncei_pdo_monthly_index.json
+wgs84 0.0 0.0
+format json
+map data
+lat_key lat
+lon_key lon
+field_in 0 year
+field_in 1 month
+field_in 2 pdo_index pdo_value
+
+source astro_ncei_soi_monthly_index
+ttl 86400
+force thermal
+url https://www.cpc.ncep.noaa.gov/data/indices/soi
+wgs84 0.0 0.0
+format text
+rows
+field 0 year
+field 1 month
+field 2 soi_index soi_value
+
+source astro_neo_sentry_risk_list
+ttl 86400
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_neo_sentry_risk_list.json
+map data
+lat_key null
+lon_key null
+field des neo_designation
+field ip impact_probability
+field ps_max palermo_scale_max
+field date_range impact_date_range
+field v_inf v_infinity_km_s
+field h absolute_magnitude
+field diameter estimated_diameter_km
+
+source biosphere_neotoma_datasets
+ttl 86400
+force diffusion
+url https://api.neotomadb.org/v2/data/datasets?limit=500
+map data
+lat_key site.geography.lat
+lon_key site.geography.lng
+field datasetid dataset_id
+field dataset.type dataset_type
+field dataset.name dataset_name
+field site.sitename site_name
+field dataset.units dataset_units
+field dataset.pi.name principal_investigator
+
+source biosphere_neotoma_ostracod_sites
+ttl 86400
+force diffusion
+url https://api.neotomadb.org/v2/data/datasets?datasettype=ostracode&limit=500&offset=0
+map data
+lat_key site.geography.latitude
+lon_key site.geography.longitude
+field site.sitename site_name
+field datasettype dataset_type
+
+source biosphere_neotoma_plant_macrofossil_sites
+ttl 86400
+force diffusion
+url https://api.neotomadb.org/v2/data/datasets?datasettype=plant+macrofossil&limit=500&offset=0
+map data
+lat_key site.geography.latitude
+lon_key site.geography.longitude
+field site.sitename site_name
+
+source biosphere_neotoma_sites
+ttl 86400
+force diffusion
+url https://api.neotomadb.org/v2/data/sites?limit=500
+map data
+lat_key site.geography.lat
+lon_key site.geography.lng
+field siteid site_id
+field sitename site_name
+field site.description site_description
+field site.altitude altitude_m
+field site.geography.country country
+field site.geography.state state
+
+source astro_neowise_asteroid_diameters
+ttl 86400
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/tap_irsa_neowiser_p1bs_psd.csv
+format text
+rows
+ra_key ra
+dec_key dec
+field object_name neo_designation
+field abs_mag absolute_magnitude
+field diameter estimated_diameter_km
+field extended extended_object_flag
+field neo_flag near_earth_flag
+
+source geosphere_ngdc_volcanoes_significant
+ttl 86400
+force seismic-body
+url https://www.ngdc.noaa.gov/hazel/hazard-service/api/v1/volcanoes?maxRows=2000&startRow=1
+map items
+lat_key latitude
+lon_key longitude
+field name volcano_name
+field elevation elevation_m
+field deathsTotal deaths_total
+field year last_eruption_year
+
+source subatomic_nist_codata_fundamental_constants
+ttl 86400
+force em
+url https://physics.nist.gov/cuu/Constants/Table/allascii.txt
+format text
+rows
+field 0 quantity_name
+field 1 symbol
+field 2 value
+field 3 uncertainty
+field 4 unit
+
+source technosphere_nlm_assembly_total
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_nlm_assembly_total.json
+wgs84 38.995 -77.101
+field eSearchResult.Count molecular_genome_assemblies_total
+
+source technosphere_nlm_bioproject_total
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_nlm_bioproject_total.json
+wgs84 38.995 -77.101
+field eSearchResult.Count molecular_bioprojects_total
+
+source technosphere_nlm_biosample_total
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_nlm_biosample_total.json
+wgs84 38.995 -77.101
+field eSearchResult.Count molecular_biosamples_total
+
+source technosphere_nlm_books_total
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_nlm_books_total.json
+wgs84 38.995 -77.101
+field eSearchResult.Count biosphere_nlm_books_total
+
+source technosphere_nlm_clinical_trials_total
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_nlm_clinical_trials_total.json
+wgs84 38.995 -77.101
+field eSearchResult.Count biosphere_clinical_trials_total
+
+source technosphere_nlm_clinvar_total
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_nlm_clinvar_total.json
+wgs84 38.995 -77.101
+field eSearchResult.Count biosphere_clinic_variants_total
+
+source technosphere_nlm_gap_total
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_nlm_gap_total.json
+wgs84 38.995 -77.101
+field eSearchResult.Count biosphere_dbgap_studies_total
+
+source technosphere_nlm_gene_total
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_nlm_gene_total.json
+wgs84 38.995 -77.101
+field eSearchResult.Count molecular_genbank_genes_total
+
+source technosphere_nlm_genome_total
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_nlm_genome_total.json
+wgs84 38.995 -77.101
+field eSearchResult.Count molecular_genome_total
+
+source technosphere_nlm_mesh_total
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_nlm_mesh_total.json
+wgs84 38.995 -77.101
+field eSearchResult.Count biosphere_mesh_terms_total
+
+source technosphere_nlm_nucleotide_total
+ttl 86400
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_nlm_nucleotide_total.json
+wgs84 38.995 -77.101
+field eSearchResult.Count molecular_nucleotide_sequences_total
+
+source technosphere_nlm_omim_total
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_nlm_omim_total.json
+wgs84 38.995 -77.101
+field eSearchResult.Count biosphere_mendelian_disorders_total
+
+source technosphere_nlm_pmc_total
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_nlm_pmc_total.json
+wgs84 38.995 -77.101
+field eSearchResult.Count biosphere_pmc_articles_total
+
+source technosphere_nlm_protein_total
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_nlm_protein_total.json
+wgs84 38.995 -77.101
+field eSearchResult.Count molecular_protein_sequences_total
+
+source technosphere_nlm_pubmed_total
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_nlm_pubmed_total.json
+wgs84 38.995 -77.101
+field eSearchResult.Count biosphere_pubmed_articles_total
+
+source technosphere_nlm_snp_total
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_nlm_snp_total.json
+wgs84 38.995 -77.101
+field eSearchResult.Count molecular_snp_total
+
+source technosphere_nlm_sra_total
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_nlm_sra_total.json
+wgs84 38.995 -77.101
+field eSearchResult.Count molecular_sequencing_runs_total
+
+source technosphere_nlm_taxonomy_total
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_nlm_taxonomy_total.json
+wgs84 38.995 -77.101
+field eSearchResult.Count biosphere_taxonomy_total
+
+source noaa_coops_current_stations
+ttl 86400
+force advective
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_coops_current_stations.json
+map stations
+lat_key lat
+lon_key lng
+field id station_id
+field name station_name
+field state state
+
+source noaa_cpc_enso_nino34
+ttl 86400
+force thermal
+url https://www.cpc.ncep.noaa.gov/data/indices/sstoi.indices
+wgs84 0.0 -170.0
+format text
+rows
+field_in 0 year
+field_in 1 month
+field_in 3 nino12_sst_c
+field_in 4 nino12_sst_anom_c
+field_in 7 nino34_sst_c
+field_in 8 nino34_sst_anom_c
+
+source noaa_cpc_pdo_index
+ttl 86400
+force thermal
+url https://psl.noaa.gov/data/correlation/pdo.data
+wgs84 40.0 -170.0
+format text
+rows
+field_in 0 year
+field_in 1 month
+field_in 2 pdo_index
+
+source noaa_ghcnd_global_daily
+ttl 86400
+force thermal
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_ghcnd_global_daily.json
+map .
+lat_key LATITUDE
+lon_key LONGITUDE
+field STATION station_id
+field NAME station_name
+field TMAX tmax_tenths_c
+field TMIN tmin_tenths_c
+field PRCP precipitation_tenths_mm
+field SNOW snowfall_mm
+field SNWD snow_depth_mm
+
+source noaa_ghcnd_global_station_inventory
+ttl 86400
+force diffusion
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_ghcnd_global_station_inventory.json
+format json
+map data
+lat_key 1
+lon_key 2
+field_in 0 station_id
+field_in 3 elevation_m
+field_in 4 state
+field_in 5 station_name
+
+source noaa_ghcnd_station_inventory
+ttl 86400
+force thermal
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_ghcnd_station_inventory.json
+format json
+map data
+lat_key 1
+lon_key 2
+pos station_latitude station_longitude
+field_in 0 station_id
+field_in 1 station_latitude
+field_in 2 station_longitude
+field_in 3 station_elevation_m
+
+source noaa_gml_ch4_global
+ttl 86400
+force diffusion
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_gml_ch4_global.json
+wgs84 0.0 0.0
+format json
+rows
+field_in 0 year
+field_in 1 month
+field_in 2 ch4_ppb_mean
+field_in 3 ch4_ppb_uncertainty
+
+source noaa_gml_ch4_global_trend_monthly
+ttl 86400
+force diffusion
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_gml_ch4_global_trend_monthly.json
+wgs84 0.0 0.0
+format json
+rows
+field 0 year
+field 1 month
+field 2 ch4_global_ppb
+field 3 ch4_uncertainty_ppb
+field 4 ch4_trend_ppb
+field 5 trend_uncertainty
+
+source noaa_gml_co2_global_growth_rate
+ttl 86400
+force diffusion
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_gml_co2_global_growth_rate.json
+wgs84 0.0 0.0
+format json
+rows
+field 0 year
+field 1 co2_growth_rate_ppm_yr
+field 2 growth_rate_uncertainty
+
+source noaa_gml_co2_mauna_loa
+ttl 86400
+force diffusion
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_gml_co2_mauna_loa.json
+wgs84 19.5 -155.6
+format json
+rows
+field_in 0 year
+field_in 1 month
+field_in 2 day
+field_in 4 co2_ppm
+field_in 6 co2_1_yr_ago
+field_in 7 co2_10_yr_ago
+
+source noaa_gml_co2_mauna_loa_realtime
+ttl 86400
+force diffusion
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_gml_co2_mauna_loa_realtime.json
+wgs84 19.5 -155.6
+format json
+rows
+field_in 0 year
+field_in 1 month
+field_in 2 day
+field_in 3 co2_ppm
+
+source noaa_gml_global_xco2_long_term_trend
+ttl 86400
+force diffusion
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_gml_global_xco2_long_term_trend.json
+wgs84 0.0 0.0
+format json
+rows
+field 0 year
+field 1 co2_annual_mean_ppm
+field 2 co2_uncertainty_ppm
+
+source noaa_gml_n2o_global
+ttl 86400
+force diffusion
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_gml_n2o_global.json
+wgs84 0.0 0.0
+format json
+rows
+field_in 0 year
+field_in 1 month
+field_in 2 n2o_ppb_mean
+field_in 3 n2o_ppb_uncertainty
+
+source noaa_gml_sf6_global
+ttl 86400
+force diffusion
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_gml_sf6_global.json
+wgs84 0.0 0.0
+format json
+rows
+field_in 0 year
+field_in 1 month
+field_in 2 sf6_ppt_mean
+field_in 3 sf6_ppt_uncertainty
+
+source noaa_gml_stratospheric_aerosol
+ttl 86400
+force diffusion
+ecliptic 1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_gml_stratospheric_aerosol.json
+format json
+rows
+field_in 0 year
+field_in 1 co2_ppm_mean
+field_in 2 co2_ppm_uncertainty
+
+source noaa_gsod_global_surface_summary
+ttl 86400
+force thermal
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&dataTypes=TEMP,MAX,MIN,PRCP,WDSP,SLP,VISIB&stations=72420314733,10637099999,47678099999,94120099999&startDate={today}&endDate={today}&format=json
+map .
+lat_key LATITUDE
+lon_key LONGITUDE
+field STATION station_id
+field NAME station_name
+field DATE obs_date
+field TEMP mean_temp_f
+field MAX max_temp_f
+field MIN min_temp_f
+field PRCP precipitation_inch
+field WDSP wind_speed_kt
+field SLP sea_level_pressure_mb
+field VISIB visibility_miles

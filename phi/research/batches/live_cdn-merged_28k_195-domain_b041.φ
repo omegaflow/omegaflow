@@ -1,0 +1,99 @@
+cmap data
+
+tau_key _dist_m
+
+ra_key ra
+
+dec_key dec
+
+plx_key parallax
+
+field_in phot_g_mean_mag astro_gaia_blue_supergiants_phot_g_mean_mag
+
+field_in bp_rp astro_gaia_blue_supergiants_bp_rp
+
+url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/gaia_bright_vmag7_{latest}.json
+
+ttl 604800
+
+force em
+
+at sun 1.0
+
+cmap data
+
+tau_key _dist_m
+
+ra_key ra
+
+dec_key dec
+
+plx_key parallax
+
+field_in pmra astro_gaia_bright_vmag7_pmra
+
+field_in pmdec astro_gaia_bright_vmag7_pmdec
+
+field_in phot_g_mean_mag astro_gaia_bright_vmag7_phot_g_mean_mag
+
+field_in phot_bp_mean_mag astro_gaia_bright_vmag7_phot_bp_mean_mag
+
+field_in phot_rp_mean_mag astro_gaia_bright_vmag7_phot_rp_mean_mag
+
+field_in radial_velocity astro_gaia_bright_vmag7_radial_velocity
+
+field_in teff_gspphot astro_gaia_bright_vmag7_teff_gspphot
+
+field_in mh_gspphot astro_gaia_bright_vmag7_mh_gspphot
+
+field_in bp_rp astro_gaia_bright_vmag7_bp_rp
+
+url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/gaia_bright_vmag9_{latest}.json
+
+ttl 604800
+
+force em
+
+at sun 1.0
+
+cmap data
+
+tau_key _dist_m
+
+ra_key ra
+
+dec_key dec
+
+plx_key parallax
+
+field_in phot_g_mean_mag astro_gaia_bright_vmag9_phot_g_mean_mag
+
+url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/gaia_giants_{latest}.json
+
+ttl 604800
+
+force em
+
+at sun 1.0
+
+cmap data
+
+tau_key _dist_m
+
+ra_key ra
+
+dec_key dec
+
+plx_key parallax
+
+field_in phot_g_mean_mag astro_gaia_giants_phot_g_mean_mag
+
+field_in bp_rp astro_gaia_giants_bp_rp
+
+field_in teff_gspphot astro_gaia_giants_teff_gspphot
+
+url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/gaia_high_pm_{latest}.json
+
+ttl 604800
+
+force em

@@ -1,0 +1,546 @@
+url https://api.geonet.org.nz/volcano/val
+ttl 3600
+force em
+on earth 0 0
+header Accept application/vnd.geo+json;version=2
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+  field_in properties.volcanoID volcanoID
+  field_in properties.volcanoTitle volcanoTitle
+  field_in properties.level level
+  field_in properties.level aviationColourCode
+  field_in properties.activity activity
+
+url https://eonet.gsfc.nasa.gov/api/v3/events
+ttl 3600
+force em
+at sun 1
+map events
+lat_key geometry.0.coordinates.1
+lon_key geometry.0.coordinates.0
+  field_in title title
+  field_in categories.0.title title
+  field_in id id
+
+url https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/Active_Fires/FeatureServer/0/query?where=1%3D1&outFields=*&geometry={lon_min},{lat_min},{lon_max},{lat_max}&geometryType=esriGeometryEnvelope&f=json
+ttl 3600
+force em
+at sun 1
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+  field_in attributes.IncidentName IncidentName
+  field_in attributes.PolygonAcres PolygonAcres
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?date=today&station=9414290&product=predictions&datum=MLLW&time_zone=GMT&units=metric&format=json
+ttl 3600
+force gravity
+at sun 1.0
+map predictions
+lat_key lat
+lon_key lon
+  field_in v v
+
+url https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json?expand=details&type=watertemp
+ttl 3600
+force thermal
+at sun 1.0
+map stations
+lat_key lat
+lon_key lng
+  field_in id id
+  field_in name name
+field_in state state
+
+url https://api.coral.tsr.lol/stations/gbr_central/current
+ttl 3600
+force thermal
+on earth -18.0 147.0
+  field current.sst_min sst_min
+  field current.sst_max sst_max
+  field current.ssta_90th_hs ssta_90th_hs
+  field current.dhw dhw
+  field current.baa_7day_max baa_7day_max
+
+url https://api.coral.tsr.lol/stations/gbr_northern/current
+ttl 3600
+force thermal
+on earth -14.0 145.0
+  field current.sst_min sst_min
+  field current.sst_max sst_max
+  field current.ssta_90th_hs ssta_90th_hs
+  field current.hs_90th hs_90th
+  field current.dhw dhw
+  field current.baa_7day_max baa_7day_max
+
+url https://api.coral.tsr.lol/stations/gbr_southern/current
+ttl 3600
+force thermal
+on earth -22.0 150.0
+  field current.sst_min sst_min
+  field current.sst_max sst_max
+  field current.ssta_90th_hs ssta_90th_hs
+  field current.dhw dhw
+  field current.baa_7day_max baa_7day_max
+
+url https://api.coral.tsr.lol/stations
+ttl 3600
+force thermal
+on earth 0 0
+map .
+lat_key 2.latitude
+lon_key 2.latitude
+  field_in slug slug
+  field_in avg_max_monthly_mean avg_max_monthly_mean
+  field_in bleaching_threshold bleaching_threshold
+field_in region region
+field_in subregion subregion
+  field_in elevation elevation
+  field_in datacoverage datacoverage
+
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=daily-summaries&dataTypes=TMAX,TMIN,PRCP,SNOW,AWND&stations=USW00013739,USW00094728&startDate={week_ago}&endDate={today}&format=json
+ttl 3600
+force thermal
+at sun 1.0
+map .
+lat_key LATITUDE
+lon_key LONGITUDE
+  field_in STATION STATION
+  field_in NAME NAME
+  field_in TMAX TMAX
+  field_in TMIN TMIN
+  field_in PRCP PRCP
+  field_in SNOW SNOW
+  field_in AWND AWND
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+  field_in tmax_c tmax_c
+  field_in tmin_c tmin_c
+  field_in prcp_mm prcp_mm
+
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_weekly_mlo.csv
+ttl 3600
+force diffusion
+on earth 19.5 -155.6
+format universal
+rows
+  field_in 0 year
+  field_in 1 month
+  field_in 2 day
+  field_in 3 decimal_year
+  field_in 4 sunspot_number
+  field_in 5 std_dev
+  field_in 6 num_observations
+  field_in 7 definitive_flag
+field_in 0 year
+field_in 1 month
+field_in 2 day
+field_in 4 co2_ppm
+field_in 6 co2_1_yr_ago
+field_in 7 co2_10_yr_ago
+field_in 3 co2_ppm
+
+url https://data.pmel.noaa.gov/pmel/erddap/tabledap/pmel_co2_moorings_c2e7_ecb9_4565.csv?latitude,longitude,time,pCO2_sw,pCO2_air,xCO2_air,pH_sw,DOXY,CHL,NTU,SST,SSS
+ttl 3600
+force diffusion
+at sun 1.0
+format universal
+rows
+lat_key latitude
+lon_key longitude
+  field_in 0 station_id
+  field_in 2 time_utc
+  field_in 3 pCO2_sw_uatm
+  field_in 4 pCO2_air_uatm
+  field_in 5 xCO2_air_ppm
+  field_in 6 pH_sw
+  field_in 7 DOXY_umol_kg
+  field_in 8 CHL_ug_l
+  field_in 9 NTU
+  field_in 10 SST_degC
+  field_in 11 SSS_PSU
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20260726&end_date=20260727&station=9414290&product=air_pressure&units=metric&time_zone=gmt&format=json
+ttl 3600
+force diffusion
+at sun 1.0
+map data
+  field_in t t
+  field_in v v
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20260726&end_date=20260727&station=9414290&product=currents&units=metric&time_zone=gmt&format=json
+ttl 3600
+force diffusion
+at sun 1.0
+map data
+  field_in t t
+  field_in v v
+  field_in d d
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20260726&end_date=20260727&station=9414290&product=water_temperature&units=metric&time_zone=gmt&format=json
+ttl 3600
+force diffusion
+at sun 1.0
+map data
+  field_in t t
+  field_in v v
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20260726&end_date=20260727&station=9414290&product=wind&units=metric&time_zone=gmt&format=json
+ttl 3600
+force diffusion
+at sun 1.0
+map data
+  field_in t t
+  field_in s s
+  field_in d d
+  field_in g g
+
+url https://api.weather.gov/points/39.7456,-97.0892
+ttl 3600
+force diffusion
+at sun 1.0
+map properties
+  field_in cwa cwa
+  field_in forecastOffice forecastOffice
+  field_in forecastHourly forecastHourly
+  field_in gridId gridId
+  field_in gridX gridX
+  field_in gridY gridY
+  field_in timeZone timeZone
+  field_in radarStation radarStation
+
+url https://api.weather.gov/gridpoints/TOP/31,80/forecast/hourly
+ttl 3600
+force diffusion
+at sun 1.0
+map properties
+  field_in updated updated
+  field_in units units
+  field_in generatedAt generatedAt
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=soil_moisture_0_to_7cm,soil_moisture_7_to_28cm,soil_moisture_28_to_100cm,soil_moisture_100_to_255cm&timezone=auto
+ttl 3600
+force em
+at sun 1.0
+pos atmosphere_lat atmosphere_lon
+  path latitude lat
+  path longitude lon
+  path current.soil_moisture_0_to_7cm soil_moisture_surface_m3m3
+  path current.soil_moisture_7_to_28cm soil_moisture_shallow_m3m3
+  path current.soil_moisture_28_to_100cm soil_moisture_deep_m3m3
+  path current.soil_moisture_100_to_255cm soil_moisture_bedrock_m3m3
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=soil_temperature_0cm,soil_temperature_6cm,soil_temperature_18cm,soil_temperature_54cm&timezone=auto
+ttl 3600
+force em
+at sun 1.0
+pos atmosphere_lat atmosphere_lon
+  path latitude lat
+  path longitude lon
+  path current.soil_temperature_0cm soil_temp_surface_c
+  path current.soil_temperature_6cm soil_temp_6cm_c
+  path current.soil_temperature_18cm soil_temp_18cm_c
+  path current.soil_temperature_54cm soil_temp_54cm_c
+
+url https://terrabrasilis.dpi.inpe.br/app/api/v1/layer/amazon/latest/deforestation-alerts/all?format=geojson&limit=1000
+ttl 3600
+force diffusion
+at sun 1.0
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+  field_in properties.object_id object_id
+  field_in properties.class_name class_name
+  field_in properties.area_km area_km
+  field_in properties.view_date view_date
+  field_in properties.uf uf
+
+url https://waterservices.usgs.gov/nwis/gwlevels/?format=json&modifiedSince=P1D&siteStatus=active&siteType=GW&parameterCd=72019&countyCd=&stateCd=&bbox=-125,24,-66,50&resultRetrievalMode=grouped
+ttl 3600
+force diffusion
+at sun 1.0
+map value.timeSeries
+lat_key sourceInfo.geoLocation.geogLocation.latitude
+lon_key sourceInfo.geoLocation.geogLocation.longitude
+  field_in sourceInfo.siteName siteName
+  field_in sourceInfo.siteCode.0.value value
+  field_in values.0.value.0.value value
+  field_in values.0.value.0.dateTime dateTime
+
+url https://waterservices.usgs.gov/nwis/dv?format=json&sites=01646500,09380000,09506000,06892350&startDT={year}-{month}-01&endDT={year}-{month}-{day}&parameterCd=00060&siteStatus=all
+ttl 3600
+force acoustic
+at sun 1.0
+map value.timeSeries
+lat_key sourceInfo.geoLocation.geogLocation.latitude
+lon_key sourceInfo.geoLocation.geogLocation.longitude
+  field_in sourceInfo.siteCode.0.value value
+  field_in sourceInfo.siteName siteName
+  field_in values.0.value.0.value value
+  field_in values.0.value.0.dateTime dateTime
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=01646500&parameterCd=00065&siteStatus=all
+ttl 3600
+force diffusion
+at sun 1.0
+map value.timeSeries
+lat_key sourceInfo.geoLocation.geogLocation.latitude
+lon_key sourceInfo.geoLocation.geogLocation.longitude
+  field_in sourceInfo.siteName siteName
+  field_in values.0.value.0.value value
+  field_in values.0.value.0.dateTime dateTime
+
+url https://volcanoes.usgs.gov/vsc/api/volcanoApi/geojson
+ttl 3600
+force seismic-surface
+on earth 0 0
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+  field_in properties.alertLevel alertLevel
+  field_in properties.volcanoName volcanoName
+
+url https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/WFIGS_Interagency_Perimeters_YearToDate/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&geometry={lon_min}%2C{lat_min}%2C{lon_max}%2C{lat_max}&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&f=geojson&resultRecordCount=500
+ttl 3600
+at sun 1.0
+force thermal
+format universal
+  field properties.poly_GISAcres poly_GISAcres
+  field properties.poly_PolygonDateTime poly_PolygonDateTime
+map features
+
+url https://argovis-api.colorado.edu/argo?startDate=2026-07-26T00:00:00Z&endDate=2026-07-27T00:00:00Z&box=%5B%5B-180,-90%5D,%5B180,90%5D%5D
+ttl 3600
+force diffusion
+at sun 1.0
+map .
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in profile_id profile_id
+  field_in temperature temperature
+  field_in salinity salinity
+  field_in pressure pressure
+  field_in date date
+
+url https://geoserver.efas.eu/geoserver/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=efas:FloodEvents&outputFormat=application%2Fjson&count=500
+ttl 3600
+force diffusion
+at sun 1.0
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+  field_in properties.FloodClass FloodClass
+  field_in properties.CountryCode CountryCode
+  field_in properties.StartDate StartDate
+  field_in properties.EndDate EndDate
+  field_in properties.Area Area
+
+url https://erddap.aoml.noaa.gov/gdp/erddap/tabledap/drifter_hourly_qc.json?latitude,longitude,sst&time%3E=max(time)-7days
+ttl 3600
+force em
+at sun 1.0
+map table.rows
+field_in 2 hydrosphere_drifter_sst_k
+
+url https://erddap.marine.ie/erddap/tabledap/smartbay_obs_acoustic.csv?time,spl_full
+ttl 3600
+force em
+on earth 42.62682 -8.78233
+format universal
+last_row TotalSPL hydrosphere_sound_pressure_db
+
+url https://www.globalfloods.eu/glofas-forecasting/?format=json
+ttl 3600
+force em
+at sun 1
+map .
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+  field_in discharge discharge
+  field_in probability probability
+  field_in return_period return_period
+
+url https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.csv?latitude,longitude,TEMP,PSAL,DOXY,PRES,time&DOXY%3E=0&time%3E=now-7days&orderBy(%22time%22)&limit=3000
+ttl 3600
+force diffusion
+at sun 1.0
+format text
+rows
+lat_key latitude
+lon_key longitude
+  field_in DOXY DOXY
+  field_in TEMP TEMP
+  field_in PSAL PSAL
+  field_in PRES PRES
+  field_in time time
+
+url https://bhuvan-app1.nrsc.gov.in/disaster/disaster.php?id=flood&format=json
+ttl 3600
+force diffusion
+at sun 1.0
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+  field_in properties.district district
+  field_in properties.state state
+  field_in properties.area_ha area_ha
+  field_in properties.date date
+
+url https://www.ndbc.noaa.gov/activestations.xml
+ttl 3600
+force diffusion
+at sun 1.0
+format universal
+rows
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in station_id station_id
+  field_in site site
+field_in owner owner
+  field_in id id
+  field_in name name
+  field_in type type
+  field_in elev elev
+  field_in pgm pgm
+  field_in met met
+  field_in currents currents
+
+url https://www.ndbc.noaa.gov/data/realtime2/21413.dart
+ttl 3600
+force acoustic
+on earth 38.7 148.7
+format universal
+rows
+field_in 0 year
+field_in 1 month
+field_in 2 day
+field_in 3 hour
+field_in 6 data_type
+field_in 7 sea_level_height_m
+
+url https://www.ndbc.noaa.gov/data/realtime2/23401.dart
+ttl 3600
+force acoustic
+on earth -8.4 67.5
+format universal
+rows
+field_in 0 year
+field_in 1 month
+field_in 2 day
+field_in 3 hour
+field_in 7 sea_level_height_m
+
+url https://www.ndbc.noaa.gov/data/realtime2/32401.dart
+ttl 3600
+force acoustic
+on earth -19.6 -162.1
+format universal
+rows
+field_in 0 year
+field_in 1 month
+field_in 2 day
+field_in 3 hour
+field_in 7 sea_level_height_m
+
+url https://www.ndbc.noaa.gov/data/realtime2/41420.dart
+ttl 3600
+force acoustic
+on earth 17.9 -74.9
+format universal
+rows
+field_in 0 year
+field_in 1 month
+field_in 2 day
+field_in 3 hour
+field_in 7 sea_level_height_m
+
+url https://data.neracoos.org/erddap/tabledap/A01_met.csv?time,latitude,longitude,air_temperature,wind_speed,wind_gust,wind_direction,barometric_pressure&time>=max(time)-1day
+ttl 3600
+force thermal
+on earth 42.523 -70.566
+format universal
+last_row air_temperature hydrosphere_buoy_air_temp_c
+last_row barometric_pressure hydrosphere_buoy_pressure_hpa
+
+url https://data.neracoos.org/erddap/tabledap/A01_ocean_001m.csv?time,latitude,longitude,temperature,salinity&time>=max(time)-1day
+ttl 3600
+force thermal
+on earth 42.523 -70.566
+format universal
+last_row temperature hydrosphere_ocean_temp_c
+last_row salinity hydrosphere_ocean_salinity_psu
+
+url https://data.neracoos.org/erddap/tabledap/A01_surface_currents.csv?time,latitude,longitude,current_speed,current_direction,current_u,current_v&time>=max(time)-1day
+ttl 3600
+force advective
+on earth 42.523 -70.566
+format universal
+last_row current_speed hydrosphere_buoy_current_speed_cms
+last_row current_direction hydrosphere_buoy_current_dir_deg
+
+url https://data.neracoos.org/erddap/tabledap/A01_waves.csv?time,latitude,longitude,significant_wave_height,dominant_wave_period,mean_wave_direction&time>=max(time)-1day
+ttl 3600
+force acoustic
+on earth 42.523 -70.566
+format universal
+last_row significant_wave_height hydrosphere_wave_height_m
+
+url https://data.neracoos.org/erddap/tabledap/B01_met.csv?time,latitude,longitude,air_temperature,wind_speed,wind_gust,wind_direction,barometric_pressure&time>=max(time)-1day
+ttl 3600
+force thermal
+on earth 43.181 -70.428
+format universal
+last_row air_temperature hydrosphere_buoy_air_temp_c
+last_row barometric_pressure hydrosphere_buoy_pressure_hpa
+
+url https://data.neracoos.org/erddap/tabledap/B01_ocean_001m.csv?time,latitude,longitude,temperature,salinity&time>=max(time)-1day
+ttl 3600
+force thermal
+on earth 43.181 -70.428
+format universal
+last_row temperature hydrosphere_ocean_temp_c
+
+url https://data.neracoos.org/erddap/tabledap/B01_surface_currents.csv?time,latitude,longitude,current_speed,current_direction,current_u,current_v&time>=max(time)-1day
+ttl 3600
+force advective
+on earth 43.179 -70.427
+format universal
+last_row current_speed hydrosphere_buoy_current_speed_cms
+last_row current_direction hydrosphere_buoy_current_dir_deg
+
+url https://data.neracoos.org/erddap/tabledap/B01_waves.csv?time,latitude,longitude,significant_wave_height,dominant_wave_period,mean_wave_direction&time>=max(time)-1day
+ttl 3600
+force acoustic
+on earth 43.181 -70.428
+format universal
+last_row significant_wave_height hydrosphere_wave_height_m
+
+url https://data.neracoos.org/erddap/tabledap/E01_met.csv?time,latitude,longitude,air_temperature,wind_speed,wind_gust,wind_direction,barometric_pressure&time>=max(time)-1day
+ttl 3600
+force thermal
+on earth 43.714 -69.356
+format universal
+last_row air_temperature hydrosphere_buoy_air_temp_c
+
+url https://data.neracoos.org/erddap/tabledap/E01_ocean_001m.csv?time,latitude,longitude,temperature,salinity&time>=max(time)-1day
+ttl 3600
+force thermal
+on earth 43.714 -69.356
+format universal
+last_row temperature hydrosphere_ocean_temp_c
+
+url https://data.neracoos.org/erddap/tabledap/E01_surface_currents.csv?time,latitude,longitude,current_speed,current_direction,current_u,current_v&time>=max(time)-1day
+ttl 3600
+force advective
+on earth 43.715 -69.358
+format universal
+last_row current_speed hydrosphere_buoy_current_speed_cms
+last_row current_direction hydrosphere_buoy_current_dir_deg
+
+url https://data.neracoos.org/erddap/tabledap/E01_waves.csv?time,latitude,longitude,significant_wave_height,dominant_wave_period,mean_wave_direction&time>=max(time)-1day
+ttl 3600
+force acoustic
+on earth 43.714 -69.356
+format universal
+last_row significant_wave_height hydrosphere_wave_height_m

@@ -1,0 +1,565 @@
+url https://api.weather.gov/stations/KTOP/observations/latest
+ttl 1800
+force diffusion
+at sun 1.0
+map properties
+  field_in temperature temperature
+  field_in dewpoint dewpoint
+  field_in windDirection windDirection
+  field_in windSpeed windSpeed
+  field_in barometricPressure barometricPressure
+  field_in visibility visibility
+  field_in relativeHumidity relativeHumidity
+  field_in textDescription textDescription
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson
+ttl 1800
+force seismic-surface
+on earth 0 0
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+  field_in properties.mag mag
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+  field_in geometry.coordinates.2 2
+  field_in properties.place place
+  field_in properties.time time
+alt_key geometry.coordinates.2
+
+url https://www.ndbc.noaa.gov/data/latest_obs/latest_obs.txt
+ttl 1800
+force acoustic
+at sun 1.0
+format universal
+rows
+field_in 0 station_id
+field_in 8 wind_dir_deg
+field_in 9 wind_speed_ms
+field_in 11 wave_height_m
+field_in 12 dominant_period_s
+field_in 18 water_temp_c
+field_in 17 air_temp_c
+field_in 15 pressure_hpa
+lat_key 1
+lon_key 2
+
+url https://www.pegelonline.wsv.de/webservices/rest-api/v2/stations.json
+ttl 1800
+force advective
+on earth 0 0
+format universal
+map .
+lat_key 2.latitude
+lon_key 2.latitude
+  field_in shortname shortname
+  field_in number number
+  field_in water.shortname shortname
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites={usgs_site}&parameterCd=00060&siteStatus=all
+ttl 1800
+force diffusion
+on earth 0 0
+  path value.timeSeries.0.values.0.value.0.value value
+  path value.timeSeries.0.sourceInfo.siteName siteName
+  path value.timeSeries.0.sourceInfo.geoLocation.geogLocation.latitude latitude
+  path value.timeSeries.0.sourceInfo.geoLocation.geogLocation.longitude longitude
+
+url https://epic.gsfc.nasa.gov/api/natural/images
+ttl 3600
+force em
+on earth 0 0
+map .
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+  field_in version version
+  field_in identifier identifier
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2790000031%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 3600
+at sun 1.0
+force em
+format universal
+extent 1.34e-8
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Eris%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 3600
+at sun 1.0
+force em
+format universal
+extent 7.77e-6
+
+url https://simbad.cds.unistra.fr/simbad/sim-tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,dec,main_id,otype_txt,sp_type+FROM+basic+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1&FORMAT=json
+ttl 3600
+force em
+at sun 1.0
+verify false
+format json
+map data
+  field_in main_id main_id
+  field_in otype_txt otype_txt
+  field_in sp_type sp_type
+lat_key ra
+lon_key dec
+
+url https://fireball.fripon.org/ajax/liste_multiple.ajax.php
+ttl 3600
+force em
+at sun 1.0
+map .
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+  field_in date date
+  field_in time time
+  field_in nb_camera nb_camera
+  field_in duration duration
+
+url https://archive.gemini.edu/jsonsummary/notengineering/NotFail/
+ttl 3600
+force em
+at sun 1.0
+verify false
+map .
+lat_key ra
+lon_key dec
+  field_in object object
+field_in instrument instrument
+field_in observation_id observation_id
+  field_in utc utc
+
+url https://gracedb.ligo.org/api/superevents/?format=json&category=Production&label=GW&ordering=-created&per_page=10
+ttl 3600
+force gravity
+at sun 1.0
+map superevents
+  field_in superevent_id superevent_id
+  field_in t_0 t_0
+  field_in far far
+  field_in labels labels
+  field_in distance.mean mean
+  field_in classification.BNS BNS
+  field_in classification.BBH BBH
+
+url https://gracedb.ligo.org/api/superevents/?format=json&category=Production&public=True&ordering=-created&per_page=100
+ttl 3600
+force gravity
+at sun 1.0
+map superevents
+  field_in superevent_id superevent_id
+  field_in t_0 t_0
+  field_in far far
+  field_in classification.MassGap MassGap
+  field_in distance.mean mean
+  field_in created created
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Haumea%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 3600
+at sun 1.0
+force em
+format universal
+extent 5.45e-6
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+latitude,longitude,date,altitude,ext525,ext1020+FROM+sage2l2+WHERE+latitude+IS+NOT+NULL+AND+date>%272020-01-01%27+ORDER+BY+date+DESC
+ttl 3600
+force em
+at sun 1.0
+verify false
+format universal
+map data
+  field_in name name
+  field_in t_scid t_scid
+lat_key ra
+lon_key dec
+lat_key latitude
+lon_key longitude
+  field_in date date
+  field_in altitude altitude
+  field_in ext525 ext525
+  field_in ext1020 ext1020
+ra_key RAJ2000
+dec_key DEJ2000
+  field_in Source_Name Source_Name
+  field_in ASSOC1 ASSOC1
+  field_in Energy_Flux_Band3 Energy_Flux_Band3
+ra_key ra
+dec_key dec
+  field_in obsid obsid
+field_in target_name target_name
+  field_in duration duration
+field_in revolution revolution
+cmap data
+  field_in energy_tev energy_tev
+  field_in error_radius_deg error_radius_deg
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,obsid,exposure,count_rate,type+FROM+nicermastr+WHERE+ra+IS+NOT+NULL+ORDER+BY+count_rate+DESC
+ttl 3600
+force em
+at sun 1.0
+format universal
+map .
+lat_key ra
+lon_key dec
+  field_in name name
+  field_in obsid obsid
+  field_in exposure exposure
+  field_in count_rate count_rate
+  field_in type type
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+200+date,band,peak_flux,duration,type+FROM+sgraflares+WHERE+date+IS+NOT+NULL+ORDER+BY+date+DESC
+ttl 3600
+force em
+on earth -29.008 266.417
+format universal
+rows
+  field_in date date
+  field_in band band
+field_in peak_flux peak_flux
+  field_in duration duration
+  field_in type type
+
+url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=0.05&date-min={today}&date-max=%2B30&body=Earth&fullname=true&diameter=true&sort=date
+ttl 3600
+force gravity
+at sun 1.0
+map data
+field_in 0 designation
+field_in 3 close_approach_date
+field_in 4 distance_au
+field_in 7 velocity_km_s
+field_in 17 diameter_km
+
+url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=10LD&date-min={today}&limit=100
+ttl 3600
+force em
+at sun 1.0
+cmap data
+tau_key _dist_m
+field_in 0 designation
+field_in 1 orbit_id
+field_in 3 close_approach_date
+field_in 4 distance_au
+field_in 7 v_rel_kms
+
+field_in 0 event_date
+field_in 1 energy_j
+field_in 2 impact_e_j
+field_in 3 latitude_deg
+field_in 5 longitude_deg
+field_in 7 altitude_km
+field_in 8 velocity_kms
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-31'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='6+h'&VEC_TABLE='2'&REF_PLANE='ECLIPTIC'
+ttl 3600
+force gravity
+at sun 1
+format universal
+rows
+field_in 2 x_au
+field_in 3 y_au
+field_in 4 z_au
+field_in 5 vx_au_d
+field_in 6 vy_au_d
+field_in 7 vz_au_d
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-32'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='6+h'&VEC_TABLE='2'&REF_PLANE='ECLIPTIC'
+ttl 3600
+force gravity
+on earth 0.0 0.0
+format universal
+rows
+field_in 2 x_au
+field_in 3 y_au
+field_in 4 z_au
+field_in 5 vx_au_d
+field_in 6 vy_au_d
+field_in 7 vz_au_d
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-61%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 3600
+at sun 1.0
+force em
+format universal
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-170%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 3600
+at sun 1.0
+force em
+format universal
+
+url https://lasp.colorado.edu/lisird/latis/dap/fism_flare_hr.csv?time>={today}
+ttl 3600
+force em
+at sun 1.0
+format text
+rows
+  field_in time time
+  field_in wavelength wavelength
+  field_in irradiance irradiance
+
+url https://lasp.colorado.edu/lisird/latis/dap/noaa_radio_flux.csv?time>={today}
+ttl 3600
+force em
+on earth 49.32 -119.62
+format text
+rows
+  field_in time time
+  field_in f107 f107
+  field_in f107_adj f107_adj
+
+url https://lasp.colorado.edu/lisird/latis/dap/tsis_tsi_24hr.csv?time>=2024-01-01
+ttl 3600
+force em
+at sun 1.0
+format universal
+rows
+  field_in time time
+  field_in tsi tsi
+  field_in uncertainty uncertainty
+
+url https://lasp.colorado.edu/lisird/latis/dap/sdo_eve_ssi_1nm_l3.csv?time>=2026-01-01&time<={today}
+ttl 3600
+force em
+at sun 1.0
+format universal
+rows
+  field_in time time
+  field_in wavelength wavelength
+  field_in irradiance irradiance
+  field_in stdev stdev
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Makemake%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 3600
+at sun 1.0
+force em
+format universal
+extent 4.78e-6
+
+url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+s_ra,s_dec,obs_id,obs_collection,instrument_name,filters,target_name,calib_level+FROM+ivoa.obscore+WHERE+CONTAINS(POINT('ICRS',s_ra,s_dec),CIRCLE('ICRS',{ra},{dec},0.1))=1&FORMAT=json
+ttl 3600
+force em
+at sun 1.0
+verify false
+format json
+map data
+  field_in s_ra s_ra
+  field_in s_dec s_dec
+  field_in obs_id obs_id
+  field_in obs_collection obs_collection
+  field_in instrument_name instrument_name
+field_in filters filters
+  field_in target_name target_name
+  field_in calib_level calib_level
+lat_key s_ra
+lon_key s_dec
+
+url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+obs_id%2Ctarget_name%2Cs_ra%2Cs_dec%2Ct_exptime%2Cinstrument_name%2Cem_min%2Cem_max+FROM+ivoa.obscore+WHERE+obs_collection%3D%27JWST%27+AND+calib_level%3D3+AND+obs_id+LIKE+%27jw01727%25%27+ORDER+BY+t_exptime+DESC
+ttl 3600
+force em
+at sun 1.0
+format universal
+map .
+lat_key s_ra
+lon_key s_dec
+  field_in observationID observationID
+  field_in target_name target_name
+  field_in t_exptime t_exptime
+  field_in energy_bandpassName energy_bandpassName
+  field_in em_min em_min
+  field_in em_max em_max
+
+url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+obs_id%2Ctarget_name%2Cs_ra%2Cs_dec%2Ct_exptime%2Cinstrument_name%2Cem_min%2Cem_max+FROM+ivoa.obscore+WHERE+obs_collection%3D%27JWST%27+AND+calib_level%3D3+AND+instrument_name+LIKE+%27NIRSPEC%25%27+AND+%28proposal_id%3D%271180%27+OR+proposal_id%3D%271286%27%29+ORDER+BY+t_exptime+DESC
+ttl 3600
+force em
+at sun 1.0
+format text
+rows
+ra_key s_ra
+dec_key s_dec
+  field_in observationID observationID
+  field_in target_name target_name
+  field_in t_exptime t_exptime
+  field_in energy_bandpassName energy_bandpassName
+  field_in em_min em_min
+  field_in em_max em_max
+
+url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?LANG=ADQL&REQUEST=doQuery&FORMAT=csv&QUERY=SELECT+TOP+2000+obs_id%2Ctarget_name%2Cs_ra%2Cs_dec%2Ct_exptime%2Cinstrument_name%2Cem_min%2Cem_max+FROM+ivoa.obscore+WHERE+obs_collection%3D%27JWST%27+AND+instrument_name+LIKE+%27MIRI%25%27+AND+calib_level%3D3+ORDER+BY+t_exptime+DESC
+ttl 3600
+force em
+at sun 1.0
+format universal
+map .
+lat_key s_ra
+lon_key s_dec
+  field_in observationID observationID
+field_in target_name target_name
+  field_in t_exptime t_exptime
+  field_in energy_bandpassName energy_bandpassName
+  field_in em_min em_min
+  field_in em_max em_max
+
+url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?LANG=ADQL&REQUEST=doQuery&FORMAT=csv&QUERY=SELECT+TOP+2000+obs_id%2Ctarget_name%2Cs_ra%2Cs_dec%2Ct_exptime%2Cinstrument_name%2Cem_min%2Cem_max+FROM+ivoa.obscore+WHERE+obs_collection%3D%27JWST%27+AND+instrument_name+LIKE+%27NIRCAM%25%27+AND+calib_level%3D3+ORDER+BY+t_exptime+DESC
+ttl 3600
+force em
+at sun 1.0
+format universal
+map .
+lat_key s_ra
+lon_key s_dec
+  field_in observationID observationID
+field_in target_name target_name
+  field_in t_exptime t_exptime
+  field_in energy_bandpassName energy_bandpassName
+  field_in em_min em_min
+  field_in em_max em_max
+
+url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?LANG=ADQL&REQUEST=doQuery&FORMAT=csv&QUERY=SELECT+TOP+2000+obs_id%2Ctarget_name%2Cs_ra%2Cs_dec%2Ct_exptime%2Cinstrument_name%2Cem_min%2Cem_max+FROM+ivoa.obscore+WHERE+obs_collection%3D%27JWST%27+AND+instrument_name+LIKE+%27NIRSPEC%25%27+AND+calib_level%3D3+ORDER+BY+t_exptime+DESC
+ttl 3600
+force em
+at sun 1.0
+format universal
+map .
+lat_key s_ra
+lon_key s_dec
+  field_in observationID observationID
+field_in target_name target_name
+  field_in t_exptime t_exptime
+  field_in energy_bandpassName energy_bandpassName
+  field_in em_min em_min
+  field_in em_max em_max
+
+url https://www.minorplanetcenter.net/cgi-bin/checkmp.cgi?ty=c&head=N&TextArea=&radius=180&ra=&decl=&oc=500&e=J2000&resoc=&s=t&m=h&adir=N&oed=&e=J2000&dFormat=YYYY+MM+DD&css=modern&mot=check&dmot=p&si=t&uto=0&int=2&fmt=csv
+ttl 3600
+force gravity
+on earth 0.0 0.0
+format text
+rows
+  field_in 0 name meteorite_name
+  field_in 1 id meteorite_id
+  field_in 2 name_type classification_status
+  field_in 3 class meteorite_class
+  field_in 4 mass_g
+  field_in 5 fall fall_or_find
+  field_in 6 year year
+
+url https://power.larc.nasa.gov/api/temporal/monthly/point?parameters=ALLSKY_SFC_SW_DWN&community=RE&longitude={lon}&latitude={lat}&start=2025&end=2025&format=JSON
+ttl 3600
+force em
+at sun 1.0
+obj_last value biosphere_solar_radiation_power
+
+field_in 0 event_date
+field_in 1 energy_j
+field_in 2 impact_e_j
+field_in 3 latitude_deg
+field_in 5 longitude_deg
+field_in 7 altitude_km
+field_in 8 velocity_kms
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-98%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 3600
+at sun 1.0
+force em
+format universal
+
+url https://simbad.cds.unistra.fr/simbad/sim-tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,dec,main_id,otype_txt+FROM+basic+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1&FORMAT=json
+ttl 3600
+force em
+at sun 1.0
+verify false
+format json
+map data
+  field_in main_id main_id
+  field_in otype_txt otype_txt
+lat_key ra
+lon_key dec
+
+url https://gong2.nso.edu/oQR/zqs/?ref=zqs&series=zqs&date={year}.{month}.{day}&format=json
+ttl 3600
+force em
+at sun 1.0
+map .
+  field_in filename filename
+  field_in date date
+  field_in time time
+  field_in carrington_rotation carrington_rotation
+  field_in coverage coverage
+  field_in site site
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%273I%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 3600
+at sun 1.0
+force em
+format universal
+extent 3.34e-9
+
+url https://tle.ivanstanojevic.me/api/tle/?page-size=100
+ttl 3600
+force em
+at sun 1.0
+map member
+  field_in satelliteId satelliteId
+  field_in name name
+  field_in date date
+  field_in line1 line1
+  field_in line2 line2
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Vesta%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 3600
+at sun 1.0
+force em
+format universal
+extent 1.76e-6
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-96%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 3600
+at sun 1.0
+force em
+format universal
+
+url https://earth-search.aws.element84.com/v1/search
+ttl 3600
+force em
+at sun 1.0
+method post
+body {"collections":["sentinel-2-l2a"],"bbox":[{lon_min},{lat_min},{lon_max},{lat_max}],"datetime":"{today}T00:00:00Z/{today}T23:59:59Z","limit":50}
+header Content-Type application/json
+map features
+lat_key properties.proj:centroid.lat
+lon_key properties.proj:centroid.lon
+  field_in id id
+field_in collection collection
+  field_in properties.datetime datetime
+  field_in properties.eo:cloud_cover eo:cloud_cover
+  field_in properties.landsat:collection_number landsat:collection_number
+  field_in properties.landsat:wrs_path landsat:wrs_path
+  field_in properties.landsat:wrs_row landsat:wrs_row
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-144%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 3600
+at sun 1.0
+force em
+format universal
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-31%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 3600
+at sun 1.0
+force em
+format universal
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-32%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 3600
+at sun 1.0
+force em
+format universal
+
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD15=1&AVG=10&if_no_html=1
+ttl 3600
+force diffusion
+at sun 1.0
+format universal
+rows
+lat_key Site_Latitude(Degrees)
+lon_key Site_Longitude(Degrees)
+  field_in AOD_440nm AOD_440nm
+  field_in AOD_500nm AOD_500nm
+  field_in Precipitable_Water(cm) Precipitable_Water(cm)

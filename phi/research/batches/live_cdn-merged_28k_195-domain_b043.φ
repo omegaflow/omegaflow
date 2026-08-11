@@ -1,0 +1,99 @@
+tau_key _dist_m
+
+ra_key ra
+
+dec_key dec
+
+plx_key parallax
+
+field_in pmra astro_gaia_nearby_plx50_pmra
+
+field_in pmdec astro_gaia_nearby_plx50_pmdec
+
+field_in phot_g_mean_mag astro_gaia_nearby_plx50_phot_g_mean_mag
+
+field_in bp_rp astro_gaia_nearby_plx50_bp_rp
+
+field_in radial_velocity astro_gaia_nearby_plx50_radial_velocity
+
+url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/gaia_white_dwarfs_{latest}.json
+
+ttl 604800
+
+force em
+
+at sun 1.0
+
+cmap data
+
+tau_key _dist_m
+
+ra_key ra
+
+dec_key dec
+
+plx_key parallax
+
+field_in phot_g_mean_mag astro_gaia_white_dwarfs_phot_g_mean_mag
+
+field_in bp_rp astro_gaia_white_dwarfs_bp_rp
+
+url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/integral_agn_{latest}.json
+
+ttl 604800
+
+force em
+
+at sun 1.0
+
+cmap data
+
+tau_key _dist_m
+
+ra_key ra
+
+dec_key dec
+
+plx_key default_plx
+
+field_in sb_flux integral_agn_flux
+
+url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/integral_bsc_{latest}.json
+
+ttl 604800
+
+force em
+
+at sun 1.0
+
+cmap data
+
+tau_key _dist_m
+
+ra_key ra
+
+dec_key dec
+
+plx_key default_plx
+
+field_in isgri_soft_rate integral_soft_rate
+
+field_in isgri_hard_rate integral_hard_rate
+
+url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/integral_isgri4yr_{latest}.json
+
+ttl 604800
+
+force em
+
+at sun 1.0
+
+cmap data
+
+tau_key _dist_m
+
+ra_key ra
+
+dec_key dec
+
+plx_key default_plx

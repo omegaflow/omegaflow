@@ -1,0 +1,318 @@
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9411340&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+force gravity
+on earth 34.4046 -119.6925
+first data.v hydrosphere_tide_height_m_santa_barbara
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9412110&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+force gravity
+on earth 35.1689 -120.7542
+first data.v hydrosphere_tide_height_m_port_san_luis
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9413450&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+force gravity
+on earth 36.6089 -121.8914
+first data.v hydrosphere_tide_height_m_monterey
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9414290&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+force gravity
+on earth 37.8063 -122.4659
+first data.v hydrosphere_tide_height_m_san_francisco
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9416131&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+force gravity
+on earth 38.5622 -121.5463
+first data.v hydrosphere_tide_height_m_port_of_west_sacramento_washin
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9416841&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+force gravity
+on earth 38.9146 -123.7111
+first data.v hydrosphere_tide_height_m_arena_cove
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9418767&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+force gravity
+on earth 40.7669 -124.2173
+first data.v hydrosphere_tide_height_m_north_spit
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9419750&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+force gravity
+on earth 41.7456 -124.1844
+first data.v hydrosphere_tide_height_m_crescent_city
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9431647&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+force gravity
+on earth 42.7390 -124.4980
+first data.v hydrosphere_tide_height_m_port_orford
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9435380&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+force gravity
+on earth 44.6254 -124.0449
+first data.v hydrosphere_tide_height_m_south_beach
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9437540&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+force gravity
+on earth 45.5545 -123.9189
+first data.v hydrosphere_tide_height_m_garibaldi
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9440910&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+force gravity
+on earth 46.7075 -123.9669
+first data.v hydrosphere_tide_height_m_toke_point
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9442396&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+force gravity
+on earth 47.9128 -124.6357
+first data.v hydrosphere_tide_height_m_la_push_quillayute_river
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9444900&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+force gravity
+on earth 48.1112 -122.7597
+first data.v hydrosphere_tide_height_m_port_townsend
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9450460&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+force gravity
+on earth 55.3319 -131.6261
+first data.v hydrosphere_tide_height_m_ketchikan
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9451054&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+force gravity
+on earth 56.2467 -134.6470
+first data.v hydrosphere_tide_height_m_port_alexander
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9452210&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+force gravity
+on earth 58.2988 -134.4106
+first data.v hydrosphere_tide_height_m_juneau
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9452400&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+force gravity
+on earth 59.4508 -135.3280
+first data.v hydrosphere_tide_height_m_skagway_taiya_inlet
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9452634&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+force gravity
+on earth 58.1947 -136.3469
+first data.v hydrosphere_tide_height_m_elfin_cove
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9453220&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+force gravity
+on earth 59.5485 -139.7334
+first data.v hydrosphere_tide_height_m_yakutat_yakutat_bay
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9454050&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+force gravity
+on earth 60.5583 -145.7530
+first data.v hydrosphere_tide_height_m_cordova
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9455090&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+force gravity
+on earth 60.1193 -149.4281
+first data.v hydrosphere_tide_height_m_seward
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9455500&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+force gravity
+on earth 59.4405 -151.7199
+first data.v hydrosphere_tide_height_m_seldovia
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9455760&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+force gravity
+on earth 60.6833 -151.3980
+first data.v hydrosphere_tide_height_m_nikiski
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9455920&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+force gravity
+on earth 61.2375 -149.8904
+first data.v hydrosphere_tide_height_m_anchorage
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9457292&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+force gravity
+on earth 57.7317 -152.5120
+first data.v hydrosphere_tide_height_m_kodiak_island
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9457804&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+force gravity
+on earth 56.8974 -154.2480
+first data.v hydrosphere_tide_height_m_alitak
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9459450&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+force gravity
+on earth 55.3317 -160.5043
+first data.v hydrosphere_tide_height_m_sand_point
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9459881&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+force gravity
+on earth 55.0599 -162.3261
+first data.v hydrosphere_tide_height_m_king_cove
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9461380&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+force gravity
+on earth 51.8606 -176.6376
+first data.v hydrosphere_tide_height_m_adak_island
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9461710&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+force gravity
+on earth 52.2319 -174.1725
+first data.v hydrosphere_tide_height_m_atka
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9462450&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+force gravity
+on earth 52.9406 -168.8713
+first data.v hydrosphere_tide_height_m_nikolski
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9462620&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+force gravity
+on earth 53.8792 -166.5403
+first data.v hydrosphere_tide_height_m_unalaska
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9464212&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+force gravity
+on earth 57.1253 -170.2852
+first data.v hydrosphere_tide_height_m_village_cove_st_paul_island
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9468333&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+force gravity
+on earth 63.875 -160.788
+first data.v hydrosphere_tide_height_m_unalakleet
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9468756&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+force gravity
+on earth 64.4946 -165.4396
+first data.v hydrosphere_tide_height_m_nome_norton_sound
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9491094&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+force gravity
+on earth 67.5758 -164.0644
+first data.v hydrosphere_tide_height_m_red_dog_dock
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9497645&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+force gravity
+on earth 70.4114 -148.5317
+first data.v hydrosphere_tide_height_m_prudhoe_bay
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9751364&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+force gravity
+on earth 17.7477 -64.6984
+first data.v hydrosphere_tide_height_m_christiansted_harbor_st_croix
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9753216&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+force gravity
+on earth 18.335278 -65.63111
+first data.v hydrosphere_tide_height_m_fajardo
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9757811&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+force gravity
+on earth 18.480528 -66.70236
+first data.v hydrosphere_tide_height_m_arecibo
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9759938&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+force gravity
+on earth 18.0893 -67.9382
+first data.v hydrosphere_tide_height_m_mona_island
+
+url https://environment.data.gov.uk/flood-monitoring/id/stations?_limit=500
+ttl 300
+force em
+on earth 0 0
+map items
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+  field_in measures.0.latestReading.value value
+
+url https://cdaweb.gsfc.nasa.gov/hapi/data?id=AC_H0_MFI&parameters=BGSEc,Magnitude&time.min={today}T00:00:00.000Z&time.max={today}T23:59:59.000Z&format=csv
+ttl 300
+force em
+at sun 0.99
+format universal
+rows
+  field_in 0 quantity_name
+  field_in 1 symbol
+  field_in 2 value
+  field_in 3 uncertainty
+  field_in 4 unit
+
+url https://cdaweb.gsfc.nasa.gov/hapi/data?id=DSCOVR_H0_MAG&time.min=2026-07-01T00:00:00Z&time.max=2026-07-13T23:59:59Z&parameters=Time,B1F1&format=json
+ttl 300
+force gravity
+at sun 1.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NGK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
+ttl 300
+force gravity
+on earth 52.07 12.68
+map data
+  path 1.0 x_nt
+  path 1.1 y_nt
+  path 1.2 z_nt
+  path 2 s_nt
+
+url https://www.ionosonde.iap-kborn.de/actuellz.htm
+ttl 300
+force em
+on earth 54.6 13.4
+format universal
+  field data.0.MUF_D__MHz MUF_D__MHz
+  field data.8.MUF_D__MHz MUF_D__MHz
+
+url https://services.swpc.noaa.gov/products/summary/solar-wind-mag-field.json
+ttl 300
+force gravity
+at sun 0.99
+  path 0.bz_gsm imf_bz_nt
+  path 0.bt imf_bt_nt
+
+url https://services.swpc.noaa.gov/products/geospace/propagated-solar-wind-1-hour.json
+ttl 300
+force gravity
+at sun 1.0
+last_row 1 magnetosphere_solar_wind_speed_noaa
+last_row 2 magnetosphere_solar_wind_density_noaa
+
+url https://services.swpc.noaa.gov/json/goes/primary/differential-protons-3-day.json
+ttl 300
+force em
+at sun 1.0
+map .
+  field_in time_tag time_tag
+  field_in satellite satellite
+  field_in flux flux

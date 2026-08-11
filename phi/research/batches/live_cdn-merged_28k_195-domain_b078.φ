@@ -1,0 +1,99 @@
+field_in recno vizier_glade2_recno
+
+field_in PGC vizier_glade2_PGC
+
+field_in GWGC vizier_glade2_GWGC
+
+field_in HyperLEDA vizier_glade2_HyperLEDA
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_gleam.json
+
+ttl 604800
+
+force em
+
+cmap data
+
+ra_key RAJ2000
+
+dec_key DEJ2000
+
+plx_key default_plx
+
+field_in bckwide gleam_brightness_wide
+
+field_in lrmswide gleam_peak_flux_wide
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_hecate.json
+
+ttl 604800
+
+force em
+
+cmap data
+
+ra_key RAJ2000
+
+dec_key DEJ2000
+
+field_in recno vizier_hecate_recno
+
+field_in PGC vizier_hecate_PGC
+
+field_in HyperLEDA vizier_hecate_HyperLEDA
+
+field_in NED vizier_hecate_NED
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_hi4pi.json
+
+ttl 604800
+
+force em
+
+cmap data
+
+ra_key RAJ2000
+
+dec_key DEJ2000
+
+plx_key default_plx
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_lotss_dr3.json
+
+ttl 604800
+
+force em
+
+cmap data
+
+ra_key RAJ2000
+
+dec_key DEJ2000
+
+field_in recno vizier_lotss_dr3_recno
+
+field_in Source vizier_lotss_dr3_Source
+
+field_in e_RAJ2000 vizier_lotss_dr3_e_RAJ2000
+
+field_in e_DEJ2000 vizier_lotss_dr3_e_DEJ2000
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_nvss.json
+
+ttl 604800
+
+force em
+
+cmap data
+
+ra_key RAJ2000
+
+dec_key DEJ2000
+
+field_in recno vizier_nvss_recno
+
+field_in Field vizier_nvss_Field
+
+field_in Xpos vizier_nvss_Xpos
+
+field_in Ypos vizier_nvss_Ypos

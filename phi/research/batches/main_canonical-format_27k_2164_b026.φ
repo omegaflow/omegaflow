@@ -1,0 +1,672 @@
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PEG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
+ttl 86400
+force em
+on earth 38.1 23.9
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+map data
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PHU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
+ttl 86400
+force em
+on earth 21.03 105.96
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+map data
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PIL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
+ttl 86400
+force em
+on earth -31.667 -63.88099999999997
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+map data
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PPT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
+ttl 86400
+force em
+on earth -17.567 -149.574
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+map data
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=REU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
+ttl 86400
+force em
+on earth -21.206 55.576
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+map data
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ESK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
+ttl 86400
+force em
+on earth 55.3 -3.2
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+map data
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SBA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
+ttl 86400
+force em
+on earth -77.829 166.671
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+map data
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SFS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
+ttl 86400
+force em
+on earth 36.667 -5.944999999999993
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+map data
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SHE/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
+ttl 86400
+force em
+on earth -15.961 -5.747000000000014
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+map data
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SHU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
+ttl 86400
+force em
+on earth 55.35 -160.46
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+map data
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SIT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
+ttl 86400
+force em
+on earth 57.06 -135.33
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+map data
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SJG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
+ttl 86400
+force em
+on earth 18.11 -66.14999999999998
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+map data
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SOD/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
+ttl 300
+force em
+on earth 67.37 26.63
+map data
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SPT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
+ttl 86400
+force em
+on earth 39.55 -4.350000000000023
+path 1.0 0
+path 1.1 1
+path 2 2
+path 1.2 2
+map data
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SUA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
+ttl 86400
+force em
+on earth 44.68 26.25
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+map data
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=THL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
+ttl 86400
+force em
+on earth 77.47 -69.22699999999998
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+map data
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=THY/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
+ttl 86400
+force em
+on earth 46.9 17.89
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+map data
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TSU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
+ttl 86400
+force em
+on earth -19.202 17.584
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+map data
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TTB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
+ttl 86400
+force em
+on earth -1.205 -48.51299999999998
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+map data
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TUC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
+ttl 86400
+force em
+on earth 32.17 -110.72999999999999
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+map data
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=UPS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
+ttl 86400
+force em
+on earth 59.903 17.353
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+map data
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VNA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
+ttl 86400
+force em
+on earth -70.683 -8.281999999999982
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+map data
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VOS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
+ttl 86400
+force em
+on earth -78.464 106.835
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+map data
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VSS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
+ttl 86400
+force em
+on earth -22.4 -43.64999999999998
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+map data
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WIC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
+ttl 86400
+force em
+on earth 47.931 15.866
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+map data
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WNG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
+ttl 86400
+force em
+on earth 53.725 9.053
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+map data
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=LRM/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
+ttl 86400
+force em
+on earth -22.22 114.1
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+map data
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TDC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
+ttl 86400
+force em
+lon -12.315999999999974 A
+on earth -37.067 -12.315999999999974
+path 1.0 0
+path 1.1 1
+path 1.2 2
+path 2 2
+map data
+
+url https://network.satnogs.org/api/stations/?format=json
+ttl 86400
+force em
+on earth 0 0
+map .
+lat_key geometry.coordinates.1
+lon_key lng
+field_in altitude altitude
+field_in name name
+field_in observations observations
+field_in status status
+field_in success_rate success_rate
+
+url https://raw.githubusercontent.com/scikit-hep/particle/main/src/particle/data/particle2026.csv
+ttl 86400
+force em
+at sun 1.0
+format universal
+last_row ID ID
+last_row Mass Mass
+last_row Charge Charge
+
+url https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M,RH2M,WS10M,PRECTOTCORR&community=AG&longitude={lon}&latitude={lat}&start={date}&end={date}&format=JSON
+ttl 86400
+force em
+body earth
+path properties.parameter.T2M.0 0
+path properties.parameter.RH2M.0 0
+path properties.parameter.WS10M.0 0
+path properties.parameter.PRECTOTCORR.0 0
+map features
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+batsegrb
+ttl 604800
+force em
+body earth
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in trigger_num trigger_num
+field_in flux_64 flux_64
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+batsepulsr
+ttl 604800
+force em
+body earth
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in obsid obsid
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+chanmaster
+ttl 604800
+force em
+body earth
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in obsid obsid
+field_in status status
+field_in name name
+field_in lii lii
+field_in bii bii
+field_in time time
+field_in detector detector
+field_in grating grating
+field_in exposure exposure
+field_in type type
+field_in pi pi
+field_in cycle cycle
+field_in proposal proposal
+field_in public_date public_date
+field_in sequence_number sequence_number
+field_in data_mode data_mode
+field_in category category
+field_in class class
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+fermil4fgl_dr4
+ttl 604800
+force em
+body earth
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in name name
+field_in data_release data_release
+field_in lii lii
+field_in bii bii
+field_in semi_major_axis_68 semi_major_axis_68
+field_in semi_minor_axis_68 semi_minor_axis_68
+field_in position_angle_68 position_angle_68
+field_in semi_major_axis_95 semi_major_axis_95
+field_in semi_minor_axis_95 semi_minor_axis_95
+field_in position_angle_95 position_angle_95
+field_in detection_significance detection_significance
+field_in pivot_energy pivot_energy
+field_in flux_1_100_gev flux_1_100_gev
+field_in flux_1_100_gev_error flux_1_100_gev_error
+field_in energy_flux energy_flux
+field_in energy_flux_error energy_flux_error
+field_in spectrum_type spectrum_type
+field_in pl_flux_density pl_flux_density
+field_in pl_flux_density_error pl_flux_density_error
+field_in pl_index pl_index
+field_in pl_index_error pl_index_error
+field_in lp_flux_density lp_flux_density
+field_in lp_flux_density_error lp_flux_density_error
+field_in lp_index lp_index
+field_in lp_index_error lp_index_error
+field_in lp_beta lp_beta
+field_in lp_beta_error lp_beta_error
+field_in lp_curve_significance lp_curve_significance
+field_in lp_epeak lp_epeak
+field_in lp_epeak_error lp_epeak_error
+field_in plec_flux_density plec_flux_density
+field_in plec_flux_density_error plec_flux_density_error
+field_in plec_index_s plec_index_s
+field_in plec_index_s_error plec_index_s_error
+field_in plec_exp_factor_s plec_exp_factor_s
+field_in plec_exp_factor_s_error plec_exp_factor_s_error
+field_in plec_exp_index plec_exp_index
+field_in plec_exp_index_error plec_exp_index_error
+field_in plec_curve_significance plec_curve_significance
+field_in plec_epeak plec_epeak
+field_in plec_epeak_error plec_epeak_error
+field_in npred npred
+field_in variability_index variability_index
+field_in frac_variability frac_variability
+field_in frac_variability_error frac_variability_error
+field_in significance_peak significance_peak
+field_in flux_peak flux_peak
+field_in flux_peak_error flux_peak_error
+field_in time_peak time_peak
+field_in time_peak_interval time_peak_interval
+field_in alt_gammaray_name_1 alt_gammaray_name_1
+field_in alt_gammaray_name_2 alt_gammaray_name_2
+field_in alt_gammaray_name_3 alt_gammaray_name_3
+field_in alt_gammaray_name_4 alt_gammaray_name_4
+field_in alt_gammaray_name_5 alt_gammaray_name_5
+field_in alt_gammaray_name_6 alt_gammaray_name_6
+field_in extended_source_name extended_source_name
+field_in tevcat_flag tevcat_flag
+field_in tevcat_assoc tevcat_assoc
+field_in source_type source_type
+field_in source_type_alt source_type_alt
+field_in assoc_name assoc_name
+field_in assoc_name_alt assoc_name_alt
+field_in assoc_prob_bay assoc_prob_bay
+field_in assoc_prob_lr assoc_prob_lr
+field_in assoc_ra assoc_ra
+field_in assoc_dec assoc_dec
+field_in assoc_error_radius assoc_error_radius
+field_in analysis_flags analysis_flags
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+fermil4lac
+ttl 604800
+force em
+body earth
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key ra
+dec_key dec
+z_key redshift
+field_in name name
+field_in data_release data_release
+field_in lii lii
+field_in bii bii
+field_in detection_significance detection_significance
+field_in flux_1_100_gev flux_1_100_gev
+field_in flux_1_100_gev_error flux_1_100_gev_error
+field_in energy_flux energy_flux
+field_in energy_flux_error energy_flux_error
+field_in spectrum_type spectrum_type
+field_in pl_index pl_index
+field_in pl_index_error pl_index_error
+field_in pivot_energy pivot_energy
+field_in lp_index lp_index
+field_in lp_index_error lp_index_error
+field_in lp_beta lp_beta
+field_in lp_beta_error lp_beta_error
+field_in analysis_flags analysis_flags
+field_in source_type source_type
+field_in assoc_name assoc_name
+field_in assoc_prob_bay assoc_prob_bay
+field_in assoc_prob_lr assoc_prob_lr
+field_in assoc_catalog assoc_catalog
+field_in assoc_ra assoc_ra
+field_in assoc_dec assoc_dec
+field_in assoc_error_radius assoc_error_radius
+field_in vlbi_assoc_name vlbi_assoc_name
+field_in sed_class sed_class
+field_in he_peak he_peak
+field_in he_peak_error he_peak_error
+field_in he_nufnu_peak he_nufnu_peak
+field_in he_nufnu_peak_error he_nufnu_peak_error
+field_in nu_syn nu_syn
+field_in nufnu_syn nufnu_syn
+field_in variability_index variability_index
+field_in frac_variability frac_variability
+field_in frac_variability_error frac_variability_error
+field_in highest_energy_photon highest_energy_photon
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+J%2FApJ%2F865%2F105%2Ftable2
+ttl 604800
+force em
+at sun 1.0
+format universal
+cmap .
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+plx_key default_plx
+field_in DM DM
+field_in SNR SNR
+field_in Flux Flux
+field_in Fluence Fluence
+field_in Widthfitb Widthfitb
+field_in SpInd SpInd
+
+url https://raw.githubusercontent.com/ofrohn/d3-celestial/master/data/constellations.bounds.json
+ttl 604800
+at sun 1.0
+force em
+format universal
+field properties.rank rank
+field 0 0
+field 3 3
+map features
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+intagn
+ttl 604800
+force em
+body earth
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in sb_flux sb_flux
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+intbsc
+ttl 604800
+force em
+body earth
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in isgri_soft_rate isgri_soft_rate
+field_in isgri_hard_rate isgri_hard_rate
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+intisgri4yr
+ttl 604800
+force em
+body earth
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in distance distance
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+integralvartable
+ttl 604800
+force em
+body earth
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in flux_20_40kev flux_20_40kev
+field_in var_20_40kev var_20_40kev
+
+url https://ssd-api.jpl.nasa.gov/sbdb.api?sstr=asteroid&phys-par=1&limit=1000
+ttl 604800
+force gravity
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key ra
+dec_key dec
+dist_key dist_au
+dist_scale 1.495978707e11
+field_in e e
+field_in a_au a_au
+field_in i_deg i_deg
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+maxigsc7yr
+ttl 604800
+force em
+body earth
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in flux_4_10 flux_4_10
+field_in flux_3_4 flux_3_4
+field_in excess_variance excess_variance
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+maximaster
+ttl 604800
+force em
+body earth
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in time time
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+maxissc
+ttl 604800
+force em
+body earth
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in sb_flux sb_flux
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+nicermaster
+ttl 604800
+force em
+body earth
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in exposure exposure
+
+url http://www.nmdb.eu/station/list/
+ttl 604800
+force em
+at sun 1.0
+map data
+lat_key latitude
+lon_key longitude
+alt_key altitude_m
+field_in rigidity_gv rigidity_gv
+field_in hist_min hist_min
+field_in hist_max hist_max
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+xtemaster
+ttl 604800
+force em
+body earth
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in exposure exposure
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+xteslew
+ttl 604800
+force em
+body earth
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key ra
+dec_key dec
+plx_key default_plx
+field_in stop_time stop_time

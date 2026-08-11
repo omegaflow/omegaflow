@@ -1,0 +1,99 @@
+field_in m1_3_flux astro_xmm_sources_m1_3_flux
+
+field_in m1_3_flux_error astro_xmm_sources_m1_3_flux_error
+
+field_in m1_4_flux astro_xmm_sources_m1_4_flux
+
+field_in m1_4_flux_error astro_xmm_sources_m1_4_flux_error
+
+field_in m1_5_flux astro_xmm_sources_m1_5_flux
+
+field_in m1_5_flux_error astro_xmm_sources_m1_5_flux_error
+
+field_in m2_flux astro_xmm_sources_m2_flux
+
+field_in m2_flux_error astro_xmm_sources_m2_flux_error
+
+field_in m2_1_flux astro_xmm_sources_m2_1_flux
+
+field_in m2_1_flux_error astro_xmm_sources_m2_1_flux_error
+
+field_in m2_2_flux astro_xmm_sources_m2_2_flux
+
+field_in m2_2_flux_error astro_xmm_sources_m2_2_flux_error
+
+field_in m2_3_flux astro_xmm_sources_m2_3_flux
+
+field_in m2_3_flux_error astro_xmm_sources_m2_3_flux_error
+
+field_in m2_4_flux astro_xmm_sources_m2_4_flux
+
+field_in m2_4_flux_error astro_xmm_sources_m2_4_flux_error
+
+field_in m2_5_flux astro_xmm_sources_m2_5_flux
+
+field_in m2_5_flux_error astro_xmm_sources_m2_5_flux_error
+
+field_in ep_rate astro_xmm_sources_ep_rate
+
+field_in ep_rate_error astro_xmm_sources_ep_rate_error
+
+field_in pn_rate astro_xmm_sources_pn_rate
+
+field_in pn_rate_error astro_xmm_sources_pn_rate_error
+
+field_in pn_1_rate astro_xmm_sources_pn_1_rate
+
+field_in pn_1_rate_error astro_xmm_sources_pn_1_rate_error
+
+field_in pn_2_rate astro_xmm_sources_pn_2_rate
+
+field_in pn_2_rate_error astro_xmm_sources_pn_2_rate_error
+
+field_in pn_3_rate astro_xmm_sources_pn_3_rate
+
+field_in pn_3_rate_error astro_xmm_sources_pn_3_rate_error
+
+field_in pn_4_rate astro_xmm_sources_pn_4_rate
+
+field_in pn_4_rate_error astro_xmm_sources_pn_4_rate_error
+
+field_in pn_5_rate astro_xmm_sources_pn_5_rate
+
+field_in pn_5_rate_error astro_xmm_sources_pn_5_rate_error
+
+field_in m1_rate astro_xmm_sources_m1_rate
+
+field_in m1_rate_error astro_xmm_sources_m1_rate_error
+
+field_in m1_1_rate astro_xmm_sources_m1_1_rate
+
+field_in m1_1_rate_error astro_xmm_sources_m1_1_rate_error
+
+field_in m1_2_rate astro_xmm_sources_m1_2_rate
+
+field_in m1_2_rate_error astro_xmm_sources_m1_2_rate_error
+
+field_in m1_3_rate astro_xmm_sources_m1_3_rate
+
+field_in m1_3_rate_error astro_xmm_sources_m1_3_rate_error
+
+field_in m1_4_rate astro_xmm_sources_m1_4_rate
+
+field_in m1_4_rate_error astro_xmm_sources_m1_4_rate_error
+
+field_in m1_5_rate astro_xmm_sources_m1_5_rate
+
+field_in m1_5_rate_error astro_xmm_sources_m1_5_rate_error
+
+field_in m2_rate astro_xmm_sources_m2_rate
+
+field_in m2_rate_error astro_xmm_sources_m2_rate_error
+
+field_in m2_1_rate astro_xmm_sources_m2_1_rate
+
+field_in m2_1_rate_error astro_xmm_sources_m2_1_rate_error
+
+field_in m2_2_rate astro_xmm_sources_m2_2_rate
+
+field_in m2_2_rate_error astro_xmm_sources_m2_2_rate_error

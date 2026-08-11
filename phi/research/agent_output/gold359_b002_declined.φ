@@ -1,0 +1,129 @@
+# gold359_b002_declined.φ
+# 50 blocks in gold_pre-cdn_27k_359-domains_b002.φ. 29 ACCEPT (→ gold359_b002_accepted.φ),
+# 21 DECLINE. Per-block disposition below. Reason families: Force Gate (no physical force /
+# text / counts / catalogs), model forecast, dead endpoints, and parser-def (single-object or
+# positionless responses the map/rows extractors cannot consume).
+
+# Block 1: biosphere_wiener_linien_realtime
+# DECLINE: Bare count without individual events. `count data.monitors.0.lines` tallies transit
+# lines at a Vienna stop — a human-infrastructure tally, not a measurement. No organism senses a
+# departure-board line count. No physical force.
+# Old block: https://www.wienerlinien.at/ogd_realtime/monitor?stopId=1234 | force em | ttl 60
+
+# Block 2: biosphere_yahoo_finance_markets
+# DECLINE: No physical force. AAPL stock price delivered over HTTP is an abstraction of human
+# economic activity. Precedent: batch_001 gold blocks 4/5 (Yahoo Finance) declined under the same
+# Force Gate litmus.
+# Old block: https://query1.finance.yahoo.com/v8/finance/chart/AAPL... | force em | ttl 60
+
+# Block 3: blitzortung_lightning_signals
+# DECLINE: Parser-def + mislabeled force. data.blitzortung.org signals are served as binary/HTML,
+# not JSON (source_curation.md precedent). Force `acoustic` also misnames the measurement —
+# Blitzortung detects the radio-frequency EM of a strike, not the acoustic thunder.
+# Old block: https://data.blitzortung.org/contributors/0/stations/0/signals/0/{y}/{m}/{d}/{h}/{mi}.json | force acoustic | ttl 60
+
+# Block 4: cosmic_radiation_jung
+# DECLINE: Model forecast, not a live measurement. open-meteo `current=shortwave_radiation,uv_index`
+# is a forecast model's output. No organism senses a model. Explicit declined category in
+# source_curation.md.
+# Old block: https://api.open-meteo.com/v1/forecast?latitude=46.95&longitude=7.86&current=... | force em | ttl 60
+
+# Block 5: drand_quantum_entropy
+# DECLINE: Protocol artifact. `field round` extracts a sequential round counter from a
+# cryptographic consensus beacon. Same disposition as batch_002 block 1 (drand).
+# Old block: https://api.drand.sh/public/latest | force em | ttl 60
+
+# Block 10: geonet_nz_dart_buoys
+# DECLINE: Station catalog / registry. stationID, name, sensor_type, depth are static registry
+# attributes of the DART buoy array, not a measurement of the sea surface or water column. The
+# endpoint also rejects the path (400).
+# Old block: https://api.geonet.org.nz/tsunami/dart | force acoustic | ttl 60
+
+# Block 11: geonet_nz_earthquake_events
+# DECLINE: Endpoint as written returns 400 — the Geonet quake API now requires the `MMI` query
+# parameter. The measurement (earthquake magnitude/depth) is physically real; the block must be
+# re-verified against `api.geonet.org.nz/quake?MMI=...` before acceptance.
+# Old block: https://api.geonet.org.nz/quake?limit=200 | force seismic-body | ttl 60
+
+# Block 12: geonet_quakes_strong
+# DECLINE: Same as Block 11 — `api.geonet.org.nz/quake` requires `MMI`; the block as written
+# returns 400. Re-verify against the live parameter before acceptance.
+# Old block: https://api.geonet.org.nz/quake?format=geojson&minmag=3&limit=100 | force seismic-body | ttl 60
+
+# Block 13: geosphere_jma_eew
+# DECLINE: Parser-def — single-object API. wolfx.jp/jma_eew.json returns ONE event object, so the
+# array-based map extractor yields nothing; a fixed frame would fabricate a position for a moving
+# hypocentre. The live key is also the API typo `Magunitude` (not `Magnitude`), and position
+# (Latitude/Longitude) is carried as scalar field values rather than position keys. Correct path:
+# a scalar `last`-style extract at the event's own coordinates, which the parser cannot express.
+# Old block: https://api.wolfx.jp/jma_eew.json | force em | ttl 60 | terra 1
+
+# Block 14: geosphere_raspberry_shake_latest
+# DECLINE: Endpoint dead as written — data.raspberryshake.org/api/v2/shake returns 404; the API
+# moved to the FDSNWS event query (/fdsnws/event/1/). The measurement (seismic events) passes the
+# Force Gate; re-verify against the current FDSNWS path before acceptance.
+# Old block: https://data.raspberryshake.org/api/v2/shake?limit=500 | force seismic-body | ttl 60
+
+# Block 19: incois_erddap_tsunami_bpr_buoys
+# DECLINE: Parser-def — `rows` extract positions every row at the block's single fixed frame, but
+# the ERDDAP table carries one latitude/longitude per buoy row; per-row positions are lost. Endpoint
+# also unreachable from the curation host (000/403). Bottom-pressure is physically real; a map-based
+# JSON conversion of the ERDDAP tabledap response is the fix path.
+# Old block: https://erddap.incois.gov.in/erddap/tabledap/INCOIS_TSUNAMI_BPR.csv?latitude,longitude,time,water_pressure,sea_floor_depth... | force acoustic | ttl 60
+
+# Block 21: irsc_iran_earthquakes
+# DECLINE: Endpoint unreachable (no route to irsc.ut.ac.ir from the curation host). Same disposition
+# as the documented cdaweb/irsc reachability case in source_curation.md. Re-verify reachability.
+# Old block: http://irsc.ut.ac.ir/fdsnws/event/1/query?format=geojson&minmagnitude=2.0... | force seismic-body | ttl 60
+
+# Block 24: magnetosphere_geomag_forecast
+# DECLINE: Model forecast. 3-day-geomag-forecast.txt predicts future geomagnetic states; it is a
+# computation, not a sensing organ. Precedent: batch_002 block 12.
+# Old block: https://services.swpc.noaa.gov/text/3-day-geomag-forecast.txt | force em | ttl 60
+
+# Block 32: nmdb_realtime_all_stations
+# DECLINE: Dead endpoint (404) and no position mapping. realtime.txt is a multi-station text table
+# with a station code column but no lat/lon per row; `rows` needs a fixed frame and per-row positions
+# are not carried. The station code would need a registry lookup the parser does not perform.
+# Old block: https://www.nmdb.eu/nest/data/realtime.txt | force em | ttl 60
+
+# Block 37: noaa_goes18_electron_flux
+# DECLINE: Dead endpoint — goes/primary/electron-1-day.json returns 404 (the live product is
+# integral-electrons-1-day.json), and the `map .` extract on a positionless array yields no samples
+# even when the file exists. Electron flux is physically real; the scalar `last flux` form at the
+# satellite frame is the fix path (as in gold359_b002_accepted.φ for the proton feed).
+# Old block: https://services.swpc.noaa.gov/json/goes/primary/electron-1-day.json | force em | ttl 60
+
+# Block 41: noaa_swpc_alerts_current
+# DECLINE: Text warnings. alerts.json carries message strings (alert_time_utc, alert_message,
+# issue_time_utc) with no numeric measurement. Precedent: source_curation.md "alerts.json is message
+# strings only (no numeric measurement) -> declined".
+# Old block: https://services.swpc.noaa.gov/products/alerts.json | force em | ttl 60
+
+# Block 42: noaa_swpc_dscovr_mag_realtime
+# DECLINE: Dead endpoint — products/solar-wind/mag-7-day.json returns 404, and the map extract on a
+# positionless array-of-arrays yields no samples even when the file exists. IMF is physically real;
+# the live rtsw_mag_1m.json scalar `last` form already covers the measurement
+# (gold359_b002_accepted.φ).
+# Old block: https://services.swpc.noaa.gov/products/solar-wind/mag-7-day.json | force em | ttl 60
+
+# Block 43: noaa_swpc_dscovr_solar_wind_realtime
+# DECLINE: Dead endpoint — products/solar-wind/plasma-7-day.json returns 404, and the map extract on
+# a positionless array-of-arrays yields no samples. Solar-wind plasma is physically real; the live
+# rtsw_wind_1m.json scalar `last` form already covers it (gold359_b002_accepted.φ).
+# Old block: https://services.swpc.noaa.gov/products/solar-wind/plasma-7-day.json | force em | ttl 60
+
+# Block 44: noaa_swpc_geomagnetic_alerts
+# DECLINE: Text warnings. Same alerts.json message strings as Block 41; no numeric measurement.
+# Old block: https://services.swpc.noaa.gov/products/alerts.json | force em | ttl 60
+
+# Block 45: noaa_swpc_geomagnetic_storm_alerts
+# DECLINE: Text warnings. Same alerts.json message strings (timestamp/type/message); no numeric
+# measurement. Precedent: batch_002 block 46 (categorical text label declined).
+# Old block: https://services.swpc.noaa.gov/products/alerts.json | force em | ttl 60
+
+# Block 50: noaa_swpc_xray_flares_latest
+# DECLINE: Categorical/text fields only. `last class`/`last satellite` extract a flare classification
+# label (e.g. "B2.9") and a satellite id — no numeric flux. The numeric flare intensity
+# (current_int_xrlong) is already carried by exosphere_solar_flares (gold359_b002_accepted.φ).
+# Old block: https://services.swpc.noaa.gov/json/goes/primary/xray-flares-latest.json | force em | ttl 60

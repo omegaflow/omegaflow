@@ -1,0 +1,487 @@
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+WISE,Cl,GLON,GLAT,Rad,HIIName,_RA_icrs,_DE_icrs+FROM+%22J/ApJS/212/1/wisecat%22+WHERE+_RA_icrs+IS+NOT+NULL+ORDER+BY+Rad+DESC
+ttl 86400
+force em
+at sun 1.0
+format text
+rows
+ra_key _RA_icrs
+dec_key _DE_icrs
+field_in WISE WISE
+field_in Cl Cl
+field_in GLON GLON
+field_in GLAT GLAT
+field_in Rad Rad
+field_in HIIName HIIName
+cmap .
+ra_key RAJ2000
+dec_key DEJ2000
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+Source,RA_ICRS,DE_ICRS+FROM+%22IX/69/xmm4d13s%22
+ttl 86400
+force em
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key 1
+dec_key 2
+field_in 0 0
+
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD20=1&AVG=20&if_no_html=1
+ttl 86400
+force diffusion
+at sun 1.0
+format text
+rows
+lat_key Site_Latitude(Degrees)
+lon_key Site_Longitude(Degrees)
+field_in AOD_440nm AOD_440nm
+field_in AOD_500nm AOD_500nm
+field_in Precipitable_Water(cm) Precipitable_Water(cm)
+
+url https://opendata.dwd.de/climate_environment/health/alerts/s31fg.json
+ttl 86400
+force em
+on earth 51.0 10.0
+field content.0.Pollen.Graeser.today today
+field content.0.Pollen.Birke.today today
+field content.0.Pollen.Beifuss.today today
+field content.0.Pollen.Esche.today today
+
+url https://api.met.no/weatherapi/sunrise/3.0/sun?lat={lat}&lon={lon}&date={today}&offset=+00:00
+ttl 86400
+force em
+on earth 47.3769 8.5417
+header User-Agent "omegaflow"
+field properties.sunrise.time time
+field properties.solar_noon.elevation elevation
+map features
+
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&stations=USW00013739&startDate=2026-01-01&endDate=2026-07-27&format=json
+ttl 86400
+on earth 0.0 0.0
+force diffusion
+map
+lat 40.74
+lon -73.98
+field station station
+field date date
+field TMAX TMAX
+field TMIN TMIN
+field PRCP PRCP
+field SNOW SNOW
+field AWND AWND
+
+url https://data.cosmic.ucar.edu/gnss-ro/cosmic2/nrt/level3/
+ttl 86400
+force diffusion
+on earth 0.0 0.0
+format text
+rows
+field_in 0 0
+field_in 1 1
+field_in 2 2
+
+url https://api.woudc.org/collections/stations/items?f=json&limit=500
+ttl 86400
+force diffusion
+on earth 0 0
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.woudc_id woudc_id
+field_in properties.gaw_id gaw_id
+field_in properties.name name
+field_in properties.type type
+field_in properties.country_name_en country_name_en
+field_in properties.active active
+
+url https://woudc.org/data/api/v1/observations/?format=json&limit=500&order_by=-datetime&phenomenon=ozone_total_column
+ttl 86400
+force diffusion
+on earth 43.780 -79.470
+path numberMatched numberMatched
+
+url https://woudc.org/api/records/observations/?dataset=TotalOzone&limit=2000&sortby=-datetime
+ttl 86400
+force diffusion
+at sun 1.0
+map data
+lat_key station.latitude
+lon_key station.longitude
+field_in datetime datetime
+field_in value value
+field_in station.name name
+field_in station.country country
+
+url https://woudc.org/data/api/v1/observations/?format=json&limit=500&order_by=-datetime&phenomenon=uv_index
+ttl 86400
+force diffusion
+at sun 1.0
+map observations
+lat_key station.geometry.coordinates.1
+lon_key station.geometry.coordinates.0
+field_in value value
+
+url https://woudc.org/api/records/observations/?dataset=UmkehrN14&limit=1000&sortby=-datetime
+ttl 86400
+force diffusion
+at sun 1.0
+map data
+lat_key station.latitude
+lon_key station.longitude
+field_in datetime datetime
+field_in value value
+field_in station.name name
+field_in station.country country
+
+url https://modis.ornl.gov/rst/api/v1/MOD13Q1/subset?latitude={lat}&longitude={lon}&startDate=A2018049&endDate=A2018049&kmAboveBelow=0&kmLeftRight=0
+ttl 86400
+force em
+body earth
+field subset.0.1 1
+
+url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_parks_and_protected_lands_area.geojson
+ttl 86400
+force em
+at sun 1
+field scalerank scalerank
+map features
+
+url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_parks_and_protected_lands_point.geojson
+ttl 86400
+force em
+at sun 1
+field scalerank scalerank
+map features
+
+url https://www.star.nesdis.noaa.gov/smcd/emb/vci/VH/get_TS_admin.php?country=USA&province=0&year=2023&type=VHI
+ttl 86400
+force em
+on earth 38.978 -76.919
+format universal
+last_row VHI VHI
+
+url https://gtnp.arcticportal.org/api/activelayer/?format=json&limit=2000
+ttl 86400
+force thermal
+at sun 1.0
+map data
+lat_key location.lat
+lon_key location.lng
+field_in name name
+field_in id id
+field_in location.country country
+field_in active_layer_thickness active_layer_thickness
+field_in measurement_date measurement_date
+
+url https://gtnp.arcticportal.org/api/v1/gtnp-boreholes?format=json&limit=500
+ttl 86400
+force thermal
+at sun 1.0
+map data
+lat_key location.lat
+lon_key location.lon
+field_in name name
+field_in id id
+field_in temperature_mean_c temperature_mean_c
+field_in depth_m depth_m
+field_in elevation_m elevation_m
+
+url https://gtnp.arcticportal.org/api/v1/calm-data?format=json&limit=500
+ttl 86400
+force diffusion
+at sun 1.0
+map data
+lat_key station.latitude
+lon_key station.longitude
+field_in value value
+field_in station.name name
+field_in year year
+
+url https://gtnp.arcticportal.org/api/boreholes/?format=json&limit=2000
+ttl 86400
+force thermal
+at sun 1.0
+map data
+lat_key location.lat
+lon_key location.lng
+field_in name name
+field_in id id
+field_in location.country country
+field_in location.region region
+field_in elevation elevation
+field_in depth depth
+field_in temperature.0.mean_annual mean_annual
+
+url https://gtnp.arcticportal.org/api/v1/tsp-annual?format=json&limit=500
+ttl 86400
+force thermal
+at sun 1.0
+map data
+lat_key station.latitude
+lon_key station.longitude
+field_in value value
+field_in station.name name
+field_in year year
+
+url https://gtnp.arcticportal.org/api/v1/stations?format=json&limit=500
+ttl 86400
+force diffusion
+at sun 1.0
+map data
+lat_key station.latitude
+lon_key station.longitude
+field_in station.name name
+field_in station.country country
+
+url https://noaadata.apps.nsidc.org/NOAA/G02135/south/daily/data/S_seaice_extent_daily_v4.0.csv
+ttl 86400
+force em
+at sun 1
+last_line cryosphere_antarctic_sea_ice_extent_nsidc
+last line line
+
+url https://noaadata.apps.nsidc.org/NOAA/G02135/north/daily/data/N_seaice_extent_daily_v4.0.csv
+ttl 86400
+force em
+at sun 1
+last_line cryosphere_arctic_sea_ice_extent_nsidc
+last line line
+path data.-1.extent_mkm2 extent_mkm2
+path data.-1.missing missing
+
+url https://gml.noaa.gov/aftp/data/meteorology/in-situ/brw/met_brw_insitu_1_obop_hour_{year}.txt
+ttl 86400
+force em
+on earth 71.29 -156.57
+format universal
+last_row 8 8
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='2099942'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1%20h'
+ttl 86400
+body apophis
+force em
+at sun 1.0
+format ephemeris_binary
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='2019-01A'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1%20h'
+ttl 86400
+body atlas_3i
+force em
+at sun 1.0
+format ephemeris_binary
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-101955'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1%20h'
+ttl 86400
+body bennu
+force em
+at sun 1.0
+format ephemeris_binary
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='90000031'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1%20h'
+ttl 86400
+body encke
+force em
+at sun 1.0
+format ephemeris_binary
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='Haumea'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1%20h'
+ttl 86400
+body haumea
+force em
+at sun 1.0
+format ephemeris_binary
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-125544'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1%20h'
+ttl 86400
+body iss
+force em
+at sun 1.0
+format ephemeris_binary
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-61'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1%20h'
+ttl 86400
+body juno
+force em
+at sun 1.0
+format ephemeris_binary
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-170'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1%20h'
+ttl 86400
+body jwst
+force em
+at sun 1.0
+format ephemeris_binary
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='Makemake'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1%20h'
+ttl 86400
+body makemake
+force em
+at sun 1.0
+format ephemeris_binary
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-98'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1%20h'
+ttl 86400
+body new_horizons
+force em
+at sun 1.0
+format ephemeris_binary
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='2000004'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1%20h'
+ttl 86400
+body vesta
+force em
+at sun 1.0
+format ephemeris_binary
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-31'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1%20h'
+ttl 86400
+body voyager1
+force em
+at sun 1.0
+format ephemeris_binary
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-32'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1%20h'
+ttl 86400
+body voyager2
+force em
+at sun 1.0
+format ephemeris_binary
+
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+TOP+512+ra,dec,sy_dist,pl_eqt,pl_rade,pl_orbper,pl_bmasse+FROM+pscomppars+WHERE+sy_dist+IS+NOT+NULL+ORDER+BY+pl_eqt+ASC&format=json
+ttl 86400
+force em
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key ra
+dec_key dec
+field_in pl_eqt pl_eqt
+field_in pl_rade pl_rade
+field_in pl_orbper pl_orbper
+field_in pl_bmasse pl_bmasse
+dist_key sy_dist 3.085677581e16
+
+url https://services.swpc.noaa.gov/json/f107_cm_flux.json
+ttl 86400
+force em
+at sun 1.0
+field 0.flux flux
+
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+TOP+256+ra,dec,sy_dist,pl_eqt,pl_orbper+FROM+pscomppars+WHERE+pl_orbper%3C1+AND+sy_dist+IS+NOT+NULL+ORDER+BY+pl_orbper+ASC&format=json
+ttl 86400
+force em
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key ra
+dec_key dec
+field_in pl_eqt pl_eqt
+field_in pl_orbper pl_orbper
+dist_key sy_dist 3.085677581e16
+
+url https://geofon.gfz.de/fdsnws/station/1/query?format=geojson&level=station&network=AF
+ttl 86400
+force em
+on earth 0 0
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.station station
+field_in properties.network network
+field_in properties.site.name name
+alt_key geometry.coordinates.2
+
+url https://services3.arcgis.com/GVgbJbqm8hXASVYi/arcgis/rest/services/PAGER_CAT/FeatureServer/0/query?where=1%3D1&geometry={lon_min}%2C{lat_min}%2C{lon_max}%2C{lat_max}&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=YEAR,MAG,DEPTH,DEATHS,INJURIES,LATITUDE,LONGITUDE,COUNTRY&f=json&resultRecordCount=500
+ttl 86400
+force seismic-body
+at sun 1.0
+map features
+lat_key attributes.LATITUDE
+lon_key attributes.LONGITUDE
+field_in attributes.YEAR YEAR
+field_in attributes.MAG MAG
+field_in attributes.DEPTH DEPTH
+field_in attributes.DEATHS DEATHS
+field_in attributes.INJURIES INJURIES
+field_in attributes.COUNTRY COUNTRY
+
+url https://catalogue.clms.copernicus.eu/odc/api/v1/collections
+ttl 86400
+force em
+at sun 1
+map collections
+field_in id id
+field_in title title
+field_in description description
+field_in spatial_extent.bbox.0 0
+field_in spatial_extent.bbox.1 1
+field_in spatial_extent.bbox.2 2
+field_in spatial_extent.bbox.3 3
+
+url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_boundary_lines_land.geojson
+ttl 86400
+force em
+on earth 0 0
+map features
+field_in properties.name name
+
+url https://services.arcgis.com/LG9Yn2oFqZi5PnO5/arcgis/rest/services/EDMAT_Disaster_Data/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 86400
+force gravity
+on earth 0 0
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.totalDeath totalDeath
+field_in properties.totalAffected totalAffected
+field_in properties.numberInjured numberInjured
+field_in properties.numberHomeless numberHomeless
+
+url https://www.ncei.noaa.gov/erddap/griddap/ncdc_oisst_v2_avhrr_by_time_zlev_lat_lon.csv?err%5B(last)%5D%5B(0)%5D%5B(-60.0):20:(60.0)%5D%5B(0.125):20:(359.875)%5D
+ttl 86400
+at sun 1.0
+force diffusion
+format universal
+map data
+lat_key latitude
+lon_key longitude
+field_in err err
+
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Alternate_Fuel/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+ttl 86400
+force em
+at sun 1.0
+map features
+field_in attributes.OBJECTID OBJECTID
+field_in attributes.Station_Id Station_Id
+field_in attributes.Station_Name Station_Name
+field_in attributes.Fuel_Type Fuel_Type
+field_in attributes.Address Address
+field_in attributes.City City
+field_in attributes.State State
+field_in attributes.Zipcode Zipcode
+lat_key geometry.y
+lon_key geometry.x
+
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/NOAA_temp_historic/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+ttl 86400
+force thermal
+at sun 1.0
+map features
+field_in attributes.OBJECTID OBJECTID
+field_in attributes.Date_ Date_
+field_in attributes.Anomaly Anomaly
+lat_key geometry.y
+lon_key geometry.x
+
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/NOAA_temp_yearly_historic/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+ttl 86400
+force thermal
+at sun 1.0
+map features
+field_in attributes.OBJECTID OBJECTID
+field_in attributes.Date_ Date_
+field_in attributes.Anomaly Anomaly
+lat_key geometry.y
+lon_key geometry.x

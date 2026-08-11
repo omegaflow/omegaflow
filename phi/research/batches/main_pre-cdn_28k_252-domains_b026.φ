@@ -1,0 +1,471 @@
+source biosphere_protected_lands_area
+ttl 86400
+force em
+ecliptic 1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/mirror_ne_10m_parks_area.geojson
+field scalerank biosphere_park_area_rank
+flatten features
+
+source biosphere_protected_lands_point
+ttl 86400
+force em
+ecliptic 1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/mirror_ne_10m_parks_point.geojson
+field scalerank biosphere_park_rank
+flatten features
+
+source biosphere_restcountries_population
+ttl 86400
+force em
+url https://restcountries.com/v3.1/all?fields=name,population,latlng
+wgs84 38.899 -77.043
+field 0.population biosphere_country_population_sample
+
+source biosphere_semantic_scholar_papers
+ttl 86400
+force em
+url https://api.openalex.org/works?per-page=1
+wgs84 47.6062 -122.3321
+field meta.count biosphere_semantic_scholar_papers_total
+
+source biosphere_submarine_cables
+ttl 86400
+force em
+url https://www.submarinecablemap.com/api/v3/cable/cable-geo.json
+wgs84 38.899 -77.043
+count features biosphere_submarine_cable_count
+
+source biosphere_unhcr_displacement
+ttl 86400
+force em
+url https://api.unhcr.org/population/v1/population/?limit=1
+wgs84 46.234 6.140
+count items biosphere_displacement_record_count
+
+source biosphere_vegetation_health
+ttl 86400
+force em
+url https://www.star.nesdis.noaa.gov/smcd/emb/vci/VH/get_TS_admin.php?country=USA&province=0&year=2023&type=VHI
+wgs84 38.978 -76.919
+format csv
+last_row VHI biosphere_global_vegetation_health_index
+
+source biosphere_who_cholera
+ttl 86400
+force em
+url https://ghoapi.azureedge.net/api/CHOLERA_0000000001
+wgs84 46.234 6.140
+count value biosphere_cholera_record_count
+
+source biosphere_who_gho_tuberculosis
+ttl 86400
+force em
+url https://ghoapi.azureedge.net/api/MDG_0000000020
+wgs84 46.234 6.140
+count value biosphere_tuberculosis_record_count
+
+source biosphere_who_influenza
+ttl 86400
+force em
+url https://xmart-api-public.who.int/FLUMART/VIW_FNT
+wgs84 46.234 6.140
+count value biosphere_influenza_record_count
+
+source biosphere_who_life_expectancy
+ttl 86400
+force em
+url https://ghoapi.azureedge.net/api/Indicator/SP_DYN_LE00_IN
+wgs84 46.2276 6.1432
+last_line biosphere_who_life_expectancy_global
+
+source hydrosphere_bodc_ocean_chemistry_catalog
+ttl 86400
+force diffusion
+url https://www.bodc.ac.uk/data/published_data_library/catalogue/?jsonrequest=1&keywords=oxygen+salinity&limit=200
+map results
+lat_key geo_location.lat
+lon_key geo_location.lon
+field title dataset_title
+field variables.0 primary_variable
+field temporal_coverage.start start_date
+field temporal_coverage.end end_date
+field bodc_id bodc_dataset_id
+field species algae_species
+field cellcount cell_count
+field cellcount_units count_units
+field hab_category hab_level
+field sample_date sample_date
+
+source biosphere_bold_animal_specimens_barcodes
+ttl 86400
+force diffusion
+url http://v4.boldsystems.org/index.php/API_Public/specimen?taxon=Animalia&geo=&format=json&limit=500
+map .
+lat_key lat
+lon_key lon
+field processid specimen_id
+field bin barcode_index
+field species_name species
+field country country
+field region province
+field collection_date collection_date
+
+source biosphere_bold_marine_invertebrate_barcodes
+ttl 86400
+force diffusion
+url http://v4.boldsystems.org/index.php/API_Public/specimen?taxon=Echinodermata&geo=&format=json&limit=300
+map .
+lat_key lat
+lon_key lon
+field processid specimen_id
+field bin barcode_index
+field species_name species
+field country country
+field region province
+
+source biosphere_bold_plant_specimens_barcodes
+ttl 86400
+force diffusion
+url http://v4.boldsystems.org/index.php/API_Public/specimen?taxon=Plantae&geo=&format=json&limit=500
+map .
+lat_key lat
+lon_key lon
+field processid specimen_id
+field bin barcode_index
+field species_name species
+field country country
+field region province
+
+source astro_cddis_ivs_eop_vlbi_results
+ttl 86400
+force gravity
+url https://cddis.nasa.gov/archive/vlbi/ivsproducts/eops/ivseops.snx
+wgs84 0.0 0.0
+format text
+rows
+field 0 epoch
+field 1 x_pole x_pole_mas
+field 2 y_pole y_pole_mas
+field 3 ut1_utc ut1_offset_ms
+field 4 length_of_day lod_ms
+
+source astro_chime_frb_catalog_total
+ttl 86400
+force em
+url https://www.chime-frb.ca/catalog
+wgs84 49.321 -122.573
+last_line exosphere_chime_frb_count
+
+source cmems_atlantic_currents
+ttl 86400
+force diffusion
+url https://www.ncei.noaa.gov/erddap/griddap/cfs_reanl_mm_ocnh_by_time16_depth_below_sea_lat_lon.csv?u_component_of_current%5B(last)%5D%5B(0)%5D%5B(-60.0):20:(60.0)%5D%5B(0.125):20:(359.875)%5D,v_component_of_current%5B(last)%5D%5B(0)%5D%5B(-60.0):20:(60.0)%5D%5B(0.125):20:(359.875)%5D
+format text
+rows
+lat_key latitude
+lon_key longitude
+field u_component_of_current current_u_ms
+field v_component_of_current current_v_ms
+
+source cmems_aviso_mesoscale_eddy_tracking
+ttl 86400
+force diffusion
+url https://erddap.emodnet-physics.eu/erddap/griddap/EMODNET_SEA_LEVEL_MONTHLY_MEAN_DESEASONALIZED.csv?sla%5B(last)%5D%5B(40.0):1:(60.0)%5D%5B(-10.0):1:(10.0)%5D
+format text
+rows
+lat_key latitude
+lon_key longitude
+field sla sea_level_anomaly_m
+field speed_radius rotation_speed_m_s
+field eddy_type cyclonic_anticyclonic
+
+source cmems_duacs_dt2024_sla_global_grid
+ttl 86400
+force gravity
+url https://erddap.emodnet-physics.eu/erddap/griddap/EMODNET_SEA_LEVEL_TREND.csv?sla%5B(last)%5D%5B(40.0):1:(60.0)%5D%5B(-10.0):1:(10.0)%5D
+format text
+rows
+lat_key latitude
+lon_key longitude
+field sla sea_level_anomaly_m
+
+source cmems_global_ocean_oxygen
+ttl 86400
+force diffusion
+url https://www.ncei.noaa.gov/erddap/griddap/cfs_reanl_mm_ocnh_by_time16_depth_below_sea_lat_lon.csv?Salinity%5B(last)%5D%5B(0)%5D%5B(-60.0):20:(60.0)%5D%5B(0.125):20:(359.875)%5D
+format text
+rows
+lat_key latitude
+lon_key longitude
+field Salinity ocean_salinity_psu
+
+source cmems_global_sla_altimetry
+ttl 86400
+force acoustic
+url https://erddap.emodnet-physics.eu/erddap/griddap/EMODNET_SEA_LEVEL_MONTHLY_MEAN.csv?sla%5B(last)%5D%5B(40.0):1:(60.0)%5D%5B(-10.0):1:(10.0)%5D
+format text
+rows
+lat_key latitude
+lon_key longitude
+field sla sea_level_anomaly_m
+
+source cmems_global_sst_analysis
+ttl 86400
+force thermal
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/cmems_global_sst_analysis.json
+format json
+map data
+lat_key latitude
+lon_key longitude
+field_in sst sea_surface_temp_c
+
+source cmems_glorys12_ocean_3d
+ttl 86400
+force thermal
+url https://www.ncei.noaa.gov/erddap/griddap/cfs_reanl_mm_ocnh_by_time16_depth_below_sea_lat_lon.csv?Potential_temperature%5B(last)%5D%5B(0)%5D%5B(-60.0):20:(60.0)%5D%5B(0.125):20:(359.875)%5D
+format text
+rows
+lat_key latitude
+lon_key longitude
+field Potential_temperature ocean_temp_k
+field so salinity_psu
+
+source cmems_glorys12_ocean_temperature_3d
+ttl 86400
+force thermal
+url https://www.ncei.noaa.gov/erddap/griddap/cfs_reanl_mm_ocnh_by_time16_depth_below_sea_lat_lon.csv?Potential_temperature%5B(last)%5D%5B(0)%5D%5B(-60.0):20:(60.0)%5D%5B(0.125):20:(359.875)%5D
+format text
+rows
+lat_key latitude
+lon_key longitude
+field Potential_temperature temperature_k
+
+source cmems_indian_ocean_waves
+ttl 86400
+force acoustic
+url https://erddap.marine.ie/erddap/griddap/IMI_IRISH_SHELF_SWAN_WAVE.csv?significant_wave_height%5B(last)%5D%5B(-60.0):4:(60.0)%5D%5B(-20.0):4:(-5.0)%5D
+format text
+rows
+lat_key latitude
+lon_key longitude
+field significant_wave_height wave_height_m
+
+source cmems_sentinel3_chlorophyll_global
+ttl 86400
+force diffusion
+url https://oceanwatch.pifsc.noaa.gov/erddap/griddap/noaa_snpp_chla_daily.csv?chlor_a%5B(last)%5D%5B(0)%5D%5B(-60.0):20:(60.0)%5D%5B(0.125):20:(359.875)%5D
+format text
+rows
+lat_key latitude
+lon_key longitude
+field chlor_a chlorophyll_mgm3
+
+source cmems_sla_global_adt
+ttl 86400
+force gravity
+url https://erddap.emodnet-physics.eu/erddap/griddap/EMODNET_SEA_LEVEL_MONTHLY_MEAN.csv?sla%5B(last)%5D%5B(40.0):1:(60.0)%5D%5B(-10.0):1:(10.0)%5D
+format text
+rows
+lat_key latitude
+lon_key longitude
+field sla absolute_dyn_top_m
+
+source cmems_sst_anomaly_global_l4
+ttl 86400
+force thermal
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/cmems_sst_anomaly_global_l4.json
+format json
+map data
+lat_key latitude
+lon_key longitude
+field_in anom sst_anomaly_c
+
+source astro_cneos_fireballs_infrasound
+ttl 86400
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_cneos_fireballs_infrasound.json
+map data
+lat_key 3
+lon_key 5
+lon_sign 6
+field_in 0 event_date
+field_in 1 energy
+field_in 2 impact_energy_kt
+field_in 7 altitude_km
+field_in 8 velocity_kms
+
+source astro_asteroids_numbered
+ttl 86400
+force em
+ssb
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_asteroids_numbered.json
+count data cosmos_asteroids_numbered_total
+
+source astro_asteroids_positions
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_asteroids_positions.json
+field H cosmic_asteroid_h_mag
+kepler_map data
+a_key a
+e_key e
+i_key i
+om_key om
+w_key w
+ma_key ma
+epoch_key epoch
+
+source astro_mars_landers
+ttl 86400
+force em
+url https://gist.githubusercontent.com/burritojustice/2d967b31c3bd11165b4439ebe98ecb01/raw/8594b09096f93f723c929c397de49ed7ac8ecc64/mars_landers.geojson
+areocentric 1
+flatten features
+
+source astro_mars_weather
+ttl 86400
+force em
+url https://mars.nasa.gov/rss/api/?feed=weather&category=msl&feedtype=json
+path soles.0.min_temp cosmos_mars_min_temp_c
+path soles.0.max_temp cosmos_mars_max_temp_c
+path soles.0.pressure cosmos_mars_pressure_pa
+areocentric 1
+
+source astro_tle_catalog
+ttl 86400
+force em
+ssb
+url https://tle.ivanstanojevic.me/api/tle/
+field totalItems cosmos_tle_total_satellites
+field totalItems cosmos_tle_total_satellites
+count member cosmos_tle_page_count
+
+source astro_tle_search_iss
+ttl 86400
+force em
+ssb
+url https://tle.ivanstanojevic.me/api/tle/?search=ISS&page-size=50
+field totalItems cosmos_tle_iss_related_total
+field member.0.satelliteId cosmos_tle_iss_satellite_id
+count member cosmos_tle_iss_related_count
+
+source technosphere_cratesio_crates_total
+ttl 86400
+force em
+url https://crates.io/api/v1/crates?per_page=1
+wgs84 37.774 -122.419
+field meta.total biosphere_cratesio_crates_total
+
+source cryosphere_nsidc_antarctic_sea_ice_v4
+ttl 86400
+force em
+ecliptic 1
+url https://noaadata.apps.nsidc.org/NOAA/G02135/south/daily/data/S_seaice_extent_daily_v4.0.csv
+last_line cryosphere_antarctic_sea_ice_extent_nsidc
+
+source cryosphere_nsidc_arctic_sea_ice_v4
+ttl 86400
+force em
+ecliptic 1
+url https://noaadata.apps.nsidc.org/NOAA/G02135/north/daily/data/N_seaice_extent_daily_v4.0.csv
+last_line cryosphere_arctic_sea_ice_extent_nsidc
+
+source cryosphere_nsidc_sea_ice
+ttl 86400
+force em
+url https://noaadata.apps.nsidc.org/NOAA/G02135/north/daily/data/N_seaice_extent_daily_v4.0.csv
+wgs84 40.008 -105.263
+format csv
+last_row extent hydrosphere_sea_ice_extent_north_mkm2
+last_row area hydrosphere_sea_ice_area_north_mkm2
+
+source cryosphere_nsidc_sea_ice_north
+ttl 86400
+force em
+url https://noaadata.apps.nsidc.org/NOAA/G02135/north/daily/data/N_seaice_extent_daily_v4.0.csv
+wgs84 40.008 -105.263
+format csv
+last line cryosphere_sea_ice_extent_north_raw
+
+source cryosphere_nsidc_sea_ice_south
+ttl 86400
+force em
+url https://noaadata.apps.nsidc.org/NOAA/G02135/south/daily/data/S_seaice_extent_daily_v4.0.csv
+wgs84 -75.250 -0.071
+format csv
+last line cryosphere_sea_ice_extent_south_raw
+
+source cryosphere_permafrost_barrow
+ttl 86400
+force em
+url https://gml.noaa.gov/aftp/data/meteorology/in-situ/brw/met_brw_insitu_1_obop_hour_{year}.txt
+wgs84 71.29 -156.57
+format csv
+last_row 8 cryosphere_permafrost_temp_barrow_c
+
+source cryosphere_sea_ice_north
+ttl 86400
+force em
+url https://noaadata.apps.nsidc.org/NOAA/G02135/north/daily/data/N_seaice_extent_daily_v4.0.csv
+wgs84 40.008 -105.263
+format csv
+last_row extent cryosphere_sea_ice_north_mkm2
+
+source cryosphere_sea_ice_south
+ttl 86400
+force em
+url https://noaadata.apps.nsidc.org/NOAA/G02135/south/daily/data/S_seaice_extent_daily_v4.0.csv
+wgs84 -75.250 -0.071
+format csv
+last_row extent cryosphere_sea_ice_south_mkm2
+
+source hydrosphere_dartmouth_flood_observatory_global
+ttl 86400
+force diffusion
+url https://gdacs.org/xml/rss.xml
+wgs84 38.9072 -77.0369
+xml_count item flood_event_count
+
+source astro_dasch_harvard_agn_lightcurves
+ttl 86400
+force em
+ssb
+url https://dasch.rc.fas.harvard.edu/lightcurve.php?objid=GJ+551&type=json&limit=500
+map .
+field 0 jd
+field 1 magnitude
+field 2 magnitude_error
+
+source geosphere_earth_coastlines_110m
+ttl 86400
+force em
+ssb
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/mirror_ne_110m_coastline.geojson
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.name coastline_name
+
+source geosphere_earth_country_boundaries_110m
+ttl 86400
+force em
+ssb
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/mirror_ne_110m_boundaries.geojson
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.name boundary_name
+
+source geosphere_earthscope_fdsn_stations
+ttl 86400
+force acoustic
+url https://service.earthscope.org/fdsnws/station/1/query?format=text&limit=50000
+format text
+rows
+pos station_latitude station_longitude
+field_in 0 network_code
+field_in 1 station_code
+field_in 2 station_latitude
+field_in 3 station_longitude
+field_in 4 station_elevation_m
+field_in 5 site_name

@@ -1,0 +1,551 @@
+url https://api.inaturalist.org/v1/observations?iconic_taxa=Actinopterygii&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
+ttl 3600
+force diffusion
+at sun 1.0
+map results
+lat_key geojson.coordinates.1
+lon_key geojson.coordinates.0
+field_in taxon.name species_name
+field_in taxon.rank taxon_rank
+field_in observed_on observation_date
+
+url https://api.inaturalist.org/v1/observations?iconic_taxa=Reptilia&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
+ttl 3600
+force diffusion
+at sun 1.0
+map results
+lat_key geojson.coordinates.1
+lon_key geojson.coordinates.0
+field_in taxon.name species_name
+field_in taxon.rank taxon_rank
+field_in observed_on observation_date
+field_in place_guess locality
+
+url https://api.inaturalist.org/v1/observations?threatened=true&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
+ttl 3600
+force diffusion
+at sun 1.0
+map results
+lat_key geojson.coordinates.1
+lon_key geojson.coordinates.0
+field_in taxon.name species_name
+field_in observed_on observation_date
+field_in place_guess locality
+
+url https://api.neotomadb.org/v2.0/data/datasets?datasettype=pollen&limit=2000&offset=0
+ttl 86400
+force biotic
+map data
+lat_key site.geography.coordinates.1
+lon_key site.geography.coordinates.0
+  field_in site.sitename site_name
+  field_in site.altitude elevation_m
+  field_in site.datasets.0.datasetid dataset_id
+  field_in site.datasets.0.agerange.0.ageyoung age_young_yr
+  field_in site.datasets.0.agerange.0.ageold age_old_yr
+
+url https://api.neotomadb.org/v2.0/data/datasets?datasettype=vertebrate+fauna&limit=2000&offset=0
+ttl 86400
+force biotic
+map data
+lat_key site.geography.coordinates.1
+lon_key site.geography.coordinates.0
+  field_in site.sitename site_name
+  field_in site.altitude elevation_m
+  field_in site.datasets.0.datasetid dataset_id
+  field_in site.datasets.0.agerange.0.ageyoung age_young_yr
+  field_in site.datasets.0.agerange.0.ageold age_old_yr
+
+url https://api.neotomadb.org/v2.0/data/datasets?datasettype=diatom&limit=2000&offset=0
+ttl 86400
+force biotic
+map data
+lat_key site.geography.coordinates.1
+lon_key site.geography.coordinates.0
+  field_in site.sitename site_name
+  field_in site.altitude elevation_m
+  field_in site.datasets.0.datasetid dataset_id
+  field_in site.datasets.0.agerange.0.ageyoung age_young_yr
+  field_in site.datasets.0.agerange.0.ageold age_old_yr
+
+url https://api.neotomadb.org/v2.0/data/datasets?datasettype=plant+macrofossils&limit=2000&offset=0
+ttl 86400
+force biotic
+map data
+lat_key site.geography.coordinates.1
+lon_key site.geography.coordinates.0
+  field_in site.sitename site_name
+  field_in site.altitude elevation_m
+  field_in site.datasets.0.datasetid dataset_id
+  field_in site.datasets.0.agerange.0.ageyoung age_young_yr
+  field_in site.datasets.0.agerange.0.ageold age_old_yr
+
+url https://coastwatch.noaa.gov/erddap/griddap/noaacrwbaa7dDaily.csv?bleaching_alert_area%5Blast%5D%5B(0.0):(30.0)%5D%5B(0.0):(60.0)%5D
+ttl 86400
+force thermal
+map .
+lat_key latitude
+lon_key longitude
+  field_in bleaching_alert_area bleach_alert_level
+
+url https://firms.modaps.eosdis.nasa.gov/api/area/csv/{firms_map_key}/VIIRS_SNPP_NRT/World/1/{today}
+ttl 600
+force thermal
+rows
+lat_key latitude
+lon_key longitude
+  field_in bright_ti4 fire_brightness_k
+  field_in bright_ti5 brightness_ti5_k
+  field_in frp fire_radiative_power_mw
+  field_in confidence confidence_pct
+  field_in daynight day_night_flag
+  field_in acq_date acquisition_date
+  field_in acq_time acquisition_time
+
+url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&occurrenceStatus=PRESENT&basisOfRecord=HUMAN_OBSERVATION&month={month}&year={year}
+ttl 86400
+force biotic
+body earth
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+  field_in species species_name
+  field_in genus genus
+  field_in family family
+  field_in kingdom kingdom
+  field_in year obs_year
+  field_in month obs_month
+  field_in country country_code
+  field_in stateProvince state_province
+
+url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&iucnRedListCategory=CR&basisOfRecord=HUMAN_OBSERVATION&year={year}
+ttl 86400
+force biotic
+body earth
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in species species_name
+field_in iucnRedListCategory iucn_category
+field_in year obs_year
+field_in country country_code
+
+url https://api.gbif.org/v1/occurrence/search?establishmentMeans=INVASIVE&hasCoordinate=true&limit=300&mediaType=StillImage&basisOfRecord=HUMAN_OBSERVATION,MACHINE_OBSERVATION&year={year}&month={month}&format=json
+ttl 3600
+force biotic
+body earth
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in scientificName species_name
+field_in kingdom kingdom
+field_in family family_name
+field_in establishmentMeans establishment_means
+field_in stateProvince region
+field_in country country_code
+field_in mediaCount image_count
+field_in occurrenceDate observation_date
+
+url https://api.gbif.org/v1/occurrence/search?orderKey=4867&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
+ttl 3600
+force biotic
+body earth
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in scientificName species_name
+field_in family family_name
+field_in stateProvince region
+field_in country country_code
+field_in occurrenceDate observation_date
+field_in individualCount flock_size
+
+url https://api.gbif.org/v1/occurrence/search?orderKey=734&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION,MACHINE_OBSERVATION&year={year}&format=json
+ttl 3600
+force biotic
+body earth
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in scientificName species_name
+field_in family family_name
+field_in stateProvince region
+field_in country country_code
+field_in occurrenceDate observation_date
+field_in recordedBy observer
+
+url https://api.gbif.org/v1/occurrence/search?establishmentMeans=INVASIVE&hasCoordinate=true&limit=300&habitat=marine&basisOfRecord=HUMAN_OBSERVATION&year={year}&format=json
+ttl 3600
+force biotic
+body earth
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in scientificName species_name
+field_in kingdom kingdom_name
+field_in family family_name
+field_in establishmentMeans establishment_status
+field_in country country_code
+field_in occurrenceDate observation_date
+field_in waterBody water_body
+
+url https://api.gbif.org/v1/occurrence/search?classKey=358&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
+ttl 3600
+force biotic
+body earth
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in scientificName species_name
+field_in family family_name
+field_in country country_code
+field_in stateProvince region
+field_in occurrenceDate observation_date
+
+url https://api.gbif.org/v1/occurrence/search?classKey=212,359,358,131,186&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&format=json
+ttl 3600
+force biotic
+body earth
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in scientificName species_name
+field_in class taxon_class
+field_in country country_code
+field_in occurrenceDate observation_date
+field_in individualCount population_count_proxy
+field_in recordedBy observer
+
+url https://api.gbif.org/v1/occurrence/search?orderKey=797&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
+ttl 3600
+force biotic
+body earth
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in scientificName species_name
+field_in family family_name
+field_in country country_code
+field_in stateProvince region
+field_in occurrenceDate observation_date
+field_in individualCount individual_count
+
+url https://api.gbif.org/v1/occurrence/search?orderKey=221&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION,PRESERVED_SPECIMEN&year={year}&format=json
+ttl 3600
+force biotic
+body earth
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in scientificName species_name
+field_in order order_name
+field_in country country_code
+field_in occurrenceDate observation_date
+field_in waterBody ocean_basin
+field_in depth depth_m
+
+url https://api.gbif.org/v1/occurrence/search?orderKey=145&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
+ttl 3600
+force biotic
+body earth
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in scientificName species_name
+field_in family family_name
+field_in country country_code
+field_in stateProvince region
+field_in occurrenceDate observation_date
+field_in waterBody water_body
+
+url https://api.gbif.org/v1/occurrence/search?kingdomKey=5&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
+ttl 3600
+force biotic
+body earth
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in scientificName species_name
+field_in phylum phylum_name
+field_in country country_code
+field_in stateProvince region
+field_in occurrenceDate observation_date
+field_in kingdom kingdom_name
+
+url https://api.gbif.org/v1/occurrence/search?orderKey=4887&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&format=json
+ttl 3600
+force biotic
+body earth
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in scientificName species_name
+field_in family family_name
+field_in country country_code
+field_in waterBody sea_basin
+field_in occurrenceDate observation_date
+field_in stateProvince coastal_region
+
+url https://api.gbif.org/v1/occurrence/search?orderKey=1571&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&format=json
+ttl 3600
+force biotic
+body earth
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in scientificName species_name
+field_in family family_name
+field_in country country_code
+field_in waterBody ocean_basin
+field_in occurrenceDate observation_date
+field_in depth depth_m
+
+url https://api.gbif.org/v1/occurrence/search?taxonKey=104&hasCoordinate=true&depth=500,5000&limit=300&basisOfRecord=PRESERVED_SPECIMEN&format=json
+ttl 3600
+force biotic
+body earth
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in scientificName species_name
+field_in family family_name
+field_in depth depth_m
+field_in waterBody ocean_region
+field_in occurrenceDate collection_date
+field_in country country_code
+
+url https://api.gbif.org/v1/occurrence/search?classKey=137&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION,PRESERVED_SPECIMEN&year={year}&format=json
+ttl 3600
+force biotic
+body earth
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in scientificName species_name
+field_in order order_name
+field_in country country_code
+field_in depth depth_m
+field_in waterBody ocean_basin
+field_in occurrenceDate observation_date
+
+url https://api.gbif.org/v1/occurrence/search?classKey=359&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&habitat=terrestrial&format=json
+ttl 3600
+force biotic
+body earth
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in scientificName species_name
+field_in family family_name
+field_in country country_code
+field_in stateProvince region
+field_in occurrenceDate observation_date
+field_in individualCount group_size
+
+url https://api.gbif.org/v1/occurrence/search?kingdomKey=6&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
+ttl 3600
+force biotic
+body earth
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in scientificName species_name
+field_in phylum phylum_name
+field_in country country_code
+field_in stateProvince region
+field_in occurrenceDate observation_date
+
+url https://api.gbif.org/v1/occurrence/search?orderKey=9247&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
+ttl 3600
+force biotic
+body earth
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in scientificName species_name
+field_in family family_name
+field_in country country_code
+field_in waterBody ocean_habitat
+field_in occurrenceDate observation_date
+field_in depth nesting_depth_cm
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json,1.1&bBox={lon_min},{lat_min},{lon_max},{lat_max}&parameterCd=00010
+ttl 300
+force thermal
+body earth
+map value.timeSeries
+lat_key sourceInfo.geoLocation.geogLocation.latitude
+lon_key sourceInfo.geoLocation.geogLocation.longitude
+  field_in sourceInfo.siteName station_name
+  field_in sourceInfo.siteCode.0.value site_code
+  field_in values.0.value.0.value hydrosphere_local_water_temp_c
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json,1.1&bBox={lon_min},{lat_min},{lon_max},{lat_max}&parameterCd=00095
+ttl 300
+force diffusion
+body earth
+map value.timeSeries
+lat_key sourceInfo.geoLocation.geogLocation.latitude
+lon_key sourceInfo.geoLocation.geogLocation.longitude
+  field_in sourceInfo.siteName station_name
+  field_in sourceInfo.siteCode.0.value site_code
+  field_in values.0.value.0.value hydrosphere_local_water_conductivity_uscm
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json,1.1&bBox={lon_min},{lat_min},{lon_max},{lat_max}&parameterCd=00400
+ttl 300
+force diffusion
+body earth
+map value.timeSeries
+lat_key sourceInfo.geoLocation.geogLocation.latitude
+lon_key sourceInfo.geoLocation.geogLocation.longitude
+  field_in sourceInfo.siteName station_name
+  field_in sourceInfo.siteCode.0.value site_code
+  field_in values.0.value.0.value hydrosphere_local_river_ph
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json,1.1&bBox={lon_min},{lat_min},{lon_max},{lat_max}&parameterCd=63680
+ttl 300
+force diffusion
+body earth
+map value.timeSeries
+lat_key sourceInfo.geoLocation.geogLocation.latitude
+lon_key sourceInfo.geoLocation.geogLocation.longitude
+  field_in sourceInfo.siteName station_name
+  field_in sourceInfo.siteCode.0.value site_code
+  field_in values.0.value.0.value hydrosphere_local_turbidity_fnu
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json,1.1&bBox={lon_min},{lat_min},{lon_max},{lat_max}&parameterCd=00300
+ttl 300
+force diffusion
+body earth
+map value.timeSeries
+lat_key sourceInfo.geoLocation.geogLocation.latitude
+lon_key sourceInfo.geoLocation.geogLocation.longitude
+  field_in sourceInfo.siteName station_name
+  field_in sourceInfo.siteCode.0.value site_code
+  field_in values.0.value.0.value hydrosphere_local_dissolved_oxygen_mgl
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?dataset=ngk/best-avail/PT1M/xyzf&parameters=Field_Magnitude&time.min={yesterday}T00:00:00Z&time.max={now}Z
+ttl 300
+force gravity
+on earth 52.07 12.68
+format csv
+rows
+  field_in Field_Magnitude magnetosphere_f_ngk_nt
+  field_in Time timestamp_utc
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MCQ/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={yesterday}T23:59:00Z&format=json
+ttl 300
+force gravity
+on earth -54.5 158.95
+map data
+  path 1.0 x_nt
+  path 1.1 y_nt
+  path 1.2 z_nt
+  path 2 s_nt
+
+url https://ssd-api.jpl.nasa.gov/fireball.api?limit=500&date-min=2010-01-01
+ttl 86400
+force em
+at sun 1.0
+format universal
+rows data
+  field_in 0 event_date
+  field_in 1 energy_kt
+  field_in 2 impact_e_kt
+  field_in 3 latitude_deg
+  lat_sign 4 lat_dir
+  field_in 5 longitude_deg
+  lon_sign 6 lon_dir
+  field_in 7 altitude_km
+  field_in 8 velocity_kms
+
+url https://vires.services/hapi/data?dataset=SW_OPER_MAGA_LR_1B&parameters=Latitude,Longitude,B_NEC&time.min=2026-08-03T00:00:00Z&time.max=2026-08-03T23:59:59Z
+ttl 3600
+force gravity
+body earth
+rows
+lat_key 1
+lon_key 2
+  field_in 0 timestamp_utc
+  field_in 5 swarm_mag_bx_nt
+  field_in 6 swarm_mag_by_nt
+  field_in 7 swarm_mag_bz_nt
+
+url https://datacenter.iers.org/data/csv/finals2000A.data.csv
+ttl 86400
+force gravity
+at sun 1.0
+format csv
+rows
+  field_in MJD mjd
+  field_in Year year
+  field_in Month month
+  field_in Day day
+  field_in x_pole pole_x_arcsec
+  field_in y_pole pole_y_arcsec
+  field_in UT1-UTC ut1_utc_s
+  field_in LOD lod_s
+  field_in dPsi nutation_dpsi_arcsec
+  field_in dEpsilon nutation_depsilon_arcsec
+
+url https://api.inaturalist.org/v1/observations?taxon_name=Amphibia&quality_grade=research&per_page=200&order_by=observed_on&order=desc
+ttl 3600
+force biotic
+body earth
+map results
+lat_key geojson.coordinates.1
+lon_key geojson.coordinates.0
+  field_in id observation_id
+  field_in taxon.name species_name
+  field_in observed_on_details.date observed_date
+  field_in place_guess place_guess
+
+url https://api.inaturalist.org/v1/observations?taxon_name=Fungi&quality_grade=research&per_page=200&order_by=observed_on&order=desc
+ttl 3600
+force biotic
+body earth
+map results
+lat_key geojson.coordinates.1
+lon_key geojson.coordinates.0
+  field_in id observation_id
+  field_in taxon.name species_name
+  field_in observed_on_details.date observed_date
+  field_in place_guess place_guess
+
+url https://api.inaturalist.org/v1/observations?taxon_name=Mammalia&quality_grade=research&per_page=200&order_by=observed_on&order=desc
+ttl 3600
+force biotic
+body earth
+map results
+lat_key geojson.coordinates.1
+lon_key geojson.coordinates.0
+  field_in id observation_id
+  field_in taxon.name species_name
+  field_in observed_on_details.date observed_date
+  field_in place_guess place_guess
+
+url https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-3-day.json
+ttl 300
+force em
+at sun 1.0
+map .
+  field_in time_tag measurement_time
+  field_in satellite satellite_id
+  field_in flux electron_flux_pfu
+  field_in energy energy_band
+
+url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/meteorite_landings_tidy_{latest}.json
+
+ttl 86400
+
+force gravity
+
+at sun 1.0
+
+format universal
+
+rows
+
+lat_key lat
+
+lon_key long

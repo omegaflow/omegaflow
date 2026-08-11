@@ -1,0 +1,25 @@
+url https://opensky-network.org/api/states/all
+ttl 10
+on earth 0 0 0
+map states
+lat 6
+lon 5
+alt 7
+field 7 biosphere_aircraft_baro_altitude inverse-square em m 1.0 0.0 0.0
+field 9 biosphere_aircraft_velocity inverse-square em m/s 1.0 0.0 0.0
+field 11 biosphere_aircraft_vertical_rate inverse-square em m/s 1.0 0.0 0.0
+field 13 biosphere_aircraft_geo_altitude inverse-square em m 1.0 0.0 0.0
+
+url https://earthquake.alaska.edu/fdsnws/event/1/query?format=geojson&minmagnitude=2.0&limit=200&orderby=time&starttime={today}T00:00:00
+ttl 60
+on earth 0 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field geometry.coordinates.2 geosphere_earthquake_depth_km erfc seismic-surface km 6.0 0.0 0.0
+field properties.mag geosphere_earthquake_mag erfc seismic-surface Mw 6.0 0.0 0.0
+
+url https://qrng.anu.edu.au/API/jsonI.php?length=1&type=uint8
+ttl 60
+on earth -35.2809 149.1300 0
+field data.0 anu_quantum_entropy inverse-square em count 6.0 0.0 0.0

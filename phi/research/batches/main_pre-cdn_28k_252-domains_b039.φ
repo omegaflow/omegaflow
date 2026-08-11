@@ -1,0 +1,651 @@
+source astro_gaia_extreme_red
+ttl 86400
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_gaia_extreme_red.json
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+plx_key 3
+field_in 2 mag_g
+field_in 3 par
+field_in 4 bp_rp
+
+source astro_gaia_galactic_plane
+ttl 86400
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_gaia_galactic_plane.json
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+plx_key 3
+field_in 2 mag_g
+
+source astro_gaia_giant_branch
+ttl 86400
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_gaia_giant_branch.json
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+plx_key 3
+field_in 2 mag_g
+
+source astro_gaia_high_velocity
+ttl 86400
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_gaia_high_velocity.json
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+plx_key 3
+field_in 2 mag_g
+field_in 3 par
+
+source astro_gaia_hot_subdwarfs
+ttl 86400
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_gaia_hot_subdwarfs.json
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+plx_key 3
+field_in 2 mag_g
+
+source astro_gaia_lmc
+ttl 86400
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_gaia_lmc.json
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+plx_key 2
+field_in 2 par
+
+source astro_gaia_main_sequence
+ttl 86400
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_gaia_main_sequence.json
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+plx_key 3
+field_in 2 mag_g
+
+source astro_gaia_metallicity
+ttl 86400
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_gaia_metallicity.json
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+plx_key 3
+field_in 2 phot_g_mean_mag
+field_in 3 parallax_mas
+field_in 4 metallicity_dex
+
+source astro_gaia_nearby_1000
+ttl 315576000000
+reach_ttl 86400
+catalog_epoch 504921600.0
+abs_mag_from mag_g
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_gaia_nearby_1000.json
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+plx_key 3
+field_in 2 mag_g
+
+source astro_gaia_red_clump
+ttl 86400
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_gaia_red_clump.json
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+plx_key 3
+field_in 2 bp_rp
+
+source astro_gaia_smc
+ttl 86400
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_gaia_smc.json
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+plx_key 2
+field_in 2 par
+
+source astro_nvss_radio
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_nvss.json
+format json
+cmap data
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+field S1_4 flux_14ghz_mjy
+
+source astro_xmm_4xmm_dr13
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_xmm_4xmm_dr13.json
+cmap data
+tau_key _dist_m
+ra_key 1
+dec_key 2
+field_in 0 Source
+
+source usgs_earthquakes_hazard_layer
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/usgs_earthquakes_hazard_layer.json
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.mag magnitude
+field properties.place location_description
+field properties.time event_time
+field properties.tsunami tsunami_flag
+field properties.alert alert_level
+field properties.sig significance
+field properties.cdi instrumental_intensity
+field properties.mmi maximum_intensity
+field properties.felt felt_reports
+depth_key geometry.coordinates.2
+
+source usgs_nwis_peak_streamflow
+ttl 86400
+force diffusion
+url https://nwis.waterdata.usgs.gov/usa/nwis/peak?state_cd=all&format=rdb&date_format=YYYY-MM-DD&peak_begin_date={year}-01-01&peak_end_date={year}-12-31
+format text
+rows
+lat_key dec_lat_va
+lon_key dec_long_va
+field site_no site_code
+field station_nm station_name
+field peak_dt peak_date
+field peak_va peak_discharge_cfs
+field gage_ht gage_height_ft
+
+source usgs_sciencebase_nlcd
+ttl 86400
+force diffusion
+url https://www.sciencebase.gov/catalog/items?format=json&q=National+Land+Cover+Database&max=50&fields=id,title,body,spatial,contacts,tags
+map items
+lat_key spatial.boundingBox.minY
+lon_key spatial.boundingBox.minX
+field title dataset_title
+field tags.0.name primary_tag
+field spatial.representationalPoint.coordinates.0 centroid_lon
+field spatial.representationalPoint.coordinates.1 centroid_lat
+
+source usgs_volcano_monitoring
+ttl 86400
+force em
+url https://volcanoes.usgs.gov/hans-public/api/volcano/getUSVolcanoes
+map .
+lat_key latitude
+lon_key longitude
+field volcano_name name
+field region region_code
+field elevation_meters elevation_m
+field nvews_threat threat_level
+field icao_coordinates icao_grid
+
+source technosphere_uspto_patents_total
+ttl 86400
+force em
+url https://developer.uspto.gov/ptab-api/v2/patents?limit=1
+wgs84 38.995 -77.101
+field totalResults biosphere_uspto_patents_total
+
+source astro_viirs_lst_global
+ttl 86400
+force thermal
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/firms_viirs_nrt_world.csv
+format text
+rows
+lat_key latitude
+lon_key longitude
+field brightness viirs_lst_brightness_k
+field scan track_scan_km
+field frp fire_radiative_power_mw
+field satellite satellite
+
+source vizier_2dfgrs
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/vizier_2dfgrs.json
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field bJmag bj_magnitude
+field z redshift
+
+source vizier_2mass_psc_bright
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/vizier_2mass_psc_bright.json
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field 2MASS source_name
+field Jmag j_mag
+field Hmag h_mag
+field Kmag k_mag
+field Qflg quality_flag
+
+source vizier_2qz_qso
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/VII_241_2qz.json
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field z1 redshift
+field bJmag bj_magnitude
+
+source vizier_4xmm_dr13
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/vizier_4xmm_dr13.json
+format text
+rows
+ra_key RA_ICRS
+dec_key DE_ICRS
+field Flux2 flux_2to12_kev_erg_cm2s
+field HR1 hardness_ratio_1
+field HR2 hardness_ratio_2
+
+source vizier_6dfgs
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_6dfgs.json
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field cz velocity_kms
+field bJmag bj_magnitude
+field S/G star_galaxy_flag
+
+source vizier_allwise_bright
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+AllWISE,RAJ2000,DEJ2000,W1mag,W2mag,W3mag,W4mag,var_flg,ex+FROM+%22II/328/allwise%22+WHERE+W1mag<9+AND+RAJ2000+IS+NOT+NULL+ORDER+BY+W1mag+ASC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field AllWISE source_name
+field W1mag w1_3_4um_mag
+field W2mag w2_4_6um_mag
+field W3mag w3_12um_mag
+field W4mag w4_22um_mag
+field var_flg variability_flag
+field ex extended_source_flag
+
+source vizier_apogee_dr17_stellar_params
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+APOGEE_ID,RA,DEC,Teff,logg,M_H,alpha_M,VHELIO_AVG,DIST_BPG+FROM+"III/286/allstars"+WHERE+RA+IS+NOT+NULL+AND+ASPCAPFLAG%3D0+AND+SNR>100+ORDER+BY+SNR+DESC
+format text
+rows
+ra_key RA
+dec_key DEC
+field APOGEE_ID apogee_id
+field Teff effective_temp_K
+field logg surface_gravity
+field M_H metallicity
+field alpha_M alpha_over_m
+field VHELIO_AVG radial_velocity_km_s
+dist_key DIST_BPG
+
+source vizier_asteroid_families_nesvorny
+ttl 86400
+force gravity
+ssb
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+Family,n,e,sini,a,H+FROM+"J/Icarus/239/46/table3"+WHERE+n+IS+NOT+NULL+ORDER+BY+n+DESC
+format text
+rows
+field Family family_name
+field n family_members
+field a semimajor_axis_au
+field e eccentricity
+field sini sin_inclination
+field H abs_magnitude
+
+source vizier_atlasgal_csc
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+AGAL,_RA_icrs,_DE_icrs,GLON,GLAT,Fint,e_Fint,Fp,Reff+FROM+"J/A+A/568/A41/atl-csc"+WHERE+_RA_icrs+IS+NOT+NULL+ORDER+BY+Fint+DESC
+format text
+rows
+ra_key _RA_icrs
+dec_key _DE_icrs
+field GLON galactic_longitude_deg
+field GLAT galactic_latitude_deg
+field Fint integrated_flux_jy
+field Reff effective_radius_arcsec
+
+source vizier_atnf_all_pulsars_distance
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+JNAME,RAJ,DECJ,P0,DM,DIST,ASSOC,Type+FROM+"VII/304/catalog"+WHERE+DIST+IS+NOT+NULL+AND+RAJ+IS+NOT+NULL+ORDER+BY+DIST+ASC
+format text
+rows
+ra_key RAJ
+dec_key DECJ
+field JNAME pulsar_name
+field P0 period_s
+field DM dispersion_measure
+field Type pulsar_type
+dist_key DIST
+
+source vizier_atnf_millisecond_pulsars
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+JNAME,RAJ,DECJ,P0,DM,DIST,ASSOC,Binary,Type+FROM+"VII/304/catalog"+WHERE+P0<0.03+AND+RAJ+IS+NOT+NULL+ORDER+BY+P0+ASC
+format text
+rows
+ra_key RAJ
+dec_key DECJ
+field JNAME pulsar_name
+field P0 period_s
+field DM dispersion_measure
+field ASSOC associated_object
+field Binary binary_type
+field Type pulsar_type
+dist_key DIST
+
+source vizier_atnf_pulsar_catalog
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+Name,RAJ2000,DEJ2000,Dist,P0,F0,DM,S1400+FROM+%22J%2FApJS%2F208%2F17%2Fpsrcat%22+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+P0
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field Name source_name
+field Dist distance_kpc
+field P0 period_s
+field F0 frequency_hz
+field DM dispersion_measure_pccm3
+field S1400 flux_1400mhz_mjy
+
+source vizier_bzcat5_blazars
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+4000+Name,RAJ2000,DEJ2000,z,LogFlux,Type+FROM+%22VII/274/bzcat5%22+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+LogFlux+DESC
+cmap data
+tau_key _dist_m
+ra_key 1
+dec_key 2
+z_key 3
+field_in 0 source_name
+field_in 4 log_radio_flux
+field_in 5 blazar_type
+
+source vizier_carmenes_survey
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+_RA,_DE,Karmn,GJ,SpType,Dist,Ksmag+FROM+"J/A+A/609/A117/table1"+WHERE+_RA+IS+NOT+NULL+ORDER+BY+Dist+ASC
+format text
+rows
+ra_key _RA
+dec_key _DE
+field SpType spectral_type
+field Dist distance_pc
+
+source vizier_catwise_agn_candidates
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_catwise_agn.json
+format text
+rows
+ra_key RA_ICRS
+dec_key DE_ICRS
+field W1mproPM w1_magnitude
+field W2mproPM w2_magnitude
+pmra_key pmRA
+pmdec_key pmDE
+
+source vizier_chandra_gc_xray
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/vizier_chandra_gc_xray.json
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field F2-8 flux_2to8keV_erg_cm2s
+field HR0 hardness_ratio_0
+field HR1 hardness_ratio_1
+
+source vizier_cornish_5ghz_catalog
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+Name,GLON,GLAT,RAJ2000,DEJ2000,Speak,Sint,ASc,mT+FROM+%22J/ApJS/205/1/catalog%22+WHERE+RAJ2000+IS+NOT+NULL+AND+Speak>1+ORDER+BY+Speak+DESC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field Name source_name
+field GLON galactic_lon
+field GLAT galactic_lat
+field Speak peak_flux_5ghz_mJy_beam
+field Sint integrated_flux_5ghz_mJy
+field ASc spectral_index
+field mT source_type
+
+source vizier_cosmic_voids
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/J_AplusA_570_A106_void.json
+format json
+map .
+lat_key RAJ2000
+lon_key DEJ2000
+field z redshift
+field r void_radius_mpc
+
+source vizier_cosmograil_lcs
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+200+RAJ2000,DEJ2000,Name,SName+FROM+"J/A+A/640/A105/stars"+WHERE+RAJ2000+IS+NOT+NULL
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field Name lens_name
+
+source vizier_dla_sdss
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/J_ApJ_800_7_dla.json
+format json
+map .
+lat_key _RA
+lon_key _DE
+field zabs absorber_redshift
+field NHI column_density_cm2
+
+source vizier_epta_dr2_pulsars
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50+JNAME,RAJ,DECJ,P0,DM,Dist,Tspan+FROM+"J/A+A/678/A48/table1"+WHERE+RAJ+IS+NOT+NULL+ORDER+BY+Tspan+DESC
+format text
+rows
+ra_key RAJ
+dec_key DECJ
+field JNAME pulsar_name
+field P0 period_s
+field DM dispersion_measure
+field Tspan timing_baseline_yr
+dist_key Dist
+
+source vizier_first_radio
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_first.json
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field Fpeak peak_flux_mjy
+field Fint int_flux_mjy
+field Maj majaxis_arcsec
+field Min minaxis_arcsec
+
+source vizier_first_radio_catalog
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_first.json
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field Fpeak flux_peak_mjy
+field Fint flux_int_mjy
+field Maj major_axis_arcsec
+
+source vizier_gaia_binary_candidates
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/vizier_gaia_binary_candidates.json
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+plx_key Plx
+field Gmag g_magnitude
+field RUWE ruwe_astrometric_excess
+pmra_key pmRA
+pmdec_key pmDE
+
+source vizier_gaia_dr3_full_astrometric_catalog
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/vizier_gaia_dr3_full_astrometric_catalog.json
+format text
+rows
+ra_key RA_ICRS
+dec_key DE_ICRS
+field DR3Name gaia_dr3_id
+field Plx parallax_mas
+field e_Plx parallax_error_mas
+field PM total_proper_motion_mas_yr
+field e_pmRA pmra_error
+field e_pmDE pmdec_error
+field Gmag g_mag
+field BPmag bp_mag
+field RPmag rp_mag
+field e_RV radial_velocity_error
+dist_key 1000/Plx
+pmra_key pmRA
+pmdec_key pmDE
+radvel_key RadialVelocity
+
+source vizier_gaia_dr3_radial_velocities
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/vizier_gaia_dr3_radial_velocities.json
+format text
+rows
+ra_key ra
+dec_key dec
+plx_key parallax
+field source_id gaia_source_id
+field pmra proper_motion_ra_mas_yr
+field pmdec proper_motion_dec_mas_yr
+field radial_velocity radial_velocity_km_s
+field radial_velocity_error rv_error_km_s
+field teff_gspphot effective_temp_K
+
+source vizier_galactic_black_hole_catalog
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+100+Name,RAJ2000,DEJ2000,Porb,Fx,MX,Mdist+FROM+"J/ApJS/163/2/table1"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+MX+DESC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field Name source_name
+field Porb orbital_period_h
+field Fx peak_x_flux_Crab
+field MX bh_mass_solar
+field Mdist distance_kpc
+
+source vizier_galah_dr4_stellar_parameters
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+star_id,RAJ2000,DEJ2000,Teff,logg,fe_h,alpha_fe,Vrad,age_bstep+FROM+"J/MNRAS/528/5/catalog"+WHERE+RAJ2000+IS+NOT+NULL+AND+flag_sp%3D0+ORDER+BY+snr_c3_iraf+DESC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field star_id galah_id
+field Teff effective_temp_K
+field logg surface_gravity
+field fe_h iron_abundance
+field alpha_fe alpha_over_iron
+field Vrad radial_velocity_km_s
+field age_bstep stellar_age_Gyr
+
+source vizier_galfa_hi_compact_sources
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+GLON,GLAT,RAJ2000,DEJ2000,VLSR,Sint,Peak+FROM+"J/ApJS/208/14/catalog"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+Sint+DESC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field VLSR radial_velocity_km_s
+field Sint integrated_flux_Jy_km_s
+field Peak peak_brightness_K
+
+source vizier_gcvs_variable_stars
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/B_gcvs_gcvs_cat.json
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field VarType variable_type
+field magMax max_magnitude
+field Min1 min_magnitude
+field Period variability_period_days
+field SpType spectral_type
+pmra_key pmRA
+pmdec_key pmDE
+
+source vizier_gleam_extragalactic_catalog
+ttl 86400
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+Name,RAJ2000,DEJ2000,Fintwide,alpha,e_alpha,Fpwide+FROM+"J/MNRAS/464/1146/gleam"+WHERE+RAJ2000+IS+NOT+NULL+AND+Fintwide>500+ORDER+BY+Fintwide+DESC
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field Name source_name
+field Fintwide int_flux_170_231mhz_mJy
+field alpha spectral_index
+field e_alpha spectral_index_error
+field Fpwide peak_flux_mJy_beam

@@ -1,0 +1,602 @@
+url https://www.ndbc.noaa.gov/data/realtime2/41066.txt
+ttl 300
+force acoustic
+on earth 32.536 -79.656
+format universal
+last_row WDIR hydrosphere_buoy_41066_wind_dir
+last_row WSPD hydrosphere_buoy_41066_wind_speed_ms
+last_row GST hydrosphere_buoy_41066_gust_ms
+last_row PRES hydrosphere_buoy_41066_pressure_hpa
+last_row ATMP hydrosphere_buoy_41066_air_temp_c
+last_row WTMP hydrosphere_buoy_41066_water_temp_c
+last_row DEWP hydrosphere_buoy_41066_dew_point_c
+
+url https://www.ndbc.noaa.gov/data/realtime2/41067.txt
+ttl 300
+force acoustic
+on earth 32.276 -80.406
+format universal
+last_row WVHT hydrosphere_buoy_41067_wave_height_m
+last_row DPD hydrosphere_buoy_41067_dominant_period_s
+last_row APD hydrosphere_buoy_41067_avg_period_s
+last_row MWD hydrosphere_buoy_41067_wave_dir_deg
+last_row WTMP hydrosphere_buoy_41067_water_temp_c
+
+url https://www.ndbc.noaa.gov/data/realtime2/41068.txt
+ttl 300
+force acoustic
+on earth 27.593 -80.189
+format universal
+last_row WDIR hydrosphere_buoy_41068_wind_dir
+last_row WSPD hydrosphere_buoy_41068_wind_speed_ms
+last_row GST hydrosphere_buoy_41068_gust_ms
+last_row PRES hydrosphere_buoy_41068_pressure_hpa
+last_row ATMP hydrosphere_buoy_41068_air_temp_c
+last_row WTMP hydrosphere_buoy_41068_water_temp_c
+last_row DEWP hydrosphere_buoy_41068_dew_point_c
+
+url https://www.ndbc.noaa.gov/data/realtime2/41069.txt
+ttl 300
+force acoustic
+on earth 29.289 -80.803
+format universal
+last_row WDIR hydrosphere_buoy_41069_wind_dir
+last_row WSPD hydrosphere_buoy_41069_wind_speed_ms
+last_row GST hydrosphere_buoy_41069_gust_ms
+last_row PRES hydrosphere_buoy_41069_pressure_hpa
+last_row ATMP hydrosphere_buoy_41069_air_temp_c
+last_row WTMP hydrosphere_buoy_41069_water_temp_c
+last_row DEWP hydrosphere_buoy_41069_dew_point_c
+
+url https://www.ndbc.noaa.gov/data/realtime2/41070.txt
+ttl 300
+force acoustic
+on earth 29.289 -80.803
+format universal
+last_row WVHT hydrosphere_buoy_41070_wave_height_m
+last_row DPD hydrosphere_buoy_41070_dominant_period_s
+last_row APD hydrosphere_buoy_41070_avg_period_s
+last_row MWD hydrosphere_buoy_41070_wave_dir_deg
+last_row WTMP hydrosphere_buoy_41070_water_temp_c
+
+url https://www.ndbc.noaa.gov/data/realtime2/41076.txt
+ttl 300
+force acoustic
+on earth 32.536 -79.659
+format universal
+last_row WVHT hydrosphere_buoy_41076_wave_height_m
+last_row DPD hydrosphere_buoy_41076_dominant_period_s
+last_row APD hydrosphere_buoy_41076_avg_period_s
+last_row MWD hydrosphere_buoy_41076_wave_dir_deg
+last_row WTMP hydrosphere_buoy_41076_water_temp_c
+
+url https://www.ndbc.noaa.gov/data/realtime2/41082.txt
+ttl 300
+force acoustic
+on earth 35.95 -75.125
+format universal
+last_row WDIR hydrosphere_buoy_41082_wind_dir
+last_row WSPD hydrosphere_buoy_41082_wind_speed_ms
+last_row PRES hydrosphere_buoy_41082_pressure_hpa
+last_row ATMP hydrosphere_buoy_41082_air_temp_c
+last_row PTDY hydrosphere_buoy_41082_pressure_trend_hpa
+
+url https://www.ndbc.noaa.gov/data/realtime2/41083.txt
+ttl 300
+force acoustic
+on earth 35.725 -74.853
+format universal
+last_row WDIR hydrosphere_buoy_41083_wind_dir
+last_row WSPD hydrosphere_buoy_41083_wind_speed_ms
+last_row WVHT hydrosphere_buoy_41083_wave_height_m
+last_row DPD hydrosphere_buoy_41083_dominant_period_s
+last_row MWD hydrosphere_buoy_41083_wave_dir_deg
+last_row PRES hydrosphere_buoy_41083_pressure_hpa
+last_row ATMP hydrosphere_buoy_41083_air_temp_c
+last_row PTDY hydrosphere_buoy_41083_pressure_trend_hpa
+
+url https://www.ndbc.noaa.gov/data/realtime2/41108.txt
+ttl 300
+force acoustic
+on earth 33.719 -78.016
+format universal
+last_row WVHT hydrosphere_buoy_41108_wave_height_m
+last_row DPD hydrosphere_buoy_41108_dominant_period_s
+last_row APD hydrosphere_buoy_41108_avg_period_s
+last_row MWD hydrosphere_buoy_41108_wave_dir_deg
+last_row WTMP hydrosphere_buoy_41108_water_temp_c
+
+url https://www.ndbc.noaa.gov/data/realtime2/41110.txt
+ttl 300
+force acoustic
+on earth 34.144 -77.715
+format universal
+last_row WVHT hydrosphere_buoy_41110_wave_height_m
+last_row DPD hydrosphere_buoy_41110_dominant_period_s
+last_row APD hydrosphere_buoy_41110_avg_period_s
+last_row MWD hydrosphere_buoy_41110_wave_dir_deg
+last_row ATMP hydrosphere_buoy_41110_air_temp_c
+last_row WTMP hydrosphere_buoy_41110_water_temp_c
+
+url https://www.ndbc.noaa.gov/data/realtime2/41112.txt
+ttl 300
+force acoustic
+on earth 30.709 -81.292
+format universal
+last_row WVHT hydrosphere_buoy_41112_wave_height_m
+last_row DPD hydrosphere_buoy_41112_dominant_period_s
+last_row APD hydrosphere_buoy_41112_avg_period_s
+last_row MWD hydrosphere_buoy_41112_wave_dir_deg
+last_row WTMP hydrosphere_buoy_41112_water_temp_c
+
+url https://www.ndbc.noaa.gov/data/realtime2/41113.txt
+ttl 300
+force acoustic
+on earth 28.4 -80.533
+format universal
+last_row WVHT hydrosphere_buoy_41113_wave_height_m
+last_row DPD hydrosphere_buoy_41113_dominant_period_s
+last_row APD hydrosphere_buoy_41113_avg_period_s
+last_row MWD hydrosphere_buoy_41113_wave_dir_deg
+last_row WTMP hydrosphere_buoy_41113_water_temp_c
+
+url https://www.ndbc.noaa.gov/data/realtime2/41115.txt
+ttl 300
+force acoustic
+on earth 18.376 -67.28
+format universal
+last_row WVHT hydrosphere_buoy_41115_wave_height_m
+last_row DPD hydrosphere_buoy_41115_dominant_period_s
+last_row APD hydrosphere_buoy_41115_avg_period_s
+last_row MWD hydrosphere_buoy_41115_wave_dir_deg
+last_row WTMP hydrosphere_buoy_41115_water_temp_c
+
+url https://www.ndbc.noaa.gov/data/realtime2/41117.txt
+ttl 300
+force acoustic
+on earth 29.999 -81.079
+format universal
+last_row WVHT hydrosphere_buoy_41117_wave_height_m
+last_row DPD hydrosphere_buoy_41117_dominant_period_s
+last_row APD hydrosphere_buoy_41117_avg_period_s
+last_row MWD hydrosphere_buoy_41117_wave_dir_deg
+last_row WTMP hydrosphere_buoy_41117_water_temp_c
+
+url https://www.ndbc.noaa.gov/data/realtime2/41120.txt
+ttl 300
+force acoustic
+on earth 35.258 -75.285
+format universal
+last_row WVHT hydrosphere_buoy_41120_wave_height_m
+last_row DPD hydrosphere_buoy_41120_dominant_period_s
+last_row APD hydrosphere_buoy_41120_avg_period_s
+last_row MWD hydrosphere_buoy_41120_wave_dir_deg
+last_row WTMP hydrosphere_buoy_41120_water_temp_c
+
+url https://www.ndbc.noaa.gov/data/realtime2/41121.txt
+ttl 300
+force acoustic
+on earth 18.491 -66.701
+format universal
+last_row WVHT hydrosphere_buoy_41121_wave_height_m
+last_row DPD hydrosphere_buoy_41121_dominant_period_s
+last_row APD hydrosphere_buoy_41121_avg_period_s
+last_row MWD hydrosphere_buoy_41121_wave_dir_deg
+last_row ATMP hydrosphere_buoy_41121_air_temp_c
+last_row WTMP hydrosphere_buoy_41121_water_temp_c
+
+url https://www.ndbc.noaa.gov/data/realtime2/41122.txt
+ttl 300
+force acoustic
+on earth 26.001 -80.096
+format universal
+last_row WVHT hydrosphere_buoy_41122_wave_height_m
+last_row DPD hydrosphere_buoy_41122_dominant_period_s
+last_row APD hydrosphere_buoy_41122_avg_period_s
+last_row MWD hydrosphere_buoy_41122_wave_dir_deg
+last_row ATMP hydrosphere_buoy_41122_air_temp_c
+last_row WTMP hydrosphere_buoy_41122_water_temp_c
+
+url https://www.ndbc.noaa.gov/data/realtime2/41159.txt
+ttl 300
+force acoustic
+on earth 34.211 -76.944
+format universal
+last_row WVHT hydrosphere_buoy_41159_wave_height_m
+last_row DPD hydrosphere_buoy_41159_dominant_period_s
+last_row APD hydrosphere_buoy_41159_avg_period_s
+last_row MWD hydrosphere_buoy_41159_wave_dir_deg
+last_row WTMP hydrosphere_buoy_41159_water_temp_c
+
+url https://www.ndbc.noaa.gov/data/realtime2/42001.txt
+ttl 300
+force acoustic
+on earth 25.90 -89.67
+format universal
+last_row WDIR hydrosphere_buoy_42001_wind_dir
+last_row WSPD hydrosphere_buoy_42001_wind_speed
+last_row WVHT hydrosphere_buoy_42001_wave_height
+last_row DPD hydrosphere_buoy_42001_dominant_period
+last_row PRES hydrosphere_buoy_42001_pressure
+last_row WTMP hydrosphere_buoy_42001_water_temp
+
+url https://www.ndbc.noaa.gov/data/realtime2/42002.txt
+ttl 300
+force acoustic
+on earth 25.16 -94.42
+format universal
+last_row WDIR hydrosphere_buoy_42002_wind_dir
+last_row WSPD hydrosphere_buoy_42002_wind_speed
+last_row WVHT hydrosphere_buoy_42002_wave_height
+last_row DPD hydrosphere_buoy_42002_dominant_period
+last_row PRES hydrosphere_buoy_42002_pressure
+last_row WTMP hydrosphere_buoy_42002_water_temp
+
+url https://www.ndbc.noaa.gov/data/realtime2/42012.txt
+ttl 300
+force acoustic
+on earth 30.061 -87.547
+format universal
+last_row WDIR hydrosphere_buoy_42012_wind_dir
+last_row WSPD hydrosphere_buoy_42012_wind_speed
+last_row WVHT hydrosphere_buoy_42012_wave_height
+last_row DPD hydrosphere_buoy_42012_dominant_period
+last_row PRES hydrosphere_buoy_42012_pressure
+last_row WTMP hydrosphere_buoy_42012_water_temp
+
+url https://www.ndbc.noaa.gov/data/realtime2/42013.txt
+ttl 300
+force acoustic
+on earth 27.173 -82.924
+format universal
+last_row WDIR hydrosphere_buoy_42013_wind_dir
+last_row WSPD hydrosphere_buoy_42013_wind_speed_ms
+last_row GST hydrosphere_buoy_42013_gust_ms
+last_row PRES hydrosphere_buoy_42013_pressure_hpa
+last_row WTMP hydrosphere_buoy_42013_water_temp_c
+
+url https://www.ndbc.noaa.gov/data/realtime2/42022.txt
+ttl 300
+force acoustic
+on earth 27.505 -83.741
+format universal
+last_row WDIR hydrosphere_buoy_42022_wind_dir
+last_row WSPD hydrosphere_buoy_42022_wind_speed_ms
+last_row GST hydrosphere_buoy_42022_gust_ms
+last_row PRES hydrosphere_buoy_42022_pressure_hpa
+last_row ATMP hydrosphere_buoy_42022_air_temp_c
+last_row WTMP hydrosphere_buoy_42022_water_temp_c
+last_row DEWP hydrosphere_buoy_42022_dew_point_c
+
+url https://www.ndbc.noaa.gov/data/realtime2/42023.txt
+ttl 300
+force acoustic
+on earth 26.01 -83.086
+format universal
+last_row WDIR hydrosphere_buoy_42023_wind_dir
+last_row WSPD hydrosphere_buoy_42023_wind_speed_ms
+last_row GST hydrosphere_buoy_42023_gust_ms
+last_row PRES hydrosphere_buoy_42023_pressure_hpa
+last_row ATMP hydrosphere_buoy_42023_air_temp_c
+last_row WTMP hydrosphere_buoy_42023_water_temp_c
+last_row DEWP hydrosphere_buoy_42023_dew_point_c
+
+url https://www.ndbc.noaa.gov/data/realtime2/42026.txt
+ttl 300
+force acoustic
+on earth 25.171 -83.475
+format universal
+last_row WDIR hydrosphere_buoy_42026_wind_dir
+last_row WSPD hydrosphere_buoy_42026_wind_speed_ms
+last_row GST hydrosphere_buoy_42026_gust_ms
+last_row PRES hydrosphere_buoy_42026_pressure_hpa
+last_row ATMP hydrosphere_buoy_42026_air_temp_c
+last_row WTMP hydrosphere_buoy_42026_water_temp_c
+last_row DEWP hydrosphere_buoy_42026_dew_point_c
+
+url https://www.ndbc.noaa.gov/data/realtime2/42027.txt
+ttl 300
+force acoustic
+on earth 29.045 -85.305
+format universal
+last_row WDIR hydrosphere_buoy_42027_wind_dir
+last_row WSPD hydrosphere_buoy_42027_wind_speed_ms
+last_row GST hydrosphere_buoy_42027_gust_ms
+last_row PRES hydrosphere_buoy_42027_pressure_hpa
+last_row ATMP hydrosphere_buoy_42027_air_temp_c
+last_row WTMP hydrosphere_buoy_42027_water_temp_c
+
+url https://www.ndbc.noaa.gov/data/realtime2/42028.txt
+ttl 300
+force acoustic
+on earth 29.745 -86.227
+format universal
+last_row WDIR hydrosphere_buoy_42028_wind_dir
+last_row WSPD hydrosphere_buoy_42028_wind_speed_ms
+last_row GST hydrosphere_buoy_42028_gust_ms
+last_row PRES hydrosphere_buoy_42028_pressure_hpa
+last_row ATMP hydrosphere_buoy_42028_air_temp_c
+last_row WTMP hydrosphere_buoy_42028_water_temp_c
+
+url https://www.ndbc.noaa.gov/data/realtime2/42035.txt
+ttl 300
+force acoustic
+on earth 29.235 -94.41
+format universal
+last_row WDIR hydrosphere_buoy_42035_wind_dir
+last_row WSPD hydrosphere_buoy_42035_wind_speed
+last_row WVHT hydrosphere_buoy_42035_wave_height
+last_row DPD hydrosphere_buoy_42035_dominant_period
+last_row PRES hydrosphere_buoy_42035_pressure
+last_row WTMP hydrosphere_buoy_42035_water_temp
+
+url https://www.ndbc.noaa.gov/data/realtime2/42036.txt
+ttl 300
+force acoustic
+on earth 28.50 -84.52
+format universal
+last_row WDIR hydrosphere_buoy_42036_wind_dir
+last_row WSPD hydrosphere_buoy_42036_wind_speed
+last_row WVHT hydrosphere_buoy_42036_wave_height
+last_row DPD hydrosphere_buoy_42036_dominant_period
+last_row PRES hydrosphere_buoy_42036_pressure
+last_row WTMP hydrosphere_buoy_42036_water_temp
+
+url https://www.ndbc.noaa.gov/data/realtime2/42039.txt
+ttl 300
+force acoustic
+on earth 28.768 -86.024
+format universal
+last_row WDIR hydrosphere_buoy_42039_wind_dir
+last_row WSPD hydrosphere_buoy_42039_wind_speed_ms
+last_row GST hydrosphere_buoy_42039_gust_ms
+last_row WVHT hydrosphere_buoy_42039_wave_height_m
+last_row DPD hydrosphere_buoy_42039_dominant_period_s
+last_row APD hydrosphere_buoy_42039_avg_period_s
+last_row MWD hydrosphere_buoy_42039_wave_dir_deg
+last_row PRES hydrosphere_buoy_42039_pressure_hpa
+last_row ATMP hydrosphere_buoy_42039_air_temp_c
+last_row DEWP hydrosphere_buoy_42039_dew_point_c
+last_row PTDY hydrosphere_buoy_42039_pressure_trend_hpa
+
+url https://www.ndbc.noaa.gov/data/realtime2/42055.txt
+ttl 300
+force acoustic
+on earth 22.14 -91.39
+format universal
+last_row WDIR hydrosphere_buoy_42055_wind_dir
+last_row WSPD hydrosphere_buoy_42055_wind_speed
+last_row WVHT hydrosphere_buoy_42055_wave_height
+last_row DPD hydrosphere_buoy_42055_dominant_period
+last_row PRES hydrosphere_buoy_42055_pressure
+last_row WTMP hydrosphere_buoy_42055_water_temp
+
+url https://www.ndbc.noaa.gov/data/realtime2/42056.txt
+ttl 300
+force acoustic
+on earth 19.82 -84.98
+format universal
+last_row WDIR hydrosphere_buoy_42056_wind_dir
+last_row WSPD hydrosphere_buoy_42056_wind_speed
+last_row WVHT hydrosphere_buoy_42056_wave_height
+last_row DPD hydrosphere_buoy_42056_dominant_period
+last_row PRES hydrosphere_buoy_42056_pressure
+last_row WTMP hydrosphere_buoy_42056_water_temp
+
+url https://www.ndbc.noaa.gov/data/realtime2/42057.txt
+ttl 300
+force acoustic
+on earth 16.975 -81.578
+format universal
+last_row WDIR hydrosphere_buoy_42057_wind_dir
+last_row WSPD hydrosphere_buoy_42057_wind_speed_ms
+last_row GST hydrosphere_buoy_42057_gust_ms
+last_row WVHT hydrosphere_buoy_42057_wave_height_m
+last_row DPD hydrosphere_buoy_42057_dominant_period_s
+last_row APD hydrosphere_buoy_42057_avg_period_s
+last_row MWD hydrosphere_buoy_42057_wave_dir_deg
+last_row PRES hydrosphere_buoy_42057_pressure_hpa
+last_row ATMP hydrosphere_buoy_42057_air_temp_c
+last_row DEWP hydrosphere_buoy_42057_dew_point_c
+last_row PTDY hydrosphere_buoy_42057_pressure_trend_hpa
+
+url https://www.ndbc.noaa.gov/data/realtime2/42058.txt
+ttl 300
+force acoustic
+on earth 14.114 -75.949
+format universal
+last_row WDIR hydrosphere_buoy_42058_wind_dir
+last_row WSPD hydrosphere_buoy_42058_wind_speed
+last_row WVHT hydrosphere_buoy_42058_wave_height
+last_row DPD hydrosphere_buoy_42058_dominant_period
+last_row PRES hydrosphere_buoy_42058_pressure
+last_row WTMP hydrosphere_buoy_42058_water_temp
+
+url https://www.ndbc.noaa.gov/data/realtime2/42059.txt
+ttl 300
+force acoustic
+on earth 15.255 -67.621
+format universal
+last_row WDIR hydrosphere_buoy_42059_wind_dir
+last_row WSPD hydrosphere_buoy_42059_wind_speed
+last_row WVHT hydrosphere_buoy_42059_wave_height
+last_row DPD hydrosphere_buoy_42059_dominant_period
+last_row PRES hydrosphere_buoy_42059_pressure
+last_row WTMP hydrosphere_buoy_42059_water_temp
+
+url https://www.ndbc.noaa.gov/data/realtime2/42060.txt
+ttl 300
+force acoustic
+on earth 16.428 -63.21
+format universal
+last_row WDIR hydrosphere_buoy_42060_wind_dir
+last_row WSPD hydrosphere_buoy_42060_wind_speed
+last_row WVHT hydrosphere_buoy_42060_wave_height
+last_row DPD hydrosphere_buoy_42060_dominant_period
+last_row PRES hydrosphere_buoy_42060_pressure
+last_row WTMP hydrosphere_buoy_42060_water_temp
+
+url https://www.ndbc.noaa.gov/data/realtime2/42067.txt
+ttl 300
+force acoustic
+on earth 30.05 -88.583
+format universal
+last_row WSPD hydrosphere_buoy_42067_wind_speed_ms
+last_row GST hydrosphere_buoy_42067_gust_ms
+last_row WVHT hydrosphere_buoy_42067_wave_height_m
+last_row PRES hydrosphere_buoy_42067_pressure_hpa
+last_row ATMP hydrosphere_buoy_42067_air_temp_c
+last_row WTMP hydrosphere_buoy_42067_water_temp_c
+last_row DEWP hydrosphere_buoy_42067_dew_point_c
+last_row PTDY hydrosphere_buoy_42067_pressure_trend_hpa
+
+url https://www.ndbc.noaa.gov/data/realtime2/42084.txt
+ttl 300
+force acoustic
+on earth 28.988 -89.649
+format universal
+last_row WVHT hydrosphere_buoy_42084_wave_height_m
+last_row DPD hydrosphere_buoy_42084_dominant_period_s
+last_row APD hydrosphere_buoy_42084_avg_period_s
+last_row MWD hydrosphere_buoy_42084_wave_dir_deg
+last_row ATMP hydrosphere_buoy_42084_air_temp_c
+last_row WTMP hydrosphere_buoy_42084_water_temp_c
+
+url https://www.ndbc.noaa.gov/data/realtime2/42085.txt
+ttl 300
+force acoustic
+on earth 17.87 -66.537
+format universal
+last_row WDIR hydrosphere_buoy_42085_wind_dir
+last_row WSPD hydrosphere_buoy_42085_wind_speed
+last_row WVHT hydrosphere_buoy_42085_wave_height
+last_row DPD hydrosphere_buoy_42085_dominant_period
+last_row PRES hydrosphere_buoy_42085_pressure
+last_row WTMP hydrosphere_buoy_42085_water_temp
+
+url https://www.ndbc.noaa.gov/data/realtime2/42092.txt
+ttl 300
+force acoustic
+on earth 27.639 -97.012
+format universal
+last_row WVHT hydrosphere_buoy_42092_wave_height_m
+last_row DPD hydrosphere_buoy_42092_dominant_period_s
+last_row APD hydrosphere_buoy_42092_avg_period_s
+last_row MWD hydrosphere_buoy_42092_wave_dir_deg
+last_row WTMP hydrosphere_buoy_42092_water_temp_c
+
+url https://www.ndbc.noaa.gov/data/realtime2/42095.txt
+ttl 300
+force acoustic
+on earth 24.407 -81.968
+format universal
+last_row WVHT hydrosphere_buoy_42095_wave_height_m
+last_row DPD hydrosphere_buoy_42095_dominant_period_s
+last_row APD hydrosphere_buoy_42095_avg_period_s
+last_row MWD hydrosphere_buoy_42095_wave_dir_deg
+last_row ATMP hydrosphere_buoy_42095_air_temp_c
+last_row WTMP hydrosphere_buoy_42095_water_temp_c
+
+url https://www.ndbc.noaa.gov/data/realtime2/42097.txt
+ttl 300
+force acoustic
+on earth 25.704 -83.654
+format universal
+last_row WVHT hydrosphere_buoy_42097_wave_height_m
+last_row DPD hydrosphere_buoy_42097_dominant_period_s
+last_row APD hydrosphere_buoy_42097_avg_period_s
+last_row MWD hydrosphere_buoy_42097_wave_dir_deg
+last_row WTMP hydrosphere_buoy_42097_water_temp_c
+
+url https://www.ndbc.noaa.gov/data/realtime2/42098.txt
+ttl 300
+force acoustic
+on earth 27.59 -82.931
+format universal
+last_row WVHT hydrosphere_buoy_42098_wave_height_m
+last_row DPD hydrosphere_buoy_42098_dominant_period_s
+last_row APD hydrosphere_buoy_42098_avg_period_s
+last_row MWD hydrosphere_buoy_42098_wave_dir_deg
+last_row ATMP hydrosphere_buoy_42098_air_temp_c
+last_row WTMP hydrosphere_buoy_42098_water_temp_c
+
+url https://www.ndbc.noaa.gov/data/realtime2/42099.txt
+ttl 300
+force acoustic
+on earth 27.352 -84.275
+format universal
+last_row WVHT hydrosphere_buoy_42099_wave_height_m
+last_row DPD hydrosphere_buoy_42099_dominant_period_s
+last_row APD hydrosphere_buoy_42099_avg_period_s
+last_row MWD hydrosphere_buoy_42099_wave_dir_deg
+last_row WTMP hydrosphere_buoy_42099_water_temp_c
+
+url https://www.ndbc.noaa.gov/data/realtime2/42354.txt
+ttl 300
+force acoustic
+on earth 29.579 -88.643
+format universal
+last_row WVHT hydrosphere_buoy_42354_wave_height_m
+last_row DPD hydrosphere_buoy_42354_dominant_period_s
+last_row APD hydrosphere_buoy_42354_avg_period_s
+last_row MWD hydrosphere_buoy_42354_wave_dir_deg
+last_row WTMP hydrosphere_buoy_42354_water_temp_c
+
+url https://www.ndbc.noaa.gov/data/realtime2/42357.txt
+ttl 300
+force acoustic
+on earth 30.092 -88.212
+format universal
+last_row WVHT hydrosphere_buoy_42357_wave_height_m
+last_row DPD hydrosphere_buoy_42357_dominant_period_s
+last_row MWD hydrosphere_buoy_42357_wave_dir_deg
+last_row PRES hydrosphere_buoy_42357_pressure_hpa
+last_row WTMP hydrosphere_buoy_42357_water_temp_c
+
+url https://www.ndbc.noaa.gov/data/realtime2/42358.txt
+ttl 300
+force acoustic
+on earth 27.874 -93.815
+format universal
+last_row WSPD hydrosphere_buoy_42358_wind_speed_ms
+last_row WVHT hydrosphere_buoy_42358_wave_height_m
+last_row PRES hydrosphere_buoy_42358_pressure_hpa
+last_row WTMP hydrosphere_buoy_42358_water_temp_c
+
+url https://www.ndbc.noaa.gov/data/realtime2/44007.txt
+ttl 300
+force acoustic
+on earth 43.525 -70.14
+format universal
+last_row WDIR hydrosphere_buoy_44007_wind_dir
+last_row WSPD hydrosphere_buoy_44007_wind_speed
+last_row WVHT hydrosphere_buoy_44007_wave_height
+last_row DPD hydrosphere_buoy_44007_dominant_period
+last_row PRES hydrosphere_buoy_44007_pressure
+last_row WTMP hydrosphere_buoy_44007_water_temp
+
+url https://www.ndbc.noaa.gov/data/realtime2/44008.txt
+ttl 300
+force acoustic
+on earth 40.5 -69.254
+format universal
+last_row WDIR hydrosphere_buoy_44008_wind_dir
+last_row WSPD hydrosphere_buoy_44008_wind_speed
+last_row WVHT hydrosphere_buoy_44008_wave_height
+last_row DPD hydrosphere_buoy_44008_dominant_period
+last_row PRES hydrosphere_buoy_44008_pressure
+last_row WTMP hydrosphere_buoy_44008_water_temp
+
+url https://www.ndbc.noaa.gov/data/realtime2/44009.txt
+ttl 300
+force acoustic
+on earth 38.46 -74.70
+format universal
+last_row WDIR hydrosphere_buoy_44009_wind_dir
+last_row WSPD hydrosphere_buoy_44009_wind_speed_ms
+last_row GST hydrosphere_buoy_44009_gust_ms
+last_row PRES hydrosphere_buoy_44009_pressure_hpa
+last_row ATMP hydrosphere_buoy_44009_air_temp_c
+last_row WTMP hydrosphere_buoy_44009_water_temp_c
+last_row DEWP hydrosphere_buoy_44009_dew_point_c
+last_row PTDY hydrosphere_buoy_44009_pressure_trend_hpa

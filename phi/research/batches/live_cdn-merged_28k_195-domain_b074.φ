@@ -1,0 +1,99 @@
+field_in opt_detection astro_swift_grb_opt_detection
+
+field_in opt_ref astro_swift_grb_opt_ref
+
+field_in ot_ra astro_swift_grb_ot_ra
+
+field_in ot_dec astro_swift_grb_ot_dec
+
+field_in ot_pos_err astro_swift_grb_ot_pos_err
+
+field_in ot_pos_ref astro_swift_grb_ot_pos_ref
+
+field_in other_obs astro_swift_grb_other_obs
+
+field_in other_obs_ref astro_swift_grb_other_obs_ref
+
+field_in other_obs2 astro_swift_grb_other_obs2
+
+field_in other_obs2_ref astro_swift_grb_other_obs2_ref
+
+field_in other_obs3 astro_swift_grb_other_obs3
+
+field_in other_obs3_ref astro_swift_grb_other_obs3_ref
+
+field_in other_obs4 astro_swift_grb_other_obs4
+
+field_in other_obs4_ref astro_swift_grb_other_obs4_ref
+
+field_in supernova_flag astro_swift_grb_supernova_flag
+
+field_in galaxy_flag astro_swift_grb_galaxy_flag
+
+field_in galaxy_name astro_swift_grb_galaxy_name
+
+field_in galaxy_type astro_swift_grb_galaxy_type
+
+field_in galaxy_ra astro_swift_grb_galaxy_ra
+
+field_in galaxy_dec astro_swift_grb_galaxy_dec
+
+field_in galaxy_pos_ref astro_swift_grb_galaxy_pos_ref
+
+field_in galaxy_redshift astro_swift_grb_galaxy_redshift
+
+field_in galaxy_ref astro_swift_grb_galaxy_ref
+
+field_in galaxy_offset astro_swift_grb_galaxy_offset
+
+field_in ground_counterpart astro_swift_grb_ground_counterpart
+
+field_in web_page astro_swift_grb_web_page
+
+field_in comments astro_swift_grb_comments
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/tevcat.json
+
+ttl 604800
+
+force em
+
+cmap data
+
+ra_key ra
+
+dec_key dec
+
+field_in source_number astro_tevcat_source_number
+
+field_in source_sample astro_tevcat_source_sample
+
+field_in name astro_tevcat_name
+
+field_in alt_name astro_tevcat_alt_name
+
+field_in lii astro_tevcat_lii
+
+field_in bii astro_tevcat_bii
+
+field_in source_type astro_tevcat_source_type
+
+field_in flux astro_tevcat_flux
+
+field_in spectral_index astro_tevcat_spectral_index
+
+field_in distance astro_tevcat_distance
+
+field_in discovery_date astro_tevcat_discovery_date
+
+field_in extended_flag astro_tevcat_extended_flag
+
+field_in x_size astro_tevcat_x_size
+
+field_in y_size astro_tevcat_y_size
+
+field_in tevcat_url astro_tevcat_tevcat_url
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/twomass_psc.json
+
+ttl 604800

@@ -1,0 +1,485 @@
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_vesta.json
+ttl 86400
+force em
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_apophis.json
+ttl 86400
+force em
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_bennu.json
+ttl 86400
+force em
+at sun 1.0
+
+url https://hpiers.obspm.fr/iers/eop/eopc04/eopc04.1962-now
+ttl 86400
+force em
+on earth 40.034 0.0
+format csv
+header User-Agent "omegaflow"
+last line line
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_ceres.json
+ttl 86400
+force em
+on earth 34.201 -118.171
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mass_earth.json
+ttl 86400
+force em
+at sun 1.0
+
+url https://ssd-api.jpl.nasa.gov/fireball.api?limit=1
+ttl 86400
+force em
+on earth 34.201 -118.171
+field count count
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mass_jupiter.json
+ttl 86400
+force em
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mass_mars.json
+ttl 86400
+force em
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mass_mercury.json
+ttl 86400
+force em
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mass_neptune.json
+ttl 86400
+force em
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mass_saturn.json
+ttl 86400
+force em
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mass_uranus.json
+ttl 86400
+force em
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mass_venus.json
+ttl 86400
+force em
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/J_ApJ_938_110_table7.json
+ttl 86400
+force em
+at sun 1.0
+cmap data
+ra_key 23
+dec_key 24
+field_in 7 7
+
+url https://api.stackexchange.com/2.3/questions?order=desc&sort=activity&site=stackoverflow&filter=total
+ttl 86400
+force em
+on earth 37.774 -122.419
+field total total
+
+url https://api.stackexchange.com/2.3/tags?pagesize=1&order=desc&sort=popular&site=stackoverflow
+ttl 86400
+force em
+on earth 40.712 -74.006
+path items.0.count count
+
+url https://tevcat2.tevcat.org/api/sources
+ttl 86400
+force em
+at sun 1.0
+map .
+ra_key ra
+dec_key dec
+field_in name name
+field_in type type
+field_in distance distance
+field_in flux flux
+field_in index index
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/B_sn_sncat.json
+ttl 86400
+force em
+at sun 1.0
+cmap data
+ra_key 0
+dec_key 1
+field_in 3 3
+field_in 4 4
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/J_ApJ_935_170_table4.json
+ttl 86400
+force em
+at sun 1.0
+cmap data
+ra_key 5
+dec_key 6
+field_in 11 11
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+TNS,RAJ2000,DEJ2000,DM+FROM+%22J/A%2BA/693/A279/frbs%22
+ttl 86400
+force em
+at sun 1.0
+cmap data
+ra_key 1
+dec_key 2
+field_in 0 0
+field_in 3 3
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/J_other_PASA_33.45_frbcat.json
+ttl 86400
+force em
+at sun 1.0
+cmap data
+ra_key 10
+dec_key 11
+field_in 1 1
+field_in 23 23
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx10_cmap.json
+ttl 86400
+force gravity
+at sun 1.0
+format json
+cmap data
+ra_key ra
+dec_key dec
+field_in phot_g_mean_mag phot_g_mean_mag
+
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%2Cbp_rp%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%20%3C%200.5%20AND%20phot_g_mean_mag%20%3C%2014%20AND%20parallax%20%3E%202
+ttl 86400
+force em gravity
+at sun 1.0
+cmap data
+ra_key 0
+dec_key 1
+field_in 2 2
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RAJ2000,DEJ2000,%22S1.4%22+FROM+%22VIII/65/nvss%22
+ttl 86400
+force em
+at sun 1.0
+cmap data
+ra_key 0
+dec_key 1
+field_in 2 2
+
+url https://www.sciencebase.gov/catalog/items?format=json&q=National+Land+Cover+Database&max=50&fields=id,title,body,spatial,contacts,tags
+ttl 86400
+force diffusion
+body earth
+map items
+lat_key spatial.boundingBox.minY
+lon_key spatial.boundingBox.minX
+field title title
+field tags.0.name name
+field spatial.representationalPoint.coordinates.0 0
+field spatial.representationalPoint.coordinates.1 1
+
+url https://github.com/omegaflow/catalogs/releases/download/live-data/firms_viirs_nrt_world.csv
+ttl 86400
+force thermal
+at sun 1.0
+format text
+rows
+lat_key latitude
+lon_key longitude
+field brightness brightness
+field scan scan
+field frp frp
+field satellite satellite
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,bJmag,z,SpClass+FROM+"J/MNRAS/329/227/2dFGRS"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+bJmag+ASC
+ttl 86400
+force em
+at sun 1.0
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field bJmag bJmag
+field z z
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/VII_241_2qz.json
+ttl 86400
+force em
+at sun 1.0
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field z1 z1
+field bJmag bJmag
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,cz,e_cz,bJmag,%22S%2FG%22+FROM+"VII/259/6dfgs"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+bJmag+ASC
+ttl 86400
+force em
+at sun 1.0
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field cz cz
+field bJmag bJmag
+field S/G S/G
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/J_AplusA_570_A106_void.json
+ttl 86400
+force em
+at sun 1.0
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field z z
+field r r
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/J_ApJ_800_7_dla.json
+ttl 86400
+force em
+at sun 1.0
+format text
+rows
+ra_key _RA
+dec_key _DE
+field zabs zabs
+field NHI NHI
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/B_gcvs_gcvs_cat.json
+ttl 86400
+force em
+at sun 1.0
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field VarType VarType
+field magMax magMax
+field Min1 Min1
+field Period Period
+field SpType SpType
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/VII_278_snrs.json
+ttl 86400
+force em
+at sun 1.0
+format text
+rows
+ra_key GLON
+dec_key GLAT
+field SNR SNR
+field Dmaj Dmaj
+field Dmin Dmin
+field S1GHz S1GHz
+field alpha alpha
+field Type Type
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/I_311_hip2.json
+ttl 86400
+force em
+at sun 1.0
+format text
+rows
+ra_key RArad
+dec_key DErad
+field Hpmag Hpmag
+field B-V B-V
+field VA VA
+field Ntr Ntr
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/J_MNRAS_384_1277_emitters.json
+ttl 86400
+force em
+at sun 1.0
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field IPHAS IPHAS
+field r'mag r'mag
+field r'-i r'-i
+field r'-Ha r'-Ha
+field Flag Flag
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/J_AplusA_558_A53_catalog.json
+ttl 86400
+force gravity
+at sun 1.0
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field Name Name
+field logt logt
+field FeH FeH
+field r2 r2
+field Type Type
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/J_AJ_130_1389_mojave.json
+ttl 86400
+force em
+at sun 1.0
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field z z
+field Vmag Vmag
+field S15GHz S15GHz
+field STot STot
+field SPeak SPeak
+field PTot PTot
+field EVPA EVPA
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+RAJ2000,DEJ2000,RAJ2000,DEJ2000,"S1.4",MajAxis,MinAxis+FROM+"VIII/65/nvss"+WHERE+"S1.4"%3E50+ORDER+BY+"S1.4"+DESC
+ttl 86400
+force em
+at sun 1.0
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field S1.4 4
+field MajAxis MajAxis
+field MinAxis MinAxis
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/J_ApJS_229_28_table1.json
+ttl 86400
+force em
+at sun 1.0
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field Reg Reg
+field Dist Dist
+field SimbadName SimbadName
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/J_AplusA_594_A27_psz2.json
+ttl 86400
+force em
+at sun 1.0
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field Name Name
+field SNR SNR
+field z z
+field MSZ MSZ
+field Y5R500 Y5R500
+field Val Val
+field MCXC MCXC
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+RA_ICRS,DE_ICRS,zsp,rmag,gmag,imag+FROM+%22V/147/sdss12%22+WHERE+%22class%22%3D3+AND+zsp+IS+NOT+NULL+AND+zsp%3E0.01
+ttl 86400
+force em
+at sun 1.0
+format text
+rows
+ra_key RA_ICRS
+dec_key DE_ICRS
+field rmag rmag
+field gmag gmag
+field imag imag
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+RA_ICRS,DE_ICRS,zsp,rmag,gmag+FROM+%22V/147/sdss12%22+WHERE+zsp+IS+NOT+NULL+AND+zsp%3E0.5
+ttl 86400
+force em
+at sun 1.0
+format text
+rows
+ra_key RA_ICRS
+dec_key DE_ICRS
+field rmag rmag
+field gmag gmag
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/J_ApJ_785_144_table1.json
+ttl 86400
+force em
+at sun 1.0
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field imag imag
+field zphot zphot
+field zd zd
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/J_ApJ_851_48_table1.json
+ttl 86400
+force em
+at sun 1.0
+format text
+rows
+ra_key _RA
+dec_key _DE
+field zL zL
+field zS zS
+field Sigma Sigma
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/J_ApJ_837_30_table3.json
+ttl 86400
+force em
+at sun 1.0
+format text
+rows
+ra_key _RA
+dec_key _DE
+field Star Star
+field a a
+field e e
+field i i
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_catwise_agn.json
+ttl 604800
+force em
+at sun 1.0
+format text
+rows
+ra_key RA_ICRS
+dec_key DE_ICRS
+field Name Name
+field RAPMdeg RAPMdeg
+field DEPMdeg DEPMdeg
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_hmxb_catalog.json
+ttl 604800
+force em
+at sun 1.0
+format text
+rows
+ra_key _RA
+dec_key _DE
+field Target Target
+
+url https://zenodo.org/api/records/?communities=iodp&size=100
+ttl 86400
+force diffusion
+at sun 1.0
+map hits.hits
+field metadata.doi doi
+field metadata.title title
+field metadata.creators.0.name name
+field metadata.publication_date publication_date
+field metadata.description description
+field files.0.links.self self
+
+url https://zenodo.org/api/records/?q=IODP+DSDP&size=100
+ttl 86400
+force diffusion
+at sun 1.0
+map hits.hits
+field metadata.doi doi
+field metadata.title title
+field metadata.creators.0.name name
+field metadata.publication_date publication_date

@@ -1,0 +1,504 @@
+source atmosphere_biome_maldives_archive
+ttl 604800
+force em
+lat 3.0
+lon 73.0
+url https://archive-api.open-meteo.com/v1/archive?latitude=3.0&longitude=73.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+path daily.temperature_2m_max.0 atmosphere_biome_maldives_temp_max_jan_2000_c
+path daily.temperature_2m_min.0 atmosphere_biome_maldives_temp_min_jan_2000_c
+path daily.temperature_2m_max.9131 atmosphere_biome_maldives_temp_max_dec_2024_c
+path daily.temperature_2m_min.9131 atmosphere_biome_maldives_temp_min_dec_2024_c
+
+source atmosphere_biome_okavango_archive
+ttl 604800
+force em
+lat -19.5
+lon 23.5
+url https://archive-api.open-meteo.com/v1/archive?latitude=-19.5&longitude=23.5&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+path daily.temperature_2m_max.0 atmosphere_biome_okavango_temp_max_jan_2000_c
+path daily.temperature_2m_min.0 atmosphere_biome_okavango_temp_min_jan_2000_c
+path daily.temperature_2m_max.9131 atmosphere_biome_okavango_temp_max_dec_2024_c
+path daily.temperature_2m_min.9131 atmosphere_biome_okavango_temp_min_dec_2024_c
+
+source atmosphere_biome_patagonia_archive
+ttl 604800
+force em
+lat -50.0
+lon -72.0
+url https://archive-api.open-meteo.com/v1/archive?latitude=-50.0&longitude=-72.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+path daily.temperature_2m_max.0 atmosphere_biome_patagonia_temp_max_jan_2000_c
+path daily.temperature_2m_min.0 atmosphere_biome_patagonia_temp_min_jan_2000_c
+path daily.temperature_2m_max.9131 atmosphere_biome_patagonia_temp_max_dec_2024_c
+path daily.temperature_2m_min.9131 atmosphere_biome_patagonia_temp_min_dec_2024_c
+
+source atmosphere_biome_sahara_archive
+ttl 604800
+force em
+lat 23.0
+lon 5.0
+url https://archive-api.open-meteo.com/v1/archive?latitude=23.0&longitude=5.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+path daily.temperature_2m_max.0 atmosphere_biome_sahara_temp_max_jan_2000_c
+path daily.temperature_2m_min.0 atmosphere_biome_sahara_temp_min_jan_2000_c
+path daily.temperature_2m_max.9131 atmosphere_biome_sahara_temp_max_dec_2024_c
+path daily.temperature_2m_min.9131 atmosphere_biome_sahara_temp_min_dec_2024_c
+
+source atmosphere_biome_siberia_archive
+ttl 604800
+force em
+lat 62.0
+lon 105.0
+url https://archive-api.open-meteo.com/v1/archive?latitude=62.0&longitude=105.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+path daily.temperature_2m_max.0 atmosphere_biome_siberia_temp_max_jan_2000_c
+path daily.temperature_2m_min.0 atmosphere_biome_siberia_temp_min_jan_2000_c
+path daily.temperature_2m_max.9131 atmosphere_biome_siberia_temp_max_dec_2024_c
+path daily.temperature_2m_min.9131 atmosphere_biome_siberia_temp_min_dec_2024_c
+
+source atmosphere_biome_tibet_archive
+ttl 604800
+force em
+lat 32.0
+lon 86.0
+url https://archive-api.open-meteo.com/v1/archive?latitude=32.0&longitude=86.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+path daily.temperature_2m_max.0 atmosphere_biome_tibet_temp_max_jan_2000_c
+path daily.temperature_2m_min.0 atmosphere_biome_tibet_temp_min_jan_2000_c
+path daily.temperature_2m_max.9131 atmosphere_biome_tibet_temp_max_dec_2024_c
+path daily.temperature_2m_min.9131 atmosphere_biome_tibet_temp_min_dec_2024_c
+
+source atmosphere_co2_historical
+ttl 604800
+force em
+lat 19.5
+lon -155.6
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_mm_mlo.txt
+regex 2000\s+1\s+\d+\.\d+\s+([0-9.]+) atmosphere_co2_jan_2000_ppm
+regex 2020\s+1\s+\d+\.\d+\s+([0-9.]+) atmosphere_co2_jan_2020_ppm
+regex 2025\s+1\s+\d+\.\d+\s+([0-9.]+) atmosphere_co2_jan_2025_ppm
+
+source atmosphere_power_climatology
+ttl 604800
+force em
+url https://power.larc.nasa.gov/api/temporal/monthly/point?parameters=T2M,PRECTOTCORR,ALLSKY_SFC_SW_DWN&community=RE&longitude={lon}&latitude={lat}&start=2001&end=2020&format=JSON
+path properties.parameter.T2M.01 atmosphere_power_temp_jan_clim_c
+path properties.parameter.T2M.07 atmosphere_power_temp_jul_clim_c
+path properties.parameter.PRECTOTCORR.01 atmosphere_power_precip_jan_clim_mm
+path properties.parameter.PRECTOTCORR.07 atmosphere_power_precip_jul_clim_mm
+
+source biosphere_overpass_allotments_positioned
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["leisure"="garden"];out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in tags.name anthroposphere_allotments_name
+field_in id allotments_osm_id
+
+source biosphere_overpass_archaeological_paleontology_positioned
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:10000,{lat},{lon})["geological"="palaeontological_site"];out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in tags.name anthroposphere_archaeological_paleontology_name
+field_in id archaeological_paleontology_osm_id
+
+source biosphere_overpass_archaeological_sites_positioned
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:10000,{lat},{lon})["historic"="archaeological_site"];out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in tags.name anthroposphere_archaeological_sites_name
+field_in id archaeological_sites_osm_id
+
+source biosphere_overpass_arts_centres_positioned
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:5000,{lat},{lon})["amenity"="arts_centre"];out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in tags.name anthroposphere_arts_centres_name
+field_in id arts_centres_osm_id
+
+source biosphere_overpass_bakeries_positioned
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["shop"="bakery"];out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in tags.name anthroposphere_bakeries_name
+field_in id bakeries_osm_id
+
+source biosphere_overpass_banks_positioned
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["amenity"="bank"];out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in tags.name anthroposphere_banks_name
+field_in id banks_osm_id
+
+source biosphere_overpass_bars_positioned
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="bar"];out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in tags.name anthroposphere_bars_name
+field_in id bars_osm_id
+
+source biosphere_overpass_bicycle_parking_positioned
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="bicycle_parking"];out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in tags.name anthroposphere_bicycle_parking_name
+field_in id bicycle_parking_osm_id
+
+source biosphere_overpass_bicycle_rental_positioned
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="bicycle_rental"];out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in tags.name anthroposphere_bicycle_rental_name
+field_in id bicycle_rental_osm_id
+
+source biosphere_overpass_bookshops_positioned
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["shop"="books"];out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in tags.name anthroposphere_bookshops_name
+field_in id bookshops_osm_id
+
+source biosphere_overpass_cafes_positioned
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="cafe"];out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in tags.name anthroposphere_cafes_name
+field_in id cafes_osm_id
+
+source biosphere_overpass_car_sharing_positioned
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="car_sharing"];out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in tags.name anthroposphere_car_sharing_name
+field_in id car_sharing_osm_id
+
+source biosphere_overpass_castles_positioned
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:10000,{lat},{lon})["historic"="castle"];out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in tags.name anthroposphere_castles_name
+field_in id castles_osm_id
+
+source biosphere_overpass_cemetery_positioned
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="grave_yard"];out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in tags.name anthroposphere_cemetery_name
+field_in id cemetery_osm_id
+
+source biosphere_overpass_clinics_positioned
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["amenity"="clinic"];out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in tags.name anthroposphere_clinics_name
+field_in id clinics_osm_id
+
+source biosphere_overpass_courthouses_positioned
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:5000,{lat},{lon})["amenity"="courthouse"];out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in tags.name anthroposphere_courthouses_name
+field_in id courthouses_osm_id
+
+source biosphere_overpass_defibrillator_positioned
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["emergency"="defibrillator"];out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in tags.name anthroposphere_defibrillator_name
+field_in id defibrillator_osm_id
+
+source biosphere_overpass_dentists_positioned
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["amenity"="dentist"];out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in tags.name anthroposphere_dentists_name
+field_in id dentists_osm_id
+
+source biosphere_overpass_embassies_positioned
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:5000,{lat},{lon})["amenity"="embassy"];out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in tags.name anthroposphere_embassies_name
+field_in id embassies_osm_id
+
+source biosphere_overpass_fast_food_positioned
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="fast_food"];out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in tags.name anthroposphere_fast_food_name
+field_in id fast_food_osm_id
+
+source biosphere_overpass_fire_station_positioned
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="fire_station"];out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in tags.name anthroposphere_fire_station_name
+field_in id fire_station_osm_id
+
+source biosphere_overpass_florists_positioned
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["shop"="florist"];out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in tags.name anthroposphere_florists_name
+field_in id florists_osm_id
+
+source biosphere_overpass_fountains_positioned
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="fountain"];out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in tags.name anthroposphere_fountains_name
+field_in id fountains_osm_id
+
+source biosphere_overpass_galleries_positioned
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:5000,{lat},{lon})["tourism"="gallery"];out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in tags.name anthroposphere_galleries_name
+field_in id galleries_osm_id
+
+source biosphere_overpass_greengrocers_positioned
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["shop"="greengrocer"];out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in tags.name anthroposphere_greengrocers_name
+field_in id greengrocers_osm_id
+
+source biosphere_overpass_gyms_positioned
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["leisure"="fitness_centre"];out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in tags.name anthroposphere_gyms_name
+field_in id gyms_osm_id
+
+source biosphere_overpass_hairdressers_positioned
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["shop"="hairdresser"];out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in tags.name anthroposphere_hairdressers_name
+field_in id hairdressers_osm_id
+
+source biosphere_overpass_jewelry_shops_positioned
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["shop"="jewelry"];out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in tags.name anthroposphere_jewelry_shops_name
+field_in id jewelry_shops_osm_id
+
+source biosphere_overpass_kindergarten_positioned
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="kindergarten"];out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in tags.name anthroposphere_kindergarten_name
+field_in id kindergarten_osm_id
+
+source biosphere_overpass_laundry_positioned
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["shop"="laundry"];out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in tags.name anthroposphere_laundry_name
+field_in id laundry_osm_id
+
+source biosphere_overpass_libraries_positioned
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["amenity"="library"];out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in tags.name anthroposphere_libraries_name
+field_in id libraries_osm_id
+
+source biosphere_overpass_memorials_culture_positioned
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["historic"="memorial"];out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in tags.name anthroposphere_memorials_culture_name
+field_in id memorials_culture_osm_id
+
+source biosphere_overpass_monuments_positioned
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["historic"="monument"];out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in tags.name anthroposphere_monuments_name
+field_in id monuments_osm_id
+
+source biosphere_overpass_museums_positioned
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:5000,{lat},{lon})["tourism"="museum"];out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in tags.name anthroposphere_museums_name
+field_in id museums_osm_id
+
+source biosphere_overpass_music_venues_positioned
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:5000,{lat},{lon})["amenity"="music_venue"];out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in tags.name anthroposphere_music_venues_name
+field_in id music_venues_osm_id
+
+source biosphere_overpass_opticians_positioned
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["shop"="optician"];out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in tags.name anthroposphere_opticians_name
+field_in id opticians_osm_id
+
+source biosphere_overpass_pet_shops_positioned
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["shop"="pet"];out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in tags.name anthroposphere_pet_shops_name
+field_in id pet_shops_osm_id
+
+source biosphere_overpass_place_of_worship_positioned
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="place_of_worship"];out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in tags.name anthroposphere_place_of_worship_name
+field_in id place_of_worship_osm_id
+
+source biosphere_overpass_playgrounds_positioned
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["leisure"="playground"];out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in tags.name anthroposphere_playgrounds_name
+field_in id playgrounds_osm_id
+
+source biosphere_overpass_police_positioned
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="police"];out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in tags.name anthroposphere_police_name
+field_in id police_osm_id
+
+source biosphere_overpass_post_boxes_positioned
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="post_box"];out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in tags.name anthroposphere_post_boxes_name
+field_in id post_boxes_osm_id
+
+source biosphere_overpass_pubs_positioned
+ttl 604800
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="pub"];out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in tags.name anthroposphere_pubs_name
+field_in id pubs_osm_id

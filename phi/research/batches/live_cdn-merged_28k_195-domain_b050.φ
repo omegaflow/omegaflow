@@ -1,0 +1,99 @@
+field_in ot_ra astro_swift_grb_ot_ra
+
+field_in ot_dec astro_swift_grb_ot_dec
+
+field_in ot_pos_err astro_swift_grb_ot_pos_err
+
+field_in ot_pos_ref astro_swift_grb_ot_pos_ref
+
+field_in other_obs astro_swift_grb_other_obs
+
+field_in other_obs_ref astro_swift_grb_other_obs_ref
+
+field_in other_obs2 astro_swift_grb_other_obs2
+
+field_in other_obs2_ref astro_swift_grb_other_obs2_ref
+
+field_in other_obs3 astro_swift_grb_other_obs3
+
+field_in other_obs3_ref astro_swift_grb_other_obs3_ref
+
+field_in other_obs4 astro_swift_grb_other_obs4
+
+field_in other_obs4_ref astro_swift_grb_other_obs4_ref
+
+field_in supernova_flag astro_swift_grb_supernova_flag
+
+field_in galaxy_flag astro_swift_grb_galaxy_flag
+
+field_in galaxy_name astro_swift_grb_galaxy_name
+
+field_in galaxy_type astro_swift_grb_galaxy_type
+
+field_in galaxy_ra astro_swift_grb_galaxy_ra
+
+field_in galaxy_dec astro_swift_grb_galaxy_dec
+
+field_in galaxy_pos_ref astro_swift_grb_galaxy_pos_ref
+
+field_in galaxy_redshift astro_swift_grb_galaxy_redshift
+
+field_in galaxy_ref astro_swift_grb_galaxy_ref
+
+field_in galaxy_offset astro_swift_grb_galaxy_offset
+
+field_in ground_counterpart astro_swift_grb_ground_counterpart
+
+field_in web_page astro_swift_grb_web_page
+
+field_in comments astro_swift_grb_comments
+
+url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/global_airports_{latest}_{latest}.json
+
+ttl 604800
+
+force em
+
+on earth 0 0
+
+map .
+
+lat_key lat
+
+lon_key lon
+
+field_in elevation technosphere_airport_elevation_ft
+
+url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/tevcat_main_{latest}.json
+
+ttl 604800
+
+force em
+
+at sun 1.0
+
+format universal
+
+tau_key _dist_m
+
+url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/twomass_psc_{latest}.json
+
+ttl 604800
+
+force em
+
+at sun 1.0
+
+cmap data
+
+tau_key _dist_m
+
+ra_key RAJ2000
+
+dec_key DEJ2000
+
+plx_key default_plx
+
+field_in Jmag astro_twomass_psc_Jmag
+
+field_in Hmag astro_twomass_psc_Hmag

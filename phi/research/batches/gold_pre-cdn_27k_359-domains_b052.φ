@@ -1,0 +1,185 @@
+source geosphere_soilgrids_ph
+ttl 2592000
+force em
+url https://rest.isric.org/soilgrids/v2.0/properties/query?lon={lon}&lat={lat}&property=phh2o&depth=0-5cm&value=mean
+field properties.layers.0.depths.0.values.mean geosphere_soil_ph_x10
+
+source geosphere_soilgrids_sand
+ttl 2592000
+force em
+url https://rest.isric.org/soilgrids/v2.0/properties/query?lon={lon}&lat={lat}&property=sand&depth=0-5cm&value=mean
+field properties.layers.0.depths.0.values.mean geosphere_soil_sand_pct
+
+source geosphere_soilgrids_soc
+ttl 2592000
+force em
+url https://rest.isric.org/soilgrids/v2.0/properties/query?lon={lon}&lat={lat}&property=soc&depth=0-5cm&value=mean
+field properties.layers.0.depths.0.values.mean geosphere_soil_organic_carbon_x10
+
+source geosphere_usgs_epqs_elevation
+ttl 2592000
+force seismic-surface
+url https://epqs.nationalmap.gov/v1/json?x={lon}&y={lat}&units=Meters&wkid=4326
+path value geosphere_elevation_epqs_m
+
+source lithosphere_gem_active_faults
+ttl 2592000
+force em
+url https://raw.githubusercontent.com/cossatot/gem-global-active-faults/master/geojson/gem_active_faults_harmonized.geojson
+flatten features
+
+source lithosphere_pb2002_boundaries
+ttl 2592000
+force em
+url https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_boundaries.json
+flatten features
+
+source lithosphere_pb2002_orogens
+ttl 2592000
+force em
+url https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_orogens.json
+flatten features
+
+source lithosphere_pb2002_plates
+ttl 2592000
+force em
+url https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_plates.json
+flatten features
+
+source neutrinoless_double_beta_limits
+ttl 2592000
+force em
+lat 42.454
+lon 13.576
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=neutrinoless+double+beta+decay+limit&fields=titles,citation_count
+field hits.hits.0.metadata.citation_count quantum_double_beta_limit_citations
+
+source noaa_epica_domec_deuterium
+ttl 2592000
+force diffusion
+lat -75.1
+lon 123.35
+url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/epica_domec/dc_ch4_hol_fl02-noaa.txt
+format text
+rows
+field 0 depth_m
+field 1 age_yr_bp
+field 2 ch4_ppbv
+
+source noaa_vostok_deuterium
+ttl 2592000
+force diffusion
+lat -78.464
+lon 106.837
+url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/vostok/deutnat.txt
+format text
+rows
+field 0 depth_m
+field 1 age_yr_bp
+field 2 deuterium_delta
+
+source noaa_wais_divide_co2
+ttl 2592000
+force diffusion
+lat -79.467
+lon -112.085
+url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/antarctica2015co2wais-noaa.txt
+format text
+rows
+field 0 depth_m
+field 1 age_yr_bp
+field 2 co2_ppmv
+field 3 co2_sigma_ppmv
+
+source paleoclimate_dome_fuji_co2
+ttl 2592000
+force em
+lat -77.3190
+lon 39.7030
+url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/domefuji/df-co2-dry-260ka-2007.txt
+format csv
+rows
+field_in 0 paleoclimate_domefuji_age_bp
+field_in 1 paleoclimate_domefuji_co2_ppm
+
+source paleoclimate_epica_co2
+ttl 2592000
+force em
+lat -75.100
+lon 123.350
+url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/epica_domec/edc-co2-2008.txt
+format text
+rows
+field_in 3 paleoclimate_epica_age_bp
+field_in 4 paleoclimate_epica_co2_ppm
+
+source paleoclimate_vostok_icecore
+ttl 2592000
+force em
+lat -78.464
+lon 106.833
+url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/vostok/co2nat.txt
+format text
+rows
+field_in 0 paleoclimate_vostok_depth_m
+field_in 1 paleoclimate_vostok_age_bp
+field_in 2 paleoclimate_vostok_co2_ppm
+
+source physics_cern_opendata_records
+ttl 2592000
+force em
+lat 46.233
+lon 6.055
+url https://opendata.cern.ch/api/records/?size=1&page=1
+field hits.total physics_cern_opendata_total
+
+source physics_crossref_biophoton_papers
+ttl 2592000
+force em
+lat 50.775
+lon 6.084
+url https://api.crossref.org/works?query=ultraweak+biophoton+emission&rows=0
+field message.total-results biosphere_biophoton_research_total
+
+source physics_inspirehep_cmb_anomaly_papers
+ttl 2592000
+force em
+lat 5.230
+lon -52.769
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=CMB+cold+spot+anomaly&fields=titles,citation_count
+field hits.hits.0.metadata.citation_count cosmic_cmb_anomaly_research_citations
+
+source physics_inspirehep_vacuum_metastability_papers
+ttl 2592000
+force em
+lat 46.233
+lon 6.055
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=vacuum+metastability+Higgs&fields=titles,citation_count
+field hits.hits.0.metadata.citation_count physics_vacuum_metastability_citations
+
+source physics_inspirehep_xenonnt_papers
+ttl 2592000
+force em
+lat 42.454
+lon 13.576
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=XENONnT+dark+matter&fields=titles,citation_count
+field hits.hits.0.metadata.citation_count physics_dark_matter_limit_citations
+
+source quantum_gravity_lorentz_bounds
+ttl 2592000
+force em
+lat 42.454
+lon 13.576
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=Lorentz+invariance+violation+quantum+gravity&fields=titles,citation_count
+field hits.hits.0.metadata.citation_count quantum_lorentz_bounds_citations
+
+source nist_codata_2022
+ttl 31536000
+force diffusion
+url https://physics.nist.gov/cuu/Constants/Table/allascii.txt
+format text
+rows
+field 0 quantity_name
+field 1 value_str
+field 2 uncertainty_str
+field 3 unit

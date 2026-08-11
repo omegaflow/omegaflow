@@ -1,0 +1,264 @@
+url https://opensky-network.org/api/states/all?lamin=35&lomin=-10&lamax=70&lomax=40
+ttl 60
+on earth 0 0 0
+map states
+lat 6
+lon 5
+field 7 aircraft_baro_altitude_m inverse-square em m 6.0 0.0 0.0
+field 9 aircraft_velocity_ms inverse-square em m/s 6.0 0.0 0.0
+field 10 aircraft_track_deg inverse-square em deg 6.0 0.0 0.0
+
+url https://beacon.nist.gov/beacon/2.0/pulse/last
+ttl 60
+on earth 39.9916 -105.2748 0
+path pulse.pulseIndex quantum_entropy_nist_beacon inverse-square em count 6.0 0.0 0.0
+
+url https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-1-day.json
+ttl 60
+on earth 0.0 -75.2 35786023
+last flux radiation_electron_flux_2mev inverse-square em count 6.0 0.0 0.0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=ALMT&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 43.18 76.93 0
+path data.ALMT.1h.0.1 cosmic_neutron_flux_almaty inverse-square em count 6.0 0.0 0.0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=AUST&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 30.27 -97.74 0
+path data.AUST.1h.0.1 cosmic_neutron_flux_austin inverse-square em count 6.0 0.0 0.0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=BOUL&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 40.01 -105.27 0
+path data.BOUL.1h.0.1 cosmic_neutron_flux_boulder inverse-square em count 6.0 0.0 0.0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=CTWN&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth -33.93 18.47 0
+path data.CTWN.1h.0.1 cosmic_neutron_flux_cape_town inverse-square em count 6.0 0.0 0.0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=DOMC&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth -75.1 123.36 0
+path data.DOMC.1h.0.1 cosmic_neutron_flux_dome_c inverse-square em count 6.0 0.0 0.0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=ERMN&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth -6.89 107.59 0
+path data.ERMN.1h.0.1 cosmic_neutron_flux_ermawan inverse-square em count 6.0 0.0 0.0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=FSMT&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 60.02 -111.93 0
+path data.FSMT.1h.0.1 cosmic_neutron_flux_fort_smith inverse-square em count 6.0 0.0 0.0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=GOOS&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 53.32 -60.42 0
+path data.GOOS.1h.0.1 cosmic_neutron_flux_goose_bay inverse-square em count 6.0 0.0 0.0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=HALF&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 44.63 -63.59 0
+path data.HALF.1h.0.1 cosmic_neutron_flux_halifax inverse-square em count 6.0 0.0 0.0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=INVK&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 68.36 -133.72 0
+path data.INVK.1h.0.1 cosmic_neutron_flux_inuvik inverse-square em count 6.0 0.0 0.0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=KERG&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth -49.35 70.25 0
+path data.KERG.1h.0.1 cosmic_neutron_flux_kerguelen inverse-square em count 6.0 0.0 0.0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=KIEL&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 54.34 10.12 0
+path data.KIEL.1h.0.1 cosmic_neutron_flux_kiel inverse-square em count 6.0 0.0 0.0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=MOSC&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 55.75 37.57 0
+path data.MOSC.1h.0.1 cosmic_neutron_flux_moscow inverse-square em count 6.0 0.0 0.0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=NAIN&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 56.55 -61.67 0
+path data.NAIN.1h.0.1 cosmic_neutron_flux_nain inverse-square em count 6.0 0.0 0.0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=NRLK&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 69.35 88.2 0
+path data.NRLK.1h.0.1 cosmic_neutron_flux_norilsk inverse-square em count 6.0 0.0 0.0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=PWNK&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 54.99 -85.44 0
+path data.PWNK.1h.0.1 cosmic_neutron_flux_peawanuck inverse-square em count 6.0 0.0 0.0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=REYK&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 64.14 -21.9 0
+path data.REYK.1h.0.1 cosmic_neutron_flux_reykjavik inverse-square em count 6.0 0.0 0.0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=SANA&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth -62.09 -58.4 0
+path data.SANA.1h.0.1 cosmic_neutron_flux_san_antonio inverse-square em count 6.0 0.0 0.0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=TBLS&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 41.72 44.76 0
+path data.TBLS.1h.0.1 cosmic_neutron_flux_tbilisi inverse-square em count 6.0 0.0 0.0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=ULNB&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 47.92 106.92 0
+path data.ULNB.1h.0.1 cosmic_neutron_flux_ulan_bator inverse-square em count 6.0 0.0 0.0
+
+url https://services.swpc.noaa.gov/json/goes/primary/differential-protons-1-day.json
+ttl 60
+on earth 0.0 -75.2 35786023
+last flux radiation_proton_flux_differential inverse-square em count 6.0 0.0 0.0
+
+url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
+ttl 60
+on earth 0.0 -75.2 35786023
+last flux radiation_proton_flux_integral inverse-square em count 6.0 0.0 0.0
+
+url https://service.scedc.caltech.edu/fdsnws/event/1/query?format=geojson&minmagnitude=1.5&limit=500&orderby=time&starttime={today}T00:00:00
+ttl 60
+on earth 0 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field geometry.coordinates.2 geosphere_quake_depth_km erfc seismic-surface km 6.0 0.0 0.0
+field properties.mag geosphere_quake_magnitude erfc seismic-surface Mw 6.0 0.0 0.0
+
+url https://services.swpc.noaa.gov/json/goes/primary/xray-flux-1-minute.json
+ttl 60
+on earth 0.0 -75.2 35786023
+last flux solar_xray_flux_wm2_1min inverse-square em W/m2 6.0 0.0 0.0
+
+url https://services.swpc.noaa.gov/json/solar-radio-flux.json
+ttl 60
+on earth 0 0 0
+path 0.details.0.flux solar_radio_flux_sfu inverse-square em sfu 6.0 0.0 0.0
+
+url https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json
+ttl 60
+at earth 0.99
+last proton_speed solar_wind_speed_km_s inverse-square em km/s 6.0 0.0 0.0
+last proton_density solar_wind_density_cm3 inverse-square em 1/cm3 6.0 0.0 0.0
+last proton_temperature solar_wind_temp_k inverse-square em K 6.0 0.0 0.0
+
+url https://services.swpc.noaa.gov/json/goes/primary/xrays-1-day.json
+ttl 60
+on earth 0.0 -75.2 35786023
+last flux solar_xray_flux_wm2 inverse-square em W/m2 6.0 0.0 0.0
+
+url https://services.swpc.noaa.gov/json/goes/primary/xray-flares-7-day.json
+ttl 60
+on earth 0.0 -75.2 35786023
+last max_xrlong solar_flare_xray_intensity inverse-square em W/m2 6.0 0.0 0.0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=1.5&limit=1000&orderby=time&starttime={today}T00:00:00
+ttl 60
+on earth 0 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field geometry.coordinates.2 geosphere_quake_depth_km erfc seismic-surface km 6.0 0.0 0.0
+field properties.mag geosphere_quake_magnitude erfc seismic-surface Mw 6.0 0.0 0.0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=6&limit=50&orderby=time&eventtype=earthquake
+ttl 60
+on earth 0 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field geometry.coordinates.2 geosphere_quake_depth_km erfc seismic-surface km 6.0 0.0 0.0
+field properties.mag geosphere_quake_magnitude erfc seismic-surface Mw 6.0 0.0 0.0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=2.5&orderby=time
+ttl 60
+on earth 0 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field geometry.coordinates.2 geosphere_quake_depth_km erfc seismic-surface km 6.0 0.0 0.0
+field properties.mag geosphere_quake_magnitude erfc seismic-surface Mw 6.0 0.0 0.0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=2.0&limit=500&orderby=magnitude
+ttl 60
+on earth 0 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field geometry.coordinates.2 geosphere_quake_depth_km erfc seismic-surface km 6.0 0.0 0.0
+field properties.mag geosphere_quake_magnitude erfc seismic-surface Mw 6.0 0.0 0.0
+
+url https://opensky-network.org/api/states/all?lamin=-90&lomin=-180&lamax=90&lomax=180
+ttl 60
+on earth 0 0 0
+map states
+lat 6
+lon 5
+alt 7
+field 7 baro_altitude inverse-square em m 6.0 0.0 0.0
+
+url https://scweb.cwa.gov.tw/api/v1/earthquake/latest?limit=200
+ttl 120
+on earth 0 0 0
+map .
+lat lat
+lon lon
+field mag_local geosphere_quake_magnitude erfc seismic-surface Mw 12.0 0.0 0.0
+field depth geosphere_quake_depth_km erfc seismic-surface km 12.0 0.0 0.0
+field max geosphere_quake_intensity erfc seismic-surface 1 12.0 0.0 0.0
+
+url https://seismo.ethz.ch/fdsnws/event/1/query?format=geojson&minmagnitude=1.0&limit=200&orderby=time&starttime={today}T00:00:00
+ttl 120
+on earth 0 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field geometry.coordinates.2 geosphere_quake_depth_km erfc seismic-surface km 12.0 0.0 0.0
+field properties.mag geosphere_quake_magnitude erfc seismic-surface Mw 12.0 0.0 0.0
+
+url https://earthquake.tmd.go.th/earthquake_json.php?limit=200
+ttl 120
+on earth 0 0 0
+map .
+lat lat
+lon lon
+field mag geosphere_quake_magnitude erfc seismic-surface Mw 12.0 0.0 0.0
+field dep geosphere_quake_depth_km erfc seismic-surface km 12.0 0.0 0.0
+
+url https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json
+ttl 180
+at earth
+last Kp magnetosphere_kp_index inverse-square em 1 18.0 0.0 0.0
+last a_running magnetosphere_kp_a_running inverse-square em 1 18.0 0.0 0.0
+
+url https://services.swpc.noaa.gov/products/geospace/glm_lightning_density.json
+ttl 300
+on earth 0 0 0
+map .
+lat lat
+lon lon
+field flash_density atmosphere_glm_flash_density_perdeg2 inverse-square em 1/deg2 30.0 0.0 0.0
+
+url https://aviationweather.gov/api/data/metar?ids=EDDF,EDDM,EGLL,KJFK,RJTT&format=json
+ttl 300
+on earth 0 0 0
+map .
+lat lat
+lon lon
+field temp atmosphere_metar_temp_c gaussian-inverse-square acoustic C 30.0 0.0 0.0
+field dewp atmosphere_metar_dewpoint_c gaussian-inverse-square acoustic C 30.0 0.0 0.0
+field altim atmosphere_metar_pressure_hpa gaussian-inverse-square acoustic hPa 30.0 0.0 0.0
+field wspd atmosphere_metar_wind_speed_kt gaussian-inverse-square acoustic kt 30.0 0.0 0.0
+field wdir atmosphere_metar_wind_direction_deg gaussian-inverse-square acoustic deg 30.0 0.0 0.0

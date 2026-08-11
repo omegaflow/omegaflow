@@ -1,0 +1,99 @@
+dec_key DEJ2000
+
+field_in recno vizier_young_stars_recno
+
+field_in Name vizier_young_stars_Name
+
+field_in FileName vizier_young_stars_FileName
+
+field_in SName vizier_young_stars_SName
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/wise_allsky.json
+
+ttl 604800
+
+force em
+
+cmap data
+
+ra_key ra
+
+dec_key dec
+
+plx_key default_plx
+
+field_in w1mpro astro_wise_allsky_w1mpro
+
+field_in w2mpro astro_wise_allsky_w2mpro
+
+field_in w3mpro astro_wise_allsky_w3mpro
+
+field_in w4mpro astro_wise_allsky_w4mpro
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_xmm_slew.json
+
+ttl 604800
+
+force em
+
+cmap data
+
+ra_key ra
+
+dec_key dec
+
+plx_key default_plx
+
+field_in flux_b8 xmm_slew_flux_b8
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/xmm_sources.json
+
+ttl 604800
+
+force em
+
+cmap data
+
+ra_key ra
+
+dec_key dec
+
+field_in srcid astro_xmm_sources_srcid
+
+field_in name astro_xmm_sources_name
+
+field_in obsid astro_xmm_sources_obsid
+
+field_in pps_srcnum astro_xmm_sources_pps_srcnum
+
+field_in n_obs astro_xmm_sources_n_obs
+
+field_in n_contrib astro_xmm_sources_n_contrib
+
+field_in n_exp astro_xmm_sources_n_exp
+
+field_in error_radius astro_xmm_sources_error_radius
+
+field_in error_ell_major astro_xmm_sources_error_ell_major
+
+field_in error_ell_minor astro_xmm_sources_error_ell_minor
+
+field_in error_ell_pa astro_xmm_sources_error_ell_pa
+
+field_in lii astro_xmm_sources_lii
+
+field_in bii astro_xmm_sources_bii
+
+field_in x_pixel astro_xmm_sources_x_pixel
+
+field_in x_pixel_error astro_xmm_sources_x_pixel_error
+
+field_in x_pixel_neg_err astro_xmm_sources_x_pixel_neg_err
+
+field_in x_pixel_pos_err astro_xmm_sources_x_pixel_pos_err
+
+field_in y_pixel astro_xmm_sources_y_pixel
+
+field_in y_pixel_error astro_xmm_sources_y_pixel_error
+
+field_in y_pixel_neg_err astro_xmm_sources_y_pixel_neg_err

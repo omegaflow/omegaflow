@@ -1,0 +1,99 @@
+field_in source_type astro_fermi_4lac_source_type
+
+field_in assoc_name astro_fermi_4lac_assoc_name
+
+field_in assoc_prob_bay astro_fermi_4lac_assoc_prob_bay
+
+field_in assoc_prob_lr astro_fermi_4lac_assoc_prob_lr
+
+field_in assoc_catalog astro_fermi_4lac_assoc_catalog
+
+field_in assoc_ra astro_fermi_4lac_assoc_ra
+
+field_in assoc_dec astro_fermi_4lac_assoc_dec
+
+field_in assoc_error_radius astro_fermi_4lac_assoc_error_radius
+
+field_in vlbi_assoc_name astro_fermi_4lac_vlbi_assoc_name
+
+field_in sed_class astro_fermi_4lac_sed_class
+
+field_in he_peak astro_fermi_4lac_he_peak
+
+field_in he_peak_error astro_fermi_4lac_he_peak_error
+
+field_in he_nufnu_peak astro_fermi_4lac_he_nufnu_peak
+
+field_in he_nufnu_peak_error astro_fermi_4lac_he_nufnu_peak_error
+
+field_in nu_syn astro_fermi_4lac_nu_syn
+
+field_in nufnu_syn astro_fermi_4lac_nufnu_syn
+
+field_in variability_index astro_fermi_4lac_variability_index
+
+field_in frac_variability astro_fermi_4lac_frac_variability
+
+field_in frac_variability_error astro_fermi_4lac_frac_variability_error
+
+field_in highest_energy_photon astro_fermi_4lac_highest_energy_photon
+
+url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/frb_chime_{latest}.json
+
+ttl 604800
+
+force em
+
+at sun 1.0
+
+format universal
+
+cmap data
+
+tau_key _dist_m
+
+ra_key RAJ2000
+
+dec_key DEJ2000
+
+plx_key default_plx
+
+field_in DM frb_dispersion_measure
+
+field_in SNR frb_signal_to_noise
+
+field_in Flux frb_flux_jy
+
+field_in Fluence frb_fluence_jy_ms
+
+field_in Widthfitb frb_width_ms
+
+field_in SpInd frb_spectral_index
+
+url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/gaia_binaries_{latest}.json
+
+ttl 604800
+
+force em
+
+at sun 1.0
+
+cmap data
+
+tau_key _dist_m
+
+ra_key ra
+
+dec_key dec
+
+plx_key parallax
+
+field_in phot_g_mean_mag astro_gaia_binaries_phot_g_mean_mag
+
+url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/gaia_blue_supergiants_{latest}.json
+
+ttl 604800
+
+force em
+
+at sun 1.0

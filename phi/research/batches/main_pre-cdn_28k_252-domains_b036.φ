@@ -1,0 +1,540 @@
+source noaa_ibtracs_last3years
+ttl 86400
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_ibtracs_last3years.json
+format json
+map data
+lat_key LAT
+lon_key LON
+field_in NAME storm_name
+field_in SID storm_id
+field_in SEASON season_year
+field_in ISO_TIME timestamp_utc
+field_in WMO_WIND max_wind_kt
+field_in WMO_PRES min_pressure_hpa
+field_in BASIN basin_code
+
+source noaa_isd_china_daily
+ttl 86400
+force thermal
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_isd_china_daily.json
+map .
+lat_key LATITUDE
+lon_key LONGITUDE
+field STATION station_id
+field NAME station_name
+field TEMP temp_f
+field MAX temp_max_f
+field MIN temp_min_f
+field WDSP wind_speed_knots
+field PRCP precipitation_inches
+field SLP sea_level_pressure_hpa
+
+source noaa_isd_south_africa_daily
+ttl 86400
+force thermal
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_isd_south_africa_daily.json
+map .
+lat_key LATITUDE
+lon_key LONGITUDE
+field STATION station_id
+field NAME station_name
+field TEMP temp_f
+field MAX temp_max_f
+field MIN temp_min_f
+field WDSP wind_speed_knots
+field PRCP precipitation_inches
+
+source noaa_itrdb_northern_hemisphere
+ttl 86400
+force diffusion
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_itrdb_northern_hemisphere.json
+map study
+lat_key site.0.geo.geometry.coordinates.1
+lon_key site.0.geo.geometry.coordinates.0
+field site.0.siteName site_name
+field site.0.elevation elevation_m
+field earliestYearBP earliest_year_bp
+field mostRecentYearBP most_recent_year_bp
+field investigator investigator
+field species.0.speciesCode tree_species
+
+source noaa_itrdb_southern_hemisphere
+ttl 86400
+force diffusion
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_itrdb_southern_hemisphere.json
+map study
+lat_key site.0.geo.geometry.coordinates.1
+lon_key site.0.geo.geometry.coordinates.0
+field site.0.siteName site_name
+field site.0.elevation elevation_m
+field earliestYearBP earliest_year_bp
+field mostRecentYearBP most_recent_year_bp
+field species.0.speciesCode tree_species
+
+source noaa_ncei_climate_extremes_monthly
+ttl 86400
+force thermal
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_ncei_climate_extremes_monthly.json
+map .
+lat_key LATITUDE
+lon_key LONGITUDE
+field STATION station_id
+field NAME station_name
+field TMAX monthly_tmax_tenths_c
+field TMIN monthly_tmin_tenths_c
+field TAVG monthly_tavg_tenths_c
+field PRCP monthly_prcp_tenths_mm
+
+source noaa_ncei_climate_normals_1991_2020
+ttl 86400
+force thermal
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_ncei_climate_normals_1991_2020.json
+map .
+lat_key LATITUDE
+lon_key LONGITUDE
+field STATION station_id
+field NAME station_name
+field TEMP_NORMAL_MAX daily_normal_max_c
+field TEMP_NORMAL_MIN daily_normal_min_c
+field PRCP_NORMAL daily_normal_precip_mm
+
+source noaa_ncei_gebco_bathymetry
+ttl 86400
+force gravity
+url https://gis.ngdc.noaa.gov/arcgis/rest/services/DEM_global_mosaic_hillshade/ImageServer/identify?geometry=%7B%22x%22:{lon},%22y%22:{lat}%7D&geometryType=esriGeometryPoint&returnGeometry=false&f=json
+field value depth_m
+field objectId gebco_cell_id
+
+source noaa_ncei_gsom_climate_monthly
+ttl 86400
+force thermal
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_ncei_gsom_climate_monthly.json
+wgs84 0 0
+map
+lat_key LATITUDE
+lon_key LONGITUDE
+field STATION station_id
+field NAME station_name
+field DATE month
+field TMAX max_temp_c
+field TMIN min_temp_c
+field TAVG avg_temp_c
+field PRCP precipitation_mm
+
+source noaa_ncei_gsom_climate_normals
+ttl 86400
+force thermal
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_ncei_gsom_climate_normals.json
+map .
+lat_key latitude
+lon_key longitude
+field TMAX temp_max_c
+field TMIN temp_min_c
+field TAVG temp_avg_c
+field PRCP precip_mm
+
+source noaa_ncei_ohc_0_700m
+ttl 86400
+force thermal
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_ncei_ohc_0_700m.json
+wgs84 0.0 0.0
+format json
+map data
+lat_key lat
+lon_key lon
+field_in 0 year
+field_in 1 ohc_world_zj
+field_in 2 ohc_nh_zj
+field_in 3 ohc_sh_zj
+field_in 4 ohc_tropics_zj
+
+source noaa_ncei_woce_ocean_sections_ctd
+ttl 86400
+force diffusion
+url https://www.ncei.noaa.gov/access/world-ocean-database-select/dbsearch.html?DirectAccess=yes&type=json&survey=WOCE&variable=T,S,O2,NO3,PO4,SiO3&limit=300
+map profiles
+lat_key latitude
+lon_key longitude
+field cast_id cast_identifier
+field cruise_id cruise_name
+field date obs_date
+field max_depth max_depth_m
+field temp_surface surface_temp_c
+field sal_surface surface_sal_psu
+
+source noaa_ndbc_dart_buoys_metadata
+ttl 86400
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_ndbc_dart_buoys_metadata.txt
+format text
+rows
+lat_key lat
+lon_key lon
+field id station_id
+field name station_name
+field type sensor_type
+field elev depth_m
+field pgm program_code
+field met has_met_sensor
+field currents has_current_sensor
+
+source noaa_ngdc_significant_earthquakes
+ttl 86400
+force seismic-body
+url https://www.ngdc.noaa.gov/hazel/hazard-service/api/v1/earthquakes?maxRows=2000&startRow=1&orderBy=year&ascending=false
+map items
+lat_key latitude
+lon_key longitude
+field year event_year
+field eqMagnitude richter_magnitude
+field eqMagUnk magnitude_unknown
+field damageAmountOrder damage_ordinal
+field deaths deaths_total
+field damageMillionsDollars damage_mmusd
+field country country
+
+source noaa_paleo_coral_records
+ttl 86400
+force thermal
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_paleo_coral_records.json
+map study
+lat_key site.0.geo.geometry.coordinates.1
+lon_key site.0.geo.geometry.coordinates.0
+field site.0.siteName site_name
+field earliestYearBP earliest_year_bp
+field mostRecentYearBP most_recent_year_bp
+field investigator investigator
+
+source noaa_paleo_coral_studies_global
+ttl 86400
+force diffusion
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_paleo_coral_studies_global.json
+map studyList
+lat_key site.geo.geometry.coordinates.1
+lon_key site.geo.geometry.coordinates.0
+field xmlId study_id
+field studyName study_title
+field earliestYearBP earliest_year_bp
+field mostRecentYearBP most_recent_year_bp
+field site.siteName coral_site_name
+
+source noaa_paleo_ice_cores
+ttl 86400
+force thermal
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_paleo_ice_cores.json
+map study
+lat_key site.0.geo.geometry.coordinates.1
+lon_key site.0.geo.geometry.coordinates.0
+field site.0.siteName site_name
+field site.0.elevation elevation_m
+field earliestYearBP earliest_year_bp
+field mostRecentYearBP most_recent_year_bp
+field investigator investigator
+
+source noaa_paleo_pollen_records
+ttl 86400
+force diffusion
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_paleo_pollen_records.json
+map study
+lat_key site.0.geo.geometry.coordinates.1
+lon_key site.0.geo.geometry.coordinates.0
+field site.0.siteName site_name
+field site.0.elevation elevation_m
+field earliestYearBP earliest_year_bp
+field mostRecentYearBP most_recent_year_bp
+
+source noaa_paleo_speleothem
+ttl 86400
+force thermal
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_paleo_speleothem.json
+map study
+lat_key site.0.geo.geometry.coordinates.1
+lon_key site.0.geo.geometry.coordinates.0
+field site.0.siteName site_name
+field site.0.elevation elevation_m
+field earliestYearBP earliest_year_bp
+field mostRecentYearBP most_recent_year_bp
+
+source noaa_storm_events_hail
+ttl 86400
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_storm_events_hail.json
+map .
+field swdiJsonResponse.status query_status
+field summary.count event_count
+field summary.totalTimeInSeconds query_time
+
+source noaa_storm_events_significant_monthly
+ttl 86400
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_storm_events_significant_monthly.json
+map .
+field swdiJsonResponse.status query_status
+field summary.count event_count
+field summary.totalTimeInSeconds query_time
+
+source noaa_storm_events_tornadoes
+ttl 86400
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_storm_events_tornadoes.json
+map .
+field swdiJsonResponse.status query_status
+field summary.count event_count
+field summary.totalTimeInSeconds query_time
+
+source noaa_tide_predictions
+ttl 86400
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_tide_predictions.json
+wgs84 40.7 -74.01
+map predictions
+field t prediction_time_utc
+field v predicted_tide_m
+
+source noaa_tides_predictions
+ttl 86400
+force diffusion
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_tides_predictions.json
+map predictions
+lat_key 32.757
+lon_key -117.226
+field t prediction_time
+field v predicted_tide_m
+
+source noaa_wmm_magnetic_field
+ttl 86400
+force em
+ecliptic 1
+url https://www.ngdc.noaa.gov/geomag-web/calculators/calculateIgrfwmm?lat={lat}&lon={lon}&elevation=0&resultFormat=json&magneticComponent=x
+map result.0
+field decl magnetic_declination_deg
+field incl magnetic_inclination_deg
+field bx bx_nT
+field by by_nT
+field bz bz_nT
+field totalintensity total_field_nT
+
+source noaa_wod18_ctd_profiles_realtime
+ttl 86400
+force diffusion
+url https://www.ncei.noaa.gov/access/world-ocean-database-select/dbsearch.html?DirectAccess=yes&type=json&depth=0&lat1=-90&lat2=90&lon1=-180&lon2=180&variable=T,S,O2&startDate={today}&endDate={today}&limit=300
+map .
+lat_key lat
+lon_key lon
+field Temperature temperature_c
+field Salinity salinity_psu
+field Oxygen oxygen_ml_l
+
+source technosphere_npm_packages_total
+ttl 86400
+force em
+url https://registry.npmjs.org/-/v1/search?text=*&size=1
+wgs84 37.774 -122.419
+field total biosphere_npm_packages_total
+
+source astro_nso_gong_ring_diagram_flow_maps
+ttl 86400
+force em
+ssb
+url https://gong2.nso.edu/HA/hag/?ref=hag&series=hag&date={year}.{month}.{day}&format=json
+map .
+field filename ring_diagram_filename
+field date obs_date
+field cr carrington_rotation
+field latitude heliographic_latitude
+field longitude heliographic_longitude
+field vx eastward_flow_m_s
+field vy northward_flow_m_s
+
+source astro_oac_astrocats
+ttl 86400
+force em
+url https://api.astrocats.space/{target}/
+verify false
+target SN2014J
+pos ra_deg dec_deg
+field ra ra_deg
+field dec dec_deg
+field name name
+field claimedtype type
+field redshift redshift
+
+source biosphere_obis_coral_species_global
+ttl 86400
+force diffusion
+url https://api.obis.org/v3/occurrence?taxonid=1567&size=500&fields=decimalLatitude,decimalLongitude,scientificName,class,family,date_year&startdate=2020-01-01
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field scientificName species_name
+field family taxon_family
+field date_year obs_year
+
+source biosphere_obis_threatened_marine_species
+ttl 86400
+force diffusion
+url https://api.obis.org/v3/occurrence?iucnRedListCategory=CR,EN,VU&size=500&fields=decimalLatitude,decimalLongitude,scientificName,class,family,iucnRedListCategory,date_year
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field scientificName species_name
+field class taxon_class
+field family taxon_family
+field iucnRedListCategory iucn_category
+field date_year obs_year
+
+source hydrosphere_oceanography_cmems_global_analysis
+ttl 86400
+force em
+ecliptic 1
+url https://erddap.emodnet-physics.eu/erddap/tabledap/index.json?page=1&itemsPerPage=100
+format json
+map .
+field id oceanography_cmems_service_id
+field name oceanography_cmems_service_name
+
+source open_meteo_cmip6_climate
+ttl 86400
+force thermal
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/open_meteo_cmip6_climate.json
+wgs84 0.0 0.0
+map daily
+field temperature_2m_mean temp_mean_c
+field precipitation_sum precip_mm
+
+source open_meteo_era5_reanalysis
+ttl 86400
+force thermal
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/open_meteo_era5_reanalysis.json
+map hourly.time
+field hourly.temperature_2m temp_2m_c
+field hourly.precipitation precipitation_mm
+field hourly.windspeed_10m wind_speed_ms
+field hourly.relative_humidity_2m rh_pct
+field hourly.surface_pressure surface_pressure_hpa
+
+source open_meteo_vegetation_proxy
+ttl 86400
+force diffusion
+ecliptic 1
+url https://api.open-meteo.com/v1/forecast?latitude=50.0&longitude=10.0&daily=et0_fao_evapotranspiration,vapor_pressure_deficit&forecast_days=1&format=json
+map daily.time
+field daily.et0_fao_evapotranspiration et0_mm_proxy_gpp
+field daily.vapor_pressure_deficit vpd_kpa
+field daily.growing_degree_days_base_0_limit_50 gdd_0_50
+
+source technosphere_openfda_adverse_total
+ttl 86400
+force em
+url https://api.fda.gov/drug/event.json?limit=1
+wgs84 38.995 -77.101
+field meta.results.total biosphere_fda_adverse_events_total
+
+source technosphere_openfda_device_total
+ttl 86400
+force em
+url https://api.fda.gov/device/510k.json?limit=1
+wgs84 38.995 -77.101
+field meta.results.total biosphere_fda_devices_total
+
+source technosphere_openfda_drug_total
+ttl 86400
+force em
+url https://api.fda.gov/drug/drugsfda.json?limit=1
+wgs84 38.995 -77.101
+field meta.results.total biosphere_fda_drugs_total
+
+source technosphere_openfda_recalls_total
+ttl 86400
+force em
+url https://api.fda.gov/drug/enforcement.json?limit=1
+wgs84 38.995 -77.101
+field meta.results.total biosphere_fda_recalls_total
+
+source technosphere_openfoodfacts_products_count
+ttl 86400
+force em
+url https://world.openfoodfacts.org/cgi/search.pl?search_terms=&page_size=1&json=1
+wgs84 48.8566 2.3522
+field count biosphere_food_product_count_openfoodfacts
+
+url https://overpass-api.de/api/interpreter?data=[out:json];node[power=plant](global);out;
+ttl 86400
+force em
+url https://api.openinframap.org/stats/country
+map .
+lat_key centroid.lat
+lon_key centroid.lon
+field country country_name
+field power_plant_count power_plant_count
+field wind_capacity_mw wind_capacity_mw
+field solar_capacity_mw solar_capacity_mw
+field nuclear_capacity_mw nuclear_capacity_mw
+
+source geosphere_openlandmap_soil_carbon_stac
+ttl 86400
+force diffusion
+url https://stac.openlandmap.org/collections/sol_organic.carbon_usda.6a1c_m/items?limit=500&bbox=-180,-60,180,75
+map features
+lat_key geometry.coordinates.0.0.1
+lon_key geometry.coordinates.0.0.0
+field properties.title layer_title
+field properties.datetime data_datetime
+field properties.description layer_description
+
+source technosphere_openlibrary_authors_total
+ttl 86400
+force em
+url https://openlibrary.org/authors.json?limit=1
+wgs84 40.712 -74.006
+field size biosphere_openlibrary_authors_total
+
+source technosphere_openlibrary_books_total
+ttl 86400
+force em
+url https://openlibrary.org/books.json?limit=1
+wgs84 40.712 -74.006
+field size biosphere_openlibrary_books_total
+
+source orbit_celestrak_active
+ttl 86400
+force em
+ecliptic 1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_celestrak_active.json
+count lines orbital_active_satellites_celestrak
+
+source orbit_celestrak_active_satellites
+ttl 86400
+force em
+ecliptic 1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_celestrak_active_satellites.json
+count lines orbital_active_satellites_celestrak
+
+source orbit_celestrak_all_satellites
+ttl 86400
+force em
+ecliptic 1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_celestrak_all_satellites.json
+count lines orbital_satellites_active_celestrak
+
+source orbit_celestrak_cubesats
+ttl 86400
+force em
+ecliptic 1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_celestrak_cubesats.json
+count lines orbital_cubesats_celestrak
+
+source orbit_celestrak_debris
+ttl 86400
+force em
+ecliptic 1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_celestrak_debris.json
+count lines orbital_debris_tracked_celestrak
+
+source orbit_celestrak_debris_analyst
+ttl 86400
+force em
+ecliptic 1
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_celestrak_debris_analyst.json
+count lines orbital_debris_tracked_celestrak

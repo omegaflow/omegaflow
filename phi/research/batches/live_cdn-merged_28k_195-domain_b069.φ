@@ -1,0 +1,99 @@
+dec_key dec
+
+plx_key default_plx
+
+field_in time maxi_master_time
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_maxi_ssc.json
+
+ttl 604800
+
+force em
+
+cmap data
+
+ra_key ra
+
+dec_key dec
+
+plx_key default_plx
+
+field_in sb_flux maxi_ssc_flux
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_nicer_master.json
+
+ttl 604800
+
+force em
+
+cmap data
+
+ra_key ra
+
+dec_key dec
+
+plx_key default_plx
+
+field_in exposure nicer_exposure_s
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/nmdb_stations.json
+
+ttl 604800
+
+force em
+
+map data
+
+lat_key latitude
+
+lon_key longitude
+
+alt_key altitude_m
+
+field_in rigidity_gv nmdb_rigidity_gv
+
+field_in hist_min nmdb_hist_min_rate
+
+field_in hist_max nmdb_hist_max_rate
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/nsidc_arctic_seaice.json
+
+ttl 604800
+
+force thermal
+
+path data.-1.extent_mkm2 arctic_seaice_extent_mkm2
+
+path data.-1.missing arctic_seaice_missing
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_rxte_master.json
+
+ttl 604800
+
+force em
+
+cmap data
+
+ra_key ra
+
+dec_key dec
+
+plx_key default_plx
+
+field_in exposure rxte_exposure_s
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_rxte_slew.json
+
+ttl 604800
+
+force em
+
+cmap data
+
+ra_key ra
+
+dec_key dec
+
+plx_key default_plx
+
+field_in stop_time rxte_slew_stop_time

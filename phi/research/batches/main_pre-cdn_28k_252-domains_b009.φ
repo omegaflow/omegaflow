@@ -1,0 +1,649 @@
+source hydrosphere_ndbc_buoy_45212
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45212.json
+wgs84 45.351 -82.84
+format json
+last_row WDIR hydrosphere_buoy_45212_wind_dir
+last_row WSPD hydrosphere_buoy_45212_wind_speed
+last_row WVHT hydrosphere_buoy_45212_wave_height
+last_row DPD hydrosphere_buoy_45212_dominant_period
+last_row PRES hydrosphere_buoy_45212_pressure
+last_row WTMP hydrosphere_buoy_45212_water_temp
+
+source hydrosphere_ndbc_buoy_45213
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45213.json
+wgs84 47.588 -86.588
+format json
+last_row WDIR hydrosphere_buoy_45213_wind_dir
+last_row WSPD hydrosphere_buoy_45213_wind_speed
+last_row WVHT hydrosphere_buoy_45213_wave_height
+last_row DPD hydrosphere_buoy_45213_dominant_period
+last_row PRES hydrosphere_buoy_45213_pressure
+last_row WTMP hydrosphere_buoy_45213_water_temp
+
+source hydrosphere_ndbc_buoy_45214
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45214.json
+wgs84 42.674 -87.026
+format json
+last_row WDIR hydrosphere_buoy_45214_wind_dir
+last_row WSPD hydrosphere_buoy_45214_wind_speed
+last_row WVHT hydrosphere_buoy_45214_wave_height
+last_row DPD hydrosphere_buoy_45214_dominant_period
+last_row PRES hydrosphere_buoy_45214_pressure
+last_row WTMP hydrosphere_buoy_45214_water_temp
+
+source hydrosphere_ndbc_buoy_45215
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45215.json
+wgs84 43.501 -76.539
+format json
+last_row WDIR hydrosphere_buoy_45215_wind_dir
+last_row WSPD hydrosphere_buoy_45215_wind_speed
+last_row WVHT hydrosphere_buoy_45215_wave_height
+last_row DPD hydrosphere_buoy_45215_dominant_period
+last_row PRES hydrosphere_buoy_45215_pressure
+last_row WTMP hydrosphere_buoy_45215_water_temp
+
+source hydrosphere_ndbc_buoy_45216
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45216.json
+wgs84 46.907 -89.354
+format json
+last_row WDIR hydrosphere_buoy_45216_wind_dir
+last_row WSPD hydrosphere_buoy_45216_wind_speed
+last_row WVHT hydrosphere_buoy_45216_wave_height
+last_row DPD hydrosphere_buoy_45216_dominant_period
+last_row PRES hydrosphere_buoy_45216_pressure
+last_row WTMP hydrosphere_buoy_45216_water_temp
+
+source hydrosphere_ndbc_buoy_45217
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45217.json
+wgs84 46.708 -92.0
+format json
+last_row WDIR hydrosphere_buoy_45217_wind_dir
+last_row WSPD hydrosphere_buoy_45217_wind_speed
+last_row WVHT hydrosphere_buoy_45217_wave_height
+last_row DPD hydrosphere_buoy_45217_dominant_period
+last_row PRES hydrosphere_buoy_45217_pressure
+last_row WTMP hydrosphere_buoy_45217_water_temp
+
+source hydrosphere_ndbc_buoy_45219
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45219.json
+wgs84 47.021 -91.625
+format json
+last_row WDIR hydrosphere_buoy_45219_wind_dir
+last_row WSPD hydrosphere_buoy_45219_wind_speed
+last_row WVHT hydrosphere_buoy_45219_wave_height
+last_row DPD hydrosphere_buoy_45219_dominant_period
+last_row PRES hydrosphere_buoy_45219_pressure
+last_row WTMP hydrosphere_buoy_45219_water_temp
+
+source hydrosphere_ndbc_buoy_45220
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45220.json
+wgs84 42.561 -79.432
+format json
+last_row WDIR hydrosphere_buoy_45220_wind_dir
+last_row WSPD hydrosphere_buoy_45220_wind_speed
+last_row WVHT hydrosphere_buoy_45220_wave_height
+last_row DPD hydrosphere_buoy_45220_dominant_period
+last_row PRES hydrosphere_buoy_45220_pressure
+last_row WTMP hydrosphere_buoy_45220_water_temp
+
+source hydrosphere_ndbc_buoy_45221
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45221.json
+wgs84 44.756 -73.355
+format json
+last_row WDIR hydrosphere_buoy_45221_wind_dir
+last_row WSPD hydrosphere_buoy_45221_wind_speed
+last_row WVHT hydrosphere_buoy_45221_wave_height
+last_row DPD hydrosphere_buoy_45221_dominant_period
+last_row PRES hydrosphere_buoy_45221_pressure
+last_row WTMP hydrosphere_buoy_45221_water_temp
+
+source hydrosphere_ndbc_buoy_45222
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45222.json
+wgs84 42.126 -80.148
+format json
+last_row WDIR hydrosphere_buoy_45222_wind_dir
+last_row WSPD hydrosphere_buoy_45222_wind_speed
+last_row WVHT hydrosphere_buoy_45222_wave_height
+last_row DPD hydrosphere_buoy_45222_dominant_period
+last_row PRES hydrosphere_buoy_45222_pressure
+last_row WTMP hydrosphere_buoy_45222_water_temp
+
+source hydrosphere_ndbc_buoy_45223
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_45223.json
+wgs84 42.144 -80.139
+format json
+last_row WDIR hydrosphere_buoy_45223_wind_dir
+last_row WSPD hydrosphere_buoy_45223_wind_speed
+last_row WVHT hydrosphere_buoy_45223_wave_height
+last_row DPD hydrosphere_buoy_45223_dominant_period
+last_row PRES hydrosphere_buoy_45223_pressure
+last_row WTMP hydrosphere_buoy_45223_water_temp
+
+source hydrosphere_ndbc_buoy_46004
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46004.json
+wgs84 50.93 -136.1
+format json
+last_row WDIR hydrosphere_buoy_46004_wind_dir
+last_row WSPD hydrosphere_buoy_46004_wind_speed
+last_row WVHT hydrosphere_buoy_46004_wave_height
+last_row DPD hydrosphere_buoy_46004_dominant_period
+last_row PRES hydrosphere_buoy_46004_pressure
+last_row WTMP hydrosphere_buoy_46004_water_temp
+
+source hydrosphere_ndbc_buoy_46011
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46011.json
+wgs84 34.937 -120.999
+format json
+last_row WDIR hydrosphere_buoy_46011_wind_dir
+last_row WSPD hydrosphere_buoy_46011_wind_speed
+last_row WVHT hydrosphere_buoy_46011_wave_height
+last_row DPD hydrosphere_buoy_46011_dominant_period
+last_row PRES hydrosphere_buoy_46011_pressure
+last_row WTMP hydrosphere_buoy_46011_water_temp
+
+source hydrosphere_ndbc_buoy_46014
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46014.json
+wgs84 39.225 -123.98
+format json
+last_row WDIR hydrosphere_buoy_46014_wind_dir
+last_row WSPD hydrosphere_buoy_46014_wind_speed
+last_row WVHT hydrosphere_buoy_46014_wave_height
+last_row DPD hydrosphere_buoy_46014_dominant_period
+last_row PRES hydrosphere_buoy_46014_pressure
+last_row WTMP hydrosphere_buoy_46014_water_temp
+
+source hydrosphere_ndbc_buoy_46015
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46015.json
+wgs84 42.754 -124.839
+format json
+last_row WDIR hydrosphere_buoy_46015_wind_dir
+last_row WSPD hydrosphere_buoy_46015_wind_speed
+last_row WVHT hydrosphere_buoy_46015_wave_height
+last_row DPD hydrosphere_buoy_46015_dominant_period
+last_row PRES hydrosphere_buoy_46015_pressure
+last_row WTMP hydrosphere_buoy_46015_water_temp
+
+source hydrosphere_ndbc_buoy_46028
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46028.json
+wgs84 35.763 -121.9
+format json
+last_row WDIR hydrosphere_buoy_46028_wind_dir
+last_row WSPD hydrosphere_buoy_46028_wind_speed
+last_row WVHT hydrosphere_buoy_46028_wave_height
+last_row DPD hydrosphere_buoy_46028_dominant_period
+last_row PRES hydrosphere_buoy_46028_pressure
+last_row WTMP hydrosphere_buoy_46028_water_temp
+
+source hydrosphere_ndbc_buoy_46035
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46035.json
+wgs84 57.034 -177.468
+format json
+last_row WDIR hydrosphere_buoy_46035_wind_dir
+last_row WSPD hydrosphere_buoy_46035_wind_speed
+last_row WVHT hydrosphere_buoy_46035_wave_height
+last_row DPD hydrosphere_buoy_46035_dominant_period
+last_row PRES hydrosphere_buoy_46035_pressure
+last_row WTMP hydrosphere_buoy_46035_water_temp
+
+source hydrosphere_ndbc_buoy_46036
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46036.json
+wgs84 48.36 -133.94
+format json
+last_row WDIR hydrosphere_buoy_46036_wind_dir
+last_row WSPD hydrosphere_buoy_46036_wind_speed
+last_row WVHT hydrosphere_buoy_46036_wave_height
+last_row DPD hydrosphere_buoy_46036_dominant_period
+last_row PRES hydrosphere_buoy_46036_pressure
+last_row WTMP hydrosphere_buoy_46036_water_temp
+
+source hydrosphere_ndbc_buoy_46041
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46041.json
+wgs84 47.351 -124.741
+format json
+last_row WDIR hydrosphere_buoy_46041_wind_dir
+last_row WSPD hydrosphere_buoy_46041_wind_speed
+last_row WVHT hydrosphere_buoy_46041_wave_height
+last_row DPD hydrosphere_buoy_46041_dominant_period
+last_row PRES hydrosphere_buoy_46041_pressure
+last_row WTMP hydrosphere_buoy_46041_water_temp
+
+source hydrosphere_ndbc_buoy_46042
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46042.json
+wgs84 36.787 -122.408
+format json
+last_row WDIR hydrosphere_buoy_46042_wind_dir
+last_row WSPD hydrosphere_buoy_46042_wind_speed
+last_row WVHT hydrosphere_buoy_46042_wave_height
+last_row DPD hydrosphere_buoy_46042_dominant_period
+last_row PRES hydrosphere_buoy_46042_pressure
+last_row WTMP hydrosphere_buoy_46042_water_temp
+
+source hydrosphere_ndbc_buoy_46050
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46050.json
+wgs84 44.679 -124.535
+format json
+last_row WDIR hydrosphere_buoy_46050_wind_dir
+last_row WSPD hydrosphere_buoy_46050_wind_speed
+last_row WVHT hydrosphere_buoy_46050_wave_height
+last_row DPD hydrosphere_buoy_46050_dominant_period
+last_row PRES hydrosphere_buoy_46050_pressure
+last_row WTMP hydrosphere_buoy_46050_water_temp
+
+source hydrosphere_ndbc_buoy_46060
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46060.json
+wgs84 60.571 -146.795
+format json
+last_row WDIR hydrosphere_buoy_46060_wind_dir
+last_row WSPD hydrosphere_buoy_46060_wind_speed
+last_row WVHT hydrosphere_buoy_46060_wave_height
+last_row DPD hydrosphere_buoy_46060_dominant_period
+last_row PRES hydrosphere_buoy_46060_pressure
+last_row WTMP hydrosphere_buoy_46060_water_temp
+
+source hydrosphere_ndbc_buoy_46061
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46061.json
+wgs84 60.23 -146.837
+format json
+last_row WDIR hydrosphere_buoy_46061_wind_dir
+last_row WSPD hydrosphere_buoy_46061_wind_speed
+last_row WVHT hydrosphere_buoy_46061_wave_height
+last_row DPD hydrosphere_buoy_46061_dominant_period
+last_row PRES hydrosphere_buoy_46061_pressure
+last_row WTMP hydrosphere_buoy_46061_water_temp
+
+source hydrosphere_ndbc_buoy_46066
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46066.json
+wgs84 52.776 -154.992
+format json
+last_row WDIR hydrosphere_buoy_46066_wind_dir
+last_row WSPD hydrosphere_buoy_46066_wind_speed
+last_row WVHT hydrosphere_buoy_46066_wave_height
+last_row DPD hydrosphere_buoy_46066_dominant_period
+last_row PRES hydrosphere_buoy_46066_pressure
+last_row WTMP hydrosphere_buoy_46066_water_temp
+
+source hydrosphere_ndbc_buoy_46070
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46070.json
+wgs84 55.048 175.246
+format json
+last_row WDIR hydrosphere_buoy_46070_wind_dir
+last_row WSPD hydrosphere_buoy_46070_wind_speed
+last_row WVHT hydrosphere_buoy_46070_wave_height
+last_row DPD hydrosphere_buoy_46070_dominant_period
+last_row PRES hydrosphere_buoy_46070_pressure
+last_row WTMP hydrosphere_buoy_46070_water_temp
+
+source hydrosphere_ndbc_buoy_46071
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46071.json
+wgs84 51.035 179.808
+format json
+last_row WDIR hydrosphere_buoy_46071_wind_dir
+last_row WSPD hydrosphere_buoy_46071_wind_speed
+last_row WVHT hydrosphere_buoy_46071_wave_height
+last_row DPD hydrosphere_buoy_46071_dominant_period
+last_row PRES hydrosphere_buoy_46071_pressure
+last_row WTMP hydrosphere_buoy_46071_water_temp
+
+source hydrosphere_ndbc_buoy_46072
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46072.json
+wgs84 51.645 -172.145
+format json
+last_row WDIR hydrosphere_buoy_46072_wind_dir
+last_row WSPD hydrosphere_buoy_46072_wind_speed
+last_row WVHT hydrosphere_buoy_46072_wave_height
+last_row DPD hydrosphere_buoy_46072_dominant_period
+last_row PRES hydrosphere_buoy_46072_pressure
+last_row WTMP hydrosphere_buoy_46072_water_temp
+
+source hydrosphere_ndbc_buoy_46073
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46073.json
+wgs84 54.985 -171.874
+format json
+last_row WDIR hydrosphere_buoy_46073_wind_dir
+last_row WSPD hydrosphere_buoy_46073_wind_speed
+last_row WVHT hydrosphere_buoy_46073_wave_height
+last_row DPD hydrosphere_buoy_46073_dominant_period
+last_row PRES hydrosphere_buoy_46073_pressure
+last_row WTMP hydrosphere_buoy_46073_water_temp
+
+source hydrosphere_ndbc_buoy_46075
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46075.json
+wgs84 53.938 -160.735
+format json
+last_row WDIR hydrosphere_buoy_46075_wind_dir
+last_row WSPD hydrosphere_buoy_46075_wind_speed
+last_row WVHT hydrosphere_buoy_46075_wave_height
+last_row DPD hydrosphere_buoy_46075_dominant_period
+last_row PRES hydrosphere_buoy_46075_pressure
+last_row WTMP hydrosphere_buoy_46075_water_temp
+
+source hydrosphere_ndbc_buoy_46076
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46076.json
+wgs84 59.508 -148.005
+format json
+last_row WDIR hydrosphere_buoy_46076_wind_dir
+last_row WSPD hydrosphere_buoy_46076_wind_speed
+last_row WVHT hydrosphere_buoy_46076_wave_height
+last_row DPD hydrosphere_buoy_46076_dominant_period
+last_row PRES hydrosphere_buoy_46076_pressure
+last_row WTMP hydrosphere_buoy_46076_water_temp
+
+source hydrosphere_ndbc_buoy_46077
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46077.json
+wgs84 57.869 -154.211
+format json
+last_row WDIR hydrosphere_buoy_46077_wind_dir
+last_row WSPD hydrosphere_buoy_46077_wind_speed
+last_row WVHT hydrosphere_buoy_46077_wave_height
+last_row DPD hydrosphere_buoy_46077_dominant_period
+last_row PRES hydrosphere_buoy_46077_pressure
+last_row WTMP hydrosphere_buoy_46077_water_temp
+
+source hydrosphere_ndbc_buoy_46078
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46078.json
+wgs84 55.561 -152.599
+format json
+last_row WDIR hydrosphere_buoy_46078_wind_dir
+last_row WSPD hydrosphere_buoy_46078_wind_speed
+last_row WVHT hydrosphere_buoy_46078_wave_height
+last_row DPD hydrosphere_buoy_46078_dominant_period
+last_row PRES hydrosphere_buoy_46078_pressure
+last_row WTMP hydrosphere_buoy_46078_water_temp
+
+source hydrosphere_ndbc_buoy_46080
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46080.json
+wgs84 57.91 -150.129
+format json
+last_row WDIR hydrosphere_buoy_46080_wind_dir
+last_row WSPD hydrosphere_buoy_46080_wind_speed
+last_row WVHT hydrosphere_buoy_46080_wave_height
+last_row DPD hydrosphere_buoy_46080_dominant_period
+last_row PRES hydrosphere_buoy_46080_pressure
+last_row WTMP hydrosphere_buoy_46080_water_temp
+
+source hydrosphere_ndbc_buoy_46081
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46081.json
+wgs84 60.802 -148.283
+format json
+last_row WDIR hydrosphere_buoy_46081_wind_dir
+last_row WSPD hydrosphere_buoy_46081_wind_speed
+last_row WVHT hydrosphere_buoy_46081_wave_height
+last_row DPD hydrosphere_buoy_46081_dominant_period
+last_row PRES hydrosphere_buoy_46081_pressure
+last_row WTMP hydrosphere_buoy_46081_water_temp
+
+source hydrosphere_ndbc_buoy_46082
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46082.json
+wgs84 59.67 -143.353
+format json
+last_row WDIR hydrosphere_buoy_46082_wind_dir
+last_row WSPD hydrosphere_buoy_46082_wind_speed
+last_row WVHT hydrosphere_buoy_46082_wave_height
+last_row DPD hydrosphere_buoy_46082_dominant_period
+last_row PRES hydrosphere_buoy_46082_pressure
+last_row WTMP hydrosphere_buoy_46082_water_temp
+
+source hydrosphere_ndbc_buoy_46083
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46083.json
+wgs84 58.276 -138.024
+format json
+last_row WDIR hydrosphere_buoy_46083_wind_dir
+last_row WSPD hydrosphere_buoy_46083_wind_speed
+last_row WVHT hydrosphere_buoy_46083_wave_height
+last_row DPD hydrosphere_buoy_46083_dominant_period
+last_row PRES hydrosphere_buoy_46083_pressure
+last_row WTMP hydrosphere_buoy_46083_water_temp
+
+source hydrosphere_ndbc_buoy_46084
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46084.json
+wgs84 56.614 -136.04
+format json
+last_row WDIR hydrosphere_buoy_46084_wind_dir
+last_row WSPD hydrosphere_buoy_46084_wind_speed
+last_row WVHT hydrosphere_buoy_46084_wave_height
+last_row DPD hydrosphere_buoy_46084_dominant_period
+last_row PRES hydrosphere_buoy_46084_pressure
+last_row WTMP hydrosphere_buoy_46084_water_temp
+
+source hydrosphere_ndbc_buoy_46085
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46085.json
+wgs84 55.84 -142.895
+format json
+last_row WDIR hydrosphere_buoy_46085_wind_dir
+last_row WSPD hydrosphere_buoy_46085_wind_speed
+last_row WVHT hydrosphere_buoy_46085_wave_height
+last_row DPD hydrosphere_buoy_46085_dominant_period
+last_row PRES hydrosphere_buoy_46085_pressure
+last_row WTMP hydrosphere_buoy_46085_water_temp
+
+source hydrosphere_ndbc_buoy_46087
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46087.json
+wgs84 48.493 -124.727
+format json
+last_row WDIR hydrosphere_buoy_46087_wind_dir
+last_row WSPD hydrosphere_buoy_46087_wind_speed
+last_row WVHT hydrosphere_buoy_46087_wave_height
+last_row DPD hydrosphere_buoy_46087_dominant_period
+last_row PRES hydrosphere_buoy_46087_pressure
+last_row WTMP hydrosphere_buoy_46087_water_temp
+
+source hydrosphere_ndbc_buoy_46088
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46088.json
+wgs84 48.332 -123.179
+format json
+last_row WDIR hydrosphere_buoy_46088_wind_dir
+last_row WSPD hydrosphere_buoy_46088_wind_speed
+last_row WVHT hydrosphere_buoy_46088_wave_height
+last_row DPD hydrosphere_buoy_46088_dominant_period
+last_row PRES hydrosphere_buoy_46088_pressure
+last_row WTMP hydrosphere_buoy_46088_water_temp
+
+source hydrosphere_ndbc_buoy_46089
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46089.json
+wgs84 45.928 -125.815
+format json
+last_row WDIR hydrosphere_buoy_46089_wind_dir
+last_row WSPD hydrosphere_buoy_46089_wind_speed
+last_row WVHT hydrosphere_buoy_46089_wave_height
+last_row DPD hydrosphere_buoy_46089_dominant_period
+last_row PRES hydrosphere_buoy_46089_pressure
+last_row WTMP hydrosphere_buoy_46089_water_temp
+
+source hydrosphere_ndbc_buoy_46092
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46092.json
+wgs84 36.751 -122.029
+format json
+last_row WDIR hydrosphere_buoy_46092_wind_dir
+last_row WSPD hydrosphere_buoy_46092_wind_speed
+last_row WVHT hydrosphere_buoy_46092_wave_height
+last_row DPD hydrosphere_buoy_46092_dominant_period
+last_row PRES hydrosphere_buoy_46092_pressure
+last_row WTMP hydrosphere_buoy_46092_water_temp
+
+source hydrosphere_ndbc_buoy_46108
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46108.json
+wgs84 59.598 -151.828
+format json
+last_row WDIR hydrosphere_buoy_46108_wind_dir
+last_row WSPD hydrosphere_buoy_46108_wind_speed
+last_row WVHT hydrosphere_buoy_46108_wave_height
+last_row DPD hydrosphere_buoy_46108_dominant_period
+last_row PRES hydrosphere_buoy_46108_pressure
+last_row WTMP hydrosphere_buoy_46108_water_temp
+
+source hydrosphere_ndbc_buoy_46118
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46118.json
+wgs84 48.724 -122.576
+format json
+last_row WDIR hydrosphere_buoy_46118_wind_dir
+last_row WSPD hydrosphere_buoy_46118_wind_speed
+last_row WVHT hydrosphere_buoy_46118_wave_height
+last_row DPD hydrosphere_buoy_46118_dominant_period
+last_row PRES hydrosphere_buoy_46118_pressure
+last_row WTMP hydrosphere_buoy_46118_water_temp
+
+source hydrosphere_ndbc_buoy_46119
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46119.json
+wgs84 47.967 -124.95
+format json
+last_row WDIR hydrosphere_buoy_46119_wind_dir
+last_row WSPD hydrosphere_buoy_46119_wind_speed
+last_row WVHT hydrosphere_buoy_46119_wave_height
+last_row DPD hydrosphere_buoy_46119_dominant_period
+last_row PRES hydrosphere_buoy_46119_pressure
+last_row WTMP hydrosphere_buoy_46119_water_temp
+
+source hydrosphere_ndbc_buoy_46120
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46120.json
+wgs84 47.761 -122.397
+format json
+last_row WDIR hydrosphere_buoy_46120_wind_dir
+last_row WSPD hydrosphere_buoy_46120_wind_speed
+last_row WVHT hydrosphere_buoy_46120_wave_height
+last_row DPD hydrosphere_buoy_46120_dominant_period
+last_row PRES hydrosphere_buoy_46120_pressure
+last_row WTMP hydrosphere_buoy_46120_water_temp
+
+source hydrosphere_ndbc_buoy_46123
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46123.json
+wgs84 47.375 -123.008
+format json
+last_row WDIR hydrosphere_buoy_46123_wind_dir
+last_row WSPD hydrosphere_buoy_46123_wind_speed
+last_row WVHT hydrosphere_buoy_46123_wave_height
+last_row DPD hydrosphere_buoy_46123_dominant_period
+last_row PRES hydrosphere_buoy_46123_pressure
+last_row WTMP hydrosphere_buoy_46123_water_temp
+
+source hydrosphere_ndbc_buoy_46125
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46125.json
+wgs84 47.907 -122.627
+format json
+last_row WDIR hydrosphere_buoy_46125_wind_dir
+last_row WSPD hydrosphere_buoy_46125_wind_speed
+last_row WVHT hydrosphere_buoy_46125_wave_height
+last_row DPD hydrosphere_buoy_46125_dominant_period
+last_row PRES hydrosphere_buoy_46125_pressure
+last_row WTMP hydrosphere_buoy_46125_water_temp
+
+source hydrosphere_ndbc_buoy_46131
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46131.json
+wgs84 49.91 -124.98
+format json
+last_row WDIR hydrosphere_buoy_46131_wind_dir
+last_row WSPD hydrosphere_buoy_46131_wind_speed
+last_row WVHT hydrosphere_buoy_46131_wave_height
+last_row DPD hydrosphere_buoy_46131_dominant_period
+last_row PRES hydrosphere_buoy_46131_pressure
+last_row WTMP hydrosphere_buoy_46131_water_temp
+
+source hydrosphere_ndbc_buoy_46132
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46132.json
+wgs84 49.78 -127.89
+format json
+last_row WDIR hydrosphere_buoy_46132_wind_dir
+last_row WSPD hydrosphere_buoy_46132_wind_speed
+last_row WVHT hydrosphere_buoy_46132_wave_height
+last_row DPD hydrosphere_buoy_46132_dominant_period
+last_row PRES hydrosphere_buoy_46132_pressure
+last_row WTMP hydrosphere_buoy_46132_water_temp

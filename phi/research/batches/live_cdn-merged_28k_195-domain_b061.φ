@@ -1,0 +1,99 @@
+field_in percent_mangrove mangrove_percent_total
+
+url https://raw.githubusercontent.com/davidmegginson/ourairports-data/main/airports.csv
+
+ttl 86400
+
+force em
+
+format csv
+
+pos airport_latitude airport_longitude
+
+field_in 2 airport_type
+
+field_in 3 airport_name
+
+field_in 4 airport_latitude
+
+field_in 5 airport_longitude
+
+field_in 6 elevation_ft
+
+field_in 10 municipality
+
+field_in 11 scheduled_service
+
+field_in 12 icao_code
+
+field_in 13 iata_code
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/co2_emissions_countries.json
+
+ttl 86400
+
+force diffusion
+
+map data
+
+lat_key latitude
+
+lon_key longitude
+
+field_in country country_name
+
+field_in iso3 country_iso3
+
+field_in co2_kt co2_kt
+
+field_in year data_year
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/pm25_exposure_countries.json
+
+ttl 86400
+
+force diffusion
+
+map data
+
+lat_key latitude
+
+lon_key longitude
+
+field_in country country_name
+
+field_in iso3 country_iso3
+
+field_in pm25_ugm3 pm25_ugm3
+
+field_in year data_year
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/population_countries.json
+
+ttl 86400
+
+force diffusion
+
+map data
+
+lat_key latitude
+
+lon_key longitude
+
+field_in country country_name
+
+field_in iso3 country_iso3
+
+field_in population population_estimate
+
+field_in year data_year
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/heasarc_batse_grb.json
+
+ttl 604800
+
+force em
+
+cmap data
+
+ra_key ra

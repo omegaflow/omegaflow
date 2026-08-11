@@ -1,0 +1,99 @@
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_orion_region.json
+
+ttl 604800
+
+force em
+
+cmap data
+
+ra_key RAJ2000
+
+dec_key DEJ2000
+
+field_in recno vizier_orion_region_recno
+
+field_in Seq vizier_orion_region_Seq
+
+field_in ePos vizier_orion_region_ePos
+
+field_in CTot vizier_orion_region_CTot
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_prigozhin_pulsars.json
+
+ttl 604800
+
+force em
+
+cmap data
+
+ra_key RAJ2000
+
+dec_key DEJ2000
+
+field_in recno vizier_prigozhin_pulsars_recno
+
+field_in Name vizier_prigozhin_pulsars_Name
+
+field_in imag vizier_prigozhin_pulsars_imag
+
+field_in zphot vizier_prigozhin_pulsars_zphot
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_qso_variable.json
+
+ttl 604800
+
+force em
+
+cmap data
+
+ra_key _RA
+
+dec_key _DE
+
+plx_key default_plx
+
+field_in Mass qso_variable_mass
+
+field_in Dist qso_variable_dist_pc
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_sdss_qso.json
+
+ttl 604800
+
+force em
+
+cmap data
+
+ra_key RAJ2000
+
+dec_key DEJ2000
+
+field_in recno vizier_sdss_qso_recno
+
+field_in SDSS vizier_sdss_qso_SDSS
+
+field_in umag vizier_sdss_qso_umag
+
+field_in e_umag vizier_sdss_qso_e_umag
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_snrs.json
+
+ttl 604800
+
+force em
+
+cmap data
+
+ra_key RAJ2000
+
+dec_key DEJ2000
+
+field_in recno vizier_snrs_recno
+
+field_in SNR vizier_snrs_SNR
+
+field_in MajDiam vizier_snrs_MajDiam
+
+field_in MinDiam vizier_snrs_MinDiam
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_tycho2.json

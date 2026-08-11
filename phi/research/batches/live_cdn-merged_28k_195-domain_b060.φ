@@ -1,0 +1,99 @@
+field_in approx_source_var astro_xmm_sources_approx_source_var
+
+field_in redshift_tpz_flag_zconf astro_xmm_sources_redshift_tpz_flag_zconf
+
+field_in redshift_lph_z_best astro_xmm_sources_redshift_lph_z_best
+
+field_in redshift_lph_flag_zconf astro_xmm_sources_redshift_lph_flag_zconf
+
+field_in redshift_info_distance astro_xmm_sources_redshift_info_distance
+
+url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/nasa_meteorite_landings_{latest}.json
+
+ttl 604800
+
+force gravity
+
+on earth 0 0
+
+map features
+
+lat_key lat
+
+lon_key lon
+
+field_in properties.mass geosphere_meteorite_mass_g
+
+field_in properties.name geosphere_meteorite_name
+
+url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/geonuclear_power_plants_{latest}.json
+
+ttl 604800
+
+force thermal
+
+on earth 0 0
+
+format universal
+
+map .
+
+lat_key Latitude
+
+lon_key Longitude
+
+field_in Capacity geonuclear_capacity_mw
+
+url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/wri_global_power_plants_{latest}.json
+
+ttl 604800
+
+force thermal
+
+on earth 0 0
+
+format universal
+
+map .
+
+lat_key latitude
+
+lon_key longitude
+
+field_in capacity_mw wri_plant_capacity_mw
+
+field_in primary_fuel wri_primary_fuel
+
+url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_coastline.geojson
+
+ttl 86400
+
+force em
+
+map features
+
+lat_key geometry.coordinates.1
+
+lon_key geometry.coordinates.0
+
+field_in properties.name coastline_name
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/mangrove_countries.json
+
+ttl 86400
+
+force diffusion
+
+map data
+
+lat_key latitude
+
+lon_key longitude
+
+field_in country country_name
+
+field_in iso3 country_iso3
+
+field_in country_area_km2 country_area_km2
+
+field_in mangrove_area_km2 mangrove_area_km2

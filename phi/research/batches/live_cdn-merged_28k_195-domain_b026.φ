@@ -1,0 +1,601 @@
+url https://its-live-data.jpl.nasa.gov/vel_api/v1/coverage?region=ANT&limit=500&format=json
+ttl 86400
+force em
+body earth
+at sun 1.0
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+  field_in properties.v_mean v_mean
+  field_in properties.v0 v0
+  field_in properties.date_start date_start
+  field_in properties.date_end date_end
+  field_in properties.mission mission
+
+url https://nsidc.org/api/itslive/greenland
+at sun 1.0
+ttl 86400
+force gravity
+
+url https://its-live-data.jpl.nasa.gov/vel_api/v1/coverage?region=GRE&limit=500&format=json
+ttl 86400
+force em
+body earth
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+  field_in properties.v_mean v_mean
+  field_in properties.v0 v0
+  field_in properties.date_start date_start
+  field_in properties.date_end date_end
+  field_in properties.mission mission
+
+url https://epqs.nationalmap.gov/v1/json?x={lon}&y={lat}&units=Meters&output=json
+ttl 86400
+force em
+body earth
+  field value value
+  field resolution resolution
+
+url https://www.ncei.noaa.gov/access/paleo-search/study/search.json?dataTypeId=18&limit=500
+ttl 86400
+force diffusion
+at sun 1.0
+map .
+lat_key site.latitude
+lon_key site.longitude
+  field_in studyId studyId
+  field_in title title
+  field_in investigators.0.name name
+  field_in site.name name
+  field_in site.elevation elevation
+  field_in abstract abstract
+  field_in publication.0.title title
+  field_in publication.0.year year
+
+url https://www.ngdc.noaa.gov/hazel/hazard-service/api/v1/volcanoes?maxRows=2000&startRow=1
+ttl 86400
+force seismic-surface
+map items
+lat_key latitude
+lon_key longitude
+  field_in name name
+  field_in elevation elevation
+  field_in deathsTotal deathsTotal
+  field_in year year
+
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_annmean_gl.txt
+ttl 86400
+force diffusion
+on earth 19.5362 -155.5763
+last_line atmosphere_co2_annual_mean_global
+  field 0 year
+  field 1 co2_annual_mean_ppm
+  field 2 co2_uncertainty_ppm
+field_in 0 year
+field_in 1 co2_ppm_mean
+field_in 2 co2_ppm_uncertainty
+
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_mm_mlo.txt
+ttl 86400
+force diffusion
+on earth 19.5362 -155.5763
+last_row average atmosphere_co2_ppm_mlo_monthly
+
+url https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json?type=currents
+ttl 86400
+force advective
+at sun 1.0
+map stations
+lat_key lat
+lon_key lng
+  field_in id id
+  field_in name name
+field_in state state
+
+url https://www.cpc.ncep.noaa.gov/data/indices/sstoi.indices
+ttl 86400
+force thermal
+on earth 0.0 -170.0
+format universal
+rows
+field_in 0 year
+field_in 1 month
+field_in 3 nino12_sst_c
+field_in 4 nino12_sst_anom_c
+field_in 7 nino34_sst_c
+field_in 8 nino34_sst_anom_c
+
+url https://psl.noaa.gov/data/correlation/pdo.data
+ttl 86400
+force thermal
+on earth 40.0 -170.0
+format universal
+rows
+field_in 0 year
+field_in 1 month
+field_in 2 pdo_index
+
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=daily-summaries&dataTypes=TMAX,TMIN,PRCP,SNOW&stations=USW00013739&startDate={week_ago}&endDate={today}&includeAttributes=false&format=json&limit=10000
+ttl 86400
+force thermal
+at sun 1.0
+map .
+lat_key LATITUDE
+lon_key LONGITUDE
+  field_in STATION STATION
+  field_in NAME NAME
+  field_in TMAX TMAX
+  field_in TMIN TMIN
+  field_in PRCP PRCP
+  field_in SNOW SNOW
+  field_in SNWD SNWD
+
+url https://www.ncei.noaa.gov/pub/data/ghcn/daily/ghcnd-stations.txt
+ttl 86400
+force diffusion
+at sun 1.0
+format universal
+map data
+field_in 0 station_id
+field_in 3 elevation_m
+field_in 4 state
+field_in 5 station_name
+field_in 1 station_latitude
+field_in 2 station_longitude
+field_in 3 station_elevation_m
+lat_key 1
+lon_key 2
+
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_gr_gl.txt
+ttl 86400
+force diffusion
+on earth 0.0 0.0
+format universal
+rows
+  field_in 0 year
+  field_in 1 co2_annual_mean_ppm
+  field_in 2 co2_uncertainty_ppm
+
+url https://gml.noaa.gov/webdata/ccgg/trends/sf6/sf6_mm_gl.txt
+ttl 86400
+force diffusion
+on earth 0.0 0.0
+format universal
+rows
+field_in 0 year
+field_in 1 month
+field_in 2 sf6_ppt_mean
+field_in 3 sf6_ppt_uncertainty
+
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&dataTypes=TEMP,MAX,MIN,PRCP,WDSP,SLP,VISIB&stations=72420314733,10637099999,47678099999,94120099999&startDate={week_ago}&endDate={today}&format=json
+ttl 86400
+force thermal
+at sun 1.0
+map .
+lat_key LATITUDE
+lon_key LONGITUDE
+  field_in STATION STATION
+  field_in NAME NAME
+  field_in DATE DATE
+  field_in TEMP TEMP
+  field_in MAX MAX
+  field_in MIN MIN
+  field_in PRCP PRCP
+  field_in WDSP WDSP
+  field_in SLP SLP
+  field_in VISIB VISIB
+
+url https://www.ncei.noaa.gov/data/international-best-track-archive-for-climate-stewardship-ibtracs/v04r00/access/csv/ibtracs.last3years.list.v04r00.csv
+ttl 86400
+force acoustic
+at sun 1.0
+format universal
+map data
+lat_key LAT
+lon_key LON
+field_in NAME storm_name
+field_in SID storm_id
+field_in SEASON season_year
+field_in ISO_TIME timestamp_utc
+field_in WMO_WIND max_wind_kt
+field_in WMO_PRES min_pressure_hpa
+field_in BASIN basin_code
+
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&dataTypes=TEMP,DEWP,WDSP,PRCP,SLP,MAX,MIN&stations=USW00013739&startDate={week_ago}&endDate={today}&includeAttributes=false&format=json
+ttl 86400
+force thermal
+at sun 1.0
+map .
+lat_key LATITUDE
+lon_key LONGITUDE
+  field_in STATION STATION
+  field_in NAME NAME
+  field_in TEMP TEMP
+  field_in MAX MAX
+  field_in MIN MIN
+  field_in WDSP WDSP
+  field_in PRCP PRCP
+  field_in SLP SLP
+
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&dataTypes=TEMP,DEWP,WDSP,PRCP,SLP,MAX,MIN&stations=USW00094728&startDate={week_ago}&endDate={today}&includeAttributes=false&format=json
+ttl 86400
+force thermal
+at sun 1.0
+map .
+lat_key LATITUDE
+lon_key LONGITUDE
+  field_in STATION STATION
+  field_in NAME NAME
+  field_in TEMP TEMP
+  field_in MAX MAX
+  field_in MIN MIN
+  field_in WDSP WDSP
+  field_in PRCP PRCP
+
+url https://www.ncei.noaa.gov/access/paleo-search/study/search.json?dataPublisher=NOAA&dataType=Tree+Ring&minLat=30&maxLat=90&minLon=-180&maxLon=180&headersOnly=true
+ttl 86400
+force diffusion
+at sun 1.0
+map study
+lat_key site.0.geo.geometry.coordinates.1
+lon_key site.0.geo.geometry.coordinates.0
+  field_in site.0.siteName siteName
+  field_in site.0.elevation elevation
+  field_in earliestYearBP earliestYearBP
+  field_in mostRecentYearBP mostRecentYearBP
+field_in investigator investigator
+  field_in species.0.speciesCode speciesCode
+
+url https://www.ncei.noaa.gov/access/paleo-search/study/search.json?dataPublisher=NOAA&dataType=Tree+Ring&minLat=-90&maxLat=30&minLon=-180&maxLon=180&headersOnly=true
+ttl 86400
+force diffusion
+at sun 1.0
+map study
+lat_key site.0.geo.geometry.coordinates.1
+lon_key site.0.geo.geometry.coordinates.0
+  field_in site.0.siteName siteName
+  field_in site.0.elevation elevation
+  field_in earliestYearBP earliestYearBP
+  field_in mostRecentYearBP mostRecentYearBP
+  field_in species.0.speciesCode speciesCode
+
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-month&dataTypes=TMAX,TMIN,PRCP,TAVG&stations=USW00013739&startDate={year}-{month}-01&endDate={year}-{month}-{day}&includeAttributes=false&format=json&limit=5000
+ttl 86400
+force thermal
+at sun 1.0
+map .
+lat_key LATITUDE
+lon_key LONGITUDE
+  field_in STATION STATION
+  field_in NAME NAME
+  field_in TMAX TMAX
+  field_in TMIN TMIN
+  field_in TAVG TAVG
+  field_in PRCP PRCP
+
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=normals-daily&dataTypes=TEMP_NORMAL_MAX,TEMP_NORMAL_MIN,PRCP_NORMAL&stations=GM000003026,USW00094728,UK000003772,JN000047412&startDate=2010-01-01&endDate=2010-01-31&format=json
+ttl 86400
+force thermal
+at sun 1.0
+map .
+lat_key LATITUDE
+lon_key LONGITUDE
+  field_in STATION STATION
+  field_in NAME NAME
+  field_in TEMP_NORMAL_MAX TEMP_NORMAL_MAX
+  field_in TEMP_NORMAL_MIN TEMP_NORMAL_MIN
+  field_in PRCP_NORMAL PRCP_NORMAL
+
+url https://gis.ngdc.noaa.gov/arcgis/rest/services/DEM_global_mosaic_hillshade/ImageServer/identify?geometry=%7B%22x%22:{lon},%22y%22:{lat}%7D&geometryType=esriGeometryPoint&returnGeometry=false&f=json
+ttl 86400
+force gravity
+on earth 47.3769 8.5417
+  field value value
+  field objectId objectId
+
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-month&dataTypes=TMAX,TMIN,PRCP,TAVG,SNOW&stations=USW00094728&startDate={year}-01-01&endDate={year}-{month}-{day}&format=json
+ttl 86400
+force thermal
+on earth 0 0
+map
+lat_key LATITUDE
+lon_key LONGITUDE
+  field STATION STATION
+  field NAME NAME
+  field DATE DATE
+  field TMAX TMAX
+  field TMIN TMIN
+  field TAVG TAVG
+  field PRCP PRCP
+
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-month&dataTypes=TMAX,TMIN,PRCP,TAVG,SNOW,SNWD&stations=GM000003026,GM000003946,UKM00003772,USW00094728&startDate={year}-01-01&endDate={today}&format=json
+ttl 86400
+force thermal
+at sun 1.0
+map .
+lat_key latitude
+lon_key longitude
+  field_in TMAX TMAX
+  field_in TMIN TMIN
+  field_in TAVG TAVG
+  field_in PRCP PRCP
+
+url https://www.ncei.noaa.gov/data/oceans/woa/DATA_ANALYSIS/3M_HEAT_CONTENT/DATA/basin/yearly/h22-w0-700m.dat
+ttl 86400
+force thermal
+on earth 0.0 0.0
+format universal
+map data
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in 0 year
+field_in 1 ohc_world_zj
+field_in 2 ohc_nh_zj
+field_in 3 ohc_sh_zj
+field_in 4 ohc_tropics_zj
+
+url https://www.ncei.noaa.gov/access/world-ocean-database-select/dbsearch.html?DirectAccess=yes&type=json&survey=WOCE&variable=T,S,O2,NO3,PO4,SiO3&limit=300
+ttl 86400
+force diffusion
+at sun 1.0
+map profiles
+lat_key latitude
+lon_key longitude
+  field_in cast_id cast_id
+  field_in cruise_id cruise_id
+  field_in date date
+  field_in max_depth max_depth
+  field_in temp_surface temp_surface
+  field_in sal_surface sal_surface
+
+url https://www.ngdc.noaa.gov/hazel/hazard-service/api/v1/earthquakes?maxRows=2000&startRow=1&orderBy=year&ascending=false
+ttl 86400
+force seismic-body
+on earth 0 0
+map items
+lat_key items.2.latitude
+lon_key items.2.latitude
+  field_in year year
+  field_in eqMagnitude eqMagnitude
+  field_in eqMagUnk eqMagUnk
+  field_in damageAmountOrder damageAmountOrder
+  field_in deaths deaths
+  field_in damageMillionsDollars damageMillionsDollars
+field_in country country
+
+url https://www.ncei.noaa.gov/access/paleo-search/study/search.json?dataPublisher=NOAA&dataType=Coral&headersOnly=true
+ttl 86400
+force thermal
+at sun 1.0
+map study
+lat_key site.0.geo.geometry.coordinates.1
+lon_key site.0.geo.geometry.coordinates.0
+  field_in site.0.siteName siteName
+  field_in earliestYearBP earliestYearBP
+  field_in mostRecentYearBP mostRecentYearBP
+field_in investigator investigator
+
+url https://www.ncei.noaa.gov/paleo-search/study/search.json?dataPublisher=NOAA&dataTypeId=2&keyword=coral&access=public&format=json&limit=200
+ttl 86400
+force diffusion
+at sun 1.0
+map studyList
+lat_key site.geo.geometry.coordinates.1
+lon_key site.geo.geometry.coordinates.0
+  field_in xmlId xmlId
+  field_in studyName studyName
+  field_in earliestYearBP earliestYearBP
+  field_in mostRecentYearBP mostRecentYearBP
+  field_in site.siteName siteName
+
+url https://www.ncei.noaa.gov/access/paleo-search/study/search.json?dataPublisher=NOAA&dataType=Ice+Core&headersOnly=true
+ttl 86400
+force thermal
+at sun 1.0
+map study
+lat_key site.0.geo.geometry.coordinates.1
+lon_key site.0.geo.geometry.coordinates.0
+  field_in site.0.siteName siteName
+  field_in site.0.elevation elevation
+  field_in earliestYearBP earliestYearBP
+  field_in mostRecentYearBP mostRecentYearBP
+field_in investigator investigator
+
+url https://www.ncei.noaa.gov/access/paleo-search/study/search.json?dataPublisher=NOAA&dataType=Pollen&headersOnly=true
+ttl 86400
+force diffusion
+at sun 1.0
+map study
+lat_key site.0.geo.geometry.coordinates.1
+lon_key site.0.geo.geometry.coordinates.0
+  field_in site.0.siteName siteName
+  field_in site.0.elevation elevation
+  field_in earliestYearBP earliestYearBP
+  field_in mostRecentYearBP mostRecentYearBP
+
+url https://www.ncei.noaa.gov/access/paleo-search/study/search.json?dataPublisher=NOAA&dataType=Speleothem&headersOnly=true
+ttl 86400
+force thermal
+at sun 1.0
+map study
+lat_key site.0.geo.geometry.coordinates.1
+lon_key site.0.geo.geometry.coordinates.0
+  field_in site.0.siteName siteName
+  field_in site.0.elevation elevation
+  field_in earliestYearBP earliestYearBP
+  field_in mostRecentYearBP mostRecentYearBP
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=predictions&application=batch16&begin_date={year}{month}{day}&end_date={year}{month}{day}&station=8518750&datum=MLLW&units=metric&time_zone=gmt&format=json
+ttl 86400
+force acoustic
+on earth 40.7 -74.01
+map predictions
+  field_in t t
+  field_in v v
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20260726&end_date=20260727&station=9414290&product=predictions&datum=MSL&units=metric&time_zone=gmt&format=json
+ttl 86400
+force diffusion
+at sun 1.0
+map predictions
+  field_in t t
+  field_in v v
+
+url https://www.ngdc.noaa.gov/geomag-web/calculators/calculateIgrfwmm?lat={lat}&lon={lon}&elevation=0&resultFormat=json&magneticComponent=x
+ttl 86400
+force em
+at sun 1
+map result.0
+  field_in decl decl
+  field_in incl incl
+  field_in bx bx
+  field_in by by
+  field_in bz bz
+  field_in totalintensity totalintensity
+
+url https://www.ncei.noaa.gov/access/world-ocean-database-select/dbsearch.html?DirectAccess=yes&type=json&depth=0&lat1=-90&lat2=90&lon1=-180&lon2=180&variable=T,S,O2&startDate={today}&endDate={today}&limit=300
+ttl 86400
+force diffusion
+at sun 1.0
+map .
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+  field_in Temperature Temperature
+  field_in Salinity Salinity
+  field_in Oxygen Oxygen
+
+url https://www.orfeus-eu.org/fdsnws/station/1/query?level=station&format=text&starttime=2020-01-01&endtime=9999-01-01
+ttl 86400
+force seismic-body
+at sun 1.0
+format universal
+rows
+lat_key Latitude
+lon_key Longitude
+  field_in Network Network
+  field_in Station Station
+  field_in Elevation Elevation
+
+url https://www.orfeus-eu.org/fdsnws/station/1/query?level=station&format=text&starttime=2020-01-01
+ttl 86400
+force seismic-body
+at sun 1.0
+format universal
+rows
+field_in 0 geosphere_orfeus_network
+field_in 1 geosphere_orfeus_station
+field_in 4 geosphere_orfeus_elevation_m
+lat_key 2
+lon_key 3
+
+url https://gis1.servirglobal.net/arcgis/rest/services/SMAP/SM_1km/MapServer/0/query?where=1%3D1&outFields=*&f=json&resultRecordCount=500
+ttl 86400
+force diffusion
+at sun 1.0
+map features
+lat_key geometry.y
+lon_key geometry.x
+  field_in attributes.sm sm
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=6.0&orderby=time&limit=20
+ttl 86400
+force em
+on earth 0 0
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+  field_in properties.mag mag
+  field_in properties.place place
+  field_in properties.time time
+  field_in properties.tsunami tsunami
+  field_in properties.alert alert
+  field_in properties.sig sig
+  field_in properties.cdi cdi
+  field_in properties.mmi mmi
+  field_in properties.felt felt
+depth_key geometry.coordinates.2
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2015-01-01&endtime=2024-12-31&minmagnitude=4.5&limit=300
+ttl 86400
+force seismic-surface
+at sun 1.0
+geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
+
+url https://nwis.waterdata.usgs.gov/usa/nwis/peak?state_cd=all&format=rdb&date_format=YYYY-MM-DD&peak_begin_date={year}-01-01&peak_end_date={year}-12-31
+ttl 86400
+force diffusion
+at sun 1.0
+format text
+rows
+lat_key dec_lat_va
+lon_key dec_long_va
+  field_in site_no site_no
+  field_in station_nm station_nm
+  field_in peak_dt peak_dt
+  field_in peak_va peak_va
+  field_in gage_ht gage_ht
+
+url https://www.ncei.noaa.gov/erddap/griddap/cfs_reanl_mm_ocnh_by_time16_depth_below_sea_lat_lon.csv?u_component_of_current%5B(last)%5D%5B(0)%5D%5B(-60.0):20:(60.0)%5D%5B(0.125):20:(359.875)%5D,v_component_of_current%5B(last)%5D%5B(0)%5D%5B(-60.0):20:(60.0)%5D%5B(0.125):20:(359.875)%5D
+ttl 86400
+force diffusion
+at sun 1.0
+format text
+rows
+lat_key latitude
+lon_key longitude
+  field_in u_component_of_current u_component_of_current
+  field_in v_component_of_current v_component_of_current
+
+url https://erddap.emodnet-physics.eu/erddap/griddap/EMODNET_SEA_LEVEL_MONTHLY_MEAN_DESEASONALIZED.csv?sla%5B(last)%5D%5B(40.0):1:(60.0)%5D%5B(-10.0):1:(10.0)%5D
+ttl 86400
+force diffusion
+at sun 1.0
+format universal
+rows
+lat_key latitude
+lon_key longitude
+  field_in sla sla
+  field_in speed_radius speed_radius
+  field_in eddy_type eddy_type
+
+url https://erddap.emodnet-physics.eu/erddap/griddap/EMODNET_SEA_LEVEL_TREND.csv?sla%5B(last)%5D%5B(40.0):1:(60.0)%5D%5B(-10.0):1:(10.0)%5D
+ttl 86400
+force gravity
+at sun 1.0
+format universal
+rows
+lat_key latitude
+lon_key longitude
+  field_in sla sla
+
+url https://www.ncei.noaa.gov/erddap/griddap/cfs_reanl_mm_ocnh_by_time16_depth_below_sea_lat_lon.csv?Salinity%5B(last)%5D%5B(0)%5D%5B(-60.0):20:(60.0)%5D%5B(0.125):20:(359.875)%5D
+ttl 86400
+force diffusion
+at sun 1.0
+format text
+rows
+lat_key latitude
+lon_key longitude
+  field_in Salinity Salinity
+
+url https://erddap.emodnet-physics.eu/erddap/griddap/EMODNET_SEA_LEVEL_MONTHLY_MEAN.csv?sla%5B(last)%5D%5B(40.0):1:(60.0)%5D%5B(-10.0):1:(10.0)%5D
+ttl 86400
+force acoustic
+at sun 1.0
+format universal
+rows
+lat_key latitude
+lon_key longitude
+  field_in sla sla
+
+url https://www.ncei.noaa.gov/erddap/griddap/cfs_reanl_mm_ocnh_by_time16_depth_below_sea_lat_lon.csv?Potential_temperature%5B(last)%5D%5B(0)%5D%5B(-60.0):20:(60.0)%5D%5B(0.125):20:(359.875)%5D
+ttl 86400
+force thermal
+at sun 1.0
+format text
+rows
+lat_key latitude
+lon_key longitude
+  field_in Potential_temperature Potential_temperature
+  field_in so so

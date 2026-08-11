@@ -1,0 +1,568 @@
+source gcoos_buoy_wmo_42379
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gcoos_buoy_wmo_42379.json
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42379_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42379_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42379_current_speed_cms
+
+source gcoos_buoy_wmo_42382
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gcoos_buoy_wmo_42382.json
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42382_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42382_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42382_current_speed_cms
+
+source gcoos_buoy_wmo_42384
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gcoos_buoy_wmo_42384.json
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42384_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42384_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42384_current_speed_cms
+
+source gcoos_buoy_wmo_42386
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gcoos_buoy_wmo_42386.json
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42386_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42386_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42386_current_speed_cms
+
+source gcoos_buoy_wmo_42388
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gcoos_buoy_wmo_42388.json
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42388_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42388_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42388_current_speed_cms
+
+source gcoos_buoy_wmo_42395
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gcoos_buoy_wmo_42395.json
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42395_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42395_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42395_current_speed_cms
+
+source gcoos_buoy_wmo_42400
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gcoos_buoy_wmo_42400.json
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42400_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42400_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42400_current_speed_cms
+
+source gcoos_buoy_wmo_42873
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gcoos_buoy_wmo_42873.json
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42873_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42873_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42873_current_speed_cms
+
+source gcoos_buoy_wmo_42876
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gcoos_buoy_wmo_42876.json
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42876_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42876_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42876_current_speed_cms
+
+source gcoos_buoy_wmo_42881
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gcoos_buoy_wmo_42881.json
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42881_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42881_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42881_current_speed_cms
+
+source gcoos_buoy_wmo_42884
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gcoos_buoy_wmo_42884.json
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42884_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42884_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42884_current_speed_cms
+
+source gcoos_buoy_wmo_42887
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gcoos_buoy_wmo_42887.json
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42887_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42887_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42887_current_speed_cms
+
+source gcoos_buoy_wmo_42934
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gcoos_buoy_wmo_42934.json
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42934_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42934_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42934_current_speed_cms
+
+source gcoos_buoy_wmo_42936
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gcoos_buoy_wmo_42936.json
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.depth__m_ gcoos_42936_depth_m
+field properties.sea_surface_temperature_0__degr gcoos_42936_sst_deg
+field properties.sea_water_speed_0__cm_s_1_ gcoos_42936_current_speed_cms
+
+source geosphere_gdacs_disaster_alerts
+ttl 300
+force seismic-body
+url https://gdacs.org/xml/rss.xml
+wgs84 38.9072 -77.0369
+xml_count item hazard_event_count
+
+source geosphere_cenc_earthquakes
+ttl 300
+force em
+ecliptic 1
+url https://api.wolfx.jp/cenc_eqlist.json
+field 1.latitude geosphere_cenc_eq_lat
+field 1.longitude geosphere_cenc_eq_lon
+field 1.magnitude geosphere_cenc_eq_mag
+field 1.depth geosphere_cenc_eq_depth_km
+field 1.time geosphere_cenc_eq_time
+field 1.location geosphere_cenc_eq_location
+
+source geosphere_earthquakes
+ttl 300
+force seismic-surface
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/geosphere_earthquakes.json
+geojson events mag 0 geosphere_earthquake_mag geosphere_earthquake_depth_m
+
+source geosphere_earthquakes_significant_day
+ttl 300
+force seismic-surface
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_day.geojson
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.mag geosphere_quake_mag
+field properties.sig geosphere_quake_sig
+
+source geosphere_emsc_earthquakes_significant
+ttl 300
+force em
+ecliptic 1
+url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&minmag=5&limit=100
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.mag geosphere_emsc_sig_magnitude
+field properties.flynn_region geosphere_emsc_sig_place
+field properties.time geosphere_emsc_sig_time
+field properties.depth geosphere_emsc_sig_depth
+alt_key geometry.coordinates.2
+
+source geosphere_jma_earthquakes
+ttl 300
+force em
+ecliptic 1
+url https://api.wolfx.jp/jma_eqlist.json
+field 1.latitude geosphere_jma_eq_lat
+field 1.longitude geosphere_jma_eq_lon
+field 1.magnitude geosphere_jma_eq_mag
+field 1.depth geosphere_jma_eq_depth_km
+field 1.time geosphere_jma_eq_time
+field 1.location geosphere_jma_eq_location
+
+source geosphere_nws_alerts
+ttl 300
+force em
+ecliptic 1
+url https://api.weather.gov/alerts/active
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.event weather_event_type
+field properties.severity alert_severity
+field properties.headline alert_headline
+field properties.areaDesc affected_area
+
+source geosphere_nws_tsunami_warnings
+ttl 300
+force gravity
+ecliptic 1
+url https://api.weather.gov/alerts/active?event=Tsunami%20Warning
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.event weather_event_type
+field properties.severity alert_severity
+field properties.headline alert_headline
+field properties.areaDesc affected_area
+
+source geosphere_tsunami_alerts_ntwc
+ttl 300
+force gravity
+ecliptic 1
+url https://www.tsunami.gov/events/xml/PAAQAtom.xml
+xml_count entry geosphere_tsunami_alert_count
+
+source geosphere_tsunami_alerts_ptwc
+ttl 300
+force gravity
+ecliptic 1
+url https://www.tsunami.gov/events/xml/PHEBAtom.xml
+xml_count entry geosphere_tsunami_alert_count
+
+source geosphere_usgs_streamflow
+ttl 300
+force seismic-surface
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_usgs_streamflow.json
+wgs84 38.94900000 -77.36500000
+path value.timeSeries.0.values.0.value.0.value hydrosphere_river_flow_cfs
+
+source geosphere_usgs_streamflow_bbox
+ttl 300
+force seismic-surface
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_usgs_streamflow_bbox.json
+map value.timeSeries
+lat_key sourceInfo.geoLocation.geogLocation.latitude
+lon_key sourceInfo.geoLocation.geogLocation.longitude
+field values.0.value.0.value hydrosphere_river_flow_cfs
+
+source astro_gfz_f107_radio_flux
+ttl 300
+force em
+ssb
+url https://kp.gfz.de/app/json/?start={week_ago}T00:00:00Z&end={today}T23:59:59Z&index=Fobs
+last Fobs solar_radio_flux_sfu
+
+source magnetosphere_gfz_kp_index
+ttl 300
+force gravity
+ssb
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/magnetosphere_gfz_kp_index.json
+last kp_index magnetosphere_kp_index
+
+source astro_gfz_sunspot_number
+ttl 300
+force em
+ssb
+url https://kp.gfz.de/app/json/?start={week_ago}T00:00:00Z&end={today}T23:59:59Z&index=SN
+last SN solar_sunspot_number
+
+source magnetosphere_goes_eps_protons
+ttl 300
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/magnetosphere_goes_eps_protons.json
+map .
+lat_key satellite_lat
+lon_key satellite_lon
+field time_tag observation_time
+field satellite satellite_id
+field energy_channel energy_channel_mev
+field flux proton_flux_pfu
+
+source magnetosphere_goes_xray_flares
+ttl 300
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/magnetosphere_goes_xray_flares.json
+map .
+lat_key satellite_lat
+lon_key satellite_lon
+field begin_time flare_start
+field peak_time flare_peak
+field class flare_class
+field energy flare_energy_w_m2
+
+source astro_gracedb_lvk_o4_public_superevents
+ttl 300
+force gravity
+ssb
+url https://gracedb.ligo.org/api/superevents/?format=json&category=Production&ordering=-created&public=True&per_page=200
+map superevents
+field superevent_id event_id
+field t_0 gps_time
+field far false_alarm_rate_Hz
+field classification.BNS p_bns
+field classification.BBH p_bbh
+field classification.NSBH p_nsbh
+field classification.Terrestrial p_terrestrial
+field distance.mean distance_mean_Mpc
+field distance.std distance_std_Mpc
+field created created_utc
+
+source heasarc_integral_ibas_sgr_burst_alerts
+ttl 300
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/heasarc_integral_ibas_sgr_burst_alerts.json
+format text
+rows
+ra_key ra
+dec_key dec
+field name source_name
+field trigger_time burst_utc
+field duration burst_duration_s
+field peak_flux peak_flux_erg_cm2_s
+field fluence fluence_erg_cm2
+field type burst_classification
+
+source hydrosphere_ndbc_buoy_41001
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_41001.json
+wgs84 34.7 -72.4
+format json
+last_row WDIR hydrosphere_buoy_41001_wind_dir
+last_row WSPD hydrosphere_buoy_41001_wind_speed
+last_row WVHT hydrosphere_buoy_41001_wave_height
+last_row DPD hydrosphere_buoy_41001_dominant_period
+last_row PRES hydrosphere_buoy_41001_pressure
+last_row WTMP hydrosphere_buoy_41001_water_temp
+
+source hydrosphere_ndbc_buoy_42001
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_42001.json
+wgs84 25.90 -89.67
+format json
+last_row WDIR hydrosphere_buoy_42001_wind_dir
+last_row WSPD hydrosphere_buoy_42001_wind_speed
+last_row WVHT hydrosphere_buoy_42001_wave_height
+last_row DPD hydrosphere_buoy_42001_dominant_period
+last_row PRES hydrosphere_buoy_42001_pressure
+last_row WTMP hydrosphere_buoy_42001_water_temp
+
+source hydrosphere_ndbc_buoy_42002
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_42002.json
+wgs84 25.16 -94.42
+format json
+last_row WDIR hydrosphere_buoy_42002_wind_dir
+last_row WSPD hydrosphere_buoy_42002_wind_speed
+last_row WVHT hydrosphere_buoy_42002_wave_height
+last_row DPD hydrosphere_buoy_42002_dominant_period
+last_row PRES hydrosphere_buoy_42002_pressure
+last_row WTMP hydrosphere_buoy_42002_water_temp
+
+source hydrosphere_ndbc_buoy_42036
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_42036.json
+wgs84 28.50 -84.52
+format json
+last_row WDIR hydrosphere_buoy_42036_wind_dir
+last_row WSPD hydrosphere_buoy_42036_wind_speed
+last_row WVHT hydrosphere_buoy_42036_wave_height
+last_row DPD hydrosphere_buoy_42036_dominant_period
+last_row PRES hydrosphere_buoy_42036_pressure
+last_row WTMP hydrosphere_buoy_42036_water_temp
+
+source hydrosphere_ndbc_buoy_42040
+ttl 300
+force acoustic
+url https://www.ndbc.noaa.gov/data/realtime2/42040.txt
+wgs84 29.22 -88.23
+format csv
+last_row WDIR hydrosphere_buoy_42040_wind_dir
+last_row WSPD hydrosphere_buoy_42040_wind_speed
+last_row WVHT hydrosphere_buoy_42040_wave_height
+last_row DPD hydrosphere_buoy_42040_dominant_period
+last_row PRES hydrosphere_buoy_42040_pressure
+last_row WTMP hydrosphere_buoy_42040_water_temp
+
+source hydrosphere_ndbc_buoy_42055
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_42055.json
+wgs84 22.14 -91.39
+format json
+last_row WDIR hydrosphere_buoy_42055_wind_dir
+last_row WSPD hydrosphere_buoy_42055_wind_speed
+last_row WVHT hydrosphere_buoy_42055_wave_height
+last_row DPD hydrosphere_buoy_42055_dominant_period
+last_row PRES hydrosphere_buoy_42055_pressure
+last_row WTMP hydrosphere_buoy_42055_water_temp
+
+source hydrosphere_ndbc_buoy_44009
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_44009.json
+wgs84 38.46 -74.70
+format json
+last_row WDIR hydrosphere_buoy_44009_wind_dir
+last_row WSPD hydrosphere_buoy_44009_wind_speed
+last_row WVHT hydrosphere_buoy_44009_wave_height
+last_row DPD hydrosphere_buoy_44009_dominant_period
+last_row PRES hydrosphere_buoy_44009_pressure
+last_row WTMP hydrosphere_buoy_44009_water_temp
+
+source hydrosphere_ndbc_buoy_44013
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_44013.json
+wgs84 42.35 -70.69
+format json
+last_row WDIR hydrosphere_buoy_44013_wind_dir
+last_row WSPD hydrosphere_buoy_44013_wind_speed
+last_row WVHT hydrosphere_buoy_44013_wave_height
+last_row DPD hydrosphere_buoy_44013_dominant_period
+last_row PRES hydrosphere_buoy_44013_pressure
+last_row WTMP hydrosphere_buoy_44013_water_temp
+
+source hydrosphere_ndbc_buoy_44014
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_44014.json
+wgs84 36.61 -74.84
+format json
+last_row WDIR hydrosphere_buoy_44014_wind_dir
+last_row WSPD hydrosphere_buoy_44014_wind_speed
+last_row WVHT hydrosphere_buoy_44014_wave_height
+last_row DPD hydrosphere_buoy_44014_dominant_period
+last_row PRES hydrosphere_buoy_44014_pressure
+last_row WTMP hydrosphere_buoy_44014_water_temp
+
+source hydrosphere_ndbc_buoy_44025
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_44025.json
+wgs84 40.25 -73.17
+format json
+last_row WDIR hydrosphere_buoy_44025_wind_dir
+last_row WSPD hydrosphere_buoy_44025_wind_speed
+last_row WVHT hydrosphere_buoy_44025_wave_height
+last_row DPD hydrosphere_buoy_44025_dominant_period
+last_row PRES hydrosphere_buoy_44025_pressure
+last_row WTMP hydrosphere_buoy_44025_water_temp
+
+source hydrosphere_ndbc_buoy_46001
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46001.json
+wgs84 56.30 -148.17
+format json
+last_row WDIR hydrosphere_buoy_46001_wind_dir
+last_row WSPD hydrosphere_buoy_46001_wind_speed
+last_row WVHT hydrosphere_buoy_46001_wave_height
+last_row DPD hydrosphere_buoy_46001_dominant_period
+last_row PRES hydrosphere_buoy_46001_pressure
+last_row WTMP hydrosphere_buoy_46001_water_temp
+
+source hydrosphere_ndbc_buoy_46002
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46002.json
+wgs84 42.67 -124.82
+format json
+last_row WDIR hydrosphere_buoy_46002_wind_dir
+last_row WSPD hydrosphere_buoy_46002_wind_speed
+last_row WVHT hydrosphere_buoy_46002_wave_height
+last_row DPD hydrosphere_buoy_46002_dominant_period
+last_row PRES hydrosphere_buoy_46002_pressure
+last_row WTMP hydrosphere_buoy_46002_water_temp
+
+source hydrosphere_ndbc_buoy_46005
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46005.json
+wgs84 46.06 -124.96
+format json
+last_row WDIR hydrosphere_buoy_46005_wind_dir
+last_row WSPD hydrosphere_buoy_46005_wind_speed
+last_row WVHT hydrosphere_buoy_46005_wave_height
+last_row DPD hydrosphere_buoy_46005_dominant_period
+last_row PRES hydrosphere_buoy_46005_pressure
+last_row WTMP hydrosphere_buoy_46005_water_temp
+
+source hydrosphere_ndbc_buoy_46006
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46006.json
+wgs84 55.06 -137.07
+format json
+last_row WDIR hydrosphere_buoy_46006_wind_dir
+last_row WSPD hydrosphere_buoy_46006_wind_speed
+last_row WVHT hydrosphere_buoy_46006_wave_height
+last_row DPD hydrosphere_buoy_46006_dominant_period
+last_row PRES hydrosphere_buoy_46006_pressure
+last_row WTMP hydrosphere_buoy_46006_water_temp
+
+source hydrosphere_ndbc_buoy_46012
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46012.json
+wgs84 37.36 -122.88
+format json
+last_row WDIR hydrosphere_buoy_46012_wind_dir
+last_row WSPD hydrosphere_buoy_46012_wind_speed
+last_row WVHT hydrosphere_buoy_46012_wave_height
+last_row DPD hydrosphere_buoy_46012_dominant_period
+last_row PRES hydrosphere_buoy_46012_pressure
+last_row WTMP hydrosphere_buoy_46012_water_temp
+
+source hydrosphere_ndbc_buoy_46013
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46013.json
+wgs84 38.24 -123.30
+format json
+last_row WDIR hydrosphere_buoy_46013_wind_dir
+last_row WSPD hydrosphere_buoy_46013_wind_speed
+last_row WVHT hydrosphere_buoy_46013_wave_height
+last_row DPD hydrosphere_buoy_46013_dominant_period
+last_row PRES hydrosphere_buoy_46013_pressure
+last_row WTMP hydrosphere_buoy_46013_water_temp
+
+source hydrosphere_ndbc_buoy_46022
+ttl 300
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46022.json
+wgs84 40.74 -124.54
+format json
+last_row WDIR hydrosphere_buoy_46022_wind_dir
+last_row WSPD hydrosphere_buoy_46022_wind_speed
+last_row WVHT hydrosphere_buoy_46022_wave_height
+last_row DPD hydrosphere_buoy_46022_dominant_period
+last_row PRES hydrosphere_buoy_46022_pressure
+last_row WTMP hydrosphere_buoy_46022_water_temp

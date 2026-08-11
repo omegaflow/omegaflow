@@ -1,0 +1,99 @@
+field_in he_nufnu_peak_error astro_fermi_4lac_he_nufnu_peak_error
+
+field_in nu_syn astro_fermi_4lac_nu_syn
+
+field_in nufnu_syn astro_fermi_4lac_nufnu_syn
+
+field_in variability_index astro_fermi_4lac_variability_index
+
+field_in frac_variability astro_fermi_4lac_frac_variability
+
+field_in frac_variability_error astro_fermi_4lac_frac_variability_error
+
+field_in highest_energy_photon astro_fermi_4lac_highest_energy_photon
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_frb.json
+
+ttl 604800
+
+force em
+
+cmap data
+
+ra_key RAJ2000
+
+dec_key DEJ2000
+
+plx_key default_plx
+
+field_in DM frb_dispersion_measure
+
+field_in SNR frb_signal_to_noise
+
+field_in Flux frb_flux_jy
+
+field_in Fluence frb_fluence_jy_ms
+
+field_in Widthfitb frb_width_ms
+
+field_in SpInd frb_spectral_index
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_binaries.json
+
+ttl 604800
+
+force em
+
+cmap data
+
+ra_key ra
+
+dec_key dec
+
+plx_key parallax
+
+field_in phot_g_mean_mag astro_gaia_binaries_phot_g_mean_mag
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_blue_supergiants.json
+
+ttl 604800
+
+force em
+
+cmap data
+
+ra_key ra
+
+dec_key dec
+
+plx_key parallax
+
+field_in phot_g_mean_mag astro_gaia_blue_supergiants_phot_g_mean_mag
+
+field_in bp_rp astro_gaia_blue_supergiants_bp_rp
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/gaia_bright_vmag7.json
+
+ttl 604800
+
+force em
+
+cmap data
+
+ra_key ra
+
+dec_key dec
+
+plx_key parallax
+
+field_in pmra astro_gaia_bright_vmag7_pmra
+
+field_in pmdec astro_gaia_bright_vmag7_pmdec
+
+field_in phot_g_mean_mag astro_gaia_bright_vmag7_phot_g_mean_mag
+
+field_in phot_bp_mean_mag astro_gaia_bright_vmag7_phot_bp_mean_mag
+
+field_in phot_rp_mean_mag astro_gaia_bright_vmag7_phot_rp_mean_mag
+
+field_in radial_velocity astro_gaia_bright_vmag7_radial_velocity

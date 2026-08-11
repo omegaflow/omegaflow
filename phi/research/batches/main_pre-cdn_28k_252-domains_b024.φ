@@ -1,0 +1,500 @@
+source geosphere_reliefweb_active_humanitarian_disasters
+ttl 3600
+force diffusion
+url https://gdacs.org/xml/rss.xml
+wgs84 38.9072 -77.0369
+xml_count item disaster_count
+
+source astro_saturn_vectors
+ttl 3600
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_saturn.json
+ephemeris orbital_saturn_distance
+extent 3.89e-4
+
+source astro_sentinel2_l2a
+ttl 3600
+force em
+url https://earth-search.aws.element84.com/v1/search
+method post
+body {"collections":["sentinel-2-l2a"],"bbox":[{lon_min},{lat_min},{lon_max},{lat_max}],"datetime":"{today}T00:00:00Z/{today}T23:59:59Z","limit":50}
+header Content-Type application/json
+map features
+lat_key properties.proj:centroid.lat
+lon_key properties.proj:centroid.lon
+field id scene_id
+field collection collection
+field properties.datetime observation_time
+field properties.eo:cloud_cover cloud_cover_pct
+
+source solar_callisto_vectors
+ttl 3600
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_callisto.json
+ephemeris orbital_callisto_distance
+extent 1.61e-5
+
+source solar_noaa_srs
+ttl 3600
+force em
+
+ssb
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/solar_noaa_srs.json
+map .
+lat_key latitude
+lon_key longitude
+field region_number solar_region_number
+field hale_class solar_region_hale_class
+field mclass_flare_prob solar_region_mflare_prob_pct
+field xclass_flare_prob solar_region_xflare_prob_pct
+field area solar_region_area_microhemispheres
+field spots solar_region_spot_count
+
+source solar_noaa_swpc_flare_count
+ttl 3600
+force em
+ssb
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/solar_noaa_swpc_flare_count.json
+count . solar_flare_count_noaa
+
+source solar_noaa_swpc_flares
+ttl 3600
+force em
+ssb
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/solar_noaa_swpc_flares.json
+count . solar_flare_count_noaa
+
+source solar_orbiter_vectors
+ttl 3600
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_solar_orbiter.json
+ephemeris orbital_solar_orbiter_distance
+
+source astro_sun_vectors
+ttl 3600
+force em gravity thermal
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_sun.json
+ephemeris orbital_sun_distance
+extent 0.004650
+
+source atmosphere_taf_global_forecasts
+ttl 3600
+force acoustic
+url https://aviationweather.gov/api/data/taf?bbox=35,-10,70,40&format=json&time=valid
+map .
+lat_key lat
+lon_key lon
+field icaoId icao_code
+field fcsts.0.wdir forecast_wind_dir
+field fcsts.0.wspd forecast_wind_kt
+field fcsts.0.visib forecast_visibility_sm
+field validTimeFrom valid_from
+field validTimeTo valid_to
+
+source technosphere_technosphere_wikipedia_views
+ttl 3600
+force em
+url https://en.wikipedia.org/w/api.php?action=query&list=random&rnnamespace=0&rnlimit=1&format=json
+wgs84 40.712 -74.006
+field query.random.0.id technosphere_wikipedia_random_id
+
+source atmosphere_temis_uv_index_daily_global
+ttl 3600
+force em
+url https://www.temis.nl/uvradiation/nrt/uvindex.php?date={year}{month}{day}&type=overpass&format=text
+format text
+rows
+lat_key latitude
+lon_key longitude
+field uvindex uv_index
+field cloud_modification cloud_factor
+field date measurement_date
+
+source geosphere_terrabrasilis_deter_deforestation_alerts
+ttl 3600
+force diffusion
+url https://terrabrasilis.dpi.inpe.br/app/api/v1/layer/amazon/latest/deforestation-alerts/all?format=geojson&limit=1000
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.object_id alert_id
+field properties.class_name deforestation_class
+field properties.area_km alert_area_km2
+field properties.view_date detection_date
+field properties.uf state
+
+source astro_titan_vectors
+ttl 3600
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_titan.json
+ephemeris orbital_titan_distance
+extent 1.72e-5
+
+source astro_triton_vectors
+ttl 3600
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_triton.json
+ephemeris orbital_triton_distance
+extent 9.04e-6
+
+source astro_dscovr_epic
+ttl 3600
+force em
+url https://epic.gsfc.nasa.gov/api/natural/images
+map .
+lat_key centroid_coordinates.lat
+lon_key centroid_coordinates.lon
+field version universe_dscovr_version
+field identifier universe_dscovr_identifier
+
+source astro_jpl_close_approaches
+ttl 3600
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_jpl_close_approaches.json
+cmap data
+tau_key _dist_m
+field_in 0 designation
+field_in 1 orbit_id
+field_in 3 close_approach_date
+field_in 4 distance_au
+field_in 7 v_rel_kms
+
+source astro_jpl_fireballs
+ttl 3600
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_jpl_fireballs.json
+cmap data
+tau_key _dist_m
+field_in 0 peak_date
+field_in 1 energy_j
+field_in 3 latitude_deg
+field_in 4 lat_dir
+field_in 5 longitude_deg
+field_in 6 lon_dir
+field_in 7 altitude_km
+field_in 8 velocity_kms
+
+source astro_uranus_vectors
+ttl 3600
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_uranus.json
+ephemeris orbital_uranus_distance
+extent 1.70e-4
+
+source usgs_earthquakes_weekly
+ttl 3600
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/usgs_earthquakes_weekly.json
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.mag magnitude
+field properties.place location_description
+field properties.time event_time
+field properties.url event_url
+field properties.dmin minimum_distance
+field properties.rms rms_residual
+field properties.gap azimuthal_gap
+field properties.nst station_count
+field properties.magType magnitude_type
+field properties.type event_type
+field properties.status review_status
+depth_key geometry.coordinates.2
+
+source usgs_nwis_groundwater_levels
+ttl 3600
+force diffusion
+url https://waterservices.usgs.gov/nwis/gwlevels/?format=json&modifiedSince=P1D&siteStatus=active&siteType=GW&parameterCd=72019&countyCd=&stateCd=&bbox=-125,24,-66,50&resultRetrievalMode=grouped
+map value.timeSeries
+lat_key sourceInfo.geoLocation.geogLocation.latitude
+lon_key sourceInfo.geoLocation.geogLocation.longitude
+field sourceInfo.siteName station_name
+field sourceInfo.siteCode.0.value site_code
+field values.0.value.0.value groundwater_depth_ft
+field values.0.value.0.dateTime measurement_datetime
+
+source usgs_nwis_streamflow_daily
+ttl 3600
+force acoustic
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/usgs_nwis_streamflow_daily.json
+map value.timeSeries
+lat_key sourceInfo.geoLocation.geogLocation.latitude
+lon_key sourceInfo.geoLocation.geogLocation.longitude
+field sourceInfo.siteCode.0.value station_id
+field sourceInfo.siteName station_name
+field values.0.value.0.value streamflow_cfs
+field values.0.value.0.dateTime streamflow_time_utc
+
+source usgs_streamflow_daily
+ttl 3600
+force diffusion
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/usgs_streamflow_daily.json
+map value.timeSeries
+lat_key sourceInfo.geoLocation.geogLocation.latitude
+lon_key sourceInfo.geoLocation.geogLocation.longitude
+field sourceInfo.siteName station_name
+field values.0.value.0.value streamflow_cfs
+field values.0.value.0.dateTime measurement_datetime
+
+source usgs_volcano_weekly_activity_report
+ttl 3600
+force seismic-surface
+url https://volcanoes.usgs.gov/hans-public/api/volcano/weekly
+map .
+lat_key Latitude
+lon_key Longitude
+field VolcanoName volcano_name
+field ActivityCategory activity_category
+field StartDate activity_start_date
+field EndDate activity_end_date
+
+source astro_venus_vectors
+ttl 3600
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_venus.json
+ephemeris orbital_venus_distance
+extent 4.05e-5
+
+source astro_voyager1_vectors
+ttl 3600
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_voyager1.json
+ephemeris orbital_voyager1_distance
+
+source astro_voyager2_vectors
+ttl 3600
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_voyager2.json
+ephemeris orbital_voyager2_distance
+
+source geosphere_wfigs_current_fire_perimeters
+ttl 3600
+force thermal
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_wfigs_current_fire_perimeters.json
+flatten features
+field properties.poly_GISAcres fire_acres
+field properties.poly_PolygonDateTime fire_polygon_ms
+
+source technosphere_satellite_satnogs_active
+ttl 14400
+force em
+url https://db.satnogs.org/api/tle/?format=json
+map .
+field tle0 satellite_name
+field tle1 satellite_tle_line1
+field tle2 satellite_tle_line2
+field norad_cat_id satellite_norad_id
+field tle_source satellite_tle_source
+
+source biosphere_cdc_covid_variants
+ttl 43200
+wgs84 33.797 0.0
+86400
+force em
+url https://data.cdc.gov/resource/jr58-6ysp.json?$limit=1
+field share biosphere_covid_variant_share
+
+source atmosphere_coastwatch_ascat_wind
+ttl 43200
+force em
+url https://coastwatch.pfeg.noaa.gov/erddap/griddap/erdQMwind1day_LonPM180.json?x_wind%5B(2022-12-01T12%3A00%3A00Z)%5D%5B(10.0)%5D%5B(-75.0)%3A4%3A(75.0)%5D%5B(-180.0)%3A4%3A(180.0)%5D
+map table.rows
+lat_key 2
+lon_key 3
+alt_key 1
+epoch_key 0
+field_in 4 coastwatch_ascat_x_wind_ms
+
+source cryosphere_coastwatch_oisst_sea_ice
+ttl 43200
+force thermal
+url https://coastwatch.pfeg.noaa.gov/erddap/griddap/ncdcOisst21Agg_LonPM180.json?ice%5B(last)%5D%5B(0)%5D%5B(-79.875)%3A20%3A(79.875)%5D%5B(-179.875)%3A20%3A(179.875)%5D
+map table.rows
+lat_key 2
+lon_key 3
+epoch_key 0
+field_in 4 cryosphere_oisst_sea_ice_fraction
+
+source astro_iers_eop_bulletinb
+ttl 43200
+force em
+url https://hpiers.obspm.fr/iers/bul/bulb_new/bulletinb.dat
+format text
+pos 0 0
+field col2 mjd
+field col3 x_pole_mas
+field col4 y_pole_mas
+field col5 ut1_utc_ms
+field col6 dx_celestial_pole_mas
+field col7 dy_celestial_pole_mas
+
+source hydrosphere_ocean_argo_floats_profiles
+ttl 43200
+force thermal
+url https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.json?time%2Clongitude%2Clatitude%2Cpres%2Ctemp%26time%3E%3D{yesterday}%26time%3C%3D{now}%26longitude%3E%3D{lon_min}%26longitude%3C%3D{lon_max}%26latitude%3E%3D{lat_min}%26latitude%3C%3D{lat_max}
+map table.rows
+lat_key 2
+lon_key 1
+alt_key 3
+alt_sign -1
+epoch_key 0
+field_in 4 argo_temp_c
+
+source open_meteo_daily_forecast
+ttl 43200
+force diffusion
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/open_meteo_daily_forecast.json
+map daily
+lat_key 52.52
+lon_key 13.41
+field temperature_2m_max daily_temp_max_celsius
+field temperature_2m_min daily_temp_min_celsius
+field precipitation_sum daily_precip_mm
+field precipitation_probability_max daily_precip_prob_max
+field wind_speed_10m_max daily_wind_max_kmh
+field wind_gusts_10m_max daily_wind_gust_max_kmh
+field shortwave_radiation_sum daily_solar_radiation_mjm2
+field et0_fao_evapotranspiration daily_evapotranspiration_mm
+
+source hydrosphere_socat_surface_co2
+ttl 43200
+force diffusion
+url https://data.pmel.noaa.gov/socat/erddap/tabledap/socat_v2026_fulldata.json?time,latitude,longitude,xCO2_water_sst_dry_ppm&time%3E={yesterday}&distinct()
+map table.rows
+lat_key 1
+lon_key 2
+epoch_key 0
+field_in 3 socat_xco2_water_dry_ppm
+
+source atmosphere_wyoming_radiosonde_berlin
+ttl 43200
+force thermal
+url https://weather.uwyo.edu/wsgi/sounding?datetime={today}%2000:00:00&type=TEXT:CSV&id=10393&src=UNKNOWN
+format csv
+map .
+lat_key latitude
+lon_key longitude
+field temperature_C atmosphere_radiosonde_temp_c
+field pressure_hPa atmosphere_radiosonde_pressure_hpa
+
+source astro_aavso_vsx_variable_stars
+ttl 86400
+force em
+url https://vsx.aavso.org/index.php?view=api.votable&format=json&ra=0&dec=0&radius=5
+map .
+lat_key ra_hms
+lon_key dec_dms
+field oid vsx_oid
+field name star_name
+field type variable_type
+field mag_max max_magnitude
+field mag_min min_magnitude
+field period period_days
+field epoch epoch_hjd
+
+source aeronet_aod20_global
+ttl 86400
+force diffusion
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD20=1&AVG=20&if_no_html=1
+format text
+rows
+lat_key Site_Latitude(Degrees)
+lon_key Site_Longitude(Degrees)
+field AOD_440nm aod_440_l2
+field AOD_500nm aod_500_l2
+field Precipitable_Water(cm) precip_water_l2
+
+source aeronet_inv_ssa
+ttl 86400
+force diffusion
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&INV15=1&AVG=10&if_no_html=1
+format text
+rows
+lat_key Site_Latitude(Degrees)
+lon_key Site_Longitude(Degrees)
+field SSA_440nm ssa_440
+field SSA_675nm ssa_675
+field SSA_870nm ssa_870
+field SSA_1020nm ssa_1020
+
+source aeronet_site_list
+ttl 86400
+force diffusion
+ecliptic 1
+url https://aeronet.gsfc.nasa.gov/aeronet_locations_v3.txt
+format text
+rows
+lat_key Latitude(decimal_degrees)
+lon_key Longitude(decimal_degrees)
+field Site_Name site_name
+field Elevation(meters) elevation_m
+
+source astro_allwise_catalog_irsa_tap
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/tap_irsa_allwise_p3as_psd.csv
+format text
+rows
+ra_key ra
+dec_key dec
+field designation source_name
+field w1mpro mag_w1_3_4um
+field w2mpro mag_w2_4_6um
+field w3mpro mag_w3_12um
+field w4mpro mag_w4_22um
+
+source arcgis_pager_earthquake_impacts
+ttl 86400
+force seismic-body
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/arcgis_pager_earthquake_impacts.json
+map features
+lat_key attributes.LATITUDE
+lon_key attributes.LONGITUDE
+field attributes.YEAR event_year
+field attributes.MAG magnitude
+field attributes.DEPTH depth_km
+field attributes.DEATHS fatalities
+field attributes.INJURIES injuries
+field attributes.COUNTRY country
+
+source technosphere_arxiv_astro_total
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/arxiv_astro_total.json
+wgs84 40.712 -74.006
+field feed.totalResults exosphere_arxiv_astro_papers_total
+
+source technosphere_arxiv_cs_total
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/arxiv_cs_total.json
+wgs84 40.712 -74.006
+field feed.totalResults biosphere_arxiv_cs_papers_total
+
+source technosphere_arxiv_hep_total
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/arxiv_hep_total.json
+wgs84 40.712 -74.006
+field feed.totalResults subatomic_arxiv_hep_papers_total
+
+source technosphere_arxiv_math_total
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/arxiv_math_total.json
+wgs84 40.712 -74.006
+field feed.totalResults physics_arxiv_math_papers_total
+
+source technosphere_arxiv_physics_total
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/arxiv_physics_total.json
+wgs84 40.712 -74.006
+field feed.totalResults physics_arxiv_physics_papers_total
+
+source technosphere_arxiv_qbio_total
+ttl 86400
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/arxiv_qbio_total.json
+wgs84 40.712 -74.006
+field feed.totalResults biosphere_arxiv_qbio_papers_total

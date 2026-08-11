@@ -1,0 +1,16 @@
+# gold359_b006_declined.φ
+# All 50 blocks in gold_pre-cdn_27k_359-domains_b006.φ PASS the Force Gate — no declines.
+#
+# Disposition summary:
+#   Blocks 1–50 (hydrosphere_tide_8665530 … 9418767): ACCEPT
+#     Force Gate: water level height at NOAA coastal and Great-Lakes tide gauges —
+#     live water-surface height above a vertical datum, the same physical quantity
+#     as gold359_b005 Blocks 21–50. Baroreceptive organisms sense water level as
+#     hydrostatic pressure; a tide gauge is a pressure/float instrument on the
+#     same quantity. Datums differ (MLLW, MSL, STND) but the measured height is
+#     physically real in every case.
+#
+# Skip checks:
+#   None of the 50 blocks reference an ephemeris-covered body.
+#   None are model forecasts, reanalysis, text warnings, bare counts, or catalogs.
+#   Each URL is the live NOAA CO-OPS datagetter endpoint (one fixed station per block).

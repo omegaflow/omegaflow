@@ -1,0 +1,99 @@
+field_in e_Bmag astro_vizier_apass_e_Bmag
+
+field_in u_e_Bmag astro_vizier_apass_u_e_Bmag
+
+field_in g'mag astro_vizier_apass_g'mag
+
+field_in e_g'mag astro_vizier_apass_e_g'mag
+
+field_in u_e_g'mag astro_vizier_apass_u_e_g'mag
+
+field_in r'mag astro_vizier_apass_r'mag
+
+field_in e_r'mag astro_vizier_apass_e_r'mag
+
+field_in u_e_r'mag astro_vizier_apass_u_e_r'mag
+
+field_in i'mag astro_vizier_apass_i'mag
+
+field_in e_i'mag astro_vizier_apass_e_i'mag
+
+field_in u_e_i'mag astro_vizier_apass_u_e_i'mag
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_carmenes.json
+
+ttl 604800
+
+force em
+
+cmap data
+
+ra_key RAJ2000
+
+dec_key DEJ2000
+
+field_in recno vizier_carmenes_recno
+
+field_in MWSC vizier_carmenes_MWSC
+
+field_in Name vizier_carmenes_Name
+
+field_in Type vizier_carmenes_Type
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_cosmic_voids.json
+
+ttl 604800
+
+force em
+
+cmap data
+
+ra_key RAJ2000
+
+dec_key DEJ2000
+
+field_in recno vizier_cosmic_voids_recno
+
+field_in ID vizier_cosmic_voids_ID
+
+field_in r vizier_cosmic_voids_r
+
+field_in p-value vizier_cosmic_voids_p-value
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_distant_halo.json
+
+ttl 604800
+
+force em
+
+cmap data
+
+ra_key RAJ2000
+
+dec_key DEJ2000
+
+plx_key default_plx
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_dla.json
+
+ttl 604800
+
+force em
+
+cmap data
+
+ra_key _RA
+
+dec_key _DE
+
+plx_key default_plx
+
+field_in zabs dla_redshift
+
+field_in NHI dla_neutral_hydrogen
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_first.json
+
+ttl 604800
+
+force em

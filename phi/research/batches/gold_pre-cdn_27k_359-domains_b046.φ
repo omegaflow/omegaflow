@@ -1,0 +1,401 @@
+source physics_crossref_longevity_age_research
+ttl 604800
+force em
+lat 51.500
+lon -0.126
+url https://api.crossref.org/works?query=biological+age+clock+epigenetic&rows=0
+field message.total-results biosphere_longevity_research_total
+
+source physics_crossref_synthetic_genome_papers
+ttl 604800
+force em
+lat 42.373
+lon -71.110
+url https://api.crossref.org/works?query=synthetic+genome+writing+minimal+cell&rows=0
+field message.total-results biosphere_synthetic_genome_research_total
+
+source physics_inspirehep_bell_test_papers
+ttl 604800
+force em
+lat 52.086
+lon 5.171
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=loophole-free+Bell+test&fields=titles,citation_count
+field hits.hits.0.metadata.citation_count physics_bell_test_loophole_free_citations
+
+source physics_inspirehep_organoid_papers
+ttl 604800
+force em
+lat -37.813
+lon 144.963
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=organoid+intelligence+biocomputing&fields=titles,citation_count
+field hits.hits.0.metadata.citation_count biosphere_organoid_computing_citations
+
+source physics_inspirehep_proton_decay_papers
+ttl 604800
+force em
+lat 36.428
+lon 137.310
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=proton+decay+Super-Kamiokande&fields=arxiv_eprints,citation_count
+field hits.hits.0.metadata.citation_count cosmic_proton_decay_citations
+
+source physics_inspirehep_quantum_teleport_papers
+ttl 604800
+force em
+lat 39.904
+lon 116.407
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=quantum+entanglement+satellite+distance+record&fields=titles,citation_count
+field hits.hits.0.metadata.citation_count quantum_entanglement_distance_record_citations
+
+source physics_inspirehep_time_crystal_papers
+ttl 604800
+force em
+lat 42.360
+lon -71.093
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=time+crystal&fields=titles,citation_count
+field hits.hits.0.metadata.citation_count physics_time_crystal_research_citations
+
+source solar_helioseismology_papers
+ttl 604800
+force em
+lat 37.774
+lon -122.419
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=helioseismology&fields=titles
+field hits.total solar_helioseismology_papers
+
+source subatomic_pdg_b_c_plus_mass
+ttl 604800
+force em
+lat 37.877
+lon -122.247
+url https://pdgapi.lbl.gov/summaries/S091M
+field pdg_values.0.value subatomic_b_c_plus_mass_mev
+
+source subatomic_pdg_b_plus_mass
+ttl 604800
+force em
+lat 37.877
+lon -122.247
+url https://pdgapi.lbl.gov/summaries/S041M
+field pdg_values.0.value subatomic_b_plus_mass_mev
+
+source subatomic_pdg_b_zero_mass
+ttl 604800
+force em
+lat 37.877
+lon -122.247
+url https://pdgapi.lbl.gov/summaries/S042M
+field pdg_values.0.value subatomic_b_zero_mass_mev
+
+source subatomic_pdg_bottom_quark_mass
+ttl 604800
+force em
+lat 37.877
+lon -122.247
+url https://pdgapi.lbl.gov/summaries/Q005M
+field pdg_values.0.value subatomic_bottom_quark_mass_gev
+
+source subatomic_pdg_charged_pion_mass
+ttl 604800
+force em
+lat 37.877
+lon -122.247
+url https://pdgapi.lbl.gov/summaries/S008M
+field pdg_values.0.value subatomic_charged_pion_mass_mev
+
+source subatomic_pdg_charm_quark_mass
+ttl 604800
+force em
+lat 37.877
+lon -122.247
+url https://pdgapi.lbl.gov/summaries/Q004M
+field pdg_values.0.value subatomic_charm_quark_mass_gev
+
+source subatomic_pdg_d_s_star_mass
+ttl 604800
+force em
+lat 37.877
+lon -122.247
+url https://pdgapi.lbl.gov/summaries/S074M
+field pdg_values.0.value subatomic_d_s_star_mass_mev
+
+source subatomic_pdg_down_quark_mass
+ttl 604800
+force em
+lat 37.877
+lon -122.247
+url https://pdgapi.lbl.gov/summaries/Q001M
+field pdg_values.0.value subatomic_down_quark_mass_mev
+
+source subatomic_pdg_electron_mass
+ttl 604800
+force em
+lat 37.877
+lon -122.247
+url https://pdgapi.lbl.gov/summaries/S003M
+field pdg_values.0.value subatomic_electron_mass_mev
+
+source subatomic_pdg_eta_mass
+ttl 604800
+force em
+lat 37.877
+lon -122.247
+url https://pdgapi.lbl.gov/summaries/S014M
+field pdg_values.0.value subatomic_eta_mass_mev
+
+source subatomic_pdg_kaon_plus_mass
+ttl 604800
+force em
+lat 37.877
+lon -122.247
+url https://pdgapi.lbl.gov/summaries/S010M
+field pdg_values.0.value subatomic_kaon_plus_mass_mev
+
+source subatomic_pdg_kaon_zero_mass
+ttl 604800
+force em
+lat 37.877
+lon -122.247
+url https://pdgapi.lbl.gov/summaries/S011M
+field pdg_values.0.value subatomic_kaon_zero_mass_mev
+
+source subatomic_pdg_lambda_b_mass
+ttl 604800
+force em
+lat 37.877
+lon -122.247
+url https://pdgapi.lbl.gov/summaries/S040M
+field pdg_values.0.value subatomic_lambda_b_mass_mev
+
+source subatomic_pdg_lambda_mass
+ttl 604800
+force em
+lat 37.877
+lon -122.247
+url https://pdgapi.lbl.gov/summaries/S018M
+field pdg_values.0.value subatomic_lambda_mass_mev
+
+source subatomic_pdg_muon_mass
+ttl 604800
+force em
+lat 37.877
+lon -122.247
+url https://pdgapi.lbl.gov/summaries/S004M
+field pdg_values.0.value subatomic_muon_mass_mev
+
+source subatomic_pdg_neutron_mass
+ttl 604800
+force em
+lat 37.877
+lon -122.247
+url https://pdgapi.lbl.gov/summaries/S017M
+field pdg_values.0.value subatomic_neutron_mass_mev
+
+source subatomic_pdg_omega_b_minus_mass
+ttl 604800
+force em
+lat 37.877
+lon -122.247
+url https://pdgapi.lbl.gov/summaries/S063M
+field pdg_values.0.value subatomic_omega_b_minus_mass_mev
+
+source subatomic_pdg_omega_c_2770_mass
+ttl 604800
+force em
+lat 37.877
+lon -122.247
+url https://pdgapi.lbl.gov/summaries/S053M
+field pdg_values.0.value subatomic_omega_c_2770_mass_mev
+
+source subatomic_pdg_omega_c_zero_mass
+ttl 604800
+force em
+lat 37.877
+lon -122.247
+url https://pdgapi.lbl.gov/summaries/S047M
+field pdg_values.0.value subatomic_omega_c_zero_mass_mev
+
+source subatomic_pdg_pion_mass
+ttl 604800
+force em
+lat 37.877
+lon -122.247
+url https://pdgapi.lbl.gov/summaries/S009M
+field pdg_values.0.value subatomic_pion_mass_mev
+
+source subatomic_pdg_proton_mass
+ttl 604800
+force em
+lat 37.877
+lon -122.247
+url https://pdgapi.lbl.gov/summaries/S016M
+field pdg_values.0.value subatomic_proton_mass_mev
+
+source subatomic_pdg_sigma_minus_mass
+ttl 604800
+force em
+lat 37.877
+lon -122.247
+url https://pdgapi.lbl.gov/summaries/S020M
+field pdg_values.0.value subatomic_sigma_minus_mass_mev
+
+source subatomic_pdg_sigma_plus_mass
+ttl 604800
+force em
+lat 37.877
+lon -122.247
+url https://pdgapi.lbl.gov/summaries/S019M
+field pdg_values.0.value subatomic_sigma_plus_mass_mev
+
+source subatomic_pdg_sigma_zero_mass
+ttl 604800
+force em
+lat 37.877
+lon -122.247
+url https://pdgapi.lbl.gov/summaries/S021M
+field pdg_values.0.value subatomic_sigma_zero_mass_mev
+
+source subatomic_pdg_strange_quark_mass
+ttl 604800
+force em
+lat 37.877
+lon -122.247
+url https://pdgapi.lbl.gov/summaries/Q003M
+field pdg_values.0.value subatomic_strange_quark_mass_mev
+
+source subatomic_pdg_tau_mass
+ttl 604800
+force em
+lat 37.877
+lon -122.247
+url https://pdgapi.lbl.gov/summaries/S035M
+field pdg_values.0.value subatomic_tau_mass_mev
+
+source subatomic_pdg_top_quark_mass
+ttl 604800
+force em
+lat 37.877
+lon -122.247
+url https://pdgapi.lbl.gov/summaries/Q007TP
+field pdg_values.0.value subatomic_top_quark_mass_gev
+
+source subatomic_pdg_up_quark_mass
+ttl 604800
+force em
+lat 37.877
+lon -122.247
+url https://pdgapi.lbl.gov/summaries/Q002M
+field pdg_values.0.value subatomic_up_quark_mass_mev
+
+source subatomic_pdg_w_boson_mass
+ttl 604800
+force em
+lat 37.877
+lon -122.247
+url https://pdgapi.lbl.gov/summaries/S043M
+field pdg_values.0.value subatomic_w_boson_mass_gev
+
+source subatomic_pdg_xi_c_plus_mass
+ttl 604800
+force em
+lat 37.877
+lon -122.247
+url https://pdgapi.lbl.gov/summaries/S045M
+field pdg_values.0.value subatomic_xi_c_plus_mass_mev
+
+source subatomic_pdg_xi_c_prime_plus_mass
+ttl 604800
+force em
+lat 37.877
+lon -122.247
+url https://pdgapi.lbl.gov/summaries/S058M
+field pdg_values.0.value subatomic_xi_c_prime_plus_mass_mev
+
+source subatomic_pdg_xi_c_prime_zero_mass
+ttl 604800
+force em
+lat 37.877
+lon -122.247
+url https://pdgapi.lbl.gov/summaries/S059M
+field pdg_values.0.value subatomic_xi_c_prime_zero_mass_mev
+
+source subatomic_pdg_xi_c_zero_mass
+ttl 604800
+force em
+lat 37.877
+lon -122.247
+url https://pdgapi.lbl.gov/summaries/S048M
+field pdg_values.0.value subatomic_xi_c_zero_mass_mev
+
+source subatomic_pdg_xi_cc_plus_mass
+ttl 604800
+force em
+lat 37.877
+lon -122.247
+url https://pdgapi.lbl.gov/summaries/S065M
+field pdg_values.0.value subatomic_xi_cc_plus_mass_mev
+
+source subatomic_pdg_xi_cc_plusplus_mass
+ttl 604800
+force em
+lat 37.877
+lon -122.247
+url https://pdgapi.lbl.gov/summaries/S068M
+field pdg_values.0.value subatomic_xi_cc_plusplus_mass_mev
+
+source subatomic_pdg_xi_minus_mass
+ttl 604800
+force em
+lat 37.877
+lon -122.247
+url https://pdgapi.lbl.gov/summaries/S022M
+field pdg_values.0.value subatomic_xi_minus_mass_mev
+
+source subatomic_pdg_xi_zero_mass
+ttl 604800
+force em
+lat 37.877
+lon -122.247
+url https://pdgapi.lbl.gov/summaries/S023M
+field pdg_values.0.value subatomic_xi_zero_mass_mev
+
+source subatomic_pdg_z_boson_mass
+ttl 604800
+force em
+lat 37.877
+lon -122.247
+url https://pdgapi.lbl.gov/summaries/S044M
+field pdg_values.0.value subatomic_z_boson_mass_gev
+
+source technosphere_global_airports
+ttl 604800
+force em
+url https://raw.githubusercontent.com/jbrooksuk/JSON-Airports/master/airports.json
+map .
+lat_key lat
+lon_key lon
+field_in elevation technosphere_airport_elevation_ft
+
+source technosphere_submarine_cables
+ttl 604800
+force em
+url https://github.com/lifewinning/submarine-cable-taps/raw/master/data/submarine_cables.geojson
+field_in properties.name technosphere_cable_name
+field_in properties.length technosphere_cable_length_km
+flatten features
+
+source atmosphere_climate_projection
+ttl 2592000
+force em
+url https://climate-api.open-meteo.com/v1/climate?latitude={lat}&longitude={lon}&start_date={today}&end_date={today}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum
+first temperature_2m_max atmosphere_climate_temp_max_c
+first temperature_2m_min atmosphere_climate_temp_min_c
+first precipitation_sum atmosphere_climate_precip_mm
+
+source atmosphere_hadcrut5_temp
+ttl 2592000
+force em
+lat 50.727
+lon -3.476
+url https://www.metoffice.gov.uk/hadobs/hadcrut5/data/HadCRUT.5.1.0.0/analysis/diagnostics/HadCRUT.5.1.0.0.analysis.summary_series.global.annual.csv
+format csv
+last line atmosphere_hadcrut5_temp_anomaly_raw

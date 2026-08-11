@@ -1,0 +1,847 @@
+url https://www.sidc.be/SILSO/DATA/SN_m_tot_V2.0.txt
+ttl 86400
+force em
+at sun 1.0
+last_line solar_sunspot_number_silso
+
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+COUNT(*)+FROM+ps+WHERE+pl_discmethod+like+'%25TESS%25'&format=json
+ttl 86400
+force em
+on earth 42.365 -71.105
+last_line exosphere_tess_candidates_total
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+50000+RAJ2000,DEJ2000,z,MaxMag,Type+FROM+%22B/sn/sncat%22
+ttl 86400
+force em
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+z_key z
+  field_in MaxMag MaxMag
+  field_in Type Type
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+50000+RAJ2000,DEJ2000,DLum,Kmag+FROM+%22J/ApJ/935/170/table4%22
+ttl 86400
+force em
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+dist_key DLum 3.0857e22
+  field_in Kmag Kmag
+
+url https://firms.modaps.eosdis.nasa.gov/api/country/csv/{firms_map_key}/VIIRS_SNPP_NRT/USA
+ttl 86400
+force thermal
+at sun 1.0
+format universal
+rows
+lat_key latitude
+lon_key longitude
+  field_in brightness brightness
+  field_in scan scan
+  field_in frp frp
+field_in satellite satellite
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+AllWISE,RAJ2000,DEJ2000,W1mag,W2mag,W3mag,W4mag,var_flg,ex+FROM+%22II/328/allwise%22+WHERE+W1mag<9+AND+RAJ2000+IS+NOT+NULL+ORDER+BY+W1mag+ASC
+ttl 86400
+force em
+at sun 1.0
+format universal
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+  field_in bJmag bJmag
+  field_in z z
+  field_in cz cz
+  field_in S/G S/G
+  field_in AllWISE AllWISE
+  field_in W1mag W1mag
+  field_in W2mag W2mag
+  field_in W3mag W3mag
+  field_in W4mag W4mag
+  field_in var_flg var_flg
+  field_in ex ex
+cmap data
+ra_key 0
+dec_key 1
+field_in 3 universe_panstarrs_gaia_g_mag
+  field_in recno recno
+  field_in 2QZ 2QZ
+  field_in intNo intNo
+  field_in intName intName
+  field_in e_RAJ2000 e_RAJ2000
+  field_in e_DEJ2000 e_DEJ2000
+  field_in Field Field
+  field_in nobs nobs
+  field_in mobs mobs
+  field_in B-V B-V
+  field_in e_B-V e_B-V
+  field_in Vmag Vmag
+  field_in e_Vmag e_Vmag
+  field_in u_e_Vmag u_e_Vmag
+  field_in Bmag Bmag
+  field_in e_Bmag e_Bmag
+  field_in u_e_Bmag u_e_Bmag
+  field_in g'mag g'mag
+  field_in e_g'mag e_g'mag
+  field_in u_e_g'mag u_e_g'mag
+  field_in r'mag r'mag
+  field_in e_r'mag e_r'mag
+  field_in u_e_r'mag u_e_r'mag
+  field_in i'mag i'mag
+  field_in e_i'mag e_i'mag
+  field_in u_e_i'mag u_e_i'mag
+ra_key _RA
+dec_key _DE
+  field_in zabs zabs
+  field_in NHI NHI
+  field_in FIRST FIRST
+  field_in p(S) p(S)
+  field_in Fpeak Fpeak
+  field_in PGC PGC
+  field_in GWGC GWGC
+  field_in HyperLEDA HyperLEDA
+  field_in 2MASS 2MASS
+  field_in SDSS-DR12 SDSS-DR12
+  field_in Flag1 Flag1
+  field_in e_Dist e_Dist
+  field_in BMAG BMAG
+  field_in Jmag Jmag
+  field_in e_Jmag e_Jmag
+  field_in Hmag Hmag
+  field_in e_Hmag e_Hmag
+  field_in Kmag Kmag
+  field_in e_Kmag e_Kmag
+  field_in Flag2 Flag2
+  field_in Flag3 Flag3
+  field_in NED NED
+  field_in Xpos Xpos
+  field_in Ypos Ypos
+  field_in SNR SNR
+  field_in MajDiam MajDiam
+  field_in MinDiam MinDiam
+ra_key RAmdeg
+dec_key DEmdeg
+  field_in TYC1 TYC1
+  field_in TYC2 TYC2
+  field_in TYC3 TYC3
+  field_in pflag pflag
+  field_in RAmdeg RAmdeg
+  field_in DEmdeg DEmdeg
+  field_in pmRA pmRA
+  field_in pmDE pmDE
+  field_in e_RAmdeg e_RAmdeg
+  field_in e_DEmdeg e_DEmdeg
+  field_in e_pmRA e_pmRA
+  field_in e_pmDE e_pmDE
+  field_in EpRAm EpRAm
+  field_in EpDEm EpDEm
+  field_in Num Num
+  field_in q_RAmdeg q_RAmdeg
+  field_in q_DEmdeg q_DEmdeg
+  field_in q_pmRA q_pmRA
+  field_in q_pmDE q_pmDE
+  field_in BTmag BTmag
+  field_in e_BTmag e_BTmag
+  field_in VTmag VTmag
+  field_in e_VTmag e_VTmag
+  field_in prox prox
+  field_in TYC TYC
+  field_in HIP HIP
+  field_in CCDM CCDM
+  field_in RA(ICRS) RA(ICRS)
+  field_in DE(ICRS) DE(ICRS)
+  field_in EpRA-1990 EpRA-1990
+  field_in EpDE-1990 EpDE-1990
+  field_in e_RAdeg e_RAdeg
+  field_in e_DEdeg e_DEdeg
+  field_in posflg posflg
+  field_in corr corr
+  field_in SrcIDgaia SrcIDgaia
+  field_in RAgaia RAgaia
+  field_in e_RAgaia e_RAgaia
+  field_in DEgaia DEgaia
+  field_in e_DEgaia e_DEgaia
+  field_in Org Org
+  field_in Nu Nu
+  field_in EPucac EPucac
+  field_in Gmag Gmag
+  field_in f_mag f_mag
+  field_in Rmag Rmag
+ra_key RA_ICRS
+dec_key DE_ICRS
+  field_in Flux1 Flux1
+  field_in Flux2 Flux2
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,%222MASS%22,Jmag,Hmag,Kmag,Qflg+FROM+%22II/246/out%22+WHERE+Jmag<9+AND+RAJ2000+IS+NOT+NULL+ORDER+BY+Jmag+ASC
+ttl 86400
+force em
+at sun 1.0
+format universal
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+  field_in 2MASS 2MASS
+  field_in Jmag Jmag
+  field_in Hmag Hmag
+  field_in Kmag Kmag
+  field_in Qflg Qflg
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,z,imag+FROM+"VII/260/dr7qso"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+z+DESC
+ttl 86400
+force em
+at sun 1.0
+format universal
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+  field_in z1 z1
+  field_in bJmag bJmag
+map .
+lat_key _RA
+lon_key _DE
+  field_in zabs zabs
+  field_in NHI NHI
+  field_in z z
+  field_in imag imag
+cmap data
+ra_key _RA
+dec_key _DE
+  field_in Mass Mass
+  field_in Dist Dist
+  field_in recno recno
+  field_in SDSS SDSS
+  field_in umag umag
+  field_in e_umag e_umag
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+RA_ICRS,DE_ICRS,Flux2,Flux3,%22HR1%22,%22HR2%22,4XMM+FROM+"IX/69/xmm4d13s"+WHERE+RA_ICRS+IS+NOT+NULL+ORDER+BY+Flux2+DESC
+ttl 86400
+force em
+at sun 1.0
+format universal
+rows
+ra_key RA_ICRS
+dec_key DE_ICRS
+  field_in Flux2 Flux2
+  field_in HR1 HR1
+  field_in HR2 HR2
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+APOGEE_ID,RA,DEC,Teff,logg,M_H,alpha_M,VHELIO_AVG,DIST_BPG+FROM+"III/286/allstars"+WHERE+RA+IS+NOT+NULL+AND+ASPCAPFLAG%3D0+AND+SNR>100+ORDER+BY+SNR+DESC
+ttl 86400
+force em
+at sun 1.0
+format text
+rows
+ra_key RA
+dec_key DEC
+  field_in APOGEE_ID APOGEE_ID
+  field_in Teff Teff
+  field_in logg logg
+  field_in M_H M_H
+  field_in alpha_M alpha_M
+  field_in VHELIO_AVG VHELIO_AVG
+dist_key DIST_BPG
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+Family,n,e,sini,a,H+FROM+"J/Icarus/239/46/table3"+WHERE+n+IS+NOT+NULL+ORDER+BY+n+DESC
+ttl 86400
+force gravity
+at sun 1.0
+format text
+rows
+  field_in Family Family
+  field_in n n
+  field_in a a
+  field_in e e
+  field_in sini sini
+  field_in H H
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+AGAL,_RA_icrs,_DE_icrs,GLON,GLAT,Fint,e_Fint,Fp,Reff+FROM+"J/A+A/568/A41/atl-csc"+WHERE+_RA_icrs+IS+NOT+NULL+ORDER+BY+Fint+DESC
+ttl 86400
+force em
+at sun 1.0
+format text
+rows
+ra_key _RA_icrs
+dec_key _DE_icrs
+  field_in GLON GLON
+  field_in GLAT GLAT
+  field_in Fint Fint
+  field_in Reff Reff
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+JNAME,RAJ,DECJ,P0,DM,DIST,ASSOC,Type+FROM+"VII/304/catalog"+WHERE+DIST+IS+NOT+NULL+AND+RAJ+IS+NOT+NULL+ORDER+BY+DIST+ASC
+ttl 86400
+force em
+at sun 1.0
+format text
+rows
+ra_key RAJ
+dec_key DECJ
+  field_in JNAME JNAME
+  field_in P0 P0
+  field_in DM DM
+  field_in Type Type
+dist_key DIST
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+  field_in recno recno
+  field_in Name Name
+  field_in imag imag
+  field_in zphot zphot
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+JNAME,RAJ,DECJ,P0,DM,DIST,ASSOC,Binary,Type+FROM+"VII/304/catalog"+WHERE+P0<0.03+AND+RAJ+IS+NOT+NULL+ORDER+BY+P0+ASC
+ttl 86400
+force em
+at sun 1.0
+format text
+rows
+ra_key RAJ
+dec_key DECJ
+  field_in JNAME JNAME
+  field_in P0 P0
+  field_in DM DM
+  field_in ASSOC ASSOC
+  field_in Binary Binary
+  field_in Type Type
+dist_key DIST
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+Name,RAJ2000,DEJ2000,Dist,P0,F0,DM,S1400+FROM+%22J%2FApJS%2F208%2F17%2Fpsrcat%22+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+P0
+ttl 86400
+force em
+at sun 1.0
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+  field_in Name Name
+  field_in Dist Dist
+  field_in P0 P0
+  field_in F0 F0
+  field_in DM DM
+  field_in S1400 S1400
+ra_key _RA
+dec_key _DE
+  field_in Target Target
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+4000+Name,RAJ2000,DEJ2000,z,LogFlux,Type+FROM+%22VII/274/bzcat5%22+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+LogFlux+DESC
+ttl 86400
+force em
+at sun 1.0
+cmap data
+tau_key _dist_m
+ra_key 1
+dec_key 2
+z_key 3
+field_in 0 source_name
+field_in 4 log_radio_flux
+field_in 5 blazar_type
+ra_key RAJ2000
+dec_key DEJ2000
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+_RA,_DE,Karmn,GJ,SpType,Dist,Ksmag+FROM+"J/A+A/609/A117/table1"+WHERE+_RA+IS+NOT+NULL+ORDER+BY+Dist+ASC
+ttl 86400
+force em
+at sun 1.0
+format text
+rows
+ra_key _RA
+dec_key _DE
+  field_in SpType SpType
+  field_in Dist Dist
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+  field_in recno recno
+  field_in MWSC MWSC
+  field_in Name Name
+  field_in Type Type
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+RA_ICRS,DE_ICRS,W1mproPM,W2mproPM,pmRA,pmDE+FROM+"II/365/catwise"+WHERE+RA_ICRS+IS+NOT+NULL+AND+W1mproPM<8+ORDER+BY+W1mproPM+ASC
+ttl 86400
+force em
+at sun 1.0
+format universal
+rows
+ra_key RA_ICRS
+dec_key DE_ICRS
+  field_in W1mproPM W1mproPM
+  field_in W2mproPM W2mproPM
+pmra_key pmRA
+pmdec_key pmDE
+  field_in Name Name
+  field_in RAPMdeg RAPMdeg
+  field_in DEPMdeg DEPMdeg
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,%22F2-8%22,%22HR0%22,%22HR1%22,%22HR2%22+FROM+"J/ApJS/235/26/table3"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+%22F2-8%22+DESC
+ttl 86400
+force em
+at sun 1.0
+format universal
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+  field_in F2-8 F2-8
+  field_in HR0 HR0
+  field_in HR1 HR1
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+Name,GLON,GLAT,RAJ2000,DEJ2000,Speak,Sint,ASc,mT+FROM+%22J/ApJS/205/1/catalog%22+WHERE+RAJ2000+IS+NOT+NULL+AND+Speak>1+ORDER+BY+Speak+DESC
+ttl 86400
+force em
+at sun 1.0
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+  field_in Name Name
+  field_in GLON GLON
+  field_in GLAT GLAT
+  field_in Speak Speak
+  field_in Sint Sint
+  field_in ASc ASc
+  field_in mT mT
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+RAJ2000,DEJ2000,z,r,ID+FROM+"J/A+A/570/A106/void"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+r+DESC
+ttl 86400
+force em
+at sun 1.0
+format universal
+map .
+lat_key RAJ2000
+lon_key DEJ2000
+  field_in z z
+  field_in r r
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+200+RAJ2000,DEJ2000,Name,SName+FROM+"J/A+A/640/A105/stars"+WHERE+RAJ2000+IS+NOT+NULL
+ttl 86400
+force em
+at sun 1.0
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+  field_in Name Name
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50+JNAME,RAJ,DECJ,P0,DM,Dist,Tspan+FROM+"J/A+A/678/A48/table1"+WHERE+RAJ+IS+NOT+NULL+ORDER+BY+Tspan+DESC
+ttl 86400
+force em
+at sun 1.0
+format text
+rows
+ra_key RAJ
+dec_key DECJ
+  field_in JNAME JNAME
+  field_in P0 P0
+  field_in DM DM
+  field_in Tspan Tspan
+dist_key Dist
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+RAJ2000,DEJ2000,Fpeak,Fint,Maj,Min+FROM+"VIII/92/first14"+WHERE+Fpeak%3E10+ORDER+BY+Fpeak+DESC
+ttl 86400
+force em
+at sun 1.0
+format universal
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+  field_in Fpeak Fpeak
+  field_in Fint Fint
+  field_in Maj Maj
+  field_in Min Min
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+RAJ2000,DEJ2000,Fpeak,Fint,Maj+FROM+%22VIII/92/first14%22+WHERE+Fpeak%3E5+ORDER+BY+Fpeak+DESC
+ttl 86400
+force em
+at sun 1.0
+format universal
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+  field_in Fpeak Fpeak
+  field_in Fint Fint
+  field_in Maj Maj
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+RAJ2000,DEJ2000,Gmag,Plx,pmRA,pmDE,RUWE+FROM+"I/355/gaiadr3"+WHERE+RAJ2000+IS+NOT+NULL+AND+RUWE>1.4+ORDER+BY+Gmag+ASC
+ttl 86400
+force em
+at sun 1.0
+format universal
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+plx_key Plx
+  field_in Gmag Gmag
+  field_in RUWE RUWE
+pmra_key pmRA
+pmdec_key pmDE
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+DR3Name%2CRA_ICRS%2CDE_ICRS%2CPlx%2Ce_Plx%2CPM%2CpmRA%2Ce_pmRA%2CpmDE%2Ce_pmDE%2CGmag%2CBPmag%2CRPmag%2CRV%2Ce_RV+FROM+%22I%2F355%2Fgaiadr3%22+WHERE+RA_ICRS+IS+NOT+NULL+AND+Plx%3E5+ORDER+BY+Gmag+ASC
+ttl 86400
+force em
+at sun 1.0
+format universal
+rows
+ra_key RA_ICRS
+dec_key DE_ICRS
+  field_in DR3Name DR3Name
+  field_in Plx Plx
+  field_in e_Plx e_Plx
+  field_in PM PM
+  field_in e_pmRA e_pmRA
+  field_in e_pmDE e_pmDE
+  field_in Gmag Gmag
+  field_in BPmag BPmag
+  field_in RPmag RPmag
+  field_in e_RV e_RV
+dist_key 1000/Plx
+pmra_key pmRA
+pmdec_key pmDE
+radvel_key RadialVelocity
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+DR3Name%2CRA_ICRS%2CDE_ICRS%2CPlx%2CpmRA%2CpmDE%2CRV%2Ce_RV%2CGmag%2CTeff+FROM+%22I%2F355%2Fgaiadr3%22+WHERE+RV+IS+NOT+NULL+AND+Plx%3E5+ORDER+BY+Plx+DESC
+ttl 86400
+force em
+at sun 1.0
+format universal
+rows
+ra_key ra
+dec_key dec
+plx_key parallax
+  field_in source_id source_id
+  field_in pmra pmra
+  field_in pmdec pmdec
+  field_in radial_velocity radial_velocity
+  field_in radial_velocity_error radial_velocity_error
+  field_in teff_gspphot teff_gspphot
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+100+Name,RAJ2000,DEJ2000,Porb,Fx,MX,Mdist+FROM+"J/ApJS/163/2/table1"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+MX+DESC
+ttl 86400
+force em
+at sun 1.0
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+  field_in Name Name
+  field_in Porb Porb
+  field_in Fx Fx
+  field_in MX MX
+  field_in Mdist Mdist
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+star_id,RAJ2000,DEJ2000,Teff,logg,fe_h,alpha_fe,Vrad,age_bstep+FROM+"J/MNRAS/528/5/catalog"+WHERE+RAJ2000+IS+NOT+NULL+AND+flag_sp%3D0+ORDER+BY+snr_c3_iraf+DESC
+ttl 86400
+force em
+at sun 1.0
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+  field_in star_id star_id
+  field_in Teff Teff
+  field_in logg logg
+  field_in fe_h fe_h
+  field_in alpha_fe alpha_fe
+  field_in Vrad Vrad
+  field_in age_bstep age_bstep
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+GLON,GLAT,RAJ2000,DEJ2000,VLSR,Sint,Peak+FROM+"J/ApJS/208/14/catalog"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+Sint+DESC
+ttl 86400
+force em
+at sun 1.0
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+  field_in VLSR VLSR
+  field_in Sint Sint
+  field_in Peak Peak
+cmap data
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+RAJ2000,DEJ2000,VarType,magMax,Min1,Period,SpType,pmRA,pmDE,VarName+FROM+%22B/gcvs/gcvs_cat%22+WHERE+RAJ2000+IS+NOT+NULL+AND+magMax<16+ORDER+BY+magMax+ASC
+ttl 86400
+force em
+at sun 1.0
+format universal
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+  field_in VarType VarType
+  field_in magMax magMax
+  field_in Min1 Min1
+  field_in Period Period
+  field_in SpType SpType
+pmra_key pmRA
+pmdec_key pmDE
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+Name,RAJ2000,DEJ2000,Fintwide,alpha,e_alpha,Fpwide+FROM+"J/MNRAS/464/1146/gleam"+WHERE+RAJ2000+IS+NOT+NULL+AND+Fintwide>500+ORDER+BY+Fintwide+DESC
+ttl 86400
+force em
+at sun 1.0
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+  field_in Name Name
+  field_in Fintwide Fintwide
+  field_in alpha alpha
+  field_in e_alpha e_alpha
+  field_in Fpwide Fpwide
+cmap data
+  field_in bckwide bckwide
+  field_in lrmswide lrmswide
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+304+SNR,GLON,GLAT,Dmaj,Dmin,S1GHz,alpha,Type+FROM+"VII/278/snrs"+WHERE+GLON+IS+NOT+NULL+ORDER+BY+S1GHz+DESC
+ttl 86400
+force em
+at sun 1.0
+format universal
+map .
+lat_key RAJ2000
+lon_key DEJ2000
+  field_in SNR SNR
+  field_in MajDiam MajDiam
+  field_in MinDiam MinDiam
+  field_in S(1GHz) S(1GHz)
+  field_in Sp-Index Sp-Index
+  field_in type type
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+157+ID,RAJ2000,DEJ2000,Rsun,FeH,VHB,sigv,MVt,RV+FROM+"VII/202/table1"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+Rsun+ASC
+ttl 86400
+force gravity
+at sun 1.0
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+  field_in ID ID
+  field_in VHB VHB
+  field_in sigv sigv
+  field_in MVt MVt
+  field_in RV RV
+dist_key Rsun
+cmap data
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,HRV,D,W1mag,W2mag+FROM+"J/MNRAS/506/1896/hecate"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+D+ASC
+ttl 86400
+force em
+at sun 1.0
+format universal
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+  field_in HRV HRV
+  field_in D D
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+GLON,GLAT,NHI,VLSR,FWHM+FROM+"J/A+A/594/A116/hi4pi"+WHERE+NHI+IS+NOT+NULL+AND+NHI>1e20+ORDER+BY+NHI+DESC
+ttl 86400
+force em
+at sun 1.0
+format text
+rows
+ra_key GLON
+dec_key GLAT
+  field_in NHI NHI
+  field_in VLSR VLSR
+  field_in FWHM FWHM
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+Name,RAJ2000,DEJ2000,Fint,Fpeak,FWHMA,FWHMB,PA,SNR+FROM+%22J/A%2BA/591/A149/higalpsw%22+WHERE+RAJ2000+IS+NOT+NULL+AND+Fpeak>0.1+ORDER+BY+Fpeak+DESC
+ttl 86400
+force em
+at sun 1.0
+format universal
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+  field_in Name Name
+  field_in Fint Fint
+  field_in Fpeak Fpeak
+  field_in FWHMA FWHMA
+  field_in FWHMB FWHMB
+  field_in PA PA
+  field_in SNR SNR
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+Name,RAJ2000,DEJ2000,cz,Sint,Wpeak,Dist+FROM+"J/MNRAS/322/486/table1"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+Sint+DESC
+ttl 86400
+force em
+at sun 1.0
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+  field_in Name Name
+  field_in cz cz
+  field_in Sint Sint
+  field_in Wpeak Wpeak
+  field_in Dist Dist
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+RArad,DErad,Plx,pmRA,pmDE,Hpmag,B-V,VA,Ntr+FROM+%22I/311/hip2%22+WHERE+RArad+IS+NOT+NULL+AND+Hpmag<12+ORDER+BY+Hpmag+ASC
+ttl 86400
+force em
+at sun 1.0
+format universal
+rows
+ra_key RArad
+dec_key DErad
+plx_key Plx
+  field_in Hpmag Hpmag
+  field_in B-V B-V
+  field_in VA VA
+  field_in Ntr Ntr
+pmra_key pmRA
+pmdec_key pmDE
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+IPHAS,RAJ2000,DEJ2000,r%27mag,e_r%27mag,r%27-i,r%27-Ha,Flag+FROM+%22J/MNRAS/384/1277/emitters%22+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+r%27-Ha+DESC
+ttl 86400
+force em
+at sun 1.0
+format universal
+map .
+lat_key RAJ2000
+lon_key DEJ2000
+  field_in IPHAS IPHAS
+  field_in r'mag r'mag
+  field_in r'-i' r'-i'
+  field_in r'-Ha r'-Ha
+  field_in Flag Flag
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,Speak,SpeakTot,Maj,DCMaj,Source+FROM+"J/A+A/707/A198/lotssdr3"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+SpeakTot+DESC
+ttl 86400
+force em
+at sun 1.0
+format universal
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+  field_in Speak Speak
+  field_in SpeakTot SpeakTot
+  field_in Maj Maj
+  field_in Source Source
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3006+Name,RAJ2000,DEJ2000,d,logt,FeH,r2,Type+FROM+"J/A+A/558/A53/catalog"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+d+ASC
+ttl 86400
+force gravity
+at sun 1.0
+format universal
+map .
+lat_key RAJ2000
+lon_key DEJ2000
+  field_in Name Name
+  field_in logt logt
+  field_in r2 r2
+  field_in Type Type
+dist_key d
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+Name,RAJ2000,DEJ2000,z,Speak+FROM+\"J/AJ/137/3718/table1\"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+Speak+DESC
+ttl 86400
+force em
+at sun 1.0
+format universal
+map .
+lat_key RAJ2000
+lon_key DEJ2000
+  field_in z z
+  field_in Vmag Vmag
+  field_in S15GHz S15GHz
+  field_in STot STot
+  field_in SPeak SPeak
+  field_in PTot PTot
+  field_in EVPA EVPA
+ra_key RAJ2000
+dec_key DEJ2000
+  field_in Speak Speak
+  field_in Name Name
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ID,OName,z,Opt,mu-max,beta-max,Nep,PA,logVarPA,_RA,_DE+FROM+%22J/ApJ/923/30/mojave18%22+WHERE+_RA+IS+NOT+NULL+ORDER+BY+z+ASC
+ttl 86400
+force em
+at sun 1.0
+format text
+rows
+ra_key _RA
+dec_key _DE
+  field_in OName OName
+  field_in z z
+  field_in Opt Opt
+  field_in mu-max mu-max
+  field_in beta-max beta-max
+  field_in Nep Nep
+  field_in PA PA
+  field_in logVarPA logVarPA
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+Name,RAJ2000,DEJ2000,z,S15,mu_app,Class+FROM+\"J/ApJS/260/12/table3\"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+S15+DESC
+ttl 86400
+force em
+at sun 1.0
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+z_key z
+  field_in S15 S15
+  field_in mu_app mu_app
+  field_in Class Class
+  field_in Name Name
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+100+JNAME,RAdeg,DEdeg,Dist,P0,DM,tspan+FROM+"J/ApJ/951/L9/table1"+WHERE+RAdeg+IS+NOT+NULL+ORDER+BY+tspan+DESC
+ttl 86400
+force em
+at sun 1.0
+format text
+rows
+ra_key RAdeg
+dec_key DEdeg
+  field_in JNAME JNAME
+  field_in P0 P0
+  field_in DM DM
+  field_in tspan tspan
+dist_key Dist
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+RAJ2000,DEJ2000,"S1.4",MajAxis+FROM+"VIII/65/nvss"+WHERE+CONTAINS(POINT('ICRS',RAJ2000,DEJ2000),CIRCLE('ICRS',266.4,-29.0,5.0))=1
+ttl 86400
+force em
+at sun 1.0
+format universal
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field_in S1_4 flux_1400mhz_mjy
+  field_in MajAxis MajAxis
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+RAJ2000,DEJ2000,%22S1.4%22,MajAxis+FROM+%22VIII/65/nvss%22+WHERE+%22S1.4%22%3E20+ORDER+BY+%22S1.4%22+DESC
+ttl 86400
+force em
+at sun 1.0
+format universal
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field_in S1_4 flux_1400mhz_mjy
+  field_in MajAxis MajAxis
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+Reg,RAJ2000,DEJ2000,Dist,SimbadName+FROM+%22J/ApJS/229/28/table1%22+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+Dist+ASC
+ttl 86400
+force em
+at sun 1.0
+format universal
+map .
+lat_key RAJ2000
+lon_key DEJ2000
+  field_in Reg Reg
+  field_in Dist Dist
+  field_in SimbadName SimbadName
+cmap data
+ra_key RAJ2000
+dec_key DEJ2000
+  field_in recno recno
+  field_in Seq Seq
+  field_in ePos ePos
+  field_in CTot CTot

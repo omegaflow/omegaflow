@@ -1,0 +1,349 @@
+source hydrosphere_tide_1615680
+ttl 300
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_1615680.json
+wgs84 20.8949 -156.4690
+first data.v hydrosphere_tide_height_m_kahului_kahului_harbor
+
+source hydrosphere_tide_1617433
+ttl 300
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_1617433.json
+wgs84 20.0366 -155.8294
+first data.v hydrosphere_tide_height_m_kawaihae
+
+source hydrosphere_tide_1619910
+ttl 300
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_1619910.json
+wgs84 28.2117 -177.3600
+first data.v hydrosphere_tide_height_m_sand_island_midway_islands
+
+source hydrosphere_tide_1630000
+ttl 300
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_1630000.json
+wgs84 13.4434 144.6564
+first data.v hydrosphere_tide_height_m_apra_harbor_guam
+
+source hydrosphere_tide_1770000
+ttl 300
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_1770000.json
+wgs84 -14.28 -170.69
+first data.v hydrosphere_tide_height_m_pago_pago_american_samoa
+
+source hydrosphere_tide_1820000
+ttl 300
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_1820000.json
+wgs84 8.7317 167.7361
+first data.v hydrosphere_tide_height_m_kwajalein_marshall_islands
+
+source hydrosphere_tide_1890000
+ttl 300
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_1890000.json
+wgs84 19.2906 166.6175
+first data.v hydrosphere_tide_height_m_wake_island_pacific_ocean
+
+source hydrosphere_tide_2695535
+ttl 300
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_2695535.json
+wgs84 32.3702 -64.6957
+first data.v hydrosphere_tide_height_m_bermuda_biological_station
+
+source hydrosphere_tide_8311030
+ttl 300
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8311030.json
+wgs84 44.7028 -75.4944
+first data.v hydrosphere_tide_height_m_ogdensburg
+
+source hydrosphere_tide_8410140
+ttl 300
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8410140.json
+wgs84 44.9046 -66.9829
+first data.v hydrosphere_tide_height_m_eastport
+
+source hydrosphere_tide_8413320
+ttl 300
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8413320.json
+wgs84 44.3922 -68.2043
+first data.v hydrosphere_tide_height_m_bar_harbor
+
+source hydrosphere_tide_8418150
+ttl 300
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8418150.json
+wgs84 43.6581 -70.2442
+first data.v hydrosphere_tide_height_m_portland
+
+source hydrosphere_tide_8443970
+ttl 300
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8443970.json
+wgs84 42.3539 -71.0503
+first data.v hydrosphere_tide_height_m_boston
+
+source hydrosphere_tide_8447435
+ttl 300
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8447435.json
+wgs84 41.6885 -69.9511
+first data.v hydrosphere_tide_height_m_chatham
+
+source hydrosphere_tide_8461490
+ttl 300
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8461490.json
+wgs84 41.3717 -72.0956
+first data.v hydrosphere_tide_height_m_new_london
+
+source hydrosphere_tide_8516945
+ttl 300
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8516945.json
+wgs84 40.8103 -73.7649
+first data.v hydrosphere_tide_height_m_kings_point
+
+source hydrosphere_tide_8518962
+ttl 300
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8518962.json
+wgs84 42.0139 -73.9392
+first data.v hydrosphere_tide_height_m_turkey_point_hudson_river_nerr
+
+source hydrosphere_tide_8534720
+ttl 300
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8534720.json
+wgs84 39.3567 -74.4180
+first data.v hydrosphere_tide_height_m_atlantic_city
+
+source hydrosphere_tide_8551762
+ttl 300
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8551762.json
+wgs84 39.5822 -75.5890
+first data.v hydrosphere_tide_height_m_delaware_city
+
+source hydrosphere_tide_8570283
+ttl 300
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8570283.json
+wgs84 38.3283 -75.0917
+first data.v hydrosphere_tide_height_m_ocean_city_inlet
+
+source hydrosphere_tide_8575512
+ttl 300
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8575512.json
+wgs84 38.9839 -76.4800
+first data.v hydrosphere_tide_height_m_annapolis
+
+source hydrosphere_tide_8632200
+ttl 300
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8632200.json
+wgs84 37.1652 -75.9884
+first data.v hydrosphere_tide_height_m_kiptopeke
+
+source hydrosphere_tide_8635750
+ttl 300
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8635750.json
+wgs84 37.9961 -76.4644
+first data.v hydrosphere_tide_height_m_lewisetta
+
+source hydrosphere_tide_8651370
+ttl 300
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8651370.json
+wgs84 36.1833 -75.7467
+first data.v hydrosphere_tide_height_m_duck
+
+source hydrosphere_tide_8654467
+ttl 300
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8654467.json
+wgs84 35.2086 -75.7042
+first data.v hydrosphere_tide_height_m_uscg_station_hatteras
+
+source hydrosphere_tide_8656483
+ttl 300
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8656483.json
+wgs84 34.7173 -76.6707
+first data.v hydrosphere_tide_height_m_beaufort_duke_marine_lab
+
+source hydrosphere_tide_8658120
+ttl 300
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8658120.json
+wgs84 34.2267 -77.9533
+first data.v hydrosphere_tide_height_m_wilmington
+
+source hydrosphere_tide_8661070
+ttl 300
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8661070.json
+wgs84 33.6550 -78.9180
+first data.v hydrosphere_tide_height_m_springmaid_pier
+
+source hydrosphere_tide_8665530
+ttl 300
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8665530.json
+wgs84 32.7808 -79.9236
+first data.v hydrosphere_tide_height_m_charleston
+
+source hydrosphere_tide_8670870
+ttl 300
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8670870.json
+wgs84 32.0347 -80.9030
+first data.v hydrosphere_tide_height_m_fort_pulaski
+
+source hydrosphere_tide_8679598
+ttl 300
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8679598.json
+wgs84 30.7781 -81.4914
+first data.v hydrosphere_tide_height_m_kings_bay_msf_pier
+
+source hydrosphere_tide_8721604
+ttl 300
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8721604.json
+wgs84 28.4158 -80.5931
+first data.v hydrosphere_tide_height_m_trident_pier_port_canaveral
+
+source hydrosphere_tide_8722670
+ttl 300
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8722670.json
+wgs84 26.6128 -80.0342
+first data.v hydrosphere_tide_height_m_lake_worth_pier_atlantic_ocean
+
+source hydrosphere_tide_8723970
+ttl 300
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8723970.json
+wgs84 24.7110 -81.1060
+first data.v hydrosphere_tide_height_m_vaca_key_florida_bay
+
+source hydrosphere_tide_8725114
+ttl 300
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8725114.json
+wgs84 26.1367 -81.7883
+first data.v hydrosphere_tide_height_m_naples_bay_north
+
+source hydrosphere_tide_8726384
+ttl 300
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8726384.json
+wgs84 27.6387 -82.5621
+first data.v hydrosphere_tide_height_m_port_manatee
+
+source hydrosphere_tide_8727520
+ttl 300
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8727520.json
+wgs84 29.1350 -83.0320
+first data.v hydrosphere_tide_height_m_cedar_key
+
+source hydrosphere_tide_8728690
+ttl 300
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8728690.json
+wgs84 29.7244 -84.9805
+first data.v hydrosphere_tide_height_m_apalachicola
+
+source hydrosphere_tide_8729210
+ttl 300
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8729210.json
+wgs84 30.2138 -85.8786
+first data.v hydrosphere_tide_height_m_panama_city_beach
+
+source hydrosphere_tide_8729840
+ttl 300
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8729840.json
+wgs84 30.4044 -87.2112
+first data.v hydrosphere_tide_height_m_pensacola
+
+source hydrosphere_tide_8741533
+ttl 300
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8741533.json
+wgs84 30.3678 -88.5631
+first data.v hydrosphere_tide_height_m_pascagoula_noaa_lab
+
+source hydrosphere_tide_8760721
+ttl 300
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8760721.json
+wgs84 29.1793 -89.2588
+first data.v hydrosphere_tide_height_m_pilottown
+
+source hydrosphere_tide_8761927
+ttl 300
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8761927.json
+wgs84 30.0272 -90.1133
+first data.v hydrosphere_tide_height_m_new_canal_station
+
+source hydrosphere_tide_8764044
+ttl 300
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8764044.json
+wgs84 29.6675 -91.2376
+first data.v hydrosphere_tide_height_m_berwick_atchafalaya_river
+
+source hydrosphere_tide_8766072
+ttl 300
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8766072.json
+wgs84 29.5517 -92.3052
+first data.v hydrosphere_tide_height_m_freshwater_canal_locks
+
+source hydrosphere_tide_8767816
+ttl 300
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8767816.json
+wgs84 30.2236 -93.2217
+first data.v hydrosphere_tide_height_m_lake_charles
+
+source hydrosphere_tide_8770613
+ttl 300
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8770613.json
+wgs84 29.6817 -94.9850
+first data.v hydrosphere_tide_height_m_morgans_point_barbours_cut
+
+source hydrosphere_tide_8772985
+ttl 300
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8772985.json
+wgs84 28.7716 -95.6168
+first data.v hydrosphere_tide_height_m_sargent
+
+source hydrosphere_tide_8773037
+ttl 300
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8773037.json
+wgs84 28.4069 -96.7124
+first data.v hydrosphere_tide_height_m_seadrift
+
+source hydrosphere_tide_8775222
+ttl 300
+force gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8775222.json
+wgs84 27.8461 -97.5207
+first data.v hydrosphere_tide_height_m_viola_turning_basin

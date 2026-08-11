@@ -1,0 +1,99 @@
+cmap data
+
+ra_key RAJ2000
+
+dec_key DEJ2000
+
+field_in recno vizier_first_recno
+
+field_in FIRST vizier_first_FIRST
+
+field_in p(S) vizier_first_p(S)
+
+field_in Fpeak vizier_first_Fpeak
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_gcvs_variables.json
+
+ttl 604800
+
+force em
+
+cmap data
+
+ra_key RAJ2000
+
+dec_key DEJ2000
+
+field_in recno vizier_gcvs_variables_recno
+
+field_in VarNum vizier_gcvs_variables_VarNum
+
+field_in m_VarNum vizier_gcvs_variables_m_VarNum
+
+field_in GCVS vizier_gcvs_variables_GCVS
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_glade.json
+
+ttl 604800
+
+force em
+
+cmap data
+
+ra_key RAJ2000
+
+dec_key DEJ2000
+
+dist_key Dist
+
+field_in recno astro_vizier_glade_recno
+
+field_in PGC astro_vizier_glade_PGC
+
+field_in GWGC astro_vizier_glade_GWGC
+
+field_in HyperLEDA astro_vizier_glade_HyperLEDA
+
+field_in 2MASS astro_vizier_glade_2MASS
+
+field_in SDSS-DR12 astro_vizier_glade_SDSS-DR12
+
+field_in Flag1 astro_vizier_glade_Flag1
+
+field_in e_Dist astro_vizier_glade_e_Dist
+
+field_in Bmag astro_vizier_glade_Bmag
+
+field_in e_Bmag astro_vizier_glade_e_Bmag
+
+field_in BMAG astro_vizier_glade_BMAG
+
+field_in Jmag astro_vizier_glade_Jmag
+
+field_in e_Jmag astro_vizier_glade_e_Jmag
+
+field_in Hmag astro_vizier_glade_Hmag
+
+field_in e_Hmag astro_vizier_glade_e_Hmag
+
+field_in Kmag astro_vizier_glade_Kmag
+
+field_in e_Kmag astro_vizier_glade_e_Kmag
+
+field_in Flag2 astro_vizier_glade_Flag2
+
+field_in Flag3 astro_vizier_glade_Flag3
+
+url https://raw.githubusercontent.com/omegaflow/catalogs/main/vizier_glade2.json
+
+ttl 604800
+
+force em
+
+cmap data
+
+ra_key RAJ2000
+
+dec_key DEJ2000
+
+dist_key Dist

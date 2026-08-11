@@ -1,0 +1,520 @@
+source geosphere_opentopo_mapzen_terrain
+ttl 2592000
+force em
+url https://api.opentopodata.org/v1/mapzen?locations={grid}
+map results
+lat_key location.lat
+lon_key location.lng
+field elevation geosphere_terrain_mapzen_m
+alt_key elevation
+
+source geosphere_opentopo_srtm30m
+ttl 2592000
+force em
+url https://api.opentopodata.org/v1/srtm30m?locations={grid}
+map results
+lat_key location.lat
+lon_key location.lng
+field elevation geosphere_elevation_srtm30_m
+alt_key elevation
+
+source geosphere_planetary_computer_collections
+ttl 2592000
+force em
+url https://planetarycomputer.microsoft.com/api/stac/v1/collections
+wgs84 47.640000000 -122.140000000
+count collections biosphere_planetary_computer_collection_count
+
+source geosphere_soilgrids_clay
+ttl 2592000
+force em
+url https://rest.isric.org/soilgrids/v2.0/properties/query?lon={lon}&lat={lat}&property=clay&depth=0-5cm&value=mean
+field properties.layers.0.depths.0.values.mean geosphere_soil_clay_pct
+
+source geosphere_soilgrids_ph
+ttl 2592000
+force em
+url https://rest.isric.org/soilgrids/v2.0/properties/query?lon={lon}&lat={lat}&property=phh2o&depth=0-5cm&value=mean
+field properties.layers.0.depths.0.values.mean geosphere_soil_ph_x10
+
+source geosphere_soilgrids_sand
+ttl 2592000
+force em
+url https://rest.isric.org/soilgrids/v2.0/properties/query?lon={lon}&lat={lat}&property=sand&depth=0-5cm&value=mean
+field properties.layers.0.depths.0.values.mean geosphere_soil_sand_pct
+
+source geosphere_soilgrids_soc
+ttl 2592000
+force em
+url https://rest.isric.org/soilgrids/v2.0/properties/query?lon={lon}&lat={lat}&property=soc&depth=0-5cm&value=mean
+field properties.layers.0.depths.0.values.mean geosphere_soil_organic_carbon_x10
+
+source geosphere_usgs_epqs_elevation
+ttl 2592000
+force seismic-surface
+url https://epqs.nationalmap.gov/v1/json?x={lon}&y={lat}&units=Meters&wkid=4326
+path value geosphere_elevation_epqs_m
+
+source lithosphere_gem_active_faults
+ttl 2592000
+force em
+url https://raw.githubusercontent.com/cossatot/gem-global-active-faults/master/geojson/gem_active_faults_harmonized.geojson
+flatten features
+
+source lithosphere_pb2002_boundaries
+ttl 2592000
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/mirror_pb2002_boundaries.json
+flatten features
+
+source lithosphere_pb2002_orogens
+ttl 2592000
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/mirror_pb2002_orogens.json
+flatten features
+
+source lithosphere_pb2002_plates
+ttl 2592000
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/mirror_pb2002_plates.json
+flatten features
+
+source astro_ned
+ttl 2592000
+force em
+url https://ned.ipac.caltech.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,dec,preferredname,redshift,vel+FROM+ned.source+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
+verify false
+format votable
+map data
+field preferredname name
+field redshift redshift
+field vel velocity_km_s
+lat_key ra
+lon_key dec
+
+source subatomic_neutrinoless_double_beta_limits
+ttl 2592000
+force em
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=neutrinoless+double+beta+decay+limit&fields=titles,citation_count
+wgs84 42.454 13.576
+field hits.hits.0.metadata.citation_count quantum_double_beta_limit_citations
+
+source noaa_epica_domec_deuterium
+ttl 2592000
+force diffusion
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_epica_domec_deuterium.json
+wgs84 -75.1 123.35
+format json
+map data
+lat_key lat
+lon_key lon
+field_in 0 depth_m
+field_in 1 age_yr_bp
+field_in 2 ch4_ppbv
+
+source noaa_vostok_deuterium
+ttl 2592000
+force diffusion
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_vostok_deuterium.json
+wgs84 -78.464 106.837
+format json
+map data
+lat_key lat
+lon_key lon
+field_in 0 depth_m
+field_in 1 age_yr_bp
+field_in 2 deuterium_delta
+
+source noaa_wais_divide_co2
+ttl 2592000
+force diffusion
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_wais_divide_co2.json
+wgs84 -79.467 -112.085
+format json
+map data
+lat_key lat
+lon_key lon
+field_in 0 depth_m
+field_in 1 age_yr_bp
+field_in 2 co2_ppmv
+field_in 3 co2_sigma_ppmv
+
+source cryosphere_paleoclimate_dome_fuji_co2
+ttl 2592000
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/cryosphere_paleoclimate_dome_fuji_co2.json
+wgs84 -77.3190 39.7030
+format json
+map data
+lat_key lat
+lon_key lon
+field_in 0 paleoclimate_domefuji_age_bp
+field_in 1 paleoclimate_domefuji_co2_ppm
+
+source cryosphere_paleoclimate_epica_co2
+ttl 2592000
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/cryosphere_paleoclimate_epica_co2.json
+wgs84 -75.100 123.350
+format json
+map data
+lat_key lat
+lon_key lon
+field_in 3 paleoclimate_epica_age_bp
+field_in 4 paleoclimate_epica_co2_ppm
+
+source cryosphere_paleoclimate_vostok_icecore
+ttl 2592000
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/cryosphere_paleoclimate_vostok_icecore.json
+wgs84 -78.464 106.833
+format json
+map data
+lat_key lat
+lon_key lon
+field_in 0 paleoclimate_vostok_depth_m
+field_in 1 paleoclimate_vostok_age_bp
+field_in 2 paleoclimate_vostok_co2_ppm
+
+source physics_cern_opendata_records
+ttl 2592000
+force em
+url https://opendata.cern.ch/api/records/?size=1&page=1
+wgs84 46.233 6.055
+field hits.total physics_cern_opendata_total
+
+source physics_crossref_biophoton_papers
+ttl 2592000
+force em
+url https://api.crossref.org/works?query=ultraweak+biophoton+emission&rows=0
+wgs84 50.775 6.084
+field message.total-results biosphere_biophoton_research_total
+
+source physics_inspirehep_cmb_anomaly_papers
+ttl 2592000
+force em
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=CMB+cold+spot+anomaly&fields=titles,citation_count
+wgs84 5.230 -52.769
+field hits.hits.0.metadata.citation_count cosmic_cmb_anomaly_research_citations
+
+source physics_inspirehep_vacuum_metastability_papers
+ttl 2592000
+force em
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=vacuum+metastability+Higgs&fields=titles,citation_count
+wgs84 46.233 6.055
+field hits.hits.0.metadata.citation_count physics_vacuum_metastability_citations
+
+source physics_inspirehep_xenonnt_papers
+ttl 2592000
+force em
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=XENONnT+dark+matter&fields=titles,citation_count
+wgs84 42.454 13.576
+field hits.hits.0.metadata.citation_count physics_dark_matter_limit_citations
+
+source subatomic_quantum_gravity_lorentz_bounds
+ttl 2592000
+force em
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=Lorentz+invariance+violation+quantum+gravity&fields=titles,citation_count
+wgs84 42.454 13.576
+field hits.hits.0.metadata.citation_count quantum_lorentz_bounds_citations
+
+source astro_vizier
+ttl 2592000
+force em
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+*+FROM+"{catalog}"+WHERE+CONTAINS(POINT('ICRS',RAJ2000,DEJ2000),CIRCLE('ICRS',{ra},{dec},{radius}))=1
+verify false
+format votable
+map data
+catalog I/355/gaiadr3
+map data
+lat_key RAJ2000
+lon_key DEJ2000
+source hydrosphere_cmems_sst_global
+ttl 21600
+force thermal
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_cmems_sst_global.json
+format json
+map data
+lat_key latitude
+lon_key longitude
+field_in sst hydrosphere_cmems_sst_c
+
+source hydrosphere_cmems_heat_content_700m
+ttl 21600
+force thermal
+url https://www.ncei.noaa.gov/erddap/griddap/cfs_reanl_mm_ocnh_by_time16_depth_below_sea_lat_lon.csv?Potential_temperature%5B(last)%5D%5B(0)%5D%5B(-80.0):10:(80.0)%5D%5B(0.125):10:(359.875)%5D
+format text
+rows
+lat_key latitude
+lon_key longitude
+field Potential_temperature hydrosphere_cmems_ocean_temp_k
+
+source hydrosphere_cmems_mixed_layer_depth
+ttl 21600
+force thermal
+url https://www.ncei.noaa.gov/erddap/griddap/cfs_reanl_mm_ocnh_by_time16_bottom_of_ocean_mixed_layer_lat_lon.csv?bottom_of_ocean_mixed_layer%5B(last)%5D%5B(-80.0):10:(80.0)%5D%5B(0.125):10:(359.875)%5D
+format text
+rows
+lat_key latitude
+lon_key longitude
+field bottom_of_ocean_mixed_layer hydrosphere_cmems_mlotst_m
+
+source atmosphere_aeronet_aod_full
+ttl 10800
+force thermal
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?site=all&year=2026&month=7&day=31&hour=0&min=0&AOD15=1
+format csv
+rows
+lat_key 1
+lon_key 2
+field_in 7 atmosphere_aeronet_aod_500nm
+
+source ndbc_all_buoys
+ttl 600
+force acoustic
+url https://www.ndbc.noaa.gov/data/latest_obs/all_stations.txt
+format text
+rows
+lat_key 5
+lon_key 6
+field_in 0 station_id
+field_in 8 wind_dir_deg
+field_in 9 wind_speed_ms
+field_in 10 gust_ms
+field_in 11 wave_height_m
+field_in 12 dominant_period_s
+field_in 14 pressure_hpa
+field_in 17 water_temp_c
+
+source hydrosphere_pegelonline_all_stations
+ttl 1800
+force advective
+url https://www.pegelonline.wsv.de/webservices/rest-api/v2/stations.json
+format json
+map .
+lat_key latitude
+lon_key longitude
+field shortname hydrosphere_pegelonline_station
+field number hydrosphere_pegelonline_number
+field water.shortname hydrosphere_pegelonline_water
+
+source exosphere_cmems_currents
+ttl 21600
+force advective
+url https://www.ncei.noaa.gov/erddap/griddap/cfs_reanl_mm_ocnh_by_time16_depth_below_sea_lat_lon.csv?u_component_of_current%5B(last)%5D%5B(0)%5D%5B(-80.0):10:(80.0)%5D%5B(0.125):10:(359.875)%5D,v_component_of_current%5B(last)%5D%5B(0)%5D%5B(-80.0):10:(80.0)%5D%5B(0.125):10:(359.875)%5D
+format text
+rows
+lat_key latitude
+lon_key longitude
+field u_component_of_current hydrosphere_cmems_current_u_ms
+field v_component_of_current hydrosphere_cmems_current_v_ms
+
+source geosphere_raspberry_shake_stations
+ttl 43200
+force seismic-surface
+url https://stationview.raspberryshake.org/stations?online=true
+format json
+map .
+lat_key latitude
+lon_key longitude
+field code geosphere_raspberry_shake_name
+field elevation geosphere_raspberry_shake_elevation_m
+
+source geosphere_iris_stations
+ttl 86400
+force seismic-body
+url https://service.earthscope.org/fdsnws/station/1/query?level=station&format=geocsv
+format csv
+rows
+lat_key Latitude
+lon_key Longitude
+field Network geosphere_iris_network
+field Station geosphere_iris_station
+
+source biosphere_gbif_invasive_species
+ttl 86400
+force diffusion
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_gbif_invasive_species.json
+format json
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field species biosphere_gbif_species
+field occurrenceStatus biosphere_gbif_occurrence_status
+
+source biosphere_gbif_range_shifts
+ttl 86400
+force diffusion
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_gbif_range_shifts.json
+format json
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field species biosphere_gbif_species
+field year biosphere_gbif_year
+
+source biosphere_gbif_marine_invasives
+ttl 86400
+force diffusion
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_gbif_marine_invasives.json
+format json
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field species biosphere_gbif_marine_species
+field depth biosphere_gbif_depth_m
+source astro_vizier_2mass
+ttl 86400
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_vizier_2mass.json
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+plx_key 2
+field_in 3 universe_2mass_gaia_g_mag
+
+source astro_vizier_panstarrs
+ttl 86400
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_vizier_panstarrs.json
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+plx_key 2
+field_in 3 universe_panstarrs_gaia_g_mag
+
+source exosphere_gaia_nearby_stars
+ttl 604800
+force em gravity
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+256+ra,dec,parallax,pmra,pmdec,radial_velocity,phot_g_mean_mag+FROM+gaiadr3.gaia_source+WHERE+parallax+>+0+ORDER+BY+parallax+DESC
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+plx_key 2
+field_in 6 gaia_nearby_star_mag
+pmra_key 3
+pmdec_key 4
+radvel_key 5 1000
+
+source exosphere_gaia_stars
+ttl 604800
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/exosphere_gaia_stars.json
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+plx_key 2
+field_in 6 cosmic_star_magnitude
+pmra_key 3
+pmdec_key 4
+radvel_key 5 1000
+
+source exosphere_gaia_stellar_ages
+ttl 604800
+force em gravity
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+128+g.ra,g.dec,g.parallax,g.pmra,g.pmdec,g.radial_velocity,ap.age_flame,ap.teff_gspphot+FROM+gaiadr3.astrophysical_parameters+AS+ap+JOIN+gaiadr3.gaia_source+AS+g+ON+ap.source_id=g.source_id+WHERE+ap.age_flame+IS+NOT+NULL+AND+g.parallax+>+0+ORDER+BY+ap.age_flame+DESC
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+plx_key 2
+field_in 6 cosmic_oldest_star_age_gyr
+field_in 7 cosmic_oldest_star_temp_k
+pmra_key 3
+pmdec_key 4
+radvel_key 5 1000
+
+source exosphere_gaia_variable_stars
+ttl 604800
+force em gravity
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/exosphere_gaia_variable_stars.json
+cmap data
+tau_key _dist_m
+ra_key 0
+dec_key 1
+plx_key 2
+field_in 6 gaia_cepheid_period_d
+pmra_key 3
+pmdec_key 4
+radvel_key 5 1000
+
+source biosphere_ebird_recent
+ttl 3600
+force em
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/ebird_recent.json
+map .
+lat_key lat
+lon_key lon
+field speciesCode ebird_species_code
+field howMany ebird_observation_count
+field obsDt ebird_obs_time
+
+source atmosphere_openaq_pm25
+ttl 3600
+force diffusion
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/openaq_pm25.json
+map .
+lat_key lat
+lon_key lon
+field value openaq_pm25_ugm3
+field lastUpdated openaq_measurement_time
+
+source atmosphere_openaq_pm10
+ttl 3600
+force diffusion
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/openaq_pm10.json
+map .
+lat_key lat
+lon_key lon
+field value openaq_pm10_ugm3
+field lastUpdated openaq_measurement_time
+
+source geosphere_firms_viirs_global_nrt
+ttl 3600
+force thermal
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/firms_viirs_nrt_world.csv
+format csv
+map data
+lat_key latitude
+lon_key longitude
+field bright_ti4 fire_brightness_k
+field bright_ti5 fire_brightness_ti5_k
+field frp fire_radiative_power_mw
+field confidence fire_confidence
+
+source geosphere_firms_modis_global_nrt
+ttl 3600
+force thermal
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/firms_modis_nrt_world.csv
+format csv
+map data
+lat_key latitude
+lon_key longitude
+field bright_ti4 fire_brightness_k
+field bright_ti5 fire_brightness_ti5_k
+field frp fire_radiative_power_mw
+field confidence fire_confidence
+
+source geosphere_noaa_ghcnd_stations
+ttl 86400
+force thermal
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_ghcnd_stations.json
+map .
+lat_key lat
+lon_key lon
+field elevation geosphere_station_elevation_m
+field datacoverage geosphere_station_coverage
+
+source hydrosphere_oceannetworks_sites
+ttl 86400
+force diffusion
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/oceannetworks_sites.json
+map .
+lat_key lat
+lon_key lon
+field deployments ocean_site_deployments
+field depth ocean_site_depth_m

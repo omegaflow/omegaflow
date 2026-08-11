@@ -1,0 +1,547 @@
+source geosphere_overpass_wlan
+ttl 3600
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["internet_access"="wlan"](around:10000,{lat},{lon});out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in id geosphere_overpass_wlan_id
+
+source geosphere_police
+ttl 3600
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="police"](around:200000,{lat},{lon});out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in id geosphere_police_id
+
+source geosphere_restaurants
+ttl 3600
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="restaurant"](around:50000,{lat},{lon});out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in id geosphere_restaurant_id
+
+source geosphere_soil_moisture_profile
+ttl 3600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=soil_moisture_0_to_7cm,soil_moisture_7_to_28cm,soil_moisture_28_to_100cm,soil_moisture_100_to_255cm&timezone=auto
+path current.soil_moisture_0_to_7cm geosphere_soil_moisture_surface_m3m3
+path current.soil_moisture_7_to_28cm geosphere_soil_moisture_shallow_m3m3
+path current.soil_moisture_28_to_100cm geosphere_soil_moisture_deep_m3m3
+path current.soil_moisture_100_to_255cm geosphere_soil_moisture_bedrock_m3m3
+
+source geosphere_soil_temperature_profile
+ttl 3600
+force em
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=soil_temperature_0cm,soil_temperature_6cm,soil_temperature_18cm,soil_temperature_54cm&timezone=auto
+path current.soil_temperature_0cm geosphere_soil_temp_surface_c
+path current.soil_temperature_6cm geosphere_soil_temp_6cm_c
+path current.soil_temperature_18cm geosphere_soil_temp_18cm_c
+path current.soil_temperature_54cm geosphere_soil_temp_54cm_c
+
+source geosphere_speed_cameras
+ttl 3600
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["highway"="speed_camera"](around:50000,{lat},{lon});out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in tags.maxspeed geosphere_speed_camera_limit_kmh
+
+source geosphere_usgs_earthquakes_month
+ttl 3600
+force seismic-surface
+lat 0
+lon 0
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in geometry.coordinates.2 geosphere_quake_depth_km
+field_in properties.mag geosphere_quake_magnitude
+
+source geosphere_usgs_significant_earthquakes
+ttl 3600
+force seismic-surface
+lat 38.9072
+lon -77.0369
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={yesterday}&endtime={today}&minmagnitude=6.0
+field metadata.count geosphere_earthquakes_magnitude6_usgs
+
+source geosphere_usgs_volcano_alerts
+ttl 3600
+force seismic-surface
+terra 1
+url https://volcanoes.usgs.gov/vsc/api/volcanoApi/geojson
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in properties.alertLevel volcano_alert_level
+field_in properties.volcanoName volcano_name
+
+source geosphere_volcanoes
+ttl 3600
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["natural"="volcano"](around:500000,{lat},{lon});out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in tags.ele geosphere_volcano_elevation_m
+
+source geosphere_weather_stations_overpass
+ttl 3600
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="weather_station"](around:200000,{lat},{lon});out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in tags.ele geosphere_weather_station_elevation_m
+
+source geosphere_wind_turbines
+ttl 3600
+force em
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["power"="generator"]["generator:source"="wind"](around:200000,{lat},{lon});out%20100;
+map elements
+lat_key lat
+lon_key lon
+field_in tags.ele geosphere_wind_turbine_elevation_m
+
+source gfz_potsdam_kp_index_hourly
+ttl 3600
+force gravity
+lat 0.0
+lon 0.0
+url https://kp.gfz-potsdam.de/app/files/gfz-hpo-Kp_def-{year}.txt
+format text
+rows
+field 0 year
+field 1 month
+field 2 day
+field 3 hour
+field 4 kp_value
+
+source giro_digisonde_network_stations
+ttl 3600
+force em
+url https://giro.uml.edu/SAOExplorer/index.php?action=getStations&format=json
+map stations
+lat_key lat
+lon_key lon
+field ursiCode station_code
+field stationName station_name
+field country country
+field altitude altitude_m
+field lastDataTime last_observation
+
+source gracedb_latest_confirmed_gw_event
+ttl 3600
+force gravity
+lat 0.0
+lon 0.0
+url https://gracedb.ligo.org/api/superevents/?format=json&category=Production&label=GW&ordering=-created&per_page=10
+map superevents
+field superevent_id event_id
+field t_0 gps_time
+field far false_alarm_rate_Hz
+field labels event_labels
+field distance.mean luminosity_distance_Mpc
+field classification.BNS p_bns
+field classification.BBH p_bbh
+
+source gracedb_o4_mass_gap_candidates
+ttl 3600
+force gravity
+lat 0.0
+lon 0.0
+url https://gracedb.ligo.org/api/superevents/?format=json&category=Production&public=True&ordering=-created&per_page=100
+map superevents
+field superevent_id event_id
+field t_0 gps_time
+field far false_alarm_rate_Hz
+field classification.MassGap p_massgap
+field distance.mean distance_Mpc
+field created created_utc
+
+source gvp_smithsonian_weekly_activity
+ttl 3600
+force seismic-body
+url https://volcano.si.edu/api/v1/activity?format=json&weeks=4&status=eruption
+map items
+lat_key lat
+lon_key lon
+field name volcano_name
+field country country
+field alert_level alert_level
+field start_date eruption_start
+field status eruption_status
+field vei vei_index
+
+source gwis_active_fires_global
+ttl 3600
+force thermal
+url https://gwis.jrc.ec.europa.eu/api/fire/current?format=json&limit=500
+map fires
+lat_key latitude
+lon_key longitude
+field frp fire_radiative_power
+field confidence confidence
+
+source gwosc_gw_events_all
+ttl 3600
+force gravity
+url https://gwosc.org/api/v2/events/?format=json&page_size=300
+map results
+field commonName event_name
+field GPS gps_time
+field parameters.mass_1_source.best mass1_solar
+field parameters.mass_2_source.best mass2_solar
+field parameters.luminosity_distance.best lum_dist_mpc
+field parameters.network_matched_filter_snr.best snr
+field catalog.shortName catalog_name
+
+source gwosc_gw_neutron_star_mergers
+ttl 3600
+force gravity
+url https://gwosc.org/api/v2/events/?format=json&page_size=200
+map results
+field commonName event_name
+field GPS gps_time
+field parameters.mass_1_source.best mass1_solar
+field parameters.mass_2_source.best mass2_solar
+field parameters.luminosity_distance.best lum_dist_mpc
+field parameters.has_ns.best has_neutron_star
+
+source gwosc_gwtc4_catalog
+ttl 3600
+force gravity
+url https://gwosc.org/api/v2/events/?catalog=GWTC-4-confident&format=json&page_size=200
+map results
+field commonName event_name
+field GPS gps_time
+field parameters.mass_1_source.best mass1_solar
+field parameters.mass_2_source.best mass2_solar
+field parameters.luminosity_distance.best lum_dist_mpc
+field parameters.chirp_mass_source.best chirp_mass_solar
+
+source haumea_vectors
+ttl 3600
+force em
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Haumea%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ephemeris orbital_haumea_distance
+extent 5.45e-6
+
+source heasarc_nicer_master_source_catalog
+ttl 3600
+force em
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+name,ra,dec,obsid,exposure,count_rate,type+FROM+nicermastr+WHERE+ra+IS+NOT+NULL+ORDER+BY+count_rate+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field name source_name
+field obsid observation_id
+field exposure exposure_time_ks
+field count_rate photon_count_rate_cts_s
+field type source_classification
+
+source heasarc_sgra_multiwavelength_flares
+ttl 3600
+force em
+lat -29.008
+lon 266.417
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+200+date,band,peak_flux,duration,type+FROM+sgraflares+WHERE+date+IS+NOT+NULL+ORDER+BY+date+DESC
+format text
+rows
+field date flare_date_utc
+field band observing_band
+field peak_flux peak_flux
+field duration duration_min
+field type flare_classification
+
+source hydroshere_global_flood_awareness
+ttl 3600
+force em
+terra 1
+url https://www.globalfloods.eu/glofas-forecasting/?format=json
+map .
+lat_key lat
+lon_key lon
+field_in discharge hydrosphere_glofas_discharge_m3s
+field_in probability hydrosphere_glofas_flood_probability
+field_in return_period hydrosphere_glofas_return_period_years
+
+source hydrosphere_drifters_hourly
+ttl 3600
+force em
+lat 0
+lon 0
+url https://erddap.aoml.noaa.gov/gdp/erddap/tabledap/drifter_hourly_qc.json?latitude,longitude,sst&time%3E=max(time)-7days
+map table.rows
+lat_key 0
+lon_key 1
+field_in 2 hydrosphere_drifter_sst_k
+
+source hydrosphere_erddap_smartbay_spl
+ttl 3600
+force em
+lat 53.13
+lon -9.27
+url https://erddap.marine.ie/erddap/tabledap/smartbay_obs_acoustic.csv?time,spl_full
+format csv
+last_row spl_full hydrosphere_sound_pressure_db
+
+source hydrosphere_flood
+ttl 3600
+force em
+url https://flood-api.open-meteo.com/v1/flood?latitude={lat}&longitude={lon}&daily=river_discharge
+first river_discharge hydrosphere_river_discharge_m3s
+
+source hydrosphere_pegelonline_water_level
+ttl 3600
+force gravity
+url https://pegelonline.wsv.de/webservices/rest-api/v2/stations.json?latitude={lat}&longitude={lon}&radius=50&includeCurrentMeasurement=true
+field 0.water.currentMeasurement.value hydrosphere_water_level_cm
+
+source iagos_aircraft_measurements
+ttl 3600
+force diffusion
+url https://iagos.aeris-data.fr/api/json/products?domain=IAGOS-CORE&variables=O3,CO&start={today}T00:00:00&stop={today}T23:59:59&limit=500
+map .
+lat_key lat
+lon_key lon
+field O3 ozone_ppb
+field CO carbon_monoxide_ppb
+field altitude altitude_m
+field time measurement_time
+field aircraft_type aircraft_model
+
+source icos_carbon_portal_co2_station_data
+ttl 3600
+force diffusion
+url https://meta.icos-cp.eu/sparql?format=json&query=SELECT+?s+?name+?lat+?lon+?alt+?country+?stType+WHERE{?s+a+<http://meta.icos-cp.eu/ontologies/cpmeta/ES>+;+<http://www.w3.org/2000/01/rdf-schema#label>+?name+;+<http://meta.icos-cp.eu/ontologies/cpmeta/hasLatitude>+?lat+;+<http://meta.icos-cp.eu/ontologies/cpmeta/hasLongitude>+?lon+;+<http://meta.icos-cp.eu/ontologies/cpmeta/hasCountry>+?country+}+LIMIT+200
+map results.bindings
+lat_key lat.value
+lon_key lon.value
+field name.value station_name
+field country.value country_code
+field s.value station_uri
+field stType.value station_type
+
+source ifremer_argo_oxygen_profiles
+ttl 3600
+force diffusion
+url https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.csv?latitude,longitude,TEMP,PSAL,DOXY,PRES,time&DOXY%3E=0&time%3E=now-7days&orderBy(%22time%22)&limit=3000
+format text
+rows
+lat_key latitude
+lon_key longitude
+field DOXY dissolved_oxygen_umolkg
+field TEMP water_temp_c
+field PSAL salinity_psu
+field PRES pressure_dbar
+field time obs_time
+
+source inaturalist
+ttl 3600
+force em
+url https://api.inaturalist.org/v1/observations?lat={lat}&lng={lon}&radius=1&per_page=1
+field total_results biosphere_observations
+
+source inaturalist_amazon_biodiversity
+ttl 3600
+force diffusion
+url https://api.inaturalist.org/v1/observations?quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true&swlat=-20&swlng=-80&nelat=5&nelng=-45
+map results
+lat_key geojson.coordinates.1
+lon_key geojson.coordinates.0
+field taxon.name species_name
+field taxon.iconic_taxon_name iconic_taxon
+field observed_on observation_date
+
+source inaturalist_amphibia_global
+ttl 3600
+force diffusion
+url https://api.inaturalist.org/v1/observations?iconic_taxa=Amphibia&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
+map results
+lat_key geojson.coordinates.1
+lon_key geojson.coordinates.0
+field taxon.name species_name
+field observed_on observation_date
+
+source inaturalist_europe_recent
+ttl 3600
+force diffusion
+url https://api.inaturalist.org/v1/observations?quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true&swlat=35&swlng=-10&nelat=70&nelng=40
+map results
+lat_key geojson.coordinates.1
+lon_key geojson.coordinates.0
+field taxon.name species_name
+field taxon.iconic_taxon_name iconic_taxon
+field observed_on observation_date
+field place_guess locality
+
+source inaturalist_fungi_global
+ttl 3600
+force diffusion
+url https://api.inaturalist.org/v1/observations?iconic_taxa=Fungi&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
+map results
+lat_key geojson.coordinates.1
+lon_key geojson.coordinates.0
+field taxon.name species_name
+field taxon.rank taxon_rank
+field observed_on observation_date
+field place_guess locality
+
+source inaturalist_invasive_insects
+ttl 3600
+force diffusion
+url https://api.inaturalist.org/v1/observations?iconic_taxa=Insecta&invasive=true&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
+map results
+lat_key geojson.coordinates.1
+lon_key geojson.coordinates.0
+field taxon.name species_name
+field observed_on observation_date
+field place_guess locality
+
+source inaturalist_mammalia_global
+ttl 3600
+force diffusion
+url https://api.inaturalist.org/v1/observations?iconic_taxa=Mammalia&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
+map results
+lat_key geojson.coordinates.1
+lon_key geojson.coordinates.0
+field taxon.name species_name
+field taxon.rank taxon_rank
+field observed_on observation_date
+field place_guess locality
+
+source inaturalist_marine_fish
+ttl 3600
+force diffusion
+url https://api.inaturalist.org/v1/observations?iconic_taxa=Actinopterygii&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
+map results
+lat_key geojson.coordinates.1
+lon_key geojson.coordinates.0
+field taxon.name species_name
+field taxon.rank taxon_rank
+field observed_on observation_date
+
+source inaturalist_reptilia_global
+ttl 3600
+force diffusion
+url https://api.inaturalist.org/v1/observations?iconic_taxa=Reptilia&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
+map results
+lat_key geojson.coordinates.1
+lon_key geojson.coordinates.0
+field taxon.name species_name
+field taxon.rank taxon_rank
+field observed_on observation_date
+field place_guess locality
+
+source inaturalist_threatened_species
+ttl 3600
+force diffusion
+url https://api.inaturalist.org/v1/observations?threatened=true&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
+map results
+lat_key geojson.coordinates.1
+lon_key geojson.coordinates.0
+field taxon.name species_name
+field observed_on observation_date
+field place_guess locality
+
+source incois_erddap_argo_profiles_io
+ttl 3600
+force diffusion
+url https://erddap.incois.gov.in/erddap/tabledap/INCOIS_ARGO_PROFILES.csv?latitude,longitude,time,pres,temp,psal,platform_number&time>={today}T00:00:00Z&latitude>=-30&latitude<=30&longitude>=40&longitude<=120&orderBy(%22time%22)&distinct()
+format text
+rows
+lat_key latitude
+lon_key longitude
+field temp temperature_c
+field psal salinity_psu
+field pres pressure_dbar
+field platform_number argo_float_id
+field time profile_time
+
+source incois_erddap_sst_indian_ocean
+ttl 3600
+force thermal
+url https://erddap.incois.gov.in/erddap/griddap/INCOIS_GHRSST_MUR_SST.csv?analysed_sst%5Blast%5D%5B(-30.0):(30.0):5%5D%5B(40.0):(120.0):5%5D
+format text
+rows
+lat_key latitude
+lon_key longitude
+field analysed_sst sst_kelvin
+
+source incois_erddap_wave_arabian_sea
+ttl 3600
+force acoustic
+url https://erddap.incois.gov.in/erddap/griddap/INCOIS_NIO_WAVE_MODEL.csv?SWH%5Blast%5D%5B(0.0):(25.0):2%5D%5B(50.0):(80.0):2%5D,MWP%5Blast%5D%5B(0.0):(25.0):2%5D%5B(50.0):(80.0):2%5D,MWD%5Blast%5D%5B(0.0):(25.0):2%5D%5B(50.0):(80.0):2%5D
+format text
+rows
+lat_key latitude
+lon_key longitude
+field SWH sig_wave_height_m
+field MWP mean_wave_period_s
+field MWD mean_wave_direction_deg
+
+source incois_erddap_wave_bay_of_bengal
+ttl 3600
+force acoustic
+url https://erddap.incois.gov.in/erddap/griddap/INCOIS_NIO_WAVE_MODEL.csv?SWH%5Blast%5D%5B(0.0):(25.0):2%5D%5B(80.0):(100.0):2%5D,MWP%5Blast%5D%5B(0.0):(25.0):2%5D%5B(80.0):(100.0):2%5D,PWP%5Blast%5D%5B(0.0):(25.0):2%5D%5B(80.0):(100.0):2%5D
+format text
+rows
+lat_key latitude
+lon_key longitude
+field SWH sig_wave_height_m
+field MWP mean_wave_period_s
+field PWP peak_wave_period_s
+
+source incois_osf_fishermen_alert
+ttl 3600
+force acoustic
+url https://incois.gov.in/portal/osf/json/osf_alert.jsp
+map .
+lat_key lat
+lon_key lon
+field port_name port_name
+field dist_name district
+field state_name state
+field swh sig_wave_height_m
+field mwd wave_direction_deg
+field mwp mean_period_s
+field wind_speed wind_speed_kmh
+field alert_color alert_level
+
+source io_vectors
+ttl 3600
+force em
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27501%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ephemeris orbital_io_distance
+extent 1.22e-5
+
+source ionosphere_tec_global_1hour
+ttl 3600
+force em
+terra 1
+url https://services.swpc.noaa.gov/json/tec/tec_global_1h.json
+map .
+lat_key lat
+lon_key lon
+field_in tec ionosphere_tec_1h_tecu
+
+source irsa_tap_neowiser
+ttl 3600
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,w1mpro,w2mpro,mjd+FROM+neowiser_p1bs_psd+WHERE+mjd%3E59000
+format text
+rows
+ra_key ra
+dec_key dec
+field w1mpro mag_w1
+field w2mpro mag_w2
+field mjd mjd_obs

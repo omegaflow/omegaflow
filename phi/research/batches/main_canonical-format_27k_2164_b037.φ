@@ -1,0 +1,454 @@
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_sun.json
+ttl 3600
+force em gravity thermal
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_titan.json
+ttl 3600
+force em gravity
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_triton.json
+ttl 3600
+force em gravity
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_uranus.json
+ttl 3600
+force em gravity
+at sun 1.0
+
+url https://volcanoes.usgs.gov/hans-public/api/volcano/weekly
+ttl 3600
+force seismic-surface
+body earth
+map .
+lat_key Latitude
+lon_key Longitude
+field VolcanoName VolcanoName
+field ActivityCategory ActivityCategory
+field StartDate StartDate
+field EndDate EndDate
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_venus.json
+ttl 3600
+force em gravity
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/live-data/waqi_china_airquality.json
+ttl 3600
+force diffusion
+at sun 1.0
+format json
+map .
+lat_key lat
+lon_key lon
+field aqi aqi
+field station_name station_name
+
+url https://github.com/omegaflow/catalogs/releases/download/live-data/waqi_east_asia_airquality.json
+ttl 3600
+force diffusion
+at sun 1.0
+format json
+map .
+lat_key lat
+lon_key lon
+field aqi aqi
+field station_name station_name
+
+url https://hpiers.obspm.fr/iers/bul/bulb_new/bulletinb.dat
+ttl 43200
+force em
+body earth
+pos 0 0
+format text
+field_in col2 col2
+field_in col3 col3
+field_in col4 col4
+field_in col5 col5
+field_in col6 col6
+field_in col7 col7
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/arxiv_astro_total.json
+ttl 86400
+force em
+on earth 40.712 -74.006
+field feed.totalResults totalResults
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/arxiv_cs_total.json
+ttl 86400
+force em
+on earth 40.712 -74.006
+field feed.totalResults totalResults
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/arxiv_hep_total.json
+ttl 86400
+force em
+on earth 40.712 -74.006
+field feed.totalResults totalResults
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/arxiv_math_total.json
+ttl 86400
+force em
+on earth 40.712 -74.006
+field feed.totalResults totalResults
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/arxiv_physics_total.json
+ttl 86400
+force em
+on earth 40.712 -74.006
+field feed.totalResults totalResults
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/arxiv_qbio_total.json
+ttl 86400
+force em
+on earth 40.712 -74.006
+field feed.totalResults totalResults
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/arxiv_qfin_total.json
+ttl 86400
+force em
+on earth 40.712 -74.006
+field feed.totalResults totalResults
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/arxiv_stat_total.json
+ttl 86400
+force em
+on earth 40.712 -74.006
+field feed.totalResults totalResults
+
+url https://api.woudc.org/collections/totalozone/items?limit=1
+ttl 86400
+force diffusion
+on earth 43.780 -79.470
+path numberMatched numberMatched
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_arxiv_total_papers.json
+ttl 86400
+force em
+on earth 42.3601 -71.0589
+xml_count totalResults biosphere_arxiv_papers_total
+
+url https://api.openalex.org/works?per-page=1
+ttl 86400
+force em
+on earth 47.6062 -122.3321
+field meta.count count
+
+url https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name&sb-ns=n&limit=1
+ttl 86400
+force em
+at sun 1.0
+count data cosmos_asteroids_numbered_total
+
+url https://ssd-api.jpl.nasa.gov/sbdb_query.api?sb-kind=a&fields=a,e,i,om,w,ma,epoch,H&limit=10000
+ttl 86400
+force em
+at sun 1.0
+field_in H H
+
+url https://re.jrc.ec.europa.eu/api/v5_2/seriescalc?lat={lat}&lon={lon}&raddatabase=PVGIS-ERA5&startyear={year}&endyear={year}&outputformat=json
+ttl 86400
+force em
+at sun 1.0
+path outputs.hourly.0.G(i) G(i)
+path outputs.hourly.0.T2m T2m
+path outputs.hourly.0.WS10m WS10m
+
+url https://cmr.earthdata.nasa.gov/search/granules.json?short_name=VNP46A2&page_size=200
+ttl 86400
+force em
+on earth 40.0 -105.0
+count feed.entry viirs_ntl_granule_count
+
+url https://esa-sst-cci-browser.ceda.ac.uk/api/v1/sst/global-monthly?format=json&dataset=ESACCI-SST-L4-CDR-SST-ANALYSIS
+ttl 86400
+force thermal
+body earth
+map .
+lat_key lat
+lon_key lon
+field sst_analysed sst_analysed
+field sst_uncertainty sst_uncertainty
+field time time
+
+url https://vires.services/hapi/data?dataset=SW_OPER_MAGA_LR_1B&parameters=Latitude,Longitude&start={today}T00:00:00Z&stop={tomorrow}T00:00:00Z
+ttl 86400
+force gravity
+body earth
+format text
+rows
+lat_key Latitude
+lon_key Longitude
+
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+COUNT(*)+FROM+ps&format=json
+ttl 86400
+force em
+on earth 42.365 -71.105
+last_line exosphere_exoplanets_confirmed_total
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/exoplanets_full.json
+ttl 86400
+force em
+at sun 1.0
+cmap .
+ra_key ra
+dec_key dec
+field_in pl_eqt pl_eqt
+field_in pl_rade pl_rade
+field_in pl_orbper pl_orbper
+field_in pl_bmasse pl_bmasse
+
+url https://usdmdataservices.unl.edu/api/USStatistics/GetDroughtSeverityStatisticsByAreaPercent?aoi=conus&startdate={week_ago}&enddate={today}&statisticsType=1
+ttl 86400
+force em
+on earth 40.820 -96.702
+field 0.DSCI DSCI
+
+url https://volcanoes.usgs.gov/hans-public/api/volcano/getUSVolcanoes
+ttl 86400
+force seismic-surface
+body earth
+map .
+lat_key latitude
+lon_key longitude
+field_in elevation_meters elevation_meters
+field_in vnum vnum
+
+url https://api.github.com/search/repositories?q=stars:>0&per_page=1
+ttl 86400
+force em
+on earth 37.774 -122.419
+field total_count total_count
+
+url https://api.github.com/search/users?q=type:user&per_page=1
+ttl 86400
+force em
+on earth 37.774 -122.419
+field total_count total_count
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mangrove_countries.json
+ttl 86400
+force diffusion
+at sun 1.0
+map data
+lat_key latitude
+lon_key longitude
+field country country
+field iso3 iso3
+field country_area_km2 country_area_km2
+field mangrove_area_km2 mangrove_area_km2
+field percent_mangrove percent_mangrove
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_halley.json
+ttl 86400
+force em
+on earth 34.201 -118.171
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+name,ra,dec,flux_density,spectral_index,signif_avg,class1,assoc_name+FROM+fermilpsc+WHERE+class1+IN+('BLL','bll','FSRQ','fsrq','BCU','bcu')+ORDER+BY+flux_density+DESC
+ttl 86400
+force em
+at sun 1.0
+format text
+rows
+ra_key ra
+dec_key dec
+field flux_density flux_density
+field spectral_index spectral_index
+field signif_avg signif_avg
+field class1 class1
+field assoc_name assoc_name
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,Source_Name,ASSOC1,TeV_Flag,GLON,GLAT,Energy_Flux_Band3,Power_Index+FROM+public.angel_threefhl+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+Energy_Flux_Band3+DESC&FORMAT=text
+ttl 86400
+force em
+at sun 1.0
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field Source_Name Source_Name
+field ASSOC1 ASSOC1
+field Energy_Flux_Band3 Energy_Flux_Band3
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+obsid,target_name,ra,dec,duration,revolution+FROM+xmmmaster+WHERE+pn_filter+IS+NOT+NULL+ORDER+BY+revolution+DESC
+ttl 86400
+force em
+at sun 1.0
+format text
+rows
+ra_key ra
+dec_key dec
+field obsid obsid
+field target_name target_name
+field duration duration
+field revolution revolution
+
+url https://ows.emodnet-humanactivities.eu/geoserver/emodnet/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=emodnet:vessel_density&outputFormat=application/json&bbox={lon_min},{lat_min},{lon_max},{lat_max}
+ttl 86400
+force em
+on earth 51.231 2.928
+count features biosphere_vessel_density_feature_count
+
+url https://meta.icos-cp.eu/sparql?format=json&query=SELECT%20?uri%20?name%20?lat%20?lon%20?alt%20?country%20?ecosys%20WHERE%20%7B?uri%20a%20%3Chttp://meta.icos-cp.eu/ontologies/cpmeta/ES%3E%20%3B%20%3Chttp://www.w3.org/2000/01/rdf-schema%23label%3E%20?name%20%3B%20%3Chttp://meta.icos-cp.eu/ontologies/cpmeta/hasLatitude%3E%20?lat%20%3B%20%3Chttp://meta.icos-cp.eu/ontologies/cpmeta/hasLongitude%3E%20?lon%7D
+ttl 86400
+force diffusion
+body earth
+map results.bindings
+lat_key lat.value
+lon_key lon.value
+field name.value value
+field country.value value
+field alt.value value
+field ecosys.value value
+
+url https://datacenter.iers.org/data/9/finals2000A.all
+ttl 86400
+force gravity
+at sun 1.0
+format text
+rows
+field 0 0
+field 1 1 x_pole_arcsec
+field 2 2 y_pole_arcsec
+field 3 3 ut1_utc_offset_ms
+field 4 4 length_of_day_ms
+field 5 5 dpsi_arcsec
+field 6 6 deps_arcsec
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+ra,dec,j_m,h_m,k_m+FROM+fp_psc+WHERE+j_m+IS+NOT+NULL+AND+j_m%3C15
+ttl 86400
+force em
+at sun 1.0
+format text
+rows
+ra_key ra
+dec_key dec
+field j_m j_m
+field h_m h_m
+field k_m k_m
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+ra,dec,w1mpro,w2mpro,w3mpro,w4mpro+FROM+allwise_p3as_psd+WHERE+w1mpro+IS+NOT+NULL+AND+w1mpro%3C14
+ttl 86400
+force em
+at sun 1.0
+format text
+rows
+ra_key ra
+dec_key dec
+field w1mpro w1mpro
+field w2mpro w2mpro
+field w3mpro w3mpro
+field w4mpro w4mpro
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,RA,DE,z,yn_snr,yn_mass,theta500,dist+FROM+planck.com_pccs2_sz_mmf3+WHERE+RA+IS+NOT+NULL+ORDER+BY+yn_snr+DESC
+ttl 86400
+force diffusion
+at sun 1.0
+format text
+rows
+ra_key RA
+dec_key DE
+field name name
+field yn_snr yn_snr
+field yn_mass yn_mass
+field theta500 theta500
+field dist dist
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+ra,dec,j_mag,h_mag,k_mag,ir1_mag,ir2_mag+FROM+sage_smc+WHERE+ra+IS+NOT+NULL
+ttl 86400
+force em
+at sun 1.0
+format text
+rows
+ra_key ra
+dec_key dec
+field j_mag j_mag
+field h_mag h_mag
+field k_mag k_mag
+field ir1_mag ir1_mag
+field ir2_mag ir2_mag
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,dist,morph,f3p6tot,f4p5tot,f5p8tot,f8p0tot+FROM+sings+WHERE+ra+IS+NOT+NULL
+ttl 86400
+force em
+at sun 1.0
+format text
+rows
+ra_key ra
+dec_key dec
+field name name
+field dist dist
+field morph morph
+field f3p6tot f3p6tot
+field f4p5tot f4p5tot
+field f5p8tot f5p8tot
+field f8p0tot f8p0tot
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+oid,ra,dec,filterid,medianmag,magrms,ngoodobsrel+FROM+ztf_objects_dr20+WHERE+ngoodobsrel%3E50+AND+magrms%3E0.05
+ttl 86400
+force em
+at sun 1.0
+format text
+rows
+ra_key ra
+dec_key dec
+field oid oid
+field filterid filterid
+field medianmag medianmag
+field magrms magrms
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/elements_apophis.json
+ttl 86400
+force gravity
+on earth 0.0 0.0
+format text
+rows
+field_in 1 1
+field_in 2 2
+field_in 3 3
+field_in 4 4
+field_in 5 5
+field_in 6 6
+field_in 7 7
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_comet_c2023_a3.json
+ttl 86400
+force gravity
+on earth 0.0 0.0
+format text
+rows
+field 0 0
+field 1 1
+field 2 2
+field 3 3
+field 4 4
+field 5 5
+field 6 6
+
+url https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name,epoch,H,diameter,albedo,class,neo&sb-kind=a&sb-group=neo
+ttl 86400
+force gravity
+on earth 0.0 0.0
+map data
+field full_name full_name
+field epoch epoch
+field H H
+field diameter diameter
+field albedo albedo
+field class class
+field neo neo
+
+url https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name,a,e,i,om,w,ma,epoch,H,class,diameter&sb-class=TNO
+ttl 86400
+force gravity
+on earth 0.0 0.0
+map data
+field full_name full_name
+field a a
+field e e
+field i i
+field H H
+field class class
+field diameter diameter

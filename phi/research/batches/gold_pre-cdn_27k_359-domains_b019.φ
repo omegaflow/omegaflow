@@ -1,0 +1,584 @@
+source irsa_tap_ztf_objects
+ttl 3600
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,medianmag,magrms,ngoodobsrel+FROM+ztf_objects_dr20+WHERE+ngoodobsrel%3E50+AND+magrms%3E0.05
+format text
+rows
+ra_key ra
+dec_key dec
+field medianmag median_mag
+field magrms mag_variability_rms
+
+source isro_bhuvan_flood_india
+ttl 3600
+force diffusion
+url https://bhuvan-app1.nrsc.gov.in/disaster/disaster.php?id=flood&format=json
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.district district_name
+field properties.state state_name
+field properties.area_ha inundated_area_ha
+field properties.date flood_date
+
+source jpl_cad_neo_30d
+ttl 3600
+force gravity
+url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=0.05&date-min={today}&date-max=%2B30&body=Earth&fullname=true&diameter=true&sort=date
+map data
+field_in 0 designation
+field_in 3 close_approach_date
+field_in 4 distance_au
+field_in 7 velocity_km_s
+field_in 17 diameter_km
+
+source jpl_fireball_impact_events
+ttl 3600
+force gravity
+url https://ssd-api.jpl.nasa.gov/fireball.api?date-min=2010-01-01&req-loc=true&limit=1000&sort=-energy
+map data
+lat_key lat
+lon_key lon
+field date event_date
+field time event_time
+field alt altitude_km
+field v velocity_km_s
+field energy impact_energy_kt
+field lat latitude
+field lon longitude
+
+source jpl_fireball_impacts
+ttl 3600
+force gravity
+url https://ssd-api.jpl.nasa.gov/fireball.api?limit=100&sort=date
+map data
+field_in 2 date
+field_in 3 radiated_energy_gj
+field_in 4 impact_energy_kt
+field_in 6 latitude
+field_in 7 lat_dir
+field_in 8 longitude
+field_in 9 lon_dir
+field_in 18 altitude_km
+
+source jpl_horizons_voyager1
+ttl 3600
+force gravity
+lat 0.0
+lon 0.0
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND='-31'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='6+h'&VEC_TABLE='2'&REF_PLANE='ECLIPTIC'
+format text
+rows
+field_in 2 x_au
+field_in 3 y_au
+field_in 4 z_au
+field_in 5 vx_au_d
+field_in 6 vy_au_d
+field_in 7 vz_au_d
+
+source jpl_horizons_voyager2
+ttl 3600
+force gravity
+lat 0.0
+lon 0.0
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND='-32'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='6+h'&VEC_TABLE='2'&REF_PLANE='ECLIPTIC'
+format text
+rows
+field_in 2 x_au
+field_in 3 y_au
+field_in 4 z_au
+field_in 5 vx_au_d
+field_in 6 vy_au_d
+field_in 7 vz_au_d
+
+source juno_vectors
+ttl 3600
+force em
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-61%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ephemeris orbital_juno_distance
+
+source jupiter_vectors
+ttl 3600
+force em
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27599%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+ephemeris orbital_jupiter_distance
+extent 4.67e-4
+
+source jwst_vectors
+ttl 3600
+force em
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-170%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ephemeris orbital_jwst_distance
+
+source lasp_fism2_euv_hr_model
+ttl 3600
+force em
+lat 0.0
+lon 0.0
+url https://lasp.colorado.edu/lisird/latis/dap/fism_flare_hr.csv?time>={today}
+format text
+rows
+field time model_time
+field wavelength wavelength_nm
+field irradiance modeled_irradiance_W_m2
+
+source lasp_lisird_f107_solar_flux
+ttl 3600
+force em
+lat 49.32
+lon -119.62
+url https://lasp.colorado.edu/lisird/latis/dap/noaa_radio_flux.csv?time>={today}
+format text
+rows
+field time observation_date
+field f107 f107_sfu
+field f107_adj f107_adjusted_sfu
+
+source lasp_lisird_tsis1_tsi_daily
+ttl 3600
+force em
+lat 0.0
+lon 0.0
+url https://lasp.colorado.edu/lisird/latis/dap/tsis_tsi_24hr.csv?time>=2024-01-01
+format text
+rows
+field time observation_date
+field tsi total_solar_irradiance_W_m2
+field uncertainty tsi_uncertainty_W_m2
+
+source lasp_sdo_eve_l3_ssi_1nm
+ttl 3600
+force em
+lat 0.0
+lon 0.0
+url https://lasp.colorado.edu/lisird/latis/dap/sdo_eve_ssi_1nm_l3.csv?time>=2026-01-01&time<={today}
+format text
+rows
+field time observation_date
+field wavelength wavelength_nm
+field irradiance spectral_irradiance_W_m2_nm
+field stdev irradiance_stdev_W_m2_nm
+
+source magnetosphere_aurora_forecast
+ttl 3600
+force em
+terra 1
+url https://services.swpc.noaa.gov/json/ovation_aurora_latest.json
+count coordinates atmosphere_aurora_coord_count
+
+source magnetosphere_aurora_nowcast_north
+ttl 3600
+force em
+terra 1
+url https://services.swpc.noaa.gov/json/ovation_aurora_latest.json
+count coordinates atmosphere_aurora_coordinate_count
+
+source magnetosphere_geomagnetic_storms
+ttl 3600
+force em
+terra 1
+url https://api.nasa.gov/DONKI/GST?startDate={yesterday}&api_key={nasa_key}
+count gst solar_gstorm_count_24h
+
+source magnetosphere_magnetopause_crossings
+ttl 3600
+force em
+terra 1
+url https://api.nasa.gov/DONKI/MPC?startDate={yesterday}&api_key={nasa_key}
+count mpc magnetopause_crossing_count_24h
+
+source magnetosphere_solar_regions
+ttl 3600
+force em
+terra 0.99
+url https://services.swpc.noaa.gov/json/solar_regions.json
+map .
+lat_key latitude
+lon_key longitude
+field_in region magnetosphere_sunspot_region
+field_in area magnetosphere_sunspot_area
+field_in number_spots magnetosphere_spot_count
+field_in extent magnetosphere_spot_extent
+field_in spot_class magnetosphere_spot_class
+field_in mag_class magnetosphere_mag_class
+
+source makemake_vectors
+ttl 3600
+force em
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Makemake%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ephemeris orbital_makemake_distance
+extent 4.78e-6
+
+source mars_vectors
+ttl 3600
+force em
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27499%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+ephemeris orbital_mars_distance
+extent 2.27e-5
+
+source mast_jwst_cosmosweb_nircam_metadata
+ttl 3600
+force em
+url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+observationID,target_name,s_ra,s_dec,t_exptime,instrument_name,energy_bandpassName,em_min,em_max+FROM+caom2.Observation+WHERE+collection%3D'JWST'+AND+dataRights%3D'PUBLIC'+AND+calib_level%3D3+AND+proposal_id%3D'1727'+ORDER+BY+t_exptime+DESC
+format text
+rows
+ra_key s_ra
+dec_key s_dec
+field observationID obs_id
+field target_name field_name
+field t_exptime exposure_s
+field energy_bandpassName filter
+field em_min wl_min_m
+field em_max wl_max_m
+
+source mast_jwst_jades_nirspec_metadata
+ttl 3600
+force em
+url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+observationID,target_name,s_ra,s_dec,t_exptime,instrument_name,energy_bandpassName,em_min,em_max+FROM+caom2.Observation+WHERE+collection%3D'JWST'+AND+dataRights%3D'PUBLIC'+AND+calib_level%3D3+AND+instrument_name+LIKE+'NIRSPEC%25'+AND+(proposal_id%3D'1180'+OR+proposal_id%3D'1286')+ORDER+BY+t_exptime+DESC
+format text
+rows
+ra_key s_ra
+dec_key s_dec
+field observationID obs_id
+field target_name target_field
+field t_exptime exposure_s
+field energy_bandpassName grating
+field em_min wl_min_m
+field em_max wl_max_m
+
+source mast_jwst_miri_public
+ttl 3600
+force em
+url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?LANG=ADQL&REQUEST=doQuery&FORMAT=csv&QUERY=SELECT+TOP+2000+observationID,target_name,s_ra,s_dec,t_exptime,instrument_name,energy_bandpassName,em_min,em_max,t_min+FROM+dbo.caomobservation+WHERE+collection%3D'JWST'+AND+calib_level%3D3+AND+instrument_name+LIKE+'MIRI%25'+ORDER+BY+t_min+DESC
+format text
+rows
+ra_key s_ra
+dec_key s_dec
+field observationID obs_id
+field target_name target_name
+field t_exptime exposure_sec
+field energy_bandpassName filter_name
+field em_min wavelength_min_m
+field em_max wavelength_max_m
+
+source mast_jwst_nircam_public
+ttl 3600
+force em
+url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?LANG=ADQL&REQUEST=doQuery&FORMAT=csv&QUERY=SELECT+TOP+2000+observationID,target_name,s_ra,s_dec,t_exptime,instrument_name,energy_bandpassName,em_min,em_max,t_min+FROM+dbo.caomobservation+WHERE+collection%3D'JWST'+AND+calib_level%3D3+AND+instrument_name+LIKE+'NIRCAM%25'+ORDER+BY+t_min+DESC
+format text
+rows
+ra_key s_ra
+dec_key s_dec
+field observationID obs_id
+field target_name target_name
+field t_exptime exposure_sec
+field energy_bandpassName filter_name
+field em_min wavelength_min_m
+field em_max wavelength_max_m
+
+source mast_jwst_nirspec_public
+ttl 3600
+force em
+url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?LANG=ADQL&REQUEST=doQuery&FORMAT=csv&QUERY=SELECT+TOP+2000+observationID,target_name,s_ra,s_dec,t_exptime,instrument_name,energy_bandpassName,em_min,em_max,t_min+FROM+dbo.caomobservation+WHERE+collection%3D'JWST'+AND+calib_level%3D3+AND+instrument_name+LIKE+'NIRSPEC%25'+ORDER+BY+t_min+DESC
+format text
+rows
+ra_key s_ra
+dec_key s_dec
+field observationID obs_id
+field target_name target_name
+field t_exptime exposure_sec
+field energy_bandpassName grating_filter
+field em_min wavelength_min_m
+field em_max wavelength_max_m
+
+source maxi_xray_transient_alerts
+ttl 3600
+force em
+url http://maxi.riken.jp/alert/novae/json/novae_list.json
+map .
+ra_key ra
+dec_key dec
+field name source_name
+field type transient_type
+field date_detected detection_date
+field peak_flux peak_flux_mCrab
+field status alert_status
+
+source mercury_vectors
+ttl 3600
+force em
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27199%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+ephemeris orbital_mercury_distance
+extent 1.63e-5
+
+source metar_polar_regions
+ttl 3600
+force acoustic
+url https://aviationweather.gov/api/data/metar?bbox=-90,-180,-60,180&format=json&hours=3
+map .
+lat_key lat
+lon_key lon
+field icaoId icao_code
+field temp temp_c
+field wdir wind_dir_deg
+field wspd wind_speed_kt
+field altim pressure_hpa
+
+source mirova_volcanic_thermal
+ttl 3600
+force thermal
+url https://www.mirovaweb.it/api/v1/anomalies?limit=200
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.volcano volcano_name
+field properties.temp_max_k max_temp_kelvin
+field properties.frp radiative_power_mw
+field properties.date observation_date
+
+source modvolc_volcanic_alerts
+ttl 3600
+force thermal
+url https://modvolc.ov.ingv.it/modvolc/feed.json
+map items
+lat_key lat
+lon_key lon
+field volcano volcano_name
+field max_temp_c hotspot_max_temp_c
+field frp_modis radiative_power_mw
+field satellite satellite
+
+source moon_vectors
+ttl 3600
+force em
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27301%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+ephemeris orbital_moon_distance
+extent 1.16e-5
+
+source mpc_comet_ephemeris_bright
+ttl 3600
+force gravity
+lat 0.0
+lon 0.0
+url https://www.minorplanetcenter.net/cgi-bin/checkmp.cgi?ty=c&head=N&TextArea=&radius=180&ra=&decl=&oc=500&e=J2000&resoc=&s=t&m=h&adir=N&oed=&e=J2000&dFormat=YYYY+MM+DD&css=modern&mot=check&dmot=p&si=t&uto=0&int=2&fmt=csv
+format text
+rows
+field 0 designation
+field 1 ra_hms
+field 2 dec_dms
+field 3 delta_au
+field 4 r_au
+field 5 elongation_deg
+field 6 vmag
+
+source nasa_cdaw_cme_catalog
+ttl 3600
+force em
+url https://cdaw.gsfc.nasa.gov/CME_list/UNIVERSAL/json/univ_{year}{month}.json
+map .
+field date cme_date
+field time cme_time
+field cpa central_position_angle_deg
+field width angular_width_deg
+field speed linear_speed_kms
+
+source nasa_mur_sst_1km_global
+ttl 3600
+force thermal
+url https://coastwatch.noaa.gov/erddap/griddap/jplMURSST41.csv?analysed_sst%5B-1%5D%5B(0.0):(60.0):4%5D%5B(-180.0):(180.0):4%5D
+format text
+rows
+lat_key latitude
+lon_key longitude
+field analysed_sst mur_sst_kelvin
+field analysis_error mur_sst_error_K
+
+source nasa_power_solar_radiation
+ttl 3600
+force em
+lat 0
+lon 0
+url https://power.larc.nasa.gov/api/temporal/monthly/point?parameters=ALLSKY_SFC_SW_DWN&community=RE&longitude={lon}&latitude={lat}&start=2025&end=2025&format=JSON
+obj_last value biosphere_solar_radiation_power
+
+source nbn_atlas_uk_bat_acoustic_records
+ttl 3600
+force acoustic
+url https://records-ws.nbnatlas.org/occurrences/search?q=group:Chiroptera&fq=dataProviderName:%22Bat+Conservation+Trust%22&fl=decimalLatitude,decimalLongitude,vernacularName,scientificName,year,month&pageSize=300&sort=year&order=desc
+map occurrences
+lat_key decimalLatitude
+lon_key decimalLongitude
+field scientificName species_name
+field vernacularName common_name
+field year obs_year
+field month obs_month
+
+source ncei_global_hourly_multi_station
+ttl 3600
+force diffusion
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-hourly&stations=USW00013739,USW00094728,USW00012918&startDate=2026-07-01&endDate=2026-07-27&format=json
+map
+lat_key 40.74
+  lon_key -73.98
+  lat 40.74
+  lon -73.98
+field_in station station_id
+field_in date observation_date
+field_in temperature temperature_celsius
+field_in dewPoint dewpoint_celsius
+field_in windSpeed wind_speed_ms
+field_in windDirection wind_direction_degrees
+field_in seaLevelPressure pressure_hpa
+
+source ncei_global_hourly_weather
+ttl 3600
+force diffusion
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-hourly&stations=USW00013739&startDate=2026-01-01&endDate=2026-07-27&format=json
+map
+lat_key 40.74
+  lon_key -73.98
+  lat 40.74
+  lon -73.98
+field_in station station_id
+field_in date observation_date
+field_in temperature temperature_celsius
+field_in dewPoint dewpoint_celsius
+field_in windSpeed wind_speed_ms
+field_in windDirection wind_direction_degrees
+field_in visibility visibility_m
+field_in seaLevelPressure pressure_hpa
+
+source ndbc_active_stations
+ttl 3600
+force diffusion
+url https://www.ndbc.noaa.gov/activestations.xml
+format text
+rows
+lat_key lat
+lon_key lon
+field station_id station_id
+field site station_name
+field owner owner
+
+source ndbc_dart_21413_nwpacific
+ttl 3600
+force acoustic
+lat 38.7
+lon 148.7
+url https://www.ndbc.noaa.gov/data/realtime2/21413.dart
+format text
+rows
+field_in 0 year
+field_in 1 month
+field_in 2 day
+field_in 3 hour
+field_in 6 data_type
+field_in 7 sea_level_height_m
+
+source ndbc_dart_23401_indian_ocean
+ttl 3600
+force acoustic
+lat -8.4
+lon 67.5
+url https://www.ndbc.noaa.gov/data/realtime2/23401.dart
+format text
+rows
+field_in 0 year
+field_in 1 month
+field_in 2 day
+field_in 3 hour
+field_in 7 sea_level_height_m
+
+source ndbc_dart_32401_spac
+ttl 3600
+force acoustic
+lat -19.6
+lon -162.1
+url https://www.ndbc.noaa.gov/data/realtime2/32401.dart
+format text
+rows
+field_in 0 year
+field_in 1 month
+field_in 2 day
+field_in 3 hour
+field_in 7 sea_level_height_m
+
+source ndbc_dart_41420_caribbean
+ttl 3600
+force acoustic
+lat 17.9
+lon -74.9
+url https://www.ndbc.noaa.gov/data/realtime2/41420.dart
+format text
+rows
+field_in 0 year
+field_in 1 month
+field_in 2 day
+field_in 3 hour
+field_in 7 sea_level_height_m
+
+source ndbc_dart_46401_nepacific
+ttl 3600
+force acoustic
+lat 50.1
+lon -171.0
+url https://www.ndbc.noaa.gov/data/realtime2/46401.dart
+format text
+rows
+field_in 0 year
+field_in 1 month
+field_in 2 day
+field_in 3 hour
+field_in 7 sea_level_height_m
+
+source neo_jpl_fireball_events
+ttl 3600
+force gravity
+url https://ssd-api.jpl.nasa.gov/fireball.api?limit=100&date-min=2020-01-01
+map data
+lat_key lat
+lon_key lon
+field date fireball_date
+field time fireball_time
+field alt altitude_km
+field v velocity_km_s
+field vx velocity_x_km_s
+field vy velocity_y_km_s
+field vz velocity_z_km_s
+field energy impact_energy_kt
+field imp impact_flag
+
+source neptune_vectors
+ttl 3600
+force em
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27899%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+ephemeris orbital_neptune_distance
+extent 1.65e-4
+
+source new_horizons_vectors
+ttl 3600
+force em
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-98%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ephemeris orbital_new_horizons_distance
+
+source nmdb_nest_apatity
+ttl 3600
+force em
+lat 67.55
+lon 33.33
+url https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=APTY&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0
+format text
+rows
+field_in 0 timestamp_utc
+field_in 2 count_rate_cps
+
+source nmdb_nest_hermanus
+ttl 3600
+force em
+lat -34.42
+lon 19.22
+url https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=HRMS&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0
+format text
+rows
+field_in 0 timestamp_utc
+field_in 2 count_rate_cps

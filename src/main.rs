@@ -2015,6 +2015,32 @@ fn kernel_id_of(name: &str) -> Option<u8> {
     }
 }
 
+fn kernel_for_force(force: u8) -> u8 {
+    match force {
+        0 | 1 => 0,
+        5 | 6 => 3,
+        4 => 1,
+        8 => 5,
+        _ => 1,
+    }
+}
+
+fn tau_for_force(force: u8) -> f64 {
+    const VS: f64 = 340.0;
+    match force {
+        0 => 1.0,
+        1 => 1.0,
+        2 => 1.0 / VS,
+        3 => 1.0 / 5000.0,
+        4 => 1.0 / 3000.0,
+        5 => 86400.0,
+        6 => 86400.0,
+        7 => 1.0 / 10.0,
+        8 => 86400.0,
+        _ => 1.0,
+    }
+}
+
 fn extract_fields(ext: &Extract) -> &[FieldConfig] {
     match ext {
         Extract::Map { fields, .. }
@@ -3024,6 +3050,7 @@ fn load_sources() -> Vec<SourceConfig> {
     let mut cur_min_freq: Option<f64> = None;
     let mut cur_body: Option<String> = None;
     let mut cur_post_body: Option<String> = None;
+    let mut cur_force: Option<u8> = None;
 
     let mut cur_stations_url: Option<String> = None;
     let mut cur_stations_path = String::from("stations");
@@ -3449,6 +3476,65 @@ fn load_sources() -> Vec<SourceConfig> {
             "vectors" if parts.len() >= 2 => {
                 cur_extracts.push(Extract::Vectors(parts[1].to_string()));
             }
+            "field" if parts.len() == 4 => {
+                let f = match force_id_of(parts[2]) {
+                    Some(f) => f,
+                    None => continue,
+                };
+                let fc = FieldConfig {
+                    key: parts[1].to_string(),
+                    name: parts[1].to_string(),
+                    kernel: kernel_for_force(f),
+                    force: f,
+                    tau: tau_for_force(f),
+                    absorption: 0.0,
+                    advection: 0.0,
+                };
+                if let Some(ext) = cur_extracts.last_mut() {
+                    let fields: Option<&mut Vec<FieldConfig>> = match ext {
+                        Extract::Map { fields, .. } => Some(fields),
+                        Extract::CelestialMap { fields, .. } => Some(fields),
+                        Extract::Rows { fields, .. } => Some(fields),
+                        Extract::Flatten { fields, .. } => Some(fields),
+                        Extract::CmrPolygon { fields, .. } => Some(fields),
+                        Extract::CelestialPolygon { fields, .. } => Some(fields),
+                        Extract::KeplerMap { fields, .. } => Some(fields),
+                        _ => None,
+                    };
+                    if let Some(flds) = fields {
+                        flds.push(fc);
+                    } else {
+                        cur_extracts.push(Extract::Field(fc.clone()));
+                    }
+                } else {
+                    cur_extracts.push(Extract::Field(fc.clone()));
+                }
+            }
+            "field" if parts.len() == 3 => {
+                if let Some(ext) = cur_extracts.last_mut() {
+                    if let Some(f) = cur_force {
+                        let fc = FieldConfig {
+                            key: parts[1].to_string(),
+                            name: parts[1].to_string(),
+                            kernel: kernel_for_force(f),
+                            force: f,
+                            tau: tau_for_force(f),
+                            absorption: 0.0,
+                            advection: 0.0,
+                        };
+                        match ext {
+                            Extract::Map { fields, .. } => fields.push(fc),
+                            Extract::CelestialMap { fields, .. } => fields.push(fc),
+                            Extract::Rows { fields, .. } => fields.push(fc),
+                            Extract::Flatten { fields, .. } => fields.push(fc),
+                            Extract::CmrPolygon { fields, .. } => fields.push(fc),
+                            Extract::CelestialPolygon { fields, .. } => fields.push(fc),
+                            Extract::KeplerMap { fields, .. } => fields.push(fc),
+                            _ => {}
+                        }
+                    }
+                }
+            }
             "field" if parts.len() >= 9 => {
                 let k = match kernel_id_of(parts[3]) {
                     Some(k) => k,
@@ -3551,6 +3637,11 @@ fn load_sources() -> Vec<SourceConfig> {
                 }
             }
             "format" if parts.len() >= 2 => cur_format = parts[1].to_string(),
+            "force" if parts.len() >= 2 => {
+                if let Some(f) = force_id_of(parts[1]) {
+                    cur_force = Some(f);
+                }
+            }
             "header" if parts.len() >= 3 => {
                 cur_headers.push((parts[1].to_string(), parts[2].to_string()));
             }
@@ -5524,6 +5615,680 @@ fn source_name_from_url(url: &str) -> String {
         .collect()
 }
 
+fn probe_mode(path: &str) -> i32 {
+    let content = match std::fs::read_to_string(path) {
+        Ok(c) => c,
+        Err(e) => {
+            eprintln!("probe: read {}: {}", path, e);
+            return 1;
+        }
+    };
+    let sources = load_sources_from(&content);
+    eprintln!(
+        "probe: {} source blocks loaded from {}",
+        sources.len(),
+        path
+    );
+    let mut out = String::new();
+    for src in &sources {
+        let raw = fetch_raw(&src.url, None, &[], src.ttl);
+        let parsed = raw.as_ref().and_then(|r| parse_json(r));
+        let auto_ttl = raw.as_ref().and_then(|r| probe_ttl(r));
+        out.push_str(&format!("url {}\n", src.url));
+        let ttl = auto_ttl.unwrap_or(src.ttl);
+        out.push_str(&format!("ttl {}\n", ttl));
+        match &src.frame {
+            Frame::Surface {
+                body_name,
+                lat,
+                lon,
+                alt,
+            } => {
+                out.push_str(&format!("on {} {} {} {}\n", body_name, lat, lon, alt));
+            }
+            Frame::Barycenter { body_name, scale } if *scale == 1.0 => {
+                out.push_str(&format!("at {}\n", body_name));
+            }
+            Frame::Barycenter { body_name, scale } => {
+                out.push_str(&format!("at {} {}\n", body_name, scale));
+            }
+        }
+        if let Some(ref body) = src.body {
+            if !matches!(&src.frame, Frame::Surface { .. } | Frame::Barycenter { .. }) {
+                out.push_str(&format!("body {}\n", body));
+            }
+        }
+        if let Some(p) = parsed {
+            let mut fields = String::new();
+            let mut coords = String::new();
+            walk_json_probe(&p, "", &mut fields, &mut coords);
+            if !coords.is_empty() {
+                out.push_str(&coords);
+            }
+            if !fields.is_empty() {
+                out.push_str(&fields);
+            }
+        } else if let Some(ref r) = raw {
+            if let Some(csv) = probe_csv(r) {
+                out.push_str(&csv);
+            }
+        } else {
+            out.push_str("# fetch returned void\n");
+        }
+        out.push('\n');
+    }
+    std::fs::write("probe_output.φ", &out).ok();
+    eprintln!("probe: wrote probe_output.φ ({} blocks)", sources.len());
+    0
+}
+
+fn probe_ttl(body: &str) -> Option<u64> {
+    let val = parse_json(body)?;
+    match val {
+        JsonVal::Arr(ref arr) if arr.len() >= 2 => {
+            let t0 = find_timestamp(&arr[0]);
+            let t1 = find_timestamp(&arr[1]);
+            match (t0, t1) {
+                (Some(a), Some(b)) if (a - b).abs() > 0.0 => {
+                    Some(((a - b).abs() as u64).max(10).min(86400))
+                }
+                _ => None,
+            }
+        }
+        JsonVal::Obj(ref map) => {
+            for (k, v) in map {
+                if is_time_key(k) {
+                    if json_num(v).is_some() {
+                        return Some(60);
+                    }
+                }
+            }
+            None
+        }
+        _ => None,
+    }
+}
+
+fn find_timestamp(val: &JsonVal) -> Option<f64> {
+    if let JsonVal::Obj(map) = val {
+        for (k, v) in map {
+            if is_time_key(k) {
+                if let Some(n) = json_num(v) {
+                    return Some(n);
+                }
+            }
+        }
+    }
+    None
+}
+
+fn json_num(val: &JsonVal) -> Option<f64> {
+    match val {
+        JsonVal::Num(n) => Some(*n),
+        JsonVal::Str(s) => s.parse().ok(),
+        _ => None,
+    }
+}
+
+fn is_time_key(k: &str) -> bool {
+    let kl = k.to_lowercase();
+    kl == "time"
+        || kl == "time_tag"
+        || kl == "timestamp"
+        || kl == "epoch"
+        || kl == "t"
+        || kl == "date"
+        || kl.contains("time")
+        || kl.contains("date")
+}
+
+fn is_drop_key(key: &str) -> bool {
+    let kl = key.to_lowercase();
+    kl == "id"
+        || kl == "hex"
+        || kl == "flight"
+        || kl == "callsign"
+        || kl == "icao24"
+        || kl == "origin_country"
+        || kl == "evid"
+        || kl == "publicid"
+        || kl == "locality"
+        || kl == "place"
+        || kl == "region"
+        || kl == "flynn_region"
+        || kl == "satellite"
+        || kl == "net"
+        || kl == "source"
+        || kl == "station"
+        || kl == "name"
+        || kl == "stid"
+        || kl == "icao"
+        || kl == "station_name"
+        || kl == "country"
+        || kl == "sitename"
+        || kl == "variablename"
+        || kl == "hypocenter"
+        || kl == "code"
+        || kl == "wmo"
+        || kl == "wban"
+        || kl == "usaf"
+        || kl == "buoy_id"
+        || kl == "platform"
+        || kl == "sensor"
+        || kl == "catalog"
+        || is_time_key(key)
+        || kl == "timestamp_utc"
+        || kl == "observed_date"
+        || kl == "generated"
+        || kl == "local_date_time"
+        || kl == "datetime"
+        || kl == "timezone"
+        || kl == "origintime"
+        || kl == "obstime"
+        || kl == "lastupdated"
+        || kl == "begintime"
+        || kl == "peaktime"
+        || kl == "endtime"
+        || kl == "announcedtime"
+        || kl == "daynum"
+        || kl == "type"
+        || kl == "status"
+        || kl == "alert"
+        || kl == "magtype"
+        || kl == "evtype"
+        || kl == "auth"
+        || kl == "iscancel"
+        || kl == "isfinal"
+        || kl == "domestictsunami"
+        || kl == "issea"
+        || kl == "istraining"
+        || kl == "active"
+        || kl == "count"
+        || kl == "total"
+        || kl == "number_spots"
+        || kl == "station_count"
+        || kl == "event_count"
+        || kl == "multiplicity"
+        || kl.starts_with("count_")
+        || kl.starts_with("number_")
+        || (kl.starts_with("n_") && kl.len() <= 5)
+        || kl == "mag"
+        || kl == "magnitude"
+        || kl.ends_with("_index")
+        || kl.ends_with("_scale")
+        || kl.ends_with("_code")
+        || kl.ends_with("_pct")
+        || kl == "ssn"
+        || kl == "kp_index"
+        || kl == "estimated_kp"
+        || kl == "kp"
+        || kl == "a_running"
+        || kl == "uv_index"
+        || kl == "weather_code"
+        || kl == "cdi"
+        || kl == "mmi"
+        || kl == "sig"
+        || kl == "felt"
+        || kl == "tsunami"
+        || kl == "confidence"
+        || kl == "dmin"
+        || kl == "nst"
+        || kl == "rms"
+        || kl == "gap"
+        || kl == "flare_index"
+        || kl == "storm_level"
+        || kl == "noaa_scale"
+        || kl == "class"
+        || kl == "classtype"
+        || kl == "ra"
+        || kl == "dec"
+}
+
+fn is_coord_key(key: &str) -> bool {
+    let kl = key.to_lowercase();
+    kl == "latitude"
+        || kl == "lat"
+        || kl == "longitude"
+        || kl == "lon"
+        || kl == "lng"
+        || kl == "altitude"
+        || kl == "alt"
+        || kl == "depth"
+        || kl == "solar_lat"
+        || kl == "solar_lon"
+}
+
+fn probe_csv(raw: &str) -> Option<String> {
+    let first_header = raw.lines().find_map(|line| {
+        let trimmed = line.trim();
+        if trimmed.starts_with('#') {
+            let stripped = trimmed.strip_prefix('#').unwrap_or(trimmed).trim();
+            if !stripped.is_empty() {
+                return Some(stripped);
+            }
+        }
+        None
+    })?;
+    let cols: Vec<&str> = first_header.split_whitespace().collect();
+    if cols.len() <= 5 {
+        return None;
+    }
+    let mut out = String::new();
+    for col in &cols[5..] {
+        let lower = col.to_lowercase();
+        if lower == "yy" || lower == "mm" || lower == "dd" || lower == "hh" || lower == "min" {
+            continue;
+        }
+        if is_unit_name(&lower) {
+            continue;
+        }
+        let (force, unit) = classify_field(col, f64::NAN);
+        if force == "DROP" {
+            continue;
+        }
+        out.push_str(&format!("field {} {} {}\n", col, force, unit));
+    }
+    if out.is_empty() {
+        None
+    } else {
+        Some(out)
+    }
+}
+
+fn is_unit_name(name: &str) -> bool {
+    let kl = name.to_lowercase();
+    kl == "degt"
+        || kl == "m/s"
+        || kl == "sec"
+        || kl == "hpa"
+        || kl == "degc"
+        || kl == "nmi"
+        || kl == "ft"
+        || kl == "m"
+        || kl == "s"
+        || kl == "cm"
+        || kl == "mm"
+        || kl == "km"
+        || kl == "in"
+        || kl == "inhg"
+        || kl == "mb"
+        || kl == "mbar"
+        || kl == "kt"
+        || kl == "mph"
+        || kl == "knots"
+        || kl == "m/sec"
+        || kl == "deg"
+}
+
+fn walk_json_probe(val: &JsonVal, prefix: &str, out: &mut String, coords: &mut String) {
+    match val {
+        JsonVal::Obj(map) => {
+            for (k, v) in map {
+                let path = if prefix.is_empty() {
+                    k.clone()
+                } else {
+                    format!("{}.{}", prefix, k)
+                };
+                if is_coord_key(k) {
+                    let unit = coord_unit(k);
+                    let directive = coord_directive(k);
+                    let line = format!("{} {} {}\n", directive, path, unit);
+                    if !coords.contains(&line) {
+                        coords.push_str(&line);
+                    }
+                    if k == "depth" {
+                        out.push_str(&format!("field {} seismic-body {}\n", path, unit));
+                    }
+                } else {
+                    walk_json_probe(v, &path, out, coords);
+                }
+            }
+        }
+        JsonVal::Arr(arr) => {
+            if arr.is_empty() {
+                return;
+            }
+            if prefix.ends_with(".coordinates") || prefix == "coordinates" {
+                let lon_path = if prefix.is_empty() {
+                    "coordinates.0".to_string()
+                } else {
+                    format!("{}.0", prefix)
+                };
+                let lat_path = if prefix.is_empty() {
+                    "coordinates.1".to_string()
+                } else {
+                    format!("{}.1", prefix)
+                };
+                let alt_path = if prefix.is_empty() {
+                    "coordinates.2".to_string()
+                } else {
+                    format!("{}.2", prefix)
+                };
+                let lon_line = format!("lon {} deg\n", lon_path);
+                if !coords.contains(&lon_line) {
+                    coords.push_str(&lon_line);
+                }
+                let lat_line = format!("lat {} deg\n", lat_path);
+                if !coords.contains(&lat_line) {
+                    coords.push_str(&lat_line);
+                }
+                let alt_line = format!("alt {} km\n", alt_path);
+                if !coords.contains(&alt_line) {
+                    coords.push_str(&alt_line);
+                }
+                return;
+            }
+            let first = &arr[0];
+            if matches!(first, JsonVal::Obj(_)) {
+                walk_json_probe(first, prefix, out, coords);
+            } else {
+                for (i, v) in arr.iter().enumerate() {
+                    walk_json_probe(v, &format!("{}.{}", prefix, i), out, coords);
+                }
+            }
+        }
+        JsonVal::Num(n) => {
+            let key = match prefix.rfind('.') {
+                Some(pos) => &prefix[pos + 1..],
+                None => prefix,
+            };
+            if is_drop_key(key) || is_coord_key(key) {
+                return;
+            }
+            let (force, unit) = classify_field(key, *n);
+            if unit == "DROP" {
+                return;
+            }
+            out.push_str(&format!("field {} {} {}\n", prefix, force, unit));
+        }
+        _ => {}
+    }
+}
+
+fn coord_unit(key: &str) -> &'static str {
+    let kl = key.to_lowercase();
+    if kl == "altitude" || kl == "alt" || kl.contains("depth") {
+        "km"
+    } else {
+        "deg"
+    }
+}
+
+fn coord_directive(key: &str) -> &'static str {
+    let kl = key.to_lowercase();
+    if kl == "altitude" || kl == "alt" || kl.contains("depth") {
+        "alt"
+    } else if kl.contains("lon") || kl == "lng" {
+        "lon"
+    } else {
+        "lat"
+    }
+}
+
+fn classify_field(key: &str, val: f64) -> (&'static str, &'static str) {
+    let kl = key.to_lowercase();
+    if val.fract() == 0.0
+        && val.abs() > 1e9
+        && (kl.contains("time") || kl.contains("epoch") || kl == "t")
+    {
+        return ("DROP", "DROP");
+    }
+    if kl.ends_with("_nt")
+        || kl.ends_with("_ut")
+        || kl.ends_with("_mt")
+        || kl == "bx"
+        || kl == "by"
+        || kl == "bz"
+        || kl == "b_rtn"
+        || kl.ends_with("_f")
+        || kl.contains("mag_")
+        || kl.contains("_b_")
+    {
+        ("em", "nT")
+    } else if kl.ends_with("_wm2")
+        || kl.ends_with("_w_m2")
+        || kl == "flux"
+        || kl.ends_with("_flux")
+        || kl.ends_with("_sfu")
+        || kl.ends_with("_jy")
+        || kl.ends_with("_mjy")
+    {
+        ("em", "W/m2")
+    } else if kl.ends_with("_ev")
+        || kl.ends_with("_kev")
+        || kl.ends_with("_mev")
+        || kl.ends_with("_gev")
+    {
+        ("em", "eV")
+    } else if kl.contains("temp")
+        || kl.ends_with("_c")
+        || kl.ends_with("_k")
+        || kl == "atmp"
+        || kl == "wtmp"
+        || kl == "air_temp"
+        || kl == "water_temp"
+        || kl == "dewp"
+    {
+        ("thermal", "C")
+    } else if kl == "pres"
+        || kl.ends_with("_pres")
+        || kl.ends_with("_hpa")
+        || kl.ends_with("_pa")
+        || kl.ends_with("_mb")
+        || kl.ends_with("_mbar")
+        || kl.ends_with("_atm")
+        || kl.ends_with("baro")
+        || kl == "ptdy"
+        || kl.ends_with("_pressure")
+    {
+        ("advective", "hPa")
+    } else if kl.contains("spd")
+        || kl == "speed"
+        || kl.ends_with("_speed")
+        || kl.ends_with("_ms")
+        || kl.ends_with("_km_s")
+        || kl.ends_with("_kmh")
+        || kl.ends_with("_mph")
+        || kl.ends_with("_knot")
+        || kl.contains("wind")
+        || kl.contains("wspd")
+        || kl == "gs"
+    {
+        ("advective", "m/s")
+    } else if kl.contains("dir")
+        || kl == "wdire"
+        || kl == "wd"
+        || kl == "track"
+        || kl.ends_with("_deg")
+        || kl.contains("heading")
+        || kl.ends_with("_dir")
+    {
+        ("advective", "deg")
+    } else if kl.contains("wvht")
+        || kl.contains("wave")
+        || kl.contains("swh")
+        || kl == "swell"
+        || kl == "dpd"
+        || kl == "apd"
+        || kl == "mwd"
+    {
+        ("acoustic", "m")
+    } else if kl.contains("height") || kl.ends_with("_m") {
+        ("acoustic", "m")
+    } else if kl == "depth" || kl.ends_with("_depth") {
+        ("seismic-body", "km")
+    } else if kl.ends_with("_km") && !kl.contains("speed") && !kl.contains("vel") {
+        ("seismic-body", "km")
+    } else if kl.contains("vel") || kl.contains("vlct") {
+        ("advective", "km/s")
+    } else if kl.contains("conc")
+        || kl.contains("ppm")
+        || kl.contains("ppb")
+        || kl.ends_with("_ppm")
+        || kl.ends_with("_ppb")
+    {
+        ("diffusion", "ppm")
+    } else if kl.contains("co2")
+        || kl.contains("ch4")
+        || kl.contains("o3")
+        || kl.contains("no2")
+        || kl.contains("so2")
+        || kl.contains("h2o")
+    {
+        ("diffusion", "ppm")
+    } else if kl.contains("salinity") || kl.ends_with("_psu") || kl.ends_with("_ntu") {
+        ("diffusion", "PSU")
+    } else if kl.ends_with("_hz")
+        || kl.ends_with("_khz")
+        || kl.ends_with("_mhz")
+        || kl.ends_with("_ghz")
+        || kl.contains("freq")
+        || kl == "frequency"
+    {
+        ("em", "Hz")
+    } else if kl.ends_with("_vm") || kl.ends_with("_mvm") || kl.ends_with("_kvm") {
+        ("electric", "V/m")
+    } else if kl.ends_with("_mv")
+        || kl.ends_with("_uv")
+        || kl.ends_with("_nv")
+        || kl.ends_with("_v")
+    {
+        ("electric", "V")
+    } else if kl.ends_with("_uscm") || kl.ends_with("_sm") || kl.contains("conductivity") {
+        ("electric", "μS/cm")
+    } else if kl.ends_with("_ka") || kl.ends_with("_ma") || kl.ends_with("_a") {
+        ("electric", "A")
+    } else if kl == "db" || kl.ends_with("_db") || kl.ends_with("_dba") || kl.ends_with("_dbz") {
+        ("acoustic", "dB")
+    } else if kl.contains("discharge") || kl.ends_with("_m3s") || kl.ends_with("_ft3s") {
+        ("advective", "m3/s")
+    } else if kl.ends_with("_mas") || kl.ends_with("_arcsec") {
+        ("DROP", "DROP")
+    } else if kl == "footprint" {
+        ("em", "km")
+    } else if val.fract() == 0.0 && val.abs() < 100000.0 {
+        ("DROP", "DROP")
+    } else {
+        ("DROP", "DROP")
+    }
+}
+
+fn load_sources_from(content: &str) -> Vec<SourceConfig> {
+    let mut sources = Vec::new();
+    let mut cur_ttl: u64 = 0;
+    let mut cur_url = String::new();
+    let mut cur_body: Option<String> = None;
+    let mut cur_frame: Option<Frame> = None;
+    for line in content.lines() {
+        let line = line.trim();
+        if line.is_empty() || line.starts_with('#') {
+            continue;
+        }
+        let parts: Vec<&str> = line.split_whitespace().collect();
+        if parts.is_empty() {
+            continue;
+        }
+        match parts[0] {
+            "url" if parts.len() >= 2 => {
+                if cur_ttl > 0 && !cur_url.is_empty() {
+                    if let Some(ref frame) = cur_frame {
+                        sources.push(SourceConfig {
+                            ttl: cur_ttl,
+                            url: std::mem::take(&mut cur_url),
+                            frame: frame.clone(),
+                            format: String::new(),
+                            extracts: Vec::new(),
+                            headers: Vec::new(),
+                            post_body: None,
+                            target: None,
+                            catalog: None,
+                            max_freq: None,
+                            min_freq: None,
+                            body: cur_body.clone(),
+                            stations_url: None,
+                            stations_path: String::from("stations"),
+                            stations_lat: String::from("lat"),
+                            stations_lon: String::from("lng"),
+                            stations_id: String::from("id"),
+                            flux_from_mag: None,
+                            abs_mag_from: None,
+                            catalog_epoch: None,
+                            repeat_ra_bins: 0,
+                        });
+                    }
+                }
+                cur_url = parts[1].to_string();
+                cur_frame = None;
+                cur_body = None;
+            }
+            "ttl" if parts.len() >= 2 => {
+                if let Ok(v) = parts[1].parse::<u64>() {
+                    cur_ttl = v;
+                }
+            }
+            "at" if parts.len() >= 2 => {
+                let body = parts[1].to_string();
+                cur_body = Some(body.clone());
+                cur_frame = Some(Frame::Barycenter {
+                    body_name: body,
+                    scale: 1.0,
+                });
+            }
+            "on" if parts.len() >= 4 => {
+                let body = parts[1].to_string();
+                let lat: f64 = parts[2].parse().ok().unwrap_or(0.0);
+                let lon: f64 = parts[3].parse().ok().unwrap_or(0.0);
+                let alt: f64 = parts.get(4).and_then(|s| s.parse().ok()).unwrap_or(0.0);
+                cur_body = Some(body.clone());
+                cur_frame = Some(Frame::Surface {
+                    body_name: body,
+                    lat,
+                    lon,
+                    alt,
+                });
+            }
+            "body" if parts.len() >= 2 => {
+                cur_body = Some(parts[1].to_string());
+                if cur_frame.is_none() {
+                    cur_frame = Some(Frame::Barycenter {
+                        body_name: parts[1].to_string(),
+                        scale: 1.0,
+                    });
+                }
+            }
+            _ => {}
+        }
+    }
+    if cur_ttl > 0 && !cur_url.is_empty() {
+        if let Some(ref frame) = cur_frame {
+            sources.push(SourceConfig {
+                ttl: cur_ttl,
+                url: cur_url,
+                frame: frame.clone(),
+                format: String::new(),
+                extracts: Vec::new(),
+                headers: Vec::new(),
+                post_body: None,
+                target: None,
+                catalog: None,
+                max_freq: None,
+                min_freq: None,
+                body: cur_body,
+                stations_url: None,
+                stations_path: String::from("stations"),
+                stations_lat: String::from("lat"),
+                stations_lon: String::from("lng"),
+                stations_id: String::from("id"),
+                flux_from_mag: None,
+                abs_mag_from: None,
+                catalog_epoch: None,
+                repeat_ra_bins: 0,
+            });
+        }
+    }
+    sources
+}
+
 fn verify_mode(dir: &str) -> i32 {
     let mut urls: Vec<String> = Vec::new();
     let mut seen: std::collections::HashSet<String> = std::collections::HashSet::new();
@@ -5612,6 +6377,16 @@ fn main() {
                 }
             };
             std::process::exit(verify_mode(dir));
+        }
+        if args.len() > 1 && args[1] == "--probe" {
+            let path = match args.get(2) {
+                Some(s) => s.as_str(),
+                None => {
+                    eprintln!("--probe: file argument absent");
+                    std::process::exit(1);
+                }
+            };
+            std::process::exit(probe_mode(path));
         }
     }
     let loaded = load_sources();

@@ -1,0 +1,477 @@
+url https://data.neracoos.org/erddap/tabledap/A01_waves.csv?time,latitude,longitude,significant_wave_height,dominant_wave_period,mean_wave_direction&time>=max(time)-1day
+ttl 3600
+force acoustic
+on earth 42.523 -70.566
+format universal
+last_row significant_wave_height significant_wave_height
+
+url https://data.neracoos.org/erddap/tabledap/B01_met.csv?time,latitude,longitude,air_temperature,wind_speed,wind_gust,wind_direction,barometric_pressure&time>=max(time)-1day
+ttl 3600
+force thermal
+on earth 43.181 -70.428
+format universal
+last_row air_temperature air_temperature
+last_row barometric_pressure barometric_pressure
+
+url https://data.neracoos.org/erddap/tabledap/B01_ocean_001m.csv?time,latitude,longitude,temperature,salinity&time>=max(time)-1day
+ttl 3600
+force thermal
+on earth 43.181 -70.428
+format universal
+last_row temperature temperature
+
+url https://data.neracoos.org/erddap/tabledap/B01_surface_currents.csv?time,latitude,longitude,current_speed,current_direction,current_u,current_v&time>=max(time)-1day
+ttl 3600
+force advective
+on earth 43.179 -70.427
+format universal
+last_row current_speed current_speed
+last_row current_direction current_direction
+
+url https://data.neracoos.org/erddap/tabledap/B01_waves.csv?time,latitude,longitude,significant_wave_height,dominant_wave_period,mean_wave_direction&time>=max(time)-1day
+ttl 3600
+force acoustic
+on earth 43.181 -70.428
+format universal
+last_row significant_wave_height significant_wave_height
+
+url https://data.neracoos.org/erddap/tabledap/E01_met.csv?time,latitude,longitude,air_temperature,wind_speed,wind_gust,wind_direction,barometric_pressure&time>=max(time)-1day
+ttl 3600
+force thermal
+on earth 43.714 -69.356
+format universal
+last_row air_temperature air_temperature
+
+url https://data.neracoos.org/erddap/tabledap/E01_ocean_001m.csv?time,latitude,longitude,temperature,salinity&time>=max(time)-1day
+ttl 3600
+force thermal
+on earth 43.714 -69.356
+format universal
+last_row temperature temperature
+
+url https://data.neracoos.org/erddap/tabledap/E01_surface_currents.csv?time,latitude,longitude,current_speed,current_direction,current_u,current_v&time>=max(time)-1day
+ttl 3600
+force advective
+on earth 43.715 -69.358
+format universal
+last_row current_speed current_speed
+last_row current_direction current_direction
+
+url https://data.neracoos.org/erddap/tabledap/E01_waves.csv?time,latitude,longitude,significant_wave_height,dominant_wave_period,mean_wave_direction&time>=max(time)-1day
+ttl 3600
+force acoustic
+on earth 43.714 -69.356
+format universal
+last_row significant_wave_height significant_wave_height
+
+url https://data.neracoos.org/erddap/tabledap/F01_surface_currents.csv?time,latitude,longitude,current_speed,current_direction,current_u,current_v&time>=max(time)-1day
+ttl 3600
+force advective
+on earth 44.055 -68.998
+format universal
+last_row current_speed current_speed
+last_row current_direction current_direction
+
+url https://data.neracoos.org/erddap/tabledap/I01_met.csv?time,latitude,longitude,air_temperature,wind_speed,wind_gust,wind_direction,barometric_pressure&time>=max(time)-1day
+ttl 3600
+force thermal
+on earth 44.103 -68.109
+format universal
+last_row air_temperature air_temperature
+
+url https://data.neracoos.org/erddap/tabledap/I01_surface_currents.csv?time,latitude,longitude,current_speed,current_direction,current_u,current_v&time>=max(time)-1day
+ttl 3600
+force advective
+on earth 44.102 -68.113
+format universal
+last_row current_speed current_speed
+last_row current_direction current_direction
+
+url https://data.neracoos.org/erddap/tabledap/I01_waves.csv?time,latitude,longitude,significant_wave_height,dominant_wave_period,mean_wave_direction&time>=max(time)-1day
+ttl 3600
+force acoustic
+on earth 44.103 -68.109
+format universal
+last_row significant_wave_height significant_wave_height
+
+url https://data.neracoos.org/erddap/tabledap/M01_surface_currents.csv?time,latitude,longitude,current_speed,current_direction,current_u,current_v&time>=max(time)-1day
+ttl 3600
+force advective
+on earth 43.491 -67.880
+format universal
+last_row current_speed current_speed
+last_row current_direction current_direction
+
+url https://data.neracoos.org/erddap/tabledap/N01_surface_currents.csv?time,latitude,longitude,current_speed,current_direction,current_u,current_v&time>=max(time)-1day
+ttl 3600
+force advective
+on earth 42.330 -65.914
+format universal
+last_row current_speed current_speed
+last_row current_direction current_direction
+
+url https://data.neracoos.org/erddap/tabledap/Hohonu_tide_Adams_Point_NH.csv?time,latitude,longitude,navd88_meters&time%3E={today}T00:00:00Z
+ttl 3600
+force gravity
+on earth 43.09 -70.74
+format universal
+last_row navd88_meters navd88_meters
+
+url https://data.neracoos.org/erddap/tabledap/Greenstream_tide_ME_BWD.csv?time,latitude,longitude,navd88_meters&time%3E={today}T00:00:00Z
+ttl 3600
+force gravity
+on earth 44.01 -69.90
+format universal
+last_row navd88_meters navd88_meters
+
+url https://data.neracoos.org/erddap/tabledap/Greenstream_tide_ME_RKL.csv?time,latitude,longitude,navd88_meters&time%3E={today}T00:00:00Z
+ttl 3600
+force gravity
+on earth 44.104 -69.109
+format universal
+last_row navd88_meters navd88_meters
+
+url https://pegelonline.wsv.de/webservices/rest-api/v2/stations.json?latitude={lat}&longitude={lon}&radius=50&includeCurrentMeasurement=true
+ttl 3600
+force gravity
+at sun 1.0
+format universal
+map .
+lat_key latitude
+lon_key longitude
+field_in shortname shortname
+field_in number number
+
+url https://cddis.nasa.gov/archive/gnss/products/ionex/{year}/{day}/COD0OPSFIN_{year}{day}0000_01D_01H_GIM.INX
+ttl 3600
+force em
+at sun 1.0
+format text
+rows
+lat_key latitude
+lon_key longitude
+field_in 0 0
+field_in 1 1
+field_in 2 2
+field_in 3 3
+field_in 4 4
+
+url https://api.safecast.org/en-US/measurements.json?limit=100
+ttl 3600
+force em
+on earth 0 0
+map .
+lat_key 2.latitude
+lon_key 2.latitude
+field_in value value
+
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?site=all&year=2026&month=7&day=31&hour=0&min=0&AOD15=1
+ttl 10800
+force thermal
+at sun 1.0
+format text
+rows
+field_in 7 7
+lat_key 1
+lon_key 2
+
+url https://db.satnogs.org/api/tle/?format=json
+ttl 14400
+force em
+at sun 1.0
+map .
+field_in tle0 tle0
+field_in tle1 tle1
+field_in tle2 tle2
+field_in norad_cat_id norad_cat_id
+field_in tle_source tle_source
+
+url https://www.ncei.noaa.gov/erddap/griddap/cfs_reanl_mm_ocnh_by_time16_depth_below_sea_lat_lon.csv?u_component_of_current%5B(last)%5D%5B(0)%5D%5B(-80.0):10:(80.0)%5D%5B(0.125):10:(359.875)%5D,v_component_of_current%5B(last)%5D%5B(0)%5D%5B(-80.0):10:(80.0)%5D%5B(0.125):10:(359.875)%5D
+ttl 21600
+force advective
+at sun 1.0
+format text
+rows
+lat_key latitude
+lon_key longitude
+field_in u_component_of_current u_component_of_current
+field_in v_component_of_current v_component_of_current
+
+url https://www.ncei.noaa.gov/erddap/griddap/cfs_reanl_mm_ocnh_by_time16_depth_below_sea_lat_lon.csv?Potential_temperature%5B(last)%5D%5B(0)%5D%5B(-80.0):10:(80.0)%5D%5B(0.125):10:(359.875)%5D
+ttl 21600
+force thermal
+at sun 1.0
+format text
+rows
+lat_key latitude
+lon_key longitude
+field_in Potential_temperature Potential_temperature
+
+url https://www.ncei.noaa.gov/erddap/griddap/cfs_reanl_mm_ocnh_by_time16_bottom_of_ocean_mixed_layer_lat_lon.csv?bottom_of_ocean_mixed_layer%5B(last)%5D%5B(-80.0):10:(80.0)%5D%5B(0.125):10:(359.875)%5D
+ttl 21600
+force thermal
+at sun 1.0
+format text
+rows
+lat_key latitude
+lon_key longitude
+field_in bottom_of_ocean_mixed_layer bottom_of_ocean_mixed_layer
+
+url https://www.ncei.noaa.gov/erddap/griddap/ncdc_oisst_v2_avhrr_by_time_zlev_lat_lon.csv?sst%5B(last)%5D%5B(0)%5D%5B(-60.0):20:(60.0)%5D%5B(0.125):20:(359.875)%5D
+ttl 21600
+force thermal
+at sun 1.0
+format universal
+map data
+lat_key latitude
+lon_key longitude
+field_in sst sst
+field_in sst sst
+
+url https://coastwatch.pfeg.noaa.gov/erddap/griddap/erdQMwind1day_LonPM180.json?x_wind%5B(2022-12-01T12%3A00%3A00Z)%5D%5B(10.0)%5D%5B(-75.0)%3A4%3A(75.0)%5D%5B(-180.0)%3A4%3A(180.0)%5D
+ttl 43200
+force em
+at sun 1.0
+map table.rows
+alt_key 1
+epoch_key 0
+field_in 4 4
+
+url https://weather.uwyo.edu/wsgi/sounding?datetime={today}%2000:00:00&type=TEXT:CSV&id=10393&src=UNKNOWN
+ttl 43200
+force thermal
+at sun 1.0
+format universal
+map .
+lat_key latitude
+lon_key longitude
+field_in temperature_C temperature_C
+field_in pressure_hPa pressure_hPa
+
+url https://coastwatch.pfeg.noaa.gov/erddap/griddap/ncdcOisst21Agg_LonPM180.json?ice%5B(last)%5D%5B(0)%5D%5B(-79.875)%3A20%3A(79.875)%5D%5B(-179.875)%3A20%3A(179.875)%5D
+ttl 43200
+force thermal
+at sun 1.0
+map table.rows
+epoch_key 0
+field_in 4 4
+
+url https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.json?time%2Clongitude%2Clatitude%2Cpres%2Ctemp%26time%3E%3D{yesterday}%26time%3C%3D{now}%26longitude%3E%3D{lon_min}%26longitude%3C%3D{lon_max}%26latitude%3E%3D{lat_min}%26latitude%3C%3D{lat_max}
+ttl 43200
+force thermal
+at sun 1.0
+map table.rows
+alt_key 3
+alt_sign -1
+epoch_key 0
+field_in 4 4
+
+url https://data.pmel.noaa.gov/socat/erddap/tabledap/socat_v2026_fulldata.json?time,latitude,longitude,xCO2_water_sst_dry_ppm&time%3E={yesterday}&distinct()
+ttl 43200
+force diffusion
+at sun 1.0
+map table.rows
+epoch_key 0
+field_in 3 3
+
+url https://vsx.aavso.org/index.php?view=api.votable&format=json&ra=0&dec=0&radius=5
+ttl 86400
+force em
+at sun 1.0
+map .
+lat_key ra_hms
+lon_key dec_dms
+field_in oid oid
+field_in name name
+field_in type type
+field_in mag_max mag_max
+field_in mag_min mag_min
+field_in period period
+field_in epoch epoch
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?request=doQuery&lang=ADQL&format=json&query=SELECT+TOP+200+RAJ2000,DEJ2000,Vmag+FROM+%22II/366/catv2021%22
+ttl 86400
+force em
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key 0
+dec_key 1
+field_in 2 2
+
+url https://newton.spacedys.com/astdys2/index.php?pc=3.0&type=all&format=json&limit=500
+ttl 86400
+force gravity
+on earth 0.0 0.0
+map .
+field_in number number
+field_in name name
+field_in class class
+
+url https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name,epoch,H,diameter,albedo,class,neo&sb-kind=a&sb-cdata=%7B%22AND%22%3A%5B%22neo%3Aeq%3AY%22%5D%7D
+ttl 86400
+force gravity
+at sun 1.0
+map data
+field_in full_name full_name
+field_in epoch epoch
+field_in H H
+field_in diameter diameter
+field_in albedo albedo
+field_in class class
+field_in neo neo
+
+url https://cddis.nasa.gov/archive/vlbi/ivsproducts/eops/ivseops.snx
+ttl 86400
+force gravity
+on earth 0.0 0.0
+format text
+rows
+field_in 0 0
+field_in 1 1
+field_in 2 2
+field_in 3 3
+field_in 4 4
+
+url https://www.chime-frb.ca/catalog
+at sun 1.0
+ttl 86400
+force em
+on earth 49.321 -122.573
+last_line exosphere_chime_frb_count
+cmap .
+ra_key RAJ2000
+dec_key DEJ2000
+field_in Name Name
+field_in DM DM
+
+url https://dasch.rc.fas.harvard.edu/lightcurve.php?objid=GJ+551&type=json&limit=500
+ttl 86400
+force em
+at sun 1.0
+map .
+field_in 0 0
+field_in 1 1
+field_in 2 2
+
+url https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/sat441.bsp
+ttl 86400
+body enceladus
+force em
+at sun 1.0
+format ephemeris_binary
+
+url https://services.terrascope.be/catalogue/products?collection=urn:eop:VITO:ESA_WorldCover_10m_2021_V2&bbox=-180,-60,180,60
+ttl 86400
+force diffusion
+at sun 1.0
+map features
+lat_key geometry.coordinates.0.0.1
+lon_key geometry.coordinates.0.0.0
+field_in properties.title title
+field_in properties.date date
+field_in properties.cloudCover cloudCover
+
+url https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/jup365.bsp
+ttl 86400
+body europa
+force em
+at sun 1.0
+format ephemeris_binary
+
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=json&QUERY=SELECT+pl_name,ra,dec,sy_dist,pl_orbper,pl_rade,pl_bmasse,pl_eqt,st_teff,disc_year+FROM+ps+WHERE+default_flag=1+AND+ra+IS+NOT+NULL+ORDER+BY+sy_dist+ASC
+body earth
+ttl 86400
+force gravity
+map .
+ra_key ra
+dec_key dec
+dist_key sy_dist
+field_in pl_name pl_name
+field_in pl_orbper pl_orbper
+field_in pl_rade pl_rade
+field_in pl_bmasse pl_bmasse
+field_in pl_eqt pl_eqt
+field_in st_teff st_teff
+field_in disc_year disc_year
+
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+TOP+200+ra,dec,pl_name,sy_dist+FROM+ps+ORDER+BY+sy_dist&format=json
+ttl 86400
+force em
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key ra
+dec_key dec
+field_in sy_dist sy_dist
+dist_key 3 3.085677581e16
+
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+TOP+200+ra,dec,sy_dist,pl_orbper,pl_rade+FROM+ps+WHERE+sy_dist+IS+NOT+NULL+ORDER+BY+sy_dist&format=json
+ttl 86400
+force em
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key ra
+dec_key dec
+field_in sy_dist sy_dist
+field_in pl_orbper pl_orbper
+field_in pl_rade pl_rade
+dist_key 2 3.085677581e16
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?request=doQuery&lang=ADQL&format=json&query=SELECT+TOP+200+RAJ2000,DEJ2000,F1000i,PLGam+FROM+%22IX/67/4fgldr3%22
+body earth
+ttl 86400
+force em
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key 0
+dec_key 1
+field_in 2 2
+field_in 3 3
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&QUERY=SELECT+name,ra,dec,redshift,flux_100_300000,spectral_index,object_type,nu_flux,z_phot+FROM+fermilpsc+WHERE+flux_100_300000+IS+NOT+NULL+ORDER+BY+flux_100_300000+DESC&FORMAT=text&limit=2000
+ttl 86400
+force em
+body earth
+at sun 1.0
+format universal
+rows
+ra_key ra
+dec_key dec
+z_key redshift
+field_in name name
+field_in flux_100_300000 flux_100_300000
+field_in spectral_index spectral_index
+field_in object_type object_type
+field_in nu_flux nu_flux
+field_in z_phot z_phot
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RAJ2000,DEJ2000,Fpeak,Fint+FROM+%22VIII/92/first14%22
+ttl 86400
+force em
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+field_in Fpeak Fpeak
+field_in Fint Fint
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+Name,RAJ2000,DEJ2000,DM+FROM+%22J/other/PASA/33.45/frbcat%22
+ttl 86400
+force em
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key 10
+dec_key 11
+field_in 1 1
+field_in 23 23
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2790000001%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 86400
+force em
+on earth 34.201 -118.171
+extent 3.34e-8

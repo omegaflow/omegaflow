@@ -1,0 +1,292 @@
+url https://opensky-network.org/api/states/all
+ttl 300
+on earth 0 0 0
+header User-Agent omegaflow
+map states
+lat 6
+lon 5
+alt 7
+field 9 biosphere_aircraft_velocity inverse-square em m/s 30.0 0.0 0.0
+field 11 biosphere_aircraft_vertical_rate inverse-square em m/s 30.0 0.0 0.0
+field 13 biosphere_aircraft_geo_altitude inverse-square em m 30.0 0.0 0.0
+
+url http://reg.bom.gov.au/fwo/IDN60901/IDN60901.95765.json
+ttl 300
+on earth 0 0 0
+map observations.data
+lat lat
+lon lon
+field air_temp atmosphere_bom_air_temp_c exponential-decay thermal C 30.0 0.0 0.0
+field rel_hum atmosphere_bom_relative_humidity_pct gaussian-inverse-square diffusion % 30.0 0.0 0.0
+field wind_spd_kmh atmosphere_bom_wind_speed_kmh patch-levy advective km/h 30.0 0.0 0.0
+field gust_kmh atmosphere_bom_gust_speed_kmh patch-levy advective km/h 30.0 0.0 0.0
+field rain_trace atmosphere_bom_rain_trace_mm patch-levy advective mm 30.0 0.0 0.0
+
+url https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/AC_H0_MFI/variables/BGSEc,Magnitude/data/{today}T00:00:00.000Z/{today}T23:59:59.000Z?format=csv
+ttl 300
+format text
+on earth 0 0 0
+rows
+field 1 magnetosphere_ace_bx_gse_nT inverse-square em nT 30.0 0.0 0.0
+field 2 magnetosphere_ace_by_gse_nT inverse-square em nT 30.0 0.0 0.0
+field 3 magnetosphere_ace_bz_gse_nT inverse-square em nT 30.0 0.0 0.0
+field 4 magnetosphere_ace_b_magnitude_nT inverse-square em nT 30.0 0.0 0.0
+
+url https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/GOES16_L2_MAG/variables/Hp,He,Hn,B_Total/data/{today}T00:00:00.000Z/{today}T23:59:59.000Z?format=csv
+ttl 300
+format text
+on earth 0.0 -75.2 35786023
+rows
+field 1 magnetosphere_goes16_hp_nT inverse-square em nT 30.0 0.0 0.0
+field 2 magnetosphere_goes16_he_nT inverse-square em nT 30.0 0.0 0.0
+field 3 magnetosphere_goes16_hn_nT inverse-square em nT 30.0 0.0 0.0
+field 4 magnetosphere_goes16_b_total_nT inverse-square em nT 30.0 0.0 0.0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&orderby=magnitude&limit=100
+ttl 300
+on earth 0 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field geometry.coordinates.2 geosphere_earthquake_depth_km erfc seismic-surface km 30.0 0.0 0.0
+field properties.mag geosphere_earthquake_mag erfc seismic-surface Mw 30.0 0.0 0.0
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_day.geojson
+ttl 300
+on earth 0 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.mag geosphere_quake_mag erfc seismic-surface Mw 30.0 0.0 0.0
+field properties.sig geosphere_quake_sig erfc seismic-surface 1 30.0 0.0 0.0
+
+url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&minmag=5&limit=100
+ttl 300
+on earth 0 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+alt geometry.coordinates.2
+field properties.mag geosphere_emsc_sig_magnitude erfc seismic-surface Mw 30.0 0.0 0.0
+field properties.depth geosphere_emsc_sig_depth_km erfc seismic-surface km 30.0 0.0 0.0
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=50049000&parameterCd=00060&siteStatus=all
+ttl 300
+on earth 38.949 -77.365 0
+path value.timeSeries.0.values.0.value.0.value hydrosphere_river_flow_cfs patch-levy advective cfs 30.0 0.0 0.0
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&bBox={lon_min},{lat_min},{lon_max},{lat_max}&parameterCd=00060&siteStatus=active
+ttl 300
+on earth 0 0 0
+map value.timeSeries
+lat sourceInfo.geoLocation.geogLocation.latitude
+lon sourceInfo.geoLocation.geogLocation.longitude
+field values.0.value.0.value hydrosphere_river_flow_cfs patch-levy advective cfs 30.0 0.0 0.0
+
+url https://services.swpc.noaa.gov/json/goes/primary/differential-protons-3-day.json
+ttl 300
+on earth 0.0 -75.2 35786023
+last flux radiation_proton_flux_goes inverse-square em pfu 30.0 0.0 0.0
+
+url https://services.swpc.noaa.gov/json/goes/primary/xray-flares-latest.json
+ttl 300
+on earth 0.0 -75.2 35786023
+last current_int_xrlong solar_xray_flux_wm2 inverse-square em W/m2 30.0 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/41001.txt
+ttl 300
+format csv
+on earth 34.7 -72.4 0
+lastrow WDIR hydrosphere_buoy_41001_wind_dir gaussian-inverse-square acoustic deg 30.0 0.0 0.0
+lastrow WSPD hydrosphere_buoy_41001_wind_speed gaussian-inverse-square acoustic m/s 30.0 0.0 0.0
+lastrow WVHT hydrosphere_buoy_41001_wave_height gaussian-inverse-square acoustic m 30.0 0.0 0.0
+lastrow DPD hydrosphere_buoy_41001_dominant_period gaussian-inverse-square acoustic s 30.0 0.0 0.0
+lastrow PRES hydrosphere_buoy_41001_pressure gaussian-inverse-square acoustic hPa 30.0 0.0 0.0
+lastrow WTMP hydrosphere_buoy_41001_water_temp gaussian-inverse-square acoustic C 30.0 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/42001.txt
+ttl 300
+format csv
+on earth 25.90 -89.67 0
+lastrow WDIR hydrosphere_buoy_42001_wind_dir gaussian-inverse-square acoustic deg 30.0 0.0 0.0
+lastrow WSPD hydrosphere_buoy_42001_wind_speed gaussian-inverse-square acoustic m/s 30.0 0.0 0.0
+lastrow WVHT hydrosphere_buoy_42001_wave_height gaussian-inverse-square acoustic m 30.0 0.0 0.0
+lastrow DPD hydrosphere_buoy_42001_dominant_period gaussian-inverse-square acoustic s 30.0 0.0 0.0
+lastrow PRES hydrosphere_buoy_42001_pressure gaussian-inverse-square acoustic hPa 30.0 0.0 0.0
+lastrow WTMP hydrosphere_buoy_42001_water_temp gaussian-inverse-square acoustic C 30.0 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/42002.txt
+ttl 300
+format csv
+on earth 25.16 -94.42 0
+lastrow WDIR hydrosphere_buoy_42002_wind_dir gaussian-inverse-square acoustic deg 30.0 0.0 0.0
+lastrow WSPD hydrosphere_buoy_42002_wind_speed gaussian-inverse-square acoustic m/s 30.0 0.0 0.0
+lastrow WVHT hydrosphere_buoy_42002_wave_height gaussian-inverse-square acoustic m 30.0 0.0 0.0
+lastrow DPD hydrosphere_buoy_42002_dominant_period gaussian-inverse-square acoustic s 30.0 0.0 0.0
+lastrow PRES hydrosphere_buoy_42002_pressure gaussian-inverse-square acoustic hPa 30.0 0.0 0.0
+lastrow WTMP hydrosphere_buoy_42002_water_temp gaussian-inverse-square acoustic C 30.0 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/42003.txt
+ttl 300
+format csv
+on earth 26.06 -85.82 0
+lastrow WDIR hydrosphere_buoy_42003_wind_dir gaussian-inverse-square acoustic deg 30.0 0.0 0.0
+lastrow WSPD hydrosphere_buoy_42003_wind_speed gaussian-inverse-square acoustic m/s 30.0 0.0 0.0
+lastrow WVHT hydrosphere_buoy_42003_wave_height gaussian-inverse-square acoustic m 30.0 0.0 0.0
+lastrow DPD hydrosphere_buoy_42003_dominant_period gaussian-inverse-square acoustic s 30.0 0.0 0.0
+lastrow PRES hydrosphere_buoy_42003_pressure gaussian-inverse-square acoustic hPa 30.0 0.0 0.0
+lastrow WTMP hydrosphere_buoy_42003_water_temp gaussian-inverse-square acoustic C 30.0 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/42019.txt
+ttl 300
+format csv
+on earth 27.91 -95.35 0
+lastrow WDIR hydrosphere_buoy_42019_wind_dir gaussian-inverse-square acoustic deg 30.0 0.0 0.0
+lastrow WSPD hydrosphere_buoy_42019_wind_speed gaussian-inverse-square acoustic m/s 30.0 0.0 0.0
+lastrow WVHT hydrosphere_buoy_42019_wave_height gaussian-inverse-square acoustic m 30.0 0.0 0.0
+lastrow DPD hydrosphere_buoy_42019_dominant_period gaussian-inverse-square acoustic s 30.0 0.0 0.0
+lastrow PRES hydrosphere_buoy_42019_pressure gaussian-inverse-square acoustic hPa 30.0 0.0 0.0
+lastrow WTMP hydrosphere_buoy_42019_water_temp gaussian-inverse-square acoustic C 30.0 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/42020.txt
+ttl 300
+format csv
+on earth 27.21 -96.66 0
+lastrow WDIR hydrosphere_buoy_42020_wind_dir gaussian-inverse-square acoustic deg 30.0 0.0 0.0
+lastrow WSPD hydrosphere_buoy_42020_wind_speed gaussian-inverse-square acoustic m/s 30.0 0.0 0.0
+lastrow WVHT hydrosphere_buoy_42020_wave_height gaussian-inverse-square acoustic m 30.0 0.0 0.0
+lastrow DPD hydrosphere_buoy_42020_dominant_period gaussian-inverse-square acoustic s 30.0 0.0 0.0
+lastrow PRES hydrosphere_buoy_42020_pressure gaussian-inverse-square acoustic hPa 30.0 0.0 0.0
+lastrow WTMP hydrosphere_buoy_42020_water_temp gaussian-inverse-square acoustic C 30.0 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/42036.txt
+ttl 300
+format csv
+on earth 28.50 -84.52 0
+lastrow WDIR hydrosphere_buoy_42036_wind_dir gaussian-inverse-square acoustic deg 30.0 0.0 0.0
+lastrow WSPD hydrosphere_buoy_42036_wind_speed gaussian-inverse-square acoustic m/s 30.0 0.0 0.0
+lastrow WVHT hydrosphere_buoy_42036_wave_height gaussian-inverse-square acoustic m 30.0 0.0 0.0
+lastrow DPD hydrosphere_buoy_42036_dominant_period gaussian-inverse-square acoustic s 30.0 0.0 0.0
+lastrow PRES hydrosphere_buoy_42036_pressure gaussian-inverse-square acoustic hPa 30.0 0.0 0.0
+lastrow WTMP hydrosphere_buoy_42036_water_temp gaussian-inverse-square acoustic C 30.0 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/42040.txt
+ttl 300
+format csv
+on earth 29.22 -88.23 0
+lastrow WDIR hydrosphere_buoy_42040_wind_dir gaussian-inverse-square acoustic deg 30.0 0.0 0.0
+lastrow WSPD hydrosphere_buoy_42040_wind_speed gaussian-inverse-square acoustic m/s 30.0 0.0 0.0
+lastrow WVHT hydrosphere_buoy_42040_wave_height gaussian-inverse-square acoustic m 30.0 0.0 0.0
+lastrow DPD hydrosphere_buoy_42040_dominant_period gaussian-inverse-square acoustic s 30.0 0.0 0.0
+lastrow PRES hydrosphere_buoy_42040_pressure gaussian-inverse-square acoustic hPa 30.0 0.0 0.0
+lastrow WTMP hydrosphere_buoy_42040_water_temp gaussian-inverse-square acoustic C 30.0 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/42055.txt
+ttl 300
+format csv
+on earth 22.14 -91.39 0
+lastrow WDIR hydrosphere_buoy_42055_wind_dir gaussian-inverse-square acoustic deg 30.0 0.0 0.0
+lastrow WSPD hydrosphere_buoy_42055_wind_speed gaussian-inverse-square acoustic m/s 30.0 0.0 0.0
+lastrow WVHT hydrosphere_buoy_42055_wave_height gaussian-inverse-square acoustic m 30.0 0.0 0.0
+lastrow DPD hydrosphere_buoy_42055_dominant_period gaussian-inverse-square acoustic s 30.0 0.0 0.0
+lastrow PRES hydrosphere_buoy_42055_pressure gaussian-inverse-square acoustic hPa 30.0 0.0 0.0
+lastrow WTMP hydrosphere_buoy_42055_water_temp gaussian-inverse-square acoustic C 30.0 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/44004.txt
+ttl 300
+format csv
+on earth 38.48 -70.68 0
+lastrow WDIR hydrosphere_buoy_44004_wind_dir gaussian-inverse-square acoustic deg 30.0 0.0 0.0
+lastrow WSPD hydrosphere_buoy_44004_wind_speed gaussian-inverse-square acoustic m/s 30.0 0.0 0.0
+lastrow WVHT hydrosphere_buoy_44004_wave_height gaussian-inverse-square acoustic m 30.0 0.0 0.0
+lastrow DPD hydrosphere_buoy_44004_dominant_period gaussian-inverse-square acoustic s 30.0 0.0 0.0
+lastrow PRES hydrosphere_buoy_44004_pressure gaussian-inverse-square acoustic hPa 30.0 0.0 0.0
+lastrow WTMP hydrosphere_buoy_44004_water_temp gaussian-inverse-square acoustic C 30.0 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/44009.txt
+ttl 300
+format csv
+on earth 38.46 -74.70 0
+lastrow WDIR hydrosphere_buoy_44009_wind_dir gaussian-inverse-square acoustic deg 30.0 0.0 0.0
+lastrow WSPD hydrosphere_buoy_44009_wind_speed gaussian-inverse-square acoustic m/s 30.0 0.0 0.0
+lastrow WVHT hydrosphere_buoy_44009_wave_height gaussian-inverse-square acoustic m 30.0 0.0 0.0
+lastrow DPD hydrosphere_buoy_44009_dominant_period gaussian-inverse-square acoustic s 30.0 0.0 0.0
+lastrow PRES hydrosphere_buoy_44009_pressure gaussian-inverse-square acoustic hPa 30.0 0.0 0.0
+lastrow WTMP hydrosphere_buoy_44009_water_temp gaussian-inverse-square acoustic C 30.0 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/44013.txt
+ttl 300
+format csv
+on earth 42.35 -70.69 0
+lastrow WDIR hydrosphere_buoy_44013_wind_dir gaussian-inverse-square acoustic deg 30.0 0.0 0.0
+lastrow WSPD hydrosphere_buoy_44013_wind_speed gaussian-inverse-square acoustic m/s 30.0 0.0 0.0
+lastrow WVHT hydrosphere_buoy_44013_wave_height gaussian-inverse-square acoustic m 30.0 0.0 0.0
+lastrow DPD hydrosphere_buoy_44013_dominant_period gaussian-inverse-square acoustic s 30.0 0.0 0.0
+lastrow PRES hydrosphere_buoy_44013_pressure gaussian-inverse-square acoustic hPa 30.0 0.0 0.0
+lastrow WTMP hydrosphere_buoy_44013_water_temp gaussian-inverse-square acoustic C 30.0 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/44014.txt
+ttl 300
+format csv
+on earth 36.61 -74.84 0
+lastrow WDIR hydrosphere_buoy_44014_wind_dir gaussian-inverse-square acoustic deg 30.0 0.0 0.0
+lastrow WSPD hydrosphere_buoy_44014_wind_speed gaussian-inverse-square acoustic m/s 30.0 0.0 0.0
+lastrow WVHT hydrosphere_buoy_44014_wave_height gaussian-inverse-square acoustic m 30.0 0.0 0.0
+lastrow DPD hydrosphere_buoy_44014_dominant_period gaussian-inverse-square acoustic s 30.0 0.0 0.0
+lastrow PRES hydrosphere_buoy_44014_pressure gaussian-inverse-square acoustic hPa 30.0 0.0 0.0
+lastrow WTMP hydrosphere_buoy_44014_water_temp gaussian-inverse-square acoustic C 30.0 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/44025.txt
+ttl 300
+format csv
+on earth 40.25 -73.17 0
+lastrow WDIR hydrosphere_buoy_44025_wind_dir gaussian-inverse-square acoustic deg 30.0 0.0 0.0
+lastrow WSPD hydrosphere_buoy_44025_wind_speed gaussian-inverse-square acoustic m/s 30.0 0.0 0.0
+lastrow WVHT hydrosphere_buoy_44025_wave_height gaussian-inverse-square acoustic m 30.0 0.0 0.0
+lastrow DPD hydrosphere_buoy_44025_dominant_period gaussian-inverse-square acoustic s 30.0 0.0 0.0
+lastrow PRES hydrosphere_buoy_44025_pressure gaussian-inverse-square acoustic hPa 30.0 0.0 0.0
+lastrow WTMP hydrosphere_buoy_44025_water_temp gaussian-inverse-square acoustic C 30.0 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/46001.txt
+ttl 300
+format csv
+on earth 56.30 -148.17 0
+lastrow WDIR hydrosphere_buoy_46001_wind_dir gaussian-inverse-square acoustic deg 30.0 0.0 0.0
+lastrow WSPD hydrosphere_buoy_46001_wind_speed gaussian-inverse-square acoustic m/s 30.0 0.0 0.0
+lastrow WVHT hydrosphere_buoy_46001_wave_height gaussian-inverse-square acoustic m 30.0 0.0 0.0
+lastrow DPD hydrosphere_buoy_46001_dominant_period gaussian-inverse-square acoustic s 30.0 0.0 0.0
+lastrow PRES hydrosphere_buoy_46001_pressure gaussian-inverse-square acoustic hPa 30.0 0.0 0.0
+lastrow WTMP hydrosphere_buoy_46001_water_temp gaussian-inverse-square acoustic C 30.0 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/46002.txt
+ttl 300
+format csv
+on earth 42.67 -124.82 0
+lastrow WDIR hydrosphere_buoy_46002_wind_dir gaussian-inverse-square acoustic deg 30.0 0.0 0.0
+lastrow WSPD hydrosphere_buoy_46002_wind_speed gaussian-inverse-square acoustic m/s 30.0 0.0 0.0
+lastrow WVHT hydrosphere_buoy_46002_wave_height gaussian-inverse-square acoustic m 30.0 0.0 0.0
+lastrow DPD hydrosphere_buoy_46002_dominant_period gaussian-inverse-square acoustic s 30.0 0.0 0.0
+lastrow PRES hydrosphere_buoy_46002_pressure gaussian-inverse-square acoustic hPa 30.0 0.0 0.0
+lastrow WTMP hydrosphere_buoy_46002_water_temp gaussian-inverse-square acoustic C 30.0 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/46005.txt
+ttl 300
+format csv
+on earth 46.06 -124.96 0
+lastrow WDIR hydrosphere_buoy_46005_wind_dir gaussian-inverse-square acoustic deg 30.0 0.0 0.0
+lastrow WSPD hydrosphere_buoy_46005_wind_speed gaussian-inverse-square acoustic m/s 30.0 0.0 0.0
+lastrow WVHT hydrosphere_buoy_46005_wave_height gaussian-inverse-square acoustic m 30.0 0.0 0.0
+lastrow DPD hydrosphere_buoy_46005_dominant_period gaussian-inverse-square acoustic s 30.0 0.0 0.0
+lastrow PRES hydrosphere_buoy_46005_pressure gaussian-inverse-square acoustic hPa 30.0 0.0 0.0
+lastrow WTMP hydrosphere_buoy_46005_water_temp gaussian-inverse-square acoustic C 30.0 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/46006.txt
+ttl 300
+format csv
+on earth 55.06 -137.07 0
+lastrow WDIR hydrosphere_buoy_46006_wind_dir gaussian-inverse-square acoustic deg 30.0 0.0 0.0
+lastrow WSPD hydrosphere_buoy_46006_wind_speed gaussian-inverse-square acoustic m/s 30.0 0.0 0.0
+lastrow WVHT hydrosphere_buoy_46006_wave_height gaussian-inverse-square acoustic m 30.0 0.0 0.0
+lastrow DPD hydrosphere_buoy_46006_dominant_period gaussian-inverse-square acoustic s 30.0 0.0 0.0
+lastrow PRES hydrosphere_buoy_46006_pressure gaussian-inverse-square acoustic hPa 30.0 0.0 0.0
+lastrow WTMP hydrosphere_buoy_46006_water_temp gaussian-inverse-square acoustic C 30.0 0.0 0.0

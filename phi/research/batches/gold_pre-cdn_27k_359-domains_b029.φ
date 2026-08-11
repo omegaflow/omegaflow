@@ -1,0 +1,678 @@
+source irsa_dust_extinction_query
+ttl 86400
+force diffusion
+terra 1
+lat 0.0
+lon 0.0
+url https://irsa.ipac.caltech.edu/cgi-bin/DUST/nph-dust?locstr={lat}+{lon}+gal&regSize=5&output_type=json
+field statistics.refPixelValueSandF ebv_sfd98_reference
+field statistics.meanValueSandF ebv_sfd98_mean
+field statistics.maxValueSandF ebv_sfd98_max
+field statistics.minValueSandF ebv_sfd98_min
+field descriptionSandF map_description
+
+source irsa_glimpse360_outer_galaxy
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+designation,ra,dec,mag3_6,mag4_5,mag5_8,mag8_0+FROM+glimpse360_psc+WHERE+ra+IS+NOT+NULL+AND+mag3_6<12+ORDER+BY+mag3_6+ASC
+format text
+rows
+ra_key ra
+dec_key dec
+field designation source_id
+field mag3_6 irac_3_6um_mag
+field mag4_5 irac_4_5um_mag
+field mag5_8 irac_5_8um_mag
+field mag8_0 irac_8_0um_mag
+
+source irsa_glimpse_i_point_source_catalog
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+designation,ra,dec,mag3_6,mag4_5,mag5_8,mag8_0,e_mag3_6,e_mag8_0,sqf_3_6+FROM+glimpsei_psc+WHERE+ra+IS+NOT+NULL+AND+mag3_6<10+ORDER+BY+mag3_6+ASC
+format text
+rows
+ra_key ra
+dec_key dec
+field designation source_id
+field mag3_6 irac_3_6um_mag
+field mag4_5 irac_4_5um_mag
+field mag5_8 irac_5_8um_mag
+field mag8_0 irac_8_0um_mag
+field e_mag3_6 irac_3_6um_error
+field sqf_3_6 source_quality_3_6
+
+source irsa_glimpse_ii_inner_galactic_plane
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+designation,ra,dec,mag3_6,mag4_5,mag8_0,e_mag4_5+FROM+glimpseii_psc+WHERE+ra+IS+NOT+NULL+AND+mag4_5<12+ORDER+BY+mag4_5+ASC
+format text
+rows
+ra_key ra
+dec_key dec
+field designation source_id
+field mag3_6 irac_3_6um_mag
+field mag4_5 irac_4_5um_mag
+field mag8_0 irac_8_0um_mag
+field e_mag4_5 irac_4_5um_error
+
+source irsa_iras_psc_infrared
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+ra,dec,fnu_12,fnu_25,fnu_60,fnu_100,var_flg+FROM+iraspsc+WHERE+fnu_25>10+AND+fnu_60>10+ORDER+BY+fnu_60+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field fnu_12 flux_12um_jy
+field fnu_25 flux_25um_jy
+field fnu_60 flux_60um_jy
+field fnu_100 flux_100um_jy
+field var_flg variability_flag
+
+source irsa_mipsgal_24um_point_source_catalog
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+designation,ra,dec,f24,e_f24,snr24,flags+FROM+mipsgal_psc+WHERE+ra+IS+NOT+NULL+AND+f24>10+ORDER+BY+f24+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field designation source_id
+field f24 flux_24um_mJy
+field e_f24 flux_error_mJy
+field snr24 signal_to_noise_24um
+field flags quality_flags
+
+source irsa_neowise_r10
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+ra,dec,w1mpro,w2mpro,mjd+FROM+neowiser_p1bs_psd+WHERE+mjd%3E59000+AND+w1mpro+IS+NOT+NULL
+format text
+rows
+ra_key ra
+dec_key dec
+field w1mpro mag_w1
+field w2mpro mag_w2
+field mjd mjd_obs
+
+source irsa_planck_pccs2_100ghz_compact_sources
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+name,ra,dec,flux_100mJy,ext_flag,DETPROB+FROM+planck.com_pccs2_100+WHERE+ra+IS+NOT+NULL+ORDER+BY+flux_100mJy+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field name source_name
+field flux_100mJy flux_100ghz_mJy
+field ext_flag extended_flag
+field DETPROB detection_probability
+
+source irsa_planck_pccs2_143ghz_compact_sources
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+name,ra,dec,flux_143mJy,ext_flag,DETPROB+FROM+planck.com_pccs2_143+WHERE+ra+IS+NOT+NULL+ORDER+BY+flux_143mJy+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field name source_name
+field flux_143mJy flux_143ghz_mJy
+field ext_flag extended_flag
+field DETPROB detection_probability
+
+source irsa_planck_pccs2_217ghz_compact_sources
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+name,ra,dec,flux_217mJy,ext_flag,DETPROB+FROM+planck.com_pccs2_217+WHERE+ra+IS+NOT+NULL+ORDER+BY+flux_217mJy+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field name source_name
+field flux_217mJy flux_217ghz_mJy
+field ext_flag extended_flag
+field DETPROB detection_probability
+
+source irsa_planck_pr2_sz_cluster_mmf3_catalog
+ttl 86400
+force diffusion
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+name,RA,DE,z,yn_snr,yn_mass,theta500,dist+FROM+planck.com_pccs2_sz_mmf3+WHERE+RA+IS+NOT+NULL+ORDER+BY+yn_snr+DESC
+format text
+rows
+ra_key RA
+dec_key DE
+z_key z
+field name cluster_name
+field yn_snr sz_signal_to_noise
+field yn_mass sz_mass_10e14_msun
+field theta500 angular_radius_arcmin
+field dist distance_mpc
+
+source irsa_sage_lmc_infrared_catalog
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+designation,ra,dec,i1_f_ap,i2_f_ap,i3_f_ap,i4_f_ap+FROM+sage_lmc+WHERE+ra+IS+NOT+NULL
+format text
+rows
+ra_key ra
+dec_key dec
+field designation sage_id
+field i1_f_ap flux_3_6um
+field i2_f_ap flux_4_5um
+field i3_f_ap flux_5_8um
+field i4_f_ap flux_8_0um
+
+source irsa_sage_lmc_irac_catalog
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+designation,ra,dec,mag3_6,mag4_5,mag5_8,mag8_0,fluxj,fluxh,fluxk+FROM+sage_cat_irac+WHERE+ra+IS+NOT+NULL+AND+mag3_6<14+ORDER+BY+mag3_6+ASC
+format text
+rows
+ra_key ra
+dec_key dec
+field designation source_name
+field mag3_6 irac_3_6um_mag
+field mag4_5 irac_4_5um_mag
+field mag5_8 irac_5_8um_mag
+field mag8_0 irac_8_0um_mag
+field fluxj j_band_flux_mJy
+field fluxh h_band_flux_mJy
+field fluxk k_band_flux_mJy
+
+source irsa_sage_smc_infrared_catalog
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,j_mag,h_mag,k_mag,ir1_mag,ir2_mag+FROM+sage_smc+WHERE+ra+IS+NOT+NULL
+format text
+rows
+ra_key ra
+dec_key dec
+field j_mag mag_j
+field h_mag mag_h
+field k_mag mag_k
+field ir1_mag mag_ir1
+field ir2_mag mag_ir2
+
+source irsa_sage_smc_irac_catalog
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+designation,ra,dec,mag3_6,mag4_5,mag8_0+FROM+sage_cat_irac+WHERE+ra+IS+NOT+NULL+AND+dec<-65+AND+mag3_6<15+ORDER+BY+mag5_8+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field designation source_name
+field mag3_6 irac_3_6um_mag
+field mag4_5 irac_4_5um_mag
+field mag8_0 irac_8_0um_mag
+
+source irsa_sings_nearby_galaxies
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+100+target,ra,dec,mips_24_flux,mips_70_flux,mips_160_flux+FROM+spitzer.sings_mipssed_spec+WHERE+ra+IS+NOT+NULL+ORDER+BY+mips_70_flux+DESC
+format text
+rows
+ra_key ra
+dec_key dec
+field target galaxy_name
+field mips_24_flux flux_24um_mJy
+field mips_70_flux flux_70um_mJy
+field mips_160_flux flux_160um_mJy
+
+source irsa_sings_nearby_galaxies_photometry
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+name,ra,dec,dist,morph,f3p6tot,f4p5tot,f5p8tot,f8p0tot+FROM+sings+WHERE+ra+IS+NOT+NULL
+format text
+rows
+ra_key ra
+dec_key dec
+field name galaxy_name
+field dist distance_mpc
+field morph morphology
+field f3p6tot flux_3_6um
+field f4p5tot flux_4_5um
+field f5p8tot flux_5_8um
+field f8p0tot flux_8_0um
+
+source irsa_tap_2mass_galcenter
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+ra,dec,j_m,h_m,k_m+FROM+fp_psc+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',266.4,-29.0,2.0))=1
+format text
+rows
+ra_key ra
+dec_key dec
+field j_m mag_j
+field h_m mag_h
+field k_m mag_k
+
+source irsa_tap_2mass_psc
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,j_m,h_m,k_m+FROM+fp_psc+WHERE+j_m+IS+NOT+NULL+AND+j_m%3C15
+format text
+rows
+ra_key ra
+dec_key dec
+field j_m mag_j
+field h_m mag_h
+field k_m mag_k
+
+source irsa_tap_allwise
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,w1mpro,w2mpro,w3mpro,w4mpro+FROM+allwise_p3as_psd+WHERE+w1mpro+IS+NOT+NULL+AND+w1mpro%3C14
+format text
+rows
+ra_key ra
+dec_key dec
+field w1mpro mag_w1
+field w2mpro mag_w2
+field w3mpro mag_w3
+field w4mpro mag_w4
+
+source irsa_wise_zodiacal_emission_proxy
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+designation,ra,dec,w3mpro,w4mpro,w3snr,w4snr,cc_flags+FROM+wise_allwise_p3as_psd+WHERE+ABS(dec-23.44*SIN(ra*3.14159265/180))<10+AND+w4snr>5+AND+w3mpro<8+ORDER+BY+w4mpro+ASC
+format text
+rows
+ra_key ra
+dec_key dec
+field designation wise_id
+field w3mpro w3_12um_mag
+field w4mpro w4_22um_mag
+field w3snr w3_snr
+field w4snr w4_snr
+
+source irsa_ztf_dr20_object_catalog
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/cgi-bin/Gator/nph-query?catalog=ztf_objects_dr20&spatial=none&outfmt=1&selcols=oid,ra,dec,gmag,rmag,imag,classtar,sharp
+format text
+rows
+ra_key ra
+dec_key dec
+field oid ztf_object_id
+field gmag g_mag
+field rmag r_mag
+field imag i_mag
+field classtar star_galaxy_score
+field sharp sharpness
+
+source irsa_ztf_objects
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+oid,ra,dec,filterid,medianmag,magrms,ngoodobsrel+FROM+ztf_objects_dr20+WHERE+ngoodobsrel%3E50+AND+magrms%3E0.05
+format text
+rows
+ra_key ra
+dec_key dec
+field oid object_id
+field filterid filter_id
+field medianmag median_mag
+field magrms mag_rms
+
+source irsa_ztf_variables
+ttl 86400
+force em
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+oid,ra,dec,filterid,medianmag,magrms,refmag+FROM+ztf_objects_dr20+WHERE+magrms%3E0.3+AND+ngoodobsrel%3E100
+format text
+rows
+ra_key ra
+dec_key dec
+field oid object_id
+field filterid filter_id
+field medianmag median_mag
+field magrms mag_rms
+
+source isc_catalog_historic
+ttl 86400
+force seismic-body
+url https://www.isc.ac.uk/fdsnws/event/1/query?format=geojson&minmagnitude=5.0&limit=500&orderby=time&starttime=1900-01-01&endtime={today}
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.mag magnitude
+field properties.place locality
+field properties.time event_time
+field properties.depth depth_km
+field properties.auth reporting_authority
+
+source isc_seismological_events
+ttl 86400
+force seismic-body
+url http://www.isc.ac.uk/cgi-bin/web-db-run?request=BULLETIN&out_format=CSV&searchshape=RECT&bot_lat=-90&top_lat=90&left_lon=-180&right_lon=180&start_year={year}&start_mon={month}&start_day={day}&start_time=00%3A00%3A00&end_year={year}&end_mon={month}&end_day={day}&end_time=23%3A59%3A59&min_mag=4.5&req_mag_type=mb&req_mag_agcy=ISC
+format text
+rows
+lat_key Latitude
+lon_key Longitude
+field EventID event_id
+field Time event_time
+field Depth depth_km
+field Magnitude magnitude
+field MagType mag_type
+field Author agency
+
+source isric_soilgrids_properties
+ttl 86400
+force diffusion
+terra 1
+url https://rest.isric.org/soilgrids/v2.0/properties/query?lon={lon}&lat={lat}&property=phh2o,soc,bdod,clay,sand,silt,nitrogen&depth=0-5cm,5-15cm&value=mean
+map properties.phh2o.layers
+field_in name depth_layer
+field_in values.mean ph_h2o_mean
+
+source isro_bhuvan_drought_ndvi
+ttl 86400
+force diffusion
+url https://bhuvan-app1.nrsc.gov.in/disaster/disaster.php?id=drought&format=json
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.district district_name
+field properties.state state_name
+field properties.ndvi_anomaly ndvi_anomaly
+field properties.drought_class drought_severity_class
+
+source isro_bhuvan_landslide_india
+ttl 86400
+force seismic-surface
+url https://bhuvan-app1.nrsc.gov.in/disaster/disaster.php?id=landslide&format=json
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.district district_name
+field properties.state state_name
+field properties.susceptibility_class susceptibility_class
+
+source itslive_glacier_velocity_greenland
+ttl 86400
+force gravity
+url https://its-live-regional.s3.amazonaws.com/v02/GRE/GRE_G0240_2021.zarr/.zmetadata
+
+source itslive_ice_velocity_antarctica
+ttl 86400
+force gravity
+url https://its-live-data.jpl.nasa.gov/vel_api/v1/coverage?region=ANT&limit=500&format=json
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.v_mean mean_speed_m_yr
+field properties.v0 latest_speed_m_yr
+field properties.date_start start_year
+field properties.date_end end_year
+field properties.mission satellite_mission
+
+source itslive_ice_velocity_greenland
+ttl 86400
+force gravity
+url https://its-live-data.jpl.nasa.gov/vel_api/v1/coverage?region=GRE&limit=500&format=json
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field properties.v_mean mean_speed_m_yr
+field properties.v0 latest_speed_m_yr
+field properties.date_start start_year
+field properties.date_end end_year
+field properties.mission satellite_mission
+
+source ivs_vlbi_station_catalog
+ttl 86400
+force gravity
+lat 0.0
+lon 0.0
+url https://cddis.nasa.gov/archive/vlbi/ivsdata/db/sched/ns-codes.txt
+format text
+rows
+field 0 station_code
+field 1 station_name
+field 2 cddis_code
+field 3 domain
+
+source jma_strong_motion_stations
+ttl 86400
+force seismic-body
+url https://www.data.jma.go.jp/svd/eqev/data/bulletin/station.csv
+format text
+rows
+lat_key 4
+lon_key 5
+field 0 station_code
+field 1 station_name
+field 6 elevation_m
+
+source jpl_cad_lunar_distance
+ttl 86400
+force gravity
+url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=1LD&date-min={today}&date-max=%2B365&body=Earth&fullname=true&diameter=true&sort=date
+map data
+field_in 0 designation
+field_in 3 close_approach_date
+field_in 4 distance_au
+field_in 7 velocity_km_s
+field_in 17 diameter_km
+
+source jpl_cad_lunar_distance_objects
+ttl 86400
+force gravity
+url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=1LD&date-min={today}&date-max=%2B365&body=Earth&fullname=true&diameter=true&limit=100
+map data
+lat_key null
+lon_key null
+field des neo_designation
+field dist_min lunar_distances
+field v_rel v_relative_km_s
+field h_mag absolute_magnitude
+field diameter estimated_diameter_km
+field epoch approach_time_jd
+
+source jpl_horizons_apophis_elements
+ttl 86400
+force gravity
+lat 0.0
+lon 0.0
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND='99942'&OBJ_DATA='YES'&MAKE_EPHEM='YES'&EPHEM_TYPE='ELEMENTS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+d'&REF_PLANE='ECLIPTIC'
+format text
+rows
+field_in 1 epoch_jd
+field_in 2 eccentricity
+field_in 3 perihelion_dist_au
+field_in 4 inclination_deg
+field_in 5 long_asc_node_deg
+field_in 6 arg_perihelion_deg
+field_in 7 time_perihelion_jd
+
+source jpl_horizons_comet_tsuchinshan_vectors
+ttl 86400
+force gravity
+lat 0.0
+lon 0.0
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND='DES%3DC%2F2023+A3'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='500@0'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4'
+format text
+rows
+field 0 epoch_jd
+field 1 x_au
+field 2 y_au
+field 3 z_au
+field 4 vx_au_day
+field 5 vy_au_day
+field 6 vz_au_day
+
+source jpl_horizons_jupiter_observer
+ttl 86400
+force gravity
+lat 0.0
+lon 0.0
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND='599'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4,20'
+format text
+rows
+field 0 epoch_jd
+field 1 ra_deg
+field 2 dec_deg
+field 3 distance_au
+field 4 solar_distance_au
+
+source jpl_horizons_mars_observer
+ttl 86400
+force gravity
+lat 0.0
+lon 0.0
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND='499'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4,20'
+format text
+rows
+field 0 epoch_jd
+field 1 ra_deg
+field 2 dec_deg
+field 3 distance_au
+field 4 solar_distance_au
+
+source jpl_horizons_saturn_observer
+ttl 86400
+force gravity
+lat 0.0
+lon 0.0
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND='699'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4,20'
+format text
+rows
+field 0 epoch_jd
+field 1 ra_deg
+field 2 dec_deg
+field 3 distance_au
+field 4 solar_distance_au
+
+source jpl_horizons_voyager1_vectors
+ttl 86400
+force gravity
+lat 0.0
+lon 0.0
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND='-31'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='500@0'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4'
+format text
+rows
+field 0 epoch_jd
+field 1 x_au
+field 2 y_au
+field 3 z_au
+field 4 vx_au_day
+field 5 vy_au_day
+field 6 vz_au_day
+
+source jpl_horizons_voyager2_vectors
+ttl 86400
+force gravity
+lat 0.0
+lon 0.0
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND='-32'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='500@0'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4'
+format text
+rows
+field 0 epoch_jd
+field 1 x_au
+field 2 y_au
+field 3 z_au
+field 4 vx_au_day
+field 5 vy_au_day
+field 6 vz_au_day
+
+source jpl_sbdb_ceres_ephemeris
+ttl 86400
+force gravity
+lat 0.0
+lon 0.0
+url https://ssd-api.jpl.nasa.gov/sbdb.api?sstr=ceres&phys-par=1
+map .
+field object display_name
+field epoch epoch_jd
+field e eccentricity
+field a semimajor_axis_au
+field q perihelion_au
+field i orbital_inclination_deg
+field node ascending_node_deg
+field peri perihelion_argument_deg
+field M mean_anomaly_deg
+field H absolute_magnitude
+field diameter diameter_km
+
+source jpl_sbdb_eris_ephemeris
+ttl 86400
+force gravity
+lat 0.0
+lon 0.0
+url https://ssd-api.jpl.nasa.gov/sbdb.api?sstr=eris&phys-par=1
+map .
+field object display_name
+field epoch epoch_jd
+field e eccentricity
+field a semimajor_axis_au
+field q perihelion_au
+field i orbital_inclination_deg
+field node ascending_node_deg
+field peri perihelion_argument_deg
+field M mean_anomaly_deg
+field H absolute_magnitude
+field diameter diameter_km
+
+source jpl_sbdb_neo_asteroid_catalog
+ttl 86400
+force gravity
+lat 0.0
+lon 0.0
+url https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name,epoch,H,diameter,albedo,class,neo&sb-kind=a&sb-cdata=%7B%22AND%22%3A%5B%22neo%3Aeq%3AY%22%5D%7D
+map data
+field full_name asteroid_name
+field epoch epoch_jd
+field H absolute_magnitude
+field diameter estimated_diameter_km
+field albedo geometric_albedo
+field class orbit_class
+field neo neo_flag
+
+source jpl_sbdb_tno_distant_object_catalog
+ttl 86400
+force gravity
+lat 0.0
+lon 0.0
+url https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name,a,e,i,om,w,ma,epoch,H,class,diameter&sb-cdata=%7B%22AND%22%3A%5B%22class%3Aeq%3ATNO%22%5D%7D
+map data
+field full_name tno_name
+field a semi_major_axis_au
+field e orbital_eccentricity
+field i orbital_inclination_deg
+field H absolute_magnitude
+field class orbit_class
+field diameter estimated_diameter_km
+
+source lasp_fism2_euv_proxy_model
+ttl 86400
+force em
+lat 0.0
+lon 0.0
+url https://lasp.colorado.edu/data/fism/FISM2_2026_07_27.csv
+format text
+rows
+field_in 0 wavelength_nm
+field_in 1 irradiance_wm2nm
+
+source lasp_lisird_pmod_tsi_composite
+ttl 86400
+force em
+lat 0.0
+lon 0.0
+url https://lasp.colorado.edu/lisird/latis/dap/pmod_composite.csv?time>=1978-01-01
+format text
+rows
+field time observation_date
+field tsi pmod_tsi_composite_W_m2
+
+source lasp_lisird_sorce_tsi_legacy
+ttl 86400
+force em
+lat 0.0
+lon 0.0
+url https://lasp.colorado.edu/lisird/latis/dap/sorce_tsi_24hr.csv?time>=2003-01-01
+format text
+rows
+field time observation_date
+field tsi total_solar_irradiance_W_m2
+field uncertainty tsi_uncertainty_W_m2

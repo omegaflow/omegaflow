@@ -1,0 +1,657 @@
+url https://www.cpc.ncep.noaa.gov/products/precip/CWlink/pna/norm.nao.monthly.b5001.current.ascii
+ttl 86400
+force thermal
+on earth 0.0 0.0
+format universal
+rows
+field_in 0 0
+field_in 1 1
+field_in 2 2
+
+url https://www.ncei.noaa.gov/pub/data/cmb/ersst/v5/index/ersst.v5.pdo.dat
+ttl 86400
+force thermal
+on earth 0.0 0.0
+format universal
+map data
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in 0 0
+field_in 1 1
+field_in 2 2 pdo_value
+
+url https://www.cpc.ncep.noaa.gov/data/indices/soi
+ttl 86400
+force thermal
+on earth 0.0 0.0
+format universal
+rows
+field_in 0 0
+field_in 1 1
+field_in 2 2
+
+url https://ssd-api.jpl.nasa.gov/sentry.api?all=1
+ttl 86400
+force gravity
+at sun 1.0
+map data
+field_in 1 1
+field_in 2 2
+field_in 3 3
+field_in 4 4
+field_in 5 5
+field_in 6 6
+
+url https://gong2.nso.edu/HA/hag/?ref=hag&series=hag&date={year}.{month}.{day}&format=json
+ttl 86400
+force em
+at sun 1.0
+map .
+field_in filename filename
+field_in date date
+field_in cr cr
+field_in latitude latitude
+field_in longitude longitude
+field_in vx vx
+field_in vy vy
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+RAJ2000,DEJ2000,%22S1.4%22,MajAxis,MinAxis+FROM+%22VIII/65/nvss%22+WHERE+%22S1.4%22%3E50+ORDER+BY+%22S1.4%22+DESC
+at sun 1.0
+ttl 86400
+force em
+cmap .
+ra_key RAJ2000
+dec_key DEJ2000
+field_in S1_4 S1_4
+field_in MajAxis MajAxis
+field_in MinAxis MinAxis
+
+url https://api.astrocats.space/{target}/
+on earth 0 0
+ttl 86400
+force em
+field ra ra
+field dec dec
+field name name
+field claimedtype claimedtype
+field redshift redshift
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Ceres%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%272026-01-01%27&STOP_TIME=%272026-12-31%27&STEP_SIZE=%271+d%27
+ttl 86400
+at sun 1.0
+force em
+format universal
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Eris%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%272026-01-01%27&STOP_TIME=%272026-12-31%27&STEP_SIZE=%271+d%27
+ttl 86400
+at sun 1.0
+force em
+format universal
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Haumea%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%272026-01-01%27&STOP_TIME=%272026-12-31%27&STEP_SIZE=%271+d%27
+ttl 86400
+at sun 1.0
+force em
+format universal
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Makemake%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%272026-01-01%27&STOP_TIME=%272026-12-31%27&STEP_SIZE=%271+d%27
+ttl 86400
+at sun 1.0
+force em
+format universal
+
+url https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/nep097.bsp
+ttl 86400
+body triton
+force em
+at sun 1.0
+format ephemeris_binary
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Vesta%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%272026-01-01%27&STOP_TIME=%272026-12-31%27&STEP_SIZE=%271+d%27
+ttl 86400
+at sun 1.0
+force em
+format universal
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2799942%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 86400
+at sun 1.0
+force em
+format universal
+extent 1.24e-9
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27DES%3D2101955%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 86400
+at sun 1.0
+force em
+format universal
+extent 1.75e-9
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Ceres%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 86400
+force em
+on earth 34.201 -118.171
+extent 3.16e-6
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=399&OBJ_DATA=YES
+ttl 86400
+force em
+at sun 1
+regex \(kg\).\W*([0-9.]+) orbital_earth_mass_x10_24_kg
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=599&OBJ_DATA=YES
+ttl 86400
+force em
+at sun 5.2
+regex \(kg\).\W*([0-9.]+) orbital_jupiter_mass_x10_24_kg
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=499&OBJ_DATA=YES
+ttl 86400
+force em
+at sun 1.5
+regex \(kg\).\W*([0-9.]+) orbital_mars_mass_x10_24_kg
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=199&OBJ_DATA=YES
+ttl 86400
+force em
+at sun 0.4
+regex \(kg\).\W*([0-9.]+) orbital_mercury_mass_x10_24_kg
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=899&OBJ_DATA=YES
+ttl 86400
+force em
+at sun 30.0
+regex \(kg\).\W*([0-9.]+) orbital_neptune_mass_x10_24_kg
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=699&OBJ_DATA=YES
+ttl 86400
+force em
+at sun 9.6
+regex \(kg\).\W*([0-9.]+) orbital_saturn_mass_x10_24_kg
+
+url https://ssd-api.jpl.nasa.gov/sentry.api
+ttl 86400
+force em
+on earth 34.201 -118.171
+field count count
+field_in 0 0
+field_in 1 1
+field_in 2 2
+field_in 6 6
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=799&OBJ_DATA=YES
+ttl 86400
+force em
+at sun 19.2
+regex \(kg\).\W*([0-9.]+) orbital_uranus_mass_x10_24_kg
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=299&OBJ_DATA=YES
+ttl 86400
+force em
+at sun 0.7
+regex \(kg\).\W*([0-9.]+) orbital_venus_mass_x10_24_kg
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+50000+%22_RA%22,%22_DE%22,zCMB,mBcorr+FROM+%22J/ApJ/938/110/table7%22
+ttl 86400
+force em
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key _RA
+dec_key _DE
+z_key zCMB
+field_in mBcorr mBcorr
+
+url https://raw.githubusercontent.com/omegaflow/omegaflow/main/static/data/saturn_rings_10k.json
+body earth
+ttl 86400
+force em
+at sun 1.0
+format universal
+cmap .
+tau_key _dist_m
+ra_key ra
+dec_key dec
+dist_key _dist_m 1.0
+pmra_key pmra
+pmdec_key pmdec
+field_in optical_depth optical_depth
+field_in zone zone
+
+url https://skyserver.sdss.org/dr18/SkyServerWS/ConeSearch/ConeSearchService?ra={ra}&dec={dec}&sr=6&format=json
+ttl 86400
+force em
+at sun 1.0
+map 0.Rows
+ra_key ra
+dec_key dec
+field_in objid objid
+field_in type type
+field_in u u
+field_in g g
+field_in r r
+field_in i i
+field_in z z
+
+url https://skyserver.sdss.org/dr18/SearchTools/sql?cmd=SELECT+TOP+50000+ra,dec,z,r,g,i+FROM+SpecObj+WHERE+class%3D%27GALAXY%27+AND+z+BETWEEN+0.01+AND+0.3+AND+zWarning%3D0&format=json
+ttl 86400
+force em
+at sun 1.0
+map .
+ra_key ra
+dec_key dec
+z_key z
+field_in r r
+field_in g g
+field_in i i
+
+url https://skyserver.sdss.org/dr18/SearchTools/sql?cmd=SELECT+TOP+3000+ra,dec,z,psfMag_r,psfMag_g+FROM+SpecObj+WHERE+class%3D%27QSO%27+AND+z+BETWEEN+0.1+AND+3.0+AND+zWarning%3D0&format=json
+ttl 86400
+force em
+at sun 1.0
+map .
+ra_key ra
+dec_key dec
+z_key z
+field_in psfMag_r psfMag_r
+field_in psfMag_g psfMag_g
+
+url https://skyserver.sdss.org/dr18/SearchTools/sql?cmd=SELECT+TOP+50000+ra,dec,r,g,u,i,z+FROM+Star+WHERE+(r-extinction_r)%3C20+AND+clean%3D1&format=json
+ttl 86400
+force em
+at sun 1.0
+map .
+ra_key ra
+dec_key dec
+field_in r r
+field_in g g
+field_in u u
+field_in i i
+field_in z z
+
+url https://www.sidc.be/SILSO/DATA/SN_d_tot_V2.0.txt
+ttl 86400
+force em
+at sun 1.0
+format universal
+rows
+field_in 0 0
+field_in 1 1
+field_in 2 2
+field_in 3 3
+field_in 0 0
+field_in 1 1
+field_in 2 2
+field_in 3 3
+field_in 4 4
+field_in 5 5
+field_in 6 6
+field_in 7 7
+
+url https://www.sidc.be/SILSO/DATA/SN_ms_tot_V2.0.txt
+ttl 86400
+force em
+on earth 50.85 4.35
+format universal
+rows
+field_in 0 0
+field_in 1 1
+field_in 2 2
+field_in 3 3
+field_in 4 4
+field_in 5 5
+field_in 6 6
+field_in 7 7
+
+url https://www.sidc.be/silso/DATA/SN_d_tot_V2.0.txt
+ttl 86400
+force em
+at sun 1.0
+last_line solar_sunspot_number_silso
+
+url https://www.sidc.be/SILSO/DATA/SN_m_tot_V2.0.txt
+ttl 86400
+force em
+at sun 1.0
+last_line solar_sunspot_number_silso
+
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+COUNT(*)+FROM+ps+WHERE+pl_discmethod+like+'%25TESS%25'&format=json
+ttl 86400
+force em
+on earth 42.365 -71.105
+last_line exosphere_tess_candidates_total
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+50000+RAJ2000,DEJ2000,z,MaxMag,Type+FROM+%22B/sn/sncat%22
+ttl 86400
+force em
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+z_key z
+field_in MaxMag MaxMag
+field_in Type Type
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+50000+RAJ2000,DEJ2000,DLum,Kmag+FROM+%22J/ApJ/935/170/table4%22
+ttl 86400
+force em
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key RAJ2000
+dec_key DEJ2000
+dist_key DLum 3.0857e22
+field_in Kmag Kmag
+
+url https://firms.modaps.eosdis.nasa.gov/api/country/csv/{firms_map_key}/VIIRS_SNPP_NRT/USA
+ttl 86400
+force thermal
+at sun 1.0
+format universal
+rows
+lat_key latitude
+lon_key longitude
+field_in brightness brightness
+field_in scan scan
+field_in frp frp
+field_in satellite satellite
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+AllWISE,RAJ2000,DEJ2000,W1mag,W2mag,W3mag,W4mag,var_flg,ex+FROM+%22II/328/allwise%22+WHERE+W1mag<9+AND+RAJ2000+IS+NOT+NULL+ORDER+BY+W1mag+ASC
+ttl 86400
+force em
+at sun 1.0
+format universal
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field_in bJmag bJmag
+field_in z z
+field_in cz cz
+field_in S/G S/G
+field_in AllWISE AllWISE
+field_in W1mag W1mag
+field_in W2mag W2mag
+field_in W3mag W3mag
+field_in W4mag W4mag
+field_in var_flg var_flg
+field_in ex ex
+cmap .
+ra_key 0
+dec_key 1
+field_in 3 3
+field_in recno recno
+field_in 2QZ 2QZ
+field_in intNo intNo
+field_in intName intName
+field_in e_RAJ2000 e_RAJ2000
+field_in e_DEJ2000 e_DEJ2000
+field_in Field Field
+field_in nobs nobs
+field_in mobs mobs
+field_in B-V B-V
+field_in e_B-V e_B-V
+field_in Vmag Vmag
+field_in e_Vmag e_Vmag
+field_in u_e_Vmag u_e_Vmag
+field_in Bmag Bmag
+field_in e_Bmag e_Bmag
+field_in u_e_Bmag u_e_Bmag
+field_in g'mag g'mag
+field_in e_g'mag e_g'mag
+field_in u_e_g'mag u_e_g'mag
+field_in r'mag r'mag
+field_in e_r'mag e_r'mag
+field_in u_e_r'mag u_e_r'mag
+field_in i'mag i'mag
+field_in e_i'mag e_i'mag
+field_in u_e_i'mag u_e_i'mag
+ra_key _RA
+dec_key _DE
+field_in zabs zabs
+field_in NHI NHI
+field_in FIRST FIRST
+field_in p(S) p(S)
+field_in Fpeak Fpeak
+field_in PGC PGC
+field_in GWGC GWGC
+field_in HyperLEDA HyperLEDA
+field_in 2MASS 2MASS
+field_in SDSS-DR12 SDSS-DR12
+field_in Flag1 Flag1
+field_in e_Dist e_Dist
+field_in BMAG BMAG
+field_in Jmag Jmag
+field_in e_Jmag e_Jmag
+field_in Hmag Hmag
+field_in e_Hmag e_Hmag
+field_in Kmag Kmag
+field_in e_Kmag e_Kmag
+field_in Flag2 Flag2
+field_in Flag3 Flag3
+field_in NED NED
+field_in Xpos Xpos
+field_in Ypos Ypos
+field_in SNR SNR
+field_in MajDiam MajDiam
+field_in MinDiam MinDiam
+ra_key RAmdeg
+dec_key DEmdeg
+field_in TYC1 TYC1
+field_in TYC2 TYC2
+field_in TYC3 TYC3
+field_in pflag pflag
+field_in RAmdeg RAmdeg
+field_in DEmdeg DEmdeg
+field_in pmRA pmRA
+field_in pmDE pmDE
+field_in e_RAmdeg e_RAmdeg
+field_in e_DEmdeg e_DEmdeg
+field_in e_pmRA e_pmRA
+field_in e_pmDE e_pmDE
+field_in EpRAm EpRAm
+field_in EpDEm EpDEm
+field_in Num Num
+field_in q_RAmdeg q_RAmdeg
+field_in q_DEmdeg q_DEmdeg
+field_in q_pmRA q_pmRA
+field_in q_pmDE q_pmDE
+field_in BTmag BTmag
+field_in e_BTmag e_BTmag
+field_in VTmag VTmag
+field_in e_VTmag e_VTmag
+field_in prox prox
+field_in TYC TYC
+field_in HIP HIP
+field_in CCDM CCDM
+field_in RA(ICRS) RA(ICRS)
+field_in DE(ICRS) DE(ICRS)
+field_in EpRA-1990 EpRA-1990
+field_in EpDE-1990 EpDE-1990
+field_in e_RAdeg e_RAdeg
+field_in e_DEdeg e_DEdeg
+field_in posflg posflg
+field_in corr corr
+field_in SrcIDgaia SrcIDgaia
+field_in RAgaia RAgaia
+field_in e_RAgaia e_RAgaia
+field_in DEgaia DEgaia
+field_in e_DEgaia e_DEgaia
+field_in Org Org
+field_in Nu Nu
+field_in EPucac EPucac
+field_in Gmag Gmag
+field_in f_mag f_mag
+field_in Rmag Rmag
+ra_key RA_ICRS
+dec_key DE_ICRS
+field_in Flux1 Flux1
+field_in Flux2 Flux2
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,%222MASS%22,Jmag,Hmag,Kmag,Qflg+FROM+%22II/246/out%22+WHERE+Jmag<9+AND+RAJ2000+IS+NOT+NULL+ORDER+BY+Jmag+ASC
+ttl 86400
+force em
+at sun 1.0
+format universal
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field_in 2MASS 2MASS
+field_in Jmag Jmag
+field_in Hmag Hmag
+field_in Kmag Kmag
+field_in Qflg Qflg
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,z,imag+FROM+"VII/260/dr7qso"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+z+DESC
+ttl 86400
+force em
+at sun 1.0
+format universal
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field_in z1 z1
+field_in bJmag bJmag
+map .
+lat_key _RA
+lon_key _DE
+field_in zabs zabs
+field_in NHI NHI
+field_in z z
+field_in imag imag
+cmap .
+ra_key _RA
+dec_key _DE
+field_in Mass Mass
+field_in Dist Dist
+field_in recno recno
+field_in SDSS SDSS
+field_in umag umag
+field_in e_umag e_umag
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+RA_ICRS,DE_ICRS,Flux2,Flux3,%22HR1%22,%22HR2%22,4XMM+FROM+"IX/69/xmm4d13s"+WHERE+RA_ICRS+IS+NOT+NULL+ORDER+BY+Flux2+DESC
+ttl 86400
+force em
+at sun 1.0
+format universal
+rows
+ra_key RA_ICRS
+dec_key DE_ICRS
+field_in Flux2 Flux2
+field_in HR1 HR1
+field_in HR2 HR2
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+APOGEE_ID,RA,DEC,Teff,logg,M_H,alpha_M,VHELIO_AVG,DIST_BPG+FROM+"III/286/allstars"+WHERE+RA+IS+NOT+NULL+AND+ASPCAPFLAG%3D0+AND+SNR>100+ORDER+BY+SNR+DESC
+ttl 86400
+force em
+at sun 1.0
+format text
+rows
+ra_key RA
+dec_key DEC
+field_in APOGEE_ID APOGEE_ID
+field_in Teff Teff
+field_in logg logg
+field_in M_H M_H
+field_in alpha_M alpha_M
+field_in VHELIO_AVG VHELIO_AVG
+dist_key DIST_BPG
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+Family,n,e,sini,a,H+FROM+"J/Icarus/239/46/table3"+WHERE+n+IS+NOT+NULL+ORDER+BY+n+DESC
+ttl 86400
+force gravity
+at sun 1.0
+format text
+rows
+field_in Family Family
+field_in n n
+field_in a a
+field_in e e
+field_in sini sini
+field_in H H
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+AGAL,_RA_icrs,_DE_icrs,GLON,GLAT,Fint,e_Fint,Fp,Reff+FROM+"J/A+A/568/A41/atl-csc"+WHERE+_RA_icrs+IS+NOT+NULL+ORDER+BY+Fint+DESC
+ttl 86400
+force em
+at sun 1.0
+format text
+rows
+ra_key _RA_icrs
+dec_key _DE_icrs
+field_in GLON GLON
+field_in GLAT GLAT
+field_in Fint Fint
+field_in Reff Reff
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+JNAME,RAJ,DECJ,P0,DM,DIST,ASSOC,Type+FROM+"VII/304/catalog"+WHERE+DIST+IS+NOT+NULL+AND+RAJ+IS+NOT+NULL+ORDER+BY+DIST+ASC
+ttl 86400
+force em
+at sun 1.0
+format text
+rows
+ra_key RAJ
+dec_key DECJ
+field_in JNAME JNAME
+field_in P0 P0
+field_in DM DM
+field_in Type Type
+dist_key DIST
+cmap .
+ra_key RAJ2000
+dec_key DEJ2000
+field_in recno recno
+field_in Name Name
+field_in imag imag
+field_in zphot zphot
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+JNAME,RAJ,DECJ,P0,DM,DIST,ASSOC,Binary,Type+FROM+"VII/304/catalog"+WHERE+P0<0.03+AND+RAJ+IS+NOT+NULL+ORDER+BY+P0+ASC
+ttl 86400
+force em
+at sun 1.0
+format text
+rows
+ra_key RAJ
+dec_key DECJ
+field_in JNAME JNAME
+field_in P0 P0
+field_in DM DM
+field_in ASSOC ASSOC
+field_in Binary Binary
+field_in Type Type
+dist_key DIST
+cmap .
+ra_key RAJ2000
+dec_key DEJ2000
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+Name,RAJ2000,DEJ2000,Dist,P0,F0,DM,S1400+FROM+%22J%2FApJS%2F208%2F17%2Fpsrcat%22+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+P0
+ttl 86400
+force em
+at sun 1.0
+format text
+rows
+ra_key RAJ2000
+dec_key DEJ2000
+field_in Name Name
+field_in Dist Dist
+field_in P0 P0
+field_in F0 F0
+field_in DM DM
+field_in S1400 S1400
+ra_key _RA
+dec_key _DE
+field_in Target Target
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+4000+Name,RAJ2000,DEJ2000,z,LogFlux,Type+FROM+%22VII/274/bzcat5%22+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+LogFlux+DESC
+ttl 86400
+force em
+at sun 1.0
+cmap .
+tau_key _dist_m
+ra_key 1
+dec_key 2
+z_key 3
+field_in 0 0
+field_in 4 4
+field_in 5 5
+ra_key RAJ2000
+dec_key DEJ2000

@@ -1,0 +1,567 @@
+url https://api.obis.org/v3/occurrence?startdate={yesterday}&enddate={today}&size=1000&fields=decimalLatitude,decimalLongitude,scientificName,class,order,family,genus,species,date_year,country
+ttl 3600
+force diffusion
+at sun 1.0
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in scientificName species_name
+field_in class taxon_class
+field_in order taxon_order
+field_in family taxon_family
+field_in date_year obs_year
+field_in country country_code
+
+url https://api.obis.org/v3/occurrence/search?scientificname=Cetacea&startdate={yesterday}
+ttl 86400
+force em
+on earth 51.231 2.928
+path total biosphere_cetacean_observations_24h
+map results
+
+url https://api.obis.org/v3/occurrence?limit=500&hascoordinates=true&taxonid=38
+ttl 86400
+force em
+at sun 1.0
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in scientificName biosphere_obis_marine_species
+field_in eventDate biosphere_obis_marine_date
+field_in depth biosphere_obis_marine_depth_m
+
+url https://api.obis.org/v3/occurrence?limit=500&hascoordinates=true
+ttl 86400
+force em
+at sun 1.0
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in scientificName biosphere_obis_species
+field_in eventDate biosphere_obis_date
+field_in depth biosphere_obis_depth_m
+field_in aphiaID biosphere_obis_aphia_id
+
+url https://api.obis.org/v3/occurrence?taxonid=1567&size=500&fields=decimalLatitude,decimalLongitude,scientificName,class,family,date_year&startdate=2020-01-01
+ttl 86400
+force diffusion
+at sun 1.0
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in scientificName species_name
+field_in family taxon_family
+field_in date_year obs_year
+
+url https://api.obis.org/v3/occurrence?iucnRedListCategory=CR,EN,VU&size=500&fields=decimalLatitude,decimalLongitude,scientificName,class,family,iucnRedListCategory,date_year
+ttl 86400
+force diffusion
+at sun 1.0
+map results
+lat_key decimalLatitude
+lon_key decimalLongitude
+field_in scientificName species_name
+field_in class taxon_class
+field_in family taxon_family
+field_in iucnRedListCategory iucn_category
+field_in date_year obs_year
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,w1mpro,w2mpro,mjd+FROM+neowiser_p1bs_psd+WHERE+mjd%3E59000
+ttl 3600
+force em
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field w1mpro mag_w1
+field w2mpro mag_w2
+field mjd mjd_obs
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,medianmag,magrms,ngoodobsrel+FROM+ztf_objects_dr20+WHERE+ngoodobsrel%3E50+AND+magrms%3E0.05
+ttl 3600
+force em
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field medianmag median_mag
+field magrms mag_variability_rms
+
+url https://irsa.ipac.caltech.edu/TAP/sync?query=SELECT+ra,dec,designation,w1mpro,w2mpro,w3mpro,w4mpro+FROM+allwise_p3as_psd+WHERE+w1mpro+IS+NOT+NULL&format=csv&limit=5000
+ttl 86400
+force em
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field designation source_name
+field w1mpro mag_w1_3_4um
+field w2mpro mag_w2_4_6um
+field w3mpro mag_w3_12um
+field w4mpro mag_w4_22um
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,j_m,h_m,k_m+FROM+fp_psc+WHERE+j_m+IS+NOT+NULL+AND+j_m%3C15
+ttl 86400
+force em
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field j_m mag_j
+field h_m mag_h
+field k_m mag_k
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,w1mpro,w2mpro,w3mpro,w4mpro+FROM+allwise_p3as_psd+WHERE+w1mpro+IS+NOT+NULL+AND+w1mpro%3C14
+ttl 86400
+force em
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field w1mpro mag_w1
+field w2mpro mag_w2
+field w3mpro mag_w3
+field w4mpro mag_w4
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+designation,ra,dec,mag3_6,mag4_5,mag5_8,mag8_0+FROM+glimpse360_psc+WHERE+ra+IS+NOT+NULL+AND+mag3_6<12+ORDER+BY+mag3_6+ASC
+ttl 86400
+force em
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field designation source_id
+field mag3_6 irac_3_6um_mag
+field mag4_5 irac_4_5um_mag
+field mag5_8 irac_5_8um_mag
+field mag8_0 irac_8_0um_mag
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+designation,ra,dec,mag3_6,mag4_5,mag5_8,mag8_0,e_mag3_6,e_mag8_0,sqf_3_6+FROM+glimpsei_psc+WHERE+ra+IS+NOT+NULL+AND+mag3_6<10+ORDER+BY+mag3_6+ASC
+ttl 86400
+force em
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field designation source_id
+field mag3_6 irac_3_6um_mag
+field mag4_5 irac_4_5um_mag
+field mag5_8 irac_5_8um_mag
+field mag8_0 irac_8_0um_mag
+field e_mag3_6 irac_3_6um_error
+field sqf_3_6 source_quality_3_6
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+designation,ra,dec,mag3_6,mag4_5,mag8_0,e_mag4_5+FROM+glimpseii_psc+WHERE+ra+IS+NOT+NULL+AND+mag4_5<12+ORDER+BY+mag4_5+ASC
+ttl 86400
+force em
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field designation source_id
+field mag3_6 irac_3_6um_mag
+field mag4_5 irac_4_5um_mag
+field mag8_0 irac_8_0um_mag
+field e_mag4_5 irac_4_5um_error
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+ra,dec,fnu_12,fnu_25,fnu_60,fnu_100,var_flg+FROM+iraspsc+WHERE+fnu_25>10+AND+fnu_60>10+ORDER+BY+fnu_60+DESC
+ttl 86400
+force em
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field fnu_12 flux_12um_jy
+field fnu_25 flux_25um_jy
+field fnu_60 flux_60um_jy
+field fnu_100 flux_100um_jy
+field var_flg variability_flag
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+designation,ra,dec,f24,e_f24,snr24,flags+FROM+mipsgal_psc+WHERE+ra+IS+NOT+NULL+AND+f24>10+ORDER+BY+f24+DESC
+ttl 86400
+force em
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field designation source_id
+field f24 flux_24um_mJy
+field e_f24 flux_error_mJy
+field snr24 signal_to_noise_24um
+field flags quality_flags
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+ra,dec,w1mpro,w2mpro,mjd+FROM+neowiser_p1bs_psd+WHERE+mjd%3E59000+AND+w1mpro+IS+NOT+NULL
+ttl 86400
+force em
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field w1mpro mag_w1
+field w2mpro mag_w2
+field mjd mjd_obs
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+name,ra,dec,flux_100mJy,ext_flag,DETPROB+FROM+planck.com_pccs2_100+WHERE+ra+IS+NOT+NULL+ORDER+BY+flux_100mJy+DESC
+ttl 86400
+force em
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field name source_name
+field flux_100mJy flux_100ghz_mJy
+field ext_flag extended_flag
+field DETPROB detection_probability
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+name,ra,dec,flux_143mJy,ext_flag,DETPROB+FROM+planck.com_pccs2_143+WHERE+ra+IS+NOT+NULL+ORDER+BY+flux_143mJy+DESC
+ttl 86400
+force em
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field name source_name
+field flux_143mJy flux_143ghz_mJy
+field ext_flag extended_flag
+field DETPROB detection_probability
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+name,ra,dec,flux_217mJy,ext_flag,DETPROB+FROM+planck.com_pccs2_217+WHERE+ra+IS+NOT+NULL+ORDER+BY+flux_217mJy+DESC
+ttl 86400
+force em
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field name source_name
+field flux_217mJy flux_217ghz_mJy
+field ext_flag extended_flag
+field DETPROB detection_probability
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+name,RA,DE,z,yn_snr,yn_mass,theta500,dist+FROM+planck.com_pccs2_sz_mmf3+WHERE+RA+IS+NOT+NULL+ORDER+BY+yn_snr+DESC
+ttl 86400
+force diffusion
+at sun 1.0
+format text
+ra_key RA
+dec_key DE
+field name cluster_name
+field yn_snr sz_signal_to_noise
+field yn_mass sz_mass_10e14_msun
+field theta500 angular_radius_arcmin
+field dist distance_mpc
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+designation,ra,dec,i1_f_ap,i2_f_ap,i3_f_ap,i4_f_ap+FROM+sage_lmc+WHERE+ra+IS+NOT+NULL
+ttl 86400
+force em
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field designation sage_id
+field i1_f_ap flux_3_6um
+field i2_f_ap flux_4_5um
+field i3_f_ap flux_5_8um
+field i4_f_ap flux_8_0um
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+designation,ra,dec,mag3_6,mag4_5,mag5_8,mag8_0,fluxj,fluxh,fluxk+FROM+sage_cat_irac+WHERE+ra+IS+NOT+NULL+AND+mag3_6<14+ORDER+BY+mag3_6+ASC
+ttl 86400
+force em
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field designation source_name
+field mag3_6 irac_3_6um_mag
+field mag4_5 irac_4_5um_mag
+field mag5_8 irac_5_8um_mag
+field mag8_0 irac_8_0um_mag
+field fluxj j_band_flux_mJy
+field fluxh h_band_flux_mJy
+field fluxk k_band_flux_mJy
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,j_mag,h_mag,k_mag,ir1_mag,ir2_mag+FROM+sage_smc+WHERE+ra+IS+NOT+NULL
+ttl 86400
+force em
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field j_mag mag_j
+field h_mag mag_h
+field k_mag mag_k
+field ir1_mag mag_ir1
+field ir2_mag mag_ir2
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+designation,ra,dec,mag3_6,mag4_5,mag8_0+FROM+sage_cat_irac+WHERE+ra+IS+NOT+NULL+AND+dec<-65+AND+mag3_6<15+ORDER+BY+mag5_8+DESC
+ttl 86400
+force em
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field designation source_name
+field mag3_6 irac_3_6um_mag
+field mag4_5 irac_4_5um_mag
+field mag8_0 irac_8_0um_mag
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+100+target,ra,dec,mips_24_flux,mips_70_flux,mips_160_flux+FROM+spitzer.sings_mipssed_spec+WHERE+ra+IS+NOT+NULL+ORDER+BY+mips_70_flux+DESC
+ttl 86400
+force em
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field target galaxy_name
+field mips_24_flux flux_24um_mJy
+field mips_70_flux flux_70um_mJy
+field mips_160_flux flux_160um_mJy
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+name,ra,dec,dist,morph,f3p6tot,f4p5tot,f5p8tot,f8p0tot+FROM+sings+WHERE+ra+IS+NOT+NULL
+ttl 86400
+force em
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field name galaxy_name
+field dist distance_mpc
+field morph morphology
+field f3p6tot flux_3_6um
+field f4p5tot flux_4_5um
+field f5p8tot flux_5_8um
+field f8p0tot flux_8_0um
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+ra,dec,j_m,h_m,k_m+FROM+fp_psc+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',266.4,-29.0,2.0))=1
+ttl 86400
+force em
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field j_m mag_j
+field h_m mag_h
+field k_m mag_k
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,j_m,h_m,k_m+FROM+fp_psc+WHERE+j_m+IS+NOT+NULL+AND+j_m%3C15
+ttl 86400
+force em
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field j_m mag_j
+field h_m mag_h
+field k_m mag_k
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,w1mpro,w2mpro,w3mpro,w4mpro+FROM+allwise_p3as_psd+WHERE+w1mpro+IS+NOT+NULL+AND+w1mpro%3C14
+ttl 86400
+force em
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field w1mpro mag_w1
+field w2mpro mag_w2
+field w3mpro mag_w3
+field w4mpro mag_w4
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+designation,ra,dec,w3mpro,w4mpro,w3snr,w4snr,cc_flags+FROM+wise_allwise_p3as_psd+WHERE+ABS(dec-23.44*SIN(ra*3.14159265/180))<10+AND+w4snr>5+AND+w3mpro<8+ORDER+BY+w4mpro+ASC
+ttl 86400
+force em
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field designation wise_id
+field w3mpro w3_12um_mag
+field w4mpro w4_22um_mag
+field w3snr w3_snr
+field w4snr w4_snr
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+oid,ra,dec,filterid,medianmag,magrms,ngoodobsrel+FROM+ztf_objects_dr20+WHERE+ngoodobsrel%3E50+AND+magrms%3E0.05
+ttl 86400
+force em
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field oid object_id
+field filterid filter_id
+field medianmag median_mag
+field magrms mag_rms
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+oid,ra,dec,filterid,medianmag,magrms,refmag+FROM+ztf_objects_dr20+WHERE+magrms%3E0.3+AND+ngoodobsrel%3E100
+ttl 86400
+force em
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field oid object_id
+field filterid filter_id
+field medianmag median_mag
+field magrms mag_rms
+
+url https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+object_name,ra,dec,abs_mag,diameter,extended,neo_flag+FROM+neowiser_p1bs_psd+WHERE+diameter+IS+NOT+NULL+ORDER+BY+diameter+DESC
+ttl 86400
+force gravity
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field object_name neo_designation
+field abs_mag absolute_magnitude
+field diameter estimated_diameter_km
+field extended extended_object_flag
+field neo_flag near_earth_flag
+
+url https://irsa.ipac.caltech.edu/TAP/sync?query=SELECT+ra,dec,designation,j_m,h_m,k_m+FROM+fp_psc+WHERE+j_m+IS+NOT+NULL&format=csv&limit=5000
+ttl 86400
+force em
+at sun 1.0
+format text
+ra_key ra
+dec_key dec
+field designation source_name
+field j_m mag_j
+field h_m mag_h
+field k_m mag_k
+
+url https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,+dec,+designation,+j_m,+h_m,+k_m+FROM+fp_psc+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
+ttl 604800
+force em
+at sun 1.0
+format votable
+map data
+field_in designation name
+field_in j_m mag_j
+field_in h_m mag_h
+field_in k_m mag_k
+lat_key ra
+lon_key dec
+
+url https://api.inaturalist.org/v1/observations?per_page=1
+ttl 300
+force em
+at sun 1.0
+field total_results biosphere_inaturalist_obs_count
+
+url https://api.inaturalist.org/v1/observations?lat={lat}&lng={lon}&radius=10&per_page=20&order=desc&order_by=observed_on
+ttl 600
+force em
+at sun 1.0
+map results
+lat_key geojson.coordinates.1
+lon_key geojson.coordinates.0
+field_in species_guess biosphere_inaturalist_nearby
+
+url https://api.inaturalist.org/v1/observations?per_page=1
+ttl 600
+force em
+at sun 1.0
+path total_results biosphere_inaturalist_observations_total
+
+url https://api.inaturalist.org/v1/observations?quality_grade=needs_id&per_page=200&order_by=created_at&order=desc&geo=true&geojson=true
+ttl 1800
+force diffusion
+at sun 1.0
+map results
+lat_key geojson.coordinates.1
+lon_key geojson.coordinates.0
+field_in taxon.name species_name
+field_in taxon.iconic_taxon_name iconic_taxon
+field_in created_at submission_time
+field_in place_guess locality
+
+url https://api.inaturalist.org/v1/observations?taxon_id=47170&lat={lat}&lng={lon}&radius=10&quality_grade=research&per_page=0
+ttl 3600
+force em
+at sun 1.0
+path total_results biosphere_fungi_observations
+
+url https://api.inaturalist.org/v1/observations?taxon_id=47170&lat={lat}&lng={lon}&radius=10&quality_grade=research&per_page=0
+ttl 3600
+force em
+at sun 1.0
+field total_results biosphere_fungi_observations
+field species_count biosphere_fungi_species_count
+
+url https://api.inaturalist.org/v1/observations?lat={lat}&lng={lon}&radius=1&quality_grade=research&per_page=1
+ttl 3600
+force em
+at sun 1.0
+field total_results biosphere_verified_observations
+
+url https://api.inaturalist.org/v1/observations?lat={lat}&lng={lon}&radius=1&per_page=1
+ttl 3600
+force em
+at sun 1.0
+field total_results biosphere_observations
+
+url https://api.inaturalist.org/v1/observations?quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true&swlat=-20&swlng=-80&nelat=5&nelng=-45
+ttl 3600
+force diffusion
+at sun 1.0
+map results
+lat_key geojson.coordinates.1
+lon_key geojson.coordinates.0
+field_in taxon.name species_name
+field_in taxon.iconic_taxon_name iconic_taxon
+field_in observed_on observation_date
+
+url https://api.inaturalist.org/v1/observations?iconic_taxa=Amphibia&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
+ttl 3600
+force diffusion
+at sun 1.0
+map results
+lat_key geojson.coordinates.1
+lon_key geojson.coordinates.0
+field_in taxon.name species_name
+field_in observed_on observation_date
+
+url https://api.inaturalist.org/v1/observations?quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true&swlat=35&swlng=-10&nelat=70&nelng=40
+ttl 3600
+force diffusion
+at sun 1.0
+map results
+lat_key geojson.coordinates.1
+lon_key geojson.coordinates.0
+field_in taxon.name species_name
+field_in taxon.iconic_taxon_name iconic_taxon
+field_in observed_on observation_date
+field_in place_guess locality
+
+url https://api.inaturalist.org/v1/observations?iconic_taxa=Fungi&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
+ttl 3600
+force diffusion
+at sun 1.0
+map results
+lat_key geojson.coordinates.1
+lon_key geojson.coordinates.0
+field_in taxon.name species_name
+field_in taxon.rank taxon_rank
+field_in observed_on observation_date
+field_in place_guess locality
+
+url https://api.inaturalist.org/v1/observations?iconic_taxa=Insecta&invasive=true&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
+ttl 3600
+force diffusion
+at sun 1.0
+map results
+lat_key geojson.coordinates.1
+lon_key geojson.coordinates.0
+field_in taxon.name species_name
+field_in observed_on observation_date
+field_in place_guess locality
+
+url https://api.inaturalist.org/v1/observations?iconic_taxa=Mammalia&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
+ttl 3600
+force diffusion
+at sun 1.0
+map results
+lat_key geojson.coordinates.1
+lon_key geojson.coordinates.0
+field_in taxon.name species_name
+field_in taxon.rank taxon_rank
+field_in observed_on observation_date
+field_in place_guess locality

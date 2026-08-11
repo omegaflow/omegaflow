@@ -1,0 +1,99 @@
+ra_key ra
+
+dec_key dec
+
+field_in name astro_swift_grb_name
+
+field_in target_id astro_swift_grb_target_id
+
+field_in other_id astro_swift_grb_other_id
+
+field_in det_flag astro_swift_grb_det_flag
+
+field_in slew_info astro_swift_grb_slew_info
+
+field_in pos_err astro_swift_grb_pos_err
+
+field_in lii astro_swift_grb_lii
+
+field_in bii astro_swift_grb_bii
+
+field_in pos_flag astro_swift_grb_pos_flag
+
+field_in pos_ref astro_swift_grb_pos_ref
+
+field_in start_time astro_swift_grb_start_time
+
+field_in stop_time astro_swift_grb_stop_time
+
+field_in duration astro_swift_grb_duration
+
+field_in trigger_time astro_swift_grb_trigger_time
+
+field_in trigger_ref astro_swift_grb_trigger_ref
+
+field_in bat_detection astro_swift_grb_bat_detection
+
+field_in bat_dettype astro_swift_grb_bat_dettype
+
+field_in bat_ra astro_swift_grb_bat_ra
+
+field_in bat_dec astro_swift_grb_bat_dec
+
+field_in bat_pos_err astro_swift_grb_bat_pos_err
+
+field_in bat_pos_ref astro_swift_grb_bat_pos_ref
+
+field_in bat_theta astro_swift_grb_bat_theta
+
+field_in bat_phi astro_swift_grb_bat_phi
+
+field_in bat_imagesig astro_swift_grb_bat_imagesig
+
+field_in bat_t90 astro_swift_grb_bat_t90
+
+field_in bat_t50 astro_swift_grb_bat_t50
+
+field_in bat_start astro_swift_grb_bat_start
+
+field_in bat_stop astro_swift_grb_bat_stop
+
+field_in bat_t100_start astro_swift_grb_bat_t100_start
+
+field_in bat_t100_stop astro_swift_grb_bat_t100_stop
+
+field_in bat_fluence_model astro_swift_grb_bat_fluence_model
+
+field_in bat_fluence astro_swift_grb_bat_fluence
+
+field_in bat_fluence_err astro_swift_grb_bat_fluence_err
+
+field_in bat_fluence1 astro_swift_grb_bat_fluence1
+
+field_in bat_fluence1_err astro_swift_grb_bat_fluence1_err
+
+field_in bat_fluence2 astro_swift_grb_bat_fluence2
+
+field_in bat_fluence2_err astro_swift_grb_bat_fluence2_err
+
+field_in bat_fluence3 astro_swift_grb_bat_fluence3
+
+field_in bat_fluence3_err astro_swift_grb_bat_fluence3_err
+
+field_in bat_fluence4 astro_swift_grb_bat_fluence4
+
+field_in bat_fluence4_err astro_swift_grb_bat_fluence4_err
+
+field_in bat_peak_time astro_swift_grb_bat_peak_time
+
+field_in bat_peak_model astro_swift_grb_bat_peak_model
+
+field_in bat_peak_flux astro_swift_grb_bat_peak_flux
+
+field_in bat_peak_flux_err astro_swift_grb_bat_peak_flux_err
+
+field_in bat_peak_flux1 astro_swift_grb_bat_peak_flux1
+
+field_in bat_peak_flux1_err astro_swift_grb_bat_peak_flux1_err
+
+field_in bat_peak_flux2 astro_swift_grb_bat_peak_flux2
