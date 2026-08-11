@@ -2399,41 +2399,67 @@ impl Radiator for AudioRadiator {
     }
 }
 
-enum StderrMode {
-    Intensity,
-    Count,
-}
-
-struct StderrRadiator {
-    name: &'static str,
-    mode: StderrMode,
-}
+struct StderrRadiator;
 
 impl Radiator for StderrRadiator {
     fn accept(&self, field: Arc<Buffer>) {
-        let mut result: f64 = 0.0;
-        for b in field
-            .bodies
-            .values()
-            .chain(std::iter::once(&field.inertial))
-        {
-            for v in b.cells.values() {
-                match self.mode {
-                    StderrMode::Intensity => {
-                        for osc in v {
-                            result += osc.val.abs();
-                        }
-                    }
-                    StderrMode::Count => {
-                        result += v.len() as f64;
+        let mut total: f64 = 0.0;
+        let mut per_field: std::collections::HashMap<&str, f64> = std::collections::HashMap::new();
+        let mut per_body: std::collections::HashMap<&str, f64> = std::collections::HashMap::new();
+        let mut osc_count = 0usize;
+        let mut browser_count = 0usize;
+        let mut api_count = 0usize;
+        for (body_name, hash) in &field.bodies {
+            for cell in hash.cells.values() {
+                for osc in cell {
+                    let v = osc.val.abs();
+                    total += v;
+                    osc_count += 1;
+                    *per_body.entry(body_name.as_str()).or_insert(0.0) += v;
+                    *per_field.entry(osc.name.as_str()).or_insert(0.0) += v;
+                    match osc.source {
+                        OscillatorSource::Browser => browser_count += 1,
+                        OscillatorSource::Api(_) => api_count += 1,
                     }
                 }
             }
         }
-        writeln!(std::io::stderr(), "{}:{}", self.name, result).ok();
+        for cell in field.inertial.cells.values() {
+            for osc in cell {
+                let v = osc.val.abs();
+                total += v;
+                osc_count += 1;
+                *per_body.entry("inertial").or_insert(0.0) += v;
+                *per_field.entry(osc.name.as_str()).or_insert(0.0) += v;
+                match osc.source {
+                    OscillatorSource::Browser => browser_count += 1,
+                    OscillatorSource::Api(_) => api_count += 1,
+                }
+            }
+        }
+        let _ = writeln!(
+            std::io::stderr(),
+            "{} oscs: {} browser {} api | int:{:.3} | fields:[{}] | bodies:[{}]",
+            osc_count,
+            browser_count,
+            api_count,
+            total,
+            per_field
+                .iter()
+                .take(5)
+                .map(|(k, v)| format!("{}:{:.1}", k, v))
+                .collect::<Vec<_>>()
+                .join(" "),
+            per_body
+                .iter()
+                .take(5)
+                .map(|(k, v)| format!("{}:{:.1}", k, v))
+                .collect::<Vec<_>>()
+                .join(" "),
+        );
     }
     fn name(&self) -> &str {
-        self.name
+        "osc"
     }
 }
 
@@ -6859,14 +6885,7 @@ fn main() {
     );
     radiators.push(Box::new(sr));
     radiators.push(Box::new(AudioRadiator::new(44100)));
-    radiators.push(Box::new(StderrRadiator {
-        name: "field-int",
-        mode: StderrMode::Intensity,
-    }));
-    radiators.push(Box::new(StderrRadiator {
-        name: "osc-count",
-        mode: StderrMode::Count,
-    }));
+    radiators.push(Box::new(StderrRadiator));
     let cadence = 1.0;
     loop {
         let now = tdb_now();
@@ -6924,16 +6943,18 @@ fn main() {
                 let src_clone = archive.sources[i].clone();
                 let src_idx = i;
                 thread::spawn(move || {
-                    let bytes = match fetch_raw_bytes(&url, src_clone.ttl) {
-                        Some(b) => b,
-                        None => return,
-                    };
                     let tmp_path = match &src_clone.body {
                         Some(b) => format!("/tmp/omegaflow_eph_{}.bin", b),
                         None => return,
                     };
-                    if std::fs::write(&tmp_path, &bytes).is_err() {
-                        return;
+                    if read_cache_if_fresh(&tmp_path, src_clone.ttl).is_none() {
+                        let bytes = match fetch_raw_bytes(&url, src_clone.ttl) {
+                            Some(b) => b,
+                            None => return,
+                        };
+                        if std::fs::write(&tmp_path, &bytes).is_err() {
+                            return;
+                        }
                     }
                     if let ExtractResult::WithEphemeris(_, eph) =
                         extract(&src_clone, &tmp_path, tdb_now())
