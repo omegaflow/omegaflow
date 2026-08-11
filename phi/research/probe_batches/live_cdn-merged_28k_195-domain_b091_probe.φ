@@ -1,0 +1,3 @@
+url https://paleobiodb.org/data1.2/occs/list.json?limit=500&show=paleoloc
+ttl 86400
+at earth

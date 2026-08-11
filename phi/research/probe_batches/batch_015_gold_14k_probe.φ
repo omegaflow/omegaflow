@@ -1,0 +1,199 @@
+url https://api.obis.org/occurrence?lat={lat}&lon={lon}&radius=50&size=0
+ttl 86400
+at earth
+
+url https://api.obis.org/v3/statistics
+ttl 86400
+on earth 51.231 2.928 0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["amenity"="atm"](around:1000,{lat},{lon});out%20count;
+ttl 86400
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["amenity"="bench"](around:500,{lat},{lon});out%20count;
+ttl 86400
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];way["bridge"="yes"](around:5000,{lat},{lon});out%20count;
+ttl 86400
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];way["building"](around:1000,{lat},{lon});out%20count;
+ttl 86400
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["highway"="bus_stop"](around:1000,{lat},{lon});out%20count;
+ttl 86400
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["highway"="construction"];out%20count;
+ttl 86400
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["highway"="crossing"](around:500,{lat},{lon});out%20count;
+ttl 86400
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["amenity"="drinking_water"](around:1000,{lat},{lon});out%20count;
+ttl 86400
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];way["landuse"="forest"](around:10000,{lat},{lon});out%20count;
+ttl 86400
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["amenity"="fuel"](around:5000,{lat},{lon});out%20count;
+ttl 86400
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["amenity"="hospital"](around:10000,{lat},{lon});out%20count;
+ttl 86400
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["tourism"="hotel"](around:5000,{lat},{lon});out%20count;
+ttl 86400
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];(node["amenity"~"hospital|fire_station|school"](around:50000,{lat},{lon});node["railway"="station"](around:50000,{lat},{lon}););out%20count;
+ttl 86400
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:60];node["telecom"="antenna"](around:10000,{lat},{lon});out%20count;
+ttl 86400
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];way["leisure"="park"](around:5000,{lat},{lon});out%20count;
+ttl 86400
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["amenity"="pharmacy"](around:2000,{lat},{lon});out%20count;
+ttl 86400
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];way["power"="line"](around:5000,{lat},{lon});out%20count;
+ttl 86400
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["power"="tower"](around:5000,{lat},{lon});out%20count;
+ttl 86400
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["amenity"="school"](around:10000,{lat},{lon});out%20count;
+ttl 86400
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];way["highway"](around:500,{lat},{lon});out%20count;
+ttl 86400
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["shop"="supermarket"](around:2000,{lat},{lon});out%20count;
+ttl 86400
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["man_made"="surveillance"](around:2000,{lat},{lon});out%20count;
+ttl 86400
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["natural"="tree"](around:500,{lat},{lon});out%20count;
+ttl 86400
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];way["waterway"](around:5000,{lat},{lon});out%20count;
+ttl 86400
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["internet_access"="wlan"](around:5000,{lat},{lon});out%20count;
+ttl 86400
+at earth
+
+url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_parks_and_protected_lands_area.geojson
+ttl 86400
+on earth 0 0 0
+
+url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_parks_and_protected_lands_point.geojson
+ttl 86400
+on earth 0 0 0
+
+url https://restcountries.com/v3.1/all?fields=name,population,latlng
+ttl 86400
+on earth 38.899 -77.043 0
+
+url https://api.semanticscholar.org/graph/v1/paper/search?query=*&limit=1
+ttl 86400
+on earth 47.6062 -122.3321 0
+
+url https://www.submarinecablemap.com/api/v3/cable/cable-geo.json
+ttl 86400
+on earth 38.899 -77.043 0
+
+url https://api.unhcr.org/population/v1/population/?limit=1
+ttl 86400
+on earth 46.234 6.140 0
+
+url https://www.star.nesdis.noaa.gov/smcd/emb/vci/VH/get_TS_admin.php?country=USA&province=0&year=2023&type=VHI
+ttl 86400
+on earth 38.978 -76.919 0
+
+url https://ghoapi.azureedge.net/api/CHOLERA_0000000001
+ttl 86400
+on earth 46.234 6.140 0
+
+url https://ghoapi.azureedge.net/api/MDG_0000000020
+ttl 86400
+on earth 46.234 6.140 0
+
+url https://xmart-api-public.who.int/FLUMART/VIW_FNT
+ttl 86400
+on earth 46.234 6.140 0
+
+url https://ghoapi.azureedge.net/api/Indicator/SP_DYN_LE00_IN
+ttl 86400
+on earth 46.2276 6.1432 0
+
+url https://www.chime-frb.ca/catalog
+ttl 86400
+on earth 49.321 -122.573 0
+
+url https://gist.githubusercontent.com/burritojustice/2d967b31c3bd11165b4439ebe98ecb01/raw/8594b09096f93f723c929c397de49ed7ac8ecc64/mars_landers.geojson
+ttl 86400
+at earth
+
+url https://mars.nasa.gov/rss/api/?feed=weather&category=msl&feedtype=json
+ttl 86400
+at earth
+
+url https://tle.ivanstanojevic.me/api/tle/
+ttl 86400
+at earth
+
+url https://tle.ivanstanojevic.me/api/tle/?search=ISS&page-size=50
+ttl 86400
+at earth
+
+url https://crates.io/api/v1/crates?per_page=1
+ttl 86400
+on earth 37.774 -122.419 0
+
+url https://www.glims.org/mapservice/wfs?service=WFS&version=1.1.0&request=GetFeature&typeName=glims_glaciers&maxFeatures=1&outputFormat=application/json
+ttl 86400
+on earth 46.818 8.227 0
+
+url https://nsidc.org/data/seaice_index/data/daily/S_seaice_extent_daily.csv
+ttl 86400
+on earth -90.0 0.0 0
+
+url https://noaadata.apps.nsidc.org/NOAA/G02135/south/daily/data/S_seaice_extent_daily_v4.0.csv
+ttl 86400
+on earth 0 0 0
+
+url https://nsidc.org/data/seaice_index/data/daily/N_seaice_extent_daily.csv
+ttl 86400
+on earth 90.0 0.0 0
+
+url https://noaadata.apps.nsidc.org/NOAA/G02135/north/daily/data/N_seaice_extent_daily_v4.0.csv
+ttl 86400
+on earth 0 0 0
+
+url https://noaadata.apps.nsidc.org/NOAA/G02135/north/daily/data/N_seaice_extent_daily_v4.0.csv
+ttl 86400
+on earth 40.008 -105.263 0

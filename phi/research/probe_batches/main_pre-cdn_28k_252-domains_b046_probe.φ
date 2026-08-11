@@ -1,0 +1,199 @@
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_prigozhin_pulsars.json
+ttl 604800
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_nearby_plx10.json
+ttl 604800
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_gcvs_variables.json
+ttl 604800
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_nearby_plx10.json
+ttl 604800
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_bright_vmag9.json
+ttl 604800
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_2qz.json
+ttl 604800
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_bright_vmag9.json
+ttl 604800
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_nearby_plx10.json
+ttl 604800
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gaia_nearby_plx10.json
+ttl 604800
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/mirror_power_plants_wri.csv
+ttl 604800
+at earth
+
+url https://egg.astro.cornell.edu/alfalfa/data/a40files/a40.datafile1.csv
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_climate_projection.json
+ttl 2592000
+body earth
+
+url https://www.metoffice.gov.uk/hadobs/hadcrut5/data/HadCRUT.5.1.0.0/analysis/diagnostics/HadCRUT.5.1.0.0.analysis.summary_series.global.annual.csv
+ttl 2592000
+at earth
+
+url https://data-api.globalforestwatch.org/dataset/umd_tree_cover_loss/latest
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_birth_rate.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_co2_emissions.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_death_rate.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_afghanistan.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_albania.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_algeria.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_american_samoa.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_andorra.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_angola.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_antigua_and_barbuda.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_argentina.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_armenia.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_aruba.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_australia.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_austria.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_azerbaijan.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_bahamas.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_bahrain.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_bangladesh.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_barbados.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_belarus.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_belgium.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_belize.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_benin.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_bermuda.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_bhutan.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_bolivia.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_bosnia_and_herzegovina.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_botswana.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_brazil.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_british_virgin_islands.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_brunei_darussalam.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_bulgaria.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_burkina_faso.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_burundi.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_cabo_verde.json
+ttl 2592000
+at earth

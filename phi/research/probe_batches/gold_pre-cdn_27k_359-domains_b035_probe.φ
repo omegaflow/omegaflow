@@ -1,0 +1,199 @@
+url https://www.cpc.ncep.noaa.gov/data/indices/sstoi.indices
+ttl 86400
+on earth 0.0 -170.0 0
+
+url https://psl.noaa.gov/data/correlation/pdo.data
+ttl 86400
+on earth 40.0 -170.0 0
+
+url https://www.cpc.ncep.noaa.gov/products/GODAS/pdo_hourly.dat
+ttl 86400
+on earth 0.0 0.0 0
+
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=daily-summaries&dataTypes=TMAX,TMIN,PRCP,SNOW,SNWD&startDate={today}&endDate={today}&includeAttributes=false&format=json&limit=10000
+ttl 86400
+at earth
+
+url https://www.ncei.noaa.gov/pub/data/ghcn/daily/ghcnd-stations.txt
+ttl 86400
+at earth
+
+url https://www.ngdc.noaa.gov/gazetteer/rest/feature?typeCode=Ridge&format=json&maxResults=2000
+ttl 86400
+at earth
+
+url https://www.ncei.noaa.gov/access/monitoring/climate-at-a-glance/global/time-series/globe/land-ocean/1/7/2026.json
+ttl 86400
+on earth 0.0 0.0 0
+
+url https://gml.noaa.gov/aftp/data/ccgg/flask/multispecies/multi_station_all.txt
+ttl 86400
+at earth
+
+url https://gml.noaa.gov/webdata/ccgg/trends/ch4/ch4_mm_gl.txt
+ttl 86400
+on earth 0.0 0.0 0
+
+url https://gml.noaa.gov/webdata/ccgg/trends/ch4/ch4_mm_gl.txt
+ttl 86400
+on earth 0.0 0.0 0
+
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_gr_gl.txt
+ttl 86400
+on earth 0.0 0.0 0
+
+url https://gml.noaa.gov/aftp/data/trace_gases/co2/flask/surface/co2_surface-flask_ccgg_text.txt
+ttl 86400
+at earth
+
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_weekly_mlo.csv
+ttl 86400
+on earth 19.5 -155.6 0
+
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_weekly_mlo.csv
+ttl 86400
+on earth 19.5 -155.6 0
+
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_annmean_gl.txt
+ttl 86400
+on earth 0.0 0.0 0
+
+url https://gml.noaa.gov/webdata/ccgg/trends/n2o/n2o_mm_gl.txt
+ttl 86400
+on earth 0.0 0.0 0
+
+url https://gml.noaa.gov/webdata/ozwv/Dobson/dobsonNetworkData.json
+ttl 86400
+at earth
+
+url https://gml.noaa.gov/webdata/ccgg/trends/sf6/sf6_mm_gl.txt
+ttl 86400
+on earth 0.0 0.0 0
+
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_annmean_gl.txt
+ttl 86400
+on earth 0.0 0.0 0
+
+url https://gml.noaa.gov/aftp/data/uv/monitoring/latest/uv_daily.dat
+ttl 86400
+at earth
+
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&dataTypes=TEMP,MAX,MIN,PRCP,WDSP,SLP,VISIB&stations=72420314733,10637099999,47678099999,94120099999&startDate={today}&endDate={today}&format=json
+ttl 86400
+at earth
+
+url https://coastwatch.noaa.gov/erddap/tabledap/noaaHabsosData.csv?latitude,longitude,sample_date,genus,species,cellcount,cellcount_units,hab_category&time%3E=now-30days&orderBy(%22time%22)
+ttl 86400
+at earth
+
+url https://www.nhc.noaa.gov/data/hurdat/hurdat2-1851-2023-050423.txt
+ttl 86400
+body earth
+
+url https://www.ncei.noaa.gov/data/international-best-track-archive-for-climate-stewardship-ibtracs/v04r00/access/csv/ibtracs.last3years.list.v04r00.csv
+ttl 86400
+at earth
+
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&dataTypes=TEMP,DEWP,WDSP,PRCP,SLP,MAX,MIN&countries=CH&startDate={today}&endDate={today}&includeAttributes=false&format=json
+ttl 86400
+at earth
+
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&dataTypes=TEMP,DEWP,WDSP,PRCP,SLP,MAX,MIN&countries=SF&startDate={today}&endDate={today}&includeAttributes=false&format=json
+ttl 86400
+at earth
+
+url https://www.ncei.noaa.gov/access/paleo-search/study/search.json?dataPublisher=NOAA&dataType=Tree+Ring&minLat=30&maxLat=90&minLon=-180&maxLon=180&headersOnly=true
+ttl 86400
+at earth
+
+url https://www.ncei.noaa.gov/access/paleo-search/study/search.json?dataPublisher=NOAA&dataType=Tree+Ring&minLat=-90&maxLat=30&minLon=-180&maxLon=180&headersOnly=true
+ttl 86400
+at earth
+
+url https://api.fisheries.noaa.gov/api/mangrove-cover-index?format=json&limit=1000
+ttl 86400
+at earth
+
+url https://coastwatch.noaa.gov/erddap/griddap/erdMH1chlaM.csv?chlorophyll%5Blast%5D%5B(-60.0):(60.0):6%5D%5B(-180.0):(180.0):6%5D
+ttl 86400
+at earth
+
+url https://coastwatch.noaa.gov/erddap/griddap/erdMH1ET8day.csv?ET%5Blast%5D%5B(-60.0):(75.0):5%5D%5B(-180.0):(180.0):5%5D
+ttl 86400
+at earth
+
+url https://coastwatch.noaa.gov/erddap/griddap/erdMT1VImonthly.csv?EVI%5Blast%5D%5B(-60.0):(75.0):5%5D%5B(-180.0):(180.0):5%5D
+ttl 86400
+at earth
+
+url https://coastwatch.noaa.gov/erddap/griddap/erdMT1VImonthly.csv?NDVI%5Blast%5D%5B(-60.0):(75.0):5%5D%5B(-180.0):(180.0):5%5D
+ttl 86400
+at earth
+
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-month&dataTypes=TMAX,TMIN,PRCP,TAVG&startDate={year}-{month}-01&endDate={year}-{month}-{day}&includeAttributes=false&format=json&limit=5000
+ttl 86400
+at earth
+
+url https://www.ncei.noaa.gov/access/monitoring/climate-at-a-glance/global/time-series/globe/land/12/07/{year}.json
+ttl 86400
+on earth 0.0 0.0 0
+
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=normals-daily&dataTypes=TEMP_NORMAL_MAX,TEMP_NORMAL_MIN,PRCP_NORMAL&stations=GM000003026,USW00094728,UK000003772,JN000047412&startDate=2010-01-01&endDate=2010-01-31&format=json
+ttl 86400
+at earth
+
+url https://gis.ngdc.noaa.gov/arcgis/rest/services/DEM_global_mosaic_hillshade/ImageServer/identify?geometry=%7B%22x%22:{lon},%22y%22:{lat}%7D&geometryType=esriGeometryPoint&returnGeometry=false&f=json
+ttl 86400
+on earth 0.0 0.0 0
+
+url https://www.star.nesdis.noaa.gov/sod/lsa/SeaLevelRise/LSA_SLR_timeseries_global.csv
+ttl 86400
+on earth 0.0 0.0 0
+
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-month&dataTypes=TMAX,TMIN,PRCP,TAVG,SNOW&stations=USW00094728&startDate={year}-01-01&endDate={year}-{month}-{day}&format=json
+ttl 86400
+at earth
+
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-month&dataTypes=TMAX,TMIN,PRCP,TAVG,SNOW,SNWD&stations=GM000003026,GM000003946,UKM00003772,USW00094728&startDate={year}-01-01&endDate={today}&format=json
+ttl 86400
+at earth
+
+url https://www.ncei.noaa.gov/data/oceans/woa/DATA_ANALYSIS/3M_HEAT_CONTENT/DATA/basin/3month/h22-w0-2p.dat
+ttl 86400
+on earth 0.0 0.0 0
+
+url https://www.ncei.noaa.gov/data/oceans/woa/DATA_ANALYSIS/3M_HEAT_CONTENT/DATA/basin/yearly/h22-w0-700m.dat
+ttl 86400
+on earth 0.0 0.0 0
+
+url https://www.ncei.noaa.gov/access/monitoring/climate-at-a-glance/global/time-series/globe/pdsi/land/1/{month}/{year}/{year}.json
+ttl 86400
+on earth 0.0 0.0 0
+
+url https://www.ngdc.noaa.gov/hazel/hazard/service/earthquake/query?limit=500&offset=0&format=json
+ttl 86400
+at earth
+
+url https://www.ncei.noaa.gov/access/monitoring/drought/zscore-precip/global-zscore.json
+ttl 86400
+on earth 0.0 0.0 0
+
+url https://www.ngdc.noaa.gov/hazel/hazard/service/volcano/query?limit=500&offset=0&format=json
+ttl 86400
+at earth
+
+url https://www.ncei.noaa.gov/access/world-ocean-database-select/dbsearch.html?DirectAccess=yes&type=json&survey=WOCE&variable=T,S,O2,NO3,PO4,SiO3&limit=300
+ttl 86400
+at earth
+
+url https://www.ndbc.noaa.gov/activestations.xml
+ttl 86400
+at earth
+
+url https://www.ngdc.noaa.gov/hazel/hazard-service/api/v1/earthquakes?maxRows=2000&startRow=1&orderBy=year&ascending=false
+ttl 86400
+at earth
+
+url https://www.ngdc.noaa.gov/hazel/hazard-service/api/v1/tsunamiEvents?maxRows=2000&startRow=1&orderBy=year&ascending=false
+ttl 86400
+at earth

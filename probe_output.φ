@@ -1,19 +1,11 @@
-url https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json
+url https://api.wheretheiss.at/v1/satellites/25544
 ttl 60
-at sun
-# precision bt=1dp theta_gse=1dp max_data_flag=0dp theta_gsm=0dp bx_gse=1dp by_gsm=1dp by_gse=1dp bz_gse=2dp bx_gsm=1dp phi_gsm=0dp phi_gse=0dp bz_gsm=1dp
-# bt = 4.57
-# theta_gse = -6.89
-# max_telemetry_flag = 0.0
-# max_data_flag = 0.0
-# theta_gsm = 11.5
-# bx_gse = 2.41
-# overall_quality = 0.0
-# by_gsm = -3.76
-# by_gse = -3.84
-# bz_gse = -0.55
-# bx_gsm = 2.41
-# phi_gsm = 302.61
-# phi_gse = 302.11
-# bz_gsm = 0.92
+at earth
+lat latitude deg
+lon solar_lon deg
+lon longitude deg
+alt altitude km
+lat solar_lat deg
+# footprint = 4530.0023979275
+# velocity = 27558.587383991
 

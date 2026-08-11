@@ -1,0 +1,199 @@
+url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/law/law2006co2.txt
+ttl 2592000
+on earth -66.733 140.800 0
+
+url https://data-api.globalforestwatch.org/dataset/umd_tree_cover_loss/latest
+ttl 2592000
+on earth 38.907 -77.036 0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];way["landuse"="farmland"](around:10000,{lat},{lon});out%20center;
+ttl 2592000
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[date:"2024-01-01T00:00:00Z"][out:json][timeout:25];way["building"](around:1000,{lat},{lon});out%20100;
+ttl 2592000
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[date:"2021-01-01T00:00:00Z"][out:json][timeout:25];way["building"](around:1000,{lat},{lon});out%20100;
+ttl 2592000
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[date:"2021-01-01T00:00:00Z"][out:json][timeout:25];node["amenity"="hospital"](around:10000,{lat},{lon});out%20100;
+ttl 2592000
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[date:"2021-01-01T00:00:00Z"][out:json][timeout:25];node["amenity"="school"](around:10000,{lat},{lon});out%20100;
+ttl 2592000
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[date:"2021-01-01T00:00:00Z"][out:json][timeout:25];node["shop"](around:5000,{lat},{lon});out%20100;
+ttl 2592000
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[date:"2021-01-01T00:00:00Z"][out:json][timeout:25];way["highway"](around:500,{lat},{lon});out%20100;
+ttl 2592000
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["historic"="memorial"](around:5000,{lat},{lon});out%20100;
+ttl 2592000
+at earth
+
+url https://api.worldbank.org/v2/country/WLD/indicator/SP.DYN.CBRT.IN?format=json&date=2023&per_page=1&mrv=1
+ttl 2592000
+on earth 38.899 -77.043 0
+
+url https://api.worldbank.org/v2/country/WLD/indicator/EN.GHG.CO2.MT.CE.AR5?format=json
+ttl 2592000
+on earth 38.899 -77.043 0
+
+url https://api.worldbank.org/v2/country/WLD/indicator/SP.DYN.CDRT.IN?format=json&date=2023&per_page=1&mrv=1
+ttl 2592000
+on earth 38.899 -77.043 0
+
+url https://api.worldbank.org/v2/country/AFG/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 33.83 67.71 0
+
+url https://api.worldbank.org/v2/country/ALB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 41.33 19.82 0
+
+url https://api.worldbank.org/v2/country/DZA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 36.75 3.06 0
+
+url https://api.worldbank.org/v2/country/ASM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -14.28 -170.70 0
+
+url https://api.worldbank.org/v2/country/AND/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 42.51 1.52 0
+
+url https://api.worldbank.org/v2/country/AGO/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -8.84 13.23 0
+
+url https://api.worldbank.org/v2/country/ATG/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 17.12 -61.85 0
+
+url https://api.worldbank.org/v2/country/ARG/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -34.60 -58.38 0
+
+url https://api.worldbank.org/v2/country/ARM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 40.18 44.51 0
+
+url https://api.worldbank.org/v2/country/ABW/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 12.52 -70.03 0
+
+url https://api.worldbank.org/v2/country/AUS/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -35.28 149.13 0
+
+url https://api.worldbank.org/v2/country/AUT/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 48.21 16.37 0
+
+url https://api.worldbank.org/v2/country/AZE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 40.40 49.87 0
+
+url https://api.worldbank.org/v2/country/BHS/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 25.06 -77.35 0
+
+url https://api.worldbank.org/v2/country/BHR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 26.23 50.59 0
+
+url https://api.worldbank.org/v2/country/BGD/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 23.81 90.41 0
+
+url https://api.worldbank.org/v2/country/BRB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 13.10 -59.62 0
+
+url https://api.worldbank.org/v2/country/BLR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 53.90 27.57 0
+
+url https://api.worldbank.org/v2/country/BEL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 50.85 4.35 0
+
+url https://api.worldbank.org/v2/country/BLZ/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 17.25 -88.77 0
+
+url https://api.worldbank.org/v2/country/BEN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 6.50 2.60 0
+
+url https://api.worldbank.org/v2/country/BMU/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 32.29 -64.78 0
+
+url https://api.worldbank.org/v2/country/BTN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 27.47 89.64 0
+
+url https://api.worldbank.org/v2/country/BOL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -16.50 -68.15 0
+
+url https://api.worldbank.org/v2/country/BIH/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 43.85 18.41 0
+
+url https://api.worldbank.org/v2/country/BWA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -24.63 25.90 0
+
+url https://api.worldbank.org/v2/country/BRA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -15.80 -47.88 0
+
+url https://api.worldbank.org/v2/country/VGB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 18.42 -64.62 0
+
+url https://api.worldbank.org/v2/country/BRN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 4.94 114.94 0
+
+url https://api.worldbank.org/v2/country/BGR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 42.70 23.32 0
+
+url https://api.worldbank.org/v2/country/BFA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 12.37 -1.52 0
+
+url https://api.worldbank.org/v2/country/BDI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -3.36 29.92 0
+
+url https://api.worldbank.org/v2/country/CPV/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 14.93 -23.51 0
+
+url https://api.worldbank.org/v2/country/KHM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 11.56 104.93 0
+
+url https://api.worldbank.org/v2/country/CMR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 3.87 11.52 0
+
+url https://api.worldbank.org/v2/country/CAN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 45.42 -75.70 0
+
+url https://api.worldbank.org/v2/country/CYM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 19.29 -81.37 0

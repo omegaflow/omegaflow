@@ -1,0 +1,199 @@
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&FORMAT=text&QUERY=SELECT+TOP+50000+name,ra,dec,ep_flux,ep_flux_error+FROM+xmmssc+WHERE+ep_flux+IS+NOT+NULL+AND+ep_flux%3E0+ORDER+BY+ep_flux+DESC
+ttl 86400
+at sun 1.0
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+iauname,sc_ra,sc_dec,sc_flux8,sc_hr4,sc_var_flag,sc_sum_flag+FROM+xmmssc+WHERE+sc_flux8+IS+NOT+NULL+AND+sc_sum_flag%3C3+ORDER+BY+sc_flux8+DESC
+ttl 86400
+at sun 1.0
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,dist,class,period,spinper,lx,donor_type+FROM+xrbcat+WHERE+ra+IS+NOT+NULL+ORDER+BY+lx+DESC
+ttl 86400
+at sun 1.0
+
+url https://network.igs.org/api/public/stations?format=json
+ttl 86400
+at sun 1.0
+
+url https://www.tng-project.org/api/TNG100-1/snapshots/99/halos/?format=json&limit=500&order_by=-mass_log_msun
+ttl 86400
+on earth 0.0 0.0
+
+url https://irsa.ipac.caltech.edu/cgi-bin/Gator/nph-query?catalog=fp_psc&spatial=box&ra=0.0&dec=0.0&size=14400&outfmt=1&selcols=designation,ra,dec,j_m,h_m,k_m,ph_qual,gal_contam
+ttl 86400
+at sun 1.0
+
+url https://irsa.ipac.caltech.edu/cgi-bin/Gator/nph-query?catalog=allwise_p3as_psd&spatial=box&ra=0.0&dec=0.0&size=14400&outfmt=1&selcols=designation,ra,dec,w1mpro,w2mpro,w3mpro,w4mpro,ph_qual
+ttl 86400
+at sun 1.0
+
+url https://irsa.ipac.caltech.edu/cgi-bin/DUST/nph-dust?locstr={lat}+{lon}+gal&regSize=5&output_type=json
+ttl 86400
+on earth 47.3769 8.5417
+
+url https://irsa.ipac.caltech.edu/cgi-bin/Gator/nph-query?catalog=ztf_objects_dr20&spatial=none&outfmt=1&selcols=oid,ra,dec,gmag,rmag,imag,classtar,sharp
+ttl 86400
+at sun 1.0
+
+url https://cddis.nasa.gov/archive/vlbi/ivsdata/db/sched/ns-codes.txt
+ttl 86400
+on earth 0.0 0.0
+
+url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=1LD&date-min={today}&date-max=%2B365&body=Earth&fullname=true&diameter=true&sort=date
+ttl 86400
+at sun 1.0
+
+url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=1LD&date-min={today}&date-max=%2B365&body=Earth&fullname=true&diameter=true&limit=100
+ttl 86400
+at sun 1.0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='99942'&OBJ_DATA='YES'&MAKE_EPHEM='YES'&EPHEM_TYPE='ELEMENTS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+d'&REF_PLANE='ECLIPTIC'
+ttl 86400
+on earth 0.0 0.0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='DES%3DC%2F2023+A3'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='500@0'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4'
+ttl 86400
+on earth 0.0 0.0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='599'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4,20'
+ttl 86400
+on earth 0.0 0.0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='499'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4,20'
+ttl 86400
+on earth 0.0 0.0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='699'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4,20'
+ttl 86400
+on earth 0.0 0.0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-31'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='500@0'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4'
+ttl 86400
+on earth 0.0 0.0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-32'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='500@0'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4'
+ttl 86400
+on earth 0.0 0.0
+
+url https://ssd-api.jpl.nasa.gov/sbdb.api?sstr={target}
+ttl 86400
+at sun 1.0
+
+url https://ssd-api.jpl.nasa.gov/sbdb.api?sstr=ceres&phys-par=1
+ttl 86400
+on earth 0.0 0.0
+
+url https://ssd-api.jpl.nasa.gov/sbdb.api?sstr=eris&phys-par=1
+ttl 86400
+on earth 0.0 0.0
+
+url https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name,epoch,H,diameter,albedo,class,neo&sb-kind=a&sb-cdata=%7B%22AND%22%3A%5B%22neo%3Aeq%3AY%22%5D%7D
+ttl 86400
+at sun 1.0
+
+url https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name,epoch,H,diameter,albedo,class,neo&sb-kind=a&sb-cdata=%7B%22AND%22%3A%5B%22neo%3Aeq%3AY%22%5D%7D
+ttl 86400
+at sun 1.0
+
+url https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de440.bsp
+ttl 86400
+at sun 1.0
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+50000+%22_RA%22,%22_DE%22,zQSO,%22S%2FN%22+FROM+%22J/ApJ/852/22/sample%22
+ttl 86400
+at sun 1.0
+
+url https://landsatlook.usgs.gov/stac-server/search
+ttl 86400
+at sun 1.0
+
+url https://lasp.colorado.edu/lisird/latis/dap/tsis1_hsrs.csv
+ttl 86400
+at sun 1.0
+
+url https://g6goyz4w56.execute-api.us-west-2.amazonaws.com/prod/collections/lunar_orbiter_laser_altimeter/items?limit=1
+ttl 86400
+on earth 0 0
+
+url https://oderest.rsl.wustl.edu/live2/?query=PRODUCT&target=Mars&IHID=MGS&IID=MOLA&PT=MEGDR&output=XML
+ttl 86400
+on earth 0 0
+
+url https://oderest.rsl.wustl.edu/live2/?query=PRODUCT&target=Mars&IHID=MGS&IID=MOLA&PT=PEDR&output=XML
+ttl 86400
+on earth 0 0
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+50000+RAJ2000,DEJ2000,D,Mass,HRV+FROM+%22J/AJ/144/4/catalog%22
+ttl 86400
+at sun 1.0
+
+url https://mars.nasa.gov/rss/api/?feed=weather&category=msl&feedtype=json
+ttl 86400
+at mars 1
+
+url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?LANG=ADQL&REQUEST=doQuery&FORMAT=csv&QUERY=SELECT+TOP+3000+obs_id%2Ctarget_name%2Cs_ra%2Cs_dec%2Ct_exptime%2Cinstrument_name%2Cem_min%2Cem_max+FROM+ivoa.obscore+WHERE+obs_collection%3D%27HST%27+AND+calib_level%3D3+ORDER+BY+t_exptime+DESC
+ttl 86400
+at sun 1.0
+
+url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?LANG=ADQL&REQUEST=doQuery&FORMAT=csv&QUERY=SELECT+TOP+3000+obs_id%2Ctarget_name%2Cs_ra%2Cs_dec%2Ct_exptime%2Cinstrument_name%2Cem_min%2Cem_max+FROM+ivoa.obscore+WHERE+obs_collection%3D%27Kepler%27+OR+obs_collection%3D%27K2%27+ORDER+BY+t_exptime+DESC
+ttl 86400
+at sun 1.0
+
+url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?LANG=ADQL&REQUEST=doQuery&FORMAT=csv&QUERY=SELECT+TOP+3000+obs_id%2Ctarget_name%2Cs_ra%2Cs_dec%2Ct_exptime%2Cinstrument_name%2Cem_min%2Cem_max+FROM+ivoa.obscore+WHERE+obs_collection%3D%27TESS%27+AND+calib_level%3D3+ORDER+BY+t_exptime+DESC
+ttl 86400
+at sun 1.0
+
+url https://tess.mit.edu/wp-content/uploads/all_targets_S001_v1.csv
+ttl 86400
+at sun 1.0
+
+url https://www.physics.mcgill.ca/~pulsar/magnetar/TabO1.csv
+ttl 86400
+at sun 1.0
+
+url https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-06-11/meteorites.csv
+ttl 86400
+at sun 1.0
+
+url https://aa.usno.navy.mil/api/rstt/oneday?date={today}&coords=34.201,-118.171&tz=0
+ttl 86400
+on earth 34.201 -118.171
+
+url https://www.minorplanetcenter.net/iau/MPCORB/Distant.txt
+ttl 86400
+at sun 1.0
+
+url https://cmr.earthdata.nasa.gov/search/granules.json?short_name=GEDI02_A&page_size=2000&sort_key=-start_date
+ttl 86400
+at sun 1.0
+
+url https://cmr.earthdata.nasa.gov/search/granules.json?short_name=ATL06&page_size=2000&sort_key=-start_date
+ttl 86400
+at sun 1.0
+
+url https://cmr.earthdata.nasa.gov/search/granules.json?short_name=ATL03&page_size=2000&sort_key=-start_date
+ttl 86400
+at sun 1.0
+
+url https://cmr.earthdata.nasa.gov/search/granules.json?short_name=SWOT_L2_LR_SSH_D&page_size=2000&sort_key=-start_date
+ttl 86400
+at sun 1.0
+
+url https://cmr.earthdata.nasa.gov/search/granules.json?short_name=VNP14IMG_NRT&page_size=2000&sort_key=-start_date
+ttl 86400
+at sun 1.0
+
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+top+2000+ra,dec,pl_name,pl_rade,pl_bmasse,pl_orbsmax,pl_eqt,st_teff,st_spectype,sy_distan+from+pscomppars+where+ra+is+not+null+and+pl_eqt+is+not+null+order+by+sy_distan+asc&format=json
+ttl 86400
+at sun 1.0
+
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=json&QUERY=SELECT+pl_name,ra,dec,sy_dist,pl_orbper,pl_rade,pl_bmasse,pl_eqt,disc_year+FROM+ps+WHERE+default_flag=1+AND+ra+IS+NOT+NULL+ORDER+BY+sy_dist+ASC
+ttl 86400
+at sun 1.0
+
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=json&QUERY=SELECT+toi,ra,dec,sy_dist,pl_orbper,pl_rade,tfopwg_disp+FROM+toi+WHERE+ra+IS+NOT+NULL+AND+tfopwg_disp+IN+(%27PC%27,%27KP%27,%27CP%27)+ORDER+BY+sy_dist+ASC
+ttl 86400
+at sun 1.0
+
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+50000+toi,ra,dec,sy_dist,pl_orbper,pl_rade,pl_masse,pl_trandur,st_teff+FROM+TOI+WHERE+ra+IS+NOT+NULL
+ttl 86400
+at sun 1.0

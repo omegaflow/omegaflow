@@ -1,0 +1,199 @@
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8777812.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9014070.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9052030.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9052076.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9063038.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9063053.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9063079.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9075014.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9075065.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9075080.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9087023.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9087031.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9087044.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9087057.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9087068.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9099018.json
+ttl 300
+at earth
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9099044&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9099064.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9099090.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9410170.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9410660.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9411340.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9412110.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9413450.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9414290.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9416131.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9416841.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9418767.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9419750.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9431647.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9435380.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9437540.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9440910.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9442396.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9444900.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9450460.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9451054.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9452210.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9452400.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9452634.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9453220.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9454050.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9455090.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9455500.json
+ttl 300
+at earth
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9455760&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9455920.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9457292.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9457804.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9459450.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9459881.json
+ttl 300
+at earth

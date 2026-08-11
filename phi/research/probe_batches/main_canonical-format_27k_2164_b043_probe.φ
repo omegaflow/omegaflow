@@ -1,0 +1,199 @@
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_lotss_dr3.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_nvss.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_orion_region.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_prigozhin_pulsars.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_qso_variable.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_sdss_qso.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_snrs.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_tycho2.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_ucac5.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_variable_stars.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_vsx_variables.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_xmm4d13s.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_young_stars.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/wise_allsky.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/heasarc_xmm_slew.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/xmm_sources.json
+ttl 604800
+at sun 1.0
+
+url https://macrostrat.org/api/v2/units?format=json
+ttl 2592000
+on earth 43.073 -89.401
+
+url https://macrostrat.org/api/v2/defs/timescales?timescale_id=11&format=json
+ttl 2592000
+on earth 43.073 -89.401
+
+url https://api.opentopodata.org/v1/eudem25m?locations={grid}
+ttl 2592000
+body earth
+
+url https://api.opentopodata.org/v1/gebco2020?locations={grid}
+ttl 2592000
+body earth
+
+url https://ned.ipac.caltech.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,dec,preferredname,redshift,vel+FROM+ned.source+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
+ttl 2592000
+body earth
+
+url https://www.ncei.noaa.gov/erddap/griddap/ncdc_oisst_v2_avhrr_by_time_zlev_lat_lon.csv?sst%5B(last)%5D%5B(0)%5D%5B(-80.0):10:(80.0)%5D%5B(0.125):10:(359.875)%5D
+ttl 21600
+body earth
+
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+g.ra,g.dec,g.parallax,g.phot_g_mean_mag+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.tmass_psc_xsc_best_neighbour+AS+x+ON+g.source_id=x.source_id+WHERE+g.parallax+>+0+AND+g.phot_g_mean_mag+<+14
+ttl 86400
+at sun 1.0
+
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+g.ra,g.dec,g.parallax,e.bmag,e.vmag+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.apassdr9_best_neighbour+AS+x+ON+g.source_id=x.source_id+JOIN+external.apassdr9+AS+e+ON+x.clean_apassdr9_oid=e.recno+WHERE+g.parallax+>+0+AND+e.bmag+<+13
+ttl 86400
+at sun 1.0
+
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+g.ra,g.dec,g.parallax,g.phot_g_mean_mag+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.panstarrs1_best_neighbour+AS+x+ON+g.source_id=x.source_id+WHERE+g.parallax+>+0+AND+g.phot_g_mean_mag+<+17
+ttl 86400
+at sun 1.0
+
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+256+g.ra,g.dec,g.parallax,g.pmra,g.pmdec,g.radial_velocity,v.pf+FROM+gaiadr3.vari_cepheid+AS+v+JOIN+gaiadr3.gaia_source+AS+g+ON+v.source_id=g.source_id+WHERE+g.parallax+>+0+ORDER+BY+v.pf+DESC
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/live-data/ebird_recent.json
+ttl 3600
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/live-data/openaq_pm25.json
+ttl 3600
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/live-data/openaq_pm10.json
+ttl 3600
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/live-data/firms_modis_nrt_world.csv
+ttl 3600
+at sun 1.0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=water_temperature&begin_date={year}{month}{day}&end_date={year}{month}{day}&station=8447435&datum=MLLW&units=metric&time_zone=gmt&format=json
+ttl 86400
+at sun 1
+
+url https://cddis.nasa.gov/archive/gnss/products/{year}{day}/igs{year}{day}.sp3.Z
+ttl 3600
+at sun 1
+
+url https://ds.iris.edu/spud/momenttensor?evlo=&evla=&evdp=&startTime={today}T00:00:00&endTime={tomorrow}T00:00:00&catalog=GCMT&format=text&nodata=404
+ttl 86400
+on earth 0 0
+
+url https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M,PRECTOTCORR,ALLSKY_SFC_SW_DWN,ALLSKY_SFC_LW_DWN,RH2M,WS10M&community=AG&longitude={lon}&latitude={lat}&start={year}{month}01&end={year}{month}{day}&format=JSON
+ttl 86400
+on earth 0 0
+
+url https://services3.arcgis.com/GVgbJbqm8hXASVYi/arcgis/rest/services/PAGER_CAT/FeatureServer/0/query?where=1%3D1&geometry={lon_min}%2C{lat_min}%2C{lon_max}%2C{lat_max}&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=*&f=json&resultRecordCount=500
+ttl 86400
+on earth 0 0
+
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-month&dataTypes=TMAX,TMIN,PRCP,TAVG,SNOW,SNWD&stations=GM000003026,GM000003946,UKM00003772,USW00094728&startDate={year}-01-01&endDate={year}-{month}-{day}&format=json
+ttl 300
+on earth 0 0
+
+url https://api.blitzortung.org/v1/strikes/latest?lat={lat}&lon={lon}&radius=100
+ttl 60
+at sun 1.0
+
+url https://app.birdweather.com/api/v1/stations/{id}/detections?limit=100&from={today}T00:00:00Z
+ttl 300
+on earth 0 0
+
+url https://services7.arcgis.com/yHbO69mL1QTGCPQG/arcgis/rest/services/PSF_harmful_phyto/FeatureServer/0/query?where=1%3D1&outFields=*&f=geojson&resultRecordCount=500
+ttl 86400
+on earth 0 0
+
+url https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats-index.json?latitude,longitude,date,ocean&date%3E%3D{yesterday}T00%3A00%3A00Z
+ttl 3600
+at sun 1.0
+
+url https://mangrove-atlas.sei.org/api/widgets/mangrove-cover/?location_id=country&startYear=2020&endYear=2020
+ttl 86400
+on earth 0 0
+
+url https://mangrove-atlas.sei.org/api/widgets/mangrove-cover/?location_id=worldwide&startYear=2020&endYear=2020
+ttl 86400
+on earth 0 0
+
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+source_id%2Cra%2Cdec%2Cparallax%2Cphot_g_mean_mag+FROM+gaiadr3.binary_masses+WHERE+parallax+%3E+0
+ttl 86400
+at sun 1.0
+
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+source_id%2Cra%2Cdec%2Cparallax%2Cphot_g_mean_mag%2Cbp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+%3C+0.3+AND+phot_g_mean_mag+%3C+18+AND+parallax+%3E+0
+ttl 86400
+at sun 1.0
+
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+source_id%2Cra%2Cdec%2Cparallax%2Cphot_g_mean_mag%2Cbp_rp+FROM+gaiadr3.gaia_source+WHERE+phot_g_mean_mag+%3C+6+AND+parallax+%3E+0+AND+bp_rp+%3E+1.0
+ttl 86400
+at sun 1.0
+
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+source_id%2Cra%2Cdec%2Cparallax%2Cphot_g_mean_mag+FROM+gaiadr3.gaia_source+WHERE+CONTAINS%28POINT%28%27ICRS%27%2Cra%2Cdec%29%2CCIRCLE%28%27ICRS%27%2C266.4%2C-29.0%2C5.0%29%29%3D1+AND+parallax+%3E+0
+ttl 86400
+at sun 1.0
+
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+source_id%2Cra%2Cdec%2Cparallax%2Cphot_g_mean_mag%2Cbp_rp%2Cteff_gspphot+FROM+gaiadr3.gaia_source+WHERE+teff_gspphot+%3C+4000+AND+phot_g_mean_mag+%3C+18+AND+parallax+%3E+0
+ttl 86400
+at sun 1.0
+
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+source_id%2Cra%2Cdec%2Cparallax%2Cphot_g_mean_mag+FROM+gaiadr3.gaia_source+WHERE+phot_g_mean_mag+%3E+20+AND+parallax+%3E+0
+ttl 86400
+at sun 1.0
+
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+source_id%2Cra%2Cdec%2Cparallax%2Cphot_g_mean_mag%2Cbp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+%3C+0.0+AND+phot_g_mean_mag+%3C+18+AND+parallax+%3E+0
+ttl 86400
+at sun 1.0
+
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+source_id%2Cra%2Cdec%2Cparallax%2Cphot_g_mean_mag%2Cbp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+%3E+3.0+AND+phot_g_mean_mag+%3C+18+AND+parallax+%3E+0
+ttl 86400
+at sun 1.0

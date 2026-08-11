@@ -1,0 +1,199 @@
+url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+obs_id%2Ctarget_name%2Cs_ra%2Cs_dec%2Ct_exptime%2Cinstrument_name%2Cem_min%2Cem_max+FROM+ivoa.obscore+WHERE+obs_collection%3D%27JWST%27+AND+calib_level%3D3+AND+obs_id+LIKE+%27jw01727%25%27+ORDER+BY+t_exptime+DESC
+ttl 3600
+at sun 1.0
+
+url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+obs_id%2Ctarget_name%2Cs_ra%2Cs_dec%2Ct_exptime%2Cinstrument_name%2Cem_min%2Cem_max+FROM+ivoa.obscore+WHERE+obs_collection%3D%27JWST%27+AND+calib_level%3D3+AND+instrument_name+LIKE+%27NIRSPEC%25%27+AND+%28proposal_id%3D%271180%27+OR+proposal_id%3D%271286%27%29+ORDER+BY+t_exptime+DESC
+ttl 3600
+at sun 1.0
+
+url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?LANG=ADQL&REQUEST=doQuery&FORMAT=csv&QUERY=SELECT+TOP+2000+obs_id%2Ctarget_name%2Cs_ra%2Cs_dec%2Ct_exptime%2Cinstrument_name%2Cem_min%2Cem_max+FROM+ivoa.obscore+WHERE+obs_collection%3D%27JWST%27+AND+instrument_name+LIKE+%27MIRI%25%27+AND+calib_level%3D3+ORDER+BY+t_exptime+DESC
+ttl 3600
+at sun 1.0
+
+url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?LANG=ADQL&REQUEST=doQuery&FORMAT=csv&QUERY=SELECT+TOP+2000+obs_id%2Ctarget_name%2Cs_ra%2Cs_dec%2Ct_exptime%2Cinstrument_name%2Cem_min%2Cem_max+FROM+ivoa.obscore+WHERE+obs_collection%3D%27JWST%27+AND+instrument_name+LIKE+%27NIRCAM%25%27+AND+calib_level%3D3+ORDER+BY+t_exptime+DESC
+ttl 3600
+at sun 1.0
+
+url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?LANG=ADQL&REQUEST=doQuery&FORMAT=csv&QUERY=SELECT+TOP+2000+obs_id%2Ctarget_name%2Cs_ra%2Cs_dec%2Ct_exptime%2Cinstrument_name%2Cem_min%2Cem_max+FROM+ivoa.obscore+WHERE+obs_collection%3D%27JWST%27+AND+instrument_name+LIKE+%27NIRSPEC%25%27+AND+calib_level%3D3+ORDER+BY+t_exptime+DESC
+ttl 3600
+at sun 1.0
+
+url https://www.minorplanetcenter.net/cgi-bin/checkmp.cgi?ty=c&head=N&TextArea=&radius=180&ra=&decl=&oc=500&e=J2000&resoc=&s=t&m=h&adir=N&oed=&e=J2000&dFormat=YYYY+MM+DD&css=modern&mot=check&dmot=p&si=t&uto=0&int=2&fmt=csv
+ttl 3600
+on earth 0.0 0.0
+
+url https://power.larc.nasa.gov/api/temporal/monthly/point?parameters=ALLSKY_SFC_SW_DWN&community=RE&longitude={lon}&latitude={lat}&start=2025&end=2025&format=JSON
+ttl 3600
+at sun 1.0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-98%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 3600
+at sun 1.0
+
+url https://simbad.cds.unistra.fr/simbad/sim-tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,dec,main_id,otype_txt+FROM+basic+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1&FORMAT=json
+ttl 3600
+body earth
+
+url https://gong2.nso.edu/oQR/zqs/?ref=zqs&series=zqs&date={year}.{month}.{day}&format=json
+ttl 3600
+at sun 1.0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%273I%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 3600
+at sun 1.0
+
+url https://tle.ivanstanojevic.me/api/tle/?page-size=100
+ttl 3600
+at sun 1.0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Vesta%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 3600
+at sun 1.0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-96%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 3600
+at sun 1.0
+
+url https://earth-search.aws.element84.com/v1/search
+ttl 3600
+at sun 1.0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-144%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 3600
+at sun 1.0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-31%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 3600
+at sun 1.0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-32%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 3600
+at sun 1.0
+
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD15=1&AVG=10&if_no_html=1
+ttl 3600
+at sun 1.0
+
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD15=1&AVG=10&if_no_html=1&lat1=-35.0&lon1=-20.0&lat2=38.0&lon2=55.0
+ttl 3600
+at sun 1.0
+
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&AOD15=1&AVG=10&if_no_html=1&lat1=-35.0&lon1=-20.0&lat2=38.0&lon2=55.0
+ttl 3600
+at sun 1
+
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD15=1&AVG=10&if_no_html=1&lat1=-55.0&lon1=-130.0&lat2=60.0&lon2=-30.0
+ttl 3600
+at sun 1.0
+
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&AOD15=1&AVG=10&if_no_html=1
+ttl 3600
+at sun 1
+
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&INV15=1&AVG=10&if_no_html=1&lat1=-90&lon1=-180&lat2=90&lon2=180
+ttl 3600
+at sun 1.0
+
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&INV15=1&AVG=10&if_no_html=1
+ttl 3600
+at sun 1
+
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&SDA15=1&AVG=10&if_no_html=1
+ttl 3600
+at sun 1
+
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&TOT15=1&AVG=10&if_no_html=1
+ttl 3600
+at sun 1
+
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_weekly_mlo.txt
+ttl 3600
+on earth 19.5362 -155.5763 3397
+
+url https://gml.noaa.gov/webdata/ccgg/trends/ch4/ch4_mm_gl.txt
+ttl 3600
+at sun 1
+
+url https://gml.noaa.gov/webdata/ccgg/trends/n2o/n2o_mm_gl.txt
+ttl 3600
+at sun 1
+
+url https://www.hamqsl.com/solarxml.php
+ttl 3600
+on earth 35.0 -106.0
+
+url https://aviationweather.gov/api/data/metar?bbox=-90,-180,-60,180&format=json&hours=3
+ttl 3600
+on earth 0 0
+
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-hourly&stations=USW00013739,USW00094728,USW00012918&startDate=2026-07-01&endDate=2026-07-27&format=json&dataTypes=TEMP,DEWP,WDSP,WND,SLP
+ttl 3600
+on earth 0.0 0.0
+
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-hourly&stations=USW00013739&startDate=2026-01-01&endDate=2026-07-27&format=json&dataTypes=TEMP,DEWP,WDSP,WND,SLP
+ttl 3600
+on earth 0.0 0.0
+
+url https://api.openaq.org/v3/locations?limit=500&has_geo=true&parameter_id=1&is_monitor=true
+ttl 3600
+at sun 1.0
+
+url https://api.openaq.org/v3/locations?limit=500&has_geo=true&parameter_id=2&is_monitor=true
+ttl 3600
+at sun 1.0
+
+url https://api.sunrise-sunset.org/json?lat={lat}&lng={lon}&formatted=0
+ttl 3600
+at sun 1
+
+url https://superdarn.ca/plotting/convection-maps/latest
+ttl 3600
+at sun 1.0
+
+url https://api.superdarn.ca/v1/convection/map/latest
+ttl 3600
+on earth 65.0 -147.0
+
+url https://superdarn.ca/status
+ttl 3600
+at sun 1
+
+url https://api.superdarn.ca/v1/radars/status
+ttl 86400
+body earth
+
+url https://aviationweather.gov/api/data/taf?bbox=35,-10,70,40&format=json&time=valid
+ttl 3600
+on earth 0 0
+
+url https://www.temis.nl/uvradiation/nrt/uvindex.php?date={year}{month}{day}&type=overpass&format=text
+ttl 3600
+at sun 1.0
+
+url https://api.coral.tsr.lol/stations/southeast_florida/current
+ttl 3600
+on earth 26.100 -80.100
+
+url https://services.swpc.noaa.gov/json/ace/mag/ace_mag_1h.json
+ttl 3600
+at sun 0.99
+
+url https://services.swpc.noaa.gov/json/ace/swepam/ace_swepam_1h.json
+ttl 3600
+at sun 1.0
+
+url https://ssd-api.jpl.nasa.gov/sbdb.api?sstr=3I&discovery=true
+ttl 3600
+at sun 1.0
+
+url https://geofon.gfz.de/fdsnws/event/1/query?format=geojson&minmag=3&limit=100&region=AFRICA
+ttl 3600
+on earth 0 0
+
+url https://services3.arcgis.com/GVgbJbqm8hXASVYi/arcgis/rest/services/PAGER_CAT/FeatureServer/0/query?where=1%3D1&outFields=mag,place,time,alert,fatalities&f=json&resultRecordCount=500
+ttl 3600
+at sun 1.0
+
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Coral_Reef_Stations/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+ttl 3600
+at sun 1.0

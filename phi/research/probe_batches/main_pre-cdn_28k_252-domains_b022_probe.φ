@@ -1,0 +1,199 @@
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/jpl_cad_neo_30d.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/jpl_fireball_impact_events.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/jpl_fireball_impacts.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_voyager1.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_voyager2.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_juno.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_jupiter.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_jwst.json
+ttl 3600
+at earth
+
+url https://lasp.colorado.edu/lisird/latis/dap/fism_flare_hr.csv?time>={today}
+ttl 3600
+at earth
+
+url https://lasp.colorado.edu/lisird/latis/dap/noaa_radio_flux.csv?time>={today}
+ttl 3600
+at earth
+
+url https://lasp.colorado.edu/lisird/latis/dap/tsis_tsi_24hr.csv?time>=2024-01-01
+ttl 3600
+at earth
+
+url https://lasp.colorado.edu/lisird/latis/dap/sdo_eve_ssi_1nm_l3.csv?time>=2026-01-01&time<={today}
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/magnetosphere_aurora_forecast.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/magnetosphere_aurora_nowcast_north.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/magnetosphere_solar_regions.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_makemake.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_mars.json
+ttl 3600
+at earth
+
+url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+s_ra,s_dec,obs_id,obs_collection,instrument_name,filters,target_name,calib_level+FROM+ivoa.obscore+WHERE+CONTAINS(POINT('ICRS',s_ra,s_dec),CIRCLE('ICRS',{ra},{dec},0.1))=1
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mast_jwst_cosmosweb_nircam_metadata.json
+ttl 3600
+at earth
+
+url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+obs_id%2Ctarget_name%2Cs_ra%2Cs_dec%2Ct_exptime%2Cinstrument_name%2Cem_min%2Cem_max+FROM+ivoa.obscore+WHERE+obs_collection%3D%27JWST%27+AND+calib_level%3D3+AND+instrument_name+LIKE+%27NIRSPEC%25%27+AND+%28proposal_id%3D%271180%27+OR+proposal_id%3D%271286%27%29+ORDER+BY+t_exptime+DESC
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mast_jwst_miri_public.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mast_jwst_nircam_public.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mast_jwst_nirspec_public.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_mercury.json
+ttl 3600
+at earth
+
+url https://aviationweather.gov/api/data/metar?bbox=-90,-180,-60,180&format=json&hours=3
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_luna.json
+ttl 3600
+at earth
+
+url https://www.minorplanetcenter.net/cgi-bin/checkmp.cgi?ty=c&head=N&TextArea=&radius=180&ra=&decl=&oc=500&e=J2000&resoc=&s=t&m=h&adir=N&oed=&e=J2000&dFormat=YYYY+MM+DD&css=modern&mot=check&dmot=p&si=t&uto=0&int=2&fmt=csv
+ttl 3600
+at earth
+
+url https://power.larc.nasa.gov/api/temporal/monthly/point?parameters=ALLSKY_SFC_SW_DWN&community=RE&longitude={lon}&latitude={lat}&start=2025&end=2025&format=JSON
+ttl 3600
+at earth
+
+url https://records-ws.nbnatlas.org/occurrences/search?q=group:Chiroptera&fq=dataProviderName:%22Bat+Conservation+Trust%22&fl=decimalLatitude,decimalLongitude,vernacularName,scientificName,year,month&pageSize=300&sort=year&order=desc
+ttl 3600
+at earth
+
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-hourly&stations=USW00013739,USW00094728,USW00012918&startDate=2026-07-01&endDate=2026-07-27&format=json
+ttl 3600
+on earth 40.74 -73.98 0
+
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-hourly&stations=USW00013739&startDate=2026-01-01&endDate=2026-07-27&format=json
+ttl 3600
+on earth 40.74 -73.98 0
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/ndbc_active_stations.txt
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/ndbc_dart_21413_nwpacific.txt
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/ndbc_dart_23401_indian_ocean.txt
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/ndbc_dart_32401_spac.txt
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/ndbc_dart_41420_caribbean.txt
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_neo_jpl_fireball_events.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_neptune.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_new_horizons.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_coops_tidal_predictions_usa.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_coops_water_temp_network.json
+ttl 3600
+at earth
+
+url https://api.coral.tsr.lol/stations/gbr_central/current
+ttl 3600
+at earth
+
+url https://api.coral.tsr.lol/stations/gbr_northern/current
+ttl 3600
+at earth
+
+url https://api.coral.tsr.lol/stations/gbr_southern/current
+ttl 3600
+at earth
+
+url https://api.coral.tsr.lol/stations
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_estimated_kp.json
+ttl 3600
+at earth
+
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=daily-summaries&dataTypes=TMAX,TMIN,PRCP,SNOW,AWND&stations=GM000003026,GM000010501,UK000003668&startDate={today}&endDate={today}&format=json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_gml_co2_weekly_mlo.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_kp_index_historic.json
+ttl 3600
+at earth
+
+url https://data.pmel.noaa.gov/pmel/erddap/tabledap/pmel_co2_moorings_c2e7_ecb9_4565.csv?latitude,longitude,time,pCO2_sw,pCO2_air,xCO2_air,pH_sw,DOXY,CHL,NTU,SST,SSS
+ttl 3600
+at earth

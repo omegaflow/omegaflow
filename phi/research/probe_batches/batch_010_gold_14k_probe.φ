@@ -1,0 +1,199 @@
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["natural"="peak"](around:200000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["tourism"="museum"](around:100000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://eonet.gsfc.nasa.gov/api/v3/events
+ttl 3600
+at earth
+
+url https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/Active_Fires/FeatureServer/0/query?where=1%3D1&outFields=*&geometry={lon_min},{lat_min},{lon_max},{lat_max}&geometryType=esriGeometryEnvelope&f=json
+ttl 3600
+on earth 43.6187 -116.2146 0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["man_made"="observatory"](around:500000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["aeroway"="aerodrome"](around:500000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["tourism"="alpine_hut"](around:500000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["historic"="archaeological_site"](around:200000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["tourism"="artwork"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="bakery"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="bar"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["historic"="battlefield"](around:500000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["man_made"="beacon"](around:200000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="bench"](around:5000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="bicycle_rental"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="books"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["craft"="brewery"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];way["way"="bridge"](around:yes,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="butcher"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="cafe"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["tourism"="camp_site"](around:200000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="car_sharing"](around:100000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["natural"="cave_entrance"](around:500000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="cinema"](around:100000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="clinic"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["man_made"="tower"](around:100000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="clothes"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="college"](around:100000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="community_centre"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="compressed_air"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["highway"="construction"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="convenience"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="courthouse"](around:200000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["highway"="crossing"](around:5000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["emergency"="defibrillator"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="dentist"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["leisure"="dog_park"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="electronics"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="embassy"](around:500000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];way["way"="landuse"](around:farmland,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="fast_food"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="ferry_terminal"](around:200000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["leisure"="fitness_centre"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="florist"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];way["way"="landuse"](around:forest,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["historic"="fort"](around:500000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="fountain"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["tourism"="gallery"](around:100000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["leisure"="garden"](around:100000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="grave_yard"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+at earth

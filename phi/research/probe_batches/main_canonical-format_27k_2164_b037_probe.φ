@@ -1,0 +1,199 @@
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_sun.json
+ttl 3600
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_titan.json
+ttl 3600
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_triton.json
+ttl 3600
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_uranus.json
+ttl 3600
+at sun 1.0
+
+url https://volcanoes.usgs.gov/hans-public/api/volcano/weekly
+ttl 3600
+body earth
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_venus.json
+ttl 3600
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/live-data/waqi_china_airquality.json
+ttl 3600
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/live-data/waqi_east_asia_airquality.json
+ttl 3600
+at sun 1.0
+
+url https://hpiers.obspm.fr/iers/bul/bulb_new/bulletinb.dat
+ttl 43200
+body earth
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/arxiv_astro_total.json
+ttl 86400
+on earth 40.712 -74.006
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/arxiv_cs_total.json
+ttl 86400
+on earth 40.712 -74.006
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/arxiv_hep_total.json
+ttl 86400
+on earth 40.712 -74.006
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/arxiv_math_total.json
+ttl 86400
+on earth 40.712 -74.006
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/arxiv_physics_total.json
+ttl 86400
+on earth 40.712 -74.006
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/arxiv_qbio_total.json
+ttl 86400
+on earth 40.712 -74.006
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/arxiv_qfin_total.json
+ttl 86400
+on earth 40.712 -74.006
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/arxiv_stat_total.json
+ttl 86400
+on earth 40.712 -74.006
+
+url https://api.woudc.org/collections/totalozone/items?limit=1
+ttl 86400
+on earth 43.780 -79.470
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/biosphere_arxiv_total_papers.json
+ttl 86400
+on earth 42.3601 -71.0589
+
+url https://api.openalex.org/works?per-page=1
+ttl 86400
+on earth 47.6062 -122.3321
+
+url https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name&sb-ns=n&limit=1
+ttl 86400
+at sun 1.0
+
+url https://ssd-api.jpl.nasa.gov/sbdb_query.api?sb-kind=a&fields=a,e,i,om,w,ma,epoch,H&limit=10000
+ttl 86400
+at sun 1.0
+
+url https://re.jrc.ec.europa.eu/api/v5_2/seriescalc?lat={lat}&lon={lon}&raddatabase=PVGIS-ERA5&startyear={year}&endyear={year}&outputformat=json
+ttl 86400
+at sun 1.0
+
+url https://cmr.earthdata.nasa.gov/search/granules.json?short_name=VNP46A2&page_size=200
+ttl 86400
+on earth 40.0 -105.0
+
+url https://esa-sst-cci-browser.ceda.ac.uk/api/v1/sst/global-monthly?format=json&dataset=ESACCI-SST-L4-CDR-SST-ANALYSIS
+ttl 86400
+body earth
+
+url https://vires.services/hapi/data?dataset=SW_OPER_MAGA_LR_1B&parameters=Latitude,Longitude&start={today}T00:00:00Z&stop={tomorrow}T00:00:00Z
+ttl 86400
+body earth
+
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+COUNT(*)+FROM+ps&format=json
+ttl 86400
+on earth 42.365 -71.105
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/exoplanets_full.json
+ttl 86400
+at sun 1.0
+
+url https://usdmdataservices.unl.edu/api/USStatistics/GetDroughtSeverityStatisticsByAreaPercent?aoi=conus&startdate={week_ago}&enddate={today}&statisticsType=1
+ttl 86400
+on earth 40.820 -96.702
+
+url https://volcanoes.usgs.gov/hans-public/api/volcano/getUSVolcanoes
+ttl 86400
+body earth
+
+url https://api.github.com/search/repositories?q=stars:>0&per_page=1
+ttl 86400
+on earth 37.774 -122.419
+
+url https://api.github.com/search/users?q=type:user&per_page=1
+ttl 86400
+on earth 37.774 -122.419
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/mangrove_countries.json
+ttl 86400
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_halley.json
+ttl 86400
+on earth 34.201 -118.171
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+name,ra,dec,flux_density,spectral_index,signif_avg,class1,assoc_name+FROM+fermilpsc+WHERE+class1+IN+('BLL','bll','FSRQ','fsrq','BCU','bcu')+ORDER+BY+flux_density+DESC
+ttl 86400
+at sun 1.0
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,Source_Name,ASSOC1,TeV_Flag,GLON,GLAT,Energy_Flux_Band3,Power_Index+FROM+public.angel_threefhl+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+Energy_Flux_Band3+DESC&FORMAT=text
+ttl 86400
+at sun 1.0
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+obsid,target_name,ra,dec,duration,revolution+FROM+xmmmaster+WHERE+pn_filter+IS+NOT+NULL+ORDER+BY+revolution+DESC
+ttl 86400
+at sun 1.0
+
+url https://ows.emodnet-humanactivities.eu/geoserver/emodnet/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=emodnet:vessel_density&outputFormat=application/json&bbox={lon_min},{lat_min},{lon_max},{lat_max}
+ttl 86400
+on earth 51.231 2.928
+
+url https://meta.icos-cp.eu/sparql?format=json&query=SELECT%20?uri%20?name%20?lat%20?lon%20?alt%20?country%20?ecosys%20WHERE%20%7B?uri%20a%20%3Chttp://meta.icos-cp.eu/ontologies/cpmeta/ES%3E%20%3B%20%3Chttp://www.w3.org/2000/01/rdf-schema%23label%3E%20?name%20%3B%20%3Chttp://meta.icos-cp.eu/ontologies/cpmeta/hasLatitude%3E%20?lat%20%3B%20%3Chttp://meta.icos-cp.eu/ontologies/cpmeta/hasLongitude%3E%20?lon%7D
+ttl 86400
+body earth
+
+url https://datacenter.iers.org/data/9/finals2000A.all
+ttl 86400
+at sun 1.0
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+ra,dec,j_m,h_m,k_m+FROM+fp_psc+WHERE+j_m+IS+NOT+NULL+AND+j_m%3C15
+ttl 86400
+at sun 1.0
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+ra,dec,w1mpro,w2mpro,w3mpro,w4mpro+FROM+allwise_p3as_psd+WHERE+w1mpro+IS+NOT+NULL+AND+w1mpro%3C14
+ttl 86400
+at sun 1.0
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,RA,DE,z,yn_snr,yn_mass,theta500,dist+FROM+planck.com_pccs2_sz_mmf3+WHERE+RA+IS+NOT+NULL+ORDER+BY+yn_snr+DESC
+ttl 86400
+at sun 1.0
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+ra,dec,j_mag,h_mag,k_mag,ir1_mag,ir2_mag+FROM+sage_smc+WHERE+ra+IS+NOT+NULL
+ttl 86400
+at sun 1.0
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+name,ra,dec,dist,morph,f3p6tot,f4p5tot,f5p8tot,f8p0tot+FROM+sings+WHERE+ra+IS+NOT+NULL
+ttl 86400
+at sun 1.0
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+oid,ra,dec,filterid,medianmag,magrms,ngoodobsrel+FROM+ztf_objects_dr20+WHERE+ngoodobsrel%3E50+AND+magrms%3E0.05
+ttl 86400
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/elements_apophis.json
+ttl 86400
+on earth 0.0 0.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_comet_c2023_a3.json
+ttl 86400
+on earth 0.0 0.0
+
+url https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name,epoch,H,diameter,albedo,class,neo&sb-kind=a&sb-group=neo
+ttl 86400
+on earth 0.0 0.0
+
+url https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name,a,e,i,om,w,ma,epoch,H,class,diameter&sb-class=TNO
+ttl 86400
+on earth 0.0 0.0

@@ -1,0 +1,199 @@
+url https://www.amsmeteors.org/members/ams/check_data.php?y={year}&m={month}&type=json
+ttl 3600
+on earth 0 0
+
+url https://api.eia.gov/v2/electricity/rto/region-data/data/?api_key=EIA_API_KEY&frequency=hourly&data[]=value&facets[type][]=D&sort[0][column]=period&sort[0][direction]=desc&length=500
+ttl 3600
+on earth 0 0
+
+url http://v4.boldsystems.org/index.php/API_Public/specimen?taxon=Animalia&geo=&format=json&limit=500
+ttl 86400
+on earth 0 0
+
+url http://v4.boldsystems.org/index.php/API_Public/specimen?taxon=Echinodermata&geo=&format=json&limit=300
+ttl 86400
+on earth 0 0
+
+url http://v4.boldsystems.org/index.php/API_Public/specimen?taxon=Plantae&geo=&format=json&limit=500
+ttl 86400
+on earth 0 0
+
+url https://api.neotomadb.org/v2/data/datasets?limit=500
+ttl 86400
+at sun 1.0
+
+url https://api.neotomadb.org/v2/data/datasets?datasettype=ostracode&limit=500&offset=0
+ttl 86400
+at sun 1.0
+
+url https://api.neotomadb.org/v2/data/datasets?datasettype=plant+macrofossil&limit=500&offset=0
+ttl 86400
+at sun 1.0
+
+url https://api.neotomadb.org/v2/data/sites?limit=500
+ttl 86400
+at sun 1.0
+
+url https://rest.uniprot.org/uniprotkb/statistics
+ttl 86400
+on earth 46.233 6.056
+
+url https://ghoapi.azureedge.net/api/Indicator/SP_DYN_LE00_IN
+ttl 86400
+on earth 46.2276 6.1432
+
+url https://www.marinespecies.org/rest/AphiaRecordsByName/Solea%20solea?like=false&marine_only=true
+ttl 86400
+at sun 1.0
+
+url https://api.marinespecies.org/rest/AphiaRecordsByMatchNames?scientificnames[]=Mola+mola&marine_only=true
+ttl 86400
+on earth 0.0 0.0
+
+url https://www.bodc.ac.uk/data/published_data_library/catalogue/?jsonrequest=1&keywords=oxygen+salinity&limit=200
+ttl 86400
+on earth 0 0
+
+url https://ws.pangaea.de/oai/provider?verb=ListRecords&metadataPrefix=oai_dc&set=GEOTRACES
+ttl 86400
+on earth 0.0 0.0
+
+url https://ws.pangaea.de/oai/provider?verb=ListRecords&metadataPrefix=oai_dc&set=GNIP
+ttl 86400
+on earth 0.0 0.0
+
+url https://ws.pangaea.de/oai/provider?verb=ListRecords&metadataPrefix=oai_dc&set=GNIR
+ttl 86400
+on earth 0 0
+
+url https://registry.npmjs.org/-/v1/search?text=*&size=1
+ttl 86400
+on earth 37.774 -122.419
+
+url https://world.openfoodfacts.org/cgi/search.pl?search_terms=&page_size=1&json=1
+ttl 86400
+on earth 48.8566 2.3522
+
+url https://overpass-api.de/api/interpreter?data=[out:json];node[power=plant](global);out;
+ttl 86400
+at sun 1.0
+
+url https://api.openinframap.org/stats/country
+ttl 86400
+at sun 1.0
+
+url https://raw.githubusercontent.com/omegaflow/sources/main/gaia_wide_parallax4_mag11.json
+ttl 604800
+at sun 1.0
+
+url https://raw.githubusercontent.com/omegaflow/sources/main/global_landslide_catalog.json
+ttl 604800
+on earth 0 0
+
+url https://raw.githubusercontent.com/omegaflow/sources/main/ndbc_station_list.json
+ttl 604800
+on earth 0 0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&orderby=magnitude&limit=100
+ttl 300
+at earth
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_week.geojson
+ttl 600
+at earth
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_day.geojson
+ttl 600
+at earth
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_week.geojson
+ttl 600
+at earth
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_day.geojson
+ttl 600
+at earth
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_week.geojson
+ttl 600
+at earth
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={week_ago}&endtime={today}&minmagnitude=2.5&limit=200
+ttl 600
+at earth
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_month.geojson
+ttl 1800
+at earth
+
+url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=10LD
+ttl 3600
+at earth
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=3&limit=200
+ttl 3600
+at earth
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_month.geojson
+ttl 3600
+at earth
+
+url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=1LD&date-min={today}&date-max={today}
+ttl 3600
+at earth
+
+url https://ssd-api.jpl.nasa.gov/cad.api
+ttl 3600
+at earth
+
+url https://api.obis.org/occurrence?lat={lat}&lon={lon}&radius=50&size=0
+ttl 86400
+at earth
+
+url https://api.obis.org/v3/statistics
+ttl 86400
+at earth
+
+url https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name,epoch,H,diameter,albedo,class,neo&sb-kind=a&sb-cdata=%7B%22AND%22%3A%5B%22neo%3Aeq%3AY%22%5D%7D
+ttl 86400
+at sun 1.0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2015-01-01&endtime=2015-12-31&minmagnitude=5&limit=200
+ttl 86400
+at earth
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2016-01-01&endtime=2016-12-31&minmagnitude=5&limit=200
+ttl 86400
+at earth
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2017-01-01&endtime=2017-12-31&minmagnitude=5&limit=200
+ttl 86400
+at earth
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2018-01-01&endtime=2018-12-31&minmagnitude=5&limit=200
+ttl 86400
+at earth
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2019-01-01&endtime=2019-12-31&minmagnitude=5&limit=200
+ttl 86400
+at earth
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2020-01-01&endtime=2020-12-31&minmagnitude=5&limit=200
+ttl 86400
+at earth
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2021-01-01&endtime=2021-12-31&minmagnitude=5&limit=200
+ttl 86400
+at earth
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2022-01-01&endtime=2022-12-31&minmagnitude=5&limit=200
+ttl 86400
+at earth
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2023-01-01&endtime=2023-12-31&minmagnitude=5&limit=200
+ttl 86400
+at earth
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2024-01-01&endtime=2024-12-31&minmagnitude=5&limit=200
+ttl 86400
+at earth

@@ -1,0 +1,199 @@
+url https://api.geonet.org.nz/volcano/val
+ttl 3600
+on earth 0 0
+
+url https://eonet.gsfc.nasa.gov/api/v3/events
+ttl 3600
+at sun 1
+
+url https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/Active_Fires/FeatureServer/0/query?where=1%3D1&outFields=*&geometry={lon_min},{lat_min},{lon_max},{lat_max}&geometryType=esriGeometryEnvelope&f=json
+ttl 3600
+at sun 1
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?date=today&station=9414290&product=predictions&datum=MLLW&time_zone=GMT&units=metric&format=json
+ttl 3600
+at sun 1.0
+
+url https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json?expand=details&type=watertemp
+ttl 3600
+at sun 1.0
+
+url https://api.coral.tsr.lol/stations/gbr_central/current
+ttl 3600
+on earth -18.0 147.0
+
+url https://api.coral.tsr.lol/stations/gbr_northern/current
+ttl 3600
+on earth -14.0 145.0
+
+url https://api.coral.tsr.lol/stations/gbr_southern/current
+ttl 3600
+on earth -22.0 150.0
+
+url https://api.coral.tsr.lol/stations
+ttl 3600
+on earth 0 0
+
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=daily-summaries&dataTypes=TMAX,TMIN,PRCP,SNOW,AWND&stations=USW00013739,USW00094728&startDate={week_ago}&endDate={today}&format=json
+ttl 3600
+at sun 1.0
+
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_weekly_mlo.csv
+ttl 3600
+on earth 19.5 -155.6
+
+url https://data.pmel.noaa.gov/pmel/erddap/tabledap/pmel_co2_moorings_c2e7_ecb9_4565.csv?latitude,longitude,time,pCO2_sw,pCO2_air,xCO2_air,pH_sw,DOXY,CHL,NTU,SST,SSS
+ttl 3600
+at sun 1.0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20260726&end_date=20260727&station=9414290&product=air_pressure&units=metric&time_zone=gmt&format=json
+ttl 3600
+at sun 1.0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20260726&end_date=20260727&station=9414290&product=currents&units=metric&time_zone=gmt&format=json
+ttl 3600
+at sun 1.0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20260726&end_date=20260727&station=9414290&product=water_temperature&units=metric&time_zone=gmt&format=json
+ttl 3600
+at sun 1.0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20260726&end_date=20260727&station=9414290&product=wind&units=metric&time_zone=gmt&format=json
+ttl 3600
+at sun 1.0
+
+url https://api.weather.gov/points/39.7456,-97.0892
+ttl 3600
+at sun 1.0
+
+url https://api.weather.gov/gridpoints/TOP/31,80/forecast/hourly
+ttl 3600
+at sun 1.0
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=soil_moisture_0_to_7cm,soil_moisture_7_to_28cm,soil_moisture_28_to_100cm,soil_moisture_100_to_255cm&timezone=auto
+ttl 3600
+at sun 1.0
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=soil_temperature_0cm,soil_temperature_6cm,soil_temperature_18cm,soil_temperature_54cm&timezone=auto
+ttl 3600
+at sun 1.0
+
+url https://terrabrasilis.dpi.inpe.br/app/api/v1/layer/amazon/latest/deforestation-alerts/all?format=geojson&limit=1000
+ttl 3600
+at sun 1.0
+
+url https://waterservices.usgs.gov/nwis/gwlevels/?format=json&modifiedSince=P1D&siteStatus=active&siteType=GW&parameterCd=72019&countyCd=&stateCd=&bbox=-125,24,-66,50&resultRetrievalMode=grouped
+ttl 3600
+at sun 1.0
+
+url https://waterservices.usgs.gov/nwis/dv?format=json&sites=01646500,09380000,09506000,06892350&startDT={year}-{month}-01&endDT={year}-{month}-{day}&parameterCd=00060&siteStatus=all
+ttl 3600
+at sun 1.0
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=01646500&parameterCd=00065&siteStatus=all
+ttl 3600
+at sun 1.0
+
+url https://volcanoes.usgs.gov/vsc/api/volcanoApi/geojson
+ttl 3600
+on earth 0 0
+
+url https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/WFIGS_Interagency_Perimeters_YearToDate/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&geometry={lon_min}%2C{lat_min}%2C{lon_max}%2C{lat_max}&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&f=geojson&resultRecordCount=500
+ttl 3600
+at sun 1.0
+
+url https://argovis-api.colorado.edu/argo?startDate=2026-07-26T00:00:00Z&endDate=2026-07-27T00:00:00Z&box=%5B%5B-180,-90%5D,%5B180,90%5D%5D
+ttl 3600
+at sun 1.0
+
+url https://geoserver.efas.eu/geoserver/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=efas:FloodEvents&outputFormat=application%2Fjson&count=500
+ttl 3600
+at sun 1.0
+
+url https://erddap.aoml.noaa.gov/gdp/erddap/tabledap/drifter_hourly_qc.json?latitude,longitude,sst&time%3E=max(time)-7days
+ttl 3600
+at sun 1.0
+
+url https://erddap.marine.ie/erddap/tabledap/smartbay_obs_acoustic.csv?time,spl_full
+ttl 3600
+on earth 42.62682 -8.78233
+
+url https://www.globalfloods.eu/glofas-forecasting/?format=json
+ttl 3600
+at sun 1
+
+url https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.csv?latitude,longitude,TEMP,PSAL,DOXY,PRES,time&DOXY%3E=0&time%3E=now-7days&orderBy(%22time%22)&limit=3000
+ttl 3600
+at sun 1.0
+
+url https://bhuvan-app1.nrsc.gov.in/disaster/disaster.php?id=flood&format=json
+ttl 3600
+at sun 1.0
+
+url https://www.ndbc.noaa.gov/activestations.xml
+ttl 3600
+at sun 1.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/21413.dart
+ttl 3600
+on earth 38.7 148.7
+
+url https://www.ndbc.noaa.gov/data/realtime2/23401.dart
+ttl 3600
+on earth -8.4 67.5
+
+url https://www.ndbc.noaa.gov/data/realtime2/32401.dart
+ttl 3600
+on earth -19.6 -162.1
+
+url https://www.ndbc.noaa.gov/data/realtime2/41420.dart
+ttl 3600
+on earth 17.9 -74.9
+
+url https://data.neracoos.org/erddap/tabledap/A01_met.csv?time,latitude,longitude,air_temperature,wind_speed,wind_gust,wind_direction,barometric_pressure&time>=max(time)-1day
+ttl 3600
+on earth 42.523 -70.566
+
+url https://data.neracoos.org/erddap/tabledap/A01_ocean_001m.csv?time,latitude,longitude,temperature,salinity&time>=max(time)-1day
+ttl 3600
+on earth 42.523 -70.566
+
+url https://data.neracoos.org/erddap/tabledap/A01_surface_currents.csv?time,latitude,longitude,current_speed,current_direction,current_u,current_v&time>=max(time)-1day
+ttl 3600
+on earth 42.523 -70.566
+
+url https://data.neracoos.org/erddap/tabledap/A01_waves.csv?time,latitude,longitude,significant_wave_height,dominant_wave_period,mean_wave_direction&time>=max(time)-1day
+ttl 3600
+on earth 42.523 -70.566
+
+url https://data.neracoos.org/erddap/tabledap/B01_met.csv?time,latitude,longitude,air_temperature,wind_speed,wind_gust,wind_direction,barometric_pressure&time>=max(time)-1day
+ttl 3600
+on earth 43.181 -70.428
+
+url https://data.neracoos.org/erddap/tabledap/B01_ocean_001m.csv?time,latitude,longitude,temperature,salinity&time>=max(time)-1day
+ttl 3600
+on earth 43.181 -70.428
+
+url https://data.neracoos.org/erddap/tabledap/B01_surface_currents.csv?time,latitude,longitude,current_speed,current_direction,current_u,current_v&time>=max(time)-1day
+ttl 3600
+on earth 43.179 -70.427
+
+url https://data.neracoos.org/erddap/tabledap/B01_waves.csv?time,latitude,longitude,significant_wave_height,dominant_wave_period,mean_wave_direction&time>=max(time)-1day
+ttl 3600
+on earth 43.181 -70.428
+
+url https://data.neracoos.org/erddap/tabledap/E01_met.csv?time,latitude,longitude,air_temperature,wind_speed,wind_gust,wind_direction,barometric_pressure&time>=max(time)-1day
+ttl 3600
+on earth 43.714 -69.356
+
+url https://data.neracoos.org/erddap/tabledap/E01_ocean_001m.csv?time,latitude,longitude,temperature,salinity&time>=max(time)-1day
+ttl 3600
+on earth 43.714 -69.356
+
+url https://data.neracoos.org/erddap/tabledap/E01_surface_currents.csv?time,latitude,longitude,current_speed,current_direction,current_u,current_v&time>=max(time)-1day
+ttl 3600
+on earth 43.715 -69.358
+
+url https://data.neracoos.org/erddap/tabledap/E01_waves.csv?time,latitude,longitude,significant_wave_height,dominant_wave_period,mean_wave_direction&time>=max(time)-1day
+ttl 3600
+on earth 43.714 -69.356

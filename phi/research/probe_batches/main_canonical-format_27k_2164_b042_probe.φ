@@ -1,0 +1,199 @@
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/heasarc_batse_grb.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/heasarc_batse_pulsar.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/chandra_master.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/fermi_4fgl.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/fermi_4lac.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_frb.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_binaries.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_blue_supergiants.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag7.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_bright_vmag9.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_giants.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_high_pm.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_hypervelocity.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_metal_poor.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx10.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_nearby_plx50.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/gaia_white_dwarfs.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/heasarc_icecube.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/heasarc_integral_agn.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/heasarc_integral_bsc.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/heasarc_integral_isgri4yr.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/heasarc_integral_var.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/jpl_asteroids.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/heasarc_maxi_gsc7yr.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/heasarc_maxi_master.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/heasarc_maxi_ssc.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/heasarc_nicer_master.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/nsidc_arctic_seaice.json
+ttl 604800
+on earth 80.0 0.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/heasarc_rxte_master.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/heasarc_rxte_slew.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/sdss_galaxies.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/sdss_stars.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/swift_bat.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/swift_grb.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/tevcat.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/twomass_psc.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_2qz.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_6dfgs.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_apass.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_carmenes.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_cosmic_voids.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_distant_halo.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_dla.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_first.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_gcvs_variables.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_glade.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_glade2.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_gleam.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_hecate.json
+ttl 604800
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/vizier_hi4pi.json
+ttl 604800
+at sun 1.0

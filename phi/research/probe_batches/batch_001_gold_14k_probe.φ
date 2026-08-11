@@ -1,0 +1,199 @@
+url https://api.wheretheiss.at/v1/satellites/25544
+ttl 10
+body earth
+
+url https://api.wheretheiss.at/v1/satellites/25544/positions?timestamps=1,2,3,4,5
+ttl 10
+body earth
+
+url https://qrng.anu.edu.au/API/jsonI.php?length=1&type=uint8
+ttl 60
+on earth -35.2809 149.1300 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/AFK?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/EWZ?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/FXI?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/BDRY?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/EEM?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/VGK?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/FM?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/EWG?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/GC%3DF?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/INDA?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/EWJ?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/ILF?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/EWW?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/KSA?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/CL%3DF?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/XLC?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/XLY?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/XLP?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/XLE?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/XLF?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/XLV?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/XLI?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/XLB?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/XLRE?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/XLK?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/XLU?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/SOXX?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/EZA?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/ASEA?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/IYT?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/%5ETNX?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/SPY?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/%5EVIX?interval=1d&range=1d
+ttl 60
+on earth 41.8781 -87.6298 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/ACWI?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/URTH?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://api.github.com/events?per_page=100
+ttl 60
+at earth
+
+url https://www.inex.ie/ixp/grapher/ixp?id=1&type=json
+ttl 60
+on earth 53.3 -6.2 0
+
+url https://api.irail.be/liveboard/?station=Brussels&format=json
+ttl 60
+on earth 50.8 4.3 0
+
+url https://api.irishrail.ie/realtime/realtime.asmx/getStationDataByCodeXML?StationCode=BROC
+ttl 60
+on earth 53.3 -6.2 0
+
+url https://stat.ripe.net/data/bgp-state/data.json?resource=0.0.0.0/0
+ttl 60
+at earth
+
+url https://stat.ripe.net/data/bgp-updates/data.json?resource=0.0.0.0/0&starttime={hour_ago}&endtime={today}
+ttl 60
+at earth
+
+url https://transport.opendata.ch/v1/stationboard?station=Bern&limit=10
+ttl 60
+on earth 46.9 7.4 0
+
+url https://transport.opendata.ch/v1/stationboard?station=Zurich&limit=10
+ttl 60
+on earth 47.3 8.5 0
+
+url https://www.wienerlinien.at/ogd_realtime/monitor?stopId=1234
+ttl 60
+on earth 48.2 16.3 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/AAPL?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://api.open-meteo.com/v1/forecast?latitude=46.95&longitude=7.86&current=shortwave_radiation,uv_index&timezone=auto
+ttl 60
+on earth 46.95 7.86 0

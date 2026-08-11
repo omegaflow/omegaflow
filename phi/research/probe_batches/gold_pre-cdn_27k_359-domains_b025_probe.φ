@@ -1,0 +1,199 @@
+url https://mars.nasa.gov/rss/api/?feed=weather&category=msl&feedtype=json
+ttl 86400
+at earth
+
+url https://tle.ivanstanojevic.me/api/tle/
+ttl 86400
+at earth
+
+url https://tle.ivanstanojevic.me/api/tle/?search=ISS&page-size=50
+ttl 86400
+at earth
+
+url https://crates.io/api/v1/crates?per_page=1
+ttl 86400
+on earth 37.774 -122.419 0
+
+url https://www.glims.org/mapservice/wfs?service=WFS&version=1.1.0&request=GetFeature&typeName=glims_glaciers&maxFeatures=1&outputFormat=application/json
+ttl 86400
+on earth 46.818 8.227 0
+
+url https://nsidc.org/data/seaice_index/data/daily/S_seaice_extent_daily.csv
+ttl 86400
+on earth -90.0 0.0 0
+
+url https://noaadata.apps.nsidc.org/NOAA/G02135/south/daily/data/S_seaice_extent_daily_v4.0.csv
+ttl 86400
+on earth 0 0 0
+
+url https://nsidc.org/data/seaice_index/data/daily/N_seaice_extent_daily.csv
+ttl 86400
+on earth 90.0 0.0 0
+
+url https://noaadata.apps.nsidc.org/NOAA/G02135/north/daily/data/N_seaice_extent_daily_v4.0.csv
+ttl 86400
+on earth 0 0 0
+
+url https://noaadata.apps.nsidc.org/NOAA/G02135/north/daily/data/N_seaice_extent_daily_v4.0.csv
+ttl 86400
+on earth 40.008 -105.263 0
+
+url https://noaadata.apps.nsidc.org/NOAA/G02135/north/daily/data/N_seaice_extent_daily_v4.0.csv
+ttl 86400
+on earth 40.008 -105.263 0
+
+url https://noaadata.apps.nsidc.org/NOAA/G02135/south/daily/data/S_seaice_extent_daily_v4.0.csv
+ttl 86400
+on earth -75.250 -0.071 0
+
+url https://gml.noaa.gov/aftp/data/meteorology/in-situ/brw/met_brw_insitu_1_obop_hour_{year}.txt
+ttl 86400
+on earth 71.29 -156.57 0
+
+url https://noaadata.apps.nsidc.org/NOAA/G02135/north/daily/data/N_seaice_extent_daily_v4.0.csv
+ttl 86400
+on earth 40.008 -105.263 0
+
+url https://noaadata.apps.nsidc.org/NOAA/G02135/south/daily/data/S_seaice_extent_daily_v4.0.csv
+ttl 86400
+on earth -75.250 -0.071 0
+
+url https://floodobservatory.colorado.edu/Archives/MasterListrev.csv
+ttl 86400
+at earth
+
+url https://dasch.rc.fas.harvard.edu/lightcurve.php?objid=GJ+551&type=json&limit=500
+ttl 86400
+on earth 0.0 0.0 0
+
+url https://data.desi.lbl.gov/public/papers/
+ttl 86400
+on earth 34.0 -111.0 0
+
+url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_coastline.geojson
+ttl 86400
+at earth
+
+url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_boundary_lines_land.geojson
+ttl 86400
+at earth
+
+url https://earthref.org/MagIC/api/v1/site/search?format=json&per_page=500&result_type=site&age_type=calendar&site_type_include=s
+ttl 86400
+at earth
+
+url https://service.das.earthscope.org/fdsnws/station/1/query?level=station&format=json
+ttl 86400
+at earth
+
+url https://service.das.earthscope.org/fdsnws/station/1/query?level=station&format=json
+ttl 86400
+at earth
+
+url https://web-services.unavco.org/metadata/sites/v1?format=json
+ttl 86400
+at earth
+
+url https://www.ebi.ac.uk/metagenomics/api/v1/studies?format=json&page_size=100&ordering=-last_update&biome_name=root:Environmental:Aquatic:Marine
+ttl 86400
+at earth
+
+url https://www.ebi.ac.uk/metagenomics/api/v1/studies?format=json&page_size=100&ordering=-last_update
+ttl 86400
+at earth
+
+url https://api.ember-climate.org/v2/electricity-generation/yearly?country=DE&date_from=2000-01-01&date_to={year}-12-31
+ttl 86400
+on earth 0.0 0.0 0
+
+url https://api.ember-climate.org/v1/electricity-generation?aggregate_by=country&date_from={year}-01-01&date_to={year}-12-31&format=json
+ttl 86400
+at earth
+
+url https://ows.emodnet-bathymetry.eu/geoserver/wcs?SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&FORMAT=application/x-netcdf&COVERAGEID=emodnet__mean&SUBSET=Long(-10,10)&SUBSET=Lat(35,60)
+ttl 86400
+on earth 0.0 0.0 0
+
+url https://www.ebi.ac.uk/ena/portal/api/search?result=sample&query=tax_tree(2)&format=tsv&limit=500
+ttl 86400
+on earth 0.0 0.0 0
+
+url https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M,RH2M,WS10M,PRECTOTCORR&community=AG&longitude={lon}&latitude={lat}&start={date}&end={date}&format=JSON
+ttl 86400
+at earth
+
+url https://re.jrc.ec.europa.eu/api/v5_2/seriescalc?lat={lat}&lon={lon}&raddatabase=PVGIS-ERA5&startyear={year}&endyear={year}&outputformat=json
+ttl 86400
+at earth
+
+url https://eogdata.mines.edu/nighttime_light/monthly/v10/catalog.json
+ttl 86400
+at earth
+
+url https://nrt.cmems-du.eu/erddap/griddap/cmems_obs-sl_glo_phy_mynrt_l4_P1D-m.csv?sla%5Blast%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D
+ttl 86400
+at earth
+
+url https://esa-sst-cci-browser.ceda.ac.uk/api/v1/sst/global-monthly?format=json&dataset=ESACCI-SST-L4-CDR-SST-ANALYSIS
+ttl 86400
+at earth
+
+url https://science-pds.cryosat.esa.int/oads/access/collection/CryoSat_Northern_Hemisphere_Sea_Ice_Thickness/latest/?format=json
+ttl 86400
+on earth 0.0 0.0 0
+
+url https://vires.services/hapi/data?dataset=SW_OPER_MAGA_LR_1B&parameters=Latitude,Longitude&start={today}T00:00:00Z&stop={tomorrow}T00:00:00Z
+ttl 86400
+at earth
+
+url https://services.terrascope.be/catalogue/products?collection=urn:eop:VITO:ESA_WorldCover_10m_2021_V2&bbox=-180,-60,180,60&format=json&limit=100
+ttl 86400
+at earth
+
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+COUNT(*)+FROM+ps&format=json
+ttl 86400
+on earth 42.365 -71.105 0
+
+url https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/CME/?startDate=2024-01-01&endDate=2024-12-31
+ttl 86400
+on earth 0 0 0
+
+url https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/FLR/?startDate=2024-01-01&endDate=2024-12-31
+ttl 86400
+on earth 0 0 0
+
+url https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/GST/?startDate=2024-01-01&endDate=2024-12-31
+ttl 86400
+on earth 0 0 0
+
+url https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/HSS/?startDate=2024-01-01&endDate=2024-12-31
+ttl 86400
+on earth 0 0 0
+
+url https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/IPS/?startDate=2024-01-01&endDate=2024-12-31
+ttl 86400
+on earth 0 0 0
+
+url https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/MPC/?startDate=2024-01-01&endDate=2024-12-31
+ttl 86400
+on earth 0 0 0
+
+url https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/SEP/?startDate=2024-01-01&endDate=2024-12-31
+ttl 86400
+on earth 0 0 0
+
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+TOP+512+ra,dec,sy_dist,pl_eqt,pl_rade,pl_orbper,pl_bmasse+FROM+pscomppars+WHERE+sy_dist+IS+NOT+NULL+ORDER+BY+pl_eqt+ASC&format=json
+ttl 86400
+at earth
+
+url https://services.swpc.noaa.gov/json/f107_cm_flux.json
+ttl 86400
+on earth 0 0 0
+
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+TOP+256+ra,dec,sy_dist,pl_eqt,pl_orbper+FROM+pscomppars+WHERE+pl_orbper%3C1+AND+sy_dist+IS+NOT+NULL+ORDER+BY+pl_orbper+ASC&format=json
+ttl 86400
+at earth
+
+url https://www.fao.org/aquastat/en/databases/agromat/api/v1/water?year={year}&format=json
+ttl 86400
+at earth

@@ -1,0 +1,199 @@
+url https://clinicaltrials.gov/api/v2/studies?query.term=CRISPR&filter.overallStatus=RECRUITING&countTotal=true&pageSize=1
+ttl 86400
+on earth 37.872 -122.258 0
+
+url https://api.crossref.org/works?rows=1
+ttl 86400
+on earth 38.9072 -77.0369 0
+
+url https://api.crossref.org/members?rows=1
+ttl 86400
+on earth 38.9072 -77.0369 0
+
+url https://opendata.ecdc.europa.eu/monkeypox/casedistribution/json/data.json
+ttl 86400
+on earth 59.365 18.016 0
+
+url https://epoch.ai/data/notable_ai_models.csv
+ttl 86400
+on earth 37.774 -122.419 0
+
+url https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_manr?geo=EU27_2020&unit=RCH_A&coicop=CP00&format=JSON
+ttl 86400
+on earth 50.8503 4.3517 0
+
+url https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/nama_10_gdp?geo=EU27_2020&unit=CLV_I10&na_item=B1GQ&format=JSON
+ttl 86400
+on earth 50.8503 4.3517 0
+
+url https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/demo_pjan?geo=EU27_2020&sex=T&age=TOTAL&format=JSON
+ttl 86400
+on earth 50.8503 4.3517 0
+
+url https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/une_rt_q?geo=EU27_2020&unit=PC_ACT&s_adj=SA&age=TOTAL&format=JSON
+ttl 86400
+on earth 50.8503 4.3517 0
+
+url https://api.fbi.gov/wanted/v1/list
+ttl 86400
+on earth 38.9 -77.0 0
+
+url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=131&hasGeospatialIssue=false
+ttl 86400
+on earth 0 0 0
+
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&hasGeospatialIssue=false&taxonKey=47115
+ttl 86400
+on earth 0 0 0
+
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=54&hasGeospatialIssue=false
+ttl 86400
+on earth 0 0 0
+
+url https://api.gbif.org/v1/occurrence/search?taxonKey=1&limit=500&hasCoordinate=true
+ttl 86400
+at earth
+
+url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=212&hasGeospatialIssue=false
+ttl 86400
+on earth 0 0 0
+
+url https://api.gbif.org/v1/occurrence/search?taxonKey=212&limit=200&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}
+ttl 86400
+at earth
+
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=722&hasGeospatialIssue=false
+ttl 86400
+on earth 0 0 0
+
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&hasGeospatialIssue=false&taxonKey=51
+ttl 86400
+on earth 0 0 0
+
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=44&hasGeospatialIssue=false
+ttl 86400
+on earth 0 0 0
+
+url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=5&hasGeospatialIssue=false
+ttl 86400
+on earth 0 0 0
+
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=47115&hasGeospatialIssue=false
+ttl 86400
+on earth 0 0 0
+
+url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=44&hasGeospatialIssue=false
+ttl 86400
+on earth 0 0 0
+
+url https://api.gbif.org/v1/occurrence/search?taxonKey=212&limit=500&hasCoordinate=true
+ttl 86400
+at earth
+
+url https://api.gbif.org/v1/occurrence/search?taxon_key=212&month={month}&hasCoordinate=true&limit=0
+ttl 86400
+on earth 55.7022 12.5592 0
+
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=52&hasGeospatialIssue=false
+ttl 86400
+on earth 0 0 0
+
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&hasGeospatialIssue=false&coordinateUncertaintyInMeters=0,100
+ttl 86400
+on earth 0 0 0
+
+url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=6&hasGeospatialIssue=false
+ttl 86400
+on earth 0 0 0
+
+url https://api.gbif.org/v1/occurrence/search?taxonKey=6&limit=200&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}
+ttl 86400
+at earth
+
+url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=358&hasGeospatialIssue=false
+ttl 86400
+on earth 0 0 0
+
+url https://www.peeringdb.com/api/ix?limit=1
+ttl 86400
+on earth 38.899 -77.043 0
+
+url https://dataserver-coids.inpe.br/queimadas/queimadas/deter/
+ttl 86400
+at earth
+
+url https://www.ebi.ac.uk/metagenomics/api/v1/studies?page_size=1
+ttl 86400
+on earth 52.079 0.187 0
+
+url https://modis.ornl.gov/rst/api/v1/MOD13Q1/subset?latitude={lat}&longitude={lon}&startDate=A2018049&endDate=A2018049&kmAboveBelow=0&kmLeftRight=0
+ttl 86400
+at earth
+
+url https://api.obis.org/v3/occurrence/search?scientificname=Cetacea&startdate={yesterday}
+ttl 86400
+on earth 51.231 2.928 0
+
+url https://api.obis.org/v3/occurrence?limit=500&hascoordinates=true&taxonid=38
+ttl 86400
+at earth
+
+url https://api.obis.org/v3/occurrence?limit=500&hascoordinates=true
+ttl 86400
+at earth
+
+url https://api.obis.org/occurrence?lat={lat}&lon={lon}&radius=50&size=0
+ttl 86400
+at earth
+
+url https://api.obis.org/v3/statistics
+ttl 86400
+on earth 51.231 2.928 0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["amenity"="atm"](around:1000,{lat},{lon});out%20100;
+ttl 86400
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["amenity"="bench"](around:500,{lat},{lon});out%20100;
+ttl 86400
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];way["bridge"="yes"](around:5000,{lat},{lon});out%20center;
+ttl 86400
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];way["building"](around:1000,{lat},{lon});out%20center;
+ttl 86400
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["highway"="bus_stop"](around:1000,{lat},{lon});out%20100;
+ttl 86400
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["highway"="construction"];out%20100;
+ttl 86400
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["highway"="crossing"](around:500,{lat},{lon});out%20100;
+ttl 86400
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["amenity"="drinking_water"](around:1000,{lat},{lon});out%20100;
+ttl 86400
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];way["landuse"="forest"](around:10000,{lat},{lon});out%20center;
+ttl 86400
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["amenity"="fuel"](around:5000,{lat},{lon});out%20100;
+ttl 86400
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["amenity"="hospital"](around:10000,{lat},{lon});out%20100;
+ttl 86400
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["tourism"="hotel"](around:5000,{lat},{lon});out%20100;
+ttl 86400
+at earth

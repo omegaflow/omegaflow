@@ -1,0 +1,199 @@
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gcoos_buoy_wmo_42379.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gcoos_buoy_wmo_42382.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gcoos_buoy_wmo_42384.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gcoos_buoy_wmo_42386.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gcoos_buoy_wmo_42388.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gcoos_buoy_wmo_42395.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gcoos_buoy_wmo_42400.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gcoos_buoy_wmo_42873.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gcoos_buoy_wmo_42876.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gcoos_buoy_wmo_42881.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gcoos_buoy_wmo_42884.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gcoos_buoy_wmo_42887.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gcoos_buoy_wmo_42934.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gcoos_buoy_wmo_42936.json
+ttl 300
+at earth
+
+url https://gdacs.org/xml/rss.xml
+ttl 300
+at earth
+
+url https://api.wolfx.jp/cenc_eqlist.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/geosphere_earthquakes.json
+ttl 300
+at earth
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_day.geojson
+ttl 300
+at earth
+
+url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&minmag=5&limit=100
+ttl 300
+at earth
+
+url https://api.wolfx.jp/jma_eqlist.json
+ttl 300
+at earth
+
+url https://api.weather.gov/alerts/active
+ttl 300
+at earth
+
+url https://api.weather.gov/alerts/active?event=Tsunami%20Warning
+ttl 300
+at earth
+
+url https://www.tsunami.gov/events/xml/PAAQAtom.xml
+ttl 300
+at earth
+
+url https://www.tsunami.gov/events/xml/PHEBAtom.xml
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_usgs_streamflow.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_usgs_streamflow_bbox.json
+ttl 300
+at earth
+
+url https://kp.gfz.de/app/json/?start={week_ago}T00:00:00Z&end={today}T23:59:59Z&index=Fobs
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/magnetosphere_gfz_kp_index.json
+ttl 300
+at earth
+
+url https://kp.gfz.de/app/json/?start={week_ago}T00:00:00Z&end={today}T23:59:59Z&index=SN
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/magnetosphere_goes_eps_protons.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/magnetosphere_goes_xray_flares.json
+ttl 300
+at earth
+
+url https://gracedb.ligo.org/api/superevents/?format=json&category=Production&ordering=-created&public=True&per_page=200
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/heasarc_integral_ibas_sgr_burst_alerts.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_41001.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_42001.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_42002.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_42036.json
+ttl 300
+at earth
+
+url https://www.ndbc.noaa.gov/data/realtime2/42040.txt
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_42055.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_44009.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_44013.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_44014.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_44025.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46001.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46002.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46005.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46006.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46012.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46013.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_ndbc_buoy_46022.json
+ttl 300
+at earth

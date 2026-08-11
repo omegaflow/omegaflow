@@ -1,0 +1,199 @@
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/esri_noaa_temp_latest.json
+ttl 3600
+at earth
+
+url https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/OADS_Moorings/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+ttl 3600
+at earth
+
+url https://api.obis.org/v3/occurrence/grid/100?taxon=*https://api.eurobis.org/year=2026https://api.eurobis.org/geometry=POLYGON((-25 30, 45 30, 45 72, -25 72))v2/occurrence/search?limit=200&hascoordinates=true&scientificname=&year={year}
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_europa.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/exosphere_ace_magnetometer.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/exosphere_ace_solar_wind.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/exosphere_aurora_oval.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/exosphere_dst_index.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_interstellar_3i.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/exosphere_kp_index.json
+ttl 3600
+at earth
+
+url https://network.satnogs.org/api/observations/?format=json&limit=1
+ttl 3600
+at earth
+
+url https://fireball.fripon.org/ajax/liste_multiple.ajax.php
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_ganymede.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_gbif.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gbif_amphibian_global_occurrences.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gbif_bat_acoustic_monitoring_data.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gbif_chiroptera_observations.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gbif_ept_macroinvertebrate_bioindicators.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gbif_freshwater_fish_observations.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gbif_marine_mammal_sightings.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/gbif_occurrence_search.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gbif_pollinator_bee_monitoring.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gbif_shorebird_coastal_occurrences.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gbif_species_occurrences_global.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/gbif_threatened_species.json
+ttl 3600
+at earth
+
+url https://www.globalcmt.org/cgi-bin/globalcmt-cgi-bin/CMT5/form?itype=ymd&yr={year}&mo={month}&dy=01&otype=ymd&oyr={year}&omo={month}&ody={day}&jyr=1976&jday=1&ojyr=2025&ojday=366&nday=28&lmw=5&umw=10&llat=-90&ulat=90&llon=-180&ulon=180&lhd=0&uhd=1000&list=6
+ttl 3600
+body earth
+
+url https://archive.gemini.edu/jsonsummary/notengineering/NotFail/
+ttl 3600
+at earth
+
+url https://geofon.gfz.de/fdsnws/event/1/query?format=geojson&minmag=3&limit=100&region=AFRICA
+ttl 3600
+at earth
+
+url https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$top=1&$count=true
+ttl 3600
+at earth
+
+url https://webservices.ingv.it/fdsnws/event/1/query?format=geojson&minmagnitude=2.5&limit=200
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/geosphere_earthquakes_m3_monthly.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/geosphere_earthquakes_significant_month.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/geosphere_earthquakes_usgs_all_month.json
+ttl 3600
+at earth
+
+url https://ies-ows.jrc.ec.europa.eu/effis?service=WFS&request=GetFeature&typeName=ms:modis.hs&outputFormat=application/json&maxFeatures=1
+ttl 3600
+at earth
+
+url https://seismic-api.science.unimelb.edu.au/month-quakes
+ttl 3600
+at earth
+
+url https://gdacs.org/xml/rss.xml
+ttl 3600
+at earth
+
+url https://gdacs.org/xml/rss.xml
+ttl 3600
+at earth
+
+url https://api.geonet.org.nz/volcano/val
+ttl 3600
+at earth
+
+url https://eonet.gsfc.nasa.gov/api/v3/events
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_nifc_fires.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_soil_moisture_profile.json
+ttl 3600
+body earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_soil_temperature_profile.json
+ttl 3600
+body earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/geosphere_usgs_earthquakes_month.json
+ttl 3600
+at earth
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={yesterday}&endtime={today}&minmagnitude=6.0
+ttl 3600
+at earth
+
+url https://volcanoes.usgs.gov/vsc/api/volcanoApi/geojson
+ttl 3600
+at earth
+
+url https://gracedb.ligo.org/api/superevents/?format=json&category=Production&label=GW&ordering=-created&per_page=10
+ttl 3600
+at earth
+
+url https://gracedb.ligo.org/api/superevents/?format=json&category=Production&public=True&ordering=-created&per_page=100
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_haumea.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_heasarc.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/heasarc_nicer_master_source_catalog.json
+ttl 3600
+at earth

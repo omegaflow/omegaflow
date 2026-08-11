@@ -1,0 +1,191 @@
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9461380.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9461710.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9462450.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9462620.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9464212.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9468333.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9468756.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9491094.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9497645.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9751364.json
+ttl 300
+at earth
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9753216&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+at earth
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9757811&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9759938.json
+ttl 300
+at earth
+
+url https://environment.data.gov.uk/flood-monitoring/id/stations?_limit=500
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_intermagnet_niemegk_realtime.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_intermagnet_niemegk_realtime_magnetic_data.json
+ttl 300
+at earth
+
+url https://www.ionosonde.iap-kborn.de/actuellz.htm
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/jpl_cad_neo_recent_approaches.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_iss.json
+ttl 300
+at earth
+
+url https://tadas.afad.gov.tr/api/event/list?limit=200
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/magnetosphere_noaa_imf_bz.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/magnetosphere_noaa_kp_index.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/magnetosphere_noaa_swpc_electron_flux.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/magnetosphere_noaa_swpc_kp_index.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/magnetosphere_noaa_swpc_proton_flux.json
+ttl 300
+at earth
+
+url https://cdaweb.gsfc.nasa.gov/hapi/data?id=OMNI_HRO_1MIN&time.min=2026-07-01T00:00:00Z&time.max=2026-07-08T00:00:00Z&parameters=Time,BX_GSE,BY_GSE,BZ_GSE,flow_speed,proton_density,T,Pressure,SYM_H,AE_INDEX&format=json
+ttl 300
+at earth
+
+url https://api.weather.gov/stations?state=CA,TX,NY&limit=500&cursor=&format=json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_coops_air_temperature_realtime.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_coops_water_level_realtime.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_coops_water_temperature_realtime.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_ibtracs_active_storms.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_ndbc_dart_realtime_pressure.txt
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_planetary_k_index.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_swpc_aurora_ovation_prime.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_swpc_dst_real_time.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_swpc_goes_electron_1day.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_swpc_goes_integral_protons_1day.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_swpc_goes_sep_7day_proton_flux.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_swpc_goes_sep_proton_flux.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_swpc_kp_index_realtime.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_swpc_kp_planetary_index.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_swpc_solar_region_magnetic_classes.json
+ttl 300
+at earth
+
+url https://api.obis.org/v3/occurrence?startdate={yesterday}&enddate={today}&size=200&fields=decimalLatitude,decimalLongitude,scientificName,eventDate
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/open_meteo_air_quality.json
+ttl 300
+body earth
+
+url https://gcn.nasa.gov/circulars?query=icecube
+ttl 300
+at earth
+
+url https://gracedb.ligo.org/api/superevents/?format=json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/solar_noaa_Integrated_irradiance.json
+ttl 300
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/solar_noaa_swpc_xray_flux.json
+ttl 300
+at earth

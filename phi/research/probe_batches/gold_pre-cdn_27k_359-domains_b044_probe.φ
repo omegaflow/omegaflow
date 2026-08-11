@@ -1,0 +1,199 @@
+url https://archive-api.open-meteo.com/v1/archive?latitude=3.0&longitude=73.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth 3.0 73.0 0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=-19.5&longitude=23.5&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth -19.5 23.5 0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=-50.0&longitude=-72.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth -50.0 -72.0 0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=23.0&longitude=5.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth 23.0 5.0 0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=62.0&longitude=105.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth 62.0 105.0 0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=32.0&longitude=86.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth 32.0 86.0 0
+
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_mm_mlo.txt
+ttl 604800
+on earth 19.5 -155.6 0
+
+url https://power.larc.nasa.gov/api/temporal/monthly/point?parameters=T2M,PRECTOTCORR,ALLSKY_SFC_SW_DWN&community=RE&longitude={lon}&latitude={lat}&start=2001&end=2020&format=JSON
+ttl 604800
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["leisure"="garden"];out%20100;
+ttl 604800
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:10000,{lat},{lon})["geological"="palaeontological_site"];out%20100;
+ttl 604800
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:10000,{lat},{lon})["historic"="archaeological_site"];out%20100;
+ttl 604800
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:5000,{lat},{lon})["amenity"="arts_centre"];out%20100;
+ttl 604800
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["shop"="bakery"];out%20100;
+ttl 604800
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["amenity"="bank"];out%20100;
+ttl 604800
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="bar"];out%20100;
+ttl 604800
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="bicycle_parking"];out%20100;
+ttl 604800
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="bicycle_rental"];out%20100;
+ttl 604800
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["shop"="books"];out%20100;
+ttl 604800
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="cafe"];out%20100;
+ttl 604800
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="car_sharing"];out%20100;
+ttl 604800
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:10000,{lat},{lon})["historic"="castle"];out%20100;
+ttl 604800
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="grave_yard"];out%20100;
+ttl 604800
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["amenity"="clinic"];out%20100;
+ttl 604800
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:5000,{lat},{lon})["amenity"="courthouse"];out%20100;
+ttl 604800
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["emergency"="defibrillator"];out%20100;
+ttl 604800
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["amenity"="dentist"];out%20100;
+ttl 604800
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:5000,{lat},{lon})["amenity"="embassy"];out%20100;
+ttl 604800
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="fast_food"];out%20100;
+ttl 604800
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="fire_station"];out%20100;
+ttl 604800
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["shop"="florist"];out%20100;
+ttl 604800
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="fountain"];out%20100;
+ttl 604800
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:5000,{lat},{lon})["tourism"="gallery"];out%20100;
+ttl 604800
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["shop"="greengrocer"];out%20100;
+ttl 604800
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["leisure"="fitness_centre"];out%20100;
+ttl 604800
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["shop"="hairdresser"];out%20100;
+ttl 604800
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["shop"="jewelry"];out%20100;
+ttl 604800
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="kindergarten"];out%20100;
+ttl 604800
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["shop"="laundry"];out%20100;
+ttl 604800
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["amenity"="library"];out%20100;
+ttl 604800
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["historic"="memorial"];out%20100;
+ttl 604800
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["historic"="monument"];out%20100;
+ttl 604800
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:5000,{lat},{lon})["tourism"="museum"];out%20100;
+ttl 604800
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:5000,{lat},{lon})["amenity"="music_venue"];out%20100;
+ttl 604800
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["shop"="optician"];out%20100;
+ttl 604800
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["shop"="pet"];out%20100;
+ttl 604800
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="place_of_worship"];out%20100;
+ttl 604800
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["leisure"="playground"];out%20100;
+ttl 604800
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="police"];out%20100;
+ttl 604800
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="post_box"];out%20100;
+ttl 604800
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="pub"];out%20100;
+ttl 604800
+at earth

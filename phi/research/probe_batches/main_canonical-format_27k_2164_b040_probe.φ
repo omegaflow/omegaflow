@@ -1,0 +1,199 @@
+url https://github.com/omegaflow/catalogs/releases/download/live-data/cmr_GEDI02_A.json
+ttl 86400
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/live-data/cmr_ATL06.json
+ttl 86400
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/live-data/cmr_ATL03.json
+ttl 86400
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/live-data/cmr_SWOT_L2_LR_SSH_D.json
+ttl 86400
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/live-data/cmr_VNP14IMG_NRT.json
+ttl 86400
+at sun 1.0
+
+url https://www.ncei.noaa.gov/access/paleo-search/study/params.json?dataTypeId=18
+ttl 86400
+on earth 0.0 0.0
+
+url https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+object_name,ra,dec,abs_mag,diameter,extended,neo_flag+FROM+neowiser_p1bs_psd+WHERE+diameter+IS+NOT+NULL+ORDER+BY+diameter+DESC
+ttl 86400
+at sun 1.0
+
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=daily-summaries&dataTypes=TMAX,TMIN,PRCP,SNOW,SNWD&startDate={today}&endDate={today}&includeAttributes=false&format=json&limit=10000
+ttl 86400
+body earth
+
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&dataTypes=TEMP,DEWP,WDSP,PRCP,SLP,MAX,MIN&countries=CH&startDate={today}&endDate={today}&includeAttributes=false&format=json
+ttl 86400
+body earth
+
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&dataTypes=TEMP,DEWP,WDSP,PRCP,SLP,MAX,MIN&countries=SF&startDate={today}&endDate={today}&includeAttributes=false&format=json
+ttl 86400
+body earth
+
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-month&dataTypes=TMAX,TMIN,PRCP,TAVG&startDate={year}-{month}-01&endDate={year}-{month}-{day}&includeAttributes=false&format=json&limit=5000
+ttl 86400
+body earth
+
+url https://www.ncei.noaa.gov/swdiws/json/nx3hail/{today}
+ttl 86400
+on earth 0 0
+
+url https://www.ncei.noaa.gov/swdiws/json/nx3meso/{today}
+ttl 86400
+on earth 0 0
+
+url https://www.ncei.noaa.gov/swdiws/json/nx3structure/{today}
+ttl 86400
+on earth 0 0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_active.json
+ttl 86400
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_active_satellites.json
+ttl 86400
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_all_satellites.json
+ttl 86400
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_cubesats.json
+ttl 86400
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_debris.json
+ttl 86400
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_debris_analyst.json
+ttl 86400
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_engineering_sats.json
+ttl 86400
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_glonass.json
+ttl 86400
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_gps.json
+ttl 86400
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_navigation_sats.json
+ttl 86400
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_oneweb.json
+ttl 86400
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_science_sats.json
+ttl 86400
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_starlink.json
+ttl 86400
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_celestrak_weather_sats.json
+ttl 86400
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_callisto.json
+ttl 86400
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_ceres.json
+ttl 86400
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_earth.json
+ttl 86400
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_enceladus.json
+ttl 86400
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_eris.json
+ttl 86400
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_europa.json
+ttl 86400
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_ganymede.json
+ttl 86400
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_haumea.json
+ttl 86400
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_io.json
+ttl 86400
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_jupiter.json
+ttl 86400
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_makemake.json
+ttl 86400
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_mars.json
+ttl 86400
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_mercury.json
+ttl 86400
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_moon.json
+ttl 86400
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_neptune.json
+ttl 86400
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_pluto.json
+ttl 86400
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_saturn.json
+ttl 86400
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_sun.json
+ttl 86400
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_titan.json
+ttl 86400
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_triton.json
+ttl 86400
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_uranus.json
+ttl 86400
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/orbit_venus.json
+ttl 86400
+at sun 1.0

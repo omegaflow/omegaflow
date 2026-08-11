@@ -1,0 +1,199 @@
+url https://api.inaturalist.org/v1/observations?lat={lat}&lng={lon}&radius=1&quality_grade=research&per_page=1
+ttl 3600
+at earth
+
+url https://ll.thespacedevs.com/2.0.0/launch/upcoming/?limit=1
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["amenity"="charging_station"](around:5000,{lat},{lon});out%20count;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["amenity"="restaurant"](around:1000,{lat},{lon});out%20count;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["shop"](around:5000,{lat},{lon});out%20count;
+ttl 3600
+at earth
+
+url https://onionoo.torproject.org/summary?running=true
+ttl 3600
+at earth
+
+url https://power.larc.nasa.gov/api/temporal/monthly/point?parameters=ALLSKY_SFC_UV_INDEX&community=AG&longitude=0&latitude=0&start={year}&end={year}&format=JSON
+ttl 3600
+on earth 0.0 0.0 0
+
+url https://wikimedia.org/api/rest_v1/metrics/pageviews/aggregate/en.wikipedia/all-access/all-agents/daily/{yesterday_nodashes}/{yesterday_nodashes}
+ttl 3600
+at earth
+
+url https://eonet.gsfc.nasa.gov/api/v3/events?category=wildfires
+ttl 3600
+at earth
+
+url https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name&sb-ns=n&limit=1
+ttl 86400
+at earth
+
+url https://ssd-api.jpl.nasa.gov/sbdb_query.api?sb-kind=a&fields=a,e,i,om,w,ma,epoch,H&limit=10000
+ttl 86400
+at earth
+
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+200+ra,dec,parallax,phot_rp_mean_mag+FROM+gaiadr3.gaia_source+WHERE+parallax>10
+ttl 86400
+at earth
+
+url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=10LD
+ttl 3600
+at earth
+
+url https://hub.docker.com/v2/repositories/library/alpine
+ttl 3600
+on earth 37.7749 -122.4194 0
+
+url https://hub.docker.com/v2/repositories/library/node
+ttl 3600
+on earth 37.7749 -122.4194 0
+
+url https://hub.docker.com/v2/repositories/library/python
+ttl 3600
+on earth 37.7749 -122.4194 0
+
+url https://hub.docker.com/v2/repositories/library/ubuntu
+ttl 3600
+on earth 37.7749 -122.4194 0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27399%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+ttl 3600
+at earth
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27602%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 3600
+at earth
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2790000031%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 3600
+at earth
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Eris%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 3600
+at earth
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27502%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 3600
+at earth
+
+url https://services.swpc.noaa.gov/json/ace/mag/ace_mag_1h.json
+ttl 3600
+on earth 0 0 0
+
+url https://services.swpc.noaa.gov/json/ace/swepam/ace_swepam_1h.json
+ttl 3600
+on earth 0 0 0
+
+url https://services.swpc.noaa.gov/json/ovation_aurora_latest.json
+ttl 3600
+at earth
+
+url https://services.swpc.noaa.gov/json/geospace/geospace_dst_1_hour.json
+ttl 3600
+on earth 0 0 0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%273I%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+ttl 3600
+at earth
+
+url https://services.swpc.noaa.gov/json/planetary_k_index_1m.json
+ttl 3600
+on earth 0 0 0
+
+url https://network.satnogs.org/api/observations/?format=json&limit=1
+ttl 3600
+at earth
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27503%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 3600
+at earth
+
+url https://api.gbif.org/v1/occurrence/search?decimalLatitude={lat}&decimalLongitude={lon}&radius=1&limit=0
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="atm"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="bank"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["highway"="bus_stop"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["historic"="castle"](around:500000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$top=1&$count=true
+ttl 3600
+at earth
+
+url https://webservices.ingv.it/fdsnws/event/1/query?format=geojson&minmagnitude=2.5&limit=200
+ttl 3600
+on earth 40.0 15.0 0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=3&limit=200
+ttl 3600
+on earth 0 0 0
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_month.geojson
+ttl 3600
+on earth 0 0 0
+
+url https://ies-ows.jrc.ec.europa.eu/effis?service=WFS&request=GetFeature&typeName=ms:modis.hs&outputFormat=application/json&maxFeatures=1
+ttl 3600
+on earth 45.803 8.624 0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="charging_station"](around:100000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="fire_station"](around:100000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="fuel"](around:100000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://www.gdacs.org/gdacsapi/api/events/geteventlist/SEARCH?alertlevel=red;orange;green
+ttl 3600
+at earth
+
+url https://gdacs.org/xml/rss.xml
+ttl 3600
+on earth 38.9072 -77.0369 0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="hospital"](around:200000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="library"](around:100000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["man_made"="lighthouse"](around:500000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["man_made"="mast"](around:200000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["historic"="memorial"](around:100000,{lat},{lon});out%20100;
+ttl 3600
+at earth

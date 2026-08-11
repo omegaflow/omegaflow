@@ -1,0 +1,199 @@
+url https://data.neracoos.org/erddap/tabledap/F01_surface_currents.csv?time,latitude,longitude,current_speed,current_direction,current_u,current_v&time>=max(time)-1day
+ttl 3600
+on earth 44.055 -68.998
+
+url https://data.neracoos.org/erddap/tabledap/I01_met.csv?time,latitude,longitude,air_temperature,wind_speed,wind_gust,wind_direction,barometric_pressure&time>=max(time)-1day
+ttl 3600
+on earth 44.103 -68.109
+
+url https://data.neracoos.org/erddap/tabledap/I01_surface_currents.csv?time,latitude,longitude,current_speed,current_direction,current_u,current_v&time>=max(time)-1day
+ttl 3600
+on earth 44.102 -68.113
+
+url https://data.neracoos.org/erddap/tabledap/I01_waves.csv?time,latitude,longitude,significant_wave_height,dominant_wave_period,mean_wave_direction&time>=max(time)-1day
+ttl 3600
+on earth 44.103 -68.109
+
+url https://data.neracoos.org/erddap/tabledap/M01_surface_currents.csv?time,latitude,longitude,current_speed,current_direction,current_u,current_v&time>=max(time)-1day
+ttl 3600
+on earth 43.491 -67.880
+
+url https://data.neracoos.org/erddap/tabledap/N01_surface_currents.csv?time,latitude,longitude,current_speed,current_direction,current_u,current_v&time>=max(time)-1day
+ttl 3600
+on earth 42.330 -65.914
+
+url https://data.neracoos.org/erddap/tabledap/Hohonu_tide_Adams_Point_NH.csv?time,latitude,longitude,navd88_meters&time%3E={today}T00:00:00Z
+ttl 3600
+on earth 43.09 -70.74
+
+url https://data.neracoos.org/erddap/tabledap/Greenstream_tide_ME_BWD.csv?time,latitude,longitude,navd88_meters&time%3E={today}T00:00:00Z
+ttl 3600
+on earth 44.01 -69.90
+
+url https://data.neracoos.org/erddap/tabledap/Greenstream_tide_ME_RKL.csv?time,latitude,longitude,navd88_meters&time%3E={today}T00:00:00Z
+ttl 3600
+on earth 44.104 -69.109
+
+url https://flood-api.open-meteo.com/v1/flood?latitude={lat}&longitude={lon}&daily=river_discharge
+ttl 3600
+at sun 1.0
+
+url https://pegelonline.wsv.de/webservices/rest-api/v2/stations.json?latitude={lat}&longitude={lon}&radius=50&includeCurrentMeasurement=true
+ttl 3600
+at sun 1.0
+
+url https://cddis.nasa.gov/archive/gnss/products/ionex/{year}/{day}/COD0OPSFIN_{year}{day}0000_01D_01H_GIM.INX
+ttl 3600
+at sun 1.0
+
+url https://api.safecast.org/en-US/measurements.json?limit=100
+ttl 3600
+on earth 0 0
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=shortwave_radiation
+ttl 3600
+at sun 1.0
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=uv_index
+ttl 3600
+at sun 1.0
+
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?site=all&year=2026&month=7&day=31&hour=0&min=0&AOD15=1
+ttl 10800
+at sun 1.0
+
+url https://db.satnogs.org/api/tle/?format=json
+ttl 14400
+at sun 1.0
+
+url https://www.ncei.noaa.gov/erddap/griddap/cfs_reanl_mm_ocnh_by_time16_depth_below_sea_lat_lon.csv?u_component_of_current%5B(last)%5D%5B(0)%5D%5B(-80.0):10:(80.0)%5D%5B(0.125):10:(359.875)%5D,v_component_of_current%5B(last)%5D%5B(0)%5D%5B(-80.0):10:(80.0)%5D%5B(0.125):10:(359.875)%5D
+ttl 21600
+at sun 1.0
+
+url https://www.ncei.noaa.gov/erddap/griddap/cfs_reanl_mm_ocnh_by_time16_depth_below_sea_lat_lon.csv?Potential_temperature%5B(last)%5D%5B(0)%5D%5B(-80.0):10:(80.0)%5D%5B(0.125):10:(359.875)%5D
+ttl 21600
+at sun 1.0
+
+url https://www.ncei.noaa.gov/erddap/griddap/cfs_reanl_mm_ocnh_by_time16_bottom_of_ocean_mixed_layer_lat_lon.csv?bottom_of_ocean_mixed_layer%5B(last)%5D%5B(-80.0):10:(80.0)%5D%5B(0.125):10:(359.875)%5D
+ttl 21600
+at sun 1.0
+
+url https://www.ncei.noaa.gov/erddap/griddap/ncdc_oisst_v2_avhrr_by_time_zlev_lat_lon.csv?sst%5B(last)%5D%5B(0)%5D%5B(-60.0):20:(60.0)%5D%5B(0.125):20:(359.875)%5D
+ttl 21600
+at sun 1.0
+
+url https://coastwatch.pfeg.noaa.gov/erddap/griddap/erdQMwind1day_LonPM180.json?x_wind%5B(2022-12-01T12%3A00%3A00Z)%5D%5B(10.0)%5D%5B(-75.0)%3A4%3A(75.0)%5D%5B(-180.0)%3A4%3A(180.0)%5D
+ttl 43200
+at sun 1.0
+
+url https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,precipitation_sum,rain_sum,precipitation_hours,precipitation_probability_max,wind_speed_10m_max,wind_gusts_10m_max,wind_direction_10m_dominant,shortwave_radiation_sum,et0_fao_evapotranspiration&timezone=auto
+ttl 43200
+at sun 1.0
+
+url https://weather.uwyo.edu/wsgi/sounding?datetime={today}%2000:00:00&type=TEXT:CSV&id=10393&src=UNKNOWN
+ttl 43200
+at sun 1.0
+
+url https://coastwatch.pfeg.noaa.gov/erddap/griddap/ncdcOisst21Agg_LonPM180.json?ice%5B(last)%5D%5B(0)%5D%5B(-79.875)%3A20%3A(79.875)%5D%5B(-179.875)%3A20%3A(179.875)%5D
+ttl 43200
+at sun 1.0
+
+url https://stationview.raspberryshake.org/stations?online=true
+ttl 43200
+at sun 1.0
+
+url https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.json?time%2Clongitude%2Clatitude%2Cpres%2Ctemp%26time%3E%3D{yesterday}%26time%3C%3D{now}%26longitude%3E%3D{lon_min}%26longitude%3C%3D{lon_max}%26latitude%3E%3D{lat_min}%26latitude%3C%3D{lat_max}
+ttl 43200
+at sun 1.0
+
+url https://data.pmel.noaa.gov/socat/erddap/tabledap/socat_v2026_fulldata.json?time,latitude,longitude,xCO2_water_sst_dry_ppm&time%3E={yesterday}&distinct()
+ttl 43200
+at sun 1.0
+
+url https://vsx.aavso.org/index.php?view=api.votable&format=json&ra=0&dec=0&radius=5
+ttl 86400
+at sun 1.0
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?request=doQuery&lang=ADQL&format=json&query=SELECT+TOP+200+RAJ2000,DEJ2000,Vmag+FROM+%22II/366/catv2021%22
+ttl 86400
+at sun 1.0
+
+url https://newton.spacedys.com/astdys2/index.php?pc=3.0&type=all&format=json&limit=500
+ttl 86400
+on earth 0.0 0.0
+
+url https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name,epoch,H,diameter,albedo,class,neo&sb-kind=a&sb-cdata=%7B%22AND%22%3A%5B%22neo%3Aeq%3AY%22%5D%7D
+ttl 86400
+at sun 1.0
+
+url https://cddis.nasa.gov/archive/vlbi/ivsproducts/eops/ivseops.snx
+ttl 86400
+on earth 0.0 0.0
+
+url https://www.chime-frb.ca/catalog
+ttl 86400
+on earth 49.321 -122.573
+
+url https://dasch.rc.fas.harvard.edu/lightcurve.php?objid=GJ+551&type=json&limit=500
+ttl 86400
+at sun 1.0
+
+url https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/sat441.bsp
+ttl 86400
+at sun 1.0
+
+url https://services.terrascope.be/catalogue/products?collection=urn:eop:VITO:ESA_WorldCover_10m_2021_V2&bbox=-180,-60,180,60
+ttl 86400
+at sun 1.0
+
+url https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/jup365.bsp
+ttl 86400
+at sun 1.0
+
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=json&QUERY=SELECT+pl_name,ra,dec,sy_dist,pl_orbper,pl_rade,pl_bmasse,pl_eqt,st_teff,disc_year+FROM+ps+WHERE+default_flag=1+AND+ra+IS+NOT+NULL+ORDER+BY+sy_dist+ASC
+ttl 86400
+at earth
+
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+TOP+200+ra,dec,pl_name,sy_dist+FROM+ps+ORDER+BY+sy_dist&format=json
+ttl 86400
+at sun 1.0
+
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+TOP+200+ra,dec,sy_dist,pl_orbper,pl_rade+FROM+ps+WHERE+sy_dist+IS+NOT+NULL+ORDER+BY+sy_dist&format=json
+ttl 86400
+at sun 1.0
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?request=doQuery&lang=ADQL&format=json&query=SELECT+TOP+200+RAJ2000,DEJ2000,F1000i,PLGam+FROM+%22IX/67/4fgldr3%22
+ttl 86400
+at sun 1.0
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?LANG=ADQL&QUERY=SELECT+name,ra,dec,redshift,flux_100_300000,spectral_index,object_type,nu_flux,z_phot+FROM+fermilpsc+WHERE+flux_100_300000+IS+NOT+NULL+ORDER+BY+flux_100_300000+DESC&FORMAT=text&limit=2000
+ttl 86400
+at sun 1.0
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RAJ2000,DEJ2000,Fpeak,Fint+FROM+%22VIII/92/first14%22
+ttl 86400
+at sun 1.0
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+Name,RAJ2000,DEJ2000,DM+FROM+%22J/other/PASA/33.45/frbcat%22
+ttl 86400
+at sun 1.0
+
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%2Cruwe%20FROM%20gaiadr3.gaia_source%20WHERE%20ruwe%20%3E%202%20AND%20phot_g_mean_mag%20%3C%2015%20AND%20parallax%20%3E%202
+ttl 86400
+at sun 1.0
+
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cbp_rp%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%3C-0.1%20AND%20phot_g_mean_mag%3C14%20AND%20parallax%3E2
+ttl 86400
+at sun 1.0
+
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20phot_g_mean_mag%20%3C%208%20AND%20parallax%20%3E%205
+ttl 86400
+at sun 1.0
+
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20SQRT%28POWER%28ra-266.4%2C2%29%2BPOWER%28dec%2B29%2C2%29%29%3C5%20AND%20parallax%20IS%20NOT%20NULL
+ttl 86400
+at sun 1.0
+
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.gaia_source%20WHERE%20bp_rp%3E2%20AND%20bp_rp%3C4%20AND%20parallax%3E20
+ttl 86400
+at sun 1.0

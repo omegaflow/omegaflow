@@ -1,0 +1,199 @@
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_celestrak_engineering_sats.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_celestrak_glonass.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_celestrak_gps.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_celestrak_navigation_sats.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_celestrak_oneweb.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_celestrak_science_sats.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_celestrak_space_stations.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_celestrak_starlink.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_celestrak_weather_sats.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_callisto.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_ceres.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_earth.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_enceladus.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_eris.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_europa.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_ganymede.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_haumea.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_io.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_jupiter.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_makemake.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_mars.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_mercury.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_moon.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_neptune.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_pluto.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_saturn.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/saturn_rings_10k.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_sun.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_titan.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_triton.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_uranus.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_venus.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_vesta.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_apophis.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_bennu.json
+ttl 86400
+at earth
+
+url https://hpiers.obspm.fr/iers/eop/eopc04/eopc04.1962-now
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_ceres.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/mass_earth.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/orbital_jpl_atmospheric_fireballs.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/mass_jupiter.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/mass_mars.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/mass_mercury.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/mass_neptune.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/mass_saturn.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/orbital_sentry_objects.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/mass_uranus.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/mass_venus.json
+ttl 86400
+at earth
+
+url https://www.orfeus-eu.org/fdsnws/station/1/query?level=station&format=text&starttime=2020-01-01&endtime=9999-01-01
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/mirror_ourairports_global.csv
+ttl 86400
+body earth
+
+url https://paleobiodb.org/data1.2/occs/list.json?all_records=1&limit=1
+ttl 86400
+at earth

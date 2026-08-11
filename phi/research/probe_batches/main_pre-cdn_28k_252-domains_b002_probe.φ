@@ -1,0 +1,199 @@
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_yahoo_finance_markets.json
+ttl 60
+at earth
+
+url https://data.blitzortung.org/contributors/0/stations/0/signals/0/{year}/{month}/{day}/{hour}/{minute}.json
+ttl 60
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/magnetosphere_cosmic_radiation_jung.json
+ttl 60
+at earth
+
+url https://api.drand.sh/public/latest
+ttl 60
+at earth
+
+url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&limit=100&minmagnitude=2.5&orderby=time&start={today}T00:00:00
+ttl 60
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/exosphere_magnetometer.json
+ttl 60
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/exosphere_solar_flares.json
+ttl 60
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/exosphere_solar_wind.json
+ttl 60
+at earth
+
+url https://api.geonet.org.nz/quake?MMI=3
+ttl 60
+at earth
+
+url https://api.geonet.org.nz/quake?MMI=3
+ttl 60
+at earth
+
+url https://api.wolfx.jp/jma_eew.json
+ttl 60
+at earth
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={hour_ago}&latitude={lat}&longitude={lon}&maxradiuskm=500&minmagnitude=2.0
+ttl 60
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/geosphere_usgs_earthquakes_24h.json
+ttl 60
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/geosphere_usgs_earthquakes_hour.json
+ttl 60
+at earth
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_day.geojson
+ttl 60
+at earth
+
+url https://webservices.ingv.it/fdsnws/event/1/query?format=geojson&minmagnitude=1.5&limit=200&orderby=time&starttime={today}T00:00:00
+ttl 60
+at earth
+
+url http://irsc.ut.ac.ir/fdsnws/event/1/query?format=geojson&minmagnitude=2.0&limit=500&orderby=time&starttime={today}T00:00:00
+ttl 60
+at earth
+
+url https://api.p2pquake.net/v2/jma/quake?limit=100&order=-1
+ttl 60
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_dst_index.json
+ttl 60
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_geomag_forecast.json
+ttl 60
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_goes.json
+ttl 60
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_kp_index.json
+ttl 60
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_solar_wind.json
+ttl 60
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_goes18_electron_flux.json
+ttl 60
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_goes18_eps_energetic_particles.json
+ttl 60
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_goes_exis_xrays.json
+ttl 60
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_goes_r_exis_euv_realtime.json
+ttl 60
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_swpc_alerts_current.json
+ttl 60
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_swpc_geomagnetic_alerts.json
+ttl 60
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_swpc_geomagnetic_storm_alerts.json
+ttl 60
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_swpc_goes_proton_primary.json
+ttl 60
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_swpc_goes_xray_flux.json
+ttl 60
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_swpc_goes_xray_primary.json
+ttl 60
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_swpc_solar_events.json
+ttl 60
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/noaa_swpc_xray_flares_latest.json
+ttl 60
+at earth
+
+url https://api.adsb.lol/v2/point/50/10/1500
+ttl 60
+at earth
+
+url https://beacon.nist.gov/beacon/2.0/pulse/last
+ttl 60
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/radiation_electrons.json
+ttl 60
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/radiation_proton_flux.json
+ttl 60
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/radiation_protons.json
+ttl 60
+at earth
+
+url https://service.scedc.caltech.edu/fdsnws/event/1/query?format=text&minmagnitude=1.5&limit=500&orderby=time&starttime={today}T00:00:00
+ttl 60
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/solar_events.json
+ttl 60
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/solar_indices.json
+ttl 60
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/solar_radio_flux.json
+ttl 60
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/solar_sunspots.json
+ttl 60
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/solar_wind.json
+ttl 60
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/solar_xray.json
+ttl 60
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/solar_xray_flares.json
+ttl 60
+at earth
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=1.5&limit=1000&orderby=time&starttime={today}T00:00:00
+ttl 60
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/usgs_earthquake_significant_6.json
+ttl 60
+at earth

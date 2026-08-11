@@ -1,0 +1,199 @@
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=et0_fao_evapotranspiration,soil_moisture_0_to_1cm,soil_moisture_1_to_3cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm&forecast_days=7&format=json
+ttl 3600
+at earth
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=precipitation,cape,lifted_index,precipitation_probability&models=icon_d2&forecast_days=2&format=json
+ttl 3600
+at earth
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=windspeed_10m,windgusts_10m,winddirection_10m,snowfall&models=icon_seamless&forecast_days=3&format=json
+ttl 3600
+at earth
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=temperature_2m,precipitation,windspeed_10m,cape&models=jma_msm&forecast_days=4&format=json
+ttl 3600
+at earth
+
+url https://marine-api.open-meteo.com/v1/marine?latitude={lat}&longitude={lon}&hourly=wave_height,wave_period,wave_direction,swell_wave_height,ocean_current_velocity&forecast_days=7&format=json
+ttl 3600
+at earth
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=snow_depth,frozen_soil_0_to_7cm,frozen_soil_7_to_28cm,soil_temperature_0cm,soil_temperature_6cm&forecast_days=7&format=json
+ttl 3600
+at earth
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=direct_normal_irradiance,global_tilted_irradiance,diffuse_radiation,sunshine_duration&forecast_days=7&format=json
+ttl 3600
+at earth
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=uv_index,uv_index_clear_sky,direct_radiation&models=best_match&forecast_days=3&format=json
+ttl 3600
+at earth
+
+url https://openlittermap.com/api/getdata?lat=0.0&lon=0.0&radius=50&format=json&limit=500
+ttl 3600
+at earth
+
+url https://openlittermap.com/api/getdata?lat={lat}&lon={lon}&radius=50&format=json&limit=500
+ttl 3600
+at earth
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%273I%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 3600
+at earth
+
+url https://tle.ivanstanojevic.me/api/tle/?page-size=1&search=STARLINK
+ttl 3600
+at earth
+
+url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=1LD&date-min={today}&date-max={today}
+ttl 3600
+at earth
+
+url https://ssd-api.jpl.nasa.gov/cad.api
+ttl 3600
+at earth
+
+url https://eyes.nasa.gov/dsn-now/dsn.json
+ttl 3600
+at earth
+
+url https://ssd-api.jpl.nasa.gov/fireball.api
+ttl 3600
+at earth
+
+url https://api.nasa.gov/neo/rest/v1/feed?start_date={today}&end_date={today}&api_key={nasa_key}
+ttl 3600
+at earth
+
+url https://retlector.eu/tle/active
+ttl 3600
+at earth
+
+url https://retlector.eu/norad/{sat_id}
+ttl 3600
+at earth
+
+url https://tle.ivanstanojevic.me/api/tle/?page-size=500
+ttl 3600
+at earth
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Vesta%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 3600
+at earth
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration,shortwave_radiation_sum&past_days=1&forecast_days=0&timezone=auto
+ttl 3600
+at earth
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-96%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 3600
+at earth
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27999%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+ttl 3600
+at earth
+
+url https://api.nasa.gov/DONKI/RBE?startDate={yesterday}&api_key={nasa_key}
+ttl 3600
+at earth
+
+url https://api.safecast.org/en-US/measurements.json?limit=100
+ttl 3600
+at earth
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=shortwave_radiation
+ttl 3600
+on earth 0 0 0
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=uv_index
+ttl 3600
+on earth 0 0 0
+
+url https://api.reliefweb.int/v2/disasters?appname=omegaflow&limit=200&filter[field]=status&filter[value]=ongoing&sort[]=date:desc&profile=full&fields[include][]=name&fields[include][]=primary_type&fields[include][]=country&fields[include][]=date&fields[include][]=glide
+ttl 3600
+at earth
+
+url https://api.reliefweb.int/v1/disasters?appname=opencode&limit=200&filter[field]=status&filter[value]=ongoing&sort[]=date:desc
+ttl 3600
+at earth
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27699%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+ttl 3600
+at earth
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27504%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 3600
+at earth
+
+url https://api.nasa.gov/DONKI/CME?startDate={yesterday}&api_key={nasa_key}
+ttl 3600
+at earth
+
+url https://api.nasa.gov/DONKI/SEP?startDate={yesterday}&api_key={nasa_key}
+ttl 3600
+at earth
+
+url https://api.nasa.gov/DONKI/FLR?startDate={yesterday}&api_key={nasa_key}
+ttl 3600
+at earth
+
+url https://api.nasa.gov/DONKI/HSS?startDate={yesterday}&api_key={nasa_key}
+ttl 3600
+at earth
+
+url https://api.nasa.gov/DONKI/IPS?startDate={yesterday}&api_key={nasa_key}
+ttl 3600
+at earth
+
+url https://services.swpc.noaa.gov/json/solar_regions.json
+ttl 3600
+at earth
+
+url https://services.swpc.noaa.gov/json/goes/primary/xray-flares-latest.json
+ttl 3600
+at earth
+
+url https://services.swpc.noaa.gov/json/goes/primary/xray-flares-latest.json
+ttl 3600
+at earth
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-144%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 3600
+at earth
+
+url https://api.nasa.gov/DONKI/CMEAnalysis?startDate={yesterday}&api_key={nasa_key}
+ttl 3600
+at earth
+
+url https://api.nasa.gov/DONKI/CME?startDate={yesterday}&api_key={nasa_key}
+ttl 3600
+at earth
+
+url https://api.nasa.gov/DONKI/FLR?startDate={yesterday}&classType=X&api_key={nasa_key}
+ttl 3600
+at earth
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+ttl 3600
+at earth
+
+url https://aviationweather.gov/api/data/taf?bbox=35,-10,70,40&format=json&time=valid
+ttl 3600
+at earth
+
+url https://api.npmjs.org/downloads/point/last-day/lodash
+ttl 3600
+on earth 0 0 0
+
+url https://en.wikipedia.org/w/api.php?action=query&list=random&rnnamespace=0&rnlimit=1&format=json
+ttl 3600
+on earth 40.712 -74.006 0
+
+url https://www.temis.nl/uvradiation/nrt/uvdose.php?date={year}{month}{day}&type=overpass&format=json
+ttl 3600
+at earth
+
+url https://www.temis.nl/uvradiation/nrt/uvindex.php?date={year}{month}{day}&type=overpass&format=json
+ttl 3600
+at earth

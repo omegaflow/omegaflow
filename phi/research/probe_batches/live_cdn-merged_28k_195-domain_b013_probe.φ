@@ -1,0 +1,199 @@
+url https://gcn.nasa.gov/circulars?query=icecube
+ttl 300
+on earth -90.0 0.0 2835
+
+url https://gracedb.ligo.org/api/superevents/?format=json
+ttl 300
+at sun 1.0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8518750&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&begin_date={today}&end_date={tomorrow}&interval=hilo
+ttl 360
+at sun 1.0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?date=latest&range=24&product=water_level&datum=MLLW&units=metric&time_zone=gmt&station=8518750&format=json
+ttl 600
+at sun 1.0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-96'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&VEC_TABLE='2'&REF_PLANE='ECLIPTIC'
+ttl 600
+at sun 1.0
+
+url https://www.minorplanetcenter.net/iau/NEO/neocp.txt
+ttl 600
+on earth 0.0 0.0
+
+url https://eonet.gsfc.nasa.gov/api/v3/events?limit=200&open=true
+ttl 600
+at sun 1.0
+
+url https://firms.modaps.eosdis.nasa.gov/data/active_fire/noaa-20-viirs-c2/csv/J1_VIIRS_C2_Global_24h.csv
+ttl 600
+at sun 1.0
+
+url https://firms.modaps.eosdis.nasa.gov/data/active_fire/suomi-npp-viirs-c2/csv/SUOMI_VIIRS_C2_Global_24h.csv
+ttl 600
+at sun 1.0
+
+url https://epic.gsfc.nasa.gov/api/natural
+ttl 600
+at sun 1
+
+url https://services.swpc.noaa.gov/json/goes/primary/euvs-1-day.json
+ttl 600
+at sun 1.0
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=shortwave_radiation,direct_radiation,diffuse_radiation,direct_normal_irradiance,global_tilted_irradiance,vapour_pressure_deficit,cape,evapotranspiration,et0_fao_evapotranspiration,visibility,freezing_level_height,snow_depth,precipitation_probability,weather_code&timezone=auto
+ttl 600
+at sun 1.0
+
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?site=GSFC&year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD15=1&AVG=10
+ttl 600
+on earth 38.99 -76.84
+
+url https://air-quality-api.open-meteo.com/v1/air-quality?latitude={lat}&longitude={lon}&current=pm10,pm2_5,carbon_monoxide,nitrogen_dioxide,sulphur_dioxide,ozone&timezone=auto
+ttl 600
+at sun 1.0
+
+url https://air-quality-api.open-meteo.com/v1/air-quality?latitude={lat}&longitude={lon}&current=ammonia,dust,aerosol_optical_depth,formaldehyde
+ttl 600
+at sun 1.0
+
+url https://air-quality-api.open-meteo.com/v1/air-quality?latitude={lat}&longitude={lon}&current=us_aqi,us_aqi_pm2_5&timezone=auto
+ttl 600
+at sun 1.0
+
+url https://aviationweather.gov/api/data/pirep?bbox=-90,-180,90,180&hours=3&format=json
+ttl 600
+at sun 1
+
+url https://aviationweather.gov/api/data/airsigmet?format=json&hours=3
+ttl 600
+at sun 1
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,wind_direction_10m
+ttl 600
+on earth -25.0 135.0
+
+url https://api.weather.bom.gov.au/v1/warnings/{lat},{lon}
+ttl 600
+on earth -25.0 135.0
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=wind_speed_10m,wind_direction_10m&hourly=windspeed_250hPa
+ttl 600
+at sun 1.0
+
+url https://aviationweather.gov/api/data/metar?format=json&bbox=-180,-90,180,90
+ttl 600
+on earth 0 0
+
+url https://aviationweather.gov/api/data/airsigmet?format=json
+ttl 600
+on earth 0 0
+
+url https://air-quality-api.open-meteo.com/v1/air-quality?latitude={lat}&longitude={lon}&current=pm10,pm2_5,carbon_monoxide,nitrogen_dioxide,sulphur_dioxide,ozone,aerosol_optical_depth&timezone=auto
+ttl 600
+at sun 1.0
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=temperature_1000hPa,temperature_950hPa,temperature_925hPa,temperature_900hPa,temperature_850hPa,temperature_800hPa,temperature_700hPa,temperature_600hPa,temperature_500hPa,temperature_400hPa,temperature_300hPa,temperature_250hPa,temperature_200hPa,temperature_150hPa,temperature_100hPa,temperature_70hPa,temperature_50hPa,relative_humidity_1000hPa,relative_humidity_950hPa,relative_humidity_925hPa,relative_humidity_850hPa,relative_humidity_700hPa,relative_humidity_500hPa,relative_humidity_300hPa,relative_humidity_200hPa,relative_humidity_100hPa,relative_humidity_50hPa,wind_speed_1000hPa,wind_speed_950hPa,wind_speed_925hPa,wind_speed_850hPa,wind_speed_700hPa,wind_speed_500hPa,wind_speed_300hPa,wind_speed_250hPa,wind_speed_200hPa,wind_speed_100hPa,wind_speed_70hPa,wind_speed_50hPa&timezone=auto
+ttl 600
+at sun 1.0
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=lightning_potential&minutely_15=lightning_potential
+ttl 600
+at sun 1.0
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&daily=cape_max,wind_gusts_10m_max
+ttl 600
+at sun 1.0
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=visibility,freezing_level_height,snow_depth,precipitation_probability,weather_code,sunshine_duration,is_day
+ttl 600
+at sun 1.0
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,rain,showers,snowfall,weather_code,cloud_cover,pressure_msl,surface_pressure,wind_speed_10m,wind_direction_10m,wind_gusts_10m&timezone=auto
+ttl 600
+at sun 1.0
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,surface_pressure,wind_speed_10m,wind_direction_10m
+ttl 600
+at sun 1.0
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=et0_fao_evapotranspiration,vapor_pressure_deficit,dew_point_2m,weather_code,is_day,rain,showers&timezone=auto
+ttl 600
+at sun 1.0
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_500hPa,temperature_850hPa,geopotential_height_500hPa,geopotential_height_850hPa&timezone=auto
+ttl 600
+at sun 1.0
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=wind_speed_10m,wind_speed_80m,wind_speed_120m,wind_speed_180m,wind_direction_10m,wind_direction_80m,wind_direction_120m,wind_direction_180m,wind_gusts_10m,temperature_80m,temperature_120m,temperature_180m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,uv_index,uv_index_clear_sky,dew_point_2m,pressure_msl,surface_pressure&timezone=auto
+ttl 600
+at sun 1.0
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=snowfall,snow_depth
+ttl 600
+at sun 1.0
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=snow_depth&timezone=auto
+ttl 600
+at sun 1.0
+
+url https://bmkg-restapi.vercel.app/v1/earthquake/recent
+ttl 600
+on earth 0 0
+
+url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&minmag=3&limit=500
+ttl 600
+on earth 0 0
+
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Active_Hurricanes_Sampler/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+ttl 600
+on earth 0 0
+
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Active_Hurricanes_v1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+ttl 600
+on earth 0 0
+
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Air_Quality_PM25_Latest_Results/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+ttl 600
+at sun 1.0
+
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/ASAM_events_V1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+ttl 600
+at sun 1.0
+
+url https://services.arcgis.com/wjcPoefzjpzCgffS/arcgis/rest/services/AirQualityHealthIndexCanada/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+ttl 600
+at sun 1.0
+
+url https://services.arcgis.com/txWDfZ2LIgzmw5Ts/arcgis/rest/services/Hotspots_(CWFIS)/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=1000
+ttl 600
+on earth 0 0
+
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Live_Stream_Gauges_v1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+ttl 600
+at sun 1.0
+
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/MODIS_Thermal_v1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+ttl 600
+at sun 1.0
+
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/NOAA_storm_reports_Sampler/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+ttl 600
+on earth 0 0
+
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/NOAA_storm_reports_v1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+ttl 600
+on earth 0 0
+
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Recent_Hurricanes_v1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+ttl 600
+on earth 0 0
+
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/USA_Wildfires_v1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+ttl 600
+at sun 1.0
+
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/USGS_Seismic_Data_v1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+ttl 600
+on earth 0 0

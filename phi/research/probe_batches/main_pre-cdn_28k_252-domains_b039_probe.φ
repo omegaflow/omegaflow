@@ -1,0 +1,199 @@
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_gaia_extreme_red.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_gaia_galactic_plane.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_gaia_giant_branch.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_gaia_high_velocity.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_gaia_hot_subdwarfs.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_gaia_lmc.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_gaia_main_sequence.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_gaia_metallicity.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_gaia_nearby_1000.json
+ttl 315576000000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_gaia_red_clump.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_gaia_smc.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_nvss.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_xmm_4xmm_dr13.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/usgs_earthquakes_hazard_layer.json
+ttl 86400
+at earth
+
+url https://nwis.waterdata.usgs.gov/usa/nwis/peak?state_cd=all&format=rdb&date_format=YYYY-MM-DD&peak_begin_date={year}-01-01&peak_end_date={year}-12-31
+ttl 86400
+at earth
+
+url https://www.sciencebase.gov/catalog/items?format=json&q=National+Land+Cover+Database&max=50&fields=id,title,body,spatial,contacts,tags
+ttl 86400
+at earth
+
+url https://volcanoes.usgs.gov/hans-public/api/volcano/getUSVolcanoes
+ttl 86400
+at earth
+
+url https://developer.uspto.gov/ptab-api/v2/patents?limit=1
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/firms_viirs_nrt_world.csv
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/vizier_2dfgrs.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/vizier_2mass_psc_bright.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/VII_241_2qz.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/vizier_4xmm_dr13.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_6dfgs.json
+ttl 86400
+at earth
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+AllWISE,RAJ2000,DEJ2000,W1mag,W2mag,W3mag,W4mag,var_flg,ex+FROM+%22II/328/allwise%22+WHERE+W1mag<9+AND+RAJ2000+IS+NOT+NULL+ORDER+BY+W1mag+ASC
+ttl 86400
+at earth
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+APOGEE_ID,RA,DEC,Teff,logg,M_H,alpha_M,VHELIO_AVG,DIST_BPG+FROM+"III/286/allstars"+WHERE+RA+IS+NOT+NULL+AND+ASPCAPFLAG%3D0+AND+SNR>100+ORDER+BY+SNR+DESC
+ttl 86400
+at earth
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+Family,n,e,sini,a,H+FROM+"J/Icarus/239/46/table3"+WHERE+n+IS+NOT+NULL+ORDER+BY+n+DESC
+ttl 86400
+at earth
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+AGAL,_RA_icrs,_DE_icrs,GLON,GLAT,Fint,e_Fint,Fp,Reff+FROM+"J/A+A/568/A41/atl-csc"+WHERE+_RA_icrs+IS+NOT+NULL+ORDER+BY+Fint+DESC
+ttl 86400
+at earth
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+JNAME,RAJ,DECJ,P0,DM,DIST,ASSOC,Type+FROM+"VII/304/catalog"+WHERE+DIST+IS+NOT+NULL+AND+RAJ+IS+NOT+NULL+ORDER+BY+DIST+ASC
+ttl 86400
+at earth
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+JNAME,RAJ,DECJ,P0,DM,DIST,ASSOC,Binary,Type+FROM+"VII/304/catalog"+WHERE+P0<0.03+AND+RAJ+IS+NOT+NULL+ORDER+BY+P0+ASC
+ttl 86400
+at earth
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+Name,RAJ2000,DEJ2000,Dist,P0,F0,DM,S1400+FROM+%22J%2FApJS%2F208%2F17%2Fpsrcat%22+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+P0
+ttl 86400
+at earth
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+4000+Name,RAJ2000,DEJ2000,z,LogFlux,Type+FROM+%22VII/274/bzcat5%22+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+LogFlux+DESC
+ttl 86400
+at earth
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+_RA,_DE,Karmn,GJ,SpType,Dist,Ksmag+FROM+"J/A+A/609/A117/table1"+WHERE+_RA+IS+NOT+NULL+ORDER+BY+Dist+ASC
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_catwise_agn.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/vizier_chandra_gc_xray.json
+ttl 86400
+at earth
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+Name,GLON,GLAT,RAJ2000,DEJ2000,Speak,Sint,ASc,mT+FROM+%22J/ApJS/205/1/catalog%22+WHERE+RAJ2000+IS+NOT+NULL+AND+Speak>1+ORDER+BY+Speak+DESC
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/J_AplusA_570_A106_void.json
+ttl 86400
+at earth
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+200+RAJ2000,DEJ2000,Name,SName+FROM+"J/A+A/640/A105/stars"+WHERE+RAJ2000+IS+NOT+NULL
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/J_ApJ_800_7_dla.json
+ttl 86400
+at earth
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50+JNAME,RAJ,DECJ,P0,DM,Dist,Tspan+FROM+"J/A+A/678/A48/table1"+WHERE+RAJ+IS+NOT+NULL+ORDER+BY+Tspan+DESC
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_first.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_first.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/vizier_gaia_binary_candidates.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/vizier_gaia_dr3_full_astrometric_catalog.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/vizier_gaia_dr3_radial_velocities.json
+ttl 86400
+at earth
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+100+Name,RAJ2000,DEJ2000,Porb,Fx,MX,Mdist+FROM+"J/ApJS/163/2/table1"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+MX+DESC
+ttl 86400
+at earth
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+star_id,RAJ2000,DEJ2000,Teff,logg,fe_h,alpha_fe,Vrad,age_bstep+FROM+"J/MNRAS/528/5/catalog"+WHERE+RAJ2000+IS+NOT+NULL+AND+flag_sp%3D0+ORDER+BY+snr_c3_iraf+DESC
+ttl 86400
+at earth
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+GLON,GLAT,RAJ2000,DEJ2000,VLSR,Sint,Peak+FROM+"J/ApJS/208/14/catalog"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+Sint+DESC
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/B_gcvs_gcvs_cat.json
+ttl 86400
+at earth
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+Name,RAJ2000,DEJ2000,Fintwide,alpha,e_alpha,Fpwide+FROM+"J/MNRAS/464/1146/gleam"+WHERE+RAJ2000+IS+NOT+NULL+AND+Fintwide>500+ORDER+BY+Fintwide+DESC
+ttl 86400
+at earth

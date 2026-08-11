@@ -1,0 +1,199 @@
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_st_martin_french_part.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_st_vincent_and_the_grenadines.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_sudan.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_suriname.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_sweden.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_switzerland.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_syrian_arab_republic.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_tajikistan.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_tanzania.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_thailand.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_timor_leste.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_togo.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_tonga.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_trinidad_and_tobago.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_tunisia.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_turkiye.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_turkmenistan.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_turks_and_caicos_islands.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_tuvalu.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_uganda.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_ukraine.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_united_arab_emirates.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_united_kingdom.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_united_states.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_uruguay.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_uzbekistan.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_vanuatu.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_venezuela.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_vietnam.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_virgin_islands_u_s.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_west_bank_and_gaza.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_yemen.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_zambia.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_zimbabwe.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_life_expectancy.json
+ttl 2592000
+at earth
+
+url https://api.worldbank.org/v2/country/WLD/indicator/SP.POP.MEDN?format=json&date=2023&per_page=1&mrv=1
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_population.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_population_density.json
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_urban_population_pct.json
+ttl 2592000
+at earth
+
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=dark+matter+direct+detection+limit+XENONnT+LZ&fields=titles,citation_count
+ttl 2592000
+at earth
+
+url https://en.wikipedia.org/w/api.php?action=query&list=geosearch&gscoord={lat}|{lon}&gsradius=10000&gslimit=500&format=json
+ttl 2592000
+at earth
+
+url https://esgf.ceda.ac.uk/esg-search/search/?query=CCI&limit=1
+ttl 2592000
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_elevation.json
+ttl 2592000
+at earth
+
+url https://stac.eoapi.dev/collections
+ttl 2592000
+at earth
+
+url https://icgem.gfz-potsdam.de/calcgrid?model=EGM2008&functype=geoid_undulation&lat={lat}&lon={lon}&format=gdf
+ttl 2592000
+at earth
+
+url https://macrostrat.org/api/v2/units?format=json
+ttl 2592000
+at earth
+
+url https://macrostrat.org/api/v2/defs/timescales?timescale_id=11&format=json
+ttl 2592000
+at earth
+
+url https://api.open-elevation.com/api/v1/lookup?locations={grid}
+ttl 2592000
+at earth
+
+url https://api.opentopodata.org/v1/eudem25m?locations={grid}
+ttl 2592000
+at earth
+
+url https://api.opentopodata.org/v1/gebco2020?locations={grid}
+ttl 2592000
+at earth

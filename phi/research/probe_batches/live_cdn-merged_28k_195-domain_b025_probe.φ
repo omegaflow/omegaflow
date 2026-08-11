@@ -1,0 +1,199 @@
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='90000031'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1%20h'
+ttl 86400
+at sun 1.0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='Haumea'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1%20h'
+ttl 86400
+at sun 1.0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-125544'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1%20h'
+ttl 86400
+at sun 1.0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-61'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1%20h'
+ttl 86400
+at sun 1.0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-170'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1%20h'
+ttl 86400
+at sun 1.0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='Makemake'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1%20h'
+ttl 86400
+at sun 1.0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-98'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1%20h'
+ttl 86400
+at sun 1.0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='2000004'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1%20h'
+ttl 86400
+at sun 1.0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-31'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1%20h'
+ttl 86400
+at sun 1.0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-32'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1%20h'
+ttl 86400
+at sun 1.0
+
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+TOP+512+ra,dec,sy_dist,pl_eqt,pl_rade,pl_orbper,pl_bmasse+FROM+pscomppars+WHERE+sy_dist+IS+NOT+NULL+ORDER+BY+pl_eqt+ASC&format=json
+ttl 86400
+at sun 1.0
+
+url https://services.swpc.noaa.gov/json/f107_cm_flux.json
+ttl 86400
+at sun 1.0
+
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+TOP+256+ra,dec,sy_dist,pl_eqt,pl_orbper+FROM+pscomppars+WHERE+pl_orbper%3C1+AND+sy_dist+IS+NOT+NULL+ORDER+BY+pl_orbper+ASC&format=json
+ttl 86400
+at sun 1.0
+
+url https://geofon.gfz.de/fdsnws/station/1/query?format=geojson&level=station&network=AF
+ttl 86400
+on earth 0 0
+
+url https://services3.arcgis.com/GVgbJbqm8hXASVYi/arcgis/rest/services/PAGER_CAT/FeatureServer/0/query?where=1%3D1&geometry={lon_min}%2C{lat_min}%2C{lon_max}%2C{lat_max}&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=YEAR,MAG,DEPTH,DEATHS,INJURIES,LATITUDE,LONGITUDE,COUNTRY&f=json&resultRecordCount=500
+ttl 86400
+at sun 1.0
+
+url https://catalogue.clms.copernicus.eu/odc/api/v1/collections
+ttl 86400
+at sun 1
+
+url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_boundary_lines_land.geojson
+ttl 86400
+on earth 0 0
+
+url https://service.earthscope.org/fdsnws/station/1/query?format=text&limit=50000
+ttl 86400
+at sun 1.0
+
+url https://services.arcgis.com/LG9Yn2oFqZi5PnO5/arcgis/rest/services/EDMAT_Disaster_Data/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 86400
+on earth 0 0
+
+url https://www.ncei.noaa.gov/erddap/griddap/ncdc_oisst_v2_avhrr_by_time_zlev_lat_lon.csv?err%5B(last)%5D%5B(0)%5D%5B(-60.0):20:(60.0)%5D%5B(0.125):20:(359.875)%5D
+ttl 86400
+at sun 1.0
+
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Alternate_Fuel/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+ttl 86400
+at sun 1.0
+
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/NOAA_temp_historic/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+ttl 86400
+at sun 1.0
+
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/NOAA_temp_yearly_historic/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+ttl 86400
+at sun 1.0
+
+url https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/Monthly_High_Tide_Flooding_Outlook_Daily_Flood_Likelihood/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+ttl 86400
+on earth 0 0
+
+url https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/Tsunami_Capable_Tide_Stations/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+ttl 86400
+at sun 1.0
+
+url https://seismic-api.science.unimelb.edu.au/monitoring-sites
+ttl 86400
+on earth 0 0
+
+url https://raw.githubusercontent.com/GEMScienceTools/gem-global-active-faults/master/geojson/gem_active_faults.geojson
+ttl 86400
+at sun 1.0
+
+url https://geofon.gfz-potsdam.de/fdsnws/station/1/query?level=station&network=GE
+ttl 86400
+at sun 1.0
+
+url https://hydro1.gesdisc.eosdis.nasa.gov/daac-bin/access/timeseries.cgi?variable=GLDAS2:GLDAS_NOAH025_3H_v2.1:SoilTMP0_10cm_inst&startDate={year}-{month}-{day}T00:00&endDate={year}-{month}-{day}T23:00&location=GEOM:POINT({lon}%20{lat})&type=asc2
+ttl 86400
+body earth
+
+url https://webservices.volcano.si.edu/geoserver/GVP-VOTW/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=GVP-VOTW:Smithsonian_VOTW_Holocene_Eruptions&outputFormat=application/json&count=1000
+ttl 86400
+at sun 1.0
+
+url https://webservices.volcano.si.edu/geoserver/GVP-VOTW/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=GVP-VOTW:Smithsonian_VOTW_Holocene_Eruptions&outputFormat=csv&count=1000
+ttl 86400
+at sun 1.0
+
+url https://webservices.volcano.si.edu/geoserver/GVP-VOTW/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=GVP-VOTW:Smithsonian_VOTW_Holocene_Volcanoes&outputFormat=application/json&count=1000
+ttl 86400
+at sun 1.0
+
+url https://webservices.volcano.si.edu/geoserver/GVP-VOTW/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=GVP-VOTW:Smithsonian_VOTW_Holocene_Volcanoes&outputFormat=csv&count=1000
+ttl 86400
+at sun 1.0
+
+url https://webservices.volcano.si.edu/geoserver/GVP-VOTW/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=GVP-VOTW:Smithsonian_VOTW_Pleistocene_Volcanoes&outputFormat=application/json&count=1000
+ttl 86400
+at sun 1.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude={lat}&longitude={lon}&start_date={yesterday}&end_date={yesterday}&hourly=soil_temperature_0_to_7cm,soil_temperature_7_to_28cm,soil_temperature_28_to_100cm,soil_moisture_0_to_7cm,soil_moisture_7_to_28cm,soil_moisture_28_to_100cm&timezone=auto
+ttl 86400
+at sun 1.0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/catalog
+ttl 86400
+at sun 1
+
+url https://service.earthscope.org/fdsnws/station/1/query?level=station&format=geocsv&net=IC,AU
+ttl 86400
+at sun 1.0
+
+url https://service.earthscope.org/fdsnws/station/1/query?level=station&format=geocsv&net=II
+ttl 86400
+at sun 1.0
+
+url https://service.earthscope.org/fdsnws/station/1/query?level=station&format=geocsv&net=IU
+ttl 86400
+at sun 1.0
+
+url https://service.earthscope.org/fdsnws/station/1/query?level=station&format=geocsv&starttime=2020-01-01
+ttl 86400
+at sun 1.0
+
+url https://service.earthscope.org/fdsnws/station/1/query?level=network&format=geocsv
+ttl 86400
+at sun 1
+
+url https://service.earthscope.org/fdsnws/station/1/query?level=station&format=geocsv&net={net}
+ttl 86400
+at sun 1
+
+url https://ds.iris.edu/spud/momenttensor?evlo=&evla=&evdp=&startTime={today}T00:00:00&endTime={today}T23:59:59&catalog=GCMT&format=text&nodata=404
+ttl 86400
+at sun 1.0
+
+url https://service.earthscope.org/fdsnws/station/1/query?level=station&format=geocsv
+ttl 86400
+at sun 1.0
+
+url https://www.isc.ac.uk/fdsnws/event/1/query?format=geojson&minmagnitude=5.0&limit=500&orderby=time&starttime=1900-01-01&endtime={today}
+ttl 86400
+at sun 1.0
+
+url http://www.isc.ac.uk/cgi-bin/web-db-run?request=BULLETIN&out_format=CSV&searchshape=RECT&bot_lat=-90&top_lat=90&left_lon=-180&right_lon=180&start_year={year}&start_mon={month}&start_day={day}&start_time=00%3A00%3A00&end_year={year}&end_mon={month}&end_day={day}&end_time=23%3A59%3A59&min_mag=4.5&req_mag_type=mb&req_mag_agcy=ISC
+ttl 86400
+at sun 1.0
+
+url https://rest.isric.org/soilgrids/v2.0/properties/query?lon={lon}&lat={lat}&property=phh2o,soc,bdod,clay,sand,silt,nitrogen&depth=0-5cm,5-15cm&value=mean
+ttl 86400
+at sun 1
+
+url https://bhuvan-app1.nrsc.gov.in/disaster/disaster.php?id=drought&format=json
+ttl 86400
+at sun 1.0
+
+url https://bhuvan-app1.nrsc.gov.in/disaster/disaster.php?id=landslide&format=json
+ttl 86400
+at sun 1.0
+
+url https://nsidc.org/api/itslive/antarctica
+ttl 86400
+at sun 1.0

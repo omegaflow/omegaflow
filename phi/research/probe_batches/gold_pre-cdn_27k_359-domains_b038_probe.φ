@@ -1,0 +1,199 @@
+url https://www.pangaea.de/api/datasets?format=json&maxResults=200&query=benthic+foraminifera+Mg+Ca+temperature&topic=PALEOCLIMATE&access=open
+ttl 86400
+at earth
+
+url https://ws.pangaea.de/oai/provider?verb=ListRecords&metadataPrefix=oai_dc&set=GEOTRACES
+ttl 86400
+on earth 0.0 0.0 0
+
+url https://ws.pangaea.de/oai/provider?verb=ListRecords&metadataPrefix=oai_dc&set=GNIP
+ttl 86400
+on earth 0.0 0.0 0
+
+url https://ws.pangaea.de/oai/provider?verb=ListRecords&metadataPrefix=oai_dc&set=GNIR
+ttl 86400
+on earth 0.0 0.0 0
+
+url https://www.pangaea.de/api/catalog?q=CTD+ocean+oxygen&count=500&type=dataset&maxDate={today}T00:00:00&minDate={year}-01-01T00:00:00
+ttl 86400
+at earth
+
+url https://www.pangaea.de/api/datasets?format=json&maxResults=500&query=sediment+core+age+model&topic=PALEOCLIMATE&access=open
+ttl 86400
+at earth
+
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=find+tc&fields=titles,citation_count
+ttl 86400
+on earth 46.233 6.056 0
+
+url https://api.crossref.org/works?rows=0
+ttl 86400
+on earth 42.530 -71.048 0
+
+url https://api.crossref.org/works?query=JWST+high+redshift+galaxy+candidate&rows=0
+ttl 86400
+on earth 39.328 -76.620 0
+
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=ITER+plasma+fusion&fields=titles,citation_count
+ttl 86400
+on earth 43.709 5.777 0
+
+url https://api.openalex.org/works?per-page=1
+ttl 86400
+on earth 42.373 -71.110 0
+
+url https://www.pmel.noaa.gov/gt/dart/dart_map.json
+ttl 86400
+at earth
+
+url https://polly.tropos.de/api/stations?format=json
+ttl 86400
+at earth
+
+url https://www.psmsl.org/data/obtaining/slowtrends/slowtrends.txt
+ttl 86400
+at earth
+
+url https://www.psmsl.org/data/obtaining/rlr.metadata.txt
+ttl 86400
+at earth
+
+url https://pubchem.ncbi.nlm.nih.gov/rest/pug/compounds/count/JSON
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://pubchem.ncbi.nlm.nih.gov/rest/pug/substances/count/JSON
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://pypi.org/stats/packages/
+ttl 86400
+on earth 37.774 -122.419 0
+
+url https://www.nmdb.eu/nest/station_list.json
+ttl 86400
+at earth
+
+url https://rapid.ac.uk/rapidmoc/rapid_data/datadl.php?data=moc_vertical
+ttl 86400
+on earth 26.5 -75.0 0
+
+url https://rapid.ac.uk/rapidmoc/rapid_data/datadl.php?data=fc
+ttl 86400
+on earth 27.0 -79.5 0
+
+url https://data.rcsb.org/graphql?query={graphStatistics{totalEntries}}
+ttl 86400
+on earth 40.444 -74.494 0
+
+url https://api.reliefweb.int/v2/disasters?appname=omegaflow&limit=500&filter[conditions][0][field]=date.created&filter[conditions][0][value][from]={yesterday}T00:00:00%2B00:00&sort[]=date:desc&profile=full&fields[include][]=name&fields[include][]=primary_type&fields[include][]=country&fields[include][]=date&fields[include][]=status
+ttl 86400
+at earth
+
+url https://raw.githubusercontent.com/omegaflow/omegaflow/main/static/data/saturn_rings_10k.json
+ttl 86400
+at earth
+
+url https://skyserver.sdss.org/dr18/SkyServerWS/ConeSearch/ConeSearchService?ra={ra}&dec={dec}&sr=6&format=json
+ttl 86400
+at earth
+
+url https://skyserver.sdss.org/dr18/SearchTools/sql?cmd=SELECT+TOP+5000+ra,dec,z,r,g,i+FROM+SpecObj+WHERE+class%3D%27GALAXY%27+AND+z+BETWEEN+0.01+AND+0.3+AND+zWarning%3D0&format=json
+ttl 86400
+at earth
+
+url https://skyserver.sdss.org/dr18/SearchTools/sql?cmd=SELECT+TOP+3000+ra,dec,z,psfMag_r,psfMag_g+FROM+SpecObj+WHERE+class%3D%27QSO%27+AND+z+BETWEEN+0.1+AND+3.0+AND+zWarning%3D0&format=json
+ttl 86400
+at earth
+
+url https://skyserver.sdss.org/dr18/SearchTools/sql?cmd=SELECT+TOP+5000+ra,dec,r,g,u,i,z+FROM+Star+WHERE+(r-extinction_r)%3C20+AND+clean%3D1&format=json
+ttl 86400
+at earth
+
+url https://seabass.gsfc.nasa.gov/api/v1/measurement/?limit=500
+ttl 86400
+at earth
+
+url https://sedac.ciesin.columbia.edu/arcgis/rest/services/sedac/GPWv4/MapServer/0/query?where=1%3D1&geometry={lon_min}%2C{lat_min}%2C{lon_max}%2C{lat_max}&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=*&f=json&resultRecordCount=500
+ttl 86400
+at earth
+
+url https://gis1.servirglobal.net/arcgis/rest/services/SMAP/SM_1km/MapServer/0/query?where=1%3D1&outFields=*&f=json&resultRecordCount=500
+ttl 86400
+at earth
+
+url https://www.sidc.be/SILSO/DATA/SN_d_tot_V2.0.txt
+ttl 86400
+on earth 0.0 0.0 0
+
+url https://www.sidc.be/silso/datafiles/SN_d_tot_V2.0.txt
+ttl 86400
+on earth 0.0 0.0 0
+
+url https://www.sidc.be/SILSO/DATA/SN_ms_tot_V2.0.txt
+ttl 86400
+on earth 50.85 4.35 0
+
+url https://www.sidc.be/SILSO/DATA/SN_d_tot_V2.0.txt
+ttl 86400
+on earth 50.85 4.35 0
+
+url https://simbad.cds.unistra.fr/simbad/sim-tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+main_id,ra,dec,otype,sp_type,V+FROM+basic+WHERE+V<9+AND+ra+IS+NOT+NULL+ORDER+BY+V+ASC
+ttl 86400
+at earth
+
+url https://simbad.cds.unistra.fr/simbad/sim-tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+main_id,ra,dec,plx_value,sp_type,otype,V+FROM+basic+WHERE+plx_value>50+AND+ra+IS+NOT+NULL+ORDER+BY+plx_value+DESC
+ttl 86400
+at earth
+
+url https://sios-svalbard.org/metsis/api/datasets?format=json&limit=200&subject=atmosphere
+ttl 86400
+at earth
+
+url https://volcano.si.edu/news/WeeklyVolcanoRSS.xml
+ttl 86400
+at earth
+
+url https://archive-api.open-meteo.com/v1/archive?latitude={lat}&longitude={lon}&start_date={yesterday}&end_date={yesterday}&hourly=shortwave_radiation,direct_radiation,diffuse_radiation,et0_fao_evapotranspiration,vapour_pressure_deficit&timezone=auto
+ttl 86400
+at earth
+
+url https://api.stackexchange.com/2.3/questions?order=desc&sort=activity&site=stackoverflow&filter=total
+ttl 86400
+on earth 37.774 -122.419 0
+
+url https://raw.githubusercontent.com/scikit-hep/particle/main/src/particle/data/particle2026.csv
+ttl 86400
+at earth
+
+url https://www.sidc.be/silso/DATA/SN_d_tot_V2.0.txt
+ttl 86400
+at earth
+
+url https://www.sidc.be/SILSO/DATA/SN_m_tot_V2.0.txt
+ttl 86400
+at earth
+
+url https://api.stackexchange.com/2.3/tags?pagesize=1&order=desc&sort=popular&site=stackoverflow
+ttl 86400
+on earth 40.712 -74.006 0
+
+url https://www.temis.nl/airpollution/no2col/data/tropomi/netcdf/no2_{year}{month}{day}.nc
+ttl 86400
+at earth
+
+url https://www.temis.nl/uvradiation/UVindex/uvief_{year}{month}{day}.nc
+ttl 86400
+at earth
+
+url https://terrabrasilis.dpi.inpe.br/geoserver/deter/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=deter:public&outputFormat=application/json&sortBy=view_date+DESC&count=500
+ttl 86400
+at earth
+
+url https://terrabrasilis.dpi.inpe.br/geoserver/prodes/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=prodes:desmatamento&outputFormat=application/json&count=500
+ttl 86400
+at earth
+
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+COUNT(*)+FROM+ps+WHERE+pl_discmethod+like+'%25TESS%25'&format=json
+ttl 86400
+on earth 42.365 -71.105 0

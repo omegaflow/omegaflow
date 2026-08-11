@@ -1,0 +1,199 @@
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SUA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 44.68 26.25 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TDC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -37.067 -12.315999999999974 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=THL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 77.47 -69.22699999999998 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=THY/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 46.9 17.89 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TIRM/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -22.22 114.1 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TLON/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 45.408 16.659 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TSU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -19.202 17.584 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TTB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -1.205 -48.51299999999998 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TTB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -1.205 -48.51299999999998 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TUC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 32.17 -110.72999999999999 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TUC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 32.17 -110.72999999999999 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=UPS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 59.903 17.353 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VALL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 51.933 -10.25 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VNA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -70.683 -8.281999999999982 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VNA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -22.4 -43.64999999999998 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VOS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -78.464 106.835 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VSS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -22.4 -43.64999999999998 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WIC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 47.931 15.866 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WIC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 47.931 15.866 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WNG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 53.725 9.053 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WNG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 53.725 9.053 0
+
+url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?LANG=ADQL&REQUEST=doQuery&FORMAT=csv&QUERY=SELECT+TOP+3000+observationID,target_name,s_ra,s_dec,t_exptime,instrument_name,energy_bandpassName,em_min,em_max+FROM+dbo.caomobservation+WHERE+collection%3D'HST'+AND+calib_level%3D3+AND+t_exptime%3E3600+ORDER+BY+t_exptime+DESC
+ttl 86400
+at earth
+
+url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?LANG=ADQL&REQUEST=doQuery&FORMAT=csv&QUERY=SELECT+TOP+3000+observationID,target_name,s_ra,s_dec,t_exptime,instrument_name,t_min,t_max+FROM+dbo.caomobservation+WHERE+collection+IN+('Kepler','K2')+AND+calib_level%3D2+ORDER+BY+t_min+DESC
+ttl 86400
+at earth
+
+url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?LANG=ADQL&REQUEST=doQuery&FORMAT=csv&QUERY=SELECT+TOP+3000+observationID,target_name,s_ra,s_dec,t_exptime,instrument_name,t_min,t_max+FROM+dbo.caomobservation+WHERE+collection%3D'TESS'+AND+calib_level%3D2+ORDER+BY+t_min+DESC
+ttl 86400
+at earth
+
+url https://tess.mit.edu/wp-content/uploads/all_targets_S001_v1.csv
+ttl 86400
+at earth
+
+url https://www.physics.mcgill.ca/~pulsar/magnetar/TabO1.csv
+ttl 86400
+at earth
+
+url https://www.physics.mcgill.ca/~pulsar/magnetar/TabO1.csv
+ttl 86400
+at earth
+
+url https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-06-11/meteorites.csv
+ttl 86400
+at earth
+
+url https://www.minorplanetcenter.net/data_service
+ttl 86400
+on earth 42.365 -71.105 0
+
+url https://www.crystallography.net/cod/result.php?format=json&element=Si&limit=1
+ttl 86400
+on earth 54.683 25.287 0
+
+url https://data.rcsb.org/rest/v1/core/entry/1UBQ
+ttl 86400
+on earth 40.500 -74.450 0
+
+url https://aa.usno.navy.mil/api/rstt/oneday?date={today}&coords=34.201,-118.171&tz=0
+ttl 86400
+on earth 34.201 -118.171 0
+
+url https://www.minorplanetcenter.net/iau/lists/ObsCodes.html
+ttl 86400
+at earth
+
+url https://www.minorplanetcenter.net/iau/MPCORB/Distant.txt
+ttl 86400
+at earth
+
+url https://musicbrainz.org/ws/2/artist?query=*&limit=1&fmt=json
+ttl 86400
+on earth 51.507 -0.127 0
+
+url https://musicbrainz.org/ws/2/recording?query=*&limit=1&fmt=json
+ttl 86400
+on earth 51.507 -0.127 0
+
+url https://musicbrainz.org/ws/2/release?query=*&limit=1&fmt=json
+ttl 86400
+on earth 51.507 -0.127 0
+
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+top+2000+ra,dec,pl_name,pl_rade,pl_bmasse,pl_orbsmax,pl_eqt,st_teff,st_spectype,sy_distan+from+pscomppars+where+ra+is+not+null+and+pl_eqt+is+not+null+order+by+sy_distan+asc&format=json
+ttl 86400
+at earth
+
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=json&QUERY=SELECT+pl_name,ra,dec,sy_dist,pl_orbper,pl_rade,pl_bmasse,pl_eqt,disc_year+FROM+ps+WHERE+default_flag=1+AND+ra+IS+NOT+NULL+ORDER+BY+sy_dist+ASC
+ttl 86400
+at earth
+
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=json&QUERY=SELECT+toi,ra,dec,sy_dist,pl_orbper,pl_rade,tfopwg_disp+FROM+toi+WHERE+ra+IS+NOT+NULL+AND+tfopwg_disp+IN+(%27PC%27,%27KP%27,%27CP%27)+ORDER+BY+sy_dist+ASC
+ttl 86400
+at earth
+
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+toi,ra,dec,sy_dist,pl_orbper,pl_rade,pl_masse,pl_trandur,st_teff+FROM+TOI+WHERE+ra+IS+NOT+NULL
+ttl 86400
+at earth
+
+url https://heasarc.gsfc.nasa.gov/db-perl/W3Browse/w3query.pl?tablehead=name%3Dfermigtrig&Action=More+Options&ResultRange=1&order=desc&field=from&field=0+1+2+3
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://data.giss.nasa.gov/gistemp/tabledata_v4/GLB.Ts+dSST.csv
+ttl 86400
+on earth 0.0 0.0 0
+
+url https://hydro1.gesdisc.eosdis.nasa.gov/daac-bin/access/timeseries.cgi?variable=GLDAS2:GLDAS_NOAH025_3H_v2.1:SoilMoi0_10cm_inst&startDate={year}-{month}-{day}T00:00&endDate={year}-{month}-{day}T23:00&location=GEOM:POINT({lon}%20{lat})&type=asc2
+ttl 86400
+at earth
+
+url https://goldsmr4.gesdisc.eosdis.nasa.gov/opendap/MERRA2/M2T1NXFXR.5.12.4/2026/07/MERRA2_400.tavg1_2d_aer_Nx.20260727.SUB.nc4.ascii?DUSTTOTAL[0][0:72:30][0:144:30]
+ttl 86400
+at earth
+
+url https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2019/2019-06-11/meteorites.csv
+ttl 86400
+at earth
+
+url https://acdisc.gesdisc.eosdis.nasa.gov/opendap/Aura_MLS_Level3/ML3DZO3.005/{year}/MLS-Aura_L3DM-O3_{year}d{day}.nc4.ascii?O3[0:1:0][0:1:35][0:1:60]
+ttl 86400
+on earth 0.0 0.0 0
+
+url https://acdisc.gesdisc.eosdis.nasa.gov/opendap/Aura_MLS_Level3/ML3DZT.005/{year}/MLS-Aura_L3DM-Temperature_{year}d{day}.nc4.ascii?T[0:1:0][0:1:35][0:1:60]
+ttl 86400
+on earth 0.0 0.0 0
+
+url https://e4ftl01.cr.usgs.gov/MOLT/MOD11C3.061/
+ttl 86400
+at earth
+
+url https://modis.gsfc.nasa.gov/data/dataprod/mod13.php
+ttl 86400
+on earth 0 0 0

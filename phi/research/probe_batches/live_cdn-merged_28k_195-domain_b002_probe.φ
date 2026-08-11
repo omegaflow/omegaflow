@@ -1,0 +1,199 @@
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Historical_Quakes/FeatureServer/0/query?where=1%3D1&outFields=mag,sig,felt,cdi,mmi,tsunami,depth,latitude,longitude&outSR=4326&f=geojson&resultRecordCount=5000
+ttl 300
+at sun 1.0
+
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/NOAA_METAR_current_wind_speed_direction_v1/FeatureServer/0/query?where=1%3D1&outFields=LATITUDE,LONGITUDE,TEMP,DEW_POINT,R_HUMIDITY,WIND_DIRECT,WIND_SPEED,WIND_GUST,WIND_CHILL,PRESSURE,VISIBILITY,HEAT_INDEX,ELEVATION&outSR=4326&f=geojson&resultRecordCount=5000
+ttl 300
+at sun 1.0
+
+url https://services.arcgis.com/xOi1kZaI0eWDREZv/arcgis/rest/services/NTAD_Dams/FeatureServer/0/query?where=1%3D1&outFields=latitude,longitude,nidHeight,damHeight&outSR=4326&f=geojson&resultRecordCount=5000
+ttl 300
+on earth 0 0
+
+url https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/NOAA_Satellite_Fire_Detections_(v1)/FeatureServer/0/query?where=1%3D1&outFields=Lon,Lat,FRP,Satellite,Method,YearDay&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 300
+on earth 0 0
+
+url https://services5.arcgis.com/t2t1phUp5Bj3z8Lp/arcgis/rest/services/Satellite_Point/FeatureServer/0/query?where=1%3D1&outFields=sat_name,altitude_km,velocity_kmps,inclination,norad_cat_id&outSR=4326&f=geojson&resultRecordCount=5000
+ttl 300
+on earth 0 0
+
+url https://services3.arcgis.com/UJlXKlDHq85VvxWm/arcgis/rest/services/SpaceWeatherCurrent/FeatureServer/0/query?where=1%3D1&orderByFields=OBJECTID+DESC&resultRecordCount=1&returnGeometry=false&outFields=date_time_current,Geomagnetic,RadioBlackouts,RadiationStorms&f=json
+ttl 300
+at sun 1.0
+
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/USGS_Seismic_Data_v1/FeatureServer/0/query?where=1%3D1&outFields=mag,sig,felt,cdi,mmi,tsunami,longitude,latitude,depth&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 300
+on earth 0 0
+
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Satellite_VIIRS_Thermal_Hotspots_and_Fire_Activity/FeatureServer/0/query?where=1%3D1&outFields=latitude,longitude,bright_ti4,bright_ti5,frp,confidence&outSR=4326&f=geojson&resultRecordCount=5000
+ttl 300
+at sun 1.0
+
+url https://api.wolfx.jp/cenc_eqlist.json
+ttl 300
+at sun 1
+
+url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&minmag=5&limit=100
+ttl 300
+on earth 0 0
+
+url https://services.arcgis.com/v400IkDOw1ad7Yad/arcgis/rest/services/Current_Wind_Speed/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+ttl 300
+on earth 0 0
+
+url https://services.arcgis.com/wjcPoefzjpzCgffS/arcgis/rest/services/Environment_Canada_Wind_Speed_and_Direction/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+ttl 300
+at sun 1.0
+
+url https://services6.arcgis.com/LT1iWT50Endhh6TU/arcgis/rest/services/Lightning__Global_/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=1000
+ttl 300
+on earth 0 0
+
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/NOAA_METAR_current_wind_speed_direction_v1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+ttl 300
+on earth 0 0
+
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42043/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_1__degr,sea_water_speed_1__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+ttl 300
+on earth 0 0
+
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42084/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_1__degr&outSR=4326&f=geojson&resultRecordCount=500
+ttl 300
+on earth 0 0
+
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42091/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_1__degr&outSR=4326&f=geojson&resultRecordCount=500
+ttl 300
+on earth 0 0
+
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42095/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_1__degr&outSR=4326&f=geojson&resultRecordCount=500
+ttl 300
+on earth 0 0
+
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42098/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_1__degr&outSR=4326&f=geojson&resultRecordCount=500
+ttl 300
+on earth 0 0
+
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42099/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_1__degr&outSR=4326&f=geojson&resultRecordCount=500
+ttl 300
+on earth 0 0
+
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42360/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_water_speed__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+ttl 300
+at sun 1.0
+
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42361/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+ttl 300
+on earth 0 0
+
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42362/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+ttl 300
+on earth 0 0
+
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42363/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+ttl 300
+on earth 0 0
+
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42364/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+ttl 300
+on earth 0 0
+
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42365/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+ttl 300
+on earth 0 0
+
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42369/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+ttl 300
+on earth 0 0
+
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42370/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_2__degr,sea_water_speed_2__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+ttl 300
+at sun 1.0
+
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42373/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+ttl 300
+on earth 0 0
+
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42374/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+ttl 300
+on earth 0 0
+
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42377/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+ttl 300
+on earth 0 0
+
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42379/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+ttl 300
+on earth 0 0
+
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42382/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+ttl 300
+on earth 0 0
+
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42384/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+ttl 300
+on earth 0 0
+
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42386/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_1__degr,sea_water_speed_1__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+ttl 300
+on earth 0 0
+
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42388/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+ttl 300
+on earth 0 0
+
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42395/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_water_speed__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+ttl 300
+at sun 1.0
+
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42400/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+ttl 300
+on earth 0 0
+
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42873/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+ttl 300
+on earth 0 0
+
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42876/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+ttl 300
+on earth 0 0
+
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42881/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_2__degr,sea_water_speed_2__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+ttl 300
+at sun 1.0
+
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42884/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+ttl 300
+on earth 0 0
+
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42887/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+ttl 300
+on earth 0 0
+
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42934/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+ttl 300
+on earth 0 0
+
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42936/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+ttl 300
+on earth 0 0
+
+url https://api.weather.gov/stations?state=CA,TX,NY&limit=500
+ttl 300
+on earth 0 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=air_temperature&application=omegaflow&begin_date={year}{month}{day}&end_date={year}{month}{day}&station=8518750&units=metric&time_zone=gmt&format=json
+ttl 300
+on earth 40.7 -74.01
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=water_level&application=omegaflow&begin_date={year}{month}{day}&end_date={year}{month}{day}&station=8518750&datum=MLLW&units=metric&time_zone=gmt&format=json
+ttl 300
+on earth 40.7 -74.01
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=water_temperature&application=omegaflow&begin_date={year}{month}{day}&end_date={year}{month}{day}&station=8518750&units=metric&time_zone=gmt&format=json
+ttl 300
+on earth 40.7 -74.01
+
+url https://www.ndbc.noaa.gov/data/realtime2/51407.dart
+ttl 300
+on earth 19.63 -156.49

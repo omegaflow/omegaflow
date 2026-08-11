@@ -1,0 +1,199 @@
+url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
+ttl 300
+at earth
+
+url https://services.swpc.noaa.gov/products/geospace/propagated-solar-wind-1-hour.json
+ttl 300
+at earth
+
+url https://services.swpc.noaa.gov/products/solar-wind/mag-1-day.json
+ttl 300
+on earth 0 0 1500000000
+
+url https://services.swpc.noaa.gov/json/magnetometers/magnetometers.json
+ttl 300
+at earth
+
+url https://services.swpc.noaa.gov/products/solar-wind/plasma-1-day.json
+ttl 300
+on earth 0 0 1500000000
+
+url https://www.minorplanetcenter.net/cgi-bin/neocp.cgi?style=json
+ttl 300
+at earth
+
+url https://www.nmdb.eu/nest/draw_graph.php?wget=1&stations[]=OULU&stations[]=JUNG&stations[]=THUL&stations[]=NEWK&tabchoice=1h&output=ascii&startdate_1={today}T00:00:00&enddate_1={today}T23:59:59
+ttl 300
+on earth 0.0 0.0 0
+
+url https://api.weather.gov/stations?state=CA,TX,NY&limit=500&cursor=&format=json
+ttl 300
+at earth
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=air_temperature&application=batch16&begin_date={year}{month}{day}&end_date={year}{month}{day}&station=8518750&units=metric&time_zone=gmt&format=json
+ttl 300
+on earth 40.7 -74.01 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=water_level&application=batch15&begin_date={year}{month}{day}&end_date={year}{month}{day}&station=8518750&datum=MLLW&units=metric&time_zone=gmt&format=json
+ttl 300
+on earth 40.7 -74.01 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=water_temperature&application=batch16&begin_date={year}{month}{day}&end_date={year}{month}{day}&station=8518750&units=metric&time_zone=gmt&format=json
+ttl 300
+on earth 40.7 -74.01 0
+
+url https://services.swpc.noaa.gov/json/goes/primary/differential-euv-flux.json
+ttl 300
+on earth 0.0 -75.0 0
+
+url https://www.ncei.noaa.gov/data/international-best-track-archive-for-climate-stewardship-ibtracs/v04r00/access/csv/ibtracs.ACTIVE.list.v04r00.csv
+ttl 300
+at earth
+
+url https://www.ndbc.noaa.gov/data/realtime2/51407.dart
+ttl 300
+on earth 19.63 -156.49 0
+
+url https://services.swpc.noaa.gov/json/planetary_k_index_1m.json
+ttl 300
+on earth 55.0 0.0 0
+
+url https://services.swpc.noaa.gov/json/ovation_aurora_latest.json
+ttl 300
+at earth
+
+url https://services.swpc.noaa.gov/json/geomag/dst_index.json
+ttl 300
+on earth 0.0 0.0 0
+
+url https://services.swpc.noaa.gov/products/kyoto-dst.json
+ttl 300
+on earth 0.0 0.0 0
+
+url https://services.swpc.noaa.gov/json/goes/primary/differential-electrons-1-day.json
+ttl 300
+on earth 0.0 0.0 0
+
+url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
+ttl 300
+on earth 0.0 0.0 0
+
+url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-7-day.json
+ttl 300
+on earth 0.0 0.0 0
+
+url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
+ttl 300
+on earth 0.0 0.0 0
+
+url https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json
+ttl 300
+on earth 0.0 0.0 0
+
+url https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json
+ttl 300
+on earth 0.0 0.0 0
+
+url https://services.swpc.noaa.gov/json/solar_filaments.json
+ttl 300
+on earth 0.0 0.0 0
+
+url https://services.swpc.noaa.gov/json/solar-geophysical-activity-summary.json
+ttl 300
+on earth 0.0 0.0 0
+
+url https://services.swpc.noaa.gov/json/solar_regions.json
+ttl 300
+on earth 0.0 0.0 0
+
+url https://api.obis.org/v3/occurrence?startdate={yesterday}&enddate={today}&size=200&fields=decimalLatitude,decimalLongitude,scientificName,eventDate
+ttl 300
+at earth
+
+url https://aisstream.io/api/v1/stream/vessels?latitude={lat}&longitude={lon}&radius=100
+ttl 300
+at earth
+
+url https://gcn.nasa.gov/api/v1/events?query=instrument:Fermi/GBM&order-by=-created
+ttl 300
+at earth
+
+url https://gcn.nasa.gov/circulars?query=icecube
+ttl 300
+on earth -90.0 0.0 2835
+
+url https://gracedb.ligo.org/api/superevents/?format=json
+ttl 300
+at earth
+
+url https://gcn.nasa.gov/api/v1/events?query=instrument:Swift/BAT&order-by=-created
+ttl 300
+at earth
+
+url https://www.nmdb.eu/nest/data/NEWK/realtime.txt
+ttl 300
+at earth
+
+url https://www.nmdb.eu/nest/data/OULU/realtime.txt
+ttl 300
+on earth 65.0 25.5 0
+
+url https://renass.unistra.fr/fdsnws/event/1/query?format=geojson&minmagnitude=1.0&limit=500&orderby=time&starttime={today}T00:00:00
+ttl 300
+at earth
+
+url https://data.sensor.community/airrohr/v1/filter/type=SPS30
+ttl 300
+at earth
+
+url https://services.swpc.noaa.gov/products/solar-wind/mag-7-day.json
+ttl 300
+on earth 0 0 1500000000
+
+url https://services.swpc.noaa.gov/products/solar-wind/plasma-7-day.json
+ttl 300
+on earth 0 0 1500000000
+
+url https://services.swpc.noaa.gov/json/goes/primary/xray-flares-latest.json
+ttl 300
+at earth
+
+url https://services.swpc.noaa.gov/json/goes/primary/xrays-1-day.json
+ttl 300
+at earth
+
+url https://services.swpc.noaa.gov/products/summary/solar-wind-speed.json
+ttl 300
+at earth
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=5.5&limit=100&orderby=time&producttype=aftershock-forecast
+ttl 300
+at earth
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=3.5&mindepth=300&limit=500&orderby=time&starttime={today}T00:00:00
+ttl 300
+at earth
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=2.5&limit=200&orderby=time
+ttl 300
+at earth
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=5.0&orderby=time&limit=50
+ttl 300
+at earth
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=4.0&limit=100&orderby=time&producttype=pager
+ttl 300
+at earth
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=5.0&limit=50&orderby=time&producttype=shakemap
+ttl 300
+at earth
+
+url https://volcanoes.usgs.gov/hans-public/api/volcano/current
+ttl 300
+at earth
+
+url https://volcanoes.usgs.gov/vhp/feeds/vaalatom.xml
+ttl 300
+at earth

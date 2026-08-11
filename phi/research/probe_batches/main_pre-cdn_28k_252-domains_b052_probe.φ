@@ -1,0 +1,7 @@
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/eia_grid_demand.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/noaa_cdo_daily.json
+ttl 86400
+at earth

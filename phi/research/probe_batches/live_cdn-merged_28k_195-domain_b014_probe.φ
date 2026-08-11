@@ -1,0 +1,199 @@
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Satellite_VIIRS_Thermal_Hotspots_and_Fire_Activity/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=1000
+ttl 600
+on earth 0 0
+
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Wildfire_aggregated_v1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+ttl 600
+at sun 1.0
+
+url https://seismic-api.science.unimelb.edu.au/today-quakes
+ttl 600
+at sun 1
+
+url https://geofon.gfz-potsdam.de/fdsnws/event/1/query?format=text&minmagnitude=3&limit=100
+ttl 600
+at sun 1.0
+
+url https://webservices.ingv.it/fdsnws/event/1/query?format=geojson&minmagnitude=2&limit=100
+ttl 600
+on earth 0 0
+
+url https://api.open-meteo.com/v1/elevation?latitude={lat}&longitude={lon}
+ttl 600
+on earth 0.0 0.0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=water_level&station={nearest_station}&format=json&date=today&units=metric&datum=MLLW&time_zone=gmt
+ttl 600
+at sun 1.0
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=soil_temperature_0cm,soil_temperature_6cm,soil_temperature_18cm,soil_temperature_54cm,soil_moisture_0_to_1cm,soil_moisture_1_to_3cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,soil_moisture_27_to_81cm&timezone=auto
+ttl 600
+at sun 1.0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=4.5&orderby=magnitude&limit=100
+ttl 600
+on earth 0 0
+
+url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&minmagnitude=2&limit=500
+ttl 600
+on earth 0 0
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson
+ttl 600
+on earth 0 0
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojson
+ttl 600
+on earth 0 0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={yesterday}&endtime={today}&minmagnitude=6.0
+ttl 600
+on earth 0 0
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=01646500,09380000,11447650,02177000,03036500,05064500,07010000,08330000,09421500,12144500&parameterCd=00060&period=PT1H
+ttl 600
+at sun 1.0
+
+url https://api.open-meteo.com/v1/forecast?latitude=0&longitude=0&hourly=evapotranspiration&timezone=auto
+ttl 600
+at sun 1
+
+url https://www.ndbc.noaa.gov/data/latest_obs/all_stations.txt
+ttl 600
+at sun 1.0
+
+url https://www.nhc.noaa.gov/CurrentStorms.json
+ttl 900
+at sun 1.0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20260726&end_date=20260727&station=9414290&product=water_level&datum=MSL&units=metric&time_zone=gmt&format=json
+ttl 900
+at sun 1.0
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=01646500&parameterCd=00065,00060&siteStatus=all
+ttl 900
+at sun 1.0
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=07263295&parameterCd=00060,00065
+ttl 900
+on earth 34.74 -92.27
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=09380000&parameterCd=00060,00065
+ttl 900
+on earth 36.86 -111.59
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=14105700&parameterCd=00060,00065
+ttl 900
+on earth 45.61 -121.19
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=05413500&parameterCd=00060,00065
+ttl 900
+on earth 42.72 -90.82
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=01358000&parameterCd=00060,00065
+ttl 900
+on earth 42.66 -73.75
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=07010000&parameterCd=00060,00065
+ttl 900
+on earth 38.87 -90.18
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=07289000&parameterCd=00060,00065
+ttl 900
+on earth 32.35 -90.89
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=06342500&parameterCd=00060,00065
+ttl 900
+on earth 46.85 -100.78
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=06934500&parameterCd=00060,00065
+ttl 900
+on earth 38.71 -91.44
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=03294500&parameterCd=00060,00065
+ttl 900
+on earth 38.26 -85.66
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=01646500&parameterCd=00060,00065
+ttl 900
+on earth 38.95 -77.13
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=08371000&parameterCd=00060,00065
+ttl 900
+on earth 31.80 -106.53
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=03565500&parameterCd=00060,00065
+ttl 900
+on earth 35.04 -85.31
+
+url https://services.swpc.noaa.gov/products/glotec/geojson_2d_urt.json
+ttl 900
+at sun 1
+
+url https://impc.dlr.de/SWE/Total_Electron_Content/TEC_Near_Real-Time/DLR_GNSS_GCG_L4_VTEC-NTCM-SCM_NC_GLOBAL/v2.0.0/latest/DLR_GNSS_GCG_L4_VTEC-NTCM-SCM_NC_GLOBAL_latest_D.json
+ttl 900
+at sun 1
+
+url https://www.imis.bfs.de/ogc/opendata/ows?service=WFS&version=1.1.0&request=GetFeature&typeName=opendata:odlinfo_odl_1h_latest&outputFormat=application/json&count=2000
+ttl 900
+at sun 1.0
+
+url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=0.1&date-min=-7&date-max={today}&body=Earth&fullname=true&sort=dist&limit=500
+ttl 1800
+at sun 1.0
+
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD15=1&AVG=10&if_no_html=1&lat1=35.0&lon1=-10.0&lat2=70.0&lon2=40.0
+ttl 1800
+at sun 1.0
+
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&AOD15=1&AVG=10&if_no_html=1&lat1=-10.0&lon1=60.0&lat2=55.0&lon2=150.0
+ttl 1800
+at earth
+
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&AOD15=1&AVG=10&if_no_html=1&lat1=35.0&lon1=-10.0&lat2=70.0&lon2=40.0
+ttl 1800
+at sun 1
+
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&AOD15=1&AVG=10&if_no_html=1&lat1=15.0&lon1=-170.0&lat2=80.0&lon2=-40.0
+ttl 1800
+at sun 1
+
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&AOD15=1&AVG=10&if_no_html=1&lat1=-60.0&lon1=-90.0&lat2=15.0&lon2=-30.0
+ttl 1800
+at sun 1
+
+url https://aviationweather.gov/api/data/taf?ids=KJFK&format=json
+ttl 1800
+at sun 1
+
+url https://aviationweather.gov/api/data/metar?bbox=-35,-20,38,65&format=json&hours=2
+ttl 1800
+on earth 0 0
+
+url https://aviationweather.gov/api/data/metar?bbox=-10,60,55,150&format=json&hours=2
+ttl 1800
+on earth 0 0
+
+url https://aviationweather.gov/api/data/metar?bbox=35,-10,70,40&format=json&hours=2
+ttl 1800
+on earth 0 0
+
+url https://aviationweather.gov/api/data/metar?bbox=25,-170,72,-50&format=json&hours=2
+ttl 1800
+on earth 0 0
+
+url https://www.nhc.noaa.gov/CurrentStorms.json?basin=epac
+ttl 1800
+at sun 1.0
+
+url https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,rain,weather_code,cloud_cover,wind_speed_10m,wind_direction_10m,pressure_msl,surface_pressure&timezone=auto
+ttl 1800
+at sun 1.0
+
+url https://seismic-api.science.unimelb.edu.au/three-day-quakes
+ttl 1800
+at sun 1
+
+url https://aviationweather.gov/api/data/sigmet?format=json
+ttl 1800
+at sun 1.0

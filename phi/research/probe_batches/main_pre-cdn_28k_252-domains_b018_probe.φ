@@ -1,0 +1,199 @@
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD15=1&AVG=10&if_no_html=1&lat1=-35.0&lon1=-20.0&lat2=38.0&lon2=55.0
+ttl 3600
+at earth
+
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&AOD15=1&AVG=10&if_no_html=1&lat1=-35.0&lon1=-20.0&lat2=38.0&lon2=55.0
+ttl 3600
+at earth
+
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD15=1&AVG=10&if_no_html=1&lat1=-55.0&lon1=-130.0&lat2=60.0&lon2=-30.0
+ttl 3600
+at earth
+
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&AOD15=1&AVG=10&if_no_html=1
+ttl 3600
+at earth
+
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&INV15=1&AVG=10&if_no_html=1&lat1=-90&lon1=-180&lat2=90&lon2=180
+ttl 3600
+at earth
+
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&INV15=1&AVG=10&if_no_html=1
+ttl 3600
+at earth
+
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&SDA15=1&AVG=10&if_no_html=1
+ttl 3600
+at earth
+
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&TOT15=1&AVG=10&if_no_html=1
+ttl 3600
+at earth
+
+url https://almascience.org/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,dec,source_name,project_code+FROM+ivoa.obscore+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
+ttl 3600
+at earth
+
+url https://www.amsmeteors.org/members/ams/check_data.php?y={year}&m={month}&type=json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/arcgis_pager_cat_earthquake_impacts.json
+ttl 3600
+at earth
+
+url https://argovis-api.colorado.edu/argo?startDate=2026-07-26T00:00:00Z&endDate=2026-07-27T00:00:00Z&box=%5B%5B-180,-90%5D,%5B180,90%5D%5D
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_aerosol_optical_depth.json
+ttl 3600
+body earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/atmosphere_biome_amazon.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/atmosphere_biome_antarctic.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/atmosphere_biome_atacama.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/atmosphere_biome_borneo.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/atmosphere_biome_cairo.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/atmosphere_biome_cape_town.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/atmosphere_biome_congo.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/atmosphere_biome_death_valley.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/atmosphere_biome_fiji.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/atmosphere_biome_gobi.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/atmosphere_biome_greenland.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_biome_iceland.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_biome_kerguelen.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_biome_maldives.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_biome_okavango.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_biome_patagonia.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_biome_sahara.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_biome_siberia.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_biome_tibet.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_bom_forecast_daily.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_co2_current.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_co2_mauna_loa.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_daily_forecast.json
+ttl 3600
+body earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_ensemble_forecast.json
+ttl 3600
+body earth
+
+url https://www.hamqsl.com/solarxml.php
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_marine_daily.json
+ttl 3600
+body earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_marine_sst.json
+ttl 3600
+body earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_methane.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_n2o.json
+ttl 3600
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_openmeteo_bom.json
+ttl 3600
+body earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_openmeteo_cma.json
+ttl 3600
+body earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_openmeteo_dwd.json
+ttl 3600
+body earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_openmeteo_ecmwf.json
+ttl 3600
+body earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_openmeteo_gem.json
+ttl 3600
+body earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_openmeteo_jma.json
+ttl 3600
+body earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_openmeteo_kma.json
+ttl 3600
+body earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_openmeteo_meteofrance.json
+ttl 3600
+body earth

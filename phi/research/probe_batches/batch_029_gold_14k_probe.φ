@@ -1,0 +1,199 @@
+url https://api.worldbank.org/v2/country/GEO/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 41.72 44.79 0
+
+url https://api.worldbank.org/v2/country/DEU/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 52.52 13.40 0
+
+url https://api.worldbank.org/v2/country/GHA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 5.56 -0.20 0
+
+url https://api.worldbank.org/v2/country/GIB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 36.14 -5.35 0
+
+url https://api.worldbank.org/v2/country/GRC/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 37.98 23.73 0
+
+url https://api.worldbank.org/v2/country/GRL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 64.15 -21.94 0
+
+url https://api.worldbank.org/v2/country/GRD/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 12.05 -61.75 0
+
+url https://api.worldbank.org/v2/country/GUM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 13.44 144.79 0
+
+url https://api.worldbank.org/v2/country/GTM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 14.63 -90.51 0
+
+url https://api.worldbank.org/v2/country/GIN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 9.51 -13.71 0
+
+url https://api.worldbank.org/v2/country/GNB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 11.86 -15.60 0
+
+url https://api.worldbank.org/v2/country/GUY/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 6.80 -58.16 0
+
+url https://api.worldbank.org/v2/country/HTI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 18.59 -72.31 0
+
+url https://api.worldbank.org/v2/country/HND/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 14.07 -87.21 0
+
+url https://api.worldbank.org/v2/country/HKG/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 22.32 114.17 0
+
+url https://api.worldbank.org/v2/country/HUN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 47.50 19.04 0
+
+url https://api.worldbank.org/v2/country/ISL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 64.15 -21.94 0
+
+url https://api.worldbank.org/v2/country/IND/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 28.61 77.21 0
+
+url https://api.worldbank.org/v2/country/IDN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -6.21 106.85 0
+
+url https://api.worldbank.org/v2/country/IRN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 35.69 51.39 0
+
+url https://api.worldbank.org/v2/country/IRQ/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 33.31 44.36 0
+
+url https://api.worldbank.org/v2/country/IRL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 53.35 -6.26 0
+
+url https://api.worldbank.org/v2/country/ISR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 31.78 35.22 0
+
+url https://api.worldbank.org/v2/country/ITA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 41.90 12.50 0
+
+url https://api.worldbank.org/v2/country/JAM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 18.01 -76.79 0
+
+url https://api.worldbank.org/v2/country/JPN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 35.69 139.69 0
+
+url https://api.worldbank.org/v2/country/JOR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 31.95 35.91 0
+
+url https://api.worldbank.org/v2/country/KAZ/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 51.16 71.43 0
+
+url https://api.worldbank.org/v2/country/KEN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -1.29 36.82 0
+
+url https://api.worldbank.org/v2/country/KIR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 1.33 172.97 0
+
+url https://api.worldbank.org/v2/country/KOR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 37.57 126.98 0
+
+url https://api.worldbank.org/v2/country/XKX/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 42.66 21.16 0
+
+url https://api.worldbank.org/v2/country/KWT/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 29.38 47.98 0
+
+url https://api.worldbank.org/v2/country/KGZ/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 42.87 74.59 0
+
+url https://api.worldbank.org/v2/country/LAO/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 17.97 102.63 0
+
+url https://api.worldbank.org/v2/country/LVA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 56.95 24.11 0
+
+url https://api.worldbank.org/v2/country/LBN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 33.89 35.50 0
+
+url https://api.worldbank.org/v2/country/LSO/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -29.31 27.49 0
+
+url https://api.worldbank.org/v2/country/LBR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 6.30 -10.80 0
+
+url https://api.worldbank.org/v2/country/LBY/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 32.89 13.19 0
+
+url https://api.worldbank.org/v2/country/LIE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 47.14 9.52 0
+
+url https://api.worldbank.org/v2/country/LTU/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 54.69 25.28 0
+
+url https://api.worldbank.org/v2/country/LUX/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 49.61 6.13 0
+
+url https://api.worldbank.org/v2/country/MAC/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 22.20 113.55 0
+
+url https://api.worldbank.org/v2/country/MDG/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -18.88 47.52 0
+
+url https://api.worldbank.org/v2/country/MWI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -13.96 33.79 0
+
+url https://api.worldbank.org/v2/country/MYS/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 3.14 101.69 0
+
+url https://api.worldbank.org/v2/country/MDV/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 4.18 73.51 0
+
+url https://api.worldbank.org/v2/country/MLI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 12.65 -8.00 0
+
+url https://api.worldbank.org/v2/country/MLT/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 35.90 14.46 0

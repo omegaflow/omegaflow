@@ -1,0 +1,199 @@
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,medianmag,magrms,ngoodobsrel+FROM+ztf_objects_dr20+WHERE+ngoodobsrel%3E50+AND+magrms%3E0.05
+ttl 3600
+at earth
+
+url https://bhuvan-app1.nrsc.gov.in/disaster/disaster.php?id=flood&format=json
+ttl 3600
+at earth
+
+url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=0.05&date-min={today}&date-max=%2B30&body=Earth&fullname=true&diameter=true&sort=date
+ttl 3600
+at earth
+
+url https://ssd-api.jpl.nasa.gov/fireball.api?date-min=2010-01-01&req-loc=true&limit=1000&sort=-energy
+ttl 3600
+at earth
+
+url https://ssd-api.jpl.nasa.gov/fireball.api?limit=100&sort=date
+ttl 3600
+at earth
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND='-31'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='6+h'&VEC_TABLE='2'&REF_PLANE='ECLIPTIC'
+ttl 3600
+on earth 0.0 0.0 0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND='-32'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='6+h'&VEC_TABLE='2'&REF_PLANE='ECLIPTIC'
+ttl 3600
+on earth 0.0 0.0 0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-61%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 3600
+at earth
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27599%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+ttl 3600
+at earth
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-170%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 3600
+at earth
+
+url https://lasp.colorado.edu/lisird/latis/dap/fism_flare_hr.csv?time>={today}
+ttl 3600
+on earth 0.0 0.0 0
+
+url https://lasp.colorado.edu/lisird/latis/dap/noaa_radio_flux.csv?time>={today}
+ttl 3600
+on earth 49.32 -119.62 0
+
+url https://lasp.colorado.edu/lisird/latis/dap/tsis_tsi_24hr.csv?time>=2024-01-01
+ttl 3600
+on earth 0.0 0.0 0
+
+url https://lasp.colorado.edu/lisird/latis/dap/sdo_eve_ssi_1nm_l3.csv?time>=2026-01-01&time<={today}
+ttl 3600
+on earth 0.0 0.0 0
+
+url https://services.swpc.noaa.gov/json/ovation_aurora_latest.json
+ttl 3600
+at earth
+
+url https://services.swpc.noaa.gov/json/ovation_aurora_latest.json
+ttl 3600
+at earth
+
+url https://api.nasa.gov/DONKI/GST?startDate={yesterday}&api_key={nasa_key}
+ttl 3600
+at earth
+
+url https://api.nasa.gov/DONKI/MPC?startDate={yesterday}&api_key={nasa_key}
+ttl 3600
+at earth
+
+url https://services.swpc.noaa.gov/json/solar_regions.json
+ttl 3600
+at earth
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Makemake%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 3600
+at earth
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27499%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+ttl 3600
+at earth
+
+url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+observationID,target_name,s_ra,s_dec,t_exptime,instrument_name,energy_bandpassName,em_min,em_max+FROM+caom2.Observation+WHERE+collection%3D'JWST'+AND+dataRights%3D'PUBLIC'+AND+calib_level%3D3+AND+proposal_id%3D'1727'+ORDER+BY+t_exptime+DESC
+ttl 3600
+at earth
+
+url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+observationID,target_name,s_ra,s_dec,t_exptime,instrument_name,energy_bandpassName,em_min,em_max+FROM+caom2.Observation+WHERE+collection%3D'JWST'+AND+dataRights%3D'PUBLIC'+AND+calib_level%3D3+AND+instrument_name+LIKE+'NIRSPEC%25'+AND+(proposal_id%3D'1180'+OR+proposal_id%3D'1286')+ORDER+BY+t_exptime+DESC
+ttl 3600
+at earth
+
+url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?LANG=ADQL&REQUEST=doQuery&FORMAT=csv&QUERY=SELECT+TOP+2000+observationID,target_name,s_ra,s_dec,t_exptime,instrument_name,energy_bandpassName,em_min,em_max,t_min+FROM+dbo.caomobservation+WHERE+collection%3D'JWST'+AND+calib_level%3D3+AND+instrument_name+LIKE+'MIRI%25'+ORDER+BY+t_min+DESC
+ttl 3600
+at earth
+
+url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?LANG=ADQL&REQUEST=doQuery&FORMAT=csv&QUERY=SELECT+TOP+2000+observationID,target_name,s_ra,s_dec,t_exptime,instrument_name,energy_bandpassName,em_min,em_max,t_min+FROM+dbo.caomobservation+WHERE+collection%3D'JWST'+AND+calib_level%3D3+AND+instrument_name+LIKE+'NIRCAM%25'+ORDER+BY+t_min+DESC
+ttl 3600
+at earth
+
+url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync?LANG=ADQL&REQUEST=doQuery&FORMAT=csv&QUERY=SELECT+TOP+2000+observationID,target_name,s_ra,s_dec,t_exptime,instrument_name,energy_bandpassName,em_min,em_max,t_min+FROM+dbo.caomobservation+WHERE+collection%3D'JWST'+AND+calib_level%3D3+AND+instrument_name+LIKE+'NIRSPEC%25'+ORDER+BY+t_min+DESC
+ttl 3600
+at earth
+
+url http://maxi.riken.jp/alert/novae/json/novae_list.json
+ttl 3600
+at earth
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27199%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+ttl 3600
+at earth
+
+url https://aviationweather.gov/api/data/metar?bbox=-90,-180,-60,180&format=json&hours=3
+ttl 3600
+at earth
+
+url https://www.mirovaweb.it/api/v1/anomalies?limit=200
+ttl 3600
+at earth
+
+url https://modvolc.ov.ingv.it/modvolc/feed.json
+ttl 3600
+at earth
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27301%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+ttl 3600
+at earth
+
+url https://www.minorplanetcenter.net/cgi-bin/checkmp.cgi?ty=c&head=N&TextArea=&radius=180&ra=&decl=&oc=500&e=J2000&resoc=&s=t&m=h&adir=N&oed=&e=J2000&dFormat=YYYY+MM+DD&css=modern&mot=check&dmot=p&si=t&uto=0&int=2&fmt=csv
+ttl 3600
+on earth 0.0 0.0 0
+
+url https://cdaw.gsfc.nasa.gov/CME_list/UNIVERSAL/json/univ_{year}{month}.json
+ttl 3600
+at earth
+
+url https://coastwatch.noaa.gov/erddap/griddap/jplMURSST41.csv?analysed_sst%5B-1%5D%5B(0.0):(60.0):4%5D%5B(-180.0):(180.0):4%5D
+ttl 3600
+at earth
+
+url https://power.larc.nasa.gov/api/temporal/monthly/point?parameters=ALLSKY_SFC_SW_DWN&community=RE&longitude={lon}&latitude={lat}&start=2025&end=2025&format=JSON
+ttl 3600
+on earth 0 0 0
+
+url https://records-ws.nbnatlas.org/occurrences/search?q=group:Chiroptera&fq=dataProviderName:%22Bat+Conservation+Trust%22&fl=decimalLatitude,decimalLongitude,vernacularName,scientificName,year,month&pageSize=300&sort=year&order=desc
+ttl 3600
+at earth
+
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-hourly&stations=USW00013739,USW00094728,USW00012918&startDate=2026-07-01&endDate=2026-07-27&format=json
+ttl 3600
+on earth 40.74 -73.98 0
+
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-hourly&stations=USW00013739&startDate=2026-01-01&endDate=2026-07-27&format=json
+ttl 3600
+on earth 40.74 -73.98 0
+
+url https://www.ndbc.noaa.gov/activestations.xml
+ttl 3600
+at earth
+
+url https://www.ndbc.noaa.gov/data/realtime2/21413.dart
+ttl 3600
+on earth 38.7 148.7 0
+
+url https://www.ndbc.noaa.gov/data/realtime2/23401.dart
+ttl 3600
+on earth -8.4 67.5 0
+
+url https://www.ndbc.noaa.gov/data/realtime2/32401.dart
+ttl 3600
+on earth -19.6 -162.1 0
+
+url https://www.ndbc.noaa.gov/data/realtime2/41420.dart
+ttl 3600
+on earth 17.9 -74.9 0
+
+url https://www.ndbc.noaa.gov/data/realtime2/46401.dart
+ttl 3600
+on earth 50.1 -171.0 0
+
+url https://ssd-api.jpl.nasa.gov/fireball.api?limit=100&date-min=2020-01-01
+ttl 3600
+at earth
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27899%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+ttl 3600
+at earth
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-98%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 3600
+at earth
+
+url https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=APTY&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0
+ttl 3600
+on earth 67.55 33.33 0
+
+url https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=HRMS&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0
+ttl 3600
+on earth -34.42 19.22 0

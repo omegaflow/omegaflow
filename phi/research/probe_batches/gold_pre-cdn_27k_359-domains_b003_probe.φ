@@ -1,0 +1,199 @@
+url https://opensky-network.org/api/states/all?lamin=35&lomin=-10&lamax=70&lomax=40
+ttl 60
+at earth
+
+url https://beacon.nist.gov/beacon/2.0/pulse/last
+ttl 60
+on earth 39.9916 -105.2748 0
+
+url https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-1-day.json
+ttl 60
+on earth 0.0 -75.2 35786023
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=ALMT&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 43.18 76.93 0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=AUST&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 30.27 -97.74 0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=BOUL&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 40.01 -105.27 0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=CTWN&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth -33.93 18.47 0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=DOMC&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth -75.1 123.36 0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=ERMN&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth -6.89 107.59 0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=FSMT&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 60.02 -111.93 0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=GOOS&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 53.32 -60.42 0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=HALF&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 44.63 -63.59 0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=INVK&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 68.36 -133.72 0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=KERG&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth -49.35 70.25 0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=KIEL&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 54.34 10.12 0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=MOSC&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 55.75 37.57 0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=NAIN&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 56.55 -61.67 0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=NRLK&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 69.35 88.2 0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=PWNK&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 54.99 -85.44 0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=REYK&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 64.14 -21.9 0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=SANA&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth -62.09 -58.4 0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=TBLS&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 41.72 44.76 0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=ULNB&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 47.92 106.92 0
+
+url https://services.swpc.noaa.gov/json/goes/primary/differential-protons-1-day.json
+ttl 60
+on earth 0.0 -75.2 35786023
+
+url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
+ttl 60
+on earth 0.0 -75.2 35786023
+
+url https://service.scedc.caltech.edu/fdsnws/event/1/query?format=geojson&minmagnitude=1.5&limit=500&orderby=time&starttime={today}T00:00:00
+ttl 60
+at earth
+
+url https://services.swpc.noaa.gov/json/edited_events.json
+ttl 60
+at earth
+
+url https://services.swpc.noaa.gov/json/solar-cycle/observed-solar-cycle-indices.json
+ttl 60
+at earth
+
+url https://services.swpc.noaa.gov/json/goes/primary/xray-flux-1-minute.json
+ttl 60
+at earth
+
+url https://services.swpc.noaa.gov/json/solar-radio-flux.json
+ttl 60
+at earth
+
+url https://services.swpc.noaa.gov/json/solar_regions.json
+ttl 60
+at earth
+
+url https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json
+ttl 60
+at earth
+
+url https://services.swpc.noaa.gov/json/goes/primary/xrays-1-day.json
+ttl 60
+on earth 0.0 -75.2 35786023
+
+url https://services.swpc.noaa.gov/json/goes/primary/xray-flares-7-day.json
+ttl 60
+at earth
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=1.5&limit=1000&orderby=time&starttime={today}T00:00:00
+ttl 60
+at earth
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=6&limit=50&orderby=time&eventtype=earthquake
+ttl 60
+at earth
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=2.5&orderby=time
+ttl 60
+at earth
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=2.0&limit=500&orderby=magnitude
+ttl 60
+at earth
+
+url https://opensky-network.org/api/states/all?lamin=-90&lomin=-180&lamax=90&lomax=180
+ttl 60
+at earth
+
+url https://scweb.cwa.gov.tw/api/v1/earthquake/latest?limit=200
+ttl 120
+at earth
+
+url https://seismo.ethz.ch/fdsnws/event/1/query?format=geojson&minmagnitude=1.0&limit=200&orderby=time&starttime={today}T00:00:00
+ttl 120
+at earth
+
+url https://earthquake.tmd.go.th/earthquake_json.php?limit=200
+ttl 120
+at earth
+
+url https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json
+ttl 180
+at earth
+
+url https://gcn.gsfc.nasa.gov/amon_icecube_gold_bronze_events.html
+ttl 300
+on earth 0 0 0
+
+url https://gcn.gsfc.nasa.gov/amon_icecube_gold_bronze_events.html
+ttl 300
+on earth 0 0 0
+
+url https://services.swpc.noaa.gov/products/geospace/glm_lightning_density.json
+ttl 300
+at earth
+
+url https://aviationweather.gov/api/data/metar?ids=EDDF,EDDM,EGLL,KJFK,RJTT&format=json
+ttl 300
+at earth
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}
+ttl 300
+body earth
+
+url https://api.rainviewer.com/public/weather-maps.json
+ttl 300
+at earth
+
+url https://api.waqi.info/feed/geo:{lat};{lon}/?token=demo
+ttl 300
+at earth

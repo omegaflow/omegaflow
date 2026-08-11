@@ -1,0 +1,199 @@
+url https://www.imis.bfs.de/ogc/opendata/ows?service=WFS&version=1.1.0&request=GetFeature&typeName=opendata:odlinfo_odl_1h_latest&outputFormat=application/json&count=2000
+ttl 900
+at earth
+
+url https://spaceweather.sansa.org.za/ionosonde/latest
+ttl 900
+on earth -34.0 19.0 0
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=07263295&parameterCd=00060,00065
+ttl 900
+on earth 34.74 -92.27 0
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=09380000&parameterCd=00060,00065
+ttl 900
+on earth 36.86 -111.59 0
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=14105700&parameterCd=00060,00065
+ttl 900
+on earth 45.61 -121.19 0
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=05413500&parameterCd=00060,00065
+ttl 900
+on earth 42.72 -90.82 0
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=01358000&parameterCd=00060,00065
+ttl 900
+on earth 42.66 -73.75 0
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=07010000&parameterCd=00060,00065
+ttl 900
+on earth 38.87 -90.18 0
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=07289000&parameterCd=00060,00065
+ttl 900
+on earth 32.35 -90.89 0
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=06342500&parameterCd=00060,00065
+ttl 900
+on earth 46.85 -100.78 0
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=06934500&parameterCd=00060,00065
+ttl 900
+on earth 38.71 -91.44 0
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=03294500&parameterCd=00060,00065
+ttl 900
+on earth 38.26 -85.66 0
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=01646500&parameterCd=00060,00065
+ttl 900
+on earth 38.95 -77.13 0
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=08371000&parameterCd=00060,00065
+ttl 900
+on earth 31.80 -106.53 0
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=03565500&parameterCd=00060,00065
+ttl 900
+on earth 35.04 -85.31 0
+
+url https://services.swpc.noaa.gov/json/tec/tec_global.json
+ttl 900
+at earth
+
+url https://services.swpc.noaa.gov/products/glotec/geojson_2d_urt.json
+ttl 900
+at earth
+
+url https://services.swpc.noaa.gov/json/tec/tec_global_hp.json
+ttl 900
+at earth
+
+url https://impc.dlr.de/SWE/Total_Electron_Content/TEC_Near_Real-Time/DLR_GNSS_GCG_L4_VTEC-NTCM-SCM_NC_GLOBAL/v2.0.0/latest/DLR_GNSS_GCG_L4_VTEC-NTCM-SCM_NC_GLOBAL_latest_D.json
+ttl 900
+on earth 0 0 0
+
+url https://www.nhc.noaa.gov/CurrentStorms.json
+ttl 900
+at earth
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20260726&end_date=20260727&station=9414290&product=water_level&datum=MSL&units=metric&time_zone=gmt&format=json
+ttl 900
+at earth
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=01646500&parameterCd=00065,00060&siteStatus=all
+ttl 900
+at earth
+
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD15=1&AVG=10&if_no_html=1&lat1=35.0&lon1=-10.0&lat2=70.0&lon2=40.0
+ttl 1800
+at earth
+
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&AOD15=1&AVG=10&if_no_html=1&lat1=-10.0&lon1=60.0&lat2=55.0&lon2=150.0
+ttl 1800
+at earth
+
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&AOD15=1&AVG=10&if_no_html=1&lat1=35.0&lon1=-10.0&lat2=70.0&lon2=40.0
+ttl 1800
+at earth
+
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&AOD15=1&AVG=10&if_no_html=1&lat1=15.0&lon1=-170.0&lat2=80.0&lon2=-40.0
+ttl 1800
+at earth
+
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&AOD15=1&AVG=10&if_no_html=1&lat1=-60.0&lon1=-90.0&lat2=15.0&lon2=-30.0
+ttl 1800
+at earth
+
+url https://api.waqi.info/feed/geo:{lat};{lon}/?token=demo
+ttl 1800
+at earth
+
+url https://aviationweather.gov/api/data/taf?ids=KJFK&format=json
+ttl 1800
+at earth
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_month.geojson
+ttl 1800
+on earth 0 0 0
+
+url https://seismic-api.science.unimelb.edu.au/three-day-quakes
+ttl 1800
+at earth
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson
+ttl 1800
+at earth
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites={usgs_site}&parameterCd=00060&siteStatus=all
+ttl 1800
+at earth
+
+url https://api.inaturalist.org/v1/observations?quality_grade=needs_id&per_page=200&order_by=created_at&order=desc&geo=true&geojson=true
+ttl 1800
+at earth
+
+url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=0.1&date-min=-7&date-max={today}&body=Earth&fullname=true&sort=dist&limit=500
+ttl 1800
+at earth
+
+url https://aviationweather.gov/api/data/metar?bbox=-35,-20,38,65&format=json&hours=2
+ttl 1800
+at earth
+
+url https://aviationweather.gov/api/data/metar?bbox=-10,60,55,150&format=json&hours=2
+ttl 1800
+at earth
+
+url https://aviationweather.gov/api/data/metar?bbox=35,-10,70,40&format=json&hours=2
+ttl 1800
+at earth
+
+url https://aviationweather.gov/api/data/metar?bbox=25,-170,72,-50&format=json&hours=2
+ttl 1800
+at earth
+
+url https://www.ndbc.noaa.gov/data/latest_obs/latest_obs.txt
+ttl 1800
+at earth
+
+url https://www.nhc.noaa.gov/CurrentStorms.json
+ttl 1800
+at earth
+
+url https://www.nhc.noaa.gov/CurrentStorms.json?basin=epac
+ttl 1800
+at earth
+
+url https://aviationweather.gov/api/data/sigmet?format=json
+ttl 1800
+at earth
+
+url https://services.swpc.noaa.gov/json/ovation_aurora_latest.json
+ttl 1800
+at earth
+
+url https://api.weather.gov/stations/KTOP/observations/latest
+ttl 1800
+at earth
+
+url https://www.ogimet.com/cgi-bin/getsynop?block=20&begin={today}000000&end={today}235959&zoom=1&state=30
+ttl 1800
+at earth
+
+url https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,rain,weather_code,cloud_cover,wind_speed_10m,wind_direction_10m,pressure_msl,surface_pressure&timezone=auto
+ttl 1800
+at earth
+
+url https://tle.ivanstanojevic.me/api/tle/?page-size=1&search=IRIDIUM+33
+ttl 1800
+at earth
+
+url https://tle.ivanstanojevic.me/api/tle/?page-size=1&search=NAVSTAR
+ttl 1800
+at earth
+
+url https://tle.ivanstanojevic.me/api/tle/?page-size=500
+ttl 1800
+at earth

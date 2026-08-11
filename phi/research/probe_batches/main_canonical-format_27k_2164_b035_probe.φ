@@ -1,0 +1,199 @@
+url https://services.arcgis.com/xYjDUN35YwdCEcMm/arcgis/rest/services/GOES_GLM_Bolides/FeatureServer/0/query?where=1%3D1&outFields=latitude,longitude,detected_duration,detected_energy,detected_latitude,detected_longitude&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 300
+body earth
+
+url https://github.com/omegaflow/catalogs/releases/download/live-data/waqi_air_quality.json
+ttl 300
+at sun 1.0
+
+url https://api.energy-charts.info/ren_share
+ttl 300
+on earth 50.0 10.0
+
+url https://api.carbonintensity.org.uk/intensity
+ttl 300
+on earth 54.0 -2.0
+
+url https://www.emsc-csem.org/service/rss/rss.php?typ=felt&limit=100
+ttl 300
+body earth
+
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42043/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+ttl 300
+body earth
+
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42084/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+ttl 300
+body earth
+
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42091/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+ttl 300
+body earth
+
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42095/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+ttl 300
+body earth
+
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42098/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+ttl 300
+body earth
+
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42099/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+ttl 300
+body earth
+
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42360/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+ttl 300
+body earth
+
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42370/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+ttl 300
+body earth
+
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42386/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+ttl 300
+body earth
+
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42395/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+ttl 300
+body earth
+
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/wmo_42881/FeatureServer/0/query?where=1%3D1&outFields=depth__m_,sea_surface_temperature_0__degr,sea_water_speed_0__cm_s_1_&outSR=4326&f=geojson&resultRecordCount=500
+ttl 300
+body earth
+
+url https://gdacs.org/xml/rss.xml
+ttl 300
+on earth 38.9072 -77.0369
+
+url https://api.wolfx.jp/jma_eqlist.json
+ttl 300
+at sun 1.0
+
+url https://api.weather.gov/alerts/active
+ttl 300
+at sun 1.0
+
+url https://api.weather.gov/alerts/active?event=Tsunami%20Warning
+ttl 300
+at sun 1.0
+
+url https://www.tsunami.gov/events/xml/PAAQAtom.xml
+ttl 300
+at sun 1.0
+
+url https://www.tsunami.gov/events/xml/PHEBAtom.xml
+ttl 300
+at sun 1.0
+
+url https://kp.gfz.de/app/json/?start={week_ago}T00:00:00Z&end={today}T23:59:59Z&index=SN
+ttl 300
+at sun 1.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/42040.txt
+ttl 300
+on earth 29.22 -88.23
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NGK/best-avail/PT1M/xyzf&start={today}T00:00:00Z&stop={now}Z&format=json
+ttl 300
+on earth 52.07 12.68
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_iss.json
+ttl 300
+at sun 1.0
+
+url https://tadas.afad.gov.tr/api/event/list?limit=200
+ttl 300
+body earth
+
+url https://cdaweb.gsfc.nasa.gov/hapi/data?id=OMNI_HRO_1MIN&time.min=2026-07-01T00:00:00Z&time.max=2026-07-08T00:00:00Z&parameters=Time,BX_GSE,BY_GSE,BZ_GSE,flow_speed,proton_density,T,Pressure,SYM_H,AE_INDEX&format=json
+ttl 300
+at sun 1.0
+
+url https://api.weather.gov/stations?state=CA,TX,NY&limit=500&cursor=&format=json
+ttl 300
+body earth
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=air_temperature&application=batch16&begin_date={year}{month}{day}&end_date={year}{month}{day}&station=8518750&units=metric&time_zone=gmt&format=json
+ttl 300
+on earth 40.7 -74.01
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=water_temperature&application=batch16&begin_date={year}{month}{day}&end_date={year}{month}{day}&station=8518750&units=metric&time_zone=gmt&format=json
+ttl 300
+on earth 40.7 -74.01
+
+url https://volcanoes.usgs.gov/hans-public/api/volcano/current
+ttl 300
+body earth
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&parameterCd=00400,00095,00300,63680&siteStatus=active&bbox=-125,24,-66,50&siteType=ST
+ttl 300
+body earth
+
+url http://afis.meraka.org.za/afis/data/json/
+ttl 600
+body earth
+
+url https://dataserver-coids.inpe.br/queimadas/queimadas/focos/csv/10min/
+ttl 600
+at sun 1.0
+
+url https://api.wheretheiss.at/v1/satellites/25544/astronauts
+ttl 600
+at sun 1.0
+
+url https://gcn.nasa.gov/circulars/44806.json
+ttl 600
+at sun 1.0
+
+url https://www.ceic.ac.cn/speedsearch?time=1&type=2&page=1
+ttl 600
+on earth 39.9 116.4
+
+url https://www.jma.go.jp/bosai/quake/data/list.json
+ttl 600
+on earth 35.68 139.69
+
+url https://github.com/omegaflow/catalogs/releases/download/v1.0/horizons_parker_solar_probe.json
+ttl 600
+at sun 1.0
+
+url https://gcn.nasa.gov/circulars?query=IceCube%20LVK
+ttl 600
+at sun 1.0
+
+url https://gracedb.ligo.org/api/superevents/?count=10&category=production
+ttl 600
+at sun 1.0
+
+url https://github.com/omegaflow/catalogs/releases/download/live-data/usgs_water_daily.json
+ttl 600
+at sun 1.0
+
+url https://volcanoes.usgs.gov/hans-public/api/volcano/list
+ttl 600
+body earth
+
+url https://api.carbonintensity.org.uk/intensity/date/{today}
+ttl 1800
+on earth 54.0 -2.0
+
+url https://almascience.org/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,dec,source_name,project_code+FROM+ivoa.obscore+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
+ttl 3600
+body earth
+
+url https://api.energy-charts.info/price?country=DE
+ttl 3600
+on earth 51.0 10.0
+
+url https://api.exchangerate-api.com/v4/latest/USD
+ttl 3600
+at sun 1.0
+
+url http://data.gdeltproject.org/normfiles/daily.csv
+ttl 3600
+at sun 1.0
+
+url https://ws.cadc-ccda.hia-iha.nrc-cnrc.gc.ca/argus/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,+dec,+target,+obsid,+collection+FROM+caom2.Observation+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
+ttl 3600
+body earth

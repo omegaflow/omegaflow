@@ -1,0 +1,199 @@
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TTB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -1.205 -48.51299999999998 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TTB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -1.205 -48.51299999999998 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TUC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 32.17 -110.72999999999999 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TUC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 32.17 -110.72999999999999 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=UPS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 59.903 17.353 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VALL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 51.933 -10.25 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VNA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -70.683 -8.281999999999982 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VNA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -22.4 -43.64999999999998 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VOS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -78.464 106.835 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VSS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -22.4 -43.64999999999998 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WIC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 47.931 15.866 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WIC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 47.931 15.866 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WNG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 53.725 9.053 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WNG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 53.725 9.053 0
+
+url https://www.minorplanetcenter.net/data_service
+ttl 86400
+on earth 42.365 -71.105 0
+
+url https://www.crystallography.net/cod/result.php?format=json&element=Si&limit=1
+ttl 86400
+on earth 54.683 25.287 0
+
+url https://data.rcsb.org/rest/v1/core/entry/1UBQ
+ttl 86400
+on earth 40.500 -74.450 0
+
+url https://aa.usno.navy.mil/api/rstt/oneday?date={today}&coords=34.201,-118.171&tz=0
+ttl 86400
+on earth 34.201 -118.171 0
+
+url https://musicbrainz.org/ws/2/artist?query=*&limit=1&fmt=json
+ttl 86400
+on earth 51.507 -0.127 0
+
+url https://musicbrainz.org/ws/2/recording?query=*&limit=1&fmt=json
+ttl 86400
+on earth 51.507 -0.127 0
+
+url https://musicbrainz.org/ws/2/release?query=*&limit=1&fmt=json
+ttl 86400
+on earth 51.507 -0.127 0
+
+url https://heasarc.gsfc.nasa.gov/db-perl/W3Browse/w3query.pl?tablehead=name%3Dfermigtrig&Action=More+Options&ResultRange=1&order=desc&field=from&field=0+1+2+3
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://modis.gsfc.nasa.gov/data/dataprod/mod13.php
+ttl 86400
+on earth 0 0 0
+
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=assembly&retmax=0
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=bioproject&retmax=0
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=biosample&retmax=0
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=books&retmax=0
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=clinicaltrials&retmax=0
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=clinvar&retmax=0
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=gap&retmax=0
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=gene&retmax=0
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=genome&retmax=0
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=mesh&retmax=0
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=nucleotide&retmax=0
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=omim&retmax=0
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pmc&retmax=0
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=protein&retmax=0
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&retmax=0
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=snp&retmax=0
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=sra&retmax=0
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=taxonomy&retmax=0
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://registry.npmjs.org/-/v1/search?text=*&size=1
+ttl 86400
+on earth 37.774 -122.419 0
+
+url https://api.fda.gov/drug/event.json?limit=1
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://api.fda.gov/device/510k.json?limit=1
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://api.fda.gov/drug/drugsfda.json?limit=1
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://api.fda.gov/drug/enforcement.json?limit=1
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://world.openfoodfacts.org/cgi/search.pl?search_terms=&page_size=1&json=1
+ttl 86400
+on earth 48.8566 2.3522 0
+
+url https://openlibrary.org/authors.json?limit=1
+ttl 86400
+on earth 40.712 -74.006 0
+
+url https://openlibrary.org/books.json?limit=1
+ttl 86400
+on earth 40.712 -74.006 0
+
+url https://openneuro.org/api/v1/datasets
+ttl 86400
+on earth 42.365 -71.105 0

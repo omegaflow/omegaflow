@@ -1,0 +1,199 @@
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_eyr_hapi.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_frd.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_frd_hapi.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_frn.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_frn_hapi.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_fur.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_fur_hapi.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_gan.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_gan_hapi.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_gck.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_gdh.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_gng.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_gng_hapi.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_gua.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_gua_hapi.json
+ttl 86400
+at earth
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GUI/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+at earth
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GUI/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_hbk.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_her.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_hlp.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_hlp_hapi.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_hon.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_hon_hapi.json
+ttl 86400
+at earth
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HRB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+at earth
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HRB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_hrn.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_hrn_hapi.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_hua.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_hyb.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_hyb_hapi.json
+ttl 86400
+at earth
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ESK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+at earth
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=IPM/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+at earth
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=IPM/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_irt.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_izn.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_izn_hapi.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_jai.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_kak.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_kak_hapi.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_kdu.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_kdu_hapi.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_kir.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_kir_hapi.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_kmh.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_kny.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_kny_hapi.json
+ttl 86400
+at earth
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KOU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+at earth
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KOU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_lrm_hapi.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_lvv.json
+ttl 86400
+at earth

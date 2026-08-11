@@ -1,0 +1,199 @@
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=JSON
+ttl 86400
+at earth
+
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=JSON
+ttl 86400
+at earth
+
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=JSON
+ttl 86400
+at earth
+
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=cubesat&FORMAT=JSON
+ttl 86400
+at earth
+
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=analyst&FORMAT=JSON
+ttl 86400
+at earth
+
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=analyst&FORMAT=JSON
+ttl 86400
+at earth
+
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=engineering&FORMAT=JSON
+ttl 86400
+at earth
+
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=glonass-ops&FORMAT=JSON
+ttl 86400
+at earth
+
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=gps-ops&FORMAT=JSON
+ttl 86400
+at earth
+
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=gnss&FORMAT=JSON
+ttl 86400
+at earth
+
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=oneweb&FORMAT=JSON
+ttl 86400
+at earth
+
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=science&FORMAT=JSON
+ttl 86400
+at earth
+
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=stations&FORMAT=JSON
+ttl 86400
+at earth
+
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=starlink&FORMAT=JSON
+ttl 86400
+at earth
+
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=weather&FORMAT=JSON
+ttl 86400
+at earth
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2799942%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 86400
+at earth
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27DES%3D2101955%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 86400
+at earth
+
+url https://hpiers.obspm.fr/iers/eop/eopc04/eopc04.1962-now
+ttl 86400
+on earth 40.034 -75.630 0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Ceres%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 86400
+on earth 34.201 -118.171 0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=399&OBJ_DATA=YES
+ttl 86400
+on earth 0 0 0
+
+url https://ssd-api.jpl.nasa.gov/fireball.api?limit=1
+ttl 86400
+on earth 34.201 -118.171 0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=599&OBJ_DATA=YES
+ttl 86400
+on earth 0 0 0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=499&OBJ_DATA=YES
+ttl 86400
+on earth 0 0 0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=199&OBJ_DATA=YES
+ttl 86400
+on earth 0 0 0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=899&OBJ_DATA=YES
+ttl 86400
+on earth 0 0 0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=699&OBJ_DATA=YES
+ttl 86400
+on earth 0 0 0
+
+url https://ssd-api.jpl.nasa.gov/sentry.api
+ttl 86400
+on earth 34.201 -118.171 0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=799&OBJ_DATA=YES
+ttl 86400
+on earth 0 0 0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=299&OBJ_DATA=YES
+ttl 86400
+on earth 0 0 0
+
+url https://paleobiodb.org/data1.2/occs/list.json?all_records=1&limit=1
+ttl 86400
+on earth 43.073 -89.401 0
+
+url https://api.neotomadb.org/v2.0/data/occurrences?ageyounger=0&ageolder=50000&limit=1
+ttl 86400
+on earth 43.073 -89.401 0
+
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=find+tc&fields=titles,citation_count
+ttl 86400
+on earth 46.233 6.056 0
+
+url https://api.crossref.org/works?rows=0
+ttl 86400
+on earth 42.530 -71.048 0
+
+url https://api.crossref.org/works?query=JWST+high+redshift+galaxy+candidate&rows=0
+ttl 86400
+on earth 39.328 -76.620 0
+
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=ITER+plasma+fusion&fields=titles,citation_count
+ttl 86400
+on earth 43.709 5.777 0
+
+url https://api.openalex.org/works?per-page=1
+ttl 86400
+on earth 42.373 -71.110 0
+
+url https://pubchem.ncbi.nlm.nih.gov/rest/pug/compounds/count/JSON
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://pubchem.ncbi.nlm.nih.gov/rest/pug/substances/count/JSON
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://pypi.org/stats/packages/
+ttl 86400
+on earth 37.774 -122.419 0
+
+url https://data.rcsb.org/graphql?query={graphStatistics{totalEntries}}
+ttl 86400
+on earth 40.444 -74.494 0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude={lat}&longitude={lon}&start_date={yesterday}&end_date={yesterday}&hourly=shortwave_radiation,direct_radiation,diffuse_radiation,et0_fao_evapotranspiration,vapour_pressure_deficit&timezone=auto
+ttl 86400
+at earth
+
+url https://api.stackexchange.com/2.3/questions?order=desc&sort=activity&site=stackoverflow&filter=total
+ttl 86400
+on earth 37.774 -122.419 0
+
+url https://raw.githubusercontent.com/scikit-hep/particle/main/src/particle/data/particle2026.csv
+ttl 86400
+at earth
+
+url https://www.sidc.be/silso/DATA/SN_d_tot_V2.0.txt
+ttl 86400
+at earth
+
+url https://www.sidc.be/SILSO/DATA/SN_m_tot_V2.0.txt
+ttl 86400
+at earth
+
+url https://api.stackexchange.com/2.3/tags?pagesize=1&order=desc&sort=popular&site=stackoverflow
+ttl 86400
+on earth 40.712 -74.006 0
+
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+COUNT(*)+FROM+ps+WHERE+pl_discmethod+like+'%25TESS%25'&format=json
+ttl 86400
+on earth 42.365 -71.105 0
+
+url https://www.wis-tns.org/statistics
+ttl 86400
+on earth 32.0 -110.0 0
+
+url https://rest.uniprot.org/uniprotkb/statistics
+ttl 86400
+on earth 46.233 6.056 0
+
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+TOP+200+ra,dec,pl_name,sy_dist+FROM+ps+ORDER+BY+sy_dist&format=json
+ttl 86400
+at earth

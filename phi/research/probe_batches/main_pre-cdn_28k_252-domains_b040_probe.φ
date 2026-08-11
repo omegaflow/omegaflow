@@ -1,0 +1,199 @@
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/VII_278_snrs.json
+ttl 86400
+at earth
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+157+ID,RAJ2000,DEJ2000,Rsun,FeH,VHB,sigv,MVt,RV+FROM+"VII/202/table1"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+Rsun+ASC
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_hecate.json
+ttl 86400
+at earth
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+GLON,GLAT,NHI,VLSR,FWHM+FROM+"J/A+A/594/A116/hi4pi"+WHERE+NHI+IS+NOT+NULL+AND+NHI>1e20+ORDER+BY+NHI+DESC
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/vizier_higal_250um_compact_sources.json
+ttl 86400
+at earth
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+Name,RAJ2000,DEJ2000,cz,Sint,Wpeak,Dist+FROM+"J/MNRAS/322/486/table1"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+Sint+DESC
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/I_311_hip2.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/J_MNRAS_384_1277_emitters.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_lotss_dr3.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_lotss_dr3.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/J_AplusA_558_A53_catalog.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/J_AJ_130_1389_mojave.json
+ttl 86400
+at earth
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+Name,RAJ2000,DEJ2000,z,Speak+FROM+\"J/AJ/137/3718/table1\"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+Speak+DESC
+ttl 86400
+at earth
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ID,OName,z,Opt,mu-max,beta-max,Nep,PA,logVarPA,_RA,_DE+FROM+%22J/ApJ/923/30/mojave18%22+WHERE+_RA+IS+NOT+NULL+ORDER+BY+z+ASC
+ttl 86400
+at earth
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+Name,RAJ2000,DEJ2000,z,S15,mu_app,Class+FROM+\"J/ApJS/260/12/table3\"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+S15+DESC
+ttl 86400
+at earth
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+100+JNAME,RAdeg,DEdeg,Dist,P0,DM,tspan+FROM+"J/ApJ/951/L9/table1"+WHERE+RAdeg+IS+NOT+NULL+ORDER+BY+tspan+DESC
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/vizier_nvss_galcenter.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/vizier_nvss_radio.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_nvss_radio_{repeat_bin}.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/vizier_nvss_radio_catalog.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/J_ApJS_229_28_table1.json
+ttl 86400
+at earth
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+No,Name,GLON,GLAT,_RA_icrs,_DE_icrs+FROM+%22J/A%2BA/607/A48/tablea1%22+WHERE+_RA_icrs+IS+NOT+NULL
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/vizier_ovro_blazar_monitoring.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/vizier_panstarrs_dr2_catalog.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/J_AplusA_594_A27_psz2.json
+ttl 86400
+at earth
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+Source_name,RAJ2000,DEJ2000,Total_flux_887,Peak_flux_887,Maj,Min,Local_rms+FROM+"J/PASA/38/e058/catalog"+WHERE+RAJ2000+IS+NOT+NULL+AND+Total_flux_887>20+ORDER+BY+Total_flux_887+DESC
+ttl 86400
+at earth
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+RAJ2000,DEJ2000,Seq,Nx,blambda,Title+FROM+%22J/A%2BA/614/A116/list%22+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+Nx+DESC
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/vizier_sdss12_galaxies.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/vizier_sdss12_quasars.json
+ttl 86400
+at earth
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+RA_ICRS,DE_ICRS,rmag,gmag,imag,zmag+FROM+%22V/147/sdss12%22+WHERE+%22class%22%3D1+AND+rmag%3C18
+ttl 86400
+at earth
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,z,imag+FROM+"VII/260/dr7qso"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+z+DESC
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/J_ApJ_785_144_table1.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/J_ApJ_851_48_table1.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/J_ApJ_837_30_table3.json
+ttl 86400
+at earth
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+Source_name,RAJ2000,DEJ2000,Total_flux,Peak_flux,Maj,Min,RMS+FROM+"J/A+A/598/A78/catalog"+WHERE+RAJ2000+IS+NOT+NULL+AND+Total_flux>200+ORDER+BY+Total_flux+DESC
+ttl 86400
+at earth
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1500+Name,RAJ2000,DEJ2000,Stotal,PolFrac,PolAngle+FROM+\"J/AJ/131/1937/table1\"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+Stotal+DESC
+ttl 86400
+at earth
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+Component_name,RAJ2000,DEJ2000,Total_flux,Peak_flux,Maj,Min,PA,RMS+FROM+"J/ApJS/255/30/catalog"+WHERE+RAJ2000+IS+NOT+NULL+AND+Total_flux>10+ORDER+BY+Total_flux+DESC
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/vizier_vsx_cataclysmic_variables.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/vizier_vsx_galactic_center_variables.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/vizier_vsx_mira_longperiod.json
+ttl 86400
+at earth
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+WISE,Cl,GLON,GLAT,Rad,HIIName,_RA_icrs,_DE_icrs+FROM+%22J/ApJS/212/1/wisecat%22+WHERE+_RA_icrs+IS+NOT+NULL+ORDER+BY+Rad+DESC
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_catwise_agn.json
+ttl 604800
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/vizier_hmxb_catalog.json
+ttl 604800
+at earth
+
+url https://ghoapi.azureedge.net/api/AIR_12?\$filter=SpatialDimType+eq+'COUNTRY'&\$top=500
+ttl 86400
+at earth
+
+url https://ghoapi.azureedge.net/api/AIR_12?$filter=SpatialDimType+eq+'COUNTRY'&$top=500
+ttl 86400
+at earth
+
+url https://www.wikidata.org/w/api.php?action=query&meta=siteinfo&siprop=statistics&format=json
+ttl 86400
+at earth
+
+url https://en.wikipedia.org/w/api.php?action=query&meta=siteinfo&siprop=statistics&format=json
+ttl 86400
+at earth
+
+url https://en.wikipedia.org/w/api.php?action=query&meta=siteinfo&siprop=statistics&format=json
+ttl 86400
+at earth
+
+url https://en.wikipedia.org/w/api.php?action=query&meta=siteinfo&siprop=statistics&format=json
+ttl 86400
+at earth
+
+url https://api.openbrewerydb.org/v1/breweries?per_page=200
+ttl 86400
+at earth

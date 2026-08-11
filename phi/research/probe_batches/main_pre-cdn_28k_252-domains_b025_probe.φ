@@ -1,0 +1,199 @@
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/arxiv_qfin_total.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/arxiv_stat_total.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/astro_asas_sn_variables_vizier.json
+ttl 86400
+at earth
+
+url https://newton.spacedys.com/astdys2/index.php?pc=3.0&type=all&format=json&limit=500
+ttl 86400
+at earth
+
+url https://opendata.dwd.de/climate_environment/health/alerts/s31fg.json
+ttl 86400
+at earth
+
+url https://www.cpc.ncep.noaa.gov/data/indices/oni.ascii.txt
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_historical_daily.json
+ttl 86400
+body earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_historical_weather.json
+ttl 86400
+body earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_historical_wind.json
+ttl 86400
+body earth
+
+url https://api.met.no/weatherapi/sunrise/3.0/sun?lat={lat}&lon={lon}&date={today}&offset=+00:00
+ttl 86400
+at earth
+
+url https://api.woudc.org/collections/stations/items?f=json&limit=500
+ttl 86400
+at earth
+
+url https://api.woudc.org/collections/totalozone/items?limit=1
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_arxiv_total_papers.json
+ttl 86400
+at earth
+
+url https://clinicaltrials.gov/api/v2/studies?query.term=brain-computer+interface&filter.overallStatus=RECRUITING&countTotal=true&pageSize=1
+ttl 86400
+at earth
+
+url https://clinicaltrials.gov/api/v2/studies?query.term=CRISPR&filter.overallStatus=RECRUITING&countTotal=true&pageSize=1
+ttl 86400
+at earth
+
+url https://api.crossref.org/works?rows=1
+ttl 86400
+at earth
+
+url https://api.crossref.org/members?rows=1
+ttl 86400
+at earth
+
+url https://opendata.ecdc.europa.eu/monkeypox/casedistribution/json/data.json
+ttl 86400
+at earth
+
+url https://epoch.ai/data/notable_ai_models.csv
+ttl 86400
+at earth
+
+url https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_manr?geo=EU27_2020&unit=RCH_A&coicop=CP00&format=JSON
+ttl 86400
+at earth
+
+url https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/nama_10_gdp?geo=EU27_2020&unit=CLV_I10&na_item=B1GQ&format=JSON
+ttl 86400
+at earth
+
+url https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/demo_pjan?geo=EU27_2020&sex=T&age=TOTAL&format=JSON
+ttl 86400
+at earth
+
+url https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/une_rt_q?geo=EU27_2020&unit=PC_ACT&s_adj=SA&age=TOTAL&format=JSON
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_gbif_amphibians.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_gbif_arachnids.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_gbif_arthropods.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_gbif_biodiversity_global.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_gbif_birds.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_gbif_birds_migratory.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_gbif_cnidaria.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_gbif_cnidarians.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_gbif_echinoderms.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_gbif_fungi.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_gbif_insects.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_gbif_mammals.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_gbif_marine_species.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_gbif_migrations.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_gbif_mollusks.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_gbif_occurrences_precise.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_gbif_plants.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_gbif_plants_bbox.json
+ttl 86400
+at earth
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_gbif_reptiles.json
+ttl 86400
+at earth
+
+url https://www.peeringdb.com/api/ix?limit=1
+ttl 86400
+at earth
+
+url https://www.ebi.ac.uk/metagenomics/api/v1/studies?page_size=1
+ttl 86400
+at earth
+
+url https://modis.ornl.gov/rst/api/v1/MOD13Q1/subset?latitude={lat}&longitude={lon}&startDate=A2018049&endDate=A2018049&kmAboveBelow=0&kmLeftRight=0
+ttl 86400
+at earth
+
+url https://api.obis.org/v3/occurrence/search?scientificname=Cetacea&startdate={yesterday}
+ttl 86400
+at earth
+
+url https://api.obis.org/v3/occurrence?limit=500&hascoordinates=true&taxonid=38
+ttl 86400
+at earth
+
+url https://api.obis.org/v3/occurrence?limit=500&hascoordinates=true
+ttl 86400
+at earth
+
+url https://api.obis.org/occurrence?lat={lat}&lon={lon}&radius=50&size=0
+ttl 86400
+at earth
+
+url https://api.obis.org/v3/statistics
+ttl 86400
+at earth

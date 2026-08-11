@@ -1,0 +1,199 @@
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_day.geojson
+ttl 600
+body earth
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_week.geojson
+ttl 600
+body earth
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_day.geojson
+ttl 600
+body earth
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_week.geojson
+ttl 600
+body earth
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={week_ago}&endtime={today}&minmagnitude=2.5&limit=200
+ttl 600
+body earth
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_month.geojson
+ttl 1800
+body earth
+
+url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=10LD
+ttl 3600
+on earth 0 0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=3&limit=200
+ttl 3600
+body earth
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_month.geojson
+ttl 3600
+body earth
+
+url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=1LD&date-min={today}&date-max={today}
+ttl 3600
+on earth 0 0
+
+url https://ssd-api.jpl.nasa.gov/cad.api
+ttl 3600
+on earth 0 0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2015-01-01&endtime=2015-12-31&minmagnitude=5&limit=200
+ttl 86400
+body earth
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2016-01-01&endtime=2016-12-31&minmagnitude=5&limit=200
+ttl 86400
+body earth
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2017-01-01&endtime=2017-12-31&minmagnitude=5&limit=200
+ttl 86400
+body earth
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2018-01-01&endtime=2018-12-31&minmagnitude=5&limit=200
+ttl 86400
+body earth
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2019-01-01&endtime=2019-12-31&minmagnitude=5&limit=200
+ttl 86400
+body earth
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2020-01-01&endtime=2020-12-31&minmagnitude=5&limit=200
+ttl 86400
+body earth
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2021-01-01&endtime=2021-12-31&minmagnitude=5&limit=200
+ttl 86400
+body earth
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2022-01-01&endtime=2022-12-31&minmagnitude=5&limit=200
+ttl 86400
+body earth
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2023-01-01&endtime=2023-12-31&minmagnitude=5&limit=200
+ttl 86400
+body earth
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2024-01-01&endtime=2024-12-31&minmagnitude=5&limit=200
+ttl 86400
+body earth
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={year}-01-01&endtime={today}&minmagnitude=5&limit=200
+ttl 86400
+body earth
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2015-01-01&endtime=2024-12-31&minmagnitude=4&limit=200
+ttl 86400
+body earth
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2020-01-01&endtime=2024-12-31&minmagnitude=6&limit=200
+ttl 86400
+body earth
+
+url https://geomag.usgs.gov/ws/data/?id=BOU&type=adjusted&starttime={today}T00:00:00&endtime={today}T23:59:59&format=json&sampling_period=60
+ttl 60
+on earth 40.137 -105.237
+
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?site=Mauna_Loa&year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD15=1&AVG=10&if_no_html=1
+ttl 86400
+on earth 19.54 -155.58
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8724580&product=wind&time_zone=gmt&units=metric&format=json&date=latest
+ttl 300
+on earth 24.5557 -81.8079
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8454000&product=air_temperature&time_zone=gmt&units=metric&format=json&date=latest
+ttl 300
+on earth 41.8067 -71.4006
+
+url https://gml.noaa.gov/aftp/data/hats/cfcs/cfc11/combined/HATS_global_F11.txt
+ttl 2592000
+at sun 1.0
+
+url https://gml.noaa.gov/aftp/data/hats/cfcs/cfc12/combined/HATS_global_F12.txt
+ttl 2592000
+at sun 1.0
+
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_daily_mlo.txt
+ttl 86400
+at sun 1.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/41001.spec
+ttl 300
+on earth 34.68 -72.55
+
+url https://api.weather.gov/stations/KJFK/observations/latest
+ttl 300
+on earth 40.64 -73.78
+
+url https://api.gbif.org/v1/occurrence/search?classKey=734&hasCoordinate=true&limit=300&basisOfRecord=MACHINE_OBSERVATION&year={year}&format=json
+ttl 3600
+body earth
+
+url https://api.gbif.org/v1/occurrence/search?orderKey=734&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&basisOfRecord=MACHINE_OBSERVATION
+ttl 3600
+body earth
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,w1mpro,w2mpro,mjd+FROM+neowiser_p1bs_psd+WHERE+mjd%3E59000
+ttl 3600
+at sun 1.0
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,medianmag,magrms,ngoodobsrel+FROM+ztf_objects_dr20+WHERE+ngoodobsrel%3E50+AND+magrms%3E0.05
+ttl 3600
+at sun 1.0
+
+url https://irsa.ipac.caltech.edu/TAP/sync?query=SELECT+ra,dec,designation,w1mpro,w2mpro,w3mpro,w4mpro+FROM+allwise_p3as_psd+WHERE+w1mpro+IS+NOT+NULL&format=csv&limit=5000
+ttl 86400
+at sun 1.0
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,j_m,h_m,k_m+FROM+fp_psc+WHERE+j_m+IS+NOT+NULL+AND+j_m%3C15
+ttl 86400
+at sun 1.0
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,w1mpro,w2mpro,w3mpro,w4mpro+FROM+allwise_p3as_psd+WHERE+w1mpro+IS+NOT+NULL+AND+w1mpro%3C14
+ttl 86400
+at sun 1.0
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+designation,ra,dec,mag3_6,mag4_5,mag5_8,mag8_0+FROM+glimpse360_psc+WHERE+ra+IS+NOT+NULL+AND+mag3_6<12+ORDER+BY+mag3_6+ASC
+ttl 86400
+at sun 1.0
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+designation,ra,dec,mag3_6,mag4_5,mag5_8,mag8_0,e_mag3_6,e_mag8_0,sqf_3_6+FROM+glimpsei_psc+WHERE+ra+IS+NOT+NULL+AND+mag3_6<10+ORDER+BY+mag3_6+ASC
+ttl 86400
+at sun 1.0
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+designation,ra,dec,mag3_6,mag4_5,mag8_0,e_mag4_5+FROM+glimpseii_psc+WHERE+ra+IS+NOT+NULL+AND+mag4_5<12+ORDER+BY+mag4_5+ASC
+ttl 86400
+at sun 1.0
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+ra,dec,fnu_12,fnu_25,fnu_60,fnu_100,var_flg+FROM+iraspsc+WHERE+fnu_25>10+AND+fnu_60>10+ORDER+BY+fnu_60+DESC
+ttl 86400
+at sun 1.0
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+designation,ra,dec,f24,e_f24,snr24,flags+FROM+mipsgal_psc+WHERE+ra+IS+NOT+NULL+AND+f24>10+ORDER+BY+f24+DESC
+ttl 86400
+at sun 1.0
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+ra,dec,w1mpro,w2mpro,mjd+FROM+neowiser_p1bs_psd+WHERE+mjd%3E59000+AND+w1mpro+IS+NOT+NULL
+ttl 86400
+at sun 1.0
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+name,ra,dec,flux_100mJy,ext_flag,DETPROB+FROM+planck.com_pccs2_100+WHERE+ra+IS+NOT+NULL+ORDER+BY+flux_100mJy+DESC
+ttl 86400
+at sun 1.0
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+name,ra,dec,flux_143mJy,ext_flag,DETPROB+FROM+planck.com_pccs2_143+WHERE+ra+IS+NOT+NULL+ORDER+BY+flux_143mJy+DESC
+ttl 86400
+at sun 1.0
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+name,ra,dec,flux_217mJy,ext_flag,DETPROB+FROM+planck.com_pccs2_217+WHERE+ra+IS+NOT+NULL+ORDER+BY+flux_217mJy+DESC
+ttl 86400
+at sun 1.0
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+name,RA,DE,z,yn_snr,yn_mass,theta500,dist+FROM+planck.com_pccs2_sz_mmf3+WHERE+RA+IS+NOT+NULL+ORDER+BY+yn_snr+DESC
+ttl 86400
+at sun 1.0

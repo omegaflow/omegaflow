@@ -1,0 +1,199 @@
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+>+2.5+AND+bp_rp+<+4+AND+phot_g_mean_mag+<+10+AND+parallax+>+0.5+AND+parallax+<+3
+ttl 86400
+at earth
+
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cphot_g_mean_mag%2Cparallax%20FROM%20gaiadr3.vari_classifier_result%20WHERE%20best_class_name%20%3D%20%27RR%20Lyrae%27
+ttl 86400
+at earth
+
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+1000+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+phot_g_mean_mag+<+12+AND+parallax+>+1
+ttl 86400
+at earth
+
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.vari_classifier_result+WHERE+best_class_name+=+%27SR%27+ORDER+BY+random_index
+ttl 86400
+at earth
+
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20500%20ra%2Cdec%2Cpar%20FROM%20gaiadr3.gaia_source%20WHERE%20ra%20BETWEEN%2012%20AND%2014%20AND%20dec%20BETWEEN%20-74%20AND%20-72%20AND%20parallax%20IS%20NOT%20NULL
+ttl 86400
+at earth
+
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+parallax+>+5+AND+bp_rp+<+0.5+AND+phot_g_mean_mag+<+15+AND+mh_gspphot+<+-1+ORDER+BY+random_index
+ttl 86400
+at earth
+
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+ABS(radial_velocity)+>+50+AND+ABS(radial_velocity)+<+200+AND+parallax+>+2+AND+phot_g_mean_mag+<+14
+ttl 86400
+at earth
+
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+>+4+AND+bp_rp+<+8+AND+phot_g_mean_mag+<+18+AND+parallax+>+10
+ttl 86400
+at earth
+
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.vari_classifier_result+WHERE+phot_g_mean_mag+IS+NOT+NULL
+ttl 86400
+at earth
+
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax,bp_rp+FROM+gaiadr3.gaia_source+WHERE+bp_rp+<+0+AND+parallax+>+10+AND+phot_g_mean_mag+<+18
+ttl 86400
+at earth
+
+url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+parallax+>+10+AND+phot_g_mean_mag+<+15+AND+bp_rp+IS+NOT+NULL
+ttl 86400
+at earth
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+500+RAJ2000,DEJ2000,%22S1.4%22+FROM+%22VIII/65/nvss%22
+ttl 86400
+at earth
+
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+500+g.ra,g.dec,g.parallax,s.psfmag_g+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.sdssdr13_best_neighbour+AS+x+ON+g.source_id=x.source_id+JOIN+external.sdssdr13_photoprimary+AS+s+ON+x.original_ext_source_id=s.objid+WHERE+g.parallax+>+0+AND+s.psfmag_g+<+17
+ttl 86400
+at earth
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27AGN%27+AND+flux_V+IS+NOT+NULL
+ttl 86400
+at earth
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,rvz_redshift,flux_V,plx_value+FROM+basic+WHERE+sp_type+LIKE+%27Ba%25%27+AND+plx_value+IS+NOT+NULL
+ttl 86400
+at earth
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27Bla%27+AND+flux_V+IS+NOT+NULL
+ttl 86400
+at earth
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,rvz_redshift,flux_V,plx_value+FROM+basic+WHERE+otype=%27BCD%27
+ttl 86400
+at earth
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,rvz_redshift,flux_V,plx_value+FROM+basic+WHERE+otype=%27sgB%27+OR+otype=%27B%2A%27+AND+sp_type+LIKE+%27%25I%25%27
+ttl 86400
+at earth
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,rvz_redshift,flux_V,plx_value+FROM+basic+WHERE+otype=%27sgB%27
+ttl 86400
+at earth
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,plx_value+FROM+basic+WHERE+otype=%27BD*%27
+ttl 86400
+at earth
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27C*%27+AND+flux_V+IS+NOT+NULL
+ttl 86400
+at earth
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20200%20ra%2Cdec%2Cflux_V%2Cplx_value%20FROM%20basic%20WHERE%20otype%3D%27cr%2A%27%20AND%20flux_V%20IS%20NOT%20NULL
+ttl 86400
+at earth
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27Ce*%27+AND+flux_V+IS+NOT+NULL
+ttl 86400
+at earth
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,rvz_redshift,flux_V,plx_value+FROM+basic+WHERE+sp_type+LIKE+%27CH%25%27+AND+plx_value+IS+NOT+NULL
+ttl 86400
+at earth
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27DNe%27+AND+flux_V+IS+NOT+NULL
+ttl 86400
+at earth
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,rvz_redshift,flux_V,plx_value+FROM+basic+WHERE+otype=%27G%27+AND+sp_type+LIKE+%27dwarf%27+OR+otype=%27dG%27
+ttl 86400
+at earth
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,rvz_redshift,flux_V,plx_value+FROM+basic+WHERE+otype=%27DN%27
+ttl 86400
+at earth
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27EB*%27+AND+flux_V+IS+NOT+NULL
+ttl 86400
+at earth
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27Em*%27+AND+flux_V+IS+NOT+NULL
+ttl 86400
+at earth
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27Fl*%27+AND+flux_V+IS+NOT+NULL
+ttl 86400
+at earth
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,rvz_redshift,flux_V,plx_value+FROM+basic+WHERE+otype=%27FU%27
+ttl 86400
+at earth
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,rvz_redshift,flux_V,plx_value+FROM+basic+WHERE+otype=%27Galaxy%27+AND+rvz_redshift+>+0.01
+ttl 86400
+at earth
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,rvz_redshift,plx_value+FROM+basic+WHERE+otype=%27ClG%27+AND+rvz_redshift+IS+NOT+NULL
+ttl 86400
+at earth
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27gam%27+AND+flux_V+IS+NOT+NULL
+ttl 86400
+at earth
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27HB*%27+AND+flux_V+IS+NOT+NULL
+ttl 86400
+at earth
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,flux_V,rvz_redshift,plx_value+FROM+basic+WHERE+otype=%27GlC%27+AND+flux_V+IS+NOT+NULL
+ttl 86400
+at earth
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27GravLens%27+AND+flux_V+IS+NOT+NULL
+ttl 86400
+at earth
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27HH%27+AND+flux_V+IS+NOT+NULL
+ttl 86400
+at earth
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,rvz_redshift,flux_V,plx_value+FROM+basic+WHERE+otype=%27HII%27
+ttl 86400
+at earth
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20100%20ra%2Cdec%2Cplx_value%20FROM%20basic%20WHERE%20otype%3D%27HVC%27
+ttl 86400
+at earth
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20200%20ra%2Cdec%2Cflux_V%2Cplx_value%20FROM%20basic%20WHERE%20otype%3D%27ISM%27%20AND%20flux_V%20IS%20NOT%20NULL
+ttl 86400
+at earth
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20200%20ra%2Cdec%2Cflux_V%2Cplx_value%20FROM%20basic%20WHERE%20otype%3D%27Ir%2A%27%20AND%20flux_V%20IS%20NOT%20NULL
+ttl 86400
+at earth
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20200%20ra%2Cdec%2Cflux_V%2Cplx_value%20FROM%20basic%20WHERE%20otype%3D%27ISM%27
+ttl 86400
+at earth
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20200%20ra%2Cdec%2Cflux_V%2Cplx_value%20FROM%20basic%20WHERE%20otype%3D%27LP%2A%27%20AND%20flux_V%20IS%20NOT%20NULL
+ttl 86400
+at earth
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+200+ra,dec,rvz_redshift,flux_V,plx_value+FROM+basic+WHERE+otype=%27Mi%2A%27
+ttl 86400
+at earth
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27Mas%27+AND+flux_V+IS+NOT+NULL
+ttl 86400
+at earth
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27MQO%27+AND+flux_V+IS+NOT+NULL
+ttl 86400
+at earth
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27ms*%27+AND+flux_V+IS+NOT+NULL
+ttl 86400
+at earth
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+100+ra,dec,flux_V,plx_value+FROM+basic+WHERE+otype=%27Mi*%27+AND+flux_V+IS+NOT+NULL
+ttl 86400
+at earth
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20200%20ra%2Cdec%2Cflux_V%2Cplx_value%20FROM%20basic%20WHERE%20otype%3D%27MolC%27
+ttl 86400
+at earth

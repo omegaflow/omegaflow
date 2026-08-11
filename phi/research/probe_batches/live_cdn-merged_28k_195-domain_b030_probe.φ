@@ -1,0 +1,199 @@
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+RAJ2000%2CDEJ2000%2Cz%2CbJmag+FROM+VII%2F241%2F2qz
+ttl 604800
+at sun 1.0
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+ra,dec,main_id,otype+FROM+basic+WHERE+otype='HVC'
+ttl 604800
+at sun 1.0
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+ra,dec,main_id,otype+FROM+basic+WHERE+otype='ISM'
+ttl 604800
+at sun 1.0
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+ra,dec,main_id,otype+FROM+basic+WHERE+otype='Y*O'
+ttl 604800
+at sun 1.0
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+name%2Cra%2Cdec%2Cflux%2Credshift%2Csource_type+FROM+swbat105m
+ttl 604800
+at sun 1.0
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+swiftgrb
+ttl 604800
+at sun 1.0
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+*+FROM+tevcat
+ttl 604800
+at sun 1.0
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+J%2FMNRAS%2F509%2F1662%2Ftable1
+ttl 604800
+at sun 1.0
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+xmmslew
+ttl 604800
+at sun 1.0
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+xmmssc
+ttl 604800
+at sun 1.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=-3.47&longitude=-62.22&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth -3.47 -62.22
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=-80.0&longitude=100.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth -80.0 100.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=-24.0&longitude=-69.5&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth -24.0 -69.5
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=0.5&longitude=114.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth 0.5 114.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=30.0&longitude=31.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth 30.0 31.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=-34.0&longitude=18.5&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth -34.0 18.5
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=0.0&longitude=18.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth 0.0 18.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=36.5&longitude=-117.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth 36.5 -117.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=-18.0&longitude=178.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth -18.0 178.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=44.0&longitude=105.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth 44.0 105.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=72.0&longitude=-40.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth 72.0 -40.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=64.0&longitude=-19.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth 64.0 -19.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=-49.5&longitude=69.5&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth -49.5 69.5
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=3.0&longitude=73.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth 3.0 73.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=-19.5&longitude=23.5&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth -19.5 23.5
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=-50.0&longitude=-72.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth -50.0 -72.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=23.0&longitude=5.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth 23.0 5.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=62.0&longitude=105.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth 62.0 105.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=32.0&longitude=86.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth 32.0 86.0
+
+url https://power.larc.nasa.gov/api/temporal/monthly/point?parameters=T2M,PRECTOTCORR,ALLSKY_SFC_SW_DWN&community=RE&longitude={lon}&latitude={lat}&start=2001&end=2020&format=JSON
+ttl 604800
+on earth 47.3769 8.5417
+
+url https://www.glims.org/geoserver/ows?service=wfs&version=2.0.0&request=GetFeature&typeName=GLIMS:GLIMS_Points&bbox={lon_min},{lat_min},{lon_max},{lat_max},EPSG:4326&count=500&outputFormat=application/json
+ttl 604800
+at sun 1.0
+
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+COUNT(*)+as+n+FROM+gaiadr3.gaia_source+WHERE+parallax+>+100
+ttl 604800
+at sun 1.0
+
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+256+ra,dec,parallax,pmra,pmdec,radial_velocity,phot_g_mean_mag+FROM+gaiadr3.gaia_source+WHERE+phot_g_mean_mag+<+6+AND+parallax+>+0+ORDER+BY+phot_g_mean_mag
+ttl 604800
+at sun 1.0
+
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+128+g.ra,g.dec,g.parallax,g.pmra,g.pmdec,g.radial_velocity,ap.age_flame,ap.teff_gspphot+FROM+gaiadr3.astrophysical_parameters+AS+ap+JOIN+gaiadr3.gaia_source+AS+g+ON+ap.source_id=g.source_id+WHERE+ap.age_flame+IS+NOT+NULL+AND+g.parallax+>+0+ORDER+BY+ap.age_flame+DESC
+ttl 604800
+at sun 1.0
+
+url https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+COUNT(*)+as+n+FROM+gaiadr3.vari_classifier_result
+ttl 604800
+at sun 1.0
+
+url https://skyserver.sdss.org/dr18/SkyServerWS/SearchTools/SqlSearch?format=json&cmd=SELECT+TOP+1024+ra,dec,z,petroMag_g+FROM+SpecObj+WHERE+class=%27GALAXY%27+AND+z+BETWEEN+0.01+AND+2+AND+petroMag_g+<+19
+ttl 604800
+at sun 1.0
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27BD*%27
+ttl 604800
+at sun 1.0
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27C*%27
+ttl 604800
+at sun 1.0
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27EB*%27
+ttl 604800
+at sun 1.0
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='Galaxy'
+ttl 604800
+at sun 1.0
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27ClG%27
+ttl 604800
+at sun 1.0
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27Galaxy%27+AND+rvz_redshift+%3E+5
+ttl 604800
+at sun 1.0
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+1+main_id,ra,dec,rvz_redshift+FROM+basic+WHERE+otype='QSO'+AND+rvz_redshift+IS+NOT+NULL+ORDER+BY+rvz_redshift+DESC
+ttl 604800
+at sun 1.0
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27ms*%27
+ttl 604800
+at sun 1.0
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='Nova'
+ttl 604800
+at sun 1.0
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='Pulsar'
+ttl 604800
+at sun 1.0
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='QSO'
+ttl 604800
+at sun 1.0
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='SN'
+ttl 604800
+at sun 1.0
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype=%27Sy*%27
+ttl 604800
+at sun 1.0
+
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+COUNT(*)+as+n+FROM+basic+WHERE+otype='WD*'
+ttl 604800
+at sun 1.0

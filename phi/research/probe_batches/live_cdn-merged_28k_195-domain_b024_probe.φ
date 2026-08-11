@@ -1,0 +1,199 @@
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+No,Name,GLON,GLAT,_RA_icrs,_DE_icrs+FROM+%22J/A%2BA/607/A48/tablea1%22+WHERE+_RA_icrs+IS+NOT+NULL
+ttl 86400
+at sun 1.0
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+IRAS,z,logLIR,F12um,F25um,F60um,F100um,_RA,_DE+FROM+%22J/ApJS/274/5/table1%22+WHERE+_RA+IS+NOT+NULL+ORDER+BY+z+ASC
+ttl 86400
+at sun 1.0
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+objID,RAJ2000,DEJ2000,gmag,rmag,imag,zmag,ymag+FROM+%22II/349/ps1%22+WHERE+RAJ2000+IS+NOT+NULL+AND+gmag<15
+ttl 86400
+at sun 1.0
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+Name,RAJ2000,DEJ2000,SNR,z,Val,MSZ,Y5R500,MCXC+FROM+%22J/A%2BA/594/A27/psz2%22+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+SNR+DESC
+ttl 86400
+at sun 1.0
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+Source_name,RAJ2000,DEJ2000,Total_flux_887,Peak_flux_887,Maj,Min,Local_rms+FROM+"J/PASA/38/e058/catalog"+WHERE+RAJ2000+IS+NOT+NULL+AND+Total_flux_887>20+ORDER+BY+Total_flux_887+DESC
+ttl 86400
+at sun 1.0
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+RAJ2000,DEJ2000,Seq,Nx,blambda,Title+FROM+%22J/A%2BA/614/A116/list%22+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+Nx+DESC
+ttl 86400
+at sun 1.0
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50000+RA_ICRS,DE_ICRS,rmag,gmag,imag,zmag+FROM+%22V/147/sdss12%22+WHERE+%22class%22%3D1+AND+rmag%3C18
+ttl 86400
+at sun 1.0
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+RAJ2000,DEJ2000,imag,zphot,zd,zs,qflag+FROM+"J/ApJ/785/144/table1"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+zphot+DESC
+ttl 86400
+at sun 1.0
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+_RA,_DE,zL,zS,Sigma,Imag,Class+FROM+"J/ApJ/851/48/table1"+WHERE+_RA+IS+NOT+NULL+ORDER+BY+zL+ASC
+ttl 86400
+at sun 1.0
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+100+_RA,_DE,Star,a,e,i,Omega,w,Tp,Per+FROM+"J/ApJ/837/30/table3"+WHERE+_RA+IS+NOT+NULL
+ttl 86400
+at sun 1.0
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+Source_name,RAJ2000,DEJ2000,Total_flux,Peak_flux,Maj,Min,RMS+FROM+"J/A+A/598/A78/catalog"+WHERE+RAJ2000+IS+NOT+NULL+AND+Total_flux>200+ORDER+BY+Total_flux+DESC
+ttl 86400
+at sun 1.0
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1500+Name,RAJ2000,DEJ2000,Stotal,PolFrac,PolAngle+FROM+\"J/AJ/131/1937/table1\"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+Stotal+DESC
+ttl 86400
+at sun 1.0
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+Component_name,RAJ2000,DEJ2000,Total_flux,Peak_flux,Maj,Min,PA,RMS+FROM+"J/ApJS/255/30/catalog"+WHERE+RAJ2000+IS+NOT+NULL+AND+Total_flux>10+ORDER+BY+Total_flux+DESC
+ttl 86400
+at sun 1.0
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+Name,RAJ2000,DEJ2000,Type,Period,max,min+FROM+"B/vsx/vsx"+WHERE+(Type+LIKE+'CV%25'+OR+Type+LIKE+'UG%25'+OR+Type+LIKE+'CN%25'+OR+Type+LIKE+'AM%25'+OR+Type+LIKE+'DQ%25')+AND+RAJ2000+IS+NOT+NULL+ORDER+BY+max+ASC
+ttl 86400
+at sun 1.0
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+Name,RAJ2000,DEJ2000,Type,Period,max,min+FROM+"B/vsx/vsx"+WHERE+1%3DCONTAINS(POINT('ICRS',RAJ2000,DEJ2000),CIRCLE('ICRS',266.4,-29.0,5.0))+AND+RAJ2000+IS+NOT+NULL+ORDER+BY+max+ASC
+ttl 86400
+at sun 1.0
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+Name,RAJ2000,DEJ2000,Type,Period,max,min+FROM+"B/vsx/vsx"+WHERE+(Type+LIKE+'M+%25'+OR+Type+LIKE+'M%25'+OR+Type+LIKE+'SR%25'+OR+Type+LIKE+'SRA%25'+OR+Type+LIKE+'SRB%25')+AND+Period>100+AND+RAJ2000+IS+NOT+NULL+ORDER+BY+Period+DESC
+ttl 86400
+at sun 1.0
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+WISE,Cl,GLON,GLAT,Rad,HIIName,_RA_icrs,_DE_icrs+FROM+%22J/ApJS/212/1/wisecat%22+WHERE+_RA_icrs+IS+NOT+NULL+ORDER+BY+Rad+DESC
+ttl 86400
+at sun 1.0
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+Source,RA_ICRS,DE_ICRS+FROM+%22IX/69/xmm4d13s%22
+ttl 86400
+at sun 1.0
+
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD20=1&AVG=20&if_no_html=1
+ttl 86400
+at sun 1.0
+
+url https://opendata.dwd.de/climate_environment/health/alerts/s31fg.json
+ttl 86400
+on earth 51.0 10.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude={lat}&longitude={lon}&start_date={yesterday}&end_date={yesterday}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration,et0_fao_evapotranspiration,shortwave_radiation_sum&timezone=auto
+ttl 86400
+at sun 1.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude={lat}&longitude={lon}&start_date={yesterday}&end_date={yesterday}&hourly=temperature_2m,relative_humidity_2m,precipitation,windspeed_10m,soil_temperature_0_to_7cm,soil_moisture_0_to_7cm&timezone=auto
+ttl 86400
+at sun 1.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude={lat}&longitude={lon}&start_date={yesterday}&end_date={yesterday}&hourly=wind_speed_10m,wind_speed_100m,wind_direction_10m,wind_direction_100m,wind_gusts_10m&timezone=auto
+ttl 86400
+at sun 1.0
+
+url https://api.met.no/weatherapi/sunrise/3.0/sun?lat={lat}&lon={lon}&date={today}&offset=+00:00
+ttl 86400
+on earth 47.3769 8.5417
+
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&stations=USW00013739&startDate=2026-01-01&endDate=2026-07-27&format=json
+ttl 86400
+on earth 0.0 0.0
+
+url https://climate-api.open-meteo.com/v1/climate?latitude=0.0&longitude=0.0&start_year=2020&end_year=2030&models=CMCC_CM2_VHR4,FGOALS_f3_H&daily=temperature_2m_mean,temperature_2m_max,precipitation_sum
+ttl 86400
+on earth 0.0 0.0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude={lat}&longitude={lon}&start_date={yesterday}&end_date={today}&hourly=temperature_2m,precipitation,windspeed_10m,relative_humidity_2m,surface_pressure&models=era5&format=json
+ttl 86400
+at sun 1.0
+
+url https://api.open-meteo.com/v1/forecast?latitude=50.0&longitude=10.0&daily=et0_fao_evapotranspiration,vapor_pressure_deficit&forecast_days=1&format=json
+ttl 86400
+at sun 1
+
+url https://data.cosmic.ucar.edu/gnss-ro/cosmic2/nrt/level3/
+ttl 86400
+on earth 0.0 0.0
+
+url https://api.woudc.org/collections/stations/items?f=json&limit=500
+ttl 86400
+on earth 0 0
+
+url https://woudc.org/data/api/v1/observations/?format=json&limit=500&order_by=-datetime&phenomenon=ozone_total_column
+ttl 86400
+on earth 43.780 -79.470
+
+url https://woudc.org/api/records/observations/?dataset=TotalOzone&limit=2000&sortby=-datetime
+ttl 86400
+at sun 1.0
+
+url https://woudc.org/data/api/v1/observations/?format=json&limit=500&order_by=-datetime&phenomenon=uv_index
+ttl 86400
+at sun 1.0
+
+url https://woudc.org/api/records/observations/?dataset=UmkehrN14&limit=1000&sortby=-datetime
+ttl 86400
+at sun 1.0
+
+url https://modis.ornl.gov/rst/api/v1/MOD13Q1/subset?latitude={lat}&longitude={lon}&startDate=A2018049&endDate=A2018049&kmAboveBelow=0&kmLeftRight=0
+ttl 86400
+body earth
+
+url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_parks_and_protected_lands_area.geojson
+ttl 86400
+at sun 1
+
+url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_parks_and_protected_lands_point.geojson
+ttl 86400
+at sun 1
+
+url https://www.star.nesdis.noaa.gov/smcd/emb/vci/VH/get_TS_admin.php?country=USA&province=0&year=2023&type=VHI
+ttl 86400
+on earth 38.978 -76.919
+
+url https://gtnp.arcticportal.org/api/activelayer/?format=json&limit=2000
+ttl 86400
+at sun 1.0
+
+url https://gtnp.arcticportal.org/api/v1/gtnp-boreholes?format=json&limit=500
+ttl 86400
+at sun 1.0
+
+url https://gtnp.arcticportal.org/api/v1/calm-data?format=json&limit=500
+ttl 86400
+at sun 1.0
+
+url https://gtnp.arcticportal.org/api/boreholes/?format=json&limit=2000
+ttl 86400
+at sun 1.0
+
+url https://gtnp.arcticportal.org/api/v1/tsp-annual?format=json&limit=500
+ttl 86400
+at sun 1.0
+
+url https://gtnp.arcticportal.org/api/v1/stations?format=json&limit=500
+ttl 86400
+at sun 1.0
+
+url https://noaadata.apps.nsidc.org/NOAA/G02135/south/daily/data/S_seaice_extent_daily_v4.0.csv
+ttl 86400
+at sun 1
+
+url https://noaadata.apps.nsidc.org/NOAA/G02135/north/daily/data/N_seaice_extent_daily_v4.0.csv
+ttl 86400
+at sun 1
+
+url https://gml.noaa.gov/aftp/data/meteorology/in-situ/brw/met_brw_insitu_1_obop_hour_{year}.txt
+ttl 86400
+on earth 71.29 -156.57
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='2099942'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1%20h'
+ttl 86400
+at sun 1.0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='2019-01A'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1%20h'
+ttl 86400
+at sun 1.0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-101955'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1%20h'
+ttl 86400
+at sun 1.0

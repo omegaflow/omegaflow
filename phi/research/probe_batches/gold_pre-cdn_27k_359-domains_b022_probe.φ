@@ -1,0 +1,199 @@
+url https://terrabrasilis.dpi.inpe.br/app/api/v1/layer/amazon/latest/deforestation-alerts/all?format=geojson&limit=1000
+ttl 3600
+at earth
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27606%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 3600
+at earth
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27801%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 3600
+at earth
+
+url https://epic.gsfc.nasa.gov/api/natural/images
+ttl 3600
+on earth 0 0 0
+
+url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=10LD&date-min={today}&limit=100
+ttl 3600
+at earth
+
+url https://ssd-api.jpl.nasa.gov/fireball.api?limit=100
+ttl 3600
+at earth
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27799%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+ttl 3600
+at earth
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=4.5&orderby=magnitude&limit=100
+ttl 3600
+at earth
+
+url https://waterservices.usgs.gov/nwis/gwlevels/?format=json&modifiedSince=P1D&siteStatus=active&siteType=GW&parameterCd=72019&countyCd=&stateCd=&bbox=-125,24,-66,50&resultRetrievalMode=grouped
+ttl 3600
+at earth
+
+url https://waterservices.usgs.gov/nwis/dv?format=json&sites=01646500,09380000,09506000,06892350&startDT={year}-{month}-01&endDT={year}-{month}-{day}&parameterCd=00060&siteStatus=all
+ttl 3600
+at earth
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=01646500&parameterCd=00065&siteStatus=all
+ttl 3600
+at earth
+
+url https://volcanoes.usgs.gov/hans-public/api/volcano/weekly
+ttl 3600
+at earth
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27299%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+ttl 3600
+at earth
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-31%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 3600
+at earth
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-32%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 3600
+at earth
+
+url https://api.waqi.info/map/bounds/?latlng=17,72,54,136&token=demo
+ttl 3600
+at earth
+
+url https://api.waqi.info/map/bounds/?latlng=-10,100,55,145&token=demo
+ttl 3600
+at earth
+
+url https://db.satnogs.org/api/tle/?format=json
+ttl 14400
+at earth
+
+url https://hpiers.obspm.fr/iers/bul/bulb_new/bulletinb.dat
+ttl 43200
+body earth
+
+url https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,precipitation_sum,rain_sum,precipitation_hours,precipitation_probability_max,wind_speed_10m_max,wind_gusts_10m_max,wind_direction_10m_dominant,shortwave_radiation_sum,et0_fao_evapotranspiration&timezone=auto
+ttl 43200
+at earth
+
+url https://vsx.aavso.org/index.php?view=api.votable&format=json&ra=0&dec=0&radius=5
+ttl 86400
+at earth
+
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD20=1&AVG=20&if_no_html=1
+ttl 86400
+at earth
+
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&INV15=1&AVG=10&if_no_html=1
+ttl 86400
+at earth
+
+url https://aeronet.gsfc.nasa.gov/aeronet_locations_v3.txt
+ttl 86400
+at earth
+
+url https://irsa.ipac.caltech.edu/TAP/sync?query=SELECT+ra,dec,designation,w1mpro,w2mpro,w3mpro,w4mpro+FROM+allwise_p3as_psd+WHERE+w1mpro+IS+NOT+NULL&format=csv&limit=5000
+ttl 86400
+at earth
+
+url https://services3.arcgis.com/GVgbJbqm8hXASVYi/arcgis/rest/services/PAGER_CAT/FeatureServer/0/query?where=1%3D1&geometry={lon_min}%2C{lat_min}%2C{lon_max}%2C{lat_max}&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=YEAR,MAG,DEPTH,DEATHS,INJURIES,LATITUDE,LONGITUDE,COUNTRY&f=json&resultRecordCount=500
+ttl 86400
+at earth
+
+url https://argovis-api.colorado.edu/heatContent?startDate={yesterday}T00:00:00Z&endDate={today}T00:00:00Z
+ttl 86400
+at earth
+
+url http://export.arxiv.org/api/query?search_query=cat:astro-ph.*&max_results=0
+ttl 86400
+on earth 40.712 -74.006 0
+
+url http://export.arxiv.org/api/query?search_query=cat:cs.*&max_results=0
+ttl 86400
+on earth 40.712 -74.006 0
+
+url http://export.arxiv.org/api/query?search_query=cat:hep-*&max_results=0
+ttl 86400
+on earth 40.712 -74.006 0
+
+url http://export.arxiv.org/api/query?search_query=cat:math.*&max_results=0
+ttl 86400
+on earth 40.712 -74.006 0
+
+url http://export.arxiv.org/api/query?search_query=cat:physics.*&max_results=0
+ttl 86400
+on earth 40.712 -74.006 0
+
+url http://export.arxiv.org/api/query?search_query=cat:q-bio.*&max_results=0
+ttl 86400
+on earth 40.712 -74.006 0
+
+url http://export.arxiv.org/api/query?search_query=cat:q-fin.*&max_results=0
+ttl 86400
+on earth 40.712 -74.006 0
+
+url http://export.arxiv.org/api/query?search_query=cat:stat.*&max_results=0
+ttl 86400
+on earth 40.712 -74.006 0
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?request=doQuery&lang=ADQL&format=json&query=SELECT+TOP+200+RAJ2000,DEJ2000,Vmag+FROM+%22II/366/catv2021%22
+ttl 86400
+at earth
+
+url https://newton.spacedys.com/astdys2/index.php?pc=3.0&type=all&format=json&limit=500
+ttl 86400
+on earth 0.0 0.0 0
+
+url https://opendata.dwd.de/climate_environment/health/alerts/s31fg.json
+ttl 86400
+on earth 51.0 10.0 0
+
+url https://www.cpc.ncep.noaa.gov/data/indices/oni.ascii.txt
+ttl 86400
+on earth 38.989 -76.937 0
+
+url https://services.swpc.noaa.gov/json/spi/global_spi.json
+ttl 86400
+at earth
+
+url https://archive-api.open-meteo.com/v1/archive?latitude={lat}&longitude={lon}&start_date={yesterday}&end_date={yesterday}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration,et0_fao_evapotranspiration,shortwave_radiation_sum&timezone=auto
+ttl 86400
+at earth
+
+url https://archive-api.open-meteo.com/v1/archive?latitude={lat}&longitude={lon}&start_date={yesterday}&end_date={yesterday}&hourly=temperature_2m,relative_humidity_2m,precipitation,windspeed_10m,soil_temperature_0_to_7cm,soil_moisture_0_to_7cm&timezone=auto
+ttl 86400
+at earth
+
+url https://archive-api.open-meteo.com/v1/archive?latitude={lat}&longitude={lon}&start_date={yesterday}&end_date={yesterday}&hourly=wind_speed_10m,wind_speed_100m,wind_direction_10m,wind_direction_100m,wind_gusts_10m&timezone=auto
+ttl 86400
+at earth
+
+url https://api.met.no/weatherapi/sunrise/3.0/sun?lat={lat}&lon={lon}&date={today}&offset=+00:00
+ttl 86400
+at earth
+
+url https://api.sensor.community/v1/data/measurement?limit=10000
+ttl 86400
+at earth
+
+url https://api.woudc.org/collections/stations/items?f=json&limit=500
+ttl 86400
+at earth
+
+url https://api.woudc.org/collections/totalozone/items?limit=1
+ttl 86400
+on earth 43.780 -79.470 0
+
+url http://export.arxiv.org/api/query?search_query=*:*&max_results=1
+ttl 86400
+on earth 42.3601 -71.0589 0
+
+url https://clinicaltrials.gov/api/v2/studies?query.term=brain-computer+interface&filter.overallStatus=RECRUITING&countTotal=true&pageSize=1
+ttl 86400
+at earth
+
+url https://data.cdc.gov/resource/jr58-6ysp.json?$limit=1
+ttl 86400
+on earth 33.797 -84.323 0

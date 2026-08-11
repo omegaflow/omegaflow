@@ -1,0 +1,199 @@
+url https://kauai.ccmc.gsfc.nasa.gov/ISWA/iSWAGateway?action=getdata&id=iri_tec&format=json
+ttl 3600
+at earth
+
+url https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/ERG_HFA_L2_SPECTRA_60S/variables/spec_mW_E,spec_mW_B,freq/data/{today}T00:00:00.000Z/{today}T06:00:00.000Z?format=csv
+ttl 3600
+on earth 0.0 0.0 0
+
+url https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/MMS1_FGM_SRVY_L2/variables/mms1_fgm_b_gsm_srvy_l2/data/{today}T00:00:00.000Z/{today}T06:00:00.000Z?format=csv
+ttl 3600
+on earth 0.0 0.0 0
+
+url https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/RBSPA_REL04_ECT-MAGEIS-L3/variables/FESA,L,MLAT,MLON/data/{today}T00:00:00.000Z/{tomorrow}T00:00:00.000Z?format=csv
+ttl 3600
+at earth
+
+url https://cddis.nasa.gov/archive/gnss/products/ionex/{year}/{day}/COD0OPSFIN_{year}{day}0000_01D_01H_GIM.INX
+ttl 3600
+at earth
+
+url https://celestrak.org/SOCRATES/query.php?TIMEFRAME=24&MAX_PROB=0.001&LIMIT=200&FORMAT=json
+ttl 3600
+on earth 0.0 0.0 0
+
+url https://ssd-api.jpl.nasa.gov/fireball.api?limit=100
+ttl 3600
+at earth
+
+url https://geoserver.efas.eu/geoserver/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=efas:FloodEvents&outputFormat=application%2Fjson&count=500
+ttl 3600
+at earth
+
+url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=10LD
+ttl 3600
+at earth
+
+url https://floodobservatory.colorado.edu/FloodArchive/active_floods.geojson
+ttl 3600
+at earth
+
+url https://hub.docker.com/v2/repositories/library/alpine
+ttl 3600
+on earth 37.7749 -122.4194 0
+
+url https://hub.docker.com/v2/repositories/library/node
+ttl 3600
+on earth 37.7749 -122.4194 0
+
+url https://hub.docker.com/v2/repositories/library/python
+ttl 3600
+on earth 37.7749 -122.4194 0
+
+url https://hub.docker.com/v2/repositories/library/ubuntu
+ttl 3600
+on earth 37.7749 -122.4194 0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27399%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+ttl 3600
+at earth
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27602%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 3600
+at earth
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2790000031%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 3600
+at earth
+
+url https://api.eia.gov/v2/electricity/rto/region-sub-ba/data/?frequency=hourly&data[0]=value&api_key={eia_key}
+ttl 3600
+on earth 38.9 -77.0 0
+
+url https://api.electricitymap.org/v3/carbon-intensity/latest?lat={lat}&lon={lon}
+ttl 3600
+at earth
+
+url https://api.electricitymap.org/v3/power-breakdown/latest?lat={lat}&lon={lon}
+ttl 3600
+at earth
+
+url https://web-api.tp.entsoe.eu/api?documentType=A44&in_Domain=DE_LU&period.start={today}0000&period.end={today}2300&securityToken={entsoe_key}
+ttl 3600
+on earth 51.0 10.0 0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Eris%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 3600
+at earth
+
+url https://api.eurobis.org/v2/occurrence/search?limit=200&hascoordinates=true&scientificname=&year={year}
+ttl 3600
+at earth
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27502%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 3600
+at earth
+
+url https://services.swpc.noaa.gov/json/ace/mag/ace_mag_1h.json
+ttl 3600
+on earth 0 0 0
+
+url https://services.swpc.noaa.gov/json/ace/swepam/ace_swepam_1h.json
+ttl 3600
+on earth 0 0 0
+
+url https://services.swpc.noaa.gov/json/ovation_aurora_latest.json
+ttl 3600
+at earth
+
+url https://services.swpc.noaa.gov/json/geospace/geospace_dst_1_hour.json
+ttl 3600
+on earth 0 0 0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%273I%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+ttl 3600
+at earth
+
+url https://services.swpc.noaa.gov/json/planetary_k_index_1m.json
+ttl 3600
+on earth 0 0 0
+
+url https://network.satnogs.org/api/observations/?format=json&limit=1
+ttl 3600
+at earth
+
+url https://stereo-ssc.nascom.nasa.gov/beacon/tables.shtml
+ttl 3600
+on earth -25.0 60.0 150000000000
+
+url https://fireball.fripon.org/ajax/liste_multiple.ajax.php
+ttl 3600
+at earth
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27503%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 3600
+at earth
+
+url https://api.gbif.org/v1/occurrence/search?decimalLatitude={lat}&decimalLongitude={lon}&radius=1&limit=0
+ttl 3600
+at earth
+
+url https://api.gbif.org/v1/occurrence/search?classKey=131&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
+ttl 3600
+at earth
+
+url https://api.gbif.org/v1/occurrence/search?classKey=734&hasCoordinate=true&limit=300&basisOfRecord=MACHINE_OBSERVATION&year={year}&format=json
+ttl 3600
+at earth
+
+url https://api.gbif.org/v1/occurrence/search?orderKey=734&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION,MACHINE_OBSERVATION
+ttl 3600
+at earth
+
+url https://api.gbif.org/v1/occurrence/search?orderKey=809&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&format=json
+ttl 3600
+at earth
+
+url https://api.gbif.org/v1/occurrence/search?classKey=186&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
+ttl 3600
+at earth
+
+url https://api.gbif.org/v1/occurrence/search?orderKey=180130&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
+ttl 3600
+at earth
+
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true
+ttl 3600
+at earth
+
+url https://api.gbif.org/v1/occurrence/search?familyKey=7908&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
+ttl 3600
+at earth
+
+url https://api.gbif.org/v1/occurrence/search?orderKey=719&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
+ttl 3600
+at earth
+
+url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&occurrenceStatus=PRESENT&basisOfRecord=HUMAN_OBSERVATION&year={year}&format=json
+ttl 3600
+at earth
+
+url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&iucnRedListCategory=CR&basisOfRecord=HUMAN_OBSERVATION&year={year}&format=json
+ttl 3600
+at earth
+
+url https://www.globalcmt.org/cgi-bin/globalcmt-cgi-bin/CMT5/form?itype=ymd&yr={year}&mo={month}&dy=01&otype=ymd&oyr={year}&omo={month}&ody={day}&jyr=1976&jday=1&ojyr=2025&ojday=366&nday=28&lmw=5&umw=10&llat=-90&ulat=90&llon=-180&ulon=180&lhd=0&uhd=1000&list=6
+ttl 3600
+body earth
+
+url https://geofon.gfz.de/fdsnws/event/1/query?format=geojson&minmag=3&limit=100&region=AFRICA
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="atm"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+at earth
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="bank"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+at earth

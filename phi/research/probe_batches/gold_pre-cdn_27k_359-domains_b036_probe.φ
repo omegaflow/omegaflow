@@ -1,0 +1,199 @@
+url https://gml.noaa.gov/aftp/data/trace_gases/ch4/in-situ/surface/txt/ch4_mol_frac_global_surface.txt
+ttl 86400
+at earth
+
+url https://www.ncei.noaa.gov/access/paleo-search/study/search.json?dataPublisher=NOAA&dataType=Coral&headersOnly=true
+ttl 86400
+at earth
+
+url https://www.ncei.noaa.gov/paleo-search/study/search.json?dataPublisher=NOAA&dataTypeId=2&keyword=coral&access=public&format=json&limit=200
+ttl 86400
+at earth
+
+url https://www.ncei.noaa.gov/access/paleo-search/study/search.json?dataPublisher=NOAA&dataType=Ice+Core&headersOnly=true
+ttl 86400
+at earth
+
+url https://www.ncei.noaa.gov/access/paleo-search/study/search.json?dataPublisher=NOAA&dataType=Pollen&headersOnly=true
+ttl 86400
+at earth
+
+url https://www.ncei.noaa.gov/access/paleo-search/study/search.json?dataPublisher=NOAA&dataType=Speleothem&headersOnly=true
+ttl 86400
+at earth
+
+url https://psl.noaa.gov/thredds/ncss/Datasets/ncep.reanalysis.dailyavgs/surface/slp.{year}.nc?var=slp&north=90&west=-180&east=180&south=-90&disableLLSubset=on&disableProjSubset=on&horizStride=4&time_start={year}-{month}-{day}T00:00:00Z&time_end={year}-{month}-{day}T23:59:59Z&timeStride=1&accept=csv
+ttl 86400
+at earth
+
+url https://psl.noaa.gov/gcos_wgsp/Timeseries/Data/iod.long.data
+ttl 86400
+on earth 0.0 0.0 0
+
+url https://coastwatch.noaa.gov/erddap/griddap/erdSMOSsss.csv?sss%5Blast%5D%5B(-60.0):(75.0):3%5D%5B(-180.0):(180.0):3%5D
+ttl 86400
+at earth
+
+url https://www.ncei.noaa.gov/swdiws/json/nx3hail/{today}
+ttl 86400
+at earth
+
+url https://www.ncei.noaa.gov/swdiws/json/nx3meso/{today}
+ttl 86400
+at earth
+
+url https://www.ncei.noaa.gov/swdiws/json/nx3structure/{today}
+ttl 86400
+at earth
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=predictions&application=batch16&begin_date={year}{month}{day}&end_date={year}{month}{day}&station=8518750&datum=MLLW&units=metric&time_zone=gmt&format=json
+ttl 86400
+on earth 40.7 -74.01 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20260726&end_date=20260727&station=9414290&product=predictions&datum=MSL&units=metric&time_zone=gmt&format=json
+ttl 86400
+at earth
+
+url https://coastwatch.noaa.gov/erddap/tabledap/noaaVIIRSboatdetect.csv?latitude,longitude,time,bright_ti4&time%3E=now-24hours&limit=5000
+ttl 86400
+at earth
+
+url https://coastwatch.noaa.gov/erddap/griddap/nesdisVHNSNPPchlaW.csv?chlor_a%5Blast%5D%5B(-40.0):(40.0):5%5D%5B(-180.0):(180.0):5%5D
+ttl 86400
+at earth
+
+url https://www.ngdc.noaa.gov/geomag-web/calculators/calculateIgrfwmm?lat={lat}&lon={lon}&elevation=0&resultFormat=json&magneticComponent=x
+ttl 86400
+at earth
+
+url https://www.ncei.noaa.gov/erddap/griddap/nceiWoa23Sal1.csv?s_an%5B0%5D%5B0%5D%5B(-60.0):(75.0):3%5D%5B(-180.0):(180.0):3%5D
+ttl 86400
+at earth
+
+url https://www.ncei.noaa.gov/access/world-ocean-database-select/dbsearch.html?DirectAccess=yes&type=json&depth=0&lat1=-90&lat2=90&lon1=-180&lon2=180&variable=T,S,O2&startDate={today}&endDate={today}&limit=300
+ttl 86400
+at earth
+
+url https://www.ncei.noaa.gov/access/world-ocean-database-select/wparms.json?dataset=OSD&variables=oxygen&time_from={year}-{month}-01&time_to={year}-{month}-{day}&lat_from=-90&lat_to=90&lon_from=-180&lon_to=180&depth_from=0&depth_to=1000&format=json
+ttl 86400
+at earth
+
+url https://registry.npmjs.org/-/v1/search?text=*&size=1
+ttl 86400
+on earth 37.774 -122.419 0
+
+url https://noaadata.apps.nsidc.org/NOAA/G02156/data/4km/{year}/{year}{month}{day}_IMS4km_v1.3.nc
+ttl 86400
+on earth 70.0 0.0 0
+
+url https://noaadata.apps.nsidc.org/NOAA/G02135/north/daily/data/N_seaice_extent_daily_v3.0.csv
+ttl 86400
+on earth 90.0 0.0 0
+
+url https://noaadata.apps.nsidc.org/NOAA/G02135/south/daily/data/S_seaice_extent_daily_v3.0.csv
+ttl 86400
+on earth -90.0 0.0 0
+
+url https://gong2.nso.edu/HA/hag/?ref=hag&series=hag&date={year}.{month}.{day}&format=json
+ttl 86400
+on earth 0.0 0.0 0
+
+url https://api.obis.org/v3/occurrence?taxonid=1567&size=500&fields=decimalLatitude,decimalLongitude,scientificName,class,family,date_year&startdate=2020-01-01
+ttl 86400
+at earth
+
+url https://api.obis.org/v3/occurrence?iucnRedListCategory=CR,EN,VU&size=500&fields=decimalLatitude,decimalLongitude,scientificName,class,family,iucnRedListCategory,date_year
+ttl 86400
+at earth
+
+url https://my.cmems-du.eu/motu-web/services
+ttl 86400
+at earth
+
+url https://data.oceannetworks.ca/api/locations?method=getTree&token=REGISTERED_TOKEN&locationCode=&includeChildren=Y&deviceCategoryCode=CTD
+ttl 86400
+at earth
+
+url https://climate-api.open-meteo.com/v1/climate?latitude=0.0&longitude=0.0&start_year=2020&end_year=2030&models=CMCC_CM2_VHR4,FGOALS_f3_H&daily=temperature_2m_mean,temperature_2m_max,precipitation_sum
+ttl 86400
+on earth 0.0 0.0 0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude={lat}&longitude={lon}&start_date={yesterday}&end_date={today}&hourly=temperature_2m,precipitation,windspeed_10m,relative_humidity_2m,surface_pressure&models=era5&format=json
+ttl 86400
+at earth
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&daily=et0_fao_evapotranspiration,vapor_pressure_deficit,growing_degree_days_base_0_limit_50&models=era5_seamless&forecast_days=1&format=json
+ttl 86400
+at earth
+
+url https://api.fda.gov/drug/event.json?limit=1
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://api.fda.gov/device/510k.json?limit=1
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://api.fda.gov/drug/drugsfda.json?limit=1
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://api.fda.gov/drug/enforcement.json?limit=1
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://world.openfoodfacts.org/cgi/search.pl?search_terms=&page_size=1&json=1
+ttl 86400
+on earth 48.8566 2.3522 0
+
+url https://openghg.org/api/v1/search?species=co2&network=ICOS&start_date={year}-01-01&end_date={year}-12-31
+ttl 86400
+on earth 0.0 0.0 0
+
+url https://api.openinframap.org/stats/country
+ttl 86400
+at earth
+
+url https://stac.openlandmap.org/collections/sol_organic.carbon_usda.6a1c_m/items?limit=500&bbox=-180,-60,180,75
+ttl 86400
+at earth
+
+url https://openlibrary.org/authors.json?limit=1
+ttl 86400
+on earth 40.712 -74.006 0
+
+url https://openlibrary.org/books.json?limit=1
+ttl 86400
+on earth 40.712 -74.006 0
+
+url https://openneuro.org/api/v1/datasets
+ttl 86400
+on earth 42.365 -71.105 0
+
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=JSON
+ttl 86400
+at earth
+
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=JSON
+ttl 86400
+at earth
+
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=JSON
+ttl 86400
+at earth
+
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=cubesat&FORMAT=JSON
+ttl 86400
+at earth
+
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=analyst&FORMAT=JSON
+ttl 86400
+at earth
+
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=analyst&FORMAT=JSON
+ttl 86400
+at earth
+
+url https://celestrak.org/NORAD/elements/gp.php?GROUP=engineering&FORMAT=JSON
+ttl 86400
+at earth

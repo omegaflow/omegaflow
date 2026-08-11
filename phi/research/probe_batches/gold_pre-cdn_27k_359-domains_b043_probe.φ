@@ -1,0 +1,199 @@
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+RA_ICRS,DE_ICRS,zsp,rmag,gmag+FROM+%22V/147/sdss12%22+WHERE+zsp+IS+NOT+NULL+AND+zsp%3E0.5
+ttl 86400
+at earth
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+RA_ICRS,DE_ICRS,rmag,gmag,imag,zmag+FROM+%22V/147/sdss12%22+WHERE+%22class%22%3D1+AND+rmag%3C18
+ttl 86400
+at earth
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,z,imag+FROM+"VII/260/dr7qso"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+z+DESC
+ttl 86400
+at earth
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+RAJ2000,DEJ2000,imag,zphot,zd,zs,qflag+FROM+"J/ApJ/785/144/table1"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+zphot+DESC
+ttl 86400
+at earth
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+_RA,_DE,zL,zS,Sigma,Imag,Class+FROM+"J/ApJ/851/48/table1"+WHERE+_RA+IS+NOT+NULL+ORDER+BY+zL+ASC
+ttl 86400
+at earth
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+100+_RA,_DE,Star,a,e,i,Omega,w,Tp,Per+FROM+"J/ApJ/837/30/table3"+WHERE+_RA+IS+NOT+NULL
+ttl 86400
+at earth
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+Source_name,RAJ2000,DEJ2000,Total_flux,Peak_flux,Maj,Min,RMS+FROM+"J/A+A/598/A78/catalog"+WHERE+RAJ2000+IS+NOT+NULL+AND+Total_flux>200+ORDER+BY+Total_flux+DESC
+ttl 86400
+at earth
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1500+Name,RAJ2000,DEJ2000,Stotal,PolFrac,PolAngle+FROM+\"J/AJ/131/1937/table1\"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+Stotal+DESC
+ttl 86400
+at earth
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+Component_name,RAJ2000,DEJ2000,Total_flux,Peak_flux,Maj,Min,PA,RMS+FROM+"J/ApJS/255/30/catalog"+WHERE+RAJ2000+IS+NOT+NULL+AND+Total_flux>10+ORDER+BY+Total_flux+DESC
+ttl 86400
+at earth
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+Name,RAJ2000,DEJ2000,Type,Period,max,min+FROM+"B/vsx/vsx"+WHERE+(Type+LIKE+'CV%25'+OR+Type+LIKE+'UG%25'+OR+Type+LIKE+'CN%25'+OR+Type+LIKE+'AM%25'+OR+Type+LIKE+'DQ%25')+AND+RAJ2000+IS+NOT+NULL+ORDER+BY+max+ASC
+ttl 86400
+at earth
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+Name,RAJ2000,DEJ2000,Type,Period,max,min+FROM+"B/vsx/vsx"+WHERE+1%3DCONTAINS(POINT('ICRS',RAJ2000,DEJ2000),CIRCLE('ICRS',266.4,-29.0,5.0))+AND+RAJ2000+IS+NOT+NULL+ORDER+BY+max+ASC
+ttl 86400
+at earth
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+Name,RAJ2000,DEJ2000,Type,Period,max,min+FROM+"B/vsx/vsx"+WHERE+(Type+LIKE+'M+%25'+OR+Type+LIKE+'M%25'+OR+Type+LIKE+'SR%25'+OR+Type+LIKE+'SRA%25'+OR+Type+LIKE+'SRB%25')+AND+Period>100+AND+RAJ2000+IS+NOT+NULL+ORDER+BY+Period+DESC
+ttl 86400
+at earth
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+WISE,Cl,GLON,GLAT,Rad,HIIName,_RA_icrs,_DE_icrs+FROM+%22J/ApJS/212/1/wisecat%22+WHERE+_RA_icrs+IS+NOT+NULL+ORDER+BY+Rad+DESC
+ttl 86400
+at earth
+
+url https://data.who.int/api/3/action/datastore_search?resource_id=air-quality-pm25&limit=5000
+ttl 86400
+at earth
+
+url https://ghoapi.azureedge.net/api/AIR_12?\$filter=SpatialDimType+eq+'COUNTRY'&\$top=500
+ttl 86400
+at earth
+
+url https://ghoapi.azureedge.net/api/AIR_12?$filter=SpatialDimType+eq+'COUNTRY'&$top=500
+ttl 86400
+on earth 0.0 0.0 0
+
+url https://www.wikidata.org/w/api.php?action=query&meta=siteinfo&siprop=statistics&format=json
+ttl 86400
+on earth 37.774 -122.419 0
+
+url https://en.wikipedia.org/w/api.php?action=query&meta=siteinfo&siprop=statistics&format=json
+ttl 86400
+on earth 37.774 -122.419 0
+
+url https://en.wikipedia.org/w/api.php?action=query&meta=siteinfo&siprop=statistics&format=json
+ttl 86400
+on earth 37.774 -122.419 0
+
+url https://en.wikipedia.org/w/api.php?action=query&meta=siteinfo&siprop=statistics&format=json
+ttl 86400
+on earth 37.774 -122.419 0
+
+url https://api.openbrewerydb.org/v1/breweries?per_page=200
+ttl 86400
+at earth
+
+url https://api.worldbank.org/v2/country/all/indicator/EN.ATM.CO2E.KT?format=json&per_page=500
+ttl 86400
+at earth
+
+url https://api.worldbank.org/v2/country/all?format=json&per_page=300
+ttl 86400
+at earth
+
+url https://api.worldbank.org/v2/country/all/indicator/AG.LND.FRST.ZS?format=json&per_page=500
+ttl 86400
+at earth
+
+url https://api.worldbank.org/v2/country/all/indicator/EN.ATM.PM25.MC.M3?format=json&per_page=500
+ttl 86400
+at earth
+
+url https://api.worldbank.org/v2/country/all/indicator/SH.H2O.BASIC.ZS?format=json&per_page=500
+ttl 86400
+at earth
+
+url https://www.worldpop.org/rest/data/pop/wpgp?iso3=BRA,CHN,IND,USA,NGA,IDN,PAK&year=2024&format=json
+ttl 86400
+at earth
+
+url https://api.marinespecies.org/rest/AphiaRecordsByMatchNames?scientificnames[]=Mola+mola&marine_only=true
+ttl 86400
+on earth 0.0 0.0 0
+
+url https://woudc.org/data/api/v1/observations/?format=json&limit=500&order_by=-datetime&phenomenon=ozone_total_column
+ttl 86400
+at earth
+
+url https://woudc.org/api/records/observations/?dataset=TotalOzone&limit=2000&sortby=-datetime
+ttl 86400
+at earth
+
+url https://woudc.org/data/api/v1/observations/?format=json&limit=500&order_by=-datetime&phenomenon=uv_index
+ttl 86400
+at earth
+
+url https://woudc.org/api/records/observations/?dataset=UmkehrN14&limit=1000&sortby=-datetime
+ttl 86400
+at earth
+
+url https://cartocdn-gusc.global.ssl.fastly.net/wri-rw/api/v3/sql?q=SELECT+cartodb_id,the_geom,name,country,primary_fuel,capacity_mw,latitude,longitude+FROM+powerwatch_data_20180102+LIMIT+5000&format=geojson
+ttl 86400
+at earth
+
+url https://xeno-canto.org/api/2/recordings?query=grp:birds
+ttl 86400
+on earth 52.37 4.893 0
+
+url https://xeno-canto.org/api/2/recordings?query=grp:birds
+ttl 86400
+on earth 52.37 4.893 0
+
+url https://zenodo.org/api/records/?communities=iodp&size=100
+ttl 86400
+on earth 0.0 0.0 0
+
+url https://zenodo.org/api/records/?q=IODP+DSDP&size=100
+ttl 86400
+on earth 0.0 0.0 0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=-3.47&longitude=-62.22&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth -3.47 -62.22 0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=-80.0&longitude=100.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth -80.0 100.0 0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=-24.0&longitude=-69.5&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth -24.0 -69.5 0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=0.5&longitude=114.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth 0.5 114.0 0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=30.0&longitude=31.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth 30.0 31.0 0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=-34.0&longitude=18.5&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth -34.0 18.5 0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=0.0&longitude=18.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth 0.0 18.0 0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=36.5&longitude=-117.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth 36.5 -117.0 0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=-18.0&longitude=178.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth -18.0 178.0 0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=44.0&longitude=105.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth 44.0 105.0 0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=72.0&longitude=-40.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth 72.0 -40.0 0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=64.0&longitude=-19.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth 64.0 -19.0 0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=-49.5&longitude=69.5&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth -49.5 69.5 0
