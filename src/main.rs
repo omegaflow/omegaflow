@@ -6951,6 +6951,7 @@ fn main() {
                     continue;
                 }
                 let _ = std::fs::write(&lock, "");
+                eprintln!("loading {}", body_name);
                 thread::spawn(move || {
                     let tmp_path = match &src_clone.body {
                         Some(b) => format!("/tmp/omegaflow_eph_{}.bin", b),
@@ -6973,9 +6974,11 @@ fn main() {
                         }
                     }
                     let _ = std::fs::remove_file(&lock);
+                    let body_loaded = src_clone.body.clone().unwrap_or_default();
                     if let ExtractResult::WithEphemeris(_, eph) =
                         extract(&src_clone, &tmp_path, tdb_now())
                     {
+                        eprintln!("loaded {}", body_loaded);
                         let _ = ftx.send(FetchResult {
                             source_idx: src_idx,
                             channels: Vec::new(),
