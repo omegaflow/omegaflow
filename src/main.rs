@@ -5728,7 +5728,10 @@ fn probe_mode(path: &str) -> i32 {
             let mut coords = String::new();
             walk_json_probe(&p, "", &mut fields, &mut coords);
             if !coords.is_empty() {
-                out.push_str(&coords);
+                if let Some(ref raw_text) = raw {
+                    let precision_lines = measure_coord_precision(&p, raw_text, &coords);
+                    out.push_str(&precision_lines);
+                }
             }
             if !fields.is_empty() {
                 out.push_str(&fields);
@@ -6099,6 +6102,100 @@ fn coord_directive(key: &str) -> &'static str {
     }
 }
 
+fn coord_precision(a: f64, b: f64) -> usize {
+    let diff = (a - b).abs();
+    if diff == 0.0 {
+        return 15;
+    }
+    let mut p = 0;
+    let mut d = diff;
+    while d < 1.0 && p < 15 {
+        d *= 10.0;
+        p += 1;
+    }
+    p
+}
+
+fn measure_coord_precision(val: &JsonVal, _raw: &str, _coords: &str) -> String {
+    match val {
+        JsonVal::Arr(arr) if arr.len() >= 2 => {
+            let a = &arr[0];
+            let b = &arr[1];
+            let mut out = String::new();
+            find_coord_precisions(a, b, "", &mut out);
+            if !out.is_empty() {
+                format!("# coord_precision {}\n", out.trim())
+            } else {
+                String::new()
+            }
+        }
+        JsonVal::Obj(map) => {
+            if let Some(features) = map.get("features") {
+                if let JsonVal::Arr(features_arr) = features {
+                    if features_arr.len() >= 2 {
+                        let a = &features_arr[0];
+                        let b = &features_arr[1];
+                        let mut out = String::new();
+                        find_coord_precisions(a, b, "", &mut out);
+                        if !out.is_empty() {
+                            format!("# coord_precision {}\n", out.trim())
+                        } else {
+                            String::new()
+                        }
+                    } else {
+                        String::new()
+                    }
+                } else {
+                    String::new()
+                }
+            } else {
+                String::new()
+            }
+        }
+        _ => String::new(),
+    }
+}
+
+fn find_coord_precisions(a: &JsonVal, b: &JsonVal, prefix: &str, out: &mut String) {
+    match (a, b) {
+        (JsonVal::Obj(ma), JsonVal::Obj(mb)) => {
+            for (k, va) in ma {
+                if let Some(vb) = mb.get(k) {
+                    let path = if prefix.is_empty() {
+                        k.clone()
+                    } else {
+                        format!("{}.{}", prefix, k)
+                    };
+                    find_coord_precisions(va, vb, &path, out);
+                }
+            }
+        }
+        (JsonVal::Arr(aa), JsonVal::Arr(ab)) => {
+            if aa.len() >= 2 && ab.len() >= 2 && prefix.ends_with("coordinates") {
+                for i in 0..3.min(aa.len()).min(ab.len()) {
+                    if let (JsonVal::Num(na), JsonVal::Num(nb)) = (&aa[i], &ab[i]) {
+                        let p = coord_precision(*na, *nb);
+                        let label = ["lon", "lat", "alt"][i.min(2)];
+                        out.push_str(&format!("{}={}dp ", label, p));
+                    }
+                }
+            }
+        }
+        (JsonVal::Num(na), JsonVal::Num(nb)) => {
+            if is_coord_key(prefix)
+                || prefix.ends_with("lat")
+                || prefix.ends_with("lon")
+                || prefix.ends_with("lng")
+                || prefix.ends_with("altitude")
+                || prefix.ends_with("alt")
+            {
+                let p = coord_precision(*na, *nb);
+                out.push_str(&format!("{}={}dp ", prefix, p));
+            }
+        }
+        _ => {}
+    }
+}
 fn load_sources_from(content: &str) -> Vec<SourceConfig> {
     let mut sources = Vec::new();
     let mut cur_ttl: u64 = 0;
