@@ -2026,18 +2026,17 @@ fn kernel_for_force(force: u8) -> u8 {
 }
 
 fn tau_for_force(force: u8) -> f64 {
-    const VS: f64 = 340.0;
     match force {
-        0 => 1.0,
-        1 => 1.0,
-        2 => 1.0 / VS,
-        3 => 1.0 / 5000.0,
-        4 => 1.0 / 3000.0,
-        5 => 86400.0,
+        0 => 60.0,
+        1 => 3600.0,
+        2 => 60.0,
+        3 => 10.0,
+        4 => 10.0,
+        5 => 3600.0,
         6 => 86400.0,
-        7 => 1.0 / 10.0,
-        8 => 86400.0,
-        _ => 1.0,
+        7 => 60.0,
+        8 => 3600.0,
+        _ => 60.0,
     }
 }
 
@@ -5734,7 +5733,7 @@ fn probe_mode(path: &str) -> i32 {
         if let Some(p) = parsed {
             let mut fields = String::new();
             let mut coords = String::new();
-            walk_json_probe(&p, "", &mut fields, &mut coords);
+            walk_json_probe(&p, "", &mut fields, &mut coords, ttl);
             if !coords.is_empty() {
                 out.push_str(&coords);
             }
@@ -5742,7 +5741,7 @@ fn probe_mode(path: &str) -> i32 {
                 out.push_str(&fields);
             }
         } else if let Some(ref r) = raw {
-            if let Some(csv) = probe_csv(r) {
+            if let Some(csv) = probe_csv(r, ttl) {
                 out.push_str(&csv);
             }
         } else {
@@ -5933,7 +5932,7 @@ fn is_coord_key(key: &str) -> bool {
         || kl == "solar_lon"
 }
 
-fn probe_csv(raw: &str) -> Option<String> {
+fn probe_csv(raw: &str, _tau_field: u64) -> Option<String> {
     let first_header = raw.lines().find_map(|line| {
         let trimmed = line.trim();
         if trimmed.starts_with('#') {
@@ -5961,7 +5960,7 @@ fn probe_csv(raw: &str) -> Option<String> {
         if force == "DROP" {
             continue;
         }
-        let tau = force_id_of(force).map(tau_for_force).unwrap_or(1.0);
+        let tau = force_id_of(force).map(tau_for_force).unwrap_or(60.0);
         out.push_str(&format!("field {} {} {} {}\n", col, force, unit, tau));
     }
     if out.is_empty() {
@@ -5996,7 +5995,13 @@ fn is_unit_name(name: &str) -> bool {
         || kl == "deg"
 }
 
-fn walk_json_probe(val: &JsonVal, prefix: &str, out: &mut String, coords: &mut String) {
+fn walk_json_probe(
+    val: &JsonVal,
+    prefix: &str,
+    out: &mut String,
+    coords: &mut String,
+    tau_field: u64,
+) {
     match val {
         JsonVal::Obj(map) => {
             for (k, v) in map {
@@ -6016,7 +6021,7 @@ fn walk_json_probe(val: &JsonVal, prefix: &str, out: &mut String, coords: &mut S
                         out.push_str(&format!("field {} seismic-body {}\n", path, unit));
                     }
                 } else {
-                    walk_json_probe(v, &path, out, coords);
+                    walk_json_probe(v, &path, out, coords, tau_field);
                 }
             }
         }
@@ -6056,10 +6061,10 @@ fn walk_json_probe(val: &JsonVal, prefix: &str, out: &mut String, coords: &mut S
             }
             let first = &arr[0];
             if matches!(first, JsonVal::Obj(_)) {
-                walk_json_probe(first, prefix, out, coords);
+                walk_json_probe(first, prefix, out, coords, tau_field);
             } else {
                 for (i, v) in arr.iter().enumerate() {
-                    walk_json_probe(v, &format!("{}.{}", prefix, i), out, coords);
+                    walk_json_probe(v, &format!("{}.{}", prefix, i), out, coords, tau_field);
                 }
             }
         }
@@ -6075,7 +6080,7 @@ fn walk_json_probe(val: &JsonVal, prefix: &str, out: &mut String, coords: &mut S
             if unit == "DROP" {
                 return;
             }
-            let tau = force_id_of(force).map(tau_for_force).unwrap_or(1.0);
+            let tau = force_id_of(force).map(tau_for_force).unwrap_or(60.0);
             out.push_str(&format!("field {} {} {} {}\n", prefix, force, unit, tau));
         }
         JsonVal::Str(s) => {
@@ -6091,7 +6096,7 @@ fn walk_json_probe(val: &JsonVal, prefix: &str, out: &mut String, coords: &mut S
                 if unit == "DROP" {
                     return;
                 }
-                let tau = force_id_of(force).map(tau_for_force).unwrap_or(1.0);
+                let tau = force_id_of(force).map(tau_for_force).unwrap_or(60.0);
                 out.push_str(&format!("field {} {} {} {}\n", prefix, force, unit, tau));
             }
         }
