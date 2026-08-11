@@ -644,20 +644,24 @@ fn presence_probe() {
             for (let i = 0; i < 9; i++) lvls[i] = Math.max(kernelExpose[i], Math.pow(2, -10)) / boost;
             try {
                 gpu.queue.writeBuffer(vpBuf, 0, new Float32Array([evalW, evalH, n, gridStep, fr[0], fr[1], fr[2], vPresence[0] / C, fu[0], fu[1], fu[2], vPresence[1] / C, ff[0], ff[1], ff[2], vPresence[2] / C, lvls[0], lvls[1], lvls[2], lvls[3], lvls[4], lvls[5], lvls[6], lvls[7], lvls[8], 0, 0, 0, xPresence, yPresence, zPresence, tPresence]));
-                const encoder = gpu.createCommandEncoder();
                 {
-                    const cpass = encoder.beginComputePass();
+                    const compEncoder = gpu.createCommandEncoder();
+                    const cpass = compEncoder.beginComputePass();
                     cpass.setPipeline(fieldGridPipe);
                     cpass.setBindGroup(0, fieldBind);
                     cpass.dispatchWorkgroups(16, 16);
                     cpass.end();
+                    gpu.queue.submit([compEncoder.finish()]);
                 }
-                const pass = encoder.beginRenderPass({ colorAttachments: [{ view: fieldCtx.getCurrentTexture().createView(), clearValue: { r: 0, g: 0, b: 0, a: 1 }, loadOp: 'clear', storeOp: 'store' }] });
-                pass.setPipeline(fieldPipe);
-                pass.setBindGroup(0, fieldBind);
-                pass.draw(6);
-                pass.end();
-                gpu.queue.submit([encoder.finish()]);
+                {
+                    const renderEncoder = gpu.createCommandEncoder();
+                    const pass = renderEncoder.beginRenderPass({ colorAttachments: [{ view: fieldCtx.getCurrentTexture().createView(), clearValue: { r: 0, g: 0, b: 0, a: 1 }, loadOp: 'clear', storeOp: 'store' }] });
+                    pass.setPipeline(fieldPipe);
+                    pass.setBindGroup(0, fieldBind);
+                    pass.draw(6);
+                    pass.end();
+                    gpu.queue.submit([renderEncoder.finish()]);
+                }
                 fieldFrames++;
             } catch { gpu = null; }
             probePresence().catch(() => { console.warn('stream empty'); });
