@@ -6957,6 +6957,7 @@ fn main() {
     radiators.push(Box::new(sr));
     radiators.push(Box::new(AudioRadiator::new(44100)));
     radiators.push(Box::new(StderrRadiator));
+    let mut in_flight: std::collections::HashSet<String> = std::collections::HashSet::new();
     let cadence = 1.0;
     loop {
         let now = tdb_now();
@@ -7006,6 +7007,9 @@ fn main() {
         for i in 0..archive.sources.len() {
             let origin = (i as u32, 0, 0);
             if !origin_stale(&archive.origins, origin, archive.sources[i].ttl, now) {
+                if let Some(ref body) = archive.sources[i].body {
+                    in_flight.remove(body.as_str());
+                }
                 continue;
             }
             if archive.sources[i].format == "ephemeris_binary" {
@@ -7022,34 +7026,25 @@ fn main() {
                 let src_clone = archive.sources[i].clone();
                 let src_idx = i;
                 let body_name = src_clone.body.clone().unwrap_or_default();
-                let lock = format!("/tmp/omegaflow_eph_{}.lock", body_name);
-                if std::path::Path::new(&lock).exists() {
+                if in_flight.contains(&body_name) {
                     continue;
                 }
-                let _ = std::fs::write(&lock, "");
+                in_flight.insert(body_name.clone());
                 eprintln!("loading {}", body_name);
                 thread::spawn(move || {
                     let tmp_path = match &src_clone.body {
                         Some(b) => format!("/tmp/omegaflow_eph_{}.bin", b),
-                        None => {
-                            let _ = std::fs::remove_file(&lock);
-                            return;
-                        }
+                        None => return,
                     };
                     if read_cache_if_fresh(&tmp_path, src_clone.ttl).is_none() {
                         let bytes = match fetch_raw_bytes(&url, src_clone.ttl) {
                             Some(b) => b,
-                            None => {
-                                let _ = std::fs::remove_file(&lock);
-                                return;
-                            }
+                            None => return,
                         };
                         if std::fs::write(&tmp_path, &bytes).is_err() {
-                            let _ = std::fs::remove_file(&lock);
                             return;
                         }
                     }
-                    let _ = std::fs::remove_file(&lock);
                     let body_loaded = src_clone.body.clone().unwrap_or_default();
                     if let ExtractResult::WithEphemeris(_, eph) =
                         extract(&src_clone, &tmp_path, tdb_now())
