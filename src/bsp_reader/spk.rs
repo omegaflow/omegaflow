@@ -1,27 +1,3 @@
-//! SPK (Spacecraft and Planet Kernel) reader.
-//!
-//! Parses DAF segments into typed `SpkSegment`s and evaluates each
-//! supported NAIF data type at a requested TDB ephemeris time. Returned
-//! states are 6-vectors (km, km/s) in the segment's native frame, which
-//! the caller may rotate to another frame. All times are TDB seconds
-//! past J2000.
-//!
-//! Supported data types:
-//! - **Type 2** — Chebyshev (position only). Velocity is the analytic
-//!   derivative of the position polynomial (the standard CSPICE
-//!   definition). Covers DE440 and other planetary ephemerides.
-//! - **Type 3** — Chebyshev with separately-stored velocity
-//!   coefficients (no chain-rule derivative; velocity is its own
-//!   polynomial).
-//! - **Type 9** — Lagrange interpolation of discrete states with
-//!   unequal time steps; position and velocity components are
-//!   interpolated independently.
-//! - **Type 13** — Hermite interpolation of discrete states with
-//!   unequal time steps; position and velocity used as joint
-//!   constraints.
-//!
-//! Calling `evaluate` on an unsupported segment type returns
-//! `SpkError::UnsupportedType`.
 
 use std::collections::HashMap;
 use std::path::Path;
@@ -60,8 +36,6 @@ impl From<DafError> for SpkError {
 
 impl std::error::Error for SpkError {}
 
-/// Fully-parsed SPK segment. Payload is lazily evaluable; the metadata
-/// block is enough to route a lookup without reading coefficients.
 #[derive(Clone)]
 pub struct SpkSegment {
     pub target: i32,
@@ -85,15 +59,6 @@ enum SpkPayload {
     Unsupported,
 }
 
-/// Type 2 segment: Chebyshev position, analytic-derivative velocity.
-///
-/// Record layout (all f64, little-endian):
-///   [MID, RADIUS, Xcoef[0..N], Ycoef[0..N], Zcoef[0..N]]
-/// where RSIZE = 2 + 3*N and N = polynomial_degree + 1.
-///
-/// Segment trailer (last 4 doubles of the segment):
-///   [INIT, INTLEN, RSIZE, N_RECORDS]
-/// INIT and INTLEN are the TDB epoch / length (seconds) of each record.
 #[derive(Clone)]
 struct SpkType2 {
     file: DafFile,
@@ -165,16 +130,6 @@ impl SpkType2 {
     }
 }
 
-/// Type 3 segment: Chebyshev with separately-stored velocity
-/// coefficients.
-///
-/// Record layout:
-///   [MID, RADIUS, Xpos[N], Ypos[N], Zpos[N], Xvel[N], Yvel[N], Zvel[N]]
-/// RSIZE = 2 + 6*N. The trailer `[INIT, INTLEN, RSIZE, N_RECORDS]` is
-/// shared with Type 2.
-///
-/// Unlike Type 2, velocity is evaluated from its own coefficient block
-/// (no chain-rule scaling by `1/RADIUS` on the position derivative).
 #[derive(Clone)]
 struct SpkType3 {
     file: DafFile,
@@ -235,12 +190,6 @@ impl SpkType3 {
     }
 }
 
-/// Shared trailer read for discrete-state segments (Types 8, 9, 12, 13).
-///
-/// Last two doubles of the segment are `[window_or_degree, N_states]`.
-/// The epoch table sits immediately before the directory entries (one
-/// directory entry per full group of 100 states; directory follows
-/// the epoch table).
 struct DiscreteMeta {
     window_or_degree: usize,
     n_states: usize,
@@ -272,9 +221,6 @@ impl DiscreteMeta {
     }
 }
 
-/// Type 9 segment: Lagrange interpolation of discrete states with
-/// unequal time steps. Position and velocity components are
-/// interpolated independently from their stored values.
 #[derive(Clone)]
 struct SpkType9 {
     file: DafFile,
@@ -319,8 +265,6 @@ impl SpkType9 {
     }
 }
 
-/// Type 13 segment: Hermite interpolation of discrete states (position
-/// + velocity used as constraints) with unequal time steps.
 #[derive(Clone)]
 struct SpkType13 {
     file: DafFile,
@@ -378,9 +322,6 @@ impl SpkType13 {
     }
 }
 
-/// Pick the contiguous window of `window` epoch indices centered on
-/// the requested `et`. Binary-searches the epoch array and clamps to
-/// the segment bounds (leading/trailing cases).
 fn pick_window(
     file: &DafFile,
     epochs_start: u32,
@@ -410,7 +351,6 @@ fn pick_window(
     Ok((start, count))
 }
 
-/// Barycentric Lagrange evaluation on arbitrary nodes.
 fn lagrange_eval(xs: &[f64], ys: &[f64], x: f64) -> f64 {
     let n = xs.len();
     for i in 0..n {
@@ -437,12 +377,6 @@ fn lagrange_eval(xs: &[f64], ys: &[f64], x: f64) -> f64 {
     num / den
 }
 
-/// Hermite interpolation at arbitrary nodes with paired value +
-/// derivative constraints. Returns `(f(x), f'(x))`.
-///
-/// Uses the standard "doubled nodes" divided-difference scheme: treat
-/// each node as repeated, seed divided differences with the derivative
-/// across each doubled pair, and then apply the Newton form.
 fn hermite_eval(xs: &[f64], ys: &[f64], dys: &[f64], x: f64) -> (f64, f64) {
     let n = xs.len();
     debug_assert_eq!(ys.len(), n);
@@ -492,15 +426,6 @@ fn hermite_eval(xs: &[f64], ys: &[f64], dys: &[f64], x: f64) -> (f64, f64) {
     (val, der)
 }
 
-/// Three-channel Chebyshev evaluation with shared basis-function
-/// recurrence. Equivalent to calling a scalar Chebyshev evaluator three
-/// times on `(cx, cy, cz)` at the same `s`, but computes `T_k(s)` and
-/// `dT_k/ds` once per iteration and applies them to all three
-/// channels. The per-channel arithmetic order is identical to the
-/// scalar variant, so the output is bit-for-bit equivalent.
-///
-/// All three slices must have the same length (a Type 2/3 record
-/// invariant; debug-asserted).
 #[inline]
 pub(crate) fn cheby3_val_and_deriv(
     cx: &[f64],
@@ -545,10 +470,6 @@ pub(crate) fn cheby3_val_and_deriv(
     (val, der)
 }
 
-/// Three-channel Chebyshev value-only evaluation (no derivative).
-/// Used by SPK Type 3, which stores velocity as a separate Chebyshev
-/// series so the position-polynomial derivative is unused. Saves the
-/// `dT_n/ds` recurrence and one fma per iteration per channel.
 #[inline]
 pub(crate) fn cheby3_val_only(cx: &[f64], cy: &[f64], cz: &[f64], s: f64) -> [f64; 3] {
     let n = cx.len();
@@ -579,8 +500,6 @@ pub(crate) fn cheby3_val_only(cx: &[f64], cy: &[f64], cz: &[f64], s: f64) -> [f6
     val
 }
 
-/// A loaded SPK file: DAF plus per-segment metadata and a
-/// (target, center) index for O(1) segment lookup.
 pub struct SpkFile {
     segments: Vec<SpkSegment>,
     index: HashMap<(i32, i32), Vec<usize>>,
@@ -641,12 +560,6 @@ impl SpkFile {
         &self.segments
     }
 
-    /// State of `target` relative to `center` at `et` (TDB seconds past
-    /// J2000). Walks the body chain if no direct segment is available
-    /// for the pair: computes state(target -> SSB) and state(center ->
-    /// SSB) by recursively summing segments rooted at body 0 (SSB),
-    /// then subtracts. All segments must share the same inertial frame;
-    /// this holds for DE-series planetary ephemerides (all J2000).
     #[inline]
     pub fn state(&self, target: i32, center: i32, et: f64) -> Result<[f64; 6], SpkError> {
         if target == center {
@@ -671,9 +584,6 @@ impl SpkFile {
         Ok(out)
     }
 
-    /// Try to satisfy the pair from a single segment (or a single
-    /// reverse segment by negation). Returns `Ok(None)` when neither
-    /// direction has coverage at `et`.
     #[inline]
     fn try_direct(&self, target: i32, center: i32, et: f64) -> Result<Option<[f64; 6]>, SpkError> {
         if let Some(indices) = self.index.get(&(target, center)) {
@@ -710,9 +620,6 @@ impl SpkFile {
         }
     }
 
-    /// State of `body` wrt SSB (NAIF 0) at `et`, by walking
-    /// `body -> next_center -> ... -> 0`. Detects cycles and bails
-    /// if the chain exceeds a conservative depth bound.
     #[cold]
     #[inline(never)]
     fn state_wrt_ssb(&self, body: i32, et: f64) -> Result<[f64; 6], SpkError> {
@@ -745,10 +652,6 @@ impl SpkFile {
         })
     }
 
-    /// Pick one segment whose target is `body`, whose covers `et`, and
-    /// whose center is closer to SSB (prefer center = 0 when available;
-    /// otherwise the first matching segment). Returns the segment state
-    /// and the center body we advanced to.
     #[cold]
     #[inline(never)]
     fn step_toward_ssb(&self, body: i32, et: f64) -> Result<([f64; 6], i32), SpkError> {

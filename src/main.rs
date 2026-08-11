@@ -901,7 +901,11 @@ fn parse_iso_utc(s: &str) -> Option<u64> {
     let mut tp = time_core.split(':');
     let hh: u32 = tp.next()?.parse().ok()?;
     let mm: u32 = tp.next()?.parse().ok()?;
-    let ss: u32 = tp.next().and_then(|s2| s2.parse().ok()).unwrap_or(0);
+    let s2 = match tp.next() {
+        Some(s) => s,
+        None => return None,
+    };
+    let ss: u32 = s2.parse().ok()?;
     let days = ymd_to_days(y, m, d)? as i64;
     let unix = days * 86400 + (hh as i64) * 3600 + (mm as i64) * 60 + (ss as i64);
     Some(unix as u64)
@@ -2071,24 +2075,30 @@ fn kernel_extent(kernel_id: u8, body_props: Option<&BodyProperties>, tau: f64) -
     if tau == 0.0 {
         return 0.0;
     }
-    match kernel_id {
-        0 | 6 => f64::INFINITY,
-        _ => {
-            let reach_time = tau;
-            let p = match body_props {
-                Some(p) => p,
-                None => return 0.0,
-            };
-            match kernel_id {
-                1 => p.gaussian_inverse_square * reach_time,
-                2 => p.gaussian_inverse * reach_time,
-                3 => (2.0 * p.erfc * reach_time).sqrt(),
-                4 => p.exponential_decay,
-                5 => p.patch_levy * reach_time,
-                _ => 0.0,
-            }
-        }
+    if kernel_id == 0 || kernel_id == 6 {
+        return f64::INFINITY;
     }
+    let p = match body_props {
+        Some(p) => p,
+        None => return 0.0,
+    };
+    let reach_time = tau;
+    if kernel_id == 1 {
+        return p.gaussian_inverse_square * reach_time;
+    }
+    if kernel_id == 2 {
+        return p.gaussian_inverse * reach_time;
+    }
+    if kernel_id == 3 {
+        return (2.0 * p.erfc * reach_time).sqrt();
+    }
+    if kernel_id == 4 {
+        return p.exponential_decay;
+    }
+    if kernel_id == 5 {
+        return p.patch_levy * reach_time;
+    }
+    0.0
 }
 
 #[derive(Clone)]
@@ -6663,9 +6673,19 @@ fn load_sources_from(content: &str) -> Vec<SourceConfig> {
             }
             "on" if parts.len() >= 4 => {
                 let body = parts[1].to_string();
-                let lat: f64 = parts[2].parse().ok().unwrap_or(0.0);
-                let lon: f64 = parts[3].parse().ok().unwrap_or(0.0);
-                let alt: f64 = parts.get(4).and_then(|s| s.parse().ok()).unwrap_or(0.0);
+                let Ok(lat) = parts[2].parse::<f64>() else {
+                    continue;
+                };
+                let Ok(lon) = parts[3].parse::<f64>() else {
+                    continue;
+                };
+                let alt: f64 = match parts.get(4) {
+                    Some(s) => match s.parse::<f64>() {
+                        Ok(a) => a,
+                        Err(_) => continue,
+                    },
+                    None => 0.0,
+                };
                 cur_body = Some(body.clone());
                 cur_frame = Some(Frame::Surface {
                     body_name: body,
@@ -6957,7 +6977,6 @@ fn main() {
     radiators.push(Box::new(sr));
     radiators.push(Box::new(AudioRadiator::new(44100)));
     radiators.push(Box::new(StderrRadiator));
-    let mut in_flight: std::collections::HashSet<String> = std::collections::HashSet::new();
     let cadence = 1.0;
     loop {
         let now = tdb_now();
@@ -7007,9 +7026,6 @@ fn main() {
         for i in 0..archive.sources.len() {
             let origin = (i as u32, 0, 0);
             if !origin_stale(&archive.origins, origin, archive.sources[i].ttl, now) {
-                if let Some(ref body) = archive.sources[i].body {
-                    in_flight.remove(body.as_str());
-                }
                 continue;
             }
             if archive.sources[i].format == "ephemeris_binary" {
@@ -7018,10 +7034,14 @@ fn main() {
                 let src_clone = archive.sources[i].clone();
                 let src_idx = i;
                 let body_name = src_clone.body.clone().unwrap_or_default();
-                if in_flight.contains(&body_name) {
-                    continue;
-                }
-                in_flight.insert(body_name.clone());
+                archive.origins.entry(origin).or_insert(OriginState {
+                    fetched: now,
+                    prev_epoch: 0.0,
+                    prev_abs: [0.0; 3],
+                    prev_motion: None,
+                    resid_ema: 0.0,
+                    has_prev: false,
+                });
                 eprintln!("loading {}", body_name);
                 thread::spawn(move || {
                     let tmp_path = match &src_clone.body {

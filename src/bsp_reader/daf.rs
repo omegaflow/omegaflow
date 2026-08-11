@@ -1,13 +1,3 @@
-//! NAIF DAF (Double-precision Array File) container reader.
-//!
-//! DAF is the shared on-disk container behind every binary SPICE
-//! kernel format — SPK, PCK, and CK — so this module is the entry
-//! point for the per-kernel-type parsers above it. It parses the
-//! file record and the summary/name record chain, yielding typed
-//! [`Summary`] descriptors; payload interpretation (e.g. SPK Type 2
-//! Chebyshev coefficients) is the caller's responsibility.
-//!
-//! Reference: NAIF "DAF Required Reading" (daf.req).
 
 use std::path::Path;
 use std::sync::Arc;
@@ -78,7 +68,6 @@ impl From<std::io::Error> for DafError {
 pub const RECORD_BYTES: usize = 1024;
 pub const DOUBLE_BYTES: usize = 8;
 
-/// A DAF file loaded into memory. Cheap to clone (`Arc`-backed).
 #[derive(Clone)]
 pub struct DafFile {
     inner: Arc<DafInner>,
@@ -92,8 +81,6 @@ struct DafInner {
     pub fward: u32,
 }
 
-/// One summary plus its 40-character name, extracted from a summary/name
-/// record pair.
 #[derive(Debug, Clone)]
 pub struct Summary {
     pub doubles: Vec<f64>,  // length == nd
@@ -162,12 +149,10 @@ impl DafFile {
         self.inner.idword
     }
 
-    /// Number of doubles per summary = ND + (NI+1)/2.
     pub fn summary_size_doubles(&self) -> usize {
         self.inner.nd as usize + (self.inner.ni as usize).div_ceil(2)
     }
 
-    /// Enumerate every (summary, name) pair across the summary-record chain.
     pub fn summaries(&self) -> Result<Vec<Summary>, DafError> {
         let mut out = Vec::new();
         let mut rec = self.inner.fward;
@@ -254,8 +239,6 @@ impl DafFile {
         Ok(())
     }
 
-    /// Read a contiguous block of doubles by DAF address range
-    /// (1-indexed, inclusive on both ends).
     pub fn read_doubles(&self, start_addr: u32, end_addr: u32) -> Result<Vec<f64>, DafError> {
         if start_addr == 0 || end_addr < start_addr {
             return Err(DafError::AddressOutOfBounds {
@@ -284,11 +267,6 @@ impl DafFile {
         Ok(out)
     }
 
-    /// Read a range of doubles by DAF address, returning an owned `Vec<f64>`.
-    ///
-    /// This is the hot-path accessor used by SPK/PCK segment evaluators.
-    /// Each double is decoded from little-endian on-disk bytes via
-    /// `f64::from_le_bytes`, so this function is endian-agnostic.
     pub fn doubles_native(&self, start_addr: u32, end_addr: u32) -> Result<Vec<f64>, DafError> {
         let bytes = self.double_slice(start_addr, end_addr)?;
         let n = bytes.len() / DOUBLE_BYTES;
@@ -301,7 +279,6 @@ impl DafFile {
         Ok(out)
     }
 
-    /// View of a double range as a `&[u8]` slice.
     pub fn double_slice(&self, start_addr: u32, end_addr: u32) -> Result<&[u8], DafError> {
         if start_addr == 0 || end_addr < start_addr {
             return Err(DafError::AddressOutOfBounds {
@@ -322,7 +299,6 @@ impl DafFile {
         Ok(&self.inner.data[byte_start..byte_end])
     }
 
-    /// Bulk-load N doubles starting at DAF address `start_addr`.
     pub fn read_n_doubles(&self, start_addr: u32, count: usize) -> Result<Vec<f64>, DafError> {
         if count == 0 {
             return Ok(Vec::new());

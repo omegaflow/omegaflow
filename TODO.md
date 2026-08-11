@@ -16,7 +16,7 @@ AGENTS.md is the primary constraint matrix. Git is the history. Pending work onl
 - Force-Farben WGSL: VOut.force_type, hue per kernel+force
 - fold_eff fix: v=0 forces → temporal decay only (no d/c)
 - `max(1)` and `reach_ttl` eliminated from source
-- bsp_reader has 121 doc comments; main.rs and lib.rs are comment-free
+- 0 comments in all source files (bsp_reader doc comments removed 2026-08-11)
 - Overflow Protocol restored to AGENTS.md System Directive
 - Archaeology consolidated: `archeology/` (56 φ sources, 370+ research docs), `docs/omegaflow_archeology.zip`
 - GitHub cleanup: 22 issues closed, ~80 failed runs deleted, mirror-cdn cron disabled
