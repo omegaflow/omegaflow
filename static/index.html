@@ -1131,7 +1131,7 @@ fn presence_probe() {
                     "Connection\n" +
                     `  WebSocket: ${transport.socket ? 'open' : 'closed'}\n` +
                     `  Round trip: ${transport.rtt.toFixed(0)}ms\n\n` +
-                    "Station oscillators\n" +
+                    "Browser sensors\n" +
                     (topLines || "  Waiting for interaction...");
                 debugFontCnt++;
                 if (debugFontCnt % 30 === 0) {
