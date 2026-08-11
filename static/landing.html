@@ -122,7 +122,7 @@ else if (isWin) binary = 'omegaflow_windows.exe';
 if (isMobile) {
     φ.href = 'https://github.com/omegaflow/omegaflow';
     Φ.href = 'https://github.com/omegaflow/omegaflow';
-    info.textContent = 'run on a server — the field is not mobile yet';
+    info.innerHTML = 'this page IS the field — WebGPU runs on Android Chrome and iOS Safari. Download the Ω binary to a server, then open <code style="color:#8a8270">http://your-server:1111</code> on this device.';
     Φ.classList.remove('pulse');
 } else {
     φ.href = binary;
@@ -135,6 +135,7 @@ const allLinks = [
     ['macOS (Apple Silicon)', 'omegaflow_macos_arm64'],
     ['macOS (Intel)', 'omegaflow_macos_intel'],
     ['Windows (x64)', 'omegaflow_windows.exe'],
+    ['Android · iOS', 'https://github.com/omegaflow/omegaflow'],
 ];
 platforms.innerHTML = allLinks.map(l => `<a href="${l[1]}">${l[0]}</a>`).join(' · ');
 
