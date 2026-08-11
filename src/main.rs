@@ -41,7 +41,7 @@ const CHEBYSHEV_N: usize = 18;
 const ECLIPTIC_OBLIQUITY: f64 = 0.409092804;
 const AU: f64 = 1.495978707e11;
 const GAUSS_K: f64 = 0.01720209895;
-const PORT_CONST: u16 = 1111;
+const PORT_CONST: u16 = 1618;
 const SONIFICATION_ROOT_FREQ: f32 = 220.0;
 const SONIFICATION_KERNEL_STEP: f32 = 110.0;
 const SONIFICATION_FORCE_STEP: f32 = 55.0;
@@ -2269,12 +2269,18 @@ impl TcpRadiator {
     ) -> Self {
         let (field_tx, field_rx) = mpsc::channel::<Arc<Buffer>>();
         let listener = match TcpListener::bind(format!("127.0.0.1:{}", port)) {
-            Ok(l) => l,
+            Ok(l) => {
+                eprintln!("serving on http://127.0.0.1:{}", port);
+                l
+            }
             Err(e) => {
                 eprintln!("TCP bind to 127.0.0.1:{} returned {:?}", port, e.kind());
                 std::process::exit(1);
             }
         };
+        let _ = std::process::Command::new("xdg-open")
+            .arg(format!("http://127.0.0.1:{}", port))
+            .spawn();
         match listener.set_nonblocking(true) {
             Ok(_) => {}
             Err(e) => {

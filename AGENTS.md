@@ -1,7 +1,7 @@
 # omegaflow
 
 Kybernetic field system. Pure Rust, WebGPU point cloud, ICRS block universe.
-`cargo run` → 127.0.0.1:1111 → static/index.html.
+`cargo run` → 127.0.0.1:1618 → static/index.html.
 
 ## Core Philosophy: A = A
 
@@ -201,7 +201,7 @@ Any permutation, omission, or type-width change in the Rust serialization silent
 - **Verify edge cases** — zero-length arrays, missing fields in source rows, boundary conditions on ephemeris granules, TTL expiration, absorption at 0.0 and 1.0.
 - **Re-read survey files** — if the session modified something that was surveyed early (low context-position), re-read that file to confirm the change is coherent with its surroundings.
 - **Read the WGSL shader** — if the Rust side changed any field meaning, read the WGSL vertex and compute shaders to confirm the field access pattern still matches.
-- **Confirm rendering** — `cargo run`, open browser at `127.0.0.1:1111`. A non-black window with point cloud visible confirms the data contract is intact. A black window is a fully realized state only when intentional — never the default verification outcome.
+- **Confirm rendering** — `cargo run`, open browser at `127.0.0.1:1618`. A non-black window with point cloud visible confirms the data contract is intact. A black window is a fully realized state only when intentional — never the default verification outcome.
 
 `cargo check` is a syntax gate. It is not verification. The Kybernaut is the verifier.
 
