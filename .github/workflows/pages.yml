@@ -1,35 +1,78 @@
-name: Deploy to GitHub Pages
-
+name: Pages — Landing + Binaries
 on:
   push:
     branches: [main]
-
+  workflow_dispatch:
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
-
 concurrency:
   group: pages
   cancel-in-progress: false
-
 jobs:
-  deploy:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            artifact: omegaflow_linux
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            artifact: omegaflow_windows.exe
+          - os: macos-latest
+            target: x86_64-apple-darwin
+            artifact: omegaflow_macos_intel
+          - os: macos-latest
+            target: aarch64-apple-darwin
+            artifact: omegaflow_macos_arm64
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions-rust-lang/setup-rust-toolchain@v1
+      with:
+        target: ${{ matrix.target }}
+    - run: cargo build --release --target ${{ matrix.target }}
+    - run: |
+        BIN="target/${{ matrix.target }}/release/omegaflow"
+        if [ -f "$BIN" ]; then cp "$BIN" "${{ matrix.artifact }}"; fi
+        if [ -f "$BIN.exe" ]; then cp "$BIN.exe" "${{ matrix.artifact }}"; fi
+    - uses: actions/upload-artifact@v4
+      with:
+        name: ${{ matrix.artifact }}
+        path: ${{ matrix.artifact }}
+
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+    - run: dd if=/dev/urandom of=probe_64k.bin bs=1024 count=64
+    - uses: actions/upload-artifact@v4
+      with:
+        name: probe
+        path: probe_64k.bin
+
+  pages:
+    needs: [build, probe]
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - name: Setup Pages
-      uses: actions/configure-pages@v4
-    - name: Build site
-      run: |
-        mkdir _site
+    - uses: actions/download-artifact@v4
+      with:
+        pattern: '*'
+        merge-multiple: true
+        path: _site
+    - run: |
         cp static/landing.html _site/index.html
-        cp CNAME _site/CNAME
-    - name: Upload artifact
-      uses: actions/upload-pages-artifact@v3
-    - name: Deploy
+        cp static/app.html _site/app.html 2>/dev/null || true
+        cp CNAME _site/CNAME 2>/dev/null || true
+        ls -lh _site/
+    - uses: actions/configure-pages@v4
+    - uses: actions/upload-pages-artifact@v3
+      with:
+        path: _site
+    - uses: actions/deploy-pages@v4
       id: deployment
-      uses: actions/deploy-pages@v4

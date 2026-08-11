@@ -1,0 +1,103 @@
+name: Healthcheck
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '*/5 * * * *'
+  push:
+    paths:
+      - 'src/**'
+      - 'phi/**'
+      - 'Cargo.toml'
+permissions:
+  contents: write
+  issues: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+jobs:
+  cd:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions-rust-lang/setup-rust-toolchain@v1
+    - run: cargo run --release -- --verify phi
+    - if: failure()
+      run: |
+        gh issue create --repo omegaflow/omegaflow \
+          --title "health: CDN mirror returned void" \
+          --body "CDN mirror job failed. Last commit: ${{ github.sha }}" \
+          --label health
+
+  sources:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions-rust-lang/setup-rust-toolchain@v1
+    - run: cargo run --release -- --verify phi/research
+    - if: failure()
+      run: |
+        gh issue create --repo omegaflow/omegaflow \
+          --title "health: source health returned void" \
+          --body "Source health job failed. Last commit: ${{ github.sha }}" \
+          --label health
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions-rust-lang/setup-rust-toolchain@v1
+    - run: cargo check
+    - if: failure()
+      run: |
+        gh issue create --repo omegaflow/omegaflow \
+          --title "health: cargo check returned void" \
+          --body "Build job failed on ${{ github.sha }}" \
+          --label health
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions-rust-lang/setup-rust-toolchain@v1
+    - run: cargo test
+    - if: failure()
+      run: |
+        gh issue create --repo omegaflow/omegaflow \
+          --title "health: cargo test returned void" \
+          --body "Test job failed on ${{ github.sha }}" \
+          --label health
+
+  pages-verify:
+    runs-on: ubuntu-latest
+    steps:
+    - run: |
+        STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://omegaflow.space/ 2>/dev/null || echo "void")
+        if [ "$STATUS" != "200" ]; then
+          echo "pages returned $STATUS"
+          exit 1
+        fi
+        echo "pages ok: $STATUS"
+    - if: failure()
+      run: |
+        gh issue create --repo omegaflow/omegaflow \
+          --title "health: pages returned void" \
+          --body "Pages health check failed. https://omegaflow.space/ may be down." \
+          --label health
+
+  sources-package:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+    steps:
+    - uses: actions/checkout@v4
+    - run: |
+        mkdir -p _out
+        gh release download ssd.jpl.nasa.gov --repo omegaflow/sources --dir _out/assets/ 2>/dev/null || echo "no assets"
+        cp phi/sources.φ _out/
+        cp phi/sources_live.φ _out/ 2>/dev/null || true
+        tar czf omegaflow_sources.tar.gz -C _out .
+        ls -lh omegaflow_sources.tar.gz
+    - uses: actions/upload-artifact@v4
+      with:
+        name: sources-package
+        path: omegaflow_sources.tar.gz

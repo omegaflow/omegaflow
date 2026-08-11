@@ -8,37 +8,107 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html, body { height: 100%; background: #0a0908; color: #c4b9a8; font-family: system-ui, monospace; }
 body { display: flex; flex-direction: column; align-items: center; justify-content: center; }
-h1 { font-size: 2.5rem; font-weight: 200; letter-spacing: 0.15em; color: #f0e8d8; margin-bottom: 2rem; }
-a { color: #a89878; text-decoration: none; font-size: 1rem; padding: 0.5rem 1.5rem; border: 1px solid #3a3630; }
-a:hover { background: #141210; }
+h1 { font-size: 2.5rem; font-weight: 200; letter-spacing: 0.15em; color: #f0e8d8; margin-bottom: 0.5rem; }
+.buttons { display: flex; gap: 1.5rem; margin-top: 1.5rem; }
+a.button { color: #a89878; text-decoration: none; font-size: 1.2rem; padding: 0.6rem 1.8rem; border: 1px solid #3a3630; display: inline-block; min-width: 4rem; text-align: center; letter-spacing: 0.05em; }
+a.button:hover { background: #141210; }
+a.button.recommended { border-color: #a89878; border-width: 2px; font-weight: bold; }
+a.button.alt { opacity: 0.5; font-size: 0.9rem; padding: 0.4rem 1rem; }
+.recommendation { font-size: 0.7rem; color: #5a5550; margin-top: 0.5rem; max-width: 20rem; text-align: center; }
+.platforms { font-size: 0.65rem; color: #3a3630; margin-top: 2rem; }
+.platforms a { color: #5a5550; }
 </style>
 </head>
 <body>
 <h1>&phi;(x,y,z,t)</h1>
-<a id="link" href="#">Download</a>
+<div class="recommendation" id="rec"></div>
+<div class="buttons">
+  <a id="btn-φ" class="button recommended" href="#" aria-label="omegaflow standalone">&phi;</a>
+  <a id="btn-Φ" class="button alt" href="#" aria-label="omegaflow full">&Phi;</a>
+</div>
+<div class="platforms" id="platforms"></div>
 <script>
+const φ = document.getElementById('btn-φ');
+const Φ = document.getElementById('btn-Φ');
+const rec = document.getElementById('rec');
+const platforms = document.getElementById('platforms');
+
 const ua = navigator.userAgent;
-const isMobile = ua.includes('Android') || ua.includes('iPhone') || ua.includes('iPad') || ua.includes('Mobi');
-const link = document.getElementById('link');
+const plat = navigator.platform || '';
+const isMobile = /Android|iPhone|iPad|iPod|Mobi/i.test(ua);
+const isWin = /Win/i.test(ua);
+const isMac = /Mac/i.test(ua) || /iPhone|iPad|iPod/i.test(ua);
+const isLinux = /Linux/i.test(ua) && !/Android/i.test(ua);
+const isArm = /arm|aarch/i.test(ua) || /Apple.*ARM|Mac.*ARM/i.test(ua);
+
+let binary = '';
+let binaryName = '';
+if (isMac) {
+    binary = isArm ? 'omegaflow_macos_arm64' : 'omegaflow_macos_intel';
+    binaryName = isArm ? 'macOS (Apple Silicon)' : 'macOS (Intel)';
+} else if (isWin) {
+    binary = 'omegaflow_windows.exe';
+    binaryName = 'Windows (x64)';
+} else if (isLinux && !isMobile) {
+    binary = 'omegaflow_linux';
+    binaryName = 'Linux (x64)';
+} else {
+    binary = 'omegaflow_linux';
+    binaryName = 'Linux (x64)';
+}
+
+const base = '';
+const standaloneUrl = base + '/' + binary;
+const sourcesUrl = base + '/omegaflow_sources.tar.gz';
 
 if (isMobile) {
-    link.href = '/app.html';
-    link.textContent = 'Open';
-} else if (ua.includes('Win')) {
-    link.href = 'https://github.com/omegaflow/omegaflow/releases/latest/download/omegaflow_windows.exe';
-    link.textContent = 'Download';
-} else if (ua.includes('Mac')) {
-    link.href = ua.includes('Arm')
-        ? 'https://github.com/omegaflow/omegaflow/releases/latest/download/omegaflow_macos_arm64'
-        : 'https://github.com/omegaflow/omegaflow/releases/latest/download/omegaflow_macos_intel';
-    link.textContent = 'Download';
-} else if (ua.includes('Linux')) {
-    link.href = 'https://github.com/omegaflow/omegaflow/releases/latest/download/omegaflow_linux';
-    link.textContent = 'Download';
+    φ.href = 'https://github.com/omegaflow/omegaflow';
+    Φ.href = 'https://github.com/omegaflow/omegaflow';
+    rec.textContent = 'mobile — run omegaflow on a server to access the field';
 } else {
-    link.href = 'https://github.com/omegaflow/omegaflow/releases';
-    link.textContent = 'Releases';
+    φ.href = standaloneUrl;
+    Φ.href = sourcesUrl;
+    rec.textContent = 'detecting bandwidth…';
 }
+
+const allLinks = [
+    { name: 'Linux (x64)',      file: 'omegaflow_linux' },
+    { name: 'macOS (Apple Silicon)', file: 'omegaflow_macos_arm64' },
+    { name: 'macOS (Intel)',    file: 'omegaflow_macos_intel' },
+    { name: 'Windows (x64)',    file: 'omegaflow_windows.exe' },
+];
+platforms.innerHTML = 'also: ' + allLinks.map(l =>
+    `<a href="${base}/${l.file}">${l.name}</a>`
+).join(' · ');
+
+(function probe() {
+    const start = performance.now();
+    const img = new Image();
+    img.onload = () => {
+        const elapsed = performance.now() - start;
+        const kbps = (64 * 8) / (elapsed / 1000);
+        const isFast = kbps > 500;
+        if (isFast) {
+            rec.textContent = 'Φ empfohlen — binary + alle Ephemeriden (~130 MB)';
+            Φ.className = 'button recommended';
+            φ.className = 'button alt';
+            Φ.href = sourcesUrl;
+            φ.href = standaloneUrl;
+        } else {
+            rec.textContent = 'φ empfohlen — nur das Binary (~1 MB), Quellen bei Bedarf vom CDN';
+            φ.className = 'button recommended';
+            Φ.className = 'button alt';
+            φ.href = standaloneUrl;
+            Φ.href = sourcesUrl;
+        }
+    };
+    img.onerror = () => {
+        rec.textContent = 'φ empfohlen — Binary (~1 MB)';
+        φ.className = 'button recommended';
+        Φ.className = 'button alt';
+    };
+    img.src = base + '/probe_64k.bin?' + Date.now();
+})();
 </script>
 </body>
 </html>
