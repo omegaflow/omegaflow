@@ -2484,6 +2484,37 @@ fn fetch_raw(
     }
 }
 
+fn fetch_raw_bytes(url: &str, ttl: u64) -> Option<Vec<u8>> {
+    let connect_t = ((ttl as f64) / (Φ * Φ * Φ)).ceil() as u64;
+    let max_t = ((ttl as f64) / (Φ * Φ)).ceil() as u64;
+    let mut cmd = Command::new("curl");
+    cmd.arg("-s")
+        .arg("-S")
+        .arg("-f")
+        .arg("-L")
+        .arg("--retry")
+        .arg("3")
+        .arg("--remove-on-error")
+        .arg("-m")
+        .arg(max_t.to_string())
+        .arg("--connect-timeout")
+        .arg(connect_t.to_string());
+    cmd.arg(url);
+    let output = cmd.output().ok()?;
+    if output.status.success() {
+        Some(output.stdout)
+    } else {
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        eprintln!(
+            "fetch_bytes returned ({}): {} {}",
+            output.status,
+            url,
+            stderr.trim()
+        );
+        None
+    }
+}
+
 fn fetch_one(
     url: &str,
     body: Option<&str>,
@@ -5685,6 +5716,35 @@ fn main() {
             if !origin_stale(&archive.origins, origin, archive.sources[i].ttl, now) {
                 continue;
             }
+            if archive.sources[i].format == "ephemeris_binary" {
+                let url = archive.sources[i].url.clone();
+                let ftx = fetch_tx.clone();
+                let src_clone = archive.sources[i].clone();
+                let src_idx = i;
+                thread::spawn(move || {
+                    let bytes = match fetch_raw_bytes(&url, src_clone.ttl) {
+                        Some(b) => b,
+                        None => return,
+                    };
+                    let tmp_path = match &src_clone.body {
+                        Some(b) => format!("/tmp/omegaflow_eph_{}.bin", b),
+                        None => return,
+                    };
+                    if std::fs::write(&tmp_path, &bytes).is_err() {
+                        return;
+                    }
+                    if let ExtractResult::WithEphemeris(_, eph) =
+                        extract(&src_clone, &tmp_path, tdb_now())
+                    {
+                        let _ = ftx.send(FetchResult {
+                            source_idx: src_idx,
+                            channels: Vec::new(),
+                            eph_update: src_clone.body.clone().map(|b| (b, eph)),
+                        });
+                    }
+                });
+                continue;
+            }
             let body_name = match &archive.sources[i].frame {
                 Frame::Surface { body_name, .. } | Frame::Barycenter { body_name, .. } => {
                     body_name.as_str()
@@ -5760,28 +5820,52 @@ fn main() {
                 &archive.body_ephemerides,
             );
             let src_idx = i;
+            let is_eph = src_clone.format == "ephemeris_binary";
             thread::spawn(move || {
-                let raw = fetch_one(&url, body.as_deref(), &src_clone.headers, src_clone.ttl);
-                let channels = match raw {
-                    Some(ref r) => match extract(&src_clone, r, now) {
-                        ExtractResult::Measurements(v) => v,
-                        ExtractResult::WithEphemeris(v, eph) => {
-                            let _ = ftx.send(FetchResult {
-                                source_idx: src_idx,
-                                channels: Vec::new(),
-                                eph_update: src_clone.body.clone().map(|b| (b, eph)),
-                            });
-                            v
-                        }
-                    },
-                    None => Vec::new(),
-                };
-                if !channels.is_empty() {
-                    let _ = ftx.send(FetchResult {
-                        source_idx: src_idx,
-                        channels,
-                        eph_update: None,
-                    });
+                if is_eph {
+                    let bytes = match fetch_raw_bytes(&url, src_clone.ttl) {
+                        Some(b) => b,
+                        None => return,
+                    };
+                    let tmp_path = match &src_clone.body {
+                        Some(b) => format!("/tmp/omegaflow_eph_{}.bin", b),
+                        None => return,
+                    };
+                    if std::fs::write(&tmp_path, &bytes).is_err() {
+                        return;
+                    }
+                    if let ExtractResult::WithEphemeris(_, eph) =
+                        extract(&src_clone, &tmp_path, now)
+                    {
+                        let _ = ftx.send(FetchResult {
+                            source_idx: src_idx,
+                            channels: Vec::new(),
+                            eph_update: src_clone.body.clone().map(|b| (b, eph)),
+                        });
+                    }
+                } else {
+                    let raw = fetch_one(&url, body.as_deref(), &src_clone.headers, src_clone.ttl);
+                    let channels = match raw {
+                        Some(ref r) => match extract(&src_clone, r, now) {
+                            ExtractResult::Measurements(v) => v,
+                            ExtractResult::WithEphemeris(v, eph) => {
+                                let _ = ftx.send(FetchResult {
+                                    source_idx: src_idx,
+                                    channels: Vec::new(),
+                                    eph_update: src_clone.body.clone().map(|b| (b, eph)),
+                                });
+                                v
+                            }
+                        },
+                        None => Vec::new(),
+                    };
+                    if !channels.is_empty() {
+                        let _ = ftx.send(FetchResult {
+                            source_idx: src_idx,
+                            channels,
+                            eph_update: None,
+                        });
+                    }
                 }
             });
         }
