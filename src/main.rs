@@ -1,7 +1,7 @@
 #![allow(mixed_script_confusables)]
 use std::{
     collections::HashMap,
-    io::{Cursor, Read, Write},
+    io::{Cursor, IsTerminal, Read, Write},
     net::{TcpListener, TcpStream},
     process::Command,
     sync::{
@@ -15,6 +15,7 @@ use std::{
 const Φ: f64 = 1.618033988749895;
 const J2000_EPOCH: f64 = 2451545.0;
 const UNIX_J2000_OFFSET: f64 = 946728000.0;
+const TT_MINUS_UTC: f64 = 32.184 + 37.0;
 const PARSEC_M: f64 = 3.085677581e16;
 const C_LIGHT: f64 = 299792458.0;
 const HUBBLE_H0: f64 = 70000.0 / (PARSEC_M * 1.0e6);
@@ -148,31 +149,13 @@ fn parse_ephemeris_binary(data: &[u8]) -> Option<BodyEphemeris> {
             let ert = f(2);
             let ed = f(3);
             let pl = f(4);
-            props = Some(match props {
-                Some(mut p) => {
-                    p.gaussian_inverse_square = gis;
-                    p.gaussian_inverse = giv;
-                    p.erfc = ert;
-                    p.exponential_decay = ed;
-                    p.patch_levy = pl;
-                    p
-                }
-                None => BodyProperties {
-                    α0_deg: 0.0,
-                    dα0_dt_deg_per_century: 0.0,
-                    δ0_deg: 0.0,
-                    dδ0_dt_deg_per_century: 0.0,
-                    w0_deg: 0.0,
-                    dw_dt_deg_per_day: 0.0,
-                    radius_m: 0.0,
-                    flattening: 0.0,
-                    gaussian_inverse_square: gis,
-                    gaussian_inverse: giv,
-                    erfc: ert,
-                    exponential_decay: ed,
-                    patch_levy: pl,
-                },
-            });
+            if let Some(ref mut p) = props {
+                p.gaussian_inverse_square = gis;
+                p.gaussian_inverse = giv;
+                p.erfc = ert;
+                p.exponential_decay = ed;
+                p.patch_levy = pl;
+            }
             pos += 5 * 8;
             continue;
         }
@@ -389,7 +372,7 @@ fn icrs_to_body_surface(
 }
 
 type CellKey = (i64, i64, i64);
-type Origin = (u32, i32, i32);
+type Origin = u32;
 
 #[derive(Clone)]
 enum Motion {
@@ -471,11 +454,13 @@ struct SpatialHash {
     cell_lo: CellKey,
     cell_hi: CellKey,
     cells: HashMap<CellKey, Vec<Oscillator>>,
+    unbounded: Vec<Oscillator>,
 }
 
 struct Buffer {
     bodies: HashMap<String, SpatialHash>,
     inertial: SpatialHash,
+    eph: Arc<HashMap<String, BodyEphemeris>>,
 }
 
 fn cell_of(p: [f64; 3], s: f64) -> CellKey {
@@ -520,11 +505,20 @@ fn law_bounds(
 }
 
 fn build_spatial_hash(samples: Vec<Oscillator>, cadence: f64) -> SpatialHash {
+    let mut bounded = Vec::new();
+    let mut unbounded = Vec::new();
+    for s in samples {
+        if s.extent.is_finite() {
+            bounded.push(s);
+        } else {
+            unbounded.push(s);
+        }
+    }
     let mut vmax = 0.0f64;
     let mut amax = 0.0f64;
     let mut rmax = 0.0f64;
     let mut epoch_min = f64::MAX;
-    for s in &samples {
+    for s in &bounded {
         vmax = vmax.max(s.vmax);
         amax = amax.max(s.amax);
         rmax = rmax.max(s.extent);
@@ -536,7 +530,7 @@ fn build_spatial_hash(samples: Vec<Oscillator>, cadence: f64) -> SpatialHash {
     let mut cells: HashMap<CellKey, Vec<Oscillator>> = HashMap::new();
     let mut cell_lo = (i64::MAX, i64::MAX, i64::MAX);
     let mut cell_hi = (i64::MIN, i64::MIN, i64::MIN);
-    for s in samples {
+    for s in bounded {
         let c = cell_of(s.p0f, cell_size);
         cell_lo.0 = cell_lo.0.min(c.0);
         cell_lo.1 = cell_lo.1.min(c.1);
@@ -559,10 +553,15 @@ fn build_spatial_hash(samples: Vec<Oscillator>, cadence: f64) -> SpatialHash {
         cell_lo,
         cell_hi,
         cells,
+        unbounded,
     }
 }
 
-fn build_buffer(samples: Vec<Oscillator>, cadence: f64) -> Buffer {
+fn build_buffer(
+    samples: Vec<Oscillator>,
+    cadence: f64,
+    eph: Arc<HashMap<String, BodyEphemeris>>,
+) -> Buffer {
     let mut body_samps: HashMap<String, Vec<Oscillator>> = HashMap::new();
     let mut inertial_samps = Vec::new();
     for s in samples {
@@ -579,6 +578,7 @@ fn build_buffer(samples: Vec<Oscillator>, cadence: f64) -> Buffer {
     Buffer {
         bodies,
         inertial: build_spatial_hash(inertial_samps, cadence),
+        eph,
     }
 }
 
@@ -592,6 +592,26 @@ fn query_hash(
     body_props: Option<&BodyProperties>,
     eph: &HashMap<String, BodyEphemeris>,
 ) {
+    for osc in &hash.unbounded {
+        let p = match osc.motion.at(t2, osc.epoch, eph) {
+            Some(p) => p,
+            None => continue,
+        };
+        records.push((
+            p[0],
+            p[1],
+            p[2],
+            osc.val,
+            osc.epoch,
+            osc.ttl,
+            osc.tau,
+            osc.extent,
+            osc.kernel_id,
+            osc.force_type,
+            osc.absorption,
+            osc.advection,
+        ));
+    }
     if hash.cells.is_empty() {
         return;
     }
@@ -777,13 +797,11 @@ fn frame_body_name(frame: &Frame) -> String {
     }
 }
 
-fn body_id_to_name(eph: &HashMap<String, BodyEphemeris>, id: u32) -> Option<String> {
+fn body_id_to_name(bodies: &[String], id: u32) -> Option<String> {
     if id == 0 {
         return None;
     }
-    let mut keys: Vec<&String> = eph.keys().collect();
-    keys.sort();
-    keys.get((id - 1) as usize).map(|s| (*s).clone())
+    bodies.get((id - 1) as usize).cloned()
 }
 
 fn frame_motion(
@@ -834,7 +852,7 @@ fn frame_motion(
 
 fn tdb_now() -> f64 {
     match SystemTime::now().duration_since(UNIX_EPOCH) {
-        Ok(d) => d.as_secs_f64() - UNIX_J2000_OFFSET,
+        Ok(d) => d.as_secs_f64() + TT_MINUS_UTC - UNIX_J2000_OFFSET,
         Err(_) => {
             eprintln!("system clock reads epoch prior to 1970-01-01T00:00:00Z");
             std::process::exit(1);
@@ -867,7 +885,7 @@ fn parse_iso_tdb(s: &str) -> Option<f64> {
     .ok()?;
     let days = ymd_to_days(y, m, d)? as i64;
     let unix = days * 86400 + (hh as i64) * 3600 + (mm as i64) * 60 + ss as i64;
-    Some(unix as f64 - UNIX_J2000_OFFSET)
+    Some(unix as f64 + TT_MINUS_UTC - UNIX_J2000_OFFSET)
 }
 
 fn ymd_to_days(year: i64, month: u32, day: u32) -> Option<u64> {
@@ -1024,16 +1042,28 @@ impl<'a> JsonParser<'a> {
             b'[' => self.parse_arr(),
             b'"' => self.parse_str().map(JsonVal::Str),
             b't' => {
-                self.pos += 4;
-                Some(JsonVal::Bool(true))
+                if self.chars[self.pos..].starts_with(b"true") {
+                    self.pos += 4;
+                    Some(JsonVal::Bool(true))
+                } else {
+                    None
+                }
             }
             b'f' => {
-                self.pos += 5;
-                Some(JsonVal::Bool(false))
+                if self.chars[self.pos..].starts_with(b"false") {
+                    self.pos += 5;
+                    Some(JsonVal::Bool(false))
+                } else {
+                    None
+                }
             }
             b'n' => {
-                self.pos += 4;
-                Some(JsonVal::Null)
+                if self.chars[self.pos..].starts_with(b"null") {
+                    self.pos += 4;
+                    Some(JsonVal::Null)
+                } else {
+                    None
+                }
             }
             _ => self.parse_num(),
         }
@@ -1143,12 +1173,37 @@ impl<'a> JsonParser<'a> {
                                 std::str::from_utf8(&self.chars[self.pos..self.pos + 4])
                             {
                                 if let Ok(cp) = u32::from_str_radix(hex, 16) {
-                                    if let Some(ch) = char::from_u32(cp) {
+                                    self.pos += 4;
+                                    if (0xD800..=0xDBFF).contains(&cp)
+                                        && self.pos + 6 <= self.chars.len()
+                                        && self.chars[self.pos] == b'\\'
+                                        && self.chars[self.pos + 1] == b'u'
+                                    {
+                                        if let Ok(hex_lo) = std::str::from_utf8(
+                                            &self.chars[self.pos + 2..self.pos + 6],
+                                        ) {
+                                            if let Ok(lo) = u32::from_str_radix(hex_lo, 16) {
+                                                if (0xDC00..=0xDFFF).contains(&lo) {
+                                                    self.pos += 6;
+                                                    let combined = 0x10000
+                                                        + ((cp - 0xD800) << 10)
+                                                        + (lo - 0xDC00);
+                                                    if let Some(ch) = char::from_u32(combined) {
+                                                        s.push(ch);
+                                                    }
+                                                    continue;
+                                                }
+                                            }
+                                        }
+                                    } else if let Some(ch) = char::from_u32(cp) {
                                         s.push(ch);
                                     }
+                                } else {
+                                    self.pos += 4;
                                 }
+                            } else {
+                                self.pos += 4;
                             }
-                            self.pos += 4;
                         }
                     }
                     _ => {
@@ -1159,8 +1214,19 @@ impl<'a> JsonParser<'a> {
                 self.pos += 1;
                 return Some(s);
             } else {
-                s.push(c as char);
-                self.pos += 1;
+                let run_start = self.pos;
+                while self.pos < self.chars.len()
+                    && self.chars[self.pos] != b'"'
+                    && self.chars[self.pos] != b'\\'
+                {
+                    self.pos += 1;
+                }
+                match std::str::from_utf8(&self.chars[run_start..self.pos]) {
+                    Ok(t) => s.push_str(t),
+                    Err(_) => {
+                        s.push_str(&String::from_utf8_lossy(&self.chars[run_start..self.pos]))
+                    }
+                }
             }
         }
         None
@@ -1316,7 +1382,7 @@ fn universal_auto_detect(j: &JsonVal) -> Vec<Extract> {
             alt_key: alt_key.into(),
             epoch_key: epoch_key.into(),
             val_key: String::new(),
-            alt_sign: -1.0,
+            alt_scale: -1.0,
             vel_key: vel_key.into(),
             trk_key: trk_key.into(),
             vr_key: vr_key.into(),
@@ -1356,7 +1422,6 @@ fn jpath_val<'a>(json: &'a JsonVal, path: &str) -> Option<&'a JsonVal> {
     Some(current)
 }
 
-#[cfg(test)]
 fn json_has_content(v: &JsonVal) -> bool {
     match v {
         JsonVal::Arr(arr) => !arr.is_empty() || arr.iter().any(json_has_content),
@@ -1365,7 +1430,6 @@ fn json_has_content(v: &JsonVal) -> bool {
     }
 }
 
-#[cfg(test)]
 fn diagnose_no_samples(src: &SourceConfig, body: &str) -> String {
     let parsed = parse_json(body);
     match parsed {
@@ -1707,8 +1771,6 @@ fn extract_regex_val(body: &str, pat: &str) -> Option<f64> {
         return r[..e].trim().parse::<f64>().ok();
     }
 
-    let mut capture: Option<f64> = None;
-
     fn match_re(
         mut pi: usize,
         p: &[u8],
@@ -1722,19 +1784,6 @@ fn extract_regex_val(body: &str, pat: &str) -> Option<f64> {
                 b'\\' => {
                     pi += 1;
                     let esc = p.get(pi).copied()?;
-                    let ok = match esc {
-                        b'd' => bc().map_or(false, |c| c.is_ascii_digit()),
-                        b's' => bc().map_or(false, |c| c.is_ascii_whitespace()),
-                        b'w' => bc().map_or(false, |c| c.is_ascii_alphanumeric() || c == b'_'),
-                        b'D' => bc().map_or(true, |c| !c.is_ascii_digit()),
-                        b'S' => bc().map_or(true, |c| !c.is_ascii_whitespace()),
-                        b'W' => bc().map_or(true, |c| !(c.is_ascii_alphanumeric() || c == b'_')),
-                        _ => bc() == Some(esc),
-                    };
-                    if !ok {
-                        return None;
-                    }
-                    bi += 1;
                     pi += 1;
                     let check = |c: u8| -> bool {
                         match esc {
@@ -1747,24 +1796,43 @@ fn extract_regex_val(body: &str, pat: &str) -> Option<f64> {
                             _ => c == esc,
                         }
                     };
-                    if pi < p.len() {
+                    let void_matches = matches!(esc, b'D' | b'S' | b'W');
+                    let (min, max) = if pi < p.len() {
                         match p[pi] {
                             b'+' => {
                                 pi += 1;
-                                while b.get(bi).map_or(false, |&c| check(c)) {
-                                    bi += 1;
-                                }
+                                (1, usize::MAX)
                             }
                             b'*' => {
                                 pi += 1;
-                                while b.get(bi).map_or(false, |&c| check(c)) {
-                                    bi += 1;
-                                }
+                                (0, usize::MAX)
                             }
                             b'?' => {
                                 pi += 1;
+                                (0, 1)
                             }
-                            _ => {}
+                            _ => (1, 1),
+                        }
+                    } else {
+                        (1, 1)
+                    };
+                    if min > 0 {
+                        let ok = match bc() {
+                            Some(c) => check(c),
+                            None => void_matches,
+                        };
+                        if !ok {
+                            return None;
+                        }
+                        bi += 1;
+                    }
+                    if max == usize::MAX {
+                        while b.get(bi).map_or(false, |&c| check(c)) {
+                            bi += 1;
+                        }
+                    } else if min == 0 && max == 1 {
+                        if b.get(bi).map_or(false, |&c| check(c)) {
+                            bi += 1;
                         }
                     }
                 }
@@ -1884,10 +1952,6 @@ fn extract_regex_val(body: &str, pat: &str) -> Option<f64> {
                         }
                     }
                     pi += 1;
-                    let in_cls = bc().map_or(false, |c| cls.contains(&c));
-                    if neg == in_cls {
-                        return None;
-                    }
                     let (min, max) = if pi < p.len() {
                         match p[pi] {
                             b'+' => {
@@ -1908,10 +1972,18 @@ fn extract_regex_val(body: &str, pat: &str) -> Option<f64> {
                         (1, 1)
                     };
                     if min > 0 {
+                        let in_cls = bc().map_or(false, |c| cls.contains(&c));
+                        if neg == in_cls {
+                            return None;
+                        }
                         bi += 1;
                     }
                     if max == usize::MAX {
                         while b.get(bi).map_or(false, |c| cls.contains(c) != neg) {
+                            bi += 1;
+                        }
+                    } else if min == 0 && max == 1 {
+                        if b.get(bi).map_or(false, |c| cls.contains(c) != neg) {
                             bi += 1;
                         }
                     }
@@ -1929,11 +2001,13 @@ fn extract_regex_val(body: &str, pat: &str) -> Option<f64> {
         Some(bi)
     }
 
-    if let Some(_) = match_re(0, pat_bytes, 0, body_bytes, &mut capture) {
-        capture
-    } else {
-        None
+    for start in 0..=body_bytes.len() {
+        let mut cap: Option<f64> = None;
+        if match_re(0, pat_bytes, start, body_bytes, &mut cap).is_some() {
+            return cap;
+        }
     }
+    None
 }
 
 #[derive(Clone)]
@@ -1965,7 +2039,7 @@ enum Extract {
         alt_key: String,
         epoch_key: String,
         val_key: String,
-        alt_sign: f64,
+        alt_scale: f64,
         vel_key: String,
         trk_key: String,
         vr_key: String,
@@ -2041,7 +2115,7 @@ fn kernel_id_of(name: &str) -> Option<u8> {
     }
 }
 
-const FORCE_KERNEL: [u8; 9] = [0, 0, 1, 1, 1, 3, 3, 1, 5];
+const FORCE_KERNEL: [u8; 9] = [0, 0, 1, 1, 1, 3, 3, 1, 1];
 
 fn kernel_for_force(force: u8) -> Option<u8> {
     FORCE_KERNEL.get(force as usize).copied()
@@ -2127,6 +2201,7 @@ fn force_id_of(name: &str) -> Option<u8> {
         "thermal" => Some(5),
         "diffusion" => Some(6),
         "advective" => Some(7),
+        "electric" => Some(8),
         _ => None,
     }
 }
@@ -2250,7 +2325,7 @@ struct FetchResult {
 }
 
 struct WsConfig {
-    eph: Arc<HashMap<String, BodyEphemeris>>,
+    bodies: Arc<Vec<String>>,
     index_html: Vec<u8>,
     constants_js: Vec<u8>,
     field_rx: mpsc::Receiver<Arc<Buffer>>,
@@ -2260,11 +2335,9 @@ struct WsConfig {
 
 trait Radiator: Send + Sync {
     fn accept(&self, field: Arc<Buffer>);
-    fn name(&self) -> &str;
 }
 
 struct TcpRadiator {
-    name: &'static str,
     shutdown: Arc<AtomicBool>,
     field_tx: mpsc::Sender<Arc<Buffer>>,
     _thread: Option<thread::JoinHandle<()>>,
@@ -2273,7 +2346,8 @@ struct TcpRadiator {
 impl TcpRadiator {
     fn new(
         port: u16,
-        eph: Arc<HashMap<String, BodyEphemeris>>,
+        bodies: Arc<Vec<String>>,
+        initial_field: Arc<Buffer>,
         index_html: Vec<u8>,
         constants_js: Vec<u8>,
         osc_tx: mpsc::Sender<Vec<Oscillator>>,
@@ -2303,16 +2377,18 @@ impl TcpRadiator {
         let shutdown = Arc::new(AtomicBool::new(false));
         let shutdown_clone = shutdown.clone();
         let handle = thread::spawn(move || {
-            let mut field_txs: Vec<mpsc::Sender<Arc<Buffer>>> = Vec::new();
+            let mut field_txs: Vec<mpsc::SyncSender<Arc<Buffer>>> = Vec::new();
+            let mut latest: Arc<Buffer> = initial_field;
             loop {
                 if shutdown_clone.load(Ordering::Relaxed) {
                     break;
                 }
                 while let Ok((stream, _)) = listener.accept() {
-                    let (ftx, frx) = mpsc::channel();
+                    let (ftx, frx) = mpsc::sync_channel::<Arc<Buffer>>(2);
+                    let _ = ftx.try_send(latest.clone());
                     field_txs.push(ftx);
                     let cfg = WsConfig {
-                        eph: eph.clone(),
+                        bodies: bodies.clone(),
                         index_html: index_html.clone(),
                         constants_js: constants_js.clone(),
                         field_rx: frx,
@@ -2321,14 +2397,21 @@ impl TcpRadiator {
                     };
                     thread::spawn(move || handle_ingress(stream, cfg));
                 }
-                if let Ok(field) = field_rx.try_recv() {
-                    field_txs.retain(|tx| tx.send(field.clone()).is_ok());
+                match field_rx.recv_timeout(std::time::Duration::from_secs_f64(2f64.powi(-8))) {
+                    Ok(field) => {
+                        latest = field;
+                        field_txs.retain(|tx| match tx.try_send(latest.clone()) {
+                            Ok(_) => true,
+                            Err(mpsc::TrySendError::Full(_)) => true,
+                            Err(mpsc::TrySendError::Disconnected(_)) => false,
+                        });
+                    }
+                    Err(mpsc::RecvTimeoutError::Timeout) => {}
+                    Err(mpsc::RecvTimeoutError::Disconnected) => break,
                 }
-                thread::sleep(std::time::Duration::from_millis(1));
             }
         });
         Self {
-            name: "tcp",
             shutdown,
             field_tx,
             _thread: Some(handle),
@@ -2340,9 +2423,6 @@ impl Radiator for TcpRadiator {
     fn accept(&self, field: Arc<Buffer>) {
         let _ = self.field_tx.send(field);
     }
-    fn name(&self) -> &str {
-        self.name
-    }
 }
 
 impl Drop for TcpRadiator {
@@ -2353,21 +2433,20 @@ impl Drop for TcpRadiator {
 const AUDIO_SAMPLE_RATE: u32 = 44100;
 
 struct AudioRadiator {
-    name: &'static str,
     sample_rate: u32,
 }
 
 impl AudioRadiator {
     fn new(sample_rate: u32) -> Self {
-        Self {
-            name: "audio",
-            sample_rate,
-        }
+        Self { sample_rate }
     }
 }
 
 impl Radiator for AudioRadiator {
     fn accept(&self, field: Arc<Buffer>) {
+        if std::io::stdout().is_terminal() {
+            return;
+        }
         let mut out = std::io::stdout();
         let mut samples: Vec<f32> = Vec::new();
         for hash in field
@@ -2375,8 +2454,11 @@ impl Radiator for AudioRadiator {
             .values()
             .chain(std::iter::once(&field.inertial))
         {
-            for v in hash.cells.values() {
+            for v in hash.cells.values().chain(std::iter::once(&hash.unbounded)) {
                 for s in v {
+                    if !s.tau.is_finite() {
+                        continue;
+                    }
                     let tau_u32 = (s.tau as u64).min(u32::MAX as u64) as u32;
                     let amp = (s.val as f32).clamp(0.0, 1.0);
                     let dur = tau_u32.min(self.sample_rate);
@@ -2407,9 +2489,6 @@ impl Radiator for AudioRadiator {
             let _ = out.flush();
         }
     }
-    fn name(&self) -> &str {
-        self.name
-    }
 }
 
 struct StderrRadiator;
@@ -2422,7 +2501,7 @@ impl Radiator for StderrRadiator {
         let mut api_count = 0usize;
         let mut body_count = 0usize;
         for (body_name, hash) in &field.bodies {
-            for cell in hash.cells.values() {
+            for cell in hash.cells.values().chain(std::iter::once(&hash.unbounded)) {
                 for osc in cell {
                     let v = osc.val.abs();
                     osc_count += 1;
@@ -2436,7 +2515,12 @@ impl Radiator for StderrRadiator {
                 }
             }
         }
-        for cell in field.inertial.cells.values() {
+        for cell in field
+            .inertial
+            .cells
+            .values()
+            .chain(std::iter::once(&field.inertial.unbounded))
+        {
             for osc in cell {
                 let v = osc.val.abs();
                 osc_count += 1;
@@ -2471,9 +2555,6 @@ impl Radiator for StderrRadiator {
                 .collect::<Vec<_>>()
                 .join(" "),
         );
-    }
-    fn name(&self) -> &str {
-        "osc"
     }
 }
 
@@ -2632,6 +2713,68 @@ fn fetch_raw_bytes(url: &str, ttl: u64) -> Option<Vec<u8>> {
     }
 }
 
+fn rfc1123_to_unix(s: &str) -> Option<u64> {
+    let parts: Vec<&str> = s.split_whitespace().collect();
+    if parts.len() < 6 {
+        return None;
+    }
+    let day: u32 = parts[1].parse().ok()?;
+    let month = match parts[2] {
+        "Jan" => 1,
+        "Feb" => 2,
+        "Mar" => 3,
+        "Apr" => 4,
+        "May" => 5,
+        "Jun" => 6,
+        "Jul" => 7,
+        "Aug" => 8,
+        "Sep" => 9,
+        "Oct" => 10,
+        "Nov" => 11,
+        "Dec" => 12,
+        _ => return None,
+    };
+    let year: i64 = parts[3].parse().ok()?;
+    let mut hms = parts[4].split(':');
+    let hh: u64 = hms.next()?.parse().ok()?;
+    let mm: u64 = hms.next()?.parse().ok()?;
+    let ss: u64 = hms.next()?.parse().ok()?;
+    let days = ymd_to_days(year, month, day)?;
+    Some(days * 86400 + hh * 3600 + mm * 60 + ss)
+}
+
+fn cdn_fresh(cdn_url: &str, ttl: u64) -> bool {
+    let connect_t = ((ttl as f64) / (Φ * Φ * Φ)).ceil() as u64;
+    let mut cmd = Command::new("curl");
+    cmd.arg("-s")
+        .arg("-I")
+        .arg("-L")
+        .arg("-m")
+        .arg(connect_t.to_string())
+        .arg(cdn_url);
+    let output = match cmd.output() {
+        Ok(o) => o,
+        Err(_) => return false,
+    };
+    if !output.status.success() {
+        return false;
+    }
+    let head = String::from_utf8_lossy(&output.stdout).to_string();
+    let lm = match extract_header(&head, "last-modified") {
+        Some(v) => v,
+        None => return false,
+    };
+    let asset_ts = match rfc1123_to_unix(&lm) {
+        Some(t) => t,
+        None => return false,
+    };
+    let now = match SystemTime::now().duration_since(UNIX_EPOCH) {
+        Ok(d) => d.as_secs(),
+        Err(_) => return false,
+    };
+    now.saturating_sub(asset_ts) < ttl
+}
+
 fn fetch_one(
     url: &str,
     body: Option<&str>,
@@ -2650,12 +2793,14 @@ fn fetch_one(
                     "https://github.com/omegaflow/sources/releases/download/{}/{}.json",
                     netloc, name
                 );
-                if let Some(cdn_body) = fetch_raw(&cdn_url, None, &[], ttl) {
-                    let _ = std::fs::create_dir_all(
-                        std::path::Path::new(&cache_path).parent().unwrap(),
-                    );
-                    let _ = std::fs::write(&cache_path, cdn_body.as_bytes());
-                    return Some(cdn_body);
+                if cdn_fresh(&cdn_url, ttl) {
+                    if let Some(cdn_body) = fetch_raw(&cdn_url, None, &[], ttl) {
+                        if let Some(parent) = std::path::Path::new(&cache_path).parent() {
+                            let _ = std::fs::create_dir_all(parent);
+                        }
+                        let _ = std::fs::write(&cache_path, cdn_body.as_bytes());
+                        return Some(cdn_body);
+                    }
                 }
             }
         }
@@ -2666,8 +2811,9 @@ fn fetch_one(
             let name = source_name_from_url(url);
             if !name.is_empty() {
                 let cache_path = format!("/tmp/archivar_cache/{}/{}.json", netloc, name);
-                let _ =
-                    std::fs::create_dir_all(std::path::Path::new(&cache_path).parent().unwrap());
+                if let Some(parent) = std::path::Path::new(&cache_path).parent() {
+                    let _ = std::fs::create_dir_all(parent);
+                }
                 let _ = std::fs::write(&cache_path, r.as_bytes());
             }
         }
@@ -2675,13 +2821,23 @@ fn fetch_one(
     live
 }
 
+fn cache_fresh(path: &str, ttl: u64) -> bool {
+    let meta = match std::fs::metadata(path) {
+        Ok(m) => m,
+        Err(_) => return false,
+    };
+    let modified = match meta.modified() {
+        Ok(m) => m,
+        Err(_) => return false,
+    };
+    match std::time::SystemTime::now().duration_since(modified) {
+        Ok(age) => age.as_secs() < ttl,
+        Err(_) => false,
+    }
+}
+
 fn read_cache_if_fresh(path: &str, ttl: u64) -> Option<String> {
-    let meta = std::fs::metadata(path).ok()?;
-    let age = std::time::SystemTime::now()
-        .duration_since(meta.modified().ok()?)
-        .ok()?
-        .as_secs();
-    if age < ttl {
+    if cache_fresh(path, ttl) {
         std::fs::read_to_string(path).ok()
     } else {
         None
@@ -2698,14 +2854,17 @@ fn handle_ingress(stream: TcpStream, cfg: WsConfig) {
     if signal.to_lowercase().contains("upgrade: websocket") {
         resonance(s, &signal, cfg);
     } else {
-        let mut last_field: Arc<Buffer> = Arc::new(build_buffer(Vec::new(), 1.0));
+        let mut last_field: Arc<Buffer> =
+            Arc::new(build_buffer(Vec::new(), 1.0, Arc::new(HashMap::new())));
         let mut cur = signal;
         loop {
             let path = parse_path(&cur);
             match path.as_str() {
                 "/" => {
-                    let page = std::fs::read(resolve_asset("static/index.html"))
-                        .unwrap_or_else(|_| cfg.index_html.clone());
+                    let page = match std::fs::read(resolve_asset("static/index.html")) {
+                        Ok(v) => v,
+                        Err(_) => cfg.index_html.clone(),
+                    };
                     emit(&mut s, "200 OK", "text/html", &page);
                 }
                 "/time" => {
@@ -2721,12 +2880,20 @@ fn handle_ingress(stream: TcpStream, cfg: WsConfig) {
                             }
                             last_field.clone()
                         };
-                        let eph_map = cfg.eph.clone();
+                        let eph_map = buf.eph.clone();
                         let mut device_sample: Option<Oscillator> = None;
-                        for v in buf.inertial.cells.values() {
-                            for osc in v {
-                                if matches!(osc.source, OscillatorSource::Device) {
-                                    device_sample = Some(osc.clone());
+                        for hash in buf.bodies.values().chain(std::iter::once(&buf.inertial)) {
+                            for v in hash.cells.values().chain(std::iter::once(&hash.unbounded)) {
+                                for osc in v {
+                                    if matches!(osc.source, OscillatorSource::Device) {
+                                        let newer = match &device_sample {
+                                            Some(cur) => osc.epoch > cur.epoch,
+                                            None => true,
+                                        };
+                                        if newer {
+                                            device_sample = Some(osc.clone());
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -2752,7 +2919,12 @@ fn handle_ingress(stream: TcpStream, cfg: WsConfig) {
                 }
                 _ if path.starts_with("/jump/") => {
                     let body: &str = &path[6..];
-                    let eph = cfg.eph.clone();
+                    let eph = {
+                        if let Ok(f) = cfg.field_rx.try_recv() {
+                            last_field = f;
+                        }
+                        last_field.eph.clone()
+                    };
                     match body_barycenter_position(body, tdb_now(), &eph) {
                         Some([x, y, z]) => emit(
                             &mut s,
@@ -2783,7 +2955,7 @@ fn handle_ingress(stream: TcpStream, cfg: WsConfig) {
                             std::collections::HashSet::new();
                         let mut src_ids: std::collections::HashSet<u32> =
                             std::collections::HashSet::new();
-                        for v in hash.cells.values() {
+                        for v in hash.cells.values().chain(std::iter::once(&hash.unbounded)) {
                             for osc in v {
                                 n += 1;
                                 field_names.insert(osc.name.as_str());
@@ -2796,13 +2968,15 @@ fn handle_ingress(stream: TcpStream, cfg: WsConfig) {
                             }
                         }
                         report.push_str(&format!(
-                            "{} samples={} cells={} rmax={:.3e} vmax={:.3e} epoch_min={:.1}\n",
+                            "{} samples={} cells={} unbounded={} rmax={:.3e} vmax={:.3e} epoch_min={:.1} origins={}\n",
                             fname,
                             n,
                             hash.cells.len(),
+                            hash.unbounded.len(),
                             hash.rmax,
                             hash.vmax,
-                            hash.epoch_min
+                            hash.epoch_min,
+                            src_ids.len()
                         ));
                         let mut names: Vec<&str> = field_names.into_iter().collect();
                         names.sort();
@@ -2811,19 +2985,16 @@ fn handle_ingress(stream: TcpStream, cfg: WsConfig) {
                             report.push_str(&format!("  {}\n", nm));
                         }
                     }
-                    let origins_n = 0;
-                    let presence_n = 0;
-                    report.push_str(&format!("origins={} presence={}\n", origins_n, presence_n));
+                    report.push_str(&format!("ephemerides={}\n", buf.eph.len()));
                     emit(&mut s, "200 OK", "text/plain", report.as_bytes());
                 }
                 "/constants.js" => {
-                    let mut page = std::fs::read(resolve_asset("static/constants.js"))
-                        .unwrap_or_else(|_| cfg.constants_js.clone());
+                    let mut page = match std::fs::read(resolve_asset("static/constants.js")) {
+                        Ok(v) => v,
+                        Err(_) => cfg.constants_js.clone(),
+                    };
                     let mut extra = String::from("\nexport const BODY_REGISTRY = {");
-                    let eph = cfg.eph.clone();
-                    let mut keys: Vec<&String> = eph.keys().collect();
-                    keys.sort();
-                    for (i, name) in keys.iter().enumerate() {
+                    for (i, name) in cfg.bodies.iter().enumerate() {
                         extra.push_str(&format!("{}:\"{}\",", i + 1, name));
                     }
                     extra.push_str("};\n");
@@ -2852,7 +3023,8 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
         &format!("{}{}", key, "258EAFA5-E914-47DA-95CA-C5AB0DC85B11").into_bytes(),
     ));
     if stream.write_all(format!("HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: {}\r\n\r\n", encoded).as_bytes()).is_err() { return; }
-    let mut last_field_r: Arc<Buffer> = Arc::new(build_buffer(Vec::new(), 1.0));
+    let mut last_field_r: Arc<Buffer> =
+        Arc::new(build_buffer(Vec::new(), 1.0, Arc::new(HashMap::new())));
     let _ = stream.set_nodelay(true);
     while let Some(frame) = read_ws_frame_raw(&mut stream) {
         if frame.opcode == 0x8 {
@@ -2921,11 +3093,26 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                 continue;
             }
             let query_count = u32::from_le_bytes(buf4) as usize;
+            let mut queries: Vec<(f64, f64, f64, f64)> = Vec::with_capacity(query_count);
             for _ in 0..query_count {
-                let mut qbuf = [0u8; 32];
-                if cursor.read_exact(&mut qbuf).is_err() {
+                let mut t_buf = [0u8; 8];
+                if cursor.read_exact(&mut t_buf).is_err() {
                     break;
                 }
+                let qt = f64::from_le_bytes(t_buf);
+                if cursor.read_exact(&mut t_buf).is_err() {
+                    break;
+                }
+                let qx = f64::from_le_bytes(t_buf);
+                if cursor.read_exact(&mut t_buf).is_err() {
+                    break;
+                }
+                let qy = f64::from_le_bytes(t_buf);
+                if cursor.read_exact(&mut t_buf).is_err() {
+                    break;
+                }
+                let qz = f64::from_le_bytes(t_buf);
+                queries.push((qt, qx, qy, qz));
             }
             {
                 let mut pb8 = [0u8; 8];
@@ -2947,6 +3134,13 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                 }
             }
 
+            let field = {
+                if let Ok(f) = cfg.field_rx.try_recv() {
+                    last_field_r = f;
+                }
+                last_field_r.clone()
+            };
+            let eph_map = field.eph.clone();
             let now = tdb_now();
             let (mut st_lat, mut st_lon, mut st_alt, mut st_body) = (None, None, None, None::<u32>);
             let mut field_values: Vec<(String, f64, f64)> = Vec::new();
@@ -2969,10 +3163,9 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                 }
             }
             if let (Some(lat), Some(lon), Some(alt)) = (st_lat, st_lon, st_alt) {
-                let eph_map = cfg.eph.clone();
-                let body_name = match st_body.and_then(|id| body_id_to_name(&eph_map, id)) {
+                let body_name = match st_body.and_then(|id| body_id_to_name(&cfg.bodies, id)) {
                     Some(n) => n,
-                    None => continue,
+                    None => String::new(),
                 };
                 if eph_map
                     .get(&body_name)
@@ -3026,10 +3219,9 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                     }
                 }
             } else if let Some(body_id) = st_body {
-                let eph_map = cfg.eph.clone();
-                let body_name = match body_id_to_name(&eph_map, body_id) {
+                let body_name = match body_id_to_name(&cfg.bodies, body_id) {
                     Some(n) => n,
-                    None => continue,
+                    None => String::new(),
                 };
                 let frame = Frame::Barycenter {
                     body_name: body_name.clone(),
@@ -3082,34 +3274,6 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                     let _ = cfg.osc_tx.send(oscillators);
                 }
             }
-            let field = {
-                if let Ok(f) = cfg.field_rx.try_recv() {
-                    last_field_r = f;
-                }
-                last_field_r.clone()
-            };
-
-            let mut queries: Vec<(f64, f64, f64, f64)> = Vec::with_capacity(query_count);
-            for _ in 0..query_count {
-                let mut t_buf = [0u8; 8];
-                if cursor.read_exact(&mut t_buf).is_err() {
-                    break;
-                }
-                let qt = f64::from_le_bytes(t_buf);
-                if cursor.read_exact(&mut t_buf).is_err() {
-                    break;
-                }
-                let qx = f64::from_le_bytes(t_buf);
-                if cursor.read_exact(&mut t_buf).is_err() {
-                    break;
-                }
-                let qy = f64::from_le_bytes(t_buf);
-                if cursor.read_exact(&mut t_buf).is_err() {
-                    break;
-                }
-                let qz = f64::from_le_bytes(t_buf);
-                queries.push((qt, qx, qy, qz));
-            }
             let mut records: Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64, f64, f64, f64)> =
                 Vec::new();
             if !queries.is_empty() {
@@ -3121,7 +3285,6 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                         extent = d;
                     }
                 }
-                let eph_map = cfg.eph.clone();
                 let center = [x0, y0, z0];
                 sense_buffer(&field, center, t0, extent, &mut records, &eph_map);
             }
@@ -3199,11 +3362,12 @@ fn resolve_secret(url: &str) -> String {
         if let Some(end) = rest.find('}') {
             let key = &rest[..end];
             let upper = key.to_uppercase();
-            if let Some(val) = std::env::var(key)
+            match std::env::var(key)
                 .ok()
                 .or_else(|| std::env::var(&upper).ok())
             {
-                result.push_str(&val);
+                Some(val) => result.push_str(&val),
+                None => eprintln!("env marker {{{}}} absent — substituting void", key),
             }
             rest = &rest[end + 1..];
         } else {
@@ -3239,11 +3403,15 @@ fn parse_field_config(parts: &[&str]) -> Option<(u8, u8, f64, f64, f64)> {
 }
 
 fn load_sources() -> Vec<SourceConfig> {
-    let mut sources = Vec::new();
     let content = match std::fs::read_to_string("phi/sources.φ") {
         Ok(c) => c,
-        Err(_) => return sources,
+        Err(_) => return Vec::new(),
     };
+    parse_sources(&content)
+}
+
+fn parse_sources(content: &str) -> Vec<SourceConfig> {
+    let mut sources = Vec::new();
 
     let mut cur_ttl: u64 = 0;
     let mut cur_url = String::new();
@@ -3306,10 +3474,6 @@ fn load_sources() -> Vec<SourceConfig> {
                     }
                 }
             }
-            cur_url.clear();
-            cur_format.clear();
-            cur_extracts.clear();
-            cur_headers.clear();
         };
     }
 
@@ -3327,6 +3491,27 @@ fn load_sources() -> Vec<SourceConfig> {
             "url" if parts.len() >= 2 => {
                 flush!();
                 cur_url = parts[1].to_string();
+                cur_format.clear();
+                cur_extracts.clear();
+                cur_headers.clear();
+                cur_ttl = 0;
+                cur_target = None;
+                cur_catalog = None;
+                cur_max_freq = None;
+                cur_min_freq = None;
+                cur_body = None;
+                cur_post_body = None;
+                cur_force = None;
+                cur_stations_url = None;
+                cur_stations_path = String::from("stations");
+                cur_stations_lat = String::from("lat");
+                cur_stations_lon = String::from("lng");
+                cur_stations_id = String::from("id");
+                cur_flux_from_mag = None;
+                cur_abs_mag_from = None;
+                cur_catalog_epoch = None;
+                cur_repeat_ra_bins = 0;
+                cur_frame = None;
                 active = true;
             }
             "ttl" if parts.len() >= 2 => {
@@ -3342,7 +3527,7 @@ fn load_sources() -> Vec<SourceConfig> {
                     scale: 1.0,
                 });
             }
-            "on" if parts.len() >= 5 => {
+            "on" if parts.len() >= 4 => {
                 let body = parts[1].to_string();
                 cur_body = Some(body.clone());
                 let lat: f64 = match parts[2].parse() {
@@ -3353,9 +3538,12 @@ fn load_sources() -> Vec<SourceConfig> {
                     Ok(v) => v,
                     Err(_) => continue,
                 };
-                let alt: f64 = match parts[4].parse() {
-                    Ok(v) => v,
-                    Err(_) => continue,
+                let alt: f64 = match parts.get(4) {
+                    Some(s) => match s.parse() {
+                        Ok(v) => v,
+                        Err(_) => continue,
+                    },
+                    None => 0.0,
                 };
                 cur_frame = Some(Frame::Surface {
                     body_name: body,
@@ -3372,7 +3560,7 @@ fn load_sources() -> Vec<SourceConfig> {
                     alt_key: String::new(),
                     epoch_key: String::new(),
                     val_key: String::new(),
-                    alt_sign: 1.0,
+                    alt_scale: 1.0,
                     vel_key: String::new(),
                     trk_key: String::new(),
                     vr_key: String::new(),
@@ -3773,7 +3961,7 @@ fn load_sources() -> Vec<SourceConfig> {
                     if let Some(f) = cur_force {
                         let fc = FieldConfig {
                             key: parts[1].to_string(),
-                            name: parts[3].to_string(),
+                            name: parts[2].to_string(),
                             kernel: match kernel_for_force(f) {
                                 Some(k) => k,
                                 None => continue,
@@ -3858,8 +4046,48 @@ fn load_sources() -> Vec<SourceConfig> {
                 }
             }
             "alt" if parts.len() >= 2 => {
-                if let Some(Extract::Map { alt_key, .. }) = cur_extracts.last_mut() {
+                let scale = match parts.get(2) {
+                    None => 1.0,
+                    Some(&"m") => 1.0,
+                    Some(&"km") => 1000.0,
+                    Some(&"ft") => 0.3048,
+                    Some(&"cm") => 0.01,
+                    Some(&"mm") => 0.001,
+                    Some(&"-m") => -1.0,
+                    Some(&"-km") => -1000.0,
+                    Some(_) => continue,
+                };
+                if let Some(Extract::Map {
+                    alt_key, alt_scale, ..
+                }) = cur_extracts.last_mut()
+                {
                     *alt_key = parts[1].to_string();
+                    *alt_scale = scale;
+                }
+            }
+            "epoch" if parts.len() >= 2 => {
+                if let Some(Extract::Map { epoch_key, .. }) = cur_extracts.last_mut() {
+                    *epoch_key = parts[1].to_string();
+                }
+            }
+            "vel" if parts.len() >= 2 => {
+                if let Some(Extract::Map { vel_key, .. }) = cur_extracts.last_mut() {
+                    *vel_key = parts[1].to_string();
+                }
+            }
+            "trk" if parts.len() >= 2 => {
+                if let Some(Extract::Map { trk_key, .. }) = cur_extracts.last_mut() {
+                    *trk_key = parts[1].to_string();
+                }
+            }
+            "vr" if parts.len() >= 2 => {
+                if let Some(Extract::Map { vr_key, .. }) = cur_extracts.last_mut() {
+                    *vr_key = parts[1].to_string();
+                }
+            }
+            "val" if parts.len() >= 2 => {
+                if let Some(Extract::Map { val_key, .. }) = cur_extracts.last_mut() {
+                    *val_key = parts[1].to_string();
                 }
             }
             "ra" if parts.len() >= 2 => {
@@ -3931,8 +4159,12 @@ fn load_sources() -> Vec<SourceConfig> {
                     cur_catalog_epoch = Some(v);
                 }
             }
-            "repeat" if parts.len() >= 5 => {
-                if let Ok(v) = parts[1].parse::<u32>() {
+            "repeat" if parts.len() >= 2 => {
+                if parts[1] == "ra" && parts.len() >= 5 {
+                    if let Ok(v) = parts[4].parse::<u32>() {
+                        cur_repeat_ra_bins = v;
+                    }
+                } else if let Ok(v) = parts[1].parse::<u32>() {
                     cur_repeat_ra_bins = v;
                 }
             }
@@ -3944,7 +4176,10 @@ fn load_sources() -> Vec<SourceConfig> {
 }
 
 fn parse_path(s: &str) -> String {
-    let fl = s.lines().next().unwrap_or("");
+    let fl = match s.lines().next() {
+        Some(l) => l,
+        None => "",
+    };
     let p: Vec<&str> = fl.split_whitespace().collect();
     if p.len() >= 2 {
         p[1].to_string()
@@ -3973,9 +4208,10 @@ fn read_signal(s: &mut TcpStream) -> Option<String> {
     }
 }
 
-fn read_ws_frame_raw(stream: &mut TcpStream) -> Option<WsFrame> {
+fn read_ws_frame_part(stream: &mut TcpStream) -> Option<(u8, bool, Vec<u8>)> {
     let mut header = [0u8; 2];
     stream.read_exact(&mut header).ok()?;
+    let fin = (header[0] & 0x80) != 0;
     let opcode = header[0] & 0x0f;
     let masked = (header[1] & 0x80) != 0;
     let mut plen = (header[1] & 0x7f) as usize;
@@ -3988,6 +4224,9 @@ fn read_ws_frame_raw(stream: &mut TcpStream) -> Option<WsFrame> {
         stream.read_exact(&mut e).ok()?;
         plen = u64::from_be_bytes(e) as usize;
     }
+    if plen > 1 << 24 {
+        return None;
+    }
     let mut mk = [0u8; 4];
     if masked {
         stream.read_exact(&mut mk).ok()?;
@@ -3997,6 +4236,30 @@ fn read_ws_frame_raw(stream: &mut TcpStream) -> Option<WsFrame> {
     if masked {
         for i in 0..payload.len() {
             payload[i] ^= mk[i % 4];
+        }
+    }
+    Some((opcode, fin, payload))
+}
+
+fn read_ws_frame_raw(stream: &mut TcpStream) -> Option<WsFrame> {
+    let (opcode, mut fin, mut payload) = read_ws_frame_part(stream)?;
+    while !fin {
+        let (next_op, next_fin, mut next_payload) = read_ws_frame_part(stream)?;
+        match next_op {
+            0x0 => {
+                if payload.len() + next_payload.len() > 1 << 24 {
+                    return None;
+                }
+                payload.append(&mut next_payload);
+                fin = next_fin;
+            }
+            0x8 => {
+                return Some(WsFrame {
+                    opcode: 0x8,
+                    payload: next_payload,
+                });
+            }
+            _ => {}
         }
     }
     Some(WsFrame { opcode, payload })
@@ -4012,7 +4275,7 @@ fn render_url(
     body_name: &str,
     eph: &HashMap<String, BodyEphemeris>,
 ) -> String {
-    let unix = tdb_secs + UNIX_J2000_OFFSET;
+    let unix = tdb_secs - TT_MINUS_UTC + UNIX_J2000_OFFSET;
     let secs = unix as u64;
     let days = secs / 86400;
     let (ty, tm, td) = days_to_ymd(days);
@@ -4171,7 +4434,6 @@ fn render_source_url(
     z: f64,
     tdb: f64,
     r: f64,
-    archive: Option<&Archive>,
     eph: &HashMap<String, BodyEphemeris>,
 ) -> String {
     let mut url = render_url(&src.url, x, y, z, tdb, r, &frame_body_name(&src.frame), eph);
@@ -4196,7 +4458,7 @@ fn render_source_url(
             .replace("{repeat_bin}", &bin_str)
             .replace("{bin}", &bin_str);
     }
-    if let Some(_ar) = archive {
+    if url.contains("{nearest_station}") {
         if let Some(ref st_url) = src.stations_url {
             let stations = if let Some(body) = fetch_one(st_url, None, &[], 86400) {
                 if let Some(j) = parse_json(&body) {
@@ -4824,7 +5086,7 @@ fn extract(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                 alt_key,
                 epoch_key,
                 val_key,
-                alt_sign,
+                alt_scale,
                 vel_key,
                 trk_key,
                 vr_key,
@@ -4835,14 +5097,19 @@ fn extract(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                 let eff_lon_key = lon_key.clone();
                 let eff_epoch_key = epoch_key.clone();
                 if let Some(ref j) = parsed_json {
-                    if let Some(JsonVal::Arr(arr)) = jpath_val(j, arr_path) {
-                        for v in arr.iter() {
+                    let rows: Vec<&JsonVal> = match jpath_val(j, arr_path) {
+                        Some(JsonVal::Arr(arr)) => arr.iter().collect(),
+                        Some(obj @ JsonVal::Obj(_)) => vec![obj],
+                        _ => Vec::new(),
+                    };
+                    {
+                        for v in rows {
                             let lat = jpath(v, &eff_lat_key);
                             let lon = jpath(v, &eff_lon_key);
                             let alt = if alt_key.is_empty() {
-                                None
+                                Some(0.0)
                             } else {
-                                jpath(v, alt_key).map(|a| a * alt_sign)
+                                jpath(v, alt_key).map(|a| a * alt_scale)
                             };
                             if let (Some(la), Some(lo), Some(al)) = (lat, lon, alt) {
                                 let mut lon_val = lo;
@@ -4893,7 +5160,7 @@ fn extract(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                                     }
                                 };
                                 let epoch = if eff_epoch_key.is_empty() {
-                                    continue;
+                                    now
                                 } else if let Some(ev) = jpath_val(v, &eff_epoch_key) {
                                     match ev {
                                         JsonVal::Str(s) => {
@@ -4903,7 +5170,7 @@ fn extract(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                                                 continue;
                                             }
                                         }
-                                        JsonVal::Num(n) => n - UNIX_J2000_OFFSET,
+                                        JsonVal::Num(n) => n + TT_MINUS_UTC - UNIX_J2000_OFFSET,
                                         _ => continue,
                                     }
                                 } else {
@@ -5055,7 +5322,7 @@ fn extract(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                                             continue;
                                         }
                                     }
-                                    JsonVal::Num(n) => n - UNIX_J2000_OFFSET,
+                                    JsonVal::Num(n) => n + TT_MINUS_UTC - UNIX_J2000_OFFSET,
                                     _ => continue,
                                 }
                             } else {
@@ -5670,7 +5937,7 @@ fn extract(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                 | Extract::Path(fc)
                 | Extract::Deep(fc)
                 | Extract::Regex(fc) => {
-                    if fc.name == *name {
+                    if fc.name == *name && fc.tau > 0.0 {
                         Some(fc)
                     } else {
                         None
@@ -5926,48 +6193,27 @@ fn probe_mode(path: &str, precise: bool, lat: f64, lon: f64) -> i32 {
         path
     );
     let mut out = String::new();
+    let mut dead = String::new();
+    let now = tdb_now();
+    let void_eph: HashMap<String, BodyEphemeris> = HashMap::new();
+    let mut accepted = 0usize;
+    let mut declined = 0usize;
     for src in &sources {
-        let url = src
-            .url
-            .replace("{today}", "2026-08-11")
-            .replace("{yesterday}", "2026-08-10")
-            .replace("{tomorrow}", "2026-08-12")
-            .replace("{today_yyyymmdd}", "20260811")
-            .replace("{today_ymd}", "20260811")
-            .replace("{today_nodashes}", "20260811")
-            .replace("{yesterday_nodashes}", "20260810")
-            .replace("{tomorrow_nodashes}", "20260812")
-            .replace("{t_start}", "2026-08-10")
-            .replace("{t_end}", "2026-08-11")
-            .replace("{hour_ago}", "2026-08-11T03:00:00Z")
-            .replace("{now}", "2026-08-11T04:00:00Z")
-            .replace("{now_minus_1}", "2026-08-11T04:00:00Z")
-            .replace("{now_minus_2}", "2026-08-11T04:00:00Z")
-            .replace("{week_ago}", "2026-08-04T04:00:00Z")
-            .replace("{week_ago_nodashes}", "20260804")
-            .replace("{today_plus_365}", "2027-08-11")
-            .replace("{unix_now}", "1754913600")
-            .replace("{unix_now_plus_3600}", "1754917200")
-            .replace("{year}", "2026")
-            .replace("{year2}", "26")
-            .replace("{month}", "08")
-            .replace("{day}", "11")
-            .replace("{yday}", "223")
-            .replace("{hour}", "04")
-            .replace("{minute}", "00")
+        let url = render_url(&src.url, 0.0, 0.0, 0.0, now, 0.0, "", &void_eph)
             .replace("{lat}", &format!("{:.6}", lat))
-            .replace("{lon}", &format!("{:.6}", lon))
-            .replace("{x}", "0.0")
-            .replace("{y}", "0.0")
-            .replace("{z}", "0.0");
+            .replace("{lon}", &format!("{:.6}", lon));
         let url = resolve_secret(&url);
         let url = url.replace("ZZ", "Z").replace("  ", " ");
         let raw = fetch_raw(&url, None, &[], src.ttl);
         let parsed = raw.as_ref().and_then(|r| parse_json(r));
         let auto_ttl = raw.as_ref().and_then(|r| probe_ttl(r));
-        out.push_str(&format!("url {}\n", src.url));
-        let ttl = auto_ttl.unwrap_or(src.ttl);
-        out.push_str(&format!("ttl {}\n", ttl));
+        let mut block = String::new();
+        block.push_str(&format!("url {}\n", src.url));
+        let ttl = match auto_ttl {
+            Some(t) => t,
+            None => src.ttl,
+        };
+        block.push_str(&format!("ttl {}\n", ttl));
         match &src.frame {
             Frame::Surface {
                 body_name,
@@ -5975,48 +6221,82 @@ fn probe_mode(path: &str, precise: bool, lat: f64, lon: f64) -> i32 {
                 lon,
                 alt,
             } => {
-                out.push_str(&format!("on {} {:?} {:?} {:?}\n", body_name, lat, lon, alt));
+                block.push_str(&format!("on {} {:?} {:?} {:?}\n", body_name, lat, lon, alt));
             }
             Frame::Barycenter { body_name, scale } if *scale == 1.0 => {
-                out.push_str(&format!("at {}\n", body_name));
+                block.push_str(&format!("at {}\n", body_name));
             }
             Frame::Barycenter { body_name, scale } => {
-                out.push_str(&format!("at {} {}\n", body_name, scale));
-            }
-        }
-        if let Some(ref body) = src.body {
-            if !matches!(&src.frame, Frame::Surface { .. } | Frame::Barycenter { .. }) {
-                out.push_str(&format!("body {}\n", body));
+                block.push_str(&format!("at {} {}\n", body_name, scale));
             }
         }
         if let Some(p) = parsed {
             let mut fields = String::new();
             let mut coords = String::new();
-            walk_json_probe(&p, "", &mut fields, &mut coords);
+            let mut map_path: Option<String> = None;
+            walk_json_probe(&p, "", &mut fields, &mut coords, &mut map_path);
+            if map_path.is_none() && !coords.is_empty() {
+                map_path = Some(".".to_string());
+            }
             let precision_lines = measure_precision(&p);
             if !precision_lines.is_empty() {
-                out.push_str(&precision_lines);
+                block.push_str(&precision_lines);
+            }
+            if let Some(ref mp) = map_path {
+                if !coords.is_empty() {
+                    block.push_str(&format!("map {}\n", mp));
+                }
             }
             if !coords.is_empty() {
-                out.push_str(&coords);
+                block.push_str(&coords);
             }
             if !fields.is_empty() {
-                out.push_str(&fields);
+                block.push_str(&fields);
             }
         } else if let Some(ref r) = raw {
             if let Some(csv) = probe_csv(r) {
-                out.push_str(&csv);
+                block.push_str(&csv);
             }
         } else {
-            out.push_str("# fetch returned void\n");
+            block.push_str("# fetch returned void\n");
         }
         if precise && raw.is_some() {
-            out.push_str(&bruteforce_precision(&url, &src.url, ttl));
+            block.push_str(&bruteforce_precision(&url, &src.url, ttl));
         }
-        out.push('\n');
+        let verdict = match (&raw, parse_sources(&block).first()) {
+            (Some(r), Some(candidate)) => match extract(candidate, r, now) {
+                ExtractResult::Measurements(v) | ExtractResult::WithEphemeris(v, _) => {
+                    if v.is_empty() {
+                        Err(diagnose_no_samples(candidate, r))
+                    } else {
+                        Ok(v.len())
+                    }
+                }
+            },
+            (Some(_), None) => Err("block refused at parse (frame/ttl/field gate)".into()),
+            (None, _) => Err("fetch returned void".into()),
+        };
+        match verdict {
+            Ok(n) => {
+                accepted += 1;
+                out.push_str(&format!("# verified {} samples\n", n));
+                out.push_str(&block);
+                out.push('\n');
+            }
+            Err(why) => {
+                declined += 1;
+                dead.push_str(&format!("# declined: {}\n", why));
+                dead.push_str(&block);
+                dead.push('\n');
+            }
+        }
     }
     std::fs::write("probe_output.φ", &out).ok();
-    eprintln!("probe: wrote probe_output.φ ({} blocks)", sources.len());
+    std::fs::write("probe_dead.φ", &dead).ok();
+    eprintln!(
+        "probe: wrote probe_output.φ ({} verified) and probe_dead.φ ({} declined)",
+        accepted, declined
+    );
     0
 }
 
@@ -6125,9 +6405,7 @@ fn probe_ttl(body: &str) -> Option<u64> {
             let t0 = find_timestamp(&arr[0]);
             let t1 = find_timestamp(&arr[1]);
             match (t0, t1) {
-                (Some(a), Some(b)) if (a - b).abs() > 0.0 => {
-                    Some(((a - b).abs() as u64).max(10).min(86400))
-                }
+                (Some(a), Some(b)) if (a - b).abs() >= 1.0 => Some((a - b).abs() as u64),
                 _ => None,
             }
         }
@@ -6418,14 +6696,26 @@ fn probe_classify(key: &str) -> (&str, &str, f64) {
         ("gravity", "m", 3600.0)
     } else if kl.contains("footprint") {
         ("em", "km", 60.0)
+    } else if kl.contains("volt") || kl.contains("efield") || kl.contains("potential") {
+        ("electric", "V", 60.0)
+    } else if kl.contains("current") && !kl.contains("ocean") {
+        ("electric", "A", 60.0)
+    } else if kl.contains("conduct") {
+        ("electric", "S/m", 3600.0)
     } else if kl.contains("sample") || kl.contains("sort") || kl.contains("order") {
         ("DROP", "", 0.0)
     } else {
-        ("DROP", "", 0.0)
+        ("UNCERTAIN", "", 0.0)
     }
 }
 
-fn walk_json_probe(val: &JsonVal, prefix: &str, out: &mut String, coords: &mut String) {
+fn walk_json_probe(
+    val: &JsonVal,
+    prefix: &str,
+    out: &mut String,
+    coords: &mut String,
+    map_path: &mut Option<String>,
+) {
     match val {
         JsonVal::Obj(map) => {
             for (k, v) in map {
@@ -6437,15 +6727,54 @@ fn walk_json_probe(val: &JsonVal, prefix: &str, out: &mut String, coords: &mut S
                 if is_coord_key(k) {
                     let unit = coord_unit(k);
                     let directive = coord_directive(k);
+                    let exact = matches!(
+                        k.to_lowercase().as_str(),
+                        "lat"
+                            | "latitude"
+                            | "lon"
+                            | "lng"
+                            | "longitude"
+                            | "alt"
+                            | "altitude"
+                            | "depth"
+                    );
                     let line = format!("{} {} {}\n", directive, path, unit);
-                    if !coords.contains(&line) {
-                        coords.push_str(&line);
+                    let marker = format!("{} ", directive);
+                    let existing: Option<String> = coords
+                        .lines()
+                        .find(|l| l.starts_with(&marker))
+                        .map(|l| l.to_string());
+                    match existing {
+                        None => coords.push_str(&line),
+                        Some(old) => {
+                            let old_key = old.split_whitespace().nth(1);
+                            let old_exact = old_key.map_or(false, |ok_key| {
+                                let tail = match ok_key.rfind('.') {
+                                    Some(p) => &ok_key[p + 1..],
+                                    None => ok_key,
+                                };
+                                matches!(
+                                    tail.to_lowercase().as_str(),
+                                    "lat"
+                                        | "latitude"
+                                        | "lon"
+                                        | "lng"
+                                        | "longitude"
+                                        | "alt"
+                                        | "altitude"
+                                        | "depth"
+                                )
+                            });
+                            if exact && !old_exact {
+                                *coords = coords.replace(&format!("{}\n", old), &line);
+                            }
+                        }
                     }
                     if k == "depth" {
-                        out.push_str(&format!("field {} seismic-body {}\n", path, unit));
+                        out.push_str(&format!("field {} seismic-body {} 3600\n", path, unit));
                     }
                 } else {
-                    walk_json_probe(v, &path, out, coords);
+                    walk_json_probe(v, &path, out, coords, map_path);
                 }
             }
         }
@@ -6485,10 +6814,19 @@ fn walk_json_probe(val: &JsonVal, prefix: &str, out: &mut String, coords: &mut S
             }
             let first = &arr[0];
             if matches!(first, JsonVal::Obj(_)) {
-                walk_json_probe(first, prefix, out, coords);
+                if map_path.is_none() {
+                    *map_path = Some(if prefix.is_empty() {
+                        ".".to_string()
+                    } else {
+                        prefix.to_string()
+                    });
+                    walk_json_probe(first, "", out, coords, map_path);
+                } else {
+                    walk_json_probe(first, prefix, out, coords, map_path);
+                }
             } else {
                 for (i, v) in arr.iter().enumerate() {
-                    walk_json_probe(v, &format!("{}.{}", prefix, i), out, coords);
+                    walk_json_probe(v, &format!("{}.{}", prefix, i), out, coords, map_path);
                 }
             }
         }
@@ -6502,7 +6840,12 @@ fn walk_json_probe(val: &JsonVal, prefix: &str, out: &mut String, coords: &mut S
             }
             out.push_str(&format!("# {} = {:?}\n", prefix, n));
             let (force, unit, tau) = probe_classify(key);
-            if force != "DROP" {
+            if force == "UNCERTAIN" {
+                out.push_str(&format!(
+                    "# uncertain field {} — force/unit undetermined, review\n",
+                    prefix
+                ));
+            } else if force != "DROP" {
                 out.push_str(&format!("field {} {} {} {}\n", prefix, force, unit, tau));
             }
         }
@@ -6517,7 +6860,12 @@ fn walk_json_probe(val: &JsonVal, prefix: &str, out: &mut String, coords: &mut S
                 }
                 out.push_str(&format!("# {} = {:?} (str)\n", prefix, n));
                 let (force, unit, tau) = probe_classify(key);
-                if force != "DROP" {
+                if force == "UNCERTAIN" {
+                    out.push_str(&format!(
+                        "# uncertain field {} — force/unit undetermined, review\n",
+                        prefix
+                    ));
+                } else if force != "DROP" {
                     out.push_str(&format!("field {} {} {} {}\n", prefix, force, unit, tau));
                 }
             }
@@ -6703,6 +7051,7 @@ fn load_sources_from(content: &str) -> Vec<SourceConfig> {
                 cur_url = parts[1].to_string();
                 cur_frame = None;
                 cur_body = None;
+                cur_ttl = 0;
             }
             "ttl" if parts.len() >= 2 => {
                 if let Ok(v) = parts[1].parse::<u64>() {
@@ -7022,14 +7371,25 @@ fn main() {
     let mut archive = Archive {
         sources: loaded,
         body_ephemerides: body_ephemerides.clone(),
-        field: Arc::new(build_buffer(Vec::new(), 1.0)),
+        field: Arc::new(build_buffer(Vec::new(), 1.0, body_ephemerides.clone())),
         presence: HashMap::new(),
         origins: HashMap::new(),
+    };
+    let body_names: Arc<Vec<String>> = {
+        let mut names: Vec<String> = archive
+            .sources
+            .iter()
+            .filter_map(|s| s.body.clone())
+            .collect();
+        names.sort();
+        names.dedup();
+        Arc::new(names)
     };
     let mut radiators: Vec<Box<dyn Radiator>> = Vec::new();
     let sr = TcpRadiator::new(
         port,
-        body_ephemerides.clone(),
+        body_names,
+        archive.field.clone(),
         index_html.clone(),
         constants_js.clone(),
         osc_tx.clone(),
@@ -7045,7 +7405,7 @@ fn main() {
         while let Ok(res) = fetch_rx.try_recv() {
             archive
                 .origins
-                .entry((res.source_idx as u32, 0, 0))
+                .entry(res.source_idx as u32)
                 .or_insert(OriginState {
                     fetched: now,
                     prev_epoch: now,
@@ -7071,7 +7431,7 @@ fn main() {
                     Some(res.source_idx as u32),
                     Some(&src.frame),
                     if track_origin {
-                        archive.origins.get_mut(&(res.source_idx as u32, 0, 0))
+                        archive.origins.get_mut(&(res.source_idx as u32))
                     } else {
                         None
                     },
@@ -7090,7 +7450,7 @@ fn main() {
                 .insert("device".to_string(), (pt, px, py, pz, pr));
         }
         for i in 0..archive.sources.len() {
-            let origin = (i as u32, 0, 0);
+            let origin = i as u32;
             if !origin_stale(&archive.origins, origin, archive.sources[i].ttl, now) {
                 continue;
             }
@@ -7112,13 +7472,12 @@ fn main() {
                     resid_ema: 0.0,
                     has_prev: false,
                 });
-                eprintln!("loading {}", body_log);
                 thread::spawn(move || {
                     let tmp_path = match &src_clone.body {
                         Some(b) => format!("/tmp/omegaflow_eph_{}.bin", b),
                         None => return,
                     };
-                    if read_cache_if_fresh(&tmp_path, src_clone.ttl).is_none() {
+                    if !cache_fresh(&tmp_path, src_clone.ttl) {
                         let bytes = match fetch_raw_bytes(&url, src_clone.ttl) {
                             Some(b) => b,
                             None => return,
@@ -7199,71 +7558,39 @@ fn main() {
             }
             let ftx = fetch_tx.clone();
             let src_clone = archive.sources[i].clone();
-            let url = render_source_url(
-                &src_clone,
-                pos.0,
-                pos.1,
-                pos.2,
-                now,
-                r,
-                None,
-                &archive.body_ephemerides,
-            );
-            let body = render_source_body(
-                &src_clone,
-                pos.0,
-                pos.1,
-                pos.2,
-                now,
-                r,
-                &archive.body_ephemerides,
-            );
+            let eph_arc = archive.body_ephemerides.clone();
             let src_idx = i;
-            let is_eph = src_clone.format == "ephemeris_binary";
+            archive.origins.entry(origin).or_insert(OriginState {
+                fetched: now,
+                prev_epoch: now,
+                prev_abs: [0.0; 3],
+                prev_motion: None,
+                resid_ema: 0.0,
+                has_prev: false,
+            });
             thread::spawn(move || {
-                if is_eph {
-                    let bytes = match fetch_raw_bytes(&url, src_clone.ttl) {
-                        Some(b) => b,
-                        None => return,
-                    };
-                    let tmp_path = match &src_clone.body {
-                        Some(b) => format!("/tmp/omegaflow_eph_{}.bin", b),
-                        None => return,
-                    };
-                    if std::fs::write(&tmp_path, &bytes).is_err() {
-                        return;
-                    }
-                    if let ExtractResult::WithEphemeris(_, eph) =
-                        extract(&src_clone, &tmp_path, now)
-                    {
-                        let _ = ftx.send(FetchResult {
-                            source_idx: src_idx,
-                            channels: Vec::new(),
-                            eph_update: src_clone.body.clone().map(|b| (b, eph)),
-                        });
-                    }
-                } else {
-                    let raw = fetch_one(&url, body.as_deref(), &src_clone.headers, src_clone.ttl);
-                    let channels = match raw {
-                        Some(ref r) => match extract(&src_clone, r, now) {
-                            ExtractResult::Measurements(v) => v,
-                            ExtractResult::WithEphemeris(v, eph) => {
-                                let _ = ftx.send(FetchResult {
-                                    source_idx: src_idx,
-                                    channels: Vec::new(),
-                                    eph_update: src_clone.body.clone().map(|b| (b, eph)),
-                                });
-                                v
-                            }
-                        },
-                        None => Vec::new(),
-                    };
-                    let _ = ftx.send(FetchResult {
-                        source_idx: src_idx,
-                        channels,
-                        eph_update: None,
-                    });
-                }
+                let url = render_source_url(&src_clone, pos.0, pos.1, pos.2, now, r, &eph_arc);
+                let body = render_source_body(&src_clone, pos.0, pos.1, pos.2, now, r, &eph_arc);
+                let raw = fetch_one(&url, body.as_deref(), &src_clone.headers, src_clone.ttl);
+                let channels = match raw {
+                    Some(ref r) => match extract(&src_clone, r, now) {
+                        ExtractResult::Measurements(v) => v,
+                        ExtractResult::WithEphemeris(v, eph) => {
+                            let _ = ftx.send(FetchResult {
+                                source_idx: src_idx,
+                                channels: Vec::new(),
+                                eph_update: src_clone.body.clone().map(|b| (b, eph)),
+                            });
+                            v
+                        }
+                    },
+                    None => Vec::new(),
+                };
+                let _ = ftx.send(FetchResult {
+                    source_idx: src_idx,
+                    channels,
+                    eph_update: None,
+                });
             });
         }
         {
@@ -7273,7 +7600,7 @@ fn main() {
             let mut hashes: Vec<&SpatialHash> = old.bodies.values().collect();
             hashes.push(&old.inertial);
             for hash in hashes {
-                for v in hash.cells.values() {
+                for v in hash.cells.values().chain(std::iter::once(&hash.unbounded)) {
                     for s in v {
                         if matches!(s.source, OscillatorSource::Body) {
                             continue;
@@ -7314,11 +7641,10 @@ fn main() {
                     }
                 }
             }
-            archive.field = Arc::new(build_buffer(all, cadence));
+            archive.field = Arc::new(build_buffer(all, cadence, archive.body_ephemerides.clone()));
         }
         let f = archive.field.clone();
         for r in &radiators {
-            let _ = r.name();
             r.accept(f.clone());
         }
         let elapsed = tdb_now() - now;
@@ -7370,10 +7696,9 @@ fn flatten_geojson_coords(val: &[JsonVal]) -> Vec<(f64, f64, Option<f64>)> {
     result
 }
 
+#[cfg(test)]
 mod tests {
-    #[cfg(test)]
     use super::*;
-    #[cfg(test)]
     use std::collections::HashMap;
 
     #[test]
@@ -7420,7 +7745,7 @@ mod tests {
             catalog_epoch: None,
             repeat_ra_bins: 0,
         };
-        let url = render_source_url(&src, 0.0, 0.0, 0.0, 0.0, 1000.0, None, &HashMap::new());
+        let url = render_source_url(&src, 0.0, 0.0, 0.0, 0.0, 1000.0, &HashMap::new());
         assert!(url.contains("Ceres"));
         assert!(url.contains("fp_psc"));
         assert!(!url.contains("{target}"));
@@ -7479,7 +7804,7 @@ mod tests {
                 alt_key: "3".into(),
                 epoch_key: "0".into(),
                 val_key: String::new(),
-                alt_sign: -1.0,
+                alt_scale: -1.0,
                 vel_key: String::new(),
                 trk_key: String::new(),
                 vr_key: String::new(),
@@ -8110,7 +8435,7 @@ mod tests {
             ok + empty.len()
         );
         for (u, why) in empty.iter() {
-            eprintln!("  FAIL {}  {}", u, why);
+            eprintln!("  void {}  {}", u, why);
         }
     }
 
@@ -8133,7 +8458,7 @@ mod tests {
                 alt_key: String::new(),
                 epoch_key: String::new(),
                 val_key: String::new(),
-                alt_sign: 1.0,
+                alt_scale: 1.0,
                 vel_key: String::new(),
                 trk_key: String::new(),
                 vr_key: String::new(),
@@ -8180,5 +8505,83 @@ mod tests {
         let d_html = super::diagnose_no_samples(&base, html);
         eprintln!("html -> {}", d_html);
         assert!(d_html.contains("non-JSON"), "got: {}", d_html);
+    }
+
+    #[test]
+    fn test_map_single_object_alt_scale_epoch_default() {
+        let src = super::SourceConfig {
+            ttl: 10,
+            url: "https://api.wheretheiss.at/v1/satellites/25544".into(),
+            frame: super::Frame::Barycenter {
+                body_name: "earth".into(),
+                scale: 1.0,
+            },
+            format: "json".into(),
+            extracts: vec![super::Extract::Map {
+                arr_path: ".".into(),
+                lat_key: "latitude".into(),
+                lon_key: "longitude".into(),
+                alt_key: "altitude".into(),
+                epoch_key: String::new(),
+                val_key: String::new(),
+                alt_scale: 1000.0,
+                vel_key: String::new(),
+                trk_key: String::new(),
+                vr_key: String::new(),
+                fields: vec![FieldConfig {
+                    key: "velocity".into(),
+                    name: "velocity".into(),
+                    kernel: 0,
+                    force: 0,
+                    tau: 1.0,
+                    absorption: 0.0,
+                    advection: 0.0,
+                }],
+                lon_sign: None,
+            }],
+            headers: vec![],
+            post_body: None,
+            target: None,
+            catalog: None,
+            max_freq: None,
+            min_freq: None,
+            body: None,
+            stations_url: None,
+            stations_path: String::new(),
+            stations_lat: String::new(),
+            stations_lon: String::new(),
+            stations_id: String::new(),
+            flux_from_mag: None,
+            abs_mag_from: None,
+            catalog_epoch: None,
+            repeat_ra_bins: 0,
+        };
+        let body = r#"{"latitude":-47.75,"longitude":78.87,"altitude":438.28,"velocity":27528.0}"#;
+        let now = 8.4e8;
+        match super::extract(&src, body, now) {
+            super::ExtractResult::Measurements(v) => {
+                assert_eq!(v.len(), 1);
+                let (ch, fc) = &v[0];
+                assert_eq!(ch.epoch, now);
+                assert_eq!(ch.value, 27528.0);
+                assert_eq!(fc.tau, 1.0);
+                match &ch.position {
+                    super::Position::Surface { lat, lon, alt, .. } => {
+                        assert!((lat - -47.75).abs() < 1e-9);
+                        assert!((lon - 78.87).abs() < 1e-9);
+                        assert!((alt - 438280.0).abs() < 1e-6);
+                    }
+                    other => panic!("position variant: {:?} unexpected", other),
+                }
+            }
+            _ => panic!("extract variant unexpected"),
+        }
+    }
+
+    #[test]
+    fn test_force_id_electric() {
+        assert_eq!(super::force_id_of("electric"), Some(8));
+        assert_eq!(super::force_id_of("biotic"), None);
+        assert_eq!(super::kernel_for_force(8), Some(1));
     }
 }

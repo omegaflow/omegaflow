@@ -1,65 +1,101 @@
-# sources_v2.φ — Canonical Format Specification
+# sources.φ — Canonical Format Specification
+
+Verified against the living parser (`load_sources` in `src/main.rs`). Every
+directive listed here has a parser arm. Directives without a parser arm are
+listed in §10 as open work — writing them into a block today produces nothing
+(0 honored, silently).
 
 ## 0. Axiom
 
 A field _is_ its API key. No prefix. No name. No identity beyond the key.
-Force and unit are the field's physical signature. A measurement without a
-physical unit is metadata — it cannot manifest in the block universe.
+Force and τ are the field's physical signature. A field without a declared
+τ produces no oscillators — the τ-Gate closes (0 honored). A measurement
+without a physical unit is metadata — it cannot manifest in the block universe.
+
+All oscillators are equal. API oscillators (fetched channels), Body
+oscillators (ephemeris bodies with radius), and Device oscillators (browser
+station sensors) carry the same 12-value record, pass through the same
+Enclosure Lemma, and are manifested by the Mathematikerin onto every
+radiator — window, audio, stderr, serial, USB, BT, HID. No source class is
+privileged. Every fetched response is mirrored to the CDN by the CI Archivar
+(release tag = API netloc); local Archivars read the CDN first and fall back
+to the live API.
 
 ## 1. Directive Table
 
 Every directive starts at column 0. No indentation. One directive per line.
+`url` starts a block and resets ALL block state (frame, ttl, force, headers,
+post_body, stations, …) — nothing leaks between blocks. A block is refused
+unless it has `url` + `ttl` + a frame (`at`/`on`).
 
 | Directive | Tokens | Meaning |
 |-----------|--------|---------|
-| `url <u>` | 2 | API endpoint. Template variables: `{lat}`, `{lon}`, `{today}`, `{yesterday}`, `{hour_ago}`, `{SECRET}` |
-| `ttl <s>` | 2 | Fetch interval in seconds |
-| `at <body>` | 2 | Barycentric frame of the named body. SSB origin. |
-| `on <body> <lat> <lon>` | 4 | Surface point on the named body. Geodetic coordinates. |
-| `on <body> <lat> <lon> <alt>` | 5 | Surface point with altitude in km. |
-| `body <name>` | 2 | Data-carried position (map/cmap rows carry their own coords). |
-| `method <GET\|POST>` | 2 | HTTP method. Default GET. |
-| `header <name> <value>` | 3 | HTTP header. Repeatable. |
-| `post_body <json>` | 2 | POST body. |
-| `format <json\|text\|csv\|ephemeris_binary\|universal>` | 2 | Response format. Default json. |
-| `map <arr>` | 2 | Iterate JSON array. Each element becomes an oscillator. |
-| `cmap <arr>` | 2 | Celestial map. ICRS position from ra/dec/plx. |
+| `url <u>` | 2 | API endpoint. Starts the block. Template variables: see §1.1 |
+| `ttl <s>` | 2 | Fetch interval in seconds. Fetch fires at ttl/Φ. Retention ttl×2⁶. |
+| `at <body>` | 2 | Barycentric frame of the named body (scale fixed 1.0). Also sets the block's body. |
+| `on <body> <lat> <lon> [alt]` | 4–5 | Surface point (WGCCRE rotation). alt in **meters**, optional (default 0 = surface datum). |
+| `format <f>` | 2 | `json` (default) \| `ephemeris_binary` \| `universal` (auto-detect) \| free text (rows/text extracts parse CSV/text bodies regardless) |
+| `header <name> <value>` | 3 | HTTP header. Repeatable. Values cannot contain spaces (whitespace split). |
+| `post_body <json>` | 2 | POST body (no spaces). Presence of post_body ⇒ POST. There is no `method` directive. |
+| `force <name>` | 2 | Block force context for 3-token `field` annotations. em \| gravity \| acoustic \| seismic-body \| seismic-surface \| thermal \| diffusion \| advective \| electric |
+| `map <arr>` | 2 | Iterate JSON array; each row an oscillator (data-carried lat/lon). |
+| `cmap <arr>` | 2 | Celestial map; ICRS from ra/dec + plx/dist/z keys. |
 | `rows <arr>` | 2 | Table rows (column-index or header-name lookup). |
-| `flatten <arr>` | 2 | Flatten nested array geometry. |
-| `field <key> <force> <unit>` | 4 | **Scalar physical measurement.** Key = JSON path (dot-notation). Force = propagation mechanism. Unit = SI or accepted non-SI. |
-| `field <key> <identifier>` | 3 | **Inside map/cmap/rows only.** Annotates a row field. Identifier is the property label. |
-| `lat <key> <unit>` | 3 | Latitude. Replaces `lat_key`. Unit: deg. |
-| `lon <key> <unit>` | 3 | Longitude. Replaces `lon_key`. Unit: deg. |
-| `alt <key> <unit>` | 3 | Altitude. Replaces `alt_key`. Unit: km or m. |
-| `ra <key> <unit>` | 3 | Right ascension. Replaces `ra_key`. Unit: deg. |
-| `dec <key> <unit>` | 3 | Declination. Replaces `dec_key`. Unit: deg. |
-| `plx <key> <unit>` | 3 | Parallax. Replaces `plx_key`. Unit: mas. |
-| `pmra <key> <unit>` | 3 | Proper motion RA. Unit: mas/yr. |
-| `pmdec <key> <unit>` | 3 | Proper motion Dec. Unit: mas/yr. |
-| `radvel <key> <unit>` | 3 | Radial velocity. Unit: km/s or m/s. |
-| `z <key> <unit>` | 3 | Redshift. Unit: scalar (dimensionless ratio — admitted, has SI path). |
-| `dist <key> <unit>` | 3 | Distance. Unit: pc, ly, m, km. |
-| `epoch <key> <unit>` | 3 | Epoch timestamp. Unit: s or d. |
-| `tau <key> <unit>` | 3 | Decay constant override. Unit: s. |
-| `vel <key> <unit>` | 3 | Velocity. Unit: m/s or km/s. |
-| `trk <key> <unit>` | 3 | Track/heading. Unit: deg. |
-| `vr <key> <unit>` | 3 | Vertical rate. Unit: m/s. |
-| `val <key> <unit>` | 3 | Value filter key. Unit: scalar. |
-| `extent <m>` | 2 | Explicit spatial extent in meters. |
-| `reach_ttl <s>` | 2 | Override fetch reach TTL. |
-| `catalog_epoch <yr>` | 2 | Catalog reference epoch. |
-| `target <body>` | 2 | Target body for ephemeris/vectors. |
-| `catalog <name>` | 2 | Catalog identifier. |
-| `max_freq <hz>` | 2 | Maximum frequency for observation planning. |
-| `min_freq <hz>` | 2 | Minimum frequency. |
-| `repeat <n> <ra_min> <ra_max> <dec_min> <dec_max>` | 6 | RA-binned repeat. |
-| `flux_from_mag <key>` | 2 | Derive flux from magnitude key. |
+| `flatten <arr> [geom] [epoch]` | 2–4 | Flatten nested array geometry. |
+| `field <key> <force> <unit> <tau>` | 5 | **Scalar physical measurement.** Key = JSON path (dot-notation). Kernel = force default (§2.1). τ in seconds, must be > 0. |
+| `field <key> <force> <unit> <tau> <kernel>` | 6 | Same, with explicit kernel name. |
+| `field <key> <name> <kernel> <force> <unit> <tau> <absorption> <advection>` | 9 | Legacy long form. τ > 0 required. |
+| `field <key> <identifier>` | 3 | Annotation inside map/cmap/rows after a `force` directive. τ = 0 → **never manifests** (τ-Gate). Documentation only. |
+| `first/last/lastrow/objlast/path/deep/regex <key> <name> <kernel> <force> <unit> <tau> <absorption> <advection>` | 9 | Positioned scalar extract variants (same 9-token config). |
+| `count <path> [name]` | 2–3 | Extracted but τ = 0 → never manifests unless paired with a τ-carrying `field` of the same name. |
+| `geojson <mag_key> <min_mag> <out1> <out2> <tau> <absorption> <advection>` | 8 | GeoJSON event extract. |
+| `cmrpolygon <arr> [epoch] [alt] [val]` | 2–5 | CMR polygon centroids. |
+| `celestialpolygon <arr> <radius> [epoch] [val]` | 3–5 | Celestial polygon. |
+| `keplermap <arr> [a] [e] [i]` | 2–5 | Kepler elements map. |
+| `hapi <k=v>…` | ≥2 | HAPI parameters. Values manifest only when paired with a τ-carrying `field` of the same name. |
+| `ephemeris <target>` / `vectors <target>` | 2 | Horizons ephemeris/state-vector extracts. |
+| `lat <key>` / `lon <key>` | 2 | Row position keys (map). Fixed unit: deg. |
+| `alt <key> [unit]` | 2–3 | Row altitude key (map). Unit: `m` (default) \| `km` \| `ft` \| `cm` \| `mm` \| `-m` \| `-km` (negative = depth). Absent `alt` directive → surface datum 0. |
+| `epoch <key>` | 2 | Row epoch key (map). ISO string or unix seconds. Absent → fetch time. |
+| `vel <key>` / `trk <key>` / `vr <key>` | 2 | Row motion keys (map): speed m/s, track deg, vertical rate m/s → SurfaceFlow. |
+| `val <key>` | 2 | Restrict map fields to the named field. |
+| `ra <key>` / `dec <key>` | 2 | ICRS deg (cmap). |
+| `plx <key>` | 2 | Parallax, mas (cmap). |
+| `pmra <key>` / `pmdec <key>` | 2 | Proper motion, mas/yr (cmap). |
+| `radvel <key>` | 2 | Radial velocity key (cmap). |
+| `dist <key>` | 2 | Distance key (cmap). |
+| `target <body>` | 2 | Target for ephemeris/vectors (`{target}` substitution). |
+| `catalog <name>` | 2 | Catalog identifier (`{catalog}` substitution). |
+| `max_freq <hz>` / `min_freq <hz>` | 2 | Frequency bounds (`{max_freq}`/`{min_freq}`). |
+| `repeat ra <min> <max> <bins>` | 5 | RA-binned repeat (`{bin}`/`{repeat_bin}`). Short form: `repeat <bins>`. |
+| `flux_from_mag <key>` | 2 | Derive flux 10^(−0.4·mag). Conflicts with abs_mag_from (block refused). |
 | `abs_mag_from <key>` | 2 | Derive absolute magnitude. |
-| `stations <url>` | 2 | Station list URL. |
-| `stations_path <key>` | 2 | Path to station list in response. |
-| `stations_lat <key>` | 2 | Station latitude key. |
-| `stations_lon <key>` | 2 | Station longitude key. |
-| `stations_id <key>` | 2 | Station ID key. |
+| `catalog_epoch <yr>` | 2 | Catalog reference epoch (proper-motion propagation). |
+| `stations <url>` | 2 | Station list URL for `{nearest_station}`. |
+| `stations_path/lat/lon/id <key>` | 2 | Station list keys (defaults: stations, lat, lng, id). |
+
+### 1.1 URL template variables
+
+Position/extent (from presence + frame): `{lat}` `{lon}` `{lat_int}` `{lon_int}`
+`{lat_min}` `{lat_max}` `{lon_min}` `{lon_max}` `{grid}` `{grid_lat}` `{grid_lon}`
+`{x}` `{y}` `{z}` `{nearest_station}` `{bin}` `{repeat_bin}`.
+Time (from the Archivar clock, TDB→UTC): `{today}` `{yesterday}` `{tomorrow}`
+`{today_nodashes}` `{yesterday_nodashes}` `{tomorrow_nodashes}` `{today_yyyymmdd}`
+`{today_ymd}` `{today_plus_365}` `{t_start}` `{t_end}` `{now}` `{now_minus_1}`
+`{now_minus_2}` `{hour_ago}` `{week_ago}` `{week_ago_nodashes}` `{year}` `{year2}`
+`{month}` `{day}` `{yday}` `{hour}` `{minute}` `{unix_now}` `{unix_now_plus_3600}`.
+Declared: `{target}` `{catalog}` `{max_freq}` `{min_freq}`.
+Any remaining `{MARKER}` resolves from the environment (`.env` /
+`.secrets.local`); an absent marker substitutes void and logs to stderr.
+
+### 1.2 The τ-Gate
+
+τ is the temporal decay constant of the measured process in seconds. It is
+the price of manifestation: no τ, no oscillator. Estimation when the process
+itself does not declare one:
+- explicit knowledge of the process → use it
+- rapidly changing data (ISS position, live weather) → ttl/10
+- stable data (star catalogs, geology) → ttl
 
 ## 2. Force-Unit Registry (grows with every API fetch)
 
@@ -93,19 +129,38 @@ quantities.
 
 ### Force assignment
 
-The force describes the propagation mechanism of the measured quantity:
+The force describes the propagation mechanism of the measured quantity.
+IDs and names as implemented (`force_id_of` in `src/main.rs`):
 
 | Force | ID | Propagation | What it covers |
 |-------|----|-------------|----------------|
 | `em` | 0 | c (light) | EM radiation (flux, irradiance), magnetic fields, radio, radar measurements, optical depth (AOD is EM extinction), lightning EM pulse |
 | `gravity` | 1 | c (grav. wave) | Gravitational acceleration, tidal force, orbital velocity measured gravitationally, Earth gravity field, elevation (geopotential height) |
-| `seismic-body` | 2 | body wave vel. | Subsurface displacement, body wave velocity/acceleration, hypocentral depth, borehole measurements |
-| `seismic-surface` | 3 | surface wave vel. | Surface displacement, ground shaking, surface wave amplitude, earthquake effects at surface, volcano deformation |
-| `thermal` | 4 | thermal diffusivity | Temperature (any medium), heat flux, brightness temperature (IR), fire temperature |
-| `diffusion` | 5 | diffusion coeff. | Gas concentration, aerosol mass, water chemistry, salinity, turbidity, dissolved oxygen, nutrients, humidity (water vapor diffusion), soil moisture, pCO2, CH4, O3, NO2 |
-| `advective` | 6 | flow velocity | Wind speed/direction, ocean currents, river discharge, air pressure (advected air mass), water level (advective flow), streamflow, wave energy flux |
-| `acoustic` | 7 | sound speed | Wave height/period, sound pressure, acoustic frequency, precipitation (rain/snow accumulation as acoustic displacement), infrasound |
-| `electric` | 8 | dielectric relax. | E-field strength, bioelectric potential, conductivity, telluric currents, lightning current, atmospheric potential gradient |
+| `acoustic` | 2 | sound speed | Wave height/period, sound pressure, acoustic frequency, precipitation (rain/snow accumulation as acoustic displacement), infrasound |
+| `seismic-body` | 3 | body wave vel. | Subsurface displacement, body wave velocity/acceleration, hypocentral depth, borehole measurements |
+| `seismic-surface` | 4 | surface wave vel. | Surface displacement, ground shaking, surface wave amplitude, earthquake effects at surface, volcano deformation |
+| `thermal` | 5 | thermal diffusivity | Temperature (any medium), heat flux, brightness temperature (IR), fire temperature |
+| `diffusion` | 6 | diffusion coeff. | Gas concentration, aerosol mass, water chemistry, salinity, turbidity, dissolved oxygen, nutrients, humidity (water vapor diffusion), soil moisture, pCO2, CH4, O3, NO2 |
+| `advective` | 7 | flow velocity | Wind speed/direction, ocean currents, river discharge, air pressure (advected air mass), water level (advective flow), streamflow, wave energy flux |
+| `electric` | 8 | c (field propagation), dielectric relaxation in media | E-field strength, bioelectric potential, conductivity, telluric currents, lightning current, atmospheric potential gradient, battery voltage/current |
+
+`biotic` is **not a force**. An organism sensing another organism does so
+through a physical carrier: bioacoustics → `acoustic`, chemosignals →
+`diffusion`, bioluminescence → `em`, bioelectric fields → `electric`. Legacy
+blocks declaring `force biotic` are refused at load and are re-keyed to their
+carrier mechanism during curation.
+
+### 2.1 Force → default kernel (FORCE_KERNEL, as implemented)
+
+| Force | Default kernel |
+|-------|----------------|
+| em, gravity | inverse-square |
+| acoustic, seismic-body, seismic-surface, advective, electric | gaussian-inverse-square |
+| thermal, diffusion | erfc |
+
+Kernel names accepted by the 6-token `field` form: `inverse-square`,
+`gaussian-inverse-square`, `gaussian-inverse`, `erfc`, `exponential-decay`,
+`patch-levy`, `inverse-linear`.
 
 The rule: same physical quantity, different measurement mechanism → different
 force. ISS velocity via radar → em. Solar wind via plasma instrument → advective.
@@ -203,7 +258,7 @@ any field that reports "how many" rather than a physical quantity.
 ### 3.6 Coordinates as Scalar Fields
 
 `latitude`, `longitude`, `altitude`, `ra`, `dec`, `plx`, `solar_lat`,
-`solar_lon`, `lat`, `lon` when extracted via `field` (4-token) — these are
+`solar_lon`, `lat`, `lon` when extracted via a scalar `field` line — these are
 position data that belong in `lat`/`lon`/`alt`/`ra`/`dec`/`plx` directives.
 
 ### 3.7 Strings / Text
@@ -236,7 +291,7 @@ ICRS origin at the body's barycenter. Used for:
 - Heliospheric spacecraft at L1 (`at sun`)
 - Celestial catalogs with ICRS sky coordinates (`at sun`)
 - Planetary ephemeris targets — the body is the TARGET, not the frame (`target mars` + `at sun`)
-- Orbiting satellites whose position is data-carried (`pos` + `at sun`)
+- Orbiting satellites whose position is data-carried (map keys + `at sun`)
 
 ### `on <body> <lat> <lon> [alt]`
 Fixed geodetic point rotating with the body's surface (WGCCRE rotation model).
@@ -246,42 +301,39 @@ Used for:
 - ADSB receivers, METAR stations
 - The browser station declares its position via `on <body>` oscillators over WebSocket
 
-### `body <name>`
-Declares the body for data-carried position. Each data row carries its own
-lat/lon via `lat`/`lon` directives inside a `map` block. The `body` directive
-tells the parser which body's rotation model to apply.
-- `body earth` — GeoJSON earthquake feeds, OBIS, GBIF
-- `body mars` — Mars weather stations with per-row lat/lon
-- `body sun` — solar active regions with Stonyhurst coordinates
+### Data-carried position (map/cmap rows)
 
-`body` never appears together with `at` or `on` in the same block.
-
-### `pos <lat_key> <lon_key> [alt_key] [scale]`
-Legacy carry-over for data-carried position. Equivalent to `body <body>` +
-`lat <lat_key> deg` + `lon <lon_key> deg`. Prefer `body` + `lat`/`lon`.
+There is **no `body` directive and no `pos` directive** in the parser. A map
+block with per-row lat/lon still declares its frame via `at <body>` or
+`on <body> <lat> <lon> [alt]` — the frame's body is the rotation model applied
+to the row coordinates, and the frame position gates fetching (presence gate)
+and renders `{lat}`/`{lon}` templates. Rows carry their own position through
+the `lat`/`lon`/`alt` (map) or `ra`/`dec`/`plx`/`dist` (cmap) key directives.
+Legacy blocks written with `body earth` or `pos …` do not load — recurate them
+with an explicit frame.
 
 ## 5. Map / CMap / Rows Blocks
 
 ```
-url https://example.com/geojson
+url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&limit=100&minmagnitude=2.5&orderby=time&start={today}T00:00:00
 ttl 60
-body earth
+at earth
 map features
-lat geometry.coordinates.1 deg
-lon geometry.coordinates.0 deg
-field depth km
-field mag seismic-body scalar
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.depth seismic-body km 3600
 ```
 
 - `map <arr>` or `cmap <arr>` or `rows <arr>`: the array to iterate.
-- `lat`, `lon`, `alt`, `ra`, `dec`, `plx`: position extraction from each row.
-- `field <key> <unit>` inside map (3-token): a physical field value extracted from each row.
-  The unit goes in the 3rd token. The force is inherited from the block context
-  (or can be specified as a 4-token `field <key> <force> <unit>` for mixed-force rows).
-- `field <key> <identifier>` (3-token, identifier is NOT a unit): metadata annotation
-  (quality flags, instrument IDs encoded as strings). Parsed but not rendered as field value.
-- Non-physical fields inside map (IDs, names, timestamps) are dropped per RULE 3.
-- Drop rules apply per field_in inside map blocks just as they do for standalone fields.
+- `lat`, `lon`, `alt` (map) / `ra`, `dec`, `plx`, `pmra`, `pmdec`, `radvel`,
+  `dist` (cmap): 2-token position keys. Units are fixed by physics:
+  deg, deg, m / deg, deg, mas, mas/yr, mas/yr, (km/s via scale), (m via scale).
+- `field <key> <force> <unit> <tau>` (5-token) after a map/cmap/rows directive
+  attaches the field to that extract's rows. τ > 0 or nothing manifests.
+- `field <key> <identifier>` (3-token, after a `force` line): annotation only —
+  τ = 0, the τ-Gate closes, no oscillator. Use it to document string metadata,
+  never to extract measurements.
+- Non-physical fields (IDs, names, timestamps) are dropped per RULE 3.
 
 ## 6. API-as-Specification
 
@@ -321,15 +373,16 @@ The unit for every field line comes from the API response. The hierarchy:
 ```
 url https://api.wheretheiss.at/v1/satellites/25544
 ttl 10
-at sun
-lat latitude deg
-lon longitude deg
+at earth
+map .
+lat latitude
+lon longitude
 alt altitude km
-field velocity em km/h
-field footprint em km
+field velocity em km/h 1
+field footprint em km 1
 ```
 
-API response: `{"latitude": -47.75, "longitude": 78.87, "altitude": 438.28, "velocity": 27528, "footprint": 4599, "units": "kilometers"}`. All keys verified. `velocity` unit: km/h (ISS API docs). Force: EM (radar Doppler tracking). `footprint`: km (API `"units":"kilometers"`), force EM (instrument footprint).
+API response: `{"latitude": -47.75, "longitude": 78.87, "altitude": 438.28, "velocity": 27528, "footprint": 4599, "units": "kilometers"}`. Single object → one row. `alt altitude km` scales the km value to meters. `velocity`: km/h (ISS API docs), force EM (radar Doppler tracking). τ = min(ttl/10, 1) — fast-moving data. No epoch key → the sample anchors at fetch time.
 
 ### ADS-B Aircraft
 ```
@@ -337,57 +390,56 @@ url https://api.adsb.lol/v2/point/{lat}/{lon}/250
 ttl 10
 on earth 52.5 13.4
 map ac
-lat lat deg
-lon lon deg
-field alt_baro advective hPa
-field gs advective km/h
-field track em deg
-field baro_rate advective hPa
+lat lat
+lon lon
+field gs advective km/h 1
+field track em deg 1
 ```
 
-API response: `{"ac": [{"hex":"...","flight":"...","alt_baro":36000,"gs":450,"track":270,"baro_rate":0,"lat":52.5,"lon":13.4}]}`. `hex`, `flight` dropped (IDs). `alt_baro`: ft → hPa, force advective (barometric pressure altitude). `gs`: knots → km/h, force advective. `track`: deg, force em (transponder measurement). `baro_rate`: ft/min → hPa, force advective.
+`hex`, `flight` dropped (IDs). `gs`: ground speed, force advective. `track`: deg, force em (transponder measurement). τ = 1 s (live traffic).
 
 ### NDBC Buoy
 ```
 url https://www.ndbc.noaa.gov/data/realtime2/13002.txt
 ttl 300
 on earth 21.0 -23.0
-field WDIR advective deg
-field WSPD advective m/s
-field WVHT acoustic m
-field DPD acoustic s
-field APD acoustic s
-field MWD acoustic deg
-field PRES advective hPa
-field ATMP thermal C
-field WTMP thermal C
-field PTDY advective hPa
+rows .
+field WDIR advective deg 30
+field WSPD advective m/s 30
+field WVHT acoustic m 30
+field DPD acoustic s 30
+field APD acoustic s 30
+field MWD acoustic deg 30
+field PRES advective hPa 30
+field ATMP thermal C 30
+field WTMP thermal C 30
+field PTDY advective hPa 30
 ```
 
-API response (CSV header): `#YY MM DD hh mm WDIR WSPD GST WVHT DPD APD MWD PRES ATMP WTMP DEWP VIS PTDY TIDE`. Units from NDBC header line: WDIR=degT, WSPD=m/s, WVHT=m, DPD=sec, APD=sec, MWD=degT, PRES=hPa, ATMP=degC, WTMP=degC, PTDY=hPa. Force assignments: wind → advective, waves → acoustic, temperature → thermal, pressure → advective. `GST`, `DEWP`, `VIS`, `TIDE` — additional fields available but shown subset.
+CSV header: `#YY MM DD hh mm WDIR WSPD GST WVHT DPD APD MWD PRES ATMP WTMP DEWP VIS PTDY TIDE`. Units from the NDBC header line. Wind → advective, waves → acoustic, temperature → thermal, pressure → advective. τ = ttl/10.
 
 ### GOES X-Ray Flux
 ```
 url https://services.swpc.noaa.gov/json/goes/primary/xrays-1-day.json
 ttl 60
 at sun
-field flux em W/m2
+field flux em W/m2 6
 ```
 
-API response: `[{"time_tag":"...","satellite":"...","flux":1.23e-6,"energy":"..."}]`. Array-of-objects. `flux` key exists, value is in W/m2 (GOES XRS product spec). Force: EM. `time_tag`, `satellite`, `energy` dropped (timestamp, ID, metadata).
+Array-of-objects; `flux` in W/m2 (GOES XRS product spec). Force EM. `time_tag`, `satellite`, `energy` dropped (timestamp, ID, metadata).
 
 ### Seismic Portal (GeoJSON)
 ```
 url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&limit=100&minmagnitude=2.5&orderby=time&start={today}T00:00:00
 ttl 60
-body earth
+at earth
 map features
-lat geometry.coordinates.1 deg
-lon geometry.coordinates.0 deg
-field depth seismic-body km
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.depth seismic-body km 3600
 ```
 
-API response: GeoJSON FeatureCollection. `features[]` array. Per feature: `geometry.coordinates` = [lon, lat, depth(-km)]. Properties: `evid`, `time`, `mag`, `depth`, `flynn_region`, `evtype`, `auth`, `magtype`. Surviving fields: `depth` (km, seismic-body). Dropped: `mag` (dimensionless), `evid` (ID), `time` (timestamp), `flynn_region` (string), `evtype`/`auth`/`magtype` (metadata strings).
+GeoJSON FeatureCollection. Surviving field: `depth` (km, seismic-body, τ = 1 h — a hypocenter persists). Dropped: `mag` (dimensionless), `evid` (ID), `time` (timestamp), `flynn_region` (string).
 
 ### Celestial Catalog (Fermi 4FGL)
 ```
@@ -395,20 +447,19 @@ url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FO
 ttl 604800
 at sun
 cmap .
-ra ra deg
-dec dec deg
-plx default_plx mas
-field flux_1_100_gev em W/m2
-field energy_flux em W/m2
-field detection_significance diffusion scalar
+ra ra
+dec dec
+plx default_plx
+field flux_1_100_gev em W/m2 604800
+field energy_flux em W/m2 604800
 ```
 
-Position keys locate the source in ICRS. `flux_1_100_gev`, `energy_flux`: physical EM flux measurements. `detection_significance`: statistical test value (sigma) — dimensionless but physically grounded statistical measurement. Accept as `diffusion scalar` (it is a property of the detector noise distribution). `name`, `data_release`, `spectrum_type`, time fields — dropped.
+Position keys locate the source in ICRS. τ = ttl (stable catalog). `name`, `data_release`, `spectrum_type`, time fields — dropped.
 
 ## 8. Block Survival
 
-A block survives the migration if it has at least one `field` line (4-token)
-with a physical unit. Position alone is not enough — a point without a
+A block survives the migration if it has at least one `field` line (5/6/9-token)
+with a physical unit and τ > 0. Position alone is not enough — a point without a
 measurement is not an oscillator.
 
 Before dropping any block, research the API: does it return ANY numeric value
@@ -419,44 +470,54 @@ flux — if yes, keep it as a field measurement. If the API only returns metadat
 ## 9. Migration Algorithm (revised)
 
 ```
-for each block in sources.φ:
+for each block in the legacy corpus:
     url = block.url
-    fetch live API response
-    keep: url, ttl, at/on/body, map/cmap/rows, structural directives
-    drop: block-level force
+    fetch live API response (CDN-first; the CI Archivar mirrors every response)
+    keep: url, ttl, frame (at/on — REQUIRED, translate body/pos → at/on),
+          map/cmap/rows, structural directives
+    drop: block-level force (unless 3-token annotations remain)
 
-    for each field / last / path / first / last_row line:
+    for each field / first / last / lastrow / path line:
         key = extract_key_name(line)
         if key not in API response → DROP
         if key in dropped categories (RULE 3) → DROP
         unit = determine_unit(api_response, key_name_pattern)
         if unit == None → DROP
         force = assign_force(key, unit, block_force_hint)
-        if not allowed_units_for_force(force).contains(unit) → DROP
-        output: field <key> <force> <unit>
+        tau = declared τ, else ttl/10 (fast data) or ttl (stable data)
+        output: field <key> <force> <unit> <tau>
 
     for each field_in inside map/cmap/rows:
-        same filtering as above
-        if survives: output: field <key> <unit>  (3-token inside map)
+        same filtering; survivors become 5-token field lines after the
+        map/cmap/rows directive (3-token annotations do not manifest)
 
     for each *_key directive:
-        output: <keyword> <key> <unit>  (3-token)
+        output: <keyword> <key>   (2-token; units are fixed by physics)
 
     at <body> <scale> → at <body>  (drop scale)
-    pos <lat> <lon> [alt] [scale] → lat <lat> deg + lon <lon> deg [+ alt <alt> km]
+    pos <lat> <lon> [alt] [scale] → at/on frame + lat <lat> + lon <lon> [+ alt <alt>]
+    on … alt: convert km → m (parser expects meters)
 
-    if block has fields or position → write to sources_v2.φ
-    else → drop block entirely
+    if block has ≥1 manifesting field → write to phi/sources.φ
+    else → write to phi/dead_sources.φ with the decline reason
 ```
 
-## 10. Non-Goals
+## 10. Non-Goals & Known Parser Gaps
 
-This spec defines the canonical DATA FORMAT only. It does not define:
-- Parser implementation (separate session)
-- Extract variant unification (`first`→`field`, `last_row`→`field` — separate session)
-- SI conversion functions (separate session with parser update)
+This spec defines the canonical DATA FORMAT as the parser accepts it today.
+It does not define:
+- Extract variant unification (`first`→`field`, `lastrow`→`field` — separate session)
+- SI conversion functions (units are documentation slots; values pass through raw)
 - Anomaly reporting
-- CDN/live routing
+
+Directives that appear in legacy corpora but have **no parser arm** (writing
+them produces nothing): `body`, `pos`, `method`, `source`, `field_in`,
+`lat_key`/`lon_key`/`alt_key`, `z`, `extent`, `reach_ttl`, `note`, `tau`
+(as key directive), `force biotic`. Open parser work: a `z` redshift key on
+cmap, per-row τ override, SI conversion for `field` values and `vel` (m/s
+fixed today). Map rows without an `epoch` key anchor at fetch time; map rows
+without an `alt` key anchor at the surface datum (0 m); single-object
+responses iterate as one row.
 
 ## 11. Matrix Evolution (initial → complete)
 

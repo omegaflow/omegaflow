@@ -457,9 +457,9 @@ fn extract_granules(
             let et = mid_et + tau * granule_half_sec;
             match state_ssb(spk, target, et) {
                 Some([x, y, z, _, _, _]) => {
-                    samples_x.push(x);
-                    samples_y.push(y);
-                    samples_z.push(z);
+                    samples_x.push(x * 1000.0);
+                    samples_y.push(y * 1000.0);
+                    samples_z.push(z * 1000.0);
                 }
                 None => {
                     valid = false;

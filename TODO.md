@@ -4,7 +4,22 @@ AGENTS.md is the primary constraint matrix. Git is the history.
 
 ## Stand — 2026-08-11
 
-Körper sind Oszillatoren. τ-Gate in `anchor()`. `kernel_for_force` als Tabelle. 3 Höhe-0.0 eliminiert. 3 Eigenbewegung-0.0 eliminiert. 4 Epoche-"jetzt" eliminiert. `/crash` entfernt. `unwrap_or_default` ×2 eliminiert. Exzentrizitäts-Clamp entfernt. Probe-Koordinaten per `--lat`/`--lon`. Casts bereinigt. Force 8 in WGSL. Audio-Radiator safe. Device-τ lebt im Transit. Diverse Konstanten benannt. 16 Tests, 0/0/0.
+Serving-Pfad repariert (WS-Query-Doppellese, eph via `Buffer.eph`, BODY_REGISTRY stabil aus sources.φ, `cache_fresh` per mtime, `syncField`-ReferenceError, Consent-Race). Physik: TT−UTC 69.184 s, `fold_eff` mit max(0,·), km→m-Fix im ephemeris_compiler (→ U01). Sprache: `electric` = Force 8 (biotic entfernt), Map mit Single-Object/alt-Unit/epoch/vel/trk/vr/val, flush!-Vollreset, `on` alt optional. Probe kuratiert selbst-verifizierend (probe_output.φ / probe_dead.φ, UNCERTAIN-Markierung). Spec `docs/concepts/SOURCES_V2_SPEC.md` = Ist-Grammatik. Q01 relativistischer Beobachter eingebaut: Aberration + Doppler + D⁴-Beaming im Vertex-Shader, β = vPresence/c in den VP-Padding-Slots (right.w/up.w/forward.w); β=0 → Identität. 17 Tests, cargo check 0/0. Details: Git.
+
+---
+
+### Einheiten (1)
+
+**U01** ephemeris_compiler schrieb km-Granules — CDN-Ephemeriden neu manifestieren
+```
+ephemeris_compiler.rs:460 → samples_x.push(x * 1000.0);  (Fix im Code, Daten noch alt)
+/jump/earth → 1.136e8 (km-Skala)   /jump/iss → 1.136e11 (m-Skala, horizons_compiler)
+```
+Die BSP-basierten Binaries (sun, mercury…neptune, moon, Monde) auf dem CDN tragen km;
+horizons-basierte (iss, jwst, sonden, Kleinkörper) tragen m. main.rs rechnet durchgängig
+in m (radius_m, alt, c). Compiler ist gefixt (×1000 vor dem Fit) — die CI muss die
+ephemeris_*.bin neu kompilieren und auf `ssd.jpl.nasa.gov` re-uploaden; lokale
+/tmp/omegaflow_eph_*.bin danach verwerfen. Bis dahin stehen Planeten bei 1/1000 der Distanz.
 
 ---
 
@@ -230,8 +245,21 @@ ephemeris_compiler.rs:579 → body_id_to_name Tabelle
 - `archeology/foundation/collection.md` — curated collection state
 
 ### Code Hygiene
-- 3-part `field` form hardcodes `tau: 0.0` with no gate — main.rs:3735
 - Tau-Gate inkonsistent: 5-token/6-token prüfen `v > 0.0`, 9-token prüft nicht
+- `/crash`: index.html `reportState()` POSTet, Server kennt den Pfad nicht (404 + close)
+- Kamera: ~19k Pixel-Oszillatoren (4×4-Raster) → WS-Traffic-Hotspot
+- `sensor_config`/`probe_classify`-τ/TTL-Konstanten ohne Herleitung (60/300/0.01/3600)
+- `getRto` min/max 100/5000 ms — nicht 2ⁿ/Φ-hergeleitet (constants.js)
+- Probe: `coordinates.2` als `alt … km` — bei Seismik-Feeds ist es Tiefe (−km); Vorzeichen-Heuristik offen
+- CDN-Asset-Naming `{name}.json` (clobber) vs AGENTS-Konvention `{prefix}_{iso8601}.json`
+- Restliche strukturelle `unwrap_or` (String-Slicing): siehe F01–F24
+
+### Probe-Skalierung (300k URLs → kuratierte sources.φ)
+- URL-Listen-Ingest: eine URL pro Zeile → Default-Blöcke (ttl-Schätzung, Frame-Frage)
+- Rate-Limit pro Netloc (ttl/Φ), Blocklist für 403/404-Domains
+- Zweit-Fetch nach Δt → beobachtete Änderungsrate → ttl
+- `vel`-Unit-Konvertierung (m/s fest), `z`-Redshift-Key für cmap
+- UNCERTAIN-Felder: Review-Pass (Kybernaut) → Force/Unit-Zuweisung → Registry wächst
 
 ### Validation
 - `--verify` CLI exists (tests URL reachability), no sources loaded yet

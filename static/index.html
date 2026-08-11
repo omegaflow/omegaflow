@@ -123,7 +123,8 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
         let RX = window.innerWidth, RY = window.innerHeight;
         function windowQueries() {
             const [r, u] = orientationFrame();
-            const hx = RX * gridStep * 0.5, hy = RY * gridStep * 0.5;
+            const dpr = window.devicePixelRatio || 1;
+            const hx = RX * dpr * gridStep * 0.5, hy = RY * dpr * gridStep * 0.5;
             const corner = (sx, sy) => ({
                 t: tPresence,
                 x: xPresence + sx * hx * r[0] + sy * hy * u[0],
@@ -178,13 +179,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
                 gate.style.animation = `fadeIn ${fadeS}s ease forwards`;
                 function finish(stationFlow) {
                     localStorage.setItem('omegaflow.consent.stationFlow', stationFlow ? 'yes' : 'no');
-                    startAudio();
-                    if (stationFlow) {
-                        startMicrophone();
-                        startCamera();
-                        startXR();
-                        startHardware();
-                    }
+                    if (stationFlow) startHardware();
                     gate.style.animation = `fadeOut ${fadeS}s ease forwards`;
                     setTimeout(() => { gate.remove(); resolve({ stationFlow }); }, fadeS * 1000);
                 }
@@ -197,6 +192,12 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
         awaitConsent().then(({ stationFlow }) => {
             stationFlowConsented = stationFlow;
             if (!stationFlow) return;
+            startAudio();
+            startMicrophone();
+            startCamera();
+            startXR();
+            registerHardwareSurfaces();
+            registerDeviceSensors();
             if (navigator.geolocation) {
                 navigator.geolocation.watchPosition((pos) => {
                     const c = pos.coords;
@@ -275,6 +276,7 @@ fn fold_eff(d_mag: f32, raw: f32, t: f32, ttl: f32, force_type: u32, advective_v
     let v = select(v_const, advective_v, force_type == 7u && advective_v > 0.0);
     let temporal = abs(vp.presence.w - t);
     let retarded = select(temporal - d_mag / v, temporal, v == 0.0 || d_mag == 0.0);
+    retarded = max(retarded, 0.0);
     return raw * exp(-retarded / max(ttl, 1e-9));
 }
 @group(0) @binding(0) var<storage, read> field: array<vec4f>;
@@ -320,7 +322,22 @@ fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
     );
 
     let m = field[id * 3u];
-    let d = m.xyz;
+    var d = m.xyz;
+    let beta = vec3f(vp.right.w, vp.up.w, vp.forward.w);
+    let b2 = dot(beta, beta);
+    var dopp = 1.0;
+    let d_mag0 = length(d);
+    if (b2 > 1e-12 && d_mag0 > 0.0) {
+        let gamma = 1.0 / sqrt(max(1.0 - b2, 1e-9));
+        let n_hat = d / d_mag0;
+        let nb = dot(n_hat, beta);
+        dopp = gamma * (1.0 + nb);
+        let bmag = sqrt(b2);
+        let bhat = beta / bmag;
+        let nbh = dot(n_hat, bhat);
+        let n_prime = (n_hat + ((gamma - 1.0) * nbh + gamma * bmag) * bhat) / (gamma * (1.0 + nb));
+        d = n_prime * d_mag0;
+    }
     let val = m.w;
     let tm = field[id * 3u + 1u];
     let fm = field[id * 3u + 2u];
@@ -358,8 +375,8 @@ fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
     let hue_center = fract(log2(max(tau, 1.0)) / 16.0 + f32(k_id) * 0.125);
     let tau_freq = 1.0 / max(tau, exp2(-32.0));
     let color_shift = clamp(log2(tau_freq) / 8.0, -0.25, 0.25);
-    let hue = fract(hue_center + color_shift + f32(u32(tm.z)) / 9.0);
-    let lum = clamp(log2(abs(fold_eff(d_mag, val, tm.x, tm.y, u32(tm.z), fm.x)) + 1.0) / log2(lvl + 1.0), 0.0, 1.0);
+    let hue = fract(hue_center + color_shift + f32(u32(tm.z)) / 9.0 + log2(dopp) * 0.125);
+    let lum = clamp(log2(abs(fold_eff(d_mag, val, tm.x, tm.y, u32(tm.z), fm.x)) * pow(dopp, 4.0) + 1.0) / log2(lvl + 1.0), 0.0, 1.0);
     let rgb = hsl_to_rgb(hue, DISPLAY_GAMUT_SATURATION, lum);
     out.color = rgb;
     out.force_type = u32(tm.z);
@@ -576,8 +593,8 @@ fn presence_probe() {
                 await gpu.queue.onSubmittedWorkDone();
                 await probeRead.mapAsync(GPUMapMode.READ);
                 const data = new Float32Array(probeRead.getMappedRange());
-                probedOmegas = [data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7]];
-                probedOmega = data[0] + data[1] + data[2] + data[3] + data[4] + data[5] + data[6] + data[7];
+                probedOmegas = [data[0], data[1], data[2], data[3], data[4], data[5], data[6]];
+                probedOmega = data[0] + data[1] + data[2] + data[3] + data[4] + data[5] + data[6];
                 probeRead.unmap();
             } catch { console.warn('position stream empty'); } finally { probePending = false; }
         }
@@ -636,7 +653,7 @@ fn presence_probe() {
             const lvls = new Float32Array(7);
             for (let i = 0; i < 7; i++) lvls[i] = Math.max(kernelExpose[i], Math.pow(2, -10)) / boost;
             try {
-                gpu.queue.writeBuffer(vpBuf, 0, new Float32Array([evalW, evalH, n, gridStep, fr[0], fr[1], fr[2], 0, fu[0], fu[1], fu[2], 0, ff[0], ff[1], ff[2], 0, lvls[0], lvls[1], lvls[2], lvls[3], lvls[4], lvls[5], lvls[6], 0, xPresence, yPresence, zPresence, tPresence]));
+                gpu.queue.writeBuffer(vpBuf, 0, new Float32Array([evalW, evalH, n, gridStep, fr[0], fr[1], fr[2], vPresence[0] / C, fu[0], fu[1], fu[2], vPresence[1] / C, ff[0], ff[1], ff[2], vPresence[2] / C, lvls[0], lvls[1], lvls[2], lvls[3], lvls[4], lvls[5], lvls[6], 0, xPresence, yPresence, zPresence, tPresence]));
                 const encoder = gpu.createCommandEncoder();
                 const pass = encoder.beginRenderPass({ colorAttachments: [{ view: fieldCtx.getCurrentTexture().createView(), clearValue: { r: 0, g: 0, b: 0, a: 1 }, loadOp: 'clear', storeOp: 'store' }] });
                 pass.setPipeline(fieldPipe);
@@ -689,7 +706,8 @@ fn presence_probe() {
         let fieldCount = 0;
         const cachedFref = new Float64Array(7);
         async function syncField(transmitList, queries) {
-            const response = await syncFrame(transmitList, queries, { x: xPresence, y: yPresence, z: zPresence, t: tPresence, range: Math.max(evalW, evalH) * gridStep * 2 });
+            const dpr = window.devicePixelRatio || 1;
+            const response = await syncFrame(transmitList, queries, { x: xPresence, y: yPresence, z: zPresence, t: tPresence, range: Math.max(RX, RY) * dpr * gridStep * 2 });
             rawWindowResponse = response || rawWindowResponse;
         }
 
@@ -744,7 +762,7 @@ fn presence_probe() {
                             const { value: frame, done } = await reader.read();
                             if (done) break;
                             try {
-                                if (track.kind === 'video' && typeof frame.createImageBitmap === 'function') {
+                                if (track.kind === 'video' && typeof createImageBitmap === 'function') {
                                     const bmp = await createImageBitmap(frame);
                                     c2d.canvas.width = bmp.width; c2d.canvas.height = bmp.height;
                                     c2d.drawImage(bmp, 0, 0);
@@ -872,7 +890,7 @@ fn presence_probe() {
                 }
             });
         }
-        if (stationFlowConsented) {
+        function registerHardwareSurfaces() {
             if (navigator.serial) {
                 registerOscillator('navigator.serial.channel.tx', Number.EPSILON, 0);
                 surfaces.push({
@@ -1152,7 +1170,7 @@ fn presence_probe() {
             }
             requestAnimationFrame(ω);
         }
-        if (stationFlowConsented) {
+        function registerDeviceSensors() {
             const sensorNames = ['Accelerometer', 'Gyroscope', 'Magnetometer', 'AmbientLightSensor', 'LinearAccelerationSensor', 'GravitySensor'];
             for (const name of sensorNames) {
                 if (typeof window[name] !== 'undefined') {
