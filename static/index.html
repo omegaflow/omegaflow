@@ -47,7 +47,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
         let exposureBoost = 4.0;
         let debugFontF = 1.0;
         let debugFontCnt = 0;
-        const kernelExpose = new Float64Array([1e-8, 1e-8, 1e-8, 1e-8, 1e-8, 1e-8, 1e-8]);
+        const kernelExpose = new Float64Array([1e-8, 1e-8, 1e-8, 1e-8, 1e-8, 1e-8, 1e-8, 1e-8, 1e-8]);
         let lastQueryX = 0, lastQueryY = 0, lastQueryZ = 0, lastQueryStep = 0, lastQueryTs = -1e9;
         let xPresence = 0, yPresence = 0, zPresence = 0;
         let audioCtx = null;
@@ -257,7 +257,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
         });
         
         const fieldShader = `
-struct VP { surface: vec4f, right: vec4f, up: vec4f, forward: vec4f, expose_lo: vec4f, expose_hi: vec4f, presence: vec4f };
+struct VP { surface: vec4f, right: vec4f, up: vec4f, forward: vec4f, expose_lo: vec4f, expose_hi: vec4f, expose_ex: vec4f, presence: vec4f };
 const C_VACUUM: f32 = 299792458.0;
 const AUDIO_SPEED_AIR: f32 = 343.0;
 const PROPAGATION_SPEED: array<f32, 9> = array<f32, 9>(
@@ -266,9 +266,9 @@ const PROPAGATION_SPEED: array<f32, 9> = array<f32, 9>(
     AUDIO_SPEED_AIR,
     6000.0,
     3000.0,
-    0.0,
-    0.0,
-    0.0,
+    0.3,
+    0.05,
+    1.0,
     C_VACUUM,
 );
 fn fold_eff(d_mag: f32, raw: f32, t: f32, ttl: f32, force_type: u32, advective_v: f32) -> f32 {
@@ -367,11 +367,11 @@ fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
     out.uv = quad[vid];
 
     let k_id = u32(mt.z);
+    let ft = u32(tm.z);
     out.kernel_id = k_id;
     out.absorption = f32(tm.w);
     out.advection = fm.x;
-    var lvl = vp.expose_lo[min(k_id, 3u)];
-    if (k_id >= 4u && k_id < 7u) { lvl = vp.expose_hi[k_id - 4u]; }
+    var lvl = get_expose(ft);
     if (lvl <= 0.0) { return out; }
 
     let hue_center = fract(log2(max(tau, 1.0)) / 16.0 + f32(k_id) * 0.125);
@@ -383,6 +383,16 @@ fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
     out.color = rgb;
     out.force_type = u32(tm.z);
     return out;
+}
+
+fn get_expose(ft: u32) -> f32 {
+    if (ft < 4u) {
+        return vp.expose_lo[ft];
+    } else if (ft < 8u) {
+        return vp.expose_hi[ft - 4u];
+    } else {
+        return vp.expose_ex[ft - 8u];
+    }
 }
 
 fn erfc(x: f32) -> f32 {
@@ -543,7 +553,7 @@ fn presence_probe() {
                     });
                     probeBuf = device.createBuffer({ size: 32, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC });
                     probeRead = device.createBuffer({ size: 32, usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.COPY_DST });
-                    vpBuf = device.createBuffer({ size: 112, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
+                    vpBuf = device.createBuffer({ size: 128, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
                     gpu = device;
                 } catch (e) { gpu = null; gpuStatus = 'WebGPU: absent (' + String(e) + ')'; reportState('gpu', String(e)); }
             })();
@@ -626,19 +636,19 @@ fn presence_probe() {
                 lastFoldResp = rawWindowResponse;
                 const raw = rawWindowResponse.field;
                 const rawm = rawWindowResponse.meta;
-                const fref = new Float64Array(7);
-                const kid_vals = [[], [], [], [], [], [], []];
+                const fref = new Float64Array(9);
+                const ft_vals = [[], [], [], [], [], [], [], [], []];
                 for (let i = 0; i < n; i++) {
-                    const kid = rawm[i * 4 + 2] | 0;
-                    if (kid < 7) {
+                    const ft = raw[i * 8 + 6] | 0;
+                    if (ft < 9) {
                         const av = Math.abs(raw[i * 8 + 3]);
-                        if (av > 0 && isFinite(av)) kid_vals[kid].push(av);
+                        if (av > 0 && isFinite(av)) ft_vals[ft].push(av);
                     }
                 }
-                for (let k = 0; k < 7; k++) {
-                    if (kid_vals[k].length > 0) {
-                        kid_vals[k].sort((a, b) => Math.log10(Math.max(a, 1e-30)) - Math.log10(Math.max(b, 1e-30)));
-                        cachedFref[k] = kid_vals[k][kid_vals[k].length >> 1];
+                for (let k = 0; k < 9; k++) {
+                    if (ft_vals[k].length > 0) {
+                        ft_vals[k].sort((a, b) => Math.log10(Math.max(a, 1e-30)) - Math.log10(Math.max(b, 1e-30)));
+                        cachedFref[k] = ft_vals[k][ft_vals[k].length >> 1];
                     }
                 }
                 try {
@@ -648,17 +658,17 @@ fn presence_probe() {
                 } catch { uploadErrors++; }
             }
             const relax = 1 - Math.exp(-dt / Φ);
-            for (let i = 0; i < 7; i++) kernelExpose[i] += (cachedFref[i] - kernelExpose[i]) * relax;
+            for (let i = 0; i < 9; i++) kernelExpose[i] += (cachedFref[i] - kernelExpose[i]) * relax;
             const dpr = window.devicePixelRatio || 1;
             const evalW = Math.floor(RX * dpr);
             const evalH = Math.floor(RY * dpr);
             if (fieldCanvas.width !== evalW || fieldCanvas.height !== evalH) { fieldCanvas.width = evalW; fieldCanvas.height = evalH; }
             const [fr, fu, ff] = orientationFrame();
             const boost = Math.pow(2, exposureBoost);
-            const lvls = new Float32Array(7);
-            for (let i = 0; i < 7; i++) lvls[i] = Math.max(kernelExpose[i], Math.pow(2, -10)) / boost;
+            const lvls = new Float32Array(9);
+            for (let i = 0; i < 9; i++) lvls[i] = Math.max(kernelExpose[i], Math.pow(2, -10)) / boost;
             try {
-                gpu.queue.writeBuffer(vpBuf, 0, new Float32Array([evalW, evalH, n, gridStep, fr[0], fr[1], fr[2], vPresence[0] / C, fu[0], fu[1], fu[2], vPresence[1] / C, ff[0], ff[1], ff[2], vPresence[2] / C, lvls[0], lvls[1], lvls[2], lvls[3], lvls[4], lvls[5], lvls[6], 0, xPresence, yPresence, zPresence, tPresence]));
+                gpu.queue.writeBuffer(vpBuf, 0, new Float32Array([evalW, evalH, n, gridStep, fr[0], fr[1], fr[2], vPresence[0] / C, fu[0], fu[1], fu[2], vPresence[1] / C, ff[0], ff[1], ff[2], vPresence[2] / C, lvls[0], lvls[1], lvls[2], lvls[3], lvls[4], lvls[5], lvls[6], lvls[7], lvls[8], 0, 0, 0, xPresence, yPresence, zPresence, tPresence]));
                 const encoder = gpu.createCommandEncoder();
                 const pass = encoder.beginRenderPass({ colorAttachments: [{ view: fieldCtx.getCurrentTexture().createView(), clearValue: { r: 0, g: 0, b: 0, a: 1 }, loadOp: 'clear', storeOp: 'store' }] });
                 pass.setPipeline(fieldPipe);
@@ -709,7 +719,7 @@ fn presence_probe() {
         let uploadCount = 0, uploadErrors = 0;
         let lastFoldResp = null;
         let fieldCount = 0;
-        const cachedFref = new Float64Array(7);
+        const cachedFref = new Float64Array(9);
         async function syncField(transmitList, queries) {
             const dpr = window.devicePixelRatio || 1;
             const response = await syncFrame(transmitList, queries, { x: xPresence, y: yPresence, z: zPresence, t: tPresence, range: Math.max(RX, RY) * dpr * gridStep * 2 });
@@ -1283,7 +1293,7 @@ fn presence_probe() {
             else if (e.key === 'E') { exposureBoost = Math.max(exposureBoost - 1.0 / Φ, -8); e.preventDefault(); }
         });
         const stationJumps = (() => {
-            const jumps = { '0': { target: 'ssb', grid: Math.pow(2, 54) } };
+            const jumps = {};
             let key = 1;
             for (const id in BODY_REGISTRY) {
                 if (key > 9) break;

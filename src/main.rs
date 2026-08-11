@@ -103,6 +103,7 @@ fn parse_ephemeris_binary(data: &[u8]) -> Option<BodyEphemeris> {
     let mut granules = Vec::new();
     let mut rotation_matrices = Vec::new();
     let mut props = None;
+    let mut has_stype2 = false;
     for _ in 0..section_count {
         if pos + 24 > data.len() {
             break;
@@ -139,6 +140,7 @@ fn parse_ephemeris_binary(data: &[u8]) -> Option<BodyEphemeris> {
             continue;
         }
         if stype == 2 {
+            has_stype2 = true;
             let f = |i: usize| -> f64 {
                 let mut buf = [0u8; 8];
                 buf.copy_from_slice(&data[pos + i * 8..pos + i * 8 + 8]);
@@ -209,6 +211,9 @@ fn parse_ephemeris_binary(data: &[u8]) -> Option<BodyEphemeris> {
             pos += gs * 8;
         }
     }
+    if props.is_some() && !has_stype2 {
+        return None;
+    }
     if granules.is_empty() {
         None
     } else {
@@ -266,17 +271,7 @@ fn body_fixed_to_icrs(
             .rotation_matrices
             .iter()
             .filter(|(t, _)| t.is_finite())
-            .min_by(|a, b| {
-                let da = (jd - a.0).abs();
-                let db = (jd - b.0).abs();
-                if da < db {
-                    std::cmp::Ordering::Less
-                } else if da > db {
-                    std::cmp::Ordering::Greater
-                } else {
-                    std::cmp::Ordering::Equal
-                }
-            })
+            .min_by(|a, b| (jd - a.0).abs().total_cmp(&(jd - b.0).abs()))
             .map(|(_, m)| m)?;
         let xi = rot_m[0] * xb + rot_m[1] * yb + rot_m[2] * zb;
         let yi = rot_m[3] * xb + rot_m[4] * yb + rot_m[5] * zb;
@@ -320,17 +315,7 @@ fn icrs_to_body_surface(
             .rotation_matrices
             .iter()
             .filter(|(t, _)| t.is_finite())
-            .min_by(|a, b| {
-                let da = (jd - a.0).abs();
-                let db = (jd - b.0).abs();
-                if da < db {
-                    std::cmp::Ordering::Less
-                } else if da > db {
-                    std::cmp::Ordering::Greater
-                } else {
-                    std::cmp::Ordering::Equal
-                }
-            })
+            .min_by(|a, b| (jd - a.0).abs().total_cmp(&(jd - b.0).abs()))
             .map(|(_, m)| m)?;
         let xt = rot_m[0] * rx + rot_m[3] * ry + rot_m[6] * rz;
         let yt = rot_m[1] * rx + rot_m[4] * ry + rot_m[7] * rz;
@@ -1591,9 +1576,7 @@ fn jcount(json: &JsonVal, path: &str) -> Option<f64> {
 }
 
 fn jlast(json: &JsonVal, key: &str) -> Option<f64> {
-    if key.contains('.') {
-        let target_path = key.rsplit_once('.').map(|(p, _)| p).unwrap_or("");
-        let final_key = key.rsplit_once('.').map(|(_, k)| k).unwrap_or(key);
+    if let Some((target_path, final_key)) = key.rsplit_once('.') {
         let parent = if target_path.is_empty() {
             json
         } else {
@@ -1627,8 +1610,7 @@ fn jlast(json: &JsonVal, key: &str) -> Option<f64> {
 }
 
 fn jfirst(json: &JsonVal, key: &str) -> Option<f64> {
-    if key.contains('.') {
-        let (prefix, final_key) = key.rsplit_once('.').unwrap_or(("", key));
+    if let Some((prefix, final_key)) = key.rsplit_once('.') {
         let parent = if prefix.is_empty() {
             json
         } else {
@@ -1712,7 +1694,12 @@ fn text_last_col(data: &str, col: &str) -> Option<f64> {
         if trimmed.is_empty() {
             continue;
         }
-        let stripped = trimmed.strip_prefix('#').unwrap_or(trimmed).trim();
+        let stripped = (if let Some(s) = trimmed.strip_prefix('#') {
+            s
+        } else {
+            trimmed
+        })
+        .trim();
         let cols = split_data_line(stripped);
         if header_idx.is_none() {
             if let Some(idx) = cols
@@ -1730,11 +1717,7 @@ fn text_last_col(data: &str, col: &str) -> Option<f64> {
         let trimmed = line.trim();
         if trimmed.is_empty()
             || trimmed.starts_with('#')
-            || trimmed
-                .chars()
-                .next()
-                .map(|c| c.is_alphabetic())
-                .unwrap_or(false)
+            || trimmed.chars().next().is_some_and(|c| c.is_alphabetic())
         {
             continue;
         }
@@ -1763,10 +1746,15 @@ fn extract_regex_val(body: &str, pat: &str) -> Option<f64> {
         let p = body.find(prefix)?;
         let r = &body[p + prefix.len()..];
         let e = if suffix.is_empty() {
-            r.find(|c: char| c.is_whitespace() || c == '<' || c == '"')
-                .unwrap_or(r.len())
+            match r.find(|c: char| c.is_whitespace() || c == '<' || c == '"') {
+                Some(pos) => pos,
+                None => r.len(),
+            }
         } else {
-            r.find(suffix).unwrap_or(r.len())
+            match r.find(suffix) {
+                Some(pos) => pos,
+                None => r.len(),
+            }
         };
         return r[..e].trim().parse::<f64>().ok();
     }
@@ -2115,10 +2103,13 @@ fn kernel_id_of(name: &str) -> Option<u8> {
     }
 }
 
-const FORCE_KERNEL: [u8; 9] = [0, 0, 1, 1, 1, 3, 3, 1, 1];
-
 fn kernel_for_force(force: u8) -> Option<u8> {
-    FORCE_KERNEL.get(force as usize).copied()
+    match force {
+        0 | 1 => Some(0),
+        2 | 3 | 4 | 7 | 8 => Some(1),
+        5 | 6 => Some(3),
+        _ => None,
+    }
 }
 
 fn extract_fields(ext: &Extract) -> &[FieldConfig] {
@@ -2459,9 +2450,8 @@ impl Radiator for AudioRadiator {
                     if !s.tau.is_finite() {
                         continue;
                     }
-                    let tau_u32 = (s.tau as u64).min(u32::MAX as u64) as u32;
                     let amp = (s.val as f32).clamp(0.0, 1.0);
-                    let dur = tau_u32.min(self.sample_rate);
+                    let dur = (s.tau as f32 * self.sample_rate as f32).max(1.0) as u32;
                     let freq = SONIFICATION_ROOT_FREQ
                         + s.kernel_id as f32 * SONIFICATION_KERNEL_STEP
                         + s.force_type as f32 * SONIFICATION_FORCE_STEP;
@@ -3001,6 +2991,10 @@ fn handle_ingress(stream: TcpStream, cfg: WsConfig) {
                     page.extend_from_slice(extra.as_bytes());
                     emit(&mut s, "200 OK", "application/javascript", &page);
                 }
+                "/crash" => {
+                    emit(&mut s, "200 OK", "text/plain", &[]);
+                    break;
+                }
                 _ => {
                     emit_void(&mut s);
                     break;
@@ -3331,7 +3325,8 @@ fn is_leap(y: u32) -> bool {
     (y % 4 == 0 && y % 100 != 0) || y % 400 == 0
 }
 
-fn load_env() {
+fn load_env() -> HashMap<String, String> {
+    let mut env: HashMap<String, String> = std::env::vars().collect();
     for name in &[".env", ".secrets.local"] {
         if let Ok(content) = std::fs::read_to_string(resolve_asset(name)) {
             for line in content.lines() {
@@ -3340,20 +3335,19 @@ fn load_env() {
                     continue;
                 }
                 if let Some(eq) = line.find('=') {
-                    let key = line[..eq].trim();
-                    let val = line[eq + 1..].trim();
-                    if std::env::var(key).is_err() {
-                        unsafe {
-                            std::env::set_var(key, val);
-                        }
+                    let key = line[..eq].trim().to_string();
+                    let val = line[eq + 1..].trim().to_string();
+                    if !env.contains_key(&key) {
+                        env.insert(key, val);
                     }
                 }
             }
         }
     }
+    env
 }
 
-fn resolve_secret(url: &str) -> String {
+fn resolve_secret(url: &str, env: &HashMap<String, String>) -> String {
     let mut result = String::with_capacity(url.len());
     let mut rest = url;
     while let Some(start) = rest.find('{') {
@@ -3362,11 +3356,8 @@ fn resolve_secret(url: &str) -> String {
         if let Some(end) = rest.find('}') {
             let key = &rest[..end];
             let upper = key.to_uppercase();
-            match std::env::var(key)
-                .ok()
-                .or_else(|| std::env::var(&upper).ok())
-            {
-                Some(val) => result.push_str(&val),
+            match env.get(key).or_else(|| env.get(&upper)) {
+                Some(val) => result.push_str(val),
                 None => eprintln!("env marker {{{}}} absent — substituting void", key),
             }
             rest = &rest[end + 1..];
@@ -4176,9 +4167,8 @@ fn parse_sources(content: &str) -> Vec<SourceConfig> {
 }
 
 fn parse_path(s: &str) -> String {
-    let fl = match s.lines().next() {
-        Some(l) => l,
-        None => "",
+    let Some(fl) = s.lines().next() else {
+        return "/".to_string();
     };
     let p: Vec<&str> = fl.split_whitespace().collect();
     if p.len() >= 2 {
@@ -4435,6 +4425,7 @@ fn render_source_url(
     tdb: f64,
     r: f64,
     eph: &HashMap<String, BodyEphemeris>,
+    env: &HashMap<String, String>,
 ) -> String {
     let mut url = render_url(&src.url, x, y, z, tdb, r, &frame_body_name(&src.frame), eph);
     if let Some(ref t) = src.target {
@@ -4512,7 +4503,7 @@ fn render_source_url(
             }
         }
     }
-    resolve_secret(&url)
+    resolve_secret(&url, env)
 }
 
 fn render_source_body(
@@ -4672,9 +4663,13 @@ fn extract(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
     let effective_extracts: &[Extract] = if src.format == "universal" && src.extracts.is_empty() {
         if let Some(ref j) = parsed_json {
             auto_extracts = Some(universal_auto_detect(j));
-            auto_extracts.as_ref().map(|v| v.as_slice()).unwrap_or(&[])
+            if let Some(ref auto) = auto_extracts {
+                auto.as_slice()
+            } else {
+                return ExtractResult::Measurements(vec![]);
+            }
         } else {
-            &[]
+            return ExtractResult::Measurements(vec![]);
         }
     } else {
         &src.extracts
@@ -5458,7 +5453,12 @@ fn extract(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                                     if t.is_empty() {
                                         continue;
                                     }
-                                    let s = t.strip_prefix('#').unwrap_or(t).trim();
+                                    let s = (if let Some(u) = t.strip_prefix('#') {
+                                        u
+                                    } else {
+                                        t
+                                    })
+                                    .trim();
                                     if let Some(idx) = split_data_line(s).iter().position(|c| {
                                         c.eq_ignore_ascii_case(&fc.key) || c.starts_with(&fc.key)
                                     }) {
@@ -6138,17 +6138,26 @@ fn extract_netloc(url: &str) -> Option<&str> {
         .strip_prefix("https://")
         .or_else(|| url.strip_prefix("http://"))?;
     let netloc = after.split('/').next()?;
-    Some(netloc.strip_prefix("www.").unwrap_or(netloc))
+    Some(if let Some(s) = netloc.strip_prefix("www.") {
+        s
+    } else {
+        netloc
+    })
 }
 
 fn source_name_from_url(url: &str) -> String {
-    let without_scheme = url
-        .strip_prefix("https://")
-        .unwrap_or(url)
-        .strip_prefix("http://")
-        .unwrap_or(url)
-        .strip_prefix("www.")
-        .unwrap_or(url);
+    let s1 = match url.strip_prefix("https://") {
+        Some(s) => s,
+        None => url,
+    };
+    let s2 = match s1.strip_prefix("http://") {
+        Some(s) => s,
+        None => s1,
+    };
+    let without_scheme = match s2.strip_prefix("www.") {
+        Some(s) => s,
+        None => s2,
+    };
     let after_domain: Vec<&str> = without_scheme.splitn(2, '/').collect();
     if after_domain.len() < 2 {
         return "index.json".to_string();
@@ -6178,7 +6187,7 @@ fn source_name_from_url(url: &str) -> String {
     }
 }
 
-fn probe_mode(path: &str, precise: bool, lat: f64, lon: f64) -> i32 {
+fn probe_mode(path: &str, precise: bool, lat: f64, lon: f64, env: &HashMap<String, String>) -> i32 {
     let content = match std::fs::read_to_string(path) {
         Ok(c) => c,
         Err(e) => {
@@ -6202,7 +6211,7 @@ fn probe_mode(path: &str, precise: bool, lat: f64, lon: f64) -> i32 {
         let url = render_url(&src.url, 0.0, 0.0, 0.0, now, 0.0, "", &void_eph)
             .replace("{lat}", &format!("{:.6}", lat))
             .replace("{lon}", &format!("{:.6}", lon));
-        let url = resolve_secret(&url);
+        let url = resolve_secret(&url, env);
         let url = url.replace("ZZ", "Z").replace("  ", " ");
         let raw = fetch_raw(&url, None, &[], src.ttl);
         let parsed = raw.as_ref().and_then(|r| parse_json(r));
@@ -6346,14 +6355,17 @@ fn extract_all_template_values(
         let val_end = if next_part.is_empty() {
             let next_const = parts[idx + 2..].iter().find(|p| !p.is_empty());
             match next_const {
-                Some(nc) => sub[pos..].find(nc).map(|p| pos + p).unwrap_or(sub.len()),
+                Some(nc) => match sub[pos..].find(nc) {
+                    Some(p) => pos + p,
+                    None => sub.len(),
+                },
                 None => sub.len(),
             }
         } else {
-            sub[pos..]
-                .find(next_part)
-                .map(|p| pos + p)
-                .unwrap_or(sub.len())
+            match sub[pos..].find(next_part) {
+                Some(p) => pos + p,
+                None => sub.len(),
+            }
         };
         let val_str = &sub[pos..val_end];
         values.insert(marker.to_string(), val_str.to_string());
@@ -6578,7 +6590,12 @@ fn probe_csv(raw: &str) -> Option<String> {
     let first_header = raw.lines().find_map(|line| {
         let trimmed = line.trim();
         if trimmed.starts_with('#') {
-            let stripped = trimmed.strip_prefix('#').unwrap_or(trimmed).trim();
+            let stripped = (if let Some(s) = trimmed.strip_prefix('#') {
+                s
+            } else {
+                trimmed
+            })
+            .trim();
             if !stripped.is_empty() {
                 return Some(stripped);
             }
@@ -7140,7 +7157,7 @@ fn load_all_sources(dir: &str) -> Vec<SourceConfig> {
             if p.is_dir() {
                 let path_str = p.to_string_lossy().to_string();
                 sources.extend(load_all_sources(&path_str));
-            } else if p.extension().map(|x| x == "φ").unwrap_or(false) {
+            } else if p.extension().is_some_and(|x| x == "φ") {
                 if let Ok(content) = std::fs::read_to_string(&p) {
                     sources.extend(load_sources_from(&content));
                 }
@@ -7303,7 +7320,7 @@ fn ci_mode(dir: &str) -> i32 {
 }
 
 fn main() {
-    load_env();
+    let env = Arc::new(load_env());
     {
         let args: Vec<String> = std::env::args().collect();
         if args.len() > 1 && args[1] == "--verify" {
@@ -7325,8 +7342,8 @@ fn main() {
                 }
             };
             let precise = args.iter().any(|a| a == "--precise");
-            let mut lat = 35.0;
-            let mut lon = 139.0;
+            let mut lat = 0.0;
+            let mut lon = 0.0;
             let mut i = 2;
             while i < args.len() {
                 if args[i] == "--lat" {
@@ -7342,7 +7359,7 @@ fn main() {
                 }
                 i += 1;
             }
-            std::process::exit(probe_mode(path, precise, lat, lon));
+            std::process::exit(probe_mode(path, precise, lat, lon, &env));
         }
     }
     let loaded = load_sources();
@@ -7559,6 +7576,7 @@ fn main() {
             let ftx = fetch_tx.clone();
             let src_clone = archive.sources[i].clone();
             let eph_arc = archive.body_ephemerides.clone();
+            let e = env.clone();
             let src_idx = i;
             archive.origins.entry(origin).or_insert(OriginState {
                 fetched: now,
@@ -7569,7 +7587,7 @@ fn main() {
                 has_prev: false,
             });
             thread::spawn(move || {
-                let url = render_source_url(&src_clone, pos.0, pos.1, pos.2, now, r, &eph_arc);
+                let url = render_source_url(&src_clone, pos.0, pos.1, pos.2, now, r, &eph_arc, &e);
                 let body = render_source_body(&src_clone, pos.0, pos.1, pos.2, now, r, &eph_arc);
                 let raw = fetch_one(&url, body.as_deref(), &src_clone.headers, src_clone.ttl);
                 let channels = match raw {
@@ -7662,7 +7680,10 @@ fn horizons_nums(line: &str, keys: [&str; 3]) -> Option<[f64; 3]> {
     for (i, k) in keys.iter().enumerate() {
         let p = line.find(k)?;
         let r = line[p + k.len()..].trim_start_matches(|c: char| c == '=' || c == ' ' || c == '\t');
-        let end = r.find(|c: char| c.is_whitespace()).unwrap_or(r.len());
+        let end = match r.find(|c: char| c.is_whitespace()) {
+            Some(pos) => pos,
+            None => r.len(),
+        };
         out[i] = r[..end].parse().ok()?;
     }
     Some(out)
@@ -8366,7 +8387,7 @@ mod tests {
         let mut ok = 0usize;
         let mut empty: Vec<(String, String)> = Vec::new();
         let mut limit = 600usize;
-        super::load_env();
+        let env = super::load_env();
         for s in srcs.iter() {
             let mut url = s.url.clone();
             for (k, v) in [
@@ -8394,7 +8415,7 @@ mod tests {
             ] {
                 url = url.replace(k, v);
             }
-            url = super::resolve_secret(&url);
+            url = super::resolve_secret(&url, &env);
             if url.starts_with("https://github.com/omegaflow/sources") {
                 continue;
             }
