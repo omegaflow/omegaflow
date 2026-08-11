@@ -5645,7 +5645,7 @@ fn source_name_from_url(url: &str) -> String {
         .collect()
 }
 
-fn probe_mode(path: &str) -> i32 {
+fn probe_mode(path: &str, precise: bool) -> i32 {
     let content = match std::fs::read_to_string(path) {
         Ok(c) => c,
         Err(e) => {
@@ -5743,6 +5743,9 @@ fn probe_mode(path: &str) -> i32 {
         } else {
             out.push_str("# fetch returned void\n");
         }
+        if precise && raw.is_some() {
+            out.push_str(&bruteforce_precision(&url, &src.url, ttl));
+        }
         out.push('\n');
     }
     std::fs::write("probe_output.φ", &out).ok();
@@ -5750,6 +5753,120 @@ fn probe_mode(path: &str) -> i32 {
     0
 }
 
+fn extract_all_template_values(
+    substituted_url: &str,
+    template_url: &str,
+) -> HashMap<String, String> {
+    let mut values = HashMap::new();
+    let bytes = template_url.as_bytes();
+    let mut markers: Vec<(usize, usize, &str)> = Vec::new();
+    let mut i = 0;
+    while i < bytes.len() {
+        if bytes[i] == b'{' {
+            let start = i;
+            while i < bytes.len() && bytes[i] != b'}' {
+                i += 1;
+            }
+            if i < bytes.len() {
+                i += 1;
+                if let Ok(marker) = std::str::from_utf8(&bytes[start..i]) {
+                    markers.push((start, i, marker));
+                }
+            }
+        } else {
+            i += 1;
+        }
+    }
+    let mut parts: Vec<&str> = Vec::new();
+    let mut prev_end = 0;
+    for &(start, end, _) in &markers {
+        parts.push(&template_url[prev_end..start]);
+        prev_end = end;
+    }
+    parts.push(&template_url[prev_end..]);
+    let sub = substituted_url;
+    let mut pos = 0;
+    for idx in 0..markers.len() {
+        let part = parts[idx];
+        if !part.is_empty() {
+            match sub[pos..].find(part) {
+                Some(offset) => pos += offset + part.len(),
+                None => break,
+            }
+        }
+        let marker = markers[idx].2;
+        let next_part = parts[idx + 1];
+        let val_end = if next_part.is_empty() {
+            let next_const = parts[idx + 2..].iter().find(|p| !p.is_empty());
+            match next_const {
+                Some(nc) => sub[pos..].find(nc).map(|p| pos + p).unwrap_or(sub.len()),
+                None => sub.len(),
+            }
+        } else {
+            sub[pos..]
+                .find(next_part)
+                .map(|p| pos + p)
+                .unwrap_or(sub.len())
+        };
+        let val_str = &sub[pos..val_end];
+        values.insert(marker.to_string(), val_str.to_string());
+        pos = val_end;
+    }
+    values
+}
+
+fn bruteforce_precision(substituted_url: &str, template_url: &str, ttl: u64) -> String {
+    let spatial: &[&str] = &["{lat}", "{lon}", "{x}", "{y}", "{z}"];
+    let has_spatial = spatial.iter().any(|v| template_url.contains(v));
+    if !has_spatial {
+        return String::new();
+    }
+    let all_values = extract_all_template_values(substituted_url, template_url);
+    let mut spatial_base: Vec<(&str, f64)> = Vec::new();
+    for &var in spatial {
+        if let Some(val_str) = all_values.get(var) {
+            if let Ok(val) = val_str.parse::<f64>() {
+                spatial_base.push((var, val));
+            }
+        }
+    }
+    if spatial_base.is_empty() {
+        return String::new();
+    }
+    let mut last_body: Option<String> = None;
+    let mut effective_dp: usize = 15;
+    for dp in 0..=15 {
+        let mut test_url = template_url.to_string();
+        for (marker, value_str) in &all_values {
+            let replacement: String =
+                if let Some(&(_, base)) = spatial_base.iter().find(|(m, _)| *m == marker) {
+                    format!("{}", truncate_f64(base, dp))
+                } else {
+                    value_str.clone()
+                };
+            test_url = test_url.replace(marker, &replacement);
+        }
+        let body = fetch_raw(&test_url, None, &[], ttl);
+        match (&last_body, &body) {
+            (Some(prev), Some(curr)) if prev != curr => {
+                effective_dp = dp;
+                break;
+            }
+            (None, Some(_)) => {
+                effective_dp = dp;
+                break;
+            }
+            _ => {}
+        }
+        last_body = body;
+    }
+    format!("# template_precision {}dp\n", effective_dp)
+}
+
+fn truncate_f64(value: f64, decimal_places: usize) -> f64 {
+    let factor = 10_f64.powi(decimal_places as i32);
+    (value * factor).round() / factor
+}
 fn probe_ttl(body: &str) -> Option<u64> {
     let val = parse_json(body)?;
     match val {
@@ -6409,7 +6526,8 @@ fn main() {
                     std::process::exit(1);
                 }
             };
-            std::process::exit(probe_mode(path));
+            let precise = args.len() > 3 && args[3] == "--precise";
+            std::process::exit(probe_mode(path, precise));
         }
     }
     let loaded = load_sources();

@@ -1,11 +1,5 @@
-url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2026-08-10&endtime=2026-08-11&latitude={lat}&longitude={lon}&maxradiuskm=500
 ttl 60
 at earth
-# coord_precision lon=0dp lat=0dp alt=1dp
-# bbox.0 = -179.826
-# bbox.1 = -37.4038
-# bbox.2 = -0.51
-# bbox.3 = 178.716
-# bbox.4 = 64.985
-# bbox.5 = 655.67
+# template_precision 0dp
 
