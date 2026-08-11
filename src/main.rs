@@ -5727,11 +5727,12 @@ fn probe_mode(path: &str, precise: bool) -> i32 {
             let mut fields = String::new();
             let mut coords = String::new();
             walk_json_probe(&p, "", &mut fields, &mut coords);
+            let precision_lines = measure_precision(&p);
+            if !precision_lines.is_empty() {
+                out.push_str(&precision_lines);
+            }
             if !coords.is_empty() {
-                if let Some(ref raw_text) = raw {
-                    let precision_lines = measure_coord_precision(&p, raw_text, &coords);
-                    out.push_str(&precision_lines);
-                }
+                out.push_str(&coords);
             }
             if !fields.is_empty() {
                 out.push_str(&fields);
@@ -5822,51 +5823,35 @@ fn bruteforce_precision(substituted_url: &str, template_url: &str, ttl: u64) -> 
         return String::new();
     }
     let all_values = extract_all_template_values(substituted_url, template_url);
-    let mut spatial_base: Vec<(&str, f64)> = Vec::new();
-    for &var in spatial {
-        if let Some(val_str) = all_values.get(var) {
-            if let Ok(val) = val_str.parse::<f64>() {
-                spatial_base.push((var, val));
-            }
-        }
-    }
-    if spatial_base.is_empty() {
-        return String::new();
-    }
-    let mut last_body: Option<String> = None;
-    let mut effective_dp: usize = 15;
+    let baseline = fetch_raw(substituted_url, None, &[], ttl);
+    let mut effective_dp: usize = 0;
     for dp in 0..=15 {
         let mut test_url = template_url.to_string();
         for (marker, value_str) in &all_values {
-            let replacement: String =
-                if let Some(&(_, base)) = spatial_base.iter().find(|(m, _)| *m == marker) {
-                    format!("{}", truncate_f64(base, dp))
-                } else {
-                    value_str.clone()
-                };
+            let replacement: String = if spatial.contains(&marker.as_str()) {
+                match marker.as_str() {
+                    "{lat}" => format!("{:.lat_dp$}", 35.0, lat_dp = dp),
+                    "{lon}" => format!("{:.lon_dp$}", 139.0, lon_dp = dp),
+                    "{x}" => format!("{:.x_dp$}", 1.495978707e11, x_dp = dp),
+                    "{y}" => format!("{:.y_dp$}", 0.0, y_dp = dp),
+                    "{z}" => format!("{:.z_dp$}", 0.0, z_dp = dp),
+                    _ => format!("{:.prec$}", 0.0, prec = dp),
+                }
+            } else {
+                value_str.clone()
+            };
             test_url = test_url.replace(marker, &replacement);
         }
         let body = fetch_raw(&test_url, None, &[], ttl);
-        match (&last_body, &body) {
-            (Some(prev), Some(curr)) if prev != curr => {
+        if let (Some(b), Some(base)) = (&body, &baseline) {
+            if b != base {
                 effective_dp = dp;
-                break;
             }
-            (None, Some(_)) => {
-                effective_dp = dp;
-                break;
-            }
-            _ => {}
         }
-        last_body = body;
     }
     format!("# template_precision {}dp\n", effective_dp)
 }
 
-fn truncate_f64(value: f64, decimal_places: usize) -> f64 {
-    let factor = 10_f64.powi(decimal_places as i32);
-    (value * factor).round() / factor
-}
 fn probe_ttl(body: &str) -> Option<u64> {
     let val = parse_json(body)?;
     match val {
@@ -6233,7 +6218,7 @@ fn coord_precision(a: f64, b: f64) -> usize {
     p
 }
 
-fn measure_coord_precision(val: &JsonVal, _raw: &str, _coords: &str) -> String {
+fn measure_precision(val: &JsonVal) -> String {
     match val {
         JsonVal::Arr(arr) if arr.len() >= 2 => {
             let a = &arr[0];
@@ -6241,7 +6226,7 @@ fn measure_coord_precision(val: &JsonVal, _raw: &str, _coords: &str) -> String {
             let mut out = String::new();
             find_coord_precisions(a, b, "", &mut out);
             if !out.is_empty() {
-                format!("# coord_precision {}\n", out.trim())
+                format!("# precision {}\n", out.trim())
             } else {
                 String::new()
             }
@@ -6255,7 +6240,7 @@ fn measure_coord_precision(val: &JsonVal, _raw: &str, _coords: &str) -> String {
                         let mut out = String::new();
                         find_coord_precisions(a, b, "", &mut out);
                         if !out.is_empty() {
-                            format!("# coord_precision {}\n", out.trim())
+                            format!("# precision {}\n", out.trim())
                         } else {
                             String::new()
                         }
@@ -6299,15 +6284,31 @@ fn find_coord_precisions(a: &JsonVal, b: &JsonVal, prefix: &str, out: &mut Strin
             }
         }
         (JsonVal::Num(na), JsonVal::Num(nb)) => {
-            if is_coord_key(prefix)
-                || prefix.ends_with("lat")
-                || prefix.ends_with("lon")
-                || prefix.ends_with("lng")
-                || prefix.ends_with("altitude")
-                || prefix.ends_with("alt")
-            {
-                let p = coord_precision(*na, *nb);
+            let p = coord_precision(*na, *nb);
+            if p < 15 {
+                let key = match prefix.rfind('.') {
+                    Some(pos) => &prefix[pos + 1..],
+                    None => prefix,
+                };
+                if is_drop_key(key) || is_coord_key(key) {
+                    return;
+                }
                 out.push_str(&format!("{}={}dp ", prefix, p));
+            }
+        }
+        (JsonVal::Str(sa), JsonVal::Str(sb)) => {
+            if let (Ok(na), Ok(nb)) = (sa.parse::<f64>(), sb.parse::<f64>()) {
+                let p = coord_precision(na, nb);
+                if p < 15 {
+                    let key = match prefix.rfind('.') {
+                        Some(pos) => &prefix[pos + 1..],
+                        None => prefix,
+                    };
+                    if is_drop_key(key) || is_coord_key(key) {
+                        return;
+                    }
+                    out.push_str(&format!("{}={}dp ", prefix, p));
+                }
             }
         }
         _ => {}
