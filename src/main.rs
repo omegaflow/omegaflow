@@ -6932,28 +6932,7 @@ fn main() {
             }
         }
         while let Ok(oscs) = osc_rx.try_recv() {
-            let presences: Vec<(f64, f64, f64, f64, f64)> =
-                archive.presence.values().cloned().collect();
-            for osc in oscs {
-                if matches!(osc.source, OscillatorSource::Browser) && !presences.is_empty() {
-                    let mut in_range = false;
-                    for &(px, py, pz, _pt, _pan) in &presences {
-                        let dx = osc.p0f[0] - px;
-                        let dy = osc.p0f[1] - py;
-                        let dz = osc.p0f[2] - pz;
-                        let d2 = dx * dx + dy * dy + dz * dz;
-                        let reach = osc.extent + osc.vmax * (now - osc.epoch).abs();
-                        if d2 <= reach * reach {
-                            in_range = true;
-                            break;
-                        }
-                    }
-                    if !in_range {
-                        continue;
-                    }
-                }
-                fetched_oscillators.push(osc);
-            }
+            fetched_oscillators.extend(oscs);
         }
         for i in 0..archive.sources.len() {
             let origin = (i as u32, 0, 0);
