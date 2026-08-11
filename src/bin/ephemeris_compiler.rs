@@ -612,21 +612,42 @@ fn main() {
         eprintln!("output: ephemeris_<body>.bin in current directory");
         std::process::exit(1);
     }
-    let mut spk_files: Vec<(String, SpkFile)> = Vec::new();
-    for path in &args[1..] {
-        match SpkFile::open(path) {
-            Ok(spk) => spk_files.push((path.clone(), spk)),
-            Err(e) => {
-                eprintln!("open {}: {}", path, e);
-                std::process::exit(1);
-            }
-        }
-    }
-    for target_id in [
+    let kernel_paths: Vec<String> = args[1..].to_vec();
+    let all_target_ids: [i32; 23] = [
         10, 1, 2, 399, 301, 4, 5, 6, 7, 8, 9, 501, 502, 503, 504, 602, 603, 604, 605, 606, 801,
         401, 402,
-    ] {
+    ];
+    let mut all_granules: Vec<Vec<(f64, f64, Vec<f64>, Vec<f64>, Vec<f64>)>> =
+        vec![Vec::new(); all_target_ids.len()];
+    let mut all_rotations: Vec<Vec<(f64, [f64; 9])>> = vec![Vec::new(); all_target_ids.len()];
+
+    for kernel_path in &kernel_paths {
+        let spk = match SpkFile::open(kernel_path) {
+            Ok(s) => s,
+            Err(e) => {
+                eprintln!("open {}: {}", kernel_path, e);
+                std::process::exit(1);
+            }
+        };
+        for (idx, &target_id) in all_target_ids.iter().enumerate() {
+            let body_name = body_id_to_name(target_id);
+            let has_coverage = spk.segments().iter().any(|s| s.target == target_id);
+            if !has_coverage {
+                continue;
+            }
+            let wgccre = match wgccre_for_body(body_name) {
+                Some(w) => w,
+                None => continue,
+            };
+            let (granules, rotations) = extract_granules(&spk, target_id, body_name, &wgccre);
+            all_granules[idx].extend(granules);
+            all_rotations[idx].extend(rotations);
+        }
+    }
+    for (idx, &target_id) in all_target_ids.iter().enumerate() {
         let body_name = body_id_to_name(target_id);
+        let mut granules = core::mem::take(&mut all_granules[idx]);
+        let mut rotations = core::mem::take(&mut all_rotations[idx]);
         let wgccre = match wgccre_for_body(body_name) {
             Some(w) => w,
             None => {
@@ -634,29 +655,18 @@ fn main() {
                 continue;
             }
         };
-        let mut all_granules: Vec<(f64, f64, Vec<f64>, Vec<f64>, Vec<f64>)> = Vec::new();
-        let mut all_rotations: Vec<(f64, [f64; 9])> = Vec::new();
-        for (_, spk) in &spk_files {
-            let has_coverage = spk.segments().iter().any(|s| s.target == target_id);
-            if !has_coverage {
-                continue;
-            }
-            let (granules, rotations) = extract_granules(spk, target_id, body_name, &wgccre);
-            all_granules.extend(granules);
-            all_rotations.extend(rotations);
-        }
-        if all_granules.is_empty() && target_id != 10 {
+        if granules.is_empty() && target_id != 10 {
             eprintln!("  SKIP {}: no granules in any kernel", body_name);
             continue;
         }
-        all_granules.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal));
-        all_rotations.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal));
+        granules.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal));
+        rotations.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal));
         let path = format!("ephemeris_{}.bin", body_name);
         write_binary(
             &path,
             body_name,
-            &all_granules,
-            &all_rotations,
+            &granules,
+            &rotations,
             &wgccre,
             BODIES_WITH_MEDIA.contains(&target_id),
         );
