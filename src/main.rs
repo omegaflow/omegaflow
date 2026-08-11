@@ -5709,7 +5709,7 @@ fn probe_mode(path: &str) -> i32 {
                 lon,
                 alt,
             } => {
-                out.push_str(&format!("on {} {} {} {}\n", body_name, lat, lon, alt));
+                out.push_str(&format!("on {} {:?} {:?} {:?}\n", body_name, lat, lon, alt));
             }
             Frame::Barycenter { body_name, scale } if *scale == 1.0 => {
                 out.push_str(&format!("at {}\n", body_name));
@@ -5949,11 +5949,10 @@ fn probe_csv(raw: &str) -> Option<String> {
         if is_unit_name(&lower) {
             continue;
         }
-        let (force, unit) = classify_field(col, f64::NAN);
-        if force == "DROP" {
+        if is_drop_key(&lower) {
             continue;
         }
-        out.push_str(&format!("field {} {} {}\n", col, force, unit));
+        out.push_str(&format!("# {}\n", col));
     }
     if out.is_empty() {
         None
@@ -6062,11 +6061,7 @@ fn walk_json_probe(val: &JsonVal, prefix: &str, out: &mut String, coords: &mut S
             if is_drop_key(key) || is_coord_key(key) {
                 return;
             }
-            let (force, unit) = classify_field(key, *n);
-            if unit == "DROP" {
-                return;
-            }
-            out.push_str(&format!("field {} {} {}\n", prefix, force, unit));
+            out.push_str(&format!("# {} = {:?}\n", prefix, n));
         }
         JsonVal::Str(s) => {
             if let Ok(n) = s.parse::<f64>() {
@@ -6077,11 +6072,7 @@ fn walk_json_probe(val: &JsonVal, prefix: &str, out: &mut String, coords: &mut S
                 if is_drop_key(key) || is_coord_key(key) {
                     return;
                 }
-                let (force, unit) = classify_field(key, n);
-                if unit == "DROP" {
-                    return;
-                }
-                out.push_str(&format!("field {} {} {}\n", prefix, force, unit));
+                out.push_str(&format!("# {} = {:?} (str)\n", prefix, n));
             }
         }
         _ => {}
@@ -6105,178 +6096,6 @@ fn coord_directive(key: &str) -> &'static str {
         "lon"
     } else {
         "lat"
-    }
-}
-
-fn classify_field(key: &str, val: f64) -> (&'static str, &'static str) {
-    let kl = key.to_lowercase();
-    if val.fract() == 0.0
-        && val.abs() > 1e9
-        && (kl.contains("time") || kl.contains("epoch") || kl == "t")
-    {
-        return ("DROP", "DROP");
-    }
-    if kl.ends_with("_nt")
-        || kl.ends_with("_ut")
-        || kl.ends_with("_mt")
-        || kl == "bx"
-        || kl == "by"
-        || kl == "bz"
-        || kl == "bt"
-        || kl == "bx_gse"
-        || kl == "by_gse"
-        || kl == "bz_gse"
-        || kl == "b_rtn"
-        || kl == "hcomp"
-        || kl == "he"
-        || kl == "hp"
-        || kl == "hn"
-        || kl.ends_with("_f")
-        || kl.contains("mag_")
-        || kl.contains("_b_")
-        || kl == "dst"
-        || (kl == "total" && val < 1000.0)
-    {
-        ("em", "nT")
-    } else if kl.ends_with("_wm2")
-        || kl.ends_with("_w_m2")
-        || kl == "flux"
-        || kl.ends_with("_flux")
-        || kl.ends_with("_sfu")
-        || kl.ends_with("_jy")
-        || kl.ends_with("_mjy")
-    {
-        ("em", "W/m2")
-    } else if kl.ends_with("_ev")
-        || kl.ends_with("_kev")
-        || kl.ends_with("_mev")
-        || kl.ends_with("_gev")
-    {
-        ("em", "eV")
-    } else if kl == "proton_temperature" {
-        ("thermal", "K")
-    } else if kl.contains("temp")
-        || kl.ends_with("_c")
-        || kl.ends_with("_k")
-        || kl == "atmp"
-        || kl == "wtmp"
-        || kl == "air_temp"
-        || kl == "water_temp"
-        || kl == "dewp"
-    {
-        ("thermal", "C")
-    } else if kl == "pres"
-        || kl.ends_with("_pres")
-        || kl.ends_with("_hpa")
-        || kl.ends_with("_pa")
-        || kl.ends_with("_mb")
-        || kl.ends_with("_mbar")
-        || kl.ends_with("_atm")
-        || kl.ends_with("baro")
-        || kl == "ptdy"
-        || kl.ends_with("_pressure")
-    {
-        ("advective", "hPa")
-    } else if kl.contains("spd")
-        || kl == "speed"
-        || (kl.ends_with("_speed") && kl != "proton_speed")
-        || kl.ends_with("_ms")
-        || kl.ends_with("_km_s")
-        || kl.ends_with("_kmh")
-        || kl.ends_with("_mph")
-        || kl.ends_with("_knot")
-        || kl.contains("wind")
-        || kl.contains("wspd")
-        || kl == "gs"
-    {
-        ("advective", "m/s")
-    } else if kl.contains("dir")
-        || kl == "wdire"
-        || kl == "wd"
-        || kl == "track"
-        || kl.ends_with("_deg")
-        || kl.contains("heading")
-        || kl.ends_with("_dir")
-    {
-        ("advective", "deg")
-    } else if kl.contains("wvht")
-        || kl.contains("wave")
-        || kl.contains("swh")
-        || kl == "swell"
-        || kl == "dpd"
-        || kl == "apd"
-        || kl == "mwd"
-    {
-        ("acoustic", "m")
-    } else if kl.contains("height") || kl.ends_with("_m") {
-        ("acoustic", "m")
-    } else if kl == "depth" || kl.ends_with("_depth") {
-        ("seismic-body", "km")
-    } else if kl.ends_with("_km") && !kl.contains("speed") && !kl.contains("vel") {
-        ("seismic-body", "km")
-    } else if kl.contains("vel") || kl.contains("vlct") || kl == "proton_speed" {
-        ("advective", "km/s")
-    } else if kl.contains("conc")
-        || kl.contains("ppm")
-        || kl.contains("ppb")
-        || kl.ends_with("_ppm")
-        || kl.ends_with("_ppb")
-    {
-        ("diffusion", "ppm")
-    } else if kl.contains("co2")
-        || kl.contains("ch4")
-        || kl.contains("o3")
-        || kl.contains("no2")
-        || kl.contains("so2")
-        || kl.contains("h2o")
-    {
-        ("diffusion", "ppm")
-    } else if kl.contains("salinity") || kl.ends_with("_psu") || kl.ends_with("_ntu") {
-        ("diffusion", "PSU")
-    } else if kl.ends_with("_hz")
-        || kl.ends_with("_khz")
-        || kl.ends_with("_mhz")
-        || kl.ends_with("_ghz")
-        || kl.contains("freq")
-        || kl == "frequency"
-    {
-        ("em", "Hz")
-    } else if kl.ends_with("_vm") || kl.ends_with("_mvm") || kl.ends_with("_kvm") {
-        ("electric", "V/m")
-    } else if kl.ends_with("_mv")
-        || kl.ends_with("_uv")
-        || kl.ends_with("_nv")
-        || kl.ends_with("_v")
-    {
-        ("electric", "V")
-    } else if kl.ends_with("_uscm") || kl.ends_with("_sm") || kl.contains("conductivity") {
-        ("electric", "μS/cm")
-    } else if kl.ends_with("_ka") || kl.ends_with("_ma") || kl.ends_with("_a") {
-        ("electric", "A")
-    } else if kl == "db" || kl.ends_with("_db") || kl.ends_with("_dba") || kl.ends_with("_dbz") {
-        ("acoustic", "dB")
-    } else if kl.contains("discharge") || kl.ends_with("_m3s") || kl.ends_with("_ft3s") {
-        ("advective", "m3/s")
-    } else if kl.ends_with("_mas") || kl.ends_with("_arcsec") {
-        ("DROP", "DROP")
-    } else if kl == "footprint" {
-        ("em", "km")
-    } else if kl == "proton_density" || kl.contains("density") {
-        ("diffusion", "p/cm3")
-    } else if kl == "v" && val > 0.0 && val < 100.0 {
-        ("gravity", "m")
-    } else if kl == "s" && val > 0.0 && val < 100.0 {
-        ("gravity", "m")
-    } else if kl == "p" && val > 900.0 {
-        ("advective", "hPa")
-    } else if kl == "rh" {
-        ("diffusion", "%")
-    } else if kl.contains("rain") || kl.contains("rrr") || kl.contains("prcp") {
-        ("acoustic", "mm")
-    } else if kl.contains("vis") {
-        ("em", "km")
-    } else {
-        ("DROP", "DROP")
     }
 }
 
