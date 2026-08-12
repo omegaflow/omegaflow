@@ -17,12 +17,12 @@ export function getRto() {
 export async function syncFrame(inputs, queries, presence) {
     inputs = inputs || [];
     queries = queries || [];
-    const emptyResp = { field: new Float32Array(0), meta: new Float32Array(0), count: 0 };
+    const emptyResp = { field: new Float32Array(0), meta: new Float32Array(0), count: 0, response_epoch: 0 };
     if (inputs.length === 0 && queries.length === 0) return emptyResp;
 
     let inputBytes = 0;
     for (const inp of inputs) inputBytes += 17 + new TextEncoder().encode(inp.name).length;
-    const buf = new ArrayBuffer(8 + inputBytes + 4 + queries.length * 32 + 40);
+    const buf = new ArrayBuffer(8 + inputBytes + 4 + queries.length * 32 + 48);
     const dv = new DataView(buf);
     const id = ++transport.seq;
     dv.setUint32(0, id, true);
@@ -47,6 +47,7 @@ export async function syncFrame(inputs, queries, presence) {
     dv.setFloat64(off, presence.z, true); off += 8;
     dv.setFloat64(off, presence.t, true); off += 8;
     dv.setFloat64(off, presence.range, true); off += 8;
+    dv.setFloat64(off, presence.cache_interval || 0, true); off += 8;
 
     const startTime = performance.now();
     if (!transport.socket || transport.socket.readyState !== WebSocket.OPEN) return emptyResp;
@@ -64,10 +65,11 @@ export async function syncFrame(inputs, queries, presence) {
 
     const bytes = new Uint8Array(buffer);
     const dvRes = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
-    if (bytes.length < 11 || bytes[0] !== 0xCF || bytes[1] !== 0x86) return emptyResp;
-    if (bytes[2] !== 4) throw new Error('protocol mismatch');
+    if (bytes.length < 19 || bytes[0] !== 0xCF || bytes[1] !== 0x86) return emptyResp;
+    if (bytes[2] !== 5) throw new Error('protocol mismatch');
 
     let o = 3;
+    const response_epoch = dvRes.getFloat64(o, true); o += 8;
     o += 4;
     const oscCount = dvRes.getUint32(o, true); o += 4;
 
@@ -75,7 +77,7 @@ export async function syncFrame(inputs, queries, presence) {
     const meta = new Float32Array(oscCount * 4);
 
     for (let i = 0; i < oscCount; i++) {
-        if (o + 96 > bytes.length) break;
+        if (o + 120 > bytes.length) break;
         const x = dvRes.getFloat64(o, true); o += 8;
         const y = dvRes.getFloat64(o, true); o += 8;
         const z = dvRes.getFloat64(o, true); o += 8;
@@ -88,6 +90,9 @@ export async function syncFrame(inputs, queries, presence) {
         const force_type = dvRes.getFloat64(o, true); o += 8;
         const absorption = dvRes.getFloat64(o, true); o += 8;
         const advection = dvRes.getFloat64(o, true); o += 8;
+        const vx = dvRes.getFloat64(o, true); o += 8;
+        const vy = dvRes.getFloat64(o, true); o += 8;
+        const vz = dvRes.getFloat64(o, true); o += 8;
 
         const fOff = i * 12;
         if (presence) {
@@ -105,9 +110,9 @@ export async function syncFrame(inputs, queries, presence) {
         field[fOff + 6] = force_type;
         field[fOff + 7] = absorption;
         field[fOff + 8] = advection;
-        field[fOff + 9] = 0;
-        field[fOff + 10] = 0;
-        field[fOff + 11] = 0;
+        field[fOff + 9] = vx;
+        field[fOff + 10] = vy;
+        field[fOff + 11] = vz;
 
         const mOff = i * 4;
         meta[mOff] = extent;
@@ -115,6 +120,6 @@ export async function syncFrame(inputs, queries, presence) {
         meta[mOff + 2] = kernel_id;
         meta[mOff + 3] = 0;
     }
-    return { field, meta, count: oscCount };
+    return { field, meta, count: oscCount, response_epoch };
 }
 

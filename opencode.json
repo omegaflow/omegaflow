@@ -57,15 +57,24 @@
     },
     "general": {
       "mode": "subagent",
-      "model": "deepseek/deepseek-v4-pro"
+      "model": "deepseek/deepseek-v4-pro",
+      "permission": {
+        "edit": "deny"
+      }
     },
     "explore": {
       "mode": "subagent",
-      "model": "deepseek/deepseek-v4-flash"
+      "model": "deepseek/deepseek-v4-flash",
+      "permission": {
+        "edit": "deny"
+      }
     },
     "council": {
       "mode": "subagent",
-      "model": "deepseek/deepseek-v4-pro"
+      "model": "deepseek/deepseek-v4-pro",
+      "permission": {
+        "edit": "deny"
+      }
     },
     "grind-flash": {
       "mode": "subagent",

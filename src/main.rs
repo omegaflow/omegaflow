@@ -573,7 +573,24 @@ fn query_hash(
     center: [f64; 3],
     t2: f64,
     pad: f64,
-    records: &mut Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64, f64, f64, f64)>,
+    delta_t_cache: f64,
+    records: &mut Vec<(
+        f64,
+        f64,
+        f64,
+        f64,
+        f64,
+        f64,
+        f64,
+        f64,
+        f64,
+        f64,
+        f64,
+        f64,
+        f64,
+        f64,
+        f64,
+    )>,
     body_props: Option<&BodyProperties>,
     eph: &HashMap<String, BodyEphemeris>,
 ) {
@@ -581,6 +598,19 @@ fn query_hash(
         let p = match osc.motion.at(t2, osc.epoch, eph) {
             Some(p) => p,
             None => continue,
+        };
+        let v = if let Motion::Linear { v, .. } = &osc.motion {
+            [v[0], v[1], v[2]]
+        } else {
+            let p_dt = match osc.motion.at(t2 + 1e-3, osc.epoch, eph) {
+                Some(pd) => pd,
+                None => continue,
+            };
+            [
+                (p_dt[0] - p[0]) / 1e-3,
+                (p_dt[1] - p[1]) / 1e-3,
+                (p_dt[2] - p[2]) / 1e-3,
+            ]
         };
         records.push((
             p[0],
@@ -595,6 +625,9 @@ fn query_hash(
             osc.force_type,
             osc.absorption,
             osc.advection,
+            v[0],
+            v[1],
+            v[2],
         ));
     }
     if hash.cells.is_empty() {
@@ -605,7 +638,7 @@ fn query_hash(
         center[1] - anchor[1],
         center[2] - anchor[2],
     ];
-    let dt = (t2 - hash.epoch_min).abs();
+    let dt = (t2 - hash.epoch_min).abs() + delta_t_cache;
     let rho = hash.rmax + hash.vmax * dt + 0.5 * hash.amax * dt * dt + pad;
     let s = hash.cell_size;
     let qlo = cell_of([qf[0] - rho, qf[1] - rho, qf[2] - rho], s);
@@ -656,8 +689,11 @@ fn query_hash(
         for osc in samples {
             let age = (t2 - osc.epoch).abs();
             let causal_reach = kernel_extent(osc.kernel_id as u8, body_props, osc.tau);
-            let reach =
-                osc.extent.max(causal_reach) + osc.vmax * age + 0.5 * osc.amax * age * age + pad;
+            let future_age = age + delta_t_cache;
+            let reach = osc.extent.max(causal_reach)
+                + osc.vmax * future_age
+                + 0.5 * osc.amax * future_age * future_age
+                + pad;
             let dx = osc.p0f[0] - qf[0];
             let dy = osc.p0f[1] - qf[1];
             let dz = osc.p0f[2] - qf[2];
@@ -677,6 +713,19 @@ fn query_hash(
             if dist2 > exact * exact {
                 continue;
             }
+            let v = if let Motion::Linear { v, .. } = &osc.motion {
+                [v[0], v[1], v[2]]
+            } else {
+                let p_dt = match osc.motion.at(t2 + 1e-3, osc.epoch, eph) {
+                    Some(pd) => pd,
+                    None => continue,
+                };
+                [
+                    (p_dt[0] - p[0]) / 1e-3,
+                    (p_dt[1] - p[1]) / 1e-3,
+                    (p_dt[2] - p[2]) / 1e-3,
+                ]
+            };
             records.push((
                 p[0],
                 p[1],
@@ -690,6 +739,9 @@ fn query_hash(
                 osc.force_type,
                 osc.absorption,
                 osc.advection,
+                v[0],
+                v[1],
+                v[2],
             ));
         }
     }
@@ -700,7 +752,24 @@ fn sense_buffer(
     center: [f64; 3],
     t2: f64,
     pad: f64,
-    records: &mut Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64, f64, f64, f64)>,
+    delta_t_cache: f64,
+    records: &mut Vec<(
+        f64,
+        f64,
+        f64,
+        f64,
+        f64,
+        f64,
+        f64,
+        f64,
+        f64,
+        f64,
+        f64,
+        f64,
+        f64,
+        f64,
+        f64,
+    )>,
     eph: &HashMap<String, BodyEphemeris>,
 ) {
     for (body_name, hash_cell) in &buf.bodies {
@@ -709,7 +778,17 @@ fn sense_buffer(
             None => continue,
         };
         let body_props = eph.get(body_name).and_then(|e| e.props.as_ref());
-        query_hash(hash_cell, anchor, center, t2, pad, records, body_props, eph);
+        query_hash(
+            hash_cell,
+            anchor,
+            center,
+            t2,
+            pad,
+            delta_t_cache,
+            records,
+            body_props,
+            eph,
+        );
     }
     query_hash(
         &buf.inertial,
@@ -717,6 +796,7 @@ fn sense_buffer(
         center,
         t2,
         pad,
+        delta_t_cache,
         records,
         None,
         eph,
@@ -2251,6 +2331,12 @@ fn sensor_config(name: &str) -> Option<BrowserSensor> {
         (3, 1, 1.0)
     } else if kl.contains("gyro") {
         (3, 1, 1.0)
+    } else if kl.contains("gravity") {
+        (1, 0, 10.0)
+    } else if kl.contains("camera") || kl.contains("video") {
+        (0, 0, 1.0 / 30.0)
+    } else if kl.contains("battery") && kl.contains("charging") {
+        (8, 5, 60.0)
     } else if kl.contains("gps") || kl.contains("gnss") {
         return None;
     } else {
@@ -2325,7 +2411,7 @@ struct WsConfig {
 }
 
 trait Radiator: Send + Sync {
-    fn accept(&self, field: Arc<Buffer>);
+    fn accept(&mut self, field: Arc<Buffer>);
 }
 
 struct TcpRadiator {
@@ -2355,9 +2441,6 @@ impl TcpRadiator {
                 std::process::exit(1);
             }
         };
-        let _ = std::process::Command::new("xdg-open")
-            .arg(format!("http://127.0.0.1:{}", port))
-            .spawn();
         match listener.set_nonblocking(true) {
             Ok(_) => {}
             Err(e) => {
@@ -2411,7 +2494,7 @@ impl TcpRadiator {
 }
 
 impl Radiator for TcpRadiator {
-    fn accept(&self, field: Arc<Buffer>) {
+    fn accept(&mut self, field: Arc<Buffer>) {
         let _ = self.field_tx.send(field);
     }
 }
@@ -2434,7 +2517,7 @@ impl AudioRadiator {
 }
 
 impl Radiator for AudioRadiator {
-    fn accept(&self, field: Arc<Buffer>) {
+    fn accept(&mut self, field: Arc<Buffer>) {
         if std::io::stdout().is_terminal() {
             return;
         }
@@ -2481,26 +2564,31 @@ impl Radiator for AudioRadiator {
     }
 }
 
-struct StderrRadiator;
+struct StderrRadiator {
+    last_line: String,
+    repeat: usize,
+}
 
 impl Radiator for StderrRadiator {
-    fn accept(&self, field: Arc<Buffer>) {
-        let mut per_field: std::collections::HashMap<&str, f64> = std::collections::HashMap::new();
-        let mut osc_count = 0usize;
-        let mut device_count = 0usize;
-        let mut api_count = 0usize;
-        let mut body_count = 0usize;
-        for (body_name, hash) in &field.bodies {
+    fn accept(&mut self, field: Arc<Buffer>) {
+        let mut body_osc = 0usize;
+        let mut api_osc = 0usize;
+        let mut dev_osc = 0usize;
+        let mut body_src: std::collections::HashSet<String> = std::collections::HashSet::new();
+        let mut api_src: std::collections::HashSet<u32> = std::collections::HashSet::new();
+        for (_body_name, hash) in &field.bodies {
             for cell in hash.cells.values().chain(std::iter::once(&hash.unbounded)) {
                 for osc in cell {
-                    let v = osc.val.abs();
-                    osc_count += 1;
-                    *per_field.entry(body_name.as_str()).or_insert(0.0) += v;
-                    *per_field.entry(osc.name.as_str()).or_insert(0.0) += v;
                     match osc.source {
-                        OscillatorSource::Device => device_count += 1,
-                        OscillatorSource::Api(_) => api_count += 1,
-                        OscillatorSource::Body => body_count += 1,
+                        OscillatorSource::Device => dev_osc += 1,
+                        OscillatorSource::Api(idx) => {
+                            api_osc += 1;
+                            api_src.insert(idx);
+                        }
+                        OscillatorSource::Body => {
+                            body_osc += 1;
+                            body_src.insert(osc.name.split('.').next().unwrap_or("").to_string());
+                        }
                     }
                 }
             }
@@ -2512,39 +2600,35 @@ impl Radiator for StderrRadiator {
             .chain(std::iter::once(&field.inertial.unbounded))
         {
             for osc in cell {
-                let v = osc.val.abs();
-                osc_count += 1;
-                *per_field.entry(osc.name.as_str()).or_insert(0.0) += v;
                 match osc.source {
-                    OscillatorSource::Device => device_count += 1,
-                    OscillatorSource::Api(_) => api_count += 1,
-                    OscillatorSource::Body => body_count += 1,
+                    OscillatorSource::Device => dev_osc += 1,
+                    OscillatorSource::Api(idx) => {
+                        api_osc += 1;
+                        api_src.insert(idx);
+                    }
+                    OscillatorSource::Body => {
+                        body_osc += 1;
+                        body_src.insert(osc.name.split('.').next().unwrap_or("").to_string());
+                    }
                 }
             }
         }
-        if osc_count == 0 {
+        let line = format!(
+            "omegaflow v{} | φ v5 | body: {} sources, {} oscillators | api: {} sources, {} oscillators | device: {} oscillators",
+            env!("CARGO_PKG_VERSION"),
+            body_src.len(),
+            body_osc,
+            api_src.len(),
+            api_osc,
+            dev_osc,
+        );
+        if line == self.last_line {
+            self.repeat += 1;
             return;
         }
-        let _ = writeln!(
-            std::io::stderr(),
-            "{} oscs | {} device {} api {} body | {}",
-            osc_count,
-            device_count,
-            api_count,
-            body_count,
-            per_field
-                .iter()
-                .map(|(k, v)| format!(
-                    "{}:{:.1}",
-                    k.chars()
-                        .filter(|c| c.is_ascii_graphic() || *c == ' ')
-                        .take(32)
-                        .collect::<String>(),
-                    v
-                ))
-                .collect::<Vec<_>>()
-                .join(" "),
-        );
+        self.repeat = 1;
+        eprint!("\r{:<80}", line);
+        self.last_line = line;
     }
 }
 
@@ -2608,7 +2692,7 @@ fn days_to_ymd(total_days: u64) -> (u32, u32, u32) {
 }
 
 fn emit(s: &mut TcpStream, st: &str, ct: &str, b: &[u8]) {
-    let _=s.write_all(format!("HTTP/1.1 {}\r\nContent-Type: {}\r\nContent-Length: {}\r\nCache-Control: no-store\r\nConnection: keep-alive\r\n\r\n",st,ct,b.len()).as_bytes());
+    let _=s.write_all(format!("HTTP/1.1 {}\r\nContent-Type: {}\r\nContent-Length: {}\r\nCache-Control: no-store, no-cache, must-revalidate\r\nPragma: no-cache\r\nExpires: 0\r\nConnection: keep-alive\r\n\r\n",st,ct,b.len()).as_bytes());
     let _ = s.write_all(b);
 }
 fn emit_void(s: &mut TcpStream) {
@@ -2844,8 +2928,7 @@ fn handle_ingress(stream: TcpStream, cfg: WsConfig) {
     if signal.to_lowercase().contains("upgrade: websocket") {
         resonance(s, &signal, cfg);
     } else {
-        let mut last_field: Arc<Buffer> =
-            Arc::new(build_buffer(Vec::new(), 1.0, Arc::new(HashMap::new())));
+        let mut last_field: Option<Arc<Buffer>> = None;
         let mut cur = signal;
         loop {
             let path = parse_path(&cur);
@@ -2866,9 +2949,11 @@ fn handle_ingress(stream: TcpStream, cfg: WsConfig) {
                     let result = {
                         let buf = {
                             if let Ok(f) = cfg.field_rx.try_recv() {
-                                last_field = f;
+                                last_field = Some(f);
                             }
-                            last_field.clone()
+                            last_field.clone().unwrap_or_else(|| {
+                                Arc::new(build_buffer(Vec::new(), 1.0, Arc::new(HashMap::new())))
+                            })
                         };
                         let eph_map = buf.eph.clone();
                         let mut device_sample: Option<Oscillator> = None;
@@ -2911,9 +2996,12 @@ fn handle_ingress(stream: TcpStream, cfg: WsConfig) {
                     let body: &str = &path[6..];
                     let eph = {
                         if let Ok(f) = cfg.field_rx.try_recv() {
-                            last_field = f;
+                            last_field = Some(f);
                         }
-                        last_field.eph.clone()
+                        last_field
+                            .as_ref()
+                            .map(|b| b.eph.clone())
+                            .unwrap_or_else(|| Arc::new(HashMap::new()))
                     };
                     match body_barycenter_position(body, tdb_now(), &eph) {
                         Some([x, y, z]) => emit(
@@ -2931,9 +3019,11 @@ fn handle_ingress(stream: TcpStream, cfg: WsConfig) {
                 "/field" => {
                     let buf = {
                         if let Ok(f) = cfg.field_rx.try_recv() {
-                            last_field = f;
+                            last_field = Some(f);
                         }
-                        last_field.clone()
+                        last_field.clone().unwrap_or_else(|| {
+                            Arc::new(build_buffer(Vec::new(), 1.0, Arc::new(HashMap::new())))
+                        })
                     };
                     let mut report = String::new();
                     let mut hashes: Vec<(&str, &SpatialHash)> =
@@ -3108,6 +3198,7 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                 let qz = f64::from_le_bytes(t_buf);
                 queries.push((qt, qx, qy, qz));
             }
+            let mut delta_t_cache = 0.0f64;
             {
                 let mut pb8 = [0u8; 8];
                 if cursor.read_exact(&mut pb8).is_ok() {
@@ -3121,6 +3212,9 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                                 if cursor.read_exact(&mut pb8).is_ok() {
                                     let pr = f64::from_le_bytes(pb8);
                                     let _ = cfg.presence_tx.send((pt, px, py, pz, pr));
+                                    if cursor.read_exact(&mut pb8).is_ok() {
+                                        delta_t_cache = f64::from_le_bytes(pb8);
+                                    }
                                 }
                             }
                         }
@@ -3268,8 +3362,24 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                     let _ = cfg.osc_tx.send(oscillators);
                 }
             }
-            let mut records: Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64, f64, f64, f64)> =
-                Vec::new();
+            let mut records: Vec<(
+                f64,
+                f64,
+                f64,
+                f64,
+                f64,
+                f64,
+                f64,
+                f64,
+                f64,
+                f64,
+                f64,
+                f64,
+                f64,
+                f64,
+                f64,
+            )> = Vec::new();
+            let response_epoch;
             if !queries.is_empty() {
                 let (t0, x0, y0, z0) = queries[0];
                 let mut extent = 0.0f64;
@@ -3280,12 +3390,24 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                     }
                 }
                 let center = [x0, y0, z0];
-                sense_buffer(&field, center, t0, extent, &mut records, &eph_map);
+                sense_buffer(
+                    &field,
+                    center,
+                    t0,
+                    extent,
+                    delta_t_cache,
+                    &mut records,
+                    &eph_map,
+                );
+                response_epoch = t0;
+            } else {
+                response_epoch = tdb_now();
             }
 
-            let mut out = Vec::with_capacity(11 + records.len() * 96);
+            let mut out = Vec::with_capacity(19 + records.len() * 120);
             out.extend_from_slice(&[0xCF, 0x86]);
-            out.push(4u8);
+            out.push(5u8);
+            out.extend_from_slice(&response_epoch.to_le_bytes());
             out.extend_from_slice(&id.to_le_bytes());
             out.extend_from_slice(&(records.len() as u32).to_le_bytes());
             for &(
@@ -3301,6 +3423,9 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                 force_type,
                 absorption,
                 advection,
+                vx,
+                vy,
+                vz,
             ) in &records
             {
                 out.extend_from_slice(&x.to_le_bytes());
@@ -3315,6 +3440,9 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                 out.extend_from_slice(&force_type.to_le_bytes());
                 out.extend_from_slice(&absorption.to_le_bytes());
                 out.extend_from_slice(&advection.to_le_bytes());
+                out.extend_from_slice(&vx.to_le_bytes());
+                out.extend_from_slice(&vy.to_le_bytes());
+                out.extend_from_slice(&vz.to_le_bytes());
             }
             write_ws_binary(&mut stream, &out);
         }
@@ -6133,6 +6261,67 @@ fn anchor(
     })
 }
 
+fn body_channels(name: &str, props: &BodyProperties, now: f64) -> Vec<(Channel, FieldConfig)> {
+    let mut out = Vec::new();
+    out.push((
+        Channel {
+            name: format!("{}.radius", name),
+            value: 1.0,
+            position: Position::Source,
+            epoch: now,
+        },
+        FieldConfig {
+            key: format!("{}.radius", name),
+            name: format!("{}.radius", name),
+            kernel: 0,
+            force: 1,
+            tau: f64::INFINITY,
+            absorption: 0.0,
+            advection: 0.0,
+        },
+    ));
+    let rot_val = (props.dw_dt_deg_per_day / 360.0).abs();
+    if rot_val > 0.0 {
+        out.push((
+            Channel {
+                name: format!("{}.rotation", name),
+                value: rot_val,
+                position: Position::Source,
+                epoch: now,
+            },
+            FieldConfig {
+                key: format!("{}.rotation", name),
+                name: format!("{}.rotation", name),
+                kernel: 3,
+                force: 4,
+                tau: 1.0,
+                absorption: 0.0,
+                advection: 0.0,
+            },
+        ));
+    }
+    if props.gaussian_inverse_square > 0.0 {
+        out.push((
+            Channel {
+                name: format!("{}.gi_sq", name),
+                value: 1.0,
+                position: Position::Source,
+                epoch: now,
+            },
+            FieldConfig {
+                key: format!("{}.gi_sq", name),
+                name: format!("{}.gi_sq", name),
+                kernel: 1,
+                force: 1,
+                tau: 1.0,
+                absorption: 0.0,
+                advection: 0.0,
+            },
+        ));
+    }
+    out
+}
+
 fn extract_netloc(url: &str) -> Option<&str> {
     let after = url
         .strip_prefix("https://")
@@ -7405,7 +7594,7 @@ fn main() {
     let mut radiators: Vec<Box<dyn Radiator>> = Vec::new();
     let sr = TcpRadiator::new(
         port,
-        body_names,
+        body_names.clone(),
         archive.field.clone(),
         index_html.clone(),
         constants_js.clone(),
@@ -7414,7 +7603,10 @@ fn main() {
     );
     radiators.push(Box::new(sr));
     radiators.push(Box::new(AudioRadiator::new(AUDIO_SAMPLE_RATE)));
-    radiators.push(Box::new(StderrRadiator));
+    radiators.push(Box::new(StderrRadiator {
+        last_line: String::new(),
+        repeat: 0,
+    }));
     let cadence = 1.0;
     loop {
         let now = tdb_now();
@@ -7476,11 +7668,10 @@ fn main() {
                 let ftx = fetch_tx.clone();
                 let src_clone = archive.sources[i].clone();
                 let src_idx = i;
-                let body_log = match &src_clone.body {
+                let _body_log = match &src_clone.body {
                     Some(b) => b.as_str(),
                     None => "",
                 };
-                eprintln!("loading {}", body_log);
                 archive.origins.entry(origin).or_insert(OriginState {
                     fetched: now,
                     prev_epoch: now,
@@ -7503,14 +7694,13 @@ fn main() {
                             return;
                         }
                     }
-                    let body_log = match &src_clone.body {
+                    let _body_log = match &src_clone.body {
                         Some(b) => b.as_str(),
                         None => "",
                     };
                     if let ExtractResult::WithEphemeris(_, eph) =
                         extract(&src_clone, &tmp_path, tdb_now())
                     {
-                        eprintln!("loaded {}", body_log);
                         let _ = ftx.send(FetchResult {
                             source_idx: src_idx,
                             channels: Vec::new(),
@@ -7632,29 +7822,23 @@ fn main() {
             for (name, eph) in archive.body_ephemerides.iter() {
                 if let Some(props) = &eph.props {
                     if props.radius_m > 0.0 {
-                        if let Some([bx, by, bz]) =
-                            body_barycenter_position(name, now, &archive.body_ephemerides)
-                        {
-                            all.push(Oscillator {
-                                source: OscillatorSource::Body,
-                                epoch: now,
-                                ttl: cadence,
-                                extent: props.radius_m,
-                                tau: f64::INFINITY,
-                                kernel_id: 0.0,
-                                force_type: 1.0,
-                                absorption: 0.0,
-                                advection: 0.0,
-                                vmax: 0.0,
-                                amax: 0.0,
-                                p0f: [bx, by, bz],
-                                motion: Motion::Barycenter {
-                                    body_name: name.clone(),
-                                    scale: 1.0,
-                                },
-                                val: 1.0,
-                                name: name.clone(),
-                            });
+                        let frame = Frame::Barycenter {
+                            body_name: name.clone(),
+                            scale: 1.0,
+                        };
+                        for (channel, sensor) in body_channels(name, props, now) {
+                            if let Some(mut osc) = anchor(
+                                &channel,
+                                &sensor,
+                                cadence,
+                                Some(archive.sources.len() as u32),
+                                Some(&frame),
+                                None,
+                                &archive.body_ephemerides,
+                            ) {
+                                osc.source = OscillatorSource::Body;
+                                all.push(osc);
+                            }
                         }
                     }
                 }
@@ -7662,7 +7846,7 @@ fn main() {
             archive.field = Arc::new(build_buffer(all, cadence, archive.body_ephemerides.clone()));
         }
         let f = archive.field.clone();
-        for r in &radiators {
+        for r in &mut radiators {
             r.accept(f.clone());
         }
         let elapsed = tdb_now() - now;

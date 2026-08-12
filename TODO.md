@@ -2,11 +2,9 @@
 
 AGENTS.md is the primary constraint matrix. Git is the history.
 
-## Stand — 2026-08-11 (Post-DeepSeek-Cleanup)
+## Stand — 2026-08-12 (4D-Worldline + Channel-Pipeline)
 
-Architektur kohärent: Fragment-Shader nutzt radial falloff `1 - dist²` (B04 gefixt), Propagation Speeds für alle 9 Kräfte, Exposure-System auf 9 Forces erweitert (B03/D04/H15), `kernel_for_force` als `match` (B02). Auto-Zoom beim ersten Datenempfang (90. Perzentil, min 2²⁸, >5 Oszillatoren). Stride 8→12 korrigiert. 0 Warnings, 0 Errors.
-**Source Curation gestartet:** 7 Live-API-Quellen in `phi/sources.φ` (USGS Erdbeben, SWPC Sonnenwind/Xray/Mag, NOAA Magnetometer, FDSN Quake, METAR). `test_live_sources_extract`: 7/7 ok.
-Fabrikationen (F01-F26, F43) eliminiert. Zentrismus-Biases (Z02, Z05, Z09) entfernt. `/crash`-Endpoint stabilisiert. Details: Git.
+Protokoll v5 (120 byte/Osc, response_epoch, velocity), 4D Enclosure Lemma (temporal dilation via delta_t_cache), GPU velocity-propagation in build_field_grid. Body-Channel-Pipeline: body_channels() zerlegt BodyProperties in radius/rotation/gi_sq-Channels via anchor(). Probe kernel_id→force_type, 7→9 Omegas, Audio 9 Partial. Kernel-0-Physik: Softening = max(extent,gridStep)², kein künstlicher Nyquist-Floor. Navigation: Mausrad ×4, [-]/[+] Zoom ×4, Jump-Scale 2^28, Initial-Scale 2^31. StderrRadiator: source/oscillator-Counts getrennt, kompakt. HUD: 3-zeilig, UPPERCASE-Header, feste Spalten, Selbst-Dokumentation. Jump-Reparatur: last_field als Option<Buffer>. Consent: Audio außerhalb des Gates (Radiator). Agent permissions: council/explore/general edit:deny. 0 Warnings, 0 Errors.
 
 ---
 
@@ -82,7 +80,7 @@ ephemeris_compiler.rs:604 → _ => "unknown"
 
 ---
 
-### Daten zweiter Klasse (3)
+### Daten zweiter Klasse (2)
 
 **D07** Kein Oszillator-Cap in Rust
 ```
@@ -93,14 +91,6 @@ index.html:534 → while (c * 32 > maxBuf) c >>= 1;
 ```
 main.rs:2746 → if matches!(osc.source, OscillatorSource::Device)
 ```
-
-**D09** (Neu) 3 von 9 Kräften fehlen Luminanz-Referenz im Compute-Shader
-```
-index.html presence_probe: if (kernel_id < 7u) { omegas[kernel_id] += val_eff * sk; }
-```
-Force 8 (electric) wird im Vertex-Shader曝光iert, aber im `presence_probe` (Audio/Haptics) ignoriert. Array muss auf 9.
-
----
 
 ### Bias (2)
 
