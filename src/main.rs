@@ -3107,8 +3107,7 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
         &format!("{}{}", key, "258EAFA5-E914-47DA-95CA-C5AB0DC85B11").into_bytes(),
     ));
     if stream.write_all(format!("HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: {}\r\n\r\n", encoded).as_bytes()).is_err() { return; }
-    let mut last_field_r: Arc<Buffer> =
-        Arc::new(build_buffer(Vec::new(), 1.0, Arc::new(HashMap::new())));
+    let mut last_field_r: Option<Arc<Buffer>> = None;
     let _ = stream.set_nodelay(true);
     while let Some(frame) = read_ws_frame_raw(&mut stream) {
         if frame.opcode == 0x8 {
@@ -3224,9 +3223,11 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
 
             let field = {
                 if let Ok(f) = cfg.field_rx.try_recv() {
-                    last_field_r = f;
+                    last_field_r = Some(f);
                 }
-                last_field_r.clone()
+                last_field_r.clone().unwrap_or_else(|| {
+                    Arc::new(build_buffer(Vec::new(), 1.0, Arc::new(HashMap::new())))
+                })
             };
             let eph_map = field.eph.clone();
             let now = tdb_now();
