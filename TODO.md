@@ -358,6 +358,43 @@ Binary-PCK-Pakets oben).
   GCN/SCiMMA/Swift/CASDA parser-def, LSDB decline, HERMES decline
   direction-only — Token verifiziert, aber nur RA/Dec ohne Feldwert/Distanz).
   Dispositionen in `phi/dead_sources.φ`. TNS bleibt der lebende em-Transienten-Feed.
+- Host-Kuration 2026-08-15 (Home-Verzeichnis-URLs: 10598 Hosts → 326 daten-artige
+  Kandidaten geprobt): 195 mechanische Dispositionen (dead/key-needed/method) +
+  119 200er-Klassifikationen in `phi/dead_sources.φ`. 13 Accept-Kandidaten pending
+  (nicht eingebaut, keine sources.φ-Änderung):
+  · CENC Erdbeben `api.wolfx.jp/cenc_eqlist.json` — seismic-body; Objekt No1..NoN,
+    Felder latitude/longitude/magnitude/depth (Strings)
+  · JMA Erdbeben `www.jma.go.jp/bosai/quake/data/list.json` — seismic-body; Array,
+    Position kodiert in `cod` „+lat+lon+tiefe", mag folgt
+  · Pegelonline Wasserstand `www.pegelonline.wsv.de/webservices/rest-api/v2/
+    stations/{id}/W/measurements.json?start=P1D` — Wasserstand (gravity/advective);
+    Array {timestamp,value}; Station via Stations-Endpoint (lat/lon dort)
+  · NHC Hurrikans `www.nhc.noaa.gov/CurrentStorms.json` — advective; activeStorms[],
+    latitudeNumeric/longitudeNumeric/intensity/pressure
+  · GWOSC `gwosc.org/api/v2/` — gravity; Routen-Index (runs/O1/events) — Event-Route
+    wählen, FAR/Skymaps dort
+  · ResonanceOne `resonanceone.app/api/now` — em (Schumann); global — Frame at earth,
+    Felder schumann_frequency_hz/schumann_index/kp_index/solar_flare_class
+  · TeVCat2 `tevcat2.tevcat.org/api/sources` — em cmap; Array, ra/dec Sexagesimal-
+    Strings, glat/glon als Float (galaktisch) — Umrechnung nötig
+  · DSN `eyes.nasa.gov/dsn/data/dsn.json?t={unix}` — em; dishes{}.az/el/ws/sigs
+    (Signalstärke); Positionen = statische DSN-Standortkoordinaten
+  · SO2 Vulkanemission ArcGIS `services7.arcgis.com/WSiUmUhlFx4CtMBB/.../SO2datanew/
+    ...f=geojson` — diffusion; GeoJSON-Punkte, properties mit VolcanoNumber/Emission
+  · Schildkröten-Tracks ArcGIS `services6.arcgis.com/2DGR1sZBUvcPcd8Z/.../
+    C_mydas_SSM/...f=geojson` — biotic; lat/lon/date/turtleid
+  · Magnetar-Tabelle `www.physics.mcgill.ca/~pulsar/magnetar/TabO1.csv` — em cmap;
+    CSV mit Period/Pdot/B/Flux/Dist — RA/Dec-Spalten bestätigen
+  · ALFALFA HI-Katalog `egg.astro.cornell.edu/alfalfa/data/a40files/a40.datafile1.csv`
+    — em cmap; CSV — RA/Dec/HI-Fluss-Spalten bestätigen
+  · MPC cometels `minorplanetcenter.net/Extended_Files/cometels.json.gz` — em;
+    Kometen-Elemente (q/e/i/peri/node/tp/H/G) — DASTCOM-analoger Kanal (K03),
+    Kepler zur Query-Zeit, kein RA/Dec im Katalog
+  Recheck-Liste (URL fehlte f=json/Accept-Header bzw. nur Index geprobt):
+  Tides&Currents-Datagetter, coastwatch/ifremer/emodnet-ERDDAP (.json-Endpoints),
+  PMEL-CO2-Moorings (ERDDAP, Subset nötig), SERVIR-SoilMoisture + NDBC + Active-
+  Hurricanes-ArcGIS (f=geojson), AFAD tadas (Accept-Header), Safecast
+  measurements.json (nicht bgeigie_imports), MPC-Daten-API-Unterrouten.
 - `phi/research/agent_output/batch_*_accepted.φ` (32 Dateien, neue Grammatik):
   konvertierte Blöcke, die nie nach phi/sources.φ übernommen wurden.
 - `archeology/sources/sources_gold_pre-cdn_27k_359-domains.φ` (2572 Blöcke, alte
