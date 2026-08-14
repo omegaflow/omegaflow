@@ -24,29 +24,65 @@ Exposure-Kette getilgt (keine lvls, keine e/E). SSAA als dichtere Messung: q/Q i
 
 ---
 
-### Einheiten & Ephemeriden (3)
+### Gravity-Komplettierung — Kernel-Flattener (K01–K06)
 
-**U01** CDN-Ephemeriden neu manifestieren (v2 + m-Skala)
+Entscheidungsgrundlage: Der volle Kernel-Bestand (Multi-GB) wird ausschließlich von
+der Rust-CI geflattet — lokal kommt nur das per-Body-Binary vom CDN. Keine lokalen
+Python-Umwege. Quellen-Inventar: ssd.jpl.nasa.gov/ftp (Crawl 2026-08-14, siehe
+Session-Protokoll). Kernel-Familien laut NAIF „Introduction to Kernels"-PDF.
+
+**K01** Rust-CI-Ephemeriden-Flattener (ersetzt Python; schließt die bisherigen
+Einheiten-/Monde-Punkte)
 ```
-Compiler schreiben v2 (gcount=12, ×1000); 28 Binaries lokal kompiliert und verifiziert.
-Der CDN-Release trägt noch gcount=0-Legacy (km) → Runtime gibt None → Körper absent
-(0 honored) bis Re-Upload. Kein aktiver CI-Workflow (die Pipeline läuft noch in Python,
-der Rust-Upload-Pfad ist offene Arbeit).
+CI-Workflow (generate-ephemerides in Rust): lädt die vollen Kernels —
+Mond-SPKs jup365/sat441l/mar099/ura184/nep098 (volle Zeitfenster, CI hat den Platz),
+Mond-Text-PCKs pck.sat441/pck.jup365/pck.mar099/pck.ura182/pck.plu060,
+gm_Horizons.pck (GM aller Körper, 15 KB) — kompiliert mit ephemeris_compiler
+(+ --ci-mode-CDNUpload-Pfad), überschreibt die CDN-Assets {netloc}/ephemeris_{body}.bin
+(v2, Meter) — auch die stale Planeten-Binaries (km-Legacy) werden ersetzt.
+Python-Exzision (generate-ephemerides + mirror-cdn aktivieren).
+Verifikations-Schritt: Mond-PCKs auf j2/j4-Einträge prüfen (Crawl-Behauptung) —
+falls ja, trägt der Flattener die Monde mit echten Harmonischen aus.
+Lokal ändert sich nichts: Die φ-Ephemeris-Blöcke für die Monde existieren bereits;
+mit dem CDN-Upload erscheinen die Körper (bis dahin absent, 0 honored).
 ```
 
-**U02** Monde (io…triton) ohne Ephemeriden
+**K02** Binary-PCK-Reader (Erde/Mond-Präzision)
 ```
-de440s.bsp trägt keine Mond-Segmente → jup365/sat441/mar097/ura111/nep095.bsp
-herunterladen, mit ephemeris_compiler kompilieren (v2), nach /tmp/omegaflow_eph_*.bin.
-Bis dahin: Monde absent (0 honored). Deckt sich mit der Kernel-Flattener-Arbeit.
+Neues Modul auf daf.rs: DAF-Segmente — Typ 2 (Chebyshev-Orientierung RA/Dec/W),
+CON-Typen (J2/J4/…), ORBNUM (Satelliten-Bahnelemente). Quellen:
+moon_pa_de440_200625.bpc (+ .tf), earth_latest_high_prec.bpc, Eros falls vorhanden.
+Compiler: stype-4-Nutationssektion (entschieden: additiv — die v2-Parser-Strenge
+bleibt, keine Format-Umstrukturierung). Merge-Regel binary-PCK > text-PCK
+in pck_bodies einbauen (NAIF-Precedence-Regel).
+Runtime: body_pole_at mit echten Nutationsreihen; Zonal-Term leuchtet für
+Mond/Eros (Erde hat die Harmonischen bereits).
 ```
 
-**U03** J2/J4 für weitere Körper: nur Erde hat Text-Quelle
+**K03** Kleinkörper-Katalog
 ```
-geophysical.ker trägt BODY399_J2/J4 → Erde hat echte Harmonische (j2=1.082616e-3
-im v6-Record verifiziert). Weitere Körper: Werte liegen nur in binären .bpc-Kerneln
-→ Binary-PCK-Reader (DAF-Segment-Typ 2; daf.rs existiert als Basis). Bis dahin:
-j2/j4 = 0.0 neutral (0 honored).
+dcom5_le.dat (4,6 MB, kompakte DASTCOM-Variante): Orbits, H, Durchmesser, Albedo,
+Spektraltyp, Rotationsperiode für ~1,4 Mio. Objekte. Bahnelement-Propagation via
+Kepler-Löser — verbindet sich mit dem KeplerMap-Befund im Parser-Abschnitt.
+gravity + thermal/em-Parameter der Kleinkörper.
+```
+
+**K04** Tycho-2-Katalog (em)
+```
+tycho2r.cat / tycho2v.cat (je 88 MB): 2,5 Mio. Stern-Punktquellen im ICRS
+(Position, Parallaxe, Helligkeit) — die „Galaxie" als echte Katalog-Messung.
+```
+
+**K05** FK-Frames
+```
+moon_080317.tf / earth_assoc_itrf93.tf als Frame-Assoziationsquelle →
+hartcodierte Parent-/Name-Tabellen ersetzen (Bias-Befund unten).
+```
+
+**K06** EOP (erst nach K01–K05)
+```
+Erdrotation (Polbewegung, UT1−UTC) für präzise Erd-Stationen; Konzept liegt in
+docs/concepts/IAU-2000_EOP.md.
 ```
 
 ---
@@ -184,7 +220,7 @@ PARSER_MAGIC.md / EXTRACT_TYPES.md — geschachtelte Feldpfade und Flatten-Varia
 
 ---
 
-### Infrastruktur (4)
+### Infrastruktur (3)
 
 **I01** Universal Anomaly Reporter
 ```
@@ -192,21 +228,15 @@ PARSER_EVALUATION_MATRIX.md — GitHub-Issue via gh; Kategorien: Physics Mismatc
 API Unreachable, Empty, Malformed, Invalid.
 ```
 
-**I02** CI-Dual-Mode: Rust, nicht Python
+**I02** refresh-protected-data: Python → Rust
 ```
-AGENTS.md formuliert „same binary runs in CI (CDN-write)" als Ist — real laufen
-generate-ephemerides.yml + refresh-protected-data.yml in Python, mirror-cdn.yml
-cron disabled. Offen: --ci-mode/CDN-Upload in Rust, Python-Exzision, mirror-cdn
-aktivieren. Vorlage: archeology/ci/*.yml + archeology/ci/secrets.template.
-```
-
-**I03** CI-Kernel-Flattener (NAIF)
-```
-KERNEL CURATION & CI AUTOMATION PLAN: Planetary/Satellites/Asteroids/Spacecraft-Kernel
-→ CDN, kernel_flatten.yml, sources_index.φ, NAIF-ID-Mapping. Deckt die Mond-Kernel-Arbeit ab.
+Der API-Mirror-Workflow (refresh-protected-data.yml) läuft weiter in Python —
+Rust-Umsetzung mit Auth-Header-Support (siehe Auth-APIs unten). Vorlage:
+archeology/ci/*.yml + archeology/ci/secrets.template. (Der Ephemeriden-Teil der
+CI ist im Kernel-Flattener-Paket oben aufgegangen.)
 ```
 
-**I04** Auth-APIs
+**I03** Auth-APIs
 ```
 AUTH_APIS.md: 25 Secrets offen (Platzhalter in .secrets.local), Auth-Header-Support
 im Fetch-System, Priorität-A-Quellen nach phi/sources.φ.
@@ -260,10 +290,10 @@ SEARCH_COMMAND-PALETTE.md: SIMBAD-TAP-Objektsuche (Presence-Jump), lokaler
 Source-Index, Force-Filter, Fuse.js, 3 Phasen.
 ```
 
-**M08** Horizons-Zwillingstabelle löschen + stype-4-Nutation
+**M08** Horizons-Zwillingstabelle löschen
 ```
-wgccre_for_body in horizons_compiler → PCK; Nutationsreihen als
-stype-4-Sektion im Binary + body_pole_at-Nutzung (nut_ra/nut_dec stehen bereit).
+wgccre_for_body in horizons_compiler → PCK (die stype-4-Nutation ist Teil des
+Binary-PCK-Pakets oben).
 ```
 
 ---
@@ -307,9 +337,9 @@ stype-4-Sektion im Binary + body_pole_at-Nutzung (nut_ra/nut_dec stehen bereit).
 
 ### CI Pipeline
 
-- `mirror-cdn.yml`: cron disabled (Rust-Rewrite der Pipeline ist offene Arbeit).
-- `generate-ephemerides.yml` (Python/spiceypy) + `refresh-protected-data.yml`
-  (Python inline) → Rust-Rewrite (I02).
+- `refresh-protected-data.yml` (Python inline) → Rust (Befund oben unter Infrastruktur).
+- Der Ephemeriden-Teil (generate-ephemerides + mirror-cdn) ist im
+  Kernel-Flattener-Paket (K01) aufgegangen.
 - CDN-Asset-Naming: `{name}.json` (ein Asset pro Quelle, CI überschreibt) — Konvention
   ist der Resolver.
 
