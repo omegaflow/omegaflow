@@ -371,13 +371,13 @@ Binary-PCK-Pakets oben).
   `DISPLAY=:0 chrome --no-sandbox --enable-unsafe-webgpu --no-default-browser-check
   --remote-debugging-port=9224` (WebGPU ist unter Linux per Default aus, der Flag ist
   Pflicht), Consent per CDP-Klick, Beweis: `__of_state().gpu === true`, frames > 0.
-- Befund HD 515 + Chrome: Der GPU-Prozess stirbt unter der Per-Pixel-Last
-  (`GPU process exited unexpectedly: exit_code=512`, ~3–7 s/Frame bei ~130 Quellen
-  auf 1280×800) → device.lost → Sonde liefert 0 („A valid external Instance reference
-  no longer exists"). Die Per-Pixel-Physik ist die gewählte Wahrheit — der
-  Prozess-Tod ist die ehrliche Kapazitätsgrenze des Siliziums. Firefox (wgpu) als
-  alternativer Laufzeit-Browser offen (Fable-Präzedenz; dom.webgpu.enabled per
-  about:config — FF-153-CDP-Endpoints waren hier nicht erreichbar, ungetestet).
+- Befund HD 515 + Chrome: Der GPU-Prozess stirbt unter der Per-Pixel-Last —
+  Mechanik offiziell geklärt (docs/reference/GPU_WATCHDOG_AND_DEVICE_LOSS.md):
+  `exit_code=512` = Chromium-GpuWatchdogThread-Kill (`RESULT_CODE_HUNG=2 << 8`,
+  Linux-Frist 15 s, erster verpasster Timeout tötet). Mitigation:
+  `--gpu-watchdog-timeout-seconds=60` im Verifikations-Start. Firefox hat keinen
+  Kill-on-Deadline-Watchdog — Laufzeit-Verifikation dort noch offen (BiDi-Weg
+  skizziert: user.js mit dom.webgpu.enabled + devtools-Prefs, WS auf /session).
 - Headless-WebGPU bleibt unverfügbar (adapter null auch mit voller Flag-Matrix;
   Vulkan-WSI braucht ein Display) — der Echt-Browser-CDP-Weg oben ersetzt das.
 
