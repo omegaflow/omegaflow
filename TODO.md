@@ -367,12 +367,19 @@ Binary-PCK-Pakets oben).
   geparst — Lautablehnung fehlt.
 - Test-Limit der Curation über 200 Blöcke hinaus erhöhen; 6 Rest-FAILs sind
   Daten-Artefakte (docs/source_curation.md).
-- Headless-WebGPU: in dieser Umgebung nicht aktivierbar — `requestAdapter()` liefert
-  null trotz `--enable-unsafe-webgpu`, `--use-vulkan=swiftshader`,
-  `--enable-features=VulkanFromANGLE,DefaultANGLEVulkan`, `--disable-vulkan-surface`
-  (Testmatrix 2026-08-14, Chrome 151; System hat intel_icd, aber Vulkan-WSI braucht
-  ein Display — Xvfb fehlt, kein sudo). GPU-Pfade prüft der Operator-Browser;
-  automatischer Weg erst mit Xvfb (`DISPLAY=:99 chrome --enable-unsafe-webgpu`).
+- Browser-Verifikation (Fables Weg, 2026-08-14 verifiziert): Echter Browser + CDP —
+  `DISPLAY=:0 chrome --no-sandbox --enable-unsafe-webgpu --no-default-browser-check
+  --remote-debugging-port=9224` (WebGPU ist unter Linux per Default aus, der Flag ist
+  Pflicht), Consent per CDP-Klick, Beweis: `__of_state().gpu === true`, frames > 0.
+- Befund HD 515 + Chrome: Der GPU-Prozess stirbt unter der Per-Pixel-Last
+  (`GPU process exited unexpectedly: exit_code=512`, ~3–7 s/Frame bei ~130 Quellen
+  auf 1280×800) → device.lost → Sonde liefert 0 („A valid external Instance reference
+  no longer exists"). Die Per-Pixel-Physik ist die gewählte Wahrheit — der
+  Prozess-Tod ist die ehrliche Kapazitätsgrenze des Siliziums. Firefox (wgpu) als
+  alternativer Laufzeit-Browser offen (Fable-Präzedenz; dom.webgpu.enabled per
+  about:config — FF-153-CDP-Endpoints waren hier nicht erreichbar, ungetestet).
+- Headless-WebGPU bleibt unverfügbar (adapter null auch mit voller Flag-Matrix;
+  Vulkan-WSI braucht ein Display) — der Echt-Browser-CDP-Weg oben ersetzt das.
 
 ---
 
