@@ -115,28 +115,28 @@ ephemeris_compiler.rs all_target_ids + body_id_to_name Tabelle.
 
 ---
 
-## Membran (nächstes Päckchen)
+## Membran (Stand 2026-08-14: reine Nebra-Thermik)
 
-- ~~Trommelfell: Compute-Grid statt O(pixel×osc)-fs; bilineare Interpolation;
-  dynamische Netzdichte (stableTick); Relativitäts-Codepfade löschen.~~
-  Manifestiert: membrane_grid (workgroup 8×8, 9 Kraft-Kanäle, 3 vec4/Knoten),
-  fs = bilinearer Interpolator, Relativität (beta/gamma/dopp/aberration) gelöscht,
-  Galileische Propagation + fold_eff bleiben. HUD: `__of_state().gridN`.
-- ~~WGSL konsumiert v6-meta-Slots: props[j*3+1] pole, props[j*3+2] j2/j4/r_eq;
-  Zonal-Harmonic-Term (J2/J4) für Kernel 0/6 + gravity; Kernel-0-Softening:
-  Nebra-Guard 1/max(d²,1) statt max(extent,scale)².~~
-  Manifestiert: osc_field (gemeinsamer Evaluator für Probe + Grid), P2/P4-Terme,
-  j2=0 → neutral. Shader via naga validiert.
-- ~~Tonemap: Exposure wieder konsumiert (per-force lvl = Fenster-Maximum-EMA),
-  a9d87bd-Form log2(|x|/lvl)/8+0.5; Mass-Channel macht Ω > 0 sichtbar.~~
-  Manifestiert: nodeMaxBuf (atomicMax, 36 B) → readNodeMax (Φ-EMA je Kraft) →
-  expose_lo/hi/ex → fs-Tonemap. cachedFref-Median gelöscht.
+- ~~Trommelfell: Compute-Grid~~ — **getilgt**. Rückkehr zum Nebra-Prinzip: der fs
+  evaluiert `osc_field` für JEDEN Pixel (kontinuierliche Mathematik, keine Stützstellen,
+  keine Interpolation — Raum-Lüge und Zeit-Lüge verworfen, Council-Urteil über alle
+  sechs Berater-Positionen in docs/concepts/WGSL_ SHADER.md).
+- ~~Exposure-Kette~~ — **getilgt**: atomicMax, readForceMax, kernelExpose, e/E-Tasten,
+  expose_lo/hi/ex sind tot. Die Nebra-Rampe (tiefes Blau → Cyan → Orange → Weiß,
+  4 mix()-Segmente, Original aus /home/johannes/projects/nebra) IST die Tonemap:
+  `t2 = clamp((log2(Ω_total) + 14.0) / 22.0, 0, 1)` mit Ω_total = Σ|omegas[k]|.
+  Fixe GM-Ordnungs-Kalibrierung: Sonne bei 1 AU → t2 ≈ 0.30.
+- `stableTick` ist reiner HUD-Messwert — kein Regler verkleinert das Feld. Der fallende
+  Tick ist die ehrliche Kapazitätsmessung des Siliziums.
+- presence_probe bleibt für Audio/Haptik/Serial (Sonde am Präsenzpunkt).
+
+### Verbleibend
 - WebSerial flow-Protokoll: `flow <force> <id> <|Ω|> 1 <tick_ms> <t> <x> <y> <z>`.
-- Audio-Gain auf lvl-Basis statt tanh(Ω·medianExtent) — meta[i*12]-Stride-Fix ist drin.
-- Wheel-Divisor 128→512, Initial-Scale 2³¹→2³⁷.
+- Audio-Gain auf lvl-Basis statt tanh(Ω·medianExtent).
+- Wheel-Divisor 128→512, Initial-Scale 2³¹→2³⁷ (Nebra-Kalibrierung).
 - Horizons-Zwillingstabelle löschen (PCK-Hochzeit); stype-4-Nutation.
-- Browser-Smoke: GPU-Pfad braucht echte WebGPU (Headless-SwiftShader absent);
-  JS-Syntax + naga + HUD/Transport headless verifiziert.
+- Forschungs-Iteration (Council): Backend als „langsamer Prior" für Exposure-Kaltstart
+  (falls je wieder eine Anpassung gewünscht wird — aktuell: fixe Rampe).
 
 ---
 
