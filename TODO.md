@@ -404,6 +404,30 @@ Binary-PCK-Pakets oben).
   PMEL-CO2-Moorings (ERDDAP, Subset nötig), SERVIR-SoilMoisture + NDBC + Active-
   Hurricanes-ArcGIS (f=geojson), AFAD tadas (Accept-Header), Safecast
   measurements.json (nicht bgeigie_imports), MPC-Daten-API-Unterrouten.
+- Host-Kuration Batch 2 (2026-08-15, 300 Kandidaten): 199 mechanische + 91
+  klassifizierte Dispositionen in `phi/dead_sources.φ`. 8 weitere Accept-
+  Kandidaten pending:
+  · P2PQuake `api.p2pquake.net/v2/jma/quake?limit=100&order=-1` — seismic-body;
+    Array, earthquake.hypocenter.latitude/longitude/magnitude/depth
+  · Safecast `api.safecast.org/en-US/measurements.json` — em (Gammadosis);
+    Array {value, unit:"cpm", latitude, longitude, captured_at}
+  · JMA-EEW `api.wolfx.jp/jma_eew.json` — seismic-body; Objekt {Latitude,
+    Longitude, OriginTime, Hypocenter} (Magnitude-Feld prüfen)
+  · GraceDB `gracedb.ligo.org/api/` — gravity; Routen-Index (api/v2/superevents,
+    api/v2/events) — Event-Route wählen
+  · USGS-Geomag `geomag.usgs.gov/ws/data/?id=BOU&type=adjusted&format=json`
+    — em (Magnetometer-Timeseries XYZF); Stations-Koordinaten in
+    metadata.intermagnet.coordinates; INTERMAGNET-IAGA-Codes
+  · MSL-Wetter `mars.nasa.gov/rss/api/?feed=weather&category=msl&feedtype=json`
+    — thermal (REMS-Druck/Temperatur/Wind auf Mars); ~1,7 MB Sol-Archiv, Felder prüfen
+  · SatNOGS `network.satnogs.org/api/observations/` — em (Satelliten-
+    Radiobeobachtungen); Array {station_lat/lng/alt, start/end}; Signalfelder prüfen
+  · ADSB `api.adsb.lol/v2/point/{lat}/{lon}/1500` — advective (Flugzeuge,
+    dynamische lat/lon-Keys); in sources.φ noch nicht live (nur Spec-Beispiel)
+  Recheck-Liste erweitert: Argovis (korrekte Query), sensor.community airrohr
+  (area-ID), environment.data.gov.uk Readings-Endpoint, BGS-GIN Observation-
+  Endpoint, IRSA-Gator (spatial-Syntax), Exoplanet-Archiv TAP, ACTRIS, GTN-P,
+  GONG, OceanNetworks, OMNIWeb, AstDyS. SERVIR-SMAP/1km: Service entfernt (404).
 - `phi/research/agent_output/batch_*_accepted.φ` (32 Dateien, neue Grammatik):
   konvertierte Blöcke, die nie nach phi/sources.φ übernommen wurden.
 - `archeology/sources/sources_gold_pre-cdn_27k_359-domains.φ` (2572 Blöcke, alte

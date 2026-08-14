@@ -1373,3 +1373,1174 @@ note Google-Maps-JS (Browser-Cache); der gefundene API-Key wird nicht übernomme
 decline no-physical-force
 url https://res.cloudinary.com/superdarncanada/image/upload/v1589217349/superDARN/nserc_lxzo6g.png
 note Bild-Datei (superDARN-Banner), kein Messwert.
+dead unreachable
+url http://127.0.0.1:8080/schumann.json
+note curl: curl: (7) Failed to connect to 127.0.0.1 port 8080 after 0 ms: Couldn't connect to server
+
+key-needed blocked
+url http://api.worldbank.org/v2/country/.../indicator/...`
+note HTTP 403 — Auth-Gate oder Bot-Block.
+
+key-needed blocked
+url http://apiv3.iucnredlist.org/api/v3/getspeciesbylocation/
+note HTTP 403 — Auth-Gate oder Bot-Block.
+
+dead 404
+url http://geoscope.ipgp.fr/fdsnws/station/1/query?level=station&format=json&network=G
+note HTTP 404 — Endpoint weg.
+
+dead unreachable
+url http://localhost:5000/api/compute
+note curl: curl: (7) Failed to connect to localhost port 5000 after 0 ms: Couldn't connect to server
+
+dead 404
+url http://hashpn.space/api/
+note HTTP 404 — Endpoint weg.
+
+dead 400
+url http://opendata.cern.ch/api/records/?type=dataset&experiment=ALICE&size=1`
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+
+dead 404
+url http://data.neonscience.org/api/v0/documents/NEON.DP1.10081\_20086\_20141.001.variables.20180306T000000Z.csv
+note HTTP 404 — Endpoint weg.
+
+dead 404
+url http://api.open-notify.org/iss-pass.json
+note HTTP 404 — Endpoint weg.
+
+dead 404
+url http://gravis.gfz-potsdam.de/api/v1/timeseries/
+note HTTP 404 — Endpoint weg.
+
+dead 404
+url http://polly.tropos.de/api/stations?format=json
+note HTTP 404 — Endpoint weg.
+
+dead 404
+url https://aisstream.io/api/v1/stream/vessels?latitude=
+note HTTP 404 — Endpoint weg.
+
+key-needed blocked
+url https://alerce.online/api/v1/objects/?format=json&ndet__gte=5&lastmjd__gte=
+note HTTP 403 — Auth-Gate oder Bot-Block.
+
+dead 404
+url http://api.inaturalist.org/v1/docs/`
+note HTTP 404 — Endpoint weg.
+
+dead 404
+url https://api.bas.ac.uk/uk-pdc-catalogue/v1/items?format=json&category=environmental_monitoring&limit=500
+note HTTP 404 — Endpoint weg.
+
+dead 404
+url http://maxi.riken.jp/alert/novae/json/novae_list.json
+note HTTP 404 — Endpoint weg.
+
+dead ssl
+url https://api.astrocats.space/catalog?format=json&
+note curl: curl: (60) SSL certificate problem: unable to get local issuer certificate
+
+dead ssl
+url https://api.blitzortung.org/v1/strikes/latest
+note curl: curl: (60) SSL certificate problem: certificate has expired
+
+dead dns-unresolved
+url https://api.farmsense.net/v1/moonphases/?d=
+note curl: curl: (6) Could not resolve host: api.farmsense.net
+
+dead 404
+url https://api.digitransit.fi/realtime/vehicle-positions/v1/`
+note HTTP 404 — Endpoint weg.
+
+dead 404
+url https://api.adsabs.harvard.edu/v1/export/bibtex/
+note HTTP 404 — Endpoint weg.
+
+dead 404
+url http://reg.bom.gov.au/fwo/IDD60901/IDD60901.95765.json
+note HTTP 404 — Endpoint weg.
+
+key-needed blocked
+url http://api.nasa.gov/neo/rest/v1/feed?start\_date=2025-06-22&end\_date=2025-06-22&detailed=false&api\_key=DEMO\_KEY
+note HTTP 403 — Auth-Gate oder Bot-Block.
+
+key-needed auth
+url https://api.electricitymap.org/v3/carbon-intensity/latest
+note HTTP 401 — Token/Registrierung nötig.
+
+dead 400
+url https://api.cloudflare.com/client/v4/accounts/$
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+
+dead 404
+url https://api.ember-climate.org/v1/electricity-generation?aggregate_by=country&
+note HTTP 404 — Endpoint weg.
+
+dead 404
+url https://api.entur.io/realtime/v1/gtfs-rt/
+note HTTP 404 — Endpoint weg.
+
+dead 404
+url https://api.boldsystems.org/v4/public/data/geo?format=json&limit=250
+note HTTP 404 — Endpoint weg.
+
+key-needed blocked
+url https://api.maptiler.com/maps/basic-v2-dark/style.json
+note HTTP 403 — Auth-Gate oder Bot-Block.
+
+dead 404
+url https://api.openaq.org/v2/
+note HTTP 410 — Endpoint weg.
+
+dead 404
+url https://api.open-meteo.com/v1/air-quality?...european_aqi
+note HTTP 404 — Endpoint weg.
+
+dead 404
+url https://api.ebird.org/v2/data/obs/
+note HTTP 404 — Endpoint weg.
+
+dead dns-unresolved
+url https://api.mbari.org/m3/ctd?format=json&platform=MARS&limit=200&start=
+note curl: curl: (6) Could not resolve host: api.mbari.org
+
+dead 404
+url https://api.open-elevation.com/api/v1/lookup`
+note HTTP 404 — Endpoint weg.
+
+dead 404
+url https://api.openquake.org/v1/hazard/pga/?model=GEM_GLOBAL_v2023.1&poe=0.02&investigation_time=50&bbox=
+note HTTP 404 — Endpoint weg.
+
+dead 400
+url https://api.opentopodata.org/v1/gebco2020?locations=
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+
+dead 400
+url https://api.geonet.org.nz/volcano/alert?format=json
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+
+key-needed blocked
+url https://api.purpleair.com/v1/sensors?fields=latitude,longitude,pm2.5&limit=5000
+note HTTP 403 — Auth-Gate oder Bot-Block.
+
+key-needed blocked
+url https://api.sensor.community/v1/data/measurement?limit=10000
+note HTTP 403 — Auth-Gate oder Bot-Block.
+
+dead 5xx
+url https://api.spacexdata.com/v5/...`
+note HTTP 525 — Server antwortet nicht brauchbar.
+
+dead 404
+url https://api.reliefweb.int/v1/
+note HTTP 410 — Endpoint weg.
+
+dead 400
+url https://api.weather.gov/stations?state=CA,TX,NY&limit=500&cursor=&format=json
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+
+dead 400
+url https://api.tidesandcurrents.noaa.gov/api/prod/...`
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+
+dead 400
+url https://api.waterdata.usgs.gov/ogcapi/v0/collections/daily/items?limit=100&api_key=DEMO_KEY&bbox=
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+
+dead 404
+url https://api.weather.bom.gov.au/v1/observations/
+note HTTP 404 — Endpoint weg.
+
+key-needed auth
+url https://api.z.ai/api/coding/paas/v4`
+note HTTP 401 — Token/Registrierung nötig.
+
+dead 400
+url https://aqs.epa.gov/data/api/dailyData/byBox?email=
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+
+dead 400
+url https://argovis-api.colorado.edu/argo?center=-22.5,0&radius=100&startDate=2024-06-01&data=temperature,salinity&format=json
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+
+dead 404
+url https://aqportal.discomap.eea.europa.eu/api/observations?pollutant=NO2&
+note HTTP 404 — Endpoint weg.
+
+dead 404
+url https://aviationweather.gov/api/data
+note HTTP 404 — Endpoint weg.
+
+dead 5xx
+url https://bmkg-restapi.vercel.app/v1/weather/3273
+note HTTP 503 — Server antwortet nicht brauchbar.
+
+dead 404
+url https://astromap.app/schemas/chart-request.schema.json
+note HTTP 404 — Endpoint weg.
+
+dead unreachable
+url https://casu.ast.cam.ac.uk/casuadc/ingarch/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+target_name,ra_j2000,dec_j2000,instrument,filter,exp_time,night,snr+FROM+weave_observations+WHERE+ra_j2000+IS+NOT+NULL+ORDER+BY+night+DESC
+note curl: curl: (7) Failed to connect to casu.ast.cam.ac.uk port 443 after 78 ms: Couldn't connect to server
+
+dead 400
+url https://catalogue.dataspace.copernicus.eu/odata/v1/Products?...`
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+
+dead 404
+url https://atmosphere.copernicus.eu/api/
+note HTTP 404 — Endpoint weg.
+
+dead 404
+url https://cartocdn-gusc.global.ssl.fastly.net/wri-rw/api/v3/sql?q=SELECT+cartodb_id,the_geom,name,country,primary_fuel,capacity_mw,latitude,longitude+FROM+powerwatch_data_20180102+LIMIT+5000&format=geojson
+note HTTP 404 — Endpoint weg.
+
+dead 404
+url https://cdms.astro.uni-koeln.de/vamdc/tap/rest/VAMDC-TAP/sync?REQUEST=doQuery&LANG=VSS2&FORMAT=application/x-xsams+xml&QUERY=SELECT+SPECIES+WHERE+MoleculeChemicalFormula%3D%27H2O%27
+note HTTP 404 — Endpoint weg.
+
+dead dns-unresolved
+url https://bhuvan-panchayat.nrsc.gov.in:8080/geoserver/sde/wms
+note curl: curl: (6) Could not resolve host: bhuvan-panchayat.nrsc.gov.in
+
+decline method
+url https://cds.climate.copernicus.eu/api/
+note HTTP 202 — Endpoint verlangt anderen Interaktionsmodus.
+
+key-needed auth
+url https://archive.swot.podaac.earthdata.nasa.gov/podaac-swot-ops-cumulus-protected/SWOT_L2_LR_SSH_D/SWOT_L2_LR_SSH_Basic_054_035_20260801T063210_20260801T072338_PID0_01.met.json
+note HTTP 401 — Token/Registrierung nötig.
+
+dead 404
+url https://cems.ecmwf.int/api/v1/glofas/forecast?lat=0&lon=0&format=json&ensemble=true
+note HTTP 404 — Endpoint weg.
+
+dead unreachable
+url https://chain.physics.unb.ca/api/
+note curl: curl: (7) Failed to connect to chain.physics.unb.ca port 443 after 210 ms: Couldn't connect to server
+
+dead dns-unresolved
+url https://api.superdarn.ca/v1/radars/status
+note curl: curl: (6) Could not resolve host: api.superdarn.ca
+
+dead 404
+url https://climada.ethz.ch/api/
+note HTTP 404 — Endpoint weg.
+
+key-needed blocked
+url https://climateknowledgeportal.worldbank.org/api/data/get-download-data/
+note HTTP 403 — Auth-Gate oder Bot-Block.
+
+dead 404
+url https://bhuvan.nrsc.gov.in/geonetwork/srv/eng/csw?SERVICE=CSW&VERSION=2.0.2&REQUEST=GetCapabilities&format=json
+note HTTP 404 — Endpoint weg.
+
+key-needed auth
+url https://cdaac-www.cosmic.ucar.edu/cdaac/rest/users/catalog/cosmic2/
+note HTTP 401 — Token/Registrierung nötig.
+
+key-needed blocked
+url https://crates.io/api/v1/crates?per_page=1
+note HTTP 403 — Auth-Gate oder Bot-Block.
+
+key-needed auth
+url https://data.blitzortung.org/Data/Protected/strikes.json
+note HTTP 401 — Token/Registrierung nötig.
+
+dead 404
+url https://data.apps.fao.org/catalog/api/v1/hise/data?layer=asias_ndvi_vci_d&interp=true&x=13.4&y=52.5`
+note HTTP 404 — Endpoint weg.
+
+dead 404
+url https://coralreefwatch.noaa.gov/satellite/vs/data/vs_alldata_cur.json
+note HTTP 404 — Endpoint weg.
+
+dead 404
+url https://datacenter.iers.org/data/csv/bulletina-ex-001.csv
+note HTTP 404 — Endpoint weg.
+
+dead 404
+url https://data.caltech.edu/api/v1/records?q=tccon+methane&sort=mostrecent&size=50&format=json
+note HTTP 404 — Endpoint weg.
+
+dead 404
+url https://databace.scisat.ca/api/v2/profiles?species=CH4&version=v4.1&start=
+note HTTP 404 — Endpoint weg.
+
+dead 404
+url https://data.earlinet.org/api/services/
+note HTTP 404 — Endpoint weg.
+
+dead 400
+url https://data.cdc.gov/resource/jr58-6ysp.json?\$limit=1
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+
+dead 404
+url https://coastwatch.noaa.gov/erddap/`
+note HTTP 404 — Endpoint weg.
+
+dead 404
+url https://comet.nerc.ac.uk/lics-portal/api/events/?format=json&limit=200&type=eruption&status=active
+note HTTP 404 — Endpoint weg.
+
+dead 404
+url https://data.humdata.org/api/3/action/datastore_search?resource_id=13ac0b40-5e3e-4a01-8b3b-85fe6a0b47e7&limit=2000
+note HTTP 404 — Endpoint weg.
+
+key-needed auth
+url https://data.lsst.cloud/api/tap
+note HTTP 401 — Token/Registrierung nötig.
+
+dead 404
+url https://data.minorplanetcenter.net/comet_e.json
+note HTTP 404 — Endpoint weg.
+
+dead 404
+url https://data.nasa.gov/api/views/gh4g-9sfh/rows.csv
+note HTTP 404 — Endpoint weg.
+
+dead 404
+url https://data.raspberryshake.org/api/v2/station?limit=1000
+note HTTP 404 — Endpoint weg.
+
+key-needed auth
+url https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/GEDI02_A.002/GEDI02_A_2025188131609_O37201_02_T03282_02_004_02_V002/GEDI02_A_2025188131609_O37201_02_T03282_02_004_02_V002.cmr.xml
+note HTTP 401 — Token/Registrierung nötig.
+
+dead dns-unresolved
+url https://dsn.jpl.nasa.gov/dsn/data/dsn.xml
+note curl: curl: (6) Could not resolve host: dsn.jpl.nasa.gov
+
+dead 404
+url https://data.who.int/api/v1/indicators/data?indicatorCode=AIR_10&format=json&
+note HTTP 404 — Endpoint weg.
+
+dead 404
+url https://dc.zah.uni-heidelberg.de/tap/...`
+note HTTP 404 — Endpoint weg.
+
+dead dns-unresolved
+url https://easd.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+source_id,ra,dec,ie_mag,ye_mag,je_mag,he_mag,phz_z,phz_z_err+FROM+euclid.ero_source_catalog+WHERE+ra+IS+NOT+NULL+AND+ie_mag
+note curl: curl: (6) Could not resolve host: easd.esac.esa.int
+
+dead 404
+url https://ebas-data.nilu.no/api/v1/station/?format=json&parameter=NOx&
+note HTTP 404 — Endpoint weg.
+
+dead 400
+url https://earth-search.aws.element84.com/v0/search\
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+
+dead 400
+url https://data.neracoos.org/erddap/tabledap/A01_ocean_001m.csv?time,latitude,longitude,temperature,salinity&time
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+
+dead 404
+url https://ebolaintel.com/api/`
+note HTTP 404 — Endpoint weg.
+
+dead 404
+url https://edgar.jrc.ec.europa.eu/api/v1/emissions?gas=co2&year=2020&format=json`
+note HTTP 404 — Endpoint weg.
+
+dead 404
+url https://earthref.org/MagIC/api/v1/contribution/search?format=json&n_max_sites=100&n_max_locations=20&page=1&per_page=100&contribution_type=Paleomagnetism
+note HTTP 404 — Endpoint weg.
+
+dead 404
+url https://effis.jrc.ec.europa.eu/api/
+note HTTP 404 — Endpoint weg.
+
+dead 400
+url https://data.pmel.noaa.gov/pmel/erddap/tabledap/all_pmel_co2_moorings.csv?pCO2_air&orderByMax
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+
+key-needed blocked
+url https://data-api.globalforestwatch.org/dataset/umd_tree_cover_loss/latest/query?format=json&sql=SELECT+latitude,longitude,year,area__ha,relative_humidity_weight+FROM+umd_tree_cover_loss+WHERE+year
+note HTTP 403 — Auth-Gate oder Bot-Block.
+
+dead dns-unresolved
+url https://erddap.aodn.org.au/erddap/tabledap/imos_argo_sst.csv
+note curl: curl: (6) Could not resolve host: erddap.aodn.org.au
+
+dead 404
+url http://sekitan.jp/plant-map/en/v2/table_en,WRI,1056399,,,,,,,,,,,,,,722.7,NO-ESTIMATION,NO-ESTIMATION,NO-ESTIMATION,NO-ESTIMATION,CAPACITY-FACTOR-V1
+note HTTP 404 — Endpoint weg.
+
+dead unreachable
+url https://erddap.gml.noaa.gov/erddap/tabledap/greenhouse_gases_sf6_aircraft_pfp_discrete.json?time,latitude,longitude,sf6&time
+note curl: curl: (7) Failed to connect to erddap.gml.noaa.gov port 443 after 340 ms: Couldn't connect to server
+
+dead ssl
+url https://erddap.incois.gov.in/erddap/`
+note curl: curl: (60) SSL certificate problem: unable to get local issuer certificate
+
+dead dns-unresolved
+url https://erddap.saeon.ac.za/erddap/
+note curl: curl: (6) Could not resolve host: erddap.saeon.ac.za
+
+dead 400
+url https://erddap.gcoos.org/erddap/tabledap/drifter_6hour_qc.csv?...`
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+
+dead 404
+url https://esa-worldcover.s3.eu-central-1.amazonaws.com/v200/2021/map/ESA_WorldCover_10m_2021_v200_MapInput.tif`
+note HTTP 404 — Endpoint weg.
+
+dead 404
+url https://erosita.mpe.mpg.de/api/v1/populations?format=json&survey=eRASS4&type=AGN&flux_min=1e-14&limit=500
+note HTTP 404 — Endpoint weg.
+
+dead 404
+url https://example.com/api/data?param=
+note HTTP 404 — Endpoint weg.
+
+dead dns-unresolved
+url https://faostat4.fao.org/api/file/Capture_Quantity.zip
+note curl: curl: (6) Could not resolve host: faostat4.fao.org
+
+dead timeout
+url https://api.eia.gov/v2/electricity/rto/region-data/data/?api_key=DEMO_KEY
+note curl: curl: (28) Operation timed out after 12002 milliseconds with 0 bytes received
+
+dead timeout
+url https://api.gdeltproject.org/api/v2/doc/doc?query=climate&mode=timelinevol&format=json
+note curl: curl: (28) Connection timed out after 12000 milliseconds
+
+dead 400
+url https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.csv?latitude,longitude,TEMP,PSAL,DOXY,PRES,time&DOXY%3E=0&time%3E=now-7days&orderBy
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+
+dead timeout
+url https://api.ioda.caida.org/v2/outages/asn/...`
+note curl: curl: (28) Connection timed out after 12000 milliseconds
+
+dead 404
+url https://erddap.emodnet-chemistry.eu/erddap/tabledap/EUT_NORTHSEA_TIMESERIES.json?latitude,longitude,time,Water_body_nitrate,Water_body_phosphate,Water_body_silicate,Water_body_dissolved_oxygen_concentration,ITS_90_water_temperature,Water_body_salinity,Water_body_pH&time%3E%3D2026-01-01T00%3A00%3A00Z
+note HTTP 404 — Endpoint weg.
+
+dead 404
+url https://fireballs.ndc.nasa.gov/api/meteors/last24h
+note HTTP 404 — Endpoint weg.
+
+dead dns-unresolved
+url https://gdp.aoml.noaa.gov/erddap/...`
+note curl: curl: (6) Could not resolve host: gdp.aoml.noaa.gov
+
+dead 404
+url https://floodobservatory.colorado.edu/Archives/GFEDfloods_annual.csv
+note HTTP 410 — Endpoint weg.
+
+dead 404
+url https://gcn.nasa.gov/api/alerts/icecube?alert_type=bronze&limit=100
+note HTTP 404 — Endpoint weg.
+
+dead 400
+url https://gateway.api.globalfishingwatch.org/v3/`
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+
+dead 404
+url https://gea.esac.esa.int/archive/tap/sync
+note HTTP 404 — Endpoint weg.
+
+dead dns-unresolved
+url https://geoserver.efas.eu/geoserver/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=efas:FloodEvents&outputFormat=application%2Fjson&count=500
+note curl: curl: (6) Could not resolve host: geoserver.efas.eu
+
+dead 400
+url https://geofon.gfz-potsdam.de/fdsnws/event/1/query?format=json&minmagnitude=3&limit=100
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+
+dead 400
+url https://gisco-services.ec.europa.eu/api/?dataset=EDGAR_GHG&format=json&filter
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+
+dead 404
+url https://giro.uml.edu/didbase/json/scaled.php?format=json
+note HTTP 404 — Endpoint weg.
+
+dead dns-unresolved
+url https://global-flood-monitor.org/api/v1/reservoirs?format=json
+note curl: curl: (6) Could not resolve host: global-flood-monitor.org
+
+dead transport
+url https://globalland.vgt.vito.be/geoserver/ows?SERVICE=WCS&
+note curl: curl: (60) SSL: no alternative certificate subject name matches target host name 'globalland.vgt.vito.be'
+
+dead timeout
+url https://cdaweb.gsfc.nasa.gov/hapi/data?id=DSCOVR_H0_MAG&time.min=2026-07-01T00:00:00Z&time.max=2026-07-13T23:59:59Z&parameters=Time,B1F1&format=json
+note curl: curl: (28) Operation timed out after 12000 milliseconds with 0 bytes received
+
+dead 404
+url https://global-surface-water.appspot.com/api/
+note HTTP 404 — Endpoint weg.
+
+dead timeout
+url https://celestrak.com/NORAD/elements/gp.php?GROUP=active&FORMAT=json
+note curl: curl: (28) Connection timed out after 12001 milliseconds
+
+dead timeout
+url https://celestrak.org/NORAD/elements/gp.php?...&FORMAT=json`
+note curl: curl: (28) Connection timed out after 12002 milliseconds
+
+dead 404
+url https://glam1.gsfc.nasa.gov/api/gettbl/v4`
+note HTTP 404 — Endpoint weg.
+
+dead 404
+url https://grdc.bafg.de/GRDC/EN/04_spcldtfmts/41_ArcGIS/GRDC_Stations.zip.json
+note HTTP 404 — Endpoint weg.
+
+dead 404
+url https://gwis.jrc.ec.europa.eu/api/fire/current?format=json&limit=500
+note HTTP 404 — Endpoint weg.
+
+dead timeout
+url https://cmr.earthdata.nasa.gov:443/search/granules.json?short_name=ATL03&page_size=2000&sort_key=-start_date
+note curl: curl: (28) Operation timed out after 12000 milliseconds with 18895778 bytes received
+
+dead 404
+url https://gml.noaa.gov/aftp/data/ozwv/Dobson/dobsonNetworkData.json
+note HTTP 404 — Endpoint weg.
+
+dead timeout
+url https://coastwatch.pfeg.noaa.gov/erddap/griddap/
+note curl: curl: (28) Operation timed out after 11141 milliseconds with 1935855 bytes received
+
+dead 404
+url https://hsaf.meteoam.it/Products/Detail?prod=H10&format=json&date=2026-08-08
+note HTTP 404 — Endpoint weg.
+
+dead 404
+url https://heatflow.world/api/v1/sites?lat=47&lon=8&radius=100
+note HTTP 404 — Endpoint weg.
+
+dead 404
+url https://emergency.copernicus.eu/mapping/rest/feed/atom/
+note HTTP 404 — Endpoint weg.
+
+dead 404
+url https://gwosc.org/api/v2/events/
+note HTTP 404 — Endpoint weg.
+
+dead 404
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/
+note HTTP 404 — Endpoint weg.
+
+dead 400
+url https://inspirehep.net/api/literature?q=find%20t%20proton%20decay&size=0
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+
+dead 404
+url https://imbie.org/data/greenland_mass_balance.csv
+note HTTP 404 — Endpoint weg.
+
+dead 404
+url https://iagos.aeris-data.fr/api/json/products?domain=IAGOS-CORE&variables=O3,CO&start=
+note HTTP 404 — Endpoint weg.
+
+dead dns-unresolved
+url https://its-live-data.jpl.nasa.gov/vel_api/v1/coverage?region=ANT&limit=500&format=json
+note curl: curl: (6) Could not resolve host: its-live-data.jpl.nasa.gov
+
+dead 404
+url https://intermagnet.github.io/stations.json
+note HTTP 404 — Endpoint weg.
+
+dead 404
+url https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/DRAXIS/FOREST/GFC/api/v1/data?year=2026&bbox=
+note HTTP 404 — Endpoint weg.
+
+dead 5xx
+url https://kp.gfz.de/app/json/?start=2026-01-01T00:00:00Z&end=2026-07-27T00:00:00Z&index=Kp,Ap&status=def&format=JSON
+note HTTP 500 — Server antwortet nicht brauchbar.
+
+dead dns-unresolved
+url https://iono4d.iri-ap.ru/api/v1/stations?region=europe&format=json&limit=200
+note curl: curl: (6) Could not resolve host: iono4d.iri-ap.ru
+
+dead 404
+url https://icecube.wisc.edu/data-releases/2023/07/icecube-hese-12-year-data-release/hese_12yr_events.csv
+note HTTP 404 — Endpoint weg.
+
+dead dns-unresolved
+url https://lightningwa.info/api/`
+note curl: curl: (6) Could not resolve host: lightningwa.info
+
+dead 5xx
+url https://kp.gfz-potsdam.de/app/json/?start=1932-01-01T00:00:00Z&end=2026-08-08T00:00:00Z&index=Kp,Ap&status=def&format=JSON
+note HTTP 500 — Server antwortet nicht brauchbar.
+
+dead 404
+url https://kauai.ccmc.gsfc.nasa.gov/ISWA/iSWAGateway?action=getdata&id=iri_tec&format=json
+note HTTP 404 — Endpoint weg.
+
+dead 404
+url https://land.copernicus.eu/api/v2/datasets?dataset=SWI10&format=json&date=
+note HTTP 404 — Endpoint weg.
+
+dead dns-unresolved
+url https://lpa.esac.esa.int/api/v1/data?format=json&product=differential_force&start_date=
+note curl: curl: (6) Could not resolve host: lpa.esac.esa.int
+
+dead dns-unresolved
+url https://mangrove-atlas.sei.org/api/widgets/mangrove-cover/?location_id=country&startYear=2020&endYear=2020
+note curl: curl: (6) Could not resolve host: mangrove-atlas.sei.org
+
+dead 404
+url https://labs.waterdata.usgs.gov/api/nldi/linked-data/nwissite/...`
+note HTTP 404 — Endpoint weg.
+
+key-needed auth
+url https://lasair-ztf.lsst.ac.uk/api/cone/?ra=180.0&dec=30.0&radius=10.0&
+note HTTP 401 — Token/Registrierung nötig.
+
+dead 404
+url https://map.blitzortung.org/live.json
+note HTTP 404 — Endpoint weg.
+
+key-needed blocked
+url https://lisn.igp.gob.pe/api/v1/stations?format=json&status=operational
+note HTTP 403 — Auth-Gate oder Bot-Block.
+
+dead dns-unresolved
+url https://masie_ice.apps.nsidc.org/pub/DATASETS/NOAA/G02135/south/daily/data/S_seaice_extent_daily_v3.0.csv
+note curl: curl: (6) Could not resolve host: masie_ice.apps.nsidc.org
+
+dead 404
+url https://maps.openquake.org/api/v1/hazard/sa/?model=GEM_GLOBAL_2023&periods=0.2&imt=SA&poe=0.1
+note HTTP 404 — Endpoint weg.
+
+dead dns-unresolved
+url https://masie_web.apps.nsidc.org/pub/DATASETS/NSIDC0079MASIE-NH_r00v01/masie_4km_allyears_extent_sqkm.csv
+note curl: curl: (6) Could not resolve host: masie_web.apps.nsidc.org
+
+dead 404
+url https://mempool.space/api/v1/fees/recommended`
+note HTTP 404 — Endpoint weg.
+
+dead 400
+url https://mast.stsci.edu/api/v0.1/Download/file?uri=mast:TESS/product/
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+
+decline method
+url https://meri.digitraffic.fi/api/ais/v1/locations
+note HTTP 406 — Endpoint verlangt anderen Interaktionsmodus.
+
+key-needed auth
+url https://my-api.plantnet.org/v2/identify/all?api-key=REDACTED
+note HTTP 401 — Token/Registrierung nötig.
+
+dead 404
+url https://mesonet.agron.iastate.edu/api/1/nldn.geojson?sts=
+note HTTP 404 — Endpoint weg.
+
+dead 400
+url https://modis.ornl.gov/rst/api/v1/MOD13Q1/subset?latitude=
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+
+dead 404
+url https://meta.icos-cp.eu/objects/latest?spec=http://meta.icos-cp.eu/resources/cpmeta/atcCo2NrtDataObject&format=json&limi
+note HTTP 404 — Endpoint weg.
+
+dead 404
+url https://mrdata.usgs.gov/mrds/geo-mrds.php?format=json
+note HTTP 404 — Endpoint weg.
+
+dead 404
+url https://neo.ssa.esa.int/api/neo/close-approaches?date-min=
+note HTTP 404 — Endpoint weg.
+
+dead 404
+url https://lasp.colorado.edu/data/sdo_eve/l3/2026/2026_208_eve_l3.csv
+note HTTP 404 — Endpoint weg.
+
+dead 404
+url https://nucleus.iaea.org/ILIS/api/v1/events?format=json&limit=100&status=current&category=nuclear
+note HTTP 404 — Endpoint weg.
+
+dead 5xx
+url https://fenixservices.fao.org/faostat/api/v1/en/
+note HTTP 521 — Server antwortet nicht brauchbar.
+
+dead 404
+url https://odims.ospar.org/api/
+note HTTP 404 — Endpoint weg.
+
+dead 404
+url https://oceandata.sci.gsfc.nasa.gov/ERDDAP/griddap/MODISA_L3m_CHL_MO.csv?chlor_a%5Blast%5D%5B
+note HTTP 404 — Endpoint weg.
+
+dead 404
+url https://odlinfo.bfs.de/daten/odl-status-de.json
+note HTTP 404 — Endpoint weg.
+
+dead 404
+url https://nwis.waterdata.usgs.gov/w3c/p3p.xml
+note HTTP 404 — Endpoint weg.
+
+dead timeout
+url https://erddap.dataexplorer.oceanobservatories.org/erddap/tabledap/
+note curl: curl: (28) Operation timed out after 11103 milliseconds with 359917 bytes received
+
+dead 404
+url https://openeo.org/documentation/1.0/developers/api/reference.html
+note HTTP 404 — Endpoint weg.
+
+dead 404
+url https://openghg.org/api/v1/data?species=CO2&network=ICOS&
+note HTTP 404 — Endpoint weg.
+
+dead 404
+url https://openinfra.io/api/v1/power/plants`
+note HTTP 404 — Endpoint weg.
+
+dead 404
+url https://noaadata.apps.nsidc.org/NOAA/G02135/north/daily/data/N_seaice_extent_daily_v3.0.csv
+note HTTP 404 — Endpoint weg.
+
+dead timeout
+url https://erddap.marine.ie/erddap/tabledap/smartbay_obs_acoustic.csv?time,spl_full
+note curl: curl: (28) Operation timed out after 12000 milliseconds with 2129061 bytes received
+
+dead 400
+url https://nominatim.openstreetmap.org/reverse?format=json&accept-language=de,en&lat=$
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+
+dead 404
+url https://openneuro.org/api/crn/datasets
+note HTTP 404 — Endpoint weg.
+
+dead 404
+url https://overpass-api.de/api/...`
+note HTTP 404 — Endpoint weg.
+
+dead 404
+url https://overpass.kumi.systems/api/...`
+note HTTP 404 — Endpoint weg.
+
+dead 400
+url https://overpass.openstreetmap.fr/api/interpreter?data=
+note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
+
+dead 404
+url https://openquantumsafe.org/api/v1/algorithms`
+note HTTP 404 — Endpoint weg.
+
+key-needed auth
+url https://opendap.earthdata.nasa.gov/providers/GES_DISC/collections/SAGE3_ISS_L2_SOLAR_V5.2/granules?format=json&temporal
+note HTTP 401 — Token/Registrierung nötig.
+
+dead 404
+url https://ows.emodnet-bathymetry.eu/geoserver/wcs?SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&FORMAT=application/x-netcdf&COVERAGEID=emodnet__mean&SUBSET=Long
+note HTTP 404 — Endpoint weg.
+
+dead 404
+url https://portal.boldsystems.org/api/docs`
+note HTTP 404 — Endpoint weg.
+
+decline method
+url https://portal.opentopography.org/API/
+note HTTP 405 — Endpoint verlangt anderen Interaktionsmodus.
+
+dead 404
+url https://nsidc.org/api/
+note HTTP 404 — Endpoint weg.
+
+dead 404
+url https://ned.ipac.caltech.edu/api/
+note HTTP 404 — Endpoint weg.
+
+dead timeout
+url https://impc.dlr.de/SWE/Total_Electron_Content/TEC_Near_Real-Time/DLR_GNSS_GCG_L4_VTEC-NTCM-SCM_NC_GLOBAL/v2.0.0/latest/DLR_GNSS_GCG_L4_VTEC-NTCM-SCM_NC_GLOBAL_latest_D.json
+note curl: curl: (28) Operation timed out after 12000 milliseconds with 7464101 out of 8987150 bytes received
+
+dead timeout
+url https://ioda.caida.org/api/v1/outages
+note curl: curl: (28) Connection timed out after 12002 milliseconds
+
+dead timeout
+url https://lisa-ldc.lal.in2p3.fr/api/v1/sources?dataset=LDC2_sangria&type=GB&limit=2000&format=json
+note curl: curl: (28) Connection timed out after 12002 milliseconds
+
+dead timeout
+url https://oceanwatch.pifsc.noaa.gov/erddap/griddap/CRW_dhw_v1_0.csv?degree_heating_week
+note curl: curl: (28) Operation timed out after 12000 milliseconds with 3102553 bytes received
+
+# ── Host-Kuration 2026-08-15 — Batch 2 (300 Kandidaten) ──
+# 99 HTTP-200-Kandidaten einzeln klassifiziert. Accept-Kandidaten (8) pending in
+# TODO.md. ALeRCE-Recheck-Befund: alerce.online/api/v1/objects → 403.
+
+parser-def html
+url http://api3.geo.admin.ch/rest/services/api/MapServer/ch.bfe.kernkraftwerke/2/extendedHtmlPopup?lang=en,WRI,,,,,,,,,,,,,,,6955.52,NO-ESTIMATION,NO-ESTIMATION,NO-ESTIMATION,NO-ESTIMATION,CAPACITY-FACTOR-V1
+note GeoAdmin liefert JSON bei f=json — HTML-Popup-Format gewählt.
+
+parser-def rss
+url http://erddap.emodnet-physics.eu/erddap/rss/ARICE_all_cruise_db.rss
+note ERDDAP-RSS; dieselbe Instanz liefert .json/.csv.
+
+decline model-forecast
+url http://cera-www.dkrz.de/WDCC/meta/CMIP6/CMIP6.CMIP.CCCma.CanESM5-1.historical.r15i1p2f1.Lmon.gpp.gn.v20190429.json
+note CMIP6-Modellausgabe (Redirect auf wdc-climate.de).
+
+decline model-forecast
+url https://air-quality-api.open-meteo.com/v1/air-quality?...aerosol_optical_depth,dust,pm2_5,pm10
+note open-meteo = Modelloutput.
+
+key-needed auth
+url https://ads.atmosphere.copernicus.eu/api/retrieve/v1/
+note CAMS Atmosphere Data Store — Daten hinter Registrierung.
+
+decline literature
+url http://export.arxiv.org/api/query?search_query=all:physics&max_results=1
+note Publikations-Metadaten.
+
+decline model-computation
+url http://icgem.gfz-potsdam.de/calcgrid?model=EIGEN-6C4&lat=0&lon=0&height=0&functional=gravity_cl&format=json
+note ICGEM-Gravity-Berechnung aus Modell (calcgrid) — Modellrechnung, kein Messwert.
+
+key-needed auth
+url https://antares.noirlab.edu/api/v1/locus/?format=json&created__gte=
+note ANTARES verlangt Token (siehe Eintrag oben).
+
+decline imagery-tiles
+url https://9dru9gaeoh.execute-api.us-west-2.amazonaws.com/collections/MAXAR_afghanistan_earthquake22/WebMercatorQuad/tilejson.json?title=Visual+Image&assets=visual&asset_bidx=visual%7C1%2C2%2C3&minmax_zoom=8&minmax_zoom=22
+note Satellitenbild-Kachelkatalog (TileJSON).
+
+parser-def html
+url https://actris.nilu.no/api/measurements/
+note ACTRIS-Aerosol-Messdaten (diffusion, echt) hinter Web-Frontend.
+
+decline superseded-by-ephemeris
+url http://api.wheretheiss.at/v1/satellites/25544
+note ISS-Position kommt aus ephemeris_iss.bin (CDN).
+
+decline no-physical-force
+url https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd
+note Kryptopreis.
+
+decline presence-catalog
+url https://api.gbif.org/v1/occurrence/count
+note GBIF = Presence-Katalog (siehe Eintrag oben).
+
+decline presence-catalog
+url https://api.obis.org/v3/
+note OBIS = Biodiversitäts-Presence-Katalog.
+
+decline schedule
+url https://api.irail.be/liveboard/?station=Brussels&format=json
+note Fahrplan.
+
+decline computation
+url https://aa.usno.navy.mil/api/rstt/oneday?date=2026-08-07&coords=34.201,-118.171&tz=0
+note Auf-/Untergangszeiten — astronomische Berechnung.
+
+decline stats
+url https://api.unhcr.org/population/v1/
+note Flüchtlingsstatistik.
+
+decline registry
+url https://api.fda.gov/drug/drugsfda.json?limit=1
+note Arzneimittel-Registry.
+
+decline model-forecast
+url https://archive-api.open-meteo.com/v1/archive?latitude=
+note open-meteo Archiv = Modell/Reanalyse.
+
+decline paleo-catalog
+url https://api.neotomadb.org/v2/data/
+note Paläoökologie-Datenbank.
+
+decline presence
+url https://artenfinder.net/api/v2/sichtbeobachtungen/55423273?format=xml
+note Arten-Sichtbeobachtungen (Presence).
+
+decline no-physical-force
+url https://atlas.ripe.net/api/v2/
+note Internet-Messnetz (Probes).
+
+parser-def html
+url https://argovis.colorado.edu/selection/api/profiles
+note Argovis (Argo-Profile, thermal echt): nackte Route liefert HTML-Fehler — korrekte Query (startDate/endDate) → JSON. Recheck.
+
+decline schema
+url http://schemas.opengis.net/wfs/2.0/wfs.xsd
+note Schema-Dokument.
+
+decline model-forecast
+url https://climate-api.open-meteo.com/v1/climate?latitude=
+note open-meteo Klima = Modelloutput.
+
+decline registry
+url https://clinicaltrials.gov/api/v2/studies?query.cond=
+note Studien-Registry.
+
+parser-def wfs
+url https://bhuvan-vec2.nrsc.gov.in/bhuvan/wfs
+note WFS-Capability-Dokument.
+
+decline randomness
+url https://beacon.nist.gov/beacon/2.0/api/beacon/1.0/record/last`
+note Zufalls-Beacon.
+
+decline no-physical-force
+url https://chromium.googlesource.com/chromium/src/+/0fcdce5f4fdec8d442d7df760cb541f1ca6e446d/gpu/config/gpu_driver_bug_list.json
+note Quellcode-Repo.
+
+decline no-physical-force
+url https://bhuvan-app1.nrsc.gov.in/disaster/disaster.php?id=drought&format=json
+note Katastrophen-Dashboard.
+
+decline registry
+url http://environment.data.gov.uk/flood-monitoring/id/stations.csv?_limit=500
+note Stations-Registry; Readings-Endpoint (id/stations/{id}/readings.json) trägt echte Pegel — Recheck.
+
+parser-def html
+url https://darts.isas.jaxa.jp/astro/xrism/api/v1/observations?format=json&release=DR1&status=public&limit=50
+note XRISM-Beobachtungskatalog — format=json greift nicht (HTML).
+
+decline molecular
+url https://data.rcsb.org/rest/v1/core/entry/1UBQ
+note Proteinstruktur-Daten.
+
+parser-def empty-param
+url https://data.sensor.community/airrohr/v1/filter/area=
+note area= leer → 2 B. Mit Gebiets-ID liefert der Archive-Endpoint PM2.5-Messwerte (diffusion, echt) — Recheck.
+
+decline superseded
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/aka2026nmpbnu.geojson
+note USGS-FDSN ist bereits live in phi/sources.φ.
+
+key-needed auth
+url https://data.nsidc.earthdatacloud.nasa.gov/nsidc-cumulus-prod-public/ATLAS/ATL03/007/2026/05/18/ATL03_20260518015745_09753111_007_01.iso.xml
+note ICESat-2 ATL03 (LIDAR, em echt) — signierte Cloudfront-URL, Earthdata-Login.
+
+decline stats
+url https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/demo_pjan?geo=EU27_2020&sex=T&age=TOTAL&format=JSON
+note Statistik-Aggregat.
+
+decline model-forecast
+url https://ensemble-api.open-meteo.com/v1/ensemble?latitude=
+note Ensemble-Modelloutput.
+
+decline no-physical-force
+url https://en.wikipedia.org/w/api.php?action=query&list=random&rnnamespace=0&rnlimit=1&format=json
+note Wissensgraph.
+
+decline position-only
+url https://eonet.gsfc.nasa.gov/api/v2.1/categories/10
+note EONET-Ereigniskatalog — Geometrie ohne Feldwert (Position-only, §3.9).
+
+parser-def html
+url https://data.oceannetworks.ca/api/
+note Ocean Networks Canada (Ozeansensoren, echt) — OpenAPI-Frontend, Messwert-Routen dahinter.
+
+decline terrain
+url https://epqs.nationalmap.gov/v1/json?x=13.41&y=52.52&units=Meters&output=json
+note DEM-Höhenabfrage — Terrain per Gate declined.
+
+decline imagery
+url https://epic.gsfc.nasa.gov/api/natural/images
+note EPIC-Bilder sind die EM-Messung; JSON nur Bild-Metadata.
+
+key-needed auth
+url https://ebird.org/api/keygen
+note eBird-Key (Login-Redirect).
+
+decline derived-product
+url https://eogdata.mines.edu/nighttime_light/annual/v21/2022/VNL_v21_npp_2022_global_vcmslcfg_c202303062300.average_masked.dat.tif.gz
+note Nighttime-Lights = abgeleitetes Produkt (OAuth-Gate).
+
+decline superseded
+url https://eyes.nasa.gov/dsn/data/dsn.xml
+note XML-Variante; dsn.json ist Accept-Kandidat (TODO).
+
+decline model-forecast
+url https://flood-api.open-meteo.com/v1/flood?latitude=
+note Flutmodell.
+
+decline no-physical-force
+url https://fpma.fao.org/giews/fpmat4/api/v1/indicator/world-food-prices?commodity=wheat&limit=12
+note Preisindizes.
+
+decline no-physical-force
+url https://fred.stlouisfed.org/docs/api/api_key.html
+note Ökonomie-Daten.
+
+key-needed auth
+url https://firms.modaps.eosdis.nasa.gov/api/
+note FIRMS-Aktivfeuer (VIIRS/MODIS, thermal echt) — MAP_KEY nötig.
+
+decline catalog
+url https://ggis.un-igrac.org/api/
+note IGRAC-GGIS-Datensatz-Index (Katalog); Grundwasser-Zeitreihen hinter /api/datasets/ — Recheck.
+
+decline imagery-tiles
+url https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi
+note GIBS-WMS-Bildkacheln.
+
+parser-def docs
+url https://exoplanetarchive.ipac.caltech.edu/docs/TAP/usingTAP.html
+note Exoplanet-Archiv-TAP (em celestial, echt) — Docs-Seite; TAP-Endpoint direkt prüfen.
+
+dead 404
+url https://gis1.servirglobal.net/arcgis/rest/services/SMAP/SM_1km/MapServer/0/query?where=1%3D1&outFields=*&f=json&resultRecordCount=500
+note JSON-Body: {"error":{"code":404,"message":"Service SMAP/SM_1km/MapServer not found"}} — Service entfernt.
+
+decline terrain
+url https://gis.ngdc.noaa.gov/arcgis/rest/services/DEM_global_mosaic_hillshade/ImageServer/identify?geometry=%7B%22x%22
+note Terrain-DEM.
+
+parser-def html
+url https://gtnp.arcticportal.org/api/
+note GTN-P-Bodentemperatur (thermal, echt) — HTML-Frontend.
+
+decline registry
+url https://hub.docker.com/v2/repositories/library/alpine
+note Container-Registry.
+
+decline presence
+url https://globalplasticwatch.org/api/v1/detections?bbox=
+note Plastikfunde — Presence-Katalog.
+
+parser-def html
+url https://gong2.nso.edu/HA/hag/?ref=hag&series=hag&date=2026.08.07&format=json
+note GONG-H-alpha-Sonnenbilder (em, echt) — format=json greift nicht auf dieser Route.
+
+decline no-physical-force
+url https://huggingface.co/api/models?sort=downloads&search=llama`
+note Modell-Registry.
+
+decline schedule
+url https://gtfsrt.api.translink.com.au/api/realtime/SEQ/VehiclePositions
+note GTFS-RT (protobuf) — Fahrplandaten.
+
+decline model-forecast
+url https://hydro1.gesdisc.eosdis.nasa.gov/daac-bin/access/timeseries.cgi?variable=GLDAS2:GLDAS_NOAH025_3H_v2.1:SoilMoi0_10cm_inst&startDate=2026-08-07T00:00&endDate=2026-08-07T23:00&location=GEOM:POINT
+note GLDAS = Landmodell.
+
+parser-def capabilities
+url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetCapabilities&Format=json
+note BGS-GIN (INTERMAGNET-Magnetfeld, em echt): nur Capabilities/Observatoriumsliste — Observation-Endpoint trägt Zeitreihen. Recheck.
+
+parser-def usage-error
+url https://irsa.ipac.caltech.edu/cgi-bin/Gator/nph-query?catalog=allwise_p3as_psd&spatial=box&ra=0.0&dec=0.0&size=14400&outfmt=1&selcols=designation,ra,dec,w1mpro,w2mpro,w3mpro,w4mpro,ph_qual
+note Gator lebt, aber Parameter-Form falsch (Usage-Error) — korrekte spatial-Syntax verwenden. Recheck.
+
+decline derived
+url https://maps.elie.ucl.ac.be/CCI/viewer/download.php?type=products&year=2026&format=json
+note CCI-Landprodukte.
+
+decline model-forecast
+url https://marine-api.open-meteo.com/v1/marine
+note open-meteo Marine = Modelloutput.
+
+decline infrastructure
+url https://github.com/lifewinning/submarine-cable-taps/raw/master/data/submarine_cables.geojson
+note Seekabel-Verläufe.
+
+decline no-physical-force
+url https://maps.googleapis.com/maps/api/js?libraries=places,geometry,visualization&amp;language=en&amp;key=
+note Google-Maps-JS (Browser-Cache); zweiter gefundener API-Key ebenfalls nicht übernommen (key leer).
+
+decline terrain
+url https://macrostrat.org/api/mobile/map_query?lng=8.67&lat=47.37&z=10
+note Geologische Kartendaten.
+
+decline catalog
+url https://ladsweb.modaps.eosdis.nasa.gov/api/v2/content/details
+note LAADS-Produktkatalog.
+
+parser-def html
+url https://newton.spacedys.com/astdys2/index.php?pc=3.0&type=all&format=json&limit=500
+note AstDyS (Asteroiden-Dynamik, echt) — HTML; JSON-Route prüfen.
+
+key-needed auth
+url https://lpdaacsvc.cr.usgs.gov/appeears/api/point/sample?product=GEDI02_A.002&layer=rh100&lat=0&lon=0&format=json
+note GEDI hinter Earthdata-Login.
+
+key-needed auth
+url https://marinecadastre.gov/ais/api/v1/locations?bbox=
+note AIS-Schiffspositionen (advective, echt) — Key nötig.
+
+decline no-physical-force
+url https://naif.jpl.nasa.gov/pub/naif/cosmographia/doc/templates/body_TEMPLATE_globe.json
+note Cosmographia-Template-Datei.
+
+key-needed auth
+url https://nrt.cmems-du.eu/erddap/griddap/cmems_mod_glo_bgc_anfc_0.25deg_P1D-m.csv?o2%5Blast%5D%5B0%5D%5B
+note CMEMS-NRT verlangt Login.
+
+decline static
+url https://gist.githubusercontent.com/rsicarelli/ba4b383a7b56c2f4292597e8c0965cc7/raw/a421c3ba23938f6963b120c6372ac74ca3186052/real.planet.world-heritage.json
+note Statische GeoJSON-Datei.
+
+decline own-infrastructure
+url https://opencode.ai/config.json
+note Eigene Infrastruktur (opencode-Konfiguration).
+
+parser-def cgi
+url https://omniweb.gsfc.nasa.gov/cgi/nx1.cgi?activity=retrieve&res=hour&spacecraft=omni2&start_date=
+note OMNI-Solarwind (Plasma/IMF, em echt) — CGI-Formular.
+
+decline health-stats
+url https://opendata.ecdc.europa.eu/monkeypox/casedistribution/csv/data.csv
+note Fallzahlen-Statistik.
+
+decline presence
+url https://openlittermap.com/api/getdata`
+note Müllfunde.
+
+key-needed auth
+url https://nrt3.modaps.eosdis.nasa.gov/api/v2/content/archives/allData/5200/VNP14IMG_NRT/2026/213/VNP14IMG_NRT.A2026213.1248.002.2026213155308.nc
+note VIIRS-Aktivfeuer hinter Earthdata-Login.
+
+decline no-physical-force
+url https://openlibrary.org/books.json?limit=1
+note Bibliothekskatalog.
+
+decline registry
+url https://ows.emodnet-humanactivities.eu/geoserver/emodnet/ows
+note Human-Activities-Geoserver (Registry).
+
+decline stats
+url https://ourworldindata.org/grapher/electricity-generation.csv
+note Statistik-CSV.
+
+decline catalog
+url https://planetarycomputer.microsoft.com/api/stac/v1/
+note STAC-Suchkatalog (Index); Daten hinter Signierung.
+
+decline presence-catalog
+url https://paleobiodb.org/data1.2/occs/list.json?all_records=1&limit=1
+note Fossilien-Presence-Katalog.
+
+decline literature
+url https://paperswithcode.com/api/v1/papers/recent
+note Publikations-Metadaten.
+
+decline registry
+url https://peeringdb.com/api/ix?limit=1
+note Internet-Exchange-Registry.
+
+decline superseded
+url https://opensky-network.org/api/states/all
+note OpenSky = zweiter ADSB-Anbieter; api.adsb.lol ist Accept-Kandidat (TODO).
+
+decline registry
+url https://network.igs.org/api/public/stations/?format=json&len
+note IGS-Stations-Registry.
+
+decline registry
+url https://ourairports.com/data/airports.csv
+note Flughafen-Registry.
+
+decline netcdf-ftp
+url ftp://ftp.ifremer.fr/ifremer/argo/dac/aoml/1901843/profiles/R1901843_357.nc
+note Argo-Profil als NetCDF via FTP (226 IM) — Archivar konsumiert nur HTTP(S)/JSON.
+
+dead 333
+url https://ghoapi.azureedge.net/api/`
+note Azure liefert HTTP 333 (Proxy-Antwort, kein Datenendpoint).
