@@ -1,6 +1,6 @@
 # URL Template Variables
 
-`src/main.rs:3266-3309`
+`src/main.rs`
 
 All variables substituted via `.replace()` in `render_url()`.
 
@@ -47,11 +47,11 @@ All variables substituted via `.replace()` in `render_url()`.
 
 ## Secrets
 
-`{KEY_NAME}` resolved via `resolve_secret()` (`src/main.rs:2732-2749`). Lookup from environment (loaded from `.secrets.local` at startup). Case-insensitive.
+`{KEY_NAME}` resolved via `resolve_secret()`. Lookup from environment (loaded from `.secrets.local` at startup). Case-insensitive.
 
 ## Format directive
 
-`src/main.rs:3555-3573`
+`src/main.rs`
 
 ```
 format json        default

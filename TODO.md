@@ -30,14 +30,15 @@ Exposure-Kette getilgt (keine lvls, keine e/E). SSAA als dichtere Messung: q/Q i
 ```
 Compiler schreiben v2 (gcount=12, ×1000); 28 Binaries lokal kompiliert und verifiziert.
 Der CDN-Release trägt noch gcount=0-Legacy (km) → Runtime gibt None → Körper absent
-(0 honored) bis Re-Upload. Kein CI-Workflow aktiv (siehe I02).
+(0 honored) bis Re-Upload. Kein aktiver CI-Workflow (die Pipeline läuft noch in Python,
+der Rust-Upload-Pfad ist offene Arbeit).
 ```
 
 **U02** Monde (io…triton) ohne Ephemeriden
 ```
 de440s.bsp trägt keine Mond-Segmente → jup365/sat441/mar097/ura111/nep095.bsp
 herunterladen, mit ephemeris_compiler kompilieren (v2), nach /tmp/omegaflow_eph_*.bin.
-Bis dahin: Monde absent (0 honored). Deckt sich mit I03 (Kernel-Flattener).
+Bis dahin: Monde absent (0 honored). Deckt sich mit der Kernel-Flattener-Arbeit.
 ```
 
 **U03** J2/J4 für weitere Körper: nur Erde hat Text-Quelle
@@ -52,19 +53,19 @@ j2/j4 = 0.0 neutral (0 honored).
 
 ### Zentrismus (3)
 
-**Z03** Sonne (NAIF 10) spezialbehandelt im Ephemeriden-Compiler
+**Z03** Sonne (NAIF 10) wird im Ephemeriden-Compiler von der Leere-Prüfung ausgenommen
 ```
-ephemeris_compiler.rs:457 → if granules.is_empty() && target_id != 10 {
+if granules.is_empty() && target_id != 10 { … } — Sonne überspringt die Skip-Logik.
 ```
 
 **Z04** Ephemeris-Kanäle hardcoded auf gravity
 ```
-main.rs:5255, 5336, 5381 → tau: 86400.0 * 365.0, kernel: 0, force: 1
+tau: 86400.0 * 365.0, kernel: 0, force: 1 — drei Stellen im Extract-Pfad.
 ```
 
 **Z08** Device-Daten verworfen ohne Körper-Ephemeriden
 ```
-main.rs /device-Pfad (~2954) → st_lat/st_lon/st_alt-Gate ohne eph
+/device-Pfad: st_lat/st_lon/st_alt-Gate ohne eph
 ```
 
 ---
@@ -73,12 +74,12 @@ main.rs /device-Pfad (~2954) → st_lat/st_lon/st_alt-Gate ohne eph
 
 **H11** Hot-Path-Clones: `all.push(s.clone())` jeden Tick
 ```
-main.rs:8111 → all.push(s.clone());
+Quell-Liste wird im Loop kloniert statt referenziert.
 ```
 
 **H12** `query_hash` klont Zellen-Referenzen
 ```
-main.rs:732 → out.push(samples);
+out.push(samples) — Zell-Container wird pro Treffer kopiert.
 ```
 
 ---
@@ -87,17 +88,17 @@ main.rs:732 → out.push(samples);
 
 **F33** Geschwindigkeit `[0.0, 0.0, 0.0]` — CelestialPolygon
 ```
-main.rs:5766 → v: [0.0, 0.0, 0.0],
+CelestialPolygon: v: [0.0, 0.0, 0.0],
 ```
 
 **F35** State-Vector hardcoded gravity
 ```
-main.rs:5255 → kernel: 0, force: 1, tau: 86400.0 * 365.0, (drei Stellen, siehe Z04)
+kernel: 0, force: 1, tau: 86400.0 * 365.0, (drei Stellen — gleicher Befund wie oben)
 ```
 
 **F40** NAIF-ID unbekannt → "unknown"
 ```
-ephemeris_compiler.rs:350 → _ => "unknown"
+Name-Mapping im Ephemeriden-Compiler: _ => "unknown"
 ```
 
 ---
@@ -106,12 +107,12 @@ ephemeris_compiler.rs:350 → _ => "unknown"
 
 **D07** Kein Oszillator-Cap in Rust
 ```
-index.html:542 → while (c * 96 > maxBuf) c >>= 1;
+Das Frontend beschneidet über maxBufferSize (c * 96 > maxBuf); Rust kennt kein Cap.
 ```
 
 **D08** `/device` scannt nur Device-Quellen
 ```
-main.rs:3099 → if matches!(osc.source, OscillatorSource::Device)
+matches!(osc.source, OscillatorSource::Device) — API-Quellen fehlen im Scan.
 ```
 
 ---
@@ -120,7 +121,7 @@ main.rs:3099 → if matches!(osc.source, OscillatorSource::Device)
 
 **B05** ISS bekommt spezielles Datenfenster
 ```
-horizons_compiler.rs:715 → let months = if *name == "iss" { 0.9 } else { 1.0 };
+Horizons-Compiler: let months = if *name == "iss" { 0.9 } else { 1.0 };
 ```
 
 **B06** Hardcodierte Body-Listen in Compilern
@@ -132,12 +133,12 @@ all_target_ids + body_id_to_name Tabelle (→ NAIF-ID-Mapping vervollständigen,
 
 ---
 
-### Parser & Spec (8 — aus PARSER_MAGIC.md, PARSER_EVALUATION_MATRIX.md, SOURCES_V2_SPEC.md §10)
+### Parser & Spec (8 — aus PARSER_MAGIC.md, PARSER_EVALUATION_MATRIX.md, SOURCES_V2_SPEC.md „Non-Goals")
 
 **P01** Tote Grammatik wird still akzeptiert
 ```
-main.rs:4419 ("force"-Arm) und main.rs:4246 (3-Token-"field" setzt τ=0) parsen alte
-Blöcke fehlerfrei → stille 0 Oszillatoren (0 honored, aber ohne sichtbares Signal).
+Der Parser akzeptiert die tote force-Direktive und den 3-Token-field (setzt τ=0)
+fehlerfrei → stille 0 Oszillatoren (0 honored, aber ohne sichtbares Signal).
 Entscheidung: laut ablehnen (Refused) oder Migration mit Lautsignal. Betrifft
 archeology/sources/* (alte force-Grammatik) und phi/research/batches/* (source-Köpfe).
 ```
@@ -145,13 +146,14 @@ archeology/sources/* (alte force-Grammatik) und phi/research/batches/* (source-K
 **P02** SI-Konvertierung + Unit-Kraft-Matrix
 ```
 convert_to_si + allowed_units_for_force (PARSER_EVALUATION_MATRIX.md); inkl.
-mag → W/m² (SUNSPOTS-Rest: Sterne blieben). SOURCES_V2_SPEC §10: „units are
-documentation slots" — heute roher Durchfluss.
+mag → W/m² (SUNSPOTS-Rest: Sterne blieben). SOURCES_V2_SPEC („Non-Goals & Known
+Parser Gaps"): „units are documentation slots" — heute roher Durchfluss.
 ```
 
 **P03** `z`-Redshift-Key für cmap + per-row τ-Override + vel-Einheitenkonvertierung
 ```
-SOURCES_V2_SPEC.md §10: z_key (Hubble-Flow), τ-Override je Zeile, vel m/s fix.
+SOURCES_V2_SPEC („Non-Goals & Known Parser Gaps"): z_key (Hubble-Flow),
+τ-Override je Zeile, vel m/s fix.
 ```
 
 **P04** kepler_map-Bahnlöser fehlt
@@ -201,7 +203,7 @@ aktivieren. Vorlage: archeology/ci/*.yml + archeology/ci/secrets.template.
 **I03** CI-Kernel-Flattener (NAIF)
 ```
 KERNEL CURATION & CI AUTOMATION PLAN: Planetary/Satellites/Asteroids/Spacecraft-Kernel
-→ CDN, kernel_flatten.yml, sources_index.φ, NAIF-ID-Mapping. Deckt U02.
+→ CDN, kernel_flatten.yml, sources_index.φ, NAIF-ID-Mapping. Deckt die Mond-Kernel-Arbeit ab.
 ```
 
 **I04** Auth-APIs
@@ -235,8 +237,8 @@ Normalisierung auf die reine Messung steht aus.
 
 **M04** Navigation: Wheel-Divisor + Initial-Scale (Nebra-Kalibrierung)
 ```
-index.html:1194 → gridStep /= 2^(deltaY/128) (Hauptpfad; Touch-Pfad nutzt 512).
-Initial-Scale: `gridStep = 2**31` (index.html:121) → 2³⁷.
+Wheel-Divisor 128 im Hauptpfad (gridStep /= 2^(deltaY/128); Touch-Pfad nutzt 512).
+Initial-Scale: gridStep = 2**31 → 2³⁷.
 ```
 
 **M05** Device-Sensoren als SI-4-Token
@@ -260,7 +262,7 @@ Source-Index, Force-Filter, Fuse.js, 3 Phasen.
 
 **M08** Horizons-Zwillingstabelle löschen + stype-4-Nutation
 ```
-wgccre_for_body in horizons_compiler (siehe B06) → PCK; Nutationsreihen als
+wgccre_for_body in horizons_compiler → PCK; Nutationsreihen als
 stype-4-Sektion im Binary + body_pole_at-Nutzung (nut_ra/nut_dec stehen bereit).
 ```
 
@@ -272,7 +274,8 @@ stype-4-Sektion im Binary + body_pole_at-Nutzung (nut_ra/nut_dec stehen bereit).
   konvertierte Blöcke, die nie nach phi/sources.φ übernommen wurden.
 - `archeology/sources/sources_gold_pre-cdn_27k_359-domains.φ` (2572 Blöcke, alte
   force-Grammatik) + `sources_recovery_pre-cdn_25k_211-domains.φ` (1924): Migration
-  nach Protokoll (docs/source_curation.md); siehe P01.
+  nach Protokoll (docs/source_curation.md); die alte Grammatik wird derzeit noch
+  still geparst (Befund oben).
 - `archeology/sources/sources_new_untested_14k_new-unchecked.φ` (873),
   `sources_astro_untested_*` (30), `sources_exotic_untested_*` (16, ohne force
   → Gate), `sources_earth_untested_*` (3). Der ehemalige UNTESTED_index.txt ist
@@ -304,11 +307,11 @@ stype-4-Sektion im Binary + body_pole_at-Nutzung (nut_ra/nut_dec stehen bereit).
 
 ### CI Pipeline
 
-- `mirror-cdn.yml`: cron disabled → I02.
+- `mirror-cdn.yml`: cron disabled (Rust-Rewrite der Pipeline ist offene Arbeit).
 - `generate-ephemerides.yml` (Python/spiceypy) + `refresh-protected-data.yml`
   (Python inline) → Rust-Rewrite (I02).
-- CDN-Asset-Naming: `{name}.json` (clobber) vs. AGENTS-Konvention
-  `{prefix}_{iso8601}.json` — Konvention ist der Resolver, Naming weicht ab.
+- CDN-Asset-Naming: `{name}.json` (ein Asset pro Quelle, CI überschreibt) — Konvention
+  ist der Resolver.
 
 ---
 

@@ -1,6 +1,6 @@
 # Physical Constants
 
-`src/main.rs:10-16`
+`src/main.rs` (const block)
 
 | Constant | Value | Use |
 |----------|-------|-----|

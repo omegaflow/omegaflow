@@ -118,7 +118,7 @@ Tracking mechanism:
 4. When a block is tested, its disposition appears in one of the two files,
    so the next diff automatically shrinks the open set.
 5. The former `UNTESTED_index.txt` was not archived — reconstruct the per-domain
-   index from the four files (open work, TODO Curation).
+   index from the four files (open work).
 
 ## SESSION HANDOFF (2026-08-07) — read this first
 

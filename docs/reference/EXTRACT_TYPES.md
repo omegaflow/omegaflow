@@ -1,6 +1,6 @@
 # Extract Types
 
-`src/main.rs:1900-1988` (`Extract` enum)
+`src/main.rs` (`Extract` enum)
 
 ## Scalar extracts (outside map/cmap/rows)
 

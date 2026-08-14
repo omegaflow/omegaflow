@@ -1,10 +1,10 @@
 # SI Units — omegaflow Binding
 
-> SUPERSEDED as controlling source by `docs/concepts/SOURCES_V2_SPEC.md` §2/§10.
+> SUPERSEDED as controlling source by `docs/concepts/SOURCES_V2_SPEC.md`
+> („Force-Unit Registry" + „Non-Goals & Known Parser Gaps").
 > `phi/units.φ` and `phi/forces.φ` do not exist — the force/unit registry lives
 > in the spec and the parser (`src/main.rs`). The unit-per-force matrix below
-> remains a useful physical reference. SI conversion in the parser is open work
-> (TODO P02).
+> remains a useful physical reference. SI conversion in the parser is open work.
 
 ## Architecture
 
@@ -13,8 +13,8 @@
 | **Identity** | `docs/reference/NIST_SP330_tables.md` | SI base + derived units (official BIPM tables) |
 | **Identity** | `docs/reference/NIST_SP811_units.md` | API unit normalization, non-SI conversions |
 | **Identity** | `docs/reference/ucum-essence.xml` | UCUM v2.2 complete registry |
-| **Binding** | `docs/concepts/SOURCES_V2_SPEC.md` §2 | Force names, IDs, units — the growing registry |
-| **Parser** | `src/main.rs` | force/unit handling (SI conversion open work: TODO P02) |
+| **Binding** | `docs/concepts/SOURCES_V2_SPEC.md` „Force-Unit Registry" | Force names, IDs, units — the growing registry |
+| **Parser** | `src/main.rs` | force/unit handling (SI conversion is open work) |
 
 No layer is a filter. A unit outside the registry is resolved by consulting
 the identity layers (NIST → UCUM) and applying physics reasoning to determine
@@ -39,7 +39,7 @@ the force. It is never silently dropped.
 ```
 API unit string → NIST_SP811_units.md (identify + normalize)
                 → NIST_SP330_tables.md (classify physical quantity)
-                → SOURCES_V2_SPEC §2 (look up force binding)
+                → SOURCES_V2_SPEC „Force-Unit Registry" (look up force binding)
                 → if missing: physics reasoning (propagation mechanism)
                 → if still unclear: operator review flag
 ```

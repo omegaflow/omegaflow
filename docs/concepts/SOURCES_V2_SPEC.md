@@ -2,7 +2,7 @@
 
 Verified against the living parser (`load_sources` in `src/main.rs`). Every
 directive listed here has a parser arm. Directives without a parser arm are
-listed in §10 as open work — writing them into a block today produces nothing
+listed under „Non-Goals & Known Parser Gaps" as open work — writing them into a block today produces nothing
 (0 honored, silently).
 
 ## 0. Axiom
@@ -30,7 +30,7 @@ unless it has `url` + `ttl` + a frame (`at`/`on`).
 
 | Directive | Tokens | Meaning |
 |-----------|--------|---------|
-| `url <u>` | 2 | API endpoint. Starts the block. Template variables: see §1.1 |
+| `url <u>` | 2 | API endpoint. Starts the block. Template variables: see „URL template variables" |
 | `ttl <s>` | 2 | Fetch interval in seconds. Fetch fires at ttl/Φ. Retention ttl×2⁶. |
 | `at <body>` | 2 | Barycentric frame of the named body (scale fixed 1.0). Also sets the block's body. |
 | `on <body> <lat> <lon> [alt]` | 4–5 | Surface point (WGCCRE rotation). alt in **meters**, optional (default 0 = surface datum). |
@@ -42,7 +42,7 @@ unless it has `url` + `ttl` + a frame (`at`/`on`).
 | `cmap <arr>` | 2 | Celestial map; ICRS from ra/dec + plx/dist/z keys. |
 | `rows <arr>` | 2 | Table rows (column-index or header-name lookup). |
 | `flatten <arr> [geom] [epoch]` | 2–4 | Flatten nested array geometry. |
-| `field <key> <force> <unit> <tau>` | 5 | **Scalar physical measurement.** Key = JSON path (dot-notation). Kernel = force default (§2.1). τ in seconds, must be > 0. |
+| `field <key> <force> <unit> <tau>` | 5 | **Scalar physical measurement.** Key = JSON path (dot-notation). Kernel = force default (see „Force → default kernel"). τ in seconds, must be > 0. |
 | `field <key> <force> <unit> <tau> <kernel>` | 6 | Same, with explicit kernel name. |
 | `field <key> <name> <kernel> <force> <unit> <tau> <absorption> <advection>` | 9 | Legacy long form. τ > 0 required. |
 | `field <key> <identifier>` | 3 | Annotation inside map/cmap/rows after a `force` directive. τ = 0 → **never manifests** (τ-Gate). Documentation only. |
