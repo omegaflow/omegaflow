@@ -32,11 +32,14 @@ Keys werden **niemals** in dieses Dokument oder das Repo geschrieben. Sie leben 
 
 ### ✅ In `.secrets.local` vorhanden (2026-08-14 — aus der ehemaligen „Noch zu besorgen"-Liste eingelöst)
 
-`NASA_API_KEY`, `NASA_ADS_TOKEN`, `SPACETRACK_USER/PASS`, `SUPERMAG_USER`,
-`CDS_API_KEY`, `JSOC_EMAIL`, `NOAA_CDO_TOKEN`, `TNS_API_KEY` (integriert, Vollkatalog),
-`ZENODO_TOKEN`, `MATERIALS_KEY`, `EIA_API_KEY`, `PLANTNET_KEY`, `AIRNOW_KEY`,
-`GFW_USER/PASS`, `OCEANNETWORKS_TOKEN`, `TRANSPORTDATA_KEY` (tedp_*), `SI_API_KEY`,
-`IUCN_TOKEN`, `MOVEBANK_USER/PASS/TOKEN`, `CMEMS_USER/PASS`.
+`NASA_API_KEY`, `NASA_ADS_TOKEN`, `SPACETRACK_USER/PASS`, `SUPERMAG_USER`
+(API nutzt nur `user=`-Param, kein Passwort nötig), `CDS_API_KEY`, `JSOC_EMAIL`,
+`NOAA_CDO_TOKEN`, `TNS_API_KEY` (integriert, Vollkatalog), `ZENODO_TOKEN`,
+`MATERIALS_KEY`, `EIA_API_KEY`, `PLANTNET_KEY`, `AIRNOW_KEY`, `GFW_USER/PASS`,
+`OCEANNETWORKS_TOKEN`, `TRANSPORTDATA_KEY` (tedp_*), `SI_API_KEY`, `IUCN_TOKEN`,
+`MOVEBANK_USER/PASS/TOKEN`, `CMEMS_USER/PASS`, `GBIF_USER/PASS` (verifiziert,
+3,9 Mrd. Vorkommen), `PURPLEAIR_KEY` (verifiziert, globale PM-Sensoren),
+`TRANSIT511_KEY` (Key da, Endpoint-Pfad noch zu verifizieren).
 
 ### ❌ Entfernt (4 — ToS verbieten Redistribution via CDN)
  
@@ -50,17 +53,13 @@ Keys werden **niemals** in dieses Dokument oder das Repo geschrieben. Sie leben 
 CMEMS_USER/CMEMS_PASS liegen noch in `.secrets.local`, die Quelle selbst ist aber
 retired (ERDDAP → NOAA/EMODnet umgestellt).
 
-### ❌ Noch fehlend (7 — in `.secrets.local` absent)
+### ❌ Decline (projekt-gebunden — kein globales Feld)
 
-| Secret | API | Force | Registrierung / Hinweis |
-|---|---|---|---|
-| `GBIF_USER`/`GBIF_PASS` | GBIF (Organismen-Beobachtung) | em | https://www.gbif.org/user/profile — Account existiert (2026-08-01); API keyless (3 req/s), Login hebt auf 100 req/s |
-| `SUPERMAG_PASS` | SuperMAG (Magnetometer) | em | nur `SUPERMAG_USER` in secrets; Passwort aus der Signup-Mail |
-| `PURPLEAIR_KEY` | PurpleAir (PM-Sensoren) | diffusion | https://develop.purpleair.com/ — Key erstellt 2026-06-23, im Portal abrufen |
-| `ARBIMON_KEY` | Arbimon (Bioakustik) | acoustic | https://arbimon.rfcx.org/ — E-Mail verifiziert 2026-08-08 |
-| `WILDLIFE_INSIGHTS_KEY` | Wildlife Insights (Kamera-Fallen) | em | https://www.wildlifeinsights.org/ — Account approved 2026-08-12 |
-| `TRANSIT511_KEY` | 511.org Transit | advective | https://511.org/open-data/token |
-| `TNG_KEY` | IllustrisTNG (Galaxien) | — | decline per Force Gate (Simulation, keine Messung) |
+| Secret | API | Grund |
+|---|---|---|
+| `ARBIMON_KEY` | Arbimon (Bioakustik) | Projekt-gebunden: Aufnahmen gehören zu einzelnen Projekt-Standorten, kein öffentlicher Entwickler-Token, kein „ein Fetch = globales Feld". Force Gate erfüllt (acoustic), aber Datenmodell passt nicht. |
+| `WILDLIFE_INSIGHTS_KEY` | Wildlife Insights (Kamera-Fallen) | Projekt-gebunden: Kamera-Deployments einzelner Organisationen, Datenzugriff über manuellen Download (≤ 500k Records), kein globaler Punktwolken-Endpoint. |
+| `TNG_KEY` | IllustrisTNG (Galaxien) | Simulation, keine Messung (Force Gate). |
 
 ---
 
@@ -142,19 +141,14 @@ retired (ERDDAP → NOAA/EMODnet umgestellt).
 
 ## Nächste Schritte
 
-1. **Noch fehlende Keys besorgen** (siehe Secrets-Matrix oben) — konkrete Wege:
-
-   | Secret | Wie besorgen |
-   |---|---|
-   | `GBIF_USER`/`GBIF_PASS` | Account existiert (2026-08-01): https://www.gbif.org/user → Passwort setzen → `GBIF_USER=code@omegaflow.space` + Passwort in `.secrets.local` |
-   | `SUPERMAG_PASS` | Signup-Mail (2026-08-01, robin.barnes@jhuapl.edu) → Passwort eintragen (neben `SUPERMAG_USER=omegaflow`) |
-   | `PURPLEAIR_KEY` | https://develop.purpleair.com → „API Keys" (Key wurde 2026-06-23 erstellt) → in `.secrets.local` |
-   | `ARBIMON_KEY` | https://arbimon.rfcx.org → Login (E-Mail verifiziert 2026-08-08) → Account → API-Token |
-   | `WILDLIFE_INSIGHTS_KEY` | https://www.wildlifeinsights.org → Login (approved 2026-08-12) → Profil → API-Key |
-   | `TRANSIT511_KEY` | https://511.org/open-data/token → Token anfordern |
-   | `TNG_KEY` | überspringen — decline per Force Gate (Simulation) |
+1. **Keys-Status (2026-08-14):** Alle physisch nutzbaren Keys sind besorgt und in
+   `.secrets.local` — verbleibend sind nur Decline-Fälle (Arbimon/Wildlife Insights
+   projekt-gebunden, TNG Simulation). Kein weiterer Key nötig.
 
 2. Werte in `.secrets.local` eintragen (gitignored, keine Keys committen)
-3. Workflow `refresh-protected-data.yml` erweitern — jede API als optionalen Step (überspringt wenn Secret leer)
-4. Für jede Priorität-A-API Sources in `sources.φ` anlegen
-5. Auth-Header/Query-Param im Fetch-System unterstützen
+3. **Neue Quellen einbauen** (nächste Sessions):
+   - PurpleAir (`diffusion`, globale PM-Sensoren, `X-API-Key`-Header) — verifiziert
+   - GBIF (`em`, 3,9 Mrd. Vorkommen, Basic-Auth) — verifiziert
+   - Transit511 (`advective`, Endpoint-Pfad verifizieren)
+4. Workflow `refresh-protected-data.yml` erweitern — jede API als optionalen Step (überspringt wenn Secret leer)
+5. Auth-Header/Query-Param im Fetch-System unterstützen (PurpleAir braucht `X-API-Key`-Header, GBIF Basic-Auth)
