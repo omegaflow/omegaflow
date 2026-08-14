@@ -19,7 +19,7 @@ Keys werden **niemals** in dieses Dokument oder das Repo geschrieben. Sie leben 
 1. **Lokal**: `.secrets.local` (gitignored) — Platzhalter für alle unten gelisteten Secrets
 2. **GitHub Actions**: `Settings → Secrets and variables → Actions` (Workflow `refresh-protected-data.yml`)
 
-### ✅ Bereits besorgt (7 — im Workflow aktiv, legal redistributable)
+### ✅ Bereits besorgt (im Workflow aktiv, legal redistributable)
  
 | GitHub-Secret | Lokal (`.secrets.local`) | API | Registrierung |
 |---|---|---|---|
@@ -28,8 +28,15 @@ Keys werden **niemals** in dieses Dokument oder das Repo geschrieben. Sie leben 
 | `FIRMS_MAP_KEY` | ✅ | FIRMS Feuer (Public Domain) | https://firms.modaps.eosdis.nasa.gov/api/area/ |
 | `EARTHDATA_EDL_TOKEN` | ✅ | NASA Earthdata (PD) | https://urs.earthdata.nasa.gov → Profil → Generate Token |
 | `USGS_WATER_KEY` | ✅ | USGS Water (PD) | https://api.waterdata.usgs.gov/ogcapi/ |
-| `GBIF_USER`/`GBIF_PASS` | ✅ | GBIF (CC-BY-NC) | https://www.gbif.org/user/profile |
 | `CATALOGS_REPO`/`OMEGAFLOW_TOKEN` | ✅ | Publish-Ziel | PAT mit Contents-write |
+
+### ✅ In `.secrets.local` vorhanden (2026-08-14 — aus der ehemaligen „Noch zu besorgen"-Liste eingelöst)
+
+`NASA_API_KEY`, `NASA_ADS_TOKEN`, `SPACETRACK_USER/PASS`, `SUPERMAG_USER`,
+`CDS_API_KEY`, `JSOC_EMAIL`, `NOAA_CDO_TOKEN`, `TNS_API_KEY` (integriert, Vollkatalog),
+`ZENODO_TOKEN`, `MATERIALS_KEY`, `EIA_API_KEY`, `PLANTNET_KEY`, `AIRNOW_KEY`,
+`GFW_USER/PASS`, `OCEANNETWORKS_TOKEN`, `TRANSPORTDATA_KEY` (tedp_*), `SI_API_KEY`,
+`IUCN_TOKEN`, `MOVEBANK_USER/PASS/TOKEN`, `CMEMS_USER/PASS`.
 
 ### ❌ Entfernt (4 — ToS verbieten Redistribution via CDN)
  
@@ -40,35 +47,20 @@ Keys werden **niemals** in dieses Dokument oder das Repo geschrieben. Sie leben 
 | `ALPHAVANTAGE_KEY` | AlphaVantage | — (kein Äquivalent nötig) |
 | `FRED_API_KEY` | FRED St. Louis Fed | — (kein Äquivalent nötig) |
 
-CMEMS_USER/CMEMS_PASS entfernt: ERDDAP retired — Quellen auf NOAA/EMODnet umgestellt.
+CMEMS_USER/CMEMS_PASS liegen noch in `.secrets.local`, die Quelle selbst ist aber
+retired (ERDDAP → NOAA/EMODnet umgestellt).
 
-### ❌ Noch zu besorgen (25 — Platzhalter in `.secrets.local`)
+### ❌ Noch fehlend (7 — in `.secrets.local` absent)
 
-| GitHub-Secret | .secrets.local | API | Registrierung |
+| Secret | API | Force | Registrierung / Hinweis |
 |---|---|---|---|
-| `NASA_API_KEY` | `NASA_API_KEY=` | NASA open (DONKI/NEO/Insight/Mars) | https://api.nasa.gov/#signUp |
-| `NASA_ADS_TOKEN` | `NASA_ADS_TOKEN=` | NASA ADS Literatur | https://ui.adsabs.harvard.edu/user/settings/token |
-| `SPACETRACK_USER`/`SPACETRACK_PASS` | `SPACETRACK_*=` | Space-Track Sat-Katalog | https://www.space-track.org/auth/login |
-| `SUPERMAG_USER`/`SUPERMAG_PASS` | `SUPERMAG_*=` | SuperMAG Magnetfeld | https://supermag.jhuapl.edu/info/signup.php |
-| `CDS_API_KEY` | `CDS_API_KEY=` | Copernicus CDS (ERA5) | https://cds.climate.copernicus.eu/user/register |
-| `JSOC_EMAIL` | `JSOC_EMAIL=` | JSOC Sonne (HMI) | https://jsoc.stanford.edu/ajax/register_account.html |
-| `OWM_API_KEY` | `OWM_API_KEY=` | OpenWeatherMap | https://home.openweathermap.org/users/sign_up |
-| `NOAA_CDO_TOKEN` | `NOAA_CDO_TOKEN=` | NOAA NCDC/CDO | https://www.ncdc.noaa.gov/cdo-web/token |
-| `TNS_API_KEY` | `TNS_API_KEY=` | TNS Transient | https://www.wis-tns.org/user/register |
-| `ZENODO_TOKEN` | `ZENODO_TOKEN=` | Zenodo | https://zenodo.org/oauth/login |
-| `MATERIALS_KEY` | `MATERIALS_KEY=` | Materials Project | https://materialsproject.org/register |
-| `EIA_API_KEY` | `EIA_API_KEY=` | EIA Energie | https://www.eia.gov/opendata/register.php |
-| `ALPHAVANTAGE_KEY` | `ALPHAVANTAGE_KEY=` | AlphaVantage | https://www.alphavantage.co/support/#api-key |
-| `FRED_API_KEY` | `FRED_API_KEY=` | FRED St. Louis | https://fred.stlouisfed.org/docs/api/api_key.html |
-| `PLANTNET_KEY` | `PLANTNET_KEY=` | PlantNet | https://my.plantnet.org/ |
-| `AIRNOW_KEY` | `AIRNOW_KEY=` | AirNow EPA | https://docs.airnowapi.org/account/request/ |
-| `GFW_TOKEN` | `GFW_TOKEN=` | Global Forest Watch | https://data.globalforestwatch.org/ |
-| `OCEANNETWORKS_TOKEN` | `OCEANNETWORKS_TOKEN=` | Ocean Networks Canada | https://data.oceannetworks.ca/DataSearch |
-| `TRANSPORTDATA_KEY` | `TRANSPORTDATA_KEY=` | Swiss OpenTransport | https://opentransportdata.swiss/en/dataset/ |
-| `TRANSIT511_KEY` | `TRANSIT511_KEY=` | 511.org Transit | https://511.org/open-data/api |
-| `TNG_KEY` | `TNG_KEY=` | IllustrisTNG | https://www.tng-project.org/register/ |
-| `SI_API_KEY` | `SI_API_KEY=` | Smithsonian | https://api.data.gov/signup/ |
-| `IUCN_TOKEN` | `IUCN_TOKEN=` | IUCN Red List | https://apiv3.iucnredlist.org/api/v3/token |
+| `GBIF_USER`/`GBIF_PASS` | GBIF (Organismen-Beobachtung) | em | https://www.gbif.org/user/profile — Account existiert (2026-08-01); API keyless (3 req/s), Login hebt auf 100 req/s |
+| `SUPERMAG_PASS` | SuperMAG (Magnetometer) | em | nur `SUPERMAG_USER` in secrets; Passwort aus der Signup-Mail |
+| `PURPLEAIR_KEY` | PurpleAir (PM-Sensoren) | diffusion | https://develop.purpleair.com/ — Key erstellt 2026-06-23, im Portal abrufen |
+| `ARBIMON_KEY` | Arbimon (Bioakustik) | acoustic | https://arbimon.rfcx.org/ — E-Mail verifiziert 2026-08-08 |
+| `WILDLIFE_INSIGHTS_KEY` | Wildlife Insights (Kamera-Fallen) | em | https://www.wildlifeinsights.org/ — Account approved 2026-08-12 |
+| `TRANSIT511_KEY` | 511.org Transit | advective | https://511.org/open-data/token |
+| `TNG_KEY` | IllustrisTNG (Galaxien) | — | decline per Force Gate (Simulation, keine Messung) |
 
 ---
 
@@ -99,7 +91,7 @@ CMEMS_USER/CMEMS_PASS entfernt: ERDDAP retired — Quellen auf NOAA/EMODnet umge
 | **NASA NEO Asteroids** | `api.nasa.gov/neo/rest/v1/` | Key | frei | Gravity | erweitert | https://api.nasa.gov/ (auch: https://api.nasa.gov/#signUp) |
 | **NASA Insight Mars** | `api.nasa.gov/insight_weather` | Key | frei | Thermal | fehlt | https://api.nasa.gov/ |
 | **NASA Mars Photos** | `api.nasa.gov/mars-photos` | Key | frei | EM | fehlt | https://api.nasa.gov/ |
-| **TNS Transient** | `www.wis-tns.org/api/` | Key | frei | EM | erweitert | https://www.wis-tns.org/user/register |
+| **TNS Transient** | `www.wis-tns.org/api/` + CSV-Staging | Key + User-Marker | frei | EM | integriert (Vollkatalog, csv_zip) | https://www.wis-tns.org/user/register |
 | **Zenodo** | `zenodo.org/api/records` | Token | frei | EM | erweitert | https://zenodo.org/oauth/login |
 
 ## C. Nische — spezifischer Mehrwert
@@ -123,6 +115,9 @@ CMEMS_USER/CMEMS_PASS entfernt: ERDDAP retired — Quellen auf NOAA/EMODnet umge
 | **IllustrisTNG** | `tng-project.org/data/` | Key | frei | EM | fehlt (Galaxien) | https://www.tng-project.org/register/ |
 | **OpenTopography** | `portal.opentopography.org` | Demo-Key | frei | EM | erweitert | https://opentopography.org/ |
 | **Smithsonian Open Access** | `api.si.edu` | Key | frei | EM | fehlt | https://api.data.gov/signup/ (SI-Key via api.data.gov) |
+| **PurpleAir** | `api.purpleair.com/v1/` | Key | frei | Diffusion | Key erstellt 2026-06-23 | https://develop.purpleair.com/ |
+| **Arbimon** | `arbimon.rfcx.org` API | Token | frei | Acoustic | E-Mail verifiziert 2026-08-08 | https://arbimon.rfcx.org/ |
+| **Wildlife Insights** | `www.wildlifeinsights.org` API | Key | frei | EM | approved 2026-08-12 | https://www.wildlifeinsights.org/ |
 
 ## D. Niedrig — viel Aufwand, wenig Mehrwert
 
@@ -147,7 +142,18 @@ CMEMS_USER/CMEMS_PASS entfernt: ERDDAP retired — Quellen auf NOAA/EMODnet umge
 
 ## Nächste Schritte
 
-1. Alle 25 fehlenden Keys besorgen (Registrierungs-URLs in Secrets-Matrix oben)
+1. **Noch fehlende Keys besorgen** (siehe Secrets-Matrix oben) — konkrete Wege:
+
+   | Secret | Wie besorgen |
+   |---|---|
+   | `GBIF_USER`/`GBIF_PASS` | Account existiert (2026-08-01): https://www.gbif.org/user → Passwort setzen → `GBIF_USER=code@omegaflow.space` + Passwort in `.secrets.local` |
+   | `SUPERMAG_PASS` | Signup-Mail (2026-08-01, robin.barnes@jhuapl.edu) → Passwort eintragen (neben `SUPERMAG_USER=omegaflow`) |
+   | `PURPLEAIR_KEY` | https://develop.purpleair.com → „API Keys" (Key wurde 2026-06-23 erstellt) → in `.secrets.local` |
+   | `ARBIMON_KEY` | https://arbimon.rfcx.org → Login (E-Mail verifiziert 2026-08-08) → Account → API-Token |
+   | `WILDLIFE_INSIGHTS_KEY` | https://www.wildlifeinsights.org → Login (approved 2026-08-12) → Profil → API-Key |
+   | `TRANSIT511_KEY` | https://511.org/open-data/token → Token anfordern |
+   | `TNG_KEY` | überspringen — decline per Force Gate (Simulation) |
+
 2. Werte in `.secrets.local` eintragen (gitignored, keine Keys committen)
 3. Workflow `refresh-protected-data.yml` erweitern — jede API als optionalen Step (überspringt wenn Secret leer)
 4. Für jede Priorität-A-API Sources in `sources.φ` anlegen
