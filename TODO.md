@@ -428,6 +428,28 @@ Binary-PCK-Pakets oben).
   (area-ID), environment.data.gov.uk Readings-Endpoint, BGS-GIN Observation-
   Endpoint, IRSA-Gator (spatial-Syntax), Exoplanet-Archiv TAP, ACTRIS, GTN-P,
   GONG, OceanNetworks, OMNIWeb, AstDyS. SERVIR-SMAP/1km: Service entfernt (404).
+- Host-Kuration Batch 3 (2026-08-15, 160 Kandidaten): 107 mechanische + 47
+  klassifizierte Dispositionen in `phi/dead_sources.φ`. 5 weitere Accept-
+  Kandidaten pending (zwei Batch-1-Rechecks bestätigt):
+  · EMSC `www.seismicportal.eu/fdsnws/event/1/query?format=json&limit=100&
+    minmagnitude=2.5&orderby=time` — seismic-body; GeoJSON-FeatureCollection,
+    geometry [lon,lat,depth], properties.source_catalog=EMSC-RTS (mag-Felder
+    im Einbau prüfen); noch nicht in sources.φ
+  · NDBC-Bojen `services5.arcgis.com/7weheFjxuNkGGiZi/.../National_Data_Buoy_
+    Center_Station_Observations/...f=json` — thermal/advective (SST/Strömung);
+    Recheck bestätigt: f=json liefert FeatureService (f=geojson für
+    FeatureCollection)
+  · Hurrikans `services9.arcgis.com/RHVPKKiFTONKtxq3/.../Active_Hurricanes_
+    Sampler/...f=json` — advective; Recheck bestätigt
+  · Schädliches Phytoplankton `services7.arcgis.com/yHbO69mL1QTGCPQG/.../
+    PSF_harmful_phyto/...f=geojson` — biotic; properties {lat/long/date/depth_m,
+    chaetocero, rhizosolen, alexandrium…} (Arten-Zählungen)
+  · SIMBAD-TAP `simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=
+    adql&format=json&query=…` — em cmap; JSON-TAP-Antwort (ra/dec); noch nicht
+    in sources.φ
+  Recheck-Liste erweitert: SWPC ace_mag_1h (SWPC-Familie lebt mit 4 Blöcken —
+  prüfen, ob ACE-Mag dabei), SuperMAG, WOUDC, AAVSO-VSX, ATNF-PSRCAT-TAP,
+  SDSS-SkyServer-SQL, TESS-Target-CSV (RA/Dec-Spalten).
 - `phi/research/agent_output/batch_*_accepted.φ` (32 Dateien, neue Grammatik):
   konvertierte Blöcke, die nie nach phi/sources.φ übernommen wurden.
 - `archeology/sources/sources_gold_pre-cdn_27k_359-domains.φ` (2572 Blöcke, alte
