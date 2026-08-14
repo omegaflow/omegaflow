@@ -1,6 +1,16 @@
 # ── Source Curation: Declined Sources ──
 # Format: <category> <reason> \n url <url> \n note <explanation>
 
+# ── OpenAQ ──
+# Recheck 2026-08-15: v2 (flacher globaler /v2/measurements) → 410 gone.
+# v3 hat KEINEN globalen Messwert-Endpoint mehr: /v3/measurements → 404,
+# Werte nur per /v3/sensors/{id}/measurements (Timeseries pro Sensor).
+# /v3/locations trägt Position + Sensor-Metadaten, aber keine Messwerte.
+
+parser-def sensor-fanout
+url https://api.openaq.org/v3/measurements?parameter=pm25
+note Global flat measurements endpoint removed (v2 → 410, v3 /measurements → 404). Values only via per-sensor timeseries /v3/sensors/{id}/measurements — fan-out, no single fetch with position+value. locations = registry without values. AWS S3 archive is bulk parquet (no live JSON).
+
 # ── Astro-Broker-Verifikation 2026-08-15 (TNS-Bot-Liste, A/B-Sweep) ──
 # A-Kandidaten (keyless JSON + Position): alle dead — einziger lebender
 # em-Transienten-Feed bleibt TNS (phi/sources.φ).
