@@ -266,50 +266,6 @@ stype-4-Sektion im Binary + body_pole_at-Nutzung (nut_ra/nut_dec stehen bereit).
 
 ---
 
-### Doku-Drift (6 — Wahrheitspflicht: Docs an den Code)
-
-**D-D1** BINARY_PROTOCOL.md neu schreiben (v6)
-```
-Real: 19-B-Header (0xCF 0x86 0x06, response_epoch f64, id u32, count u32),
-Record 168 B / 21 f64, field 12 + meta 12 floats, WGSL field[j*3]/props[j*3].
-Dokumentiert: v0x02, 80 B, 10 f64, 11-B-Header. response_epoch ist nirgends dokumentiert.
-```
-
-**D-D2** AGENTS.md-Protokoll-Absatz korrigieren
-```
-„96 bytes, 12 × f64", „0xCF 0x86 0x04" → 168 B, 21 f64, 0x06. (0xCF 0x86 0x01 ist
-nur der Ephemeriden-Binary-Header.)
-```
-
-**D-D3** FORCE_SYSTEM.md + README.md angleichen
-```
-9 Kräfte inkl. biotic; Verweise auf phi/forces.φ + phi/units.φ (existieren nicht)
-→ SOURCES_V2_SPEC als Quelle; BodyProperties-Liste ohne gm/j2/j4/radii/nut.
-```
-
-**D-D4** Curation-Pfad-Drift
-```
-source_curation.md + AGENTS.md verweisen auf phi/research/pre-cdn-history/
-UNTESTED_blocks.φ — Pfad existiert nicht mehr. Reale Untested-Listen:
-archeology/sources/sources_*_untested_* (873 + 30 + 16 + 3 Blöcke). Index
-rekonstruieren oder Docs umhängen.
-```
-
-**D-D5** AGENTS-CI-Behauptung angleichen
-```
-„same binary code runs in CI (CDN-write)" ist Ziel, nicht Ist → als Ziel kennzeichnen
-(siehe I02) oder umsetzen.
-```
-
-**D-D6** Duplikate auflösen
-```
-docs/dual_mode_architecture.md = docs/plans/dual_mode_architecture.md (byte-identisch);
-docs/source_curation.md = docs/plans/source_curation.md; docs/concepts/WGSL SHADER =
-docs/concepts/WGSL_ SHADER.md. Je ein Exemplar behalten (AGENTS-Verweis beachten).
-```
-
----
-
 ### Curation & Quellen
 
 - `phi/research/agent_output/batch_*_accepted.φ` (32 Dateien, neue Grammatik):
@@ -317,8 +273,10 @@ docs/concepts/WGSL_ SHADER.md. Je ein Exemplar behalten (AGENTS-Verweis beachten
 - `archeology/sources/sources_gold_pre-cdn_27k_359-domains.φ` (2572 Blöcke, alte
   force-Grammatik) + `sources_recovery_pre-cdn_25k_211-domains.φ` (1924): Migration
   nach Protokoll (docs/source_curation.md); siehe P01.
-- `sources_new_untested_14k_new-unchecked.φ` (873), `sources_astro_untested_*` (30),
-  `sources_exotic_untested_*` (16, ohne force → Gate), `sources_earth_untested_*` (3).
+- `archeology/sources/sources_new_untested_14k_new-unchecked.φ` (873),
+  `sources_astro_untested_*` (30), `sources_exotic_untested_*` (16, ohne force
+  → Gate), `sources_earth_untested_*` (3). Der ehemalige UNTESTED_index.txt ist
+  nicht archiviert — per-Domain-Index aus diesen vier Dateien rekonstruieren.
 - `sources_recovery_cdn-merged_60k_lost-blocks.φ` (5701 urls, 0 field-Tokens):
   Extract-Parameter aus history/recovery-Dateien zuordnen.
 - `phi/research/batches/` (283) + `probe_batches/` (242): alte Grammatik bzw.
