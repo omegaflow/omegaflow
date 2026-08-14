@@ -264,6 +264,15 @@ PARSER_MAGIC.md — gravity → body_radius statt c·τ als Extent-Herleitung.
 PARSER_MAGIC.md / EXTRACT_TYPES.md — geschachtelte Feldpfade und Flatten-Variante.
 ```
 
+**P09** Two-Stage-Fetch (Werte↔Positionen-Join)
+```
+Strukturmuster der modernen APIs (2026-08-15 verifiziert): Werte und Positionen
+leben in getrennten Endpoints — OpenAQ v3 (/data-Werte nur per Sensor-Timeseries,
+Locations ohne Werte), NOAA CDO (/data ohne lat/lon, /stations mit lat/lon).
+Ein stations-Fanout (Stationsliste → Oscillator-Join pro Station) würde OpenAQ,
+NOAA CDO und TNS get/object freischalten. Heute parser-def in dead_sources.φ.
+```
+
 ---
 
 ### Infrastruktur (3)

@@ -11,6 +11,15 @@ parser-def sensor-fanout
 url https://api.openaq.org/v3/measurements?parameter=pm25
 note Global flat measurements endpoint removed (v2 → 410, v3 /measurements → 404). Values only via per-sensor timeseries /v3/sensors/{id}/measurements — fan-out, no single fetch with position+value. locations = registry without values. AWS S3 archive is bulk parquet (no live JSON).
 
+# ── NOAA CDO (NCEI) ──
+# Recheck 2026-08-15: Token ok (datasets/stations/data → 200). /data liefert
+# date+datatype+station+value OHNE lat/lon (auch mit includemetadata=true);
+# /stations liefert lat/lon+elevation ohne Werte. Kein Join im Parser.
+
+parser-def values-positions-split
+url https://www.ncdc.noaa.gov/cdo-web/api/v2/data?datasetid=GHCND&startdate=2026-07-10&enddate=2026-07-10&datatypeid=TMAX
+note Token ok (200), aber data records carry no coordinates (verified with includemetadata=true); stations endpoint carries lat/lon+elevation but no values. Two-stage fetch needed — registered as TODO P09.
+
 # ── Astro-Broker-Verifikation 2026-08-15 (TNS-Bot-Liste, A/B-Sweep) ──
 # A-Kandidaten (keyless JSON + Position): alle dead — einziger lebender
 # em-Transienten-Feed bleibt TNS (phi/sources.φ).
