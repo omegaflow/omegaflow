@@ -264,13 +264,14 @@ PARSER_MAGIC.md — gravity → body_radius statt c·τ als Extent-Herleitung.
 PARSER_MAGIC.md / EXTRACT_TYPES.md — geschachtelte Feldpfade und Flatten-Variante.
 ```
 
-**P09** Two-Stage-Fetch (Werte↔Positionen-Join)
+**P09** Fanout: Parallelität + Präsenz-Sortierung
 ```
-Strukturmuster der modernen APIs (2026-08-15 verifiziert): Werte und Positionen
-leben in getrennten Endpoints — OpenAQ v3 (/data-Werte nur per Sensor-Timeseries,
-Locations ohne Werte), NOAA CDO (/data ohne lat/lon, /stations mit lat/lon).
-Ein stations-Fanout (Stationsliste → Oscillator-Join pro Station) würde OpenAQ,
-NOAA CDO und TNS get/object freischalten. Heute parser-def in dead_sources.φ.
+Two-Stage-Fetch implementiert (2026-08-15): `fanout <cap>` + {station}-Template,
+Stationsliste über stations_url/path/lat/lon/id, per-Station-Datenfetch via
+fetch_raw (live, ohne Cache/CDN), Positions-Override auf Stations-lat/lon.
+NOAA CDO GHCND TMAX (thermal) lebt damit in phi/sources.φ. Offen: parallele
+Station-Fetches (heute sequenziell), Präsenz-Sortierung (heute API-Ordnung),
+OpenAQ-v3-Anbindung (Sensor-IDs sind in Locations verschachtelt).
 ```
 
 ---

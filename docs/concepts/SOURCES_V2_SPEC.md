@@ -72,14 +72,17 @@ unless it has `url` + `ttl` + a frame (`at`/`on`).
 | `flux_from_mag <key>` | 2 | Derive flux 10^(−0.4·mag). Conflicts with abs_mag_from (block refused). |
 | `abs_mag_from <key>` | 2 | Derive absolute magnitude. |
 | `catalog_epoch <yr>` | 2 | Catalog reference epoch (proper-motion propagation). |
-| `stations <url>` | 2 | Station list URL for `{nearest_station}`. |
+| `stations <url>` | 2 | Station list URL for `{nearest_station}` and `fanout` two-stage fetch. |
 | `stations_path/lat/lon/id <key>` | 2 | Station list keys (defaults: stations, lat, lng, id). |
+| `fanout <cap>` | 2 | Two-stage fetch: fetch the stations list, then fetch the block `url` per station (up to `cap` stations, API order) with `{station}` substituted by the station id. The extract's scalar channels are anchored at the station's lat/lon. Fetches are live (`fetch_raw`, no cache/CDN). |
 
 ### 1.1 URL template variables
 
 Position/extent (from presence + frame): `{lat}` `{lon}` `{lat_int}` `{lon_int}`
 `{lat_min}` `{lat_max}` `{lon_min}` `{lon_max}` `{grid}` `{grid_lat}` `{grid_lon}`
-`{x}` `{y}` `{z}` `{nearest_station}` `{bin}` `{repeat_bin}`.
+`{x}` `{y}` `{z}` `{nearest_station}` `{bin}` `{repeat_bin}`. Fanout: `{station}`
+(substituted per station in two-stage mode, substituted after render_url so it
+survives the secret resolver).
 Time (from the Archivar clock, TDB→UTC): `{today}` `{yesterday}` `{tomorrow}`
 `{today_nodashes}` `{yesterday_nodashes}` `{tomorrow_nodashes}` `{today_yyyymmdd}`
 `{today_ymd}` `{today_plus_365}` `{t_start}` `{t_end}` `{now}` `{now_minus_1}`

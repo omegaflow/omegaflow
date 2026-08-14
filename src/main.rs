@@ -2885,6 +2885,7 @@ struct SourceConfig {
     abs_mag_from: Option<String>,
     catalog_epoch: Option<f64>,
     repeat_ra_bins: u32,
+    fanout_cap: u32,
 }
 
 struct FetchResult {
@@ -4168,6 +4169,7 @@ fn parse_sources(content: &str) -> Vec<SourceConfig> {
     let mut cur_abs_mag_from: Option<String> = None;
     let mut cur_catalog_epoch: Option<f64> = None;
     let mut cur_repeat_ra_bins: u32 = 0;
+    let mut cur_fanout_cap: u32 = 0;
     let mut cur_frame: Option<Frame> = None;
     let mut active = false;
 
@@ -4206,6 +4208,7 @@ fn parse_sources(content: &str) -> Vec<SourceConfig> {
                             abs_mag_from: cur_abs_mag_from.clone(),
                             catalog_epoch: cur_catalog_epoch,
                             repeat_ra_bins: cur_repeat_ra_bins,
+                            fanout_cap: cur_fanout_cap,
                         });
                     }
                 }
@@ -4247,6 +4250,7 @@ fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 cur_abs_mag_from = None;
                 cur_catalog_epoch = None;
                 cur_repeat_ra_bins = 0;
+                cur_fanout_cap = 0;
                 cur_frame = None;
                 active = true;
             }
@@ -4896,6 +4900,11 @@ fn parse_sources(content: &str) -> Vec<SourceConfig> {
             "stations_lat" if parts.len() >= 2 => cur_stations_lat = parts[1].to_string(),
             "stations_lon" if parts.len() >= 2 => cur_stations_lon = parts[1].to_string(),
             "stations_id" if parts.len() >= 2 => cur_stations_id = parts[1].to_string(),
+            "fanout" if parts.len() >= 2 => {
+                if let Ok(v) = parts[1].parse::<u32>() {
+                    cur_fanout_cap = v;
+                }
+            }
             "flux_from_mag" if parts.len() >= 2 => cur_flux_from_mag = Some(parts[1].to_string()),
             "abs_mag_from" if parts.len() >= 2 => cur_abs_mag_from = Some(parts[1].to_string()),
             "catalog_epoch" if parts.len() >= 2 => {
@@ -5315,6 +5324,86 @@ fn render_source_body(
         body = body.replace("{min_freq}", &f.to_string());
     }
     Some(body)
+}
+fn parse_station_entries(j: &JsonVal, src: &SourceConfig) -> Vec<StationEntry> {
+    let arr = match jpath_val(j, &src.stations_path) {
+        Some(JsonVal::Arr(a)) => a.iter().collect::<Vec<_>>(),
+        _ => return Vec::new(),
+    };
+    let mut stations: Vec<StationEntry> = Vec::new();
+    for v in arr {
+        let id = match jpath_val(v, &src.stations_id) {
+            Some(JsonVal::Str(s)) => s.clone(),
+            Some(JsonVal::Num(n)) => n.to_string(),
+            _ => continue,
+        };
+        let lat = match jpath(v, &src.stations_lat) {
+            Some(l) => l,
+            None => continue,
+        };
+        let lon = match jpath(v, &src.stations_lon) {
+            Some(l) => l,
+            None => continue,
+        };
+        stations.push(StationEntry { id, lat, lon });
+    }
+    stations
+}
+
+fn fanout_fetch(
+    src: &SourceConfig,
+    stations_url_tmpl: &str,
+    x: f64,
+    y: f64,
+    z: f64,
+    now: f64,
+    r: f64,
+    eph: &HashMap<String, BodyEphemeris>,
+    env: &HashMap<String, String>,
+    lsk: &LeapSeconds,
+) -> Vec<(Channel, FieldConfig)> {
+    let mut channels = Vec::new();
+    let body_name = frame_body_name(&src.frame);
+    let stations_url = match render_url(stations_url_tmpl, x, y, z, now, r, &body_name, eph, lsk) {
+        Some(u) => resolve_secret(&u, env),
+        None => return channels,
+    };
+    let headers = render_headers(&src.headers, env);
+    let raw = match fetch_raw(&stations_url, None, &headers, src.ttl) {
+        Some(v) => v,
+        None => return channels,
+    };
+    let j = match parse_json(&raw) {
+        Some(v) => v,
+        None => return channels,
+    };
+    let stations = parse_station_entries(&j, src);
+    let cap = src.fanout_cap as usize;
+    let base_url = match render_url(&src.url, x, y, z, now, r, &body_name, eph, lsk) {
+        Some(u) => u,
+        None => return channels,
+    };
+    let body = render_source_body(src, x, y, z, now, r, eph, lsk);
+    for st in stations.into_iter().take(cap) {
+        let url = resolve_secret(&base_url.replace("{station}", &st.id), env);
+        let post = body.as_deref().map(|b| b.replace("{station}", &st.id));
+        let raw = match fetch_raw(&url, post.as_deref(), &headers, src.ttl) {
+            Some(v) => v,
+            None => continue,
+        };
+        if let ExtractResult::Measurements(mut cs) = extract(src, &raw, now, lsk) {
+            for (mut ch, fc) in cs.drain(..) {
+                ch.position = Position::Surface {
+                    body_name: body_name.clone(),
+                    lat: st.lat,
+                    lon: st.lon,
+                    alt: 0.0,
+                };
+                channels.push((ch, fc));
+            }
+        }
+    }
+    channels
 }
 
 fn sha1(data: &[u8]) -> [u8; 20] {
@@ -7934,6 +8023,7 @@ fn load_sources_from(content: &str) -> Vec<SourceConfig> {
                             abs_mag_from: None,
                             catalog_epoch: None,
                             repeat_ra_bins: 0,
+                            fanout_cap: 0,
                         });
                     }
                 }
@@ -8014,6 +8104,7 @@ fn load_sources_from(content: &str) -> Vec<SourceConfig> {
                 abs_mag_from: None,
                 catalog_epoch: None,
                 repeat_ra_bins: 0,
+                fanout_cap: 0,
             });
         }
     }
@@ -8565,6 +8656,20 @@ fn main() {
             });
             let lsk_c = lsk.clone();
             thread::spawn(move || {
+                if src_clone.fanout_cap > 0 {
+                    if let Some(ref su) = src_clone.stations_url {
+                        let channels = fanout_fetch(
+                            &src_clone, su, pos.0, pos.1, pos.2, now, r, &eph_arc, &e, &lsk_c,
+                        );
+                        let _ = ftx.send(FetchResult {
+                            source_idx: src_idx,
+                            channels,
+                            eph_update: None,
+                            asteroid_hash: None,
+                        });
+                    }
+                    return;
+                }
                 let url = match render_source_url(
                     &src_clone, pos.0, pos.1, pos.2, now, r, &eph_arc, &e, &lsk_c,
                 ) {
@@ -8754,6 +8859,7 @@ mod tests {
             abs_mag_from: None,
             catalog_epoch: None,
             repeat_ra_bins: 0,
+            fanout_cap: 0,
         };
         let fixture_lsk = super::LeapSeconds {
             delta_t_a: 32.184,
@@ -8801,6 +8907,7 @@ mod tests {
             abs_mag_from: None,
             catalog_epoch: None,
             repeat_ra_bins: 0,
+            fanout_cap: 0,
         };
         let fixture_lsk = super::LeapSeconds {
             delta_t_a: 32.184,
@@ -8896,6 +9003,7 @@ mod tests {
             abs_mag_from: Some("tns_transient_flux".into()),
             catalog_epoch: None,
             repeat_ra_bins: 0,
+            fanout_cap: 0,
         };
         let fixture_lsk = LeapSeconds {
             delta_t_a: 32.184,
@@ -8976,6 +9084,7 @@ mod tests {
             abs_mag_from: Some("tns_transient_flux".into()),
             catalog_epoch: None,
             repeat_ra_bins: 0,
+            fanout_cap: 0,
         };
         let fixture_lsk = LeapSeconds {
             delta_t_a: 32.184,
@@ -9002,6 +9111,50 @@ mod tests {
         let rendered = render_headers(&headers, &env);
         assert_eq!(rendered[0].1, "secret123");
         assert_eq!(rendered[1].1, "plain");
+    }
+
+    #[test]
+    fn test_parse_station_entries() {
+        let j = parse_json(
+            r#"{"results":[{"id":"GHCND:AA1","latitude":17.1,"longitude":-61.8,"elevation":10.0},{"id":"GHCND:BB2","latitude":40.9,"longitude":-74.0},{"id":7,"latitude":52.5,"longitude":13.4}]}"#,
+        )
+        .unwrap();
+        let src = SourceConfig {
+            ttl: 300,
+            url: "https://example.com/x".into(),
+            frame: Frame::Surface {
+                body_name: "earth".into(),
+                lat: 0.0,
+                lon: 0.0,
+                alt: 0.0,
+            },
+            format: "json".into(),
+            extracts: vec![],
+            headers: vec![],
+            post_body: None,
+            target: None,
+            catalog: None,
+            max_freq: None,
+            min_freq: None,
+            body: None,
+            stations_url: None,
+            stations_path: "results".into(),
+            stations_lat: "latitude".into(),
+            stations_lon: "longitude".into(),
+            stations_id: "id".into(),
+            flux_from_mag: None,
+            abs_mag_from: None,
+            catalog_epoch: None,
+            repeat_ra_bins: 0,
+            fanout_cap: 0,
+        };
+        let stations = parse_station_entries(&j, &src);
+        assert_eq!(stations.len(), 3);
+        assert_eq!(stations[0].id, "GHCND:AA1");
+        assert_eq!(stations[0].lat, 17.1);
+        assert_eq!(stations[0].lon, -61.8);
+        assert_eq!(stations[2].id, "7");
+        assert_eq!(stations[2].lat, 52.5);
     }
 
     #[test]
@@ -9054,6 +9207,7 @@ mod tests {
             abs_mag_from: None,
             catalog_epoch: None,
             repeat_ra_bins: 0,
+            fanout_cap: 0,
         };
         let body = r#"{"table":{"columnNames":["time","longitude","latitude","pres","temp"],"columnTypes":["String","double","double","float","float"],"rows":[["2026-07-30T21:40:30Z",-14.408395,34.49025,3.1,23.478],["2026-07-30T22:00:00Z",-12.5,35.0,1000.0,4.681]]}}"#;
         let fixture_lsk = super::LeapSeconds {
@@ -9527,6 +9681,7 @@ mod tests {
             abs_mag_from: None,
             catalog_epoch: None,
             repeat_ra_bins: 0,
+            fanout_cap: 0,
         };
         let channel = super::Channel {
             epoch: 0.0,
@@ -9842,6 +9997,7 @@ mod tests {
             abs_mag_from: None,
             catalog_epoch: None,
             repeat_ra_bins: 0,
+            fanout_cap: 0,
         };
         let empty_geojson =
             r#"{"type":"FeatureCollection","metadata":{"api":"2.7","count":0},"features":[]}"#;
@@ -9908,6 +10064,7 @@ mod tests {
             abs_mag_from: None,
             catalog_epoch: None,
             repeat_ra_bins: 0,
+            fanout_cap: 0,
         };
         let body = r#"{"latitude":-47.75,"longitude":78.87,"altitude":438.28,"velocity":27528.0}"#;
         let now = 8.4e8;

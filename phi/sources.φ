@@ -469,3 +469,99 @@ map data
 lat 0
 lon 1
 field 2 purpleair_pm25_ugm3 gaussian-inverse-square diffusion µg/m3 3600 0.0 0.0
+
+# ── Live API: NOAA CDO GHCND daily summaries (thermal, presence fan-out) ──
+url https://www.ncdc.noaa.gov/cdo-web/api/v2/data?datasetid=GHCND&startdate={week_ago}&enddate={yesterday}&datatypeid=TMAX&stationid={station}&limit=1&units=metric
+stations https://www.ncdc.noaa.gov/cdo-web/api/v2/stations?datasetid=GHCND&extent={lat_min},{lon_min},{lat_max},{lon_max}&limit=100
+stations_path results
+stations_id id
+stations_lat latitude
+stations_lon longitude
+fanout 50
+header token {NOAA_CDO_TOKEN}
+ttl 3600
+on earth 52.5 13.4
+last results.value noaa_ghcnd_tmax_c erfc thermal C 3600 0.0 0.0
+
+# ── Host-Kuration Einbau 2026-08-15 — 9 neue Live-Quellen (Struktur-Befunde in TODO.md, Batch 1–3) ──
+
+url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&limit=100&minmagnitude=2.5&orderby=time&start={today}T00:00:00
+ttl 60
+at earth
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.depth quake_depth_km gaussian-inverse-square seismic-body km 3600 0.0 0.0
+
+url https://api.adsb.lol/v2/point/{lat}/{lon}/250
+ttl 10
+on earth 52.5 13.4
+map ac
+lat lat
+lon lon
+field gs adsb_ground_speed_kmh gaussian-inverse-square advective km/h 1 0.0 0.0
+field track adsb_track_deg inverse-square em deg 1 0.0 0.0
+
+url https://www.nhc.noaa.gov/CurrentStorms.json
+ttl 300
+at earth
+map activeStorms
+lat latitudeNumeric
+lon longitudeNumeric
+field intensity storm_intensity_kt gaussian-inverse-square advective knot 300 0.0 0.0
+field pressure storm_pressure_mb gaussian-inverse-square advective mb 300 0.0 0.0
+
+url https://api.p2pquake.net/v2/jma/quake?limit=100&order=-1
+ttl 30
+at earth
+map .
+lat earthquake.hypocenter.latitude
+lon earthquake.hypocenter.longitude
+field earthquake.hypocenter.depth quake_depth_km gaussian-inverse-square seismic-body km 3600 0.0 0.0
+
+url https://api.safecast.org/en-US/measurements.json?latitude={lat}&longitude={lon}&distance=5000
+ttl 300
+at earth
+map .
+lat latitude
+lon longitude
+epoch captured_at
+field value safecast_cpm inverse-square em cpm 3600 0.0 0.0
+
+url https://resonanceone.app/api/now
+ttl 300
+at earth
+field schumann_frequency_hz resonance_schumann_hz inverse-square em Hz 600 0.0 0.0
+
+url https://api.wolfx.jp/jma_eew.json
+ttl 5
+at earth
+map .
+lat Latitude
+lon Longitude
+field Depth eew_depth_km gaussian-inverse-square seismic-body km 300 0.0 0.0
+
+url https://services7.arcgis.com/WSiUmUhlFx4CtMBB/arcgis/rest/services/SO2datanew/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 3600
+at earth
+map features
+lat properties.Lat
+lon properties.Long
+field properties.SO2_Kilotons so2_emission_kt erfc diffusion kt 86400 0.0 0.0
+
+url https://services5.arcgis.com/7weheFjxuNkGGiZi/arcgis/rest/services/National_Data_Buoy_Center_Station_Observations/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+ttl 300
+at earth
+map features
+lat attributes.LAT
+lon attributes.LON
+field attributes.WDIR ndbc_arc_wdir_deg gaussian-inverse-square advective deg 30 0.0 0.0
+field attributes.WSPD ndbc_arc_wspd_ms gaussian-inverse-square advective m/s 30 0.0 0.0
+field attributes.GST ndbc_arc_gust_ms gaussian-inverse-square advective m/s 30 0.0 0.0
+field attributes.WVHT ndbc_arc_wave_m gaussian-inverse-square acoustic m 30 0.0 0.0
+field attributes.DPD ndbc_arc_dom_period_s gaussian-inverse-square acoustic s 30 0.0 0.0
+field attributes.APD ndbc_arc_avg_period_s gaussian-inverse-square acoustic s 30 0.0 0.0
+field attributes.MWD ndbc_arc_wave_dir_deg gaussian-inverse-square acoustic deg 30 0.0 0.0
+field attributes.PRES ndbc_arc_pressure_hpa gaussian-inverse-square advective hPa 30 0.0 0.0
+field attributes.ATMP ndbc_arc_air_temp_c erfc thermal C 30 0.0 0.0
+field attributes.WTMP ndbc_arc_water_temp_c erfc thermal C 30 0.0 0.0
