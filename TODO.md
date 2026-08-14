@@ -44,17 +44,32 @@ Target-Enumeration) ist geschlossen; Git trägt es.
 
 **K02** Binary-PCK-Reader (Erde/Mond-Präzision)
 ```
-Neues Modul auf daf.rs: DAF-Segmente — Typ 2 (Chebyshev-Orientierung RA/Dec/W),
-CON-Typen (J2/J4/…), ORBNUM (Satelliten-Bahnelemente). Quellen:
-moon_pa_de440_200625.bpc (+ .tf), earth_latest_high_prec.bpc, Eros falls vorhanden.
-Compiler: stype-4-Nutationssektion (entschieden: additiv — die v2-Parser-Strenge
-bleibt, keine Format-Umstrukturierung). Merge-Regel binary-PCK > text-PCK
-in pck_bodies einbauen (NAIF-Precedence-Regel).
-Runtime: body_pole_at mit echten Nutationsreihen; Zonal-Term leuchtet für
-Mond/Eros (Erde hat die Harmonischen bereits).
-Detail-Specs im Repo: docs/reference/NAIF_PCK_REQUIRED_READING.md (pck.req, 2021 —
-Text-PCK-Keywords + Binary-PCK-Typen 2/3/20) und docs/reference/NAIF_DAF_REQUIRED_READING.md
-(daf.req, 2017 — Dateiarchitektur, Summary-Records, Wortadressen).
+Modul src/bpc.rs auf daf.rs: DAF-Segmente Typ 2 (Chebyshev-Orientierung RA/Dec/W;
+Typ 3/20 werden gemeldet und übersprungen — 0 honored). Precedence-Regel:
+Binary-PCK > Text-PCK (pck.req). Der Compiler sampelt das volle Orientierungsmodell
+und schreibt die stype-4-Nutationssektion (additiv: Chebyshev-Fit von voll − linear,
+RA/DEC/PM); die Runtime addiert sie in orientation_angles_at (K02 geschlossen —
+Leser, Kanal, Protokoll-Doku, CI-Anschluss). Befund 2026-08-14: Text-PCKs der Monde
+tragen echte NUT_PREC-Reihen (Io −0,083°, Iapetus −0,451°, Uranus-Monde …) — sie
+fließen über die stype-4-Röhre. Binary-PCKs tragen NUR Orientierung (pck.req,
+Typen 2/3/20) — die CON-J2/J4-Behauptung war falsch; Mond-Harmonische liegen nicht
+in den Flattener-Wurzeln (bleiben j2/j4 = 0 honored, Kanal-Forschung: GRAIL-Modelle).
+```
+Verifikations-Befund moon_pa_de440_200625.bpc (Session 2026-08-14): Der
+DAF-Leser ist korrekt (Trailer, Record-Adressen, Fenster 1550–2650, Grad-9-Fits
+verifiziert) — aber die gespeicherten Winkel folgen nicht der IAU-Pol-Konvention:
+bei J2000 liefert die Datei Pol ≈ (RA −0,05°, DEC +0,43°) und W-Drift 0,23°/Tag
+statt 13,176°/Tag. Die SPICE-Kette geht über MOON_PA_DE440 (31008) + TKFRAME_31009
+(67,85"/78,69"/0,28", AXES 3-2-1, ARCSECONDS, moon_de440_250416.tf). Der
+Binary-PCK-Merge für den Mond parkt deshalb an K05 (FK-Kette) — der Leser steht.
+
+**K05** FK-Frames (erweitert um den K02-Befund)
+```
+moon_de440_250416.tf / moon_080317.tf / earth_assoc_itrf93.tf als
+Frame-Assoziationsquelle → hartcodierte Parent-/Name-Tabellen ersetzen
+(Bias-Befund unten). Trägt außerdem den Moon-PA-Merge: MOON_PA_DE440 (31008,
+PCK-Klasse 2, src/bpc.rs steht) + TKFRAME_31009-Festrotation = ME-Frame;
+erst dann trägt der Flattener die Binary-PCK-Präzision für den Mond.
 ```
 
 **K03** Kleinkörper-Katalog
@@ -75,12 +90,6 @@ die --fetch-from-Maschinerie bleibt generisch (Systeme erweiterbar).
 ```
 tycho2r.cat / tycho2v.cat (je 88 MB): 2,5 Mio. Stern-Punktquellen im ICRS
 (Position, Parallaxe, Helligkeit) — die „Galaxie" als echte Katalog-Messung.
-```
-
-**K05** FK-Frames
-```
-moon_080317.tf / earth_assoc_itrf93.tf als Frame-Assoziationsquelle →
-hartcodierte Parent-/Name-Tabellen ersetzen (Bias-Befund unten).
 ```
 
 **K06** EOP (erst nach K01–K05)

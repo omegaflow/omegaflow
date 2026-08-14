@@ -1,3 +1,4 @@
+use omegaflow::bpc::BpcFile;
 use omegaflow::bsp_reader::spk::SpkFile;
 use omegaflow::cdn::{body_url, upload_asset};
 use omegaflow::pck::{neutral, PckBody};
@@ -9,6 +10,7 @@ use std::sync::{Arc, Mutex};
 use std::time::Duration;
 
 const CHEBYSHEV_DEGREE: usize = 17;
+const NUT_DEGREE: usize = 11;
 const GRANULE_DAYS: f64 = 32.0;
 const N_SAMPLES: usize = 25;
 const J2000_EPOCH: f64 = 2451545.0;
@@ -76,6 +78,14 @@ fn pck_id_of(target: i32) -> i32 {
         8 => 899,
         9 => 999,
         other => other,
+    }
+}
+
+fn pa_frame_of(body: i32) -> Option<i32> {
+    match body {
+        301 => Some(31008),
+        399 => Some(31006),
+        _ => None,
     }
 }
 
@@ -199,11 +209,10 @@ fn state_ssb(spk: &SpkFile, target: i32, et: f64) -> Option<[f64; 6]> {
     ])
 }
 
-fn compute_rotation_matrix(wgccre: &PckBody, jd: f64) -> Option<[f64; 9]> {
-    let tc = (jd - J2000_EPOCH) / 36525.0;
-    let a = wgccre.pole_ra_at(tc)?.to_radians();
-    let d = wgccre.pole_dec_at(tc)?.to_radians();
-    let w = (wgccre.pm_at(jd - J2000_EPOCH)? - wgccre.pole_ra_at(tc)?).to_radians();
+fn rotation_matrix_from_angles(ra_deg: f64, dec_deg: f64, pm_deg: f64) -> [f64; 9] {
+    let a = ra_deg.to_radians();
+    let d = dec_deg.to_radians();
+    let w = (pm_deg - ra_deg).to_radians();
     let (sa, ca) = a.sin_cos();
     let (sd, cd) = d.sin_cos();
     let (sw, cw) = w.sin_cos();
@@ -216,29 +225,89 @@ fn compute_rotation_matrix(wgccre: &PckBody, jd: f64) -> Option<[f64; 9]> {
     let xt_east = -sa * sd;
     let yt_east = ca * sd;
     let zt_east = -cd;
-    Some([
+    [
         xt_target, yt_target, zt_target, xt_east, yt_east, zt_east, xt_up, yt_up, zt_up,
-    ])
+    ]
+}
+
+fn full_orientation(
+    wgccre: &PckBody,
+    bpc_files: &[BpcFile],
+    body_id: i32,
+    jd: f64,
+) -> Option<(f64, f64, f64)> {
+    let et = (jd - J2000_EPOCH) * 86400.0;
+    for bpc in bpc_files {
+        if let Some(v) = bpc.orient(body_id, 1, et) {
+            return Some(v);
+        }
+        if let Some(pa) = pa_frame_of(body_id) {
+            if let Some(v) = bpc.orient(pa, 1, et) {
+                return Some(v);
+            }
+        }
+    }
+    let tc = (jd - J2000_EPOCH) / 36525.0;
+    Some((
+        wgccre.pole_ra_at(tc)?,
+        wgccre.pole_dec_at(tc)?,
+        wgccre.pm_at(jd - J2000_EPOCH)?,
+    ))
+}
+
+fn linear_orientation(wgccre: &PckBody, jd: f64) -> Option<(f64, f64, f64)> {
+    let tc = (jd - J2000_EPOCH) / 36525.0;
+    Some((
+        wgccre.pole_ra_deg? + wgccre.pole_ra_rate_deg_per_century? * tc,
+        wgccre.pole_dec_deg? + wgccre.pole_dec_rate_deg_per_century? * tc,
+        wgccre.pm_deg? + wgccre.pm_rate_deg_per_day? * (jd - J2000_EPOCH),
+    ))
+}
+
+fn nutation_delta_fit(
+    wgccre: &PckBody,
+    bpc_files: &[BpcFile],
+    body_id: i32,
+    mid_jd: f64,
+    half_jd: f64,
+) -> Option<(Vec<f64>, Vec<f64>, Vec<f64>)> {
+    let nodes = chebyshev_nodes(N_SAMPLES);
+    let mut samples: Vec<(f64, f64, f64)> = Vec::with_capacity(N_SAMPLES);
+    for tau in &nodes {
+        let jd = mid_jd + tau * half_jd;
+        let full = full_orientation(wgccre, bpc_files, body_id, jd)?;
+        let lin = linear_orientation(wgccre, jd)?;
+        samples.push((full.0 - lin.0, full.1 - lin.1, full.2 - lin.2));
+    }
+    let (ra_d, dec_d, pm_d) = (samples[0].0.abs(), samples[0].1.abs(), samples[0].2.abs());
+    if ra_d < 1e-9 && dec_d < 1e-9 && pm_d < 1e-9 {
+        return None;
+    }
+    chebyshev_fit(&samples, NUT_DEGREE)
 }
 
 fn extract_granules(
     spk: &SpkFile,
     target: i32,
     wgccre: &PckBody,
+    bpc_files: &[BpcFile],
 ) -> (
     Vec<(f64, f64, Vec<f64>, Vec<f64>, Vec<f64>)>,
     Vec<(f64, [f64; 9])>,
+    Vec<(f64, f64, Vec<f64>, Vec<f64>, Vec<f64>)>,
 ) {
     let mut granules = Vec::new();
     let mut rotations = Vec::new();
+    let mut nutation = Vec::new();
     let segments = spk.segments();
     let relevant: Vec<_> = segments
         .iter()
         .filter(|s| s.target == target && s.data_type == 2)
         .collect();
     if relevant.is_empty() {
-        return (granules, rotations);
+        return (granules, rotations, nutation);
     }
+    let pck_id = pck_id_of(target);
     let mut min_et = f64::MAX;
     let mut max_et = f64::MIN;
     for seg in &relevant {
@@ -283,11 +352,16 @@ fn extract_granules(
         if let Some((cx, cy, cz)) = chebyshev_fit(&combined, CHEBYSHEV_DEGREE) {
             granules.push((mid_jd, half_jd, cx, cy, cz));
         }
-        if let Some(rot_m) = compute_rotation_matrix(wgccre, mid_jd) {
-            rotations.push((mid_jd, rot_m));
+        if let Some((ra, dec, pm)) = full_orientation(wgccre, bpc_files, pck_id, mid_jd) {
+            rotations.push((mid_jd, rotation_matrix_from_angles(ra, dec, pm)));
+        }
+        if let Some((nra, ndec, npm)) =
+            nutation_delta_fit(wgccre, bpc_files, pck_id, mid_jd, half_jd)
+        {
+            nutation.push((mid_jd, half_jd, nra, ndec, npm));
         }
     }
-    (granules, rotations)
+    (granules, rotations, nutation)
 }
 
 fn write_binary(
@@ -295,10 +369,14 @@ fn write_binary(
     body_name: &str,
     granules: &[(f64, f64, Vec<f64>, Vec<f64>, Vec<f64>)],
     rotations: &[(f64, [f64; 9])],
+    nutation: &[(f64, f64, Vec<f64>, Vec<f64>, Vec<f64>)],
     wgccre: &PckBody,
 ) -> bool {
     let mut n_sections: u32 = 2;
     if !rotations.is_empty() {
+        n_sections += 1;
+    }
+    if !nutation.is_empty() {
         n_sections += 1;
     }
     let mut buf = Vec::new();
@@ -369,13 +447,34 @@ fn write_binary(
             }
         }
     }
+    if !nutation.is_empty() {
+        let section_stype: u32 = 4;
+        buf.extend_from_slice(&section_stype.to_le_bytes());
+        buf.extend_from_slice(&(nutation.len() as u32).to_le_bytes());
+        buf.extend_from_slice(&(NUT_DEGREE as u32).to_le_bytes());
+        buf.extend_from_slice(&0u32.to_le_bytes());
+        for (t0, dt, cx, cy, cz) in nutation {
+            buf.extend_from_slice(&t0.to_le_bytes());
+            buf.extend_from_slice(&dt.to_le_bytes());
+            for &c in cx {
+                buf.extend_from_slice(&c.to_le_bytes());
+            }
+            for &c in cy {
+                buf.extend_from_slice(&c.to_le_bytes());
+            }
+            for &c in cz {
+                buf.extend_from_slice(&c.to_le_bytes());
+            }
+        }
+    }
     match std::fs::write(path, &buf) {
         Ok(()) => {
             eprintln!(
-                "  {}: {} granules, {} rotations, {} B",
+                "  {}: {} granules, {} rotations, {} nutation, {} B",
                 body_name,
                 granules.len(),
                 rotations.len(),
+                nutation.len(),
                 buf.len()
             );
             true
@@ -407,7 +506,7 @@ fn family_of(url: &str) -> &'static str {
     if name.contains("dcom") || name.contains("dastcom") {
         return "dastcom";
     }
-    if name.ends_with(".bsp") || name.ends_with(".bpc") || name.ends_with(".bc") {
+    if name.ends_with(".bsp") {
         if url.contains("/satellites/") {
             return "spk-satellites";
         }
@@ -415,6 +514,12 @@ fn family_of(url: &str) -> &'static str {
             return "spk-planets";
         }
         return "spk";
+    }
+    if name.ends_with(".bpc") {
+        return "bpc";
+    }
+    if name.ends_with(".bc") {
+        return "ck";
     }
     if name.ends_with(".tpc") || name.ends_with(".ker") {
         return "pck-text";
@@ -891,8 +996,9 @@ fn download_missing(entries: &[IndexEntry], dest: &str) -> Vec<String> {
     paths
 }
 
-fn classify(paths: &[String]) -> (Vec<String>, Option<String>, Vec<String>) {
+fn classify(paths: &[String]) -> (Vec<String>, Vec<String>, Option<String>, Vec<String>) {
     let mut kernels = Vec::new();
+    let mut bpcs = Vec::new();
     let mut gm_text = String::new();
     let mut pck_text = String::new();
     for p in paths {
@@ -907,6 +1013,10 @@ fn classify(paths: &[String]) -> (Vec<String>, Option<String>, Vec<String>) {
             },
             "spk-planets" | "spk-satellites" | "spk" => {
                 kernels.push(p.clone());
+                None
+            }
+            "bpc" => {
+                bpcs.push(p.clone());
                 None
             }
             family => {
@@ -936,7 +1046,7 @@ fn classify(paths: &[String]) -> (Vec<String>, Option<String>, Vec<String>) {
     } else {
         Some(gm_text)
     };
-    (kernels, gm, vec![pck_text])
+    (kernels, bpcs, gm, vec![pck_text])
 }
 
 fn update_index_bodies(index_path: &str, bodies: &[String]) {
@@ -961,6 +1071,7 @@ fn update_index_bodies(index_path: &str, bodies: &[String]) {
 
 fn flatten(
     kernels: &[String],
+    bpcs: &[String],
     gm_text: Option<&str>,
     pck_text: Option<&str>,
     ci_mode: bool,
@@ -973,6 +1084,13 @@ fn flatten(
                 eprintln!("open {}: {}", kernel_path, e);
                 std::process::exit(1);
             }
+        }
+    }
+    let mut bpc_files = Vec::new();
+    for bpc_path in bpcs {
+        match BpcFile::open(bpc_path) {
+            Ok(b) => bpc_files.push(b),
+            Err(e) => eprintln!("open {}: {}", bpc_path, e),
         }
     }
     let pck_bodies: HashMap<i32, PckBody> = omegaflow::pck::parse(gm_text, pck_text);
@@ -988,14 +1106,16 @@ fn flatten(
         };
         let mut granules: Vec<(f64, f64, Vec<f64>, Vec<f64>, Vec<f64>)> = Vec::new();
         let mut rotations: Vec<(f64, [f64; 9])> = Vec::new();
+        let mut nutation: Vec<(f64, f64, Vec<f64>, Vec<f64>, Vec<f64>)> = Vec::new();
         for spk in &spk_files {
             let has_coverage = spk.segments().iter().any(|s| s.target == *target_id);
             if !has_coverage {
                 continue;
             }
-            let (g, r) = extract_granules(spk, *target_id, &wgccre);
+            let (g, r, n) = extract_granules(spk, *target_id, &wgccre, &bpc_files);
             granules.extend(g);
             rotations.extend(r);
+            nutation.extend(n);
         }
         if granules.is_empty() && *target_id != 10 {
             eprintln!("  SKIP {}: no granules in any kernel", body_name);
@@ -1003,8 +1123,9 @@ fn flatten(
         }
         granules.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal));
         rotations.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal));
+        nutation.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal));
         let path = format!("ephemeris_{}.bin", body_name);
-        if write_binary(&path, body_name, &granules, &rotations, &wgccre) {
+        if write_binary(&path, body_name, &granules, &rotations, &nutation, &wgccre) {
             written.push(body_name.clone());
             if ci_mode {
                 let _ = upload_asset(&path);
@@ -1112,7 +1233,7 @@ fn main() {
     let args: Vec<String> = std::env::args().collect();
     if args.len() < 2 {
         eprintln!(
-            "usage: ephemeris_compiler <kernel_path>... [--gm <gm>] [--pck <pck>] [--ci-mode]"
+            "usage: ephemeris_compiler <kernel_path>... [--gm <gm>] [--pck <pck>] [--bpc <bpc>] [--ci-mode]"
         );
         eprintln!(
             "       ephemeris_compiler --index --root <url> [--depth N] [--out <file>] [--delay-ms N] [--jobs N]"
@@ -1189,6 +1310,7 @@ fn main() {
     let mut kernel_paths: Vec<String> = Vec::new();
     let mut gm_path: Option<String> = None;
     let mut pck_paths: Vec<String> = Vec::new();
+    let mut bpc_paths: Vec<String> = Vec::new();
     let mut ci_mode = false;
     let mut index_path: Option<String> = None;
     let mut fetch_from: Option<String> = None;
@@ -1207,6 +1329,12 @@ fn main() {
             "--pck" => {
                 if let Some(p) = args.get(i + 1) {
                     pck_paths.push(p.clone());
+                }
+                i += 1;
+            }
+            "--bpc" => {
+                if let Some(p) = args.get(i + 1) {
+                    bpc_paths.push(p.clone());
                 }
                 i += 1;
             }
@@ -1262,14 +1390,14 @@ fn main() {
             eprintln!("selected: {} ({}, {} B)", e.name, e.family, e.size);
         }
         let paths = download_missing(&selected, &dest);
-        let (kernels, gm_text, pck_texts) = classify(&paths);
+        let (kernels, bpcs, gm_text, pck_texts) = classify(&paths);
         let pck_merged: String = pck_texts.concat();
         let pck = if pck_merged.is_empty() {
             None
         } else {
             Some(pck_merged)
         };
-        let written = flatten(&kernels, gm_text.as_deref(), pck.as_deref(), ci_mode);
+        let written = flatten(&kernels, &bpcs, gm_text.as_deref(), pck.as_deref(), ci_mode);
         if ci_mode {
             if let Some(idx) = &index_path {
                 update_index_bodies(idx, &written);
@@ -1296,6 +1424,7 @@ fn main() {
     };
     flatten(
         &kernel_paths,
+        &bpc_paths,
         gm_text.as_deref(),
         pck_text.as_deref(),
         ci_mode,

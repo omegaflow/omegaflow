@@ -38,19 +38,35 @@ additionally gets the zonal harmonic term
 
 ## BodyProperties
 
-`src/main.rs` struct — 21 fields; the last seven are `Option` (nut series `Option<Vec<[f64;3]>>`):
+`src/main.rs` struct — 22 fields; the last eight are `Option` (nut series
+`Option<Vec<[f64;3]>>`, nutation `Option<Vec<NutationRecord>>`):
 
 ```
 α0_deg, dα0_dt_deg_per_century, δ0_deg, dδ0_dt_deg_per_century,
 w0_deg, dw_dt_deg_per_day, radius_m, flattening,
 gaussian_inverse_square, gaussian_inverse, erfc, exponential_decay, patch_levy,
-gm, j2, j4, radii_b, radii_c, nut_ra, nut_dec
+gm, j2, j4, radii_b, radii_c, nut_ra, nut_dec, nutation
 ```
 
 Kernel extents derive via `kernel_extent(kernel_id, props, tau)`: kernel 0/6 → ∞;
 kernels 1–5 → `sqrt(2 · param · tau)` with `param` the matching BodyProperties field
 (0 = absent → extent 0). The first eight fields come from the ephemeris binary
 (stype-1 v2, gcount=12); flattening is derived from R_a/R_c in v2.
+
+## Ephemeris Binary Sections
+
+`ephemeris_{body}.bin` (magic `0xCF 0x86 0x01 0x00`): header (granule count +
+degree, Chebyshev position granules in meters) followed by sections:
+
+| stype | Inhalt |
+|-------|--------|
+| 1 | Body-Parameter v2 (gcount=12): α0/dα0/δ0/dδ0/w0/dw0, Radii a/b/c, J2, J4, GM (m³/s²) |
+| 2 | Kernel-Parameter (gcount=0, 5 Doubles, ungenutzt) |
+| 3 | Rotationsmatrizen: je Record [t0_jd f64 + 9 f64] (stype-3-Abtastung aus dem vollen Orientierungsmodell) |
+| 4 | **Nutationsreihe (additiv, K02)**: je Record [mid_jd, half_jd, RA-Koeffizienten, DEC-Koeffizienten, PM-Koeffizienten] — Chebyshev-Fit des Deltas (volles Modell − lineares Modell). Volles Modell = Binary-PCK (moon_pa_de440, Typ 2, Precedence binary > text) bzw. Text-PCK mit NUT_PREC-Reihen. Runtime addiert die Delta-Evaluation in `orientation_angles_at` (pole, gravity, Rotation). |
+
+Absent properties sind 0.0 — die neutrale Konstante des festen Strides.
+Nutation absent = Körper ohne Binary-PCK und ohne NUT_PREC-Reihen (0 honored).
 
 ## Body Channels
 

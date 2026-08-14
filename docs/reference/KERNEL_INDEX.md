@@ -17,7 +17,10 @@ verifiziert).
   mar099,ura182,plu060}.tpc`. Sie tragen RADII + POLE für die Monde, aber KEINE
   J2/J4-Werte — die einzigen Treffer sind Kommentarzeilen (BODYnnn_JCOEF-Doku).
   Mond-Harmonische aus Text-PCKs manifestieren 0 (0 honored, keine Fabrikation).
-  Echte Zonal-Terme liegen in den Binary-PCKs — das ist K02.
+  Binary-PCKs (moon_pa_de440_200625.bpc) tragen laut pck.req NUR Orientierung
+  (Typen 2/3/20, „orientation only") — die Präzisions-Röhre ist die stype-4-
+  Nutationssektion (K02), nicht J2/J4. Echte Mond-Zonal-Terme liegen außerhalb
+  der Flattener-Wurzeln (GRAIL-Modelle, Kanal-Forschung).
 - `gm_Horizons.pck` (ssd.jpl.nasa.gov/ftp/xfr/) trägt GM aller Körper in km³/s²
   (Parser skaliert ×1e9); es zerlegt Pluto korrekt in 999 + 901 (Charon).
   `pck00010.tpc` deckt Phobos/Triton/Charon mit POLE+RADII ab.
@@ -48,3 +51,11 @@ verifiziert).
   Kameras, keine Bordzeit — NAIF-PDF-Bewertung). Kleinkörper-SPKs sind im
   Index registriert (Familie `spk`); ihr Flatten-Pass liegt am K03-Zweig
   (DASTCOM+Kepler).
+- K02-Befund (2026-08-14): src/bpc.rs (DAF, Binary-PCK Typ 2) + stype-4-
+  Nutationssektion (additiv, RA/DEC/PM) in Compiler/Runtime/Protokoll-Doku
+  (FORCE_SYSTEM.md). Mond-Text-PCKs tragen echte NUT_PREC-Reihen → die Monde
+  bekommen die stype-4-Nutation aus dem Text-Kanal. moon_pa_de440_200625.bpc:
+  Leser verifiziert (Fenster 1550–2650, Grad-9-Fits), aber die Winkel folgen
+  nicht der IAU-Pol-Konvention (J2000-Pol ≈ RA −0,05°/DEC +0,43°, W-Drift
+  0,23°/Tag) — der Moon-PA-Merge läuft über die FK-Kette MOON_PA_DE440 +
+  TKFRAME_31009 (moon_de440_250416.tf), das ist K05.

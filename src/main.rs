@@ -72,6 +72,16 @@ struct BodyProperties {
     radii_c: Option<f64>,
     nut_ra: Option<Vec<[f64; 3]>>,
     nut_dec: Option<Vec<[f64; 3]>>,
+    nutation: Option<Vec<NutationRecord>>,
+}
+
+#[derive(Clone)]
+struct NutationRecord {
+    mid_jd: f64,
+    half_jd: f64,
+    ra: Vec<f64>,
+    dec: Vec<f64>,
+    pm: Vec<f64>,
 }
 
 #[derive(Clone)]
@@ -99,6 +109,47 @@ fn chebyshev_evaluate(coeffs: &[f64; CHEBYSHEV_N], tau: f64) -> f64 {
         b0 = 2.0 * tau * b1 - b2 + coeffs[i];
     }
     b0 - tau * b1
+}
+
+fn chebyshev_eval_slice(coeffs: &[f64], tau: f64) -> f64 {
+    let mut b0 = 0.0;
+    let mut b1 = 0.0;
+    for i in (0..coeffs.len()).rev() {
+        let b2 = b1;
+        b1 = b0;
+        b0 = 2.0 * tau * b1 - b2 + coeffs[i];
+    }
+    b0 - tau * b1
+}
+
+fn nutation_deltas_at(props: &BodyProperties, jd: f64) -> Option<(f64, f64, f64)> {
+    let records = props.nutation.as_ref()?;
+    let rec = records
+        .iter()
+        .find(|r| (jd - r.mid_jd).abs() <= r.half_jd)?;
+    let tau = ((jd - rec.mid_jd) / rec.half_jd).clamp(-1.0, 1.0);
+    Some((
+        chebyshev_eval_slice(&rec.ra, tau),
+        chebyshev_eval_slice(&rec.dec, tau),
+        chebyshev_eval_slice(&rec.pm, tau),
+    ))
+}
+
+fn orientation_angles_at(bp: &BodyProperties, jd: f64) -> (f64, f64, f64) {
+    let tc = (jd - J2000_EPOCH) / 36525.0;
+    let (d_ra, d_dec, d_pm) = nutation_deltas_at(bp, jd).unwrap_or((0.0, 0.0, 0.0));
+    let nut_ra = match &bp.nut_ra {
+        Some(terms) => nutation_sum(terms, tc),
+        None => 0.0,
+    };
+    let nut_dec = match &bp.nut_dec {
+        Some(terms) => nutation_sum(terms, tc),
+        None => 0.0,
+    };
+    let ra = bp.α0_deg + bp.dα0_dt_deg_per_century * tc + nut_ra + d_ra;
+    let dec = bp.δ0_deg + bp.dδ0_dt_deg_per_century * tc + nut_dec + d_dec;
+    let pm = bp.w0_deg + bp.dw_dt_deg_per_day * (jd - J2000_EPOCH) + d_pm;
+    (ra, dec, pm)
 }
 
 fn measured(v: f64) -> Option<f64> {
@@ -166,6 +217,7 @@ fn parse_ephemeris_binary(data: &[u8]) -> Option<BodyEphemeris> {
                 radii_c,
                 nut_ra: None,
                 nut_dec: None,
+                nutation: None,
             });
             pos += 96;
             continue;
@@ -206,6 +258,43 @@ fn parse_ephemeris_binary(data: &[u8]) -> Option<BodyEphemeris> {
                 let m: [f64; 9] = [f(1), f(2), f(3), f(4), f(5), f(6), f(7), f(8), f(9)];
                 rotation_matrices.push((t0_jd, m));
                 pos += 80;
+            }
+            continue;
+        }
+        if stype == 4 {
+            let n = degree + 1;
+            let gs = 2 + 3 * n;
+            let mut records = Vec::new();
+            for _ in 0..gcount {
+                if pos + gs * 8 > data.len() {
+                    break;
+                }
+                let f = |i: usize| -> f64 {
+                    let mut buf = [0u8; 8];
+                    buf.copy_from_slice(&data[pos + i * 8..pos + i * 8 + 8]);
+                    f64::from_le_bytes(buf)
+                };
+                let mid_jd = f(0);
+                let half_jd = f(1);
+                let mut ra = Vec::with_capacity(n);
+                let mut dec = Vec::with_capacity(n);
+                let mut pm = Vec::with_capacity(n);
+                for k in 0..n {
+                    ra.push(f(2 + k));
+                    dec.push(f(2 + n + k));
+                    pm.push(f(2 + 2 * n + k));
+                }
+                records.push(NutationRecord {
+                    mid_jd,
+                    half_jd,
+                    ra,
+                    dec,
+                    pm,
+                });
+                pos += gs * 8;
+            }
+            if let Some(ref mut p) = props {
+                p.nutation = Some(records);
             }
             continue;
         }
@@ -317,12 +406,10 @@ fn body_fixed_to_icrs(
         return Some([xi + bx, yi + by, zi + bz]);
     }
     let jd = tdb / 86400.0 + J2000_EPOCH;
-    let tc = (jd - J2000_EPOCH) / 36525.0;
-    let a = (bp.α0_deg + bp.dα0_dt_deg_per_century * tc).to_radians();
-    let d = (bp.δ0_deg + bp.dδ0_dt_deg_per_century * tc).to_radians();
-    let w = ((bp.w0_deg + bp.dw_dt_deg_per_day * (jd - J2000_EPOCH))
-        - (bp.α0_deg + bp.dα0_dt_deg_per_century * tc))
-        .to_radians();
+    let (ra, dec, pm) = orientation_angles_at(bp, jd);
+    let a = ra.to_radians();
+    let d = dec.to_radians();
+    let w = (pm - ra).to_radians();
     let xt = xb * w.cos() + yb * w.sin();
     let yt = -xb * w.sin() + yb * w.cos();
     let zt = zb;
@@ -362,12 +449,10 @@ fn icrs_to_body_surface(
     } else {
         let bp = e.props.as_ref()?;
         let jd = tdb_secs / 86400.0 + J2000_EPOCH;
-        let tc = (jd - J2000_EPOCH) / 36525.0;
-        let a = (bp.α0_deg + bp.dα0_dt_deg_per_century * tc).to_radians();
-        let d = (bp.δ0_deg + bp.dδ0_dt_deg_per_century * tc).to_radians();
-        let w = ((bp.w0_deg + bp.dw_dt_deg_per_day * (jd - J2000_EPOCH))
-            - (bp.α0_deg + bp.dα0_dt_deg_per_century * tc))
-            .to_radians();
+        let (ra, dec, pm) = orientation_angles_at(bp, jd);
+        let a = ra.to_radians();
+        let d = dec.to_radians();
+        let w = (pm - ra).to_radians();
         let (sw, cw) = w.sin_cos();
         let (sa, ca) = a.sin_cos();
         let (sd, cd) = d.sin_cos();
@@ -1003,19 +1088,10 @@ fn nutation_sum(terms: &[[f64; 3]], t: f64) -> f64 {
 }
 
 fn body_pole_at(props: &BodyProperties, tdb: f64) -> [f64; 3] {
-    let tc = tdb / 86400.0 / 36525.0;
-    let nut_ra = match &props.nut_ra {
-        Some(terms) => nutation_sum(terms, tc),
-        None => 0.0,
-    };
-    let nut_dec = match &props.nut_dec {
-        Some(terms) => nutation_sum(terms, tc),
-        None => 0.0,
-    };
-    let ra = (props.α0_deg + props.dα0_dt_deg_per_century * tc + nut_ra).to_radians();
-    let dec = (props.δ0_deg + props.dδ0_dt_deg_per_century * tc + nut_dec).to_radians();
-    let (sd, cd) = dec.sin_cos();
-    let (sr, cr) = ra.sin_cos();
+    let jd = tdb / 86400.0 + J2000_EPOCH;
+    let (ra, dec, _) = orientation_angles_at(props, jd);
+    let (sd, cd) = dec.to_radians().sin_cos();
+    let (sr, cr) = ra.to_radians().sin_cos();
     [cd * cr, cd * sr, sd]
 }
 
@@ -8440,6 +8516,7 @@ mod tests {
             radii_c: None,
             nut_ra: None,
             nut_dec: None,
+            nutation: None,
         };
         let granule = super::ChebyshevGranule {
             t0_jd: super::J2000_EPOCH,
@@ -8518,6 +8595,7 @@ mod tests {
             radii_c: None,
             nut_ra: None,
             nut_dec: None,
+            nutation: None,
         };
         let granule = super::ChebyshevGranule {
             t0_jd: super::J2000_EPOCH,
@@ -8596,6 +8674,7 @@ mod tests {
             radii_c: None,
             nut_ra: None,
             nut_dec: None,
+            nutation: None,
         };
         let granule = super::ChebyshevGranule {
             t0_jd: super::J2000_EPOCH,
@@ -8660,6 +8739,7 @@ mod tests {
             radii_c: None,
             nut_ra: None,
             nut_dec: None,
+            nutation: None,
         };
         let granule = super::ChebyshevGranule {
             t0_jd: super::J2000_EPOCH,
@@ -8791,6 +8871,7 @@ mod tests {
             radii_c: None,
             nut_ra: None,
             nut_dec: None,
+            nutation: None,
         };
         let granule = super::ChebyshevGranule {
             t0_jd: super::J2000_EPOCH,
@@ -8844,7 +8925,7 @@ mod tests {
     fn test_parse_ephemeris_binary_v2() {
         let mut buf = Vec::new();
         buf.extend_from_slice(&[0xCF, 0x86, 0x01, 0x00]);
-        buf.extend_from_slice(&3u32.to_le_bytes());
+        buf.extend_from_slice(&4u32.to_le_bytes());
         buf.extend_from_slice(&0u32.to_le_bytes());
         buf.extend_from_slice(&1u32.to_le_bytes());
         buf.extend_from_slice(&17u32.to_le_bytes());
@@ -8880,6 +8961,15 @@ mod tests {
         for _ in 0..5 {
             buf.extend_from_slice(&0.0_f64.to_le_bytes());
         }
+        buf.extend_from_slice(&4u32.to_le_bytes());
+        buf.extend_from_slice(&1u32.to_le_bytes());
+        buf.extend_from_slice(&1u32.to_le_bytes());
+        buf.extend_from_slice(&0u32.to_le_bytes());
+        buf.extend_from_slice(&2451545.0_f64.to_le_bytes());
+        buf.extend_from_slice(&16.0_f64.to_le_bytes());
+        for c in [1.0_f64, 0.5, 2.0, 0.25, 0.5, 0.125] {
+            buf.extend_from_slice(&c.to_le_bytes());
+        }
         let eph = super::parse_ephemeris_binary(&buf).unwrap();
         let props = eph.props.unwrap();
         assert_eq!(props.gm, Some(3.9860043543609598e14));
@@ -8889,6 +8979,10 @@ mod tests {
         assert_eq!(props.radii_c, Some(6356751.9));
         assert!((props.flattening - (6378136.6 - 6356751.9) / 6378136.6).abs() < 1e-15);
         assert_eq!(eph.granules.len(), 1);
+        let deltas = super::nutation_deltas_at(&props, 2451545.0).unwrap();
+        assert!((deltas.0 - 1.0).abs() < 1e-12);
+        assert!((deltas.1 - 2.0).abs() < 1e-12);
+        assert!((deltas.2 - 0.5).abs() < 1e-12);
     }
 
     #[test]
