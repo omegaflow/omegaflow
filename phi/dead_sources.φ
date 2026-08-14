@@ -3164,3 +3164,25 @@ note gNnAj = seismische Stations-Registry (II-Netz, z. B. AAK Ala Archa) — Sta
 decline schema
 url https://stac-extensions.github.io/pointcloud/v1.0.0/schema.json
 note Schema-Dokument.
+
+# ── Einbau-Korrekturen 2026-08-15 (Spec §3, Nachprüfung beim Blockbau) ──
+
+decline position-only
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/C_mydas_SSM/FeatureServer/0/query?where=1%3D1&outFields=*&f=geojson&resultRecordCount=500
+note Schildkröten-Tracks: nur lat/lon/date/turtleid — Position-only (§3.9), kein Messwert mit Einheit.
+
+decline counts
+url https://services7.arcgis.com/yHbO69mL1QTGCPQG/arcgis/rest/services/PSF_harmful_phyto/FeatureServer/0/query?where=1%3D1&outFields=*&f=geojson&resultRecordCount=500
+note Phytoplankton-Artenzählungen (chaetocero/rhizosolen/…) — Counts (§3.2), keine physikalische Einheit.
+
+decline position-only
+url https://network.satnogs.org/api/observations/
+note Beobachtungs-Metadaten mit Stations-Koordinaten; Signaldaten liegen in demoddata/waterfall-Dateien, nicht im JSON — Position-only (§3.9).
+
+decline model-forecast
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Active_Hurricanes_Sampler/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+note Recheck: f=json liefert Forecast-Track-Punkte (TAU/FCSTPRD/VALIDTIME) — Modell-/Vorhersagedaten, nicht die aktuelle Messung. NHC-CurrentStorms bleibt der accept-würdige Live-Feed (lebt jetzt in sources.φ).
+
+parser-def votable
+url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20100%20ra%2Cdec%20FROM%20basic%20WHERE%20otype%3D%27HVC%27
+note SIMBAD-TAP liefert VOTable-XML trotz format=json — kein JSON-Row-Extract möglich (parser-def).

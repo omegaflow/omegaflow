@@ -7988,6 +7988,7 @@ fn load_sources_from(content: &str) -> Vec<SourceConfig> {
     let mut cur_url = String::new();
     let mut cur_body: Option<String> = None;
     let mut cur_frame: Option<Frame> = None;
+    let mut cur_format = String::new();
     for line in content.lines() {
         let line = line.trim();
         if line.is_empty() || line.starts_with('#') {
@@ -8000,12 +8001,15 @@ fn load_sources_from(content: &str) -> Vec<SourceConfig> {
         match parts[0] {
             "url" if parts.len() >= 2 => {
                 if cur_ttl > 0 && !cur_url.is_empty() {
-                    if let Some(ref frame) = cur_frame {
+                    if cur_format == "kernel_text" || cur_frame.is_some() {
                         sources.push(SourceConfig {
                             ttl: cur_ttl,
                             url: std::mem::take(&mut cur_url),
-                            frame: frame.clone(),
-                            format: String::new(),
+                            frame: match cur_frame.clone() {
+                                Some(f) => f,
+                                None => Frame::Manifest,
+                            },
+                            format: std::mem::take(&mut cur_format),
                             extracts: Vec::new(),
                             headers: Vec::new(),
                             post_body: None,
@@ -8031,12 +8035,14 @@ fn load_sources_from(content: &str) -> Vec<SourceConfig> {
                 cur_frame = None;
                 cur_body = None;
                 cur_ttl = 0;
+                cur_format.clear();
             }
             "ttl" if parts.len() >= 2 => {
                 if let Ok(v) = parts[1].parse::<u64>() {
                     cur_ttl = v;
                 }
             }
+            "format" if parts.len() >= 2 => cur_format = parts[1].to_string(),
             "at" if parts.len() >= 2 => {
                 let body = parts[1].to_string();
                 cur_body = Some(body.clone());
@@ -8070,23 +8076,20 @@ fn load_sources_from(content: &str) -> Vec<SourceConfig> {
             }
             "body" if parts.len() >= 2 => {
                 cur_body = Some(parts[1].to_string());
-                if cur_frame.is_none() {
-                    cur_frame = Some(Frame::Barycenter {
-                        body_name: parts[1].to_string(),
-                        scale: 1.0,
-                    });
-                }
             }
             _ => {}
         }
     }
     if cur_ttl > 0 && !cur_url.is_empty() {
-        if let Some(ref frame) = cur_frame {
+        if cur_format == "kernel_text" || cur_frame.is_some() {
             sources.push(SourceConfig {
                 ttl: cur_ttl,
                 url: cur_url,
-                frame: frame.clone(),
-                format: String::new(),
+                frame: match cur_frame.clone() {
+                    Some(f) => f,
+                    None => Frame::Manifest,
+                },
+                format: std::mem::take(&mut cur_format),
                 extracts: Vec::new(),
                 headers: Vec::new(),
                 post_body: None,

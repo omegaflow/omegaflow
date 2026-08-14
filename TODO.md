@@ -370,8 +370,8 @@ Binary-PCK-Pakets oben).
   Dispositionen in `phi/dead_sources.φ`. TNS bleibt der lebende em-Transienten-Feed.
 - Host-Kuration 2026-08-15 (Home-Verzeichnis-URLs: 10598 Hosts → 326 daten-artige
   Kandidaten geprobt): 195 mechanische Dispositionen (dead/key-needed/method) +
-  119 200er-Klassifikationen in `phi/dead_sources.φ`. 13 Accept-Kandidaten pending
-  (nicht eingebaut, keine sources.φ-Änderung):
+  119 200er-Klassifikationen in `phi/dead_sources.φ`. 13 Accept-Kandidaten
+  (Stand der einzelnen: siehe Einbau-Eintrag):
   · CENC Erdbeben `api.wolfx.jp/cenc_eqlist.json` — seismic-body; Objekt No1..NoN,
     Felder latitude/longitude/magnitude/depth (Strings)
   · JMA Erdbeben `www.jma.go.jp/bosai/quake/data/list.json` — seismic-body; Array,
@@ -407,7 +407,7 @@ Binary-PCK-Pakets oben).
   measurements.json (nicht bgeigie_imports), MPC-Daten-API-Unterrouten.
 - Host-Kuration Batch 2 (2026-08-15, 300 Kandidaten): 199 mechanische + 91
   klassifizierte Dispositionen in `phi/dead_sources.φ`. 8 weitere Accept-
-  Kandidaten pending:
+  Kandidaten (Stand: siehe Einbau-Eintrag):
   · P2PQuake `api.p2pquake.net/v2/jma/quake?limit=100&order=-1` — seismic-body;
     Array, earthquake.hypocenter.latitude/longitude/magnitude/depth
   · Safecast `api.safecast.org/en-US/measurements.json` — em (Gammadosis);
@@ -431,7 +431,7 @@ Binary-PCK-Pakets oben).
   GONG, OceanNetworks, OMNIWeb, AstDyS. SERVIR-SMAP/1km: Service entfernt (404).
 - Host-Kuration Batch 3 (2026-08-15, 160 Kandidaten): 107 mechanische + 47
   klassifizierte Dispositionen in `phi/dead_sources.φ`. 5 weitere Accept-
-  Kandidaten pending (zwei Batch-1-Rechecks bestätigt):
+  Kandidaten (Stand: siehe Einbau-Eintrag):
   · EMSC `www.seismicportal.eu/fdsnws/event/1/query?format=json&limit=100&
     minmagnitude=2.5&orderby=time` — seismic-body; GeoJSON-FeatureCollection,
     geometry [lon,lat,depth], properties.source_catalog=EMSC-RTS (mag-Felder
@@ -451,6 +451,24 @@ Binary-PCK-Pakets oben).
   Recheck-Liste erweitert: SWPC ace_mag_1h (SWPC-Familie lebt mit 4 Blöcken —
   prüfen, ob ACE-Mag dabei), SuperMAG, WOUDC, AAVSO-VSX, ATNF-PSRCAT-TAP,
   SDSS-SkyServer-SQL, TESS-Target-CSV (RA/Dec-Spalten).
+- Einbau 2026-08-15: 9 Kandidaten sind live in `phi/sources.φ` (Sektion
+  „Host-Kuration Einbau", probe-verifiziert: 5 via `--probe` mit LSK, 4 key-
+  verifiziert — Daten + Keys bestätigt, Probe-Auto-Detect limitiert):
+  EMSC, ADSB (mit Berlin-Presence verifiziert), NHC (scalar_of koerziert
+  Strings), P2PQuake, Safecast, ResonanceOne, JMA-EEW (Einzelobjekt = eine
+  Zeile, Spec §5), SO2-ArcGIS, NDBC-ArcGIS (1726 Samples verifiziert).
+  `load_sources_from`-Fix: format/kernel_text-Arm + Flush-Bedingung — Probe
+  erkennt LSK-Blöcke wieder (vorher „time absent" für alle).
+  Geparkt (Parser-Gap, offen): Pegelonline (wartet auf fanout der parallelen
+  Session), USGS-Geomag (Komponenten-Timeseries), GWOSC/GraceDB (Position nur
+  via Skymap), TeVCat (Sexagesimal/galaktisch), DSN (statische Dish-Positionen,
+  Keyed Object), CENC (Keyed Object No1..NoN), JMA-Quake (Position im
+  `cod`-String), Magnetar/ALFALFA (dist_scale: kpc/Mpc roh statt Meter),
+  MPC-cometels (K03-Katalog-Kanal).
+  Korrigiert zu decline (Spec §3): C_mydas_SSM (position-only, §3.9),
+  PSF-Phytoplankton (Zählwerte, §3.2), SatNOGS (position-only), Active-
+  Hurricanes-Sampler (Forecast-Track-Punkte, §Model), SIMBAD-TAP (VOTable
+  trotz format=json).
 - `phi/research/agent_output/batch_*_accepted.φ` (32 Dateien, neue Grammatik):
   konvertierte Blöcke, die nie nach phi/sources.φ übernommen wurden.
 - `archeology/sources/sources_gold_pre-cdn_27k_359-domains.φ` (2572 Blöcke, alte
