@@ -64,6 +64,7 @@ unless it has `url` + `ttl` + a frame (`at`/`on`).
 | `pmra <key>` / `pmdec <key>` | 2 | Proper motion, mas/yr (cmap). |
 | `radvel <key>` | 2 | Radial velocity key (cmap). |
 | `dist <key>` | 2 | Distance key (cmap). |
+| `z <key>` | 2 | Redshift key (cmap) — Hubble-flow distance z·c/H0 (z > 0, else row skipped). |
 | `target <body>` | 2 | Target for ephemeris/vectors (`{target}` substitution). |
 | `catalog <name>` | 2 | Catalog identifier (`{catalog}` substitution). |
 | `max_freq <hz>` / `min_freq <hz>` | 2 | Frequency bounds (`{max_freq}`/`{min_freq}`). |
@@ -321,15 +322,17 @@ at earth
 map features
 lat geometry.coordinates.1
 lon geometry.coordinates.0
-field properties.depth seismic-body km 3600
+field properties.depth quake_depth_km gaussian-inverse-square seismic-body km 3600 0.0 0.0
 ```
 
 - `map <arr>` or `cmap <arr>` or `rows <arr>`: the array to iterate.
 - `lat`, `lon`, `alt` (map) / `ra`, `dec`, `plx`, `pmra`, `pmdec`, `radvel`,
-  `dist` (cmap): 2-token position keys. Units are fixed by physics:
-  deg, deg, m / deg, deg, mas, mas/yr, mas/yr, (km/s via scale), (m via scale).
-- `field <key> <force> <unit> <tau>` (5-token) after a map/cmap/rows directive
-  attaches the field to that extract's rows. τ > 0 or nothing manifests.
+  `dist`, `z` (cmap): 2-token position keys. Units are fixed by physics:
+  deg, deg, m / deg, deg, mas, mas/yr, mas/yr, (km/s via scale), (m via scale), (redshift).
+- `field <key> <force> <unit> <tau>` (5-token, compact) or the 9-token long form
+  `field <key> <name> <kernel> <force> <unit> <tau> <absorption> <advection>`
+  after a map/cmap/rows directive attaches the field to that extract's rows.
+  τ > 0 or nothing manifests. `phi/sources.φ` carries the 9-token form.
 - `field <key> <identifier>` (3-token, after a `force` line): annotation only —
   τ = 0, the τ-Gate closes, no oscillator. Use it to document string metadata,
   never to extract measurements.
@@ -369,6 +372,11 @@ The unit for every field line comes from the API response. The hierarchy:
 
 ## 7. Example Blocks
 
+All examples use the 9-token `field` long form (`field <key> <name> <kernel>
+<force> <unit> <tau> <absorption> <advection>`) — the form `phi/sources.φ`
+carries today. The kernel is the force's default (§2.1); absorption and
+advection are 0.0 unless the medium declares otherwise.
+
 ### ISS Position
 ```
 url https://api.wheretheiss.at/v1/satellites/25544
@@ -378,8 +386,8 @@ map .
 lat latitude
 lon longitude
 alt altitude km
-field velocity em km/h 1
-field footprint em km 1
+field velocity iss_velocity_kmh inverse-square em km/h 1 0.0 0.0
+field footprint iss_footprint_km inverse-square em km 1 0.0 0.0
 ```
 
 API response: `{"latitude": -47.75, "longitude": 78.87, "altitude": 438.28, "velocity": 27528, "footprint": 4599, "units": "kilometers"}`. Single object → one row. `alt altitude km` scales the km value to meters. `velocity`: km/h (ISS API docs), force EM (radar Doppler tracking). τ = min(ttl/10, 1) — fast-moving data. No epoch key → the sample anchors at fetch time.
@@ -392,8 +400,8 @@ on earth 52.5 13.4
 map ac
 lat lat
 lon lon
-field gs advective km/h 1
-field track em deg 1
+field gs adsb_ground_speed_kmh gaussian-inverse-square advective km/h 1 0.0 0.0
+field track adsb_track_deg inverse-square em deg 1 0.0 0.0
 ```
 
 `hex`, `flight` dropped (IDs). `gs`: ground speed, force advective. `track`: deg, force em (transponder measurement). τ = 1 s (live traffic).
@@ -404,16 +412,16 @@ url https://www.ndbc.noaa.gov/data/realtime2/13002.txt
 ttl 300
 on earth 21.0 -23.0
 rows .
-field WDIR advective deg 30
-field WSPD advective m/s 30
-field WVHT acoustic m 30
-field DPD acoustic s 30
-field APD acoustic s 30
-field MWD acoustic deg 30
-field PRES advective hPa 30
-field ATMP thermal C 30
-field WTMP thermal C 30
-field PTDY advective hPa 30
+field WDIR ndbc_wind_dir_deg gaussian-inverse-square advective deg 30 0.0 0.0
+field WSPD ndbc_wind_speed_ms gaussian-inverse-square advective m/s 30 0.0 0.0
+field WVHT ndbc_wave_height_m gaussian-inverse-square acoustic m 30 0.0 0.0
+field DPD ndbc_dominant_period_s gaussian-inverse-square acoustic s 30 0.0 0.0
+field APD ndbc_avg_period_s gaussian-inverse-square acoustic s 30 0.0 0.0
+field MWD ndbc_mean_wave_dir_deg gaussian-inverse-square acoustic deg 30 0.0 0.0
+field PRES ndbc_pressure_hpa gaussian-inverse-square advective hPa 30 0.0 0.0
+field ATMP ndbc_air_temp_c erfc thermal C 30 0.0 0.0
+field WTMP ndbc_water_temp_c erfc thermal C 30 0.0 0.0
+field PTDY ndbc_pressure_tendency_hpa gaussian-inverse-square advective hPa 30 0.0 0.0
 ```
 
 CSV header: `#YY MM DD hh mm WDIR WSPD GST WVHT DPD APD MWD PRES ATMP WTMP DEWP VIS PTDY TIDE`. Units from the NDBC header line. Wind → advective, waves → acoustic, temperature → thermal, pressure → advective. τ = ttl/10.
@@ -423,7 +431,7 @@ CSV header: `#YY MM DD hh mm WDIR WSPD GST WVHT DPD APD MWD PRES ATMP WTMP DEWP 
 url https://services.swpc.noaa.gov/json/goes/primary/xrays-1-day.json
 ttl 60
 at sun
-field flux em W/m2 6
+field flux goes_xray_flux_wm2 inverse-square em W/m2 6 0.0 0.0
 ```
 
 Array-of-objects; `flux` in W/m2 (GOES XRS product spec). Force EM. `time_tag`, `satellite`, `energy` dropped (timestamp, ID, metadata).
@@ -436,7 +444,7 @@ at earth
 map features
 lat geometry.coordinates.1
 lon geometry.coordinates.0
-field properties.depth seismic-body km 3600
+field properties.depth quake_depth_km gaussian-inverse-square seismic-body km 3600 0.0 0.0
 ```
 
 GeoJSON FeatureCollection. Surviving field: `depth` (km, seismic-body, τ = 1 h — a hypocenter persists). Dropped: `mag` (dimensionless), `evid` (ID), `time` (timestamp), `flynn_region` (string).
@@ -450,8 +458,8 @@ cmap .
 ra ra
 dec dec
 plx default_plx
-field flux_1_100_gev em W/m2 604800
-field energy_flux em W/m2 604800
+field flux_1_100_gev fermi_flux_1_100_gev_wm2 inverse-square em W/m2 604800 0.0 0.0
+field energy_flux fermi_energy_flux_wm2 inverse-square em W/m2 604800 0.0 0.0
 ```
 
 Position keys locate the source in ICRS. τ = ttl (stable catalog). `name`, `data_release`, `spectrum_type`, time fields — dropped.
@@ -512,12 +520,12 @@ It does not define:
 
 Directives that appear in legacy corpora but have **no parser arm** (writing
 them produces nothing): `body`, `pos`, `method`, `source`, `field_in`,
-`lat_key`/`lon_key`/`alt_key`, `z`, `extent`, `reach_ttl`, `note`, `tau`
-(as key directive), `force biotic`. Open parser work: a `z` redshift key on
-cmap, per-row τ override, SI conversion for `field` values and `vel` (m/s
-fixed today). Map rows without an `epoch` key anchor at fetch time; map rows
-without an `alt` key anchor at the surface datum (0 m); single-object
-responses iterate as one row.
+`lat_key`/`lon_key`/`alt_key`, `extent`, `reach_ttl`, `note`, `tau`
+(as key directive), `force biotic`. Open parser work: per-row τ override,
+SI conversion for `field` values and `vel` (m/s fixed today). Map rows
+without an `epoch` key anchor at fetch time; map rows without an `alt` key
+anchor at the surface datum (0 m); single-object responses iterate as one
+row.
 
 ## 11. Matrix Evolution (initial → complete)
 
