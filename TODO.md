@@ -40,9 +40,12 @@ Mond-Text-PCKs pck.sat441/pck.jup365/pck.mar099/pck.ura182/pck.plu060,
 gm_Horizons.pck (GM aller Körper, 15 KB) — kompiliert mit ephemeris_compiler
 (+ --ci-mode-CDNUpload-Pfad), überschreibt die CDN-Assets {netloc}/ephemeris_{body}.bin
 (v2, Meter) — auch die stale Planeten-Binaries (km-Legacy) werden ersetzt.
-Python-Exzision (generate-ephemerides + mirror-cdn aktivieren).
-Verifikations-Schritt: Mond-PCKs auf j2/j4-Einträge prüfen (Crawl-Behauptung) —
-falls ja, trägt der Flattener die Monde mit echten Harmonischen aus.
+Python-Exzision (generate-ephemerides + mirror-cdn aktivieren);
+kernel_flatten.yml + sources_index.φ als Flattener-Struktur.
+Verifikations-Schritte: (1) Mond-PCKs auf j2/j4-Einträge prüfen (Crawl-Behauptung) —
+falls ja, trägt der Flattener die Monde mit echten Harmonischen aus;
+(2) Dev-Beweis vor dem CI-Lauf: volle Kernels einmalig lokal kompilieren
+(einmaliger Download, nur zur Compiler-Verifikation — der Weg bleibt CI).
 Lokal ändert sich nichts: Die φ-Ephemeris-Blöcke für die Monde existieren bereits;
 mit dem CDN-Upload erscheinen die Körper (bis dahin absent, 0 honored).
 ```
@@ -57,6 +60,8 @@ bleibt, keine Format-Umstrukturierung). Merge-Regel binary-PCK > text-PCK
 in pck_bodies einbauen (NAIF-Precedence-Regel).
 Runtime: body_pole_at mit echten Nutationsreihen; Zonal-Term leuchtet für
 Mond/Eros (Erde hat die Harmonischen bereits).
+Detail-Specs: NAIF pck.req (PCK Required Reading) + Binary-PCK-Tutorial —
+das „Introduction to Kernels"-PDF enthält die Segment-/Keyword-Struktur nicht.
 ```
 
 **K03** Kleinkörper-Katalog
@@ -64,7 +69,8 @@ Mond/Eros (Erde hat die Harmonischen bereits).
 dcom5_le.dat (4,6 MB, kompakte DASTCOM-Variante): Orbits, H, Durchmesser, Albedo,
 Spektraltyp, Rotationsperiode für ~1,4 Mio. Objekte. Bahnelement-Propagation via
 Kepler-Löser — verbindet sich mit dem KeplerMap-Befund im Parser-Abschnitt.
-gravity + thermal/em-Parameter der Kleinkörper.
+gravity + thermal/em-Parameter der Kleinkörper. Lesecode-Vorlage für das
+Fortran-Blockformat: ssd/misc/dastcom (extractPC.for); ID-Indexe: SPKID.DB/MI.DB.
 ```
 
 **K04** Tycho-2-Katalog (em)
@@ -84,6 +90,10 @@ hartcodierte Parent-/Name-Tabellen ersetzen (Bias-Befund unten).
 Erdrotation (Polbewegung, UT1−UTC) für präzise Erd-Stationen; Konzept liegt in
 docs/concepts/IAU-2000_EOP.md.
 ```
+
+Nicht im Zielbild (NAIF-PDF-Bewertung): CK/SCLK/IK/EK/DBK — Sonden-Attitude,
+Bordzeit, Instrumente, Events sind für Punkt-Sonden ohne Belang; DSK (Shape-Modelle)
+als spätere Option für Asteroiden-Monde.
 
 ---
 
@@ -390,8 +400,8 @@ Binary-PCK-Pakets oben).
 - Forschungs-Iterationen (Council): Backend als „langsamer Prior" für Exposure-Kaltstart
   (aktuell: fixe Rampe, keine Anpassung); Exposure-EMA auf dem Silizium (gegenstandslos
   solange die Rampe fix ist).
-- Future: Aggregation of Presence, Retro-Manifestation, Nostr-Stationsweb
-  (kollidiert mit LOST_CONCEPTS-Entscheidung) — FUTURE_CONCEPTS.md.
+- Future: Aggregation of Presence, Retro-Manifestation, Total Coherence Integration,
+  Nostr-Stationsweb (kollidiert mit LOST_CONCEPTS-Entscheidung) — FUTURE_CONCEPTS.md.
 
 ---
 
