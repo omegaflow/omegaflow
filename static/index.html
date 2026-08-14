@@ -1078,11 +1078,11 @@ fn presence_probe() {
                 const PAD = (s, n) => s.padEnd(n);
 
                 const xyz =
-                    PAD(`X: ${xPresence.toExponential(2)}`, 13) +
-                    PAD(`Y: ${yPresence.toExponential(2)}`, 14) +
-                    PAD(`Z: ${zPresence.toExponential(2)}`, 14);
-                const line1A = PAD(xyz, 44);
-                const line1B = PAD(`Time: ${tPresence.toFixed(1)}  Speed: ${velMag.toExponential(1)} m/s`, 30);
+                    PAD(`X: ${xPresence.toExponential(2)}m`, 14) +
+                    PAD(`Y: ${yPresence.toExponential(2)}m`, 15) +
+                    PAD(`Z: ${zPresence.toExponential(2)}m`, 15);
+                const line1A = PAD(xyz, 46);
+                const line1B = PAD(`Time: ${tPresence.toFixed(1)}s  Speed: ${velMag.toExponential(1)}m/s`, 34);
                 const line1C = `GPU: ${gpuStat}  WS: ${wsRtt}ms  Scale: ${gridStep.toExponential(1)}m/px  Ticks: ${tps}  Frame: ${rawTick.toFixed(0)}ms`;
                 let line1 = `${PAD('PRESENCE',10)}${SEP}${line1A}${SEP}${line1B}${SEP}${line1C}`;
 
@@ -1135,8 +1135,8 @@ fn presence_probe() {
                     for (let i = 0; i < Math.min(4, groups.length); i++) {
                         const g = groups[i];
                         const fn = FORCE_NAME[g.ft] || ('f' + g.ft);
-                        line2C += g.n > 1 ? `  ${g.n}×${fn} d:${g.d.toExponential(1)} v:${g.v.toExponential(1)}`
-                                         : `  ${fn} d:${g.d.toExponential(1)} v:${g.v.toExponential(1)}`;
+                        line2C += g.n > 1 ? `  ${g.n}×${fn} d:${g.d.toExponential(1)}m v:${g.v.toExponential(1)}m/s`
+                                          : `  ${fn} d:${g.d.toExponential(1)}m v:${g.v.toExponential(1)}m/s`;
                     }
                 }
                 let line2 = `${PAD('FIELD',10)}${SEP}${line2A}${SEP}${line2B}${SEP}${line2C}`;
