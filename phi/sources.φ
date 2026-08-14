@@ -1,3 +1,23 @@
+url https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/gm_de440.tpc
+format kernel_text
+body gm_de440
+ttl 604800
+
+url https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00010.tpc
+format kernel_text
+body pck00010
+ttl 604800
+
+url https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/geophysical.ker
+format kernel_text
+body geophysical
+ttl 604800
+
+url https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls
+format kernel_text
+body naif0012
+ttl 604800
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_sun.bin
 format ephemeris_binary
 at sun

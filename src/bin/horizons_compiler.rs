@@ -16,32 +16,6 @@ struct BodyProps {
     flattening: f64,
 }
 
-const BODIES_WITH_MEDIA: &[&str] = &[
-    "sun",
-    "mercury",
-    "venus",
-    "earth",
-    "moon",
-    "mars",
-    "jupiter",
-    "saturn",
-    "uranus",
-    "neptune",
-    "pluto",
-    "io",
-    "europa",
-    "ganymede",
-    "callisto",
-    "enceladus",
-    "rhea",
-    "dione",
-    "tethys",
-    "titan",
-    "triton",
-    "phobos",
-    "deimos",
-];
-
 fn wgccre_for_body(body: &str) -> Option<BodyProps> {
     match body {
         "sun" => Some(BodyProps {
@@ -383,12 +357,12 @@ fn write_binary(
     body_name: &str,
     granules: &[(f64, f64, Vec<f64>, Vec<f64>, Vec<f64>)],
     rotations: &[(f64, [f64; 9])],
-    wgccre: &BodyProps,
-    has_media: bool,
+    wgccre: Option<&BodyProps>,
+    gm_m3_s2: Option<f64>,
 ) {
-    let mut n_sections: u32 = 1;
-    n_sections += 1;
-    if has_media {
+    let has_props = wgccre.is_some() || gm_m3_s2.is_some();
+    let mut n_sections: u32 = 2;
+    if has_props {
         n_sections += 1;
     }
     if !rotations.is_empty() {
@@ -414,27 +388,38 @@ fn write_binary(
             buf.extend_from_slice(&c.to_le_bytes());
         }
     }
-    {
+    if has_props {
         let section_stype: u32 = 1;
         buf.extend_from_slice(&section_stype.to_le_bytes());
-        buf.extend_from_slice(&0u32.to_le_bytes());
+        buf.extend_from_slice(&12u32.to_le_bytes());
         buf.extend_from_slice(&17u32.to_le_bytes());
         buf.extend_from_slice(&0u32.to_le_bytes());
-        let params: [f64; 8] = [
-            wgccre.a0_deg,
-            wgccre.da0_dt_deg_per_century,
-            wgccre.d0_deg,
-            wgccre.dd0_dt_deg_per_century,
-            wgccre.w0_deg,
-            wgccre.dw_dt_deg_per_day,
-            wgccre.radius_m,
-            wgccre.flattening,
+        let row = |f: fn(&BodyProps) -> f64| match wgccre {
+            Some(w) => f(w),
+            None => 0.0,
+        };
+        let params: [f64; 12] = [
+            row(|w| w.a0_deg),
+            row(|w| w.da0_dt_deg_per_century),
+            row(|w| w.d0_deg),
+            row(|w| w.dd0_dt_deg_per_century),
+            row(|w| w.w0_deg),
+            row(|w| w.dw_dt_deg_per_day),
+            row(|w| w.radius_m),
+            row(|w| w.radius_m),
+            row(|w| w.radius_m * (1.0 - w.flattening)),
+            0.0,
+            0.0,
+            match gm_m3_s2 {
+                Some(g) => g,
+                None => 0.0,
+            },
         ];
         for &p in &params {
             buf.extend_from_slice(&p.to_le_bytes());
         }
     }
-    if has_media {
+    {
         let section_stype: u32 = 2;
         buf.extend_from_slice(&section_stype.to_le_bytes());
         buf.extend_from_slice(&0u32.to_le_bytes());
@@ -474,7 +459,8 @@ fn horizons_request(command: &str, t_start_jd: f64, t_stop_jd: f64) -> Option<St
     let url = format!(
         "https://ssd.jpl.nasa.gov/api/horizons.api?format=text\
          &COMMAND='{cmd}'&CENTER='500@0'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'\
-         &START_TIME='JD+{t_start:.2}'&STOP_TIME='JD+{t_stop:.2}'&STEP_SIZE='1+d'",
+         &START_TIME='JD+{t_start:.2}'&STOP_TIME='JD+{t_stop:.2}'&STEP_SIZE='1+d'\
+         &QUANTITIES='1,2,4'",
         cmd = cmd_safe,
         t_start = t_start_jd,
         t_stop = t_stop_jd,
@@ -502,7 +488,7 @@ fn horizons_request(command: &str, t_start_jd: f64, t_stop_jd: f64) -> Option<St
     Some(String::from_utf8_lossy(&output.stdout).to_string())
 }
 
-fn extract_vectors(text: &str) -> Vec<(f64, f64, f64, f64)> {
+fn extract_vectors(text: &str) -> (Vec<(f64, f64, f64, f64)>, Option<f64>) {
     let mut vectors = Vec::new();
     let mut in_block = false;
     let mut current_jd: Option<f64> = None;
@@ -568,7 +554,19 @@ fn extract_vectors(text: &str) -> Vec<(f64, f64, f64, f64)> {
             }
         }
     }
-    vectors
+    (vectors, extract_gm_km3_s2(text).map(|g| g * 1.0e9))
+}
+
+fn extract_gm_km3_s2(text: &str) -> Option<f64> {
+    for line in text.lines() {
+        let line = line.trim();
+        if let Some(pos) = line.find("GM=") {
+            let rest = &line[pos + 3..];
+            let first = rest.split_whitespace().next()?;
+            return first.parse().ok();
+        }
+    }
+    None
 }
 
 fn current_jd() -> f64 {
@@ -638,7 +636,7 @@ fn generate_from_horizons(
     body_name: &str,
     months: f64,
     lookback: f64,
-) -> Vec<(f64, f64, Vec<f64>, Vec<f64>, Vec<f64>)> {
+) -> (Vec<(f64, f64, Vec<f64>, Vec<f64>, Vec<f64>)>, Option<f64>) {
     let jd_now = current_jd();
     let t_start = jd_now - lookback;
     let t_stop = jd_now + months * 30.44;
@@ -649,10 +647,10 @@ fn generate_from_horizons(
                 "  {}: Horizons request returned void (curl or API issue)",
                 body_name
             );
-            return Vec::new();
+            return (Vec::new(), None);
         }
     };
-    let vectors = extract_vectors(&text);
+    let (vectors, gm_m3_s2) = extract_vectors(&text);
     if vectors.len() < 10 {
         eprintln!(
             "  SKIP {}: {} vectors (min 10), lead: {:?}",
@@ -660,7 +658,7 @@ fn generate_from_horizons(
             vectors.len(),
             text.get(..200)
         );
-        return Vec::new();
+        return (Vec::new(), gm_m3_s2);
     }
     let mut granules = Vec::new();
     let n = ((t_stop - t_start) / GRANULE_DAYS).ceil() as usize;
@@ -671,7 +669,7 @@ fn generate_from_horizons(
             granules.push((mid_jd, half_jd, cx, cy, cz));
         }
     }
-    granules
+    (granules, gm_m3_s2)
 }
 
 fn main() {
@@ -698,26 +696,16 @@ fn main() {
     ];
     let bodies_retry: &[(&str, &str)] = &[];
     let run_body = |command: &str, body_name: &str, months: f64, lookback: f64| {
-        let granules = generate_from_horizons(command, body_name, months, lookback);
+        let (granules, gm_m3_s2) = generate_from_horizons(command, body_name, months, lookback);
         if granules.is_empty() {
             return;
         }
-        let wgccre = match wgccre_for_body(body_name) {
-            Some(w) => w,
-            None => BodyProps {
-                a0_deg: 0.0,
-                da0_dt_deg_per_century: 0.0,
-                d0_deg: 0.0,
-                dd0_dt_deg_per_century: 0.0,
-                w0_deg: 0.0,
-                dw_dt_deg_per_day: 0.0,
-                radius_m: 0.0,
-                flattening: 0.0,
-            },
-        };
-        let has_media = BODIES_WITH_MEDIA.contains(&body_name);
+        let wgccre = wgccre_for_body(body_name);
+        if wgccre.is_none() && gm_m3_s2.is_none() {
+            eprintln!("  {}: granules only, no PCK/Horizons properties", body_name);
+        }
         let path = format!("ephemeris_{}.bin", body_name);
-        write_binary(&path, body_name, &granules, &[], &wgccre, has_media);
+        write_binary(&path, body_name, &granules, &[], wgccre.as_ref(), gm_m3_s2);
     };
     for (cmd, name) in bodies_stable {
         eprintln!("  {} (Horizons stable)", name);

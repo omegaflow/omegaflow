@@ -2,24 +2,36 @@
 
 AGENTS.md is the primary constraint matrix. Git is the history.
 
-## Stand — 2026-08-12 (4D-Worldline + Channel-Pipeline)
+## Stand — 2026-08-14 (LSK/PCK-Hochzeit, Binary v2, Protokoll v6)
 
-Protokoll v5 (120 byte/Osc, response_epoch, velocity), 4D Enclosure Lemma (temporal dilation via delta_t_cache), GPU velocity-propagation in build_field_grid. Body-Channel-Pipeline: body_channels() zerlegt BodyProperties in radius/rotation/gi_sq-Channels via anchor(). Probe kernel_id→force_type, 7→9 Omegas, Audio 9 Partial. Kernel-0-Physik: Softening = max(extent,gridStep)², kein künstlicher Nyquist-Floor. Navigation: Mausrad ×4, [-]/[+] Zoom ×4, Jump-Scale 2^28, Initial-Scale 2^31. StderrRadiator: source/oscillator-Counts getrennt, kompakt. HUD: 3-zeilig, UPPERCASE-Header, feste Spalten, Selbst-Dokumentation. Jump-Reparatur: last_field als Option<Buffer>. Consent: Audio außerhalb des Gates (Radiator). Agent permissions: council/explore/general edit:deny. 0 Warnings, 0 Errors.
+LSK-Kernel naif0012.tls als Zeit-Quelle (TT_MINUS_UTC-Konstante gelöscht; Zeit absent ohne LSK). PCK-Reader pck.rs (gm_de440.tpc, pck00010.tpc: POLE/PM/RADII/J2/J4/NUT). stype-1 v2: gcount=12, 96 B festes Stride (α0, α̇, δ0, δ̇, w0, ẇ, R_a, R_b, R_c, J2, J4, GM), non-v2 → None. Compiler schreiben v2 aus PckBody (ephemeris, NAIF-Mapping 1→199 etc.) bzw. Horizons QUANTITIES='1,2,4' GM-Parse. F39 gelöscht. body_channels: {body}.radius = radius_m, {body}.mass = gm (Kernel 0, gravity, tau ∞, nur wenn gemessen). WS-Protokoll v6: 21 f64 (168 B) + pole/j2/j4/r_eq. body_pole_at mit Nutation, triaxiales Ellipsoid (radii_b/radii_c). Lokale v2-Binaries unter /tmp/omegaflow_eph_*.bin (28 Körper). 0 Warnings, 0 Errors.
 
 ---
 
 ### Einheiten (1)
 
-**U01** ephemeris_compiler schrieb km-Granules — CDN-Ephemeriden neu manifestieren
+**U01** CDN-Ephemeriden neu manifestieren (v2 + m-Skala)
 ```
-ephemeris_compiler.rs:460 → samples_x.push(x * 1000.0);  (Fix im Code, Daten noch alt)
-/jump/earth → 1.136e8 (km-Skala)   /jump/iss → 1.136e11 (m-Skala, horizons_compiler)
+Compiler gefixt (×1000, stype-1 v2 gcount=12); 28 Binaries lokal neu kompiliert und
+unter /tmp/omegaflow_eph_*.bin verifiziert. Der CDN-Release trägt noch gcount=0-Legacy
+(km) → Runtime gibt None → Körper absent (0 honored) bis Re-Upload.
 ```
-Die BSP-basierten Binaries (sun, mercury…neptune, moon, Monde) auf dem CDN tragen km;
-horizons-basierte (iss, jwst, sonden, Kleinkörper) tragen m. main.rs rechnet durchgängig
-in m (radius_m, alt, c). Compiler ist gefixt (×1000 vor dem Fit) — die CI muss die
-ephemeris_*.bin neu kompilieren und auf `ssd.jpl.nasa.gov` re-uploaden; lokale
-/tmp/omegaflow_eph_*.bin danach verwerfen. Bis dahin stehen Planeten bei 1/1000 der Distanz.
+
+**U02** Monde (io…triton) ohne Ephemeriden
+```
+de440s.bsp trägt keine Mond-Segmente → jup365/sat441/mar097/ura111/nep095.bsp
+herunterladen, mit ephemeris_compiler kompilieren (v2), nach /tmp/omegaflow_eph_*.bin.
+Bis dahin: Monde absent (0 honored).
+```
+
+**U03** J2/J4 für weitere Körper: nur Erde hat Text-Quelle
+```
+geophysical.ker (auch live auf NAIF) trägt BODY399_J2/J4 → Erde hat echte
+Harmonische (j2=1.082616e-3 im v6-Record verifiziert). Weitere Körper: Werte liegen
+nur in binären .bpc-Kerneln (earth_*.bpc, moon_pa_*.bpc) → Binary-PCK-Reader
+(DAF-Segment-Typ 2) als nächste Quelle. Bis dahin: j2/j4 = 0.0 neutral (0 honored).
+```
+(Scanner-Fix für nackte Werte + Kommentarzeilen mit '='-Suche ist drin.)
 
 ---
 
@@ -68,11 +80,6 @@ main.rs:5161 → v: [0.0, 0.0, 0.0],
 main.rs:4637 → kernel: 0, force: 1, tau: 86400.0 * 365.0,
 ```
 
-**F39** Zero-BodyProperties für körperlose Körper
-```
-horizons_compiler.rs:707 → BodyProps { a0_deg: 0.0, radius_m: 0.0, flattening: 0.0, … }
-```
-
 **F40** NAIF-ID unbekannt → "unknown"
 ```
 ephemeris_compiler.rs:604 → _ => "unknown"
@@ -84,7 +91,7 @@ ephemeris_compiler.rs:604 → _ => "unknown"
 
 **D07** Kein Oszillator-Cap in Rust
 ```
-index.html:534 → while (c * 32 > maxBuf) c >>= 1;
+index.html:551 → while (c * 96 > maxBuf) c >>= 1;
 ```
 
 **D08** `/device` scannt nur Device-Quellen
@@ -101,10 +108,35 @@ horizons_compiler.rs:727 → let months = if *name == "iss" { 0.9 } else { 1.0 }
 
 **B06** Hardcodierte Body-Listen in Compilern
 ```
-horizons_compiler.rs:19 → BODIES_WITH_MEDIA (23 Einträge)
-ephemeris_compiler.rs:20 → BODIES_WITH_MEDIA, all_target_ids
-ephemeris_compiler.rs:579 → body_id_to_name Tabelle
+BODIES_WITH_MEDIA in beiden Compilern gelöscht (stype-2 immer, absent = 0.0).
+Verbleibend: horizons_compiler.rs wgccre_for_body-Zwillingstabelle (→ PCK-Hochzeit),
+ephemeris_compiler.rs all_target_ids + body_id_to_name Tabelle.
 ```
+
+---
+
+## Membran (nächstes Päckchen)
+
+- ~~Trommelfell: Compute-Grid statt O(pixel×osc)-fs; bilineare Interpolation;
+  dynamische Netzdichte (stableTick); Relativitäts-Codepfade löschen.~~
+  Manifestiert: membrane_grid (workgroup 8×8, 9 Kraft-Kanäle, 3 vec4/Knoten),
+  fs = bilinearer Interpolator, Relativität (beta/gamma/dopp/aberration) gelöscht,
+  Galileische Propagation + fold_eff bleiben. HUD: `__of_state().gridN`.
+- ~~WGSL konsumiert v6-meta-Slots: props[j*3+1] pole, props[j*3+2] j2/j4/r_eq;
+  Zonal-Harmonic-Term (J2/J4) für Kernel 0/6 + gravity; Kernel-0-Softening:
+  Nebra-Guard 1/max(d²,1) statt max(extent,scale)².~~
+  Manifestiert: osc_field (gemeinsamer Evaluator für Probe + Grid), P2/P4-Terme,
+  j2=0 → neutral. Shader via naga validiert.
+- ~~Tonemap: Exposure wieder konsumiert (per-force lvl = Fenster-Maximum-EMA),
+  a9d87bd-Form log2(|x|/lvl)/8+0.5; Mass-Channel macht Ω > 0 sichtbar.~~
+  Manifestiert: nodeMaxBuf (atomicMax, 36 B) → readNodeMax (Φ-EMA je Kraft) →
+  expose_lo/hi/ex → fs-Tonemap. cachedFref-Median gelöscht.
+- WebSerial flow-Protokoll: `flow <force> <id> <|Ω|> 1 <tick_ms> <t> <x> <y> <z>`.
+- Audio-Gain auf lvl-Basis statt tanh(Ω·medianExtent) — meta[i*12]-Stride-Fix ist drin.
+- Wheel-Divisor 128→512, Initial-Scale 2³¹→2³⁷.
+- Horizons-Zwillingstabelle löschen (PCK-Hochzeit); stype-4-Nutation.
+- Browser-Smoke: GPU-Pfad braucht echte WebGPU (Headless-SwiftShader absent);
+  JS-Syntax + naga + HUD/Transport headless verifiziert.
 
 ---
 

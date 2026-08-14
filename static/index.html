@@ -151,7 +151,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
             ws.addEventListener('message', (e) => {
                 if (typeof e.data !== 'string') {
                     const buf = new Uint8Array(e.data);
-                    if (buf.length < 19 || buf[0] !== 0xCF || buf[1] !== 0x86 || buf[2] !== 5) return;
+                    if (buf.length < 19 || buf[0] !== 0xCF || buf[1] !== 0x86 || buf[2] !== 6) return;
                     const dv = new DataView(buf.buffer, buf.byteOffset, buf.byteLength);
                     const id = dv.getUint32(11, true);
                     const pending = transport.pending.get(id);
@@ -291,28 +291,10 @@ fn fold_eff(d_mag: f32, raw: f32, t: f32, ttl: f32, force_type: u32, advective_v
 @group(0) @binding(1) var<storage, read> props: array<vec4f>;
 @group(0) @binding(2) var<uniform> vp: VP;
 @group(0) @binding(3) var<storage, read_write> probe_out: array<f32>;
-@group(0) @binding(4) var<storage, read_write> grid_out: array<f32>;
-@group(1) @binding(0) var<uniform> vp_render: VP;
-@group(1) @binding(1) var<storage, read> grid_in: array<f32>;
+@group(0) @binding(4) var<storage, read_write> node: array<vec4f>;
+@group(0) @binding(5) var<storage, read_write> node_max: array<atomic<i32>>;
 
 struct VOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f };
-
-const DISPLAY_GAMUT_SATURATION: f32 = 1.0;
-
-fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
-    let c = (1.0 - abs(2.0 * l - 1.0)) * s;
-    let hp = h * 6.0;
-    let x = c * (1.0 - abs(hp - 2.0 * floor(hp / 2.0) - 1.0));
-    let m = l - c * 0.5;
-    var rgb01: vec3f;
-    if (hp < 1.0)       { rgb01 = vec3f(c, x, 0.0); }
-    else if (hp < 2.0)  { rgb01 = vec3f(x, c, 0.0); }
-    else if (hp < 3.0)  { rgb01 = vec3f(0.0, c, x); }
-    else if (hp < 4.0)  { rgb01 = vec3f(0.0, x, c); }
-    else if (hp < 5.0)  { rgb01 = vec3f(x, 0.0, c); }
-    else                { rgb01 = vec3f(c, 0.0, x); }
-    return rgb01 + vec3f(m);
-}
 
 @vertex fn vs(@builtin(vertex_index) i: u32) -> VOut {
     var p = array<vec2f, 6>(
@@ -325,14 +307,28 @@ fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
     return out;
 }
 
-fn get_expose(ft: u32) -> f32 {
-    if (ft < 4u) {
-        return vp.expose_lo[ft];
-    } else if (ft < 8u) {
-        return vp.expose_hi[ft - 4u];
+fn wavelength_to_rgb(lambda: f32) -> vec3f {
+    var r = 0.0f; var g = 0.0f; var b = 0.0f;
+    if (lambda < 440.0) {
+        r = -(lambda - 440.0) / 60.0; g = 0.0; b = 1.0;
+    } else if (lambda < 490.0) {
+        r = 0.0; g = (lambda - 440.0) / 50.0; b = 1.0;
+    } else if (lambda < 510.0) {
+        r = 0.0; g = 1.0; b = -(lambda - 510.0) / 20.0;
+    } else if (lambda < 580.0) {
+        r = (lambda - 510.0) / 70.0; g = 1.0; b = 0.0;
+    } else if (lambda < 645.0) {
+        r = 1.0; g = -(lambda - 645.0) / 65.0; b = 0.0;
     } else {
-        return vp.expose_ex[ft - 8u];
+        r = 1.0; g = 0.0; b = 0.0;
     }
+    var intensity = 1.0f;
+    if (lambda < 420.0) {
+        intensity = 0.3 + 0.7 * (lambda - 380.0) / 40.0;
+    } else if (lambda > 700.0) {
+        intensity = 0.3 + 0.7 * (780.0 - lambda) / 80.0;
+    }
+    return vec3f(r, g, b) * intensity;
 }
 
 fn erfc(x: f32) -> f32 {
@@ -349,7 +345,7 @@ fn field_spatial(d2: f32, d_mag: f32, extent: f32, kernel_id: u32, global_scale:
     let s2 = global_scale * global_scale;
 
     if (kernel_id == 0u || kernel_id == 6u) {
-        return 1.0 / max(d2 + e2, 1e-9);
+        return 1.0 / max(d2, 1.0);
     } else if (kernel_id == 3u) {
         return erfc(d_mag / max(perceptual_extent * sqrt(2.0), global_scale));
     } else if (kernel_id == 2u) {
@@ -367,93 +363,120 @@ fn field_spatial(d2: f32, d_mag: f32, extent: f32, kernel_id: u32, global_scale:
     }
 }
 
-@compute @workgroup_size(8, 8)
-fn build_field_grid(@builtin(global_invocation_id) gid: vec3u) {
-    let count = u32(vp.surface.z);
-    let GRID = 128u;
-    if (gid.x >= GRID || gid.y >= GRID) { return; }
-    let idx = gid.y * GRID + gid.x;
-    let is_center = gid.x == 63u && gid.y == 63u;
-
-    if (count == 0u) {
-        grid_out[idx] = 0.0;
-        if (is_center) {
-            for (var i: u32 = 0u; i < 9u; i = i + 1u) { probe_out[i] = 0.0; }
-        }
-        return;
+fn osc_field(j: u32, rel: vec3f, dt: f32) -> vec2f {
+    let m = field[j * 3u];
+    let tm = field[j * 3u + 1u];
+    let fm = field[j * 3u + 2u];
+    let mt = props[j * 3u];
+    let mp = props[j * 3u + 1u];
+    let mg = props[j * 3u + 2u];
+    let v_obs = vec3f(vp.right.w, vp.up.w, vp.forward.w) * C_VACUUM;
+    let v_rel = fm.yzw - v_obs;
+    let propagated = m.xyz + v_rel * dt;
+    let delta = propagated - rel;
+    let d2 = dot(delta, delta);
+    let d_mag = sqrt(d2);
+    let ft = u32(tm.z);
+    let kid = u32(mt.z);
+    let val_eff = fold_eff(d_mag, m.w, tm.x, tm.y, ft, fm.x);
+    var sk = field_spatial(d2, d_mag, mt.x, kid, vp.surface.w, f32(tm.w));
+    if ((kid == 0u || kid == 6u) && ft == 1u) {
+        let dhat = delta / max(d_mag, 1e-9);
+        let cos_t = clamp(dot(dhat, mp.xyz), -1.0, 1.0);
+        let p2 = (3.0 * cos_t * cos_t - 1.0) * 0.5;
+        let p4 = (35.0 * cos_t * cos_t * cos_t * cos_t - 30.0 * cos_t * cos_t + 3.0) * 0.125;
+        let rd = mg.z / max(d_mag, 1.0);
+        sk *= 1.0 - mp.w * rd * rd * p2 - mg.x * rd * rd * rd * rd * p4;
     }
+    return vec2f(val_eff * sk, f32(ft));
+}
 
+@compute @workgroup_size(1)
+fn presence_probe() {
+    let count = u32(vp.surface.z);
+    var omegas = array<f32, 9>();
+    for (var i = 0u; i < 9u; i = i + 1u) { omegas[i] = 0.0; }
+    let dt = vp.presence.w - vp.expose_ex.y;
+    for (var j = 0u; j < count; j = j + 1u) {
+        let c = osc_field(j, vec3f(0.0), dt);
+        let ft = u32(c.y);
+        if (ft < 9u) { omegas[ft] += c.x; }
+    }
+    for (var i = 0u; i < 9u; i = i + 1u) { probe_out[i] = omegas[i]; }
+}
+
+@compute @workgroup_size(8, 8)
+fn membrane_grid(@builtin(global_invocation_id) gid: vec3u) {
+    let gx = u32(vp.expose_ex.z);
+    let gy = u32(vp.expose_ex.w);
+    let i = gid.x;
+    let j = gid.y;
+    if (i >= gx || j >= gy) { return; }
+    let count = u32(vp.surface.z);
     let w = vp.surface.x;
     let h = vp.surface.y;
     let scale = vp.surface.w;
-    let gx = f32(gid.x) / f32(GRID);
-    let gy = f32(gid.y) / f32(GRID);
-    let pixel_rel = (gx - 0.5) * w * scale * vp.right.xyz
-        + (0.5 - gy) * h * scale * vp.up.xyz;
-
+    let u = (f32(i) + 0.5) / f32(gx);
+    let v = (f32(j) + 0.5) / f32(gy);
+    let rel = (u - 0.5) * w * scale * vp.right.xyz
+        + (0.5 - v) * h * scale * vp.up.xyz;
     let dt = vp.presence.w - vp.expose_ex.y;
-    let v_obs = vec3f(vp.right.w, vp.up.w, vp.forward.w) * C_VACUUM;
 
-    var omega = 0.0f;
-    var omegas: array<f32, 9>;
-    for (var i: u32 = 0u; i < 9u; i = i + 1u) { omegas[i] = 0.0; }
-
-    for (var j = 0u; j < count; j = j + 1u) {
-        let m = field[j * 3u];
-        let tm = field[j * 3u + 1u];
-        let fm = field[j * 3u + 2u];
-        let mt = props[j];
-
-        let v_rel = fm.yzw - v_obs;
-        let propagated = m.xyz + v_rel * dt;
-        let delta = propagated - pixel_rel;
-        let d2 = dot(delta, delta);
-        let d_mag = sqrt(d2);
-
-        let val_eff = fold_eff(d_mag, m.w, tm.x, tm.y, u32(tm.z), fm.x);
-        let sk = field_spatial(d2, d_mag, mt.x, u32(mt.z), scale, f32(tm.w));
-        omega += val_eff * sk;
-
-        let ft = u32(tm.z);
-        if (ft < 9u) { omegas[ft] += val_eff * sk; }
+    var omegas = array<f32, 9>();
+    for (var k = 0u; k < 9u; k = k + 1u) { omegas[k] = 0.0; }
+    for (var s = 0u; s < count; s = s + 1u) {
+        let c = osc_field(s, rel, dt);
+        let ft = u32(c.y);
+        if (ft < 9u) { omegas[ft] += c.x; }
     }
-    grid_out[idx] = omega;
-
-    if (is_center) {
-        for (var i: u32 = 0u; i < 9u; i = i + 1u) {
-            probe_out[i] = omegas[i];
-        }
+    let base = (j * gx + i) * 3u;
+    for (var k = 0u; k < 9u; k = k + 1u) {
+        node[base + k / 4u][k % 4u] = omegas[k];
+        atomicMax(&node_max[k], bitcast<i32>(abs(omegas[k])));
     }
-}
-
-fn sample_grid(uv: vec2f) -> f32 {
-    let GRID = 128u;
-    let gx = uv.x * f32(GRID) - 0.5;
-    let gy = uv.y * f32(GRID) - 0.5;
-    let ix = u32(clamp(gx, 0.0, f32(GRID - 1u)));
-    let iy = u32(clamp(gy, 0.0, f32(GRID - 1u)));
-    let nx = min(ix + 1u, GRID - 1u);
-    let ny = min(iy + 1u, GRID - 1u);
-    let fx = fract(gx);
-    let fy = fract(gy);
-    let v00 = grid_in[iy * GRID + ix];
-    let v10 = grid_in[iy * GRID + nx];
-    let v01 = grid_in[ny * GRID + ix];
-    let v11 = grid_in[ny * GRID + nx];
-    return mix(mix(v00, v10, fx), mix(v01, v11, fx), fy);
 }
 
 @fragment fn fs(in: VOut) -> @location(0) vec4f {
-    let count = u32(vp_render.surface.z);
-    if (count == 0u) { discard; }
-    let scale = vp_render.surface.w;
-    let omega = sample_grid(in.uv);
-    let aw = abs(omega);
-    if (aw < 1e-30) { discard; }
-    let lum = clamp(log2(aw + 1.0) / 16.0, 0.0, 1.0);
-    let hue = fract(log2(max(scale, 1.0)) / 32.0 + lum * 0.3);
-    let rgb = hsl_to_rgb(hue, 0.7, lum * 0.85);
-    return vec4f(rgb, 1.0);
+    let gx = vp.expose_ex.z;
+    let gy = vp.expose_ex.w;
+    if (gx < 2.0 || gy < 2.0) { discard; }
+    let fx = in.uv.x * gx - 0.5;
+    let fy = in.uv.y * gy - 0.5;
+    let i0 = u32(clamp(floor(fx), 0.0, gx - 1.0));
+    let j0 = u32(clamp(floor(fy), 0.0, gy - 1.0));
+    let i1 = min(i0 + 1u, u32(gx) - 1u);
+    let j1 = min(j0 + 1u, u32(gy) - 1u);
+    let tx = fx - floor(fx);
+    let ty = fy - floor(fy);
+    let w00 = (1.0 - tx) * (1.0 - ty);
+    let w10 = tx * (1.0 - ty);
+    let w01 = (1.0 - tx) * ty;
+    let w11 = tx * ty;
+    let b00 = (j0 * u32(gx) + i0) * 3u;
+    let b10 = (j0 * u32(gx) + i1) * 3u;
+    let b01 = (j1 * u32(gx) + i0) * 3u;
+    let b11 = (j1 * u32(gx) + i1) * 3u;
+
+    let lvls = array<f32, 9>(
+        vp.expose_lo.x, vp.expose_lo.y, vp.expose_lo.z, vp.expose_lo.w,
+        vp.expose_hi.x, vp.expose_hi.y, vp.expose_hi.z, vp.expose_hi.w,
+        vp.expose_ex.x
+    );
+    var rgb = vec3f(0.0);
+    var luma = 0.0;
+    for (var k = 0u; k < 9u; k = k + 1u) {
+        let o = node[b00 + k / 4u][k % 4u] * w00
+            + node[b10 + k / 4u][k % 4u] * w10
+            + node[b01 + k / 4u][k % 4u] * w01
+            + node[b11 + k / 4u][k % 4u] * w11;
+        let t = log2(abs(o) / max(lvls[k], 5.421010862427522e-20)) / 8.0 + 0.5;
+        let lam = 780.0 - f32(k) * 400.0 / 8.0;
+        rgb += wavelength_to_rgb(lam) * clamp(t, 0.0, 1.0);
+        luma += abs(o);
+    }
+    let out = clamp(rgb, vec3f(0.0), vec3f(1.0));
+    if (luma < 1e-30 && dot(out, out) < 1e-6) { discard; }
+    return vec4f(out, 1.0);
 }
 `;
         let fieldCanvas = document.createElement('canvas');
@@ -469,11 +492,14 @@ fn sample_grid(uv: vec2f) -> f32 {
                 uploads: typeof uploadCount === 'number' ? uploadCount : -1,
                 uploadErrors: typeof uploadErrors === 'number' ? uploadErrors : -1,
                 frames: fieldFrames, wsOpen: !!(ws && ws.readyState === 1),
-                lvls0: kernelExpose[0], gridStepLog2: Math.round(Math.log2(gridStep))
+                lvls0: kernelExpose[0], gridStepLog2: Math.round(Math.log2(gridStep)), gridN
             });
         };
-        let gpu = null, fieldCtx = null, fieldPipe = null, fieldGridPipe = null, fieldLayout = null, renderFieldLayout = null, renderLayout = null, vpBuf = null, fieldBuf = null, metaBuf = null, probeBuf = null, probeRead = null, fieldBind = null, renderFieldBind = null, renderBind = null, gridBuf = null, fieldCap = 0, fieldFrames = 0;
+        let gpu = null, fieldCtx = null, fieldPipe = null, probePipe = null, gridPipe = null, fieldLayout = null, renderFieldLayout = null, vpBuf = null, fieldBuf = null, metaBuf = null, probeBuf = null, probeRead = null, nodeBuf = null, nodeMaxBuf = null, nodeMaxRead = null, fieldBind = null, renderFieldBind = null, fieldCap = 0, fieldFrames = 0;
         let probePending = false, probedOmega = 0, probedOmegas = [0,0,0,0,0,0,0,0,0];
+        let nodeMaxPending = false;
+        let gridN = 64, gridNY = 64;
+        let coarseTicks = 0, fineTicks = 0;
         let gpuInitPromise = null;
         let gpuStatus = 'WebGPU: awaiting config';
         async function initFieldGPU() {
@@ -490,43 +516,39 @@ fn sample_grid(uv: vec2f) -> f32 {
                     gpuStatus = 'WebGPU: active (' + (adapter.info ? (adapter.info.vendor || '') + ' ' + (adapter.info.architecture || '') : 'Renderer') + ')';
                     device.lost.then((info) => {
                         gpu = null;
-                        fieldCtx = null; fieldPipe = null; fieldGridPipe = null; fieldLayout = null; renderFieldLayout = null; renderLayout = null;
-                        vpBuf = null; fieldBuf = null; metaBuf = null; probeBuf = null; probeRead = null; gridBuf = null;
-                        fieldBind = null; renderFieldBind = null; renderBind = null; fieldCap = 0; gpuInitPromise = null;
+                        fieldCtx = null; fieldPipe = null; probePipe = null; gridPipe = null; fieldLayout = null; renderFieldLayout = null;
+                        vpBuf = null; fieldBuf = null; metaBuf = null; probeBuf = null; probeRead = null; nodeBuf = null; nodeMaxBuf = null; nodeMaxRead = null;
+                        fieldBind = null; renderFieldBind = null; fieldCap = 0; gpuInitPromise = null;
                         reportState('gpu', 'device.lost: ' + (info && info.reason ? info.reason : 'unknown'));
                     });
                     fieldCtx = fieldCanvas.getContext('webgpu');
                     fieldCap = 0;
                     fieldBind = null;
                     const format = navigator.gpu.getPreferredCanvasFormat();
-                    fieldCtx.configure({ device, format, alphaMode: 'opaque' });
+                    fieldCtx.configure({ device, format, alphaMode: 'premultiplied' });
                     const module = device.createShaderModule({ code: fieldShader });
                     fieldLayout = device.createBindGroupLayout({ entries: [
                         { binding: 0, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'read-only-storage' } },
                         { binding: 1, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'read-only-storage' } },
                         { binding: 2, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'uniform' } },
                         { binding: 3, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'storage' } },
-                        { binding: 4, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'storage' } }
+                        { binding: 4, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'storage' } },
+                        { binding: 5, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'storage' } }
                     ] });
                     renderFieldLayout = device.createBindGroupLayout({ entries: [
-                        { binding: 0, visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT, buffer: { type: 'read-only-storage' } },
-                        { binding: 1, visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT, buffer: { type: 'read-only-storage' } },
-                        { binding: 2, visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT, buffer: { type: 'uniform' } }
-                    ] });
-                    renderLayout = device.createBindGroupLayout({ entries: [
-                        { binding: 0, visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT, buffer: { type: 'uniform' } },
-                        { binding: 1, visibility: GPUShaderStage.FRAGMENT, buffer: { type: 'read-only-storage' } }
+                        { binding: 2, visibility: GPUShaderStage.FRAGMENT, buffer: { type: 'uniform' } },
+                        { binding: 4, visibility: GPUShaderStage.FRAGMENT, buffer: { type: 'storage' } }
                     ] });
                     fieldPipe = device.createRenderPipeline({
-                        layout: device.createPipelineLayout({ bindGroupLayouts: [renderFieldLayout, renderLayout] }),
+                        layout: device.createPipelineLayout({ bindGroupLayouts: [renderFieldLayout] }),
                         vertex: { module, entryPoint: 'vs' },
                         fragment: {
                             module, entryPoint: 'fs',
                             targets: [{
                                 format,
                                 blend: {
-                                    color: { srcFactor: 'src-alpha', dstFactor: 'one-minus-src-alpha', operation: 'add' },
-                                    alpha: { srcFactor: 'one', dstFactor: 'one-minus-src-alpha', operation: 'add' }
+                                    color: { srcFactor: 'one', dstFactor: 'one', operation: 'add' },
+                                    alpha: { srcFactor: 'one', dstFactor: 'one', operation: 'add' }
                                 }
                             }]
                         },
@@ -534,11 +556,17 @@ fn sample_grid(uv: vec2f) -> f32 {
                     });
                     probeBuf = device.createBuffer({ size: 36, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC });
                     probeRead = device.createBuffer({ size: 36, usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.COPY_DST });
+                    nodeMaxBuf = device.createBuffer({ size: 36, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST | GPUBufferUsage.COPY_SRC });
+                    nodeMaxRead = device.createBuffer({ size: 36, usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.COPY_DST });
+                    nodeBuf = device.createBuffer({ size: 64 * 64 * 48, usage: GPUBufferUsage.STORAGE });
                     vpBuf = device.createBuffer({ size: 128, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
-                    gridBuf = device.createBuffer({ size: 128 * 128 * 4, usage: GPUBufferUsage.STORAGE });
-                    fieldGridPipe = device.createComputePipeline({
+                    probePipe = device.createComputePipeline({
                         layout: device.createPipelineLayout({ bindGroupLayouts: [fieldLayout] }),
-                        compute: { module, entryPoint: 'build_field_grid' }
+                        compute: { module, entryPoint: 'presence_probe' }
+                    });
+                    gridPipe = device.createComputePipeline({
+                        layout: device.createPipelineLayout({ bindGroupLayouts: [fieldLayout] }),
+                        compute: { module, entryPoint: 'membrane_grid' }
                     });
                     gpu = device;
                 } catch (e) { gpu = null; gpuStatus = 'WebGPU: absent (' + String(e) + ')'; reportState('gpu', String(e)); }
@@ -554,7 +582,7 @@ fn sample_grid(uv: vec2f) -> f32 {
             let c = fieldCap > 0 ? fieldCap : 256;
             while (c < n) c <<= 1;
             const maxBuf = gpu.limits.maxBufferSize || 268435456;
-            while (c * 48 > maxBuf) c >>= 1;
+            while (c * 96 > maxBuf) c >>= 1;
             if (c < 256) c = 256;
             if (c < fieldCap >> 1 && stableTick > 0) {
                 const displayFreq = 60;
@@ -565,23 +593,19 @@ fn sample_grid(uv: vec2f) -> f32 {
             if (metaBuf) metaBuf.destroy();
             try {
                 fieldBuf = gpu.createBuffer({ size: fieldCap * 48, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST });
-                metaBuf = gpu.createBuffer({ size: fieldCap * 16, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST });
+                metaBuf = gpu.createBuffer({ size: fieldCap * 48, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST });
                 if (!fieldBuf || !metaBuf) { reportState('gpu', 'ensureFieldCapacity: fieldBuf/metaBuf null'); return; }
                 fieldBind = gpu.createBindGroup({ layout: fieldLayout, entries: [
                     { binding: 0, resource: { buffer: fieldBuf } },
                     { binding: 1, resource: { buffer: metaBuf } },
                     { binding: 2, resource: { buffer: vpBuf } },
                     { binding: 3, resource: { buffer: probeBuf } },
-                    { binding: 4, resource: { buffer: gridBuf } }
+                    { binding: 4, resource: { buffer: nodeBuf } },
+                    { binding: 5, resource: { buffer: nodeMaxBuf } }
                 ] });
                 renderFieldBind = gpu.createBindGroup({ layout: renderFieldLayout, entries: [
-                    { binding: 0, resource: { buffer: fieldBuf } },
-                    { binding: 1, resource: { buffer: metaBuf } },
-                    { binding: 2, resource: { buffer: vpBuf } }
-                ] });
-                renderBind = gpu.createBindGroup({ layout: renderLayout, entries: [
-                    { binding: 0, resource: { buffer: vpBuf } },
-                    { binding: 1, resource: { buffer: gridBuf } }
+                    { binding: 2, resource: { buffer: vpBuf } },
+                    { binding: 4, resource: { buffer: nodeBuf } }
                 ] });
             } catch (e) {
                 fieldCap = 0;
@@ -589,6 +613,36 @@ fn sample_grid(uv: vec2f) -> f32 {
                 renderFieldBind = null;
                 reportState('gpu', 'bindgroup: ' + String(e));
             }
+        }
+        function ensureGridCapacity(gx, gy) {
+            if (!gpu) return;
+            const cells = gx * gy;
+            if (nodeBuf && nodeBuf.size >= cells * 48) return;
+            try {
+                nodeBuf = gpu.createBuffer({ size: cells * 48, usage: GPUBufferUsage.STORAGE });
+                fieldBind = gpu.createBindGroup({ layout: fieldLayout, entries: [
+                    { binding: 0, resource: { buffer: fieldBuf } },
+                    { binding: 1, resource: { buffer: metaBuf } },
+                    { binding: 2, resource: { buffer: vpBuf } },
+                    { binding: 3, resource: { buffer: probeBuf } },
+                    { binding: 4, resource: { buffer: nodeBuf } },
+                    { binding: 5, resource: { buffer: nodeMaxBuf } }
+                ] });
+                renderFieldBind = gpu.createBindGroup({ layout: renderFieldLayout, entries: [
+                    { binding: 2, resource: { buffer: vpBuf } },
+                    { binding: 4, resource: { buffer: nodeBuf } }
+                ] });
+            } catch (e) { reportState('gpu', 'grid: ' + String(e)); }
+        }
+        function adaptGridDensity() {
+            const hi = 1000 / 25, lo = 1000 / 55;
+            if (stableTick > hi) {
+                coarseTicks++; fineTicks = 0;
+                if (coarseTicks > 30) { coarseTicks = 0; if (gridN > 16) gridN >>= 1; }
+            } else if (stableTick < lo) {
+                fineTicks++; coarseTicks = 0;
+                if (fineTicks > 30) { fineTicks = 0; if (gridN < 256) gridN <<= 1; }
+            } else { coarseTicks = 0; fineTicks = 0; }
         }
         async function probePresence() {
             if (!gpu || probePending || fieldCount === 0) return;
@@ -605,15 +659,33 @@ fn sample_grid(uv: vec2f) -> f32 {
                 probeRead.unmap();
             } catch { console.warn('position stream empty'); } finally { probePending = false; }
         }
+        async function readNodeMax(relax) {
+            if (!gpu || nodeMaxPending) return;
+            nodeMaxPending = true;
+            try {
+                const encoder = gpu.createCommandEncoder();
+                encoder.copyBufferToBuffer(nodeMaxBuf, 0, nodeMaxRead, 0, 36);
+                gpu.queue.submit([encoder.finish()]);
+                await gpu.queue.onSubmittedWorkDone();
+                await nodeMaxRead.mapAsync(GPUMapMode.READ);
+                const data = new Float32Array(nodeMaxRead.getMappedRange());
+                for (let k = 0; k < 9; k++) {
+                    const v = Math.abs(data[k]);
+                    if (kernelExpose[k] === 0 && v > 0) kernelExpose[k] = v;
+                    else kernelExpose[k] += (v - kernelExpose[k]) * relax;
+                }
+                nodeMaxRead.unmap();
+            } catch { console.warn('drum skin stream empty'); } finally { nodeMaxPending = false; }
+        }
 
         function manifestWindow(ts, rawTick) {
             if (!gpu) { initFieldGPU(); return; }
             if (!fieldVisible) {
                 try {
                     const encoder = gpu.createCommandEncoder();
-                const pass = encoder.beginRenderPass({ colorAttachments: [{ view: fieldCtx.getCurrentTexture().createView(), clearValue: { r: 0, g: 0, b: 0, a: 1 }, loadOp: 'clear', storeOp: 'store' }] });
+                    const pass = encoder.beginRenderPass({ colorAttachments: [{ view: fieldCtx.getCurrentTexture().createView(), clearValue: { r: 0, g: 0, b: 0, a: 1 }, loadOp: 'clear', storeOp: 'store' }] });
                     pass.setPipeline(fieldPipe);
-                    pass.setBindGroup(0, fieldBind);
+                    pass.setBindGroup(0, renderFieldBind);
                     pass.draw(0);
                     pass.end();
                     gpu.queue.submit([encoder.finish()]);
@@ -628,36 +700,20 @@ fn sample_grid(uv: vec2f) -> f32 {
                 lastFoldResp = rawWindowResponse;
                 const raw = rawWindowResponse.field;
                 const rawm = rawWindowResponse.meta;
-                const fref = new Float64Array(9);
-                const ft_vals = [[], [], [], [], [], [], [], [], []];
-                for (let i = 0; i < n; i++) {
-                    const ft = raw[i * 12 + 6] | 0;
-                    if (ft < 9) {
-                        const av = Math.abs(raw[i * 12 + 3]);
-                        if (av > 0 && isFinite(av)) ft_vals[ft].push(av);
-                    }
-                }
-                for (let k = 0; k < 9; k++) {
-                    if (ft_vals[k].length > 0) {
-                        ft_vals[k].sort((a, b) => Math.log10(Math.max(a, 1e-30)) - Math.log10(Math.max(b, 1e-30)));
-                        cachedFref[k] = ft_vals[k][ft_vals[k].length >> 1];
-                    }
-                }
                 try {
                     gpu.queue.writeBuffer(fieldBuf, 0, raw.subarray(0, n * 12));
-                    gpu.queue.writeBuffer(metaBuf, 0, rawm.subarray(0, n * 4));
+                    gpu.queue.writeBuffer(metaBuf, 0, rawm.subarray(0, n * 12));
                     uploadCount++;
                 } catch { uploadErrors++; }
             }
             const relax = 1 - Math.exp(-dt / Φ);
-            for (let i = 0; i < 9; i++) {
-                if (kernelExpose[i] === 0 && cachedFref[i] > 0) kernelExpose[i] = cachedFref[i];
-                else kernelExpose[i] += (cachedFref[i] - kernelExpose[i]) * relax;
-            }
             const dpr = window.devicePixelRatio || 1;
             const evalW = Math.floor(RX * dpr);
             const evalH = Math.floor(RY * dpr);
             if (fieldCanvas.width !== evalW || fieldCanvas.height !== evalH) { fieldCanvas.width = evalW; fieldCanvas.height = evalH; }
+            adaptGridDensity();
+            gridNY = Math.max(2, Math.round(gridN * evalH / evalW));
+            ensureGridCapacity(gridN, gridNY);
             const [fr, fu, ff] = orientationFrame();
             const boost = Math.pow(2, exposureBoost);
             const lvls = new Float32Array(9);
@@ -670,15 +726,18 @@ fn sample_grid(uv: vec2f) -> f32 {
                     ff[0], ff[1], ff[2], vPresence[2] / C,
                     lvls[0], lvls[1], lvls[2], lvls[3],
                     lvls[4], lvls[5], lvls[6], lvls[7],
-                    lvls[8], lastResponseEpoch, 0, 0,
+                    lvls[8], lastResponseEpoch, gridN, gridNY,
                     xPresence, yPresence, zPresence, tPresence
                 ]));
                 {
                     const compEncoder = gpu.createCommandEncoder();
+                    gpu.queue.writeBuffer(nodeMaxBuf, 0, new Float32Array(9));
                     const cpass = compEncoder.beginComputePass();
-                    cpass.setPipeline(fieldGridPipe);
+                    cpass.setPipeline(probePipe);
                     cpass.setBindGroup(0, fieldBind);
-                    cpass.dispatchWorkgroups(16, 16);
+                    cpass.dispatchWorkgroups(1);
+                    cpass.setPipeline(gridPipe);
+                    cpass.dispatchWorkgroups(Math.ceil(gridN / 8), Math.ceil(gridNY / 8));
                     cpass.end();
                     gpu.queue.submit([compEncoder.finish()]);
                 }
@@ -687,7 +746,6 @@ fn sample_grid(uv: vec2f) -> f32 {
                     const pass = renderEncoder.beginRenderPass({ colorAttachments: [{ view: fieldCtx.getCurrentTexture().createView(), clearValue: { r: 0, g: 0, b: 0, a: 1 }, loadOp: 'clear', storeOp: 'store' }] });
                     pass.setPipeline(fieldPipe);
                     pass.setBindGroup(0, renderFieldBind);
-                    pass.setBindGroup(1, renderBind);
                     pass.draw(6);
                     pass.end();
                     gpu.queue.submit([renderEncoder.finish()]);
@@ -695,6 +753,7 @@ fn sample_grid(uv: vec2f) -> f32 {
                 fieldFrames++;
             } catch { gpu = null; }
             probePresence().catch(() => { console.warn('stream empty'); });
+            readNodeMax(relax).catch(() => { console.warn('stream empty'); });
         }
         let mxRef = null, mxVal = 1;
         function windowMedianExtent() {
@@ -703,7 +762,7 @@ fn sample_grid(uv: vec2f) -> f32 {
                 const meta = rawWindowResponse.meta;
                 const n = rawWindowResponse.count;
                 const exts = [];
-                for (let i = 0; i < n; i++) { const e = meta[i * 4]; if (e > 0) exts.push(e); }
+                for (let i = 0; i < n; i++) { const e = meta[i * 12]; if (e > 0) exts.push(e); }
                 mxVal = exts.length === 0 ? 1 : exts.sort((a, b) => a - b)[exts.length >> 1];
             }
             return mxVal;
@@ -735,7 +794,6 @@ fn sample_grid(uv: vec2f) -> f32 {
         let uploadCount = 0, uploadErrors = 0;
         let lastFoldResp = null;
         let fieldCount = 0;
-        const cachedFref = new Float64Array(9);
         let lastResponseEpoch = 0;
         let cacheInterval = Φ;
         async function syncField(transmitList, queries) {

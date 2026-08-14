@@ -1,262 +1,12 @@
 use omegaflow::bsp_reader::spk::SpkFile;
+use omegaflow::pck::{neutral, PckBody};
+use std::collections::HashMap;
 
 const CHEBYSHEV_DEGREE: usize = 17;
 const GRANULE_DAYS: f64 = 32.0;
 const N_SAMPLES: usize = 25;
 const J2000_EPOCH: f64 = 2451545.0;
 const MAGIC_HEADER: [u8; 4] = [0xCF, 0x86, 0x01, 0x00];
-
-struct BodyProps {
-    a0_deg: f64,
-    da0_dt_deg_per_century: f64,
-    d0_deg: f64,
-    dd0_dt_deg_per_century: f64,
-    w0_deg: f64,
-    dw_dt_deg_per_day: f64,
-    radius_m: f64,
-    flattening: f64,
-}
-
-const BODIES_WITH_MEDIA: &[i32] = &[
-    10, 1, 2, 399, 301, 4, 5, 6, 7, 8, 9, 501, 502, 503, 504, 602, 603, 604, 605, 606, 801, 401,
-    402,
-];
-
-fn wgccre_for_body(body: &str) -> Option<BodyProps> {
-    match body {
-        "sun" => Some(BodyProps {
-            a0_deg: 286.13,
-            da0_dt_deg_per_century: 0.0,
-            d0_deg: 63.87,
-            dd0_dt_deg_per_century: 0.0,
-            w0_deg: 84.176,
-            dw_dt_deg_per_day: 14.1844,
-            radius_m: 696000000.0,
-            flattening: 0.0,
-        }),
-        "mercury" => Some(BodyProps {
-            a0_deg: 281.01,
-            da0_dt_deg_per_century: -0.033,
-            d0_deg: 61.45,
-            dd0_dt_deg_per_century: -0.005,
-            w0_deg: 329.548,
-            dw_dt_deg_per_day: 6.1385,
-            radius_m: 2439700.0,
-            flattening: 0.0,
-        }),
-        "venus" => Some(BodyProps {
-            a0_deg: 272.76,
-            da0_dt_deg_per_century: 0.0,
-            d0_deg: 67.16,
-            dd0_dt_deg_per_century: 0.0,
-            w0_deg: 160.20,
-            dw_dt_deg_per_day: -1.4814,
-            radius_m: 6051800.0,
-            flattening: 0.0,
-        }),
-        "earth" => Some(BodyProps {
-            a0_deg: 0.0,
-            da0_dt_deg_per_century: 0.0,
-            d0_deg: 90.0,
-            dd0_dt_deg_per_century: 0.0,
-            w0_deg: 190.147,
-            dw_dt_deg_per_day: 360.9856235,
-            radius_m: 6378136.6,
-            flattening: 0.0033527,
-        }),
-        "moon" => Some(BodyProps {
-            a0_deg: 269.9949,
-            da0_dt_deg_per_century: 0.0031,
-            d0_deg: 66.5392,
-            dd0_dt_deg_per_century: 0.013,
-            w0_deg: 38.3213,
-            dw_dt_deg_per_day: 13.17635815,
-            radius_m: 1737400.0,
-            flattening: 0.0,
-        }),
-        "mars" => Some(BodyProps {
-            a0_deg: 317.68143,
-            da0_dt_deg_per_century: -0.1061,
-            d0_deg: 52.88650,
-            dd0_dt_deg_per_century: -0.0609,
-            w0_deg: 176.630,
-            dw_dt_deg_per_day: 350.89198226,
-            radius_m: 3396190.0,
-            flattening: 0.00589,
-        }),
-        "jupiter" => Some(BodyProps {
-            a0_deg: 268.056595,
-            da0_dt_deg_per_century: -0.006499,
-            d0_deg: 64.495303,
-            dd0_dt_deg_per_century: 0.002413,
-            w0_deg: 284.95,
-            dw_dt_deg_per_day: 870.536,
-            radius_m: 71492000.0,
-            flattening: 0.06487,
-        }),
-        "saturn" => Some(BodyProps {
-            a0_deg: 40.589,
-            da0_dt_deg_per_century: -0.036,
-            d0_deg: 83.537,
-            dd0_dt_deg_per_century: -0.004,
-            w0_deg: 38.90,
-            dw_dt_deg_per_day: 810.7939024,
-            radius_m: 60268000.0,
-            flattening: 0.09796,
-        }),
-        "uranus" => Some(BodyProps {
-            a0_deg: 257.311,
-            da0_dt_deg_per_century: 0.0,
-            d0_deg: -15.175,
-            dd0_dt_deg_per_century: 0.0,
-            w0_deg: 203.81,
-            dw_dt_deg_per_day: -501.1600928,
-            radius_m: 25559000.0,
-            flattening: 0.02293,
-        }),
-        "neptune" => Some(BodyProps {
-            a0_deg: 299.36,
-            da0_dt_deg_per_century: 0.70,
-            d0_deg: 43.46,
-            dd0_dt_deg_per_century: -0.51,
-            w0_deg: 253.18,
-            dw_dt_deg_per_day: 536.3128492,
-            radius_m: 24764000.0,
-            flattening: 0.0171,
-        }),
-        "pluto" => Some(BodyProps {
-            a0_deg: 132.993,
-            da0_dt_deg_per_century: 0.0,
-            d0_deg: -6.163,
-            dd0_dt_deg_per_century: 0.0,
-            w0_deg: 302.695,
-            dw_dt_deg_per_day: 56.3625225,
-            radius_m: 1188300.0,
-            flattening: 0.0,
-        }),
-        "io" => Some(BodyProps {
-            a0_deg: 268.05,
-            da0_dt_deg_per_century: -0.009,
-            d0_deg: 64.50,
-            dd0_dt_deg_per_century: 0.003,
-            w0_deg: 200.39,
-            dw_dt_deg_per_day: 203.4889538,
-            radius_m: 1821600.0,
-            flattening: 0.0,
-        }),
-        "europa" => Some(BodyProps {
-            a0_deg: 268.08,
-            da0_dt_deg_per_century: -0.009,
-            d0_deg: 64.51,
-            dd0_dt_deg_per_century: 0.003,
-            w0_deg: 35.98,
-            dw_dt_deg_per_day: 101.3747235,
-            radius_m: 1560800.0,
-            flattening: 0.0,
-        }),
-        "ganymede" => Some(BodyProps {
-            a0_deg: 268.20,
-            da0_dt_deg_per_century: -0.009,
-            d0_deg: 64.57,
-            dd0_dt_deg_per_century: 0.003,
-            w0_deg: 44.064,
-            dw_dt_deg_per_day: 50.3176081,
-            radius_m: 2631200.0,
-            flattening: 0.0,
-        }),
-        "callisto" => Some(BodyProps {
-            a0_deg: 268.72,
-            da0_dt_deg_per_century: -0.009,
-            d0_deg: 64.83,
-            dd0_dt_deg_per_century: 0.003,
-            w0_deg: 259.51,
-            dw_dt_deg_per_day: 21.5710715,
-            radius_m: 2410300.0,
-            flattening: 0.0,
-        }),
-        "titan" => Some(BodyProps {
-            a0_deg: 36.41,
-            da0_dt_deg_per_century: -0.036,
-            d0_deg: 83.94,
-            dd0_dt_deg_per_century: -0.004,
-            w0_deg: 189.64,
-            dw_dt_deg_per_day: 22.5769768,
-            radius_m: 2575500.0,
-            flattening: 0.0,
-        }),
-        "triton" => Some(BodyProps {
-            a0_deg: 299.36,
-            da0_dt_deg_per_century: 0.70,
-            d0_deg: 43.46,
-            dd0_dt_deg_per_century: -0.51,
-            w0_deg: 296.53,
-            dw_dt_deg_per_day: -61.2572637,
-            radius_m: 1353400.0,
-            flattening: 0.0,
-        }),
-        "enceladus" => Some(BodyProps {
-            a0_deg: 40.66,
-            da0_dt_deg_per_century: -0.036,
-            d0_deg: 83.52,
-            dd0_dt_deg_per_century: -0.004,
-            w0_deg: 36.41,
-            dw_dt_deg_per_day: 262.7318996,
-            radius_m: 252100.0,
-            flattening: 0.0,
-        }),
-        "rhea" => Some(BodyProps {
-            a0_deg: 40.38,
-            da0_dt_deg_per_century: -0.036,
-            d0_deg: 83.55,
-            dd0_dt_deg_per_century: -0.004,
-            w0_deg: 345.65,
-            dw_dt_deg_per_day: 79.6900478,
-            radius_m: 763800.0,
-            flattening: 0.0,
-        }),
-        "dione" => Some(BodyProps {
-            a0_deg: 40.66,
-            da0_dt_deg_per_century: -0.036,
-            d0_deg: 83.52,
-            dd0_dt_deg_per_century: -0.004,
-            w0_deg: 357.00,
-            dw_dt_deg_per_day: 131.5349316,
-            radius_m: 561400.0,
-            flattening: 0.0,
-        }),
-        "tethys" => Some(BodyProps {
-            a0_deg: 50.41,
-            da0_dt_deg_per_century: -0.036,
-            d0_deg: 83.55,
-            dd0_dt_deg_per_century: -0.004,
-            w0_deg: 299.11,
-            dw_dt_deg_per_day: 190.6979086,
-            radius_m: 531100.0,
-            flattening: 0.0,
-        }),
-        "phobos" => Some(BodyProps {
-            a0_deg: 317.68,
-            da0_dt_deg_per_century: -0.108,
-            d0_deg: 54.46,
-            dd0_dt_deg_per_century: -0.061,
-            w0_deg: 165.00,
-            dw_dt_deg_per_day: 1128.844759,
-            radius_m: 11260.0,
-            flattening: 0.0,
-        }),
-        "deimos" => Some(BodyProps {
-            a0_deg: 317.68,
-            da0_dt_deg_per_century: -0.108,
-            d0_deg: 54.46,
-            dd0_dt_deg_per_century: -0.061,
-            w0_deg: 240.00,
-            dw_dt_deg_per_day: 285.161891,
-            radius_m: 6230.0,
-            flattening: 0.0,
-        }),
-        _ => None,
-    }
-}
 
 fn parent_of(body: i32) -> Option<i32> {
     match body {
@@ -389,13 +139,11 @@ fn state_ssb(spk: &SpkFile, target: i32, et: f64) -> Option<[f64; 6]> {
     ])
 }
 
-fn compute_rotation_matrix(_body: &str, wgccre: &BodyProps, jd: f64) -> Option<[f64; 9]> {
+fn compute_rotation_matrix(wgccre: &PckBody, jd: f64) -> Option<[f64; 9]> {
     let tc = (jd - J2000_EPOCH) / 36525.0;
-    let a = (wgccre.a0_deg + wgccre.da0_dt_deg_per_century * tc).to_radians();
-    let d = (wgccre.d0_deg + wgccre.dd0_dt_deg_per_century * tc).to_radians();
-    let w = ((wgccre.w0_deg + wgccre.dw_dt_deg_per_day * (jd - J2000_EPOCH))
-        - (wgccre.a0_deg + wgccre.da0_dt_deg_per_century * tc))
-        .to_radians();
+    let a = wgccre.pole_ra_at(tc)?.to_radians();
+    let d = wgccre.pole_dec_at(tc)?.to_radians();
+    let w = (wgccre.pm_at(jd - J2000_EPOCH)? - wgccre.pole_ra_at(tc)?).to_radians();
     let (sa, ca) = a.sin_cos();
     let (sd, cd) = d.sin_cos();
     let (sw, cw) = w.sin_cos();
@@ -416,8 +164,7 @@ fn compute_rotation_matrix(_body: &str, wgccre: &BodyProps, jd: f64) -> Option<[
 fn extract_granules(
     spk: &SpkFile,
     target: i32,
-    body_name: &str,
-    wgccre: &BodyProps,
+    wgccre: &PckBody,
 ) -> (
     Vec<(f64, f64, Vec<f64>, Vec<f64>, Vec<f64>)>,
     Vec<(f64, [f64; 9])>,
@@ -476,7 +223,7 @@ fn extract_granules(
         if let Some((cx, cy, cz)) = chebyshev_fit(&combined, CHEBYSHEV_DEGREE) {
             granules.push((mid_jd, half_jd, cx, cy, cz));
         }
-        if let Some(rot_m) = compute_rotation_matrix(body_name, wgccre, mid_jd) {
+        if let Some(rot_m) = compute_rotation_matrix(wgccre, mid_jd) {
             rotations.push((mid_jd, rot_m));
         }
     }
@@ -488,14 +235,9 @@ fn write_binary(
     body_name: &str,
     granules: &[(f64, f64, Vec<f64>, Vec<f64>, Vec<f64>)],
     rotations: &[(f64, [f64; 9])],
-    wgccre: &BodyProps,
-    has_media: bool,
+    wgccre: &PckBody,
 ) {
-    let mut n_sections: u32 = 1;
-    n_sections += 1;
-    if has_media {
-        n_sections += 1;
-    }
+    let mut n_sections: u32 = 2;
     if !rotations.is_empty() {
         n_sections += 1;
     }
@@ -522,24 +264,28 @@ fn write_binary(
     {
         let section_stype: u32 = 1;
         buf.extend_from_slice(&section_stype.to_le_bytes());
-        buf.extend_from_slice(&0u32.to_le_bytes());
+        buf.extend_from_slice(&12u32.to_le_bytes());
         buf.extend_from_slice(&17u32.to_le_bytes());
         buf.extend_from_slice(&0u32.to_le_bytes());
-        let params: [f64; 8] = [
-            wgccre.a0_deg,
-            wgccre.da0_dt_deg_per_century,
-            wgccre.d0_deg,
-            wgccre.dd0_dt_deg_per_century,
-            wgccre.w0_deg,
-            wgccre.dw_dt_deg_per_day,
-            wgccre.radius_m,
-            wgccre.flattening,
+        let params: [f64; 12] = [
+            neutral(wgccre.pole_ra_deg),
+            neutral(wgccre.pole_ra_rate_deg_per_century),
+            neutral(wgccre.pole_dec_deg),
+            neutral(wgccre.pole_dec_rate_deg_per_century),
+            neutral(wgccre.pm_deg),
+            neutral(wgccre.pm_rate_deg_per_day),
+            neutral(wgccre.radii_m.map(|r| r[0])),
+            neutral(wgccre.radii_m.map(|r| r[1])),
+            neutral(wgccre.radii_m.map(|r| r[2])),
+            neutral(wgccre.j2),
+            neutral(wgccre.j4),
+            neutral(wgccre.gm_m3_s2),
         ];
         for &p in &params {
             buf.extend_from_slice(&p.to_le_bytes());
         }
     }
-    if has_media {
+    {
         let section_stype: u32 = 2;
         buf.extend_from_slice(&section_stype.to_le_bytes());
         buf.extend_from_slice(&0u32.to_le_bytes());
@@ -605,14 +351,68 @@ fn body_id_to_name(id: i32) -> &'static str {
     }
 }
 
+fn pck_id_of(target: i32) -> i32 {
+    match target {
+        1 => 199,
+        2 => 299,
+        4 => 499,
+        5 => 599,
+        6 => 699,
+        7 => 799,
+        8 => 899,
+        9 => 999,
+        other => other,
+    }
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     if args.len() < 2 {
-        eprintln!("usage: ephemeris_compiler <kernel_path> [kernel_path ...]");
+        eprintln!(
+            "usage: ephemeris_compiler <kernel_path>... --gm <gm_de440.tpc> --pck <pck00010.tpc>"
+        );
         eprintln!("output: ephemeris_<body>.bin in current directory");
         std::process::exit(1);
     }
-    let kernel_paths: Vec<String> = args[1..].to_vec();
+    let mut kernel_paths: Vec<String> = Vec::new();
+    let mut gm_path: Option<String> = None;
+    let mut pck_paths: Vec<String> = Vec::new();
+    let mut i = 1;
+    while i < args.len() {
+        match args[i].as_str() {
+            "--gm" => {
+                gm_path = args.get(i + 1).cloned();
+                i += 1;
+            }
+            "--pck" => {
+                if let Some(p) = args.get(i + 1) {
+                    pck_paths.push(p.clone());
+                }
+                i += 1;
+            }
+            other => kernel_paths.push(other.to_string()),
+        }
+        i += 1;
+    }
+    if kernel_paths.is_empty() {
+        eprintln!("no kernel paths given");
+        std::process::exit(1);
+    }
+    let gm_text = gm_path.and_then(|p| std::fs::read_to_string(p).ok());
+    let mut pck_merged = String::new();
+    for p in &pck_paths {
+        if let Ok(t) = std::fs::read_to_string(p) {
+            pck_merged.push_str(&t);
+            pck_merged.push('\n');
+        }
+    }
+    let pck_text = if pck_merged.is_empty() {
+        None
+    } else {
+        Some(pck_merged)
+    };
+    let pck_bodies: HashMap<i32, PckBody> =
+        omegaflow::pck::parse(gm_text.as_deref(), pck_text.as_deref());
     let all_target_ids: [i32; 23] = [
         10, 1, 2, 399, 301, 4, 5, 6, 7, 8, 9, 501, 502, 503, 504, 602, 603, 604, 605, 606, 801,
         401, 402,
@@ -630,16 +430,15 @@ fn main() {
             }
         };
         for (idx, &target_id) in all_target_ids.iter().enumerate() {
-            let body_name = body_id_to_name(target_id);
             let has_coverage = spk.segments().iter().any(|s| s.target == target_id);
             if !has_coverage {
                 continue;
             }
-            let wgccre = match wgccre_for_body(body_name) {
+            let wgccre = match pck_bodies.get(&pck_id_of(target_id)) {
                 Some(w) => w,
                 None => continue,
             };
-            let (granules, rotations) = extract_granules(&spk, target_id, body_name, &wgccre);
+            let (granules, rotations) = extract_granules(&spk, target_id, &wgccre);
             all_granules[idx].extend(granules);
             all_rotations[idx].extend(rotations);
         }
@@ -648,10 +447,10 @@ fn main() {
         let body_name = body_id_to_name(target_id);
         let mut granules = core::mem::take(&mut all_granules[idx]);
         let mut rotations = core::mem::take(&mut all_rotations[idx]);
-        let wgccre = match wgccre_for_body(body_name) {
+        let wgccre = match pck_bodies.get(&pck_id_of(target_id)) {
             Some(w) => w,
             None => {
-                eprintln!("  SKIP {}: no WGCCRE params", body_name);
+                eprintln!("  SKIP {}: no PCK params", body_name);
                 continue;
             }
         };
@@ -662,13 +461,6 @@ fn main() {
         granules.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal));
         rotations.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal));
         let path = format!("ephemeris_{}.bin", body_name);
-        write_binary(
-            &path,
-            body_name,
-            &granules,
-            &rotations,
-            &wgccre,
-            BODIES_WITH_MEDIA.contains(&target_id),
-        );
+        write_binary(&path, body_name, &granules, &rotations, &wgccre);
     }
 }

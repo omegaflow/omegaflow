@@ -1,4 +1,6 @@
 #![allow(mixed_script_confusables)]
+use omegaflow::lsk::LeapSeconds;
+use omegaflow::pck::PckBody;
 use std::{
     collections::HashMap,
     io::{Cursor, IsTerminal, Read, Write},
@@ -6,7 +8,7 @@ use std::{
     process::Command,
     sync::{
         atomic::{AtomicBool, Ordering},
-        mpsc, Arc,
+        mpsc, Arc, Mutex,
     },
     thread,
     time::{SystemTime, UNIX_EPOCH},
@@ -14,8 +16,6 @@ use std::{
 
 const Φ: f64 = 1.618033988749895;
 const J2000_EPOCH: f64 = 2451545.0;
-const UNIX_J2000_OFFSET: f64 = 946728000.0;
-const TT_MINUS_UTC: f64 = 32.184 + 37.0;
 const PARSEC_M: f64 = 3.085677581e16;
 const C_LIGHT: f64 = 299792458.0;
 const HUBBLE_H0: f64 = 70000.0 / (PARSEC_M * 1.0e6);
@@ -65,6 +65,13 @@ struct BodyProperties {
     erfc: f64,
     exponential_decay: f64,
     patch_levy: f64,
+    gm: Option<f64>,
+    j2: Option<f64>,
+    j4: Option<f64>,
+    radii_b: Option<f64>,
+    radii_c: Option<f64>,
+    nut_ra: Option<Vec<[f64; 3]>>,
+    nut_dec: Option<Vec<[f64; 3]>>,
 }
 
 #[derive(Clone)]
@@ -94,6 +101,14 @@ fn chebyshev_evaluate(coeffs: &[f64; CHEBYSHEV_N], tau: f64) -> f64 {
     b0 - tau * b1
 }
 
+fn measured(v: f64) -> Option<f64> {
+    if v != 0.0 {
+        Some(v)
+    } else {
+        None
+    }
+}
+
 fn parse_ephemeris_binary(data: &[u8]) -> Option<BodyEphemeris> {
     if data.len() < 24 || data[0] != 0xCF || data[1] != 0x86 || data[2] != 0x01 {
         return None;
@@ -121,6 +136,12 @@ fn parse_ephemeris_binary(data: &[u8]) -> Option<BodyEphemeris> {
                 buf.copy_from_slice(&data[pos + i * 8..pos + i * 8 + 8]);
                 f64::from_le_bytes(buf)
             };
+            if gcount != 12 {
+                return None;
+            }
+            let radius_m = f(6);
+            let radii_b = measured(f(7));
+            let radii_c = measured(f(8));
             props = Some(BodyProperties {
                 α0_deg: f(0),
                 dα0_dt_deg_per_century: f(1),
@@ -128,15 +149,25 @@ fn parse_ephemeris_binary(data: &[u8]) -> Option<BodyEphemeris> {
                 dδ0_dt_deg_per_century: f(3),
                 w0_deg: f(4),
                 dw_dt_deg_per_day: f(5),
-                radius_m: f(6),
-                flattening: f(7),
+                radius_m,
+                flattening: match radii_c {
+                    Some(c) if radius_m > 0.0 => (radius_m - c) / radius_m,
+                    _ => 0.0,
+                },
                 gaussian_inverse_square: 0.0,
                 gaussian_inverse: 0.0,
                 erfc: 0.0,
                 exponential_decay: 0.0,
                 patch_levy: 0.0,
+                gm: measured(f(11)),
+                j2: measured(f(9)),
+                j4: measured(f(10)),
+                radii_b,
+                radii_c,
+                nut_ra: None,
+                nut_dec: None,
             });
-            pos += 64;
+            pos += 96;
             continue;
         }
         if stype == 2 {
@@ -258,12 +289,19 @@ fn body_fixed_to_icrs(
     let [bx, by, bz] = body_barycenter_position(name, tdb, eph)?;
     let lr = lat.to_radians();
     let nr = lon.to_radians();
-    let f = bp.flattening;
+    let f = match bp.radii_c {
+        Some(rc) if bp.radius_m > 0.0 => (bp.radius_m - rc) / bp.radius_m,
+        Some(_) | None => bp.flattening,
+    };
     let e2 = f * (2.0 - f);
     let sl = lr.sin();
     let n = bp.radius_m / (1.0 - e2 * sl * sl).sqrt();
+    let rb_scale = match bp.radii_b {
+        Some(v) if bp.radius_m > 0.0 => v / bp.radius_m,
+        _ => 1.0,
+    };
     let xb = (n + alt) * lr.cos() * nr.cos();
-    let yb = (n + alt) * lr.cos() * nr.sin();
+    let yb = (n + alt) * lr.cos() * nr.sin() * rb_scale;
     let zb = (n * (1.0 - e2) + alt) * sl;
     if !e.rotation_matrices.is_empty() {
         let jd = tdb / 86400.0 + J2000_EPOCH;
@@ -590,6 +628,12 @@ fn query_hash(
         f64,
         f64,
         f64,
+        f64,
+        f64,
+        f64,
+        f64,
+        f64,
+        f64,
     )>,
     body_props: Option<&BodyProperties>,
     eph: &HashMap<String, BodyEphemeris>,
@@ -612,6 +656,7 @@ fn query_hash(
                 (p_dt[2] - p[2]) / 1e-3,
             ]
         };
+        let (pole, j2, j4, r_eq) = gravity_manifest(osc, t2, eph);
         records.push((
             p[0],
             p[1],
@@ -628,6 +673,12 @@ fn query_hash(
             v[0],
             v[1],
             v[2],
+            pole[0],
+            pole[1],
+            pole[2],
+            j2,
+            j4,
+            r_eq,
         ));
     }
     if hash.cells.is_empty() {
@@ -726,6 +777,7 @@ fn query_hash(
                     (p_dt[2] - p[2]) / 1e-3,
                 ]
             };
+            let (pole, j2, j4, r_eq) = gravity_manifest(osc, t2, eph);
             records.push((
                 p[0],
                 p[1],
@@ -742,6 +794,12 @@ fn query_hash(
                 v[0],
                 v[1],
                 v[2],
+                pole[0],
+                pole[1],
+                pole[2],
+                j2,
+                j4,
+                r_eq,
             ));
         }
     }
@@ -754,6 +812,12 @@ fn sense_buffer(
     pad: f64,
     delta_t_cache: f64,
     records: &mut Vec<(
+        f64,
+        f64,
+        f64,
+        f64,
+        f64,
+        f64,
         f64,
         f64,
         f64,
@@ -859,6 +923,7 @@ fn surface_motion(
 fn frame_body_name(frame: &Frame) -> String {
     match frame {
         Frame::Surface { body_name, .. } | Frame::Barycenter { body_name, .. } => body_name.clone(),
+        Frame::Manifest => String::new(),
     }
 }
 
@@ -912,20 +977,74 @@ fn frame_motion(
                 None
             }
         }
+        Frame::Manifest => None,
     }
 }
 
-fn tdb_now() -> f64 {
-    match SystemTime::now().duration_since(UNIX_EPOCH) {
-        Ok(d) => d.as_secs_f64() + TT_MINUS_UTC - UNIX_J2000_OFFSET,
-        Err(_) => {
-            eprintln!("system clock reads epoch prior to 1970-01-01T00:00:00Z");
-            std::process::exit(1);
-        }
+fn leap_seconds(time: &Arc<Mutex<Option<LeapSeconds>>>) -> Option<LeapSeconds> {
+    match time.lock() {
+        Ok(guard) => guard.clone(),
+        Err(_) => None,
     }
 }
 
-fn parse_iso_tdb(s: &str) -> Option<f64> {
+fn system_now(time: &Arc<Mutex<Option<LeapSeconds>>>) -> Option<f64> {
+    match leap_seconds(time) {
+        Some(lsk) => lsk.system_now_tdb(),
+        None => None,
+    }
+}
+
+fn nutation_sum(terms: &[[f64; 3]], t: f64) -> f64 {
+    terms
+        .iter()
+        .map(|&[amplitude, frequency, phase]| amplitude * (frequency * t + phase).sin())
+        .sum()
+}
+
+fn body_pole_at(props: &BodyProperties, tdb: f64) -> [f64; 3] {
+    let tc = tdb / 86400.0 / 36525.0;
+    let nut_ra = match &props.nut_ra {
+        Some(terms) => nutation_sum(terms, tc),
+        None => 0.0,
+    };
+    let nut_dec = match &props.nut_dec {
+        Some(terms) => nutation_sum(terms, tc),
+        None => 0.0,
+    };
+    let ra = (props.α0_deg + props.dα0_dt_deg_per_century * tc + nut_ra).to_radians();
+    let dec = (props.δ0_deg + props.dδ0_dt_deg_per_century * tc + nut_dec).to_radians();
+    let (sd, cd) = dec.sin_cos();
+    let (sr, cr) = ra.sin_cos();
+    [cd * cr, cd * sr, sd]
+}
+
+fn gravity_manifest(
+    osc: &Oscillator,
+    t: f64,
+    eph: &HashMap<String, BodyEphemeris>,
+) -> ([f64; 3], f64, f64, f64) {
+    let name = match osc.motion.anchor_body() {
+        Some(n) => n,
+        None => return ([0.0; 3], 0.0, 0.0, 0.0),
+    };
+    let props = match eph.get(name).and_then(|e| e.props.as_ref()) {
+        Some(p) => p,
+        None => return ([0.0; 3], 0.0, 0.0, 0.0),
+    };
+    let pole = body_pole_at(props, t);
+    let j2 = match props.j2 {
+        Some(v) => v,
+        None => 0.0,
+    };
+    let j4 = match props.j4 {
+        Some(v) => v,
+        None => 0.0,
+    };
+    (pole, j2, j4, props.radius_m)
+}
+
+fn parse_iso_tdb(s: &str, lsk: &LeapSeconds) -> Option<f64> {
     let s = s.trim();
     let (date, time) = s.split_once('T')?;
     let mut dp = date.split('-');
@@ -950,7 +1069,7 @@ fn parse_iso_tdb(s: &str) -> Option<f64> {
     .ok()?;
     let days = ymd_to_days(y, m, d)? as i64;
     let unix = days * 86400 + (hh as i64) * 3600 + (mm as i64) * 60 + ss as i64;
-    Some(unix as f64 + TT_MINUS_UTC - UNIX_J2000_OFFSET)
+    lsk.unix_to_tdb(unix as f64)
 }
 
 fn ymd_to_days(year: i64, month: u32, day: u32) -> Option<u64> {
@@ -2362,6 +2481,7 @@ enum Frame {
         body_name: String,
         scale: f64,
     },
+    Manifest,
 }
 
 struct StationEntry {
@@ -2408,6 +2528,7 @@ struct WsConfig {
     field_rx: mpsc::Receiver<Arc<Buffer>>,
     osc_tx: mpsc::Sender<Vec<Oscillator>>,
     presence_tx: mpsc::Sender<(f64, f64, f64, f64, f64)>,
+    time: Arc<Mutex<Option<LeapSeconds>>>,
 }
 
 trait Radiator: Send + Sync {
@@ -2429,6 +2550,7 @@ impl TcpRadiator {
         constants_js: Vec<u8>,
         osc_tx: mpsc::Sender<Vec<Oscillator>>,
         presence_tx: mpsc::Sender<(f64, f64, f64, f64, f64)>,
+        time: Arc<Mutex<Option<LeapSeconds>>>,
     ) -> Self {
         let (field_tx, field_rx) = mpsc::channel::<Arc<Buffer>>();
         let listener = match TcpListener::bind(format!("127.0.0.1:{}", port)) {
@@ -2468,6 +2590,7 @@ impl TcpRadiator {
                         field_rx: frx,
                         osc_tx: osc_tx.clone(),
                         presence_tx: presence_tx.clone(),
+                        time: time.clone(),
                     };
                     thread::spawn(move || handle_ingress(stream, cfg));
                 }
@@ -2638,6 +2761,8 @@ struct Archive {
     field: Arc<Buffer>,
     presence: HashMap<String, (f64, f64, f64, f64, f64)>,
     origins: HashMap<Origin, OriginState>,
+    pck_bodies: HashMap<i32, PckBody>,
+    time: Arc<Mutex<Option<LeapSeconds>>>,
 }
 struct WsFrame {
     opcode: u8,
@@ -2940,12 +3065,23 @@ fn handle_ingress(stream: TcpStream, cfg: WsConfig) {
                     };
                     emit(&mut s, "200 OK", "text/html", &page);
                 }
-                "/time" => {
-                    let tdb = tdb_now();
-                    emit(&mut s, "200 OK", "text/plain", tdb.to_string().as_bytes());
-                }
+                "/time" => match system_now(&cfg.time) {
+                    Some(tdb) => {
+                        emit(&mut s, "200 OK", "text/plain", tdb.to_string().as_bytes());
+                    }
+                    None => {
+                        emit_void(&mut s);
+                        break;
+                    }
+                },
                 "/device" => {
-                    let now = tdb_now();
+                    let now = match system_now(&cfg.time) {
+                        Some(t) => t,
+                        None => {
+                            emit_void(&mut s);
+                            break;
+                        }
+                    };
                     let result = {
                         let buf = {
                             if let Ok(f) = cfg.field_rx.try_recv() {
@@ -3003,7 +3139,14 @@ fn handle_ingress(stream: TcpStream, cfg: WsConfig) {
                             .map(|b| b.eph.clone())
                             .unwrap_or_else(|| Arc::new(HashMap::new()))
                     };
-                    match body_barycenter_position(body, tdb_now(), &eph) {
+                    let now = match system_now(&cfg.time) {
+                        Some(t) => t,
+                        None => {
+                            emit_void(&mut s);
+                            break;
+                        }
+                    };
+                    match body_barycenter_position(body, now, &eph) {
                         Some([x, y, z]) => emit(
                             &mut s,
                             "200 OK",
@@ -3230,7 +3373,10 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                 })
             };
             let eph_map = field.eph.clone();
-            let now = tdb_now();
+            let now = match system_now(&cfg.time) {
+                Some(t) => t,
+                None => continue,
+            };
             let (mut st_lat, mut st_lon, mut st_alt, mut st_body) = (None, None, None, None::<u32>);
             let mut field_values: Vec<(String, f64, f64)> = Vec::new();
             for (name, value, tau) in &browser {
@@ -3379,6 +3525,12 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                 f64,
                 f64,
                 f64,
+                f64,
+                f64,
+                f64,
+                f64,
+                f64,
+                f64,
             )> = Vec::new();
             let response_epoch;
             if !queries.is_empty() {
@@ -3402,12 +3554,12 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                 );
                 response_epoch = t0;
             } else {
-                response_epoch = tdb_now();
+                response_epoch = now;
             }
 
-            let mut out = Vec::with_capacity(19 + records.len() * 120);
+            let mut out = Vec::with_capacity(19 + records.len() * 168);
             out.extend_from_slice(&[0xCF, 0x86]);
-            out.push(5u8);
+            out.push(6u8);
             out.extend_from_slice(&response_epoch.to_le_bytes());
             out.extend_from_slice(&id.to_le_bytes());
             out.extend_from_slice(&(records.len() as u32).to_le_bytes());
@@ -3427,6 +3579,12 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                 vx,
                 vy,
                 vz,
+                pole_x,
+                pole_y,
+                pole_z,
+                j2,
+                j4,
+                r_eq,
             ) in &records
             {
                 out.extend_from_slice(&x.to_le_bytes());
@@ -3444,6 +3602,12 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                 out.extend_from_slice(&vx.to_le_bytes());
                 out.extend_from_slice(&vy.to_le_bytes());
                 out.extend_from_slice(&vz.to_le_bytes());
+                out.extend_from_slice(&pole_x.to_le_bytes());
+                out.extend_from_slice(&pole_y.to_le_bytes());
+                out.extend_from_slice(&pole_z.to_le_bytes());
+                out.extend_from_slice(&j2.to_le_bytes());
+                out.extend_from_slice(&j4.to_le_bytes());
+                out.extend_from_slice(&r_eq.to_le_bytes());
             }
             write_ws_binary(&mut stream, &out);
         }
@@ -3561,7 +3725,7 @@ fn parse_sources(content: &str) -> Vec<SourceConfig> {
     macro_rules! flush {
         () => {
             if active && cur_ttl > 0 && !cur_url.is_empty() {
-                if let Some(ref frame) = cur_frame {
+                if cur_format == "kernel_text" || cur_frame.is_some() {
                     if cur_flux_from_mag.is_some() && cur_abs_mag_from.is_some() {
                         eprintln!(
                             "source refused: flux_from_mag + abs_mag_from conflict at {}",
@@ -3571,7 +3735,10 @@ fn parse_sources(content: &str) -> Vec<SourceConfig> {
                         sources.push(SourceConfig {
                             ttl: cur_ttl,
                             url: std::mem::take(&mut cur_url),
-                            frame: frame.clone(),
+                            frame: match &cur_frame {
+                                Some(f) => f.clone(),
+                                None => Frame::Manifest,
+                            },
                             format: std::mem::take(&mut cur_format),
                             extracts: std::mem::take(&mut cur_extracts),
                             headers: std::mem::take(&mut cur_headers),
@@ -4246,6 +4413,9 @@ fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 }
             }
             "format" if parts.len() >= 2 => cur_format = parts[1].to_string(),
+            "body" if parts.len() >= 2 => {
+                cur_body = Some(parts[1].to_string());
+            }
             "force" if parts.len() >= 2 => {
                 if let Some(f) = force_id_of(parts[1]) {
                     cur_force = Some(f);
@@ -4393,8 +4563,12 @@ fn render_url(
     extent: f64,
     body_name: &str,
     eph: &HashMap<String, BodyEphemeris>,
-) -> String {
-    let unix = tdb_secs - TT_MINUS_UTC + UNIX_J2000_OFFSET;
+    lsk: &LeapSeconds,
+) -> Option<String> {
+    let unix = match lsk.tdb_to_unix(tdb_secs) {
+        Some(u) => u,
+        None => return None,
+    };
     let secs = unix as u64;
     let days = secs / 86400;
     let (ty, tm, td) = days_to_ymd(days);
@@ -4543,7 +4717,7 @@ fn render_url(
         }
     }
 
-    url
+    Some(url)
 }
 
 fn render_source_url(
@@ -4555,8 +4729,22 @@ fn render_source_url(
     r: f64,
     eph: &HashMap<String, BodyEphemeris>,
     env: &HashMap<String, String>,
-) -> String {
-    let mut url = render_url(&src.url, x, y, z, tdb, r, &frame_body_name(&src.frame), eph);
+    lsk: &LeapSeconds,
+) -> Option<String> {
+    let mut url = match render_url(
+        &src.url,
+        x,
+        y,
+        z,
+        tdb,
+        r,
+        &frame_body_name(&src.frame),
+        eph,
+        lsk,
+    ) {
+        Some(u) => u,
+        None => return None,
+    };
     if let Some(ref t) = src.target {
         url = url.replace("{target}", t);
     }
@@ -4617,7 +4805,7 @@ fn render_source_url(
                 let (lat, lon) =
                     match icrs_to_body_surface(x, y, z, tdb, &frame_body_name(&src.frame), eph) {
                         Some(ll) => ll,
-                        None => return url,
+                        None => return Some(url),
                     };
                 let mut best = 0usize;
                 let mut best_d = f64::MAX;
@@ -4632,7 +4820,7 @@ fn render_source_url(
             }
         }
     }
-    resolve_secret(&url, env)
+    Some(resolve_secret(&url, env))
 }
 
 fn render_source_body(
@@ -4643,9 +4831,23 @@ fn render_source_body(
     tdb: f64,
     r: f64,
     eph: &HashMap<String, BodyEphemeris>,
+    lsk: &LeapSeconds,
 ) -> Option<String> {
     let tmpl = src.post_body.as_ref()?;
-    let mut body = render_url(tmpl, x, y, z, tdb, r, &frame_body_name(&src.frame), eph);
+    let mut body = match render_url(
+        tmpl,
+        x,
+        y,
+        z,
+        tdb,
+        r,
+        &frame_body_name(&src.frame),
+        eph,
+        lsk,
+    ) {
+        Some(b) => b,
+        None => return None,
+    };
     if let Some(ref t) = src.target {
         body = body.replace("{target}", t);
     }
@@ -4768,7 +4970,7 @@ enum ExtractResult {
     WithEphemeris(Vec<(Channel, FieldConfig)>, BodyEphemeris),
 }
 
-fn extract(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
+fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> ExtractResult {
     if src.format == "ephemeris_binary" {
         let mut buf = Vec::new();
         if let Ok(mut f) = std::fs::File::open(body) {
@@ -5288,13 +5490,16 @@ fn extract(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                                 } else if let Some(ev) = jpath_val(v, &eff_epoch_key) {
                                     match ev {
                                         JsonVal::Str(s) => {
-                                            if let Some(t) = parse_iso_tdb(s) {
+                                            if let Some(t) = parse_iso_tdb(s, lsk) {
                                                 t
                                             } else {
                                                 continue;
                                             }
                                         }
-                                        JsonVal::Num(n) => n + TT_MINUS_UTC - UNIX_J2000_OFFSET,
+                                        JsonVal::Num(n) => match lsk.unix_to_tdb(*n) {
+                                            Some(t) => t,
+                                            None => continue,
+                                        },
                                         _ => continue,
                                     }
                                 } else {
@@ -5440,13 +5645,16 @@ fn extract(src: &SourceConfig, body: &str, now: f64) -> ExtractResult {
                             } else if let Some(ev) = jpath_val(v, epoch_key) {
                                 match ev {
                                     JsonVal::Str(s) => {
-                                        if let Some(t) = parse_iso_tdb(s) {
+                                        if let Some(t) = parse_iso_tdb(s, lsk) {
                                             t
                                         } else {
                                             continue;
                                         }
                                     }
-                                    JsonVal::Num(n) => n + TT_MINUS_UTC - UNIX_J2000_OFFSET,
+                                    JsonVal::Num(n) => match lsk.unix_to_tdb(*n) {
+                                        Some(t) => t,
+                                        None => continue,
+                                    },
                                     _ => continue,
                                 }
                             } else {
@@ -6267,7 +6475,7 @@ fn body_channels(name: &str, props: &BodyProperties, now: f64) -> Vec<(Channel, 
     out.push((
         Channel {
             name: format!("{}.radius", name),
-            value: 1.0,
+            value: props.radius_m,
             position: Position::Source,
             epoch: now,
         },
@@ -6281,6 +6489,25 @@ fn body_channels(name: &str, props: &BodyProperties, now: f64) -> Vec<(Channel, 
             advection: 0.0,
         },
     ));
+    if let Some(gm) = props.gm {
+        out.push((
+            Channel {
+                name: format!("{}.mass", name),
+                value: gm,
+                position: Position::Source,
+                epoch: now,
+            },
+            FieldConfig {
+                key: format!("{}.mass", name),
+                name: format!("{}.mass", name),
+                kernel: 0,
+                force: 1,
+                tau: f64::INFINITY,
+                absorption: 0.0,
+                advection: 0.0,
+            },
+        ));
+    }
     let rot_val = (props.dw_dt_deg_per_day / 360.0).abs();
     if rot_val > 0.0 {
         out.push((
@@ -6393,14 +6620,47 @@ fn probe_mode(path: &str, precise: bool, lat: f64, lon: f64, env: &HashMap<Strin
     );
     let mut out = String::new();
     let mut dead = String::new();
-    let now = tdb_now();
+    let mut lsk: Option<LeapSeconds> = None;
+    for src in sources.iter().filter(|s| s.format == "kernel_text") {
+        if src.body.as_deref() != Some("naif0012") {
+            continue;
+        }
+        if let Some(text) = fetch_one(&src.url, None, &[], src.ttl) {
+            lsk = omegaflow::lsk::parse(&text);
+        }
+    }
+    let time_pair: Option<(f64, LeapSeconds)> = match lsk {
+        Some(l) => match l.system_now_tdb() {
+            Some(t) => Some((t, l)),
+            None => None,
+        },
+        None => None,
+    };
     let void_eph: HashMap<String, BodyEphemeris> = HashMap::new();
     let mut accepted = 0usize;
     let mut declined = 0usize;
     for src in &sources {
-        let url = render_url(&src.url, 0.0, 0.0, 0.0, now, 0.0, "", &void_eph)
-            .replace("{lat}", &format!("{:.6}", lat))
-            .replace("{lon}", &format!("{:.6}", lon));
+        if src.format == "kernel_text" {
+            continue;
+        }
+        let (now, lsk_ref) = match &time_pair {
+            Some((t, l)) => (*t, l),
+            None => {
+                declined += 1;
+                dead.push_str("# declined: time absent\n");
+                continue;
+            }
+        };
+        let url = match render_url(&src.url, 0.0, 0.0, 0.0, now, 0.0, "", &void_eph, lsk_ref) {
+            Some(u) => u,
+            None => {
+                declined += 1;
+                dead.push_str("# declined: time absent\n");
+                continue;
+            }
+        }
+        .replace("{lat}", &format!("{:.6}", lat))
+        .replace("{lon}", &format!("{:.6}", lon));
         let url = resolve_secret(&url, env);
         let url = url.replace("ZZ", "Z").replace("  ", " ");
         let raw = fetch_raw(&url, None, &[], src.ttl);
@@ -6428,6 +6688,7 @@ fn probe_mode(path: &str, precise: bool, lat: f64, lon: f64, env: &HashMap<Strin
             Frame::Barycenter { body_name, scale } => {
                 block.push_str(&format!("at {} {}\n", body_name, scale));
             }
+            Frame::Manifest => {}
         }
         if let Some(p) = parsed {
             let mut fields = String::new();
@@ -6463,7 +6724,7 @@ fn probe_mode(path: &str, precise: bool, lat: f64, lon: f64, env: &HashMap<Strin
             block.push_str(&bruteforce_precision(&url, &src.url, ttl));
         }
         let verdict = match (&raw, parse_sources(&block).first()) {
-            (Some(r), Some(candidate)) => match extract(candidate, r, now) {
+            (Some(r), Some(candidate)) => match extract(candidate, r, now, lsk_ref) {
                 ExtractResult::Measurements(v) | ExtractResult::WithEphemeris(v, _) => {
                     if v.is_empty() {
                         Err(diagnose_no_samples(candidate, r))
@@ -7442,6 +7703,7 @@ fn ci_mode(dir: &str) -> i32 {
     for src in &sources {
         if src.url.starts_with("https://github.com/omegaflow/sources")
             || src.format == "ephemeris_binary"
+            || src.format == "kernel_text"
         {
             continue;
         }
@@ -7575,17 +7837,21 @@ fn main() {
             Vec::new()
         }
     };
+    let time: Arc<Mutex<Option<LeapSeconds>>> = Arc::new(Mutex::new(None));
     let mut archive = Archive {
         sources: loaded,
         body_ephemerides: body_ephemerides.clone(),
         field: Arc::new(build_buffer(Vec::new(), 1.0, body_ephemerides.clone())),
         presence: HashMap::new(),
         origins: HashMap::new(),
+        pck_bodies: HashMap::new(),
+        time: time.clone(),
     };
     let body_names: Arc<Vec<String>> = {
         let mut names: Vec<String> = archive
             .sources
             .iter()
+            .filter(|s| s.format != "kernel_text")
             .filter_map(|s| s.body.clone())
             .collect();
         names.sort();
@@ -7601,6 +7867,7 @@ fn main() {
         constants_js.clone(),
         osc_tx.clone(),
         presence_tx,
+        time.clone(),
     );
     radiators.push(Box::new(sr));
     radiators.push(Box::new(AudioRadiator::new(AUDIO_SAMPLE_RATE)));
@@ -7609,8 +7876,63 @@ fn main() {
         repeat: 0,
     }));
     let cadence = 1.0;
+    let mut gm_text: Option<String> = None;
+    let mut pck_text: Option<String> = None;
     loop {
-        let now = tdb_now();
+        for i in 0..archive.sources.len() {
+            if archive.sources[i].format != "kernel_text" {
+                continue;
+            }
+            let Some(kernel_body) = archive.sources[i].body.clone() else {
+                continue;
+            };
+            let url = archive.sources[i].url.clone();
+            let ttl = archive.sources[i].ttl;
+            let cache_path = format!("/tmp/omegaflow_kernel_{}.txt", kernel_body);
+            if !cache_fresh(&cache_path, ttl) {
+                let Some(text) = fetch_one(&url, None, &[], ttl) else {
+                    continue;
+                };
+                if std::fs::write(&cache_path, text.as_bytes()).is_err() {
+                    continue;
+                }
+            }
+            let Ok(text) = std::fs::read_to_string(&cache_path) else {
+                continue;
+            };
+            match kernel_body.as_str() {
+                "gm_de440" => gm_text = Some(text),
+                "pck00010" | "geophysical" => {
+                    pck_text = Some(match pck_text {
+                        Some(prev) => prev + "\n" + &text,
+                        None => text,
+                    });
+                }
+                "naif0012" => {
+                    if let Some(l) = omegaflow::lsk::parse(&text) {
+                        if let Ok(mut guard) = archive.time.lock() {
+                            *guard = Some(l);
+                        }
+                    }
+                }
+                _ => {}
+            }
+            archive.pck_bodies = omegaflow::pck::parse(gm_text.as_deref(), pck_text.as_deref());
+        }
+        let lsk = match leap_seconds(&archive.time) {
+            Some(l) => l,
+            None => {
+                thread::sleep(std::time::Duration::from_secs_f64(cadence));
+                continue;
+            }
+        };
+        let now = match lsk.system_now_tdb() {
+            Some(t) => t,
+            None => {
+                thread::sleep(std::time::Duration::from_secs_f64(cadence));
+                continue;
+            }
+        };
         let mut fetched_oscillators: Vec<Oscillator> = Vec::new();
         while let Ok(res) = fetch_rx.try_recv() {
             archive
@@ -7681,6 +8003,7 @@ fn main() {
                     resid_ema: 0.0,
                     has_prev: false,
                 });
+                let lsk_c = lsk.clone();
                 thread::spawn(move || {
                     let tmp_path = match &src_clone.body {
                         Some(b) => format!("/tmp/omegaflow_eph_{}.bin", b),
@@ -7700,7 +8023,7 @@ fn main() {
                         None => "",
                     };
                     if let ExtractResult::WithEphemeris(_, eph) =
-                        extract(&src_clone, &tmp_path, tdb_now())
+                        extract(&src_clone, &tmp_path, now, &lsk_c)
                     {
                         let _ = ftx.send(FetchResult {
                             source_idx: src_idx,
@@ -7715,6 +8038,7 @@ fn main() {
                 Frame::Surface { body_name, .. } | Frame::Barycenter { body_name, .. } => {
                     body_name.as_str()
                 }
+                Frame::Manifest => continue,
             };
             let body_props = archive
                 .body_ephemerides
@@ -7758,6 +8082,7 @@ fn main() {
                         continue;
                     }
                 }
+                Frame::Manifest => continue,
             };
             let presences: Vec<(f64, f64, f64, f64, f64)> =
                 archive.presence.values().cloned().collect();
@@ -7777,12 +8102,19 @@ fn main() {
                 resid_ema: 0.0,
                 has_prev: false,
             });
+            let lsk_c = lsk.clone();
             thread::spawn(move || {
-                let url = render_source_url(&src_clone, pos.0, pos.1, pos.2, now, r, &eph_arc, &e);
-                let body = render_source_body(&src_clone, pos.0, pos.1, pos.2, now, r, &eph_arc);
+                let url = match render_source_url(
+                    &src_clone, pos.0, pos.1, pos.2, now, r, &eph_arc, &e, &lsk_c,
+                ) {
+                    Some(u) => u,
+                    None => return,
+                };
+                let body =
+                    render_source_body(&src_clone, pos.0, pos.1, pos.2, now, r, &eph_arc, &lsk_c);
                 let raw = fetch_one(&url, body.as_deref(), &src_clone.headers, src_clone.ttl);
                 let channels = match raw {
-                    Some(ref r) => match extract(&src_clone, r, now) {
+                    Some(ref r) => match extract(&src_clone, r, now, &lsk_c) {
                         ExtractResult::Measurements(v) => v,
                         ExtractResult::WithEphemeris(v, eph) => {
                             let _ = ftx.send(FetchResult {
@@ -7850,7 +8182,10 @@ fn main() {
         for r in &mut radiators {
             r.accept(f.clone());
         }
-        let elapsed = tdb_now() - now;
+        let elapsed = match lsk.system_now_tdb() {
+            Some(t) => t - now,
+            None => cadence,
+        };
         if elapsed < cadence {
             thread::sleep(std::time::Duration::from_secs_f64(cadence - elapsed));
         }
@@ -7951,16 +8286,22 @@ mod tests {
             catalog_epoch: None,
             repeat_ra_bins: 0,
         };
+        let fixture_lsk = super::LeapSeconds {
+            delta_t_a: 32.184,
+            deltas: vec![(37.0, 1483228800.0)],
+        };
         let url = render_source_url(
             &src,
             0.0,
             0.0,
             0.0,
-            0.0,
+            8.0e8,
             1000.0,
             &HashMap::new(),
             &HashMap::new(),
+            &fixture_lsk,
         );
+        let url = url.unwrap();
         assert!(url.contains("Ceres"));
         assert!(url.contains("fp_psc"));
         assert!(!url.contains("{target}"));
@@ -7992,7 +8333,20 @@ mod tests {
             catalog_epoch: None,
             repeat_ra_bins: 0,
         };
-        let body = render_source_body(&src, 0.0, 0.0, 0.0, 0.0, 100000.0, &HashMap::new());
+        let fixture_lsk = super::LeapSeconds {
+            delta_t_a: 32.184,
+            deltas: vec![(37.0, 1483228800.0)],
+        };
+        let body = render_source_body(
+            &src,
+            0.0,
+            0.0,
+            0.0,
+            8.0e8,
+            100000.0,
+            &HashMap::new(),
+            &fixture_lsk,
+        );
         assert!(body.is_some());
         let b = body.unwrap();
         assert!(b.contains("bbox"));
@@ -8052,10 +8406,14 @@ mod tests {
             repeat_ra_bins: 0,
         };
         let body = r#"{"table":{"columnNames":["time","longitude","latitude","pres","temp"],"columnTypes":["String","double","double","float","float"],"rows":[["2026-07-30T21:40:30Z",-14.408395,34.49025,3.1,23.478],["2026-07-30T22:00:00Z",-12.5,35.0,1000.0,4.681]]}}"#;
-        let now = super::tdb_now();
-        let test_epoch = super::parse_iso_tdb("2026-07-30T21:40:30Z").unwrap();
+        let fixture_lsk = super::LeapSeconds {
+            delta_t_a: 32.184,
+            deltas: vec![(37.0, 1483228800.0)],
+        };
+        let test_epoch = super::parse_iso_tdb("2026-07-30T21:40:30Z", &fixture_lsk).unwrap();
+        let now = test_epoch + 86400.0;
         eprintln!("now={} test_epoch={}", now, test_epoch);
-        let result = super::extract(&src, body, now);
+        let result = super::extract(&src, body, now, &fixture_lsk);
         let channels = match result {
             super::ExtractResult::Measurements(v) => v,
             _ => {
@@ -8065,7 +8423,7 @@ mod tests {
         assert_eq!(channels.len(), 2);
         let (p0, _f0) = &channels[0];
         assert!(p0.epoch < now);
-        let test_epoch = super::parse_iso_tdb("2026-07-30T21:40:30Z").unwrap();
+        let test_epoch = super::parse_iso_tdb("2026-07-30T21:40:30Z", &fixture_lsk).unwrap();
         assert!((p0.epoch - test_epoch).abs() < 1e-6);
         match p0.position {
             super::Position::Surface {
@@ -8201,6 +8559,13 @@ mod tests {
             erfc: 0.0,
             patch_levy: 0.0,
             exponential_decay: 0.0,
+            gm: None,
+            j2: None,
+            j4: None,
+            radii_b: None,
+            radii_c: None,
+            nut_ra: None,
+            nut_dec: None,
         };
         let granule = super::ChebyshevGranule {
             t0_jd: super::J2000_EPOCH,
@@ -8272,6 +8637,13 @@ mod tests {
             erfc: 0.0,
             patch_levy: 0.0,
             exponential_decay: 0.0,
+            gm: None,
+            j2: None,
+            j4: None,
+            radii_b: None,
+            radii_c: None,
+            nut_ra: None,
+            nut_dec: None,
         };
         let granule = super::ChebyshevGranule {
             t0_jd: super::J2000_EPOCH,
@@ -8343,6 +8715,13 @@ mod tests {
             erfc: 0.0,
             patch_levy: 0.0,
             exponential_decay: 0.0,
+            gm: None,
+            j2: None,
+            j4: None,
+            radii_b: None,
+            radii_c: None,
+            nut_ra: None,
+            nut_dec: None,
         };
         let granule = super::ChebyshevGranule {
             t0_jd: super::J2000_EPOCH,
@@ -8400,6 +8779,13 @@ mod tests {
             erfc: 0.0,
             patch_levy: 0.0,
             exponential_decay: 0.0,
+            gm: None,
+            j2: None,
+            j4: None,
+            radii_b: None,
+            radii_c: None,
+            nut_ra: None,
+            nut_dec: None,
         };
         let granule = super::ChebyshevGranule {
             t0_jd: super::J2000_EPOCH,
@@ -8524,6 +8910,13 @@ mod tests {
             erfc: 0.0,
             patch_levy: 0.0,
             exponential_decay: 0.0,
+            gm: None,
+            j2: None,
+            j4: None,
+            radii_b: None,
+            radii_c: None,
+            nut_ra: None,
+            nut_dec: None,
         };
         let granule = super::ChebyshevGranule {
             t0_jd: super::J2000_EPOCH,
@@ -8574,10 +8967,87 @@ mod tests {
     }
 
     #[test]
+    fn test_parse_ephemeris_binary_v2() {
+        let mut buf = Vec::new();
+        buf.extend_from_slice(&[0xCF, 0x86, 0x01, 0x00]);
+        buf.extend_from_slice(&3u32.to_le_bytes());
+        buf.extend_from_slice(&0u32.to_le_bytes());
+        buf.extend_from_slice(&1u32.to_le_bytes());
+        buf.extend_from_slice(&17u32.to_le_bytes());
+        buf.extend_from_slice(&0u32.to_le_bytes());
+        for _ in 0..56 {
+            buf.extend_from_slice(&0.0_f64.to_le_bytes());
+        }
+        buf.extend_from_slice(&1u32.to_le_bytes());
+        buf.extend_from_slice(&12u32.to_le_bytes());
+        buf.extend_from_slice(&17u32.to_le_bytes());
+        buf.extend_from_slice(&0u32.to_le_bytes());
+        let params: [f64; 12] = [
+            270.0,
+            0.003,
+            66.54,
+            0.013,
+            38.31,
+            14460.0,
+            6378136.6,
+            6378136.6,
+            6356751.9,
+            1.08262668e-3,
+            -1.6196e-6,
+            3.9860043543609598e14,
+        ];
+        for p in params {
+            buf.extend_from_slice(&p.to_le_bytes());
+        }
+        buf.extend_from_slice(&2u32.to_le_bytes());
+        buf.extend_from_slice(&0u32.to_le_bytes());
+        buf.extend_from_slice(&17u32.to_le_bytes());
+        buf.extend_from_slice(&0u32.to_le_bytes());
+        for _ in 0..5 {
+            buf.extend_from_slice(&0.0_f64.to_le_bytes());
+        }
+        let eph = super::parse_ephemeris_binary(&buf).unwrap();
+        let props = eph.props.unwrap();
+        assert_eq!(props.gm, Some(3.9860043543609598e14));
+        assert_eq!(props.j2, Some(1.08262668e-3));
+        assert_eq!(props.j4, Some(-1.6196e-6));
+        assert_eq!(props.radii_b, Some(6378136.6));
+        assert_eq!(props.radii_c, Some(6356751.9));
+        assert!((props.flattening - (6378136.6 - 6356751.9) / 6378136.6).abs() < 1e-15);
+        assert_eq!(eph.granules.len(), 1);
+    }
+
+    #[test]
+    fn test_parse_ephemeris_binary_rejects_non_v2_props() {
+        let mut buf = Vec::new();
+        buf.extend_from_slice(&[0xCF, 0x86, 0x01, 0x00]);
+        buf.extend_from_slice(&3u32.to_le_bytes());
+        buf.extend_from_slice(&0u32.to_le_bytes());
+        buf.extend_from_slice(&1u32.to_le_bytes());
+        buf.extend_from_slice(&17u32.to_le_bytes());
+        buf.extend_from_slice(&0u32.to_le_bytes());
+        for _ in 0..56 {
+            buf.extend_from_slice(&0.0_f64.to_le_bytes());
+        }
+        buf.extend_from_slice(&1u32.to_le_bytes());
+        buf.extend_from_slice(&0u32.to_le_bytes());
+        buf.extend_from_slice(&17u32.to_le_bytes());
+        buf.extend_from_slice(&0u32.to_le_bytes());
+        for _ in 0..8 {
+            buf.extend_from_slice(&0.0_f64.to_le_bytes());
+        }
+        assert!(super::parse_ephemeris_binary(&buf).is_none());
+    }
+
+    #[test]
     fn test_live_sources_extract() {
         let srcs = super::load_sources();
         eprintln!("load_sources returned {} sources", srcs.len());
-        let now = super::tdb_now();
+        let fixture_lsk = super::LeapSeconds {
+            delta_t_a: 32.184,
+            deltas: vec![(37.0, 1483228800.0)],
+        };
+        let now = fixture_lsk.system_now_tdb().unwrap();
         let mut ok = 0usize;
         let mut empty: Vec<(String, String)> = Vec::new();
         let mut limit = 600usize;
@@ -8624,7 +9094,7 @@ mod tests {
                     continue;
                 }
             };
-            match super::extract(s, &body, now) {
+            match super::extract(s, &body, now, &fixture_lsk) {
                 super::ExtractResult::Measurements(v) => {
                     if v.is_empty() {
                         let diag = super::diagnose_no_samples(s, &body);
@@ -8773,7 +9243,11 @@ mod tests {
         };
         let body = r#"{"latitude":-47.75,"longitude":78.87,"altitude":438.28,"velocity":27528.0}"#;
         let now = 8.4e8;
-        match super::extract(&src, body, now) {
+        let fixture_lsk = super::LeapSeconds {
+            delta_t_a: 32.184,
+            deltas: vec![(37.0, 1483228800.0)],
+        };
+        match super::extract(&src, body, now, &fixture_lsk) {
             super::ExtractResult::Measurements(v) => {
                 assert_eq!(v.len(), 1);
                 let (ch, fc) = &v[0];

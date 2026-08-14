@@ -66,7 +66,7 @@ export async function syncFrame(inputs, queries, presence) {
     const bytes = new Uint8Array(buffer);
     const dvRes = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
     if (bytes.length < 19 || bytes[0] !== 0xCF || bytes[1] !== 0x86) return emptyResp;
-    if (bytes[2] !== 5) throw new Error('protocol mismatch');
+    if (bytes[2] !== 6) throw new Error('protocol mismatch');
 
     let o = 3;
     const response_epoch = dvRes.getFloat64(o, true); o += 8;
@@ -74,10 +74,10 @@ export async function syncFrame(inputs, queries, presence) {
     const oscCount = dvRes.getUint32(o, true); o += 4;
 
     const field = new Float32Array(oscCount * 12);
-    const meta = new Float32Array(oscCount * 4);
+    const meta = new Float32Array(oscCount * 12);
 
     for (let i = 0; i < oscCount; i++) {
-        if (o + 120 > bytes.length) break;
+        if (o + 168 > bytes.length) break;
         const x = dvRes.getFloat64(o, true); o += 8;
         const y = dvRes.getFloat64(o, true); o += 8;
         const z = dvRes.getFloat64(o, true); o += 8;
@@ -93,6 +93,12 @@ export async function syncFrame(inputs, queries, presence) {
         const vx = dvRes.getFloat64(o, true); o += 8;
         const vy = dvRes.getFloat64(o, true); o += 8;
         const vz = dvRes.getFloat64(o, true); o += 8;
+        const pole_x = dvRes.getFloat64(o, true); o += 8;
+        const pole_y = dvRes.getFloat64(o, true); o += 8;
+        const pole_z = dvRes.getFloat64(o, true); o += 8;
+        const j2 = dvRes.getFloat64(o, true); o += 8;
+        const j4 = dvRes.getFloat64(o, true); o += 8;
+        const r_eq = dvRes.getFloat64(o, true); o += 8;
 
         const fOff = i * 12;
         if (presence) {
@@ -114,11 +120,19 @@ export async function syncFrame(inputs, queries, presence) {
         field[fOff + 10] = vy;
         field[fOff + 11] = vz;
 
-        const mOff = i * 4;
+        const mOff = i * 12;
         meta[mOff] = extent;
         meta[mOff + 1] = tau;
         meta[mOff + 2] = kernel_id;
         meta[mOff + 3] = 0;
+        meta[mOff + 4] = pole_x;
+        meta[mOff + 5] = pole_y;
+        meta[mOff + 6] = pole_z;
+        meta[mOff + 7] = j2;
+        meta[mOff + 8] = j4;
+        meta[mOff + 9] = r_eq;
+        meta[mOff + 10] = 0;
+        meta[mOff + 11] = 0;
     }
     return { field, meta, count: oscCount, response_epoch };
 }
