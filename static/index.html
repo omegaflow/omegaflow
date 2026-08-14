@@ -46,7 +46,6 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
         let frameInterval = 16 / 1000;
         let tPresence = 0;
         const FORCE_NAME = ['EM','Gravity','Acoustic','SeismicBody','SeismicSurface','Thermal','Diffusion','Advective','Electric'];
-        const FORCE_SHORT = ['EM','Gr','Ac','Sb','Ss','Th','Df','Av','El'];
         let lastQueryX = 0, lastQueryY = 0, lastQueryZ = 0, lastQueryStep = 0, lastQueryTs = -1e9;
         let xPresence = 0, yPresence = 0, zPresence = 0;
         let audioCtx = null;
@@ -674,6 +673,7 @@ fn presence_probe() {
             if (response) {
                 rawWindowResponse = response;
                 lastResponseEpoch = response.response_epoch;
+                tPresence = lastResponseEpoch;
             }
         }
 
@@ -1094,10 +1094,10 @@ fn presence_probe() {
                 for (let k = 0; k < 9; k++) {
                     const v = probedOmegas[k];
                     if (Math.abs(v) < 1e-30) {
-                        forceZero.push(FORCE_SHORT[k]);
+                        forceZero.push(FORCE_NAME[k]);
                     } else {
                         if (forceNonZero) forceNonZero += '  ';
-                        forceNonZero += `${FORCE_SHORT[k]}: ${v.toExponential(1)}`;
+                        forceNonZero += `${FORCE_NAME[k]}: ${v.toExponential(1)}`;
                     }
                 }
                 let forceStr = forceNonZero;
@@ -1134,7 +1134,7 @@ fn presence_probe() {
                     line2C = 'Nearby';
                     for (let i = 0; i < Math.min(4, groups.length); i++) {
                         const g = groups[i];
-                        const fn = FORCE_SHORT[g.ft] || ('f' + g.ft);
+                        const fn = FORCE_NAME[g.ft] || ('f' + g.ft);
                         line2C += g.n > 1 ? `  ${g.n}×${fn} d:${g.d.toExponential(1)} v:${g.v.toExponential(1)}`
                                          : `  ${fn} d:${g.d.toExponential(1)} v:${g.v.toExponential(1)}`;
                     }

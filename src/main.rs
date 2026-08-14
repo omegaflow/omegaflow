@@ -8128,7 +8128,7 @@ fn main() {
                             if let Some(mut osc) = anchor(
                                 &channel,
                                 &sensor,
-                                cadence,
+                                86400.0,
                                 Some(archive.sources.len() as u32),
                                 Some(&frame),
                                 None,
