@@ -7,7 +7,7 @@
 
 dead dns-unresolved
 url https://ztf.alerce.online/v3/objects?ra=180&dec=-20&radius=5&format=json
-note ALeRCE: ztf.alerce.online löst nicht auf; api.alerce.online löst auf, aber /v3/objects → 404 (Endpoint-Pfad geändert). Recheck gegen aktuelle ALeRCE-Doku nötig.
+note ALeRCE-Recheck gegen aktuelle Doku (2026-08-15): ztf.alerce.online DNS dead; ztf.alerce.cl löst auf, aber Connect blockiert; api.alerce.online = 404-Stub (alle Pfade); tap.alerce.online = 502 (TAP-Backend down). ALeRCE migriert auf TAP („Direct database access is being retired"). Recheck: tap.alerce.online/vo/tap/sync sobald TAP wieder 200 liefert.
 
 dead unreachable
 url https://api.fink-portal.org/api/v1/objects
