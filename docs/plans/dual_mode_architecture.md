@@ -370,7 +370,7 @@ Replace `TODO.md:32-38` with:
 
 > **Archivar Dual-Mode Architecture** — the `{latest}` resolver is superseded
 > by the CDN-first fetch with naming convention. See
-> `docs/dual_mode_architecture.md`. The CI Archivar writes timestamped
+> `docs/plans/dual_mode_architecture.md`. The CI Archivar writes timestamped
 > snapshots to the CDN; the local Archivar constructs the CDN URL from the
 > naming convention and checks TTL freshness.
 

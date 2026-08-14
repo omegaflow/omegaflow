@@ -6,11 +6,11 @@ Code-verified reference for omegaflow internals.
 
 | File | Content | Code source |
 |------|---------|-------------|
-| `BINARY_PROTOCOL.md` | 80-byte oscillator record, WebSocket framing, JS→GPU repacking | `src/main.rs:2684-2701` |
-| `CONSTANTS.md` | Φ, C_LIGHT, J2000, PARSEC_M, HUBBLE_H0, etc. | `src/main.rs:10-16` |
-| `FORCE_SYSTEM.md` | Force IDs, extents, velocities, WGSL kernels, BodyProperties | `src/main.rs:1990-2034` |
-| `EXTRACT_TYPES.md` | Extract enum variants and fields | `src/main.rs:1900-1988` |
-| `URL_TEMPLATES.md` | URL substitution variables | `src/main.rs:3266-3309` |
+| `BINARY_PROTOCOL.md` | v6: 19-byte WS header (response_epoch), 168-byte/21-f64 records, query frame, JS→GPU repacking | `src/main.rs` resonance, `static/constants.js` |
+| `CONSTANTS.md` | Φ, C_LIGHT, J2000, PARSEC_M, HUBBLE_H0, etc. | `src/main.rs` |
+| `FORCE_SYSTEM.md` | 9 force channels, 7 kernel shapes, BodyProperties, body channels | `src/main.rs`, `static/index.html` |
+| `EXTRACT_TYPES.md` | Extract enum variants and fields | `src/main.rs` |
+| `URL_TEMPLATES.md` | URL substitution variables | `src/main.rs` |
 
 ## External standards (official documents)
 
@@ -24,7 +24,5 @@ Code-verified reference for omegaflow internals.
 
 | File | Content | Source |
 |------|---------|--------|
-| `../phi/forces.φ` | Force names, IDs, extent, velocity | `src/main.rs:1990-2034` |
-| `../phi/units.φ` | Unit→force bindings | NIST SP 330/811 + UCUM (unit identity) + physics (force binding) |
-| `../concepts/SI_UNITS.md` | Unit system overview, force-unit matrix | |
-| `../concepts/SOURCES_V2_SPEC.md` | Controlling spec for sources.φ syntax | |
+| `../concepts/SI_UNITS.md` | Unit system overview (superseded by SOURCES_V2_SPEC §2/§10) | |
+| `../concepts/SOURCES_V2_SPEC.md` | Controlling spec for sources.φ syntax — force names, IDs, units registry | `src/main.rs` parser |

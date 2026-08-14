@@ -1,49 +1,62 @@
 # Force System
 
-`src/main.rs:1990-2034` (definitions), `src/main.rs:579-591` (body constants), `phi/forces.φ` (registry)
+`src/main.rs` (`force_id_of`, `kernel_extent`, `body_channels`), `docs/concepts/SOURCES_V2_SPEC.md` (registry source), `static/index.html` (`field_spatial`).
 
-## Force Identity
+## Force Identity (9 channels, ID 0–8)
 
-| Name | ID | Extent (m) | Velocity / Diffusivity |
-|------|----|-----------|------------------------|
-| em | 0 | ∞ | C_LIGHT |
-| gravity | 1 | ∞ | C_LIGHT |
-| acoustic | 2 | 1000 | body.v_sound |
-| seismic-body | 3 | 100000 | body.v_seismic_p |
-| seismic-surface | 4 | 10000 | body.v_seismic_s |
-| thermal | 5 | 1 | body.alpha_thermal (diffusive) |
-| diffusion | 6 | 1 | body.d_diffusion (diffusive) |
-| advective | 7 | 10 | body.v_advective |
-| electric | 8 | 100 | C_LIGHT |
+| ID | Name | Propagation speed (WGSL `PROPAGATION_SPEED`) |
+|----|------|----------------------------------------------|
+| 0 | em | C_LIGHT |
+| 1 | gravity | C_LIGHT |
+| 2 | acoustic | 343 m/s (air) |
+| 3 | seismic-body | 6000 m/s |
+| 4 | seismic-surface | 3000 m/s |
+| 5 | thermal | 0.3 m/s (diffusive) |
+| 6 | diffusion | 0.05 m/s (diffusive) |
+| 7 | advective | per-source advection slot when > 0, else 1 m/s |
+| 8 | electric | C_LIGHT |
 
-Diffusive forces (thermal, diffusion) use `sqrt(2 · v · lifetime)` as reach instead of `v · Δt`.
+The speed table lives in the shader; advective uses the per-source slot (`field[j*3+2].x`).
 
-## ID-specific defaults
+## Kernel Shapes (7, keyed by `kernel_id` — decoupled from force)
 
-| ID | tau (s) | extent (m) |
-|----|---------|------------|
-| 8 (electric) | 86400 | 100 |
+`field_spatial` in `static/index.html`:
 
-All other forces derive tau from `1/v` and extent from the per-name `force_extent()` function.
+| kernel_id | Shape |
+|-----------|-------|
+| 0, 6 | `1.0 / max(d², 1.0)` — pure Nebra, guard d > 1 m, no softening |
+| 1 | `exp(-d²/(2·max(e²,s²))) / max(d²+s², s²)` |
+| 2 | `exp(-d²/(2·max(e²,s²))) / (d + sqrt(s²))` |
+| 3 | `erfc(d / max(σ·√2, s))` |
+| 4 | `exp(-d / max(σ, s))` |
+| 5 | Patch-Levy: `(1-α)·exp(-d²/(2·max(e²,s²))) + α·max(e²,s²)^(β/2) / max(d²+s², s²)^(β/2)`, β = 1.6 |
 
-## WGSL Kernel (`static/index.html:359-378`)
-
-| Force IDs | Kernel |
-|-----------|--------|
-| 0, 1 (em, gravity) | 1 / d² |
-| 5, 6 (thermal, diffusion) | erfc(d / σ·√2) |
-| 4 (seismic-surface) | exp(-d²/2σ²) / d |
-| 8 (electric) | Patch-Levy: (1-α)·exp(-d²/2σ²) + α·σ^β / (d²+σ²)^(β/2) |
-| else (acoustic, seismic-body, advective) | exp(-d²/2σ²) / d² |
+`e²`/`s²` carry a 1e-30 floor — f32-underflow shield, not softening. Kernel 0/6 + gravity
+additionally gets the zonal harmonic term
+`1 − J2·(r_eq/d)²·P2(cosθ) − J4·(r_eq/d)⁴·P4(cosθ)` with `cosθ = dot(d̂, pole)`
+(0 honored when j2/j4 absent).
 
 ## BodyProperties
 
-`src/main.rs:44-60`
+`src/main.rs` struct — 21 fields; the last seven are `Option` (nut series `Option<Vec<[f64;3]>>`):
 
 ```
 α0_deg, dα0_dt_deg_per_century, δ0_deg, dδ0_dt_deg_per_century,
 w0_deg, dw_dt_deg_per_day, radius_m, flattening,
-v_sound, v_seismic_p, v_seismic_s, alpha_thermal, d_diffusion, v_advective
+gaussian_inverse_square, gaussian_inverse, erfc, exponential_decay, patch_levy,
+gm, j2, j4, radii_b, radii_c, nut_ra, nut_dec
 ```
 
-Medium properties (v_sound through v_advective) are `Option<f64>` — a value of `None` means the body does not support that propagation mode.
+Kernel extents derive via `kernel_extent(kernel_id, props, tau)`: kernel 0/6 → ∞;
+kernels 1–5 → `sqrt(2 · param · tau)` with `param` the matching BodyProperties field
+(0 = absent → extent 0). The first eight fields come from the ephemeris binary
+(stype-1 v2, gcount=12); flattening is derived from R_a/R_c in v2.
+
+## Body Channels
+
+`body_channels()` emits exactly two channels:
+- `{body}.radius` — val = radius_m, kernel 0, gravity, τ = ∞
+- `{body}.mass` — val = gm, kernel 0, gravity, τ = ∞ (only when gm measured)
+
+Rotation (erfc) and gi_sq channels were killed — NaN singularity at the source center
+and a val=1.0 fabrication.

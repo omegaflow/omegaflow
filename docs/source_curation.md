@@ -101,18 +101,24 @@ Manual verification is required. `cargo check` only validates syntax.
 
 ## The pending list (current work)
 
-The file `phi/research/pre-cdn-history/UNTESTED_blocks.φ` is the authoritative
-list of source blocks not yet tested. Each has `url` + block lines. None of
-these URLs appears in `dead_sources.φ`, `sources_live.φ`, or `sources_cdn.φ`.
+The pending list lives in `archeology/sources/sources_*_untested_*` (the
+pre-cdn-history tree was archived there):
+
+- `sources_new_untested_14k_new-unchecked.φ` — 873 blocks
+- `sources_astro_untested_30-astro.φ` — 30 blocks
+- `sources_exotic_untested_neutrino-ligo.φ` — 16 blocks (no force → Gate)
+- `sources_earth_untested_stac-sentinel.φ` — 3 blocks
+
+None of these URLs appears in `phi/dead_sources.φ` or `phi/sources.φ`.
 
 Tracking mechanism:
-1. Read `UNTESTED_blocks.φ`.
-2. Diff each URL against `dead_sources.φ` + `sources_live.φ` + `sources_cdn.φ`.
-3. Blocks not in any of those are still open. Test them with the workflow above.
-4. When a block is tested, its disposition appears in one of the three files,
+1. Read the four untested files above.
+2. Diff each URL against `phi/dead_sources.φ` + `phi/sources.φ`.
+3. Blocks not in either are still open. Test them with the workflow above.
+4. When a block is tested, its disposition appears in one of the two files,
    so the next diff automatically shrinks the open set.
-5. `phi/research/pre-cdn-history/UNTESTED_index.txt` lists remaining blocks by
-   API domain for orientation.
+5. The former `UNTESTED_index.txt` was not archived — reconstruct the per-domain
+   index from the four files (registered as TODO D-D4).
 
 ## SESSION HANDOFF (2026-08-07) — read this first
 
@@ -157,7 +163,9 @@ Takes ~150s (network-bound, first 200 non-CDN sources). Output lines:
 - `FAIL <url> no samples (data-present (container array has rows but extract
   yielded nothing))` — the data IS there but the extract directives do not
   match. This is the actionable defect: fix the block (compare against the
-  golden version in `phi/research/pre-cdn-history/ALL_lost_blocks_richest.φ`).
+   golden version in `archeology/sources/sources_recovery_cdn-merged_60k_lost-blocks.φ`
+   joined with the richest parameter sets from `archeology/sources/sources_gold_pre-cdn_*`
+   and `sources_recovery_pre-cdn_*`).
 - `FAIL <url> no samples (data-present (keys exist ...))` / `(JSON has
   content but declared keys absent)` — data exists but keys/containers are
   wrong. Fix the block.
@@ -301,7 +309,7 @@ authoritative verifier. Command:
 
 - `phi/sources_live.φ`: 1767 blocks. `phi/sources_cdn.φ`: 1770 blocks.
   Golden archives: `phi/research/pre-cdn-1924-blocks.φ` (the reference),
-  `phi/research/pre-cdn-history/ALL_lost_blocks_richest.φ` (5701 lost blocks
+  `archeology/sources/sources_recovery_cdn-merged_60k_lost-blocks.φ` (5701 lost blocks
   with richest extract params), `sources_3_kopie.md`, `sources_4_kopie.md`,
   `sources_new.φ`, `sources_backup_20260719.φ` (copied from
   `~/Schreibtisch/Archiv` into the archive).
@@ -341,9 +349,9 @@ DO THIS, IN ORDER:
    source's world requires (never invent a body in the parser). Many are
    `raw.githubusercontent.com/omegaflow/catalogs` celestial catalogs that
    need `at sun 1` (barycentric) — or a working URL.
-4. Then open `phi/research/pre-cdn-history/UNTESTED_blocks.φ`. For each block,
-   apply the per-block curation workflow (fill templates -> curl -> structure ->
-   Force Gate -> classify). Add accepted blocks to `phi/sources_live.φ`,
+4. Then open the four files under `archeology/sources/sources_*_untested_*`.
+   For each block, apply the per-block curation workflow (fill templates -> curl ->
+   structure -> Force Gate -> classify). Add accepted blocks to `phi/sources.φ`,
    rejected ones to `phi/dead_sources.φ`.
 5. `cargo check` must stay at zero errors AND zero warnings throughout.
 6. Commit per logical unit (TODO.md updated in the same commit).
@@ -357,13 +365,15 @@ A CDN migration replaced many URLs with `github.com/omegaflow/sources` asset
 paths, and during merging thousands of original URLs and their extract
 parameters were lost or replaced by guessed/fabricated endpoints.
 
-The complete pre-CDN history is preserved in `phi/research/pre-cdn-history/`:
-- 7 full `sources.φ` versions from git history (before CDN switch)
-- `ALL_lost_blocks_richest.φ` — 5701 lost blocks with their richest extract
-  parameters merged across history (fields, keys, frames)
-- `lost_urls.txt` — all 5764 lost URLs
-- `NEW_unchecked_blocks.φ` — arena-research blocks not present in history
-- `UNTESTED_blocks.φ` — the still-open subset to curate
+The pre-CDN history is archived in `archeology/sources/`:
+- Full block versions from before the CDN switch: 5× gold, 12× main_cdn-merged,
+  11× main_pre-cdn, 8× recovery_pre-cdn, 7× recovery_cdn-merged
+- `sources_recovery_cdn-merged_60k_lost-blocks.φ` — 5701 lost URLs
+  (extract parameters must be joined from the gold/recovery files)
+- `sources_gold_pre-cdn_27k_359-domains.φ` (2572 blocks) and
+  `sources_recovery_pre-cdn_25k_211-domains.φ` (1924 blocks) — the richest
+  parameter sources (old `force` grammar, migrate per the Force Gate protocol)
+- `sources_*_untested_*` — the still-open subset to curate
 
 When curating, prefer the version with the richest extract (most `field` /
 `path` / `*_key` lines) from `ALL_lost_blocks_richest.φ`. Compare the pending
