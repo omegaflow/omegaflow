@@ -2689,7 +2689,7 @@ impl Radiator for AudioRadiator {
 
 struct StderrRadiator {
     last_line: String,
-    repeat: usize,
+    interactive: bool,
 }
 
 impl Radiator for StderrRadiator {
@@ -2746,11 +2746,15 @@ impl Radiator for StderrRadiator {
             dev_osc,
         );
         if line == self.last_line {
-            self.repeat += 1;
             return;
         }
-        self.repeat = 1;
-        eprint!("\r{:<80}", line);
+        let prev_len = self.last_line.chars().count();
+        if self.interactive {
+            let pad = " ".repeat(prev_len.saturating_sub(line.chars().count()));
+            eprint!("\r{}{}\r", line, pad);
+        } else {
+            eprintln!("{}", line);
+        }
         self.last_line = line;
     }
 }
@@ -7834,7 +7838,7 @@ fn main() {
     radiators.push(Box::new(AudioRadiator::new(AUDIO_SAMPLE_RATE)));
     radiators.push(Box::new(StderrRadiator {
         last_line: String::new(),
-        repeat: 0,
+        interactive: std::io::stderr().is_terminal(),
     }));
     let cadence = 1.0;
     let mut gm_text: Option<String> = None;
