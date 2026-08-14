@@ -6508,45 +6508,6 @@ fn body_channels(name: &str, props: &BodyProperties, now: f64) -> Vec<(Channel, 
             },
         ));
     }
-    let rot_val = (props.dw_dt_deg_per_day / 360.0).abs();
-    if rot_val > 0.0 {
-        out.push((
-            Channel {
-                name: format!("{}.rotation", name),
-                value: rot_val,
-                position: Position::Source,
-                epoch: now,
-            },
-            FieldConfig {
-                key: format!("{}.rotation", name),
-                name: format!("{}.rotation", name),
-                kernel: 3,
-                force: 4,
-                tau: 1.0,
-                absorption: 0.0,
-                advection: 0.0,
-            },
-        ));
-    }
-    if props.gaussian_inverse_square > 0.0 {
-        out.push((
-            Channel {
-                name: format!("{}.gi_sq", name),
-                value: 1.0,
-                position: Position::Source,
-                epoch: now,
-            },
-            FieldConfig {
-                key: format!("{}.gi_sq", name),
-                name: format!("{}.gi_sq", name),
-                kernel: 1,
-                force: 1,
-                tau: 1.0,
-                absorption: 0.0,
-                advection: 0.0,
-            },
-        ));
-    }
     out
 }
 
