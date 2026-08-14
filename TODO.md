@@ -342,11 +342,11 @@ Binary-PCK-Pakets oben).
 
 ### Curation & Quellen
 
-- TNS-Transienten (em, celestisch) live seit 2026-08-14: Daily-Delta-CSV
-  (`format csv_zip`, std-only Inflate in src/inflate.rs, z-Distanz via Redshift).
-  Offen: Der Delta-Tag trägt überwiegend unklassifizierte ATs ohne Redshift
-  (0 honored) — Vollkatalog `tns_public_objects.csv.zip` oder eine
-  Redshift-vollständige Fütterung erwägen, wenn der Himmel dichter werden soll.
+- TNS-Transienten (em, celestisch) live seit 2026-08-14: Vollkatalog
+  `tns_public_objects.csv.zip` (`format csv_zip`, std-only Inflate in
+  src/inflate.rs, z-Distanz via Redshift, abs_mag_from). ~20k
+  redshift-tragende Transienten manifestieren; Parse ~70 s pro Fetch
+  (Hintergrund-Thread, TTL 3600); das Frontend beschneidet über D07.
 - `phi/research/agent_output/batch_*_accepted.φ` (32 Dateien, neue Grammatik):
   konvertierte Blöcke, die nie nach phi/sources.φ übernommen wurden.
 - `archeology/sources/sources_gold_pre-cdn_27k_359-domains.φ` (2572 Blöcke, alte
