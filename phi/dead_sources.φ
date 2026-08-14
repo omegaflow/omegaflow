@@ -1,6 +1,62 @@
 # ── Source Curation: Declined Sources ──
 # Format: <category> <reason> \n url <url> \n note <explanation>
 
+# ── Astro-Broker-Verifikation 2026-08-15 (TNS-Bot-Liste, A/B-Sweep) ──
+# A-Kandidaten (keyless JSON + Position): alle dead — einziger lebender
+# em-Transienten-Feed bleibt TNS (phi/sources.φ).
+
+dead dns-unresolved
+url https://ztf.alerce.online/v3/objects?ra=180&dec=-20&radius=5&format=json
+note ALeRCE: ztf.alerce.online löst nicht auf; api.alerce.online löst auf, aber /v3/objects → 404 (Endpoint-Pfad geändert). Recheck gegen aktuelle ALeRCE-Doku nötig.
+
+dead unreachable
+url https://api.fink-portal.org/api/v1/objects
+note Fink: DNS löst auf (157.136.255.32), aber Connect schlägt fehl (curl 000) — vom Archivar-Netz nicht erreichbar.
+
+dead dns-unresolved
+url https://api.sne.space/objects?format=json
+note Open Supernova Catalog: api.sne.space löst nicht auf (konsistent über Sessions). Server down oder umgezogen.
+
+parser-def kafka-spa
+url https://gcn.nasa.gov/circulars
+note GCN: HTML/SPA + Kafka-Stream (GCN/Kafka), kein GET-JSON — Archivar hat nur curl/GET/POST.
+
+key-needed token
+url https://hermes.lco.global/api/v0/messages/
+note HERMES: JSON-API existiert (Index 200), aber /messages/ → 403 „Authentication credentials were not provided". Token aus dem HERMES-Account nötig.
+
+key-needed token
+url https://antares.noirlab.edu/api/v1/
+note ANTARES: SPA-Shell, API dahinter verlangt Account/Token.
+
+dead dns-unresolved
+url https://api.astro-colibri.com/api/
+note AstroCOLIBRI: api.astro-colibri.com löst nicht auf.
+
+parser-def html-fits
+url https://www.swift.ac.uk/xrt_products/grb_table/
+note Swift UKSSDC: GRB-Katalog als Web-Formulare + FITS, kein JSON-Endpoint (pfade 404).
+
+dead unreachable
+url https://www.frbcat.org/
+note FRBCAT: Host löst auf (ASTRON), Connect schlägt fehl. FRB-Katalog, kein Live-Messwert.
+
+parser-def pubsub
+url https://scimma.org/
+note SCiMMA/Hopskotch: Pub/Sub-Messaging (Apache Pulsar), kein GET-JSON.
+
+key-needed auth
+url https://irsa.ipac.caltech.edu/ibe/
+note ZTF/IPAC: IRSA erreichbar (200), ZTF-Alert-Daten verlangen IRSA-Auth (zudem Stream/Catalog-Query, kein keyless GET-Feld).
+
+decline static-catalog
+url https://data.lsdb.io/
+note LSDB: statische HATS-Katalog-Downloads (Python-Lib), kein Messwert-Stream — Katalog per Force Gate.
+
+parser-def votable
+url https://casda.csiro.au/casda_vo_tools/tap/sync
+note CASDA/VAST: TAP liefert ausschließlich VOTable (XML) — kein VOTable-Row-Extract im Parser.
+
 # ── 511.org Transit ──
 # Key verifiziert (2026-08-14): operators/stops/StopMonitoring → 200, aber
 # VehicleMonitoring (echte Echtzeit-Fahrzeugpositionen) → 401 (Premium-Tier).

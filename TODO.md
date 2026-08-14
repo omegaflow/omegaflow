@@ -353,6 +353,10 @@ Binary-PCK-Pakets oben).
   src/inflate.rs, z-Distanz via Redshift, abs_mag_from). ~20k
   redshift-tragende Transienten manifestieren; Parse ~70 s pro Fetch
   (Hintergrund-Thread, TTL 3600); das Frontend beschneidet über D07.
+- Astro-Broker-Sweep (2026-08-15): A/B-Kandidaten der TNS-Bot-Liste verifiziert —
+  keine Accept-Kandidaten (ALeRCE/Fink/OSC dead, HERMES/ANTARES/IRSA key-needed,
+  GCN/SCiMMA/Swift/CASDA parser-def, LSDB decline). Dispositionen in
+  `phi/dead_sources.φ`. TNS bleibt der lebende em-Transienten-Feed.
 - `phi/research/agent_output/batch_*_accepted.φ` (32 Dateien, neue Grammatik):
   konvertierte Blöcke, die nie nach phi/sources.φ übernommen wurden.
 - `archeology/sources/sources_gold_pre-cdn_27k_359-domains.φ` (2572 Blöcke, alte
