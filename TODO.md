@@ -225,10 +225,11 @@ mag → W/m² (SUNSPOTS-Rest: Sterne blieben). SOURCES_V2_SPEC („Non-Goals & K
 Parser Gaps"): „units are documentation slots" — heute roher Durchfluss.
 ```
 
-**P03** `z`-Redshift-Key für cmap + per-row τ-Override + vel-Einheitenkonvertierung
+**P03** per-row τ-Override + vel-Einheitenkonvertierung
 ```
-SOURCES_V2_SPEC („Non-Goals & Known Parser Gaps"): z_key (Hubble-Flow),
-τ-Override je Zeile, vel m/s fix.
+`z`-Redshift-Key für cmap ist implementiert (z_key-Direktive, Hubble-Flow,
+TNS-Transienten-Quelle, 2026-08-14). Rest aus SOURCES_V2_SPEC: τ-Override
+je Zeile, vel m/s fix.
 ```
 
 **P04** kepler_map-Bahnlöser fehlt
@@ -242,9 +243,11 @@ gegen Code verifiziert).
 PARSER_MAGIC.md — Horizons-Text-Extract produziert leere/zeitversetzte Samples.
 ```
 
-**P06** cmap: plx/pmra/radvel-Füllung
+**P06** cmap: pmra/pmdec/radvel-Füllung
 ```
-PARSER_MAGIC.md — Parallaxe/Eigenbewegung/Radialgeschwindigkeit ungenutzt.
+pmra/pmdec/radvel sind seit 2026-08-14 optional (Absenz = Geschwindigkeit 0,
+statt Zeile zu verwerfen). Verbleibt: echte Füllung der Eigenbewegung/
+Radialgeschwindigkeit (Gaia-Werte einspeisen); plx-Füllung bleibt offen.
 ```
 
 **P07** extent-pro-Force
@@ -339,6 +342,11 @@ Binary-PCK-Pakets oben).
 
 ### Curation & Quellen
 
+- TNS-Transienten (em, celestisch) live seit 2026-08-14: Daily-Delta-CSV
+  (`format csv_zip`, std-only Inflate in src/inflate.rs, z-Distanz via Redshift).
+  Offen: Der Delta-Tag trägt überwiegend unklassifizierte ATs ohne Redshift
+  (0 honored) — Vollkatalog `tns_public_objects.csv.zip` oder eine
+  Redshift-vollständige Fütterung erwägen, wenn der Himmel dichter werden soll.
 - `phi/research/agent_output/batch_*_accepted.φ` (32 Dateien, neue Grammatik):
   konvertierte Blöcke, die nie nach phi/sources.φ übernommen wurden.
 - `archeology/sources/sources_gold_pre-cdn_27k_359-domains.φ` (2572 Blöcke, alte

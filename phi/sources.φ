@@ -440,3 +440,16 @@ field dewp atmosphere_metar_dewpoint_c gaussian-inverse-square acoustic C 30.0 0
 field altim atmosphere_metar_pressure_hpa gaussian-inverse-square acoustic hPa 30.0 0.0 0.0
 field wspd atmosphere_metar_wind_speed_kt gaussian-inverse-square acoustic kt 30.0 0.0 0.0
 field wdir atmosphere_metar_wind_direction_deg gaussian-inverse-square acoustic deg 30.0 0.0 0.0
+
+# ── Live API: TNS Transient daily delta (em, celestial) ──
+url https://www.wis-tns.org/system/files/tns_public_objects/tns_public_objects_{yesterday_nodashes}.csv.zip
+format csv_zip
+header user-agent tns_marker{"tns_id":4474,"type":"user","name":"omegaflow"}
+ttl 3600
+at sun
+abs_mag_from tns_transient_flux
+cmap .
+ra ra
+dec declination
+z redshift
+field discoverymag tns_transient_flux inverse-square em mag 3600 0.0 0.0

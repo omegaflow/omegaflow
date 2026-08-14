@@ -1,4 +1,5 @@
 #![allow(mixed_script_confusables)]
+use omegaflow::inflate::unzip;
 use omegaflow::lsk::LeapSeconds;
 use omegaflow::pck::PckBody;
 use std::{
@@ -1255,6 +1256,62 @@ pub fn parse_json(s: &str) -> Option<JsonVal> {
     };
     p.skip_ws();
     p.parse_value()
+}
+
+fn split_csv_line(line: &str) -> Vec<String> {
+    let mut fields = Vec::new();
+    let mut cur = String::new();
+    let mut in_quotes = false;
+    let mut chars = line.chars().peekable();
+    while let Some(c) = chars.next() {
+        if in_quotes {
+            if c == '"' {
+                if chars.peek() == Some(&'"') {
+                    chars.next();
+                    cur.push('"');
+                } else {
+                    in_quotes = false;
+                }
+            } else {
+                cur.push(c);
+            }
+        } else if c == '"' {
+            in_quotes = true;
+        } else if c == ',' {
+            fields.push(std::mem::take(&mut cur));
+        } else {
+            cur.push(c);
+        }
+    }
+    fields.push(cur);
+    fields
+}
+
+fn csv_to_json(text: &str) -> Option<JsonVal> {
+    let mut lines = text
+        .lines()
+        .filter(|l| !l.trim().is_empty() && !l.trim().starts_with('#'));
+    let header_line = lines.find(|l| l.contains(','))?;
+    let headers = split_csv_line(header_line);
+    if headers.len() < 2 {
+        return None;
+    }
+    let mut rows = Vec::new();
+    for line in lines {
+        if !line.contains(',') {
+            continue;
+        }
+        let fields = split_csv_line(line);
+        if fields.len() != headers.len() {
+            continue;
+        }
+        let mut obj = HashMap::new();
+        for (h, f) in headers.iter().zip(fields.iter()) {
+            obj.insert(h.clone(), JsonVal::Str(f.clone()));
+        }
+        rows.push(JsonVal::Obj(obj));
+    }
+    Some(JsonVal::Arr(rows))
 }
 
 struct JsonParser<'a> {
@@ -2968,6 +3025,52 @@ fn fetch_raw_bytes(url: &str, ttl: u64) -> Option<Vec<u8>> {
     }
 }
 
+fn fetch_raw_bytes_post(
+    url: &str,
+    body: Option<&str>,
+    headers: &[(String, String)],
+    ttl: u64,
+) -> Option<Vec<u8>> {
+    let connect_t = ((ttl as f64) / (Φ * Φ * Φ)).ceil() as u64;
+    let max_t = ((ttl as f64) / (Φ * Φ)).ceil() as u64;
+    let mut cmd = Command::new("curl");
+    cmd.arg("-s")
+        .arg("-S")
+        .arg("-f")
+        .arg("-L")
+        .arg("--retry")
+        .arg("5")
+        .arg("--retry-delay")
+        .arg("2")
+        .arg("--http1.1")
+        .arg("-m")
+        .arg(max_t.to_string())
+        .arg("--connect-timeout")
+        .arg(connect_t.to_string())
+        .arg("-X")
+        .arg("POST");
+    if let Some(b) = body {
+        cmd.arg("-d").arg(b);
+    }
+    for (k, v) in headers {
+        cmd.arg("-H").arg(format!("{}: {}", k, v));
+    }
+    cmd.arg(url);
+    let output = cmd.output().ok()?;
+    if output.status.success() {
+        Some(output.stdout)
+    } else {
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        eprintln!(
+            "fetch_bytes_post returned ({}): {} {}",
+            output.status,
+            url,
+            stderr.trim()
+        );
+        None
+    }
+}
+
 fn rfc1123_to_unix(s: &str) -> Option<u64> {
     let parts: Vec<&str> = s.split_whitespace().collect();
     if parts.len() < 6 {
@@ -4443,6 +4546,11 @@ fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     *dec_key = parts[1].to_string();
                 }
             }
+            "z" if parts.len() >= 2 => {
+                if let Some(Extract::CelestialMap { z_key, .. }) = cur_extracts.last_mut() {
+                    *z_key = parts[1].to_string();
+                }
+            }
             "plx" if parts.len() >= 2 => {
                 if let Some(Extract::CelestialMap { plx_key, .. }) = cur_extracts.last_mut() {
                     *plx_key = parts[1].to_string();
@@ -5040,8 +5148,14 @@ fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> Extra
     }
     let mut channels: Vec<(Channel, FieldConfig)> = Vec::new();
     let mut extracted: HashMap<String, f64> = HashMap::new();
-    let parsed_json = if src.format == "json" || src.format.is_empty() || src.format == "universal"
-    {
+    let parsed_json = if src.format == "csv_zip" {
+        std::fs::read(body)
+            .ok()
+            .and_then(|b| unzip(&b))
+            .map(|bytes| String::from_utf8_lossy(&bytes).into_owned())
+            .as_deref()
+            .and_then(csv_to_json)
+    } else if src.format == "json" || src.format.is_empty() || src.format == "universal" {
         parse_json(body)
     } else {
         None
@@ -6054,7 +6168,7 @@ fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> Extra
                 let default_epoch = if let Some(e) = src.catalog_epoch {
                     e
                 } else {
-                    continue;
+                    now
                 };
                 if let Some(ref j) = parsed_json {
                     if let Some(JsonVal::Arr(arr)) = jpath_val(j, arr_path) {
@@ -6112,25 +6226,25 @@ fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> Extra
                             let p_hat = [cd * ca, cd * sa, sd];
                             let p = [p_hat[0] * d, p_hat[1] * d, p_hat[2] * d];
                             let mu_a = if pmra_key.is_empty() {
-                                continue;
+                                0.0
                             } else if let Some(v) = jpath(v, pmra_key) {
                                 v * MAS_YR_TO_RAD_S
                             } else {
-                                continue;
+                                0.0
                             };
                             let mu_d = if pmdec_key.is_empty() {
-                                continue;
+                                0.0
                             } else if let Some(v) = jpath(v, pmdec_key) {
                                 v * MAS_YR_TO_RAD_S
                             } else {
-                                continue;
+                                0.0
                             };
                             let vr = if rv_key.is_empty() {
-                                continue;
+                                0.0
                             } else if let Some(v) = jpath(v, rv_key) {
                                 v * rv_scale
                             } else {
-                                continue;
+                                0.0
                             };
                             let a_hat = [-sa, ca, 0.0];
                             let d_hat = [-sd * ca, -sd * sa, cd];
@@ -7653,6 +7767,7 @@ fn ci_mode(dir: &str) -> i32 {
     for src in &sources {
         if src.url.starts_with("https://github.com/omegaflow/sources")
             || src.format == "ephemeris_binary"
+            || src.format == "csv_zip"
             || src.format == "kernel_text"
         {
             continue;
@@ -7984,6 +8099,55 @@ fn main() {
                 });
                 continue;
             }
+            if archive.sources[i].format == "csv_zip" {
+                let ftx = fetch_tx.clone();
+                let src_clone = archive.sources[i].clone();
+                let src_idx = i;
+                let eph_arc = archive.body_ephemerides.clone();
+                let e = env.clone();
+                archive.origins.entry(origin).or_insert(OriginState {
+                    fetched: now,
+                    prev_epoch: now,
+                    prev_abs: [0.0; 3],
+                    prev_motion: None,
+                    resid_ema: 0.0,
+                    has_prev: false,
+                });
+                let lsk_c = lsk.clone();
+                thread::spawn(move || {
+                    let url = match render_source_url(
+                        &src_clone, 0.0, 0.0, 0.0, now, 0.0, &eph_arc, &e, &lsk_c,
+                    ) {
+                        Some(u) => u,
+                        None => return,
+                    };
+                    let tmp_path = format!("/tmp/omegaflow_csv_{}.zip", src_idx);
+                    if !cache_fresh(&tmp_path, src_clone.ttl) {
+                        let bytes = match fetch_raw_bytes_post(
+                            &url,
+                            None,
+                            &src_clone.headers,
+                            src_clone.ttl,
+                        ) {
+                            Some(b) => b,
+                            None => return,
+                        };
+                        if std::fs::write(&tmp_path, &bytes).is_err() {
+                            return;
+                        }
+                    }
+                    if let ExtractResult::Measurements(channels) =
+                        extract(&src_clone, &tmp_path, now, &lsk_c)
+                    {
+                        let _ = ftx.send(FetchResult {
+                            source_idx: src_idx,
+                            channels,
+                            eph_update: None,
+                        });
+                    }
+                });
+                continue;
+            }
             let body_name = match &archive.sources[i].frame {
                 Frame::Surface { body_name, .. } | Frame::Barycenter { body_name, .. } => {
                     body_name.as_str()
@@ -8302,6 +8466,174 @@ mod tests {
         assert!(b.contains("bbox"));
         assert!(b.contains("{lon_min}"));
         assert!(!b.contains("{today}"));
+    }
+
+    #[test]
+    fn test_csv_to_json_tns_shape() {
+        let csv = "2026-08-13 00:00:00 - 23:59:59\n\"objid\",\"ra\",\"declination\",\"redshift\",\"discoverymag\"\n\"1\",\"89.8\",\"53.6\",\"0.027\",\"19.8\"\n\"2\",\"35.0\",\"-24.4\",\"\",\"19.4\"\n";
+        let j = csv_to_json(csv).unwrap();
+        let arr = match j {
+            JsonVal::Arr(a) => a,
+            _ => panic!("expected array"),
+        };
+        assert_eq!(arr.len(), 2);
+        match &arr[0] {
+            JsonVal::Obj(m) => {
+                assert_eq!(scalar_of(m.get("ra").unwrap()), Some(89.8));
+                assert_eq!(scalar_of(m.get("redshift").unwrap()), Some(0.027));
+            }
+            _ => panic!("expected object"),
+        }
+        match &arr[1] {
+            JsonVal::Obj(m) => {
+                assert_eq!(scalar_of(m.get("redshift").unwrap()), None);
+            }
+            _ => panic!("expected object"),
+        }
+    }
+
+    #[test]
+    fn test_celestial_map_redshift_distance() {
+        let src = SourceConfig {
+            ttl: 100,
+            url: "https://example.com/x".into(),
+            frame: Frame::Barycenter {
+                body_name: "sun".into(),
+                scale: 1.0,
+            },
+            format: "json".into(),
+            extracts: vec![Extract::CelestialMap {
+                arr_path: ".".into(),
+                ra_key: "ra".into(),
+                dec_key: "declination".into(),
+                dist_key: String::new(),
+                dist_scale: 1.0,
+                plx_key: String::new(),
+                z_key: "redshift".into(),
+                pmra_key: String::new(),
+                pmdec_key: String::new(),
+                rv_key: String::new(),
+                rv_scale: 1.0,
+                epoch_key: String::new(),
+                fields: vec![FieldConfig {
+                    key: "discoverymag".into(),
+                    name: "tns_transient_flux".into(),
+                    kernel: 0,
+                    force: 0,
+                    tau: 3600.0,
+                    absorption: 0.0,
+                    advection: 0.0,
+                }],
+            }],
+            headers: vec![],
+            post_body: None,
+            target: None,
+            catalog: None,
+            max_freq: None,
+            min_freq: None,
+            body: None,
+            stations_url: None,
+            stations_path: String::new(),
+            stations_lat: String::new(),
+            stations_lon: String::new(),
+            stations_id: String::new(),
+            flux_from_mag: None,
+            abs_mag_from: Some("tns_transient_flux".into()),
+            catalog_epoch: None,
+            repeat_ra_bins: 0,
+        };
+        let fixture_lsk = LeapSeconds {
+            delta_t_a: 32.184,
+            deltas: vec![(37.0, 1483228800.0)],
+        };
+        let body = r#"[{"ra":89.8,"declination":53.6,"redshift":0.027,"discoverymag":19.8},{"ra":35.0,"declination":-24.4,"redshift":0.0,"discoverymag":19.4}]"#;
+        match extract(&src, body, 8.0e8, &fixture_lsk) {
+            ExtractResult::Measurements(channels) => {
+                assert_eq!(channels.len(), 1);
+                assert_eq!(channels[0].1.name, "tns_transient_flux");
+            }
+            ExtractResult::WithEphemeris(_, _) => panic!("unexpected ephemeris"),
+        }
+    }
+
+    #[test]
+    fn test_extract_csv_zip_end_to_end() {
+        let csv = "2026-08-13 00:00:00 - 23:59:59\n\"objid\",\"ra\",\"declination\",\"redshift\",\"discoverymag\"\n\"1\",\"89.8\",\"53.6\",\"0.027\",\"19.8\"\n\"2\",\"35.0\",\"-24.4\",\"\",\"19.4\"\n";
+        let mut zip = Vec::new();
+        zip.extend_from_slice(b"PK\x03\x04");
+        zip.extend_from_slice(&20u16.to_le_bytes());
+        zip.extend_from_slice(&0u16.to_le_bytes());
+        zip.extend_from_slice(&0u16.to_le_bytes());
+        zip.extend_from_slice(&0u16.to_le_bytes());
+        zip.extend_from_slice(&0u16.to_le_bytes());
+        zip.extend_from_slice(&0u32.to_le_bytes());
+        zip.extend_from_slice(&(csv.len() as u32).to_le_bytes());
+        zip.extend_from_slice(&(csv.len() as u32).to_le_bytes());
+        zip.extend_from_slice(&0u16.to_le_bytes());
+        zip.extend_from_slice(&0u16.to_le_bytes());
+        zip.extend_from_slice(csv.as_bytes());
+        let path = std::env::temp_dir().join("omegaflow_test_tns.zip");
+        std::fs::write(&path, &zip).unwrap();
+        let src = SourceConfig {
+            ttl: 100,
+            url: "https://example.com/x".into(),
+            frame: Frame::Barycenter {
+                body_name: "sun".into(),
+                scale: 1.0,
+            },
+            format: "csv_zip".into(),
+            extracts: vec![Extract::CelestialMap {
+                arr_path: ".".into(),
+                ra_key: "ra".into(),
+                dec_key: "declination".into(),
+                dist_key: String::new(),
+                dist_scale: 1.0,
+                plx_key: String::new(),
+                z_key: "redshift".into(),
+                pmra_key: String::new(),
+                pmdec_key: String::new(),
+                rv_key: String::new(),
+                rv_scale: 1.0,
+                epoch_key: String::new(),
+                fields: vec![FieldConfig {
+                    key: "discoverymag".into(),
+                    name: "tns_transient_flux".into(),
+                    kernel: 0,
+                    force: 0,
+                    tau: 3600.0,
+                    absorption: 0.0,
+                    advection: 0.0,
+                }],
+            }],
+            headers: vec![],
+            post_body: None,
+            target: None,
+            catalog: None,
+            max_freq: None,
+            min_freq: None,
+            body: None,
+            stations_url: None,
+            stations_path: String::new(),
+            stations_lat: String::new(),
+            stations_lon: String::new(),
+            stations_id: String::new(),
+            flux_from_mag: None,
+            abs_mag_from: Some("tns_transient_flux".into()),
+            catalog_epoch: None,
+            repeat_ra_bins: 0,
+        };
+        let fixture_lsk = LeapSeconds {
+            delta_t_a: 32.184,
+            deltas: vec![(37.0, 1483228800.0)],
+        };
+        match extract(&src, path.to_str().unwrap(), 8.0e8, &fixture_lsk) {
+            ExtractResult::Measurements(channels) => {
+                assert_eq!(channels.len(), 1);
+                assert_eq!(channels[0].1.name, "tns_transient_flux");
+            }
+            ExtractResult::WithEphemeris(_, _) => panic!("unexpected ephemeris"),
+        }
+        let _ = std::fs::remove_file(&path);
     }
 
     #[test]
