@@ -21,9 +21,9 @@ parser-def kafka-spa
 url https://gcn.nasa.gov/circulars
 note GCN: HTML/SPA + Kafka-Stream (GCN/Kafka), kein GET-JSON — Archivar hat nur curl/GET/POST.
 
-key-needed token
-url https://hermes.lco.global/api/v0/messages/
-note JSON-API existiert (Index 200), aber /messages/ → 403 „Authentication credentials were not provided". Registrierung: https://hermes.lco.global/ → Signup → Account → API-Token.
+decline direction-only
+url https://hermes.lco.global/api/v0/targets/
+note Token besorgt + verifiziert (2026-08-15, HERMES_TOKEN in .secrets.local): /messages/ (362k) und /targets/ (304) → 200. Aber targets tragen nur name + right_ascension/declination (Dezimalgrad) + message-Refs — kein Feldwert (keine Signifikanz/Flux im API-Modell), keine Distanz (nichtlokalisierte Kandidaten). Position-only → §3.9 drop. Ohne erfundene Distanz/Feldwert nicht manifestierbar.
 
 key-needed token
 url https://antares.noirlab.edu/api/v1/
