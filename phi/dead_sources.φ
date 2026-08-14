@@ -23,11 +23,11 @@ note GCN: HTML/SPA + Kafka-Stream (GCN/Kafka), kein GET-JSON — Archivar hat nu
 
 key-needed token
 url https://hermes.lco.global/api/v0/messages/
-note HERMES: JSON-API existiert (Index 200), aber /messages/ → 403 „Authentication credentials were not provided". Token aus dem HERMES-Account nötig.
+note JSON-API existiert (Index 200), aber /messages/ → 403 „Authentication credentials were not provided". Registrierung: https://hermes.lco.global/ → Signup → Account → API-Token.
 
 key-needed token
 url https://antares.noirlab.edu/api/v1/
-note ANTARES: SPA-Shell, API dahinter verlangt Account/Token.
+note SPA-Shell, API dahinter verlangt Account/Token. Registrierung: https://antares.noirlab.edu/ → Signup (Token im Account).
 
 dead dns-unresolved
 url https://api.astro-colibri.com/api/
@@ -47,7 +47,7 @@ note SCiMMA/Hopskotch: Pub/Sub-Messaging (Apache Pulsar), kein GET-JSON.
 
 key-needed auth
 url https://irsa.ipac.caltech.edu/ibe/
-note ZTF/IPAC: IRSA erreichbar (200), ZTF-Alert-Daten verlangen IRSA-Auth (zudem Stream/Catalog-Query, kein keyless GET-Feld).
+note IRSA erreichbar (200), ZTF-Alert-Daten verlangen IRSA-Auth (zudem Stream/Catalog-Query, kein keyless GET-Feld). Registrierung: https://irsa.ipac.caltech.edu/applications/Register/
 
 decline static-catalog
 url https://data.lsdb.io/
