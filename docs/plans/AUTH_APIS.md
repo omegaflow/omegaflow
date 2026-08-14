@@ -39,7 +39,7 @@ Keys werden **niemals** in dieses Dokument oder das Repo geschrieben. Sie leben 
 `OCEANNETWORKS_TOKEN`, `TRANSPORTDATA_KEY` (tedp_*), `SI_API_KEY`, `IUCN_TOKEN`,
 `MOVEBANK_USER/PASS/TOKEN`, `CMEMS_USER/PASS`, `GBIF_USER/PASS` (verifiziert,
 3,9 Mrd. Vorkommen), `PURPLEAIR_KEY` (verifiziert, globale PM-Sensoren),
-`TRANSIT511_KEY` (Key da, Endpoint-Pfad noch zu verifizieren).
+`TRANSIT511_KEY` (verifiziert, aber decline — Premium-Echtzeit + gzip + Registry).
 
 ### ❌ Entfernt (4 — ToS verbieten Redistribution via CDN)
  
@@ -147,8 +147,8 @@ retired (ERDDAP → NOAA/EMODnet umgestellt).
 
 2. Werte in `.secrets.local` eintragen (gitignored, keine Keys committen)
 3. **Neue Quellen einbauen** (nächste Sessions):
-   - PurpleAir (`diffusion`, globale PM-Sensoren, `X-API-Key`-Header) — verifiziert
-   - GBIF (`em`, 3,9 Mrd. Vorkommen, Basic-Auth) — verifiziert
-   - Transit511 (`advective`, Endpoint-Pfad verifizieren)
+   - PurpleAir (`diffusion`, globale PM-Sensoren, `X-API-Key`-Header) — verifiziert + live
+   - GBIF (`em`, 3,9 Mrd. Vorkommen, Basic-Auth) — decline (Presence-Katalog)
+   - Transit511 — decline (stops/operators = Registry; VehicleMonitoring = 401 Premium; gzip)
 4. Workflow `refresh-protected-data.yml` erweitern — jede API als optionalen Step (überspringt wenn Secret leer)
 5. Auth-Header/Query-Param im Fetch-System unterstützen (PurpleAir braucht `X-API-Key`-Header, GBIF Basic-Auth)

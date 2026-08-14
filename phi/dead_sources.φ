@@ -1,6 +1,16 @@
 # ── Source Curation: Declined Sources ──
 # Format: <category> <reason> \n url <url> \n note <explanation>
 
+# ── 511.org Transit ──
+# Key verifiziert (2026-08-14): operators/stops/StopMonitoring → 200, aber
+# VehicleMonitoring (echte Echtzeit-Fahrzeugpositionen) → 401 (Premium-Tier).
+# stops/operators sind statische Register (decline). Antwort ist gzip
+# (Content-Encoding: gzip) — fetch_raw bräuchte --compressed. Regional (SF Bay).
+
+decline registry-premium-gzip
+url https://api.511.org/transit/stops?operator_id=SF&api_key={TRANSIT511_KEY}&format=json
+note Free tier: stops/operators = static registries (Force Gate decline); VehicleMonitoring (real-time positions) = 401 premium; response gzip-compressed (parser has no --compressed). Regional SF Bay only.
+
 # ── GBIF organism occurrences ──
 # Presence catalog: occurrence records carry position + metadata, no physical
 # field measurement. elevation/depth are position coordinates (sparse, ~1/300
