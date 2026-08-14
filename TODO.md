@@ -87,6 +87,29 @@ docs/concepts/IAU-2000_EOP.md.
 
 ---
 
+### Kraft-Abdeckung — Zielbild (alle 9 Kanäle)
+
+JPL-SSD trägt nur gravity vollständig sowie em/thermal teilweise (Crawl 2026-08-14);
+die übrigen Kanäle sind Kurations-Arbeit an den φ-API-Quellen. Regel: Jeder Kanal
+braucht mindestens eine gemessene, physisch gate-konforme Quelle.
+
+| Kanal | Messquelle | Offene Arbeit |
+|---|---|---|
+| em | Tycho-2-Katalog, Radar-OEMs, DASTCOM-Albedo; Zeitreihen: NOAA GOES, HEASARC, PDS | K04 (Katalog); Kuration (Zeitreihen) |
+| gravity | JPL SSD komplett: DE442/441/440, Mond-Systeme, Kleinkörper, Sonden, GM-PCK, DASTCOM | K01 (Monde+CI), K02 (Binary-PCK), K03 (Katalog) |
+| acoustic | GONG/SOHO (Helioseismologie), NOAA (Atmosphäre) | Kuration |
+| seismic-body | USGS, IRIS, GFZ, PDS InSight/Apollo | Kuration (USGS bereits aktiv) |
+| seismic-surface | USGS, IRIS, GFZ | Kuration |
+| thermal | DASTCOM H/Albedo + Yarkovsky-Listen; GOES-Thermal | K03 (Parameter); Kuration (Zeitreihen) |
+| diffusion | NOAA SWPC, NASA OMNI | Kuration |
+| advective | DSCOVR/SWPC (Solarwind), NOAA GFS | Kuration |
+| electric | SWPC, NASA OmniWeb (B-Felder), ESA Swarm | Kuration |
+
+Device-Sensoren (M05) ergänzen die Kanäle lokal; das Radiatorium (M01/M02) ist die
+Aktuator-Seite. Der Kurations-Pfad ist unten registriert (Curation & Quellen).
+
+---
+
 ### Zentrismus (3)
 
 **Z03** Sonne (NAIF 10) wird im Ephemeriden-Compiler von der Leere-Prüfung ausgenommen
