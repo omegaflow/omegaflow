@@ -60,8 +60,9 @@ bleibt, keine Format-Umstrukturierung). Merge-Regel binary-PCK > text-PCK
 in pck_bodies einbauen (NAIF-Precedence-Regel).
 Runtime: body_pole_at mit echten Nutationsreihen; Zonal-Term leuchtet für
 Mond/Eros (Erde hat die Harmonischen bereits).
-Detail-Specs: NAIF pck.req (PCK Required Reading) + Binary-PCK-Tutorial —
-das „Introduction to Kernels"-PDF enthält die Segment-/Keyword-Struktur nicht.
+Detail-Specs im Repo: docs/reference/NAIF_PCK_REQUIRED_READING.md (pck.req, 2021 —
+Text-PCK-Keywords + Binary-PCK-Typen 2/3/20) und docs/reference/NAIF_DAF_REQUIRED_READING.md
+(daf.req, 2017 — Dateiarchitektur, Summary-Records, Wortadressen).
 ```
 
 **K03** Kleinkörper-Katalog
@@ -69,8 +70,9 @@ das „Introduction to Kernels"-PDF enthält die Segment-/Keyword-Struktur nicht
 dcom5_le.dat (4,6 MB, kompakte DASTCOM-Variante): Orbits, H, Durchmesser, Albedo,
 Spektraltyp, Rotationsperiode für ~1,4 Mio. Objekte. Bahnelement-Propagation via
 Kepler-Löser — verbindet sich mit dem KeplerMap-Befund im Parser-Abschnitt.
-gravity + thermal/em-Parameter der Kleinkörper. Lesecode-Vorlage für das
-Fortran-Blockformat: ssd/misc/dastcom (extractPC.for); ID-Indexe: SPKID.DB/MI.DB.
+gravity + thermal/em-Parameter der Kleinkörper. Format-Referenzen im Repo:
+docs/reference/extractPC.for + getascomPC.for (Record-Layout im Quellkopf,
+28 Felder/395 Bytes); ID-Indexe: SPKID.DB/MI.DB.
 ```
 
 **K04** Tycho-2-Katalog (em)
