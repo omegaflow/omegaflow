@@ -1091,30 +1091,6 @@ fn ymd_to_days(year: i64, month: u32, day: u32) -> Option<u64> {
     }
 }
 
-fn parse_iso_utc(s: &str) -> Option<u64> {
-    let s = s.trim();
-    let (date, time_rest) = s.split_once('T')?;
-    let time = time_rest.trim_end_matches('Z').trim_end_matches('z');
-    let time_core = time.split(|c: char| c == '.').next()?;
-    let mut dp = date.split('-');
-    let y: i64 = dp.next()?.parse().ok()?;
-    let m: u32 = dp.next()?.parse().ok()?;
-    let d: u32 = dp.next()?.parse().ok()?;
-    let mut tp = time_core.split(':');
-    let hh: u32 = tp.next()?.parse().ok()?;
-    let mm: u32 = tp.next()?.parse().ok()?;
-    let ss: u32 = match tp.next() {
-        Some(s) => match s.parse::<u32>() {
-            Ok(v) => v,
-            Err(_) => return None,
-        },
-        None => 0,
-    };
-    let days = ymd_to_days(y, m, d)? as i64;
-    let unix = days * 86400 + (hh as i64) * 3600 + (mm as i64) * 60 + (ss as i64);
-    Some(unix as u64)
-}
-
 #[derive(Clone)]
 struct OriginState {
     fetched: f64,
@@ -7584,78 +7560,11 @@ fn load_all_sources(dir: &str) -> Vec<SourceConfig> {
 }
 
 fn cdn_asset_fresh(netloc: &str, name: &str, ttl: u64) -> bool {
-    let gh_token = match std::env::var("GH_TOKEN") {
-        Ok(t) => t,
-        Err(_) => return false,
-    };
-    let url = format!(
-        "https://api.github.com/repos/omegaflow/sources/releases/tags/{}",
-        netloc
+    let cdn_url = format!(
+        "https://github.com/omegaflow/sources/releases/download/{}/{}.json",
+        netloc, name
     );
-    let asset_name = format!("{}.json", name);
-    let mut cmd = Command::new("curl");
-    cmd.arg("-s")
-        .arg("-S")
-        .arg("-f")
-        .arg("-L")
-        .arg("--max-time")
-        .arg("15")
-        .arg("-H")
-        .arg(format!("Authorization: Bearer {}", gh_token))
-        .arg("-H")
-        .arg("Accept: application/vnd.github+json")
-        .arg(&url);
-    let output = match cmd.output() {
-        Ok(o) => o,
-        Err(_) => return false,
-    };
-    if !output.status.success() {
-        return false;
-    }
-    let body = String::from_utf8_lossy(&output.stdout).to_string();
-    let json = match parse_json(&body) {
-        Some(j) => j,
-        None => return false,
-    };
-    let assets = match &json {
-        JsonVal::Obj(map) => match map.get("assets") {
-            Some(JsonVal::Arr(arr)) => arr,
-            _ => return false,
-        },
-        _ => return false,
-    };
-    for asset in assets {
-        if let JsonVal::Obj(amap) = asset {
-            let found = amap.get("name").and_then(|v| {
-                if let JsonVal::Str(s) = v {
-                    Some(s.as_str())
-                } else {
-                    None
-                }
-            });
-            if found != Some(asset_name.as_str()) {
-                continue;
-            }
-            let updated = amap.get("updated_at").and_then(|v| {
-                if let JsonVal::Str(s) = v {
-                    Some(s.as_str())
-                } else {
-                    None
-                }
-            });
-            if let Some(ts) = updated {
-                if let Some(asset_ts) = parse_iso_utc(ts) {
-                    let now = match SystemTime::now().duration_since(UNIX_EPOCH) {
-                        Ok(d) => d.as_secs(),
-                        Err(_) => return false,
-                    };
-                    let age = now.saturating_sub(asset_ts);
-                    return age < ttl;
-                }
-            }
-        }
-    }
-    false
+    cdn_fresh(&cdn_url, ttl)
 }
 
 fn ci_mode(dir: &str) -> i32 {
