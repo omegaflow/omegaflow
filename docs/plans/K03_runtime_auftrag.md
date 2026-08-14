@@ -1,5 +1,9 @@
 # AUFTRAG — K03-Runtime-Konsum: Kleinkörper-Katalog ins System
 
+**Status: ERLEDIGT 2026-08-15.** Der TODO-Eintrag K03 trägt das Ergebnis
+(GM-Gate: nur GM-gemessene Körper manifestieren, Hill-Extent, WS-Beweis
+Ceres 1,3 km). Dieses Dokument bleibt als Handoff-Referenz der Specs.
+
 **Für:** neue Session, Modell beliebig. **Ziel:** Der DASTCOM5-Asteroiden-Katalog
 (1,56 Mio. Körper) wird zur Laufzeit geladen und über den Kepler-Löser als
 Oszillatoren manifestiert — als eine vollständige, testbare Einheit.

@@ -79,20 +79,24 @@ erst dann trägt der Flattener die Binary-PCK-Präzision für den Mond.
 
 **K03** Kleinkörper-Katalog
 ```
-Compiler-Einheit geschlossen (2026-08-14): src/kepler.rs (Kepler-Löser,
-Elemente→ICRS, 6 Tests) + src/bin/dastcom_compiler.rs (DASTCOM5-Parser,
-dast5_le.dat → dastcom_asteroids.bin, 92-B-Stride × 1,56 Mio. Records,
---ci-mode, kernel_flatten.yml-Schritt). Dev-Beweis: Ceres am Osculating-Epoch
-Delta 1,3 km = 0,001 Bogensekunden gegen Horizons (H=3,34, Albedo=0,09,
-GM=62,63, Radius=469,7 verifiziert). Befund: R4-Offsets = cum−4 (0-basiert);
-Header: CALDATE@52, FTYP@79 ('5'); Bias-Zone ab logical 50.000.000
-(physical = logical − 49.104.089); dast5_le.dat direkt unter
-ssd.jpl.nasa.gov/ftp/xfr/ (1,3 GB, täglich regeneriert).
-Verbleibend: Runtime-Konsum — φ-Block für dastcom_asteroids.bin, Streaming-
-Load + Enclosure-Lemma für 1,56 Mio. Körper (Kepler-Evaluation on demand,
-Anzahl-Obergrenze nach Spatial-Hash), Kometen-Records (Multi-Apparitionen,
-976-B-Records, dcom5_le.dat) und der Kleinkörper-SPK-Flatten-Pass
-(Asteroiden-SPKs sind im Index registriert, Familie spk).
+GESCHLOSSEN (2026-08-15): Compiler-Einheit (src/kepler.rs Kepler-Löser +
+elements_to_icrs_state, src/dastcom.rs Record-Format 92-B-Stride + Hill-Radius,
+src/bin/dastcom_compiler.rs, Dev-Beweis Ceres 1,3 km = 0,001″ gegen Horizons)
+UND Runtime-Konsum: φ-Format catalog_dastcom (at sun, ttl 86400), TTL-Fetch
+nach /tmp/omegaflow_catalog_dastcom_asteroids.bin, AsteroidHash (Enclosure-
+Lemma, Zellen auf Epoch-Positionen, vmax/amax datenabgeleitet ×Φ), Query
+query_asteroid_hash (Pre-Filter mit per-Record-Reach, Kepler-Evaluation zum
+Query-Zeitpunkt, Exact-Filter auf Hill+pad), Emission Massen- (GM m³/s²,
+kernel 0, force 1, τ ∞) + Radius-Kanal (m), Extent = Hill-Radius
+a·(GM/3GM_sun)^(1/3). **GM-Gate:** nur Körper mit gemessenem GM manifestieren
+(17 Records — alle anderen sind absent, 0 honored; das Gate löst zugleich die
+Mengenfrage: 17 statt 1,56 Mio. Kandidaten pro Query). WS-Beweis: Ceres-
+Oszillator bei Fenster-Mitte auf der Epoch-Position, Distanz 1,3 km.
+Befund: Kepler-Positionen driften vom n-body-Wahren (Elemente sind Zwei-Körper,
+Epochs altern) — das ist die ehrliche Physik des Katalogs, die TTL-Frische
+regelt den Takt.
+Verbleibend: Kometen-Records (dcom5_le.dat, 976 B, Multi-Apparitionen) und
+der Asteroiden-SPK-Flatten-Pass (Familie spk im Index registriert).
 ```
 
 **K04** Tycho-2-Katalog (em)

@@ -383,6 +383,12 @@ format ephemeris_binary
 at styx
 ttl 86400
 
+# ── DASTCOM5 asteroid catalog (K03) ──
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/dastcom_asteroids.bin
+format catalog_dastcom
+at sun
+ttl 86400
+
 # ── Live API: USGS Earthquakes (seismic-surface) ──
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson
 ttl 60
@@ -453,3 +459,22 @@ ra ra
 dec declination
 z redshift
 field discoverymag tns_transient_flux inverse-square em mag 3600 0.0 0.0
+
+# ── Live API: PurpleAir PM sensors (diffusion, global) ──
+url https://api.purpleair.com/v1/sensors?fields=latitude,longitude,pm2.5&limit=5000
+ttl 3600
+on earth 0 0 0
+header X-API-Key {PURPLEAIR_KEY}
+map data
+lat 0
+lon 1
+field 2 purpleair_pm25_ugm3 gaussian-inverse-square diffusion µg/m3 3600 0.0 0.0
+
+# ── Live API: GBIF organism occurrences (em, global) ──
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true
+ttl 3600
+on earth 0 0 0
+map results
+lat decimalLatitude
+lon decimalLongitude
+field elevation gbif_elevation_m inverse-square gravity m 3600 0.0 0.0

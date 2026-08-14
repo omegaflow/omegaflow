@@ -68,6 +68,16 @@ degree, Chebyshev position granules in meters) followed by sections:
 Absent properties sind 0.0 — die neutrale Konstante des festen Strides.
 Nutation absent = Körper ohne Binary-PCK und ohne NUT_PREC-Reihen (0 honored).
 
+## Asteroid Catalog Channels (K03)
+
+`catalog_dastcom` (φ-Format): DASTCOM5-Asteroidenkatalog (92-B-Stride).
+Nur Körper mit gemessenem GM manifestieren — GM-Gate, alle anderen sind absent
+(0 honored). Massen-Kanal: val = GM (m³/s²); Radius-Kanal: val = Radius (m);
+beide kernel 0, force 1, τ = ∞, extent = Hill-Radius a·(GM/3GM_sun)^(1/3).
+Position/Velocity via Kepler-Evaluation zum Query-Zeitpunkt (die Zwei-Körper-
+Physik des Katalogs; die Elemente sind osculating, die TTL-Frische regelt den
+Takt gegen das n-body-Wahre).
+
 ## Body Channels
 
 `body_channels()` emits exactly two channels:

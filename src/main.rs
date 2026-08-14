@@ -1,4 +1,8 @@
 #![allow(mixed_script_confusables)]
+use omegaflow::dastcom::{
+    accel_at_epoch, hill_radius_m, parse_record, speed_at_epoch, state_at, AsteroidRec,
+    RECORD_STRIDE,
+};
 use omegaflow::inflate::unzip;
 use omegaflow::lsk::LeapSeconds;
 use omegaflow::pck::PckBody;
@@ -566,10 +570,35 @@ struct SpatialHash {
     unbounded: Vec<Oscillator>,
 }
 
+type OscRecord = (
+    f64,
+    f64,
+    f64,
+    f64,
+    f64,
+    f64,
+    f64,
+    f64,
+    f64,
+    f64,
+    f64,
+    f64,
+    f64,
+    f64,
+    f64,
+    f64,
+    f64,
+    f64,
+    f64,
+    f64,
+    f64,
+);
+
 struct Buffer {
     bodies: HashMap<String, SpatialHash>,
     inertial: SpatialHash,
     eph: Arc<HashMap<String, BodyEphemeris>>,
+    asteroids: Option<Arc<AsteroidHash>>,
 }
 
 fn cell_of(p: [f64; 3], s: f64) -> CellKey {
@@ -670,6 +699,7 @@ fn build_buffer(
     samples: Vec<Oscillator>,
     cadence: f64,
     eph: Arc<HashMap<String, BodyEphemeris>>,
+    asteroids: Option<Arc<AsteroidHash>>,
 ) -> Buffer {
     let mut body_samps: HashMap<String, Vec<Oscillator>> = HashMap::new();
     let mut inertial_samps = Vec::new();
@@ -688,6 +718,236 @@ fn build_buffer(
         bodies,
         inertial: build_spatial_hash(inertial_samps, cadence),
         eph,
+        asteroids,
+    }
+}
+
+struct AsteroidHash {
+    cell_size: f64,
+    vmax: f64,
+    amax: f64,
+    rmax: f64,
+    epoch_min_secs: f64,
+    ttl: f64,
+    cell_lo: CellKey,
+    cell_hi: CellKey,
+    cells: HashMap<CellKey, Vec<u32>>,
+    records: Vec<AsteroidRec>,
+    p0: Vec<[f64; 3]>,
+}
+
+fn build_asteroid_hash(bytes: &[u8], cadence: f64, ttl: u64) -> AsteroidHash {
+    let mut records: Vec<AsteroidRec> = Vec::new();
+    let mut p0: Vec<[f64; 3]> = Vec::new();
+    let mut vmax = 0.0f64;
+    let mut amax = 0.0f64;
+    let mut rmax = 0.0f64;
+    let mut epoch_min = f64::MAX;
+    for chunk in bytes.chunks_exact(RECORD_STRIDE) {
+        let rec = match parse_record(chunk) {
+            Some(r) => r,
+            None => continue,
+        };
+        if rec.number == 0 || rec.a_au <= 0.0 || rec.e >= 1.0 {
+            continue;
+        }
+        let hill = match hill_radius_m(&rec) {
+            Some(h) => h,
+            None => continue,
+        };
+        let (pos, vel) = match state_at(&rec, rec.epoch_jd) {
+            Some(s) => s,
+            None => continue,
+        };
+        let speed = (vel[0] * vel[0] + vel[1] * vel[1] + vel[2] * vel[2]).sqrt();
+        let accel = accel_at_epoch(&rec).unwrap_or(0.0);
+        let epoch_secs = (rec.epoch_jd - J2000_EPOCH) * 86400.0;
+        vmax = vmax.max(speed);
+        amax = amax.max(accel);
+        rmax = rmax.max(hill);
+        epoch_min = epoch_min.min(epoch_secs);
+        records.push(rec);
+        p0.push(pos);
+    }
+    vmax *= Φ;
+    amax *= Φ;
+    let rho_cad = rmax + vmax * cadence + 0.5 * amax * cadence * cadence;
+    let shift = (2.0 * rho_cad).log2().ceil().clamp(0.0, 63.0) as i32;
+    let cell_size = 2f64.powi(shift);
+    let mut cells: HashMap<CellKey, Vec<u32>> = HashMap::new();
+    let mut cell_lo = (i64::MAX, i64::MAX, i64::MAX);
+    let mut cell_hi = (i64::MIN, i64::MIN, i64::MIN);
+    for (i, pos) in p0.iter().enumerate() {
+        let c = cell_of(*pos, cell_size);
+        cell_lo.0 = cell_lo.0.min(c.0);
+        cell_lo.1 = cell_lo.1.min(c.1);
+        cell_lo.2 = cell_lo.2.min(c.2);
+        cell_hi.0 = cell_hi.0.max(c.0);
+        cell_hi.1 = cell_hi.1.max(c.1);
+        cell_hi.2 = cell_hi.2.max(c.2);
+        cells.entry(c).or_default().push(i as u32);
+    }
+    AsteroidHash {
+        cell_size,
+        vmax,
+        amax,
+        rmax,
+        epoch_min_secs: if epoch_min == f64::MAX {
+            0.0
+        } else {
+            epoch_min
+        },
+        ttl: ttl as f64,
+        cell_lo,
+        cell_hi,
+        cells,
+        records,
+        p0,
+    }
+}
+
+fn query_asteroid_hash(
+    hash: &AsteroidHash,
+    center: [f64; 3],
+    t2: f64,
+    pad: f64,
+    delta_t_cache: f64,
+    records: &mut Vec<OscRecord>,
+) {
+    if hash.cells.is_empty() {
+        return;
+    }
+    let dt = (t2 - hash.epoch_min_secs).abs() + delta_t_cache;
+    let rho = hash.rmax + hash.vmax * dt + 0.5 * hash.amax * dt * dt + pad;
+    let s = hash.cell_size;
+    let qlo = cell_of([center[0] - rho, center[1] - rho, center[2] - rho], s);
+    let qhi = cell_of([center[0] + rho, center[1] + rho, center[2] + rho], s);
+    let lo = (
+        qlo.0.max(hash.cell_lo.0),
+        qlo.1.max(hash.cell_lo.1),
+        qlo.2.max(hash.cell_lo.2),
+    );
+    let hi = (
+        qhi.0.min(hash.cell_hi.0),
+        qhi.1.min(hash.cell_hi.1),
+        qhi.2.min(hash.cell_hi.2),
+    );
+    if lo.0 > hi.0 || lo.1 > hi.1 || lo.2 > hi.2 {
+        return;
+    }
+    let span = ((hi.0 - lo.0 + 1) as u64)
+        .saturating_mul((hi.1 - lo.1 + 1) as u64)
+        .saturating_mul((hi.2 - lo.2 + 1) as u64);
+    let visit: Vec<&Vec<u32>> = if span > hash.cells.len() as u64 * 4 {
+        hash.cells
+            .iter()
+            .filter(|(ck, _)| {
+                ck.0 >= lo.0
+                    && ck.0 <= hi.0
+                    && ck.1 >= lo.1
+                    && ck.1 <= hi.1
+                    && ck.2 >= lo.2
+                    && ck.2 <= hi.2
+            })
+            .map(|(_, v)| v)
+            .collect()
+    } else {
+        let mut out = Vec::new();
+        for cx in lo.0..=hi.0 {
+            for cy in lo.1..=hi.1 {
+                for cz in lo.2..=hi.2 {
+                    if let Some(indices) = hash.cells.get(&(cx, cy, cz)) {
+                        out.push(indices);
+                    }
+                }
+            }
+        }
+        out
+    };
+    let t_jd = t2 / 86400.0 + J2000_EPOCH;
+    for indices in visit {
+        for &i in indices {
+            let rec = &hash.records[i as usize];
+            let hill = match hill_radius_m(rec) {
+                Some(h) => h,
+                None => continue,
+            };
+            let epoch_secs = (rec.epoch_jd - J2000_EPOCH) * 86400.0;
+            let age = (t2 - epoch_secs).abs();
+            let future_age = age + delta_t_cache;
+            let speed = speed_at_epoch(rec).unwrap_or(0.0);
+            let accel = accel_at_epoch(rec).unwrap_or(0.0);
+            let reach = hill + speed * future_age + 0.5 * accel * future_age * future_age + pad;
+            let p0 = hash.p0[i as usize];
+            let dx = p0[0] - center[0];
+            let dy = p0[1] - center[1];
+            let dz = p0[2] - center[2];
+            let dist2_p0 = dx * dx + dy * dy + dz * dz;
+            if dist2_p0 > reach * reach {
+                continue;
+            }
+            let (p, v) = match state_at(rec, t_jd) {
+                Some(s) => s,
+                None => continue,
+            };
+            let ddx = p[0] - center[0];
+            let ddy = p[1] - center[1];
+            let ddz = p[2] - center[2];
+            let exact = hill + pad;
+            let dist2 = ddx * ddx + ddy * ddy + ddz * ddz;
+            if dist2 > exact * exact {
+                continue;
+            }
+            let gm = rec.gm_km3_s2 as f64 * 1.0e9;
+            records.push((
+                p[0],
+                p[1],
+                p[2],
+                gm,
+                epoch_secs,
+                hash.ttl,
+                f64::INFINITY,
+                hill,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                v[0],
+                v[1],
+                v[2],
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+            ));
+            if rec.radius_km > 0.0 {
+                records.push((
+                    p[0],
+                    p[1],
+                    p[2],
+                    rec.radius_km as f64 * 1000.0,
+                    epoch_secs,
+                    hash.ttl,
+                    f64::INFINITY,
+                    hill,
+                    0.0,
+                    1.0,
+                    0.0,
+                    0.0,
+                    v[0],
+                    v[1],
+                    v[2],
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                ));
+            }
+        }
     }
 }
 
@@ -951,6 +1211,9 @@ fn sense_buffer(
         None,
         eph,
     );
+    if let Some(ash) = &buf.asteroids {
+        query_asteroid_hash(ash, center, t2, pad, delta_t_cache, records);
+    }
 }
 
 fn surface_motion(
@@ -2628,6 +2891,7 @@ struct FetchResult {
     source_idx: usize,
     channels: Vec<(Channel, FieldConfig)>,
     eph_update: Option<(String, BodyEphemeris)>,
+    asteroid_hash: Option<Arc<AsteroidHash>>,
 }
 
 struct WsConfig {
@@ -2876,6 +3140,7 @@ struct Archive {
     origins: HashMap<Origin, OriginState>,
     pck_bodies: HashMap<i32, PckBody>,
     time: Arc<Mutex<Option<LeapSeconds>>>,
+    asteroids: Option<Arc<AsteroidHash>>,
 }
 struct WsFrame {
     opcode: u8,
@@ -3247,7 +3512,12 @@ fn handle_ingress(stream: TcpStream, cfg: WsConfig) {
                                 last_field = Some(f);
                             }
                             last_field.clone().unwrap_or_else(|| {
-                                Arc::new(build_buffer(Vec::new(), 1.0, Arc::new(HashMap::new())))
+                                Arc::new(build_buffer(
+                                    Vec::new(),
+                                    1.0,
+                                    Arc::new(HashMap::new()),
+                                    None,
+                                ))
                             })
                         };
                         let eph_map = buf.eph.clone();
@@ -3324,7 +3594,12 @@ fn handle_ingress(stream: TcpStream, cfg: WsConfig) {
                             last_field = Some(f);
                         }
                         last_field.clone().unwrap_or_else(|| {
-                            Arc::new(build_buffer(Vec::new(), 1.0, Arc::new(HashMap::new())))
+                            Arc::new(build_buffer(
+                                Vec::new(),
+                                1.0,
+                                Arc::new(HashMap::new()),
+                                None,
+                            ))
                         })
                     };
                     let mut report = String::new();
@@ -3528,7 +3803,12 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                     last_field_r = Some(f);
                 }
                 last_field_r.clone().unwrap_or_else(|| {
-                    Arc::new(build_buffer(Vec::new(), 1.0, Arc::new(HashMap::new())))
+                    Arc::new(build_buffer(
+                        Vec::new(),
+                        1.0,
+                        Arc::new(HashMap::new()),
+                        None,
+                    ))
                 })
             };
             let eph_map = field.eph.clone();
@@ -3819,6 +4099,16 @@ fn resolve_secret(url: &str, env: &HashMap<String, String>) -> String {
     }
     result.push_str(rest);
     result
+}
+
+fn render_headers(
+    headers: &[(String, String)],
+    env: &HashMap<String, String>,
+) -> Vec<(String, String)> {
+    headers
+        .iter()
+        .map(|(k, v)| (k.clone(), resolve_secret(v, env)))
+        .collect()
 }
 
 fn parse_field_config(parts: &[&str]) -> Option<(u8, u8, f64, f64, f64)> {
@@ -7767,6 +8057,7 @@ fn ci_mode(dir: &str) -> i32 {
     for src in &sources {
         if src.url.starts_with("https://github.com/omegaflow/sources")
             || src.format == "ephemeris_binary"
+            || src.format == "catalog_dastcom"
             || src.format == "csv_zip"
             || src.format == "kernel_text"
         {
@@ -7906,11 +8197,17 @@ fn main() {
     let mut archive = Archive {
         sources: loaded,
         body_ephemerides: body_ephemerides.clone(),
-        field: Arc::new(build_buffer(Vec::new(), 1.0, body_ephemerides.clone())),
+        field: Arc::new(build_buffer(
+            Vec::new(),
+            1.0,
+            body_ephemerides.clone(),
+            None,
+        )),
         presence: HashMap::new(),
         origins: HashMap::new(),
         pck_bodies: HashMap::new(),
         time: time.clone(),
+        asteroids: None,
     };
     let body_names: Arc<Vec<String>> = {
         let mut names: Vec<String> = archive
@@ -8017,6 +8314,9 @@ fn main() {
                 eph_map.insert(name, eph);
                 archive.body_ephemerides = Arc::new(eph_map);
             }
+            if let Some(hash) = res.asteroid_hash {
+                archive.asteroids = Some(hash);
+            }
             let src = &archive.sources[res.source_idx];
             for (channel, sensor) in &res.channels {
                 let track_origin = matches!(channel.position, Position::Source)
@@ -8094,8 +8394,57 @@ fn main() {
                             source_idx: src_idx,
                             channels: Vec::new(),
                             eph_update: src_clone.body.clone().map(|b| (b, eph)),
+                            asteroid_hash: None,
                         });
                     }
+                });
+                continue;
+            }
+            if archive.sources[i].format == "catalog_dastcom" {
+                let url = archive.sources[i].url.clone();
+                let ftx = fetch_tx.clone();
+                let src_clone = archive.sources[i].clone();
+                let src_idx = i;
+                let src_ttl = src_clone.ttl;
+                let cadence_c = cadence;
+                archive.origins.entry(origin).or_insert(OriginState {
+                    fetched: now,
+                    prev_epoch: now,
+                    prev_abs: [0.0; 3],
+                    prev_motion: None,
+                    resid_ema: 0.0,
+                    has_prev: false,
+                });
+                thread::spawn(move || {
+                    let name = url.rsplit('/').next().unwrap_or("catalog").to_string();
+                    let tmp_path = format!("/tmp/omegaflow_catalog_{}", name);
+                    if !cache_fresh(&tmp_path, src_ttl) {
+                        let bytes = match fetch_raw_bytes(&url, src_ttl) {
+                            Some(b) => b,
+                            None => return,
+                        };
+                        if std::fs::write(&tmp_path, &bytes).is_err() {
+                            return;
+                        }
+                    }
+                    let bytes = match std::fs::read(&tmp_path) {
+                        Ok(b) => b,
+                        Err(_) => return,
+                    };
+                    let hash = build_asteroid_hash(&bytes, cadence_c, src_ttl);
+                    eprintln!(
+                        "catalog_dastcom: {} records, cell_size {:.3e} m, vmax {:.1} m/s, rmax {:.3e} m",
+                        hash.records.len(),
+                        hash.cell_size,
+                        hash.vmax,
+                        hash.rmax
+                    );
+                    let _ = ftx.send(FetchResult {
+                        source_idx: src_idx,
+                        channels: Vec::new(),
+                        eph_update: None,
+                        asteroid_hash: Some(Arc::new(hash)),
+                    });
                 });
                 continue;
             }
@@ -8123,12 +8472,9 @@ fn main() {
                     };
                     let tmp_path = format!("/tmp/omegaflow_csv_{}.zip", src_idx);
                     if !cache_fresh(&tmp_path, src_clone.ttl) {
-                        let bytes = match fetch_raw_bytes_post(
-                            &url,
-                            None,
-                            &src_clone.headers,
-                            src_clone.ttl,
-                        ) {
+                        let headers = render_headers(&src_clone.headers, &e);
+                        let bytes = match fetch_raw_bytes_post(&url, None, &headers, src_clone.ttl)
+                        {
                             Some(b) => b,
                             None => return,
                         };
@@ -8143,6 +8489,7 @@ fn main() {
                             source_idx: src_idx,
                             channels,
                             eph_update: None,
+                            asteroid_hash: None,
                         });
                     }
                 });
@@ -8226,7 +8573,8 @@ fn main() {
                 };
                 let body =
                     render_source_body(&src_clone, pos.0, pos.1, pos.2, now, r, &eph_arc, &lsk_c);
-                let raw = fetch_one(&url, body.as_deref(), &src_clone.headers, src_clone.ttl);
+                let headers = render_headers(&src_clone.headers, &e);
+                let raw = fetch_one(&url, body.as_deref(), &headers, src_clone.ttl);
                 let channels = match raw {
                     Some(ref r) => match extract(&src_clone, r, now, &lsk_c) {
                         ExtractResult::Measurements(v) => v,
@@ -8235,6 +8583,7 @@ fn main() {
                                 source_idx: src_idx,
                                 channels: Vec::new(),
                                 eph_update: src_clone.body.clone().map(|b| (b, eph)),
+                                asteroid_hash: None,
                             });
                             v
                         }
@@ -8245,6 +8594,7 @@ fn main() {
                     source_idx: src_idx,
                     channels,
                     eph_update: None,
+                    asteroid_hash: None,
                 });
             });
         }
@@ -8290,7 +8640,12 @@ fn main() {
                     }
                 }
             }
-            archive.field = Arc::new(build_buffer(all, cadence, archive.body_ephemerides.clone()));
+            archive.field = Arc::new(build_buffer(
+                all,
+                cadence,
+                archive.body_ephemerides.clone(),
+                archive.asteroids.clone(),
+            ));
         }
         let f = archive.field.clone();
         for r in &mut radiators {
@@ -8634,6 +8989,50 @@ mod tests {
             ExtractResult::WithEphemeris(_, _) => panic!("unexpected ephemeris"),
         }
         let _ = std::fs::remove_file(&path);
+    }
+
+    #[test]
+    fn temp_verify_purpleair_gbif() {
+        let env = super::load_env();
+        let srcs = super::load_sources();
+        let fixture_lsk = super::LeapSeconds {
+            delta_t_a: 32.184,
+            deltas: vec![(37.0, 1483228800.0)],
+        };
+        let now = fixture_lsk.system_now_tdb().unwrap();
+        let eph = std::collections::HashMap::new();
+        for s in srcs
+            .iter()
+            .filter(|s| s.url.contains("purpleair") || s.url.contains("gbif"))
+        {
+            let url = match super::render_source_url(
+                s,
+                0.0,
+                0.0,
+                0.0,
+                now,
+                0.0,
+                &eph,
+                &env,
+                &fixture_lsk,
+            ) {
+                Some(u) => u,
+                None => {
+                    eprintln!("render void: {}", s.url);
+                    continue;
+                }
+            };
+            let headers = super::render_headers(&s.headers, &env);
+            let n = match super::fetch_one(&url, None, &headers, s.ttl) {
+                Some(ref r) => match super::extract(s, r, now, &fixture_lsk) {
+                    super::ExtractResult::Measurements(v) => v.len(),
+                    _ => 0,
+                },
+                None => 0,
+            };
+            eprintln!("{} -> {} samples", s.url, n);
+            assert!(n > 0, "{} produced no samples", s.url);
+        }
     }
 
     #[test]

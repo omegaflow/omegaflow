@@ -1,78 +1,10 @@
 use omegaflow::cdn::upload_asset;
-use omegaflow::kepler::elements_to_icrs;
+use omegaflow::dastcom::{encode_record, parse_db_record, state_at, RECORD_STRIDE};
 use std::fs::File;
 use std::io::{Read, Seek, SeekFrom};
 
 const ASTEROID_RECORD_BYTES: u64 = 835;
-const CATALOG_STRIDE: usize = 92;
 const J2000_JD: f64 = 2451545.0;
-
-struct AsteroidRecord {
-    number: u32,
-    epoch_jd: f64,
-    a_au: f64,
-    e: f64,
-    incl_deg: f64,
-    node_deg: f64,
-    peri_deg: f64,
-    ma_deg: f64,
-    h: f32,
-    g: f32,
-    albedo: f32,
-    rot_period_h: f32,
-    radius_km: f32,
-    gm_km3_s2: f32,
-    sptype: [u8; 5],
-}
-
-fn f32_at(buf: &[u8], off: usize) -> f32 {
-    f32::from_le_bytes(buf[off..off + 4].try_into().unwrap())
-}
-
-fn f64_at(buf: &[u8], off: usize) -> f64 {
-    f64::from_le_bytes(buf[off..off + 8].try_into().unwrap())
-}
-
-fn parse_record(buf: &[u8; 835]) -> AsteroidRecord {
-    let mut sptype = [0u8; 5];
-    sptype.copy_from_slice(&buf[646..651]);
-    AsteroidRecord {
-        number: i32::from_le_bytes(buf[0..4].try_into().unwrap()) as u32,
-        epoch_jd: f64_at(buf, 16),
-        a_au: f64_at(buf, 72),
-        e: f64_at(buf, 64),
-        incl_deg: f64_at(buf, 56),
-        node_deg: f64_at(buf, 48),
-        peri_deg: f64_at(buf, 40),
-        ma_deg: f64_at(buf, 32),
-        h: f32_at(buf, 492),
-        g: f32_at(buf, 496),
-        albedo: f32_at(buf, 588),
-        rot_period_h: f32_at(buf, 560),
-        radius_km: f32_at(buf, 568),
-        gm_km3_s2: f32_at(buf, 564),
-        sptype,
-    }
-}
-
-fn encode_catalog(rec: &AsteroidRecord, out: &mut Vec<u8>) {
-    out.extend_from_slice(&rec.number.to_le_bytes());
-    out.extend_from_slice(&rec.epoch_jd.to_le_bytes());
-    out.extend_from_slice(&rec.a_au.to_le_bytes());
-    out.extend_from_slice(&rec.e.to_le_bytes());
-    out.extend_from_slice(&rec.incl_deg.to_le_bytes());
-    out.extend_from_slice(&rec.node_deg.to_le_bytes());
-    out.extend_from_slice(&rec.peri_deg.to_le_bytes());
-    out.extend_from_slice(&rec.ma_deg.to_le_bytes());
-    out.extend_from_slice(&rec.h.to_le_bytes());
-    out.extend_from_slice(&rec.g.to_le_bytes());
-    out.extend_from_slice(&rec.albedo.to_le_bytes());
-    out.extend_from_slice(&rec.rot_period_h.to_le_bytes());
-    out.extend_from_slice(&rec.radius_km.to_le_bytes());
-    out.extend_from_slice(&rec.gm_km3_s2.to_le_bytes());
-    out.extend_from_slice(&rec.sptype);
-    out.extend_from_slice(&[0u8; 3]);
-}
 
 fn compile_catalog(input: &str, out_path: &str) -> usize {
     let mut file = File::open(input).expect("open dast5_le.dat");
@@ -85,7 +17,7 @@ fn compile_catalog(input: &str, out_path: &str) -> usize {
         "dast5: ibias1_raw={} caldate={} ftyp={}",
         ibias1, caldate, ftyp
     );
-    let mut buf = Vec::with_capacity(1_600_000 * CATALOG_STRIDE);
+    let mut buf = Vec::with_capacity(1_600_000 * RECORD_STRIDE);
     let mut record_buf = [0u8; 835];
     let mut written = 0usize;
     let mut skipped = 0usize;
@@ -94,12 +26,18 @@ fn compile_catalog(input: &str, out_path: &str) -> usize {
             Ok(()) => {}
             Err(_) => break,
         }
-        let rec = parse_record(&record_buf);
+        let rec = match parse_db_record(&record_buf) {
+            Some(r) => r,
+            None => {
+                skipped += 1;
+                continue;
+            }
+        };
         if rec.number == 0 || rec.a_au <= 0.0 || rec.e >= 1.0 {
             skipped += 1;
             continue;
         }
-        encode_catalog(&rec, &mut buf);
+        encode_record(&rec, &mut buf);
         written += 1;
     }
     std::fs::write(out_path, &buf).expect("write catalog");
@@ -126,7 +64,13 @@ fn probe_record(file: &mut File, number: u32, t_jd: f64) {
                 return;
             }
         }
-        let rec = parse_record(&record_buf);
+        let rec = match parse_db_record(&record_buf) {
+            Some(r) => r,
+            None => {
+                eprintln!("probe: number {} not present in dast5_le.dat", number);
+                return;
+            }
+        };
         offset += ASTEROID_RECORD_BYTES;
         if rec.number == number {
             break rec;
@@ -139,18 +83,8 @@ fn probe_record(file: &mut File, number: u32, t_jd: f64) {
         offset - ASTEROID_RECORD_BYTES,
         rec.epoch_jd
     );
-    let r = elements_to_icrs(
-        rec.a_au,
-        rec.e,
-        rec.incl_deg,
-        rec.node_deg,
-        rec.peri_deg,
-        rec.ma_deg,
-        rec.epoch_jd,
-        t,
-    );
-    match r {
-        Some(p) => eprintln!(
+    match state_at(&rec, t) {
+        Some((p, _)) => eprintln!(
             "probe: t={:.5} icrs_km x={:.6} y={:.6} z={:.6} | a={} e={} incl={} node={} peri={} ma={} h={} albedo={} rot={} rad={} gm={}",
             t, p[0] / 1000.0, p[1] / 1000.0, p[2] / 1000.0,
             rec.a_au, rec.e, rec.incl_deg, rec.node_deg, rec.peri_deg, rec.ma_deg,
