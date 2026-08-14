@@ -1,0 +1,65 @@
+name: kernel-flatten
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 3 1 * *'
+
+permissions:
+  contents: write
+
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+
+jobs:
+  index:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Crawl kernel roots
+        run: |
+          cargo run --release --bin ephemeris_compiler -- --index \
+            --root https://ssd.jpl.nasa.gov/ftp/ \
+            --root https://naif.jpl.nasa.gov/pub/ \
+            --out phi/sources_index.φ \
+            --jobs 4 \
+            --delay-ms 50
+      - name: Summarize kernel index
+        run: |
+          cargo run --release --bin ephemeris_compiler -- \
+            --summarize phi/sources_index.φ docs/reference/KERNEL_INDEX.md
+      - name: Commit index
+        run: |
+          git config user.name "omegaflow-bot"
+          git config user.email "bot@omegaflow.space"
+          git add phi/sources_index.φ docs/reference/KERNEL_INDEX.md
+          git diff --staged --quiet || git commit -m "kernel index $(date -u +'%Y-%m-%dT%H:%MZ')"
+          git push
+
+  flatten:
+    needs: index
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Flatten SPK bodies and upload to CDN
+        run: |
+          cargo run --release --bin ephemeris_compiler -- \
+            --fetch-from phi/sources_index.φ \
+            --systems planets,jupiter,saturn,mars,uranus,neptune,pluto \
+            --dest kernels \
+            --ci-mode \
+            --index phi/sources_index.φ
+      - name: Compile Horizons bodies and upload to CDN
+        run: |
+          cargo run --release --bin horizons_compiler -- --ci-mode
+      - name: Commit body manifest
+        run: |
+          git config user.name "omegaflow-bot"
+          git config user.email "bot@omegaflow.space"
+          git add phi/sources_index.φ
+          git diff --staged --quiet || git commit -m "body manifest $(date -u +'%Y-%m-%dT%H:%MZ')"
+          git push

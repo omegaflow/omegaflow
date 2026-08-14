@@ -695,6 +695,7 @@ fn main() {
         ("2020-047A", "atlas_3i"),
     ];
     let bodies_retry: &[(&str, &str)] = &[];
+    let ci_mode = std::env::args().any(|a| a == "--ci-mode");
     let run_body = |command: &str, body_name: &str, months: f64, lookback: f64| {
         let (granules, gm_m3_s2) = generate_from_horizons(command, body_name, months, lookback);
         if granules.is_empty() {
@@ -706,6 +707,9 @@ fn main() {
         }
         let path = format!("ephemeris_{}.bin", body_name);
         write_binary(&path, body_name, &granules, &[], wgccre.as_ref(), gm_m3_s2);
+        if ci_mode {
+            let _ = omegaflow::cdn::upload_asset(&path);
+        }
     };
     for (cmd, name) in bodies_stable {
         eprintln!("  {} (Horizons stable)", name);
