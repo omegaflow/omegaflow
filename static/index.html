@@ -582,11 +582,16 @@ fn presence_probe() {
             const evalH = Math.floor(RY * dpr);
             const ssW = Math.max(1, Math.round(evalW * ssaa));
             const ssH = Math.max(1, Math.round(evalH * ssaa));
-            if (fieldCanvas.width !== ssW || fieldCanvas.height !== ssH) { fieldCanvas.width = ssW; fieldCanvas.height = ssH; }
+            if (fieldCanvas.width !== ssW || fieldCanvas.height !== ssH) {
+                const w = ssW, h = ssH;
+                gpu.queue.onSubmittedWorkDone().then(() => {
+                    fieldCanvas.width = w; fieldCanvas.height = h;
+                });
+            }
             const [fr, fu, ff] = orientationFrame();
             try {
                 gpu.queue.writeBuffer(vpBuf, 0, new Float32Array([
-                    ssW, ssH, n, gridStep,
+                    fieldCanvas.width, fieldCanvas.height, n, gridStep,
                     fr[0], fr[1], fr[2], vPresence[0] / C,
                     fu[0], fu[1], fu[2], vPresence[1] / C,
                     ff[0], ff[1], ff[2], vPresence[2] / C,
