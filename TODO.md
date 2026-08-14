@@ -367,6 +367,12 @@ Binary-PCK-Pakets oben).
   geparst — Lautablehnung fehlt.
 - Test-Limit der Curation über 200 Blöcke hinaus erhöhen; 6 Rest-FAILs sind
   Daten-Artefakte (docs/source_curation.md).
+- Headless-WebGPU: in dieser Umgebung nicht aktivierbar — `requestAdapter()` liefert
+  null trotz `--enable-unsafe-webgpu`, `--use-vulkan=swiftshader`,
+  `--enable-features=VulkanFromANGLE,DefaultANGLEVulkan`, `--disable-vulkan-surface`
+  (Testmatrix 2026-08-14, Chrome 151; System hat intel_icd, aber Vulkan-WSI braucht
+  ein Display — Xvfb fehlt, kein sudo). GPU-Pfade prüft der Operator-Browser;
+  automatischer Weg erst mit Xvfb (`DISPLAY=:99 chrome --enable-unsafe-webgpu`).
 
 ---
 
