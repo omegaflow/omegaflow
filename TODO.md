@@ -131,7 +131,7 @@ braucht mindestens eine gemessene, physisch gate-konforme Quelle.
 | seismic-body | USGS, IRIS, GFZ, PDS InSight/Apollo | Kuration (USGS bereits aktiv) |
 | seismic-surface | USGS, IRIS, GFZ | Kuration |
 | thermal | DASTCOM H/Albedo + Yarkovsky-Listen; GOES-Thermal | K03 (Parameter); Kuration (Zeitreihen) |
-| diffusion | NOAA SWPC, NASA OMNI | Kuration |
+| diffusion | PurpleAir (globales PM-Sensorfeld, live), NOAA SWPC, NASA OMNI | Kuration |
 | advective | DSCOVR/SWPC (Solarwind), NOAA GFS | Kuration |
 | electric | SWPC, NASA OmniWeb (B-Felder), ESA Swarm | Kuration |
 
@@ -284,8 +284,10 @@ CI ist im Kernel-Flattener-Paket oben aufgegangen.)
 
 **I03** Auth-APIs
 ```
-AUTH_APIS.md: 25 Secrets offen (Platzhalter in .secrets.local), Auth-Header-Support
-im Fetch-System, Priorität-A-Quellen nach phi/sources.φ.
+Auth-Header-Support steht (render_headers: {SECRET}-Substitution in Header-Werten,
+PurpleAir lebt mit X-API-Key-Header). Verbleibend: Basic-Auth (base64 user:pass)
+für GBIF-Fallback — GBIF selbst ist als Presence-Catalog declined (dead_sources.φ).
+Priorität-A-Quellen nach phi/sources.φ.
 ```
 
 ---

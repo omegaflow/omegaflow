@@ -469,12 +469,3 @@ map data
 lat 0
 lon 1
 field 2 purpleair_pm25_ugm3 gaussian-inverse-square diffusion µg/m3 3600 0.0 0.0
-
-# ── Live API: GBIF organism occurrences (em, global) ──
-url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true
-ttl 3600
-on earth 0 0 0
-map results
-lat decimalLatitude
-lon decimalLongitude
-field elevation gbif_elevation_m inverse-square gravity m 3600 0.0 0.0

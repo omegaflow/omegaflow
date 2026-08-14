@@ -8992,47 +8992,16 @@ mod tests {
     }
 
     #[test]
-    fn temp_verify_purpleair_gbif() {
-        let env = super::load_env();
-        let srcs = super::load_sources();
-        let fixture_lsk = super::LeapSeconds {
-            delta_t_a: 32.184,
-            deltas: vec![(37.0, 1483228800.0)],
-        };
-        let now = fixture_lsk.system_now_tdb().unwrap();
-        let eph = std::collections::HashMap::new();
-        for s in srcs
-            .iter()
-            .filter(|s| s.url.contains("purpleair") || s.url.contains("gbif"))
-        {
-            let url = match super::render_source_url(
-                s,
-                0.0,
-                0.0,
-                0.0,
-                now,
-                0.0,
-                &eph,
-                &env,
-                &fixture_lsk,
-            ) {
-                Some(u) => u,
-                None => {
-                    eprintln!("render void: {}", s.url);
-                    continue;
-                }
-            };
-            let headers = super::render_headers(&s.headers, &env);
-            let n = match super::fetch_one(&url, None, &headers, s.ttl) {
-                Some(ref r) => match super::extract(s, r, now, &fixture_lsk) {
-                    super::ExtractResult::Measurements(v) => v.len(),
-                    _ => 0,
-                },
-                None => 0,
-            };
-            eprintln!("{} -> {} samples", s.url, n);
-            assert!(n > 0, "{} produced no samples", s.url);
-        }
+    fn test_render_headers_secret_substitution() {
+        let mut env = HashMap::new();
+        env.insert("PURPLEAIR_KEY".to_string(), "secret123".to_string());
+        let headers = vec![
+            ("X-API-Key".to_string(), "{PURPLEAIR_KEY}".to_string()),
+            ("User-Agent".to_string(), "plain".to_string()),
+        ];
+        let rendered = render_headers(&headers, &env);
+        assert_eq!(rendered[0].1, "secret123");
+        assert_eq!(rendered[1].1, "plain");
     }
 
     #[test]

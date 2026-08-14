@@ -1,6 +1,15 @@
 # ── Source Curation: Declined Sources ──
 # Format: <category> <reason> \n url <url> \n note <explanation>
 
+# ── GBIF organism occurrences ──
+# Presence catalog: occurrence records carry position + metadata, no physical
+# field measurement. elevation/depth are position coordinates (sparse, ~1/300
+# records); individualCount is a dropped count (borderline population density).
+
+decline presence-catalog
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true
+note Presence/observation catalog — no surviving physical field. elevation is position data (geopotential height, sparse ~1/300); individualCount is a dropped count (borderline, per spec §3.2/§11). Position-only oscillators are dropped (§3.9).
+
 # ── Block 1-2: ISS Position (wheretheiss.at) ──
 # Superseded by JPL Horizons ephemeris (at iss in phi/sources.φ)
 
