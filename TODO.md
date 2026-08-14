@@ -6,7 +6,7 @@ wird entfernt (Git trägt es). Kein Eintrag meldet Erledigtes als offen, kein of
 Punkt fehlt. Widerspricht ein Dokument dieser Datei, gilt diese Datei — solche
 Drift-Stellen sind unter „Doku-Drift" registriert.
 
-## Stand — 2026-08-14 (LSK/PCK-Hochzeit, Binary v2, Protokoll v6, reine Per-Pixel-Membran)
+## Stand — 2026-08-14 (LSK/PCK-Hochzeit, Binary v2, Protokoll v6, reine Per-Pixel-Membran, K01 geschlossen)
 
 Zeit aus naif0012.tls (LSK-Reader, keine TT_MINUS_UTC-Konstante). PCK-Reader pck.rs
 (gm_de440, pck00010, geophysical.ker → GM/J2/J4/Radii/POLE). stype-1 v2: gcount=12,
@@ -20,35 +20,27 @@ keine Stützstellen, keine Interpolation); Nebra-Rampe t2 = clamp((log2(Ω_total
 Exposure-Kette getilgt (keine lvls, keine e/E). SSAA als dichtere Messung: q/Q in
 Φ-Schritten (1.00–8.00, Start 1.00×), Canvas-Backing skaliert, CSS nativ.
 28 lokale v2-Binaries unter /tmp/omegaflow_eph_*.bin (Meter, verifiziert).
+K01 geschlossen: kernel_flatten.yml (Rust-Flattener-CI) ersetzt
+generate-ephemerides.yml; ephemeris_compiler mit --index (voller rekursiver
+HTTPS-Crawl ssd.jpl.nasa.gov/ftp + naif.jpl.nasa.gov/pub → phi/sources_index.φ),
+--summarize (docs/reference/KERNEL_INDEX.md), --fetch-from (Index-getriebene
+Kernel-Auswahl), --ci-mode (gh release upload ssd.jpl.nasa.gov, --clobber);
+dynamische Target-Enumeration aus DAF-Segmenten statt all_target_ids;
+NAIF-ID↔Name-Tabelle docs/reference/naif_body_ids.tsv; gm_Horizons.pck als
+GM-Quelle; Horizons-Compiler trägt --ci-mode. Kleinkörper-Flatten-Pass ist am
+K03-Zweig registriert (DASTCOM+Kepler).
 0 Warnings, 0 Errors; Tests: 5 lib + 20 bin.
 
 ---
 
-### Gravity-Komplettierung — Kernel-Flattener (K01–K06)
+### Gravity-Komplettierung — Kernel-Flattener (K02–K06)
 
 Entscheidungsgrundlage: Der volle Kernel-Bestand (Multi-GB) wird ausschließlich von
 der Rust-CI geflattet — lokal kommt nur das per-Body-Binary vom CDN. Keine lokalen
-Python-Umwege. Quellen-Inventar: ssd.jpl.nasa.gov/ftp (Crawl 2026-08-14, siehe
-Session-Protokoll). Kernel-Familien laut NAIF „Introduction to Kernels"-PDF.
-
-**K01** Rust-CI-Ephemeriden-Flattener (ersetzt Python; schließt die bisherigen
-Einheiten-/Monde-Punkte)
-```
-CI-Workflow (generate-ephemerides in Rust): lädt die vollen Kernels —
-Mond-SPKs jup365/sat441l/mar099/ura184/nep098 (volle Zeitfenster, CI hat den Platz),
-Mond-Text-PCKs pck.sat441/pck.jup365/pck.mar099/pck.ura182/pck.plu060,
-gm_Horizons.pck (GM aller Körper, 15 KB) — kompiliert mit ephemeris_compiler
-(+ --ci-mode-CDNUpload-Pfad), überschreibt die CDN-Assets {netloc}/ephemeris_{body}.bin
-(v2, Meter) — auch die stale Planeten-Binaries (km-Legacy) werden ersetzt.
-Python-Exzision (generate-ephemerides + mirror-cdn aktivieren);
-kernel_flatten.yml + sources_index.φ als Flattener-Struktur.
-Verifikations-Schritte: (1) Mond-PCKs auf j2/j4-Einträge prüfen (Crawl-Behauptung) —
-falls ja, trägt der Flattener die Monde mit echten Harmonischen aus;
-(2) Dev-Beweis vor dem CI-Lauf: volle Kernels einmalig lokal kompilieren
-(einmaliger Download, nur zur Compiler-Verifikation — der Weg bleibt CI).
-Lokal ändert sich nichts: Die φ-Ephemeris-Blöcke für die Monde existieren bereits;
-mit dem CDN-Upload erscheinen die Körper (bis dahin absent, 0 honored).
-```
+Python-Umwege. Quellen-Inventar: phi/sources_index.φ (Crawl, kernel_flatten.yml)
++ docs/reference/KERNEL_INDEX.md (Lesefassung, 9-Kanal-Matrix). K01 (Flattener-CI,
+--index-Crawler, --fetch-from, --ci-mode, NAIF-ID-Tabelle, dynamische
+Target-Enumeration) ist geschlossen; Git trägt es.
 
 **K02** Binary-PCK-Reader (Erde/Mond-Präzision)
 ```
@@ -73,6 +65,10 @@ Kepler-Löser — verbindet sich mit dem KeplerMap-Befund im Parser-Abschnitt.
 gravity + thermal/em-Parameter der Kleinkörper. Format-Referenzen im Repo:
 docs/reference/extractPC.for + getascomPC.for (Record-Layout im Quellkopf,
 28 Felder/395 Bytes); ID-Indexe: SPKID.DB/MI.DB.
+Angeschlossen (K01-Beschluss): Kleinkörper-SPK-Flatten-Pass — die Asteroiden-/
+Kometen-SPKs (asteroids_de441, 17k+ Dateien) sind in phi/sources_index.φ
+registriert (Familie spk); der Flatten-Pass läuft hier über DASTCOM+Kepler,
+die --fetch-from-Maschinerie bleibt generisch (Systeme erweiterbar).
 ```
 
 **K04** Tycho-2-Katalog (em)
@@ -122,12 +118,7 @@ Aktuator-Seite. Der Kurations-Pfad ist unten registriert (Curation & Quellen).
 
 ---
 
-### Zentrismus (3)
-
-**Z03** Sonne (NAIF 10) wird im Ephemeriden-Compiler von der Leere-Prüfung ausgenommen
-```
-if granules.is_empty() && target_id != 10 { … } — Sonne überspringt die Skip-Logik.
-```
+### Zentrismus (2)
 
 **Z04** Ephemeris-Kanäle hardcoded auf gravity
 ```
@@ -167,11 +158,6 @@ CelestialPolygon: v: [0.0, 0.0, 0.0],
 kernel: 0, force: 1, tau: 86400.0 * 365.0, (drei Stellen — gleicher Befund wie oben)
 ```
 
-**F40** NAIF-ID unbekannt → "unknown"
-```
-Name-Mapping im Ephemeriden-Compiler: _ => "unknown"
-```
-
 ---
 
 ### Daten zweiter Klasse (2)
@@ -198,8 +184,8 @@ Horizons-Compiler: let months = if *name == "iss" { 0.9 } else { 1.0 };
 **B06** Hardcodierte Body-Listen in Compilern
 ```
 Verbleibend: horizons_compiler.rs wgccre_for_body-Zwillingstabelle (→ PCK-Hochzeit,
-wgccre in ephemeris_compiler ist bereits gelöscht), ephemeris_compiler.rs
-all_target_ids + body_id_to_name Tabelle (→ NAIF-ID-Mapping vervollständigen, F40).
+siehe M08). Der Ephemeriden-Compiler ist seit K01 tabellegetrieben
+(docs/reference/naif_body_ids.tsv + dynamische Segment-Enumeration, F40 geschlossen).
 ```
 
 ---
@@ -367,6 +353,12 @@ Binary-PCK-Pakets oben).
   geparst — Lautablehnung fehlt.
 - Test-Limit der Curation über 200 Blöcke hinaus erhöhen; 6 Rest-FAILs sind
   Daten-Artefakte (docs/source_curation.md).
+- **Laufzeit-Browser (verifiziert 2026-08-14, Desktop GTX 970 / NVIDIA 580):**
+  **Firefox = 60 fps stabil** mit der Per-Pixel-Membran (wgpu im Content-Prozess,
+  kein Kill-on-Deadline-Watchdog) — der empfohlene Laufzeit-Browser.
+  Chrome = 2 fps (Verdacht Software-Adapter: `chrome://gpu` prüfen — zeigt die
+  WebGPU-Adapterzeile llvmpipe/SwiftShader, dann NVIDIA-Vulkan erzwingen:
+  `--enable-unsafe-webgpu --use-angle=vulkan --enable-features=Vulkan`).
 - Browser-Verifikation (Fables Weg, 2026-08-14 verifiziert): Echter Browser + CDP —
   `DISPLAY=:0 chrome --no-sandbox --enable-unsafe-webgpu --no-default-browser-check
   --remote-debugging-port=9224` (WebGPU ist unter Linux per Default aus, der Flag ist
@@ -386,8 +378,14 @@ Binary-PCK-Pakets oben).
 ### CI Pipeline
 
 - `refresh-protected-data.yml` (Python inline) → Rust (Befund oben unter Infrastruktur).
-- Der Ephemeriden-Teil (generate-ephemerides + mirror-cdn) ist im
-  Kernel-Flattener-Paket (K01) aufgegangen.
+- Ephemeriden-Flatten läuft seit K01 in `kernel_flatten.yml`: Index-Job (voll rekursiver
+  --index-Crawl → phi/sources_index.φ + docs/reference/KERNEL_INDEX.md, Bot-Commit)
+  + Flatten-Job (--fetch-from --systems planets,jupiter,saturn,mars,uranus,neptune,pluto
+  --ci-mode → CDN-Assets ephemeris_{body}.bin, --clobber; Body-Manifest in
+  sources_index.φ; Horizons-Sonden via horizons_compiler --ci-mode). Monatlich +
+  workflow_dispatch.
+- Das Python `refresh.yml` im sources-Repo (Kataloge/TAP/Gaia, Release v1.0) bleibt
+  bis I02 auf Python — K01-Grenze.
 - CDN-Asset-Naming: `{name}.json` (ein Asset pro Quelle, CI überschreibt) — Konvention
   ist der Resolver.
 
