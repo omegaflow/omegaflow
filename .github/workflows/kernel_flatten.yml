@@ -35,6 +35,7 @@ jobs:
           git config user.email "bot@omegaflow.space"
           git add phi/sources_index.φ docs/reference/KERNEL_INDEX.md
           git diff --staged --quiet || git commit -m "kernel index $(date -u +'%Y-%m-%dT%H:%MZ')"
+          git pull --rebase origin main
           git push
 
   flatten:
@@ -56,10 +57,19 @@ jobs:
       - name: Compile Horizons bodies and upload to CDN
         run: |
           cargo run --release --bin horizons_compiler -- --ci-mode
+      - name: Compile DASTCOM asteroid catalog and upload to CDN
+        run: |
+          curl -sSfL --retry 3 --max-time 7200 -o kernels/dast5_le.dat \
+            https://ssd.jpl.nasa.gov/ftp/xfr/dast5_le.dat
+          cargo run --release --bin dastcom_compiler -- \
+            --input kernels/dast5_le.dat \
+            --out dastcom_asteroids.bin \
+            --ci-mode
       - name: Commit body manifest
         run: |
           git config user.name "omegaflow-bot"
           git config user.email "bot@omegaflow.space"
           git add phi/sources_index.φ
           git diff --staged --quiet || git commit -m "body manifest $(date -u +'%Y-%m-%dT%H:%MZ')"
+          git pull --rebase origin main
           git push

@@ -218,6 +218,171 @@ format ephemeris_binary
 at atlas_3i
 ttl 86400
 
+# ── Flattener bodies (K01-K02): Jupiter moons beyond the Galileans ──
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_amalthea.bin
+format ephemeris_binary
+at amalthea
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_himalia.bin
+format ephemeris_binary
+at himalia
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_thebe.bin
+format ephemeris_binary
+at thebe
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_adrastea.bin
+format ephemeris_binary
+at adrastea
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_metis.bin
+format ephemeris_binary
+at metis
+ttl 86400
+
+# ── Flattener bodies: Saturn moons beyond the classical five ──
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_mimas.bin
+format ephemeris_binary
+at mimas
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_hyperion.bin
+format ephemeris_binary
+at hyperion
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_iapetus.bin
+format ephemeris_binary
+at iapetus
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_phoebe.bin
+format ephemeris_binary
+at phoebe
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_janus.bin
+format ephemeris_binary
+at janus
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_epimetheus.bin
+format ephemeris_binary
+at epimetheus
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_helene.bin
+format ephemeris_binary
+at helene
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_atlas.bin
+format ephemeris_binary
+at atlas
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_prometheus.bin
+format ephemeris_binary
+at prometheus
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_pandora.bin
+format ephemeris_binary
+at pandora
+ttl 86400
+
+# ── Flattener bodies: Uranus moons ──
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_ariel.bin
+format ephemeris_binary
+at ariel
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_umbriel.bin
+format ephemeris_binary
+at umbriel
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_titania.bin
+format ephemeris_binary
+at titania
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_oberon.bin
+format ephemeris_binary
+at oberon
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_miranda.bin
+format ephemeris_binary
+at miranda
+ttl 86400
+
+# ── Flattener bodies: Neptune moons beyond Triton ──
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_naiad.bin
+format ephemeris_binary
+at naiad
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_thalassa.bin
+format ephemeris_binary
+at thalassa
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_despina.bin
+format ephemeris_binary
+at despina
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_galatea.bin
+format ephemeris_binary
+at galatea
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_larissa.bin
+format ephemeris_binary
+at larissa
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_proteus.bin
+format ephemeris_binary
+at proteus
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_nereid.bin
+format ephemeris_binary
+at nereid
+ttl 86400
+
+# ── Flattener bodies: Pluto moons beyond Charon ──
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_charon.bin
+format ephemeris_binary
+at charon
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_nix.bin
+format ephemeris_binary
+at nix
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_hydra.bin
+format ephemeris_binary
+at hydra
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_kerberos.bin
+format ephemeris_binary
+at kerberos
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_styx.bin
+format ephemeris_binary
+at styx
+ttl 86400
+
 # ── Live API: USGS Earthquakes (seismic-surface) ──
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson
 ttl 60

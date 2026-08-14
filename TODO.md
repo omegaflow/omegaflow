@@ -28,7 +28,12 @@ Kernel-Auswahl), --ci-mode (gh release upload ssd.jpl.nasa.gov, --clobber);
 dynamische Target-Enumeration aus DAF-Segmenten statt all_target_ids;
 NAIF-ID↔Name-Tabelle docs/reference/naif_body_ids.tsv; gm_Horizons.pck als
 GM-Quelle; Horizons-Compiler trägt --ci-mode. Kleinkörper-Flatten-Pass ist am
-K03-Zweig registriert (DASTCOM+Kepler).
+K03-Zweig registriert (DASTCOM+Kepler). K02 geschlossen: src/bpc.rs
+(Binary-PCK-Leser, DAF Typ 2) + stype-4-Nutationssektion (additiv) in
+Compiler/Runtime; Moon-PA-Merge parkt an K05. K03-Compiler-Einheit
+geschlossen: src/kepler.rs + src/bin/dastcom_compiler.rs (Dev-Beweis Ceres
+0,001″ gegen Horizons). 32 neue φ-Ephemeris-Blöcke für die Flattener-Monde
+(absent bis der Flattener-CI-Lauf die CDN-Assets trägt — 0 honored).
 0 Warnings, 0 Errors; Tests: 5 lib + 20 bin.
 
 ---
@@ -74,16 +79,20 @@ erst dann trägt der Flattener die Binary-PCK-Präzision für den Mond.
 
 **K03** Kleinkörper-Katalog
 ```
-dcom5_le.dat (4,6 MB, kompakte DASTCOM-Variante): Orbits, H, Durchmesser, Albedo,
-Spektraltyp, Rotationsperiode für ~1,4 Mio. Objekte. Bahnelement-Propagation via
-Kepler-Löser — verbindet sich mit dem KeplerMap-Befund im Parser-Abschnitt.
-gravity + thermal/em-Parameter der Kleinkörper. Format-Referenzen im Repo:
-docs/reference/extractPC.for + getascomPC.for (Record-Layout im Quellkopf,
-28 Felder/395 Bytes); ID-Indexe: SPKID.DB/MI.DB.
-Angeschlossen (K01-Beschluss): Kleinkörper-SPK-Flatten-Pass — die Asteroiden-/
-Kometen-SPKs (asteroids_de441, 17k+ Dateien) sind in phi/sources_index.φ
-registriert (Familie spk); der Flatten-Pass läuft hier über DASTCOM+Kepler,
-die --fetch-from-Maschinerie bleibt generisch (Systeme erweiterbar).
+Compiler-Einheit geschlossen (2026-08-14): src/kepler.rs (Kepler-Löser,
+Elemente→ICRS, 6 Tests) + src/bin/dastcom_compiler.rs (DASTCOM5-Parser,
+dast5_le.dat → dastcom_asteroids.bin, 92-B-Stride × 1,56 Mio. Records,
+--ci-mode, kernel_flatten.yml-Schritt). Dev-Beweis: Ceres am Osculating-Epoch
+Delta 1,3 km = 0,001 Bogensekunden gegen Horizons (H=3,34, Albedo=0,09,
+GM=62,63, Radius=469,7 verifiziert). Befund: R4-Offsets = cum−4 (0-basiert);
+Header: CALDATE@52, FTYP@79 ('5'); Bias-Zone ab logical 50.000.000
+(physical = logical − 49.104.089); dast5_le.dat direkt unter
+ssd.jpl.nasa.gov/ftp/xfr/ (1,3 GB, täglich regeneriert).
+Verbleibend: Runtime-Konsum — φ-Block für dastcom_asteroids.bin, Streaming-
+Load + Enclosure-Lemma für 1,56 Mio. Körper (Kepler-Evaluation on demand,
+Anzahl-Obergrenze nach Spatial-Hash), Kometen-Records (Multi-Apparitionen,
+976-B-Records, dcom5_le.dat) und der Kleinkörper-SPK-Flatten-Pass
+(Asteroiden-SPKs sind im Index registriert, Familie spk).
 ```
 
 **K04** Tycho-2-Katalog (em)
