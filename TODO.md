@@ -190,7 +190,7 @@ braucht mindestens eine gemessene, physisch gate-konforme Quelle.
 | thermal | DASTCOM H/Albedo + Yarkovsky-Listen; GOES-Thermal | K03 (Parameter); Kuration (Zeitreihen) |
 | diffusion | PurpleAir (globales PM-Sensorfeld, live), NOAA SWPC, NASA OMNI | Kuration |
 | advective | DSCOVR/SWPC (Solarwind), NOAA GFS | Kuration |
-| electric | SWPC, NASA OmniWeb (B-Felder), ESA Swarm | Kuration |
+| electric | Kein öffentlicher Live-Endpoint (verifiziert 2026-08-15): OOI-CTD-Leitfähigkeit endet 2025-08/09, SWPC-GLM-Blitz 404, Argo ohne Roh-Leitfähigkeit (nur abgeleitete Salinität). B-Felder sind em, nicht electric. Offen: ESA Swarm (VIRTIS/EFI braucht Registrierung), GIC-Netze (nicht öffentlich) | Kuration |
 
 Device-Sensoren (M05) ergänzen die Kanäle lokal; das Radiatorium (M01/M02) ist die
 Aktuator-Seite. Der Kurations-Pfad ist unten registriert (Curation & Quellen).
