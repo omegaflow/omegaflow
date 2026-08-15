@@ -6,7 +6,7 @@ url https://www.ndbc.noaa.gov/data/realtime2/42002.txt
 ttl 3600
 on earth 0 0
 
-url https://vires.services/hapi/data?id=SW_FAST_EFIA_LP_1B&time.min=2026-08-13&time.max=2026-08-14
+url https://vires.services/hapi/data?id=SW_FAST_EFIA_LP_1B&time.min=2026-08-13T12:00:00Z&time.max=2026-08-13T12:59:59Z
 ttl 86400
 at earth
 

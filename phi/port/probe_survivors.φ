@@ -1,0 +1,24 @@
+# verified 293 samples
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2026-08-14&endtime=2026-08-15
+ttl 3600
+on earth 0.0 0.0 0.0
+# precision lon=0dp lat=0dp alt=0dp properties.mag=0dp
+map features
+lon geometry.coordinates.0 deg
+lat geometry.coordinates.1 deg
+alt geometry.coordinates.2 km
+# bbox.0 = -179.576
+# uncertain field bbox.0 — force/unit undetermined, review
+# bbox.1 = -12.3805
+# uncertain field bbox.1 — force/unit undetermined, review
+# bbox.2 = -3.28
+# uncertain field bbox.2 — force/unit undetermined, review
+# bbox.3 = 176.313
+# uncertain field bbox.3 — force/unit undetermined, review
+# bbox.4 = 64.974
+# uncertain field bbox.4 — force/unit undetermined, review
+# bbox.5 = 516.445
+# uncertain field bbox.5 — force/unit undetermined, review
+# properties.mag = 4.8
+field properties.mag seismic-body M 3600
+

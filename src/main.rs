@@ -7886,7 +7886,8 @@ fn probe_mode(path: &str, precise: bool, lat: f64, lon: f64, env: &HashMap<Strin
         .replace("{lon}", &format!("{:.6}", lon));
         let url = resolve_secret(&url, env);
         let url = url.replace("ZZ", "Z").replace("  ", " ");
-        let raw = fetch_raw_probe(&url, None, &[]);
+        let headers = render_headers(&src.headers, env);
+        let raw = fetch_raw_probe(&url, None, &headers);
         let parsed = raw.as_ref().and_then(|r| parse_json(r));
         let auto_ttl = raw.as_ref().and_then(|r| probe_ttl(r));
         let mut block = String::new();
@@ -8213,8 +8214,6 @@ fn is_drop_key(key: &str) -> bool {
         || kl.starts_with("count_")
         || kl.starts_with("number_")
         || (kl.starts_with("n_") && kl.len() <= 5)
-        || kl == "mag"
-        || kl == "magnitude"
         || kl.ends_with("_index")
         || kl.ends_with("_scale")
         || kl.ends_with("_code")
@@ -8395,6 +8394,10 @@ fn probe_classify(key: &str) -> (&str, &str, f64) {
     } else if kl.contains("conduct") {
         ("electric", "S/m", 3600.0)
     } else if kl.contains("sample") || kl.contains("sort") || kl.contains("order") {
+        ("DROP", "", 0.0)
+    } else if kl == "mag" || kl.contains("magnitude") {
+        ("seismic-body", "M", 3600.0)
+    } else if kl.contains("bbox") {
         ("DROP", "", 0.0)
     } else {
         ("UNCERTAIN", "", 0.0)
