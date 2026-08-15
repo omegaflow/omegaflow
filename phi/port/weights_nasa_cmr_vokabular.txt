@@ -1,0 +1,851 @@
+# 785 Tags in der Library
+0 | - | 2332 ATMOSPHERE
+0 | - | 1437 OCEANS
+0 | - | 792 BIOSPHERE
+0 | - | 614 CRYOSPHERE
+0 | - | 586 LAND SURFACE
+0 | - | 499 BIOLOGICAL CLASSIFICATION
+0 | diffusion | 483 ATMOSPHERIC CHEMISTRY
+0 | - | 397 SOLID EARTH
+0 | - | 370 TERRESTRIAL HYDROSPHERE
+0 | - | 357 SPECTRAL/ENGINEERING
+0 | - | 350 CLOUDS
+0 | - | 319 ECOSYSTEMS
+0 | - | 317 GLACIERS/ICE SHEETS
+0 | diffusion | 311 OCEAN CHEMISTRY
+-8 | advective | 298 SNOW/ICE
+-8 | thermal | 281 ATMOSPHERIC TEMPERATURE
+0 | - | 268 HUMAN DIMENSIONS
+0 | - | 252 VEGETATION
+0 | - | 252 ANIMALS/VERTEBRATES
+0 | - | 247 SEA ICE
+-8 | thermal | 227 OCEAN TEMPERATURE
+-8 | advective | 224 ATMOSPHERIC WINDS
+0 | - | 221 AEROSOLS
+0 | - | 219 GEOMORPHIC LANDFORMS/PROCESSES
+0 | - | 219 ATMOSPHERIC WATER VAPOR
+0 | - | 213 ECOLOGICAL DYNAMICS
+0 | - | 199 SOILS
+0 | - | 199 CARBON AND HYDROCARBON COMPOUNDS
+0 | - | 196 Atmosphere
+0 | diffusion | 194 SALINITY/DENSITY
+-4 | thermal | 193 SURFACE TEMPERATURE
+0 | - | 172 CLOUD PROPERTIES
+0 | - | 157 ANIMALS/INVERTEBRATES
+0 | - | 146 WATER VAPOR INDICATORS
+0 | - | 139 Oceans
+-8 | advective | 128 SURFACE WINDS
+0 | - | 124 BIRDS
+0 | advective | 123 PRECIPITATION
+8 | advective | 121 ATMOSPHERIC PRESSURE
+0 | - | 119 TECTONIC LANDFORMS
+-8 | em | 117 ATMOSPHERIC RADIATION
+0 | - | 116 TERRESTRIAL ECOSYSTEMS
+0 | - | 116 AGRICULTURE
+0 | - | 114 TOPOGRAPHY
+0 | - | 110 CLIMATE INDICATORS
+0 | - | 106 VISIBLE WAVELENGTHS
+0 | - | 102 MARINE ECOSYSTEMS
+0 | - | 102 COASTAL PROCESSES
+0 | - | 102 BATHYMETRY/SEAFLOOR TOPOGRAPHY
+0 | - | 101 OCEAN OPTICS
+0 | - | 98 PALEOCLIMATE
+0 | - | 96 SUN-EARTH INTERACTIONS
+0 | - | 93 ALTITUDE
+0 | - | 91 AIR QUALITY
+0 | - | 89 MARINE SEDIMENTS
+0 | - | 88 TERRAIN ELEVATION
+0 | - | 87 INFRARED WAVELENGTHS
+0 | - | 85 SURFACE WATER
+-16 | - | 85 SPECIES/POPULATION INTERACTIONS
+0 | - | 85 Not provided
+-4 | thermal | 81 WATER TEMPERATURE
+0 | - | 81 CLOUD MICROPHYSICS
+0 | diffusion | 79 OXYGEN COMPOUNDS
+0 | - | 78 ICE SHEETS
+0 | diffusion | 77 WATER QUALITY/WATER CHEMISTRY
+0 | diffusion | 77 SALINITY
+0 | - | 74 TECTONICS
+0 | - | 73 MAMMALS
+0 | - | 73 ENVIRONMENTAL IMPACTS
+0 | - | 72 ROCKS/MINERALS/CRYSTALS
+0 | - | 70 AQUATIC ECOSYSTEMS
+0 | - | 68 LAND USE/LAND COVER
+0 | - | 68 FROZEN GROUND
+0 | - | 67 Biosphere
+0 | - | 66 MICROWAVE
+0 | - | 64 NITROGEN COMPOUNDS
+0 | electric | 60 CONDUCTIVITY
+0 | - | 59 VEGETATION COVER
+0 | - | 58 HALOCARBONS AND HALOGENS
+0 | - | 51 WATER CHARACTERISTICS
+20 | thermal | 51 SEA SURFACE TEMPERATURE
+0 | advective | 49 OCEAN CIRCULATION
+0 | - | 49 ECOSYSTEM FUNCTIONS
+0 | - | 48 WATER VAPOR PROFILES
+0 | - | 48 SULFUR COMPOUNDS
+0 | - | 47 VISIBLE RADIANCE
+0 | - | 47 EARTH GASES/LIQUIDS
+0 | - | 46 SURFACE RADIATIVE PROPERTIES
+-8 | diffusion | 46 AEROSOL PARTICLE PROPERTIES
+0 | - | 45 PLANTS
+12 | - | 45 ICE DEPTH/THICKNESS
+0 | - | 45 GEOPOTENTIAL HEIGHT
+-8 | thermal | 45 Atmospheric Temperature
+12 | - | 44 WATER DEPTH
+-8 | advective | 44 UPPER LEVEL WINDS
+0 | - | 44 ARTHROPODS
+-8 | diffusion | 43 SOIL MOISTURE/WATER CONTENT
+0 | advective | 43 OCEAN CURRENTS
+0 | - | 41 PERMAFROST
+0 | - | 41 INFRARED RADIANCE
+0 | - | 41 BIOSPHERIC INDICATORS
+0 | - | 39 ICE CORE RECORDS
+0 | - | 39 EROSION/SEDIMENTATION
+0 | - | 38 GLACIER MOTION/ICE SHEET MOTION
+0 | - | 38 COMMUNITY DYNAMICS
+0 | - | 37 SURFACE WATER FEATURES
+0 | advective | 37 SURFACE PRESSURE
+0 | - | 37 LAND USE/LAND COVER CLASSIFICATION
+0 | - | 36 VISIBLE IMAGERY
+0 | - | 36 Ecological Dynamics
+0 | thermal | 35 UPPER AIR TEMPERATURE
+0 | - | 35 SURFACE WATER PROCESSES/MEASUREMENTS
+0 | - | 35 ENVIRONMENTAL GOVERNANCE/MANAGEMENT
+28 | diffusion | 35 AEROSOL OPTICAL DEPTH/THICKNESS
+28 | advective | 34 SNOW DEPTH
+0 | advective | 34 PRECIPITATION AMOUNT
+0 | - | 34 CARBON
+0 | - | 34 BREEDING PRODUCTIVITY
+-8 | diffusion | 33 SOLAR ENERGETIC PARTICLE FLUX
+0 | - | 32 SURFACE THERMAL PROPERTIES
+0 | - | 32 Sedimentary Structures
+0 | - | 32 Plate Tectonics
+0 | - | 32 Marine Sediments
+0 | - | 32 Marine Geophysics
+0 | - | 32 LANDSCAPE
+0 | - | 32 LAND RECORDS
+0 | - | 32 GLACIERS
+0 | - | 32 GLACIER ELEVATION/ICE SHEET ELEVATION
+-8 | thermal | 32 BRIGHTNESS TEMPERATURE
+0 | - | 31 PLATFORM CHARACTERISTICS
+0 | - | 30 IONOSPHERE/MAGNETOSPHERE DYNAMICS
+0 | - | 30 FIRE ECOLOGY
+0 | - | 30 CARBON MONOXIDE
+0 | advective | 29 OCEAN PRESSURE
+0 | - | 29 NATURAL HAZARDS
+0 | - | 29 ICE EXTENT
+0 | - | 29 ACTIVE LAYER
+0 | - | 28 STRATIGRAPHIC SEQUENCE
+0 | diffusion | 28 OXYGEN
+-8 | em | 28 OUTGOING LONGWAVE RADIATION
+0 | - | 28 OCEAN WAVES
+0 | - | 28 Cryosphere
+-8 | advective | 27 WIND DYNAMICS
+0 | advective | 27 WATER PRESSURE
+0 | - | 27 TROPOPAUSE
+0 | thermal | 27 SOIL TEMPERATURE
+0 | - | 27 OCEAN ACOUSTICS
+0 | - | 27 LAND SURFACE/AGRICULTURE INDICATORS
+0 | - | 27 Land Surface
+0 | - | 27 FRESHWATER ECOSYSTEMS
+0 | - | 27 FISH
+0 | - | 27 Ecosystems
+0 | - | 27 EARTHQUAKES
+0 | - | 27 BOUNDARIES
+0 | - | 27 BIOMASS
+-8 | em | 27 Atmospheric Radiation
+-8 | thermal | 26 SKIN TEMPERATURE
+0 | - | 26 SEDIMENTATION
+0 | - | 26 OCEAN/LAKE RECORDS
+0 | - | 26 EMISSIVITY
+0 | - | 26 DENSITY
+0 | advective | 25 SNOW/ICE TEMPERATURE
+-8 | em | 25 REFLECTANCE
+0 | - | 25 GROUND WATER
+0 | - | 25 CHLOROPHYLL
+0 | - | 24 VOLCANIC ACTIVITY
+0 | - | 24 PETROLEUM
+0 | - | 24 Marine Ecosystems
+0 | - | 24 ICEBERGS
+0 | - | 23 RADAR
+0 | - | 23 Ocean Optics
+-8 | diffusion | 23 NATURAL GAS
+0 | - | 23 GLACIAL LANDFORMS
+0 | - | 23 BATHYMETRY
+0 | - | 23 ALKALINITY
+-8 | - | 22 VEGETATION SPECIES
+0 | - | 22 Spectral/Engineering
+-8 | advective | 22 SNOW COVER
+0 | advective | 22 LIQUID PRECIPITATION
+0 | - | 22 ICE MOTION
+-8 | advective | 22 Atmospheric Winds
+0 | - | 22 ANIMAL SCIENCE
+-8 | - | 21 TRACE GASES/TRACE SPECIES
+0 | advective | 21 PRECIPITATION RATE
+0 | - | 21 PLATE TECTONICS
+0 | - | 21 MOLLUSKS
+0 | - | 21 GLACIER TOPOGRAPHY/ICE SHEET TOPOGRAPHY
+0 | - | 21 GLACIER THICKNESS/ICE SHEET THICKNESS
+0 | - | 21 COASTAL LANDFORMS
+0 | - | 21 Altitude
+0 | - | 20 WILDFIRES
+0 | - | 20 SEDIMENTS
+0 | - | 20 SEA ICE MOTION
+0 | - | 20 PHOSPHATE
+0 | - | 20 PH
+0 | - | 20 Human Dimensions
+0 | - | 20 GEOMAGNETISM
+-4 | - | 19 VEGETATION INDEX
+0 | - | 19 SUSTAINABILITY
+0 | diffusion | 19 Ocean Chemistry
+8 | diffusion | 19 NITRATE
+0 | - | 19 GRAVITY/GRAVITATIONAL FIELD
+8 | advective | 19 ATMOSPHERIC PRESSURE MEASUREMENTS
+0 | - | 18 ULTRAVIOLET WAVELENGTHS
+0 | - | 18 Soils
+0 | - | 18 SILICATE
+8 | em | 18 MAGNETIC FIELD
+0 | - | 18 LAKE ICE
+0 | - | 18 ICE GROWTH/MELT
+-8 | diffusion | 18 GEOCHEMISTRY
+0 | - | 18 Frozen Ground
+0 | - | 18 CONTAMINANT LEVELS/SPILLS
+0 | - | 18 Atmospheric Water Vapor
+0 | - | 17 ULTRAVIOLET RADIANCE
+0 | - | 17 SOLAR ENERGETIC PARTICLE PROPERTIES
+8 | diffusion | 17 SNOW/ICE CHEMISTRY
+0 | - | 17 SEDIMENT COMPOSITION
+0 | - | 17 NITRITE
+0 | - | 17 Mesopause
+0 | - | 17 INFRASTRUCTURE
+0 | - | 17 IGNEOUS ROCKS
+0 | - | 17 ICE TYPES
+0 | - | 17 CLOUD TYPES
+0 | - | 17 Airglow
+0 | - | 16 THERMOCLINE
+0 | thermal | 16 Soil Temperature
+-8 | thermal | 16 POTENTIAL TEMPERATURE
+0 | diffusion | 16 NUTRIENTS
+4 | thermal | 16 HEAT FLUX
+0 | - | 16 CONSERVATION
+0 | - | 16 ANIMAL ECOLOGY AND BEHAVIOR
+0 | - | 15 TROPOSPHERIC OZONE
+0 | - | 15 TIDES
+-8 | em | 15 SOLAR IRRADIANCE
+0 | - | 15 SOLAR ACTIVITY
+-8 | advective | 15 SNOW MELT
+0 | - | 15 PACK ICE
+-8 | advective | 15 OCEAN WINDS
+0 | - | 15 NITROGEN
+0 | - | 15 LIDAR
+0 | - | 15 ICE VELOCITY
+0 | - | 15 ICE FLOES
+0 | - | 15 ICE DEFORMATION
+0 | - | 15 FOREST SCIENCE
+0 | - | 15 CRYOSPHERIC INDICATORS
+20 | thermal | 14 Sea Surface Temperature
+0 | - | 14 RIVER ICE
+0 | - | 14 PUBLIC HEALTH
+0 | - | 14 PROTISTS
+-8 | thermal | 14 Ocean Temperature
+0 | - | 14 ICE EDGES
+0 | - | 14 EROSION
+0 | - | 14 CANOPY CHARACTERISTICS
+0 | - | 14 AIRSPEED/GROUND SPEED
+0 | - | 14 AGRICULTURAL PLANT SCIENCE
+-8 | advective | 13 Surface Winds
+0 | advective | 13 STATIC PRESSURE
+0 | - | 13 SEA ICE CONCENTRATION
+0 | - | 13 REFORESTATION
+0 | - | 13 POLYNYAS
+0 | - | 13 PIGMENTS
+0 | - | 13 Microwave
+0 | - | 13 LAND RESOURCES
+0 | - | 13 HABITAT CONVERSION/FRAGMENTATION
+0 | - | 13 GROUND WATER FEATURES
+0 | - | 13 GASES
+0 | - | 13 FUNGI
+0 | - | 13 ENVIRONMENTAL SUSTAINABILITY
+0 | - | 13 CLIMATE CHANGE RESPONSES
+0 | - | 13 CLIMATE ADAPTATION
+0 | - | 13 BAROMETRIC ALTITUDE
+8 | advective | 13 Atmospheric Pressure
+0 | - | 12 Tropical Cyclones
+0 | - | 12 TOPOGRAPHIC EFFECTS
+-16 | - | 12 Species/Population Interactions
+0 | - | 12 SEGMENTED WORMS (ANNELIDS)
+0 | - | 12 Sea Ice
+-8 | - | 12 POPULATION
+-8 | em | 12 PHOTOSYNTHETICALLY ACTIVE RADIATION
+0 | - | 12 National Centers for Coastal Ocean Science, National Ocean Service, NOAA, U.S. Department of Commerce
+0 | - | 12 MOSSES/HORNWORTS/LIVERWORTS
+0 | - | 12 Models
+0 | - | 12 MICROALGAE
+0 | - | 12 MARINE ENVIRONMENT MONITORING
+0 | - | 12 LEADS
+0 | - | 12 ISOTOPES
+0 | - | 12 ICE ROUGHNESS
+0 | - | 12 FLUORESCENCE
+0 | - | 12 Environmental Governance/Management
+0 | - | 12 Environmental Assessments
+0 | - | 12 Ecosystem Functions
+0 | - | 12 Dynamic Vegetation/Ecosystem Models
+0 | - | 12 Community Dynamics
+-8 | thermal | 12 Brightness Temperature
+0 | - | 12 Aerosols
+-8 | advective | 11 WIND PROFILES
+0 | - | 11 Weather Events
+-8 | thermal | 11 Temperature Tendency
+12 | - | 11 SOIL DEPTH
+-8 | advective | 11 SNOW WATER EQUIVALENT
+0 | - | 11 SIGMA NAUGHT
+0 | - | 11 SEAFLOOR TOPOGRAPHY
+0 | - | 11 ORGANIC MATTER
+0 | - | 11 NITROGEN OXIDES
+0 | - | 11 LAND MANAGEMENT
+0 | - | 11 GROUND WATER PROCESSES/MEASUREMENTS
+0 | - | 11 FLIGHT DATA LOGS
+0 | - | 11 ECHINODERMS
+0 | - | 11 DUST/ASH/SMOKE
+0 | - | 11 CNIDARIANS
+0 | - | 11 BACTERIA/ARCHAEA
+0 | - | 11 ATTENUATION/TRANSMISSION
+0 | diffusion | 11 Atmospheric Chemistry
+0 | thermal | 11 Air Temperature
+-8 | diffusion | 11 AEROSOL BACKSCATTER
+0 | - | 10 SURFACE ROUGHNESS
+0 | advective | 10 SOLID PRECIPITATION
+0 | advective | 10 SEA LEVEL PRESSURE
+0 | - | 10 PLANT CHARACTERISTICS
+0 | - | 10 LEAF CHARACTERISTICS
+0 | - | 10 INFRARED IMAGERY
+-8 | thermal | 10 Ice Temperature
+0 | - | 10 GLACIER MASS BALANCE/ICE SHEET MASS BALANCE
+0 | - | 10 GEOCHEMICAL PROPERTIES
+0 | - | 10 ELEMENTS
+0 | - | 10 Carbon and Hydrocarbon Compounds
+-8 | em | 10 ALBEDO
+0 | - | 10 AGE DETERMINATIONS
+-8 | diffusion | 10 AEROSOL EXTINCTION
+0 | - | 9 VOLCANIC DEPOSITS
+0 | - | 9 TIDAL HEIGHT
+0 | thermal | 9 Surface Air Temperature
+0 | - | 9 SEDIMENTARY ROCKS
+0 | advective | 9 PRECIPITATION PROFILES
+8 | diffusion | 9 NITRATE PARTICLES
+0 | - | 9 MANGROVES
+0 | - | 9 LICHENS
+0 | diffusion | 9 Humidity
+0 | - | 9 GRAVITY
+0 | - | 9 ESTUARIES
+-8 | - | 9 DOMINANT SPECIES
+0 | diffusion | 9 CARBON DIOXIDE
+0 | - | 9 ATMOSPHERIC/OCEAN INDICATORS
+0 | - | 9 ADMINISTRATIVE DIVISIONS
+0 | - | 9 ACOUSTIC VELOCITY
+0 | - | 8 TERRESTRIAL HYDROSPHERE INDICATORS
+0 | - | 8 Solid Earth
+-8 | advective | 8 SNOW DENSITY
+-8 | - | 8 SENSOR COUNTS
+0 | - | 8 SEDIMENT TRANSPORT
+0 | - | 8 ROCK GLACIERS
+0 | - | 8 RADIATIVE FORCING
+-8 | diffusion | 8 PROTON FLUX
+0 | advective | 8 Precipitation
+-12 | thermal | 8 OCEAN HEAT BUDGET
+0 | - | 8 Natural Hazards
+0 | - | 8 METAMORPHIC ROCKS
+0 | - | 8 MACROALGAE (SEAWEEDS)
+0 | - | 8 LIDAR DEPOLARIZATION RATIO
+0 | - | 8 LANDSCAPE PROCESSES
+-8 | diffusion | 8 ION FLUX
+-8 | thermal | 8 ICE TEMPERATURE
+0 | - | 8 GLACIAL PROCESSES
+0 | - | 8 Geomagnetism
+0 | - | 8 FIRN
+0 | - | 8 ANTHROPOGENIC/HUMAN INFLUENCED ECOSYSTEMS
+0 | - | 8 AMMONIA
+-8 | diffusion | 8 Aerosol Particle Properties
+0 | - | 8 Active Layer
+0 | - | 8 ABSORPTION
+-8 | advective | 7 WAVE HEIGHT
+0 | - | 7 WATER VAPOR PROCESSES
+0 | thermal | 7 Upper Air Temperature
+0 | - | 7 TECTONIC PROCESSES
+0 | - | 7 SUSPENDED SOLIDS
+0 | - | 7 Sun-earth Interactions
+0 | - | 7 SULFUR OXIDES
+0 | - | 7 SULFATE PARTICLES
+-8 | diffusion | 7 Soil Moisture/Water Content
+0 | - | 7 SEA SURFACE TOPOGRAPHY
+0 | - | 7 RECLAMATION/REVEGETATION/RESTORATION
+0 | advective | 7 Ocean Currents
+0 | advective | 7 Ocean Circulation
+-8 | em | 7 LONGWAVE RADIATION
+0 | - | 7 LANDSCAPE ECOLOGY
+0 | - | 7 Ionosphere/Magnetosphere Dynamics
+0 | - | 7 HEAVY METALS CONCENTRATION
+0 | - | 7 EXOTIC VEGETATION
+-8 | diffusion | 7 ELECTRON FLUX
+0 | - | 7 CROP/PLANT YIELDS
+0 | - | 7 CONTAMINANTS
+0 | - | 7 BOREHOLES
+0 | - | 7 BIOMASS BURNING
+0 | - | 7 BEACHES
+0 | - | 7 Aurorae
+0 | - | 7 Aquatic Ecosystems
+0 | - | 7 ANGIOSPERMS (FLOWERING PLANTS)
+0 | - | 7 AMPHIBIANS
+-8 | diffusion | 7 ALPHA PARTICLE FLUX
+0 | - | 7 AGRICULTURAL CHEMICALS
+-8 | advective | 6 WIND WAVES
+8 | em | 6 SOLAR RADIATION
+0 | - | 6 SOIL EROSION
+0 | - | 6 SOIL ABSORPTION
+0 | - | 6 SOCIAL BEHAVIOR
+-8 | advective | 6 Snow/Ice
+-8 | em | 6 SHORTWAVE RADIATION
+0 | - | 6 SHORELINES
+0 | - | 6 SEWAGE DISPOSAL
+0 | - | 6 SEA SURFACE HEIGHT
+0 | - | 6 SEA LEVEL RISE
+0 | - | 6 ROCKY COASTS
+0 | - | 6 REPTILES
+-8 | em | 6 RADIATION EXPOSURE
+0 | - | 6 PARTICULATE MATTER
+0 | - | 6 PARTICLE SPEED
+0 | - | 6 PARTICLE COMPOSITION
+0 | - | 6 ORGANIC PARTICLES
+0 | - | 6 -NA-
+0 | - | 6 MICROFOSSILS
+0 | - | 6 MARSHES
+0 | - | 6 LAND USE CLASSES
+0 | - | 6 LANDSLIDES
+0 | - | 6 LANDSCAPE PATTERNS
+0 | - | 6 LAGOONS
+0 | - | 6 KARST LANDFORMS
+-8 | em | 6 IRRADIANCE
+0 | - | 6 INORGANIC CARBON
+0 | - | 6 Inorganic Carbon
+0 | - | 6 INLETS
+0 | - | 6 Gravity Wave
+0 | - | 6 FOREST COMPOSITION/VEGETATION STRUCTURE
+0 | - | 6 FLUVIAL LANDFORMS
+0 | - | 6 FJORDS
+0 | - | 6 EMISSIONS
+0 | - | 6 ECOTOXICOLOGY
+0 | - | 6 DUNES
+0 | - | 6 DELTAS
+0 | - | 6 BEDROCK LITHOLOGY
+0 | - | 6 BARRIER ISLANDS
+0 | - | 6 AURORAE
+0 | - | 6 Atmospheric Electricity
+0 | - | 6 AQUATIC SCIENCES
+0 | - | 6 AEOLIAN LANDFORMS
+0 | - | 5 WEATHER EVENTS
+0 | - | 5 WAVE PERIOD
+0 | - | 5 WATERSHED CHARACTERISTICS
+0 | - | 5 Turbulence
+0 | - | 5 TRANSPORTATION
+0 | - | 5 SOIL PRODUCTIVITY
+0 | - | 5 SOIL BULK DENSITY
+0 | diffusion | 5 SEDIMENT CHEMISTRY
+0 | - | 5 Rain Storms
+0 | - | 5 PLANETARY BOUNDARY LAYER HEIGHT
+0 | - | 5 PHENOLOGICAL CHANGES
+0 | - | 5 PERIGLACIAL PROCESSES
+0 | - | 5 PALEOCLIMATE RECONSTRUCTIONS
+0 | - | 5 PALEOCLIMATE INDICATORS
+0 | - | 5 Paleoclimate
+0 | - | 5 ORGANIC CARBON
+0 | - | 5 MINERALS
+0 | - | 5 MARINE OBSTRUCTIONS
+0 | - | 5 MACHINE LEARNING TRAINING DATA
+0 | - | 5 LIDAR BACKSCATTER
+0 | - | 5 LABELS
+0 | - | 5 IRRIGATION
+0 | diffusion | 5 ION CHEMISTRY/IONIZATION
+8 | em | 5 INCOMING SOLAR RADIATION
+4 | thermal | 5 Heat Flux
+0 | - | 5 ENVIRONMENTAL ASSESSMENTS
+0 | - | 5 ECONOMIC RESOURCES
+0 | - | 5 DISSOLVED GASES
+0 | - | 5 CULTURAL FEATURES
+0 | - | 5 CLOUD RADIATIVE TRANSFER
+0 | - | 5 CLOUD CONDENSATION NUCLEI
+0 | diffusion | 5 Carbon Dioxide
+0 | - | 5 BRYOZOANS/MOSS ANIMALS
+0 | - | 5 BOUNDARY SURVEYS
+0 | - | 5 AMBIENT NOISE
+0 | - | 5 AGRICULTURAL ENGINEERING
+-8 | advective | 4 Wind Dynamics
+0 | - | 4 Water Vapor Profiles
+0 | - | 4 Water Vapor Indicators
+0 | - | 4 WATER QUALITY
+0 | - | 4 Visualization/Image Processing
+0 | - | 4 TREE RINGS
+-4 | thermal | 4 Surface Temperature
+0 | - | 4 Sunshine
+0 | - | 4 SPONGES
+0 | - | 4 SOIL PH
+0 | - | 4 SOIL HORIZONS/PROFILE
+0 | - | 4 SOIL FERTILITY
+0 | - | 4 SEA STATE
+0 | em | 4 RADIOCARBON
+0 | - | 4 RADAR BACKSCATTER
+0 | - | 4 Radar
+0 | advective | 4 PRECIPITATION ANOMALIES
+0 | - | 4 POLITICAL DIVISIONS
+-8 | electric | 4 PLASMA WAVES
+0 | - | 4 PLANT PHENOLOGY
+0 | - | 4 Plankton
+0 | - | 4 PESTICIDES
+0 | - | 4 Permafrost
+-8 | advective | 4 Ocean Winds
+0 | - | 4 MICROWAVE IMAGERY
+0 | - | 4 MACROFOSSILS
+0 | - | 4 Macrofossils
+0 | - | 4 Lightning
+-4 | thermal | 4 LAND SURFACE TEMPERATURE
+0 | - | 4 LAND PRODUCTIVITY
+0 | - | 4 IONS
+0 | - | 4 HYPERSPECTRAL IMAGERY
+0 | - | 4 FISHERIES
+0 | - | 4 ENVIRONMENTAL HEALTH FACTORS
+0 | - | 4 Data Analysis And Visualization
+0 | - | 4 CONTINENTAL MARGINS
+-8 | diffusion | 4 CARBON FLUX
+0 | - | 4 CARBONACEOUS AEROSOLS
+0 | - | 4 Carbon
+0 | - | 4 BIOGEOCHEMICAL CYCLES
+-8 | thermal | 4 ATMOSPHERIC TEMPERATURE INDICES
+0 | advective | 4 Atmospheric Precipitation Indices
+0 | - | 4 ANIMAL COMMODITIES
+0 | - | 4 AMOEBOIDS
+0 | - | 4 AGRICULTURAL AQUATIC SCIENCES
+0 | - | 4 ACID DEPOSITION
+0 | - | 3 WATER RESOURCES
+0 | - | 3 WATER MANAGEMENT
+0 | - | 3 VOLATILE ORGANIC COMPOUNDS
+0 | - | 3 VECTOR LABELS
+0 | - | 3 TURBIDITY
+0 | - | 3 TIDAL RANGE
+0 | - | 3 THERMAL INFRARED
+0 | - | 3 STORM SURGE
+0 | - | 3 STABLE ISOTOPES
+-8 | advective | 3 SOLAR WIND
+0 | diffusion | 3 SOIL CHEMISTRY
+28 | advective | 3 Snow Depth
+0 | - | 3 SEDIMENTARY STRUCTURES
+12 | - | 3 SECCHI DEPTH
+0 | - | 3 SCATTERING
+0 | - | 3 Scattering
+0 | - | 3 RURAL AREAS
+0 | - | 3 ROUNDWORMS
+12 | - | 3 RIVER ICE DEPTH/EXTENT
+-8 | em | 3 Reflectance
+0 | - | 3 POLLEN
+0 | - | 3 Platform Characteristics
+-8 | em | 3 Photosynthetically Active Radiation
+0 | - | 3 PHOSPHORUS
+0 | - | 3 PERMAFROST MELT
+0 | - | 3 PARTICULATES
+0 | - | 3 Organic Carbon
+0 | - | 3 Ocean/Lake Records
+0 | - | 3 OCEAN COLOR
+-8 | diffusion | 3 NOBLE GAS
+0 | - | 3 METHANE
+0 | - | 3 MARINE GEOPHYSICS
+0 | - | 3 MARINE GEOCHEMICAL PROCESSES
+32 | em | 3 MAGNETIC FIELDS/MAGNETIC CURRENTS
+8 | em | 3 Magnetic Field
+0 | - | 3 LEAD
+0 | - | 3 HYDROGEN COMPOUNDS
+0 | - | 3 HYDROCARBONS
+0 | - | 3 HUMAN SETTLEMENTS
+-8 | diffusion | 3 HEAVY NUCLEI FLUX
+0 | - | 3 GRAVITATIONAL FIELD
+0 | - | 3 Glaciers/Ice Sheets
+0 | - | 3 GLACIATION
+0 | - | 3 GEOMAGNETIC INDICES
+0 | - | 3 Gelbstoff
+0 | - | 3 FOREST CONSERVATION
+0 | - | 3 FLATWORMS/FLUKES/TAPEWORMS
+-8 | electric | 3 Electric Field
+0 | - | 3 DEFORESTATION
+0 | - | 3 CYANOBACTERIA (BLUE-GREEN ALGAE)
+0 | - | 3 COSMIC RAYS
+0 | - | 3 Climate Indicators
+0 | - | 3 Chlorophyll
+0 | - | 3 CHEMICAL COMPOSITION
+0 | - | 3 BLACK CARBON
+0 | - | 3 Biological Classification
+0 | - | 3 Attenuation/Transmission
+8 | advective | 3 Atmospheric Pressure Measurements
+0 | - | 3 Atmospheric/Ocean Indicators
+0 | - | 3 ATMOSPHERIC ELECTRICITY
+0 | - | 3 AMMONIUM AEROSOLS
+0 | - | 3 AGRICULTURE PRODUCTION
+0 | - | 3 Agriculture
+-8 | diffusion | 3 AEROSOL RADIANCE
+0 | - | 3 ACOUSTIC SCATTERING
+0 | - | 3 Absorption
+0 | - | 2 VULNERABILITY LEVELS/INDEX
+0 | - | 2 VORTICITY
+0 | - | 2 VEGETATION RECONSTRUCTION
+-8 | advective | 2 Upper Level Winds
+0 | em | 2 ULTRAVIOLET RADIATION
+0 | - | 2 TUNICATES
+0 | - | 2 TRENCHES
+0 | advective | 2 TOTAL SURFACE PRECIPITATION RATE
+0 | - | 2 Topography
+0 | - | 2 Terrain Elevation
+0 | - | 2 TELECONNECTIONS
+0 | diffusion | 2 Surface Salinity
+0 | advective | 2 Surface Pressure
+0 | - | 2 SUNSHINE
+-8 | em | 2 SOLAR FLARES
+0 | - | 2 SOIL STRUCTURE
+0 | - | 2 SOIL RESPIRATION
+-8 | diffusion | 2 SOIL MOISTURE
+-12 | thermal | 2 SOIL HEAT BUDGET
+-8 | diffusion | 2 SOIL GAS/AIR
+0 | - | 2 SOIL CLASSIFICATION
+0 | - | 2 SOCIOECONOMICS
+0 | - | 2 SMOG
+0 | - | 2 SHORELINE DISPLACEMENT
+0 | - | 2 SENSOR CHARACTERISTICS
+0 | - | 2 Sea Surface Topography
+0 | - | 2 Sea Surface Height
+0 | - | 2 SEASONALLY FROZEN GROUND
+0 | diffusion | 2 Salinity/Density
+0 | - | 2 RIVER/LAKE ICE FREEZE
+0 | - | 2 RIVER/LAKE ICE BREAKUP
+0 | - | 2 REFLECTED INFRARED
+0 | - | 2 RASTER LABELS
+0 | - | 2 RANGE CHANGES
+0 | em | 2 Radio Wave Flux
+-8 | em | 2 RADIO WAVE
+-8 | em | 2 Radio Wave
+0 | - | 2 RADAR REFLECTIVITY
+0 | - | 2 Radar Reflectivity
+0 | - | 2 RADAR IMAGERY
+-8 | - | 2 POPULATION SIZE
+0 | - | 2 Plants
+0 | - | 2 PLANT COMMODITIES
+0 | - | 2 Planetary Boundary Layer Height
+0 | - | 2 Pigments
+-8 | thermal | 2 PARTICLE TEMPERATURE
+-8 | diffusion | 2 PARTICLE FLUX
+0 | - | 2 PARTICLE DENSITY
+0 | - | 2 Pack Ice
+0 | - | 2 OCEAN PLATEAUS/RIDGES
+0 | - | 2 NITROUS OXIDE
+0 | - | 2 MICROFLORA
+0 | - | 2 Microalgae
+-8 | advective | 2 LOCAL WINDS
+0 | - | 2 LIVESTOCK PRODUCTS
+0 | - | 2 LITTER CHARACTERISTICS
+0 | - | 2 LENGTH OF GROWING SEASON
+0 | - | 2 Land Records
+0 | - | 2 LAKES
+0 | - | 2 INDIGENOUS VEGETATION
+0 | - | 2 ICE CORE AIR BUBBLES
+0 | - | 2 GLACIAL MEASUREMENTS
+0 | - | 2 GEODETICS
+0 | - | 2 FREEZE/THAW
+0 | - | 2 FOREST MANAGEMENT
+0 | - | 2 FOREST FIRE SCIENCE
+0 | - | 2 FOOD SCIENCE
+0 | - | 2 Flight Data Logs
+0 | - | 2 FERTILIZERS
+0 | - | 2 EVERGREEN VEGETATION
+8 | advective | 2 ELECTRIC FIELDS/ELECTRIC CURRENTS
+-8 | electric | 2 ELECTRIC FIELD
+0 | - | 2 Doppler Velocity
+0 | - | 2 DIATOMS
+0 | - | 2 CROPPING SYSTEMS
+0 | - | 2 CORAL REEFS
+0 | - | 2 CONTROL SURVEYS
+0 | electric | 2 Conductivity
+0 | - | 2 COASTAL ELEVATION
+0 | - | 2 CLOUD INDICATORS
+0 | - | 2 CLOUD DROPLET DISTRIBUTION
+0 | - | 2 CAVE DEPOSITS
+0 | - | 2 BUILDINGS
+0 | - | 2 Bathymetry/Seafloor Topography
+-8 | thermal | 2 Atmospheric Temperature Indices
+0 | - | 2 ANIMAL PHYSIOLOGY AND BIOCHEMISTRY
+0 | - | 2 AIRGLOW
+0 | - | 2 AFFORESTATION/REFORESTATION
+0 | em | 2 AEROSOL SINGLE SCATTERING ALBEDO
+28 | diffusion | 2 Aerosol Optical Depth/Thickness
+-8 | diffusion | 2 AEROSOL FORWARD SCATTER
+-8 | diffusion | 2 Aerosol Backscatter
+0 | - | 2 ACOUSTIC REFLECTIVITY
+0 | - | 2 ACOUSTIC FREQUENCY
+0 | - | 2 ABYSSAL HILLS/PLAINS
+0 | - | 2 ABLATION ZONES/ACCUMULATION ZONES
+-8 | advective | 1 Wind Profiles
+0 | - | 1 WETLANDS
+0 | - | 1 WEEDS, NOXIOUS PLANTS OR INVASIVE PLANTS
+0 | - | 1 WEATHERING
+0 | - | 1 WAVE SPEED/DIRECTION
+0 | - | 1 WATER VAPOR INDICES
+0 | - | 1 Water Vapor
+0 | - | 1 WATER MASSES
+0 | - | 1 VULNERABLE POPULATIONS
+0 | - | 1 VOLCANIC ERUPTIONS
+0 | - | 1 VISIBILITY
+0 | - | 1 Visibility
+0 | - | 1 Tropopause
+0 | - | 1 TRANSMITTANCE
+-8 | diffusion | 1 TRACE ELEMENTS/TRACE METALS
+-8 | diffusion | 1 TRACE ELEMENTS
+0 | - | 1 TOXIC AEROSOLS
+0 | - | 1 TOTAL ELECTRON CONTENT
+0 | advective | 1 THERMOHALINE CIRCULATION
+0 | - | 1 TERRIGENOUS SEDIMENTS
+0 | - | 1 Terrestrial Hydrosphere
+-8 | thermal | 1 TEMPERATURE INDICES
+0 | diffusion | 1 SURFACE SALINITY
+0 | - | 1 SURFACE MELT
+0 | - | 1 SUNSPOTS
+0 | - | 1 SULFUR
+0 | - | 1 STREAMFLOW RECONSTRUCTION
+0 | - | 1 Station Height
+0 | - | 1 SOLIDS
+0 | - | 1 SOLAR VELOCITY FIELDS
+0 | - | 1 SOLAR ULTRAVIOLET EMISSIONS
+8 | em | 1 Solar Radiation
+0 | - | 1 SOLAR INDUCED FLUORESCENCE
+0 | - | 1 SOLAR IMAGERY
+0 | - | 1 SOLAR ACTIVE REGIONS
+0 | - | 1 SOIL TEXTURE
+0 | - | 1 SOIL POROSITY
+-8 | diffusion | 1 SOIL BIOGEOCHEMISTRY
+-8 | advective | 1 Snow Water Equivalent
+-8 | advective | 1 Snow Density
+-8 | advective | 1 Snow
+-8 | advective | 1 SIGNIFICANT WAVE HEIGHT
+-8 | - | 1 Sensor Counts
+0 | - | 1 Sediments
+0 | - | 1 SEA SALT
+0 | - | 1 Seafloor Topography
+0 | - | 1 ROTIFERS
+0 | - | 1 RIVERS/STREAMS
+0 | - | 1 RIVERS/STREAM HABITAT
+0 | - | 1 RIBBON WORMS
+0 | - | 1 RETURN POWER
+0 | - | 1 Reference Fields
+0 | - | 1 RECREATIONAL ACTIVITIES/AREAS
+0 | - | 1 Rain
+0 | em | 1 RADIO WAVE FLUX
+0 | advective | 1 Pressure Thickness
+0 | advective | 1 Precipitation Rate
+0 | advective | 1 Precipitation Amount
+0 | - | 1 POULTRY PRODUCTS
+0 | - | 1 POTENTIAL DENSITY
+-8 | - | 1 POPULATION DISTRIBUTION
+0 | - | 1 PIPELINES
+0 | - | 1 PERMAFROST/METHANE RELEASE
+0 | - | 1 PARTICLE DISTRIBUTION FUNCTIONS
+0 | - | 1 PALEOMAGNETISM
+0 | diffusion | 1 Oxygen Compounds
+0 | - | 1 OSCILLATIONS
+20 | em | 1 OPTICAL DEPTH/THICKNESS
+0 | - | 1 OCEAN TRACERS
+-8 | thermal | 1 OCEAN TEMPERATURE PROFILES
+0 | - | 1 OCEAN CONTAMINANTS
+0 | - | 1 Ocean Color
+0 | - | 1 NON-METALLIC MINERALS
+0 | - | 1 NITRIC ACID
+0 | em | 1 NET RADIATION
+0 | - | 1 MONSOONS
+0 | - | 1 MICROFAUNA
+0 | - | 1 METALS
+0 | - | 1 MEAN RADIAL VELOCITY
+0 | - | 1 MARINE VOLCANISM
+0 | - | 1 MARINE MAGNETICS
+0 | - | 1 MARINE HABITAT
+-8 | diffusion | 1 MARINE GEOCHEMISTRY
+-8 | em | 1 MAGNETIC STORMS
+-8 | em | 1 Magnetic Intensity
+-8 | em | 1 Magnetic Inclination
+-8 | em | 1 Magnetic Declination
+-8 | em | 1 Magnetic Anomalies
+0 | - | 1 LOCAL SUBSIDENCE TRENDS
+-8 | thermal | 1 Land Temperature
+-4 | thermal | 1 Land Surface Temperature
+0 | - | 1 ISLANDS
+-8 | diffusion | 1 INFRARED FLUX
+0 | - | 1 INDUSTRIAL EMISSIONS
+12 | - | 1 Ice Depth/Thickness
+0 | - | 1 HAZARD MITIGATION/PLANNING
+0 | - | 1 GYRES
+0 | diffusion | 1 GREENHOUSE GAS FLUX
+0 | - | 1 GRAVITY WAVES
+0 | - | 1 Glacier Topography/Ice Sheet Topography
+0 | - | 1 Glacier Thickness/Ice Sheet Thickness
+0 | - | 1 Glacier Elevation/Ice Sheet Elevation
+0 | - | 1 GEODETICS/GRAVITY
+0 | - | 1 GEOCHEMICAL PROCESSES
+0 | - | 1 GELBSTOFF
+0 | - | 1 FRUIT PRODUCTS
+0 | - | 1 FREEZE/FROST
+0 | - | 1 FRACTURE ZONES
+0 | - | 1 FOREST YIELDS
+0 | - | 1 FOOD SECURITY
+0 | - | 1 FOOD QUALITY
+0 | - | 1 FOOD CONTAMINATION AND TOXICOLOGY
+0 | - | 1 Fluorescence
+0 | - | 1 FLOODS
+0 | - | 1 FLAGELLATES
+0 | - | 1 Fisheries
+0 | - | 1 Fish
+0 | - | 1 FIELD CROP PRODUCTS
+0 | - | 1 ENTOPROCTS
+0 | - | 1 ENERGY PRODUCTION/USE
+-8 | electric | 1 ELECTRICAL PROPERTIES
+0 | - | 1 DROUGHTS
+0 | - | 1 DROPLET SIZE
+0 | - | 1 DRAINAGE
+0 | - | 1 DOPPLER VELOCITY
+0 | - | 1 DISEASES/EPIDEMICS
+0 | advective | 1 DIFFERENTIAL PRESSURE
+0 | - | 1 DEGRADATION
+0 | - | 1 DECIDUOUS VEGETATION
+0 | - | 1 Data Synchronization Time
+0 | - | 1 CRUSTAL MOTION
+0 | - | 1 CORONA
+0 | - | 1 CORE PROCESSES
+0 | - | 1 COORDINATE REFERENCE SYSTEM
+0 | - | 1 COASTAL HABITAT
+0 | - | 1 CIVIL DISTURBANCE
+0 | - | 1 CATION EXCHANGE CAPACITY
+0 | - | 1 CANOPY TRANSMITTANCE
+0 | - | 1 CALIBRATION
+-8 | advective | 1 Boundary Layer Winds
+0 | - | 1 BENTHIC HABITAT
+0 | - | 1 Bathymetry
+0 | - | 1 Barometric Altitude
+0 | - | 1 ATTITUDE CHARACTERISTICS
+0 | - | 1 ATMOSPHERIC STABILITY
+0 | - | 1 Atmospheric Stability
+0 | - | 1 Atmospheric Phenomena
+0 | electric | 1 Atmospheric Conductivity
+0 | - | 1 ATMOSPHERE/SURFACE INTERACTIONS
+0 | - | 1 Aquatic Sciences
+0 | - | 1 APPARENT SURFACE REFLECTIVITY
+0 | - | 1 Animals/Vertebrates
+0 | - | 1 ANIMAL DISEASES/DISORDERS/PESTS
+0 | - | 1 ANIMAL BREEDING AND GENETICS
+0 | thermal | 1 AIR TEMPERATURE RECONSTRUCTION
+0 | - | 1 Air Quality
+0 | - | 1 AGRICULTURAL EQUIPMENT
+-8 | diffusion | 1 AEROSOL ABSORPTION
+0 | - | 1 AEOLIAN PROCESSES
+0 | - | 1 ADVECTION
+0 | - | 1 ACOUSTIC TOMOGRAPHY
+0 | - | 1 ACOUSTIC ATTENUATION/TRANSMISSION
