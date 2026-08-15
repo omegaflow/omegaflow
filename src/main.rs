@@ -563,7 +563,6 @@ struct SpatialHash {
     cell_size: f64,
     vmax: f64,
     amax: f64,
-    rmax: f64,
     epoch_min: f64,
     cell_lo: CellKey,
     cell_hi: CellKey,
@@ -656,17 +655,26 @@ fn build_spatial_hash(samples: Vec<Oscillator>, cadence: f64) -> SpatialHash {
     }
     let mut vmax = 0.0f64;
     let mut amax = 0.0f64;
-    let mut rmax = 0.0f64;
     let mut epoch_min = f64::MAX;
     for s in &bounded {
         vmax = vmax.max(s.vmax);
         amax = amax.max(s.amax);
-        rmax = rmax.max(s.extent);
         epoch_min = epoch_min.min(s.epoch);
     }
-    let rho_cad = rmax + vmax * cadence + 0.5 * amax * cadence * cadence;
+    let rho_cad = vmax * cadence + 0.5 * amax * cadence * cadence;
     let shift = (2.0 * rho_cad).log2().ceil().clamp(0.0, 63.0) as i32;
-    let cell_size = 2f64.powi(shift);
+    let motion_cell = 2f64.powi(shift);
+    let mut span = 1.0f64;
+    for k in 0..3 {
+        let mut lo = f64::INFINITY;
+        let mut hi = f64::NEG_INFINITY;
+        for s in &bounded {
+            lo = lo.min(s.p0f[k]);
+            hi = hi.max(s.p0f[k]);
+        }
+        span = span.max(hi - lo);
+    }
+    let cell_size = motion_cell.max(span / 1024.0);
     let mut cells: HashMap<CellKey, Vec<Oscillator>> = HashMap::new();
     let mut cell_lo = (i64::MAX, i64::MAX, i64::MAX);
     let mut cell_hi = (i64::MIN, i64::MIN, i64::MIN);
@@ -684,7 +692,6 @@ fn build_spatial_hash(samples: Vec<Oscillator>, cadence: f64) -> SpatialHash {
         cell_size,
         vmax,
         amax,
-        rmax,
         epoch_min: if epoch_min == f64::MAX {
             0.0
         } else {
@@ -834,9 +841,9 @@ fn query_asteroid_hash(
     if lo.0 > hi.0 || lo.1 > hi.1 || lo.2 > hi.2 {
         return;
     }
-    let span = ((hi.0 - lo.0 + 1) as u64)
-        .saturating_mul((hi.1 - lo.1 + 1) as u64)
-        .saturating_mul((hi.2 - lo.2 + 1) as u64);
+    let span = (hi.0.saturating_sub(lo.0).saturating_add(1) as u64)
+        .saturating_mul(hi.1.saturating_sub(lo.1).saturating_add(1) as u64)
+        .saturating_mul(hi.2.saturating_sub(lo.2).saturating_add(1) as u64);
     let visit: Vec<&Vec<u32>> = if span > hash.cells.len() as u64 * 4 {
         hash.cells
             .iter()
@@ -1103,9 +1110,9 @@ fn query_star_hash(
     if lo.0 > hi.0 || lo.1 > hi.1 || lo.2 > hi.2 {
         return;
     }
-    let span = ((hi.0 - lo.0 + 1) as u64)
-        .saturating_mul((hi.1 - lo.1 + 1) as u64)
-        .saturating_mul((hi.2 - lo.2 + 1) as u64);
+    let span = (hi.0.saturating_sub(lo.0).saturating_add(1) as u64)
+        .saturating_mul(hi.1.saturating_sub(lo.1).saturating_add(1) as u64)
+        .saturating_mul(hi.2.saturating_sub(lo.2).saturating_add(1) as u64);
     let visit: Vec<&Vec<u32>> = if span > hash.cells.len() as u64 * 4 {
         hash.cells
             .iter()
@@ -1265,9 +1272,9 @@ fn query_hash(
     if lo.0 > hi.0 || lo.1 > hi.1 || lo.2 > hi.2 {
         return;
     }
-    let span = ((hi.0 - lo.0 + 1) as u64)
-        .saturating_mul((hi.1 - lo.1 + 1) as u64)
-        .saturating_mul((hi.2 - lo.2 + 1) as u64);
+    let span = (hi.0.saturating_sub(lo.0).saturating_add(1) as u64)
+        .saturating_mul(hi.1.saturating_sub(lo.1).saturating_add(1) as u64)
+        .saturating_mul(hi.2.saturating_sub(lo.2).saturating_add(1) as u64);
     let visit: Vec<&Vec<Oscillator>> = if span > hash.cells.len() as u64 * 4 {
         hash.cells
             .iter()
@@ -3896,12 +3903,11 @@ fn handle_ingress(stream: TcpStream, cfg: WsConfig) {
                             }
                         }
                         report.push_str(&format!(
-                            "{} samples={} cells={} unbounded={} rmax={:.3e} vmax={:.3e} epoch_min={:.1} origins={}\n",
+                            "{} samples={} cells={} unbounded={} vmax={:.3e} epoch_min={:.1} origins={}\n",
                             fname,
                             n,
                             hash.cells.len(),
                             hash.unbounded.len(),
-                            hash.rmax,
                             hash.vmax,
                             hash.epoch_min,
                             src_ids.len()
