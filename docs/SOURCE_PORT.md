@@ -22,6 +22,7 @@ registrierten Ort.
 | `phi/port/park/` | Geparkte Kandidaten mit Parser-Gap (jeder mit Gap-Verweis). |
 | `phi/port/stage/` | Konvertierungs-Ausgänge `<korpus>_converted.φ` + Sweep-Ergebnisse `staging_verified.φ` / `staging_empty.txt`. |
 | `phi/port/ledger.φ` | DAS Zustands-Register. Jeder offene Posten mit Zustand. |
+| `phi/port/index.φ` | Der Index der zu portierenden Dateien (eine Zeile je Queue-Datei: Zustand + Blockzahl). Regenerierbar. |
 | `phi/port/prompt.φ` | Port-Vorlage für Agenten (Korpus → Disposition). |
 | `phi/research/` | Der lebende Bestand: Katalog-Inventare, Kandidaten-Listen, abgeschlossene Grind-Wellen (read-only, Historie bleibt). |
 | `phi/sources.φ` | Das kanonische Register (Annahme-Ziel). |

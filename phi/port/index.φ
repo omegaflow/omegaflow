@@ -1,0 +1,25 @@
+# index der zu portierenden Dateien
+# Stand 2026-08-15 — Blockzahlen aus dem Dateisystem gezählt, regenerierbar.
+# Zustand: ausstehend | verifiziert | disponiert
+# eine Zeile = eine Datei: <zustand> <blöcke> <pfad relativ zu phi/port/>
+
+ausstehend 30 queue/sources_astro_untested_30-astro.φ
+verifiziert 3 queue/sources_earth_untested_stac-sentinel.φ
+ausstehend 16 queue/sources_exotic_untested_neutrino-ligo.φ
+ausstehend 2572 queue/sources_gold_pre-cdn_27k_359-domains.φ
+ausstehend 1047 queue/sources_new_untested_13k_230-domains.φ
+ausstehend 873 queue/sources_new_untested_14k_new-unchecked.φ
+ausstehend 1047 queue/sources_new_untested_15k_230-domains.φ
+ausstehend 19 queue/sources_new_untested_183l.φ
+ausstehend 177 queue/sources_new_untested_2k.φ
+ausstehend 423 queue/sources_new_untested_7k.φ
+ausstehend 49 queue/sources_new_untested_candidate-staging.φ
+ausstehend 824 queue/sources_potential_pre-cdn_9k_richest.φ
+ausstehend 63 queue/sources_potential_pre-cdn_params.φ
+ausstehend 5701 queue/sources_recovery_cdn-merged_60k_lost-blocks.φ
+ausstehend 1924 queue/sources_recovery_pre-cdn_25k_211-domains.φ
+
+# Bestand (nicht mehr zu portieren — read-only, ausgeschöpft):
+#   phi/research/batches/        284 Dateien, alte Grammatik (Quell-Korpora, gesplittet)
+#   phi/research/probe_batches/  242 Dateien, Probe-Artefakte der Läufe
+#   phi/research/agent_output/   111 Dateien, Grind-Ergebnisse + Dispositionen
