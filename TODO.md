@@ -6,7 +6,7 @@ wird entfernt (Git trägt es). Kein Eintrag meldet Erledigtes als offen, kein of
 Punkt fehlt. Widerspricht ein Dokument dieser Datei, gilt diese Datei — solche
 Drift-Stellen sind unter „Doku-Drift" registriert.
 
-## Stand — 2026-08-14 (LSK/PCK-Hochzeit, Binary v2, Protokoll v6, reine Per-Pixel-Membran, K01 geschlossen)
+## Stand — 2026-08-15 (Katalog-Welle: K03-Kometen, K04b Gaia-DR3+Bailer-Jones 1,84 Mio Sterne, tap_compiler über TAPVizieR/GAVO/ARI, Enrichment-Matrix; LSK/PCK-Hochzeit, Binary v2, Protokoll v6, reine Per-Pixel-Membran, K01 geschlossen)
 
 Zeit aus naif0012.tls (LSK-Reader, keine TT_MINUS_UTC-Konstante). PCK-Reader pck.rs
 (gm_de440, pck00010, geophysical.ker → GM/J2/J4/Radii/POLE). stype-1 v2: gcount=12,
@@ -159,7 +159,10 @@ Block tgas_stars.bin ersetzt tycho2_stars.bin, CI-Schritt gespiegelt.
 Beweis HIP 13989 (HD 18560): plx 6,35 mas, G 7,991, dist 157,5 pc — DR1-
 ehrlich (DR3 verfeinert auf 6,66). Befunde: Vega/Barnard absent, weil Gaia
 DR1 bei G < ~3,5 sättigt bzw. pm > 3,5″/yr ausgeschlossen ist — 0 honored.
-Der Tycho-2+I/239-Weg (--source tycho2) bleibt als Fallback im Compiler.
+Der Tycho-2+I/239-Weg (--source tycho2) bleibt als Compiler-Modus.
+SUPERSEDED am selben Tag (2026-08-15): der DR3-Merge (K04b-Welle, ARI
+Heidelberg, Bailer-Jones + Hipparcos-Helle) ersetzt tgas_stars.bin als
+Live-Kanal — siehe eigener Eintrag; TGAS-Modus = Historie/Fallback-Code.
 ```
 
 **K06** EOP (erst nach K01–K05)
@@ -555,12 +558,12 @@ Binary-PCK-Pakets oben).
   Zeile, Spec §5), SO2-ArcGIS, NDBC-ArcGIS (1726 Samples verifiziert).
   `load_sources_from`-Fix: format/kernel_text-Arm + Flush-Bedingung — Probe
   erkennt LSK-Blöcke wieder (vorher „time absent" für alle).
-  Geparkt (Parser-Gap, offen): Pegelonline (wartet auf fanout der parallelen
-  Session), USGS-Geomag (Komponenten-Timeseries), GWOSC/GraceDB (Position nur
-  via Skymap), TeVCat (Sexagesimal/galaktisch), DSN (statische Dish-Positionen,
-  Keyed Object), CENC (Keyed Object No1..NoN), JMA-Quake (Position im
-  `cod`-String), Magnetar/ALFALFA (dist_scale: kpc/Mpc roh statt Meter),
-  MPC-cometels (K03-Katalog-Kanal).
+  Geparkt (Parser-Gap, offen): Pegelonline (fanout liegt seit P09 — Block
+  steht noch aus), USGS-Geomag (Komponenten-Timeseries), GWOSC/GraceDB
+  (Position nur via Skymap), DSN (statische Dish-Positionen, Keyed Object),
+  CENC (Keyed Object No1..NoN), JMA-Quake (Position im `cod`-String).
+  Aufgelöst seitdem: TeVCat + Magnetar (Sexagesimal-Kompilat + Enrichment,
+  live), ALFALFA (dist_scale Mpc, live), MPC-cometels (K03 geschlossen).
   Korrigiert zu decline (Spec §3): C_mydas_SSM (position-only, §3.9),
   PSF-Phytoplankton (Zählwerte, §3.2), SatNOGS (position-only), Active-
   Hurricanes-Sampler (Forecast-Track-Punkte, §Model), SIMBAD-TAP (VOTable
@@ -605,8 +608,10 @@ Binary-PCK-Pakets oben).
   Tabellen), `--fetch-from` (ADQL TOP, FORMAT=json, --columns-Mapping → Flat-cmap),
   `--ci-mode`. Erster Bulk: FRBCAT (J/other/PASA/33.45/frbcat, 118 Zeilen,
   zHost→z, Beweis FRB 121102: DM 557, z 0,19273, Speak 0,4 Jy — exakt).
-  Befund: TAPVizieR-sync kennt kein OFFSET/LIMIT (nur TOP) — Paging für
-  Tabellen > TOP-Cap über den Async-Endpoint, offen. Offen: IRSA/HEASARC/
+  Befund: TAPVizieR-sync kennt kein OFFSET/LIMIT (nur TOP). Paging gelöst
+  (ARI, 2026-08-15): mag-Band-Adaption (--mag-bands: COUNT-Halbierung,
+  Streaming pro Band) bei indizierten Mirrors; UWS-Async bleibt für
+  nicht-bandbare Resultate (Queue-abhängig). Offen: IRSA/HEASARC/
   MAST-Inventare (gleiche --index-Methode), weitere Tabellen-Bulks aus
   phi/tap_index.φ (39 genutzte VizieR-Tabellen), Gaia-Archiv.
 - GAVO-Grenze (2026-08-15): dc.g-vo.org/tap inventarisiert → phi/tap_index_gavo.φ
@@ -615,7 +620,10 @@ Binary-PCK-Pakets oben).
   Distanzen (r_med_geo pc, Join über gaia-Lite per source_id) — die
   K04b-Folge-Quelle; antares.data/antares10.data = ANTARES-Mirror (5 921
   Zeilen) — Recheck erledigt: Counts+Position → Decline (dead_sources.φ).
-  GAVO-sync kennt ebenfalls kein OFFSET/LIMIT — Paging bleibt UWS-Async.
+  GAVO-sync kennt ebenfalls kein OFFSET/LIMIT; GAVO-litewithdist ist
+  unindiziert (Band-COUNTs 20s+) — der Merge lief über ARI (indiziert).
+  GAVO-Async-Queue hing am 15.08. (2 Jobs PENDING) — Queue-Zustand beim
+  nächsten Versuch erneut prüfen.
 - K04b-Welle GESCHLOSSEN (2026-08-15): tap_compiler gewinnt UWS-Async-Client
   (submit/phase/results), VOTable-Reader (FIELDref-Self-Closing-Fix — der
   stille None-Killer), --votable-Sync-Modus, --order, --epoch (pm-Propagation
@@ -631,9 +639,10 @@ Binary-PCK-Pakets oben).
   J1991.25→J2000 — 45 Sterne: Vega 7,76 pc, Sirius 2,64 pc, Alpha Centauri
   1,347 pc) + --union-bright im tap_compiler → 1 837 259 Sterne in EINEM
   Kanal, kein Fallback-Block. Befunde:
-  ARI-lite cutt bei G<1,94 (Vega/Sirius absent — Tycho2-Fallback trägt die
-  hellen ~30); GAVO-litewithdist ist der vor-gejointe, aber unindizierte
-  Zwilling; ARI inventarisiert (203 Tabellen → phi/tap_index_ari.φ);
+  ARI-lite cutt bei G<1,94 (physikalisch: Gaia sättigt dort — geschlossen
+  via Hipparcos-Union, kein Fallback); GAVO-litewithdist ist der
+  vor-gejointe, aber unindizierte Zwilling; ARI inventarisiert (203
+  Tabellen → phi/tap_index_ari.φ);
   GAVO-sync/ARI-sync ohne OFFSET/LIMIT — UWS-Async bleibt für
   >100k-Einzelresultate. CNS5 (5 909 Sterne, alle mit gaia_edr3_id) ⊂ DR3
   — kein separater Block, die lokale Blase manifestiert im Merge.
@@ -654,6 +663,7 @@ Binary-PCK-Pakets oben).
 - Enrichment-Matrix komplett (2026-08-15, „alle Kataloge"):
   · TGAS: --hip-Join im tgas-Modus — 160 der 31 217 plx-losen Zeilen via
     Hipparcos wiederhergestellt (Rest trägt keine HIP-Nummer — absent).
+    (Historie: der Live-Kanal ist seit der K04b-Welle der DR3-Merge.)
   · TeVCat: z-Join (BZCAT4) + dist-Join (Green) + dist2-Join (B/psr/psr,
     PSRCAT-Mirror, 2536 Pulsare, 2348 mit Dist, <=30″) — Vela 0,29 kpc und
     Geminga 0,25 kpc exakt; 67 z + 79 dist von 360.
@@ -704,6 +714,13 @@ Binary-PCK-Pakets oben).
   sources_index.φ; Horizons-Sonden via horizons_compiler --ci-mode; DASTCOM-Katalog
   via dastcom_compiler --ci-mode). Monatlich + workflow_dispatch. Upload-Fehler
   exiten seit 2026-08-15 laut (kein stilles let _ = mehr).
+- Katalog-Kompilate seit 2026-08-15 im selben Job: cometels_compiler
+  (cometels_flat.json), tycho2_compiler --source bright (bright_stars.json),
+  tap_compiler DR3-Merge via ARI (--mag-bands + --star-bin + --union-bright →
+  dr3_stars.bin), tap_compiler FRBCAT + A279, sexagesimal_compiler (Magnetar
+  + TeVCat mit BZCAT4/Green/PSRCAT-Joins). Die CDN-Assets entstehen beim
+  ersten Lauf nach dieser Welle — bis dahin manifestieren die Blöcke 0
+  (0 honored, dokumentiert je Block).
 - Quota-Befund 2026-08-15: `--verify phi` lud rekursiv die research-Batches
   (27k+ Quellen) und mirrorte jede per gh release upload — das Kontingent
   (5000/h) starb strukturell. Fix manifestiert: (1) Mirror nur für das
