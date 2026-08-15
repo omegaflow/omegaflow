@@ -134,14 +134,6 @@ export async function syncFrame(inputs, queries, presence) {
         meta[mOff + 10] = 0;
         meta[mOff + 11] = 0;
     }
-    let directive = null;
-    if (o + 24 <= bytes.length) {
-        directive = {
-            x: dvRes.getFloat64(o, true),
-            y: dvRes.getFloat64(o + 8, true),
-            z: dvRes.getFloat64(o + 16, true),
-        };
-    }
-    return { field, meta, count: oscCount, response_epoch, directive };
+    return { field, meta, count: oscCount, response_epoch };
 }
 

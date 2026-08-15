@@ -4320,44 +4320,6 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                 out.extend_from_slice(&j4.to_le_bytes());
                 out.extend_from_slice(&r_eq.to_le_bytes());
             }
-            let mut dir_x = 0.0f64;
-            let mut dir_y = 0.0f64;
-            let mut dir_z = 0.0f64;
-            let mut dir_val = 0.0f64;
-            for &(rx, ry, rz, rv, ..) in &records {
-                let m = rv.abs();
-                if m > dir_val {
-                    dir_val = m;
-                    dir_x = rx;
-                    dir_y = ry;
-                    dir_z = rz;
-                }
-            }
-            if dir_val == 0.0 {
-                for (name, hash_cell) in &field.bodies {
-                    let Some(anchor) = body_barycenter_position(name, now, &eph_map) else {
-                        continue;
-                    };
-                    for cell in hash_cell
-                        .cells
-                        .values()
-                        .chain(std::iter::once(&hash_cell.unbounded))
-                    {
-                        for osc in cell {
-                            let m = osc.val.abs();
-                            if m > dir_val {
-                                dir_val = m;
-                                dir_x = osc.p0f[0] + anchor[0];
-                                dir_y = osc.p0f[1] + anchor[1];
-                                dir_z = osc.p0f[2] + anchor[2];
-                            }
-                        }
-                    }
-                }
-            }
-            out.extend_from_slice(&dir_x.to_le_bytes());
-            out.extend_from_slice(&dir_y.to_le_bytes());
-            out.extend_from_slice(&dir_z.to_le_bytes());
             write_ws_binary(&mut stream, &out);
         }
     }

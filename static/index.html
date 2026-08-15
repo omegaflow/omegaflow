@@ -1087,14 +1087,7 @@ fn presence_probe() {
                 let line1 = `${PAD('PRESENCE',10)}${SEP}${line1A}${SEP}${line1B}${SEP}${line1C}`;
 
                 const nOsc = rawWindowResponse.count;
-                let dirSuffix = '';
-                if (rawWindowResponse.directive) {
-                    const dxd = rawWindowResponse.directive.x - xPresence;
-                    const dyd = rawWindowResponse.directive.y - yPresence;
-                    const dzd = rawWindowResponse.directive.z - zPresence;
-                    dirSuffix = `  archivar→ d: ${Math.hypot(dxd, dyd, dzd).toExponential(1)}m`;
-                }
-                let line2A = PAD(`${nOsc} oscillators  Ω: ${probedOmega.toExponential(2)}  SSAA ${ssaa.toFixed(2)}×`, 44) + dirSuffix;
+                let line2A = PAD(`${nOsc} oscillators  Ω: ${probedOmega.toExponential(2)}  SSAA ${ssaa.toFixed(2)}×`, 44);
 
                 let forceNonZero = '';
                 let forceZero = [];
