@@ -1,0 +1,35 @@
+candidate https://services1.arcgis.com/4ZdJfkWE583IARCX/arcgis/rest/services/Solar_Panels/FeatureServer/0
+note felder: ADDRESS, FID, PRINT_KEY, RPSTYPE, Shape__Area, Shape__Length
+dataset Solar Potential in Cambridge - Analysis layers | https://services1.arcgis.com/il4lisavMw89PBzH/arcgis/rest/services/Solar_Potential_in_Cambridge_WFL1/FeatureServer
+candidate-leer https://services1.arcgis.com/il4lisavMw89PBzH/arcgis/rest/services/Solar_Potential_in_Cambridge_WFL1/FeatureServer
+note 0 rows, felder unbekannt
+dataset Solar Radiation in Arizona legend WFL1 | https://services1.arcgis.com/HmwnYiJTBZ4UkySc/arcgis/rest/services/Solar_Radiation_in_Arizona_legend_WFL1/FeatureServer/0
+candidate https://services1.arcgis.com/HmwnYiJTBZ4UkySc/arcgis/rest/services/Solar_Radiation_in_Arizona_legend_WFL1/FeatureServer/0
+note felder: ANNUAL, ID, OBJECTID, Shape__Area, Shape__Length
+# solar radiation seite 24: 3 services
+dataset Existing Residential Solar | https://services5.arcgis.com/JNsV9gwtc6W7wYcK/arcgis/rest/services/Existing_Residential_Solar/FeatureServer/0
+candidate https://services5.arcgis.com/JNsV9gwtc6W7wYcK/arcgis/rest/services/Existing_Residential_Solar/FeatureServer/0
+note felder: City, FID, Res_Solar, State, Town, X, Y
+dataset Potential Solar Fields | https://services3.arcgis.com/i0P1AizjIwwAZiAU/arcgis/rest/services/Solar_Fields/FeatureServer/1
+candidate https://services3.arcgis.com/i0P1AizjIwwAZiAU/arcgis/rest/services/Solar_Fields/FeatureServer/1
+note felder: Area, Bldg_Notes, City_Town, County, GlobalID, Id, Location, Mile_Post, Notes, OBJECTID, PPN, Rating, Shape__Area, Shape__Length
+# solar radiation seite 25: 6 services
+dataset Solar Zonal Merge | https://services2.arcgis.com/PHia28eJFSKIteha/arcgis/rest/services/Solar_Zonal_Merge/FeatureServer/0
+candidate https://services2.arcgis.com/PHia28eJFSKIteha/arcgis/rest/services/Solar_Zonal_Merge/FeatureServer/0
+note felder: AREA_1, AREA_12_13, AREA_12_13_14_15, AREA_12_13_14_15_16_17, AREA_12_13_14_15_16_17_18_19, AREA_12_13_14_15_16_17_18_19_21, AREA_12_13_14_15_16_17_18_19_23, AREA_12_13_14_15_16_17_18_19_25, AREA_12_13_14_15_16_17_18_19_27, AREA_12_13_14_15_16_17_18_19_29, AREA_12_13_14_15_16_17_18_19_32, AREA_12_13_14_15_16_17_18_19_34, AREA_12_13_14_15_16_17_18_19_36, AREA_12_13_14_15_16_17_18_19_38, AREA_12_13_14_15_16_17_18_19_40, AREA_12_13_14_15_16_17_18_19_42, AREA_12_13_14_15_16_17_18_19_44, AREA_12_13_14_15_16_17_18_19_46
+dataset Solar Array Locations WFL1 | https://services2.arcgis.com/RQcpPaCpMAXzUI5g/arcgis/rest/services/Solar_Array_Locations_WFL1/FeatureServer
+candidate-leer https://services2.arcgis.com/RQcpPaCpMAXzUI5g/arcgis/rest/services/Solar_Array_Locations_WFL1/FeatureServer
+note 0 rows, felder unbekannt
+dataset Service Plaza Solar Areas | https://services3.arcgis.com/i0P1AizjIwwAZiAU/arcgis/rest/services/Service_Plaza_Solar_Areas/FeatureServer/0
+candidate https://services3.arcgis.com/i0P1AizjIwwAZiAU/arcgis/rest/services/Service_Plaza_Solar_Areas/FeatureServer/0
+note felder: Area_Acres, City_Town, County, GlobalID, Id, Location, Milepost, Notes, OBJECTID, Shape__Area, Shape__Length, Type
+dataset Rossland Solar kWh Polygon | https://services2.arcgis.com/Atlhpf089cGUuFTD/arcgis/rest/services/Rossland_Solar_kWh_Polygon/FeatureServer/0
+candidate https://services2.arcgis.com/Atlhpf089cGUuFTD/arcgis/rest/services/Rossland_Solar_kWh_Polygon/FeatureServer/0
+note felder: Id, OBJECTID, Shape__Area, Shape__Length, SolarRad_kWh, gridcode
+dataset wheat solar size vs irr admin | https://services.arcgis.com/P8Cok4qAP1sTVE59/arcgis/rest/services/wheat_solar_size_vs_irr_admin/FeatureServer/0
+candidate https://services.arcgis.com/P8Cok4qAP1sTVE59/arcgis/rest/services/wheat_solar_size_vs_irr_admin/FeatureServer/0
+note felder: ENGTYPE_1, ENGTYPE_2, ENGTYPE_3, GlobalID, NAME_0, NAME_1, NAME_2, NAME_3, OBJECTID, Shape__Area, Shape__Length, Solar_size, irr2, irr2_5, irr3
+dataset tomato solar size vs irr admin | https://services.arcgis.com/P8Cok4qAP1sTVE59/arcgis/rest/services/tomato_solar_size_vs_irr_admin/FeatureServer/0
+candidate https://services.arcgis.com/P8Cok4qAP1sTVE59/arcgis/rest/services/tomato_solar_size_vs_irr_admin/FeatureServer/0
+note felder: ENGTYPE_1, ENGTYPE_2, ENGTYPE_3, GlobalID, NAME_0, NAME_1, NAME_2, NAME_3, OBJECTID, Shape__Area, Shape__Length, irr2, irr2_5, irr3, solar_size
+# keyword total electron content

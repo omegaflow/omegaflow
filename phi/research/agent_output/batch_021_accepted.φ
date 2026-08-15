@@ -1,8 +1,0 @@
-# batch_021: 50 blocks, 0 accepted. Fifteen CelesTrak blocks are bare `count
-# lines` tallies of TLE registries; three Horizons VECTORS blocks (apophis,
-# bennu, ceres) are ephemeris-superseded; seven planetary-mass blocks and the
-# particle catalog are reference constants. The remainder are registry counts
-# (papers, DOIs, packages, proteins, compounds, fossils, PDB structures,
-# StackOverflow), catalogs (Sentry risk objects, exoplanet hosts, EOP
-# reference), an ERA5 reanalysis feed, and aggregate indices (sunspot number).
-# None carries a physical force a sensory organ detects.

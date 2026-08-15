@@ -5,93 +5,67 @@
 #
 # ZUSAMMENFASSUNG (dedupliziert, ohne live + declined):
 #   port/master_urls.txt        10153 URLs, 502 Netlocs — die eine Master-Queue
-#   port/netloc.txt             Netloc-Counts (4290 github.com-CDN-Assets an der Spitze)
-#   port/netloc_per_datei.txt   welche Datei welchen Inhalt trägt (Top-5 je Datei/Korpus)
-#   tap_index*.φ                64148+995+271+203+46 Katalog-IDs → tap_compiler-Route (nicht URL-flatten)
-#
-# ------------------------------------------------------------------
-# ZU PORTIEREN — Queue (destillierte Extrakte, alte Grammatik)
-# ------------------------------------------------------------------
-# ZU PORTIEREN — Queue (destillierte Extrakte, alte Grammatik)
-# ------------------------------------------------------------------
-ausstehend 30 queue/sources_astro_untested_30-astro.φ
-verifiziert 3 queue/sources_earth_untested_stac-sentinel.φ
-ausstehend 16 queue/sources_exotic_untested_neutrino-ligo.φ
-ausstehend 2572 queue/sources_gold_pre-cdn_27k_359-domains.φ
-ausstehend 1047 queue/sources_new_untested_13k_230-domains.φ
-ausstehend 873 queue/sources_new_untested_14k_new-unchecked.φ
-ausstehend 1047 queue/sources_new_untested_15k_230-domains.φ
-ausstehend 19 queue/sources_new_untested_183l.φ
-ausstehend 177 queue/sources_new_untested_2k.φ
-ausstehend 423 queue/sources_new_untested_7k.φ
-ausstehend 49 queue/sources_new_untested_candidate-staging.φ
-ausstehend 824 queue/sources_potential_pre-cdn_9k_richest.φ
-ausstehend 63 queue/sources_potential_pre-cdn_params.φ
-ausstehend 5701 queue/sources_recovery_cdn-merged_60k_lost-blocks.φ
-ausstehend 1924 queue/sources_recovery_pre-cdn_25k_211-domains.φ
+#   port/netloc.txt             Netloc-Counts (github.com-CDN, tapvizier, ndbc …)
+#   port/netloc_per_datei.txt   welche Datei welchen Inhalt trägt (Top-5 je Datei)
+#   port/review_kandidaten.txt  197 Re-Review-Kandidaten aus dead_sources.φ
+#   katalog/tap_index*.φ        64148+995+271+203+46 Katalog-IDs → tap_compiler-Route
+# Archiv (pre-cdn-Historie + erledigte Korpora):
+#   /home/johannes/projects/archive/archeology/          (pre-cdn)
+#   /home/johannes/projects/archive/phi-research/        (batches 284, probe_batches 242, dispositionen 88)
 
 # ------------------------------------------------------------------
-# ZU PORTIEREN — Batches (Quell-Korpora, alte Grammatik, NICHT in queue)
+# ZU PORTIEREN — Queue (die eine Master-Datei + Join-Paar + Drafts)
 # ------------------------------------------------------------------
-ausstehend 5102 research/batches/main_pre-cdn_28k_252-domains_b001..b052.φ
-ausstehend 1861 research/batches/live_cdn-merged_28k_195-domain_b001..b091.φ
-ausstehend 2164 research/batches/main_canonical-format_27k_2164_b001..b044.φ
-redundant 5144 research/batches/gold_pre-cdn_27k_359-domains_b001..b052.φ
-# redundant = bereits als queue/sources_gold_pre-cdn_27k_359-domains.φ extrahiert
+ausstehend 7430 queue/master.φ
+verifiziert 4486 stage/master_converted.φ
+ausstehend 824 queue/sources_potential_pre-cdn_9k_richest.φ
+ausstehend 63 queue/sources_potential_pre-cdn_params.φ
+# master.φ = 13 alte Korpora dedupliziert gemergt; richest+params = Join-Quelle der Lost-Blocks
+# stage/master_converted.φ = --gold-Ausgang, 4486 parse-fähig
 
 # ------------------------------------------------------------------
 # ZU PORTIEREN — Agent-Drafts (offene Block-Drafts, Disposition ausstehend)
 # ------------------------------------------------------------------
-ausstehend 32 research/agent_output/grind_arcgis_b01..b06.φ
-ausstehend 63 research/agent_output/grind_vires_full.φ
-ausstehend 0 research/agent_output/grind_esa_full.φ
-ausstehend 11 research/agent_output/grind_terrapulse_a.φ
-ausstehend 99 research/agent_output/grind_terrapulse_b.φ
-ausstehend 26 research/agent_output/grind_nasa.φ
-ausstehend 10 research/agent_output/grind_nasa_donki.φ
-ausstehend 11 research/agent_output/grind_host.φ
-ausstehend 3 research/agent_output/grind_rechecks.φ
-ausstehend 7 research/agent_output/grind_planetary.φ
-ausstehend 0 research/agent_output/grind_swarm_diss.φ
-ausstehend 0 research/agent_output/grind_b2find.φ
-ausstehend 0 research/agent_output/grind_domain_coverage.φ
-ausstehend 0 research/agent_output/grind_esa.φ
-ausstehend 0 research/agent_output/grind_arcgis_deep.φ
+ausstehend 32 queue/grind_arcgis_b01..b10.φ
+ausstehend 63 queue/grind_vires_full.φ
+ausstehend 0 queue/grind_esa_full.φ
+ausstehend 11 queue/grind_terrapulse_a.φ
+ausstehend 99 queue/grind_terrapulse_b.φ
+ausstehend 26 queue/grind_nasa.φ
+ausstehend 10 queue/grind_nasa_donki.φ
+ausstehend 11 queue/grind_host.φ
+ausstehend 3 queue/grind_rechecks.φ
+ausstehend 7 queue/grind_planetary.φ
+ausstehend 0 queue/grind_swarm_diss.φ
+ausstehend 0 queue/grind_b2find.φ
+ausstehend 0 queue/grind_domain_coverage.φ
+ausstehend 0 queue/grind_esa.φ
+ausstehend 0 queue/grind_arcgis_deep.φ
 
 # ------------------------------------------------------------------
 # RECHERCHE-BESTAND — Katalog-Inventare (Quellen für neue Blöcke)
 # ------------------------------------------------------------------
-ausstehend 0 tap_index.φ
-ausstehend 0 tap_index_ari.φ
-ausstehend 0 tap_index_exoarchive.φ
-ausstehend 0 tap_index_gavo.φ
-ausstehend 0 tap_index_heasarc.φ
-ausstehend 0 tap_index_irsa.φ
-ausstehend 0 research/agent_output/b2find_catalogs_index.φ
-ausstehend 0 research/agent_output/grind_eogateway_index.φ
-ausstehend 0 research/agent_output/grind_vires_catalog.φ
-ausstehend 0 research/agent_output/grind_arcgis_index.φ
-ausstehend 0 research/agent_output/terrapulse_catalog.φ
-ausstehend 0 research/agent_output/esa_geomagnetic_catalog.φ
-ausstehend 0 research/agent_output/archeology_gaps_index.φ
+ausstehend 0 katalog/tap_index.φ
+ausstehend 0 katalog/tap_index_ari.φ
+ausstehend 0 katalog/tap_index_exoarchive.φ
+ausstehend 0 katalog/tap_index_gavo.φ
+ausstehend 0 katalog/tap_index_heasarc.φ
+ausstehend 0 katalog/tap_index_irsa.φ
+ausstehend 0 katalog/b2find_catalogs_index.φ
+ausstehend 0 katalog/b2find_intermagnet_catalog.φ
+ausstehend 0 katalog/grind_eogateway_index.φ
+ausstehend 0 katalog/grind_vires_catalog.φ
+ausstehend 0 katalog/grind_arcgis_index.φ
+ausstehend 0 katalog/terrapulse_catalog.φ
+ausstehend 0 katalog/esa_geomagnetic_catalog.φ
+ausstehend 0 katalog/archeology_gaps_index.φ
 
 # ------------------------------------------------------------------
-# ERLEDIGT — Dispositionen + Artefakte (read-only, Git trägt sie)
+# ERLEDIGT — im Archiv (read-only, /home/johannes/projects/archive/phi-research/)
 # ------------------------------------------------------------------
-erledigt 32 research/batches/batch_001..032_gold_14k.φ
-erledigt 12 research/batches/batch_*_accepted.φ
-erledigt 12 research/batches/batch_*_declined.φ
-erledigt 1 research/batches/grind_einbau_2026-08-15_pending.φ
-erledigt 26 research/agent_output/batch_*_accepted.φ
-erledigt 26 research/agent_output/batch_*_declined.φ
-erledigt 6 research/agent_output/gold359_b*_accepted.φ
-erledigt 6 research/agent_output/gold359_b*_declined.φ
-erledigt 15 research/agent_output/gold_home_*_accepted.φ
-erledigt 1 research/agent_output/aa_gate_verify_2026-08-15_accepted.φ
-erledigt 242 research/probe_batches/*.φ
-artefakt 1 research/agent_output/gold_converted.φ
-artefakt 2 research/agent_output/staging_verified.φ
-artefakt 6 research/agent_output/*.txt
+erledigt 284 archive/phi-research/batches/
+erledigt 242 archive/phi-research/probe_batches/
+erledigt 88 archive/phi-research/agent_output/
 artefakt 2 port/stage/staging_verified.φ
 artefakt 1 port/stage/staging_empty.txt
 artefakt 1 port/stage/earth_stac_converted.φ
@@ -109,4 +83,3 @@ infra port/master_urls.txt
 infra port/netloc.txt
 infra port/netloc_per_datei.txt
 infra port/review_kandidaten.txt
-infra research/agent_prompt.φ

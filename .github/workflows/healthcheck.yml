@@ -22,7 +22,6 @@ jobs:
           archivar-cache-
     - uses: actions-rust-lang/setup-rust-toolchain@v1
     - run: cargo run -- --verify phi
-    - run: cargo run -- --verify phi/research
     - uses: actions/cache@v4
       if: always()
       with:
@@ -57,7 +56,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - uses: actions-rust-lang/setup-rust-toolchain@v1
-    - run: cargo run --release -- --probe phi/research/probe_batches/batch_003.φ
+    - run: cargo run --release -- --probe phi/port/stage/master_converted.φ
     - uses: actions/upload-artifact@v4
       with:
         name: probe-output
@@ -71,7 +70,7 @@ jobs:
     - uses: actions-rust-lang/setup-rust-toolchain@v1
     - run: |
         mkdir -p probe-results
-        for f in phi/research/probe_batches/*_probe.φ; do
+        for f in phi/port/stage/*_converted.φ; do
           [ -f "$f" ] || continue
           echo "=== probing $(basename $f) ==="
           timeout 120 cargo run --release -- --probe "$f" 2>&1 | tail -3

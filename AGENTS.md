@@ -58,12 +58,12 @@ Name = Implementation. TODO entries carry no numeric identifiers. The heading is
 Alle Source-Arbeit (Grind, Port, Kuration) läuft ausschließlich über
 `docs/SOURCE_PORT.md` — das selbsttragende Protokoll mit Zustandsmaschine,
 Workflow-Prozedur, Referenz-Karte und Pfadkarte. Arbeitsfläche: `phi/port/`
-(`queue/` portierbare Korpora, `park/` Parser-Gap-Kandidaten, `stage/`
-Konvertierungs-Ausgänge, `ledger.φ` Zustands-Register, `prompt.φ`
-Port-Vorlage). Bestand: `phi/research/`. Register: `phi/sources.φ` +
-`phi/dead_sources.φ`. Die pre-cdn-Historie liegt unter
-`/home/johannes/projects/archive/`. Eine neue Session liest genau das eine
-Dokument.
+(`queue/master.φ` die eine Master-Datei + `queue/grind_*`-Drafts, `stage/`
+Konvertierungs-Ausgänge, `ledger.φ` Zustands-Register, `index.φ` Index,
+`prompt.φ` Port-Vorlage). Bestand: `phi/katalog/`. Register: `phi/sources.φ` +
+`phi/dead_sources.φ`. Die pre-cdn-Historie und die erledigten Korpora liegen
+unter `/home/johannes/projects/archive/` (archeology + phi-research). Eine
+neue Session liest genau das eine Dokument.
 
 ## Stack
 

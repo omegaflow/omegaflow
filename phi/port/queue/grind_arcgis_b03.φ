@@ -1,0 +1,1343 @@
+# grind arcgis b03 (2026-08-15) — keywords: hurricane, volcano, lightning, streamflow, snow depth, sea level
+# keyword hurricane
+dataset Hurricane Miley | https://services.arcgis.com/1kuuRiUAOfF5pwAn/arcgis/rest/services/Hurricane_Miley/FeatureServer
+decline https://services.arcgis.com/1kuuRiUAOfF5pwAn/arcgis/rest/services/Hurricane_Miley/FeatureServer
+note arcgis-error-body
+dataset Hurricane | https://services1.arcgis.com/FLgshDLgxaIsVNWq/arcgis/rest/services/Hurricane/FeatureServer
+candidate-leer https://services1.arcgis.com/FLgshDLgxaIsVNWq/arcgis/rest/services/Hurricane/FeatureServer
+note 0 rows, felder unbekannt
+# hurricane seite 1: 3 services
+dataset 2017 Hurricane Prep Partners | https://services1.arcgis.com/ZGrptGlLV2IILABw/arcgis/rest/services/2017_Hurricane_Prep_Partners/FeatureServer/0
+candidate https://services1.arcgis.com/ZGrptGlLV2IILABw/arcgis/rest/services/2017_Hurricane_Prep_Partners/FeatureServer/0
+note felder: BPID, CITY, COUNTRY, FID_, LATITUDE, LONGITUDE, NAME, OBJECTID, OBJECTID_1, PARTICIPAT, STATE, WEBSITE
+dataset Hurricane Matthew Work Orders | https://services.arcgis.com/EzsazWbpzy8Fv5VV/arcgis/rest/services/jJbqQ/FeatureServer/0
+candidate https://services.arcgis.com/EzsazWbpzy8Fv5VV/arcgis/rest/services/jJbqQ/FeatureServer/0
+note felder: EXCEL_ID, f1, f10, f11, f12, f13, f2, f3, f4, f5, f6, f7, f8, f9, objectId
+dataset Portland Hurricane Inundation Depths | https://services1.arcgis.com/Z84SVYy1QoXoOXkk/arcgis/rest/services/Portland_Hurricane_Inundation_Depths/FeatureServer
+candidate-leer https://services1.arcgis.com/Z84SVYy1QoXoOXkk/arcgis/rest/services/Portland_Hurricane_Inundation_Depths/FeatureServer
+note 0 rows, felder unbekannt
+dataset hurricane frequency | https://services1.arcgis.com/FLgshDLgxaIsVNWq/arcgis/rest/services/Hurricane/FeatureServer/3
+candidate https://services1.arcgis.com/FLgshDLgxaIsVNWq/arcgis/rest/services/Hurricane/FeatureServer/3
+note felder: FREQUENCY, OBJECTID, Season
+# hurricane seite 2: 4 services
+# hurricane seite 3: 0 services
+# hurricane erschoeft bei seite 3
+# keyword volcano
+# volcano seite 1: 7 services
+dataset Volcano | https://services2.arcgis.com/NzAqpeLbvbvoP3qh/arcgis/rest/services/Volcano/FeatureServer/0
+candidate https://services2.arcgis.com/NzAqpeLbvbvoP3qh/arcgis/rest/services/Volcano/FeatureServer/0
+note felder: DroneModel1, DroneModel2, DroneModel3, FlightPath_m1, FlightPath_m2, FlightPath_m3, HazardID, HazardType, OBJECTID, Sensor1, Sensor2, Sensor3, Stage_1, cpm_total_time, distance, duration_minutes, economic_loss_million, intensity
+dataset Volcano Data | https://services5.arcgis.com/t3U5B39kSeLnI7mS/arcgis/rest/services/Volcano_Data/FeatureServer/1
+candidate https://services5.arcgis.com/t3U5B39kSeLnI7mS/arcgis/rest/services/Volcano_Data/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Edit1 | https://services.arcgis.com/8df8p0NlLFEShl0r/arcgis/rest/services/Volcano_Edit1/FeatureServer/0
+candidate https://services.arcgis.com/8df8p0NlLFEShl0r/arcgis/rest/services/Volcano_Edit1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Locations | https://services3.arcgis.com/o98K21Ga5N91Ugjw/arcgis/rest/services/Volcano_Locations/FeatureServer/0
+candidate https://services3.arcgis.com/o98K21Ga5N91Ugjw/arcgis/rest/services/Volcano_Locations/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data | https://services1.arcgis.com/VVapzOPgBae5joyC/arcgis/rest/services/Volcano_Data/FeatureServer/0
+candidate https://services1.arcgis.com/VVapzOPgBae5joyC/arcgis/rest/services/Volcano_Data/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Edit2 | https://services6.arcgis.com/EDFKKZivVyfUwPAb/arcgis/rest/services/Volcano_Edit2/FeatureServer/0
+candidate https://services6.arcgis.com/EDFKKZivVyfUwPAb/arcgis/rest/services/Volcano_Edit2/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data | https://services9.arcgis.com/MA14Su4yNGn53wNB/arcgis/rest/services/Volcano_Data/FeatureServer/1
+candidate https://services9.arcgis.com/MA14Su4yNGn53wNB/arcgis/rest/services/Volcano_Data/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data | https://services2.arcgis.com/utBig56dGaw25bwu/arcgis/rest/services/Volcano_Data/FeatureServer/0
+candidate https://services2.arcgis.com/utBig56dGaw25bwu/arcgis/rest/services/Volcano_Data/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data | https://services2.arcgis.com/IsDCghZ73NgoYoz5/arcgis/rest/services/Volcano_Data/FeatureServer/0
+candidate https://services2.arcgis.com/IsDCghZ73NgoYoz5/arcgis/rest/services/Volcano_Data/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL2 | https://services1.arcgis.com/ZozYr1WfCwexXgcn/arcgis/rest/services/Volcano_Data_WFL2/FeatureServer/0
+candidate https://services1.arcgis.com/ZozYr1WfCwexXgcn/arcgis/rest/services/Volcano_Data_WFL2/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Edit Trong | https://services7.arcgis.com/iNLmn3DMjnu5wEKf/arcgis/rest/services/Volcano_Edit_Trong/FeatureServer/1
+candidate https://services7.arcgis.com/iNLmn3DMjnu5wEKf/arcgis/rest/services/Volcano_Edit_Trong/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, GlobalID, Latitude, Location, Longitude, Mo, Name, Num
+dataset Volcano MWP Edit | https://services6.arcgis.com/AZvnIky2AKQNH37M/arcgis/rest/services/Volcano_MWP_Edit/FeatureServer/0
+candidate https://services6.arcgis.com/AZvnIky2AKQNH37M/arcgis/rest/services/Volcano_MWP_Edit/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+# volcano seite 2: 13 services
+dataset Volcano Edit EF | https://services9.arcgis.com/EGheeB0VDT6EarZv/arcgis/rest/services/Volcano_Edit_EF/FeatureServer/0
+candidate https://services9.arcgis.com/EGheeB0VDT6EarZv/arcgis/rest/services/Volcano_Edit_EF/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Edit JK | https://services1.arcgis.com/FLgshDLgxaIsVNWq/arcgis/rest/services/Volcano_Edit_JK/FeatureServer/0
+candidate https://services1.arcgis.com/FLgshDLgxaIsVNWq/arcgis/rest/services/Volcano_Edit_JK/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services3.arcgis.com/78NCjKQBFdxcVfDb/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/1
+candidate https://services3.arcgis.com/78NCjKQBFdxcVfDb/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services2.arcgis.com/utBig56dGaw25bwu/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services2.arcgis.com/utBig56dGaw25bwu/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Locations WFL1 | https://services6.arcgis.com/Sjtjj6zwMH9eAgbl/arcgis/rest/services/Volcano_Locations_WFL1/FeatureServer/1
+candidate https://services6.arcgis.com/Sjtjj6zwMH9eAgbl/arcgis/rest/services/Volcano_Locations_WFL1/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Locations edit | https://services3.arcgis.com/F0auW5iU93OLpNE3/arcgis/rest/services/Volcano_Locations_edit/FeatureServer/0
+candidate https://services3.arcgis.com/F0auW5iU93OLpNE3/arcgis/rest/services/Volcano_Locations_edit/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Webcams (Geonet) | https://services.arcgis.com/XTtANUDT8Va4DLwI/arcgis/rest/services/VolcanoWebCamTest/FeatureServer/0
+candidate https://services.arcgis.com/XTtANUDT8Va4DLwI/arcgis/rest/services/VolcanoWebCamTest/FeatureServer/0
+note felder: CameraPageURL, ImageLargeURL, Name, OBJECTID
+dataset Volcano Data WFL | https://services3.arcgis.com/GivVPBTZqiQP20fU/arcgis/rest/services/Volcano_Data_WFL/FeatureServer/0
+candidate https://services3.arcgis.com/GivVPBTZqiQP20fU/arcgis/rest/services/Volcano_Data_WFL/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL | https://services1.arcgis.com/0MSEUqKaxRlEPj5g/arcgis/rest/services/Volcano_Data_WFL/FeatureServer/0
+candidate https://services1.arcgis.com/0MSEUqKaxRlEPj5g/arcgis/rest/services/Volcano_Data_WFL/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services.arcgis.com/B7NI2jUD81lCgSpx/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services.arcgis.com/B7NI2jUD81lCgSpx/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL2 | https://services7.arcgis.com/rBnCjz9V3uJQLcRc/arcgis/rest/services/Volcano_Data_WFL2/FeatureServer/0
+candidate https://services7.arcgis.com/rBnCjz9V3uJQLcRc/arcgis/rest/services/Volcano_Data_WFL2/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services3.arcgis.com/UIDEa9S9iqq5orpE/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services3.arcgis.com/UIDEa9S9iqq5orpE/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Edit | https://services7.arcgis.com/rBnCjz9V3uJQLcRc/arcgis/rest/services/Volcano_Edit/FeatureServer/0
+candidate https://services7.arcgis.com/rBnCjz9V3uJQLcRc/arcgis/rest/services/Volcano_Edit/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Edit | https://services.arcgis.com/b3fMqPOmotX6SV4k/arcgis/rest/services/Volcano_Edit/FeatureServer/0
+candidate https://services.arcgis.com/b3fMqPOmotX6SV4k/arcgis/rest/services/Volcano_Edit/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Edit | https://services3.arcgis.com/0IbpLwS460cn4psv/arcgis/rest/services/Volcano_Edit/FeatureServer/0
+candidate https://services3.arcgis.com/0IbpLwS460cn4psv/arcgis/rest/services/Volcano_Edit/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Quynh Volcano Edit Japan | https://services7.arcgis.com/iNLmn3DMjnu5wEKf/arcgis/rest/services/Quynh_Volcano_Edit_Japan/FeatureServer/1
+candidate https://services7.arcgis.com/iNLmn3DMjnu5wEKf/arcgis/rest/services/Quynh_Volcano_Edit_Japan/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, GlobalID, Latitude, Location, Longitude, Mo, Name, Num
+# volcano seite 3: 17 services
+dataset Volcano Data WFL1 | https://services5.arcgis.com/8Zx2H52HkNqFiOlf/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services5.arcgis.com/8Zx2H52HkNqFiOlf/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL | https://services3.arcgis.com/Ff42L1rsWs1QfpLT/arcgis/rest/services/Volcano_Data_WFL/FeatureServer/1
+candidate https://services3.arcgis.com/Ff42L1rsWs1QfpLT/arcgis/rest/services/Volcano_Data_WFL/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services9.arcgis.com/MK13qD3p0ttTbX8o/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/1
+decline https://services9.arcgis.com/MK13qD3p0ttTbX8o/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/1
+note arcgis-error-body
+dataset Volcano Data WFL1 | https://services1.arcgis.com/jYHC0Oa2n7z2uKcM/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/1
+candidate https://services1.arcgis.com/jYHC0Oa2n7z2uKcM/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano DataSP WFL1 | https://services3.arcgis.com/o98K21Ga5N91Ugjw/arcgis/rest/services/Volcano_DataSP_WFL1/FeatureServer/1
+candidate https://services3.arcgis.com/o98K21Ga5N91Ugjw/arcgis/rest/services/Volcano_DataSP_WFL1/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL | https://services5.arcgis.com/ilvOamkQCWQM5KB8/arcgis/rest/services/Volcano_Data_WFL/FeatureServer/0
+candidate https://services5.arcgis.com/ilvOamkQCWQM5KB8/arcgis/rest/services/Volcano_Data_WFL/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services1.arcgis.com/ZozYr1WfCwexXgcn/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services1.arcgis.com/ZozYr1WfCwexXgcn/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services1.arcgis.com/UxSKKWBwycGErUpi/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+decline https://services1.arcgis.com/UxSKKWBwycGErUpi/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note arcgis-error-body
+dataset Volcano Data Moss | https://services3.arcgis.com/o98K21Ga5N91Ugjw/arcgis/rest/services/Volcano_Data_Moss/FeatureServer/0
+candidate https://services3.arcgis.com/o98K21Ga5N91Ugjw/arcgis/rest/services/Volcano_Data_Moss/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1JD | https://services3.arcgis.com/o98K21Ga5N91Ugjw/arcgis/rest/services/Volcano_Data_WFL1JD/FeatureServer/0
+candidate https://services3.arcgis.com/o98K21Ga5N91Ugjw/arcgis/rest/services/Volcano_Data_WFL1JD/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services2.arcgis.com/p9kdkXEBKa61zG6O/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services2.arcgis.com/p9kdkXEBKa61zG6O/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services1.arcgis.com/t03WDvnSR7gSDOB2/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services1.arcgis.com/t03WDvnSR7gSDOB2/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services5.arcgis.com/s1DFLqWfkSIcXZ9O/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services5.arcgis.com/s1DFLqWfkSIcXZ9O/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services8.arcgis.com/NpbjfzW6d4DHYNPS/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+decline https://services8.arcgis.com/NpbjfzW6d4DHYNPS/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note arcgis-error-body
+dataset Volcano Data WFL9 | https://services1.arcgis.com/JXBurs0uwQlwOiHt/arcgis/rest/services/Volcano_Data_WFL9/FeatureServer/0
+candidate https://services1.arcgis.com/JXBurs0uwQlwOiHt/arcgis/rest/services/Volcano_Data_WFL9/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1PA | https://services2.arcgis.com/IsDCghZ73NgoYoz5/arcgis/rest/services/Volcano_Data_WFL1PA/FeatureServer/0
+candidate https://services2.arcgis.com/IsDCghZ73NgoYoz5/arcgis/rest/services/Volcano_Data_WFL1PA/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL2 | https://services2.arcgis.com/IsDCghZ73NgoYoz5/arcgis/rest/services/Volcano_Data_WFL2/FeatureServer/0
+candidate https://services2.arcgis.com/IsDCghZ73NgoYoz5/arcgis/rest/services/Volcano_Data_WFL2/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data GISClass | https://services1.arcgis.com/JXBurs0uwQlwOiHt/arcgis/rest/services/Volcano_Data_GISClass/FeatureServer/0
+candidate https://services1.arcgis.com/JXBurs0uwQlwOiHt/arcgis/rest/services/Volcano_Data_GISClass/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1B | https://services9.arcgis.com/EGheeB0VDT6EarZv/arcgis/rest/services/Volcano_Data_WFL1B/FeatureServer/0
+candidate https://services9.arcgis.com/EGheeB0VDT6EarZv/arcgis/rest/services/Volcano_Data_WFL1B/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+# volcano seite 4: 20 services
+dataset Volcano Data WFL1 | https://services.arcgis.com/aMv9lrl6jFsuGNu8/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services.arcgis.com/aMv9lrl6jFsuGNu8/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL12 | https://services1.arcgis.com/JXBurs0uwQlwOiHt/arcgis/rest/services/Volcano_Data_WFL12/FeatureServer/0
+candidate https://services1.arcgis.com/JXBurs0uwQlwOiHt/arcgis/rest/services/Volcano_Data_WFL12/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services1.arcgis.com/KNdRU5cN6ENqCTjk/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services1.arcgis.com/KNdRU5cN6ENqCTjk/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL12 | https://services8.arcgis.com/GMS8EQ8cdBashx1Z/arcgis/rest/services/Volcano_Data_WFL12/FeatureServer/0
+candidate https://services8.arcgis.com/GMS8EQ8cdBashx1Z/arcgis/rest/services/Volcano_Data_WFL12/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1123 | https://services1.arcgis.com/Hi6kEmQzn9cl2oYk/arcgis/rest/services/Volcano_Data_WFL1123/FeatureServer/0
+candidate https://services1.arcgis.com/Hi6kEmQzn9cl2oYk/arcgis/rest/services/Volcano_Data_WFL1123/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano DataBs WFL1 | https://services.arcgis.com/8df8p0NlLFEShl0r/arcgis/rest/services/Volcano_DataBs_WFL1/FeatureServer/0
+candidate https://services.arcgis.com/8df8p0NlLFEShl0r/arcgis/rest/services/Volcano_DataBs_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services.arcgis.com/RyyEtpdLlqzX0PRT/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services.arcgis.com/RyyEtpdLlqzX0PRT/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services1.arcgis.com/51R1xnARnjq5iyz9/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services1.arcgis.com/51R1xnARnjq5iyz9/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL | https://services9.arcgis.com/8S9gOTu7oX7gWRzY/arcgis/rest/services/Volcano_Data_WFL/FeatureServer/0
+candidate https://services9.arcgis.com/8S9gOTu7oX7gWRzY/arcgis/rest/services/Volcano_Data_WFL/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services5.arcgis.com/QJyghEkHsKxYcT5P/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+decline https://services5.arcgis.com/QJyghEkHsKxYcT5P/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note arcgis-error-body
+dataset Volcano Data WFL1 | https://services.arcgis.com/F7DSX1DSNSiWmOqh/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services.arcgis.com/F7DSX1DSNSiWmOqh/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services3.arcgis.com/F0auW5iU93OLpNE3/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services3.arcgis.com/F0auW5iU93OLpNE3/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data NEW | https://services6.arcgis.com/EDFKKZivVyfUwPAb/arcgis/rest/services/Volcano_Data_NEW/FeatureServer/0
+candidate https://services6.arcgis.com/EDFKKZivVyfUwPAb/arcgis/rest/services/Volcano_Data_NEW/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1  | https://services6.arcgis.com/EDFKKZivVyfUwPAb/arcgis/rest/services/Volcano_Data_WFL1_/FeatureServer/0
+candidate https://services6.arcgis.com/EDFKKZivVyfUwPAb/arcgis/rest/services/Volcano_Data_WFL1_/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services3.arcgis.com/iSvoqDIDIgsY1gyO/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+decline https://services3.arcgis.com/iSvoqDIDIgsY1gyO/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note arcgis-error-body
+dataset Volcano Data WFL | https://services1.arcgis.com/JXBurs0uwQlwOiHt/arcgis/rest/services/Volcano_Data_WFL/FeatureServer/0
+candidate https://services1.arcgis.com/JXBurs0uwQlwOiHt/arcgis/rest/services/Volcano_Data_WFL/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1b | https://services1.arcgis.com/Hi6kEmQzn9cl2oYk/arcgis/rest/services/Volcano_Data_WFL1b/FeatureServer/0
+candidate https://services1.arcgis.com/Hi6kEmQzn9cl2oYk/arcgis/rest/services/Volcano_Data_WFL1b/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services1.arcgis.com/9NvE8jKNWWlDGsUJ/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services1.arcgis.com/9NvE8jKNWWlDGsUJ/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Dataa WFL1 | https://services1.arcgis.com/0EOqWPtpCmgQr2ay/arcgis/rest/services/Volcano_Dataa_WFL1/FeatureServer/0
+candidate https://services1.arcgis.com/0EOqWPtpCmgQr2ay/arcgis/rest/services/Volcano_Dataa_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services.arcgis.com/g8EzU2gNHvGpFUGY/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services.arcgis.com/g8EzU2gNHvGpFUGY/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+# volcano seite 5: 20 services
+dataset Volcano Data WFL1 | https://services9.arcgis.com/D9JgeJ7U4FhDi0EM/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+decline https://services9.arcgis.com/D9JgeJ7U4FhDi0EM/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note arcgis-error-body
+dataset Volcano Data WFL2 | https://services7.arcgis.com/rGNBhFmeDahu1ofV/arcgis/rest/services/Volcano_Data_WFL2/FeatureServer/0
+candidate https://services7.arcgis.com/rGNBhFmeDahu1ofV/arcgis/rest/services/Volcano_Data_WFL2/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano DataRC WFL1 | https://services7.arcgis.com/Pnb1I1OCft25NDcq/arcgis/rest/services/Volcano_DataRC_WFL1/FeatureServer/0
+candidate https://services7.arcgis.com/Pnb1I1OCft25NDcq/arcgis/rest/services/Volcano_DataRC_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services7.arcgis.com/rGNBhFmeDahu1ofV/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services7.arcgis.com/rGNBhFmeDahu1ofV/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services5.arcgis.com/Fx6AublH7bu5CjVB/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services5.arcgis.com/Fx6AublH7bu5CjVB/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+# volcano seite 6: 20 services
+dataset Volcano Data WFL1 | https://services6.arcgis.com/LhLoEHpKCLq0Db4Z/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services6.arcgis.com/LhLoEHpKCLq0Db4Z/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL2 | https://services1.arcgis.com/Hi6kEmQzn9cl2oYk/arcgis/rest/services/Volcano_Data_WFL2/FeatureServer/0
+candidate https://services1.arcgis.com/Hi6kEmQzn9cl2oYk/arcgis/rest/services/Volcano_Data_WFL2/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano DataKaseyRankl WFL1 | https://services.arcgis.com/8df8p0NlLFEShl0r/arcgis/rest/services/Volcano_DataKaseyRankl_WFL1/FeatureServer/0
+candidate https://services.arcgis.com/8df8p0NlLFEShl0r/arcgis/rest/services/Volcano_DataKaseyRankl_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data2 WFL1 | https://services2.arcgis.com/utBig56dGaw25bwu/arcgis/rest/services/Volcano_Data2_WFL1/FeatureServer/0
+candidate https://services2.arcgis.com/utBig56dGaw25bwu/arcgis/rest/services/Volcano_Data2_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL  | https://services1.arcgis.com/JXBurs0uwQlwOiHt/arcgis/rest/services/Volcano_Data_WFL_/FeatureServer/0
+candidate https://services1.arcgis.com/JXBurs0uwQlwOiHt/arcgis/rest/services/Volcano_Data_WFL_/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFLtest | https://services1.arcgis.com/JXBurs0uwQlwOiHt/arcgis/rest/services/Volcano_Data_WFLtest/FeatureServer/0
+candidate https://services1.arcgis.com/JXBurs0uwQlwOiHt/arcgis/rest/services/Volcano_Data_WFLtest/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL2 | https://services1.arcgis.com/JXBurs0uwQlwOiHt/arcgis/rest/services/Volcano_Data_WFL2/FeatureServer/0
+candidate https://services1.arcgis.com/JXBurs0uwQlwOiHt/arcgis/rest/services/Volcano_Data_WFL2/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services1.arcgis.com/1a2tmD6ZLIYsIeMb/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services1.arcgis.com/1a2tmD6ZLIYsIeMb/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services5.arcgis.com/dFCi4j751Fk5jtHP/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services5.arcgis.com/dFCi4j751Fk5jtHP/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services9.arcgis.com/99WpbDIdQaBFxOhO/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services9.arcgis.com/99WpbDIdQaBFxOhO/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data1 WFL1 | https://services1.arcgis.com/TSNNo8H51qYl31gq/arcgis/rest/services/Volcano_Data1_WFL1/FeatureServer/0
+candidate https://services1.arcgis.com/TSNNo8H51qYl31gq/arcgis/rest/services/Volcano_Data1_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services2.arcgis.com/IsDCghZ73NgoYoz5/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services2.arcgis.com/IsDCghZ73NgoYoz5/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services.arcgis.com/9Jk4Zl9KofTtvg3x/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services.arcgis.com/9Jk4Zl9KofTtvg3x/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL | https://services.arcgis.com/LjCtRQt1uf8M6LGR/arcgis/rest/services/Volcano_Data_WFL/FeatureServer/0
+candidate https://services.arcgis.com/LjCtRQt1uf8M6LGR/arcgis/rest/services/Volcano_Data_WFL/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services1.arcgis.com/BkEmXKuPzvnbC7ZB/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/1
+candidate https://services1.arcgis.com/BkEmXKuPzvnbC7ZB/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+# volcano seite 7: 20 services
+dataset Volcano Data WFL1 | https://services5.arcgis.com/BFucnLaN4NszOvuE/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer
+decline https://services5.arcgis.com/BFucnLaN4NszOvuE/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer
+note arcgis-error-body
+dataset Volcano Risk WFL1 | https://services3.arcgis.com/F0auW5iU93OLpNE3/arcgis/rest/services/Volcano_Risk_WFL1/FeatureServer/0
+candidate https://services3.arcgis.com/F0auW5iU93OLpNE3/arcgis/rest/services/Volcano_Risk_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL2A1 | https://services1.arcgis.com/cc7nIINtrZ67dyVJ/arcgis/rest/services/Volcano_Data_WFL2A1/FeatureServer/1
+candidate https://services1.arcgis.com/cc7nIINtrZ67dyVJ/arcgis/rest/services/Volcano_Data_WFL2A1/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Luke Volcano Data | https://services3.arcgis.com/o98K21Ga5N91Ugjw/arcgis/rest/services/Luke_Volcano_Data/FeatureServer/0
+candidate https://services3.arcgis.com/o98K21Ga5N91Ugjw/arcgis/rest/services/Luke_Volcano_Data/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services3.arcgis.com/nV0HyP5uKL48nAKr/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/1
+candidate https://services3.arcgis.com/nV0HyP5uKL48nAKr/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL12222 | https://services.arcgis.com/B7NI2jUD81lCgSpx/arcgis/rest/services/Volcano_Data_WFL12222/FeatureServer/0
+candidate https://services.arcgis.com/B7NI2jUD81lCgSpx/arcgis/rest/services/Volcano_Data_WFL12222/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL | https://services2.arcgis.com/IsDCghZ73NgoYoz5/arcgis/rest/services/Volcano_Data_WFL/FeatureServer/0
+candidate https://services2.arcgis.com/IsDCghZ73NgoYoz5/arcgis/rest/services/Volcano_Data_WFL/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data NGH1 | https://services2.arcgis.com/TSIJRCUq2X813XVI/arcgis/rest/services/Volcano_Data_NGH1/FeatureServer/0
+candidate https://services2.arcgis.com/TSIJRCUq2X813XVI/arcgis/rest/services/Volcano_Data_NGH1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services.arcgis.com/bEJP9sfCdgcs9O1O/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services.arcgis.com/bEJP9sfCdgcs9O1O/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL12 | https://services3.arcgis.com/o98K21Ga5N91Ugjw/arcgis/rest/services/Volcano_Data_WFL12/FeatureServer/0
+candidate https://services3.arcgis.com/o98K21Ga5N91Ugjw/arcgis/rest/services/Volcano_Data_WFL12/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services8.arcgis.com/cPUbOSMhfMofCriW/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+decline https://services8.arcgis.com/cPUbOSMhfMofCriW/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note arcgis-error-body
+dataset Volcano Data WFL1 | https://services5.arcgis.com/vV7RVgkYudn9YamR/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+decline https://services5.arcgis.com/vV7RVgkYudn9YamR/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note arcgis-error-body
+dataset Volcano Data WFL | https://services1.arcgis.com/BcZYUdYklVTk714E/arcgis/rest/services/Volcano_Data_WFL/FeatureServer/0
+candidate https://services1.arcgis.com/BcZYUdYklVTk714E/arcgis/rest/services/Volcano_Data_WFL/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data4117 WFL1 | https://services6.arcgis.com/EDFKKZivVyfUwPAb/arcgis/rest/services/Volcano_Data4117_WFL1/FeatureServer/0
+candidate https://services6.arcgis.com/EDFKKZivVyfUwPAb/arcgis/rest/services/Volcano_Data4117_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL343 | https://services6.arcgis.com/EDFKKZivVyfUwPAb/arcgis/rest/services/Volcano_Data_WFL343/FeatureServer/0
+candidate https://services6.arcgis.com/EDFKKZivVyfUwPAb/arcgis/rest/services/Volcano_Data_WFL343/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL | https://services9.arcgis.com/EGheeB0VDT6EarZv/arcgis/rest/services/Volcano_Data_WFL/FeatureServer/0
+candidate https://services9.arcgis.com/EGheeB0VDT6EarZv/arcgis/rest/services/Volcano_Data_WFL/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+# volcano seite 8: 17 services
+# volcano seite 9: 20 services
+dataset Volcano Data WFL1 | https://services.arcgis.com/Sf0q24s0oDKgX14j/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services.arcgis.com/Sf0q24s0oDKgX14j/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL12 | https://services1.arcgis.com/nelKfx0uyTKT0d0C/arcgis/rest/services/Volcano_Data_WFL12/FeatureServer/0
+candidate https://services1.arcgis.com/nelKfx0uyTKT0d0C/arcgis/rest/services/Volcano_Data_WFL12/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFLA | https://services1.arcgis.com/0EOqWPtpCmgQr2ay/arcgis/rest/services/Volcano_Data_WFLA/FeatureServer/1
+candidate https://services1.arcgis.com/0EOqWPtpCmgQr2ay/arcgis/rest/services/Volcano_Data_WFLA/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data1 WFL1 | https://services.arcgis.com/aMv9lrl6jFsuGNu8/arcgis/rest/services/Volcano_Data1_WFL1/FeatureServer/0
+candidate https://services.arcgis.com/aMv9lrl6jFsuGNu8/arcgis/rest/services/Volcano_Data1_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL | https://services.arcgis.com/8df8p0NlLFEShl0r/arcgis/rest/services/Volcano_Data_WFL/FeatureServer/0
+candidate https://services.arcgis.com/8df8p0NlLFEShl0r/arcgis/rest/services/Volcano_Data_WFL/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL10151 | https://services9.arcgis.com/EGheeB0VDT6EarZv/arcgis/rest/services/Volcano_Data_WFL10151/FeatureServer/1
+candidate https://services9.arcgis.com/EGheeB0VDT6EarZv/arcgis/rest/services/Volcano_Data_WFL10151/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data1 WFL1 | https://services3.arcgis.com/o98K21Ga5N91Ugjw/arcgis/rest/services/Volcano_Data1_WFL1/FeatureServer/1
+candidate https://services3.arcgis.com/o98K21Ga5N91Ugjw/arcgis/rest/services/Volcano_Data1_WFL1/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data1234 WFL1 | https://services2.arcgis.com/4XlTp6SwwtAtXgjj/arcgis/rest/services/Volcano_Data1234_WFL1/FeatureServer/0
+candidate https://services2.arcgis.com/4XlTp6SwwtAtXgjj/arcgis/rest/services/Volcano_Data1234_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data2 WFL1 | https://services2.arcgis.com/IsDCghZ73NgoYoz5/arcgis/rest/services/Volcano_Data2_WFL1/FeatureServer/0
+candidate https://services2.arcgis.com/IsDCghZ73NgoYoz5/arcgis/rest/services/Volcano_Data2_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL2 | https://services1.arcgis.com/CtMjdUqInecbPao9/arcgis/rest/services/Volcano_Data_WFL2/FeatureServer/0
+candidate https://services1.arcgis.com/CtMjdUqInecbPao9/arcgis/rest/services/Volcano_Data_WFL2/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFLmikk | https://services1.arcgis.com/FLgshDLgxaIsVNWq/arcgis/rest/services/Volcano_Data_WFLmikk/FeatureServer/0
+candidate https://services1.arcgis.com/FLgshDLgxaIsVNWq/arcgis/rest/services/Volcano_Data_WFLmikk/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFLsh4125 | https://services2.arcgis.com/IsDCghZ73NgoYoz5/arcgis/rest/services/Volcano_Data_WFLsh4125/FeatureServer/0
+candidate https://services2.arcgis.com/IsDCghZ73NgoYoz5/arcgis/rest/services/Volcano_Data_WFLsh4125/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFLAdamson | https://services1.arcgis.com/qvhbYl7AOHUVqxij/arcgis/rest/services/Volcano_Data_WFLAdamson/FeatureServer/0
+candidate https://services1.arcgis.com/qvhbYl7AOHUVqxij/arcgis/rest/services/Volcano_Data_WFLAdamson/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services3.arcgis.com/asLMiasruIgxPXnm/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+decline https://services3.arcgis.com/asLMiasruIgxPXnm/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note arcgis-error-body
+dataset Volcano Data WFL | https://services3.arcgis.com/o98K21Ga5N91Ugjw/arcgis/rest/services/Volcano_Data_WFL/FeatureServer/0
+candidate https://services3.arcgis.com/o98K21Ga5N91Ugjw/arcgis/rest/services/Volcano_Data_WFL/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services3.arcgis.com/sSyqU2G01sKVqGZA/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services3.arcgis.com/sSyqU2G01sKVqGZA/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services.arcgis.com/lY0By1TVrNVXFf6Y/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services.arcgis.com/lY0By1TVrNVXFf6Y/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data  WFL1 | https://services1.arcgis.com/CtMjdUqInecbPao9/arcgis/rest/services/Volcano_Data__WFL1/FeatureServer/0
+candidate https://services1.arcgis.com/CtMjdUqInecbPao9/arcgis/rest/services/Volcano_Data__WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services5.arcgis.com/I8ntB3fl0w1MCzij/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+decline https://services5.arcgis.com/I8ntB3fl0w1MCzij/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note arcgis-error-body
+# volcano seite 10: 19 services
+dataset Volcano Data WFL91 | https://services1.arcgis.com/JXBurs0uwQlwOiHt/arcgis/rest/services/Volcano_Data_WFL91/FeatureServer/0
+candidate https://services1.arcgis.com/JXBurs0uwQlwOiHt/arcgis/rest/services/Volcano_Data_WFL91/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services3.arcgis.com/nodjYORYn9Dg3YqU/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+decline https://services3.arcgis.com/nodjYORYn9Dg3YqU/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note arcgis-error-body
+dataset Volcano Data WFL1 | https://services7.arcgis.com/Oc5gZTy4bRSRY8yA/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services7.arcgis.com/Oc5gZTy4bRSRY8yA/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL01 | https://services6.arcgis.com/ZVM1rEuVZjtC1Wwk/arcgis/rest/services/Volcano_Data_WFL01/FeatureServer/0
+candidate https://services6.arcgis.com/ZVM1rEuVZjtC1Wwk/arcgis/rest/services/Volcano_Data_WFL01/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services3.arcgis.com/2apYAev6EzpKDen5/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services3.arcgis.com/2apYAev6EzpKDen5/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services8.arcgis.com/13KZUUCB9M7r2jHL/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+decline https://services8.arcgis.com/13KZUUCB9M7r2jHL/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note arcgis-error-body
+dataset Volcano Data WFL1B | https://services6.arcgis.com/EDFKKZivVyfUwPAb/arcgis/rest/services/Volcano_Data_WFL1B/FeatureServer/0
+candidate https://services6.arcgis.com/EDFKKZivVyfUwPAb/arcgis/rest/services/Volcano_Data_WFL1B/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services.arcgis.com/JmSyAMvJJkgxqun6/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services.arcgis.com/JmSyAMvJJkgxqun6/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data1 WFL1 | https://services9.arcgis.com/EGheeB0VDT6EarZv/arcgis/rest/services/Volcano_Data1_WFL1/FeatureServer/0
+candidate https://services9.arcgis.com/EGheeB0VDT6EarZv/arcgis/rest/services/Volcano_Data1_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services5.arcgis.com/yPNnawpX3ryif3Sm/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services5.arcgis.com/yPNnawpX3ryif3Sm/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services6.arcgis.com/venGxobARcuLsEVl/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services6.arcgis.com/venGxobARcuLsEVl/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1  | https://services1.arcgis.com/SIYkiqjmENweC50g/arcgis/rest/services/Volcano_Data_WFL1_/FeatureServer/0
+candidate https://services1.arcgis.com/SIYkiqjmENweC50g/arcgis/rest/services/Volcano_Data_WFL1_/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL2 | https://services2.arcgis.com/TSIJRCUq2X813XVI/arcgis/rest/services/Volcano_Data_WFL2/FeatureServer/0
+candidate https://services2.arcgis.com/TSIJRCUq2X813XVI/arcgis/rest/services/Volcano_Data_WFL2/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL2 | https://services1.arcgis.com/0EOqWPtpCmgQr2ay/arcgis/rest/services/Volcano_Data_WFL2/FeatureServer/0
+candidate https://services1.arcgis.com/0EOqWPtpCmgQr2ay/arcgis/rest/services/Volcano_Data_WFL2/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services1.arcgis.com/HmwnYiJTBZ4UkySc/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services1.arcgis.com/HmwnYiJTBZ4UkySc/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services7.arcgis.com/R3qH9nmSGQu8b2Qx/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services7.arcgis.com/R3qH9nmSGQu8b2Qx/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL10 | https://services2.arcgis.com/IsDCghZ73NgoYoz5/arcgis/rest/services/Volcano_Data_WFL10/FeatureServer/0
+candidate https://services2.arcgis.com/IsDCghZ73NgoYoz5/arcgis/rest/services/Volcano_Data_WFL10/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL2 | https://services6.arcgis.com/EDFKKZivVyfUwPAb/arcgis/rest/services/Volcano_Data_WFL2/FeatureServer/0
+candidate https://services6.arcgis.com/EDFKKZivVyfUwPAb/arcgis/rest/services/Volcano_Data_WFL2/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL111 | https://services6.arcgis.com/EDFKKZivVyfUwPAb/arcgis/rest/services/Volcano_Data_WFL111/FeatureServer/0
+candidate https://services6.arcgis.com/EDFKKZivVyfUwPAb/arcgis/rest/services/Volcano_Data_WFL111/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services.arcgis.com/QFySQspEmqdNL2bM/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services.arcgis.com/QFySQspEmqdNL2bM/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+# volcano seite 11: 20 services
+dataset Volcano Data WFL1 | https://services1.arcgis.com/EX9Lx0EdFAxE7zvX/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services1.arcgis.com/EX9Lx0EdFAxE7zvX/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL2 | https://services1.arcgis.com/YiULsZbgRKmBtdZN/arcgis/rest/services/Volcano_Data_WFL2/FeatureServer/0
+candidate https://services1.arcgis.com/YiULsZbgRKmBtdZN/arcgis/rest/services/Volcano_Data_WFL2/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL11 | https://services1.arcgis.com/YiULsZbgRKmBtdZN/arcgis/rest/services/Volcano_Data_WFL11/FeatureServer/0
+candidate https://services1.arcgis.com/YiULsZbgRKmBtdZN/arcgis/rest/services/Volcano_Data_WFL11/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services4.arcgis.com/Suik55vhPUT8ZIfl/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services4.arcgis.com/Suik55vhPUT8ZIfl/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services1.arcgis.com/nelKfx0uyTKT0d0C/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services1.arcgis.com/nelKfx0uyTKT0d0C/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services.arcgis.com/8df8p0NlLFEShl0r/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services.arcgis.com/8df8p0NlLFEShl0r/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services5.arcgis.com/t3U5B39kSeLnI7mS/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/1
+candidate https://services5.arcgis.com/t3U5B39kSeLnI7mS/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL2 | https://services.arcgis.com/B7NI2jUD81lCgSpx/arcgis/rest/services/Volcano_Data_WFL2/FeatureServer/0
+candidate https://services.arcgis.com/B7NI2jUD81lCgSpx/arcgis/rest/services/Volcano_Data_WFL2/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano DataNoahL WFL1 | https://services7.arcgis.com/Pnb1I1OCft25NDcq/arcgis/rest/services/Volcano_DataNoahL_WFL1/FeatureServer/0
+candidate https://services7.arcgis.com/Pnb1I1OCft25NDcq/arcgis/rest/services/Volcano_DataNoahL_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFLPeterson1 | https://services.arcgis.com/8df8p0NlLFEShl0r/arcgis/rest/services/Volcano_Data_WFLPeterson1/FeatureServer/0
+candidate https://services.arcgis.com/8df8p0NlLFEShl0r/arcgis/rest/services/Volcano_Data_WFLPeterson1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data 4291 | https://services.arcgis.com/8df8p0NlLFEShl0r/arcgis/rest/services/Volcano_Data_4291/FeatureServer/1
+candidate https://services.arcgis.com/8df8p0NlLFEShl0r/arcgis/rest/services/Volcano_Data_4291/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services8.arcgis.com/msZFSm9Jn7uTNQfI/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/1
+candidate https://services8.arcgis.com/msZFSm9Jn7uTNQfI/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data Layer | https://services7.arcgis.com/J8RUt0wngjTJEZPP/arcgis/rest/services/Volcano_Data_Layer/FeatureServer/1
+candidate https://services7.arcgis.com/J8RUt0wngjTJEZPP/arcgis/rest/services/Volcano_Data_Layer/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services6.arcgis.com/3c9DqV5MFHKXDAYQ/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/1
+decline https://services6.arcgis.com/3c9DqV5MFHKXDAYQ/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/1
+note arcgis-error-body
+dataset Volcano Data WFL1 | https://services1.arcgis.com/m9p5y180BqMf6JT7/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services1.arcgis.com/m9p5y180BqMf6JT7/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services3.arcgis.com/egy383N2MJlOx7I8/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services3.arcgis.com/egy383N2MJlOx7I8/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services9.arcgis.com/wFxVWoGsisLkGCI7/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services9.arcgis.com/wFxVWoGsisLkGCI7/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano dataJoe WFL1 | https://services9.arcgis.com/EGheeB0VDT6EarZv/arcgis/rest/services/Volcano_dataJoe_WFL1/FeatureServer/0
+candidate https://services9.arcgis.com/EGheeB0VDT6EarZv/arcgis/rest/services/Volcano_dataJoe_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+# volcano seite 12: 20 services
+dataset Volcano Data sw3523 | https://services2.arcgis.com/IsDCghZ73NgoYoz5/arcgis/rest/services/Volcano_Data_sw3523/FeatureServer/0
+candidate https://services2.arcgis.com/IsDCghZ73NgoYoz5/arcgis/rest/services/Volcano_Data_sw3523/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL12 | https://services2.arcgis.com/TSIJRCUq2X813XVI/arcgis/rest/services/Volcano_Data_WFL12/FeatureServer/0
+candidate https://services2.arcgis.com/TSIJRCUq2X813XVI/arcgis/rest/services/Volcano_Data_WFL12/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL2 | https://services3.arcgis.com/o98K21Ga5N91Ugjw/arcgis/rest/services/Volcano_Data_WFL2/FeatureServer/0
+candidate https://services3.arcgis.com/o98K21Ga5N91Ugjw/arcgis/rest/services/Volcano_Data_WFL2/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services3.arcgis.com/o98K21Ga5N91Ugjw/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services3.arcgis.com/o98K21Ga5N91Ugjw/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data 1021 | https://services.arcgis.com/B7NI2jUD81lCgSpx/arcgis/rest/services/Volcano_Data_1021/FeatureServer/0
+candidate https://services.arcgis.com/B7NI2jUD81lCgSpx/arcgis/rest/services/Volcano_Data_1021/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL | https://services2.arcgis.com/JCZKHUOTKN7eWpNb/arcgis/rest/services/Volcano_Data_WFL/FeatureServer/0
+candidate https://services2.arcgis.com/JCZKHUOTKN7eWpNb/arcgis/rest/services/Volcano_Data_WFL/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL12 | https://services6.arcgis.com/ZVM1rEuVZjtC1Wwk/arcgis/rest/services/Volcano_Data_WFL12/FeatureServer/0
+candidate https://services6.arcgis.com/ZVM1rEuVZjtC1Wwk/arcgis/rest/services/Volcano_Data_WFL12/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services8.arcgis.com/AUzB6nOCWYow3ofS/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services8.arcgis.com/AUzB6nOCWYow3ofS/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset volcano Data WFL1 | https://services6.arcgis.com/ZVM1rEuVZjtC1Wwk/arcgis/rest/services/volcano_Data_WFL1/FeatureServer/0
+candidate https://services6.arcgis.com/ZVM1rEuVZjtC1Wwk/arcgis/rest/services/volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services.arcgis.com/CG29OGjgIfcKMr7c/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services.arcgis.com/CG29OGjgIfcKMr7c/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+# volcano seite 13: 20 services
+dataset Volcano Edit2 | https://services3.arcgis.com/EkiZXsKUjcuTmRZG/arcgis/rest/services/Volcano_Edit2/FeatureServer/0
+candidate https://services3.arcgis.com/EkiZXsKUjcuTmRZG/arcgis/rest/services/Volcano_Edit2/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Edit13 | https://services3.arcgis.com/EkiZXsKUjcuTmRZG/arcgis/rest/services/Volcano_Edit13/FeatureServer/0
+candidate https://services3.arcgis.com/EkiZXsKUjcuTmRZG/arcgis/rest/services/Volcano_Edit13/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Edit5 | https://services3.arcgis.com/EkiZXsKUjcuTmRZG/arcgis/rest/services/Volcano_Edit5/FeatureServer/0
+candidate https://services3.arcgis.com/EkiZXsKUjcuTmRZG/arcgis/rest/services/Volcano_Edit5/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+# volcano seite 14: 19 services
+dataset Volcano Edit3 | https://services3.arcgis.com/EkiZXsKUjcuTmRZG/arcgis/rest/services/Volcano_Edit3/FeatureServer/0
+candidate https://services3.arcgis.com/EkiZXsKUjcuTmRZG/arcgis/rest/services/Volcano_Edit3/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Edit | https://services4.arcgis.com/IVO7bqspY7CXFUTU/arcgis/rest/services/Volcano_Edit/FeatureServer/0
+candidate https://services4.arcgis.com/IVO7bqspY7CXFUTU/arcgis/rest/services/Volcano_Edit/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano EditSG | https://services3.arcgis.com/EkiZXsKUjcuTmRZG/arcgis/rest/services/Volcano_EditSG/FeatureServer/0
+candidate https://services3.arcgis.com/EkiZXsKUjcuTmRZG/arcgis/rest/services/Volcano_EditSG/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Edit | https://services1.arcgis.com/YiULsZbgRKmBtdZN/arcgis/rest/services/Volcano_Edit/FeatureServer/0
+candidate https://services1.arcgis.com/YiULsZbgRKmBtdZN/arcgis/rest/services/Volcano_Edit/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data  WFL1 | https://services.arcgis.com/Sf0q24s0oDKgX14j/arcgis/rest/services/Volcano_Data__WFL1/FeatureServer/0
+candidate https://services.arcgis.com/Sf0q24s0oDKgX14j/arcgis/rest/services/Volcano_Data__WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano edit enabled | https://services1.arcgis.com/cc7nIINtrZ67dyVJ/arcgis/rest/services/Volcano_edit_enabled/FeatureServer/0
+candidate https://services1.arcgis.com/cc7nIINtrZ67dyVJ/arcgis/rest/services/Volcano_edit_enabled/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Edit EK | https://services3.arcgis.com/EkiZXsKUjcuTmRZG/arcgis/rest/services/Volcano_Edit_EK/FeatureServer/0
+candidate https://services3.arcgis.com/EkiZXsKUjcuTmRZG/arcgis/rest/services/Volcano_Edit_EK/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Chile Volcano Multi Buffer | https://services.arcgis.com/xYjDUN35YwdCEcMm/arcgis/rest/services/Assignment01_Trial02/FeatureServer/5
+candidate https://services.arcgis.com/xYjDUN35YwdCEcMm/arcgis/rest/services/Assignment01_Trial02/FeatureServer/5
+note felder: Buf_Dist, Country, Elevation, Evidence_Category, Last_Eruption_Year, Latitude, Longitude, Major_Rock_1, Major_Rock_2, Major_Rock_3, Major_Rock_4, Major_Rock_5, Minor_Rock_1, Minor_Rock_2, Minor_Rock_3, Minor_Rock_4, OBJECTID, ORIG_FID
+dataset Volcano Data WFL1 | https://services7.arcgis.com/nCr2TeL1BX3Jz4dE/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/1
+candidate https://services7.arcgis.com/nCr2TeL1BX3Jz4dE/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data DA WFL1 | https://services9.arcgis.com/50Ucgk6iWOvN8To8/arcgis/rest/services/Volcano_Data_DA_WFL1/FeatureServer/1
+candidate https://services9.arcgis.com/50Ucgk6iWOvN8To8/arcgis/rest/services/Volcano_Data_DA_WFL1/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+# volcano seite 15: 13 services
+dataset Volcano Data GJ WFL1 | https://services3.arcgis.com/o98K21Ga5N91Ugjw/arcgis/rest/services/Volcano_Data_GJ_WFL1/FeatureServer/1
+candidate https://services3.arcgis.com/o98K21Ga5N91Ugjw/arcgis/rest/services/Volcano_Data_GJ_WFL1/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data DARios WFL1 | https://services5.arcgis.com/30NrgOEHC9Dsh9sl/arcgis/rest/services/Volcano_Data_DARios_WFL1/FeatureServer/1
+candidate https://services5.arcgis.com/30NrgOEHC9Dsh9sl/arcgis/rest/services/Volcano_Data_DARios_WFL1/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data mjd WFL1 | https://services2.arcgis.com/ZQgQTuoyBrtmoGdP/arcgis/rest/services/Volcano_Data_mjd_WFL1/FeatureServer/1
+candidate https://services2.arcgis.com/ZQgQTuoyBrtmoGdP/arcgis/rest/services/Volcano_Data_mjd_WFL1/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data MK WFL1 | https://services.arcgis.com/V4Rx2DXlIHdEvTZA/arcgis/rest/services/Volcano_Data_MK_WFL1/FeatureServer/1
+candidate https://services.arcgis.com/V4Rx2DXlIHdEvTZA/arcgis/rest/services/Volcano_Data_MK_WFL1/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data ES WFL1 | https://services3.arcgis.com/o98K21Ga5N91Ugjw/arcgis/rest/services/Volcano_Data_ES_WFL1/FeatureServer/1
+candidate https://services3.arcgis.com/o98K21Ga5N91Ugjw/arcgis/rest/services/Volcano_Data_ES_WFL1/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data SDR WFL1 | https://services6.arcgis.com/Gii8sQvJy3dYFDAt/arcgis/rest/services/Volcano_Data_SDR_WFL1/FeatureServer/0
+candidate https://services6.arcgis.com/Gii8sQvJy3dYFDAt/arcgis/rest/services/Volcano_Data_SDR_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data CYT WFL1 | https://services7.arcgis.com/Oc5gZTy4bRSRY8yA/arcgis/rest/services/Volcano_Data_CYT_WFL1/FeatureServer/1
+candidate https://services7.arcgis.com/Oc5gZTy4bRSRY8yA/arcgis/rest/services/Volcano_Data_CYT_WFL1/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data BD WFL1 | https://services3.arcgis.com/hYDGPBWVMKXNG9JW/arcgis/rest/services/Volcano_Data_BD_WFL1/FeatureServer/1
+decline https://services3.arcgis.com/hYDGPBWVMKXNG9JW/arcgis/rest/services/Volcano_Data_BD_WFL1/FeatureServer/1
+note arcgis-error-body
+dataset Volcano Data DCHA2 WFL1 | https://services1.arcgis.com/7S16A7PAFcmSmqJA/arcgis/rest/services/Volcano_Data_DCHA2_WFL1/FeatureServer/1
+candidate https://services1.arcgis.com/7S16A7PAFcmSmqJA/arcgis/rest/services/Volcano_Data_DCHA2_WFL1/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Barnett Volcano Data WFL1 | https://services5.arcgis.com/ed839pyDNWVlk9KK/arcgis/rest/services/Barnett_Volcano_Data_WFL1/FeatureServer/1
+candidate https://services5.arcgis.com/ed839pyDNWVlk9KK/arcgis/rest/services/Barnett_Volcano_Data_WFL1/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data MKR1 WFL1 | https://services1.arcgis.com/gDSyXKjKAObQureo/arcgis/rest/services/Volcano_Data_MKR1_WFL1/FeatureServer/1
+candidate https://services1.arcgis.com/gDSyXKjKAObQureo/arcgis/rest/services/Volcano_Data_MKR1_WFL1/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data MakennaS WFL1 | https://services1.arcgis.com/FB50u5E6wrw7l3d1/arcgis/rest/services/Volcano_Data_MakennaS_WFL1/FeatureServer/1
+candidate https://services1.arcgis.com/FB50u5E6wrw7l3d1/arcgis/rest/services/Volcano_Data_MakennaS_WFL1/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, GlobalID, Latitude, Location, Longitude, Mo, Name, Num
+dataset Volcano Data JR WFL1 | https://services3.arcgis.com/o98K21Ga5N91Ugjw/arcgis/rest/services/Volcano_Data_JR_WFL1/FeatureServer/1
+candidate https://services3.arcgis.com/o98K21Ga5N91Ugjw/arcgis/rest/services/Volcano_Data_JR_WFL1/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 ZY | https://services3.arcgis.com/o98K21Ga5N91Ugjw/arcgis/rest/services/Volcano_Data_WFL1_ZY/FeatureServer/1
+candidate https://services3.arcgis.com/o98K21Ga5N91Ugjw/arcgis/rest/services/Volcano_Data_WFL1_ZY/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 1 | https://services6.arcgis.com/HQUud09zgy3Asw9X/arcgis/rest/services/Volcano_Data_WFL1_1/FeatureServer/1
+candidate https://services6.arcgis.com/HQUud09zgy3Asw9X/arcgis/rest/services/Volcano_Data_WFL1_1/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL 1 | https://services.arcgis.com/8df8p0NlLFEShl0r/arcgis/rest/services/Volcano_Data_WFL_1/FeatureServer/1
+candidate https://services.arcgis.com/8df8p0NlLFEShl0r/arcgis/rest/services/Volcano_Data_WFL_1/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+# volcano seite 16: 17 services
+dataset Volcano Data WFL CLW | https://services1.arcgis.com/JXBurs0uwQlwOiHt/arcgis/rest/services/Volcano_Data_WFL_CLW/FeatureServer/0
+candidate https://services1.arcgis.com/JXBurs0uwQlwOiHt/arcgis/rest/services/Volcano_Data_WFL_CLW/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL lb | https://services.arcgis.com/aMv9lrl6jFsuGNu8/arcgis/rest/services/Volcano_Data_WFL_lb/FeatureServer/0
+candidate https://services.arcgis.com/aMv9lrl6jFsuGNu8/arcgis/rest/services/Volcano_Data_WFL_lb/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 MM | https://services6.arcgis.com/JUmUgCafSWdOK8hF/arcgis/rest/services/Volcano_Data_WFL1_MM/FeatureServer/0
+candidate https://services6.arcgis.com/JUmUgCafSWdOK8hF/arcgis/rest/services/Volcano_Data_WFL1_MM/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 GK | https://services2.arcgis.com/IsDCghZ73NgoYoz5/arcgis/rest/services/Volcano_Data_WFL1_GK/FeatureServer/0
+candidate https://services2.arcgis.com/IsDCghZ73NgoYoz5/arcgis/rest/services/Volcano_Data_WFL1_GK/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL KJ | https://services9.arcgis.com/EGheeB0VDT6EarZv/arcgis/rest/services/Volcano_Data_WFL_KJ/FeatureServer/0
+candidate https://services9.arcgis.com/EGheeB0VDT6EarZv/arcgis/rest/services/Volcano_Data_WFL_KJ/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data purseglove WFL1 | https://services1.arcgis.com/Hi6kEmQzn9cl2oYk/arcgis/rest/services/Volcano_Data_purseglove_WFL1/FeatureServer/0
+candidate https://services1.arcgis.com/Hi6kEmQzn9cl2oYk/arcgis/rest/services/Volcano_Data_purseglove_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL Sprague | https://services1.arcgis.com/SIYkiqjmENweC50g/arcgis/rest/services/Volcano_Data_WFL_Sprague/FeatureServer/0
+candidate https://services1.arcgis.com/SIYkiqjmENweC50g/arcgis/rest/services/Volcano_Data_WFL_Sprague/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 derekdahly | https://services.arcgis.com/8df8p0NlLFEShl0r/arcgis/rest/services/Volcano_Data_WFL1_derekdahly/FeatureServer/0
+candidate https://services.arcgis.com/8df8p0NlLFEShl0r/arcgis/rest/services/Volcano_Data_WFL1_derekdahly/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data dd WFL1 | https://services.arcgis.com/8df8p0NlLFEShl0r/arcgis/rest/services/Volcano_Data_dd_WFL1/FeatureServer/0
+candidate https://services.arcgis.com/8df8p0NlLFEShl0r/arcgis/rest/services/Volcano_Data_dd_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data lea2151 WFL1 | https://services2.arcgis.com/IsDCghZ73NgoYoz5/arcgis/rest/services/Volcano_Data_lea2151_WFL1/FeatureServer/0
+candidate https://services2.arcgis.com/IsDCghZ73NgoYoz5/arcgis/rest/services/Volcano_Data_lea2151_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 RGD | https://services1.arcgis.com/JXBurs0uwQlwOiHt/arcgis/rest/services/Volcano_Data_WFL1_RGD/FeatureServer/0
+candidate https://services1.arcgis.com/JXBurs0uwQlwOiHt/arcgis/rest/services/Volcano_Data_WFL1_RGD/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data LLUGIS WFL1 | https://services1.arcgis.com/JXBurs0uwQlwOiHt/arcgis/rest/services/Volcano_Data_LLUGIS_WFL1/FeatureServer/0
+candidate https://services1.arcgis.com/JXBurs0uwQlwOiHt/arcgis/rest/services/Volcano_Data_LLUGIS_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 riedel | https://services4.arcgis.com/Suik55vhPUT8ZIfl/arcgis/rest/services/Volcano_Data_WFL1_riedel/FeatureServer/0
+candidate https://services4.arcgis.com/Suik55vhPUT8ZIfl/arcgis/rest/services/Volcano_Data_WFL1_riedel/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 RSL | https://services2.arcgis.com/p3fHpql7LDfjRvXx/arcgis/rest/services/Volcano_Data_WFL1_RSL/FeatureServer/1
+candidate https://services2.arcgis.com/p3fHpql7LDfjRvXx/arcgis/rest/services/Volcano_Data_WFL1_RSL/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset nl2570 Volcano Data WFL1 | https://services2.arcgis.com/IsDCghZ73NgoYoz5/arcgis/rest/services/nl2570_Volcano_Data_WFL1/FeatureServer/0
+candidate https://services2.arcgis.com/IsDCghZ73NgoYoz5/arcgis/rest/services/nl2570_Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WRB WFL1 | https://services3.arcgis.com/o98K21Ga5N91Ugjw/arcgis/rest/services/Volcano_Data_WRB_WFL1/FeatureServer/1
+candidate https://services3.arcgis.com/o98K21Ga5N91Ugjw/arcgis/rest/services/Volcano_Data_WRB_WFL1/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data msf2171 WFL1 | https://services2.arcgis.com/IsDCghZ73NgoYoz5/arcgis/rest/services/Volcano_Data_msf2171_WFL1/FeatureServer/1
+candidate https://services2.arcgis.com/IsDCghZ73NgoYoz5/arcgis/rest/services/Volcano_Data_msf2171_WFL1/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL ID | https://services6.arcgis.com/HQUud09zgy3Asw9X/arcgis/rest/services/Volcano_Data_WFL_ID/FeatureServer/1
+candidate https://services6.arcgis.com/HQUud09zgy3Asw9X/arcgis/rest/services/Volcano_Data_WFL_ID/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data cfs WFL1 | https://services3.arcgis.com/o98K21Ga5N91Ugjw/arcgis/rest/services/Volcano_Data_cfs_WFL1/FeatureServer/1
+candidate https://services3.arcgis.com/o98K21Ga5N91Ugjw/arcgis/rest/services/Volcano_Data_cfs_WFL1/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+# volcano seite 17: 19 services
+dataset Volcano Data shn2121 WFL1 | https://services2.arcgis.com/IsDCghZ73NgoYoz5/arcgis/rest/services/Volcano_Data_shn2121_WFL1/FeatureServer/1
+candidate https://services2.arcgis.com/IsDCghZ73NgoYoz5/arcgis/rest/services/Volcano_Data_shn2121_WFL1/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data SW WFL1 | https://services2.arcgis.com/IsDCghZ73NgoYoz5/arcgis/rest/services/Volcano_Data_SW_WFL1/FeatureServer/0
+candidate https://services2.arcgis.com/IsDCghZ73NgoYoz5/arcgis/rest/services/Volcano_Data_SW_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 Gaunce | https://services2.arcgis.com/4XlTp6SwwtAtXgjj/arcgis/rest/services/Volcano_Data_WFL1_Gaunce/FeatureServer/1
+candidate https://services2.arcgis.com/4XlTp6SwwtAtXgjj/arcgis/rest/services/Volcano_Data_WFL1_Gaunce/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 Merriam | https://services1.arcgis.com/Hi6kEmQzn9cl2oYk/arcgis/rest/services/Volcano_Data_WFL1_Merriam/FeatureServer/0
+candidate https://services1.arcgis.com/Hi6kEmQzn9cl2oYk/arcgis/rest/services/Volcano_Data_WFL1_Merriam/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data TJL WFL1 | https://services7.arcgis.com/Oc5gZTy4bRSRY8yA/arcgis/rest/services/Volcano_Data_TJL_WFL1/FeatureServer/0
+candidate https://services7.arcgis.com/Oc5gZTy4bRSRY8yA/arcgis/rest/services/Volcano_Data_TJL_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data GF WFL1 | https://services6.arcgis.com/Sjtjj6zwMH9eAgbl/arcgis/rest/services/Volcano_Data_GF_WFL1/FeatureServer/0
+candidate https://services6.arcgis.com/Sjtjj6zwMH9eAgbl/arcgis/rest/services/Volcano_Data_GF_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data 1 WFL1 | https://services6.arcgis.com/AZvnIky2AKQNH37M/arcgis/rest/services/Volcano_Data_1_WFL1/FeatureServer/0
+candidate https://services6.arcgis.com/AZvnIky2AKQNH37M/arcgis/rest/services/Volcano_Data_1_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset AB Volcano Data WFL1 | https://services1.arcgis.com/0EOqWPtpCmgQr2ay/arcgis/rest/services/AB_Volcano_Data_WFL1/FeatureServer/0
+candidate https://services1.arcgis.com/0EOqWPtpCmgQr2ay/arcgis/rest/services/AB_Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL UnityCollege | https://services9.arcgis.com/EGheeB0VDT6EarZv/arcgis/rest/services/Volcano_Data_WFL_UnityCollege/FeatureServer/0
+candidate https://services9.arcgis.com/EGheeB0VDT6EarZv/arcgis/rest/services/Volcano_Data_WFL_UnityCollege/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data 2 WFL1 | https://services1.arcgis.com/0EOqWPtpCmgQr2ay/arcgis/rest/services/Volcano_Data_2_WFL1/FeatureServer/0
+candidate https://services1.arcgis.com/0EOqWPtpCmgQr2ay/arcgis/rest/services/Volcano_Data_2_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 ASS | https://services.arcgis.com/qFQYQQeTXZSPY7Fs/arcgis/rest/services/Volcano_Data_WFL1_ASS/FeatureServer/0
+candidate https://services.arcgis.com/qFQYQQeTXZSPY7Fs/arcgis/rest/services/Volcano_Data_WFL1_ASS/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 Lau | https://services2.arcgis.com/TSIJRCUq2X813XVI/arcgis/rest/services/Volcano_Data_WFL1_Lau/FeatureServer/0
+candidate https://services2.arcgis.com/TSIJRCUq2X813XVI/arcgis/rest/services/Volcano_Data_WFL1_Lau/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data nevel WFL1 | https://services.arcgis.com/B7NI2jUD81lCgSpx/arcgis/rest/services/Volcano_Data_nevel_WFL1/FeatureServer/0
+candidate https://services.arcgis.com/B7NI2jUD81lCgSpx/arcgis/rest/services/Volcano_Data_nevel_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 02 | https://services1.arcgis.com/Hi6kEmQzn9cl2oYk/arcgis/rest/services/Volcano_Data_WFL1_02/FeatureServer/0
+candidate https://services1.arcgis.com/Hi6kEmQzn9cl2oYk/arcgis/rest/services/Volcano_Data_WFL1_02/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 Sharp | https://services.arcgis.com/8df8p0NlLFEShl0r/arcgis/rest/services/Volcano_Data_WFL1_Sharp/FeatureServer/0
+candidate https://services.arcgis.com/8df8p0NlLFEShl0r/arcgis/rest/services/Volcano_Data_WFL1_Sharp/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data DW WFL1 | https://services5.arcgis.com/AZfRlM23miy4J4k7/arcgis/rest/services/Volcano_Data_DW_WFL1/FeatureServer/1
+candidate https://services5.arcgis.com/AZfRlM23miy4J4k7/arcgis/rest/services/Volcano_Data_DW_WFL1/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data TO WFL1 | https://services7.arcgis.com/KyVYEOdteN9vDcGi/arcgis/rest/services/Volcano_Data_TO_WFL1/FeatureServer/1
+candidate https://services7.arcgis.com/KyVYEOdteN9vDcGi/arcgis/rest/services/Volcano_Data_TO_WFL1/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data LF WFL1 | https://services5.arcgis.com/Is1opAnU3pWnhfvE/arcgis/rest/services/Volcano_Data_LF_WFL1/FeatureServer/1
+candidate https://services5.arcgis.com/Is1opAnU3pWnhfvE/arcgis/rest/services/Volcano_Data_LF_WFL1/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 Axel | https://services1.arcgis.com/SIYkiqjmENweC50g/arcgis/rest/services/Volcano_Data_WFL1_Axel/FeatureServer/0
+candidate https://services1.arcgis.com/SIYkiqjmENweC50g/arcgis/rest/services/Volcano_Data_WFL1_Axel/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+# volcano seite 18: 20 services
+dataset Volcano Data WFL WFL1 | https://services1.arcgis.com/7S16A7PAFcmSmqJA/arcgis/rest/services/Volcano_Data_WFL_WFL1/FeatureServer/0
+candidate https://services1.arcgis.com/7S16A7PAFcmSmqJA/arcgis/rest/services/Volcano_Data_WFL_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data NU WFL1 | https://services1.arcgis.com/ZozYr1WfCwexXgcn/arcgis/rest/services/Volcano_Data_NU_WFL1/FeatureServer/1
+candidate https://services1.arcgis.com/ZozYr1WfCwexXgcn/arcgis/rest/services/Volcano_Data_NU_WFL1/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data DK WFL1 | https://services3.arcgis.com/o98K21Ga5N91Ugjw/arcgis/rest/services/Volcano_Data_DK_WFL1/FeatureServer/1
+candidate https://services3.arcgis.com/o98K21Ga5N91Ugjw/arcgis/rest/services/Volcano_Data_DK_WFL1/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data 2 WFL1 | https://services9.arcgis.com/EGheeB0VDT6EarZv/arcgis/rest/services/Volcano_Data_2_WFL1/FeatureServer/1
+candidate https://services9.arcgis.com/EGheeB0VDT6EarZv/arcgis/rest/services/Volcano_Data_2_WFL1/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data AHC WFL1 | https://services1.arcgis.com/sQOueNHZBxRJjRN3/arcgis/rest/services/Volcano_Data_AHC_WFL1/FeatureServer/0
+candidate https://services1.arcgis.com/sQOueNHZBxRJjRN3/arcgis/rest/services/Volcano_Data_AHC_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data 106938 WFL1 | https://services.arcgis.com/B7NI2jUD81lCgSpx/arcgis/rest/services/Volcano_Data_106938_WFL1/FeatureServer/0
+candidate https://services.arcgis.com/B7NI2jUD81lCgSpx/arcgis/rest/services/Volcano_Data_106938_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL GILES | https://services3.arcgis.com/nV0HyP5uKL48nAKr/arcgis/rest/services/Volcano_Data_WFL_GILES/FeatureServer/0
+candidate https://services3.arcgis.com/nV0HyP5uKL48nAKr/arcgis/rest/services/Volcano_Data_WFL_GILES/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 er2963 | https://services2.arcgis.com/IsDCghZ73NgoYoz5/arcgis/rest/services/Volcano_Data_WFL1_er2963/FeatureServer/0
+candidate https://services2.arcgis.com/IsDCghZ73NgoYoz5/arcgis/rest/services/Volcano_Data_WFL1_er2963/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 cad2220 | https://services2.arcgis.com/IsDCghZ73NgoYoz5/arcgis/rest/services/Volcano_Data_WFL1_cad2220/FeatureServer/0
+candidate https://services2.arcgis.com/IsDCghZ73NgoYoz5/arcgis/rest/services/Volcano_Data_WFL1_cad2220/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL EF | https://services9.arcgis.com/EGheeB0VDT6EarZv/arcgis/rest/services/Volcano_Data_WFL_EF/FeatureServer/0
+candidate https://services9.arcgis.com/EGheeB0VDT6EarZv/arcgis/rest/services/Volcano_Data_WFL_EF/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 MJ | https://services9.arcgis.com/EGheeB0VDT6EarZv/arcgis/rest/services/Volcano_Data_WFL1_MJ/FeatureServer/0
+candidate https://services9.arcgis.com/EGheeB0VDT6EarZv/arcgis/rest/services/Volcano_Data_WFL1_MJ/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 TH | https://services2.arcgis.com/IsDCghZ73NgoYoz5/arcgis/rest/services/Volcano_Data_WFL1_TH/FeatureServer/0
+candidate https://services2.arcgis.com/IsDCghZ73NgoYoz5/arcgis/rest/services/Volcano_Data_WFL1_TH/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL polom007 | https://services.arcgis.com/8df8p0NlLFEShl0r/arcgis/rest/services/Volcano_Data_WFL_polom007/FeatureServer/0
+candidate https://services.arcgis.com/8df8p0NlLFEShl0r/arcgis/rest/services/Volcano_Data_WFL_polom007/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data Japan 211015 | https://services.arcgis.com/B7NI2jUD81lCgSpx/arcgis/rest/services/Volcano_Data_Japan_211015/FeatureServer/0
+candidate https://services.arcgis.com/B7NI2jUD81lCgSpx/arcgis/rest/services/Volcano_Data_Japan_211015/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+# volcano seite 19: 20 services
+dataset Volcano Data 1 WFL1 | https://services.arcgis.com/aMv9lrl6jFsuGNu8/arcgis/rest/services/Volcano_Data_1_WFL1/FeatureServer/0
+candidate https://services.arcgis.com/aMv9lrl6jFsuGNu8/arcgis/rest/services/Volcano_Data_1_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 Roskill | https://services2.arcgis.com/IsDCghZ73NgoYoz5/arcgis/rest/services/Volcano_Data_WFL1_Roskill/FeatureServer/0
+candidate https://services2.arcgis.com/IsDCghZ73NgoYoz5/arcgis/rest/services/Volcano_Data_WFL1_Roskill/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL MF | https://services9.arcgis.com/EGheeB0VDT6EarZv/arcgis/rest/services/Volcano_Data_WFL_MF/FeatureServer/0
+candidate https://services9.arcgis.com/EGheeB0VDT6EarZv/arcgis/rest/services/Volcano_Data_WFL_MF/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL dba2128 | https://services2.arcgis.com/IsDCghZ73NgoYoz5/arcgis/rest/services/Volcano_Data_WFL_dba2128/FeatureServer/0
+candidate https://services2.arcgis.com/IsDCghZ73NgoYoz5/arcgis/rest/services/Volcano_Data_WFL_dba2128/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 LLU | https://services1.arcgis.com/JXBurs0uwQlwOiHt/arcgis/rest/services/Volcano_Data_WFL1_LLU/FeatureServer/0
+candidate https://services1.arcgis.com/JXBurs0uwQlwOiHt/arcgis/rest/services/Volcano_Data_WFL1_LLU/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset GC Volcano Data WFL1 | https://services1.arcgis.com/Hi6kEmQzn9cl2oYk/arcgis/rest/services/GC_Volcano_Data_WFL1/FeatureServer/0
+candidate https://services1.arcgis.com/Hi6kEmQzn9cl2oYk/arcgis/rest/services/GC_Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 Kk | https://services6.arcgis.com/JUmUgCafSWdOK8hF/arcgis/rest/services/Volcano_Data_WFL1_Kk/FeatureServer/0
+candidate https://services6.arcgis.com/JUmUgCafSWdOK8hF/arcgis/rest/services/Volcano_Data_WFL1_Kk/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data McCarthy WFL1 | https://services2.arcgis.com/utBig56dGaw25bwu/arcgis/rest/services/Volcano_Data_McCarthy_WFL1/FeatureServer/0
+candidate https://services2.arcgis.com/utBig56dGaw25bwu/arcgis/rest/services/Volcano_Data_McCarthy_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 AS | https://services2.arcgis.com/O0WNu8LYU2Zm8uhP/arcgis/rest/services/Volcano_Data_WFL1_AS/FeatureServer/0
+candidate https://services2.arcgis.com/O0WNu8LYU2Zm8uhP/arcgis/rest/services/Volcano_Data_WFL1_AS/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data 1 WFL1 | https://services.arcgis.com/9Jk4Zl9KofTtvg3x/arcgis/rest/services/Volcano_Data_1_WFL1/FeatureServer/0
+candidate https://services.arcgis.com/9Jk4Zl9KofTtvg3x/arcgis/rest/services/Volcano_Data_1_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Murphy Volcano Data WFL1 | https://services3.arcgis.com/o98K21Ga5N91Ugjw/arcgis/rest/services/Murphy_Volcano_Data_WFL1/FeatureServer/1
+candidate https://services3.arcgis.com/o98K21Ga5N91Ugjw/arcgis/rest/services/Murphy_Volcano_Data_WFL1/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL hgl | https://services2.arcgis.com/IsDCghZ73NgoYoz5/arcgis/rest/services/Volcano_Data_WFL_hgl/FeatureServer/0
+candidate https://services2.arcgis.com/IsDCghZ73NgoYoz5/arcgis/rest/services/Volcano_Data_WFL_hgl/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL jm | https://services2.arcgis.com/IsDCghZ73NgoYoz5/arcgis/rest/services/Volcano_Data_WFL_jm/FeatureServer/0
+candidate https://services2.arcgis.com/IsDCghZ73NgoYoz5/arcgis/rest/services/Volcano_Data_WFL_jm/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Lemarr Volcano Data WFL1 | https://services2.arcgis.com/4XlTp6SwwtAtXgjj/arcgis/rest/services/Lemarr_Volcano_Data_WFL1/FeatureServer/0
+candidate https://services2.arcgis.com/4XlTp6SwwtAtXgjj/arcgis/rest/services/Lemarr_Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data AE WFL1 | https://services2.arcgis.com/4XlTp6SwwtAtXgjj/arcgis/rest/services/Volcano_Data_AE_WFL1/FeatureServer/0
+candidate https://services2.arcgis.com/4XlTp6SwwtAtXgjj/arcgis/rest/services/Volcano_Data_AE_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data JM WFL1 | https://services3.arcgis.com/o98K21Ga5N91Ugjw/arcgis/rest/services/Volcano_Data_JM_WFL1/FeatureServer/0
+candidate https://services3.arcgis.com/o98K21Ga5N91Ugjw/arcgis/rest/services/Volcano_Data_JM_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 JM | https://services6.arcgis.com/Sjtjj6zwMH9eAgbl/arcgis/rest/services/Volcano_Data_WFL1_JM/FeatureServer/0
+candidate https://services6.arcgis.com/Sjtjj6zwMH9eAgbl/arcgis/rest/services/Volcano_Data_WFL1_JM/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 20210721 | https://services.arcgis.com/B7NI2jUD81lCgSpx/arcgis/rest/services/Volcano_Data_WFL1_20210721/FeatureServer/0
+candidate https://services.arcgis.com/B7NI2jUD81lCgSpx/arcgis/rest/services/Volcano_Data_WFL1_20210721/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 YF | https://services5.arcgis.com/ilvOamkQCWQM5KB8/arcgis/rest/services/Volcano_Data_WFL1_YF/FeatureServer/0
+candidate https://services5.arcgis.com/ilvOamkQCWQM5KB8/arcgis/rest/services/Volcano_Data_WFL1_YF/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data tensfelc WFL1 | https://services6.arcgis.com/EDFKKZivVyfUwPAb/arcgis/rest/services/Volcano_Data_tensfelc_WFL1/FeatureServer/0
+candidate https://services6.arcgis.com/EDFKKZivVyfUwPAb/arcgis/rest/services/Volcano_Data_tensfelc_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+# volcano seite 20: 20 services
+dataset Volcano Data WFL1 RC | https://services8.arcgis.com/hlIFY8nyWOpMTBEr/arcgis/rest/services/Volcano_Data_WFL1_RC/FeatureServer/0
+candidate https://services8.arcgis.com/hlIFY8nyWOpMTBEr/arcgis/rest/services/Volcano_Data_WFL1_RC/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL JH | https://services3.arcgis.com/o98K21Ga5N91Ugjw/arcgis/rest/services/Volcano_Data_WFL_JH/FeatureServer/0
+candidate https://services3.arcgis.com/o98K21Ga5N91Ugjw/arcgis/rest/services/Volcano_Data_WFL_JH/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+# volcano seite 21: 20 services
+dataset Volcano Data WFL1 cpg2139 | https://services2.arcgis.com/IsDCghZ73NgoYoz5/arcgis/rest/services/Volcano_Data_WFL1_cpg2139/FeatureServer/0
+candidate https://services2.arcgis.com/IsDCghZ73NgoYoz5/arcgis/rest/services/Volcano_Data_WFL1_cpg2139/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL AT | https://services6.arcgis.com/Sjtjj6zwMH9eAgbl/arcgis/rest/services/Volcano_Data_WFL_AT/FeatureServer/0
+candidate https://services6.arcgis.com/Sjtjj6zwMH9eAgbl/arcgis/rest/services/Volcano_Data_WFL_AT/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL AMGC | https://services8.arcgis.com/GMS8EQ8cdBashx1Z/arcgis/rest/services/Volcano_Data_WFL_AMGC/FeatureServer/0
+candidate https://services8.arcgis.com/GMS8EQ8cdBashx1Z/arcgis/rest/services/Volcano_Data_WFL_AMGC/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Clement Volcano Data WFL1 | https://services1.arcgis.com/Hi6kEmQzn9cl2oYk/arcgis/rest/services/Clement_Volcano_Data_WFL1/FeatureServer/0
+candidate https://services1.arcgis.com/Hi6kEmQzn9cl2oYk/arcgis/rest/services/Clement_Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 Curl | https://services1.arcgis.com/SIYkiqjmENweC50g/arcgis/rest/services/Volcano_Data_WFL1_Curl/FeatureServer/0
+candidate https://services1.arcgis.com/SIYkiqjmENweC50g/arcgis/rest/services/Volcano_Data_WFL1_Curl/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL baker56 | https://services9.arcgis.com/8S9gOTu7oX7gWRzY/arcgis/rest/services/Volcano_Data_WFL_baker56/FeatureServer/0
+candidate https://services9.arcgis.com/8S9gOTu7oX7gWRzY/arcgis/rest/services/Volcano_Data_WFL_baker56/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+# volcano seite 22: 20 services
+dataset Volcano Edit PW | https://services3.arcgis.com/EkiZXsKUjcuTmRZG/arcgis/rest/services/Volcano_Edit_PW/FeatureServer/0
+candidate https://services3.arcgis.com/EkiZXsKUjcuTmRZG/arcgis/rest/services/Volcano_Edit_PW/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL500 | https://services.arcgis.com/B7NI2jUD81lCgSpx/arcgis/rest/services/Volcano_Data_WFL500/FeatureServer/0
+candidate https://services.arcgis.com/B7NI2jUD81lCgSpx/arcgis/rest/services/Volcano_Data_WFL500/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL5 | https://services3.arcgis.com/EkiZXsKUjcuTmRZG/arcgis/rest/services/Volcano_Data_WFL5/FeatureServer/0
+candidate https://services3.arcgis.com/EkiZXsKUjcuTmRZG/arcgis/rest/services/Volcano_Data_WFL5/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL2 | https://services3.arcgis.com/EkiZXsKUjcuTmRZG/arcgis/rest/services/Volcano_Data_WFL2/FeatureServer/0
+candidate https://services3.arcgis.com/EkiZXsKUjcuTmRZG/arcgis/rest/services/Volcano_Data_WFL2/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services1.arcgis.com/HrMiNYsSqqPpLTDE/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services1.arcgis.com/HrMiNYsSqqPpLTDE/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data2 WFL1 | https://services3.arcgis.com/EkiZXsKUjcuTmRZG/arcgis/rest/services/Volcano_Data2_WFL1/FeatureServer/0
+candidate https://services3.arcgis.com/EkiZXsKUjcuTmRZG/arcgis/rest/services/Volcano_Data2_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Edit Williams | https://services3.arcgis.com/EkiZXsKUjcuTmRZG/arcgis/rest/services/Volcano_Edit_Williams/FeatureServer/0
+candidate https://services3.arcgis.com/EkiZXsKUjcuTmRZG/arcgis/rest/services/Volcano_Edit_Williams/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL11 | https://services.arcgis.com/B7NI2jUD81lCgSpx/arcgis/rest/services/Volcano_Data_WFL11/FeatureServer/0
+candidate https://services.arcgis.com/B7NI2jUD81lCgSpx/arcgis/rest/services/Volcano_Data_WFL11/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services.arcgis.com/ogdeCdziRfIzuoFs/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services.arcgis.com/ogdeCdziRfIzuoFs/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services8.arcgis.com/8bLomDDRcQnERKr2/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services8.arcgis.com/8bLomDDRcQnERKr2/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services3.arcgis.com/f15Z4yV8uDyO38fy/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services3.arcgis.com/f15Z4yV8uDyO38fy/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+# volcano seite 23: 16 services
+dataset Volcano Data WFL1 | https://services.arcgis.com/ykpntM6e3tHvzKRJ/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services.arcgis.com/ykpntM6e3tHvzKRJ/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services3.arcgis.com/EkiZXsKUjcuTmRZG/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services3.arcgis.com/EkiZXsKUjcuTmRZG/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services.arcgis.com/b3fMqPOmotX6SV4k/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services.arcgis.com/b3fMqPOmotX6SV4k/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services1.arcgis.com/YiULsZbgRKmBtdZN/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services1.arcgis.com/YiULsZbgRKmBtdZN/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services1.arcgis.com/sQOueNHZBxRJjRN3/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services1.arcgis.com/sQOueNHZBxRJjRN3/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data12 WFL1 | https://services3.arcgis.com/EkiZXsKUjcuTmRZG/arcgis/rest/services/Volcano_Data12_WFL1/FeatureServer/0
+candidate https://services3.arcgis.com/EkiZXsKUjcuTmRZG/arcgis/rest/services/Volcano_Data12_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Edit N | https://services3.arcgis.com/EkiZXsKUjcuTmRZG/arcgis/rest/services/Volcano_Edit_N/FeatureServer/0
+candidate https://services3.arcgis.com/EkiZXsKUjcuTmRZG/arcgis/rest/services/Volcano_Edit_N/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano DataSG WFL1 | https://services3.arcgis.com/EkiZXsKUjcuTmRZG/arcgis/rest/services/Volcano_DataSG_WFL1/FeatureServer/0
+candidate https://services3.arcgis.com/EkiZXsKUjcuTmRZG/arcgis/rest/services/Volcano_DataSG_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services4.arcgis.com/IVO7bqspY7CXFUTU/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services4.arcgis.com/IVO7bqspY7CXFUTU/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services3.arcgis.com/0IbpLwS460cn4psv/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services3.arcgis.com/0IbpLwS460cn4psv/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Chile Volcano Buffer - 10 Km | https://services.arcgis.com/xYjDUN35YwdCEcMm/arcgis/rest/services/Assignment01_Trial02/FeatureServer/2
+candidate https://services.arcgis.com/xYjDUN35YwdCEcMm/arcgis/rest/services/Assignment01_Trial02/FeatureServer/2
+note felder: BUFF_DIST, Country, Elevation, Evidence_Category, Last_Eruption_Year, Latitude, Longitude, Major_Rock_1, Major_Rock_2, Major_Rock_3, Major_Rock_4, Major_Rock_5, Minor_Rock_1, Minor_Rock_2, Minor_Rock_3, Minor_Rock_4, OBJECTID, ORIG_FID
+dataset Chile Volcano Buffer - 5 Km | https://services.arcgis.com/xYjDUN35YwdCEcMm/arcgis/rest/services/Assignment01_Trial02/FeatureServer/1
+candidate https://services.arcgis.com/xYjDUN35YwdCEcMm/arcgis/rest/services/Assignment01_Trial02/FeatureServer/1
+note felder: BUFF_DIST, Country, Elevation, Evidence_Category, Last_Eruption_Year, Latitude, Longitude, Major_Rock_1, Major_Rock_2, Major_Rock_3, Major_Rock_4, Major_Rock_5, Minor_Rock_1, Minor_Rock_2, Minor_Rock_3, Minor_Rock_4, OBJECTID, ORIG_FID
+dataset Chile Volcano Buffer - 100 Km | https://services.arcgis.com/xYjDUN35YwdCEcMm/arcgis/rest/services/Assignment01_Trial02/FeatureServer/4
+candidate https://services.arcgis.com/xYjDUN35YwdCEcMm/arcgis/rest/services/Assignment01_Trial02/FeatureServer/4
+note felder: BUFF_DIST, Country, Elevation, Evidence_Category, Last_Eruption_Year, Latitude, Longitude, Major_Rock_1, Major_Rock_2, Major_Rock_3, Major_Rock_4, Major_Rock_5, Minor_Rock_1, Minor_Rock_2, Minor_Rock_3, Minor_Rock_4, OBJECTID, ORIG_FID
+dataset Chile Volcano Buffer - 30 Km | https://services.arcgis.com/xYjDUN35YwdCEcMm/arcgis/rest/services/Assignment01_Trial02/FeatureServer/3
+candidate https://services.arcgis.com/xYjDUN35YwdCEcMm/arcgis/rest/services/Assignment01_Trial02/FeatureServer/3
+note felder: BUFF_DIST, Country, Elevation, Evidence_Category, Last_Eruption_Year, Latitude, Longitude, Major_Rock_1, Major_Rock_2, Major_Rock_3, Major_Rock_4, Major_Rock_5, Minor_Rock_1, Minor_Rock_2, Minor_Rock_3, Minor_Rock_4, OBJECTID, ORIG_FID
+dataset Volcano Data WFL Lowery | https://services1.arcgis.com/VVapzOPgBae5joyC/arcgis/rest/services/Volcano_Data_WFL_Lowery/FeatureServer/0
+candidate https://services1.arcgis.com/VVapzOPgBae5joyC/arcgis/rest/services/Volcano_Data_WFL_Lowery/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, GlobalID, Latitude, Location, Longitude, Mo, Name, Num
+# volcano seite 24: 15 services
+dataset Volcano Data Michael Fletcher WFL1 | https://services1.arcgis.com/Hi6kEmQzn9cl2oYk/arcgis/rest/services/Volcano_Data_Michael_Fletcher_WFL1/FeatureServer/0
+candidate https://services1.arcgis.com/Hi6kEmQzn9cl2oYk/arcgis/rest/services/Volcano_Data_Michael_Fletcher_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data O L WFL1 | https://services7.arcgis.com/2hYXmwteFLemN5bW/arcgis/rest/services/Volcano_Data_O_L_WFL1/FeatureServer/0
+candidate https://services7.arcgis.com/2hYXmwteFLemN5bW/arcgis/rest/services/Volcano_Data_O_L_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data 57 WFL1 | https://services3.arcgis.com/EkiZXsKUjcuTmRZG/arcgis/rest/services/Volcano_Data_57_WFL1/FeatureServer/0
+candidate https://services3.arcgis.com/EkiZXsKUjcuTmRZG/arcgis/rest/services/Volcano_Data_57_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data Japan WFL1 | https://services.arcgis.com/eoP5lsTDzcIUyaQZ/arcgis/rest/services/Volcano_Data_Japan_WFL1/FeatureServer/0
+candidate https://services.arcgis.com/eoP5lsTDzcIUyaQZ/arcgis/rest/services/Volcano_Data_Japan_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano types | https://services4.arcgis.com/ZgDywiEiHuPo9jON/arcgis/rest/services/Earthquakes_Volcanoes_Plate_Tectonics/FeatureServer/0
+candidate https://services4.arcgis.com/ZgDywiEiHuPo9jON/arcgis/rest/services/Earthquakes_Volcanoes_Plate_Tectonics/FeatureServer/0
+note felder: Country, Elevation, Evidence_C, Last_Erupt, Latitude, Longitude, Major_Ro_1, Major_Ro_2, Major_Ro_3, Major_Ro_4, Major_Rock, Minor_Ro_1, Minor_Ro_2, Minor_Ro_3, Minor_Ro_4, Minor_Rock, OBJECTID, Populati_1
+dataset Volcano Data WFL1 EK | https://services3.arcgis.com/EkiZXsKUjcuTmRZG/arcgis/rest/services/Volcano_Data_WFL1_EK/FeatureServer/0
+candidate https://services3.arcgis.com/EkiZXsKUjcuTmRZG/arcgis/rest/services/Volcano_Data_WFL1_EK/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data  CDT EC Presnell  WFL1 | https://services2.arcgis.com/TSIJRCUq2X813XVI/arcgis/rest/services/Volcano_Data__CDT_EC_Presnell__WFL1/FeatureServer/0
+candidate https://services2.arcgis.com/TSIJRCUq2X813XVI/arcgis/rest/services/Volcano_Data__CDT_EC_Presnell__WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+# volcano seite 25: 7 services
+# keyword lightning
+# lightning seite 1: 5 services
+dataset Live Lightning Strikes | https://utility.arcgis.com/usrsvcs/servers/68ea53001b1049da996eb220e5eb2bfd/rest/services/public-safety/Live_Lightning_Strikes/FeatureServer/0
+decline https://utility.arcgis.com/usrsvcs/servers/68ea53001b1049da996eb220e5eb2bfd/rest/services/public-safety/Live_Lightning_Strikes/FeatureServer/0
+note arcgis-error-body
+# lightning seite 2: 1 services
+dataset LightningService | https://services5.arcgis.com/VkerMMzwuE36WJsD/arcgis/rest/services/LightningService/FeatureServer/0
+candidate https://services5.arcgis.com/VkerMMzwuE36WJsD/arcgis/rest/services/LightningService/FeatureServer/0
+note felder: OBJECTID, angleindicator, chisquare, cloudindicator, datetime, degreeoffreedom, ellipseangle, flashdatamultiplicity, latitude, longitude, nanoseconds, numberofsensors, peakcurrent, semimajoraxis, semiminoraxis, signalindicator, timingindicator, uniqueid
+dataset Lightning Strikes - 1993 | https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/Arizona_Lightning_Strikes___1993_WFL1/FeatureServer/1
+candidate https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/Arizona_Lightning_Strikes___1993_WFL1/FeatureServer/1
+note felder: DAY, FID, HOUR, LATITUDE, Longitude, MONTH, STRIKES, YEAR
+dataset Lightning Neighborhood | https://services9.arcgis.com/nvrRG5StBhZeX6g9/arcgis/rest/services/Lightning_Neighborhood/FeatureServer/0
+candidate https://services9.arcgis.com/nvrRG5StBhZeX6g9/arcgis/rest/services/Lightning_Neighborhood/FeatureServer/0
+note felder: Acres, Name, OBJECTID, SQMiles, Shape__Area, Shape__Length, Type
+dataset Lightning withZ | https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/AZ_Lightning_WFL1/FeatureServer/13
+candidate https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/AZ_Lightning_WFL1/FeatureServer/13
+note felder: DAY, Elevation, HOUR, LATITUDE, Longitude, MONTH, OBJECTID, STRIKES, Time, YEAR
+dataset lightning location view 2h | https://services9.arcgis.com/yhXgFcLJESwFP7uY/arcgis/rest/services/lightning_location_1_view2/FeatureServer/0
+candidate https://services9.arcgis.com/yhXgFcLJESwFP7uY/arcgis/rest/services/lightning_location_1_view2/FeatureServer/0
+note felder: ObjectId, lat, lon, time
+dataset Lightning Global TimeEnabled | https://arcgis-feature.wdtinc.com/server/rest/services/Severe/Lightning_Global_TimeEnabled/FeatureServer
+dead https://arcgis-feature.wdtinc.com/server/rest/services/Severe/Lightning_Global_TimeEnabled/FeatureServer
+note fetch-void
+dataset Lightning CTG SDU 2024 | https://services6.arcgis.com/YuxYMQcGdEpQWmWr/arcgis/rest/services/Lightning_CTG_SDU_2024/FeatureServer/0
+candidate https://services6.arcgis.com/YuxYMQcGdEpQWmWr/arcgis/rest/services/Lightning_CTG_SDU_2024/FeatureServer/0
+note felder: AGREEMENTS, Battalion, COMMENTS, COST_APPOR, DPA_AGENCY, DPA_GROUP, Division, LCA, Month, NWCG_UNITID, OBJECTID, RESPOND_ID, Year, cg_multiplicity, duration, ic_height, ic_multiplicity, latitude
+dataset AZ Lightning Strikes WFL1 | https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/AZ_Lightning_Strikes_WFL1/FeatureServer
+candidate-leer https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/AZ_Lightning_Strikes_WFL1/FeatureServer
+note 0 rows, felder unbekannt
+dataset Lightning Parcels | https://services9.arcgis.com/nvrRG5StBhZeX6g9/arcgis/rest/services/Lightning_Parcels/FeatureServer
+candidate-leer https://services9.arcgis.com/nvrRG5StBhZeX6g9/arcgis/rest/services/Lightning_Parcels/FeatureServer
+note 0 rows, felder unbekannt
+# lightning seite 3: 9 services
+dataset AccuWeather Lightning | https://utility.arcgis.com/usrsvcs/servers/815dbfa9af3b4bdd982744e3c4b1c3a7/rest/services/DataServices/Lightning_NA_FS/FeatureServer/0
+candidate https://utility.arcgis.com/usrsvcs/servers/815dbfa9af3b4bdd982744e3c4b1c3a7/rest/services/DataServices/Lightning_NA_FS/FeatureServer/0
+note felder: Age, DT, ID
+dataset LNU Lightning Complex Fire Perimeter | https://socogis.sonomacounty.ca.gov/map/rest/services/CALFIREPublic/LNULightningComplexFirePerimeter/FeatureServer/0
+candidate https://socogis.sonomacounty.ca.gov/map/rest/services/CALFIREPublic/LNULightningComplexFirePerimeter/FeatureServer/0
+note felder: Comments, ComplexID, ComplexName, CreateDate, DateCurrent, FeatureAccess, FeatureCategory, FeatureStatus, GACC, GISAcres, GeometryID, GlobalID, IMTName, IRWINID, IncidentName, IsVisible, Label, LocalIncidentID
+dataset Lightning Fire Rebuild Permit Parcels | https://services1.arcgis.com/P5Mv5GY5S66M8Z1Q/arcgis/rest/services/Lightning%20Fire%20Rebuild%20Permit%20Parcels/FeatureServer/0
+candidate https://services1.arcgis.com/P5Mv5GY5S66M8Z1Q/arcgis/rest/services/Lightning%20Fire%20Rebuild%20Permit%20Parcels/FeatureServer/0
+note felder: APN, Approval_Date, Area_ID, Buildings, Category, Date_Opened, Event_Title, First_Inspection_Date, Issue_Date, Latitude, Longitude, OBJECTID, PC_Appr_Status, Parcel_Center, Parcel_Number, Permit_Description, Permit_Status, Permit_Type
+dataset Lightning Strikes - 1993 | https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/Distribution___Elevation_12pm_6pm__5k___AZ_Lightning_Strikes___1993_WFL1/FeatureServer/1
+candidate https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/Distribution___Elevation_12pm_6pm__5k___AZ_Lightning_Strikes___1993_WFL1/FeatureServer/1
+note felder: DAY, FID, HOUR, LATITUDE, Longitude, MONTH, STRIKES, YEAR
+dataset Lightning Strikes - 1993 | https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/Density_Distribution__Default_Radius___AZ_Lightning_Strikes___1993_WFL1/FeatureServer/1
+candidate https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/Density_Distribution__Default_Radius___AZ_Lightning_Strikes___1993_WFL1/FeatureServer/1
+note felder: DAY, FID, HOUR, LATITUDE, Longitude, MONTH, STRIKES, YEAR
+dataset AZ Lightning WFL1 | https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/AZ_Lightning_WFL1/FeatureServer
+candidate-leer https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/AZ_Lightning_WFL1/FeatureServer
+note 0 rows, felder unbekannt
+# lightning seite 4: 6 services
+dataset Lightning Strikes - 1993 | https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/Density_Distribution___Elevation__5k___AZ_Lightning_Strikes___1993_WFL1/FeatureServer/1
+candidate https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/Density_Distribution___Elevation__5k___AZ_Lightning_Strikes___1993_WFL1/FeatureServer/1
+note felder: DAY, FID, HOUR, LATITUDE, Longitude, MONTH, STRIKES, YEAR
+dataset Lightning Strikes - 1993 | https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/Density_Distribution___Elevation__Default___AZ_Lightning_Strikes___1993_WFL1/FeatureServer/1
+candidate https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/Density_Distribution___Elevation__Default___AZ_Lightning_Strikes___1993_WFL1/FeatureServer/1
+note felder: DAY, FID, HOUR, LATITUDE, Longitude, MONTH, STRIKES, YEAR
+dataset Lightning Strikes - 1993 | https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/Density_Distribution__5k_Radius___AZ_Lightning_Strikes___1993_WFL1/FeatureServer/1
+candidate https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/Density_Distribution__5k_Radius___AZ_Lightning_Strikes___1993_WFL1/FeatureServer/1
+note felder: DAY, FID, HOUR, LATITUDE, Longitude, MONTH, STRIKES, YEAR
+dataset Lightning Strikes - 1993 | https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/Density_Distribution_12pm_6pm__Default___AZ_Lightning_Strikes___1993_WFL1/FeatureServer/1
+candidate https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/Density_Distribution_12pm_6pm__Default___AZ_Lightning_Strikes___1993_WFL1/FeatureServer/1
+note felder: DAY, FID, HOUR, LATITUDE, Longitude, MONTH, STRIKES, YEAR
+dataset Lightning Strikes - 1993 | https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/Distribution___Elevation_12pm_6pm__5k___AZ_Lightning_Strikes___1993_v2_WFL1/FeatureServer/1
+candidate https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/Distribution___Elevation_12pm_6pm__5k___AZ_Lightning_Strikes___1993_v2_WFL1/FeatureServer/1
+note felder: DAY, FID, HOUR, LATITUDE, Longitude, MONTH, STRIKES, YEAR
+dataset Lightning Strikes - 1993 | https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/Distribution___Elevation_12pm_6pm__Default___AZ_Lightning_Strikes___1993_WFL1/FeatureServer/1
+candidate https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/Distribution___Elevation_12pm_6pm__Default___AZ_Lightning_Strikes___1993_WFL1/FeatureServer/1
+note felder: DAY, FID, HOUR, LATITUDE, Longitude, MONTH, STRIKES, YEAR
+dataset Lightning Strikes - 1993 | https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/Density_Distribution_12pm_6pm__5k___AZ_Lightning_Strikes___1993_WFL1/FeatureServer/1
+candidate https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/Density_Distribution_12pm_6pm__5k___AZ_Lightning_Strikes___1993_WFL1/FeatureServer/1
+note felder: DAY, FID, HOUR, LATITUDE, Longitude, MONTH, STRIKES, YEAR
+dataset Lightning Neighborhood Half Mile Buffer | https://services9.arcgis.com/nvrRG5StBhZeX6g9/arcgis/rest/services/Lightning_Neighborhood_Half_Mile_Buffer/FeatureServer/0
+candidate https://services9.arcgis.com/nvrRG5StBhZeX6g9/arcgis/rest/services/Lightning_Neighborhood_Half_Mile_Buffer/FeatureServer/0
+note felder: OBJECTID, Shape__Area, Shape__Length
+dataset Lightning Strikes - 1993 | https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/Directional_Distribution__AZ_Lightning_Strikes___1993_WFL1/FeatureServer/1
+candidate https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/Directional_Distribution__AZ_Lightning_Strikes___1993_WFL1/FeatureServer/1
+note felder: DAY, FID, HOUR, LATITUDE, Longitude, MONTH, STRIKES, YEAR
+dataset Lightning Strikes Per Month | https://services3.arcgis.com/5H4ySekQnCDr5Bzc/arcgis/rest/services/Arizona_Lightning_Strikes_Map_WFL1/FeatureServer/5
+candidate https://services3.arcgis.com/5H4ySekQnCDr5Bzc/arcgis/rest/services/Arizona_Lightning_Strikes_Map_WFL1/FeatureServer/5
+note felder: DAY, HOUR, LATITUDE, LONGITUDE, MONTH, OBJECTID, STRIKES, YEAR, yyyyMM
+dataset Lightning stage and barricade | https://services.arcgis.com/QPnoxtBFXm6yYtyc/arcgis/rest/services/Lightning_stage_and_barricade/FeatureServer/0
+candidate https://services.arcgis.com/QPnoxtBFXm6yYtyc/arcgis/rest/services/Lightning_stage_and_barricade/FeatureServer/0
+note felder: Color, DocId, DocName, DocUpdate, Elevation, Entity, GlobalWidth, Handle, Layer, LineWt, Linetype, LyrFrzn, LyrOn, OBJECTID, RefName, Shape__Length
+dataset NOAA Lightning strikes 2009 to 2018 | https://services9.arcgis.com/JVmvqPgm1v1hRNVp/arcgis/rest/services/NOAA_Lightning_strikes_2009_to_2018/FeatureServer/0
+candidate https://services9.arcgis.com/JVmvqPgm1v1hRNVp/arcgis/rest/services/NOAA_Lightning_strikes_2009_to_2018/FeatureServer/0
+note felder: ObjectId, date, number_of_strikes, x_coord, y_coord
+# lightning seite 5: 12 services
+dataset Arizona Lightning Strikes   1993 WFL1 | https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/Arizona_Lightning_Strikes___1993_WFL1/FeatureServer
+candidate-leer https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/Arizona_Lightning_Strikes___1993_WFL1/FeatureServer
+note 0 rows, felder unbekannt
+dataset Lightning Hexagons 2022 | https://services5.arcgis.com/ARxOqVFcodl7rmzw/arcgis/rest/services/Lightning_Hexagons_2022/FeatureServer/86
+candidate https://services5.arcgis.com/ARxOqVFcodl7rmzw/arcgis/rest/services/Lightning_Hexagons_2022/FeatureServer/86
+note felder: Customer_M, FID, F__Out, GRID_ID, Hex_ID, Id, Id_1, Join_Count, Shape_Leng, Shape__Area, Shape__Length, TARGET_FID
+dataset Lightning Strikes Area Boundary | https://services3.arcgis.com/5H4ySekQnCDr5Bzc/arcgis/rest/services/Arizona_Lightning_Strikes_Map_WFL1/FeatureServer/2
+candidate https://services3.arcgis.com/5H4ySekQnCDr5Bzc/arcgis/rest/services/Arizona_Lightning_Strikes_Map_WFL1/FeatureServer/2
+note felder: FID, Id, Shape__Area, Shape__Length
+dataset Lightning CONUS - Cloud-to-Cloud | https://utility.arcgis.com/usrsvcs/servers/6caced8127f44e9182d57edc0cb54fc2/rest/services/Severe/Lightning_CONUS/FeatureServer/1
+candidate https://utility.arcgis.com/usrsvcs/servers/6caced8127f44e9182d57edc0cb54fc2/rest/services/Severe/Lightning_CONUS/FeatureServer/1
+note felder: amps, datetime, esri_oid, ground, millisecond, objectid, oid
+dataset DTN Conus Lightning - FS | https://utility.arcgis.com/usrsvcs/servers/6caced8127f44e9182d57edc0cb54fc2/rest/services/Severe/Lightning_CONUS/FeatureServer
+candidate-leer https://utility.arcgis.com/usrsvcs/servers/6caced8127f44e9182d57edc0cb54fc2/rest/services/Severe/Lightning_CONUS/FeatureServer
+note 0 rows, felder unbekannt
+dataset Lightning Fire Rebuild Permit Unique Parcels | https://services1.arcgis.com/P5Mv5GY5S66M8Z1Q/arcgis/rest/services/Lightning%20Fire%20Rebuild%20Permit%20Unique%20Parcels/FeatureServer/0
+candidate https://services1.arcgis.com/P5Mv5GY5S66M8Z1Q/arcgis/rest/services/Lightning%20Fire%20Rebuild%20Permit%20Unique%20Parcels/FeatureServer/0
+note felder: APN, Approval_Date, Area_ID, Buildings, Category, Date_Opened, Event_Title, First_Inspection_Date, Issue_Date, Latitude, Longitude, Number_of_Permits, OBJECTID, PC_Appr_Status, Parcel_Center, Parcel_Number, Permit_Description, Permit_Status
+dataset Arizona Lightning Strikes Map WFL1 | https://services3.arcgis.com/5H4ySekQnCDr5Bzc/arcgis/rest/services/Arizona_Lightning_Strikes_Map_WFL1/FeatureServer
+candidate-leer https://services3.arcgis.com/5H4ySekQnCDr5Bzc/arcgis/rest/services/Arizona_Lightning_Strikes_Map_WFL1/FeatureServer
+note 0 rows, felder unbekannt
+dataset NIFC Operational Data 2020 CZU Lightning Fire | https://services8.arcgis.com/A76GjgcBUTTcwFGS/arcgis/rest/services/NIFC_Operational_Data_2020_CZU_Lightning_Fire/FeatureServer
+candidate-leer https://services8.arcgis.com/A76GjgcBUTTcwFGS/arcgis/rest/services/NIFC_Operational_Data_2020_CZU_Lightning_Fire/FeatureServer
+note 0 rows, felder unbekannt
+dataset Lightning Strikes Per Month TableToPoint | https://services3.arcgis.com/5H4ySekQnCDr5Bzc/arcgis/rest/services/Arizona_Lightning_Strikes_Map_WFL1/FeatureServer/32
+candidate https://services3.arcgis.com/5H4ySekQnCDr5Bzc/arcgis/rest/services/Arizona_Lightning_Strikes_Map_WFL1/FeatureServer/32
+note felder: DAY, F_STRIKES, HOUR, LATITUDE, LONGITUDE, MONTH, OBJECTID, YEAR
+dataset Enriched Lightning Neighborhood Half Mile Buffer | https://services9.arcgis.com/nvrRG5StBhZeX6g9/arcgis/rest/services/Enriched_Lightning_Neighborhood_Half_Mile_Buffer/FeatureServer/0
+candidate https://services9.arcgis.com/nvrRG5StBhZeX6g9/arcgis/rest/services/Enriched_Lightning_Neighborhood_Half_Mile_Buffer/FeatureServer/0
+note felder: ACSMEDYBLT, AMERIND_CY, ASIAN_CY, ASSCDEG_CY, AVGVAL_CY, BACHDEG_CY, BLACK_CY, CIVLBFR_CY, DIVORCD_CY, EDUCBASECY, EMP_CY, ENRICH_FID, FutureBuilds, GED_CY, GRADDEG_CY, HISPPOP_CY, HSGRAD_CY, HasData
+# lightning seite 6: 10 services
+dataset Baron - Live Lightning Strikes DEMO | https://utility.arcgis.com/usrsvcs/servers/783efb5e677e489e98c73e255da05da0/rest/services/cal_oes/Live_Lightning_Strikes/FeatureServer/0
+decline https://utility.arcgis.com/usrsvcs/servers/783efb5e677e489e98c73e255da05da0/rest/services/cal_oes/Live_Lightning_Strikes/FeatureServer/0
+note arcgis-error-body
+dataset Lightning CONUS - Cloud-to-Ground | https://utility.arcgis.com/usrsvcs/servers/6caced8127f44e9182d57edc0cb54fc2/rest/services/Severe/Lightning_CONUS/FeatureServer/0
+candidate https://utility.arcgis.com/usrsvcs/servers/6caced8127f44e9182d57edc0cb54fc2/rest/services/Severe/Lightning_CONUS/FeatureServer/0
+note felder: amps, datetime, esri_oid, ground, millisecond, objectid, oid
+dataset Expected Annual Loss from Lightning Strikes | https://services4.arcgis.com/eeULstZhYSemxYF5/arcgis/rest/services/2023_NRI_Lightning_EAL/FeatureServer/0
+candidate https://services4.arcgis.com/eeULstZhYSemxYF5/arcgis/rest/services/2023_NRI_Lightning_EAL/FeatureServer/0
+note felder: COUNTY, FID, LTNG_AFREQ, LTNG_EALR, LTNG_EALT, LTNG_EVNTS, POPULATION
+dataset Lightning Public | https://services3.arcgis.com/podPgqZpl75POnBL/arcgis/rest/services/LIGHTNINGPUBLIC/FeatureServer/0
+candidate-leer https://services3.arcgis.com/podPgqZpl75POnBL/arcgis/rest/services/LIGHTNINGPUBLIC/FeatureServer/0
+note 0 rows, felder unbekannt
+dataset Lightning Strikes Per Month Hot Spots | https://services3.arcgis.com/5H4ySekQnCDr5Bzc/arcgis/rest/services/Arizona_Lightning_Strikes_Map_WFL1/FeatureServer/1
+candidate https://services3.arcgis.com/5H4ySekQnCDr5Bzc/arcgis/rest/services/Arizona_Lightning_Strikes_Map_WFL1/FeatureServer/1
+note felder: GiPValue, GiZScore, Gi_Bin, NNeighbors, OBJECTID, SOURCE_ID, YEAR
+dataset CA Lightning Strikes Aug16 to Aug18 2020 | https://services.arcgis.com/XG15cJAlne2vxtgt/arcgis/rest/services/CA_Lightning_Strikes_Aug16_to_Aug18_2020/FeatureServer/0
+candidate https://services.arcgis.com/XG15cJAlne2vxtgt/arcgis/rest/services/CA_Lightning_Strikes_Aug16_to_Aug18_2020/FeatureServer/0
+note felder: OBJECTID
+dataset Lightning Strike density parish 2024 | https://services2.arcgis.com/MvofhWK1i5zOJjuj/arcgis/rest/services/Lightning_Strike_density_parish_2024/FeatureServer/0
+candidate https://services2.arcgis.com/MvofhWK1i5zOJjuj/arcgis/rest/services/Lightning_Strike_density_parish_2024/FeatureServer/0
+note felder: Area, Day_, ENGTYPE_1, End_time_u, FEATUREID, Flash1_cs, Flash1_d_1, Flash1_dir, Flash1_dis, ID_0, ID_1, ISO, Join_Count, Lgtn_Density, Meridiem, Month_, NAME_0, NAME_1
+# lightning seite 7: 7 services
+dataset Lightning Complex Fire Perimeter | https://services1.arcgis.com/Ko5rxt00spOfjMqj/arcgis/rest/services/Lightning_Complex_Fire_Perimeter/FeatureServer/0
+candidate https://services1.arcgis.com/Ko5rxt00spOfjMqj/arcgis/rest/services/Lightning_Complex_Fire_Perimeter/FeatureServer/0
+note felder: Collector, Comments, ComplexID, ComplexName, ContactEmail, ContactName, ContactPhone, CreateDate, CreateName, DateCurrent, DeleteThis, EditName, FeatureAccess, FeatureCategory, FeatureStatus, GACC, GISAcres, GeometryID
+dataset Directional Distribution  AZ Lightning Strikes   1993 WFL1 | https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/Directional_Distribution__AZ_Lightning_Strikes___1993_WFL1/FeatureServer
+candidate-leer https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/Directional_Distribution__AZ_Lightning_Strikes___1993_WFL1/FeatureServer
+note 0 rows, felder unbekannt
+dataset DINS 2025 TCU September Lightning Complex Public View | https://services1.arcgis.com/jUJYIo9tSA7EHvfZ/arcgis/rest/services/DINS_2025_TCU_Lightning_Complex_Public_View/FeatureServer/0
+candidate https://services1.arcgis.com/jUJYIo9tSA7EHvfZ/arcgis/rest/services/DINS_2025_TCU_Lightning_Complex_Public_View/FeatureServer/0
+note felder: DAMAGE, GLOBALID, OBJECTID, STRUCTURETYPE
+# lightning seite 8: 3 services
+dataset TBFire Features lightning | https://services.arcgis.com/eSnyVpqwqWBADfzp/arcgis/rest/services/TBFire_Features_lightning/FeatureServer/0
+candidate-leer https://services.arcgis.com/eSnyVpqwqWBADfzp/arcgis/rest/services/TBFire_Features_lightning/FeatureServer/0
+note 0 rows, felder unbekannt
+dataset Density Distribution   Elevation  5k   AZ Lightning Strikes   1993 WFL1 | https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/Density_Distribution___Elevation__5k___AZ_Lightning_Strikes___1993_WFL1/FeatureServer
+candidate-leer https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/Density_Distribution___Elevation__5k___AZ_Lightning_Strikes___1993_WFL1/FeatureServer
+note 0 rows, felder unbekannt
+# lightning seite 9: 2 services
+dataset Density Distribution   Elevation  Default   AZ Lightning Strikes   1993 WFL1 | https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/Density_Distribution___Elevation__Default___AZ_Lightning_Strikes___1993_WFL1/FeatureServer
+candidate-leer https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/Density_Distribution___Elevation__Default___AZ_Lightning_Strikes___1993_WFL1/FeatureServer
+note 0 rows, felder unbekannt
+dataset Density Distribution  Default Radius   AZ Lightning Strikes   1993 WFL1 | https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/Density_Distribution__Default_Radius___AZ_Lightning_Strikes___1993_WFL1/FeatureServer
+candidate-leer https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/Density_Distribution__Default_Radius___AZ_Lightning_Strikes___1993_WFL1/FeatureServer
+note 0 rows, felder unbekannt
+dataset Density Distribution  5k Radius   AZ Lightning Strikes   1993 WFL1 | https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/Density_Distribution__5k_Radius___AZ_Lightning_Strikes___1993_WFL1/FeatureServer
+candidate-leer https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/Density_Distribution__5k_Radius___AZ_Lightning_Strikes___1993_WFL1/FeatureServer
+note 0 rows, felder unbekannt
+dataset CA Lightning Layer | https://services1.arcgis.com/jUJYIo9tSA7EHvfZ/arcgis/rest/services/CA_Lightning_Layer/FeatureServer/0
+candidate https://services1.arcgis.com/jUJYIo9tSA7EHvfZ/arcgis/rest/services/CA_Lightning_Layer/FeatureServer/0
+note felder: OBJECTID, numsensors, peak_current, polarity, source_object_id, timestamp_dat, unit
+# lightning seite 10: 4 services
+dataset Density Distribution 12pm 6pm  Default   AZ Lightning Strikes   1993 WFL1 | https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/Density_Distribution_12pm_6pm__Default___AZ_Lightning_Strikes___1993_WFL1/FeatureServer
+candidate-leer https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/Density_Distribution_12pm_6pm__Default___AZ_Lightning_Strikes___1993_WFL1/FeatureServer
+note 0 rows, felder unbekannt
+# lightning seite 11: 1 services
+dataset Distribution   Elevation 12pm 6pm  5k   AZ Lightning Strikes   1993 WFL1 | https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/Distribution___Elevation_12pm_6pm__5k___AZ_Lightning_Strikes___1993_WFL1/FeatureServer
+candidate-leer https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/Distribution___Elevation_12pm_6pm__5k___AZ_Lightning_Strikes___1993_WFL1/FeatureServer
+note 0 rows, felder unbekannt
+# lightning seite 12: 1 services
+dataset Distribution   Elevation 12pm 6pm  Default   AZ Lightning Strikes   1993 WFL1 | https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/Distribution___Elevation_12pm_6pm__Default___AZ_Lightning_Strikes___1993_WFL1/FeatureServer
+candidate-leer https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/Distribution___Elevation_12pm_6pm__Default___AZ_Lightning_Strikes___1993_WFL1/FeatureServer
+note 0 rows, felder unbekannt
+dataset Density Distribution 12pm 6pm  5k   AZ Lightning Strikes   1993 WFL1 | https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/Density_Distribution_12pm_6pm__5k___AZ_Lightning_Strikes___1993_WFL1/FeatureServer
+candidate-leer https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/Density_Distribution_12pm_6pm__5k___AZ_Lightning_Strikes___1993_WFL1/FeatureServer
+note 0 rows, felder unbekannt
+# lightning seite 13: 2 services
+dataset CA Lightning Layer View | https://services1.arcgis.com/jUJYIo9tSA7EHvfZ/arcgis/rest/services/CA_Lightning_Layer_2_view/FeatureServer/0
+candidate-leer https://services1.arcgis.com/jUJYIo9tSA7EHvfZ/arcgis/rest/services/CA_Lightning_Layer_2_view/FeatureServer/0
+note 0 rows, felder unbekannt
+dataset Distribution   Elevation 12pm 6pm  5k   AZ Lightning Strikes   1993 v2 WFL1 | https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/Distribution___Elevation_12pm_6pm__5k___AZ_Lightning_Strikes___1993_v2_WFL1/FeatureServer
+candidate-leer https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/Distribution___Elevation_12pm_6pm__5k___AZ_Lightning_Strikes___1993_v2_WFL1/FeatureServer
+note 0 rows, felder unbekannt
+dataset Lightning Occurance | https://services7.arcgis.com/qyfUEOGJ9RD09Dnn/arcgis/rest/services/lightning_occurance/FeatureServer/0
+candidate-leer https://services7.arcgis.com/qyfUEOGJ9RD09Dnn/arcgis/rest/services/lightning_occurance/FeatureServer/0
+note 0 rows, felder unbekannt
+# lightning seite 14: 3 services
+dataset Barbados 2024 LightningStrikes | https://services2.arcgis.com/MvofhWK1i5zOJjuj/arcgis/rest/services/Barbados_2024_LightningStrikes/FeatureServer/0
+candidate https://services2.arcgis.com/MvofhWK1i5zOJjuj/arcgis/rest/services/Barbados_2024_LightningStrikes/FeatureServer/0
+note felder: Day_, ENGTYPE_1, End_time_utc, Event_Feature, FEATUREID, Flash1_cs, Flash1_dir, Flash1_dis, Flash1_dis_m, ID_0, ID_1, ISO, JOIN_FID, Join_Count, Meridiem, Month_, NAME_0, NAME_1
+dataset CA Lightning Layer view (Old) | https://services1.arcgis.com/jUJYIo9tSA7EHvfZ/arcgis/rest/services/CA_Lightning_Layer_view/FeatureServer/0
+candidate https://services1.arcgis.com/jUJYIo9tSA7EHvfZ/arcgis/rest/services/CA_Lightning_Layer_view/FeatureServer/0
+note felder: OBJECTID, numsensors, peak_current, polarity, source_object_id, timestamp_dat, unit
+dataset 2024 LightningStrikes AllData | https://services2.arcgis.com/MvofhWK1i5zOJjuj/arcgis/rest/services/2024_LightningStrikes_AllData/FeatureServer/0
+candidate https://services2.arcgis.com/MvofhWK1i5zOJjuj/arcgis/rest/services/2024_LightningStrikes_AllData/FeatureServer/0
+note felder: Day_, End_time_utc, FEATUREID, Flash1_cs, Flash1_dir, Flash1_dis, Flash1_dis_m, Meridiem, Month_, Num_Flashes, OBJECTID, ORIG_FID, RAW_Lat, RAW_Lon, Self_Test, Start_time_utc, Strike_count, Time_
+# lightning seite 15: 3 services
+dataset CZU and SCU Lightning Complex Perimeter | https://services2.arcgis.com/qmhndvC947rDNl6t/arcgis/rest/services/CZU_web_mercator/FeatureServer/0
+candidate https://services2.arcgis.com/qmhndvC947rDNl6t/arcgis/rest/services/CZU_web_mercator/FeatureServer/0
+note felder: Comments, ComplexID, ComplexNam, CreateDate, DateCurren, FID, FeatureAcc, FeatureCat, FeatureSta, GACC, GISAcres, GeometryID, GlobalID, GlobalID_2, GlobalID_3, IMTName, IRWINID, IncidentNa
+dataset Lightning Directional Distribution  | https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/July__August____September_10__Strikes_WFL1/FeatureServer/0
+candidate https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/July__August____September_10__Strikes_WFL1/FeatureServer/0
+note felder: CenterX, CenterY, OBJECTID, Rotation, Shape__Area, Shape__Length, XStdDist, YStdDist
+# lightning seite 16: 2 services
+# lightning seite 17: 0 services
+# lightning erschoeft bei seite 17
+# keyword streamflow
+# streamflow seite 1: 7 services
+dataset Final Streamflow Classifications | https://services1.arcgis.com/FjPcSmEFuDYlIdKC/arcgis/rest/services/Final_Streamflow_Classifications/FeatureServer/0
+candidate https://services1.arcgis.com/FjPcSmEFuDYlIdKC/arcgis/rest/services/Final_Streamflow_Classifications/FeatureServer/0
+note felder: AnadFish, ChgOF, Comment, DAMMetric, DIVMetric, DPHID, FID, FPWS, FWS_SigInv, GrowthArea, HSI, HydroID, ICMetric, IndxGage, LvlAAqf, Other, POSM, Res
+dataset CRWU CREAT Streamflow Gages | https://services.arcgis.com/cJ9YHowT8TU7DUyn/arcgis/rest/services/CRWU_CREAT_Streamflow_Gages/FeatureServer/0
+candidate https://services.arcgis.com/cJ9YHowT8TU7DUyn/arcgis/rest/services/CRWU_CREAT_Streamflow_Gages/FeatureServer/0
+note felder: Avg_Max_Date, Avg_Max_Q, Avg_Mean_Q, Avg_Mean_Q_Display, Avg_Min_Date, Avg_Min_Q, End_Year, F7Q10, F7Q2, F_95__Comp_Yrs, Latitude, Longitude, MaxDate_CI, MinDate_CI, OBJECTID, Start_Year, USGS_Site_ID, drain_area_units
+dataset Streamflow Data FT | https://services.arcgis.com/ykpntM6e3tHvzKRJ/arcgis/rest/services/WaterLevelRiver_view/FeatureServer/0
+candidate https://services.arcgis.com/ykpntM6e3tHvzKRJ/arcgis/rest/services/WaterLevelRiver_view/FeatureServer/0
+note felder: OBJECTID, associatedPointId, associatedPointNumId, dataType, duration, durationISO8601, elevation, geometry, latitude, longitude, name, novaScore, numId, periodEnd, periodStart, receive_dt, statisticDateTime, statisticType
+dataset Streamflow Gauges | https://services7.arcgis.com/9nlQUywsHzFwAwIM/arcgis/rest/services/Water_Facility/FeatureServer/1
+candidate https://services7.arcgis.com/9nlQUywsHzFwAwIM/arcgis/rest/services/Water_Facility/FeatureServer/1
+note felder: Name, OBJECTID
+dataset Streamflow Data CFS | https://services.arcgis.com/ykpntM6e3tHvzKRJ/arcgis/rest/services/DischargeProject_view/FeatureServer/1
+candidate https://services.arcgis.com/ykpntM6e3tHvzKRJ/arcgis/rest/services/DischargeProject_view/FeatureServer/1
+note felder: GlobalID, OBJECTID, associatedPointId, associatedPointNumId, dataType, duration, durationISO8601, elevation, geometry, latitude, longitude, name, novaScore, numId, periodEnd, periodStart, receive_dt, statisticDateTime
+# streamflow seite 2: 5 services
+# streamflow seite 3: 0 services
+# streamflow erschoeft bei seite 3
+# keyword snow depth
+# snow depth seite 1: 1 services
+dataset BYTE snowdepth | https://services2.arcgis.com/DkOAcUnJBG6NkFvj/arcgis/rest/services/BYTE_snowdepth/FeatureServer/0
+candidate https://services2.arcgis.com/DkOAcUnJBG6NkFvj/arcgis/rest/services/BYTE_snowdepth/FeatureServer/0
+note felder: OBJECTID, date, depth
+dataset Snow Depth | https://services6.arcgis.com/LT1iWT50Endhh6TU/arcgis/rest/services/Current_Snow_Depth/FeatureServer/0
+candidate https://services6.arcgis.com/LT1iWT50Endhh6TU/arcgis/rest/services/Current_Snow_Depth/FeatureServer/0
+note felder: OBJECTID, Shape__Area, Shape__Length, category, value
+# snow depth seite 2: 2 services
+dataset Tongass National Forest Snow Public View | https://services1.arcgis.com/gGHDlz6USftL5Pau/arcgis/rest/services/Tongass_National_Forest_Snow_Public_View/FeatureServer/16
+candidate https://services1.arcgis.com/gGHDlz6USftL5Pau/arcgis/rest/services/Tongass_National_Forest_Snow_Public_View/FeatureServer/16
+note felder: Shape__Area, Shape__Length, created_date, created_user, globalid, last_edited_date, last_edited_user, objectid, snow
+dataset Winter Wildlife Signs and Snow Depth v1 | https://services6.arcgis.com/ubm4tcTYICKBpist/arcgis/rest/services/service_4f3f1d8171a54bcf966267af3dc903b2/FeatureServer/0
+candidate https://services6.arcgis.com/ubm4tcTYICKBpist/arcgis/rest/services/service_4f3f1d8171a54bcf966267af3dc903b2/FeatureServer/0
+note felder: CreationDate, Creator, EditDate, Editor, aspect, batteries, cam_code, cam_deployed, cam_loc, cam_lock, cam_model, cam_on, cam_retrieved, canopy_cover, comments, crew_initials, example2, globalid
+dataset Depth | https://services1.arcgis.com/ze0XBzU1FXj94DJq/arcgis/rest/services/Depth/FeatureServer/0
+candidate https://services1.arcgis.com/ze0XBzU1FXj94DJq/arcgis/rest/services/Depth/FeatureServer/0
+note felder: Diff_Sal, OBJECTID, avg_depth, avg_tempt, depth, latitude, longitude, salinity, temperatur, time
+# snow depth seite 3: 3 services
+# snow depth seite 4: 0 services
+# snow depth erschoeft bei seite 4
+# keyword sea level
+# sea level seite 1: 2 services
+dataset Above sea level | https://services1.arcgis.com/eGSDp8lpKe5izqVc/arcgis/rest/services/Above_sea_level/FeatureServer/0
+candidate https://services1.arcgis.com/eGSDp8lpKe5izqVc/arcgis/rest/services/Above_sea_level/FeatureServer/0
+note felder: Contour, Id, OBJECTID, Shape__Length
+dataset Sea Level Pressure | https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/Sea_Level_Pressure/FeatureServer/0
+candidate https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/Sea_Level_Pressure/FeatureServer/0
+note felder: F__OBJECTID, Heavy_Rain, Lat, Light_Drizzle, Light_Rain, Location, Lon, SLP, Sky, T, Td, Thunderstom, Wind
+dataset Sea Level Rise | https://services5.arcgis.com/umIjvohPcWJU5ij6/arcgis/rest/services/Sea_Level_Rise/FeatureServer
+candidate-leer https://services5.arcgis.com/umIjvohPcWJU5ij6/arcgis/rest/services/Sea_Level_Rise/FeatureServer
+note 0 rows, felder unbekannt
+dataset Sea Level Rise Overlay | https://services5.arcgis.com/sruoiBDPu8SihcGN/arcgis/rest/services/SLR_Overlay_Area_Line_File/FeatureServer/0
+candidate https://services5.arcgis.com/sruoiBDPu8SihcGN/arcgis/rest/services/SLR_Overlay_Area_Line_File/FeatureServer/0
+note felder: FID, Id, Shape__Length
+dataset Sea Level Rise | https://services1.arcgis.com/UWYHeuuJISiGmgXx/arcgis/rest/services/Baltimore_SeaLevelRise/FeatureServer/0
+candidate https://services1.arcgis.com/UWYHeuuJISiGmgXx/arcgis/rest/services/Baltimore_SeaLevelRise/FeatureServer/0
+note felder: Id, OBJECTID, Shape__Area, Shape__Length, gridcode
+dataset Sea LEvel Rise 200 cm | https://services5.arcgis.com/umIjvohPcWJU5ij6/arcgis/rest/services/Sea_Level_Rise/FeatureServer/8
+candidate https://services5.arcgis.com/umIjvohPcWJU5ij6/arcgis/rest/services/Sea_Level_Rise/FeatureServer/8
+note felder: CM, GRIDCODE, ID, OBJECTID, Shape__Area, Shape__Length
+dataset Sea Level Rise 50 cm | https://services5.arcgis.com/umIjvohPcWJU5ij6/arcgis/rest/services/Sea_Level_Rise/FeatureServer/2
+candidate https://services5.arcgis.com/umIjvohPcWJU5ij6/arcgis/rest/services/Sea_Level_Rise/FeatureServer/2
+note felder: CM, GRIDCODE, ID, OBJECTID, Shape__Area, Shape__Length
+dataset Sea Level Rise 25 cm | https://services5.arcgis.com/umIjvohPcWJU5ij6/arcgis/rest/services/Sea_Level_Rise/FeatureServer/1
+candidate https://services5.arcgis.com/umIjvohPcWJU5ij6/arcgis/rest/services/Sea_Level_Rise/FeatureServer/1
+note felder: CM, GRIDCODE, ID, OBJECTID, Shape__Area, Shape__Length
+# sea level seite 2: 9 services
+dataset Sea Level Rise 0 cm | https://services5.arcgis.com/umIjvohPcWJU5ij6/arcgis/rest/services/Sea_Level_Rise/FeatureServer/0
+candidate https://services5.arcgis.com/umIjvohPcWJU5ij6/arcgis/rest/services/Sea_Level_Rise/FeatureServer/0
+note felder: CM, GRIDCODE, ID, OBJECTID, Shape__Area, Shape__Length
+dataset Sea Level Rise 175 cm | https://services5.arcgis.com/umIjvohPcWJU5ij6/arcgis/rest/services/Sea_Level_Rise/FeatureServer/7
+candidate https://services5.arcgis.com/umIjvohPcWJU5ij6/arcgis/rest/services/Sea_Level_Rise/FeatureServer/7
+note felder: CM, GRIDCODE, ID, OBJECTID, Shape__Area, Shape__Length
+dataset Sea Level Rise 150 cm | https://services5.arcgis.com/umIjvohPcWJU5ij6/arcgis/rest/services/Sea_Level_Rise/FeatureServer/6
+candidate https://services5.arcgis.com/umIjvohPcWJU5ij6/arcgis/rest/services/Sea_Level_Rise/FeatureServer/6
+note felder: CM, GRIDCODE, ID, OBJECTID, Shape__Area, Shape__Length
+dataset Sea Level Rise 125 cm | https://services5.arcgis.com/umIjvohPcWJU5ij6/arcgis/rest/services/Sea_Level_Rise/FeatureServer/5
+candidate https://services5.arcgis.com/umIjvohPcWJU5ij6/arcgis/rest/services/Sea_Level_Rise/FeatureServer/5
+note felder: CM, GRIDCODE, ID, OBJECTID, Shape__Area, Shape__Length
+dataset Sea Level Rise 75 cm | https://services5.arcgis.com/umIjvohPcWJU5ij6/arcgis/rest/services/Sea_Level_Rise/FeatureServer/3
+candidate https://services5.arcgis.com/umIjvohPcWJU5ij6/arcgis/rest/services/Sea_Level_Rise/FeatureServer/3
+note felder: CM, GRIDCODE, ID, OBJECTID, Shape__Area, Shape__Length
+dataset Sea level Rising 2040 | https://services2.arcgis.com/Lu7Uh8HEPwu0SbYS/arcgis/rest/services/Sea_level_Rising_2040/FeatureServer/0
+candidate https://services2.arcgis.com/Lu7Uh8HEPwu0SbYS/arcgis/rest/services/Sea_level_Rising_2040/FeatureServer/0
+note felder: Id, Level_, OBJECTID, Shape__Area, Shape__Length, Year, gridcode
+dataset Sea Level Rise 100 cm | https://services5.arcgis.com/umIjvohPcWJU5ij6/arcgis/rest/services/Sea_Level_Rise/FeatureServer/4
+candidate https://services5.arcgis.com/umIjvohPcWJU5ij6/arcgis/rest/services/Sea_Level_Rise/FeatureServer/4
+note felder: CM, GRIDCODE, ID, OBJECTID, Shape__Area, Shape__Length
+# sea level seite 3: 7 services
+dataset Sea Level Rise 500 cm | https://services5.arcgis.com/umIjvohPcWJU5ij6/arcgis/rest/services/Sea_Level_Rise/FeatureServer/9
+candidate https://services5.arcgis.com/umIjvohPcWJU5ij6/arcgis/rest/services/Sea_Level_Rise/FeatureServer/9
+note felder: CM, GRIDCODE, ID, OBJECTID, Shape__Area, Shape__Length
+# sea level seite 4: 1 services
+dataset Sea Level Affecting Marshes Model  SLAMM  | https://services6.arcgis.com/Fr1St8uKGFocXUEL/arcgis/rest/services/Sea_Level_Affecting_Marshes_Model__SLAMM_/FeatureServer
+candidate-leer https://services6.arcgis.com/Fr1St8uKGFocXUEL/arcgis/rest/services/Sea_Level_Affecting_Marshes_Model__SLAMM_/FeatureServer
+note 0 rows, felder unbekannt
+dataset buildings affected by 3ft sea level rise | https://services1.arcgis.com/5Gtv38l8677OspKm/arcgis/rest/services/buildings_affected_3ft_slr/FeatureServer/0
+candidate https://services1.arcgis.com/5Gtv38l8677OspKm/arcgis/rest/services/buildings_affected_3ft_slr/FeatureServer/0
+note felder: Acreage, AgrAssessed, AgrMktAppr, AgrUseAppr, Appraisal, AtticArea, BLDGCD, BLDGNAME, BLDG_20011, BLDG_2001_, BedroomCount, BookPage, Building_N, Classcd, ComSWFee, ComUserFee, Condition, Consid
+dataset Hydrodynamics and Sea level rise | https://services.arcgis.com/gPAeJh41oYEgw9wR/arcgis/rest/services/Hydrodynamics_and_Sea_level_rise/FeatureServer/0
+candidate https://services.arcgis.com/gPAeJh41oYEgw9wR/arcgis/rest/services/Hydrodynamics_and_Sea_level_rise/FeatureServer/0
+note felder: FID, OBJECTID, hdar, hdlgdd, hdltdd
+dataset buildings affected by 1ft sea level rise | https://services1.arcgis.com/5Gtv38l8677OspKm/arcgis/rest/services/buildings_affected_1ft_slr/FeatureServer/0
+candidate https://services1.arcgis.com/5Gtv38l8677OspKm/arcgis/rest/services/buildings_affected_1ft_slr/FeatureServer/0
+note felder: Acreage, AgrAssessed, AtticArea, BLDGCD, BLDG_20011, BLDG_2001_, BedroomCount, BookPage, Classcd, ComSWFee, ComUserFee, Condition, Cooling, CountyMills, CountySalesTaxCr, CountyTax, DocDate, Eff_Year_Built
+dataset Hydrodynamics and Sea level rise | https://services1.arcgis.com/VwarAUbcaX64Jhub/arcgis/rest/services/Hydrodynamics_and_Sea_level_rise/FeatureServer/0
+candidate https://services1.arcgis.com/VwarAUbcaX64Jhub/arcgis/rest/services/Hydrodynamics_and_Sea_level_rise/FeatureServer/0
+note felder: FID, OBJECTID, hdar, hdlgdd, hdltdd
+# sea level seite 5: 6 services
+dataset Sea Level Rise | https://services1.arcgis.com/8CpMUd3fdw6aXef7/arcgis/rest/services/Sea_Level_Rise/FeatureServer
+candidate-leer https://services1.arcgis.com/8CpMUd3fdw6aXef7/arcgis/rest/services/Sea_Level_Rise/FeatureServer
+note 0 rows, felder unbekannt
+dataset Clip OutFeatureClass Exhibit 8 High Risk Sea Level Rise | https://services9.arcgis.com/l0PUGx9JqRxaCPsG/arcgis/rest/services/Clip_OutFeatureClass_Exhibit_8_High_Risk_Sea_Level_Rise/FeatureServer/0
+candidate https://services9.arcgis.com/l0PUGx9JqRxaCPsG/arcgis/rest/services/Clip_OutFeatureClass_Exhibit_8_High_Risk_Sea_Level_Rise/FeatureServer/0
+note felder: FID, NEAR_DIST, NEAR_FID, Shape_Leng, Shape__Area, Shape__Length
+# sea level seite 6: 5 services
+dataset Sea Level Rise Impacts to Transportation Infrastructure (Points) | https://services1.arcgis.com/NWUiNpFLGIf9gkGi/arcgis/rest/services/TransportationInfrastructure_Points/FeatureServer/0
+candidate https://services1.arcgis.com/NWUiNpFLGIf9gkGi/arcgis/rest/services/TransportationInfrastructure_Points/FeatureServer/0
+note felder: BRIDGE_TYP, FACILITY, FEATINT, FID, Impact_SLR, Impact_S_1, LOCATION, Max_SLR, Max_SLRand, OBJECTID, OWNER, STRUCTNAME
+dataset Sea Level Rise Impacts to Transportation Infrastructure (Lines) | https://services1.arcgis.com/NWUiNpFLGIf9gkGi/arcgis/rest/services/TransportationInfrastructure_Lines/FeatureServer/0
+candidate https://services1.arcgis.com/NWUiNpFLGIf9gkGi/arcgis/rest/services/TransportationInfrastructure_Lines/FeatureServer/0
+note felder: FID, Impact_SLR, Impact_S_1, MaxScenari, Max_SLR, Max_SLR_SS, OBJECTID, STREET, Shape_Leng, Shape__Length
+# sea level seite 7: 7 services
+dataset Sea Level Rise Exposure Scenarios | https://services1.arcgis.com/0DaVqrPt2eyXUS9g/arcgis/rest/services/SeaLevelRise_KAUAI/FeatureServer/1
+candidate https://services1.arcgis.com/0DaVqrPt2eyXUS9g/arcgis/rest/services/SeaLevelRise_KAUAI/FeatureServer/1
+note felder: FEET, OBJECTID, Shape__Area, Shape__Length, YEAR, id
+# sea level seite 8: 2 services
+dataset Virginia Beach Vulnerable Critical Facilities (3 ft Sea Level Rise) | https://services2.arcgis.com/CyVvlIiUfRBmMQuu/arcgis/rest/services/Vulnerable_Critical_Facilities_3ft_SLR/FeatureServer/0
+candidate https://services2.arcgis.com/CyVvlIiUfRBmMQuu/arcgis/rest/services/Vulnerable_Critical_Facilities_3ft_SLR/FeatureServer/0
+note felder: AHAID, Address, AreaSqfeet, BackupPowe, CensusTrac, City, ContactPer, ContentDam, ContentsDa, FID, FacilityCl, FacilityNa, FirstOccup, FloodBuild, FloodPrePo, FloodStruc, HazusID, Heightofth
+dataset Virginia Beach Vulnerable Critical Facilities (1.5 ft Sea Level Rise) | https://services2.arcgis.com/CyVvlIiUfRBmMQuu/arcgis/rest/services/Vulnerable_Critical_Facilities_1p5ft_SLR/FeatureServer/0
+candidate https://services2.arcgis.com/CyVvlIiUfRBmMQuu/arcgis/rest/services/Vulnerable_Critical_Facilities_1p5ft_SLR/FeatureServer/0
+note felder: AHAID, Address, AreaSqfeet, BackupPowe, CensusTrac, City, ContactPer, ContentDam, ContentsDa, FID, FacilityCl, FacilityNa, FirstOccup, FloodBuild, FloodPrePo, FloodStruc, HazusID, Heightofth
+dataset Sea Level Rise ArcGIS Lab WFL1 | https://services.arcgis.com/ue9rwulIoeLEI9bj/arcgis/rest/services/Sea_Level_Rise_ArcGIS_Lab_WFL1/FeatureServer
+candidate-leer https://services.arcgis.com/ue9rwulIoeLEI9bj/arcgis/rest/services/Sea_Level_Rise_ArcGIS_Lab_WFL1/FeatureServer
+note 0 rows, felder unbekannt
+# sea level seite 9: 4 services
+# sea level seite 10: 0 services
+# sea level erschoeft bei seite 10

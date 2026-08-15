@@ -1,0 +1,67 @@
+# grind nasa donki (2026-08-15)
+# DONKI-Vervollständigung (api.nasa.gov/DONKI/...). Nachlauf — erster Lauf verlor die Ergebnis-Datei.
+# Fenster 2026-07-01 .. 2026-08-15, api_key={NASA_API_KEY} (Wert in .secrets.local, nie hier).
+# 10 Endpoints geprobt: 1 accepted (CME-Block-Draft), 8 decline, 1 dead (SSD 404).
+# FLR bleibt wie in grind_nasa.φ disponiert (live in sources.φ Z.502) — nicht wiederholt.
+
+# ── CME — koronaler Massenauswurf (em) — ACCEPTED ──
+accepted https://api.nasa.gov/DONKI/CME?startDate={week_ago}&endDate={today}&api_key={NASA_API_KEY}
+note Probe: 200, Array aus 191 CME-Records. speed/latitude/longitude/halfAngle liegen NESTED in cmeAnalyses[0] (nicht top-level). Messwert = cmeAnalyses[0].speed (km/s, plane-of-sky, Weißlicht-Koronagraph → em, Litmus erfüllt). Position: latitude = heliographische Breite, longitude = plane-of-sky-Länge (Projektion, nicht heliographisch). 171 Analyses mit gesetzter latitude+longitude, 46 Analyses mit latitude gesetzt aber longitude=null → diese Zeilen tragen keine Position (0 honored). Block-Draft: map . + deep-Pfad auf cmeAnalyses.0.
+url https://api.nasa.gov/DONKI/CME?startDate={week_ago}&endDate={today}&api_key={NASA_API_KEY}
+ttl 3600
+at sun
+map .
+lat cmeAnalyses.0.latitude
+lon cmeAnalyses.0.longitude
+field cmeAnalyses.0.speed cme_plane_of_sky_speed_km_s inverse-square em km/s 3600 0.0 0.0
+# Struktur: [ { activityID, startTime, sourceLocation, activeRegionNum, catalog,
+# cmeAnalyses:[{time21_5,latitude,longitude,halfAngle,speed,speedMeasuredAtHeight,type,
+# levelOfData,measurementTechnique,isMostAccurate,...}], instruments, linkedEvents, ... } ].
+# speed-Werte im Fenster (cmeAnalyses[0]): 455.0, 502.0, 464.0, 372.0, 649.0, 363.0, 617.0, 238.0, 728.0, 744.0 km/s.
+# Caveat: plane-of-sky-Länge ist Projektion (Earth-Blickrichtung), keine heliographische Länge;
+# longitude=null in 46 Analyses. Nur der erste Analyse-Record je CME (cmeAnalyses.0) manifestiert.
+
+# ── SEP — Solar Energetic Particle — decline ──
+decline event-catalog
+url https://api.nasa.gov/DONKI/SEP?startDate={week_ago}&endDate={today}&api_key={NASA_API_KEY}
+note Probe: 200, 6 Records. Record = { sepID, eventTime, instruments:[{displayName}], linkedEvents, ... }. instruments.displayName = Schwellen-String (z.B. "MODEL: REleASE:ACE/EPAM 15.8-39.8 MeV") — Energie-Schwelle, kein Fluss-Messwert. Kein numerischer Flux (pfu) im Payload. Ereignis-Katalog ohne Messwert → decline.
+
+# ── GST — Geomagnetic Storm — decline dimensionless ──
+decline dimensionless
+url https://api.nasa.gov/DONKI/GST?startDate={week_ago}&endDate={today}&api_key={NASA_API_KEY}
+note Probe: 200, 3 Records. allKpIndex = [{observedTime, kpIndex, source}] mit kpIndex z.B. 6.0, 7.33. Kp-Index ist dimensionslos (SOURCES_V2_SPEC §3.1 listet kp_index/Kp explizit) → decline. SWPC deckt Kp live (noaa-planetary-k-index in sources.φ Z.98).
+
+# ── IPS — Interplanetary Shock — decline ──
+decline event-catalog
+url https://api.nasa.gov/DONKI/IPS?startDate={week_ago}&endDate={today}&api_key={NASA_API_KEY}
+note Probe: 200, 20 Records. Record = { catalog, activityID, location:"Earth", eventTime, instruments:[{displayName}], linkedEvents, ... }. Kein speed-Feld, kein numerischer Messwert — location ist String, instruments sind Detektoren. Schock-Detektions-Katalog → decline.
+
+# ── HSS — High Speed Stream — decline ──
+decline event-catalog
+url https://api.nasa.gov/DONKI/HSS?startDate={week_ago}&endDate={today}&api_key={NASA_API_KEY}
+note Probe: 200, 6 Records. Record = { hssID, eventTime, instruments:[{displayName}], linkedEvents, ... }. Kein speed-Feld, kein numerischer Messwert — nur Detektions-Record (Instrumente + Zeit) → decline.
+
+# ── MPC — Magnetopause Crossing — decline model ──
+decline model
+url https://api.nasa.gov/DONKI/MPC?startDate={week_ago}&endDate={today}&api_key={NASA_API_KEY}
+note Probe: 200, 3 Records. Alle instruments.displayName = "MODEL: SWMF" (Space Weather Modeling Framework). Magnetopause-Crossing ist Modell-Produkt, keine Sensor-Messung → decline model.
+
+# ── RBE — Radiation Belt Enhancement — decline ──
+decline event-catalog
+url https://api.nasa.gov/DONKI/RBE?startDate={week_ago}&endDate={today}&api_key={NASA_API_KEY}
+note Probe: 200, 5 Records. Record = { rbeID, eventTime, instruments:[{displayName}], ... }. instruments.displayName = Schwellen-String (z.B. "GOES-P: SEISS >2MeV"). Kein Fluss-Zahlenwert im Payload — nur Energie-Schwellen-Strings → decline.
+
+# ── WSAEnlilSimulations — decline model ──
+decline model
+url https://api.nasa.gov/DONKI/WSAEnlilSimulations?startDate={week_ago}&endDate={today}&api_key={NASA_API_KEY}
+note Probe: 200, 190 Records. { simulationID, modelCompletionTime, cmeInputs, kp_135, kp_18, kp_90, kp_180, rmin_re, au, isEarthGB, impactList, ... }. WSA-ENLIL = Magnetohydrodynamik-Modell (Forecast) — kp_* sind Modell-Forecast-Werte, keine Messung → decline model.
+
+# ── SSD — Route absent ──
+dead 404
+url https://api.nasa.gov/DONKI/SSD?startDate={week_ago}&endDate={today}&api_key={NASA_API_KEY}
+note Probe: 404 (9 kB HTML). Route api.nasa.gov/DONKI/SSD existiert nicht im DONKI-Endpoint-Set.
+
+# ── notifications — decline registry ──
+decline registry
+url https://api.nasa.gov/DONKI/notifications?startDate={week_ago}&endDate={today}&api_key={NASA_API_KEY}
+note Probe: 200, 67 Records. { messageID, messageType, messageIssueTime, messageURL, messageBody }. Alert-Katalog (Benachrichtigungen) — Registry ohne Messwert → decline registry.

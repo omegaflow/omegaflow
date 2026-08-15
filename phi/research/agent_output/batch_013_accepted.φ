@@ -1,7 +1,0 @@
-url https://api.safecast.org/en-US/measurements.json?limit=100
-ttl 3600
-on earth 0 0 0
-map .
-lat latitude
-lon longitude
-field value radiation_safecast_cpm inverse-square em cpm 360.0 0.0 0.0

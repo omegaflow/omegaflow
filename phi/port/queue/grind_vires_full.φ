@@ -1,0 +1,752 @@
+# grind vires full (2026-08-15) — 174 datasets
+# dataset CH_ME_MAG_LR_3 drafted — CHAMP FGM L3 F (nT), em — Draft in grind_vires_catalog.φ
+# dataset CH_OPER_DNS_ACC_2_ drafted — CHAMP Neutraldichte density (kg/m3) — Draft
+# dataset CH_OPER_TEC_TMS_2F drafted — CHAMP GPS-TEC Absolute_VTEC (TECU) — Draft
+# dataset CH_OPER_WND_ACC_2_ drafted — CHAMP Querwind crosswind (m/s) — Draft
+# dataset CS_OPER_MAG drafted — CryoSat FGM F (nT), em — Draft
+# dataset GF1_MAG_ACAL_CORR_ML accepted — 1 Feld(er), Probe ok (2023-07-31T12:00:00Z..2023-07-31T12:59:59Z)
+accepted https://vires.services/hapi/data?id=GF1_MAG_ACAL_CORR_ML&start=2023-07-31T12:00:00Z&stop=2023-07-31T12:59:59Z&parameters=F&format=json
+url https://vires.services/hapi/data?id=GF1_MAG_ACAL_CORR_ML&start=2023-07-31T12:00:00Z&stop=2023-07-31T12:59:59Z&parameters=F&format=json
+ttl 86400
+at earth
+hapi F=gracefo1_magnetic_field_intensity_ml_nt
+field gracefo1_magnetic_field_intensity_ml_nt gracefo1_magnetic_field_intensity_ml_nt inverse-square em nT 86400 0.0 0.0
+
+# dataset GF1_OPER_FGM_ACAL_CORR accepted — 1 Feld(er), Probe ok (2026-05-31T12:00:00Z..2026-05-31T12:59:59Z)
+accepted https://vires.services/hapi/data?id=GF1_OPER_FGM_ACAL_CORR&start=2026-05-31T12:00:00Z&stop=2026-05-31T12:59:59Z&parameters=F&format=json
+url https://vires.services/hapi/data?id=GF1_OPER_FGM_ACAL_CORR&start=2026-05-31T12:00:00Z&stop=2026-05-31T12:59:59Z&parameters=F&format=json
+ttl 86400
+at earth
+hapi F=gracefo1_magnetic_field_intensity_nt
+field gracefo1_magnetic_field_intensity_nt gracefo1_magnetic_field_intensity_nt inverse-square em nT 86400 0.0 0.0
+
+# dataset GF2_MAG_ACAL_CORR_ML accepted — 1 Feld(er), Probe ok (2023-07-31T12:00:00Z..2023-07-31T12:59:59Z)
+accepted https://vires.services/hapi/data?id=GF2_MAG_ACAL_CORR_ML&start=2023-07-31T12:00:00Z&stop=2023-07-31T12:59:59Z&parameters=F&format=json
+url https://vires.services/hapi/data?id=GF2_MAG_ACAL_CORR_ML&start=2023-07-31T12:00:00Z&stop=2023-07-31T12:59:59Z&parameters=F&format=json
+ttl 86400
+at earth
+hapi F=gracefo2_magnetic_field_intensity_ml_nt
+field gracefo2_magnetic_field_intensity_ml_nt gracefo2_magnetic_field_intensity_ml_nt inverse-square em nT 86400 0.0 0.0
+
+# dataset GF2_OPER_FGM_ACAL_CORR accepted — 1 Feld(er), Probe ok (2026-05-31T12:00:00Z..2026-05-31T12:59:59Z)
+accepted https://vires.services/hapi/data?id=GF2_OPER_FGM_ACAL_CORR&start=2026-05-31T12:00:00Z&stop=2026-05-31T12:59:59Z&parameters=F&format=json
+url https://vires.services/hapi/data?id=GF2_OPER_FGM_ACAL_CORR&start=2026-05-31T12:00:00Z&stop=2026-05-31T12:59:59Z&parameters=F&format=json
+ttl 86400
+at earth
+hapi F=gracefo2_magnetic_field_intensity_nt
+field gracefo2_magnetic_field_intensity_nt gracefo2_magnetic_field_intensity_nt inverse-square em nT 86400 0.0 0.0
+
+# dataset GF_OPER_DNS1ACC_2_ accepted — 1 Feld(er), Probe ok (2026-04-30T12:00:00Z..2026-04-30T12:59:59Z)
+accepted https://vires.services/hapi/data?id=GF_OPER_DNS1ACC_2_&start=2026-04-30T12:00:00Z&stop=2026-04-30T12:59:59Z&parameters=density&format=json
+url https://vires.services/hapi/data?id=GF_OPER_DNS1ACC_2_&start=2026-04-30T12:00:00Z&stop=2026-04-30T12:59:59Z&parameters=density&format=json
+ttl 86400
+at earth
+hapi density=gracefo1_neutral_density_kgm3
+field gracefo1_neutral_density_kgm3 gracefo1_neutral_density_kgm3 gaussian-inverse-square diffusion kg/m3 86400 0.0 0.0
+
+# dataset GF_OPER_NE__KBR_2F drafted — GRACE-FO KBR Distance+Absolute_Ne — Draft
+# dataset GF_OPER_TEC1TMS_2F accepted — 1 Feld(er), Probe ok (2026-06-17T12:00:00Z..2026-06-17T12:59:59Z)
+accepted https://vires.services/hapi/data?id=GF_OPER_TEC1TMS_2F&start=2026-06-17T12:00:00Z&stop=2026-06-17T12:59:59Z&parameters=Absolute_VTEC&format=json
+url https://vires.services/hapi/data?id=GF_OPER_TEC1TMS_2F&start=2026-06-17T12:00:00Z&stop=2026-06-17T12:59:59Z&parameters=Absolute_VTEC&format=json
+ttl 86400
+at earth
+hapi Absolute_VTEC=gracefo1_absolute_vtec_tecu
+field gracefo1_absolute_vtec_tecu gracefo1_absolute_vtec_tecu inverse-square em TECU 86400 0.0 0.0
+
+# dataset GF_OPER_TEC2TMS_2F accepted — 1 Feld(er), Probe ok (2026-06-17T12:00:00Z..2026-06-17T12:59:59Z)
+accepted https://vires.services/hapi/data?id=GF_OPER_TEC2TMS_2F&start=2026-06-17T12:00:00Z&stop=2026-06-17T12:59:59Z&parameters=Absolute_VTEC&format=json
+url https://vires.services/hapi/data?id=GF_OPER_TEC2TMS_2F&start=2026-06-17T12:00:00Z&stop=2026-06-17T12:59:59Z&parameters=Absolute_VTEC&format=json
+ttl 86400
+at earth
+hapi Absolute_VTEC=gracefo2_absolute_vtec_tecu
+field gracefo2_absolute_vtec_tecu gracefo2_absolute_vtec_tecu inverse-square em TECU 86400 0.0 0.0
+
+# dataset GF_OPER_WND1ACC_2_ accepted — 1 Feld(er), Probe ok (2026-04-30T12:00:00Z..2026-04-30T12:59:59Z)
+accepted https://vires.services/hapi/data?id=GF_OPER_WND1ACC_2_&start=2026-04-30T12:00:00Z&stop=2026-04-30T12:59:59Z&parameters=crosswind&format=json
+url https://vires.services/hapi/data?id=GF_OPER_WND1ACC_2_&start=2026-04-30T12:00:00Z&stop=2026-04-30T12:59:59Z&parameters=crosswind&format=json
+ttl 86400
+at earth
+hapi crosswind=gracefo1_crosswind_ms
+field gracefo1_crosswind_ms gracefo1_crosswind_ms gaussian-inverse-square advective m/s 86400 0.0 0.0
+
+# dataset GO_MAG_ACAL_CORR drafted — GOCE Fluxgate F (nT), em — Draft
+# dataset GO_MAG_ACAL_CORR_ML accepted — 1 Feld(er), Probe ok (2013-09-30T00:00:00Z..2013-09-30T00:59:59Z)
+accepted https://vires.services/hapi/data?id=GO_MAG_ACAL_CORR_ML&start=2013-09-30T00:00:00Z&stop=2013-09-30T00:59:59Z&parameters=F&format=json
+url https://vires.services/hapi/data?id=GO_MAG_ACAL_CORR_ML&start=2013-09-30T00:00:00Z&stop=2013-09-30T00:59:59Z&parameters=F&format=json
+ttl 86400
+at earth
+hapi F=goce_magnetic_field_intensity_ml_nt
+field goce_magnetic_field_intensity_ml_nt goce_magnetic_field_intensity_ml_nt inverse-square em nT 86400 0.0 0.0
+
+# dataset GRACE_A_MAG accepted — 1 Feld(er), Probe ok (2017-10-31T12:00:00Z..2017-10-31T12:59:59Z)
+accepted https://vires.services/hapi/data?id=GRACE_A_MAG&start=2017-10-31T12:00:00Z&stop=2017-10-31T12:59:59Z&parameters=F&format=json
+url https://vires.services/hapi/data?id=GRACE_A_MAG&start=2017-10-31T12:00:00Z&stop=2017-10-31T12:59:59Z&parameters=F&format=json
+ttl 86400
+at earth
+hapi F=grace_a_magnetic_field_intensity_nt
+field grace_a_magnetic_field_intensity_nt grace_a_magnetic_field_intensity_nt inverse-square em nT 86400 0.0 0.0
+
+# dataset GRACE_B_MAG accepted — 1 Feld(er), Probe ok (2017-09-04T12:00:00Z..2017-09-04T12:59:59Z)
+accepted https://vires.services/hapi/data?id=GRACE_B_MAG&start=2017-09-04T12:00:00Z&stop=2017-09-04T12:59:59Z&parameters=F&format=json
+url https://vires.services/hapi/data?id=GRACE_B_MAG&start=2017-09-04T12:00:00Z&stop=2017-09-04T12:59:59Z&parameters=F&format=json
+ttl 86400
+at earth
+hapi F=grace_b_magnetic_field_intensity_nt
+field grace_b_magnetic_field_intensity_nt grace_b_magnetic_field_intensity_nt inverse-square em nT 86400 0.0 0.0
+
+# dataset GR_OPER_DNS1ACC_2_ drafted — GRACE-A Neutraldichte density — Draft
+# dataset GR_OPER_DNS2ACC_2_ accepted — 1 Feld(er), Probe ok (2017-05-22T12:00:00Z..2017-05-22T12:59:59Z)
+accepted https://vires.services/hapi/data?id=GR_OPER_DNS2ACC_2_&start=2017-05-22T12:00:00Z&stop=2017-05-22T12:59:59Z&parameters=density&format=json
+url https://vires.services/hapi/data?id=GR_OPER_DNS2ACC_2_&start=2017-05-22T12:00:00Z&stop=2017-05-22T12:59:59Z&parameters=density&format=json
+ttl 86400
+at earth
+hapi density=grace_b_neutral_density_kgm3
+field grace_b_neutral_density_kgm3 grace_b_neutral_density_kgm3 gaussian-inverse-square diffusion kg/m3 86400 0.0 0.0
+
+# dataset GR_OPER_NE__KBR_2F accepted — 2 Feld(er), Probe ok (2017-06-22T12:00:00Z..2017-06-22T12:59:59Z)
+accepted https://vires.services/hapi/data?id=GR_OPER_NE__KBR_2F&start=2017-06-22T12:00:00Z&stop=2017-06-22T12:59:59Z&parameters=Distance,Absolute_Ne&format=json
+url https://vires.services/hapi/data?id=GR_OPER_NE__KBR_2F&start=2017-06-22T12:00:00Z&stop=2017-06-22T12:59:59Z&parameters=Distance,Absolute_Ne&format=json
+ttl 86400
+at earth
+hapi Distance=grace_intersatellite_range_m Absolute_Ne=grace_electron_density_cm3
+field grace_intersatellite_range_m grace_intersatellite_range_m inverse-square gravity m 86400 0.0 0.0
+field grace_electron_density_cm3 grace_electron_density_cm3 gaussian-inverse-square diffusion cm-3 86400 0.0 0.0
+
+# dataset GR_OPER_TEC1TMS_2F accepted — 1 Feld(er), Probe ok (2017-10-31T12:00:00Z..2017-10-31T12:59:59Z)
+accepted https://vires.services/hapi/data?id=GR_OPER_TEC1TMS_2F&start=2017-10-31T12:00:00Z&stop=2017-10-31T12:59:59Z&parameters=Absolute_VTEC&format=json
+url https://vires.services/hapi/data?id=GR_OPER_TEC1TMS_2F&start=2017-10-31T12:00:00Z&stop=2017-10-31T12:59:59Z&parameters=Absolute_VTEC&format=json
+ttl 86400
+at earth
+hapi Absolute_VTEC=grace_a_absolute_vtec_tecu
+field grace_a_absolute_vtec_tecu grace_a_absolute_vtec_tecu inverse-square em TECU 86400 0.0 0.0
+
+# dataset GR_OPER_TEC2TMS_2F accepted — 1 Feld(er), Probe ok (2017-09-04T12:00:00Z..2017-09-04T12:59:59Z)
+accepted https://vires.services/hapi/data?id=GR_OPER_TEC2TMS_2F&start=2017-09-04T12:00:00Z&stop=2017-09-04T12:59:59Z&parameters=Absolute_VTEC&format=json
+url https://vires.services/hapi/data?id=GR_OPER_TEC2TMS_2F&start=2017-09-04T12:00:00Z&stop=2017-09-04T12:59:59Z&parameters=Absolute_VTEC&format=json
+ttl 86400
+at earth
+hapi Absolute_VTEC=grace_b_absolute_vtec_tecu
+field grace_b_absolute_vtec_tecu grace_b_absolute_vtec_tecu inverse-square em TECU 86400 0.0 0.0
+
+# dataset GR_OPER_WND1ACC_2_ accepted — 1 Feld(er), Probe ok (2017-10-31T12:00:00Z..2017-10-31T12:59:59Z)
+accepted https://vires.services/hapi/data?id=GR_OPER_WND1ACC_2_&start=2017-10-31T12:00:00Z&stop=2017-10-31T12:59:59Z&parameters=crosswind&format=json
+url https://vires.services/hapi/data?id=GR_OPER_WND1ACC_2_&start=2017-10-31T12:00:00Z&stop=2017-10-31T12:59:59Z&parameters=crosswind&format=json
+ttl 86400
+at earth
+hapi crosswind=grace_a_crosswind_ms
+field grace_a_crosswind_ms grace_a_crosswind_ms gaussian-inverse-square advective m/s 86400 0.0 0.0
+
+# dataset GR_OPER_WND2ACC_2_ accepted — 1 Feld(er), Probe ok (2017-05-22T12:00:00Z..2017-05-22T12:59:59Z)
+accepted https://vires.services/hapi/data?id=GR_OPER_WND2ACC_2_&start=2017-05-22T12:00:00Z&stop=2017-05-22T12:59:59Z&parameters=crosswind&format=json
+url https://vires.services/hapi/data?id=GR_OPER_WND2ACC_2_&start=2017-05-22T12:00:00Z&stop=2017-05-22T12:59:59Z&parameters=crosswind&format=json
+ttl 86400
+at earth
+hapi crosswind=grace_b_crosswind_ms
+field grace_b_crosswind_ms grace_b_crosswind_ms gaussian-inverse-square advective m/s 86400 0.0 0.0
+
+# dataset MM_OPER_CON_EPH_2_:crossover decline flags — Konstellation-Ephemeriden (Orbitgeometrie)
+decline MM_OPER_CON_EPH_2_:crossover flags
+# dataset MM_OPER_CON_EPH_2_:plane_alignment decline flags — Konstellation-Ephemeriden (Orbitgeometrie)
+decline MM_OPER_CON_EPH_2_:plane_alignment flags
+# dataset SW_EXPT_EFIA_TCT02 integrated — Draft grind_esa.φ (Ehx/Ehy/Ehz)
+# dataset SW_EXPT_EFIA_TCT16 accepted — 3 Feld(er), Probe ok (2025-12-04T12:00:00Z..2025-12-04T12:59:59Z)
+accepted https://vires.services/hapi/data?id=SW_EXPT_EFIA_TCT16&start=2025-12-04T12:00:00Z&stop=2025-12-04T12:59:59Z&parameters=Ehx,Ehy,Ehz&format=json
+url https://vires.services/hapi/data?id=SW_EXPT_EFIA_TCT16&start=2025-12-04T12:00:00Z&stop=2025-12-04T12:59:59Z&parameters=Ehx,Ehy,Ehz&format=json
+ttl 86400
+at earth
+hapi Ehx=swarm_a_e16hz_electric_field_x_mvm Ehy=swarm_a_e16hz_electric_field_y_mvm Ehz=swarm_a_e16hz_electric_field_z_mvm
+field swarm_a_e16hz_electric_field_x_mvm swarm_a_e16hz_electric_field_x_mvm inverse-square electric mV/m 86400 0.0 0.0
+field swarm_a_e16hz_electric_field_y_mvm swarm_a_e16hz_electric_field_y_mvm inverse-square electric mV/m 86400 0.0 0.0
+field swarm_a_e16hz_electric_field_z_mvm swarm_a_e16hz_electric_field_z_mvm inverse-square electric mV/m 86400 0.0 0.0
+
+# dataset SW_EXPT_EFIB_TCT02 accepted — 3 Feld(er), Probe ok (2025-12-04T12:00:00Z..2025-12-04T12:59:59Z)
+accepted https://vires.services/hapi/data?id=SW_EXPT_EFIB_TCT02&start=2025-12-04T12:00:00Z&stop=2025-12-04T12:59:59Z&parameters=Ehx,Ehy,Ehz&format=json
+url https://vires.services/hapi/data?id=SW_EXPT_EFIB_TCT02&start=2025-12-04T12:00:00Z&stop=2025-12-04T12:59:59Z&parameters=Ehx,Ehy,Ehz&format=json
+ttl 86400
+at earth
+hapi Ehx=swarm_b_electric_field_x_mvm Ehy=swarm_b_electric_field_y_mvm Ehz=swarm_b_electric_field_z_mvm
+field swarm_b_electric_field_x_mvm swarm_b_electric_field_x_mvm inverse-square electric mV/m 86400 0.0 0.0
+field swarm_b_electric_field_y_mvm swarm_b_electric_field_y_mvm inverse-square electric mV/m 86400 0.0 0.0
+field swarm_b_electric_field_z_mvm swarm_b_electric_field_z_mvm inverse-square electric mV/m 86400 0.0 0.0
+
+# dataset SW_EXPT_EFIB_TCT16 accepted — 3 Feld(er), Probe ok (2025-12-04T12:00:00Z..2025-12-04T12:59:59Z)
+accepted https://vires.services/hapi/data?id=SW_EXPT_EFIB_TCT16&start=2025-12-04T12:00:00Z&stop=2025-12-04T12:59:59Z&parameters=Ehx,Ehy,Ehz&format=json
+url https://vires.services/hapi/data?id=SW_EXPT_EFIB_TCT16&start=2025-12-04T12:00:00Z&stop=2025-12-04T12:59:59Z&parameters=Ehx,Ehy,Ehz&format=json
+ttl 86400
+at earth
+hapi Ehx=swarm_b_e16hz_electric_field_x_mvm Ehy=swarm_b_e16hz_electric_field_y_mvm Ehz=swarm_b_e16hz_electric_field_z_mvm
+field swarm_b_e16hz_electric_field_x_mvm swarm_b_e16hz_electric_field_x_mvm inverse-square electric mV/m 86400 0.0 0.0
+field swarm_b_e16hz_electric_field_y_mvm swarm_b_e16hz_electric_field_y_mvm inverse-square electric mV/m 86400 0.0 0.0
+field swarm_b_e16hz_electric_field_z_mvm swarm_b_e16hz_electric_field_z_mvm inverse-square electric mV/m 86400 0.0 0.0
+
+# dataset SW_EXPT_EFIC_TCT02 accepted — 3 Feld(er), Probe ok (2025-11-04T12:00:00Z..2025-11-04T12:59:59Z)
+accepted https://vires.services/hapi/data?id=SW_EXPT_EFIC_TCT02&start=2025-11-04T12:00:00Z&stop=2025-11-04T12:59:59Z&parameters=Ehx,Ehy,Ehz&format=json
+url https://vires.services/hapi/data?id=SW_EXPT_EFIC_TCT02&start=2025-11-04T12:00:00Z&stop=2025-11-04T12:59:59Z&parameters=Ehx,Ehy,Ehz&format=json
+ttl 86400
+at earth
+hapi Ehx=swarm_c_electric_field_x_mvm Ehy=swarm_c_electric_field_y_mvm Ehz=swarm_c_electric_field_z_mvm
+field swarm_c_electric_field_x_mvm swarm_c_electric_field_x_mvm inverse-square electric mV/m 86400 0.0 0.0
+field swarm_c_electric_field_y_mvm swarm_c_electric_field_y_mvm inverse-square electric mV/m 86400 0.0 0.0
+field swarm_c_electric_field_z_mvm swarm_c_electric_field_z_mvm inverse-square electric mV/m 86400 0.0 0.0
+
+# dataset SW_EXPT_EFIC_TCT16 accepted — 3 Feld(er), Probe ok (2025-11-04T12:00:00Z..2025-11-04T12:59:59Z)
+accepted https://vires.services/hapi/data?id=SW_EXPT_EFIC_TCT16&start=2025-11-04T12:00:00Z&stop=2025-11-04T12:59:59Z&parameters=Ehx,Ehy,Ehz&format=json
+url https://vires.services/hapi/data?id=SW_EXPT_EFIC_TCT16&start=2025-11-04T12:00:00Z&stop=2025-11-04T12:59:59Z&parameters=Ehx,Ehy,Ehz&format=json
+ttl 86400
+at earth
+hapi Ehx=swarm_c_e16hz_electric_field_x_mvm Ehy=swarm_c_e16hz_electric_field_y_mvm Ehz=swarm_c_e16hz_electric_field_z_mvm
+field swarm_c_e16hz_electric_field_x_mvm swarm_c_e16hz_electric_field_x_mvm inverse-square electric mV/m 86400 0.0 0.0
+field swarm_c_e16hz_electric_field_y_mvm swarm_c_e16hz_electric_field_y_mvm inverse-square electric mV/m 86400 0.0 0.0
+field swarm_c_e16hz_electric_field_z_mvm swarm_c_e16hz_electric_field_z_mvm inverse-square electric mV/m 86400 0.0 0.0
+
+# dataset SW_FAST_AEJALPL_2F decline modell — abgeleiteter Auroral-Elektrojet (Inversion aus B), kein Direktmaß
+decline SW_FAST_AEJALPL_2F modell
+# dataset SW_FAST_AEJALPL_2F:Quality decline modell — abgeleiteter Auroral-Elektrojet (Inversion aus B), kein Direktmaß
+decline SW_FAST_AEJALPL_2F:Quality modell
+# dataset SW_FAST_AEJAPBL_2F decline modell — abgeleiteter Auroral-Elektrojet (Inversion aus B), kein Direktmaß
+decline SW_FAST_AEJAPBL_2F modell
+# dataset SW_FAST_AEJBLPL_2F decline modell — abgeleiteter Auroral-Elektrojet (Inversion aus B), kein Direktmaß
+decline SW_FAST_AEJBLPL_2F modell
+# dataset SW_FAST_AEJBLPL_2F:Quality decline modell — abgeleiteter Auroral-Elektrojet (Inversion aus B), kein Direktmaß
+decline SW_FAST_AEJBLPL_2F:Quality modell
+# dataset SW_FAST_AEJBPBL_2F decline modell — abgeleiteter Auroral-Elektrojet (Inversion aus B), kein Direktmaß
+decline SW_FAST_AEJBPBL_2F modell
+# dataset SW_FAST_AEJCLPL_2F decline modell — abgeleiteter Auroral-Elektrojet (Inversion aus B), kein Direktmaß
+decline SW_FAST_AEJCLPL_2F modell
+# dataset SW_FAST_AEJCLPL_2F:Quality decline modell — abgeleiteter Auroral-Elektrojet (Inversion aus B), kein Direktmaß
+decline SW_FAST_AEJCLPL_2F:Quality modell
+# dataset SW_FAST_AEJCPBL_2F decline modell — abgeleiteter Auroral-Elektrojet (Inversion aus B), kein Direktmaß
+decline SW_FAST_AEJCPBL_2F modell
+# dataset SW_FAST_AOBAFAC_2F decline flags — Auroral-Oval-Boundary Grenzflag (kategorial)
+decline SW_FAST_AOBAFAC_2F flags
+# dataset SW_FAST_AOBBFAC_2F decline flags — Auroral-Oval-Boundary Grenzflag (kategorial)
+decline SW_FAST_AOBBFAC_2F flags
+# dataset SW_FAST_AOBCFAC_2F decline flags — Auroral-Oval-Boundary Grenzflag (kategorial)
+decline SW_FAST_AOBCFAC_2F flags
+# dataset SW_FAST_EFIA_LP_1B integrated — integriert phi/sources.φ (N_ion/T_elec/Vs)
+# dataset SW_FAST_EFIB_LP_1B accepted — 3 Feld(er), Probe ok (2026-08-15T00:00:00Z..2026-08-15T00:59:59Z)
+accepted https://vires.services/hapi/data?id=SW_FAST_EFIB_LP_1B&start=2026-08-15T00:00:00Z&stop=2026-08-15T00:59:59Z&parameters=N_ion,T_elec,Vs&format=json
+url https://vires.services/hapi/data?id=SW_FAST_EFIB_LP_1B&start=2026-08-15T00:00:00Z&stop=2026-08-15T00:59:59Z&parameters=N_ion,T_elec,Vs&format=json
+ttl 86400
+at earth
+hapi N_ion=swarm_b_fast_ion_density_cm3 T_elec=swarm_b_fast_electron_temp_k Vs=swarm_b_fast_spacecraft_potential_v
+field swarm_b_fast_ion_density_cm3 swarm_b_fast_ion_density_cm3 gaussian-inverse-square diffusion cm-3 86400 0.0 0.0
+field swarm_b_fast_electron_temp_k swarm_b_fast_electron_temp_k exponential-decay thermal K 86400 0.0 0.0
+field swarm_b_fast_spacecraft_potential_v swarm_b_fast_spacecraft_potential_v inverse-square electric V 86400 0.0 0.0
+
+# dataset SW_FAST_EFIC_LP_1B accepted — 3 Feld(er), Probe ok (2026-08-15T00:00:00Z..2026-08-15T00:59:59Z)
+accepted https://vires.services/hapi/data?id=SW_FAST_EFIC_LP_1B&start=2026-08-15T00:00:00Z&stop=2026-08-15T00:59:59Z&parameters=N_ion,T_elec,Vs&format=json
+url https://vires.services/hapi/data?id=SW_FAST_EFIC_LP_1B&start=2026-08-15T00:00:00Z&stop=2026-08-15T00:59:59Z&parameters=N_ion,T_elec,Vs&format=json
+ttl 86400
+at earth
+hapi N_ion=swarm_c_fast_ion_density_cm3 T_elec=swarm_c_fast_electron_temp_k Vs=swarm_c_fast_spacecraft_potential_v
+field swarm_c_fast_ion_density_cm3 swarm_c_fast_ion_density_cm3 gaussian-inverse-square diffusion cm-3 86400 0.0 0.0
+field swarm_c_fast_electron_temp_k swarm_c_fast_electron_temp_k exponential-decay thermal K 86400 0.0 0.0
+field swarm_c_fast_spacecraft_potential_v swarm_c_fast_spacecraft_potential_v inverse-square electric V 86400 0.0 0.0
+
+# dataset SW_FAST_FACATMS_2F integrated — integriert phi/sources.φ (IRC+FAC)
+# dataset SW_FAST_FACBTMS_2F accepted — 2 Feld(er), Probe ok (2026-08-15T00:00:00Z..2026-08-15T00:59:59Z)
+accepted https://vires.services/hapi/data?id=SW_FAST_FACBTMS_2F&start=2026-08-15T00:00:00Z&stop=2026-08-15T00:59:59Z&parameters=IRC,FAC&format=json
+url https://vires.services/hapi/data?id=SW_FAST_FACBTMS_2F&start=2026-08-15T00:00:00Z&stop=2026-08-15T00:59:59Z&parameters=IRC,FAC&format=json
+ttl 86400
+at earth
+hapi IRC=swarm_b_fast_ionospheric_radial_current_uam2 FAC=swarm_b_fast_field_aligned_current_uam2
+field swarm_b_fast_ionospheric_radial_current_uam2 swarm_b_fast_ionospheric_radial_current_uam2 inverse-square electric uA/m2 86400 0.0 0.0
+field swarm_b_fast_field_aligned_current_uam2 swarm_b_fast_field_aligned_current_uam2 inverse-square electric uA/m2 86400 0.0 0.0
+
+# dataset SW_FAST_FACCTMS_2F accepted — 2 Feld(er), Probe ok (2026-08-15T00:00:00Z..2026-08-15T00:59:59Z)
+accepted https://vires.services/hapi/data?id=SW_FAST_FACCTMS_2F&start=2026-08-15T00:00:00Z&stop=2026-08-15T00:59:59Z&parameters=IRC,FAC&format=json
+url https://vires.services/hapi/data?id=SW_FAST_FACCTMS_2F&start=2026-08-15T00:00:00Z&stop=2026-08-15T00:59:59Z&parameters=IRC,FAC&format=json
+ttl 86400
+at earth
+hapi IRC=swarm_c_fast_ionospheric_radial_current_uam2 FAC=swarm_c_fast_field_aligned_current_uam2
+field swarm_c_fast_ionospheric_radial_current_uam2 swarm_c_fast_ionospheric_radial_current_uam2 inverse-square electric uA/m2 86400 0.0 0.0
+field swarm_c_fast_field_aligned_current_uam2 swarm_c_fast_field_aligned_current_uam2 inverse-square electric uA/m2 86400 0.0 0.0
+
+# dataset SW_FAST_MAGA_HR_1B accepted — 1 Feld(er), Probe ok (2026-08-15T00:00:00Z..2026-08-15T00:59:59Z)
+accepted https://vires.services/hapi/data?id=SW_FAST_MAGA_HR_1B&start=2026-08-15T00:00:00Z&stop=2026-08-15T00:59:59Z&parameters=F&format=json
+url https://vires.services/hapi/data?id=SW_FAST_MAGA_HR_1B&start=2026-08-15T00:00:00Z&stop=2026-08-15T00:59:59Z&parameters=F&format=json
+ttl 86400
+at earth
+hapi F=swarm_a_magnetic_field_intensity_fast_hr_nt
+field swarm_a_magnetic_field_intensity_fast_hr_nt swarm_a_magnetic_field_intensity_fast_hr_nt inverse-square em nT 86400 0.0 0.0
+
+# dataset SW_FAST_MAGA_LR_1B integrated — integriert phi/sources.φ (F)
+# dataset SW_FAST_MAGB_HR_1B accepted — 1 Feld(er), Probe ok (2026-08-15T00:00:00Z..2026-08-15T00:59:59Z)
+accepted https://vires.services/hapi/data?id=SW_FAST_MAGB_HR_1B&start=2026-08-15T00:00:00Z&stop=2026-08-15T00:59:59Z&parameters=F&format=json
+url https://vires.services/hapi/data?id=SW_FAST_MAGB_HR_1B&start=2026-08-15T00:00:00Z&stop=2026-08-15T00:59:59Z&parameters=F&format=json
+ttl 86400
+at earth
+hapi F=swarm_b_magnetic_field_intensity_fast_hr_nt
+field swarm_b_magnetic_field_intensity_fast_hr_nt swarm_b_magnetic_field_intensity_fast_hr_nt inverse-square em nT 86400 0.0 0.0
+
+# dataset SW_FAST_MAGB_LR_1B accepted — 1 Feld(er), Probe ok (2026-08-15T00:00:00Z..2026-08-15T00:59:59Z)
+accepted https://vires.services/hapi/data?id=SW_FAST_MAGB_LR_1B&start=2026-08-15T00:00:00Z&stop=2026-08-15T00:59:59Z&parameters=F&format=json
+url https://vires.services/hapi/data?id=SW_FAST_MAGB_LR_1B&start=2026-08-15T00:00:00Z&stop=2026-08-15T00:59:59Z&parameters=F&format=json
+ttl 86400
+at earth
+hapi F=swarm_b_magnetic_field_intensity_fast_lr_nt
+field swarm_b_magnetic_field_intensity_fast_lr_nt swarm_b_magnetic_field_intensity_fast_lr_nt inverse-square em nT 86400 0.0 0.0
+
+# dataset SW_FAST_MAGC_HR_1B accepted — 1 Feld(er), Probe ok (2026-08-15T00:00:00Z..2026-08-15T00:59:59Z)
+accepted https://vires.services/hapi/data?id=SW_FAST_MAGC_HR_1B&start=2026-08-15T00:00:00Z&stop=2026-08-15T00:59:59Z&parameters=F&format=json
+url https://vires.services/hapi/data?id=SW_FAST_MAGC_HR_1B&start=2026-08-15T00:00:00Z&stop=2026-08-15T00:59:59Z&parameters=F&format=json
+ttl 86400
+at earth
+hapi F=swarm_c_magnetic_field_intensity_fast_hr_nt
+field swarm_c_magnetic_field_intensity_fast_hr_nt swarm_c_magnetic_field_intensity_fast_hr_nt inverse-square em nT 86400 0.0 0.0
+
+# dataset SW_FAST_MAGC_LR_1B probe-void — F NaN im gesamten FAST-Fenster (Swarm-C-LR-Skalar degradiert); B_NEC-Vektor trägt endliche B-Werte (~23117 nT), aber Vektor-Spalte vom Hapi-Extract nicht skalar-tragbar; HR-Variante (SW_FAST_MAGC_HR_1B) liefert F endlich
+# dataset SW_FAST_MODA_SC_1B decline flags — nur Position/AOCS-Mode (Housekeeping)
+decline SW_FAST_MODA_SC_1B flags
+# dataset SW_FAST_MODB_SC_1B decline flags — nur Position/AOCS-Mode (Housekeeping)
+decline SW_FAST_MODB_SC_1B flags
+# dataset SW_FAST_MODC_SC_1B decline flags — nur Position/AOCS-Mode (Housekeeping)
+decline SW_FAST_MODC_SC_1B flags
+# dataset SW_FAST_TECATMS_2F accepted — 1 Feld(er), Probe ok (2026-07-13T00:00:00Z..2026-07-13T00:59:59Z)
+accepted https://vires.services/hapi/data?id=SW_FAST_TECATMS_2F&start=2026-07-13T00:00:00Z&stop=2026-07-13T00:59:59Z&parameters=Absolute_VTEC&format=json
+url https://vires.services/hapi/data?id=SW_FAST_TECATMS_2F&start=2026-07-13T00:00:00Z&stop=2026-07-13T00:59:59Z&parameters=Absolute_VTEC&format=json
+ttl 86400
+at earth
+hapi Absolute_VTEC=swarm_a_absolute_vtec_fast_tecu
+field swarm_a_absolute_vtec_fast_tecu swarm_a_absolute_vtec_fast_tecu inverse-square em TECU 86400 0.0 0.0
+
+# dataset SW_FAST_TECBTMS_2F accepted — 1 Feld(er), Probe ok (2026-07-13T00:00:00Z..2026-07-13T00:59:59Z)
+accepted https://vires.services/hapi/data?id=SW_FAST_TECBTMS_2F&start=2026-07-13T00:00:00Z&stop=2026-07-13T00:59:59Z&parameters=Absolute_VTEC&format=json
+url https://vires.services/hapi/data?id=SW_FAST_TECBTMS_2F&start=2026-07-13T00:00:00Z&stop=2026-07-13T00:59:59Z&parameters=Absolute_VTEC&format=json
+ttl 86400
+at earth
+hapi Absolute_VTEC=swarm_b_absolute_vtec_fast_tecu
+field swarm_b_absolute_vtec_fast_tecu swarm_b_absolute_vtec_fast_tecu inverse-square em TECU 86400 0.0 0.0
+
+# dataset SW_FAST_TECCTMS_2F accepted — 1 Feld(er), Probe ok (2026-07-13T00:00:00Z..2026-07-13T00:59:59Z)
+accepted https://vires.services/hapi/data?id=SW_FAST_TECCTMS_2F&start=2026-07-13T00:00:00Z&stop=2026-07-13T00:59:59Z&parameters=Absolute_VTEC&format=json
+url https://vires.services/hapi/data?id=SW_FAST_TECCTMS_2F&start=2026-07-13T00:00:00Z&stop=2026-07-13T00:59:59Z&parameters=Absolute_VTEC&format=json
+ttl 86400
+at earth
+hapi Absolute_VTEC=swarm_c_absolute_vtec_fast_tecu
+field swarm_c_absolute_vtec_fast_tecu swarm_c_absolute_vtec_fast_tecu inverse-square em TECU 86400 0.0 0.0
+
+# dataset SW_OPER_AEJALPL_2F decline modell — abgeleiteter Auroral-Elektrojet (Inversion aus B), kein Direktmaß
+decline SW_OPER_AEJALPL_2F modell
+# dataset SW_OPER_AEJALPL_2F:Quality decline modell — abgeleiteter Auroral-Elektrojet (Inversion aus B), kein Direktmaß
+decline SW_OPER_AEJALPL_2F:Quality modell
+# dataset SW_OPER_AEJALPS_2F decline modell — abgeleiteter Auroral-Elektrojet (Inversion aus B), kein Direktmaß
+decline SW_OPER_AEJALPS_2F modell
+# dataset SW_OPER_AEJALPS_2F:Quality decline modell — abgeleiteter Auroral-Elektrojet (Inversion aus B), kein Direktmaß
+decline SW_OPER_AEJALPS_2F:Quality modell
+# dataset SW_OPER_AEJAPBL_2F decline modell — abgeleiteter Auroral-Elektrojet (Inversion aus B), kein Direktmaß
+decline SW_OPER_AEJAPBL_2F modell
+# dataset SW_OPER_AEJAPBS_2F decline modell — abgeleiteter Auroral-Elektrojet (Inversion aus B), kein Direktmaß
+decline SW_OPER_AEJAPBS_2F modell
+# dataset SW_OPER_AEJAPBS_2F:GroundMagneticDisturbance decline modell — abgeleiteter Auroral-Elektrojet (Inversion aus B), kein Direktmaß
+decline SW_OPER_AEJAPBS_2F:GroundMagneticDisturbance modell
+# dataset SW_OPER_AEJBLPL_2F decline modell — abgeleiteter Auroral-Elektrojet (Inversion aus B), kein Direktmaß
+decline SW_OPER_AEJBLPL_2F modell
+# dataset SW_OPER_AEJBLPL_2F:Quality decline modell — abgeleiteter Auroral-Elektrojet (Inversion aus B), kein Direktmaß
+decline SW_OPER_AEJBLPL_2F:Quality modell
+# dataset SW_OPER_AEJBLPS_2F decline modell — abgeleiteter Auroral-Elektrojet (Inversion aus B), kein Direktmaß
+decline SW_OPER_AEJBLPS_2F modell
+# dataset SW_OPER_AEJBLPS_2F:Quality decline modell — abgeleiteter Auroral-Elektrojet (Inversion aus B), kein Direktmaß
+decline SW_OPER_AEJBLPS_2F:Quality modell
+# dataset SW_OPER_AEJBPBL_2F decline modell — abgeleiteter Auroral-Elektrojet (Inversion aus B), kein Direktmaß
+decline SW_OPER_AEJBPBL_2F modell
+# dataset SW_OPER_AEJBPBS_2F decline modell — abgeleiteter Auroral-Elektrojet (Inversion aus B), kein Direktmaß
+decline SW_OPER_AEJBPBS_2F modell
+# dataset SW_OPER_AEJBPBS_2F:GroundMagneticDisturbance decline modell — abgeleiteter Auroral-Elektrojet (Inversion aus B), kein Direktmaß
+decline SW_OPER_AEJBPBS_2F:GroundMagneticDisturbance modell
+# dataset SW_OPER_AEJCLPL_2F decline modell — abgeleiteter Auroral-Elektrojet (Inversion aus B), kein Direktmaß
+decline SW_OPER_AEJCLPL_2F modell
+# dataset SW_OPER_AEJCLPL_2F:Quality decline modell — abgeleiteter Auroral-Elektrojet (Inversion aus B), kein Direktmaß
+decline SW_OPER_AEJCLPL_2F:Quality modell
+# dataset SW_OPER_AEJCLPS_2F decline modell — abgeleiteter Auroral-Elektrojet (Inversion aus B), kein Direktmaß
+decline SW_OPER_AEJCLPS_2F modell
+# dataset SW_OPER_AEJCLPS_2F:Quality decline modell — abgeleiteter Auroral-Elektrojet (Inversion aus B), kein Direktmaß
+decline SW_OPER_AEJCLPS_2F:Quality modell
+# dataset SW_OPER_AEJCPBL_2F decline modell — abgeleiteter Auroral-Elektrojet (Inversion aus B), kein Direktmaß
+decline SW_OPER_AEJCPBL_2F modell
+# dataset SW_OPER_AEJCPBS_2F decline modell — abgeleiteter Auroral-Elektrojet (Inversion aus B), kein Direktmaß
+decline SW_OPER_AEJCPBS_2F modell
+# dataset SW_OPER_AEJCPBS_2F:GroundMagneticDisturbance decline modell — abgeleiteter Auroral-Elektrojet (Inversion aus B), kein Direktmaß
+decline SW_OPER_AEJCPBS_2F:GroundMagneticDisturbance modell
+# dataset SW_OPER_AOBAFAC_2F decline flags — Auroral-Oval-Boundary Grenzflag (kategorial)
+decline SW_OPER_AOBAFAC_2F flags
+# dataset SW_OPER_AOBBFAC_2F decline flags — Auroral-Oval-Boundary Grenzflag (kategorial)
+decline SW_OPER_AOBBFAC_2F flags
+# dataset SW_OPER_AOBCFAC_2F decline flags — Auroral-Oval-Boundary Grenzflag (kategorial)
+decline SW_OPER_AOBCFAC_2F flags
+# dataset SW_OPER_DNSAACC_2_ accepted — 1 Feld(er), Probe ok (2025-11-30T12:00:00Z..2025-11-30T12:59:59Z)
+accepted https://vires.services/hapi/data?id=SW_OPER_DNSAACC_2_&start=2025-11-30T12:00:00Z&stop=2025-11-30T12:59:59Z&parameters=density&format=json
+url https://vires.services/hapi/data?id=SW_OPER_DNSAACC_2_&start=2025-11-30T12:00:00Z&stop=2025-11-30T12:59:59Z&parameters=density&format=json
+ttl 86400
+at earth
+hapi density=swarm_a_neutral_density_acc_kgm3
+field swarm_a_neutral_density_acc_kgm3 swarm_a_neutral_density_acc_kgm3 gaussian-inverse-square diffusion kg/m3 86400 0.0 0.0
+
+# dataset SW_OPER_DNSAPOD_2_ accepted — 1 Feld(er), Probe ok (2026-06-30T12:00:00Z..2026-06-30T12:59:59Z)
+accepted https://vires.services/hapi/data?id=SW_OPER_DNSAPOD_2_&start=2026-06-30T12:00:00Z&stop=2026-06-30T12:59:59Z&parameters=density&format=json
+url https://vires.services/hapi/data?id=SW_OPER_DNSAPOD_2_&start=2026-06-30T12:00:00Z&stop=2026-06-30T12:59:59Z&parameters=density&format=json
+ttl 86400
+at earth
+hapi density=swarm_a_neutral_density_pod_kgm3
+field swarm_a_neutral_density_pod_kgm3 swarm_a_neutral_density_pod_kgm3 gaussian-inverse-square diffusion kg/m3 86400 0.0 0.0
+
+# dataset SW_OPER_DNSBACC_2_ accepted — 1 Feld(er), Probe ok (2025-11-30T12:00:00Z..2025-11-30T12:59:59Z)
+accepted https://vires.services/hapi/data?id=SW_OPER_DNSBACC_2_&start=2025-11-30T12:00:00Z&stop=2025-11-30T12:59:59Z&parameters=density&format=json
+url https://vires.services/hapi/data?id=SW_OPER_DNSBACC_2_&start=2025-11-30T12:00:00Z&stop=2025-11-30T12:59:59Z&parameters=density&format=json
+ttl 86400
+at earth
+hapi density=swarm_b_neutral_density_acc_kgm3
+field swarm_b_neutral_density_acc_kgm3 swarm_b_neutral_density_acc_kgm3 gaussian-inverse-square diffusion kg/m3 86400 0.0 0.0
+
+# dataset SW_OPER_DNSBPOD_2_ accepted — 1 Feld(er), Probe ok (2026-06-30T12:00:00Z..2026-06-30T12:59:59Z)
+accepted https://vires.services/hapi/data?id=SW_OPER_DNSBPOD_2_&start=2026-06-30T12:00:00Z&stop=2026-06-30T12:59:59Z&parameters=density&format=json
+url https://vires.services/hapi/data?id=SW_OPER_DNSBPOD_2_&start=2026-06-30T12:00:00Z&stop=2026-06-30T12:59:59Z&parameters=density&format=json
+ttl 86400
+at earth
+hapi density=swarm_b_neutral_density_pod_kgm3
+field swarm_b_neutral_density_pod_kgm3 swarm_b_neutral_density_pod_kgm3 gaussian-inverse-square diffusion kg/m3 86400 0.0 0.0
+
+# dataset SW_OPER_DNSCACC_2_ accepted — 1 Feld(er), Probe ok (2025-11-30T12:00:00Z..2025-11-30T12:59:59Z)
+accepted https://vires.services/hapi/data?id=SW_OPER_DNSCACC_2_&start=2025-11-30T12:00:00Z&stop=2025-11-30T12:59:59Z&parameters=density&format=json
+url https://vires.services/hapi/data?id=SW_OPER_DNSCACC_2_&start=2025-11-30T12:00:00Z&stop=2025-11-30T12:59:59Z&parameters=density&format=json
+ttl 86400
+at earth
+hapi density=swarm_c_neutral_density_acc_kgm3
+field swarm_c_neutral_density_acc_kgm3 swarm_c_neutral_density_acc_kgm3 gaussian-inverse-square diffusion kg/m3 86400 0.0 0.0
+
+# dataset SW_OPER_DNSCPOD_2_ accepted — 1 Feld(er), Probe ok (2026-06-30T12:00:00Z..2026-06-30T12:59:59Z)
+accepted https://vires.services/hapi/data?id=SW_OPER_DNSCPOD_2_&start=2026-06-30T12:00:00Z&stop=2026-06-30T12:59:59Z&parameters=density&format=json
+url https://vires.services/hapi/data?id=SW_OPER_DNSCPOD_2_&start=2026-06-30T12:00:00Z&stop=2026-06-30T12:59:59Z&parameters=density&format=json
+ttl 86400
+at earth
+hapi density=swarm_c_neutral_density_pod_kgm3
+field swarm_c_neutral_density_pod_kgm3 swarm_c_neutral_density_pod_kgm3 gaussian-inverse-square diffusion kg/m3 86400 0.0 0.0
+
+# dataset SW_OPER_EEFATMS_2F decline modell — äquatoriales E-Feld abgeleitet aus TEC-Gradient
+decline SW_OPER_EEFATMS_2F modell
+# dataset SW_OPER_EEFBTMS_2F decline modell — äquatoriales E-Feld abgeleitet aus TEC-Gradient
+decline SW_OPER_EEFBTMS_2F modell
+# dataset SW_OPER_EEFCTMS_2F decline modell — äquatoriales E-Feld abgeleitet aus TEC-Gradient
+decline SW_OPER_EEFCTMS_2F modell
+# dataset SW_OPER_EFIA_LP_1B accepted — 3 Feld(er), Probe ok (2026-08-11T12:00:00Z..2026-08-11T12:59:59Z)
+accepted https://vires.services/hapi/data?id=SW_OPER_EFIA_LP_1B&start=2026-08-11T12:00:00Z&stop=2026-08-11T12:59:59Z&parameters=N_ion,T_elec,Vs&format=json
+url https://vires.services/hapi/data?id=SW_OPER_EFIA_LP_1B&start=2026-08-11T12:00:00Z&stop=2026-08-11T12:59:59Z&parameters=N_ion,T_elec,Vs&format=json
+ttl 86400
+at earth
+hapi N_ion=swarm_a_ion_density_cm3 T_elec=swarm_a_electron_temp_k Vs=swarm_a_spacecraft_potential_v
+field swarm_a_ion_density_cm3 swarm_a_ion_density_cm3 gaussian-inverse-square diffusion cm-3 86400 0.0 0.0
+field swarm_a_electron_temp_k swarm_a_electron_temp_k exponential-decay thermal K 86400 0.0 0.0
+field swarm_a_spacecraft_potential_v swarm_a_spacecraft_potential_v inverse-square electric V 86400 0.0 0.0
+
+# dataset SW_OPER_EFIATIE_2_ accepted — 2 Feld(er), Probe ok (2025-11-30T12:00:00Z..2025-11-30T12:59:59Z)
+accepted https://vires.services/hapi/data?id=SW_OPER_EFIATIE_2_&start=2025-11-30T12:00:00Z&stop=2025-11-30T12:59:59Z&parameters=Te_adj_LP,Ti_meas_drift&format=json
+url https://vires.services/hapi/data?id=SW_OPER_EFIATIE_2_&start=2025-11-30T12:00:00Z&stop=2025-11-30T12:59:59Z&parameters=Te_adj_LP,Ti_meas_drift&format=json
+ttl 86400
+at earth
+hapi Te_adj_LP=swarm_a_electron_temp_tie_k Ti_meas_drift=swarm_a_ion_temp_tie_k
+field swarm_a_electron_temp_tie_k swarm_a_electron_temp_tie_k exponential-decay thermal K 86400 0.0 0.0
+field swarm_a_ion_temp_tie_k swarm_a_ion_temp_tie_k exponential-decay thermal K 86400 0.0 0.0
+
+# dataset SW_OPER_EFIB_LP_1B accepted — 3 Feld(er), Probe ok (2026-08-11T12:00:00Z..2026-08-11T12:59:59Z)
+accepted https://vires.services/hapi/data?id=SW_OPER_EFIB_LP_1B&start=2026-08-11T12:00:00Z&stop=2026-08-11T12:59:59Z&parameters=N_ion,T_elec,Vs&format=json
+url https://vires.services/hapi/data?id=SW_OPER_EFIB_LP_1B&start=2026-08-11T12:00:00Z&stop=2026-08-11T12:59:59Z&parameters=N_ion,T_elec,Vs&format=json
+ttl 86400
+at earth
+hapi N_ion=swarm_b_ion_density_cm3 T_elec=swarm_b_electron_temp_k Vs=swarm_b_spacecraft_potential_v
+field swarm_b_ion_density_cm3 swarm_b_ion_density_cm3 gaussian-inverse-square diffusion cm-3 86400 0.0 0.0
+field swarm_b_electron_temp_k swarm_b_electron_temp_k exponential-decay thermal K 86400 0.0 0.0
+field swarm_b_spacecraft_potential_v swarm_b_spacecraft_potential_v inverse-square electric V 86400 0.0 0.0
+
+# dataset SW_OPER_EFIBTIE_2_ accepted — 2 Feld(er), Probe ok (2025-11-30T12:00:00Z..2025-11-30T12:59:59Z)
+accepted https://vires.services/hapi/data?id=SW_OPER_EFIBTIE_2_&start=2025-11-30T12:00:00Z&stop=2025-11-30T12:59:59Z&parameters=Te_adj_LP,Ti_meas_drift&format=json
+url https://vires.services/hapi/data?id=SW_OPER_EFIBTIE_2_&start=2025-11-30T12:00:00Z&stop=2025-11-30T12:59:59Z&parameters=Te_adj_LP,Ti_meas_drift&format=json
+ttl 86400
+at earth
+hapi Te_adj_LP=swarm_b_electron_temp_tie_k Ti_meas_drift=swarm_b_ion_temp_tie_k
+field swarm_b_electron_temp_tie_k swarm_b_electron_temp_tie_k exponential-decay thermal K 86400 0.0 0.0
+field swarm_b_ion_temp_tie_k swarm_b_ion_temp_tie_k exponential-decay thermal K 86400 0.0 0.0
+
+# dataset SW_OPER_EFIC_LP_1B accepted — 3 Feld(er), Probe ok (2026-08-11T12:00:00Z..2026-08-11T12:59:59Z)
+accepted https://vires.services/hapi/data?id=SW_OPER_EFIC_LP_1B&start=2026-08-11T12:00:00Z&stop=2026-08-11T12:59:59Z&parameters=N_ion,T_elec,Vs&format=json
+url https://vires.services/hapi/data?id=SW_OPER_EFIC_LP_1B&start=2026-08-11T12:00:00Z&stop=2026-08-11T12:59:59Z&parameters=N_ion,T_elec,Vs&format=json
+ttl 86400
+at earth
+hapi N_ion=swarm_c_ion_density_cm3 T_elec=swarm_c_electron_temp_k Vs=swarm_c_spacecraft_potential_v
+field swarm_c_ion_density_cm3 swarm_c_ion_density_cm3 gaussian-inverse-square diffusion cm-3 86400 0.0 0.0
+field swarm_c_electron_temp_k swarm_c_electron_temp_k exponential-decay thermal K 86400 0.0 0.0
+field swarm_c_spacecraft_potential_v swarm_c_spacecraft_potential_v inverse-square electric V 86400 0.0 0.0
+
+# dataset SW_OPER_EFICTIE_2_ accepted — 2 Feld(er), Probe ok (2025-11-30T12:00:00Z..2025-11-30T12:59:59Z)
+accepted https://vires.services/hapi/data?id=SW_OPER_EFICTIE_2_&start=2025-11-30T12:00:00Z&stop=2025-11-30T12:59:59Z&parameters=Te_adj_LP,Ti_meas_drift&format=json
+url https://vires.services/hapi/data?id=SW_OPER_EFICTIE_2_&start=2025-11-30T12:00:00Z&stop=2025-11-30T12:59:59Z&parameters=Te_adj_LP,Ti_meas_drift&format=json
+ttl 86400
+at earth
+hapi Te_adj_LP=swarm_c_electron_temp_tie_k Ti_meas_drift=swarm_c_ion_temp_tie_k
+field swarm_c_electron_temp_tie_k swarm_c_electron_temp_tie_k exponential-decay thermal K 86400 0.0 0.0
+field swarm_c_ion_temp_tie_k swarm_c_ion_temp_tie_k exponential-decay thermal K 86400 0.0 0.0
+
+# dataset SW_OPER_FACATMS_2F accepted — 2 Feld(er), Probe ok (2026-08-09T12:00:00Z..2026-08-09T12:59:59Z)
+accepted https://vires.services/hapi/data?id=SW_OPER_FACATMS_2F&start=2026-08-09T12:00:00Z&stop=2026-08-09T12:59:59Z&parameters=IRC,FAC&format=json
+url https://vires.services/hapi/data?id=SW_OPER_FACATMS_2F&start=2026-08-09T12:00:00Z&stop=2026-08-09T12:59:59Z&parameters=IRC,FAC&format=json
+ttl 86400
+at earth
+hapi IRC=swarm_a_ionospheric_radial_current_uam2 FAC=swarm_a_field_aligned_current_uam2
+field swarm_a_ionospheric_radial_current_uam2 swarm_a_ionospheric_radial_current_uam2 inverse-square electric uA/m2 86400 0.0 0.0
+field swarm_a_field_aligned_current_uam2 swarm_a_field_aligned_current_uam2 inverse-square electric uA/m2 86400 0.0 0.0
+
+# dataset SW_OPER_FACBTMS_2F accepted — 2 Feld(er), Probe ok (2026-08-09T12:00:00Z..2026-08-09T12:59:59Z)
+accepted https://vires.services/hapi/data?id=SW_OPER_FACBTMS_2F&start=2026-08-09T12:00:00Z&stop=2026-08-09T12:59:59Z&parameters=IRC,FAC&format=json
+url https://vires.services/hapi/data?id=SW_OPER_FACBTMS_2F&start=2026-08-09T12:00:00Z&stop=2026-08-09T12:59:59Z&parameters=IRC,FAC&format=json
+ttl 86400
+at earth
+hapi IRC=swarm_b_ionospheric_radial_current_uam2 FAC=swarm_b_field_aligned_current_uam2
+field swarm_b_ionospheric_radial_current_uam2 swarm_b_ionospheric_radial_current_uam2 inverse-square electric uA/m2 86400 0.0 0.0
+field swarm_b_field_aligned_current_uam2 swarm_b_field_aligned_current_uam2 inverse-square electric uA/m2 86400 0.0 0.0
+
+# dataset SW_OPER_FACCTMS_2F accepted — 2 Feld(er), Probe ok (2026-08-09T12:00:00Z..2026-08-09T12:59:59Z)
+accepted https://vires.services/hapi/data?id=SW_OPER_FACCTMS_2F&start=2026-08-09T12:00:00Z&stop=2026-08-09T12:59:59Z&parameters=IRC,FAC&format=json
+url https://vires.services/hapi/data?id=SW_OPER_FACCTMS_2F&start=2026-08-09T12:00:00Z&stop=2026-08-09T12:59:59Z&parameters=IRC,FAC&format=json
+ttl 86400
+at earth
+hapi IRC=swarm_c_ionospheric_radial_current_uam2 FAC=swarm_c_field_aligned_current_uam2
+field swarm_c_ionospheric_radial_current_uam2 swarm_c_ionospheric_radial_current_uam2 inverse-square electric uA/m2 86400 0.0 0.0
+field swarm_c_field_aligned_current_uam2 swarm_c_field_aligned_current_uam2 inverse-square electric uA/m2 86400 0.0 0.0
+
+# dataset SW_OPER_FAC_TMS_2F accepted — 2 Feld(er), Probe ok (2026-08-09T12:00:00Z..2026-08-09T12:59:59Z)
+accepted https://vires.services/hapi/data?id=SW_OPER_FAC_TMS_2F&start=2026-08-09T12:00:00Z&stop=2026-08-09T12:59:59Z&parameters=IRC,FAC&format=json
+url https://vires.services/hapi/data?id=SW_OPER_FAC_TMS_2F&start=2026-08-09T12:00:00Z&stop=2026-08-09T12:59:59Z&parameters=IRC,FAC&format=json
+ttl 86400
+at earth
+hapi IRC=swarm_combined_ionospheric_radial_current_uam2 FAC=swarm_combined_field_aligned_current_uam2
+field swarm_combined_ionospheric_radial_current_uam2 swarm_combined_ionospheric_radial_current_uam2 inverse-square electric uA/m2 86400 0.0 0.0
+field swarm_combined_field_aligned_current_uam2 swarm_combined_field_aligned_current_uam2 inverse-square electric uA/m2 86400 0.0 0.0
+
+# dataset SW_OPER_IBIATMS_2F decline modell — Ionospheric-Bubble-Index (kategorial/Wahrscheinlichkeit)
+decline SW_OPER_IBIATMS_2F modell
+# dataset SW_OPER_IBIBTMS_2F decline modell — Ionospheric-Bubble-Index (kategorial/Wahrscheinlichkeit)
+decline SW_OPER_IBIBTMS_2F modell
+# dataset SW_OPER_IBICTMS_2F decline modell — Ionospheric-Bubble-Index (kategorial/Wahrscheinlichkeit)
+decline SW_OPER_IBICTMS_2F modell
+# dataset SW_OPER_IPDAIRR_2F accepted — 2 Feld(er), Probe ok (2014-08-15T12:00:00Z..2014-08-15T12:59:59Z)
+accepted https://vires.services/hapi/data?id=SW_OPER_IPDAIRR_2F&start=2014-08-15T12:00:00Z&stop=2014-08-15T12:59:59Z&parameters=Ne,Te&format=json
+url https://vires.services/hapi/data?id=SW_OPER_IPDAIRR_2F&start=2014-08-15T12:00:00Z&stop=2014-08-15T12:59:59Z&parameters=Ne,Te&format=json
+ttl 86400
+at earth
+hapi Ne=swarm_a_electron_density_ipd_cm3 Te=swarm_a_electron_temp_ipd_k
+field swarm_a_electron_density_ipd_cm3 swarm_a_electron_density_ipd_cm3 gaussian-inverse-square diffusion cm-3 86400 0.0 0.0
+field swarm_a_electron_temp_ipd_k swarm_a_electron_temp_ipd_k exponential-decay thermal K 86400 0.0 0.0
+
+# dataset SW_OPER_IPDBIRR_2F accepted — 2 Feld(er), Probe ok (2014-08-15T12:00:00Z..2014-08-15T12:59:59Z)
+accepted https://vires.services/hapi/data?id=SW_OPER_IPDBIRR_2F&start=2014-08-15T12:00:00Z&stop=2014-08-15T12:59:59Z&parameters=Ne,Te&format=json
+url https://vires.services/hapi/data?id=SW_OPER_IPDBIRR_2F&start=2014-08-15T12:00:00Z&stop=2014-08-15T12:59:59Z&parameters=Ne,Te&format=json
+ttl 86400
+at earth
+hapi Ne=swarm_b_electron_density_ipd_cm3 Te=swarm_b_electron_temp_ipd_k
+field swarm_b_electron_density_ipd_cm3 swarm_b_electron_density_ipd_cm3 gaussian-inverse-square diffusion cm-3 86400 0.0 0.0
+field swarm_b_electron_temp_ipd_k swarm_b_electron_temp_ipd_k exponential-decay thermal K 86400 0.0 0.0
+
+# dataset SW_OPER_IPDCIRR_2F accepted — 2 Feld(er), Probe ok (2014-08-15T12:00:00Z..2014-08-15T12:59:59Z)
+accepted https://vires.services/hapi/data?id=SW_OPER_IPDCIRR_2F&start=2014-08-15T12:00:00Z&stop=2014-08-15T12:59:59Z&parameters=Ne,Te&format=json
+url https://vires.services/hapi/data?id=SW_OPER_IPDCIRR_2F&start=2014-08-15T12:00:00Z&stop=2014-08-15T12:59:59Z&parameters=Ne,Te&format=json
+ttl 86400
+at earth
+hapi Ne=swarm_c_electron_density_ipd_cm3 Te=swarm_c_electron_temp_ipd_k
+field swarm_c_electron_density_ipd_cm3 swarm_c_electron_density_ipd_cm3 gaussian-inverse-square diffusion cm-3 86400 0.0 0.0
+field swarm_c_electron_temp_ipd_k swarm_c_electron_temp_ipd_k exponential-decay thermal K 86400 0.0 0.0
+
+# dataset SW_OPER_MAGA_HR_1B accepted — 1 Feld(er), Probe ok (2026-08-11T12:00:00Z..2026-08-11T12:59:59Z)
+accepted https://vires.services/hapi/data?id=SW_OPER_MAGA_HR_1B&start=2026-08-11T12:00:00Z&stop=2026-08-11T12:59:59Z&parameters=F&format=json
+url https://vires.services/hapi/data?id=SW_OPER_MAGA_HR_1B&start=2026-08-11T12:00:00Z&stop=2026-08-11T12:59:59Z&parameters=F&format=json
+ttl 86400
+at earth
+hapi F=swarm_a_magnetic_field_intensity_hr_nt
+field swarm_a_magnetic_field_intensity_hr_nt swarm_a_magnetic_field_intensity_hr_nt inverse-square em nT 86400 0.0 0.0
+
+# dataset SW_OPER_MAGA_LR_1B integrated — Draft grind_esa.φ (F)
+# dataset SW_OPER_MAGB_HR_1B accepted — 1 Feld(er), Probe ok (2026-08-11T12:00:00Z..2026-08-11T12:59:59Z)
+accepted https://vires.services/hapi/data?id=SW_OPER_MAGB_HR_1B&start=2026-08-11T12:00:00Z&stop=2026-08-11T12:59:59Z&parameters=F&format=json
+url https://vires.services/hapi/data?id=SW_OPER_MAGB_HR_1B&start=2026-08-11T12:00:00Z&stop=2026-08-11T12:59:59Z&parameters=F&format=json
+ttl 86400
+at earth
+hapi F=swarm_b_magnetic_field_intensity_hr_nt
+field swarm_b_magnetic_field_intensity_hr_nt swarm_b_magnetic_field_intensity_hr_nt inverse-square em nT 86400 0.0 0.0
+
+# dataset SW_OPER_MAGB_LR_1B accepted — 1 Feld(er), Probe ok (2026-08-11T12:00:00Z..2026-08-11T12:59:59Z)
+accepted https://vires.services/hapi/data?id=SW_OPER_MAGB_LR_1B&start=2026-08-11T12:00:00Z&stop=2026-08-11T12:59:59Z&parameters=F&format=json
+url https://vires.services/hapi/data?id=SW_OPER_MAGB_LR_1B&start=2026-08-11T12:00:00Z&stop=2026-08-11T12:59:59Z&parameters=F&format=json
+ttl 86400
+at earth
+hapi F=swarm_b_magnetic_field_intensity_lr_nt
+field swarm_b_magnetic_field_intensity_lr_nt swarm_b_magnetic_field_intensity_lr_nt inverse-square em nT 86400 0.0 0.0
+
+# dataset SW_OPER_MAGC_HR_1B accepted — 1 Feld(er), Probe ok (2026-08-11T12:00:00Z..2026-08-11T12:59:59Z)
+accepted https://vires.services/hapi/data?id=SW_OPER_MAGC_HR_1B&start=2026-08-11T12:00:00Z&stop=2026-08-11T12:59:59Z&parameters=F&format=json
+url https://vires.services/hapi/data?id=SW_OPER_MAGC_HR_1B&start=2026-08-11T12:00:00Z&stop=2026-08-11T12:59:59Z&parameters=F&format=json
+ttl 86400
+at earth
+hapi F=swarm_c_magnetic_field_intensity_hr_nt
+field swarm_c_magnetic_field_intensity_hr_nt swarm_c_magnetic_field_intensity_hr_nt inverse-square em nT 86400 0.0 0.0
+
+# dataset SW_OPER_MAGC_LR_1B accepted — 1 Feld(er), Probe ok (2013-12-25T12:00:00Z..2013-12-25T12:59:59Z)
+accepted https://vires.services/hapi/data?id=SW_OPER_MAGC_LR_1B&start=2013-12-25T12:00:00Z&stop=2013-12-25T12:59:59Z&parameters=F&format=json
+url https://vires.services/hapi/data?id=SW_OPER_MAGC_LR_1B&start=2013-12-25T12:00:00Z&stop=2013-12-25T12:59:59Z&parameters=F&format=json
+ttl 86400
+at earth
+hapi F=swarm_c_magnetic_field_intensity_lr_nt
+field swarm_c_magnetic_field_intensity_lr_nt swarm_c_magnetic_field_intensity_lr_nt inverse-square em nT 86400 0.0 0.0
+
+# dataset SW_OPER_MITA_LP_2F:ID decline modell — Mid-lat-Ionosphären-Trog-Index
+decline SW_OPER_MITA_LP_2F:ID modell
+# dataset SW_OPER_MITA_LP_2F decline modell — Mid-lat-Ionosphären-Trog-Index
+decline SW_OPER_MITA_LP_2F modell
+# dataset SW_OPER_MITATEC_2F:ID decline modell — Mid-lat-Ionosphären-Trog-Index
+decline SW_OPER_MITATEC_2F:ID modell
+# dataset SW_OPER_MITATEC_2F decline modell — Mid-lat-Ionosphären-Trog-Index
+decline SW_OPER_MITATEC_2F modell
+# dataset SW_OPER_MITB_LP_2F:ID decline modell — Mid-lat-Ionosphären-Trog-Index
+decline SW_OPER_MITB_LP_2F:ID modell
+# dataset SW_OPER_MITB_LP_2F decline modell — Mid-lat-Ionosphären-Trog-Index
+decline SW_OPER_MITB_LP_2F modell
+# dataset SW_OPER_MITBTEC_2F:ID decline modell — Mid-lat-Ionosphären-Trog-Index
+decline SW_OPER_MITBTEC_2F:ID modell
+# dataset SW_OPER_MITBTEC_2F decline modell — Mid-lat-Ionosphären-Trog-Index
+decline SW_OPER_MITBTEC_2F modell
+# dataset SW_OPER_MITC_LP_2F:ID decline modell — Mid-lat-Ionosphären-Trog-Index
+decline SW_OPER_MITC_LP_2F:ID modell
+# dataset SW_OPER_MITC_LP_2F decline modell — Mid-lat-Ionosphären-Trog-Index
+decline SW_OPER_MITC_LP_2F modell
+# dataset SW_OPER_MITCTEC_2F:ID decline modell — Mid-lat-Ionosphären-Trog-Index
+decline SW_OPER_MITCTEC_2F:ID modell
+# dataset SW_OPER_MITCTEC_2F decline modell — Mid-lat-Ionosphären-Trog-Index
+decline SW_OPER_MITCTEC_2F modell
+# dataset SW_OPER_MODA_SC_1B decline flags — nur Position/AOCS-Mode (Housekeeping)
+decline SW_OPER_MODA_SC_1B flags
+# dataset SW_OPER_MODB_SC_1B decline flags — nur Position/AOCS-Mode (Housekeeping)
+decline SW_OPER_MODB_SC_1B flags
+# dataset SW_OPER_MODC_SC_1B decline flags — nur Position/AOCS-Mode (Housekeeping)
+decline SW_OPER_MODC_SC_1B flags
+# dataset SW_OPER_NIX_TMS_2F decline modell — NEGIX-Index
+decline SW_OPER_NIX_TMS_2F modell
+# dataset SW_OPER_PC1AMAG_2F:Ba_event decline flags — Pc1-Wellen-Ereigniskatalog (Event-Flag)
+decline SW_OPER_PC1AMAG_2F:Ba_event flags
+# dataset SW_OPER_PC1AMAG_2F:Bp_event decline flags — Pc1-Wellen-Ereigniskatalog (Event-Flag)
+decline SW_OPER_PC1AMAG_2F:Bp_event flags
+# dataset SW_OPER_PC1AMAG_2F:Br_event decline flags — Pc1-Wellen-Ereigniskatalog (Event-Flag)
+decline SW_OPER_PC1AMAG_2F:Br_event flags
+# dataset SW_OPER_PC1AMAG_2F:Ba_event_mean decline flags — Pc1-Wellen-Ereigniskatalog (Event-Flag)
+decline SW_OPER_PC1AMAG_2F:Ba_event_mean flags
+# dataset SW_OPER_PC1AMAG_2F:Bp_event_mean decline flags — Pc1-Wellen-Ereigniskatalog (Event-Flag)
+decline SW_OPER_PC1AMAG_2F:Bp_event_mean flags
+# dataset SW_OPER_PC1AMAG_2F:Br_event_mean decline flags — Pc1-Wellen-Ereigniskatalog (Event-Flag)
+decline SW_OPER_PC1AMAG_2F:Br_event_mean flags
+# dataset SW_OPER_PC1BMAG_2F:Ba_event decline flags — Pc1-Wellen-Ereigniskatalog (Event-Flag)
+decline SW_OPER_PC1BMAG_2F:Ba_event flags
+# dataset SW_OPER_PC1BMAG_2F:Bp_event decline flags — Pc1-Wellen-Ereigniskatalog (Event-Flag)
+decline SW_OPER_PC1BMAG_2F:Bp_event flags
+# dataset SW_OPER_PC1BMAG_2F:Br_event decline flags — Pc1-Wellen-Ereigniskatalog (Event-Flag)
+decline SW_OPER_PC1BMAG_2F:Br_event flags
+# dataset SW_OPER_PC1BMAG_2F:Ba_event_mean decline flags — Pc1-Wellen-Ereigniskatalog (Event-Flag)
+decline SW_OPER_PC1BMAG_2F:Ba_event_mean flags
+# dataset SW_OPER_PC1BMAG_2F:Bp_event_mean decline flags — Pc1-Wellen-Ereigniskatalog (Event-Flag)
+decline SW_OPER_PC1BMAG_2F:Bp_event_mean flags
+# dataset SW_OPER_PC1BMAG_2F:Br_event_mean decline flags — Pc1-Wellen-Ereigniskatalog (Event-Flag)
+decline SW_OPER_PC1BMAG_2F:Br_event_mean flags
+# dataset SW_OPER_PC1CMAG_2F:Ba_event decline flags — Pc1-Wellen-Ereigniskatalog (Event-Flag)
+decline SW_OPER_PC1CMAG_2F:Ba_event flags
+# dataset SW_OPER_PC1CMAG_2F:Bp_event decline flags — Pc1-Wellen-Ereigniskatalog (Event-Flag)
+decline SW_OPER_PC1CMAG_2F:Bp_event flags
+# dataset SW_OPER_PC1CMAG_2F:Br_event decline flags — Pc1-Wellen-Ereigniskatalog (Event-Flag)
+decline SW_OPER_PC1CMAG_2F:Br_event flags
+# dataset SW_OPER_PC1CMAG_2F:Ba_event_mean decline flags — Pc1-Wellen-Ereigniskatalog (Event-Flag)
+decline SW_OPER_PC1CMAG_2F:Ba_event_mean flags
+# dataset SW_OPER_PC1CMAG_2F:Bp_event_mean decline flags — Pc1-Wellen-Ereigniskatalog (Event-Flag)
+decline SW_OPER_PC1CMAG_2F:Bp_event_mean flags
+# dataset SW_OPER_PC1CMAG_2F:Br_event_mean decline flags — Pc1-Wellen-Ereigniskatalog (Event-Flag)
+decline SW_OPER_PC1CMAG_2F:Br_event_mean flags
+# dataset SW_OPER_PPIAFAC_2F:ID decline flags — PPI :ID — Position_Quality/PointType Metadaten
+decline SW_OPER_PPIAFAC_2F:ID flags
+# dataset SW_OPER_PPIAFAC_2F decline modell — Teilringstrom-Index PPI (R_E) + Sigma (TECU), abgeleitet
+decline SW_OPER_PPIAFAC_2F modell
+# dataset SW_OPER_PPIBFAC_2F:ID decline flags — PPI :ID — Position_Quality/PointType Metadaten
+decline SW_OPER_PPIBFAC_2F:ID flags
+# dataset SW_OPER_PPIBFAC_2F decline modell — Teilringstrom-Index PPI (R_E) + Sigma (TECU), abgeleitet
+decline SW_OPER_PPIBFAC_2F modell
+# dataset SW_OPER_PPICFAC_2F:ID decline flags — PPI :ID — Position_Quality/PointType Metadaten
+decline SW_OPER_PPICFAC_2F:ID flags
+# dataset SW_OPER_PPICFAC_2F decline modell — Teilringstrom-Index PPI (R_E) + Sigma (TECU), abgeleitet
+decline SW_OPER_PPICFAC_2F modell
+# dataset SW_OPER_TECATMS_2F accepted — 1 Feld(er), Probe ok (2026-08-09T12:00:00Z..2026-08-09T12:59:59Z)
+accepted https://vires.services/hapi/data?id=SW_OPER_TECATMS_2F&start=2026-08-09T12:00:00Z&stop=2026-08-09T12:59:59Z&parameters=Absolute_VTEC&format=json
+url https://vires.services/hapi/data?id=SW_OPER_TECATMS_2F&start=2026-08-09T12:00:00Z&stop=2026-08-09T12:59:59Z&parameters=Absolute_VTEC&format=json
+ttl 86400
+at earth
+hapi Absolute_VTEC=swarm_a_absolute_vtec_tecu
+field swarm_a_absolute_vtec_tecu swarm_a_absolute_vtec_tecu inverse-square em TECU 86400 0.0 0.0
+
+# dataset SW_OPER_TECBTMS_2F accepted — 1 Feld(er), Probe ok (2026-08-09T12:00:00Z..2026-08-09T12:59:59Z)
+accepted https://vires.services/hapi/data?id=SW_OPER_TECBTMS_2F&start=2026-08-09T12:00:00Z&stop=2026-08-09T12:59:59Z&parameters=Absolute_VTEC&format=json
+url https://vires.services/hapi/data?id=SW_OPER_TECBTMS_2F&start=2026-08-09T12:00:00Z&stop=2026-08-09T12:59:59Z&parameters=Absolute_VTEC&format=json
+ttl 86400
+at earth
+hapi Absolute_VTEC=swarm_b_absolute_vtec_tecu
+field swarm_b_absolute_vtec_tecu swarm_b_absolute_vtec_tecu inverse-square em TECU 86400 0.0 0.0
+
+# dataset SW_OPER_TECCTMS_2F accepted — 1 Feld(er), Probe ok (2026-08-09T12:00:00Z..2026-08-09T12:59:59Z)
+accepted https://vires.services/hapi/data?id=SW_OPER_TECCTMS_2F&start=2026-08-09T12:00:00Z&stop=2026-08-09T12:59:59Z&parameters=Absolute_VTEC&format=json
+url https://vires.services/hapi/data?id=SW_OPER_TECCTMS_2F&start=2026-08-09T12:00:00Z&stop=2026-08-09T12:59:59Z&parameters=Absolute_VTEC&format=json
+ttl 86400
+at earth
+hapi Absolute_VTEC=swarm_c_absolute_vtec_tecu
+field swarm_c_absolute_vtec_tecu swarm_c_absolute_vtec_tecu inverse-square em TECU 86400 0.0 0.0
+
+# dataset SW_OPER_TIX_TMS_2F decline modell — TEGIX-Index
+decline SW_OPER_TIX_TMS_2F modell
+# dataset SW_OPER_ULFAMAG_2F:event decline modell — ULF-Wellen-Index
+decline SW_OPER_ULFAMAG_2F:event modell
+# dataset SW_OPER_ULFAMAG_2F decline modell — ULF-Wellen-Index
+decline SW_OPER_ULFAMAG_2F modell
+# dataset SW_OPER_ULFAMAG_2F:event_mean decline modell — ULF-Wellen-Index
+decline SW_OPER_ULFAMAG_2F:event_mean modell
+# dataset SW_OPER_ULFBMAG_2F:event decline modell — ULF-Wellen-Index
+decline SW_OPER_ULFBMAG_2F:event modell
+# dataset SW_OPER_ULFBMAG_2F decline modell — ULF-Wellen-Index
+decline SW_OPER_ULFBMAG_2F modell
+# dataset SW_OPER_ULFBMAG_2F:event_mean decline modell — ULF-Wellen-Index
+decline SW_OPER_ULFBMAG_2F:event_mean modell
+# dataset SW_OPER_ULFCMAG_2F:event decline modell — ULF-Wellen-Index
+decline SW_OPER_ULFCMAG_2F:event modell
+# dataset SW_OPER_ULFCMAG_2F decline modell — ULF-Wellen-Index
+decline SW_OPER_ULFCMAG_2F modell
+# dataset SW_OPER_ULFCMAG_2F:event_mean decline modell — ULF-Wellen-Index
+decline SW_OPER_ULFCMAG_2F:event_mean modell
+# dataset SW_PREL_EFIAIDM_2_ accepted — 3 Feld(er), Probe ok (2025-03-31T12:00:00Z..2025-03-31T12:59:59Z)
+accepted https://vires.services/hapi/data?id=SW_PREL_EFIAIDM_2_&start=2025-03-31T12:00:00Z&stop=2025-03-31T12:59:59Z&parameters=V_i,N_i,T_e&format=json
+url https://vires.services/hapi/data?id=SW_PREL_EFIAIDM_2_&start=2025-03-31T12:00:00Z&stop=2025-03-31T12:59:59Z&parameters=V_i,N_i,T_e&format=json
+ttl 86400
+at earth
+hapi V_i=swarm_a_ion_drift_idm_ms N_i=swarm_a_ion_density_idm_cm3 T_e=swarm_a_electron_temp_idm_k
+field swarm_a_ion_drift_idm_ms swarm_a_ion_drift_idm_ms gaussian-inverse-square advective m/s 86400 0.0 0.0
+field swarm_a_ion_density_idm_cm3 swarm_a_ion_density_idm_cm3 gaussian-inverse-square diffusion cm-3 86400 0.0 0.0
+field swarm_a_electron_temp_idm_k swarm_a_electron_temp_idm_k exponential-decay thermal K 86400 0.0 0.0
+
+# dataset SW_PREL_EFIBIDM_2_ accepted — 3 Feld(er), Probe ok (2025-03-31T12:00:00Z..2025-03-31T12:59:59Z)
+accepted https://vires.services/hapi/data?id=SW_PREL_EFIBIDM_2_&start=2025-03-31T12:00:00Z&stop=2025-03-31T12:59:59Z&parameters=V_i,N_i,T_e&format=json
+url https://vires.services/hapi/data?id=SW_PREL_EFIBIDM_2_&start=2025-03-31T12:00:00Z&stop=2025-03-31T12:59:59Z&parameters=V_i,N_i,T_e&format=json
+ttl 86400
+at earth
+hapi V_i=swarm_b_ion_drift_idm_ms N_i=swarm_b_ion_density_idm_cm3 T_e=swarm_b_electron_temp_idm_k
+field swarm_b_ion_drift_idm_ms swarm_b_ion_drift_idm_ms gaussian-inverse-square advective m/s 86400 0.0 0.0
+field swarm_b_ion_density_idm_cm3 swarm_b_ion_density_idm_cm3 gaussian-inverse-square diffusion cm-3 86400 0.0 0.0
+field swarm_b_electron_temp_idm_k swarm_b_electron_temp_idm_k exponential-decay thermal K 86400 0.0 0.0
+
+# dataset SW_PREL_EFICIDM_2_ accepted — 3 Feld(er), Probe ok (2025-03-31T12:00:00Z..2025-03-31T12:59:59Z)
+accepted https://vires.services/hapi/data?id=SW_PREL_EFICIDM_2_&start=2025-03-31T12:00:00Z&stop=2025-03-31T12:59:59Z&parameters=V_i,N_i,T_e&format=json
+url https://vires.services/hapi/data?id=SW_PREL_EFICIDM_2_&start=2025-03-31T12:00:00Z&stop=2025-03-31T12:59:59Z&parameters=V_i,N_i,T_e&format=json
+ttl 86400
+at earth
+hapi V_i=swarm_c_ion_drift_idm_ms N_i=swarm_c_ion_density_idm_cm3 T_e=swarm_c_electron_temp_idm_k
+field swarm_c_ion_drift_idm_ms swarm_c_ion_drift_idm_ms gaussian-inverse-square advective m/s 86400 0.0 0.0
+field swarm_c_ion_density_idm_cm3 swarm_c_ion_density_idm_cm3 gaussian-inverse-square diffusion cm-3 86400 0.0 0.0
+field swarm_c_electron_temp_idm_k swarm_c_electron_temp_idm_k exponential-decay thermal K 86400 0.0 0.0
+

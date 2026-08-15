@@ -1,4 +1,0 @@
-# batch_011: 50 blocks, 0 accepted. All geosphere_overpass_* blocks are Overpass
-# POI queries whose only extracted field is the node `id` — static location
-# catalogs of human infrastructure (shops, amenities, historic features).
-# A node id is a registry key, not a measurement; no organism senses a shop.

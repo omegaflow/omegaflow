@@ -1,9 +1,0 @@
-# gold conversion (old → new grammar, mechanical)
-url https://example.com/api/data?param={today}
-ttl 3600
-on mars 14.0 90.0
-map results
-lat latitude
-lon longitude
-field value my_measurement inverse-square em 1 360 0.0 0.0
-

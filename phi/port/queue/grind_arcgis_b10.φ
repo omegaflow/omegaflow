@@ -1,0 +1,30 @@
+dataset 2017 may flooded river gauges | https://services2.arcgis.com/jWXb6JPWtBjOCalT/arcgis/rest/services/2017_may_flooded_river_gauges/FeatureServer/0
+candidate https://services2.arcgis.com/jWXb6JPWtBjOCalT/arcgis/rest/services/2017_may_flooded_river_gauges/FeatureServer/0
+note felder: OBJECTID, STAGE, dec_lat_va, dec_long_va, drain_area_va, flood_nu, flood_stage, flow_dt, flow_va, major_flood_nu, major_flood_stage, moderate_flood_nu, moderate_flood_stage, peak_count, peak_max, peak_max_yr, peak_rank, site_no
+dataset Flood Gauges 29Apr to 9Jun | https://services2.arcgis.com/jWXb6JPWtBjOCalT/arcgis/rest/services/Flood_Gauges_29Apr_to_9Jun/FeatureServer/0
+candidate https://services2.arcgis.com/jWXb6JPWtBjOCalT/arcgis/rest/services/Flood_Gauges_29Apr_to_9Jun/FeatureServer/0
+note felder: FID, STAGE, dec_lat_va, dec_long_v, drain_area, flood_nu, flood_stag, flow_dt, flow_va, major_fl_1, major_floo, moderate_1, moderate_f, peak_count, peak_max, peak_max_y, peak_rank, site_no
+dataset Flood of 1993 River Gauges | https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/Flood_of_1993_River_Gauges_WFL1/FeatureServer/0
+candidate https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/Flood_of_1993_River_Gauges_WFL1/FeatureServer/0
+note felder: Action, FID, Flood, GaugeLID, HDatum, Latitude, Location, Longitude, LowThresh, LowThreshU, Major, Moderate, ObsTime, Observed, PEDTS, SecUnit, SecValue, State
+dataset Flood Gauge | https://services.arcgis.com/p3UBboyC0NH1uCie/arcgis/rest/services/Flood_Gauge/FeatureServer/0
+candidate https://services.arcgis.com/p3UBboyC0NH1uCie/arcgis/rest/services/Flood_Gauge/FeatureServer/0
+note felder: OBJECTID, lastupdate, name, stage_meters, stationid, status
+dataset Russian River Bridges | https://services1.arcgis.com/P5Mv5GY5S66M8Z1Q/arcgis/rest/services/Russian_River_Bridges/FeatureServer/0
+candidate https://services1.arcgis.com/P5Mv5GY5S66M8Z1Q/arcgis/rest/services/Russian_River_Bridges/FeatureServer/0
+note felder: Inundation, OBJECTID, flood_WS
+dataset Gauge Watershed Morey | https://services1.arcgis.com/utVR6GjejYAZciWt/arcgis/rest/services/Gauge_Watershed_Morey/FeatureServer/1
+candidate https://services1.arcgis.com/utVR6GjejYAZciWt/arcgis/rest/services/Gauge_Watershed_Morey/FeatureServer/1
+note felder: AnalysisArea, DataResolution, Description, Id, OBJECTID, PourPtID
+dataset Gauge Watershed Morey | https://services1.arcgis.com/utVR6GjejYAZciWt/arcgis/rest/services/Gauge_Watershed_Morey/FeatureServer
+candidate-leer https://services1.arcgis.com/utVR6GjejYAZciWt/arcgis/rest/services/Gauge_Watershed_Morey/FeatureServer
+note 0 rows, felder unbekannt
+dataset Minmal Flood | https://services.arcgis.com/o6oETlrWetREI1A2/arcgis/rest/services/Minmal_Flood/FeatureServer/0
+candidate https://services.arcgis.com/o6oETlrWetREI1A2/arcgis/rest/services/Minmal_Flood/FeatureServer/0
+note felder: AR_REVERT, AR_SUBTRV, BFE_REVERT, DEPTH, DEP_REVERT, DFIRM_ID, DUAL_ZONE, FLD_AR_ID, FLD_ZONE, GlobalID, LEN_UNIT, OBJECTID, SFHA_TF, SOURCE_CIT, STATIC_BFE, STUDY_TYP, VELOCITY, VEL_UNIT
+dataset USGS Rain Gauge | https://services8.arcgis.com/hkdcaEwTqUMczBiw/arcgis/rest/services/USGS_Rain_Gauge/FeatureServer/0
+candidate https://services8.arcgis.com/hkdcaEwTqUMczBiw/arcgis/rest/services/USGS_Rain_Gauge/FeatureServer/0
+note felder: AGENCY, CATEGORY, FID, GlobalID, LATDD, LONGDD, SITENAME, SITENO, SITEURL
+dataset Water Gauge Map WFL1 | https://services6.arcgis.com/9ALftzD3ElQ7KAgT/arcgis/rest/services/Water_Gauge_Map_WFL1/FeatureServer
+candidate-leer https://services6.arcgis.com/9ALftzD3ElQ7KAgT/arcgis/rest/services/Water_Gauge_Map_WFL1/FeatureServer
+note 0 rows, felder unbekannt

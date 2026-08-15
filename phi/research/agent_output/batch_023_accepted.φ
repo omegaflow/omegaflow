@@ -1,9 +1,0 @@
-# batch_023: 50 blocks, 0 accepted. All 50 are celestial cmap catalogs
-# (40 SIMBAD TAP object-class catalogs, 3 Gaia DR3 crossmatch catalogs)
-# or bare registry counts (USPTO patents, Wikidata/Wikipedia statistics,
-# OpenBreweryDB brewery registry, xeno-canto recording tally). Declined
-# under the Force Gate: catalogs are static astrometric/photometric
-# registry rows and counts are tallies without individual events — no
-# organism senses a catalog row or a count. Precedent: batch_022 (all
-# celestial catalogs), batch_024 (all bare counts). Per-block disposition
-# in batch_023_declined.φ.

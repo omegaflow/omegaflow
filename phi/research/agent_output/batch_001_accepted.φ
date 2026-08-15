@@ -1,4 +1,0 @@
-url https://qrng.anu.edu.au/API/jsonI.php?length=1&type=uint8
-ttl 60
-on earth -35.2809 149.1300 0
-field data.0 anu_quantum_entropy inverse-square em count 6.0 0.0 0.0

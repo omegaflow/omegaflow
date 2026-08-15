@@ -5892,19 +5892,27 @@ fn gold_convert_mode(input: &str, output: &str) -> i32 {
     let mut block = String::new();
     let mut total = 0usize;
     let mut parsed = 0usize;
-    let split_on_source = content
-        .lines()
-        .any(|l| l.trim_start().starts_with("source "));
+    let mut in_source = false;
     for line in content.lines() {
         let t = line.trim_start();
-        let starts_block = if split_on_source {
-            t.starts_with("source ")
-        } else {
-            t.starts_with("url ")
-        };
-        if starts_block && !block.is_empty() {
-            gold_flush_block(&block, &mut converted, &mut total, &mut parsed);
-            block = String::new();
+        if t.starts_with("source ") {
+            if !block.is_empty() {
+                gold_flush_block(&block, &mut converted, &mut total, &mut parsed);
+                block = String::new();
+            }
+            in_source = true;
+            block.push_str(line);
+            block.push('\n');
+            continue;
+        }
+        if t.starts_with("url ") && !in_source {
+            if !block.is_empty() {
+                gold_flush_block(&block, &mut converted, &mut total, &mut parsed);
+                block = String::new();
+            }
+            block.push_str(line);
+            block.push('\n');
+            continue;
         }
         block.push_str(line);
         block.push('\n');

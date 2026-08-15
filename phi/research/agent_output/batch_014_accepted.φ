@@ -1,7 +1,0 @@
-# batch_014: 50 blocks, 0 accepted. The batch is dominated by bare counts
-# (arxiv totals, clinical-trial tallies, DOI/member registrations, GBIF
-# occurrence keys, ozone measurement totals, OBIS observation counts) and
-# model/reanalysis/forecast feeds (open-meteo ERA5 archive, DWD pollen
-# forecast index). Economic indices (Eurostat CPI/GDP/unemployment, ONI)
-# carry no physical force. The three Horizons VECTORS blocks and the
-# met.no solar-geometry block are ephemeris-superseded.

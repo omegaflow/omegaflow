@@ -18,16 +18,18 @@ registrierten Ort.
 
 | Pfad | Was es IST |
 |------|------------|
-| `phi/port/queue/` | Portierbare Korpora, alte Grammatik. Eine Datei = ein Korpus. Getrackt, sichtbar. |
-| `phi/port/park/` | Geparkte Kandidaten mit Parser-Gap (jeder mit Gap-Verweis). |
+| `phi/port/queue/master.φ` | DIE eine Master-Datei: 13 alte Korpora dedupliziert gemergt (7.430 Blöcke). |
+| `phi/port/queue/sources_potential_*` | Join-Paar (reichste Extract-Parameter) für die Lost-Blocks. |
+| `phi/port/queue/grind_*` | Offene Block-Drafts (ArcGIS, VirES, ESA, TerraPulse, NASA/DONKI, …) mit Disposition ausstehend. |
 | `phi/port/stage/` | Konvertierungs-Ausgänge `<korpus>_converted.φ` + Sweep-Ergebnisse `staging_verified.φ` / `staging_empty.txt`. |
 | `phi/port/ledger.φ` | DAS Zustands-Register. Jeder offene Posten mit Zustand. |
-| `phi/port/index.φ` | Der Index der zu portierenden Dateien (eine Zeile je Queue-Datei: Zustand + Blockzahl). Regenerierbar. |
+| `phi/port/index.φ` | Der Index der zu portierenden Dateien (Zustand + Blockzahl). Regenerierbar. |
+| `phi/port/master_urls.txt` | Die deduplizierte URL-Liste (ohne live/declined) + `netloc.txt` (Domänen-Counts). |
 | `phi/port/prompt.φ` | Port-Vorlage für Agenten (Korpus → Disposition). |
-| `phi/research/` | Der lebende Bestand: Katalog-Inventare, Kandidaten-Listen, abgeschlossene Grind-Wellen (read-only, Historie bleibt). |
+| `phi/katalog/` | Katalog-Inventare (tap_index*, b2find, eogateway, VirES, ArcGIS, TerraPulse, ESA, archeology_gaps). |
 | `phi/sources.φ` | Das kanonische Register (Annahme-Ziel). |
 | `phi/dead_sources.φ` | Das Dispositions-Register (dead/parser-def/decline/key-needed). |
-| `/home/johannes/projects/archive/` | Externes Archiv: die pre-cdn-Historie (ehemals `archeology/`), inkl. CI-Vorlagen. |
+| `/home/johannes/projects/archive/` | Externes Archiv: `archeology/` (pre-cdn) + `phi-research/` (batches, probe_batches, Dispositionen). |
 | `docs/concepts/SOURCES_V2_SPEC.md` | Die Kontroll-Spec (Grammatik, τ-Gate, Force-Unit-Registry, File-Regeln). |
 
 ## 3. Die zwei Register

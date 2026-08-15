@@ -1,9 +1,0 @@
-# batch_026: 50 blocks, 0 accepted. All 50 are catalogs (Natural Earth
-# glaciers/lakes/places/rivers, UNESCO heritage, HDX and world volcano
-# registries), bibliographic counts (Inspire-HEP, Crossref, CERN Open Data),
-# or reference constants (periodic table, PDG particle masses). Declined
-# under the Force Gate: catalogs are static registry rows, counts are tallies
-# without individual events, and constants are tabulated values — no organism
-# senses any of them. Precedent: batch_015 (Natural Earth), batch_021 blocks
-# 32-35 (Inspire-HEP/Crossref), batch_012 block 41 (volcano catalog).
-# Per-block disposition in batch_026_declined.φ.

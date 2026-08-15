@@ -1,0 +1,500 @@
+# total electron content seite 1: 3 services
+dataset Content Views Total View Layer | https://services.arcgis.com/oEazpvC7G00gPDRM/arcgis/rest/services/ContentViewsTotal_view/FeatureServer/0
+candidate https://services.arcgis.com/oEazpvC7G00gPDRM/arcgis/rest/services/ContentViewsTotal_view/FeatureServer/0
+note felder: ContentViews, OBJECTID
+dataset DSHS Hub Content Inventory With Views | https://services3.arcgis.com/vljlarU2635mITsl/arcgis/rest/services/DSHS_Hub_Content_Inventory_With_Views_20251212144733/FeatureServer/0
+candidate https://services3.arcgis.com/vljlarU2635mITsl/arcgis/rest/services/DSHS_Hub_Content_Inventory_With_Views_20251212144733/FeatureServer/0
+note felder: ObjectId, created_date, days_since_created, days_since_lastViewed, days_since_modified, group_id, group_owner, group_source, group_title, item_created, item_id, item_lastViewed, item_modified, item_owner, item_title, item_type, item_url, item_views
+dataset Total Waste Heat N.I | https://services1.arcgis.com/apXLh7dI0ZzfRO8S/arcgis/rest/services/Total_Waste_Heat_NI/FeatureServer/0
+candidate https://services1.arcgis.com/apXLh7dI0ZzfRO8S/arcgis/rest/services/Total_Waste_Heat_NI/FeatureServer/0
+note felder: FID, Local_Auth, OBJECTID, Shape__Area, Shape__Length, Total_Wast
+# total electron content seite 2: 6 services
+dataset Contribute Content | https://services8.arcgis.com/GyR85gR88mMqIY4t/arcgis/rest/services/survey123_f894b4360111477e9acc30d711f0ee2d/FeatureServer/0
+candidate https://services8.arcgis.com/GyR85gR88mMqIY4t/arcgis/rest/services/survey123_f894b4360111477e9acc30d711f0ee2d/FeatureServer/0
+note felder: CreationDate, Creator, EditDate, Editor, Other, email, geoportal_username, globalid, license, metadata, name, objectid, short_summary, title_of_your_content, type_of_content, url
+dataset Describe distribution of Total | https://services1.arcgis.com/c3O27TaBSygXSsjy/arcgis/rest/services/Describe_distribution_of_Total/FeatureServer/0
+candidate https://services1.arcgis.com/c3O27TaBSygXSsjy/arcgis/rest/services/Describe_distribution_of_Total/FeatureServer/0
+note felder: OBJECTID, SOURCE_ID
+dataset Describe distribution of Total | https://services1.arcgis.com/c3O27TaBSygXSsjy/arcgis/rest/services/Describe_distribution_of_Total/FeatureServer
+candidate-leer https://services1.arcgis.com/c3O27TaBSygXSsjy/arcgis/rest/services/Describe_distribution_of_Total/FeatureServer
+note 0 rows, felder unbekannt
+dataset GVA Total Local Authority  | https://services9.arcgis.com/t0wddbS78BpRN1IL/arcgis/rest/services/GVA_LA_2020/FeatureServer/0
+candidate https://services9.arcgis.com/t0wddbS78BpRN1IL/arcgis/rest/services/GVA_LA_2020/FeatureServer/0
+note felder: BNG_E, BNG_N, FID, F_1998, F_1999, F_2000, F_2001, F_2002, F_2003, F_2004, F_2005, F_2006, F_2007, F_2008, F_2009, F_2010, F_2011, F_2012
+dataset Content | https://services.arcgis.com/vrxQ2YTzI1s1ARvj/arcgis/rest/services/ArcGIS_Admin_Insights_Table_1db01_ad5ee/FeatureServer/0
+candidate-leer https://services.arcgis.com/vrxQ2YTzI1s1ARvj/arcgis/rest/services/ArcGIS_Admin_Insights_Table_1db01_ad5ee/FeatureServer/0
+note 0 rows, felder unbekannt
+dataset HLT Total | https://services6.arcgis.com/Sh56793mcoDuTEt3/arcgis/rest/services/HLT_Total/FeatureServer
+decline https://services6.arcgis.com/Sh56793mcoDuTEt3/arcgis/rest/services/HLT_Total/FeatureServer
+note arcgis-error-body
+# total electron content seite 3: 2 services
+dataset City Hot Spots TOTAL | https://services2.arcgis.com/CQb3HPZZHBLORNXf/arcgis/rest/services/City_Hot_Spots_TOTAL/FeatureServer/0
+candidate https://services2.arcgis.com/CQb3HPZZHBLORNXf/arcgis/rest/services/City_Hot_Spots_TOTAL/FeatureServer/0
+note felder: GiPValue, GiZScore, Gi_Bin, Gi_Text, NNeighbors, OBJECTID, SOURCE_ID, TOTAL
+dataset senderos total | https://services5.arcgis.com/qEtEQZFKRsffiyQ8/arcgis/rest/services/senderos_total/FeatureServer/0
+decline https://services5.arcgis.com/qEtEQZFKRsffiyQ8/arcgis/rest/services/senderos_total/FeatureServer/0
+note arcgis-error-body
+# total electron content seite 4: 4 services
+dataset Content History | https://services.arcgis.com/vrxQ2YTzI1s1ARvj/arcgis/rest/services/ArcGIS_Admin_Insights_Table_1db01_ad5ee/FeatureServer/12
+candidate-leer https://services.arcgis.com/vrxQ2YTzI1s1ARvj/arcgis/rest/services/ArcGIS_Admin_Insights_Table_1db01_ad5ee/FeatureServer/12
+note 0 rows, felder unbekannt
+dataset Hot Spots Total (tons) total | https://services1.arcgis.com/eGSDp8lpKe5izqVc/arcgis/rest/services/Hot_Spots_Total_(tons)_total/FeatureServer/0
+candidate https://services1.arcgis.com/eGSDp8lpKe5izqVc/arcgis/rest/services/Hot_Spots_Total_(tons)_total/FeatureServer/0
+note felder: GiPValue, GiZScore, Gi_Bin, Gi_Text, NNeighbors, OBJECTID, SOURCE_ID, Total
+dataset Total Cases | https://services9.arcgis.com/rrkYZtv8pOmrp6c5/arcgis/rest/services/Total_Cases/FeatureServer/0
+candidate https://services9.arcgis.com/rrkYZtv8pOmrp6c5/arcgis/rest/services/Total_Cases/FeatureServer/0
+note felder: Age_, Date_, FID, Sex_, Status_
+dataset Total WFL1 | https://services1.arcgis.com/0EOqWPtpCmgQr2ay/arcgis/rest/services/Total_WFL1/FeatureServer
+candidate-leer https://services1.arcgis.com/0EOqWPtpCmgQr2ay/arcgis/rest/services/Total_WFL1/FeatureServer
+note 0 rows, felder unbekannt
+# total electron content seite 5: 8 services
+dataset Total Pop20220210 | https://services5.arcgis.com/8bhjIOmlgyNOu0nD/arcgis/rest/services/Total_Pop20220210/FeatureServer
+candidate-leer https://services5.arcgis.com/8bhjIOmlgyNOu0nD/arcgis/rest/services/Total_Pop20220210/FeatureServer
+note 0 rows, felder unbekannt
+dataset Content Deltas | https://services.arcgis.com/vrxQ2YTzI1s1ARvj/arcgis/rest/services/ArcGIS_Admin_Insights_Table_1db01_ad5ee/FeatureServer/13
+candidate-leer https://services.arcgis.com/vrxQ2YTzI1s1ARvj/arcgis/rest/services/ArcGIS_Admin_Insights_Table_1db01_ad5ee/FeatureServer/13
+note 0 rows, felder unbekannt
+dataset Total Population, US Census 2020 | https://services7.arcgis.com/2L9nlPlkmAzDWOHn/arcgis/rest/services/Enriched_Station2_ResponseArea_2020TotalPopulation_USCensus/FeatureServer/0
+candidate https://services7.arcgis.com/2L9nlPlkmAzDWOHn/arcgis/rest/services/Enriched_Station2_ResponseArea_2020TotalPopulation_USCensus/FeatureServer/0
+note felder: AREA, ENRICH_FID, GlobalID, HasData, ID, NAME, OBJECTID, TOTPOP20, aggregationMethod, apportionmentConfidence, populationToPolygonSizeRating, sourceCountry
+dataset moisture content | https://services9.arcgis.com/3jDtx85QhirkLgzo/arcgis/rest/services/moisture_content/FeatureServer/0
+candidate https://services9.arcgis.com/3jDtx85QhirkLgzo/arcgis/rest/services/moisture_content/FeatureServer/0
+note felder: Date_of_sampling, Lat__N_, Long__W_, Moisture_Content____, ObjectId, Site, Site_location, Year, time
+dataset Census Blocks Total Population Points Burleigh County ND | https://services2.arcgis.com/8r0lsT7QHelkANsD/arcgis/rest/services/Census_Blocks_Total_Population_Points_Burleigh_County_ND/FeatureServer/0
+candidate https://services2.arcgis.com/8r0lsT7QHelkANsD/arcgis/rest/services/Census_Blocks_Total_Population_Points_Burleigh_County_ND/FeatureServer/0
+note felder: OBJECTID, Total_Population
+dataset Fase Total Eclipse  | https://services8.arcgis.com/5ZgsIvyL8Ys9FuYQ/arcgis/rest/services/FaseTotalEclipseRegiondeCoquimbo2019/FeatureServer/1
+candidate https://services8.arcgis.com/5ZgsIvyL8Ys9FuYQ/arcgis/rest/services/FaseTotalEclipseRegiondeCoquimbo2019/FeatureServer/1
+note felder: Comunas, Descrip, Id, OBJECTID, Región, Shape__Area, Shape__Length
+dataset Content | https://services.arcgis.com/8DAUcrpQcpyLMznu/arcgis/rest/services/ArcGIS_Admin_Insights_Table_1db01_627cb/FeatureServer/0
+candidate https://services.arcgis.com/8DAUcrpQcpyLMznu/arcgis/rest/services/ArcGIS_Admin_Insights_Table_1db01_627cb/FeatureServer/0
+note felder: GlobalID, OBJECTID, attachments_size_mb, content_status, creation_date, days_since_update, description, downstream_count, item_id, item_page, item_type, last_updated, last_viewed, metadata_completeness, owner_email, owner_name, owner_username, sharing_lvl
+dataset Content | https://services7.arcgis.com/iAasbpc9ingeLFjE/arcgis/rest/services/ArcGIS_Admin_Insights_Table_1db01/FeatureServer/0
+candidate-leer https://services7.arcgis.com/iAasbpc9ingeLFjE/arcgis/rest/services/ArcGIS_Admin_Insights_Table_1db01/FeatureServer/0
+note 0 rows, felder unbekannt
+# total electron content seite 6: 7 services
+dataset Content | https://services.arcgis.com/ZN2A4THMtsVQ15wW/arcgis/rest/services/ArcGIS_Admin_Insights_Table_1db01/FeatureServer/0
+candidate-leer https://services.arcgis.com/ZN2A4THMtsVQ15wW/arcgis/rest/services/ArcGIS_Admin_Insights_Table_1db01/FeatureServer/0
+note 0 rows, felder unbekannt
+dataset Content | https://services7.arcgis.com/iAasbpc9ingeLFjE/arcgis/rest/services/ArcGIS_Admin_Insights_Table_1db01_6c6d7/FeatureServer/0
+candidate-leer https://services7.arcgis.com/iAasbpc9ingeLFjE/arcgis/rest/services/ArcGIS_Admin_Insights_Table_1db01_6c6d7/FeatureServer/0
+note 0 rows, felder unbekannt
+dataset Dependência total Loures | https://services3.arcgis.com/HZiQ86FNEvCVDWWt/arcgis/rest/services/Depend%C3%AAncia_total_Loures/FeatureServer/0
+candidate https://services3.arcgis.com/HZiQ86FNEvCVDWWt/arcgis/rest/services/Depend%C3%AAncia_total_Loures/FeatureServer/0
+note felder: Freguesia, ObjectId, Índice_de_Dependência_Total
+dataset Hot Spots Total 2017 | https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/Hot_Spots_Total_2017/FeatureServer/0
+candidate https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/Hot_Spots_Total_2017/FeatureServer/0
+note felder: ALAND, GiPValue, GiZScore, Gi_Bin, Gi_Text, NNeighbors, OBJECTID, SOURCE_ID, SS_RATE, Total
+dataset NMC Fisheries Total Catch | https://services8.arcgis.com/NO2mqJqRjvPz7Kqb/arcgis/rest/services/NMC_Fisheries_Total_Catch/FeatureServer/0
+candidate https://services8.arcgis.com/NO2mqJqRjvPz7Kqb/arcgis/rest/services/NMC_Fisheries_Total_Catch/FeatureServer/0
+note felder: Catch_Unit, Country, Fishery, ObjectId, Total_Catch, Year, lat, long
+dataset TOTAL HOSPITALES | https://services3.arcgis.com/IzYoQ5zMTJzG1H2H/arcgis/rest/services/TOTAL_HOSPITALES/FeatureServer/0
+decline https://services3.arcgis.com/IzYoQ5zMTJzG1H2H/arcgis/rest/services/TOTAL_HOSPITALES/FeatureServer/0
+note arcgis-error-body
+dataset Total Nitrogen | https://services.arcgis.com/cJ9YHowT8TU7DUyn/arcgis/rest/services/Nutrients/FeatureServer/9
+candidate https://services.arcgis.com/cJ9YHowT8TU7DUyn/arcgis/rest/services/Nutrients/FeatureServer/9
+note felder: AquiferName, AquiferTypeName, CONCATENATE_ResultMeasure_Measu, ConstructionDateText, ContributingDrainageAreaMeasu_1, ContributingDrainageAreaMeasure, CountryCode, CountyCode, DrainageAreaMeasure_MeasureUnit, DrainageAreaMeasure_MeasureValu, FREQUENCY, FormationTypeText, HUCEightDigitCode, HorizontalAccuracyMeasure_Mea_1, HorizontalAccuracyMeasure_Measu, HorizontalCollectionMethodName, HorizontalCoordinateReferenceSy, LAST_ActivityStartDate
+# total electron content seite 7: 9 services
+dataset Content for Retail Map WFL1 | https://services.arcgis.com/7eMCKfEPV8BkFVLQ/arcgis/rest/services/Content_for_Retail_Map_WFL1/FeatureServer
+candidate-leer https://services.arcgis.com/7eMCKfEPV8BkFVLQ/arcgis/rest/services/Content_for_Retail_Map_WFL1/FeatureServer
+note 0 rows, felder unbekannt
+dataset I64Corridor Content | https://services.arcgis.com/p5v98VHDX9Atv3l7/arcgis/rest/services/I64Corridor_Content/FeatureServer
+candidate-leer https://services.arcgis.com/p5v98VHDX9Atv3l7/arcgis/rest/services/I64Corridor_Content/FeatureServer
+note 0 rows, felder unbekannt
+dataset Content Nomination | https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/Content_Nomination/FeatureServer/0
+candidate-leer https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/Content_Nomination/FeatureServer/0
+note 0 rows, felder unbekannt
+dataset area dourada total | https://services7.arcgis.com/LsUbXXti2Keo6yB5/arcgis/rest/services/area_dourada_total/FeatureServer/0
+decline https://services7.arcgis.com/LsUbXXti2Keo6yB5/arcgis/rest/services/area_dourada_total/FeatureServer/0
+note arcgis-error-body
+dataset Content | https://services8.arcgis.com/mpSDBlkEzjS62WgX/arcgis/rest/services/ArcGIS_Admin_Insights_Table_1db01_de21d/FeatureServer/0
+candidate https://services8.arcgis.com/mpSDBlkEzjS62WgX/arcgis/rest/services/ArcGIS_Admin_Insights_Table_1db01_de21d/FeatureServer/0
+note felder: GlobalID, OBJECTID, attachments_size_mb, content_status, creation_date, days_since_update, description, downstream_count, item_id, item_page, item_type, last_updated, last_viewed, metadata_completeness, owner_email, owner_name, owner_username, sharing_lvl
+dataset Content | https://services2.arcgis.com/NEwhEo9GGSHXcRXV/arcgis/rest/services/ArcGIS_Admin_Insights_Table_1db01_7ae19/FeatureServer/0
+candidate https://services2.arcgis.com/NEwhEo9GGSHXcRXV/arcgis/rest/services/ArcGIS_Admin_Insights_Table_1db01_7ae19/FeatureServer/0
+note felder: GlobalID, OBJECTID, attachments_size_mb, content_status, creation_date, days_since_update, description, downstream_count, item_id, item_page, item_type, last_updated, last_viewed, metadata_completeness, owner_email, owner_name, owner_username, sharing_lvl
+dataset Content | https://services.arcgis.com/hRUr1F8lE8Jq2uJo/arcgis/rest/services/ArcGIS_Admin_Insights_Table_1db01/FeatureServer/0
+candidate https://services.arcgis.com/hRUr1F8lE8Jq2uJo/arcgis/rest/services/ArcGIS_Admin_Insights_Table_1db01/FeatureServer/0
+note felder: GlobalID, OBJECTID, attachments_size_mb, content_status, creation_date, days_since_update, description, downstream_count, item_id, item_page, item_type, last_updated, last_viewed, metadata_completeness, owner_email, owner_name, owner_username, sharing_lvl
+dataset Hot Spots Total 1992 | https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/Hot_Spots_Total_1992/FeatureServer
+candidate-leer https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/Hot_Spots_Total_1992/FeatureServer
+note 0 rows, felder unbekannt
+dataset DRSL Total Emissions | https://services1.arcgis.com/4ezfu5dIwH83BUNL/arcgis/rest/services/Tessellation_updated/FeatureServer/0
+candidate https://services1.arcgis.com/4ezfu5dIwH83BUNL/arcgis/rest/services/Tessellation_updated/FeatureServer/0
+note felder: Dates, GRID_ID, Join_Count, OBJECTID, Shape__Area, Shape__Length, Sum_Facilities2020_1km, TARGET_FID, Tons_CO2, Total_CO2e, gridcode, sum_RiverCO2_2019, sum_residential_annual_co2
+# total electron content seite 8: 5 services
+dataset Summarize Total Population within Public Library 5 Mile Buffers | https://services8.arcgis.com/OiSFxWvIsHCKkiXv/arcgis/rest/services/Summarize_Total_Population_within_Public_Library_5_Mile_Buffers/FeatureServer/0
+candidate https://services8.arcgis.com/OiSFxWvIsHCKkiXv/arcgis/rest/services/Summarize_Total_Population_within_Public_Library_5_Mile_Buffers/FeatureServer/0
+note felder: AnalysisArea, BUFF_DIST, OBJECTID, SUM_Area_SquareMiles, SUM_Total_Pop
+dataset Summarize Total Population within Public Library 1 Mile Buffers | https://services8.arcgis.com/OiSFxWvIsHCKkiXv/arcgis/rest/services/Summarize_Total_Population_within_Public_Library_1_Mile_Buffers/FeatureServer/0
+candidate https://services8.arcgis.com/OiSFxWvIsHCKkiXv/arcgis/rest/services/Summarize_Total_Population_within_Public_Library_1_Mile_Buffers/FeatureServer/0
+note felder: AnalysisArea, BUFF_DIST, OBJECTID, SUM_Total_Pop
+dataset Summarize Total Population within Public Libraries 2 Mile Buffers | https://services8.arcgis.com/OiSFxWvIsHCKkiXv/arcgis/rest/services/Summarize_Total_Population_within_Public_Libraries_2_Mile_Buffers/FeatureServer/0
+candidate https://services8.arcgis.com/OiSFxWvIsHCKkiXv/arcgis/rest/services/Summarize_Total_Population_within_Public_Libraries_2_Mile_Buffers/FeatureServer/0
+note felder: AnalysisArea, BUFF_DIST, OBJECTID, SUM_Area_SquareMiles, SUM_Total_Pop
+dataset SchoolZone total | https://services1.arcgis.com/Io7DAM0jTXMmEchl/arcgis/rest/services/SchoolZone_total/FeatureServer/10
+candidate https://services1.arcgis.com/Io7DAM0jTXMmEchl/arcgis/rest/services/SchoolZone_total/FeatureServer/10
+note felder: Current_, GlobalID, OBJECTID, SCHOOL_ID, SCHOOL_NAME, SchoolName_Total, SchoolYear, School_Type, Shape__Area, Shape__Length, Year, Zoning_Approval
+dataset Total Population | https://services1.arcgis.com/4IrRAeQHBmswYHZ7/arcgis/rest/services/Total_Population_WFL1/FeatureServer/1
+candidate https://services1.arcgis.com/4IrRAeQHBmswYHZ7/arcgis/rest/services/Total_Population_WFL1/FeatureServer/1
+note felder: CommunalEstablishment, Households, OBJECTID, Pert_Inc, PopDensity, Pop_2011, Pop_2021, Shape__Area, Shape__Length, Ward, WardCode
+# total electron content seite 9: 7 services
+dataset Total Population | https://services2.arcgis.com/2gKap7KMz7fy1U4a/arcgis/rest/services/Total_Population/FeatureServer/0
+candidate https://services2.arcgis.com/2gKap7KMz7fy1U4a/arcgis/rest/services/Total_Population/FeatureServer/0
+note felder: Area, Elevation, GEOID, NAME, OBJECTID, PopDensity, Shape__Area, Shape__Length, estimate, moe, variable
+dataset Total acres symbology | https://services6.arcgis.com/tuxY7TQIaDhLWARO/arcgis/rest/services/Total_acres_symbology/FeatureServer/0
+candidate https://services6.arcgis.com/tuxY7TQIaDhLWARO/arcgis/rest/services/Total_acres_symbology/FeatureServer/0
+note felder: Agricult_1, All_ecos_1, All_fore_2, All_fore_3, COUNTY_SEA, Carbon_r_1, Carbon_s_1, Count_1, Farm_Acr_1, Farm_ass_1, Farm_ren_1, Forest_r_1, OBJECTID_1, Private__2, Private__3, Private__4, Public_f_3, Public_f_4
+dataset Total Concejalas por Muinicipio | https://services7.arcgis.com/lsxbLWF2l19Rmhqj/arcgis/rest/services/eZuG1/FeatureServer/0
+candidate https://services7.arcgis.com/lsxbLWF2l19Rmhqj/arcgis/rest/services/eZuG1/FeatureServer/0
+note felder: COD_DANE, EXCEL_ID, f1, f2, f3, f4, objectId
+dataset Total Population within a 15 minute walk | https://services5.arcgis.com/278L6SNPC4FKp6eI/arcgis/rest/services/Total_Population_within_a_15_minute_walk/FeatureServer/0
+candidate https://services5.arcgis.com/278L6SNPC4FKp6eI/arcgis/rest/services/Total_Population_within_a_15_minute_walk/FeatureServer/0
+note felder: AdditionalDistance, AdditionalTime, AnalysisArea, Breaks, FacilityOID, FromBreak, Name, Name_1, OBJECTID, Polygon_Count, ToBreak, stop_id, stop_name, sum_Area_SquareKilometers, sum_b01001_001e
+dataset Total Homicides | https://services3.arcgis.com/gsb70S74SUlDakBS/arcgis/rest/services/Total_Homicides/FeatureServer/0
+decline https://services3.arcgis.com/gsb70S74SUlDakBS/arcgis/rest/services/Total_Homicides/FeatureServer/0
+note arcgis-error-body
+dataset Total Homicides | https://services3.arcgis.com/gsb70S74SUlDakBS/arcgis/rest/services/Total_Homicides/FeatureServer
+decline https://services3.arcgis.com/gsb70S74SUlDakBS/arcgis/rest/services/Total_Homicides/FeatureServer
+note arcgis-error-body
+dataset Campamentos Total 1 | https://services7.arcgis.com/Sr4EFyBDNH0tqliD/arcgis/rest/services/Campamentos_Total_1/FeatureServer/4
+candidate https://services7.arcgis.com/Sr4EFyBDNH0tqliD/arcgis/rest/services/Campamentos_Total_1/FeatureServer/4
+note felder: CATEGORIA_, COMUNA, CUT_COMUNA, CUT_PROVIN, CUT_REG, ESTE, GID, GID_ORIGIN, NOMBRE, NORTE, OBJECTID, PROVINCIA, REGION, SUP_KM, SUP_M2, Shape__Area, Shape__Length, T__HOGARES
+# total electron content seite 10: 7 services
+dataset Total Population | https://services2.arcgis.com/I9cUOJUZvdGAJncI/arcgis/rest/services/Total_Population_WFL1/FeatureServer/1
+candidate https://services2.arcgis.com/I9cUOJUZvdGAJncI/arcgis/rest/services/Total_Population_WFL1/FeatureServer/1
+note felder: ALAND, AWATER, African_American_or_Black_18_Ye, African_American_or_Black_2010, African_American_or_Black_2020, African_American_or_Black_Cha_1, African_American_or_Black_Cha_2, African_American_or_Black_Chang, African_American_or_Black__18_1, African_American_or_Black__18_2, African_American_or_Black__18_3, African_American_or_Black__18_4, African_American_or_Black__18_5, African_American_or_Black__18_6, African_American_or_Black__18_7, African_American_or_Black__18_8, African_American_or_Black__18_9, African_American_or_Black__18_Y
+dataset Total Birds - Density Map | https://services3.arcgis.com/iuNbZYJOrAYBrPyC/arcgis/rest/services/Total%20Birds%20-%20Count%20Heat%20Map%20Density/FeatureServer/0
+candidate https://services3.arcgis.com/iuNbZYJOrAYBrPyC/arcgis/rest/services/Total%20Birds%20-%20Count%20Heat%20Map%20Density/FeatureServer/0
+note felder: AnalysisArea, OBJECTID, Value_Max_per_SquareMile, Value_Min_per_SquareMile, class
+dataset Zones éoliennes total WFL1 | https://services9.arcgis.com/SraCdVwYTPYBL7aX/arcgis/rest/services/Zones_%C3%A9oliennes_total_WFL1/FeatureServer/0
+candidate https://services9.arcgis.com/SraCdVwYTPYBL7aX/arcgis/rest/services/Zones_%C3%A9oliennes_total_WFL1/FeatureServer/0
+note felder: FID, NAME, Shape__Area, Shape__Length, surface
+dataset Total Employees Residing | https://services1.arcgis.com/HmwnYiJTBZ4UkySc/arcgis/rest/services/Total_Workers_Residing_Steven_Althardt_WFL1/FeatureServer/2
+candidate https://services1.arcgis.com/HmwnYiJTBZ4UkySc/arcgis/rest/services/Total_Workers_Residing_Steven_Althardt_WFL1/FeatureServer/2
+note felder: ALAND10, AWATER10, BLKGRPCE10, Bicycle, Bus, COUNTYFP10, CarTruckVan_Alone, CarTruckVan_Carpool, Car_Truck_Van, FUNCSTAT10, Ferryboat, GEOID10, INTPTLAT10, INTPTLON10, Light_rail_streetcar_trolley, Long_distance_train_or_commuter, MTFCC10, Motorcycle
+dataset Texas Total POP | https://services1.arcgis.com/W47q82gM5Y2xNen1/arcgis/rest/services/Total_Population_WFL1/FeatureServer/2
+candidate https://services1.arcgis.com/W47q82gM5Y2xNen1/arcgis/rest/services/Total_Population_WFL1/FeatureServer/2
+note felder: AFFGEOID, ALAND, AWATER, COUNTYFP, COUNTYNS, GEOID, Geographic_Area_Name, LSAD, NAME, NAMELSAD, Native_Born_in_Puerto_Rico__U_S, Native_Born_in_United_States, Native_Born_in_United_States_Di, Native_Born_in_United_States_St, OBJECTID_1, ObjectID, Percent_Foreign_born, Percent_Native
+dataset California Total POP | https://services1.arcgis.com/W47q82gM5Y2xNen1/arcgis/rest/services/Total_Population_WFL1/FeatureServer/0
+candidate https://services1.arcgis.com/W47q82gM5Y2xNen1/arcgis/rest/services/Total_Population_WFL1/FeatureServer/0
+note felder: AFFGEOID, ALAND, AWATER, COUNTYFP, COUNTYNS, GEOID, Geographic_Area_Name, LSAD, NAME, NAMELSAD, Native_Born_in_Puerto_Rico__U_S, Native_Born_in_United_States, Native_Born_in_United_States_Di, Native_Born_in_United_States_St, OBJECTID_1, ObjectID, Percent_Native_Born_in_Puerto_R, Percent_Native_Born_in_United_1
+dataset Florida Total POP | https://services1.arcgis.com/W47q82gM5Y2xNen1/arcgis/rest/services/Total_Population_WFL1/FeatureServer/1
+candidate https://services1.arcgis.com/W47q82gM5Y2xNen1/arcgis/rest/services/Total_Population_WFL1/FeatureServer/1
+note felder: AFFGEOID, ALAND, AWATER, COUNTYFP, COUNTYNS, GEOID, Geographic_Area_Name, LSAD, NAME, NAMELSAD, Native_Born_in_Puerto_Rico__U_S, Native_Born_in_United_States, Native_Born_in_United_States_Di, Native_Born_in_United_States_St, OBJECTID_1, ObjectID, Percent_Native_Born_in_Puerto_R, Percent_Native_Born_in_United_1
+# total electron content seite 11: 4 services
+dataset TOTAL Eoliennes WFL1 | https://services.arcgis.com/d3voDfTFbHOCRwVR/arcgis/rest/services/TOTAL_Eoliennes_WFL1/FeatureServer
+candidate-leer https://services.arcgis.com/d3voDfTFbHOCRwVR/arcgis/rest/services/TOTAL_Eoliennes_WFL1/FeatureServer
+note 0 rows, felder unbekannt
+dataset Total Campus Data | https://services1.arcgis.com/DRYt3fps0uMvIxeE/arcgis/rest/services/Total_Campus_Data/FeatureServer/0
+candidate https://services1.arcgis.com/DRYt3fps0uMvIxeE/arcgis/rest/services/Total_Campus_Data/FeatureServer/0
+note felder: OBJECTID, PPE, PerPopTesting, Per_Agg_Vaccinated, Pop_Test_Amount, QCapacity, Shape__Area, Shape__Length
+dataset Total Pendapatan Daerah | https://services2.arcgis.com/LvCBNZuwhTWWbvod/arcgis/rest/services/o9svA/FeatureServer/0
+candidate https://services2.arcgis.com/LvCBNZuwhTWWbvod/arcgis/rest/services/o9svA/FeatureServer/0
+note felder: EXCEL_ID, f1, f10, f11, f12, f13, f14, f15, f2, f3, f4, f5, f6, f7, f8, f9, objectId, provinsi
+dataset UnemploymentRate CensusTract Total | https://services7.arcgis.com/QE0COxD8ToUT6CQN/arcgis/rest/services/Unemployment_Rate_Total_WFL1/FeatureServer/1
+candidate https://services7.arcgis.com/QE0COxD8ToUT6CQN/arcgis/rest/services/Unemployment_Rate_Total_WFL1/FeatureServer/1
+note felder: CENSUS_TRACT, CENSUS_TRACT_NAME, COUNTY_NAME, Demographic, F16UPPOP, Geographic, LFPOP, OBJECTID, Shape__Area, Shape__Length, UNEMPCOUNT, UNEMPRATE
+# total electron content seite 12: 8 services
+dataset UnemploymentRate County Total | https://services7.arcgis.com/QE0COxD8ToUT6CQN/arcgis/rest/services/Unemployment_Rate_Total_WFL1/FeatureServer/0
+candidate https://services7.arcgis.com/QE0COxD8ToUT6CQN/arcgis/rest/services/Unemployment_Rate_Total_WFL1/FeatureServer/0
+note felder: COUNTY_NAME, Demographic, F16UPPOP, GEOID, LFPOP, OBJECTID, Shape__Area, Shape__Length, UNEMPCOUNT, UNEMPRATE
+dataset Total Population WFL1 | https://services1.arcgis.com/W47q82gM5Y2xNen1/arcgis/rest/services/Total_Population_WFL1/FeatureServer
+candidate-leer https://services1.arcgis.com/W47q82gM5Y2xNen1/arcgis/rest/services/Total_Population_WFL1/FeatureServer
+note 0 rows, felder unbekannt
+dataset Puits Total | https://services.arcgis.com/d3voDfTFbHOCRwVR/arcgis/rest/services/Test_bateaux2/FeatureServer/0
+candidate https://services.arcgis.com/d3voDfTFbHOCRwVR/arcgis/rest/services/Test_bateaux2/FeatureServer/0
+note felder: CURR_LIC, CURR_OPER, DISC_DATE, DISC_WELL, DISC_YEAR, FID, LATITUDE, LONGITUDE, NAME, STATUS, STAT_CODE, TYPE
+dataset Total Population WFL1 | https://services1.arcgis.com/4IrRAeQHBmswYHZ7/arcgis/rest/services/Total_Population_WFL1/FeatureServer
+candidate-leer https://services1.arcgis.com/4IrRAeQHBmswYHZ7/arcgis/rest/services/Total_Population_WFL1/FeatureServer
+note 0 rows, felder unbekannt
+dataset Content view | https://services1.arcgis.com/36PP9fe9l4BSnArw/arcgis/rest/services/Content_view/FeatureServer/2
+candidate https://services1.arcgis.com/36PP9fe9l4BSnArw/arcgis/rest/services/Content_view/FeatureServer/2
+note felder: Category, CreationDate, Description, EditDate, GlobalID, Graphic, Industry, Level_, OBJECTID, Title, Type, URL
+dataset Enriched Total Population Affected | https://services1.arcgis.com/HmwnYiJTBZ4UkySc/arcgis/rest/services/Enriched_Total_Population_Affected/FeatureServer/0
+candidate https://services1.arcgis.com/HmwnYiJTBZ4UkySc/arcgis/rest/services/Enriched_Total_Population_Affected/FeatureServer/0
+note felder: AnalysisArea, DAMNAME, ENRICH_FID, HasData, ID, OBJECTID, POPDENS_CY, SUM_TOTPOP_CY, TOTPOP_CY, aggregationMethod, apportionmentConfidence, populationToPolygonSizeRating, sourceCountry
+dataset Enriched Total Precipitation (inches) | https://services.arcgis.com/DO4gTjwJVIJ7O9Ca/arcgis/rest/services/Enriched_Total_Precipitation_(inches)/FeatureServer/0
+candidate https://services.arcgis.com/DO4gTjwJVIJ7O9Ca/arcgis/rest/services/Enriched_Total_Precipitation_(inches)/FeatureServer/0
+note felder: CHILD_CY, ENRICH_FID, FIRST_gridcode, HasData, ID, OBJECTID, OWNER_CY, RENTER_CY, S01_BUS, S04_BUS, S09_BUS, S22_BUS, S27_BUS, S29_BUS, S31_BUS, SENIORS_CY, Shape__Area, Shape__Length
+dataset Enriched Total Area Population | https://services4.arcgis.com/YUrDaHsSsDgAfy4f/arcgis/rest/services/Enriched_Total_Area_Population/FeatureServer/0
+candidate https://services4.arcgis.com/YUrDaHsSsDgAfy4f/arcgis/rest/services/Enriched_Total_Area_Population/FeatureServer/0
+note felder: City, Description, ENRICH_FID, ENRICH_FID_1, HasData, HasData_1, ID, ID_1, Link_to_Image, Link_to_Website, Name_of_Location, OBJECTID, PCI_CY, State, Street_Address, TOTPOP_CY, aggregationMethod, aggregationMethod_1
+# total electron content seite 13: 10 services
+dataset CAS COVID Total | https://services4.arcgis.com/o6d0JG3fjSR8wpWP/arcgis/rest/services/CAS_COVID_Total/FeatureServer/2
+candidate https://services4.arcgis.com/o6d0JG3fjSR8wpWP/arcgis/rest/services/CAS_COVID_Total/FeatureServer/2
+note felder: Cas_Total__Cantons, Cas_Total__Cantons_AB, Cas_Total__Total, OBJECTID, Shape__Area, Shape__Length
+dataset Total Snow | https://services.arcgis.com/As5CFN3ThbQpy8Ph/arcgis/rest/services/Climate_Canada1/FeatureServer/6
+candidate https://services.arcgis.com/As5CFN3ThbQpy8Ph/arcgis/rest/services/Climate_Canada1/FeatureServer/6
+note felder: AnnMaxTemp, AnnMeanTemp, AnnMinTemp, DaylightHrsDec, DaylightHrsJune, NEWSYMBOL, OBJECTID, Shape__Area, Shape__Length, TotRain, TotSnow
+dataset Línea Central de la Fase Total | https://services8.arcgis.com/5ZgsIvyL8Ys9FuYQ/arcgis/rest/services/FaseTotalEclipseRegiondeCoquimbo2019/FeatureServer/0
+candidate https://services8.arcgis.com/5ZgsIvyL8Ys9FuYQ/arcgis/rest/services/FaseTotalEclipseRegiondeCoquimbo2019/FeatureServer/0
+note felder: Comunas, Desc_, Id, OBJECTID, Región, Shape__Length
+dataset Country page content | https://services5.arcgis.com/sjP4Ugu5s0dZWLjd/arcgis/rest/services/DIEM_Hub_3_Country_Editorial_Public_386c4/FeatureServer/0
+candidate https://services5.arcgis.com/sjP4Ugu5s0dZWLjd/arcgis/rest/services/DIEM_Hub_3_Country_Editorial_Public_386c4/FeatureServer/0
+note felder: OBJECTID, content_format, created_at, created_by, hero_image_url, intro_content, is_seeded, iso3, name, published, review_notes, source_updated_at, thumbnail_url, updated_at, updated_by
+dataset Total Rain | https://services.arcgis.com/As5CFN3ThbQpy8Ph/arcgis/rest/services/Climate_Canada1/FeatureServer/5
+candidate https://services.arcgis.com/As5CFN3ThbQpy8Ph/arcgis/rest/services/Climate_Canada1/FeatureServer/5
+note felder: AnnMaxTemp, AnnMeanTemp, AnnMinTemp, DaylightHrsDec, DaylightHrsJune, NEWSYMBOL, OBJECTID, Shape__Area, Shape__Length, TotRain, TotSnow
+dataset TOTAL DIA | https://services8.arcgis.com/WOL6nTwRRbctZ1sF/arcgis/rest/services/TOTAL_DIA/FeatureServer/0
+candidate https://services8.arcgis.com/WOL6nTwRRbctZ1sF/arcgis/rest/services/TOTAL_DIA/FeatureServer/0
+note felder: FID, ISOVALUE, OBJECTID, Shape_Area, Shape_Leng, Shape__Area, Shape__Length
+dataset Total CFS | https://services6.arcgis.com/KL1aiRJt0tw3BM7h/arcgis/rest/services/Total_CFS/FeatureServer/0
+candidate https://services6.arcgis.com/KL1aiRJt0tw3BM7h/arcgis/rest/services/Total_CFS/FeatureServer/0
+note felder: CFSNo, CallType, OBJECTID, Received
+dataset TOTAL NOCHE | https://services8.arcgis.com/WOL6nTwRRbctZ1sF/arcgis/rest/services/TOTAL_NOCHE/FeatureServer/0
+candidate https://services8.arcgis.com/WOL6nTwRRbctZ1sF/arcgis/rest/services/TOTAL_NOCHE/FeatureServer/0
+note felder: FID, ISOVALUE, OBJECTID, Shape_Area, Shape_Leng, Shape__Area, Shape__Length
+dataset Blue Diamond Embedded Content view | https://services8.arcgis.com/8sHVUwlgWC1a4Shd/arcgis/rest/services/Blue_Diamond_Embedded_Content_view/FeatureServer/3
+candidate https://services8.arcgis.com/8sHVUwlgWC1a4Shd/arcgis/rest/services/Blue_Diamond_Embedded_Content_view/FeatureServer/3
+note felder: File_, OBJECTID
+dataset Continuous Coverage Unwinding Total Enrollment | https://services7.arcgis.com/7MUwsS9z05YumJRZ/arcgis/rest/services/Continous_Coverage_Unwinding_Total_Enrollment/FeatureServer/0
+candidate https://services7.arcgis.com/7MUwsS9z05YumJRZ/arcgis/rest/services/Continous_Coverage_Unwinding_Total_Enrollment/FeatureServer/0
+note felder: Annotation_Code, Count_Annotation_Description, County_Name, Eligibility_Month, ObjectId, Total_Enrollment
+# total electron content seite 14: 6 services
+dataset Total Population 2020 Dot | https://services1.arcgis.com/xnOV358bj0tLwxji/arcgis/rest/services/Total_Population_2020_Dot/FeatureServer/50
+candidate https://services1.arcgis.com/xnOV358bj0tLwxji/arcgis/rest/services/Total_Population_2020_Dot/FeatureServer/50
+note felder: ALAND, AWATER, COUNTYFP, FUNCSTAT, GEOID, HasData, INTPTLAT, INTPTLON, MTFCC, NAME, NAMELSAD, OBJECTID, ORIGINAL_OID, STATEFP, Shape__Area, Shape__Length, TRACTCE, agedependency_child_cy_p
+dataset Total Population WFL1 | https://services2.arcgis.com/I9cUOJUZvdGAJncI/arcgis/rest/services/Total_Population_WFL1/FeatureServer
+candidate-leer https://services2.arcgis.com/I9cUOJUZvdGAJncI/arcgis/rest/services/Total_Population_WFL1/FeatureServer
+note 0 rows, felder unbekannt
+dataset DECES COVID Total | https://services4.arcgis.com/o6d0JG3fjSR8wpWP/arcgis/rest/services/DECES_COVID_Total/FeatureServer/0
+candidate https://services4.arcgis.com/o6d0JG3fjSR8wpWP/arcgis/rest/services/DECES_COVID_Total/FeatureServer/0
+note felder: Deces_Total__Cantons, Deces_Total__Cantons_AB, Deces_Total__Total, OBJECTID, Shape__Area, Shape__Length
+dataset Puyallup Electron Reach | https://services6.arcgis.com/O8Kw0GEC8zyWf4yI/arcgis/rest/services/Upper_Puyallup_White_River/FeatureServer/3
+candidate https://services6.arcgis.com/O8Kw0GEC8zyWf4yI/arcgis/rest/services/Upper_Puyallup_White_River/FeatureServer/3
+note felder: Id, OBJECTID, Shape__Area, Shape__Length
+dataset Food Affordability Total WFL1 | https://services7.arcgis.com/QE0COxD8ToUT6CQN/arcgis/rest/services/Food_Affordability_Total_WFL1/FeatureServer/0
+candidate https://services7.arcgis.com/QE0COxD8ToUT6CQN/arcgis/rest/services/Food_Affordability_Total_WFL1/FeatureServer/0
+note felder: AMHI, Annual_Food_Expenses, COSTBURDEN, Demographic, FCP, Food_Cost_burdened_Percentage_L, GEOID, NAME, OBJECTID, Shape__Area, Shape__Length, UWSSC_Annual_Income, UWSSC_Hourly_Income, UWSSC_Monthly_Food_Expenses, UWSSC_Monthly_Income
+dataset Unemployment Rate Total WFL1 | https://services7.arcgis.com/QE0COxD8ToUT6CQN/arcgis/rest/services/Unemployment_Rate_Total_WFL1/FeatureServer
+candidate-leer https://services7.arcgis.com/QE0COxD8ToUT6CQN/arcgis/rest/services/Unemployment_Rate_Total_WFL1/FeatureServer
+note 0 rows, felder unbekannt
+# total electron content seite 15: 0 services
+# total electron content seite 16: 5 services
+dataset IRP Content | https://services1.arcgis.com/QsZ6YNp8DCrBlhlg/arcgis/rest/services/IRP_Content/FeatureServer
+candidate-leer https://services1.arcgis.com/QsZ6YNp8DCrBlhlg/arcgis/rest/services/IRP_Content/FeatureServer
+note 0 rows, felder unbekannt
+dataset Total Bonded Property | https://services.arcgis.com/xfNoiwYbWwrd3CKg/arcgis/rest/services/Total_Bonded_Property/FeatureServer/0
+candidate https://services.arcgis.com/xfNoiwYbWwrd3CKg/arcgis/rest/services/Total_Bonded_Property/FeatureServer/0
+note felder: Elevation, Layer, LyrHandle, OBJECTID, RefName, Shape__Area, Shape__Length
+dataset Enriched Total Cases 2000-2015 | https://services7.arcgis.com/I0uDHlULFyzUMwfp/arcgis/rest/services/Enriched%20Total%20Cases%202000-2015/FeatureServer/0
+candidate https://services7.arcgis.com/I0uDHlULFyzUMwfp/arcgis/rest/services/Enriched%20Total%20Cases%202000-2015/FeatureServer/0
+note felder: ENRICH_FID, EXCEL_ID, HasData, ID, OBJECTID, TOTPOP00, TOTPOP10, aggregationMethod, cruderate, f1, f10, f11, f12, f13, f14, f15, f16, f17
+dataset Enriched Total Population Black 18 | https://services2.arcgis.com/xsh7pVZv42relbEf/arcgis/rest/services/Enriched_Total_Population_Black_18/FeatureServer/0
+candidate https://services2.arcgis.com/xsh7pVZv42relbEf/arcgis/rest/services/Enriched_Total_Population_Black_18/FeatureServer/0
+note felder: ADULTBL20, BACHDEG_CY, BLKMAL10, COUNTY_FIPS, ENRICH_FID, ENRICH_FID_1, ENRICH_FID_12, FIPS, HasData, HasData_1, HasData_12, ID, ID_1, ID_12, MEDHINC_CY, OBJECTID, POPDENS_CY, POPULATION
+dataset Tech Revenue total revenue  KB | https://services.arcgis.com/tKsJAIiLjd90D5q2/arcgis/rest/services/Tech_Revenue_total_revenue__KB/FeatureServer/0
+candidate https://services.arcgis.com/tKsJAIiLjd90D5q2/arcgis/rest/services/Tech_Revenue_total_revenue__KB/FeatureServer/0
+note felder: AnalysisArea, Companies, GEOID_Data, NAMELSAD, OBJECTID, Payroll1000s, Pct_TechRevenue, Revenue1000s, TotalBusinesses, TotalRevenue
+# total electron content seite 17: 4 services
+dataset Enriched 2010 SC Total Pop | https://services1.arcgis.com/5Gtv38l8677OspKm/arcgis/rest/services/Enriched_2010_SC_Total_Pop/FeatureServer/0
+candidate https://services1.arcgis.com/5Gtv38l8677OspKm/arcgis/rest/services/Enriched_2010_SC_Total_Pop/FeatureServer/0
+note felder: ENRICH_FID, Field, HasData, ID, ID_1, NAME, OBJECTID, RG_ABBREV, RG_NAME, TOTPOP10, TOTPOP10_1, aggregationMethod, apportionmentConfidence, populationToPolygonSizeRating, sourceCountry
+dataset Enriched Essex Drug Crime Total | https://services6.arcgis.com/3zO4MTaCrKgSue0g/arcgis/rest/services/Enriched%20Essex%20Drug%20Crime%20Total/FeatureServer/0
+candidate https://services6.arcgis.com/3zO4MTaCrKgSue0g/arcgis/rest/services/Enriched%20Essex%20Drug%20Crime%20Total/FeatureServer/0
+note felder: Context, Crime_ID, Crime_type, ENRICH_FID, Falls_within, HasData, ID, LSOA_code, LSOA_name, Last_outcome_category, Latitude, Location, Longitude, Month, OBJECTID, Reported_by, TOTPOP, aggregationMethod
+dataset USACounties Content | https://services.arcgis.com/VzVxlXQ7sFWNrO8P/arcgis/rest/services/USACounties_Content/FeatureServer/2
+candidate https://services.arcgis.com/VzVxlXQ7sFWNrO8P/arcgis/rest/services/USACounties_Content/FeatureServer/2
+note felder: COUNTY_FIPS, FIPS, NAME, OBJECTID, POPULATION, POP_SQMI, SQMI, STATE_ABBR, STATE_FIPS, STATE_NAME, Shape__Area, Shape__Length
+dataset Buffer 200 Área Alagada Total | https://services6.arcgis.com/HPn4GENt50YndCi7/arcgis/rest/services/Buffer_200_%C3%81rea_Alagada_Total/FeatureServer/0
+candidate https://services6.arcgis.com/HPn4GENt50YndCi7/arcgis/rest/services/Buffer_200_%C3%81rea_Alagada_Total/FeatureServer/0
+note felder: AnalysisArea, BUFF_DIST, OBJECTID
+# total electron content seite 18: 10 services
+dataset Population Toronto Total Destruction Radius | https://services.arcgis.com/QI0dObYawrKkuwDp/arcgis/rest/services/Population%20Toronto%20Total%20Destruction%20Radius/FeatureServer/0
+candidate https://services.arcgis.com/QI0dObYawrKkuwDp/arcgis/rest/services/Population%20Toronto%20Total%20Destruction%20Radius/FeatureServer/0
+note felder: AnalysisArea, BUFF_DIST, DATE, DESCRIPTION, ECYDAYPOP, ENRICH_FID, HasData, ID, IMAGE_LINK_URL, IMAGE_URL, OBJECTID, ORIG_FID, TITLE, TYPEID, VISIBLE, aggregationMethod, sourceCountry
+dataset Projections 2040 by Jurisdiction: Total Population by Age | https://services3.arcgis.com/i2dkYWmb4wHvYPda/arcgis/rest/services/pba2040_projections_juris_tpop_age/FeatureServer/0
+candidate https://services3.arcgis.com/i2dkYWmb4wHvYPda/arcgis/rest/services/pba2040_projections_juris_tpop_age/FeatureServer/0
+note felder: Shape__Area, Shape__Length, fipco, fipst, jurname, objectid, t04_2010a, t04_2010b, t04_2015, t04_2020, t04_2025, t04_2030, t04_2035, t04_2040, t244_2010a, t244_2010b, t244_2015, t244_2020
+dataset COVID VACCINE TOTAL DOSES | https://services.arcgis.com/fLeGjb7u4uXqeF9q/arcgis/rest/services/COVID_VACCINE_TOTAL_DOSES/FeatureServer/0
+candidate https://services.arcgis.com/fLeGjb7u4uXqeF9q/arcgis/rest/services/COVID_VACCINE_TOTAL_DOSES/FeatureServer/0
+note felder: ESRI_OID, ETL_TIMESTAMP, TOTAL_DOSES_ADMINISTERED
+dataset Updated Total Spending WFL1 | https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/Updated_Total_Spending_WFL1/FeatureServer
+candidate-leer https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/Updated_Total_Spending_WFL1/FeatureServer
+note 0 rows, felder unbekannt
+dataset 2020 Total Population by County | https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/USA_Census_2020_DHC_Total_Population/FeatureServer
+candidate-leer https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/USA_Census_2020_DHC_Total_Population/FeatureServer
+note 0 rows, felder unbekannt
+dataset USAStates Content | https://services.arcgis.com/VzVxlXQ7sFWNrO8P/arcgis/rest/services/USAStates_Content/FeatureServer/1
+candidate https://services.arcgis.com/VzVxlXQ7sFWNrO8P/arcgis/rest/services/USAStates_Content/FeatureServer/1
+note felder: OBJECTID, POPULATION, POP_SQMI, STATE_ABBR, STATE_FIPS, STATE_NAME, Shape__Area, Shape__Length
+dataset Projections 2040 by County: Total Population by Age | https://services3.arcgis.com/i2dkYWmb4wHvYPda/arcgis/rest/services/pba2040_projections_co_tpop_age/FeatureServer/0
+candidate https://services3.arcgis.com/i2dkYWmb4wHvYPda/arcgis/rest/services/pba2040_projections_co_tpop_age/FeatureServer/0
+note felder: Shape__Area, Shape__Length, coname, fipco, fipst, objectid, t04_2010a, t04_2010b, t04_2015, t04_2020, t04_2025, t04_2030, t04_2035, t04_2040, t244_2010a, t244_2010b, t244_2015, t244_2020
+dataset Enriched Huntsville Total Destruction Radius | https://services.arcgis.com/QI0dObYawrKkuwDp/arcgis/rest/services/Enriched%20Huntsville%20Total%20Destruction%20Radius/FeatureServer/0
+candidate https://services.arcgis.com/QI0dObYawrKkuwDp/arcgis/rest/services/Enriched%20Huntsville%20Total%20Destruction%20Radius/FeatureServer/0
+note felder: AnalysisArea, BUFF_DIST, DATE, DESCRIPTION, ENRICH_FID, HasData, ID, IMAGE_LINK_URL, IMAGE_URL, OBJECTID, ORIG_FID, TITLE, TOTPOP, TYPEID, VISIBLE, aggregationMethod, sourceCountry
+dataset Total Households by County 2017 | https://services.arcgis.com/VkQCwBWHl35OSv1t/arcgis/rest/services/Total%20Households%20by%20County%202017/FeatureServer/0
+candidate https://services.arcgis.com/VkQCwBWHl35OSv1t/arcgis/rest/services/Total%20Households%20by%20County%202017/FeatureServer/0
+note felder: F_2016_Total_Population__County, ID, OBJECTID, S24_BUS, TOTHH_CY, TOTPOP_CY, X9051_X
+dataset Nashville Insights Content (view) | https://services2.arcgis.com/HdTo6HJqh92wn4D8/arcgis/rest/services/Nashville_Insights_Content_view/FeatureServer/0
+candidate https://services2.arcgis.com/HdTo6HJqh92wn4D8/arcgis/rest/services/Nashville_Insights_Content_view/FeatureServer/0
+note felder: Category, Description, Link, Name, OBJECTID, Page, Sort_Order
+# total electron content seite 19: 2 services
+dataset Total Population | https://services1.arcgis.com/HmwnYiJTBZ4UkySc/arcgis/rest/services/Total_Population_Newark_WFL/FeatureServer/2
+candidate https://services1.arcgis.com/HmwnYiJTBZ4UkySc/arcgis/rest/services/Total_Population_Newark_WFL/FeatureServer/2
+note felder: ACS_14_5YR_B17021_with_ann_Us_1, ACS_14_5YR_B17021_with_ann_Used, GEO_display_label, GEO_id, Newark_bg_GEOID, Newark_bg_GEOIDNum, Newark_bg_INTPTLAT, Newark_bg_INTPTLON, Newark_bg_NAMELSAD, OBJECTID
+dataset Total Population 20241022T114402Z 001 JZ | https://services3.arcgis.com/TUZOXGJ0VXTtmQu3/arcgis/rest/services/Total_Population_20241022T114402Z_001_JZ/FeatureServer
+candidate-leer https://services3.arcgis.com/TUZOXGJ0VXTtmQu3/arcgis/rest/services/Total_Population_20241022T114402Z_001_JZ/FeatureServer
+note 0 rows, felder unbekannt
+# total electron content seite 20: 9 services
+dataset Leon Wakulla Total Nitrogen | https://services6.arcgis.com/Quh8rQD6XPU9pMAg/arcgis/rest/services/Leon_and_Wakulla_Total_Phosphorus_and_Total_Nitrogen_Data_WFL1/FeatureServer/0
+candidate https://services6.arcgis.com/Quh8rQD6XPU9pMAg/arcgis/rest/services/Leon_and_Wakulla_Total_Phosphorus_and_Total_Nitrogen_Data_WFL1/FeatureServer/0
+note felder: ADaPT_Anal, Activity_D, Activity_E, Activity_S, Analysis_D, Basin, County, DDLat, DDLon, DEP_Anal_1, DEP_Analyt, DEP_Distri, DEP_Latitu, DEP_Longit, DEP_MDL, DEP_PQL, DEP_Resu_1, Dilution
+dataset Leon Wakulla Total Phosphorus | https://services6.arcgis.com/Quh8rQD6XPU9pMAg/arcgis/rest/services/Leon_and_Wakulla_Total_Phosphorus_and_Total_Nitrogen_Data_WFL1/FeatureServer/1
+candidate https://services6.arcgis.com/Quh8rQD6XPU9pMAg/arcgis/rest/services/Leon_and_Wakulla_Total_Phosphorus_and_Total_Nitrogen_Data_WFL1/FeatureServer/1
+note felder: ADaPT_Anal, Activity_D, Activity_E, Activity_S, Analysis_D, Basin, County, DDLat, DDLon, DEP_Anal_1, DEP_Analyt, DEP_Distri, DEP_Latitu, DEP_Longit, DEP_MDL, DEP_PQL, DEP_Resu_1, DEP_Resu_3
+dataset Computer Math over Total | https://services.arcgis.com/tKsJAIiLjd90D5q2/arcgis/rest/services/Computer_Math_over_Total/FeatureServer/0
+candidate https://services.arcgis.com/tKsJAIiLjd90D5q2/arcgis/rest/services/Computer_Math_over_Total/FeatureServer/0
+note felder: AnalysisArea, Computer_Math_Occ, GEOID_Data, NAMELSAD, OBJECTID, Pct_Computer_Math_Occ, Total_Occupation
+dataset Lithium Content Table | https://services2.arcgis.com/jQV6VMr2Loovu7GU/arcgis/rest/services/Mineral_Occurrences/FeatureServer/4
+candidate https://services2.arcgis.com/jQV6VMr2Loovu7GU/arcgis/rest/services/Mineral_Occurrences/FeatureServer/4
+note felder: AGS_LITHID, B_Depth_m, Cat_An_Bal, Comments, Date_Samp, Geo_Unit, GlobalID, Gr_El_masl, KB_El_masl, Lat_NAD83, Li_mg_L, Li_mg_L_No, Long_NAD83, M_Depth_m, OBJECTID, Pub_by, Reference, Report_No
+dataset DOC Public Content Count | https://gis.conservation.ca.gov/server/rest/services/Base/DOCPublicContentCount/FeatureServer/0
+candidate https://gis.conservation.ca.gov/server/rest/services/Base/DOCPublicContentCount/FeatureServer/0
+note felder: EditDate, ItemCount, ItemType, OBJECTID
+dataset Total Adoptions Aggregate County Adoptions 2022 | https://services6.arcgis.com/0mAkOvkJY1dHWy28/arcgis/rest/services/Total_Adoptions_Aggregate/FeatureServer/0
+candidate https://services6.arcgis.com/0mAkOvkJY1dHWy28/arcgis/rest/services/Total_Adoptions_Aggregate/FeatureServer/0
+note felder: AREA_SQMI, AnalysisArea, COUNTY, EPL_AGE17, EPL_AGE65, EPL_CROWD, EPL_DISABL, EPL_GROUPQ, EPL_LIMENG, EPL_MINRTY, EPL_MOBILE, EPL_MUNIT, EPL_NOHSDP, EPL_NOVEH, EPL_PCI, EPL_POV, EPL_SNGPNT, EPL_UNEMP
+dataset Total Closest Facility Routes | https://services1.arcgis.com/diQbEFavWah0WAHd/arcgis/rest/services/Total_Closest_Facility_Routes/FeatureServer/0
+candidate https://services1.arcgis.com/diQbEFavWah0WAHd/arcgis/rest/services/Total_Closest_Facility_Routes/FeatureServer/0
+note felder: EndTime, EndTimeUTC, FID, FacilityCu, FacilityID, FacilityNa, FacilityRa, IncidentCu, IncidentID, Name, Shape_Leng, Shape__Length, StartTime, StartTimeU, Total_Kilo, Total_Mile, Total_Minu, Total_Time
+dataset Merge Total merger (Areas) | https://services2.arcgis.com/DEoxb4q3EJppiDKC/arcgis/rest/services/Merge_Total_merger_(Areas)/FeatureServer/0
+candidate https://services2.arcgis.com/DEoxb4q3EJppiDKC/arcgis/rest/services/Merge_Total_merger_(Areas)/FeatureServer/0
+note felder: DATE, DESCRIPTION, FID_ROVPoints_PointsToLine1_Buf, FID_site2_XYTableToPoint_Points, IMAGE_LINK_URL, IMAGE_URL, OBJECTID, Shape__Area, Shape__Length, TITLE, TYPEID, VISIBLE
+dataset Total Number of People | https://services.arcgis.com/djZgF6YJCuO8rbmH/arcgis/rest/services/ACSPopulationCount_VectorTile/FeatureServer/1
+candidate https://services.arcgis.com/djZgF6YJCuO8rbmH/arcgis/rest/services/ACSPopulationCount_VectorTile/FeatureServer/1
+note felder: ALAND, AWATER, AreaKm2, B01003_001, B01003_002, CBSAFP, CLASSFP, COUNTYFP, COUNTYNS, CSAFP, FUNCSTAT, GEOID, GEO_ID, INTPTLAT, INTPTLON, LSAD, METDIVFP, MTFCC
+# total electron content seite 21: 3 services
+dataset Centroids for 2020 Total Households Data | https://services1.arcgis.com/xnOV358bj0tLwxji/arcgis/rest/services/Centroids_for_2020_Total_Households_Data/FeatureServer/0
+candidate https://services1.arcgis.com/xnOV358bj0tLwxji/arcgis/rest/services/Centroids_for_2020_Total_Households_Data/FeatureServer/0
+note felder: DESCRIPTION, ID, OBJECTID, ORIG_FID, TOTHH_CY, matchField
+dataset Sixth Census Districts Total Spending | https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/Updated_Total_Spending_WFL1/FeatureServer/1
+candidate https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/Updated_Total_Spending_WFL1/FeatureServer/1
+note felder: AREA_SQMI, EPL_AGE17, EPL_AGE65, EPL_CROWD, EPL_DISABL, EPL_GROUPQ, EPL_HBURD, EPL_LIMENG, EPL_MINRTY, EPL_MOBILE, EPL_MUNIT, EPL_NOHSDP, EPL_NOVEH, EPL_POV150, EPL_SNGPNT, EPL_UNEMP, EPL_UNINSUR, EP_AFAM
+dataset Total population WFL1 | https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/Total_population_WFL1/FeatureServer/0
+candidate https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/Total_population_WFL1/FeatureServer/0
+note felder: ADDRESS, AREA_NUMBE, BLDGID, BLDGNOTES, CA2, CITY, COMMONNAME, COMMUNITY, DTCLOSE, DTOPEN, EDITDATE, FACILITY, LABEL, OBJECTID, PARENTORG, TRACT, TYPE1, TYPE2
+# total electron content seite 22: 6 services
+dataset 2010 SC Total Pop | https://services1.arcgis.com/5Gtv38l8677OspKm/arcgis/rest/services/2010_SC_Total_Pop/FeatureServer/0
+candidate https://services1.arcgis.com/5Gtv38l8677OspKm/arcgis/rest/services/2010_SC_Total_Pop/FeatureServer/0
+note felder: Field, ID, NAME, OBJECTID, RG_ABBREV, RG_NAME, Shape__Area, Shape__Length, TOTPOP10
+dataset Enriched Unsheltered Total Homeless 2019 USA | https://services4.arcgis.com/FPAQdCq3zJIgniU3/arcgis/rest/services/Enriched_Unsheltered_Total_Homeless_2019_USA/FeatureServer/0
+candidate https://services4.arcgis.com/FPAQdCq3zJIgniU3/arcgis/rest/services/Enriched_Unsheltered_Total_Homeless_2019_USA/FeatureServer/0
+note felder: CH_IND_TOT_19, CH_PFAM_TOT_19, CH_TOT_19, COCCAT, COCNAME, COCNUM, CPY_TOT_19, ENRICH_FID, FAM_TOT_19, HasData, ID, IND_TOT_19, OBJECTID, Overall, PFAM_TOT_19, PY1824_TOT_19, PYLT18_TOT_19, PY_TOT_19
+dataset Civil War Fatalities Total Export | https://services.arcgis.com/7vyJMxlH6ODgjFtB/arcgis/rest/services/Civil_War_Fatalities_Total_Export/FeatureServer/0
+candidate https://services.arcgis.com/7vyJMxlH6ODgjFtB/arcgis/rest/services/Civil_War_Fatalities_Total_Export/FeatureServer/0
+note felder: Address_1, Address_2, Age, Category, Cause, County, County_Ori, CreationDate, Creator, Date, EditDate, Editor, Forename, GlobalID, Location, NEW_I_D, OBJECTID, Occupation
+dataset Total Population 2016 within SA1 boundaries | https://services5.arcgis.com/2W9uqLBbAqjLOyJL/arcgis/rest/services/Total_Population_2016_within_SA1_boundaries/FeatureServer/0
+decline https://services5.arcgis.com/2W9uqLBbAqjLOyJL/arcgis/rest/services/Total_Population_2016_within_SA1_boundaries/FeatureServer/0
+note arcgis-error-body
+dataset Tsar Bomba Total destruction Population Hiroshima | https://services.arcgis.com/QI0dObYawrKkuwDp/arcgis/rest/services/Tsar%20Bomba%20Total%20destruction%20Population%20Hiroshima/FeatureServer/0
+candidate https://services.arcgis.com/QI0dObYawrKkuwDp/arcgis/rest/services/Tsar%20Bomba%20Total%20destruction%20Population%20Hiroshima/FeatureServer/0
+note felder: AnalysisArea, BUFF_DIST, City_Name, ENRICH_FID, HasData, ID, Latitude, Longitude, OBJECTID, ORIG_FID, TOTPOP_CY, aggregationMethod, sourceCountry
+# total electron content seite 23: 6 services
+dataset Age 65+ Population (Percent & Total) | https://services.arcgis.com/tNJpAOha4mODLkXz/arcgis/rest/services/Age65overpopTotal/FeatureServer/0
+candidate https://services.arcgis.com/tNJpAOha4mODLkXz/arcgis/rest/services/Age65overpopTotal/FeatureServer/0
+note felder: ALAND10, AWATER10, Age60years_andover, Age62years_andover, Age65years_andover, Age75years_andover, Age85years_andover, AverageHHsize_OwnerOccupied, AverageHHsize_RenterOccupied, ChildAgeDependencyRatio, Disability_WithAny, Disability_WithaAmbulatoryDiffi, Disability_WithaCognitiveDiffic, Disability_WithaHearingDifficul, Disability_WithaIndependentLivi, Disability_WithaSelfCareDifficu, Disability_WithaVisionDifficult, Divorced
+dataset Total Exempts Account Points | https://services2.arcgis.com/rwnOSbfKSwyTBcwN/arcgis/rest/services/Total_Tax_Exempt_AcctPts/FeatureServer/0
+candidate https://services2.arcgis.com/rwnOSbfKSwyTBcwN/arcgis/rest/services/Total_Tax_Exempt_AcctPts/FeatureServer/0
+note felder: AccountID, AppraisalYr, BldgClass, CityJuris, CityTaxVal, Council, CountyJuris, ISDJuris, ImpVal, LandVal, NbhdCode, NorthSouthCBD, OBJECTID, ParcelID, ParcelOID, PropClass, ResCom, TotalVal
+dataset Summarize Assigned facilities for Merged Incident Data Layer in Fire Stations Content | https://services3.arcgis.com/0OPQIK59PJJqLK0A/arcgis/rest/services/Summarize_Assigned_facilities_for_Merged_Incident_Data_Layer_in_Fire_Stations_Content/FeatureServer/0
+candidate https://services3.arcgis.com/0OPQIK59PJJqLK0A/arcgis/rest/services/Summarize_Assigned_facilities_for_Merged_Incident_Data_Layer_in_Fire_Stations_Content/FeatureServer/0
+note felder: ADDRESS, AdditionalDistance, AdditionalTime, AnalysisArea, Breaks, FromBreak, GlobalID, ID, Name, Name_1, OBJECTID, Point_Count, TYPE, ToBreak, X_Coord, Y_Coord
+dataset Total pratiquants dans le monde | https://services3.arcgis.com/B6wffRnmMgm6pr7L/arcgis/rest/services/Total_pratiquants_dans_le_monde/FeatureServer/0
+candidate https://services3.arcgis.com/B6wffRnmMgm6pr7L/arcgis/rest/services/Total_pratiquants_dans_le_monde/FeatureServer/0
+note felder: CreationDate, Creator, EditDate, Editor, GlobalID, OBJECTID, Total
+dataset Total Workers Residing Steven Althardt WFL1 | https://services1.arcgis.com/HmwnYiJTBZ4UkySc/arcgis/rest/services/Total_Workers_Residing_Steven_Althardt_WFL1/FeatureServer
+candidate-leer https://services1.arcgis.com/HmwnYiJTBZ4UkySc/arcgis/rest/services/Total_Workers_Residing_Steven_Althardt_WFL1/FeatureServer
+note 0 rows, felder unbekannt
+# total electron content seite 24: 4 services
+dataset Total Nitrogen | https://services2.arcgis.com/FOAjZu7OcdPEtbC0/arcgis/rest/services/Layers_new/FeatureServer/2
+candidate https://services2.arcgis.com/FOAjZu7OcdPEtbC0/arcgis/rest/services/Layers_new/FeatureServer/2
+note felder: Date, End_, Location, OBJECTID, Parm, Percent_, Pvalue, Sitename, Start, Trend, Trend1, lat, long
+dataset Total Phosphorus | https://services2.arcgis.com/FOAjZu7OcdPEtbC0/arcgis/rest/services/Layers_new/FeatureServer/4
+candidate https://services2.arcgis.com/FOAjZu7OcdPEtbC0/arcgis/rest/services/Layers_new/FeatureServer/4
+note felder: Date, End_, Location, OBJECTID, Parm, Percent_, Pvalue, Sitename, Start, Trend, Trend1, lat, long
+dataset misa2021 Total Population by Census Tracts | https://services6.arcgis.com/2yF1BNcZtu43QAOt/arcgis/rest/services/misa2021_Total_Population_by_Census_Tracts/FeatureServer/0
+candidate https://services6.arcgis.com/2yF1BNcZtu43QAOt/arcgis/rest/services/misa2021_Total_Population_by_Census_Tracts/FeatureServer/0
+note felder: AVGHHSZ_CY, AVGHINC_CY, DESCRIPTION, ENRICH_FID, HasData, ID, ID_1, MEDAGE_CY, OBJECTID, POPGRWCYFY, S01_BUS, S01_EMP, TOTPOP_CY, TOTPOP_FY, ThematicValue, aggregationMethod, apportionmentConfidence, populationToPolygonSizeRating
+dataset Enriched Total Precip 7days From 831 | https://services.arcgis.com/DO4gTjwJVIJ7O9Ca/arcgis/rest/services/Enriched%20Total%20Precip%207days%20From%20831/FeatureServer/0
+candidate https://services.arcgis.com/DO4gTjwJVIJ7O9Ca/arcgis/rest/services/Enriched%20Total%20Precip%207days%20From%20831/FeatureServer/0
+note felder: CHILD_CY, Dissolve, ENRICH_FID, FIRST_gridcode, HasData, ID, OBJECTID, OWNER_CY, RENTER_CY, S01_BUS, S06_BUS, S07_BUS, S09_BUS, S27_BUS, S29_BUS, S31_BUS, SENIORS_CY, Shape__Area
+# total electron content seite 25: 4 services
+dataset LAMSA2021 Total Population by Census Tracts | https://services6.arcgis.com/2yF1BNcZtu43QAOt/arcgis/rest/services/LAMSA2021_Total_Population_by_Census_Tracts/FeatureServer/0
+candidate https://services6.arcgis.com/2yF1BNcZtu43QAOt/arcgis/rest/services/LAMSA2021_Total_Population_by_Census_Tracts/FeatureServer/0
+note felder: AVGHHSZ_CY, AVGHINC_CY, DESCRIPTION, ENRICH_FID, HasData, ID, ID_1, MEDAGE_CY, OBJECTID, POPGRWCYFY, S01_BUS, S01_EMP, TOTPOP_CY, TOTPOP_FY, ThematicValue, aggregationMethod, apportionmentConfidence, populationToPolygonSizeRating
+dataset Superficie Total | https://services7.arcgis.com/iEMmryaM5E3wkdnU/arcgis/rest/services/Superficie_Total/FeatureServer/0
+candidate https://services7.arcgis.com/iEMmryaM5E3wkdnU/arcgis/rest/services/Superficie_Total/FeatureServer/0
+note felder: Description, End_Date, Name, Number_Value_1, Number_Value_2, ObjectId, Shape__Length, Start_Date, String_Value_1, String_Value_2
+dataset 2017 Median Age- Total Pop 1000PL | https://services.arcgis.com/QI0dObYawrKkuwDp/arcgis/rest/services/2017%20Median%20Age-%20Total%20Pop%201000PL/FeatureServer/0
+candidate https://services.arcgis.com/QI0dObYawrKkuwDp/arcgis/rest/services/2017%20Median%20Age-%20Total%20Pop%201000PL/FeatureServer/0
+note felder: ECYPTA1014, ECYPTA1519, ECYPTA2024, ECYPTA2529, ECYPTA3034, ECYPTA3539, ECYPTA4044, ECYPTA4549, ECYPTA5054, ECYPTA6569, ECYPTA7074, ECYPTA7579, ECYPTA8084, ECYPTA85P, ECYPTAAVG, ECYPTAMED, ECYPTAPOP, ECYPTA_0_4
+dataset Total Unesco Sites in Mountain Biomes | https://services.arcgis.com/QI0dObYawrKkuwDp/arcgis/rest/services/Total%20Unesco%20Sites%20in%20Mountain%20Biomes/FeatureServer/0
+candidate https://services.arcgis.com/QI0dObYawrKkuwDp/arcgis/rest/services/Total%20Unesco%20Sites%20in%20Mountain%20Biomes/FeatureServer/0
+note felder: AnalysisArea, BIOME_DESC, MaxSimpTol, MinSimpTol, OBJECTID, SUM_Area_SquareKilometers, SUM_Point_Count, Shape_Leng
+# keyword geomagnetic observatory
+# geomagnetic observatory seite 1: 6 services
+dataset OBSERVATORY FS | https://services.arcgis.com/VZFBz62gxB8VrbIS/arcgis/rest/services/SHINSUI_INUNDATION_DEPTH_v06/FeatureServer/0
+candidate https://services.arcgis.com/VZFBz62gxB8VrbIS/arcgis/rest/services/SHINSUI_INUNDATION_DEPTH_v06/FeatureServer/0
+note felder: BASE_ID, CODE, OBJECTID
+# geomagnetic observatory seite 2: 5 services
+dataset OBSERVATORY FS | https://services1.arcgis.com/M9VrPX1Q3P2opod2/arcgis/rest/services/SHINSUI_INUNDATION_DEPTH_REALTIME_v06/FeatureServer/0
+decline https://services1.arcgis.com/M9VrPX1Q3P2opod2/arcgis/rest/services/SHINSUI_INUNDATION_DEPTH_REALTIME_v06/FeatureServer/0
+note arcgis-error-body
+dataset Observatory | https://services5.arcgis.com/cu2HFDk7AqvG7e31/arcgis/rest/services/CRH_CommunityResources/FeatureServer/0
+candidate https://services5.arcgis.com/cu2HFDk7AqvG7e31/arcgis/rest/services/CRH_CommunityResources/FeatureServer/0
+note felder: ADDRESS, NAME, OBJECTID
+# geomagnetic observatory seite 3: 3 services
+dataset OBSERVATORY FS | https://services1.arcgis.com/M9VrPX1Q3P2opod2/arcgis/rest/services/SHINSUI_INUNDATION_DEPTH_v06/FeatureServer/0
+decline https://services1.arcgis.com/M9VrPX1Q3P2opod2/arcgis/rest/services/SHINSUI_INUNDATION_DEPTH_v06/FeatureServer/0
+note arcgis-error-body
+dataset OBSERVATORY FS | https://services1.arcgis.com/M9VrPX1Q3P2opod2/arcgis/rest/services/SHINSUI_INUNDATION_DEPTH_WORKSHOP_v06/FeatureServer/0
+decline https://services1.arcgis.com/M9VrPX1Q3P2opod2/arcgis/rest/services/SHINSUI_INUNDATION_DEPTH_WORKSHOP_v06/FeatureServer/0
+note arcgis-error-body
+# geomagnetic observatory seite 4: 2 services
+dataset Observatory | https://services7.arcgis.com/Po9k92ioxMAhTLSu/arcgis/rest/services/OhioObservatoryDataEdit/FeatureServer/0
+candidate https://services7.arcgis.com/Po9k92ioxMAhTLSu/arcgis/rest/services/OhioObservatoryDataEdit/FeatureServer/0
+note felder: FID, Lat, Long, Name, Notes, OnSiteTelescope, PublicShowing, School, StudentResearch, Website
+dataset Hong Kong Observatory Resource Centre | https://services3.arcgis.com/6j1KwZfY2fZrfNMR/arcgis/rest/services/Hong%20Kong%20Observatory%20Resource%20Centre/FeatureServer/0
+candidate https://services3.arcgis.com/6j1KwZfY2fZrfNMR/arcgis/rest/services/Hong%20Kong%20Observatory%20Resource%20Centre/FeatureServer/0
+note felder: Address, Dataset, Easting, Email_Address, Facility_Name, Fax_Number, GMID, Last_Update, Latitude, Longitude, Northing, OBJECTID, Opening_Hours, Telephone, Website, 傳真號碼, 地址, 數據集
+# geomagnetic observatory seite 5: 2 services
+dataset Turner Farm Park Observatory Half Mile Buffer | https://services1.arcgis.com/ioennV6PpG5Xodq0/arcgis/rest/services/Observatory_Park_Half_Mile_Buffer/FeatureServer/1
+candidate https://services1.arcgis.com/ioennV6PpG5Xodq0/arcgis/rest/services/Observatory_Park_Half_Mile_Buffer/FeatureServer/1
+note felder: BUFF_DIST, OBJECTID, ORIG_FID, PARCEL_KEY, PARCEL_TYPE, PIN, SRC_CONTROL, Shape__Area, Shape__Length
+dataset Precipitation for Priddis Observatory (2021-2022) | https://services7.arcgis.com/qSpM6wfHUV6z06e8/arcgis/rest/services/PrecAtPriddisObservatory2/FeatureServer/0
+candidate https://services7.arcgis.com/qSpM6wfHUV6z06e8/arcgis/rest/services/PrecAtPriddisObservatory2/FeatureServer/0
+note felder: F2021_Precipitation, F2022_Precipitation, Month, Month1, OBJECTID, objectID_Revised
+# geomagnetic observatory seite 6: 0 services
+# geomagnetic observatory seite 7: 3 services
+dataset Observatories | https://services7.arcgis.com/lwV4Epx1RhUBYhT7/arcgis/rest/services/Observatories/FeatureServer/0
+candidate https://services7.arcgis.com/lwV4Epx1RhUBYhT7/arcgis/rest/services/Observatories/FeatureServer/0
+note felder: Altitude, Description, F__OBJECTID, Latitude, Longitude, Name
+# geomagnetic observatory seite 8: 3 services
+dataset Urban Observatory Profiles Updatable | https://services6.arcgis.com/uWtJiVzcBsV6C7NV/arcgis/rest/services/Urban_Observatory_Profiles_Updatable/FeatureServer/0
+candidate https://services6.arcgis.com/uWtJiVzcBsV6C7NV/arcgis/rest/services/Urban_Observatory_Profiles_Updatable/FeatureServer/0
+note felder: FID, Focal_Po_1, Focal_Poin, Focus_of_t, Hosting_In, Latitude, Location, Longitude, Name, OID_, Other_SDGs, Profile, SDG11_Moni, SDG_11_Mon, Type, Type_of_Ho, Website, Year_Start
+dataset Susquehanna Shale Hills Critical Zone Observatory | https://services9.arcgis.com/6EuFgO4fLTqfNOhu/arcgis/rest/services/Susquehanna_Shale_Hills_Critical_Zone_Observatory_WFL1/FeatureServer
+candidate-leer https://services9.arcgis.com/6EuFgO4fLTqfNOhu/arcgis/rest/services/Susquehanna_Shale_Hills_Critical_Zone_Observatory_WFL1/FeatureServer
+note 0 rows, felder unbekannt
+# geomagnetic observatory seite 9: 4 services
+dataset Observatory Park | https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/Little_Free_Libraries___Observatory_Park_Map_WFL1/FeatureServer/6
+candidate https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/Little_Free_Libraries___Observatory_Park_Map_WFL1/FeatureServer/6
+note felder: CreationDate, Creator, EditDate, Editor, GlobalID, Name, OBJECTID, Shape__Area, Shape__Length, Type
+dataset NEMOHeadquarters | https://services5.arcgis.com/U8xJBTiAx2RGR2e2/arcgis/rest/services/LocationPoints/FeatureServer/0
+candidate https://services5.arcgis.com/U8xJBTiAx2RGR2e2/arcgis/rest/services/LocationPoints/FeatureServer/0
+note felder: Id, Name, OBJECTID
+dataset Vesuvius Observatory | https://services5.arcgis.com/RbjlVNAtGGPx1hPV/arcgis/rest/services/Landscape_of_Vesuvius_and_location_of_observatory_WFL1/FeatureServer/0
+candidate https://services5.arcgis.com/RbjlVNAtGGPx1hPV/arcgis/rest/services/Landscape_of_Vesuvius_and_location_of_observatory_WFL1/FeatureServer/0
+note felder: Building, Latitude_, Longitude_, OBJECTID
+# geomagnetic observatory seite 10: 4 services
+dataset BelmontObservatory | https://services5.arcgis.com/U8xJBTiAx2RGR2e2/arcgis/rest/services/LocationPoints/FeatureServer/1
+candidate https://services5.arcgis.com/U8xJBTiAx2RGR2e2/arcgis/rest/services/LocationPoints/FeatureServer/1
+note felder: Id, OBJECTID
+dataset LocationPoints | https://services5.arcgis.com/U8xJBTiAx2RGR2e2/arcgis/rest/services/LocationPoints/FeatureServer
+candidate-leer https://services5.arcgis.com/U8xJBTiAx2RGR2e2/arcgis/rest/services/LocationPoints/FeatureServer
+note 0 rows, felder unbekannt
+# geomagnetic observatory seite 11: 0 services
+# geomagnetic observatory seite 12: 0 services

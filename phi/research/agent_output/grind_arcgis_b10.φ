@@ -1,0 +1,421 @@
+dataset Coastal Flood Hazard Zone 1 (50 years) | https://services2.arcgis.com/J8errK5dyxu7Xjf7/arcgis/rest/services/Northland_Coastal_Flood_Hazard_Zones/FeatureServer/1
+decline https://services2.arcgis.com/J8errK5dyxu7Xjf7/arcgis/rest/services/Northland_Coastal_Flood_Hazard_Zones/FeatureServer/1
+note arcgis-error-body
+dataset USGS Gauge Sites CONUS | https://services.arcgis.com/ts4gk3YgS68yLGFl/arcgis/rest/services/USGS_Gauge_Sites_CONUS/FeatureServer/0
+candidate https://services.arcgis.com/ts4gk3YgS68yLGFl/arcgis/rest/services/USGS_Gauge_Sites_CONUS/FeatureServer/0
+note felder: COMID, REACHCODE, REACH_meas, fid, site_id
+dataset NOAA River Gauges ViewLayer | https://services1.arcgis.com/zC7pGkrIoR451W0i/arcgis/rest/services/NOAA_River_Gauges_ViewLayer/FeatureServer/0
+candidate https://services1.arcgis.com/zC7pGkrIoR451W0i/arcgis/rest/services/NOAA_River_Gauges_ViewLayer/FeatureServer/0
+note felder: ActStg_ft, Elev_ft, FldStg_ft, Gauge_Name, GuageID, MajFldStg_ft, ModFldStg_ft, Notes, Notes2, OBJECTID, POINT_X, POINT_Y, Type, Website
+dataset FLOOD POLYGON | https://services3.arcgis.com/rl7ACuZkiFsmDA2g/arcgis/rest/services/FLOOD_POLYGON/FeatureServer/0
+candidate https://services3.arcgis.com/rl7ACuZkiFsmDA2g/arcgis/rest/services/FLOOD_POLYGON/FeatureServer/0
+note felder: OBJECTID, Shape__Area, Shape__Length
+dataset Coastal Flood Hazard Zone 2 (100 years) | https://services2.arcgis.com/J8errK5dyxu7Xjf7/arcgis/rest/services/Northland_Coastal_Flood_Hazard_Zones/FeatureServer/2
+candidate https://services2.arcgis.com/J8errK5dyxu7Xjf7/arcgis/rest/services/Northland_Coastal_Flood_Hazard_Zones/FeatureServer/2
+note felder: CFHZ2, GlobalID, Model, Name, OBJECTID, Shape__Area, Shape__Length
+dataset Gauge Stations | https://services9.arcgis.com/35noZiiZeSuYlpr5/arcgis/rest/services/Gauges/FeatureServer/0
+candidate https://services9.arcgis.com/35noZiiZeSuYlpr5/arcgis/rest/services/Gauges/FeatureServer/0
+note felder: Area, AvFlow_BCM, Country, Flow, GlobalID, ID, Measure, Missing_da, Name, OBJECTID, Period_of_, River, Source, USGS_ID, X, Y
+dataset Flood Zone | https://services1.arcgis.com/XhE4Nx2bBPScQrhF/arcgis/rest/services/FEMA_Flood_Insurance_Map/FeatureServer/2
+candidate https://services1.arcgis.com/XhE4Nx2bBPScQrhF/arcgis/rest/services/FEMA_Flood_Insurance_Map/FeatureServer/2
+note felder: AR_REVERT, BFE_REVERT, CST_MDL_ID, DEPTH, DEPTH_LAB, DEP_REVERT, DFIRM_ID, FLD_AR_ID, FLD_ZONE, FLOODWAY, HYDRO_ID, LEN_UNIT, OBJECTID, OBJECTID_1, SFHA_TF, SOURCE_CIT, STATIC_BFE, Shape_Leng
+dataset Neighborhood | https://services5.arcgis.com/ji3WHeqN0AysEK5g/arcgis/rest/services/Rain_Gauge_Map1/FeatureServer/1
+candidate https://services5.arcgis.com/ji3WHeqN0AysEK5g/arcgis/rest/services/Rain_Gauge_Map1/FeatureServer/1
+note felder: Shape__Area, Shape__Length, globalid, neighborhood_code, objectid
+dataset Parcel Inundated 46ft Flood Extent | https://services1.arcgis.com/P5Mv5GY5S66M8Z1Q/arcgis/rest/services/Parcel_Inundated_46ft_Flood_Extent/FeatureServer/0
+candidate https://services1.arcgis.com/P5Mv5GY5S66M8Z1Q/arcgis/rest/services/Parcel_Inundated_46ft_Flood_Extent/FeatureServer/0
+note felder: APN, AREA_ID, Address, BldgIn, OBJECTID, Shape__Area, Shape__Length
+dataset NWS Wakefield Service Area Proposed Locations | https://services3.arcgis.com/qVupYidwzMKkDQzr/arcgis/rest/services/NWS_WakefieldServiceAreaProposedLocations/FeatureServer/0
+candidate https://services3.arcgis.com/qVupYidwzMKkDQzr/arcgis/rest/services/NWS_WakefieldServiceAreaProposedLocations/FeatureServer/0
+note felder: City_County, FID, Lat, Long, Site_Name, Site_Owner
+dataset RG LongRange 75 | https://services.arcgis.com/XG15cJAlne2vxtgt/arcgis/rest/services/RG_LongRange_75/FeatureServer/0
+candidate https://services.arcgis.com/XG15cJAlne2vxtgt/arcgis/rest/services/RG_LongRange_75/FeatureServer/0
+note felder: FID, idp_source, object_id
+dataset stream gauge stations jrs91a | https://services.arcgis.com/eoP5lsTDzcIUyaQZ/arcgis/rest/services/stream_gauge_stations_jrs91a/FeatureServer/0
+candidate https://services.arcgis.com/eoP5lsTDzcIUyaQZ/arcgis/rest/services/stream_gauge_stations_jrs91a/FeatureServer/0
+note felder: AUTOID, COUNT_, DATUM, DESCRIPT, FGDLAQDATE, FLOODSTAGE, HUC, LATDD, LONDD, OBJECTID, OBJECTID_1, REALSTX_ID, ST, STAID, STANAME, URL, WORKA
+dataset Gauge Adjusted Radar Rainfall Data Geometry | https://services6.arcgis.com/dMKWX9NPCcfmaZl3/arcgis/rest/services/garrd/FeatureServer
+candidate-leer https://services6.arcgis.com/dMKWX9NPCcfmaZl3/arcgis/rest/services/garrd/FeatureServer
+note 0 rows, felder unbekannt
+dataset ADS Rain Gauge Accumulations | https://services2.arcgis.com/OIAIimblRxPs0xxc/arcgis/rest/services/RainGaugeAccumulations2/FeatureServer/0
+candidate https://services2.arcgis.com/OIAIimblRxPs0xxc/arcgis/rest/services/RainGaugeAccumulations2/FeatureServer/0
+note felder: OBJECTID, accum_12hr_in, accum_1hr_in, accum_24hr_in, accum_48hr_in, accum_6hr_in, accum_72hr_in, gauge_id, gauge_name, last_updated, latitude, longitude
+dataset FWCE Gauge Network | https://services1.arcgis.com/M68M8H7oABBFs1Pf/arcgis/rest/services/FWCE_Gauge_Network/FeatureServer/0
+candidate https://services1.arcgis.com/M68M8H7oABBFs1Pf/arcgis/rest/services/FWCE_Gauge_Network/FeatureServer/0
+note felder: Enabled, FCode, FDate, FType, FlowDir, GNIS_ID, GNIS_Name, InNetwork, LengthKM, MainPath, NHDPlusID, OBJECTID, Permanent_Identifier, ReachCode, Resolution, Shape__Length, StreamOrde, VPUID
+dataset Fuzzy25Yr | https://services1.arcgis.com/yIZWbv8PF0WADSXn/arcgis/rest/services/PotentialFloodModeling/FeatureServer/3
+candidate https://services1.arcgis.com/yIZWbv8PF0WADSXn/arcgis/rest/services/PotentialFloodModeling/FeatureServer/3
+note felder: DEPTH, FLOODPLAIN_1, LABEL, NAME, NAVD88, NGVD29, OBJECTID, STATIONID, Shape__Area, Shape__Length, Xpar
+dataset Fuzzy200Yr | https://services1.arcgis.com/yIZWbv8PF0WADSXn/arcgis/rest/services/PotentialFloodModeling/FeatureServer/6
+candidate https://services1.arcgis.com/yIZWbv8PF0WADSXn/arcgis/rest/services/PotentialFloodModeling/FeatureServer/6
+note felder: DEPTH, FLOODPLAIN_1, LABEL, NAME, NAVD88, NGVD29, OBJECTID, STATIONID, Shape__Area, Shape__Length, Xpar
+dataset Fuzzy50Yr | https://services1.arcgis.com/yIZWbv8PF0WADSXn/arcgis/rest/services/PotentialFloodModeling/FeatureServer/4
+candidate https://services1.arcgis.com/yIZWbv8PF0WADSXn/arcgis/rest/services/PotentialFloodModeling/FeatureServer/4
+note felder: DEPTH, FLOODPLAIN_1, LABEL, NAME, NAVD88, NGVD29, OBJECTID, STATIONID, Shape__Area, Shape__Length, Xpar
+dataset FEMA Flood Zones 2016 Proposed | https://services.arcgis.com/5iWzb1srkjPDXmpL/arcgis/rest/services/FEMA_Flood_Zones_2016_Proposed/FeatureServer
+candidate-leer https://services.arcgis.com/5iWzb1srkjPDXmpL/arcgis/rest/services/FEMA_Flood_Zones_2016_Proposed/FeatureServer
+note 0 rows, felder unbekannt
+dataset Fuzzy10Yr | https://services1.arcgis.com/yIZWbv8PF0WADSXn/arcgis/rest/services/PotentialFloodModeling/FeatureServer/2
+candidate https://services1.arcgis.com/yIZWbv8PF0WADSXn/arcgis/rest/services/PotentialFloodModeling/FeatureServer/2
+note felder: DEPTH, FLOODPLAIN_1, LABEL, NAME, NAVD88, NGVD29, OBJECTID, STATIONID, Shape__Area, Shape__Length, Xpar
+dataset North Rockhampton Flood Management Area | https://services-ap1.arcgis.com/hx2J5p82likyGt5G/arcgis/rest/services/North_Rockhampton_Flood_Management_Area/FeatureServer/0
+candidate https://services-ap1.arcgis.com/hx2J5p82likyGt5G/arcgis/rest/services/North_Rockhampton_Flood_Management_Area/FeatureServer/0
+note felder: DATASET, DESCRIPTION, LAYER, OBJECTID, PUBLISH_DATE, SCHEME, SUB_TYPE, Shape__Area, Shape__Length, UserText_1, UserText_2, User_Text_3, User_Text_4, VERSION, VERSION_DATE
+dataset Fuzzy100Yr | https://services1.arcgis.com/yIZWbv8PF0WADSXn/arcgis/rest/services/PotentialFloodModeling/FeatureServer/5
+candidate https://services1.arcgis.com/yIZWbv8PF0WADSXn/arcgis/rest/services/PotentialFloodModeling/FeatureServer/5
+note felder: DEPTH, FLOODPLAIN_1, LABEL, NAME, NAVD88, NGVD29, OBJECTID, STATIONID, Shape__Area, Shape__Length, Xpar
+dataset flood plain final | https://services3.arcgis.com/LNTe09Xft4ymdHYS/arcgis/rest/services/flood_plain_final/FeatureServer/0
+candidate https://services3.arcgis.com/LNTe09Xft4ymdHYS/arcgis/rest/services/flood_plain_final/FeatureServer/0
+note felder: AREA, COBRA, COMMUNITY, CO_FIPS, FIPS, FIRM_PANEL, FLOODWAY, KLEBERG_Q3, KLEBERG__1, LAT, LONG, NUECES_Q31, NUECES_Q3_, OBJECTID, OBJECTID_1, PANEL, PANEL_TYP, PCOMM
+dataset Fuzzy2Yr | https://services1.arcgis.com/yIZWbv8PF0WADSXn/arcgis/rest/services/PotentialFloodModeling/FeatureServer/1
+candidate https://services1.arcgis.com/yIZWbv8PF0WADSXn/arcgis/rest/services/PotentialFloodModeling/FeatureServer/1
+note felder: DEPTH_1, FLOODPLAIN, LABEL, NAME_1, NAVD88, NGVD29, OBJECTID, STATIONID, Shape__Area, Shape__Length, Xpar
+dataset USGS Gauge | https://services1.arcgis.com/1Cfo0re3un0w6a30/arcgis/rest/services/YellowBreechesDamsGauge/FeatureServer/1
+candidate https://services1.arcgis.com/1Cfo0re3un0w6a30/arcgis/rest/services/YellowBreechesDamsGauge/FeatureServer/1
+note felder: Id, OBJECTID, text_
+dataset 1927 Kelly Flood Key Locations | https://services9.arcgis.com/6ukHJ1QHS9lvQoRO/arcgis/rest/services/1927_Kelly_Flood_Key_Locations/FeatureServer/0
+candidate https://services9.arcgis.com/6ukHJ1QHS9lvQoRO/arcgis/rest/services/1927_Kelly_Flood_Key_Locations/FeatureServer/0
+note felder: OBJECTID, description, location, sort_order
+dataset Flood Zones | https://services2.arcgis.com/safmkHh6IfIYbpgO/arcgis/rest/services/BBL_FEMA_Flood/FeatureServer/28
+candidate https://services2.arcgis.com/safmkHh6IfIYbpgO/arcgis/rest/services/BBL_FEMA_Flood/FeatureServer/28
+note felder: AR_REVERT, AR_SUBTRV, BFE_REVERT, DEPTH, DEP_REVERT, DFIRM_ID, DUAL_ZONE, FLD_AR_ID, FLD_ZONE, GlobalID, LEN_UNIT, OBJECTID, SFHA_TF, SOURCE_CIT, STATIC_BFE, STUDY_TYP, Shape__Area, Shape__Length
+dataset WCC Flood Hazard Layers | https://services7.arcgis.com/2ECs938g489DMWjt/arcgis/rest/services/WCC_Flood_Hazard_Layers/FeatureServer
+candidate-leer https://services7.arcgis.com/2ECs938g489DMWjt/arcgis/rest/services/WCC_Flood_Hazard_Layers/FeatureServer
+note 0 rows, felder unbekannt
+dataset Flood 0 1 | https://services1.arcgis.com/ZrftDl8WETyHb7ah/arcgis/rest/services/Food_5/FeatureServer/1
+candidate https://services1.arcgis.com/ZrftDl8WETyHb7ah/arcgis/rest/services/Food_5/FeatureServer/1
+note felder: GlobalID, Id, OBJECTID, Shape__Area, Shape__Length, gridcode
+dataset Construction Employees Flood | https://services1.arcgis.com/5Gtv38l8677OspKm/arcgis/rest/services/FH_EMP/FeatureServer/3
+candidate https://services1.arcgis.com/5Gtv38l8677OspKm/arcgis/rest/services/FH_EMP/FeatureServer/3
+note felder: DN01_BUS, DN02_EMP, DN03_EMP, DN04_EMP, DN05_EMP, DN06_EMP, DN07_EMP, DN08_EMP, DN09_EMP, DN10_EMP, DN11_EMP, DN12_EMP, DN13_EMP, DN14_EMP, DN15_EMP, DN16_EMP, DN17_EMP, DN18_EMP
+dataset Flood 5 poly | https://services1.arcgis.com/ZrftDl8WETyHb7ah/arcgis/rest/services/Food_5/FeatureServer/2
+candidate https://services1.arcgis.com/ZrftDl8WETyHb7ah/arcgis/rest/services/Food_5/FeatureServer/2
+note felder: GlobalID, Id, OBJECTID, Shape__Area, Shape__Length, gridcode
+dataset Flood Gauges 23 to 24 Mar | https://services2.arcgis.com/jWXb6JPWtBjOCalT/arcgis/rest/services/Flood_Gauges_23_to_24_Mar/FeatureServer/0
+candidate https://services2.arcgis.com/jWXb6JPWtBjOCalT/arcgis/rest/services/Flood_Gauges_23_to_24_Mar/FeatureServer/0
+note felder: FID, STAGE, dec_lat_va, dec_long_v, drain_area, flood_nu, flood_stag, flow_dt, flow_va, major_fl_1, major_floo, moderate_1, moderate_f, peak_count, peak_max, peak_max_y, peak_rank, site_no
+dataset Flood Control Basins | https://services.arcgis.com/KkJhFbLnXVqahKz2/arcgis/rest/services/Flood_Control_Basins/FeatureServer/0
+candidate https://services.arcgis.com/KkJhFbLnXVqahKz2/arcgis/rest/services/Flood_Control_Basins/FeatureServer/0
+note felder: Facility_Name, GlobalID, OBJECTID, Type
+dataset Flood Hazard Zones | https://services1.arcgis.com/EhkUu6sHoRi5xjBh/arcgis/rest/services/FloodMapNewHanoverCounty/FeatureServer/0
+candidate https://services1.arcgis.com/EhkUu6sHoRi5xjBh/arcgis/rest/services/FloodMapNewHanoverCounty/FeatureServer/0
+note felder: CO_FIPS, CURREFFTF, LN_LID, METAID, OBJECTID, ST_FIPS, Shape__Length, V_FLDLNID, V_GRIDID
+dataset Rain gauge Loc View | https://services6.arcgis.com/X1UaYt4598Pmo44L/arcgis/rest/services/Rain_gauge_Loc_View/FeatureServer/0
+candidate https://services6.arcgis.com/X1UaYt4598Pmo44L/arcgis/rest/services/Rain_gauge_Loc_View/FeatureServer/0
+note felder: MeterLocation, OBJECTID
+dataset FLOOD ZONE 2021 | https://services.arcgis.com/zuVYcGbo1L9xuj72/arcgis/rest/services/FLOOD_ZONE_2021/FeatureServer/0
+candidate https://services.arcgis.com/zuVYcGbo1L9xuj72/arcgis/rest/services/FLOOD_ZONE_2021/FeatureServer/0
+note felder: Id, OBJECTID, Shape__Area, Shape__Length, ZONE
+dataset Flood Polygons | https://services5.arcgis.com/QwKU2m39zaSlQgLF/arcgis/rest/services/Flood_Polygons/FeatureServer
+candidate-leer https://services5.arcgis.com/QwKU2m39zaSlQgLF/arcgis/rest/services/Flood_Polygons/FeatureServer
+note 0 rows, felder unbekannt
+dataset FEMA Flood | https://services.arcgis.com/12ZpLdNBJek66bmF/arcgis/rest/services/FEMA_Flood/FeatureServer
+candidate-leer https://services.arcgis.com/12ZpLdNBJek66bmF/arcgis/rest/services/FEMA_Flood/FeatureServer
+note 0 rows, felder unbekannt
+dataset Flood Map | https://services.arcgis.com/Zs2aNLFN00jrS4gG/arcgis/rest/services/FloodMap/FeatureServer/1
+candidate https://services.arcgis.com/Zs2aNLFN00jrS4gG/arcgis/rest/services/FloodMap/FeatureServer/1
+note felder: OBJECTID, Shape_Leng, Shape__Area, Shape__Length
+dataset Coastal Flood Hazard Zone 3 (100 years + Rapid SLR Scenario) | https://services2.arcgis.com/J8errK5dyxu7Xjf7/arcgis/rest/services/Northland_Coastal_Flood_Hazard_Zones/FeatureServer/3
+candidate https://services2.arcgis.com/J8errK5dyxu7Xjf7/arcgis/rest/services/Northland_Coastal_Flood_Hazard_Zones/FeatureServer/3
+note felder: CFHZ3, GlobalID, Model, Name, OBJECTID, Shape__Area, Shape__Length
+dataset Flood Gauges 11 to 22 Mar | https://services2.arcgis.com/jWXb6JPWtBjOCalT/arcgis/rest/services/Flood_Gauges_11_to_22_Mar/FeatureServer/0
+candidate https://services2.arcgis.com/jWXb6JPWtBjOCalT/arcgis/rest/services/Flood_Gauges_11_to_22_Mar/FeatureServer/0
+note felder: FID, STAGE, dec_lat_va, dec_long_v, drain_area, flood_nu, flood_stag, flow_dt, flow_va, major_fl_1, major_floo, moderate_1, moderate_f, peak_count, peak_max, peak_max_y, peak_rank, site_no
+dataset Local Flood Hazard Area | https://services6.arcgis.com/rHMUPKWdiOvdGXkw/arcgis/rest/services/Local_Flood_Hazard_Area/FeatureServer/0
+candidate https://services6.arcgis.com/rHMUPKWdiOvdGXkw/arcgis/rest/services/Local_Flood_Hazard_Area/FeatureServer/0
+note felder: GIS_Labels, Id, OBJECTID, STUDY, Shape__Area, Shape__Length, TRAKIT
+dataset FEMA Flood Zones | https://services2.arcgis.com/32siQkg0O6da8zFF/arcgis/rest/services/FEMA_Flood_Zones/FeatureServer/0
+candidate https://services2.arcgis.com/32siQkg0O6da8zFF/arcgis/rest/services/FEMA_Flood_Zones/FeatureServer/0
+note felder: AR_REVERT, AR_SUBTRV, BFE_REVERT, DEPTH, DEP_REVERT, DFIRM_ID, DUAL_ZONE, FLD_AR_ID, FLD_ZONE, LEN_UNIT, OBJECTID, SFHA_TF, SOURCE_CIT, STATIC_BFE, STUDY_TYP, Shape__Area, Shape__Length, VELOCITY
+dataset Flood Hazard Areas | https://services5.arcgis.com/9zdKz4c9IFXMrlCe/arcgis/rest/services/FloodPlainPrelim/FeatureServer/4
+candidate https://services5.arcgis.com/9zdKz4c9IFXMrlCe/arcgis/rest/services/FloodPlainPrelim/FeatureServer/4
+note felder: AR_Revert, BFE_Revert, DEP_Revert, Depth, Fld_Ar_ID, Fld_Zone, Floodway, LABEL, Len_Unit, OBJECTID, SFHA_TF, Source_Cit, Static_BFE, V_Datum, Vel_Unit, Velocity
+dataset Calgary Rain Gauge Locations | https://services2.arcgis.com/XSv3KNGfmrd1txPN/arcgis/rest/services/Calgary_Rain_Gauge_Locations/FeatureServer/0
+candidate https://services2.arcgis.com/XSv3KNGfmrd1txPN/arcgis/rest/services/Calgary_Rain_Gauge_Locations/FeatureServer/0
+note felder: FID, channel, easting, elevation, name, northing, quadrant, station
+dataset Flood Schemes | https://services5.arcgis.com/0sktPVp3t1LvXc9z/arcgis/rest/services/Flood_Schemes/FeatureServer/19
+candidate https://services5.arcgis.com/0sktPVp3t1LvXc9z/arcgis/rest/services/Flood_Schemes/FeatureServer/19
+note felder: Additional, Descriptio, OBJECTID, Title, Year
+dataset Rain and Stage Gauges | https://services.arcgis.com/ptvDyBs1KkcwzQNJ/arcgis/rest/services/Rain_and_Stage_Gauges/FeatureServer/2
+candidate https://services.arcgis.com/ptvDyBs1KkcwzQNJ/arcgis/rest/services/Rain_and_Stage_Gauges/FeatureServer/2
+note felder: AQUIFER, CASING_DEP, CONSTRUCTI, DIAMETER, DISCHARGE_, ELEVATION, ELEV_ACCUR, ELEV_DATUM, ELEV_METHO, ELEV_SOURC, ESTABLISH_, LAND_NET, LATDD, LATITUDE, LIFECYCLE, LOCATION_M, LOC_ACCURA, LOC_DATUM
+dataset Flood Observations | https://utility.arcgis.com/usrsvcs/servers/e2f7a2e1b1044f6893cd9eb85df256a8/rest/services/Flood_Documentation/Flood_Documentation_V2025_PublicViewer/FeatureServer/1
+candidate https://utility.arcgis.com/usrsvcs/servers/e2f7a2e1b1044f6893cd9eb85df256a8/rest/services/Flood_Documentation/Flood_Documentation_V2025_PublicViewer/FeatureServer/1
+note felder: ADDRESS, AFFECTED_AGRICULTURE, AFFECTED_AGRICULTURE_OTHER, AFFECTED_AREA, AHED_WS_NAME, CONTACT_EMAIL, CONTACT_NAME, CONTACT_NUMBER, COUNTY, EMAIL_ID, EMAIL_TEXT, EVENT_NAME, FLOODING_DATE, FLOOD_DEPTH, FLOOD_DEPTH_OTHER, FLOOD_DRIVER, FLOOD_FREQUENCY, FLOOD_FREQUENCY_OTHER
+dataset FEMA flood zone | https://portal.greenvilleillinois.com/cog_server/rest/services/test/FEMA_flood_zone/FeatureServer/0
+dead https://portal.greenvilleillinois.com/cog_server/rest/services/test/FEMA_flood_zone/FeatureServer/0
+note fetch-void
+dataset Flood Ways | https://services2.arcgis.com/L4ywDaHbEfVZyfpl/arcgis/rest/services/Flood_Ways/FeatureServer/0
+candidate https://services2.arcgis.com/L4ywDaHbEfVZyfpl/arcgis/rest/services/Flood_Ways/FeatureServer/0
+note felder: AR_REVERT, BFE_REVERT, DEPTH, DEP_REVERT, FLD_AR_ID, FLD_ZONE, FLOODWAY, GlobalID, LEN_UNIT, OBJECTID, SFHA_TF, SOURCE_CIT, STATIC_BFE, Shape__Area, Shape__Length, VELOCITY, VEL_UNIT, V_DATUM
+dataset Flood Fringe | https://services1.arcgis.com/9NvE8jKNWWlDGsUJ/arcgis/rest/services/Flood_Fringe_/FeatureServer/0
+candidate https://services1.arcgis.com/9NvE8jKNWWlDGsUJ/arcgis/rest/services/Flood_Fringe_/FeatureServer/0
+note felder: FID, GlobalID, Shape__Area, Shape__Length
+dataset 1 in 500 Year Flood Areas | https://services1.arcgis.com/7MBdlVpjqbfBhQer/arcgis/rest/services/1_500yr_Flood/FeatureServer/2
+candidate https://services1.arcgis.com/7MBdlVpjqbfBhQer/arcgis/rest/services/1_500yr_Flood/FeatureServer/2
+note felder: Line_Type, Location, OBJECTID, Shape__Area, Shape__Length
+dataset Flood Zones - Hosted | https://services.arcgis.com/3wFbqsFPLeKqOlIK/arcgis/rest/services/Flood_Zones_Hosted/FeatureServer/0
+decline https://services.arcgis.com/3wFbqsFPLeKqOlIK/arcgis/rest/services/Flood_Zones_Hosted/FeatureServer/0
+note arcgis-error-body
+dataset THIRA Scenario - Flood | https://services.arcgis.com/g1fRTDLeMgspWrYp/arcgis/rest/services/THIRA_Scenario_Flood/FeatureServer/0
+candidate https://services.arcgis.com/g1fRTDLeMgspWrYp/arcgis/rest/services/THIRA_Scenario_Flood/FeatureServer/0
+note felder: Name, OBJECTID, Type
+dataset Proposed Rain Gauge Locations Polygons | https://services1.arcgis.com/75p30vIdi46ekQmI/arcgis/rest/services/Proposed_Rain_Gauge_Locations_Polygons/FeatureServer/0
+candidate https://services1.arcgis.com/75p30vIdi46ekQmI/arcgis/rest/services/Proposed_Rain_Gauge_Locations_Polygons/FeatureServer/0
+note felder: FID, OBJECTID, RainGauge, SHAPE_STAr, SHAPE_STLe, Shape__Area, Shape__Length, fmtaddress, land_use, land_use_d, property_n, property_t, tpklpaprop
+dataset Flood Zone Parcels | https://services8.arcgis.com/OPmRdssd8jj0bT5H/arcgis/rest/services/Flood%20Zone%20Parcels/FeatureServer/0
+candidate https://services8.arcgis.com/OPmRdssd8jj0bT5H/arcgis/rest/services/Flood%20Zone%20Parcels/FeatureServer/0
+note felder: APN, CaseNoAdj, DateFirm, DateFirmAdj, Depth, FLD_ZONE, FeatureName, FirmAdj, FirmAdjType, FirmMapPanel, GID, OBJECTID, QuadName, QuadNo, STATIC_BFE, Shape__Area, Shape__Length, TS
+dataset Flood Data Notes Polygons | https://services-ap1.arcgis.com/152ojN3Ts9H3cdtl/arcgis/rest/services/Flood_Data_Notes_Polygons/FeatureServer
+candidate-leer https://services-ap1.arcgis.com/152ojN3Ts9H3cdtl/arcgis/rest/services/Flood_Data_Notes_Polygons/FeatureServer
+note 0 rows, felder unbekannt
+dataset Approx WujalWujal Flood Extent | https://services8.arcgis.com/Ds9GMj5UzejdJDO7/arcgis/rest/services/Approx_WujalWujal_Flood_Extent/FeatureServer/0
+candidate https://services8.arcgis.com/Ds9GMj5UzejdJDO7/arcgis/rest/services/Approx_WujalWujal_Flood_Extent/FeatureServer/0
+note felder: ACC_CODE, ALIAS_NAME, CA_AREA_SQ, COUNTY, COVER_TYP, EXCL_AREA, FEAT_NAME, LAC, LOC, LOCALITY, LOT, LOTPLAN, LOT_AREA, LOT_VOLUME, OBJECTID, OBJECTID_1, O_SHAPE_Ar, O_SHAPE_Le
+dataset FEMA Flood Insurance Map | https://services1.arcgis.com/XhE4Nx2bBPScQrhF/arcgis/rest/services/FEMA_Flood_Insurance_Map/FeatureServer
+candidate-leer https://services1.arcgis.com/XhE4Nx2bBPScQrhF/arcgis/rest/services/FEMA_Flood_Insurance_Map/FeatureServer
+note 0 rows, felder unbekannt
+dataset Flood Hazard Line | https://gis.eauclairecounty.gov/agsserver/rest/services/FEMA/FEMA_Flood_Hazard/FeatureServer/0
+dead https://gis.eauclairecounty.gov/agsserver/rest/services/FEMA/FEMA_Flood_Hazard/FeatureServer/0
+note fetch-void
+dataset Flood Hazard Area | https://gis.eauclairecounty.gov/agsserver/rest/services/FEMA/FEMA_Flood_Hazard/FeatureServer/2
+dead https://gis.eauclairecounty.gov/agsserver/rest/services/FEMA/FEMA_Flood_Hazard/FeatureServer/2
+note fetch-void
+dataset FEMA Flood Hazard | https://gis.eauclairecounty.gov/agsserver/rest/services/FEMA/FEMA_Flood_Hazard/FeatureServer
+dead https://gis.eauclairecounty.gov/agsserver/rest/services/FEMA/FEMA_Flood_Hazard/FeatureServer
+note fetch-void
+dataset FLOOD ZONE LAYER 2019 | https://services2.arcgis.com/g26Y0m7OCdjU0ObA/arcgis/rest/services/FLOOD_ZONE_LAYER_2019/FeatureServer/0
+candidate https://services2.arcgis.com/g26Y0m7OCdjU0ObA/arcgis/rest/services/FLOOD_ZONE_LAYER_2019/FeatureServer/0
+note felder: AREA_GEO, CENTROID_X, CENTROID_Y, EFF_DATE, FID_FEMAFIRMPANEL, FID_SF_FLD_DISSOLVE_1_Clip, FIRM_ID, FIRM_PAN, FLD_ZONE, FLOOD_ZONE_NAME, GlobalID, NW_LAT, NW_LONG, OBJECTID, PANEL, PANEL_TYP, PCOMM, PNP_REASON
+# done flood gauge
+# keyword coral bleaching
+dataset Buffer of Coral Bleaching 1 | https://services8.arcgis.com/r9beY2M9iDqCvoBt/arcgis/rest/services/Buffer%20of%20Coral%20Bleaching%201/FeatureServer/0
+candidate https://services8.arcgis.com/r9beY2M9iDqCvoBt/arcgis/rest/services/Buffer%20of%20Coral%20Bleaching%201/FeatureServer/0
+note felder: AnalysisArea, BUFF_DIST, Country, LAT, LONG, Location, OBJECTID, ORIG_FID, Regopm, Subregion
+dataset Coral Bleaching | https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Coral_Reef_Stations/FeatureServer
+candidate-leer https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Coral_Reef_Stations/FeatureServer
+note 0 rows, felder unbekannt
+dataset Coral Reef Watch TLyner | https://services8.arcgis.com/oTalEaSXAuyNT7xf/arcgis/rest/services/Coral_Reef_Watch_TLyner/FeatureServer
+candidate-leer https://services8.arcgis.com/oTalEaSXAuyNT7xf/arcgis/rest/services/Coral_Reef_Watch_TLyner/FeatureServer
+note 0 rows, felder unbekannt
+dataset Find Locations in Coral Bleaching High Severity | https://services1.arcgis.com/Hq25QaB70BoKJFTa/arcgis/rest/services/Find_Locations_in_Coral_Bleaching_High_Severity/FeatureServer/0
+candidate https://services1.arcgis.com/Hq25QaB70BoKJFTa/arcgis/rest/services/Find_Locations_in_Coral_Bleaching_High_Severity/FeatureServer/0
+note felder: BLEACHING_DURATION, BLEACHING_SEVERITY, CORAL_FAMILY, CORAL_SPECIES, COUNTRY, COUNTRY_CODE, DEPTH, ID, LAT, LOCATION, LON, MONTH, MORTALITY, MORTALITY_CODE, OBJECTID, OTHER_FACTORS, PERCENTAGE_AFFECTED, RECOVERY
+dataset Find Locations in Coral Bleaching   ReefBase   copy | https://services1.arcgis.com/Hq25QaB70BoKJFTa/arcgis/rest/services/Find_Locations_in_Coral_Bleaching___ReefBase___copy/FeatureServer/0
+candidate https://services1.arcgis.com/Hq25QaB70BoKJFTa/arcgis/rest/services/Find_Locations_in_Coral_Bleaching___ReefBase___copy/FeatureServer/0
+note felder: BLEACHING_DURATION, BLEACHING_SEVERITY, CORAL_FAMILY, CORAL_SPECIES, COUNTRY, COUNTRY_CODE, DEPTH, ID, LAT, LOCATION, LON, MONTH, MORTALITY, MORTALITY_CODE, OBJECTID, OTHER_FACTORS, PERCENTAGE_AFFECTED, RECOVERY
+dataset Coral Bleaching | https://services1.arcgis.com/sQOueNHZBxRJjRN3/arcgis/rest/services/Coral_Bleaching/FeatureServer/0
+candidate https://services1.arcgis.com/sQOueNHZBxRJjRN3/arcgis/rest/services/Coral_Bleaching/FeatureServer/0
+note felder: BLEACHING_DURATION, BLEACHING_SEVERITY, CORAL_FAMILY, CORAL_SPECIES, COUNTRY, COUNTRY_CODE, DEPTH, ID, LAT, LOCATION, LON, MONTH, MORTALITY, MORTALITY_CODE, OTHER_FACTORS, ObjectId, PERCENTAGE_AFFECTED, RECOVERY
+dataset Coral damage | https://services.arcgis.com/qchgHH9IIeiivY5M/arcgis/rest/services/Coral_damage_2/FeatureServer/0
+candidate-leer https://services.arcgis.com/qchgHH9IIeiivY5M/arcgis/rest/services/Coral_damage_2/FeatureServer/0
+note 0 rows, felder unbekannt
+dataset SA1 CoralBleaching  NECI 2023 | https://services7.arcgis.com/7EbO0sDrpxYJfbeG/arcgis/rest/services/SA1_CoralBleaching__NECI/FeatureServer/17
+candidate https://services7.arcgis.com/7EbO0sDrpxYJfbeG/arcgis/rest/services/SA1_CoralBleaching__NECI/FeatureServer/17
+note felder: CITATION, COMMENTS, CORAL_REGI, COUNTRY, DATA_POINT, DAY, DEPTH, FID, LATITUDE, LOCATION, LONGITUDE, MAX_PERCEN, MIN_PERCEN, MONTH, PERCENT_BL, PERCENT_MO, POC_E_MAIL, RECORD_ID
+dataset Coral Bleaching - Philippines | https://services.arcgis.com/Djjoop3BmZekEtDo/arcgis/rest/services/Coral_Bleaching/FeatureServer/0
+decline https://services.arcgis.com/Djjoop3BmZekEtDo/arcgis/rest/services/Coral_Bleaching/FeatureServer/0
+note arcgis-error-body
+dataset Coral Bleaching | https://services1.arcgis.com/x5wCko8UnSi4h0CB/arcgis/rest/services/Coral_Bleaching/FeatureServer/0
+candidate https://services1.arcgis.com/x5wCko8UnSi4h0CB/arcgis/rest/services/Coral_Bleaching/FeatureServer/0
+note felder: BLEACHING_DURATION, BLEACHING_SEVERITY, CORAL_FAMILY, CORAL_SPECIES, COUNTRY, COUNTRY_CODE, DEPTH, ID, LAT, LOCATION, LON, MONTH, MORTALITY, MORTALITY_CODE, OTHER_FACTORS, ObjectId, PERCENTAGE_AFFECTED, RECOVERY
+dataset Coral damage 2 | https://services.arcgis.com/qchgHH9IIeiivY5M/arcgis/rest/services/Coral_damage_2/FeatureServer
+candidate-leer https://services.arcgis.com/qchgHH9IIeiivY5M/arcgis/rest/services/Coral_damage_2/FeatureServer
+note 0 rows, felder unbekannt
+dataset Coral damage ATTACH | https://services.arcgis.com/qchgHH9IIeiivY5M/arcgis/rest/services/Coral_damage_2/FeatureServer/1
+candidate https://services.arcgis.com/qchgHH9IIeiivY5M/arcgis/rest/services/Coral_damage_2/FeatureServer/1
+note felder: COMMENTS, CreationDate, Creator, EditDate, Editor, GUID, GlobalID, OBJECTID
+dataset Coral Bleaching WFL1 | https://services1.arcgis.com/sQOueNHZBxRJjRN3/arcgis/rest/services/Coral_Bleaching_WFL1/FeatureServer
+candidate-leer https://services1.arcgis.com/sQOueNHZBxRJjRN3/arcgis/rest/services/Coral_Bleaching_WFL1/FeatureServer
+note 0 rows, felder unbekannt
+dataset Coral Bleaching WFL1 | https://services.arcgis.com/2j08Y1PuezhQEfCz/arcgis/rest/services/Coral_Bleaching_WFL1/FeatureServer
+candidate-leer https://services.arcgis.com/2j08Y1PuezhQEfCz/arcgis/rest/services/Coral_Bleaching_WFL1/FeatureServer
+note 0 rows, felder unbekannt
+dataset 2024 Validated Coral Bleaching Reports | https://services7.arcgis.com/poOcx60xJtGtoR7g/arcgis/rest/services/survey123_e65576f1b3f8414f8cd69b45aec3d0d3/FeatureServer/0
+candidate https://services7.arcgis.com/poOcx60xJtGtoR7g/arcgis/rest/services/survey123_e65576f1b3f8414f8cd69b45aec3d0d3/FeatureServer/0
+note felder: CreationDate, Creator, EditDate, Editor, bleach_patroller, coral_bleaching_severity, date_of_observation, depth_in_meters, globalid, name_of_dive_site, objectid, temperature
+dataset Summarize 200 mm in Donner Coral Bleaching 2000 2011 20km | https://services6.arcgis.com/7Uac3kw7U5xTu7Ju/arcgis/rest/services/Summarize%20200%20mm%20in%20Donner%20Coral%20Bleaching%202000%202011%2020km/FeatureServer/0
+decline https://services6.arcgis.com/7Uac3kw7U5xTu7Ju/arcgis/rest/services/Summarize%20200%20mm%20in%20Donner%20Coral%20Bleaching%202000%202011%2020km/FeatureServer/0
+note arcgis-error-body
+dataset Coral Bleaching global | https://services1.arcgis.com/sQOueNHZBxRJjRN3/arcgis/rest/services/Coral_Bleaching_global/FeatureServer/0
+candidate https://services1.arcgis.com/sQOueNHZBxRJjRN3/arcgis/rest/services/Coral_Bleaching_global/FeatureServer/0
+note felder: BLEACHING_DURATION, BLEACHING_SEVERITY, CORAL_FAMILY, CORAL_SPECIES, COUNTRY, COUNTRY_CODE, DEPTH, ID, LAT, LOCATION, LON, MONTH, MORTALITY, MORTALITY_CODE, OTHER_FACTORS, ObjectId, PERCENTAGE_AFFECTED, RECOVERY
+dataset 2024 Validated Coral Bleaching Reports results | https://services7.arcgis.com/poOcx60xJtGtoR7g/arcgis/rest/services/survey123_e65576f1b3f8414f8cd69b45aec3d0d3_results/FeatureServer/0
+candidate https://services7.arcgis.com/poOcx60xJtGtoR7g/arcgis/rest/services/survey123_e65576f1b3f8414f8cd69b45aec3d0d3_results/FeatureServer/0
+note felder: CreationDate, Creator, EditDate, Editor, bleach_patroller, coral_bleaching_severity, date_of_observation, depth_in_meters, globalid, name_of_dive_site, objectid, temperature
+dataset 2024 Validated Coral Bleaching Reports form | https://services7.arcgis.com/poOcx60xJtGtoR7g/arcgis/rest/services/survey123_e65576f1b3f8414f8cd69b45aec3d0d3_form/FeatureServer/0
+decline https://services7.arcgis.com/poOcx60xJtGtoR7g/arcgis/rest/services/survey123_e65576f1b3f8414f8cd69b45aec3d0d3_form/FeatureServer/0
+note arcgis-error-body
+dataset Guam Coral Bleaching data | https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/Guam_Coral_Bleaching_data/FeatureServer/0
+candidate https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/Guam_Coral_Bleaching_data/FeatureServer/0
+note felder: BLEACHING_CODE_ROW_ALTERED__Y_N, BLEACHING_SEVERITY_CODE, BLEACHING_SEVERITY_CODE_FIXED, BLEACHING_TO_USE, BLEACHING_YEAR, BLEACHING_YEAR_MAX_DHW, CITATION, COMMENTS, COUNTRY, DAILY_DHW, DATA_ID, DATA_POINT_OF_CONTACT, DATA_TYPE_CODE, DATE, DATE_BLEACHING_YEAR_DHW_MAX, DHW_OFFSET, DHW_TO_USE, F__DAYS_HS__1
+# done coral bleaching
+# keyword whale tracking
+dataset Find Locations in False Killer Whale Tracking | https://services4.arcgis.com/oNj7i3UB9cjxvxwj/arcgis/rest/services/Find%20Locations%20in%20False%20Killer%20Whale%20Tracking/FeatureServer/0
+candidate https://services4.arcgis.com/oNj7i3UB9cjxvxwj/arcgis/rest/services/Find%20Locations%20in%20False%20Killer%20Whale%20Tracking/FeatureServer/0
+note felder: OBJECTID, animal, date_GMT, latitude, longitud, time_GMT
+dataset False Killer Whales Inside Whale Sanctuary | https://services4.arcgis.com/oNj7i3UB9cjxvxwj/arcgis/rest/services/False%20Killer%20Whales%20Inside%20Whale%20Sanctuary/FeatureServer/0
+candidate https://services4.arcgis.com/oNj7i3UB9cjxvxwj/arcgis/rest/services/False%20Killer%20Whales%20Inside%20Whale%20Sanctuary/FeatureServer/0
+note felder: OBJECTID, animal, date_GMT, latitude, longitud, time_GMT
+dataset whale test1 | https://services3.arcgis.com/yqaYkpXDZlwz1t6r/arcgis/rest/services/whale_test1/FeatureServer/0
+candidate-leer https://services3.arcgis.com/yqaYkpXDZlwz1t6r/arcgis/rest/services/whale_test1/FeatureServer/0
+note 0 rows, felder unbekannt
+dataset Killer Whale (southern density) | https://services9.arcgis.com/rLkpFp1GxgPDr9HL/arcgis/rest/services/Killer/FeatureServer/0
+candidate https://services9.arcgis.com/rLkpFp1GxgPDr9HL/arcgis/rest/services/Killer/FeatureServer/0
+note felder: Data_Source, Data_Title, Date_Updated, Date_of_Publication, Density, Description, Metadata, More_Information, OBJECTID, Point_of_Contact, Shape__Area, Shape__Length, gridcode
+dataset Whale Track Oct25 2023 | https://services1.arcgis.com/TLdVcW1aE8FOKj1g/arcgis/rest/services/Whale_Track_Oct25_2023/FeatureServer
+candidate-leer https://services1.arcgis.com/TLdVcW1aE8FOKj1g/arcgis/rest/services/Whale_Track_Oct25_2023/FeatureServer
+note 0 rows, felder unbekannt
+dataset Whale 221422 | https://services1.arcgis.com/TLdVcW1aE8FOKj1g/arcgis/rest/services/Whale_Track_Oct25_2023/FeatureServer/1
+candidate https://services1.arcgis.com/TLdVcW1aE8FOKj1g/arcgis/rest/services/Whale_Track_Oct25_2023/FeatureServer/1
+note felder: DDLat, DDLon, OBJECTID, date, id, lat, lc, lon
+dataset Whale 221420 | https://services1.arcgis.com/TLdVcW1aE8FOKj1g/arcgis/rest/services/Whale_Track_Oct25_2023/FeatureServer/0
+candidate https://services1.arcgis.com/TLdVcW1aE8FOKj1g/arcgis/rest/services/Whale_Track_Oct25_2023/FeatureServer/0
+note felder: DDLat, DDLon, OBJECTID, date, id, lat, lc, lon
+dataset Whale Tracklines.csv | https://services1.arcgis.com/TLdVcW1aE8FOKj1g/arcgis/rest/services/Whale_Track_Oct25_2023/FeatureServer/4
+candidate https://services1.arcgis.com/TLdVcW1aE8FOKj1g/arcgis/rest/services/Whale_Track_Oct25_2023/FeatureServer/4
+note felder: OBJECTID, date, id, lat, lc, lon
+dataset Whale 222172 | https://services1.arcgis.com/TLdVcW1aE8FOKj1g/arcgis/rest/services/Whale_Track_Oct25_2023/FeatureServer/3
+candidate https://services1.arcgis.com/TLdVcW1aE8FOKj1g/arcgis/rest/services/Whale_Track_Oct25_2023/FeatureServer/3
+note felder: DDLat, DDLon, OBJECTID, date, id, lat, lc, lon
+dataset Whale 221423 | https://services1.arcgis.com/TLdVcW1aE8FOKj1g/arcgis/rest/services/Whale_Track_Oct25_2023/FeatureServer/2
+candidate https://services1.arcgis.com/TLdVcW1aE8FOKj1g/arcgis/rest/services/Whale_Track_Oct25_2023/FeatureServer/2
+note felder: DDLat, DDLon, OBJECTID, date, id, lat, lc, lon
+dataset False Killer Whale Tracking | https://services4.arcgis.com/oNj7i3UB9cjxvxwj/arcgis/rest/services/False_Killer_Whale_Tracking/FeatureServer/0
+candidate https://services4.arcgis.com/oNj7i3UB9cjxvxwj/arcgis/rest/services/False_Killer_Whale_Tracking/FeatureServer/0
+note felder: FID, animal, date_GMT, latitude, longitud, time_GMT
+dataset Grey Whale (southern density) | https://services9.arcgis.com/rLkpFp1GxgPDr9HL/arcgis/rest/services/GreyWhaleSDensity/FeatureServer/0
+candidate https://services9.arcgis.com/rLkpFp1GxgPDr9HL/arcgis/rest/services/GreyWhaleSDensity/FeatureServer/0
+note felder: Data_Source, Data_Title, Date_Updated, Date_of_Publication, Density, Description, Metadata, More_Information, OBJECTID, Point_of_Contact, Shape__Area, Shape__Length, gridcode
+dataset Killer Whale entanglements 2023 West Coast | https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/Killer_Whales/FeatureServer/0
+candidate https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/Killer_Whales/FeatureServer/0
+note felder: Alive_or_Dead, County, Entanglement_Fishery, Entanglement_Removed, Entanglement_Response, FID, Latitude, Longitude, Month, Species
+dataset Fig 58. Fin whale management stocks | https://services-eu1.arcgis.com/0uK40YtWoUkQMlYW/arcgis/rest/services/Fig58Finwhalemanagementstocks/FeatureServer/0
+candidate https://services-eu1.arcgis.com/0uK40YtWoUkQMlYW/arcgis/rest/services/Fig58Finwhalemanagementstocks/FeatureServer/0
+note felder: Shape__Length, objectid
+dataset Fig 56. Humpback whale | https://services-eu1.arcgis.com/0uK40YtWoUkQMlYW/arcgis/rest/services/Fig56Humpbackwhale/FeatureServer/0
+candidate https://services-eu1.arcgis.com/0uK40YtWoUkQMlYW/arcgis/rest/services/Fig56Humpbackwhale/FeatureServer/0
+note felder: dateandtime, flocksize, latdecdeg, londecdeg, name, objectid, obsperiod_guid, sighting_guid, speciescode, survey_guid, transect_guid
+dataset Fig 56. Killer whale | https://services-eu1.arcgis.com/0uK40YtWoUkQMlYW/arcgis/rest/services/Fig56Killerwhale/FeatureServer/0
+candidate https://services-eu1.arcgis.com/0uK40YtWoUkQMlYW/arcgis/rest/services/Fig56Killerwhale/FeatureServer/0
+note felder: dateandtime, flocksize, latdecdeg, londecdeg, name, objectid, obsperiod_guid, sighting_guid, speciescode, survey_guid, transect_guid
+dataset Fig 56. Fin whale | https://services-eu1.arcgis.com/0uK40YtWoUkQMlYW/arcgis/rest/services/Fig56Finwhale/FeatureServer/0
+candidate https://services-eu1.arcgis.com/0uK40YtWoUkQMlYW/arcgis/rest/services/Fig56Finwhale/FeatureServer/0
+note felder: dateandtime, flocksize, latdecdeg, londecdeg, name, objectid, obsperiod_guid, sighting_guid, speciescode, survey_guid, transect_guid
+dataset Fig 56. Blue whale | https://services-eu1.arcgis.com/0uK40YtWoUkQMlYW/arcgis/rest/services/Fig56Bluewhale/FeatureServer/0
+candidate https://services-eu1.arcgis.com/0uK40YtWoUkQMlYW/arcgis/rest/services/Fig56Bluewhale/FeatureServer/0
+note felder: dateandtime, flocksize, latdecdeg, londecdeg, name, objectid, obsperiod_guid, sighting_guid, speciescode, survey_guid, transect_guid
+dataset Fig. 56 Bowhead whale | https://services-eu1.arcgis.com/0uK40YtWoUkQMlYW/arcgis/rest/services/Fig56Bowheadwhale/FeatureServer/0
+candidate https://services-eu1.arcgis.com/0uK40YtWoUkQMlYW/arcgis/rest/services/Fig56Bowheadwhale/FeatureServer/0
+note felder: dateandtime, flocksize, latdecdeg, londecdeg, name, objectid, obsperiod_guid, sighting_guid, speciescode, survey_guid, transect_guid
+dataset Fig 58. Minke whale management stocks | https://services-eu1.arcgis.com/0uK40YtWoUkQMlYW/arcgis/rest/services/Fig58Minkewhalemanagementstocks/FeatureServer/0
+candidate https://services-eu1.arcgis.com/0uK40YtWoUkQMlYW/arcgis/rest/services/Fig58Minkewhalemanagementstocks/FeatureServer/0
+note felder: Shape__Length, objectid
+dataset Fig 56. Unspecified baleen whale | https://services-eu1.arcgis.com/0uK40YtWoUkQMlYW/arcgis/rest/services/Fig56Unspecifiedbaleenwhale/FeatureServer/0
+candidate https://services-eu1.arcgis.com/0uK40YtWoUkQMlYW/arcgis/rest/services/Fig56Unspecifiedbaleenwhale/FeatureServer/0
+note felder: dateandtime, flocksize, latdecdeg, londecdeg, name, objectid, obsperiod_guid, sighting_guid, speciescode, survey_guid, transect_guid
+dataset Tracking GPS | https://services6.arcgis.com/p5Z3MVUBsdqR8RU3/arcgis/rest/services/Tracking_ElPrat/FeatureServer/2
+candidate https://services6.arcgis.com/p5Z3MVUBsdqR8RU3/arcgis/rest/services/Tracking_ElPrat/FeatureServer/2
+note felder: Accuracy, CreationDate, Creator, OBJECTID
+dataset Tracking EGNOS | https://services6.arcgis.com/p5Z3MVUBsdqR8RU3/arcgis/rest/services/Tracking_ElPrat/FeatureServer/0
+candidate https://services6.arcgis.com/p5Z3MVUBsdqR8RU3/arcgis/rest/services/Tracking_ElPrat/FeatureServer/0
+note felder: Accuracy, CreationDate, Creator, OBJECTID
+dataset Tracking ElPrat | https://services6.arcgis.com/p5Z3MVUBsdqR8RU3/arcgis/rest/services/Tracking_ElPrat/FeatureServer
+candidate-leer https://services6.arcgis.com/p5Z3MVUBsdqR8RU3/arcgis/rest/services/Tracking_ElPrat/FeatureServer
+note 0 rows, felder unbekannt
+dataset Whale Protection Areas in the GBRMP | https://services.arcgis.com/82C0E4OYu0hT3hkh/arcgis/rest/services/Whale_Protection_Areas_in_the_GBRMP/FeatureServer/0
+candidate https://services.arcgis.com/82C0E4OYu0hT3hkh/arcgis/rest/services/Whale_Protection_Areas_in_the_GBRMP/FeatureServer/0
+note felder: AREA_DESCR, AREA_TYPE, FID, GLOBALID, SHAPE_LENG, Shape_Area, Shape_Le_1, Shape__Area, Shape__Length, UNIQUE_ID
+dataset GPS Tracking LTrinidad | https://services.arcgis.com/Fu2oOWg1Aw7azh41/arcgis/rest/services/GPS_Tracking_LTrinidad/FeatureServer/0
+candidate https://services.arcgis.com/Fu2oOWg1Aw7azh41/arcgis/rest/services/GPS_Tracking_LTrinidad/FeatureServer/0
+note felder: Date1, Date2, DateText, Lat, Long_, OBJECTID, Tracked
+dataset North Pacific Blue Whale Migration | https://services7.arcgis.com/iFGeGXTAJXnjq0YN/arcgis/rest/services/Blue_Whale_Migration/FeatureServer
+candidate-leer https://services7.arcgis.com/iFGeGXTAJXnjq0YN/arcgis/rest/services/Blue_Whale_Migration/FeatureServer
+note 0 rows, felder unbekannt
+dataset Whale Shark Abundance Data | https://services1.arcgis.com/DSJq1MrJ8wkZdxYE/arcgis/rest/services/Whale_Shark/FeatureServer/0
+candidate https://services1.arcgis.com/DSJq1MrJ8wkZdxYE/arcgis/rest/services/Whale_Shark/FeatureServer/0
+note felder: Field, OBJECTID, behavior, class, collectionID, country, datasetID, datasetName, day, eventDate, fieldNotes, institutionID, lifeStage, locality, locationID, month, order_, organismName
+dataset Box 11 fig 2 Bowhead whale positions | https://services-eu1.arcgis.com/0uK40YtWoUkQMlYW/arcgis/rest/services/Box_11__fig_2___Bowhead_whale_positions/FeatureServer/0
+candidate https://services-eu1.arcgis.com/0uK40YtWoUkQMlYW/arcgis/rest/services/Box_11__fig_2___Bowhead_whale_positions/FeatureServer/0
+note felder: fid, month, year
+dataset Humpback Whale Abundance Data | https://services1.arcgis.com/DSJq1MrJ8wkZdxYE/arcgis/rest/services/Humpback_Whale/FeatureServer/5
+candidate https://services1.arcgis.com/DSJq1MrJ8wkZdxYE/arcgis/rest/services/Humpback_Whale/FeatureServer/5
+note felder: Field1, OBJECTID, class, country, datasetName, day, eventDate, lifeStage, locality, month, order_, reproductiveCondition, rightsHolder, scientificName, sex, stateProvince, year
+dataset Gray Whale UME Stranding Locations View | https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/Gray_Whale_UME_Stranding_Locations_Hosted_View/FeatureServer/0
+candidate https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/Gray_Whale_UME_Stranding_Locations_Hosted_View/FeatureServer/0
+note felder: Carcass_Condition, Common_Name, Country, Field_Number, Latitude, Longitude, Month, OBJECTID, Obs_Date, Sex, State_Province, Year, updated
+dataset Gray Whale entanglements 2023 West Coast | https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/2023_gray_whales/FeatureServer/0
+candidate https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/2023_gray_whales/FeatureServer/0
+note felder: Alive_or_Dead, County, Entanglement_Fishery, Entanglement_Removed, Entanglement_Response, FID, Latitude, Longitude, Month, Species, column9
+dataset Killer Whale - Annual Distribution | https://geospatial.mpi.govt.nz/portal/rest/services/Hosted/Marine_Mammal_Species_Distribution_MML/FeatureServer/5
+candidate https://geospatial.mpi.govt.nz/portal/rest/services/Hosted/Marine_Mammal_Species_Distribution_MML/FeatureServer/5
+note felder: SHAPE__Area, SHAPE__Length, accuracyexplanation, alert, alertwarning, distributiontype, endangeredstatus, featurekey, habitattype, keywords, layergroupkey, layeridentifier, layerkey, layername, metadatakey, objectid, objectname, objectreferences
+dataset Whale Buffer Zone | https://services1.arcgis.com/B4MnusZHL3vmqU3t/arcgis/rest/services/Whale_Buffer_Zone/FeatureServer/1
+candidate https://services1.arcgis.com/B4MnusZHL3vmqU3t/arcgis/rest/services/Whale_Buffer_Zone/FeatureServer/1
+note felder: Area, BUFF_DIST, COMNAME, Central_Am, DPS, Mex_Cen_DP, Mex_WNP_DP, Mexico_DPS, OBJECTID, ORIG_FID, Region, SCINAME, Shape__Area, Shape__Length, WNP_DPS
+dataset Bowhead Whale Fox Basin | https://services.arcgis.com/95RHLhmbdkjxW66F/arcgis/rest/services/Bowhead_whale_Foxe_Basin/FeatureServer/0
+candidate https://services.arcgis.com/95RHLhmbdkjxW66F/arcgis/rest/services/Bowhead_whale_Foxe_Basin/FeatureServer/0
+note felder: ObjectId, argos_lc, event_id, individual_local_identifier, individual_taxon_canonical_name, location_lat, location_long, sensor_type, study_name, tag_local_identifier, timestamp, visible
+dataset White Shark Tracking view | https://services5.arcgis.com/JZPISF0sj1UatnZ8/arcgis/rest/services/White_Shark_Tracking_view/FeatureServer/0
+candidate https://services5.arcgis.com/JZPISF0sj1UatnZ8/arcgis/rest/services/White_Shark_Tracking_view/FeatureServer/0
+note felder: FID, Latitude, Longitude, Maturity_a, Record__, Sex, Shark_Name, individual, tag_local_, timestamp
+dataset E1 Humpback Whale Mean Daily Locations, 2008-2011 | https://services.arcgis.com/3wgo1qnFL7YLB8lT/arcgis/rest/services/E1_CalculatedDailyLocationsSSM_2008_11_ver1/FeatureServer/0
+candidate https://services.arcgis.com/3wgo1qnFL7YLB8lT/arcgis/rest/services/E1_CalculatedDailyLocationsSSM_2008_11_ver1/FeatureServer/0
+note felder: ArgosPTT, DATE, Month, OBJECTID, XCoord, YCoord, animal_life_stage, animal_sex, deploy_difference_days, deploy_location, deploy_off_date, deploy_on_date, deploy_on_latitude, deploy_on_longitude
+dataset Whale Habitats in Alaska | https://services1.arcgis.com/B4MnusZHL3vmqU3t/arcgis/rest/services/Whale_Habitats_in_Alaska/FeatureServer/6
+candidate https://services1.arcgis.com/B4MnusZHL3vmqU3t/arcgis/rest/services/Whale_Habitats_in_Alaska/FeatureServer/6
+note felder: Area, COMNAME, Central_Am, DPS, Mex_Cen_DP, Mex_WNP_DP, Mexico_DPS, OBJECTID, Region, SCINAME, Shape__Area, Shape__Length, WNP_DPS
+dataset Gyrfalcon Movement Tracking | https://services1.arcgis.com/PsDtSYIjNsyfjwcX/arcgis/rest/services/Gyrfalcon_Movement_Tracking/FeatureServer
+candidate-leer https://services1.arcgis.com/PsDtSYIjNsyfjwcX/arcgis/rest/services/Gyrfalcon_Movement_Tracking/FeatureServer
+note 0 rows, felder unbekannt
+dataset  2002-2004 BOEM Sperm Whale Seismic Study (SWSS) S-Tag cetacean sightings  | https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/obis_seamap_dataset_903_points/FeatureServer/4
+candidate https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/obis_seamap_dataset_903_points/FeatureServer/4
+note felder: OBJECTID, adults, bearing, behaviour1, behaviour2, behaviour3, birds, calves, common_name, cue, dataset_id, datastatus, date_time, distance, ds_type, end_time, gps_heading, gpserror
+dataset Tracking Points Reyes Cabalgata Coruña | https://utility.arcgis.com/usrsvcs/servers/c74f9b0aeb0d44a086154b4f09147586/rest/services/71611a82df224df898b723dd96a4a0c2_Track_View/FeatureServer/1
+decline https://utility.arcgis.com/usrsvcs/servers/c74f9b0aeb0d44a086154b4f09147586/rest/services/71611a82df224df898b723dd96a4a0c2_Track_View/FeatureServer/1
+note arcgis-error-body
+dataset Box 11 fig 6 Bowhead whale seasonal home ranges | https://services-eu1.arcgis.com/0uK40YtWoUkQMlYW/arcgis/rest/services/Box_11__fig_6___Bowhead_whale_seasonal_home_ranges/FeatureServer/0
+candidate https://services-eu1.arcgis.com/0uK40YtWoUkQMlYW/arcgis/rest/services/Box_11__fig_6___Bowhead_whale_seasonal_home_ranges/FeatureServer/0
+note felder: Shape__Area, Shape__Length, area, diskowseas, fid, probabilit
+dataset UWI Campus Tracking Layer | https://services1.arcgis.com/NUSHso3rgWERZOFF/arcgis/rest/services/UWICampus_Group2_TrackingLayer/FeatureServer/0
+candidate https://services1.arcgis.com/NUSHso3rgWERZOFF/arcgis/rest/services/UWICampus_Group2_TrackingLayer/FeatureServer/0
+note felder: Accuracy, CreationDate, Creator, EditDate, Editor, GlobalID, OBJECTID
+dataset Whale Watching [Gotham Whale]: Humpback Whale 2011-2016 | https://services2.arcgis.com/okXm0pb6aWH6XOGI/arcgis/rest/services/Whale_Watching__Gotham_Whale___Humpback_Whale_2011_2016/FeatureServer/0
+candidate https://services2.arcgis.com/okXm0pb6aWH6XOGI/arcgis/rest/services/Whale_Watching__Gotham_Whale___Humpback_Whale_2011_2016/FeatureServer/0
+note felder: ACCDATE, ACCNO, ACCTYPE, COMNAME, FEED, Field16, Field17, Field18, Field19, Field20, Field6, GENSPEC, HOLDAREA, ID, LATITUDE, LONGITUDE, MULTIPLE, Month
+dataset whale  | https://services6.arcgis.com/hvDKfZPbo9U6dyyo/arcgis/rest/services/whale_/FeatureServer/0
+candidate https://services6.arcgis.com/hvDKfZPbo9U6dyyo/arcgis/rest/services/whale_/FeatureServer/0
+note felder: AREASqKm, CHSTATUS, COMNAME, CREATEDATE, ECFR, EFFECTDATE, FID, FR, HABTYPE, ID, INPORTURL, LEADOFFICE, LISTENTITY, LISTSTATUS, NOTES, PUBDATE, SCIENAME, Shape__Area
+dataset MAES Active Tracking 2014 | https://services.arcgis.com/DzkBIV3ztulDZBgc/arcgis/rest/services/ActiveTrac2014/FeatureServer/0
+candidate https://services.arcgis.com/DzkBIV3ztulDZBgc/arcgis/rest/services/ActiveTrac2014/FeatureServer/0
+note felder: Antenna, CrewLead, EndTracLat, EndTracLon, EndTracTim, GlobalID, Notes, OBJECTID, ProjName, ProjType, ProjectID, ReceiverID, ReceiverTy, S, SampDate, StartTra00, StartTracL, StartTracT
+dataset E1 Humpback Whale Mean Daily Locations, 2008-2011 | https://services.arcgis.com/3wgo1qnFL7YLB8lT/arcgis/rest/services/HBWDailyLoc_Merged_Joined/FeatureServer/114
+candidate https://services.arcgis.com/3wgo1qnFL7YLB8lT/arcgis/rest/services/HBWDailyLoc_Merged_Joined/FeatureServer/114
+note felder: DeploymentDetails_Argos_PTT, DeploymentDetails_Deploy_date, DeploymentDetails_Deploy_latitu, DeploymentDetails_Deploy_locati, DeploymentDetails_Deploy_longit, DeploymentDetails_Deploy_year, DeploymentDetails_End_date, DeploymentDetails_Initial_Activ, DeploymentDetails_Maturity, DeploymentDetails_Movement_capt, DeploymentDetails_Number_of_loc, DeploymentDetails_OBJECTID, DeploymentDetails_Retained_for_, DeploymentDetails_SSM_derived_t, DeploymentDetails_Sex, DeploymentDetails_Stage_of_annu, DeploymentDetails_Tag_programmi, DeploymentDetails_Tracking_dura
+dataset Buffer   Humpback Whale Migration | https://services8.arcgis.com/3Rz4sVvwsvwrkMv6/arcgis/rest/services/Buffer___Humpback_Whale_Migration/FeatureServer/0
+decline https://services8.arcgis.com/3Rz4sVvwsvwrkMv6/arcgis/rest/services/Buffer___Humpback_Whale_Migration/FeatureServer/0
+note arcgis-error-body
+dataset E1 Humpback Whale Satellite Tagging Deployments, 2008-10 | https://services.arcgis.com/3wgo1qnFL7YLB8lT/arcgis/rest/services/DeploymentDetailsAAS400/FeatureServer/1
+candidate https://services.arcgis.com/3wgo1qnFL7YLB8lT/arcgis/rest/services/DeploymentDetailsAAS400/FeatureServer/1
+note felder: Argos_PTT, Deploy_date, Deploy_latitude, Deploy_location, Deploy_longitude, Deploy_year, End_date, Initial_Activity, Maturity, Movement_captured, Number_of_locations, OBJECTID, Retained_for_SSM, SSM_derived_track_distance_esti, Sex, Stage_of_annual_cycle_upon_depl, Tag_programming, Tracking_duration__days_
+dataset Buffer of Whale Watch 2018 | https://services5.arcgis.com/cuQhNeNcUrgLmYGD/arcgis/rest/services/Buffer%20of%20Whale%20Watch%202018/FeatureServer/1
+candidate https://services5.arcgis.com/cuQhNeNcUrgLmYGD/arcgis/rest/services/Buffer%20of%20Whale%20Watch%202018/FeatureServer/1
+note felder: AnalysisArea, BUFF_DIST, GlobalID, OBJECTID, ORIG_FID, Species, curated, description, observationdate, observer
+dataset Buffer of Whale Watch 2018 | https://services5.arcgis.com/cuQhNeNcUrgLmYGD/arcgis/rest/services/Buffer%20of%20Whale%20Watch%202018/FeatureServer/0
+candidate https://services5.arcgis.com/cuQhNeNcUrgLmYGD/arcgis/rest/services/Buffer%20of%20Whale%20Watch%202018/FeatureServer/0
+note felder: AnalysisArea, BUFF_DIST, GlobalID, OBJECTID, ORIG_FID, Species, curated, description, observationdate, observer
+dataset Southern Right Whale - Annual Distribution | https://geospatial.mpi.govt.nz/portal/rest/services/Hosted/Marine_Mammal_Species_Distribution_MML/FeatureServer/10
+candidate https://geospatial.mpi.govt.nz/portal/rest/services/Hosted/Marine_Mammal_Species_Distribution_MML/FeatureServer/10
+note felder: SHAPE__Area, SHAPE__Length, accuracyexplanation, alert, alertwarning, distributiontype, endangeredstatus, featurekey, habitattype, keywords, layergroupkey, layeridentifier, layerkey, layername, metadatakey, objectid, objectname, objectreferences
+dataset Burlington Mammal Tracking Project | https://services1.arcgis.com/1bO0c7PxQdsGidPK/arcgis/rest/services/Burlington_Mammal_Tracking_Project/FeatureServer/0
+candidate https://services1.arcgis.com/1bO0c7PxQdsGidPK/arcgis/rest/services/Burlington_Mammal_Tracking_Project/FeatureServer/0
+note felder: GlobalID, OBJECTID, common_nam, coordinate, descriptio, iconic_tax, id, latitude, longitude, observed_o, positional, positionin, quality_gr, scientific, taxon_geop, taxon_id, time_obser, url
+dataset Buffer of Whale Watch 2018 | https://services5.arcgis.com/cuQhNeNcUrgLmYGD/arcgis/rest/services/Buffer%20of%20Whale%20Watch%202018/FeatureServer
+candidate-leer https://services5.arcgis.com/cuQhNeNcUrgLmYGD/arcgis/rest/services/Buffer%20of%20Whale%20Watch%202018/FeatureServer
+note 0 rows, felder unbekannt
+dataset Humpback Whale Density | https://services6.arcgis.com/4XnW0LugjJEsZM3v/arcgis/rest/services/Humpback_Whale_Density/FeatureServer/0
+candidate https://services6.arcgis.com/4XnW0LugjJEsZM3v/arcgis/rest/services/Humpback_Whale_Density/FeatureServer/0
+note felder: ABUNDANCE, AREA_SQKM, DENSITY, FID, MODEL_TYPE, MODEL_VERS, MONTH_NAME, MONTH_NUMB, NAEMO_VERS, SEASON, SPECIES, SPECIES_2, STRATUM, STUDY, Shape_Area, Shape_Leng, Shape__Area, Shape__Length
+dataset Whale Watching | https://services3.arcgis.com/dGkWQRTbdsLW3GnN/arcgis/rest/services/Whale_Watching/FeatureServer/0
+candidate https://services3.arcgis.com/dGkWQRTbdsLW3GnN/arcgis/rest/services/Whale_Watching/FeatureServer/0
+note felder: Description, Location, ObjectId, Season, Whale_type, X, Y, imageURL

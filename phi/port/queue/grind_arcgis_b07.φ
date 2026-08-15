@@ -1,0 +1,1257 @@
+# grind arcgis b07 (2026-08-15) — keywords: fire detection, drought, evapotranspiration, groundwater, water temperature, ice extent
+# keyword fire detection
+# keyword drought
+dataset Drought | https://services3.arcgis.com/0Fs3HcaFfvzXvm7w/arcgis/rest/services/Indicator_Drought/FeatureServer/0
+candidate https://services3.arcgis.com/0Fs3HcaFfvzXvm7w/arcgis/rest/services/Indicator_Drought/FeatureServer/0
+note felder: Indicator_Integer, Indicator_Name, Indicator_Value, Link, Notes, OBJECTID, Source, Timeseries_Data, Timeseries_Date, Timeseries_Label, Topic, d1, d10, d11, d12, d13, d14, d15
+dataset CA County Drought Designation | https://services.arcgis.com/BLN4oKB0N1YSgvY8/arcgis/rest/services/CA_County_Drought_Designation/FeatureServer/0
+candidate https://services.arcgis.com/BLN4oKB0N1YSgvY8/arcgis/rest/services/CA_County_Drought_Designation/FeatureServer/0
+note felder: ADMIN_REG, CONAME, EM_PROC, Law_Mutaid, MUT_AID, NAME, OBJECTID, OBJECTID_1, Shape__Area, Shape__Length, USDA_PNDA
+dataset 2015 California Drought | https://services1.arcgis.com/ZGrptGlLV2IILABw/arcgis/rest/services/2015_California_Drought/FeatureServer/0
+candidate https://services1.arcgis.com/ZGrptGlLV2IILABw/arcgis/rest/services/2015_California_Drought/FeatureServer/0
+note felder: Conditions, DM, Description, Droughtlvl, Intensity, OBJECTID, OBJECTID_1, OBJECTID_12, Possible_Impacts, Shape_Le_1, Shape_Leng
+dataset HMP Drought | https://services1.arcgis.com/1Cfo0re3un0w6a30/arcgis/rest/services/HMP_Drought/FeatureServer/0
+candidate https://services1.arcgis.com/1Cfo0re3un0w6a30/arcgis/rest/services/HMP_Drought/FeatureServer/0
+note felder: All_Weeks, DROUGHT, OBJECTID, OBJECTID_1, Pct_Drough, Shape_Leng, Shape__Area, Shape__Length, TRACT
+dataset Drought Intensity | https://services.arcgis.com/mMUesHYPkXjaFGfS/arcgis/rest/services/Canada_USA_Drought_Monitor/FeatureServer/0
+candidate https://services.arcgis.com/mMUesHYPkXjaFGfS/arcgis/rest/services/Canada_USA_Drought_Monitor/FeatureServer/0
+note felder: DM, OBJECTID, OBS_DATE, SHAPE__Area, SHAPE__Length, SOURCE
+dataset Severe Drought | https://services6.arcgis.com/HvbabY0grzgZwGW1/arcgis/rest/services/Oregon_Drought_Conditions_/FeatureServer/1
+candidate https://services6.arcgis.com/HvbabY0grzgZwGW1/arcgis/rest/services/Oregon_Drought_Conditions_/FeatureServer/1
+note felder: OBJECTID, Shape__Area, Shape__Length
+dataset Extreme Drought | https://services6.arcgis.com/HvbabY0grzgZwGW1/arcgis/rest/services/Oregon_Drought_Conditions_/FeatureServer/0
+candidate https://services6.arcgis.com/HvbabY0grzgZwGW1/arcgis/rest/services/Oregon_Drought_Conditions_/FeatureServer/0
+note felder: OBJECTID, Shape__Area, Shape__Length
+dataset Seasonal Drought Outlook Example | https://services5.arcgis.com/0OTVzJS4K09zlixn/arcgis/rest/services/Seasonal_Drought_Outlook_Example/FeatureServer/0
+candidate https://services5.arcgis.com/0OTVzJS4K09zlixn/arcgis/rest/services/Seasonal_Drought_Outlook_Example/FeatureServer/0
+note felder: FID, FID_Remove, FID_dev, FID_improv, FID_persis, Fcst_Date, ORIG_FID, Shape__Area, Shape__Length, Target
+dataset Drought Impact | https://services.arcgis.com/mMUesHYPkXjaFGfS/arcgis/rest/services/Canada_USA_Drought_Monitor/FeatureServer/1
+candidate https://services.arcgis.com/mMUesHYPkXjaFGfS/arcgis/rest/services/Canada_USA_Drought_Monitor/FeatureServer/1
+note felder: IMPACT, OBJECTID, OBS_DATE, SOURCE
+dataset Monthly Drought Outlook Example | https://services5.arcgis.com/0OTVzJS4K09zlixn/arcgis/rest/services/Monthly_Drought_Outlook_Example/FeatureServer/0
+candidate https://services5.arcgis.com/0OTVzJS4K09zlixn/arcgis/rest/services/Monthly_Drought_Outlook_Example/FeatureServer/0
+note felder: FID, FID_Remove, FID_dev, FID_improv, FID_persis, Fcst_Date, Shape__Area, Shape__Length, Target
+dataset US Drought Monitor | https://services4.arcgis.com/eeULstZhYSemxYF5/arcgis/rest/services/US_Drought_Monitor/FeatureServer/0
+candidate https://services4.arcgis.com/eeULstZhYSemxYF5/arcgis/rest/services/US_Drought_Monitor/FeatureServer/0
+note felder: DM, FID, OBJECTID, Shape_Area, Shape_Leng, Shape__Area, Shape__Length
+dataset LFP02 Drought Index Api view | https://services7.arcgis.com/4oZC3kLP6Hu4wqUM/arcgis/rest/services/Drought_Index_Api_view/FeatureServer/0
+candidate https://services7.arcgis.com/4oZC3kLP6Hu4wqUM/arcgis/rest/services/Drought_Index_Api_view/FeatureServer/0
+note felder: D0__Abnormally_Dry, D1__Moderate_Drought, D2__Severe_Drought, D3__Extreme_Drought, D4__Exceptional_Drought, Date, None, ObjectId
+dataset Oregon Drought Conditions | https://services6.arcgis.com/HvbabY0grzgZwGW1/arcgis/rest/services/Oregon_Drought_Conditions_/FeatureServer
+decline https://services6.arcgis.com/HvbabY0grzgZwGW1/arcgis/rest/services/Oregon_Drought_Conditions_/FeatureServer
+note kein features-key
+dataset Drought Impacts US | https://services4.arcgis.com/eeULstZhYSemxYF5/arcgis/rest/services/US_Drought_Monitor_Impacts/FeatureServer/2
+candidate https://services4.arcgis.com/eeULstZhYSemxYF5/arcgis/rest/services/US_Drought_Monitor_Impacts/FeatureServer/2
+note felder: FID, Id, Shape_Area, Shape_Le_1, Shape_Leng, Shape__Area, Shape__Length
+dataset Drought Impacts Type | https://services4.arcgis.com/eeULstZhYSemxYF5/arcgis/rest/services/US_Drought_Monitor_Impacts/FeatureServer/0
+candidate https://services4.arcgis.com/eeULstZhYSemxYF5/arcgis/rest/services/US_Drought_Monitor_Impacts/FeatureServer/0
+note felder: FID, Id, Type
+dataset Drought Impacts Callout | https://services4.arcgis.com/eeULstZhYSemxYF5/arcgis/rest/services/US_Drought_Monitor_Impacts/FeatureServer/1
+candidate https://services4.arcgis.com/eeULstZhYSemxYF5/arcgis/rest/services/US_Drought_Monitor_Impacts/FeatureServer/1
+note felder: FID, Id, Shape_Le_1, Shape_Le_2, Shape_Le_3, Shape_Leng, Shape__Length
+dataset Idaho Drought | https://services.arcgis.com/WLhB60Nqwp4NnHz3/arcgis/rest/services/Idaho_Drought_Map_Final_WFL1/FeatureServer/2
+candidate https://services.arcgis.com/WLhB60Nqwp4NnHz3/arcgis/rest/services/Idaho_Drought_Map_Final_WFL1/FeatureServer/2
+note felder: D0_D4, D1_D4, D2_D4, D3_D4, FID, Shape__Are, Shape__Area, Shape__Len, Shape__Length, d0, d1, d2, d3, d4, ddate, dm, endday, endmonth
+dataset US Drought Monitor Impacts | https://services4.arcgis.com/eeULstZhYSemxYF5/arcgis/rest/services/US_Drought_Monitor_Impacts/FeatureServer
+decline https://services4.arcgis.com/eeULstZhYSemxYF5/arcgis/rest/services/US_Drought_Monitor_Impacts/FeatureServer
+note kein features-key
+dataset Drought Map Final2 WFL1 | https://services.arcgis.com/v01gqwM5QqNysAAi/arcgis/rest/services/Drought_Map_Final2_WFL1/FeatureServer
+decline https://services.arcgis.com/v01gqwM5QqNysAAi/arcgis/rest/services/Drought_Map_Final2_WFL1/FeatureServer
+note kein features-key
+dataset Drought Kentucky map | https://services.arcgis.com/v01gqwM5QqNysAAi/arcgis/rest/services/Drought_Kentucky_map/FeatureServer
+decline https://services.arcgis.com/v01gqwM5QqNysAAi/arcgis/rest/services/Drought_Kentucky_map/FeatureServer
+note arcgis-error-body
+dataset Drought | https://services2.arcgis.com/32siQkg0O6da8zFF/arcgis/rest/services/Drought/FeatureServer
+decline https://services2.arcgis.com/32siQkg0O6da8zFF/arcgis/rest/services/Drought/FeatureServer
+note kein features-key
+dataset Projects: Flood & Drought Resilience | https://services5.arcgis.com/8XweZrzdqK9bmyuU/arcgis/rest/services/Projects_Flood_Drought/FeatureServer/0
+candidate https://services5.arcgis.com/8XweZrzdqK9bmyuU/arcgis/rest/services/Projects_Flood_Drought/FeatureServer/0
+note felder: Additional, Catchmen_1, Catchment, Climate_Ch, Community, Completion, Contact, Cost, Cultural_S, Descriptio, Duration, Eastings, Evidence, Field38, Flood_Resi, Funding_So, Habitat__, ID
+dataset Canada USA Drought Monitor | https://services.arcgis.com/mMUesHYPkXjaFGfS/arcgis/rest/services/Canada_USA_Drought_Monitor/FeatureServer
+decline https://services.arcgis.com/mMUesHYPkXjaFGfS/arcgis/rest/services/Canada_USA_Drought_Monitor/FeatureServer
+note kein features-key
+# keyword evapotranspiration
+dataset Standardized Precipitation-Evapotranspiration Index (SPEI) Recent Conditions | https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/SPEI_v1_recent/FeatureServer
+decline https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/SPEI_v1_recent/FeatureServer
+note kein features-key
+dataset Standardized Precipitation-Evapotranspiration Index (SPEI) 1950 - Present | https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/SPEI_v1/FeatureServer
+decline https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/SPEI_v1/FeatureServer
+note kein features-key
+dataset Evapotranspiration potentielle | https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/Desertification/FeatureServer
+decline https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/Desertification/FeatureServer
+note kein features-key
+dataset harney fields 2018 ET summaries | https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Harney_ET_summaries/FeatureServer/0
+candidate https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Harney_ET_summaries/FeatureServer/0
+note felder: ET_M05, ET_M06, ET_M07, ET_M08, ET_M09, ET_SEAS, FIELD_ID, MAJORITY, NET_M05, NET_M06, NET_M07, NET_M08, NET_M09, NET_SEAS, OBJECTID, PIXELS, Shape__Area, Shape__Length
+dataset harney fields 1994 ET summaries | https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Harney_ET_summaries/FeatureServer/3
+candidate https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Harney_ET_summaries/FeatureServer/3
+note felder: ET_M05, ET_M06, ET_M07, ET_M08, ET_M09, ET_SEAS, FIELD_ID_1, MAJORITY, NET_M05, NET_M06, NET_M07, NET_M08, NET_M09, NET_SEAS, OBJECTID, PIXELS, Shape__Area, Shape__Length
+dataset harney fields 2009 ET summaries | https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Harney_ET_summaries/FeatureServer/7
+candidate https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Harney_ET_summaries/FeatureServer/7
+note felder: ET_M05, ET_M06, ET_M07, ET_M08, ET_M09, ET_SEAS, FIELD_ID_1, MAJORITY, NET_M05, NET_M06, NET_M07, NET_M08, NET_M09, NET_SEAS, OBJECTID, PIXELS, Shape__Area, Shape__Length
+dataset harney fields 2000 ET summaries | https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Harney_ET_summaries/FeatureServer/4
+candidate https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Harney_ET_summaries/FeatureServer/4
+note felder: ET_M05, ET_M06, ET_M07, ET_M08, ET_M09, ET_SEAS, FIELD_ID_1, MAJORITY, NET_M05, NET_M06, NET_M07, NET_M08, NET_M09, NET_SEAS, OBJECTID, PIXELS, Shape__Area, Shape__Length
+dataset harney fields 2011 ET summaries | https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Harney_ET_summaries/FeatureServer/8
+candidate https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Harney_ET_summaries/FeatureServer/8
+note felder: ET_M05, ET_M06, ET_M07, ET_M08, ET_M09, ET_SEAS, FIELD_ID_1, MAJORITY, NET_M05, NET_M06, NET_M07, NET_M08, NET_M09, NET_SEAS, OBJECTID, PIXELS, Shape__Area, Shape__Length
+dataset Harney ET summaries | https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Harney_ET_summaries/FeatureServer
+decline https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Harney_ET_summaries/FeatureServer
+note kein features-key
+dataset harney fields 2001 ET summaries | https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Harney_ET_summaries/FeatureServer/5
+candidate https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Harney_ET_summaries/FeatureServer/5
+note felder: ET_M05, ET_M06, ET_M07, ET_M08, ET_M09, ET_SEAS, FIELD_ID_1, MAJORITY, NET_M05, NET_M06, NET_M07, NET_M08, NET_M09, NET_SEAS, OBJECTID, PIXELS, Shape__Area, Shape__Length
+dataset harney fields 2015 ET summaries | https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Harney_ET_summaries/FeatureServer/10
+candidate https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Harney_ET_summaries/FeatureServer/10
+note felder: ET_M05, ET_M06, ET_M07, ET_M08, ET_M09, ET_SEAS, FIELD_ID_1, MAJORITY, NET_M05, NET_M06, NET_M07, NET_M08, NET_M09, NET_SEAS, OBJECTID, PIXELS, Shape__Area, Shape__Length
+dataset harney fields 2017 ET summaries | https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Harney_ET_summaries/FeatureServer/12
+candidate https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Harney_ET_summaries/FeatureServer/12
+note felder: ET_M05, ET_M06, ET_M07, ET_M08, ET_M09, ET_SEAS, FIELD_ID_1, MAJORITY_1, NET_M05, NET_M06, NET_M07, NET_M08, NET_M09, NET_SEAS, OBJECTID, PIXELS, Shape__Area, Shape__Length
+dataset harney fields 1992 ET summaries | https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Harney_ET_summaries/FeatureServer/2
+candidate https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Harney_ET_summaries/FeatureServer/2
+note felder: ET_M05, ET_M06, ET_M07, ET_M08, ET_M09, ET_SEAS, FIELD_ID_1, MAJORITY, NET_M05, NET_M06, NET_M07, NET_M08, NET_M09, NET_SEAS, OBJECTID, PIXELS, Shape__Area, Shape__Length
+dataset harney fields 1991 ET summaries | https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Harney_ET_summaries/FeatureServer/1
+candidate https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Harney_ET_summaries/FeatureServer/1
+note felder: ET_M05, ET_M06, ET_M07, ET_M08, ET_M09, ET_SEAS, FIELD_ID_1, MAJORITY, NET_M05, NET_M06, NET_M07, NET_M08, NET_M09, NET_SEAS, OBJECTID, PIXELS, Shape__Area, Shape__Length
+dataset harney fields 2005 ET summaries | https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Harney_ET_summaries/FeatureServer/6
+candidate https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Harney_ET_summaries/FeatureServer/6
+note felder: ET_M05, ET_M06, ET_M07, ET_M08, ET_M09, ET_SEAS, FIELD_ID_1, MAJORITY, NET_M05, NET_M06, NET_M07, NET_M08, NET_M09, NET_SEAS, OBJECTID, PIXELS, Shape__Area, Shape__Length
+dataset harney fields 2016 ET summaries | https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Harney_ET_summaries/FeatureServer/11
+candidate https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Harney_ET_summaries/FeatureServer/11
+note felder: ET_M05, ET_M06, ET_M07, ET_M08, ET_M09, ET_SEAS, FIELD_ID_1, MAJORITY, NET_M05, NET_M06, NET_M07, NET_M08, NET_M09, NET_SEAS, OBJECTID, PIXELS, Shape__Area, Shape__Length
+dataset harney fields 2014 ET summaries | https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Harney_ET_summaries/FeatureServer/9
+candidate https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Harney_ET_summaries/FeatureServer/9
+note felder: ET_M05, ET_M06, ET_M07, ET_M08, ET_M09, ET_SEAS, FIELD_ID_1, MAJORITY, NET_M05, NET_M06, NET_M07, NET_M08, NET_M09, NET_SEAS, OBJECTID, PIXELS, Shape__Area, Shape__Length
+dataset Evapotranspiration Zones | https://services1.arcgis.com/jJfZghspGKh8J9Jm/arcgis/rest/services/Evapotranspiration_Zones/FeatureServer/5
+candidate https://services1.arcgis.com/jJfZghspGKh8J9Jm/arcgis/rest/services/Evapotranspiration_Zones/FeatureServer/5
+note felder: APRIL, AUGUST, DECEMBER, DEFINITION, ETo, FEBRUARY, JANUARY, JULY2, JUNE2, MARCH, MAY2, NOVEMBER, OBJECTID, OCTOBER, Ref_ETo, SEPTEMBER, Shape__Area, Shape__Length
+dataset ET-IDWR Station Polygons | https://gis.idwr.idaho.gov/hosting/rest/services/ScientificRasters/EtIdwrStationsPoly/FeatureServer/0
+dead https://gis.idwr.idaho.gov/hosting/rest/services/ScientificRasters/EtIdwrStationsPoly/FeatureServer/0
+note fetch-void
+dataset ET-IDWR Stations | https://gis.idwr.idaho.gov/hosting/rest/services/ScientificRasters/EtIdwrStations/FeatureServer/0
+dead https://gis.idwr.idaho.gov/hosting/rest/services/ScientificRasters/EtIdwrStations/FeatureServer/0
+note fetch-void
+dataset Total evapotranspiration (m/yr) | https://services.arcgis.com/cJ9YHowT8TU7DUyn/arcgis/rest/services/Total_evapotranspiration_myr/FeatureServer/1
+candidate https://services.arcgis.com/cJ9YHowT8TU7DUyn/arcgis/rest/services/Total_evapotranspiration_myr/FeatureServer/1
+note felder: ET_0013, HUC_12, OBJECTID
+dataset Evapotranspiration | https://services1.arcgis.com/d0ZCwU7eGKVeNiEE/arcgis/rest/services/WaterBalanceData_SWP/FeatureServer/6
+candidate https://services1.arcgis.com/d0ZCwU7eGKVeNiEE/arcgis/rest/services/WaterBalanceData_SWP/FeatureServer/6
+note felder: Evapotranspiration, OBJECTID, Shape__Area, Shape__Length
+dataset Evaporation Gauges All Elevations BDR | https://gis.napacounty.gov/arcgis/rest/services/Hosted/Evaporation_Gauges_All_Elevations_master/FeatureServer/0
+candidate https://gis.napacounty.gov/arcgis/rest/services/Hosted/Evaporation_Gauges_All_Elevations_master/FeatureServer/0
+note felder: average_annual_et, elevation_ft, gage, latitude, link, longitude, objectid, source
+dataset 9-month SPEI | https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/SPEI_v1_recent/FeatureServer/3
+candidate https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/SPEI_v1_recent/FeatureServer/3
+note felder: MaxSimpTol, MinSimpTol, OBJECTID, Rec_Date, Shape__Area, Shape__Length, SimPgnFlag, gridcode
+dataset 6-month SPEI | https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/SPEI_v1_recent/FeatureServer/2
+candidate https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/SPEI_v1_recent/FeatureServer/2
+note felder: MaxSimpTol, MinSimpTol, OBJECTID, Rec_Date, Shape__Area, Shape__Length, SimPgnFlag, gridcode
+dataset 9-month SPEI | https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/SPEI_v1/FeatureServer/3
+candidate https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/SPEI_v1/FeatureServer/3
+note felder: MaxSimpTol, MinSimpTol, OBJECTID, Rec_Date, Shape__Area, Shape__Length, SimPgnFlag, gridcode
+dataset 3-month SPEI | https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/SPEI_v1_recent/FeatureServer/1
+candidate https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/SPEI_v1_recent/FeatureServer/1
+note felder: MaxSimpTol, MinSimpTol, OBJECTID, Rec_Date, Shape__Area, Shape__Length, SimPgnFlag, gridcode
+dataset 1-month SPEI | https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/SPEI_v1/FeatureServer/0
+candidate https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/SPEI_v1/FeatureServer/0
+note felder: MaxSimpTol, MinSimpTol, OBJECTID, Rec_Date, Shape__Area, Shape__Length, SimPgnFlag, gridcode
+dataset 6-month SPEI | https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/SPEI_v1/FeatureServer/2
+candidate https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/SPEI_v1/FeatureServer/2
+note felder: MaxSimpTol, MinSimpTol, OBJECTID, Rec_Date, Shape__Area, Shape__Length, SimPgnFlag, gridcode
+dataset 1-month SPEI | https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/SPEI_v1_recent/FeatureServer/0
+candidate https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/SPEI_v1_recent/FeatureServer/0
+note felder: MaxSimpTol, MinSimpTol, OBJECTID, Rec_Date, Shape__Area, Shape__Length, SimPgnFlag, gridcode
+dataset 12-month SPEI | https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/SPEI_v1_recent/FeatureServer/4
+candidate https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/SPEI_v1_recent/FeatureServer/4
+note felder: MaxSimpTol, MinSimpTol, OBJECTID, Rec_Date, Shape__Area, Shape__Length, SimPgnFlag, gridcode
+dataset 3-month SPEI | https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/SPEI_v1/FeatureServer/1
+candidate https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/SPEI_v1/FeatureServer/1
+note felder: MaxSimpTol, MinSimpTol, OBJECTID, Rec_Date, Shape__Area, Shape__Length, SimPgnFlag, gridcode
+dataset 12-month SPEI | https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/SPEI_v1/FeatureServer/4
+candidate https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/SPEI_v1/FeatureServer/4
+note felder: MaxSimpTol, MinSimpTol, OBJECTID, Rec_Date, Shape__Area, Shape__Length, SimPgnFlag, gridcode
+dataset Irwell Urban Infiltration and Evapo-Transpiration Flood Measures Targeting | https://services3.arcgis.com/Bb8lfThdhugyc4G3/arcgis/rest/services/Irwell_NFM_Outputs/FeatureServer
+decline https://services3.arcgis.com/Bb8lfThdhugyc4G3/arcgis/rest/services/Irwell_NFM_Outputs/FeatureServer
+note arcgis-error-body
+dataset Irwell Rural Infiltration and Evapo-Transpiration Flood Measures Targeting | https://services3.arcgis.com/Bb8lfThdhugyc4G3/arcgis/rest/services/Irwell_NFM_Outputs/FeatureServer
+decline https://services3.arcgis.com/Bb8lfThdhugyc4G3/arcgis/rest/services/Irwell_NFM_Outputs/FeatureServer
+note arcgis-error-body
+dataset Elevation Zones Union updated | https://services.arcgis.com/aa38u6OgfNoCkTJ6/arcgis/rest/services/CIMIS_Gap_Map_Visualization_Elevation_Reclassified_WFL1/FeatureServer/1
+dead https://services.arcgis.com/aa38u6OgfNoCkTJ6/arcgis/rest/services/CIMIS_Gap_Map_Visualization_Elevation_Reclassified_WFL1/FeatureServer/1
+note fetch-void
+dataset Active CIMIS Stations | https://services.arcgis.com/aa38u6OgfNoCkTJ6/arcgis/rest/services/CIMIS_Gap_Map_Visualization_Elevation_Reclassified_WFL1/FeatureServer/0
+candidate https://services.arcgis.com/aa38u6OgfNoCkTJ6/arcgis/rest/services/CIMIS_Gap_Map_Visualization_Elevation_Reclassified_WFL1/FeatureServer/0
+note felder: Con_Date, County, DWR_RO, Discon_Dat, Elev_ft, Elev_m, Latitude, Longitude, Max_Elev, Min_Elev, OBJECTID, Status, Stn_ID, Stn_Name
+dataset Active CIMIS Stations | https://services.arcgis.com/aa38u6OgfNoCkTJ6/arcgis/rest/services/CIMIS_Gap_Map_Visualization_Elevation_Reclassified_WFL1/FeatureServer
+decline https://services.arcgis.com/aa38u6OgfNoCkTJ6/arcgis/rest/services/CIMIS_Gap_Map_Visualization_Elevation_Reclassified_WFL1/FeatureServer
+note kein features-key
+dataset NEX-GDDP SSP5-8.5 for AK, HI, PR, VI, AS, GU & MP | https://services.arcgis.com/cJ9YHowT8TU7DUyn/arcgis/rest/services/NEXGDDP_ssp585/FeatureServer/0
+candidate https://services.arcgis.com/cJ9YHowT8TU7DUyn/arcgis/rest/services/NEXGDDP_ssp585/FeatureServer/0
+note felder: HUC_12, MEAPEfrFF2, MEAPEfrFF3, MEAPEfrHF1, MEAPEfrHF2, MEAPEfrHF3, MEAPEinFF2, MEAPEinFF3, MEAPEinHF1, MEAPEinHF2, MEAPEinHF3, MEAPRfrFF2, MEAPRfrFF3, MEAPRfrHF1, MEAPRfrHF2, MEAPRfrHF3, MEAPRinFF2, MEAPRinFF3
+dataset NEX-GDDP SSP2-4.5 for AK, HI, PR, VI, AS, GU & MP | https://services.arcgis.com/cJ9YHowT8TU7DUyn/arcgis/rest/services/NEXGDDP_ssp245/FeatureServer/0
+candidate https://services.arcgis.com/cJ9YHowT8TU7DUyn/arcgis/rest/services/NEXGDDP_ssp245/FeatureServer/0
+note felder: HUC_12, MEAPEfrFF2, MEAPEfrFF3, MEAPEfrHF1, MEAPEfrHF2, MEAPEfrHF3, MEAPEinFF2, MEAPEinFF3, MEAPEinHF1, MEAPEinHF2, MEAPEinHF3, MEAPRfrFF2, MEAPRfrFF3, MEAPRfrHF1, MEAPRfrHF2, MEAPRfrHF3, MEAPRinFF2, MEAPRinFF3
+dataset NEX-GDDP SSP3-7.0 for AK, HI, PR, VI, AS, GU & MP | https://services.arcgis.com/cJ9YHowT8TU7DUyn/arcgis/rest/services/NEXGDDP_ssp370/FeatureServer/0
+candidate https://services.arcgis.com/cJ9YHowT8TU7DUyn/arcgis/rest/services/NEXGDDP_ssp370/FeatureServer/0
+note felder: HUC_12, MEAPEfrFF2, MEAPEfrFF3, MEAPEfrHF1, MEAPEfrHF2, MEAPEfrHF3, MEAPEinFF2, MEAPEinFF3, MEAPEinHF1, MEAPEinHF2, MEAPEinHF3, MEAPRfrFF2, MEAPRfrFF3, MEAPRfrHF1, MEAPRfrHF2, MEAPRfrHF3, MEAPRinFF2, MEAPRinFF3
+dataset evapotranspiration | https://services3.arcgis.com/j7Ffnx1JFh50r1im/arcgis/rest/services/Clinton_River___ET_WFL1/FeatureServer/1
+candidate https://services3.arcgis.com/j7Ffnx1JFh50r1im/arcgis/rest/services/Clinton_River___ET_WFL1/FeatureServer/1
+note felder: ET_in, GWQ_in, LATQ_in, OBJECTID, PERC_in, SURQ_in, Shape__Area, Shape__Length, Subbasin, WYLD_in
+dataset evapotranspiration | https://services3.arcgis.com/j7Ffnx1JFh50r1im/arcgis/rest/services/NorthBranch2D_WFL1/FeatureServer/11
+candidate https://services3.arcgis.com/j7Ffnx1JFh50r1im/arcgis/rest/services/NorthBranch2D_WFL1/FeatureServer/11
+note felder: AREAkm2, ET_in, GRIDCODE, GW_Q_in, LAT_Q_in, OBJECTID, PERC_in, PRECIP_in, P_urban, SNOMELT_in, SURQ_in, S_90th_, S_Yearly, Shape__Area, Shape__Length, Subbasin
+dataset Blaney Rainfall Site | https://services1.arcgis.com/sDAPyc2rGRn7vf9B/arcgis/rest/services/REG_BLNY_RNFL_SITE/FeatureServer/0
+candidate https://services1.arcgis.com/sDAPyc2rGRn7vf9B/arcgis/rest/services/REG_BLNY_RNFL_SITE/FeatureServer/0
+note felder: AGENCY, BASIN, OBJECTID, SITE, SITENAME, SOURCE, STATUS, X_COORD, Y_COORD
+dataset NEX-GDDP SSP1-2.6 for AK, HI, PR, VI, AS, GU & MP | https://services.arcgis.com/cJ9YHowT8TU7DUyn/arcgis/rest/services/NEXGDDP_ssp126/FeatureServer/0
+candidate https://services.arcgis.com/cJ9YHowT8TU7DUyn/arcgis/rest/services/NEXGDDP_ssp126/FeatureServer/0
+note felder: HUC_12, MEAPEfrFF2, MEAPEfrFF3, MEAPEfrHF1, MEAPEfrHF2, MEAPEfrHF3, MEAPEinFF2, MEAPEinFF3, MEAPEinHF1, MEAPEinHF2, MEAPEinHF3, MEAPRfrFF2, MEAPRfrFF3, MEAPRfrHF1, MEAPRfrHF2, MEAPRfrHF3, MEAPRinFF2, MEAPRinFF3
+dataset Blaney Rainfall Thiessen Area | https://services1.arcgis.com/sDAPyc2rGRn7vf9B/arcgis/rest/services/REG_BLNY_RNFL_TSN_AREA/FeatureServer/0
+candidate https://services1.arcgis.com/sDAPyc2rGRn7vf9B/arcgis/rest/services/REG_BLNY_RNFL_TSN_AREA/FeatureServer/0
+note felder: AGENCY, BASIN, OBJECTID, SITE, SITENAME, SOURCE, STATUS, Shape__Area, Shape__Length, X_COORD, Y_COORD
+dataset Blaney Net Depth of Application | https://services1.arcgis.com/sDAPyc2rGRn7vf9B/arcgis/rest/services/REG_BLNY_NT_DPTH_OF_APP_AREA/FeatureServer/0
+candidate https://services1.arcgis.com/sDAPyc2rGRn7vf9B/arcgis/rest/services/REG_BLNY_NT_DPTH_OF_APP_AREA/FeatureServer/0
+note felder: ACRES, DEPTHNO, OBJECTID, Shape__Area, Shape__Length
+dataset mean evapotranspiration | https://services1.arcgis.com/ZIL9uO234SBBPGL7/arcgis/rest/services/mean_evapotranspiration/FeatureServer/0
+candidate https://services1.arcgis.com/ZIL9uO234SBBPGL7/arcgis/rest/services/mean_evapotranspiration/FeatureServer/0
+note felder: ENRICH_FID, EvTrnsMean, HUC8, HasData, ID, NAME, OBJECTID, aggregationMethod, apportionmentConfidence, populationToPolygonSizeRating, sourceCountry
+dataset evapotranspiration Avolevan | https://services1.arcgis.com/ZIL9uO234SBBPGL7/arcgis/rest/services/evapotranspiration%20Avolevan/FeatureServer/0
+candidate https://services1.arcgis.com/ZIL9uO234SBBPGL7/arcgis/rest/services/evapotranspiration%20Avolevan/FeatureServer/0
+note felder: ENRICH_FID, EvTrnsMean, HasData, ID, OBJECTID, PourPtID, aggregationMethod, apportionmentConfidence, areaType, bufferRadii, bufferUnits, bufferUnitsAlias, populationToPolygonSizeRating, sourceCountry, title
+dataset Nile Evapotranspiration | https://services-eu1.arcgis.com/TWfTldJhUJG0ITnp/arcgis/rest/services/Nile_Evapotranspiration/FeatureServer/0
+candidate https://services-eu1.arcgis.com/TWfTldJhUJG0ITnp/arcgis/rest/services/Nile_Evapotranspiration/FeatureServer/0
+note felder: ADM0_AR, ADM0_EN, ADM0_PCODE, ADM1_AR, ADM1_EN, ADM1_PCODE, ADM2ALT1AR, ADM2ALT1EN, ADM2ALT2AR, ADM2ALT2EN, ADM2_AR, ADM2_EN, ADM2_PCODE, ADM2_REF, CONTINENT, FID, MRBID, OCEAN
+dataset Annual Evapotranspiration | https://services3.arcgis.com/0OPQIK59PJJqLK0A/arcgis/rest/services/Annual_Evapotranspiration/FeatureServer
+decline https://services3.arcgis.com/0OPQIK59PJJqLK0A/arcgis/rest/services/Annual_Evapotranspiration/FeatureServer
+note kein features-key
+dataset Fall Evapotranspiration | https://services3.arcgis.com/0OPQIK59PJJqLK0A/arcgis/rest/services/Fall_Evapotranspiration/FeatureServer
+decline https://services3.arcgis.com/0OPQIK59PJJqLK0A/arcgis/rest/services/Fall_Evapotranspiration/FeatureServer
+note kein features-key
+dataset Winter Evapotranspiration | https://services3.arcgis.com/0OPQIK59PJJqLK0A/arcgis/rest/services/Winter_Evapotranspiration/FeatureServer
+decline https://services3.arcgis.com/0OPQIK59PJJqLK0A/arcgis/rest/services/Winter_Evapotranspiration/FeatureServer
+note kein features-key
+dataset Nile Evapotranspiration | https://services7.arcgis.com/QStg8wBFmTwSsfNS/arcgis/rest/services/Nile_Evapotranspiration/FeatureServer/0
+candidate https://services7.arcgis.com/QStg8wBFmTwSsfNS/arcgis/rest/services/Nile_Evapotranspiration/FeatureServer/0
+note felder: ADM0_AR, ADM0_EN, ADM0_PCODE, ADM1_AR, ADM1_EN, ADM1_PCODE, ADM2ALT1AR, ADM2ALT1EN, ADM2ALT2AR, ADM2ALT2EN, ADM2_AR, ADM2_EN, ADM2_PCODE, ADM2_REF, CONTINENT, FID, MRBID, OCEAN
+dataset Evapotranspiration Units | https://services.arcgis.com/ZzrwjTRez6FJiOq4/arcgis/rest/services/Evapotranspiration_Units/FeatureServer/0
+dead https://services.arcgis.com/ZzrwjTRez6FJiOq4/arcgis/rest/services/Evapotranspiration_Units/FeatureServer/0
+note fetch-void
+dataset Potential Evapotranspiration | https://services2.arcgis.com/aXTewkgzKIzzrF67/arcgis/rest/services/Potential_Evapotranspiration/FeatureServer/0
+candidate https://services2.arcgis.com/aXTewkgzKIzzrF67/arcgis/rest/services/Potential_Evapotranspiration/FeatureServer/0
+note felder: FID, Id, OBJECTID, Shape_Area, Shape_Leng, Shape__Area, Shape__Length, gridcode
+dataset Spring Evapotranspiration | https://services3.arcgis.com/0OPQIK59PJJqLK0A/arcgis/rest/services/Spring_Evapotranspiration/FeatureServer
+decline https://services3.arcgis.com/0OPQIK59PJJqLK0A/arcgis/rest/services/Spring_Evapotranspiration/FeatureServer
+note kein features-key
+dataset Evapotranspiration Grid | https://services1.arcgis.com/jURxdzl0yX1YuMiT/arcgis/rest/services/Evapotranspiration_Grid/FeatureServer/0
+candidate https://services1.arcgis.com/jURxdzl0yX1YuMiT/arcgis/rest/services/Evapotranspiration_Grid/FeatureServer/0
+note felder: Comment, ET2015Apr, ET2015Aug, ET2015Dec, ET2015Feb, ET2015Jan, ET2015Jul, ET2015Jun, ET2015Mar, ET2015May, ET2015Nov, ET2015Oct, ET2015Sep, ET2016Apr, ET2016Aug, ET2016Dec, ET2016Feb, ET2016Jan
+dataset GVI 5 Classes | https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/Desertification/FeatureServer/2
+candidate https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/Desertification/FeatureServer/2
+note felder: AREA, CLASS5, GVI05GEO_, GVI05GEO_I, LPOLY_, OBJECTID, PERIMETER, RPOLY_
+dataset Land Degradation Severity | https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/Desertification/FeatureServer/6
+candidate https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/Desertification/FeatureServer/6
+note felder: CAUSE, CAUSE1ST1, CAUSE1ST2, CAUSE2ND1, CAUSE2ND2, CAUSEAR1ST, CAUSEAR1_1, CAUSEAR2ND, CAUSEAR2_1, DEG1, DEG2, DEGAREA1, DEGAREA2, EXT1, EXT2, FACTOR1, FACTOR2, GLAS_GEO_
+dataset Mean Annual Precipitation | https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/Desertification/FeatureServer/5
+candidate https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/Desertification/FeatureServer/5
+note felder: CLASS, GRID_CODE, OBJECTID, PERIMETER, PREC_GEO_, PREC_GEO_I, land_degra
+dataset GVI 10 Classes | https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/Desertification/FeatureServer/3
+candidate https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/Desertification/FeatureServer/3
+note felder: AREA, GVI10GEO_, GVI10GEO_I, NDVI10CL, NDVI5CL, OBJECTID, PERIMETER
+dataset Susceptible Drylands | https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/Desertification/FeatureServer/0
+candidate https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/Desertification/FeatureServer/0
+note felder: COUNT_, HIX_NAME, OBJECTID
+dataset Mean Evapotranspiration 2 | https://services1.arcgis.com/ZIL9uO234SBBPGL7/arcgis/rest/services/Mean%20Evapotranspiration%202/FeatureServer/0
+candidate https://services1.arcgis.com/ZIL9uO234SBBPGL7/arcgis/rest/services/Mean%20Evapotranspiration%202/FeatureServer/0
+note felder: AnalysisArea, DataResolution, Description, ENRICH_FID, EvTrnsMean, HasData, ID, OBJECTID, PourPtID, aggregationMethod, apportionmentConfidence, populationToPolygonSizeRating, sourceCountry, title
+dataset Humidity Index | https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/Desertification/FeatureServer/1
+candidate https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/Desertification/FeatureServer/1
+note felder: AREA, CLASS, DISSOLVE, FUDGE, FUDGE_ZONE, HINTGEO_, HINTGEO_ID, HIX_NAME, HIX_ZONE, LAND, OBJECTID, PERIMETER, SUSCEPT_ZO
+dataset Avergae Evapotranspiration (mm) | https://services-eu1.arcgis.com/TWfTldJhUJG0ITnp/arcgis/rest/services/Avergae_Evapotranspiration/FeatureServer/0
+candidate https://services-eu1.arcgis.com/TWfTldJhUJG0ITnp/arcgis/rest/services/Avergae_Evapotranspiration/FeatureServer/0
+note felder: Area, F100mmax, F100mmean, F100mmin, F100msum, F250mcount, F250mmax, F250mmean, F250mmin, F250msum, FID, LEGEND, OBJECTID, OBJECTID_1, Shape_Area, Shape_Le_1, Shape_Leng, Shape__Area
+dataset Avergae Evapotranspiration (mm) | https://services7.arcgis.com/QStg8wBFmTwSsfNS/arcgis/rest/services/Avergae%20Evapotranspiration%20(mm)/FeatureServer/0
+candidate https://services7.arcgis.com/QStg8wBFmTwSsfNS/arcgis/rest/services/Avergae%20Evapotranspiration%20(mm)/FeatureServer/0
+note felder: Area, F100mmax, F100mmean, F100mmin, F100msum, F250mcount, F250mmax, F250mmean, F250mmin, F250msum, FID, LEGEND, OBJECTID, OBJECTID_1, Shape_Le_1, Shape_Leng, Shape__Area, Shape__Length
+dataset Evapotranspiration Units view | https://services.arcgis.com/ZzrwjTRez6FJiOq4/arcgis/rest/services/Evapotranspiration_Units_view/FeatureServer/0
+dead https://services.arcgis.com/ZzrwjTRez6FJiOq4/arcgis/rest/services/Evapotranspiration_Units_view/FeatureServer/0
+note fetch-void
+dataset Potential EC site | https://services.arcgis.com/ZzrwjTRez6FJiOq4/arcgis/rest/services/Potential_EC_site/FeatureServer/0
+candidate https://services.arcgis.com/ZzrwjTRez6FJiOq4/arcgis/rest/services/Potential_EC_site/FeatureServer/0
+note felder: Notes, OBJECTID, Priority, SiteNo
+dataset TahoeWatershedsContiguous Actual evapotranspiration | https://services3.arcgis.com/QCH1Le0vwRIyplqB/arcgis/rest/services/TahoeWatershedsContiguous_Actual_evapotranspiration/FeatureServer/0
+candidate https://services3.arcgis.com/QCH1Le0vwRIyplqB/arcgis/rest/services/TahoeWatershedsContiguous_Actual_evapotranspiration/FeatureServer/0
+note felder: AETAvg, AETStDev, AFGAvg, AFGChngAvg, AFGStDev, AWCAvg, AWCStDev, AWSAvg, AWSStDev, ActiveFloo, Area_Ac, Area_Ft, Area_Ha, Area_Km, Area_M, Area_Mi, BDAvg, BDStDev
+dataset Evapotranspiration mm Polygon | https://services3.arcgis.com/HVjI8GKrRtjcQ4Ry/arcgis/rest/services/Evapotranspiration__mm__Polygon/FeatureServer/0
+candidate https://services3.arcgis.com/HVjI8GKrRtjcQ4Ry/arcgis/rest/services/Evapotranspiration__mm__Polygon/FeatureServer/0
+note felder: Id, OBJECTID, Shape__Area, Shape__Length, gridcode
+dataset Evapotranspiration September 2023 | https://services.arcgis.com/8df8p0NlLFEShl0r/arcgis/rest/services/Evapotranspiration_September_2023/FeatureServer/0
+candidate https://services.arcgis.com/8df8p0NlLFEShl0r/arcgis/rest/services/Evapotranspiration_September_2023/FeatureServer/0
+note felder: ObjectId, geometry, type
+dataset TahoeWatershedsContiguous Potential evapotranspiration | https://services3.arcgis.com/QCH1Le0vwRIyplqB/arcgis/rest/services/TahoeWatersheds_Potential_evapotranspiration/FeatureServer/0
+candidate https://services3.arcgis.com/QCH1Le0vwRIyplqB/arcgis/rest/services/TahoeWatersheds_Potential_evapotranspiration/FeatureServer/0
+note felder: AETAvg, AETStDev, AFGAvg, AFGChngAvg, AFGStDev, AWCAvg, AWCStDev, AWSAvg, AWSStDev, ActiveFloo, Area_Ac, Area_Ft, Area_Ha, Area_Km, Area_M, Area_Mi, BDAvg, BDStDev
+dataset Evapotranspiration thermal regions | https://services.arcgis.com/fwF8e4aLR6TRWtqM/arcgis/rest/services/Evapotranspiration_thermal_regions/FeatureServer/0
+candidate https://services.arcgis.com/fwF8e4aLR6TRWtqM/arcgis/rest/services/Evapotranspiration_thermal_regions/FeatureServer/0
+note felder: CLASSE, EVAP_POTEN, FID, Shape__Area, Shape__Length, TEXT
+dataset HarneyBasin GW ET area | https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/HarneyBasin_GW_ET_area/FeatureServer/1
+candidate https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/HarneyBasin_GW_ET_area/FeatureServer/1
+note felder: Area_acres, FID, Shape__Area, Shape__Length
+dataset Utah Flux Sites | https://services.arcgis.com/ZzrwjTRez6FJiOq4/arcgis/rest/services/Utah_Flux_Sites/FeatureServer/2
+candidate https://services.arcgis.com/ZzrwjTRez6FJiOq4/arcgis/rest/services/Utah_Flux_Sites/FeatureServer/2
+note felder: Agency, InAmeriflux, Link, MesoLink, Notes, OBJECTID, Photos, SiteName, StationStatus, UGSLink, YrEnd, YrStart
+dataset Actual Evapotranspiration August 2023 | https://services.arcgis.com/8df8p0NlLFEShl0r/arcgis/rest/services/Actual_Evapotranspiration_August_2023/FeatureServer/0
+candidate https://services.arcgis.com/8df8p0NlLFEShl0r/arcgis/rest/services/Actual_Evapotranspiration_August_2023/FeatureServer/0
+note felder: objectid, pointid, value
+dataset Actual Evapotranspiration May 2023 | https://services.arcgis.com/8df8p0NlLFEShl0r/arcgis/rest/services/Actual_Evapotranspiration_May_2023/FeatureServer/0
+candidate https://services.arcgis.com/8df8p0NlLFEShl0r/arcgis/rest/services/Actual_Evapotranspiration_May_2023/FeatureServer/0
+note felder: objectid, pointid, value
+dataset Evapotranspiration to Precipitation Ratio | https://services1.arcgis.com/RTK5Unh1Z71JKIiR/arcgis/rest/services/Evapotranspiration_to_Precipitation_Ratio/FeatureServer/4
+candidate https://services1.arcgis.com/RTK5Unh1Z71JKIiR/arcgis/rest/services/Evapotranspiration_to_Precipitation_Ratio/FeatureServer/4
+note felder: Area, DA_RCHG, ET_Pcp, FID, Perc_Pcp, SURQ_TOTQ, SYLD, Shape__Area, Shape__Length, Subbasin
+dataset Model Evapotranspiration (model year 50) | https://services.arcgis.com/0oJ4dmPrVzF2g9ay/arcgis/rest/services/Aravaipa__The_Nature_Conservancy__WFL1/FeatureServer/28
+candidate https://services.arcgis.com/0oJ4dmPrVzF2g9ay/arcgis/rest/services/Aravaipa__The_Nature_Conservancy__WFL1/FeatureServer/28
+note felder: Cell, Column1, Column_, ETYears0to, ETYears75t, ETYeras50t, Extinction, FID, GlobalID, Layer, ModelX, ModelY, OIDTxt, Row, Row_1, Shape_Leng, Shape__Area, Shape__Length
+dataset Actual Evapotranspiration September 2023 | https://services.arcgis.com/8df8p0NlLFEShl0r/arcgis/rest/services/Actual_Evapotranspiration_September_2023/FeatureServer/0
+candidate https://services.arcgis.com/8df8p0NlLFEShl0r/arcgis/rest/services/Actual_Evapotranspiration_September_2023/FeatureServer/0
+note felder: objectid, pointid, value
+dataset Actual Evapotranspiration June 2023 | https://services.arcgis.com/8df8p0NlLFEShl0r/arcgis/rest/services/Actual_Evapotranspiration_June_2023/FeatureServer/0
+candidate https://services.arcgis.com/8df8p0NlLFEShl0r/arcgis/rest/services/Actual_Evapotranspiration_June_2023/FeatureServer/0
+note felder: objectid, pointid, value
+dataset Evapotranspiration Align Correct Export Map | https://services3.arcgis.com/HVjI8GKrRtjcQ4Ry/arcgis/rest/services/Evapotranspiration_Align_Correct_Export_Map/FeatureServer/0
+candidate https://services3.arcgis.com/HVjI8GKrRtjcQ4Ry/arcgis/rest/services/Evapotranspiration_Align_Correct_Export_Map/FeatureServer/0
+note felder: Id, OBJECTID, Shape__Area, Shape__Area_1, Shape__Length, Shape__Length_1, evapo_cubic_meters, evapo_cubic_meters_corrected, evapometers, evapometers_corrected, gridcode, gridcode_1
+dataset Eddy Covariance Stations | https://services.arcgis.com/ZzrwjTRez6FJiOq4/arcgis/rest/services/Eddy_Covariance_Stations/FeatureServer/4
+candidate https://services.arcgis.com/ZzrwjTRez6FJiOq4/arcgis/rest/services/Eddy_Covariance_Stations/FeatureServer/4
+note felder: Agency, AgreeStatus, Easting, FarmType, IN_CRB, InAmeriflux, IrrType, Latitude, Link, Longitude, Northing, Notes, OBJECTID, SiteName, Site_ID, StationStatus, SupportBy
+dataset Total Consumptive Allocation | https://services6.arcgis.com/3R3y1KXaPJ9BFnsU/arcgis/rest/services/National_Water_Balance_WFL1/FeatureServer/6
+candidate https://services6.arcgis.com/3R3y1KXaPJ9BFnsU/arcgis/rest/services/National_Water_Balance_WFL1/FeatureServer/6
+note felder: Area, ComDemand, DomDemand, DomSwSY, EffRain, GwAlloc, GwAvail, GwSY, HBDomSY, HBSy, HbAlloc, HbAvail, HbAvailDom, HbDemand, HbET, HbEffRain, HbMunAv, HbPrec
+dataset Tourism Water Demand | https://services6.arcgis.com/3R3y1KXaPJ9BFnsU/arcgis/rest/services/National_Water_Balance_WFL1/FeatureServer/12
+candidate https://services6.arcgis.com/3R3y1KXaPJ9BFnsU/arcgis/rest/services/National_Water_Balance_WFL1/FeatureServer/12
+note felder: Area, ComDemand, DomDemand, DomSwSY, EffRain, GwAlloc, GwAvail, GwSY, HBDomSY, HBSy, HbAlloc, HbAvail, HbAvailDom, HbDemand, HbET, HbEffRain, HbMunAv, HbPrec
+dataset Rainfall Isohyets | https://services6.arcgis.com/3R3y1KXaPJ9BFnsU/arcgis/rest/services/National_Water_Balance_WFL1/FeatureServer/1
+candidate https://services6.arcgis.com/3R3y1KXaPJ9BFnsU/arcgis/rest/services/National_Water_Balance_WFL1/FeatureServer/1
+note felder: CONTOUR, ID, InLine_FID, OBJECTID, OBJECTID_1, Shape_Leng, Shape__Length
+dataset TahoeWatershedsContiguous Actual evapotranspiration standard deviation | https://services3.arcgis.com/QCH1Le0vwRIyplqB/arcgis/rest/services/TahoeWatershedsContiguous_Actual_evapotranspiration_standard_deviation/FeatureServer/0
+candidate https://services3.arcgis.com/QCH1Le0vwRIyplqB/arcgis/rest/services/TahoeWatershedsContiguous_Actual_evapotranspiration_standard_deviation/FeatureServer/0
+note felder: AETAvg, AETStDev, AFGAvg, AFGChngAvg, AFGStDev, AWCAvg, AWCStDev, AWSAvg, AWSStDev, ActiveFloo, Area_Ac, Area_Ft, Area_Ha, Area_Km, Area_M, Area_Mi, BDAvg, BDStDev
+dataset Normalised Effective Rainfall (mm) | https://services6.arcgis.com/3R3y1KXaPJ9BFnsU/arcgis/rest/services/National_Water_Balance_WFL1/FeatureServer/5
+candidate https://services6.arcgis.com/3R3y1KXaPJ9BFnsU/arcgis/rest/services/National_Water_Balance_WFL1/FeatureServer/5
+note felder: Area, ComDemand, DomDemand, DomSwSY, EffRain, GwAlloc, GwAvail, GwSY, HBDomSY, HBSy, HbAlloc, HbAvail, HbAvailDom, HbDemand, HbET, HbEffRain, HbMunAv, HbPrec
+dataset Institutional Water Demand | https://services6.arcgis.com/3R3y1KXaPJ9BFnsU/arcgis/rest/services/National_Water_Balance_WFL1/FeatureServer/10
+candidate https://services6.arcgis.com/3R3y1KXaPJ9BFnsU/arcgis/rest/services/National_Water_Balance_WFL1/FeatureServer/10
+note felder: Area, ComDemand, DomDemand, DomSwSY, EffRain, GwAlloc, GwAvail, GwSY, HBDomSY, HBSy, HbAlloc, HbAvail, HbAvailDom, HbDemand, HbET, HbEffRain, HbMunAv, HbPrec
+dataset ET Isohyets | https://services6.arcgis.com/3R3y1KXaPJ9BFnsU/arcgis/rest/services/National_Water_Balance_WFL1/FeatureServer/2
+candidate https://services6.arcgis.com/3R3y1KXaPJ9BFnsU/arcgis/rest/services/National_Water_Balance_WFL1/FeatureServer/2
+note felder: CONTOUR, ID, InLine_FID, OBJECTID, OBJECTID_1, Shape_Leng, Shape__Length
+dataset TahoeWatershedsContiguous Potential evapotranspiration standard deviation | https://services3.arcgis.com/QCH1Le0vwRIyplqB/arcgis/rest/services/TahoeWatershedsContiguous_Potential_evapotranspiration_standard_deviation/FeatureServer/0
+candidate https://services3.arcgis.com/QCH1Le0vwRIyplqB/arcgis/rest/services/TahoeWatershedsContiguous_Potential_evapotranspiration_standard_deviation/FeatureServer/0
+note felder: AETAvg, AETStDev, AFGAvg, AFGChngAvg, AFGStDev, AWCAvg, AWCStDev, AWSAvg, AWSStDev, ActiveFloo, Area_Ac, Area_Ft, Area_Ha, Area_Km, Area_M, Area_Mi, BDAvg, BDStDev
+dataset Mean Annual Evapotranspiration 1980-2020 | https://services1.arcgis.com/Ezk9fcjSUkeadg6u/arcgis/rest/services/AZ_Mean_Annual_ET_1980_2020_AORC_4km_Gridded_NoahMP_v3/FeatureServer/1
+candidate https://services1.arcgis.com/Ezk9fcjSUkeadg6u/arcgis/rest/services/AZ_Mean_Annual_ET_1980_2020_AORC_4km_Gridded_NoahMP_v3/FeatureServer/1
+note felder: OBJECTID, POINT_X, POINT_Y, Value, pointid
+dataset Irrigation Water Demand | https://services6.arcgis.com/3R3y1KXaPJ9BFnsU/arcgis/rest/services/National_Water_Balance_WFL1/FeatureServer/13
+candidate https://services6.arcgis.com/3R3y1KXaPJ9BFnsU/arcgis/rest/services/National_Water_Balance_WFL1/FeatureServer/13
+note felder: Area, ComDemand, DomDemand, DomSwSY, EffRain, GwAlloc, GwAvail, GwSY, HBDomSY, HBSy, HbAlloc, HbAvail, HbAvailDom, HbDemand, HbET, HbEffRain, HbMunAv, HbPrec
+dataset Water Available for Consumptive Allocation | https://services6.arcgis.com/3R3y1KXaPJ9BFnsU/arcgis/rest/services/National_Water_Balance_WFL1/FeatureServer/16
+candidate https://services6.arcgis.com/3R3y1KXaPJ9BFnsU/arcgis/rest/services/National_Water_Balance_WFL1/FeatureServer/16
+note felder: Area, ComDemand, DomDemand, DomSwSY, EffRain, GwAlloc, GwAvail, GwSY, HBDomSY, HBSy, HbAlloc, HbAvail, HbAvailDom, HbDemand, HbET, HbEffRain, HbMunAv, HbPrec
+dataset Industrial Water Demand | https://services6.arcgis.com/3R3y1KXaPJ9BFnsU/arcgis/rest/services/National_Water_Balance_WFL1/FeatureServer/14
+candidate https://services6.arcgis.com/3R3y1KXaPJ9BFnsU/arcgis/rest/services/National_Water_Balance_WFL1/FeatureServer/14
+note felder: Area, ComDemand, DomDemand, DomSwSY, EffRain, GwAlloc, GwAvail, GwSY, HBDomSY, HBSy, HbAlloc, HbAvail, HbAvailDom, HbDemand, HbET, HbEffRain, HbMunAv, HbPrec
+dataset WMU | https://services6.arcgis.com/3R3y1KXaPJ9BFnsU/arcgis/rest/services/National_Water_Balance_WFL1/FeatureServer/3
+candidate https://services6.arcgis.com/3R3y1KXaPJ9BFnsU/arcgis/rest/services/National_Water_Balance_WFL1/FeatureServer/3
+note felder: Area, Hydrobasin, OBJECTID, Shape__Area, Shape__Length, Wmu_Label, Wmu_Name, Wmu_No
+dataset UNDP Crop Evapotranspiration Survey results | https://services4.arcgis.com/XZEtqni2CM1tP1ZM/arcgis/rest/services/survey123_43949ec2d83d465c8d3b6cc199a178b9_results/FeatureServer/0
+candidate https://services4.arcgis.com/XZEtqni2CM1tP1ZM/arcgis/rest/services/survey123_43949ec2d83d465c8d3b6cc199a178b9_results/FeatureServer/0
+note felder: CreationDate, Creator, EditDate, Editor, crop_height, crop_type, crop_type_2021, crop_type_2022, crop_type_other_2021, crop_type_other_2022, globalid, growing_stage, irrigation_type, objectid, planting_date, untitled_question_1_other, untitled_question_2_other
+dataset Oregon Hyd Area Ag Boundaries 20241016 | https://services1.arcgis.com/CD5mKowwN6nIaqd8/arcgis/rest/services/Oregon_Hyd_Area_Ag_Boundaries_20241016/FeatureServer/0
+candidate https://services1.arcgis.com/CD5mKowwN6nIaqd8/arcgis/rest/services/Oregon_Hyd_Area_Ag_Boundaries_20241016/FeatureServer/0
+note felder: ACRES_FTR_GEOM, Acres, COBCODE, COUNTY_NAME, GRIDMET_ID, HUC12, HUC12_name, HUC8, HUC8_name, IRR_EFF, ITYPE, OBJECTID, OPENET_ID, OWRD, Region, Shape__Area, Shape__Length, district_nbr
+dataset Effective Rainfall (mm) | https://services6.arcgis.com/3R3y1KXaPJ9BFnsU/arcgis/rest/services/National_Water_Balance_WFL1/FeatureServer/4
+candidate https://services6.arcgis.com/3R3y1KXaPJ9BFnsU/arcgis/rest/services/National_Water_Balance_WFL1/FeatureServer/4
+note felder: Area, ComDemand, DomDemand, DomSwSY, EffRain, GwAlloc, GwAvail, GwSY, HBDomSY, HBSy, HbAlloc, HbAvail, HbAvailDom, HbDemand, HbET, HbEffRain, HbMunAv, HbPrec
+dataset Commercial Water Demand | https://services6.arcgis.com/3R3y1KXaPJ9BFnsU/arcgis/rest/services/National_Water_Balance_WFL1/FeatureServer/9
+candidate https://services6.arcgis.com/3R3y1KXaPJ9BFnsU/arcgis/rest/services/National_Water_Balance_WFL1/FeatureServer/9
+note felder: Area, ComDemand, DomDemand, DomSwSY, EffRain, GwAlloc, GwAvail, GwSY, HBDomSY, HBSy, HbAlloc, HbAvail, HbAvailDom, HbDemand, HbET, HbEffRain, HbMunAv, HbPrec
+dataset Hotels Mplan 20201 07 | https://services6.arcgis.com/3R3y1KXaPJ9BFnsU/arcgis/rest/services/National_Water_Balance_WFL1/FeatureServer/11
+candidate https://services6.arcgis.com/3R3y1KXaPJ9BFnsU/arcgis/rest/services/National_Water_Balance_WFL1/FeatureServer/11
+note felder: Contact, Easting, Email, Employees, Hotel, Location, ManagedBy, Metadata, Northing, OBJECTID, Owner, Ownership, Parish, Remark, Rooms
+dataset Domestic Water Demand | https://services6.arcgis.com/3R3y1KXaPJ9BFnsU/arcgis/rest/services/National_Water_Balance_WFL1/FeatureServer/8
+candidate https://services6.arcgis.com/3R3y1KXaPJ9BFnsU/arcgis/rest/services/National_Water_Balance_WFL1/FeatureServer/8
+note felder: Area, ComDemand, DomDemand, DomSwSY, EffRain, GwAlloc, GwAvail, GwSY, HBDomSY, HBSy, HbAlloc, HbAvail, HbAvailDom, HbDemand, HbET, HbEffRain, HbMunAv, HbPrec
+dataset National Water Balance WFL1 | https://services6.arcgis.com/3R3y1KXaPJ9BFnsU/arcgis/rest/services/National_Water_Balance_WFL1/FeatureServer
+decline https://services6.arcgis.com/3R3y1KXaPJ9BFnsU/arcgis/rest/services/National_Water_Balance_WFL1/FeatureServer
+note kein features-key
+dataset Water Demand | https://services6.arcgis.com/3R3y1KXaPJ9BFnsU/arcgis/rest/services/National_Water_Balance_WFL1/FeatureServer/7
+candidate https://services6.arcgis.com/3R3y1KXaPJ9BFnsU/arcgis/rest/services/National_Water_Balance_WFL1/FeatureServer/7
+note felder: Area, ComDemand, DomDemand, DomSwSY, EffRain, GwAlloc, GwAvail, GwSY, HBDomSY, HBSy, HbAlloc, HbAvail, HbAvailDom, HbDemand, HbET, HbEffRain, HbMunAv, HbPrec
+dataset Surplus/Deficit | https://services6.arcgis.com/3R3y1KXaPJ9BFnsU/arcgis/rest/services/National_Water_Balance_WFL1/FeatureServer/15
+candidate https://services6.arcgis.com/3R3y1KXaPJ9BFnsU/arcgis/rest/services/National_Water_Balance_WFL1/FeatureServer/15
+note felder: Area, ComDemand, DomDemand, DomSwSY, EffRain, GwAlloc, GwAvail, GwSY, HBDomSY, HBSy, HbAlloc, HbAvail, HbAvailDom, HbDemand, HbET, HbEffRain, HbMunAv, HbPrec
+dataset Stratified Random Whitebark Pine DiFolco | https://services3.arcgis.com/QCH1Le0vwRIyplqB/arcgis/rest/services/Stratified_Random_Whitebark_Pine_DiFolco/FeatureServer/0
+candidate https://services3.arcgis.com/QCH1Le0vwRIyplqB/arcgis/rest/services/Stratified_Random_Whitebark_Pine_DiFolco/FeatureServer/0
+note felder: CID, CreationDate, Creator, EditDate, Editor, GlobalID, Name, OID
+dataset Historical Drought Frequency - Feature Layer | https://services.arcgis.com/cJ9YHowT8TU7DUyn/arcgis/rest/services/SPEI_Data_Grid/FeatureServer/0
+candidate https://services.arcgis.com/cJ9YHowT8TU7DUyn/arcgis/rest/services/SPEI_Data_Grid/FeatureServer/0
+note felder: Id, OBJECTID, Point_Count, SPEI_01_ED, SPEI_01_MD, SPEI_01_SD, SPEI_02_ED, SPEI_02_MD, SPEI_02_SD, SPEI_03_ED, SPEI_03_MD, SPEI_03_SD, SPEI_06_ED, SPEI_06_MD, SPEI_06_SD, SPEI_12_ED, SPEI_12_MD, SPEI_12_SD
+dataset Oregon Hyd Area Ag Boundaries 20241016 view | https://services1.arcgis.com/CD5mKowwN6nIaqd8/arcgis/rest/services/Oregon_Hyd_Area_Ag_Boundaries_20241016_view/FeatureServer/0
+candidate https://services1.arcgis.com/CD5mKowwN6nIaqd8/arcgis/rest/services/Oregon_Hyd_Area_Ag_Boundaries_20241016_view/FeatureServer/0
+note felder: Acres, IRR_EFF, OBJECTID, OPENET_ID, Shape__Area
+dataset Water Balance mm Precipitation Evapotranspiration Polygon | https://services3.arcgis.com/HVjI8GKrRtjcQ4Ry/arcgis/rest/services/Water_Balance__mm__Precipitation___Evapotranspiration__Polygon/FeatureServer/0
+candidate https://services3.arcgis.com/HVjI8GKrRtjcQ4Ry/arcgis/rest/services/Water_Balance__mm__Precipitation___Evapotranspiration__Polygon/FeatureServer/0
+note felder: Id, OBJECTID, Shape__Area, Shape__Length, gridcode
+dataset YearlyData.csv | https://services1.arcgis.com/IQkrFigagkCSClLX/arcgis/rest/services/Drought_Prediction_WFL1/FeatureServer/7
+candidate https://services1.arcgis.com/IQkrFigagkCSClLX/arcgis/rest/services/Drought_Prediction_WFL1/FeatureServer/7
+note felder: County, Evapotranspiration__mm_, Mean_Annual_Temperature, OBJECTID, Precipitation__mm_, Soil_Moisture__mm_, Time
+dataset NE CMA Water Balance Potential Evapotranspiration | https://services2.arcgis.com/bNcG5ccs6zGAnYpY/arcgis/rest/services/NE_CMA_Grid_Water/FeatureServer/2
+candidate https://services2.arcgis.com/bNcG5ccs6zGAnYpY/arcgis/rest/services/NE_CMA_Grid_Water/FeatureServer/2
+note felder: OBJECTID, Period, Shape__Area, Shape__Length, Value_, Variable, Year_
+dataset Final Catchment Analysis Units (Buffer minus 50) | https://services3.arcgis.com/Bb8lfThdhugyc4G3/arcgis/rest/services/Irwell_NFM_Outputs/FeatureServer/0
+decline https://services3.arcgis.com/Bb8lfThdhugyc4G3/arcgis/rest/services/Irwell_NFM_Outputs/FeatureServer/0
+note arcgis-error-body
+dataset Rural Loss Improvement | https://services3.arcgis.com/Bb8lfThdhugyc4G3/arcgis/rest/services/Irwell_NFM_Outputs/FeatureServer/6
+decline https://services3.arcgis.com/Bb8lfThdhugyc4G3/arcgis/rest/services/Irwell_NFM_Outputs/FeatureServer/6
+note arcgis-error-body
+dataset Final Catchment Analysis Units | https://services3.arcgis.com/Bb8lfThdhugyc4G3/arcgis/rest/services/Irwell_NFM_Outputs/FeatureServer/1
+decline https://services3.arcgis.com/Bb8lfThdhugyc4G3/arcgis/rest/services/Irwell_NFM_Outputs/FeatureServer/1
+note arcgis-error-body
+dataset Scrub Planting (increased roughness oppourtunities) | https://services3.arcgis.com/Bb8lfThdhugyc4G3/arcgis/rest/services/Irwell_NFM_Outputs/FeatureServer/4
+decline https://services3.arcgis.com/Bb8lfThdhugyc4G3/arcgis/rest/services/Irwell_NFM_Outputs/FeatureServer/4
+note arcgis-error-body
+dataset Woodland Planting (increased roughness oppourtunities) | https://services3.arcgis.com/Bb8lfThdhugyc4G3/arcgis/rest/services/Irwell_NFM_Outputs/FeatureServer/3
+decline https://services3.arcgis.com/Bb8lfThdhugyc4G3/arcgis/rest/services/Irwell_NFM_Outputs/FeatureServer/3
+note arcgis-error-body
+dataset Urban Loss Improvement | https://services3.arcgis.com/Bb8lfThdhugyc4G3/arcgis/rest/services/Irwell_NFM_Outputs/FeatureServer/5
+decline https://services3.arcgis.com/Bb8lfThdhugyc4G3/arcgis/rest/services/Irwell_NFM_Outputs/FeatureServer/5
+note arcgis-error-body
+dataset Runoff Attenuation Features (RAFs) | https://services3.arcgis.com/Bb8lfThdhugyc4G3/arcgis/rest/services/Irwell_NFM_Outputs/FeatureServer/2
+decline https://services3.arcgis.com/Bb8lfThdhugyc4G3/arcgis/rest/services/Irwell_NFM_Outputs/FeatureServer/2
+note arcgis-error-body
+dataset Runoff Attenuation Features (RAFs) | https://services3.arcgis.com/Bb8lfThdhugyc4G3/arcgis/rest/services/Irwell_NFM_Outputs/FeatureServer/2
+decline https://services3.arcgis.com/Bb8lfThdhugyc4G3/arcgis/rest/services/Irwell_NFM_Outputs/FeatureServer/2
+note arcgis-error-body
+dataset Urban Loss Improvement | https://services3.arcgis.com/Bb8lfThdhugyc4G3/arcgis/rest/services/Irwell_NFM_Outputs/FeatureServer/5
+decline https://services3.arcgis.com/Bb8lfThdhugyc4G3/arcgis/rest/services/Irwell_NFM_Outputs/FeatureServer/5
+note arcgis-error-body
+dataset MeanTemperatur TransposeFiel | https://services1.arcgis.com/IQkrFigagkCSClLX/arcgis/rest/services/Drought_Prediction_WFL1/FeatureServer/9
+candidate https://services1.arcgis.com/IQkrFigagkCSClLX/arcgis/rest/services/Drought_Prediction_WFL1/FeatureServer/9
+note felder: County, MeanTemperature_degCel, OBJECTID, Time_Converted
+dataset Urban Loss Improvement | https://services3.arcgis.com/Bb8lfThdhugyc4G3/arcgis/rest/services/Irwell_NFM_Outputs/FeatureServer/5
+decline https://services3.arcgis.com/Bb8lfThdhugyc4G3/arcgis/rest/services/Irwell_NFM_Outputs/FeatureServer/5
+note arcgis-error-body
+dataset Runoff Attenuation Features (RAFs) | https://services3.arcgis.com/Bb8lfThdhugyc4G3/arcgis/rest/services/Irwell_NFM_Outputs/FeatureServer/2
+decline https://services3.arcgis.com/Bb8lfThdhugyc4G3/arcgis/rest/services/Irwell_NFM_Outputs/FeatureServer/2
+note arcgis-error-body
+dataset PredictedSever TransposeFiel | https://services1.arcgis.com/IQkrFigagkCSClLX/arcgis/rest/services/Drought_Prediction_WFL1/FeatureServer/19
+candidate https://services1.arcgis.com/IQkrFigagkCSClLX/arcgis/rest/services/Drought_Prediction_WFL1/FeatureServer/19
+note felder: Counties, DroughtSeverityLevels, OBJECTID, Year_Converted
+dataset DroughtRiskInd TransposeFiel | https://services1.arcgis.com/IQkrFigagkCSClLX/arcgis/rest/services/Drought_Prediction_WFL1/FeatureServer/17
+candidate https://services1.arcgis.com/IQkrFigagkCSClLX/arcgis/rest/services/Drought_Prediction_WFL1/FeatureServer/17
+note felder: County, DroughtRiskIndex, OBJECTID, Time_Converted
+dataset SoilMoistureDa TransposeFiel | https://services1.arcgis.com/IQkrFigagkCSClLX/arcgis/rest/services/Drought_Prediction_WFL1/FeatureServer/15
+candidate https://services1.arcgis.com/IQkrFigagkCSClLX/arcgis/rest/services/Drought_Prediction_WFL1/FeatureServer/15
+note felder: County, OBJECTID, SoilMoisture_mm, Time_Converted
+dataset Evapotranspira TransposeFiel | https://services1.arcgis.com/IQkrFigagkCSClLX/arcgis/rest/services/Drought_Prediction_WFL1/FeatureServer/13
+candidate https://services1.arcgis.com/IQkrFigagkCSClLX/arcgis/rest/services/Drought_Prediction_WFL1/FeatureServer/13
+note felder: County, Evapotranspiration_mm, OBJECTID, Time_Converted
+dataset CountyMeanTemperature | https://services1.arcgis.com/IQkrFigagkCSClLX/arcgis/rest/services/Drought_Prediction_WFL1/FeatureServer/2
+candidate https://services1.arcgis.com/IQkrFigagkCSClLX/arcgis/rest/services/Drought_Prediction_WFL1/FeatureServer/2
+note felder: County, MeanTemperature_degCel, OBJECTID, Shape__Area, Shape__Length, Time_Converted
+dataset PredictedSeverityLevels 5 years.csv | https://services1.arcgis.com/IQkrFigagkCSClLX/arcgis/rest/services/Drought_Prediction_WFL1/FeatureServer/18
+candidate https://services1.arcgis.com/IQkrFigagkCSClLX/arcgis/rest/services/Drought_Prediction_WFL1/FeatureServer/18
+note felder: Garissa, Mandera, Marsabit, OBJECTID, Turkana, Wajir, Year
+dataset EvapotranspirationData1.csv | https://services1.arcgis.com/IQkrFigagkCSClLX/arcgis/rest/services/Drought_Prediction_WFL1/FeatureServer/10
+candidate https://services1.arcgis.com/IQkrFigagkCSClLX/arcgis/rest/services/Drought_Prediction_WFL1/FeatureServer/10
+note felder: Garissa, Mandera, Marsabit, OBJECTID, Turkana, Wajir
+dataset DroughtProneCounties | https://services1.arcgis.com/IQkrFigagkCSClLX/arcgis/rest/services/Drought_Prediction_WFL1/FeatureServer/6
+candidate https://services1.arcgis.com/IQkrFigagkCSClLX/arcgis/rest/services/Drought_Prediction_WFL1/FeatureServer/6
+note felder: County, OBJECTID, Shape__Area, Shape__Length
+dataset CountyEvapotranspiration | https://services1.arcgis.com/IQkrFigagkCSClLX/arcgis/rest/services/Drought_Prediction_WFL1/FeatureServer/4
+candidate https://services1.arcgis.com/IQkrFigagkCSClLX/arcgis/rest/services/Drought_Prediction_WFL1/FeatureServer/4
+note felder: County, Evapotranspiration_mm, OBJECTID, Shape__Area, Shape__Length, Time_Converted
+dataset CountyPrecipitation | https://services1.arcgis.com/IQkrFigagkCSClLX/arcgis/rest/services/Drought_Prediction_WFL1/FeatureServer/3
+candidate https://services1.arcgis.com/IQkrFigagkCSClLX/arcgis/rest/services/Drought_Prediction_WFL1/FeatureServer/3
+note felder: County, OBJECTID, Precipitation_mm, Shape__Area, Shape__Length, Time_Converted
+dataset CompositeDroughtIndex | https://services1.arcgis.com/IQkrFigagkCSClLX/arcgis/rest/services/Drought_Prediction_WFL1/FeatureServer/1
+candidate https://services1.arcgis.com/IQkrFigagkCSClLX/arcgis/rest/services/Drought_Prediction_WFL1/FeatureServer/1
+note felder: County, DroughtRiskIndex, OBJECTID_1, Shape__Area, Shape__Length, Time_Converted
+dataset Trend in Annual Evapotranspiration 2001 to 2019 | https://services1.arcgis.com/YiULsZbgRKmBtdZN/arcgis/rest/services/evapo_zone_change_trend_huc10/FeatureServer/0
+candidate https://services1.arcgis.com/YiULsZbgRKmBtdZN/arcgis/rest/services/evapo_zone_change_trend_huc10/FeatureServer/0
+note felder: AREA, COUNT_, MAX_, MEAN, MIN_, OBJECTID, OBJECTID_1, RANGE, STD, SUM_, Shape__Area, Shape__Length, ZONE_CODE, areaacres, areasqkm, gnis_id, huc10, huc10_1
+dataset Drought Prediction WFL1 | https://services1.arcgis.com/IQkrFigagkCSClLX/arcgis/rest/services/Drought_Prediction_WFL1/FeatureServer
+decline https://services1.arcgis.com/IQkrFigagkCSClLX/arcgis/rest/services/Drought_Prediction_WFL1/FeatureServer
+note kein features-key
+dataset DroughtRiskIndex.csv | https://services1.arcgis.com/IQkrFigagkCSClLX/arcgis/rest/services/Drought_Prediction_WFL1/FeatureServer/16
+candidate https://services1.arcgis.com/IQkrFigagkCSClLX/arcgis/rest/services/Drought_Prediction_WFL1/FeatureServer/16
+note felder: Garissa, Mandera, Marsabit, OBJECTID, Turkana, Wajir
+dataset PrecipitationD TransposeFiel | https://services1.arcgis.com/IQkrFigagkCSClLX/arcgis/rest/services/Drought_Prediction_WFL1/FeatureServer/14
+candidate https://services1.arcgis.com/IQkrFigagkCSClLX/arcgis/rest/services/Drought_Prediction_WFL1/FeatureServer/14
+note felder: County, OBJECTID, Precipitation_mm, Time_Converted
+dataset SoilMoistureData1.csv | https://services1.arcgis.com/IQkrFigagkCSClLX/arcgis/rest/services/Drought_Prediction_WFL1/FeatureServer/12
+candidate https://services1.arcgis.com/IQkrFigagkCSClLX/arcgis/rest/services/Drought_Prediction_WFL1/FeatureServer/12
+note felder: Garissa, Mandera, Marsabit, OBJECTID, Turkana, Wajir
+dataset PrecipitationData1.csv | https://services1.arcgis.com/IQkrFigagkCSClLX/arcgis/rest/services/Drought_Prediction_WFL1/FeatureServer/11
+candidate https://services1.arcgis.com/IQkrFigagkCSClLX/arcgis/rest/services/Drought_Prediction_WFL1/FeatureServer/11
+note felder: Garissa, Mandera, Marsabit, OBJECTID, Turkana, Wajir
+dataset MeanTemperature1.csv | https://services1.arcgis.com/IQkrFigagkCSClLX/arcgis/rest/services/Drought_Prediction_WFL1/FeatureServer/8
+candidate https://services1.arcgis.com/IQkrFigagkCSClLX/arcgis/rest/services/Drought_Prediction_WFL1/FeatureServer/8
+note felder: Garissa, Mandera, Marsabit, OBJECTID, Turkana, Wajir
+dataset CountySoilMoisture | https://services1.arcgis.com/IQkrFigagkCSClLX/arcgis/rest/services/Drought_Prediction_WFL1/FeatureServer/5
+candidate https://services1.arcgis.com/IQkrFigagkCSClLX/arcgis/rest/services/Drought_Prediction_WFL1/FeatureServer/5
+note felder: County, OBJECTID, Shape__Area, Shape__Length, SoilMoisture_mm, Time_Converted
+dataset DroughtSeverityLevelPrediction | https://services1.arcgis.com/IQkrFigagkCSClLX/arcgis/rest/services/Drought_Prediction_WFL1/FeatureServer/0
+candidate https://services1.arcgis.com/IQkrFigagkCSClLX/arcgis/rest/services/Drought_Prediction_WFL1/FeatureServer/0
+note felder: County, DroughtSeverityLevels, OBJECTID_1, Shape__Area, Shape__Length, Year_Converted
+dataset SWALIM Agriculture lenght growing period | https://services5.arcgis.com/sjP4Ugu5s0dZWLjd/arcgis/rest/services/SWALIM_Lenght_Growing_Period/FeatureServer/0
+candidate https://services5.arcgis.com/sjP4Ugu5s0dZWLjd/arcgis/rest/services/SWALIM_Lenght_Growing_Period/FeatureServer/0
+note felder: COUNTRY, DESCRIPT, DGC_CODICE, LGP_ZONE, LONGEST_GP, NO__OF_GP, OBJECTID, TOTAL_GP
+dataset Evapotranspiration Anomaly Percentage 2023 Central Asia WFL1 | https://services2.arcgis.com/p3fHpql7LDfjRvXx/arcgis/rest/services/Evapotranspiration_Anomaly_Percentage_2023_Central_Asia_WFL1/FeatureServer/0
+candidate https://services2.arcgis.com/p3fHpql7LDfjRvXx/arcgis/rest/services/Evapotranspiration_Anomaly_Percentage_2023_Central_Asia_WFL1/FeatureServer/0
+note felder: AFF_ISO, COUNTRY, COUNTRYAFF, ISO, OBJECTID, Shape__Area, Shape__Length
+dataset RFC spei 90 conditions | https://services6.arcgis.com/ubm4tcTYICKBpist/arcgis/rest/services/RFC_spei_90_conditions/FeatureServer/0
+candidate https://services6.arcgis.com/ubm4tcTYICKBpist/arcgis/rest/services/RFC_spei_90_conditions/FeatureServer/0
+note felder: Category, Date, Date_From, Parameter, Shape__Area, Shape__Length, Value, fid
+# keyword groundwater
+dataset Groundwater Service Agency Subasins | https://utility.arcgis.com/usrsvcs/servers/0b8d4534a4d34f8fa4475c1c7faa9a09/rest/services/Groundwater/Subasin/FeatureServer/2
+candidate https://utility.arcgis.com/usrsvcs/servers/0b8d4534a4d34f8fa4475c1c7faa9a09/rest/services/Groundwater/Subasin/FeatureServer/2
+note felder: BasinName, BasinNum, BasinSubName, BasinSubNum, County, OBJECTID, RegionCode, Shape__Area, Shape__Length
+dataset Groundwater | https://services6.arcgis.com/5vG0k0nTzTH8X3q2/arcgis/rest/services/Groundwater/FeatureServer/0
+candidate https://services6.arcgis.com/5vG0k0nTzTH8X3q2/arcgis/rest/services/Groundwater/FeatureServer/0
+note felder: AGENCY, CATEGORY, LATDD, LONGDD, OBJECTID, SITENAME, SITENO, SITEURL
+dataset Groundwater Basin | https://services.arcgis.com/s8wtJX9suxFen6TA/arcgis/rest/services/Groundwater_Basin/FeatureServer/0
+candidate https://services.arcgis.com/s8wtJX9suxFen6TA/arcgis/rest/services/Groundwater_Basin/FeatureServer/0
+note felder: GWBASIN_NAME, GlobalID, OBJECTID, Shape__Area, Shape__Length
+dataset Groundwater Netherlands | https://services6.arcgis.com/IrCHt1arNMmYtNtb/arcgis/rest/services/Groundwater_NLD/FeatureServer/0
+candidate https://services6.arcgis.com/IrCHt1arNMmYtNtb/arcgis/rest/services/Groundwater_NLD/FeatureServer/0
+note felder: EERSTE_GWT, GWT, KLEUR_GWT, OBJECTID_1, Shape__Area, Shape__Length
+dataset Select groundwater chemistry | https://services.arcgis.com/ZzrwjTRez6FJiOq4/arcgis/rest/services/TDS_Web_Map/FeatureServer/0
+candidate https://services.arcgis.com/ZzrwjTRez6FJiOq4/arcgis/rest/services/TDS_Web_Map/FeatureServer/0
+note felder: Alk, As_, B, Ba, Be, Br, C13, C14, CBE, CBEqual, CO2, CO3, CO3_meq, Ca, CaCO3, Ca_meq, CalcTDS, Cd
+dataset Groundwater | https://www45.swfwmd.state.fl.us/arcgis10/rest/services/Hydrologic/DCS_LastRecord_WL/FeatureServer/2
+dead https://www45.swfwmd.state.fl.us/arcgis10/rest/services/Hydrologic/DCS_LastRecord_WL/FeatureServer/2
+note fetch-void
+dataset Groundwater Flow System - Loddon | https://services2.arcgis.com/2dxDmKAvomcBK4AK/arcgis/rest/services/GFS_Loddon/FeatureServer/0
+candidate https://services2.arcgis.com/2dxDmKAvomcBK4AK/arcgis/rest/services/GFS_Loddon/FeatureServer/0
+note felder: COUNT_, FLOWSYS, FLOWSYS1, GEOLOGY, GFSU_DESC3, GFS_VIC, GlobalID, LANDF_DESC, LANDF_MJR, LANDF_MNR, NEW_ID, OBJECTID, RELIEF, Shape__Area, Shape__Length, WEATHER
+dataset Groundwater Management Areas | https://gis.idwr.idaho.gov/hosting/rest/services/Regulatory/GroundwaterManagementAreas/FeatureServer/0
+dead https://gis.idwr.idaho.gov/hosting/rest/services/Regulatory/GroundwaterManagementAreas/FeatureServer/0
+note fetch-void
+dataset Groundwater Flow System - Avon Richardson | https://services2.arcgis.com/2dxDmKAvomcBK4AK/arcgis/rest/services/GFS_AvonRich/FeatureServer/0
+candidate https://services2.arcgis.com/2dxDmKAvomcBK4AK/arcgis/rest/services/GFS_AvonRich/FeatureServer/0
+note felder: AREASQM, COMMENTS, FEATCODE, FEATURE, FLOWSYS1, GlobalID, HECTARES, ID, LAND_CD, LAND_DESC, MAP_SYMB, OBJECTID, PLOTRANK, REFID, REGO_CD, REGO_DESC, RLU_CD, RLU_DSC_D1
+dataset WRIMS Groundwater Resources | https://services.arcgis.com/NxaIos6bsLPQJAmb/arcgis/rest/services/WRIMS_Groundwater_Resources/FeatureServer/0
+candidate https://services.arcgis.com/NxaIos6bsLPQJAmb/arcgis/rest/services/WRIMS_Groundwater_Resources/FeatureServer/0
+note felder: Allocati_1, Allocati_2, Allocati_3, Allocati_4, Allocation, Comments, GlobalID, Jun21_Allo, Jun21_GenC, Jun21_Stat, Licensable, Name, OBJECTID, OBJECTID_1, Proclamati, RecoupStat, ResourceSt, ResourceTy
+dataset ESPA Groundwater Contours Spring 2023 - 50 ft interval | https://gis.idwr.idaho.gov/hosting/rest/services/Modeling/ESPA_SP2023_GW_Contours_50/FeatureServer/0
+dead https://gis.idwr.idaho.gov/hosting/rest/services/Modeling/ESPA_SP2023_GW_Contours_50/FeatureServer/0
+note fetch-void
+dataset ESPA Groundwater Contours Spring 2023 - 25 ft interval | https://gis.idwr.idaho.gov/hosting/rest/services/Modeling/ESPA_SP2023_GW_Contours_25/FeatureServer/0
+dead https://gis.idwr.idaho.gov/hosting/rest/services/Modeling/ESPA_SP2023_GW_Contours_25/FeatureServer/0
+note fetch-void
+dataset TWDB Groundwater Data | https://services.twdb.texas.gov/arcgis/rest/services/Public/TWDB_Groundwater_database/FeatureServer/0
+candidate https://services.twdb.texas.gov/arcgis/rest/services/Public/TWDB_Groundwater_database/FeatureServer/0
+note felder: AquiferCodeName, CoordDDLat, CoordDDLong, CountyName, Elevation, ObjectId, OwnerName, PrimaryWaterUse, StateWellNumber, WaterLevelObservationType, WaterQualityAvailable, WellDepth, WellType
+dataset Groundwater Flow System - Upper Campaspe | https://services2.arcgis.com/2dxDmKAvomcBK4AK/arcgis/rest/services/GFS_UpperCampaspe/FeatureServer/0
+candidate https://services2.arcgis.com/2dxDmKAvomcBK4AK/arcgis/rest/services/GFS_UpperCampaspe/FeatureServer/0
+note felder: AGEOLD, AGEOLDNO, AGEYOUNG, AGEYOUNGNO, ENVDESC, FEATCODE, FEATURE, FLOWSYS1, GFS_CODE, GlobalID, LITHDESC1, MAP_SYMB, OBJECTID, RELIEF, SUBTYPE, Shape__Area, Shape__Length, UFI
+dataset Groundwater Recharge Areas | https://services1.arcgis.com/Ug5xGQbHsD8zuZzM/arcgis/rest/services/Groundwater_by_Basin/FeatureServer/6
+candidate https://services1.arcgis.com/Ug5xGQbHsD8zuZzM/arcgis/rest/services/Groundwater_by_Basin/FeatureServer/6
+note felder: BasinName, CountyName, OBJECTID, RechType, Shape__Area, Shape__Length, areasqmi
+dataset Priority Groundwater | https://services6.arcgis.com/8FfntkJtqsQruLi6/arcgis/rest/services/Priority_Groundwater/FeatureServer/0
+decline https://services6.arcgis.com/8FfntkJtqsQruLi6/arcgis/rest/services/Priority_Groundwater/FeatureServer/0
+note arcgis-error-body
+dataset Groundwater Vulnerability Scoring | https://services5.arcgis.com/zEv9BLFdYq38maPG/arcgis/rest/services/Groundwater_Vulnerability_Scoring/FeatureServer/0
+candidate https://services5.arcgis.com/zEv9BLFdYq38maPG/arcgis/rest/services/Groundwater_Vulnerability_Scoring/FeatureServer/0
+note felder: Comment, DateRec, Deliniatio, FID_VSA_GW, FID_Wellhe, GlobalID, IV_Source, OBJECTID, OBJECTID_1, SPP_ID, Shape_Leng, Shape__Area, Shape__Length, Source, UncertainA, Uncertaint, WHPAA_ID, WHPA_ID
+dataset ADWR Groundwater Basin | https://services1.arcgis.com/Ezk9fcjSUkeadg6u/arcgis/rest/services/ADWR_Groundwater_Basin/FeatureServer/36
+candidate https://services1.arcgis.com/Ezk9fcjSUkeadg6u/arcgis/rest/services/ADWR_Groundwater_Basin/FeatureServer/36
+note felder: BASIN_NAME, FID, NAME_ABBR, PLANNING_A, Shape__Area, Shape__Length
+dataset Groundwater | https://gis.wrd.state.or.us/server/rest/services/dynamic/Water_Rights_by_Type_WGS84/FeatureServer/17
+candidate https://gis.wrd.state.or.us/server/rest/services/dynamic/Water_Rights_by_Type_WGS84/FeatureServer/17
+note felder: OBJECTID, Shape__Area, Shape__Length, agency, app_char, app_nbr, cert_nbr, claim_char, claim_nbr, decree_title, delta_size, feature_quality_code, last_updt_date, name_company, name_first, name_last, permit_char, permit_nbr
+dataset Depth to Groundwater 6ft or less | https://services1.arcgis.com/SuEt4jqH31FZKNYY/arcgis/rest/services/Depth_to_Groundwater_6ft_or_less/FeatureServer/0
+candidate https://services1.arcgis.com/SuEt4jqH31FZKNYY/arcgis/rest/services/Depth_to_Groundwater_6ft_or_less/FeatureServer/0
+note felder: Depth, GRIDCODE, Groundwater_Score, ID, OBJECTID, Shape__Area, Shape__Length
+dataset All Groundwater Stations | https://services.arcgis.com/s8wtJX9suxFen6TA/arcgis/rest/services/status_trend_2025_gw/FeatureServer/11
+candidate https://services.arcgis.com/s8wtJX9suxFen6TA/arcgis/rest/services/status_trend_2025_gw/FeatureServer/11
+note felder: OBJECTID, basin, site_name, station, station_category, wbodtype
+dataset Groundwater Vulnerability | https://services8.arcgis.com/lvdGvp1PYIbVwdnK/arcgis/rest/services/Groundwater_Vulnerability/FeatureServer/0
+candidate https://services8.arcgis.com/lvdGvp1PYIbVwdnK/arcgis/rest/services/Groundwater_Vulnerability/FeatureServer/0
+note felder: AQRating, AquiferMed, DTWRating, DepthToWat, GVIndex, HYCORating, Hydrauli_1, HydraulicC, Hydrogeolo, OBJECTID, PestIndex, RECRating, Recharge, SORating, Shape_Leng, Shape__Area, Shape__Length, SoilMedia
+dataset Groundwater Basin | https://services1.arcgis.com/Ezk9fcjSUkeadg6u/arcgis/rest/services/Groundwater_Basin/FeatureServer/0
+candidate https://services1.arcgis.com/Ezk9fcjSUkeadg6u/arcgis/rest/services/Groundwater_Basin/FeatureServer/0
+note felder: BASIN_NAME, BASIN_NA_1, FID, NAME_ABBR, OBJECTID, Shape__Are, Shape__Area, Shape__Len, Shape__Length
+dataset Groundwater Prohibition Area | https://services5.arcgis.com/ULv86JkyrywnrlnW/arcgis/rest/services/Groundwater_Prohibition_Area/FeatureServer/0
+candidate https://services5.arcgis.com/ULv86JkyrywnrlnW/arcgis/rest/services/Groundwater_Prohibition_Area/FeatureServer/0
+note felder: OBJECTID, SITE, Shape__Area, Shape__Length, TYPE
+dataset Groundwater Subbasins | https://services1.arcgis.com/Ezk9fcjSUkeadg6u/arcgis/rest/services/Groundwater_Subbasins/FeatureServer/0
+candidate https://services1.arcgis.com/Ezk9fcjSUkeadg6u/arcgis/rest/services/Groundwater_Subbasins/FeatureServer/0
+note felder: AMA_CODE, FID, MAP_LABEL, NAME_ABBR, OBJECTID, SUBBASIN_1, SUBBASIN_C, SUBBASIN_N, Shape__Are, Shape__Area, Shape__Len, Shape__Length
+dataset ADWR Groundwater Basin | https://services.arcgis.com/C34zQ7veRS0V1t04/arcgis/rest/services/Groundwater_Basin_2024/FeatureServer/0
+candidate https://services.arcgis.com/C34zQ7veRS0V1t04/arcgis/rest/services/Groundwater_Basin_2024/FeatureServer/0
+note felder: BASIN_NAME, BASIN_NAME_GWSI, NAME_ABBR, OBJECTID, Shape__Area, Shape__Length
+dataset Groundwater User Information Data Exchange | https://services1.arcgis.com/P5Mv5GY5S66M8Z1Q/arcgis/rest/services/service_e07666dca39b4cc68512e62f7371a8c4/FeatureServer/0
+decline https://services1.arcgis.com/P5Mv5GY5S66M8Z1Q/arcgis/rest/services/service_e07666dca39b4cc68512e62f7371a8c4/FeatureServer/0
+note arcgis-error-body
+dataset Harney Basin Groundwater Study Area | https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Harney_Basin_Groundwater_Study_Area/FeatureServer
+decline https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Harney_Basin_Groundwater_Study_Area/FeatureServer
+note kein features-key
+dataset Greater Harney Valley Groundwater Classified Area | https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Greater_Harney_Valley_Groundwater_Classified_Area/FeatureServer
+decline https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Greater_Harney_Valley_Groundwater_Classified_Area/FeatureServer
+note kein features-key
+dataset Status & Trends 2025 Groundwater | https://services.arcgis.com/s8wtJX9suxFen6TA/arcgis/rest/services/status_trend_2025_gw/FeatureServer
+decline https://services.arcgis.com/s8wtJX9suxFen6TA/arcgis/rest/services/status_trend_2025_gw/FeatureServer
+note kein features-key
+dataset Groundwater Dependent Terrestrial Ecosystems | https://services-eu1.arcgis.com/kswen6BYexuc1SUk/arcgis/rest/services/Groundwater_Dependent_Terrestrial_Ecosystems/FeatureServer/0
+candidate https://services-eu1.arcgis.com/kswen6BYexuc1SUk/arcgis/rest/services/Groundwater_Dependent_Terrestrial_Ecosystems/FeatureServer/0
+note felder: GlobalID, Hyperlink, NAME, OBJECTID, REFERENCE, Shape__Area, Shape__Length
+dataset Groundwater Reservoirs | https://services2.arcgis.com/S8zZg9pg23JUEexQ/arcgis/rest/services/HYDRO_GroundwaterReservois/FeatureServer/0
+candidate https://services2.arcgis.com/S8zZg9pg23JUEexQ/arcgis/rest/services/HYDRO_GroundwaterReservois/FeatureServer/0
+note felder: GWclass, Matrix, Name, OBJECTID, Resvoir, SHAPE_Leng, Shape__Area, Shape__Length
+dataset DWR Groundwater Projects | https://services.arcgis.com/aa38u6OgfNoCkTJ6/arcgis/rest/services/DWR_Groundwater_Projects/FeatureServer/0
+candidate https://services.arcgis.com/aa38u6OgfNoCkTJ6/arcgis/rest/services/DWR_Groundwater_Projects/FeatureServer/0
+note felder: AOMI_Federal, AOMI_Local, AOMI_State, AOMI_Total, AOMI_Unfunded, Add_Benefit_1_Quantity, Add_Benefit_1_Rev, Add_Benefit_1_Timing, Add_Benefit_1_Type, Add_Benefit_1_Unit, Add_Benefit_2_Quantity, Add_Benefit_2_Rev, Add_Benefit_2_Timing, Add_Benefit_2_Type, Add_Benefit_2_Unit, Add_Benefit_3_Quantity, Add_Benefit_3_Rev, Add_Benefit_3_Timing
+dataset Groundwater wells Rio Altar | https://services1.arcgis.com/Ezk9fcjSUkeadg6u/arcgis/rest/services/Groundwater_wells_Rio_Altar/FeatureServer/0
+candidate https://services1.arcgis.com/Ezk9fcjSUkeadg6u/arcgis/rest/services/Groundwater_wells_Rio_Altar/FeatureServer/0
+note felder: FID, LATDEC, LONGDEC, Titular, WATER_USE
+dataset Groundwater subareas Public | https://services1.arcgis.com/Ko5rxt00spOfjMqj/arcgis/rest/services/Groundwater_subareas_Public/FeatureServer/0
+candidate https://services1.arcgis.com/Ko5rxt00spOfjMqj/arcgis/rest/services/Groundwater_subareas_Public/FeatureServer/0
+note felder: FID, Name, Size, Vly_Flr
+dataset Groundwater Basins | https://services3.arcgis.com/0OPQIK59PJJqLK0A/arcgis/rest/services/Groundwater_Basins/FeatureServer/0
+candidate https://services3.arcgis.com/0OPQIK59PJJqLK0A/arcgis/rest/services/Groundwater_Basins/FeatureServer/0
+note felder: BASIN_NAME, BASIN_NA_1, GlobalID, NAME_ABBR, OBJECTID, OBJECTID_1, SHAPEAREA, SHAPELEN, Shape__Area, Shape__Length
+dataset Groundwater Vulnerbility Index | https://services8.arcgis.com/CJpiu5T88EYxY793/arcgis/rest/services/Groundwater_Vulnerbility_Index/FeatureServer/0
+candidate https://services8.arcgis.com/CJpiu5T88EYxY793/arcgis/rest/services/Groundwater_Vulnerbility_Index/FeatureServer/0
+note felder: AQRating, AquiferMed, DTWRating, DepthToWat, FID, GVIndex, HYCORating, Hydrauli_1, HydraulicC, Hydrogeolo, PestIndex, RECRating, Recharge, SORating, Shape_Leng, Shape__Area, Shape__Length, SoilMedia
+dataset Groundwater Drinking Water Protected Areas | https://services.arcgis.com/hQoYDJEEJMaPw8Sy/arcgis/rest/services/Groundwater_Drinking_Water_Protected_Areas/FeatureServer/0
+candidate https://services.arcgis.com/hQoYDJEEJMaPw8Sy/arcgis/rest/services/Groundwater_Drinking_Water_Protected_Areas/FeatureServer/0
+note felder: EA_WB_ID, OBJECTID, RBD_ID, RBD_NAME, Shape__Area, Shape__Length, WB_NAME
+dataset Groundwater Managment Districts | https://services5.arcgis.com/jUQNQLRsFay8U0v4/arcgis/rest/services/Groundwater_Managment_Districts/FeatureServer/0
+candidate https://services5.arcgis.com/jUQNQLRsFay8U0v4/arcgis/rest/services/Groundwater_Managment_Districts/FeatureServer/0
+note felder: AMENDED_DA, BMNDS_NO, FORMATION_, MDID, MD_NAME, OBJECTID, OBJECTID_1, PERIMETER, Shape_Leng, Shape__Area, Shape__Length
+dataset Significant Groundwater Recharge Areas | https://services3.arcgis.com/rl7ACuZkiFsmDA2g/arcgis/rest/services/Brampton_Plan_Schedule_6c_Key_Hydrologic_Areas/FeatureServer/0
+candidate https://services3.arcgis.com/rl7ACuZkiFsmDA2g/arcgis/rest/services/Brampton_Plan_Schedule_6c_Key_Hydrologic_Areas/FeatureServer/0
+note felder: ASSESSMENT, CONVAUTH, OBJECTID_12, SGRA_ID, SHAPE_LENG, SPP_ID, Shape__Area, Shape__Length, VULNERABIL, YEAR
+dataset DEAR Groundwater Special Projects stakeholder | https://services1.arcgis.com/nRHtyn3uE1kyzoYc/arcgis/rest/services/survey123_7ae7bae569eb4db4bcd47e8b4c751674_stakeholder/FeatureServer/0
+candidate https://services1.arcgis.com/nRHtyn3uE1kyzoYc/arcgis/rest/services/survey123_7ae7bae569eb4db4bcd47e8b4c751674_stakeholder/FeatureServer/0
+note felder: BLANK_COLLECTION_TIME, Blank_Field_ID, Casing_Depth, Casing_Diam, Casing_Material, Collection_Agency, Collection_Date, Collection_Time_01, CreationDate, Creator, Dashboard_Metals_ICP, Dashboard_Nutrients, Data_Load_Flag, EditDate, Editor, FLUWID, FLUWID_condition, Field_ID
+dataset Priority Groundwater Basins | https://services.arcgis.com/hVnyNvwbpFFPDV5j/arcgis/rest/services/Priority_Groundwater_Basins/FeatureServer/0
+candidate https://services.arcgis.com/hVnyNvwbpFFPDV5j/arcgis/rest/services/Priority_Groundwater_Basins/FeatureServer/0
+note felder: Adjudication, Area_Acres, Basin_Name, Basin_Number, Basin_Subbasin_Name, Basin_Subbasin_Number, Critical_Basin, GlobalID, OBJECTID, OBJECTID_1, ORIG_FID, PART_COUNT, Priority_2019, Region_Office, Shape__Area, Shape__Length, Summary, TNC_Basin_ID
+dataset TWDB Groundwater Wells | https://services2.arcgis.com/LYMgRMwHfrWWEg3s/arcgis/rest/services/TWDB_Groundwater_Wells/FeatureServer/0
+candidate https://services2.arcgis.com/LYMgRMwHfrWWEg3s/arcgis/rest/services/TWDB_Groundwater_Wells/FeatureServer/0
+note felder: AquCdDesc, AquPickMet, Aquifer, AquiferCd, AquiferId, BoreHoCmpl, Class, CoordSrc, County, CreatedDt, CuWaLeWell, CuWaQuWell, DepthSrc, DriEndDt, DriStartDt, DrillDay, DrillMeth, DrillMonth
+dataset Groundwater wells Rio Alisos | https://services1.arcgis.com/Ezk9fcjSUkeadg6u/arcgis/rest/services/Groundwater_wells_Rio_Alisos/FeatureServer/0
+candidate https://services1.arcgis.com/Ezk9fcjSUkeadg6u/arcgis/rest/services/Groundwater_wells_Rio_Alisos/FeatureServer/0
+note felder: FID, LATDEC, LONGDEC, Titular, Título, Water_Use
+dataset Otago Groundwater Protection Zones | https://services6.arcgis.com/ALxeDxaeNjQo1Mf0/arcgis/rest/services/Ground_Water_Protection_Zone/FeatureServer/1
+candidate https://services6.arcgis.com/ALxeDxaeNjQo1Mf0/arcgis/rest/services/Ground_Water_Protection_Zone/FeatureServer/1
+note felder: Description, ID, Map, OBJECTID, Shape__Area, Shape__Length, Zone_type
+dataset Groundwater Provinces of Minnesota 2021 | https://enterprise.gisdata.mn.gov/aghost/rest/services/us_mn_state_dnr/geos_groundwater_provinces_mn/FeatureServer/0
+candidate https://enterprise.gisdata.mn.gov/aghost/rest/services/us_mn_state_dnr/geos_groundwater_provinces_mn/FeatureServer/0
+note felder: Shape__Area, Shape__Length, objectid, province
+dataset 2014 Ground Water Zones | https://services2.arcgis.com/8k2PygHqghVevhzy/arcgis/rest/services/2014_Ground_Water_Zones/FeatureServer/385
+candidate https://services2.arcgis.com/8k2PygHqghVevhzy/arcgis/rest/services/2014_Ground_Water_Zones/FeatureServer/385
+note felder: Depth_ft, Location, Name, OBJECTID, Pump_Dept_ft, Shape__Area, Shape__Length, Yield_GPM
+dataset Canterbury - Groundwater Contamination Feature Layer | https://services5.arcgis.com/n4qyP7iVOnJlCVth/arcgis/rest/services/Canterbury_Groundwater_Contamination_WebMap_WFL1/FeatureServer
+decline https://services5.arcgis.com/n4qyP7iVOnJlCVth/arcgis/rest/services/Canterbury_Groundwater_Contamination_WebMap_WFL1/FeatureServer
+note kein features-key
+dataset Groundwater Availability | https://services1.arcgis.com/P5Mv5GY5S66M8Z1Q/arcgis/rest/services/Groundwater_Availability_PSGIS/FeatureServer/0
+candidate https://services1.arcgis.com/P5Mv5GY5S66M8Z1Q/arcgis/rest/services/Groundwater_Availability_PSGIS/FeatureServer/0
+note felder: ACREAGE, GWA, GWA_DEFINE, LABEL, OBJECTID, SQ_MILE, Shape__Area, Shape__Length
+dataset Groundwater Management Areas | https://services.arcgis.com/Ej0PsM5Aw677QF1W/arcgis/rest/services/GWMA_AREA_260/FeatureServer/0
+candidate https://services.arcgis.com/Ej0PsM5Aw677QF1W/arcgis/rest/services/GWMA_AREA_260/FeatureServer/0
+note felder: AREA_NAME, OBJECTID, Shape__Area, Shape__Length
+dataset Sensitive Groundwater | https://services1.arcgis.com/sYGZnQPdJ0azuLyn/arcgis/rest/services/Sensitive_Groundwater/FeatureServer/0
+candidate https://services1.arcgis.com/sYGZnQPdJ0azuLyn/arcgis/rest/services/Sensitive_Groundwater/FeatureServer/0
+note felder: Shape__Area, Shape__Length, acres, created_date, created_user, globalid, last_edited_date, last_edited_user, milessq, objectid, zone
+dataset NDDEQ Groundwater Monitoring Program | https://services1.arcgis.com/AULS0vxTrRlzLLY1/arcgis/rest/services/Groundwater_Monitoring_Program/FeatureServer/0
+candidate https://services1.arcgis.com/AULS0vxTrRlzLLY1/arcgis/rest/services/Groundwater_Monitoring_Program/FeatureServer/0
+note felder: CountOflng, FID, GlobalID, NAME, Program, SHAPE_Area, SHAPE_Leng, SampleProg
+dataset Groundwater Provinces of Minnesota 2021 | https://enterprise-dev.gisdata.mn.gov/aghost/rest/services/us_mn_state_dnr/geos_groundwater_provinces_mn/FeatureServer/0
+decline https://enterprise-dev.gisdata.mn.gov/aghost/rest/services/us_mn_state_dnr/geos_groundwater_provinces_mn/FeatureServer/0
+note nicht-json body
+dataset WAT Groundwater LatestRun GroundwaterConsents m3peryr | https://services2.arcgis.com/J8errK5dyxu7Xjf7/arcgis/rest/services/WAT_Groundwater_LatestRun_GroundwaterConsents_m3peryr/FeatureServer/0
+candidate https://services2.arcgis.com/J8errK5dyxu7Xjf7/arcgis/rest/services/WAT_Groundwater_LatestRun_GroundwaterConsents_m3peryr/FeatureServer/0
+note felder: AuthStatus, AuthorisationID, CatgoryPurpose, DateOfRun, GWnettake_m3y, IRISID, IsLatestRun, OBJECTID, SegmentId, Source, Type, UNIQUEID, Watermeter
+dataset Groundwater Savings Facility | https://services1.arcgis.com/osPHyJW29upTLmlM/arcgis/rest/services/StoryMapLayers_WFL1/FeatureServer/6
+candidate https://services1.arcgis.com/osPHyJW29upTLmlM/arcgis/rest/services/StoryMapLayers_WFL1/FeatureServer/6
+note felder: AMA, CERTIFICAT, CONVEYANCE, CRSPNDG_CE, EXIST_OR_P, GSF_OR_USF, NAME, OBJECTID, PROGRAM, STATUS, Shape__Area, Shape__Length
+dataset Groundwater Basins ExportFeatures | https://services1.arcgis.com/lDFzr3JyGEn5Eymu/arcgis/rest/services/Groundwater_Basins_ExportFeatures/FeatureServer/0
+candidate https://services1.arcgis.com/lDFzr3JyGEn5Eymu/arcgis/rest/services/Groundwater_Basins_ExportFeatures/FeatureServer/0
+note felder: BASIN_NAME, BASIN_NA_1, GlobalID, Links, NAME_ABBR, OBJECTID, OBJECTID_1, SHAPEAREA, SHAPELEN, Shape__Area, Shape__Length
+dataset Overdrafted Groundwater Basins | https://services.arcgis.com/hVnyNvwbpFFPDV5j/arcgis/rest/services/Overdrafted_Groundwater_Basins/FeatureServer/0
+candidate https://services.arcgis.com/hVnyNvwbpFFPDV5j/arcgis/rest/services/Overdrafted_Groundwater_Basins/FeatureServer/0
+note felder: Adjudication, Area_Acres, Basin_Name, Basin_Number, Basin_Subbasin_Name, Basin_Subbasin_Number, Critical_Basin, GlobalID, OBJECTID, OBJECTID_1, ORIG_FID, PART_COUNT, Priority_2019, Region_Office, Shape__Area, Shape__Length, Summary, TNC_Basin_ID
+dataset Groundwater Dependent Ecosystem Analyzed | https://services.arcgis.com/aa38u6OgfNoCkTJ6/arcgis/rest/services/Groundwater_Dependent_Ecosystem_Analyzed/FeatureServer/0
+candidate https://services.arcgis.com/aa38u6OgfNoCkTJ6/arcgis/rest/services/Groundwater_Dependent_Ecosystem_Analyzed/FeatureServer/0
+note felder: FID, Shape_Le_1, Shape_Leng, Shape__Area, Shape__Length
+dataset Groundwater Dependent Ecosystem (GDE) | https://services2.arcgis.com/bltItgu4omEvZVRv/arcgis/rest/services/GDE/FeatureServer/0
+candidate https://services2.arcgis.com/bltItgu4omEvZVRv/arcgis/rest/services/GDE/FeatureServer/0
+note felder: Acres, FID, OBJECTID_1, SUBBASIN, Shape_Area, Shape_Leng, Shape__Area, Shape__Length, Status, Type
+dataset Groundwater Level Trends Nevada | https://services.arcgis.com/F7DSX1DSNSiWmOqh/arcgis/rest/services/Groundwater_Level_Trends_Nevada/FeatureServer/0
+candidate https://services.arcgis.com/F7DSX1DSNSiWmOqh/arcgis/rest/services/Groundwater_Level_Trends_Nevada/FeatureServer/0
+note felder: App, Auto_ID, Basin, Dat_Src, Elev, FID, GloblID, HYD_AREA, HYD_AREA_, MaxYear, MinYear, New_Pvl, Notes, Old_Pvl, Owner, SigFall, Sit_Typ, Sns_Slp
+dataset Depth to Groundwater Polygons | https://services1.arcgis.com/RNxkQaMWQcgbiF98/arcgis/rest/services/Depth_to_Groundwater_Polygons/FeatureServer/0
+candidate https://services1.arcgis.com/RNxkQaMWQcgbiF98/arcgis/rest/services/Depth_to_Groundwater_Polygons/FeatureServer/0
+note felder: AQUIFER_TESTS, BOTTOM_SCREEN_1, BOTTOM_SCREEN_2, BOTTOM_SCREEN_3, CALC_MIN, DATE_DRILLED, DEPTH, DIAMETER, DRILLER, END_READINGS, GROUND_RL, GW_MONITORING_TYPE, GW_MONITORING_TYPE_DESC, HIGHEST_WATER_LEVEL, INITIAL_SWL, ISOTOPE, Input_FID, Join_Count
+dataset groundwater variation AGOL | https://services1.arcgis.com/Cx6nu3bxRHgwsm05/arcgis/rest/services/groundwater_variation_AGOL/FeatureServer
+decline https://services1.arcgis.com/Cx6nu3bxRHgwsm05/arcgis/rest/services/groundwater_variation_AGOL/FeatureServer
+note kein features-key
+dataset Ground-water Level: | https://services1.arcgis.com/Cx6nu3bxRHgwsm05/arcgis/rest/services/groundwater_variation_AGOL/FeatureServer/5
+candidate https://services1.arcgis.com/Cx6nu3bxRHgwsm05/arcgis/rest/services/groundwater_variation_AGOL/FeatureServer/5
+note felder: GW_VAR_FT, GW_VAR_M, OBJECTID, OBJECTID_12, ZONE, ZONE_1
+dataset Groundwater Models | https://services.arcgis.com/ZzrwjTRez6FJiOq4/arcgis/rest/services/GwModelsServiceView/FeatureServer/0
+candidate https://services.arcgis.com/ZzrwjTRez6FJiOq4/arcgis/rest/services/GwModelsServiceView/FeatureServer/0
+note felder: AREA, HECTARES, ID, Link, MODEL, OBJECTID, PERIMETER, Shape__Area, Shape__Length, TARGET
+dataset SCVWD Depth to First Groundwater | https://services2.arcgis.com/9KdAx8qBsHiGXOEw/arcgis/rest/services/SCVWD_Depth_to_First_Groundwater/FeatureServer/0
+candidate https://services2.arcgis.com/9KdAx8qBsHiGXOEw/arcgis/rest/services/SCVWD_Depth_to_First_Groundwater/FeatureServer/0
+note felder: ACRES, DEPTH_RANGE, GRID_CODE, OBJECTID, PERIMETER, Shape__Area, Shape__Length
+dataset Groundwater Ordinance Areas Feature Layer (Hosted) | https://services5.arcgis.com/jmdi6ffhe45GMz1s/arcgis/rest/services/Groundwater_Ordinance_Areas/FeatureServer/1
+candidate https://services5.arcgis.com/jmdi6ffhe45GMz1s/arcgis/rest/services/Groundwater_Ordinance_Areas/FeatureServer/1
+note felder: ADDNO, ADDRESSFULL, DESCRIPTION, GlobalID, LEGALDESC, MUNICIPALCODE, NOTES, NSEW, OBJECTID, ORDINANCEDATE, ORDINANCENO, PIN, PINAFFECTED, SITENAME, STATUS, STREET, STTYPE, Shape__Area
+dataset Groundwater Basins | https://services.arcgis.com/yq3FgOI44hYHAFVZ/arcgis/rest/services/Groundwater_Basins/FeatureServer/0
+candidate https://services.arcgis.com/yq3FgOI44hYHAFVZ/arcgis/rest/services/Groundwater_Basins/FeatureServer/0
+note felder: ACRES, BASIN_ID, BASIN_NAME, BASIN_SUBB, Label, OBJECTID, SUBBASIN_N, Shape__Area, Shape__Length, WEBPAGE
+dataset Groundwater Level Measurements | https://services.arcgis.com/1sGDluNFPoSGwMHo/arcgis/rest/services/Tule_Subbasin_Groundwater_Monitoring_Network/FeatureServer/1
+candidate https://services.arcgis.com/1sGDluNFPoSGwMHo/arcgis/rest/services/Tule_Subbasin_Groundwater_Monitoring_Network/FeatureServer/1
+note felder: Depth_to_Groundwater, GSA, GS_Elevation, GlobalID, Groundwater_Elevation, Lat, LocalWellName, Long_, Master_WellId, Measurement_Date, Measurement_Method, Monitoring_Type, OBJECTID, RP_Elevation, ReadingCode, ReadingCodeType, Results_Other, SGMAWellId
+dataset ADWR Groundwater Use Right 58 | https://services.arcgis.com/C34zQ7veRS0V1t04/arcgis/rest/services/Groundwater_Use_Right_58_2024/FeatureServer/44
+candidate https://services.arcgis.com/C34zQ7veRS0V1t04/arcgis/rest/services/Groundwater_Use_Right_58_2024/FeatureServer/44
+note felder: ALLOT_QTY, ALLOT_YR, BMP_CERT, BMP_CONV, BMP_NUMBER, BMP_PRO, CERT_NO, CONV_NO, IMS_KEY, IRRIGATED_CODE, IRR_ACRES, MAP_LABEL, OBJECTID, OWNER, PROGRAM_CODE, RET_ACRES, SW_ELIG_ACRES, Shape__Area
+dataset Sonoma Valley Groundwater Sustainability Priority (Depletion) Subarea | https://services1.arcgis.com/P5Mv5GY5S66M8Z1Q/arcgis/rest/services/Sonoma_Valley_Groundwater_Sustainability_Priority_Area/FeatureServer/0
+candidate https://services1.arcgis.com/P5Mv5GY5S66M8Z1Q/arcgis/rest/services/Sonoma_Valley_Groundwater_Sustainability_Priority_Area/FeatureServer/0
+note felder: NAME, OBJECTID, Shape__Area, Shape__Length
+dataset Groundwater Stations - Enterprise Water Management | https://gis.water.ca.gov/arcgis/rest/services/Geoscientific/i08_GroundwaterStations_EnterpriseWaterManagement/FeatureServer/0
+candidate https://gis.water.ca.gov/arcgis/rest/services/Geoscientific/i08_GroundwaterStations_EnterpriseWaterManagement/FeatureServer/0
+note felder: BOT_PRF, FIRST_MSMT_DATE, GlobalID, LAST_GSE, LAST_MEAS_COOPERATING_ORG_NAME, LAST_MEAS_SUBMITTING_ORG_NAME, LAST_MSMT_DATE, LAST_RPE, LAST_UPDATED_DATE, LOC_DESC, MONITORING_PROGRAM, MSMT_COUNT, OBJECTID, RP_DESC, SITE_CODE, SOURCE, STN_CMT, STN_ID
+dataset BRCMP Hydrology Depth to Groundwater | https://services.arcgis.com/ZzrwjTRez6FJiOq4/arcgis/rest/services/BRCMP_Hydrology_Depth_to_Groundwater/FeatureServer/0
+candidate https://services.arcgis.com/ZzrwjTRez6FJiOq4/arcgis/rest/services/BRCMP_Hydrology_Depth_to_Groundwater/FeatureServer/0
+note felder: DEPTH, GLSGW_, OBJECTID, Shape__Area, Shape__Length
+dataset Groundwater Flood Risk | https://services-eu1.arcgis.com/SuC1rPA4UP1jdgwy/arcgis/rest/services/Groundwater_Flood_Risk/FeatureServer/10
+candidate https://services-eu1.arcgis.com/SuC1rPA4UP1jdgwy/arcgis/rest/services/Groundwater_Flood_Risk/FeatureServer/10
+note felder: CAT, GWFR_CLASS, GWFR_SCORE, OBJECTID, Shape__Area, Shape__Length
+dataset Groundwater Sources | https://services.arcgis.com/Ej0PsM5Aw677QF1W/arcgis/rest/services/GWSOURCE_POINT_194/FeatureServer/0
+candidate https://services.arcgis.com/Ej0PsM5Aw677QF1W/arcgis/rest/services/GWSOURCE_POINT_194/FeatureServer/0
+note felder: BASIN_ID, BASIN_NAME, CARA_CODE, CITY, DATA_SRC, EQUIS_ID, GWMA, GW_ID, LOC_NAME, LOC_NUM, LOC_SRC, LOC_TYPE, OBJECTID, PIN, QS, RNG, SECTN, SRC_TYPE
+dataset Groundwater Quality Measurements | https://services.arcgis.com/1sGDluNFPoSGwMHo/arcgis/rest/services/Tule_Subbasin_Groundwater_Monitoring_Network/FeatureServer/2
+candidate https://services.arcgis.com/1sGDluNFPoSGwMHo/arcgis/rest/services/Tule_Subbasin_Groundwater_Monitoring_Network/FeatureServer/2
+note felder: Constituent, GSA, GlobalID, Lat, Long_, Master_Well_ID, MeasurableObjectives, Measurement_Date, MinimumThresholds, Monitoring_Type, OBJECTID, Results, Results_Num, SGMA_Well_ID, Units, WellID, x, y
+dataset Groundwater Protection Area GPA | https://services5.arcgis.com/V4b98G4pSkzvUam9/arcgis/rest/services/Groundwater_Protection_Area__GPA_/FeatureServer/0
+candidate https://services5.arcgis.com/V4b98G4pSkzvUam9/arcgis/rest/services/Groundwater_Protection_Area__GPA_/FeatureServer/0
+note felder: GRIDCODE, ID, OBJECTID, Shape__Area, Shape__Length
+dataset Extent of Groundwater Analysis | https://services9.arcgis.com/S87ZWifpvPdYZ4nJ/arcgis/rest/services/Chino_Basin_GW_Elevations_and_Contours_2024/FeatureServer/50
+candidate https://services9.arcgis.com/S87ZWifpvPdYZ4nJ/arcgis/rest/services/Chino_Basin_GW_Elevations_and_Contours_2024/FeatureServer/50
+note felder: Shape__Area, Shape__Length, area, fid, globalid, name
+dataset Groundwater 0ft SLR | https://services1.arcgis.com/6jEyBm2OMIBxuM1E/arcgis/rest/services/WhatcomClimateSolutions_Phase2_Hazards_Groundwater/FeatureServer/73
+candidate https://services1.arcgis.com/6jEyBm2OMIBxuM1E/arcgis/rest/services/WhatcomClimateSolutions_Phase2_Hazards_Groundwater/FeatureServer/73
+note felder: Groundwater_0ft_SLR, OBJECTID, Shape__Area, Shape__Length
+dataset Groundwater 6.6ft SLR | https://services1.arcgis.com/6jEyBm2OMIBxuM1E/arcgis/rest/services/WhatcomClimateSolutions_Phase2_Hazards_Groundwater/FeatureServer/70
+candidate https://services1.arcgis.com/6jEyBm2OMIBxuM1E/arcgis/rest/services/WhatcomClimateSolutions_Phase2_Hazards_Groundwater/FeatureServer/70
+note felder: Groundwater_6p6ft_SLR, OBJECTID, Shape__Area, Shape__Length
+dataset Areas Susceptible to Groundwater Contamination | https://services.arcgis.com/Ej0PsM5Aw677QF1W/arcgis/rest/services/ASGWC_AREA_202/FeatureServer/0
+candidate https://services.arcgis.com/Ej0PsM5Aw677QF1W/arcgis/rest/services/ASGWC_AREA_202/FeatureServer/0
+note felder: D_GW, GEOL_TYPE, GW_DEPTH, OBJECTID, POT_D, POT_D_CD, POT_G, POT_G_CD, POT_S, POT_S_CD, SUSCEPT, SUSCP_SUM, Shape__Area, Shape__Length
+dataset Groundwater wells Santa Cruz Aquifer | https://services1.arcgis.com/Ezk9fcjSUkeadg6u/arcgis/rest/services/Groundwater_wells_Santa_Cruz_Aquifer/FeatureServer/0
+candidate https://services1.arcgis.com/Ezk9fcjSUkeadg6u/arcgis/rest/services/Groundwater_wells_Santa_Cruz_Aquifer/FeatureServer/0
+note felder: FID, Latitud, Lon, OBJECTID, OWNER_NAME, Titular, WATER_USE2
+dataset Groundwater 3.3ft SLR | https://services1.arcgis.com/6jEyBm2OMIBxuM1E/arcgis/rest/services/WhatcomClimateSolutions_Phase2_Hazards_Groundwater/FeatureServer/71
+candidate https://services1.arcgis.com/6jEyBm2OMIBxuM1E/arcgis/rest/services/WhatcomClimateSolutions_Phase2_Hazards_Groundwater/FeatureServer/71
+note felder: Groundwater_3p3ft_SLR, OBJECTID, Shape__Area, Shape__Length
+dataset Groundwater 0.8ft SLR | https://services1.arcgis.com/6jEyBm2OMIBxuM1E/arcgis/rest/services/WhatcomClimateSolutions_Phase2_Hazards_Groundwater/FeatureServer/72
+candidate https://services1.arcgis.com/6jEyBm2OMIBxuM1E/arcgis/rest/services/WhatcomClimateSolutions_Phase2_Hazards_Groundwater/FeatureServer/72
+note felder: Groundwater_0p8ft_SLR, OBJECTID, Shape__Area, Shape__Length
+dataset Groundwater Basins DWR Bulletin 118 | https://services1.arcgis.com/4tcbocQlEp9Gn9Vv/arcgis/rest/services/Groundwater_Basins_DWR_Bulletin_118/FeatureServer/0
+candidate https://services1.arcgis.com/4tcbocQlEp9Gn9Vv/arcgis/rest/services/Groundwater_Basins_DWR_Bulletin_118/FeatureServer/0
+note felder: Basin_Name, Basin_Numb, Basin_Su_1, Basin_Subb, OBJECTID, Shape__Area, Shape__Length
+dataset DNR Cooperative Ground Water Monitoring Locations | https://enterprise.gisdata.mn.gov/aghost/rest/services/us_mn_state_dnr/env_wiski_groundwater_monitoring/FeatureServer/0
+candidate https://enterprise.gisdata.mn.gov/aghost/rest/services/us_mn_state_dnr/env_wiski_groundwater_monitoring/FeatureServer/0
+note felder: aquifer, aquifer_code, aquifer_name, aquifer_type, case_depth, case_material, completed_depth, completion_date, county_name, county_number, diameter, dnr_obwell_id, easting, firstfieldvisit, has_approved_data, has_provisional_data, lastfieldvisit, latitude
+dataset Groundwater Basin Boundaries | https://services9.arcgis.com/S87ZWifpvPdYZ4nJ/arcgis/rest/services/Facilities_by_Water_Use_Publisher/FeatureServer/1
+candidate https://services9.arcgis.com/S87ZWifpvPdYZ4nJ/arcgis/rest/services/Facilities_by_Water_Use_Publisher/FeatureServer/1
+note felder: FID, GlobalID, NAME, Shape__Area, Shape__Length
+dataset DNR Cooperative Ground Water Monitoring Locations | https://enterprise-dev.gisdata.mn.gov/aghost/rest/services/us_mn_state_dnr/env_wiski_groundwater_monitoring/FeatureServer/0
+decline https://enterprise-dev.gisdata.mn.gov/aghost/rest/services/us_mn_state_dnr/env_wiski_groundwater_monitoring/FeatureServer/0
+note nicht-json body
+dataset Groundwater wells San Pedro Aquifer | https://services1.arcgis.com/Ezk9fcjSUkeadg6u/arcgis/rest/services/Groundwater_wells_San_Pedro_Aquifer/FeatureServer/0
+candidate https://services1.arcgis.com/Ezk9fcjSUkeadg6u/arcgis/rest/services/Groundwater_wells_San_Pedro_Aquifer/FeatureServer/0
+note felder: FID, Latitud, Longitud, OBJECTID, OWNER_NAME, WATER_USE2
+dataset DWR Periodic Groundwater Measurements | https://services6.arcgis.com/4XnW0LugjJEsZM3v/arcgis/rest/services/CA_DWR_Well_Depth_/FeatureServer
+decline https://services6.arcgis.com/4XnW0LugjJEsZM3v/arcgis/rest/services/CA_DWR_Well_Depth_/FeatureServer
+note kein features-key
+dataset Quincy Groundwater Subarea | https://services2.arcgis.com/hQZvdtFxRzJpMtdS/arcgis/rest/services/Quincy_Groundwater_Subarea/FeatureServer/1
+candidate https://services2.arcgis.com/hQZvdtFxRzJpMtdS/arcgis/rest/services/Quincy_Groundwater_Subarea/FeatureServer/1
+note felder: DISTRICT, OBJECTID, Shape_STArea__, Shape_STLength__, Shape__Area, Shape__Length
+dataset TSB Groundwater Monitoring Network | https://services.arcgis.com/1sGDluNFPoSGwMHo/arcgis/rest/services/Tule_Subbasin_Groundwater_Monitoring_Network/FeatureServer/0
+candidate https://services.arcgis.com/1sGDluNFPoSGwMHo/arcgis/rest/services/Tule_Subbasin_Groundwater_Monitoring_Network/FeatureServer/0
+note felder: APN, Aquifer, AquiferDesignation, Chart_Link, DepthToBot, DepthToTop, GS_Elevati, GlobalID, Google_Dri, ILRP, ILRPWellId, IsActive, Labeling, Lat, LocalWellN, Long, MasterWell, MonitoringEvent
+dataset Groundwater Flow System - Avoca | https://services2.arcgis.com/2dxDmKAvomcBK4AK/arcgis/rest/services/GFS_Avoca/FeatureServer/0
+candidate https://services2.arcgis.com/2dxDmKAvomcBK4AK/arcgis/rest/services/GFS_Avoca/FeatureServer/0
+note felder: AREASQM, FEATURE, FLOWSYS1, GlobalID, HECTARES, ID, LITHDESC1, LITHDESC2, MAP_SYMB, OBJECTID, Shape__Area, Shape__Length, UFI, UNITNAME
+dataset Groundwater Production Wells | https://services9.arcgis.com/S87ZWifpvPdYZ4nJ/arcgis/rest/services/Facilities_by_Water_Use_Publisher/FeatureServer/7
+candidate https://services9.arcgis.com/S87ZWifpvPdYZ4nJ/arcgis/rest/services/Facilities_by_Water_Use_Publisher/FeatureServer/7
+note felder: GlobalID, Name, OBJECTID, Pool, Prod_2024
+dataset Groundwater Basins | https://services2.arcgis.com/SCn6czzcqKAFwdGU/arcgis/rest/services/Groundwater_Basins/FeatureServer/0
+candidate https://services2.arcgis.com/SCn6czzcqKAFwdGU/arcgis/rest/services/Groundwater_Basins/FeatureServer/0
+note felder: Shape__Area, Shape__Length, basin_name, basin_number, basin_subbasin_name, basin_subbasin_number, globalid, objectid, region_office
+dataset Groundwater Basin Boundaries | https://services9.arcgis.com/S87ZWifpvPdYZ4nJ/arcgis/rest/services/Facilities_by_Water_Use_Publisher/FeatureServer/2
+candidate https://services9.arcgis.com/S87ZWifpvPdYZ4nJ/arcgis/rest/services/Facilities_by_Water_Use_Publisher/FeatureServer/2
+note felder: FID, GlobalID, Id, Name, Shape__Area, Shape__Length
+dataset Change in Groundwater Levels | https://services.arcgis.com/hVnyNvwbpFFPDV5j/arcgis/rest/services/Change_in_Groundwater_Levels/FeatureServer/0
+candidate https://services.arcgis.com/hVnyNvwbpFFPDV5j/arcgis/rest/services/Change_in_Groundwater_Levels/FeatureServer/0
+note felder: COMMENTS, DATE_DATA_, EWM_STATIO, GSE_EARLY, GSE_LATE, GlobalID, LAST_MODIF, MODIFIED_B, MSMT_DATE_, MSMT_DAT_1, MSMT_ISSUE, MSMT_ISS_1, MSMT_SEASO, MSMT_YEAR_, MSMT_YEA_1, OBJECTID, OBJECTID_1, SITE_CODE
+dataset PADEP Groundwater Complaints | https://services.arcgis.com/jDGuO8tYggdCCnUJ/arcgis/rest/services/USMoSWWI_Dynamic/FeatureServer/5
+candidate https://services.arcgis.com/jDGuO8tYggdCCnUJ/arcgis/rest/services/USMoSWWI_Dynamic/FeatureServer/5
+note felder: Complaints, County, Incidents, Latitude, Longitude, Municipali, OBJECTID
+dataset Groundwater Vulnerability | https://services1.arcgis.com/Y68WgAIwaOZLUvnp/arcgis/rest/services/Groundwater_Vulnerability/FeatureServer/0
+candidate https://services1.arcgis.com/Y68WgAIwaOZLUvnp/arcgis/rest/services/Groundwater_Vulnerability/FeatureServer/0
+note felder: FID, Shape__Area, Shape__Length, VUL40KID, VUL_CAT, VUL_DESC
+dataset Utah DDW Groundwater Source Protection Zones | https://services2.arcgis.com/NnxP4LZ3zX8wWmP9/arcgis/rest/services/Utah_DDW_Groundwater_Source_Protection_Zones/FeatureServer/4
+candidate https://services2.arcgis.com/NnxP4LZ3zX8wWmP9/arcgis/rest/services/Utah_DDW_Groundwater_Source_Protection_Zones/FeatureServer/4
+note felder: BufferDist, ELEVATIONM, FACACTCODE, FACACTDESC, FACACTIVITY, FACID, FACNAME, FACTYPECODE, FACTYPEDESC, FederalID, LATITUDEDD, LONGITUDEDD, OBJECTID, ProtZone, SOURCEFLAG, SYSACTCODE, SYSACTDESC, SYSACTIVITY
+dataset NDGISHUB Sensitive Groundwater Areas | https://services1.arcgis.com/GOcSXpzwBHyk2nog/arcgis/rest/services/NDGISHUB_Sensitive_Groundwater_Areas/FeatureServer/0
+candidate https://services1.arcgis.com/GOcSXpzwBHyk2nog/arcgis/rest/services/NDGISHUB_Sensitive_Groundwater_Areas/FeatureServer/0
+note felder: ABBREV, AQUIFER, D_RATING, D_SCORE, EPOCH, FORMATION, MAIN_GENES, MAX_SLOPE, MINOR_GENE, OBJECTID, OBJECTID_1, OTHER_EPOC, PERIOD, SEDIMENT_1, SEDIMENT_2, SEDIMENT_3, SEDIMENT_4, SHAPE_LENG
+dataset CFWI SFWMD Groundwater Sites | https://services1.arcgis.com/sDAPyc2rGRn7vf9B/arcgis/rest/services/CFWI_SFWMD_Groundwater_Sites/FeatureServer/0
+candidate https://services1.arcgis.com/sDAPyc2rGRn7vf9B/arcgis/rest/services/CFWI_SFWMD_Groundwater_Sites/FeatureServer/0
+note felder: CASING_DEPTH, CASING_DIAM, COLLECTION_AGENCY, DATA_HYPERLINK, DATESTAMP_LAST_UPDATED, DMIT_WORK_PLAN_SITE, FGS_NBR, HAS_APT, HAS_GEO, HAS_LITHO, LAND_SURFACE_ELEV, LATITUDE_DD, LATITUDE_DMS, LONGITUDE_DD, LONGITUDE_DMS, OBJECTID, RECORDER_TYPE, SITE_ID
+dataset Pipeline Incidents Contaminating Groundwater | https://services.arcgis.com/jDGuO8tYggdCCnUJ/arcgis/rest/services/USMoSWWI_Dynamic/FeatureServer/1
+candidate https://services.arcgis.com/jDGuO8tYggdCCnUJ/arcgis/rest/services/USMoSWWI_Dynamic/FeatureServer/1
+note felder: COMMODITY_, DRINKING_W, GROUNDWATE, GROUNDWA_1, IYEAR, Latitude, Longitude, NAME, NET_LOSS_B, OBJECTID, PRIVATE_WE, REPORT_NUM, REPORT_REC, SUPPLEMENT
+dataset Natural Communities Commonly Associated with Groundwater | https://services5.arcgis.com/V0QlfY0p6DRAyng0/arcgis/rest/services/Natural_Communities_Commonly_Associated_with_Groundwater/FeatureServer/1
+candidate https://services5.arcgis.com/V0QlfY0p6DRAyng0/arcgis/rest/services/Natural_Communities_Commonly_Associated_with_Groundwater/FeatureServer/1
+note felder: COMMENTS, DATE_DATA_REFERS_TO, DOMINANT_COMMON_NAME, DOMINANT_SCIENTIFIC_NAME, GlobalID, LAST_MODIFIED_DATE, MODIFIED_BY, OBJECTID, POLYGON_ID, SOURCE_CODE, Shape__Area, Shape__Length, VEGETATION_NAME
+dataset Groundwater Sensitivity Regions of Kentucky | https://services3.arcgis.com/ghsX9CKghMvyYjBU/arcgis/rest/services/Ky_Groundwater_Sensitivity_Regions_WM_gdb/FeatureServer/0
+candidate https://services3.arcgis.com/ghsX9CKghMvyYjBU/arcgis/rest/services/Ky_Groundwater_Sensitivity_Regions_WM_gdb/FeatureServer/0
+note felder: KYGEONET, OBJECTID, SENSITIVIT, SHAPE__Area, SHAPE__Length, SQMILES
+dataset Santa Clara County Depth to First Groundwater | https://services2.arcgis.com/9KdAx8qBsHiGXOEw/arcgis/rest/services/Santa_Clara_County_Depth_to_First_Groundwater/FeatureServer/0
+candidate https://services2.arcgis.com/9KdAx8qBsHiGXOEw/arcgis/rest/services/Santa_Clara_County_Depth_to_First_Groundwater/FeatureServer/0
+note felder: Acres, Depth_Rang, FID, Perimeter, Shape_Area, Shape__Area, Shape__Length, grid_code
+dataset Minnesota Groundwater Contamination Atlas | https://enterprise-dev.gisdata.mn.gov/aghost/rest/services/us_mn_state_pca/env_mn_gw_contamination_atlas/FeatureServer
+decline https://enterprise-dev.gisdata.mn.gov/aghost/rest/services/us_mn_state_pca/env_mn_gw_contamination_atlas/FeatureServer
+note nicht-json body
+dataset 624 Groundwater | https://services.arcgis.com/o6oETlrWetREI1A2/arcgis/rest/services/624_Groundwater/FeatureServer/0
+candidate https://services.arcgis.com/o6oETlrWetREI1A2/arcgis/rest/services/624_Groundwater/FeatureServer/0
+note felder: Aggregated, Aggregatio, CASNumber, Class_1, Class_2, Class_3, Class_4, Class_5, CountryC_1, CountryCod, Determin_1, Determinan, Drinking_W, FirstUsage, GWBcode_EI, GWBcode_WF, GWBcode__1, GWBcode__2
+dataset Groundwater Wells | https://services.arcgis.com/F7DSX1DSNSiWmOqh/arcgis/rest/services/jldp_wells_(Public)/FeatureServer
+decline https://services.arcgis.com/F7DSX1DSNSiWmOqh/arcgis/rest/services/jldp_wells_(Public)/FeatureServer
+note kein features-key
+dataset QLD10352 Supplemented groundwater trading zones Clip Water Plan Areas | https://services9.arcgis.com/yuJpZThSoJXbc6ya/arcgis/rest/services/QLD10352_Supplemented_groundwater_trading_zones_Clip_Water_Plan_Areas/FeatureServer/1
+candidate https://services9.arcgis.com/yuJpZThSoJXbc6ya/arcgis/rest/services/QLD10352_Supplemented_groundwater_trading_zones_Clip_Water_Plan_Areas/FeatureServer/1
+note felder: OBJECTID, Shape__Area, Shape__Length, announced, contact, cur_vol_ml, ext_date, feature, hp_max_ml, location, map, mgt_area, mp_max_ml, office, product, status, sub_leg, trading
+dataset MassDEP Groundwater Discharge Permits (Feature Service) | https://arcgisserver.digital.mass.gov/arcgisserver/rest/services/AGOL/DEP_GWP/FeatureServer/0
+candidate https://arcgisserver.digital.mass.gov/arcgisserver/rest/services/AGOL/DEP_GWP/FeatureServer/0
+note felder: ADDRESS, BASIN, FLOW, NAME, OBJECTID, PER, PERR, REGION, TOWN, TYPE, WWTF
+dataset WhatcomClimateSolutions Phase2 Hazards Groundwater | https://services1.arcgis.com/6jEyBm2OMIBxuM1E/arcgis/rest/services/WhatcomClimateSolutions_Phase2_Hazards_Groundwater/FeatureServer
+decline https://services1.arcgis.com/6jEyBm2OMIBxuM1E/arcgis/rest/services/WhatcomClimateSolutions_Phase2_Hazards_Groundwater/FeatureServer
+note kein features-key
+dataset Groundwater Basin | https://services1.arcgis.com/F0m0hYDU3ywcMEEC/arcgis/rest/services/Groundwater_Basin/FeatureServer/0
+candidate https://services1.arcgis.com/F0m0hYDU3ywcMEEC/arcgis/rest/services/Groundwater_Basin/FeatureServer/0
+note felder: BasinName, Density, HydroReg_1, OBJECTID, Shape__Area, Shape__Length
+dataset Minnesota Groundwater Contamination Atlas | https://enterprise.gisdata.mn.gov/aghost/rest/services/us_mn_state_pca/env_mn_gw_contamination_atlas/FeatureServer
+decline https://enterprise.gisdata.mn.gov/aghost/rest/services/us_mn_state_pca/env_mn_gw_contamination_atlas/FeatureServer
+note kein features-key
+dataset Groundwater Sustainability Priority Areas | https://utility.arcgis.com/usrsvcs/servers/6fab0af650464ec684e2b8e2be620de8/rest/services/Groundwater/GroundwaterSustainabilityPriorityAreas/FeatureServer/0
+candidate https://utility.arcgis.com/usrsvcs/servers/6fab0af650464ec684e2b8e2be620de8/rest/services/Groundwater/GroundwaterSustainabilityPriorityAreas/FeatureServer/0
+note felder: Name, OBJECTID, Shape_Leng, Shape__Area, Shape__Length
+dataset Groundwater Savings Credits | https://services.arcgis.com/C34zQ7veRS0V1t04/arcgis/rest/services/Groundwater_Savings_Credits_97/FeatureServer/0
+candidate https://services.arcgis.com/C34zQ7veRS0V1t04/arcgis/rest/services/Groundwater_Savings_Credits_97/FeatureServer/0
+note felder: ALLOT_QTY, ALLOT_YR, BMP_CERT, BMP_CONV, BMP_NUMBER, BMP_PRO, CERT_NO, CONV_NO, GSC_QTY_AF, IMS_KEY, IRRIGATED_CODE, IRR_ACRES, MAP_LABEL, OBJECTID, OLD_IGFR, OWNER, PROGRAM_CODE, RET_ACRES
+dataset The Chino Groundwater Basin Boundary | https://services7.arcgis.com/x74yAepfzbQsthyi/arcgis/rest/services/DWR_ChinoBasin_Boundary/FeatureServer/0
+candidate https://services7.arcgis.com/x74yAepfzbQsthyi/arcgis/rest/services/DWR_ChinoBasin_Boundary/FeatureServer/0
+note felder: ACRES, AREA, BAS_SBBSN, BUDGET_TYP, DWR_, DWR_DIST, FID, GWBASIN, PERIMETER, SUBBSN_, SUBNAME, TYPE, labeltext
+dataset Santa Clara County Groundwater Subbasins (Hosted FL) | https://services2.arcgis.com/9KdAx8qBsHiGXOEw/arcgis/rest/services/Santa_Clara_County_Groundwater_Subbasins/FeatureServer
+decline https://services2.arcgis.com/9KdAx8qBsHiGXOEw/arcgis/rest/services/Santa_Clara_County_Groundwater_Subbasins/FeatureServer
+note kein features-key
+dataset Groundwater recharge (m/yr) | https://services.arcgis.com/cJ9YHowT8TU7DUyn/arcgis/rest/services/Groundwater_recharge_myr/FeatureServer/1
+candidate https://services.arcgis.com/cJ9YHowT8TU7DUyn/arcgis/rest/services/Groundwater_recharge_myr/FeatureServer/1
+note felder: HUC_12, OBJECTID, RC_0013
+dataset PWS Groundwater Sources | https://services2.arcgis.com/kCu40SDxsCGcuUWO/arcgis/rest/services/DWR_PWS_GroundwaterSources_NoDoD/FeatureServer/0
+candidate https://services2.arcgis.com/kCu40SDxsCGcuUWO/arcgis/rest/services/DWR_PWS_GroundwaterSources_NoDoD/FeatureServer/0
+note felder: County, DEQ_Region_Name, Facility_ID, Federal_ID, OBJECTID, PWS_ID, SWAP_Report_Link, Source_Availability, Source_Name, Source_System_Type, Susceptibility, System_Address, System_Address_2, System_City, System_Name, System_Type, System_Zip, Well_Depth_Feet
+dataset ADWR Groundwater Subbasin | https://services.arcgis.com/C34zQ7veRS0V1t04/arcgis/rest/services/ADWR_Groundwater_Subbasin_2024/FeatureServer/0
+candidate https://services.arcgis.com/C34zQ7veRS0V1t04/arcgis/rest/services/ADWR_Groundwater_Subbasin_2024/FeatureServer/0
+note felder: AMA_CODE, NAME_ABBR, OBJECTID, SUBBASIN_CODE, SUBBASIN_NAME, SUBBASIN_NAME_GWSI, Shape__Area, Shape__Length
+dataset South Tacoma Groundwater Protection District (Tacoma) | https://services3.arcgis.com/SCwJH1pD8WSn5T5y/arcgis/rest/services/Zoning_Districts_2025/FeatureServer
+decline https://services3.arcgis.com/SCwJH1pD8WSn5T5y/arcgis/rest/services/Zoning_Districts_2025/FeatureServer
+note arcgis-error-body
+dataset Groundwater wells within 1 6km of orphaned wells WFL1 | https://services.arcgis.com/v01gqwM5QqNysAAi/arcgis/rest/services/Groundwater_wells_within_1_6km_of_orphaned_wells_WFL1/FeatureServer
+decline https://services.arcgis.com/v01gqwM5QqNysAAi/arcgis/rest/services/Groundwater_wells_within_1_6km_of_orphaned_wells_WFL1/FeatureServer
+note kein features-key
+dataset Groundwater wells Los Vidrios–Western Mexican Drainage | https://services1.arcgis.com/Ezk9fcjSUkeadg6u/arcgis/rest/services/Groundwater_wells_Los_Vidrios%E2%80%93Western_Mexican_Drainage/FeatureServer/0
+candidate https://services1.arcgis.com/Ezk9fcjSUkeadg6u/arcgis/rest/services/Groundwater_wells_Los_Vidrios%E2%80%93Western_Mexican_Drainage/FeatureServer/0
+note felder: FID, LATDEC, LONGDEC, OBJECTID, OBJECTID_1, OBJECTID_2, OWNER_NAME, Titular, Uso, WATER_USE2
+dataset LPSNRD GroundWater CostShare | https://services2.arcgis.com/iTf0MCf7KYGMrPY1/arcgis/rest/services/LPSNRD_GroundWater_CostShare/FeatureServer
+decline https://services2.arcgis.com/iTf0MCf7KYGMrPY1/arcgis/rest/services/LPSNRD_GroundWater_CostShare/FeatureServer
+note kein features-key
+dataset Current Utah Shallow Groundwater Hazards | https://services6.arcgis.com/KaHXE9OkiB9e63uE/arcgis/rest/services/Hazard_Explorer_shallowgroundwater_current/FeatureServer/0
+candidate https://services6.arcgis.com/KaHXE9OkiB9e63uE/arcgis/rest/services/Hazard_Explorer_shallowgroundwater_current/FeatureServer/0
+note felder: OBJECTID, SHAPE__Area, SHAPE__Length, hazard_symbology_text, import_date, is_current, ogc_fid, sgshazardlabel, sgshazardunit, sgsmappedscale, sgsupdatedate
+dataset Groundwater Subbasins | https://services2.arcgis.com/bltItgu4omEvZVRv/arcgis/rest/services/Groundwater_Subbasins/FeatureServer/0
+candidate https://services2.arcgis.com/bltItgu4omEvZVRv/arcgis/rest/services/Groundwater_Subbasins/FeatureServer/0
+note felder: Basin_Name, Basin_Numb, Basin_Su_1, Basin_Subb, Comments, Date_Data_, Date_Recor, FID, GlobalID, LABEL, OBJECTID, Record_Edi, Region_Off, SHAPE_Area, SHAPE_Leng, Shape__Area, Shape__Length
+dataset Groundwater Rise Caused by 2-ft SLR | https://nhgeodata.unh.edu/hosting/rest/services/Hosted/CV_OceansAndCoasts/FeatureServer/29
+candidate https://nhgeodata.unh.edu/hosting/rest/services/Hosted/CV_OceansAndCoasts/FeatureServer/29
+note felder: SHAPE__Area, SHAPE__Length, elev_ft, elev_ft_co, gridcode, gwr_corr, gwr_ft, gwr_mrgd, id, objectid, shape_le_1, shape_leng
+dataset Depth to Groundwater (ft) Spring 2018 | https://services7.arcgis.com/KOo4Jz7pYsnV49c8/arcgis/rest/services/GSA_Web_Map/FeatureServer/6
+candidate https://services7.arcgis.com/KOo4Jz7pYsnV49c8/arcgis/rest/services/GSA_Web_Map/FeatureServer/6
+note felder: FID, Id, Shape__Area, Shape__Length, Spr18DTWft, gridcode
+dataset Increased Potential for Elevated Groundwater | https://services-eu1.arcgis.com/lDzXrGJF6LKIhYUB/arcgis/rest/services/LBMerton_SFRA_GroundwaterFlooding_NEW/FeatureServer/1
+candidate https://services-eu1.arcgis.com/lDzXrGJF6LKIhYUB/arcgis/rest/services/LBMerton_SFRA_GroundwaterFlooding_NEW/FeatureServer/1
+note felder: OBJECTID, Shape__Area, Shape__Length, Type
+dataset Natural Communities Commonly Associated with Groundwater - Vegetation [ds2788] | https://services2.arcgis.com/Uq9r85Potqm3MfRV/arcgis/rest/services/biosds2788_fpu/FeatureServer/0
+candidate https://services2.arcgis.com/Uq9r85Potqm3MfRV/arcgis/rest/services/biosds2788_fpu/FeatureServer/0
+note felder: CITATION, COMMENTS, COMMON_NAME, DATA_ACCESS_URL, DATE_DATA_REFERS_TO, LAST_MODIFIED_DATE, OBJECTID, OVERALL_CLASSIFICATION_ACCURACY, POSITIONAL_ACCURACY_METERS, REPORT_URL, SCIENTIFIC_NAME, SOURCE_GROUP, SOURCE_NAME, Shape__Area, Shape__Length, VEGETATION_NAME, WEBSITE_URL
+dataset Transitional Groundwater Plans (Murray—Darling Basin) | https://services8.arcgis.com/5xxEi7I2m6ml97fE/arcgis/rest/services/GW_TRANSITIONAL_PLANS/FeatureServer/0
+candidate https://services8.arcgis.com/5xxEi7I2m6ml97fE/arcgis/rest/services/GW_TRANSITIONAL_PLANS/FeatureServer/0
+note felder: EndDate, FID, GWTrans, Shape__Area, Shape__Length, Shape_area, Shape_len, StartDate, State
+dataset Increased Potential for Elevated Groundwater | https://services-eu1.arcgis.com/lDzXrGJF6LKIhYUB/arcgis/rest/services/LBMerton_SFRA_GroundwaterFlooding/FeatureServer/1
+candidate https://services-eu1.arcgis.com/lDzXrGJF6LKIhYUB/arcgis/rest/services/LBMerton_SFRA_GroundwaterFlooding/FeatureServer/1
+note felder: OBJECTID, Shape__Area, Shape__Length, Type
+dataset Nitrate violation index - Groundwater | https://services.arcgis.com/cJ9YHowT8TU7DUyn/arcgis/rest/services/Nitrateviolationindex_Groundwater/FeatureServer/0
+candidate https://services.arcgis.com/cJ9YHowT8TU7DUyn/arcgis/rest/services/Nitrateviolationindex_Groundwater/FeatureServer/0
+note felder: Ag_Erosion, Ag_N_Erosion, Ag_N_Leachate, Ag_N_NonTile_SSF, Ag_N_Runoff, Ag_N_Tile_SSF, Ag_NonTile_SSF, Ag_P_Erosion, Ag_P_Leachate, Ag_P_Runoff, Ag_P_Tile_SSF, Ag_P_balance_kg_ha, Ag_Percolation, Ag_Runoff, Ag_Tile_SSF, Avg_Buff_Width, CERA_per_km2, Crop_P_removal_kg_ha
+dataset WellWaterLevel tbl | https://utility.arcgis.com/usrsvcs/servers/5c5ec913f3a44bb28b832625f21301cb/rest/services/GW_Zone7GW_MA_LayF/FeatureServer/6
+candidate https://utility.arcgis.com/usrsvcs/servers/5c5ec913f3a44bb28b832625f21301cb/rest/services/GW_Zone7GW_MA_LayF/FeatureServer/6
+note felder: AssignedTo, DTW, GWElev, MPELEV, MeasBy, MeasCode, MeasDate, MeasInstrument, MeasNote, OBJECTID, ProgCode, ProgramYear, WellName, created_date, created_user, last_edited_date, last_edited_user
+dataset Depth to Groundwater (ft) Spring 2019 | https://services7.arcgis.com/KOo4Jz7pYsnV49c8/arcgis/rest/services/GSA_Web_Map/FeatureServer/5
+candidate https://services7.arcgis.com/KOo4Jz7pYsnV49c8/arcgis/rest/services/GSA_Web_Map/FeatureServer/5
+note felder: DTW2019, Id, OBJECTID, Shape__Area, Shape__Length
+dataset Owens Valley Groundwater Basins | https://services.arcgis.com/ipj52cMAgRJ1n7e3/arcgis/rest/services/Owens_Valley_Groundwater_Basins/FeatureServer/0
+candidate https://services.arcgis.com/ipj52cMAgRJ1n7e3/arcgis/rest/services/Owens_Valley_Groundwater_Basins/FeatureServer/0
+note felder: Area_sq_km, Area_sq_mi, Basin_Su_1, Basin_Subb, DWR_Status, FID, Shape__Area, Shape__Length
+dataset CA Groundwater Shapefile | https://services7.arcgis.com/2hYXmwteFLemN5bW/arcgis/rest/services/CA_Groundwater_Shapefile/FeatureServer/0
+candidate https://services7.arcgis.com/2hYXmwteFLemN5bW/arcgis/rest/services/CA_Groundwater_Shapefile/FeatureServer/0
+note felder: Area_Acres, Area_SqMil, Basin_Name, Basin_Numb, Basin_Su_1, Basin_Subb, Comments, Date_Data_, Date_Recor, FID, GlobalID, OBJECTID, Record_Edi, Region_Off, SHAPE_STAr, SHAPE_STLe, Shape__Area, Shape__Length
+dataset Groundwater Rise Zone 1 meter of sea level rise BayArea | https://services2.arcgis.com/iq8zYa0SRsvIFFKz/arcgis/rest/services/GWRise_Kh1_SLR1m_BayArea_/FeatureServer/0
+candidate https://services2.arcgis.com/iq8zYa0SRsvIFFKz/arcgis/rest/services/GWRise_Kh1_SLR1m_BayArea_/FeatureServer/0
+note felder: FID, Shape_Area, Shape_Leng, Shape__Area, Shape__Length
+dataset Groundwater Quality Plan Limits Wells | https://services1.arcgis.com/RNxkQaMWQcgbiF98/arcgis/rest/services/Groundwater_Quality_Plan_Limits_Wells/FeatureServer/11
+candidate https://services1.arcgis.com/RNxkQaMWQcgbiF98/arcgis/rest/services/Groundwater_Quality_Plan_Limits_Wells/FeatureServer/11
+note felder: Attribute, FID, LimitExcee, LimitNum, NAME, SiteID, WaterYear, shape_type
+dataset Emergent Groundwater with 5.5ft SLR (ART) | https://services.arcgis.com/yq3FgOI44hYHAFVZ/arcgis/rest/services/Emergent_Groundwater_(SLR_66_inches)/FeatureServer/0
+dead https://services.arcgis.com/yq3FgOI44hYHAFVZ/arcgis/rest/services/Emergent_Groundwater_(SLR_66_inches)/FeatureServer/0
+note fetch-void
+dataset Groundwater Rise Caused by 1-ft SLR | https://nhgeodata.unh.edu/hosting/rest/services/Hosted/CV_OceansAndCoasts/FeatureServer/28
+candidate https://nhgeodata.unh.edu/hosting/rest/services/Hosted/CV_OceansAndCoasts/FeatureServer/28
+note felder: SHAPE__Area, SHAPE__Length, elev_ft, elev_ft_co, gridcode, gwr_corr, gwr_ft, gwr_mrgd, id, objectid, shape_leng
+dataset Groundwater Rise Caused by 8-ft SLR | https://nhgeodata.unh.edu/hosting/rest/services/Hosted/CV_OceansAndCoasts/FeatureServer/32
+candidate https://nhgeodata.unh.edu/hosting/rest/services/Hosted/CV_OceansAndCoasts/FeatureServer/32
+note felder: SHAPE__Area, SHAPE__Length, gridcode, gwr_corr, gwr_ft, gwr_mrgd, id, objectid, shape_leng
+dataset Groundwater Rise Caused by 6-ft SLR | https://nhgeodata.unh.edu/hosting/rest/services/Hosted/CV_OceansAndCoasts/FeatureServer/31
+candidate https://nhgeodata.unh.edu/hosting/rest/services/Hosted/CV_OceansAndCoasts/FeatureServer/31
+note felder: SHAPE__Area, SHAPE__Length, elev_ft, elev_ft_co, gridcode, gwr_corr, gwr_ft, gwr_mrgd, id, objectid, shape_leng
+dataset Sampling Tbl | https://utility.arcgis.com/usrsvcs/servers/5c5ec913f3a44bb28b832625f21301cb/rest/services/GW_Zone7GW_MA_LayF/FeatureServer/11
+candidate https://utility.arcgis.com/usrsvcs/servers/5c5ec913f3a44bb28b832625f21301cb/rest/services/GW_Zone7GW_MA_LayF/FeatureServer/11
+note felder: Bacteria, CrVI, CurrentRefPoint, DTW, EstWellVolGal, FinalDTW, GWElev, MeasInstrument, MetalsMinerals, OBJECTID, Other, PFAS, PrefSampleDepth, ProgramYear, PumpType, SCField, SampleDepth, SampleLocationType
+dataset Groundwater Ordinance Boundaries 151204 | https://services9.arcgis.com/C2UkwXxRekdnbbm6/arcgis/rest/services/Groundwater_Ordinance_Boundaries_151204/FeatureServer/0
+candidate https://services9.arcgis.com/C2UkwXxRekdnbbm6/arcgis/rest/services/Groundwater_Ordinance_Boundaries_151204/FeatureServer/0
+note felder: AREA_TYPE, CNTY, OBJECTID, ORD_AREA, Shape__Area, Shape__Length
+dataset Delaware Groundwater Recharge Potential 2.0 | https://enterprise.firstmap.delaware.gov/arcgis/rest/services/Geology/DGS_GroundwaterRechargePotential/FeatureServer/0
+candidate https://enterprise.firstmap.delaware.gov/arcgis/rest/services/Geology/DGS_GroundwaterRechargePotential/FeatureServer/0
+note felder: OBJECTID, RECHARGE, Shape__Area, Shape__Length
+dataset Groundwater Protection District | https://services1.arcgis.com/ePzCWD2awZlZQ5jd/arcgis/rest/services/Groundwater_Protection_District/FeatureServer/0
+candidate https://services1.arcgis.com/ePzCWD2awZlZQ5jd/arcgis/rest/services/Groundwater_Protection_District/FeatureServer/0
+note felder: OBJECTID, Shape__Area, Shape__Length, zone
+dataset Rotorua Groundwater Catchment - Nutrient Management | https://services1.arcgis.com/TWsoAGve3wb3oFHK/arcgis/rest/services/Rotorua_Groundwater_Catchment___Nutrient_Management/FeatureServer/1
+candidate https://services1.arcgis.com/TWsoAGve3wb3oFHK/arcgis/rest/services/Rotorua_Groundwater_Catchment___Nutrient_Management/FeatureServer/1
+note felder: BoundaryGroundwater, GlobalID, OBJECTID, Shape__Area, Shape__Length
+dataset OCP 8383 Groundwater Protection Development Permit Area | https://services2.arcgis.com/CnkB6jCzAsyli34z/arcgis/rest/services/OpenData_OCPLanduse/FeatureServer/12
+candidate https://services2.arcgis.com/CnkB6jCzAsyli34z/arcgis/rest/services/OpenData_OCPLanduse/FeatureServer/12
+note felder: GlobalID, OBJECTID, Shape__Area, Shape__Length, created_date, created_user, last_edited_date, last_edited_user
+dataset Groundwater Quality Plan Limits Zones | https://services1.arcgis.com/RNxkQaMWQcgbiF98/arcgis/rest/services/Groundwater_Quality_Pan_Limits_Zones/FeatureServer/14
+candidate https://services1.arcgis.com/RNxkQaMWQcgbiF98/arcgis/rest/services/Groundwater_Quality_Pan_Limits_Zones/FeatureServer/14
+note felder: Attribute, FID, LimitExcee, LimitNum, NAME, Shape__Area, Shape__Length, SiteID, WaterYear, shape_type
+dataset LAWA Groundwater Quality Zone Reference Data | https://services6.arcgis.com/ALxeDxaeNjQo1Mf0/arcgis/rest/services/GroundwaterQualityZoneReferenceData/FeatureServer/2
+candidate https://services6.arcgis.com/ALxeDxaeNjQo1Mf0/arcgis/rest/services/GroundwaterQualityZoneReferenceData/FeatureServer/2
+note felder: AquiferName, AquiferType, AquiferUnitID, AquiferZone, GWQualityZone, Identifier, OBJECTID, ParentZone, SOEPurpose, Shape__Area, Shape__Length, Type
+dataset Groundwater wells Sonoyta Puerto Peñasco San Simon Wash | https://services1.arcgis.com/Ezk9fcjSUkeadg6u/arcgis/rest/services/Groundwater_wells_Sonoyta_Puerto_Pe%C3%B1asco_San_Simon_Wash/FeatureServer/0
+candidate https://services1.arcgis.com/Ezk9fcjSUkeadg6u/arcgis/rest/services/Groundwater_wells_Sonoyta_Puerto_Pe%C3%B1asco_San_Simon_Wash/FeatureServer/0
+note felder: FID, LATDEC, LONDEC, OBJECTID, OWNER_NAME, Water_use2
+dataset Eastern Snake Plain Aquifer Area of Common Ground Water Supply Boundary | https://gis.idwr.idaho.gov/hosting/rest/services/Modeling/EspaACGWSBoundary/FeatureServer/0
+dead https://gis.idwr.idaho.gov/hosting/rest/services/Modeling/EspaACGWSBoundary/FeatureServer/0
+note fetch-void
+dataset DNR Hydrography - Groundwater Dominated Lakes | https://enterprise.gisdata.mn.gov/aghost/rest/services/us_mn_state_dnr/env_groundwater_dominated_lakes/FeatureServer/0
+candidate https://enterprise.gisdata.mn.gov/aghost/rest/services/us_mn_state_dnr/env_groundwater_dominated_lakes/FeatureServer/0
+note felder: Shape__Area, Shape__Length, acres, catch_ac, dowlknum, fw_id, objectid, pw_basin_name, pwi_class, upsum_ac, wb_class, wl_ratio
+dataset Groundwater Subbasins | https://services2.arcgis.com/9KdAx8qBsHiGXOEw/arcgis/rest/services/SCVWD_Groundwater_Subbasins/FeatureServer/1
+candidate https://services2.arcgis.com/9KdAx8qBsHiGXOEw/arcgis/rest/services/SCVWD_Groundwater_Subbasins/FeatureServer/1
+note felder: AREA_ACRES, AREA_SQFT, DIST_AREAS, DIST_UNITS, DWRSUB_NBR, DWR_SUBBSN, OBJECTID, PERIM_FEET, SOURCE, Shape__Area, Shape__Length
+dataset Groundwater Atlas Statewide Water Chemistry | https://enterprise.gisdata.mn.gov/aghost/rest/services/us_mn_state_dnr/geos_groundwater_atlas_chemistry/FeatureServer
+decline https://enterprise.gisdata.mn.gov/aghost/rest/services/us_mn_state_dnr/geos_groundwater_atlas_chemistry/FeatureServer
+note kein features-key
+dataset Statewide Groundwater Subbasins | https://services6.arcgis.com/YBp5dUuxCMd8W1EI/arcgis/rest/services/Statewide_Groundwater_Subbasins/FeatureServer/0
+candidate https://services6.arcgis.com/YBp5dUuxCMd8W1EI/arcgis/rest/services/Statewide_Groundwater_Subbasins/FeatureServer/0
+note felder: Basin_Name, Basin_Number, Basin_Subbasin_Name, Basin_Subbasin_Number, Comments, Date_Data_Applies_To, Date_Record_Last_Edited, GlobalID, OBJECTID, Record_Edited_By, Region_Office, Shape__Area, Shape__Length
+dataset Areas at Risk of Perched Groundwater | https://services-eu1.arcgis.com/lDzXrGJF6LKIhYUB/arcgis/rest/services/LBMerton_SFRA_GroundwaterFlooding/FeatureServer/0
+candidate https://services-eu1.arcgis.com/lDzXrGJF6LKIhYUB/arcgis/rest/services/LBMerton_SFRA_GroundwaterFlooding/FeatureServer/0
+note felder: Id, OBJECTID, Shape__Area, Shape__Length
+dataset Groundwater Rise Caused by 4-ft SLR | https://nhgeodata.unh.edu/hosting/rest/services/Hosted/CV_OceansAndCoasts/FeatureServer/30
+candidate https://nhgeodata.unh.edu/hosting/rest/services/Hosted/CV_OceansAndCoasts/FeatureServer/30
+note felder: SHAPE__Area, SHAPE__Length, elev_ft, elev_ft_co, gridcode, gwr_corr, gwr_ft, gwr_mrgd, id, objectid, shape_leng
+dataset Natural Communities Commonly Associated with Groundwater - Wetlands [ds2789] | https://services2.arcgis.com/Uq9r85Potqm3MfRV/arcgis/rest/services/biosds2789_fpu/FeatureServer/0
+candidate https://services2.arcgis.com/Uq9r85Potqm3MfRV/arcgis/rest/services/biosds2789_fpu/FeatureServer/0
+note felder: CITATION, COMMENTS, DATA_ACCESS_URL, DATE_DATA_REFERS_TO, LAST_MODIFIED_DATE, OBJECTID, ORIGINAL_CODE, REPORT_URL, SOURCE_NAME, Shape__Area, Shape__Length, WETLAND_NAME
+dataset Areas at Risk of Perched Groundwater | https://services-eu1.arcgis.com/lDzXrGJF6LKIhYUB/arcgis/rest/services/LBMerton_SFRA_GroundwaterFlooding_NEW/FeatureServer/0
+candidate https://services-eu1.arcgis.com/lDzXrGJF6LKIhYUB/arcgis/rest/services/LBMerton_SFRA_GroundwaterFlooding_NEW/FeatureServer/0
+note felder: Id, OBJECTID, Shape__Area, Shape__Length
+dataset DNR Hydrography - Groundwater Dominated Lakes | https://enterprise-dev.gisdata.mn.gov/aghost/rest/services/us_mn_state_dnr/env_groundwater_dominated_lakes/FeatureServer/0
+decline https://enterprise-dev.gisdata.mn.gov/aghost/rest/services/us_mn_state_dnr/env_groundwater_dominated_lakes/FeatureServer/0
+note nicht-json body
+dataset MiningPermit tbl | https://utility.arcgis.com/usrsvcs/servers/5c5ec913f3a44bb28b832625f21301cb/rest/services/GW_Zone7GW_MA_LayF/FeatureServer/7
+candidate https://utility.arcgis.com/usrsvcs/servers/5c5ec913f3a44bb28b832625f21301cb/rest/services/GW_Zone7GW_MA_LayF/FeatureServer/7
+note felder: OBJECTID, PermitEffectiveDate, PermitEndDate, PermitNote, PermitNumber, created_date, created_user, last_edited_date, last_edited_user
+dataset GW.MiningExcavation tbl | https://utility.arcgis.com/usrsvcs/servers/5c5ec913f3a44bb28b832625f21301cb/rest/services/GW_Zone7GW_MA_LayF/FeatureServer/5
+candidate https://utility.arcgis.com/usrsvcs/servers/5c5ec913f3a44bb28b832625f21301cb/rest/services/GW_Zone7GW_MA_LayF/FeatureServer/5
+note felder: COLName, DeepestMinedDepth, DisplayName, ExcavationCurrent, ExcavationName, ExcavationPlan, GroundElevationOrig, MiningOwnerCurrent, MiningOwnerOrig, OBJECTID, PermitNumber, PermitStatus, RenamedTo, StatusNote, YearStatusChange, created_date, created_user, last_edited_date
+dataset GW.MiningProgram tbl | https://utility.arcgis.com/usrsvcs/servers/5c5ec913f3a44bb28b832625f21301cb/rest/services/GW_Zone7GW_MA_LayF/FeatureServer/10
+candidate https://utility.arcgis.com/usrsvcs/servers/5c5ec913f3a44bb28b832625f21301cb/rest/services/GW_Zone7GW_MA_LayF/FeatureServer/10
+note felder: AlsoAnalyzeFor, AnalyzeFor, BacT, LevelBy, LevelFreq, LevelNote, LevelRecFreq, MetalsMinerals, OBJECTID, PFAS, Pond, ProgYear, SampleBy, SampleFreq, SampleRecFreq, SampleRecParam, created_date, created_user
+dataset Groundwater within 6ft with 5.5ft SLR (ART) | https://services.arcgis.com/yq3FgOI44hYHAFVZ/arcgis/rest/services/Groundwater_within_6ft_(SLR_66_inches)/FeatureServer/0
+candidate https://services.arcgis.com/yq3FgOI44hYHAFVZ/arcgis/rest/services/Groundwater_within_6ft_(SLR_66_inches)/FeatureServer/0
+note felder: FID, Shape_Area, Shape_Leng, Shape__Area, Shape__Length
+dataset Current Groundwater Level Observation Wells | https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Current_Observation_Wells/FeatureServer/2
+candidate https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Current_Observation_Wells/FeatureServer/2
+note felder: OBJECTID, aquifer, aquifer_system, calc_obs_well_status_combined, calc_obs_well_status_owrd, critical_gw_subarea, cuttings_count, elevation_datum, established_by, gsis_url, gw_logid, gw_site_id, gw_stage, gw_well_tag_nbr, gw_well_tag_verified_on_well, gw_wl_county_code, gw_wl_nbr, hydrograph_url
+dataset Groundwater Monitoring Wells | https://services3.arcgis.com/kTHh5mF5pghzqQ3m/arcgis/rest/services/Find_Locations_in_Groundwater_Monitoring_Wells_(NGWMN)/FeatureServer/0
+candidate https://services3.arcgis.com/kTHh5mF5pghzqQ3m/arcgis/rest/services/Find_Locations_in_Groundwater_Monitoring_Wells_(NGWMN)/FeatureServer/0
+note felder: AgencyCd, AgencyNm, AltAcy, AltDatumCd, AltMethod, AltUnits, AltUnitsNm, AltVa, AquiferType, CountryCd, CountryNm, CountyCd, CountyNm, DecLatVa, DecLongVa, HorzAcy, HorzDatum, HorzMethod
+dataset GW.MiningProgram tbl | https://utility.arcgis.com/usrsvcs/servers/5c5ec913f3a44bb28b832625f21301cb/rest/services/GW_Zone7GW_MA_LayF/FeatureServer/4
+candidate https://utility.arcgis.com/usrsvcs/servers/5c5ec913f3a44bb28b832625f21301cb/rest/services/GW_Zone7GW_MA_LayF/FeatureServer/4
+note felder: AlsoAnalyzeFor, AnalyzeFor, BacT, LevelBy, LevelFreq, LevelNote, LevelRecFreq, MetalsMinerals, OBJECTID, PFAS, Pond, ProgYear, SampleBy, SampleFreq, SampleRecFreq, SampleRecParam, created_date, created_user
+dataset MiningPondPoint | https://utility.arcgis.com/usrsvcs/servers/5c5ec913f3a44bb28b832625f21301cb/rest/services/GW_Zone7GW_MA_LayF/FeatureServer/0
+candidate https://utility.arcgis.com/usrsvcs/servers/5c5ec913f3a44bb28b832625f21301cb/rest/services/GW_Zone7GW_MA_LayF/FeatureServer/0
+note felder: COLName, DeepestElev, Directions, DisplayName, ExcavationName, GlobalID, GroundSurfaceElev, Latitude, Location, LocationSource, LocationUpdated, Longitude, OBJECTID, Pond, PondDescription, PondStatus, PrepNote, Purpose
+dataset MiningDriveToPoint | https://utility.arcgis.com/usrsvcs/servers/5c5ec913f3a44bb28b832625f21301cb/rest/services/GW_Zone7GW_MA_LayF/FeatureServer/8
+candidate https://utility.arcgis.com/usrsvcs/servers/5c5ec913f3a44bb28b832625f21301cb/rest/services/GW_Zone7GW_MA_LayF/FeatureServer/8
+note felder: DriveDirect, DriveToLat, DriveToLong, GlobalID, MiningPond, OBJECTID, created_date, created_user, last_edited_date, last_edited_user
+dataset GW MA (Zone7GW) LayF | https://utility.arcgis.com/usrsvcs/servers/5c5ec913f3a44bb28b832625f21301cb/rest/services/GW_Zone7GW_MA_LayF/FeatureServer
+decline https://utility.arcgis.com/usrsvcs/servers/5c5ec913f3a44bb28b832625f21301cb/rest/services/GW_Zone7GW_MA_LayF/FeatureServer
+note kein features-key
+dataset Adjudicated Groundwater Basins | https://services.arcgis.com/hVnyNvwbpFFPDV5j/arcgis/rest/services/Adjudicated_Groundwater_Basins/FeatureServer/0
+candidate https://services.arcgis.com/hVnyNvwbpFFPDV5j/arcgis/rest/services/Adjudicated_Groundwater_Basins/FeatureServer/0
+note felder: Adjudication, Area_Acres, Basin_Name, Basin_Number, Basin_Subbasin_Name, Basin_Subbasin_Number, Critical_Basin, GlobalID, OBJECTID, OBJECTID_1, ORIG_FID, PART_COUNT, Priority_2019, Region_Office, Shape__Area, Shape__Length, Summary, TNC_Basin_ID
+# keyword water temperature
+dataset Water Temperature | https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/Water_Temperature/FeatureServer
+decline https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/Water_Temperature/FeatureServer
+note kein features-key
+dataset Water temperature Observation Points | https://services1.arcgis.com/qr14biwnHA6Vis6l/arcgis/rest/services/Water_Temperature/FeatureServer/0
+candidate https://services1.arcgis.com/qr14biwnHA6Vis6l/arcgis/rest/services/Water_Temperature/FeatureServer/0
+note felder: characteristic, depthheight_m, depthheightunit, latitude, longitude, measureunit, measurevalue_degc, monitoringlocation, monitoringlocationidentifier, note, objectid, organizationformal, samplefraction, startdate, starttime_utc, starttimezone
+dataset LIS - Water Temperature Model Bias | https://services.arcgis.com/cJ9YHowT8TU7DUyn/arcgis/rest/services/Final_Temperature_Model_EHSI_bias_poly/FeatureServer/0
+candidate https://services.arcgis.com/cJ9YHowT8TU7DUyn/arcgis/rest/services/Final_Temperature_Model_EHSI_bias_poly/FeatureServer/0
+note felder: Id, OBJECTID, Shape__Area, Shape__Length, gridcode
+dataset Water temperature Observation Points | https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/Water_Temperature/FeatureServer/0
+candidate https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/Water_Temperature/FeatureServer/0
+note felder: characteristic, depthheight_m, depthheightunit, latitude, longitude, measureunit, measurevalue_degc, monitoringlocation, monitoringlocationidentifier, note, objectid, organizationformal, samplefraction, startdate, starttime_utc, starttimezone
+dataset Water Temperature - Gulf of Mexico (GCOOS) | https://services1.arcgis.com/qr14biwnHA6Vis6l/arcgis/rest/services/Water_Temperature/FeatureServer
+decline https://services1.arcgis.com/qr14biwnHA6Vis6l/arcgis/rest/services/Water_Temperature/FeatureServer
+note kein features-key
+dataset Water Temperature Stations | https://services2.arcgis.com/FiaPA4ga0iQKduv3/arcgis/rest/services/COOPS_Water_Temperature_Stations_v/FeatureServer/0
+candidate https://services2.arcgis.com/FiaPA4ga0iQKduv3/arcgis/rest/services/COOPS_Water_Temperature_Stations_v/FeatureServer/0
+note felder: affil, data, dataapi, id, latitude, longitude, metaapi, name, objectid, state
+dataset Water temperature Counts in 30km length hexagon | https://services1.arcgis.com/qr14biwnHA6Vis6l/arcgis/rest/services/Water_Temperature/FeatureServer/1
+candidate https://services1.arcgis.com/qr14biwnHA6Vis6l/arcgis/rest/services/Water_Temperature/FeatureServer/1
+note felder: Shape__Area, Shape__Length, join_count, measureval, objectid, url
+dataset USGS Live Water Data | https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/USGS_Live_Water_Data/FeatureServer/0
+candidate https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/USGS_Live_Water_Data/FeatureServer/0
+note felder: GlobalID, OBJECTID, latitude, longitude, parameter, site_code, timestamp, usgs_link, value
+dataset Water temperature Counts in 30km length hexagon | https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/Water_Temperature/FeatureServer/1
+candidate-leer https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/Water_Temperature/FeatureServer/1
+note 0 rows, felder unbekannt
+dataset Water Temperature Sampling Data, Mobile Baykeeper, 2016-2022 | https://services5.arcgis.com/hEkStteCvWjRBrR0/arcgis/rest/services/MobileBaykeeperWaterTempData_view_layer/FeatureServer/0
+candidate https://services5.arcgis.com/hEkStteCvWjRBrR0/arcgis/rest/services/MobileBaykeeperWaterTempData_view_layer/FeatureServer/0
+note felder: Date_Sampl, FID, Latitude, Longitude, Sample_ID, Site_ID, Time_Sampl, Water_Temp, Waterbody
+dataset Water temperature | https://services5.arcgis.com/xEJs8I34bwDNh3gs/arcgis/rest/services/Water_temperature/FeatureServer/0
+candidate https://services5.arcgis.com/xEJs8I34bwDNh3gs/arcgis/rest/services/Water_temperature/FeatureServer/0
+note felder: AverageMeasureValue, Category, Database_, Location, ObjectId, RecentVisits
+dataset Water temperature prioritization | https://services5.arcgis.com/xEJs8I34bwDNh3gs/arcgis/rest/services/Water_temperature_prioritization/FeatureServer/0
+candidate https://services5.arcgis.com/xEJs8I34bwDNh3gs/arcgis/rest/services/Water_temperature_prioritization/FeatureServer/0
+note felder: AreaAcres, AreaSqKm, HUC12, Name, OBJECTID, Shape__Area, Shape__Length, wtemp_PR
+dataset Oregon Water Data Observations - Points | https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Oregon_Water_Data_Observations/FeatureServer/0
+candidate https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Oregon_Water_Data_Observations/FeatureServer/0
+note felder: OBJECTID, datastream_link, gauge_description, gauge_id, gauge_link, gauge_name, historical_obs, latitude, longitude, near_real_time_link, observation_link, organization, parameter, timestamp, unit, value
+dataset Documented Average Water Temperature | https://services2.arcgis.com/ouI9Ksmf4blkssRx/arcgis/rest/services/Documented_Average_Water_Temperature/FeatureServer/9
+candidate https://services2.arcgis.com/ouI9Ksmf4blkssRx/arcgis/rest/services/Documented_Average_Water_Temperature/FeatureServer/9
+note felder: AVGOFTMAX, AVGOFTMEAN, AVGOFTMIN, FIRSTOFLAT, FIRSTOFLON, OBJECTID, STATIONNAM
+dataset SWAM - Mean Surface Water Temperatures | https://services.arcgis.com/DzkBIV3ztulDZBgc/arcgis/rest/services/SWAM_TempMeanMay18_2016/FeatureServer/0
+candidate https://services.arcgis.com/DzkBIV3ztulDZBgc/arcgis/rest/services/SWAM_TempMeanMay18_2016/FeatureServer/0
+note felder: CrewLead, GlobalID, Latitude, Longitude, OBJECTID, ProjName, ProjType, ProjectID, SCON_Avg, SCON_SD, SCON_SE, SiteID, Summer_Max, Summer_Mea
+dataset Delaware Bay Water Temperature 2005 2019 WFL1 | https://services6.arcgis.com/tuxY7TQIaDhLWARO/arcgis/rest/services/Delaware_Bay_Water_Temperature_2005_2019_WFL1/FeatureServer/0
+candidate https://services6.arcgis.com/tuxY7TQIaDhLWARO/arcgis/rest/services/Delaware_Bay_Water_Temperature_2005_2019_WFL1/FeatureServer/0
+note felder: Average_of_water_temperature_de, Monitor_site, OBJECTID, Row_Labels, lat, lon
+dataset Delaware Bay Water Temperature Change 2005 2019 WFL1 | https://services6.arcgis.com/tuxY7TQIaDhLWARO/arcgis/rest/services/Delaware_Bay_Water_Temperature_Change_2005_2019_WFL1/FeatureServer/0
+candidate https://services6.arcgis.com/tuxY7TQIaDhLWARO/arcgis/rest/services/Delaware_Bay_Water_Temperature_Change_2005_2019_WFL1/FeatureServer/0
+note felder: Average_of_water_temperature_de, Monitor_site, OBJECTID, Row_Labels, lat, lon
+dataset Temperature Stations | https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Willamette_Subbasins_TMDL_map/FeatureServer/47
+candidate https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Willamette_Subbasins_TMDL_map/FeatureServer/47
+note felder: Data_Source, Latitude, Longitude, OBJECTID, Station, Station_ID
+dataset BLM OR Water Quality and Quantity Stream Temperature Sample Publication Point Hub | https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/BLM_OR_Water_Quality_and_Quantity_Stream_Temperature_Sample_Publication_Point_Hub/FeatureServer/4
+candidate https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/BLM_OR_Water_Quality_and_Quantity_Stream_Temperature_Sample_Publication_Point_Hub/FeatureServer/4
+note felder: ACCURACY_FT, AUDIT_DPLY_DT, AUDIT_DPLY_LOG_TEMP_F, AUDIT_DPLY_TEMP_F, AUDIT_DPLY_TIME, AUDIT_MID_DT, AUDIT_MID_LOG_TEMP_F, AUDIT_MID_TEMP_F, AUDIT_MID_TIME, AUDIT_RCVR_DT, AUDIT_RCVR_LOG_TEMP_F, AUDIT_RCVR_TEMP_F, AUDIT_RCVR_TIME, COORD_SRC, CURRENT_CD, DAY_GTSTD, DIRECTION, ELEVATION_FT
+dataset USGS Stream Temperatures | https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/USGS_Stream_Temperatures_/FeatureServer/0
+candidate https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/USGS_Stream_Temperatures_/FeatureServer/0
+note felder: OBJECTID, latitude, longitude, parameter, site_code, site_name, timestamp, usgs_link, value
+dataset Water temperature (inadequately sampled) | https://services5.arcgis.com/xEJs8I34bwDNh3gs/arcgis/rest/services/Water_temperature_(inadequately_sampled)/FeatureServer/0
+candidate https://services5.arcgis.com/xEJs8I34bwDNh3gs/arcgis/rest/services/Water_temperature_(inadequately_sampled)/FeatureServer/0
+note felder: Location, MeanValue, ObjectId
+dataset Water temperature (adequately sampled) | https://services5.arcgis.com/xEJs8I34bwDNh3gs/arcgis/rest/services/Water_temperature_(adequately_sampled)/FeatureServer/0
+candidate https://services5.arcgis.com/xEJs8I34bwDNh3gs/arcgis/rest/services/Water_temperature_(adequately_sampled)/FeatureServer/0
+note felder: Location, MeanValue, ObjectId
+dataset Water temperature (all sampled) | https://services5.arcgis.com/xEJs8I34bwDNh3gs/arcgis/rest/services/Water_temperature_(all_sampled)/FeatureServer/0
+candidate https://services5.arcgis.com/xEJs8I34bwDNh3gs/arcgis/rest/services/Water_temperature_(all_sampled)/FeatureServer/0
+note felder: Location, MeanValue, ObjectId
+dataset Lake Champlain Surface Water Temperature | https://services.arcgis.com/6PlwRVjhNvRFkKtA/arcgis/rest/services/Lake_Champlain_Surface_Water_Temperature/FeatureServer/0
+candidate https://services.arcgis.com/6PlwRVjhNvRFkKtA/arcgis/rest/services/Lake_Champlain_Surface_Water_Temperature/FeatureServer/0
+note felder: FID, SEG_NAME, TEMP
+dataset Temperature Sites Model Inputs | https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Lower_Grande_Ronde_Subbasins_TMDL/FeatureServer/46
+candidate https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Lower_Grande_Ronde_Subbasins_TMDL/FeatureServer/46
+note felder: Data_Source, Latitude, Longitude, Model_Location_Type, Model_Waterbody, Monitoring_Location_ID, Monitoring_Location_Name, OBJECTID, Parameter
+dataset Union Reservoir Swim Beach Water Temperature form | https://services1.arcgis.com/Sb0rgSd67ecLKIvl/arcgis/rest/services/survey123_95d6ca7a511b49508c51bfc1fef13cdb_form/FeatureServer/0
+decline https://services1.arcgis.com/Sb0rgSd67ecLKIvl/arcgis/rest/services/survey123_95d6ca7a511b49508c51bfc1fef13cdb_form/FeatureServer/0
+note arcgis-error-body
+dataset Model Extent - Heat Source Temperature | https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Lower_Grande_Ronde_Subbasins_TMDL/FeatureServer/50
+candidate https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Lower_Grande_Ronde_Subbasins_TMDL/FeatureServer/50
+note felder: Model, OBJECTID, Shape__Length
+dataset Temperature Stations | https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Lower_Columbia_Sandy_Temperature_TMDL_map/FeatureServer/7
+candidate https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Lower_Columbia_Sandy_Temperature_TMDL_map/FeatureServer/7
+note felder: Latitude, Longitude, OBJECTID, Organization, Parameter, Station, Station_ID
+dataset Upper San Gabriel Temperature Data 2023 | https://services1.arcgis.com/gfvMa5URH3rFRQ7T/arcgis/rest/services/Upper_San_Gabriel_Temperature_Data_2023/FeatureServer/0
+candidate https://services1.arcgis.com/gfvMa5URH3rFRQ7T/arcgis/rest/services/Upper_San_Gabriel_Temperature_Data_2023/FeatureServer/0
+note felder: FID, datetime, datetime_timezone, datum_, latitude, locationaccuracy, locationaccuracy_units, logger_position, loggerno, longitude, serialno, sitename, temperature, temperature_units
+dataset Union Reservoir Swim Beach Water Temperature results | https://services1.arcgis.com/Sb0rgSd67ecLKIvl/arcgis/rest/services/survey123_95d6ca7a511b49508c51bfc1fef13cdb_results/FeatureServer/0
+candidate https://services1.arcgis.com/Sb0rgSd67ecLKIvl/arcgis/rest/services/survey123_95d6ca7a511b49508c51bfc1fef13cdb_results/FeatureServer/0
+note felder: CreationDate, Creator, EditDate, Editor, globalid, objectid, what_is_the_water_temperature_i
+dataset Willamette Subbasins Temperature TMDL map | https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Willamette_Subbasins_TMDL_map/FeatureServer
+decline https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Willamette_Subbasins_TMDL_map/FeatureServer
+note kein features-key
+dataset CE QUAL W2 Temperature ModelExtent | https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Willamette_Subbasins_TMDL_map/FeatureServer/51
+candidate https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Willamette_Subbasins_TMDL_map/FeatureServer/51
+note felder: Model, OBJECTID, Shape__Length, Stream
+dataset 2022 303(d) Temperature Listed - Streams | https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Lower_Grande_Ronde_Subbasins_TMDL/FeatureServer/67
+candidate https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Lower_Grande_Ronde_Subbasins_TMDL/FeatureServer/67
+note felder: AQWMS_NUM, AQWMS_TXT, AU_AreaAcr, AU_Description, AU_ID, AU_LenMiles, AU_Name, AU_UseCode, AU_WBType, AU_delist, AU_parameter_category, Assessment, DO_Class, HAS_Spatial, HUC12, HUC_10, HUC_12, HUC_6
+dataset 2022 303(d) Temperature Listed - Waterbodies | https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Lower_Grande_Ronde_Subbasins_TMDL/FeatureServer/68
+candidate https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Lower_Grande_Ronde_Subbasins_TMDL/FeatureServer/68
+note felder: AQWMS_NUM, AQWMS_TXT, AU_AreaAcre, AU_ID, AU_LenMile, AU_Name, AU_UseCode, AU_WBType, AU_delist, AU_parameter_category, Assessment, DO_Class, HUC12, HUC_10, HUC_12, HUC_6, HUC_8, HU_10_NAME
+dataset SWAM - Calamingo River Temperature Logger Data June 2016 | https://services.arcgis.com/DzkBIV3ztulDZBgc/arcgis/rest/services/SWAM_TempLoggersCalamingoRJune2016_July16_2016/FeatureServer/0
+candidate https://services.arcgis.com/DzkBIV3ztulDZBgc/arcgis/rest/services/SWAM_TempLoggersCalamingoRJune2016_July16_2016/FeatureServer/0
+note felder: CrewLead, Date, GlobalID, OBJECTID, ProjName, ProjType, ProjectID, Stream, Temperatur, lat, lon, timetxt
+dataset Temperature Ebb | https://services3.arcgis.com/pPYcCN1qiPqRfe54/arcgis/rest/services/Temperature_Ebb/FeatureServer/0
+candidate https://services3.arcgis.com/pPYcCN1qiPqRfe54/arcgis/rest/services/Temperature_Ebb/FeatureServer/0
+note felder: DO, DateTime, Description, EndDate, Ex_ALK, Ex_DO, Ex_NTU, Ex_SS, Ex_Temp, ID, Lat, Long, ObjectId, SS, Sal, StartDate, Station, Temp
+dataset Lower Grande Ronde Subbasins Temperature TMDL | https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Lower_Grande_Ronde_Subbasins_TMDL/FeatureServer
+decline https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Lower_Grande_Ronde_Subbasins_TMDL/FeatureServer
+note kein features-key
+dataset Temperature BoundaryConditions TributaryInputs | https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Lower_Columbia_Sandy_Temperature_TMDL_map/FeatureServer/8
+candidate https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Lower_Columbia_Sandy_Temperature_TMDL_map/FeatureServer/8
+note felder: Data_Source, Latitude, Location_Units, Longitude, Model_Extent, Model_Location, Model_Location_Name, Model_Location_Type, OBJECTID, Parameter, Station_ID
+dataset 2022 303(d) Temperature Listed - Streams | https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Willamette_Subbasins_TMDL_map/FeatureServer/67
+candidate https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Willamette_Subbasins_TMDL_map/FeatureServer/67
+note felder: AQWMS_NUM, AQWMS_TXT, AU_AreaAcr, AU_Description, AU_ID, AU_LenMiles, AU_Name, AU_UseCode, AU_WBType, AU_delist, AU_parameter_category, Assessment, DO_Class, HAS_Spatial, HUC12, HUC_10, HUC_12, HUC_6
+dataset SECURE 2021 Temperature (RCP 8.5) | https://services1.arcgis.com/ixD30sld6F8MQ7V5/arcgis/rest/services/Temperature_and_Precipitation/FeatureServer/2
+candidate https://services1.arcgis.com/ixD30sld6F8MQ7V5/arcgis/rest/services/Temperature_and_Precipitation/FeatureServer/2
+note felder: OBJECTID, Shape__Area, Shape__Length, areaAcres, areaSqkm, huc8, huc8Name, rcp85maxT, rcp85meanT, rcp85minT, rcp85sdT, reclamationBasin, scenario
+dataset SECURE 2021 Temperature (RCP 4.5) | https://services1.arcgis.com/ixD30sld6F8MQ7V5/arcgis/rest/services/Temperature_and_Precipitation/FeatureServer/3
+candidate https://services1.arcgis.com/ixD30sld6F8MQ7V5/arcgis/rest/services/Temperature_and_Precipitation/FeatureServer/3
+note felder: OBJECTID, Shape__Area, Shape__Length, areaAcres, areaSqkm, huc8, huc8Name, rcp45maxT, rcp45meanT, rcp45minT, rcp45sdT, reclamationBasin, scenario
+dataset 2022 303(d) Temperature Listed - Watershed Units | https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Lower_Grande_Ronde_Subbasins_TMDL/FeatureServer/70
+candidate https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Lower_Grande_Ronde_Subbasins_TMDL/FeatureServer/70
+note felder: AQWMS_NUM, AQWMS_TXT, AU_AreaAcr, AU_Description, AU_ID, AU_LenMiles, AU_Name, AU_UseCode, AU_WBType, AU_delist, AU_parameter_category, Assessment, DO_Class, HUC12, HUC_10, HUC_12, HUC_6, HUC_8
+dataset SWAM - South Branch River Temperature Logger Data June 2016 | https://services.arcgis.com/DzkBIV3ztulDZBgc/arcgis/rest/services/SWAM_TempLoggersSouthBranchRJune2016_July16_2016/FeatureServer/0
+candidate https://services.arcgis.com/DzkBIV3ztulDZBgc/arcgis/rest/services/SWAM_TempLoggersSouthBranchRJune2016_July16_2016/FeatureServer/0
+note felder: CrewLead, Date, GlobalID, OBJECTID, ProjName, ProjType, ProjectID, Stream, Temperatur, Timetxt, lat, lon
+dataset 2022 303(d) Temperature Listed - Watershed Units | https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Willamette_Subbasins_TMDL_map/FeatureServer/70
+candidate https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Willamette_Subbasins_TMDL_map/FeatureServer/70
+note felder: AQWMS_NUM, AQWMS_TXT, AU_AreaAcr, AU_Description, AU_ID, AU_LenMiles, AU_Name, AU_UseCode, AU_WBType, AU_delist, AU_parameter_category, Assessment, DO_Class, HUC12, HUC_10, HUC_12, HUC_6, HUC_8
+dataset Climate Projections-Temperature and Precipitation | https://services1.arcgis.com/ixD30sld6F8MQ7V5/arcgis/rest/services/Temperature_and_Precipitation/FeatureServer
+decline https://services1.arcgis.com/ixD30sld6F8MQ7V5/arcgis/rest/services/Temperature_and_Precipitation/FeatureServer
+note kein features-key
+dataset 2022 303(d) Temperature Listed - Watershed GNIS Streams | https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Lower_Grande_Ronde_Subbasins_TMDL/FeatureServer/69
+candidate https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Lower_Grande_Ronde_Subbasins_TMDL/FeatureServer/69
+note felder: AU_Description, AU_GNIS, AU_GNIS_Name, AU_ID, AU_Name, AU_delist, AU_final_status, AU_previous_IR_category, Assessment, DO_Class, GNIS_22_category, GNIS_final_category, GNIS_previous_IR_impairement, GNIS_remove_impairment, GNIS_status, OBJECTID, Pollu_ID, Pollutant
+dataset Model Extent HeatSource Temperature | https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Lower_Columbia_Sandy_Temperature_TMDL_map/FeatureServer/12
+candidate https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Lower_Columbia_Sandy_Temperature_TMDL_map/FeatureServer/12
+note felder: Model, Model_Year, OBJECTID, Shape__Length, Stream
+dataset 2022 303(d) Temperature Listed - Watershed GNIS Streams | https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Willamette_Subbasins_TMDL_map/FeatureServer/69
+candidate https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Willamette_Subbasins_TMDL_map/FeatureServer/69
+note felder: AU_Description, AU_GNIS, AU_GNIS_Name, AU_ID, AU_Name, AU_delist, AU_final_status, AU_previous_IR_category, Assessment, DO_Class, GNIS_22_category, GNIS_final_category, GNIS_previous_IR_impairement, GNIS_remove_impairment, GNIS_status, OBJECTID, Pollu_ID, Pollutant
+dataset CLM - Climate Indicator Lake Surface Water Temperature Insignificant (EPA) | https://services.arcgis.com/cJ9YHowT8TU7DUyn/arcgis/rest/services/CLM___Climate_Indicator_Lake_Surface_Water_Temperatures__EPA_/FeatureServer/2
+candidate https://services.arcgis.com/cJ9YHowT8TU7DUyn/arcgis/rest/services/CLM___Climate_Indicator_Lake_Surface_Water_Temperatures__EPA_/FeatureServer/2
+note felder: Lake_Name, OBJECTID, Tot_Chg_85
+dataset Hot Spots temperature | https://services1.arcgis.com/uuGbGoEZiBHMlQWc/arcgis/rest/services/Hot%20Spots%20temperature/FeatureServer/0
+candidate https://services1.arcgis.com/uuGbGoEZiBHMlQWc/arcgis/rest/services/Hot%20Spots%20temperature/FeatureServer/0
+note felder: GiPValue, GiZScore, Gi_Bin, OBJECTID, SOURCE_ID, temperature
+dataset AKTEMP Stream Stations by Duration | https://services7.arcgis.com/DlE4MSUhoXlyq64t/arcgis/rest/services/AKTEMP_Stations_WFL1/FeatureServer/31
+candidate https://services7.arcgis.com/DlE4MSUhoXlyq64t/arcgis/rest/services/AKTEMP_Stations_WFL1/FeatureServer/31
+note felder: GlobalID, OBJECTID, active, code, date_upd, depth_cat_descr, depths_num, description, end_datetime, freq_descr, int_descr, latitude, longitude, org, plac_descr, poc_email, provider, reviewed
+dataset Limiting Factor Temperature | https://services9.arcgis.com/88Th5a5pUsaTdH5X/arcgis/rest/services/LFTemp/FeatureServer/0
+candidate https://services9.arcgis.com/88Th5a5pUsaTdH5X/arcgis/rest/services/LFTemp/FeatureServer/0
+note felder: FID, GeoArea, HUC_10_11, HUC_12, HUC_8, HighTemp, LowTemp, Model, OBJECTID, REACHKEY, REACHNAME, Shape_Leng, Shape__Length, Subbasin, Temp
+dataset AKTEMP Lake Stations by Duration | https://services7.arcgis.com/DlE4MSUhoXlyq64t/arcgis/rest/services/AKTEMP_Stations_WFL1/FeatureServer/32
+candidate https://services7.arcgis.com/DlE4MSUhoXlyq64t/arcgis/rest/services/AKTEMP_Stations_WFL1/FeatureServer/32
+note felder: GlobalID, OBJECTID, active, code, date_upd, depth_cat_descr, depths_num, description, end_datetime, freq_descr, int_descr, latitude, longitude, org, plac_descr, poc_email, provider, reviewed
+dataset AKTEMP Stations by Waterbody Type | https://services7.arcgis.com/DlE4MSUhoXlyq64t/arcgis/rest/services/AKTEMP_Stations_WFL1/FeatureServer/30
+candidate https://services7.arcgis.com/DlE4MSUhoXlyq64t/arcgis/rest/services/AKTEMP_Stations_WFL1/FeatureServer/30
+note felder: GlobalID, OBJECTID, active, code, date_upd, depth_cat_descr, depths_num, description, end_datetime, freq_descr, int_descr, latitude, longitude, org, plac_descr, poc_email, provider, reviewed
+dataset AKTEMP Stations By Organization | https://services7.arcgis.com/DlE4MSUhoXlyq64t/arcgis/rest/services/AKTEMP_Stations_WFL1/FeatureServer/29
+candidate https://services7.arcgis.com/DlE4MSUhoXlyq64t/arcgis/rest/services/AKTEMP_Stations_WFL1/FeatureServer/29
+note felder: GlobalID, OBJECTID, active, code, date_upd, depth_cat_descr, depths_num, description, end_datetime, freq_descr, int_descr, latitude, longitude, org, plac_descr, poc_email, provider, reviewed
+dataset AKTEMP Stations WFL1 | https://services7.arcgis.com/DlE4MSUhoXlyq64t/arcgis/rest/services/AKTEMP_Stations_WFL1/FeatureServer
+decline https://services7.arcgis.com/DlE4MSUhoXlyq64t/arcgis/rest/services/AKTEMP_Stations_WFL1/FeatureServer
+note kein features-key
+dataset Water Temperature (degrees C) | https://services.arcgis.com/s8wtJX9suxFen6TA/arcgis/rest/services/status_trend_2025_sw/FeatureServer/13
+candidate https://services.arcgis.com/s8wtJX9suxFen6TA/arcgis/rest/services/status_trend_2025_sw/FeatureServer/13
+note felder: OBJECTID, analyte, basin, median, site_name, station, station_category, station_id, storet, symbology, trend_annual_change, wbodtype, wqstatusdesc, wqtrenddesc, wqtrendmag, wqtrendqual, x_coord, y_coord
+dataset Predicted Average Temperature | https://services2.arcgis.com/ouI9Ksmf4blkssRx/arcgis/rest/services/Predicted_Average_Temperature/FeatureServer/7
+candidate https://services2.arcgis.com/ouI9Ksmf4blkssRx/arcgis/rest/services/Predicted_Average_Temperature/FeatureServer/7
+note felder: GNIS_ID, GNIS_NAME, LATITUDE, LONGITUDE, OBJECTID, TEMP_MAX_M, TEMP_MEAN, TEMP_MIN_M
+dataset 2022 303(d) Temperature Listed - Rivers | https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Lower_Columbia_Sandy_Temperature_TMDL_map/FeatureServer/20
+candidate https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Lower_Columbia_Sandy_Temperature_TMDL_map/FeatureServer/20
+note felder: AQWMS_NUM, AQWMS_TXT, AU_AreaAcr, AU_Description, AU_ID, AU_LenMiles, AU_Name, AU_UseCode, AU_WBType, AU_delist, AU_parameter_category, Assessment, DO_Class, HAS_Spatial, HUC12, HUC_10, HUC_12, HUC_6
+dataset Lower Columbia Sandy Temperature TMDL map | https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Lower_Columbia_Sandy_Temperature_TMDL_map/FeatureServer
+decline https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Lower_Columbia_Sandy_Temperature_TMDL_map/FeatureServer
+note kein features-key
+dataset 2022 303(d) Temperature Listed - Waterbodies | https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Lower_Columbia_Sandy_Temperature_TMDL_map/FeatureServer/21
+candidate https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Lower_Columbia_Sandy_Temperature_TMDL_map/FeatureServer/21
+note felder: AQWMS_NUM, AQWMS_TXT, AU_AreaAcre, AU_ID, AU_LenMile, AU_Name, AU_UseCode, AU_WBType, AU_delist, AU_parameter_category, Assessment, DO_Class, HUC12, HUC_10, HUC_12, HUC_6, HUC_8, HU_10_NAME
+dataset Model Extent CE QUAL W2 Temperature | https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Lower_Columbia_Sandy_Temperature_TMDL_map/FeatureServer/13
+candidate https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Lower_Columbia_Sandy_Temperature_TMDL_map/FeatureServer/13
+note felder: Model, Model_Year, OBJECTID, Shape__Length, Stream
+dataset MAES Temperature Dissolved Oxygen Profiles 2014 | https://services.arcgis.com/DzkBIV3ztulDZBgc/arcgis/rest/services/TempDOProfileJuly2Allen/FeatureServer/0
+candidate https://services.arcgis.com/DzkBIV3ztulDZBgc/arcgis/rest/services/TempDOProfileJuly2Allen/FeatureServer/0
+note felder: Cond, CreationDate, Creator, CrewLead, DOSat, DO_mgl, EditDate, Editor, GlobalID, ImageRecor, Layer, Notes, OBJECTID, PressureA, ProjName, ProjType, ProjectID, ProjectID1
+dataset Temperature | https://services4.arcgis.com/NGNDg1xsDP6ZTVw6/arcgis/rest/services/PHS_ODC_Water_Quality/FeatureServer/3
+candidate https://services4.arcgis.com/NGNDg1xsDP6ZTVw6/arcgis/rest/services/PHS_ODC_Water_Quality/FeatureServer/3
+note felder: GlobalID, OBJECTID, Temperature, Temperature_C
+dataset Annual Surface Temperature Change | https://services9.arcgis.com/weJ1QsnbMYJlCHdG/arcgis/rest/services/Indicator_3_1_Climate_Indicators_Annual_Mean_Global_Surface_Temperature/FeatureServer/0
+candidate https://services9.arcgis.com/weJ1QsnbMYJlCHdG/arcgis/rest/services/Indicator_3_1_Climate_Indicators_Annual_Mean_Global_Surface_Temperature/FeatureServer/0
+note felder: CTS_Code, CTS_Full_Descriptor, CTS_Name, Country, F1961, F1962, F1963, F1964, F1965, F1966, F1967, F1968, F1969, F1970, F1971, F1972, F1973, F1974
+dataset MN Temperature Average (1961-1990) | https://enterprise.gisdata.mn.gov/aghost/rest/services/us_mn_state_dnr/atmos_1961_1990_mn_temp_average/FeatureServer
+decline https://enterprise.gisdata.mn.gov/aghost/rest/services/us_mn_state_dnr/atmos_1961_1990_mn_temp_average/FeatureServer
+note kein features-key
+dataset MN Temperature Average (1961-1990) | https://enterprise-dev.gisdata.mn.gov/aghost/rest/services/us_mn_state_dnr/atmos_1961_1990_mn_temp_average/FeatureServer
+decline https://enterprise-dev.gisdata.mn.gov/aghost/rest/services/us_mn_state_dnr/atmos_1961_1990_mn_temp_average/FeatureServer
+note nicht-json body
+dataset Underway total alkalinity, water temperature, salinity and other variables | https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/Underway_total_alkalinity/FeatureServer/0
+candidate https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/Underway_total_alkalinity/FeatureServer/0
+note felder: CRUISE_ID, DATE_UTC__yyyymmdd_, EXPOCODE, JD_UTC, LATITUDE, LONGITUDE, OBJECTID, SSS, SST, TA, TIME_UTC__hh_mm_ss_
+dataset 2022 303(d) Temperature Listed - Watershed Units | https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Lower_Columbia_Sandy_Temperature_TMDL_map/FeatureServer/23
+candidate https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Lower_Columbia_Sandy_Temperature_TMDL_map/FeatureServer/23
+note felder: AQWMS_NUM, AQWMS_TXT, AU_AreaAcr, AU_Description, AU_ID, AU_LenMiles, AU_Name, AU_UseCode, AU_WBType, AU_delist, AU_parameter_category, Assessment, DO_Class, HUC12, HUC_10, HUC_12, HUC_6, HUC_8
+dataset Maximum Temperatures | https://services3.arcgis.com/MHHLfb7YPDdkylOD/arcgis/rest/services/Maximum_Temperatures/FeatureServer/0
+candidate https://services3.arcgis.com/MHHLfb7YPDdkylOD/arcgis/rest/services/Maximum_Temperatures/FeatureServer/0
+note felder: Latitude, Longitude, Number_of_days__20_C, Number_of_days__25_C, Number_of_days__28_C, Number_of_days__30_C, ObjectId, Percentage_of_days__20_C, Percentage_of_days__25_C, Percentage_of_days__28_C, Percentage_of_days__30_C, Site, Total_days_sampled_2017_2019
+dataset ACCS Aquatics Temperature Monitoring Sites | https://services7.arcgis.com/DlE4MSUhoXlyq64t/arcgis/rest/services/ACCS_Aquatics_Temperature_Monitoring_Sites/FeatureServer/0
+candidate https://services7.arcgis.com/DlE4MSUhoXlyq64t/arcgis/rest/services/ACCS_Aquatics_Temperature_Monitoring_Sites/FeatureServer/0
+note felder: CreationDate, Creator, EditDate, Editor, accuracy, add_water_log, add_water_log_coord, agencyorganization, air_log_information2, al_deploy, al_log_type, al_sam_freq, al_serial, channel_depth_meters, channel_depth_meters2, channel_flow_status, channel_width_meters, channel_width_meters2
+dataset Water Temperature | https://services1.arcgis.com/jYHC0Oa2n7z2uKcM/arcgis/rest/services/saltmarsh1_WFL1/FeatureServer/1
+candidate https://services1.arcgis.com/jYHC0Oa2n7z2uKcM/arcgis/rest/services/saltmarsh1_WFL1/FeatureServer/1
+note felder: Conductivity_uScm, DO_mgL, DT, Lat_dd, Lon_dd, OBJECTID, WaterTemp_C, pH
+dataset July Maximum Temperature Summaries | https://services8.arcgis.com/O5dJJKQg5b6RjO3d/arcgis/rest/services/July_Maximum_Temperature_Summaries/FeatureServer
+decline https://services8.arcgis.com/O5dJJKQg5b6RjO3d/arcgis/rest/services/July_Maximum_Temperature_Summaries/FeatureServer
+note arcgis-error-body
+dataset 2022 303(d) Temperature Listed - Watershed Unit Streams | https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Lower_Columbia_Sandy_Temperature_TMDL_map/FeatureServer/22
+candidate https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Lower_Columbia_Sandy_Temperature_TMDL_map/FeatureServer/22
+note felder: AU_Description, AU_GNIS, AU_GNIS_Name, AU_ID, AU_Name, AU_delist, AU_final_status, AU_previous_IR_category, Assessment, DO_Class, GNIS_22_category, GNIS_final_category, GNIS_previous_IR_impairement, GNIS_remove_impairment, GNIS_status, OBJECTID, Pollu_ID, Pollutant
