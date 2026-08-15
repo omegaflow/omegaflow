@@ -1,10 +1,10 @@
 ausstehend
 queue phi/port/queue/sources_astro_untested_30-astro.φ
-note 30 Blöcke, alte Grammatik (source-Köpfe, verify false, lat_key ra/lon_key dec) — --gold: 31 konvertiert, 0 parse-fähig (framelos, cmap-Migration nötig)
+note 30 Blöcke, alte Grammatik (source-Köpfe, verify false, lat_key ra/lon_key dec) — Port-Befund 2026-08-15: gemini → decline file-inventory (dead_sources.φ), mast → dead 404 (dead_sources.φ); Rest (28): framelos/ohne Container — votable-TAP-Blöcke → tap_compiler-Route, jpl_sbdb → kepler_map (P04), oac → Einzelobjekt, splatalogue → positionslos, gaia_dr3 → Index-Positionen (cmap-Index-Keys)
 
-ausstehend
+verifiziert
 queue phi/port/queue/sources_earth_untested_stac-sentinel.φ
-note 3 Blöcke (sentinel2_l2a, landsat_c2_l2, landsatlook_c2l2) — --gold: 4 konvertiert, 0 parse-fähig (framelos + method/body fällt); post_body-Migration parkt am parser-gap PostBodyMigration
+note Port-Befund 2026-08-15: sentinel2_l2a (element84) portiert + mit Samples verifiziert (proj:centroid-Keys, 6 Kanäle eo:cloud_cover 28,4/10,2/19,5); landsatlook-Blöcke: leer unter Fixture-Datum (dokumentierter Pass), Content-Type-json-Fix in fetch_raw_probe + fetch_raw_bytes_post, Template-Substitution im Sweep für post_body
 
 ausstehend
 queue phi/port/queue/sources_exotic_untested_neutrino-ligo.φ

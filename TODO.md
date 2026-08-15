@@ -491,7 +491,17 @@ phi/port/queue/ kopiert (getrackt).
 Offen (Detail in phi/port/ledger.φ, jede Zeile mit Zustand):
 - Queue: 10 Untested-Korpora (14k/13k/15k/7k/2k/183l/astro/earth/exotic/
   candidate-staging), Gold 2572 + Recovery 1924 + 5701 Lost-Blocks (Join aus
-  richest/params) — Port durch die Prozedur.
+  richest/params) — Port durch die Prozedur. Erster Port 2026-08-15: STAC
+  sentinel2_l2a verifiziert mit Samples (element84, proj:centroid-Keys,
+  eo:cloud_cover 28,4/10,2/19,5 — Content-Type-json-Fix + post_body-
+  Template-Substitution im Sweep, fetch_raw_probe/fetch_raw_bytes_post);
+  landsatlook leer unter Fixture (dokumentierter Pass); astro-Korpus:
+  gemini decline + mast 404 in dead_sources.φ, 28 Blöcke → manueller Port
+  (tap_compiler-Route, kepler_map, Einzelobjekt, Index-Positionen).
+  --gold-Konverter trägt jetzt: post_body aus method/body, celestial
+  (ra/dec/s_ra/s_dec) → cmap + at sun, benannte Keys → on earth, url-first-
+  Emission, source-Split (ttl-Off-by-one behoben) — Test
+  test_gold_convert_celestial_and_post.
 - Bestand: 38 offene VizieR-Bulks, IRSA/GAVO/ARI/ExoArchive-Inventare,
   GCNS/MWSC, 8 VirES-Drafts, 32 ArcGIS-Drafts, 103 TerraPulse-Kandidaten,
   77 Archeology-Gaps, ESA-Kandidaten, FRB-Union, Arena/Foundation/Research-

@@ -3556,7 +3556,12 @@ fn fetch_raw_probe(url: &str, body: Option<&str>, headers: &[(String, String)]) 
         .arg("--connect-timeout")
         .arg("5");
     if let Some(b) = body {
-        cmd.arg("-X").arg("POST").arg("-d").arg(b);
+        cmd.arg("-X")
+            .arg("POST")
+            .arg("-H")
+            .arg("Content-Type: application/json")
+            .arg("-d")
+            .arg(b);
     }
     for (k, v) in headers {
         cmd.arg("-H").arg(format!("{}: {}", k, v));
@@ -3595,7 +3600,10 @@ fn fetch_raw_bytes_post(
         .arg("-X")
         .arg("POST");
     if let Some(b) = body {
-        cmd.arg("-d").arg(b);
+        cmd.arg("-H")
+            .arg("Content-Type: application/json")
+            .arg("-d")
+            .arg(b);
     }
     for (k, v) in headers {
         cmd.arg("-H").arg(format!("{}: {}", k, v));
@@ -5646,13 +5654,21 @@ fn gold_synth(directive: &str, force: &str, key: &str, name: &str, ttl: u64) -> 
 }
 
 fn convert_gold_block(block: &str) -> String {
-    let mut out = String::new();
+    let mut head: Vec<String> = Vec::new();
     let mut force = String::new();
     let mut ttl: u64 = 0;
-    let mut has_frame = false;
+    let mut frame_line: Option<String> = None;
     let mut lat: Option<f64> = None;
     let mut lon: Option<f64> = None;
     let mut alt: Option<f64> = None;
+    let mut map_line: Option<String> = None;
+    let mut lat_key: Option<String> = None;
+    let mut lon_key: Option<String> = None;
+    let mut alt_key: Option<String> = None;
+    let mut epoch_key: Option<String> = None;
+    let mut post_body: Option<String> = None;
+    let mut body_target: Option<String> = None;
+    let mut raw_extracts: Vec<String> = Vec::new();
     for line in block.lines() {
         let t = line.trim();
         if t.is_empty() || t.starts_with('#') {
@@ -5664,22 +5680,16 @@ fn convert_gold_block(block: &str) -> String {
         }
         match parts[0] {
             "url" | "format" | "header" | "target" | "catalog" | "flux_from_mag"
-            | "abs_mag_from" | "catalog_epoch" => {
-                out.push_str(t);
-                out.push('\n');
+            | "abs_mag_from" | "catalog_epoch" | "max_freq" | "min_freq" => {
+                head.push(t.to_string());
             }
             "ttl" => {
-                out.push_str(t);
-                out.push('\n');
+                head.push(t.to_string());
                 if let Ok(v) = parts[1].parse::<u64>() {
                     ttl = v;
                 }
             }
-            "on" | "at" => {
-                out.push_str(t);
-                out.push('\n');
-                has_frame = true;
-            }
+            "on" | "at" => frame_line = Some(t.to_string()),
             "lat" if parts.len() >= 2 => {
                 if let Ok(v) = parts[1].parse::<f64>() {
                     lat = Some(v);
@@ -5696,72 +5706,70 @@ fn convert_gold_block(block: &str) -> String {
                 }
             }
             "force" if parts.len() >= 2 => force = parts[1].to_string(),
+            "method" => {}
+            "body" if parts.len() >= 2 => {
+                if parts[1].starts_with('{') {
+                    post_body = Some(parts[1].to_string());
+                } else {
+                    body_target = Some(parts[1].to_string());
+                }
+            }
             "map" | "cmap" | "rows" => {
                 let arg = parts.get(1).copied().unwrap_or(".");
-                out.push_str(parts[0]);
-                out.push(' ');
-                out.push_str(arg);
-                out.push('\n');
+                map_line = Some(format!("{} {}", parts[0], arg));
             }
-            "lat_key" if parts.len() >= 2 => {
-                out.push_str(&format!("lat {}\n", parts[1]));
-            }
-            "lon_key" if parts.len() >= 2 => {
-                out.push_str(&format!("lon {}\n", parts[1]));
-            }
-            "alt_key" if parts.len() >= 2 => {
-                out.push_str(&format!("alt {}\n", parts[1]));
-            }
-            "epoch_key" if parts.len() >= 2 => {
-                out.push_str(&format!("epoch {}\n", parts[1]));
-            }
-            "field" | "field_in" if parts.len() >= 3 => {
-                if let Some(s) = gold_synth("field", &force, parts[1], parts[2], ttl) {
-                    out.push_str(&s);
-                }
-            }
-            "first" | "last" | "count" | "path" | "deep" if parts.len() >= 3 => {
-                if let Some(s) = gold_synth(parts[0], &force, parts[1], parts[2], ttl) {
-                    out.push_str(&s);
-                }
-            }
-            "last_row" if parts.len() >= 3 => {
-                if let Some(s) = gold_synth("lastrow", &force, parts[1], parts[2], ttl) {
-                    out.push_str(&s);
-                }
-            }
-            "last_line" if parts.len() >= 2 => {
-                out.push_str(&format!("lastline {}\n", parts[1]));
-            }
-            "last_obj" if parts.len() >= 5 => {
-                let name = parts[parts.len() - 1];
-                let key = parts[parts.len() - 2];
-                let parent = parts[1];
-                let m = parts[2..parts.len() - 2].join(" ");
-                out.push_str(&format!("lastobj {} {} {} {}\n", parent, m, key, name));
-            }
-            "geojson" if parts.len() >= 5 => {
-                let tau = if ttl > 0 {
-                    ((ttl as f64) / 10.0).max(1.0)
-                } else {
-                    1.0
-                };
-                out.push_str(&format!(
-                    "geojson {} 0.0 {} {} {} 0.0 0.0\n",
-                    parts[2], parts[3], parts[4], tau
-                ));
-            }
-            "regex" if parts.len() >= 3 => {
-                let name = parts[parts.len() - 1];
-                let pat = parts[1..parts.len() - 1].join(" ");
-                if let Some(s) = gold_synth("regex", &force, &pat, name, ttl) {
-                    out.push_str(&s);
-                }
+            "lat_key" if parts.len() >= 2 => lat_key = Some(parts[1].to_string()),
+            "lon_key" if parts.len() >= 2 => lon_key = Some(parts[1].to_string()),
+            "alt_key" if parts.len() >= 2 => alt_key = Some(parts[1].to_string()),
+            "epoch_key" if parts.len() >= 2 => epoch_key = Some(parts[1].to_string()),
+            "field" | "field_in" | "first" | "last" | "count" | "path" | "deep" | "last_row"
+            | "last_line" | "last_obj" | "geojson" | "regex" => {
+                raw_extracts.push(t.to_string());
             }
             _ => {}
         }
     }
-    if !has_frame && lat.is_some() && lon.is_some() {
+
+    let celestial = matches!(
+        (lat_key.as_deref(), lon_key.as_deref()),
+        (Some(k1), Some(k2))
+            if (k1.eq_ignore_ascii_case("ra") || k1.eq_ignore_ascii_case("s_ra"))
+                && (k2.eq_ignore_ascii_case("dec") || k2.eq_ignore_ascii_case("s_dec"))
+    );
+    let named_keys = lat_key
+        .as_deref()
+        .is_some_and(|k| k.parse::<f64>().is_err())
+        && lon_key
+            .as_deref()
+            .is_some_and(|k| k.parse::<f64>().is_err());
+
+    let mut out = String::new();
+    for h in head.iter().filter(|h| h.starts_with("url ")) {
+        out.push_str(h);
+        out.push('\n');
+    }
+    for h in head.iter().filter(|h| !h.starts_with("url ")) {
+        out.push_str(h);
+        out.push('\n');
+    }
+    if let Some(b) = &post_body {
+        out.push_str("post_body ");
+        out.push_str(b);
+        out.push('\n');
+    }
+    if let Some(b) = &body_target {
+        out.push_str("body ");
+        out.push_str(b);
+        out.push('\n');
+    }
+    if let Some(f) = &frame_line {
+        out.push_str(f);
+        out.push('\n');
+    } else if celestial && map_line.is_some() {
+        out.push_str("at sun\n");
+    } else if named_keys && map_line.is_some() {
+        out.push_str("on earth 0 0\n");
+    } else if lat.is_some() && lon.is_some() {
         out.push_str(&format!(
             "on earth {} {} {}\n",
             lat.unwrap_or(0.0),
@@ -5769,7 +5777,107 @@ fn convert_gold_block(block: &str) -> String {
             alt.unwrap_or(0.0)
         ));
     }
+    if let Some(m) = &map_line {
+        if celestial {
+            let arg = m.splitn(2, ' ').nth(1).unwrap_or(".");
+            out.push_str("cmap ");
+            out.push_str(arg);
+            out.push('\n');
+        } else {
+            out.push_str(m);
+            out.push('\n');
+        }
+    }
+    if celestial {
+        if let Some(k) = &lat_key {
+            out.push_str("ra ");
+            out.push_str(k);
+            out.push('\n');
+        }
+        if let Some(k) = &lon_key {
+            out.push_str("dec ");
+            out.push_str(k);
+            out.push('\n');
+        }
+    } else {
+        if let Some(k) = &lat_key {
+            out.push_str("lat ");
+            out.push_str(k);
+            out.push('\n');
+        }
+        if let Some(k) = &lon_key {
+            out.push_str("lon ");
+            out.push_str(k);
+            out.push('\n');
+        }
+        if let Some(k) = &alt_key {
+            out.push_str("alt ");
+            out.push_str(k);
+            out.push('\n');
+        }
+        if let Some(k) = &epoch_key {
+            out.push_str("epoch ");
+            out.push_str(k);
+            out.push('\n');
+        }
+    }
+    for r in &raw_extracts {
+        let parts: Vec<&str> = r.split_whitespace().collect();
+        if parts.is_empty() {
+            continue;
+        }
+        let s = match parts[0] {
+            "field" | "field_in" if parts.len() >= 3 => {
+                gold_synth("field", &force, parts[1], parts[2], ttl)
+            }
+            "first" | "last" | "count" | "path" | "deep" if parts.len() >= 3 => {
+                gold_synth(parts[0], &force, parts[1], parts[2], ttl)
+            }
+            "last_row" if parts.len() >= 3 => {
+                gold_synth("lastrow", &force, parts[1], parts[2], ttl)
+            }
+            "last_line" if parts.len() >= 2 => Some(format!("lastline {}", parts[1])),
+            "last_obj" if parts.len() >= 5 => {
+                let name = parts[parts.len() - 1];
+                let key = parts[parts.len() - 2];
+                let parent = parts[1];
+                let m = parts[2..parts.len() - 2].join(" ");
+                Some(format!("lastobj {} {} {} {}", parent, m, key, name))
+            }
+            "geojson" if parts.len() >= 5 => {
+                let tau = if ttl > 0 {
+                    ((ttl as f64) / 10.0).max(1.0)
+                } else {
+                    1.0
+                };
+                Some(format!(
+                    "geojson {} 0.0 {} {} {} 0.0 0.0",
+                    parts[2], parts[3], parts[4], tau
+                ))
+            }
+            "regex" if parts.len() >= 3 => {
+                let name = parts[parts.len() - 1];
+                let pat = parts[1..parts.len() - 1].join(" ");
+                gold_synth("regex", &force, &pat, name, ttl)
+            }
+            _ => None,
+        };
+        if let Some(s) = s {
+            out.push_str(s.trim_end());
+            out.push('\n');
+        }
+    }
     out
+}
+
+fn gold_flush_block(block: &str, converted: &mut String, total: &mut usize, parsed: &mut usize) {
+    *total += 1;
+    let conv = convert_gold_block(block);
+    if !parse_sources(&conv).is_empty() {
+        *parsed += 1;
+        converted.push_str(&conv);
+        converted.push('\n');
+    }
 }
 
 fn gold_convert_mode(input: &str, output: &str) -> i32 {
@@ -5784,29 +5892,25 @@ fn gold_convert_mode(input: &str, output: &str) -> i32 {
     let mut block = String::new();
     let mut total = 0usize;
     let mut parsed = 0usize;
+    let split_on_source = content
+        .lines()
+        .any(|l| l.trim_start().starts_with("source "));
     for line in content.lines() {
         let t = line.trim_start();
-        if t.starts_with("url ") && !block.is_empty() {
-            total += 1;
-            let conv = convert_gold_block(&block);
-            if !parse_sources(&conv).is_empty() {
-                parsed += 1;
-                converted.push_str(&conv);
-                converted.push('\n');
-            }
+        let starts_block = if split_on_source {
+            t.starts_with("source ")
+        } else {
+            t.starts_with("url ")
+        };
+        if starts_block && !block.is_empty() {
+            gold_flush_block(&block, &mut converted, &mut total, &mut parsed);
             block = String::new();
         }
         block.push_str(line);
         block.push('\n');
     }
     if !block.is_empty() {
-        total += 1;
-        let conv = convert_gold_block(&block);
-        if !parse_sources(&conv).is_empty() {
-            parsed += 1;
-            converted.push_str(&conv);
-            converted.push('\n');
-        }
+        gold_flush_block(&block, &mut converted, &mut total, &mut parsed);
     }
     if std::fs::write(output, &converted).is_err() {
         eprintln!("--gold: output unwritable: {}", output);
@@ -10238,6 +10342,50 @@ field temp temp_c\n";
     }
 
     #[test]
+    fn test_gold_convert_celestial_and_post() {
+        let has_field = |src: &super::SourceConfig| {
+            src.extracts.iter().any(|e| match e {
+                super::Extract::CelestialMap { fields, .. } => !fields.is_empty(),
+                super::Extract::Map { fields, .. } => !fields.is_empty(),
+                _ => false,
+            })
+        };
+        let celestial = "source oac\nttl 86400\nforce em\nurl https://api.example.org/{target}/\nverify false\ntarget SN2014J\nmap .\nlat_key ra\nlon_key dec\nfield name name\n";
+        let conv = super::convert_gold_block(celestial);
+        let srcs = super::parse_sources(&conv);
+        assert_eq!(srcs.len(), 1);
+        assert!(matches!(&srcs[0].frame, super::Frame::Barycenter { .. }));
+        assert!(srcs[0]
+            .extracts
+            .iter()
+            .any(|e| matches!(e, super::Extract::CelestialMap { .. })));
+        assert!(has_field(&srcs[0]));
+        let post = "source stac\nttl 86400\nforce em\nurl https://example.org/search\nmethod post\nbody {\"collections\":[\"x\"],\"bbox\":[{lon_min},{lat_min},{lon_max},{lat_max}]}\nmap features\nlat_key properties.centroid.lat\nlon_key properties.centroid.lon\nfield id scene\n";
+        let conv = super::convert_gold_block(post);
+        let srcs = super::parse_sources(&conv);
+        assert_eq!(srcs.len(), 1);
+        assert!(matches!(&srcs[0].frame, super::Frame::Surface { .. }));
+        assert_eq!(
+            srcs[0].post_body.as_deref(),
+            Some("{\"collections\":[\"x\"],\"bbox\":[{lon_min},{lat_min},{lon_max},{lat_max}]}")
+        );
+        assert!(srcs[0]
+            .extracts
+            .iter()
+            .any(|e| matches!(e, super::Extract::Map { .. })));
+        assert!(has_field(&srcs[0]));
+        let mast = "source mast\nttl 3600\nforce em\nurl https://example.org/tap\nformat votable\nmap data\nfield_in s_ra ra_deg\nfield_in s_dec dec_deg\nlat_key s_ra\nlon_key s_dec\n";
+        let conv = super::convert_gold_block(mast);
+        let srcs = super::parse_sources(&conv);
+        assert_eq!(srcs.len(), 1);
+        assert!(matches!(&srcs[0].frame, super::Frame::Barycenter { .. }));
+        assert!(srcs[0]
+            .extracts
+            .iter()
+            .any(|e| matches!(e, super::Extract::CelestialMap { .. })));
+        assert!(has_field(&srcs[0]));
+    }
+    #[test]
     fn test_parse_stations_xml() {
         let xml = "<?xml version=\"1.0\" ?><GINServices>\n <ObservatoryList>\n  <Observatory>\n   <Code>AAE</Code>\n   <Name>Addis Ababa</Name>\n   <Latitude>9.035</Latitude>   <Longitude>38.770</Longitude>   <Elevation>2441</Elevation>\n  </Observatory>\n  <Observatory>\n   <Code>YKC</Code>\n   <Latitude>62.48</Latitude>   <Longitude>-114.48</Longitude>   <Elevation>181</Elevation>\n  </Observatory>\n </ObservatoryList>\n</GINServices>";
         let st = parse_stations_xml(xml);
@@ -10338,7 +10486,12 @@ field temp temp_c\n";
                         }
                         limit -= 1;
                         let headers = super::render_headers(&s.headers, &env);
-                        let body = match super::fetch_raw_probe(&url, None, &headers) {
+                        let post_body = match &s.post_body {
+                            Some(pb) => Some(substitute_test_templates(pb)),
+                            None => None,
+                        };
+                        let post = post_body.as_deref();
+                        let body = match super::fetch_raw_probe(&url, post, &headers) {
                             Some(b) => b,
                             None => {
                                 empty += 1;

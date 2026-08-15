@@ -706,6 +706,10 @@ decline model-forecast
 url https://archive-api.open-meteo.com/v1/archive?latitude=
 note open-meteo Archiv = Modell/Reanalyse.
 
+decline file-inventory
+url https://archive.gemini.edu/jsonsummary/notengineering/NotFail/
+note jsonsummary liefert ein Datei-Inventar (filename, file_size, file_md5) — kein ra/dec, kein Messwert in dieser Route (Port-Befund 2026-08-15).
+
 parser-def votable
 url https://archive.nrao.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,+dec,+obs_id,+project+FROM+ivoa.obscore+WHERE+CONTAINS
 note NRAO-TAP liefert VOTable.
@@ -1985,6 +1989,10 @@ note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
 key-needed auth
 url https://mast.stsci.edu/api/v0/
 note MAST verlangt Token für API-Zugriff.
+
+dead 404
+url https://mast.stsci.edu/vo-tap/api/v0.1/caom/sync
+note MAST tap-sync 404 (nginx) — key-needed (Port-Befund 2026-08-15 bestätigt den TODO-Befund).
 
 decline no-physical-force
 url https://mempool.space/api/v1/fees/recommended

@@ -1,1 +1,27 @@
-# gold conversion (old → new grammar, mechanical)
+# earth stac — ported blocks (proj:centroid-Keys verifiziert, json content-type, korrekte Hosts)
+url https://earth-search.aws.element84.com/v1/search
+ttl 86400
+post_body {"collections":["sentinel-2-l2a"],"bbox":[{lon_min},{lat_min},{lon_max},{lat_max}],"datetime":"{today}T00:00:00Z/{today}T23:59:59Z","limit":50}
+on earth 0 0
+map features
+lat properties.proj:centroid.lat
+lon properties.proj:centroid.lon
+field properties.eo:cloud_cover s2_cloud_cover_pct inverse-square em pct 8640 0.0 0.0
+
+url https://landsatlook.usgs.gov/stac-server/search
+ttl 86400
+post_body {"collections":["landsat-c2-l2"],"bbox":[{lon_min},{lat_min},{lon_max},{lat_max}],"datetime":"{today}T00:00:00Z/{today}T23:59:59Z","limit":50}
+on earth 0 0
+map features
+lat properties.proj:centroid.lat
+lon properties.proj:centroid.lon
+field properties.eo:cloud_cover landsat_cloud_cover_pct inverse-square em pct 8640 0.0 0.0
+
+url https://landsatlook.usgs.gov/stac-server/search
+ttl 86400
+post_body {"collections":["landsat-c2l2"],"bbox":[{lon_min},{lat_min},{lon_max},{lat_max}],"datetime":"{today}T00:00:00Z/{today}T23:59:59Z","limit":50}
+on earth 0 0
+map features
+lat properties.proj:centroid.lat
+lon properties.proj:centroid.lon
+field properties.eo:cloud_cover landsatlook_cloud_cover_pct inverse-square em pct 8640 0.0 0.0

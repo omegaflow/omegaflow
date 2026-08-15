@@ -1,1 +1,11 @@
-# staging: backlog blocks verified with samples
+# from earth_stac_converted.φ
+url https://earth-search.aws.element84.com/v1/search
+ttl 86400
+post_body {"collections":["sentinel-2-l2a"],"bbox":[{lon_min},{lat_min},{lon_max},{lat_max}],"datetime":"{today}T00:00:00Z/{today}T23:59:59Z","limit":50}
+on earth 0 0
+map features
+lat properties.proj:centroid.lat
+lon properties.proj:centroid.lon
+field properties.eo:cloud_cover s2_cloud_cover_pct inverse-square em pct 8640 0.0 0.0
+
+
