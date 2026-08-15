@@ -182,15 +182,15 @@ braucht mindestens eine gemessene, physisch gate-konforme Quelle.
 
 | Kanal | Messquelle | Offene Arbeit |
 |---|---|---|
-| em | Tycho-2-Katalog, Radar-OEMs, DASTCOM-Albedo; Zeitreihen: NOAA GOES, HEASARC, PDS | K04 (Katalog); Kuration (Zeitreihen) |
-| gravity | JPL SSD komplett: DE442/441/440, Mond-Systeme, Kleinkörper, Sonden, GM-PCK, DASTCOM; live: NOAA CO-OPS Tidenpegel (Fanout, Wasserstand über MLLW) | K01 (Monde+CI), K02 (Binary-PCK), K03 (Katalog) |
-| acoustic | GONG/SOHO (Helioseismologie), NOAA (Atmosphäre) | Kuration |
+| em | live: TNS (~20k Transienten), SWPC GOES/ACE/EUV/Kp, OpenSky-Geo-Altitude; Zeitreihen: NOAA GOES, HEASARC, PDS | K04 (Katalog); Kuration (Zeitreihen) |
+| gravity | live: NOAA CO-OPS Tidenpegel (Fanout); JPL SSD komplett: DE442/441/440, Mond-Systeme, Kleinkörper, Sonden, GM-PCK, DASTCOM | K01 (Monde+CI), K02 (Binary-PCK), K03 (Katalog) |
+| acoustic | live: METAR + NDBC-Buoys (Wellen); GONG/SOHO (Helioseismologie) | Kuration |
 | seismic-body | USGS, IRIS, GFZ, PDS InSight/Apollo | Kuration (USGS bereits aktiv) |
-| seismic-surface | USGS, IRIS, GFZ | Kuration |
-| thermal | DASTCOM H/Albedo + Yarkovsky-Listen; GOES-Thermal | K03 (Parameter); Kuration (Zeitreihen) |
-| diffusion | PurpleAir (globales PM-Sensorfeld, live), NOAA SWPC, NASA OMNI | Kuration |
-| advective | DSCOVR/SWPC (Solarwind), NOAA GFS | Kuration |
-| electric | Kein öffentlicher Live-Endpoint (verifiziert 2026-08-15): OOI-CTD-Leitfähigkeit endet 2025-08/09, SWPC-GLM-Blitz 404, Argo ohne Roh-Leitfähigkeit (nur abgeleitete Salinität). B-Felder sind em, nicht electric. Offen: ESA Swarm (VIRTIS/EFI braucht Registrierung), GIC-Netze (nicht öffentlich) | Kuration |
+| seismic-surface | live: USGS, INGV, JMA | Kuration |
+| thermal | live: NOAA-CDO-Fanout (TMAX), AOML-Drifter, GML Barrow, Buoy-WTMP; DASTCOM H/Albedo + Yarkovsky-Listen; GOES-Thermal | K03 (Parameter); Kuration (Zeitreihen) |
+| diffusion | live: PurpleAir, OpenAQ-pm25-Fanout, GML CH4/N2O/SF6, OOI-pCO2; NOAA SWPC, NASA OMNI | Kuration |
+| advective | live: Waterservices-Rivers, OpenSky-Aircraft, Buoy-Wind; DSCOVR/SWPC (Solarwind), NOAA GFS | Kuration |
+| electric | Kein öffentlicher Live-Endpoint (verifiziert 2026-08-15): OOI-CTD-Leitfähigkeit endet 2025-08/09, SWPC-GLM-Blitz 404, Argo ohne Roh-Leitfähigkeit (nur abgeleitete Salinität). GLM-Daten existieren auf NOAA-S3 (NetCDF — NetCDF-Reader fehlt). Offen: ESA Swarm (VIRTIS/EFI braucht Registrierung), GIC-Netze (nicht öffentlich) | Kuration |
 
 Device-Sensoren (M05) ergänzen die Kanäle lokal; das Radiatorium (M01/M02) ist die
 Aktuator-Seite. Der Kurations-Pfad ist unten registriert (Curation & Quellen).
