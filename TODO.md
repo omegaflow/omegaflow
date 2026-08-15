@@ -34,7 +34,7 @@ Compiler/Runtime; Moon-PA-Merge parkt an K05. K03-Compiler-Einheit
 geschlossen: src/kepler.rs + src/bin/dastcom_compiler.rs (Dev-Beweis Ceres
 0,001″ gegen Horizons). 32 neue φ-Ephemeris-Blöcke für die Flattener-Monde
 (absent bis der Flattener-CI-Lauf die CDN-Assets trägt — ausstehend). P01 geschlossen (tote force-Direktive und 3-Token-field lehnt parse_sources laut ab).
-0 Warnings, 0 Errors; Tests: 34 lib + 36 bin.
+0 Warnings, 0 Errors; Tests: 31 lib + 36 bin.
 
 ---
 
@@ -75,24 +75,26 @@ Blöcke, ANGLES/AXES/UNITS- und MATRIX-Rotationen in SPICE-Reihenfolge,
 Mehrzeilen-Tupel, Ein-Level-Kettenregel, 3 Tests); der Flattener klassifiziert
 family fk, führt die Festrotation an (pa_frame_of-Hardcode entfernt) und hat
 einen --probe-Modus (--bpc + --fk + JD → PA/ME-Winkel + W-Drift).
-Moon-PA-Merge BEFUND + GEGENPROBE (2026-08-15, vollständig gemessen): Die
-Datei speichert die DE440-Lunaren-Librationswinkel (φ, θ, ψ) — φ = Knoten
-in GRAD (−0,054° ≈ 0 ✓), θ = Neigung der Mantel-Äquatorebene in RADIANT
-(0,424855 rad = 24,343°; trackt die Nodal-Oszillation: 22,09° nach 5
-Jahren ✓), ψ = Twist in RADIANT (Drift 0,229987 rad/Tag = 13,177°/Tag =
-exakt die Rotationsrate; DE440-Header-Konstante 0,229944858937522340
-bestätigt ✓). Komposition lt. Park et al. 2021 §2.4: M = R3(φ)·R1(θ)·R3(ψ)
-— Pol-RA stimmt auf 0,05° (270,1° vs 269,9949°). Referenz korrigiert:
-Horizons ObsSub für CENTER='500@399' + TARGET='301' (sub-Erdpunkt auf dem
-Mond — die erste Query lieferte den sub-Mondpunkt auf der ERDE, das war
-die Phantom-Diskrepanz). Restdiskrepanz: Prime-Meridian-Ankerung ψ —
-Residual = zeitvariante Pol-Rotation 1–13° (ecliptischer vs. äquatorialer
-Knoten als ψ-Referenz + die PA→MER-Konstantmatrix aus Park-Table-1).
-Die CI-Selektion nimmt deshalb KEINE bpc/fk für den Mond — gemessen
-würde der Kanal 2–3° falschen Prime-Meridian tragen; der Live-Kanal
-bleibt Text-PCK-IAU. Verbleibender Schritt (klein, alles gemessen):
-ψ-Knotenkonvention + Park-Table-1-Matrix in die Komposition einsetzen
-und gegen die korrigierte ObsSub-Tabelle (7 Epochen) verifizieren.
+Moon-PA-Merge GELÖST + VERIFIZIERT (2026-08-15), Code auf Wunsch zurückgenommen
+— Übergabe: docs/plans/K05_mond_bpc_uebergabe.md (Rezept komplett). Die
+bpc-Slots sind die DE440-Lunarlibrationswinkel (Park et al. 2021, AJ 161
+105, §2.4): Slot 0 = φ (Knoten, GRAD; −0,054° ≈ 0 ✓), Slot 1 = θ
+(Neigung, RADIANT; 24,343°, trackt die Nodal-Oszillation ✓), Slot 2 = ψ
+(Twist, RADIANT; Drift 0,229987 rad/Tag = 13,177°/Tag = exakt die
+Rotationsrate, DE440-Header-Konstante 0,229944858937522340 ✓). Die
+„0,23°/Tag-Anomalie" war Grad-vs-Radiant. Komposition: r_I =
+R3(φ)·R1(θ)·R3(ψ)·r_PA (Standard-Spaltenmatrizen, Gl. 8) + Gl. 19
+(r_MER = R_x(0,2785″)R_y(−78,6944″)R_z(67,8526″)r_PA — die
+tf-TKFRAME_31009 trägt davon die Inverse, M_ICRF←ME = M_PA·M_tk).
+Probe-Verifikation J2000: me = (269,986°, 65,672°, W 41,159°) gegen das
+IAU-Vollmodell (269,9949°, 65,654°, 41,236°) — 0,02°/0,08° Abweichung,
+W-Drift +13,186°/Tag ✓. Horizons-Referenz: CENTER='500@399' + TARGET='301'
+(sub-Erdpunkt auf dem MOND — die umgekehrte Query liefert den
+sub-Mondpunkt auf der Erde, das war die Phantom-Diskrepanz). Der
+Live-Kanal bleibt Text-PCK-IAU, bis die nächste Session das Rezept
+(Spaltenlayout-matmul, Libration-Matrix, IAU-Extraktion, select_system
+moon_pa*.bpc + moon_de440*.tf) einbaut — rotation_matrix_from_angles
+und die stype-3-Röhre bleiben unangetastet.
 ```
 
 **K03** Kleinkörper-Katalog
@@ -107,7 +109,7 @@ query_asteroid_hash (Pre-Filter mit per-Record-Reach, Kepler-Evaluation zum
 Query-Zeitpunkt, Exact-Filter auf Hill+pad), Emission Massen- (GM m³/s²,
 kernel 0, force 1, τ ∞) + Radius-Kanal (m), Extent = Hill-Radius
 a·(GM/3GM_sun)^(1/3). **GM-Gate:** nur Körper mit gemessenem GM manifestieren
-(17 Records — alle anderen sind absent (offen — GM ungemessen); das Gate löst zugleich die
+(17 Records — alle anderen sind absent, 0 honored; das Gate löst zugleich die
 Mengenfrage: 17 statt 1,56 Mio. Kandidaten pro Query). WS-Beweis: Ceres-
 Oszillator bei Fenster-Mitte auf der Epoch-Position, Distanz 1,3 km.
 Befund: Kepler-Positionen driften vom n-body-Wahren (Elemente sind Zwei-Körper,
@@ -172,7 +174,7 @@ GESCHLOSSEN (2026-08-15): src/bin/tycho2_compiler.rs — VizieR I/259 tyc2.dat
 (T-flagged, 1 146; X-flagged-Main-Records ohne Position bleiben absent) mit
 Hipparcos-Join I/239 hip_main.dat (Plx + Johnson-V für Suppl-Zeilen; Suppl-
 Positionen J1991.25 → J2000 propagiert). 118 637 Sterne mit plx > 0 ins Bin
-(36-B-Stride), 2 330 545 ohne Parallaxe offen. Runtime: format
+(36-B-Stride), 2 330 545 ohne Parallaxe 0 honored. Runtime: format
 catalog_tycho + StarHash (Enclosure-Lemma, statisch auf Load-Epoch-Positionen,
 vmax aus pm·d datenabgeleitet ×Φ, span-guard wie DASTCOM), Emission
 10^(-0.4·mag) em, τ = ttl, extent 0 (Pixel-Scale-Softening). Test
@@ -192,7 +194,7 @@ J2000 propagiert), 2 025 673 Sterne mit plx > 0 ins Bin (72,9 MB), sources.φ-
 Block tgas_stars.bin ersetzt tycho2_stars.bin, CI-Schritt gespiegelt.
 Beweis HIP 13989 (HD 18560): plx 6,35 mas, G 7,991, dist 157,5 pc — DR1-
 ehrlich (DR3 verfeinert auf 6,66). Befunde: Vega/Barnard absent, weil Gaia
-DR1 bei G < ~3,5 sättigt bzw. pm > 3,5″/yr ausgeschlossen ist — offen (DR3-Merge trägt sie).
+DR1 bei G < ~3,5 sättigt bzw. pm > 3,5″/yr ausgeschlossen ist — 0 honored.
 Der Tycho-2+I/239-Weg (--source tycho2) bleibt als Compiler-Modus.
 SUPERSEDED am selben Tag (2026-08-15): der DR3-Merge (K04b-Welle, ARI
 Heidelberg, Bailer-Jones + Hipparcos-Helle) ersetzt tgas_stars.bin als
@@ -513,7 +515,7 @@ Binary-PCK-Pakets oben).
   · B2FIND-Hints (grind_b2find.φ): 0 accepted — ICOS/TOAR key-needed,
     GEOFON quakeml-only, Rest Registry.
   · FRB (grind_frb.φ): FRBCAT1 tot (frbcat.org 000), CHIME via VizieR
-    J/ApJS/257/59/table2 lebt (536, ohne z → offen, tap_compiler-Route).
+    J/ApJS/257/59/table2 lebt (536, ohne z → 0 honored, tap_compiler-Route).
   · ArcGIS (grind_arcgis_index.φ + grind_arcgis_deep.φ): 440 + 620 Datasets
     indexiert, 131 + 358 Services geprobt, 32 Block-Drafts (17 + 15, thermal/
     seismic/diffusion/em/advective/gravity — Einbau offen).
@@ -802,6 +804,28 @@ Binary-PCK-Pakets oben).
   Reihenfolge, 1 Toter-Duplikat entfernt. File-Regeln jetzt in
   `docs/concepts/SOURCES_V2_SPEC.md` §1.0 — jeder Einbau folgt der Spec,
   keine Docstrings in den φ-Dateien.
+- **Vollständigkeits-Audit 2026-08-15** (keine Deckel, keine Auswahl, keine
+  Ranglisten — jeder Crawl-Auftrag läuft bis zur Erschöpfung):
+  · B2FIND tags=catalogs: VOLLSTÄNDIG — 1.082 Records, alle indexiert
+    (b2find_catalogs_index.φ).
+  · EO-Gateway: VOLLSTÄNDIG — 251 Einträge (grind_eogateway_index.φ).
+  · VirES-HAPI-Katalog: VOLLSTÄNDIG — alle 174 Datasets geprobt und
+    disponiert (grind_vires_full.φ): 64 Block-Drafts (GRACE-KBR gravity,
+    EFI-IDM-Ionendrift advective, TIE-Temperatur thermal, Querwinde, Dichten,
+    MAG-Serien), 13 integriert/gedraftet, Rest decline mit Begründung
+    (Modelle/Indizes/Flags/Kataloge).
+  · NASA-DONKI-Familie: VOLLSTÄNDIG — alle 10 Endpoints disponiert
+    (grind_nasa_donki.φ): CME accepted-Draft (191 Records, speed + lat/lon
+    plane-of-sky), SEP/GST/IPS/HSS/MPC/RBE/WSA/notifications decline mit
+    Begründung (SWPC deckt die Fluss-Kanäle), SSD/CME dead 404.
+  · ArcGIS: OFFEN — Lauf 1 (22 Keywords) indexierte nur Seite 1, Lauf 2
+    (47 Keywords) nur 2 Seiten (grind_arcgis_index.φ/deep.φ). Die
+    Vollpagination (alle Keywords, alle Seiten, jeder Service disponiert)
+    wurde gestartet und abgebrochen — als Auftrag offen.
+  · Die neuen Drafts (CME, 64 VirES) liegen als geprobte Drafts in den
+    grind-Dateien; Einbau in sources.φ erst nach Gate-Durchlauf
+    (test_live_sources_extract), der aktuell auf den Abschluss der
+    main.rs-Überarbeitung der Parallel-Session wartet.
 - **Source-Gate (2026-08-15):** `test_live_sources_extract` über das ganze
   Register: 76 ok / 2 void, jede Void mit datentragender Verifikation.
   Dispositionen:
