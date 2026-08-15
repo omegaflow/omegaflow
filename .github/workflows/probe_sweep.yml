@@ -40,6 +40,8 @@ jobs:
       run: cargo run -- --urls phi/port/probe_url_candidates.txt --jina
     - name: draft
       run: cargo run -- --draft phi/port/probe_live.txt
+    - name: draft-context
+      run: cargo run -- --draft-context phi/port/probe_drafts.φ
     - name: upload
       if: always()
       uses: actions/upload-artifact@v4
@@ -52,6 +54,7 @@ jobs:
           phi/port/probe_url_void.txt
           phi/port/probe_jina.txt
           phi/port/probe_drafts.φ
+          phi/port/probe_drafts_enriched.φ
           phi/port/weights_*.txt
     - uses: actions/cache@v4
       if: always()

@@ -143,6 +143,10 @@ bestand phi/port/probe_drafts.φ
 note Welle 3 (Run 31910126006, 1h2m): 5.348 Drafts, Frame-Ableitung aus der Antwort nur 7% (340 geographic + 31 celestial), 93% frame ausstehend → braucht Katalog-Kontext; Jina-Key (500 RPM) ergab 81 Treffer; 371 frame-fertige geprobt → 14 Survivors → 2 Einbauten (ArcGIS-Ozean-Temperatur+Salinität, Environment-Canada-Wind), 8 Dispositionen, 4 park
 
 verifiziert
+bestand phi/port/probe_drafts_enriched.φ
+note --draft-context (Welle 3,5): 4.977 ausstehend → 123 celestial (Netloc-Set) + 21 terrestrial (Titel-Vokabel) + 4.833 bleiben ausstehend — der Katalog-Kontext existiert nur für katalog-abgeleitete Kandidaten, die Master-URLs tragen nirgends Titel; ACHTUNG: terrestrial-Frame bei Quellen ohne Daten-Position = Anker(0,0)-Verdacht → Review-Kriterium wie coral/waqi
+
+verifiziert
 bestand phi/port/batches/
 note CI-Probe-Sweep 2026-08-15 (Run 31898215331, 11m10s): 4.485 Blöcke geladen, 120 Survivors, 4.365 Voids — Review abgeschlossen: 2 Einbauten (GeoNet-NZ-Quake, PIREP), 68 Dispositionen in dead_sources.φ (53 variant, 22+19 model-forecast, 2 catalog, 2 no-physical, 1 counts), 2 park (coral, waqi)
 

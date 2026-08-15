@@ -9211,6 +9211,174 @@ fn draft_url_mode(path: &str, env: &HashMap<String, String>, fetchone: bool) -> 
     0
 }
 
+const CELESTIAL_NETLOCS: &[&str] = &[
+    "tapvizier.cds.unistra.fr",
+    "vizier.cds.unistra.fr",
+    "cds.unistra.fr",
+    "irsa.ipac.caltech.edu",
+    "dc.g-vo.org",
+    "gaia.ari.uni-heidelberg.de",
+    "exoplanetarchive.ipac.caltech.edu",
+    "heasarc.gsfc.nasa.gov",
+    "simbad.u-strasbg.fr",
+    "gea.esac.esa.int",
+    "wis-tns.org",
+    "ssd.jpl.nasa.gov",
+    "ssd-api.jpl.nasa.gov",
+    "naif.jpl.nasa.gov",
+    "archive.stsci.edu",
+    "mast.stsci.edu",
+    "archive.gemini.edu",
+    "archive.nrao.edu",
+    "skyserver.sdss.org",
+    "atnf.csiro.au",
+    "noirlab.edu",
+    "eso.org",
+    "astrocats.space",
+];
+
+fn draft_frame_guess(url: &str, context: &str) -> (String, String) {
+    let netloc = extract_netloc(url).unwrap_or_default();
+    for n in CELESTIAL_NETLOCS {
+        if netloc == *n || netloc.ends_with(n) {
+            return ("at sun\n".to_string(), "celestial netloc".to_string());
+        }
+    }
+    let lower = context.to_lowercase();
+    for w in [
+        "station",
+        "buoy",
+        "quake",
+        "earthquake",
+        "weather",
+        "wind",
+        "temperature",
+        "water",
+        "tide",
+        "sea ",
+        "ocean",
+        "snow",
+        "rain",
+        "seismic",
+        "metar",
+        "airport",
+        "pegel",
+        "air quality",
+        "hurricane",
+    ] {
+        if lower.contains(w) {
+            return (
+                "on earth 0 0\n".to_string(),
+                format!("terrestrial vocab: {}", w.trim()),
+            );
+        }
+    }
+    ("".to_string(), "frame ausstehend".to_string())
+}
+
+fn draft_context_mode(path: &str) -> i32 {
+    let drafts = match std::fs::read_to_string(path) {
+        Ok(c) => c,
+        Err(e) => {
+            eprintln!("--draft-context: read {}: {}", path, e);
+            return 1;
+        }
+    };
+    let mut context_map: HashMap<String, String> = HashMap::new();
+    for dir in ["phi/katalog", "phi/port"] {
+        if let Ok(rd) = std::fs::read_dir(dir) {
+            for e in rd.flatten() {
+                let name = e.file_name().to_string_lossy().to_string();
+                let relevant = (dir == "phi/katalog" && name.ends_with(".φ"))
+                    || (dir == "phi/port"
+                        && name.starts_with("weights_")
+                        && name.ends_with(".txt"));
+                if !relevant {
+                    continue;
+                }
+                if let Ok(c) = std::fs::read_to_string(e.path()) {
+                    for l in c.lines() {
+                        let t = l.trim();
+                        if let Some(pos) = t.find("http") {
+                            let u = t[pos..]
+                                .split_whitespace()
+                                .next()
+                                .unwrap_or("")
+                                .trim_end_matches(|ch| ch == ',' || ch == '|' || ch == ';');
+                            if u.starts_with("http") {
+                                context_map
+                                    .entry(u.to_string())
+                                    .or_insert_with(|| t.to_string());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    let mut out = String::new();
+    let mut celestial = 0usize;
+    let mut terrestrial = 0usize;
+    let mut pending = 0usize;
+    for block in drafts.split("\n\n") {
+        let b = block.trim();
+        if b.is_empty() {
+            continue;
+        }
+        let mut url = "";
+        let mut is_pending = false;
+        for l in b.lines() {
+            if l.starts_with("url ") {
+                url = l.trim_start_matches("url ").trim();
+            }
+            if l == "# frame: frame ausstehend" {
+                is_pending = true;
+            }
+        }
+        if !is_pending || url.is_empty() {
+            out.push_str(b);
+            out.push_str("\n\n");
+            continue;
+        }
+        let context = context_map.get(url).cloned().unwrap_or_default();
+        let (frame, reason) = draft_frame_guess(url, &context);
+        if frame.is_empty() {
+            pending += 1;
+            out.push_str(b);
+            out.push_str("\n\n");
+            continue;
+        }
+        let mut lines: Vec<String> = Vec::new();
+        for l in b.lines() {
+            if l == "# frame: frame ausstehend" {
+                lines.push(format!("# frame: {}", reason));
+                continue;
+            }
+            lines.push(l.to_string());
+            if l.starts_with("ttl ") {
+                lines.push(frame.trim_end().to_string());
+            }
+        }
+        if frame.starts_with("at sun") {
+            celestial += 1;
+        } else {
+            terrestrial += 1;
+        }
+        out.push_str(&lines.join("\n"));
+        out.push_str("\n\n");
+    }
+    std::fs::create_dir_all("phi/port").ok();
+    std::fs::write("phi/port/probe_drafts_enriched.φ", out).ok();
+    eprintln!(
+        "--draft-context: {} ausstehend → {} celestial, {} terrestrial, {} bleiben ausstehend → phi/port/probe_drafts_enriched.φ",
+        celestial + terrestrial + pending,
+        celestial,
+        terrestrial,
+        pending
+    );
+    0
+}
+
 fn url_probe_mode(path: &str, env: &HashMap<String, String>, fetchone: bool, jina: bool) -> i32 {
     let content = match std::fs::read_to_string(path) {
         Ok(c) => c,
@@ -9368,6 +9536,16 @@ fn main() {
                 }
             };
             std::process::exit(port_mode(input, output));
+        }
+        if args.len() > 1 && args[1] == "--draft-context" {
+            let path = match args.get(2) {
+                Some(s) => s.as_str(),
+                None => {
+                    eprintln!("--draft-context: file argument absent");
+                    std::process::exit(1);
+                }
+            };
+            std::process::exit(draft_context_mode(path));
         }
         if args.len() > 1 && args[1] == "--draft" {
             let path = match args.get(2) {
