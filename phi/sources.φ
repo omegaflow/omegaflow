@@ -46,6 +46,25 @@ ttl 60
 on earth 0 0 0
 geojson mag 0.0 seismic_magnitude_mw seismic_depth_km 6.0 0.0 0.0
 
+url https://services.arcgis.com/wjcPoefzjpzCgffS/arcgis/rest/services/Environment_Canada_Wind_Speed_and_Direction/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+ttl 86400
+on earth 0 0 0
+map features
+lat attributes.Latitude
+lon attributes.Longitude
+field attributes.WindSpeed_kmh environment_canada_wind_speed_kmh gaussian-inverse-square advective km/h 3600.0 0.0 0.0
+field attributes.Temperature_C environment_canada_temperature_c gaussian-inverse-square thermal C 3600.0 0.0 0.0
+
+url https://services1.arcgis.com/ze0XBzU1FXj94DJq/arcgis/rest/services/Temperature/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 86400
+on earth 0 0 0
+map features
+lat properties.latitude
+lon properties.longitude
+alt properties.depth
+field properties.avg_tempt ocean_average_temperature_c gaussian-inverse-square thermal C 3600.0 0.0 0.0
+field properties.salinity ocean_salinity_psu gaussian-inverse-square diffusion PSU 86400.0 0.0 0.0
+
 url https://services.swpc.noaa.gov/json/goes/primary/differential-protons-1-day.json
 ttl 60
 on earth 0.0 -75.2 35786023
