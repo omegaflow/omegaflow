@@ -171,13 +171,17 @@ Gap-Verweis (oder `park/` bei Block-Draft); `decline` (Force-Gate) →
   `pos without body directive` → Block trägt `body <body>`; `no reference
   frame` → Block braucht `on`/`at`.
 - **Auth ist kein Hindernis** solange die Registrierung frei, public und
-  nicht-kommerziell ist (NASA Earthdata, NOAA, Copernicus, GBIF, …).
-  Kommerzielle/private Keys bleiben declined. Re-review-Kandidaten stehen in
-  `phi/port/review_kandidaten.txt` (aus `dead_sources.φ` gezogen).
-- **Jina-Reader** (`https://r.jina.ai/<url>`) umgeht Netzwerk-Blocks und
-  Git-Blocks (raw.githubusercontent, geo-Blockierung): `dead dns-unresolved/
-  timeout/unreachable/ssl`-Einträge erst über den Reader erneut prüfen,
-  bevor sie endgültig bleiben.
+  nicht-kommerziell ist (NASA Earthdata, NOAA, Copernicus, GBIF, …). Der
+  Parser greift bereits auf `.secrets.local` zu — Key dort eintragen, als
+  `{MARKER}` in `url`/`header` referenzieren; `resolve_secret`/`render_headers`
+  lösen ihn auf. Kein Code nötig. Kommerzielle/private Keys bleiben declined.
+  Re-review-Kandidaten stehen in `phi/port/review_kandidaten.txt`.
+- **Jina-Reader ist eingebaut**: URL mit `https://r.jina.ai/` präfixen — der
+  Reader umgeht Netzwerk-/Git-Blocks (raw.githubusercontent, Geo-Blockierung),
+  und `parse_json` überspringt den Jina-Header (`Title/URL Source/Markdown
+  Content`) bereits (Test `test_parse_json_skips_jina_header`). `dead
+  dns-unresolved/timeout/unreachable/ssl`-Einträge über das `r.jina.ai/`-
+  Präfix erneut prüfen, bevor sie endgültig bleiben.
 - Der `--gold`-Konverter übernimmt: `url/format/header/target/catalog/
   flux_from_mag/abs_mag_from/catalog_epoch` direkt; `ttl`; `on/at`;
   numerisches `lat/lon/alt` → synthetisches `on earth`; `map/cmap/rows`;
