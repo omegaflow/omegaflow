@@ -1826,9 +1826,44 @@ impl<'a> JsonParser<'a> {
                 if self.chars[self.pos..].starts_with(b"null") {
                     self.pos += 4;
                     Some(JsonVal::Null)
+                } else if self.chars[self.pos..].starts_with(b"nan") {
+                    self.pos += 3;
+                    Some(JsonVal::Num(f64::NAN))
                 } else {
                     None
                 }
+            }
+            b'N' => {
+                if self.chars[self.pos..].starts_with(b"NaN") {
+                    self.pos += 3;
+                    Some(JsonVal::Num(f64::NAN))
+                } else {
+                    None
+                }
+            }
+            b'I' => {
+                if self.chars[self.pos..].starts_with(b"Infinity") {
+                    self.pos += 8;
+                    Some(JsonVal::Num(f64::INFINITY))
+                } else {
+                    None
+                }
+            }
+            b'i' => {
+                if self.chars[self.pos..].starts_with(b"inf") {
+                    self.pos += 3;
+                    Some(JsonVal::Num(f64::INFINITY))
+                } else {
+                    None
+                }
+            }
+            b'-' if self.chars[self.pos..].starts_with(b"-Infinity") => {
+                self.pos += 9;
+                Some(JsonVal::Num(f64::NEG_INFINITY))
+            }
+            b'-' if self.chars[self.pos..].starts_with(b"-inf") => {
+                self.pos += 4;
+                Some(JsonVal::Num(f64::NEG_INFINITY))
             }
             _ => self.parse_num(),
         }

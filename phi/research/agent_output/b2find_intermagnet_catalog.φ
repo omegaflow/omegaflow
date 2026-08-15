@@ -1,0 +1,41 @@
+# ── B2FIND (EUDAT) + INTERMAGNET-Fanout-Befund (2026-08-15) ──
+
+# B2FIND selbst: Metadaten-Register (1.469.856 Datensätze) — Force Gate:
+# Registry/Catalog → decline als Feldquelle. Discovery-Wert: die
+# Organisationen zeigen auf echte Datenanbieter.
+decline https://b2find.eudat.eu/dataset/
+# title: B2FIND — EUDAT-Metadaten-Katalog (Registry)
+
+# Discovery-Hinweise (Organisationen mit Physik-Relevanz; Endpoints einzeln
+# zu verifizieren):
+# hint icos        https://www.icos-cp.eu — Treibhausgas-Beobachtungsnetz (diffusion)
+# hint lago        https://lagoproject.net — Gamma-Observatorien (em)
+# hint toar        https://toar-data.org — Troposphärisches Ozon (diffusion)
+# hint icgem       https://icgem.gfz-potsdam.de — Gravitationsmodelle (decline: Modell)
+# hint pangaea     https://www.pangaea.de — Erd-/Meeresdaten (Multi)
+# hint seanoe      https://www.seanoe.org — Ozeandaten (Multi)
+# hint gfzdataservices https://dataservices.gfz-potsdam.de — GFZ-Daten (Multi)
+# hint geofon      https://geofon.gfz-potsdam.de — Seismologie (seismic)
+# hint envidat     https://www.envidat.ch — Umweltdaten (Multi)
+# hint tereno      https://www.tereno.net — Umwelt-Observatorien (thermal/diffusion)
+# hint intermagnet https://intermagnet.org — INTERMAGNET (em)
+
+# ── INTERMAGNET-Fanout ──
+# BGS-HAPI-Katalog verifiziert (2026-08-15): 3074 Datasets = 154 Observatorien
+# (id-Präfix aae..ykc). HAPI liefert KEINE Koordinaten. Fanout-Block braucht
+# eine Stationsliste mit lat/lon:
+#   url        https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id={station}/best-avail/PT1M/xyzf&start={hour_ago}&stop={now}&format=json
+#   stations   <INTERMAGNET-Observatoriumsliste mit lat/lon — Endpoint offen>
+#   stations_path stations
+#   stations_id id
+#   stations_lat lat
+#   stations_lon lon
+#   fanout 40
+#   hapi f=magnetosphere_total_field_nt  (+ field-Begleiter, inverse-square em nT)
+candidate https://imag-data.bgs.ac.uk/GIN_V1/hapi/catalog
+# title: BGS INTERMAGNET HAPI — 154 Observatorien, Koordinaten-Liste separat suchen
+
+# Offene Schritte:
+# 1. INTERMAGNET-Observatoriumsliste mit Koordinaten finden (intermagnet.org
+#    ArcMap-Dienst oder WDC-BGS-Metadaten) → Fanout-Block bauen
+# 2. B2FIND-Organisations-Hints einzeln verifizieren (ICOS/ToAR/LAGO zuerst)

@@ -439,6 +439,12 @@ Binary-PCK-Pakets oben).
   login), SMOS (diffusion, login), MERIS/SAR/Landsat (Raster, login).
   Modelle (IGRF/CHAOS/LCS/MF7/DTU-GVO) decline. ESA_USER/ESA_PASS-Platzhalter
   in .secrets.local angelegt.
+- **B2FIND/INTERMAGNET-Befund** (2026-08-15):
+  `phi/research/agent_output/b2find_intermagnet_catalog.φ` — B2FIND =
+  Metadaten-Registry (1,47 Mio, decline als Feld, Discovery-Hints: ICOS/ToAR/
+  LAGO/ICGEM/Pangaea/SeaNoe/TERENO). BGS-HAPI = **154 Observatorien** (3074
+  Datasets), aber ohne Koordinaten — Observatoriumsliste mit lat/lon suchen,
+  dann Fanout-Block (em, globales Magnetfeld-Netz).
 - TNS-Transienten (em, celestisch) live seit 2026-08-14: Vollkatalog
   `tns_public_objects.csv.zip` (`format csv_zip`, std-only Inflate in
   src/inflate.rs, z-Distanz via Redshift, abs_mag_from). ~20k

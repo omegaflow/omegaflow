@@ -35,10 +35,13 @@ candidate https://wdc.bgs.ac.uk/
 
 # ── ESA EO-Portal Services (Login vorhanden) ──
 key-needed https://aeolus.esa.int
-# title: VirES for Aeolus — Wind-Lidar (advective: atmosphärische Windprofile)
+# title: VirES for Aeolus — Wind-Lidar (advective); 2026-08-15 verifiziert:
+# aeolus.esa.int 000 (Netz), aeolus.services = EOX-SPA ohne /hapi (404) —
+# HAPI-Pfad noch zu finden
 
-key-needed https://smos-diss.eo.esa.int
-# title: SMOS Online Dissemination — Bodenfeuchte + Ozean-Salinität (diffusion)
+parser-def https://smos-diss.eo.esa.int
+# title: SMOS Online Dissemination — 2026-08-15 verifiziert: OADS-Webportal
+# (PHP-Formulare, 200 mit Basic-Auth), kein JSON-REST — Web-UI-Download-Pattern
 
 key-needed https://meris-ds.eo.esa.int
 # title: Envisat MERIS Dissemination — Ozeanfarbe (em; historisch)
