@@ -1,6 +1,6 @@
-# library — b2find-Tag-Vokabular gewichtet (Ratssitzung 2026-08-15, zweite Fassung)
+# library — gewichtete Tags (Ratssitzung 2026-08-15, vierte Fassung)
+# Schichten: b2find-Daten-Tags + gestiftete Klassenwörter + NASA-CMR + GBIF
 # format: <gewicht> <force|-> <tag...>
-# gewichte: potenz-von-2; force = der Kanal der Messung; - = kein Kanal
 -8 - Arts and Humanities
 -8 - Arkeologisk minne
 4 - DEPTH
@@ -747,13 +747,9 @@
 -8 - further education
 -4 - BUILDING SOCIETY ACCOUNTS
 -8 - Accumulation model
-# --- Meta-Vokabular (Ratssitzung 2026-08-15, dritte Fassung: gestiftete Klassenwörter) ---
 -8 - forecast
--8 - reanalysis
 -8 - hindcast
 -8 - prediction
--8 - simulation
--8 - model output
 -8 - checklist
 -8 - occurrence
 -8 - sighting
@@ -767,8 +763,6 @@
 -4 - statistics
 -4 - count
 -4 - summary
-4 - latitude
-4 - longitude
 4 - coordinates
 4 - location
 4 - positions
@@ -787,3 +781,923 @@
 8 em flux density
 8 advective wave height
 8 thermal heat flux
+-4 - Climate Indicators
+-8 - 3 - Gridded Observations
+8 diffusion bathythermograph - BT
+8 em Spectral/Engineering
+4 - Cryosphere
+-4 - Human Dimensions
+8 diffusion bathythermograph - XBT
+4 - Goddard Earth Sciences Data and Information Services Center (GES DISC)
+8 diffusion bathythermograph - MBT
+8 advective National Snow and Ice Data Center Distributed Active Archive Center (NSIDC DAAC)
+8 em 1B - Radiance, Sensor Coordinates
+4 thermal Temperature Sensors
+8 diffusion Carbon dioxide (CO2) gas analyzer
+8 diffusion Humidity Sensor
+-8 - Visual Observations
+8 acoustic echo sounder
+8 em 1 - Radiance
+8 advective current meter
+8 diffusion oxygen sensor
+8 diffusion Shower head chamber equilibrator for autonomous carbon dioxide (CO2) measurement
+8 acoustic ECHO SOUNDERS
+4 - Coring Devices
+8 diffusion bathythermograph - AXBT
+-8 - visual observation
+8 advective National Snow and Ice Data Center (NSIDC)
+8 em 1A - Radiance
+8 advective SnowEx
+4 - IceBridge
+8 em Solar Physics
+8 advective Snow/Ice
+4 - Reference And Information Services
+8 em Radiance Or Imagery
+4 thermal   15489 OCEAN TEMPERATURE
+8 diffusion   14280 SALINITY/DENSITY
+4 thermal   11531 WATER TEMPERATURE
+8 advective    9261 ATMOSPHERIC WINDS
+-4 -    8671 Paleoclimate Indicators
+4 -    7935 BATHYMETRY/SEAFLOOR TOPOGRAPHY
+8 diffusion    7851 SALINITY
+8 thermal    7692 ATMOSPHERIC TEMPERATURE
+-8 -    7686 ECOSYSTEMS
+8 advective    7419 SURFACE WINDS
+8 advective    5333 ATMOSPHERIC PRESSURE
+8 em    5023 ATMOSPHERIC RADIATION
+-8 -    4619 VEGETATION
+8 thermal    4514 SURFACE TEMPERATURE
+-4 -    4205 WATER VAPOR INDICATORS
+4 -    4135 SEA ICE
+8 advective    3814 SNOW/ICE
+8 electric    3780 CONDUCTIVITY
+8 advective    3749 OCEAN PRESSURE
+8 advective    3543 WATER PRESSURE
+8 diffusion    3379 OXYGEN
+8 diffusion    3219 AEROSOLS
+8 advective    3189 OCEAN WAVES
+4 -    2956 GLACIERS/ICE SHEETS
+-8 -    2650 AQUATIC ECOSYSTEMS
+8 diffusion    2633 CARBON AND HYDROCARBON COMPOUNDS
+8 advective    2614 OCEAN CIRCULATION
+8 advective    2594 PRECIPITATION
+8 gravity    2550 GRAVITY/GRAVITATIONAL FIELD
+8 thermal    2356 SEA SURFACE TEMPERATURE
+-8 -    2318 MARINE ECOSYSTEMS
+8 acoustic    2138 OCEAN ACOUSTICS
+-8 -    2131 TERRESTRIAL ECOSYSTEMS
+8 diffusion    2122 NITRATE
+8 em    2048 INFRARED WAVELENGTHS
+8 advective    2041 OCEAN CURRENTS
+8 diffusion    1908 CHLOROPHYLL
+8 em    1904 VISIBLE WAVELENGTHS
+-8 -    1898 ECOSYSTEM FUNCTIONS
+4 -    1857 TOPOGRAPHY
+8 acoustic    1777 ACOUSTIC VELOCITY
+8 seismic-body    1603 PLATE TECTONICS
+8 em    1523 REFLECTANCE
+-8 -    1484 SPECIES/POPULATION INTERACTIONS
+8 diffusion    1386 ALKALINITY
+4 -    1345 TERRAIN ELEVATION
+-8 -    1330 LAND USE/LAND COVER
+8 diffusion    1193 OXYGEN COMPOUNDS
+8 diffusion    1126 CARBON DIOXIDE
+8 seismic-body    1119 EARTHQUAKES
+8 diffusion    1081 INORGANIC CARBON
+4 -    1071 ice cores
+8 em    1056 ALBEDO
+-4 -    1034 borehole|climate reconstructions
+8 advective    1005 WAVE HEIGHT
+-4 -    1005 climate reconstructions|tree ring
+8 diffusion     994 NUTRIENTS
+8 gravity     973 TIDES
+8 advective     950 WIND DYNAMICS
+8 advective     884 UPPER LEVEL WINDS
+8 diffusion     861 CARBON
+8 advective     845 WAVE PERIOD
+8 thermal     842 Atmospheric Temperature
+4 thermal     832 OCEAN HEAT BUDGET
+8 em     828 INCOMING SOLAR RADIATION
+8 advective     820 Precipitation
+8 diffusion     817 SOIL MOISTURE/WATER CONTENT
+8 advective     785 PRECIPITATION AMOUNT
+8 advective     772 Atmospheric Winds
+4 thermal     771 POTENTIAL TEMPERATURE
+8 thermal     756 UPPER AIR TEMPERATURE
+-4 -     754 ATMOSPHERIC/OCEAN INDICATORS
+8 em     744 INFRARED RADIANCE
+8 advective     731 OCEAN WINDS
+8 em     730 SHORTWAVE RADIATION
+8 em     723 VISIBLE RADIANCE
+4 -     693 ICE DEPTH/THICKNESS
+-8 -     691 LAND USE/LAND COVER CLASSIFICATION
+8 diffusion     684 ORGANIC CARBON
+8 diffusion     679 HALOCARBONS AND HALOGENS
+8 em     664 LONGWAVE RADIATION
+4 -     623 ICE EXTENT
+4 -     619 ICE CORE RECORDS
+-8 -     612 VEGETATION COVER
+8 advective     606 SURFACE PRESSURE
+8 em     601 PHOTOSYNTHETICALLY ACTIVE RADIATION
+8 thermal     599 SOIL TEMPERATURE
+8 em     599 AEROSOL OPTICAL DEPTH/THICKNESS
+8 em     593 MICROWAVE
+8 gravity     586 TIDAL HEIGHT
+4 thermal     573 BRIGHTNESS TEMPERATURE
+8 advective     571 ATMOSPHERIC PRESSURE MEASUREMENTS
+4 -     568 ICE SHEETS
+8 gravity     567 GRAVITY
+8 advective     555 SEA LEVEL PRESSURE
+4 -     542 SEAFLOOR TOPOGRAPHY
+8 advective     523 SNOW DEPTH
+-8 -     506 VEGETATION INDEX
+8 em     505 SOLAR RADIATION
+-8 -     499 BIOMASS
+4 thermal     498 HEAT FLUX
+4 -     482 GLACIERS
+8 thermal     471 LAND SURFACE TEMPERATURE
+-8 -     468 BACTERIA/ARCHAEA
+8 advective     459 Atmospheric Pressure
+8 advective     452 SNOW COVER
+4 -     452 ICEBERGS
+8 em     451 INFRARED IMAGERY
+4 -     449 SEA SURFACE TOPOGRAPHY
+-8 -     432 FOREST SCIENCE
+-4 -     427 climate reconstructions
+8 diffusion     405 AEROSOL PARTICLE PROPERTIES
+-4 -     403 LAND SURFACE/AGRICULTURE INDICATORS
+8 advective     396 Surface Winds
+-4 -     392 Paleoclimate Reconstructions
+-8 -     392 FRESHWATER ECOSYSTEMS
+8 diffusion     389 SEA ICE CONCENTRATION
+8 diffusion     386 HYDROCARBONS
+8 em     384 Atmospheric Radiation
+8 em     380 SOLAR ACTIVITY
+-8 -     377 TRACE GASES/TRACE SPECIES
+-8 -     363 VEGETATION SPECIES
+8 thermal     359 Surface Temperature
+8 advective     353 PRECIPITATION RATE
+8 advective     353 LIQUID PRECIPITATION
+8 diffusion     340 SURFACE SALINITY
+-4 -     330 PALEOCLIMATE INDICATORS
+-4 -     301 Water Vapor Indicators
+8 em     301 OUTGOING LONGWAVE RADIATION
+-4 -     300 reconstructions
+8 advective     282 SOLID PRECIPITATION
+8 em     282 SOLAR IRRADIANCE
+4 -     276 GLACIER ELEVATION/ICE SHEET ELEVATION
+8 diffusion     276 GASES
+-8 -     274 HABITAT CONVERSION/FRAGMENTATION
+8 diffusion     258 AEROSOL EXTINCTION
+8 diffusion     256 Aerosols
+8 diffusion     251 oxygen isotopes
+8 em     249 NET RADIATION
+4 thermal     248 Ocean Temperature
+4 thermal     247 SNOW/ICE TEMPERATURE
+4 -     247 ICE TYPES
+4 -     246 GLACIER MOTION/ICE SHEET MOTION
+-4 -     245 CRYOSPHERIC INDICATORS
+-8 -     240 FOREST COMPOSITION/VEGETATION STRUCTURE
+8 advective     233 Snow/Ice
+4 -     233 ICE GROWTH/MELT
+-8 -     228 ANTHROPOGENIC/HUMAN INFLUENCED ECOSYSTEMS
+-8 -     227 Ecosystems
+8 diffusion     223 AEROSOL BACKSCATTER
+4 -     221 ICE FLOES
+4 -     215 PACK ICE
+8 em     214 THERMAL INFRARED
+8 thermal     214 Sea Surface Temperature
+4 -     214 Ice Core Records
+8 advective     212 WAVE SPEED/DIRECTION
+8 advective     211 ICE VELOCITY
+-8 -     210 FUNGI
+8 diffusion     207 DISSOLVED GASES
+-4 -     206 PALEOCLIMATE RECONSTRUCTIONS
+8 diffusion     203 RADIATIVE FLUX
+8 gravity     203 MARINE GRAVITY FIELD
+4 -     202 Sea Ice
+8 em     201 ULTRAVIOLET RADIATION
+4 -     197 GLACIER TOPOGRAPHY/ICE SHEET TOPOGRAPHY
+8 advective     190 SNOW/ICE CHEMISTRY
+4 thermal     186 ICE TEMPERATURE
+8 thermal     184 SKIN TEMPERATURE
+8 em     183 REFLECTED INFRARED
+4 -     182 SEA ICE MOTION
+8 advective     179 SNOW WATER EQUIVALENT
+4 -     177 GLACIER THICKNESS/ICE SHEET THICKNESS
+8 advective     174 Upper Level Winds
+8 advective     173 Liquid Precipitation
+8 advective     170 Precipitation Rate
+8 em     166 SOLAR ENERGETIC PARTICLE FLUX
+8 gravity     166 GEOID CHARACTERISTICS
+-4 -     165 climate reconstructions|corals and sclerosponges
+8 advective     162 Ocean Waves
+-8 -     162 Marine Ecosystems
+-4 -     162 climate reconstructions|paleoceanography
+8 diffusion     162 carbon isotopes
+-8 -     161 LAND USE CLASSES
+4 -     160 ICE MOTION
+8 diffusion     158 CARBON MONOXIDE
+-8 -     156 REFORESTATION
+8 em     154 IRRADIANCE
+8 diffusion     154 EARTH GASES/LIQUIDS
+8 advective     153 WIND PROFILES
+8 advective     151 SNOW DENSITY
+8 advective     150 Solid Precipitation
+8 advective     150 ANGIOSPERMS (FLOWERING PLANTS)
+8 advective     149 Precipitation Amount
+8 acoustic     148 ACOUSTIC SCATTERING
+8 seismic-body     147 Earthquakes
+8 advective     146 SNOW MELT
+4 -     146 ice core
+4 -     144 ICE EDGES
+8 advective     143 SIGNIFICANT WAVE HEIGHT
+4 -     136 LAKE ICE
+8 thermal     134 Soil Temperature
+8 advective     130 Atmospheric Pressure Measurements
+8 em     129 ULTRAVIOLET WAVELENGTHS
+-4 -     128 climate reconstructions|historical
+8 advective     127 WIND STRESS
+8 em     126 SOLAR ENERGETIC PARTICLE PROPERTIES
+4 -     124 GLACIER MASS BALANCE/ICE SHEET MASS BALANCE
+8 acoustic     124 ACOUSTIC REFLECTIVITY
+8 thermal     122 Upper Air Temperature
+8 advective     122 SWELLS
+8 em     122 OPTICAL DEPTH
+8 diffusion     121 NITRATE PARTICLES
+8 diffusion     119 TRACE ELEMENTS
+4 -     118 ICE ROUGHNESS
+-8 -     116 Aquatic Ecosystems
+8 advective     115 Ocean Winds
+4 -     115 ICE DEFORMATION
+8 diffusion     114 Carbon and Hydrocarbon Compounds
+8 advective     112 Wind Dynamics
+8 advective     112 STATIC PRESSURE
+-8 -     103 CYANOBACTERIA (BLUE-GREEN ALGAE)
+8 advective     101 Ocean Circulation
+-8 -      99 DEFORESTATION
+8 advective      98 Surface Pressure
+8 diffusion      98 Aerosol Particle Properties
+-8 -      97 RECLAMATION/REVEGETATION/RESTORATION
+4 thermal      96 Brightness Temperature
+8 electric      96 Atmospheric Electricity
+8 em      92 OPTICAL DEPTH/THICKNESS
+4 thermal      91 Temperature Tendency
+4 -      90 SEA LEVEL RISE
+4 -      88 RIVER ICE
+8 em      88 Microwave
+8 advective      87 Doppler Velocity
+8 diffusion      86 CARBONACEOUS AEROSOLS
+8 advective      85 Sea Level Pressure
+8 em      85 Infrared Wavelengths
+-8 -      85 Ecosystem Functions
+8 em      84 Reflectance
+-8 -      84 BIOMASS BURNING
+8 diffusion      80 Organic Carbon
+-8 -      80 FOREST MANAGEMENT
+-8 -      79 Species/Population Interactions
+8 advective      79 Snow Depth
+8 em      78 Spectrum Width
+8 diffusion      78 Chlorophyll
+8 em      78 ATMOSPHERIC EMITTED RADIATION
+-8 -      77 Dynamic Vegetation/Ecosystem Models
+8 em      77 AEROSOL RADIANCE
+8 diffusion      75 trace metals
+8 advective      75 SNOW STRATIGRAPHY
+4 -      74 Bathymetry/Seafloor Topography
+8 em      73 Aerosol Optical Depth/Thickness
+8 em      72 Visible Wavelengths
+8 em      72 ULTRAVIOLET RADIANCE
+8 diffusion      72 TRACE ELEMENTS/TRACE METALS
+-4 -      72 BIOSPHERIC INDICATORS
+8 thermal      71 ATMOSPHERIC HEATING
+8 em      69 Photosynthetically Active Radiation
+8 diffusion      69 FRESH WATER FLUX
+8 thermal      69 Air Temperature
+8 diffusion      67 CARBONATE
+8 thermal      67 air temperature
+8 thermal      65 SOIL HEAT BUDGET
+8 diffusion      65 Inorganic Carbon
+4 -      64 ROCK GLACIERS
+8 advective      63 PRECIPITATION PROFILES
+-8 -      63 MICROFLORA
+8 diffusion      63 Humidity
+8 diffusion      62 Sea Ice Concentration
+8 diffusion      62 HEAVY METALS CONCENTRATION
+8 advective      61 precipitation
+-8 -      61 FOREST CONSERVATION
+-8 -      60 FOREST PROTECTION
+8 diffusion      59 Soil Moisture/Water Content
+8 electric      59 ATMOSPHERIC ELECTRICITY
+4 -      58 COASTAL ELEVATION
+8 advective      57 WIND WAVES
+8 gravity      56 GRAVITY WAVE
+-8 -      56 DOMINANT SPECIES
+8 gravity      55 GRAVITY ANOMALIES
+4 thermal      53 OCEAN TEMPERATURE PROFILES
+8 advective      52 PRECIPITATION ANOMALIES
+8 seismic-body      52 Plate Tectonics
+4 -      52 Glaciers/Ice Sheets
+-4 -      52 climate reconstructions|pollen
+8 diffusion      51 NATURAL GAS
+-4 -      51 climate reconstructions|paleolimnology
+8 advective      50 Snow Cover
+4 -      50 SEA ICE ELEVATION
+8 diffusion      50 ELECTRON FLUX
+8 diffusion      50 BLACK CARBON
+8 advective      49 Wind Profiles
+8 diffusion      49 RADIOCARBON
+8 advective      49 HYDROSTATIC PRESSURE
+8 em      48 WAVE SPECTRA
+8 diffusion      47 SOIL GAS/AIR
+8 diffusion      47 MICRONUTRIENTS/TRACE ELEMENTS
+8 advective      47 EVAPORATION
+8 gravity      46 Tides
+8 advective      46 Pressure Thickness
+-8 -      46 MICROFAUNA
+8 em      45 SOLAR IMAGERY
+4 -      45 GROUND ICE
+8 diffusion      44 Oxygen Compounds
+8 diffusion      44 Dissolved Gases
+8 em      43 Solar Radiation
+8 advective      42 MAGNETIC FIELDS/MAGNETIC CURRENTS
+8 advective      41 WIND-DRIVEN CIRCULATION
+8 advective      41 TIDAL CURRENTS
+4 -      41 Rock Glaciers
+8 em      41 INFRARED FLUX
+8 diffusion      40 AEROSOL FORWARD SCATTER
+8 diffusion      39 VISIBLE FLUX
+8 em      38 MICROWAVE RADIANCE
+-8 -      38 INDIGENOUS VEGETATION
+4 -      38 GEOMAGNETIC INDICES
+-8 -      38 EXOTIC VEGETATION
+8 em      37 SOLAR FLARES
+8 diffusion      37 OCEAN SALINITY
+8 advective      37 Ocean Currents
+8 gravity      37 INTERTIDAL ZONE
+4 thermal      37 Dew Point Temperature
+4 thermal      36 Heat Flux
+4 thermal      35 TEMPERATURE INDICES
+8 diffusion      35 SOIL SALINITY/SOIL SODICITY
+-4 -      35 AIR TEMPERATURE RECONSTRUCTION
+-4 -      34 reconstruction
+8 diffusion      34 PROTON FLUX
+8 advective      34 Boundary Layer Winds
+4 thermal      34 ANTENNA TEMPERATURE
+8 advective      33 THERMOHALINE CIRCULATION
+8 em      33 SOLAR ACTIVE REGIONS
+8 em      33 Longwave Radiation
+8 diffusion      33 HUMIDITY INDICES
+8 electric      33 ELECTRICITY
+8 gravity      32 TIDAL COMPONENTS
+8 electric      32 ELECTRICAL CONDUCTIVITY
+8 advective      32 DOPPLER VELOCITY
+8 diffusion      31 PARTICLE FLUX
+-8 -      31 PALEOVEGETATION
+8 diffusion      31 ION FLUX
+8 diffusion      31 Carbon Dioxide
+-8 -      30 Vegetation
+8 advective      30 RADIO WAVE
+-8 -      30 FOREST FIRE SCIENCE
+8 thermal      30 Atmospheric Temperature Indices
+8 em      30 Albedo
+8 gravity      29 TIDAL RANGE
+8 em      29 SOLAR INDUCED FLUORESCENCE
+8 diffusion      29 Salinity/Density
+8 advective      29 PLASMA WAVES
+8 advective      28 Radial Velocity
+8 diffusion      28 OCEAN TRACERS
+8 em      28 Net Radiation
+4 -      27 ICE CORE AIR BUBBLES
+8 diffusion      27 AMMONIUM AEROSOLS
+8 acoustic      27 AMBIENT NOISE
+4 thermal      26 Water Temperature
+8 advective      26 Mean Radial Velocity
+8 thermal      26 ATMOSPHERIC TEMPERATURE INDICES
+-4 -      26 Atmospheric/Ocean Indicators
+8 diffusion      26 AEROSOL ABSORPTION
+8 advective      25 Wind Stress
+4 -      25 SPICE
+8 em      25 SOLAR ULTRAVIOLET EMISSIONS
+8 advective      25 Snow Water Equivalent
+8 em      25 Shortwave Radiation
+8 advective      25 Precipitation Anomalies
+8 em      25 EARTH RADIATION BUDGET
+8 em      24 WATER-LEAVING RADIANCE
+-8 -      24 VIRUSES
+-8 -      24 VEGETATION PRODUCTIVITY
+8 advective      24 streamflow
+8 advective      24 LONGSHORE CURRENTS
+8 electric      24 ELECTRIC FIELDS/ELECTRIC CURRENTS
+-4 -      23 TERRESTRIAL HYDROSPHERE INDICATORS
+8 em      23 SOLAR WIND
+4 -      23 SEA LEVEL
+8 advective      23 OCEAN GENERAL CIRCULATION MODELS (OGCM)/REGIONAL OCEAN MODELS
+8 em      23 MICROWAVE IMAGERY
+8 em      23 Incoming Solar Radiation
+-8 -      23 Fungi
+-4 -      23 climate reconstructions|ice cores
+4 thermal      22 Temperature Anomalies
+-8 -      22 Bacteria/Archaea
+4 -      21 SEA ICE AGE
+8 advective      21 PRESSURE TENDENCY
+-8 -      21 MACROFAUNA
+-8 -      21 FOREST YIELDS
+-8 -      21 EVERGREEN VEGETATION
+-8 -      21 DECIDUOUS VEGETATION
+8 advective      21 atmospheric circulation
+8 diffusion      21 ALPHA PARTICLE FLUX
+4 -      20 Topography
+8 thermal      20 Surface Air Temperature
+8 em      20 SOLAR X-RAY EMISSIONS
+8 em      20 RADIATION EXPOSURE
+8 diffusion      20 OXYGEN ISOTOPES
+4 -      20 Ice Depth/Thickness
+8 electric      20 HYDRAULIC CONDUCTIVITY
+-8 -      20 AFFORESTATION/REFORESTATION
+8 advective      19 Wave Height
+8 diffusion      19 trace metals in carbonates
+8 em      19 RADIANCE
+8 em      19 Outgoing Longwave Radiation
+8 advective      19 OCEAN BOTTOM PRESSURE
+8 em      19 Infrared Imagery
+8 electric      19 ELECTRICAL FIELD
+4 thermal      19 Boundary Layer Temperature
+8 em      18 Visible Radiance
+8 diffusion      18 SOIL MOISTURE
+8 advective      18 Snow/Ice Chemistry
+8 advective      18 PRESSURE THICKNESS
+8 advective      18 Pressure Tendency
+8 advective      18 PRESSURE ANOMALIES
+4 thermal      18 Ocean Heat Budget
+-8 -      18 Land Use/Land Cover
+8 thermal      18 Land Surface Temperature
+8 em      18 Infrared Radiance
+4 -      18 Ice Edges
+8 diffusion      18 CARBON FLUX
+-4 -      18 ATMOSPHERIC CIRCULATION RECONSTRUCTION
+8 em      18 AEROSOL SINGLE SCATTERING ALBEDO
+4 -      17 WATER QUALITY INDICES
+-4 -      17 Cryospheric Indicators
+8 diffusion      17 Aerosol Backscatter
+8 em      16 SUNSPOTS
+-4 -      16 SEA LEVEL RECONSTRUCTION
+4 -      16 Seafloor Topography
+4 thermal      16 Ice Temperature
+-4 -      16 DROUGHT/PRECIPITATION RECONSTRUCTION
+-4 -      16 climate reconstructions|insect|paleolimnology
+-8 -      15 Vegetation Index
+8 em      15 ULTRAVIOLET FLUX
+8 diffusion      15 RADIO WAVE FLUX
+8 diffusion      15 Radiative Flux
+4 thermal      15 PARTICLE TEMPERATURE
+8 advective      15 Ocean Pressure
+4 thermal      15 GEOTHERMAL TEMPERATURE
+-8 -      14 VEGETATION RECONSTRUCTION
+-8 -      14 Trace Gases/Trace Species
+-4 -      14 SOLAR FORCING/INSOLATION RECONSTRUCTION
+4 thermal      14 SINK TEMPERATURE
+8 advective      14 Significant Wave Height
+8 advective      14 LIDAR WAVEFORM
+4 -      14 Ice Extent
+4 thermal      14 HEAT
+-8 -      14 FOREST PRODUCTS/COMMODITIES
+8 seismic-body      14 Earthquake Dynamics
+8 diffusion      14 Carbon
+8 advective      13 Wave Speed/Direction
+8 advective      13 Swells
+8 em      13 SOLAR VELOCITY FIELDS
+8 em      13 SOLAR RADIO WAVE EMISSIONS
+8 advective      13 Snow Density
+8 thermal      13 SEA SURFACE TEMPERATURE INDICES
+8 electric      13 ELECTRIC FIELD
+8 advective      13 DIFFERENTIAL PRESSURE
+-8 -      13 Cyanobacteria (Blue-Green Algae)
+8 electric      13 Conductivity
+-4 -      13 climate reconstructions|historical|instrumental
+8 diffusion      13 Carbon Monoxide
+8 advective      13 Atmospheric Precipitation Indices
+8 advective      12 Wave Period
+8 advective      12 TOTAL SURFACE PRECIPITATION RATE
+8 electric      12 THERMAL CONDUCTIVITY
+8 em      12 Solar Activity
+8 advective      12 SNOW STORMS
+8 advective      12 Snow Melt
+8 diffusion      12 Humidity Indices
+8 diffusion      12 Humidity Index
+8 diffusion      12 HUMIDITY
+8 electric      12 Electric Field
+4 -      12 DYNAMIC TOPOGRAPHY
+4 -      12 climate forcing|ice cores
+8 diffusion      12 Carbon And Hydrocarbon Compounds
+8 thermal      12 Air Temperature Indices
+8 advective      11 Wind Waves
+8 advective      11 WAVE FREQUENCY
+8 gravity      11 Tidal Height
+8 advective      11 Tidal Currents
+4 -      11 Terrain Elevation
+8 em      11 SOLAR PROMINENCES/SOLAR FILAMENTS
+8 advective      11 SNOW ENERGY BALANCE
+8 diffusion      11 Salinity
+8 advective      11 LOCAL WINDS
+4 -      11 Glaciers
+4 -      11 Glacier Motion/Ice Sheet Motion
+4 -      11 Glacier Elevation/Ice Sheet Elevation
+-8 -      11 FOREST MENSURATION
+-8 -      11 FOREST HARVESTING AND ENGINEERING
+-4 -      11 climate reconstructions|speleothems
+8 acoustic      11 ACOUSTIC TOMOGRAPHY
+8 acoustic      11 ACOUSTIC ATTENUATION/TRANSMISSION
+8 advective      10 WIND VELOCITY/SPEED
+-8 -      10 weather observation
+8 gravity      10 Tidal Range
+8 gravity      10 Tidal Heights
+-4 -      10 STREAMFLOW RECONSTRUCTION
+8 em      10 SOLAR OSCILLATIONS
+8 em      10 Solar Irradiance
+8 thermal      10 Sea Surface Temperature Indices
+8 thermal      10 sea surface temperature
+8 em      10 NUCLEAR RADIATION EXPOSURE
+8 gravity      10 Marine Gravity Field
+4 -      10 LAND/OCEAN/ICE FRACTION
+4 -      10 Ground Ice
+8 diffusion      10 Gas Explosions/Leaks
+-4 -      10 climate reconstructions|paleoclimatic modeling
+8 diffusion       9 X-RAY FLUX
+8 diffusion       9 Trace Elements/Trace Metals
+4 thermal       9 TOTAL TEMPERATURE
+-4 -       9 TEMPERATURE INDICATORS
+8 em       9 SOLAR SYNOPTIC MAPS
+4 -       9 Sea Surface Topography
+-8 -       9 REFORESTATION/REVEGETATION
+8 advective       9 PRECIPITATION INDICES
+-4 -       9 PRECIPITATION INDICATORS
+4 thermal       9 Geothermal Temperature
+8 advective       9 Evaporation
+-4 -       9 climate reconstructions|corals and sclerosponges|tree ring
+8 advective       9 BLOWING SNOW
+-8 -       9 BENTHIC HABITAT
+-8 -       9 Benthic Habitat
+8 advective       8 WAVE LENGTH
+8 em       8 SPECTRAL IRRADIANCE
+8 advective       8 SNOW MICROSTRUCTURE
+8 em       8 Microwave Radiance
+-8 -       8 MARINE HABITAT
+-8 -       8 Land Use/Land Cover Classification
+4 -       8 Ice Growth/Melt
+8 diffusion       8 HEAVY NUCLEI FLUX
+4 -       8 GLACIER FACIES
+4 -       8 DROUGHT INDICES
+-8 -       8 Cyanobacteria (blue-green Algae)
+4 -       7 WATER VAPOR INDICES
+8 em       7 Ultraviolet Radiation
+8 advective       7 \t\t\t\t\t\t\tprecipitation
+8 em       7 SPECTRUM WIDTH
+8 thermal       7 Soil Heat Budget
+4 -       7 SEA ICE/OCEAN CLASSIFICATION
+8 advective       7 Rivers/Streams
+4 -       7 RIVER ICE DEPTH/EXTENT
+4 -       7 River Ice
+8 em       7 Radiance
+8 em       7 POLARIZED REFLECTANCE
+8 acoustic       7 Ocean Acoustics
+8 advective       7 Magnetic Fields/Magnetic Currents
+-8 -       7 Land Cover
+8 gravity       7 GRAVITY WAVES
+4 -       7 Glacier Thickness/Ice Sheet Thickness
+8 diffusion       7 GAS FLARING
+8 electric       7 ELECTRICAL PROPERTIES
+-4 -       7 climate reconstructions|paleolimnology|tree ring
+-4 -       7 climate reconstructions|instrumental
+8 electric       7 Atmospheric Conductivity
+8 acoustic       7 ACOUSTIC FREQUENCY
+8 advective       6 Wind Tendency
+8 advective       6 VISIBLE SNOW DARKENING
+-8 -       6 VEGETATION OPTICAL DEPTH
+4 thermal       6 Total Temperature
+-8 -       6 Terrestrial Ecosystems
+8 advective       6 Static Pressure
+8 advective       6 Standardized Precipitation Index
+-8 -       6 SPECIES MIGRATION
+8 advective       6 SNOW RADIATIVE FORCING
+4 thermal       6 Snow/Ice Temperature
+8 advective       6 SNOW FRACTION
+8 advective       6 RADIAL VELOCITY
+8 diffusion       6 NOBLE GAS
+-8 -       6 Microflora
+8 diffusion       6 Halocarbons And Halogens
+8 gravity       6 Gravity Wave
+8 diffusion       6 GAMMA RAY FLUX
+8 advective       6 Drought/Precipitation Indices
+-8 -       6 COASTAL HABITAT
+-4 -       6 CLOUD INDICATORS
+-4 -       6 climate reconstructions|instrumental|paleoceanography
+-4 -       6 climate reconstructions|insect
+-4 -       6 climate reconstructions|ice cores|tree ring
+-4 -       6 climate reconstructions|historical|tree ring
+8 diffusion       6 Carbonaceous Aerosols
+8 diffusion       5 TRACE METALS
+4 thermal       5 Temperature Profiles
+8 advective       5 Snow
+4 -       5 Sea Level Rise
+8 advective       5 Pressure Anomalies
+8 advective       5 PLANETARY/ROSSBY WAVES
+8 em       5 Optical Depth/Thickness
+8 em       5 Optical Depth
+8 diffusion       5 NEUTRAL PARTICLE FLUX
+-8 -       5 Marine Habitat
+-8 -       5 INVASIVE SPECIES
+4 -       5 Ice Types
+4 -       5 Ice Floes
+4 thermal       5 HEATING RATE
+-4 -       5 climate reconstructions|instrumental|tree ring
+-4 -       5 climate reconstructions|historical|other collections
+-8 -       5 Biomass
+8 em       5 Atmospheric Emitted Radiation
+8 thermal       5 AIR TEMPERATURE
+8 advective       4 VERTICAL WIND MOTION
+-8 -       4 VEGETATION FRACTION
+8 em       4 \t\t\t\t\t\t\tmicrowave
+8 advective       4 Total Pressure
+8 thermal       4 surface Temperature
+8 em       4 SPECTRAL/ENGINEERING
+8 advective       4 SNOW DURATION
+8 advective       4 SNOW
+8 seismic-body       4 SEISMIC SURFACE WAVES
+-4 -       4 SEA SURFACE TEMPERATURE RECONSTRUCTION
+8 advective       4 RIVERS/STREAMS
+4 thermal       4 Potential Temperature
+-8 -       4 PELAGIC HABITAT
+8 advective       4 Ocean General Circulation Models (OGCM)/Regional Ocean Models
+4 thermal       4 Land Temperature
+4 -       4 Lake Ice
+4 -       4 ICE SHELVES
+4 -       4 Ice Sheets
+4 -       4 Ice Draft
+8 em       4 HYPERSPECTRAL IMAGERY
+8 advective       4 FRESH WATER RIVER DISCHARGE
+8 diffusion       4 Droplet Concentration/Size
+-4 -       4 climate reconstructions|corals and sclerosponges|paleoceanography
+8 diffusion       4 atmospheric gas
+8 advective       4 Angiosperms (flowering Plants)
+8 acoustic       4 Ambient Noise
+8 diffusion       4 Aerosol Extinction
+-8 -       3 Wildlife Observations
+8 advective       3 WAVE TYPES
+-8 -       3 VEGETATION WATER POTENTIAL
+8 em       3 Ultraviolet Wavelengths
+8 diffusion       3 Trace Gases
+8 advective       3 Total Surface Precipitation Rate
+8 em       3 Thermal Infrared
+4 thermal       3 TEMPERATURE PROFILES
+4 thermal       3 Temperature
+8 em       3 Solar Energetic Particles
+8 advective       3 SNOW GRAIN SIZE
+8 advective       3 SNOW FACIES
+8 thermal       3 Skin Temperature
+4 -       3 Sea Ice Motion
+4 -       3 Sea Ice Elevation
+4 -       3 RIVER/LAKE ICE BREAKUP
+8 em       3 Reflected Infrared
+8 advective       3 Radio Wave
+-8 -       3 Present Weather
+8 advective       3 Precipitation Profiles
+8 advective       3 Planetary/Rossby Waves
+4 -       3 Pack Ice
+8 diffusion       3 OXYGEN ISOTOPE ANALYSIS
+4 thermal       3 LAND HEAT CAPACITY
+-4 -       3 LAKE LEVEL RECONSTRUCTION
+4 -       3 Ice Roughness
+4 -       3 Ice Deformation
+4 -       3 Icebergs
+-4 -       3 GROUND WATER RECONSTRUCTION
+8 diffusion       3 GREENHOUSE GAS FLUX
+8 gravity       3 GRAVITY FIELD
+4 -       3 Glacier Facies
+-8 -       3 GEOGRAPHY AND LAND COVER
+8 gravity       3 GEODETICS/GRAVITY
+8 diffusion       3 GAS HYDRATES
+8 diffusion       3 Gases
+8 advective       3 FRESHWATER RUNOFF
+8 diffusion       3 Electron Flux
+-8 -       3 Earthquake Occurrences
+-8 -       3 DYNAMIC VEGETATION/ECOSYSTEM MODELS
+8 diffusion       3 DUST CONCENTRATION
+4 thermal       3 DEW POINT TEMPERATURE
+4 -       3 Coastal Elevation
+-4 -       3 climate reconstructions|plant macrofossils
+-4 -       3 climate reconstructions|corals and sclerosponges|instrumental|tree ring
+4 thermal       3 CANOPY TEMPERATURE VARIABILITY
+4 thermal       3 Antenna Temperature
+4 -       3 AGE AT ICE-THICKNESS-NORMALIZED DEPTHS
+8 diffusion       3 ACTINIC FLUX
+8 acoustic       3 Acoustic Scattering
+-8 -       2 WOODY BIOMASS
+8 advective       2 WIND STORMS
+8 advective       2 WIND SHEAR
+8 advective       2 Wind Shear
+8 advective       2 Wind-Driven Circulation
+8 advective       2 WIND CHILL
+8 advective       2 Wind Chill
+-8 -       2 WETLANDS
+-8 -       2 Wetlands
+4 -       2 Water Vapor Indices
+-4 -       2 water Vapor Indicators
+4 thermal       2 Virtual Temperature
+8 advective       2 Vertical Wind Motion
+-8 -       2 Vegetation Cover
+8 em       2 Uv Radiation
+8 thermal       2 upper Air Temperature
+8 em       2 Ultraviolet Radiance
+8 advective       2 \t\t\t\t\t\t\tevaporation\n\t\t\t\t\t\t
+8 advective       2 \t\t\t\t\t\t\tevaporation
+8 thermal       2 \t\t\t\t\t\t\tatmospheric Temperature
+-4 -       2 Terrestrial Hydrosphere Indicators
+8 diffusion       2 Surface Salinity
+8 diffusion       2 SURFACE MOISTURE INDEX
+4 -       2 Stability/Severe Weather Indices
+8 em       2 solar
+8 advective       2 Snow Cover Degradation
+8 advective       2 SNOW CLASSIFICATION
+8 seismic-body       2 Seismic Body Waves
+4 -       2 Sea Ice Age
+8 diffusion       2 SATELLITE SOIL MOISTURE INDEX
+8 advective       2 ROSSBY/PLANETARY WAVES
+-8 -       2 RIVERS/STREAM HABITAT
+4 -       2 RIVER/LAKE ICE FREEZE
+8 diffusion       2 Radio Wave Flux
+8 diffusion       2 Radiocarbon
+8 diffusion       2 Proton Flux
+-8 -       2 Pelagic Habitat
+4 thermal       2 Particle Temperature
+8 diffusion       2 Oxygen
+8 diffusion       2 Nutrients
+8 diffusion       2 Moisture
+8 em       2 Microwave Imagery
+8 advective       2 MEAN RADIAL VELOCITY
+-4 -       2 Land Surface/Agriculture Indicators
+4 -       2 LAND/OCEAN/ICE MASK
+4 -       2 LAND ICE/OCEAN CLASSIFICATION
+4 -       2 ICE STORMS
+4 thermal       2 Heat Advisory
+4 thermal       2 Heat
+8 gravity       2 Gravity
+4 -       2 Glacier Topography/Ice Sheet Topography
+8 gravity       2 Geodetics/Gravity
+-8 -       2 Fire Occurrence
+8 electric       2 Electrical Properties
+4 -       2 DIGITAL ELEVATION/DIGITAL TERRAIN MODELS
+8 em       2 Cloud Optical Depth/Thickness
+-4 -       2 climate reconstructions|speleothems|tree ring
+-4 -       2 climate reconstructions|corals and sclerosponges|instrumental
+-4 -       2 borehole|climate reconstructions|tree ring
+8 thermal       2 atmospheric temperature
+8 electric       2 ATMOSPHERIC CONDUCTIVITY
+8 diffusion       2 Atmospheric Chemistry/Carbon And Hydrocarbon Compounds
+8 em       2 Aerosol Radiance
+8 diffusion       2 Aerosol Forward Scatter
+8 advective       1 WIND DYNMICS
+8 advective       1 Wind
+8 advective       1 Wave Types
+8 advective       1 WAVE SPEED
+8 advective       1 Wave Length
+8 advective       1 Wave Frequency
+8 advective       1 WAVE FETCH
+8 advective       1 WAVE DIRECTION
+8 em       1 Water-Leaving Radiance
+8 diffusion       1 Water Ion Concentration
+-8 -       1 VEGETATION TEMPERATURE
+4 thermal       1 ULTRAVIOLET SENSOR TEMPERATURE
+8 em       1 Ultraviolet Radiation 
+8 em       1 Ultraviolet Flux
+-8 -       1 \t\t\t\t\t\t\ttrace Gases/Trace Species
+8 thermal       1 \t\t\t\t\t\t\tsurface Air Temperature\n\t\t\t\t\t\t
+8 thermal       1 \t\t\t\t\t\t\tsurface Air Temperature
+8 thermal       1 \t\t\t\t\t\t\tskin Temperature\n\t\t\t\t\t\t
+8 thermal       1 \t\t\t\t\t\t\tskin Temperature
+8 diffusion       1 \t\t\t\t\t\t\toxygen Compounds
+8 em       1 \t\t\t\t\t\t\tinfrared Wavelengths
+8 diffusion       1 \t\t\t\t\t\t\thumidity\n\t\t\t\t\t\t
+8 diffusion       1 \t\t\t\t\t\t\thumidity
+4 thermal       1 \t\t\t\t\t\t\tboundary Layer Temperature\n\t\t\t\t\t\t
+4 thermal       1 \t\t\t\t\t\t\tboundary Layer Temperature
+8 advective       1 \t\t\t\t\t\t\tatmospheric Winds
+8 em       1 \t\t\t\t\t\t\tatmospheric Radiation
+8 thermal       1 \t\t\t\t\t\t\tair Temperature\n\t\t\t\t\t\t
+8 thermal       1 \t\t\t\t\t\t\tair Temperature
+8 diffusion       1 TOXIC AEROSOLS
+4 thermal       1 Temperature Indices
+4 thermal       1 Temperature Anomolies
+4 thermal       1 Temperature Anomalies\n\t\t\t\t\t\t
+8 advective       1 Surface Winds\n\t\t\t\t\t\t
+8 thermal       1 SURFACE AIR TEMPERATURE
+8 em       1 Sunspots
+4 -       1 Subscription Services
+8 gravity       1 SPECIFIC GRAVITY
+8 em       1 Solar Wind
+8 em       1 Solar Synoptic Maps
+8 em       1 Solar Imagery
+8 em       1 Solar Flares
+8 em       1 Solar Events
+8 em       1 Solar Energetic Particle Flux
+8 em       1 Solar Active Regions
+8 diffusion       1 Soil Moisture
+8 advective       1 SNOW/ICE MASS
+8 advective       1 Snow Dunes
+8 advective       1 Snow Depth Balance
+8 advective       1 Snow Depth 
+8 advective       1 Snow-Covered Area
+8 seismic-body       1 SEISMIC PROFILE
+8 seismic-body       1 Seismic Profile
+8 thermal       1 Sea\n\t\t\t\t\t\t\tsurface Temperature\n\t\t\t\t\t\t
+8 thermal       1 Sea\n\t\t\t\t\t\t\tsurface Temperature
+4 -       1 SEA ICE VOLUME BUDGET
+4 -       1 SEA ICE TOPOGRAPHY
+4 -       1 SEA ICE MASS BALANCE
+4 -       1 SEA ICE DYNAMICS
+4 -       1 seafloor topography
+8 diffusion       1 Salinity 
+8 diffusion       1 salinity
+8 advective       1 RUNOFF
+8 em       1 Radiation Exposure
+-8 -       1 PRESENT WEATHER
+8 advective       1 PRECIPITATION PHASE
+8 advective       1 Precipitation Indices
+8 diffusion       1 Particle Flux
+8 advective       1 Ocean General Circulation Models (ogcm)/Regional Ocean Models
+8 em       1 Nuclear Radiation Exposure
+8 diffusion       1 Nitrate
+8 em       1 Microwave Wavelengths
+-8 -       1 Microfauna
+-8 -       1 marine ecosystems
+8 em       1 Longwave Radiation\n\t\t\t\t\t\t
+8 advective       1 Longshore Currents
+8 advective       1 Local Winds
+8 advective       1 Line Of Sight Velocity
+-8 -       1 Land Use Classes
+4 -       1 LAND ICE FRACTION
+4 thermal       1 Land Heat Capacity
+8 gravity       1 Intertidal Zone
+8 em       1 Infrared Wavelength
+8 em       1 Infrared Radiances
+-8 -       1 INDICATOR SPECIES
+-8 -       1 Indicator Species
+8 advective       1 Ice Velocity
+4 -       1 ICE MELANGE
+4 -       1 Ice Core Air Bubbles
+4 -       1 Ice
+4 thermal       1 Heat Flux\n\t\t\t\t\t\t
+8 diffusion       1 Halocarbons and Halogens
+8 gravity       1 Gravity/Gravitational Field
+8 advective       1 Global General Circulation Models
+4 -       1 Glacier Mass Balance/Ice Sheet Mass Balance
+4 -       1 Glacier Area
+8 advective       1 General Circulation Model
+8 diffusion       1 Gas Hydrates
+8 diffusion       1 Fresh Water Flux
+-8 -       1 Freshwater Ecosystems
+-8 -       1 Forest Science
+-8 -       1 FORESTS
+-8 -       1 Forest Fire Science
+-8 -       1 FOREST FIRE DANGER INDEX
+-8 -       1 Forest Fire Danger Index
+4 -       1 FAST ICE
+-8 -       1 Endangered Species
+8 electric       1 Electric Fields/Electric Currents
+8 electric       1 Electrical Conductivity
+-8 -       1 ecosystems
+4 thermal       1 DOME TEMPERATURE
+8 advective       1 Differential Pressure
+-8 -       1 DEMERSAL HABITAT
+4 -       1 CRYOSPHERE
+8 em       1 Cloud Reflectance
+-4 -       1 Cloud Indicators
+8 diffusion       1 CARBON CYCLE/CARBON BUDGET MODELS
+4 thermal       1 Brightness Temperatures
+4 thermal       1 Brightness Temperature\n\t\t\t\t\t\t
+8 advective       1 BOUNDARY LAYER WINDS
+4 -       1 borehole|ice cores
+-8 -       1 Biomass Burning
+4 thermal       1 BENTHIC HEAT FLOW
+4 -       1 bathymetry/seafloor topography
+4 thermal       1 Atmosphere Temperature
+-8 -       1 Animal Taxonomy 
+-8 -       1 Animal Taxonomy
+8 advective       1 Angiosperms (Flowering Plants)
+8 diffusion       1 Alkalinity
+8 thermal       1 Air Temperature\n\t\t\t\t\t\t
+8 diffusion       1 AEROSOL VERTICAL DISTRIBUTION
+8 diffusion       1 Aerosol Number Concentration
+8 diffusion       1 Aerosol Light Scattering Coefficient
+8 diffusion       1 Aerosol Light Absorption Coefficient
+8 advective       1 Accumulative Convective Precipitation
+-8 - # GBIF — Provider-Tags direkt (occurrence facets + enumerations, live 2026-08-15)
+-8 - "count":9585373	"name":"LIVING_SPECIMEN"
+-8 - "count":42169144	"name":"OCCURRENCE"
+-8 - "count":3792237714	"name":"ABSENT"
+-8 - "count":3305674831	"name":"PRESERVED_SPECIMEN"
+-8 - "count":29477461	"name":"OBSERVATION"
+-8 - "count":2783615	"name":"PRESENT"
+-8 - "count":217628713	"name":"MACHINE_OBSERVATION"
+-8 - "count":19532885	"name":"FOSSIL_SPECIMEN"
+-8 - "count":129395029	"name":"HUMAN_OBSERVATION"
