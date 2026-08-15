@@ -3373,7 +3373,7 @@ impl Radiator for StderrRadiator {
         let prev_len = self.last_line.chars().count();
         if self.interactive {
             let pad = " ".repeat(prev_len.saturating_sub(line.chars().count()));
-            eprint!("\r{}{}\r", line, pad);
+            eprint!("\r{}{}", line, pad);
         } else {
             eprintln!("{}", line);
         }
@@ -3498,7 +3498,7 @@ fn fetch_raw(
     } else {
         let stderr = String::from_utf8_lossy(&output.stderr);
         eprintln!(
-            "fetch returned ({}): {} {}",
+            "\r\x1b[Kfetch returned ({}): {} {}",
             output.status,
             url,
             stderr.trim()
@@ -3531,7 +3531,7 @@ fn fetch_raw_bytes(url: &str, ttl: u64) -> Option<Vec<u8>> {
     } else {
         let stderr = String::from_utf8_lossy(&output.stderr);
         eprintln!(
-            "fetch_bytes returned ({}): {} {}",
+            "\r\x1b[Kfetch_bytes returned ({}): {} {}",
             output.status,
             url,
             stderr.trim()
@@ -9301,7 +9301,7 @@ fn main() {
                     };
                     let hash = build_asteroid_hash(&bytes, cadence_c, src_ttl);
                     eprintln!(
-                        "catalog_dastcom: {} records, cell_size {:.3e} m, vmax {:.1} m/s, rmax {:.3e} m",
+                        "\r\x1b[Kcatalog_dastcom: {} records, cell_size {:.3e} m, vmax {:.1} m/s, rmax {:.3e} m",
                         hash.records.len(),
                         hash.cell_size,
                         hash.vmax,
@@ -9351,7 +9351,7 @@ fn main() {
                     };
                     let hash = build_star_hash(&bytes, build_epoch, cadence_c, src_ttl);
                     eprintln!(
-                        "catalog_tycho: {} stars, cell_size {:.3e} m, vmax {:.1} m/s",
+                        "\r\x1b[Kcatalog_tycho: {} stars, cell_size {:.3e} m, vmax {:.1} m/s",
                         hash.records.len(),
                         hash.cell_size,
                         hash.vmax
