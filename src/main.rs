@@ -10100,11 +10100,27 @@ mod tests {
             if url.starts_with("https://github.com/omegaflow/sources") {
                 continue;
             }
+            if s.fanout_cap > 0 {
+                eprintln!("skip fanout (needs fanout_fetch): {}", s.url);
+                continue;
+            }
+            if s.format == "csv_zip" {
+                eprintln!("skip csv_zip (byte path): {}", s.url);
+                continue;
+            }
+            if s.format == "kernel_text" {
+                eprintln!(
+                    "skip kernel_text (data file, not a field source): {}",
+                    s.url
+                );
+                continue;
+            }
             if limit == 0 {
                 break;
             }
             limit -= 1;
-            let body = match super::fetch_one(&url, None, &[], s.ttl) {
+            let headers = super::render_headers(&s.headers, &env);
+            let body = match super::fetch_one(&url, None, &headers, s.ttl) {
                 Some(b) => b,
                 None => {
                     empty.push((url, "fetch returned empty".into()));

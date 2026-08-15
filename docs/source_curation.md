@@ -177,6 +177,12 @@ The `diagnose_no_samples` function (commit `2094638`) performs this
 classification; `json_has_content` counts only non-empty arrays as data
 (meta numbers like `count:0` or `api:2.7` are not rows). Unit-tested in
 `test_diagnose_no_samples`.
+
+The verifier skips source classes that need dedicated fetch paths (2026-08-15):
+`kernel_text` (data files, not field sources), `csv_zip` (byte path + inflate),
+`fanout` (two-stage station fetch) — each skip is logged. Header-carrying
+sources are fetched with `render_headers` (secrets substituted), so keyed
+sources (PurpleAir X-API-Key, NOAA token) extract with their real headers.
 - `source refused (pos without body directive)` — block uses data-carried
   `pos` but declares no `body`. Fix the SOURCE (add `body <body>` matching the
   source's world, or a proper frame), never invent a body in the parser.
