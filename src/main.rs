@@ -5647,6 +5647,8 @@ fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> Extra
             .map(|bytes| String::from_utf8_lossy(&bytes).into_owned())
             .as_deref()
             .and_then(csv_to_json)
+    } else if src.format == "csv" {
+        csv_to_json(body)
     } else if src.format == "json" || src.format.is_empty() || src.format == "universal" {
         parse_json(body)
     } else {
@@ -9335,6 +9337,85 @@ field H comet_h_mag gaussian-inverse-square em mag 604800 0.0 0.0\n";
                     assert!((p[0] - expect).abs() / expect < 1e-12);
                     assert!(p[1].abs() / expect < 1e-12);
                     assert!(p[2].abs() / expect < 1e-12);
+                } else {
+                    panic!("expected StateVector position");
+                }
+            }
+            ExtractResult::WithEphemeris(_, _) => panic!("unexpected ephemeris"),
+        }
+    }
+
+    #[test]
+    fn test_extract_cmap_csv_dist_scale_mpc() {
+        let csv = "AGCNr,Name,RAdeg_HI,Decdeg_HI,RAdeg_OC,DECdeg_OC,Vhelio,W50,errW50,HIflux,errflux,SNR,RMS,Dist,logMsun,HIcode,OCcode,NoteFlag\n\
+331061,456-013,0.01042,15.87222,0.00875,15.88167,6007,260,45,1.13,0.09,6.5,2.40,85.2,9.29,1,I,\"\"\n\
+331405,\"\",0.01375,26.01639,0.01458,26.01389,10409,315,8,2.62,0.09,16.1,2.05,143.8,10.11,1,I,\"\"\n";
+        let src = SourceConfig {
+            ttl: 604800,
+            url: "https://example.com/x".into(),
+            frame: Frame::Barycenter {
+                body_name: "sun".into(),
+                scale: 1.0,
+            },
+            format: "csv".into(),
+            extracts: vec![Extract::CelestialMap {
+                arr_path: ".".into(),
+                ra_key: "RAdeg_HI".into(),
+                dec_key: "Decdeg_HI".into(),
+                dist_key: "Dist".into(),
+                dist_scale: 3.085677581e22,
+                plx_key: String::new(),
+                z_key: String::new(),
+                pmra_key: String::new(),
+                pmdec_key: String::new(),
+                rv_key: String::new(),
+                rv_scale: 1.0,
+                epoch_key: String::new(),
+                fields: vec![FieldConfig {
+                    key: "HIflux".into(),
+                    name: "alfalfa_hi_flux".into(),
+                    kernel: 0,
+                    force: 0,
+                    tau: 604800.0,
+                    absorption: 0.0,
+                    advection: 0.0,
+                }],
+            }],
+            headers: vec![],
+            post_body: None,
+            target: None,
+            catalog: None,
+            max_freq: None,
+            min_freq: None,
+            body: None,
+            stations_url: None,
+            stations_path: String::new(),
+            stations_lat: String::new(),
+            stations_lon: String::new(),
+            stations_id: String::new(),
+            flux_from_mag: None,
+            abs_mag_from: None,
+            catalog_epoch: None,
+            repeat_ra_bins: 0,
+            fanout_cap: 0,
+            stations_flatten: String::new(),
+            stations_filter: None,
+            fanout_delay: 0,
+        };
+        let fixture_lsk = LeapSeconds {
+            delta_t_a: 32.184,
+            deltas: vec![(37.0, 1483228800.0)],
+        };
+        match extract(&src, csv, 8.0e8, &fixture_lsk) {
+            ExtractResult::Measurements(channels) => {
+                assert_eq!(channels.len(), 2);
+                assert_eq!(channels[0].1.name, "alfalfa_hi_flux");
+                assert_eq!(channels[0].0.value, 1.13);
+                assert_eq!(channels[1].0.value, 2.62);
+                if let Position::StateVector { p, .. } = channels[0].0.position {
+                    let expect = 85.2 * 3.085677581e22;
+                    let r = (p[0] * p[0] + p[1] * p[1] + p[2] * p[2]).sqrt();
+                    assert!((r - expect).abs() / expect < 1e-12);
                 } else {
                     panic!("expected StateVector position");
                 }

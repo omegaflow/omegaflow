@@ -401,6 +401,20 @@ dist dist_au
 dist_scale 1.495978707e11
 field H comet_h_mag gaussian-inverse-square em mag 604800 0.0 0.0
 
+# ── ALFALFA HI-Galaxienkatalog (em cmap; Dist in Mpc via dist_scale) ──
+# RAdeg_HI/Decdeg_HI dezimal. Magnetar (McGill TabO1.csv) bleibt geparkt:
+# RA/Decl liegen dort sexagesimal vor („01 00 43.14") — siehe TODO.
+url https://egg.astro.cornell.edu/alfalfa/data/a40files/a40.datafile1.csv
+ttl 604800
+format csv
+at sun
+cmap .
+ra RAdeg_HI
+dec Decdeg_HI
+dist Dist
+dist_scale 3.085677581e22
+field HIflux alfalfa_hi_flux gaussian-inverse-square em Jy_km/s 604800 0.0 0.0
+
 # ── Live API: USGS Earthquakes (seismic-surface) ──
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson
 ttl 60

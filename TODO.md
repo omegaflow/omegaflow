@@ -104,10 +104,14 @@ JSON ra/dec/dist_au/H; e ≥ 1 übersprungen, 0 honored; 831 Records), CI-Schrit
 in kernel_flatten.yml, sources.φ-Block (cmap + dist_scale 1.495978707e11,
 ttl 604800, field H em mag). Horizons-Beweis 1P/Halley: Δ3,3″/Δ1,2″/
 Δ0,0018 au bei 35 au — Kepler-vs.-n-body-Drift, ehrliche Katalog-Physik.
-dist_scale entriegelt zugleich Magnetar (kpc) + ALFALFA (Mpc) — Einbau-Session
-steht aus (siehe Kurations-Einträge). Das CDN-Asset cometels_flat.json entsteht
-beim ersten CI-Lauf (GH_TOKEN lokal absent) — bis dahin manifestiert der Block
-0 (0 honored, kein live-Fallback auf die .gz-Quelle möglich).
+dist_scale entriegelt zugleich Magnetar (kpc) + ALFALFA (Mpc). ALFALFA lebt
+(2026-08-15: format csv + csv_to_json-Arm im Extract-Kern, Block in sources.φ,
+RAdeg_HI/Decdeg_HI dezimal, HIflux Jy·km/s, Test Mpc→m). Magnetar wartet:
+RA/Decl liegen sexagesimal vor („01 00 43.14") — Sexagesimal-Konversion fehlt
+im Parser (teilt den Gap mit TeVCat; ein Compiler wie cometels_compiler kann
+beide konvertieren). Das CDN-Asset cometels_flat.json entsteht beim ersten
+CI-Lauf (GH_TOKEN lokal absent) — bis dahin manifestiert der Block 0 (0 honored,
+kein live-Fallback auf die .gz-Quelle möglich).
 ```
 
 **K04** Tycho-2-Katalog (em)
