@@ -766,9 +766,17 @@ Binary-PCK-Pakets oben).
   geparst — Lautablehnung fehlt.
 - Test-Limit der Curation über 200 Blöcke hinaus erhöhen; 6 Rest-FAILs sind
   Daten-Artefakte (docs/source_curation.md).
-- **Doku-Drift (2026-08-15):** `phi/.secrets.local` trägt NASA_API_KEY/FIRMS_MAP_KEY
-  aktuell NICHT (docs/source_curation.md listet sie als verfügbar). Die
-  DONKI-FLR- und FIRMS-Blöcke manifestieren 0 bis die Keys eingetragen sind.
+- **Secrets-Befund (2026-08-15):** Keys sind vollständig — `.secrets.local`
+  liegt im Repo-ROOT (46 Keys inkl. NASA_API_KEY, FIRMS_MAP_KEY, ESA_USER/
+  ESA_PASS) und wird via resolve_asset (CWD-relativ) geladen. DONKI-FLR und
+  FIRMS fetchen 200 mit Key (manuell verifiziert). Der frühere
+  „marker absent"-Befund war Probe-Mechanik: --probe lief aus /tmp/opencode
+  ohne die Asset-Datei im CWD — bei Probe-Läufen außerhalb des Repo-Roots
+  `.secrets.local` verlinken. Die verbleibenden Probe-Declines der
+  Grind-Einbau-Sektion sind Probe-Artefakte (synthetisierte Configs: HAPI-/
+  CSV-/Regex-Blöcke werden vom Probe nicht über die deklarierten Extracts
+  verifiziert — CSV braucht format-csv-Konvertierung, hapi die hapi-Arm-
+  Extraktion, regex den regex-Arm; alles im Runtime-Pfad vorhanden).
 - **Probe-Verifikation Grind-Einbau (2026-08-15):** --probe mit LSK auf die
   Grind-Einbau-Sektion: VirES-HAPI-Syntax (id=/start=/stop= und dataset=/
   time.min= sind beide gültig — 400er waren time-outside-range der
