@@ -5414,6 +5414,7 @@ fn fanout_fetch(
     x: f64,
     y: f64,
     z: f64,
+    presence: Option<(f64, f64, f64)>,
     now: f64,
     r: f64,
     eph: &HashMap<String, BodyEphemeris>,
@@ -5422,7 +5423,9 @@ fn fanout_fetch(
 ) -> Vec<(Channel, FieldConfig)> {
     let mut channels = Vec::new();
     let body_name = frame_body_name(&src.frame);
-    let stations_url = match render_url(stations_url_tmpl, x, y, z, now, r, &body_name, eph, lsk) {
+    let (ux, uy, uz) = presence.unwrap_or((x, y, z));
+    let stations_url = match render_url(stations_url_tmpl, ux, uy, uz, now, r, &body_name, eph, lsk)
+    {
         Some(u) => resolve_secret(&u, env),
         None => return channels,
     };
@@ -5436,19 +5439,30 @@ fn fanout_fetch(
         None => return channels,
     };
     let mut stations = parse_station_entries(&j, src);
-    if let Frame::Surface { lat, lon, .. } = src.frame {
+    let sort_center = match presence {
+        Some((px, py, pz)) => icrs_to_body_surface(px, py, pz, now, &body_name, eph),
+        None => None,
+    }
+    .or_else(|| {
+        if let Frame::Surface { lat, lon, .. } = src.frame {
+            Some((lat, lon))
+        } else {
+            None
+        }
+    });
+    if let Some((clat, clon)) = sort_center {
         stations.sort_by(|a, b| {
-            angular_distance_deg(a.lat, a.lon, lat, lon)
-                .partial_cmp(&angular_distance_deg(b.lat, b.lon, lat, lon))
+            angular_distance_deg(a.lat, a.lon, clat, clon)
+                .partial_cmp(&angular_distance_deg(b.lat, b.lon, clat, clon))
                 .unwrap_or(std::cmp::Ordering::Equal)
         });
     }
     let cap = src.fanout_cap as usize;
-    let base_url = match render_url(&src.url, x, y, z, now, r, &body_name, eph, lsk) {
+    let base_url = match render_url(&src.url, ux, uy, uz, now, r, &body_name, eph, lsk) {
         Some(u) => u,
         None => return channels,
     };
-    let body = render_source_body(src, x, y, z, now, r, eph, lsk);
+    let body = render_source_body(src, ux, uy, uz, now, r, eph, lsk);
     let window = 3usize;
     let chunks: Vec<&StationEntry> = stations.iter().take(cap).collect();
     for (wi, chunk) in chunks.chunks(window).enumerate() {
@@ -8755,11 +8769,22 @@ fn main() {
                 has_prev: false,
             });
             let lsk_c = lsk.clone();
+            let presence_center = presences.first().map(|p| (p.1, p.2, p.3));
             thread::spawn(move || {
                 if src_clone.fanout_cap > 0 {
                     if let Some(ref su) = src_clone.stations_url {
                         let channels = fanout_fetch(
-                            &src_clone, su, pos.0, pos.1, pos.2, now, r, &eph_arc, &e, &lsk_c,
+                            &src_clone,
+                            su,
+                            pos.0,
+                            pos.1,
+                            pos.2,
+                            presence_center,
+                            now,
+                            r,
+                            &eph_arc,
+                            &e,
+                            &lsk_c,
                         );
                         let _ = ftx.send(FetchResult {
                             source_idx: src_idx,

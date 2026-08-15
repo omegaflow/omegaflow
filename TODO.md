@@ -266,12 +266,12 @@ PARSER_MAGIC.md / EXTRACT_TYPES.md — geschachtelte Feldpfade und Flatten-Varia
 
 **P09** Fanout vollständig — nur noch Feintuning offen
 ```
-Parallelität (3er-Fenster + fanout_delay-Rate-Limit), Präsenz-Sortierung
-(angular distance zur Frame-Oberfläche) und OpenAQ-v3-Anbindung
+Parallelität (3er-Fenster + fanout_delay), Präsenz-Sortierung und
+Präsenz-URL-Rendering (Operator-Präsenz statt Frame-Punkt als Zentrum,
+{lat_min}-Bbox folgt dem Fenster) und OpenAQ-v3-Anbindung
 (stations_flatten + stations_filter) sind implementiert (2026-08-15).
 NOAA CDO (thermal) und OpenAQ pm25 (diffusion) leben im Fanout. Offen:
-echte Operator-Präsenz statt Frame-Punkt als Sortierzentrum, generisches
-Flatten über mehrere Ebenen.
+generisches Flatten über mehrere Ebenen.
 ```
 
 ---
