@@ -37,6 +37,8 @@ jobs:
         echo "voids: $(grep -c '^url ' phi/port/probe_all_void.txt)"
     - name: urls
       run: cargo run -- --urls phi/port/probe_url_candidates.txt --jina
+    - name: draft
+      run: cargo run -- --draft phi/port/probe_live.txt
     - name: upload
       if: always()
       uses: actions/upload-artifact@v4
@@ -48,6 +50,7 @@ jobs:
           phi/port/probe_live.txt
           phi/port/probe_url_void.txt
           phi/port/probe_jina.txt
+          phi/port/probe_drafts.φ
           phi/port/weights_*.txt
     - uses: actions/cache@v4
       if: always()

@@ -9095,6 +9095,122 @@ fn ci_mode(dir: &str) -> i32 {
     }
 }
 
+fn json_has_key_ci(val: &JsonVal, target: &str) -> bool {
+    match val {
+        JsonVal::Obj(map) => {
+            map.keys().any(|k| k.eq_ignore_ascii_case(target))
+                || map.values().any(|v| json_has_key_ci(v, target))
+        }
+        JsonVal::Arr(arr) => arr.iter().any(|v| json_has_key_ci(v, target)),
+        _ => false,
+    }
+}
+
+fn derive_frame(parsed: &JsonVal, coords: &str) -> (String, String) {
+    if coords.contains("lat ") || coords.contains("lon ") {
+        (
+            "on earth 0 0\n".to_string(),
+            "geographic coords".to_string(),
+        )
+    } else if json_has_key_ci(parsed, "ra") && json_has_key_ci(parsed, "dec") {
+        ("at sun\n".to_string(), "celestial ra/dec".to_string())
+    } else {
+        ("".to_string(), "frame ausstehend".to_string())
+    }
+}
+
+fn draft_url_mode(path: &str, env: &HashMap<String, String>, fetchone: bool) -> i32 {
+    let content = match std::fs::read_to_string(path) {
+        Ok(c) => c,
+        Err(e) => {
+            eprintln!("--draft: read {}: {}", path, e);
+            return 1;
+        }
+    };
+    let urls: Vec<String> = content
+        .lines()
+        .map(|l| {
+            let t = l.trim();
+            let u = if t.starts_with("live ") || t.starts_with("candidate ") {
+                t.split_whitespace()
+                    .find(|w| w.starts_with("http"))
+                    .unwrap_or("")
+            } else {
+                t
+            };
+            u.to_string()
+        })
+        .filter(|u| u.starts_with("http"))
+        .collect();
+    let total = urls.len();
+    let out_lock = std::sync::Mutex::new(String::new());
+    let drafted = std::sync::atomic::AtomicUsize::new(0);
+    let next = std::sync::atomic::AtomicUsize::new(0);
+    let workers = 8.min(total.max(1));
+    std::thread::scope(|scope| {
+        for _ in 0..workers {
+            scope.spawn(|| loop {
+                let i = next.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                if i >= total {
+                    break;
+                }
+                let url = resolve_secret(&urls[i], env);
+                let raw = if fetchone {
+                    fetch_one(&url, None, &[], 3600)
+                } else {
+                    fetch_raw_probe(&url, None, &[])
+                };
+                if let Some(body) = raw {
+                    if let Some(parsed) = parse_json(&body) {
+                        let mut fields = String::new();
+                        let mut coords = String::new();
+                        let mut map_path: Option<String> = None;
+                        let mut budget = 48usize;
+                        walk_json_probe(
+                            &parsed,
+                            "",
+                            &mut fields,
+                            &mut coords,
+                            &mut map_path,
+                            &mut budget,
+                        );
+                        let ttl = probe_ttl(&body).unwrap_or(86400);
+                        let (frame, reason) = derive_frame(&parsed, &coords);
+                        let mut block = format!("url {}\n", urls[i]);
+                        block.push_str(&format!("ttl {}\n", ttl));
+                        block.push_str(&frame);
+                        if let Some(ref mp) = map_path {
+                            if !coords.is_empty() {
+                                block.push_str(&format!("map {}\n", mp));
+                            }
+                        }
+                        if !coords.is_empty() {
+                            block.push_str(&coords);
+                        }
+                        if !fields.is_empty() {
+                            block.push_str(&fields);
+                        }
+                        let mut out = format!("# frame: {}\n", reason);
+                        out.push_str(&block);
+                        out.push('\n');
+                        out_lock.lock().unwrap().push_str(&out);
+                        drafted.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                    }
+                }
+                std::thread::sleep(std::time::Duration::from_millis(300));
+            });
+        }
+    });
+    let drafted = drafted.load(std::sync::atomic::Ordering::Relaxed);
+    std::fs::create_dir_all("phi/port").ok();
+    std::fs::write("phi/port/probe_drafts.φ", out_lock.into_inner().unwrap()).ok();
+    eprintln!(
+        "--draft: {} Kandidaten, {} Blöcke gedraftet → phi/port/probe_drafts.φ",
+        total, drafted
+    );
+    0
+}
+
 fn url_probe_mode(path: &str, env: &HashMap<String, String>, fetchone: bool, jina: bool) -> i32 {
     let content = match std::fs::read_to_string(path) {
         Ok(c) => c,
@@ -9245,6 +9361,17 @@ fn main() {
                 }
             };
             std::process::exit(port_mode(input, output));
+        }
+        if args.len() > 1 && args[1] == "--draft" {
+            let path = match args.get(2) {
+                Some(s) => s.as_str(),
+                None => {
+                    eprintln!("--draft: file argument absent");
+                    std::process::exit(1);
+                }
+            };
+            let fetchone = args.iter().any(|a| a == "--fetchone");
+            std::process::exit(draft_url_mode(path, &env, fetchone));
         }
         if args.len() > 1 && args[1] == "--urls" {
             let path = match args.get(2) {
