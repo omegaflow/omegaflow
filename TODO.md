@@ -126,7 +126,7 @@ braucht mindestens eine gemessene, physisch gate-konforme Quelle.
 | Kanal | Messquelle | Offene Arbeit |
 |---|---|---|
 | em | Tycho-2-Katalog, Radar-OEMs, DASTCOM-Albedo; Zeitreihen: NOAA GOES, HEASARC, PDS | K04 (Katalog); Kuration (Zeitreihen) |
-| gravity | JPL SSD komplett: DE442/441/440, Mond-Systeme, Kleinkörper, Sonden, GM-PCK, DASTCOM | K01 (Monde+CI), K02 (Binary-PCK), K03 (Katalog) |
+| gravity | JPL SSD komplett: DE442/441/440, Mond-Systeme, Kleinkörper, Sonden, GM-PCK, DASTCOM; live: NOAA CO-OPS Tidenpegel (Fanout, Wasserstand über MLLW) | K01 (Monde+CI), K02 (Binary-PCK), K03 (Katalog) |
 | acoustic | GONG/SOHO (Helioseismologie), NOAA (Atmosphäre) | Kuration |
 | seismic-body | USGS, IRIS, GFZ, PDS InSight/Apollo | Kuration (USGS bereits aktiv) |
 | seismic-surface | USGS, IRIS, GFZ | Kuration |

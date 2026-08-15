@@ -554,6 +554,46 @@ lat sourceInfo.geoLocation.geogLocation.latitude
 lon sourceInfo.geoLocation.geogLocation.longitude
 field values.0.value.0.value hydrosphere_river_flow_cfs erfc advective cfs 30.0 0.0 0.0
 
+# SWPC ACE L1 Magnetfeld + Plasma (em)
+url https://services.swpc.noaa.gov/json/ace/mag/ace_mag_1h.json
+ttl 3600
+at earth 0.99
+field 0.gsm_bx exosphere_ace_bx_gsm_nt inverse-square em nT 360.0 0.0 0.0
+field 0.gsm_by exosphere_ace_by_gsm_nt inverse-square em nT 360.0 0.0 0.0
+field 0.gsm_bz exosphere_ace_bz_gsm_nt inverse-square em nT 360.0 0.0 0.0
+field 0.bt exosphere_ace_bt_nt inverse-square em nT 360.0 0.0 0.0
+
+url https://services.swpc.noaa.gov/json/ace/swepam/ace_swepam_1h.json
+ttl 3600
+at earth 0.99
+field 0.speed exosphere_ace_speed_kms inverse-square em km/s 360.0 0.0 0.0
+field 0.dens exosphere_ace_dens_ncc inverse-square em n/cc 360.0 0.0 0.0
+field 0.temperature exosphere_ace_temp_k inverse-square em K 360.0 0.0 0.0
+
+# BOM Sydney Wetterbeobachtungen (thermal/diffusion/advective)
+url http://reg.bom.gov.au/fwo/IDN60901/IDN60901.95765.json
+ttl 300
+on earth 0 0 0
+map observations.data
+lat lat
+lon lon
+field air_temp atmosphere_bom_air_temp_c exponential-decay thermal C 30.0 0.0 0.0
+field rel_hum atmosphere_bom_relative_humidity_pct gaussian-inverse-square diffusion % 30.0 0.0 0.0
+field wind_spd_kmh atmosphere_bom_wind_speed_kmh patch-levy advective km/h 30.0 0.0 0.0
+
+# ── Live API: NOAA CO-OPS Tide Gauges (gravity, fan-out) ──
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station={station}&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+stations https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json?type=waterlevels&units=metric
+stations_path stations
+stations_id id
+stations_lat lat
+stations_lon lng
+fanout 40
+fanout_delay 10
+ttl 3600
+on earth 0 0 0
+last data.v hydrosphere_tide_water_level_m inverse-square gravity m 3600 0.0 0.0
+
 # ── Host-Kuration Einbau 2026-08-15 — 9 neue Live-Quellen (Struktur-Befunde in TODO.md, Batch 1–3) ──
 
 url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&limit=100&minmagnitude=2.5&orderby=time&start={today}T00:00:00
