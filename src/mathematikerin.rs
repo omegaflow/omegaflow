@@ -7,8 +7,10 @@ use std::thread;
 use winit::application::ApplicationHandler;
 use winit::dpi::LogicalSize;
 use winit::event::{ElementState, MouseButton, MouseScrollDelta, WindowEvent};
-use winit::event_loop::{ActiveEventLoop, ControlFlow, EventLoop};
+use winit::event_loop::{ActiveEventLoop, ControlFlow, EventLoopBuilder};
 use winit::keyboard::{KeyCode, PhysicalKey};
+use winit::platform::wayland::EventLoopBuilderExtWayland;
+use winit::platform::x11::EventLoopBuilderExtX11;
 use winit::window::{Window, WindowAttributes, WindowId};
 
 const Φ: f64 = 1.618033988749895;
@@ -1002,8 +1004,12 @@ fn run_window(
     time: Arc<Mutex<Option<LeapSeconds>>>,
     shutdown: Arc<AtomicBool>,
 ) {
-    let Ok(event_loop) = EventLoop::new() else {
-        return;
+    let builder = EventLoopBuilder::<()>::default();
+    let builder = EventLoopBuilderExtX11::with_any_thread(builder, true);
+    let builder = EventLoopBuilderExtWayland::with_any_thread(builder, true);
+    let event_loop = match builder.build() {
+        Ok(el) => el,
+        Err(_) => return,
     };
     event_loop.set_control_flow(ControlFlow::Poll);
     let mut app = NativeApp::new(rx, presence_tx, body_names, time, shutdown);
