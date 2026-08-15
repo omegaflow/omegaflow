@@ -445,7 +445,7 @@ at sun
 ttl 604800
 
 # ── FRBCAT (VizieR J/other/PASA/33.45, tap_compiler) — em cmap, Dist via z (Hubble) ──
-# 118 FRBs; nur die 18 mit zHost manifestieren (ohne z: absent, 0 honored).
+# 118 FRBs (Stand 2016); 18 mit zHost manifestieren, Rest absent. FRB 121102-Beweis.
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/frbcat_flat.json
 ttl 604800
 at sun
@@ -455,6 +455,19 @@ dec dec
 z z
 field dm frb_dispersion inverse-square em pc/cm3 604800 0.0 0.0
 field speak frb_peak_flux inverse-square em Jy 604800 0.0 0.0
+
+# ── FRB-Studie A&A 693/A279 (2025, tap_compiler) — em cmap, z (Hubble) ──
+# 24 FRBs (2019–2023, TNS-Namen — praktisch kein Überlapp mit FRBCAT 2016);
+# 23 mit z. DM-Halo/Galaxie zerlegt, tausc = zeitliche Streuung.
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/frb_a279.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+z z
+field dm frb_dm_em inverse-square em pc/cm3 604800 0.0 0.0
+field tausc frb_scatter_ms gaussian-inverse-square em ms 604800 0.0 0.0
 
 # ── Live API: USGS Earthquakes (seismic-surface) ──
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson

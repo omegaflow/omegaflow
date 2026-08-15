@@ -582,6 +582,13 @@ Binary-PCK-Pakets oben).
   Tabellen > TOP-Cap über den Async-Endpoint, offen. Offen: IRSA/HEASARC/
   MAST-Inventare (gleiche --index-Methode), weitere Tabellen-Bulks aus
   phi/tap_index.φ (39 genutzte VizieR-Tabellen), Gaia-Archiv.
+- FRB-Recherche (2026-08-15, „absent ist erst nach Recherche absent"): das
+  Inventar liefert 2 FRB-Tabellen — FRBCAT 2016 (118, 18 z) + A&A 693/A279
+  (2025, 24, 23 z, DM-Halo-Zerlegung, tausc) — beide live, Überlapp ≈ 0.
+  Darüber hinaus existieren FRBCAT1 (frbcat.org, ~840 FRBs, ~50 z) und der
+  CHIME-Katalog (536, ohne z) — außerhalb von VizieR. Offen: Union-Merge mit
+  TNS-Namens-Normalisierung (FRB121102 ↔ FRB20121102A) + frbcat.org-CSV als
+  Quelle (sexagesimal_compiler-Muster).
 
 ---
 
