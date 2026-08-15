@@ -961,13 +961,20 @@ Binary-PCK-Pakets oben).
   lud: sat480 (nur Barycenter 699) statt sat441 (alle Saturn-Monde), jup387xl
   (8 Monde, kein himalia) statt jup341, nep105 statt nep097. Die sechs
   Aug-11-Assets (titan/tethys/rhea/enceladus/dione/triton) sind Stale-Reste der
-  sat441/nep097-Generation. Fix manifestiert: select_system kettet die zwei
-  besten Basen (sat480+sat441, nep105+nep097, jup387xl+jup365) mit Name-Dedupe
-  (der NAIF-generic-jup365-Eintrag mit 69632 B ist ein Crawl-Stub); himalia
-  (506) läuft über die Horizons-Liste bodies_stable, weil jup387xl/jup365 ihn
-  nicht tragen und jup341 (364 MB) allein für ihn zu teuer wäre. Offen:
-  CDN-Befund nach dem nächsten Flatten — falls nep097 die Neptun-Inneren
-  (803-808) nicht trägt, nep086 ketten.
+  sat441/nep097-Generation. Fix manifestiert: `moon_carriers`-Selektion
+  (jupiter→jup365, saturn→sat441+sat427, neptune→nep097) — exklusiv, keine
+  numerische Nachrang-Füllung; die Nummer ordnet nicht mehr nach Abdeckung.
+  Zweiter Befund im selben Lauf: sat441 (2021) trägt 12 Saturn-Monde, aber
+  NICHT atlas/epimetheus/janus/pandora/prometheus — die kommen aus sat427
+  (2018, 254 MB). himalia (506) läuft über die Horizons-Liste bodies_stable.
+- **Flatten-Speicher-Befund (2026-08-15):** `SpkFile::from_daf` parst alle
+  Segment-Payloads upfront — sat441 (661 MB) + jup387xl (1,4 GB) + ura184
+  (387 MB) + nep105 (210 MB) ≈ 3,3 GB Dateien → >7 GB Runner-RAM → Run #7
+  SIGTERM (143), Run #8 „operation canceled" im Extraktions-Silentium. Fix
+  manifestiert: moon_carriers exklusiv (jup365 statt jup387xl, kein
+  sat480/nep105 — die System-Barycenter trägt de721 bereits). Offen
+  (strukturell): Segment-Payloads lazy laden statt upfront, sonst wächst die
+  Ramlast mit jeder Kernel-Generation.
 - Katalog-Kompilate seit 2026-08-15 im selben Job: cometels_compiler
   (cometels_flat.json), dcom5_compiler (dcom5_comets.json),
   tycho2_compiler --source bright (bright_stars.json),
