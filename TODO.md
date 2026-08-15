@@ -317,7 +317,7 @@ siehe M08). Der Ephemeriden-Compiler ist seit K01 tabellegetrieben
 ```
 GESCHLOSSEN (2026-08-15): parse_sources lehnt die tote force-Direktive und den
 3-Token-field laut ab (eprintln Refused — kein stilles 0). Die alte Grammatik aus
-archeology/sources/* und phi/research/batches/* migriert der --gold-Konverter
+phi/port/queue/* und phi/research/batches/* migriert der --gold-Konverter
 (Migration mit Lautsignal).
 ```
 
@@ -399,7 +399,7 @@ API Unreachable, Empty, Malformed, Invalid.
 ```
 Der API-Mirror-Workflow (refresh-protected-data.yml) läuft weiter in Python —
 Rust-Umsetzung mit Auth-Header-Support (siehe Auth-APIs unten). Vorlage:
-archeology/ci/*.yml + archeology/ci/secrets.template. (Der Ephemeriden-Teil der
+/home/johannes/projects/archive/archeology/ci/*.yml + secrets.template. (Der Ephemeriden-Teil der
 CI ist im Kernel-Flattener-Paket oben aufgegangen.)
 ```
 
@@ -466,6 +466,49 @@ Binary-PCK-Pakets oben).
 ```
 
 ---
+
+### Source-Port — der eine Pfad
+
+GESCHLOSSEN (2026-08-15, Struktur-Teil): Alle Source-Arbeit läuft über
+`docs/SOURCE_PORT.md` — das selbsttragende Protokoll mit Zustandsmaschine,
+Workflow-Prozedur (`--gold` → `test_backlog_batches_verify`-Sweep →
+Disposition; kein neuer CLI-Modus), Referenz-Karte (bindend | nachschlagen |
+SUPERSEDED) und Pfadkarte. Arbeitsfläche: `phi/port/` (queue/ 15 Korpora
+getrackt, park/ Parser-Gap-Kandidaten, stage/ Konvertierungs-Ausgänge,
+ledger.φ als DAS Zustands-Register, prompt.φ Port-Vorlage). Bestand:
+`phi/research/`. Register: `phi/sources.φ` + `phi/dead_sources.φ`. Der
+Sweep liest `phi/port/stage/*_converted.φ`; `phi/port/` ist fetch-only im
+Mirror-Gate (wie research). Stale-Specs gebannert:
+PARSER_EVALUATION_MATRIX.md + EXTRACT_TYPES.md (SUPERSEDED by
+SOURCES_V2_SPEC.md).
+
+Doku-Drift: Alle früheren `archeology/`-Referenzen in dieser Datei und in
+docs/source_curation.md zeigen auf den Konsolidierungs-Zwischenstand vor
+2026-08-15. Der Bestand liegt heute unter /home/johannes/projects/archive/
+(archeology/ dorthin verschoben); die aktionierbaren Korpora sind nach
+phi/port/queue/ kopiert (getrackt).
+
+Offen (Detail in phi/port/ledger.φ, jede Zeile mit Zustand):
+- Queue: 10 Untested-Korpora (14k/13k/15k/7k/2k/183l/astro/earth/exotic/
+  candidate-staging), Gold 2572 + Recovery 1924 + 5701 Lost-Blocks (Join aus
+  richest/params) — Port durch die Prozedur.
+- Bestand: 38 offene VizieR-Bulks, IRSA/GAVO/ARI/ExoArchive-Inventare,
+  GCNS/MWSC, 8 VirES-Drafts, 32 ArcGIS-Drafts, 103 TerraPulse-Kandidaten,
+  77 Archeology-Gaps, ESA-Kandidaten, FRB-Union, Arena/Foundation/Research-
+  Schatz im Archiv.
+- Nachlauf: VirES-Vollprobe (64 Drafts, Datei ABSENT) + DONKI-Familie
+  (CME-Draft, Datei ABSENT).
+- Park: Pegelonline, USGS-Geomag, GWOSC/GraceDB (Skymap), DSN, CENC,
+  JMA-Quake (cod-String), SDSS-SkyServer.
+- Rechecks: Argovis, sensor.community, environment.data.gov.uk, BGS-GIN,
+  IRSA-Gator-CSV, ACTRIS, GTN-P, GONG, OceanNetworks, OMNIWeb, AstDyS,
+  SuperMAG, WOUDC, AAVSO-VSX, ATNF-PSRCAT, TESS-Target-CSV,
+  Tides&Currents-Datagetter, coastwatch/ifremer/emodnet-ERDDAP, PMEL,
+  SERVIR/NDBC/Hurricanes-ArcGIS, AFAD tadas, MPC-Unterrouten,
+  SWPC ace_mag_1h.
+- Parser-Gaps: P02–P08, HapiFieldConfig, SignumFaltung, PostBodyMigration
+  (method/body fällt im --gold-Konverter), GLMNetCDF; Kraft-Abdeckung
+  acoustic/electric/thermal/advective/diffusion-Kuration.
 
 ### Curation & Quellen
 
@@ -800,7 +843,7 @@ Binary-PCK-Pakets oben).
 - `force` und der 3-Token-`field` lehnt `parse_sources` laut ab (Refused, P01
   geschlossen); `field_in` migriert der `--gold`-Konverter, `pos` trägt keinen Arm.
 - Test-Limit der Curation über 200 Blöcke hinaus erhöhen; 6 Rest-FAILs sind
-  Daten-Artefakte (docs/source_curation.md).
+  Daten-Artefakte (docs/SOURCE_PORT.md §5).
 - **Kanonisierung 2026-08-15:** `phi/sources.φ` (171 Blöcke), `phi/dead_sources.φ`
   (1.056 unique) und `.secrets.local` (46 Keys) aufgeräumt und sortiert:
   Blöcke alphabetisch nach URL, kommentarfrei, Direktiven in kanonischer

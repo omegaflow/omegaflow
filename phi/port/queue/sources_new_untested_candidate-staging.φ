@@ -1,0 +1,523 @@
+# sources_new.φ — STAGING for curated source candidates
+#
+# Rule: a block enters this file ONLY after (a) reachability test passed
+# (direct + Jina route), and (b) field paths verified against the live
+# response structure. Blocks here are NOT loaded by the Archivar.
+# Move rule: verified -> sources_live.φ (live API) or sources_cdn.φ (CDN).
+#
+# 9 blocks promoted to sources_live.φ on 2026-08-07:
+# geomag_boulder, aeronet_mauna_loa, noaa_wind_keywest,
+# noaa_airtemp_providence, cfc11, cfc12, co2_daily, ndbc_41001.spec,
+# nws_asos_jfk
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=water_temperature&begin_date={year}{month}{day}&end_date={year}{month}{day}&station=8447435&datum=MLLW&units=metric&time_zone=gmt&format=json
+ttl 86400
+force em
+at sun 1
+map data
+lat 41.52
+lon -70.67
+  field_in t observation_time
+  field_in v water_temperature_c
+  field_in f quality_flags
+
+url https://api.waqi.info/map/bounds/?latlng=-10,100,55,145&token=demo
+ttl 300
+force acoustic
+on earth 0 0
+map data
+lat_key lat
+lon_key lon
+  field_in aqi aqi_index
+  field_in station.name station_name
+
+url https://api.waqi.info/map/bounds/?latlng=17,72,54,136&token=demo
+ttl 3600
+force diffusion
+on earth 0 0
+map data
+lat_key lat
+lon_key lon
+  field_in aqi aqi_index
+  field_in station.name station_name
+  field_in station.time.stime observation_time
+
+url https://api.waqi.info/map/bounds/?latlng=-60,-180,60,180&token=demo
+ttl 3600
+force diffusion
+on earth 0 0
+map data
+lat_key lat
+lon_key lon
+  field_in aqi aqi_index
+  field_in station.name station_name
+  field_in station.time.stime observation_time
+
+url https://aviationweather.gov/api/data/isigmet?format=json
+ttl 3600
+force acoustic
+on earth 0 0
+map .
+lat_key lat
+lon_key lon
+  field_in seriesId sigmet_id
+  field_in icaoId issuing_center
+  field_in hazard hazard_type
+  field_in qualifier qualifier
+  field_in top_fl top_flight_level
+  field_in base_fl base_flight_level
+  field_in validTimeFrom valid_from
+  field_in validTimeTo valid_to
+
+url https://cddis.nasa.gov/archive/gnss/products/{year}{day}/igs{year}{day}.sp3.Z
+format text
+ttl 3600
+force thermal
+at sun 1
+rows
+lat 0.0
+lon 0.0
+  field_in 0 satellite_id
+  field_in 1 gps_week
+  field_in 2 seconds_of_week
+  field_in 3 x_km
+  field_in 4 y_km
+  field_in 5 z_km
+  field_in 6 clock_microsec
+
+url https://cddis.nasa.gov/archive/vlbi/ivsdata/aux/master{year}.txt
+format text
+ttl 86400
+force seismic-surface
+at sun 1
+rows
+lat 0.0
+lon 0.0
+  field_in 0 session_code
+  field_in 1 session_type
+  field_in 2 date_yyyy_ddd
+  field_in 3 start_time_utc
+  field_in 4 duration_h
+  field_in 5 stations_list
+  field_in 6 scheduler
+  field_in 7 correlator
+
+url https://climate-api.open-meteo.com/v1/climate?latitude={lat}&longitude={lon}&start_date=2015-01-01&end_date=2024-12-31&yearly=temperature_2m_mean,precipitation_sum,windspeed_10m_mean&models=EC_Earth3P_HR&format=json
+ttl 3600
+force thermal
+at sun 1
+map yearly.time
+field_in yearly.temperature_2m_mean temp_annual_mean_c
+field_in yearly.precipitation_sum precip_annual_mm
+field_in yearly.windspeed_10m_mean wind_annual_ms
+
+url https://ds.iris.edu/spud/momenttensor?evlo=&evla=&evdp=&startTime={today}T00:00:00&endTime={tomorrow}T00:00:00&catalog=GCMT&format=text&nodata=404
+format text
+ttl 86400
+force seismic-body
+on earth 0 0
+rows
+lat_key evla
+lon_key evlo
+  field_in evid event_id
+  field_in evla centroid_lat
+  field_in evlo centroid_lon
+  field_in evdp centroid_depth_km
+  field_in mag moment_magnitude
+  field_in type mechanism_type
+  field_in strike strike_deg
+  field_in dip dip_deg
+  field_in rake rake_deg
+
+url https://gcn.gsfc.nasa.gov/amon_icecube_gold_bronze_events.html
+format text
+ttl 300
+force em
+on earth 0 0
+rows
+lat_key dec
+lon_key ra
+  field_in stream alert_stream
+  field_in id event_id
+  field_in ra ra_deg
+  field_in dec dec_deg
+  field_in energy energy_proxy_TeV
+  field_in signalness p_astro
+  field_in far false_alarm_rate_yr
+  field_in src_error_90 error_radius_90_deg
+
+url https://gis1.servirglobal.net/arcgis/rest/services/Global/SoilMoisture/MapServer/0/query?where=1%3D1&geometry={lon_min}%2C{lat_min}%2C{lon_max}%2C{lat_max}&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=*&f=json&resultRecordCount=500
+ttl 86400
+force diffusion
+on earth 0 0
+map features
+lat_key properties.LATITUDE
+lon_key properties.LONGITUDE
+  field_in attributes.SOIL_MOISTURE soil_moisture_m3_m3
+  field_in attributes.DATE_TIME measurement_date
+  field_in attributes.QUALITY_FLAG quality_flag
+
+url https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M,PRECTOTCORR,ALLSKY_SFC_SW_DWN,ALLSKY_SFC_LW_DWN,RH2M,WS10M&community=AG&longitude={lon}&latitude={lat}&start={year}{month}01&end={year}{month}{day}&format=JSON
+ttl 86400
+force acoustic
+on earth 0 0
+map properties.parameter.T2M
+lat_key lat
+lon_key lon
+  field_in T2M temp_2m_c
+  field_in PRECTOTCORR precipitation_mm_d
+  field_in ALLSKY_SFC_SW_DWN solar_irradiance_MJ_m2_d
+  field_in RH2M relative_humidity_pct
+  field_in WS10M wind_speed_10m_m_s
+
+url https://services.arcgis.com/nGt4QxSblgDfeJn9/arcgis/rest/services/GlobalFireRiskIndex/FeatureServer/0/query?where=1%3D1&geometry={lon_min}%2C{lat_min}%2C{lon_max}%2C{lat_max}&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=*&f=json&resultRecordCount=500
+ttl 3600
+force em
+on earth 0 0
+map features
+lat_key properties.LATITUDE
+lon_key properties.LONGITUDE
+  field_in attributes.FRI fire_risk_index_0_5
+  field_in attributes.COUNTRY country_name
+  field_in attributes.BIOME biome_type
+  field_in attributes.YEAR_ASSESSMENT assessment_year
+
+url https://services3.arcgis.com/GVgbJbqm8hXASVYi/arcgis/rest/services/PAGER_CAT/FeatureServer/0/query?where=1%3D1&geometry={lon_min}%2C{lat_min}%2C{lon_max}%2C{lat_max}&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=*&f=json&resultRecordCount=500
+ttl 86400
+force thermal
+on earth 0 0
+map features
+lat_key properties.LATITUDE
+lon_key properties.LONGITUDE
+  field_in attributes.YEAR event_year
+  field_in attributes.MONTH event_month
+  field_in attributes.MAG magnitude
+  field_in attributes.DEPTH depth_km
+  field_in attributes.DEATHS deaths
+  field_in attributes.INJURIES injuries
+  field_in attributes.DAMAGE_USD damage_million_usd
+  field_in attributes.COUNTRY country
+
+url https://ssd-api.jpl.nasa.gov/fireball.api?date-min=2010-01-01&req-loc=true&limit=1000&sort=-energy
+ttl 86400
+force gravity
+at sun 1.0
+map data
+field_in 2 date
+field_in 3 radiated_energy_gj
+field_in 4 impact_energy_kt
+field_in 6 latitude
+field_in 8 longitude
+field_in 7 lat_dir
+field_in 9 lon_dir
+lat_key latitude
+lon_key longitude
+
+url https://thredds.silam.fmi.fi/thredds/catalog.html
+format text
+ttl 3600
+force thermal
+on earth 0 0
+rows
+lat_key lat
+lon_key lon
+  field_in PM2_5 pm25_ugm3
+  field_in PM10 pm10_ugm3
+  field_in NO2 no2_ugm3
+  field_in O3 o3_ugm3
+
+url https://www.ncei.noaa.gov/paleo-search/study/search.json?dataPublisher=NOAA&dataTypeId=2&keyword=ENSO+coral+Indo-Pacific&format=json&limit=100
+ttl 86400
+force diffusion
+on earth 0 0
+map studyList
+lat_key site.geo.geometry.coordinates.1
+lon_key site.geo.geometry.coordinates.0
+  field_in xmlId study_id
+  field_in studyName study_title
+  field_in earliestYearBP start_age_bp
+  field_in site.siteName site_name
+
+url https://www.ncei.noaa.gov/paleo-search/study/search.json?dataPublisher=NOAA&dataTypeId=2&keyword=Atlantic+coral&format=json&limit=100
+ttl 300
+force em
+on earth 0 0
+map studyList
+lat_key site.geo.geometry.coordinates.1
+lon_key site.geo.geometry.coordinates.0
+  field_in xmlId study_id
+  field_in studyName study_title
+  field_in earliestYearBP start_age_bp
+  field_in site.siteName site_name
+
+url https://www.ncei.noaa.gov/paleo-search/study/search.json?dataPublisher=NOAA&dataTypeId=3&keyword=pollen&format=json&limit=200
+ttl 86400
+force em
+on earth 0 0
+map studyList
+lat_key site.geo.geometry.coordinates.1
+lon_key site.geo.geometry.coordinates.0
+  field_in xmlId study_id
+  field_in studyName record_title
+  field_in earliestYearBP oldest_age_bp
+  field_in mostRecentYearBP youngest_age_bp
+  field_in site.siteName core_site
+
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-month&dataTypes=TMAX,TMIN,PRCP,TAVG,SNOW,SNWD&stations=GM000003026,GM000003946,UKM00003772,USW00094728&startDate={year}-01-01&endDate={year}-{month}-{day}&format=json
+ttl 300
+force diffusion
+on earth 0 0
+map .
+lat_key LATITUDE
+lon_key LONGITUDE
+  field_in STATION station_id
+  field_in NAME station_name
+  field_in DATE month_year
+  field_in TMAX max_temp_c
+  field_in TMIN min_temp_c
+  field_in TAVG avg_temp_c
+  field_in PRCP precipitation_mm
+  field_in SNOW snowfall_mm
+
+url https://www.ncei.noaa.gov/paleo-search/study/search.json?dataPublisher=NOAA&dataTypeId=7&keyword=speleothem+stalagmite&format=json&limit=200
+ttl 86400
+force diffusion
+on earth 0 0
+map studyList
+lat_key site.geo.geometry.coordinates.1
+lon_key site.geo.geometry.coordinates.0
+  field_in xmlId study_id
+  field_in studyName record_title
+  field_in earliestYearBP oldest_age_bp
+  field_in mostRecentYearBP youngest_age_bp
+  field_in site.siteName cave_name
+  field_in paleoData.0.paleoDataName primary_proxy
+
+url https://www.ncei.noaa.gov/paleo-search/study/search.json?dataPublisher=NOAA&keyword=PAGES+2k&format=json&limit=300
+ttl 3600
+force acoustic
+on earth 0 0
+map studyList
+lat_key site.geo.geometry.coordinates.1
+lon_key site.geo.geometry.coordinates.0
+  field_in xmlId study_id
+  field_in studyName proxy_name
+  field_in earliestYearBP earliest_year_bp
+  field_in mostRecentYearBP most_recent_year_bp
+  field_in site.siteName site_name
+  field_in paleoData.0.paleoDataName proxy_type
+
+url https://www.ncei.noaa.gov/paleo-search/study/search.json?dataPublisher=NOAA&dataTypeId=14&keyword=tree+ring&format=json&limit=300
+ttl 86400
+force em
+on earth 0 0
+map studyList
+lat_key site.geo.geometry.coordinates.1
+lon_key site.geo.geometry.coordinates.0
+  field_in xmlId study_id
+  field_in studyName chronology_title
+  field_in earliestYearBP oldest_year_bp
+  field_in mostRecentYearBP most_recent_year_bp
+  field_in site.siteName site_name
+  field_in investigators investigators
+
+url https://api.blitzortung.org/v1/strikes/latest?lat={lat}&lon={lon}&radius=100
+ttl 60
+force em
+at sun 1.0
+count . atmosphere_lightning_strikes_count_100km
+
+url https://geomag.usgs.gov/ws/data/?id=BOU&type=adjusted&starttime={today}T00:00:00&endtime={today}T23:59:59&format=json&sampling_period=60
+ttl 60
+force em
+on earth 0 0
+field BOU.0.0.0 magnetometer_x_bou_nt
+field BOU.0.0.1 magnetometer_y_bou_nt
+field BOU.0.0.2 magnetometer_z_bou_nt
+
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?site=Mauna_Loa&year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD15=1&AVG=10&if_no_html=1
+ttl 86400
+force thermal
+on earth 0 0
+format csv
+last_row AOD_500nm atmosphere_aerosol_optical_depth_mauna_loa
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8724580&product=wind&time_zone=gmt&units=metric&format=json&date=latest
+ttl 300
+force acoustic
+on earth 0 0
+first data.0.s atmosphere_wind_speed_keywest_ms
+first data.0.dr atmosphere_wind_dir_keywest_deg
+
+url https://www.ndbc.noaa.gov/data/realtime2/51001.txt
+ttl 300
+force acoustic
+on earth 0 0
+format csv
+last_row WTMP hydrosphere_buoy_51001_water_temp
+last_row WVHT hydrosphere_buoy_51001_wave_height
+last_row DPD hydrosphere_buoy_51001_dominant_period
+
+url https://gml.noaa.gov/aftp/data/hats/cfcs/cfc11/combined/HATS_global_F11.txt
+ttl 2592000
+force diffusion
+on earth 0 0
+format csv
+last_row global_mean atmosphere_cfc11_global_ppt
+
+url https://gml.noaa.gov/aftp/data/hats/cfcs/cfc12/combined/HATS_global_F12.txt
+ttl 2592000
+force diffusion
+on earth 0 0
+format csv
+last_row global_mean atmosphere_cfc12_global_ppt
+
+url https://network.satnogs.org/api/observations/?format=json&limit=1
+ttl 300
+force em
+at sun 1.0
+field count technosphere_satnogs_total_observations
+
+url https://www.ndbc.noaa.gov/data/realtime2/44065.txt
+ttl 300
+force acoustic
+on earth 0 0
+format csv
+last_row WTMP hydrosphere_buoy_44065_water_temp
+last_row WVHT hydrosphere_buoy_44065_wave_height
+last_row DPD hydrosphere_buoy_44065_dominant_period
+
+url https://api.weather.gov/stations/KJFK/observations/latest
+ttl 300
+force thermal
+on earth 0 0
+path properties.temperature.value atmosphere_temp_jfk_c
+path properties.barometricPressure.value atmosphere_pressure_jfk_pa
+path properties.windSpeed.value atmosphere_wind_speed_jfk_ms
+
+url https://firms.modaps.eosdis.nasa.gov/data/active_fire/suomi-npp-viirs-c2/csv/SUOMI_VIIRS_C2_Global_24h.csv
+ttl 10800
+force thermal
+at sun 1.0
+format csv
+count lines geosphere_global_active_fires_24h
+
+url https://www.ndbc.noaa.gov/data/realtime2/41001.spec
+ttl 300
+force acoustic
+on earth 0 0
+format csv
+last_row SwH hydrosphere_swell_height_41001_m
+last_row SwP hydrosphere_swell_period_41001_s
+
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_daily_mlo.txt
+ttl 86400
+force diffusion
+on earth 0 0
+format csv
+last_row value atmosphere_co2_daily_mlo_ppm
+
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_mm_mlo.txt
+ttl 2592000
+force diffusion
+on earth 0 0
+format csv
+last_row average atmosphere_co2_monthly_mlo_ppm
+
+url https://gml.noaa.gov/webdata/ccgg/trends/ch4/ch4_mm_gl.txt
+ttl 2592000
+force diffusion
+on earth 0 0
+format csv
+last_row average atmosphere_ch4_monthly_global_ppb
+
+url https://gml.noaa.gov/webdata/ccgg/trends/n2o/n2o_mm_gl.txt
+ttl 2592000
+force diffusion
+on earth 0 0
+format csv
+last_row average atmosphere_n2o_monthly_global_ppb
+
+url https://gml.noaa.gov/webdata/ccgg/trends/sf6/sf6_mm_gl.txt
+ttl 2592000
+force diffusion
+on earth 0 0
+format csv
+last_row average atmosphere_sf6_monthly_global_ppt
+
+url https://api.open-meteo.com/v1/elevation?latitude={lat}&longitude={lon}
+ttl 2592000
+force thermal
+on earth 0 0
+field elevation geosphere_elevation_m
+
+url https://rest.isric.org/soilgrids/v2.0/properties/query?lon={lon}&lat={lat}&property=phh2o&depth=0-5cm&value=mean
+ttl 2592000
+force diffusion
+on earth 0 0
+path properties.phh2o.depths.0.values.mean geosphere_soil_ph_0_5cm
+
+url https://rest.isric.org/soilgrids/v2.0/properties/query?lon={lon}&lat={lat}&property=clay&depth=0-5cm&value=mean
+ttl 2592000
+force diffusion
+on earth 0 0
+path properties.clay.depths.0.values.mean geosphere_soil_clay_0_5cm_gkg
+
+url https://rest.isric.org/soilgrids/v2.0/properties/query?lon={lon}&lat={lat}&property=soc&depth=0-5cm&value=mean
+ttl 2592000
+force diffusion
+on earth 0 0
+path properties.soc.depths.0.values.mean geosphere_soil_organic_carbon_0_5cm
+
+url https://www.ndbc.noaa.gov/data/realtime2/46001.txt
+ttl 300
+force acoustic
+on earth 0 0
+format csv
+last_row WTMP hydrosphere_buoy_46001_water_temp
+last_row WVHT hydrosphere_buoy_46001_wave_height
+last_row PRES hydrosphere_buoy_46001_pressure
+
+url https://www.ndbc.noaa.gov/data/realtime2/51004.txt
+ttl 300
+force acoustic
+on earth 0 0
+format csv
+last_row WTMP hydrosphere_buoy_51004_water_temp
+last_row WVHT hydrosphere_buoy_51004_wave_height
+
+url https://www.ndbc.noaa.gov/data/realtime2/42001.txt
+ttl 300
+force acoustic
+on earth 0 0
+format csv
+last_row WTMP hydrosphere_buoy_42001_water_temp
+last_row WVHT hydrosphere_buoy_42001_wave_height
+last_row PRES hydrosphere_buoy_42001_pressure
+
+url https://app.birdweather.com/api/v1/stations/{id}/detections?limit=100&from={today}T00:00:00Z
+ttl 300
+force biotic
+on earth 0 0
+map detections
+lat_key lat
+lon_key lon
+  field timestamp detection_timestamp
+  field confidence detection_confidence
+  field species.commonName species_common_name
+  field species.scientificName species_scientific_name
+
+url https://services7.arcgis.com/yHbO69mL1QTGCPQG/arcgis/rest/services/PSF_harmful_phyto/FeatureServer/0/query?where=1%3D1&outFields=*&f=geojson&resultRecordCount=500
+ttl 86400
+force biotic
+on earth 0 0
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+  field properties.station station_id
+  field properties.year sample_year
+  field properties.month sample_month
+  field properties.depth_m sample_depth_m
+  field properties.chaetoceros chaetoceros_cells
+  field properties.alexandriu alexandrium_cells
+  field properties.cochlodini cochlodinium_cells

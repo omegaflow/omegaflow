@@ -4440,7 +4440,6 @@ fn parse_sources(content: &str) -> Vec<SourceConfig> {
     let mut cur_min_freq: Option<f64> = None;
     let mut cur_body: Option<String> = None;
     let mut cur_post_body: Option<String> = None;
-    let mut cur_force: Option<u8> = None;
 
     let mut cur_stations_url: Option<String> = None;
     let mut cur_stations_path = String::from("stations");
@@ -4528,7 +4527,6 @@ fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 cur_min_freq = None;
                 cur_body = None;
                 cur_post_body = None;
-                cur_force = None;
                 cur_stations_url = None;
                 cur_stations_path = String::from("stations");
                 cur_stations_lat = String::from("lat");
@@ -4988,32 +4986,10 @@ fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 }
             }
             "field" if parts.len() == 3 => {
-                if let Some(ext) = cur_extracts.last_mut() {
-                    if let Some(f) = cur_force {
-                        let fc = FieldConfig {
-                            key: parts[1].to_string(),
-                            name: parts[2].to_string(),
-                            kernel: match kernel_for_force(f) {
-                                Some(k) => k,
-                                None => continue,
-                            },
-                            force: f,
-                            tau: 0.0,
-                            absorption: 0.0,
-                            advection: 0.0,
-                        };
-                        match ext {
-                            Extract::Map { fields, .. } => fields.push(fc),
-                            Extract::CelestialMap { fields, .. } => fields.push(fc),
-                            Extract::Rows { fields, .. } => fields.push(fc),
-                            Extract::Flatten { fields, .. } => fields.push(fc),
-                            Extract::CmrPolygon { fields, .. } => fields.push(fc),
-                            Extract::CelestialPolygon { fields, .. } => fields.push(fc),
-                            Extract::KeplerMap { fields, .. } => fields.push(fc),
-                            _ => {}
-                        }
-                    }
-                }
+                eprintln!(
+                    "field refused at {}: 3-token field carries no tau (τ-Gate)",
+                    parts[1]
+                );
             }
             "field" if parts.len() >= 9 => {
                 let k = match kernel_id_of(parts[3]) {
@@ -5174,9 +5150,10 @@ fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 cur_body = Some(parts[1].to_string());
             }
             "force" if parts.len() >= 2 => {
-                if let Some(f) = force_id_of(parts[1]) {
-                    cur_force = Some(f);
-                }
+                eprintln!(
+                    "force directive refused at {}: force is a field token, not a standalone directive",
+                    parts[1]
+                );
             }
             "header" if parts.len() >= 3 => {
                 cur_headers.push((parts[1].to_string(), parts[2].to_string()));
@@ -7729,7 +7706,6 @@ fn source_name_from_url(url: &str) -> String {
         .chars()
         .map(|c| match c {
             c if c.is_ascii_alphanumeric()
-                || c == '/'
                 || c == '-'
                 || c == '.'
                 || c == '_'
@@ -7738,14 +7714,14 @@ fn source_name_from_url(url: &str) -> String {
             {
                 c
             }
-            '?' | '&' | '=' => '/',
+            '/' | '?' | '&' | '=' => '-',
             _ => '_',
         })
         .collect::<String>();
     if cleaned.is_empty() {
         "index".to_string()
     } else {
-        cleaned.trim_matches('/').to_string()
+        cleaned.trim_matches('-').to_string()
     }
 }
 
@@ -8762,10 +8738,11 @@ fn load_all_sources(dir: &str) -> Vec<SourceConfig> {
         for e in entries.flatten() {
             let p = e.path();
             if p.is_dir() {
-                let is_research = p
-                    .file_name()
-                    .is_some_and(|n| n.to_string_lossy() == "research");
-                if is_research {
+                let is_fetch_only = p.file_name().is_some_and(|n| {
+                    let n = n.to_string_lossy();
+                    n == "research" || n == "port"
+                });
+                if is_fetch_only {
                     continue;
                 }
                 let path_str = p.to_string_lossy().to_string();
@@ -9570,6 +9547,42 @@ mod tests {
     use super::*;
     use std::collections::HashMap;
 
+    fn full_fixture_lsk() -> super::LeapSeconds {
+        super::LeapSeconds {
+            delta_t_a: 32.184,
+            deltas: vec![
+                (10.0, 63072000.0),
+                (11.0, 78796800.0),
+                (12.0, 94694400.0),
+                (13.0, 126230400.0),
+                (14.0, 157766400.0),
+                (15.0, 189302400.0),
+                (16.0, 220924800.0),
+                (17.0, 252460800.0),
+                (18.0, 283996800.0),
+                (19.0, 315532800.0),
+                (20.0, 362793600.0),
+                (21.0, 394329600.0),
+                (22.0, 425865600.0),
+                (23.0, 489024000.0),
+                (24.0, 567993600.0),
+                (25.0, 631152000.0),
+                (26.0, 662688000.0),
+                (27.0, 709948800.0),
+                (28.0, 741484800.0),
+                (29.0, 773020800.0),
+                (30.0, 820454400.0),
+                (31.0, 867715200.0),
+                (32.0, 915148800.0),
+                (33.0, 1136073600.0),
+                (34.0, 1230768000.0),
+                (35.0, 1341100800.0),
+                (36.0, 1435708800.0),
+                (37.0, 1483228800.0),
+            ],
+        }
+    }
+
     #[test]
     fn test_parse_json_skips_jina_header() {
         let s = "Title: \n\n\nURL Source: http://api.wheretheiss.at/v1/satellites/25544\n\n\nMarkdown Content:\n{\"name\":\"iss\",\"id\":25544,\"latitude\":-39.79}";
@@ -9888,6 +9901,22 @@ field H comet_h_mag gaussian-inverse-square em mag 604800 0.0 0.0\n";
     }
 
     #[test]
+    fn test_dead_grammar_refused() {
+        let phi = "url https://example.com/dead.json\n\
+ttl 60\n\
+on earth 0.0 0.0\n\
+cmap .\n\
+force em\n\
+field temp temp_c\n";
+        let sources = parse_sources(phi);
+        assert_eq!(sources.len(), 1);
+        match &sources[0].extracts[0] {
+            Extract::CelestialMap { fields, .. } => assert!(fields.is_empty()),
+            _ => panic!("expected CelestialMap extract"),
+        }
+    }
+
+    #[test]
     fn test_extract_cmap_dist_scale_kpc() {
         let json = r#"[{"ra":0.0,"dec":0.0,"dist_kpc":1.0,"H":5.5}]"#;
         let src = SourceConfig {
@@ -10181,7 +10210,7 @@ field H comet_h_mag gaussian-inverse-square em mag 604800 0.0 0.0\n";
     #[test]
     fn temp_gold_convert_check() {
         let content =
-            std::fs::read_to_string("archeology/sources/sources_gold_pre-cdn_27k_359-domains.φ")
+            std::fs::read_to_string("phi/port/queue/sources_gold_pre-cdn_27k_359-domains.φ")
                 .unwrap();
         let mut blocks = 0usize;
         let mut parsed = 0usize;
@@ -10208,7 +10237,6 @@ field H comet_h_mag gaussian-inverse-square em mag 604800 0.0 0.0\n";
         );
     }
 
-    #[test]
     #[test]
     fn test_parse_stations_xml() {
         let xml = "<?xml version=\"1.0\" ?><GINServices>\n <ObservatoryList>\n  <Observatory>\n   <Code>AAE</Code>\n   <Name>Addis Ababa</Name>\n   <Latitude>9.035</Latitude>   <Longitude>38.770</Longitude>   <Elevation>2441</Elevation>\n  </Observatory>\n  <Observatory>\n   <Code>YKC</Code>\n   <Latitude>62.48</Latitude>   <Longitude>-114.48</Longitude>   <Elevation>181</Elevation>\n  </Observatory>\n </ObservatoryList>\n</GINServices>";
@@ -10258,49 +10286,40 @@ field H comet_h_mag gaussian-inverse-square em mag 604800 0.0 0.0\n";
             .collect();
         let mut seen: std::collections::HashSet<String> = std::collections::HashSet::new();
         let mut ok_text = String::from("# staging: backlog blocks verified with samples\n");
-        if let Ok(existing) =
-            std::fs::read_to_string("phi/research/agent_output/staging_verified.φ")
-        {
+        if let Ok(existing) = std::fs::read_to_string("phi/port/stage/staging_verified.φ") {
             for l in existing.lines() {
                 let t = l.trim_start();
                 if t.starts_with("url ") {
-                    seen.insert(substitute_test_templates(t[4..].trim()));
+                    seen.insert(t[4..].trim().to_string());
                 }
             }
             ok_text = existing;
         }
         let mut void_text = String::new();
-        if let Ok(existing) = std::fs::read_to_string("phi/research/agent_output/staging_empty.txt")
-        {
+        if let Ok(existing) = std::fs::read_to_string("phi/port/stage/staging_empty.txt") {
             for l in existing.lines() {
                 if let Some(u) = l.strip_prefix("void ") {
                     if let Some(end) = u.find(' ') {
-                        seen.insert(u[..end].replace(' ', "%20"));
+                        seen.insert(u[..end].to_string());
                     }
                 }
             }
             void_text = existing;
         }
-        let fixture_lsk = super::LeapSeconds {
-            delta_t_a: 32.184,
-            deltas: vec![(37.0, 1483228800.0)],
-        };
+        let fixture_lsk = full_fixture_lsk();
         let now = fixture_lsk.system_now_tdb().unwrap();
         let env = super::load_env();
         let mut limit = 300usize;
         let mut ok = 0usize;
         let mut empty = 0usize;
-        for e in std::fs::read_dir("phi/research/agent_output")
-            .unwrap()
-            .flatten()
-        {
+        for e in std::fs::read_dir("phi/port/stage").unwrap().flatten() {
             let fname = e.file_name().to_string_lossy().to_string();
-            if !fname.ends_with("_accepted.φ") && fname != "gold_converted.φ" {
+            if !fname.ends_with("_converted.φ") {
                 continue;
             }
             let content = std::fs::read_to_string(e.path()).unwrap();
             let mut block = String::new();
-            for line in content.lines() {
+            for line in content.lines().chain(std::iter::once("url __eof__")) {
                 let t = line.trim_start();
                 if t.starts_with("url ") && !block.is_empty() {
                     if limit == 0 {
@@ -10311,13 +10330,13 @@ field H comet_h_mag gaussian-inverse-square em mag 604800 0.0 0.0\n";
                         if s.fanout_cap > 0 || s.format == "csv_zip" || s.format == "kernel_text" {
                             break;
                         }
-                        limit -= 1;
                         let mut url = substitute_test_templates(&s.url);
                         url = super::resolve_secret(&url, &env);
                         url = url.replace(' ', "%20");
-                        if live.contains(&s.url) || !seen.insert(url.clone()) {
+                        if live.contains(&s.url) || !seen.insert(s.url.clone()) {
                             break;
                         }
+                        limit -= 1;
                         let headers = super::render_headers(&s.headers, &env);
                         let body = match super::fetch_raw_probe(&url, None, &headers) {
                             Some(b) => b,
@@ -10355,8 +10374,8 @@ field H comet_h_mag gaussian-inverse-square em mag 604800 0.0 0.0\n";
             }
         }
         eprintln!("=== BACKLOG VERIFY: {} ok, {} empty ===", ok, empty);
-        let ok_path = "phi/research/agent_output/staging_verified.φ";
-        let void_path = "phi/research/agent_output/staging_empty.txt";
+        let ok_path = "phi/port/stage/staging_verified.φ";
+        let void_path = "phi/port/stage/staging_empty.txt";
         std::fs::write(ok_path, &ok_text).unwrap();
         std::fs::write(void_path, &void_text).unwrap();
         eprintln!("staged: {} and {}", ok_path, void_path);
@@ -11077,10 +11096,7 @@ field H comet_h_mag gaussian-inverse-square em mag 604800 0.0 0.0\n";
     fn test_live_sources_extract() {
         let srcs = super::load_sources();
         eprintln!("load_sources returned {} sources", srcs.len());
-        let fixture_lsk = super::LeapSeconds {
-            delta_t_a: 32.184,
-            deltas: vec![(37.0, 1483228800.0)],
-        };
+        let fixture_lsk = full_fixture_lsk();
         let now = fixture_lsk.system_now_tdb().unwrap();
         let mut ok = 0usize;
         let mut empty: Vec<(String, String)> = Vec::new();

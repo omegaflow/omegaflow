@@ -1,5 +1,9 @@
 # Extract Types
 
+> SUPERSEDED: Enum-Stand veraltet (`force_unit`-Felder, vor der
+> 9-Token-Feldform). Lebend: der `Extract`-Enum in `src/main.rs` und
+> `docs/concepts/SOURCES_V2_SPEC.md` §1 Directive Table. Diese Datei ist Historie.
+
 `src/main.rs` (`Extract` enum)
 
 ## Scalar extracts (outside map/cmap/rows)

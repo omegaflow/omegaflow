@@ -44,7 +44,7 @@ Thresholds derive from: c, Φ, J2000, power-of-2, live data, or BodyProperties (
 Behavior emerges from properties.
 Name = Implementation.
 Diagnostics name what IS, not what was EXPECTED. No `failed`, `error`, `crash`, `secret`, `cannot`, `fallback` in messages or variable names. A Sirian reading the output must understand what happened without knowing what was supposed to happen.
-0 honored: absence is a fully realized property. Black window, empty field, τ=0 gate closed — these are correct states, not bugs. Empty is not a default. Silence is not a crash.
+0 honored: absence is a fully realized property. Black window, empty field, τ=0 gate closed — these are correct states, not bugs. Empty is not a default. Silence is not a crash. 0 honored holds exactly when the 0 is the physical truth of the measurement — the measurement is absent from the thing itself (no force, no sensor signal, no parallax, no ellipse). Where the data exist and only remain to be researched, fetched, implemented, or verified, the 0 is not a truth and not honored: `ausstehend`, `offen`, `unimplementiert`, `unverifiziert`, `refused`, `außerhalb der Abdeckung`, `kein Secret`.
 Every `unwrap_or`, `_ => 0`, `max(1)`, `#[derive(Default)]` is a fabrication waiting to happen. Eliminate them. The archaeology documents the war against them.
 Role entities carry German proper names. "Archiver" is backup software — "Archivar" is the keeper of records. "Mathematician" is an academic professional — "Mathematikerin" is she who does mathematics. The name is the craft, not the profession.
 Code is self-documenting.
@@ -53,15 +53,17 @@ A commit is a checkmark. Every commit closes a TODO item, opens one, or narrows 
 Name = Implementation. TODO entries carry no numeric identifiers. The heading is the identifier.
 `cargo check` must produce zero errors AND zero warnings. A warning is a dead code path, an unused import, a neglected binding — it is code rot. Never silence a warning with `#[allow(...)]` or a leading underscore. Fix the code so the warning does not exist. `cargo check` verifies Rust syntax only — it does not verify function. Manual verification is mandatory (see Verification section below).
 
-## Source Curation
+## Source Curation — Der eine Pfad
 
-Before touching any `phi/` source file, read `docs/source_curation.md` — it is
-the self-contained protocol for the ongoing source recovery and verification
-effort. It explains the two source files, the Force Gate, the classification
-system, the per-block testing workflow, and the pending list at
-`archeology/sources/sources_*_untested_*` (the pending list lives there since the
-pre-cdn-history tree was archived; see `docs/source_curation.md`). A new session has zero prior
-context; that document is the handoff.
+Alle Source-Arbeit (Grind, Port, Kuration) läuft ausschließlich über
+`docs/SOURCE_PORT.md` — das selbsttragende Protokoll mit Zustandsmaschine,
+Workflow-Prozedur, Referenz-Karte und Pfadkarte. Arbeitsfläche: `phi/port/`
+(`queue/` portierbare Korpora, `park/` Parser-Gap-Kandidaten, `stage/`
+Konvertierungs-Ausgänge, `ledger.φ` Zustands-Register, `prompt.φ`
+Port-Vorlage). Bestand: `phi/research/`. Register: `phi/sources.φ` +
+`phi/dead_sources.φ`. Die pre-cdn-Historie liegt unter
+`/home/johannes/projects/archive/`. Eine neue Session liest genau das eine
+Dokument.
 
 ## Stack
 

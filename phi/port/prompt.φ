@@ -1,0 +1,48 @@
+# Source-Port Agent — Standard-Vorlage
+# Für die Überführung eines Korpus aus phi/port/queue/ nach v6.
+#
+# AUFGABE: Ein Korpus pro Session, komplett durch die Prozedur
+# (docs/SOURCE_PORT.md §5). Kein halber Port.
+#
+# PROZEDUR:
+#   1. cargo run -- --gold phi/port/queue/<korpus>.φ phi/port/stage/<korpus>_converted.φ
+#   2. cargo test -- test_backlog_batches_verify -- --nocapture
+#      (Sweep liest phi/port/stage/*_converted.φ, schreibt staging_verified.φ / staging_empty.txt)
+#   3. Disposition: verified-Blöcke nach SOURCES_V2_SPEC §1.0 in phi/sources.φ;
+#      void/decline in phi/dead_sources.φ; ledger.φ-Eintrag aktualisieren/entfernen.
+#   4. cargo check 0/0; ein Commit, TODO.md im selben Schritt.
+#
+# LEBENDE GRAMMATIK (SOURCES_V2_SPEC §1):
+#   field <key> <force> <unit> <tau>                        (5 Token)
+#   field <key> <force> <unit> <tau> <kernel>               (6 Token)
+#   field <key> <name> <kernel> <force> <unit> <tau> <absorption> <advection>   (9 Token)
+#   on <body> <lat> <lon> [alt m] | at <body> | body <body> + lat/lon-Keys
+#   map/cmap/rows/flatten; first/last/lastrow/lastline/lastobj/path/deep/regex/count
+#   Kraft-Kanäle: em gravity acoustic seismic-body seismic-surface thermal diffusion advective electric
+#   Kernel: inverse-square gaussian-inverse-square gaussian-inverse erfc exponential-decay patch-levy
+#
+# KERNEL-VORGABE PRO FORCE:
+#   em/gravity → inverse-square; acoustic/seismic-body/diffusion → gaussian-inverse-square;
+#   seismic-surface → erfc; thermal → exponential-decay; advective → patch-levy
+#
+# TAU: explizites Prozesswissen > ttl/10 (schnell wechselnd) > ttl (stabil, Kataloge/Geologie).
+#   τ = 0 schließt das Gate (kein Oszillator). Minimum 1.0.
+#
+# FORCE-GATE (vor jeder Disposition):
+#   Litmus: könnte ein nicht-menschlicher Organismus ein Sinnesorgan für diese
+#   Messung evolvieren? Decline: nackte Zählwerte, Stationslisten/Register ohne
+#   Messwert, Modell-Forecasts/Reanalysen, Referenz-Konstanten, aggregierte
+#   Indizes (positionslos), Text-Warnungen, abgeleitete Satellitenprodukte,
+#   geographische Infrastruktur, position-only.
+#
+# KONVERTER-GRENZE (park-Kandidaten): source/method/body/pos-Direktiven fallen
+#   im --gold-Konverter — solche Blöcke nach phi/port/park/ mit Gap-Verweis im
+#   ledger.φ (parser-gap PostBodyMigration).
+#
+# AUSGABE-REGELN:
+#   1. Keine Kommentare, kein Markdown in φ-Dateien — nur Direktiven.
+#   2. Kanonische Reihenfolge (Spec §1.0): ttl aufsteigend, dann url;
+#      Direktivenreihenfolge url → Blockzustand → Fanout → Extracts.
+#   3. Eine Leerzeile zwischen Blöcken; eine Disposition pro URL.
+#   4. Void-Diagnosen sind vollständige Dispositionen (0 honored) — nie erfunden.
+#   5. Diagnosen nennen was IST (was die Antwort trug), nicht was erwartet war.

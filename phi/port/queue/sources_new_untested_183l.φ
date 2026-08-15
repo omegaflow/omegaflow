@@ -1,0 +1,183 @@
+source geosphere_usgs_earthquakes_month
+ttl 3600
+res 0
+lat 0
+lon 0
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson
+map features
+lat_key geometry.coordinates.1
+lon_key geometry.coordinates.0
+field_in geometry.coordinates.2 geosphere_quake_depth_km
+field_in properties.mag geosphere_quake_magnitude
+
+source geosphere_usgs_volcanoes_hans
+ttl 86400
+res 0
+lat 0
+lon 0
+url https://volcanoes.usgs.gov/hans-public/api/volcano/getUSVolcanoes
+map .
+lat_key latitude
+lon_key longitude
+field_in elevation_meters geosphere_volcano_elevation_m
+field_in vnum geosphere_volcano_vnum
+
+source atmosphere_co2_mauna_loa
+ttl 86400
+res 0
+lat 19.5
+lon -155.6
+alt 3397
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_daily_mlo.txt
+last_line atmosphere_co2_daily_ppm
+
+source atmosphere_sigmet
+ttl 600
+res -1
+lat 0
+lon 0
+url https://aviationweather.gov/api/data/airsigmet?format=json
+map .
+field_in altitudeHi1 atmosphere_sigmet_alt_hi_ft
+field_in movementDir atmosphere_sigmet_movement_dir
+field_in movementSpd atmosphere_sigmet_movement_spd_kt
+
+source geosphere_nws_alerts
+ttl 300
+res -2
+lat 0
+lon 0
+url https://api.weather.gov/alerts/active
+count features atmosphere_nws_active_alert_count
+
+source geosphere_nws_tsunami_warnings
+ttl 300
+res -2
+lat 0
+lon 0
+url https://api.weather.gov/alerts/active?event=Tsunami%20Warning
+count features geosphere_tsunami_warning_count
+
+source biosphere_protected_lands_point
+ttl 86400
+res 3
+lat 0
+lon 0
+url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_parks_and_protected_lands_point.geojson
+flatten features
+field_in scalerank biosphere_park_rank
+
+source biosphere_protected_lands_area
+ttl 86400
+res 3
+lat 0
+lon 0
+url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_parks_and_protected_lands_area.geojson
+flatten features
+field_in scalerank biosphere_park_area_rank
+
+source cosmos_mars_landers
+ttl 86400
+res 0
+mars 1
+url https://gist.githubusercontent.com/burritojustice/2d967b31c3bd11165b4439ebe98ecb01/raw/8594b09096f93f723c929c397de49ed7ac8ecc64/mars_landers.geojson
+flatten features
+
+source cosmos_tle_catalog
+ttl 86400
+res -7
+url https://tle.ivanstanojevic.me/api/tle/
+field totalItems cosmos_tle_total_satellites
+count member cosmos_tle_page_count
+
+source cosmos_tle_search_iss
+ttl 86400
+res -7
+url https://tle.ivanstanojevic.me/api/tle/?search=ISS&page-size=50
+field totalItems cosmos_tle_iss_related_total
+count member cosmos_tle_iss_related_count
+field member.0.satelliteId cosmos_tle_iss_satellite_id
+
+source cryosphere_nsidc_arctic_sea_ice_v4
+ttl 86400
+res 0
+lat 0
+lon 0
+url https://noaadata.apps.nsidc.org/NOAA/G02135/north/daily/data/N_seaice_extent_daily_v4.0.csv
+last_line cryosphere_arctic_sea_ice_extent_nsidc
+
+source cryosphere_nsidc_antarctic_sea_ice_v4
+ttl 86400
+res 0
+lat 0
+lon 0
+url https://noaadata.apps.nsidc.org/NOAA/G02135/south/daily/data/S_seaice_extent_daily_v4.0.csv
+last_line cryosphere_antarctic_sea_ice_extent_nsidc
+
+source hydrosphere_drifters_hourly
+ttl 3600
+res 0
+lat 0
+lon 0
+url https://erddap.aoml.noaa.gov/gdp/erddap/tabledap/drifter_hourly_qc.json?latitude,longitude,sst&time%3E=max(time)-7days
+map table.rows
+lat_key 0
+lon_key 1
+field_in 2 hydrosphere_drifter_sst_k
+
+source atmosphere_metar_global
+ttl 600
+res 0
+lat 0
+lon 0
+url https://aviationweather.gov/api/data/metar?format=json&bbox=-180,-90,180,90
+map .
+lat_key lat
+lon_key lon
+alt_key elev
+field_in temp atmosphere_metar_temp_c
+field_in altim atmosphere_metar_pressure_hpa
+field_in wspd atmosphere_metar_wind_kt
+field_in visib atmosphere_metar_visibility
+
+source subatomare_particles
+ttl 86400
+res -8
+url https://raw.githubusercontent.com/scikit-hep/particle/main/src/particle/data/particle2026.csv
+format csv
+last_row ID subatomare_last_pdg_id
+last_row Mass subatomare_last_mass_mev
+last_row Charge subatomare_last_charge
+
+source magnetosphere_solar_regions
+ttl 3600
+res -6
+terra 0.99
+url https://services.swpc.noaa.gov/json/solar_regions.json
+map .
+lat_key latitude
+lon_key longitude
+field_in region magnetosphere_sunspot_region
+field_in area magnetosphere_sunspot_area
+field_in number_spots magnetosphere_spot_count
+field_in extent magnetosphere_spot_extent
+field_in spot_class magnetosphere_spot_class
+field_in mag_class magnetosphere_mag_class
+
+source magnetosphere_schumann_resonance
+ttl 86400
+res -2
+lat 0
+lon 0
+url https://zenodo.org/records/15225820/files/NiNo_SR_params_2024.csv
+format csv
+last_line atmos_schumann_last_val
+
+source cosmos_neo_close_approaches
+ttl 3600
+res -6
+url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=10LD
+count data cosmos_neo_count
+field data.0.4 cosmos_neo_first_dist_au
+field data.0.7 cosmos_neo_first_v_kms
+field data.0.10 cosmos_neo_first_h_mag

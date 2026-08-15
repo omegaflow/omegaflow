@@ -1,0 +1,343 @@
+ausstehend
+queue phi/port/queue/sources_astro_untested_30-astro.φ
+note 30 Blöcke, alte Grammatik (source-Köpfe, verify false, lat_key ra/lon_key dec) — --gold: 31 konvertiert, 0 parse-fähig (framelos, cmap-Migration nötig)
+
+ausstehend
+queue phi/port/queue/sources_earth_untested_stac-sentinel.φ
+note 3 Blöcke (sentinel2_l2a, landsat_c2_l2, landsatlook_c2l2) — --gold: 4 konvertiert, 0 parse-fähig (framelos + method/body fällt); post_body-Migration parkt am parser-gap PostBodyMigration
+
+ausstehend
+queue phi/port/queue/sources_exotic_untested_neutrino-ligo.φ
+note 16 Blöcke ohne force → Force-Gate; --gold + Sweep, dann Disposition
+
+ausstehend
+queue phi/port/queue/sources_new_untested_14k_new-unchecked.φ
+note 873 Blöcke, alte Grammatik — kein URL im kanonischen Register; der Kern der offenen Queue
+
+ausstehend
+queue phi/port/queue/sources_new_untested_13k_230-domains.φ
+note Untested-Variante, 230 Domains — kein URL im kanonischen Register
+
+ausstehend
+queue phi/port/queue/sources_new_untested_15k_230-domains.φ
+note Untested-Variante, 230 Domains — kein URL im kanonischen Register
+
+ausstehend
+queue phi/port/queue/sources_new_untested_183l.φ
+note Untested-Variante — kein URL im kanonischen Register
+
+ausstehend
+queue phi/port/queue/sources_new_untested_2k.φ
+note Untested-Variante — kein URL im kanonischen Register
+
+ausstehend
+queue phi/port/queue/sources_new_untested_7k.φ
+note Untested-Variante — kein URL im kanonischen Register
+
+ausstehend
+queue phi/port/queue/sources_new_untested_candidate-staging.φ
+note Untested-Variante, candidate-staging — kein URL im kanonischen Register
+
+ausstehend
+queue phi/port/queue/sources_gold_pre-cdn_27k_359-domains.φ
+note 2572 Blöcke, reichste Gold-Parameter — 1191 parse-fähig nach --gold (temp_gold_convert_check); Sweep terminiert ZERO neue Live-Quellen, offene URL-Teile verbleiben
+
+ausstehend
+queue phi/port/queue/sources_recovery_pre-cdn_25k_211-domains.φ
+note 1924 Blöcke, reichste Recovery-Parameter — Migration nach Protokoll
+
+ausstehend
+queue phi/port/queue/sources_recovery_cdn-merged_60k_lost-blocks.φ
+note 5701 Lost-URLs ohne Extract-Parameter — Join aus sources_potential_pre-cdn_9k_richest + _params
+
+ausstehend
+queue phi/port/queue/sources_potential_pre-cdn_9k_richest.φ
+note Join-Quelle (reichste Extract-Parameter) für die 5701 Lost-Blocks
+
+ausstehend
+queue phi/port/queue/sources_potential_pre-cdn_params.φ
+note Join-Quelle (Parameter-Sätze) für die 5701 Lost-Blocks
+
+geparkt
+kandidat https://www.pegelonline.wsv.de/webservices/rest-api/v2/stations/{id}/W/measurements.json
+note Wasserstand (gravity/advective) — Fanout-Mechanik liegt seit P09, Block-Draft steht aus
+
+geparkt
+kandidat https://geomag.usgs.gov/ws/data/
+note em — Komponenten-Timeseries XYZF (Stations-Koordinaten in metadata.intermagnet.coordinates); Extraktionsmuster offen
+
+geparkt
+kandidat https://gwosc.org/api/v2/
+note gravity — Event-Route mit FAR/Skymaps; Position nur via Skymap — Parser-Gap
+
+geparkt
+kandidat https://gracedb.ligo.org/api/
+note gravity — superevents/events; Position nur via Skymap — Parser-Gap
+
+geparkt
+kandidat https://eyes.nasa.gov/dsn/data/dsn.json
+note em — dishes{}.az/el/ws/sigs; Positionen = statische DSN-Standortkoordinaten, Keyed Object — Parser-Gap
+
+geparkt
+kandidat https://api.wolfx.jp/cenc_eqlist.json
+note seismic-body — Objekt No1..NoN, Felder latitude/longitude/magnitude/depth (Strings) — Keyed-Object-Extrakt fehlt
+
+geparkt
+kandidat https://www.jma.go.jp/bosai/quake/data/list.json
+note seismic-body — Array, Position kodiert im `cod`-String „+lat+lon+tiefe" — cod-String-Extrakt fehlt
+
+geparkt
+kandidat http://skyserver.sdss.org/dr14/SkyserverWS/SQLSearch/SQL
+note em cmap — 0.Rows beim Probe; Validierung der SQL-Syntax ausstehend
+
+ausstehend
+bestand phi/tap_index.φ
+note TAPVizieR-Inventar 64.148 Tabellen — 39 genutzt, BZCAT5 erledigt; 38 Tabellen-Bulks offen (tap_compiler-Muster)
+
+ausstehend
+bestand phi/tap_index_irsa.φ
+note 995 IRSA-Tabellen — Bulk-Kandidaten offen
+
+ausstehend
+bestand phi/tap_index_gavo.φ
+note 271 GAVO-Tabellen (~130 Schemata) — gedr3dist.main erledigt (K04b); Bulk-Kandidaten offen
+
+ausstehend
+bestand phi/tap_index_ari.φ
+note 203 ARI-Heidelberg-Tabellen — Gaia-Archiv TAP + GCNS (331.312 Sterne ≤100pc, dist-Parameter) + MWSC (3.006 Haufen); Kompilat-Kandidaten offen
+
+ausstehend
+bestand phi/tap_index_exoarchive.φ
+note 46 Exoplanet-Archiv-Tabellen — pscomppars erledigt; weitere Bulks offen
+
+ausstehend
+bestand phi/research/agent_output/b2find_catalogs_index.φ
+note 1.082 Records (995 CDS-VizieR, 23 GAVO, Rest VO-TAP) — Provider-/Grind-Kandidaten-Blöcke offen
+
+ausstehend
+bestand phi/research/agent_output/grind_eogateway_index.φ
+note 251 Einträge (91 Missionen, 115 Campaigns, 45 Instrumente) — 6 Grind-Kandidaten (smos-diss/oads, scihub/dataspace, science-pds.cryosat, eumetsat-romsaf) offen
+
+ausstehend
+bestand phi/research/agent_output/grind_vires_catalog.φ
+note 174 VirES-HAPI-Datasets inventarisiert — 8 Drafts (CHAMP/GRACE/GOCE/CryoSat MAG/DNS/WND/TEC/KBR) Einbau offen
+
+ausstehend
+bestand phi/research/agent_output/grind_arcgis_index.φ
+note 440 + 620 ArcGIS-Datasets indexiert, 131 + 358 Services geprobt — 32 Block-Drafts (thermal/seismic/diffusion/em/advective/gravity) Einbau offen; Lauf 1/2 waren gedeckelt, vollständige Paginationen offen
+
+ausstehend
+bestand phi/research/agent_output/terrapulse_catalog.φ
+note 469 Quellen klassifiziert — 103 Kandidaten (NCEI/ISD, Kyoto-Dst, GFZ-Kp, USGS-Geomag, NMDB, INTERMAGNET-HAPI, GWOSC, IceCube, SILSO, WSPR/HamQSL, GLM-NetCDF); Block-Erstellung + Verifikation offen
+
+ausstehend
+bestand phi/research/agent_output/esa_geomagnetic_catalog.φ
+note Swarm EFI/FAC/BGS-NGK integriert — Kandidaten VirES-Aeolus (advective, login), SMOS (diffusion, login), MERIS/SAR/Landsat (Raster, login) offen
+
+ausstehend
+bestand phi/research/agent_output/archeology_gaps_index.φ
+note 77 Kandidaten-URLs (AERONET, IERS-EOP, Fireball/Sentry, Xamin-TAP, GONG2, GIRO-Ionosonde, e-CALLISTO …) — nächster Grind-Brocken
+
+ausstehend
+bestand phi/research/agent_output/grind_frb.φ
+note FRBCAT1 tot (frbcat.org 000), CHIME via VizieR J/ApJS/257/59/table2 lebt (536, ohne z) — Union-Merge mit TNS-Namen (FRB121102 ↔ FRB20121102A) + frbcat.org-CSV als Quelle offen
+
+ausstehend
+bestand /home/johannes/projects/archive/archeology/arena/
+note batch_01–21 — API-Vorschläge als Fließtext, ungeprüft (Recherche-Schatz)
+
+ausstehend
+bestand /home/johannes/projects/archive/archeology/foundation/
+note APIs.md, collection.md, gaps.md, urls.md, sources.φ.spec (tote Grammatik) — Curation-Inventar
+
+ausstehend
+bestand /home/johannes/projects/archive/archeology/research/
+note api_potential_research.txt, NEW_APIs.md, reachable_not_loadable.tsv, VizieR-Notizen, domain_coverage — Recherche-Schatz
+
+ausstehend
+bestand /home/johannes/projects/archive/archeology/ci/
+note refresh-protected-data.yml + secrets.template + audit-source-keys.yml — I02-Vorlage (Python → Rust)
+
+ausstehend
+nachlauf phi/research/agent_output/vires_vollprobe
+note 174/174 VirES-Datasets disponiert, 64 Drafts — Ergebnis-Datei ABSENT (Schreibverlust); Vollprobe in Blöcken nachlaufen
+
+ausstehend
+nachlauf phi/research/agent_output/donki_familie
+note 10/10 DONKI-Endpoints disponiert (CME-Draft, 9 Decline) — Ergebnis-Datei ABSENT; Nachlauf in einem Block
+
+ausstehend
+nachlauf kandidat Mauna-Loa-CO2 + Fireball-API
+note 4 TerraPulse-Drafts stehen; Signum-Faltung der Hemisphären-Spalten fehlt — Parser-Gap
+
+ausstehend
+bestand phi/research/batches/
+note 283 Dateien alte Grammatik (gold/main_pre-cdn/live_cdn-merged/canonical-format) — ausgeschöpft, nicht ladbar (P01), read-only Historie
+
+ausstehend
+bestand phi/research/probe_batches/
+note 242 Dateien — probe-artefakte der Korpus-Läufe, read-only (healthcheck --probe liest hier)
+
+verifiziert
+bestand phi/research/agent_output/batch_*_accepted.φ
+note 32 Dateien, 629 Blöcke, 389 unique — alle klassifiziert, ~48 integriert, Rest redundante Varianten (ausgeschöpft)
+
+ausstehend
+kandidat https://api.argovis.com
+note Recheck — korrekte Query-Syntax verifizieren
+
+ausstehend
+kandidat https://data.sensor.community/airrohr/v1/
+note Recheck — area-ID für Fanout-Block bestimmen
+
+ausstehend
+kandidat https://environment.data.gov.uk
+note Recheck — Readings-Endpoint-Struktur
+
+ausstehend
+kandidat https://imag-data.bgs.ac.uk/GIN_V1/observation
+note Recheck — BGS-GIN Observation-Endpoint
+
+ausstehend
+kandidat https://irsa.ipac.caltech.edu/cgi-bin/Gator/nph-scan
+note Recheck — IRSA-Gator CSV-Syntax offen (TAP-Route trägt bereits)
+
+ausstehend
+kandidat https://www.supermag.org
+note Recheck — Datenzugang prüfen
+
+ausstehend
+kandidat https://woudc.org
+note Recheck — WOUDC-Datenzugang
+
+ausstehend
+kandidat https://www.aavso.org/vsx
+note Recheck — AAVSO-VSX-Datenzugang
+
+ausstehend
+kandidat https://www.atnf.csiro.au/research/pulsar/psrcat
+note Recheck — ATNF-PSRCAT-TAP (im dead_sources-Register als VOTable-only geführt; erneut prüfen)
+
+ausstehend
+kandidat https://archive.stsci.edu/tess
+note Recheck — TESS-Target-CSV (RA/Dec-Spalten) als cmap-Kompilat
+
+ausstehend
+kandidat https://tidesandcurrents.noaa.gov
+note Recheck — Datagetter-Route (application=omegaflow)
+
+ausstehend
+kandidat https://coastwatch.pfeg.noaa.gov/erddap
+note Recheck — .json-Endpoints der ERDDAP-Instanzen (coastwatch/ifremer/emodnet)
+
+ausstehend
+kandidat https://pmel.noaa.gov
+note Recheck — PMEL-CO2-Moorings (ERDDAP-Subset nötig)
+
+ausstehend
+kandidat https://landsatlook.usgs.gov
+note Recheck — SERVIR-SoilMoisture + NDBC + Active-Hurricanes-ArcGIS (f=geojson); SMAP/1km: Service entfernt (404)
+
+ausstehend
+kandidat https://afad.gov.tr
+note Recheck — AFAD tadas (Accept-Header nötig)
+
+ausstehend
+kandidat https://data.minorplanetcenter.net
+note Recheck — MPC-Daten-API-Unterrouten
+
+ausstehend
+kandidat https://services.swpc.noaa.gov
+note Recheck — SWPC ace_mag_1h (ACE-Mag in der SWPC-Familie abdecken)
+
+ausstehend
+kandidat https://actris-ebas.nilu.no
+note Recheck — ACTRIS-Datenzugang
+
+ausstehend
+kandidat https://gtnp.net
+note Recheck — GTN-P-Datenzugang
+
+ausstehend
+kandidat https://gong.nso.edu
+note Recheck — GONG (acoustic/Helioseismologie; Kraft-Abdeckung acoustic offen)
+
+ausstehend
+kandidat https://data.oceannetworks.ca
+note Recheck — OceanNetworks-Datenzugang (OCEANNETWORKS_TOKEN liegt in .secrets.local)
+
+ausstehend
+kandidat https://omniweb.gsfc.nasa.gov
+note Recheck — OMNIWeb-Datenzugang
+
+ausstehend
+kandidat https://newton.spacedys.com/astdys
+note Recheck — AstDyS-Katalogzugang
+
+ausstehend
+kandidat https://api.safecast.org
+note Recheck — measurements.json (nicht bgeigie_imports) — bereits live; Variante prüfen
+
+ausstehend
+parser-gap P02
+note SI-Konvertierung + Unit-Kraft-Matrix (convert_to_si + allowed_units_for_force) — heute roher Durchfluss
+
+ausstehend
+parser-gap P03
+note per-row τ-Override + vel-Einheitenkonvertierung
+
+ausstehend
+parser-gap P04
+note kepler_map-Bahnlöser fehlt (Extract existiert, Kepler-Gleichungs-Bahnrechnung fehlt)
+
+ausstehend
+parser-gap P05
+note HorizonsVec: 0B-Fetches + falsche Timestamps
+
+ausstehend
+parser-gap P06
+note cmap pmra/pmdec/radvel-Füllung (Eigenbewegung einspeisen); plx-Füllung offen
+
+ausstehend
+parser-gap P07
+note extent-pro-Force (gravity → body_radius statt c·τ)
+
+ausstehend
+parser-gap P08
+note field_in nested + Flatten-Extract (geschachtelte Feldpfade, generisches Flatten über mehrere Ebenen)
+
+ausstehend
+parser-gap HapiFieldConfig
+note hapi_found ersetzt field-Config durch synthetisch {kernel:0, force:0, tau:0} — deklarierte kernel/force/tau der HAPI-Blöcke erreichen den Oszillator nicht
+
+ausstehend
+parser-gap SignumFaltung
+note Halbspären-Spalten (Mauna-Loa-CO2, Fireball-API) — Signum-Faltung fehlt
+
+ausstehend
+parser-gap PostBodyMigration
+note --gold-Konverter fällt method/body (POST) — STAC/landsatlook-Kandidaten brauchen post_body-Übernahme
+
+ausstehend
+parser-gap GLMNetCDF
+note GLM-Blitz (electric-Kanal) — NetCDF-Reader fehlt
+
+ausstehend
+kraft-kanal acoustic
+note Kuration offen: GONG/SOHO Helioseismologie als Messquelle
+
+ausstehend
+kraft-kanal electric
+note Kuration offen: GLM-Blitz (NetCDF), GIC-Netze (nicht öffentlich), Live-E-Feldstärke (kein Feed existiert)
+
+ausstehend
+kraft-kanal thermal
+note Zeitreihen-Kuration offen (NOAA-CDO-Fanout lebt; weitere Quellen grinden)
+
+ausstehend
+kraft-kanal advective
+note Zeitreihen-Kuration offen (Waterservices/OpenSky lebt; Wind-Messquelle fehlt — tm.w-Kanal verdrahtet)
+
+ausstehend
+kraft-kanal diffusion
+note Zeitreihen-Kuration offen (PurpleAir/OpenAQ/GML/OOI leben; weitere Quellen grinden)

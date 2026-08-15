@@ -1,3 +1,9 @@
+> SUPERSEDED as controlling source by `docs/concepts/SOURCES_V2_SPEC.md`
+> (§1 Directive Table) und dem lebenden Parser `src/main.rs`. Die
+> 4-Token-Behauptung unten widerspricht dem heutigen Stand: der 3-Token-`field`
+> wird laut abgelehnt (P01, Refused); gültig sind die 5-/6-/9-Token-Formen
+> der Spec. Diese Datei ist Historie.
+
 Die Syntax für Skalar-Extraktion in `sources.φ` ist ab sofort **exakt 4 Token**:
 `<keyword> <key> <force> <unit>`
 
