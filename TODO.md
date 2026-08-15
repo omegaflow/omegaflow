@@ -331,14 +331,15 @@ NOAA CDO (thermal) und OpenAQ pm25 (diffusion) leben im Fanout. Offen:
 generisches Flatten über mehrere Ebenen.
 ```
 
-**I04** CDN-Naming kollidiert bei Param-Varianten
+**I04** CDN-Naming bei Param-Varianten — verifiziert kein Fehler
 ```
-source_name_from_url leitet den Asset-Namen vom Pfad ab (Query verworfen) —
-alle open-meteo-/datagetter-Varianten teilen sich EIN Asset (z.B.
-api.open-meteo.com/forecast.json). Die CI spiegelt eine Variante; andere
-Param-URLs bekommen das falsche Asset (Verifikations-Vergiftung 2026-08-15
-beobachtet). Fix braucht Hash der Query im Namen, synchron mit der
-sources-CI-Manifestation.
+Code-Review (2026-08-15): source_name_from_url verwirft die Query NICHT —
+?/&/= werden zu '/' im Asset-Namen, Param-Werte sind im Namen enthalten.
+Template-URLs ({lat} etc.) mirrornt die CI nicht (is_fixed-Gate) → CDN-first
+degradiert zu Live, kein Poisoning. Die früheren Symptome waren
+Fehlattribution: das `{}`-Body war die echte No-Data-Antwort der NOAA-CDO-API
+(andere Station/Datum), die open-meteo-Voids waren Konverter-Key-Mismatches.
+Eintrag als nicht-Existierend geschlossen.
 ```
 
 ---
