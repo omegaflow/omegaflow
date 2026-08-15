@@ -1,0 +1,21 @@
+# GBIF — Provider-Tags direkt (occurrence facets + enumerations, live 2026-08-15)
+# format: <count> <tag>
+"count":96463715	"name":"ANTARCTICA"
+"count":9585373	"name":"LIVING_SPECIMEN"
+"count":42169144	"name":"OCCURRENCE"
+"count":4142293	
+"count":3921632772	"name":"NORTH_AMERICA"
+"count":3792237714	"name":"ABSENT"
+"count":3305674831	"name":"PRESERVED_SPECIMEN"
+"count":29477461	"name":"OBSERVATION"
+"count":283159322	"name":"MATERIAL_SAMPLE"
+"count":2783615	"name":"PRESENT"
+"count":261672584	"name":"ASIA"
+"count":217628713	"name":"MACHINE_OBSERVATION"
+"count":19532885	"name":"FOSSIL_SPECIMEN"
+"count":193797936	"name":"SOUTH_AMERICA"
+"count":1614695296	"name":"EUROPE"
+"count":160864459	"name":"AFRICA"
+"count":1368202044	"name":"OCEANIA"
+"count":129395029	"name":"HUMAN_OBSERVATION"
+"count":10262750	"name":"MATERIAL_CITATION"

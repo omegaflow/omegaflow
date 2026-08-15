@@ -1,0 +1,2332 @@
+# NASA CMR — Provider-Tags direkt (collections.json include_facets=v2, live 2026-08-15)
+# format: <count> <tag> — Topics, Data Centers, Platforms, Instruments, Processing Levels, Projects
+20454 Oceans
+13467 Atmosphere
+12846 NOAA National Centers for Environmental Information
+10471 Space-based Platforms
+8978 Climate Indicators
+8201 Paleoclimate
+8093 DOC/NOAA/NESDIS/NCEI
+7802 Biosphere
+5776 Land Surface
+5133 Land-based Platforms
+4880 3 - Gridded Observations
+4843 Other
+4731 Biological Classification
+4644 CTD
+4158 Water-based Platforms
+3980 bathythermograph - BT
+3923 2 - Geophys. Variables, Sensor Coordinates
+3882 Spectral/Engineering
+3324 Cryosphere
+3103 Human Dimensions
+3036 Solid Earth
+3002 AU/AADC
+2899 Terrestrial Hydrosphere
+2718 HDF
+2630 bathythermograph - XBT
+2530 Air-based Platforms
+2473 NetCDF
+2220 GPS Receivers
+2122 Goddard Earth Sciences Data and Information Services Center (GES DISC)
+2010 bathythermograph - MBT
+1984 Oak Ridge National Laboratory Distributed Active Archive Center (ORNL DAAC)
+1917 Not applicable
+1904 ASCII
+1878 NOT APPLICABLE
+1855 KPDC
+1757 Atmospheric Science Data Center (ASDC)
+1696 bottle
+1640 4 - Gridded Model Output
+1631 FedEO
+1481 1 to 10 km
+1425 meteorological sensors
+1413 Agriculture
+1322 National Snow and Ice Data Center Distributed Active Archive Center (NSIDC DAAC)
+1261 MODIS
+1240 thermosalinograph
+1160 1B - Radiance, Sensor Coordinates
+1150 NSF/PLR
+1139 Land Process Distributed Active Archive Center (LPDAAC)
+1114 500 to 1000 meters
+1105 Temperature Sensors
+1079 VIIRS
+1060 NZ/NZAI/ANZ
+1049 Carbon dioxide (CO2) gas analyzer
+1024 JP/JAXA/SAOC
+1007 fluorometer
+995 Physical Oceanography Distributed Active Archive Center (PO.DAAC)
+986 USAP-DC
+976 Ocean Biology Distributed Active Archive Center (OB.DAAC)
+972 Humidity Sensor
+892 barometers
+846 Visual Observations
+844 Computer
+826 echo sounder
+808 Aerovanes
+781 1 - Radiance
+731 WSL
+677 Global Hydrology Resource Center (GHRC)
+668 current meter
+663 UCAR/NCAR/CISL/RDA
+653 CSV
+647 anemometer
+645 10 to 50 km
+638 Ocean Biology Processing Group (OBPG)
+607 multiple
+603 ADCP
+601 100 to 250 km
+597 secchi disk
+590 R&D
+587 Land Science Investigator-Led Processing System (LandSIPS)
+585 SHP
+573 UMASS-B/SFE
+563 IPY
+562 NSF/OPP
+557 Camera
+550 oxygen sensor
+550 ACADIS
+545 titrator
+545 COML
+543 SGLI
+528 transmissometer
+525 thermistor
+511 Shower head chamber equilibrator for autonomous carbon dioxide (CO2) measurement
+505 GeoTIFF
+493 UNEP/GRID
+491 salinometer
+488 Binary
+486 Niskin bottle
+479 UNEP/DEWA/GRID-EUROPE
+476 COLUMBIA/LDEO/MGDS
+464 AMBS
+437 PDF
+417 250 to 500 meters
+407 Sun-Earth Interactions
+406 OBIS
+403 1 to 3 hours
+401 ArcGIS
+399 ICARTT
+387 LTER
+387 Excel
+375 NASA/GSFC/SED/ESD/GCDC/SeaBASS
+373 ECHO SOUNDERS
+371 laboratory analysis
+367 CNDP
+357 NASA/GSFC/SED/ESD/TISL/MODAPS
+336 MEaSUREs
+333 NPP-JPSS
+333 AVHRR
+329 EBA
+328 ESDIS
+326 Coring Devices
+316 Coulometer for DIC measurement
+316 50 to 100 km
+314 bathythermograph - AXBT
+313 TM
+313 JPSS
+313 GPM
+308 mooring
+303 BOREAS
+300 LANCE
+299 IGBP
+298 MODIS Tile SIN
+288 visual analysis
+288 Thermometer
+287 PNG
+282 LBA
+280 visual observation
+278 DHHS/NIH/NLM/NCBI/GB
+276 National Snow and Ice Data Center (NSIDC)
+274 AMSR-E
+274 ABoVE
+271 buoy - moored buoy
+267 thermometer
+256 FLUOROMETERS
+253 1A - Radiance
+248 RAIN GAUGES
+248 30 to 100 meters
+243 OBIS Schema
+242 USGS SOFIA
+242 DOI/USGS/SESC/SOFIA
+241 0 - Raw Data
+235 1 to 30 meters
+218 IOBIS
+212 TROPESS
+208 Crustal Dynamics Data Information System (CDDIS)
+207 ESA/ESRIN
+206 Alaska Satellite Facility
+199 BCO-DMO
+193 GLOBEC
+192 AR/CDA
+189 CEDA
+189 1 to 4 days
+187 CAML
+186 Level-1 and Atmosphere Archive & Distribution System (LAADS)
+185 AQUARIUS SAC-D
+184 CMS
+183 NASA/GSFC/EOS/ESDIS/LANCE MODIS
+177 IOBIS/OBIS-SEAMAP
+176 OBIS-SEAMAP
+173 DOI/USGS/GD/PUBS/WR/GEOPUBS
+171 COLUMBIA/LDEO
+168 UNEP/ROAP
+168 CN/NADC
+167 JP/MEXT/NIPR
+161 USC/BARUCH/BMFL/NIWB
+160 JPEG
+159 SCAR-MARBIN
+158 LTER/GCE
+158 Ascii File, Formatted For Text Attributes, Declared Format (ASCII)NA
+155 CERES
+154 AR/CREDAS
+153 Jet Propulsion Laboratory (JPL)
+149 NERR
+148 SOAR-TAM
+147 DOI/USGS/PUBS/ER/PW/OFS
+146 Text
+141 IGS
+141 CWIC
+134 0 to 1 meter
+133 250 to 500 km
+131 FIRE
+127 100 to 250 meters
+122 WMS
+119 Suomi-NPP
+117 SAFARI
+115 GOMMP
+115 FIFE
+114 Text File
+114 COG
+112 ECCO
+112 ASTER
+111 500 to 1000 km
+110 IAI-DIS
+108 XML
+108 JARE
+107 SnowEx
+107 LGP
+107 JGOFS
+106 SOLAS
+106 GRIB1 > GRIdded Binary form, Edition 1
+104 MERRA-2
+103 SWOT
+103 Not Provided
+103 MASTER
+103 GHRSST
+100 GTE
+97 IceBridge
+89 AMES
+85 MISR
+78 ZIP
+75 CALIPSO
+71 GIF
+64 -Na-
+61 HTML
+60 netCDF-4 classic
+57 TIFF
+57 netCDF  > NETwork Common Data Format
+57 KML
+55 ASCII;BINARY
+51 PP
+49 Grid
+47 SDTS
+34 NetCDF (CF), ODV4
+31 BSQ, TIFF, JPEG
+31 Ames
+28 RINEX 
+28 Access
+27 Seed
+27 Military Grid Reference System
+26 TAR
+24 YAML
+24 GRIB
+24 BUFR
+23 ENVI
+23 1000 km & beyond
+22 KMZ
+22 DBF
+22 Comma-Separated Values (CSV)
+16 MODIS Tile EASE
+15 Hydrosphere
+14 Models
+8 3 to 24 hours
+6 WELD CONUS Tile
+6 VIIRS Rotated Sinusoidal Tiling System
+5 WELD Alaska Tile
+5 Ocean
+4 Data Analysis And Visualization
+2 Environmental Advisories
+2 Atmospheric
+1 Tectonics
+1 Solar Physics
+1 Snow/Ice
+1 Reference And Information Services
+1 Radiance Or Imagery
+1 Ocean/Lake Records
+1 N/A
+1 In Situ Ocean-Based Platforms
+1 In Situ Land-Based Platforms
+
+# Leaf-Terms (GCMD Term/VariableLevel1, aus allen 28 Seiten umm_json, 796200 Vorkommen)
+# format: <count> <term>
+ 270418 tree ring
+  25908 OCEAN CHEMISTRY
+  15489 OCEAN TEMPERATURE
+  14280 SALINITY/DENSITY
+  11531 WATER TEMPERATURE
+   9261 ATMOSPHERIC WINDS
+   8671 Paleoclimate Indicators
+   7935 BATHYMETRY/SEAFLOOR TOPOGRAPHY
+   7851 SALINITY
+   7692 ATMOSPHERIC TEMPERATURE
+   7686 ECOSYSTEMS
+   7566 Land Records
+   7419 SURFACE WINDS
+   7211 ATMOSPHERIC CHEMISTRY
+   6509 WATER DEPTH
+   6088 OCEAN OPTICS
+   5720 CLOUDS
+   5566 ATMOSPHERIC WATER VAPOR
+   5333 ATMOSPHERIC PRESSURE
+   5293 tree-ring
+   5039 Biological Records
+   5023 ATMOSPHERIC RADIATION
+   4979 ECOLOGICAL DYNAMICS
+   4761 Tree Rings
+   4705 width
+   4619 VEGETATION
+   4514 SURFACE TEMPERATURE
+   4486 ANIMALS/VERTEBRATES
+   4205 WATER VAPOR INDICATORS
+   4135 SEA ICE
+   4039 SOILS
+   3814 SNOW/ICE
+   3780 CONDUCTIVITY
+   3749 OCEAN PRESSURE
+   3556 ANIMALS/INVERTEBRATES
+   3543 WATER PRESSURE
+   3379 OXYGEN
+   3219 AEROSOLS
+   3189 OCEAN WAVES
+   3178 TECTONICS
+   3108 CLOUD PROPERTIES
+   3089 SURFACE RADIATIVE PROPERTIES
+   3049 borehole
+   2956 GLACIERS/ICE SHEETS
+   2921 GEOMORPHIC LANDFORMS/PROCESSES
+   2866 Ocean/Lake Records
+   2783 paleoceanography
+   2730 WATER QUALITY/WATER CHEMISTRY
+   2650 AQUATIC ECOSYSTEMS
+   2633 CARBON AND HYDROCARBON COMPOUNDS
+   2614 OCEAN CIRCULATION
+   2594 PRECIPITATION
+   2550 GRAVITY/GRAVITATIONAL FIELD
+   2431 ROCKS/MINERALS/CRYSTALS
+   2356 SEA SURFACE TEMPERATURE
+   2324 SURFACE WATER
+   2318 MARINE ECOSYSTEMS
+   2138 OCEAN ACOUSTICS
+   2131 TERRESTRIAL ECOSYSTEMS
+   2122 NITRATE
+   2063 PHOSPHATE
+   2048 INFRARED WAVELENGTHS
+   2041 OCEAN CURRENTS
+   2028 Boreholes
+   1999 DENSITY
+   1982 COASTAL PROCESSES
+   1967 SILICATE
+   1908 CHLOROPHYLL
+   1904 VISIBLE WAVELENGTHS
+   1898 ECOSYSTEM FUNCTIONS
+   1857 TOPOGRAPHY
+   1777 ACOUSTIC VELOCITY
+   1653 PH
+   1603 PLATE TECTONICS
+   1599 MAMMALS
+   1523 REFLECTANCE
+   1512 NITRITE
+   1484 SPECIES/POPULATION INTERACTIONS
+   1481 Not provided
+   1438 WATER CHARACTERISTICS
+   1418 corals and sclerosponges
+   1396 AIR QUALITY
+   1386 ALKALINITY
+   1345 TERRAIN ELEVATION
+   1337 fire history|tree ring
+   1330 LAND USE/LAND COVER
+   1248 NITROGEN COMPOUNDS
+   1233 BIRDS
+   1193 OXYGEN COMPOUNDS
+   1168 FLUORESCENCE
+   1126 CARBON DIOXIDE
+   1119 EARTHQUAKES
+   1108 PLANTS
+   1098 physical properties
+   1081 INORGANIC CARBON
+   1073 ENVIRONMENTAL IMPACTS
+   1071 ice cores
+   1066 ARTHROPODS
+   1061 MARINE SEDIMENTS
+   1056 ALBEDO
+   1034 borehole|climate reconstructions
+   1025 FISH
+   1014 boreholes
+   1013 CLOUD MICROPHYSICS
+   1005 WAVE HEIGHT
+   1005 climate reconstructions|tree ring
+    994 NUTRIENTS
+    973 TIDES
+    960 COMMUNITY DYNAMICS
+    953 SURFACE WATER PROCESSES/MEASUREMENTS
+    950 WIND DYNAMICS
+    947 TECTONIC LANDFORMS
+    947 SURFACE WATER FEATURES
+    941 AMMONIA
+    935 paleolimnology
+    933 ALTITUDE
+    906 PIGMENTS
+    884 UPPER LEVEL WINDS
+    872 VISIBLE IMAGERY
+    869 MARINE GEOPHYSICS
+    866 FROZEN GROUND
+    861 CARBON
+    852 ATTENUATION/TRANSMISSION
+    845 WAVE PERIOD
+    842 Atmospheric Temperature
+    832 OCEAN HEAT BUDGET
+    829 GEODETICS
+    828 INCOMING SOLAR RADIATION
+    820 Precipitation
+    817 SOIL MOISTURE/WATER CONTENT
+    806 SATELLITE ORBITS/REVOLUTION
+    785 PRECIPITATION AMOUNT
+    784 SURFACE THERMAL PROPERTIES
+    778 ENVIRONMENTAL GOVERNANCE/MANAGEMENT
+    772 Atmospheric Winds
+    771 POTENTIAL TEMPERATURE
+    756 UPPER AIR TEMPERATURE
+    754 ATMOSPHERIC/OCEAN INDICATORS
+    744 INFRARED RADIANCE
+    731 OCEAN WINDS
+    730 SHORTWAVE RADIATION
+    723 VISIBLE RADIANCE
+    720 fire history
+    705 EROSION/SEDIMENTATION
+    696 TURBIDITY
+    693 ICE DEPTH/THICKNESS
+    693 CLOUD TYPES
+    691 LAND USE/LAND COVER CLASSIFICATION
+    684 ORGANIC CARBON
+    681 RADAR
+    679 HALOCARBONS AND HALOGENS
+    678 PROTISTS
+    672 GEOMAGNETISM
+    667 Ocean Optics
+    664 LONGWAVE RADIATION
+    655 LAND RECORDS
+    651 instrumental
+    650 NITROGEN
+    642 NATURAL HAZARDS
+    641 paleoclimatic modeling
+    640 ANISOTROPY
+    634 fire scar dates
+    623 ICE EXTENT
+    619 ICE CORE RECORDS
+    612 VEGETATION COVER
+    608 INFRASTRUCTURE
+    606 SURFACE PRESSURE
+    604 BATHYMETRY
+    601 PHOTOSYNTHETICALLY ACTIVE RADIATION
+    599 SOIL TEMPERATURE
+    599 AEROSOL OPTICAL DEPTH/THICKNESS
+    593 SEA STATE
+    593 MICROWAVE
+    586 TIDAL HEIGHT
+    575 SEDIMENTS
+    574 BOUNDARIES
+    573 BRIGHTNESS TEMPERATURE
+    571 ATMOSPHERIC PRESSURE MEASUREMENTS
+    568 ICE SHEETS
+    567 GRAVITY
+    555 SEA LEVEL PRESSURE
+    552 Atmospheric Water Vapor
+    545 OCEAN COLOR
+    542 SEAFLOOR TOPOGRAPHY
+    540 GROUND WATER
+    527 density
+    523 SUSPENDED SOLIDS
+    523 SNOW DEPTH
+    522 SECCHI DEPTH
+    519 MAGNETIC FIELD
+    510 SULFUR COMPOUNDS
+    506 VEGETATION INDEX
+    505 SOLAR RADIATION
+    499 BIOMASS
+    498 HEAT FLUX
+    489 PLATFORM CHARACTERISTICS
+    482 GLACIERS
+    476 MOLLUSKS
+    471 LAND SURFACE TEMPERATURE
+    468 BACTERIA/ARCHAEA
+    459 Atmospheric Pressure
+    455 LAND MANAGEMENT
+    455 GEOPOTENTIAL HEIGHT
+    452 SNOW COVER
+    452 ICEBERGS
+    451 INFRARED IMAGERY
+    449 SEA SURFACE TOPOGRAPHY
+    439 Radar
+    432 FOREST SCIENCE
+    428 LANDSCAPE
+    427 climate reconstructions
+    426 COASTAL LANDFORMS
+    415 VOLCANIC ACTIVITY
+    406 OCEAN/LAKE RECORDS
+    405 AEROSOL PARTICLE PROPERTIES
+    403 LAND SURFACE/AGRICULTURE INDICATORS
+    403 CONTAMINANTS
+    402 WATER VAPOR PROCESSES
+    402 PERMAFROST
+    398 ORGANIC MATTER
+    396 Surface Winds
+    392 Paleoclimate Reconstructions
+    392 FRESHWATER ECOSYSTEMS
+    389 SEA ICE CONCENTRATION
+    386 HYDROCARBONS
+    384 Atmospheric Radiation
+    383 Clouds
+    380 SOLAR ACTIVITY
+    377 TRACE GASES/TRACE SPECIES
+    376 FISHERIES
+    376 COORDINATE REFERENCE SYSTEM
+    375 SEA SURFACE HEIGHT
+    371 historical
+    370 MICROALGAE
+    363 VEGETATION SPECIES
+    359 Surface Temperature
+    353 TROPOSPHERIC OZONE
+    353 PRECIPITATION RATE
+    353 LIQUID PRECIPITATION
+    346 SEDIMENTARY ROCKS
+    345 BEDROCK LITHOLOGY
+    340 SURFACE SALINITY
+    338 insect|paleolimnology
+    330 PALEOCLIMATE INDICATORS
+    330 IGNEOUS ROCKS
+    328 GEOCHEMISTRY
+    328 EMISSIVITY
+    324 CONTAMINANT LEVELS/SPILLS
+    321 WEATHER EVENTS
+    315 POLAR MOTION
+    309 CANOPY CHARACTERISTICS
+    307 WATER VAPOR PROFILES
+    307 paleocean
+    304 POPULATION
+    301 Water Vapor Indicators
+    301 OUTGOING LONGWAVE RADIATION
+    300 reconstructions
+    297 GRAVITATIONAL FIELD
+    296 CNIDARIANS
+    290 AGRICULTURAL PLANT SCIENCE
+    289 METAMORPHIC ROCKS
+    286 IONOSPHERE/MAGNETOSPHERE DYNAMICS
+    283 ANIMAL SCIENCE
+    282 SOLID PRECIPITATION
+    282 SOLAR IRRADIANCE
+    281 Ocean Chemistry
+    277 STRATIGRAPHIC SEQUENCE
+    276 GLACIER ELEVATION/ICE SHEET ELEVATION
+    276 GASES
+    274 HABITAT CONVERSION/FRAGMENTATION
+    272 Altitude
+    270 Natural Hazards
+    262 FIRE ECOLOGY
+    258 AEROSOL EXTINCTION
+    256 Aerosols
+    255 LEAF CHARACTERISTICS
+    252 Ecological Dynamics
+    251 oxygen isotopes
+    251 AGRICULTURAL AQUATIC SCIENCES
+    250 ISOTOPES
+    250 Frozen Ground
+    249 PUBLIC HEALTH
+    249 NET RADIATION
+    248 Ocean Temperature
+    247 SNOW/ICE TEMPERATURE
+    247 ICE TYPES
+    247 Atmospheric Chemistry
+    246 GLACIER MOTION/ICE SHEET MOTION
+    246 FLUVIAL LANDFORMS
+    245 CRYOSPHERIC INDICATORS
+    244 PLANKTON
+    244 AGE DETERMINATIONS
+    242 ECONOMIC RESOURCES
+    241 ELEMENTS
+    240 FOREST COMPOSITION/VEGETATION STRUCTURE
+    239 SEDIMENTATION
+    238 SENSOR CHARACTERISTICS
+    234 CLOUD RADIATIVE TRANSFER
+    233 Snow/Ice
+    233 ICE GROWTH/MELT
+    233 GROUND WATER FEATURES
+    231 AQUATIC SCIENCES
+    228 MINERALS
+    228 ANTHROPOGENIC/HUMAN INFLUENCED ECOSYSTEMS
+    227 Ecosystems
+    226 PARTICULATE MATTER
+    225 WATER QUALITY
+    223 AEROSOL BACKSCATTER
+    221 Weather Events
+    221 ICE FLOES
+    218 LIDAR
+    217 ECHINODERMS
+    216 PLANT CHARACTERISTICS
+    215 PACK ICE
+    214 THERMAL INFRARED
+    214 Sea Surface Temperature
+    214 Ice Core Records
+    214 Coral Deposits
+    212 WAVE SPEED/DIRECTION
+    211 ICE VELOCITY
+    210 FUNGI
+    208 SCATTERING
+    207 DISSOLVED GASES
+    206 PALEOCLIMATE RECONSTRUCTIONS
+    206 GLACIAL LANDFORMS
+    204 RADAR IMAGERY
+    203 RADIATIVE FLUX
+    203 MARINE GRAVITY FIELD
+    202 Sea Ice
+    201 ULTRAVIOLET RADIATION
+    201 SURFACE ROUGHNESS
+    201 SHORELINES
+    197 GLACIER TOPOGRAPHY/ICE SHEET TOPOGRAPHY
+    196 EMISSIONS
+    195 MACROALGAE (SEAWEEDS)
+    193 Soils
+    192 ECOTOXICOLOGY
+    190 TROPICAL CYCLONES
+    190 SNOW/ICE CHEMISTRY
+    188 -NA-
+    186 ICE TEMPERATURE
+    184 SKIN TEMPERATURE
+    184 ADMINISTRATIVE DIVISIONS
+    183 REFLECTED INFRARED
+    182 SEA ICE MOTION
+    181 SOIL CLASSIFICATION
+    180 CONTROL SURVEYS
+    179 SNOW WATER EQUIVALENT
+    178 SEDIMENT CHEMISTRY
+    177 GLACIER THICKNESS/ICE SHEET THICKNESS
+    176 GROUND WATER PROCESSES/MEASUREMENTS
+    176 ENVIRONMENTAL ASSESSMENTS
+    175 SOIL CHEMISTRY
+    174 Upper Level Winds
+    173 TOPOGRAPHIC EFFECTS
+    173 Liquid Precipitation
+    172 SEGMENTED WORMS (ANNELIDS)
+    170 Precipitation Rate
+    168 SULFATE PARTICLES
+    168 Radar Reflectivity
+    168 MOSSES/HORNWORTS/LIVERWORTS
+    166 SOLAR ENERGETIC PARTICLE FLUX
+    166 GEOID CHARACTERISTICS
+    165 climate reconstructions|corals and sclerosponges
+    163 SENSOR COUNTS
+    162 SOCIAL BEHAVIOR
+    162 Ocean Waves
+    162 Marine Ecosystems
+    162 climate reconstructions|paleoceanography
+    162 carbon isotopes
+    161 MARINE ENVIRONMENT MONITORING
+    161 LAND USE CLASSES
+    161 DUST/ASH/SMOKE
+    160 ICE MOTION
+    158 TROPOPAUSE
+    158 CARBON MONOXIDE
+    156 REFORESTATION
+    155 ROTATIONAL MOTION/VARIATIONS
+    154 Tropical Cyclones
+    154 IRRADIANCE
+    154 EARTH GASES/LIQUIDS
+    153 WIND PROFILES
+    153 SEDIMENT TRANSPORT
+    153 HYDROGEN COMPOUNDS
+    152 CONSERVATION
+    151 SNOW DENSITY
+    150 Solid Precipitation
+    150 ELLIPSOID CHARACTERISTICS
+    150 ANGIOSPERMS (FLOWERING PLANTS)
+    149 TRANSPORTATION
+    149 Precipitation Amount
+    148 TECTONIC PROCESSES
+    148 speleothems
+    148 SEDIMENT COMPOSITION
+    148 ACOUSTIC SCATTERING
+    147 WILDFIRES
+    147 Earthquakes
+    146 SNOW MELT
+    146 ice core
+    145 GEOCHEMICAL PROPERTIES
+    145 BUILDINGS
+    144 RADAR REFLECTIVITY
+    144 ICE EDGES
+    144 ENERGY PRODUCTION/USE
+    143 SIGNIFICANT WAVE HEIGHT
+    143 REPTILES
+    140 Ocean Color
+    140 ESTUARIES
+    137 ACTIVE LAYER
+    136 LAKE ICE
+    135 CROP/PLANT YIELDS
+    134 Soil Temperature
+    134 LANDSLIDES
+    133 Air Quality
+    131 TELECONNECTIONS
+    131 LICHENS
+    130 Cloud Properties
+    130 Atmospheric Pressure Measurements
+    129 ULTRAVIOLET WAVELENGTHS
+    129 Cloud Microphysics
+    128 climate reconstructions|historical
+    127 WIND STRESS
+    126 SOLAR ENERGETIC PARTICLE PROPERTIES
+    126 EROSION
+    125 SUSTAINABILITY
+    124 GLACIER MASS BALANCE/ICE SHEET MASS BALANCE
+    124 ACOUSTIC REFLECTIVITY
+    122 Upper Air Temperature
+    122 SWELLS
+    122 OPTICAL DEPTH
+    121 SOIL TEXTURE
+    121 NITRATE PARTICLES
+    119 TRACE ELEMENTS
+    119 SOCIOECONOMICS
+    118 ICE ROUGHNESS
+    117 WATERSHED CHARACTERISTICS
+    117 LANDSCAPE PATTERNS
+    117 CRUSTAL MOTION
+    116 POLYNYAS
+    116 DIATOMS
+    116 BOUNDARY SURVEYS
+    116 Aquatic Ecosystems
+    115 ORBITAL CHARACTERISTICS
+    115 Ocean Winds
+    115 ICE DEFORMATION
+    114 MICROFOSSILS
+    114 Carbon and Hydrocarbon Compounds
+    113 LAND RESOURCES
+    113 FLUVIAL PROCESSES
+    112 Wind Dynamics
+    112 STATIC PRESSURE
+    112 AGRICULTURAL CHEMICALS
+    111 fire history|paleolimnology
+    110 SOLIDS
+    110 FLIGHT DATA LOGS
+    107 VIEWING GEOMETRY
+    107 Tectonics
+    106 MACROFOSSILS
+    104 Platform Characteristics
+    104 PLANETARY BOUNDARY LAYER HEIGHT
+    104 FIRN
+    103 SOIL BULK DENSITY
+    103 OCEAN MIXED LAYER
+    103 CYANOBACTERIA (BLUE-GREEN ALGAE)
+    102 Infrastructure
+    102 BEACHES
+    101 Ocean Circulation
+    101 MARINE MAGNETICS
+    100 BIOGEOCHEMICAL CYCLES
+    100 AEOLIAN LANDFORMS
+     99 DEFORESTATION
+     99 ANIMAL ECOLOGY AND BEHAVIOR
+     98 Surface Pressure
+     98 ORGANIC PARTICLES
+     98 MANGROVES
+     98 Aerosol Particle Properties
+     97 RECLAMATION/REVEGETATION/RESTORATION
+     97 NITROGEN OXIDES
+     97 Mesopause
+     97 Coastal Processes
+     96 PLANT PHENOLOGY
+     96 Marine Sediments
+     96 Lightning
+     96 Brightness Temperature
+     96 Atmospheric Electricity
+     95 SPONGES
+     94 PARTICULATES
+     94 GLACIAL PROCESSES
+     94 CLOUD CONDENSATION NUCLEI
+     93 SIGMA NAUGHT
+     93 OCEAN CONTAMINANTS
+     93 CORAL REEFS
+     92 THERMOCLINE
+     92 OPTICAL DEPTH/THICKNESS
+     91 Temperature Tendency
+     91 ABLATION ZONES/ACCUMULATION ZONES
+     90 TUNICATES
+     90 SEA LEVEL RISE
+     90 CULTURAL FEATURES
+     88 VOLATILE ORGANIC COMPOUNDS
+     88 RIVER ICE
+     88 population abundance
+     88 Microwave
+     88 LEADS
+     88 ANIMAL PHYSIOLOGY AND BIOCHEMISTRY
+     87 VISIBILITY
+     87 GLACIAL MEASUREMENTS
+     87 Doppler Velocity
+     87 climate forcing
+     86 WATER MANAGEMENT
+     86 PLANT COMMODITIES
+     86 Permafrost
+     86 CARBONACEOUS AEROSOLS
+     86 AMOEBOIDS
+     85 SOIL DEPTH
+     85 Sea Level Pressure
+     85 POPULATION SIZE
+     85 Infrared Wavelengths
+     85 Ecosystem Functions
+     85 Community Dynamics
+     84 Reflectance
+     84 PETROLEUM
+     84 LIDAR BACKSCATTER
+     84 BIOMASS BURNING
+     84 AMPHIBIANS
+     82 TECHNIQUES
+     82 RADIATIVE FORCING
+     82 MARSHES
+     82 Macrofossils
+     80 Tsunamis
+     80 Organic Carbon
+     80 FOREST MANAGEMENT
+     79 Species/Population Interactions
+     79 Snow Depth
+     78 Spectrum Width
+     78 SOIL HORIZONS/PROFILE
+     78 Chlorophyll
+     78 ATMOSPHERIC EMITTED RADIATION
+     77 PHOSPHORUS
+     77 Environmental Governance/Management
+     77 Dynamic Vegetation/Ecosystem Models
+     77 BARRIER ISLANDS
+     77 AEROSOL RADIANCE
+     75 trace metals
+     75 SNOW STRATIGRAPHY
+     75 INDUSTRIAL EMISSIONS
+     75 GLACIATION
+     75 Environmental Assessments
+     75 BAROMETRIC ALTITUDE
+     74 WATER MASSES
+     74 Bathymetry/Seafloor Topography
+     74 Attenuation/Transmission
+     73 FLOODS
+     73 FJORDS
+     73 Aerosol Optical Depth/Thickness
+     72 Visible Wavelengths
+     72 ULTRAVIOLET RADIANCE
+     72 TRACE ELEMENTS/TRACE METALS
+     72 RADIO OCCULTATION PROFILES
+     72 EARTH SCIENCE REANALYSES/ASSIMILATION MODELS
+     72 BIOSPHERIC INDICATORS
+     72 Airglow
+     72 ABSORPTION
+     71 VOLCANIC DEPOSITS
+     71 ATMOSPHERIC HEATING
+     70 TURBULENCE
+     70 OIL SPILLS
+     70 LANDSCAPE ECOLOGY
+     70 HUMAN SETTLEMENTS
+     70 FREEZE/THAW
+     70 Animals/Vertebrates
+     70 Absorption
+     69 Photosynthetically Active Radiation
+     69 FRESH WATER FLUX
+     69 FLAGELLATES
+     69 Air Temperature
+     68 SURFACE WATER CHEMISTRY
+     68 Marine Environment Monitoring
+     67 Water Vapor Profiles
+     67 POPULATION DISTRIBUTION
+     67 ENVIRONMENTAL HEALTH FACTORS
+     67 chemistry
+     67 CARBONATE
+     67 ATTITUDE CHARACTERISTICS
+     67 air temperature
+     66 SOIL PH
+     66 ROCKY COASTS
+     66 PESTICIDES
+     66 LIGHTNING
+     66 KARST LANDFORMS
+     66 Geopotential Height
+     66 AIRSPEED/GROUND SPEED
+     65 STABLE ISOTOPES
+     65 SOIL HEAT BUDGET
+     65 LANDSCAPE PROCESSES
+     65 Inorganic Carbon
+     64 ROCK GLACIERS
+     64 PERIGLACIAL PROCESSES
+     63 PRECIPITATION PROFILES
+     63 MICROFLORA
+     63 Humidity
+     63 establishment dates
+     62 TRANSMITTANCE
+     62 SOIL RESPIRATION
+     62 Sea Ice Concentration
+     62 Scattering
+     62 INLETS
+     62 HEAVY METALS CONCENTRATION
+     62 GEOLOCATION
+     61 precipitation
+     61 LAND PRODUCTIVITY
+     61 Gelbstoff
+     61 FOREST CONSERVATION
+     60 Rain Storms
+     60 plant macrofossil
+     60 FOREST PROTECTION
+     59 STATION HEIGHT
+     59 Soil Moisture/Water Content
+     59 RADAR BACKSCATTER
+     59 POLITICAL DIVISIONS
+     59 LABELS
+     59 ATMOSPHERIC ELECTRICITY
+     58 SUNSHINE
+     58 COASTAL ELEVATION
+     57 WIND WAVES
+     57 SEWAGE DISPOSAL
+     57 LIDAR DEPOLARIZATION RATIO
+     57 LAGOONS
+     57 DELTAS
+     56 Visibility
+     56 Marine Obstructions
+     56 Marine Geophysics
+     56 GRAVITY WAVE
+     56 DOMINANT SPECIES
+     55 LITTER CHARACTERISTICS
+     55 GRAVITY ANOMALIES
+     55 CONTINENTAL MARGINS
+     55 BRYOZOANS/MOSS ANIMALS
+     55 ATMOSPHERIC STABILITY
+     54 SEASONALLY FROZEN GROUND
+     54 PHOTOCHEMISTRY
+     54 HYDROLOGICAL ADVISORIES
+     54 AURORAE
+     53 OCEAN TEMPERATURE PROFILES
+     53 IRRIGATION
+     53 GROUND WATER CHEMISTRY
+     53 DUNES
+     53 DROUGHTS
+     53 CHEMICAL COMPOSITION
+     52 PRECIPITATION ANOMALIES
+     52 Plate Tectonics
+     52 Glaciers/Ice Sheets
+     52 climate reconstructions|pollen
+     51 URBANIZATION/URBAN SPRAWL
+     51 SULFUR OXIDES
+     51 SOIL WATER HOLDING CAPACITY
+     51 NATURAL GAS
+     51 GEOCHEMICAL PROCESSES
+     51 FIELD CROP PRODUCTS
+     51 DISEASES/EPIDEMICS
+     51 climate reconstructions|paleolimnology
+     50 SOIL STRUCTURE
+     50 Snow Cover
+     50 SEA ICE ELEVATION
+     50 HEAVY METALS
+     50 FOSSIL FUEL BURNING
+     50 FLATWORMS/FLUKES/TAPEWORMS
+     50 ELECTRON FLUX
+     50 BLACK CARBON
+     49 Wind Profiles
+     49 Turbulence
+     49 Sedimentation
+     49 RADIOCARBON
+     49 HYDROSTATIC PRESSURE
+     48 WAVE SPECTRA
+     48 ROUNDWORMS
+     47 SOIL GAS/AIR
+     47 MICRONUTRIENTS/TRACE ELEMENTS
+     47 EVAPORATION
+     46 Tides
+     46 Pressure Thickness
+     46 MICROFAUNA
+     45 TREE RINGS
+     45 SOLAR IMAGERY
+     45 MARINE OBSTRUCTIONS
+     45 GROUND ICE
+     45 geochemistry
+     44 UPWELLING/DOWNWELLING
+     44 Oxygen Compounds
+     44 Dissolved Gases
+     44 CORE PROCESSES
+     43 Solar Radiation
+     43 BIOGEOCHEMICAL PROCESSES
+     43 Animals/Invertebrates
+     42 MARINE VOLCANISM
+     42 MAGNETIC FIELDS/MAGNETIC CURRENTS
+     42 FERTILIZERS
+     42 BOREHOLES
+     41 WIND-DRIVEN CIRCULATION
+     41 TIDAL CURRENTS
+     41 SHORELINE DISPLACEMENT
+     41 SEDIMENTARY TEXTURES
+     41 Sedimentary Structures
+     41 Rock Glaciers
+     41 POLLEN
+     41 PALEOMAGNETISM
+     41 MAGNETIC ANOMALIES
+     41 INFRARED FLUX
+     41 CROPPING SYSTEMS
+     41 Cloud Types
+     41 BREEDING PRODUCTIVITY
+     41 ARROW WORMS
+     40 SOIL PRODUCTIVITY
+     40 POTASSIUM
+     40 Fluorescence
+     40 Droplet Size
+     40 AGRICULTURE PRODUCTION
+     40 AEROSOL FORWARD SCATTER
+     39 VISIBLE FLUX
+     39 STORM SURGE
+     39 IONS
+     39 Environmental Impacts
+     39 COSMIC RAYS
+     39 CLIMATE CHANGE RESPONSES
+     38 Station Height
+     38 MICROWAVE RADIANCE
+     38 INDIGENOUS VEGETATION
+     38 Hydrometeors
+     38 GEOMAGNETIC INDICES
+     38 EXOTIC VEGETATION
+     38 CLIMATE ADAPTATION
+     38 Bathymetry
+     37 VECTOR LABELS
+     37 TORNADOES
+     37 SOLAR FLARES
+     37 Plankton
+     37 OCEAN SALINITY
+     37 Ocean Currents
+     37 INTERTIDAL ZONE
+     37 Dew Point Temperature
+     37 Active Layer
+     36 SEDIMENTARY STRUCTURES
+     36 Heat Flux
+     35 Weather/Climate Advisories
+     35 TEMPERATURE INDICES
+     35 SOIL SALINITY/SOIL SODICITY
+     35 PARTICLE DENSITY
+     35 ENVIRONMENTAL SUSTAINABILITY
+     35 AIR TEMPERATURE RECONSTRUCTION
+     34 TSUNAMIS
+     34 Tropospheric Ozone
+     34 reconstruction
+     34 PROTON FLUX
+     34 OCEAN PLATEAUS/RIDGES
+     34 LANDSCAPE MANAGEMENT
+     34 FREEBOARD
+     34 DISSOLVED SOLIDS
+     34 Boundary Layer Winds
+     34 ANTENNA TEMPERATURE
+     33 VOLCANIC ERUPTIONS
+     33 THERMOHALINE CIRCULATION
+     33 Surface Water
+     33 SOLAR ACTIVE REGIONS
+     33 Longwave Radiation
+     33 HUMIDITY INDICES
+     33 HERBIVORY
+     33 FOOD SECURITY
+     33 ELECTRICITY
+     33 AGRICULTURAL ENGINEERING
+     32 TIDAL COMPONENTS
+     32 ELECTRICAL CONDUCTIVITY
+     32 DOPPLER VELOCITY
+     31 Water Vapor
+     31 Water Quality/Water Chemistry
+     31 SOIL FERTILITY
+     31 SOIL COLOR
+     31 PARTICLE FLUX
+     31 PALEOVEGETATION
+     31 PALEOMAGNETIC DATA
+     31 MAGNESIUM
+     31 ION FLUX
+     31 GEOTHERMAL DYNAMICS
+     31 Flight Data Logs
+     31 Fish
+     31 Carbon Dioxide
+     30 Vegetation
+     30 RIBBON WORMS
+     30 RADIO WAVE
+     30 FRONTS
+     30 FOREST FIRE SCIENCE
+     30 BUOY POSITION
+     30 BIOGENIC SEDIMENTS
+     30 Atmospheric Temperature Indices
+     30 Albedo
+     30 age control
+     29 TIDAL RANGE
+     29 SOLAR INDUCED FLUORESCENCE
+     29 Seiches
+     29 Sea Surface Height
+     29 Salinity/Density
+     29 PLASMA WAVES
+     29 OSCILLATIONS
+     29 CROWN
+     29 CALCIUM
+     29 ANTICYCLONES/CYCLONES
+     28 Visible Imagery
+     28 SOIL POROSITY
+     28 Radial Velocity
+     28 OCEAN TRACERS
+     28 Net Radiation
+     28 FREEZE/FROST
+     28 CONDUCTION
+     27 Sunshine
+     27 POTENTIAL DENSITY
+     27 PEANUT WORMS
+     27 Ionosphere/Magnetosphere Dynamics
+     27 ION CHEMISTRY/IONIZATION
+     27 ICE CORE AIR BUBBLES
+     27 CLOUD DYNAMICS
+     27 CILIATES
+     27 Attitude Characteristics
+     27 AMMONIUM AEROSOLS
+     27 AMBIENT NOISE
+     26 Water Temperature
+     26 Visualization/Image Processing
+     26 SOIL EROSION
+     26 Sensor Characteristics
+     26 RADAR CROSS-SECTION
+     26 Planetary Boundary Layer Height
+     26 Mean Radial Velocity
+     26 KARST PROCESSES
+     26 FERNS AND ALLIES
+     26 CLOUD DROPLET DISTRIBUTION
+     26 ATMOSPHERIC TEMPERATURE INDICES
+     26 Atmospheric/Ocean Indicators
+     26 Arthropods
+     26 AEROSOL ABSORPTION
+     25 Wind Stress
+     25 Total Electron Content
+     25 SPICE
+     25 SOLAR ULTRAVIOLET EMISSIONS
+     25 SOIL ABSORPTION
+     25 Snow Water Equivalent
+     25 Shortwave Radiation
+     25 SEVERE STORMS
+     25 Precipitation Anomalies
+     25 Plants
+     25 NITROUS OXIDE
+     25 METHANE
+     25 LIQUID WATER EQUIVALENT
+     25 EARTH RADIATION BUDGET
+     25 Anticyclones/Cyclones
+     25 AEOLIAN PROCESSES
+     24 WATER-LEAVING RADIANCE
+     24 VIRUSES
+     24 VEGETATION PRODUCTIVITY
+     24 streamflow
+     24 Speleothems
+     24 REFRACTIVITY
+     24 others
+     24 MORTALITY
+     24 LONGSHORE CURRENTS
+     24 EXTREME WEATHER
+     24 EXCESS PHASE
+     24 ELECTRIC FIELDS/ELECTRIC CURRENTS
+     24 COMB JELLIES
+     24 Cave Deposits
+     24 BENDING ANGLE
+     23 Water Masses
+     23 Tropopause
+     23 TERRESTRIAL HYDROSPHERE INDICATORS
+     23 SOLAR WIND
+     23 Sensor Counts
+     23 SEA SURFACE SLOPE
+     23 SEA LEVEL
+     23 Rocks/Minerals
+     23 OCEAN GENERAL CIRCULATION MODELS (OGCM)/REGIONAL OCEAN MODELS
+     23 MICROWAVE IMAGERY
+     23 MACHINE LEARNING MODELS
+     23 lithology
+     23 Incoming Solar Radiation
+     23 HYPOXIA
+     23 Fungi
+     23 FRACTURE ZONES
+     23 EXTINCTION COEFFICIENTS
+     23 climate reconstructions|ice cores
+     22 Temperature Anomalies
+     22 RASTER LABELS
+     22 PARTICLE SPEED
+     22 Mammals
+     22 Lichens
+     22 lake levels|paleolimnology
+     22 FOOD SCIENCE
+     22 Erosion/Sedimentation
+     22 charcoal sediment
+     22 Bacteria/Archaea
+     22 Airspeed/Ground Speed
+     22 ADVECTION
+     22 ACID DEPOSITION
+     21 WEEDS, NOXIOUS PLANTS OR INVASIVE PLANTS
+     21 WEATHERING
+     21 SEA ICE AGE
+     21 PYCNOCLINE
+     21 PRESSURE TENDENCY
+     21 METALS
+     21 MARINE GEOCHEMISTRY
+     21 MACROFAUNA
+     21 Fronts
+     21 FOREST YIELDS
+     21 EVERGREEN VEGETATION
+     21 DECIDUOUS VEGETATION
+     21 atmospheric circulation
+     21 ANIMAL COMMODITIES
+     21 ANIMAL BREEDING AND GENETICS
+     21 ALPHA PARTICLE FLUX
+     20 VULNERABILITY LEVELS/INDEX
+     20 Topography
+     20 Surface Radiative Properties
+     20 Surface Air Temperature
+     20 SOLAR X-RAY EMISSIONS
+     20 Seismology
+     20 SEA SALT
+     20 RADIATION EXPOSURE
+     20 Periglacial Processes
+     20 OXYGEN ISOTOPES
+     20 INDUSTRIALIZATION
+     20 Ice Depth/Thickness
+     20 HYDRAULIC CONDUCTIVITY
+     20 DEGRADATION
+     20 AFFORESTATION/REFORESTATION
+     19 Wave Height
+     19 Volcanoes
+     19 URBAN AREAS
+     19 trace metals in carbonates
+     19 Surface Thermal Properties
+     19 SOIL MECHANICS
+     19 SOIL INFILTRATION
+     19 RADIANCE
+     19 Outgoing Longwave Radiation
+     19 OCEAN BOTTOM PRESSURE
+     19 Infrared Imagery
+     19 Fog
+     19 Evapotranspiration
+     19 ELECTRICAL FIELD
+     19 Boundary Layer Temperature
+     19 Barometric Altitude
+     19 Atmospheric Stability
+     19 Atmospheric Phenomena
+     19 ALGAL BLOOMS
+     18 Water Vapor Processes
+     18 Visible Radiance
+     18 TREATY AGREEMENTS/RESULTS
+     18 SOIL MOISTURE
+     18 Snow/Ice Chemistry
+     18 RAIN STORMS
+     18 Radar Imagery
+     18 PRESSURE THICKNESS
+     18 Pressure Tendency
+     18 PRESSURE ANOMALIES
+     18 PARTICLE COMPOSITION
+     18 Ocean Heat Budget
+     18 Land Use/Land Cover
+     18 Land Surface Temperature
+     18 LAMP SHELLS
+     18 Infrared Radiance
+     18 Ice Edges
+     18 hydrogen isotopes
+     18 GYMNOSPERMS
+     18 CORONA
+     18 CONVECTION
+     18 COMMUNICATIONS
+     18 CARBON FLUX
+     18 Birds
+     18 BIOTURBATION
+     18 ATMOSPHERIC CIRCULATION RECONSTRUCTION
+     18 ANIMAL DISEASES/DISORDERS/PESTS
+     18 AEROSOL SINGLE SCATTERING ALBEDO
+     17 WATER QUALITY INDICES
+     17 TERRIGENOUS SEDIMENTS
+     17 SULFUR
+     17 Stratigraphic Sequence
+     17 SOIL CONSISTENCE
+     17 SEAMOUNTS
+     17 ROTIFERS
+     17 RADIONUCLIDES
+     17 POVERTY LEVELS
+     17 pollen
+     17 PALEOSOLS
+     17 METEORITES
+     17 GEOTECHNICAL PROPERTIES
+     17 Fjords
+     17 EDDIES
+     17 DESERTIFICATION
+     17 Cryospheric Indicators
+     17 CATION EXCHANGE CAPACITY
+     17 BURROWS/SPOON WORMS
+     17 Aerosol Backscatter
+     16 SUNSPOTS
+     16 Seasonally Frozen Ground
+     16 SEA LEVEL RECONSTRUCTION
+     16 Seafloor Topography
+     16 SALTWATER INTRUSION
+     16 PRIAPULANS
+     16 PIPELINES
+     16 Nitrous Oxide
+     16 Nitrogen Compounds
+     16 MARINE GEOCHEMICAL PROCESSES
+     16 LOCAL SUBSIDENCE TRENDS
+     16 Ice Temperature
+     16 FOG
+     16 DROUGHT/PRECIPITATION RECONSTRUCTION
+     16 document
+     16 Degree Days
+     16 climate reconstructions|insect|paleolimnology
+     16 CHEMICAL SPILLS
+     16 ANIMAL MANURE AND WASTE
+     16 AGRICULTURAL EXPANSION
+     15 Volcanic Eruptions
+     15 Volcanic Activity
+     15 Vegetation Index
+     15 ULTRAVIOLET FLUX
+     15 SLIME MOLDS
+     15 RADIO WAVE FLUX
+     15 Radiative Flux
+     15 POPULATION ESTIMATES
+     15 plant macrofossils
+     15 PARTICLE TEMPERATURE
+     15 Ocean Pressure
+     15 LIQUID WATER CONTENT
+     15 GEOTHERMAL TEMPERATURE
+     15 ENERGY DEPOSITION
+     15 DROPLET SIZE
+     15 DENITRIFICATION RATE
+     15 CONSUMER BEHAVIOR
+     15 BIOLOGICAL RECORDS
+     15 BIOLOGICAL HAZARDS
+     15 AQUACULTURE
+     15 AIRGLOW
+     14 VEGETATION RECONSTRUCTION
+     14 TRENCHES
+     14 Trace Gases/Trace Species
+     14 SOLAR FORCING/INSOLATION RECONSTRUCTION
+     14 SINK TEMPERATURE
+     14 Significant Wave Height
+     14 PHORONIDS
+     14 PHENOLOGICAL CHANGES
+     14 other
+     14 NON-METALLIC MINERALS
+     14 LIVESTOCK PRODUCTS
+     14 LIDAR WAVEFORM
+     14 LAKES
+     14 LAKE LEVELS
+     14 instrumental|paleoceanography
+     14 Ice Extent
+     14 HEAT
+     14 Geomorphic Landforms/Processes
+     14 GEOMAGNETIC FORECASTS
+     14 FOREST PRODUCTS/COMMODITIES
+     14 Eruption Dynamics
+     14 Earthquake Dynamics
+     14 DIFFUSION
+     14 CRYOSOLS
+     14 Cloud Condensation Nuclei
+     14 Carbon
+     14 CALIBRATION
+     14 AVALANCHE
+     13 Wave Speed/Direction
+     13 Teleconnections
+     13 Swells
+     13 Strain
+     13 SOLAR VELOCITY FIELDS
+     13 SOLAR RADIO WAVE EMISSIONS
+     13 SOIL COMPACTION
+     13 Snow Density
+     13 SEA SURFACE TEMPERATURE INDICES
+     13 RECREATIONAL ACTIVITIES/AREAS
+     13 PERMAFROST MELT
+     13 INORGANIC MATTER
+     13 Freeze/Thaw
+     13 ELECTRIC FIELD
+     13 DIFFERENTIAL PRESSURE
+     13 Cyanobacteria (Blue-Green Algae)
+     13 Conductivity
+     13 climate reconstructions|historical|instrumental
+     13 CLASSIFICATION
+     13 Carbon Monoxide
+     13 Atmospheric Precipitation Indices
+     13 Arctic Oscillation
+     12 Wave Period
+     12 WATER RESOURCES
+     12 TOTAL SURFACE PRECIPITATION RATE
+     12 THERMAL CONDUCTIVITY
+     12 Solar Activity
+     12 SOIL ROOTING DEPTH
+     12 Social Behavior
+     12 SNOW STORMS
+     12 Snow Melt
+     12 SHOALS
+     12 REFERENCE FIELDS
+     12 POPULATION DENSITY
+     12 PHASE AND AMPLITUDE
+     12 model
+     12 Lidar
+     12 Landslides
+     12 Ionosphere/Magnetosphere Particles
+     12 HYDROTHERMAL VENTS
+     12 Humidity Indices
+     12 Humidity Index
+     12 HUMIDITY
+     12 ground water
+     12 Geomagnetism
+     12 Electric Field
+     12 DYNAMIC TOPOGRAPHY
+     12 Data Synchronization Time
+     12 Common Sense Climate Index
+     12 COASTAL AREAS
+     12 climate forcing|ice cores
+     12 Carbon And Hydrocarbon Compounds
+     12 CANOPY TRANSMITTANCE
+     12 ANIMAL MANAGEMENT SYSTEMS
+     12 Air Temperature Indices
+     11 Wind Waves
+     11 WAVE FREQUENCY
+     11 Water Depth
+     11 WATER BUDGET
+     11 TOTAL ELECTRON CONTENT
+     11 Tidal Height
+     11 Tidal Currents
+     11 Terrain Elevation
+     11 SOLAR PROMINENCES/SOLAR FILAMENTS
+     11 SNOW ENERGY BALANCE
+     11 Sedimentary Rocks
+     11 Salinity
+     11 Return Power
+     11 PLANT DISEASES/DISORDERS/PESTS
+     11 Organic Matter
+     11 nitrogen isotopes
+     11 NEOTECTONICS
+     11 LOCAL WINDS
+     11 Hydrogen Compounds
+     11 Glaciers
+     11 Glacier Motion/Ice Sheet Motion
+     11 Glacier Elevation/Ice Sheet Elevation
+     11 FOREST MENSURATION
+     11 FOREST HARVESTING AND ENGINEERING
+     11 Emissions
+     11 CONVECTIVE CLOUDS/SYSTEMS (OBSERVED/ANALYZED)
+     11 Contaminants
+     11 climate reconstructions|speleothems
+     11 AIR MASS/DENSITY
+     11 ACOUSTIC TOMOGRAPHY
+     11 ACOUSTIC ATTENUATION/TRANSMISSION
+     11 ACORN WORMS
+     11 accumulation
+     10 WIND VELOCITY/SPEED
+     10 weather observation
+     10 Tidal Range
+     10 Tidal Heights
+     10 STREAMFLOW RECONSTRUCTION
+     10 speleothems|tree ring
+     10 SOLAR OSCILLATIONS
+     10 Solar Irradiance
+     10 Soil Classification
+     10 Soil Chemistry
+     10 Sediment Transport
+     10 Sediments
+     10 Sea Surface Temperature Indices
+     10 sea surface temperature
+     10 SALT TRANSPORT
+     10 Radar Backscatter
+     10 PLANT BREEDING AND GENETICS
+     10 PARTICLE DISTRIBUTION FUNCTIONS
+     10 Paleoclimate Forcing
+     10 Oil Spills
+     10 NUCLEAR RADIATION EXPOSURE
+     10 MONSOONS
+     10 Marine Gravity Field
+     10 LEAD
+     10 LAND/OCEAN/ICE FRACTION
+     10 GYRES
+     10 Ground Ice
+     10 GEOTHERMAL ENERGY
+     10 Gas Explosions/Leaks
+     10 Freeze/Frost
+     10 Floods
+     10 FIRE MANAGEMENT
+     10 EUTROPHICATION
+     10 Erosion
+     10 Disaster Response
+     10 Dew Point
+     10 Coral Reefs
+     10 Contaminant Levels/Spills
+     10 climate reconstructions|paleoclimatic modeling
+     10 CIVIL DISTURBANCE
+     10 AQUACULTURE PRODUCTION
+     10 ANIMAL YIELDS
+     10 Agricultural Aquatic Sciences
+      9 X-RAY FLUX
+      9 WATER BEARS (TARDIGRADES)
+      9 VORTICITY
+      9 VEGETABLE PRODUCTS
+      9 Trace Elements/Trace Metals
+      9 TOTAL TEMPERATURE
+      9 Tornadoes
+      9 TERRESTRIAL WATER STORAGE
+      9 TEMPERATURE INDICATORS
+      9 Surface Water Processes/Measurements
+      9 Sulfur Compounds
+      9 SOLAR SYNOPTIC MAPS
+      9 SILVICULTURE
+      9 Sea Surface Topography
+      9 RURAL AREAS
+      9 REFORESTATION/REVEGETATION
+      9 Protists
+      9 PRECIPITATION INDICES
+      9 PRECIPITATION INDICATORS
+      9 MID-OCEAN RIDGES
+      9 MAGNETIC STORMS
+      9 Geothermal Temperature
+      9 GAMMA RAY
+      9 FRUIT PRODUCTS
+      9 Evaporation
+      9 Emissivity
+      9 climate reconstructions|corals and sclerosponges|tree ring
+      9 climate forcing|paleoclimatic modeling
+      9 BLOWING SNOW
+      9 biomarkers
+      9 BENTHIC HABITAT
+      9 Benthic Habitat
+      9 Aurorae
+      9 ARCHAEOLOGICAL AREAS
+      9 APPARENT SURFACE REFLECTIVITY
+      8 YEASTS/TRUFFLES
+      8 X-RAY
+      8 WETNESS
+      8 WAVE LENGTH
+      8 TROPOSPHERIC/MID-LEVEL CLOUDS (OBSERVED/ANALYZED)
+      8 TROPOSPHERIC/LOW LEVEL CLOUDS (OBSERVED/ANALYZED)
+      8 Tornados
+      8 STRATOPAUSE
+      8 Storm Surge
+      8 SPECTRAL IRRADIANCE
+      8 SOIL IMPEDANCE
+      8 SNOW MICROSTRUCTURE
+      8 RETURN POWER
+      8 PARTICULATE MATTER (PM 2.5)
+      8 Particulate Matter
+      8 MODEL LOGS
+      8 Microwave Radiance
+      8 Microfossils
+      8 MARINE HABITAT
+      8 Lidar Backscatter
+      8 Land Use/Land Cover Classification
+      8 LAND SUBSIDENCE
+      8 lake level
+      8 instrumental data
+      8 Ice Growth/Melt
+      8 HEAVY NUCLEI FLUX
+      8 GLACIER FACIES
+      8 GEOLOGICAL FEATURES
+      8 GELBSTOFF
+      8 Fisheries
+      8 FAMINE
+      8 ENTOPROCTS
+      8 DROUGHT INDICES
+      8 Cyanobacteria (blue-green Algae)
+      8 CORONA HOLES
+      8 ANCILLARY MODELS
+      8 ABYSSAL HILLS/PLAINS
+      7 WATER VAPOR INDICES
+      7 Ultraviolet Radiation
+      7 \t\t\t\t\t\t\tprecipitation
+      7 THERMAL PROPERTIES
+      7 Tectonic Processes
+      7 SPECTRUM WIDTH
+      7 Soil Heat Budget
+      7 SEA ICE/OCEAN CLASSIFICATION
+      7 Rivers/Streams
+      7 RIVER ICE DEPTH/EXTENT
+      7 River Ice
+      7 Radiance
+      7 PRESERVATION
+      7 POLARIZED REFLECTANCE
+      7 Pigments
+      7 Ocean Acoustics
+      7 NITRIC ACID
+      7 Meteorological Hazards
+      7 MESOPAUSE
+      7 Marine Advisories
+      7 Magnetic Fields/Magnetic Currents
+      7 Land Subsidence
+      7 Land Cover
+      7 Lakes
+      7 Indigenous Knowledge
+      7 GRAVITY WAVES
+      7 Glacier Thickness/Ice Sheet Thickness
+      7 GAS FLARING
+      7 ELECTRICAL PROPERTIES
+      7 Drought
+      7 CORONAL MASS EJECTIONS
+      7 CONVERGENCE/DIVERGENCE
+      7 climate reconstructions|paleolimnology|tree ring
+      7 climate reconstructions|instrumental
+      7 BIOMEDICAL CHEMICALS
+      7 Atmospheric Conductivity
+      7 APHOTIC/PHOTIC ZONE
+      7 ACOUSTIC FREQUENCY
+      6 Wind Tendency
+      6 WEATHER/CLIMATE ADVISORIES
+      6 VISIBLE SNOW DARKENING
+      6 VEGETATION OPTICAL DEPTH
+      6 \t\t\t\t\t\t\tatmospheric Phenomena
+      6 TROPOSPHERIC/HIGH-LEVEL CLOUDS (OBSERVED/ANALYZED)
+      6 Total Temperature
+      6 Terrestrial Ecosystems
+      6 Tectonic
+      6 SUSTAINABLE DEVELOPMENT
+      6 SUBMARINE CANYONS
+      6 Static Pressure
+      6 Standardized Precipitation Index
+      6 SPECIES MIGRATION
+      6 Soil Water Holding Capacity
+      6 SOIL PLASTICITY
+      6 SNOW RADIATIVE FORCING
+      6 Snow/Ice Temperature
+      6 SNOW FRACTION
+      6 SMOG
+      6 RIFT VALLEYS
+      6 Rain
+      6 RADIAL VELOCITY
+      6 Radar Cross-Section
+      6 ocean model
+      6 NOBLE GAS
+      6 NITROGEN DIOXIDE
+      6 Microflora
+      6 MEAN SEA SURFACE
+      6 MACROPHYTES
+      6 Macroalgae (seaweeds)
+      6 LOESS
+      6 Ion Chemistry/Ionization
+      6 Igneous Rocks
+      6 HYDROMETEORS
+      6 Hydrological Advisories
+      6 HYDROGENOUS SEDIMENTS
+      6 Halocarbons And Halogens
+      6 Gravity Wave
+      6 Geothermal
+      6 Geolocation
+      6 GAMMA RAY FLUX
+      6 ENTRAINMENT
+      6 Drought/Precipitation Indices
+      6 DISTURBANCE
+      6 crop harvests
+      6 CORAL DEPOSITS
+      6 Convergence/Divergence
+      6 Conservation
+      6 COASTAL HABITAT
+      6 CLOUD INDICATORS
+      6 Cloud Dynamics
+      6 climate reconstructions|instrumental|paleoceanography
+      6 climate reconstructions|insect
+      6 climate reconstructions|ice cores|tree ring
+      6 climate reconstructions|historical|tree ring
+      6 climate forcing|paleoceanography
+      6 CLIMATE FEEDBACKS
+      6 Ciliates
+      6 Carbonaceous Aerosols
+      6 BASAL SHEAR STRESS
+      5 Upwelling/Downwelling
+      5 Turbidity
+      5 Tropospheric/Mid-Level Clouds (observed/Analyzed)
+      5 Tropospheric/Low Level Clouds (observed/Analyzed)
+      5 Tropospheric/High-Level Clouds (observed/Analyzed)
+      5 TRACE METALS
+      5 Temperature Profiles
+      5 TALIK
+      5 SPINY-HEADED WORMS
+      5 Snow
+      5 Shorelines
+      5 Severe Weather
+      5 Sea Level Rise
+      5 Rocky Coasts
+      5 Pressure Anomalies
+      5 PRECIPITABLE WATER
+      5 PLANETARY/ROSSBY WAVES
+      5 phenology
+      5 Orbital Characteristics
+      5 Optical Depth/Thickness
+      5 Optical Depth
+      5 OCEAN VOLUME BUDGET
+      5 Nitrogen Oxides
+      5 Nitrogen
+      5 NEUTRAL PARTICLE FLUX
+      5 NEURAL NETWORKS
+      5 MUSHROOMS
+      5 Mosses/Hornworts/Liverworts
+      5 Monsoons
+      5 Metamorphic Rocks
+      5 Marine Habitat
+      5 Macroalgae (Seaweeds)
+      5 Liquid Water Equivalent
+      5 lake levels
+      5 Lagrangian Feature
+      5 INVASIVE SPECIES
+      5 Ice Types
+      5 Ice Floes
+      5 HEATING RATE
+      5 FROST
+      5 Frost
+      5 Fire Advisories
+      5 Finite Time Lyapunov Exponent
+      5 Environmental Features & Use
+      5 ENSEMBLE MODELS
+      5 Echinoderms
+      5 DEPTH HOAR
+      5 Community-Based Monitoring
+      5 Cloud Droplet Distribution
+      5 climate reconstructions|instrumental|tree ring
+      5 climate reconstructions|historical|other collections
+      5 CLIMATE CHANGE IMPACT ASSESSMENT MODELS
+      5 CAVE DEPOSITS
+      5 Biomass
+      5 Atmospheric Emitted Radiation
+      5 AIR TEMPERATURE
+      5 AGRICULTURAL EQUIPMENT
+      4 WATER VAPOR
+      4 Viewing Geometry
+      4 VERTICAL WIND MOTION
+      4 VEGETATION FRACTION
+      4 \t\t\t\t\t\t\tmicrowave
+      4 Total Pressure
+      4 Thermocline
+      4 surface Temperature
+      4 Sulfur Oxides
+      4 STRATOSPHERIC CLOUDS (OBSERVED/ANALYZED)
+      4 Storms
+      4 SPECTRAL/ENGINEERING
+      4 Soil Structure
+      4 Soil Depth
+      4 SNOW DURATION
+      4 SNOW
+      4 Severe Storms
+      4 SEISMOLOGY
+      4 SEISMIC SURFACE WAVES
+      4 SEA SURFACE TEMPERATURE RECONSTRUCTION
+      4 RIVERS/STREAMS
+      4 radiogenic isotopes
+      4 radiogenic isotope
+      4 PRESCRIBED BURNS/FIRES
+      4 Potential Temperature
+      4 Place Names
+      4 PERMAFROST/METHANE RELEASE
+      4 PELAGIC HABITAT
+      4 Ocean General Circulation Models (OGCM)/Regional Ocean Models
+      4 MORBIDITY
+      4 Mollusks
+      4 Microalgae
+      4 magnetic susceptibility
+      4 Magnetic Field
+      4 Magnetic Anomalies
+      4 LENGTH OF GROWING SEASON
+      4 Leads
+      4 Land Temperature
+      4 LAND SURFACE FEEDBACKS
+      4 Landscape
+      4 Land Management
+      4 lake levels|paleolimnology|tree ring
+      4 Lake Ice
+      4 Isotopes
+      4 ISLANDS
+      4 ISLAND ARCS
+      4 ICE SHELVES
+      4 Ice Sheets
+      4 Ice Draft
+      4 HYPERSPECTRAL IMAGERY
+      4 HORTICULTURAL PRODUCTS
+      4 Geomorphology
+      4 GEOMETRY OF INTERNAL REFLECTIONS
+      4 FRESH WATER RIVER DISCHARGE
+      4 FOOD CONTAMINATION AND TOXICOLOGY
+      4 FEED PRODUCTS
+      4 Extreme Weather
+      4 Ecological Dynamics 
+      4 Dust/Ash/Smoke
+      4 Droplet Concentration/Size
+      4 DIAGENESIS
+      4 DEPTHS AT SPECIFIC AGES
+      4 DEPOSITION
+      4 Cryosols
+      4 Cosmic Rays
+      4 Coastal Landforms
+      4 climate reconstructions|corals and sclerosponges|paleoceanography
+      4 climate forcing|plant macrofossils
+      4 Biomedical Chemicals
+      4 BIOCHEMICAL RELEASE
+      4 BERYLLIUM-10 ANALYSIS
+      4 atmospheric gas
+      4 atmosphere model
+      4 Angiosperms (flowering Plants)
+      4 Ambient Noise
+      4 Alpine/Tundra
+      4 Agricultural Advisories
+      4 Aerosol Extinction
+      3 Wildlife Observations
+      3 Weather Forecast
+      3 WAVE TYPES
+      3 Water Quality
+      3 Volcanic Ash/Dust
+      3 VEGETATION WATER POTENTIAL
+      3 VARVE DEPOSITS
+      3 Ultraviolet Wavelengths
+      3 Trace Gases
+      3 Total Surface Precipitation Rate
+      3 Topographical Relief
+      3 Thermal Infrared
+      3 TEMPERATURE PROFILES
+      3 Temperature
+      3 SURFACE MELT
+      3 Statistical Applications
+      3 SPOROZOANS
+      3 Solar Energetic Particles
+      3 SODIUM
+      3 SNOW GRAIN SIZE
+      3 SNOW FACIES
+      3 Skin Temperature
+      3 Sediment Chemistry
+      3 Sea State
+      3 Sea Ice Motion
+      3 Sea Ice Elevation
+      3 RIVER/LAKE ICE BREAKUP
+      3 Reflected Infrared
+      3 Radio Wave
+      3 PURCHASING POWER
+      3 Present Weather
+      3 Precipitation Profiles
+      3 Polynyas
+      3 Planetary/Rossby Waves
+      3 PARTICULATE MATTER (PM 10)
+      3 PALEOCLIMATE FORCING
+      3 Pack Ice
+      3 OXYGEN ISOTOPE ANALYSIS
+      3 MECHANICAL DISTURBANCE
+      3 Marine Biology
+      3 LAND HEAT CAPACITY
+      3 LANDFORMS
+      3 LAKE LEVEL RECONSTRUCTION
+      3 IRON
+      3 insecta
+      3 Ice Roughness
+      3 Ice Deformation
+      3 Icebergs
+      3 Hydrological Hazards
+      3 HORSEHAIR WORMS
+      3 GROUND WATER RECONSTRUCTION
+      3 GROUNDWATER CHEMISTRY
+      3 GREENHOUSE GAS FLUX
+      3 GRAVITY FIELD
+      3 Glacier Facies
+      3 Geothermal Dynamics
+      3 GEOMORPHOLOGY
+      3 GEOGRAPHY AND LAND COVER
+      3 Geographic Information Systems
+      3 GEODETICS/GRAVITY
+      3 GAS HYDRATES
+      3 Gases
+      3 FRESHWATER RUNOFF
+      3 FARM STRUCTURES
+      3 ENVIRONMENTAL REGULATIONS
+      3 Electron Flux
+      3 Economic Resources
+      3 Earthquake Occurrences
+      3 DYNAMIC VEGETATION/ECOSYSTEM MODELS
+      3 DYNAMICS
+      3 DUST CONCENTRATION
+      3 DEW POINT TEMPERATURE
+      3 DATA SYNCHRONIZATION TIME
+      3 Coastal Landforms/Processes
+      3 Coastal Elevation
+      3 Cloud Radiative Transfer
+      3 climate reconstructions|plant macrofossils
+      3 climate reconstructions|corals and sclerosponges|instrumental|tree ring
+      3 CANOPY TEMPERATURE VARIABILITY
+      3 Attitudes,preferences,behavior
+      3 ATMOSPHERIC PHENOMENA
+      3 ATMOSPHERE/SURFACE INTERACTIONS
+      3 ATMOSPHERE
+      3 Aquaculture
+      3 Antenna Temperature
+      3 Animal Science
+      3 ALUMINUM-26 ANALYSIS
+      3 AGE AT ICE-THICKNESS-NORMALIZED DEPTHS
+      3 ACTINIC FLUX
+      3 Acoustic Scattering
+      2 Youth Involvement
+      2 WOODY BIOMASS
+      2 WIND STORMS
+      2 WIND SHEAR
+      2 Wind Shear
+      2 Wind-Driven Circulation
+      2 WIND CHILL
+      2 Wind Chill
+      2 Wildlife Management
+      2 Wildfires
+      2 WETLANDS
+      2 Wetlands
+      2 Weather Stations/Networks
+      2 Water Vapor Tendency
+      2 water Vapor Processes
+      2 Water Vapor Indices
+      2 water Vapor Indicators
+      2 Vital Statistics
+      2 Virtual Temperature
+      2 Vertical Wind Motion
+      2 Vegetation Cover
+      2 Uv Radiation
+      2 upper Air Temperature
+      2 Ultraviolet Radiance
+      2 \t\t\t\t\t\t\tnatural Hazards
+      2 \t\t\t\t\t\t\tevaporation\n\t\t\t\t\t\t
+      2 \t\t\t\t\t\t\tevaporation
+      2 \t\t\t\t\t\t\tatmospheric Temperature
+      2 Tropospheric/Low Level Clouds (Observed/Analyzed)
+      2 Trenches
+      2 TOURISM
+      2 Topographic Effects
+      2 Thermal Properties
+      2 Terrestrial Hydrosphere Indicators
+      2 Surface Water Features
+      2 Surface Salinity
+      2 SURFACE MOISTURE INDEX
+      2 Submarine Canyons
+      2 Sublimation
+      2 STORMS
+      2 Stability/Severe Weather Indices
+      2 SOLID EARTH
+      2 solar
+      2 Soil Porosity
+      2 Snow Cover Degradation
+      2 SNOW CLASSIFICATION
+      2 Seismic Body Waves
+      2 Sediment Composition
+      2 SEA SURFACE CONTAMINANTS
+      2 Seamounts
+      2 Sea Ice Age
+      2 SATELLITE SOIL MOISTURE INDEX
+      2 ROSSBY/PLANETARY WAVES
+      2 RIVERS/STREAM HABITAT
+      2 RIVER/LAKE ICE FREEZE
+      2 Reindeer Herding
+      2 RECYCLING
+      2 RANGE CHANGES
+      2 Radio Wave Flux
+      2 Radiocarbon
+      2 Public Health
+      2 Proton Flux
+      2 POULTRY PRODUCTS
+      2 Population
+      2 Phosphate
+      2 Pelagic Habitat
+      2 Particle Temperature
+      2 Particle Speed
+      2 Particle Density
+      2 paleoclimatic modeling|tree ring
+      2 Oxygen
+      2 Nutrients
+      2 Numerical Models
+      2 NATALITY
+      2 Moisture
+      2 Microwave Imagery
+      2 MEAN RADIAL VELOCITY
+      2 Marine Weather/Forecast
+      2 marine sediments
+      2 Marine Invertebrates
+      2 Marine Biology 
+      2 MARINE ADVISORIES
+      2 LORICIFERANS
+      2 Lidar Depolarization Ratio
+      2 Land Tenure
+      2 Land Surface/Agriculture Indicators
+      2 Landscape Patterns
+      2 Land Resources
+      2 LAND/OCEAN/ICE MASK
+      2 LAND ICE/OCEAN CLASSIFICATION
+      2 ICE STORMS
+      2 Hypoxia
+      2 Husbandry
+      2 Hurricanes
+      2 HOUSEHOLD INCOME
+      2 Heat Advisory
+      2 Heat
+      2 HAZARD MITIGATION/PLANNING
+      2 HALOCLINE
+      2 Ground Water
+      2 Gravity
+      2 GNATHOSTOMULIDS
+      2 GLOBAL POSITIONING SYSTEMS
+      2 Glacier Topography/Ice Sheet Topography
+      2 Glaciation
+      2 GLACIAL LANDFORMS/PROCESSES
+      2 GEOGRAPHIC INFORMATION SYSTEMS
+      2 Geodetics/Gravity
+      2 Frost/Freeze Warning
+      2 Firn
+      2 Fire Occurrence
+      2 FEED CONTAMINATION AND TOXICOLOGY
+      2 EXTRATROPICAL CYCLONES
+      2 EVAPOTRANSPIRATION
+      2 Electrical Properties
+      2 Dust/Ash Advisories
+      2 Droughts
+      2 DRAINAGE
+      2 DIGITAL ELEVATION/DIGITAL TERRAIN MODELS
+      2 DESALINIZATION
+      2 Cultural Features
+      2 CRYOSPHERIC FEEDBACKS
+      2 Convective Clouds/Systems (Observed/Analyzed)
+      2 Convective Clouds/Systems (observed/Analyzed)
+      2 Convection
+      2 Contours
+      2 CONDENSATION
+      2 Cnidarians
+      2 Cloud Precipitable Water
+      2 Cloud Optical Depth/Thickness
+      2 Cloud Amount
+      2 climate reconstructions|speleothems|tree ring
+      2 climate reconstructions|corals and sclerosponges|instrumental
+      2 Climate Advisories
+      2 Calibration/Validation
+      2 BOWEN RATIO
+      2 Boundaries
+      2 borehole|climate reconstructions|tree ring
+      2 BIOLUMINESCENCE
+      2 Biogeochemical Cycles
+      2 atmospheric temperature
+      2 ATMOSPHERIC DYNAMICS
+      2 ATMOSPHERIC CONDUCTIVITY
+      2 Atmospheric Chemistry/Carbon And Hydrocarbon Compounds
+      2 Animal Ecology and Behavior
+      2 Agricultural Plant Science
+      2 AGE OF INTERNAL REFLECTIONS
+      2 Aerosol Radiance
+      2 Aerosol Forward Scatter
+      1 Zooplankton
+      1 Yeasts/Truffles
+      1 WIND DYNMICS
+      1 Wind
+      1 Whiteout
+      1 WHEEL WEAVERS (CYCLIOPHORANS)
+      1 Western Pacific Ocean
+      1 Web-Based Geographic Information Systems
+      1 Weather Stations
+      1 WEATHER FORECAST
+      1 Wave Types
+      1 WAVE SPEED
+      1 Wave Length
+      1 Wave Frequency
+      1 WAVE FETCH
+      1 WAVE DIRECTION
+      1 Water Table
+      1 water quality/Water Chemistry
+      1 Water Management
+      1 Water-Leaving Radiance
+      1 Water Ion Concentration
+      1 WATER CHANNELS
+      1 VULNERABLE POPULATIONS
+      1 Visiblity
+      1 VEGETATION TEMPERATURE
+      1 UPPER AIR TEMPERTAURE
+      1 ULTRAVIOLET SENSOR TEMPERATURE
+      1 Ultraviolet Radiation 
+      1 Ultraviolet Flux
+      1 \t\t\t\t\t\t\twater Vapor\n\t\t\t\t\t\t
+      1 \t\t\t\t\t\t\twater Vapor
+      1 \t\t\t\t\t\t\ttrace Gases/Trace Species
+      1 \t\t\t\t\t\t\tsurface Air Temperature\n\t\t\t\t\t\t
+      1 \t\t\t\t\t\t\tsurface Air Temperature
+      1 \t\t\t\t\t\t\tskin Temperature\n\t\t\t\t\t\t
+      1 \t\t\t\t\t\t\tskin Temperature
+      1 \t\t\t\t\t\t\toxygen Compounds
+      1 \t\t\t\t\t\t\tinfrared Wavelengths
+      1 \t\t\t\t\t\t\thumidity\n\t\t\t\t\t\t
+      1 \t\t\t\t\t\t\thumidity
+      1 \t\t\t\t\t\t\thuman Health
+      1 \t\t\t\t\t\t\tboundary Layer Temperature\n\t\t\t\t\t\t
+      1 \t\t\t\t\t\t\tboundary Layer Temperature
+      1 \t\t\t\t\t\t\tatmospheric Winds
+      1 \t\t\t\t\t\t\tatmospheric Water Vapor
+      1 \t\t\t\t\t\t\tatmospheric Radiation
+      1 \t\t\t\t\t\t\tair Temperature\n\t\t\t\t\t\t
+      1 \t\t\t\t\t\t\tair Temperature
+      1 Tropospheric/High-Level Clouds (Observed/Analyzed)
+      1 Tropospheric/High-level Clouds (Observed/Analyzed)
+      1 Tree Growth
+      1 Transportation
+      1 Trails
+      1 TOXIC CHEMICALS
+      1 TOXIC AEROSOLS
+      1 TERRESTRIAL HYDROSPHERE
+      1 Temperature Indices
+      1 Temperature Anomolies
+      1 Temperature Anomalies\n\t\t\t\t\t\t
+      1 Tectonic Landforms
+      1 Suspended Solids
+      1 SURF BEAT
+      1 Surface Winds\n\t\t\t\t\t\t
+      1 Surface Water Chemistry
+      1 Surface Roughness
+      1 Surface\n\t\t\t\t\t\t\twater
+      1 SURFACE MASS
+      1 SURFACE AIR TEMPERATURE
+      1 Surface Air
+      1 Sunspots
+      1 SUN-EARTH INTERACTIONS
+      1 Sulfate Particles
+      1 SUBTROPICAL CYCLONES
+      1 Subscription Services
+      1 Stratospheric Clouds (observed/Analyzed)
+      1 Stories
+      1 STOKES PARAMETER
+      1 Stable Isotopes
+      1 Springs
+      1 Sponges
+      1 SPECIFIC GRAVITY
+      1 Solar Wind
+      1 Solar Synoptic Maps
+      1 Solar Imagery
+      1 Solar Flares
+      1 Solar Events
+      1 Solar Energetic Particle Flux
+      1 Solar Active Regions
+      1 Soil Respiration
+      1 Soil Moisture
+      1 Soil Bulk Density
+      1 SOIL BIOGEOCHEMISTRY
+      1 Socioeconomics
+      1 SNOW/ICE MASS
+      1 Snow Dunes
+      1 Snow Depth Balance
+      1 Snow Depth 
+      1 Snow-Covered Area
+      1 Smog
+      1 Sleet
+      1 Silicate
+      1 Sigma Naught
+      1 Shoreline
+      1 ship logs
+      1 SHADE FRACTION
+      1 SEISMIC PROFILE
+      1 Seismic Profile
+      1 SEICHES
+      1 SEDIMENT CORE
+      1 sediment composition
+      1 Sedimentary Textures
+      1 Secchi Depth
+      1 Sea\n\t\t\t\t\t\t\tsurface Temperature\n\t\t\t\t\t\t
+      1 Sea\n\t\t\t\t\t\t\tsurface Temperature
+      1 SEA ICE VOLUME BUDGET
+      1 SEA ICE TOPOGRAPHY
+      1 SEA ICE MASS BALANCE
+      1 SEA ICE DYNAMICS
+      1 seafloor topography
+      1 Satellite Orbits/Revolution
+      1 Satellite Orbits
+      1 Sastrugi
+      1 Salinity 
+      1 salinity
+      1 RUNOFF
+      1 ROCK FRACTION
+      1 RELATIVE PERMITTIVITY
+      1 Reference Fields
+      1 Recreation
+      1 Radiation Exposure
+      1 PRESENT WEATHER
+      1 Prescribed Burns
+      1 PRECIPITATION PHASE
+      1 Precipitation Indices
+      1 Population Distribution
+      1 Political Divisions
+      1 Plant Breeding and Genetics
+      1 PLANETARY BOUNDARY LAYER
+      1 Particulates
+      1 Particle Flux
+      1 Paleomagnetism
+      1 PALEOCLIMATE
+      1 Organic Particles
+      1 Oral History
+      1 Ocean Plateaus/Ridges
+      1 Ocean optics
+      1 Ocean General Circulation Models (ogcm)/Regional Ocean Models
+      1 Ocean Contaminants
+      1 Ocean color
+      1 Nuclear Radiation Exposure
+      1 Nitrogen Dioxide
+      1 Nitrate
+      1 Natural Resources
+      1 Mortality
+      1 Moorings
+      1 mineralogy
+      1 Mid-ocean Ridges
+      1 Microwave Wavelengths
+      1 Micronesia
+      1 Microfauna
+      1 Methane
+      1 Meteorological Stations
+      1 MESOSPHERIC CLOUDS (OBSERVED/ANALYZED)
+      1 Melt Pond Depth
+      1 MELT POND
+      1 Mathematical Models
+      1 MASS BALANCE
+      1 Marine Volcanism
+      1 MARINE MAMMALS
+      1 Marine Magnetics
+      1 marine ecosystems
+      1 Marine Conditions
+      1 MARICULTURE PRODUCTION
+      1 MALNUTRITION
+      1 Magnetic Intensity
+      1 Magnetic Inclination
+      1 Magnetic Declination
+      1 Longwave Radiation\n\t\t\t\t\t\t
+      1 Longshore Currents
+      1 Local Winds
+      1 Livestock Products
+      1 Line Of Sight Velocity
+      1 Life History
+      1 Lidar backscatter
+      1 Lava
+      1 Land Use Classes
+      1 Landscape Management
+      1 Land Productivity
+      1 LAND ICE FRACTION
+      1 Land Heat Capacity
+      1 KNOWLEDGE/DECISION SYSTEMS
+      1 Intertidal Zone
+      1 insect
+      1 Infrared Wavelength
+      1 Infrared Radiances
+      1 INDICATOR SPECIES
+      1 Indicator Species
+      1 Incidence Angle
+      1 IMPULSE RESPONSE
+      1 IMPORTANCE VALUE
+      1 Ice Velocity
+      1 ICE MELANGE
+      1 Ice Core Air Bubbles
+      1 Ice
+      1 HYDROLOGICAL PARAMETER
+      1 Human Health Advisories
+      1 Human Health
+      1 Heat Flux\n\t\t\t\t\t\t
+      1 Health Advisories
+      1 Halocarbons and Halogens
+      1 HAIL STORMS
+      1 Hail
+      1 GREEN INFRASTRUCTURE
+      1 Gravity/Gravitational Field
+      1 Global General Circulation Models
+      1 Glacier Mass Balance/Ice Sheet Mass Balance
+      1 Glacier Area
+      1 Glacial Landforms/Processes
+      1 Geotechnical Properties
+      1 GEOLOGIC/TECTONIC/PALEOCLIMATE MODELS
+      1 Geochemistry
+      1 General Circulation Model
+      1 Gas Hydrates
+      1 Fresh Water Flux
+      1 Freshwater Ecosystems
+      1 Freezing Rain
+      1 Freeze
+      1 Fracture Zones
+      1 Forest Science
+      1 FORESTS
+      1 Forest Fire Science
+      1 FOREST FIRE DANGER INDEX
+      1 Forest Fire Danger Index
+      1 FOOD QUALITY
+      1 FOOD PROCESSING
+      1 FIRN LIMIT
+      1 FIRE WEATHER INDEX
+      1 Fires
+      1 FIRE ADVISORIES
+      1 Ferns and Allies
+      1 Faults
+      1 FAST ICE
+      1 Estuaries
+      1 ENVIRONMENTAL VULNERABILITY INDEX (EVI)
+      1 Energy Production/Use
+      1 Energetic Particles
+      1 Endangered Species
+      1 Electric Fields/Electric Currents
+      1 Electrical Conductivity
+      1 Ecotoxicology
+      1 ecosystems
+      1 Dust/Ash
+      1 Drought Forecast
+      1 DROUGHT
+      1 DOME TEMPERATURE
+      1 DISASTER RESPONSE
+      1 Differential Pressure
+      1 Desktop Geographic Information Systems
+      1 Density
+      1 DEMERSAL HABITAT
+      1 DEFOLIANTS
+      1 DAIRY PRODUCTS
+      1 CRYOSPHERE
+      1 CROP TYPE
+      1 Crop/Plant Yields
+      1 Crop Forecast
+      1 Coronal Mass Ejections
+      1 Corona
+      1 Corals
+      1 Continental Margins
+      1 COASTLINE
+      1 Coastal Processes 
+      1 COASTAL LANDFORMS/PROCESSES
+      1 Cloud Reflectance
+      1 Cloud Indicators
+      1 Cloud Height
+      1 Cloud Amount/Frequency
+      1 CLIMATE MITIGATION
+      1 Climate Change Impact Assessment Models
+      1 Cataloging
+      1 CARBON CYCLE/CARBON BUDGET MODELS
+      1 CALIBRATION/VALIDATION
+      1 Calibration
+      1 Buoys
+      1 Buildings
+      1 Brightness Temperatures
+      1 Brightness Temperature\n\t\t\t\t\t\t
+      1 BOUNDARY LAYER WINDS
+      1 borehole|ice cores
+      1 Biomass Burning
+      1 BIOLOGICAL CLASSIFICATION
+      1 biogenic sediments
+      1 BENTHIC HEAT FLOW
+      1 Bedrock Lithology
+      1 bathymetry/seafloor topography
+      1 BASINS
+      1 Avalanche Forecasts
+      1 Atmospheric Stabilit
+      1 Atmosphere Temperature
+      1 Aquatic Sciences
+      1 APICULTURE
+      1 Animal Taxonomy 
+      1 Animal Taxonomy
+      1 ANIMAL NUTRITION
+      1 Animal Management Systems
+      1 Animal Commodities
+      1 Angiosperms (Flowering Plants)
+      1 Alkalinity
+      1 Air Temperature\n\t\t\t\t\t\t
+      1 Agriculture Production
+      1 Agricultural Economics
+      1 AEROSOL VERTICAL DISTRIBUTION
+      1 Aerosol Number Concentration
+      1 Aerosol Light Scattering Coefficient
+      1 Aerosol Light Absorption Coefficient
+      1 Administrative Divisions
+      1 Accumulative Convective Precipitation
+      1 Abyssal Hills/Plains
