@@ -5606,36 +5606,6 @@ fn angular_distance_deg(lat1: f64, lon1: f64, lat2: f64, lon2: f64) -> f64 {
     (2.0 * a.sqrt().asin()).to_degrees()
 }
 
-fn substitute_test_templates(url: &str) -> String {
-    let mut u = url.to_string();
-    for (k, v) in [
-        ("{today}", "2026-08-07"),
-        ("{yesterday}", "2026-08-06"),
-        ("{tomorrow}", "2026-08-08"),
-        ("{now}", "2026-08-07T12:00:00Z"),
-        ("{year}", "2026"),
-        ("{month}", "08"),
-        ("{day}", "07"),
-        ("{lat}", "29.5"),
-        ("{lon}", "-95.0"),
-        ("{ra}", "0.0"),
-        ("{dec}", "0.0"),
-        ("{target}", "Ceres"),
-        ("{week_ago}", "2026-07-31"),
-        ("{hour_ago}", "2026-08-07T11:00:00Z"),
-        ("{body}", "ISS"),
-        ("{lon_min}", "-95.0"),
-        ("{lon_max}", "-94.0"),
-        ("{lat_min}", "29.0"),
-        ("{lat_max}", "30.0"),
-        ("{grid}", "29.5,-95.0|29.6,-95.0"),
-        ("{nearest_station}", "8518750"),
-    ] {
-        u = u.replace(k, v);
-    }
-    u
-}
-
 fn gold_kernel_for(force: &str) -> Option<(&'static str, &'static str)> {
     match force {
         "em" => Some(("inverse-square", "em")),
@@ -7370,15 +7340,30 @@ fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> Extra
             Extract::Hapi(pairs) => {
                 if let Some(ref j) = parsed_json {
                     if let JsonVal::Obj(root) = j {
-                        if let (Some(JsonVal::Arr(data)), Some(JsonVal::Arr(params))) =
-                            (root.get("data"), root.get("parameters"))
-                        {
+                        if let Some(JsonVal::Arr(data)) = root.get("data") {
                             let mut col: HashMap<String, usize> = HashMap::new();
-                            for (i, p) in params.iter().enumerate() {
-                                if let JsonVal::Obj(po) = p {
-                                    if let Some(JsonVal::Str(nn)) = po.get("name") {
-                                        col.insert(nn.clone(), i);
+                            let mut has_params = false;
+                            if let Some(JsonVal::Arr(params)) = root.get("parameters") {
+                                for (i, p) in params.iter().enumerate() {
+                                    if let JsonVal::Obj(po) = p {
+                                        if let Some(JsonVal::Str(nn)) = po.get("name") {
+                                            col.insert(nn.clone(), i);
+                                            has_params = true;
+                                        }
                                     }
+                                }
+                            }
+                            if !has_params {
+                                if pairs.len() == 1 {
+                                    if let Some(JsonVal::Arr(row)) = data.last() {
+                                        if let Some(val) = row.last().and_then(scalar_of) {
+                                            extracted.insert(pairs[0].1.clone(), val);
+                                        }
+                                    }
+                                    continue;
+                                }
+                                for (i, (param, _)) in pairs.iter().enumerate() {
+                                    col.insert(param.clone(), i + 1);
                                 }
                             }
                             if let Some(last_row) = data.last() {
@@ -10156,6 +10141,35 @@ field H comet_h_mag gaussian-inverse-square em mag 604800 0.0 0.0\n";
 
     #[test]
     fn test_backlog_batches_verify() {
+        fn substitute_test_templates(url: &str) -> String {
+            let mut u = url.to_string();
+            for (k, v) in [
+                ("{today}", "2026-08-07"),
+                ("{yesterday}", "2026-08-06"),
+                ("{tomorrow}", "2026-08-08"),
+                ("{now}", "2026-08-07T12:00:00Z"),
+                ("{year}", "2026"),
+                ("{month}", "08"),
+                ("{day}", "07"),
+                ("{lat}", "29.5"),
+                ("{lon}", "-95.0"),
+                ("{ra}", "0.0"),
+                ("{dec}", "0.0"),
+                ("{target}", "Ceres"),
+                ("{week_ago}", "2026-07-31"),
+                ("{hour_ago}", "2026-08-07T11:00:00Z"),
+                ("{body}", "ISS"),
+                ("{lon_min}", "-95.0"),
+                ("{lon_max}", "-94.0"),
+                ("{lat_min}", "29.0"),
+                ("{lat_max}", "30.0"),
+                ("{grid}", "29.5,-95.0|29.6,-95.0"),
+                ("{nearest_station}", "8518750"),
+            ] {
+                u = u.replace(k, v);
+            }
+            u
+        }
         let live: std::collections::HashSet<String> = super::load_sources()
             .iter()
             .map(|s| s.url.clone())
@@ -10168,7 +10182,7 @@ field H comet_h_mag gaussian-inverse-square em mag 604800 0.0 0.0\n";
             for l in existing.lines() {
                 let t = l.trim_start();
                 if t.starts_with("url ") {
-                    seen.insert(super::substitute_test_templates(t[4..].trim()));
+                    seen.insert(substitute_test_templates(t[4..].trim()));
                 }
             }
             ok_text = existing;
@@ -10216,7 +10230,7 @@ field H comet_h_mag gaussian-inverse-square em mag 604800 0.0 0.0\n";
                             break;
                         }
                         limit -= 1;
-                        let mut url = super::substitute_test_templates(&s.url);
+                        let mut url = substitute_test_templates(&s.url);
                         url = super::resolve_secret(&url, &env);
                         url = url.replace(' ', "%20");
                         if live.contains(&s.url) || !seen.insert(url.clone()) {

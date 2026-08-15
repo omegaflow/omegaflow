@@ -809,6 +809,22 @@ ttl 600
 on earth 35.68 139.69 0
 last mag geosphere_earthquakes_jma_recent_mag erfc seismic-surface Mw 60.0 0.0 0.0
 
+# ── Swarm EFI via VirES HAPI (electric — erster Live-Feldwert!) ──
+url https://vires.services/hapi/data?id=SW_FAST_EFIA_LP_1B&start={hour_ago}&stop={now}&parameters=N_ion,T_elec,Vs&format=json
+ttl 3600
+at earth
+hapi N_ion=swarm_ion_density_cm3 T_elec=swarm_electron_temp_k Vs=swarm_spacecraft_potential_v
+field swarm_ion_density_cm3 swarm_ion_density_cm3 gaussian-inverse-square diffusion cm-3 3600 0.0 0.0
+field swarm_electron_temp_k swarm_electron_temp_k exponential-decay thermal K 3600 0.0 0.0
+field swarm_spacecraft_potential_v swarm_spacecraft_potential_v inverse-square electric V 3600 0.0 0.0
+
+# ── INTERMAGNET via BGS HAPI (em, Niemegk Observatorium) ──
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NGK/best-avail/PT1M/xyzf&start={hour_ago}&stop={now}&format=json
+ttl 3600
+on earth 52.07 12.68 0
+hapi f=magnetosphere_ngk_total_field_nt
+field magnetosphere_ngk_total_field_nt magnetosphere_ngk_total_field_nt inverse-square em nT 3600 0.0 0.0
+
 # ── Backlog-Kuration 2026-08-15 — NDBC Per-Station-Buoys (ersetzt toten ArcGIS-Block, Kraft-Labels korrigiert) ──
 
 url https://www.ndbc.noaa.gov/data/realtime2/41001.txt

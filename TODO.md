@@ -190,7 +190,7 @@ braucht mindestens eine gemessene, physisch gate-konforme Quelle.
 | thermal | live: NOAA-CDO-Fanout (TMAX), AOML-Drifter, GML Barrow, Buoy-WTMP; DASTCOM H/Albedo + Yarkovsky-Listen; GOES-Thermal | K03 (Parameter); Kuration (Zeitreihen) |
 | diffusion | live: PurpleAir, OpenAQ-pm25-Fanout, GML CH4/N2O/SF6, OOI-pCO2; NOAA SWPC, NASA OMNI | Kuration |
 | advective | live: Waterservices-Rivers, OpenSky-Aircraft, Buoy-Wind; DSCOVR/SWPC (Solarwind), NOAA GFS | Kuration |
-| electric | Kein öffentlicher Live-Endpoint (verifiziert 2026-08-15): OOI-CTD-Leitfähigkeit endet 2025-08/09, SWPC-GLM-Blitz 404, Argo ohne Roh-Leitfähigkeit (nur abgeleitete Salinität). GLM-Daten existieren auf NOAA-S3 (NetCDF — NetCDF-Reader fehlt). Offen: ESA Swarm (VIRTIS/EFI braucht Registrierung), GIC-Netze (nicht öffentlich) | Kuration |
+| electric | live: Swarm EFI via VirES-HAPI (Raumfahrzeug-Potential Vs in V, Ionendichte, Elektronentemperatur). Open-End: E-Feld-Stärke selbst (EFI-TCT-Produkte), GLM-Blitz (NetCDF auf NOAA-S3 — NetCDF-Reader fehlt), GIC-Netze (nicht öffentlich) | Kuration |
 
 Device-Sensoren (M05) ergänzen die Kanäle lokal; das Radiatorium (M01/M02) ist die
 Aktuator-Seite. Der Kurations-Pfad ist unten registriert (Curation & Quellen).
