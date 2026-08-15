@@ -89,7 +89,7 @@ pub fn parse_library(content: &str) -> Vec<TagWeight> {
 }
 
 fn tag_matches(hay: &str, tag: &str) -> bool {
-    if tag.contains(' ') || tag.contains('_') || tag.contains('-') {
+    if tag.contains(' ') || tag.contains('_') {
         hay.contains(tag)
     } else {
         hay.split(|c: char| !c.is_ascii_alphanumeric())
@@ -98,13 +98,13 @@ fn tag_matches(hay: &str, tag: &str) -> bool {
 }
 
 pub fn gate_weigh(text: &str, library: &[TagWeight]) -> GateWeight {
-    let t = text.to_lowercase();
+    let t = text.to_lowercase().replace('-', " ");
     let mut weight: i32 = 0;
     let mut matched: Vec<String> = Vec::new();
     let mut force_hits: Vec<(u8, i32)> = Vec::new();
     let mut has_position = false;
     for tw in library {
-        let tag = tw.tag.to_lowercase();
+        let tag = tw.tag.to_lowercase().replace('-', " ");
         if tag.is_empty() || !tag_matches(&t, &tag) {
             continue;
         }
@@ -192,6 +192,20 @@ mod tests {
         assert_eq!(g.weight, 12);
         assert_eq!(g.force, Some(5));
         assert!(!g.matched.iter().any(|m| m == "absent:position"));
+    }
+
+    #[test]
+    fn test_gate_hyphen_normalization() {
+        let lib = sample_lib();
+        let g = gate_weigh("geospace/propagated-solar-wind-1-hour.json", &lib);
+        assert_eq!(g.weight, 0);
+        let lib2 = parse_library("8 em solar wind\n4 - station\n");
+        let g2 = gate_weigh("station propagated-solar-wind.json", &lib2);
+        assert_eq!(g2.weight, 12);
+        assert_eq!(g2.force, Some(0));
+        let g3 = gate_weigh("propagated-solar-wind.json", &lib2);
+        assert_eq!(g3.weight, -8);
+        assert!(g3.matched.iter().any(|m| m == "absent:position"));
     }
 
     #[test]

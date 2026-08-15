@@ -6,8 +6,8 @@
 -12 | em | public.igsl_source
 -12 | em | public.igsl_source_catalog_ids
 -12 | em | public.tycho2
--4 | advective | geospace/propagated-solar-wind-1-hour.json
--4 | advective | geospace/propagated-solar-wind.json
+4 | em | geospace/propagated-solar-wind-1-hour.json
+4 | em | geospace/propagated-solar-wind.json
 -8 | acoustic | gong/bqs/
 -8 | acoustic | gong/cqe/
 -8 | acoustic | gong/haf/
