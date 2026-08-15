@@ -1,5 +1,5 @@
-# library — gewichtete Tags (Ratssitzung 2026-08-15, vierte Fassung)
-# Schichten: b2find-Daten-Tags + gestiftete Klassenwörter + NASA-CMR + GBIF
+# library — gewichtete Tags (Ratssitzung 2026-08-15, fünfte Fassung)
+# Schichten: b2find + Klassenwörter + NASA-CMR + GBIF + NASA-GCMD-Leaves
 # format: <gewicht> <force|-> <tag...>
 -8 - Arts and Humanities
 -8 - Arkeologisk minne
@@ -1701,3 +1701,567 @@
 -8 - "count":217628713	"name":"MACHINE_OBSERVATION"
 -8 - "count":19532885	"name":"FOSSIL_SPECIMEN"
 -8 - "count":129395029	"name":"HUMAN_OBSERVATION"
+8 advective accumulative convective precipitation
+8 acoustic acoustic attenuation/transmission
+8 acoustic acoustic frequency
+8 acoustic acoustic reflectivity
+8 acoustic acoustic scattering
+8 acoustic acoustic tomography
+8 acoustic acoustic velocity
+8 diffusion actinic flux
+8 diffusion aerosol absorption
+8 diffusion aerosol backscatter
+8 diffusion aerosol depolarization
+8 diffusion aerosol extinction
+8 diffusion aerosol forward scatter
+8 em aerosol optical centroid height
+8 em aerosol optical depth/thickness
+8 diffusion aerosol particle properties
+8 em aerosol radiance
+8 diffusion aerosols
+8 em aerosol single scattering albedo
+8 diffusion aerosol vertical distribution
+-8 - afforestation/reforestation
+4 - age at ice-thickness-normalized depths
+-8 - agricultural advisories
+-8 - agricultural aquatic sciences
+-8 - agricultural chemicals
+-8 - agricultural engineering
+-8 - agricultural equipment
+-8 - agricultural expansion
+-8 - agricultural plant science
+-8 - agriculture
+-8 - agriculture production
+-4 - air temperature reconstruction
+8 em albedo
+8 diffusion alkalinity
+8 diffusion alpha particle flux
+8 acoustic ambient noise
+8 diffusion ammonium aerosols
+8 advective angiosperms (flowering plants)
+8 thermal antenna temperature
+-8 - anthropogenic/human influenced ecosystems
+-8 - aquaculture
+-8 - aquaculture production
+-8 - aquatic ecosystems
+-4 - atmospheric circulation reconstruction
+8 electric atmospheric conductivity
+8 electric atmospheric electricity
+8 em atmospheric emitted radiation
+8 advective atmospheric general circulation models
+8 thermal atmospheric heating
+-4 - atmospheric/ocean indicators
+8 advective atmospheric precipitation indices
+8 advective atmospheric pressure measurements
+8 em atmospheric radiation
+8 thermal atmospheric temperature
+8 thermal atmospheric temperature indices
+8 advective atmospheric winds
+-8 - bacteria/archaea
+4 - bathymetry
+4 - bathymetry/seafloor topography
+8 thermal benthic heat flow
+-8 - biomass
+-8 - biomass burning
+-4 - biospheric indicators
+8 diffusion black carbon
+4 - blowing snow
+8 em bottom reflectance
+8 thermal brightness temperature
+8 thermal canopy temperature variability
+8 diffusion carbon
+8 diffusion carbonaceous aerosols
+8 diffusion carbon and hydrocarbon compounds
+8 diffusion carbonate
+8 diffusion carbon capture and storage
+8 diffusion carbon cycle/carbon budget models
+8 diffusion carbon flux
+8 diffusion carbon footprint
+8 diffusion carbon isotope
+8 diffusion carbon monoxide
+4 - catalog service for the web
+4 - chain definition services
+4 - change detection services
+8 diffusion chlorophyll
+-4 - climate indicators
+-4 - cloud indicators
+-8 - cloud microphysics
+4 - coastal elevation
+8 advective cold wave
+4 - coverage generalization services
+4 - coverage portrayal service
+-8 - cover crops
+-8 - crop area
+-8 - crop emergence
+-8 - crop forecast
+-8 - crop health
+-8 - cropping systems
+-8 - crop/plant yields
+-8 - crop residue
+-8 - crop stress
+-8 - crop type
+-8 - crop water productivity
+4 - cryosphere
+4 - cryosphere models
+-4 - cryospheric indicators
+-8 - cyanobacteria (blue-green algae)
+4 - data alignment services
+4 - data application services
+4 - data processing services
+-8 - deciduous vegetation
+-8 - deforestation
+8 advective differential pressure
+4 - digital elevation/digital terrain models
+4 - dimension measurement services
+8 diffusion dissolved gases
+8 thermal dome temperature
+-8 - dominant species
+8 advective doppler velocity
+4 - drought indices
+-4 - drought/precipitation reconstruction
+4 - dynamic topography
+-8 - dynamic vegetation/ecosystem models
+8 diffusion earth gases/liquids
+8 seismic-body earthquakes
+8 em earth radiation budget
+4 - earth science services
+-8 - economic resources
+-8 - ecosystem functions
+-8 - ecosystems
+8 electric electrical conductivity
+8 electric electrical field
+8 electric electrical properties
+8 electric electric fields/electric currents
+8 electric electricity
+8 electric electric/magnetic field exposure
+8 em electromagnetic spectrum (ems)
+8 diffusion electron flux
+-4 - environmental vulnerability index (evi)
+8 advective evaporation
+-8 - evergreen vegetation
+-8 - exotic vegetation
+-8 - farm structures
+4 - fast ice
+4 - feature generalization application services
+4 - feature generalization services
+4 - feature portrayal service
+-8 - field crop products
+-4 - fiji index
+-4 - fire weather index
+-8 - fisheries
+-8 - forest composition/vegetation structure
+-8 - forest conservation
+-8 - forest fire danger index
+-8 - forest fire science
+-8 - forest harvesting and engineering
+-8 - forest management
+-8 - forest mensuration
+-8 - forest products/commodities
+-8 - forest protection
+-8 - forest science
+-8 - forest yields
+4 - format conversion services
+-8 - freshwater ecosystems
+8 diffusion fresh water flux
+8 advective fresh water river discharge
+8 advective freshwater runoff
+-8 - fungi
+8 diffusion gamma ray flux
+8 diffusion gases
+8 diffusion gas explosions/leaks
+8 diffusion gas flaring
+8 diffusion gas hydrates
+4 - gazetteer application services
+4 - gazetteer service
+4 - geocoder service
+4 - geographic data discovery services
+4 - geographic data extraction services
+4 - geographic data management services
+8 gravity geoid characteristics
+4 - geolinked data access service
+4 - geolinking service
+4 - geomagnetic indices
+4 - geoparser service
+8 thermal geothermal temperature
+4 - glacier elevation/ice sheet elevation
+4 - glacier facies
+4 - glacier mass balance/ice sheet mass balance
+4 - glacier motion/ice sheet motion
+4 - glaciers
+4 - glaciers/ice sheets
+4 - glacier thickness/ice sheet thickness
+4 - glacier topography/ice sheet topography
+8 gravity gravity
+8 gravity gravity anomalies
+8 gravity gravity/gravitational field
+8 gravity gravity wave
+8 gravity gravity waves
+8 diffusion greenhouse gases
+8 diffusion greenhouse gas flux
+-8 - green infrastructure
+4 - ground ice
+-4 - ground water reconstruction
+-8 - habitat conversion/fragmentation
+8 diffusion halocarbons and halogens
+8 thermal heat advisory
+8 thermal heating rate
+8 thermal heat wave
+8 diffusion heavy metals concentration
+8 diffusion heavy nuclei flux
+8 diffusion humidity indices
+8 electric hydraulic conductivity
+8 diffusion hydrocarbons
+8 diffusion hydrogen gas
+8 advective hydrostatic pressure
+8 em hyperspectral imagery
+4 - icebergs
+4 - ice core air bubbles
+4 - ice core records
+4 - ice deformation
+4 - ice depth/thickness
+4 - ice draft
+4 - ice edges
+4 - ice extent
+4 - ice floes
+4 - ice growth/melt
+4 - ice melange
+4 - ice motion
+4 - ice roughness
+4 - ice sheets
+4 - ice shelves
+4 - ice storms
+4 - ice stupa
+8 thermal ice surface temperature
+8 thermal ice temperature
+4 - ice types
+8 advective ice velocity
+8 em incoming solar radiation
+-8 - indicator species
+-8 - indigenous vegetation
+4 - information management services
+8 em infrared flux
+8 em infrared imagery
+8 em infrared radiance
+8 em infrared wavelengths
+-8 - infrastructure
+8 diffusion inorganic carbon
+8 gravity intertidal zone
+-8 - invasive species
+8 diffusion ion flux
+8 em irradiance
+-8 - irrigation
+4 - lake ice
+-4 - lake level reconstruction
+8 thermal land heat capacity
+4 - land ice fraction
+4 - land ice/ocean classification
+4 - land/ocean/ice fraction
+4 - land/ocean/ice mask
+-8 - land surface/agriculture indicators
+8 thermal land surface temperature
+-8 - land use classes
+-8 - land use/land cover
+-8 - land use/land cover change
+-8 - land use/land cover classification
+8 advective lidar waveform
+8 advective line of sight velocity
+8 advective liquid precipitation
+-8 - livestock products
+8 advective local winds
+8 advective longshore currents
+8 em longwave radiation
+-8 - macrofauna
+-8 - macrophytes
+8 advective magnetic fields/magnetic currents
+-8 - marine ecosystems
+8 gravity marine gravity field
+8 diffusion mass concentration (mascon) models
+-8 - mass transport
+8 advective mean radial velocity
+8 diffusion methane
+-8 - microfauna
+-8 - microflora
+8 diffusion micronutrients/trace elements
+8 em microwave
+8 em microwave imagery
+8 em microwave radiance
+4 - mountain snow line shift
+8 em multispectral imagery
+8 diffusion natural gas
+8 em net radiation
+8 diffusion neutral particle flux
+8 diffusion nitrate particles
+8 diffusion noble gas
+8 em nuclear radiation exposure
+8 acoustic ocean acoustics
+8 advective ocean bottom pressure
+8 advective ocean circulation
+8 advective ocean currents
+8 advective ocean general circulation models (ogcm)/regional ocean models
+8 thermal ocean heat budget
+8 advective ocean pressure
+8 diffusion ocean salinity
+-4 - ocean salinity reconstruction
+8 thermal ocean temperature
+8 thermal ocean temperature profiles
+8 diffusion ocean tracers
+4 - ocean upwelling indices
+8 advective ocean waves
+8 advective ocean winds
+8 em optical depth
+8 em optical depth/thickness
+8 diffusion organic carbon
+8 em outgoing longwave radiation
+8 diffusion oxygen compounds
+8 diffusion oxygen isotope
+8 diffusion oxygen isotope analysis
+8 diffusion oxygen isotopes
+4 - pack ice
+-4 - paleoclimate indicators
+-4 - paleoclimate reconstructions
+-8 - paleovegetation
+8 diffusion particle flux
+8 thermal particle temperature
+8 diffusion permafrost/methane release
+8 em photosynthetically active radiation
+8 advective planetary/rossby waves
+8 advective plasma waves
+8 seismic-body plate tectonics
+8 em polarized reflectance
+-8 - population
+-8 - population biology
+-8 - population density
+-8 - population distribution
+-8 - population estimates
+-8 - population size
+8 thermal potential temperature
+8 advective precipitation amount
+8 advective precipitation anomalies
+-4 - precipitation indicators
+8 advective precipitation indices
+8 advective precipitation phase
+8 advective precipitation profiles
+8 advective precipitation rate
+-8 - present weather
+8 advective pressure anomalies
+8 advective pressure tendency
+8 advective pressure thickness
+8 diffusion proton flux
+4 - proximity analysis services
+8 advective radial velocity
+8 em radiance
+8 em radiation exposure
+8 diffusion radiative flux
+8 advective radio wave
+8 diffusion radio wave flux
+-8 - reclamation/revegetation/restoration
+4 - reference and information services
+8 em reflectance
+8 em reflected infrared
+-8 - reforestation
+-8 - reforestation/revegetation
+-8 - renewable energy infrastructure
+8 advective river ice
+8 advective river ice depth/extent
+8 advective river/lake ice breakup
+8 advective river/lake ice freeze
+4 - rock glaciers
+8 advective rossby/planetary waves
+8 advective runoff
+8 diffusion salinity/density
+-8 - salt transport
+-4 - samoa index
+-4 - satellite soil moisture index
+4 - seafloor topography
+4 - sea ice
+4 - sea ice age
+4 - sea ice area
+8 diffusion sea ice concentration
+4 - sea ice dynamics
+4 - sea ice elevation
+4 - sea ice mass balance
+4 - sea ice motion
+4 - sea ice/ocean classification
+4 - sea ice origin
+4 - sea ice strain rates
+4 - sea ice strength
+4 - sea ice stress
+4 - sea ice topography
+4 - sea ice volume
+4 - sea ice volume budget
+4 - sea level
+8 advective sea level pressure
+-4 - sea level reconstruction
+4 - sea level rise
+8 thermal sea surface temperature indices
+-4 - sea surface temperature reconstruction
+4 - sea surface topography
+-8 - sediment transport
+4 - semantic translation services
+4 - service discovery
+8 em shortwave radiation
+8 advective significant wave height
+8 thermal sink temperature
+8 thermal skin temperature
+4 - snow classification
+4 - snow cover
+4 - snow cover degradation
+4 - snow density
+4 - snow energy balance
+4 - snow facies
+4 - snow fraction
+4 - snow grain size
+4 - snow/ice
+4 - snow/ice chemistry
+4 - snow/ice mass
+8 thermal snow/ice temperature
+4 - snow melt
+4 - snow microstructure
+4 - snow radiative forcing
+4 - snow storms
+4 - snow stratigraphy
+4 - snow volume budget
+4 - snow water equivalent
+-8 - social and economic models
+-8 - socioeconomics
+8 diffusion soil gas/air
+8 thermal soil heat budget
+8 diffusion soil moisture
+8 diffusion soil moisture/water content
+8 diffusion soil salinity/soil sodicity
+8 em solar active regions
+8 em solar activity
+8 em solar-atmosphere/space-weather models
+8 em solar energetic particle flux
+8 em solar energetic particle properties
+8 em solar flares
+-4 - solar forcing/insolation reconstruction
+8 em solar imagery
+8 em solar induced fluorescence
+8 em solar irradiance
+8 em solar oscillations
+8 em solar prominences/solar filaments
+8 em solar radiation storms
+8 em solar radio wave emissions
+8 em solar synoptic maps
+8 em solar ultraviolet emissions
+8 em solar velocity fields
+8 em solar wind
+8 em solar winds
+8 em solar x-ray emissions
+8 advective solid precipitation
+-8 - species distribution models
+-8 - species migration
+-8 - species/population interactions
+8 em spectral/engineering
+8 em spectral irradiance
+8 em spectrum width
+4 - spice
+4 - stability/severe weather indices
+8 advective static pressure
+-4 - streamflow reconstruction
+8 diffusion sub-atomic particle flux
+4 - subscription services
+8 em sunspot activity
+8 em sunspots
+8 diffusion surface moisture flux
+-4 - surface moisture index
+8 diffusion surface momentum flux
+8 advective surface pressure
+8 diffusion surface salinity
+8 thermal surface temperature
+8 advective surface winds
+8 advective swells
+-4 - temperature indicators
+8 thermal temperature indices
+4 - terrain elevation
+-8 - terrestrial ecosystems
+-4 - terrestrial hydrosphere indicators
+8 electric thermal conductivity
+8 em thermal infrared
+8 advective thermohaline circulation
+8 gravity tidal components
+8 advective tidal currents
+8 gravity tidal height
+8 gravity tidal range
+8 gravity tides
+8 advective topographic waves
+4 - topography
+8 advective total pressure
+8 advective total surface precipitation rate
+8 thermal total temperature
+8 diffusion toxic aerosols
+8 diffusion trace elements/trace metals
+-8 - trace gases/trace species
+-8 - transportation
+8 diffusion tropospheric ozone
+-4 - tuvalu index
+8 em ultraviolet flux
+8 em ultraviolet radiance
+8 em ultraviolet radiation
+8 thermal ultraviolet sensor temperature
+8 em ultraviolet wavelengths
+4 - universal description, discovery and integration (uddi) service
+8 thermal upper air temperature
+8 advective upper level winds
+8 em uv radiation
+-8 - vector species
+-8 - vegetation
+-8 - vegetation cover
+-8 - vegetation density
+-8 - vegetation fraction
+-8 - vegetation index
+-8 - vegetation optical depth
+-8 - vegetation productivity
+-8 - vegetation reconstruction
+-8 - vegetation species
+-8 - vegetation temperature
+-8 - vegetation water potential
+8 advective velocity
+8 advective vertical wind motion
+-8 - viruses
+8 diffusion visible flux
+8 em visible radiance
+4 - visible snow darkening
+8 em visible wavelengths
+-4 - vulnerability levels/index
+-8 - vulnerable populations
+8 em water-leaving radiance
+8 advective water pressure
+-4 - water quality indexes
+-4 - water vapor indicators
+4 - water vapor indices
+8 advective wave direction
+8 advective wave fetch
+8 advective wave frequency
+8 advective wave length
+8 advective wave overtopping
+8 advective wave period
+8 advective wave runup
+8 advective wave setup
+8 em wave spectra
+8 advective wave speed
+8 advective wave speed/direction
+8 advective wave types
+4 - web 3d service
+4 - web coordinate transformation service
+4 - web coverage service
+4 - web feature service
+4 - web image classification service
+4 - web map service
+4 - web portal services
+4 - web processing services
+4 - web services
+4 - web terrain service
+8 advective wind chill
+8 advective wind-driven circulation
+8 advective wind dynamics
+8 advective wind indices
+8 advective wind profiles
+8 advective wind shear
+8 advective wind storms
+8 advective wind stress
+8 advective wind velocity/speed
+8 advective wind waves
+-8 - woody biomass
+8 diffusion x-ray flux
