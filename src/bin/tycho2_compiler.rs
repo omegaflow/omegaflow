@@ -152,10 +152,7 @@ fn parse_tgas_record(line: &str) -> Option<StarRow> {
     let hip: i32 = f[0].trim().parse().ok().unwrap_or(0);
     let ra = f[6].trim().parse::<f64>().ok()?;
     let dec = f[8].trim().parse::<f64>().ok()?;
-    let plx = f[10].trim().parse::<f64>().ok()?;
-    if !(plx > 0.0) {
-        return None;
-    }
+    let plx = f[10].trim().parse::<f64>().ok().unwrap_or(0.0);
     let pm_ra = f[12].trim().parse::<f64>().ok().unwrap_or(0.0);
     let pm_de = f[14].trim().parse::<f64>().ok().unwrap_or(0.0);
     let gmag = f[53].trim().parse::<f64>().ok()?;
@@ -338,6 +335,25 @@ fn main() {
                 None => skipped += 1,
             }
         }
+        let hip_map = match &hip {
+            Some(p) => load_hip(p).unwrap_or_default(),
+            None => HashMap::new(),
+        };
+        let mut recovered = 0usize;
+        for row in rows.iter_mut() {
+            if row.plx_mas <= 0.0 && row.hip > 0 {
+                if let Some(&(plx, _)) = hip_map.get(&row.hip) {
+                    row.plx_mas = plx;
+                    recovered += 1;
+                }
+            }
+        }
+        eprintln!(
+            "tgas: {} rows, {} ohne plx, davon {} via Hipparcos-Join wiederhergestellt",
+            rows.len(),
+            rows.iter().filter(|r| r.plx_mas <= 0.0).count() + 0,
+            recovered
+        );
         if let Some(p) = probe {
             for row in &rows {
                 if row.hip != p {
@@ -367,8 +383,13 @@ fn main() {
             }
         };
         let mut buf = Vec::with_capacity(rows.len() * STAR_RECORD_STRIDE);
+        let mut written = 0usize;
         for row in &rows {
+            if row.plx_mas <= 0.0 {
+                continue;
+            }
             encode(row, &mut buf);
+            written += 1;
         }
         if let Ok(mut f) = std::fs::File::create(&out_path) {
             let _ = f.write_all(&buf);
@@ -378,7 +399,7 @@ fn main() {
         }
         eprintln!(
             "tgas: {} records written (plx>0), {} skipped, {} B → {}",
-            rows.len(),
+            written,
             skipped,
             buf.len(),
             out_path

@@ -81,11 +81,17 @@ jobs:
             --table J/A+A/612/A1/snrcat \
             --columns name:Source;ra:@8;dec:@9;dist:Dist \
             --out kernels/snr_dist.json
+          cargo run --release --bin tap_compiler -- \
+            --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
+            --table B/psr/psr \
+            --columns name:Name;ra:RA2000;dec:DE2000;dist:Dist \
+            --out kernels/pulsar_dist.json
           cargo run --release --bin sexagesimal_compiler -- \
             --source magnetar --input kernels/tabo1.csv --out magnetar_flat.json --ci-mode
           cargo run --release --bin sexagesimal_compiler -- \
             --source tevcat --input kernels/tevcat2.json \
             --join-z kernels/blazars_z.json --join-dist kernels/snr_dist.json \
+            --join-dist2 kernels/pulsar_dist.json 0.0083 \
             --out tevcat_flat.json --ci-mode
       - name: Compile MPC cometels catalog and upload to CDN
         run: |

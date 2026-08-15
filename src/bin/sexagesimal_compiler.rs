@@ -154,6 +154,7 @@ fn tevcat(
     probe: Option<&str>,
     join_z: Option<&str>,
     join_dist: Option<&str>,
+    join_dist2: Option<(&str, f64)>,
 ) -> usize {
     let body = match std::fs::read_to_string(input) {
         Ok(b) => b,
@@ -215,6 +216,10 @@ fn tevcat(
     if let Some(p) = join_dist {
         let n = join_catalog(&mut rows, p, "dist", 0.1);
         eprintln!("tevcat: {} Zeilen via dist-Join (<=0.1 deg)", n);
+    }
+    if let Some((p, sep)) = join_dist2 {
+        let n = join_catalog(&mut rows, p, "dist", sep);
+        eprintln!("tevcat: {} Zeilen via dist2-Join (<={} deg)", n, sep);
     }
     if let Some(p) = probe {
         for r in &rows {
@@ -376,6 +381,7 @@ fn main() {
     let mut out: Option<String> = None;
     let mut join_z: Option<String> = None;
     let mut join_dist: Option<String> = None;
+    let mut join_dist2: Option<(String, f64)> = None;
     let mut ci_mode = false;
     let mut probe: Option<String> = None;
     let mut i = 1;
@@ -400,6 +406,15 @@ fn main() {
             "--join-dist" => {
                 join_dist = args.get(i + 1).cloned();
                 i += 1;
+            }
+            "--join-dist2" => {
+                join_dist2 = Some((
+                    args.get(i + 1).cloned().unwrap_or_default(),
+                    args.get(i + 2)
+                        .and_then(|s| s.parse::<f64>().ok())
+                        .unwrap_or(0.0083),
+                ));
+                i += 2;
             }
             "--ci-mode" => ci_mode = true,
             "--probe" => {
@@ -432,6 +447,7 @@ fn main() {
                 probe.as_deref(),
                 join_z.as_deref(),
                 join_dist.as_deref(),
+                join_dist2.as_ref().map(|(p, s)| (p.as_str(), *s)),
             );
         }
         Some("magnetar") => {

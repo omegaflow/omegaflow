@@ -601,8 +601,18 @@ Binary-PCK-Pakets oben).
   Befund: TeV-Zentroid vs. optische Position ~2′ (Mkn 421: 30″-Join verfehlt,
   3′-Join trifft, z=0,03). Ergebnis: 67 von 360 TeVCat-Quellen mit z, 78 mit
   dist. tap_compiler erweitert: @n-Index-Mapping (VizieR-Virtualspalten
-  _RA_icrs nur via SELECT * greifbar). Offen: Pulsar-Distanz-Join (ATNF-
-  PSRCAT-Mirror) für die PWN-Unterklasse, Name-basierter Fallback-Join.
+  _RA_icrs nur via SELECT * greifbar).
+- Enrichment-Matrix komplett (2026-08-15, „alle Kataloge"):
+  · TGAS: --hip-Join im tgas-Modus — 160 der 31 217 plx-losen Zeilen via
+    Hipparcos wiederhergestellt (Rest trägt keine HIP-Nummer — absent).
+  · TeVCat: z-Join (BZCAT4) + dist-Join (Green) + dist2-Join (B/psr/psr,
+    PSRCAT-Mirror, 2536 Pulsare, 2348 mit Dist, <=30″) — Vela 0,29 kpc und
+    Geminga 0,25 kpc exakt; 67 z + 79 dist von 360.
+  · FRB: FRBCAT + A279 live; frbcat.org (FRBCAT1, ~840, ~50 z) von hier
+    nicht erreichbar (Connect-Refused) und CHIME nicht in VizieR — als
+    externe Quellen dokumentiert, Union-Merge offen.
+  · cometels/DASTCOM/ALFALFA/Magnetar: komplette Distanzen im Katalog selbst.
+  Offen: Name-basierter Fallback-Join, GSC I/220, Gaia-DR3-Merge.
 
 ---
 
