@@ -1006,6 +1006,7 @@ fn select_system(entries: &[IndexEntry], system: &str) -> Vec<IndexEntry> {
         .cloned()
         .collect();
     let moon_carriers: &[&str] = match system {
+        "jupiter" => &["jup365"],
         "saturn" => &["sat441"],
         "neptune" => &["nep097"],
         _ => &[],
@@ -1027,13 +1028,15 @@ fn select_system(entries: &[IndexEntry], system: &str) -> Vec<IndexEntry> {
             }
         }
     }
-    for e in &ranked {
-        let base = base_of(&e.name);
-        if !bases.contains(&base) {
-            bases.push(base);
-        }
-        if bases.len() >= 2 {
-            break;
+    if bases.is_empty() {
+        for e in &ranked {
+            let base = base_of(&e.name);
+            if !bases.contains(&base) {
+                bases.push(base);
+            }
+            if bases.len() >= 2 {
+                break;
+            }
         }
     }
     let mut pushed: HashSet<String> = HashSet::new();
