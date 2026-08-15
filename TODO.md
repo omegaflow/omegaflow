@@ -547,8 +547,14 @@ Binary-PCK-Pakets oben).
   --index-Crawl → phi/sources_index.φ + docs/reference/KERNEL_INDEX.md, Bot-Commit)
   + Flatten-Job (--fetch-from --systems planets,jupiter,saturn,mars,uranus,neptune,pluto
   --ci-mode → CDN-Assets ephemeris_{body}.bin, --clobber; Body-Manifest in
-  sources_index.φ; Horizons-Sonden via horizons_compiler --ci-mode). Monatlich +
-  workflow_dispatch.
+  sources_index.φ; Horizons-Sonden via horizons_compiler --ci-mode; DASTCOM-Katalog
+  via dastcom_compiler --ci-mode). Monatlich + workflow_dispatch. Upload-Fehler
+  exiten seit 2026-08-15 laut (kein stilles let _ = mehr).
+- Quota-Befund 2026-08-15: Der --verify-Takt (5-min) lädt ~200 JSON-Assets pro Lauf
+  hoch (TTL 60–300 s → fast immer stale, ~2400 API-Calls/h) — das Kontingent
+  (5000/h) ist strukturell ausgelastet; der Flattener-Upload (~64 Calls) braucht
+  einen Slot nach dem Stunden-Reset. Die Write-Kadenz (CDN-write nur bei echtem
+  Bedarf) ist offene CI-Architektur.
 - Das Python `refresh.yml` im sources-Repo (Kataloge/TAP/Gaia, Release v1.0) bleibt
   bis I02 auf Python — K01-Grenze.
 - CDN-Asset-Naming: `{name}.json` (ein Asset pro Quelle, CI überschreibt) — Konvention

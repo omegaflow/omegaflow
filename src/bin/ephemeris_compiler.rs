@@ -1096,6 +1096,7 @@ fn flatten(
     let pck_bodies: HashMap<i32, PckBody> = omegaflow::pck::parse(gm_text, pck_text);
     let targets = flatten_targets(&spk_files);
     let mut written = Vec::new();
+    let mut upload_failed = 0usize;
     for (target_id, body_name, _) in &targets {
         let wgccre = match pck_bodies.get(&pck_id_of(*target_id)) {
             Some(w) => w,
@@ -1127,10 +1128,18 @@ fn flatten(
         let path = format!("ephemeris_{}.bin", body_name);
         if write_binary(&path, body_name, &granules, &rotations, &nutation, &wgccre) {
             written.push(body_name.clone());
-            if ci_mode {
-                let _ = upload_asset(&path);
+            if ci_mode && !upload_asset(&path) {
+                upload_failed += 1;
             }
         }
+    }
+    if ci_mode && upload_failed > 0 {
+        eprintln!(
+            "upload: {} of {} assets did not reach the CDN",
+            upload_failed,
+            written.len()
+        );
+        std::process::exit(1);
     }
     written
 }

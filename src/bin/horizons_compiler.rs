@@ -707,8 +707,9 @@ fn main() {
         }
         let path = format!("ephemeris_{}.bin", body_name);
         write_binary(&path, body_name, &granules, &[], wgccre.as_ref(), gm_m3_s2);
-        if ci_mode {
-            let _ = omegaflow::cdn::upload_asset(&path);
+        if ci_mode && !omegaflow::cdn::upload_asset(&path) {
+            eprintln!("upload: {} did not reach the CDN", path);
+            std::process::exit(1);
         }
     };
     for (cmd, name) in bodies_stable {
