@@ -25,15 +25,24 @@ jobs:
           cargo run --quiet --bin source_scanner -- phi/port/library.φ "$f" || true
         done
     - name: probe
-      run: cargo run -- --probe phi/port/probe_batch.φ
+      run: |
+        echo '# kumulative Survivors aller Batch-Proben' > phi/port/probe_all_survivors.φ
+        echo '# kumulative Voids aller Batch-Proben' > phi/port/probe_all_void.txt
+        for f in phi/port/batches/batch_*.φ; do
+          cargo run -- --probe "$f"
+          cat phi/port/probe_survivors.φ >> phi/port/probe_all_survivors.φ
+          cat phi/port/probe_void.txt >> phi/port/probe_all_void.txt
+        done
+        echo "survivors: $(grep -c '^url ' phi/port/probe_all_survivors.φ)"
+        echo "voids: $(grep -c '^url ' phi/port/probe_all_void.txt)"
     - name: upload
       if: always()
       uses: actions/upload-artifact@v4
       with:
         name: probe-results
         path: |
-          phi/port/probe_survivors.φ
-          phi/port/probe_void.txt
+          phi/port/probe_all_survivors.φ
+          phi/port/probe_all_void.txt
           phi/port/weights_*.txt
     - uses: actions/cache@v4
       if: always()

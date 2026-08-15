@@ -1,0 +1,4391 @@
+url https://services.swpc.noaa.gov/json/ace/mag/ace_mag_1h.json
+ttl 3600
+on earth 0 0 0
+field 0.gsm_bx exosphere_ace_bx_gsm_nt inverse-square em 1 360 0.0 0.0
+field 0.gsm_by exosphere_ace_by_gsm_nt inverse-square em 1 360 0.0 0.0
+field 0.gsm_bz exosphere_ace_bz_gsm_nt inverse-square em 1 360 0.0 0.0
+field 0.bt exosphere_ace_bt_nt inverse-square em 1 360 0.0 0.0
+
+url https://services.swpc.noaa.gov/json/ace/swepam/ace_swepam_1h.json
+ttl 3600
+on earth 0 0 0
+field 0.speed exosphere_ace_speed_kms inverse-square em 1 360 0.0 0.0
+field 0.dens exosphere_ace_dens_ncc inverse-square em 1 360 0.0 0.0
+field 0.temperature exosphere_ace_temp_k inverse-square em 1 360 0.0 0.0
+
+url https://services.swpc.noaa.gov/json/geospace/geospace_dst_1_hour.json
+ttl 3600
+on earth 0 0 0
+last dst exosphere_dst_nt inverse-square em 1 360 0.0 0.0
+
+url https://stereo-ssc.nascom.nasa.gov/beacon/tables.shtml
+ttl 3600
+on earth -25 60 150000000000
+field . exosphere_stereo_status inverse-square em 1 360 0.0 0.0
+
+url https://fireball.fripon.org/ajax/liste_multiple.ajax.php
+ttl 3600
+on earth 0 0
+map .
+lat lat
+lon lon
+field date event_date inverse-square em 1 360 0.0 0.0
+field time event_time inverse-square em 1 360 0.0 0.0
+field nb_camera camera_count inverse-square em 1 360 0.0 0.0
+field duration duration_s inverse-square em 1 360 0.0 0.0
+
+url https://api.gbif.org/v1/occurrence/search?classKey=131&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
+ttl 3600
+on earth 0 0
+map results
+lat decimalLatitude
+lon decimalLongitude
+field species species_name gaussian-inverse-square diffusion 1 360 0.0 0.0
+field family family gaussian-inverse-square diffusion 1 360 0.0 0.0
+
+url https://api.gbif.org/v1/occurrence/search?classKey=734&hasCoordinate=true&limit=300&basisOfRecord=MACHINE_OBSERVATION&year={year}&format=json
+ttl 3600
+on earth 0 0
+map results
+lat decimalLatitude
+lon decimalLongitude
+field scientificName species_name gaussian-inverse-square acoustic 1 360 0.0 0.0
+field family family_name gaussian-inverse-square acoustic 1 360 0.0 0.0
+field country country_code gaussian-inverse-square acoustic 1 360 0.0 0.0
+field stateProvince region gaussian-inverse-square acoustic 1 360 0.0 0.0
+
+url https://api.gbif.org/v1/occurrence/search?orderKey=734&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION,MACHINE_OBSERVATION
+ttl 3600
+on earth 0 0
+map results
+lat decimalLatitude
+lon decimalLongitude
+field scientificName species_name gaussian-inverse-square diffusion 1 360 0.0 0.0
+field family family_name gaussian-inverse-square diffusion 1 360 0.0 0.0
+field countryCode country gaussian-inverse-square diffusion 1 360 0.0 0.0
+field occurrenceDate observation_date gaussian-inverse-square diffusion 1 360 0.0 0.0
+
+url https://api.gbif.org/v1/occurrence/search?orderKey=809&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&format=json
+ttl 3600
+on earth 0 0
+map results
+lat decimalLatitude
+lon decimalLongitude
+field species species_name gaussian-inverse-square diffusion 1 360 0.0 0.0
+
+url https://api.gbif.org/v1/occurrence/search?classKey=186&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
+ttl 3600
+on earth 0 0
+map results
+lat decimalLatitude
+lon decimalLongitude
+field species species_name gaussian-inverse-square diffusion 1 360 0.0 0.0
+
+url https://api.gbif.org/v1/occurrence/search?orderKey=180130&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
+ttl 3600
+on earth 0 0
+map results
+lat decimalLatitude
+lon decimalLongitude
+field scientificName species_name gaussian-inverse-square diffusion 1 360 0.0 0.0
+field family family_name gaussian-inverse-square diffusion 1 360 0.0 0.0
+field country country_code gaussian-inverse-square diffusion 1 360 0.0 0.0
+field occurrenceDate sighting_date gaussian-inverse-square diffusion 1 360 0.0 0.0
+field individualCount group_size gaussian-inverse-square diffusion 1 360 0.0 0.0
+
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true
+ttl 3600
+on earth 0 0
+map results
+lat decimalLatitude
+lon decimalLongitude
+field species species_name gaussian-inverse-square diffusion 1 360 0.0 0.0
+field kingdom kingdom_name gaussian-inverse-square diffusion 1 360 0.0 0.0
+field phylum phylum_name gaussian-inverse-square diffusion 1 360 0.0 0.0
+field class class_name gaussian-inverse-square diffusion 1 360 0.0 0.0
+field order order_name gaussian-inverse-square diffusion 1 360 0.0 0.0
+field family family_name gaussian-inverse-square diffusion 1 360 0.0 0.0
+field genus genus_name gaussian-inverse-square diffusion 1 360 0.0 0.0
+field year observation_year gaussian-inverse-square diffusion 1 360 0.0 0.0
+field month observation_month gaussian-inverse-square diffusion 1 360 0.0 0.0
+field day observation_day gaussian-inverse-square diffusion 1 360 0.0 0.0
+field eventDate observation_date gaussian-inverse-square diffusion 1 360 0.0 0.0
+field countryCode country_code gaussian-inverse-square diffusion 1 360 0.0 0.0
+field basisOfRecord basis_of_record gaussian-inverse-square diffusion 1 360 0.0 0.0
+field occurrenceStatus occurrence_status gaussian-inverse-square diffusion 1 360 0.0 0.0
+field individualCount individual_count gaussian-inverse-square diffusion 1 360 0.0 0.0
+
+url https://api.gbif.org/v1/occurrence/search?familyKey=7908&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
+ttl 3600
+on earth 0 0
+map results
+lat decimalLatitude
+lon decimalLongitude
+field scientificName species_name gaussian-inverse-square diffusion 1 360 0.0 0.0
+field genus genus_name gaussian-inverse-square diffusion 1 360 0.0 0.0
+field country country_code gaussian-inverse-square diffusion 1 360 0.0 0.0
+field occurrenceDate observation_date gaussian-inverse-square diffusion 1 360 0.0 0.0
+field individualCount individual_count gaussian-inverse-square diffusion 1 360 0.0 0.0
+
+url https://api.gbif.org/v1/occurrence/search?orderKey=719&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json
+ttl 3600
+on earth 0 0
+map results
+lat decimalLatitude
+lon decimalLongitude
+field species species_name gaussian-inverse-square diffusion 1 360 0.0 0.0
+
+url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&occurrenceStatus=PRESENT&basisOfRecord=HUMAN_OBSERVATION&year={year}&format=json
+ttl 3600
+on earth 0 0
+map results
+lat decimalLatitude
+lon decimalLongitude
+field species species_name gaussian-inverse-square diffusion 1 360 0.0 0.0
+field family family gaussian-inverse-square diffusion 1 360 0.0 0.0
+field kingdom kingdom gaussian-inverse-square diffusion 1 360 0.0 0.0
+
+url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&iucnRedListCategory=CR&basisOfRecord=HUMAN_OBSERVATION&year={year}&format=json
+ttl 3600
+on earth 0 0
+map results
+lat decimalLatitude
+lon decimalLongitude
+field species species_name gaussian-inverse-square diffusion 1 360 0.0 0.0
+field iucnRedListCategory iucn_category gaussian-inverse-square diffusion 1 360 0.0 0.0
+
+url https://geofon.gfz.de/fdsnws/event/1/query?format=geojson&minmag=3&limit=100&region=AFRICA
+ttl 3600
+on earth 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+alt geometry.coordinates.2
+field properties.mag geosphere_africaarray_magnitude inverse-square em 1 360 0.0 0.0
+field properties.place geosphere_africaarray_location inverse-square em 1 360 0.0 0.0
+field properties.time geosphere_africaarray_time inverse-square em 1 360 0.0 0.0
+field properties.depth geosphere_africaarray_depth_km inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="atm"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_atm_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="bank"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_bank_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["highway"="bus_stop"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_bus_stop_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["historic"="castle"](around:500000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_castle_id inverse-square em 1 360 0.0 0.0
+
+url https://webservices.ingv.it/fdsnws/event/1/query?format=geojson&minmagnitude=2.5&limit=200
+ttl 3600
+on earth 40 15 0
+geojson mag 0.0 0 geosphere_earthquake_mag 360 0.0 0.0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=3&limit=200
+ttl 3600
+on earth 0 0 0
+geojson mag 0.0 0 geosphere_earthquake_mag 360 0.0 0.0
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_month.geojson
+ttl 3600
+on earth 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.mag geosphere_quake_mag erfc seismic-surface 1 360 0.0 0.0
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson
+ttl 3600
+on earth 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+alt geometry.coordinates.2
+field properties.mag geosphere_usgs_magnitude_all inverse-square em 1 360 0.0 0.0
+field properties.place geosphere_usgs_location_all inverse-square em 1 360 0.0 0.0
+field properties.time geosphere_usgs_time_all inverse-square em 1 360 0.0 0.0
+field properties.depth geosphere_usgs_depth_km_all inverse-square em 1 360 0.0 0.0
+
+url https://ies-ows.jrc.ec.europa.eu/effis?service=WFS&request=GetFeature&typeName=ms:modis.hs&outputFormat=application/json&maxFeatures=1
+ttl 3600
+on earth 45.803 8.624 0
+field features biosphere_effis_fire_feature_count inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="charging_station"](around:100000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field tags.sockets geosphere_ev_charging_sockets inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="fire_station"](around:100000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_fire_station_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="fuel"](around:100000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_fuel_station_id inverse-square em 1 360 0.0 0.0
+
+url https://seismic-api.science.unimelb.edu.au/month-quakes
+ttl 3600
+on earth 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+alt geometry.coordinates.2
+field properties.mag geosphere_ga_magnitude_month inverse-square em 1 360 0.0 0.0
+field properties.place geosphere_ga_location_month inverse-square em 1 360 0.0 0.0
+field properties.time geosphere_ga_time_month inverse-square em 1 360 0.0 0.0
+field properties.depth geosphere_ga_depth_month inverse-square em 1 360 0.0 0.0
+
+url https://www.gdacs.org/gdacsapi/api/events/geteventlist/SEARCH?alertlevel=red;orange;green
+ttl 3600
+on earth 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.eventtype geosphere_disaster_type inverse-square em 1 360 0.0 0.0
+field properties.alertlevel geosphere_disaster_alert_level inverse-square em 1 360 0.0 0.0
+field properties.severitydata.severity geosphere_disaster_severity inverse-square em 1 360 0.0 0.0
+
+url https://gdacs.org/xml/rss.xml
+ttl 3600
+on earth 38.9072 -77.0369 0
+
+url https://api.geonet.org.nz/volcano/val
+ttl 3600
+header Accept application/vnd.geo+json;version=2
+on earth 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.volcanoID geosphere_geonet_volcano_id inverse-square em 1 360 0.0 0.0
+field properties.volcanoTitle geosphere_geonet_volcano_name inverse-square em 1 360 0.0 0.0
+field properties.level geosphere_geonet_alert_level inverse-square em 1 360 0.0 0.0
+field properties.aviationColourCode geosphere_geonet_aviation_code inverse-square em 1 360 0.0 0.0
+field properties.activity geosphere_geonet_volcano_activity inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="hospital"](around:200000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_hospital_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="library"](around:100000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_library_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["man_made"="lighthouse"](around:500000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field tags.ele geosphere_lighthouse_elevation_m inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["man_made"="mast"](around:200000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field tags.height geosphere_mast_height_m inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["historic"="memorial"](around:100000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_memorial_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["natural"="peak"](around:200000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field tags.ele geosphere_peak_elevation_m inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["tourism"="museum"](around:100000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_museum_id inverse-square em 1 360 0.0 0.0
+
+url https://eonet.gsfc.nasa.gov/api/v3/events
+ttl 3600
+on earth 0 0
+map events
+lat geometry.0.coordinates.1
+lon geometry.0.coordinates.0
+field title eonet_event_title inverse-square em 1 360 0.0 0.0
+field categories.0.title event_category inverse-square em 1 360 0.0 0.0
+field id eonet_event_id inverse-square em 1 360 0.0 0.0
+
+url https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/Active_Fires/FeatureServer/0/query?where=1%3D1&outFields=*&geometry={lon_min},{lat_min},{lon_max},{lat_max}&geometryType=esriGeometryEnvelope&f=json
+ttl 3600
+on earth 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field attributes.IncidentName wildfire_name inverse-square em 1 360 0.0 0.0
+field attributes.PolygonAcres fire_acres inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["man_made"="observatory"](around:500000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field tags.ele geosphere_observatory_elevation_m inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["aeroway"="aerodrome"](around:500000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_airport_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["tourism"="alpine_hut"](around:500000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_alpine_huts_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["historic"="archaeological_site"](around:200000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_archaeological_sites_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["tourism"="artwork"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_artworks_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="bakery"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_bakeries_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="bar"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_bars_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["historic"="battlefield"](around:500000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_battlefields_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["man_made"="beacon"](around:200000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_beacons_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="bench"](around:5000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_benches_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="bicycle_rental"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_bicycle_rentals_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="books"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_bookshops_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["craft"="brewery"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_breweries_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];way["way"="bridge"](around:yes,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_bridges_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="butcher"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_butchers_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="cafe"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_cafes_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["tourism"="camp_site"](around:200000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_camp_sites_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="car_sharing"](around:100000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_car_sharing_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["natural"="cave_entrance"](around:500000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_cave_entrances_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="cinema"](around:100000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_cinemas_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="clinic"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_clinics_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["man_made"="tower"](around:100000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_clock_towers_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="clothes"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_clothing_stores_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="college"](around:100000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_colleges_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="community_centre"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_community_centre_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="compressed_air"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_compressed_air_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["highway"="construction"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_construction_zones_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="convenience"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_convenience_stores_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="courthouse"](around:200000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_courthouses_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["highway"="crossing"](around:5000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_crossings_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["emergency"="defibrillator"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_defibrillators_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="dentist"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_dentists_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["leisure"="dog_park"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_dog_parks_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="electronics"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_electronics_stores_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="embassy"](around:500000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_embassies_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];way["way"="landuse"](around:farmland,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_farmland_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="fast_food"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_fast_food_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="ferry_terminal"](around:200000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_ferry_terminal_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["leisure"="fitness_centre"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_fitness_centres_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="florist"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_florists_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];way["way"="landuse"](around:forest,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_forests_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["historic"="fort"](around:500000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_forts_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="fountain"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_fountains_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["tourism"="gallery"](around:100000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_galleries_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["leisure"="garden"](around:100000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_gardens_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="grave_yard"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_grave_yards_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="greengrocer"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_greengrocers_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="grocery"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_grocery_stores_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["tourism"="guest_house"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_guest_houses_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="hairdresser"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_hairdressers_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="hardware"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_hardware_stores_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["tourism"="hostel"](around:100000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_hostels_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["tourism"="hotel"](around:100000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_hotels_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="hunting_stand"](around:200000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_hunting_stands_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="ice_cream"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_ice_cream_parlours_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["tourism"="information"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_information_centres_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="jewelry"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_jewelry_shops_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="kindergarten"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_kindergartens_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="kiosk"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_kiosks_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="laundry"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_laundries_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="mall"](around:100000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_malls_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["historic"="manor"](around:500000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_manors_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["leisure"="marina"](around:200000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_marinas_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["historic"="milestone"](around:200000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_milestones_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="monastery"](around:500000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_monasteries_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["historic"="monument"](around:200000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_monuments_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="motorcycle_parking"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_motorcycle_parkings_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="music_venue"](around:100000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_music_venues_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["leisure"="nature_reserve"](around:500000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_nature_reserves_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="optician"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_opticians_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["geological"="palaeontological_site"](around:500000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_palaeontological_sites_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="parking"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_parking_lots_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["leisure"="park"](around:100000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_parks_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="pet"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_pet_shops_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="pharmacy"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_pharmacy_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="chemist"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_pharmacies_shop_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["tourism"="picnic_site"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_picnic_sites_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="place_of_worship"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_places_of_worship_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["leisure"="playground"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_playgrounds_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="post_box"](around:10000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_post_boxes_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="post_office"](around:100000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_post_office_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["power"="tower"](around:200000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field tags.height geosphere_tower_height_m inverse-square em 1 360 0.0 0.0
+field id geosphere_tower_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="prison"](around:500000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_prisons_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="public_bookcase"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_public_bookcases_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="pub"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_pubs_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["railway"="station"](around:200000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_railway_station_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="recycling"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_recycling_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["historic"="ruins"](around:200000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_ruins_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="school"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_schools_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="shelter"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_shelters_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["leisure"="sports_centre"](around:100000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_sports_centres_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["leisure"="pitch"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_sports_pitches_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="sports"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_sports_shops_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["natural"="spring"](around:200000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_springs_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["leisure"="stadium"](around:200000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_stadiums_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["historic"="statue"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_statues_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["highway"="street_lamp"](around:10000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_street_lamps_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["railway"="subway_entrance"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_subway_entrances_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="supermarket"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_supermarkets_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["man_made"="surveillance"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_surveillance_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["leisure"="swimming_pool"](around:100000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_swimming_pools_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["telecom"="antenna"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_telecom_antenna_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="telephone"](around:10000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_telephones_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["man_made"="telescope"](around:500000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_telescopes_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="theatre"](around:100000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_theatres_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="toilets"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_toilets_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="townhall"](around:200000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_townhalls_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["highway"="traffic_signals"](around:10000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_traffic_signals_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["railway"="tram_stop"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_tram_stops_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="travel_agency"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_travel_agents_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["natural"="tree"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field tags.height geosphere_tree_height_m inverse-square em 1 360 0.0 0.0
+field id geosphere_tree_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="university"](around:200000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_universities_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="veterinary"](around:100000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_veterinary_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["tourism"="viewpoint"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_viewpoint_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];way["landuse"="vineyard"](around:200000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_vineyards_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="waste_basket"](around:10000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_waste_baskets_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="drinking_water"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_water_points_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["man_made"="water_well"](around:200000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_water_wells_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["man_made"="watermill"](around:200000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_watermills_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];way["way"="waterway"](around:river,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_waterways_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["historic"="wayside_shrine"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_wayside_shrines_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["man_made"="windmill"](around:500000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_windmills_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="wine"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_wine_shops_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["internet_access"="wlan"](around:10000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_overpass_wlan_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="police"](around:200000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_police_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="restaurant"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field id geosphere_restaurant_id inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["highway"="speed_camera"](around:50000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field tags.maxspeed geosphere_speed_camera_limit_kmh inverse-square em 1 360 0.0 0.0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={yesterday}&endtime={today}&minmagnitude=6.0
+ttl 3600
+on earth 38.9072 -77.0369 0
+field metadata.count geosphere_earthquakes_magnitude6_usgs erfc seismic-surface 1 360 0.0 0.0
+
+url https://volcanoes.usgs.gov/vsc/api/volcanoApi/geojson
+ttl 3600
+on earth 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.alertLevel volcano_alert_level erfc seismic-surface 1 360 0.0 0.0
+field properties.volcanoName volcano_name erfc seismic-surface 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["natural"="volcano"](around:500000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field tags.ele geosphere_volcano_elevation_m inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="weather_station"](around:200000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field tags.ele geosphere_weather_station_elevation_m inverse-square em 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["power"="generator"]["generator:source"="wind"](around:200000,{lat},{lon});out%20100;
+ttl 3600
+on earth 0 0
+map elements
+lat lat
+lon lon
+field tags.ele geosphere_wind_turbine_elevation_m inverse-square em 1 360 0.0 0.0
+
+url https://kp.gfz-potsdam.de/app/files/gfz-hpo-Kp_def-{year}.txt
+ttl 3600
+format text
+on earth 0 0 0
+rows .
+field 0 year inverse-square gravity 1 360 0.0 0.0
+field 1 month inverse-square gravity 1 360 0.0 0.0
+field 2 day inverse-square gravity 1 360 0.0 0.0
+field 3 hour inverse-square gravity 1 360 0.0 0.0
+field 4 kp_value inverse-square gravity 1 360 0.0 0.0
+
+url https://giro.uml.edu/SAOExplorer/index.php?action=getStations&format=json
+ttl 3600
+on earth 0 0
+map stations
+lat lat
+lon lon
+field ursiCode station_code inverse-square em 1 360 0.0 0.0
+field stationName station_name inverse-square em 1 360 0.0 0.0
+field country country inverse-square em 1 360 0.0 0.0
+field altitude altitude_m inverse-square em 1 360 0.0 0.0
+field lastDataTime last_observation inverse-square em 1 360 0.0 0.0
+
+url https://gracedb.ligo.org/api/superevents/?format=json&category=Production&label=GW&ordering=-created&per_page=10
+ttl 3600
+on earth 0 0 0
+map superevents
+field superevent_id event_id inverse-square gravity 1 360 0.0 0.0
+field t_0 gps_time inverse-square gravity 1 360 0.0 0.0
+field far false_alarm_rate_Hz inverse-square gravity 1 360 0.0 0.0
+field labels event_labels inverse-square gravity 1 360 0.0 0.0
+field distance.mean luminosity_distance_Mpc inverse-square gravity 1 360 0.0 0.0
+field classification.BNS p_bns inverse-square gravity 1 360 0.0 0.0
+field classification.BBH p_bbh inverse-square gravity 1 360 0.0 0.0
+
+url https://gracedb.ligo.org/api/superevents/?format=json&category=Production&public=True&ordering=-created&per_page=100
+ttl 3600
+on earth 0 0 0
+map superevents
+field superevent_id event_id inverse-square gravity 1 360 0.0 0.0
+field t_0 gps_time inverse-square gravity 1 360 0.0 0.0
+field far false_alarm_rate_Hz inverse-square gravity 1 360 0.0 0.0
+field classification.MassGap p_massgap inverse-square gravity 1 360 0.0 0.0
+field distance.mean distance_Mpc inverse-square gravity 1 360 0.0 0.0
+field created created_utc inverse-square gravity 1 360 0.0 0.0
+
+url https://volcano.si.edu/api/v1/activity?format=json&weeks=4&status=eruption
+ttl 3600
+on earth 0 0
+map items
+lat lat
+lon lon
+field name volcano_name gaussian-inverse-square seismic-body 1 360 0.0 0.0
+field country country gaussian-inverse-square seismic-body 1 360 0.0 0.0
+field alert_level alert_level gaussian-inverse-square seismic-body 1 360 0.0 0.0
+field start_date eruption_start gaussian-inverse-square seismic-body 1 360 0.0 0.0
+field status eruption_status gaussian-inverse-square seismic-body 1 360 0.0 0.0
+field vei vei_index gaussian-inverse-square seismic-body 1 360 0.0 0.0
+
+url https://gwis.jrc.ec.europa.eu/api/fire/current?format=json&limit=500
+ttl 3600
+on earth 0 0
+map fires
+lat latitude
+lon longitude
+field frp fire_radiative_power exponential-decay thermal 1 360 0.0 0.0
+field confidence confidence exponential-decay thermal 1 360 0.0 0.0
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+200+date,band,peak_flux,duration,type+FROM+sgraflares+WHERE+date+IS+NOT+NULL+ORDER+BY+date+DESC
+ttl 3600
+format text
+on earth -29.008 266.417 0
+rows .
+field date flare_date_utc inverse-square em 1 360 0.0 0.0
+field band observing_band inverse-square em 1 360 0.0 0.0
+field peak_flux peak_flux inverse-square em 1 360 0.0 0.0
+field duration duration_min inverse-square em 1 360 0.0 0.0
+field type flare_classification inverse-square em 1 360 0.0 0.0
+
+url https://www.globalfloods.eu/glofas-forecasting/?format=json
+ttl 3600
+on earth 0 0
+map .
+lat lat
+lon lon
+field discharge hydrosphere_glofas_discharge_m3s inverse-square em 1 360 0.0 0.0
+field probability hydrosphere_glofas_flood_probability inverse-square em 1 360 0.0 0.0
+field return_period hydrosphere_glofas_return_period_years inverse-square em 1 360 0.0 0.0
+
+url https://erddap.aoml.noaa.gov/gdp/erddap/tabledap/drifter_hourly_qc.json?latitude,longitude,sst&time%3E=max(time)-7days
+ttl 3600
+on earth 0 0 0
+map table.rows
+lat 0
+lon 1
+field 2 hydrosphere_drifter_sst_k inverse-square em 1 360 0.0 0.0
+
+url https://erddap.marine.ie/erddap/tabledap/smartbay_obs_acoustic.csv?time,spl_full
+ttl 3600
+format csv
+on earth 53.13 -9.27 0
+lastrow spl_full hydrosphere_sound_pressure_db inverse-square em 1 360 0.0 0.0
+
+url https://iagos.aeris-data.fr/api/json/products?domain=IAGOS-CORE&variables=O3,CO&start={today}T00:00:00&stop={today}T23:59:59&limit=500
+ttl 3600
+on earth 0 0
+map .
+lat lat
+lon lon
+field O3 ozone_ppb gaussian-inverse-square diffusion 1 360 0.0 0.0
+field CO carbon_monoxide_ppb gaussian-inverse-square diffusion 1 360 0.0 0.0
+field altitude altitude_m gaussian-inverse-square diffusion 1 360 0.0 0.0
+field time measurement_time gaussian-inverse-square diffusion 1 360 0.0 0.0
+field aircraft_type aircraft_model gaussian-inverse-square diffusion 1 360 0.0 0.0
+
+url https://meta.icos-cp.eu/sparql?format=json&query=SELECT+?s+?name+?lat+?lon+?alt+?country+?stType+WHERE{?s+a+<http://meta.icos-cp.eu/ontologies/cpmeta/ES>+;+<http://www.w3.org/2000/01/rdf-schema#label>+?name+;+<http://meta.icos-cp.eu/ontologies/cpmeta/hasLatitude>+?lat+;+<http://meta.icos-cp.eu/ontologies/cpmeta/hasLongitude>+?lon+;+<http://meta.icos-cp.eu/ontologies/cpmeta/hasCountry>+?country+}+LIMIT+200
+ttl 3600
+on earth 0 0
+map results.bindings
+lat lat.value
+lon lon.value
+field name.value station_name gaussian-inverse-square diffusion 1 360 0.0 0.0
+field country.value country_code gaussian-inverse-square diffusion 1 360 0.0 0.0
+field s.value station_uri gaussian-inverse-square diffusion 1 360 0.0 0.0
+field stType.value station_type gaussian-inverse-square diffusion 1 360 0.0 0.0
+
+url https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.csv?latitude,longitude,TEMP,PSAL,DOXY,PRES,time&DOXY%3E=0&time%3E=now-7days&orderBy(%22time%22)&limit=3000
+ttl 3600
+format text
+on earth 0 0
+rows .
+lat latitude
+lon longitude
+field DOXY dissolved_oxygen_umolkg gaussian-inverse-square diffusion 1 360 0.0 0.0
+field TEMP water_temp_c gaussian-inverse-square diffusion 1 360 0.0 0.0
+field PSAL salinity_psu gaussian-inverse-square diffusion 1 360 0.0 0.0
+field PRES pressure_dbar gaussian-inverse-square diffusion 1 360 0.0 0.0
+field time obs_time gaussian-inverse-square diffusion 1 360 0.0 0.0
+
+url https://api.inaturalist.org/v1/observations?quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true&swlat=-20&swlng=-80&nelat=5&nelng=-45
+ttl 3600
+on earth 0 0
+map results
+lat geojson.coordinates.1
+lon geojson.coordinates.0
+field taxon.name species_name gaussian-inverse-square diffusion 1 360 0.0 0.0
+field taxon.iconic_taxon_name iconic_taxon gaussian-inverse-square diffusion 1 360 0.0 0.0
+field observed_on observation_date gaussian-inverse-square diffusion 1 360 0.0 0.0
+
+url https://api.inaturalist.org/v1/observations?iconic_taxa=Amphibia&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
+ttl 3600
+on earth 0 0
+map results
+lat geojson.coordinates.1
+lon geojson.coordinates.0
+field taxon.name species_name gaussian-inverse-square diffusion 1 360 0.0 0.0
+field observed_on observation_date gaussian-inverse-square diffusion 1 360 0.0 0.0
+
+url https://api.inaturalist.org/v1/observations?quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true&swlat=35&swlng=-10&nelat=70&nelng=40
+ttl 3600
+on earth 0 0
+map results
+lat geojson.coordinates.1
+lon geojson.coordinates.0
+field taxon.name species_name gaussian-inverse-square diffusion 1 360 0.0 0.0
+field taxon.iconic_taxon_name iconic_taxon gaussian-inverse-square diffusion 1 360 0.0 0.0
+field observed_on observation_date gaussian-inverse-square diffusion 1 360 0.0 0.0
+field place_guess locality gaussian-inverse-square diffusion 1 360 0.0 0.0
+
+url https://api.inaturalist.org/v1/observations?iconic_taxa=Fungi&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
+ttl 3600
+on earth 0 0
+map results
+lat geojson.coordinates.1
+lon geojson.coordinates.0
+field taxon.name species_name gaussian-inverse-square diffusion 1 360 0.0 0.0
+field taxon.rank taxon_rank gaussian-inverse-square diffusion 1 360 0.0 0.0
+field observed_on observation_date gaussian-inverse-square diffusion 1 360 0.0 0.0
+field place_guess locality gaussian-inverse-square diffusion 1 360 0.0 0.0
+
+url https://api.inaturalist.org/v1/observations?iconic_taxa=Insecta&invasive=true&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
+ttl 3600
+on earth 0 0
+map results
+lat geojson.coordinates.1
+lon geojson.coordinates.0
+field taxon.name species_name gaussian-inverse-square diffusion 1 360 0.0 0.0
+field observed_on observation_date gaussian-inverse-square diffusion 1 360 0.0 0.0
+field place_guess locality gaussian-inverse-square diffusion 1 360 0.0 0.0
+
+url https://api.inaturalist.org/v1/observations?iconic_taxa=Mammalia&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
+ttl 3600
+on earth 0 0
+map results
+lat geojson.coordinates.1
+lon geojson.coordinates.0
+field taxon.name species_name gaussian-inverse-square diffusion 1 360 0.0 0.0
+field taxon.rank taxon_rank gaussian-inverse-square diffusion 1 360 0.0 0.0
+field observed_on observation_date gaussian-inverse-square diffusion 1 360 0.0 0.0
+field place_guess locality gaussian-inverse-square diffusion 1 360 0.0 0.0
+
+url https://api.inaturalist.org/v1/observations?iconic_taxa=Actinopterygii&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
+ttl 3600
+on earth 0 0
+map results
+lat geojson.coordinates.1
+lon geojson.coordinates.0
+field taxon.name species_name gaussian-inverse-square diffusion 1 360 0.0 0.0
+field taxon.rank taxon_rank gaussian-inverse-square diffusion 1 360 0.0 0.0
+field observed_on observation_date gaussian-inverse-square diffusion 1 360 0.0 0.0
+
+url https://api.inaturalist.org/v1/observations?iconic_taxa=Reptilia&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
+ttl 3600
+on earth 0 0
+map results
+lat geojson.coordinates.1
+lon geojson.coordinates.0
+field taxon.name species_name gaussian-inverse-square diffusion 1 360 0.0 0.0
+field taxon.rank taxon_rank gaussian-inverse-square diffusion 1 360 0.0 0.0
+field observed_on observation_date gaussian-inverse-square diffusion 1 360 0.0 0.0
+field place_guess locality gaussian-inverse-square diffusion 1 360 0.0 0.0
+
+url https://api.inaturalist.org/v1/observations?threatened=true&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true
+ttl 3600
+on earth 0 0
+map results
+lat geojson.coordinates.1
+lon geojson.coordinates.0
+field taxon.name species_name gaussian-inverse-square diffusion 1 360 0.0 0.0
+field observed_on observation_date gaussian-inverse-square diffusion 1 360 0.0 0.0
+field place_guess locality gaussian-inverse-square diffusion 1 360 0.0 0.0
+
+url https://erddap.incois.gov.in/erddap/tabledap/INCOIS_ARGO_PROFILES.csv?latitude,longitude,time,pres,temp,psal,platform_number&time>={today}T00:00:00Z&latitude>=-30&latitude<=30&longitude>=40&longitude<=120&orderBy(%22time%22)&distinct()
+ttl 3600
+format text
+on earth 0 0
+rows .
+lat latitude
+lon longitude
+field temp temperature_c gaussian-inverse-square diffusion 1 360 0.0 0.0
+field psal salinity_psu gaussian-inverse-square diffusion 1 360 0.0 0.0
+field pres pressure_dbar gaussian-inverse-square diffusion 1 360 0.0 0.0
+field platform_number argo_float_id gaussian-inverse-square diffusion 1 360 0.0 0.0
+field time profile_time gaussian-inverse-square diffusion 1 360 0.0 0.0
+
+url https://erddap.incois.gov.in/erddap/griddap/INCOIS_GHRSST_MUR_SST.csv?analysed_sst%5Blast%5D%5B(-30.0):(30.0):5%5D%5B(40.0):(120.0):5%5D
+ttl 3600
+format text
+on earth 0 0
+rows .
+lat latitude
+lon longitude
+field analysed_sst sst_kelvin exponential-decay thermal 1 360 0.0 0.0
+
+url https://erddap.incois.gov.in/erddap/griddap/INCOIS_NIO_WAVE_MODEL.csv?SWH%5Blast%5D%5B(0.0):(25.0):2%5D%5B(50.0):(80.0):2%5D,MWP%5Blast%5D%5B(0.0):(25.0):2%5D%5B(50.0):(80.0):2%5D,MWD%5Blast%5D%5B(0.0):(25.0):2%5D%5B(50.0):(80.0):2%5D
+ttl 3600
+format text
+on earth 0 0
+rows .
+lat latitude
+lon longitude
+field SWH sig_wave_height_m gaussian-inverse-square acoustic 1 360 0.0 0.0
+field MWP mean_wave_period_s gaussian-inverse-square acoustic 1 360 0.0 0.0
+field MWD mean_wave_direction_deg gaussian-inverse-square acoustic 1 360 0.0 0.0
+
+url https://erddap.incois.gov.in/erddap/griddap/INCOIS_NIO_WAVE_MODEL.csv?SWH%5Blast%5D%5B(0.0):(25.0):2%5D%5B(80.0):(100.0):2%5D,MWP%5Blast%5D%5B(0.0):(25.0):2%5D%5B(80.0):(100.0):2%5D,PWP%5Blast%5D%5B(0.0):(25.0):2%5D%5B(80.0):(100.0):2%5D
+ttl 3600
+format text
+on earth 0 0
+rows .
+lat latitude
+lon longitude
+field SWH sig_wave_height_m gaussian-inverse-square acoustic 1 360 0.0 0.0
+field MWP mean_wave_period_s gaussian-inverse-square acoustic 1 360 0.0 0.0
+field PWP peak_wave_period_s gaussian-inverse-square acoustic 1 360 0.0 0.0
+
+url https://incois.gov.in/portal/osf/json/osf_alert.jsp
+ttl 3600
+on earth 0 0
+map .
+lat lat
+lon lon
+field port_name port_name gaussian-inverse-square acoustic 1 360 0.0 0.0
+field dist_name district gaussian-inverse-square acoustic 1 360 0.0 0.0
+field state_name state gaussian-inverse-square acoustic 1 360 0.0 0.0
+field swh sig_wave_height_m gaussian-inverse-square acoustic 1 360 0.0 0.0
+field mwd wave_direction_deg gaussian-inverse-square acoustic 1 360 0.0 0.0
+field mwp mean_period_s gaussian-inverse-square acoustic 1 360 0.0 0.0
+field wind_speed wind_speed_kmh gaussian-inverse-square acoustic 1 360 0.0 0.0
+field alert_color alert_level gaussian-inverse-square acoustic 1 360 0.0 0.0
+
+url https://services.swpc.noaa.gov/json/tec/tec_global_1h.json
+ttl 3600
+on earth 0 0
+map .
+lat lat
+lon lon
+field tec ionosphere_tec_1h_tecu inverse-square em 1 360 0.0 0.0
+
+url https://bhuvan-app1.nrsc.gov.in/disaster/disaster.php?id=flood&format=json
+ttl 3600
+on earth 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.district district_name gaussian-inverse-square diffusion 1 360 0.0 0.0
+field properties.state state_name gaussian-inverse-square diffusion 1 360 0.0 0.0
+field properties.area_ha inundated_area_ha gaussian-inverse-square diffusion 1 360 0.0 0.0
+field properties.date flood_date gaussian-inverse-square diffusion 1 360 0.0 0.0
+
+url https://ssd-api.jpl.nasa.gov/fireball.api?date-min=2010-01-01&req-loc=true&limit=1000&sort=-energy
+ttl 3600
+on earth 0 0
+map data
+lat lat
+lon lon
+field date event_date inverse-square gravity 1 360 0.0 0.0
+field time event_time inverse-square gravity 1 360 0.0 0.0
+field alt altitude_km inverse-square gravity 1 360 0.0 0.0
+field v velocity_km_s inverse-square gravity 1 360 0.0 0.0
+field energy impact_energy_kt inverse-square gravity 1 360 0.0 0.0
+field lat latitude inverse-square gravity 1 360 0.0 0.0
+field lon longitude inverse-square gravity 1 360 0.0 0.0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND='-31'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='6+h'&VEC_TABLE='2'&REF_PLANE='ECLIPTIC'
+ttl 3600
+format text
+on earth 0 0 0
+rows .
+field 2 x_au inverse-square gravity 1 360 0.0 0.0
+field 3 y_au inverse-square gravity 1 360 0.0 0.0
+field 4 z_au inverse-square gravity 1 360 0.0 0.0
+field 5 vx_au_d inverse-square gravity 1 360 0.0 0.0
+field 6 vy_au_d inverse-square gravity 1 360 0.0 0.0
+field 7 vz_au_d inverse-square gravity 1 360 0.0 0.0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND='-32'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='6+h'&VEC_TABLE='2'&REF_PLANE='ECLIPTIC'
+ttl 3600
+format text
+on earth 0 0 0
+rows .
+field 2 x_au inverse-square gravity 1 360 0.0 0.0
+field 3 y_au inverse-square gravity 1 360 0.0 0.0
+field 4 z_au inverse-square gravity 1 360 0.0 0.0
+field 5 vx_au_d inverse-square gravity 1 360 0.0 0.0
+field 6 vy_au_d inverse-square gravity 1 360 0.0 0.0
+field 7 vz_au_d inverse-square gravity 1 360 0.0 0.0
+
+url https://lasp.colorado.edu/lisird/latis/dap/fism_flare_hr.csv?time>={today}
+ttl 3600
+format text
+on earth 0 0 0
+rows .
+field time model_time inverse-square em 1 360 0.0 0.0
+field wavelength wavelength_nm inverse-square em 1 360 0.0 0.0
+field irradiance modeled_irradiance_W_m2 inverse-square em 1 360 0.0 0.0
+
+url https://lasp.colorado.edu/lisird/latis/dap/noaa_radio_flux.csv?time>={today}
+ttl 3600
+format text
+on earth 49.32 -119.62 0
+rows .
+field time observation_date inverse-square em 1 360 0.0 0.0
+field f107 f107_sfu inverse-square em 1 360 0.0 0.0
+field f107_adj f107_adjusted_sfu inverse-square em 1 360 0.0 0.0
+
+url https://lasp.colorado.edu/lisird/latis/dap/tsis_tsi_24hr.csv?time>=2024-01-01
+ttl 3600
+format text
+on earth 0 0 0
+rows .
+field time observation_date inverse-square em 1 360 0.0 0.0
+field tsi total_solar_irradiance_W_m2 inverse-square em 1 360 0.0 0.0
+field uncertainty tsi_uncertainty_W_m2 inverse-square em 1 360 0.0 0.0
+
+url https://lasp.colorado.edu/lisird/latis/dap/sdo_eve_ssi_1nm_l3.csv?time>=2026-01-01&time<={today}
+ttl 3600
+format text
+on earth 0 0 0
+rows .
+field time observation_date inverse-square em 1 360 0.0 0.0
+field wavelength wavelength_nm inverse-square em 1 360 0.0 0.0
+field irradiance spectral_irradiance_W_m2_nm inverse-square em 1 360 0.0 0.0
+field stdev irradiance_stdev_W_m2_nm inverse-square em 1 360 0.0 0.0
+
+url https://aviationweather.gov/api/data/metar?bbox=-90,-180,-60,180&format=json&hours=3
+ttl 3600
+on earth 0 0
+map .
+lat lat
+lon lon
+field icaoId icao_code gaussian-inverse-square acoustic 1 360 0.0 0.0
+field temp temp_c gaussian-inverse-square acoustic 1 360 0.0 0.0
+field wdir wind_dir_deg gaussian-inverse-square acoustic 1 360 0.0 0.0
+field wspd wind_speed_kt gaussian-inverse-square acoustic 1 360 0.0 0.0
+field altim pressure_hpa gaussian-inverse-square acoustic 1 360 0.0 0.0
+
+url https://www.mirovaweb.it/api/v1/anomalies?limit=200
+ttl 3600
+on earth 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.volcano volcano_name exponential-decay thermal 1 360 0.0 0.0
+field properties.temp_max_k max_temp_kelvin exponential-decay thermal 1 360 0.0 0.0
+field properties.frp radiative_power_mw exponential-decay thermal 1 360 0.0 0.0
+field properties.date observation_date exponential-decay thermal 1 360 0.0 0.0
+
+url https://modvolc.ov.ingv.it/modvolc/feed.json
+ttl 3600
+on earth 0 0
+map items
+lat lat
+lon lon
+field volcano volcano_name exponential-decay thermal 1 360 0.0 0.0
+field max_temp_c hotspot_max_temp_c exponential-decay thermal 1 360 0.0 0.0
+field frp_modis radiative_power_mw exponential-decay thermal 1 360 0.0 0.0
+field satellite satellite exponential-decay thermal 1 360 0.0 0.0
+
+url https://www.minorplanetcenter.net/cgi-bin/checkmp.cgi?ty=c&head=N&TextArea=&radius=180&ra=&decl=&oc=500&e=J2000&resoc=&s=t&m=h&adir=N&oed=&e=J2000&dFormat=YYYY+MM+DD&css=modern&mot=check&dmot=p&si=t&uto=0&int=2&fmt=csv
+ttl 3600
+format text
+on earth 0 0 0
+rows .
+field 0 designation inverse-square gravity 1 360 0.0 0.0
+field 1 ra_hms inverse-square gravity 1 360 0.0 0.0
+field 2 dec_dms inverse-square gravity 1 360 0.0 0.0
+field 3 delta_au inverse-square gravity 1 360 0.0 0.0
+field 4 r_au inverse-square gravity 1 360 0.0 0.0
+field 5 elongation_deg inverse-square gravity 1 360 0.0 0.0
+field 6 vmag inverse-square gravity 1 360 0.0 0.0
+
+url https://coastwatch.noaa.gov/erddap/griddap/jplMURSST41.csv?analysed_sst%5B-1%5D%5B(0.0):(60.0):4%5D%5B(-180.0):(180.0):4%5D
+ttl 3600
+format text
+on earth 0 0
+rows .
+lat latitude
+lon longitude
+field analysed_sst mur_sst_kelvin exponential-decay thermal 1 360 0.0 0.0
+field analysis_error mur_sst_error_K exponential-decay thermal 1 360 0.0 0.0
+
+url https://power.larc.nasa.gov/api/temporal/monthly/point?parameters=ALLSKY_SFC_SW_DWN&community=RE&longitude={lon}&latitude={lat}&start=2025&end=2025&format=JSON
+ttl 3600
+on earth 0 0 0
+
+url https://records-ws.nbnatlas.org/occurrences/search?q=group:Chiroptera&fq=dataProviderName:%22Bat+Conservation+Trust%22&fl=decimalLatitude,decimalLongitude,vernacularName,scientificName,year,month&pageSize=300&sort=year&order=desc
+ttl 3600
+on earth 0 0
+map occurrences
+lat decimalLatitude
+lon decimalLongitude
+field scientificName species_name gaussian-inverse-square acoustic 1 360 0.0 0.0
+field vernacularName common_name gaussian-inverse-square acoustic 1 360 0.0 0.0
+field year obs_year gaussian-inverse-square acoustic 1 360 0.0 0.0
+field month obs_month gaussian-inverse-square acoustic 1 360 0.0 0.0
+
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-hourly&stations=USW00013739,USW00094728,USW00012918&startDate=2026-07-01&endDate=2026-07-27&format=json
+ttl 3600
+on earth 40.74 -73.98 0
+map .
+lat 40.74
+lon -73.98
+field station station_id gaussian-inverse-square diffusion 1 360 0.0 0.0
+field date observation_date gaussian-inverse-square diffusion 1 360 0.0 0.0
+field temperature temperature_celsius gaussian-inverse-square diffusion 1 360 0.0 0.0
+field dewPoint dewpoint_celsius gaussian-inverse-square diffusion 1 360 0.0 0.0
+field windSpeed wind_speed_ms gaussian-inverse-square diffusion 1 360 0.0 0.0
+field windDirection wind_direction_degrees gaussian-inverse-square diffusion 1 360 0.0 0.0
+field seaLevelPressure pressure_hpa gaussian-inverse-square diffusion 1 360 0.0 0.0
+
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-hourly&stations=USW00013739&startDate=2026-01-01&endDate=2026-07-27&format=json
+ttl 3600
+on earth 40.74 -73.98 0
+map .
+lat 40.74
+lon -73.98
+field station station_id gaussian-inverse-square diffusion 1 360 0.0 0.0
+field date observation_date gaussian-inverse-square diffusion 1 360 0.0 0.0
+field temperature temperature_celsius gaussian-inverse-square diffusion 1 360 0.0 0.0
+field dewPoint dewpoint_celsius gaussian-inverse-square diffusion 1 360 0.0 0.0
+field windSpeed wind_speed_ms gaussian-inverse-square diffusion 1 360 0.0 0.0
+field windDirection wind_direction_degrees gaussian-inverse-square diffusion 1 360 0.0 0.0
+field visibility visibility_m gaussian-inverse-square diffusion 1 360 0.0 0.0
+field seaLevelPressure pressure_hpa gaussian-inverse-square diffusion 1 360 0.0 0.0
+
+url https://www.ndbc.noaa.gov/activestations.xml
+ttl 3600
+format text
+on earth 0 0
+rows .
+lat lat
+lon lon
+field station_id station_id gaussian-inverse-square diffusion 1 360 0.0 0.0
+field site station_name gaussian-inverse-square diffusion 1 360 0.0 0.0
+field owner owner gaussian-inverse-square diffusion 1 360 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/21413.dart
+ttl 3600
+format text
+on earth 38.7 148.7 0
+rows .
+field 0 year gaussian-inverse-square acoustic 1 360 0.0 0.0
+field 1 month gaussian-inverse-square acoustic 1 360 0.0 0.0
+field 2 day gaussian-inverse-square acoustic 1 360 0.0 0.0
+field 3 hour gaussian-inverse-square acoustic 1 360 0.0 0.0
+field 6 data_type gaussian-inverse-square acoustic 1 360 0.0 0.0
+field 7 sea_level_height_m gaussian-inverse-square acoustic 1 360 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/23401.dart
+ttl 3600
+format text
+on earth -8.4 67.5 0
+rows .
+field 0 year gaussian-inverse-square acoustic 1 360 0.0 0.0
+field 1 month gaussian-inverse-square acoustic 1 360 0.0 0.0
+field 2 day gaussian-inverse-square acoustic 1 360 0.0 0.0
+field 3 hour gaussian-inverse-square acoustic 1 360 0.0 0.0
+field 7 sea_level_height_m gaussian-inverse-square acoustic 1 360 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/32401.dart
+ttl 3600
+format text
+on earth -19.6 -162.1 0
+rows .
+field 0 year gaussian-inverse-square acoustic 1 360 0.0 0.0
+field 1 month gaussian-inverse-square acoustic 1 360 0.0 0.0
+field 2 day gaussian-inverse-square acoustic 1 360 0.0 0.0
+field 3 hour gaussian-inverse-square acoustic 1 360 0.0 0.0
+field 7 sea_level_height_m gaussian-inverse-square acoustic 1 360 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/41420.dart
+ttl 3600
+format text
+on earth 17.9 -74.9 0
+rows .
+field 0 year gaussian-inverse-square acoustic 1 360 0.0 0.0
+field 1 month gaussian-inverse-square acoustic 1 360 0.0 0.0
+field 2 day gaussian-inverse-square acoustic 1 360 0.0 0.0
+field 3 hour gaussian-inverse-square acoustic 1 360 0.0 0.0
+field 7 sea_level_height_m gaussian-inverse-square acoustic 1 360 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/46401.dart
+ttl 3600
+format text
+on earth 50.1 -171 0
+rows .
+field 0 year gaussian-inverse-square acoustic 1 360 0.0 0.0
+field 1 month gaussian-inverse-square acoustic 1 360 0.0 0.0
+field 2 day gaussian-inverse-square acoustic 1 360 0.0 0.0
+field 3 hour gaussian-inverse-square acoustic 1 360 0.0 0.0
+field 7 sea_level_height_m gaussian-inverse-square acoustic 1 360 0.0 0.0
+
+url https://ssd-api.jpl.nasa.gov/fireball.api?limit=100&date-min=2020-01-01
+ttl 3600
+on earth 0 0
+map data
+lat lat
+lon lon
+field date fireball_date inverse-square gravity 1 360 0.0 0.0
+field time fireball_time inverse-square gravity 1 360 0.0 0.0
+field alt altitude_km inverse-square gravity 1 360 0.0 0.0
+field v velocity_km_s inverse-square gravity 1 360 0.0 0.0
+field vx velocity_x_km_s inverse-square gravity 1 360 0.0 0.0
+field vy velocity_y_km_s inverse-square gravity 1 360 0.0 0.0
+field vz velocity_z_km_s inverse-square gravity 1 360 0.0 0.0
+field energy impact_energy_kt inverse-square gravity 1 360 0.0 0.0
+field imp impact_flag inverse-square gravity 1 360 0.0 0.0
+
+url https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=APTY&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0
+ttl 3600
+format text
+on earth 67.55 33.33 0
+rows .
+field 0 timestamp_utc inverse-square em 1 360 0.0 0.0
+field 2 count_rate_cps inverse-square em 1 360 0.0 0.0
+
+url https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=HRMS&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0
+ttl 3600
+format text
+on earth -34.42 19.22 0
+rows .
+field 0 timestamp_utc inverse-square em 1 360 0.0 0.0
+field 2 count_rate_cps inverse-square em 1 360 0.0 0.0
+
+url https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=JUNG&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0
+ttl 3600
+format text
+on earth 46.55 7.98 0
+rows .
+field 0 timestamp_utc inverse-square em 1 360 0.0 0.0
+field 2 count_rate_cps inverse-square em 1 360 0.0 0.0
+
+url https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=KERG&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0
+ttl 3600
+format text
+on earth -49.35 70.25 0
+rows .
+field 0 timestamp_utc inverse-square em 1 360 0.0 0.0
+field 2 count_rate_cps inverse-square em 1 360 0.0 0.0
+
+url https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=MCMD&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0
+ttl 3600
+format text
+on earth -77.85 166.72 0
+rows .
+field 0 timestamp_utc inverse-square em 1 360 0.0 0.0
+field 2 count_rate_cps inverse-square em 1 360 0.0 0.0
+
+url https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=MXCO&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0
+ttl 3600
+format text
+on earth 19.33 -99.18 0
+rows .
+field 0 timestamp_utc inverse-square em 1 360 0.0 0.0
+field 2 count_rate_cps inverse-square em 1 360 0.0 0.0
+
+url https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=OULU&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0
+ttl 3600
+format text
+on earth 65.05 25.47 0
+rows .
+field 0 timestamp_utc inverse-square em 1 360 0.0 0.0
+field 2 count_rate_cps inverse-square em 1 360 0.0 0.0
+
+url https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=THUL&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0
+ttl 3600
+format text
+on earth 76.5 -68.7 0
+rows .
+field 0 timestamp_utc inverse-square em 1 360 0.0 0.0
+field 2 count_rate_cps inverse-square em 1 360 0.0 0.0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?date={today}&station=9414290&product=predictions&datum=MLLW&time_zone=GMT&units=metric&format=json
+ttl 3600
+on earth 0 0
+map predictions
+lat lat
+lon lon
+field v predicted_tide_m inverse-square gravity 1 360 0.0 0.0
+
+url https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json?expand=details&type=watertemp
+ttl 3600
+on earth 0 0
+map stations
+lat lat
+lon lng
+field id station_id exponential-decay thermal 1 360 0.0 0.0
+field name station_name exponential-decay thermal 1 360 0.0 0.0
+field state state exponential-decay thermal 1 360 0.0 0.0
+
+url https://coralreefwatch.noaa.gov/satellite/vs/data/vs_alldata_cur.json
+ttl 3600
+on earth 0 0
+map stations
+lat lat
+lon lon
+field station_id station_id exponential-decay thermal 1 360 0.0 0.0
+field name station_name exponential-decay thermal 1 360 0.0 0.0
+field dhw degree_heating_weeks exponential-decay thermal 1 360 0.0 0.0
+field sst_anomaly sst_anomaly_C exponential-decay thermal 1 360 0.0 0.0
+field alert_level bleaching_alert_level exponential-decay thermal 1 360 0.0 0.0
+field date data_date exponential-decay thermal 1 360 0.0 0.0
+
+url https://api.coral.tsr.lol/stations
+ttl 3600
+on earth 0 0
+map .
+lat latitude
+lon longitude
+field slug station_id exponential-decay thermal 1 360 0.0 0.0
+field avg_max_monthly_mean max_monthly_mean_c exponential-decay thermal 1 360 0.0 0.0
+field bleaching_threshold bleach_threshold_c exponential-decay thermal 1 360 0.0 0.0
+field region region exponential-decay thermal 1 360 0.0 0.0
+field subregion subregion exponential-decay thermal 1 360 0.0 0.0
+
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=daily-summaries&dataTypes=TMAX,TMIN,PRCP,SNOW,AWND&stations=GM000003026,GM000010501,UK000003668&startDate={today}&endDate={today}&format=json
+ttl 3600
+on earth 0 0
+map .
+lat LATITUDE
+lon LONGITUDE
+field STATION station_id exponential-decay thermal 1 360 0.0 0.0
+field NAME station_name exponential-decay thermal 1 360 0.0 0.0
+field TMAX max_temp_tenth_c exponential-decay thermal 1 360 0.0 0.0
+field TMIN min_temp_tenth_c exponential-decay thermal 1 360 0.0 0.0
+field PRCP precipitation_tenth_mm exponential-decay thermal 1 360 0.0 0.0
+field SNOW snowfall_mm exponential-decay thermal 1 360 0.0 0.0
+field AWND avg_wind_speed_tenth_ms exponential-decay thermal 1 360 0.0 0.0
+
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_weekly_mlo.csv
+ttl 3600
+format text
+on earth 19.5 -155.6 0
+rows .
+field 0 year gaussian-inverse-square diffusion 1 360 0.0 0.0
+field 1 month gaussian-inverse-square diffusion 1 360 0.0 0.0
+field 2 day gaussian-inverse-square diffusion 1 360 0.0 0.0
+field 3 decimal_year gaussian-inverse-square diffusion 1 360 0.0 0.0
+field 4 co2_ppm_weekly gaussian-inverse-square diffusion 1 360 0.0 0.0
+field 5 co2_1yr_ago gaussian-inverse-square diffusion 1 360 0.0 0.0
+field 6 co2_10yr_ago gaussian-inverse-square diffusion 1 360 0.0 0.0
+field 7 co2_preindustrial_baseline gaussian-inverse-square diffusion 1 360 0.0 0.0
+
+url https://coastwatch.noaa.gov/erddap/griddap/ncdcOisst21Agg.csv?sst%5B-1%5D%5B0%5D%5B(0.0):(60.0):4%5D%5B(-180.0):(180.0):4%5D
+ttl 3600
+format text
+on earth 0 0
+rows .
+lat latitude
+lon longitude
+field sst sea_surface_temp_c exponential-decay thermal 1 360 0.0 0.0
+field err sst_error_c exponential-decay thermal 1 360 0.0 0.0
+
+url https://data.pmel.noaa.gov/pmel/erddap/tabledap/pmel_co2_moorings_c2e7_ecb9_4565.csv?latitude,longitude,time,pCO2_sw,pCO2_air,xCO2_air,pH_sw,DOXY,CHL,NTU,SST,SSS
+ttl 3600
+format text
+on earth 0 0
+rows .
+lat latitude
+lon longitude
+field 0 station_id gaussian-inverse-square diffusion 1 360 0.0 0.0
+field 2 time_utc gaussian-inverse-square diffusion 1 360 0.0 0.0
+field 3 pCO2_sw_uatm gaussian-inverse-square diffusion 1 360 0.0 0.0
+field 4 pCO2_air_uatm gaussian-inverse-square diffusion 1 360 0.0 0.0
+field 5 xCO2_air_ppm gaussian-inverse-square diffusion 1 360 0.0 0.0
+field 6 pH_sw gaussian-inverse-square diffusion 1 360 0.0 0.0
+field 7 DOXY_umol_kg gaussian-inverse-square diffusion 1 360 0.0 0.0
+field 8 CHL_ug_l gaussian-inverse-square diffusion 1 360 0.0 0.0
+field 9 NTU gaussian-inverse-square diffusion 1 360 0.0 0.0
+field 10 SST_degC gaussian-inverse-square diffusion 1 360 0.0 0.0
+field 11 SSS_PSU gaussian-inverse-square diffusion 1 360 0.0 0.0
+
+url https://so2.gsfc.nasa.gov/measures/measures_so2.html
+ttl 3600
+format text
+on earth 0 0
+rows .
+lat latitude
+lon longitude
+field so2_mass so2_mass_kt gaussian-inverse-square diffusion 1 360 0.0 0.0
+field source volcano_name gaussian-inverse-square diffusion 1 360 0.0 0.0
+field date detection_date gaussian-inverse-square diffusion 1 360 0.0 0.0
+
+url https://services.swpc.noaa.gov/products/solar-regions.json
+ttl 3600
+on earth 0 0 0
+map .
+field number region_number inverse-square em 1 360 0.0 0.0
+field hale_class hale_class inverse-square em 1 360 0.0 0.0
+field area area_millionths inverse-square em 1 360 0.0 0.0
+field spot_class spot_class inverse-square em 1 360 0.0 0.0
+
+url https://gong2.nso.edu/oQR/zqs/?ref=zqs&series=zqs&date={year}.{month}.{day}&format=json
+ttl 3600
+on earth 0 0 0
+map .
+field filename magnetogram_filename inverse-square em 1 360 0.0 0.0
+field date observation_date inverse-square em 1 360 0.0 0.0
+field time observation_time inverse-square em 1 360 0.0 0.0
+field carrington_rotation cr_number inverse-square em 1 360 0.0 0.0
+field coverage disk_coverage_pct inverse-square em 1 360 0.0 0.0
+field site recording_site inverse-square em 1 360 0.0 0.0
+
+url https://services.nvd.nist.gov/rest/json/cves/2.0?resultsPerPage=1
+ttl 3600
+on earth 38.9072 -77.0369 0
+field totalResults biosphere_cyber_vulnerability_count_nvd inverse-square em 1 360 0.0 0.0
+
+url https://api.obis.org/v3/occurrence?taxonid=180130,137206&size=500&fields=decimalLatitude,decimalLongitude,scientificName,class,family,date_year
+ttl 3600
+on earth 0 0
+map results
+lat decimalLatitude
+lon decimalLongitude
+field scientificName species_name gaussian-inverse-square diffusion 1 360 0.0 0.0
+field class taxon_class gaussian-inverse-square diffusion 1 360 0.0 0.0
+field family taxon_family gaussian-inverse-square diffusion 1 360 0.0 0.0
+field date_year obs_year gaussian-inverse-square diffusion 1 360 0.0 0.0
+
+url https://api.obis.org/v3/occurrence?startdate={yesterday}&enddate={today}&size=1000&fields=decimalLatitude,decimalLongitude,scientificName,class,order,family,genus,species,date_year,country
+ttl 3600
+on earth 0 0
+map results
+lat decimalLatitude
+lon decimalLongitude
+field scientificName species_name gaussian-inverse-square diffusion 1 360 0.0 0.0
+field class taxon_class gaussian-inverse-square diffusion 1 360 0.0 0.0
+field order taxon_order gaussian-inverse-square diffusion 1 360 0.0 0.0
+field family taxon_family gaussian-inverse-square diffusion 1 360 0.0 0.0
+field date_year obs_year gaussian-inverse-square diffusion 1 360 0.0 0.0
+field country country_code gaussian-inverse-square diffusion 1 360 0.0 0.0
+
+url https://api.ifremer.fr/argoweb/float/list?days=30&format=json
+ttl 3600
+on earth 0 0
+map .
+lat latitude
+lon longitude
+field id ocean_argo_float_id inverse-square em 1 360 0.0 0.0
+field profile_count ocean_argo_profiles_count inverse-square em 1 360 0.0 0.0
+field last_date ocean_argo_last_date inverse-square em 1 360 0.0 0.0
+field last_lat ocean_argo_last_lat inverse-square em 1 360 0.0 0.0
+field last_lon ocean_argo_last_lon inverse-square em 1 360 0.0 0.0
+
+url https://api.open-meteo.com/v1/forecast?latitude=80.0&longitude=0.0&hourly=temperature_2m,snowfall,snow_depth,frozen_precipitation_percent,wind_speed_10m&models=icon_seamless&forecast_days=3&format=json
+ttl 3600
+on earth 80 0 0
+map hourly.time
+field hourly.temperature_2m temp_2m_c exponential-decay thermal 1 360 0.0 0.0
+field hourly.snowfall snowfall_cm exponential-decay thermal 1 360 0.0 0.0
+field hourly.snow_depth snow_depth_m exponential-decay thermal 1 360 0.0 0.0
+field hourly.frozen_precipitation_percent frozen_precip_pct exponential-decay thermal 1 360 0.0 0.0
+field hourly.wind_speed_10m wind_speed_kmh exponential-decay thermal 1 360 0.0 0.0
+
+url https://openlittermap.com/api/getdata?lat=0.0&lon=0.0&radius=50&format=json&limit=500
+ttl 3600
+on earth 0 0
+map data
+lat lat
+lon lng
+field litter_type litter_type gaussian-inverse-square diffusion 1 360 0.0 0.0
+field quantity litter_quantity gaussian-inverse-square diffusion 1 360 0.0 0.0
+
+url https://openlittermap.com/api/getdata?lat={lat}&lon={lon}&radius=50&format=json&limit=500
+ttl 3600
+on earth 0 0
+map data
+lat lat
+lon lon
+field id observation_id gaussian-inverse-square diffusion 1 360 0.0 0.0
+field datetime observation_date gaussian-inverse-square diffusion 1 360 0.0 0.0
+field litter_type litter_category gaussian-inverse-square diffusion 1 360 0.0 0.0
+field brand brand_name gaussian-inverse-square diffusion 1 360 0.0 0.0
+field country_code country gaussian-inverse-square diffusion 1 360 0.0 0.0
+field total_count item_count gaussian-inverse-square diffusion 1 360 0.0 0.0
+
+url https://api.safecast.org/en-US/measurements.json?limit=100
+ttl 3600
+on earth 0 0
+map .
+lat latitude
+lon longitude
+field value radiation_safecast_cpm inverse-square em 1 360 0.0 0.0
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=shortwave_radiation
+ttl 3600
+on earth 0 0 0
+field current.shortwave_radiation radiation_shortwave_openmeteo inverse-square em 1 360 0.0 0.0
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=uv_index
+ttl 3600
+on earth 0 0 0
+field current.uv_index radiation_uv_index_openmeteo inverse-square em 1 360 0.0 0.0
+
+url https://api.reliefweb.int/v1/disasters?appname=opencode&limit=200&filter[field]=status&filter[value]=ongoing&sort[]=date:desc
+ttl 3600
+on earth 0 0
+map data
+lat fields.lat
+lon fields.lon
+field fields.name disaster_name gaussian-inverse-square diffusion 1 360 0.0 0.0
+field fields.type disaster_type gaussian-inverse-square diffusion 1 360 0.0 0.0
+field fields.date.created created_date gaussian-inverse-square diffusion 1 360 0.0 0.0
+field fields.country.0.name primary_country gaussian-inverse-square diffusion 1 360 0.0 0.0
+
+url https://aviationweather.gov/api/data/taf?bbox=35,-10,70,40&format=json&time=valid
+ttl 3600
+on earth 0 0
+map .
+lat lat
+lon lon
+field icaoId icao_code gaussian-inverse-square acoustic 1 360 0.0 0.0
+field fcsts.0.wdir forecast_wind_dir gaussian-inverse-square acoustic 1 360 0.0 0.0
+field fcsts.0.wspd forecast_wind_kt gaussian-inverse-square acoustic 1 360 0.0 0.0
+field fcsts.0.visib forecast_visibility_sm gaussian-inverse-square acoustic 1 360 0.0 0.0
+field validTimeFrom valid_from gaussian-inverse-square acoustic 1 360 0.0 0.0
+field validTimeTo valid_to gaussian-inverse-square acoustic 1 360 0.0 0.0
+
+url https://api.npmjs.org/downloads/point/last-day/lodash
+ttl 3600
+on earth 0 0 0
+field downloads technosphere_npm_lodash_daily inverse-square em 1 360 0.0 0.0
+
+url https://en.wikipedia.org/w/api.php?action=query&list=random&rnnamespace=0&rnlimit=1&format=json
+ttl 3600
+on earth 40.712 -74.006 0
+field query.random.0.id technosphere_wikipedia_random_id inverse-square em 1 360 0.0 0.0
+
+url https://www.temis.nl/uvradiation/nrt/uvdose.php?date={year}{month}{day}&type=overpass&format=json
+ttl 3600
+format text
+on earth 0 0
+rows .
+lat latitude
+lon longitude
+field uvdose erythemal_uv_dose_kJm2 inverse-square em 1 360 0.0 0.0
+field date measurement_date inverse-square em 1 360 0.0 0.0
+
+url https://www.temis.nl/uvradiation/nrt/uvindex.php?date={year}{month}{day}&type=overpass&format=json
+ttl 3600
+format text
+on earth 0 0
+rows .
+lat latitude
+lon longitude
+field uvindex uv_index inverse-square em 1 360 0.0 0.0
+field cloud_modification cloud_factor inverse-square em 1 360 0.0 0.0
+field date measurement_date inverse-square em 1 360 0.0 0.0
+
+url https://terrabrasilis.dpi.inpe.br/app/api/v1/layer/amazon/latest/deforestation-alerts/all?format=geojson&limit=1000
+ttl 3600
+on earth 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.object_id alert_id gaussian-inverse-square diffusion 1 360 0.0 0.0
+field properties.class_name deforestation_class gaussian-inverse-square diffusion 1 360 0.0 0.0
+field properties.area_km alert_area_km2 gaussian-inverse-square diffusion 1 360 0.0 0.0
+field properties.view_date detection_date gaussian-inverse-square diffusion 1 360 0.0 0.0
+field properties.uf state gaussian-inverse-square diffusion 1 360 0.0 0.0
+
+url https://epic.gsfc.nasa.gov/api/natural/images
+ttl 3600
+on earth 0 0
+map .
+lat centroid_coordinates.lat
+lon centroid_coordinates.lon
+field version universe_dscovr_version inverse-square em 1 360 0.0 0.0
+field identifier universe_dscovr_identifier inverse-square em 1 360 0.0 0.0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=4.5&orderby=magnitude&limit=100
+ttl 3600
+on earth 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.mag magnitude gaussian-inverse-square acoustic 1 360 0.0 0.0
+field properties.place location_description gaussian-inverse-square acoustic 1 360 0.0 0.0
+field properties.time event_time gaussian-inverse-square acoustic 1 360 0.0 0.0
+field properties.url event_url gaussian-inverse-square acoustic 1 360 0.0 0.0
+field properties.dmin minimum_distance gaussian-inverse-square acoustic 1 360 0.0 0.0
+field properties.rms rms_residual gaussian-inverse-square acoustic 1 360 0.0 0.0
+field properties.gap azimuthal_gap gaussian-inverse-square acoustic 1 360 0.0 0.0
+field properties.nst station_count gaussian-inverse-square acoustic 1 360 0.0 0.0
+field properties.magType magnitude_type gaussian-inverse-square acoustic 1 360 0.0 0.0
+field properties.type event_type gaussian-inverse-square acoustic 1 360 0.0 0.0
+field properties.status review_status gaussian-inverse-square acoustic 1 360 0.0 0.0
+
+url https://waterservices.usgs.gov/nwis/gwlevels/?format=json&modifiedSince=P1D&siteStatus=active&siteType=GW&parameterCd=72019&countyCd=&stateCd=&bbox=-125,24,-66,50&resultRetrievalMode=grouped
+ttl 3600
+on earth 0 0
+map value.timeSeries
+lat sourceInfo.geoLocation.geogLocation.latitude
+lon sourceInfo.geoLocation.geogLocation.longitude
+field sourceInfo.siteName station_name gaussian-inverse-square diffusion 1 360 0.0 0.0
+field sourceInfo.siteCode.0.value site_code gaussian-inverse-square diffusion 1 360 0.0 0.0
+field values.0.value.0.value groundwater_depth_ft gaussian-inverse-square diffusion 1 360 0.0 0.0
+field values.0.value.0.dateTime measurement_datetime gaussian-inverse-square diffusion 1 360 0.0 0.0
+
+url https://waterservices.usgs.gov/nwis/dv?format=json&sites=01646500,09380000,09506000,06892350&startDT={year}-{month}-01&endDT={year}-{month}-{day}&parameterCd=00060&siteStatus=all
+ttl 3600
+on earth 0 0
+map value.timeSeries
+lat sourceInfo.geoLocation.geogLocation.latitude
+lon sourceInfo.geoLocation.geogLocation.longitude
+field sourceInfo.siteCode.0.value station_id gaussian-inverse-square acoustic 1 360 0.0 0.0
+field sourceInfo.siteName station_name gaussian-inverse-square acoustic 1 360 0.0 0.0
+field values.0.value.0.value streamflow_cfs gaussian-inverse-square acoustic 1 360 0.0 0.0
+field values.0.value.0.dateTime streamflow_time_utc gaussian-inverse-square acoustic 1 360 0.0 0.0
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=01646500&parameterCd=00065&siteStatus=all
+ttl 3600
+on earth 0 0
+map value.timeSeries
+lat sourceInfo.geoLocation.geogLocation.latitude
+lon sourceInfo.geoLocation.geogLocation.longitude
+field sourceInfo.siteName station_name gaussian-inverse-square diffusion 1 360 0.0 0.0
+field values.0.value.0.value streamflow_cfs gaussian-inverse-square diffusion 1 360 0.0 0.0
+field values.0.value.0.dateTime measurement_datetime gaussian-inverse-square diffusion 1 360 0.0 0.0
+
+url https://volcanoes.usgs.gov/hans-public/api/volcano/weekly
+ttl 3600
+on earth 0 0
+map .
+lat Latitude
+lon Longitude
+field VolcanoName volcano_name erfc seismic-surface 1 360 0.0 0.0
+field ActivityCategory activity_category erfc seismic-surface 1 360 0.0 0.0
+field StartDate activity_start_date erfc seismic-surface 1 360 0.0 0.0
+field EndDate activity_end_date erfc seismic-surface 1 360 0.0 0.0
+
+url https://api.waqi.info/map/bounds/?latlng=17,72,54,136&token=demo
+ttl 3600
+on earth 0 0
+map data
+lat lat
+lon lon
+field aqi aqi_index gaussian-inverse-square diffusion 1 360 0.0 0.0
+field station.name station_name gaussian-inverse-square diffusion 1 360 0.0 0.0
+
+url https://api.waqi.info/map/bounds/?latlng=-10,100,55,145&token=demo
+ttl 3600
+on earth 0 0
+map data
+lat lat
+lon lon
+field aqi aqi_index gaussian-inverse-square diffusion 1 360 0.0 0.0
+field station.name station_name gaussian-inverse-square diffusion 1 360 0.0 0.0
+
+url https://vsx.aavso.org/index.php?view=api.votable&format=json&ra=0&dec=0&radius=5
+ttl 86400
+on earth 0 0
+map .
+lat ra_hms
+lon dec_dms
+field oid vsx_oid inverse-square em 1 8640 0.0 0.0
+field name star_name inverse-square em 1 8640 0.0 0.0
+field type variable_type inverse-square em 1 8640 0.0 0.0
+field mag_max max_magnitude inverse-square em 1 8640 0.0 0.0
+field mag_min min_magnitude inverse-square em 1 8640 0.0 0.0
+field period period_days inverse-square em 1 8640 0.0 0.0
+field epoch epoch_hjd inverse-square em 1 8640 0.0 0.0
+
+url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD20=1&AVG=20&if_no_html=1
+ttl 86400
+format text
+on earth 0 0
+rows .
+lat Site_Latitude(Degrees)
+lon Site_Longitude(Degrees)
+field AOD_440nm aod_440_l2 gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field AOD_500nm aod_500_l2 gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field Precipitable_Water(cm) precip_water_l2 gaussian-inverse-square diffusion 1 8640 0.0 0.0
+
+url https://aeronet.gsfc.nasa.gov/aeronet_locations_v3.txt
+ttl 86400
+format text
+on earth 0 0
+rows .
+lat Latitude(decimal_degrees)
+lon Longitude(decimal_degrees)
+field Site_Name site_name gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field Elevation(meters) elevation_m gaussian-inverse-square diffusion 1 8640 0.0 0.0
+
+url https://services3.arcgis.com/GVgbJbqm8hXASVYi/arcgis/rest/services/PAGER_CAT/FeatureServer/0/query?where=1%3D1&geometry={lon_min}%2C{lat_min}%2C{lon_max}%2C{lat_max}&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=YEAR,MAG,DEPTH,DEATHS,INJURIES,LATITUDE,LONGITUDE,COUNTRY&f=json&resultRecordCount=500
+ttl 86400
+on earth 0 0
+map features
+lat attributes.LATITUDE
+lon attributes.LONGITUDE
+field attributes.YEAR event_year gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field attributes.MAG magnitude gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field attributes.DEPTH depth_km gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field attributes.DEATHS fatalities gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field attributes.INJURIES injuries gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field attributes.COUNTRY country gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+
+url https://argovis-api.colorado.edu/heatContent?startDate={yesterday}T00:00:00Z&endDate={today}T00:00:00Z
+ttl 86400
+on earth 0 0
+map .
+lat lat
+lon lon
+field profile_id profile_id exponential-decay thermal 1 8640 0.0 0.0
+field heat_anomaly_0_700m heat_content_anomaly_0_700_jm2 exponential-decay thermal 1 8640 0.0 0.0
+field heat_anomaly_0_2000m heat_content_anomaly_0_2000_jm2 exponential-decay thermal 1 8640 0.0 0.0
+field date observation_date exponential-decay thermal 1 8640 0.0 0.0
+
+url http://export.arxiv.org/api/query?search_query=cat:astro-ph.*&max_results=0
+ttl 86400
+on earth 40.712 -74.006 0
+field feed.totalResults exosphere_arxiv_astro_papers_total inverse-square em 1 8640 0.0 0.0
+
+url http://export.arxiv.org/api/query?search_query=cat:cs.*&max_results=0
+ttl 86400
+on earth 40.712 -74.006 0
+field feed.totalResults biosphere_arxiv_cs_papers_total inverse-square em 1 8640 0.0 0.0
+
+url http://export.arxiv.org/api/query?search_query=cat:hep-*&max_results=0
+ttl 86400
+on earth 40.712 -74.006 0
+field feed.totalResults subatomic_arxiv_hep_papers_total inverse-square em 1 8640 0.0 0.0
+
+url http://export.arxiv.org/api/query?search_query=cat:math.*&max_results=0
+ttl 86400
+on earth 40.712 -74.006 0
+field feed.totalResults physics_arxiv_math_papers_total inverse-square em 1 8640 0.0 0.0
+
+url http://export.arxiv.org/api/query?search_query=cat:physics.*&max_results=0
+ttl 86400
+on earth 40.712 -74.006 0
+field feed.totalResults physics_arxiv_physics_papers_total inverse-square em 1 8640 0.0 0.0
+
+url http://export.arxiv.org/api/query?search_query=cat:q-bio.*&max_results=0
+ttl 86400
+on earth 40.712 -74.006 0
+field feed.totalResults biosphere_arxiv_qbio_papers_total inverse-square em 1 8640 0.0 0.0
+
+url http://export.arxiv.org/api/query?search_query=cat:q-fin.*&max_results=0
+ttl 86400
+on earth 40.712 -74.006 0
+field feed.totalResults biosphere_arxiv_qfin_papers_total inverse-square em 1 8640 0.0 0.0
+
+url http://export.arxiv.org/api/query?search_query=cat:stat.*&max_results=0
+ttl 86400
+on earth 40.712 -74.006 0
+field feed.totalResults physics_arxiv_stat_papers_total inverse-square em 1 8640 0.0 0.0
+
+url https://newton.spacedys.com/astdys2/index.php?pc=3.0&type=all&format=json&limit=500
+ttl 86400
+on earth 0 0 0
+map .
+field number number inverse-square gravity 1 8640 0.0 0.0
+field name name inverse-square gravity 1 8640 0.0 0.0
+field class dynamical_class inverse-square gravity 1 8640 0.0 0.0
+
+url https://opendata.dwd.de/climate_environment/health/alerts/s31fg.json
+ttl 86400
+on earth 51 10 0
+field content.0.Pollen.Graeser.today biosphere_pollen_grass_germany_today inverse-square em 1 8640 0.0 0.0
+field content.0.Pollen.Birke.today biosphere_pollen_birch_germany_today inverse-square em 1 8640 0.0 0.0
+field content.0.Pollen.Beifuss.today biosphere_pollen_mugwort_germany_today inverse-square em 1 8640 0.0 0.0
+field content.0.Pollen.Esche.today biosphere_pollen_ash_germany_today inverse-square em 1 8640 0.0 0.0
+
+url https://www.cpc.ncep.noaa.gov/data/indices/oni.ascii.txt
+ttl 86400
+on earth 38.989 -76.937 0
+lastrow ANOM atmosphere_enso_oni_c inverse-square em 1 8640 0.0 0.0
+
+url https://services.swpc.noaa.gov/json/spi/global_spi.json
+ttl 86400
+on earth 0 0
+map .
+lat lat
+lon lon
+field spi1 atmosphere_drought_spi_1month inverse-square em 1 8640 0.0 0.0
+field spi3 atmosphere_drought_spi_3month inverse-square em 1 8640 0.0 0.0
+field spi6 atmosphere_drought_spi_6month inverse-square em 1 8640 0.0 0.0
+field spi12 atmosphere_drought_spi_12month inverse-square em 1 8640 0.0 0.0
+
+url https://api.sensor.community/v1/data/measurement?limit=10000
+ttl 86400
+on earth 0 0
+map .
+lat location.latitude
+lon location.longitude
+field sensor.id atmosphere_sensor_community_global_id inverse-square em 1 8640 0.0 0.0
+field sensor.sensor_type.name atmosphere_sensor_community_global_type inverse-square em 1 8640 0.0 0.0
+
+url https://api.woudc.org/collections/stations/items?f=json&limit=500
+ttl 86400
+on earth 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.woudc_id atmosphere_woudc_station_id inverse-square em 1 8640 0.0 0.0
+field properties.gaw_id atmosphere_woudc_gaw_id inverse-square em 1 8640 0.0 0.0
+field properties.name atmosphere_woudc_station_name inverse-square em 1 8640 0.0 0.0
+field properties.type atmosphere_woudc_station_type inverse-square em 1 8640 0.0 0.0
+field properties.country_name_en atmosphere_woudc_country inverse-square em 1 8640 0.0 0.0
+field properties.active atmosphere_woudc_active inverse-square em 1 8640 0.0 0.0
+
+url https://api.woudc.org/collections/totalozone/items?limit=1
+ttl 86400
+on earth 43.78 -79.47 0
+path numberMatched biosphere_ozone_measurement_total_count inverse-square em 1 8640 0.0 0.0
+
+url http://export.arxiv.org/api/query?search_query=*:*&max_results=1
+ttl 86400
+on earth 42.3601 -71.0589 0
+
+url https://data.cdc.gov/resource/jr58-6ysp.json?$limit=1
+ttl 86400
+on earth 33.797 -84.323 0
+field share biosphere_covid_variant_share inverse-square em 1 8640 0.0 0.0
+
+url https://clinicaltrials.gov/api/v2/studies?query.term=CRISPR&filter.overallStatus=RECRUITING&countTotal=true&pageSize=1
+ttl 86400
+on earth 37.872 -122.258 0
+field totalCount biosphere_crispr_trials_recruiting inverse-square em 1 8640 0.0 0.0
+
+url https://api.crossref.org/works?rows=1
+ttl 86400
+on earth 38.9072 -77.0369 0
+field message.total-results biosphere_doi_registrations_crossref inverse-square em 1 8640 0.0 0.0
+
+url https://api.crossref.org/members?rows=1
+ttl 86400
+on earth 38.9072 -77.0369 0
+field message.total-results biosphere_doi_members_crossref inverse-square em 1 8640 0.0 0.0
+
+url https://opendata.ecdc.europa.eu/monkeypox/casedistribution/json/data.json
+ttl 86400
+on earth 59.365 18.016 0
+count . biosphere_monkeypox_record_count inverse-square em 1 8640 0.0 0.0
+
+url https://epoch.ai/data/notable_ai_models.csv
+ttl 86400
+format csv
+on earth 37.774 -122.419 0
+lastrow Training_compute_FLOP biosphere_ai_training_flops_frontier inverse-square em 1 8640 0.0 0.0
+
+url https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_manr?geo=EU27_2020&unit=RCH_A&coicop=CP00&format=JSON
+ttl 86400
+on earth 50.8503 4.3517 0
+
+url https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/nama_10_gdp?geo=EU27_2020&unit=CLV_I10&na_item=B1GQ&format=JSON
+ttl 86400
+on earth 50.8503 4.3517 0
+
+url https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/demo_pjan?geo=EU27_2020&sex=T&age=TOTAL&format=JSON
+ttl 86400
+on earth 50.8503 4.3517 0
+
+url https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/une_rt_q?geo=EU27_2020&unit=PC_ACT&s_adj=SA&age=TOTAL&format=JSON
+ttl 86400
+on earth 50.8503 4.3517 0
+
+url https://api.fbi.gov/wanted/v1/list
+ttl 86400
+on earth 38.9 -77 0
+field total biosphere_fbi_wanted_count inverse-square em 1 8640 0.0 0.0
+
+url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=131&hasGeospatialIssue=false
+ttl 86400
+on earth 0 0
+map results
+lat decimalLatitude
+lon decimalLongitude
+field key biosphere_gbif_amphibian_key inverse-square em 1 8640 0.0 0.0
+
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&hasGeospatialIssue=false&taxonKey=47115
+ttl 86400
+on earth 0 0
+map results
+lat decimalLatitude
+lon decimalLongitude
+field key biosphere_gbif_arachnid_key inverse-square em 1 8640 0.0 0.0
+
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=54&hasGeospatialIssue=false
+ttl 86400
+on earth 0 0
+map results
+lat decimalLatitude
+lon decimalLongitude
+field key biosphere_gbif_arthropod_key inverse-square em 1 8640 0.0 0.0
+
+url https://api.gbif.org/v1/occurrence/search?taxonKey=1&limit=500&hasCoordinate=true
+ttl 86400
+on earth 0 0
+map results
+lat decimalLatitude
+lon decimalLongitude
+field species biosphere_gbif_biodiversity_species inverse-square em 1 8640 0.0 0.0
+field kingdom biosphere_gbif_kingdom inverse-square em 1 8640 0.0 0.0
+field eventDate biosphere_gbif_biodiversity_date inverse-square em 1 8640 0.0 0.0
+field locality biosphere_gbif_biodiversity_locality inverse-square em 1 8640 0.0 0.0
+
+url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=212&hasGeospatialIssue=false
+ttl 86400
+on earth 0 0
+map results
+lat decimalLatitude
+lon decimalLongitude
+field key biosphere_gbif_bird_key inverse-square em 1 8640 0.0 0.0
+
+url https://api.gbif.org/v1/occurrence/search?taxonKey=212&limit=200&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}
+ttl 86400
+on earth 0 0
+map results
+lat decimalLatitude
+lon decimalLongitude
+field species biosphere_gbif_bird_species inverse-square em 1 8640 0.0 0.0
+field eventDate biosphere_gbif_bird_date inverse-square em 1 8640 0.0 0.0
+field locality biosphere_gbif_bird_locality inverse-square em 1 8640 0.0 0.0
+
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=722&hasGeospatialIssue=false
+ttl 86400
+on earth 0 0
+map results
+lat decimalLatitude
+lon decimalLongitude
+field key biosphere_gbif_cnidarian_key inverse-square em 1 8640 0.0 0.0
+
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&hasGeospatialIssue=false&taxonKey=51
+ttl 86400
+on earth 0 0
+map results
+lat decimalLatitude
+lon decimalLongitude
+field key biosphere_gbif_cnidarian_key inverse-square em 1 8640 0.0 0.0
+
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=44&hasGeospatialIssue=false
+ttl 86400
+on earth 0 0
+map results
+lat decimalLatitude
+lon decimalLongitude
+field key biosphere_gbif_echinoderm_key inverse-square em 1 8640 0.0 0.0
+
+url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=5&hasGeospatialIssue=false
+ttl 86400
+on earth 0 0
+map results
+lat decimalLatitude
+lon decimalLongitude
+field key biosphere_gbif_fungi_key inverse-square em 1 8640 0.0 0.0
+
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=47115&hasGeospatialIssue=false
+ttl 86400
+on earth 0 0
+map results
+lat decimalLatitude
+lon decimalLongitude
+field key biosphere_gbif_insect_key inverse-square em 1 8640 0.0 0.0
+
+url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=44&hasGeospatialIssue=false
+ttl 86400
+on earth 0 0
+map results
+lat decimalLatitude
+lon decimalLongitude
+field key biosphere_gbif_mammal_key inverse-square em 1 8640 0.0 0.0
+
+url https://api.gbif.org/v1/occurrence/search?taxonKey=212&limit=500&hasCoordinate=true
+ttl 86400
+on earth 0 0
+map results
+lat decimalLatitude
+lon decimalLongitude
+field species biosphere_gbif_marine_species inverse-square em 1 8640 0.0 0.0
+field locality biosphere_gbif_marine_locality inverse-square em 1 8640 0.0 0.0
+field eventDate biosphere_gbif_marine_date inverse-square em 1 8640 0.0 0.0
+
+url https://api.gbif.org/v1/occurrence/search?taxon_key=212&month={month}&hasCoordinate=true&limit=0
+ttl 86400
+on earth 55.7022 12.5592 0
+field count biosphere_migratory_bird_records_this_month inverse-square em 1 8640 0.0 0.0
+
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=52&hasGeospatialIssue=false
+ttl 86400
+on earth 0 0
+map results
+lat decimalLatitude
+lon decimalLongitude
+field key biosphere_gbif_mollusk_key inverse-square em 1 8640 0.0 0.0
+
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&hasGeospatialIssue=false&coordinateUncertaintyInMeters=0,100
+ttl 86400
+on earth 0 0
+map results
+lat decimalLatitude
+lon decimalLongitude
+field key biosphere_gbif_precise_key inverse-square em 1 8640 0.0 0.0
+field coordinateUncertaintyInMeters biosphere_gbif_uncertainty_m inverse-square em 1 8640 0.0 0.0
+
+url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=6&hasGeospatialIssue=false
+ttl 86400
+on earth 0 0
+map results
+lat decimalLatitude
+lon decimalLongitude
+field key biosphere_gbif_plant_key inverse-square em 1 8640 0.0 0.0
+field coordinateUncertaintyInMeters biosphere_gbif_plant_uncertainty_m inverse-square em 1 8640 0.0 0.0
+
+url https://api.gbif.org/v1/occurrence/search?taxonKey=6&limit=200&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}
+ttl 86400
+on earth 0 0
+map results
+lat decimalLatitude
+lon decimalLongitude
+field species biosphere_gbif_plant_species inverse-square em 1 8640 0.0 0.0
+field family biosphere_gbif_plant_family inverse-square em 1 8640 0.0 0.0
+field eventDate biosphere_gbif_plant_date inverse-square em 1 8640 0.0 0.0
+
+url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=358&hasGeospatialIssue=false
+ttl 86400
+on earth 0 0
+map results
+lat decimalLatitude
+lon decimalLongitude
+field key biosphere_gbif_reptile_key inverse-square em 1 8640 0.0 0.0
+
+url https://www.peeringdb.com/api/ix?limit=1
+ttl 86400
+on earth 38.899 -77.043 0
+count data biosphere_ixp_count inverse-square em 1 8640 0.0 0.0
+
+url https://www.ebi.ac.uk/metagenomics/api/v1/studies?page_size=1
+ttl 86400
+on earth 52.079 0.187 0
+field meta.pagination.count biosphere_metagenomic_studies_count inverse-square em 1 8640 0.0 0.0
+
+url https://api.obis.org/v3/occurrence/search?scientificname=Cetacea&startdate={yesterday}
+ttl 86400
+on earth 51.231 2.928 0
+path total biosphere_cetacean_observations_24h inverse-square em 1 8640 0.0 0.0
+
+url https://api.obis.org/v3/occurrence?limit=500&hascoordinates=true&taxonid=38
+ttl 86400
+on earth 0 0
+map results
+lat decimalLatitude
+lon decimalLongitude
+field scientificName biosphere_obis_marine_species inverse-square em 1 8640 0.0 0.0
+field eventDate biosphere_obis_marine_date inverse-square em 1 8640 0.0 0.0
+field depth biosphere_obis_marine_depth_m inverse-square em 1 8640 0.0 0.0
+
+url https://api.obis.org/v3/occurrence?limit=500&hascoordinates=true
+ttl 86400
+on earth 0 0
+map results
+lat decimalLatitude
+lon decimalLongitude
+field scientificName biosphere_obis_species inverse-square em 1 8640 0.0 0.0
+field eventDate biosphere_obis_date inverse-square em 1 8640 0.0 0.0
+field depth biosphere_obis_depth_m inverse-square em 1 8640 0.0 0.0
+field aphiaID biosphere_obis_aphia_id inverse-square em 1 8640 0.0 0.0
+
+url https://api.obis.org/v3/statistics
+ttl 86400
+on earth 51.231 2.928 0
+field taxa biosphere_ocean_species_known inverse-square em 1 8640 0.0 0.0
+field records biosphere_ocean_records_total inverse-square em 1 8640 0.0 0.0
+field datasets biosphere_ocean_datasets_count inverse-square em 1 8640 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["amenity"="atm"](around:1000,{lat},{lon});out%20100;
+ttl 86400
+on earth 0 0
+map elements
+lat lat
+lon lon
+field tags.name anthroposphere_atms_name inverse-square em 1 8640 0.0 0.0
+field id atms_osm_id inverse-square em 1 8640 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["amenity"="bench"](around:500,{lat},{lon});out%20100;
+ttl 86400
+on earth 0 0
+map elements
+lat lat
+lon lon
+field tags.name anthroposphere_benches_name inverse-square em 1 8640 0.0 0.0
+field id benches_osm_id inverse-square em 1 8640 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];way["bridge"="yes"](around:5000,{lat},{lon});out%20center;
+ttl 86400
+on earth 0 0
+map elements
+lat lat
+lon lon
+field tags.name anthroposphere_bridges_name inverse-square em 1 8640 0.0 0.0
+field id bridges_osm_id inverse-square em 1 8640 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];way["building"](around:1000,{lat},{lon});out%20center;
+ttl 86400
+on earth 0 0
+map elements
+lat lat
+lon lon
+field tags.name anthroposphere_buildings_name inverse-square em 1 8640 0.0 0.0
+field id buildings_osm_id inverse-square em 1 8640 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["highway"="bus_stop"](around:1000,{lat},{lon});out%20100;
+ttl 86400
+on earth 0 0
+map elements
+lat lat
+lon lon
+field tags.name anthroposphere_bus_stops_name inverse-square em 1 8640 0.0 0.0
+field id bus_stops_osm_id inverse-square em 1 8640 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["highway"="construction"];out%20100;
+ttl 86400
+on earth 0 0
+map elements
+lat lat
+lon lon
+field tags.name anthroposphere_construction_name inverse-square em 1 8640 0.0 0.0
+field id construction_osm_id inverse-square em 1 8640 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["highway"="crossing"](around:500,{lat},{lon});out%20100;
+ttl 86400
+on earth 0 0
+map elements
+lat lat
+lon lon
+field tags.name anthroposphere_crossings_name inverse-square em 1 8640 0.0 0.0
+field id crossings_osm_id inverse-square em 1 8640 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["amenity"="drinking_water"](around:1000,{lat},{lon});out%20100;
+ttl 86400
+on earth 0 0
+map elements
+lat lat
+lon lon
+field tags.name anthroposphere_drinking_water_name inverse-square em 1 8640 0.0 0.0
+field id drinking_water_osm_id inverse-square em 1 8640 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];way["landuse"="forest"](around:10000,{lat},{lon});out%20center;
+ttl 86400
+on earth 0 0
+map elements
+lat lat
+lon lon
+field tags.name anthroposphere_forest_name inverse-square em 1 8640 0.0 0.0
+field id forest_osm_id inverse-square em 1 8640 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["amenity"="fuel"](around:5000,{lat},{lon});out%20100;
+ttl 86400
+on earth 0 0
+map elements
+lat lat
+lon lon
+field tags.name anthroposphere_fuel_stations_name inverse-square em 1 8640 0.0 0.0
+field id fuel_stations_osm_id inverse-square em 1 8640 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["amenity"="hospital"](around:10000,{lat},{lon});out%20100;
+ttl 86400
+on earth 0 0
+map elements
+lat lat
+lon lon
+field tags.name anthroposphere_hospitals_name inverse-square em 1 8640 0.0 0.0
+field id hospitals_osm_id inverse-square em 1 8640 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["tourism"="hotel"](around:5000,{lat},{lon});out%20100;
+ttl 86400
+on earth 0 0
+map elements
+lat lat
+lon lon
+field tags.name anthroposphere_hotels_name inverse-square em 1 8640 0.0 0.0
+field id hotels_osm_id inverse-square em 1 8640 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];(node["amenity"~"hospital|fire_station|school"](around:50000,{lat},{lon});node["railway"="station"](around:50000,{lat},{lon}););out%20100;
+ttl 86400
+on earth 0 0
+map elements
+lat lat
+lon lon
+field tags.name anthroposphere_infrastructure_name inverse-square em 1 8640 0.0 0.0
+field id infrastructure_osm_id inverse-square em 1 8640 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:60];node["telecom"="antenna"](around:10000,{lat},{lon});out%20100;
+ttl 86400
+on earth 0 0
+map elements
+lat lat
+lon lon
+field tags.name anthroposphere_mobile_antennas_name inverse-square em 1 8640 0.0 0.0
+field id mobile_antennas_osm_id inverse-square em 1 8640 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];way["leisure"="park"](around:5000,{lat},{lon});out%20center;
+ttl 86400
+on earth 0 0
+map elements
+lat lat
+lon lon
+field tags.name anthroposphere_parks_name inverse-square em 1 8640 0.0 0.0
+field id parks_osm_id inverse-square em 1 8640 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["amenity"="pharmacy"](around:2000,{lat},{lon});out%20100;
+ttl 86400
+on earth 0 0
+map elements
+lat lat
+lon lon
+field tags.name anthroposphere_pharmacies_name inverse-square em 1 8640 0.0 0.0
+field id pharmacies_osm_id inverse-square em 1 8640 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];way["power"="line"](around:5000,{lat},{lon});out%20center;
+ttl 86400
+on earth 0 0
+map elements
+lat lat
+lon lon
+field tags.name anthroposphere_power_lines_name inverse-square em 1 8640 0.0 0.0
+field id power_lines_osm_id inverse-square em 1 8640 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["power"="tower"](around:5000,{lat},{lon});out%20100;
+ttl 86400
+on earth 0 0
+map elements
+lat lat
+lon lon
+field tags.name anthroposphere_power_towers_name inverse-square em 1 8640 0.0 0.0
+field id power_towers_osm_id inverse-square em 1 8640 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["amenity"="school"](around:10000,{lat},{lon});out%20100;
+ttl 86400
+on earth 0 0
+map elements
+lat lat
+lon lon
+field tags.name anthroposphere_schools_name inverse-square em 1 8640 0.0 0.0
+field id schools_osm_id inverse-square em 1 8640 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];way["highway"](around:500,{lat},{lon});out%20center;
+ttl 86400
+on earth 0 0
+map elements
+lat lat
+lon lon
+field tags.name anthroposphere_streets_name inverse-square em 1 8640 0.0 0.0
+field id streets_osm_id inverse-square em 1 8640 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["shop"="supermarket"](around:2000,{lat},{lon});out%20100;
+ttl 86400
+on earth 0 0
+map elements
+lat lat
+lon lon
+field tags.name anthroposphere_supermarkets_name inverse-square em 1 8640 0.0 0.0
+field id supermarkets_osm_id inverse-square em 1 8640 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["man_made"="surveillance"](around:2000,{lat},{lon});out%20100;
+ttl 86400
+on earth 0 0
+map elements
+lat lat
+lon lon
+field tags.name anthroposphere_surveillance_name inverse-square em 1 8640 0.0 0.0
+field id surveillance_osm_id inverse-square em 1 8640 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["natural"="tree"](around:500,{lat},{lon});out%20100;
+ttl 86400
+on earth 0 0
+map elements
+lat lat
+lon lon
+field tags.name anthroposphere_trees_name inverse-square em 1 8640 0.0 0.0
+field id trees_osm_id inverse-square em 1 8640 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];way["waterway"](around:5000,{lat},{lon});out%20center;
+ttl 86400
+on earth 0 0
+map elements
+lat lat
+lon lon
+field tags.name anthroposphere_waterways_name inverse-square em 1 8640 0.0 0.0
+field id waterways_osm_id inverse-square em 1 8640 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["internet_access"="wlan"](around:5000,{lat},{lon});out%20100;
+ttl 86400
+on earth 0 0
+map elements
+lat lat
+lon lon
+field tags.name anthroposphere_wifi_hotspots_name inverse-square em 1 8640 0.0 0.0
+field id wifi_hotspots_osm_id inverse-square em 1 8640 0.0 0.0
+
+url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_parks_and_protected_lands_area.geojson
+ttl 86400
+on earth 0 0 0
+field scalerank biosphere_park_area_rank inverse-square em 1 8640 0.0 0.0
+
+url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_parks_and_protected_lands_point.geojson
+ttl 86400
+on earth 0 0 0
+field scalerank biosphere_park_rank inverse-square em 1 8640 0.0 0.0
+
+url https://restcountries.com/v3.1/all?fields=name,population,latlng
+ttl 86400
+on earth 38.899 -77.043 0
+field 0.population biosphere_country_population_sample inverse-square em 1 8640 0.0 0.0
+
+url https://api.semanticscholar.org/graph/v1/paper/search?query=*&limit=1
+ttl 86400
+on earth 47.6062 -122.3321 0
+field total biosphere_semantic_scholar_papers_total inverse-square em 1 8640 0.0 0.0
+
+url https://www.submarinecablemap.com/api/v3/cable/cable-geo.json
+ttl 86400
+on earth 38.899 -77.043 0
+count features biosphere_submarine_cable_count inverse-square em 1 8640 0.0 0.0
+
+url https://api.unhcr.org/population/v1/population/?limit=1
+ttl 86400
+on earth 46.234 6.14 0
+count items biosphere_displacement_record_count inverse-square em 1 8640 0.0 0.0
+
+url https://www.star.nesdis.noaa.gov/smcd/emb/vci/VH/get_TS_admin.php?country=USA&province=0&year=2023&type=VHI
+ttl 86400
+format csv
+on earth 38.978 -76.919 0
+lastrow VHI biosphere_global_vegetation_health_index inverse-square em 1 8640 0.0 0.0
+
+url https://ghoapi.azureedge.net/api/CHOLERA_0000000001
+ttl 86400
+on earth 46.234 6.14 0
+count value biosphere_cholera_record_count inverse-square em 1 8640 0.0 0.0
+
+url https://ghoapi.azureedge.net/api/MDG_0000000020
+ttl 86400
+on earth 46.234 6.14 0
+count value biosphere_tuberculosis_record_count inverse-square em 1 8640 0.0 0.0
+
+url https://xmart-api-public.who.int/FLUMART/VIW_FNT
+ttl 86400
+on earth 46.234 6.14 0
+count value biosphere_influenza_record_count inverse-square em 1 8640 0.0 0.0
+
+url https://ghoapi.azureedge.net/api/Indicator/SP_DYN_LE00_IN
+ttl 86400
+on earth 46.2276 6.1432 0
+lastline biosphere_who_life_expectancy_global
+
+url https://www.bodc.ac.uk/data/published_data_library/catalogue/?jsonrequest=1&keywords=oxygen+salinity&limit=200
+ttl 86400
+on earth 0 0
+map results
+lat geo_location.lat
+lon geo_location.lon
+field title dataset_title gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field variables.0 primary_variable gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field temporal_coverage.start start_date gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field temporal_coverage.end end_date gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field bodc_id bodc_dataset_id gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field species algae_species gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field cellcount cell_count gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field cellcount_units count_units gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field hab_category hab_level gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field sample_date sample_date gaussian-inverse-square diffusion 1 8640 0.0 0.0
+
+url http://v4.boldsystems.org/index.php/API_Public/specimen?taxon=Animalia&geo=&format=json&limit=500
+ttl 86400
+on earth 0 0
+map .
+lat lat
+lon lon
+field processid specimen_id gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field bin barcode_index gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field species_name species gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field country country gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field region province gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field collection_date collection_date gaussian-inverse-square diffusion 1 8640 0.0 0.0
+
+url http://v4.boldsystems.org/index.php/API_Public/specimen?taxon=Echinodermata&geo=&format=json&limit=300
+ttl 86400
+on earth 0 0
+map .
+lat lat
+lon lon
+field processid specimen_id gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field bin barcode_index gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field species_name species gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field country country gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field region province gaussian-inverse-square diffusion 1 8640 0.0 0.0
+
+url http://v4.boldsystems.org/index.php/API_Public/specimen?taxon=Plantae&geo=&format=json&limit=500
+ttl 86400
+on earth 0 0
+map .
+lat lat
+lon lon
+field processid specimen_id gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field bin barcode_index gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field species_name species gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field country country gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field region province gaussian-inverse-square diffusion 1 8640 0.0 0.0
+
+url https://api.boldsystems.org/v4/public/data/geo?format=json&limit=250
+ttl 86400
+on earth 0 0
+map .
+lat lat
+lon lon
+field country country gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field records sequence_count gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field species species_count gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field bins bin_count gaussian-inverse-square diffusion 1 8640 0.0 0.0
+
+url https://climate.copernicus.eu/api/v1/temperature/global-monthly?format=json
+ttl 86400
+on earth 0 0 0
+field temperature_anomaly_k land_temp_anomaly_k exponential-decay thermal 1 8640 0.0 0.0
+field reference_period reference_period exponential-decay thermal 1 8640 0.0 0.0
+
+url https://cddis.nasa.gov/archive/vlbi/ivsproducts/eops/ivseops.snx
+ttl 86400
+format text
+on earth 0 0 0
+rows .
+field 0 epoch inverse-square gravity 1 8640 0.0 0.0
+field 1 x_pole inverse-square gravity 1 8640 0.0 0.0
+field 2 y_pole inverse-square gravity 1 8640 0.0 0.0
+field 3 ut1_utc inverse-square gravity 1 8640 0.0 0.0
+field 4 length_of_day inverse-square gravity 1 8640 0.0 0.0
+
+url https://www.chime-frb.ca/catalog
+ttl 86400
+on earth 49.321 -122.573 0
+lastline exosphere_chime_frb_count
+
+url https://nrt.cmems-du.eu/erddap/griddap/cmems_mod_glo_phy_anfc_0.083deg_PT1H-m.csv?uo%5Blast%5D%5B0%5D%5B(-60.0):(60.0):4%5D%5B(-180.0):(180.0):4%5D,vo%5Blast%5D%5B0%5D%5B(-60.0):(60.0):4%5D%5B(-180.0):(180.0):4%5D
+ttl 86400
+format text
+on earth 0 0
+rows .
+lat latitude
+lon longitude
+field uo current_u_ms gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field vo current_v_ms gaussian-inverse-square diffusion 1 8640 0.0 0.0
+
+url https://nrt.cmems-du.eu/erddap/tabledap/cmems_obs_mob_glo_phy-cur_nrt_0.1deg-SSH-eddy-track_PT1H.csv?latitude,longitude,time,radius_e,amplitude,speed_radius,eddy_type&time>=2026-01-01T00:00:00Z&orderBy(%22time%22)
+ttl 86400
+format text
+on earth 0 0
+rows .
+lat latitude
+lon longitude
+field time detection_time gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field radius_e eddy_effective_radius_km gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field amplitude ssh_amplitude_m gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field speed_radius rotation_speed_m_s gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field eddy_type cyclonic_anticyclonic gaussian-inverse-square diffusion 1 8640 0.0 0.0
+
+url https://nrt.cmems-du.eu/erddap/griddap/cmems_obs-sl_glo_phy_my_multi-oi_P1D.csv?sla%5Blast%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D
+ttl 86400
+format text
+on earth 0 0
+rows .
+lat latitude
+lon longitude
+field sla sea_level_anomaly_m inverse-square gravity 1 8640 0.0 0.0
+
+url https://nrt.cmems-du.eu/erddap/griddap/cmems_mod_glo_bgc_anfc_0.25deg_P1D-m.csv?o2%5Blast%5D%5B0%5D%5B(-60.0):(60.0):4%5D%5B(-180.0):(180.0):4%5D
+ttl 86400
+format text
+on earth 0 0
+rows .
+lat latitude
+lon longitude
+field o2 oxygen_mmol_m3 gaussian-inverse-square diffusion 1 8640 0.0 0.0
+
+url https://nrt.cmems-du.eu/erddap/griddap/dataset-duacs-nrt-global-merged-allsat-phy-l4.csv?sla%5Blast%5D%5B(-60.0):(75.0):4%5D%5B(-180.0):(180.0):4%5D,adt%5Blast%5D%5B(-60.0):(75.0):4%5D%5B(-180.0):(180.0):4%5D
+ttl 86400
+format text
+on earth 0 0
+rows .
+lat latitude
+lon longitude
+field sla sea_level_anomaly_m gaussian-inverse-square acoustic 1 8640 0.0 0.0
+field adt absolute_dynamic_topography_m gaussian-inverse-square acoustic 1 8640 0.0 0.0
+
+url https://nrt.cmems-du.eu/erddap/griddap/cmems_obs-sl_glo_phy-sst_l4_multi-oi_P1D.csv?sst%5Blast%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D
+ttl 86400
+format text
+on earth 0 0
+rows .
+lat latitude
+lon longitude
+field sst sea_surface_temp_c exponential-decay thermal 1 8640 0.0 0.0
+
+url https://nrt.cmems-du.eu/erddap/griddap/cmems_mod_glo_phy_anfc_0.083deg_PT1H-m.csv?thetao%5B-1%5D%5B0%5D%5B(-60.0):(60.0):4%5D%5B(-180.0):(180.0):4%5D
+ttl 86400
+format text
+on earth 0 0
+rows .
+lat latitude
+lon longitude
+field thetao ocean_temp_c exponential-decay thermal 1 8640 0.0 0.0
+field so salinity_psu exponential-decay thermal 1 8640 0.0 0.0
+
+url https://nrt.cmems-du.eu/erddap/griddap/cmems_mod_glo_phy_anfc_0.083deg_PT1H-m.csv?thetao%5Blast%5D%5B0%5D%5B(-60.0):(60.0):4%5D%5B(-180.0):(180.0):4%5D
+ttl 86400
+format text
+on earth 0 0
+rows .
+lat latitude
+lon longitude
+field thetao temperature_c exponential-decay thermal 1 8640 0.0 0.0
+
+url https://nrt.cmems-du.eu/erddap/griddap/cmems_mod_glo_wav_anfc_0.083deg_PT3H-m.csv?vhm0%5Blast%5D%5B(-60.0):(60.0):4%5D%5B(-180.0):(180.0):4%5D
+ttl 86400
+format text
+on earth 0 0
+rows .
+lat latitude
+lon longitude
+field vhm0 wave_height_m gaussian-inverse-square acoustic 1 8640 0.0 0.0
+
+url https://coastwatch.pfeg.noaa.gov/erddap/griddap/jplOscarv2.csv?u%5Blast%5D%5B0%5D%5B(-60.0):(60.0):4%5D%5B(-180.0):(180.0):4%5D,v%5Blast%5D%5B0%5D%5B(-60.0):(60.0):4%5D%5B(-180.0):(180.0):4%5D
+ttl 86400
+format text
+on earth 0 0
+rows .
+lat latitude
+lon longitude
+field u current_u_m_s gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field v current_v_m_s gaussian-inverse-square diffusion 1 8640 0.0 0.0
+
+url https://nrt.cmems-du.eu/erddap/griddap/cmems_obs_oc_glo_bgc-plankton_nrt_l3_chl_P1D-m.csv?chl%5Blast%5D%5B(-80.0):(80.0):4%5D%5B(-180.0):(180.0):4%5D
+ttl 86400
+format text
+on earth 0 0
+rows .
+lat latitude
+lon longitude
+field chl chlorophyll_mgm3 gaussian-inverse-square diffusion 1 8640 0.0 0.0
+
+url https://nrt.cmems-du.eu/erddap/griddap/cmems_obs-sl_glo_phy_my_multi-oi_P1D.csv?adt%5Blast%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D
+ttl 86400
+format text
+on earth 0 0
+rows .
+lat latitude
+lon longitude
+field adt absolute_dyn_top_m inverse-square gravity 1 8640 0.0 0.0
+
+url https://nrt.cmems-du.eu/erddap/griddap/cmems_obs-sl_glo_phy-sst_l4_multi-oi_P1D.csv?sst_anom%5Blast%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D
+ttl 86400
+format text
+on earth 0 0
+rows .
+lat latitude
+lon longitude
+field sst_anom sst_anomaly_c exponential-decay thermal 1 8640 0.0 0.0
+
+url https://comet.nerc.ac.uk/lics-portal/api/volcanoes/?format=json&limit=200
+ttl 86400
+on earth 0 0
+map results
+lat lat
+lon lon
+field name volcano_name erfc seismic-surface 1 8640 0.0 0.0
+field country country erfc seismic-surface 1 8640 0.0 0.0
+field type volcano_type erfc seismic-surface 1 8640 0.0 0.0
+field last_update last_insar_update erfc seismic-surface 1 8640 0.0 0.0
+field deformation_rate max_los_mm_yr erfc seismic-surface 1 8640 0.0 0.0
+field status monitoring_status erfc seismic-surface 1 8640 0.0 0.0
+
+url https://crates.io/api/v1/crates?per_page=1
+ttl 86400
+on earth 37.774 -122.419 0
+field meta.total biosphere_cratesio_crates_total inverse-square em 1 8640 0.0 0.0
+
+url https://www.glims.org/mapservice/wfs?service=WFS&version=1.1.0&request=GetFeature&typeName=glims_glaciers&maxFeatures=1&outputFormat=application/json
+ttl 86400
+on earth 46.818 8.227 0
+path totalFeatures cryosphere_global_glaciers_count inverse-square em 1 8640 0.0 0.0
+
+url https://nsidc.org/data/seaice_index/data/daily/S_seaice_extent_daily.csv
+ttl 86400
+on earth -90 0 0
+lastline cryosphere_antarctic_sea_ice_extent_nsidc
+
+url https://noaadata.apps.nsidc.org/NOAA/G02135/south/daily/data/S_seaice_extent_daily_v4.0.csv
+ttl 86400
+on earth 0 0 0
+lastline cryosphere_antarctic_sea_ice_extent_nsidc
+
+url https://nsidc.org/data/seaice_index/data/daily/N_seaice_extent_daily.csv
+ttl 86400
+on earth 90 0 0
+lastline cryosphere_arctic_sea_ice_extent_nsidc
+
+url https://noaadata.apps.nsidc.org/NOAA/G02135/north/daily/data/N_seaice_extent_daily_v4.0.csv
+ttl 86400
+on earth 0 0 0
+lastline cryosphere_arctic_sea_ice_extent_nsidc
+
+url https://gml.noaa.gov/aftp/data/meteorology/in-situ/brw/met_brw_insitu_1_obop_hour_{year}.txt
+ttl 86400
+format csv
+on earth 71.29 -156.57 0
+lastrow 8 cryosphere_permafrost_temp_barrow_c inverse-square em 1 8640 0.0 0.0
+
+url https://floodobservatory.colorado.edu/Archives/MasterListrev.csv
+ttl 86400
+format text
+on earth 0 0
+rows .
+lat Lat
+lon Long
+field ID event_id gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field Began flood_begin_date gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field Ended flood_end_date gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field Dead fatalities gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field Displaced people_displaced gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field MainCause main_cause gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field Area flooded_area_km2 gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field Magnitude flood_magnitude gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field Severity severity_class gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field Country country gaussian-inverse-square diffusion 1 8640 0.0 0.0
+
+url https://dasch.rc.fas.harvard.edu/lightcurve.php?objid=GJ+551&type=json&limit=500
+ttl 86400
+on earth 0 0 0
+map .
+field 0 jd inverse-square em 1 8640 0.0 0.0
+field 1 magnitude inverse-square em 1 8640 0.0 0.0
+field 2 magnitude_error inverse-square em 1 8640 0.0 0.0
+
+url https://data.desi.lbl.gov/public/papers/
+ttl 86400
+on earth 34 -111 0
+lastline exosphere_desi_galaxy_redshifts_total
+
+url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_coastline.geojson
+ttl 86400
+on earth 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.name coastline_name inverse-square em 1 8640 0.0 0.0
+
+url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_boundary_lines_land.geojson
+ttl 86400
+on earth 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.name boundary_name inverse-square em 1 8640 0.0 0.0
+
+url https://earthref.org/MagIC/api/v1/site/search?format=json&per_page=500&result_type=site&age_type=calendar&site_type_include=s
+ttl 86400
+on earth 0 0
+map results
+lat lat
+lon lon
+field site_name site_name inverse-square em 1 8640 0.0 0.0
+field age age_Ma inverse-square em 1 8640 0.0 0.0
+field vgp_lat virtual_geomagnetic_pole_lat inverse-square em 1 8640 0.0 0.0
+field vgp_lon virtual_geomagnetic_pole_lon inverse-square em 1 8640 0.0 0.0
+field rock_type lithology inverse-square em 1 8640 0.0 0.0
+
+url https://web-services.unavco.org/metadata/sites/v1?format=json
+ttl 86400
+on earth 0 0
+map sites
+lat latitude
+lon longitude
+field site_id site_id erfc seismic-surface 1 8640 0.0 0.0
+field monument_name monument_name erfc seismic-surface 1 8640 0.0 0.0
+field state state_province erfc seismic-surface 1 8640 0.0 0.0
+field country country erfc seismic-surface 1 8640 0.0 0.0
+field elevation elevation_m erfc seismic-surface 1 8640 0.0 0.0
+field network network_name erfc seismic-surface 1 8640 0.0 0.0
+
+url https://www.ebi.ac.uk/metagenomics/api/v1/studies?format=json&page_size=100&ordering=-last_update&biome_name=root:Environmental:Aquatic:Marine
+ttl 86400
+on earth 0 0
+map data
+lat latitude
+lon longitude
+field attributes.study-name study_name gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field attributes.biome biome_name gaussian-inverse-square diffusion 1 8640 0.0 0.0
+
+url https://www.ebi.ac.uk/metagenomics/api/v1/studies?format=json&page_size=100&ordering=-last_update
+ttl 86400
+on earth 0 0
+map data
+lat latitude
+lon longitude
+field attributes.study-name study_name gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field attributes.biome biome_name gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field attributes.last-update last_update gaussian-inverse-square diffusion 1 8640 0.0 0.0
+
+url https://api.ember-climate.org/v2/electricity-generation/yearly?country=DE&date_from=2000-01-01&date_to={year}-12-31
+ttl 86400
+on earth 0 0 0
+map data
+field year year gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field coal electricity_coal_gwh gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field gas electricity_gas_gwh gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field nuclear electricity_nuclear_gwh gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field wind electricity_wind_gwh gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field solar electricity_solar_gwh gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field hydro electricity_hydro_gwh gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field total total_generation_gwh gaussian-inverse-square diffusion 1 8640 0.0 0.0
+
+url https://api.ember-climate.org/v1/electricity-generation?aggregate_by=country&date_from={year}-01-01&date_to={year}-12-31&format=json
+ttl 86400
+on earth 0 0
+map .
+lat country_latitude
+lon country_longitude
+field country_name country gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field wind_generation_twh wind_twh gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field solar_generation_twh solar_twh gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field fossil_generation_twh fossil_twh gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field total_generation_twh total_twh gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field clean_share_pct clean_energy_pct gaussian-inverse-square diffusion 1 8640 0.0 0.0
+
+url https://ows.emodnet-bathymetry.eu/geoserver/wcs?SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&FORMAT=application/x-netcdf&COVERAGEID=emodnet__mean&SUBSET=Long(-10,10)&SUBSET=Lat(35,60)
+ttl 86400
+format text
+on earth 0 0 0
+rows .
+
+url https://www.ebi.ac.uk/ena/portal/api/search?result=sample&query=tax_tree(2)&format=tsv&limit=500
+ttl 86400
+format text
+on earth 0 0 0
+rows .
+field 0 sample_accession gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field 1 description gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field 2 tax_id gaussian-inverse-square diffusion 1 8640 0.0 0.0
+
+url https://eogdata.mines.edu/nighttime_light/monthly/v10/catalog.json
+ttl 86400
+on earth 0 0
+map datasets
+lat bbox.south
+lon bbox.west
+field product_name product_name inverse-square em 1 8640 0.0 0.0
+field year year inverse-square em 1 8640 0.0 0.0
+field month month inverse-square em 1 8640 0.0 0.0
+field resolution_m resolution_m inverse-square em 1 8640 0.0 0.0
+field url data_url inverse-square em 1 8640 0.0 0.0
+
+url https://nrt.cmems-du.eu/erddap/griddap/cmems_obs-sl_glo_phy_mynrt_l4_P1D-m.csv?sla%5Blast%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D
+ttl 86400
+format text
+on earth 0 0
+rows .
+lat latitude
+lon longitude
+field sla sea_level_anomaly_m gaussian-inverse-square diffusion 1 8640 0.0 0.0
+
+url https://esa-sst-cci-browser.ceda.ac.uk/api/v1/sst/global-monthly?format=json&dataset=ESACCI-SST-L4-CDR-SST-ANALYSIS
+ttl 86400
+on earth 0 0
+map .
+lat lat
+lon lon
+field sst_analysed sea_surface_temp_c exponential-decay thermal 1 8640 0.0 0.0
+field sst_uncertainty sst_uncertainty_k exponential-decay thermal 1 8640 0.0 0.0
+field time observation_time exponential-decay thermal 1 8640 0.0 0.0
+
+url https://science-pds.cryosat.esa.int/oads/access/collection/CryoSat_Northern_Hemisphere_Sea_Ice_Thickness/latest/?format=json
+ttl 86400
+on earth 0 0 0
+map .
+field 0 file_name exponential-decay thermal 1 8640 0.0 0.0
+field 1 file_size exponential-decay thermal 1 8640 0.0 0.0
+field 2 last_modified exponential-decay thermal 1 8640 0.0 0.0
+
+url https://vires.services/hapi/data?dataset=SW_OPER_MAGA_LR_1B&parameters=Latitude,Longitude&start={today}T00:00:00Z&stop={tomorrow}T00:00:00Z
+ttl 86400
+format text
+on earth 0 0
+rows .
+lat Latitude
+lon Longitude
+
+url https://services.terrascope.be/catalogue/products?collection=urn:eop:VITO:ESA_WorldCover_10m_2021_V2&bbox=-180,-60,180,60&format=json&limit=100
+ttl 86400
+on earth 0 0
+map features
+lat geometry.coordinates.0.0.1
+lon geometry.coordinates.0.0.0
+field properties.title product_title gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field properties.date product_date gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field properties.cloudCover cloud_cover_pct gaussian-inverse-square diffusion 1 8640 0.0 0.0
+
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+COUNT(*)+FROM+ps&format=json
+ttl 86400
+on earth 42.365 -71.105 0
+lastline exosphere_exoplanets_confirmed_total
+
+url https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/CME/?startDate=2024-01-01&endDate=2024-12-31
+ttl 86400
+on earth 0 0 0
+count lines exosphere_donki_cme_count_2024 inverse-square em 1 8640 0.0 0.0
+
+url https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/FLR/?startDate=2024-01-01&endDate=2024-12-31
+ttl 86400
+on earth 0 0 0
+count lines exosphere_donki_flare_count_2024 inverse-square em 1 8640 0.0 0.0
+
+url https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/GST/?startDate=2024-01-01&endDate=2024-12-31
+ttl 86400
+on earth 0 0 0
+count lines exosphere_donki_gst_count_2024 inverse-square em 1 8640 0.0 0.0
+
+url https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/HSS/?startDate=2024-01-01&endDate=2024-12-31
+ttl 86400
+on earth 0 0 0
+count lines exosphere_donki_hss_count_2024 inverse-square em 1 8640 0.0 0.0
+
+url https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/IPS/?startDate=2024-01-01&endDate=2024-12-31
+ttl 86400
+on earth 0 0 0
+count lines exosphere_donki_ips_count_2024 inverse-square em 1 8640 0.0 0.0
+
+url https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/MPC/?startDate=2024-01-01&endDate=2024-12-31
+ttl 86400
+on earth 0 0 0
+count lines exosphere_donki_mpc_count_2024 inverse-square em 1 8640 0.0 0.0
+
+url https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/SEP/?startDate=2024-01-01&endDate=2024-12-31
+ttl 86400
+on earth 0 0 0
+count lines exosphere_donki_sep_count_2024 inverse-square em 1 8640 0.0 0.0
+
+url https://services.swpc.noaa.gov/json/f107_cm_flux.json
+ttl 86400
+on earth 0 0 0
+field 0.flux exosphere_f107_sfu inverse-square em 1 8640 0.0 0.0
+
+url https://www.fao.org/aquastat/en/databases/agromat/api/v1/water?year={year}&format=json
+ttl 86400
+on earth 0 0
+map .
+lat country_latitude
+lon country_longitude
+field country country_name gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field total_renewable_water_resources total_freshwater_m3capita gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field total_freshwater_withdrawal freshwater_withdrawal_km3 gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field agricultural_withdrawal agri_withdrawal_pct gaussian-inverse-square diffusion 1 8640 0.0 0.0
+
+url https://api.gbif.org/v1/occurrence/search?limit=300&establishmentMechanism=INVASIVE&hasCoordinate=true
+ttl 86400
+on earth 0 0
+map results
+lat decimalLatitude
+lon decimalLongitude
+field species species_name gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field country country_code gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field year observation_year gaussian-inverse-square diffusion 1 8640 0.0 0.0
+
+url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&year={year}&basisOfRecord=HUMAN_OBSERVATION&decimalLatitude=-90,90&habitat=MARINE
+ttl 86400
+on earth 0 0
+map results
+lat decimalLatitude
+lon decimalLongitude
+field species species_name gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field kingdom kingdom gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field phylum phylum gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field order order gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field family family gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field country country_code gaussian-inverse-square diffusion 1 8640 0.0 0.0
+
+url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&year={year}&decimalLatitude=-35,38&decimalLongitude=-20,55&basisOfRecord=HUMAN_OBSERVATION
+ttl 86400
+on earth 0 0
+map results
+lat decimalLatitude
+lon decimalLongitude
+field species species_name gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field genus genus gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field family family gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field kingdom kingdom gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field country country_code gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field eventDate observation_date gaussian-inverse-square diffusion 1 8640 0.0 0.0
+
+url https://www.ldeo.columbia.edu/~gcmt/projects/CMT/catalog/jan76_dec25.txt
+ttl 86400
+format text
+on earth 0 0
+rows .
+lat evla
+lon evlo
+field evdp depth_km gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field mag magnitude gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field year year gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+
+url https://raw.githubusercontent.com/GEMScienceTools/gem-global-active-faults/master/geojson/gem_active_faults.geojson
+ttl 86400
+on earth 0 0
+map features
+lat geometry.coordinates.0.0.1
+lon geometry.coordinates.0.0.0
+field properties.name fault_name erfc seismic-surface 1 8640 0.0 0.0
+field properties.slip_type slip_type erfc seismic-surface 1 8640 0.0 0.0
+field properties.net_slip_rate slip_rate_mm_yr erfc seismic-surface 1 8640 0.0 0.0
+field properties.country country erfc seismic-surface 1 8640 0.0 0.0
+field properties.aseismic_slip_factor aseismic_factor erfc seismic-surface 1 8640 0.0 0.0
+
+url https://maps.openquake.org/api/v1/hazard/sa/?model=GEM_GLOBAL_2023&periods=0.2&imt=SA&poe=0.1
+ttl 86400
+on earth 0 0
+map .
+lat lat
+lon lon
+field sa_0_2 spectral_acc_0_2s_g gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field model hazard_model gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+
+url https://maps.openquake.org/api/v1/hazard/pga/?model=GEM_GLOBAL_2023&poe=0.1&periods=475
+ttl 86400
+on earth 0 0
+map .
+lat lat
+lon lon
+field pga peak_ground_acc_g gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field model hazard_model gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field poe probability_of_exceedance gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field return_period return_period_yr gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+
+url https://api.geonet.org.nz/sensor/type/cgps
+ttl 86400
+on earth 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.siteID site_id erfc seismic-surface 1 8640 0.0 0.0
+field properties.name station_name erfc seismic-surface 1 8640 0.0 0.0
+field properties.start start_date erfc seismic-surface 1 8640 0.0 0.0
+field properties.networkID network_code erfc seismic-surface 1 8640 0.0 0.0
+
+url https://api.geonet.org.nz/gnss/1.0.0/site
+ttl 86400
+on earth 0 0
+map sites
+lat latitude
+lon longitude
+field siteID station_id inverse-square gravity 1 8640 0.0 0.0
+field name station_name inverse-square gravity 1 8640 0.0 0.0
+field network network_code inverse-square gravity 1 8640 0.0 0.0
+field startDate deployment_date inverse-square gravity 1 8640 0.0 0.0
+
+url https://api.geonet.org.nz/sensor/type/strong
+ttl 86400
+on earth 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.siteID site_id gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field properties.name station_name gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field properties.networkID network_code gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field properties.type sensor_type gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+
+url https://api.geonet.org.nz/strong-motion/1.0.0/site
+ttl 86400
+on earth 0 0
+map sites
+lat latitude
+lon longitude
+field siteID station_id gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field name station_name gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field network network_code gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field startDate deployment_date gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+
+url http://geoscope.ipgp.fr/fdsnws/station/1/query?level=station&format=json&network=G
+ttl 86400
+format text
+on earth 0 0
+rows .
+lat Latitude
+lon Longitude
+field Network network_code gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field Station station_code gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field Elevation elevation_m gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field SiteDescription station_name gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field StartTime start_date gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+
+url https://geofon.gfz.de/fdsnws/station/1/query?format=geojson&level=station&network=AF
+ttl 86400
+on earth 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+alt geometry.coordinates.2
+field properties.station geosphere_africaarray_station_code inverse-square em 1 8640 0.0 0.0
+field properties.network geosphere_africaarray_network inverse-square em 1 8640 0.0 0.0
+field properties.site.name geosphere_africaarray_station_name inverse-square em 1 8640 0.0 0.0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2015-01-01&endtime=2015-12-31&minmagnitude=5&limit=200
+ttl 86400
+on earth 0 0 0
+geojson mag 0.0 0 geosphere_earthquake_mag 8640 0.0 0.0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2016-01-01&endtime=2016-12-31&minmagnitude=5&limit=200
+ttl 86400
+on earth 0 0 0
+geojson mag 0.0 0 geosphere_earthquake_mag 8640 0.0 0.0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2017-01-01&endtime=2017-12-31&minmagnitude=5&limit=200
+ttl 86400
+on earth 0 0 0
+geojson mag 0.0 0 geosphere_earthquake_mag 8640 0.0 0.0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2018-01-01&endtime=2018-12-31&minmagnitude=5&limit=200
+ttl 86400
+on earth 0 0 0
+geojson mag 0.0 0 geosphere_earthquake_mag 8640 0.0 0.0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2019-01-01&endtime=2019-12-31&minmagnitude=5&limit=200
+ttl 86400
+on earth 0 0 0
+geojson mag 0.0 0 geosphere_earthquake_mag 8640 0.0 0.0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2020-01-01&endtime=2020-12-31&minmagnitude=5&limit=200
+ttl 86400
+on earth 0 0 0
+geojson mag 0.0 0 geosphere_earthquake_mag 8640 0.0 0.0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2021-01-01&endtime=2021-12-31&minmagnitude=5&limit=200
+ttl 86400
+on earth 0 0 0
+geojson mag 0.0 0 geosphere_earthquake_mag 8640 0.0 0.0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2022-01-01&endtime=2022-12-31&minmagnitude=5&limit=200
+ttl 86400
+on earth 0 0 0
+geojson mag 0.0 0 geosphere_earthquake_mag 8640 0.0 0.0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2023-01-01&endtime=2023-12-31&minmagnitude=5&limit=200
+ttl 86400
+on earth 0 0 0
+geojson mag 0.0 0 geosphere_earthquake_mag 8640 0.0 0.0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2024-01-01&endtime=2024-12-31&minmagnitude=5&limit=200
+ttl 86400
+on earth 0 0 0
+geojson mag 0.0 0 geosphere_earthquake_mag 8640 0.0 0.0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={year}-01-01&endtime={today}&minmagnitude=5&limit=200
+ttl 86400
+on earth 0 0 0
+geojson mag 0.0 0 geosphere_earthquake_mag 8640 0.0 0.0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2015-01-01&endtime=2024-12-31&minmagnitude=4&limit=200
+ttl 86400
+on earth 0 0 0
+geojson mag 0.0 0 geosphere_earthquake_mag 8640 0.0 0.0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2020-01-01&endtime=2024-12-31&minmagnitude=6&limit=200
+ttl 86400
+on earth 0 0 0
+geojson mag 0.0 0 geosphere_earthquake_mag 8640 0.0 0.0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2015-01-01&endtime=2024-12-31&minmagnitude=4.5&limit=300
+ttl 86400
+on earth 0 0 0
+geojson mag 0.0 0 geosphere_earthquake_mag 8640 0.0 0.0
+
+url https://seismic-api.science.unimelb.edu.au/monitoring-sites
+ttl 86400
+on earth 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.station geosphere_ga_station_code inverse-square em 1 8640 0.0 0.0
+field properties.network geosphere_ga_network inverse-square em 1 8640 0.0 0.0
+field properties.type geosphere_ga_sensor_type inverse-square em 1 8640 0.0 0.0
+
+url https://api.geonet.org.nz/network/station
+ttl 86400
+header Accept application/vnd.geo+json;version=2
+on earth 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.Network geosphere_geonet_network inverse-square em 1 8640 0.0 0.0
+field properties.Code geosphere_geonet_station_code inverse-square em 1 8640 0.0 0.0
+field properties.SensorType geosphere_geonet_sensor_type inverse-square em 1 8640 0.0 0.0
+
+url https://tsunami.incois.gov.in/itews/stations
+ttl 86400
+on earth 0 0
+map .
+lat latitude
+lon longitude
+field station_code geosphere_incois_station_code inverse-square em 1 8640 0.0 0.0
+field network geosphere_incois_network inverse-square em 1 8640 0.0 0.0
+field type geosphere_incois_sensor_type inverse-square em 1 8640 0.0 0.0
+field status geosphere_incois_status inverse-square em 1 8640 0.0 0.0
+
+url https://service.iris.edu/fdsnws/station/1/query?format=geojson&level=station&limit=10000
+ttl 86400
+on earth 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+alt geometry.coordinates.2
+field properties.station geosphere_seismic_station_code inverse-square em 1 8640 0.0 0.0
+field properties.network geosphere_seismic_network inverse-square em 1 8640 0.0 0.0
+field properties.site.name geosphere_seismic_station_name inverse-square em 1 8640 0.0 0.0
+field properties.elevation geosphere_seismic_elevation_m inverse-square em 1 8640 0.0 0.0
+
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_annmean_gl.txt
+ttl 86400
+on earth 19.5362 -155.5763 0
+lastline atmosphere_co2_annual_mean_global
+
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_mm_mlo.txt
+ttl 86400
+on earth 19.5362 -155.5763 0
+lastrow average atmosphere_co2_ppm_mlo_monthly inverse-square em 1 8640 0.0 0.0
+
+url https://www.star.nesdis.noaa.gov/sod/lsa/SeaLevelRise/slr/slr_sla_gbl_keep_tab.txt
+ttl 86400
+on earth 25 -80 0
+lastline hydrosphere_sea_level_rise_noaa
+
+url https://data.raspberryshake.org/api/v2/station?limit=1000
+ttl 86400
+on earth 0 0
+map .
+lat lat
+lon lon
+field code geosphere_rshake_station_code gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field name geosphere_rshake_station_name gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field network geosphere_rshake_network gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field status geosphere_rshake_status gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field region geosphere_rshake_region gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+
+url https://usdmdataservices.unl.edu/api/USStatistics/GetDroughtSeverityStatisticsByAreaPercent?aoi=conus&startdate={week_ago}&enddate={today}&statisticsType=1
+ttl 86400
+on earth 40.82 -96.702 0
+field 0.DSCI hydrosphere_conus_drought_severity_index inverse-square em 1 8640 0.0 0.0
+
+url https://volcanoes.usgs.gov/hans-public/api/volcano/getUSVolcanoes
+ttl 86400
+on earth 0 0
+map .
+lat latitude
+lon longitude
+field elevation_meters geosphere_volcano_elevation_m erfc seismic-surface 1 8640 0.0 0.0
+field vnum geosphere_volcano_vnum erfc seismic-surface 1 8640 0.0 0.0
+
+url https://geofon.gfz-potsdam.de/fdsnws/station/1/query?level=station&format=json&network=GE
+ttl 86400
+format text
+on earth 0 0
+rows .
+lat Latitude
+lon Longitude
+field Network network_code gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field Station station_code gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field Elevation elevation_m gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field SiteDescription station_name gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+
+url http://gravis.gfz-potsdam.de/api/v1/timeseries/?basin=AMAZON&product=GRACE_TWS&format=json
+ttl 86400
+on earth -3 -60 0
+map timeseries
+field time epoch_date inverse-square gravity 1 8640 0.0 0.0
+field value tws_anomaly_cm inverse-square gravity 1 8640 0.0 0.0
+field uncertainty tws_uncertainty_cm inverse-square gravity 1 8640 0.0 0.0
+field trend linear_trend_cm_yr inverse-square gravity 1 8640 0.0 0.0
+field seasonal_amplitude seasonal_amp_cm inverse-square gravity 1 8640 0.0 0.0
+
+url http://gravis.gfz-potsdam.de/api/v1/timeseries/?basin=ANTARCTICA&product=GRACE_ICE&format=json
+ttl 86400
+on earth -90 0 0
+map timeseries
+field time epoch_date inverse-square gravity 1 8640 0.0 0.0
+field value mass_anomaly_gt inverse-square gravity 1 8640 0.0 0.0
+field uncertainty mass_uncertainty_gt inverse-square gravity 1 8640 0.0 0.0
+field trend mass_trend_gt_yr inverse-square gravity 1 8640 0.0 0.0
+
+url http://gravis.gfz-potsdam.de/api/v1/timeseries/?basin=GANGES&product=GRACE_TWS&format=json
+ttl 86400
+on earth 25 83 0
+map timeseries
+field time epoch_date inverse-square gravity 1 8640 0.0 0.0
+field value tws_anomaly_cm inverse-square gravity 1 8640 0.0 0.0
+field uncertainty tws_uncertainty_cm inverse-square gravity 1 8640 0.0 0.0
+
+url http://gravis.gfz-potsdam.de/api/v1/timeseries/?basin=GREENLAND&product=GRACE_ICE&format=json
+ttl 86400
+on earth 72 -40 0
+map timeseries
+field time epoch_date inverse-square gravity 1 8640 0.0 0.0
+field value mass_anomaly_gt inverse-square gravity 1 8640 0.0 0.0
+field uncertainty mass_uncertainty_gt inverse-square gravity 1 8640 0.0 0.0
+field trend mass_trend_gt_yr inverse-square gravity 1 8640 0.0 0.0
+
+url https://api.github.com/search/repositories?q=stars:>0&per_page=1
+ttl 86400
+on earth 37.774 -122.419 0
+field total_count biosphere_github_repos_total inverse-square em 1 8640 0.0 0.0
+
+url https://api.github.com/search/users?q=type:user&per_page=1
+ttl 86400
+on earth 37.774 -122.419 0
+field total_count biosphere_github_users_total inverse-square em 1 8640 0.0 0.0
+
+url https://mangrove-atlas.sei.org/api/widgets/mangrove-cover/?location_id=country&startYear=2020&endYear=2020
+ttl 86400
+on earth 0 0
+map data
+lat centroid_lat
+lon centroid_lon
+field area_m2 mangrove_area_m2 gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field loss_m2 mangrove_loss_m2 gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field country_iso country_iso gaussian-inverse-square diffusion 1 8640 0.0 0.0
+
+url https://grace.jpl.nasa.gov/media/documents/GMSL_RLv04_JPL_RL06.3_SLCC.txt
+ttl 86400
+format text
+on earth 0 0 0
+rows .
+field 0 decimal_year inverse-square gravity 1 8640 0.0 0.0
+field 1 gmsl_anomaly_mm inverse-square gravity 1 8640 0.0 0.0
+field 2 gmsl_uncertainty_mm inverse-square gravity 1 8640 0.0 0.0
+field 3 trend_removed_mm inverse-square gravity 1 8640 0.0 0.0
+
+url https://sedac.ciesin.columbia.edu/arcgis/rest/services/grand/GRAND_Dams/MapServer/0/query?where=1%3D1&geometry={lon_min}%2C{lat_min}%2C{lon_max}%2C{lat_max}&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=DAM_NAME,RIVER,COUNTRY,YEAR_COMP,LAT_DD,LONG_DD,CAP_MAX,HEIGHT,MAIN_USE&f=json&resultRecordCount=500
+ttl 86400
+on earth 0 0
+map features
+lat attributes.LAT_DD
+lon attributes.LONG_DD
+field attributes.DAM_NAME dam_name gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field attributes.RIVER river gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field attributes.COUNTRY country gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field attributes.YEAR_COMP completion_year gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field attributes.CAP_MAX max_capacity_mcm gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field attributes.HEIGHT dam_height_m gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field attributes.MAIN_USE primary_use gaussian-inverse-square diffusion 1 8640 0.0 0.0
+
+url https://gtnp.arcticportal.org/api/activelayer/?format=json&limit=2000
+ttl 86400
+on earth 0 0
+map data
+lat location.lat
+lon location.lng
+field name station_name exponential-decay thermal 1 8640 0.0 0.0
+field id station_id exponential-decay thermal 1 8640 0.0 0.0
+field location.country country exponential-decay thermal 1 8640 0.0 0.0
+field active_layer_thickness alt_m exponential-decay thermal 1 8640 0.0 0.0
+field measurement_date measurement_year exponential-decay thermal 1 8640 0.0 0.0
+
+url https://gtnp.arcticportal.org/api/v1/gtnp-boreholes?format=json&limit=500
+ttl 86400
+on earth 0 0
+map data
+lat location.lat
+lon location.lon
+field name borehole_name exponential-decay thermal 1 8640 0.0 0.0
+field id borehole_id exponential-decay thermal 1 8640 0.0 0.0
+field temperature_mean_c mean_annual_temp_c exponential-decay thermal 1 8640 0.0 0.0
+field depth_m borehole_depth_m exponential-decay thermal 1 8640 0.0 0.0
+field elevation_m elevation_m exponential-decay thermal 1 8640 0.0 0.0
+
+url https://gtnp.arcticportal.org/api/v1/calm-data?format=json&limit=500
+ttl 86400
+on earth 0 0
+map data
+lat station.latitude
+lon station.longitude
+field value alt_cm gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field station.name station_name gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field year obs_year gaussian-inverse-square diffusion 1 8640 0.0 0.0
+
+url https://gtnp.arcticportal.org/api/boreholes/?format=json&limit=2000
+ttl 86400
+on earth 0 0
+map data
+lat location.lat
+lon location.lng
+field name borehole_name exponential-decay thermal 1 8640 0.0 0.0
+field id borehole_id exponential-decay thermal 1 8640 0.0 0.0
+field location.country country exponential-decay thermal 1 8640 0.0 0.0
+field location.region region exponential-decay thermal 1 8640 0.0 0.0
+field elevation elevation_m exponential-decay thermal 1 8640 0.0 0.0
+field depth borehole_depth_m exponential-decay thermal 1 8640 0.0 0.0
+field temperature.0.mean_annual temp_c exponential-decay thermal 1 8640 0.0 0.0
+
+url https://gtnp.arcticportal.org/api/v1/tsp-annual?format=json&limit=500
+ttl 86400
+on earth 0 0
+map data
+lat station.latitude
+lon station.longitude
+field value ground_temp_c exponential-decay thermal 1 8640 0.0 0.0
+field station.name station_name exponential-decay thermal 1 8640 0.0 0.0
+field year obs_year exponential-decay thermal 1 8640 0.0 0.0
+
+url https://gtnp.arcticportal.org/api/v1/stations?format=json&limit=500
+ttl 86400
+on earth 0 0
+map data
+lat station.latitude
+lon station.longitude
+field station.name station_name gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field station.country country gaussian-inverse-square diffusion 1 8640 0.0 0.0
+
+url https://webservices.volcano.si.edu/geoserver/GVP-VOTW/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=GVP-VOTW:Smithsonian_VOTW_Holocene_Eruptions&outputFormat=application/json&count=1000
+ttl 86400
+on earth 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.Eruption_Number eruption_id erfc seismic-surface 1 8640 0.0 0.0
+field properties.Volcano_Number volcano_id erfc seismic-surface 1 8640 0.0 0.0
+field properties.Volcano_Name volcano_name erfc seismic-surface 1 8640 0.0 0.0
+field properties.Eruption_Year eruption_year erfc seismic-surface 1 8640 0.0 0.0
+field properties.Eruption_Month eruption_month erfc seismic-surface 1 8640 0.0 0.0
+field properties.Eruption_Day eruption_day erfc seismic-surface 1 8640 0.0 0.0
+field properties.VEI vei_index erfc seismic-surface 1 8640 0.0 0.0
+field properties.Evidence_Method evidence_method erfc seismic-surface 1 8640 0.0 0.0
+field properties.Explosivity_Index explosivity_class erfc seismic-surface 1 8640 0.0 0.0
+
+url https://webservices.volcano.si.edu/geoserver/GVP-VOTW/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=GVP-VOTW:Smithsonian_VOTW_Holocene_Eruptions&outputFormat=csv&count=1000
+ttl 86400
+format text
+on earth 0 0
+rows .
+lat Latitude
+lon Longitude
+field Eruption_Number eruption_id erfc seismic-surface 1 8640 0.0 0.0
+field Volcano_Number volcano_id erfc seismic-surface 1 8640 0.0 0.0
+field Volcano_Name volcano_name erfc seismic-surface 1 8640 0.0 0.0
+field Eruption_Year eruption_year erfc seismic-surface 1 8640 0.0 0.0
+field Eruption_Month eruption_month erfc seismic-surface 1 8640 0.0 0.0
+field Eruption_Day eruption_day erfc seismic-surface 1 8640 0.0 0.0
+field VEI vei_index erfc seismic-surface 1 8640 0.0 0.0
+
+url https://webservices.volcano.si.edu/geoserver/GVP-VOTW/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=GVP-VOTW:Smithsonian_VOTW_Holocene_Volcanoes&outputFormat=application/json&count=1000
+ttl 86400
+on earth 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.Volcano_Number volcano_id erfc seismic-surface 1 8640 0.0 0.0
+field properties.Volcano_Name volcano_name erfc seismic-surface 1 8640 0.0 0.0
+field properties.Primary_Volcano_Type volcano_type erfc seismic-surface 1 8640 0.0 0.0
+field properties.Last_Eruption_Year last_eruption_year erfc seismic-surface 1 8640 0.0 0.0
+field properties.Country country erfc seismic-surface 1 8640 0.0 0.0
+field properties.Region region erfc seismic-surface 1 8640 0.0 0.0
+field properties.Elevation elevation_m erfc seismic-surface 1 8640 0.0 0.0
+field properties.Tectonic_Setting tectonic_setting erfc seismic-surface 1 8640 0.0 0.0
+field properties.Evidence_Category evidence_category erfc seismic-surface 1 8640 0.0 0.0
+field properties.Major_Rock_Type major_rock_type erfc seismic-surface 1 8640 0.0 0.0
+
+url https://webservices.volcano.si.edu/geoserver/GVP-VOTW/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=GVP-VOTW:Smithsonian_VOTW_Holocene_Volcanoes&outputFormat=csv&count=1000
+ttl 86400
+format text
+on earth 0 0
+rows .
+lat Latitude
+lon Longitude
+field Volcano_Number volcano_id erfc seismic-surface 1 8640 0.0 0.0
+field Volcano_Name volcano_name erfc seismic-surface 1 8640 0.0 0.0
+field Primary_Volcano_Type volcano_type erfc seismic-surface 1 8640 0.0 0.0
+field Last_Eruption_Year last_eruption_year erfc seismic-surface 1 8640 0.0 0.0
+field Country country erfc seismic-surface 1 8640 0.0 0.0
+field Region region erfc seismic-surface 1 8640 0.0 0.0
+field Elevation elevation_m erfc seismic-surface 1 8640 0.0 0.0
+field Tectonic_Setting tectonic_setting erfc seismic-surface 1 8640 0.0 0.0
+
+url https://webservices.volcano.si.edu/geoserver/GVP-VOTW/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=GVP-VOTW:Smithsonian_VOTW_Pleistocene_Volcanoes&outputFormat=application/json&count=1000
+ttl 86400
+on earth 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.Volcano_Number volcano_id erfc seismic-surface 1 8640 0.0 0.0
+field properties.Volcano_Name volcano_name erfc seismic-surface 1 8640 0.0 0.0
+field properties.Country country erfc seismic-surface 1 8640 0.0 0.0
+field properties.Region region erfc seismic-surface 1 8640 0.0 0.0
+field properties.Elevation elevation_m erfc seismic-surface 1 8640 0.0 0.0
+field properties.Geologic_Epoch geologic_epoch erfc seismic-surface 1 8640 0.0 0.0
+
+url https://gwosc.org/api/v2/runs/?format=json
+ttl 86400
+on earth 0 0 0
+map results
+field name run_name inverse-square gravity 1 8640 0.0 0.0
+field start GPS_start inverse-square gravity 1 8640 0.0 0.0
+field end GPS_end inverse-square gravity 1 8640 0.0 0.0
+field detectors detectors inverse-square gravity 1 8640 0.0 0.0
+field total_livetime_seconds livetime_s inverse-square gravity 1 8640 0.0 0.0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2790000001%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 86400
+on earth 34.201 -118.171 0
+
+url https://data.humdata.org/api/3/action/package_search?q=type:administrative-boundary&rows=500
+ttl 86400
+on earth 0 0 0
+map result.results
+field title region_name gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field notes description gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field organization.title org gaussian-inverse-square diffusion 1 8640 0.0 0.0
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+name,lat,lon,trigger_time,duration,e_mean,counts+FROM+fermitgf+WHERE+lat+IS+NOT+NULL+ORDER+BY+counts+DESC
+ttl 86400
+format text
+on earth 0 0
+rows .
+lat lat
+lon lon
+field name tgf_name inverse-square em 1 8640 0.0 0.0
+field trigger_time detection_utc inverse-square em 1 8640 0.0 0.0
+field duration duration_ms inverse-square em 1 8640 0.0 0.0
+field e_mean mean_energy_keV inverse-square em 1 8640 0.0 0.0
+field counts total_photon_counts inverse-square em 1 8640 0.0 0.0
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+latitude,longitude,co_total_column,co_surface,co_500hpa,co_300hpa,date+FROM+mopittl3m+WHERE+latitude+IS+NOT+NULL+ORDER+BY+co_total_column+DESC
+ttl 86400
+format text
+on earth 0 0
+rows .
+lat latitude
+lon longitude
+field co_total_column co_total_col gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field co_surface co_surface gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field co_500hpa co_500hpa gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field co_300hpa co_300hpa gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field date obs_date gaussian-inverse-square diffusion 1 8640 0.0 0.0
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+latitude,longitude,date,altitude,ext525,ext1020+FROM+sage2l2+WHERE+latitude+IS+NOT+NULL+AND+date>%272020-01-01%27+ORDER+BY+date+DESC
+ttl 86400
+format text
+on earth 0 0
+rows .
+lat latitude
+lon longitude
+field date measurement_date gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field altitude altitude_km gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field ext525 extinction_525nm_km gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field ext1020 extinction_1020nm_km gaussian-inverse-square diffusion 1 8640 0.0 0.0
+
+url https://ows.emodnet-humanactivities.eu/geoserver/emodnet/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=emodnet:vessel_density&outputFormat=application/json&bbox={lon_min},{lat_min},{lon_max},{lat_max}
+ttl 86400
+on earth 51.231 2.928 0
+count features biosphere_vessel_density_feature_count inverse-square em 1 8640 0.0 0.0
+
+url https://gloss-sealevel.org/api/stations?format=json
+ttl 86400
+on earth 0 0
+map .
+lat latitude
+lon longitude
+field id hydrosphere_gloss_gauge_id inverse-square em 1 8640 0.0 0.0
+field name hydrosphere_gloss_station_name inverse-square em 1 8640 0.0 0.0
+field country hydrosphere_gloss_country inverse-square em 1 8640 0.0 0.0
+field status hydrosphere_gloss_status inverse-square em 1 8640 0.0 0.0
+
+url https://erddap.dataexplorer.oceanobservatories.org/erddap/tabledap/ooi-ga01sumo-sbd12-04-pco2aa000.csv?time,sea_surface_temperature,surface_partial_pressure_of_carbon_dioxide_in_sea_water
+ttl 86400
+format csv
+on earth 46.05 -125 0
+lastrow surface_partial_pressure_of_carbon_dioxide_in_sea_water hydrosphere_pco2_ooi_uatm inverse-square em 1 8640 0.0 0.0
+lastrow sea_surface_temperature hydrosphere_sst_ooi_c inverse-square em 1 8640 0.0 0.0
+
+url https://data.pmel.noaa.gov/pmel/erddap/tabledap/all_pmel_co2_moorings.csv?pCO2_air&orderByMax(%22time%22)
+ttl 86400
+format csv
+on earth 47.606 -122.335 0
+last line hydrosphere_pmel_co2_mooring_raw inverse-square em 1 8640 0.0 0.0
+
+url https://data.pmel.noaa.gov/pmel/erddap/tabledap/all_pmel_co2_moorings.csv?station_id,longitude,latitude,time,pCO2_sw,pH_sw&orderByMax(%22station_id%2Ctime%22)
+ttl 86400
+format csv
+on earth 47.6062 -122.3321 0
+lastrow pCO2_sw hydrosphere_pco2_pmel_uatm inverse-square em 1 8640 0.0 0.0
+lastrow pH_sw hydrosphere_ph_pmel inverse-square em 1 8640 0.0 0.0
+
+url https://pris.iaea.org/api/reactors?format=json&limit=500&status=Operational
+ttl 86400
+on earth 0 0
+map .
+lat latitude
+lon longitude
+field name reactor_name exponential-decay thermal 1 8640 0.0 0.0
+field country country exponential-decay thermal 1 8640 0.0 0.0
+field type reactor_type exponential-decay thermal 1 8640 0.0 0.0
+field status operational_status exponential-decay thermal 1 8640 0.0 0.0
+field netCapacity net_capacity_mwe exponential-decay thermal 1 8640 0.0 0.0
+field firstGridConnection first_power_date exponential-decay thermal 1 8640 0.0 0.0
+field owner operator_company exponential-decay thermal 1 8640 0.0 0.0
+
+url https://meta.icos-cp.eu/sparql?format=json&query=SELECT+?uri+?name+?lat+?lon+?alt+?country+?ecosys+WHERE+{?uri+a+<http://meta.icos-cp.eu/ontologies/cpmeta/ES>+;+<http://www.w3.org/2000/01/rdf-schema#label>+?name+;+<http://meta.icos-cp.eu/ontologies/cpmeta/hasLatitude>+?lat+;+<http://meta.icos-cp.eu/ontologies/cpmeta/hasLongitude>+?lon+}
+ttl 86400
+on earth 0 0
+map results.bindings
+lat lat.value
+lon lon.value
+field name.value station_name gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field country.value country_code gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field alt.value altitude_m gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field ecosys.value ecosystem_type gaussian-inverse-square diffusion 1 8640 0.0 0.0
+
+url https://datacenter.iers.org/data/latestVersion/6_BULLETIN_A_ERFAEOP_V2013_002.txt
+ttl 86400
+format text
+on earth 0 0 0
+rows .
+field 0 mjd inverse-square gravity 1 8640 0.0 0.0
+field 4 x_pole_arcsec inverse-square gravity 1 8640 0.0 0.0
+field 5 y_pole_arcsec inverse-square gravity 1 8640 0.0 0.0
+field 6 ut1_utc_s inverse-square gravity 1 8640 0.0 0.0
+
+url https://datacenter.iers.org/data/9/finals2000A.all
+ttl 86400
+format text
+on earth 0 0 0
+rows .
+field 0 mjd inverse-square gravity 1 8640 0.0 0.0
+field 1 x_pole inverse-square gravity 1 8640 0.0 0.0
+field 2 y_pole inverse-square gravity 1 8640 0.0 0.0
+field 3 ut1_utc inverse-square gravity 1 8640 0.0 0.0
+field 4 lod inverse-square gravity 1 8640 0.0 0.0
+field 5 dpsi inverse-square gravity 1 8640 0.0 0.0
+field 6 deps inverse-square gravity 1 8640 0.0 0.0
+
+url https://network.igs.org/api/public/stations?format=json
+ttl 86400
+on earth 0 0
+map .
+lat lat
+lon lon
+field site_code station_code erfc seismic-surface 1 8640 0.0 0.0
+field name station_name erfc seismic-surface 1 8640 0.0 0.0
+field country country erfc seismic-surface 1 8640 0.0 0.0
+field is_active active_status erfc seismic-surface 1 8640 0.0 0.0
+field elevation elevation_m erfc seismic-surface 1 8640 0.0 0.0
+
+url https://www.tng-project.org/api/TNG100-1/snapshots/99/halos/?format=json&limit=500&order_by=-mass_log_msun
+ttl 86400
+on earth 0 0 0
+map results
+field id halo_id inverse-square gravity 1 8640 0.0 0.0
+field mass_log_msun log10_halo_mass_solar inverse-square gravity 1 8640 0.0 0.0
+field vel_disp velocity_dispersion_km_s inverse-square gravity 1 8640 0.0 0.0
+field spin spin_parameter inverse-square gravity 1 8640 0.0 0.0
+field subhalo_count num_subhalos inverse-square gravity 1 8640 0.0 0.0
+
+url https://www.tng-project.org/api/TNG300-1/snapshots/99/subhalos/?format=json&limit=500&order_by=-mass_log_msun&mass_log_msun__gte=10
+ttl 86400
+on earth 0 0 0
+map results
+field id subhalo_id inverse-square gravity 1 8640 0.0 0.0
+field mass_log_msun log10_mass_solar inverse-square gravity 1 8640 0.0 0.0
+field stellar_mass_log_msun log10_stellar_mass_solar inverse-square gravity 1 8640 0.0 0.0
+field sfr star_formation_rate_solar_yr inverse-square gravity 1 8640 0.0 0.0
+field bh_mass_log_msun log10_bh_mass_solar inverse-square gravity 1 8640 0.0 0.0
+
+url https://erddap.incois.gov.in/erddap/griddap/INCOIS_OSCAR_CURRENTS.csv?u%5Blast%5D%5B0%5D%5B(-30.0):(30.0):3%5D%5B(40.0):(120.0):3%5D,v%5Blast%5D%5B0%5D%5B(-30.0):(30.0):3%5D%5B(40.0):(120.0):3%5D
+ttl 86400
+format text
+on earth 0 0
+rows .
+lat latitude
+lon longitude
+field u current_u_m_s gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field v current_v_m_s gaussian-inverse-square diffusion 1 8640 0.0 0.0
+
+url https://epncb.eu/json/stationlist.json
+ttl 86400
+on earth 0 0
+map .
+lat latitude
+lon longitude
+field station ionosphere_gnss_station_code inverse-square em 1 8640 0.0 0.0
+field name ionosphere_gnss_station_name inverse-square em 1 8640 0.0 0.0
+field receiver ionosphere_gnss_receiver_type inverse-square em 1 8640 0.0 0.0
+field antenna ionosphere_gnss_antenna_type inverse-square em 1 8640 0.0 0.0
+
+url https://service.iris.edu/fdsnws/station/1/query?network=IC,AU&level=station&format=json&nodata=404
+ttl 86400
+format text
+on earth 0 0
+rows .
+lat Latitude
+lon Longitude
+field Network network_code gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field Station station_code gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field Elevation elevation_m gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field SiteDescription location_name gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field StartTime deployment_start gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+

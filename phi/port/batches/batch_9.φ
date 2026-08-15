@@ -1,0 +1,2376 @@
+url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/pdg_xi_c_prime_zero_mass_{latest}.json
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_suriname.json
+ttl 86400
+ttl 604800
+on earth 5.85 -55.20
+field pdg_values.0.value subatomic_xi_c_prime_zero_mass_mev inverse-square em 1 60480 0.0 0.0
+field 1.0.value biosphere_gdp_growth_suriname_pct inverse-square em 1 60480 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/inspirehep.net/subatomic_neutrino_oscillation_papers.json
+ttl 2592000
+on earth 42.454 13.576
+field hits.total subatomic_neutrino_oscillation_papers inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_geomag_forecast.json
+ttl 86400
+format csv
+at sun 1
+lastrow kp magnetosphere_forecast_kp_max inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/mirror_ne_10m_parks_area.geojson
+ttl 2592000
+on earth 13.1 -59.62 0
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/subatomic_pdg_z_boson_mass.json
+ttl 3600
+at sun 1
+field pdg_values.0.value subatomic_z_boson_mass_gev inverse-square em 1 360 0.0 0.0
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_uzbekistan.json
+ttl 604800
+on earth 37.877 -122.247 0
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_thailand.json
+ttl 2592000
+on earth -15.8 -47.88 0
+
+url https://github.com/omegaflow/sources/releases/download/eutils.ncbi.nlm.nih.gov/technosphere_nlm_pmc_total.json
+ttl 2592000
+on earth 38.995 -77.101
+field eSearchResult.Count biosphere_pmc_articles_total inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_serbia.json
+ttl 86400
+on earth 44.79 20.45
+field 1.0.value biosphere_gdp_growth_serbia_pct inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/pdg_eta_mass_{latest}.json
+url https://github.com/omegaflow/sources/releases/download/ssd-api.jpl.nasa.gov/astro_orbital_jpl_atmospheric_fireballs.json
+ttl 86400
+ttl 604800
+on earth 34.201 -118.171
+field pdg_values.0.value subatomic_eta_mass_mev inverse-square em 1 60480 0.0 0.0
+field count cosmic_fireball_count inverse-square em 1 60480 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/data.neracoos.org/hydrosphere_neracoos_b01_ocean_temp.json
+ttl 86400
+format universal
+on earth 43.181 -70.428
+lastrow temperature hydrosphere_ocean_temp_c inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_jordan.json
+ttl 2592000
+on earth 31.95 35.91
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_st_vincent_and_the_grenadines.json
+ttl 2592000
+on earth 13.16 -61.22
+field 1.0.value biosphere_gdp_growth_st_vincent_and_the_grenadines_pct inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/inaturalist.org/biosphere_inaturalist_observations_verified.json
+ttl 86400
+on earth 47.3769 8.5417
+
+url https://github.com/omegaflow/sources/releases/download/gml.noaa.gov/geosphere_noaa_sf6_global.json
+ttl 3600
+on earth 19.5362 -155.5763
+lastrow average atmosphere_gwis_sf6_ppt_global inverse-square em 1 360 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_northern_mariana_islands.json
+ttl 2592000
+on earth 15.21 145.72
+
+url https://github.com/omegaflow/sources/releases/download/opendata.cern.ch/subatomic_physics_cern_cms_data.json
+ttl 2592000
+on earth 46.233 6.055
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_tonga.json
+ttl 2592000
+on earth -21.17 -175.20
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_brazil.json
+ttl 604800
+on earth -15.80 -47.88
+
+url https://github.com/omegaflow/sources/releases/download/ies-ows.jrc.ec.europa.eu/geosphere_effis_fires.json
+ttl 2592000
+on earth 45.803 8.624
+field features biosphere_effis_fire_feature_count inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/services.swpc.noaa.gov/astro_solar_wind_speed.json
+ttl 3600
+at sun 1
+path 0.proton_speed solar_wind_speed_kms inverse-square em 1 360 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_estonia.json
+ttl 2592000
+on earth 59.44 24.75
+field 1.0.value biosphere_gdp_growth_estonia_pct inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_uzbekistan.json
+ttl 2592000
+on earth 41.29 69.24
+field 1.0.value biosphere_gdp_growth_uzbekistan_pct inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_hong_kong_sar.json
+ttl 2592000
+on earth 22.32 114.17
+field 1.0.value biosphere_gdp_growth_hong_kong_sar_pct inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_denmark.json
+ttl 2592000
+on earth 55.68 12.57
+field 1.0.value biosphere_gdp_growth_denmark_pct inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_uruguay.json
+ttl 86400
+on earth -34.90 -56.16
+field 1.0.value biosphere_gdp_growth_uruguay_pct inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/star.nesdis.noaa.gov/biosphere_vegetation_health.json
+ttl 2592000
+format universal
+on earth 38.978 -76.919
+lastrow VHI biosphere_global_vegetation_health_index inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/subatomic_pdg_pion_mass.json
+ttl 2592000
+on earth 15.36 44.19 0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_population_density.json
+ttl 604800
+on earth 38.8991 -77.0430
+field 1.0.value biosphere_global_population_density_sqkm inverse-square em 1 60480 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_guinea_bissau.json
+ttl 2592000
+on earth 11.86 -15.60
+field 1.0.value biosphere_gdp_growth_guinea_bissau_pct inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/gml.noaa.gov/geosphere_noaa_co2_annual_mean.json
+ttl 2592000
+on earth 19.5362 -155.5763
+lastline atmosphere_co2_annual_mean_global
+
+url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/subatomic_pdg_eta_mass.json
+ttl 86400
+on earth 37.877 -122.247
+field pdg_values.0.value subatomic_eta_mass_mev inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_japan.json
+ttl 604800
+on earth 35.69 139.69
+field 1.0.value biosphere_gdp_growth_japan_pct inverse-square em 1 60480 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/waterservices.usgs.gov/geosphere_usgs_streamflow.json
+ttl 2592000
+on earth 38.94900000 -77.36500000
+path value.timeSeries.0.values.0.value.0.value hydrosphere_river_flow_cfs inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/eutils.ncbi.nlm.nih.gov/technosphere_nlm_mesh_total.json
+ttl 86400
+on earth 38.995 -77.101
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_congo_republic.json
+ttl 86400
+on earth -4.26 15.28
+field 1.0.value biosphere_gdp_growth_congo_republic_pct inverse-square gravity 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_co2_emissions.json
+ttl 2592000
+on earth 38.899 -77.043
+field 1.0.value worldbank_co2_emissions_value inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/opendata.cern.ch/subatomic_physics_cern_opendata_records.json
+ttl 86400
+on earth 46.233 6.055
+field hits.total physics_cern_opendata_total inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/stackexchange.com/technosphere_stackoverflow_questions_total.json
+ttl 2592000
+on earth 37.774 -122.419
+field total biosphere_stackoverflow_questions_total inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_lebanon.json
+ttl 86400
+format csv
+on earth 33.89 35.50
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_grenada.json
+ttl 3600
+on earth 12.05 -61.75
+field 1.0.value biosphere_gdp_growth_grenada_pct inverse-square em 1 360 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/gbif.org/biosphere_gbif_occurrences.json
+ttl 2592000
+on earth -8.566564 -8.116489
+field count biosphere_species_count inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/inspirehep.net/subatomic_higgs_production_xsec_papers.json
+ttl 2592000
+on earth 46.233 6.056
+
+url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/subatomic_pdg_xi_cc_plusplus_mass.json
+ttl 604800
+on earth 37.877 -122.247
+field pdg_values.0.value subatomic_xi_cc_plusplus_mass_mev inverse-square em 1 60480 0.0 0.0
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/subatomic_pdg_b_zero_mass.json
+ttl 2592000
+on earth 42.66 21.16 0
+
+url https://github.com/omegaflow/sources/releases/download/data.neracoos.org/hydrosphere_neracoos_i01_met_temp.json
+ttl 604800
+format universal
+on earth 44.103 -68.109
+lastrow air_temperature hydrosphere_buoy_air_temp_c inverse-square em 1 60480 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_saudi_arabia.json
+ttl 3600
+on earth 24.71 46.68
+field 1.0.value biosphere_gdp_growth_saudi_arabia_pct gaussian-inverse-square acoustic 1 360 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_armenia.json
+ttl 2592000
+on earth 40.18 44.51
+
+url https://www.seismicportal.eu/fdsnws/event/1/query?format=text&starttime={hour_ago}&lat={lat}&lon={lon}&maxradius=5&minmag=2.0
+ttl 86400
+on earth 40.712 -74.006 0
+
+url https://github.com/omegaflow/sources/releases/download/gbif.org/biosphere_gbif_occurrences_bird_hotspots.json
+ttl 60
+on earth 42.4809 -76.4527
+
+url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/pdg_z_boson_mass_{latest}.json
+url https://github.com/omegaflow/sources/releases/download/services.swpc.noaa.gov/exosphere_donki_legacy_sep.json
+ttl 3600
+ttl 604800
+on earth 37.877 -122.247
+field pdg_values.0.value subatomic_z_boson_mass_gev inverse-square em 1 60480 0.0 0.0
+count lines exosphere_donki_sep_count_2024 inverse-square em 1 60480 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_san_marino.json
+ttl 86400
+on earth 43.94 12.45
+field 1.0.value biosphere_gdp_growth_san_marino_pct inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/subatomic_pdg_kaon_plus_mass.json
+ttl 2592000
+on earth 37.877 -122.247
+
+url https://github.com/omegaflow/sources/releases/download/inspirehep.net/subatomic_muon_gminus2_papers.json
+ttl 2592000
+on earth 41.833 -87.627
+field hits.total subatomic_muon_g2_papers inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_french_polynesia.json
+ttl 60
+on earth -17.55 -149.60
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_iraq.json
+ttl 2592000
+on earth 33.31 44.36
+
+url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/subatomic_pdg_omega_c_zero_mass.json
+ttl 86400
+on earth 37.877 -122.247
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_kosovo.json
+ttl 604800
+on earth 42.66 21.16
+field 1.0.value biosphere_gdp_growth_kosovo_pct inverse-square em 1 60480 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_colombia.json
+ttl 2592000
+on earth 4.71 -74.07
+field 1.0.value biosphere_gdp_growth_colombia_pct inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/pdg_xi_cc_plus_mass_{latest}.json
+url https://github.com/omegaflow/sources/releases/download/ebi.ac.uk/biosphere_microbe_census.json
+ttl 2592000
+ttl 604800
+on earth 52.079 0.187
+field pdg_values.0.value subatomic_xi_cc_plus_mass_mev inverse-square em 1 60480 0.0 0.0
+field meta.pagination.count biosphere_metagenomic_studies_count inverse-square em 1 60480 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/export.arxiv.org/technosphere_arxiv_qbio_total.json
+ttl 2592000
+on earth 40.712 -74.006
+field feed.totalResults biosphere_arxiv_qbio_papers_total inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/woudc.org/atmosphere_woudc_total_ozone.json
+ttl 86400
+on earth 43.780 -79.470
+path numberMatched biosphere_ozone_measurement_total_count inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_tajikistan.json
+ttl 2592000
+on earth 38.56 68.77
+
+url https://github.com/omegaflow/sources/releases/download/data.neracoos.org/hydrosphere_neracoos_tide_adams.json
+ttl 2592000
+format universal
+on earth 43.09 -70.74
+lastrow navd88_meters hydrosphere_tide_level_m inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_slovak_republic.json
+ttl 604800
+on earth 37.877 -122.247 0
+
+url https://github.com/omegaflow/sources/releases/download/musicbrainz.org/technosphere_musicbrainz_artists_total.json
+ttl 86400
+on earth 51.507 -0.127
+field artists.0.id biosphere_music_artists_total patch-levy advective 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/paleobiodb.org/biosphere_paleobiology_pbdb_paleobiology.json
+ttl 2592000
+on earth 43.073 -89.401
+field records_returned paleobiology_pbdb_occurrence_count inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_birth_rate.json
+ttl 2592000
+on earth 38.899 -77.043
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_hungary.json
+ttl 2592000
+on earth 47.50 19.04
+field 1.0.value biosphere_gdp_growth_hungary_pct inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/crossref.org/biosphere_crossref_dois_total.json
+ttl 2592000
+on earth 38.9072 -77.0369
+field message.total-results biosphere_doi_registrations_crossref inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_antigua_and_barbuda.json
+ttl 86400
+on earth 17.12 -61.85
+field 1.0.value biosphere_gdp_growth_antigua_and_barbuda_pct inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/gwis.jrc.ec.europa.eu/atmosphere_gwis_sf6.json
+ttl 2592000
+format universal
+on earth 3.75 8.77 0
+
+url https://github.com/omegaflow/sources/releases/download/opendata.cern.ch/subatomic_physics_cern_open_data.json
+ttl 3600
+on earth 46.233 6.055
+count aggregations.experiment.buckets biosphere_cern_total_record_count inverse-square em 1 360 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/stackexchange.com/technosphere_technosphere_stackoverflow_questions.json
+ttl 604800
+on earth 40.712 -74.006
+path items.0.count technosphere_stackoverflow_questions_total inverse-square em 1 60480 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/celestrak.org/astro_orbit_celestrak_starlink.json
+ttl 86400
+at sun 1
+count lines orbital_starlink_satellites_celestrak inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_namibia.json
+ttl 86400
+on earth -22.56 17.08
+field 1.0.value biosphere_gdp_growth_namibia_pct inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_united_arab_emirates.json
+ttl 2592000
+on earth 41.33 19.82 0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_liberia.json
+ttl 2592000
+on earth 6.30 -10.80
+
+url https://github.com/omegaflow/sources/releases/download/tle.ivanstanojevic.me/astro_orbital_celestrak_starlink.json
+ttl 2592000
+header User-Agent "omegaflow"
+on earth 13.76 100.5 0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_somalia.json
+ttl 3600
+on earth 2.05 45.32
+field 1.0.value biosphere_gdp_growth_somalia_pct inverse-square em 1 360 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_kenya.json
+ttl 2592000
+on earth -1.29 36.82
+field 1.0.value biosphere_gdp_growth_kenya_pct inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_ukraine.json
+ttl 86400
+on earth 50.45 30.52
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_france.json
+ttl 3600
+on earth 48.86 2.35
+field 1.0.value biosphere_gdp_growth_france_pct inverse-square em 1 360 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_turks_and_caicos_islands.json
+ttl 2592000
+on earth 21.46 -71.14
+
+url https://github.com/omegaflow/sources/releases/download/noaadata.apps.nsidc.org/sea_ice_south_{latest}.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/geosphere_noaa_sf6_global.json
+ttl 2592000
+ttl 86400
+format universal
+on earth -75.250 -0.071
+lastrow extent cryosphere_sea_ice_south_mkm2 inverse-square em 1 8640 0.0 0.0
+lastrow average atmosphere_sf6_ppt_global inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/macrostrat.org/geosphere_macrostrat_timescale.json
+ttl 86400
+on earth 43.073 -89.401
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_burundi.json
+ttl 2592000
+on earth -3.36 29.92
+field 1.0.value biosphere_gdp_growth_burundi_pct inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/celestrak.org/astro_orbit_celestrak_cubesats.json
+ttl 2592000
+on earth 23.81 90.41 0
+
+url https://github.com/omegaflow/sources/releases/download/services.swpc.noaa.gov/exosphere_donki_legacy_ips.json
+ttl 2592000
+on earth 54.69 25.28 0
+
+url https://github.com/omegaflow/sources/releases/download/hpiers.obspm.fr/astro_iers_ut1_utc.json
+ttl 86400
+at sun 1.0
+lastline geosphere_ut1_utc_iers
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_madagascar.json
+ttl 3600
+on earth -18.88 47.52
+field 1.0.value biosphere_gdp_growth_madagascar_pct inverse-square em 1 360 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/inspirehep.net/subatomic_particle_physics_papers_total.json
+ttl 2592000
+on earth 46.233 6.056
+field hits.total subatomic_papers_total inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_israel.json
+ttl 60
+on earth 60.02 -111.93 0
+
+url https://github.com/omegaflow/sources/releases/download/gml.noaa.gov/cryosphere_permafrost_barrow.json
+ttl 2592000
+format universal
+on earth 71.29 -156.57
+lastrow 8 cryosphere_permafrost_temp_barrow_c inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_ireland.json
+ttl 86400
+on earth 53.35 -6.26
+field 1.0.value biosphere_gdp_growth_ireland_pct inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_new_caledonia.json
+ttl 2592000
+on earth -22.27 166.46
+field 1.0.value biosphere_gdp_growth_new_caledonia_pct inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_togo.json
+ttl 600
+on earth 6.17 1.33
+field 1.0.value biosphere_gdp_growth_togo_pct inverse-square em 1 60 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_vietnam.json
+ttl 2592000
+on earth 21.02 105.83
+field 1.0.value biosphere_gdp_growth_vietnam_pct inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_peru.json
+ttl 2592000
+on earth -12.05 -77.04
+field 1.0.value biosphere_gdp_growth_peru_pct inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/subatomic_pdg_omega_b_minus_mass.json
+ttl 2592000
+on earth 37.877 -122.247
+
+url https://github.com/omegaflow/sources/releases/download/services.swpc.noaa.gov/exosphere_donki_legacy_mpc.json
+ttl 60
+on earth 40.01 -105.27 0
+
+url https://github.com/omegaflow/sources/releases/download/crossref.org/subatomic_physics_crossref_jwst_high_z_papers.json
+ttl 86400
+on earth 39.328 -76.620
+field message.total-results cosmic_jwst_high_z_discovery_papers patch-levy advective 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/fda.gov/technosphere_openfda_drug_total.json
+ttl 86400
+on earth 38.995 -77.101
+field meta.results.total biosphere_fda_drugs_total inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/macrostrat.org/macrostrat_timescale_{latest}.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_new_caledonia.json
+ttl 86400
+ttl 2592000
+on earth 43.073 -89.401
+path success.data.0.n_intervals geosphere_ics_timescale_units inverse-square em 1 259200 0.0 0.0
+field 1.0.value biosphere_gdp_growth_new_caledonia_pct inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/rest.isric.org/geosphere_soilgrids_soc.json
+ttl 2592000
+on earth 47.3769 8.5417
+field properties.layers.0.depths.0.values.mean geosphere_soil_organic_carbon_x10 inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_st_martin_french_part.json
+ttl 2592000
+on earth 18.07 -63.08
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_nicaragua.json
+ttl 2592000
+on earth 12.15 -86.23
+field 1.0.value biosphere_gdp_growth_nicaragua_pct inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_seychelles.json
+ttl 2592000
+on earth -4.68 55.47
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_poland.json
+ttl 3600
+on earth 52.23 21.01
+field 1.0.value biosphere_gdp_growth_poland_pct inverse-square em 1 360 0.0 0.0
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/subatomic_pdg_eta_mass.json
+ttl 604800
+on earth 37.877 -122.247 0
+
+url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/subatomic_pdg_down_quark_mass.json
+ttl 2592000
+on earth 37.877 -122.247
+
+url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/subatomic_pdg_neutron_mass.json
+ttl 2592000
+on earth 37.877 -122.247
+field pdg_values.0.value subatomic_neutron_mass_mev inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_netherlands.json
+ttl 86400
+on earth 52.37 4.90
+field 1.0.value biosphere_gdp_growth_netherlands_pct inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/eutils.ncbi.nlm.nih.gov/technosphere_nlm_biosample_total.json
+ttl 2592000
+on earth 38.995 -77.101
+field eSearchResult.Count molecular_biosamples_total inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/pdg_lambda_b_mass_{latest}.json
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_morocco.json
+ttl 2592000
+ttl 604800
+on earth 34.02 -6.83
+field pdg_values.0.value subatomic_lambda_b_mass_mev inverse-square em 1 60480 0.0 0.0
+field 1.0.value biosphere_gdp_growth_morocco_pct inverse-square em 1 60480 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/inspirehep.net/subatomic_physics_inspirehep_proton_decay_papers.json
+ttl 2592000
+on earth 36.428 137.310
+field hits.hits.0.metadata.citation_count cosmic_proton_decay_citations inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_thailand.json
+ttl 2592000
+on earth 13.76 100.50
+field 1.0.value biosphere_gdp_growth_thailand_pct inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/export.arxiv.org/technosphere_arxiv_hep_total.json
+ttl 2592000
+on earth 40.712 -74.006
+field feed.totalResults subatomic_arxiv_hep_papers_total inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/subatomic_pdg_w_boson_mass.json
+ttl 86400
+on earth 37.877 -122.247
+field pdg_values.0.value subatomic_w_boson_mass_gev inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_dominican_republic.json
+ttl 604800
+on earth 18.49 -69.93
+field 1.0.value biosphere_gdp_growth_dominican_republic_pct inverse-square em 1 60480 0.0 0.0
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_neracoos_e01_ocean_temp.json
+ttl 86400
+format erddap
+on earth 37.774 -122.419 0
+
+url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/subatomic_pdg_sigma_zero_mass.json
+ttl 2592000
+on earth 37.877 -122.247
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_solomon_islands.json
+ttl 604800
+on earth -9.43 159.95
+field 1.0.value biosphere_gdp_growth_solomon_islands_pct inverse-square em 1 60480 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_tanzania.json
+ttl 2592000
+on earth -6.16 35.75
+field 1.0.value biosphere_gdp_growth_tanzania_pct inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/data.rcsb.org/subatomic_molecular_protein_structures.json
+ttl 600
+on earth 40.500 -74.450
+field rcsb_id biosphere_protein_structure_id inverse-square em 1 60 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/open-meteo.com/atmosphere_co2_current.json
+ttl 86400
+on earth 19.5 -155.6
+path current.carbon_dioxide atmosphere_co2_mauna_loa_ppm inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_costa_rica.json
+ttl 3600
+on earth 9.93 -84.08
+field 1.0.value biosphere_gdp_growth_costa_rica_pct inverse-square em 1 360 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_population.json
+ttl 2592000
+on earth 38.899 -77.043
+field 1.0.value biosphere_worldbank_population_total inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/fda.gov/technosphere_openfda_device_total.json
+ttl 2592000
+on earth 38.995 -77.101
+field meta.results.total biosphere_fda_devices_total inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_united_states.json
+ttl 2592000
+on earth 38.90 -77.03
+
+url https://github.com/omegaflow/sources/releases/download/rest.isric.org/geosphere_soilgrids_ph.json
+ttl 2592000
+on earth 47.3769 8.5417
+field properties.layers.0.depths.0.values.mean geosphere_soil_ph_x10 inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_bosnia_and_herzegovina.json
+ttl 2592000
+on earth 43.85 18.41
+field 1.0.value biosphere_gdp_growth_bosnia_and_herzegovina_pct inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_kazakhstan.json
+ttl 2592000
+on earth 51.16 71.43
+field 1.0.value biosphere_gdp_growth_kazakhstan_pct inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_niger.json
+ttl 2592000
+on earth 13.51 2.11
+field 1.0.value biosphere_gdp_growth_niger_pct inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_nlm_gap_total.json
+ttl 2592000
+on earth 64.15 -21.94 0
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_palau.json
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_paraguay.json
+ttl 86400
+on earth -25.26 -57.59
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_belarus.json
+ttl 86400
+on earth 53.90 27.57
+field 1.0.value biosphere_gdp_growth_belarus_pct gaussian-inverse-square diffusion 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_germany.json
+ttl 2592000
+on earth 4.85 31.58 0
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_ukraine.json
+ttl 604800
+on earth 37.877 -122.247 0
+
+url https://github.com/omegaflow/sources/releases/download/data.neracoos.org/hydrosphere_neracoos_e01_ocean_temp.json
+ttl 3600
+format universal
+on earth 43.714 -69.356
+lastrow temperature hydrosphere_ocean_temp_c inverse-square em 1 360 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/eutils.ncbi.nlm.nih.gov/technosphere_nlm_protein_total.json
+ttl 2592000
+on earth 38.995 -77.101
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_malta.json
+ttl 604800
+on earth 35.90 14.46
+field 1.0.value biosphere_gdp_growth_malta_pct inverse-square em 1 60480 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_new_zealand.json
+ttl 2592000
+on earth -41.29 174.78
+field 1.0.value biosphere_gdp_growth_new_zealand_pct inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_bangladesh.json
+ttl 2592000
+on earth 23.81 90.41
+field 1.0.value biosphere_gdp_growth_bangladesh_pct inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/subatomic_pdg_sigma_minus_mass.json
+ttl 2592000
+on earth 37.877 -122.247
+field pdg_values.0.value subatomic_sigma_minus_mass_mev inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_sierra_leone.json
+ttl 86400
+on earth 8.46 -13.23
+
+url https://github.com/omegaflow/sources/releases/download/gml.noaa.gov/atmosphere_gml_n2o.json
+ttl 2592000
+format universal
+on earth 6.5 2.6 0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_urban_population_pct.json
+ttl 86400
+on earth 38.899 -77.043
+field 1.0.value biosphere_urban_population_pct inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_ghana.json
+ttl 604800
+on earth 5.56 -0.20
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_lesotho.json
+ttl 86400
+on earth -29.31 27.49
+field 1.0.value biosphere_gdp_growth_lesotho_pct inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_estonia.json
+ttl 2592000
+on earth 15.21 145.72 0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_micronesia.json
+ttl 2592000
+on earth 7.42 151.99
+field 1.0.value biosphere_gdp_growth_micronesia_pct inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/usdmdataservices.unl.edu/geosphere_usdm_conus_drought.json
+ttl 2592000
+on earth 40.820 -96.702
+field 0.DSCI hydrosphere_conus_drought_severity_index inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_turkmenistan.json
+ttl 3600
+on earth 37.95 58.38
+field 1.0.value biosphere_gdp_growth_turkmenistan_pct inverse-square em 1 360 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/export.arxiv.org/technosphere_arxiv_math_total.json
+ttl 2592000
+on earth 40.712 -74.006
+field feed.totalResults physics_arxiv_math_papers_total inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_india.json
+ttl 86400
+on earth 28.61 77.21
+
+url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/subatomic_pdg_b_c_plus_mass.json
+ttl 2592000
+on earth 37.877 -122.247
+field pdg_values.0.value subatomic_b_c_plus_mass_mev inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/biosphere_gbif_bird_hotspots.json
+ttl 2592000
+on earth 41.72 44.79 0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_west_bank_and_gaza.json
+ttl 3600
+on earth 31.95 35.23
+field 1.0.value biosphere_gdp_growth_west_bank_and_gaza_pct inverse-square em 1 360 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_gambia.json
+ttl 2592000
+on earth 13.45 -16.63
+field 1.0.value biosphere_gdp_growth_gambia_pct inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/subatomic_pdg_omega_c_2770_mass.json
+ttl 2592000
+on earth 37.877 -122.247
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_switzerland.json
+ttl 2592000
+on earth 47.37 8.54
+
+url https://github.com/omegaflow/sources/releases/download/crystallography.net/molecular_crystallography_xrd_{latest}.json
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_brunei_darussalam.json
+ttl 86400
+ttl 86400
+on earth 4.94 114.94
+field a molecular_lattice_constant_a inverse-square em 1 8640 0.0 0.0
+field 1.0.value biosphere_gdp_growth_brunei_darussalam_pct inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_curacao.json
+ttl 2592000
+on earth 12.11 -68.93
+field 1.0.value biosphere_gdp_growth_curacao_pct inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/exosphere_donki_legacy_flares.json
+ttl 60
+on earth 76.53 -68.74 0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_turkiye.json
+ttl 3600
+on earth 39.93 32.85
+field 1.0.value biosphere_gdp_growth_turkiye_pct inverse-square em 1 360 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/inspirehep.net/subatomic_dark_matter_direct_limits.json
+ttl 2592000
+on earth 42.454 13.576
+field hits.hits.0.metadata.citation_count quantum_dark_matter_limit_citations inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/noaadata.apps.nsidc.org/sea_ice_north_{latest}.json
+url https://github.com/omegaflow/sources/releases/download/ghoapi.azureedge.net/biosphere_who_gho_tuberculosis.json
+ttl 604800
+ttl 86400
+format universal
+on earth 46.234 6.140
+lastrow extent cryosphere_sea_ice_north_mkm2 inverse-square em 1 8640 0.0 0.0
+count value biosphere_tuberculosis_record_count inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/hub.docker.com/technosphere_dockerhub_node_pulls.json
+ttl 2592000
+on earth 37.7749 -122.4194
+
+url https://github.com/omegaflow/sources/releases/download/crossref.org/subatomic_physics_crossref_synthetic_genome_papers.json
+ttl 86400
+on earth 42.373 -71.110
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_british_virgin_islands.json
+ttl 2592000
+on earth 33.51 36.29 0
+
+url https://github.com/omegaflow/sources/releases/download/eutils.ncbi.nlm.nih.gov/technosphere_nlm_taxonomy_total.json
+ttl 86400
+on earth 38.995 -77.101
+
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/magnetosphere_schumann_resonance.json
+ttl 604800
+format universal
+on earth 37.877 -122.247 0
+lastline atmos_schumann_last_val
+
+url https://github.com/omegaflow/sources/releases/download/api.worldbank.org/worldbank_co2_emissions_{latest}.json
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_papua_new_guinea.json
+ttl 2592000
+ttl 2592000
+on earth -9.44 147.18
+field 1.0.value worldbank_co2_emissions_value inverse-square em 1 259200 0.0 0.0
+field 1.0.value biosphere_gdp_growth_papua_new_guinea_pct inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_burkina_faso.json
+ttl 2592000
+on earth 12.37 -1.52
+field 1.0.value biosphere_gdp_growth_burkina_faso_pct inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/dap.oceannetworks.ca/hydrosphere_onc_salinity_burrard.json
+ttl 86400
+format universal
+on earth 49.301 -123.109
+
+url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/subatomic_pdg_charged_pion_mass.json
+ttl 2592000
+on earth 37.877 -122.247
+field pdg_values.0.value subatomic_charged_pion_mass_mev inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/eutils.ncbi.nlm.nih.gov/technosphere_nlm_snp_total.json
+ttl 60
+on earth 38.995 -77.101
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_ecuador.json
+ttl 604800
+on earth -0.23 -78.52
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_romania.json
+ttl 2592000
+on earth 44.43 26.10
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_guam.json
+ttl 2592000
+on earth 13.44 144.79
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_portugal.json
+ttl 600
+on earth 38.72 -9.13
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_eritrea.json
+ttl 2592000
+on earth 13.69 -89.19 0
+
+url https://github.com/omegaflow/sources/releases/download/crossref.org/subatomic_physics_crossref_longevity_age_research.json
+ttl 2592000
+on earth 51.500 -0.126
+field message.total-results biosphere_longevity_research_total inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_n2o.json
+ttl 2592000
+format json
+on earth 37.98 23.73 0
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_celestrak_oneweb.json
+ttl 2592000
+on earth -15.38 28.32 0
+
+url https://github.com/omegaflow/sources/releases/download/ghoapi.azureedge.net/biosphere_who_cholera.json
+ttl 2592000
+on earth 46.234 6.140
+
+url https://github.com/omegaflow/sources/releases/download/data.neracoos.org/hydrosphere_neracoos_i01_waves.json
+ttl 2592000
+format universal
+on earth 44.103 -68.109
+
+url https://github.com/omegaflow/sources/releases/download/eutils.ncbi.nlm.nih.gov/technosphere_nlm_sra_total.json
+ttl 3600
+on earth 38.995 -77.101
+field eSearchResult.Count molecular_sequencing_runs_total inverse-square em 1 360 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_cayman_islands.json
+ttl 86400
+on earth 19.29 -81.37
+field 1.0.value biosphere_gdp_growth_cayman_islands_pct inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_malawi.json
+ttl 86400
+on earth -13.96 33.79
+field 1.0.value biosphere_gdp_growth_malawi_pct inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_nauru.json
+ttl 2592000
+on earth -0.55 166.93
+field 1.0.value biosphere_gdp_growth_nauru_pct inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_belgium.json
+ttl 2592000
+on earth 50.85 4.35
+field 1.0.value biosphere_gdp_growth_belgium_pct inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_sweden.json
+ttl 3600
+on earth 59.33 18.07
+field 1.0.value biosphere_gdp_growth_sweden_pct inverse-square em 1 360 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd-api.jpl.nasa.gov/astro_orbital_cneos_close_approaches.json
+ttl 60
+on earth 55.75 37.57 0
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/subatomic_pdg_xi_cc_plusplus_mass.json
+ttl 2592000
+on earth 39.93 32.85 0
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_rwanda.json
+ttl 2592000
+on earth -8.52 179.19 0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_moldova.json
+ttl 2592000
+on earth 47.01 28.86
+field 1.0.value biosphere_gdp_growth_moldova_pct inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/data.neracoos.org/hydrosphere_neracoos_tide_rockland.json
+ttl 2592000
+format universal
+on earth 44.104 -69.109
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_sint_maarten_dutch_part.json
+ttl 604800
+on earth 18.03 -63.05
+
+url https://github.com/omegaflow/sources/releases/download/hub.docker.com/technosphere_dockerhub_alpine_pulls.json
+ttl 2592000
+on earth 37.7749 -122.4194
+field pull_count biosphere_software_alpine_pulls_dockerhub inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_zimbabwe.json
+ttl 86400
+on earth -17.82 31.03
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_eswatini.json
+ttl 2592000
+on earth -26.32 31.17
+field 1.0.value biosphere_gdp_growth_eswatini_pct inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/pdg_omega_c_zero_mass_{latest}.json
+url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/subatomic_pdg_xi_cc_plus_mass.json
+ttl 2592000
+ttl 604800
+on earth 37.877 -122.247
+field pdg_values.0.value subatomic_omega_c_zero_mass_mev inverse-square em 1 60480 0.0 0.0
+field pdg_values.0.value subatomic_xi_cc_plus_mass_mev inverse-square em 1 60480 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_mauritania.json
+ttl 604800
+on earth 18.09 -15.98
+field 1.0.value biosphere_gdp_growth_mauritania_pct inverse-square em 1 60480 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/github.com/technosphere_github_repos_total.json
+ttl 604800
+on earth 37.774 -122.419
+field total_count biosphere_github_repos_total inverse-square em 1 60480 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/epoch.ai/epoch_ai_compute_trends_{latest}.json
+url https://github.com/omegaflow/sources/releases/download/celestrak.org/astro_orbit_celestrak_debris_analyst.json
+ttl 2592000
+ttl 86400
+format universal
+on earth 37.774 -122.419
+lastrow Training_compute_FLOP biosphere_ai_training_flops_frontier inverse-square em 1 8640 0.0 0.0
+count lines orbital_debris_tracked_celestrak inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_puerto_rico.json
+ttl 2592000
+on earth 18.47 -66.11
+
+url https://github.com/omegaflow/sources/releases/download/gracedb.ligo.org/subatomic_physics_ligo_gracedb_events.json
+ttl 604800
+on earth 37.877 -122.247 0
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/arxiv_cs_total.json
+ttl 2592000
+on earth -6.21 106.85 0
+
+url https://github.com/omegaflow/sources/releases/download/opendata.ecdc.europa.eu/biosphere_ecdc_monkeypox.json
+ttl 2592000
+on earth 59.365 18.016
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/orbital_cneos_close_approaches.json
+ttl 86400
+at sun 1.0
+field count cneos_close_approach_count inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_panama.json
+ttl 604800
+on earth 8.98 -79.52
+field 1.0.value biosphere_gdp_growth_panama_pct inverse-square em 1 60480 0.0 0.0
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_nlm_assembly_total.json
+ttl 2592000
+on earth 49.19 -2.11 0
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_kuwait.json
+ttl 604800
+on earth 37.877 -122.247 0
+
+url https://github.com/omegaflow/sources/releases/download/openalex.org/biosphere_semantic_scholar_papers.json
+ttl 2592000
+on earth 47.6062 -122.3321
+field meta.count biosphere_semantic_scholar_papers_total inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_kiribati.json
+ttl 86400
+on earth 1.33 172.97
+field 1.0.value biosphere_gdp_growth_kiribati_pct inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_czechia.json
+ttl 604800
+on earth 50.08 14.44
+field 1.0.value biosphere_gdp_growth_czechia_pct inverse-square em 1 60480 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/github.com/technosphere_github_users_total.json
+ttl 2592000
+on earth 37.774 -122.419
+field total_count biosphere_github_users_total inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/atmosphere_methane.json
+ttl 2592000
+format json
+on earth 4.94 114.94 0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_barbados.json
+ttl 604800
+on earth 13.10 -59.62
+field 1.0.value biosphere_gdp_growth_barbados_pct inverse-square gravity 1 60480 0.0 0.0
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/subatomic_pdg_up_quark_mass.json
+ttl 2592000
+on earth 10.69 -61.52 0
+
+url https://github.com/omegaflow/sources/releases/download/musicbrainz.org/technosphere_musicbrainz_recordings_total.json
+ttl 2592000
+on earth 51.507 -0.127
+field recordings.0.id biosphere_music_recordings_total inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/pdg_b_zero_mass_{latest}.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_north_macedonia.json
+ttl 2592000
+ttl 604800
+on earth 37.877 -122.247
+field pdg_values.0.value subatomic_b_zero_mass_mev inverse-square em 1 60480 0.0 0.0
+field 1.0.value biosphere_gdp_growth_north_macedonia_pct inverse-square em 1 60480 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_sri_lanka.json
+ttl 2592000
+on earth 6.93 79.86
+field 1.0.value biosphere_gdp_growth_sri_lanka_pct inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/celestrak.org/astro_orbit_celestrak_engineering_sats.json
+ttl 2592000
+on earth 45.81 15.98 0
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/hydrosphere_neracoos_a01_waves.json
+ttl 2592000
+format erddap
+on earth 47.01 28.86 0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_slovenia.json
+ttl 3600
+on earth 46.06 14.51
+field 1.0.value biosphere_gdp_growth_slovenia_pct gaussian-inverse-square acoustic 1 360 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/services.swpc.noaa.gov/magnetosphere_aurora_forecast.json
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_slovak_republic.json
+ttl 3600
+on earth 48.15 17.11
+field 1.0.value biosphere_gdp_growth_slovak_republic_pct inverse-square em 1 360 0.0 0.0
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_nauru.json
+ttl 2592000
+on earth 36.81 10.18 0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_zambia.json
+ttl 2592000
+on earth -15.38 28.32
+
+url https://github.com/omegaflow/sources/releases/download/inspirehep.net/subatomic_physics_inspirehep_iter_fusion_papers.json
+ttl 2592000
+on earth 43.709 5.777
+field hits.hits.0.metadata.citation_count physics_fusion_research_citations inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_botswana.json
+ttl 2592000
+on earth -24.63 25.90
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_gbif_species_observations_count.json
+ttl 86400
+on earth 0 0 0
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/subatomic_pdg_muon_mass.json
+ttl 60
+on earth 53.32 -60.42 0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_djibouti.json
+ttl 604800
+on earth 11.58 43.15
+field 1.0.value biosphere_gdp_growth_djibouti_pct inverse-square em 1 60480 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/subatomic_pdg_b_plus_mass.json
+ttl 604800
+on earth 37.877 -122.247
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_el_salvador.json
+ttl 86400
+on earth 13.69 -89.19
+field 1.0.value biosphere_gdp_growth_el_salvador_pct inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/crossref.org/subatomic_physics_crossref_dois.json
+ttl 86400
+on earth 42.530 -71.048
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_jamaica.json
+ttl 86400
+on earth 18.01 -76.79
+field 1.0.value biosphere_gdp_growth_jamaica_pct inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_uganda.json
+ttl 604800
+on earth 37.877 -122.247 0
+
+url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/pdg_xi_minus_mass_{latest}.json
+url https://github.com/omegaflow/sources/releases/download/crystallography.net/subatomic_molecular_crystallography_xrd.json
+ttl 2592000
+ttl 604800
+on earth 54.683 25.287
+field pdg_values.0.value subatomic_xi_minus_mass_mev inverse-square em 1 60480 0.0 0.0
+field a molecular_lattice_constant_a inverse-square em 1 60480 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_austria.json
+ttl 2592000
+on earth 48.21 16.37
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_trinidad_and_tobago.json
+ttl 2592000
+on earth 10.69 -61.52
+field 1.0.value biosphere_gdp_growth_trinidad_and_tobago_pct inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_cuba.json
+ttl 604800
+on earth 23.13 -82.38
+
+url https://github.com/omegaflow/sources/releases/download/en.wikipedia.org/technosphere_wikipedia_edits_total.json
+ttl 3600
+on earth 37.774 -122.419
+
+url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/pdg_tau_mass_{latest}.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_celestrak_engineering_sats.json
+ttl 86400
+ttl 604800
+on earth 37.877 -122.247
+field pdg_values.0.value subatomic_tau_mass_mev inverse-square em 1 60480 0.0 0.0
+count lines orbital_engineering_sats_celestrak inverse-square em 1 60480 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/inspirehep.net/subatomic_physics_inspirehep_organoid_papers.json
+ttl 86400
+on earth -37.813 144.963
+field hits.hits.0.metadata.citation_count biosphere_organoid_computing_citations inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_macao_sar.json
+ttl 604800
+on earth 22.20 113.55
+field 1.0.value biosphere_gdp_growth_macao_sar_pct inverse-square em 1 60480 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_israel.json
+ttl 2592000
+on earth 31.78 35.22
+field 1.0.value biosphere_gdp_growth_israel_pct inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_bahamas.json
+ttl 86400
+on earth 25.06 -77.35
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_co2_emissions.json
+ttl 60
+on earth 69.35 88.2 0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_chile.json
+ttl 2592000
+on earth -33.45 -70.67
+field 1.0.value biosphere_gdp_growth_chile_pct inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_libya.json
+ttl 2592000
+on earth 14.93 -23.51 0
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_nlm_bioproject_total.json
+ttl 2592000
+on earth 42.87 74.59 0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_italy.json
+ttl 2592000
+on earth 41.90 12.50
+field 1.0.value biosphere_gdp_growth_italy_pct inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/pdg_pion_mass_{latest}.json
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_comoros.json
+ttl 2592000
+ttl 604800
+on earth -11.72 43.25
+field pdg_values.0.value subatomic_pion_mass_mev inverse-square em 1 60480 0.0 0.0
+field 1.0.value biosphere_gdp_growth_comoros_pct inverse-square em 1 60480 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_pakistan.json
+ttl 2592000
+on earth 33.68 73.05
+field 1.0.value biosphere_gdp_growth_pakistan_pct inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_afghanistan.json
+ttl 2592000
+on earth 33.83 67.71
+field 1.0.value biosphere_gdp_growth_afghanistan_pct inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/crates.io/technosphere_cratesio_crates_total.json
+ttl 604800
+on earth 37.774 -122.419
+field meta.total biosphere_cratesio_crates_total inverse-square em 1 60480 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_mozambique.json
+ttl 86400
+on earth -25.97 32.57
+field 1.0.value biosphere_gdp_growth_mozambique_pct inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/subatomic_pdg_strange_quark_mass.json
+ttl 2592000
+on earth 37.877 -122.247
+
+url https://github.com/omegaflow/sources/releases/download/carbonintensity.org.uk/biosphere_uk_carbon_intensity.json
+ttl 2592000
+on earth 54.0 -2.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_maldives.json
+ttl 86400
+on earth 4.18 73.51
+field 1.0.value biosphere_gdp_growth_maldives_pct patch-levy advective 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/noaadata.apps.nsidc.org/cryosphere_sea_ice_north.json
+ttl 2592000
+format universal
+on earth 40.008 -105.263
+lastrow extent cryosphere_sea_ice_north_mkm2 inverse-square em 1 259200 0.0 0.0
+
+url https://erddap.emodnet-physics.eu/erddap/tabledap/EP_ERD_INT_UWN_NAT.csv?time,TotalSPL,SPL63Hz,SPL125Hz,SPL2kHz,SPL5kHz
+ttl 86400
+format csv
+at sun 1
+lastrow TotalSPL hydrosphere_sound_pressure_db inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_bahrain.json
+ttl 2592000
+on earth 0.39 9.45 0
+
+url https://github.com/omegaflow/sources/releases/download/gbif.org/biosphere_gbif_occurrences_recent_birds.json
+ttl 2592000
+on earth 55.685000 12.571000
+field count biosphere_bird_count inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_mauritius.json
+ttl 600
+on earth -20.35 57.55
+field 1.0.value biosphere_gdp_growth_mauritius_pct inverse-square em 1 60 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/esgf.ceda.ac.uk/geosphere_cci_datasets.json
+ttl 86400
+on earth 51.2802 -0.5231
+path response.numFound climate_esa_cci_datasets inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_australia.json
+ttl 86400
+on earth -35.28 149.13
+field 1.0.value biosphere_gdp_growth_australia_pct inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/subatomic_pdg_xi_c_plus_mass.json
+ttl 2592000
+on earth 37.877 -122.247
+field pdg_values.0.value subatomic_xi_c_plus_mass_mev inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/clinicaltrials.gov/biosphere_crispr_clinical_trials_recruiting.json
+ttl 60
+on earth 37.872 -122.258
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_eritrea.json
+ttl 2592000
+on earth 15.33 38.93
+field 1.0.value biosphere_gdp_growth_eritrea_pct inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_albania.json
+ttl 86400
+at sun 1
+field 1.0.value biosphere_gdp_growth_albania_pct inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/pdg_strange_quark_mass_{latest}.json
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_rwanda.json
+ttl 2592000
+ttl 604800
+on earth -1.95 30.06
+field pdg_values.0.value subatomic_strange_quark_mass_mev inverse-square em 1 60480 0.0 0.0
+field 1.0.value biosphere_gdp_growth_rwanda_pct inverse-square em 1 60480 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/services.nvd.nist.gov/technosphere_nvd_cve_count.json
+ttl 2592000
+on earth 38.9072 -77.0369
+field totalResults biosphere_cyber_vulnerability_count_nvd inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/obis.org/biosphere_obis_species.json
+ttl 86400
+on earth 47.3769 8.5417
+field total biosphere_ocean_occurrences_50km inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_iran.json
+ttl 2592000
+on earth 35.69 51.39
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_st_lucia.json
+ttl 2592000
+on earth 13.91 -60.98
+field 1.0.value biosphere_gdp_growth_st_lucia_pct inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/exosphere_donki_legacy_sep.json
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_albania.json
+ttl 604800
+on earth 41.33 19.82
+field 1.0.value biosphere_gdp_growth_albania_pct inverse-square em 1 60480 0.0 0.0
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_urban_population_pct.json
+ttl 86400
+on earth 40.712 -74.006 0
+
+url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/subatomic_pdg_xi_c_prime_plus_mass.json
+ttl 2592000
+on earth 37.877 -122.247
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_haiti.json
+ttl 604800
+on earth 18.59 -72.31
+field 1.0.value biosphere_gdp_growth_haiti_pct inverse-square em 1 60480 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_benin.json
+ttl 2592000
+on earth 6.50 2.60
+field 1.0.value biosphere_gdp_growth_benin_pct inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_angola.json
+ttl 2592000
+on earth -8.84 13.23
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_bolivia.json
+ttl 2592000
+on earth -16.50 -68.15
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_united_arab_emirates.json
+ttl 2592000
+on earth 24.45 54.38
+field 1.0.value biosphere_gdp_growth_united_arab_emirates_pct inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/subatomic_pdg_xi_minus_mass.json
+ttl 2592000
+on earth 37.95 58.38 0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_sao_tome_and_principe.json
+ttl 2592000
+on earth 0.33 6.73
+
+url https://github.com/omegaflow/sources/releases/download/eutils.ncbi.nlm.nih.gov/technosphere_nlm_gene_total.json
+ttl 86400
+on earth 38.995 -77.101
+
+url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/subatomic_pdg_top_quark_mass.json
+ttl 86400
+on earth 37.877 -122.247
+field pdg_values.0.value subatomic_top_quark_mass_gev inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_vanuatu.json
+ttl 60
+on earth -17.73 168.32
+
+url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/pdg_kaon_plus_mass_{latest}.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_iceland.json
+ttl 2592000
+ttl 604800
+on earth 37.877 -122.247
+field pdg_values.0.value subatomic_kaon_plus_mass_mev inverse-square em 1 60480 0.0 0.0
+field 1.0.value biosphere_gdp_growth_iceland_pct inverse-square em 1 60480 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/data.neracoos.org/hydrosphere_neracoos_e01_met_temp.json
+ttl 2592000
+format universal
+on earth 43.714 -69.356
+lastrow air_temperature hydrosphere_buoy_air_temp_c inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_bulgaria.json
+ttl 604800
+on earth 42.70 23.32
+field 1.0.value biosphere_gdp_growth_bulgaria_pct inverse-square em 1 60480 0.0 0.0
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_barbados.json
+ttl 86400
+on earth 0 0 0
+
+url https://github.com/omegaflow/sources/releases/download/en.wikipedia.org/geosphere_wikipedia_geopages.json
+ttl 2592000
+on earth 47.3769 8.5417
+count query.geosearch biosphere_geopages_nearby inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/exoplanetarchive.ipac.caltech.edu/astro_exoplanet_confirmed_total.json
+ttl 2592000
+on earth 42.365 -71.105
+lastline exosphere_exoplanets_confirmed_total
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_virgin_islands_u_s.json
+ttl 86400
+at sun 1.0
+field 1.0.value biosphere_gdp_growth_virgin_islands_u_s_pct patch-levy advective 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/imis.bfs.de/technosphere_bfs_odl_count.json
+ttl 86400
+on earth 51.5 10.5
+
+url https://github.com/omegaflow/sources/releases/download/services.swpc.noaa.gov/exosphere_donki_legacy_hss.json
+ttl 86400
+on earth 0 0 0
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_ethiopia.json
+ttl 3600
+on earth 9.03 38.74
+field 1.0.value biosphere_gdp_growth_ethiopia_pct inverse-square em 1 360 0.0 0.0
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/biosphere_worldbank_gdp_growth_latvia.json
+ttl 2592000
+on earth 12.05 -61.75 0
+
+url https://github.com/omegaflow/sources/releases/download/pdgapi.lbl.gov/pdg_b_plus_mass_{latest}.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/technosphere_nlm_mesh_total.json
+ttl 86400
+ttl 604800
+on earth 37.877 -122.247
+field pdg_values.0.value subatomic_b_plus_mass_mev inverse-square em 1 60480 0.0 0.0
+field eSearchResult.Count biosphere_mesh_terms_total inverse-square em 1 60480 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/crossref.org/biosphere_crossref_members_total.json
+ttl 604800
+on earth 38.9072 -77.0369
+
+url https://github.com/omegaflow/sources/releases/download/worldbank.org/biosphere_worldbank_gdp_growth_libya.json
+ttl 86400
+on earth 32.89 13.19
+field 1.0.value biosphere_gdp_growth_libya_pct inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/inspirehep.net/subatomic_physics_inspirehep_vacuum_metastability_papers.json
+ttl 2592000
+on earth 46.233 6.055
+field hits.hits.0.metadata.citation_count physics_vacuum_metastability_citations inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_8635750.json
+ttl 300
+on earth 37.9961 -76.4644
+first data.v hydrosphere_tide_height_m_lewisetta inverse-square gravity 1 30 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_1770000.json
+ttl 300
+on earth -14.28 -170.69
+first data.v hydrosphere_tide_height_m_pago_pago_american_samoa inverse-square gravity 1 30 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9454050.json
+ttl 86400
+on earth 60.5583 -145.7530
+first data.v hydrosphere_tide_height_m_cordova inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9457292.json
+ttl 600
+on earth 57.7317 -152.5120
+first data.v hydrosphere_tide_height_m_kodiak_island inverse-square em 1 60 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9455500.json
+ttl 300
+on earth 59.4405 -151.7199
+first data.v hydrosphere_tide_height_m_seldovia inverse-square gravity 1 30 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_8518962.json
+ttl 86400
+on earth 42.0139 -73.9392
+first data.v hydrosphere_tide_height_m_turkey_point_hudson_river_nerr erfc seismic-surface 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/gdacs.org/geosphere_gdacs_disasters_total.json
+ttl 300
+on earth 38.9072 -77.0369
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/mirror_pb2002_boundaries.json
+ttl 3600
+on earth 0 0 0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9461380.json
+ttl 3600
+on earth 51.8606 -176.6376
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9459881.json
+ttl 300
+on earth 55.0599 -162.3261
+first data.v hydrosphere_tide_height_m_king_cove inverse-square gravity 1 30 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_8654467.json
+ttl 86400
+on earth 35.2086 -75.7042
+first data.v hydrosphere_tide_height_m_uscg_station_hatteras inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_8661070.json
+ttl 300
+on earth 33.6550 -78.9180
+first data.v hydrosphere_tide_height_m_springmaid_pier inverse-square gravity 1 30 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_8413320.json
+ttl 300
+on earth 44.3922 -68.2043
+first data.v hydrosphere_tide_height_m_bar_harbor inverse-square gravity 1 30 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9450460.json
+ttl 86400
+on earth 55.3319 -131.6261
+first data.v hydrosphere_tide_height_m_ketchikan inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_8658120.json
+ttl 86400
+on earth 34.2267 -77.9533
+first data.v hydrosphere_tide_height_m_wilmington inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_1615680.json
+ttl 300
+on earth 20.8949 -156.4690
+first data.v hydrosphere_tide_height_m_kahului_kahului_harbor inverse-square gravity 1 30 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/gist.githubusercontent.com/astro_mars_landers.json
+ttl 300
+at mars 1
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9087044.json
+ttl 604800
+on earth 41.7297 -87.5383
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/astro_orbital_ceres_vectors.json
+ttl 3600
+on earth 34.201 -118.171
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["amenity"="pharmacy"](around:2000,{lat},{lon});out%20count;
+ttl 86400
+at sun 1
+deep total anthroposphere_pharmacies_2km inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/noaadata.apps.nsidc.org/cryosphere_nsidc_sea_ice_north.json
+ttl 2592000
+format universal
+on earth 40.008 -105.263
+last line cryosphere_sea_ice_extent_north_raw inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/earthquake.usgs.gov/geosphere_usgs_earthquakes_m6_historical.json
+ttl 3600
+on earth 0 0 0
+geojson mag 0.0 0 geosphere_earthquake_mag 360 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/gcn.nasa.gov/subatomic_physics_gcn_icecube_circulars.json
+ttl 604800
+header User-Agent "omegaflow"
+on earth -90.0 0.0 2835
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9454050.json
+ttl 300
+at sun 1.0
+first data.v hydrosphere_tide_height_m_cordova inverse-square em 1 30 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/astro_orbital_jupiter_mass.json
+ttl 300
+at sun 1
+regex \(kg\).\W*([0-9.]+) orbital_jupiter_mass_x10_24_kg inverse-square gravity 1 30 0.0 0.0
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/magnetosphere_noaa_swpc_electron_flux.json
+ttl 86400
+at sun 1.5
+last flux radiation_electron_flux_goes inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9075065.json
+ttl 600
+on earth 45.0630 -83.4286
+first data.v hydrosphere_tide_height_m_alpena inverse-square em 1 60 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9452400.json
+ttl 300
+on earth 59.4508 -135.3280
+first data.v hydrosphere_tide_height_m_skagway_taiya_inlet inverse-square gravity 1 30 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/lithosphere_pb2002_boundaries.json
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_8418150.json
+ttl 86400
+ttl 2592000
+format universal
+on earth 43.6581 -70.2442
+first data.v hydrosphere_tide_height_m_portland inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/lithosphere_pb2002_plates.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9087044.json
+ttl 300
+ttl 2592000
+format universal
+at sun 1.0
+first data.v hydrosphere_tide_height_m_calumet_harbor inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/gdacs.org/geosphere_gdacs_disasters.json
+ttl 86400
+on earth 38.9072 -77.0369
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9759938.json
+ttl 3600
+on earth 18.0893 -67.9382
+first data.v hydrosphere_tide_height_m_mona_island inverse-square em 1 360 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ec.europa.eu/biosphere_eurostat_population_eu.json
+ttl 604800
+on earth 50.8503 4.3517
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9416841.json
+ttl 86400
+on earth 38.9146 -123.7111
+first data.v hydrosphere_tide_height_m_arena_cove gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9410660.json
+ttl 300
+on earth 33.720 -118.270
+first data.v hydrosphere_tide_height_m_los_angeles inverse-square gravity 1 30 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/gdacs.org/geosphere_reliefweb_active_humanitarian_disasters.json
+ttl 300
+on earth 38.9072 -77.0369
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9444900.json
+ttl 300
+on earth 48.1112 -122.7597
+first data.v hydrosphere_tide_height_m_port_townsend inverse-square gravity 1 30 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9435380.json
+ttl 300
+on earth 44.6254 -124.0449
+first data.v hydrosphere_tide_height_m_south_beach inverse-square gravity 1 30 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_1611400.json
+ttl 300
+on earth 21.9544 -159.3561
+first data.v hydrosphere_tide_height_m_nawiliwili inverse-square gravity 1 30 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_8764044.json
+ttl 300
+on earth 29.6675 -91.2376
+first data.v hydrosphere_tide_height_m_berwick_atchafalaya_river inverse-square gravity 1 30 0.0 0.0
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/magnetosphere_kp_index.json
+ttl 300
+at sun 1.0
+last kp_index magnetosphere_kp_index inverse-square em 1 30 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["highway"="bus_stop"](around:1000,{lat},{lon});out%20count;
+ttl 300
+at sun 1
+deep total technosphere_bus_stops_1km inverse-square gravity 1 30 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_1820000.json
+ttl 86400
+on earth 8.7317 167.7361
+first data.v hydrosphere_tide_height_m_kwajalein_marshall_islands inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8665530.json
+ttl 86400
+at sun 1.0
+first data.v hydrosphere_tide_height_m_charleston inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/gml.noaa.gov/atmosphere_co2_historical.json
+ttl 300
+on earth 19.5 -155.6
+regex 2000\s+1\s+\d+\.\d+\s+([0-9.]+) atmosphere_co2_jan_2000_ppm inverse-square gravity 1 30 0.0 0.0
+regex 2020\s+1\s+\d+\.\d+\s+([0-9.]+) atmosphere_co2_jan_2020_ppm inverse-square gravity 1 30 0.0 0.0
+regex 2025\s+1\s+\d+\.\d+\s+([0-9.]+) atmosphere_co2_jan_2025_ppm inverse-square gravity 1 30 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9087057.json
+ttl 604800
+on earth 43.0020 -87.8876
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_8447435.json
+ttl 300
+on earth 41.6885 -69.9511
+first data.v hydrosphere_tide_height_m_chatham inverse-square gravity 1 30 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/metoffice.gov.uk/atmosphere_hadcrut5_temp.json
+ttl 3600
+format universal
+on earth 50.727 -3.476
+last line atmosphere_hadcrut5_temp_anomaly_raw inverse-square em 1 360 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_8727520.json
+ttl 604800
+on earth 29.1350 -83.0320
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9411340.json
+ttl 86400
+on earth 34.4046 -119.6925
+first data.v hydrosphere_tide_height_m_santa_barbara erfc seismic-surface 1 8640 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[date:"2024-01-01T00:00:00Z"][out:json][timeout:25];way["building"](around:1000,{lat},{lon});out%20count;
+ttl 300
+at sun 1.0
+deep ways technosphere_buildings_2024_1km inverse-square gravity 1 30 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_8728690.json
+ttl 2592000
+on earth 29.7244 -84.9805
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/exosphere_kp_index.json
+ttl 300
+at sun 1.0
+last estimated_kp exosphere_kp_estimated inverse-square gravity 1 30 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9461710.json
+ttl 3600
+on earth 52.2319 -174.1725
+first data.v hydrosphere_tide_height_m_atka inverse-square em 1 360 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9462620.json
+ttl 300
+on earth 53.8792 -166.5403
+first data.v hydrosphere_tide_height_m_unalaska inverse-square gravity 1 30 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9087068.json
+ttl 300
+on earth 44.4639 -87.5010
+first data.v hydrosphere_tide_height_m_kewaunee_lake_michigan inverse-square gravity 1 30 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9431647.json
+ttl 604800
+on earth 42.7390 -124.4980
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_8575512.json
+ttl 2592000
+on earth 38.9839 -76.4800
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9491094.json
+ttl 300
+on earth 67.5758 -164.0644
+first data.v hydrosphere_tide_height_m_red_dog_dock inverse-square gravity 1 30 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9751364.json
+ttl 2592000
+on earth 17.7477 -64.6984
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["shop"="greengrocer"];out%20count;
+ttl 3600
+header User-Agent "omegaflow"
+at sun 1.0
+deep total anthroposphere_greengrocers_1km inverse-square em 1 360 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_1619910.json
+ttl 604800
+on earth 28.2117 -177.3600
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/mass_uranus.json
+ttl 3600
+at sun 1
+regex \(kg\).\W*([0-9.]+) orbital_uranus_mass_x10_24_kg inverse-square em 1 360 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_8311030.json
+ttl 604800
+on earth 44.7028 -75.4944
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9412110.json
+ttl 604800
+on earth 35.1689 -120.7542
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_8772985.json
+ttl 86400
+on earth 28.7716 -95.6168
+first data.v hydrosphere_tide_height_m_sargent erfc seismic-surface 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/noaadata.apps.nsidc.org/cryosphere_nsidc_sea_ice_south.json
+ttl 86400
+format universal
+on earth -75.250 -0.071
+last line cryosphere_sea_ice_extent_south_raw inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/energy-charts.info/biosphere_energy_charts_renewable.json
+ttl 3600
+on earth 50.0 10.0
+last data.1.data biosphere_renewable_share_pct erfc seismic-surface 1 360 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="pub"];out%20count;
+ttl 300
+header User-Agent "omegaflow"
+at sun 1
+deep total anthroposphere_pubs_1km inverse-square em 1 30 0.0 0.0
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9063079.json
+ttl 2592000
+at sun 1.0
+first data.v hydrosphere_tide_height_m_marblehead inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9419750.json
+ttl 86400
+on earth 41.7456 -124.1844
+
+url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/lithosphere_pb2002_orogens.json
+url https://github.com/omegaflow/sources/releases/download/earthquake.usgs.gov/geosphere_usgs_earthquakes_historical.json
+ttl 300
+ttl 2592000
+format universal
+at sun 1.0
+geojson mag 0.0 0 geosphere_earthquake_mag 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_8722670.json
+ttl 3600
+on earth 26.6128 -80.0342
+
+url https://github.com/omegaflow/sources/releases/download/gdacs.org/hydrosphere_dartmouth_flood_observatory_global.json
+ttl 86400
+on earth 38.9072 -77.0369
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/horizons_callisto.json
+ttl 86400
+at sun 1.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_8775222.json
+ttl 604800
+on earth 27.8461 -97.5207
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_8656483.json
+ttl 86400
+on earth 34.7173 -76.6707
+first data.v hydrosphere_tide_height_m_beaufort_duke_marine_lab inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_2695535.json
+ttl 3600
+on earth 32.3702 -64.6957
+first data.v hydrosphere_tide_height_m_bermuda_biological_station inverse-square em 1 360 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_8729210.json
+ttl 300
+on earth 30.2138 -85.8786
+first data.v hydrosphere_tide_height_m_panama_city_beach inverse-square gravity 1 30 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_8760721.json
+ttl 300
+on earth 29.1793 -89.2588
+first data.v hydrosphere_tide_height_m_pilottown inverse-square gravity 1 30 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/api.energy-charts.info/entsoe_energy_{latest}.json
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/astro_orbital_mercury_mass.json
+ttl 86400
+ttl 3600
+on earth 51.0 10.0
+last price biosphere_electricity_price_eur_mwh inverse-square em 1 360 0.0 0.0
+regex \(kg\).\W*([0-9.]+) orbital_mercury_mass_x10_24_kg inverse-square em 1 360 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9442396.json
+ttl 86400
+on earth 47.9128 -124.6357
+first data.v hydrosphere_tide_height_m_la_push_quillayute_river inverse-square em 1 8640 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:2000,{lat},{lon})["amenity"="bank"];out%20count;
+ttl 2592000
+header User-Agent "omegaflow"
+at sun 1.0
+deep total economic_banks_2km inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_8726384.json
+ttl 86400
+on earth 27.6387 -82.5621
+first data.v hydrosphere_tide_height_m_port_manatee erfc seismic-surface 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_8773037.json
+ttl 300
+on earth 28.4069 -96.7124
+first data.v hydrosphere_tide_height_m_seadrift inverse-square gravity 1 30 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_8665530.json
+ttl 300
+on earth 32.7808 -79.9236
+first data.v hydrosphere_tide_height_m_charleston inverse-square gravity 1 30 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9099018.json
+ttl 604800
+on earth 46.5456 -87.3786
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9468333.json
+ttl 604800
+on earth 63.875 -160.788
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9413450.json
+ttl 300
+on earth 36.6089 -121.8914
+first data.v hydrosphere_tide_height_m_monterey inverse-square gravity 1 30 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_1890000.json
+ttl 86400
+on earth 19.2906 166.6175
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_8670870.json
+ttl 86400
+on earth 32.0347 -80.9030
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9087031.json
+ttl 300
+on earth 42.7733 -86.2128
+first data.v hydrosphere_tide_height_m_holland inverse-square gravity 1 30 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="place_of_worship"];out%20count;
+ttl 3600
+header User-Agent "omegaflow"
+on earth 38.9 -77 0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["natural"="tree"](around:500,{lat},{lon});out%20count;
+ttl 3600
+at sun 1.0
+deep total biosphere_trees_500m inverse-square em 1 360 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ec.europa.eu/biosphere_eurostat_unemployment_eu.json
+ttl 86400
+on earth 50.8503 4.3517
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9497645.json
+ttl 300
+on earth 70.4114 -148.5317
+first data.v hydrosphere_tide_height_m_prudhoe_bay inverse-square gravity 1 30 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9414290.json
+ttl 300
+on earth 37.8063 -122.4659
+first data.v hydrosphere_tide_height_m_san_francisco inverse-square gravity 1 30 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9410170.json
+ttl 604800
+on earth 32.7156 -117.1767
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_8761927.json
+ttl 86400
+on earth 30.0272 -90.1133
+first data.v hydrosphere_tide_height_m_new_canal_station erfc seismic-surface 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/raw.githubusercontent.com/lithosphere_gem_active_faults.json
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9440910.json
+ttl 300
+ttl 2592000
+format universal
+on earth 46.7075 -123.9669
+first data.v hydrosphere_tide_height_m_toke_point inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9075014.json
+ttl 86400
+on earth 43.8464 -82.6431
+first data.v hydrosphere_tide_height_m_harbor_beach inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_8410140.json
+ttl 300
+on earth 44.9046 -66.9829
+first data.v hydrosphere_tide_height_m_eastport inverse-square gravity 1 30 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ec.europa.eu/biosphere_eurostat_gdp_eu.json
+ttl 3600
+on earth 50.8503 4.3517
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_8516945.json
+ttl 604800
+on earth 40.8103 -73.7649
+
+url https://github.com/omegaflow/sources/releases/download/open-meteo.com/geosphere_openmeteo_elevation.json
+ttl 300
+on earth 0.0 0.0
+first elevation geosphere_openmeteo_elevation_m inverse-square gravity 1 30 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9455090.json
+ttl 2592000
+on earth 60.1193 -149.4281
+first data.v hydrosphere_tide_height_m_seward inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_8551762.json
+ttl 300
+on earth 39.5822 -75.5890
+first data.v hydrosphere_tide_height_m_delaware_city inverse-square gravity 1 30 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_8741533.json
+ttl 86400
+on earth 30.3678 -88.5631
+first data.v hydrosphere_tide_height_m_pascagoula_noaa_lab inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/astro_orbital_venus_mass.json
+ttl 3600
+at sun 1.0
+regex \(kg\).\W*([0-9.]+) orbital_venus_mass_x10_24_kg inverse-square em 1 360 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/noaadata.apps.nsidc.org/nsidc_sea_ice_south_{latest}.json
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9099044.json
+ttl 86400
+ttl 86400
+format universal
+on earth 46.874443 -89.324165
+last line cryosphere_sea_ice_extent_south_raw inverse-square em 1 8640 0.0 0.0
+first data.v hydrosphere_tide_height_m_ontonagon inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9452210.json
+ttl 3600
+on earth 58.2988 -134.4106
+first data.v hydrosphere_tide_height_m_juneau inverse-square em 1 360 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9757811.json
+ttl 300
+on earth 18.480528 -66.70236
+first data.v hydrosphere_tide_height_m_arecibo inverse-square gravity 1 30 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[date:"2021-01-01T00:00:00Z"][out:json][timeout:25];way["highway"](around:500,{lat},{lon});out%20count;
+ttl 2592000
+at sun 1.0
+deep ways technosphere_streets_2021_500m inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pegelonline.wsv.de/hydrosphere_pegelonline_de.json
+ttl 86400
+format universal
+on earth 52.622706 10.062164
+last value hydrosphere_water_level_cm inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_1617433.json
+ttl 300
+on earth 20.0366 -155.8294
+first data.v hydrosphere_tide_height_m_kawaihae inverse-square gravity 1 30 0.0 0.0
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/orbit_ganymede.json
+ttl 3600
+at sun 1.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_8679598.json
+ttl 300
+on earth 30.7781 -81.4914
+first data.v hydrosphere_tide_height_m_kings_bay_msf_pier inverse-square gravity 1 30 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/export.arxiv.org/biosphere_arxiv_total_papers.json
+ttl 300
+on earth 42.3601 -71.0589
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/geosphere_earthquakes_m4_decade.json
+ttl 86400
+at sun 1
+geojson mag 0.0 0 geosphere_earthquake_mag 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9455920.json
+ttl 86400
+on earth 61.2375 -149.8904
+first data.v hydrosphere_tide_height_m_anchorage erfc seismic-surface 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9416131.json
+ttl 300
+on earth 38.5622 -121.5463
+first data.v hydrosphere_tide_height_m_port_of_west_sacramento_washin inverse-square gravity 1 30 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_8770613.json
+ttl 86400
+on earth 29.6817 -94.9850
+first data.v hydrosphere_tide_height_m_morgans_point_barbours_cut inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_8723970.json
+ttl 2592000
+on earth 24.7110 -81.1060
+first data.v hydrosphere_tide_height_m_vaca_key_florida_bay inverse-square em 1 259200 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_1612340.json
+ttl 300
+on earth 21.3033 -157.8645
+first data.v hydrosphere_tide_height_m_honolulu inverse-square gravity 1 30 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9052030.json
+ttl 604800
+on earth 43.4642 -76.5118
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_8729840.json
+ttl 300
+on earth 30.4044 -87.2112
+first data.v hydrosphere_tide_height_m_pensacola inverse-square gravity 1 30 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_8570283.json
+ttl 300
+on earth 38.3283 -75.0917
+first data.v hydrosphere_tide_height_m_ocean_city_inlet inverse-square gravity 1 30 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9753216.json
+ttl 300
+on earth 18.335278 -65.63111
+first data.v hydrosphere_tide_height_m_fajardo inverse-square em 1 30 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9418767.json
+ttl 3600
+on earth 40.7669 -124.2173
+first data.v hydrosphere_tide_height_m_north_spit inverse-square em 1 360 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9099064.json
+ttl 300
+on earth 46.7758 -92.0920
+first data.v hydrosphere_tide_height_m_duluth inverse-square gravity 1 30 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9063053.json
+ttl 300
+on earth 41.7597 -81.2811
+first data.v hydrosphere_tide_height_m_fairport inverse-square gravity 1 30 0.0 0.0
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/geosphere_earthquakes_2018_M5.json
+ttl 3600
+at sun 1.0
+geojson mag 0.0 0 geosphere_earthquake_mag 360 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9468756.json
+ttl 86400
+on earth 64.4946 -165.4396
+first data.v hydrosphere_tide_height_m_nome_norton_sound erfc seismic-surface 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9075080.json
+ttl 86400
+on earth 45.7772 -84.7211
+first data.v hydrosphere_tide_height_m_mackinaw_city inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ec.europa.eu/biosphere_eurostat_cpi_eu.json
+ttl 300
+on earth 50.8503 4.3517
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9063038.json
+ttl 86400
+on earth 42.1539 -80.0758
+first data.v hydrosphere_tide_height_m_erie_lake_erie inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_1630000.json
+ttl 3600
+on earth 13.4434 144.6564
+first data.v hydrosphere_tide_height_m_apra_harbor_guam inverse-square em 1 360 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9459450.json
+ttl 300
+on earth 55.3317 -160.5043
+first data.v hydrosphere_tide_height_m_sand_point inverse-square gravity 1 30 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_8725114.json
+ttl 60
+on earth 26.1367 -81.7883
+first data.v hydrosphere_tide_height_m_naples_bay_north inverse-square gravity 1 6 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_8766072.json
+ttl 300
+on earth 29.5517 -92.3052
+first data.v hydrosphere_tide_height_m_freshwater_canal_locks inverse-square gravity 1 30 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/energy-charts.info/biosphere_entsoe_energy.json
+ttl 300
+on earth 51.0 10.0
+last price biosphere_electricity_price_eur_mwh inverse-square gravity 1 30 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["amenity"="car_sharing"];out%20count;
+ttl 86400
+header User-Agent "omegaflow"
+at sun 0.7
+deep total technosphere_car_sharing_count inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/noaadata.apps.nsidc.org/nsidc_sea_ice_north_{latest}.json
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_9099090.json
+ttl 604800
+ttl 86400
+format universal
+on earth 40.008 -105.263
+last line cryosphere_sea_ice_extent_north_raw inverse-square em 1 8640 0.0 0.0
+first data.v hydrosphere_tide_height_m_grand_marais_lake_superior inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_8534720.json
+ttl 604800
+on earth 39.3567 -74.4180
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9063079.json
+ttl 300
+on earth 41.5436 -82.7314
+first data.v hydrosphere_tide_height_m_marblehead inverse-square gravity 1 30 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_8632200.json
+ttl 60
+on earth 37.1652 -75.9884
+first data.v hydrosphere_tide_height_m_kiptopeke inverse-square gravity 1 6 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9014070.json
+ttl 300
+on earth 42.6211 -82.5267
+first data.v hydrosphere_tide_height_m_algonac inverse-square gravity 1 30 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_8651370.json
+ttl 300
+on earth 36.1833 -75.7467
+first data.v hydrosphere_tide_height_m_duck inverse-square gravity 1 30 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_8777812.json
+ttl 300
+on earth 26.8012 -97.4706
+first data.v hydrosphere_tide_height_m_rincon_del_san_jose gaussian-inverse-square seismic-body 1 30 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9457804.json
+ttl 86400
+on earth 56.8974 -154.2480
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9437540.json
+ttl 300
+on earth 45.5545 -123.9189
+first data.v hydrosphere_tide_height_m_garibaldi inverse-square gravity 1 30 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9462450.json
+ttl 604800
+on earth 52.9406 -168.8713
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["shop"](around:5000,{lat},{lon});out%20count;
+ttl 3600
+on earth 0 0 0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9099090.json
+ttl 300
+on earth 47.7486 -90.3413
+first data.v hydrosphere_tide_height_m_grand_marais_lake_superior inverse-square gravity 1 30 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/astro_halley_vectors.json
+ttl 300
+on earth 34.201 -118.171
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs-v2/radiation_proton_flux.json
+ttl 86400
+at sun 1
+lastobj energy "40300-73400 keV" flux radiation_proton_flux_40mev
+lastobj energy "83700-98500 keV" flux radiation_proton_flux_80mev
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9452634.json
+ttl 300
+on earth 58.1947 -136.3469
+first data.v hydrosphere_tide_height_m_elfin_cove inverse-square gravity 1 30 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/gdacs.org/geosphere_gdacs_disaster_alerts.json
+ttl 300
+on earth 38.9072 -77.0369
+
+url https://github.com/omegaflow/sources/releases/download/heasarc.gsfc.nasa.gov/astro_tevcat_main.json
+ttl 300
+format universal
+at sun 1.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9451054.json
+ttl 604800
+on earth 56.2467 -134.6470
+first data.v hydrosphere_tide_height_m_port_alexander inverse-square em 1 60480 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_8461490.json
+ttl 300
+on earth 41.3717 -72.0956
+first data.v hydrosphere_tide_height_m_new_london inverse-square gravity 1 30 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9087023.json
+ttl 300
+on earth 43.9474 -86.4415
+first data.v hydrosphere_tide_height_m_ludington inverse-square gravity 1 30 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_8767816.json
+ttl 300
+on earth 30.2236 -93.2217
+first data.v hydrosphere_tide_height_m_lake_charles inverse-square gravity 1 30 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_8443970.json
+ttl 300
+on earth 42.3539 -71.0503
+first data.v hydrosphere_tide_height_m_boston inverse-square gravity 1 30 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9455760.json
+ttl 300
+on earth 60.6833 -151.3980
+first data.v hydrosphere_tide_height_m_nikiski erfc seismic-surface 1 30 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/services.swpc.noaa.gov/exosphere_interstellar_object_tracking.json
+ttl 3600
+format universal
+on earth 0 0 0
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_1617433.json
+ttl 3600
+at sun 1
+first data.v hydrosphere_tide_height_m_kawaihae inverse-square gravity 1 360 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9464212.json
+ttl 86400
+on earth 57.1253 -170.2852
+first data.v hydrosphere_tide_height_m_village_cove_st_paul_island inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_8721604.json
+ttl 300
+on earth 28.4158 -80.5931
+first data.v hydrosphere_tide_height_m_trident_pier_port_canaveral inverse-square gravity 1 30 0.0 0.0
+
+url https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8447435.json
+ttl 86400
+at sun 1
+first data.v hydrosphere_tide_height_m_chatham inverse-square em 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/webservices.ingv.it/geosphere_usgs_earthquakes_ingv.json
+ttl 604800
+on earth 40.0 15.0
+geojson mag 0.0 0 geosphere_earthquake_mag 60480 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9453220.json
+ttl 86400
+on earth 59.5485 -139.7334
+first data.v hydrosphere_tide_height_m_yakutat_yakutat_bay inverse-square gravity 1 8640 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tidesandcurrents.noaa.gov/hydrosphere_tide_9052076.json
+ttl 300
+on earth 43.3384 -78.7273
+first data.v hydrosphere_tide_height_m_olcott inverse-square gravity 1 30 0.0 0.0
+
+url https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["man_made"="surveillance"](around:2000,{lat},{lon});out%20count;
+ttl 300
+at sun 1.0
+deep total anthroposphere_surveillance_cameras_2km patch-levy advective 1 30 0.0 0.0
+
