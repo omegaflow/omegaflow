@@ -1,8 +1,11 @@
-# index der zu portierenden Dateien
+# index über phi/ — alle Dateien, klassifiziert
 # Stand 2026-08-15 — Blockzahlen aus dem Dateisystem gezählt, regenerierbar.
-# Zustand: ausstehend | verifiziert | disponiert
-# eine Zeile = eine Datei: <zustand> <blöcke> <pfad relativ zu phi/port/>
+# Zustand: ausstehend | verifiziert | erledigt | redundant | artefakt
+# Eine Zeile = eine Datei oder ein Korpus. Pfade relativ zu phi/.
 
+# ------------------------------------------------------------------
+# ZU PORTIEREN — Queue (destillierte Extrakte, alte Grammatik)
+# ------------------------------------------------------------------
 ausstehend 30 queue/sources_astro_untested_30-astro.φ
 verifiziert 3 queue/sources_earth_untested_stac-sentinel.φ
 ausstehend 16 queue/sources_exotic_untested_neutrino-ligo.φ
@@ -19,7 +22,79 @@ ausstehend 63 queue/sources_potential_pre-cdn_params.φ
 ausstehend 5701 queue/sources_recovery_cdn-merged_60k_lost-blocks.φ
 ausstehend 1924 queue/sources_recovery_pre-cdn_25k_211-domains.φ
 
-# Bestand (nicht mehr zu portieren — read-only, ausgeschöpft):
-#   phi/research/batches/        284 Dateien, alte Grammatik (Quell-Korpora, gesplittet)
-#   phi/research/probe_batches/  242 Dateien, Probe-Artefakte der Läufe
-#   phi/research/agent_output/   111 Dateien, Grind-Ergebnisse + Dispositionen
+# ------------------------------------------------------------------
+# ZU PORTIEREN — Batches (Quell-Korpora, alte Grammatik, NICHT in queue)
+# ------------------------------------------------------------------
+ausstehend 5102 research/batches/main_pre-cdn_28k_252-domains_b001..b052.φ
+ausstehend 1861 research/batches/live_cdn-merged_28k_195-domain_b001..b091.φ
+ausstehend 2164 research/batches/main_canonical-format_27k_2164_b001..b044.φ
+redundant 5144 research/batches/gold_pre-cdn_27k_359-domains_b001..b052.φ
+# redundant = bereits als queue/sources_gold_pre-cdn_27k_359-domains.φ extrahiert
+
+# ------------------------------------------------------------------
+# ZU PORTIEREN — Agent-Drafts (offene Block-Drafts, Disposition ausstehend)
+# ------------------------------------------------------------------
+ausstehend 32 research/agent_output/grind_arcgis_b01..b06.φ
+ausstehend 63 research/agent_output/grind_vires_full.φ
+ausstehend 0 research/agent_output/grind_esa_full.φ
+ausstehend 11 research/agent_output/grind_terrapulse_a.φ
+ausstehend 99 research/agent_output/grind_terrapulse_b.φ
+ausstehend 26 research/agent_output/grind_nasa.φ
+ausstehend 10 research/agent_output/grind_nasa_donki.φ
+ausstehend 11 research/agent_output/grind_host.φ
+ausstehend 3 research/agent_output/grind_rechecks.φ
+ausstehend 7 research/agent_output/grind_planetary.φ
+ausstehend 0 research/agent_output/grind_swarm_diss.φ
+ausstehend 0 research/agent_output/grind_b2find.φ
+ausstehend 0 research/agent_output/grind_domain_coverage.φ
+ausstehend 0 research/agent_output/grind_esa.φ
+ausstehend 0 research/agent_output/grind_arcgis_deep.φ
+
+# ------------------------------------------------------------------
+# RECHERCHE-BESTAND — Katalog-Inventare (Quellen für neue Blöcke)
+# ------------------------------------------------------------------
+ausstehend 0 tap_index.φ
+ausstehend 0 tap_index_ari.φ
+ausstehend 0 tap_index_exoarchive.φ
+ausstehend 0 tap_index_gavo.φ
+ausstehend 0 tap_index_heasarc.φ
+ausstehend 0 tap_index_irsa.φ
+ausstehend 0 research/agent_output/b2find_catalogs_index.φ
+ausstehend 0 research/agent_output/grind_eogateway_index.φ
+ausstehend 0 research/agent_output/grind_vires_catalog.φ
+ausstehend 0 research/agent_output/grind_arcgis_index.φ
+ausstehend 0 research/agent_output/terrapulse_catalog.φ
+ausstehend 0 research/agent_output/esa_geomagnetic_catalog.φ
+ausstehend 0 research/agent_output/archeology_gaps_index.φ
+
+# ------------------------------------------------------------------
+# ERLEDIGT — Dispositionen + Artefakte (read-only, Git trägt sie)
+# ------------------------------------------------------------------
+erledigt 32 research/batches/batch_001..032_gold_14k.φ
+erledigt 12 research/batches/batch_*_accepted.φ
+erledigt 12 research/batches/batch_*_declined.φ
+erledigt 1 research/batches/grind_einbau_2026-08-15_pending.φ
+erledigt 26 research/agent_output/batch_*_accepted.φ
+erledigt 26 research/agent_output/batch_*_declined.φ
+erledigt 6 research/agent_output/gold359_b*_accepted.φ
+erledigt 6 research/agent_output/gold359_b*_declined.φ
+erledigt 15 research/agent_output/gold_home_*_accepted.φ
+erledigt 1 research/agent_output/aa_gate_verify_2026-08-15_accepted.φ
+erledigt 242 research/probe_batches/*.φ
+artefakt 1 research/agent_output/gold_converted.φ
+artefakt 2 research/agent_output/staging_verified.φ
+artefakt 6 research/agent_output/*.txt
+artefakt 2 port/stage/staging_verified.φ
+artefakt 1 port/stage/staging_empty.txt
+artefakt 1 port/stage/earth_stac_converted.φ
+
+# ------------------------------------------------------------------
+# REGISTER + INFRA (nicht zu portieren)
+# ------------------------------------------------------------------
+register sources.φ
+register dead_sources.φ
+register sources_index.φ
+infra port/ledger.φ
+infra port/prompt.φ
+infra port/index.φ
+infra research/agent_prompt.φ
