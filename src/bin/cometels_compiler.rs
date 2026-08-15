@@ -3,7 +3,7 @@
 // upload via --ci-mode (tag ssd.jpl.nasa.gov, asset cometels_flat.json).
 
 use omegaflow::cdn::upload_asset;
-use omegaflow::inflate::inflate;
+use omegaflow::inflate::gunzip;
 use omegaflow::kepler::{elements_to_icrs_state, AU_M, GM_SUN_M3_S2};
 use std::collections::HashMap;
 use std::io::Write;
@@ -184,34 +184,6 @@ fn get_str(o: &HashMap<String, Json>, key: &str) -> Option<String> {
         Some(Json::Num(v)) => Some(format!("{}", v)),
         _ => None,
     }
-}
-
-fn gunzip(data: &[u8]) -> Option<Vec<u8>> {
-    if data.len() < 10 || data[0] != 0x1f || data[1] != 0x8b {
-        return None;
-    }
-    let flags = data[3];
-    let mut i = 10usize;
-    if flags & 0x04 != 0 {
-        let xlen = u16::from_le_bytes([data[i], data[i + 1]]) as usize;
-        i += 2 + xlen;
-    }
-    if flags & 0x08 != 0 {
-        while data.get(i).copied() != Some(0) {
-            i += 1;
-        }
-        i += 1;
-    }
-    if flags & 0x10 != 0 {
-        while data.get(i).copied() != Some(0) {
-            i += 1;
-        }
-        i += 1;
-    }
-    if flags & 0x02 != 0 {
-        i += 2;
-    }
-    inflate(&data[i..])
 }
 
 struct CometRow {

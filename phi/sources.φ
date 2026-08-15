@@ -415,6 +415,36 @@ dist Dist
 dist_scale 3.085677581e22
 field HIflux alfalfa_hi_flux gaussian-inverse-square em Jy_km/s 604800 0.0 0.0
 
+# ── McGill-Magnetar-Katalog (em cmap; Sexagesimal-Kompilat, Dist kpc) ──
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/magnetar_flat.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+dist dist
+dist_scale 3.085677581e19
+field flux magnetar_flux inverse-square em erg/cm2/s 604800 0.0 0.0
+
+# ── TeVCat2 γ-Quellenkatalog (em cmap; Sexagesimal-Kompilat, Dist kpc wenn gemessen) ──
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/tevcat_flat.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+dist dist
+dist_scale 3.085677581e19
+field flux tevcat_flux inverse-square em Crab 604800 0.0 0.0
+
+# ── Tycho-2 + Hipparcos-Plx Stern-Katalog (K04) — Stern-Hash-Kanal ──
+# 114 478 Sterne mit plx > 0 manifestieren; 2,3 Mio ohne Parallaxe sind absent
+# (0 honored). X-flagged Records (Position in Supplements) folgen später.
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/tycho2_stars.bin
+format catalog_tycho
+at sun
+ttl 604800
+
 # ── Live API: USGS Earthquakes (seismic-surface) ──
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson
 ttl 60

@@ -106,18 +106,28 @@ ttl 604800, field H em mag). Horizons-Beweis 1P/Halley: Δ3,3″/Δ1,2″/
 Δ0,0018 au bei 35 au — Kepler-vs.-n-body-Drift, ehrliche Katalog-Physik.
 dist_scale entriegelt zugleich Magnetar (kpc) + ALFALFA (Mpc). ALFALFA lebt
 (2026-08-15: format csv + csv_to_json-Arm im Extract-Kern, Block in sources.φ,
-RAdeg_HI/Decdeg_HI dezimal, HIflux Jy·km/s, Test Mpc→m). Magnetar wartet:
-RA/Decl liegen sexagesimal vor („01 00 43.14") — Sexagesimal-Konversion fehlt
-im Parser (teilt den Gap mit TeVCat; ein Compiler wie cometels_compiler kann
-beide konvertieren). Das CDN-Asset cometels_flat.json entsteht beim ersten
-CI-Lauf (GH_TOKEN lokal absent) — bis dahin manifestiert der Block 0 (0 honored,
+RAdeg_HI/Decdeg_HI dezimal, HIflux Jy·km/s, Test Mpc→m). Das CDN-Asset
+cometels_flat.json entsteht beim ersten CI-Lauf (GH_TOKEN lokal
+absent) — bis dahin manifestiert der Block 0 (0 honored,
 kein live-Fallback auf die .gz-Quelle möglich).
 ```
 
 **K04** Tycho-2-Katalog (em)
 ```
-tycho2r.cat / tycho2v.cat (je 88 MB): 2,5 Mio. Stern-Punktquellen im ICRS
-(Position, Parallaxe, Helligkeit) — die „Galaxie" als echte Katalog-Messung.
+GESCHLOSSEN (2026-08-15): src/bin/tycho2_compiler.rs — VizieR I/259 tyc2.dat
+(20 Teile, 2 430 450 Records) + suppl_1 (H-flagged, 17 588) + suppl_2
+(T-flagged, 1 146; X-flagged-Main-Records ohne Position bleiben absent) mit
+Hipparcos-Join I/239 hip_main.dat (Plx + Johnson-V für Suppl-Zeilen; Suppl-
+Positionen J1991.25 → J2000 propagiert). 118 637 Sterne mit plx > 0 ins Bin
+(36-B-Stride), 2 330 545 ohne Parallaxe 0 honored. Runtime: format
+catalog_tycho + StarHash (Enclosure-Lemma, statisch auf Load-Epoch-Positionen,
+vmax aus pm·d datenabgeleitet ×Φ, span-guard wie DASTCOM), Emission
+10^(-0.4·mag) em, τ = ttl, extent 0 (Pixel-Scale-Softening). Test
+build+query. Vega-Beweis: RA Δ0,0009″, Dec Δ0,01″, plx 128,93 vs. 130,23 mas,
+dist 7,8 vs. 7,68 pc — ehrliche Katalog-Physik (Tycho-1-Reduktion). CI-Schritt
+in kernel_flatten.yml. CDN-Asset tycho2_stars.bin entsteht beim ersten CI-Lauf.
+Verbleibend: X-flagged-Positionen via Tycho-1 (I/196) und der Gaia-Merge
+(K04b, ~2 Mio. Sterne mit DR3-Plx) — tap_compiler-Territorium.
 ```
 
 **K06** EOP (erst nach K01–K05)
@@ -411,7 +421,7 @@ Binary-PCK-Pakets oben).
   · ResonanceOne `resonanceone.app/api/now` — em (Schumann); global — Frame at earth,
     Felder schumann_frequency_hz/schumann_index/kp_index/solar_flare_class
   · TeVCat2 `tevcat2.tevcat.org/api/sources` — em cmap; Array, ra/dec Sexagesimal-
-    Strings, glat/glon als Float (galaktisch) — Umrechnung nötig
+    Strings, glat/glon als Float (galaktisch) — GESCHLOSSEN (Sexagesimal-Kompilat)
   · DSN `eyes.nasa.gov/dsn/data/dsn.json?t={unix}` — em; dishes{}.az/el/ws/sigs
     (Signalstärke); Positionen = statische DSN-Standortkoordinaten
   · SO2 Vulkanemission ArcGIS `services7.arcgis.com/WSiUmUhlFx4CtMBB/.../SO2datanew/
@@ -419,7 +429,8 @@ Binary-PCK-Pakets oben).
   · Schildkröten-Tracks ArcGIS `services6.arcgis.com/2DGR1sZBUvcPcd8Z/.../
     C_mydas_SSM/...f=geojson` — biotic; lat/lon/date/turtleid
   · Magnetar-Tabelle `www.physics.mcgill.ca/~pulsar/magnetar/TabO1.csv` — em cmap;
-    CSV mit Period/Pdot/B/Flux/Dist — RA/Dec-Spalten bestätigen
+    CSV mit Period/Pdot/B/Flux/Dist — GESCHLOSSEN (Sexagesimal-Kompilat,
+    RA „01 00 43.14"/Decl „-72 11 33.8" bestätigt + konvertiert)
   · ALFALFA HI-Katalog `egg.astro.cornell.edu/alfalfa/data/a40files/a40.datafile1.csv`
     — em cmap; CSV — RA/Dec/HI-Fluss-Spalten bestätigen
   · MPC cometels `minorplanetcenter.net/Extended_Files/cometels.json.gz` — em;

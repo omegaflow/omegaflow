@@ -9958,6 +9958,33 @@ field H comet_h_mag gaussian-inverse-square em mag 604800 0.0 0.0\n";
     }
 
     #[test]
+    fn test_star_hash_build_and_query() {
+        let mut bin = Vec::new();
+        bin.extend_from_slice(&0f64.to_le_bytes());
+        bin.extend_from_slice(&0f64.to_le_bytes());
+        bin.extend_from_slice(&0f32.to_le_bytes());
+        bin.extend_from_slice(&0f32.to_le_bytes());
+        bin.extend_from_slice(&100f32.to_le_bytes());
+        bin.extend_from_slice(&0f32.to_le_bytes());
+        bin.extend_from_slice(&1f32.to_le_bytes());
+        let hash = build_star_hash(&bin, 0.0, 1.0, 604800);
+        assert_eq!(hash.records.len(), 1);
+        let d = 10.0 * PARSEC_M;
+        let mut records: Vec<OscRecord> = Vec::new();
+        query_star_hash(&hash, [0.0, 0.0, 0.0], 0.0, d * 1.001, 0.0, &mut records);
+        assert_eq!(records.len(), 1);
+        assert!((records[0].0 - d).abs() / d < 1e-9);
+        assert_eq!(records[0].3, 1.0);
+        assert_eq!(records[0].6, 604800.0);
+        let mut outside: Vec<OscRecord> = Vec::new();
+        query_star_hash(&hash, [2.0 * d, 0.0, 0.0], 0.0, d * 0.5, 0.0, &mut outside);
+        assert!(outside.is_empty());
+        let mut short = [0u8; 4];
+        short.copy_from_slice(&0f32.to_le_bytes());
+        assert!(parse_star_record(&short).is_none());
+    }
+
+    #[test]
     fn test_render_headers_secret_substitution() {
         let mut env = HashMap::new();
         env.insert("PURPLEAIR_KEY".to_string(), "secret123".to_string());
