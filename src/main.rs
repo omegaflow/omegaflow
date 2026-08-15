@@ -3359,7 +3359,7 @@ impl Radiator for StderrRadiator {
             }
         }
         let line = format!(
-            "omegaflow v{} | φ v5 | body: {} sources, {} oscillators | api: {} sources, {} oscillators | device: {} oscillators",
+            "omegaflow v{} | φ v6 | body: {} sources, {} oscillators | api: {} sources, {} oscillators | device: {} oscillators",
             env!("CARGO_PKG_VERSION"),
             body_src.len(),
             body_osc,
@@ -5995,7 +5995,7 @@ fn parse_stations_xml(body: &str) -> Vec<StationEntry> {
             Some(&obs[start..end])
         };
         let code = match tag("Code") {
-            Some(c) => c.trim().to_string(),
+            Some(c) => c.trim().to_lowercase(),
             None => continue,
         };
         let lat = match tag("Latitude").and_then(|s| s.trim().parse::<f64>().ok()) {
