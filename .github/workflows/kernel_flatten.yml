@@ -119,6 +119,26 @@ jobs:
             --skip-null dist \
             --out exoplanets.json \
             --ci-mode
+      - name: Compile BZCAT5 blazar catalog and upload to CDN
+        run: |
+          cargo run --release --bin tap_compiler -- \
+            --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
+            --table "VII/274/bzcat5" \
+            --columns 'name:Name;ra:RAJ2000;dec:DEJ2000;z:z;flux:FR;typ:Class' \
+            --skip-null z \
+            --out bzcat5.json \
+            --ci-mode
+      - name: Compile Swift GRB catalog and upload to CDN
+        run: |
+          cargo run --release --bin tap_compiler -- \
+            --root https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync \
+            --table swiftgrb \
+            --text \
+            --cols-unquoted \
+            --columns 'name:name;ra:ra;dec:dec;z:redshift;fluence:bat_fluence;t90:bat_t90' \
+            --skip-null z \
+            --out swiftgrb.json \
+            --ci-mode
       - name: Compile Gaia DR3 + Bailer-Jones star catalog and upload to CDN
         run: |
           curl -sSfL --retry 3 --max-time 1200 -o kernels/hip_main.dat \

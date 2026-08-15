@@ -694,10 +694,21 @@ Binary-PCK-Pakets oben).
   Kanal-Spezies — Gaia-DR3-Präzedenz (1,84 Mio statische Sterne, live);
   Planeten-Masse ist das Exo-Analogon des DASTCOM-GM-Gates (gravity).
   HEASARC: tap_schema.tables antwortet
-  0 Zeilen (Sync lebt, Schema leer) — Inventar-Route offen (Xamin-Metadaten
-  separat); MAST: tap-sync 404 (nginx) — MAST bleibt key-needed
-  (dead_sources.φ). Offen: weitere Tabellen-Bulks aus phi/tap_index.φ
-  (39 genutzte VizieR-Tabellen), Gaia-Archiv (Parallel-Session-Grind).
+  0 Zeilen (Sync lebt, Schema leer) — die xamin-Route selbst trägt: FORMAT=
+  csv/json ungestützt, FORMAT=votable liefert BINARY-Streams (kein TABLEDATA),
+  FORMAT=text = Pipe-Tabelle (tap_compiler gewinnt --text + --csv +
+  --votable-td dafür). xamin-Schema-Befunde: hmxbcat ohne dist-Spalte
+  (historische Query veraltet), fermilpsc ohne redshift-Spalte; swiftgrb
+  trägt z: 872 Records (COUNT bestätigt = Vollkatalog), 338 mit redshift —
+  Beweis GRB 090423: z 8,23 + ra/dec exakt, BAT-Fluence 6,25e-7 erg/cm².
+  MAST: tap-sync 404 (nginx) — MAST bleibt key-needed (dead_sources.φ).
+  VizieR-Bulk-Welle (2026-08-15): BZCAT5 (VII/274/bzcat5, 3561 Zeilen,
+  skip-null z) — Beweis 5BZQ J1229+0203 = 3C 273: z 0,158 (Archiv rundet,
+  Literatur 0,15834), FR 54992 mJy (55 Jy — exakt die 1,4-GHz-Flussdichte),
+  ra/dec exakt. CI-Schritte für bzcat5.json + swiftgrb.json in
+  kernel_flatten.yml, sources.φ-Blöcke (z → Hubble, cmap). Offen: weitere
+  Tabellen-Bulks aus phi/tap_index.φ (39 genutzte VizieR-Tabellen, davon
+  BZCAT5 erledigt), Gaia-Archiv (Parallel-Session-Grind).
 - GAVO-Grenze (2026-08-15): dc.g-vo.org/tap inventarisiert → phi/tap_index_gavo.φ
   (271 Tabellen, ~130 Schemata). tap_compiler um \uXXXX-Escapes erweitert
   (GAVO-Deskriptionen). Zahler: gedr3dist.main = Bailer-Jones-Gaia-DR3-

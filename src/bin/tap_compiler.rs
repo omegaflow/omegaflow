@@ -177,7 +177,8 @@ fn tap_query(root: &str, adql: &str) -> Option<String> {
     }
 }
 
-fn tap_query_votable(root: &str, adql: &str) -> Option<String> {
+fn tap_query_votable(root: &str, adql: &str, td: bool) -> Option<String> {
+    let format = if td { "votable/td" } else { "votable" };
     let out = Command::new("curl")
         .arg("-sSf")
         .arg("-G")
@@ -186,7 +187,7 @@ fn tap_query_votable(root: &str, adql: &str) -> Option<String> {
         .arg("--data-urlencode")
         .arg("LANG=ADQL")
         .arg("--data-urlencode")
-        .arg("FORMAT=votable/td")
+        .arg(format!("FORMAT={}", format))
         .arg("--data-urlencode")
         .arg(format!("QUERY={}", adql))
         .arg(root)
@@ -202,6 +203,142 @@ fn tap_query_votable(root: &str, adql: &str) -> Option<String> {
         );
         None
     }
+}
+
+fn tap_query_csv(root: &str, adql: &str) -> Option<String> {
+    let out = Command::new("curl")
+        .arg("-sSf")
+        .arg("-m")
+        .arg("300")
+        .arg("-G")
+        .arg("--data-urlencode")
+        .arg("REQUEST=doQuery")
+        .arg("--data-urlencode")
+        .arg("LANG=ADQL")
+        .arg("--data-urlencode")
+        .arg("FORMAT=csv")
+        .arg("--data-urlencode")
+        .arg(format!("QUERY={}", adql))
+        .arg(root)
+        .output()
+        .ok()?;
+    if out.status.success() {
+        String::from_utf8(out.stdout).ok()
+    } else {
+        eprintln!(
+            "tap_query_csv http {}: {}",
+            out.status,
+            String::from_utf8_lossy(&out.stderr).trim()
+        );
+        None
+    }
+}
+
+fn csv_line(line: &str) -> Option<Vec<String>> {
+    let mut out = Vec::new();
+    let mut cur = String::new();
+    let mut in_q = false;
+    let mut chars = line.chars().peekable();
+    while let Some(c) = chars.next() {
+        if in_q {
+            if c == '"' {
+                if chars.peek() == Some(&'"') {
+                    chars.next();
+                    cur.push('"');
+                } else {
+                    in_q = false;
+                }
+            } else {
+                cur.push(c);
+            }
+        } else if c == '"' {
+            in_q = true;
+        } else if c == ',' {
+            out.push(std::mem::take(&mut cur));
+        } else if c != '\r' {
+            cur.push(c);
+        }
+    }
+    out.push(cur);
+    Some(out)
+}
+
+fn fetch_csv_rows(root: &str, adql: &str) -> Option<(Vec<String>, Vec<Vec<String>>)> {
+    let body = tap_query_csv(root, adql)?;
+    let mut lines = body.split('\n');
+    let fields = csv_line(lines.next()?)?;
+    let mut rows = Vec::new();
+    for line in lines {
+        if line.trim().is_empty() {
+            continue;
+        }
+        if let Some(cells) = csv_line(line) {
+            rows.push(cells);
+        }
+    }
+    eprintln!("csv: {} fields, {} rows", fields.len(), rows.len());
+    Some((fields, rows))
+}
+
+fn tap_query_text(root: &str, adql: &str) -> Option<String> {
+    let out = Command::new("curl")
+        .arg("-sSf")
+        .arg("-m")
+        .arg("300")
+        .arg("-G")
+        .arg("--data-urlencode")
+        .arg("REQUEST=doQuery")
+        .arg("--data-urlencode")
+        .arg("LANG=ADQL")
+        .arg("--data-urlencode")
+        .arg("FORMAT=text")
+        .arg("--data-urlencode")
+        .arg(format!("QUERY={}", adql))
+        .arg(root)
+        .output()
+        .ok()?;
+    if out.status.success() {
+        String::from_utf8(out.stdout).ok()
+    } else {
+        eprintln!(
+            "tap_query_text http {}: {}",
+            out.status,
+            String::from_utf8_lossy(&out.stderr).trim()
+        );
+        None
+    }
+}
+
+fn fetch_text_rows(root: &str, adql: &str) -> Option<(Vec<String>, Vec<Vec<String>>)> {
+    let body = tap_query_text(root, adql)?;
+    let mut lines = body.split('\n');
+    let fields: Vec<String> = lines
+        .next()?
+        .split('|')
+        .map(|s| s.trim().to_string())
+        .filter(|s| !s.is_empty())
+        .collect();
+    let mut rows = Vec::new();
+    for line in lines {
+        let t = line.trim();
+        if t.is_empty() || t.starts_with("Number of") {
+            continue;
+        }
+        let cells: Vec<String> = t
+            .split('|')
+            .map(|s| {
+                let c = s.trim().to_string();
+                if c == "null" {
+                    String::new()
+                } else {
+                    c
+                }
+            })
+            .collect();
+        rows.push(cells);
+    }
+    eprintln!("text: {} fields, {} rows", fields.len(), rows.len());
+    Some((fields, rows))
 }
 
 fn tap_async(root: &str, adql: &str, poll_secs: u64) -> Option<String> {
@@ -547,6 +684,9 @@ fn main() {
     let mut union_bright: Option<String> = None;
     let mut skip_null: Option<String> = None;
     let mut cols_unquoted = false;
+    let mut votable_td = false;
+    let mut csv_flag = false;
+    let mut text_flag = false;
     let mut i = 1;
     while i < args.len() {
         match args[i].as_str() {
@@ -611,6 +751,9 @@ fn main() {
                 i += 1;
             }
             "--cols-unquoted" => cols_unquoted = true,
+            "--votable-td" => votable_td = true,
+            "--csv" => csv_flag = true,
+            "--text" => text_flag = true,
             "--ci-mode" => ci_mode = true,
             "--probe" => {
                 probe = args.get(i + 1).cloned();
@@ -846,7 +989,7 @@ fn main() {
         if let Some(o) = &order_by {
             q.push_str(&format!(" ORDER BY \"{}\"", o));
         }
-        let Some(body) = tap_query_votable(&root, &q) else {
+        let Some(body) = tap_query_votable(&root, &q, votable_td) else {
             eprintln!("query returned void");
             std::process::exit(1);
         };
@@ -868,7 +1011,14 @@ fn main() {
         if let Some(o) = &order_by {
             q.push_str(&format!(" ORDER BY \"{}\"", o));
         }
-        match fetch_json_rows(&root, &q) {
+        let fetched = if csv_flag {
+            fetch_csv_rows(&root, &q)
+        } else if text_flag {
+            fetch_text_rows(&root, &q)
+        } else {
+            fetch_json_rows(&root, &q)
+        };
+        match fetched {
             Some((names, rows)) => {
                 col_names = names;
                 cells_rows = rows;

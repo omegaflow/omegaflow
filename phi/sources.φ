@@ -184,6 +184,15 @@ lon longitude
 field bright_ti4 biosphere_fire_snpp_brightness_ti4_k gaussian-inverse-square thermal K 3600 0.0 0.0
 field frp biosphere_fire_snpp_radiative_power_mw gaussian-inverse-square thermal MW 3600 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/bzcat5.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+z z
+field flux bzcat5_radio_flux_mjy gaussian-inverse-square em mJy 604800 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/cometels_flat.json
 ttl 604800
 at sun
@@ -615,6 +624,15 @@ dec dec
 dist dist
 dist_scale 3.085677581e19
 field flux magnetar_flux inverse-square em erg/cm2/s 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/swiftgrb.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+z z
+field fluence bat_fluence_erg_cm2 gaussian-inverse-square em erg/cm2 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/tevcat_flat.json
 ttl 604800
