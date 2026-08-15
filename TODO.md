@@ -115,6 +115,11 @@ Komma-Feldern; TeVCat „2.0 kpc"→kpc-Parser). Dev-Beweise: TeVCat Crab
 272,16390°/−20,41107°/8,7 kpc (31/31, 0 Skips) — exakt die Katalogwerte.
 φ-Blöcke magnetar_flat.json + tevcat_flat.json (cmap, dist_scale
 3,085677581e19, field flux em) + CI-Schritt in kernel_flatten.yml.
+Verifikation 2026-08-15 (zweite Session): 5 Lib-Tests grün, Live-Läufe
+360/1 Skip + 31/0 Skips exakt, Crab 83,6329°/+22,0145° und SGR 1806-20
+272,16390°/−20,41107° — TeVCat-Flux-Einheit ist „Crab" (relativer Fluss,
+1 Crab = 2,4e-8 erg/cm²/s bei 1 TeV) — Umrechnung in SI offen, Unit-Token
+benennt was IST.
 Das CDN-Asset cometels_flat.json entsteht beim ersten CI-Lauf (GH_TOKEN lokal
 absent) — bis dahin manifestiert der Block 0 (0 honored,
 kein live-Fallback auf die .gz-Quelle möglich).
