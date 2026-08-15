@@ -962,11 +962,14 @@ Binary-PCK-Pakets oben).
   (8 Monde, kein himalia) statt jup341, nep105 statt nep097. Die sechs
   Aug-11-Assets (titan/tethys/rhea/enceladus/dione/triton) sind Stale-Reste der
   sat441/nep097-Generation. Fix manifestiert: `moon_carriers`-Selektion
-  (jupiter→jup365, saturn→sat441+sat427, neptune→nep097) — exklusiv, keine
+  (jupiter→jup365, saturn→sat441, neptune→nep097) — exklusiv, keine
   numerische Nachrang-Füllung; die Nummer ordnet nicht mehr nach Abdeckung.
   Zweiter Befund im selben Lauf: sat441 (2021) trägt 12 Saturn-Monde, aber
-  NICHT atlas/epimetheus/janus/pandora/prometheus — die kommen aus sat427
-  (2018, 254 MB). himalia (506) läuft über die Horizons-Liste bodies_stable.
+  NICHT atlas/epimetheus/janus/pandora/prometheus — und sat427 (2018) trägt
+  sie auch nicht (verifiziert per CDN-Lauf). Die fünf laufen daher über die
+  Horizons-Liste bodies_stable (610/611/615/616/617), wie himalia (506).
+  Alle 17 Monde liegen seit dem Lauf 31883186409 im CDN (74 ephemeris-Assets
+  gesamt).
 - **Flatten-Speicher-Befund (2026-08-15):** `SpkFile::from_daf` parst alle
   Segment-Payloads upfront — sat441 (661 MB) + jup387xl (1,4 GB) + ura184
   (387 MB) + nep105 (210 MB) ≈ 3,3 GB Dateien → >7 GB Runner-RAM → Run #7
