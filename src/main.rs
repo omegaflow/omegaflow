@@ -7819,6 +7819,120 @@ fn source_name_from_url(url: &str) -> String {
     }
 }
 
+fn probe_one(
+    src: &SourceConfig,
+    now: f64,
+    lsk_ref: &LeapSeconds,
+    void_eph: &HashMap<String, BodyEphemeris>,
+    env: &HashMap<String, String>,
+    fetchone: bool,
+    precise: bool,
+    lat: f64,
+    lon: f64,
+) -> (bool, String) {
+    let url = match render_url(&src.url, 0.0, 0.0, 0.0, now, 0.0, "", void_eph, lsk_ref) {
+        Some(u) => u,
+        None => return (false, "# declined: time absent\n".to_string()),
+    }
+    .replace("{lat}", &format!("{:.6}", lat))
+    .replace("{lon}", &format!("{:.6}", lon));
+    let url = resolve_secret(&url, env);
+    let url = url.replace("ZZ", "Z").replace("  ", " ");
+    let headers = render_headers(&src.headers, env);
+    let raw = if fetchone {
+        fetch_one(&url, None, &headers, src.ttl)
+    } else {
+        fetch_raw_probe(&url, None, &headers)
+    };
+    let parsed = raw.as_ref().and_then(|r| parse_json(r));
+    let auto_ttl = raw.as_ref().and_then(|r| probe_ttl(r));
+    let mut block = String::new();
+    block.push_str(&format!("url {}\n", src.url));
+    let ttl = match auto_ttl {
+        Some(t) => t,
+        None => src.ttl,
+    };
+    block.push_str(&format!("ttl {}\n", ttl));
+    match &src.frame {
+        Frame::Surface {
+            body_name,
+            lat,
+            lon,
+            alt,
+        } => {
+            block.push_str(&format!("on {} {:?} {:?} {:?}\n", body_name, lat, lon, alt));
+        }
+        Frame::Barycenter { body_name, scale } if *scale == 1.0 => {
+            block.push_str(&format!("at {}\n", body_name));
+        }
+        Frame::Barycenter { body_name, scale } => {
+            block.push_str(&format!("at {} {}\n", body_name, scale));
+        }
+        Frame::Manifest => {}
+    }
+    if let Some(p) = parsed {
+        let mut fields = String::new();
+        let mut coords = String::new();
+        let mut map_path: Option<String> = None;
+        walk_json_probe(&p, "", &mut fields, &mut coords, &mut map_path);
+        if map_path.is_none() && !coords.is_empty() {
+            map_path = Some(".".to_string());
+        }
+        let precision_lines = measure_precision(&p);
+        if !precision_lines.is_empty() {
+            block.push_str(&precision_lines);
+        }
+        if let Some(ref mp) = map_path {
+            if !coords.is_empty() {
+                block.push_str(&format!("map {}\n", mp));
+            }
+        }
+        if !coords.is_empty() {
+            block.push_str(&coords);
+        }
+        if !fields.is_empty() {
+            block.push_str(&fields);
+        }
+    } else if let Some(ref r) = raw {
+        if let Some(csv) = probe_csv(r) {
+            block.push_str("format free text\n");
+            block.push_str(&csv);
+        }
+    } else {
+        block.push_str("# fetch returned void\n");
+    }
+    if precise && raw.is_some() {
+        block.push_str(&bruteforce_precision(&url, &src.url, ttl));
+    }
+    let verdict = match (&raw, parse_sources(&block).first()) {
+        (Some(r), Some(candidate)) => match extract(candidate, r, now, lsk_ref) {
+            ExtractResult::Measurements(v) | ExtractResult::WithEphemeris(v, _) => {
+                if v.is_empty() {
+                    Err(diagnose_no_samples(candidate, r))
+                } else {
+                    Ok(v.len())
+                }
+            }
+        },
+        (Some(_), None) => Err("block refused at parse (frame/ttl/field gate)".into()),
+        (None, _) => Err("fetch returned void".into()),
+    };
+    match verdict {
+        Ok(n) => {
+            let mut b = format!("# verified {} samples\n", n);
+            b.push_str(&block);
+            b.push('\n');
+            (true, b)
+        }
+        Err(why) => {
+            let mut b = format!("# declined: {}\n", why);
+            b.push_str(&block);
+            b.push('\n');
+            (false, b)
+        }
+    }
+}
+
 fn probe_mode(
     path: &str,
     precise: bool,
@@ -7840,8 +7954,6 @@ fn probe_mode(
         sources.len(),
         path
     );
-    let mut out = String::new();
-    let mut dead = String::new();
     let mut lsk: Option<LeapSeconds> = None;
     for src in sources.iter().filter(|s| s.format == "kernel_text") {
         if src.body.as_deref() != Some("naif0012") {
@@ -7869,126 +7981,63 @@ fn probe_mode(
         None => None,
     };
     let void_eph: HashMap<String, BodyEphemeris> = HashMap::new();
-    let mut accepted = 0usize;
-    let mut declined = 0usize;
-    for src in &sources {
-        if src.format == "kernel_text" {
-            continue;
-        }
-        let (now, lsk_ref) = match &time_pair {
-            Some((t, l)) => (*t, l),
-            None => {
-                declined += 1;
-                dead.push_str("# declined: time absent\n");
-                continue;
-            }
-        };
-        let url = match render_url(&src.url, 0.0, 0.0, 0.0, now, 0.0, "", &void_eph, lsk_ref) {
-            Some(u) => u,
-            None => {
-                declined += 1;
-                dead.push_str("# declined: time absent\n");
-                continue;
-            }
-        }
-        .replace("{lat}", &format!("{:.6}", lat))
-        .replace("{lon}", &format!("{:.6}", lon));
-        let url = resolve_secret(&url, env);
-        let url = url.replace("ZZ", "Z").replace("  ", " ");
-        let headers = render_headers(&src.headers, env);
-        let raw = if fetchone {
-            fetch_one(&url, None, &headers, src.ttl)
-        } else {
-            fetch_raw_probe(&url, None, &headers)
-        };
-        let parsed = raw.as_ref().and_then(|r| parse_json(r));
-        let auto_ttl = raw.as_ref().and_then(|r| probe_ttl(r));
-        let mut block = String::new();
-        block.push_str(&format!("url {}\n", src.url));
-        let ttl = match auto_ttl {
-            Some(t) => t,
-            None => src.ttl,
-        };
-        block.push_str(&format!("ttl {}\n", ttl));
-        match &src.frame {
-            Frame::Surface {
-                body_name,
-                lat,
-                lon,
-                alt,
-            } => {
-                block.push_str(&format!("on {} {:?} {:?} {:?}\n", body_name, lat, lon, alt));
-            }
-            Frame::Barycenter { body_name, scale } if *scale == 1.0 => {
-                block.push_str(&format!("at {}\n", body_name));
-            }
-            Frame::Barycenter { body_name, scale } => {
-                block.push_str(&format!("at {} {}\n", body_name, scale));
-            }
-            Frame::Manifest => {}
-        }
-        if let Some(p) = parsed {
-            let mut fields = String::new();
-            let mut coords = String::new();
-            let mut map_path: Option<String> = None;
-            walk_json_probe(&p, "", &mut fields, &mut coords, &mut map_path);
-            if map_path.is_none() && !coords.is_empty() {
-                map_path = Some(".".to_string());
-            }
-            let precision_lines = measure_precision(&p);
-            if !precision_lines.is_empty() {
-                block.push_str(&precision_lines);
-            }
-            if let Some(ref mp) = map_path {
-                if !coords.is_empty() {
-                    block.push_str(&format!("map {}\n", mp));
+    let accepted = std::sync::atomic::AtomicUsize::new(0);
+    let declined = std::sync::atomic::AtomicUsize::new(0);
+    let out_lock = std::sync::Mutex::new(String::new());
+    let dead_lock = std::sync::Mutex::new(String::new());
+    let next = std::sync::atomic::AtomicUsize::new(0);
+    let non_kernel: Vec<&SourceConfig> = sources
+        .iter()
+        .filter(|s| s.format != "kernel_text")
+        .collect();
+    match &time_pair {
+        Some((now, lsk_ref)) => {
+            let now = *now;
+            let workers = 8.min(non_kernel.len().max(1));
+            std::thread::scope(|scope| {
+                for _ in 0..workers {
+                    scope.spawn(|| loop {
+                        let i = next.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                        if i >= non_kernel.len() {
+                            break;
+                        }
+                        let (ok, text) = probe_one(
+                            non_kernel[i],
+                            now,
+                            lsk_ref,
+                            &void_eph,
+                            env,
+                            fetchone,
+                            precise,
+                            lat,
+                            lon,
+                        );
+                        if ok {
+                            accepted.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                            out_lock.lock().unwrap().push_str(&text);
+                        } else {
+                            declined.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                            dead_lock.lock().unwrap().push_str(&text);
+                        }
+                        std::thread::sleep(std::time::Duration::from_millis(300));
+                    });
                 }
-            }
-            if !coords.is_empty() {
-                block.push_str(&coords);
-            }
-            if !fields.is_empty() {
-                block.push_str(&fields);
-            }
-        } else if let Some(ref r) = raw {
-            if let Some(csv) = probe_csv(r) {
-                block.push_str("format free text\n");
-                block.push_str(&csv);
-            }
-        } else {
-            block.push_str("# fetch returned void\n");
+            });
         }
-        if precise && raw.is_some() {
-            block.push_str(&bruteforce_precision(&url, &src.url, ttl));
-        }
-        let verdict = match (&raw, parse_sources(&block).first()) {
-            (Some(r), Some(candidate)) => match extract(candidate, r, now, lsk_ref) {
-                ExtractResult::Measurements(v) | ExtractResult::WithEphemeris(v, _) => {
-                    if v.is_empty() {
-                        Err(diagnose_no_samples(candidate, r))
-                    } else {
-                        Ok(v.len())
-                    }
-                }
-            },
-            (Some(_), None) => Err("block refused at parse (frame/ttl/field gate)".into()),
-            (None, _) => Err("fetch returned void".into()),
-        };
-        match verdict {
-            Ok(n) => {
-                accepted += 1;
-                out.push_str(&format!("# verified {} samples\n", n));
-                out.push_str(&block);
-                out.push('\n');
-            }
-            Err(why) => {
-                declined += 1;
-                dead.push_str(&format!("# declined: {}\n", why));
-                dead.push_str(&block);
-                dead.push('\n');
+        None => {
+            for _ in &non_kernel {
+                declined.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                dead_lock
+                    .lock()
+                    .unwrap()
+                    .push_str("# declined: time absent\n");
             }
         }
     }
+    let accepted = accepted.load(std::sync::atomic::Ordering::Relaxed);
+    let declined = declined.load(std::sync::atomic::Ordering::Relaxed);
+    let out = out_lock.into_inner().unwrap();
+    let dead = dead_lock.into_inner().unwrap();
     std::fs::create_dir_all("phi/port").ok();
     std::fs::write("phi/port/probe_survivors.φ", &out).ok();
     std::fs::write("phi/port/probe_void.txt", &dead).ok();
