@@ -23,3 +23,11 @@ server.log
 /tmp/
 /out/
 archeology/
+
+# Probe-Ergebnisse (transiente CI-Artefakte)
+phi/port/probe_live.txt
+phi/port/probe_url_void.txt
+phi/port/probe_all_void.txt
+phi/port/probe_all_survivors.φ
+phi/port/probe_survivors.φ
+phi/port/probe_void.txt

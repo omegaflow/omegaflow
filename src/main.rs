@@ -7874,7 +7874,8 @@ fn probe_one(
         let mut fields = String::new();
         let mut coords = String::new();
         let mut map_path: Option<String> = None;
-        walk_json_probe(&p, "", &mut fields, &mut coords, &mut map_path);
+        let mut budget = 48usize;
+        walk_json_probe(&p, "", &mut fields, &mut coords, &mut map_path, &mut budget);
         if map_path.is_none() && !coords.is_empty() {
             map_path = Some(".".to_string());
         }
@@ -8522,6 +8523,7 @@ fn walk_json_probe(
     out: &mut String,
     coords: &mut String,
     map_path: &mut Option<String>,
+    budget: &mut usize,
 ) {
     match val {
         JsonVal::Obj(map) => {
@@ -8581,7 +8583,7 @@ fn walk_json_probe(
                         out.push_str(&format!("field {} seismic-body {} 3600\n", path, unit));
                     }
                 } else {
-                    walk_json_probe(v, &path, out, coords, map_path);
+                    walk_json_probe(v, &path, out, coords, map_path, budget);
                 }
             }
         }
@@ -8627,13 +8629,20 @@ fn walk_json_probe(
                     } else {
                         prefix.to_string()
                     });
-                    walk_json_probe(first, "", out, coords, map_path);
+                    walk_json_probe(first, "", out, coords, map_path, budget);
                 } else {
-                    walk_json_probe(first, prefix, out, coords, map_path);
+                    walk_json_probe(first, prefix, out, coords, map_path, budget);
                 }
             } else {
                 for (i, v) in arr.iter().enumerate() {
-                    walk_json_probe(v, &format!("{}.{}", prefix, i), out, coords, map_path);
+                    walk_json_probe(
+                        v,
+                        &format!("{}.{}", prefix, i),
+                        out,
+                        coords,
+                        map_path,
+                        budget,
+                    );
                 }
             }
         }
@@ -8645,6 +8654,10 @@ fn walk_json_probe(
             if is_drop_key(key) || is_coord_key(key) {
                 return;
             }
+            if *budget == 0 {
+                return;
+            }
+            *budget -= 1;
             out.push_str(&format!("# {} = {:?}\n", prefix, n));
             let (force, unit, tau) = probe_classify(key);
             if force == "UNCERTAIN" {
@@ -8665,6 +8678,10 @@ fn walk_json_probe(
                 if is_drop_key(key) || is_coord_key(key) {
                     return;
                 }
+                if *budget == 0 {
+                    return;
+                }
+                *budget -= 1;
                 out.push_str(&format!("# {} = {:?} (str)\n", prefix, n));
                 let (force, unit, tau) = probe_classify(key);
                 if force == "UNCERTAIN" {
