@@ -209,7 +209,7 @@ braucht mindestens eine gemessene, physisch gate-konforme Quelle.
 | thermal | live: NOAA-CDO-Fanout (TMAX), AOML-Drifter, GML Barrow, Buoy-WTMP; DASTCOM H/Albedo + Yarkovsky-Listen; GOES-Thermal | K03 (Parameter); Kuration (Zeitreihen) |
 | diffusion | live: PurpleAir, OpenAQ-pm25-Fanout, GML CH4/N2O/SF6, OOI-pCO2; NOAA SWPC, NASA OMNI | Kuration |
 | advective | live: Waterservices-Rivers, OpenSky-Aircraft, Buoy-Wind; DSCOVR/SWPC (Solarwind), NOAA GFS | Kuration |
-| electric | live: Swarm EFI + FAC (IRC/FAC-Ströme) + TCT02-E-Feld (Ehx/y/z mV/m — Grind-Einbau 2026-08-15, electric-E-Feld-Open-End GESCHLOSSEN) + MAGA-LR (em) via VirES-HAPI | GLM-Blitz (NetCDF-Reader fehlt), GIC-Netze (nicht öffentlich) |
+| electric | live: Swarm EFI (Vs) + FAC (IRC/FAC-Ströme) + FAST-MAGA-LR (em, NRT) via VirES-HAPI; TCT02-E-Feld = Archiv-only (Abdeckung endet 2025-12-04, {hour_ago}-Fenster außerhalb → 400 → 0 honored) | GLM-Blitz (NetCDF-Reader fehlt), GIC-Netze (nicht öffentlich), Live-E-Feld-Stärke (kein Feed existiert) |
 
 Device-Sensoren (M05) ergänzen die Kanäle lokal; das Radiatorium (M01/M02) ist die
 Aktuator-Seite. Der Kurations-Pfad ist unten registriert (Curation & Quellen).
@@ -747,6 +747,23 @@ Binary-PCK-Pakets oben).
   geparst — Lautablehnung fehlt.
 - Test-Limit der Curation über 200 Blöcke hinaus erhöhen; 6 Rest-FAILs sind
   Daten-Artefakte (docs/source_curation.md).
+- **Doku-Drift (2026-08-15):** `phi/.secrets.local` trägt NASA_API_KEY/FIRMS_MAP_KEY
+  aktuell NICHT (docs/source_curation.md listet sie als verfügbar). Die
+  DONKI-FLR- und FIRMS-Blöcke manifestieren 0 bis die Keys eingetragen sind.
+- **Probe-Verifikation Grind-Einbau (2026-08-15):** --probe mit LSK auf die
+  Grind-Einbau-Sektion: VirES-HAPI-Syntax (id=/start=/stop= und dataset=/
+  time.min= sind beide gültig — 400er waren time-outside-range der
+  Datensatz-Abdeckungen), IOC-Keys sind Lat/Lon (korrigiert), gracedb-
+  superevents-Struktur bestätigt, AGOS heute leer (count:0), EA-Fanout vom
+  Probe-Design ausgenommen ({station}). Offen: Extract-Verifikation der
+  MSL/MEDA-field-Pfade end-to-end (test_live_sources_extract deckt nur die
+  ersten 200 Blöcke — Limit erhöhen, dann Grind-Einbau einschließt).
+- **VirES-Lag-Befund (2026-08-15):** FAST-Produkte haben ~10 h Lag (stopDate
+  ≈ now−10 h) — die {hour_ago}/{now}-Fenster der bestehenden EFIA/FACATMS-
+  Blöcke liegen außerhalb der Abdeckung (400 → 0 honored), solange der Lag
+  das Fenster überschreitet. Der neue FAST-MAGA-Block nutzt {yesterday}T23
+  →{now} (lag-tolerant). Die bestehenden VirES-Blöcke auf dasselbe
+  Fenster-Muster prüfen.
 - **Laufzeit-Browser (verifiziert 2026-08-14, Desktop GTX 970 / NVIDIA 580):**
   **Firefox = 60 fps stabil** mit der Per-Pixel-Membran (wgpu im Content-Prozess,
   kein Kill-on-Deadline-Watchdog) — der empfohlene Laufzeit-Browser.
@@ -771,6 +788,18 @@ Binary-PCK-Pakets oben).
 
 ### CI Pipeline
 
+- **Healthcheck-Befund + Fix (2026-08-15):** Der Healthcheck lief per
+  `*/5`-Cron + Push-Trigger und fetchtete JEDEN Lauf alle Quellen
+  (cache_fresh-Gate galt nur fürs Mirroring, nicht für research) —
+  21 Runs hingen/stauten, API-Quota starb. Fix manifestiert:
+  (1) ci_mode wendet den TTL-Gate (cache_fresh) auf ALLE festen URLs an
+  und schreibt den Cache auch im Healthcheck-Pfad, (2) Template-URLs
+  (`{lat}` etc.) werden übersprungen und gezählt (presence-gated — der
+  Runtime gehört das, nicht der CI), (3) actions/cache persistiert
+  /tmp/archivar_cache über Runs (Restore+Save), (4) Cron auf `0 */3`
+  (TTL-ausgerichtet statt 5 min), (5) verify-Jobs ohne --release
+  (Build-Minuten). Prinzip: der Healthcheck prüft, ob sich eine Quelle
+  geändert hat (TTL-Ablauf → Fetch), nicht ob eine API gerade antwortet.
 - **Upload-Regel (2026-08-15, verbindlich):** CDN-Uploads laufen ausschließlich
   über die CI (`--ci-mode` in den Compilern, kernel_flatten.yml). Manuelle
   Uploads sind keine Option — Befund: der git-Remote-Token hat weder

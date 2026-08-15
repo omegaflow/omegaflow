@@ -2,7 +2,7 @@ name: Healthcheck
 on:
   workflow_dispatch:
   schedule:
-    - cron: '*/5 * * * *'
+    - cron: '0 */3 * * *'
   push:
     paths:
       - 'src/**'
@@ -18,8 +18,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+    - uses: actions/cache@v4
+      with:
+        path: /tmp/archivar_cache
+        key: archivar-cache-${{ github.run_id }}
+        restore-keys: |
+          archivar-cache-
     - uses: actions-rust-lang/setup-rust-toolchain@v1
-    - run: cargo run --release -- --verify phi
+    - run: cargo run -- --verify phi
+    - uses: actions/cache@v4
+      if: always()
+      with:
+        path: /tmp/archivar_cache
+        key: archivar-cache-${{ github.run_id }}
     - if: failure()
       run: |
         gh issue create --repo omegaflow/omegaflow \
@@ -31,8 +42,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+    - uses: actions/cache@v4
+      with:
+        path: /tmp/archivar_cache
+        key: archivar-cache-${{ github.run_id }}
+        restore-keys: |
+          archivar-cache-
     - uses: actions-rust-lang/setup-rust-toolchain@v1
-    - run: cargo run --release -- --verify phi/research
+    - run: cargo run -- --verify phi/research
+    - uses: actions/cache@v4
+      if: always()
+      with:
+        path: /tmp/archivar_cache
+        key: archivar-cache-${{ github.run_id }}
     - if: failure()
       run: |
         gh issue create --repo omegaflow/omegaflow \

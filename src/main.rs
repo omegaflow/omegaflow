@@ -8798,6 +8798,7 @@ fn ci_mode(dir: &str) -> i32 {
     let mut dead = 0usize;
     let mut mirrored = 0u32;
     let mut fresh = 0u32;
+    let mut template_skipped = 0u32;
     for src in &sources {
         if src.url.starts_with("https://github.com/omegaflow/sources")
             || src.format == "ephemeris_binary"
@@ -8807,17 +8808,22 @@ fn ci_mode(dir: &str) -> i32 {
         {
             continue;
         }
-        let is_fixed = !src.url.contains('{');
-        if is_fixed && mirror_enabled {
-            if let Some(netloc) = extract_netloc(&src.url) {
-                let name = source_name_from_url(&src.url);
-                if !name.is_empty() {
-                    let cache_path = format!("/tmp/archivar_cache/{}/{}.json", netloc, name);
-                    if cache_fresh(&cache_path, src.ttl) {
-                        fresh += 1;
-                        continue;
-                    }
-                }
+        if src.url.contains('{') {
+            template_skipped += 1;
+            continue;
+        }
+        let netloc = extract_netloc(&src.url);
+        let name = source_name_from_url(&src.url);
+        let cache_path = match (&netloc, &name) {
+            (Some(nl), nm) if !nm.is_empty() => {
+                Some(format!("/tmp/archivar_cache/{}/{}.json", nl, nm))
+            }
+            _ => None,
+        };
+        if let Some(cp) = &cache_path {
+            if cache_fresh(cp, src.ttl) {
+                fresh += 1;
+                continue;
             }
         }
         let raw = match fetch_raw(&src.url, None, &[], src.ttl) {
@@ -8831,13 +8837,16 @@ fn ci_mode(dir: &str) -> i32 {
         if parse_json(&raw).is_some() {
             reachable += 1;
             eprintln!("ci-mode: {} JSON ok", src.url);
-            if is_fixed && mirror_enabled {
+            if let Some(cp) = &cache_path {
+                if let Some(parent) = std::path::Path::new(cp).parent() {
+                    let _ = std::fs::create_dir_all(parent);
+                }
+                let _ = std::fs::write(cp, &raw);
+            }
+            if mirror_enabled {
                 if let Some(netloc) = extract_netloc(&src.url) {
                     let name = source_name_from_url(&src.url);
                     let tmp_path = format!("/tmp/archivar_cache/{}/{}.json", netloc, name);
-                    if let Some(parent) = std::path::Path::new(&tmp_path).parent() {
-                        let _ = std::fs::create_dir_all(parent);
-                    }
                     if std::fs::write(&tmp_path, &raw).is_ok() {
                         if let Ok(_gh) = std::env::var("GH_TOKEN") {
                             let status = Command::new("gh")
@@ -8864,8 +8873,8 @@ fn ci_mode(dir: &str) -> i32 {
         }
     }
     eprintln!(
-        "ci-mode: {}/{} reachable, {} dead, {} mirrored to CDN, {} fresh (local TTL), mirror={}",
-        reachable, total, dead, mirrored, fresh, mirror_enabled
+        "ci-mode: {}/{} reachable, {} dead, {} mirrored to CDN, {} fresh (local TTL), {} template-skipped, mirror={}",
+        reachable, total, dead, mirrored, fresh, template_skipped, mirror_enabled
     );
     if dead == 0 {
         0
