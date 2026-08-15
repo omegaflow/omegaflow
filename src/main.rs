@@ -7695,7 +7695,11 @@ fn anchor(
         .anchor_body()
         .and_then(|name| eph.get(name))
         .and_then(|e| e.props.as_ref());
-    let extent = kernel_extent(sensor.kernel, body_props, sensor.tau);
+    let extent = if sensor.kernel == 0 || sensor.kernel == 6 {
+        body_props.map(|p| p.radius_m).unwrap_or(0.0)
+    } else {
+        kernel_extent(sensor.kernel, body_props, sensor.tau)
+    };
     if extent.is_nan() {
         return None;
     }
