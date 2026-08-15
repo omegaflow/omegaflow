@@ -1,0 +1,88 @@
+# ── ESA / Geomagnetik-Backlog (Linkliste 2026-08-15) ──
+# candidate = Endpoint physikalisch relevant; decline = Modell/Software/Referenz.
+# ESA-Login vorhanden (EO User Portal, Johannes Tyroller) — Login-geschützte
+# Services als key-needed: Credentials in .secrets.local (ESA_USER/ESA_PASS
+# fehlen noch), Token-Flow je Service.
+
+# ── Swarm / VirES (HAPI, keyless verifiziert) ──
+integrated https://vires.services/hapi/data?id=SW_FAST_EFIA_LP_1B
+# title: Swarm EFI Langmuir-Probe — Vs (V, electric), N_ion (diffusion), T_elec (thermal)
+
+candidate https://vires.services/hapi/data?id=SW_FAST_FACATMS_2F
+# title: Swarm Field-Aligned Currents A — electric (Ströme), NRT
+
+candidate https://vires.services/hapi/data?id=SW_EXPT_EFIA_TCT02
+# title: Swarm EFI TCT (Thermal Ion Imager, 2 Hz) — E-Feld-Stärke selbst (electric)
+
+candidate https://vires.services/hapi/data?id=SW_OPER_MAGA_LR_1B
+# title: Swarm A Magnetfeld 1 Hz — em (B-Feld-Vektor, operational)
+
+candidate https://vires.services/hapi/data?id=SW_FAST_AOBAFAC_2F
+# title: Swarm FAC Auroral Oval Boundary — electric
+
+candidate https://vires.services/hapi/data?id=SW_FAST_IBIATMS_2F
+# title: Swarm Ionospheric Bubble Index — electric/em
+
+# ── INTERMAGNET / Observatorien ──
+integrated https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NGK/best-avail/PT1M/xyzf
+# title: BGS HAPI Niemegk Totalfeld (em, nT)
+
+candidate https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id={station}/best-avail/PT1M/xyzf
+# title: INTERMAGNET-Fanout über alle Observatorien (stations via HAPI catalog) — em
+
+candidate https://wdc.bgs.ac.uk/
+# title: WDC BGS — World Data Centre Geomagnetism (Archiv + HAPI-Index)
+
+# ── ESA EO-Portal Services (Login vorhanden) ──
+key-needed https://aeolus.esa.int
+# title: VirES for Aeolus — Wind-Lidar (advective: atmosphärische Windprofile)
+
+key-needed https://smos-diss.eo.esa.int
+# title: SMOS Online Dissemination — Bodenfeuchte + Ozean-Salinität (diffusion)
+
+key-needed https://meris-ds.eo.esa.int
+# title: Envisat MERIS Dissemination — Ozeanfarbe (em; historisch)
+
+key-needed https://esar-ds.eo.esa.int
+# title: ERS SAR Dissemination — Radar-Bilder (em; Raster → parser-def prüfen)
+
+key-needed https://e4ftl01.cr.usgs.gov
+# title: Landsat Dissemination — Multispektral (em; Raster)
+
+key-needed https://earth.esa.int/eogateway
+# title: ESA EO Gateway — Metakatalog der Missionen (Registry)
+
+# ── Magnetische Modelle (decline: Modelle, keine Messungen) ──
+decline https://www.ncei.noaa.gov/products/international-geomagnetic-reference-field
+# title: IGRF — Modell-Koeffizienten
+
+decline https://spacecenter.dk/files/magnetic-models/CHAOS-8/
+# title: CHAOS-8 — geomagnetisches Feldmodell
+
+decline https://spacecenter.dk/files/magnetic-models/LCS-1/
+# title: LCS-1 — Lithosphären-Feldmodell
+
+decline https://geomag.us/models/MF7.html
+# title: MF7 — Mantel-Leitfähigkeitsmodell
+
+decline https://www.space.dtu.dk/english/research/projects/project-descriptions/geomagnetic-virtual-observatories
+# title: DTU GVO — Virtuelle Observatorien (abgeleitetes Produkt)
+
+# ── Referenz/Software (decline) ──
+decline https://viresclient.readthedocs.io/
+# title: VirES Python-Client (Software)
+
+decline https://pyamps.readthedocs.io/
+# title: pyAMPS (Software)
+
+decline https://en.wikipedia.org/wiki/Disturbance_storm_time_index
+# title: Dst-Referenz (Wikipedia)
+
+decline https://en.wikipedia.org/wiki/K-index
+# title: Kp-Referenz (Wikipedia)
+
+# ── Offene Schritte ──
+# 1. ESA_USER/ESA_PASS in .secrets.local eintragen (Login vorhanden)
+# 2. FAC/TCT-Blöcke (VirES, keyless) als nächste electric-Quellen
+# 3. INTERMAGNET-Fanout (stations via /hapi/catalog) als globales em-Feld
+# 4. Aeolus/SMOS nach Login-Verifikation (Token-Flow je Service)

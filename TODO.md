@@ -432,6 +432,13 @@ Binary-PCK-Pakets oben).
   NMDB-Neutronen, INTERMAGNET-HAPI, GWOSC-Gravitationswellen, IceCube, SILSO,
   WSPR/HamQSL, GLM-Blitz-NetCDF), 366 Decline (USDA/EPA/JRC-Inventare).
   Block-Erstellung + Verifikation offen; GLM braucht NetCDF-Reader (electric).
+- **ESA/Geomagnetik-Backlog** (Linkliste 2026-08-15, ESA-Login vorhanden):
+  `phi/research/agent_output/esa_geomagnetic_catalog.φ` — integriert: Swarm EFI
+  (electric/diffusion/thermal) + BGS-NGK (em). Kandidaten: Swarm FAC/TCT-E-Feld
+  (keyless, VirES), INTERMAGNET-Fanout (em, global), VirES-Aeolus (advective,
+  login), SMOS (diffusion, login), MERIS/SAR/Landsat (Raster, login).
+  Modelle (IGRF/CHAOS/LCS/MF7/DTU-GVO) decline. ESA_USER/ESA_PASS-Platzhalter
+  in .secrets.local angelegt.
 - TNS-Transienten (em, celestisch) live seit 2026-08-14: Vollkatalog
   `tns_public_objects.csv.zip` (`format csv_zip`, std-only Inflate in
   src/inflate.rs, z-Distanz via Redshift, abs_mag_from). ~20k
