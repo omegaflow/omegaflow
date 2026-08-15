@@ -9078,6 +9078,90 @@ fn ci_mode(dir: &str) -> i32 {
     }
 }
 
+fn url_probe_mode(path: &str, env: &HashMap<String, String>, fetchone: bool) -> i32 {
+    let content = match std::fs::read_to_string(path) {
+        Ok(c) => c,
+        Err(e) => {
+            eprintln!("--urls: read {}: {}", path, e);
+            return 1;
+        }
+    };
+    let urls: Vec<String> = content
+        .lines()
+        .map(|l| {
+            let t = l.trim();
+            let u = if t.starts_with("candidate ") {
+                t.trim_start_matches("candidate ")
+            } else {
+                t
+            };
+            u.split_whitespace().next().unwrap_or("").to_string()
+        })
+        .filter(|u| u.starts_with("http"))
+        .collect();
+    let total = urls.len();
+    let live = std::sync::atomic::AtomicUsize::new(0);
+    let void = std::sync::atomic::AtomicUsize::new(0);
+    let live_lock = std::sync::Mutex::new(String::new());
+    let void_lock = std::sync::Mutex::new(String::new());
+    let next = std::sync::atomic::AtomicUsize::new(0);
+    let workers = 8.min(total.max(1));
+    std::thread::scope(|scope| {
+        for _ in 0..workers {
+            scope.spawn(|| loop {
+                let i = next.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                if i >= total {
+                    break;
+                }
+                let url = resolve_secret(&urls[i], env);
+                let raw = if fetchone {
+                    fetch_one(&url, None, &[], 3600)
+                } else {
+                    fetch_raw_probe(&url, None, &[])
+                };
+                match raw {
+                    Some(body) => {
+                        let kind = if parse_json(&body).is_some() {
+                            "json"
+                        } else if body.trim_start().starts_with('<') {
+                            "html"
+                        } else {
+                            "text"
+                        };
+                        live.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                        live_lock
+                            .lock()
+                            .unwrap()
+                            .push_str(&format!("live {} | {}\n", kind, urls[i]));
+                    }
+                    None => {
+                        void.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                        void_lock
+                            .lock()
+                            .unwrap()
+                            .push_str(&format!("void {}\n", urls[i]));
+                    }
+                }
+                std::thread::sleep(std::time::Duration::from_millis(300));
+            });
+        }
+    });
+    let live = live.load(std::sync::atomic::Ordering::Relaxed);
+    let void = void.load(std::sync::atomic::Ordering::Relaxed);
+    std::fs::create_dir_all("phi/port").ok();
+    std::fs::write("phi/port/probe_live.txt", live_lock.into_inner().unwrap()).ok();
+    std::fs::write(
+        "phi/port/probe_url_void.txt",
+        void_lock.into_inner().unwrap(),
+    )
+    .ok();
+    eprintln!(
+        "--urls: {} geprüft, {} live, {} void → phi/port/probe_live.txt + probe_url_void.txt",
+        total, live, void
+    );
+    0
+}
+
 fn main() {
     let env = Arc::new(load_env());
     {
@@ -9108,6 +9192,17 @@ fn main() {
                 }
             };
             std::process::exit(port_mode(input, output));
+        }
+        if args.len() > 1 && args[1] == "--urls" {
+            let path = match args.get(2) {
+                Some(s) => s.as_str(),
+                None => {
+                    eprintln!("--urls: file argument absent");
+                    std::process::exit(1);
+                }
+            };
+            let fetchone = args.iter().any(|a| a == "--fetchone");
+            std::process::exit(url_probe_mode(path, &env, fetchone));
         }
         if args.len() > 1 && args[1] == "--probe" {
             let path = match args.get(2) {
