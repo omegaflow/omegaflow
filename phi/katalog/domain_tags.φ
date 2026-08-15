@@ -1,0 +1,31 @@
+# domain_tags — die Domain→Katalog→Tag-Landkarte
+# Eine Zeile: domain <netloc> | <katalog-endpoint> | <status> | <tags-datei>
+# status: done (Tags direkt geholt) | recheck (blockiert/weg) | offen (noch nicht geprüft)
+# Alle Downloads direkt vom Provider, live verifiziert 2026-08-15.
+
+domain b2find.eudat.eu | /api/3/action/package_search (CKAN-Facet) | done | katalog/b2find_tags.φ
+domain cmr.earthdata.nasa.gov | /search/collections.json include_facets=v2 | done | katalog/nasa_cmr_tags.φ
+domain gcmd.earthdata.nasa.gov | KMS sciencekeywords (via Jina) | done | katalog/nasa_gcmd_keywords.φ
+domain api.gbif.org | /v1/occurrence/search facets + enumerations | done | katalog/gbif_tags.φ + gbif_vocabulary.φ
+domain earth.esa.int | /eogateway/api/search/full_text (Voll-Pagination) | done | katalog/esa_eogateway_data.φ
+domain ads.atmosphere.copernicus.eu | /api/catalogue/v1/collections (STAC) | done | katalog/copernicus_catalogues.φ
+domain cds.climate.copernicus.eu | /api/catalogue/v1/collections (STAC) | done | katalog/copernicus_catalogues.φ
+domain vires.services | /hapi/catalog | done | katalog/grind_vires_catalog.φ
+domain tapvizier.cds.unistra.fr | TAP tap_schema.tables (TOP 2000, kein OFFSET) | done | katalog/tapvizier_descriptions.φ + tap_index.φ
+domain taginfo.openstreetmap.org | /api/4/keys/all (Voll-Pagination 44.955) | done | katalog/osm_taginfo.φ
+domain api.worldbank.org | /v2/indicator (29.544) | done | katalog/worldbank_indicators.φ
+domain eutils.ncbi.nlm.nih.gov | /entrez/eutils/einfo.fcgi?db=all | done | katalog/ncbi_databases.φ
+domain catalogue.marine.copernicus.eu | /api/records | recheck | Domain löst auch via Jina nicht auf
+domain catalogue.dataspace.copernicus.eu | /stac/collections | recheck | 503/Timeout, auch via Jina
+domain sh.dataspace.copernicus.eu | /stac/collections | recheck | 503
+domain api.inaturalist.org | /v1/taxa (1.423.081, iconic taxa 11) | done | katalog/inaturalist_vokabular.φ (Präsenz → decline)
+domain simbad.u-strasbg.fr | TAP otypes (DISTINCT 233) | done | katalog/simbad_otypes.φ
+domain www.ncei.noaa.gov | Datasets-Suche (JS-web) | offen | Recheck (maschinenlesbarer Endpoint)
+domain cdaweb.gsfc.nasa.gov | Dataset-Inventar | offen | Recheck (SPASE/JS)
+domain inspirehep.net | /api/literature facets | offen | Facet-Schlüssel gehasht — Recheck
+domain irsa.ipac.caltech.edu | TAP | done | katalog/tap_index_irsa.φ
+domain dc.g-vo.org | TAP | done | katalog/tap_index_gavo.φ
+domain gaia.ari.uni-heidelberg.de | TAP | done | katalog/tap_index_ari.φ
+domain exoplanetarchive.ipac.caltech.edu | TAP | done | katalog/tap_index_exoarchive.φ
+domain heasarc.gsfc.nasa.gov | Xamin TAP | done | katalog/tap_index_heasarc.φ
+domain services*.arcgis.com | REST/Item-Tags | offen | kein globaler Tag-Endpoint → Item-Crawl

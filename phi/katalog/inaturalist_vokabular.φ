@@ -1,0 +1,39 @@
+# iNaturalist — Vokabular (live 2026-08-15, 1.423.081 Taxa gesamt)
+# Biodiversität → Präsenz-Klasse (decline, GBIF-Entscheidung); die Iconic-Taxa sind die 11 Hauptgruppen
+-- iconic taxa
+Agaricomycetes
+Agaricomycotina
+Angiospermae
+Animalia
+Apocrita
+Arthropoda
+Asteraceae
+Asterales
+Asteroideae
+Aves
+Basidiomycota
+Chelicerata
+Chordata
+Coleoptera
+Fungi
+Hexapoda
+Hymenoptera
+Insecta
+Lamiales
+Lepidoptera
+Life
+Liliopsida
+Magnoliopsida
+Papilionoidea
+Passeriformes
+Plantae
+Polyphaga
+Pterygota
+Tracheophyta
+Vertebrata
+-- iconic taxon ids
+"iconic_taxon_id":1
+"iconic_taxon_id":3
+"iconic_taxon_id":47126
+"iconic_taxon_id":47158
+"iconic_taxon_id":47170
