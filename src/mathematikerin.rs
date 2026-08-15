@@ -1004,9 +1004,9 @@ fn run_window(
     time: Arc<Mutex<Option<LeapSeconds>>>,
     shutdown: Arc<AtomicBool>,
 ) {
-    let builder = EventLoopBuilder::<()>::default();
-    let builder = EventLoopBuilderExtX11::with_any_thread(builder, true);
-    let builder = EventLoopBuilderExtWayland::with_any_thread(builder, true);
+    let mut builder = EventLoopBuilder::<()>::default();
+    EventLoopBuilderExtX11::with_any_thread(&mut builder, true);
+    EventLoopBuilderExtWayland::with_any_thread(&mut builder, true);
     let event_loop = match builder.build() {
         Ok(el) => el,
         Err(_) => return,
