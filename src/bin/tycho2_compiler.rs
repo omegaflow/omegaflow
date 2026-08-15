@@ -32,6 +32,53 @@ struct SupplRow {
     hip: i32,
 }
 
+fn load_tyc1(path: &str, map: &mut HashMap<(i32, i32, i32), SupplRow>) -> usize {
+    let Ok(data) = std::fs::read(path) else {
+        return 0;
+    };
+    let text = String::from_utf8_lossy(&data);
+    let mut n = 0;
+    for line in text.lines() {
+        let b = line.as_bytes();
+        if b.len() < 236 {
+            continue;
+        }
+        let (Some(ra), Some(dec)) = (num(b, 52, 63), num(b, 65, 76)) else {
+            continue;
+        };
+        let pm_ra = num(b, 88, 95).unwrap_or(0.0);
+        let pm_de = num(b, 97, 104).unwrap_or(0.0);
+        let vt = num(b, 231, 236).unwrap_or(0.0);
+        let hip: i32 = field(b, 211, 216)
+            .and_then(|s| s.trim().parse().ok())
+            .unwrap_or(0);
+        let (Some(t1s), Some(t2s), Some(t3s)) = (field(b, 3, 6), field(b, 8, 11), field(b, 13, 14))
+        else {
+            continue;
+        };
+        let (Ok(t1), Ok(t2), Ok(t3)) = (
+            t1s.trim().parse::<i32>(),
+            t2s.trim().parse::<i32>(),
+            t3s.trim().parse::<i32>(),
+        ) else {
+            continue;
+        };
+        map.insert(
+            (t1, t2, t3),
+            SupplRow {
+                ra_deg: ra,
+                dec_deg: dec,
+                pm_ra,
+                pm_de,
+                mag: vt,
+                hip,
+            },
+        );
+        n += 1;
+    }
+    n
+}
+
 fn field(line: &[u8], lo: usize, hi: usize) -> Option<&str> {
     std::str::from_utf8(line.get(lo - 1..hi)?).ok()
 }
@@ -131,6 +178,7 @@ fn parse_tgas_record(line: &str) -> Option<StarRow> {
 fn parse_tyc2_record(
     line: &str,
     suppl: &HashMap<(i32, i32, i32), SupplRow>,
+    tyc1: &HashMap<(i32, i32, i32), SupplRow>,
     used: &mut HashSet<(i32, i32, i32)>,
 ) -> Option<StarRow> {
     let b = line.as_bytes();
@@ -143,10 +191,12 @@ fn parse_tyc2_record(
         .and_then(|s| s.trim().parse().ok())
         .unwrap_or(0);
     if ra.is_none() || dec.is_none() {
-        let Some(s) = suppl.get(&key) else {
+        let Some(s) = suppl.get(&key).or_else(|| tyc1.get(&key)) else {
             return None;
         };
-        used.insert(key);
+        if suppl.contains_key(&key) {
+            used.insert(key);
+        }
         let (ra_j, dec_j) = propagate_j1991_25(s.ra_deg, s.dec_deg, s.pm_ra, s.pm_de);
         ra = Some(ra_j);
         dec = Some(dec_j);
@@ -221,6 +271,7 @@ fn main() {
     let mut input: Option<String> = None;
     let mut input_dir: Option<String> = None;
     let mut hip: Option<String> = None;
+    let mut tyc1_path: Option<String> = None;
     let mut out: Option<String> = None;
     let mut ci_mode = false;
     let mut probe: Option<i32> = None;
@@ -241,6 +292,10 @@ fn main() {
             }
             "--hip" => {
                 hip = args.get(i + 1).cloned();
+                i += 1;
+            }
+            "--tyc1" => {
+                tyc1_path = args.get(i + 1).cloned();
                 i += 1;
             }
             "--out" => {
@@ -355,6 +410,12 @@ fn main() {
         }
     };
     eprintln!("hip_main: {} records with plx > 0", hip_map.len());
+    let mut tyc1: HashMap<(i32, i32, i32), SupplRow> = HashMap::new();
+    let t1 = match &tyc1_path {
+        Some(p) => load_tyc1(p, &mut tyc1),
+        None => 0,
+    };
+    eprintln!("tyc1: {} records", t1);
     let mut suppl: HashMap<(i32, i32, i32), SupplRow> = HashMap::new();
     let s1 = load_suppl(&format!("{}/suppl_1.dat.gz", dir), &mut suppl);
     let s2 = load_suppl(&format!("{}/suppl_2.dat.gz", dir), &mut suppl);
@@ -378,7 +439,7 @@ fn main() {
             continue;
         };
         for line in String::from_utf8_lossy(&text).lines() {
-            match parse_tyc2_record(line, &suppl, &mut used) {
+            match parse_tyc2_record(line, &suppl, &tyc1, &mut used) {
                 Some(r) => rows.push(r),
                 None => skipped += 1,
             }

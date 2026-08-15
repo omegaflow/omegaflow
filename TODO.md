@@ -95,8 +95,14 @@ Oszillator bei Fenster-Mitte auf der Epoch-Position, Distanz 1,3 km.
 Befund: Kepler-Positionen driften vom n-body-Wahren (Elemente sind Zwei-Körper,
 Epochs altern) — das ist die ehrliche Physik des Katalogs, die TTL-Frische
 regelt den Takt.
-Verbleibend: Kometen-Records (dcom5_le.dat, 976 B, Multi-Apparitionen) und
-der Asteroiden-SPK-Flatten-Pass (Familie spk im Index registriert).
+Verbleibend: Kometen-Records (dcom5_le.dat, 976-B-Records ab Byte 1811 =
+835-Header + 976-Null-Record; „Halley" bei 112, Note-Text 0..~75; f64-Orbit-
+Block nicht 8-aligned — echte Offsets unbestätigt, q=0,571 nirgends gefunden)
+und der Asteroiden-SPK-Flatten-Pass (Familie spk im Index registriert).
+Format-Doku liegt in dastcom5.zip/doc/README.txt (Zip ~1,3 GB — Range-Extract
+des README oder FORTRAN-Leser dxlook als Vorlage). Wert-Einordnung: cometels
+(831 Kometen, aktuelle Elemente) trägt den Kanal bereits; dcom5 bringt
+Multi-Apparitionen (Historie).
 KOMETEN-TEIL GESCHLOSSEN (2026-08-15): `dist_scale`-Direktive (cmap,
 `dist`-Wert × Faktor → m, Tests parse+eval), `src/bin/cometels_compiler.rs`
 (MPC cometels.json.gz → gunzip → Elemente → Kepler zum Katalog-Epoch → Flat-
@@ -139,7 +145,13 @@ vmax aus pm·d datenabgeleitet ×Φ, span-guard wie DASTCOM), Emission
 build+query. Vega-Beweis: RA Δ0,0009″, Dec Δ0,01″, plx 128,93 vs. 130,23 mas,
 dist 7,8 vs. 7,68 pc — ehrliche Katalog-Physik (Tycho-1-Reduktion). CI-Schritt
 in kernel_flatten.yml. CDN-Asset tycho2_stars.bin entsteht beim ersten CI-Lauf.
-Verbleibend: X-flagged-Positionen via Tycho-1 (I/196) — der Gaia-Merge ist
+Verbleibend: X-flagged-Reste — GESCHLOSSEN soweit möglich (2026-08-15):
+`--tyc1 <tyc_main.dat>` (Tycho-1, I/239 — I/196 ist das HIC, nicht Tycho-1)
+als dritter Positions-Fallback im tycho2_compiler (Key space-separiert,
+J1991.25 → J2000): 5 618 X-flagged aufgelöst (+538 mit plx im Fallback-Bin).
+103 845 X-flagged bleiben absent: GSC-only-Sterne ohne Tycho-1-Eintrag —
+Positionen lägen im Guide Star Catalog (I/220, ~25 Mio) — offen.
+Der Gaia-Merge ist
 GESCHLOSSEN (K04b, 2026-08-15): TGAS (I/337 tgas.dat.gz, 2 057 050 Records)
 als --source tgas im tycho2_compiler (Feld-Split an „|", Epoch 2015.0 →
 J2000 propagiert), 2 025 673 Sterne mit plx > 0 ins Bin (72,9 MB), sources.φ-
