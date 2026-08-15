@@ -1,0 +1,63 @@
+# grind esa (2026-08-15)
+
+# ────────────────────────────────────────────────────────────
+# VirES / Swarm HAPI (keyless, verifiziert)
+# Vorlage: bestehende Blöcke in phi/sources.φ (SW_FAST_EFIA_LP_1B,
+# SW_FAST_FACATMS_2F, INTERMAGNET). Alle Datasets tragen Latitude/
+# Longitude/Radius (ITRF) — der Hapi-Extract nutzt derzeit den Frame
+# (at earth), nicht die data-carried Position.
+# ────────────────────────────────────────────────────────────
+
+# SW_FAST_FACATMS_2F — bereits integriert (phi/sources.φ Z. 822, IRC+FAC electric).
+# Kein neuer Draft. HAPI-info: IRC/FAC/IRC_Error/FAC_Error (uA/m2), Latitude/Longitude/Radius vorhanden.
+
+accepted https://vires.services/hapi/data?id=SW_EXPT_EFIA_TCT02&start={hour_ago}&stop={now}&parameters=Ehx,Ehy,Ehz&format=json
+# title: Swarm EFI TCT02 (Thermal Ion Imager, 2 Hz) — E-Feld x/y/z (mV/m), electric; experimental, Abdeckung 2013-12-12 bis 2025-12-04
+url https://vires.services/hapi/data?id=SW_EXPT_EFIA_TCT02&start={hour_ago}&stop={now}&parameters=Ehx,Ehy,Ehz&format=json
+ttl 3600
+at earth
+hapi Ehx=swarm_electric_field_x_mvm Ehy=swarm_electric_field_y_mvm Ehz=swarm_electric_field_z_mvm
+field swarm_electric_field_x_mvm swarm_electric_field_x_mvm inverse-square electric mV/m 3600 0.0 0.0
+field swarm_electric_field_y_mvm swarm_electric_field_y_mvm inverse-square electric mV/m 3600 0.0 0.0
+field swarm_electric_field_z_mvm swarm_electric_field_z_mvm inverse-square electric mV/m 3600 0.0 0.0
+
+accepted https://vires.services/hapi/data?id=SW_OPER_MAGA_LR_1B&start={hour_ago}&stop={now}&parameters=F&format=json
+# title: Swarm A Magnetfeld 1 Hz — B-Feld-Intensität F (nT), em; operational, Abdeckung 2013-11-25 bis 2026-08-11
+url https://vires.services/hapi/data?id=SW_OPER_MAGA_LR_1B&start={hour_ago}&stop={now}&parameters=F&format=json
+ttl 3600
+at earth
+hapi F=swarm_magnetic_field_intensity_nt
+field swarm_magnetic_field_intensity_nt swarm_magnetic_field_intensity_nt inverse-square em nT 3600 0.0 0.0
+
+# SW_FAST_AOBAFAC_2F — decline. Auroral-Oval-Boundary: Boundary_Flag (1=equatorward,
+# 2=poleward, kategorial) + Quality [Pa,Sigma] + Pair_Indicator. Kein kontinuierlicher
+# Feldwert — abgeleitete Grenzkarte aus FAC. Force Gate: kein Sinnesorgan für einen
+# Grenzflag. (Parameter: Latitude, Longitude, Radius, Latitude_QD, Longitude_QD, MLT_QD.)
+
+# SW_FAST_IBIATMS_2F — decline. HAPI-info 1406 "unknown dataset id": id nicht vorhanden.
+# Korrekte id: SW_OPER_IBIATMS_2F (operational, 1 s, bis 2026-08-09). Felder:
+# Bubble_Index / Bubble_Probability = abgeleiteter Plasma-Blasen-Detektionsindex
+# (kategorial / Wahrscheinlichkeit), kein direktes Feld. Force Gate: decline.
+
+# ────────────────────────────────────────────────────────────
+# WDC BGS
+# ────────────────────────────────────────────────────────────
+# https://wdc.bgs.ac.uk/            -> 200 (HTML-Portal)
+# https://wdc.bgs.ac.uk/hapi        -> 404 (absent)
+# https://wdc.bgs.ac.uk/hapi/catalog -> 404 (absent)
+# Befund: kein HAPI-Endpoint; Web-UI-Download-Portal für Observatorien-Archive.
+# Kein Draft. (INTERMAGNET-HAPI liegt bei imag-data.bgs.ac.uk/GIN_V1/hapi —
+# bereits integriert in phi/sources.φ.) Ein toter /api/-Eintrag existiert bereits
+# in phi/dead_sources.φ.
+
+# ────────────────────────────────────────────────────────────
+# key-needed (nur Befund — keine Blöcke, keine Credentials)
+# ────────────────────────────────────────────────────────────
+# aeolus.esa.int              -> 000 (Netz/DNS nicht auflösbar)
+# smos-diss.eo.esa.int        -> 200 (OADS-Portal, PHP-Formulare, kein JSON-REST)
+# meris-ds.eo.esa.int         -> 200 (Login-Portal, Envisat MERIS)
+# esar-ds.eo.esa.int          -> 200 (Login-Portal, ERS SAR)
+# e4ftl01.cr.usgs.gov         -> 200 (Landsat Dissemination, Earthdata-Login)
+# earth.esa.int/eogateway     -> 200 (Metakatalog/Registry)
+# ESA-EO-Login vorhanden; Token-Flow je Service. ESA_USER/ESA_PASS in
+# .secrets.local noch absent.

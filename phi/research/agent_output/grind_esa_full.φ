@@ -1,0 +1,96 @@
+# grind esa_full (2026-08-15)
+
+# ESA EO User Portal — vollständiger Service-Grind (nicht nur geomagnetisch).
+# Referenz: grind_esa.φ (Geomagnetik-Ausschnitt, nicht wiederholt).
+# Vokabular: benennt was IST (absent/empty/void/unreachable/present/restricted).
+# Kein akzeptierter Block in diesem Lauf — die restlichen Portale liefern
+# Raster/Login-Zugang statt keyless Punkt-Messwert-API. 0 honored.
+
+# ────────────────────────────────────────────────────────────
+# WICHTIGSTER BEFUND: VirES for Aeolus — kein Wind-HAPI
+# ────────────────────────────────────────────────────────────
+# https://vires.services/hapi/catalog  -> 200. Vollkatalog: 174 Datasets,
+#   sämtlich CHAMP (CH_), CryoSat (CS_), GRACE (GR_/GF1/GF2), GOCE (GO_),
+#   Swarm (SW_) — Magnetometer (MAG/FGM), Accelerometer/Neutraldichte (ACC/DNS/WND),
+#   TEC, EFI. KEIN einziges AEOLUS_Dataset (grep "AEOLUS"/"ALA" -> void).
+# https://vires.services/hapi/info?id=AEOLUS_ALA_L2B_1B  -> 404 (unknown id).
+# https://aeolus.services/hapi            -> 404 (EOX-SPA-Shell, eoxs_static).
+# https://aeolus.services/hapi/catalog    -> 404 (EOX-SPA-Shell).
+# https://aeolus.services                 -> 200 (EOX-Web-App, kein REST).
+# https://aeolus.esa.int                  -> 000 (Netz/DNS nicht auflösbar).
+# https://aeolus-ds.eo.esa.int            -> 403 (Apache Forbidden, auch /oads/access).
+# Befund: Der VirES-Backend teilt sich NICHT mit Swarm; Aeolus-Windfelder
+#   (Wind-Lidar, advective) liegen NICHT als HAPI-Endpoint vor. Zugang nur via
+#   Aeolus-Dissemination (403-restricted OADS) oder FTP (key-needed).
+#   -> KEIN Block-Draft. Höchste Priorität bleibt ohne keyless HAPI-Route leer.
+
+# ────────────────────────────────────────────────────────────
+# decline — Registry/Metadaten/Portal (Force Gate: keine Messung)
+# ────────────────────────────────────────────────────────────
+# Earth Online (earth.esa.int/eogateway) -> 200. Metakatalog/Registry mit
+#   Missions-/Daten-Guides, Suche über eo-sign-in-Kategorien. Kein Messwert-API.
+#   Disposition: decline (Registry/Metadaten).
+# Earth Online Visuals                   -> decline (interaktive Modelle).
+# TellUS (tellus.esa.int)                -> 000 (Netz/DNS). Support läuft über
+#   esatellus.service-now.com/csp -> 200 (ServiceNow-Ticket-Portal).
+#   Disposition: decline (Support-Portal).
+# QRAS (qras.earth.esa.int)              -> 200. "Quality Reports Advanced Search" —
+#   Berichts-/Report-Suche. Disposition: decline (Metadaten/Reports).
+# Hedavi (hedavi.esa.int)                -> 200. "HEritage DAta VIsualisation" —
+#   Bootstrap/SPA-Viewer für ERS/Envisat-Heritage. Disposition: decline (Viewer).
+# Heritage Missions Virtual Lab           -> heritage.esa.int / heritage-missions.eo.esa.int
+#   -> 000 (Netz/DNS nicht auflösbar). Disposition: decline (Lab/Portal).
+# EarthCARE Timeline Viewer               -> earthcare.esa.int / earthcare.eo.esa.int
+#   -> 000 (Netz/DNS). Disposition: decline (Viewer).
+# ESA MAAP Explorer                       -> decline (Viewer).
+
+# ────────────────────────────────────────────────────────────
+# decline/dead — MAAP / Biomass
+# ────────────────────────────────────────────────────────────
+# ESA MAAP (esa-maap.org)                -> 000 (Netz/DNS nicht auflösbar).
+#   www.esa-maap.org / biomass-maap.org / maap.esa.int ebenfalls 000.
+#   Disposition: dead (unreachable). Biomasse-EO-Verarbeitungsplattform;
+#   keine keyless Messwert-API auffindbar.
+# Biomass MAAP                            -> Missionsdaten (Start ~2025) noch absent;
+#   Plattform-Host unreachable. Disposition: dead/unreachable.
+
+# ────────────────────────────────────────────────────────────
+# key-needed — OADS-Dissemination (Login/JSESSIONID, kein JSON-REST)
+# ────────────────────────────────────────────────────────────
+# ERS (A)SAR ODS (esar-ds.eo.esa.int)    -> 200. "Online Dissemination" OADS-Portal
+#   (JSESSIONID/PHP). Radar-Backscatter = em, aber nur Raster via Login.
+#   Disposition: key-needed (EO Sign In). Kein keyless Messwert-API.
+# Envisat MERIS ODS (meris-ds.eo.esa.int)-> 200. OADS-Portal (Envisat MERIS).
+#   Ocean-Colour/em, Login-gated. Disposition: key-needed.
+# Aeolus ODS (aeolus-ds.eo.esa.int)      -> 403 Forbidden (Apache, auch /oads/access).
+#   Disposition: key-needed/restricted. Wind = advective, aber kein offener Zugriff.
+# ALOS PALSAR ODS (alos-palsar-ds.eo.esa.int) -> 200. OADS-Portal. key-needed.
+# ALOS AVN2 ODS (alos-avn2-ds.eo.esa.int)-> 000 (Netz/DNS nicht auflösbar). dead.
+# SMOS ODS (smos-diss.eo.esa.int)        -> 200. OADS-Portal "ESA SMOS Online
+#   Dissemination" (PHP/JSESSIONID bestätigt). Bodenfeuchte/Salinität = diffusion,
+#   aber Login-gated. Disposition: key-needed.
+#   Alternative SMOS-Routen: catalogue.ceda.ac.uk (?q=SMOS) -> 200, aber CEDA-Daten
+#   erfordern CEDA-Account (login); CATDS (catds.fr) ebenfalls login. Kein keyless
+#   Punkt-Messwert-Route. -> key-needed.
+# Landsat ODS (e4ftl01.cr.usgs.gov)      -> 200 (Index, Earthdata-Login).
+#   Disposition: key-needed.
+
+# ────────────────────────────────────────────────────────────
+# BONUS — Copernicus Data Space Ecosystem (dataspace.copernicus.eu)
+# ────────────────────────────────────────────────────────────
+# dataspace.copernicus.eu                -> 200 (Portal).
+# catalogue.dataspace.copernicus.eu      -> Wurzel 404 (Host erreichbar,
+#   IP 185.48.233.66), /stac /stac/collections /stac/v1 -> Timeout (unreachable
+#   von diesem Netz, auch via r.jina.ai/webfetch).
+# Befund: STAC-Endpoint dokumentiert, aber vom Standort aus nicht erreichbar.
+#   STAC-Items = Raster-Produkt-Referenzen (GeoJSON-Footprints + COG/Safe-Assets),
+#   keine Punkt-Messwerte. Disposition: parser-def (Raster-Referenz), host unreachable.
+#   Kein Block.
+
+# ────────────────────────────────────────────────────────────
+# Zusammenfassung
+# ────────────────────────────────────────────────────────────
+# Akzeptierte Block-Drafts: 0.
+# Aeolus-HAPI: absent (kein Wind-Dataset in VirES, aeolus.services = EOX-SPA 404,
+#   aeolus.esa.int = 000, aeolus-ds = 403).
+# Alle OADS-Disseminations-Services: key-needed (Login, kein keyless JSON-REST).

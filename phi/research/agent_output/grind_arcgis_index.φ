@@ -1,0 +1,579 @@
+# grind arcgis index (2026-08-15) — 131 FeatureServices, 22 Keywords
+# Quelle: opendata.arcgis.com + hub.arcgis.com /api/v3/datasets (JSON:API page[size]=20)
+# 440 Katalog-Einträge enumeriert; 131 FeatureServices geprobt (query f=json, 5 records).
+# Block-Drafts folgen der SO2-ArcGIS-Vorlage (sources.φ: f=geojson, map features, properties.<feld>,
+# field <pfad> <name> <kernel> <force> <unit> <tau> <abs> <adv>). Force je Feld, Frame `at earth`.
+
+# ── Dataset-Index (Titel | Host | Service-URL | Keyword) ──
+# dataset Earthquake Dashboard | bmtski@rit.edu_RITArcGIS | https://services2.arcgis.com/RQcpPaCpMAXzUI5g/arcgis/rest/services/Earthquake_Dashboard/FeatureServer | earthquake
+# dataset Earthquake Epicenters | wanght_virginiatech | https://services2.arcgis.com/V2PQwgZMTFfgM0Xu/arcgis/rest/services/CVPDC_HMP_VA_earthquake/FeatureServer/0 | earthquake
+# dataset Semptember Chile Earthquake | Direct Relief | https://services1.arcgis.com/ZGrptGlLV2IILABw/arcgis/rest/services/Semptember_Chile_Earthquake/FeatureServer | earthquake
+# dataset Earthquake Rapid Assessment Data | Marie_Lou.HuttCity | https://services1.arcgis.com/DlsnLEhGfXazS5Er/arcgis/rest/services/EarthquakeData/FeatureServer/0 | earthquake
+# dataset earthquake saddlemt74m mi ver2 | Grant County, Washington | https://services2.arcgis.com/hQZvdtFxRzJpMtdS/arcgis/rest/services/earthquake_saddlemt74m_mi_ver2/FeatureServer/0 | earthquake
+# dataset tohoku seismicity |  | https://services7.arcgis.com/XnmMAZERCcHaTPxC/arcgis/rest/services/tohoku_seismicity/FeatureServer | seismicity
+# dataset Seismicity (Catalogue compilation 1901 - June 2020) | NKUA - Dept of Geophysics - Geothe | https://services-eu1.arcgis.com/BkJxImVcTMyS7LID/arcgis/rest/services/Catalogue_compilation_1901_June2020__web_v2_/Featu | seismicity
+# dataset Seismicity (Catalogue compilation 1901 - June 2020) view | National & Kapodistrian University | https://services8.arcgis.com/JDjQrQppZR2u4Y1i/arcgis/rest/services/Seismicity_(Catalogue_compilation_1901_-_June_2020)_v | seismicity
+# dataset Recent seismicity of Haiti | Shaun.Lewin | https://services5.arcgis.com/RbjlVNAtGGPx1hPV/arcgis/rest/services/Recent_seismicity_of_Haiti/FeatureServer/0 | seismicity
+# dataset Seismicity (USGS - 1 century) |  | https://services7.arcgis.com/XnmMAZERCcHaTPxC/arcgis/rest/services/tohoku_seismicity/FeatureServer/5 | seismicity
+# dataset Seismicity (USGS - 1 year) |  | https://services7.arcgis.com/XnmMAZERCcHaTPxC/arcgis/rest/services/tohoku_seismicity/FeatureServer/4 | seismicity
+# dataset Seismicity | annasta3 | https://services1.arcgis.com/HmwnYiJTBZ4UkySc/arcgis/rest/services/Seismicity_WFL1/FeatureServer/3 | seismicity
+# dataset Seismicity WFL1 | annasta3 | https://services1.arcgis.com/HmwnYiJTBZ4UkySc/arcgis/rest/services/Seismicity_WFL1/FeatureServer | seismicity
+# dataset Commercial Crab Buoy Registration |  WA Dept of Fish and Wildlife | https://services.arcgis.com/rcya3vExsaVBGUDp/arcgis/rest/services/service_9932f02723c841bfb091d7803834a77e/FeatureServer | buoy
+# dataset SI1000 Tide Buoy Locations | Australian Hydrographic Office Geo | https://services6.arcgis.com/aVpcjAFBJTBCvdHA/arcgis/rest/services/SI1000_Tide_Buoy_Locations/FeatureServer/0 | buoy
+# dataset Whale buoy | Wildlife Conservation Society | https://services.arcgis.com/x494PplYsmeeZsYB/arcgis/rest/services/Whale_buoy/FeatureServer/0 | buoy
+# dataset PICES Marine Debris Buoy | Hawaii Statewide GIS Program | https://services.arcgis.com/HQ0xoN0EzDPBOEci/arcgis/rest/services/Buoy/FeatureServer | buoy
+# dataset Grays Reef Buoy (41008) | NOAA GeoPlatform | https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/Grays_Reef_Buoy/FeatureServer/0 | buoy
+# dataset buoy update | City of Bainbridge Island | https://services5.arcgis.com/0Q6HuHqqcg7Zo8zH/arcgis/rest/services/buoy_update/FeatureServer/0 | buoy
+# dataset Ring Buoy Locations |  | https://services-eu1.arcgis.com/YDJmfAKmZVpOnK2Q/arcgis/rest/services/Ring_Buoy_Locations/FeatureServer/0 | buoy
+# dataset StormStats Marine buoy UTM | Barbados Meteorological Services | https://services2.arcgis.com/MvofhWK1i5zOJjuj/arcgis/rest/services/StormStats_Marine_buoy_UTM/FeatureServer/0 | buoy
+# dataset Palm Beach County Mooring Buoy Sites | Katelyn Armstrong | https://services1.arcgis.com/ZWOoUZbtaYePLlPw/arcgis/rest/services/Palm_Beach_County_Mooring_Buoy_Sites/FeatureServer/0 | buoy
+# dataset Glen Canyon AtoN Buoy | AZGeo Data Hub | https://services6.arcgis.com/clPWQMwZfdWn4MQZ/arcgis/rest/services/Glen_Canyon_AtoN_Buoy/FeatureServer/0 | buoy
+# dataset Glen Canyon AtoN Buoy | AZGeo Data Hub | https://services6.arcgis.com/clPWQMwZfdWn4MQZ/arcgis/rest/services/Glen_Canyon_AtoN_Buoy/FeatureServer/2 | buoy
+# dataset Live Air Quality Data for United States | Utah PLPCO | https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Air_Quality_PM25_Latest_Results/FeatureServer | air quality
+# dataset Air Quality Monitoring Stations |  | https://mercator.env.nm.gov/server/rest/services/aqb/aqi_stations/FeatureServer/0 | air quality
+# dataset Air Quality Monitoring Stations |  | https://mercator.env.nm.gov/server/rest/services/aqb/aqi_stations/FeatureServer | air quality
+# dataset Measured PM2.5 Categories | Fairbanks North Star Borough | https://services.arcgis.com/f4rR7WnIfGBdVYFd/arcgis/rest/services/Sniffer_Run_2006-01-27_Fairbanks_AK/FeatureServer/2 | pm2.5
+# dataset Measured PM2.5 Categories | Fairbanks North Star Borough | https://services.arcgis.com/f4rR7WnIfGBdVYFd/arcgis/rest/services/Sniffer_Run_2015-01-15_Fairbanks_AK/FeatureServer/2 | pm2.5
+# dataset Measured PM2.5 Categories | Fairbanks North Star Borough | https://services.arcgis.com/f4rR7WnIfGBdVYFd/arcgis/rest/services/Sniffer_Run_2014-12-15_Fairbanks_AK/FeatureServer/2 | pm2.5
+# dataset PM2.5 | Save the Children Italia | https://services3.arcgis.com/jiXW75yUEzuPStZi/arcgis/rest/services/T6_PM2_5/FeatureServer/0 | pm2.5
+# dataset Measured PM2.5 Categories | Fairbanks North Star Borough | https://services.arcgis.com/f4rR7WnIfGBdVYFd/arcgis/rest/services/Sniffer_Run_2015-03-27_Fairbanks_AK/FeatureServer/2 | pm2.5
+# dataset Measured PM2.5 Categories | Fairbanks North Star Borough | https://services.arcgis.com/f4rR7WnIfGBdVYFd/arcgis/rest/services/Sniffer_Run_2015-03-24_Fairbanks_AK/FeatureServer/2 | pm2.5
+# dataset Measured PM2.5 Categories | Fairbanks North Star Borough | https://services.arcgis.com/f4rR7WnIfGBdVYFd/arcgis/rest/services/Sniffer_Run_2015-03-19_Fairbanks_AK/FeatureServer/2 | pm2.5
+# dataset Measured PM2.5 Categories | Fairbanks North Star Borough | https://services.arcgis.com/f4rR7WnIfGBdVYFd/arcgis/rest/services/Sniffer_Run_2015-03-10_Fairbanks_AK/FeatureServer/2 | pm2.5
+# dataset Measured PM2.5 Categories | Fairbanks North Star Borough | https://services.arcgis.com/f4rR7WnIfGBdVYFd/arcgis/rest/services/Sniffer_Run_2015-02-27_Fairbanks_AK/FeatureServer/2 | pm2.5
+# dataset Measured PM2.5 Categories | Fairbanks North Star Borough | https://services.arcgis.com/f4rR7WnIfGBdVYFd/arcgis/rest/services/Sniffer_Run_2015-02-18_Fairbanks_AK/FeatureServer/2 | pm2.5
+# dataset Measured PM2.5 Categories | Fairbanks North Star Borough | https://services.arcgis.com/f4rR7WnIfGBdVYFd/arcgis/rest/services/Sniffer_Run_2014-12-29_Fairbanks_AK/FeatureServer/2 | pm2.5
+# dataset Measured PM2.5 Categories | Fairbanks North Star Borough | https://services.arcgis.com/f4rR7WnIfGBdVYFd/arcgis/rest/services/Sniffer_Run_2014-12-22_Fairbanks_AK/FeatureServer/2 | pm2.5
+# dataset Measured PM2.5 Categories | Fairbanks North Star Borough | https://services.arcgis.com/f4rR7WnIfGBdVYFd/arcgis/rest/services/Sniffer_Run_2014-12-09_Fairbanks_AK/FeatureServer/2 | pm2.5
+# dataset Measured PM2.5 Categories | Fairbanks North Star Borough | https://services.arcgis.com/f4rR7WnIfGBdVYFd/arcgis/rest/services/Sniffer_Run_2014-11-21_Fairbanks_AK/FeatureServer/2 | pm2.5
+# dataset Measured PM2.5 Categories | Fairbanks North Star Borough | https://services.arcgis.com/f4rR7WnIfGBdVYFd/arcgis/rest/services/Sniffer_Run_2014-10-27_Fairbanks_AK/FeatureServer/2 | pm2.5
+# dataset Measured PM2.5 Categories | Fairbanks North Star Borough | https://services.arcgis.com/f4rR7WnIfGBdVYFd/arcgis/rest/services/Sniffer%20Run%202014-02-13,%20Fairbanks,%20AK/FeatureS | pm2.5
+# dataset Measured PM2.5 Categories | Fairbanks North Star Borough | https://services.arcgis.com/f4rR7WnIfGBdVYFd/arcgis/rest/services/Sniffer%20Run%202013-12-03,%20Fairbanks,%20AK/FeatureS | pm2.5
+# dataset Measured PM2.5 Categories | Fairbanks North Star Borough | https://services.arcgis.com/f4rR7WnIfGBdVYFd/arcgis/rest/services/Sniffer_Run_2014-10-29_Fairbanks_AK/FeatureServer/2 | pm2.5
+# dataset Concentrazione PM2.5 | Save the Children Italia | https://services3.arcgis.com/jiXW75yUEzuPStZi/arcgis/rest/services/Concentrazione_PM2_5/FeatureServer/0 | pm2.5
+# dataset EPA Radiation Air Monitors | University of Arizona GIS | https://services.arcgis.com/XG15cJAlne2vxtgt/arcgis/rest/services/EPA_Radiation_Air_Monitors/FeatureServer/0 | radiation
+# dataset Radiation Control Permit Facilities | New York State Department of Envir | https://services6.arcgis.com/DZHaqZm9cxOD4CWM/arcgis/rest/services/Radiation_Control_Permit_Facilities/FeatureServer/3 | radiation
+# dataset Radiation Energy Production | tgrissom | https://services2.arcgis.com/CyVvlIiUfRBmMQuu/arcgis/rest/services/SolarVector_PubLayers/FeatureServer/2 | radiation
+# dataset Location of Water Radiation Sampling Sites |  | https://utility.arcgis.com/usrsvcs/servers/5be1fa37cc3a42d598bff5664e92f838/rest/services/RADIATION_WATER_32633/FeatureS | radiation
+# dataset Weather Stations |  | https://services3.arcgis.com/jleLTach0h2wlIJC/arcgis/rest/services/Weather_Stations/FeatureServer/0 | weather station
+# dataset Live Weather Stations | sk.tahsin2 | https://services1.arcgis.com/F0O6A52a4X4EXJVh/arcgis/rest/services/Live_Weather_Stations/FeatureServer/0 | weather station
+# dataset Weather Station | University of Texas at Dallas | https://services2.arcgis.com/VNo0ht0YPXJoI4oE/arcgis/rest/services/Weather_Station/FeatureServer/0 | weather station
+# dataset Suitable Weather Station Sites | University of Otago | https://services1.arcgis.com/NIkwK16KnqB4PR1J/arcgis/rest/services/Suitable_Weather_Station_Sites/FeatureServer/0 | weather station
+# dataset Weather Station | Manawatu District Council | https://services9.arcgis.com/CzWZ8m5FuciqBibe/arcgis/rest/services/Weather_Station/FeatureServer/0 | weather station
+# dataset USGS Evangeline Water Level Change 2012 2017 | HARC | https://services2.arcgis.com/LYMgRMwHfrWWEg3s/arcgis/rest/services/USGS_Evangeline_Water_Level_Change_2012_2017/FeatureS | water level
+# dataset USGS Chicot Water Level Change 2012 2017 | HARC | https://services2.arcgis.com/LYMgRMwHfrWWEg3s/arcgis/rest/services/USGS_Chicot_Water_Level_Change_2012_2017/FeatureServe | water level
+# dataset USGS Jasper Water Level Change 2012 2017 | HARC | https://services2.arcgis.com/LYMgRMwHfrWWEg3s/arcgis/rest/services/USGS_Jasper_Water_Level_Change_2012_2017/FeatureServe | water level
+# dataset USGS Evangeline Water Level Change 1977 2017 | HARC | https://services2.arcgis.com/LYMgRMwHfrWWEg3s/arcgis/rest/services/USGS_Evangeline_Water_Level_Change_1977_2017/FeatureS | water level
+# dataset USGS Chicot Water Level Change 1977 2017 | HARC | https://services2.arcgis.com/LYMgRMwHfrWWEg3s/arcgis/rest/services/USGS_Chicot_Water_Level_Change_1977_2017/FeatureServe | water level
+# dataset Total Water Level Model Extent | InDNRMaps | https://services8.arcgis.com/V4KtRsQj3LmLxN4o/arcgis/rest/services/Total_Water_Level_Model_Extent_WFL1/FeatureServer/1 | water level
+# dataset Total Water Level Model Extent WFL1 | InDNRMaps | https://services8.arcgis.com/V4KtRsQj3LmLxN4o/arcgis/rest/services/Total_Water_Level_Model_Extent_WFL1/FeatureServer | water level
+# dataset Water Level Monitoring | engeomatics | https://services9.arcgis.com/IGnf2HrvTcleIY19/arcgis/rest/services/WaterLevelMonitoring_Boreholes/FeatureServer/2 | water level
+# dataset  Water Level Prediction Stations Global | The Claremont Colleges Library | https://services2.arcgis.com/FiaPA4ga0iQKduv3/arcgis/rest/services/COOPS_Waterlevel_Prediction_Stations_v1/FeatureServer | water level
+# dataset Ireland Tide Gauges | University College Cork | https://services.arcgis.com/7vyJMxlH6ODgjFtB/arcgis/rest/services/Ireland_Tide_Gauges/FeatureServer/0 | tide
+# dataset Red Tide Dumpster Locations | Pinellas County eGIS | https://services.arcgis.com/f5HgUpxURgEzTccH/arcgis/rest/services/Red_Tide_Dumpster_Locations/FeatureServer/0 | tide
+# dataset Red Tide Dumpster Locations Public | Pinellas County eGIS | https://services.arcgis.com/f5HgUpxURgEzTccH/arcgis/rest/services/Red_Tide_Dumpster_Locations_Public/FeatureServer/0 | tide
+# dataset Red Tide Monitoring Results PublicView | Pinellas County eGIS | https://services.arcgis.com/f5HgUpxURgEzTccH/arcgis/rest/services/Red_Tide_Monitoring_Results_Public2/FeatureServer/0 | tide
+# dataset MAG Tracklines | RambollGlobal ArcGIS Online | https://services3.arcgis.com/NqGokVvI0NQ6O9Jf/arcgis/rest/services/MAG_Tracklines/FeatureServer/38 | magnetometer
+# dataset Magnetometer | US DOC; NOAA; NOS; National Center | https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/SE_Prioritization_Results_for_distribution/FeatureSer | magnetometer
+# dataset MAG Anomalies | RambollGlobal ArcGIS Online | https://services3.arcgis.com/NqGokVvI0NQ6O9Jf/arcgis/rest/services/MAG_Anomalies/FeatureServer/37 | magnetometer
+# dataset Magnetometer view | Tetra Tech | https://services3.arcgis.com/16nyMR1mdhEaLG41/arcgis/rest/services/Magnetometer_view/FeatureServer | magnetometer
+# dataset Magnetometer Detect Sys | QETBasilio | https://services6.arcgis.com/GNx0EBxfRdt2xLnK/arcgis/rest/services/WA059_1993_RD_gdb/FeatureServer/21 | magnetometer
+# dataset HNB Magnetometer Contacts | National Renewable Energy Laborato | https://services3.arcgis.com/eJGTyRrpIbVmu8UX/arcgis/rest/services/0118/FeatureServer/0 | magnetometer
+# dataset Geomagnetic Poles | Applications Prototype Lab | https://services.arcgis.com/6DIQcwlPy8knb6sg/arcgis/rest/services/Geomagnetic_Poles/FeatureServer/0 | geomagnetic
+# dataset Geomagnetic Longitudes | Applications Prototype Lab | https://services.arcgis.com/6DIQcwlPy8knb6sg/arcgis/rest/services/Geomagnetic_Longitudes/FeatureServer/0 | geomagnetic
+# dataset Geomagnetic Latitudes | Applications Prototype Lab | https://services.arcgis.com/6DIQcwlPy8knb6sg/arcgis/rest/services/Geomagnetic_Latitudes/FeatureServer/0 | geomagnetic
+# dataset Aggregated CrowdMag Observations | NOAA GeoPlatform | https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/crowdmag_observations_aggregated/FeatureServer | geomagnetic
+# dataset crowdmag h3 6 summary | NOAA GeoPlatform | https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/crowdmag_observations_aggregated/FeatureServer/1 | geomagnetic
+# dataset crowdmag h3 5 summary | NOAA GeoPlatform | https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/crowdmag_observations_aggregated/FeatureServer/2 | geomagnetic
+# dataset crowdmag grid summary | NOAA GeoPlatform | https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/crowdmag_observations_aggregated/FeatureServer/0 | geomagnetic
+# dataset Migration of Geomagnetic Pole | Applications Prototype Lab | https://services.arcgis.com/6DIQcwlPy8knb6sg/arcgis/rest/services/Migration_of_Geomagnetic_Pole/FeatureServer/0 | geomagnetic
+# dataset Soil Moisture sensors | National Institute of Water and At | https://services3.arcgis.com/fp1tibNcN9mbExhG/arcgis/rest/services/Soil_Moisture_Sensor_Map_WFL1/FeatureServer/0 | soil moisture
+# dataset Soil Moisture Sensor Map WFL1 | National Institute of Water and At | https://services3.arcgis.com/fp1tibNcN9mbExhG/arcgis/rest/services/Soil_Moisture_Sensor_Map_WFL1/FeatureServer | soil moisture
+# dataset Hurricane Miley | ArcGIS for Emergency Management | https://services.arcgis.com/1kuuRiUAOfF5pwAn/arcgis/rest/services/Hurricane_Miley/FeatureServer | hurricane
+# dataset Hurricane Tracks | TBSL | https://services.arcgis.com/LxfKOYkTamDQYlsa/arcgis/rest/services/Hurricane_Tracks/FeatureServer/0 | hurricane
+# dataset Hurricane | CCBC - Geospatial Applications Pro | https://services1.arcgis.com/FLgshDLgxaIsVNWq/arcgis/rest/services/Hurricane/FeatureServer | hurricane
+# dataset hurricane shelters | Clemson University | https://services1.arcgis.com/x5wCko8UnSi4h0CB/arcgis/rest/services/hurricane_shelters/FeatureServer/0 | hurricane
+# dataset NZ Volcano Status  | Eagle Technology Group Ltd | https://services.arcgis.com/XTtANUDT8Va4DLwI/arcgis/rest/services/Volcano_Status/FeatureServer/0 | volcano
+# dataset Volcano Status Layer | City of Puyallup | https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Volcano_Status_Public/FeatureServer/0 | volcano
+# dataset Volcano Locations | Esri Australia Support | https://services.arcgis.com/j3JVMGycAs95su2E/arcgis/rest/services/Volcano_Locations/FeatureServer/1 | volcano
+# dataset Buffer of Volcano | 14cps@queensu.ca_QueensUniversity | https://services2.arcgis.com/NzAqpeLbvbvoP3qh/arcgis/rest/services/Buffer_of_Volcano/FeatureServer/0 | volcano
+# dataset Volcano Locations | NOAA GeoPlatform | https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/Volcano_Locations/FeatureServer/0 | volcano
+# dataset Volcano edit | christopher.erb@westpoint.edu_usma | https://services2.arcgis.com/TSIJRCUq2X813XVI/arcgis/rest/services/Volcano_edit/FeatureServer/0 | volcano
+# dataset Volcano EditBS | University of Minnesota | https://services.arcgis.com/8df8p0NlLFEShl0r/arcgis/rest/services/Volcano_EditBS/FeatureServer/0 | volcano
+# dataset Volcano Edit | jleonard_MUN | https://services1.arcgis.com/ZozYr1WfCwexXgcn/arcgis/rest/services/Volcano_Edit/FeatureServer/0 | volcano
+# dataset CA Lightning Data Public View | CAL FIRE | https://services5.arcgis.com/bz1uwWPKUInZBK94/arcgis/rest/services/CA_Lightning_Data_Public_View/FeatureServer/0 | lightning
+# dataset Real-time Lightning (AccuWeather) | wpl.admin | https://utility.arcgis.com/usrsvcs/servers/ac9fa803d3824b66968b1d9f1b9b7ad1/rest/services/DataServices/Lightning_Recent_ | lightning
+# dataset Lightning Strikes (Global) | Baron Weather | https://services6.arcgis.com/LT1iWT50Endhh6TU/arcgis/rest/services/Lightning__Global_/FeatureServer/0 | lightning
+# dataset Current lightning view | Esri Finland | https://services.arcgis.com/4PuGhqdWG1FwH2Yk/arcgis/rest/services/Current_lightning_view/FeatureServer/0 | lightning
+# dataset Streamflow Bitter | Mabel.Jones1_WWDO | https://services9.arcgis.com/dvViSL029z8IVu5n/arcgis/rest/services/Streamflow_Bitter/FeatureServer/0 | streamflow
+# dataset Final Stream Flow Classifications | Department of Energy & Environment | https://services1.arcgis.com/FjPcSmEFuDYlIdKC/arcgis/rest/services/FinalStreamflowClassifications_081016_CountyView/Feat | streamflow
+# dataset USGS Real-Time Streamflow (Shapefile) | Houston-Galveston Area Council | https://services1.arcgis.com/Z6SBWLWGRRejblAA/arcgis/rest/services/usgs_streamflow/FeatureServer/0 | streamflow
+# dataset NJ 7-day Streamflow | Rutgers University | https://services1.arcgis.com/ze0XBzU1FXj94DJq/arcgis/rest/services/NJ_Streamflow_Updated/FeatureServer/0 | streamflow
+# dataset KNP StreamFlow | Parks Canada / Parcs Canada | https://services2.arcgis.com/wCOMu5IS7YdSyPNx/arcgis/rest/services/KNP_StreamFlow/FeatureServer/0 | streamflow
+# dataset KNP StreamFlow vw | Parks Canada / Parcs Canada | https://services2.arcgis.com/wCOMu5IS7YdSyPNx/arcgis/rest/services/KNP_StreamFlow_vw/FeatureServer/0 | streamflow
+# dataset Projected Streamflow | U.S. EPA | https://services.arcgis.com/cJ9YHowT8TU7DUyn/arcgis/rest/services/CRWU_CREAT_Streamflow_Projections_Points/FeatureServer | streamflow
+# dataset Buffer of depth of snow | The Appleton School | https://services8.arcgis.com/sFJK6YxafYvO2vAz/arcgis/rest/services/Buffer%20of%20depth%20of%20snow/FeatureServer/0 | snow depth
+# dataset Below Sea Level | University of California San Diego | https://services1.arcgis.com/eGSDp8lpKe5izqVc/arcgis/rest/services/Below_Sea_Level/FeatureServer/0 | sea level
+# dataset Relative sea level rise TWAP | annanusca_UPenn | https://services3.arcgis.com/9nfxWATFamVUTTGb/arcgis/rest/services/Relative_sea_level_rise_TWAP/FeatureServer/0 | sea level
+# dataset Salinity extent 2013 | mwalker_seqcatchments | https://services6.arcgis.com/sbUjYcF5FKWKRP5Q/arcgis/rest/services/Salininy_extent_2013/FeatureServer/0 | salinity
+# dataset Coastal Resiliency Salinity Sites | South Florida Water Management Dis | https://services1.arcgis.com/sDAPyc2rGRn7vf9B/arcgis/rest/services/Coastal_Resiliency_Salinity_Sites/FeatureServer/0 | salinity
+# dataset AZ salinity 2012 | University of Arizona GIS | https://services1.arcgis.com/Ezk9fcjSUkeadg6u/arcgis/rest/services/AZ_salinity_2012/FeatureServer/0 | salinity
+# dataset Ww CWTP Sensor reading (OpenData) | Christchurch City Council | https://gis.ccc.govt.nz/server/rest/services/OpenData/WasteWater/FeatureServer/39 | temperature sensor
+# dataset Ww CWTP Sensor latest reading (OpenData) | Christchurch City Council | https://gis.ccc.govt.nz/server/rest/services/OpenData/WasteWater/FeatureServer/40 | temperature sensor
+# dataset Sensor Locations | URSpatial | https://services.arcgis.com/o6oETlrWetREI1A2/arcgis/rest/services/Sensor_Locations/FeatureServer/0 | temperature sensor
+# dataset Mary Cairncross Scenic Reserve R718b140 Temperature Sensor | Sunshine Coast Council Public Acce | https://services-ap1.arcgis.com/YQyt7djuXN7rQyg4/arcgis/rest/services/Mary_Cairncross_Scenic_Reserve_R718b140_Temperatur | temperature sensor
+# dataset Syracuse Road Temperatures | City of Syracuse | https://services6.arcgis.com/bdPqSfflsdgFRVVM/arcgis/rest/services/Syracuse_Road_Temperatures/FeatureServer/0 | temperature sensor
+# dataset Temperature | Rutgers University | https://services1.arcgis.com/ze0XBzU1FXj94DJq/arcgis/rest/services/Temperature/FeatureServer/0 | temperature sensor
+# dataset Temperature Monitoring | Garcia and Associates | https://services3.arcgis.com/YhFczgmq8G7YgyNn/arcgis/rest/services/Temperature_Monitoring/FeatureServer/0 | temperature sensor
+# dataset Amenaza Tsunami | Ministerio de Vivienda y Urbanismo | https://services3.arcgis.com/cTnMkBRk4HWkUCRo/arcgis/rest/services/Amenaza_Tsunami/FeatureServer | tsunami
+# dataset Tsunami 10m | Shaun.Lewin | https://services5.arcgis.com/RbjlVNAtGGPx1hPV/arcgis/rest/services/Tsunami_10m/FeatureServer/0 | tsunami
+# dataset Ancaman Tsunami Padang | Universitas Gadjah Mada | https://services5.arcgis.com/h1YxcBX0SJlA4Mtf/arcgis/rest/services/parameter/FeatureServer/0 | tsunami
+# dataset HUB LITORAL TSUNAMI AREA | jorgequense | https://services2.arcgis.com/cRH3tEMPESJz6DMX/arcgis/rest/services/HUB_LITORAL_TSUNAMI_AREA/FeatureServer/0 | tsunami
+# dataset Amenaza por Tsunami 2024 | geoportalonemi | https://services5.arcgis.com/i7S5PSnIJAUcWvSE/arcgis/rest/services/Amenaza_por_Tsunami_2024/FeatureServer | tsunami
+# dataset DWMP Tsunami Zones | DEVELOP_Beca | https://services7.arcgis.com/NCo3mYPLFZomFtDT/arcgis/rest/services/Tsunami_Zones/FeatureServer/0 | tsunami
+# dataset Mission Darts   Rate My Oche WFL1 | tcking1152 | https://services6.arcgis.com/8YE7U3IbCsqyT36h/arcgis/rest/services/Mission_Darts___Rate_My_Oche_WFL1/FeatureServer/0 | darts
+# dataset Current DARTs and Retrospective BPR Deployments | NOAA GeoPlatform | https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/Current_DARTs_and_Retrospective_BPR_Deployments/Featu | darts
+# dataset DARTSAll |  | https://services1.arcgis.com/qS7AYixGtf3sv8B6/arcgis/rest/services/DARTSAll/FeatureServer/0 | darts
+# dataset DARTS MPO Boundary |  | https://services8.arcgis.com/yaxKTxPxCi0rfHHw/arcgis/rest/services/Lee_and_Dougherty_County_Crashes__2021_2025__along_US | darts
+# dataset DARTS MPO Boundary |  | https://services8.arcgis.com/yaxKTxPxCi0rfHHw/arcgis/rest/services/Bike_Ped_Crashes_DARTS_2021_2025_US82_US91/FeatureSer | darts
+
+# ── Block-Drafts ──
+accepted https://services2.arcgis.com/V2PQwgZMTFfgM0Xu/arcgis/rest/services/CVPDC_HMP_VA_earthquake/FeatureServer/0
+# title: CVPDC Virginia historic earthquake epicenters | host wanght_virginiatech | keyword earthquake
+# note: Historischer Erdbebenkatalog Virginia (1774+, USGS-NCEER-Kompilation).
+url https://services2.arcgis.com/V2PQwgZMTFfgM0Xu/arcgis/rest/services/CVPDC_HMP_VA_earthquake/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 3600
+at earth
+map features
+lat properties.Latitude
+lon properties.Longitude
+field properties.Magnitude va_quake_magnitude gaussian-inverse-square seismic-body Mw 6.0 0.0 0.0
+field properties.Depth_km va_quake_depth_km gaussian-inverse-square seismic-body km 6.0 0.0 0.0
+
+accepted https://services1.arcgis.com/ZGrptGlLV2IILABw/arcgis/rest/services/Semptember_Chile_Earthquake/FeatureServer
+# title: September 2015 Chile earthquake sequence | host Direct Relief | keyword earthquake
+# note: USGS-Format (M8.3 Illapel 2015, Nachbeben).
+url https://services1.arcgis.com/ZGrptGlLV2IILABw/arcgis/rest/services/Semptember_Chile_Earthquake/FeatureServer/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 3600
+at earth
+map features
+lat properties.latitude
+lon properties.longitude
+field properties.mag chile_quake_magnitude gaussian-inverse-square seismic-body Mw 6.0 0.0 0.0
+field properties.depth chile_quake_depth_km gaussian-inverse-square seismic-body km 6.0 0.0 0.0
+
+accepted https://services7.arcgis.com/XnmMAZERCcHaTPxC/arcgis/rest/services/tohoku_seismicity/FeatureServer
+# title: Tohoku seismicity (USGS format) | host  | keyword seismicity
+# note: USGS-Katalog Tohoku; Layer 4/5 = 1-Jahr/1-Jahrhundert-Sichten desselben Service.
+url https://services7.arcgis.com/XnmMAZERCcHaTPxC/arcgis/rest/services/tohoku_seismicity/FeatureServer/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 3600
+at earth
+map features
+lat properties.latitude
+lon properties.longitude
+field properties.mag tohoku_quake_magnitude gaussian-inverse-square seismic-body Mw 6.0 0.0 0.0
+field properties.depth tohoku_quake_depth_km gaussian-inverse-square seismic-body km 6.0 0.0 0.0
+
+accepted https://services8.arcgis.com/JDjQrQppZR2u4Y1i/arcgis/rest/services/Seismicity_(Catalogue_compilation_1901_-_June_2020)_view/FeatureServer/0
+# title: NKUA homogenised seismicity catalogue (1901-2020) | host National & Kapodistrian University of Athens | keyword seismicity
+# note: SHEEC homogenisierter Katalog, National & Kapodistrian University of Athens.
+url https://services8.arcgis.com/JDjQrQppZR2u4Y1i/arcgis/rest/services/Seismicity_(Catalogue_compilation_1901_-_June_2020)_view/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 86400
+at earth
+map features
+lat properties.LAT
+lon properties.LON
+field properties.Mw_hom sheec_magnitude_mw gaussian-inverse-square seismic-body Mw 6.0 0.0 0.0
+field properties.DEP sheec_depth_km gaussian-inverse-square seismic-body km 6.0 0.0 0.0
+
+accepted https://services5.arcgis.com/RbjlVNAtGGPx1hPV/arcgis/rest/services/Recent_seismicity_of_Haiti/FeatureServer/0
+# title: Recent seismicity of Haiti | host Shaun.Lewin | keyword seismicity
+# note: USGS-Format Haiti.
+url https://services5.arcgis.com/RbjlVNAtGGPx1hPV/arcgis/rest/services/Recent_seismicity_of_Haiti/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 3600
+at earth
+map features
+lat properties.latitude
+lon properties.longitude
+field properties.mag haiti_quake_magnitude gaussian-inverse-square seismic-body Mw 6.0 0.0 0.0
+field properties.depth haiti_quake_depth_km gaussian-inverse-square seismic-body km 6.0 0.0 0.0
+
+accepted https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Air_Quality_PM25_Latest_Results/FeatureServer
+# title: Live air quality PM2.5 (OpenAQ mirror) | host Utah PLPCO | keyword air quality
+# note: OpenAQ live PM2.5 (parameter=pm25), Position in geometry (kein lat/lon-Attribut).
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Air_Quality_PM25_Latest_Results/FeatureServer/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 300
+at earth
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.value pm25_ug_m3 erfc diffusion µg/m³ 3600 0.0 0.0
+
+accepted https://services1.arcgis.com/F0O6A52a4X4EXJVh/arcgis/rest/services/Live_Weather_Stations/FeatureServer/0
+# title: Live weather stations (BOM/Australia) | host sk.tahsin2 | keyword weather station
+# note: Live Wetterstationen (Lufttemperatur, Druck, Wind).
+url https://services1.arcgis.com/F0O6A52a4X4EXJVh/arcgis/rest/services/Live_Weather_Stations/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 300
+at earth
+map features
+lat properties.lat
+lon properties.lon
+field properties.air_temp air_temperature_c gaussian-inverse-square thermal °C 6.0 0.0 0.0
+field properties.press mslp_hpa gaussian-inverse-square acoustic hPa 6.0 0.0 0.0
+
+accepted https://services2.arcgis.com/VNo0ht0YPXJoI4oE/arcgis/rest/services/Weather_Station/FeatureServer/0
+# title: US historical weather station monthly record | host University of Texas at Dallas | keyword weather station
+# note: GHCND-Monatssummen pro Station (TMAX/TMIN/TAVG, PRCP, SNOW).
+url https://services2.arcgis.com/VNo0ht0YPXJoI4oE/arcgis/rest/services/Weather_Station/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 86400
+at earth
+map features
+lat properties.LATITUDE
+lon properties.LONGITUDE
+field properties.TAVG monthly_tavg_c gaussian-inverse-square thermal °C 6.0 0.0 0.0
+
+accepted https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/crowdmag_observations_aggregated/FeatureServer
+# title: NOAA CrowdMag aggregated geomagnetic observations | host NOAA GeoPlatform | keyword geomagnetic
+# note: Smartphone-Magnetometer (CrowdMag), mittleres Totalfeld je Gitterzelle.
+url https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/crowdmag_observations_aggregated/FeatureServer/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 3600
+at earth
+map features
+lat properties.lat
+lon properties.lon
+field properties.mean_intensity geomagnetic_total_field_nt inverse-square em nT 6.0 0.0 0.0
+
+accepted https://services3.arcgis.com/fp1tibNcN9mbExhG/arcgis/rest/services/Soil_Moisture_Sensor_Map_WFL1/FeatureServer/0
+# title: NIWA soil moisture sensors | host National Institute of Water and Atmospheric Research | keyword soil moisture
+# note: NIWA Bodenfeuchte-/Bodentemperatur-Sensoren (Neuseeland).
+url https://services3.arcgis.com/fp1tibNcN9mbExhG/arcgis/rest/services/Soil_Moisture_Sensor_Map_WFL1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 3600
+at earth
+map features
+lat properties.Lat
+lon properties.Long
+field properties.PAW plant_available_water_mm erfc diffusion mm 6.0 0.0 0.0
+field properties.Soil_temp soil_temperature_c gaussian-inverse-square thermal °C 6.0 0.0 0.0
+
+accepted https://services6.arcgis.com/LT1iWT50Endhh6TU/arcgis/rest/services/Lightning__Global_/FeatureServer/0
+# title: Baron Weather global lightning strikes | host Baron Weather | keyword lightning
+# note: Echtzeit-Blitzereignisse (Peakstrom, Multiplizität).
+url https://services6.arcgis.com/LT1iWT50Endhh6TU/arcgis/rest/services/Lightning__Global_/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 60
+at earth
+map features
+lat properties.lat
+lon properties.lon
+field properties.intensity lightning_peak_current_ka inverse-square em kA 6.0 0.0 0.0
+
+accepted https://services1.arcgis.com/Z6SBWLWGRRejblAA/arcgis/rest/services/usgs_streamflow/FeatureServer/0
+# title: USGS real-time streamflow | host Houston-Galveston Area Council | keyword streamflow
+# note: USGS Echtzeit-Abfluss; Position in geometry (kein lat/lon-Attribut).
+url https://services1.arcgis.com/Z6SBWLWGRRejblAA/arcgis/rest/services/usgs_streamflow/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 300
+at earth
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.FLOW streamflow_cfs gaussian-inverse-square advective ft³/s 6.0 0.0 0.0
+field properties.STAGE gage_height_ft gaussian-inverse-square gravity ft 6.0 0.0 0.0
+
+accepted https://services1.arcgis.com/ze0XBzU1FXj94DJq/arcgis/rest/services/NJ_Streamflow_Updated/FeatureServer/0
+# title: NJ/NY 7-day streamflow | host Rutgers University | keyword streamflow
+# note: Rutgers/USGS 7-Tage-Abfluss.
+url https://services1.arcgis.com/ze0XBzU1FXj94DJq/arcgis/rest/services/NJ_Streamflow_Updated/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 300
+at earth
+map features
+lat properties.latitude
+lon properties.longitude
+field properties.discharge1 streamflow_cfs gaussian-inverse-square advective ft³/s 6.0 0.0 0.0
+
+accepted https://gis.ccc.govt.nz/server/rest/services/OpenData/WasteWater/FeatureServer/39
+# title: Christchurch wastewater sensor readings | host Christchurch City Council | keyword temperature sensor
+# note: Live IoT-Sensoren (Temperatur + Sulfidgas). Position in geometry.
+url https://gis.ccc.govt.nz/server/rest/services/OpenData/WasteWater/FeatureServer/39/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 300
+at earth
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.Temperature sensor_temperature_c gaussian-inverse-square thermal °C 6.0 0.0 0.0
+field properties.Reading h2s_ppm erfc diffusion ppm 6.0 0.0 0.0
+
+accepted https://services-ap1.arcgis.com/YQyt7djuXN7rQyg4/arcgis/rest/services/Mary_Cairncross_Scenic_Reserve_R718b140_Temperature_Sensor/FeatureServer/0
+# title: Mary Cairncross Reserve temperature sensor | host Sunshine Coast Council Public Access Hub | keyword temperature sensor
+# note: Einzelgerät-Temperatursensor. Position in geometry.
+url https://services-ap1.arcgis.com/YQyt7djuXN7rQyg4/arcgis/rest/services/Mary_Cairncross_Scenic_Reserve_R718b140_Temperature_Sensor/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 300
+at earth
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.temperature sensor_temperature_c gaussian-inverse-square thermal °C 6.0 0.0 0.0
+
+accepted https://services1.arcgis.com/ze0XBzU1FXj94DJq/arcgis/rest/services/Temperature/FeatureServer/0
+# title: Ocean temperature/salinity profile (Rutgers) | host Rutgers University | keyword temperature sensor
+# note: CTD-Profilpunkte (Temperatur, Salinität, Tiefe).
+url https://services1.arcgis.com/ze0XBzU1FXj94DJq/arcgis/rest/services/Temperature/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 86400
+at earth
+map features
+lat properties.latitude
+lon properties.longitude
+field properties.temperatur ocean_temperature_c gaussian-inverse-square thermal °C 6.0 0.0 0.0
+field properties.salinity ocean_salinity_psu gaussian-inverse-square diffusion PSU 6.0 0.0 0.0
+
+accepted https://services2.arcgis.com/MvofhWK1i5zOJjuj/arcgis/rest/services/StormStats_Marine_buoy_UTM/FeatureServer/0
+# title: StormStats marine wave buoy (Barbados/SOFAR) | host Barbados Meteorological Services | keyword buoy
+# note: SOFAR-Spotter-Boje (Signifikante Wellenhöhe; auch Pressure_mb/Sea_sfc_temp, teils NULL-Strings).
+url https://services2.arcgis.com/MvofhWK1i5zOJjuj/arcgis/rest/services/StormStats_Marine_buoy_UTM/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 300
+at earth
+map features
+lat properties.Buoy_lat
+lon properties.Buoy_lon
+field properties.Sig_wave_height_m sig_wave_height_m gaussian-inverse-square gravity m 6.0 0.0 0.0
+
+# ── Candidates (physisch plausibel, nicht akzeptiert) ──
+candidate https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Active_Hurricanes_Sampler/FeatureServer/0/query
+# title: Active Hurricanes Sampler (Esri Living Atlas) — bereits in dead_sources.φ (parser-def arcgis-missing-f), Recheck mit f=geojson.
+candidate https://services2.arcgis.com/MvofhWK1i5zOJjuj/arcgis/rest/services/StormStats_Marine_buoy_UTM/FeatureServer/0
+# title: StormStats buoy — akzeptiert (s.o.); Pressure_mb + Sea_sfc_temp_degC tragen teils "NULL"-Strings, brauchen Parser-Skip.
+candidate https://services1.arcgis.com/ze0XBzU1FXj94DJq/arcgis/rest/services/Temperature/FeatureServer/0
+# title: Rutgers CTD — akzeptiert; salinity als diffusion-Proxy (Stofftransport), später ggf. biotic/advective prüfen.
+candidate https://services6.arcgis.com/DZHaqZm9cxOD4CWM/arcgis/rest/services/Radiation_Control_Permit_Facilities/FeatureServer/3
+# title: Radiation permit facilities — decline registry; ein Strahlungs-WERT fehlt (nur Permit-Metadaten).
+candidate https://utility.arcgis.com/usrsvcs/servers/5be1fa37cc3a42d598bff5664e92f838/rest/services/RADIATION_WATER_32633/FeatureServer
+# title: Water radiation sampling sites — decline registry; Testergebnis-Feld prüfen, ggf. Fanout auf Messwert.
+
+# ── Decline / Dead / Parser-def ──
+decline https://services2.arcgis.com/RQcpPaCpMAXzUI5g/arcgis/rest/services/Earthquake_Dashboard/FeatureServer
+# note: Earthquake Dashboard Demo (Name/FolderPath/SymbolID — kein Messwert).
+decline https://services1.arcgis.com/DlsnLEhGfXazS5Er/arcgis/rest/services/EarthquakeData/FeatureServer/0
+# note: Earthquake Rapid Assessment = Schadensformular-Registry.
+decline https://services2.arcgis.com/hQZvdtFxRzJpMtdS/arcgis/rest/services/earthquake_saddlemt74m_mi_ver2/FeatureServer/0
+# note: saddlemt74m = PGA-Gefährdungsraster (Polygon).
+dead https://services-eu1.arcgis.com/BkJxImVcTMyS7LID/arcgis/rest/services/Catalogue_compilation_1901_June2020__web_v2_/FeatureServer/1
+# note: NKUA-Katalog token-required (499); View [7] desselben Datensatzes ist offen.
+decline https://services1.arcgis.com/HmwnYiJTBZ4UkySc/arcgis/rest/services/Seismicity_WFL1/FeatureServer/3
+# note: Seismicity (annasta3) = Gefährdungspolygon.
+decline https://services1.arcgis.com/HmwnYiJTBZ4UkySc/arcgis/rest/services/Seismicity_WFL1/FeatureServer
+# note: Seismicity WFL1 = Aggregat-Polygon.
+decline https://services.arcgis.com/rcya3vExsaVBGUDp/arcgis/rest/services/service_9932f02723c841bfb091d7803834a77e/FeatureServer/0
+# note: Commercial Crab Buoy Registration = Lizenz-Registry.
+decline https://services6.arcgis.com/aVpcjAFBJTBCvdHA/arcgis/rest/services/SI1000_Tide_Buoy_Locations/FeatureServer/0
+# note: SI1000 Tide Buoy Locations = reine Lagepunkte (Label).
+decline https://services.arcgis.com/x494PplYsmeeZsYB/arcgis/rest/services/Whale_buoy/FeatureServer/0
+# note: Whale buoy = Buffer-Polygon.
+decline https://services.arcgis.com/HQ0xoN0EzDPBOEci/arcgis/rest/services/Buoy/FeatureServer
+# note: PICES Marine Debris Buoy = Treibgut-Zählstrecke.
+decline https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/Grays_Reef_Buoy/FeatureServer/0
+# note: Grays Reef Buoy (41008) = reiner Stationspunkt (FID/Id).
+decline https://services5.arcgis.com/0Q6HuHqqcg7Zo8zH/arcgis/rest/services/buoy_update/FeatureServer/0
+# note: buoy update = Hafen-Bojen-Registry.
+decline https://services-eu1.arcgis.com/YDJmfAKmZVpOnK2Q/arcgis/rest/services/Ring_Buoy_Locations/FeatureServer/0
+# note: Ring Buoy Locations = Infrastruktur.
+decline https://services1.arcgis.com/ZWOoUZbtaYePLlPw/arcgis/rest/services/Palm_Beach_County_Mooring_Buoy_Sites/FeatureServer/0
+# note: Mooring Buoy Sites = Mooring-Kapazität, kein Messwert.
+dead https://services6.arcgis.com/clPWQMwZfdWn4MQZ/arcgis/rest/services/Glen_Canyon_AtoN_Buoy/FeatureServer/0
+# note: Glen Canyon AtoN Buoy query 400 Invalid URL.
+decline https://services6.arcgis.com/clPWQMwZfdWn4MQZ/arcgis/rest/services/Glen_Canyon_AtoN_Buoy/FeatureServer/2
+# note: Glen Canyon AtoN Buoy = Navigations-Bojenpunkte.
+dead https://mercator.env.nm.gov/server/rest/services/aqb/aqi_stations/FeatureServer/0
+# note: Air Quality Monitoring Stations unerreichbar (Netzfehler).
+dead https://mercator.env.nm.gov/server/rest/services/aqb/aqi_stations/FeatureServer
+# note: Air Quality Monitoring Stations unerreichbar (Netzfehler).
+decline https://services.arcgis.com/f4rR7WnIfGBdVYFd/arcgis/rest/services/Sniffer_Run_2006-01-27_Fairbanks_AK/FeatureServer/2
+# note: Measured PM2.5 Categories = EPA-Kategorie-Polygon (Duplikat, 19x).
+decline https://services3.arcgis.com/jiXW75yUEzuPStZi/arcgis/rest/services/T6_PM2_5/FeatureServer/0
+# note: PM2.5 Jahresmittel je Kommune (T6_VALORE_MEDIO_ANNUO) = räumliches Jahresaggregat.
+decline https://services3.arcgis.com/jiXW75yUEzuPStZi/arcgis/rest/services/Concentrazione_PM2_5/FeatureServer/0
+# note: Concentrazione PM2.5 Jahresmittel je Kommune = räumliches Jahresaggregat.
+decline https://services.arcgis.com/XG15cJAlne2vxtgt/arcgis/rest/services/EPA_Radiation_Air_Monitors/FeatureServer/0
+# note: EPA Radiation Air Monitors = Monitor-Standortliste, kein Strahlungswert.
+decline https://services6.arcgis.com/DZHaqZm9cxOD4CWM/arcgis/rest/services/Radiation_Control_Permit_Facilities/FeatureServer/3
+# note: Radiation Control Permit Facilities = Genehmigungs-Registry.
+decline https://services2.arcgis.com/CyVvlIiUfRBmMQuu/arcgis/rest/services/SolarVector_PubLayers/FeatureServer/2
+# note: Radiation Energy Production = Solar-Parzellen.
+decline https://utility.arcgis.com/usrsvcs/servers/5be1fa37cc3a42d598bff5664e92f838/rest/services/RADIATION_WATER_32633/FeatureServer/0
+# note: Water Radiation Sampling Sites = Probenahme-Registry.
+decline https://services3.arcgis.com/jleLTach0h2wlIJC/arcgis/rest/services/Weather_Stations/FeatureServer/0
+# note: Weather Stations = Klimanormalwerte (MeanAnnualPrecip), kein Live-Wert.
+decline https://services1.arcgis.com/NIkwK16KnqB4PR1J/arcgis/rest/services/Suitable_Weather_Station_Sites/FeatureServer/0
+# note: Suitable Weather Station Sites = Eignungsanalyse.
+decline https://services9.arcgis.com/CzWZ8m5FuciqBibe/arcgis/rest/services/Weather_Station/FeatureServer/0
+# note: Weather Station (Manawatu) = Vermessungspunkte (aec_SurveyPT).
+decline https://services2.arcgis.com/LYMgRMwHfrWWEg3s/arcgis/rest/services/USGS_Evangeline_Water_Level_Change_2012_2017/FeatureServer/0
+# note: USGS Water Level Change = Kontur-Polylinien.
+decline https://services2.arcgis.com/LYMgRMwHfrWWEg3s/arcgis/rest/services/USGS_Chicot_Water_Level_Change_2012_2017/FeatureServer/0
+# note: USGS Water Level Change = Kontur-Polylinien.
+decline https://services2.arcgis.com/LYMgRMwHfrWWEg3s/arcgis/rest/services/USGS_Jasper_Water_Level_Change_2012_2017/FeatureServer/0
+# note: USGS Water Level Change = Kontur-Polylinien.
+decline https://services2.arcgis.com/LYMgRMwHfrWWEg3s/arcgis/rest/services/USGS_Evangeline_Water_Level_Change_1977_2017/FeatureServer/0
+# note: USGS Water Level Change = Kontur-Polylinien.
+decline https://services2.arcgis.com/LYMgRMwHfrWWEg3s/arcgis/rest/services/USGS_Chicot_Water_Level_Change_1977_2017/FeatureServer/0
+# note: USGS Water Level Change = Kontur-Polylinien.
+decline https://services8.arcgis.com/V4KtRsQj3LmLxN4o/arcgis/rest/services/Total_Water_Level_Model_Extent_WFL1/FeatureServer/1
+# note: Total Water Level Model Extent = Modellgrenze.
+decline https://services8.arcgis.com/V4KtRsQj3LmLxN4o/arcgis/rest/services/Total_Water_Level_Model_Extent_WFL1/FeatureServer
+# note: Total Water Level Model Extent WFL1 = Modellgrenze.
+dead https://services9.arcgis.com/IGnf2HrvTcleIY19/arcgis/rest/services/WaterLevelMonitoring_Boreholes/FeatureServer/2
+# note: Water Level Monitoring token-required (499).
+decline https://services2.arcgis.com/FiaPA4ga0iQKduv3/arcgis/rest/services/COOPS_Waterlevel_Prediction_Stations_v1/FeatureServer/0
+# note: Water Level Prediction Stations = Stationsliste (dataapi verweist auf Vorhersagen).
+decline https://services.arcgis.com/7vyJMxlH6ODgjFtB/arcgis/rest/services/Ireland_Tide_Gauges/FeatureServer/0
+# note: Ireland Tide Gauges = reine Pegel-Lagepunkte.
+decline https://services.arcgis.com/f5HgUpxURgEzTccH/arcgis/rest/services/Red_Tide_Dumpster_Locations/FeatureServer/0
+# note: Red Tide Dumpster = Müllcontainer-Infrastruktur.
+decline https://services.arcgis.com/f5HgUpxURgEzTccH/arcgis/rest/services/Red_Tide_Dumpster_Locations_Public/FeatureServer/0
+# note: Red Tide Dumpster Public = Müllcontainer-Infrastruktur.
+decline https://services.arcgis.com/f5HgUpxURgEzTccH/arcgis/rest/services/Red_Tide_Monitoring_Results_Public2/FeatureServer/0
+# note: Red Tide Monitoring Results = KareniaBrevis (biotic?) — Werttyp prüfen (Text vs Zählung).
+decline https://services3.arcgis.com/NqGokVvI0NQ6O9Jf/arcgis/rest/services/MAG_Tracklines/FeatureServer/38
+# note: MAG Tracklines = Survey-Tracklines-Metadaten.
+decline https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/SE_Prioritization_Results_for_distribution/FeatureServer/18
+# note: Magnetometer (NOAA NOS) = Ranked-Coins Marine-Survey.
+decline https://services3.arcgis.com/NqGokVvI0NQ6O9Jf/arcgis/rest/services/MAG_Anomalies/FeatureServer/37
+# note: MAG Anomalies = einmaliger UXO/Geophysik-Survey (Amp nT real, aber statisch).
+decline https://services3.arcgis.com/16nyMR1mdhEaLG41/arcgis/rest/services/Magnetometer_view/FeatureServer
+# note: Magnetometer view (Tetra Tech) = einmaliger Survey (Amp__nT_).
+dead https://services6.arcgis.com/GNx0EBxfRdt2xLnK/arcgis/rest/services/WA059_1993_RD_gdb/FeatureServer/21
+# note: Magnetometer Detect Sys = leere Attributliste.
+decline https://services3.arcgis.com/eJGTyRrpIbVmu8UX/arcgis/rest/services/0118/FeatureServer/0
+# note: HNB Magnetometer Contacts = Kontaktpunkte-Metadaten.
+decline https://services.arcgis.com/6DIQcwlPy8knb6sg/arcgis/rest/services/Geomagnetic_Poles/FeatureServer/0
+# note: Geomagnetic Poles = statische Referenzpunkte.
+decline https://services.arcgis.com/6DIQcwlPy8knb6sg/arcgis/rest/services/Geomagnetic_Longitudes/FeatureServer/0
+# note: Geomagnetic Longitudes = Referenz-Isolinien.
+decline https://services.arcgis.com/6DIQcwlPy8knb6sg/arcgis/rest/services/Geomagnetic_Latitudes/FeatureServer/0
+# note: Geomagnetic Latitudes = Referenz-Isolinien.
+decline https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/crowdmag_observations_aggregated/FeatureServer/1
+# note: crowdmag h3 6 summary = Duplikat von [77] (andere Aggregation).
+decline https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/crowdmag_observations_aggregated/FeatureServer/2
+# note: crowdmag h3 5 summary = Duplikat von [77].
+decline https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/crowdmag_observations_aggregated/FeatureServer/0
+# note: crowdmag grid summary = Duplikat von [77].
+decline https://services.arcgis.com/6DIQcwlPy8knb6sg/arcgis/rest/services/Migration_of_Geomagnetic_Pole/FeatureServer/0
+# note: Migration of Geomagnetic Pole = statische Bahn.
+decline https://services3.arcgis.com/fp1tibNcN9mbExhG/arcgis/rest/services/Soil_Moisture_Sensor_Map_WFL1/FeatureServer
+# note: Soil Moisture Sensor Map WFL1 = Duplikat von [82].
+dead https://services.arcgis.com/1kuuRiUAOfF5pwAn/arcgis/rest/services/Hurricane_Miley/FeatureServer
+# note: Hurricane Miley token-required (499).
+decline https://services.arcgis.com/LxfKOYkTamDQYlsa/arcgis/rest/services/Hurricane_Tracks/FeatureServer/0
+# note: Hurricane Tracks (HURDAT) = Polyline-Track, Position nicht in Attributen.
+decline https://services1.arcgis.com/FLgshDLgxaIsVNWq/arcgis/rest/services/Hurricane/FeatureServer
+# note: Hurricane (IBTrACS) = Polyline-Best-Track, kein lat/lon-Attribut.
+decline https://services1.arcgis.com/x5wCko8UnSi4h0CB/arcgis/rest/services/hurricane_shelters/FeatureServer/0
+# note: hurricane shelters = Schutzraum-Infrastruktur.
+decline https://services.arcgis.com/XTtANUDT8Va4DLwI/arcgis/rest/services/Volcano_Status/FeatureServer/0
+# note: NZ Volcano Status = Alarmstatus (Text), kein Messwert.
+decline https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Volcano_Status_Public/FeatureServer/0
+# note: Volcano Status Layer = Alert_Level/Color_Code (Status).
+decline https://services.arcgis.com/j3JVMGycAs95su2E/arcgis/rest/services/Volcano_Locations/FeatureServer/1
+# note: Volcano Locations = statischer Vulkankatalog.
+decline https://services2.arcgis.com/NzAqpeLbvbvoP3qh/arcgis/rest/services/Buffer_of_Volcano/FeatureServer/0
+# note: Buffer of Volcano = Puffer-Polygon.
+decline https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/Volcano_Locations/FeatureServer/0
+# note: Volcano Locations (NOAA) = statischer Vulkankatalog.
+decline https://services2.arcgis.com/TSIJRCUq2X813XVI/arcgis/rest/services/Volcano_edit/FeatureServer/0
+# note: Volcano edit = Duplikat Vulkankatalog.
+decline https://services.arcgis.com/8df8p0NlLFEShl0r/arcgis/rest/services/Volcano_EditBS/FeatureServer/0
+# note: Volcano EditBS = Duplikat Vulkankatalog.
+decline https://services1.arcgis.com/ZozYr1WfCwexXgcn/arcgis/rest/services/Volcano_Edit/FeatureServer/0
+# note: Volcano Edit = Duplikat Vulkankatalog.
+dead https://services5.arcgis.com/bz1uwWPKUInZBK94/arcgis/rest/services/CA_Lightning_Data_Public_View/FeatureServer/0
+# note: CA Lightning Data Public View = leere Attributliste (Zugriff beschränkt).
+dead https://utility.arcgis.com/usrsvcs/servers/ac9fa803d3824b66968b1d9f1b9b7ad1/rest/services/DataServices/Lightning_Recent_Features/FeatureServer/0
+# note: Real-time Lightning (AccuWeather) = 500.
+dead https://services.arcgis.com/4PuGhqdWG1FwH2Yk/arcgis/rest/services/Current_lightning_view/FeatureServer/0
+# note: Current lightning view = leere Attributliste.
+decline https://services9.arcgis.com/dvViSL029z8IVu5n/arcgis/rest/services/Streamflow_Bitter/FeatureServer/0
+# note: Streamflow Bitter = Monatsnormalwerte, kein Live-Abfluss.
+decline https://services1.arcgis.com/FjPcSmEFuDYlIdKC/arcgis/rest/services/FinalStreamflowClassifications_081016_CountyView/FeatureServer/0
+# note: Final Stream Flow Classifications = Klassifikations-Polylinien.
+decline https://services2.arcgis.com/wCOMu5IS7YdSyPNx/arcgis/rest/services/KNP_StreamFlow/FeatureServer/0
+# note: KNP StreamFlow = nur SITE/DATE/UTM, kein Messwert.
+decline https://services2.arcgis.com/wCOMu5IS7YdSyPNx/arcgis/rest/services/KNP_StreamFlow_vw/FeatureServer/0
+# note: KNP StreamFlow vw = nur SITE/DATE/UTM.
+decline https://services.arcgis.com/cJ9YHowT8TU7DUyn/arcgis/rest/services/CRWU_CREAT_Streamflow_Projections_Points/FeatureServer/0
+# note: Projected Streamflow = Klimaprojektion.
+decline https://services8.arcgis.com/sFJK6YxafYvO2vAz/arcgis/rest/services/Buffer%20of%20depth%20of%20snow/FeatureServer/0
+# note: Buffer of depth of snow = Schüler-Buffer-Polygon.
+decline https://services1.arcgis.com/eGSDp8lpKe5izqVc/arcgis/rest/services/Below_Sea_Level/FeatureServer/0
+# note: Below Sea Level = Höhenlinien.
+decline https://services3.arcgis.com/9nfxWATFamVUTTGb/arcgis/rest/services/Relative_sea_level_rise_TWAP/FeatureServer/0
+# note: Relative sea level rise TWAP = Risiko-Score (Modell).
+decline https://services6.arcgis.com/sbUjYcF5FKWKRP5Q/arcgis/rest/services/Salininy_extent_2013/FeatureServer/0
+# note: Salinity extent 2013 = Polygon-Ausdehnung.
+decline https://services1.arcgis.com/sDAPyc2rGRn7vf9B/arcgis/rest/services/Coastal_Resiliency_Salinity_Sites/FeatureServer/0
+# note: Coastal Resiliency Salinity Sites = Stationsliste.
+decline https://services1.arcgis.com/Ezk9fcjSUkeadg6u/arcgis/rest/services/AZ_salinity_2012/FeatureServer/0
+# note: AZ salinity 2012 = einmalige TDS-Brunnenmessung (statisch).
+decline https://gis.ccc.govt.nz/server/rest/services/OpenData/WasteWater/FeatureServer/40
+# note: Ww CWTP Sensor latest reading = Duplikat von [113] (Layer 40 vs 39).
+decline https://services.arcgis.com/o6oETlrWetREI1A2/arcgis/rest/services/Sensor_Locations/FeatureServer/0
+# note: Sensor Locations = reine Lagepunkte.
+parser-def https://services6.arcgis.com/bdPqSfflsdgFRVVM/arcgis/rest/services/Syracuse_Road_Temperatures/FeatureServer/0
+# note: Syracuse Road Temperatures = Wide-Format (je Straße eine Spalte).
+decline https://services3.arcgis.com/YhFczgmq8G7YgyNn/arcgis/rest/services/Temperature_Monitoring/FeatureServer/0
+# note: Temperature Monitoring = reine Lagepunkte (POINT_X/Y).
+decline https://services3.arcgis.com/cTnMkBRk4HWkUCRo/arcgis/rest/services/Amenaza_Tsunami/FeatureServer
+# note: Amenaza Tsunami = Gefährdungszone.
+decline https://services5.arcgis.com/RbjlVNAtGGPx1hPV/arcgis/rest/services/Tsunami_10m/FeatureServer/0
+# note: Tsunami 10m = Buffer-Polygon.
+dead https://services5.arcgis.com/h1YxcBX0SJlA4Mtf/arcgis/rest/services/parameter/FeatureServer/0
+# note: Ancaman Tsunami Padang = leere Attributliste.
+decline https://services2.arcgis.com/cRH3tEMPESJz6DMX/arcgis/rest/services/HUB_LITORAL_TSUNAMI_AREA/FeatureServer/0
+# note: HUB LITORAL TSUNAMI AREA = Gefährdungszone.
+decline https://services5.arcgis.com/i7S5PSnIJAUcWvSE/arcgis/rest/services/Amenaza_por_Tsunami_2024/FeatureServer
+# note: Amenaza por Tsunami 2024 = Gefährdungszone.
+decline https://services7.arcgis.com/NCo3mYPLFZomFtDT/arcgis/rest/services/Tsunami_Zones/FeatureServer/0
+# note: DWMP Tsunami Zones = Szenario-Zone.
+decline https://services6.arcgis.com/8YE7U3IbCsqyT36h/arcgis/rest/services/Mission_Darts___Rate_My_Oche_WFL1/FeatureServer/0
+# note: Mission Darts = Dartboard-Bewertung (Sport, kein Messwert).
+decline https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/Current_DARTs_and_Retrospective_BPR_Deployments/FeatureServer
+# note: Current DARTs & BPR Deployments = Einsatz-Registry (kein Messwert).
+decline https://services1.arcgis.com/qS7AYixGtf3sv8B6/arcgis/rest/services/DARTSAll/FeatureServer/0
+# note: DARTSAll = Flächennutzung (Case-Work), nicht DART-Bojen.
+decline https://services8.arcgis.com/yaxKTxPxCi0rfHHw/arcgis/rest/services/Lee_and_Dougherty_County_Crashes__2021_2025__along_US_82_and_US_19_WFL1/FeatureServer/4
+# note: DARTS MPO Boundary = MPO-Grenze.
+decline https://services8.arcgis.com/yaxKTxPxCi0rfHHw/arcgis/rest/services/Bike_Ped_Crashes_DARTS_2021_2025_US82_US91/FeatureServer/4
+# note: DARTS MPO Boundary = MPO-Grenze (Duplikat).
+
+decline https://services7.arcgis.com/XnmMAZERCcHaTPxC/arcgis/rest/services/tohoku_seismicity/FeatureServer/5
+# note: Seismicity (USGS) Layer desselben tohoku_seismicity-Service wie [5] — Duplikat.
+decline https://services7.arcgis.com/XnmMAZERCcHaTPxC/arcgis/rest/services/tohoku_seismicity/FeatureServer/4
+# note: Seismicity (USGS) Layer desselben tohoku_seismicity-Service wie [5] — Duplikat.
+decline https://services.arcgis.com/f4rR7WnIfGBdVYFd/arcgis/rest/services/Sniffer_Run_2015-01-15_Fairbanks_AK/FeatureServer/2
+# note: Measured PM2.5 Categories (Sniffer Run, Fairbanks) = EPA-Kategorie-Polygon, Duplikat.
+decline https://services.arcgis.com/f4rR7WnIfGBdVYFd/arcgis/rest/services/Sniffer_Run_2014-12-15_Fairbanks_AK/FeatureServer/2
+# note: Measured PM2.5 Categories (Sniffer Run, Fairbanks) = EPA-Kategorie-Polygon, Duplikat.
+decline https://services.arcgis.com/f4rR7WnIfGBdVYFd/arcgis/rest/services/Sniffer_Run_2015-03-27_Fairbanks_AK/FeatureServer/2
+# note: Measured PM2.5 Categories (Sniffer Run, Fairbanks) = EPA-Kategorie-Polygon, Duplikat.
+decline https://services.arcgis.com/f4rR7WnIfGBdVYFd/arcgis/rest/services/Sniffer_Run_2015-03-24_Fairbanks_AK/FeatureServer/2
+# note: Measured PM2.5 Categories (Sniffer Run, Fairbanks) = EPA-Kategorie-Polygon, Duplikat.
+decline https://services.arcgis.com/f4rR7WnIfGBdVYFd/arcgis/rest/services/Sniffer_Run_2015-03-19_Fairbanks_AK/FeatureServer/2
+# note: Measured PM2.5 Categories (Sniffer Run, Fairbanks) = EPA-Kategorie-Polygon, Duplikat.
+decline https://services.arcgis.com/f4rR7WnIfGBdVYFd/arcgis/rest/services/Sniffer_Run_2015-03-10_Fairbanks_AK/FeatureServer/2
+# note: Measured PM2.5 Categories (Sniffer Run, Fairbanks) = EPA-Kategorie-Polygon, Duplikat.
+decline https://services.arcgis.com/f4rR7WnIfGBdVYFd/arcgis/rest/services/Sniffer_Run_2015-02-27_Fairbanks_AK/FeatureServer/2
+# note: Measured PM2.5 Categories (Sniffer Run, Fairbanks) = EPA-Kategorie-Polygon, Duplikat.
+decline https://services.arcgis.com/f4rR7WnIfGBdVYFd/arcgis/rest/services/Sniffer_Run_2015-02-18_Fairbanks_AK/FeatureServer/2
+# note: Measured PM2.5 Categories (Sniffer Run, Fairbanks) = EPA-Kategorie-Polygon, Duplikat.
+decline https://services.arcgis.com/f4rR7WnIfGBdVYFd/arcgis/rest/services/Sniffer_Run_2014-12-29_Fairbanks_AK/FeatureServer/2
+# note: Measured PM2.5 Categories (Sniffer Run, Fairbanks) = EPA-Kategorie-Polygon, Duplikat.
+decline https://services.arcgis.com/f4rR7WnIfGBdVYFd/arcgis/rest/services/Sniffer_Run_2014-12-22_Fairbanks_AK/FeatureServer/2
+# note: Measured PM2.5 Categories (Sniffer Run, Fairbanks) = EPA-Kategorie-Polygon, Duplikat.
+decline https://services.arcgis.com/f4rR7WnIfGBdVYFd/arcgis/rest/services/Sniffer_Run_2014-12-09_Fairbanks_AK/FeatureServer/2
+# note: Measured PM2.5 Categories (Sniffer Run, Fairbanks) = EPA-Kategorie-Polygon, Duplikat.
+decline https://services.arcgis.com/f4rR7WnIfGBdVYFd/arcgis/rest/services/Sniffer_Run_2014-11-21_Fairbanks_AK/FeatureServer/2
+# note: Measured PM2.5 Categories (Sniffer Run, Fairbanks) = EPA-Kategorie-Polygon, Duplikat.
+decline https://services.arcgis.com/f4rR7WnIfGBdVYFd/arcgis/rest/services/Sniffer_Run_2014-10-27_Fairbanks_AK/FeatureServer/2
+# note: Measured PM2.5 Categories (Sniffer Run, Fairbanks) = EPA-Kategorie-Polygon, Duplikat.
+decline https://services.arcgis.com/f4rR7WnIfGBdVYFd/arcgis/rest/services/Sniffer%20Run%202014-02-13,%20Fairbanks,%20AK/FeatureServer/2
+# note: Measured PM2.5 Categories (Sniffer Run, Fairbanks) = EPA-Kategorie-Polygon, Duplikat.
+decline https://services.arcgis.com/f4rR7WnIfGBdVYFd/arcgis/rest/services/Sniffer%20Run%202013-12-03,%20Fairbanks,%20AK/FeatureServer/2
+# note: Measured PM2.5 Categories (Sniffer Run, Fairbanks) = EPA-Kategorie-Polygon, Duplikat.
+decline https://services.arcgis.com/f4rR7WnIfGBdVYFd/arcgis/rest/services/Sniffer_Run_2014-10-29_Fairbanks_AK/FeatureServer/2
+# note: Measured PM2.5 Categories (Sniffer Run, Fairbanks) = EPA-Kategorie-Polygon, Duplikat.

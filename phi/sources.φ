@@ -401,6 +401,20 @@ dist dist_au
 dist_scale 1.495978707e11
 field H comet_h_mag gaussian-inverse-square em mag 604800 0.0 0.0
 
+# ── DASTCOM5 comet apparition catalog (K03, compiled by dcom5_compiler → ssd.jpl.nasa.gov) ──
+# Multi-Apparitionen aus dcom5_le.dat (976-B-Records) zum Record-Epoch via Kepler (e < 1);
+# e >= 1 manifestieren 0. Record-Layout laut dastcom5/doc/README.txt (Byte-Map, Range-Extract).
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/dcom5_comets.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+dist dist_au
+dist_scale 1.495978707e11
+field H comet_h_mag gaussian-inverse-square em mag 604800 0.0 0.0
+field M1 comet_total_mag gaussian-inverse-square em mag 604800 0.0 0.0
+
 # ── ALFALFA HI-Galaxienkatalog (em cmap; Dist in Mpc via dist_scale) ──
 url https://egg.astro.cornell.edu/alfalfa/data/a40files/a40.datafile1.csv
 ttl 604800
@@ -1158,3 +1172,124 @@ lastrow WVHT hydrosphere_buoy_51004_wave_height gaussian-inverse-square acoustic
 lastrow DPD hydrosphere_buoy_51004_dominant_period gaussian-inverse-square acoustic s 30.0 0.0 0.0
 lastrow PRES hydrosphere_buoy_51004_pressure gaussian-inverse-square advective hPa 30.0 0.0 0.0
 lastrow WTMP hydrosphere_buoy_51004_water_temp gaussian-inverse-square thermal degC 30.0 0.0 0.0
+
+# ── Grind-Einbau 2026-08-15 ──
+
+# Swarm EFI TCT02 — E-Feld-Stärke selbst (electric; experimentell, 2013-12 bis 2025-12)
+url https://vires.services/hapi/data?id=SW_EXPT_EFIA_TCT02&start={hour_ago}&stop={now}&parameters=Ehx,Ehy,Ehz&format=json
+ttl 3600
+at earth
+hapi Ehx=swarm_electric_field_x_mvm Ehy=swarm_electric_field_y_mvm Ehz=swarm_electric_field_z_mvm
+field swarm_electric_field_x_mvm swarm_electric_field_x_mvm inverse-square electric mV/m 3600 0.0 0.0
+field swarm_electric_field_y_mvm swarm_electric_field_y_mvm inverse-square electric mV/m 3600 0.0 0.0
+field swarm_electric_field_z_mvm swarm_electric_field_z_mvm inverse-square electric mV/m 3600 0.0 0.0
+
+# Swarm A Magnetfeld 1 Hz (em, operational)
+url https://vires.services/hapi/data?id=SW_OPER_MAGA_LR_1B&start={hour_ago}&stop={now}&parameters=F&format=json
+ttl 3600
+at earth
+hapi F=swarm_magnetic_field_intensity_nt
+field swarm_magnetic_field_intensity_nt swarm_magnetic_field_intensity_nt inverse-square em nT 3600 0.0 0.0
+
+# MSL REMS Mars-Wetter (thermal/acoustic, Gale-Krater; Wind-Sensor ausgefallen → 0 honored)
+url https://mars.nasa.gov/rss/api/?feed=weather&category=msl&feedtype=json
+ttl 86400
+on mars -4.5895 137.4417 0
+field soles.0.max_temp cosmos_mars_max_temp_c exponential-decay thermal C 86400 0.0 0.0
+field soles.0.min_temp cosmos_mars_min_temp_c exponential-decay thermal C 86400 0.0 0.0
+field soles.0.pressure cosmos_mars_pressure_pa gaussian-inverse-square acoustic Pa 86400 0.0 0.0
+field soles.0.max_gts_temp cosmos_mars_ground_max_temp_c exponential-decay thermal C 86400 0.0 0.0
+field soles.0.min_gts_temp cosmos_mars_ground_min_temp_c exponential-decay thermal C 86400 0.0 0.0
+
+# MEDA Perseverance Mars-Wetter (thermal/acoustic, Jezero; Feed eingefroren 2024-04-27 — zerfällt ehrlich zu 0 honored)
+url https://mars.nasa.gov/rss/api/?feed=weather&category=mars2020&feedtype=json
+ttl 86400
+on mars 18.445 77.45 0
+field sols.6.max_temp cosmos_mars2020_max_temp_c exponential-decay thermal C 86400 0.0 0.0
+field sols.6.min_temp cosmos_mars2020_min_temp_c exponential-decay thermal C 86400 0.0 0.0
+field sols.6.pressure cosmos_mars2020_pressure_pa gaussian-inverse-square acoustic Pa 86400 0.0 0.0
+
+# DONKI Sonnenflare X-Klasse (em; classType=X-Filter, leer ohne X-Flare → 0 honored)
+url https://api.nasa.gov/DONKI/FLR?startDate={week_ago}&endDate={today}&classType=X&api_key={NASA_API_KEY}
+ttl 3600
+at sun
+regex classType":"X([0-9.]+) solar_flare_x_class_latest inverse-square em 1e-4W/m2 3600 0.0 0.0
+
+# FIRMS VIIRS SNPP Aktivfeuer (thermal, 24h global)
+url https://firms.modaps.eosdis.nasa.gov/api/area/csv/{FIRMS_MAP_KEY}/VIIRS_SNPP_NRT/world/1
+ttl 3600
+format csv
+on earth 0 0 0
+map .
+lat latitude
+lon longitude
+field bright_ti4 biosphere_fire_brightness_ti4_k gaussian-inverse-square thermal K 3600 0.0 0.0
+field frp biosphere_fire_radiative_power_mw gaussian-inverse-square thermal MW 3600 0.0 0.0
+
+# FIRMS VIIRS NOAA-20 Aktivfeuer (thermal, 24h global)
+url https://firms.modaps.eosdis.nasa.gov/api/area/csv/{FIRMS_MAP_KEY}/VIIRS_NOAA20_NRT/world/1
+ttl 3600
+format csv
+on earth 0 0 0
+map .
+lat latitude
+lon longitude
+field bright_ti4 biosphere_fire_brightness_ti4_k gaussian-inverse-square thermal K 3600 0.0 0.0
+field frp biosphere_fire_radiative_power_mw gaussian-inverse-square thermal MW 3600 0.0 0.0
+
+# FIRMS MODIS Aktivfeuer (thermal, 24h global)
+url https://firms.modaps.eosdis.nasa.gov/api/area/csv/{FIRMS_MAP_KEY}/MODIS_NRT/world/1
+ttl 3600
+format csv
+on earth 0 0 0
+map .
+lat latitude
+lon longitude
+field bright_ti4 biosphere_fire_brightness_ti4_k gaussian-inverse-square thermal K 3600 0.0 0.0
+field frp biosphere_fire_radiative_power_mw gaussian-inverse-square thermal MW 3600 0.0 0.0
+
+# UniMelb AGOS Erdbeben (seismic-body; heute count:0 → 0 honored bis zum nächsten Event)
+url https://seismic-api.science.unimelb.edu.au/today-quakes
+ttl 300
+at earth
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field geometry.coordinates.2 geosphere_quake_depth_km erfc seismic-body km 3600 0.0 0.0
+field properties.magnitude geosphere_quake_magnitude erfc seismic-body Mw 3600 0.0 0.0
+
+# IOC Sea-Level-Station-Monitoring (gravity, stationlist + lastvalue)
+url https://www.ioc-sealevelmonitoring.org/service.php?query=stationlist&format=json
+ttl 3600
+on earth 0 0 0
+map .
+lat lat
+lon lon
+field lastvalue hydrosphere_sealevel_m inverse-square gravity m 3600 0.0 0.0
+
+# LIGO/Virgo/KAGRA Gravitationswellen-Superevents (gravity, far)
+url https://gracedb.ligo.org/api/superevents/?limit=10
+ttl 300
+at earth
+last superevents.far gravity_wave_far inverse-square gravity 1 300 0.0 0.0
+
+# Environment Agency Flusspegel-Fanout (gravity, UK)
+url https://environment.data.gov.uk/flood-monitoring/id/stations/{station}/readings.json?_limit=1
+stations https://environment.data.gov.uk/flood-monitoring/id/stations?_limit=500
+stations_path items
+stations_id notation
+stations_lat lat
+stations_lon long
+fanout 40
+ttl 900
+on earth 0 0 0
+last items.value hydrosphere_river_stage_m inverse-square gravity m 900.0 0.0 0.0
+
+# PMEL CO2-Moorings (diffusion, ERDDAP tabledap)
+url https://data.pmel.noaa.gov/pmel/erddap/tabledap/all_pmel_co2_moorings.json?time,longitude,latitude,pCO2_air&time%3E=max(time)-7days
+ttl 86400
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+field 3 hydrosphere_pco2_mooring_uatm gaussian-inverse-square diffusion uatm 8640.0 0.0 0.0

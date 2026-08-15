@@ -6,7 +6,7 @@ wird entfernt (Git trägt es). Kein Eintrag meldet Erledigtes als offen, kein of
 Punkt fehlt. Widerspricht ein Dokument dieser Datei, gilt diese Datei — solche
 Drift-Stellen sind unter „Doku-Drift" registriert.
 
-## Stand — 2026-08-15 (Katalog-Welle: K03-Kometen, K04b Gaia-DR3+Bailer-Jones 1,84 Mio Sterne, tap_compiler über TAPVizieR/GAVO/ARI, Enrichment-Matrix; LSK/PCK-Hochzeit, Binary v2, Protokoll v6, reine Per-Pixel-Membran, K01 geschlossen)
+## Stand — 2026-08-15 (Katalog-Welle: K03-Kometen inkl. dcom5-Multi-Apparitionen, K04b Gaia-DR3+Bailer-Jones 1,84 Mio Sterne, tap_compiler über TAPVizieR/GAVO/ARI, Enrichment-Matrix; LSK/PCK-Hochzeit, Binary v2, Protokoll v6, reine Per-Pixel-Membran, K01 geschlossen)
 
 Zeit aus naif0012.tls (LSK-Reader, keine TT_MINUS_UTC-Konstante). PCK-Reader pck.rs
 (gm_de440, pck00010, geophysical.ker → GM/J2/J4/Radii/POLE). stype-1 v2: gcount=12,
@@ -34,7 +34,7 @@ Compiler/Runtime; Moon-PA-Merge parkt an K05. K03-Compiler-Einheit
 geschlossen: src/kepler.rs + src/bin/dastcom_compiler.rs (Dev-Beweis Ceres
 0,001″ gegen Horizons). 32 neue φ-Ephemeris-Blöcke für die Flattener-Monde
 (absent bis der Flattener-CI-Lauf die CDN-Assets trägt — 0 honored).
-0 Warnings, 0 Errors; Tests: 5 lib + 20 bin.
+0 Warnings, 0 Errors; Tests: 31 lib + 36 bin.
 
 ---
 
@@ -193,7 +193,7 @@ braucht mindestens eine gemessene, physisch gate-konforme Quelle.
 | thermal | live: NOAA-CDO-Fanout (TMAX), AOML-Drifter, GML Barrow, Buoy-WTMP; DASTCOM H/Albedo + Yarkovsky-Listen; GOES-Thermal | K03 (Parameter); Kuration (Zeitreihen) |
 | diffusion | live: PurpleAir, OpenAQ-pm25-Fanout, GML CH4/N2O/SF6, OOI-pCO2; NOAA SWPC, NASA OMNI | Kuration |
 | advective | live: Waterservices-Rivers, OpenSky-Aircraft, Buoy-Wind; DSCOVR/SWPC (Solarwind), NOAA GFS | Kuration |
-| electric | live: Swarm EFI (Raumfahrzeug-Potential Vs in V) + Swarm FAC (IRC/FAC-Ströme µA/m²) via VirES-HAPI. Open-End: E-Feld-Stärke selbst (EFI-TCT-Produkte), GLM-Blitz (NetCDF auf NOAA-S3 — NetCDF-Reader fehlt), GIC-Netze (nicht öffentlich) | Kuration |
+| electric | live: Swarm EFI + FAC (IRC/FAC-Ströme) + TCT02-E-Feld (Ehx/y/z mV/m — Grind-Einbau 2026-08-15, electric-E-Feld-Open-End GESCHLOSSEN) + MAGA-LR (em) via VirES-HAPI | GLM-Blitz (NetCDF-Reader fehlt), GIC-Netze (nicht öffentlich) |
 
 Device-Sensoren (M05) ergänzen die Kanäle lokal; das Radiatorium (M01/M02) ist die
 Aktuator-Seite. Der Kurations-Pfad ist unten registriert (Curation & Quellen).
@@ -448,14 +448,63 @@ Binary-PCK-Pakets oben).
   Vorkommen, aber nur 93 Codes je als URL-Block mit Koordinaten; die anderen
   61 existierten nur als Katalog-Einträge (intermagnet.txt ×3). Fanout:
   präsenz-sortiert, cap 40, BGS verlangt `Z`-Suffix an Zeitstempeln
-  (start={week_ago}T00:00:00Z). Offen: Ausbeute-Feinabstimmung (best-avail-
-  Aktualität variiert je Observatorium).
-- **Re-Kuratierungs-Kampagne** (nächster Brocken): `home_archiv_inventory.txt`
-  registriert die 376 Home-Archiv-Dateien mit 25.009 INTERMAGNET-Vorkommen —
-  der „riesen Bestand" (pre_cdn_history, omegaflow-phi-recovery, Schreibtisch/
-  Archiv) muss per --gold-Konverter + test_backlog_batches_verify neu kuratiert
-  werden. B2FIND (EUDAT, 1,47 Mio) = Registry-decline, Discovery-Hints: ICOS/
-  ToAR/LAGO/ICGEM/Pangaea/SeaNoe/TERENO (`b2find_intermagnet_catalog.φ`).
+  (start={week_ago}T00:00:00Z). Abgleich 2026-08-15 (intermagnet_abgleich.txt):
+  live 154 / Archiv-Codes 94 / nur-archiv 2 (MCG, NAG — historische Codes).
+  Offen: Ausbeute-Feintuning (best-avail-Aktualität variiert je Observatorium).
+- **Re-Kuratierungs-Kampagne GESCHLOSSEN** (2026-08-15): `home_archiv_inventory.txt`
+  (376 Dateien, 25.009 Vorkommen) vollständig dedupliziert
+  (`home_dedupe_map.txt`: 195 unique, 22 Home-only-ohne-Repo-Gegenstück),
+  --gold-konvertiert (15 gold_home_*_accepted.φ, 2.243 parse-fähige Blöcke),
+  test_backlog_batches_verify-Sweep terminiert: ZERO neue Live-Quellen
+  (2 neue URLs void) — der Home-Bestand ist eine Kopie der bereits
+  terminierten Korpora. B2FIND (EUDAT) = Registry-decline, aber der
+  tags=catalogs-Bestand ist vollständig indexiert: `b2find_catalogs_index.φ`
+  (1.082 Records, 3 Seiten, alle organisation=IVOA; 995 CDS-VizieR,
+  23 GAVO, Rest VO-TAP-Dienste; Provider-/Grind-Kandidaten-Blöcke).
+- **Grind-Welle 2026-08-15** (Elf Buckets, alles in phi/research/agent_output/):
+  · TerraPulse-103 Kandidaten vollständig geprobt (grind_terrapulse_a/b.φ):
+    4 Drafts, Mauna-Loa-CO2 + Fireball-API offen (Signum-Faltung der
+    Halbspären-Spalten fehlt — Parser-Gap, P-Liste).
+  · ESA-Vollportal (grind_esa_full.φ): 0 neue keyless Punkte — VirES-HAPI-
+    Katalog vollständig inventarisiert (174 Datasets, grind_vires_catalog.φ,
+    8 Drafts CHAMP/GRACE/GOCE/CryoSat MAG/DNS/WND/TEC/KBR — Einbau offen).
+  · NASA (grind_nasa.φ): DONKI-FLR + 3×FIRMS eingebaut; InSight tot
+    (Mission beendet, sol_keys:[]), NeoWs decline (Orbit-Fit).
+  · Host-geparkt (grind_host.φ): MSL-Mars-Wetter eingebaut; Pegelonline =
+    Struktur-Befund (wartet auf Parallel-Session-Fanout); DSN/SatNOGS decline,
+    CENC/JMA parser-def.
+  · Rechecks (grind_rechecks.φ): PMEL-CO2 + EA-Flusspegel-Fanout eingebaut;
+    SDSS-SkyServer-cmap (0.Rows) offen (Validierung).
+  · B2FIND-Hints (grind_b2find.φ): 0 accepted — ICOS/TOAR key-needed,
+    GEOFON quakeml-only, Rest Registry.
+  · FRB (grind_frb.φ): FRBCAT1 tot (frbcat.org 000), CHIME via VizieR
+    J/ApJS/257/59/table2 lebt (536, ohne z → 0 honored, tap_compiler-Route).
+  · ArcGIS (grind_arcgis_index.φ + grind_arcgis_deep.φ): 440 + 620 Datasets
+    indexiert, 131 + 358 Services geprobt, 32 Block-Drafts (17 + 15, thermal/
+    seismic/diffusion/em/advective/gravity — Einbau offen).
+  · ARI Heidelberg (grind_ari.φ): Gaia-Archiv TAP + GCNS (331.312 Sterne
+    ≤100pc, dist-Parameter) + MWSC (3.006 Haufen) — Kompilat-Kandidaten
+    (tap_compiler-Muster, Einbau offen); tap_index_ari.φ bleibt
+    Parallel-Session-Artefakt.
+  · DOMAIN_COVERAGE-Manifest (grind_domain_coverage.φ): alle 259 Hosts
+    abgeglichen (22 live, 168 klassifiziert, 16 Kandidat, 52 offen geprobt)
+    → gracedb/IOC/AGOS eingebaut.
+  · Planetenarchive (grind_planetary.φ): MEDA-Feed lebt eingefroren
+    (2024-04-27, eingebaut mit Zerfalls-Hinweis), Marsquake V14 ohne
+    Live-Route (PDS-Archiv), Apollo-Seismik = Compile-Candidate (ASCII),
+    LRO/Venus/Cassini = parser-def Archive, PDS-API = Registry-decline.
+  · Archeology-Gaps (archeology_gaps_index.φ): 77 neue Kandidaten-URLs
+    (AERONET, IERS-EOP, Fireball/Sentry, Xamin-TAP, GONG2, GIRO-Ionosonde,
+    e-CALLISTO …) — nächster Grind-Brocken; MASTER.md/DOMAIN_COVERAGE.md
+    als Manifeste registriert.
+  · dead_sources-Migration der Grind-Dispositionen: mechanisch offen
+    (python-Merge aus grind_*.φ).
+- **Hapi-FieldConfig-Befund** (2026-08-15): bei hapi-Extracts ersetzt
+  `hapi_found` die field-Zeilen-Config durch synthetisch {kernel:0, force:0,
+  tau:0} (main.rs ~7469) — die deklarierten kernel/force/tau der
+  HAPI-Blöcke erreichen den Oszillator nicht. Bestehende Swarm/INTERMAGNET-
+  Blöcke manifestieren (Kanal lebt), aber die Kraft-Labels sind tote
+  Grammatik. Klärung in P-Liste.
 - TNS-Transienten (em, celestisch) live seit 2026-08-14: Vollkatalog
   `tns_public_objects.csv.zip` (`format csv_zip`, std-only Inflate in
   src/inflate.rs, z-Distanz via Redshift, abs_mag_from). ~20k

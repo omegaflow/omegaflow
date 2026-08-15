@@ -1,0 +1,7 @@
+# intermagnet_abgleich (2026-08-15)
+# live GINServices observatorien: 154
+# archiv-codes (gold-korpora + staging): 94
+# archiv-ohne-live: 2
+# live-ohne-archiv: 0
+nur-archiv MCG
+nur-archiv NAG

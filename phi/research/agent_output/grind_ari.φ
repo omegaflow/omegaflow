@@ -1,0 +1,235 @@
+# grind ari (2026-08-15)
+# Struktur-Recherche ARI (Astronomisches Rechen-Institut Heidelberg)
+# Datendienste. Rein forschend: kein Code, kein Kompilat, keine Quell-Datei
+# angefasst. Befunde = was IST (Route, Format, Spalten), gemessen an curl/ADQL.
+#
+# Parallel-Session-Hinweis: phi/tap_index_ari.φ (204 Zeilen) listet bereits die
+# vollständige TAP_SCHEMA.tables-Sicht des gaia.ari-TAP. Diese Datei ergänzt
+# (1) Spalten-Befunde der Merge-Kandidaten, (2) die ZAH-DaCHS-Kataloge
+# (GCNS/MWSC — dc.zah.uni-heidelberg.de, NICHT in tap_index_ari.φ), (3) die
+# Instituts-Website. Keine Duplikate zu tap_index_ari.φ.
+
+# ══════════════════════════════════════════════════════════════════════════
+# 0. ÜBERBLICK — Drei Hosts, drei Rollen
+# ══════════════════════════════════════════════════════════════════════════
+#   gaia.ari.uni-heidelberg.de   Gaia-Archiv (DR1/DR2/eDR3/DR3/FPR), TAP+sync
+#   dc.zah.uni-heidelberg.de     ZAH-DaCHS (ARI ist Institut des ZAH): GCNS, MWSC, RAVE
+#   www.ari.uni-heidelberg.de    TYPO3-Instituts-Website (keine Katalog-Downloads)
+#   dc.g-vo.org                  GAVO-Mirror → SKIP (nicht ARI, Vorgabe)
+#   cdsarc.u-strasbg.fr          CDS/VizieR → SKIP (CDS, Vorgabe)
+
+# ══════════════════════════════════════════════════════════════════════════
+# 1. gaia.ari.uni-heidelberg.de — Gaia@ARI (Hauptdienst)
+# ══════════════════════════════════════════════════════════════════════════
+#
+# ROUTEN:
+#   /tap/        HTML-Abfrage-Interface (200)
+#   /tap/sync    TAP-sync-Endpoint; REQUEST=doQuery&LANG=ADQL&FORMAT=json → JSON
+#   /tapsync?    (ältere Alias-Route, Query-Tests → 200)
+#
+# FORMAT-VERHALTEN (gemessen 2026-08-15):
+#   FORMAT=json  → {"metadata":[...], "data":[{"col":val,...}]}   (named rows)
+#   FORMAT=csv   → CSV
+#   Default/VOTable → VOTable-XML
+#   Quirk: ADQL `LIKE '%x%'` auf TAP_SCHEMA.tables/columns → INTERNAL SERVER
+#   ERROR (500, VOTable-Fehlerrahmen). Gleichheits-/IN-Abfragen → 200. `SELECT
+#   TOP n *` auf Gaia-Tabellen funktioniert.
+#   Quirk: TAP_SCHEMA.columns hat KEINE schema_name-Spalte; table_name-Werte
+#   sind die katalog-internen Namen (z.B. 'distances' ohne Schema-Präfix).
+#
+# SCHEMA-ÜBERBLICK (Deckung mit tap_index_ari.φ — hier nur Ergänzung):
+#   extcat            tycho2, ppmxl, twomass, hipparcos (Kreuzkataloge)
+#   gaiadr1/2/edr3/3  gaia_source, *_neighbourhood, *_best_neighbour, vari_*,
+#                     sso_*, nss_*, xp_* (204 Tabellen, siehe tap_index_ari.φ)
+#   gaiafpr           crowded_field_source, interstellar_medium_*, lens_*,
+#                     sso_*, vari_* (Focused Product Release)
+#   gaiadr2_complements   geometric_distance
+#   gaiaedr3_complements  distances, spurious_astrometry
+#   TAP_SCHEMA        schemas/tables/columns/keys/key_columns/coosys/timesys
+#
+# ── AUSBEUTE-KANDIDATEN GAIA-DR3-MERGE (Komplement zu tap_index_ari.φ) ──
+#
+# 1a. gaiaedr3_complements.distances  — GEDR3DIST-ÄQUIVALENT AUF ARI
+#   Hinweis: KEIN gedr3dist-Schema auf ARI (gedr3dist.main + litewithdist leben
+#   auf dc.g-vo.org/GAVO, siehe tap_index_gavo.φ:231-232). Das ARI-Pendant ist
+#   diese Tabelle — Bailer-Jones eDR3 geometrische + photogeometrische Distanzen.
+#   Spalten (SELECT TOP 3 * gemessen):
+#     source_id     LONG   meta.id;meta.main        (nur eDR3/DR3-source_id, kein DR1/DR2-Join)
+#     r_med_geo     FLOAT  pc  pos.distance         Median geometric posterior
+#     r_lo_geo      FLOAT  pc  pos.distance;stat.min  16. Perzentil
+#     r_hi_geo      FLOAT  pc  pos.distance;stat.max  84. Perzentil
+#     r_med_photogeo FLOAT pc  pos.distance         Median photogeometric
+#     r_lo_photogeo FLOAT  pc  pos.distance;stat.min
+#     r_hi_photogeo FLOAT  pc  pos.distance;stat.max
+#     flag          CHAR   meta.code                Lösungshinweis (nicht filtern)
+#   Befund: reine Distanz-Tabelle, NUR source_id — keine ra/dec. Für cmap muss
+#   der Kompilat gegen gaia_source/gaia_source_lite (ra/dec/parallax) gejoint
+#   werden. 1.47e9 Zeilen (eDR3-Vollabdeckung).
+#
+# 1b. gaiadr3.gaia_source_lite — „LITEWITHDIST"-ARTIGE EINZELTABELLE
+#   Spalten (SELECT TOP 1 * gemessen, 56 Spalten — Kern):
+#     source_id         LONG   meta.id;meta.main
+#     ra / dec          DOUBLE deg  pos.eq.ra/dec;meta.main
+#     parallax          DOUBLE mas  pos.parallax.trig
+#     parallax_error    FLOAT  mas  stat.error
+#     pmra / pmdec      DOUBLE mas.yr**-1  pos.pm
+#     phot_g_mean_mag   FLOAT  mag  phot.mag;em.opt
+#     phot_bp_mean_mag  FLOAT  mag  phot.mag;em.opt.B
+#     phot_rp_mean_mag  FLOAT  mag  phot.mag;em.opt.R
+#     phot_bp_rp_excess_factor FLOAT
+#     bp_rp             FLOAT  mag  phot.color
+#     radial_velocity   FLOAT  km.s**-1  spect.dopplerVeloc.opt
+#     ruwe              FLOAT
+#     teff_gspphot      FLOAT  K    phys.temperature.effective
+#     logg_gspphot      FLOAT  log(cm.s**-2)
+#     mh_gspphot        FLOAT  dex  phys.abund.Z
+#     distance_gspphot  FLOAT  pc   pos.distance  (GSP-Phot photogeometrische Distanz)
+#     ag_gspphot        FLOAT  mag  phys.absorption
+#     ebpminrp_gspphot  FLOAT  mag  phot.color.excess
+#     + has_* Flags (has_rvs, has_xp_*, has_epoch_*, in_qso_candidates, ...)
+#   Befund: Position + Parallaxe + pm + 3-Band-Magnituden + GSP-Phot-
+#   Astrophyik-Parameter INKL. distance_gspphot in EINER Tabelle. Dies ist der
+#   beste Einzel-Kompilat-Kandidat — deckt sowohl Position als auch Distanz und
+#   em-Fluss (phot_g_mean_mag) ab, ohne Join.
+#
+# 1c. gaiadr3.gaia_source — Volltabelle (1.8e9 Zeilen)
+#   ra, dec, parallax, pmra, pmdec, phot_g_mean_mag, phot_bp_mean_mag,
+#   phot_rp_mean_mag, radial_velocity, grvs_mag, teff_gspphot (gemessen, 200).
+#   Zu groß für cmap-Vollabdeckung — nur als Kompilat-Quell-Join relevant.
+#
+# 1d. gaiadr2_complements.geometric_distance — DR2-geometrische Distanzen
+#   (Vorgänger von 1a; DR2-Ära, nur source_id + r_med_geo/r_lo_geo/r_hi_geo).
+#
+# DISPOSITION Gaia-Archiv: Stern-/Objektkatalog mit gemessenen Positionen +
+# Flüssen (mag → 10^(-0.4·mag) em). Force Gate PASS (em-Photometrie). accepted-
+# Kandidat für den Kompilat-Weg (tap_compiler). Kein Live-API-Block (TAP sync
+# per GET ist prinzipiell cmap-fähig, aber 1.8e9 Zeilen = Kompilat, nicht Live).
+
+# ══════════════════════════════════════════════════════════════════════════
+# 2. dc.zah.uni-heidelberg.de — ZAH-DaCHS (GCNS, MWSC, RAVE)
+# ══════════════════════════════════════════════════════════════════════════
+#
+# ROUTEN:
+#   /                      GAVO Data Center Home (200)
+#   /tap/sync              DaCHS-TAP; FORMAT=json → {"columns":[...],"data":[[...]]}
+#   /tableinfo/<t.main>    Tabellen-Info (Spaltenliste, HTML)
+#   /gcns/q/cone           GCNS Cone-Service
+#   /__system__/adql/query/form   ADQL-Formular
+#
+# HINWEIS: dead_sources.φ:1223 klassifiziert dc.zah.uni-heidelberg.de/tap/ als
+# parser-def votable (GAVO-TAP-Landing). Das betrifft die HTML-Landingpage.
+# Der /tap/sync-Endpoint mit FORMAT=json liefert DAGEGEN echtes JSON
+# (columns+data, array-of-arrays) — cmap-fähig. Der Kompilat-Weg nutzt
+# tap_compiler (Parallel-Session), kein Live-Block nötig.
+#
+# ── 2a. GCNS — Gaia Catalogue of Nearby Stars (ZAH/ARI, 331 312 Sterne ≤100pc) ──
+#   Tabelle: gcns.main  (auch: gcns.rejected, gcns.resolvedss, gcns.maglims5/6/7,
+#   gcns.hyacob, gcns.missing_10mas — siehe tap_index_gavo.φ:2-9)
+#   Zeilenzahl gemessen: 331 312
+#   Spalten (tableinfo + TAP sync, Kern):
+#     source_id         bigint  meta.id;meta.main
+#     ra                double  deg   pos.eq.ra;meta.main   (ICRS, Gaia eDR3)
+#     dec               double  deg   pos.eq.dec;meta.main
+#     ra_error/dec_error real   mas
+#     parallax          real    mas   pos.parallax          (J2016.0)
+#     parallax_error    real    mas
+#     pmra / pmdec      real    mas/yr pos.pm
+#     phot_g_mean_mag   real    mag   phot.mag;em.opt;stat.mean
+#     phot_bp_mean_mag  real    mag
+#     phot_rp_mean_mag  real    mag
+#     phot_bp_rp_excess_factor real
+#     ruwe              real
+#     gcns_prob         real          (WD+MS-Mischwahrscheinlichkeit)
+#     wd_prob           real
+#     dist_1/16/50/84   real    kpc   pos.distance  (Entfernungs-Posterior-Quantile)
+#     xcoord_50/ycoord_50/zcoord_50  real pc  (3D-Position, galactozentrisch)
+#     uvel_50/vvel_50/wvel_50        real      (3D-Geschwindigkeit)
+#     + Kreuzmatch-Magnituden: gmag_gunn, j_m_2mass/h_m_2mass/k_m_2mass,
+#       w1mpro_pm_wise/w2mpro_pm_wise/w3mpro_wise/w4mpro_wise
+#   Befund: MESSUNG (Gaia-eDR3-Astrometrie+Photometrie + Distanz-Posterior),
+#   kein Modell. Force Gate PASS (em). Position+Fluss vorhanden → accepted
+#   cmap-Kandidat. Distanz: dist_50 in kpc (oder parallax→1000/plx pc).
+#
+#   ── GCNS cmap-Block-Draft (nach FRBCAT-Vorlage phi/sources.φ:451-461) ──
+#   url <CDN-Asset nach Kompilat, z.B. ssd.jpl.nasa.gov/gcns_flat.json>
+#   ttl 604800
+#   at sun
+#   cmap .
+#   ra ra
+#   dec dec
+#   dist dist_50
+#   dist_scale 3.085677581e19
+#   field phot_g_mean_mag gcns_g_mag inverse-square em mag 604800 0.0 0.0
+#
+#   Hinweis dist_scale: dist_50 in kpc → 3.085677581e19 m/kpc. Alternative:
+#   Kompilat schreibt dist in pc (aus 1000/parallax) → dist_scale 3.085677581e16.
+#   Hinweis Fluss: mag → 10^(-0.4·mag) em (Vega-Nullpunkt), Konversion im
+#   Kompilat oder Feld-Kernel; phot_g_mean_mag als gemessener em-Fluss.
+#
+# ── 2b. MWSC — Milky Way Star Clusters (Kharchenko+, ZAH/ARI, ~3 006 Haufen) ──
+#   Tabelle: mwsc.main (auch: mwsc.stars, mwsce14a.main/stars — siehe
+#   tap_index_gavo.φ:167/210/249)
+#   Spalten (TAP sync, Kern):
+#     name        char   meta.id            (NGC/IC/...)
+#     raj2000     double deg  pos.eq.ra;meta.main  (J2000.0)
+#     dej2000     double deg  pos.eq.dec;meta.main
+#     glon/glat   double deg  pos.galactic.lon/lat
+#     rcore/rcenter/rcluster  real deg  (Radius: Kern/Zentrum/Haufen)
+#     pmra/pmde   real   mas/yr pos.pm
+#     rv          real   km/s  spect.dopplerVeloc.opt   (spärlich belegt, null in Probe)
+#     dist        real   pc    pos.distance;pos.heliocentric
+#     col_ex_opt  real   mag   phot.color.excess (opt. Rötung)
+#     dist_mod    real   mag
+#     logt        real         phys.age (log Jahre)
+#     fe_h        real   dex   phys.abund.Fe   (spärlich belegt)
+#     + flags (ass/dub/emb/glo/irc/...), n_star
+#   Befund: Sternhaufen-Katalog mit gemessener Position + Distanz + pm + rv +
+#   Photometrie. Force Gate PASS (em). accepted cmap-Kandidat (dist direkt in pc).
+#
+#   ── MWSC cmap-Block-Draft ──
+#   url <CDN-Asset nach Kompilat, z.B. ssd.jpl.nasa.gov/mwsc_flat.json>
+#   ttl 604800
+#   at sun
+#   cmap .
+#   ra raj2000
+#   dec dej2000
+#   dist dist
+#   dist_scale 3.085677581e16
+#   field col_ex_opt mwsc_extinction erfc em mag 604800 0.0 0.0
+#   field rv mwsc_radial_velocity inverse-square em km/s 604800 0.0 0.0
+#
+#   Hinweis: rv/fe_h sind in ~einem Teil der Zeilen absent (null in Probe) —
+#   0 honored, nur belegte Zeilen manifestieren das Feld.
+#
+# ── 2c. RAVE (Radial Velocity Experiment) — ARI-beteiligt, NICHT ARI-gehostet ──
+#   rave.main/dr2/dr3/dr4 (siehe tap_index_gavo.φ:49-52) leben auf dc.g-vo.org
+#   (GAVO) und rave-survey.org. Auf dc.zah.uni-heidelberg.de NICHT als eigene
+#   ARI-Tabelle gemessen (RAVE-Release-Server = GAVO/mcdonald). Kein ARI-
+#   eigener Endpoint → SKIP (GAVO-Domäne), kein Doppel-Index.
+
+# ══════════════════════════════════════════════════════════════════════════
+# 3. www.ari.uni-heidelberg.de — Instituts-Website (TYPO3)
+# ══════════════════════════════════════════════════════════════════════════
+#   Befund (gemessen): /institutes/astronomisches-rechen-institut/databases
+#   → 404 (Link existiert auf Homepage, Ziel fehlt). Keine Katalog-Downloads /
+#   CSV/FITS/VO-Endpoints auf der Website. Die Kataloge werden über
+#   gaia.ari.uni-heidelberg.de und dc.zah.uni-heidelberg.de (bzw. GAVO-Mirror)
+#   ausgeliefert. Disposition: decline (kein Messwert-Endpoint, reine CMS-Seite).
+
+# ══════════════════════════════════════════════════════════════════════════
+# 4. SKIP-LISTE (Vorgabe)
+# ══════════════════════════════════════════════════════════════════════════
+#   dc.g-vo.org/tap            GAVO (nicht ARI) — SKIP
+#   cdsarc.u-strasbg.fr        CDS/VizieR-Mirror — SKIP
+#   tapvizier.u-strasbg.fr     CDS — SKIP
+
+# ══════════════════════════════════════════════════════════════════════════
+# 5. ZUSAMMENFASSUNG — DISPOSITIONEN
+# ══════════════════════════════════════════════════════════════════════════
+#   ACCEPT-Kandidat (Kompilat-Weg, cmap): 
+#     GCNS  gcns.main  (dc.zah / GAVO) — 331 312 Sterne, em Photometrie+Parallaxe
+#     MWSC  mwsc.main  (dc.zah / GAVO) — ~3 006 Haufen, em Photometrie+pm+dist
+#     Gaia  gaia_source_lite + gaiaedr3_complements.distances (gaia.ari) —
+#           em, als Join-Kompilat (gedr3dist-Äquivalent auf ARI)
+#   SKIP/GAVO: gedr3dist.main+litewithdist (dc.g-vo.org), rave.* (GAVO)
+#   DECLINE:  www.ari.uni-heidelberg.de (CMS, keine Messwert-Endpoints)

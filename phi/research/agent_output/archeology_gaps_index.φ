@@ -1,0 +1,282 @@
+# archeology gaps index (2026-08-15)
+# read-only session: archeology/ foundation+arena, docs/concepts, docs/reference, TODO.md
+# abgleich gegen phi/sources.φ (156 urls, 1158 zeilen, KEIN force-token — tote direktive laut TODO P01)
+# abgleich gegen phi/dead_sources.φ (786 urls, 3205 zeilen, `decline no-physical-force`)
+# kraft-ids: em=1 gravity=2 acoustic=3 seismic-body=4 seismic-surface=5 thermal=6 diffusion=7 advective=8 electric=9
+
+# ── coverage-matrix ──
+# kanal | historisch benannt | heute
+# em | TNS, SWPC GOES/ACE/EUV/Kp, OpenSky, HEASARC, MAST, SDSS, VizieR, SIMBAD, GAIA, AERONET, Fireball, Exoplanet-Archiv, Blitzortung, e-CALLISTO | live: TNS, SWPC(13), OpenSky, JMA, BGS; dead: HEASARC, MAST, SIMBAD, GAIA, Blitzortung, Exoplanet; offen: AERONET, NEO-NDVI, LIS, e-CALLISTO
+# gravity | JPL-SSD/DE442/441/440, CO-OPS Tidenpegel, IERS EOP, GRACE/GRACE-FO, ICGEM, Argovis | live: JPL-SSD (CDN ephemeris_binary), CO-OPS fanout; dead: Argovis, GRACE(auth), ICGEM(web-only); offen: IERS EOP(hpiers), USNO(maia)
+# acoustic | NDBC-Bojen, METAR, GONG/SOHO Helioseismologie, IRIS-Infraschall, PMEL-Hydroakustik, Xeno-Canto/Bioakustik | live: NDBC(29), aviationweather/METAR; dead: IRIS, Xeno-Canto, GBIF-audio; offen: GONG, PMEL, e-CALLISTO
+# seismic-body | USGS, IRIS, GFZ-Geofon, PDS InSight/Apollo | live: USGS, seismicportal, INGV; dead: IRIS, GFZ; offen: PDS(auth)
+# seismic-surface | USGS, INGV, JMA, RaspberryShake, CEIC | live: USGS, INGV, JMA; dead: RaspberryShake, CEIC; offen: —
+# thermal | NOAA-CDO TMAX, AOML-Drifter, GML-Barrow, Buoy-WTMP, DASTCOM H/Albedo, GOES-Thermal, FIRMS | live: NDBC-WTMP, AOML; dead: FIRMS; offen: GOES-Thermal, DASTCOM(CDN)
+# diffusion | PurpleAir, OpenAQ, GML CH4/N2O/SF6, OOI-pCO2, SWPC, OMNI, GBIF, AERONET, WHO-GHO | live: PurpleAir, OpenAQ, GML(4), SWPC; dead: GBIF, OBIS, iNaturalist, GHO, WAQI; offen: AERONET, OMNI
+# advective | Waterservices-Rivers, OpenSky-Aircraft, Buoy-Wind, DSCOVR/SWPC-Solarwind, NOAA-GFS | live: Waterservices, OpenSky, NDBC-wind, SWPC; offen: GFS, NSIDC
+# electric | Swarm EFI/FAC (VirES-HAPI), GLM-Blitz(NetCDF), GIC-Netze, telluric currents, Blitzortung | live: VirES-HAPI Swarm(2); dead: Blitzortung; offen: GLM(NetCDF-reader fehlt), GIC(nicht öffentlich), telluric
+
+# ── gaps ──
+# gap foundation/collection.md "tote winkel" — 11 lücken: NDVI/EVI+Chl (Earthdata-token), korallenbleiche/entwaldung (GFW-jwt), phänologie/fischerei (registrierung), argo/ozeanversauerung (argovis-key/GLODAP-static), mikroplastik/lichtverschmutzung, atmosphärische elektrik/sprites/TLE, hydroakustik/infraschall (CTBTO-restriktiv), GRACE-FO/geoid (Earthdata), weltraummüll/DSN-now (space-track-key), ENTSO-E energie (token), polarisiertes licht — kandidaten: VIIRS-NTL, coralreefwatch, globalfishingwatch, argovis, GFW
+# gap foundation/collection.md "gemini neins" — 4 keylose-neins: lightpollutionmap/VIIRS, global-fishing-watch, nasa-oceancolor+GRACE-FO (earthdata oauth2), ENTSO-E (security-token)
+# gap arena/arena_API_research_Arena_all.md:3244 — africa weather gap (mosambik/äthiopien/südafrika); viable paths: open-meteo global, local met-services
+# gap docs/reference/KERNEL_INDEX.md — 9-kanal-matrix: acoustic/seismic/diffusion/advective/electric tragen "—" auf JPL-wurzeln (rest = kurations-arbeit)
+# gap TODO.md:193 kraft-abdeckung electric — open-end: EFI-TCT produkte, GLM-blitz (netcdf auf noaa-s3, reader fehlt), GIC-netze (nicht öffentlich)
+# gap TODO.md:719 — advective per-quelle: wind in tm.w (kanal verdrahtet, messquelle fehlt)
+# gap archeology/arena — CHIME/FRB live-api gesperrt (vizier-tap-workaround); celestrak 5-stellige NORAD erschöpft (6-stellig ab 100000)
+# gap docs/concepts/SUNSPOTS.md — heliografische koordinaten: NASA DONKI + NOAA (in SWPC-live teilweise gedeckt)
+
+# ── neue-kandidaten (nicht in sources/dead) ──
+candidate https://aeronet.gsfc.nasa.gov/aeronet_locations_v3.txt
+# title: AERONET site-list + AOD (arena_batch)
+# force-einschaetzung: em (aerosol optical depth)
+candidate https://hpiers.obspm.fr/eop-pc/index.php?index=bulletins&buffer=bulletinB
+# title: IERS EOP bulletin B (polbewegung, UT1-UTC, LOD)
+# force-einschaetzung: gravity
+candidate https://maia.usno.navy.mil/ser7/finals2000A.daily
+# title: USNO finals2000A EOP daily
+# force-einschaetzung: gravity
+candidate https://neo.gsfc.nasa.gov/servlet/RenderData?si=1586675&cs=rgb&format=CSV&width=360&height=180
+# title: NASA NEO MODIS NDVI (keyless monatlich)
+# force-einschaetzung: em (vegetations-reflexion)
+candidate https://ghrc.nsstc.nasa.gov/pub/lisdotc/
+# title: NASA LIS OTD lightning climatology
+# force-einschaetzung: em (blitz)
+candidate http://sprite.atmos.nthu.edu.tw/
+# title: ISUAL FORMOSAT-2 TLE/sprites archiv
+# force-einschaetzung: em
+candidate https://asim.dtu.dk/
+# title: ESA ASIM (ISS) TLE/lightning (anmeldung)
+# force-einschaetzung: em
+candidate https://developer.amentum.io/register
+# title: Amentum geomagnetic/aviation-radiation/gravity (trial)
+# force-einschaetzung: em gravity
+candidate https://api.le-systeme-solaire.net/rest/bodies/
+# title: solar-system-open-data (planet/mond körper, bearer-token)
+# force-einschaetzung: gravity
+candidate https://healthmap.org/ai.php?v=2.0&limit=50&striphtml=0
+# title: HealthMap ausbruchs-alerts (keyless)
+# force-einschaetzung: diffusion
+candidate https://promedmail.org/feed/
+# title: ProMED-mail disease feed
+# force-einschaetzung: diffusion
+candidate https://api.coral.tsr.lol/stations
+# title: coral reef watch community stations
+# force-einschaetzung: thermal
+candidate https://www.e-callisto.org/
+# title: e-CALLISTO solar radio (45-870 MHz, 80+ stationen)
+# force-einschaetzung: em
+candidate https://lgdc.uml.edu/common/DIDBGetValues
+# title: GIRO ionosonde foF2 profiles
+# force-einschaetzung: em (ionosphäre)
+candidate https://www.cpc.ncep.noaa.gov/products/analysis_monitoring/regional_monitoring/palmer.txt
+# title: CPC Palmer drought index
+# force-einschaetzung: diffusion
+candidate https://rapid.ac.uk/data
+# title: RAPID-AMOC atlantic meridional overturning
+# force-einschaetzung: advective
+candidate https://fdsnws.raspberryshakedata.com/
+# title: RaspberryShake FDSN (citizen seismology)
+# force-einschaetzung: seismic-surface
+candidate https://cddis.nasa.gov/archive/products/iers/finals2000A.daily
+# title: CDDIS IERS EOP daily (auth-frei archiv)
+# force-einschaetzung: gravity
+candidate https://jsoc.stanford.edu/cgi-bin/ajax/jsoc_fetch?op=rs_list&ds=hmi.M_720s
+# title: SDO JSOC HMI (helioseismologie, key)
+# force-einschaetzung: acoustic
+candidate https://services.swpc.noaa.gov/json/solar-cycle/observed-solar-cycle-indices.json
+# title: SWPC solar-cycle indices (sunspot-number zeitreihe)
+# force-einschaetzung: em
+candidate https://www.amsmeteors.org/members/imo_view/browse_events
+# title: IMO meteor shower events (via amsmeteors)
+# force-einschaetzung: em
+candidate https://celestrak.org/SpaceData/EOP-All.csv
+# title: CelesTrak EOP archive
+# force-einschaetzung: gravity
+candidate https://rest.isric.org/soilgrids/v2.0/properties/query
+# title: ISRIC SoilGrids boden-chemie (ph, clay, sand, soc)
+# force-einschaetzung: diffusion
+candidate https://macrostrat.org/api/defs/units?format=json
+# title: Macrostrat geologische einheiten
+# force-einschaetzung: seismic-surface (lithologie)
+candidate https://datacenter.iers.org/products/eop/rapid/daily/csv/finals.daily.iau2000.csv
+# title: IERS datacenter rapid EOP CSV
+# force-einschaetzung: gravity
+candidate https://www.sidc.be/silso/datafiles/total-sunspot-number_daily.json
+# title: SILSO sunspot number daily (SIDC)
+# force-einschaetzung: em
+candidate https://ssd-api.jpl.nasa.gov/fireball.api?limit=20
+# title: CNEOS fireball API (meteoriteneintritte)
+# force-einschaetzung: em
+candidate https://ssd-api.jpl.nasa.gov/sentry.api
+# title: JPL Sentry impact-risk
+# force-einschaetzung: gravity
+candidate https://ssd-api.jpl.nasa.gov/cad.api?date-min={today}&date-max={tomorrow}
+# title: JPL SBDB close-approach (NEO)
+# force-einschaetzung: gravity
+candidate https://neo.ssa.esa.int/api/neo/close-approaches
+# title: ESA NEO coordination centre close-approaches
+# force-einschaetzung: gravity
+candidate https://www.wis-tns.org/system/files/uploaded/tns_public_objects.csv
+# title: TNS public transient CSV (auch live via www.wis-tns.org)
+# force-einschaetzung: em
+candidate https://gcn.gsfc.nasa.gov/gcn3_archive.html
+# title: GCN GRB circulars archive (fermi/swift)
+# force-einschaetzung: em
+candidate https://lambda.gsfc.nasa.gov/data/map/dr5/skymaps/5yr/raw/wmap_5yr_wmap_v1.fits
+# title: WMAP/Planck CMB skymaps
+# force-einschaetzung: em
+candidate https://www.atnf.csiro.au/research/pulsar/psrcat/proc_form.php?Type=normal&format=csv
+# title: ATNF PSRCAT pulsar catalog
+# force-einschaetzung: em
+candidate https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+pl_name,ra,dec,pl_orbper+from+ps&format=json
+# title: NASA exoplanet archive TAP (ra/dec/parallax)
+# force-einschaetzung: em gravity
+candidate https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync
+# title: HEASARC Xamin TAP (fermilpsc, chanmaster, xmmmaster)
+# force-einschaetzung: em
+candidate https://gong2.nso.edu/products/
+# title: GONG helioseismology (sonnen-oszillation)
+# force-einschaetzung: acoustic
+candidate https://www.nmdb.eu/nest/draw_graph.php
+# title: NMDB neutron monitor (kosmische strahlung)
+# force-einschaetzung: em (diffusion)
+candidate https://cosmicrays.oulu.fi/phi/Pulu_1min.txt
+# title: Oulu neutron monitor 1min
+# force-einschaetzung: em
+candidate https://cr0.izmiran.ru/mosc/main.txt
+# title: IZMIRAN cosmic ray moscow
+# force-einschaetzung: em
+candidate https://www.ocearch.org/tracker/
+# title: OCEARCH shark tracker (telemetrie)
+# force-einschaetzung: diffusion
+candidate https://birdnet.cornell.edu/api/
+# title: BirdNET akustische artenerkennung
+# force-einschaetzung: acoustic
+candidate https://xeno-canto.org/api/2/recordings?query=corvus+corax
+# title: Xeno-Canto vogelgesang recordings
+# force-einschaetzung: acoustic
+candidate https://www.pmel.noaa.gov/acoustics/data/
+# title: NOAA PMEL hydroakustik (orca/ocean sound)
+# force-einschaetzung: acoustic
+candidate https://dods.wh.gov/opendap/jg/acoustic/aggregated/acoustic.nc.json
+# title: DODS west-coast hydroacoustic array
+# force-einschaetzung: acoustic
+candidate https://www.gi.alaska.edu/monitors/aurora-forecast
+# title: UAF aurora forecast (geomagnetic)
+# force-einschaetzung: em
+candidate https://supermag.jhuapl.edu/mag/?fidelity=low&format=json
+# title: SuperMAG magnetometer network
+# force-einschaetzung: em (electric)
+candidate https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetData&format=JSON
+# title: BGS GIN INTERMAGNET observatory (bereits teil-live via imag-data.bgs.ac.uk)
+# force-einschaetzung: em gravity
+candidate https://geomag.usgs.gov/ws/data/?id=BOU&format=json
+# title: USGS geomag observatory
+# force-einschaetzung: em
+candidate https://www.iris.edu/app/stationmonitor/
+# title: IRIS station monitor (seismik, ersatz fdsnws)
+# force-einschaetzung: seismic-body
+candidate https://erddap.incois.gov.in/erddap/
+# title: INCOIS ERDDAP (indian ocean oceanography)
+# force-einschaetzung: diffusion thermal
+candidate https://www.pangaea.de/
+# title: PANGAEA geowissenschaftliche daten (ws.pangaea.de)
+# force-einschaetzung: diffusion
+candidate https://meta.icos-cp.eu/
+# title: ICOS carbon-flux meta portal
+# force-einschaetzung: diffusion
+candidate https://acdisc.gesdisc.eosdis.nasa.gov/opendap/
+# title: ACDISC GES DISC (atmosphärische chemie)
+# force-einschaetzung: diffusion
+candidate https://api.openquake.org/
+# title: GEM OpenQuake (seismische gefährdung)
+# force-einschaetzung: seismic-surface
+candidate https://www.isc.ac.uk/iscbulletin/search/catalogue/
+# title: ISC earthquake bulletin
+# force-einschaetzung: seismic-body
+candidate https://www.emsc-csem.org/Earthquake/
+# title: EMSC-CSEM earthquakes
+# force-einschaetzung: seismic-body
+candidate https://renass.unistra.fr/api/
+# title: RéNaSS (france seismic)
+# force-einschaetzung: seismic-body
+candidate https://datalab.noirlab.edu/
+# title: NOIRLab Astro Data Lab
+# force-einschaetzung: em
+candidate https://dasch.rc.fas.harvard.edu/
+# title: DASCH harvard plates
+# force-einschaetzung: em
+candidate https://skyview.gsfc.nasa.gov/
+# title: NASA SkyView surveys
+# force-einschaetzung: em
+candidate https://itrf.ign.fr/
+# title: ITRF (terrestrischer referenzrahmen)
+# force-einschaetzung: gravity
+candidate https://www.cpom.ucl.ac.uk/csopr/seaice.html
+# title: CPOM/UCL sea-ice (kryosphäre)
+# force-einschaetzung: thermal
+candidate https://www.ogimet.com/
+# title: Ogimet SYNOP/METAR archive
+# force-einschaetzung: acoustic thermal
+candidate https://www.nohrsc.noaa.gov/
+# title: NOHRSC schnee-karte
+# force-einschaetzung: thermal
+candidate https://saber.gats-inc.com/
+# title: SABER TIMED (mesosphäre)
+# force-einschaetzung: thermal
+candidate https://cdaw.gsfc.nasa.gov/CME_list/
+# title: CDAW CME catalog (soho)
+# force-einschaetzung: em
+candidate https://www.physics.mcgill.ca/~pulsar/
+# title: McGill pulsar group
+# force-einschaetzung: em
+candidate https://esgf-node.llnl.gov/
+# title: ESGF CMIP6 climate model
+# force-einschaetzung: diffusion thermal
+candidate https://archive.eso.org/
+# title: ESO science archive
+# force-einschaetzung: em
+candidate https://stac.openlandmap.org/
+# title: OpenLandMap STAC (boden)
+# force-einschaetzung: diffusion
+candidate https://thredds.met.no/
+# title: MET Norway THREDDS (nordic wetter)
+# force-einschaetzung: advective thermal
+candidate https://thredds.silam.fmi.fi/
+# title: FMI SILAM atmosphärische dispersion
+# force-einschaetzung: diffusion
+candidate https://kmtnet.kasi.re.kr/
+# title: KMTNet microlensing
+# force-einschaetzung: em
+candidate https://www.globalcmt.org/CMTsearch.html
+# title: Global CMT moment tensor
+# force-einschaetzung: seismic-body
+candidate https://records-ws.nbnatlas.org/
+# title: NBN atlas (UK biodiversity)
+# force-einschaetzung: diffusion
+candidate https://www.icos-cp.eu/
+# title: ICOS ecosystem carbon
+# force-einschaetzung: diffusion
+
+# ── konzepte ──
+# docs/concepts/MASTER.md — LIVE-manifest, nicht in TODO.md registriert (verwaist als eintrag)
+# docs/concepts/MIRROR_RESEARCH.md — abgeschlossene recherche, nicht in TODO.md
+# docs/concepts/REMOVE_BIAS.md — ausführungsplan, nicht in TODO.md (status unklar)
+# docs/concepts/DOMAIN_COVERAGE.md — 259-host-inventar, nicht als arbeitseintrag in TODO.md
+# docs/concepts/CAUSALITY_PREFILTER.md — DEPLOYED, nicht in TODO.md (historisch)
+# docs/concepts/TAU-FORCE-RENDERING.md — DEPLOYED, nicht in TODO.md (historisch)
+# docs/concepts/FORCE_SEPARATED_COMPUTE.md — DEPLOYED, nicht in TODO.md (historisch)
+# docs/concepts/PROPABILITY.md — DEPLOYED (lichtkegel-check), nicht in TODO.md (historisch)
+# docs/concepts/POINTCLOUD-RENDERING.md — DEPLOYED, nicht in TODO.md (historisch)
+# docs/concepts/SI_UNITS.md — SUPERSEDED durch SOURCES_V2_SPEC
+# docs/reference/naif_body_ids.tsv — vorhanden (74 zeilen), via KERNEL_INDEX registriert
+# docs/reference/GPU_WATCHDOG_AND_DEVICE_LOSS.md — referenziert in TODO.md:678
+# docs/concepts/4D-MEMBRANE.md — referenziert TODO.md:377
+# docs/concepts/MINKOWSKI_FIELD-PERMEABILITY.md — referenziert TODO.md:724
+# docs/concepts/RADIATOREN.md — referenziert TODO.md:402
+# docs/concepts/WETTERSTATION.md — referenziert TODO.md:409
+# docs/concepts/SEARCH_COMMAND-PALETTE.md — referenziert TODO.md:415
+# docs/concepts/SUNSPOTS.md — referenziert TODO.md:285
+# docs/concepts/PARSER_MAGIC.md — referenziert TODO.md:272
+# docs/concepts/SOURCES_V2_SPEC.md — referenziert TODO.md:272

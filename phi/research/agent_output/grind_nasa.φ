@@ -1,0 +1,178 @@
+# grind nasa (2026-08-15)
+# NASA-API-Ökosystem-Katalogisierung (api.nasa.gov) + Kern-API-Proben.
+# Rein forschend — keine Änderung an sources.φ / dead_sources.φ.
+# Dispositionen: accepted / decline / parser-def / key-needed / dead / note / integrated.
+# Schlüssel referenziert als {NASA_API_KEY} / {FIRMS_MAP_KEY} (Werte in .secrets.local).
+# api.nasa.gov Root = Angular-SPA (<base href="#>", nasa.github.io/api-docs-stage) —
+# Jina-Fallback für Katalogseite nötig; die eigentlichen Daten-Endpoints sind keyless JSON.
+
+# ── 0. Katalog: api.nasa.gov ──
+note spa-index
+url https://api.nasa.gov/
+note SPA-Shell (title "NASA Open APIs"), echter Katalog unter nasa.github.io/api-docs-stage. Einzel-APIs direkt JSON-erreichbar (kein Jina nötig für Daten). Katalog selbst = Registry, kein Messwert.
+
+# ── 1. DONKI FLR — Sonnenflare (em, X-Ray) — ACCEPTED ──
+accepted https://api.nasa.gov/DONKI/FLR?startDate={week_ago}&endDate={today}&classType=X&api_key={NASA_API_KEY}
+# title: DONKI Sonnenflare X-Klasse (em) — GOES-EXIS-Soft-X-Ray, Heliosphäre
+url https://api.nasa.gov/DONKI/FLR?startDate={week_ago}&endDate={today}&classType=X&api_key={NASA_API_KEY}
+ttl 3600
+force em
+at sun
+regex classType":"X([0-9.]+) solar_flare_x_class_latest inverse-square em 1e-4W/m2 3600 0.0 0.0
+# Struktur: JSON-Array (zeit-aufsteigend), neueste Flare zuletzt. classType = "X1.1",
+# "C4.1" — Zahl = Spitzen-X-Ray-Fluss in 1e-4 W/m² (Klasse X=10^-4-Basis).
+# sourceLocation "N14W102" = heliographisch (N=Breite, W=Länge), aktivRegionNum, beginTime/peakTime.
+# Probe 2026-08-15: [C2.4 (08-10, AR14498), C4.1 (08-14, AR14503)] — keine X-Flare in Fenster
+# → classType=X-Filter = 0 honored (korrekt). Kraft: gemessene Größe IST elektromagnetische
+# Strahlung (X-Ray-Fluss) — Litmus erfüllt (Organ mit Röntgen-Sinn ist denkbar).
+# Regex-Extrakt: Handoff bestätigt "X1.1 → 1.1" (X-Klasse-Filter im URL + Capture [0-9.]).
+
+# ── 2. DONKI CME — koronaler Massenauswurf (em) — note (Struktur, Draft offen) ──
+note nested-position-plane-of-sky
+url https://api.nasa.gov/DONKI/CME?startDate={week_ago}&endDate={today}&api_key={NASA_API_KEY}
+note Probe: 200, Array von CME-Records. speed/latitude/longitude/halfAngle liegen NESTED in cmeAnalyses[0] (nicht top-level); cmeAnalyses[0].speed=263.0 (km/s, plane-of-sky), latitude=21.0, longitude=null (oft absent). Messwert (Geschwindigkeit, em via Koronagraphie) ist echt, aber Position ist Plane-of-sky-Projektion und häufig null → kein stabiler ICRS-Punkt. Kandidat: `map .` + deep cmeAnalyses.0.speed, aber Position-only-Risiko (§3.9) wenn longitude absent. Als note belassen, nicht als sauberer Block gedraftet.
+
+# ── 3. DONKI-Familie (SEP/GST/HSS/IPS/MPC/RBE) — em-Raumwetter, keyed — ──
+note space-weather-family
+url https://api.nasa.gov/DONKI/SEP?startDate={week_ago}&endDate={today}&api_key={NASA_API_KEY}
+note 200 (keyed). SEP = Solar-Energetic-Particle-Ereignis (flux in pfu, em/Teilchen-Fluss — echt messbar). GST=Kp-Index, IPS=Schock-Geschwindigkeit, HSS=Hochgeschwindigkeitsstrom, MPC=Magnetopause-Crossing, RBE=Strahlungsgürtel. Alle em (Plasma/Teilchen), aber Position = L1/Erde/geomagnetisch, meist skalare Zeitreihen ohne ICRS-Punkt. Weitere Kandidaten, nicht einzeln gedraftet; FLR ist der Primär-DONKI-Block.
+
+# ── 4. NeoWs Feed — Erdnähe-Asteroiden (gravity) — decline derived-orbit-fit ──
+decline derived-orbit-fit
+url https://api.nasa.gov/neo/rest/v1/feed?start_date=2026-08-14&end_date=2026-08-14&api_key=DEMO_KEY
+note 200 mit DEMO_KEY (kein echter Key nötig — dead_sources.φ Z.206 "key-needed blocked" ist veraltet). Struktur: near_earth_objects{date:[{name,absolute_magnitude_h,estimated_diameter,close_approach_data:[{miss_distance{kilometers/lunar/astronomical},relative_velocity{kilometers_per_second},epoch_date_close_approach}]}]}. miss_distance/relative_velocity sind Orbit-Fit-Produkte (Bahnbestimmung aus Astrometrie), KEINE direkt gefühlte Feldgröße; Position ist skalar "relativ zur Erde" (Miss-Distanz), kein ICRS-Punkt (kein ra/dec). Disposition: decline — konsistent mit TLE-Ablehnung (dead_sources Z.1023 "derived-orbit-fit"); Kleinkörper-Kanal ist via DASTCOM (catalog_dastcom) + Horizons-Ephemeriden abgedeckt. Eine gravity-Lesart ist vertretbar (gravitative Annäherung), aber der Record ist eine Bahnvorhersage, kein Sensor-Messwert.
+
+# ── 5. APOD — decline imagery ──
+decline imagery
+url https://api.nasa.gov/planetary/apod?api_key={NASA_API_KEY}
+note 200: {copyright,date,explanation,url,hdurl,media_type}. Bild/Text, kein Punkt-Messwert.
+
+# ── 6. Earth (planetary/earth/imagery) — decline imagery ──
+decline imagery
+url https://api.nasa.gov/planetary/earth/imagery?lon=-95.34&lat=29.78&date=2026-01-01&api_key={NASA_API_KEY}
+note Bild-Route (Landsat-Ausschnitt), kein Feldwert. assets = Metadaten-Katalog.
+
+# ── 7. EONET v3 — decline position-only (bereits dead_sources Z.2350) ──
+decline position-only
+url https://eonet.gsfc.nasa.gov/api/v3/events?limit=5&status=open
+note 200. events[] mit id/title/categories/sources + geometry — Ereignis-Katalog (Tropenstürme, Feuer, Vulkane). Geometrie ohne Feldwert → §3.9. Unverändert decline.
+
+# ── 8. EPIC — decline imagery (bereits dead_sources Z.2362) ──
+decline imagery
+url https://api.nasa.gov/EPIC/api/natural/images
+note natural/images ohne Key = 403, mit Key = 404 (Route-Pfad). JSON trägt nur Bildnamen/Geometrie-Metadata; die EM-Messung ist das Bild. Unverändert decline.
+
+# ── 9. Exoplanet-Archiv TAP — decline catalog ──
+decline catalog
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+TOP+5+pl_name,ra,dec,sy_dist,pl_rade+FROM+ps&format=json
+note 200. [{pl_name,ra,dec,sy_dist,pl_rade,...}] — statischer Exoplaneten-Katalog (ra/dec/Entfernung/Radius). Katalog, kein Live-Messwert.
+
+# ── 10. InSight (Mars) — dead (Mission beendet) — BEFUND ──
+dead mission-ended
+url https://mars.nasa.gov/rss/api/?feed=weather&category=insight&feedtype=json
+note InSight-Wetter: HTTP 200, aber {"sol_keys":[]} + validity_checks auf letztem Sol (1219) alle "valid":false. Mission endete Dez 2022 (Staub auf Solarpanelen) — kein aktueller Wärmefluss/Messwert. Die thermal/seismic-body-Mars-Kanäle sind über InSight inaktiv. (dead_sources Z.1383 bestätigt feedtype=json → war 404, jetzt 200-mit-leerem-sol_keys.)
+
+dead ssl-404
+url https://www.seis-insight.eu/api/v1/events?format=json&limit=5&catalog=MQS&status=confirmed
+note InSight-SEIS-Marsbeben-Katalog (MQS): seis-insight.eu war SSL-Fehler (dead_sources Z.870), jetzt 404 (Route weg). Marsbeben-Daten sind archiviert (PDS/Geosciences), kein Live-Stream. seismic-body auf Mars = real messbar, aber kein lebender Endpoint.
+
+# ── 11. Mars Rover Photos — decline imagery ──
+decline imagery
+url https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?sol=1000&api_key={NASA_API_KEY}
+note Liefert HTML "No such app" (App eingestellt/umgezogen). Bilder → decline.
+
+# ── 12. NASA Image/Video — decline imagery ──
+decline imagery
+url https://images-api.nasa.gov/search?q=moon
+note 200, Bild-/Medien-Suche (collecton links/href). Kein Punkt-Messwert.
+
+# ── 13. Patents / TechPort — decline ──
+decline registry
+url https://api.nasa.gov/techport/api/projects?api_key=DEMO_KEY
+note TechPort 200 = Projekt-Portal (Registry). Patents = Patent-Registry. Beide decline.
+
+# ── 14. TLE — decline derived-orbit-fit ──
+decline derived-orbit-fit
+url https://api.nasa.gov/DONKI/TLE?startDate={week_ago}&endDate={today}&api_key={NASA_API_KEY}
+note DONKI/TLE = 404 (DONKI hat keinen TLE-Endpoint). TLE kommt aus SSC/Celestrak (sscweb.gsfc.nasa.gov). TLE = Bahnvorhersage (Orbit-Fit), keine Messung → konsistent decline (dead_sources Z.1023); Satelliten-Positionen via Horizons-Ephemeriden (ephemeris_iss.bin u. a.) bereits abgedeckt. sscweb /WebServices/REST/ = 200 (REST-Root), Einzel-Routen unbestätigt — kein live-Messwert-Kanal.
+
+# ── 15. SBDB Query — decline catalog (DASTCOM deckt ab) ──
+decline catalog
+url https://ssd-api.jpl.nasa.gov/sbdb_query.api
+note sbdb_query mit sb-cdata-Filter {"AND":["neo:eq:Y"]} → 400 "unknown field in cdata" (Filter-Syntax-Fehler). Kleinkörper-Katalog (H, Durchmesser, Albedo, Klasse) — statisch, via DASTCOM (catalog_dastcom, K03) bereits manifestiert. Kein neuer Kanal.
+
+# ── 16. CNEOS CAD + Fireball — integrated (Terrapulse-Grind) ──
+integrated terrapulse
+url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=1LD&date-min=2026-08-15&date-max=2026-08-16
+note CAD 200 (Close-Approach-Tabelle, gravity/em — bereits via Terrapulse-Grind befunden). Fireball 200 (Bolide-Ereignisse mit Energie/Position — bereits via Terrapulse-Grind). Keine Duplizierung.
+
+# ── 17. POWER — decline model-reanalysis (bereits dead_sources Z.3174) ──
+decline model-reanalysis
+url https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M&community=RE&longitude=-95.34&latitude=29.78&start=20260801&end=20260814&format=JSON
+note 200 (Punkt-Abfrage). NASA POWER = Satelliten-/Reanalyse-Modellparameter (T2M etc.) — kein Organismus spürt Modelloutput. Unverändert decline.
+
+# ── 18. GIBS — decline imagery (bereits dead_sources Z.2398) ──
+decline imagery
+url https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi
+note WMS-Kacheln (Satelliten-Imagery). Kein numerischer Feldwert.
+
+# ── 19. FIRMS Aktivfeuer (thermal) — ACCEPTED ──
+accepted https://firms.modaps.eosdis.nasa.gov/api/area/csv/{FIRMS_MAP_KEY}/VIIRS_SNPP_NRT/world/1
+# title: FIRMS VIIRS SNPP Aktivfeuer (thermal) — globale Brände 24h
+url https://firms.modaps.eosdis.nasa.gov/api/area/csv/{FIRMS_MAP_KEY}/VIIRS_SNPP_NRT/world/1
+ttl 3600
+force thermal
+format csv
+on earth 0 0 0
+map .
+lat latitude
+lon longitude
+field bright_ti4 biosphere_fire_brightness_ti4_k gaussian-inverse-square thermal K 3600 0.0 0.0
+field frp biosphere_fire_radiative_power_mw gaussian-inverse-square thermal MW 3600 0.0 0.0
+# Struktur (CSV, header): latitude,longitude,bright_ti4,scan,track,acq_date,acq_time,
+# satellite,instrument,confidence,version,bright_ti5,frp,daynight. bright_ti4 = Helligkeitstemperatur
+# Kanal I4 (K), frp = Fire Radiative Power (MW) — echte Wärmestrahlungs-Messung (IR), Litmus erfüllt
+# (Wärmesinn). JSON-Variante (api/area/json/{key}/{source}/world/1) redirectet auf Earthdata-Login —
+# CSV-Variante liefert Daten (format csv → csv_to_json → map). Probe 2026-08-15: Feuer bei
+# lat=67.19506,lon=81.99062 (Sibirien), bright_ti4=341.95 K, frp=4.88 MW.
+
+accepted https://firms.modaps.eosdis.nasa.gov/api/area/csv/{FIRMS_MAP_KEY}/VIIRS_NOAA20_NRT/world/1
+# title: FIRMS VIIRS NOAA-20 Aktivfeuer (thermal) — globale Brände 24h
+url https://firms.modaps.eosdis.nasa.gov/api/area/csv/{FIRMS_MAP_KEY}/VIIRS_NOAA20_NRT/world/1
+ttl 3600
+force thermal
+format csv
+on earth 0 0 0
+map .
+lat latitude
+lon longitude
+field bright_ti4 biosphere_fire_brightness_ti4_k gaussian-inverse-square thermal K 3600 0.0 0.0
+field frp biosphere_fire_radiative_power_mw gaussian-inverse-square thermal MW 3600 0.0 0.0
+
+accepted https://firms.modaps.eosdis.nasa.gov/api/area/csv/{FIRMS_MAP_KEY}/MODIS_NRT/world/1
+# title: FIRMS MODIS Aktivfeuer (thermal) — globale Brände 24h
+url https://firms.modaps.eosdis.nasa.gov/api/area/csv/{FIRMS_MAP_KEY}/MODIS_NRT/world/1
+ttl 3600
+force thermal
+format csv
+on earth 0 0 0
+map .
+lat latitude
+lon longitude
+field bright_ti4 biosphere_fire_brightness_ti4_k gaussian-inverse-square thermal K 3600 0.0 0.0
+field frp biosphere_fire_radiative_power_mw gaussian-inverse-square thermal MW 3600 0.0 0.0
+
+# ── 20. SSC / CDDIS-GRACE — parser-def / key-needed ──
+parser-def grid-earthernet-login
+url https://cddis.nasa.gov/archive/grace/
+note CDDIS/GRACE Level-2 (Schwerefeld) = Earthdata-Login-Gate + Raster/Grid (NetCDF/ASCII-Grid), kein live JSON-Punkt-Messwert. gravity real, aber Format parser-def (Raster) + key-needed (EDL). EARTHDATA_EDL_TOKEN vorhanden, aber Grid-Konsum offen.
+
+# ── 21. USGS-Erdbeben — integrated (bereits live in sources.φ) ──
+integrated live
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson
+note Bereits live (sources.φ Z.477, seismic-surface). Keine Änderung.
+
+# ── 22. MSL-Wetter — integrated (grind_host.φ, skip) ──
+integrated grind-host
+url https://mars.nasa.gov/rss/api/?feed=weather&category=msl&feedtype=json
+note Bereits gedraftet in phi/research/agent_output/grind_host.φ (accepted, thermal/acoustic). Nicht dupliziert.

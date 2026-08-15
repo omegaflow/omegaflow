@@ -1,0 +1,218 @@
+# grind terrapulse_a (2026-08-15)
+
+# ── accepted ───────────────────────────────────────────────────────────
+
+accepted https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_daily_mlo.csv
+# title: NOAA Mauna Loa daily mean CO2 (in-situ gas concentration, ppm)
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_daily_mlo.csv
+ttl 86400
+format csv
+on earth 19.5362 -155.5763 0
+lastrow average atmosphere_co2_ppm_mlo gaussian-inverse-square diffusion ppm 8640.0 0.0 0.0
+# note: force diffusion (CO2-Gaskonzentration, Chemorezeption-Litmus erfüllt). Datei ist
+#       headerlos (Spalten: year,month,day,decimal,average,desasonalized,ndays,std,unc) —
+#       `lastrow average` folgt dem ch4/n2o/sf6-Muster, aber ohne Headerzeile ggf. auf
+#       numerischen Index 4 wechseln. Wert verifiziert (z.B. 333.46 ppm).
+
+accepted https://api.nasa.gov/DONKI/FLR
+# title: NASA DONKI solar X-ray flares (classType → Spitzenfluss, em)
+url https://api.nasa.gov/DONKI/FLR?startDate={week_ago}&endDate={today}&api_key={NASA_API_KEY}
+ttl 3600
+at sun 1
+regex classType":"X([0-9.]+)
+field solar_flare_xclass solar_flare_xclass inverse-square em 1 3600 0.0 0.0
+# note: force em (Röntgenstrahlung der Flare). Key {NASA_API_KEY} liegt in phi/.secrets.local.
+#       Handoff 2026-08-07 beschreibt den FLR-Regex-Block als verifiziert (X1.1 → 1.1);
+#       im aktuellen sources.φ ist DONKI jedoch absent — Regex-Direktiv-Syntax vor Merge
+#       gegen den Parser re-prüfen.
+
+# ── parser-def ─────────────────────────────────────────────────────────
+
+parser-def https://ssd-api.jpl.nasa.gov/fireball.api
+# title: CNEOS Bolide Fireballs
+url https://ssd-api.jpl.nasa.gov/fireball.api
+note JSON array-of-arrays erreicht (200). Kraft em (bolide Strahlungsenergie, Litmus erfüllt).
+  Datenfelder: date,energy,impact-e,lat,lat-dir,lon,lon-dir,alt,vel. Geodätische Position ist
+  in Werte+Halbspären-Spalten gesplittet (lat "19.5" + lat-dir "S"); der Parser hat keine
+  Signum-Faltung aus Richtungsspalten. energy verifiziert (2.9/3.2). Merge: Signum-Faltung
+  für lat-dir/lon-dir nötig.
+
+parser-def https://data.epa.gov/efservice/ERM_RESULT/
+# title: EPA RadNet Environmental Radiation Monitoring (Analyse-Ergebnisse)
+url https://data.epa.gov/efservice/ERM_RESULT/ROWS
+note XML (200): <erm_resultList><erm_result> mit RESULT_AMOUNT (pCi/L), RESULT_IN_SI, RESULT_DATE.
+  Kraft em (Gamma-Dosis). Parser kennt nur xml_count (zählt Tags, keine Werte/Zeilen); ERM_RESULT
+  trägt kein lat/lon (Position lebt im Stationsregister, Join nötig). xml_count hier nicht anwendbar.
+
+parser-def https://gwosc.org/eventapi/jsonfull/allevents/
+# title: GWOSC Gravitational Wave Events
+url https://gwosc.org/eventapi/jsonfull/allevents/
+note JSON (200), Kraft gravity erfüllt. Struktur {events:{<name>:{GPS,strain[],...}}} — Zusammenfassung
+  trägt kein ra/dec; Position liegt in der per-Event-jsonurl (Skymap). Kein flaches Positionsfeld.
+  Hinweis: gwosc.org/api/v2/events ist bereits tot (dead_sources.φ L1942); dieser Endpoint lebt.
+
+parser-def https://www.hamqsl.com/solarxml.php
+# title: HamQSL HF Propagation (Solarflux, Sonnenflecken, X-ray)
+url https://www.hamqsl.com/solarxml.php
+note XML (200): <solar><solardata> mit <solarflux>114</solarflux>, <aindex>, <kindex>, <xray>,
+  <sunspots>. Kraft em (10.7cm-Radiofluss). xml_count zählt Tags, nicht Werte — solarflux/sunspots
+  sind Skalarwerte, nicht zählbar. Kein Werte-Extraktor für XML.
+
+parser-def https://api.nasa.gov/DONKI/CME
+# title: NASA DONKI Coronal Mass Ejections
+url https://api.nasa.gov/DONKI/CME?startDate={week_ago}&endDate={today}&api_key={NASA_API_KEY}
+note JSON (200), Kraft em erfüllt. speed (km/s) liegt verschachtelt in cmeAnalyses[].speed
+  (Array), sourceLocation ist heliographischer String ("S10E20" oder ""). Kein flaches
+  numerisches Feld; kein sauberer Extraktor für cmeAnalyses[0].speed.
+
+parser-def https://geomag.usgs.gov/ws/data/
+# title: USGS Geomagnetism — Observatorium 1-Minuten-Vektor
+url https://geomag.usgs.gov/ws/data/?id=BOU&starttime={yesterday}T00:00:00Z&endtime={now}Z&sampling_period=60&type=variation&format=json
+note JSON (200), Kraft em (Erdmagnetfeld) erfüllt. Struktur: values ist Liste von 4
+  Komponentenobjekten {id:"X"/"Y"/"Z"/"F", values:[...]}; kein Direktiv, um die F-Komponente
+  per id zu wählen. Redundant: INTERMAGNET-Fanout (imag-data.bgs.ac.uk, sources.φ L830) liefert
+  bereits magnetosphere_total_field_nt; BOU ist INTERMAGNET-Station.
+
+# ── dead ───────────────────────────────────────────────────────────────
+
+dead 404 https://www.amsmeteors.org/members/api/open_api
+# title: American Meteor Society Fireballs
+url https://www.amsmeteors.org/members/api/open_api
+note HTTP 404 "Unknown Function" — Endpoint absent. Historischer Endpoint (check_data.php)
+  existiert in probe_batches, aber open_api liefert 404.
+
+dead https://explore.globalmeteornetwork.org/gmn_data_store
+# title: Global Meteor Network
+url https://explore.globalmeteornetwork.org/gmn_data_store
+note Verbindung void (000, kein Response in 15 s) — Host nicht erreichbar.
+
+dead https://www.nmdb.eu/nest/draw_graph.php
+# title: NMDB Cosmic Ray Neutron Monitors
+url https://www.nmdb.eu/nest/draw_graph.php
+note Verbindung void (000, Timeout). Verwandte NMDB-Endpoints bereits tot
+  (get_data.php dead_sources.φ L846, data.json L2853).
+
+# ── decline ────────────────────────────────────────────────────────────
+
+decline https://www.epa.gov/waterdata/get-nhdplus-national-hydrography-dataset-plus-data
+# title: Dataset National Hydrography Dataset Plus Nhdplus11
+note geografische Infrastruktur (Hydrographie/Gewässernetz) — kein Messwert, kein Sinnesorgan.
+
+decline https://data.epa.gov/efservice/ERM_RESULT/
+# title: EPA RadNet Stations (registry)
+note Stationsregister (Metadaten ohne Messung).
+
+decline https://kp.gfz.de/
+# title: GFZ Kp/ap Geomagnetic Index (Niemegk)
+note kp.gfz.de/app/json bereits tot (dead_sources.φ L1974, L1990); Root ist HTML-Indexseite.
+  Kp/ap zusätzlich Aggregat-Index ohne Position (Force Gate).
+
+decline https://gwosc.org/detector_status/
+# title: GWOSC Detector Status
+note HTML-Statusseite (Detektor up/down) — kein Messwert.
+
+decline https://dataverse.harvard.edu/api/access/datafile/7502710
+# title: IceCube Astrophysical Neutrino Alerts (IceCat-1)
+note Neutrino-Ereigniskatalog (Dateidownload). Neutrino-Wechselwirkung hat keine Kraft in der
+  8er-Vokabularliste (em/gravity/acoustic/seismic/thermal/diffusion/advective/biotic) — Force Gate.
+
+decline https://ssd-api.jpl.nasa.gov/sbdb.api
+# title: JPL Small-Body Database
+note Einzelobjekt-Nachschlage-Katalog (Orbitalelmente per sstr) — Register/Nachschlagewerk,
+  kein Beobachtungs-Feed. Close-Approach-Teil ist cad.api (bereits tot, dead_sources.φ L2701).
+
+decline https://wdc.kugi.kyoto-u.ac.jp/dst_realtime/presentmonth/
+# title: Kyoto WDC Real-time Dst
+note HTML-Plot/Tabelle; Dst ist geomagnetischer Aggregat-Index ohne Einzelereignis-Position
+  (Force Gate). Verwandter aeasy-Endpoint bereits tot (dead_sources.φ L826, L2769).
+
+decline https://www.ngdc.noaa.gov/geomag/data/poles/
+# title: Magnetic Pole Positions — NOAA NCEI
+note abgeleitete Magnetpol-Position aus Erdfeldmodell (IGRF-Modelloutput, Referenz) — Force Gate.
+
+decline https://api.nasa.gov/DONKI
+# title: NASA DONKI Space Weather (root)
+note API-Root/Swagger-Index, kein Daten-Body.
+
+decline https://ssd-api.jpl.nasa.gov
+# title: NASA NEO (root)
+note API-Root/Index, kein Daten-Body.
+
+decline https://www.nmdb.eu/nest/
+# title: NMDB Neutron Monitor Stations (registry)
+note Stationsregister (Metadaten ohne Messung).
+
+decline https://psl.noaa.gov/enso/mei/data/meiv2.data
+# title: NOAA Climate Indices (MEI v2)
+note Aggregat-Klimaindex (ENSO) — einzelner Skalar, keine Position (Force Gate).
+
+decline https://www.ncei.noaa.gov/data/global-hourly/
+# title: NOAA NCEI ISD global-hourly (Verzeichnis)
+note Verzeichnis-Listing (HTML), kein Daten-Body. Echter API-Pfad wäre
+  ncei.noaa.gov/access/services/data/v1?dataset=global-hourly (siehe probe_batches).
+
+decline https://www.spc.noaa.gov/climo/reports/
+# title: SPC Storm Reports (Verzeichnis)
+note Verzeichnis-Listing monatlicher CSV (kein Daten-Body am URL).
+
+decline https://www.spc.noaa.gov/wcm/
+# title: SPC Tornado History (Verzeichnis)
+note Verzeichnis-Listing (kein Daten-Body am URL).
+
+decline https://www.ncei.noaa.gov/pub/access/cebrequests/satellite/GOES-R-Level-0-Readers/
+# title: Satellite Goes R Level 0 Readers (Verzeichnis)
+note Verzeichnis-Listing (kein Daten-Body am URL).
+
+decline https://api.daac.asf.alaska.edu/services/search/param
+# title: ASF SAR Search
+note Granule-Such-Metadaten (Dateilocations), kein Rückstreu-Messwert — Register/Metadaten.
+
+decline https://www.usgs.gov/centers/eros/science/usgs-eros-archive-aerial-photography-high-resolution-orthoimagery-hro
+# title: USGS EROS Aerial Photography / Orthoimagery
+note geografische Bildinfrastruktur (kein Messwert).
+
+decline https://www.ncei.noaa.gov/pub/data/swdi/stormevents/csvfiles/
+# title: Storm Events csvfiles (Verzeichnis)
+note Verzeichnis-Listing (kein Daten-Body am URL).
+
+decline https://wspr.live
+# title: WSPR — Weak Signal Propagation Reporter
+note Root liefert HTML-Landing (pandoc), kein Daten-Body. WSPR-Empfangsberichte wären em,
+  aber der Daten-Endpoint liegt nicht an dieser URL.
+
+decline https://geodata.epa.gov/arcgis/rest/services/OAR_OAP/Wildfires/MapServer
+# title: Wildfires Mapserver
+note ArcGIS-MapService abgeleiteter Feuerperimeter (geografische Infrastruktur).
+
+decline https://data.worldbank.org
+# title: World Bank Energy Use per Capita
+note sozioökonomischer Indikator (Energieverbrauch pro Kopf) — keine physikalische Kraft.
+
+decline https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/{01..91}/
+# title: NCEI Hourly Precip 3240 (Familie, 55 Kandidatenzeilen)
+note Verzeichnis-Listings (HTML) für per-Station-Pfade — kein Daten-Body am URL. Familie
+  (Pfade 01–51, 66, 67, 91; Duplikate 14/48) decline als Verzeichnisindex;
+  Einzelstations-TXT wären separat zu prüfen.
+
+decline https://www.ncei.noaa.gov/data/international-best-track-archive-for-climate-stewardship-ibtracs/v04r01/access/csv/
+# title: IBTrACS Tropical Cyclone Tracks (Verzeichnis)
+note Verzeichnis-Listing von CSV-Dateien (kein Daten-Body am URL).
+
+# ── bereits live ───────────────────────────────────────────────────────
+
+# bereits live: https://www.nhc.noaa.gov/CurrentStorms.json  (sources.φ L700)
+# bereits live: https://imag-data.bgs.ac.uk  (INTERMAGNET hapi, sources.φ L830)
+# bereits live: https://api.tidesandcurrents.noaa.gov/api/prod/datagetter  (viele Blöcke)
+# bereits live: https://earthquake.usgs.gov/fdsnws/event/1/query  (viele Blöcke)
+
+# ── bereits klassifiziert (dead_sources.φ) ─────────────────────────────
+
+# bereits klassifiziert: https://ssd-api.jpl.nasa.gov/cad.api  (dead_sources.φ L2701)
+# bereits klassifiziert: https://imag-data.bgs.ac.uk/GIN_V1/GINServices  (L2442, Register)
+# bereits klassifiziert: https://ssd.jpl.nasa.gov/api/horizons.api  (L3074)
+# bereits klassifiziert: https://firms.modaps.eosdis.nasa.gov/api/  (L2390)
+# bereits klassifiziert: https://usdmdataservices.unl.edu/api/  (L742, L3054)
+# bereits klassifiziert: https://data.nasa.gov/docs/legacy/meteorite_landings/  (L1718)
+# bereits klassifiziert: https://air-quality-api.open-meteo.com/v1/air-quality  (L931/L2206, Modell)
+# bereits klassifiziert: https://api.worldbank.org/v2/  (L142, L1398)
+# bereits klassifiziert: https://volcanoes.usgs.gov/hans-public/api/volcano/  (L758, L3066)

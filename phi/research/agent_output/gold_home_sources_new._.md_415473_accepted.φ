@@ -1,0 +1,778 @@
+# gold conversion (old → new grammar, mechanical)
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=temperature_1000hPa,temperature_950hPa,temperature_925hPa,temperature_900hPa,temperature_850hPa,temperature_800hPa,temperature_700hPa,temperature_600hPa,temperature_500hPa,temperature_400hPa,temperature_300hPa,temperature_250hPa,temperature_200hPa,temperature_150hPa,temperature_100hPa,temperature_70hPa,temperature_50hPa,relative_humidity_1000hPa,relative_humidity_950hPa,relative_humidity_925hPa,relative_humidity_850hPa,relative_humidity_700hPa,relative_humidity_500hPa,relative_humidity_300hPa,relative_humidity_200hPa,relative_humidity_100hPa,relative_humidity_50hPa,wind_speed_1000hPa,wind_speed_950hPa,wind_speed_925hPa,wind_speed_850hPa,wind_speed_700hPa,wind_speed_500hPa,wind_speed_300hPa,wind_speed_250hPa,wind_speed_200hPa,wind_speed_100hPa,wind_speed_70hPa,wind_speed_50hPa&timezone=auto
+ttl 3600
+on earth 42.618 -71.342 0
+
+url https://giro.uml.edu/didbase/stationlist.php?format=json
+map stations
+lat geolat
+lon geolon
+ttl 900
+on earth 42.618 -71.342 0
+
+url https://giro.uml.edu/didbase/json/scaled.php?format=json
+map stations
+lat geolat
+lon geolon
+ttl 3600
+on earth 35 -106 0
+
+url https://api.electricitymap.org/v3/power-breakdown/latest?lat={lat}&lon={lon}
+header auth-token {electricity_maps_key}
+ttl 3600
+on earth 38.9 -77 0
+
+url https://api.eia.gov/v2/electricity/rto/region-sub-ba/data/?frequency=hourly&data[0]=value&api_key={eia_key}
+map response.data
+ttl 3600
+on earth 51 10 0
+
+url https://maps.emodnet.eu/wms/vessel_density?service=WMS&request=GetCapabilities
+ttl 3600
+on earth 65 -147 0
+
+url https://epic.gsfc.nasa.gov/api/natural
+map .
+ttl 300
+on earth 0 0 1500000000
+
+url https://services.swpc.noaa.gov/products/solar-wind/plasma-7-day.json
+map .
+ttl 300
+on earth 0 0 1500000000
+
+url https://stereo-ssc.nascom.nasa.gov/beacon/tables.shtml
+ttl 600
+on earth -25 135 150000000000
+
+url https://api.weather.bom.gov.au/v1/observations/{lat},{lon}
+ttl 3600
+on earth -25 135 0
+
+url https://api.weather.bom.gov.au/v1/forecast/{lat},{lon}
+ttl 600
+on earth -25 135 0
+
+url https://dataserver-coids.inpe.br/queimadas/queimadas/deter/
+format text
+rows .
+ttl 600
+on earth 35 105 0
+
+url https://weather.cma.cn/api/now/54511
+ttl 3600
+on earth 35 105 0
+
+url https://geofon.gfz.de/fdsnws/station/1/query?format=geojson&level=station&network=AF
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+alt geometry.coordinates.2
+ttl 900
+on earth -34 19 0
+
+url https://spaceweather.sansa.org.za/ionosonde/latest
+ttl 600
+on earth -30 25 0
+
+url https://www.nmdb.eu/nest/data/NEWK/realtime.txt
+format text
+ttl 300
+on earth 65 25.5 0
+
+url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&minmag=5&limit=100
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+alt geometry.coordinates.2
+ttl 300
+on earth 0 0 1500000000
+
+url https://services.swpc.noaa.gov/products/solar-wind/plasma-1-day.json
+map .
+ttl 300
+on earth 0 0 1500000000
+
+url https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=JUNG&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0
+format text
+rows .
+ttl 3600
+on earth 46.55 7.98 0
+
+url https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=OULU&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0
+format text
+rows .
+ttl 3600
+on earth 65.05 25.47 0
+
+url https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=THUL&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0
+format text
+rows .
+ttl 3600
+on earth 76.5 -68.7 0
+
+url https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=MCMD&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0
+format text
+rows .
+ttl 3600
+on earth -77.85 166.72 0
+
+url https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=HRMS&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0
+format text
+rows .
+ttl 3600
+on earth -34.42 19.22 0
+
+url https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=KERG&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0
+format text
+rows .
+ttl 3600
+on earth -49.35 70.25 0
+
+url https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=APTY&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0
+format text
+rows .
+ttl 3600
+on earth 67.55 33.33 0
+
+url https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=MXCO&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0
+format text
+rows .
+ttl 86400
+on earth 19.33 -99.18 0
+
+url https://www.ndbc.noaa.gov/data/realtime2/21413.dart
+format text
+rows .
+ttl 3600
+on earth 38.7 148.7 0
+
+url https://www.ndbc.noaa.gov/data/realtime2/46401.dart
+format text
+rows .
+ttl 3600
+on earth 50.1 -171 0
+
+url https://www.ndbc.noaa.gov/data/realtime2/32401.dart
+format text
+rows .
+ttl 3600
+on earth -19.6 -162.1 0
+
+url https://www.ndbc.noaa.gov/data/realtime2/23401.dart
+format text
+rows .
+ttl 3600
+on earth -8.4 67.5 0
+
+url https://www.ndbc.noaa.gov/data/realtime2/41420.dart
+format text
+rows .
+ttl 86400
+on earth 17.9 -74.9 0
+
+url https://gwosc.org/api/v2/runs/?format=json
+map results
+ttl 86400
+on earth 0 0 0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='499'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&QUANTITIES='1,9,20,23,24,29'
+format text
+rows .
+ttl 3600
+on earth 0 0 0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='599'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&QUANTITIES='1,9,20,23,24,29'
+format text
+rows .
+ttl 3600
+on earth 0 0 0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='699'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&QUANTITIES='1,9,20,23,24,29'
+format text
+rows .
+ttl 600
+on earth 0 0 0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-125544'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='10+m'&QUANTITIES='1,9,20,23,24,29'
+format text
+rows .
+ttl 3600
+on earth 0 0 0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='DES%3DC%2F2023+A3'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&VEC_TABLE='2'&REF_PLANE='ECLIPTIC'
+format text
+rows .
+ttl 86400
+on earth 0 0 0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='99942'&OBJ_DATA='YES'&MAKE_EPHEM='YES'&EPHEM_TYPE='ELEMENTS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+d'&REF_PLANE='ECLIPTIC'
+format text
+rows .
+ttl 3600
+on earth 0 0 0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-31'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='6+h'&VEC_TABLE='2'&REF_PLANE='ECLIPTIC'
+format text
+rows .
+ttl 3600
+on earth 0 0 0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-32'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='6+h'&VEC_TABLE='2'&REF_PLANE='ECLIPTIC'
+format text
+rows .
+ttl 600
+on earth 0 0 0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-96'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&VEC_TABLE='2'&REF_PLANE='ECLIPTIC'
+format text
+rows .
+ttl 3600
+on earth 0 0 0
+
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_annmean_gl.txt
+format text
+rows .
+ttl 60
+on earth 0 0 0
+
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_weekly_mlo.csv
+format text
+rows .
+ttl 86400
+on earth 19.5 -155.6 0
+
+url https://gml.noaa.gov/webdata/ccgg/trends/ch4/ch4_mm_gl.txt
+format text
+rows .
+ttl 86400
+on earth 0 0 0
+
+url https://gml.noaa.gov/webdata/ccgg/trends/n2o/n2o_mm_gl.txt
+format text
+rows .
+ttl 86400
+on earth 0 0 0
+
+url https://gml.noaa.gov/webdata/ccgg/trends/sf6/sf6_mm_gl.txt
+format text
+rows .
+ttl 3600
+on earth 0 0 0
+
+url https://lgdc.uml.edu/common/DIDBGetValues?ursiCode=JR055&charName=foF2&DMUF=3000&fromDate={today}&toDate={today}&subdiv=hour&desc=false
+format text
+rows .
+ttl 1800
+on earth 54.63 13.37 0
+
+url https://lgdc.uml.edu/common/DIDBGetValues?ursiCode=AT138&charName=foF2&DMUF=3000&fromDate={today}&toDate={today}&subdiv=hour&desc=false
+format text
+rows .
+ttl 1800
+on earth 38 23.5 0
+
+url https://lgdc.uml.edu/common/DIDBGetValues?ursiCode=DB049&charName=foF2&DMUF=3000&fromDate={today}&toDate={today}&subdiv=hour&desc=false
+format text
+rows .
+ttl 1800
+on earth 28.6 77.2 0
+
+url https://lgdc.uml.edu/common/DIDBGetValues?ursiCode=LS166&charName=foF2&DMUF=3000&fromDate={today}&toDate={today}&subdiv=hour&desc=false
+format text
+rows .
+ttl 1800
+on earth -34.6 -58.4 0
+
+url https://lgdc.uml.edu/common/DIDBGetValues?ursiCode=TO536&charName=foF2&DMUF=3000&fromDate={today}&toDate={today}&subdiv=hour&desc=false
+format text
+rows .
+ttl 86400
+on earth 35.7 139.5 0
+
+url https://www.ncei.noaa.gov/data/oceans/woa/DATA_ANALYSIS/3M_HEAT_CONTENT/DATA/basin/yearly/h22-w0-700m.dat
+format text
+rows .
+ttl 86400
+on earth 0 0 0
+
+url https://www.cpc.ncep.noaa.gov/data/indices/sstoi.indices
+format text
+rows .
+ttl 86400
+on earth 0 -170 0
+
+url https://psl.noaa.gov/data/correlation/pdo.data
+format text
+rows .
+ttl 86400
+on earth 40 -170 0
+
+url https://www.cpc.ncep.noaa.gov/data/indices/amon.us.long.data
+format text
+rows .
+ttl 86400
+on earth 40 -40 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetData&observatoryIagaCode=NGK&dataStartDate={today}T00:00:00&dataDuration=P1D&elements=X,Y,Z,F&publicationState=adjusted&format=json
+map .
+ttl 86400
+on earth 52.07 12.68 0
+
+url https://incois.gov.in/portal/wave/rssnews.jsp
+format text
+rows .
+ttl 3600
+on earth 13.07 80.27 0
+
+url http://gravis.gfz-potsdam.de/api/v1/timeseries/?basin=AMAZON&product=GRACE_TWS&format=json
+map timeseries
+ttl 86400
+on earth -3 -60 0
+
+url http://gravis.gfz-potsdam.de/api/v1/timeseries/?basin=GANGES&product=GRACE_TWS&format=json
+map timeseries
+ttl 86400
+on earth 25 83 0
+
+url http://gravis.gfz-potsdam.de/api/v1/timeseries/?basin=ANTARCTICA&product=GRACE_ICE&format=json
+map timeseries
+ttl 86400
+on earth -90 0 0
+
+url http://gravis.gfz-potsdam.de/api/v1/timeseries/?basin=GREENLAND&product=GRACE_ICE&format=json
+map timeseries
+ttl 86400
+on earth 72 -40 0
+
+url https://grace.jpl.nasa.gov/media/documents/GMSL_RLv04_JPL_RL06.3_SLCC.txt
+format text
+rows .
+ttl 86400
+on earth 0 0 0
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+Family,n,e,sini,a,H+FROM+"J/Icarus/239/46/table3"+WHERE+n+IS+NOT+NULL+ORDER+BY+n+DESC
+format text
+rows .
+ttl 86400
+on earth 0 0 0
+
+url https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/MMS1_FGM_SRVY_L2/variables/mms1_fgm_b_gsm_srvy_l2/data/{today}T00:00:00.000Z/{today}T06:00:00.000Z?format=csv
+format text
+rows .
+ttl 300
+on earth 0 0 0
+
+url https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/GOES16_L2_MAG/variables/Hp,He,Hn,B_Total/data/{today}T00:00:00.000Z/{today}T23:59:59.000Z?format=csv
+format text
+rows .
+ttl 300
+on earth 0 -75.2 0
+
+url https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/AC_H0_MFI/variables/BGSEc,Magnitude/data/{today}T00:00:00.000Z/{today}T23:59:59.000Z?format=csv
+format text
+rows .
+ttl 3600
+on earth 0 0 0
+
+url https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/ERG_HFA_L2_SPECTRA_60S/variables/spec_mW_E,spec_mW_B,freq/data/{today}T00:00:00.000Z/{today}T06:00:00.000Z?format=csv
+format text
+rows .
+ttl 300
+on earth 0 0 0
+
+url https://www.minorplanetcenter.net/iau/NEO/neocp.txt
+format text
+rows .
+ttl 3600
+on earth 0 0 0
+
+url https://www.minorplanetcenter.net/cgi-bin/checkmp.cgi?ty=c&head=N&TextArea=&radius=180&ra=&decl=&oc=500&e=J2000&resoc=&s=t&m=h&adir=N&oed=&e=J2000&dFormat=YYYY+MM+DD&css=modern&mot=check&dmot=p&si=t&uto=0&int=2&fmt=csv
+format text
+rows .
+ttl 86400
+on earth 0 0 0
+
+url https://www.nmdb.eu/nest/draw_graph.php?wget=1&stations[]=OULU&tabchoice=1h&output=ascii&startdate_1={today}T00:00:00&enddate_1={today}T23:59:59
+format text
+rows .
+ttl 60
+on earth 65.05 25.47 0
+
+url https://www.nmdb.eu/nest/draw_graph.php?wget=1&stations[]=SOPO&tabchoice=1h&output=ascii&startdate_1={today}T00:00:00&enddate_1={today}T23:59:59
+format text
+rows .
+ttl 300
+on earth -90 0 0
+
+url https://www.nmdb.eu/nest/draw_graph.php?wget=1&stations[]=OULU&stations[]=JUNG&stations[]=THUL&stations[]=NEWK&tabchoice=1h&output=ascii&startdate_1={today}T00:00:00&enddate_1={today}T23:59:59
+format text
+rows .
+ttl 86400
+on earth 0 0 0
+
+url https://noaadata.apps.nsidc.org/NOAA/G02135/north/daily/data/N_seaice_extent_daily_v3.0.csv
+format text
+rows .
+ttl 86400
+on earth 90 0 0
+
+url https://noaadata.apps.nsidc.org/NOAA/G02135/south/daily/data/S_seaice_extent_daily_v3.0.csv
+format text
+rows .
+ttl 86400
+on earth -90 0 0
+
+url https://noaadata.apps.nsidc.org/NOAA/G02156/data/4km/{year}/{year}{month}{day}_IMS4km_v1.3.nc
+format text
+rows .
+ttl 3600
+on earth 70 0 0
+
+url https://api.open-meteo.com/v1/forecast?latitude=80.0&longitude=0.0&hourly=temperature_2m,snowfall,snow_depth,frozen_precipitation_percent,wind_speed_10m&models=icon_seamless&forecast_days=3&format=json
+map hourly.time
+ttl 86400
+on earth 80 0 0
+
+url https://gis.ngdc.noaa.gov/arcgis/rest/services/DEM_global_mosaic_hillshade/ImageServer/identify?geometry=%7B%22x%22:{lon},%22y%22:{lat}%7D&geometryType=esriGeometryPoint&returnGeometry=false&f=json
+ttl 86400
+on earth 0 0 0
+
+url https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json
+map .
+ttl 300
+on earth 0 0 0
+
+url https://services.swpc.noaa.gov/json/solar-geophysical-activity-summary.json
+map .
+ttl 86400
+on earth 0 0 0
+
+url https://services.swpc.noaa.gov/json/geomag/dst_index.json
+map .
+ttl 3600
+on earth 0 0 0
+
+url https://gracedb.ligo.org/api/superevents/?format=json&category=Production&ordering=-created&public=True&per_page=200
+map superevents
+ttl 3600
+on earth 0 0 0
+
+url https://gracedb.ligo.org/api/superevents/?format=json&category=Production&label=GW&ordering=-created&per_page=10
+map superevents
+ttl 3600
+on earth 0 0 0
+
+url https://gracedb.ligo.org/api/superevents/?format=json&category=Production&public=True&ordering=-created&per_page=100
+map superevents
+ttl 3600
+on earth 0 0 0
+
+url https://lasp.colorado.edu/lisird/latis/dap/tsis_tsi_24hr.csv?time>=2024-01-01
+format text
+rows .
+ttl 86400
+on earth 0 0 0
+
+url https://lasp.colorado.edu/lisird/latis/dap/sorce_tsi_24hr.csv?time>=2003-01-01
+format text
+rows .
+ttl 86400
+on earth 0 0 0
+
+url https://lasp.colorado.edu/lisird/latis/dap/pmod_composite.csv?time>=1978-01-01
+format text
+rows .
+ttl 86400
+on earth 0 0 0
+
+url https://lasp.colorado.edu/lisird/latis/dap/tsis1_hsrs.csv
+format text
+rows .
+ttl 3600
+on earth 0 0 0
+
+url https://lasp.colorado.edu/lisird/latis/dap/noaa_radio_flux.csv?time>={today}
+format text
+rows .
+ttl 86400
+on earth 49.32 -119.62 0
+
+url https://rapid.ac.uk/rapidmoc/rapid_data/datadl.php?data=moc_vertical
+format text
+rows .
+ttl 86400
+on earth 26.5 -75 0
+
+url https://rapid.ac.uk/rapidmoc/rapid_data/datadl.php?data=fc
+format text
+rows .
+ttl 86400
+on earth 27 -79.5 0
+
+url https://www.ncei.noaa.gov/access/monitoring/climate-at-a-glance/global/time-series/globe/pdsi/land/1/{month}/{year}/{year}.json
+map data
+ttl 86400
+on earth 0 0 0
+
+url https://www.ncei.noaa.gov/access/monitoring/drought/zscore-precip/global-zscore.json
+map periods
+ttl 86400
+on earth 0 0 0
+
+url https://www.ncei.noaa.gov/access/monitoring/climate-at-a-glance/divisional/time-series/0101/spi/1/{month}/{year}/{year}.json
+map data
+ttl 86400
+on earth 36 -96 0
+
+url https://services.swpc.noaa.gov/products/solar-wind/plasma-7-day.json
+map .
+ttl 60
+on earth 0 0 0
+
+url https://services.swpc.noaa.gov/products/solar-wind/mag-7-day.json
+map .
+ttl 300
+on earth 0 0 0
+
+url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
+map .
+ttl 60
+on earth 0 0 0
+
+url https://services.swpc.noaa.gov/json/goes/primary/xrays-7-day.json
+map .
+ttl 86400
+on earth 0 0 0
+
+url https://www.ndbc.noaa.gov/data/realtime2/51407.dart
+format text
+rows .
+ttl 86400
+on earth 19.63 -156.49 0
+
+url https://gcn.gsfc.nasa.gov/amon_icecube_gold_bronze_events.html
+format text
+rows .
+ttl 300
+on earth 0 0 0
+
+url https://gcn.gsfc.nasa.gov/amon_icecube_gold_bronze_events.html
+format text
+rows .
+ttl 600
+on earth 0 0 0
+
+url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/epica_domec/dc_ch4_hol_fl02-noaa.txt
+format text
+rows .
+ttl 2592000
+on earth -75.1 123.35 0
+
+url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/vostok/deutnat.txt
+format text
+rows .
+ttl 2592000
+on earth -78.464 106.837 0
+
+url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/antarctica2015co2wais-noaa.txt
+format text
+rows .
+ttl 86400
+on earth -79.467 -112.085 0
+
+url https://lasp.colorado.edu/lisird/latis/dap/sdo_eve_ssi_1nm_l3.csv?time>=2026-01-01&time<={today}
+format text
+rows .
+ttl 3600
+on earth 0 0 0
+
+url https://lasp.colorado.edu/lisird/latis/dap/fism_flare_hr.csv?time>={today}
+format text
+rows .
+ttl 300
+on earth 0 0 0
+
+url https://lasp.colorado.edu/lisird/latis/dap/eve_esp_l3.csv?time>={today}
+format text
+rows .
+ttl 60
+on earth 0 0 0
+
+url https://services.swpc.noaa.gov/json/goes/primary/xrays-3-day.json
+map .
+ttl 3600
+on earth 0 0 0
+
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_weekly_mlo.csv
+format text
+rows .
+ttl 60
+on earth 19.5 -155.6 0
+
+url https://services.swpc.noaa.gov/products/alerts.json
+map .
+ttl 3600
+on earth 0 0 0
+
+url https://celestrak.org/SOCRATES/query.php?TIMEFRAME=24&MAX_PROB=0.001&LIMIT=200&FORMAT=json
+map data
+ttl 86400
+on earth 0 0 0
+
+url https://www.sidc.be/SILSO/DATA/SN_d_tot_V2.0.txt
+format text
+rows .
+ttl 300
+on earth 50.85 4.35 0
+
+url https://services.swpc.noaa.gov/json/solar_filaments.json
+map .
+ttl 86400
+on earth 0 0 0
+
+url https://www.ncei.noaa.gov/data/oceans/woa/DATA_ANALYSIS/3M_HEAT_CONTENT/DATA/basin/3month/h22-w0-2p.dat
+format text
+rows .
+ttl 86400
+on earth 0 0 0
+
+url https://wdc.kugi.kyoto-u.ac.jp/ae_realtime/{year}{month}/ae{year}{month}{day}.for.request
+format text
+rows .
+ttl 86400
+on earth 67 0 0
+
+url https://services.swpc.noaa.gov/json/goes/primary/xrays-7-day.json
+map .
+ttl 86400
+on earth 0 0 0
+
+url https://services.swpc.noaa.gov/products/alerts.json
+map .
+ttl 3600
+on earth 0 0 0
+
+url https://services.swpc.noaa.gov/products/solar-regions.json
+map .
+ttl 600
+on earth 0 0 0
+
+url https://services.swpc.noaa.gov/json/goes/primary/xrays-7-day.json
+map .
+ttl 60
+on earth 0 0 0
+
+url https://services.swpc.noaa.gov/json/goes/primary/xrays-1-day.json
+map .
+ttl 60
+on earth 0 0 0
+
+url https://services.swpc.noaa.gov/json/goes/primary/electron-1-day.json
+map .
+ttl 60
+on earth 0 0 0
+
+url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
+map .
+ttl 86400
+on earth 0 0 0
+
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_weekly_mlo.csv
+format text
+rows .
+ttl 86400
+on earth 19.5 -155.6 0
+
+url https://www.sidc.be/SILSO/DATA/SN_d_tot_V2.0.txt
+format text
+rows .
+ttl 86400
+on earth 0 0 0
+
+url https://lasp.colorado.edu/data/fism/FISM2_2026_07_27.csv
+format text
+rows .
+ttl 86400
+on earth 0 0 0
+
+url https://lasp.colorado.edu/data/sdo_eve/l3/2026/2026_208_eve_l3.csv
+format text
+rows .
+ttl 86400
+on earth 0 0 0
+
+url https://api.marinespecies.org/rest/AphiaRecordsByMatchNames?scientificnames[]=Mola+mola&marine_only=true
+map .
+ttl 3600
+on earth 0 0 0
+
+url https://climate-api.open-meteo.com/v1/climate?latitude=0.0&longitude=0.0&start_year=2020&end_year=2030&models=CMCC_CM2_VHR4,FGOALS_f3_H&daily=temperature_2m_mean,temperature_2m_max,precipitation_sum
+map daily
+ttl 86400
+on earth 0 0 0
+
+url https://newton.spacedys.com/astdys2/index.php?pc=3.0&type=all&format=json&limit=500
+map .
+ttl 86400
+on earth 0 0 0
+
+url https://datacenter.iers.org/data/latestVersion/6_BULLETIN_A_ERFAEOP_V2013_002.txt
+format text
+rows .
+ttl 3600
+on earth 0 0 0
+
+url https://data.giss.nasa.gov/gistemp/tabledata_v4/GLB.Ts+dSST.csv
+format text
+rows .
+ttl 3600
+on earth 0 0 0
+
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_gr_gl.txt
+format text
+rows .
+ttl 86400
+on earth 0 0 0
+
+url https://www.ncei.noaa.gov/access/monitoring/climate-at-a-glance/global/time-series/globe/land/12/07/{year}.json
+map data
+ttl 3600
+on earth 0 0 0
+
+url https://gong2.nso.edu/oQR/zqs/?ref=zqs&series=zqs&date={year}.{month}.{day}&format=json
+map .
+ttl 86400
+on earth 0 0 0
+
+url https://gong2.nso.edu/HA/hag/?ref=hag&series=hag&date={year}.{month}.{day}&format=json
+map .
+ttl 300
+on earth 0 0 0
+
+url https://services.swpc.noaa.gov/json/solar_regions.json
+map .
+ttl 86400
+on earth 0 0 0
+
+url https://www.sidc.be/SILSO/DATA/SN_ms_tot_V2.0.txt
+format text
+rows .
+ttl 86400
+on earth 50.85 4.35 0
+
+url https://irsa.ipac.caltech.edu/cgi-bin/DUST/nph-dust?locstr={lat}+{lon}+gal&regSize=5&output_type=json
+ttl 86400
+on earth 0 0 0
+
+url https://gml.noaa.gov/webdata/ccgg/trends/ch4/ch4_mm_gl.txt
+format text
+rows .
+ttl 300
+on earth 0 0 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=water_level&application=batch15&begin_date={year}{month}{day}&end_date={year}{month}{day}&station=8518750&datum=MLLW&units=metric&time_zone=gmt&format=json
+map data
+ttl 300
+on earth 40.7 -74.01 0
+

@@ -1,0 +1,83 @@
+# grind host (2026-08-15)
+# Host-Kurations-Kandidaten: Probe + Klassifikation + Block-Drafts.
+# Rein forschend — keine Änderung an sources.φ / dead_sources.φ.
+# Dispositionen: accepted / decline / parser-def / key-needed / dead / note / integrated.
+
+# ── 1. Pegelonline (Wasserstand, hydrosphere — advective/gravity) ──
+# KEIN Block (wartet auf Fanout der Parallel-Session). Struktur-Befund + Skizze.
+note structure-only
+url https://www.pegelonline.wsv.de/webservices/rest-api/v2/stations
+note Stations-Liste ist ein JSON-Array, kein keyed Object. Jedes Element: uuid, number, shortname, longname, km, agency, longitude, latitude, water{shortname,longname}. longitude/latitude als Zahl present. stations.json (mit .json) = identisches Array (decline registry in dead_sources.φ Z.3122).
+note Messwert-Route: /webservices/rest-api/v2/stations/{uuid}/W/measurements.json?start=P1D → Array [{"timestamp":"2026-08-14T07:30:00+02:00","value":116.0}, ...]. value = Wasserstand in cm, 15-min-Takt. Keine lat/lon im Messwert (kommt aus Station). Fanout: stations_id=uuid, stations_lat=latitude, stations_lon=longitude.
+note Draft-Skizze (nicht einbauen, Fanout offen):
+#   url https://www.pegelonline.wsv.de/webservices/rest-api/v2/stations/{uuid}/W/measurements.json?start=P1D
+#   stations https://www.pegelonline.wsv.de/webservices/rest-api/v2/stations
+#   stations_id uuid / stations_lat latitude / stations_lon longitude
+#   last value hydrosphere_pegelonline_water_level_cm inverse-square gravity cm ...
+
+# ── 2. USGS-Geomag (em, XYZF-Timeseries) ──
+parser-def nested-timeseries-nullpadding
+url https://geomag.usgs.gov/ws/data/?id=BOU&type=adjusted&format=json
+note Struktur {"type":"Timeseries","metadata":{"intermagnet":{"imo":{"iaga_code":"BOU","name":"Boulder","coordinates":[-105.237,40.137,1682.0]},"reported_orientation":"XYZF",...}},"times":[...],"values":[{"id":"X","metadata":{...},"values":[...]},{"id":"Y",...},{"id":"Z",...},{"id":"F",...}]}. Station-Koordinaten [lon,lat,elev] in metadata.imo.coordinates — nicht pro Record.
+note values ist eine Liste von {id,values[]}, Auswahl nur über id (X/Y/Z/F), kein Parser-Selector. Timeseries hat None-Padding am Tagesende (future Stunden, generated ~05:16 UTC) — scalar `last` griffe ein None (0 honored wäre Fälschung). Messung ist echt em (nT), aber Extrakt braucht last-non-null + id-Select.
+note Dieselben INTERMAGNET-Observatorien (BOU u. a.) sind bereits über den BGS-HAPI-Fanout in sources.φ (Z.830) abgedeckt — dort sauber via HAPI (data[]+parameters[]). USGS-Feed als Redundanz-Kandidat; erst bei last-non-null-Extract sinnvoll.
+
+# ── 3. GWOSC (gravity, Event-Katalog) ──
+parser-def skymap-fits-position
+url https://gwosc.org/eventapi/jsonfull/allevents/
+note Struktur {"events":{"<name>-v<N>":{commonName,version,catalog.shortName,GPS,gracedb_id,jsonurl,strain[],mass_1_source,mass_2_source,luminosity_distance(+unit Mpc),redshift,chi_eff,chirp_mass,far,p_astro,...}}}. Trägt gravity-Feldwerte (Masse M_sun, luminosity_distance Mpc, SNR, redshift, far) — aber KEINE ra/dec. Himmelslokalisation nur im Skymap-FITS (verlinkt via gracedb_id/SKYMAP_READY-Label), nicht im JSON. Ohne Richtung kein Oscillator platzierbar (luminosity_distance ist Distanz, keine Richtung).
+note Force gravity ist legitim (Gravitationswelle); Lücke ist die Position (FITS-Skymap).
+
+# ── 4. GraceDB (gravity-Event-Pipeline) ──
+decline significance-registry
+url https://gracedb.ligo.org/api/superevents/
+note {"numRows":5977,"superevents":[{superevent_id,gw_id,category,t_0,far,time_coinc_far,space_coinc_far,labels[]}]}. far = False-Alarm-Rate, eine Detektions-Statistik — kein physikalisches Feld. Keine Masse/Distanz/Position im Listenelement (Masse/Distanz bei GWOSC, Skymap separat). Registry + Signifikanz → kein Sensor-Organ denkbar.
+key-needed auth-401
+url https://gracedb.ligo.org/api/events/
+note /events/ antwortet {"detail":"Unauthorized"} (HTTP 401) — Authentifizierung nötig. /superevents/ ist offen (s. o., decline).
+
+# ── 5. DSN (Antennen-Zustand, position-only) ──
+decline position-only
+url https://eyes.nasa.gov/dsn/data/dsn.json?t=1786939200
+note Struktur {"time":...,"dishes":{"<id>":{az,el,ws,sigs[],tgts,act,desc}}}. az/el = Antennen-Richtwinkel (Instrument-Orientierung, kein gemessenes Feld), ws = Windstärke (echte Messung, aber keine Position). Keine lat/lon im Payload — Dish-Standorte (Goldstone/Canberra/Madrid) sind statische Referenz-Koordinaten außerhalb der Response, nur über dish-id auffindbar. Kein lat/lon → position-only (§3.9). dsn.xml ist bereits decline-superseded (dead_sources.φ Z.2374).
+
+# ── 6. CENC (seismic, keyed Object) ──
+parser-def keyed-object
+url https://api.wolfx.jp/cenc_eqlist.json
+note Struktur {"No1":{type,EventID,time,ReportTime,location,placeName,magnitude,depth,latitude,longitude,intensity},"No2":{...},...}. Keyed Object No1..NoN, kein Array — `map` iteriert keine Object-Keys. Felder bestätigt als Strings: magnitude "7.7", depth "20", latitude "-8.40", longitude "121.40", intensity "9". seismic-body/seismic-surface würde passen; Extrakt braucht Object-Einträge-als-Rows.
+
+# ── 7. JMA-Quake (seismic) ──
+integrated live-scalar
+url https://www.jma.go.jp/bosai/quake/data/list.json
+note Bereits in sources.φ (Z.807) als `last mag` — scalar, korrekt. Position ist im cod-String eingebettet: "cod":"+32.5+130.5-10000/" = +lat+lon-depth/ (Vorzeichen = N/E, -depth in m). Separate lat/lon-Felder absent. Für Positionsextrakt parser-def (String-Einbettung); bestehender Mag-Scalar bleibt gültig.
+
+# ── 8. MSL-Wetter (thermal — wichtig, Mars) ──
+accepted https://mars.nasa.gov/rss/api/?feed=weather&category=msl&feedtype=json
+# title: MSL REMS Mars-Wetter (thermal/acoustic) — Gale-Krater, neuester Sol
+url https://mars.nasa.gov/rss/api/?feed=weather&category=msl&feedtype=json
+ttl 86400
+force thermal
+on mars -4.5895 137.4417 0
+field soles.0.max_temp cosmos_mars_max_temp_c exponential-decay thermal C 86400 0.0 0.0
+field soles.0.min_temp cosmos_mars_min_temp_c exponential-decay thermal C 86400 0.0 0.0
+field soles.0.pressure cosmos_mars_pressure_pa gaussian-inverse-square acoustic Pa 86400 0.0 0.0
+field soles.0.max_gts_temp cosmos_mars_ground_max_temp_c exponential-decay thermal C 86400 0.0 0.0
+field soles.0.min_gts_temp cosmos_mars_ground_min_temp_c exponential-decay thermal C 86400 0.0 0.0
+# Struktur: {"descriptions":{...},"soles":[sol-Objekte, NEUESTER ZUERST]}. soles[0] = neuester Sol.
+# Felder je Sol: id, terrestrial_date, sol, ls, season, min_temp, max_temp, pressure,
+# pressure_string, abs_humidity, wind_speed, wind_direction, atmo_opacity, sunrise, sunset,
+# local_uv_irradiance_index, min_gts_temp, max_gts_temp. Werte sind Strings ("-69", "780").
+# Neuester Sol (2026-08-15 Probe): sol 4982, terrestrial_date 2026-08-12, min_temp "-69",
+# max_temp "-6", pressure "780" (Pa), min_gts_temp "-88", max_gts_temp "7".
+# wind_speed (HWS) und abs_humidity sind "--" (REMS-Windsensor ausgefallen, 0 honored —
+# deshalb nicht als field aufgenommen). Messwert + Zeit (terrestrial_date) present.
+
+# ── 9. SatNOGS (Position-only) ──
+decline position-only
+url https://network.satnogs.org/api/observations/
+note Bestätigt (dead_sources.φ Z.3196): [{id,start,end,ground_station,transmitter,norad_cat_id,station_name,station_lat,station_lng,station_alt,rise_azimuth,set_azimuth,max_altitude,transmitter_downlink_low/high,waterfall:null,demoddata:[]}]. station_lat/lng present, aber Messwert (Signal) liegt in waterfall-/demoddata-Dateien, im JSON absent (null/[]). Beobachtungs-Metadaten + Stations-Koordinaten → position-only.
+
+# ── 10. MPC-Daten-API (Erreichbarkeit) ──
+dead unreachable
+url https://minorplanetcenter.net/data
+note curl 000 (kein Connect). /data_service ebenfalls 000. Die tatsächliche Web-API liegt unter data.minorplanetcenter.net — data.minorplanetcenter.net/api/ antwortet 200 (API-Index, parser-def in dead_sources.φ Z.1015); comet_e.json dort = 404. Einzel-Route unter data.minorplanetcenter.net prüfen.

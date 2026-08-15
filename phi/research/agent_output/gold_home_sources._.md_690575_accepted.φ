@@ -1,0 +1,5077 @@
+# gold conversion (old → new grammar, mechanical)
+url https://api.wheretheiss.at/v1/satellites/25544/positions?timestamps=1,2,3,4,5
+ttl 60
+on earth -35.2809 149.13 0
+
+url https://api.blitzortung.org/compressed/current_positions?lat={lat}&lon={lon}&range=500
+map .
+lat lat
+lon lon
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/AFK?interval=1d&range=1d
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/EWZ?interval=1d&range=1d
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/FXI?interval=1d&range=1d
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?interval=1d&range=1d
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/BDRY?interval=1d&range=1d
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/EEM?interval=1d&range=1d
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/VGK?interval=1d&range=1d
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/FM?interval=1d&range=1d
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/EWG?interval=1d&range=1d
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/GC%3DF?interval=1d&range=1d
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/INDA?interval=1d&range=1d
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/EWJ?interval=1d&range=1d
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/ILF?interval=1d&range=1d
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/EWW?interval=1d&range=1d
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/KSA?interval=1d&range=1d
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/CL%3DF?interval=1d&range=1d
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/XLC?interval=1d&range=1d
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/XLY?interval=1d&range=1d
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/XLP?interval=1d&range=1d
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/XLE?interval=1d&range=1d
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/XLF?interval=1d&range=1d
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/XLV?interval=1d&range=1d
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/XLI?interval=1d&range=1d
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/XLB?interval=1d&range=1d
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/XLRE?interval=1d&range=1d
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/XLK?interval=1d&range=1d
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/XLU?interval=1d&range=1d
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/SOXX?interval=1d&range=1d
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/EZA?interval=1d&range=1d
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/ASEA?interval=1d&range=1d
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/IYT?interval=1d&range=1d
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/%5ETNX?interval=1d&range=1d
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/SPY?interval=1d&range=1d
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+ttl 60
+on earth 41.8781 -87.6298 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/%5EVIX?interval=1d&range=1d
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/ACWI?interval=1d&range=1d
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://api.github.com/events?per_page=100
+header User-Agent "omegaflow"
+ttl 60
+on earth 53.3 -6.2 0
+
+url https://www.inex.ie/ixp/grapher/ixp?id=1&type=json
+ttl 60
+on earth 50.8 4.3 0
+
+url https://api.irail.be/liveboard/?station=Brussels&format=json
+ttl 60
+on earth 53.3 -6.2 0
+
+url https://stat.ripe.net/data/bgp-updates/data.json?resource=0.0.0.0/0&starttime={hour_ago}&endtime={today}
+ttl 60
+on earth 46.9 7.4 0
+
+url https://transport.opendata.ch/v1/stationboard?station=Bern&limit=10
+ttl 60
+on earth 47.3 8.5 0
+
+url https://transport.opendata.ch/v1/stationboard?station=Zurich&limit=10
+ttl 60
+on earth 48.2 16.3 0
+
+url https://www.wienerlinien.at/ogd_realtime/monitor?stopId=1234
+ttl 60
+on earth 40.7128 -74.006 0
+
+url https://data.blitzortung.org/contributors/0/stations/0/signals/0/{year}/{month}/{day}/{hour}/{minute}.json
+map .
+lat lat
+lon lon
+ttl 60
+on earth 46.95 7.86 0
+
+url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&limit=100&minmagnitude=2.5&orderby=time&start={today}T00:00:00
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+ttl 60
+on earth 0 0 0
+
+url https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json
+ttl 60
+on earth 0 0 0
+
+url https://services.swpc.noaa.gov/json/goes/primary/xray-flares-latest.json
+ttl 60
+on earth 0 0 0
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+ttl 60
+on earth 39.749 -105.221 0
+
+url https://services.swpc.noaa.gov/text/3-day-geomag-forecast.txt
+format csv
+ttl 60
+on earth 0 -75.2 0
+
+url https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json
+ttl 60
+on earth 65.05 25.47 0
+
+url https://www.nmdb.eu/nest/draw_graph.php?wget=1&stations[]=OULU&tabchoice=1h&output=ascii&startdate_1={today}T00:00:00&enddate_1={today}T23:59:59
+format text
+rows .
+ttl 60
+on earth -90 0 0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=SOPO&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth -90 0 0
+
+url https://www.nmdb.eu/nest/draw_graph.php?wget=1&stations[]=SOPO&tabchoice=1h&output=ascii&startdate_1={today}T00:00:00&enddate_1={today}T23:59:59
+format text
+rows .
+ttl 60
+on earth 76.53 -68.74 0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=THUL&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 0 0 0
+
+url https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-1-day.json
+map .
+ttl 60
+on earth 0 0 0
+
+url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
+map .
+ttl 60
+on earth 0 0 0
+
+url https://services.swpc.noaa.gov/json/goes/primary/xrays-3-day.json
+map .
+ttl 60
+on earth 0 0 0
+
+url https://services.swpc.noaa.gov/json/goes/primary/xrays-1-day.json
+map .
+ttl 60
+on earth 0 0 0
+
+url https://services.swpc.noaa.gov/products/alerts.json
+map .
+ttl 60
+on earth 0 0 0
+
+url https://services.swpc.noaa.gov/products/alerts.json
+map .
+ttl 60
+on earth 0 0 0
+
+url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
+map .
+ttl 60
+on earth 0 0 0
+
+url https://services.swpc.noaa.gov/json/goes/primary/xrays-1-day.json
+map .
+ttl 60
+on earth 0 0 0
+
+url https://services.swpc.noaa.gov/json/goes/primary/xrays-7-day.json
+map .
+ttl 60
+on earth 0 0 0
+
+url https://opensky-network.org/api/states/all?lamin=35&lomin=-10&lamax=70&lomax=40
+map states
+lat 6
+lon 5
+ttl 60
+on earth 39.9916 -105.2748 0
+
+url https://beacon.nist.gov/beacon/2.0/pulse/last
+ttl 60
+on earth 0 -75.2 0
+
+url https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-1-day.json
+lastobj energy ">=2 MeV" flux radiation_electron_flux_2mev
+ttl 60
+on earth 43.18 76.93 35786023
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=ALMT&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 30.27 -97.74 0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=AUST&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 40.01 -105.27 0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=BOUL&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth -33.93 18.47 0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=CTWN&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth -75.1 123.36 0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=DOMC&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth -6.89 107.59 0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=ERMN&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 60.02 -111.93 0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=FSMT&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 53.32 -60.42 0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=GOOS&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 44.63 -63.59 0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=HALF&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 68.36 -133.72 0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=INVK&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth -49.35 70.25 0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=KERG&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 54.34 10.12 0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=KIEL&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 55.75 37.57 0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=MOSC&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 56.55 -61.67 0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=NAIN&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 69.35 88.2 0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=NRLK&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 54.99 -85.44 0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=PWNK&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 64.14 -21.9 0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=REYK&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth -62.09 -58.4 0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=SANA&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 41.72 44.76 0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=TBLS&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 47.92 106.92 0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=ULNB&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 0 -75.2 0
+
+url https://services.swpc.noaa.gov/json/goes/primary/differential-protons-1-day.json
+lastobj energy "40300-73400 keV" flux radiation_proton_flux_40mev
+lastobj energy "83700-98500 keV" flux radiation_proton_flux_80mev
+ttl 60
+on earth 0 -75.2 35786023
+
+url https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json
+ttl 60
+on earth 0 -75.2 0
+
+url https://api.waqi.info/feed/geo:{lat};{lon}/?token=demo
+ttl 300
+on earth 50 10 0
+
+url https://api.energy-charts.info/ren_share
+ttl 300
+on earth 0 0 0
+
+url https://opensky-network.org/api/states/all
+header User-Agent "omegaflow"
+map states
+lat 6
+lon 5
+alt 7
+ttl 300
+on earth 54 -2 0
+
+url https://api.wolfx.jp/cenc_eqlist.json
+ttl 300
+on earth 0 0 0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&orderby=magnitude&limit=100
+geojson mag 0.0 0 geosphere_earthquake_mag 1 0.0 0.0
+ttl 300
+on earth 0 0 0
+
+url https://www.tsunami.gov/events/xml/PHEBAtom.xml
+ttl 300
+on earth 38.949 -77.365 0
+
+url https://services.swpc.noaa.gov/json/goes/primary/xray-flares-latest.json
+map .
+lat satellite_lat
+lon satellite_lon
+ttl 300
+on earth 0 0 0
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+200+name,ra,dec,trigger_time,duration,peak_flux,fluence,type+FROM+integralburst+WHERE+(type+LIKE+'%25SGR%25'+OR+type+LIKE+'%25Magnetar%25')+AND+ra+IS+NOT+NULL+ORDER+BY+trigger_time+DESC
+format text
+rows .
+ttl 300
+on earth 34.7 -72.4 0
+
+url https://www.ndbc.noaa.gov/data/realtime2/41001.txt
+format csv
+ttl 300
+on earth 25.9 -89.67 0
+
+url https://www.ndbc.noaa.gov/data/realtime2/42001.txt
+format csv
+ttl 300
+on earth 25.16 -94.42 0
+
+url https://www.ndbc.noaa.gov/data/realtime2/42002.txt
+format csv
+ttl 300
+on earth 28.5 -84.52 0
+
+url https://www.ndbc.noaa.gov/data/realtime2/42036.txt
+format csv
+ttl 300
+on earth 29.22 -88.23 0
+
+url https://www.ndbc.noaa.gov/data/realtime2/42040.txt
+format csv
+ttl 300
+on earth 22.14 -91.39 0
+
+url https://www.ndbc.noaa.gov/data/realtime2/42055.txt
+format csv
+ttl 300
+on earth 38.46 -74.7 0
+
+url https://www.ndbc.noaa.gov/data/realtime2/44009.txt
+format csv
+ttl 300
+on earth 42.35 -70.69 0
+
+url https://www.ndbc.noaa.gov/data/realtime2/44013.txt
+format csv
+ttl 300
+on earth 36.61 -74.84 0
+
+url https://www.ndbc.noaa.gov/data/realtime2/44014.txt
+format csv
+ttl 300
+on earth 40.25 -73.17 0
+
+url https://www.ndbc.noaa.gov/data/realtime2/44025.txt
+format csv
+ttl 300
+on earth 56.3 -148.17 0
+
+url https://www.ndbc.noaa.gov/data/realtime2/46001.txt
+format csv
+ttl 300
+on earth 42.67 -124.82 0
+
+url https://www.ndbc.noaa.gov/data/realtime2/46002.txt
+format csv
+ttl 300
+on earth 46.06 -124.96 0
+
+url https://www.ndbc.noaa.gov/data/realtime2/46005.txt
+format csv
+ttl 300
+on earth 55.06 -137.07 0
+
+url https://www.ndbc.noaa.gov/data/realtime2/46006.txt
+format csv
+ttl 300
+on earth 37.36 -122.88 0
+
+url https://www.ndbc.noaa.gov/data/realtime2/46012.txt
+format csv
+ttl 300
+on earth 38.24 -123.3 0
+
+url https://www.ndbc.noaa.gov/data/realtime2/46013.txt
+format csv
+ttl 300
+on earth 40.74 -124.54 0
+
+url https://www.ndbc.noaa.gov/data/realtime2/46022.txt
+format csv
+ttl 300
+on earth 33.75 -119.2 0
+
+url https://www.ndbc.noaa.gov/data/realtime2/46025.txt
+format csv
+ttl 300
+on earth 37.75 -122.84 0
+
+url https://www.ndbc.noaa.gov/data/realtime2/46026.txt
+format csv
+ttl 300
+on earth 41.85 -124.38 0
+
+url https://www.ndbc.noaa.gov/data/realtime2/46027.txt
+format csv
+ttl 300
+on earth 46.12 -124.51 0
+
+url https://www.ndbc.noaa.gov/data/realtime2/46029.txt
+format csv
+ttl 300
+on earth 32.42 -119.53 0
+
+url https://www.ndbc.noaa.gov/data/realtime2/46047.txt
+format csv
+ttl 300
+on earth 34.26 -119.86 0
+
+url https://www.ndbc.noaa.gov/data/realtime2/46053.txt
+format csv
+ttl 300
+on earth 34.27 -120.68 0
+
+url https://www.ndbc.noaa.gov/data/realtime2/46054.txt
+format csv
+ttl 300
+on earth 38.07 -124.03 0
+
+url https://www.ndbc.noaa.gov/data/realtime2/46059.txt
+format csv
+ttl 300
+on earth 33.66 -120.2 0
+
+url https://www.ndbc.noaa.gov/data/realtime2/46069.txt
+format csv
+ttl 300
+on earth 32.49 -118.02 0
+
+url https://www.ndbc.noaa.gov/data/realtime2/46086.txt
+format csv
+ttl 300
+on earth 23.52 -153.82 0
+
+url https://www.ndbc.noaa.gov/data/realtime2/51000.txt
+format csv
+ttl 300
+on earth 24.44 -162 0
+
+url https://www.ndbc.noaa.gov/data/realtime2/51001.txt
+format csv
+ttl 300
+on earth 17.14 -157.8 0
+
+url https://www.ndbc.noaa.gov/data/realtime2/51002.txt
+format csv
+ttl 300
+on earth 17.56 -152.39 0
+
+url https://www.pegelonline.wsv.de/webservices/rest-api/v2/stations.json?includeCurrentMeasurement=true
+map .
+lat Latitude
+lon Longitude
+ttl 300
+on earth 21.9544 -159.3561 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1611400&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 21.3033 -157.8645 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1612340&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 20.8949 -156.469 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1615680&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 20.0366 -155.8294 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1617433&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 28.2117 -177.36 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1619910&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 13.4434 144.6564 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1630000&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth -14.28 -170.69 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1770000&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 8.7317 167.7361 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1820000&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 19.2906 166.6175 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1890000&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 32.3702 -64.6957 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=2695535&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 44.7028 -75.4944 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8311030&product=water_level&datum=LWD&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 44.9046 -66.9829 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8410140&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 44.3922 -68.2043 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8413320&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 43.6581 -70.2442 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8418150&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 42.3539 -71.0503 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8443970&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 41.6885 -69.9511 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8447435&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 41.3717 -72.0956 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8461490&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 40.8103 -73.7649 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8516945&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 42.0139 -73.9392 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8518962&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 39.3567 -74.418 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8534720&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 39.5822 -75.589 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8551762&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 38.3283 -75.0917 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8570283&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 38.9839 -76.48 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8575512&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 37.1652 -75.9884 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8632200&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 37.9961 -76.4644 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8635750&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 36.1833 -75.7467 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8651370&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 35.2086 -75.7042 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8654467&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 34.7173 -76.6707 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8656483&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 34.2267 -77.9533 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8658120&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 33.655 -78.918 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8661070&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 32.7808 -79.9236 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8665530&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 32.0347 -80.903 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8670870&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 30.7781 -81.4914 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8679598&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 28.4158 -80.5931 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8721604&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 26.6128 -80.0342 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8722670&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 24.711 -81.106 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8723970&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 26.1367 -81.7883 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8725114&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 27.6387 -82.5621 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8726384&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 29.135 -83.032 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8727520&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 29.7244 -84.9805 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8728690&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 30.2138 -85.8786 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8729210&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 30.4044 -87.2112 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8729840&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 30.3678 -88.5631 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8741533&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 29.1793 -89.2588 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8760721&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 30.0272 -90.1133 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8761927&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 29.6675 -91.2376 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8764044&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 29.5517 -92.3052 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8766072&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 30.2236 -93.2217 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8767816&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 29.6817 -94.985 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8770613&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 28.7716 -95.6168 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8772985&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 28.4069 -96.7124 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8773037&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 27.8461 -97.5207 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8775222&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 26.8012 -97.4706 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8777812&product=water_level&datum=MSL&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 42.6211 -82.5267 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9014070&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 43.4642 -76.5118 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9052030&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 43.3384 -78.7273 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9052076&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 42.1539 -80.0758 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9063038&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 41.7597 -81.2811 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9063053&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 41.5436 -82.7314 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9063079&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 43.8464 -82.6431 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9075014&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 45.063 -83.4286 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9075065&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 45.7772 -84.7211 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9075080&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 43.9474 -86.4415 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9087023&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 42.7733 -86.2128 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9087031&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 41.7297 -87.5383 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9087044&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 43.002 -87.8876 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9087057&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 44.4639 -87.501 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9087068&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 46.5456 -87.3786 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9099018&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 46.874443 -89.324165 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9099044&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 46.7758 -92.092 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9099064&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 47.7486 -90.3413 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9099090&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 32.7156 -117.1767 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9410170&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 33.72 -118.27 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9410660&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 34.4046 -119.6925 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9411340&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 35.1689 -120.7542 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9412110&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 36.6089 -121.8914 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9413450&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 37.8063 -122.4659 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9414290&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 38.5622 -121.5463 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9416131&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 38.9146 -123.7111 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9416841&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 40.7669 -124.2173 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9418767&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 41.7456 -124.1844 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9419750&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 42.739 -124.498 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9431647&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 44.6254 -124.0449 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9435380&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 45.5545 -123.9189 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9437540&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 46.7075 -123.9669 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9440910&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 47.9128 -124.6357 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9442396&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 48.1112 -122.7597 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9444900&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 55.3319 -131.6261 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9450460&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 56.2467 -134.647 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9451054&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 58.2988 -134.4106 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9452210&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 59.4508 -135.328 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9452400&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 58.1947 -136.3469 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9452634&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 59.5485 -139.7334 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9453220&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 60.5583 -145.753 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9454050&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 60.1193 -149.4281 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9455090&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 59.4405 -151.7199 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9455500&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 60.6833 -151.398 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9455760&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 61.2375 -149.8904 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9455920&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 57.7317 -152.512 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9457292&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 56.8974 -154.248 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9457804&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 55.3317 -160.5043 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9459450&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 55.0599 -162.3261 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9459881&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 51.8606 -176.6376 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9461380&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 52.2319 -174.1725 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9461710&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 52.9406 -168.8713 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9462450&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 53.8792 -166.5403 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9462620&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 57.1253 -170.2852 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9464212&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 63.875 -160.788 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9468333&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 64.4946 -165.4396 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9468756&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 67.5758 -164.0644 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9491094&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 70.4114 -148.5317 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9497645&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 17.7477 -64.6984 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9751364&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 18.335278 -65.63111 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9753216&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 18.480528 -66.70236 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9757811&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 18.0893 -67.9382 0
+
+url https://environment.data.gov.uk/flood-monitoring/id/stations?_limit=500
+map items
+lat Lat
+lon Long
+ttl 300
+on earth 52.07 12.68 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NGK/best-avail/PT1M/xyzf&start={today}T00:00:00Z&stop={now}Z&format=json
+map .
+ttl 300
+on earth 52.07 12.68 0
+
+url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=0.1&date-min=-7&date-max={today}&body=Earth&fullname=true&sort=dist&limit=50
+map data
+lat null
+lon null
+ttl 300
+on earth 0 0 0
+
+url https://services.swpc.noaa.gov/products/geospace/propagated-solar-wind-1-hour.json
+ttl 300
+on earth 0 0 0
+
+url https://www.nmdb.eu/nest/draw_graph.php?wget=1&stations[]=OULU&stations[]=JUNG&stations[]=THUL&stations[]=NEWK&tabchoice=1h&output=ascii&startdate_1={today}T00:00:00&enddate_1={today}T23:59:59
+format text
+rows .
+ttl 300
+on earth 40.7 -74.01 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=air_temperature&application=batch16&begin_date={year}{month}{day}&end_date={year}{month}{day}&station=8518750&units=metric&time_zone=gmt&format=json
+map data
+ttl 300
+on earth 40.7 -74.01 0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=water_level&application=batch15&begin_date={year}{month}{day}&end_date={year}{month}{day}&station=8518750&datum=MLLW&units=metric&time_zone=gmt&format=json
+map data
+ttl 300
+on earth 40.7 -74.01 0
+
+url https://www.ncei.noaa.gov/data/international-best-track-archive-for-climate-stewardship-ibtracs/v04r00/access/csv/ibtracs.ACTIVE.list.v04r00.csv
+format text
+rows .
+lat LAT
+lon LON
+ttl 300
+on earth 19.63 -156.49 0
+
+url https://services.swpc.noaa.gov/json/planetary_k_index_1m.json
+map .
+ttl 300
+on earth 55 0 0
+
+url https://services.swpc.noaa.gov/json/ovation_aurora_latest.json
+map coordinates
+lat lat
+lon lon
+ttl 300
+on earth 0 0 0
+
+url https://services.swpc.noaa.gov/products/kyoto-dst.json
+map .
+ttl 300
+on earth 0 0 0
+
+url https://services.swpc.noaa.gov/json/goes/primary/differential-electrons-1-day.json
+map .
+ttl 300
+on earth 0 0 0
+
+url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
+map .
+ttl 300
+on earth 0 0 0
+
+url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-7-day.json
+map .
+ttl 300
+on earth 0 0 0
+
+url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
+map .
+ttl 300
+on earth 0 0 0
+
+url https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json
+map .
+ttl 300
+on earth 0 0 0
+
+url https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json
+map .
+ttl 300
+on earth 0 0 0
+
+url https://api.obis.org/v3/occurrence?startdate={yesterday}&enddate={today}&size=200&fields=decimalLatitude,decimalLongitude,scientificName,eventDate
+map results
+lat decimalLatitude
+lon decimalLongitude
+ttl 300
+on earth -90 0 0
+
+url https://www.nmdb.eu/nest/data/NEWK/realtime.txt
+format text
+ttl 300
+on earth 65 25.5 0
+
+url http://afis.meraka.org.za/afis/data/json/
+map fires
+lat lat
+lon lon
+ttl 600
+on earth 38.99 -76.84 0
+
+url https://air-quality-api.open-meteo.com/v1/air-quality?latitude={lat}&longitude={lon}&current=us_aqi,us_aqi_pm2_5&timezone=auto
+ttl 600
+on earth -25 135 0
+
+url https://api.weather.bom.gov.au/v1/observations/{lat},{lon}
+ttl 600
+on earth -25 135 0
+
+url https://api.weather.bom.gov.au/v1/warnings/{lat},{lon}
+map data.warnings
+ttl 600
+on earth 35 105 0
+
+url https://weather.cma.cn/api/map/alarm
+map data
+lat latitude
+lon longitude
+ttl 600
+on earth 0 0 0
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&minutely_15=lightning_potential&timezone=auto
+ttl 600
+on earth 0 0 0
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_500hPa,temperature_850hPa,geopotential_height_500hPa,geopotential_height_850hPa&timezone=auto
+ttl 600
+on earth 0 0 0
+
+url https://aviationweather.gov/api/data/pirep?bbox=-90,-180,90,180&hours=3&format=json
+map .
+lat lat
+lon lon
+ttl 600
+on earth 0 0 0
+
+url https://aviationweather.gov/api/data/airsigmet?format=json&hours=3
+map .
+lat coords.0.lat
+lon coords.0.lon
+ttl 600
+on earth 0 0 0
+
+url https://api.gbif.org/v1/occurrence/search?limit=20&hasCoordinate=true&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}
+map results
+lat decimalLatitude
+lon decimalLongitude
+ttl 600
+on earth 55.685 12.571 0
+
+url https://bmkg-restapi.vercel.app/v1/earthquake/recent
+map data
+lat coordinates.lat
+lon coordinates.lon
+ttl 600
+on earth 0 0 0
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojson
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+ttl 600
+on earth 0 0 0
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_week.geojson
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+ttl 600
+on earth 39.9 116.4 0
+
+url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&minmagnitude=2&limit=500
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+alt geometry.coordinates.2
+ttl 600
+on earth 35.68 139.69 0
+
+url https://www.jma.go.jp/bosai/quake/data/list.json
+lastline geosphere_earthquakes_jma_recent_mag
+ttl 600
+on earth 0 0 0
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_day.geojson
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+ttl 600
+on earth 0 0 0
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_week.geojson
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+ttl 600
+on earth 0 0 0
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+ttl 600
+on earth 0 0 0
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_day.geojson
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+ttl 600
+on earth 0 0 0
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=soil_temperature_0cm,soil_temperature_6cm,soil_temperature_18cm,soil_temperature_54cm,soil_moisture_0_to_1cm,soil_moisture_1_to_3cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,soil_moisture_27_to_81cm&timezone=auto
+ttl 600
+on earth 0 0 0
+
+url https://marine-api.open-meteo.com/v1/marine?latitude={lat}&longitude={lon}&current=wave_height,wave_direction,wave_period,wind_wave_height,wind_wave_direction,wind_wave_period,swell_wave_height,swell_wave_direction,swell_wave_period&timezone=auto
+ttl 600
+on earth 0 0 0
+
+url https://services.swpc.noaa.gov/json/ovation_aurora_latest.json
+map coordinates
+lat lat
+lon lon
+ttl 600
+on earth 0 0 0
+
+url https://www.minorplanetcenter.net/iau/NEO/neocp.txt
+format text
+rows .
+ttl 600
+on earth 0 0 0
+
+url https://services.swpc.noaa.gov/json/goes/primary/xrays-7-day.json
+map .
+ttl 600
+on earth 0 0 0
+
+url https://epic.gsfc.nasa.gov/api/natural
+map .
+ttl 600
+on earth 0 -75.2 0
+
+url https://services.swpc.noaa.gov/json/ovation_aurora_latest.json
+map coordinates
+lat 1
+lon 0
+ttl 600
+on earth 0 0 0
+
+url https://volcanoes.usgs.gov/hans-public/api/volcano/list
+map .
+lat Latitude
+lon Longitude
+ttl 900
+on earth 51.5 10.5 0
+
+url https://www.imis.bfs.de/ogc/opendata/ows?service=WFS&version=1.1.0&request=GetFeature&typeName=opendata:odlinfo_odl_1h_latest&outputFormat=application/json&count=2000
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+ttl 900
+on earth -34 19 0
+
+url https://spaceweather.sansa.org.za/ionosonde/latest
+ttl 900
+on earth 34.74 -92.27 0
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=07263295&parameterCd=00060,00065
+ttl 900
+on earth 36.86 -111.59 0
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=09380000&parameterCd=00060,00065
+ttl 900
+on earth 45.61 -121.19 0
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=14105700&parameterCd=00060,00065
+ttl 900
+on earth 42.72 -90.82 0
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=05413500&parameterCd=00060,00065
+ttl 900
+on earth 42.66 -73.75 0
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=01358000&parameterCd=00060,00065
+ttl 900
+on earth 38.87 -90.18 0
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=07010000&parameterCd=00060,00065
+ttl 900
+on earth 32.35 -90.89 0
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=07289000&parameterCd=00060,00065
+ttl 900
+on earth 46.85 -100.78 0
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=06342500&parameterCd=00060,00065
+ttl 900
+on earth 38.71 -91.44 0
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=06934500&parameterCd=00060,00065
+ttl 900
+on earth 38.26 -85.66 0
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=03294500&parameterCd=00060,00065
+ttl 900
+on earth 38.95 -77.13 0
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=01646500&parameterCd=00060,00065
+ttl 900
+on earth 31.8 -106.53 0
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=08371000&parameterCd=00060,00065
+ttl 900
+on earth 35.04 -85.31 0
+
+url https://services.swpc.noaa.gov/products/glotec/geojson_2d_urt.json
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+ttl 900
+on earth 0 0 0
+
+url https://aviationweather.gov/api/data/taf?ids=KJFK&format=json
+map .
+lat lat
+lon lon
+ttl 1800
+on earth 0 0 0
+
+url https://air-quality-api.open-meteo.com/v1/air-quality?latitude={lat}&longitude={lon}&current=aerosol_optical_depth,dust,pm2_5,pm10
+ttl 3600
+on earth -3.47 -62.22 0
+
+url https://api.open-meteo.com/v1/forecast?latitude=-3.47&longitude=-62.22&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+ttl 3600
+on earth -80 100 0
+
+url https://api.open-meteo.com/v1/forecast?latitude=-80.0&longitude=100.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+ttl 3600
+on earth -24 -69.5 0
+
+url https://api.open-meteo.com/v1/forecast?latitude=-24.0&longitude=-69.5&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+ttl 3600
+on earth 0.5 114 0
+
+url https://api.open-meteo.com/v1/forecast?latitude=0.5&longitude=114.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+ttl 3600
+on earth 30 31 0
+
+url https://api.open-meteo.com/v1/forecast?latitude=30.0&longitude=31.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+ttl 3600
+on earth -34 18.5 0
+
+url https://api.open-meteo.com/v1/forecast?latitude=-34.0&longitude=18.5&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+ttl 3600
+on earth 0 18 0
+
+url https://api.open-meteo.com/v1/forecast?latitude=0.0&longitude=18.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+ttl 3600
+on earth 36.5 -117 0
+
+url https://api.open-meteo.com/v1/forecast?latitude=36.5&longitude=-117.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+ttl 3600
+on earth -18 178 0
+
+url https://api.open-meteo.com/v1/forecast?latitude=-18.0&longitude=178.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+ttl 3600
+on earth 44 105 0
+
+url https://api.open-meteo.com/v1/forecast?latitude=44.0&longitude=105.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+ttl 3600
+on earth 72 -40 0
+
+url https://api.open-meteo.com/v1/forecast?latitude=72.0&longitude=-40.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+ttl 3600
+on earth 64 -19 0
+
+url https://api.open-meteo.com/v1/forecast?latitude=64.0&longitude=-19.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+ttl 3600
+on earth -49.5 69.5 0
+
+url https://api.open-meteo.com/v1/forecast?latitude=-49.5&longitude=69.5&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+ttl 3600
+on earth 3 73 0
+
+url https://api.open-meteo.com/v1/forecast?latitude=3.0&longitude=73.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+ttl 3600
+on earth -19.5 23.5 0
+
+url https://api.open-meteo.com/v1/forecast?latitude=-19.5&longitude=23.5&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+ttl 3600
+on earth -50 -72 0
+
+url https://api.open-meteo.com/v1/forecast?latitude=-50.0&longitude=-72.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+ttl 3600
+on earth 23 5 0
+
+url https://api.open-meteo.com/v1/forecast?latitude=23.0&longitude=5.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+ttl 3600
+on earth 62 105 0
+
+url https://api.open-meteo.com/v1/forecast?latitude=62.0&longitude=105.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+ttl 3600
+on earth 32 86 0
+
+url https://api.open-meteo.com/v1/forecast?latitude=32.0&longitude=86.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto
+ttl 3600
+on earth -25 135 0
+
+url https://api.weather.bom.gov.au/v1/forecast/{lat},{lon}
+ttl 3600
+on earth 35 105 0
+
+url https://weather.cma.cn/api/weather/54511
+ttl 3600
+on earth 19.5 -155.6 0
+
+url https://air-quality-api.open-meteo.com/v1/air-quality?latitude=19.5&longitude=-155.6&current=carbon_dioxide
+ttl 3600
+on earth 19.5362 -155.5763 0
+
+url https://ensemble-api.open-meteo.com/v1/ensemble?latitude={lat}&longitude={lon}&daily=temperature_2m_max,precipitation_sum&timezone=auto
+ttl 3600
+on earth 35 -106 0
+
+url https://gml.noaa.gov/webdata/ccgg/trends/sf6/sf6_mm_gl.txt
+format csv
+ttl 3600
+on earth 0 0 0
+
+url https://api.sunrise-sunset.org/json?lat={lat}&lng={lon}&formatted=0
+ttl 3600
+on earth 65 -147 0
+
+url https://disease.sh/v3/covid-19/all
+ttl 3600
+on earth 26.1 -80.1 0
+
+url https://api.coral.tsr.lol/stations/southeast_florida/current
+ttl 3600
+on earth 51 10 0
+
+url https://open.er-api.com/v6/latest/USD
+ttl 3600
+on earth 42.4809 -76.4527 0
+
+url https://api.gbif.org/v1/occurrence/search?taxon_key=212&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}&limit=0
+ttl 3600
+on earth 0 0 0
+
+url https://api.gbif.org/v1/occurrence/search?limit=0
+ttl 3600
+on earth 0 0 0
+
+url https://api.gdeltproject.org/api/v2/doc/doc?query=climate&mode=timelinevol&format=json
+ttl 3600
+on earth 38.9 -77 0
+
+url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=10LD
+ttl 3600
+on earth 37.7749 -122.4194 0
+
+url https://hub.docker.com/v2/repositories/library/alpine
+ttl 3600
+on earth 37.7749 -122.4194 0
+
+url https://hub.docker.com/v2/repositories/library/node
+ttl 3600
+on earth 37.7749 -122.4194 0
+
+url https://hub.docker.com/v2/repositories/library/python
+ttl 3600
+on earth 37.7749 -122.4194 0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27502%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 3600
+on earth 0 0 0
+
+url https://services.swpc.noaa.gov/json/ace/mag/ace_mag_1h.json
+ttl 3600
+on earth 0 0 0
+
+url https://services.swpc.noaa.gov/json/ovation_aurora_latest.json
+map coordinates
+lat 1
+lon 0
+ttl 3600
+on earth 0 0 0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%273I%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+ttl 3600
+on earth 0 0 0
+
+url https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$top=1&$count=true
+ttl 3600
+on earth 40 15 0
+
+url https://webservices.ingv.it/fdsnws/event/1/query?format=geojson&minmagnitude=2.5&limit=200
+geojson mag 0.0 0 geosphere_earthquake_mag 1 0.0 0.0
+ttl 3600
+on earth 0 0 0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=3&limit=200
+geojson mag 0.0 0 geosphere_earthquake_mag 1 0.0 0.0
+ttl 3600
+on earth 0 0 0
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+alt geometry.coordinates.2
+ttl 3600
+on earth 45.803 8.624 0
+
+url https://www.gdacs.org/gdacsapi/api/events/geteventlist/SEARCH?alertlevel=red;orange;green
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+ttl 3600
+on earth 38.9072 -77.0369 0
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=soil_temperature_0cm,soil_temperature_6cm,soil_temperature_18cm,soil_temperature_54cm&timezone=auto
+ttl 3600
+on earth 0 0 0
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+ttl 3600
+on earth 38.9072 -77.0369 0
+
+url https://volcanoes.usgs.gov/vsc/api/volcanoApi/geojson
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+ttl 3600
+on earth 0 0 0
+
+url https://gracedb.ligo.org/api/superevents/?format=json&category=Production&label=GW&ordering=-created&per_page=10
+map superevents
+ttl 3600
+on earth 0 0 0
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+name,ra,dec,obsid,exposure,count_rate,type+FROM+nicermastr+WHERE+ra+IS+NOT+NULL+ORDER+BY+count_rate+DESC
+format text
+rows .
+ttl 3600
+on earth -29.008 266.417 0
+
+url https://www.globalfloods.eu/glofas-forecasting/?format=json
+map .
+lat lat
+lon lon
+ttl 3600
+on earth 0 0 0
+
+url https://erddap.aoml.noaa.gov/gdp/erddap/tabledap/drifter_hourly_qc.json?latitude,longitude,sst&time%3E=max(time)-7days
+map table.rows
+lat 0
+lon 1
+ttl 3600
+on earth 53.13 -9.27 0
+
+url https://ssd-api.jpl.nasa.gov/fireball.api?limit=100&sort=date
+map data
+ttl 3600
+on earth 0 0 0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-31'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='6+h'&VEC_TABLE='2'&REF_PLANE='ECLIPTIC'
+format text
+rows .
+ttl 3600
+on earth 0 0 0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-170%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 3600
+on earth 0 0 0
+
+url https://lasp.colorado.edu/lisird/latis/dap/fism_flare_hr.csv?time>={today}
+format text
+rows .
+ttl 3600
+on earth 49.32 -119.62 0
+
+url https://lasp.colorado.edu/lisird/latis/dap/noaa_radio_flux.csv?time>={today}
+format text
+rows .
+ttl 3600
+on earth 0 0 0
+
+url https://lasp.colorado.edu/lisird/latis/dap/tsis_tsi_24hr.csv?time>=2024-01-01
+format text
+rows .
+ttl 3600
+on earth 0 0 0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27301%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27
+ttl 3600
+on earth 0 0 0
+
+url https://www.minorplanetcenter.net/cgi-bin/checkmp.cgi?ty=c&head=N&TextArea=&radius=180&ra=&decl=&oc=500&e=J2000&resoc=&s=t&m=h&adir=N&oed=&e=J2000&dFormat=YYYY+MM+DD&css=modern&mot=check&dmot=p&si=t&uto=0&int=2&fmt=csv
+format text
+rows .
+ttl 3600
+on earth 0 0 0
+
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-hourly&stations=USW00013739,USW00094728,USW00012918&startDate=2026-07-01&endDate=2026-07-27&format=json
+map .
+lat 40.74
+lon -73.98
+ttl 3600
+on earth 40.74 -73.98 0
+
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-hourly&stations=USW00013739&startDate=2026-01-01&endDate=2026-07-27&format=json
+map .
+lat 40.74
+lon -73.98
+ttl 3600
+on earth 40.74 -73.98 0
+
+url https://www.ndbc.noaa.gov/activestations.xml
+format text
+rows .
+lat lat
+lon lon
+ttl 3600
+on earth 38.7 148.7 0
+
+url https://www.ndbc.noaa.gov/data/realtime2/21413.dart
+format text
+rows .
+ttl 3600
+on earth -8.4 67.5 0
+
+url https://www.ndbc.noaa.gov/data/realtime2/23401.dart
+format text
+rows .
+ttl 3600
+on earth -19.6 -162.1 0
+
+url https://www.ndbc.noaa.gov/data/realtime2/32401.dart
+format text
+rows .
+ttl 3600
+on earth 17.9 -74.9 0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-98%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 3600
+on earth 67.55 33.33 0
+
+url https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=APTY&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0
+format text
+rows .
+ttl 3600
+on earth -34.42 19.22 0
+
+url https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=HRMS&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0
+format text
+rows .
+ttl 3600
+on earth 46.55 7.98 0
+
+url https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=JUNG&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0
+format text
+rows .
+ttl 3600
+on earth -49.35 70.25 0
+
+url https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=KERG&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0
+format text
+rows .
+ttl 3600
+on earth -77.85 166.72 0
+
+url https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=MCMD&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0
+format text
+rows .
+ttl 3600
+on earth 19.33 -99.18 0
+
+url https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=MXCO&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0
+format text
+rows .
+ttl 3600
+on earth 65.05 25.47 0
+
+url https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=OULU&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0
+format text
+rows .
+ttl 3600
+on earth 76.5 -68.7 0
+
+url https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json?expand=details&type=watertemp
+map stations
+lat lat
+lon lng
+ttl 3600
+on earth -18 147 0
+
+url https://api.coral.tsr.lol/stations/gbr_central/current
+ttl 3600
+on earth -14 145 0
+
+url https://api.coral.tsr.lol/stations/gbr_northern/current
+ttl 3600
+on earth -22 150 0
+
+url https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json
+map .
+ttl 3600
+on earth 55 0 0
+
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=daily-summaries&dataTypes=TMAX,TMIN,PRCP,SNOW,AWND&stations=GM000003026,GM000010501,UK000003668&startDate={today}&endDate={today}&format=json
+map .
+lat LATITUDE
+lon LONGITUDE
+ttl 3600
+on earth 19.5 -155.6 0
+
+url https://services.swpc.noaa.gov/json/planetary_k_index_1m.json
+map .
+ttl 3600
+on earth 55 0 0
+
+url https://api.weather.gov/gridpoints/TOP/31,80/forecast/hourly
+map properties
+lat 39.7456
+lon -97.0892
+ttl 3600
+on earth 0 0 0
+
+url https://gong2.nso.edu/oQR/zqs/?ref=zqs&series=zqs&date={year}.{month}.{day}&format=json
+map .
+ttl 3600
+on earth 38.9072 -77.0369 0
+
+url https://air-quality-api.open-meteo.com/v1/air-quality?latitude={lat}&longitude={lon}&hourly=pm2_5,pm10,nitrogen_dioxide,ozone,european_aqi,us_aqi&forecast_days=5&format=json
+map hourly.time
+ttl 3600
+on earth 80 0 0
+
+url https://ssd-api.jpl.nasa.gov/fireball.api
+ttl 3600
+on earth 0 0 0
+
+url https://retlector.eu/tle/active
+ttl 3600
+on earth 0 0 0
+
+url https://api.safecast.org/en-US/measurements.json?limit=100
+map .
+lat latitude
+lon longitude
+ttl 3600
+on earth 0 0 0
+
+url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=shortwave_radiation
+ttl 3600
+on earth 0 0 0
+
+url https://aviationweather.gov/api/data/taf?bbox=35,-10,70,40&format=json&time=valid
+map .
+lat lat
+lon lon
+ttl 3600
+on earth 0 0 0
+
+url https://api.npmjs.org/downloads/point/last-day/lodash
+ttl 3600
+on earth 40.712 -74.006 0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27801%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 3600
+on earth 0 0 0
+
+url https://services3.arcgis.com/GVgbJbqm8hXASVYi/arcgis/rest/services/PAGER_CAT/FeatureServer/0/query?where=1%3D1&geometry={lon_min}%2C{lat_min}%2C{lon_max}%2C{lat_max}&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=YEAR,MAG,DEPTH,DEATHS,INJURIES,LATITUDE,LONGITUDE,COUNTRY&f=json&resultRecordCount=500
+map features
+lat attributes.LATITUDE
+lon attributes.LONGITUDE
+ttl 86400
+on earth 40.712 -74.006 0
+
+url http://export.arxiv.org/api/query?search_query=cat:astro-ph.*&max_results=0
+ttl 86400
+on earth 40.712 -74.006 0
+
+url http://export.arxiv.org/api/query?search_query=cat:cs.*&max_results=0
+ttl 86400
+on earth 40.712 -74.006 0
+
+url http://export.arxiv.org/api/query?search_query=cat:hep-*&max_results=0
+ttl 86400
+on earth 40.712 -74.006 0
+
+url http://export.arxiv.org/api/query?search_query=cat:math.*&max_results=0
+ttl 86400
+on earth 40.712 -74.006 0
+
+url http://export.arxiv.org/api/query?search_query=cat:physics.*&max_results=0
+ttl 86400
+on earth 40.712 -74.006 0
+
+url http://export.arxiv.org/api/query?search_query=cat:q-bio.*&max_results=0
+ttl 86400
+on earth 40.712 -74.006 0
+
+url http://export.arxiv.org/api/query?search_query=cat:q-fin.*&max_results=0
+ttl 86400
+on earth 40.712 -74.006 0
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?request=doQuery&lang=ADQL&format=json&query=SELECT+TOP+200+RAJ2000,DEJ2000,Vmag+FROM+%22II/366/catv2021%22
+cmap data
+ttl 86400
+on earth 0 0 0
+
+url https://newton.spacedys.com/astdys2/index.php?pc=3.0&type=all&format=json&limit=500
+map .
+ttl 86400
+on earth 51 10 0
+
+url https://opendata.dwd.de/climate_environment/health/alerts/s31fg.json
+ttl 86400
+on earth 38.989 -76.937 0
+
+url https://api.woudc.org/collections/stations/items?f=json&limit=500
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+ttl 86400
+on earth 43.78 -79.47 0
+
+url https://api.woudc.org/collections/totalozone/items?limit=1
+ttl 86400
+on earth 42.3601 -71.0589 0
+
+url https://clinicaltrials.gov/api/v2/studies?query.term=brain-computer+interface&filter.overallStatus=RECRUITING&countTotal=true&pageSize=1
+ttl 86400
+on earth 33.797 -84.323 0
+
+url https://data.cdc.gov/resource/jr58-6ysp.json?$limit=1
+ttl 86400
+on earth 37.872 -122.258 0
+
+url https://clinicaltrials.gov/api/v2/studies?query.term=CRISPR&filter.overallStatus=RECRUITING&countTotal=true&pageSize=1
+ttl 86400
+on earth 38.9072 -77.0369 0
+
+url https://api.crossref.org/works?rows=1
+ttl 86400
+on earth 38.9072 -77.0369 0
+
+url https://api.crossref.org/members?rows=1
+ttl 86400
+on earth 59.365 18.016 0
+
+url https://opendata.ecdc.europa.eu/monkeypox/casedistribution/json/data.json
+ttl 86400
+on earth 37.774 -122.419 0
+
+url https://epoch.ai/data/notable_ai_models.csv
+format csv
+ttl 86400
+on earth 50.8503 4.3517 0
+
+url https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_manr?geo=EU27_2020&unit=RCH_A&coicop=CP00&format=JSON
+ttl 86400
+on earth 50.8503 4.3517 0
+
+url https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/nama_10_gdp?geo=EU27_2020&unit=CLV_I10&na_item=B1GQ&format=JSON
+ttl 86400
+on earth 50.8503 4.3517 0
+
+url https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/demo_pjan?geo=EU27_2020&sex=T&age=TOTAL&format=JSON
+ttl 86400
+on earth 50.8503 4.3517 0
+
+url https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/une_rt_q?geo=EU27_2020&unit=PC_ACT&s_adj=SA&age=TOTAL&format=JSON
+ttl 86400
+on earth 0 0 0
+
+url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=131&hasGeospatialIssue=false
+map results
+lat decimalLatitude
+lon decimalLongitude
+ttl 86400
+on earth 0 0 0
+
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&hasGeospatialIssue=false&taxonKey=47115
+map results
+lat decimalLatitude
+lon decimalLongitude
+ttl 86400
+on earth 0 0 0
+
+url https://api.gbif.org/v1/occurrence/search?taxonKey=1&limit=500&hasCoordinate=true
+map results
+lat decimalLatitude
+lon decimalLongitude
+ttl 86400
+on earth 0 0 0
+
+url https://api.gbif.org/v1/occurrence/search?taxonKey=212&limit=200&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}
+map results
+lat decimalLatitude
+lon decimalLongitude
+ttl 86400
+on earth 0 0 0
+
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=722&hasGeospatialIssue=false
+map results
+lat decimalLatitude
+lon decimalLongitude
+ttl 86400
+on earth 0 0 0
+
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&hasGeospatialIssue=false&taxonKey=51
+map results
+lat decimalLatitude
+lon decimalLongitude
+ttl 86400
+on earth 0 0 0
+
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=44&hasGeospatialIssue=false
+map results
+lat decimalLatitude
+lon decimalLongitude
+ttl 86400
+on earth 0 0 0
+
+url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=5&hasGeospatialIssue=false
+map results
+lat decimalLatitude
+lon decimalLongitude
+ttl 86400
+on earth 0 0 0
+
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=47115&hasGeospatialIssue=false
+map results
+lat decimalLatitude
+lon decimalLongitude
+ttl 86400
+on earth 0 0 0
+
+url https://api.gbif.org/v1/occurrence/search?taxonKey=212&limit=500&hasCoordinate=true
+map results
+lat decimalLatitude
+lon decimalLongitude
+ttl 86400
+on earth 55.7022 12.5592 0
+
+url https://api.gbif.org/v1/occurrence/search?taxon_key=212&month={month}&hasCoordinate=true&limit=0
+ttl 86400
+on earth 0 0 0
+
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=52&hasGeospatialIssue=false
+map results
+lat decimalLatitude
+lon decimalLongitude
+ttl 86400
+on earth 0 0 0
+
+url https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&hasGeospatialIssue=false&coordinateUncertaintyInMeters=0,100
+map results
+lat decimalLatitude
+lon decimalLongitude
+ttl 86400
+on earth 0 0 0
+
+url https://api.gbif.org/v1/occurrence/search?taxonKey=6&limit=200&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}
+map results
+lat decimalLatitude
+lon decimalLongitude
+ttl 86400
+on earth 0 0 0
+
+url https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=358&hasGeospatialIssue=false
+map results
+lat decimalLatitude
+lon decimalLongitude
+ttl 86400
+on earth 38.899 -77.043 0
+
+url https://www.peeringdb.com/api/ix?limit=1
+ttl 86400
+on earth 52.079 0.187 0
+
+url https://modis.ornl.gov/rst/api/v1/MOD13Q1/subset?latitude={lat}&longitude={lon}&startDate=A2018049&endDate=A2018049&kmAboveBelow=0&kmLeftRight=0
+ttl 86400
+on earth 51.231 2.928 0
+
+url https://api.obis.org/occurrence?lat={lat}&lon={lon}&radius=50&size=0
+ttl 86400
+on earth 51.231 2.928 0
+
+url https://api.obis.org/v3/statistics
+ttl 86400
+on earth 0 0 0
+
+url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_parks_and_protected_lands_area.geojson
+ttl 86400
+on earth 0 0 0
+
+url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_parks_and_protected_lands_point.geojson
+ttl 86400
+on earth 38.899 -77.043 0
+
+url https://restcountries.com/v3.1/all?fields=name,population,latlng
+ttl 86400
+on earth 47.6062 -122.3321 0
+
+url https://api.semanticscholar.org/graph/v1/paper/search?query=*&limit=1
+ttl 86400
+on earth 38.899 -77.043 0
+
+url https://www.submarinecablemap.com/api/v3/cable/cable-geo.json
+ttl 86400
+on earth 46.234 6.14 0
+
+url https://api.unhcr.org/population/v1/population/?limit=1
+ttl 86400
+on earth 38.978 -76.919 0
+
+url https://www.star.nesdis.noaa.gov/smcd/emb/vci/VH/get_TS_admin.php?country=USA&province=0&year=2023&type=VHI
+format csv
+ttl 86400
+on earth 46.234 6.14 0
+
+url https://ghoapi.azureedge.net/api/CHOLERA_0000000001
+ttl 86400
+on earth 46.234 6.14 0
+
+url https://ghoapi.azureedge.net/api/MDG_0000000020
+ttl 86400
+on earth 46.234 6.14 0
+
+url https://xmart-api-public.who.int/FLUMART/VIW_FNT
+ttl 86400
+on earth 46.2276 6.1432 0
+
+url http://v4.boldsystems.org/index.php/API_Public/specimen?taxon=Plantae&geo=&format=json&limit=500
+map .
+lat lat
+lon lon
+ttl 86400
+on earth 0 0 0
+
+url https://cddis.nasa.gov/archive/vlbi/ivsproducts/eops/ivseops.snx
+format text
+rows .
+ttl 86400
+on earth 49.321 -122.573 0
+
+url https://tle.ivanstanojevic.me/api/tle/?search=ISS&page-size=50
+ttl 86400
+on earth 37.774 -122.419 0
+
+url https://crates.io/api/v1/crates?per_page=1
+ttl 86400
+on earth 46.818 8.227 0
+
+url https://www.glims.org/mapservice/wfs?service=WFS&version=1.1.0&request=GetFeature&typeName=glims_glaciers&maxFeatures=1&outputFormat=application/json
+ttl 86400
+on earth 0 0 0
+
+url https://noaadata.apps.nsidc.org/NOAA/G02135/south/daily/data/S_seaice_extent_daily_v4.0.csv
+lastline cryosphere_antarctic_sea_ice_extent_nsidc
+ttl 86400
+on earth 0 0 0
+
+url https://noaadata.apps.nsidc.org/NOAA/G02135/north/daily/data/N_seaice_extent_daily_v4.0.csv
+lastline cryosphere_arctic_sea_ice_extent_nsidc
+ttl 86400
+on earth 40.008 -105.263 0
+
+url https://noaadata.apps.nsidc.org/NOAA/G02135/north/daily/data/N_seaice_extent_daily_v4.0.csv
+format csv
+ttl 86400
+on earth 40.008 -105.263 0
+
+url https://noaadata.apps.nsidc.org/NOAA/G02135/north/daily/data/N_seaice_extent_daily_v4.0.csv
+format csv
+ttl 86400
+on earth -75.25 -0.071 0
+
+url https://noaadata.apps.nsidc.org/NOAA/G02135/south/daily/data/S_seaice_extent_daily_v4.0.csv
+format csv
+ttl 86400
+on earth 71.29 -156.57 0
+
+url https://gml.noaa.gov/aftp/data/meteorology/in-situ/brw/met_brw_insitu_1_obop_hour_{year}.txt
+format csv
+ttl 86400
+on earth 40.008 -105.263 0
+
+url https://noaadata.apps.nsidc.org/NOAA/G02135/north/daily/data/N_seaice_extent_daily_v4.0.csv
+format csv
+ttl 86400
+on earth -75.25 -0.071 0
+
+url https://floodobservatory.colorado.edu/Archives/MasterListrev.csv
+format text
+rows .
+lat Lat
+lon Long
+ttl 86400
+on earth 0 0 0
+
+url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_boundary_lines_land.geojson
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+ttl 86400
+on earth 0 0 0
+
+url https://www.ebi.ac.uk/metagenomics/api/v1/studies?format=json&page_size=100&ordering=-last_update
+map data
+lat latitude
+lon longitude
+ttl 86400
+on earth 0 0 0
+
+url https://esa-sst-cci-browser.ceda.ac.uk/api/v1/sst/global-monthly?format=json&dataset=ESACCI-SST-L4-CDR-SST-ANALYSIS
+map .
+lat lat
+lon lon
+ttl 86400
+on earth 0 0 0
+
+url https://science-pds.cryosat.esa.int/oads/access/collection/CryoSat_Northern_Hemisphere_Sea_Ice_Thickness/latest/?format=json
+map .
+ttl 300
+on earth 0 0 0
+
+url https://cdaweb.gsfc.nasa.gov/hapi/data?id=AC_H0_MFI&parameters=BGSEc,Magnitude&time.min={today}T00:00:00.000Z&time.max={today}T23:59:59.000Z&format=csv
+format text
+rows .
+ttl 3600
+on earth 0 0 0
+
+url https://cdaweb.gsfc.nasa.gov/hapi/data?id=MMS1_FGM_SRVY_L2@0&parameters=mms1_fgm_b_gsm_srvy_l2&time.min={today}T00:00:00.000Z&time.max={today}T06:00:00.000Z&format=csv
+format text
+rows .
+ttl 86400
+on earth 42.365 -71.105 0
+
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+COUNT(*)+FROM+ps&format=json
+lastline exosphere_exoplanets_confirmed_total
+ttl 86400
+on earth 0 0 0
+
+url https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/CME/?startDate=2024-01-01&endDate=2024-12-31
+ttl 86400
+on earth 0 0 0
+
+url https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/FLR/?startDate=2024-01-01&endDate=2024-12-31
+ttl 86400
+on earth 0 0 0
+
+url https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/GST/?startDate=2024-01-01&endDate=2024-12-31
+ttl 86400
+on earth 0 0 0
+
+url https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/HSS/?startDate=2024-01-01&endDate=2024-12-31
+ttl 86400
+on earth 0 0 0
+
+url https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/IPS/?startDate=2024-01-01&endDate=2024-12-31
+ttl 86400
+on earth 0 0 0
+
+url https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/MPC/?startDate=2024-01-01&endDate=2024-12-31
+ttl 86400
+on earth 0 0 0
+
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+TOP+512+ra,dec,sy_dist,pl_eqt,pl_rade,pl_orbper,pl_bmasse+FROM+pscomppars+WHERE+sy_dist+IS+NOT+NULL+ORDER+BY+pl_eqt+ASC&format=json
+cmap .
+ttl 86400
+on earth 0 0 0
+
+url https://catalogue.clms.copernicus.eu/odc/api/v1/collections
+map collections
+ttl 86400
+on earth 0 0 0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2015-01-01&endtime=2015-12-31&minmagnitude=5&limit=200
+geojson mag 0.0 0 geosphere_earthquake_mag 1 0.0 0.0
+ttl 86400
+on earth 0 0 0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2016-01-01&endtime=2016-12-31&minmagnitude=5&limit=200
+geojson mag 0.0 0 geosphere_earthquake_mag 1 0.0 0.0
+ttl 86400
+on earth 0 0 0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2017-01-01&endtime=2017-12-31&minmagnitude=5&limit=200
+geojson mag 0.0 0 geosphere_earthquake_mag 1 0.0 0.0
+ttl 86400
+on earth 0 0 0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2018-01-01&endtime=2018-12-31&minmagnitude=5&limit=200
+geojson mag 0.0 0 geosphere_earthquake_mag 1 0.0 0.0
+ttl 86400
+on earth 0 0 0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2019-01-01&endtime=2019-12-31&minmagnitude=5&limit=200
+geojson mag 0.0 0 geosphere_earthquake_mag 1 0.0 0.0
+ttl 86400
+on earth 0 0 0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2020-01-01&endtime=2020-12-31&minmagnitude=5&limit=200
+geojson mag 0.0 0 geosphere_earthquake_mag 1 0.0 0.0
+ttl 86400
+on earth 0 0 0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2021-01-01&endtime=2021-12-31&minmagnitude=5&limit=200
+geojson mag 0.0 0 geosphere_earthquake_mag 1 0.0 0.0
+ttl 86400
+on earth 0 0 0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2022-01-01&endtime=2022-12-31&minmagnitude=5&limit=200
+geojson mag 0.0 0 geosphere_earthquake_mag 1 0.0 0.0
+ttl 86400
+on earth 0 0 0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2023-01-01&endtime=2023-12-31&minmagnitude=5&limit=200
+geojson mag 0.0 0 geosphere_earthquake_mag 1 0.0 0.0
+ttl 86400
+on earth 0 0 0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2024-01-01&endtime=2024-12-31&minmagnitude=5&limit=200
+geojson mag 0.0 0 geosphere_earthquake_mag 1 0.0 0.0
+ttl 86400
+on earth 0 0 0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={year}-01-01&endtime={today}&minmagnitude=5&limit=200
+geojson mag 0.0 0 geosphere_earthquake_mag 1 0.0 0.0
+ttl 86400
+on earth 0 0 0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2015-01-01&endtime=2024-12-31&minmagnitude=4&limit=200
+geojson mag 0.0 0 geosphere_earthquake_mag 1 0.0 0.0
+ttl 86400
+on earth 0 0 0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2020-01-01&endtime=2024-12-31&minmagnitude=6&limit=200
+geojson mag 0.0 0 geosphere_earthquake_mag 1 0.0 0.0
+ttl 86400
+on earth 0 0 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/catalog
+map catalog
+ttl 86400
+on earth 19.5362 -155.5763 0
+
+url https://gml.noaa.gov/webdata/ccgg/trends/ch4/ch4_mm_gl.txt
+ttl 86400
+on earth 19.5362 -155.5763 0
+
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_annmean_gl.txt
+lastline atmosphere_co2_annual_mean_global
+ttl 86400
+on earth 19.5362 -155.5763 0
+
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_mm_mlo.txt
+ttl 86400
+on earth 19.5362 -155.5763 0
+
+url https://gml.noaa.gov/webdata/ccgg/trends/n2o/n2o_mm_gl.txt
+ttl 86400
+on earth 19.5362 -155.5763 0
+
+url https://www.orfeus-eu.org/fdsnws/station/1/query?level=station&format=text&starttime=2020-01-01
+format text
+rows .
+lat 2
+lon 3
+ttl 86400
+on earth 0 0 0
+
+url https://volcanoes.usgs.gov/hans-public/api/volcano/getUSVolcanoes
+map .
+lat latitude
+lon longitude
+ttl 86400
+on earth 37.774 -122.419 0
+
+url https://api.github.com/search/repositories?q=stars:>0&per_page=1
+ttl 86400
+on earth 37.774 -122.419 0
+
+url https://mangrove-atlas.sei.org/api/widgets/mangrove-cover/?location_id=country&startYear=2020&endYear=2020
+map data
+lat centroid_lat
+lon centroid_lon
+ttl 86400
+on earth 0 0 0
+
+url https://webservices.volcano.si.edu/geoserver/GVP-VOTW/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=GVP-VOTW:Smithsonian_VOTW_Pleistocene_Volcanoes&outputFormat=application/json&count=1000
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+ttl 86400
+on earth 34.201 -118.171 0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2790000001%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 86400
+on earth 0 0 0
+
+url https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+name,ra,dec,dist,class,period,spinper,lx,donor_type+FROM+xrbcat+WHERE+ra+IS+NOT+NULL+ORDER+BY+lx+DESC
+format text
+rows .
+ttl 86400
+on earth 51.231 2.928 0
+
+url https://coastwatch.pfeg.noaa.gov/erddap/griddap/ncdcOisst21Agg_LonPM180.json?sst%5B(last)%5D%5B(0.0)%5D%5B(-89.875):20:(89.875)%5D%5B(-179.875):20:(179.875)%5D
+map table.rows
+lat 2
+lon 3
+ttl 86400
+on earth 46.05 -125 0
+
+url https://erddap.dataexplorer.oceanobservatories.org/erddap/tabledap/ooi-ga01sumo-sbd12-04-pco2aa000.csv?time,sea_surface_temperature,surface_partial_pressure_of_carbon_dioxide_in_sea_water
+format csv
+ttl 86400
+on earth 47.6062 -122.3321 0
+
+url https://hpiers.obspm.fr/iers/bul/bulb_new/bulletinb.dat
+format text
+ttl 86400
+on earth 0 0 0
+
+url https://network.igs.org/api/public/stations?format=json
+map .
+lat lat
+lon lon
+ttl 86400
+on earth 0 0 0
+
+url https://irsa.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,w1mpro,w2mpro,w3mpro,w4mpro+FROM+allwise_p3as_psd+WHERE+w1mpro+IS+NOT+NULL+AND+w1mpro%3C14
+format text
+rows .
+ttl 86400
+on earth 0 0 0
+
+url https://its-live-data.jpl.nasa.gov/vel_api/v1/coverage?region=GRE&limit=500&format=json
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+ttl 86400
+on earth 0 0 0
+
+url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=1LD&date-min={today}&date-max=%2B365&body=Earth&fullname=true&diameter=true&limit=100
+map data
+lat null
+lon null
+ttl 86400
+on earth 0 0 0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='99942'&OBJ_DATA='YES'&MAKE_EPHEM='YES'&EPHEM_TYPE='ELEMENTS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+d'&REF_PLANE='ECLIPTIC'
+format text
+rows .
+ttl 86400
+on earth 0 0 0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='DES%3DC%2F2023+A3'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='500@0'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4'
+format text
+rows .
+ttl 86400
+on earth 0 0 0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='599'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4,20'
+format text
+rows .
+ttl 86400
+on earth 0 0 0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='499'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4,20'
+format text
+rows .
+ttl 86400
+on earth 0 0 0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='699'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4,20'
+format text
+rows .
+ttl 86400
+on earth 0 0 0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-31'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='500@0'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4'
+format text
+rows .
+ttl 86400
+on earth 0 0 0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-32'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='500@0'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4'
+format text
+rows .
+ttl 86400
+on earth 0 0 0
+
+url https://ssd-api.jpl.nasa.gov/sbdb.api?sstr=ceres&phys-par=1
+map .
+ttl 86400
+on earth 0 0 0
+
+url https://ssd-api.jpl.nasa.gov/sbdb.api?sstr=eris&phys-par=1
+map .
+ttl 86400
+on earth 0 0 0
+
+url https://www.gmrt.org/services/PointServer?longitude={lon}&latitude={lat}&format=json
+ttl 86400
+on earth 0 0 0
+
+url https://g6goyz4w56.execute-api.us-west-2.amazonaws.com/prod/collections/lunar_orbiter_laser_altimeter/items?limit=1
+ttl 86400
+on earth 0 0 0
+
+url https://g6goyz4w56.execute-api.us-west-2.amazonaws.com/prod/collections/lunar_orbiter_laser_altimeter/items?limit=1
+ttl 86400
+on earth 0 0 0
+
+url https://oderest.rsl.wustl.edu/live2/?query=PRODUCT&target=Mars&IHID=MGS&IID=MOLA&PT=MEGDR&output=XML
+ttl 86400
+on earth 0 0 0
+
+url https://oderest.rsl.wustl.edu/live2/?query=PRODUCT&target=Mars&IHID=MGS&IID=MOLA&PT=PEDR&output=XML
+ttl 86400
+on earth 18.638 72.872 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ABG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 68.358 18.823 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ABK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 68.358 18.823 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ABK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -65.245 -64.25799999999998 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=AIA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 56.433 58.567 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ARS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -23.762 133.883 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ASP/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -23.762 133.883 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ASP/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 49.08 14.02 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BDV/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 49.08 14.02 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BDV/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 51.836 20.789 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BEL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 51.836 20.789 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BEL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 48.331 8.325 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BFO/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 48.331 8.325 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BFO/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 40.14 -105.233 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BOU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 40.14 -105.233 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BOU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 71.32 -156.62 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BRW/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 71.32 -156.62 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BRW/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 30.35 -89.63999999999999 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BSL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 30.35 -89.63999999999999 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BSL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -12.188 96.834 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CKI/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -12.188 96.834 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CKI/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 48.025 2.26 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CLF/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 48.025 2.26 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CLF/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 64.87 -147.86 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CMO/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 64.87 -147.86 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CMO/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -35.32 149.36 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CNB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -35.32 149.36 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CNB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 17.294 78.919 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CPL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -66.283 110.533 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CSY/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -66.283 110.533 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CSY/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -20.09 146.264 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CTA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -20.09 146.264 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CTA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 36.37 126.854 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CYG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 36.37 126.854 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CYG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 70.36 -148.79 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DED/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 70.36 -148.79 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DED/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 11.95 108.48 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DLT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 11.95 108.48 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DLT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 50.1 4.6 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DOU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 50.1 4.6 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DOU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 41.65 14.47 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DUR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 41.65 14.47 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DUR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 40.957 0.333 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=EBR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 40.957 0.333 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=EBR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -43.474 172.393 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=EYR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -43.474 172.393 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=EYR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 38.21 -77.36700000000002 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=FRD/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 38.21 -77.36700000000002 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=FRD/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 37.09 -119.72 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=FRN/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 37.09 -119.72 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=FRN/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 48.17 11.28 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=FUR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 48.17 11.28 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=FUR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -0.695 73.154 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GAN/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -0.695 73.154 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GAN/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 44.633 20.767 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GCK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 69.252 -53.533000000000015 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GDH/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -31.356 115.715 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GNG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -31.356 115.715 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GNG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 13.59 144.87 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GUA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 13.59 144.87 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GUA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 28.321 -16.440999999999974 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GUI/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 28.321 -16.440999999999974 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GUI/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -25.88 27.71 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HBK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -34.43 19.23 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HER/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 54.603 18.811 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HLP/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 54.603 18.811 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HLP/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 21.32 -158 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HON/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 21.32 -158 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HON/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 47.873 18.19 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HRB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 47.873 18.19 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HRB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 77 15.55 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HRN/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 77 15.55 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HRN/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -12.05 -75.32999999999998 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HUA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 17.42 78.55 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HYB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 17.42 78.55 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HYB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 55.3 -3.2 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ESK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -27.171 -109.41999999999999 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=IPM/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -27.171 -109.41999999999999 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=IPM/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 52.17 104.45 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=IRT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 40.5 29.72 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=IZN/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 40.5 29.72 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=IZN/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 26.92 75.8 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=JAI/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 36.232 140.186 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KAK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 36.232 140.186 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KAK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -12.69 132.47 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KDU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -12.69 132.47 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KDU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 67.843 20.42 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KIR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 67.843 20.42 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KIR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -26.54 18.11 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KMH/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 31.42 130.88 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KNY/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 31.42 130.88 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KNY/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 5.21 -52.73000000000002 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KOU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 5.21 -52.73000000000002 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KOU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -22.22 114.1 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=LRM/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 49.9 23.75 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=LVV/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 64.612 18.748 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=LYC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 64.612 18.748 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=LYC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 50.298 5.682 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MAB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 50.298 5.682 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MAB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -67.6 62.88 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MAW/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -54.5 158.95 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MCG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -54.5 158.95 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MCQG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 43.91 144.19 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MMB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 43.91 144.19 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MMB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 61.167 -45.43299999999999 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NAG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 47.63 16.72 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NCK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 48.27 -117.12 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NEW/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 48.27 -117.12 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NEW/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 52.07 12.68 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NGK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 52.07 12.68 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NGK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 60.51 24.66 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NUR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 54.85 83.23 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NVS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -60.737 -44.73700000000002 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ORC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 42.515 24.177 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PAG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 42.515 24.177 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PAG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 38.1 23.9 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PEG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 21.03 105.96 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PHU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 21.03 105.96 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PHU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -31.667 -63.88099999999997 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PIL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -17.567 -149.574 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PPT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -17.567 -149.574 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PPT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -21.206 55.576 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=REU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -21.206 55.576 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=REU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -77.829 166.671 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SBA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 0 0 0
+
+url https://zenodo.org/records/15225820/files/NiNo_SR_params_2024.csv
+format csv
+lastline atmos_schumann_last_val
+ttl 86400
+on earth 36.667 -5.944999999999993 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SFS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 36.667 -5.944999999999993 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SFS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -15.961 -5.747000000000014 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SHE/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 55.35 -160.46 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SHU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 55.35 -160.46 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SHU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 57.06 -135.33 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SIT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 57.06 -135.33 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SIT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 18.11 -66.14999999999998 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SJG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 18.11 -66.14999999999998 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SJG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 67.37 26.63 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SOD/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 39.55 -4.350000000000023 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SPT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 39.55 -4.350000000000023 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SPT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 44.68 26.25 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SUA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 44.68 26.25 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SUA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -37.067 -12.315999999999974 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TDC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 77.47 -69.22699999999998 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=THL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 46.9 17.89 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=THY/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -22.22 114.1 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TIRM/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 45.408 16.659 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TLON/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -19.202 17.584 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TSU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -1.205 -48.51299999999998 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TTB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -1.205 -48.51299999999998 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TTB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 32.17 -110.72999999999999 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TUC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 32.17 -110.72999999999999 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TUC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 59.903 17.353 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=UPS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 51.933 -10.25 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VALL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -70.683 -8.281999999999982 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VNA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -22.4 -43.64999999999998 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VNA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -78.464 106.835 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VOS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth -22.4 -43.64999999999998 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VSS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 47.931 15.866 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WIC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 47.931 15.866 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WIC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 53.725 9.053 0
+
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WNG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 53.725 9.053 0
+
+url https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-06-11/meteorites.csv
+format text
+rows .
+lat lat
+lon long
+ttl 86400
+on earth 54.683 25.287 0
+
+url https://www.crystallography.net/cod/result.php?format=json&element=Si&limit=1
+ttl 86400
+on earth 40.5 -74.45 0
+
+url https://data.rcsb.org/rest/v1/core/entry/1UBQ
+ttl 86400
+on earth 34.201 -118.171 0
+
+url https://www.minorplanetcenter.net/iau/MPCORB/Distant.txt
+format text
+rows .
+ttl 86400
+on earth 51.507 -0.127 0
+
+url https://musicbrainz.org/ws/2/artist?query=*&limit=1&fmt=json
+ttl 86400
+on earth 51.507 -0.127 0
+
+url https://musicbrainz.org/ws/2/recording?query=*&limit=1&fmt=json
+ttl 86400
+on earth 51.507 -0.127 0
+
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=json&QUERY=SELECT+pl_name,ra,dec,sy_dist,pl_orbper,pl_rade,pl_bmasse,pl_eqt,disc_year+FROM+ps+WHERE+default_flag=1+AND+ra+IS+NOT+NULL+ORDER+BY+sy_dist+ASC
+map .
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://heasarc.gsfc.nasa.gov/db-perl/W3Browse/w3query.pl?tablehead=name%3Dfermigtrig&Action=More+Options&ResultRange=1&order=desc&field=from&field=0+1+2+3
+lastline exosphere_fermi_gamma_ray_sources_total
+ttl 86400
+on earth 0 0 0
+
+url https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2019/2019-06-11/meteorites.csv
+format text
+rows .
+lat 7
+lon 8
+ttl 86400
+on earth 0 0 0
+
+url https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M,PRECTOTCORR,ALLSKY_SFC_SW_DWN,RH2M,WS10M&community=AG&longitude={lon}&latitude={lat}&start={year}{month}01&end={today}&format=JSON
+map properties.parameter.T2M
+ttl 86400
+on earth 0 0 0
+
+url https://cmr.earthdata.nasa.gov/search/granules.json?collection_concept_id=C2565414058-GES_DISC&page_size=100&sort_key=-start_date
+map feed.entry
+ttl 86400
+on earth 0 0 0
+
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&stations=USW00013739&startDate=2026-01-01&endDate=2026-07-27&format=json
+map .
+lat 40.74
+lon -73.98
+ttl 86400
+on earth 0 0 0
+
+url https://www.cpc.ncep.noaa.gov/products/precip/CWlink/pna/norm.nao.monthly.b5001.current.ascii
+format text
+rows .
+ttl 86400
+on earth 0 0 0
+
+url https://www.ncei.noaa.gov/access/paleo-search/study/search.json?dataTypeId=18&limit=500
+map .
+lat site.latitude
+lon site.longitude
+ttl 86400
+on earth 0 0 0
+
+url https://www.ncei.noaa.gov/pub/data/cmb/ersst/v5/index/ersst.v5.pdo.dat
+format text
+rows .
+ttl 86400
+on earth 0 0 0
+
+url https://www.ngdc.noaa.gov/hazel/hazard-service/api/v1/volcanoes?maxRows=2000&startRow=1
+map items
+lat latitude
+lon longitude
+ttl 86400
+on earth 0 0 0
+
+url https://physics.nist.gov/cuu/Constants/Table/allascii.txt
+format text
+rows .
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=assembly&retmax=0
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=bioproject&retmax=0
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=biosample&retmax=0
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=books&retmax=0
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=clinicaltrials&retmax=0
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=clinvar&retmax=0
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=gap&retmax=0
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=gene&retmax=0
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=genome&retmax=0
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=mesh&retmax=0
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=nucleotide&retmax=0
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=omim&retmax=0
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pmc&retmax=0
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=protein&retmax=0
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&retmax=0
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=snp&retmax=0
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=sra&retmax=0
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=taxonomy&retmax=0
+ttl 86400
+on earth 0 -170 0
+
+url https://www.cpc.ncep.noaa.gov/data/indices/sstoi.indices
+format text
+rows .
+ttl 86400
+on earth 40 -170 0
+
+url https://www.ncei.noaa.gov/pub/data/ghcn/daily/ghcnd-stations.txt
+format text
+rows .
+lat 1
+lon 2
+ttl 86400
+on earth 0 0 0
+
+url https://gml.noaa.gov/webdata/ccgg/trends/ch4/ch4_mm_gl.txt
+format text
+rows .
+ttl 86400
+on earth 0 0 0
+
+url https://gml.noaa.gov/webdata/ccgg/trends/ch4/ch4_mm_gl.txt
+format text
+rows .
+ttl 86400
+on earth 0 0 0
+
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_gr_gl.txt
+format text
+rows .
+ttl 86400
+on earth 19.5 -155.6 0
+
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_weekly_mlo.csv
+format text
+rows .
+ttl 86400
+on earth 19.5 -155.6 0
+
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_weekly_mlo.csv
+format text
+rows .
+ttl 86400
+on earth 0 0 0
+
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_annmean_gl.txt
+format text
+rows .
+ttl 86400
+on earth 0 0 0
+
+url https://gml.noaa.gov/webdata/ccgg/trends/n2o/n2o_mm_gl.txt
+format text
+rows .
+ttl 86400
+on earth 0 0 0
+
+url https://gml.noaa.gov/webdata/ccgg/trends/sf6/sf6_mm_gl.txt
+format text
+rows .
+ttl 86400
+on earth 0 0 0
+
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=normals-daily&dataTypes=TEMP_NORMAL_MAX,TEMP_NORMAL_MIN,PRCP_NORMAL&stations=GM000003026,USW00094728,UK000003772,JN000047412&startDate=2010-01-01&endDate=2010-01-31&format=json
+map .
+lat LATITUDE
+lon LONGITUDE
+ttl 86400
+on earth 0 0 0
+
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-month&dataTypes=TMAX,TMIN,PRCP,TAVG,SNOW&stations=USW00094728&startDate={year}-01-01&endDate={year}-{month}-{day}&format=json
+map .
+lat LATITUDE
+lon LONGITUDE
+ttl 86400
+on earth 0 0 0
+
+url https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-month&dataTypes=TMAX,TMIN,PRCP,TAVG,SNOW,SNWD&stations=GM000003026,GM000003946,UKM00003772,USW00094728&startDate={year}-01-01&endDate={today}&format=json
+map .
+lat latitude
+lon longitude
+ttl 86400
+on earth 0 0 0
+
+url https://www.ncei.noaa.gov/swdiws/json/nx3structure/{today}
+map .
+ttl 86400
+on earth 40.7 -74.01 0
+
+url https://www.ncei.noaa.gov/access/world-ocean-database-select/dbsearch.html?DirectAccess=yes&type=json&depth=0&lat1=-90&lat2=90&lon1=-180&lon2=180&variable=T,S,O2&startDate={today}&endDate={today}&limit=300
+map .
+lat lat
+lon lon
+ttl 86400
+on earth 0 0 0
+
+url https://my.cmems-du.eu/motu-web/services
+map .
+ttl 86400
+on earth 0 0 0
+
+url https://api.open-meteo.com/v1/forecast?latitude=50.0&longitude=10.0&daily=et0_fao_evapotranspiration,vapor_pressure_deficit&forecast_days=1&format=json
+map daily.time
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://api.fda.gov/drug/event.json?limit=1
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://api.fda.gov/device/510k.json?limit=1
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://api.fda.gov/drug/drugsfda.json?limit=1
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://api.fda.gov/drug/enforcement.json?limit=1
+ttl 86400
+on earth 48.8566 2.3522 0
+
+url https://stac.openlandmap.org/collections/sol_organic.carbon_usda.6a1c_m/items?limit=500&bbox=-180,-60,180,75
+map features
+lat geometry.coordinates.0.0.1
+lon geometry.coordinates.0.0.0
+ttl 86400
+on earth 40.712 -74.006 0
+
+url https://openlibrary.org/authors.json?limit=1
+ttl 86400
+on earth 40.712 -74.006 0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27DES%3D2101955%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 86400
+on earth 40.034 -75.63 0
+
+url https://hpiers.obspm.fr/iers/eop/eopc04/eopc04.1962-now
+format csv
+header User-Agent "omegaflow"
+ttl 86400
+on earth 34.201 -118.171 0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Ceres%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27
+ttl 86400
+on earth 0 0 0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=399&OBJ_DATA=YES
+ttl 86400
+on earth 34.201 -118.171 0
+
+url https://ssd-api.jpl.nasa.gov/fireball.api?limit=1
+ttl 86400
+on earth 0 0 0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=599&OBJ_DATA=YES
+ttl 86400
+on earth 0 0 0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=499&OBJ_DATA=YES
+ttl 86400
+on earth 0 0 0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=199&OBJ_DATA=YES
+ttl 86400
+on earth 0 0 0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=899&OBJ_DATA=YES
+ttl 86400
+on earth 0 0 0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=699&OBJ_DATA=YES
+ttl 86400
+on earth 34.201 -118.171 0
+
+url https://ssd-api.jpl.nasa.gov/sentry.api
+ttl 86400
+on earth 0 0 0
+
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=799&OBJ_DATA=YES
+ttl 86400
+on earth 0 0 0
+
+url https://overpass-api.de/api/interpreter?data=%5Bout%3Ajson%5D%5Btimeout%3A25%5D%3B%28node%5Bamenity%3Dhospital%5D%28-90%2C-180%2C90%2C180%29%3B%29%3Bout%3B
+map elements
+lat lat
+lon lon
+ttl 86400
+on earth 43.073 -89.401 0
+
+url https://paleobiodb.org/data1.2/occs/list.json?all_records=1&limit=1
+ttl 86400
+on earth 43.073 -89.401 0
+
+url https://api.neotomadb.org/v2.0/data/occurrences?ageyounger=0&ageolder=50000&limit=1
+ttl 86400
+on earth 0 0 0
+
+url https://ws.pangaea.de/oai/provider?verb=ListRecords&metadataPrefix=oai_dc&set=GEOTRACES
+map .
+ttl 86400
+on earth 0 0 0
+
+url https://ws.pangaea.de/oai/provider?verb=ListRecords&metadataPrefix=oai_dc&set=GNIP
+map .
+ttl 86400
+on earth 0 0 0
+
+url https://ws.pangaea.de/oai/provider?verb=ListRecords&metadataPrefix=oai_dc&set=GNIR
+map .
+ttl 86400
+on earth 46.233 6.056 0
+
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=find+tc&fields=titles,citation_count
+ttl 86400
+on earth 42.53 -71.048 0
+
+url https://api.crossref.org/works?rows=0
+ttl 86400
+on earth 39.328 -76.62 0
+
+url https://api.crossref.org/works?query=JWST+high+redshift+galaxy+candidate&rows=0
+ttl 86400
+on earth 43.709 5.777 0
+
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=ITER+plasma+fusion&fields=titles,citation_count
+ttl 86400
+on earth 42.373 -71.11 0
+
+url https://www.nmdb.eu/nest/station_list.json
+map .
+lat latitude
+lon longitude
+ttl 86400
+on earth 26.5 -75 0
+
+url https://rapid.ac.uk/rapidmoc/rapid_data/datadl.php?data=moc_vertical
+format text
+rows .
+ttl 86400
+on earth 27 -79.5 0
+
+url https://rapid.ac.uk/rapidmoc/rapid_data/datadl.php?data=fc
+format text
+rows .
+ttl 86400
+on earth 40.444 -74.494 0
+
+url https://gis1.servirglobal.net/arcgis/rest/services/SMAP/SM_1km/MapServer/0/query?where=1%3D1&outFields=*&f=json&resultRecordCount=500
+map features
+lat geometry.y
+lon geometry.x
+ttl 86400
+on earth 0 0 0
+
+url https://www.sidc.be/SILSO/DATA/SN_d_tot_V2.0.txt
+format text
+rows .
+ttl 86400
+on earth 50.85 4.35 0
+
+url https://www.sidc.be/SILSO/DATA/SN_ms_tot_V2.0.txt
+format text
+rows .
+ttl 86400
+on earth 50.85 4.35 0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude={lat}&longitude={lon}&start_date={yesterday}&end_date={yesterday}&hourly=shortwave_radiation,direct_radiation,diffuse_radiation,et0_fao_evapotranspiration,vapour_pressure_deficit&timezone=auto
+ttl 86400
+on earth 37.774 -122.419 0
+
+url https://www.sidc.be/SILSO/DATA/SN_m_tot_V2.0.txt
+lastline solar_sunspot_number_silso
+ttl 86400
+on earth 40.712 -74.006 0
+
+url https://irsa.ipac.caltech.edu/TAP/sync?query=SELECT+ra,dec,designation,j_m,h_m,k_m+FROM+fp_psc+WHERE+j_m+IS+NOT+NULL&format=csv&limit=5000
+format text
+rows .
+ttl 86400
+on earth 0 0 0
+
+url https://www.sciencebase.gov/catalog/items?format=json&q=National+Land+Cover+Database&max=50&fields=id,title,body,spatial,contacts,tags
+map items
+lat spatial.boundingBox.minY
+lon spatial.boundingBox.minX
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://ghoapi.azureedge.net/api/AIR_12?\$filter=SpatialDimType+eq+'COUNTRY'&\$top=500
+map value
+ttl 86400
+on earth 0 0 0
+
+url https://ghoapi.azureedge.net/api/AIR_12?$filter=SpatialDimType+eq+'COUNTRY'&$top=500
+map value
+ttl 86400
+on earth 37.774 -122.419 0
+
+url https://www.wikidata.org/w/api.php?action=query&meta=siteinfo&siprop=statistics&format=json
+ttl 86400
+on earth 37.774 -122.419 0
+
+url https://en.wikipedia.org/w/api.php?action=query&meta=siteinfo&siprop=statistics&format=json
+ttl 86400
+on earth 37.774 -122.419 0
+
+url https://en.wikipedia.org/w/api.php?action=query&meta=siteinfo&siprop=statistics&format=json
+ttl 86400
+on earth 37.774 -122.419 0
+
+url https://www.worldpop.org/rest/data/pop/wpgp?iso3=BRA,CHN,IND,USA,NGA,IDN,PAK&year=2024&format=json
+map data
+lat bbox_ymin
+lon bbox_xmin
+ttl 86400
+on earth 0 0 0
+
+url https://woudc.org/api/records/observations/?dataset=UmkehrN14&limit=1000&sortby=-datetime
+map data
+lat station.latitude
+lon station.longitude
+ttl 604800
+on earth -3.47 -62.22 0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=-3.47&longitude=-62.22&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth -80 100 0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=-80.0&longitude=100.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth -24 -69.5 0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=-24.0&longitude=-69.5&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth 0.5 114 0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=0.5&longitude=114.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth 30 31 0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=30.0&longitude=31.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth -34 18.5 0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=-34.0&longitude=18.5&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth 0 18 0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=0.0&longitude=18.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth 36.5 -117 0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=36.5&longitude=-117.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth -18 178 0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=-18.0&longitude=178.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth 44 105 0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=44.0&longitude=105.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth 72 -40 0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=72.0&longitude=-40.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth 64 -19 0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=64.0&longitude=-19.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth -49.5 69.5 0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=-49.5&longitude=69.5&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth 3 73 0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=3.0&longitude=73.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth -19.5 23.5 0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=-19.5&longitude=23.5&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth -50 -72 0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=-50.0&longitude=-72.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth 23 5 0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=23.0&longitude=5.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth 62 105 0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=62.0&longitude=105.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth 32 86 0
+
+url https://archive-api.open-meteo.com/v1/archive?latitude=32.0&longitude=86.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth 19.5 -155.6 0
+
+url https://raw.githubusercontent.com/FreeCodeCamp/ProjectReferenceData/master/meteorite-strike-data.json
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+ttl 604800
+on earth 0 0 0
+
+url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_populated_places_simple.geojson
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+ttl 604800
+on earth 0 0 0
+
+url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_50m_glaciated_areas.geojson
+map features
+lat geometry.coordinates.0.0.1
+lon geometry.coordinates.0.0.0
+ttl 604800
+on earth 0 0 0
+
+url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_50m_lakes.geojson
+map features
+lat geometry.coordinates.0.0.1
+lon geometry.coordinates.0.0.0
+ttl 604800
+on earth 0 0 0
+
+url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_populated_places.geojson
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+ttl 604800
+on earth 0 0 0
+
+url https://data.humdata.org/dataset/a60ac839-920d-435a-bf7d-25855602699d/resource/7234d067-2d74-449a-9c61-22ae6d98d928/download/volcano.json
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+ttl 604800
+on earth 0 0 0
+
+url https://gist.githubusercontent.com/vasturiano/3c27138769a04d1780562ce04afbedf2/raw/83dde896972fad0f1f823191ea90e3d451d3977a/world_volcanoes.json
+map .
+lat lat
+lon lon
+ttl 604800
+on earth 46.233 6.056 0
+
+url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_rivers_lake_centerlines.geojson
+map features
+lat geometry.coordinates.0.1
+lon geometry.coordinates.0.0
+ttl 604800
+on earth 0 0 0
+
+url https://raw.githubusercontent.com/Bowserinator/Periodic-Table-JSON/master/PeriodicTableJSON.json
+map elements
+ttl 604800
+on earth 41.833 -87.627 0
+
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=muon+g-2+anomalous+magnetic+moment&fields=titles,citation_count
+ttl 604800
+on earth 42.454 13.576 0
+
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=neutrino+oscillation&fields=titles,citation_count
+ttl 604800
+on earth 46.233 6.055 0
+
+url https://opendata.cern.ch/api/records/?q=experiment:ALICE&size=1
+ttl 604800
+on earth 46.233 6.055 0
+
+url https://opendata.cern.ch/api/records/?q=experiment:CMS&size=1
+ttl 604800
+on earth 46.233 6.055 0
+
+url https://opendata.cern.ch/api/records/?size=1
+ttl 604800
+on earth 51.5 -0.126 0
+
+url https://api.crossref.org/works?query=biological+age+clock+epigenetic&rows=0
+ttl 604800
+on earth 42.373 -71.11 0
+
+url https://api.crossref.org/works?query=synthetic+genome+writing+minimal+cell&rows=0
+ttl 604800
+on earth 52.086 5.171 0
+
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=loophole-free+Bell+test&fields=titles,citation_count
+ttl 604800
+on earth -37.813 144.963 0
+
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=organoid+intelligence+biocomputing&fields=titles,citation_count
+ttl 604800
+on earth 36.428 137.31 0
+
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=proton+decay+Super-Kamiokande&fields=arxiv_eprints,citation_count
+ttl 604800
+on earth 39.904 116.407 0
+
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=quantum+entanglement+satellite+distance+record&fields=titles,citation_count
+ttl 604800
+on earth 42.36 -71.093 0
+
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=time+crystal&fields=titles,citation_count
+ttl 604800
+on earth 37.774 -122.419 0
+
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=helioseismology&fields=titles
+ttl 604800
+on earth 37.877 -122.247 0
+
+url https://pdgapi.lbl.gov/summaries/S091M
+ttl 604800
+on earth 37.877 -122.247 0
+
+url https://pdgapi.lbl.gov/summaries/S041M
+ttl 604800
+on earth 37.877 -122.247 0
+
+url https://pdgapi.lbl.gov/summaries/S042M
+ttl 604800
+on earth 37.877 -122.247 0
+
+url https://pdgapi.lbl.gov/summaries/Q005M
+ttl 604800
+on earth 37.877 -122.247 0
+
+url https://pdgapi.lbl.gov/summaries/S008M
+ttl 604800
+on earth 37.877 -122.247 0
+
+url https://pdgapi.lbl.gov/summaries/Q004M
+ttl 604800
+on earth 37.877 -122.247 0
+
+url https://pdgapi.lbl.gov/summaries/S074M
+ttl 604800
+on earth 37.877 -122.247 0
+
+url https://pdgapi.lbl.gov/summaries/Q001M
+ttl 604800
+on earth 37.877 -122.247 0
+
+url https://pdgapi.lbl.gov/summaries/S003M
+ttl 604800
+on earth 37.877 -122.247 0
+
+url https://pdgapi.lbl.gov/summaries/S014M
+ttl 604800
+on earth 37.877 -122.247 0
+
+url https://pdgapi.lbl.gov/summaries/S010M
+ttl 604800
+on earth 37.877 -122.247 0
+
+url https://pdgapi.lbl.gov/summaries/S011M
+ttl 604800
+on earth 37.877 -122.247 0
+
+url https://pdgapi.lbl.gov/summaries/S040M
+ttl 604800
+on earth 37.877 -122.247 0
+
+url https://pdgapi.lbl.gov/summaries/S018M
+ttl 604800
+on earth 37.877 -122.247 0
+
+url https://pdgapi.lbl.gov/summaries/S004M
+ttl 604800
+on earth 37.877 -122.247 0
+
+url https://pdgapi.lbl.gov/summaries/S017M
+ttl 604800
+on earth 37.877 -122.247 0
+
+url https://pdgapi.lbl.gov/summaries/S063M
+ttl 604800
+on earth 37.877 -122.247 0
+
+url https://pdgapi.lbl.gov/summaries/S053M
+ttl 604800
+on earth 37.877 -122.247 0
+
+url https://pdgapi.lbl.gov/summaries/S047M
+ttl 604800
+on earth 37.877 -122.247 0
+
+url https://pdgapi.lbl.gov/summaries/S009M
+ttl 604800
+on earth 37.877 -122.247 0
+
+url https://pdgapi.lbl.gov/summaries/S016M
+ttl 604800
+on earth 37.877 -122.247 0
+
+url https://pdgapi.lbl.gov/summaries/S020M
+ttl 604800
+on earth 37.877 -122.247 0
+
+url https://pdgapi.lbl.gov/summaries/S019M
+ttl 604800
+on earth 37.877 -122.247 0
+
+url https://pdgapi.lbl.gov/summaries/S021M
+ttl 604800
+on earth 37.877 -122.247 0
+
+url https://pdgapi.lbl.gov/summaries/Q003M
+ttl 604800
+on earth 37.877 -122.247 0
+
+url https://pdgapi.lbl.gov/summaries/S035M
+ttl 604800
+on earth 37.877 -122.247 0
+
+url https://pdgapi.lbl.gov/summaries/Q007TP
+ttl 604800
+on earth 37.877 -122.247 0
+
+url https://pdgapi.lbl.gov/summaries/Q002M
+ttl 604800
+on earth 37.877 -122.247 0
+
+url https://pdgapi.lbl.gov/summaries/S043M
+ttl 604800
+on earth 37.877 -122.247 0
+
+url https://pdgapi.lbl.gov/summaries/S045M
+ttl 604800
+on earth 37.877 -122.247 0
+
+url https://pdgapi.lbl.gov/summaries/S058M
+ttl 604800
+on earth 37.877 -122.247 0
+
+url https://pdgapi.lbl.gov/summaries/S059M
+ttl 604800
+on earth 37.877 -122.247 0
+
+url https://pdgapi.lbl.gov/summaries/S048M
+ttl 604800
+on earth 37.877 -122.247 0
+
+url https://pdgapi.lbl.gov/summaries/S065M
+ttl 604800
+on earth 37.877 -122.247 0
+
+url https://pdgapi.lbl.gov/summaries/S068M
+ttl 604800
+on earth 37.877 -122.247 0
+
+url https://pdgapi.lbl.gov/summaries/S022M
+ttl 604800
+on earth 37.877 -122.247 0
+
+url https://pdgapi.lbl.gov/summaries/S023M
+ttl 604800
+on earth 37.877 -122.247 0
+
+url https://climate-api.open-meteo.com/v1/climate?latitude={lat}&longitude={lon}&start_date={today}&end_date={today}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum
+ttl 2592000
+on earth 50.727 -3.476 0
+
+url https://www.metoffice.gov.uk/hadobs/hadcrut5/data/HadCRUT.5.1.0.0/analysis/diagnostics/HadCRUT.5.1.0.0.analysis.summary_series.global.annual.csv
+format csv
+ttl 2592000
+on earth 38.907 -77.036 0
+
+url https://data-api.globalforestwatch.org/dataset/umd_tree_cover_loss/latest
+ttl 2592000
+on earth 38.899 -77.043 0
+
+url https://api.worldbank.org/v2/country/WLD/indicator/SP.DYN.CBRT.IN?format=json&date=2023&per_page=1&mrv=1
+ttl 2592000
+on earth 38.899 -77.043 0
+
+url https://api.worldbank.org/v2/country/WLD/indicator/EN.GHG.CO2.MT.CE.AR5?format=json
+ttl 2592000
+on earth 38.899 -77.043 0
+
+url https://api.worldbank.org/v2/country/WLD/indicator/SP.DYN.CDRT.IN?format=json&date=2023&per_page=1&mrv=1
+ttl 2592000
+on earth 33.83 67.71 0
+
+url https://api.worldbank.org/v2/country/AFG/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 41.33 19.82 0
+
+url https://api.worldbank.org/v2/country/ALB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 36.75 3.06 0
+
+url https://api.worldbank.org/v2/country/DZA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -14.28 -170.7 0
+
+url https://api.worldbank.org/v2/country/ASM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 42.51 1.52 0
+
+url https://api.worldbank.org/v2/country/AND/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -8.84 13.23 0
+
+url https://api.worldbank.org/v2/country/AGO/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 17.12 -61.85 0
+
+url https://api.worldbank.org/v2/country/ATG/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -34.6 -58.38 0
+
+url https://api.worldbank.org/v2/country/ARG/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 40.18 44.51 0
+
+url https://api.worldbank.org/v2/country/ARM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 12.52 -70.03 0
+
+url https://api.worldbank.org/v2/country/ABW/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -35.28 149.13 0
+
+url https://api.worldbank.org/v2/country/AUS/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 48.21 16.37 0
+
+url https://api.worldbank.org/v2/country/AUT/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 40.4 49.87 0
+
+url https://api.worldbank.org/v2/country/AZE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 25.06 -77.35 0
+
+url https://api.worldbank.org/v2/country/BHS/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 26.23 50.59 0
+
+url https://api.worldbank.org/v2/country/BHR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 23.81 90.41 0
+
+url https://api.worldbank.org/v2/country/BGD/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 13.1 -59.62 0
+
+url https://api.worldbank.org/v2/country/BRB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 53.9 27.57 0
+
+url https://api.worldbank.org/v2/country/BLR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 50.85 4.35 0
+
+url https://api.worldbank.org/v2/country/BEL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 17.25 -88.77 0
+
+url https://api.worldbank.org/v2/country/BLZ/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 6.5 2.6 0
+
+url https://api.worldbank.org/v2/country/BEN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 32.29 -64.78 0
+
+url https://api.worldbank.org/v2/country/BMU/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 27.47 89.64 0
+
+url https://api.worldbank.org/v2/country/BTN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -16.5 -68.15 0
+
+url https://api.worldbank.org/v2/country/BOL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 43.85 18.41 0
+
+url https://api.worldbank.org/v2/country/BIH/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -24.63 25.9 0
+
+url https://api.worldbank.org/v2/country/BWA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -15.8 -47.88 0
+
+url https://api.worldbank.org/v2/country/BRA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 18.42 -64.62 0
+
+url https://api.worldbank.org/v2/country/VGB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 4.94 114.94 0
+
+url https://api.worldbank.org/v2/country/BRN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 42.7 23.32 0
+
+url https://api.worldbank.org/v2/country/BGR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 12.37 -1.52 0
+
+url https://api.worldbank.org/v2/country/BFA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -3.36 29.92 0
+
+url https://api.worldbank.org/v2/country/BDI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 14.93 -23.51 0
+
+url https://api.worldbank.org/v2/country/CPV/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 11.56 104.93 0
+
+url https://api.worldbank.org/v2/country/KHM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 3.87 11.52 0
+
+url https://api.worldbank.org/v2/country/CMR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 45.42 -75.7 0
+
+url https://api.worldbank.org/v2/country/CAN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 19.29 -81.37 0
+
+url https://api.worldbank.org/v2/country/CYM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 4.39 18.56 0
+
+url https://api.worldbank.org/v2/country/CAF/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 15.45 18.73 0
+
+url https://api.worldbank.org/v2/country/TCD/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 49.19 -2.11 0
+
+url https://api.worldbank.org/v2/country/CHI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -33.45 -70.67 0
+
+url https://api.worldbank.org/v2/country/CHL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 39.91 116.4 0
+
+url https://api.worldbank.org/v2/country/CHN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 4.71 -74.07 0
+
+url https://api.worldbank.org/v2/country/COL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -11.72 43.25 0
+
+url https://api.worldbank.org/v2/country/COM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -4.32 15.3 0
+
+url https://api.worldbank.org/v2/country/COD/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -4.26 15.28 0
+
+url https://api.worldbank.org/v2/country/COG/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 9.93 -84.08 0
+
+url https://api.worldbank.org/v2/country/CRI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 5.35 -4.01 0
+
+url https://api.worldbank.org/v2/country/CIV/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 45.81 15.98 0
+
+url https://api.worldbank.org/v2/country/HRV/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 23.13 -82.38 0
+
+url https://api.worldbank.org/v2/country/CUB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 12.11 -68.93 0
+
+url https://api.worldbank.org/v2/country/CUW/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 35.17 33.36 0
+
+url https://api.worldbank.org/v2/country/CYP/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 50.08 14.44 0
+
+url https://api.worldbank.org/v2/country/CZE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 55.68 12.57 0
+
+url https://api.worldbank.org/v2/country/DNK/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 52.52 13.405 0
+
+url https://api.worldbank.org/v2/country/DEU/indicator/NY.GDP.MKTP.KD.ZG?format=json
+ttl 2592000
+on earth 11.58 43.15 0
+
+url https://api.worldbank.org/v2/country/DJI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 15.3 -61.39 0
+
+url https://api.worldbank.org/v2/country/DMA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 18.49 -69.93 0
+
+url https://api.worldbank.org/v2/country/DOM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -0.23 -78.52 0
+
+url https://api.worldbank.org/v2/country/ECU/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 30.04 31.24 0
+
+url https://api.worldbank.org/v2/country/EGY/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 13.69 -89.19 0
+
+url https://api.worldbank.org/v2/country/SLV/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 3.75 8.77 0
+
+url https://api.worldbank.org/v2/country/GNQ/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 15.33 38.93 0
+
+url https://api.worldbank.org/v2/country/ERI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 59.44 24.75 0
+
+url https://api.worldbank.org/v2/country/EST/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -26.32 31.17 0
+
+url https://api.worldbank.org/v2/country/SWZ/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 9.03 38.74 0
+
+url https://api.worldbank.org/v2/country/ETH/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 62.01 -6.77 0
+
+url https://api.worldbank.org/v2/country/FRO/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -18.14 178.44 0
+
+url https://api.worldbank.org/v2/country/FJI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 60.17 24.94 0
+
+url https://api.worldbank.org/v2/country/FIN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 48.86 2.35 0
+
+url https://api.worldbank.org/v2/country/FRA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -17.55 -149.6 0
+
+url https://api.worldbank.org/v2/country/PYF/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 0.39 9.45 0
+
+url https://api.worldbank.org/v2/country/GAB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 13.45 -16.63 0
+
+url https://api.worldbank.org/v2/country/GMB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 41.72 44.79 0
+
+url https://api.worldbank.org/v2/country/GEO/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 52.52 13.4 0
+
+url https://api.worldbank.org/v2/country/DEU/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 5.56 -0.2 0
+
+url https://api.worldbank.org/v2/country/GHA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 36.14 -5.35 0
+
+url https://api.worldbank.org/v2/country/GIB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 37.98 23.73 0
+
+url https://api.worldbank.org/v2/country/GRC/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 64.15 -21.94 0
+
+url https://api.worldbank.org/v2/country/GRL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 12.05 -61.75 0
+
+url https://api.worldbank.org/v2/country/GRD/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 13.44 144.79 0
+
+url https://api.worldbank.org/v2/country/GUM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 14.63 -90.51 0
+
+url https://api.worldbank.org/v2/country/GTM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 9.51 -13.71 0
+
+url https://api.worldbank.org/v2/country/GIN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 11.86 -15.6 0
+
+url https://api.worldbank.org/v2/country/GNB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 6.8 -58.16 0
+
+url https://api.worldbank.org/v2/country/GUY/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 18.59 -72.31 0
+
+url https://api.worldbank.org/v2/country/HTI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 14.07 -87.21 0
+
+url https://api.worldbank.org/v2/country/HND/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 22.32 114.17 0
+
+url https://api.worldbank.org/v2/country/HKG/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 47.5 19.04 0
+
+url https://api.worldbank.org/v2/country/HUN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 64.15 -21.94 0
+
+url https://api.worldbank.org/v2/country/ISL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 28.61 77.21 0
+
+url https://api.worldbank.org/v2/country/IND/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -6.21 106.85 0
+
+url https://api.worldbank.org/v2/country/IDN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 35.69 51.39 0
+
+url https://api.worldbank.org/v2/country/IRN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 33.31 44.36 0
+
+url https://api.worldbank.org/v2/country/IRQ/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 53.35 -6.26 0
+
+url https://api.worldbank.org/v2/country/IRL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 31.78 35.22 0
+
+url https://api.worldbank.org/v2/country/ISR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 41.9 12.5 0
+
+url https://api.worldbank.org/v2/country/ITA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 18.01 -76.79 0
+
+url https://api.worldbank.org/v2/country/JAM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 35.69 139.69 0
+
+url https://api.worldbank.org/v2/country/JPN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 31.95 35.91 0
+
+url https://api.worldbank.org/v2/country/JOR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 51.16 71.43 0
+
+url https://api.worldbank.org/v2/country/KAZ/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -1.29 36.82 0
+
+url https://api.worldbank.org/v2/country/KEN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 1.33 172.97 0
+
+url https://api.worldbank.org/v2/country/KIR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 37.57 126.98 0
+
+url https://api.worldbank.org/v2/country/KOR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 42.66 21.16 0
+
+url https://api.worldbank.org/v2/country/XKX/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 29.38 47.98 0
+
+url https://api.worldbank.org/v2/country/KWT/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 42.87 74.59 0
+
+url https://api.worldbank.org/v2/country/KGZ/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 17.97 102.63 0
+
+url https://api.worldbank.org/v2/country/LAO/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 56.95 24.11 0
+
+url https://api.worldbank.org/v2/country/LVA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 33.89 35.5 0
+
+url https://api.worldbank.org/v2/country/LBN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -29.31 27.49 0
+
+url https://api.worldbank.org/v2/country/LSO/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 6.3 -10.8 0
+
+url https://api.worldbank.org/v2/country/LBR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 32.89 13.19 0
+
+url https://api.worldbank.org/v2/country/LBY/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 47.14 9.52 0
+
+url https://api.worldbank.org/v2/country/LIE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 54.69 25.28 0
+
+url https://api.worldbank.org/v2/country/LTU/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 49.61 6.13 0
+
+url https://api.worldbank.org/v2/country/LUX/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 22.2 113.55 0
+
+url https://api.worldbank.org/v2/country/MAC/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -18.88 47.52 0
+
+url https://api.worldbank.org/v2/country/MDG/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -13.96 33.79 0
+
+url https://api.worldbank.org/v2/country/MWI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 3.14 101.69 0
+
+url https://api.worldbank.org/v2/country/MYS/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 4.18 73.51 0
+
+url https://api.worldbank.org/v2/country/MDV/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 12.65 -8 0
+
+url https://api.worldbank.org/v2/country/MLI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 35.9 14.46 0
+
+url https://api.worldbank.org/v2/country/MLT/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 7.09 171.21 0
+
+url https://api.worldbank.org/v2/country/MHL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 18.09 -15.98 0
+
+url https://api.worldbank.org/v2/country/MRT/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -20.35 57.55 0
+
+url https://api.worldbank.org/v2/country/MUS/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 19.43 -99.13 0
+
+url https://api.worldbank.org/v2/country/MEX/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 7.42 151.99 0
+
+url https://api.worldbank.org/v2/country/FSM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 47.01 28.86 0
+
+url https://api.worldbank.org/v2/country/MDA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 43.74 7.42 0
+
+url https://api.worldbank.org/v2/country/MCO/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 47.92 106.92 0
+
+url https://api.worldbank.org/v2/country/MNG/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 42.44 19.26 0
+
+url https://api.worldbank.org/v2/country/MNE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 34.02 -6.83 0
+
+url https://api.worldbank.org/v2/country/MAR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -25.97 32.57 0
+
+url https://api.worldbank.org/v2/country/MOZ/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 19.76 96.1 0
+
+url https://api.worldbank.org/v2/country/MMR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -22.56 17.08 0
+
+url https://api.worldbank.org/v2/country/NAM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -0.55 166.93 0
+
+url https://api.worldbank.org/v2/country/NRU/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 27.71 85.32 0
+
+url https://api.worldbank.org/v2/country/NPL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 52.37 4.9 0
+
+url https://api.worldbank.org/v2/country/NLD/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -22.27 166.46 0
+
+url https://api.worldbank.org/v2/country/NCL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -41.29 174.78 0
+
+url https://api.worldbank.org/v2/country/NZL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 12.15 -86.23 0
+
+url https://api.worldbank.org/v2/country/NIC/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 13.51 2.11 0
+
+url https://api.worldbank.org/v2/country/NER/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 9.06 7.49 0
+
+url https://api.worldbank.org/v2/country/NGA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 39.04 125.76 0
+
+url https://api.worldbank.org/v2/country/PRK/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 41.99 21.43 0
+
+url https://api.worldbank.org/v2/country/MKD/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 15.21 145.72 0
+
+url https://api.worldbank.org/v2/country/MNP/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 59.91 10.75 0
+
+url https://api.worldbank.org/v2/country/NOR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 23.59 58.41 0
+
+url https://api.worldbank.org/v2/country/OMN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 33.68 73.05 0
+
+url https://api.worldbank.org/v2/country/PAK/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 7.5 134.62 0
+
+url https://api.worldbank.org/v2/country/PLW/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 8.98 -79.52 0
+
+url https://api.worldbank.org/v2/country/PAN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -9.44 147.18 0
+
+url https://api.worldbank.org/v2/country/PNG/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -25.26 -57.59 0
+
+url https://api.worldbank.org/v2/country/PRY/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -12.05 -77.04 0
+
+url https://api.worldbank.org/v2/country/PER/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 14.6 120.98 0
+
+url https://api.worldbank.org/v2/country/PHL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 52.23 21.01 0
+
+url https://api.worldbank.org/v2/country/POL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 38.72 -9.13 0
+
+url https://api.worldbank.org/v2/country/PRT/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 18.47 -66.11 0
+
+url https://api.worldbank.org/v2/country/PRI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 25.29 51.53 0
+
+url https://api.worldbank.org/v2/country/QAT/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 44.43 26.1 0
+
+url https://api.worldbank.org/v2/country/ROU/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 55.76 37.62 0
+
+url https://api.worldbank.org/v2/country/RUS/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -1.95 30.06 0
+
+url https://api.worldbank.org/v2/country/RWA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -13.85 -171.75 0
+
+url https://api.worldbank.org/v2/country/WSM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 43.94 12.45 0
+
+url https://api.worldbank.org/v2/country/SMR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 0.33 6.73 0
+
+url https://api.worldbank.org/v2/country/STP/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 24.71 46.68 0
+
+url https://api.worldbank.org/v2/country/SAU/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 14.72 -17.45 0
+
+url https://api.worldbank.org/v2/country/SEN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 44.79 20.45 0
+
+url https://api.worldbank.org/v2/country/SRB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -4.68 55.47 0
+
+url https://api.worldbank.org/v2/country/SYC/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 8.46 -13.23 0
+
+url https://api.worldbank.org/v2/country/SLE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 1.35 103.82 0
+
+url https://api.worldbank.org/v2/country/SGP/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 18.03 -63.05 0
+
+url https://api.worldbank.org/v2/country/SXM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 48.15 17.11 0
+
+url https://api.worldbank.org/v2/country/SVK/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 46.06 14.51 0
+
+url https://api.worldbank.org/v2/country/SVN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -9.43 159.95 0
+
+url https://api.worldbank.org/v2/country/SLB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 2.05 45.32 0
+
+url https://api.worldbank.org/v2/country/SOM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -25.75 28.22 0
+
+url https://api.worldbank.org/v2/country/ZAF/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 4.85 31.58 0
+
+url https://api.worldbank.org/v2/country/SSD/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 40.42 -3.7 0
+
+url https://api.worldbank.org/v2/country/ESP/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 6.93 79.86 0
+
+url https://api.worldbank.org/v2/country/LKA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 17.3 -62.73 0
+
+url https://api.worldbank.org/v2/country/KNA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 13.91 -60.98 0
+
+url https://api.worldbank.org/v2/country/LCA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 18.07 -63.08 0
+
+url https://api.worldbank.org/v2/country/MAF/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 13.16 -61.22 0
+
+url https://api.worldbank.org/v2/country/VCT/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 15.5 32.56 0
+
+url https://api.worldbank.org/v2/country/SDN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 5.85 -55.2 0
+
+url https://api.worldbank.org/v2/country/SUR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 59.33 18.07 0
+
+url https://api.worldbank.org/v2/country/SWE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 47.37 8.54 0
+
+url https://api.worldbank.org/v2/country/CHE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 33.51 36.29 0
+
+url https://api.worldbank.org/v2/country/SYR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 38.56 68.77 0
+
+url https://api.worldbank.org/v2/country/TJK/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -6.16 35.75 0
+
+url https://api.worldbank.org/v2/country/TZA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 13.76 100.5 0
+
+url https://api.worldbank.org/v2/country/THA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -8.55 125.58 0
+
+url https://api.worldbank.org/v2/country/TLS/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 6.17 1.33 0
+
+url https://api.worldbank.org/v2/country/TGO/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -21.17 -175.2 0
+
+url https://api.worldbank.org/v2/country/TON/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 10.69 -61.52 0
+
+url https://api.worldbank.org/v2/country/TTO/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 36.81 10.18 0
+
+url https://api.worldbank.org/v2/country/TUN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 39.93 32.85 0
+
+url https://api.worldbank.org/v2/country/TUR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 37.95 58.38 0
+
+url https://api.worldbank.org/v2/country/TKM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 21.46 -71.14 0
+
+url https://api.worldbank.org/v2/country/TCA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -8.52 179.19 0
+
+url https://api.worldbank.org/v2/country/TUV/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 0.34 32.58 0
+
+url https://api.worldbank.org/v2/country/UGA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 50.45 30.52 0
+
+url https://api.worldbank.org/v2/country/UKR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 24.45 54.38 0
+
+url https://api.worldbank.org/v2/country/ARE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 51.51 -0.13 0
+
+url https://api.worldbank.org/v2/country/GBR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 38.9 -77.03 0
+
+url https://api.worldbank.org/v2/country/USA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -34.9 -56.16 0
+
+url https://api.worldbank.org/v2/country/URY/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 41.29 69.24 0
+
+url https://api.worldbank.org/v2/country/UZB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -17.73 168.32 0
+
+url https://api.worldbank.org/v2/country/VUT/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 10.48 -66.9 0
+
+url https://api.worldbank.org/v2/country/VEN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 21.02 105.83 0
+
+url https://api.worldbank.org/v2/country/VNM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 18.34 -64.93 0
+
+url https://api.worldbank.org/v2/country/VIR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 31.95 35.23 0
+
+url https://api.worldbank.org/v2/country/PSE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 15.36 44.19 0
+
+url https://api.worldbank.org/v2/country/YEM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -15.38 28.32 0
+
+url https://api.worldbank.org/v2/country/ZMB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -17.82 31.03 0
+
+url https://api.worldbank.org/v2/country/ZWE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 38.899 -77.043 0
+
+url https://api.worldbank.org/v2/country/WLD/indicator/SP.DYN.LE00.IN?format=json&date=2023&per_page=1&mrv=1
+ttl 2592000
+on earth 38.899 -77.043 0
+
+url https://api.worldbank.org/v2/country/WLD/indicator/SP.POP.MEDN?format=json&date=2023&per_page=1&mrv=1
+ttl 2592000
+on earth 38.899 -77.043 0
+
+url https://api.worldbank.org/v2/country/WLD/indicator/SP.POP.TOTL?format=json
+ttl 2592000
+on earth 38.8991 -77.043 0
+
+url https://api.worldbank.org/v2/country/WLD/indicator/EN.POP.DNST?format=json&per_page=1&date=2023
+ttl 2592000
+on earth 38.899 -77.043 0
+
+url https://api.worldbank.org/v2/country/WLD/indicator/SP.URB.TOTL.IN.ZS?format=json&date=2023&per_page=1&mrv=1
+ttl 2592000
+on earth 42.454 13.576 0
+
+url https://en.wikipedia.org/w/api.php?action=query&list=geosearch&gscoord={lat}|{lon}&gsradius=10000&gslimit=500&format=json
+ttl 2592000
+on earth 51.2802 -0.5231 0
+
+url https://api.open-meteo.com/v1/elevation?latitude={lat}&longitude={lon}
+ttl 2592000
+on earth 38.9 -77.02 0
+
+url https://stac.eoapi.dev/collections
+ttl 2592000
+on earth 43.073 -89.401 0
+
+url https://macrostrat.org/api/v2/units?format=json
+ttl 2592000
+on earth 43.073 -89.401 0
+
+url https://api.opentopodata.org/v1/srtm30m?locations={grid}
+map results
+lat location.lat
+lon location.lng
+alt elevation
+ttl 2592000
+on earth 47.64 -122.14 0
+
+url https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_plates.json
+ttl 2592000
+on earth 42.454 13.576 0
+
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=neutrinoless+double+beta+decay+limit&fields=titles,citation_count
+ttl 2592000
+on earth -75.1 123.35 0
+
+url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/epica_domec/dc_ch4_hol_fl02-noaa.txt
+format text
+rows .
+ttl 2592000
+on earth -78.464 106.837 0
+
+url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/vostok/deutnat.txt
+format text
+rows .
+ttl 2592000
+on earth -79.467 -112.085 0
+
+url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/antarctica2015co2wais-noaa.txt
+format text
+rows .
+ttl 2592000
+on earth -77.319 39.703 0
+
+url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/domefuji/df-co2-dry-260ka-2007.txt
+format csv
+rows .
+ttl 2592000
+on earth -75.1 123.35 0
+
+url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/epica_domec/edc-co2-2008.txt
+format text
+rows .
+ttl 2592000
+on earth -78.464 106.833 0
+
+url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/vostok/co2nat.txt
+format text
+rows .
+ttl 2592000
+on earth 46.233 6.055 0
+
+url https://opendata.cern.ch/api/records/?size=1&page=1
+ttl 2592000
+on earth 50.775 6.084 0
+
+url https://api.crossref.org/works?query=ultraweak+biophoton+emission&rows=0
+ttl 2592000
+on earth 5.23 -52.769 0
+
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=CMB+cold+spot+anomaly&fields=titles,citation_count
+ttl 2592000
+on earth 46.233 6.055 0
+
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=vacuum+metastability+Higgs&fields=titles,citation_count
+ttl 2592000
+on earth 42.454 13.576 0
+
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=XENONnT+dark+matter&fields=titles,citation_count
+ttl 2592000
+on earth 42.454 13.576 0
+
+url https://geofon.gfz.de/fdsnws/station/1/query?format=geojson&level=station&network=AF
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+alt geometry.coordinates.2
+ttl 600
+on earth 0 0 0
+
+url https://api.opentopodata.org/v1/eudem25m?locations={grid}
+map results
+lat location.lat
+lon location.lng
+alt elevation
+ttl 86400
+on earth 40.82 -96.702 0
+
+url https://geofon.gfz-potsdam.de/fdsnws/station/1/query?level=station&network=GE
+format text
+rows .
+lat Latitude
+lon Longitude
+ttl 86400
+on earth 47.606 -122.335 0
+
+url https://data.pmel.noaa.gov/pmel/erddap/tabledap/all_pmel_co2_moorings.csv?pCO2_air&orderByMax(%22time%22)
+format csv
+ttl 1800
+on earth 0 0 0
+
+url https://service.earthscope.org/fdsnws/station/1/query?level=station&format=geocsv&starttime=2020-01-01
+format text
+rows .
+lat Latitude
+lon Longitude
+ttl 86400
+on earth 0 0 0
+
+url https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name,epoch,H,diameter,albedo,class,neo&sb-kind=a&sb-group=neo
+map data
+ttl 86400
+on earth 0 0 0
+
+url https://www.ngdc.noaa.gov/geomag-web/calculators/calculateIgrfwmm?lat={lat}&lon={lon}&elevation=0&resultFormat=json&magneticComponent=x
+map result.0
+ttl 86400
+on earth 37.774 -122.419 0
+
+url https://tle.ivanstanojevic.me/api/tle/?page-size=100
+map member
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://pubchem.ncbi.nlm.nih.gov/rest/pug/compounds/count/JSON
+ttl 86400
+on earth 38.995 -77.101 0
+
+url https://simbad.cds.unistra.fr/simbad/sim-tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+main_id,ra,dec,plx_value,sp_type,otype,V+FROM+basic+WHERE+plx_value>50+AND+ra+IS+NOT+NULL+ORDER+BY+plx_value+DESC
+format text
+rows .
+ttl 86400
+on earth 42.365 -71.105 0
+
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+COUNT(*)+FROM+ps+WHERE+pl_discmethod+like+'%25TESS%25'&format=json
+lastline exosphere_tess_candidates_total
+ttl 86400
+on earth 46.233 6.056 0
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+APOGEE_ID,RA,DEC,Teff,logg,M_H,alpha_M,VHELIO_AVG,DIST_BPG+FROM+"III/286/allstars"+WHERE+RA+IS+NOT+NULL+AND+ASPCAPFLAG%3D0+AND+SNR>100+ORDER+BY+SNR+DESC
+format text
+rows .
+ttl 86400
+on earth 0 0 0
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+WISE,Cl,GLON,GLAT,Rad,HIIName,_RA_icrs,_DE_icrs+FROM+%22J/ApJS/212/1/wisecat%22+WHERE+_RA_icrs+IS+NOT+NULL+ORDER+BY+Rad+DESC
+format text
+rows .
+ttl 86400
+on earth 0 0 0
+
+url https://earth-search.aws.element84.com/v1/search
+map features
+lat properties.proj:centroid.lat
+lon properties.proj:centroid.lon
+ttl 86400
+on earth 0 0 0
+

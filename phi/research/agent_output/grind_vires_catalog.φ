@@ -1,0 +1,360 @@
+# grind vires_catalog (2026-08-15)
+
+# Enumeration des VirES-HAPI-Katalogs (vires.services/hapi/catalog) auf physikalische
+# Messkanäle. Rein forschend — kein Code geändert, kein sources.φ/commit.
+# Referenz-Befund: grind_esa.φ / grind_esa_full.φ (gleicher Katalog, Geomagnetik-Ausschnitt).
+#
+# ENDPUNKT-FAKTEN (verifiziert heute):
+#   https://vires.services/hapi/catalog        -> 200, HAPI 3.0, 174 Datasets.
+#   https://vires.services/hapi/info?id=...    -> 200, parameters[] mit name/description/units/size.
+#   https://vires.services/hapi/data?id=...    -> 200, flat data[]-Zeilen, start/stop UND
+#     time.min/time.max sind beide akzeptiert (Aliase).
+#   WICHTIG: data-Antwort enthält KEIN parameters[]-Array (leer/absent). Der Hapi-Extract
+#     des Archivars fällt daher in den Positions-Fallback (src/main.rs Z. 7416): Spalte 0 =
+#     Timestamp (übersprungen), hapi-Paar i -> Spalte i+1. Daraus folgt: parameters=<feld1>,<feld2>
+#     MUSS die gleiche Reihenfolge wie die `hapi`-Zuordnung haben, und es dürfen NUR die
+#     Messfelder (nicht Latitude,Longitude) angefragt werden. Ein `parameters=Latitude,Longitude,F`
+#     würde F auf Spalte 1 (=Latitude) mappen — falsch. Position ist derzeit Frame-getragen
+#     (`at earth`), nicht data-carried: der Hapi-Extract setzt Position::Source -> frame_motion.
+#     Latitude/Longitude/Radius sind in der Antwort vorhanden, werden aber vom Hapi-Extract
+#     (noch) nicht als lat_key/lon_key verdrahtet (nur Map-Extract trägt lat_key/lon_key).
+#
+# VERTEILUNG NACH MISSION (174 = 27 Nicht-Swarm + 147 Swarm):
+#   CHAMP (CH_)        4   — defunct 2000-2010
+#   CryoSat (CS_)      1   — aktiv 2010-2026 (Daten bis 2026-07-31)
+#   GOCE (GO_)         2   — defunct 2009-2013
+#   GRACE (GRACE_/GR_) 9   — defunct 2002-2017
+#   GRACE-FO (GF_/GF1_/GF2_) 9 — 2018-2024
+#   MultiMission (MM_) 2   — Konstellation-Ephemeriden (Orbitgeometrie)
+#   Swarm (SW_)      147   — aktiv 2013-, FAST/OPER/PREL/EXPT-Produkte
+#
+# KANAL-VERTEILUNG (Swarm 147 nach Instrument/Produkt):
+#   MAG (Magnetometer, em)           12  (A/B/C x LR/HR 1b x OPER/FAST)
+#   EFI (E-Feld/Ionendichte/Temp)    18  (LP_1B, TIE, IDM, TCT02/16)
+#   FAC (Feld-aligned Ströme)         7  (A/B/C x OPER/FAST + FAC_TMS)
+#   TEC (GPS-TEC, em)                 6  (A/B/C x OPER/FAST)
+#   DNS (Neutraldichte, thermal)      6  (A/B/C x ACC/POD)
+#   AEJ (Auroral-Elektrojet)         30  (abgeleitet -> decline)
+#   AOB (Auroral-Oval-Boundary)       6  (Grenzflag -> decline)
+#   EEF (äquat. E-Feld-Schätzung)     3  (abgeleitet -> decline)
+#   IBI (Bubble-Index)                3  (Index -> decline)
+#   IPD (Plasma-Drift + Ne/Te)        3  (in-situ Langmuir -> Kandidat)
+#   MITA/B/C (Mid-lat-Trog-Index)    12  (Index -> decline)
+#   NIX (NEGIX-Index)                 1  (Index -> decline)
+#   TIX (TEGIX-Index)                 1  (Index -> decline)
+#   PC1 (Pc1-Wellen-Ereignisse)      18  (Ereignisflag -> decline)
+#   ULF (ULF-Wellen-Index)            9  (Index -> decline)
+#   PPIA/B/C (Teilringstrom-FAC)      6  (abgeleiteter Strom -> Kandidat)
+#   MOD (AOCS-Mode, nur Position)     6  (Housekeeping -> decline)
+
+# ════════════════════════════════════════════════════════════════
+# (a) KOMPLETTE 174-DATASET-LISTE MIT KURZKLASSIFIKATION
+# ════════════════════════════════════════════════════════════════
+# Tag-Legende:
+#   ACCEPT-DRAFT    -> Messwert physischer Größe, Block-Draft in (d)
+#   ACCEPT-CAND     -> Messwert physischer Größe, kein Draft (A/B/C-Variante eines Drafts)
+#   INTEGRATED      -> bereits in phi/sources.φ (EFI/FAC) bzw. gedraftet (MAGA_LR_1B, TCT02)
+#   DECLINE-derived -> Modell/Index/Flag/Ereigniskatalog, kein Sinnesorgan (Force Gate)
+#   DECLINE-orbit   -> Orbitgeometrie/Metadaten, keine Feldmessung
+#   DECLINE-hk      -> Housekeeping (Mode/Position only)
+
+## CHAMP (defunct 2000-2010)
+# CH_ME_MAG_LR_3          ACCEPT-DRAFT   em     Magnetometer Level-3, F/B_NEC (nT), 1 Hz
+# CH_OPER_DNS_ACC_2_      ACCEPT-DRAFT   thermal Neutraldichte density (kg/m3), 10 s
+# CH_OPER_WND_ACC_2_      ACCEPT-DRAFT   advective Querwind crosswind (m/s), 10 s
+# CH_OPER_TEC_TMS_2F      ACCEPT-DRAFT   em     GPS-TEC Absolute_VTEC/STEC (TECU), 2 Hz
+
+## CryoSat (aktiv, Daten bis 2026-07-31)
+# CS_OPER_MAG             ACCEPT-DRAFT   em     Magnetometer FGM1-3, B_NEC, F (nT), 1 Hz
+
+## GOCE (defunct 2009-2013)
+# GO_MAG_ACAL_CORR        ACCEPT-DRAFT   em     Magnetometer kalibriert, B_NEC, F (nT)
+# GO_MAG_ACAL_CORR_ML     ACCEPT-CAND    em     dito, ML-Variante
+
+## GRACE (defunct 2002-2017)
+# GRACE_A_MAG             ACCEPT-CAND    em     GRACE-A Magnetometer F/B_NEC (nT)
+# GRACE_B_MAG             ACCEPT-CAND    em     GRACE-B Magnetometer F/B_NEC (nT)
+# GR_OPER_DNS1ACC_2_      ACCEPT-DRAFT   thermal GRACE-A Neutraldichte density (kg/m3)
+# GR_OPER_DNS2ACC_2_      ACCEPT-CAND    thermal GRACE-B Neutraldichte
+# GR_OPER_NE__KBR_2F      ACCEPT-CAND    gravity KBR-Satellitenabstand + Ne (gravity/em)
+# GR_OPER_TEC1TMS_2F      ACCEPT-CAND    em     GRACE-A GPS-TEC
+# GR_OPER_TEC2TMS_2F      ACCEPT-CAND    em     GRACE-B GPS-TEC
+# GR_OPER_WND1ACC_2_      ACCEPT-CAND    advective GRACE-A Querwind
+# GR_OPER_WND2ACC_2_      ACCEPT-CAND    advective GRACE-B Querwind
+
+## GRACE-FO (2018-2024)
+# GF1_MAG_ACAL_CORR_ML    ACCEPT-CAND    em     GRACE-FO1 Magnetometer ML
+# GF1_OPER_FGM_ACAL_CORR  ACCEPT-CAND    em     GRACE-FO1 Magnetometer
+# GF2_MAG_ACAL_CORR_ML    ACCEPT-CAND    em     GRACE-FO2 Magnetometer ML
+# GF2_OPER_FGM_ACAL_CORR  ACCEPT-CAND    em     GRACE-FO2 Magnetometer
+# GF_OPER_DNS1ACC_2_      ACCEPT-CAND    thermal GRACE-FO Neutraldichte
+# GF_OPER_NE__KBR_2F      ACCEPT-DRAFT   gravity KBR-Satellitenabstand Distance (m) + Ne
+# GF_OPER_TEC1TMS_2F      ACCEPT-CAND    em     GRACE-FO1 GPS-TEC
+# GF_OPER_TEC2TMS_2F      ACCEPT-CAND    em     GRACE-FO2 GPS-TEC
+# GF_OPER_WND1ACC_2_      ACCEPT-CAND    advective GRACE-FO Querwind
+
+## MultiMission (Orbitgeometrie)
+# MM_OPER_CON_EPH_2_:crossover        DECLINE-orbit  Konstellation-Crossover (Ephemeriden)
+# MM_OPER_CON_EPH_2_:plane_alignment  DECLINE-orbit  Konstellation-Ebenenausrichtung
+
+## Swarm — Magnetometer (em, in-situ B-Feld)
+# SW_OPER_MAGA_LR_1B  INTEGRATED (Draft grind_esa.φ: F, 1 Hz, bis 2026-08-11)
+# SW_OPER_MAGB_LR_1B  ACCEPT-CAND em   1 Hz
+# SW_OPER_MAGC_LR_1B  ACCEPT-CAND em   1 Hz
+# SW_OPER_MAGA_HR_1B  ACCEPT-CAND em   50 Hz
+# SW_OPER_MAGB_HR_1B  ACCEPT-CAND em   50 Hz
+# SW_OPER_MAGC_HR_1B  ACCEPT-CAND em   50 Hz
+# SW_FAST_MAGA_LR_1B  ACCEPT-CAND em   1 Hz (fast)
+# SW_FAST_MAGB_LR_1B  ACCEPT-CAND em   1 Hz (fast)
+# SW_FAST_MAGC_LR_1B  ACCEPT-CAND em   1 Hz (fast)
+# SW_FAST_MAGA_HR_1B  ACCEPT-CAND em   50 Hz (fast)
+# SW_FAST_MAGB_HR_1B  ACCEPT-CAND em   50 Hz (fast)
+# SW_FAST_MAGC_HR_1B  ACCEPT-CAND em   50 Hz (fast)
+
+## Swarm — EFI (E-Feld / Ionendichte / Elektronentemperatur)
+# SW_OPER_EFIA_LP_1B  ACCEPT-CAND electric/diffusion/thermal (in-situ Langmuir)
+# SW_OPER_EFIB_LP_1B  ACCEPT-CAND electric/diffusion/thermal
+# SW_OPER_EFIC_LP_1B  ACCEPT-CAND electric/diffusion/thermal
+# SW_FAST_EFIA_LP_1B  INTEGRATED (phi/sources.φ Z. 813, N_ion/T_elec/Vs)
+# SW_FAST_EFIB_LP_1B  ACCEPT-CAND
+# SW_FAST_EFIC_LP_1B  ACCEPT-CAND
+# SW_OPER_EFIATIE_2_  ACCEPT-CAND electric/diffusion (EFI + TIE; Ne/Te + Tn_msis)
+# SW_OPER_EFIBTIE_2_  ACCEPT-CAND
+# SW_OPER_EFICTIE_2_  ACCEPT-CAND
+# SW_PREL_EFIAIDM_2_  ACCEPT-CAND electric (Ion Drift Meter -> E-Feld/V_sat)
+# SW_PREL_EFIBIDM_2_  ACCEPT-CAND electric
+# SW_PREL_EFICIDM_2_  ACCEPT-CAND electric
+# SW_EXPT_EFIA_TCT02  INTEGRATED (Draft grind_esa.φ: Ehx/Ehy/Ehz, 2 Hz)
+# SW_EXPT_EFIB_TCT02  ACCEPT-CAND electric (experimental)
+# SW_EXPT_EFIC_TCT02  ACCEPT-CAND electric
+# SW_EXPT_EFIA_TCT16  ACCEPT-CAND electric (16 Hz experimental)
+# SW_EXPT_EFIB_TCT16  ACCEPT-CAND electric
+# SW_EXPT_EFIC_TCT16  ACCEPT-CAND electric
+
+## Swarm — FAC (feld-aligned Ströme, abgeleitet aus B, precedent: integriert)
+# SW_OPER_FACATMS_2F  ACCEPT-CAND electric
+# SW_OPER_FACBTMS_2F  ACCEPT-CAND electric
+# SW_OPER_FACCTMS_2F  ACCEPT-CAND electric
+# SW_OPER_FAC_TMS_2F  ACCEPT-CAND electric (kombiniert)
+# SW_FAST_FACATMS_2F  INTEGRATED (phi/sources.φ Z. 822, IRC+FAC)
+# SW_FAST_FACBTMS_2F  ACCEPT-CAND electric
+# SW_FAST_FACCTMS_2F  ACCEPT-CAND electric
+
+## Swarm — TEC (em)
+# SW_OPER_TECATMS_2F  ACCEPT-CAND em
+# SW_OPER_TECBTMS_2F  ACCEPT-CAND em
+# SW_OPER_TECCTMS_2F  ACCEPT-CAND em
+# SW_FAST_TECATMS_2F  ACCEPT-CAND em
+# SW_FAST_TECBTMS_2F  ACCEPT-CAND em
+# SW_FAST_TECCTMS_2F  ACCEPT-CAND em
+
+## Swarm — DNS (Neutraldichte aus Beschleunigungsmesser, thermal)
+# SW_OPER_DNSAACC_2_  ACCEPT-CAND thermal
+# SW_OPER_DNSAPOD_2_  ACCEPT-CAND thermal
+# SW_OPER_DNSBACC_2_  ACCEPT-CAND thermal
+# SW_OPER_DNSBPOD_2_  ACCEPT-CAND thermal
+# SW_OPER_DNSCACC_2_  ACCEPT-CAND thermal
+# SW_OPER_DNSCPOD_2_  ACCEPT-CAND thermal
+
+## Swarm — EEF (äquatoriales E-Feld, aus TEC abgeleitet -> decline)
+# SW_OPER_EEFATMS_2F  DECLINE-derived (EEF-Schätzung aus TEC-Gradient, kein Direktmaß)
+# SW_OPER_EEFBTMS_2F  DECLINE-derived
+# SW_OPER_EEFCTMS_2F  DECLINE-derived
+
+## Swarm — AEJ (Auroral-Elektrojet, Inversion aus Magnetfeld -> decline)
+# SW_OPER_AEJALPL_2F / :Quality                          DECLINE-derived
+# SW_OPER_AEJALPS_2F / :Quality                          DECLINE-derived
+# SW_OPER_AEJAPBL_2F / AEJAPBS_2F [/ :GroundMagneticDisturbance] DECLINE-derived
+# SW_OPER_AEJBLPL_2F / :Quality / AEJBLPS_2F / :Quality  DECLINE-derived
+# SW_OPER_AEJBPBL_2F / AEJBPBS_2F [/ :GroundMagneticDisturbance] DECLINE-derived
+# SW_OPER_AEJCLPL_2F / :Quality / AEJCLPS_2F / :Quality  DECLINE-derived
+# SW_OPER_AEJCPBL_2F / AEJCPBS_2F [/ :GroundMagneticDisturbance] DECLINE-derived
+# SW_FAST_AEJALPL_2F / :Quality                          DECLINE-derived
+# SW_FAST_AEJAPBL_2F                                     DECLINE-derived
+# SW_FAST_AEJBLPL_2F / :Quality                          DECLINE-derived
+# SW_FAST_AEJBPBL_2F                                     DECLINE-derived
+# SW_FAST_AEJCLPL_2F / :Quality                          DECLINE-derived
+# SW_FAST_AEJCPBL_2F                                     DECLINE-derived
+
+## Swarm — AOB (Auroral-Oval-Boundary -> decline, Grenzflag)
+# SW_OPER_AOBAFAC_2F  DECLINE-derived (Boundary_Flag kategorial, s. grind_esa.φ)
+# SW_OPER_AOBBFAC_2F  DECLINE-derived
+# SW_OPER_AOBCFAC_2F  DECLINE-derived
+# SW_FAST_AOBAFAC_2F  DECLINE-derived
+# SW_FAST_AOBBFAC_2F  DECLINE-derived
+# SW_FAST_AOBCFAC_2F  DECLINE-derived
+
+## Swarm — IBI (Ionospheric Bubble Index -> decline)
+# SW_OPER_IBIATMS_2F  DECLINE-derived (Bubble_Index/Probability, s. grind_esa.φ)
+# SW_OPER_IBIBTMS_2F  DECLINE-derived
+# SW_OPER_IBICTMS_2F  DECLINE-derived
+
+## Swarm — IPD (Ionospheric Plasma Drift, in-situ Ne/Te -> Kandidat)
+# SW_OPER_IPDAIRR_2F  ACCEPT-CAND diffusion/thermal (Ne, Te, Drift — Langmuir in-situ)
+# SW_OPER_IPDBIRR_2F  ACCEPT-CAND
+# SW_OPER_IPDCIRR_2F  ACCEPT-CAND
+
+## Swarm — MITA/MITB/MITC (Mid-lat-Ionosphären-Trog-Index -> decline)
+# SW_OPER_MITA_LP_2F / :ID / MITATEC_2F / :ID  DECLINE-derived
+# SW_OPER_MITB_LP_2F / :ID / MITBTEC_2F / :ID  DECLINE-derived
+# SW_OPER_MITC_LP_2F / :ID / MITCTEC_2F / :ID  DECLINE-derived
+
+## Swarm — NIX / TIX (Index -> decline)
+# SW_OPER_NIX_TMS_2F   DECLINE-derived (NEGIX-Index)
+# SW_OPER_TIX_TMS_2F   DECLINE-derived (TEGIX-Index)
+
+## Swarm — PC1 (Pc1-Wellen-Ereignisse -> decline)
+# SW_OPER_PC1AMAG_2F: Ba/Bp/Br_event / :_mean   DECLINE-derived (Ereigniskatalog)
+# SW_OPER_PC1BMAG_2F: Ba/Bp/Br_event / :_mean   DECLINE-derived
+# SW_OPER_PC1CMAG_2F: Ba/Bp/Br_event / :_mean   DECLINE-derived
+
+## Swarm — ULF (ULF-Wellen-Index -> decline)
+# SW_OPER_ULFAMAG_2F / :event / :event_mean      DECLINE-derived
+# SW_OPER_ULFBMAG_2F / :event / :event_mean      DECLINE-derived
+# SW_OPER_ULFCMAG_2F / :event / :event_mean      DECLINE-derived
+
+## Swarm — PPIA/B/C (Teilringstrom-FAC -> Kandidat, abgeleitet)
+# SW_OPER_PPIAFAC_2F / :ID   ACCEPT-CAND electric (Teilringstrom-FAC, precedent FAC integriert)
+# SW_OPER_PPIBFAC_2F / :ID   ACCEPT-CAND electric
+# SW_OPER_PPICFAC_2F / :ID   ACCEPT-CAND electric
+
+## Swarm — MOD (AOCS-Mode -> decline, nur Position)
+# SW_OPER_MODA_SC_1B  DECLINE-hk (nur Timestamp/Latitude/Longitude/Radius)
+# SW_OPER_MODB_SC_1B  DECLINE-hk
+# SW_OPER_MODC_SC_1B  DECLINE-hk
+# SW_FAST_MODA_SC_1B  DECLINE-hk
+# SW_FAST_MODB_SC_1B  DECLINE-hk
+# SW_FAST_MODC_SC_1B  DECLINE-hk
+
+# ════════════════════════════════════════════════════════════════
+# (b) PROBEN-BEFUNDE (HAPI info + data, 9 Datasets sondiert)
+# ════════════════════════════════════════════════════════════════
+# Proben-Fenster klein gehalten (3 min), format=json, parameters=<feld> (NICHT lat/lon, s. Fallback-Regel).
+# Alle 9 liefern data[]-Zeilen. Spalte 0 = Timestamp, dann die angefragten Felder in Reihenfolge.
+
+# CH_ME_MAG_LR_3        (2000-07-19 … 2010-09-17)  F (nT), B_VFM/B_NEC (3-Vektor), + CHAOS-Modellfelder.
+#   parameters=F -> [Timestamp, F]; Probe 2010-09-17T20:00-20:03 -> 180 Zeilen (1 Hz). Werte ~48711 nT (polnah).
+# CH_OPER_DNS_ACC_2_    (2000-07-29 … 2010-09-04)  density (kg/m3), density_orbitmean, validity_flag.
+#   Probe 2010-09-04T20:00-20:03 -> 18 Zeilen (10 s). Füllwert "inf" (Python-Parse) bei 8/18 — is_finite()
+#   filtert diese im Archivar aus (anomale Orbits, validity_flag=1). 10 endliche Werte ~1e-12 kg/m3.
+# CH_OPER_WND_ACC_2_    (2000-07-29 … 2010-09-04)  crosswind (m/s, Metadaten-Unit fälschlich "kg/m3").
+#   crosswind_direction (3-Vektor), validity_flag. Probe -> 18 Zeilen. Füllwert 9.99e+32 (endlich,
+#   NICHT durch is_finite gefiltert — Füllwert-Behandlung beachten; validity_flag markiert anomal).
+# CH_OPER_TEC_TMS_2F    (2000-07-20 … 2010-09-03)  Absolute_STEC/VTEC (TECU), L1/L2/P1/P2, DCB.
+#   Probe 2010-09-03T20:00-20:03 -> 122 Zeilen. Absolute_VTEC ~7.4 TECU. GPS-Radio-Okkultation.
+# CS_OPER_MAG           (2010-05-01 … 2026-07-31)  F (nT), B_FGM1-3/B_NEC1-3/B_NEC, + CHAOS-6-Modell.
+#   Probe 2026-07-31T20:00-20:03 -> 180 Zeilen (1 Hz). F ~40388 nT. AKTIV — Datenstand ~2 Wochen Latenz.
+# GO_MAG_ACAL_CORR      (2009-11-01 … 2013-09-30)  F (nT), B_MAG/B_NEC (3-Vektor), Störfeld-Korrekturen.
+#   Probe 2013-09-30T00:00-00:03 -> 11 Zeilen. F ~21553 nT.
+# GRACE_A_MAG           (2008-01-01 … 2017-10-31)  F (nT), B_FGM/B_NEC_raw/B_NEC, + CHAOS-Modell.
+#   Probe 2017-10-31T20:00-20:03 -> 11 Zeilen. F ~28107 nT.
+# GR_OPER_DNS1ACC_2_    (2002-04-04 … 2017-10-31)  density (kg/m3), density_orbitmean.
+#   Probe 2017-10-31T20:00-20:03 -> 18 Zeilen, alle endlich ~7.9e-12 kg/m3.
+# GF_OPER_NE__KBR_2F    (2018-05-29 … 2024-11-17)  Distance (m, Satellitenabstand), Relative_Ne,
+#   Absolute_Ne (1/cm3), Relative_Hor_TEC. Probe 2024-11-17T20:00-20:03 -> 36 Zeilen. Distance ~198011 m.
+#
+# Befund Kraft-Zuordnung (Force Gate, Litmus "Sinnesorgan möglich?"):
+#   Magnetometer F/B_NEC       -> em          (Magnetorezeption)
+#   Neutraldichte density      -> diffusion   (Dichte-Gradient; thermal alternativ)
+#   Querwind crosswind         -> advective   (Wind/Gas-Transport)
+#   GPS-TEC VTEC/STEC          -> em          (Radio-Okkultations-Ausbreitung)
+#   KBR Distance               -> gravity     (Satellitenabstand trägt Gravitationsfeld)
+#   Elektronendichte Ne        -> diffusion   (Plasma, precedent EFI N_ion)
+
+# ════════════════════════════════════════════════════════════════
+# (c) BLOCK-DRAFTS (8) — Vorlage = bestehende VirES-HAPI-Blöcke (EFI/FAC), Position = at earth
+# ════════════════════════════════════════════════════════════════
+# Hinweis Zeitfenster: defunct Missionen (CHAMP/GOCE/GRACE/GRACE-FO) haben FESTE Fenster im
+# Abdeckungszeitraum (statisches Archiv, ttl 86400). CryoSat aktiv, ~2 Wochen Latenz (fester
+# aktueller Tag 2026-07-31). {now}/{hour_ago}-Templates greifen hier NICHT (Datensatz-Ende liegt
+# vor "jetzt"); der integrierende Durchgang kann bei aktiven FAST-Produkten auf {hour_ago} wechseln.
+
+# ── CHAMP Magnetometer (em — B-Feld F, 1 Hz, defunct 2000-2010) ──
+accepted https://vires.services/hapi/data?id=CH_ME_MAG_LR_3&start=2010-09-17T20:00:00Z&stop=2010-09-17T20:59:59Z&parameters=F&format=json
+# title: CHAMP FGM Magnetometer Level-3 1 Hz — skalare B-Feld-Intensität F (nT), em; archival, CHAOS-Modell als Vergleich
+url https://vires.services/hapi/data?id=CH_ME_MAG_LR_3&start=2010-09-17T20:00:00Z&stop=2010-09-17T20:59:59Z&parameters=F&format=json
+ttl 86400
+at earth
+hapi F=champ_magnetic_field_intensity_nt
+field champ_magnetic_field_intensity_nt champ_magnetic_field_intensity_nt inverse-square em nT 86400 0.0 0.0
+
+# ── CHAMP Neutraldichte (diffusion — density kg/m3, 10 s, defunct 2000-2010) ──
+accepted https://vires.services/hapi/data?id=CH_OPER_DNS_ACC_2_&start=2010-09-04T20:00:00Z&stop=2010-09-04T20:59:59Z&parameters=density&format=json
+# title: CHAMP Akzelerometer Neutraldichte — thermosphärische Massendichte density (kg/m3), diffusion; Füllwert inf (anomal) wird von is_finite gefiltert
+url https://vires.services/hapi/data?id=CH_OPER_DNS_ACC_2_&start=2010-09-04T20:00:00Z&stop=2010-09-04T20:59:59Z&parameters=density&format=json
+ttl 86400
+at earth
+hapi density=champ_neutral_density_kgm3
+field champ_neutral_density_kgm3 champ_neutral_density_kgm3 gaussian-inverse-square diffusion kg/m3 86400 0.0 0.0
+
+# ── CHAMP Querwind (advective — crosswind m/s, 10 s, defunct 2000-2010) ──
+accepted https://vires.services/hapi/data?id=CH_OPER_WND_ACC_2_&start=2010-09-04T20:00:00Z&stop=2010-09-04T20:59:59Z&parameters=crosswind&format=json
+# title: CHAMP Querwind-Magnitude crosswind (m/s, Metadaten-Unit fälschlich kg/m3), advective; Füllwert 9.99e+32 endlich (validity_flag beachten)
+url https://vires.services/hapi/data?id=CH_OPER_WND_ACC_2_&start=2010-09-04T20:00:00Z&stop=2010-09-04T20:59:59Z&parameters=crosswind&format=json
+ttl 86400
+at earth
+hapi crosswind=champ_crosswind_ms
+field champ_crosswind_ms champ_crosswind_ms gaussian-inverse-square advective m/s 86400 0.0 0.0
+
+# ── CHAMP GPS-TEC (em — Absolute_VTEC TECU, 2 Hz, defunct 2000-2010) ──
+accepted https://vires.services/hapi/data?id=CH_OPER_TEC_TMS_2F&start=2010-09-03T20:00:00Z&stop=2010-09-03T20:59:59Z&parameters=Absolute_VTEC&format=json
+# title: CHAMP GPS-Radio-Okkultation — absolutes vertikales TEC Absolute_VTEC (TECU), em
+url https://vires.services/hapi/data?id=CH_OPER_TEC_TMS_2F&start=2010-09-03T20:00:00Z&stop=2010-09-03T20:59:59Z&parameters=Absolute_VTEC&format=json
+ttl 86400
+at earth
+hapi Absolute_VTEC=champ_absolute_vtec_tecu
+field champ_absolute_vtec_tecu champ_absolute_vtec_tecu inverse-square em TECU 86400 0.0 0.0
+
+# ── CryoSat Magnetometer (em — F nT, 1 Hz, aktiv bis 2026-07-31) ──
+accepted https://vires.services/hapi/data?id=CS_OPER_MAG&start=2026-07-31T00:00:00Z&stop=2026-07-31T23:59:59Z&parameters=F&format=json
+# title: CryoSat FGM Magnetometer — skalare B-Feld-Intensität F (nT), em; aktiv, ~2 Wochen Datenlatenz
+url https://vires.services/hapi/data?id=CS_OPER_MAG&start=2026-07-31T00:00:00Z&stop=2026-07-31T23:59:59Z&parameters=F&format=json
+ttl 3600
+at earth
+hapi F=cryosat_magnetic_field_intensity_nt
+field cryosat_magnetic_field_intensity_nt cryosat_magnetic_field_intensity_nt inverse-square em nT 3600 0.0 0.0
+
+# ── GOCE Magnetometer (em — F nT, defunct 2009-2013) ──
+accepted https://vires.services/hapi/data?id=GO_MAG_ACAL_CORR&start=2013-09-30T00:00:00Z&stop=2013-09-30T00:59:59Z&parameters=F&format=json
+# title: GOCE Fluxgate-Magnetometer kalibriert — skalare B-Feld-Intensität F (nT), em
+url https://vires.services/hapi/data?id=GO_MAG_ACAL_CORR&start=2013-09-30T00:00:00Z&stop=2013-09-30T00:59:59Z&parameters=F&format=json
+ttl 86400
+at earth
+hapi F=goce_magnetic_field_intensity_nt
+field goce_magnetic_field_intensity_nt goce_magnetic_field_intensity_nt inverse-square em nT 86400 0.0 0.0
+
+# ── GRACE-A Neutraldichte (diffusion — density kg/m3, 10 s, defunct 2002-2017) ──
+accepted https://vires.services/hapi/data?id=GR_OPER_DNS1ACC_2_&start=2017-10-31T20:00:00Z&stop=2017-10-31T20:59:59Z&parameters=density&format=json
+# title: GRACE-A Akzelerometer Neutraldichte — thermosphärische Massendichte density (kg/m3), diffusion
+url https://vires.services/hapi/data?id=GR_OPER_DNS1ACC_2_&start=2017-10-31T20:00:00Z&stop=2017-10-31T20:59:59Z&parameters=density&format=json
+ttl 86400
+at earth
+hapi density=gracea_neutral_density_kgm3
+field gracea_neutral_density_kgm3 gracea_neutral_density_kgm3 gaussian-inverse-square diffusion kg/m3 86400 0.0 0.0
+
+# ── GRACE-FO KBR (gravity — Distance m + diffusion — Absolute_Ne 1/cm3, 2018-2024) ──
+accepted https://vires.services/hapi/data?id=GF_OPER_NE__KBR_2F&start=2024-11-17T20:00:00Z&stop=2024-11-17T20:59:59Z&parameters=Distance,Absolute_Ne&format=json
+# title: GRACE-FO K-Band-Ranging — Satellitenabstand Distance (m, gravity) + Elektronendichte Absolute_Ne (diffusion)
+url https://vires.services/hapi/data?id=GF_OPER_NE__KBR_2F&start=2024-11-17T20:00:00Z&stop=2024-11-17T20:59:59Z&parameters=Distance,Absolute_Ne&format=json
+ttl 86400
+at earth
+hapi Distance=gracefo_intersatellite_range_m Absolute_Ne=gracefo_electron_density_cm3
+field gracefo_intersatellite_range_m gracefo_intersatellite_range_m inverse-square gravity m 86400 0.0 0.0
+field gracefo_electron_density_cm3 gracefo_electron_density_cm3 gaussian-inverse-square diffusion cm-3 86400 0.0 0.0
+
+# ════════════════════════════════════════════════════════════════
+# ZUSAMMENFASSUNG
+# ════════════════════════════════════════════════════════════════
+# 174 Datasets enumiert. Kraft-Verteilung der akzeptierten Messkanäle:
+#   em (Magnetometer + GPS-TEC)      ~27  (CH_ME_MAG, CS/GO/GRACE/GRACE-FO/GF-MAG, TEC-Familien)
+#   diffusion (Neutral-/Plasma-Dichte) ~15 (DNS-Familien, EFI Ne, KBR Ne)
+#   thermal (Elektronen-/Neutral-Temp)  (EFI T_elec; DNS alternativ thermal)
+#   advective (Querwind)             ~7   (WND-Familien)
+#   gravity (KBR-Satellitenabstand)  2    (GR/GF_OPER_NE__KBR_2F)
+#   electric (E-Feld/Ströme)         bereits integriert (EFI/FAC) + Kandidaten (TCT, IDM, PPIA, IPD)
+# Decline (Force Gate / kein Direktmaß): AEJ 30, PC1 18, MITA 12, ULF 9, AOB 6, MOD 6,
+#   EEF 3, IBI 3, NIX 1, TIX 1, MM-Ephemeriden 2 — Modell-/Index-/Flag-/Ereignis-Produkte.
+# Block-Drafts: 8 (CHAMP 4, CryoSat 1, GOCE 1, GRACE 1, GRACE-FO 1 = em/diffusion/advective/gravity).
+# Kein Aeolus-Winddataset im Katalog (s. grind_esa_full.φ). Position data-carried
+# (Latitude/Longitude/Radius) vorhanden, aber Hapi-Extract nutzt derzeit Frame (at earth).
+# 0 honored: kein einziger decline-Kandidat wurde als Messwert dargestellt.

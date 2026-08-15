@@ -1,0 +1,301 @@
+# grind arcgis deep (2026-08-15) — 620 datasets, 47 keywords
+# Quelle: opendata.arcgis.com /api/v3/datasets (JSON:API page[size]=20, page[number]=1 UND 2).
+# 47 Keywords (erster Lauf hatte 22; alle neu: wave height, wind speed, uv index, ozone, glacier,
+# water quality, sea surface temperature, ocean current, chlorophyll, turbidity, precipitation,
+# snow water equivalent, ground motion, strong motion, fire detection, drought, evapotranspiration,
+# groundwater, water temperature, ice extent, permafrost, pollen, lightning detection,
+# solar radiation, total electron content, geomagnetic observatory, tilt, strain, displacement,
+# borehole, reservoir level, dam, spillway, flood gauge, coral bleaching, whale tracking,
+# shark detection, animal tracking, drifting buoy, wave buoy, met mast, anemometer, hygrometer,
+# barometer, seismometer network, strong-motion station, gps time series).
+# 711 rohe FeatureService-Treffer, 620 nach URL-Dedup UND Abgleich gegen grind_arcgis_index.φ
+# (22 Überschneidungen entfernt). 358 eindeutige FeatureServices mit Feld-Schema enumeriert.
+# Jeder neue Service wurde mit ?where=1%3D1&outFields=*&resultRecordCount=2&f=json geprobt.
+# Block-Drafts folgen der SO2-ArcGIS-Vorlage (sources.φ: f=geojson, map features, properties.<feld>,
+# field <pfad> <name> <kernel> <force> <unit> <tau> <abs> <adv>). Force je Feld, Frame `at earth`.
+
+# ── Keyword-Ausbeute (FeatureService-Treffer, Seite 1+2, nach URL-Dedup) ──
+# glacier 35 | whale tracking 28 | ozone 24 | anemometer 22 | wave height 21 | strain 21
+# spillway 21 | shark detection 21 | drifting buoy 21 | animal tracking 20 | uv index 19
+# dam 19 | water quality 18 | met mast 18 | displacement 18 | strong motion 17
+# seismometer network 17 | reservoir level 17 | ground motion 17 | groundwater 16 | flood gauge 16
+# borehole 16 | water temperature 15 | ice extent 14 | barometer 14 | tilt 13 | gps time series 13
+# wave buoy 11 | turbidity 11 | drought 11 | wind speed 10 | total electron content 9
+# sea surface temperature 9 | precipitation 9 | geomagnetic observatory 9 | permafrost 8
+# ocean current 8 | pollen 6 | hygrometer 6 | chlorophyll 6 | lightning detection 5
+# strong-motion station 4 | evapotranspiration 4 | coral bleaching 3 | solar radiation 1
+# fire detection 1 | snow water equivalent 0
+# (0 = leere Seiten, Keyword nach 2 leeren Seiten abgebrochen)
+
+# ── Neue Hosts (44, nicht in ArcGIS-Standard-farms services1-9.arcgis.com) ──
+# coast.noaa.gov | atlas.marine.ie | geospatial.mpi.govt.nz | gisdata.in.gov | gis.idwr.idaho.gov
+# hosting.wsapi.cloud.bom.gov.au | ukair.maps.rcdo.co.uk | maps.commerce.alaska.gov
+# mapservices.gov.yk.ca | gis.hbrc.govt.nz | gis.lsrca.on.ca | maps.kamloops.ca
+# mapservices.weather.noaa.gov | services.twdb.texas.gov | gisweb.unr.edu | maps.rcmrd.org
+# pub.sagis.org | www45.swfwmd.state.fl.us | www.portlandmaps.com | wslgis.water.co.nz
+# arcgis.water.nv.gov | dsfmportal.dcr.virginia.gov | geospatial.nctcog.org | gis.charlottenc.gov
+# gis.crawfordcountypa.net | gis.orangecountyva.gov | maps.deschutes.org | maps.langleycity.ca
+# maps.roundrocktexas.gov | mapviewer.lynchburgva.gov | maps.palmettoeoc.net
+
+# ── Block-Drafts ──
+
+accepted https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/NOAA_METAR_current_wind_speed_direction_v1/FeatureServer/1
+# title: NOAA METAR buoy wind/wave/temperature (Living Atlas) | host Utah PLPCO | keyword wave buoy
+# note: NOAA-METAR-Bojen: signifikante Wellenhöhe, Wind, Luft-/Wassertemperatur, Luftdruck. Position in Attributen LATITUDE/LONGITUDE.
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/NOAA_METAR_current_wind_speed_direction_v1/FeatureServer/1/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 300
+at earth
+map features
+lat properties.LATITUDE
+lon properties.LONGITUDE
+field properties.WAVE_HEIGHT noaa_metar_wave_height_m gaussian-inverse-square gravity m 6.0 0.0 0.0
+field properties.WIND_SPEED noaa_metar_wind_speed_ms gaussian-inverse-square advective m/s 6.0 0.0 0.0
+field properties.WATER_TEMP noaa_metar_water_temp_c gaussian-inverse-square thermal °C 6.0 0.0 0.0
+field properties.AIR_TEMP noaa_metar_air_temp_c gaussian-inverse-square thermal °C 6.0 0.0 0.0
+field properties.ATM_PRESSURE noaa_metar_mslp_hpa gaussian-inverse-square acoustic hPa 6.0 0.0 0.0
+
+accepted https://services.arcgis.com/aZwefmpBtT18PppX/arcgis/rest/services/lightning/FeatureServer/0
+# title: Lightning strikes with peak current (Vaisala UALF) | host  | keyword lightning detection
+# note: Blitzereignisse mit Peakstrom (kA) und Georeferenz (x=lon, y=lat, wkid 4326). Position in Attributen x/y.
+url https://services.arcgis.com/aZwefmpBtT18PppX/arcgis/rest/services/lightning/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 60
+at earth
+map features
+lat properties.y
+lon properties.x
+field properties.peakcurrent lightning_peak_current_ka inverse-square em kA 6.0 0.0 0.0
+
+accepted https://services1.arcgis.com/qr14biwnHA6Vis6l/arcgis/rest/services/GCOOS_Water_Temperature_2008_2016/FeatureServer/0
+# title: GCOOS water temperature observations 2008-2017 | host Texas A&M | keyword water temperature
+# note: Golf-von-Mexiko-Beobachtungsnetz (GCOOS): Wassertemperatur je Plattform. Position in Attributen lat/lon.
+url https://services1.arcgis.com/qr14biwnHA6Vis6l/arcgis/rest/services/GCOOS_Water_Temperature_2008_2016/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 3600
+at earth
+map features
+lat properties.lat
+lon properties.lon
+field properties.temperature gcoos_water_temp_c gaussian-inverse-square thermal °C 6.0 0.0 0.0
+
+accepted https://services1.arcgis.com/qr14biwnHA6Vis6l/arcgis/rest/services/Chlorophyll_a/FeatureServer/0
+# title: Chlorophyll-a observation points (WQP) | host Texas A&M | keyword chlorophyll
+# note: Chlorophyll-a-Messwerte (resultmeasurevalue_ug_l) je Probe. Position in Attributen latitude/longitude.
+url https://services1.arcgis.com/qr14biwnHA6Vis6l/arcgis/rest/services/Chlorophyll_a/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 86400
+at earth
+map features
+lat properties.latitude
+lon properties.longitude
+field properties.resultmeasurevalue_ug_l chlorophyll_a_ug_l erfc diffusion µg/L 6.0 0.0 0.0
+
+accepted https://services.arcgis.com/aa38u6OgfNoCkTJ6/arcgis/rest/services/CDEC_Reservoir_Levels_Daily_Updated_Points/FeatureServer/0
+# title: CDEC reservoir levels (daily updated) | host  | keyword reservoir level
+# note: Kalifornische Speicher (Storage acre-ft, Reservoir_Elevation ft, Outflow/Inflow cfs). Position in Geometry (kein lat/lon-Attribut).
+url https://services.arcgis.com/aa38u6OgfNoCkTJ6/arcgis/rest/services/CDEC_Reservoir_Levels_Daily_Updated_Points/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 3600
+at earth
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.Storage cdec_reservoir_storage_acreft gaussian-inverse-square gravity acre-ft 6.0 0.0 0.0
+field properties.Reservoir_Elevation cdec_reservoir_elevation_ft gaussian-inverse-square gravity ft 6.0 0.0 0.0
+field properties.Outflow cdec_reservoir_outflow_cfs gaussian-inverse-square advective ft³/s 6.0 0.0 0.0
+field properties.Inflow cdec_reservoir_inflow_cfs gaussian-inverse-square advective ft³/s 6.0 0.0 0.0
+
+accepted https://services.arcgis.com/5UFHFK7ZmWoapZj1/arcgis/rest/services/Station(AFAD_KOERI)/FeatureServer/0
+# title: AFAD/KOERI strong-motion station records | host  | keyword strong-motion station
+# note: Starkbeben-Stationsmesswerte (PGA cm/s², PGV cm/s, PGD cm, Spektralbeschleunigung SA). Position in Attributen Latitude/Longitude.
+url https://services.arcgis.com/5UFHFK7ZmWoapZj1/arcgis/rest/services/Station(AFAD_KOERI)/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 3600
+at earth
+map features
+lat properties.Latitude
+lon properties.Longitude
+field properties.EW_PGA_cms2 sm_pga_ew_cms2 gaussian-inverse-square seismic-body cm/s² 6.0 0.0 0.0
+field properties.NS_PGA_cms2 sm_pga_ns_cms2 gaussian-inverse-square seismic-body cm/s² 6.0 0.0 0.0
+field properties.EW_PGV_cms sm_pgv_ew_cms gaussian-inverse-square seismic-body cm/s 6.0 0.0 0.0
+field properties.NS_PGV_cms sm_pgv_ns_cms gaussian-inverse-square seismic-body cm/s 6.0 0.0 0.0
+
+accepted https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/Ozone_AOT40_Fixed_Measurements_2024/FeatureServer/0
+# title: UK-AIR ozone AOT40 fixed measurements | host RCDO | keyword ozone
+# note: Ozon-AOT40-Messwerte (value) je Station. Position in Geometry (easting/northing = OSGB, nicht lat/lon).
+url https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/Ozone_AOT40_Fixed_Measurements_2024/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 86400
+at earth
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.value ozone_aot40_ugm3h erfc diffusion µg/m³·h 6.0 0.0 0.0
+
+accepted https://services4.arcgis.com/MMybESiUA82igqDG/arcgis/rest/services/Turbidity_is_at_least_7_9/FeatureServer/0
+# title: Water quality: turbidity, temperature, pH, DO, conductivity | host  | keyword turbidity
+# note: Gewässergüte-Proben (Turbidity NTU, Temperatur, pH, gelöster O2, Leitfähigkeit). Position in Attributen Latitude/Longitude.
+url https://services4.arcgis.com/MMybESiUA82igqDG/arcgis/rest/services/Turbidity_is_at_least_7_9/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 86400
+at earth
+map features
+lat properties.Latitude
+lon properties.Longitude
+field properties.Turbidity_NTU_ turbidity_ntu erfc diffusion NTU 6.0 0.0 0.0
+field properties.Temperature_degrees_F_ water_temp_f gaussian-inverse-square thermal °F 6.0 0.0 0.0
+field properties.pH water_ph erfc diffusion pH 6.0 0.0 0.0
+field properties.Dissolved_Oxygen_mg_l_ dissolved_oxygen_mgl erfc diffusion mg/L 6.0 0.0 0.0
+
+accepted https://services6.arcgis.com/cGI8zn9Oo7U9dF6z/arcgis/rest/services/WVDEP_ESA_Data_Guyandotte_and_BigSandy_Crayfish/FeatureServer/1
+# title: WVDEP water quality (turbidity, temperature, pH, DO) | host  | keyword turbidity
+# note: WV-DEP-Feldproben: Lab- und EXO-Turbidität, Temperatur, pH, gelöster O2. Position in Attributen Latitude/Longitude.
+url https://services6.arcgis.com/cGI8zn9Oo7U9dF6z/arcgis/rest/services/WVDEP_ESA_Data_Guyandotte_and_BigSandy_Crayfish/FeatureServer/1/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 86400
+at earth
+map features
+lat properties.Latitude
+lon properties.Longitude
+field properties.Turbidity_EXO turbidity_ntu_exo erfc diffusion NTU 6.0 0.0 0.0
+field properties.Turbidity_Lab turbidity_ntu_lab erfc diffusion NTU 6.0 0.0 0.0
+field properties.Temperature_F water_temp_f gaussian-inverse-square thermal °F 6.0 0.0 0.0
+field properties.Dissolved_Oxygen_F dissolved_oxygen_mgl erfc diffusion mg/L 6.0 0.0 0.0
+
+accepted https://services.arcgis.com/wjcPoefzjpzCgffS/arcgis/rest/services/Environment_Canada_Wind_Speed_and_Direction/FeatureServer/0
+# title: Environment Canada wind/temperature/humidity | host  | keyword wind speed
+# note: ECCC-Stationen: Windgeschwindigkeit, Temperatur, Taupunkt, Feuchte. Position in Attributen Latitude/Longitude.
+url https://services.arcgis.com/wjcPoefzjpzCgffS/arcgis/rest/services/Environment_Canada_Wind_Speed_and_Direction/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 300
+at earth
+map features
+lat properties.Latitude
+lon properties.Longitude
+field properties.WindSpeed_kmh wind_speed_kmh gaussian-inverse-square advective km/h 6.0 0.0 0.0
+field properties.Temperature_C air_temperature_c gaussian-inverse-square thermal °C 6.0 0.0 0.0
+field properties.Humidity_Percent humidity_pct erfc diffusion % 6.0 0.0 0.0
+field properties.Dewpoint dewpoint_c gaussian-inverse-square thermal °C 6.0 0.0 0.0
+
+accepted https://services.arcgis.com/v400IkDOw1ad7Yad/arcgis/rest/services/Current_Wind_Speed/FeatureServer/0
+# title: Current wind speed observations | host  | keyword wind speed
+# note: Aktuelle Windmessungen je Station (wind_speed, wind_gust). Position in Geometry (latitude/longitude-Felder teils leer).
+url https://services.arcgis.com/v400IkDOw1ad7Yad/arcgis/rest/services/Current_Wind_Speed/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 300
+at earth
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.wind_speed wind_speed_ms gaussian-inverse-square advective m/s 6.0 0.0 0.0
+field properties.wind_gust wind_gust_ms gaussian-inverse-square advective m/s 6.0 0.0 0.0
+
+accepted https://services1.arcgis.com/SuEt4jqH31FZKNYY/arcgis/rest/services/Borehole_Base/FeatureServer/0
+# title: MMSD borehole groundwater levels | host MMSD | keyword borehole
+# note: Grundwasserbohrungen: Tiefe bis Wasser (DEPTH_TO_WATER) und Grundwasserstand (WATER_TABLE_ELEVATION_MSL). Position in Geometry.
+url https://services1.arcgis.com/SuEt4jqH31FZKNYY/arcgis/rest/services/Borehole_Base/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 86400
+at earth
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.DEPTH_TO_WATER groundwater_depth_to_water_ft gaussian-inverse-square gravity ft 6.0 0.0 0.0
+field properties.WATER_TABLE_ELEVATION_MSL groundwater_table_elevation_ft gaussian-inverse-square gravity ft 6.0 0.0 0.0
+
+accepted https://services.arcgis.com/xYjDUN35YwdCEcMm/arcgis/rest/services/Tilt_sensors/FeatureServer/2
+# title: Tilt sensors (finalX/finalY tilt values) | host  | keyword tilt
+# note: Neigungssensoren (finalX/finalY Kippwert). Position in Geometry (kein lat/lon-Attribut).
+url https://services.arcgis.com/xYjDUN35YwdCEcMm/arcgis/rest/services/Tilt_sensors/FeatureServer/2/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 300
+at earth
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.finalX tilt_final_x gaussian-inverse-square gravity ° 6.0 0.0 0.0
+field properties.finalY tilt_final_y gaussian-inverse-square gravity ° 6.0 0.0 0.0
+
+accepted https://services1.arcgis.com/gGHDlz6USftL5Pau/arcgis/rest/services/CampSwift2014_UAV_meteorology/FeatureServer/0
+# title: UAV meteorology (wind, temperature, humidity) | host USFS Pacific NW | keyword anemometer
+# note: UAV-Messflug (Camp Swift Feuerexperiment 2014): Wind, Temperatur, Feuchte, Höhe. Position in Attributen Latitude/Longitude.
+url https://services1.arcgis.com/gGHDlz6USftL5Pau/arcgis/rest/services/CampSwift2014_UAV_meteorology/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 86400
+at earth
+map features
+lat properties.Latitude
+lon properties.Longitude
+field properties.Temperatur uav_air_temp_c gaussian-inverse-square thermal °C 6.0 0.0 0.0
+field properties.WindSpeed_ uav_wind_speed_ms gaussian-inverse-square advective m/s 6.0 0.0 0.0
+field properties.Humidity_P uav_humidity_pct erfc diffusion % 6.0 0.0 0.0
+
+accepted https://services1.arcgis.com/qN3V93cYGMKQCOxL/arcgis/rest/services/jefferson_weather/FeatureServer/0
+# title: Thomas Jefferson weather diary (temp/barometer/hygrometer) | host Harvard CGA | keyword hygrometer
+# note: Historische Wetteraufzeichnungen (Celsius, Barometer, Hygrometer, Wind, Niederschlag). Position in Attributen Lat/Long.
+url https://services1.arcgis.com/qN3V93cYGMKQCOxL/arcgis/rest/services/jefferson_weather/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 86400
+at earth
+map features
+lat properties.Lat
+lon properties.Long
+field properties.Celsius_Temp jefferson_air_temp_c gaussian-inverse-square thermal °C 6.0 0.0 0.0
+
+# ── Candidates (physisch plausibel, Klärung offen) ──
+candidate https://services1.arcgis.com/ixD30sld6F8MQ7V5/arcgis/rest/services/dailyDroughtReservoirData2_ESRI/FeatureServer/0
+# title: USGS daily reservoir level | keyword reservoir level — DataValue ist String (" 266505"), Lat/Lon vorhanden; braucht String→Zahl-Parser.
+candidate https://services2.arcgis.com/sJvSsHKKEOKRemAr/arcgis/rest/services/PKS_Web/FeatureServer/0
+# title: Tilt Meter (H_Prec_Obs/V_Prec_Obs) | keyword tilt — Präzisions-Tiltmessungen, Wertfelder Double, Position GlobalLati/GlobalLong; Messwert-Bedeutung prüfen.
+candidate https://services6.arcgis.com/vuIpgeTDAwXxsHWB/arcgis/rest/services/Borehole_No/FeatureServer/0
+# title: Borehole groundwater depth (GWD_BGL) | keyword borehole — GWD_BGL (Grundwasserstand), BGL/BD; Position E/N (projiziert), ggf. geometry.
+candidate https://services5.arcgis.com/ilvOamkQCWQM5KB8/arcgis/rest/services/Chlorophyl_tbl/FeatureServer/3
+# title: URI WatershedWatch chlorophyll tbl | keyword chlorophyll — concentration (ug/l) je Probe, aber Tabelle ohne Koordinaten (location = Name). Position fehlt.
+
+# ── Decline / Dead / Parser-def ──
+decline https://services.arcgis.com/IZtlGBUe4KTzLOl4/arcgis/rest/services/ocean_currents/FeatureServer/0
+# note: ocean currents = Temp/Name nur, kein Messwert (Registry).
+decline https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/Desertification/FeatureServer/4
+# note: Potential Evapotranspiration = Raster-Klassifikationspolygon (GRID_CODE/CLASS).
+decline https://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/Solar_Radiation_HotSpots/FeatureServer/0
+# note: Solar Radiation HotSpots = Getis-Ord-Hotspot-Polygon (abgeleiteter Index).
+decline https://services4.arcgis.com/OA3oWYqlqH5rRDWJ/arcgis/rest/services/Enriched_Coral_Bleaching_Heat_Stress___Areas/FeatureServer/0
+# note: Coral Bleaching Heat Stress = angereichertes Polygon (sst/ssta/dhw als String, abgeleitetes Indexprodukt).
+decline https://services8.arcgis.com/qhgIImgl4UmEEyAS/arcgis/rest/services/NOAA_UV_Index/FeatureServer/0
+# note: NOAA UV Index = Prognose-Index (forecast_date, uv_index), kein gemessener Strahlungswert → Forecast.
+decline https://services7.arcgis.com/6o0M9YyJcHjZF5MP/arcgis/rest/services/Fire_Detection/FeatureServer/0
+# note: Fire Detection = Brandpunkte (Lon/Lat/Satellite/YearDay), kein Messwert (keine FRP/Temperatur).
+decline https://services6.arcgis.com/Qptn479QktK11k72/arcgis/rest/services/Pollen_Monitoring_in_the_East_Riding_of_Yorkshire/FeatureServer/2
+# note: Pollen Monitoring = Fallen-Registry (POLLEN-Feld ist Text "USE TO ESTABLISH..."), kein Zählwert.
+decline https://services.arcgis.com/ak2bo87wLfUpMrt1/arcgis/rest/services/Ragweed_Pollen_FMM/FeatureServer/0
+# note: Ragweed Pollen FMM = Klimaindikator (Change_in_Length_of_Ragweed_Pol, abgeleitet).
+decline https://services7.arcgis.com/zIRtsoI7e4HNAE5B/arcgis/rest/services/GMT_tilt_measures/FeatureServer/0
+# note: GMT tilt measures = Axis1/2/3 + Temp, aber kein Positionsfeld/Geometrie (positionless).
+decline https://services1.arcgis.com/Hp6G80Pky0om7QvQ/arcgis/rest/services/AG_(strong_motion)/FeatureServer/0
+# note: strong motion (lschleicher) = Stations-/Kanal-Metadaten (SensorDesc, Scale, SampleRate), kein gemessener PGA-Wert.
+decline https://services1.arcgis.com/0MSEUqKaxRlEPj5g/arcgis/rest/services/CA_Precipitation/FeatureServer/0
+# note: CA Precipitation = Jahres-Niederschlagssummen je Wasserjahr (statisch, Wasserjahr-Aggregat).
+decline https://services1.arcgis.com/0g8o874l5un2eDgz/arcgis/rest/services/Metropolitan_Area_Network/FeatureServer/0
+# note: Metropolitan Area Network = seismisches Netz-Registry (NAME/DESCRIPTIO/TOWN), kein Messwert.
+decline https://services.arcgis.com/xeMpV7tU1t4KD3Ei/arcgis/rest/services/hazard_seismic_ground_shaking_PGA_09g/FeatureServer/108
+# note: Earthquake PGA/PGV Hazard Extent = Gefährdungszonen-Polygon (Szenario).
+decline https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/RSSTFall/FeatureServer/0
+# note: Mean Sea Surface Temperature contours = saisonale Mittelwert-Isolinien (Klimatologie).
+decline https://coast.noaa.gov/arcgis/rest/services/Hosted/OffshoreWindSpeedDirection/FeatureServer/0
+# note: Offshore Wind Speed (NOAA) = Jahres-Hindcast (speedan/directionan, monatliche Zusammenfassung) → Reanalysis.
+decline https://coast.noaa.gov/arcgis/rest/services/Hosted/SignificantWaveHeightDirection/FeatureServer/0
+# note: Significant Wave Height (NOAA) = Jahres-Hindcast (significantwaveheightannual) → Reanalysis.
+decline https://atlas.marine.ie/arcgis/rest/services/OceanFeatures/MapServer/17
+# note: Wave Buoy Sea Temperature (Marine Institute) = INSPIRE-Metadatenformat (observedProperty Text, kein Messwert-Feld).
+decline https://geospatial.mpi.govt.nz/portal/rest/services/Hosted/Fish_Species_Distribution_FSH/FeatureServer/36
+# note: Shark Annual Distribution (MPI NZ) = Artverbreitungs-Polygon, kein Messwert (position-only).
+decline https://services1.arcgis.com/SG0cDrMJLpxby4Ry/arcgis/rest/services/Parent_borehole/FeatureServer/0
+# note: Parent borehole = Brunnen-Registry (pump_types, owner, serial), kein Pegelstand.
+decline https://services1.arcgis.com/CD5mKowwN6nIaqd8/arcgis/rest/services/Tilt_redlinedemo/FeatureServer/0
+# note: Tilt redlinedemo = HOLC-Redlining-Demo, kein Neigungs-Messwert.
+decline https://services.arcgis.com/xYjDUN35YwdCEcMm/arcgis/rest/services/Turbidity/FeatureServer/0
+# note: Turbidity (Year/Mean Values) = Jahresmittel je Region, kein Einzelmesswert.
+decline https://services5.arcgis.com/XqaKEQIgV03geG0E/arcgis/rest/services/BGSS_2018_Turbidity/FeatureServer/0
+# note: BGSS 2018 Turbidity = Turbidity als String ("40_JTU"), x/y projiziert (nicht lat/lon).
+decline https://services1.arcgis.com/OAlKhiPBQkgw0MI7/arcgis/rest/services/Plain_Strain/FeatureServer/0
+# note: Plain Strain 2022 = Pipeline-Dehnung je Schweißnaht (minimum_va/maximum_va) — Messwert real, aber einmaliger Survey (statisch, TTL unklar); Decline Survey.
+decline https://services6.arcgis.com/8ktpizUKdcShI4lJ/arcgis/rest/services/400m%20from%20strain%20stations/FeatureServer/0
+# note: 400m from strain stations = Buffer-Polygon.
+decline https://hosting.wsapi.cloud.bom.gov.au/arcgis/rest/services/flood/National_Flood_Gauge_Network/FeatureServer/0
+# note: BOM Flood Watch Catchments = Einzugsgebiets-Polygon (aac, dist_name), kein Pegelmesswert.
+decline https://gisdata.in.gov/server/rest/services/Hosted/DAMS_DNR_WATER_IN_RO1/FeatureServer/0
+# note: IDNR Dam Locations = Staudamm-Registry (Höhe/Oberfläche), kein Pegel-/Messwert.
+decline https://gisdata.in.gov/server/rest/services/Hosted/Indiana_Water_Balance_Network_2017/FeatureServer/0
+# note: Indiana Water Balance Network = Stationsliste (weburl, soiltextur), kein Messwert.
+decline https://services1.arcgis.com/FjPcSmEFuDYlIdKC/arcgis/rest/services/Anemometer/FeatureServer/0
+# note: CT DEEP Anemometer = Stationsliste (Airport/WBAN/AERMOD-Metadaten), kein Windwert.
+decline https://services1.arcgis.com/FNjlrOFR0aGJ71Tg/arcgis/rest/services/Meteorological_Stations/FeatureServer/0
+# note: Michigan Meteorological Stations = Stations-Registry (AnemometerFt, Elevation), kein Messwert.
+decline https://services1.arcgis.com/0BLakgVcDpWpuh4i/arcgis/rest/services/Glacier_History_1988_2020/FeatureServer/1
+# note: Glacier History 1988-2020 = Gletscher-Inventar-Polygon (Area), statische Geometrie (s.UQmaps).

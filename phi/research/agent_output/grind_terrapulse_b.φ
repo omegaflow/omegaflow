@@ -1,0 +1,528 @@
+# grind terrapulse_b (2026-08-15)
+# TerraPulse-Katalog Teil 2 — Probe + Klassifikation.
+# Eingabe terrapulse_catalog.φ: die `candidate`-Zeilen liegen in Zeilen 4–208,
+# NICHT 481–943 (481–943 enthält ausschließlich decline-Zeilen, bereits klassifiziert).
+# Verarbeitet: 103 candidate-Zeilen = 99 eindeutige URLs.
+# Dispositionen: accepted, key-needed, parser-def, dead, decline, bereit live, bereit klassifiziert.
+
+# ── ACCEPTED ────────────────────────────────────────────────────────────
+
+accepted https://ssd-api.jpl.nasa.gov/fireball.api
+# title: CNEOS Bolide Fireballs — NASA/JPL Fireball Data API (em)
+url https://ssd-api.jpl.nasa.gov/fireball.api
+ttl 3600
+on earth 0 0 0
+map data
+lat 3
+lon 5
+field 1 geosphere_fireball_energy_kt inverse-square em kt 3600 0.0 0.0
+field 2 geosphere_fireball_impact_energy_kt inverse-square em kt 3600 0.0 0.0
+note lat/lon liegen als Betrag mit N/S (Spalte 4) und E/W (Spalte 6) getrennt — Vorzeichenfaltung nicht im map-Extract; Verifier prüfen. energy=Spalte1, impact-e=Spalte2.
+
+accepted https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_daily_mlo.csv
+# title: NOAA Mauna Loa daily CO2 (diffusion, headerless CSV)
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_daily_mlo.csv
+ttl 86400
+format csv
+on earth 19.5362 -155.5763 0
+rows
+field 4 atmosphere_co2_mlo_ppm gaussian-inverse-square diffusion ppm 8640.0 0.0 0.0
+note headerless (year,month,day,decimal,co2); Spalte 4 = CO2 ppm. rows+field 4 ergibt die Tagesreihe 1974–2026 (~19k Oszillatoren) an Mauna Loa. `lastrow` scheitert: text_last_col matcht Spaltenname, kein Header vorhanden.
+
+# ── KEY-NEEDED ──────────────────────────────────────────────────────────
+
+key-needed api-key
+url https://api.nasa.gov/DONKI/FLR
+# title: NASA DONKI Solar Flares (FLR catalog)
+note 403 API_KEY_MISSING — freier NASA-API-Key nötig ({NASA_API_KEY}). em echt (Sonnenflare-Position + Klasse).
+
+key-needed api-key
+url https://api.nasa.gov/DONKI/CME
+# title: NASA DONKI Coronal Mass Ejections (CME catalog)
+note 403 API_KEY_MISSING — freier NASA-API-Key nötig ({NASA_API_KEY}). em echt.
+
+key-needed api-key
+url https://api.nasa.gov/DONKI
+# title: NASA DONKI Space Weather
+note 403 API_KEY_MISSING — freier NASA-API-Key nötig ({NASA_API_KEY}).
+
+# ── PARSER-DEF ──────────────────────────────────────────────────────────
+
+parser-def value-position-split
+url https://data.epa.gov/efservice/ERM_RESULT/
+# title: EPA RadNet (Environmental Radiation Monitoring)
+note em echt (Gamma-Radioaktivität, result_amount in pCi/L, result_in_si in Bq/L). Messwert liegt in ERM_RESULT (JSON via /rows/0:n/JSON), Position in separater Stationstabelle (ERM_SITE 404; Join-Schlüssel nicht direkt). Relationaler Split — Fanout-Kandidat, Route unklar.
+
+parser-def iaga-text
+url https://geomag.usgs.gov/ws/data/
+# title: USGS Geomagnetism -- observatory 1-minute vector data
+note 200 nur mit id-Param (z. B. ?id=BOU&elements=H,D,Z,F); Antwort ist IAGA-2002-Text, kein JSON/CSV. em echt, aber INTERMAGNET (BGS HAPI) deckt dieselben Observatorien bereits live ab (sources.φ:830).
+
+parser-def catalog-no-point-position
+url https://gwosc.org/eventapi/jsonfull/allevents/
+# title: GWOSC Gravitational Wave Events
+note 200 JSON mit 671 Events (commonName, GPS, strain-Links) — Katalog/Register. Physik (mass_1_source, luminosity_distance, SNR) liegt erst im Per-Event-JSON ({jsonurl}); Sky-Lokalisierung ist probabilistische Karte, kein Punkt-RA/Dec. gravity echt, aber kein Punkt-Frame konsumierbar.
+
+parser-def xml-scalar
+url https://www.hamqsl.com/solarxml.php
+# title: HamQSL HF Propagation
+note 200 XML (solarflux 114, aindex, kindex, xray). solarflux ist echtes em (10,7-cm-Solarradiofluss), aber XML-Skalar — Parser hat nur XmlCount/Regex, kein XML-Skalar-Extract; aindex/kindex sind Aggregat-Indizes.
+
+# ── DEAD ────────────────────────────────────────────────────────────────
+
+dead 404
+url https://www.amsmeteors.org/members/api/open_api
+# title: American Meteor Society Fireballs
+note curl 404 "Unknown Function" — Endpoint weg.
+
+dead unreachable
+url https://explore.globalmeteornetwork.org/gmn_data_store
+# title: Global Meteor Network
+note curl 000 — Connect scheitert (nicht erreichbar).
+
+dead chart-endpoint
+url https://www.nmdb.eu/nest/draw_graph.php
+# title: NMDB Cosmic Ray Neutron Monitors
+note draw_graph.php ist ein Plot-Endpoint (kein Daten-Body); nmdb.eu/nest/ bereits als dead 404 klassifiziert.
+
+# NCEI hourly_precip-3240 Verzeichnis-Endpoints — alle 404 (53 eindeutige, 66 Kandidatenzeilen inkl. Duplikate 14/48).
+dead 404
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/01/
+# title: Hourly Precip 3240 01
+note 404 Not Found — Verzeichnis weg. Gleiches gilt für alle weiteren /NN/-Endpoints (02–51, 66, 67, 91).
+
+dead 404
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/02/
+# title: Hourly Precip 3240 02
+note 404 — wie /01/.
+
+dead 404
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/03/
+# title: Hourly Precip 3240 03
+note 404 — wie /01/.
+
+dead 404
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/04/
+# title: Hourly Precip 3240 04
+note 404 — wie /01/.
+
+dead 404
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/05/
+# title: Hourly Precip 3240 05
+note 404 — wie /01/.
+
+dead 404
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/06/
+# title: Hourly Precip 3240 06
+note 404 — wie /01/.
+
+dead 404
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/07/
+# title: Hourly Precip 3240 07
+note 404 — wie /01/.
+
+dead 404
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/08/
+# title: Hourly Precip 3240 08
+note 404 — wie /01/.
+
+dead 404
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/09/
+# title: Hourly Precip 3240 09
+note 404 — wie /01/.
+
+dead 404
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/10/
+# title: Hourly Precip 3240 10
+note 404 — wie /01/.
+
+dead 404
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/11/
+# title: Hourly Precip 3240 11
+note 404 — wie /01/.
+
+dead 404
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/12/
+# title: Hourly Precip 3240 12
+note 404 — wie /01/.
+
+dead 404
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/13/
+# title: Hourly Precip 3240 13
+note 404 — wie /01/.
+
+dead 404
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/14/
+# title: Hourly Precip 3240 14
+note 404 — wie /01/. (Kandidat doppelt in terrapulse_catalog.φ.)
+
+dead 404
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/15/
+# title: Hourly Precip 3240 15
+note 404 — wie /01/.
+
+dead 404
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/16/
+# title: Hourly Precip 3240 16
+note 404 — wie /01/.
+
+dead 404
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/17/
+# title: Hourly Precip 3240 17
+note 404 — wie /01/.
+
+dead 404
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/18/
+# title: Hourly Precip 3240 18
+note 404 — wie /01/.
+
+dead 404
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/19/
+# title: Hourly Precip 3240 19
+note 404 — wie /01/.
+
+dead 404
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/20/
+# title: Hourly Precip 3240 20
+note 404 — wie /01/.
+
+dead 404
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/21/
+# title: Hourly Precip 3240 21
+note 404 — wie /01/.
+
+dead 404
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/22/
+# title: Hourly Precip 3240 22
+note 404 — wie /01/.
+
+dead 404
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/23/
+# title: Hourly Precip 3240 23
+note 404 — wie /01/.
+
+dead 404
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/24/
+# title: Hourly Precip 3240 24
+note 404 — wie /01/.
+
+dead 404
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/25/
+# title: Hourly Precip 3240 25
+note 404 — wie /01/.
+
+dead 404
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/26/
+# title: Hourly Precip 3240 26
+note 404 — wie /01/.
+
+dead 404
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/27/
+# title: Hourly Precip 3240 27
+note 404 — wie /01/.
+
+dead 404
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/28/
+# title: Hourly Precip 3240 28
+note 404 — wie /01/.
+
+dead 404
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/29/
+# title: Hourly Precip 3240 29
+note 404 — wie /01/.
+
+dead 404
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/30/
+# title: Hourly Precip 3240 30
+note 404 — wie /01/.
+
+dead 404
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/31/
+# title: Hourly Precip 3240 31
+note 404 — wie /01/.
+
+dead 404
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/32/
+# title: Hourly Precip 3240 32
+note 404 — wie /01/.
+
+dead 404
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/33/
+# title: Hourly Precip 3240 33
+note 404 — wie /01/.
+
+dead 404
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/34/
+# title: Hourly Precip 3240 34
+note 404 — wie /01/.
+
+dead 404
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/35/
+# title: Hourly Precip 3240 35
+note 404 — wie /01/.
+
+dead 404
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/36/
+# title: Hourly Precip 3240 36
+note 404 — wie /01/.
+
+dead 404
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/37/
+# title: Hourly Precip 3240 37
+note 404 — wie /01/.
+
+dead 404
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/38/
+# title: Hourly Precip 3240 38
+note 404 — wie /01/.
+
+dead 404
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/39/
+# title: Hourly Precip 3240 39
+note 404 — wie /01/.
+
+dead 404
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/40/
+# title: Hourly Precip 3240 40
+note 404 — wie /01/.
+
+dead 404
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/41/
+# title: Hourly Precip 3240 41
+note 404 — wie /01/.
+
+dead 404
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/42/
+# title: Hourly Precip 3240 42
+note 404 — wie /01/.
+
+dead 404
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/43/
+# title: Hourly Precip 3240 43
+note 404 — wie /01/.
+
+dead 404
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/44/
+# title: Hourly Precip 3240 44
+note 404 — wie /01/.
+
+dead 404
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/45/
+# title: Hourly Precip 3240 45
+note 404 — wie /01/.
+
+dead 404
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/46/
+# title: Hourly Precip 3240 46
+note 404 — wie /01/.
+
+dead 404
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/47/
+# title: Hourly Precip 3240 47
+note 404 — wie /01/.
+
+dead 404
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/48/
+# title: Hourly Precip 3240 48
+note 404 — wie /01/. (Kandidat doppelt in terrapulse_catalog.φ.)
+
+dead 404
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/50/
+# title: Hourly Precip 3240 50
+note 404 — wie /01/.
+
+dead 404
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/51/
+# title: Hourly Precip 3240 51
+note 404 — wie /01/.
+
+dead 404
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/66/
+# title: Hourly Precip 3240 66
+note 404 — wie /01/.
+
+dead 404
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/67/
+# title: Hourly Precip 3240 67
+note 404 — wie /01/.
+
+dead 404
+url https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/91/
+# title: Hourly Precip 3240 91
+note 404 — wie /01/.
+
+# ── DECLINE (Force Gate) ────────────────────────────────────────────────
+
+decline satellite-scene-catalog
+url https://api.daac.asf.alaska.edu/services/search/param?platform=Sentinel-1&start=2026-01-01T00:00:00&output=geojson&maxResults=10
+# title: Satellite Radar Climate Measurements
+note 200 JSON, aber ASF-Suchkatalog = SAR-Szenen-Metadaten (absoluteOrbit, beamMode, centerLat/Lon), kein Messwert — abgeleitetes Satellitenprodukt.
+
+decline aggregate-statistics
+url https://api.worldbank.org/v2/
+# title: World Bank Climate
+note Weltbank-Indikatoren = Aggregat-Statistik ohne Position/Messwert.
+
+decline aggregate-statistics
+url https://data.worldbank.org
+# title: World Bank Energy Use per Capita (kg oil eq)
+note Aggregat-Statistik (Indikator je Land) — kein physikalischer Messwert.
+
+decline static-archive
+url https://data.nasa.gov/docs/legacy/meteorite_landings/Meteorite_Landings.csv
+# title: Observed Meteorite Falls
+note 200 CSV, statisches historisches Archiv (bis ~2013), kein Live-Feed.
+
+decline static-datafile
+url https://dataverse.harvard.edu/api/access/datafile/7502710
+# title: IceCube Astrophysical Neutrino Alerts (IceCat-1)
+note Statischer Dataverse-Forschungsdatafile (Snapshot), kein Live-Messendpoint.
+
+decline derived-gis-layer
+url https://geodata.epa.gov/arcgis/rest/services/OAR_OAP/Wildfires/MapServer
+# title: Wildfires Mapserver
+note ArcGIS-Layer mit "Trend (Acres per Square Mile)" — statische Analyse-/Trend-Ebene, kein Live-Feuermesswert.
+
+decline html-status
+url https://gwosc.org/detector_status/
+# title: GWOSC Detector Status
+note 200 HTML-Statusseite — Detektorstatus (Metadaten), kein Messwert.
+
+decline aggregate-index
+url https://psl.noaa.gov/enso/mei/data/meiv2.data
+# title: NOAA Climate Indices
+note MEI v2 = monatlicher Aggregat-Index (Skalar ohne Position).
+
+decline reference-catalog
+url https://ssd-api.jpl.nasa.gov/sbdb.api
+# title: JPL Small-Body Database + Close Approaches
+note SBDB = Bahnelemente-Katalog (Referenz), kein Feldsmesswert.
+
+decline orbital-catalog
+url https://ssd-api.jpl.nasa.gov/cad.api?dist-max=0.05&date-min=2000-01-01&date-max=2100-01-01&body=Earth&sort=date
+# title: CNEOS Close Approach Data (near-Earth objects)
+note Close-Approach-Katalog = abgeleitete Bahnvorhersagen, kein Messwert.
+
+decline html-index
+url https://wdc.kugi.kyoto-u.ac.jp/dst_realtime/presentmonth/
+# title: Kyoto WDC Real-time Dst
+note 200 HTML (Plot+Tabelle); Dst = Aggregat-Index (Skalar), kein JSON/CSV-Body.
+
+decline html-docs
+url https://wspr.live
+# title: WSPR — Weak Signal Propagation Reporter
+note 200 HTML (pandoc-Doku) — kein Daten-Body (SPA/Doku, kein JSON/CSV).
+
+decline geographic-infrastructure
+url https://www.epa.gov/waterdata/get-nhdplus-national-hydrography-dataset-plus-data
+# title: Dataset National Hydrography Dataset Plus Nhdplus11
+note 200 HTML — NHDPlus = geografisches Hydrografie-Framework (Infrastruktur).
+
+decline registry-directory
+url https://www.ncei.noaa.gov/data/global-hourly/
+# title: NOAA NCEI Integrated Surface Database (ISD) -- hourly station observations
+note Verzeichnis/Register (ISD-Dateiablage), kein Messwert-Endpoint.
+
+decline historical-archive
+url https://www.ncei.noaa.gov/data/international-best-track-archive-for-climate-stewardship-ibtracs/v04r01/access/csv/
+# title: IBTrACS Global Tropical Cyclone Tracks
+note Historisches Zyklon-Track-Archiv (abgeleitet).
+
+decline software
+url https://www.ncei.noaa.gov/pub/access/cebrequests/satellite/GOES-R-Level-0-Readers/
+# title: Satellite Goes R Level 0 Readers
+note Software/Reader-Ablage, kein Messwert.
+
+decline historical-archive
+url https://www.ncei.noaa.gov/pub/data/swdi/stormevents/csvfiles/
+# title: Stormevents Csvfiles
+note Historisches Sturmereignis-Archiv (abgeleitet, CSV-Dateiablage).
+
+decline reference-model
+url https://www.ngdc.noaa.gov/geomag/data/poles/
+# title: Magnetic Pole Positions — NOAA NCEI
+note 200 HTML-Verzeichnis; Polpositionen = Modell/Referenz, kein Messwert.
+
+decline html-archive
+url https://www.spc.noaa.gov/climo/reports/
+# title: SPC Storm Reports
+note HTML-Archiv (Storm Reports), kein JSON/CSV-Body.
+
+decline html-archive
+url https://www.spc.noaa.gov/wcm/
+# title: SPC Tornado History (1950-2025)
+note HTML-Archiv (Tornado-Historie), kein JSON/CSV-Body.
+
+decline html-page
+url https://www.usgs.gov/centers/eros/science/usgs-eros-archive-aerial-photography-high-resolution-orthoimagery-hro?qt-science_center_objects=0#qt-science_center_objects
+# title: Science Usgs Eros Archive Aerial Photography High Resolution Orthoimagery Hro
+note HTML-Seite (Orthoimagery-Beschreibung), kein Daten-Body.
+
+# ── BEREITS LIVE (skip) ─────────────────────────────────────────────────
+
+bereit live
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter
+# title: NOAA Tides & Currents / NOAA CO-OPS Tide-Gauge Stations
+note live in sources.φ:669 (Datagetter + stations fanout).
+
+bereit live
+url https://earthquake.usgs.gov/fdsnws/event/1/query
+# title: USGS Earthquake
+note live in sources.φ:516 (FDSN geojson, presence-window).
+
+bereit live
+url https://www.nhc.noaa.gov/CurrentStorms.json
+# title: NHC Active Storms (live fixes)
+note live in sources.φ:700.
+
+bereit live
+url https://imag-data.bgs.ac.uk
+# title: INTERMAGNET — Global Magnetic Observatory Network
+note HAPI-Datenendpoint live in sources.φ:830; bare Domain = Registry-Wurzel.
+
+bereit live
+url https://imag-data.bgs.ac.uk/GIN_V1/GINServices
+# title: INTERMAGNET Magnetic Observatories (registry)
+note live als stations-Quelle in sources.φ:831.
+
+# ── BEREITS KLASSIFIZIERT (skip) ────────────────────────────────────────
+
+bereit klassifiziert
+url https://air-quality-api.open-meteo.com/v1/air-quality
+# title: Open-Meteo Air Quality
+note dead_sources.φ: decline model-forecast (Modell-/Reanalyse-Ausgabe).
+
+bereit klassifiziert
+url https://kp.gfz.de/
+# title: GFZ Kp/ap Geomagnetic Index (Niemegk)
+note dead_sources.φ: dead 5xx (JSON-Endpoint; bare Wurzel ist HTML).
+
+bereit klassifiziert
+url https://ssd-api.jpl.nasa.gov
+# title: NASA NEO (Fireballs + Close Approaches)
+note dead_sources.φ: dead 400 (unvollständiges Fragment).
+
+bereit klassifiziert
+url https://ssd.jpl.nasa.gov/api/horizons.api
+# title: Lunar/Solar Tidal Potential
+note dead_sources.φ: decline superseded (Compiler-Eingang, keine Live-Quelle).
+
+bereit klassifiziert
+url https://usdmdataservices.unl.edu/api/
+# title: USDM Drought Monitor
+note dead_sources.φ: dead transport + decline derived (Drought-Monitor-Index, abgeleitet).
+
+bereit klassifiziert
+url https://volcanoes.usgs.gov/hans-public/api/volcano/
+# title: USGS Volcano Hazards
+note dead_sources.φ: dead 400 / decline alerts (Observatoriumsstatus-Alerts).
+
+bereit klassifiziert
+url https://www.nmdb.eu/nest/
+# title: NMDB Neutron Monitor Stations (registry)
+note dead_sources.φ: dead 404.
+
+bereit klassifiziert
+url https://firms.modaps.eosdis.nasa.gov/api/area/
+# title: NASA FIRMS (VIIRS/MODIS Active Fire)
+note dead_sources.φ: key-needed auth (FIRMS MAP_KEY; thermal echt, freier Key nötig).

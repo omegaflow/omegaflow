@@ -1,0 +1,70 @@
+# grind rechecks (2026-08-15)
+
+# ── Dispositionen (Probe je Kandidat, EIN Durchgang) ──
+# CO-OPS Tides&Currents datagetter (station=8518750): skip — bereits live (fanout in phi/sources.φ, Z.668-679).
+# ERDDAP-Familie coastwatch/ifremer/emodnet: .info/index.json → 200 parse-fähige JSON-Routen vorhanden (tabledap .json trägt Messwerte). Kein neuer Block — AOML-Drifter (sources.φ) belegt tabledap bereits.
+# PMEL-CO2 Moorings: accept (tabledap all_pmel_co2_moorings.json → 200, Spalten time,longitude,latitude,pCO2_air). Draft unten.
+# SERVIR SoilMoisture: lebt (SMAP-L3-Mosaic-Layer, gis1.servirglobal.net/Global/SoilMoisture) — aber Raster-/Image-Service, /0/query 400, Werte in Tiles nicht in JSON-Zeilen → parser-def imagery (raster).
+# NDBC-ArcGIS: skip — bereits dead invalid-query (dead_sources.φ).
+# Active-Hurricanes-ArcGIS: skip — bereits decline model-forecast (Forecast-Track-Punkte, dead_sources.φ).
+# AFAD tadas: /api/event/list liefert SPA-HTML auch mit Accept: application/json → parser-def html.
+# Argovis: api.argovis.com nicht erreichbar (000); argovis-api.colorado.edu/argo lebt (JSON, format= entfernen, startDate=date-time). Struktur im Testfenster leer → accept-würdig, Feldpfad unbestätigt.
+# sensor.community: maps.sensor.community/data/v1/data.json → 200 live PM (SDS011), location.latitude/longitude present; Wert verschachtelt in sensordatavalues[].value/value_type → accept-würdig, nested Pfad unbestätigt.
+# environment.data.gov.uk: flood-monitoring readings.json → 200 JSON (Pegel); water-quality measurement → 404/SPA. Draft unten (fanout).
+# BGS-GIN Observation: HAPI bereits live (INTERMAGNET-fanout); non-HAPI GetData → 400 (Parameterform anders) → redundant.
+# IRSA-Gator/TAP: TAP/sync → VOTABLE-wrapped JSON (parser-def votable); Gator nph-query = CSV-Route (Syntax separat).
+# Exoplanet-Archiv TAP: /TAP/sync format=json → 200 parse-fähiges JSON-Array; Inhalt = Planetenkatalog (Registry) → decline catalog, Route aber verifiziert.
+# ACTRIS: actris.nilu.no/api/measurements → SPA-HTML → parser-def html.
+# GTN-P: gtnp.arcticportal.org/api → 403 → key-needed blocked.
+# GONG: Datenzugang HTML/FITS (kein JSON) → parser-def fits/html.
+# OceanNetworks: /api/locations 401 (Token), /api/scalardata 400 (method fehlt); {OCEANNETWORKS_TOKEN} vorhanden → key-needed (Token vorhanden, Route method=get).
+# OMNIWeb: CGI-Formular/FTP; Solarwind bei L1 bereits via SWPC rtsw live → parser-def cgi (redundant).
+# AstDyS: HTML; DASTCOM-Katalog bereits live → decline superseded (HTML).
+# SWPC ace_mag_1h: skip — bereits live (sources.φ Z.642, ace_mag_1h.json + ace_swepam).
+# SuperMAG: HTML-Downloadseite, Login → key-needed auth.
+# WOUDC: /api → SPA-HTML → parser-def html.
+# AAVSO-VSX: vsx.aavso.org votable-Fuseaction nicht definiert → parser-def route; Katalog-Registry.
+# ATNF-PSRCAT-TAP: psrcat_tap/sync → HTML-Umleitung → parser-def mangled-url.
+# SDSS-SkyServer-SQL: SqlSearch format=json → 200 JSON [{TableName,Rows}] → accept (em cmap). Draft unten.
+# TESS/ExoFOP: download_toi.php → nicht erreichbar (000); TOI-Katalog = Registry.
+
+# ── Accepted Block-Drafts ──
+
+accepted https://data.pmel.noaa.gov/pmel/erddap/tabledap/all_pmel_co2_moorings.json?time,longitude,latitude,pCO2_air&time%3E=max(time)-7days
+# title: PMEL CO2-Moorings — Oberflächen-pCO2 (diffusion, Ozeankohlenstoff)
+url https://data.pmel.noaa.gov/pmel/erddap/tabledap/all_pmel_co2_moorings.json?time,longitude,latitude,pCO2_air&time%3E=max(time)-7days
+ttl 86400
+force diffusion
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+field 3 hydrosphere_pco2_mooring_uatm gaussian-inverse-square diffusion uatm 8640.0 0.0 0.0
+
+accepted https://skyserver.sdss.org/dr18/SkyServerWS/SearchTools/SqlSearch?cmd=SELECT+TOP+3000+ra,dec,z,psfMag_r+FROM+SpecObj+WHERE+class%3D%27QSO%27&format=json&TaskName=Skyserver.Search.SQL
+# title: SDSS DR18 SkyServer SQL — spektroskopische Objekte (em cmap, z via Hubble)
+# note: Antwort ist [{TableName,Rows:[...]}] — Container-Pfad "0.Rows" gegen den cmap-Parser verifizieren
+url https://skyserver.sdss.org/dr18/SkyServerWS/SearchTools/SqlSearch?cmd=SELECT+TOP+3000+ra,dec,z,psfMag_r+FROM+SpecObj+WHERE+class%3D%27QSO%27&format=json&TaskName=Skyserver.Search.SQL
+ttl 86400
+force em
+at sun
+cmap 0.Rows
+ra ra
+dec dec
+z z
+field psfMag_r sdss_psfmag_r inverse-square em mag 86400 0.0 0.0
+
+accepted https://environment.data.gov.uk/flood-monitoring/id/stations/{station}/readings.json?_limit=1
+# title: Environment Agency Flusspegel (gravity, fanout)
+# note: stations_items lat/long/notation per EA-Referenz; readings items tragen value + measure (level/flow) — measure=level filtern
+url https://environment.data.gov.uk/flood-monitoring/id/stations/{station}/readings.json?_limit=1
+stations https://environment.data.gov.uk/flood-monitoring/id/stations?_limit=500
+stations_path items
+stations_id notation
+stations_lat lat
+stations_lon long
+fanout 40
+ttl 900
+force gravity
+on earth 0 0 0
+last items.value hydrosphere_river_stage_m inverse-square gravity m 900.0 0.0 0.0

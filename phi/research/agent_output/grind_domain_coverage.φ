@@ -1,0 +1,317 @@
+# grind_domain_coverage.φ — 2026-08-15
+# Grind des DOMAIN_COVERAGE-Manifests (259 Hosts) gegen phi/sources.φ, phi/dead_sources.φ, archeology_gaps_index.φ
+# Proben: curl -m 12 -L, Heute 2026-08-15. Templates: {today}=2026-08-15, {now}=2026-08-15T12:00:00Z, {lat}=52.5, {lon}=13.4
+#
+host github.com live live in sources.φ
+host api.worldbank.org klassifiziert key-needed blocked
+host imag-data.bgs.ac.uk live live in sources.φ
+host api.open-meteo.com klassifiziert dead 404
+host gea.esac.esa.int klassifiziert dead 404
+host services.swpc.noaa.gov live live in sources.φ
+host api.tidesandcurrents.noaa.gov live live in sources.φ
+host tapvizier.cds.unistra.fr klassifiziert dead 400
+host heasarc.gsfc.nasa.gov klassifiziert dead 404
+host api.adsb.lol live live in sources.φ
+host earthquake.usgs.gov live live in sources.φ
+host api.gbif.org klassifiziert decline presence-catalog
+host www.ndbc.noaa.gov live live in sources.φ
+host www.ncei.noaa.gov klassifiziert dead 404
+host nrt.cmems-du.eu klassifiziert key-needed auth
+host pdgapi.lbl.gov offen decline Referenzkonstanten (Elementarteilchen, kein Messwert)
+host irsa.ipac.caltech.edu klassifiziert parser-def usage-error
+host services6.arcgis.com klassifiziert decline position-only
+host services9.arcgis.com klassifiziert decline model-forecast
+host raw.githubusercontent.com klassifiziert decline static
+host ssd-api.jpl.nasa.gov klassifiziert dead 400
+host waterservices.usgs.gov live live in sources.φ
+host gml.noaa.gov live live in sources.φ
+host aeronet.gsfc.nasa.gov kandidat kandidat in archeology_gaps_index.φ
+host eutils.ncbi.nlm.nih.gov offen decline Bibliographie (NCBI)
+host api.inaturalist.org klassifiziert dead 404
+host inspirehep.net klassifiziert dead 400
+host pegelonline.wsv.de klassifiziert decline registry
+host aviationweather.gov live live in sources.φ
+host erddap.emodnet-physics.eu klassifiziert parser-def rss
+host exoplanetarchive.ipac.caltech.edu klassifiziert parser-def docs
+host api.obis.org klassifiziert decline presence-catalog
+host services.arcgis.com klassifiziert decline registry
+host mast.stsci.edu klassifiziert dead 400
+host service.earthscope.org offen dead 410 (fdsnws/event; Root 200 HTML) — EarthScope/IRIS FDSN-Event weg
+host stationview.raspberryshake.org klassifiziert dead 404
+host api.waqi.info offen decline Aggregat-Index (AQI) + Workflow→CDN ohne Server-Key
+host celestrak.org klassifiziert dead timeout
+host query1.finance.yahoo.com klassifiziert key-needed rate-limit
+host export.arxiv.org klassifiziert decline literature
+host api.weather.gov klassifiziert dead 400
+host tle.ivanstanojevic.me klassifiziert decline derived-orbit-fit
+host api.crossref.org offen decline Bibliographie
+host noaadata.apps.nsidc.org klassifiziert dead 404
+host cmr.earthdata.nasa.gov klassifiziert dead timeout
+host volcanoes.usgs.gov klassifiziert decline alerts
+host gtnp.arcticportal.org klassifiziert parser-def html
+host services3.arcgis.com klassifiziert decline model
+host gdacs.org klassifiziert decline alerts
+host gracedb.ligo.org offen ACCEPTED (superevents, far, gravity)
+host eonet.gsfc.nasa.gov klassifiziert decline position-only
+host api.coral.tsr.lol kandidat kandidat in archeology_gaps_index.φ
+host lasp.colorado.edu klassifiziert dead 404
+host power.larc.nasa.gov klassifiziert decline model-forecast
+host en.wikipedia.org klassifiziert decline no-physical-force
+host www.cpc.ncep.noaa.gov kandidat kandidat in archeology_gaps_index.φ
+host ghoapi.azureedge.net klassifiziert dead 333
+host webservices.volcano.si.edu klassifiziert dead timeout
+host rest.isric.org kandidat kandidat in archeology_gaps_index.φ
+host api.neotomadb.org klassifiziert decline paleo-catalog
+host skyserver.sdss.org klassifiziert parser-def html
+host www.sidc.be klassifiziert dead 404
+host www.seismicportal.eu live live in sources.φ
+host api.geonet.org.nz klassifiziert dead 400
+host services2.arcgis.com klassifiziert dead timeout
+host cdaweb.gsfc.nasa.gov klassifiziert dead timeout
+host seismic-api.science.unimelb.edu.au offen ACCEPTED (GeoJSON-Feed seismic-body, heute count:0)
+host hub.docker.com klassifiziert decline registry
+host data.pmel.noaa.gov klassifiziert dead 400
+host ec.europa.eu klassifiziert decline stats
+host www.ebi.ac.uk klassifiziert dead 404
+host ned.ipac.caltech.edu klassifiziert dead 404
+host api.fda.gov klassifiziert decline registry
+host woudc.org klassifiziert parser-def html
+host opendata.cern.ch klassifiziert dead 400
+host api.opentopodata.org klassifiziert dead 400
+host api.github.com offen decline Code-Register
+host api.wolfx.jp live live in sources.φ
+host webservices.ingv.it live live in sources.φ
+host gcn.nasa.gov klassifiziert dead 404
+host www.minorplanetcenter.net klassifiziert decline no-physical-force
+host www.nhc.noaa.gov live live in sources.φ
+host cddis.nasa.gov kandidat kandidat in archeology_gaps_index.φ
+host bhuvan-app1.nrsc.gov.in klassifiziert decline no-physical-force
+host coastwatch.pfeg.noaa.gov klassifiziert dead timeout
+host hpiers.obspm.fr kandidat kandidat in archeology_gaps_index.φ
+host v4.boldsystems.org klassifiziert decline molecular
+host gist.githubusercontent.com klassifiziert decline static
+host ssd.jpl.nasa.gov klassifiziert decline superseded
+host zenodo.org klassifiziert dead 400
+host musicbrainz.org offen decline Bibliographie
+host www.ngdc.noaa.gov klassifiziert key-needed blocked
+host ws.pangaea.de offen decline Archiv-Metadaten (SOAP/ES, kein Feld-Messwert)
+host api.wheretheiss.at klassifiziert decline superseded-by-ephemeris
+host stat.ripe.net klassifiziert dead 400
+host transport.opendata.ch klassifiziert decline schedule
+host services1.arcgis.com klassifiziert decline registry
+host services5.arcgis.com klassifiziert parser-def arcgis-missing-f
+host api.energy-charts.info offen decline Energie-Marktdaten
+host api.carbonintensity.org.uk offen decline Aggregat-Index CO2-Intensität
+host www.tsunami.gov klassifiziert decline alerts
+host kp.gfz.de klassifiziert dead 5xx
+host geofon.gfz-potsdam.de klassifiziert dead 400
+host firms.modaps.eosdis.nasa.gov klassifiziert key-needed auth
+host epic.gsfc.nasa.gov klassifiziert decline imagery
+host www.imis.bfs.de offen dead SPA-Geoportal (ODL-API odlinfo.bfs.de 404)
+host simbad.cds.unistra.fr klassifiziert dead 404
+host geofon.gfz.de offen decline HTML-Shell (echter FDSN geofon.gfz-potsdam.de bereits dead)
+host meta.icos-cp.eu klassifiziert dead 404
+host erddap.ifremer.fr klassifiziert dead 400
+host gong2.nso.edu klassifiziert parser-def html
+host openlittermap.com klassifiziert decline presence
+host earth-search.aws.element84.com klassifiziert dead 400
+host api.woudc.org offen parser-def HATEOAS/JSON-LD (Ozon, Datenpfad unentdeckt)
+host clinicaltrials.gov klassifiziert decline registry
+host api.openalex.org offen decline Bibliographie
+host www.orfeus-eu.org klassifiziert decline registry
+host hydro1.gesdisc.eosdis.nasa.gov klassifiziert decline model-forecast
+host data.humdata.org klassifiziert dead 404
+host www.isc.ac.uk kandidat kandidat in archeology_gaps_index.φ
+host epqs.nationalmap.gov klassifiziert decline terrain
+host g6goyz4w56.execute-api.us-west-2.ama offen dead 403 Forbidden (AWS-Gateway)
+host oderest.rsl.wustl.edu offen decline PDS Orbital-Data-Explorer (Produkt-Katalog)
+host www.physics.mcgill.ca kandidat kandidat in archeology_gaps_index.φ
+host data.rcsb.org klassifiziert decline molecular
+host climate-api.open-meteo.com klassifiziert decline model-forecast
+host openlibrary.org klassifiziert decline no-physical-force
+host pubchem.ncbi.nlm.nih.gov klassifiziert dead 400
+host rapid.ac.uk kandidat kandidat in archeology_gaps_index.φ
+host api.stackexchange.com offen decline Forum
+host macrostrat.org klassifiziert decline terrain
+host qrng.anu.edu.au klassifiziert decline randomness
+host api.blitzortung.org klassifiziert dead ssl
+host www.inex.ie offen decline Domain-Register
+host api.irail.be klassifiziert decline schedule
+host api.irishrail.ie offen decline Zugfahrplan position-only
+host www.wienerlinien.at offen decline ÖPNV position-only
+host data.blitzortung.org klassifiziert key-needed auth
+host api.drand.sh offen decline Zufalls-Beacon (kein Kraft)
+host irsc.ut.ac.ir offen dead 000 (kein Kontakt/DNS)
+host api.p2pquake.net live live in sources.φ
+host beacon.nist.gov klassifiziert decline randomness
+host service.scedc.caltech.edu offen parser-def text (FDSN nur text-Format, kein json/geojson)
+host earthquake.tmd.go.th offen parser-def SPA (json-Route 404)
+host api.rainviewer.com klassifiziert parser-def radar-tiles
+host reg.bom.gov.au live live in sources.φ
+host www.emsc-csem.org kandidat kandidat in archeology_gaps_index.φ
+host environment.data.gov.uk klassifiziert decline registry
+host www.ionosonde.iap-kborn.de offen decline HTML-Instrumentenseite (Grafiken, kein JSON)
+host tadas.afad.gov.tr klassifiziert parser-def html
+host api.weather.bom.gov.au klassifiziert dead 404
+host dataserver-coids.inpe.br offen decline Datei-Browser-Index (keine Mess-API)
+host bmkg-restapi.vercel.app klassifiziert dead 5xx
+host www.ceic.ac.cn offen parser-def SPA (Katalog via Ajax, kein offener JSON)
+host www.jma.go.jp live live in sources.φ
+host api.waterdata.usgs.gov klassifiziert dead 400
+host impc.dlr.de klassifiziert dead timeout
+host almascience.org klassifiziert dead 400
+host www.amsmeteors.org kandidat kandidat in archeology_gaps_index.φ
+host argovis-api.colorado.edu klassifiziert dead 400
+host www.hamqsl.com offen decline Aggregator (redundant zu SWPC GOES live)
+host api.sunrise-sunset.org offen decline berechnete Solargeometrie (kein Messwert)
+host disease.sh klassifiziert decline health-stats
+host api.exchangerate-api.com klassifiziert decline no-physical-force
+host open.er-api.com klassifiziert decline no-physical-force
+host data.gdeltproject.org klassifiziert decline no-physical-force
+host www.govtrack.us klassifiziert dead 404
+host ll.thespacedevs.com offen decline Startfahrplan-Katalog
+host onionoo.torproject.org offen decline Relay-Register
+host wikimedia.org klassifiziert dead 404
+host ws.cadc-ccda.hia-iha.nrc-cnrc.gc.ca offen dead 404
+host geoserver.efas.eu klassifiziert dead dns-unresolved
+host sky.esa.int klassifiziert dead 404
+host network.satnogs.org klassifiziert decline position-only
+host fireball.fripon.org offen parser-def SPA-Frontend (FRIPON, kein JSON-Pfad)
+host www.globalcmt.org kandidat kandidat in archeology_gaps_index.φ
+host archive.gemini.edu offen decline Teleskop-Archiv-Metadaten
+host catalogue.dataspace.copernicus.eu klassifiziert dead 400
+host ies-ows.jrc.ec.europa.eu offen decline EC-Service-Seite (keine Mess-API am Root)
+host www.globalfloods.eu klassifiziert decline model-forecast
+host erddap.aoml.noaa.gov live live in sources.φ
+host dap.oceannetworks.ca klassifiziert dead 400
+host records-ws.nbnatlas.org kandidat kandidat in archeology_gaps_index.φ
+host archive.nrao.edu klassifiziert parser-def votable
+host services.nvd.nist.gov klassifiziert decline registry
+host eyes.nasa.gov klassifiziert decline superseded
+host api.safecast.org live live in sources.φ
+host www.temis.nl klassifiziert dead 404
+host terrabrasilis.dpi.inpe.br klassifiziert decline derived
+host db.satnogs.org klassifiziert decline derived-orbit-fit
+host data.cdc.gov klassifiziert dead 400
+host weather.uwyo.edu offen parser-def Upper-Air-CGI (thermal, kein JSON)
+host vsx.aavso.org klassifiziert parser-def html
+host newton.spacedys.com klassifiziert parser-def html
+host opendata.dwd.de klassifiziert decline alerts
+host api.met.no offen decline locationforecast = Modell-Vorhersage
+host opendata.ecdc.europa.eu klassifiziert decline health-stats
+host epoch.ai klassifiziert decline no-physical-force
+host www.peeringdb.com klassifiziert key-needed rate-limit
+host modis.ornl.gov klassifiziert dead 400
+host restcountries.com offen decline Länder-Metadaten
+host www.submarinecablemap.com klassifiziert decline infrastructure
+host api.unhcr.org klassifiziert decline stats
+host www.star.nesdis.noaa.gov klassifiziert dead 404
+host xmart-api-public.who.int klassifiziert decline health-stats
+host www.bodc.ac.uk klassifiziert dead 404
+host www.chime-frb.ca offen dead Portal im Umbau (nur Archiv-Verweis)
+host mars.nasa.gov klassifiziert dead retired
+host crates.io klassifiziert key-needed blocked
+host dasch.rc.fas.harvard.edu kandidat kandidat in archeology_gaps_index.φ
+host re.jrc.ec.europa.eu klassifiziert dead 400
+host vires.services live live in sources.φ
+host services.terrascope.be klassifiziert decline derived
+host catalogue.clms.copernicus.eu klassifiziert dead dns-unresolved
+host usdmdataservices.unl.edu klassifiziert decline derived
+host ows.emodnet-humanactivities.eu klassifiziert decline registry
+host erddap.dataexplorer.oceanobservatori offen live (bereits in sources.φ, Manifest-Trunkierung)
+host datacenter.iers.org klassifiziert dead 404
+host maia.usno.navy.mil kandidat kandidat in archeology_gaps_index.φ
+host network.igs.org klassifiziert decline registry
+host www.tng-project.org klassifiziert decline simulation
+host www.ioc-sealevelmonitoring.org offen ACCEPTED (stationlist lastvalue, gravity)
+host ds.iris.edu offen decline HTML-DMC (FDSN-Event 410, siehe service.iris.edu)
+host landsatlook.usgs.gov offen decline Bild-Browser/Imagery
+host tess.mit.edu klassifiziert decline registry
+host www.crystallography.net klassifiziert decline molecular
+host aa.usno.navy.mil klassifiziert decline computation
+host data.giss.nasa.gov klassifiziert decline aggregate
+host modis.gsfc.nasa.gov offen decline Imagery-Portal (abgeleitetes Produkt)
+host physics.nist.gov offen decline Referenzkonstanten
+host psl.noaa.gov klassifiziert dead 404
+host gis.ngdc.noaa.gov klassifiziert decline terrain
+host registry.npmjs.org klassifiziert dead 400
+host api.astrocats.space klassifiziert dead ssl
+host my.cmems-du.eu klassifiziert key-needed auth
+host world.openfoodfacts.org offen decline Produkt-Katalog
+host stac.openlandmap.org kandidat kandidat in archeology_gaps_index.φ
+host paleobiodb.org klassifiziert decline presence-catalog
+host atlas.ripe.net klassifiziert decline no-physical-force
+host gis1.servirglobal.net klassifiziert dead 404
+host tevcat2.tevcat.org offen live-via-CDN (tevcat_flat.json bereits in sources.φ)
+host data.cosmic.ucar.edu offen parser-def GNSS-RO Datei-Archiv
+host rest.uniprot.org klassifiziert decline molecular
+host nwis.waterdata.usgs.gov klassifiziert dead 404
+host www.sciencebase.gov klassifiziert decline catalog
+host developer.uspto.gov klassifiziert decline no-physical-force
+host www.wikidata.org klassifiziert decline no-physical-force
+host api.openbrewerydb.org klassifiziert decline registry
+host services7.arcgis.com live live in sources.φ
+host www.glims.org klassifiziert dead 400
+host egg.astro.cornell.edu live live in sources.φ
+host www.metoffice.gov.uk klassifiziert dead 404
+host data-api.globalforestwatch.org klassifiziert key-needed blocked
+host esgf.ceda.ac.uk offen decline Klimamodell-Reanalyse (CMIP6)
+host stac.eoapi.dev offen decline STAC-Katalog/DEM (Infrastruktur)
+host icgem.gfz-potsdam.de klassifiziert decline model-computation
+host api.open-elevation.com klassifiziert dead 404
+host planetarycomputer.microsoft.com klassifiziert decline catalog
+#
+# ── Normalisierung ──
+# Manifest zählt 259 Hosts; www./nicht-www.-Dubletten (pegelonline.wsv.de vs.
+# www.pegelonline.wsv.de) werden hier als EIN Host geführt → 258 Zeilen.
+# :443-Port-Formen (cmr.earthdata.nasa.gov:443) zählen als deren Host.
+# Manifest-Trunkierungen (erddap.dataexplorer.oceanobservatori…, g6goyz4w56…)
+# wurden auf den vollen Hostnamen aufgelöst.
+#
+# ── Recheck „nicht erreichbar“ (Manifest) — Stand HEUTE 2026-08-15 ──
+# gtnp.arcticportal.org    parser-def (HTML-Frontend, GTN-P Bodentemperatur thermal) — unverändert
+# lasp.colorado.edu        dead 404 (FISM2/SDO-EVE CSV-Pfade) — unverändert 404
+# power.larc.nasa.gov      decline model-forecast (NASA POWER = Reanalyse) — unverändert decline
+# webservices.volcano.si.edu dead timeout (Geoserver WFS) — unverändert timeout
+# rest.isric.org           kandidat (SoilGrids) — NICHT doppelt probiert, referenziert
+# www.seismicportal.eu     live (in sources.φ) — erreichbar, war im Manifest „nicht erreichbar“
+# cdaweb.gsfc.nasa.gov     dead timeout (HAPI DSCOVR_H0_MAG) — unverändert timeout
+# seismic-api.science.unimelb.edu.au offen→ACCEPTED (GeoJSON-Feed lebt; count:0 heute)
+# data.pmel.noaa.gov       dead 400/timeout (ERDDAP pCO2-Moorings) — unverändert
+# api.opentopodata.org     dead 400 + decline terrain (DEM = Infrastruktur) — decline
+# webservices.ingv.it      live (in sources.φ) — erreichbar, war im Manifest „nicht erreichbar“
+# coastwatch.pfeg.noaa.gov dead timeout (ERDDAP) — unverändert timeout
+# nrt.cmems-du.eu          RETIRED (key-needed auth) — decline dokumentiert
+#
+# ── Block-Drafts (accepted; nur hier, NICHT in sources.φ geschrieben) ──
+# 3 neue Blöcke. Kraft-Gate geprüft. Feldpfade gegen Live-Response verifiziert
+# (gracedb, ioc-sealevel) bzw. Standard-GeoJSON-Schema (melbourne — features
+# heute leer, count:0 → 0 honored; property-Keys beim nächsten Event verifizieren).
+#
+accepted https://gracedb.ligo.org/api/superevents/?limit=10
+# title: LIGO/Virgo/KAGRA Gravitationswellen-Superevents (far = Falschalarmrate, gravity)
+url https://gracedb.ligo.org/api/superevents/?limit=10
+ttl 300
+at earth
+last superevents.far gravity_wave_far inverse-square gravity 1 300 0.0 0.0
+
+accepted https://seismic-api.science.unimelb.edu.au/today-quakes
+# title: UniMelb AGOS Erdbeben-GeoJSON-Feed (seismic-body)
+url https://seismic-api.science.unimelb.edu.au/today-quakes
+ttl 300
+at earth
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field geometry.coordinates.2 geosphere_quake_depth_km erfc seismic-body km 3600 0.0 0.0
+field properties.magnitude geosphere_quake_magnitude erfc seismic-body Mw 3600 0.0 0.0
+
+accepted https://www.ioc-sealevelmonitoring.org/service.php?query=stationlist&format=json
+# title: IOC Sea-Level-Station-Monitoring (lastvalue in m, gravity)
+url https://www.ioc-sealevelmonitoring.org/service.php?query=stationlist&format=json
+ttl 3600
+on earth 0 0 0
+map .
+lat lat
+lon lon
+field lastvalue hydrosphere_sealevel_m inverse-square gravity m 3600 0.0 0.0

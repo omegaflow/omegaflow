@@ -755,3 +755,5 @@ void http://www.nmdb.eu/nmdb/qtipart.php?station=SOPO&start=2026-08-06&end=2026-
 void http://www.nmdb.eu/nmdb/qtipart.php?station=TBLS&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
 void http://www.nmdb.eu/nmdb/qtipart.php?station=THUL&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
 void http://www.nmdb.eu/nmdb/qtipart.php?station=ULNB&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void https://api.wheretheiss.at/v1/satellites/25544/positions?timestamps=1,2,3,4,5 data-present (JSON has content but declared keys absent)
+void https://qrng.anu.edu.au/API/jsonI.php?length=1&type=uint8 data-present (JSON has content but declared keys absent)

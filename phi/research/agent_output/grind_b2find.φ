@@ -1,0 +1,119 @@
+# grind b2find (2026-08-15)
+
+# B2FIND-Discovery-Hints: echter Mess-API-Endpoint hinter jedem Registry-Portal
+# probed + klassifiziert. 0 accepted — alle Hint-Organisationen sind entweder
+# Registries (decline), Modelle (decline) oder auth-gegatete Messwert-APIs
+# (key-needed). Kein einziger keyless JSON-Map-Endpoint mit lat/lon + Feldwert.
+
+# ── ICOS (icos-cp.eu — Treibhausgas, diffusion) ──
+# Messwerte (CO2/CH4-Zeitreihen) liegen als Data Objects (CSV/NetCDF) im Carbon
+# Portal data.icos-cp.eu. Programmatischer Download verlangt User-Account +
+# Lizenz-Akzeptanz. SPARQL (meta.icos-cp.eu/sparql) liefert nur Metadaten-IRIs.
+# data.icos-cp.eu/portal/api = 404, licence_accept?id= = 404 (Route verlangt
+# Account-Token). Kein keyless JSON-Messwert-Endpoint.
+
+decline metadata-sparql
+url https://meta.icos-cp.eu/sparql
+note SPARQL-Endpoint (JSON 200) liefert cpmeta-Metadaten-IRIs, keine Messwerte. Data Objects = per-Station-Dateien.
+
+key-needed account
+url https://data.icos-cp.eu/portal/
+note Programmatic download of data objects requires user account + data-licence acceptance (github.com/ICOS-Carbon-Portal/data readme). Messwerte (diffusion) hinter Login. Kein keyless JSON-Map.
+
+# ── LAGO (lagoproject.net — Gamma-Observatorien, em) ──
+# MkDocs-Site ohne Daten-Route. Daten-Zugang läuft über kollaborations-internes
+# Wiki (wiki.lagoproject.net = 401). Kein öffentlicher Messwert-API-Endpoint
+# gefunden. Gamma-Dosismessungen wären em-accept-würdig, aber nicht public.
+
+decline no-public-api
+url https://lagoproject.net
+note MkDocs-Kollaborationssite, keine Daten-Route im Nav. wiki.lagoproject.net → 401. Gamma-Daten (em) nicht öffentlich abrufbar.
+
+# ── TOAR (toar-data.org — Ozon, diffusion) ──
+# TOAR-II-Datenbank REST-API: https://toar-data.fz-juelich.de/api/v2/ (FastAPI).
+# stationmeta/ ist OFFEN (JSON-Array mit coordinates.lat/lng) — aber nur
+# Stations-Registry (Metadaten). Messwerte: /data/map/ → 401 Unauthorized.
+# /data/timeseries/record/ ist ein POST-Write-Endpoint (series_id/datetime/value).
+# TOAR-II führt User-Management ein → Messwert-Abruf hinter Registration.
+
+decline station-registry
+url https://toar-data.fz-juelich.de/api/v2/stationmeta/?limit=100
+note Offen (200, JSON-Array). coordinates.lat/lng + codes[] vorhanden, aber nur Stations-Metadaten (Registry). Kein Feldwert.
+
+key-needed auth
+url https://toar-data.fz-juelich.de/api/v2/data/map/
+note Ozon-Messwerte (diffusion) → 401 Unauthorized. /data/timeseries/ GET = Method Not Allowed, /data/timeseries/record/ = POST-Write. Messwert-Abruf hinter TOAR-II-User-Registration.
+
+# ── ICGEM (icgem.gfz-potsdam.de — Gravitationsmodelle) ──
+# decline belegt: ICGEM serviert Schwerefeld-MODELLE (statische Koeffizienten/
+# Gitter), keine Messung. Kein Organismus spürt ein Modell. Nur Befund.
+
+decline model
+url https://icgem.gfz-potsdam.de
+note Gravitationsfeld-Modelle (Statik/Koeffizienten), keine Messwerte. Force Gate: Modell → decline.
+
+# ── Pangaea (pangaea.de — Multi) ──
+# OAI-PMH (ws.pangaea.de/oai/provider) 200, aber nur Dublin-Core-Metadaten.
+# advanced/search.php liefert JSON {"results":[...]} = Dataset-Zitate (DOI, Titel),
+# keine Messwerte. Messdaten stecken in per-Dataset-Dateien (doi.pangaea.de/...).
+# Kein JSON-Map mit Einzel-Messwerten + lat/lon.
+
+decline metadata-registry
+url https://ws.pangaea.de/oai/provider
+note OAI-PMH 200, Dublin-Core-Metadaten (Titel/DOI/bbox), keine Messwerte.
+
+decline catalog
+url https://www.pangaea.de/advanced/search.php?q=temperature&count=2
+note JSON-Suche liefert Dataset-Zitate (URI/Citation), keine Messwert-Zeilen. Einzel-Datensätze mit lat/lon nur als per-Dataset-Files.
+
+# ── SeaNoe (seanoe.org — Multi) ──
+# Data-Publisher (Archiv für marine Datensätze). /data/ und OAI-Route = 404.
+# Kein JSON-Messwert-Endpoint gefunden. Datensätze als File-Downloads.
+
+decline publisher
+url https://www.seanoe.org
+note Publisher-Portal; /data/ = 404, keine OAI-/JSON-API. Marine Daten als per-Dataset-Files, kein Messwert-Map.
+
+# ── GEOFON (geofon.gfz-potsdam.de — Seismologie, seismic-body) ──
+# FDSNWS-Event-Endpoint lebt, aber format=json → 400 (nur format=text/
+# quakeml). text-Format = pipe-delimited Katalog (EventID|Time|Lat|Lon|Depth|
+# Mag|...). Archivar-`rows`-Extract kann Text nur an FESTEM Surface-Frame
+# extrahieren (kein per-Event lat/lon). Kein JSON → nicht als Map konsumierbar.
+# Zudem redundant: USGS-Feeds (GeoJSON, seismic-surface) liegen bereits in
+# phi/sources.φ.
+
+decline no-json-redundant
+url https://geofon.gfz-potsdam.de/fdsnws/event/1/query?format=json&limit=10
+note FDSNWS 400 "invalid value in parameter: format" — GEOFON serviert nur text/quakeml, kein JSON. USGS-GeoJSON-Feeds decken globale Seismik bereits ab (phi/sources.φ).
+
+# ── GFZ-Dataservices (dataservices.gfz-potsdam.de — Multi) ──
+# Metadaten-Portal (ISDC/IGETS/Kataloge). fdsnws/station + fdsnws/event = 404
+# (FDSN liegt bei geofon.gfz-potsdam.de). Kein Messwert-Endpoint hier.
+
+decline metadata-portal
+url https://dataservices.gfz-potsdam.de
+note Portal-Index (200 HTML). fdsnws/station + fdsnws/event = 404. FDSN-Daten liegen auf geofon.gfz-potsdam.de. ISDC/IGETS = Katalog-Downloads, kein JSON-Messwert-Map.
+
+# ── EnviDat (envidat.ch — Multi) ──
+# CKAN-Instanz (api/3/action/package_list 200, 858 Datasets). datastore_search =
+# "Action name not known" → DataStore-API nicht aktiviert. Daten als CSV-/File-
+# Downloads im Portal. CKAN-Katalog = Registry.
+
+decline ckan-catalog
+url https://www.envidat.ch/api/3/action/package_search?rows=100
+note CKAN-Katalog (858 Datasets, Metadaten). datastore_search deaktiviert. Messwerte nur als File-Downloads, kein JSON-Messwert-Map.
+
+# ── TERENO (tereno.net — thermal/diffusion) ──
+# www.tereno.net = Joomla-Site (000 via curl, über r.jina.ai lesbar). Daten-
+# Zugang: TERENO-DDP (ddp.tereno.net, 200) + DEIMS (deims.org/api/sites 200).
+# DEIMS = Metadaten-Katalog (Site-Koordinaten, keine Messwerte). Messwerte via
+# OGC-SOS-XML (Sensor Web) am DDP — kein JSON-Map.
+
+decline metadata-sos
+url https://deims.org/api/sites?limit=100
+note DEIMS-Site-Katalog (Metadaten + coordinates POINT). Messwerte (thermal/diffusion) via OGC-SOS-XML am ddp.tereno.net, kein keyless JSON-Map.
+
+# ── INTERMAGNET (intermagnet.org — em) ──
+# Läuft bereits live in phi/sources.φ über BGS-HAPI (imag-data.bgs.ac.uk/GIN_V1/
+# hapi/data?id={station}/best-avail/PT1M/xyzf). Nur Notiz, kein neuer Block.
+# Fanout-Stationsliste mit lat/lon bleibt offen (siehe b2find_intermagnet_catalog.φ).

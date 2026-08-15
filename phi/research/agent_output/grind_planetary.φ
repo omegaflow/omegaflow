@@ -1,0 +1,79 @@
+# grind planetary (2026-08-15)
+# Planetare Wissenschaftsarchive AUẞERHALB der Erde: Mars-Wetter, Marsbeben,
+# Mond, Venus, Titan. Rein forschend — keine Änderung an sources.φ / dead_sources.φ.
+# Dispositionen: accepted / decline / parser-def / key-needed / dead / note /
+# compile-candidate / integrated. Block-Drafts nur für accepted (erreichbar +
+# echte Messung + JSON-Extrakt). Format der Drafts folgt dem bestehenden
+# sources.φ-Schema (value_key name kernel force unit tau abs adv).
+
+# ── 1. MEDA / Perseverance-Wetter (Mars 2020, Jezero) — EINGEFROREN, aber lebend ──
+accepted https://mars.nasa.gov/rss/api/?feed=weather&category=mars2020&feedtype=json
+# title: MEDA Perseverance Mars-Wetter (thermal/acoustic) — Jezero-Krater — Feed eingefroren 2024-04-27
+url https://mars.nasa.gov/rss/api/?feed=weather&category=mars2020&feedtype=json
+ttl 86400
+force thermal
+on mars 18.445 77.45 0
+field sols.6.max_temp cosmos_mars2020_max_temp_c exponential-decay thermal C 86400 0.0 0.0
+field sols.6.min_temp cosmos_mars2020_min_temp_c exponential-decay thermal C 86400 0.0 0.0
+field sols.6.pressure cosmos_mars2020_pressure_pa gaussian-inverse-square acoustic Pa 86400 0.0 0.0
+# Struktur: {"sols":[{terrestrial_date,sol,ls,season,min_temp,max_temp,pressure,sunrise,sunset}]}.
+# WICHTIG, drei Abweichungen vom MSL-Feed:
+#  (a) Container heißt "sols" (MSL: "soles"), 7 Einträge, ÄLTESTER ZUERST —
+#      neuester Sol = letzter Index (sols.6), nicht sols.0.
+#  (b) EINGEFROREN: neuester Sol 1133 (2024-04-27). Perseverance ist 2026 aktiv
+#      (~Sol 1700+), aber dieser mars.nasa.gov-Weather-Endpoint liefert seit
+#      April 2024 keine neuen Sols. MSL-Feed (category=msl) ist aktuell
+#      (Sol 4982, 2026-08-12) — MEDA-Feed ist es nicht. Bei ttl 86400 zerfällt
+#      die 2 Jahre alte Messung zu ~0 certainty (e^-Δt/ttl) → manifestiert
+#      korrekt "0 honored", KEINE Fälschung. Integration = informierte
+#      Entscheidung: Kanal lebt (200), trägt aber nur eingefrorene Historie.
+#  (c) Einige Sols tragen "--" statt Zahl (Sol 1127/1128: min/max/pressure "--").
+#      Numerische Extraktion weist "--" ab (kein Wert → 0 honored), die
+#      Feldschaft ist bei den belegten Sols (z. B. 1133: -79.3/-24.7/778.9) sauber.
+# Messwerte echt: min_temp/max_temp (thermal, °C), pressure (acoustic, Pa).
+# Kraft analog MSL-Draft (grind_host.φ). Jezero-Landepunkt = 18.4446 N, 77.4509 E;
+# die Aufgabenstellung nannte "-18.445" — Vorzeichenfehler (Jezero ist NORD,
+# nicht Süd). Frame hier mit korrektem +18.445.
+# echte MEDA-Archivierung läuft separat in PDS4 (atmos.nmsu.edu/PDS/data/PDS4/
+# Mars2020/mars2020_meda/, 200) — der Live-Feed ist nur das Web-Fenster.
+
+# ── 2. Marsquake-Katalog V14 (InSight SEIS) — dead (alle Live-Routen weg) ──
+dead no-live-endpoint
+url https://www.seis-insight.eu/api/v1/events?format=json&limit=500&catalog=MQS&status=confirmed
+note seis-insight.eu = curl 000 (unreachable, war SSL-Fehler → jetzt weg). MQS V14 (Marsquake Service) hat keinen lebenden Web-/FDSN-Endpoint mehr. Alternativ-Routen geprüft: datacenter.ipgp.fr/resif/marsquake/ = 404 (Root 200, Pfad weg); fdsnws.ipgp.fr = 000; service.iris.edu/fdsnws/event/1/query = 410 Gone (IRIS-Event-Service eingestellt); service.iris.edu/fdsnws/station XB = 400; irisws/availability XB = 404. seismic-body auf Mars ist real messbar, aber der Katalog ist archiviert (PDS Geosciences Node, InSight SEIS), kein Live-Stream.
+
+# ── 3. Apollo-Seismik (Mond, PSE) — compile-candidate (kein Live-JSON) ──
+compile-candidate ascii-tables
+url https://pds-geosciences.wustl.edu/missions/apollo/seismic_event_catalog.htm
+note 200. PDS Geosciences Node (pds-geosciences.wustl.edu) hostet das Apollo Passive Seismic Experiment (PSE): Mondbeben-Kataloge (Nakamura-Katalog 2005: Datum/Zeit, lat/lon, Tiefe, Magnitude) als ASCII-Tabellen (.tab/.lbl), KEIN JSON-API. seismic-body auf moon = real (passive Seismik 1969–1977). Für den Archivar: Katalog-Kompilat-Kandidat analog FRBCAT — braucht einen Compiler (ASCII → cmap JSON mit ra_key=lat, dec_key=lon, field=Magnitude), kein direkter Live-Block. cmap auf moon-Körper (kein on-earth-Frame).
+
+# ── 4. LRO Diviner (Mond, thermal) — parser-def (Raster + ASCII) ──
+parser-def raster-ascii
+url https://pds-geosciences.wustl.edu/missions/lro/diviner.htm
+note 200. LRO Diviner = thermaler Radiometer (Helligkeitstemperatur, thermal on moon — Litmus erfüllt). Datenzugang: PDS Geosciences Node (ASCII/GeoTIFF-Raster) + LROC WMS (wms.lroc.asu.edu/lroc/search = 200, Kachel-/Raster-Dienst, imagery). Kein keyless JSON-Punkt-Messwert. Raster → parser-def (wie CDDIS/GRACE, dead_sources); WMS → imagery-decline (wie GIBS). Kein Live-Block.
+
+# ── 5. Venus (Venus Express PSA + Akatsuki DARTS) — archive/login/raster ──
+parser-def archive-login
+url https://archives.esac.esa.int/psa/
+note 200 (Portal). ESA Planetary Science Archive: Venus Express-Thermal-/Diffusions-Profile (VEx VIRTIS/SPICAV) liegen im Archiv — Produkt-Download verlangt PSA-Login, kein keyless JSON-Endpoint (psa/api/ = 404). Akatsuki (JAXA DARTS, darts.isas.jaxa.jp/planet/project/akatsuki/ = 200) = HTML-Dateibaum (japanisch), L2/L3-Raster/NetCDF. Venus-Atmosphärenprofil (thermal/diffusion) ist real messbar, aber Zugang = Archiv-Download, parser-def (Raster/NetCDF) + Login. Kein Live-Block.
+
+# ── 6. Cassini / Titan (PDS + PSA) — archive ──
+parser-def archive
+url https://atmos.nmsu.edu/PDS/data/
+note 200 (PDS Atmospheres Node, Cassini CIRS thermal spectra). Cassini-Mission endete 2017 — kein Live-Kanal. Titan-Daten (CIRS-Temperaturprofile, thermal on titan) liegen in PDS (Atmospheres Node: atmos.nmsu.edu; Imaging Node: pds-imaging.jpl.nasa.gov/volumes/cassini.html = 404, Volumes verschoben) + PSA-Mirror. Zugang = Archiv-Download (Raster/FITS/PDS4), kein JSON-Messwert-Stream. Ephemeride für Titan bereits in sources.φ (ephemeris_titan.bin).
+
+# ── 7. PDS-API (pds.nasa.gov) — decline catalog (Metadata-Registry) ──
+decline catalog-registry
+url https://pds.nasa.gov/api/search/1/products?limit=1
+note 200 JSON — {"summary":{"hits":84674684,"properties":[...]}}. Die PDS-API ist eine PRODUKT-LABEL-Suche (84,6 Mio PDS4-Metadaten-Records: lid, title, file_ref, checksum, harvest_date), KEIN Messwert-Feld. Der q-Parameter verlangt Lucene-Syntax (q=meda → 400 UnparsableQParamException). Such-API registriert — aber als Katalog-Registry per Force Gate declined (konsistent mit CMR-Granul-Metadata, dead_sources Z.998/1000). NICHT cmap-fähig für physikalische Messung: die Labels tragen Datei-Metadaten, nicht Temperatur/Druck/Seismik-Werte; die Messwerte liegen in den verlinkten PDS4-Datenfiles.
+
+# ── 8. Force-Gate-Summe ──
+# Messwerte (Temperatur, Druck, Wind, Seismik, Strahlung) = accepted-Kanäle —
+#   auf Mars/Mond/Venus/Titan real messbar, aber fast durchgängig ARCHIVIERT
+#   (PDS/PSA/DARTS), kein keyless Live-JSON. Einziger lebender JSON-Messwert-
+#   Kanal off-Earth bleibt die mars.nasa.gov-Weather-Familie: MSL (live, bereits
+#   gedraftet) + MEDA (eingefroren, hier gedraftet).
+# Raster-Bilder (Diviner, WMS, Akatsuki) → parser-def/decline-imagery.
+# Portale ohne API (PSA, DARTS, PDS-Volumes) → parser-def/archive-login.
+# Archiv-Kataloge mit Koordinaten/Zeit (Nakamura-Mondbeben, InSight-MQS-V14)
+#   → compile-candidate (Compiler → cmap JSON, wie FRBCAT/TeVCat).
