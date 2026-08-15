@@ -1005,6 +1005,11 @@ fn select_system(entries: &[IndexEntry], system: &str) -> Vec<IndexEntry> {
         .filter(|e| e.family == "spk-satellites" && e.name.starts_with(prefix))
         .cloned()
         .collect();
+    let moon_carriers: &[&str] = match system {
+        "saturn" => &["sat441"],
+        "neptune" => &["nep097"],
+        _ => &[],
+    };
     let mut ranked = spk.clone();
     ranked.sort_by(|a, b| {
         numeric_of(&b.name)
@@ -1014,6 +1019,14 @@ fn select_system(entries: &[IndexEntry], system: &str) -> Vec<IndexEntry> {
             .then(a.name.len().cmp(&b.name.len()))
     });
     let mut bases: Vec<String> = Vec::new();
+    for wanted in moon_carriers {
+        if let Some(e) = spk.iter().find(|e| base_of(&e.name) == *wanted) {
+            let base = base_of(&e.name);
+            if !bases.contains(&base) {
+                bases.push(base);
+            }
+        }
+    }
     for e in &ranked {
         let base = base_of(&e.name);
         if !bases.contains(&base) {
