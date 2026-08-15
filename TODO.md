@@ -289,6 +289,16 @@ NOAA CDO (thermal) und OpenAQ pm25 (diffusion) leben im Fanout. Offen:
 generisches Flatten über mehrere Ebenen.
 ```
 
+**I04** CDN-Naming kollidiert bei Param-Varianten
+```
+source_name_from_url leitet den Asset-Namen vom Pfad ab (Query verworfen) —
+alle open-meteo-/datagetter-Varianten teilen sich EIN Asset (z.B.
+api.open-meteo.com/forecast.json). Die CI spiegelt eine Variante; andere
+Param-URLs bekommen das falsche Asset (Verifikations-Vergiftung 2026-08-15
+beobachtet). Fix braucht Hash der Query im Namen, synchron mit der
+sources-CI-Manifestation.
+```
+
 ---
 
 ### Infrastruktur (3)
@@ -491,7 +501,12 @@ Binary-PCK-Pakets oben).
   gravity, 29 NDBC-Buoys, GML CH4/N2O/SF6, Barrow, AOML-Drifter, OOI-pCO2,
   BOM). Verbleibende Staging-Blöcke sind redundante Varianten (USGS-Historie,
   Per-Station-Tides superseded durch Fanout). Nächster Bestand:
-  `archeology/sources/` (27k alte Grammatik, davon gold_27k_359-domains kuratiert).
+  `archeology/sources/` — `--gold`-Konverter steht (mechanisch: force→kernel,
+  tau=TTL/10, lat_key→lat, field_in→field, last_row→lastrow): 2573 Blöcke →
+  1191 parse-fähig → `phi/research/agent_output/gold_converted.φ`. Erster
+  Sweep: pre-CDN-Archiv ~50% tote URLs; Verifizierer nutzt jetzt
+  `fetch_raw_probe` (live, kurze Timeouts). Offen: Staging-Reset + gechunkte
+  Neuverifikation + semantische Kuration der Key-Mismatch-Fälle.
 - `archeology/sources/sources_gold_pre-cdn_27k_359-domains.φ` (2572 Blöcke, alte
   force-Grammatik) + `sources_recovery_pre-cdn_25k_211-domains.φ` (1924): Migration
   nach Protokoll (docs/source_curation.md); die alte Grammatik wird derzeit noch

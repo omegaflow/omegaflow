@@ -3294,6 +3294,36 @@ fn fetch_raw_bytes(url: &str, ttl: u64) -> Option<Vec<u8>> {
     }
 }
 
+fn fetch_raw_probe(url: &str, body: Option<&str>, headers: &[(String, String)]) -> Option<String> {
+    let mut cmd = Command::new("curl");
+    cmd.arg("-s")
+        .arg("-S")
+        .arg("-f")
+        .arg("-L")
+        .arg("--retry")
+        .arg("1")
+        .arg("--retry-delay")
+        .arg("1")
+        .arg("--http1.1")
+        .arg("-m")
+        .arg("15")
+        .arg("--connect-timeout")
+        .arg("8");
+    if let Some(b) = body {
+        cmd.arg("-X").arg("POST").arg("-d").arg(b);
+    }
+    for (k, v) in headers {
+        cmd.arg("-H").arg(format!("{}: {}", k, v));
+    }
+    cmd.arg(url);
+    let output = cmd.output().ok()?;
+    if output.status.success() {
+        Some(String::from_utf8_lossy(&output.stdout).into_owned())
+    } else {
+        None
+    }
+}
+
 fn fetch_raw_bytes_post(
     url: &str,
     body: Option<&str>,
@@ -5362,6 +5392,207 @@ fn angular_distance_deg(lat1: f64, lon1: f64, lat2: f64, lon2: f64) -> f64 {
     (2.0 * a.sqrt().asin()).to_degrees()
 }
 
+fn gold_kernel_for(force: &str) -> Option<(&'static str, &'static str)> {
+    match force {
+        "em" => Some(("inverse-square", "em")),
+        "gravity" => Some(("inverse-square", "gravity")),
+        "acoustic" => Some(("gaussian-inverse-square", "acoustic")),
+        "seismic-body" => Some(("gaussian-inverse-square", "seismic-body")),
+        "seismic-surface" => Some(("erfc", "seismic-surface")),
+        "thermal" => Some(("exponential-decay", "thermal")),
+        "diffusion" => Some(("gaussian-inverse-square", "diffusion")),
+        "advective" => Some(("patch-levy", "advective")),
+        _ => None,
+    }
+}
+
+fn gold_synth(directive: &str, force: &str, key: &str, name: &str, ttl: u64) -> Option<String> {
+    let (kernel, f) = gold_kernel_for(force)?;
+    let tau = if ttl > 0 {
+        ((ttl as f64) / 10.0).max(1.0)
+    } else {
+        1.0
+    };
+    Some(format!(
+        "{} {} {} {} {} 1 {} 0.0 0.0\n",
+        directive, key, name, kernel, f, tau
+    ))
+}
+
+fn convert_gold_block(block: &str) -> String {
+    let mut out = String::new();
+    let mut force = String::new();
+    let mut ttl: u64 = 0;
+    let mut has_frame = false;
+    let mut lat: Option<f64> = None;
+    let mut lon: Option<f64> = None;
+    let mut alt: Option<f64> = None;
+    for line in block.lines() {
+        let t = line.trim();
+        if t.is_empty() || t.starts_with('#') {
+            continue;
+        }
+        let parts: Vec<&str> = t.split_whitespace().collect();
+        if parts.is_empty() {
+            continue;
+        }
+        match parts[0] {
+            "url" | "format" | "header" | "target" | "catalog" | "flux_from_mag"
+            | "abs_mag_from" | "catalog_epoch" => {
+                out.push_str(t);
+                out.push('\n');
+            }
+            "ttl" => {
+                out.push_str(t);
+                out.push('\n');
+                if let Ok(v) = parts[1].parse::<u64>() {
+                    ttl = v;
+                }
+            }
+            "on" | "at" => {
+                out.push_str(t);
+                out.push('\n');
+                has_frame = true;
+            }
+            "lat" if parts.len() >= 2 => {
+                if let Ok(v) = parts[1].parse::<f64>() {
+                    lat = Some(v);
+                }
+            }
+            "lon" if parts.len() >= 2 => {
+                if let Ok(v) = parts[1].parse::<f64>() {
+                    lon = Some(v);
+                }
+            }
+            "alt" if parts.len() >= 2 => {
+                if let Ok(v) = parts[1].parse::<f64>() {
+                    alt = Some(v);
+                }
+            }
+            "force" if parts.len() >= 2 => force = parts[1].to_string(),
+            "map" | "cmap" | "rows" => {
+                let arg = parts.get(1).copied().unwrap_or(".");
+                out.push_str(parts[0]);
+                out.push(' ');
+                out.push_str(arg);
+                out.push('\n');
+            }
+            "lat_key" if parts.len() >= 2 => {
+                out.push_str(&format!("lat {}\n", parts[1]));
+            }
+            "lon_key" if parts.len() >= 2 => {
+                out.push_str(&format!("lon {}\n", parts[1]));
+            }
+            "alt_key" if parts.len() >= 2 => {
+                out.push_str(&format!("alt {}\n", parts[1]));
+            }
+            "epoch_key" if parts.len() >= 2 => {
+                out.push_str(&format!("epoch {}\n", parts[1]));
+            }
+            "field" | "field_in" if parts.len() >= 3 => {
+                if let Some(s) = gold_synth("field", &force, parts[1], parts[2], ttl) {
+                    out.push_str(&s);
+                }
+            }
+            "first" | "last" | "count" | "path" | "deep" if parts.len() >= 3 => {
+                if let Some(s) = gold_synth(parts[0], &force, parts[1], parts[2], ttl) {
+                    out.push_str(&s);
+                }
+            }
+            "last_row" if parts.len() >= 3 => {
+                if let Some(s) = gold_synth("lastrow", &force, parts[1], parts[2], ttl) {
+                    out.push_str(&s);
+                }
+            }
+            "last_line" if parts.len() >= 2 => {
+                out.push_str(&format!("lastline {}\n", parts[1]));
+            }
+            "last_obj" if parts.len() >= 5 => {
+                let name = parts[parts.len() - 1];
+                let key = parts[parts.len() - 2];
+                let parent = parts[1];
+                let m = parts[2..parts.len() - 2].join(" ");
+                out.push_str(&format!("lastobj {} {} {} {}\n", parent, m, key, name));
+            }
+            "geojson" if parts.len() >= 5 => {
+                let tau = if ttl > 0 {
+                    ((ttl as f64) / 10.0).max(1.0)
+                } else {
+                    1.0
+                };
+                out.push_str(&format!(
+                    "geojson {} 0.0 {} {} {} 0.0 0.0\n",
+                    parts[2], parts[3], parts[4], tau
+                ));
+            }
+            "regex" if parts.len() >= 3 => {
+                let name = parts[parts.len() - 1];
+                let pat = parts[1..parts.len() - 1].join(" ");
+                if let Some(s) = gold_synth("regex", &force, &pat, name, ttl) {
+                    out.push_str(&s);
+                }
+            }
+            _ => {}
+        }
+    }
+    if !has_frame && lat.is_some() && lon.is_some() {
+        out.push_str(&format!(
+            "on earth {} {} {}\n",
+            lat.unwrap_or(0.0),
+            lon.unwrap_or(0.0),
+            alt.unwrap_or(0.0)
+        ));
+    }
+    out
+}
+
+fn gold_convert_mode(input: &str, output: &str) -> i32 {
+    let content = match std::fs::read_to_string(input) {
+        Ok(c) => c,
+        Err(_) => {
+            eprintln!("--gold: input unreadable: {}", input);
+            return 1;
+        }
+    };
+    let mut converted = String::from("# gold conversion (old → new grammar, mechanical)\n");
+    let mut block = String::new();
+    let mut total = 0usize;
+    let mut parsed = 0usize;
+    for line in content.lines() {
+        let t = line.trim_start();
+        if t.starts_with("url ") && !block.is_empty() {
+            total += 1;
+            let conv = convert_gold_block(&block);
+            if !parse_sources(&conv).is_empty() {
+                parsed += 1;
+                converted.push_str(&conv);
+                converted.push('\n');
+            }
+            block = String::new();
+        }
+        block.push_str(line);
+        block.push('\n');
+    }
+    if !block.is_empty() {
+        total += 1;
+        let conv = convert_gold_block(&block);
+        if !parse_sources(&conv).is_empty() {
+            parsed += 1;
+            converted.push_str(&conv);
+            converted.push('\n');
+        }
+    }
+    if std::fs::write(output, &converted).is_err() {
+        eprintln!("--gold: output unwritable: {}", output);
+        return 1;
+    }
+    eprintln!(
+        "--gold: {} blocks converted, {} parse in the current parser → {}",
+        total, parsed, output
+    );
+    0
+}
+
 fn parse_station_entries(j: &JsonVal, src: &SourceConfig) -> Vec<StationEntry> {
     let arr = match jpath_val(j, &src.stations_path) {
         Some(JsonVal::Arr(a)) => a.iter().collect::<Vec<_>>(),
@@ -7288,7 +7519,7 @@ fn probe_mode(path: &str, precise: bool, lat: f64, lon: f64, env: &HashMap<Strin
         .replace("{lon}", &format!("{:.6}", lon));
         let url = resolve_secret(&url, env);
         let url = url.replace("ZZ", "Z").replace("  ", " ");
-        let raw = fetch_raw(&url, None, &[], src.ttl);
+        let raw = fetch_raw_probe(&url, None, &[]);
         let parsed = raw.as_ref().and_then(|r| parse_json(r));
         let auto_ttl = raw.as_ref().and_then(|r| probe_ttl(r));
         let mut block = String::new();
@@ -8355,6 +8586,23 @@ fn main() {
                 }
             };
             std::process::exit(ci_mode(dir));
+        }
+        if args.len() > 1 && args[1] == "--gold" {
+            let input = match args.get(2) {
+                Some(s) => s.as_str(),
+                None => {
+                    eprintln!("--gold: input file argument absent");
+                    std::process::exit(1);
+                }
+            };
+            let output = match args.get(3) {
+                Some(s) => s.as_str(),
+                None => {
+                    eprintln!("--gold: output file argument absent");
+                    std::process::exit(1);
+                }
+            };
+            std::process::exit(gold_convert_mode(input, output));
         }
         if args.len() > 1 && args[1] == "--probe" {
             let path = match args.get(2) {
@@ -9533,6 +9781,36 @@ field H comet_h_mag gaussian-inverse-square em mag 604800 0.0 0.0\n";
     }
 
     #[test]
+    fn temp_gold_convert_check() {
+        let content =
+            std::fs::read_to_string("archeology/sources/sources_gold_pre-cdn_27k_359-domains.φ")
+                .unwrap();
+        let mut blocks = 0usize;
+        let mut parsed = 0usize;
+        let mut with_extracts = 0usize;
+        let mut block = String::new();
+        for line in content.lines() {
+            let t = line.trim_start();
+            if t.starts_with("url ") && !block.is_empty() {
+                blocks += 1;
+                let conv = super::convert_gold_block(&block);
+                let srcs = super::parse_sources(&conv);
+                if !srcs.is_empty() {
+                    parsed += 1;
+                    with_extracts += srcs.iter().filter(|s| !s.extracts.is_empty()).count();
+                }
+                block = String::new();
+            }
+            block.push_str(line);
+            block.push('\n');
+        }
+        eprintln!(
+            "gold convert: {} blocks, {} parsed, {} with extracts",
+            blocks, parsed, with_extracts
+        );
+    }
+
+    #[test]
     fn test_backlog_batches_verify() {
         let live: std::collections::HashSet<String> = super::load_sources()
             .iter()
@@ -9540,14 +9818,36 @@ field H comet_h_mag gaussian-inverse-square em mag 604800 0.0 0.0\n";
             .collect();
         let mut seen: std::collections::HashSet<String> = std::collections::HashSet::new();
         let mut ok_text = String::from("# staging: backlog blocks verified with samples\n");
+        if let Ok(existing) =
+            std::fs::read_to_string("phi/research/agent_output/staging_verified.φ")
+        {
+            for l in existing.lines() {
+                let t = l.trim_start();
+                if t.starts_with("url ") {
+                    seen.insert(t[4..].trim().to_string());
+                }
+            }
+            ok_text = existing;
+        }
         let mut void_text = String::new();
+        if let Ok(existing) = std::fs::read_to_string("phi/research/agent_output/staging_empty.txt")
+        {
+            for l in existing.lines() {
+                if let Some(u) = l.strip_prefix("void ") {
+                    if let Some(end) = u.find(' ') {
+                        seen.insert(u[..end].to_string());
+                    }
+                }
+            }
+            void_text = existing;
+        }
         let fixture_lsk = super::LeapSeconds {
             delta_t_a: 32.184,
             deltas: vec![(37.0, 1483228800.0)],
         };
         let now = fixture_lsk.system_now_tdb().unwrap();
         let env = super::load_env();
-        let mut limit = 180usize;
+        let mut limit = 250usize;
         let mut ok = 0usize;
         let mut empty = 0usize;
         for e in std::fs::read_dir("phi/research/agent_output")
@@ -9555,7 +9855,7 @@ field H comet_h_mag gaussian-inverse-square em mag 604800 0.0 0.0\n";
             .flatten()
         {
             let fname = e.file_name().to_string_lossy().to_string();
-            if !fname.ends_with("_accepted.φ") {
+            if !fname.ends_with("_accepted.φ") && fname != "gold_converted.φ" {
                 continue;
             }
             let content = std::fs::read_to_string(e.path()).unwrap();
@@ -9603,7 +9903,7 @@ field H comet_h_mag gaussian-inverse-square em mag 604800 0.0 0.0\n";
                         }
                         url = super::resolve_secret(&url, &env);
                         let headers = super::render_headers(&s.headers, &env);
-                        let body = match super::fetch_one(&url, None, &headers, s.ttl) {
+                        let body = match super::fetch_raw_probe(&url, None, &headers) {
                             Some(b) => b,
                             None => {
                                 empty += 1;

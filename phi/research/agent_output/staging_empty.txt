@@ -97,3 +97,794 @@ void https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/GOES16_L
 void https://www.ndbc.noaa.gov/data/realtime2/51003.txt fetch returned empty
 void https://www.ndbc.noaa.gov/data/realtime2/51005.txt fetch returned empty
 void https://www.pegelonline.wsv.de/webservices/rest-api/v2/stations.json?includeCurrentMeasurement=true data-present (container array has rows but extract yielded nothing)
+void http://www.nmdb.eu/nmdb/qtipart.php?station=ALMT&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=AUST&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=BOUL&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=CTWN&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=DOMC&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=ERMN&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=FSMT&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=GOOS&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=HALF&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=INVK&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=KERG&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=KIEL&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=MOSC&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=NAIN&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=NRLK&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=PWNK&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=REYK&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=SANA&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=TBLS&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=ULNB&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void https://service.scedc.caltech.edu/fdsnws/event/1/query?format=geojson&minmagnitude=1.5&limit=500&orderby=time&starttime=2026-08-07T00:00:00 fetch returned empty
+void https://seismo.ethz.ch/fdsnws/event/1/query?format=geojson&minmagnitude=1.0&limit=200&orderby=time&starttime=2026-08-07T00:00:00 fetch returned empty
+void https://earthquake.alaska.edu/fdsnws/event/1/query?format=geojson&minmagnitude=2.0&limit=200&orderby=time&starttime=2026-08-07T00:00:00 fetch returned empty
+void https://power.larc.nasa.gov/api/temporal/monthly/point?parameters=ALLSKY_SFC_UV_INDEX&community=AG&longitude=0&latitude=0&start=2026&end=2026&format=JSON fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TTB/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TUC/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=UPS/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VALL/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VNA/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VOS/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VSS/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WIC/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WNG/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/AC_H0_MFI/variables/BGSEc,Magnitude/data/2026-08-07T00:00:00.000Z/2026-08-07T23:59:59.000Z?format=csv fetch returned empty
+void https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/GOES16_L2_MAG/variables/Hp,He,Hn,B_Total/data/2026-08-07T00:00:00.000Z/2026-08-07T23:59:59.000Z?format=csv fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=EYR/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=FRD/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=FRN/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=FUR/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GAN/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GCK/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GDH/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GNG/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GUA/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GUI/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HBK/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HER/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HLP/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HON/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HRB/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HRN/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HUA/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HYB/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=IPM/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=IRT/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=IZN/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=JAI/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KAK/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KDU/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KIR/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KMH/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KNY/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KOU/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=LRM/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=LVV/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_annmean_gl.txt data-present (non-JSON body: HTML/XML/text)
+void https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_mm_mlo.txt data-present (non-JSON body: HTML/XML/text)
+void https://data.pmel.noaa.gov/pmel/erddap/tabledap/all_pmel_co2_moorings.csv?pCO2_air&orderByMax(%22time%22) fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=LYC/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MAB/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MAW/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MAW/best fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MCG/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MCQG/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MMB/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NAG/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NCK/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NEW/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NGK/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NUR/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NVS/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ORC/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PAG/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PEG/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PHU/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PIL/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PPT/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=REU/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SBA/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SFS/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SHE/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SHU/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SIT/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SJG/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SOD/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SPT/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SUA/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TDC/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=THL/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=THY/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TIRM/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TLON/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojson data-present (JSON has content but declared keys absent)
+void https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_week.geojson data-present (JSON has content but declared keys absent)
+void https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_day.geojson data-present (JSON has content but declared keys absent)
+void https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_week.geojson data-present (JSON has content but declared keys absent)
+void https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson data-present (JSON has content but declared keys absent)
+void https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_day.geojson data-present (JSON has content but declared keys absent)
+void https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_week.geojson data-present (JSON has content but declared keys absent)
+void https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2026-07-31&endtime=2026-08-07&minmagnitude=2.5&limit=200 data-present (JSON has content but declared keys absent)
+void https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetData&format=JSON&observatoryIagaCode=BOU&samplesPerDay=1440&dataStartDate=2026-08-07&dataDuration=1 data-present (keys exist but no rows extracted)
+void https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetData&format=JSON&observatoryIagaCode=ESK&samplesPerDay=1440&dataStartDate=2026-08-07&dataDuration=1 data-present (keys exist but no rows extracted)
+void https://waterservices.usgs.gov/nwis/iv/?format=json&sites=08371000&parameterCd=00060,00065 data-present (JSON has content but declared keys absent)
+void https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_month.geojson data-present (JSON has content but declared keys absent)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9753216&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow empty-response (JSON parsed but all containers empty)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9757811&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow empty-response (JSON parsed but all containers empty)
+void https://environment.data.gov.uk/flood-monitoring/id/stations?_limit=500 data-present (container array has rows but extract yielded nothing)
+void https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?site=GSFC&year=2026&month=08&day=07&year2=2026&month2=08&day2=07&AOD15=1&AVG=10 data-present (non-JSON body: HTML/XML/text)
+void https://data.sensor.community/airrohr/v1/filter/area=29.5,-95.0,10 empty-response (JSON parsed but all containers empty)
+void https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_weekly_mlo.txt data-present (non-JSON body: HTML/XML/text)
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ABG/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ABK/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=AIA/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ARS/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ASP/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BDV/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BEL/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BFO/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BOU/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BRW/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BSL/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CKI/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CLF/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CMO/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CNB/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CPL/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CSY/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CTA/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CYG/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DED/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DLT/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DOU/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DUR/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=EBR/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson data-present (JSON has content but declared keys absent)
+void https://services.swpc.noaa.gov/products/kyoto-dst.json data-present (JSON has content but declared keys absent)
+void http://www.nmdb.eu/nmdb/qtipart.php?station=MCMD&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=NEWK&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=OULU&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=ROME&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=SOPO&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=THUL&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void https://services.swpc.noaa.gov/json/solar-cycle/observed-solar-cycle-indices.json data-present (JSON has content but declared keys absent)
+void https://www.nmdb.eu/nest/draw_graph.php?wget=1&stations[]=OULU&tabchoice=1h&output=ascii&startdate_1=2026-08-07T00:00:00&enddate_1=2026-08-07T23:59:59 fetch returned empty
+void https://www.nmdb.eu/nest/draw_graph.php?wget=1&stations[]=SOPO&tabchoice=1h&output=ascii&startdate_1=2026-08-07T00:00:00&enddate_1=2026-08-07T23:59:59 fetch returned empty
+void https://erddap.marine.ie/erddap/tabledap/smartbay_obs_acoustic.csv?time,spl_full data-present (non-JSON body: HTML/XML/text)
+void http://www.nmdb.eu/nmdb/qtipart.php?station=ALMT&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=AUST&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=BOUL&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=CTWN&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=DOMC&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=ERMN&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=FSMT&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=GOOS&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=HALF&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=INVK&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=KERG&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=KIEL&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=MOSC&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=NAIN&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=NRLK&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=PWNK&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=REYK&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=SANA&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=TBLS&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=ULNB&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void https://service.scedc.caltech.edu/fdsnws/event/1/query?format=geojson&minmagnitude=1.5&limit=500&orderby=time&starttime=2026-08-07T00:00:00 fetch returned empty
+void https://seismo.ethz.ch/fdsnws/event/1/query?format=geojson&minmagnitude=1.0&limit=200&orderby=time&starttime=2026-08-07T00:00:00 fetch returned empty
+void https://earthquake.alaska.edu/fdsnws/event/1/query?format=geojson&minmagnitude=2.0&limit=200&orderby=time&starttime=2026-08-07T00:00:00 fetch returned empty
+void https://power.larc.nasa.gov/api/temporal/monthly/point?parameters=ALLSKY_SFC_UV_INDEX&community=AG&longitude=0&latitude=0&start=2026&end=2026&format=JSON fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TTB/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TUC/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=UPS/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VALL/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VNA/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VOS/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VSS/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WIC/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WNG/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/AC_H0_MFI/variables/BGSEc,Magnitude/data/2026-08-07T00:00:00.000Z/2026-08-07T23:59:59.000Z?format=csv fetch returned empty
+void https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/GOES16_L2_MAG/variables/Hp,He,Hn,B_Total/data/2026-08-07T00:00:00.000Z/2026-08-07T23:59:59.000Z?format=csv fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=EYR/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=FRD/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=FRN/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=FUR/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GAN/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GCK/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GDH/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GNG/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GUA/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GUI/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HBK/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HER/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HLP/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HON/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HRB/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HRN/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HUA/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HYB/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=IPM/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=IRT/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=IZN/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=JAI/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KAK/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KDU/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KIR/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KMH/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KNY/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KOU/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=LRM/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=LVV/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=LYC/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MAB/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MAW/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MCG/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MCQG/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MMB/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NAG/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NCK/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NEW/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NGK/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NUR/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NVS/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ORC/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PAG/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PEG/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PHU/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PIL/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PPT/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=REU/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SBA/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SFS/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SHE/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SHU/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SIT/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SJG/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SOD/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SPT/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SUA/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TDC/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=THL/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=THY/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TIRM/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TLON/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2026-07-31&endtime=2026-08-07&minmagnitude=2.5&limit=200 data-present (JSON has content but declared keys absent)
+void https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetData&format=JSON&observatoryIagaCode=BOU&samplesPerDay=1440&dataStartDate=2026-08-07&dataDuration=1 data-present (keys exist but no rows extracted)
+void https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetData&format=JSON&observatoryIagaCode=ESK&samplesPerDay=1440&dataStartDate=2026-08-07&dataDuration=1 data-present (keys exist but no rows extracted)
+void https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?site=GSFC&year=2026&month=08&day=07&year2=2026&month2=08&day2=07&AOD15=1&AVG=10 data-present (non-JSON body: HTML/XML/text)
+void https://data.sensor.community/airrohr/v1/filter/area=29.5,-95.0,10 empty-response (JSON parsed but all containers empty)
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ABG/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ABK/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=AIA/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ARS/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ASP/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BDV/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BEL/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BFO/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BOU/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BRW/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BSL/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CKI/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CLF/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CMO/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CNB/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CPL/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CSY/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CTA/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CYG/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DED/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DLT/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DOU/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DUR/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=EBR/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=MCMD&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=NEWK&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=OULU&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=ROME&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=SOPO&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=THUL&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void https://www.nmdb.eu/nest/draw_graph.php?wget=1&stations[]=OULU&tabchoice=1h&output=ascii&startdate_1=2026-08-07T00:00:00&enddate_1=2026-08-07T23:59:59 fetch returned empty
+void https://www.nmdb.eu/nest/draw_graph.php?wget=1&stations[]=SOPO&tabchoice=1h&output=ascii&startdate_1=2026-08-07T00:00:00&enddate_1=2026-08-07T23:59:59 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=ALMT&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=AUST&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=BOUL&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=CTWN&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=DOMC&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=ERMN&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=FSMT&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=GOOS&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=HALF&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=INVK&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=KERG&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=KIEL&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=MOSC&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=NAIN&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=NRLK&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=PWNK&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=REYK&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=SANA&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=TBLS&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=ULNB&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void https://service.scedc.caltech.edu/fdsnws/event/1/query?format=geojson&minmagnitude=1.5&limit=500&orderby=time&starttime=2026-08-07T00:00:00 fetch returned empty
+void https://seismo.ethz.ch/fdsnws/event/1/query?format=geojson&minmagnitude=1.0&limit=200&orderby=time&starttime=2026-08-07T00:00:00 fetch returned empty
+void https://earthquake.alaska.edu/fdsnws/event/1/query?format=geojson&minmagnitude=2.0&limit=200&orderby=time&starttime=2026-08-07T00:00:00 fetch returned empty
+void https://power.larc.nasa.gov/api/temporal/monthly/point?parameters=ALLSKY_SFC_UV_INDEX&community=AG&longitude=0&latitude=0&start=2026&end=2026&format=JSON fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TTB/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TUC/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=UPS/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VALL/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VNA/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VOS/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VSS/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WIC/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WNG/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/AC_H0_MFI/variables/BGSEc,Magnitude/data/2026-08-07T00:00:00.000Z/2026-08-07T23:59:59.000Z?format=csv fetch returned empty
+void https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/GOES16_L2_MAG/variables/Hp,He,Hn,B_Total/data/2026-08-07T00:00:00.000Z/2026-08-07T23:59:59.000Z?format=csv fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=EYR/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=FRD/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=FRN/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=FUR/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GAN/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GCK/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GDH/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GNG/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GUA/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GUI/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HBK/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HER/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HLP/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HON/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HRB/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HRN/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HUA/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HYB/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=IPM/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=IRT/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=IZN/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=JAI/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KAK/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KDU/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KIR/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KMH/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KNY/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KOU/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=LRM/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=LVV/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=LYC/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MAB/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MAW/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MCG/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MCQG/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MMB/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NAG/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NCK/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NEW/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NGK/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NUR/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NVS/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ORC/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PAG/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PEG/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PHU/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PIL/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PPT/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=REU/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SBA/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SFS/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SHE/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SHU/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SIT/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SJG/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SOD/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SPT/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SUA/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TDC/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=THL/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=THY/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TIRM/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TLON/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2026-07-31&endtime=2026-08-07&minmagnitude=2.5&limit=200 data-present (JSON has content but declared keys absent)
+void https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetData&format=JSON&observatoryIagaCode=BOU&samplesPerDay=1440&dataStartDate=2026-08-07&dataDuration=1 data-present (keys exist but no rows extracted)
+void https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetData&format=JSON&observatoryIagaCode=ESK&samplesPerDay=1440&dataStartDate=2026-08-07&dataDuration=1 data-present (keys exist but no rows extracted)
+void https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?site=GSFC&year=2026&month=08&day=07&year2=2026&month2=08&day2=07&AOD15=1&AVG=10 data-present (non-JSON body: HTML/XML/text)
+void https://data.sensor.community/airrohr/v1/filter/area=29.5,-95.0,10 empty-response (JSON parsed but all containers empty)
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ABG/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ABK/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=AIA/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ARS/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ASP/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BDV/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BEL/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BFO/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BOU/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BRW/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BSL/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CKI/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CLF/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CMO/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CNB/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CPL/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CSY/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CTA/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CYG/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DED/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DLT/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DOU/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DUR/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=EBR/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=MCMD&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=NEWK&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=OULU&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=ROME&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=SOPO&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=THUL&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void https://www.nmdb.eu/nest/draw_graph.php?wget=1&stations[]=OULU&tabchoice=1h&output=ascii&startdate_1=2026-08-07T00:00:00&enddate_1=2026-08-07T23:59:59 fetch returned empty
+void https://www.nmdb.eu/nest/draw_graph.php?wget=1&stations[]=SOPO&tabchoice=1h&output=ascii&startdate_1=2026-08-07T00:00:00&enddate_1=2026-08-07T23:59:59 fetch returned empty
+void https://api.blitzortung.org/compressed/current_positions?lat=29.5&lon=-95.0&range=500 fetch returned empty
+void https://query1.finance.yahoo.com/v8/finance/chart/AFK?interval=1d&range=1d data-present (JSON has content but declared keys absent)
+void https://query1.finance.yahoo.com/v8/finance/chart/EWZ?interval=1d&range=1d data-present (JSON has content but declared keys absent)
+void https://query1.finance.yahoo.com/v8/finance/chart/FXI?interval=1d&range=1d data-present (JSON has content but declared keys absent)
+void https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?interval=1d&range=1d data-present (JSON has content but declared keys absent)
+void https://query1.finance.yahoo.com/v8/finance/chart/BDRY?interval=1d&range=1d data-present (JSON has content but declared keys absent)
+void https://query1.finance.yahoo.com/v8/finance/chart/EEM?interval=1d&range=1d data-present (JSON has content but declared keys absent)
+void https://query1.finance.yahoo.com/v8/finance/chart/VGK?interval=1d&range=1d data-present (JSON has content but declared keys absent)
+void https://query1.finance.yahoo.com/v8/finance/chart/FM?interval=1d&range=1d data-present (JSON has content but declared keys absent)
+void https://query1.finance.yahoo.com/v8/finance/chart/EWG?interval=1d&range=1d data-present (JSON has content but declared keys absent)
+void https://query1.finance.yahoo.com/v8/finance/chart/GC%3DF?interval=1d&range=1d data-present (JSON has content but declared keys absent)
+void https://query1.finance.yahoo.com/v8/finance/chart/INDA?interval=1d&range=1d data-present (JSON has content but declared keys absent)
+void https://query1.finance.yahoo.com/v8/finance/chart/EWJ?interval=1d&range=1d data-present (JSON has content but declared keys absent)
+void https://query1.finance.yahoo.com/v8/finance/chart/ILF?interval=1d&range=1d data-present (JSON has content but declared keys absent)
+void https://query1.finance.yahoo.com/v8/finance/chart/EWW?interval=1d&range=1d data-present (JSON has content but declared keys absent)
+void https://query1.finance.yahoo.com/v8/finance/chart/KSA?interval=1d&range=1d data-present (JSON has content but declared keys absent)
+void https://query1.finance.yahoo.com/v8/finance/chart/CL%3DF?interval=1d&range=1d data-present (JSON has content but declared keys absent)
+void https://query1.finance.yahoo.com/v8/finance/chart/XLC?interval=1d&range=1d data-present (JSON has content but declared keys absent)
+void https://query1.finance.yahoo.com/v8/finance/chart/XLY?interval=1d&range=1d data-present (JSON has content but declared keys absent)
+void https://query1.finance.yahoo.com/v8/finance/chart/XLP?interval=1d&range=1d data-present (JSON has content but declared keys absent)
+void https://query1.finance.yahoo.com/v8/finance/chart/XLE?interval=1d&range=1d data-present (JSON has content but declared keys absent)
+void https://query1.finance.yahoo.com/v8/finance/chart/XLF?interval=1d&range=1d data-present (JSON has content but declared keys absent)
+void https://query1.finance.yahoo.com/v8/finance/chart/XLV?interval=1d&range=1d data-present (JSON has content but declared keys absent)
+void https://query1.finance.yahoo.com/v8/finance/chart/XLI?interval=1d&range=1d data-present (JSON has content but declared keys absent)
+void https://query1.finance.yahoo.com/v8/finance/chart/XLB?interval=1d&range=1d data-present (JSON has content but declared keys absent)
+void https://query1.finance.yahoo.com/v8/finance/chart/XLRE?interval=1d&range=1d data-present (JSON has content but declared keys absent)
+void https://query1.finance.yahoo.com/v8/finance/chart/XLK?interval=1d&range=1d data-present (JSON has content but declared keys absent)
+void https://query1.finance.yahoo.com/v8/finance/chart/XLU?interval=1d&range=1d data-present (JSON has content but declared keys absent)
+void https://query1.finance.yahoo.com/v8/finance/chart/SOXX?interval=1d&range=1d data-present (JSON has content but declared keys absent)
+void https://query1.finance.yahoo.com/v8/finance/chart/EZA?interval=1d&range=1d data-present (JSON has content but declared keys absent)
+void https://query1.finance.yahoo.com/v8/finance/chart/ASEA?interval=1d&range=1d data-present (JSON has content but declared keys absent)
+void https://query1.finance.yahoo.com/v8/finance/chart/IYT?interval=1d&range=1d data-present (JSON has content but declared keys absent)
+void https://query1.finance.yahoo.com/v8/finance/chart/%5ETNX?interval=1d&range=1d data-present (JSON has content but declared keys absent)
+void https://query1.finance.yahoo.com/v8/finance/chart/SPY?interval=1d&range=1d data-present (JSON has content but declared keys absent)
+void https://query1.finance.yahoo.com/v8/finance/chart/%5EVIX?interval=1d&range=1d data-present (JSON has content but declared keys absent)
+void https://query1.finance.yahoo.com/v8/finance/chart/ACWI?interval=1d&range=1d data-present (JSON has content but declared keys absent)
+void https://api.github.com/events?per_page=100 data-present (JSON has content but declared keys absent)
+void https://www.inex.ie/ixp/grapher/ixp?id=1&type=json empty-response (JSON parsed but all containers empty)
+void https://api.irail.be/liveboard/?station=Brussels&format=json empty-response (JSON parsed but all containers empty)
+void https://stat.ripe.net/data/bgp-updates/data.json?resource=0.0.0.0/0&starttime=2026-08-07T11:00:00Z&endtime=2026-08-07 empty-response (JSON parsed but all containers empty)
+void https://transport.opendata.ch/v1/stationboard?station=Bern&limit=10 data-present (JSON has content but declared keys absent)
+void https://transport.opendata.ch/v1/stationboard?station=Zurich&limit=10 data-present (JSON has content but declared keys absent)
+void https://www.wienerlinien.at/ogd_realtime/monitor?stopId=1234 data-present (JSON has content but declared keys absent)
+void https://data.blitzortung.org/contributors/0/stations/0/signals/0/2026/08/07//.json data-present (non-JSON body: HTML/XML/text)
+void https://services.swpc.noaa.gov/text/3-day-geomag-forecast.txt data-present (non-JSON body: HTML/XML/text)
+void https://www.nmdb.eu/nest/data/realtime.txt fetch returned empty
+void https://services.swpc.noaa.gov/json/goes/primary/electron-1-day.json fetch returned empty
+void https://services.swpc.noaa.gov/products/alerts.json data-present (container array has rows but extract yielded nothing)
+void https://services.swpc.noaa.gov/products/solar-wind/mag-7-day.json fetch returned empty
+void https://services.swpc.noaa.gov/products/solar-wind/plasma-7-day.json fetch returned empty
+void https://gcn.gsfc.nasa.gov/amon_icecube_gold_bronze_events.html data-present (non-JSON body: HTML/XML/text)
+void https://earthquakes.bgs.ac.uk/fdsnws/event/1/query?format=geojson&minmagnitude=1.0&limit=200&orderby=time&starttime=2026-08-07T00:00:00 fetch returned empty
+void https://api.energy-charts.info/ren_share data-present (JSON has content but declared keys absent)
+void https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year=2026&month=08 data-present (JSON has content but declared keys absent)
+void https://gcn.nasa.gov/api/v0.1/circulars?subject=GRB+optical&limit=100&format=json fetch returned empty
+void https://api.wolfx.jp/cenc_eqlist.json empty-response (JSON parsed but all containers empty)
+void https://www.tsunami.gov/events/xml/PHEBAtom.xml data-present (non-JSON body: HTML/XML/text)
+void https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+200+name,ra,dec,trigger_time,duration,peak_flux,fluence,type+FROM+integralburst+WHERE+(type+LIKE+'%25SGR%25'+OR+type+LIKE+'%25Magnetar%25')+AND+ra+IS+NOT+NULL+ORDER+BY+trigger_time+DESC data-present (non-JSON body: HTML/XML/text)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9453220&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow data-present (JSON has content but declared keys absent)
+void https://incois.gov.in/portal/wave/rssnews.jsp fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NGK/best-avail/PT1M/xyzf&start=2026-08-07T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://ssd-api.jpl.nasa.gov/cad.api?dist-max=0.1&date-min=-7&date-max=2026-08-07&body=Earth&fullname=true&sort=dist&limit=50 empty-response (JSON parsed but all containers empty)
+void https://tadas.afad.gov.tr/api/event/list?limit=200 empty-response (JSON parsed but all containers empty)
+void https://wdc.kugi.kyoto-u.ac.jp/ae_realtime/202608/ae20260807.for.request fetch returned empty
+void https://wdc.kugi.kyoto-u.ac.jp/dst_realtime/202608/dst20260807.for.request fetch returned empty
+void https://services.swpc.noaa.gov/products/geospace/propagated-solar-wind-1-hour.json data-present (non-JSON body: HTML/XML/text)
+void https://services.swpc.noaa.gov/json/magnetometers/magnetometers.json fetch returned empty
+void https://www.minorplanetcenter.net/cgi-bin/neocp.cgi?style=json fetch returned empty
+void https://api.weather.gov/stations?state=CA,TX,NY&limit=500&cursor=&format=json fetch returned empty
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=air_temperature&application=batch16&begin_date=20260807&end_date=20260807&station=8518750&units=metric&time_zone=gmt&format=json data-present (container array has rows but extract yielded nothing)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=water_level&application=batch15&begin_date=20260807&end_date=20260807&station=8518750&datum=MLLW&units=metric&time_zone=gmt&format=json data-present (container array has rows but extract yielded nothing)
+void https://services.swpc.noaa.gov/json/goes/primary/differential-euv-flux.json fetch returned empty
+void https://www.ncei.noaa.gov/data/international-best-track-archive-for-climate-stewardship-ibtracs/v04r00/access/csv/ibtracs.ACTIVE.list.v04r00.csv data-present (non-JSON body: HTML/XML/text)
+void https://services.swpc.noaa.gov/json/ovation_aurora_latest.json data-present (container array has rows but extract yielded nothing)
+void https://services.swpc.noaa.gov/json/geomag/dst_index.json fetch returned empty
+void https://services.swpc.noaa.gov/json/goes/primary/differential-electrons-1-day.json data-present (container array has rows but extract yielded nothing)
+void https://services.swpc.noaa.gov/json/goes/primary/integral-protons-7-day.json data-present (container array has rows but extract yielded nothing)
+void https://services.swpc.noaa.gov/json/solar_filaments.json fetch returned empty
+void https://services.swpc.noaa.gov/json/solar-geophysical-activity-summary.json fetch returned empty
+void https://gcn.nasa.gov/api/v1/events?query=instrument:Fermi/GBM&order-by=-created fetch returned empty
+void https://www.nmdb.eu/nest/data/NEWK/realtime.txt fetch returned empty
+void https://data.sensor.community/airrohr/v1/filter/type=SPS30 data-present (container array has rows but extract yielded nothing)
+void http://afis.meraka.org.za/afis/data/json/ fetch returned empty
+void https://air-quality-api.open-meteo.com/v1/air-quality?latitude=29.5&longitude=-95.0&current=us_aqi,us_aqi_pm2_5&timezone=auto empty-response (JSON parsed but all containers empty)
+void https://api.weather.bom.gov.au/v1/observations/29.5,-95.0 fetch returned empty
+void https://api.weather.bom.gov.au/v1/warnings/29.5,-95.0 fetch returned empty
+void https://firms.modaps.eosdis.nasa.gov/api/area/json//VIIRS_NOAA20_NRT/1/world fetch returned empty
+void https://api.open-meteo.com/v1/forecast?latitude=29.5&longitude=-95.0&minutely_15=lightning_potential&timezone=auto data-present (JSON has content but declared keys absent)
+void https://api.weather.gov/alerts/active/region/SA fetch returned empty
+void https://api.sensor.community/v1/data/measurement?lat=29.5&lon=-95.0&distance=5000&limit=50&sensor_type=17 fetch returned empty
+void https://api.gbif.org/v1/occurrence/search?limit=20&hasCoordinate=true&decimalLatitude=29.0,30.0&decimalLongitude=-95.0,-94.0 data-present (container array has rows but extract yielded nothing)
+void https://bmkg-restapi.vercel.app/v1/earthquake/recent fetch returned empty
+void https://www.seismicportal.eu/fdsnws/event/1/query?format=json&minmagnitude=2&limit=500 data-present (container array has rows but extract yielded nothing)
+void https://api.open-meteo.com/v1/forecast?latitude=29.5&longitude=-95.0&current=soil_temperature_0cm,soil_temperature_6cm,soil_temperature_18cm,soil_temperature_54cm,soil_moisture_0_to_1cm,soil_moisture_1_to_3cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,soil_moisture_27_to_81cm&timezone=auto empty-response (JSON parsed but all containers empty)
+void https://marine-api.open-meteo.com/v1/marine?latitude=29.5&longitude=-95.0&current=wave_height,wave_direction,wave_period,wind_wave_height,wind_wave_direction,wind_wave_period,swell_wave_height,swell_wave_direction,swell_wave_period&timezone=auto empty-response (JSON parsed but all containers empty)
+void https://www.minorplanetcenter.net/iau/NEO/neocp.txt data-present (non-JSON body: HTML/XML/text)
+void https://gml.noaa.gov/aftp/data/radiation/solrad/realtime/abq/abq.dat fetch returned empty
+void https://epic.gsfc.nasa.gov/api/natural data-present (container array has rows but extract yielded nothing)
+void https://services.swpc.noaa.gov/json/aurora_power/aurora_power.json fetch returned empty
+void https://volcanoes.usgs.gov/hans-public/api/volcano/list empty-response (JSON parsed but all containers empty)
+void https://www.imis.bfs.de/ogc/opendata/ows?service=WFS&version=1.1.0&request=GetFeature&typeName=opendata:odlinfo_odl_1h_latest&outputFormat=application/json&count=2000 data-present (container array has rows but extract yielded nothing)
+void https://spaceweather.sansa.org.za/ionosonde/latest fetch returned empty
+void https://services.swpc.noaa.gov/json/tec/tec_global_hp.json fetch returned empty
+void https://aviationweather.gov/api/data/taf?ids=KJFK&format=json data-present (container array has rows but extract yielded nothing)
+void https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_info_v3?site=all&if_no_site=1 fetch returned empty
+void https://api.open-meteo.com/v1/air-quality?latitude=29.5&longitude=-95.0&current=european_aqi,european_aqi_pm2_5,european_aqi_pm10,european_aqi_nitrogen_dioxide,european_aqi_ozone,european_aqi_sulphur_dioxide fetch returned empty
+void https://api.open-meteo.com/v1/forecast?latitude=-3.47&longitude=-62.22&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto data-present (JSON has content but declared keys absent)
+void https://api.open-meteo.com/v1/forecast?latitude=-80.0&longitude=100.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto data-present (JSON has content but declared keys absent)
+void https://api.open-meteo.com/v1/forecast?latitude=-24.0&longitude=-69.5&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto data-present (JSON has content but declared keys absent)
+void https://api.open-meteo.com/v1/forecast?latitude=0.5&longitude=114.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto data-present (JSON has content but declared keys absent)
+void https://api.open-meteo.com/v1/forecast?latitude=30.0&longitude=31.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto data-present (JSON has content but declared keys absent)
+void https://api.open-meteo.com/v1/forecast?latitude=-34.0&longitude=18.5&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto data-present (JSON has content but declared keys absent)
+void https://api.open-meteo.com/v1/forecast?latitude=0.0&longitude=18.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto data-present (JSON has content but declared keys absent)
+void https://api.open-meteo.com/v1/forecast?latitude=36.5&longitude=-117.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto data-present (JSON has content but declared keys absent)
+void https://api.open-meteo.com/v1/forecast?latitude=-18.0&longitude=178.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto data-present (JSON has content but declared keys absent)
+void http://www.nmdb.eu/nmdb/qtipart.php?station=ALMT&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=AUST&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=BOUL&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=CTWN&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=DOMC&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=ERMN&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=FSMT&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=GOOS&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=HALF&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=INVK&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=KERG&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=KIEL&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=MOSC&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=NAIN&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=NRLK&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=PWNK&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=REYK&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=SANA&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=TBLS&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=ULNB&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void https://service.scedc.caltech.edu/fdsnws/event/1/query?format=geojson&minmagnitude=1.5&limit=500&orderby=time&starttime=2026-08-07T00:00:00 fetch returned empty
+void https://seismo.ethz.ch/fdsnws/event/1/query?format=geojson&minmagnitude=1.0&limit=200&orderby=time&starttime=2026-08-07T00:00:00 fetch returned empty
+void https://earthquake.alaska.edu/fdsnws/event/1/query?format=geojson&minmagnitude=2.0&limit=200&orderby=time&starttime=2026-08-07T00:00:00 fetch returned empty
+void https://power.larc.nasa.gov/api/temporal/monthly/point?parameters=ALLSKY_SFC_UV_INDEX&community=AG&longitude=0&latitude=0&start=2026&end=2026&format=JSON fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TTB/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TUC/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=UPS/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VALL/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VNA/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VOS/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VSS/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WIC/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WNG/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/AC_H0_MFI/variables/BGSEc,Magnitude/data/2026-08-07T00:00:00.000Z/2026-08-07T23:59:59.000Z?format=csv fetch returned empty
+void https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/GOES16_L2_MAG/variables/Hp,He,Hn,B_Total/data/2026-08-07T00:00:00.000Z/2026-08-07T23:59:59.000Z?format=csv fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=EYR/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=FRD/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=FRN/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=FUR/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GAN/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GCK/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GDH/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GNG/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GUA/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GUI/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HBK/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HER/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HLP/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HON/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HRB/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HRN/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HUA/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HYB/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=IPM/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=IRT/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=IZN/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=JAI/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KAK/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KDU/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KIR/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KMH/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KNY/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KOU/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=LRM/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=LVV/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=LYC/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MAB/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MAW/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MCG/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MCQG/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MMB/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NAG/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NCK/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NEW/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NGK/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NUR/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NVS/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ORC/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PAG/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PEG/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PHU/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PIL/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PPT/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=REU/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SBA/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SFS/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SHE/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SHU/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SIT/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SJG/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SOD/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SPT/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SUA/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TDC/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=THL/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=THY/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TIRM/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TLON/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2026-07-31&endtime=2026-08-07&minmagnitude=2.5&limit=200 data-present (JSON has content but declared keys absent)
+void https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetData&format=JSON&observatoryIagaCode=BOU&samplesPerDay=1440&dataStartDate=2026-08-07&dataDuration=1 data-present (keys exist but no rows extracted)
+void https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetData&format=JSON&observatoryIagaCode=ESK&samplesPerDay=1440&dataStartDate=2026-08-07&dataDuration=1 data-present (keys exist but no rows extracted)
+void https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?site=GSFC&year=2026&month=08&day=07&year2=2026&month2=08&day2=07&AOD15=1&AVG=10 data-present (non-JSON body: HTML/XML/text)
+void https://data.sensor.community/airrohr/v1/filter/area=29.5,-95.0,10 empty-response (JSON parsed but all containers empty)
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ABG/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ABK/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=AIA/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ARS/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ASP/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BDV/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BEL/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BFO/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BOU/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BRW/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BSL/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CKI/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CLF/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CMO/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CNB/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CPL/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CSY/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CTA/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CYG/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DED/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DLT/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DOU/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DUR/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=EBR/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=MCMD&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=NEWK&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=OULU&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=ROME&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=SOPO&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=THUL&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void https://www.nmdb.eu/nest/draw_graph.php?wget=1&stations[]=OULU&tabchoice=1h&output=ascii&startdate_1=2026-08-07T00:00:00&enddate_1=2026-08-07T23:59:59 fetch returned empty
+void https://www.nmdb.eu/nest/draw_graph.php?wget=1&stations[]=SOPO&tabchoice=1h&output=ascii&startdate_1=2026-08-07T00:00:00&enddate_1=2026-08-07T23:59:59 fetch returned empty
+void https://api.blitzortung.org/compressed/current_positions?lat=29.5&lon=-95.0&range=500 fetch returned empty
+void https://stat.ripe.net/data/bgp-updates/data.json?resource=0.0.0.0/0&starttime=2026-08-07T11:00:00Z&endtime=2026-08-07 empty-response (JSON parsed but all containers empty)
+void https://data.blitzortung.org/contributors/0/stations/0/signals/0/2026/08/07//.json data-present (non-JSON body: HTML/XML/text)
+void https://earthquakes.bgs.ac.uk/fdsnws/event/1/query?format=geojson&minmagnitude=1.0&limit=200&orderby=time&starttime=2026-08-07T00:00:00 fetch returned empty
+void https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year=2026&month=08 data-present (JSON has content but declared keys absent)
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NGK/best-avail/PT1M/xyzf&start=2026-08-07T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://ssd-api.jpl.nasa.gov/cad.api?dist-max=0.1&date-min=-7&date-max=2026-08-07&body=Earth&fullname=true&sort=dist&limit=50 empty-response (JSON parsed but all containers empty)
+void https://wdc.kugi.kyoto-u.ac.jp/ae_realtime/202608/ae20260807.for.request fetch returned empty
+void https://wdc.kugi.kyoto-u.ac.jp/dst_realtime/202608/dst20260807.for.request fetch returned empty
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=air_temperature&application=batch16&begin_date=20260807&end_date=20260807&station=8518750&units=metric&time_zone=gmt&format=json data-present (container array has rows but extract yielded nothing)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=water_level&application=batch15&begin_date=20260807&end_date=20260807&station=8518750&datum=MLLW&units=metric&time_zone=gmt&format=json data-present (container array has rows but extract yielded nothing)
+void https://air-quality-api.open-meteo.com/v1/air-quality?latitude=29.5&longitude=-95.0&current=us_aqi,us_aqi_pm2_5&timezone=auto empty-response (JSON parsed but all containers empty)
+void https://api.weather.bom.gov.au/v1/observations/29.5,-95.0 fetch returned empty
+void https://api.weather.bom.gov.au/v1/warnings/29.5,-95.0 fetch returned empty
+void https://firms.modaps.eosdis.nasa.gov/api/area/json//VIIRS_NOAA20_NRT/1/world fetch returned empty
+void https://api.open-meteo.com/v1/forecast?latitude=29.5&longitude=-95.0&minutely_15=lightning_potential&timezone=auto data-present (JSON has content but declared keys absent)
+void https://api.sensor.community/v1/data/measurement?lat=29.5&lon=-95.0&distance=5000&limit=50&sensor_type=17 fetch returned empty
+void https://api.gbif.org/v1/occurrence/search?limit=20&hasCoordinate=true&decimalLatitude=29.0,30.0&decimalLongitude=-95.0,-94.0 data-present (container array has rows but extract yielded nothing)
+void https://api.open-meteo.com/v1/forecast?latitude=29.5&longitude=-95.0&current=soil_temperature_0cm,soil_temperature_6cm,soil_temperature_18cm,soil_temperature_54cm,soil_moisture_0_to_1cm,soil_moisture_1_to_3cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,soil_moisture_27_to_81cm&timezone=auto empty-response (JSON parsed but all containers empty)
+void https://marine-api.open-meteo.com/v1/marine?latitude=29.5&longitude=-95.0&current=wave_height,wave_direction,wave_period,wind_wave_height,wind_wave_direction,wind_wave_period,swell_wave_height,swell_wave_direction,swell_wave_period&timezone=auto empty-response (JSON parsed but all containers empty)
+void https://gml.noaa.gov/aftp/data/radiation/solrad/realtime/abq/abq.dat fetch returned empty
+void https://api.open-meteo.com/v1/air-quality?latitude=29.5&longitude=-95.0&current=european_aqi,european_aqi_pm2_5,european_aqi_pm10,european_aqi_nitrogen_dioxide,european_aqi_ozone,european_aqi_sulphur_dioxide fetch returned empty
+void https://api.open-meteo.com/v1/forecast?latitude=44.0&longitude=105.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto data-present (JSON has content but declared keys absent)
+void https://api.open-meteo.com/v1/forecast?latitude=72.0&longitude=-40.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto data-present (JSON has content but declared keys absent)
+void https://api.open-meteo.com/v1/forecast?latitude=64.0&longitude=-19.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto data-present (JSON has content but declared keys absent)
+void https://api.open-meteo.com/v1/forecast?latitude=-49.5&longitude=69.5&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto data-present (JSON has content but declared keys absent)
+void https://api.open-meteo.com/v1/forecast?latitude=3.0&longitude=73.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto data-present (JSON has content but declared keys absent)
+void https://api.open-meteo.com/v1/forecast?latitude=-19.5&longitude=23.5&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto data-present (JSON has content but declared keys absent)
+void https://api.open-meteo.com/v1/forecast?latitude=-50.0&longitude=-72.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto data-present (JSON has content but declared keys absent)
+void https://api.open-meteo.com/v1/forecast?latitude=23.0&longitude=5.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto data-present (JSON has content but declared keys absent)
+void https://api.open-meteo.com/v1/forecast?latitude=62.0&longitude=105.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto data-present (JSON has content but declared keys absent)
+void https://bmkg-restapi.vercel.app/v1/weather/3273 fetch returned empty
+void https://ads.atmosphere.copernicus.eu/api/v1/collections fetch returned empty
+void https://weather.cma.cn/api/weather/54511 fetch returned empty
+void https://air-quality-api.open-meteo.com/v1/air-quality?latitude=19.5&longitude=-155.6&current=carbon_dioxide empty-response (JSON parsed but all containers empty)
+void https://giro.uml.edu/didbase/json/scaled.php?format=json fetch returned empty
+void https://giro.uml.edu/didbase/stationlist.php?format=json fetch returned empty
+void https://api.sunrise-sunset.org/json?lat=29.5&lng=-95.0&formatted=0 empty-response (JSON parsed but all containers empty)
+void https://disease.sh/v3/covid-19/all empty-response (JSON parsed but all containers empty)
+void https://api.coral.tsr.lol/stations/southeast_florida/current empty-response (JSON parsed but all containers empty)
+void https://open.er-api.com/v6/latest/USD empty-response (JSON parsed but all containers empty)
+void https://api.gbif.org/v1/occurrence/search?taxon_key=212&decimalLatitude=29.0,30.0&decimalLongitude=-95.0,-94.0&limit=0 empty-response (JSON parsed but all containers empty)
+void https://api.gbif.org/v1/occurrence/search?limit=0 empty-response (JSON parsed but all containers empty)
+void https://api.gdeltproject.org/api/v2/doc/doc?query=climate&mode=timelinevol&format=json fetch returned empty
+void https://onionoo.torproject.org/summary?running=true data-present (JSON has content but declared keys absent)
+void https://kauai.ccmc.gsfc.nasa.gov/ISWA/iSWAGateway?action=getdata&id=iri_tec&format=json fetch returned empty
+void https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/ERG_HFA_L2_SPECTRA_60S/variables/spec_mW_E,spec_mW_B,freq/data/2026-08-07T00:00:00.000Z/2026-08-07T06:00:00.000Z?format=csv fetch returned empty
+void https://cddis.nasa.gov/archive/gnss/products/ionex/2026/07/COD0OPSFIN_2026070000_01D_01H_GIM.INX data-present (non-JSON body: HTML/XML/text)
+void https://floodobservatory.colorado.edu/FloodArchive/active_floods.geojson fetch returned empty
+void https://hub.docker.com/v2/repositories/library/alpine data-present (JSON has content but declared keys absent)
+void https://hub.docker.com/v2/repositories/library/node data-present (JSON has content but declared keys absent)
+void https://hub.docker.com/v2/repositories/library/python data-present (JSON has content but declared keys absent)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2790000031%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%272026-08-07%27&STOP_TIME=%272026-08-08%27&STEP_SIZE=%271+d%27 empty-response (JSON parsed but all containers empty)
+void https://api.electricitymap.org/v3/power-breakdown/latest?lat=29.5&lon=-95.0 fetch returned empty
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27502%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%272026-08-07%27&STOP_TIME=%272026-08-08%27&STEP_SIZE=%271+d%27 empty-response (JSON parsed but all containers empty)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%273I%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%272026-08-07%27&STOP_TIME=%272026-08-08%27&STEP_SIZE=%271%20d%27 empty-response (JSON parsed but all containers empty)
+void https://network.satnogs.org/api/observations/?format=json&limit=1 data-present (JSON has content but declared keys absent)
+void https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$top=1&$count=true fetch returned empty
+void https://www.gdacs.org/gdacsapi/api/events/geteventlist/SEARCH?alertlevel=red;orange;green data-present (container array has rows but extract yielded nothing)
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["highway"="speed_camera"](around:50000,29.5,-95.0);out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["power"="generator"]["generator:source"="wind"](around:200000,29.5,-95.0);out%20100; fetch returned empty
+void https://giro.uml.edu/SAOExplorer/index.php?action=getStations&format=json fetch returned empty
+void https://gracedb.ligo.org/api/superevents/?format=json&category=Production&label=GW&ordering=-created&per_page=10 data-present (container array has rows but extract yielded nothing)
+void https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+name,ra,dec,obsid,exposure,count_rate,type+FROM+nicermastr+WHERE+ra+IS+NOT+NULL+ORDER+BY+count_rate+DESC data-present (non-JSON body: HTML/XML/text)
+void https://www.globalfloods.eu/glofas-forecasting/?format=json data-present (non-JSON body: HTML/XML/text)
+void https://ssd-api.jpl.nasa.gov/fireball.api?limit=100&sort=date data-present (container array has rows but extract yielded nothing)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND='-31'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='2026-08-07'&STOP_TIME='2026-08-08'&STEP_SIZE='6+h'&VEC_TABLE='2'&REF_PLANE='ECLIPTIC' empty-response (JSON parsed but all containers empty)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-170%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%272026-08-07%27&STOP_TIME=%272026-08-08%27&STEP_SIZE=%271+d%27 empty-response (JSON parsed but all containers empty)
+void https://lasp.colorado.edu/lisird/latis/dap/fism_flare_hr.csv?time>=2026-08-07 fetch returned empty
+void https://lasp.colorado.edu/lisird/latis/dap/noaa_radio_flux.csv?time>=2026-08-07 empty-response (empty body)
+void https://lasp.colorado.edu/lisird/latis/dap/tsis_tsi_24hr.csv?time>=2024-01-01 data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27301%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%272026-08-07%27&STOP_TIME=%272026-08-08%27&STEP_SIZE=%271%20d%27 empty-response (JSON parsed but all containers empty)
+void https://coastwatch.noaa.gov/erddap/griddap/jplMURSST41.csv?analysed_sst%5B-1%5D%5B(0.0):(60.0):4%5D%5B(-180.0):(180.0):4%5D fetch returned empty
+void https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-hourly&stations=USW00013739,USW00094728,USW00012918&startDate=2026-07-01&endDate=2026-07-27&format=json empty-response (JSON parsed but all containers empty)
+void https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-hourly&stations=USW00013739&startDate=2026-01-01&endDate=2026-07-27&format=json empty-response (JSON parsed but all containers empty)
+void https://www.ndbc.noaa.gov/activestations.xml data-present (non-JSON body: HTML/XML/text)
+void https://www.ndbc.noaa.gov/data/realtime2/21413.dart data-present (non-JSON body: HTML/XML/text)
+void https://www.ndbc.noaa.gov/data/realtime2/23401.dart data-present (non-JSON body: HTML/XML/text)
+void https://www.ndbc.noaa.gov/data/realtime2/32401.dart data-present (non-JSON body: HTML/XML/text)
+void https://www.ndbc.noaa.gov/data/realtime2/41420.dart data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-98%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%272026-08-07%27&STOP_TIME=%272026-08-08%27&STEP_SIZE=%271+d%27 empty-response (JSON parsed but all containers empty)
+void https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=APTY&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0 fetch returned empty
+void https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=HRMS&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0 fetch returned empty
+void https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=JUNG&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0 fetch returned empty
+void https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=KERG&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0 fetch returned empty
+void https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=MCMD&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0 fetch returned empty
+void https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=MXCO&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0 fetch returned empty
+void https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=OULU&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0 fetch returned empty
+void https://www.ncei.noaa.gov/access/services/data/v1?dataset=daily-summaries&dataTypes=TMAX,TMIN,PRCP,SNOW,AWND&stations=GM000003026,GM000010501,UK000003668&startDate=2026-08-07&endDate=2026-08-07&format=json empty-response (JSON parsed but all containers empty)
+void https://so2.gsfc.nasa.gov/measures/measures_so2.html fetch returned empty
+void https://api.weather.gov/gridpoints/TOP/31,80/forecast/hourly data-present (JSON has content but declared keys absent)
+void https://gong2.nso.edu/oQR/zqs/?ref=zqs&series=zqs&date=2026.08.07&format=json data-present (non-JSON body: HTML/XML/text)
+void https://air-quality-api.open-meteo.com/v1/air-quality?latitude=29.5&longitude=-95.0&hourly=pm2_5,pm10,nitrogen_dioxide,ozone,european_aqi,us_aqi&forecast_days=5&format=json data-present (container array has rows but extract yielded nothing)
+void https://api.safecast.org/en-US/measurements.json?limit=100 data-present (container array has rows but extract yielded nothing)
+void https://api.open-meteo.com/v1/forecast?latitude=29.5&longitude=-95.0&current=shortwave_radiation empty-response (JSON parsed but all containers empty)
+void https://aviationweather.gov/api/data/taf?bbox=35,-10,70,40&format=json&time=valid data-present (container array has rows but extract yielded nothing)
+void https://api.npmjs.org/downloads/point/last-day/lodash empty-response (JSON parsed but all containers empty)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27801%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%272026-08-07%27&STOP_TIME=%272026-08-08%27&STEP_SIZE=%271+d%27 empty-response (JSON parsed but all containers empty)
+void https://argovis-api.colorado.edu/heatContent?startDate=2026-08-06T00:00:00Z&endDate=2026-08-07T00:00:00Z fetch returned empty
+void http://export.arxiv.org/api/query?search_query=cat:astro-ph.*&max_results=0 fetch returned empty
+void http://export.arxiv.org/api/query?search_query=cat:cs.*&max_results=0 fetch returned empty
+void http://export.arxiv.org/api/query?search_query=cat:hep-*&max_results=0 fetch returned empty
+void http://export.arxiv.org/api/query?search_query=cat:math.*&max_results=0 fetch returned empty
+void http://export.arxiv.org/api/query?search_query=cat:physics.*&max_results=0 fetch returned empty
+void http://export.arxiv.org/api/query?search_query=cat:q-bio.*&max_results=0 fetch returned empty
+void http://export.arxiv.org/api/query?search_query=cat:q-fin.*&max_results=0 fetch returned empty
+void https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?request=doQuery&lang=ADQL&format=json&query=SELECT+TOP+200+RAJ2000,DEJ2000,Vmag+FROM+%22II/366/catv2021%22 data-present (container array has rows but extract yielded nothing)
+void https://newton.spacedys.com/astdys2/index.php?pc=3.0&type=all&format=json&limit=500 data-present (non-JSON body: HTML/XML/text)
+void https://opendata.dwd.de/climate_environment/health/alerts/s31fg.json data-present (JSON has content but declared keys absent)
+void https://api.woudc.org/collections/stations/items?f=json&limit=500 data-present (container array has rows but extract yielded nothing)
+void https://api.woudc.org/collections/totalozone/items?limit=1 data-present (JSON has content but declared keys absent)
+void https://clinicaltrials.gov/api/v2/studies?query.term=brain-computer+interface&filter.overallStatus=RECRUITING&countTotal=true&pageSize=1 data-present (JSON has content but declared keys absent)
+void https://data.cdc.gov/resource/jr58-6ysp.json?$limit=1 data-present (JSON has content but declared keys absent)
+void https://clinicaltrials.gov/api/v2/studies?query.term=CRISPR&filter.overallStatus=RECRUITING&countTotal=true&pageSize=1 data-present (JSON has content but declared keys absent)
+void https://api.crossref.org/works?rows=1 data-present (JSON has content but declared keys absent)
