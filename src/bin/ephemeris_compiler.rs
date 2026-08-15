@@ -1007,7 +1007,7 @@ fn select_system(entries: &[IndexEntry], system: &str) -> Vec<IndexEntry> {
         .collect();
     let moon_carriers: &[&str] = match system {
         "jupiter" => &["jup365"],
-        "saturn" => &["sat441", "sat427"],
+        "saturn" => &["sat441"],
         "neptune" => &["nep097"],
         _ => &[],
     };
