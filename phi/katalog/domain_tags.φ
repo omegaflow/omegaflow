@@ -20,9 +20,12 @@ domain catalogue.dataspace.copernicus.eu | /stac/collections | recheck | 503/Tim
 domain sh.dataspace.copernicus.eu | /stac/collections | recheck | 503
 domain api.inaturalist.org | /v1/taxa (1.423.081, iconic taxa 11) | done | katalog/inaturalist_vokabular.φ (Präsenz → decline)
 domain simbad.u-strasbg.fr | TAP otypes (DISTINCT 233) | done | katalog/simbad_otypes.φ
-domain www.ncei.noaa.gov | Datasets-Suche (JS-web) | offen | Recheck (maschinenlesbarer Endpoint)
-domain cdaweb.gsfc.nasa.gov | Dataset-Inventar | offen | Recheck (SPASE/JS)
-domain inspirehep.net | /api/literature facets | offen | Facet-Schlüssel gehasht — Recheck
+domain cdaweb.gsfc.nasa.gov | istp_public/data Verzeichnis (via Jina) | done | katalog/cdaweb_missions.φ (102 Missionen)
+domain gea.esac.esa.int | Gaia-TAP tap_schema | done | katalog/gaia_swpc_vokabular.φ (7 Tabellen)
+domain services.swpc.noaa.gov | /products/ Verzeichnis inkl. Unterordner | done | katalog/gaia_swpc_vokabular.φ (78 Produkte)
+domain inspirehep.net | /api/literature (via Jina erreichbar) | done | Literatur → nicht-physikalisch (decline); Facet gehasht
+domain www.ncei.noaa.gov | Datasets-Suche | recheck | 403 auch via Jina
+domain pdgapi.lbl.gov | /api/v1 | recheck | JS-App (pdgLive), kein sauberes JSON
 domain irsa.ipac.caltech.edu | TAP | done | katalog/tap_index_irsa.φ
 domain dc.g-vo.org | TAP | done | katalog/tap_index_gavo.φ
 domain gaia.ari.uni-heidelberg.de | TAP | done | katalog/tap_index_ari.φ
@@ -30,4 +33,4 @@ domain exoplanetarchive.ipac.caltech.edu | TAP | done | katalog/tap_index_exoarc
 domain heasarc.gsfc.nasa.gov | Xamin TAP | done | katalog/tap_index_heasarc.φ
 domain services*.arcgis.com | REST-Item-Crawl (12 Typen, ~84k Items) | done | katalog/arcgis_tags.φ (95.596 Tags)
 domain terrapulse | TerraPulse-Katalog (25 Seiten, 469 Quellen) | done | katalog/terrapulse_catalog.φ (103 candidate: NCEI 59, JPL 4, NASA 3…; 366 decline)
-domain catalog.data.gov | CKAN package_search | recheck | API „Not Found" — Katalog migriert, neuer Endpoint suchen
+domain catalog.data.gov | CKAN package_search | recheck | 404 auch via Jina — migriert, neuer Endpoint suchen
