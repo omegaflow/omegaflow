@@ -238,7 +238,7 @@ braucht mindestens eine gemessene, physisch gate-konforme Quelle.
 | thermal | live: NOAA-CDO-Fanout (TMAX), AOML-Drifter, GML Barrow, Buoy-WTMP; DASTCOM H/Albedo + Yarkovsky-Listen; GOES-Thermal | K03 (Parameter); Kuration (Zeitreihen) |
 | diffusion | live: PurpleAir, OpenAQ-pm25-Fanout, GML CH4/N2O/SF6, OOI-pCO2; NOAA SWPC, NASA OMNI | Kuration |
 | advective | live: Waterservices-Rivers, OpenSky-Aircraft, Buoy-Wind; DSCOVR/SWPC (Solarwind), NOAA GFS | Kuration |
-| electric | live: Swarm EFI (Vs) + FAC (IRC/FAC-Ströme) + FAST-MAGA-LR (em, NRT) via VirES-HAPI; TCT02-E-Feld = Quarantäne (Abdeckung endet 2025-12-04, kein Live-Feed; grind_einbau_2026-08-15_pending.φ) | GLM-Blitz (NetCDF-Reader fehlt), GIC-Netze (nicht öffentlich), Live-E-Feld-Stärke (kein Feed existiert) |
+| electric | live: Swarm EFI (Vs) + FAC (IRC/FAC-Ströme) + FAST-MAGA-LR (em, NRT) via VirES-HAPI; TCT02 + TCT16 = Quarantäne (beide enden 2025-12-04, kein Live-Feed, swarm-diss nur CDF/ZIP) | GLM-Blitz (NetCDF-Reader fehlt), GIC-Netze (nicht öffentlich), Live-E-Feld-Stärke (kein Feed existiert) |
 
 Device-Sensoren (M05) ergänzen die Kanäle lokal; das Radiatorium (M01/M02) ist die
 Aktuator-Seite. Der Kurations-Pfad ist unten registriert (Curation & Quellen).
@@ -814,19 +814,33 @@ Binary-PCK-Pakets oben).
   `docs/concepts/SOURCES_V2_SPEC.md` §1.0 — jeder Einbau folgt der Spec,
   keine Docstrings in den φ-Dateien.
 - **Source-Gate (2026-08-15):** `test_live_sources_extract` über das ganze
-  Register (Limit 600, Parallel-Session): 75 ok / 5 void. Dispositionen:
-  DONKI-FLR + AGOS = legitim leer (Fixture-Fenster ohne X-Flare / count:0),
-  Safecast = Fixture-LSK-Artefakt (prä-2017-Epoch-Zeilen fallen mit dem
-  Minimal-LSK; Produktions-LSK parst 1972+), opensky = 429 Rate-Limit
-  (transient), TCT02 = Abdeckung beendet (→ Quarantäne
-  `grind_einbau_2026-08-15_pending.φ`). Gate-Regel jetzt in
-  docs/source_curation.md: keine Source ohne Probe+Verify+händische
-  Kuration. Secret-Leak im Test-Logging gefixt (Void-Zeilen drucken
-  Templates statt aufgelöster URLs — die Parser-Tests leaken keine Keys
-  mehr in die Konsole). Offen: EA-Fanout-Runtime-Verifikation (Fanout wird
-  vom Test designbedingt übersprungen — die Fanout-Mechanik trägt CO-OPS/
-  OpenAQ/BGS/NOAA-CDO; die EA-Keys brauchen einen Lauf der Live-Fanout-
-  Extraktion).
+  Register: 76 ok / 2 void, jede Void mit datentragender Verifikation.
+  Dispositionen:
+  · Safecast: OK nach LSK-Volltabelle in der Fixture (die Minimal-Fixture
+    kannte prä-2017-Epochs nicht → alle Zeilen fielen — Fixture-Fix, kein
+    Source-Fix).
+  · DONKI-FLR: der classType=X-Filter des APIs wird NICHT angewendet
+    (liefert C2.4/C4.1 mit) — der Regex extrahiert trotzdem nur X-Flares;
+    heute kein X-Flare → 0 honored (historisch X1.1→1.1 verifiziert).
+  · AGOS → Quarantäne: Fenster-Routen count:0, der Katalog endet 2022-02-05
+    (all-quakes 17.380 Events/5,5 MB, significant 1.533 M5+) — Live-
+    Ingestion eingestellt; Kompilat-Kandidat über den CDN-Weg.
+  · opensky → Quarantäne: 429 bei zwei Läufen (ADSB deckt den Kanal).
+  · TCT02/TCT16 → Quarantäne: swarm-diss-Crawl (grind_swarm_diss.φ) belegt:
+    TCT16 existiert als CDF/ZIP, endet ebenfalls 2025-12-04 — kein
+    Live-Nachfolger, kein JSON-Zugang auf swarm-diss.
+  · EO-Gateway-Index (grind_eogateway_index.φ): 251 Einträge (91 Missionen,
+    115 Campaigns, 45 Instrumente), API-Route
+    earth.esa.int/eogateway/api/search/full_text, 6 Grind-Kandidaten
+    (smos-diss/oads, scihub/dataspace, science-pds.cryosat, eumetsat-romsaf).
+  · EA-Fanout: Keys gegen Live-Antworten verifiziert (notation/lat/long,
+    items.value) — Runtime-Fanout-Lauf offen (Test überspringt Fanout
+    designbedingt).
+  · Backlog-Test-Reparaturen im Working Tree (Template-Keyed-Dedupe,
+    Letzter-Block-Flush, Limit zählt nur Fetch-Blöcke, LSK-Volltabelle):
+    warten auf den Abschluss der laufenden main.rs-Überarbeitung der
+    Parallel-Session (deren Zwischenstand kompiliert nicht — cur_force) und
+    werden mit deren Commit mitgezogen.
 - **Secrets-Befund (2026-08-15):** Keys sind vollständig — `.secrets.local`
   liegt im Repo-ROOT (46 Keys inkl. NASA_API_KEY, FIRMS_MAP_KEY, ESA_USER/
   ESA_PASS) und wird via resolve_asset (CWD-relativ) geladen. DONKI-FLR und
@@ -846,8 +860,8 @@ Binary-PCK-Pakets oben).
   Marker-Braces — `tns_marker{"tns_id":4474,...}` wurde als ein Marker-Key
   gelesen → UA kollabierte zu „tns_marker" → wis-tns.org 403. Fix: Header als
   Einzel-Marker `header user-agent {TNS_UA}` (sources.φ) + `.secrets.local`-
-  Eintrag `TNS_UA=tns_marker{...}` (verbatim). Offen: Marker (tns_id/type)
-  gegen die TNS-Registrierung verifizieren, falls weiterhin 403.
+  Eintrag `TNS_UA=tns_marker{"tns_id":197991,"type":"bot","name":"omegaflow_archivar"}`
+  (registrierter Marker) und `TNS_API_KEY` gesetzt.
 - **Probe-Verifikation Grind-Einbau (2026-08-15):** --probe mit LSK auf die
   Grind-Einbau-Sektion: VirES-HAPI-Syntax (id=/start=/stop= und dataset=/
   time.min= sind beide gültig — 400er waren time-outside-range der

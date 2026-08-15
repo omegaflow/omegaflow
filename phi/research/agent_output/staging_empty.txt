@@ -757,3 +757,824 @@ void http://www.nmdb.eu/nmdb/qtipart.php?station=THUL&start=2026-08-06&end=2026-
 void http://www.nmdb.eu/nmdb/qtipart.php?station=ULNB&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
 void https://api.wheretheiss.at/v1/satellites/25544/positions?timestamps=1,2,3,4,5 data-present (JSON has content but declared keys absent)
 void https://qrng.anu.edu.au/API/jsonI.php?length=1&type=uint8 data-present (JSON has content but declared keys absent)
+void https://opensky-network.org/api/states/all fetch returned empty
+void https://query1.finance.yahoo.com/v8/finance/chart/AAPL?interval=1d&range=1d data-present (JSON has content but declared keys absent)
+void https://api.drand.sh/public/latest empty-response (JSON parsed but all containers empty)
+void https://www.seismicportal.eu/fdsnws/event/1/query?format=text&starttime={hour_ago}&lat={lat}&lon={lon}&maxradius=5&minmag=2.0 data-present (non-JSON body: HTML/XML/text)
+void https://api.waqi.info/feed/geo:{lat};{lon}/?token=demo data-present (JSON has content but declared keys absent)
+void https://api.carbonintensity.org.uk/intensity data-present (JSON has content but declared keys absent)
+void https://api.weather.gov/alerts/active data-present (JSON has content but declared keys absent)
+void https://data.sensor.community/static/v1/data.json data-present (container array has rows but extract yielded nothing)
+void https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=snowfall,snow_depth,temperature_2m,precipitation,cloud_cover,wind_speed_10m&timezone=auto empty-response (JSON parsed but all containers empty)
+void https://www.ceic.ac.cn/speedsearch?time=1&type=2&page=1 data-present (non-JSON body: HTML/XML/text)
+void https://gracedb.ligo.org/api/superevents/?count=10&category=production data-present (JSON has content but declared keys absent)
+void https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=shortwave_radiation,direct_radiation,diffuse_radiation,direct_normal_irradiance,global_tilted_irradiance,vapour_pressure_deficit,cape,evapotranspiration,et0_fao_evapotranspiration,visibility,freezing_level_height,snow_depth,precipitation_probability,weather_code&timezone=auto empty-response (JSON parsed but all containers empty)
+void https://blockchain.info/q/getblockcount data-present (non-JSON body: HTML/XML/text)
+void https://impc.dlr.de/SWE/Total_Electron_Content/TEC_Near_Real-Time/DLR_GNSS_GCG_L4_VTEC-NTCM-SCM_NC_GLOBAL/v2.0.0/latest/DLR_GNSS_GCG_L4_VTEC-NTCM-SCM_NC_GLOBAL_latest_D.json data-present (JSON has content but declared keys absent)
+void https://air-quality-api.open-meteo.com/v1/air-quality?latitude={lat}&longitude={lon}&current=aerosol_optical_depth,dust,pm2_5,pm10 empty-response (JSON parsed but all containers empty)
+void https://api.open-meteo.com/v1/forecast?latitude=32.0&longitude=86.0&current=temperature_2m,precipitation,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,sunshine_duration&past_days=1&timezone=auto data-present (JSON has content but declared keys absent)
+void https://ssd-api.jpl.nasa.gov/cad.api?dist-max=10LD data-present (JSON has content but declared keys absent)
+void https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_month.geojson data-present (container array has rows but extract yielded nothing)
+void https://eonet.gsfc.nasa.gov/api/v3/events data-present (JSON has content but declared keys absent)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Haumea%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27 empty-response (JSON parsed but all containers empty)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27 empty-response (JSON parsed but all containers empty)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-32%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27 empty-response (JSON parsed but all containers empty)
+void http://export.arxiv.org/api/query?search_query=cat:stat.*&max_results=0 fetch returned empty
+void https://api.met.no/weatherapi/sunrise/3.0/sun?lat={lat}&lon={lon}&date={today}&offset=+00:00 data-present (JSON has content but declared keys absent)
+void https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=54&hasGeospatialIssue=false data-present (container array has rows but extract yielded nothing)
+void https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=212&hasGeospatialIssue=false data-present (container array has rows but extract yielded nothing)
+void https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=44&hasGeospatialIssue=false data-present (container array has rows but extract yielded nothing)
+void https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=6&hasGeospatialIssue=false data-present (container array has rows but extract yielded nothing)
+void https://www.peeringdb.com/api/ix?limit=1 data-present (JSON has content but declared keys absent)
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["internet_access"="wlan"](around:5000,{lat},{lon});out%20count; fetch returned empty
+void https://ghoapi.azureedge.net/api/Indicator/SP_DYN_LE00_IN fetch returned empty
+void https://data.desi.lbl.gov/public/papers/ data-present (non-JSON body: HTML/XML/text)
+void https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+TOP+256+ra,dec,sy_dist,pl_eqt,pl_orbper+FROM+pscomppars+WHERE+pl_orbper%3C1+AND+sy_dist+IS+NOT+NULL+ORDER+BY+pl_orbper+ASC&format=json data-present (container array has rows but extract yielded nothing)
+void https://archive-api.open-meteo.com/v1/archive?latitude={lat}&longitude={lon}&start_date={yesterday}&end_date={yesterday}&hourly=soil_temperature_0_to_7cm,soil_temperature_7_to_28cm,soil_temperature_28_to_100cm,soil_moisture_0_to_7cm,soil_moisture_7_to_28cm,soil_moisture_28_to_100cm&timezone=auto data-present (JSON has content but declared keys absent)
+void https://volcanoes.usgs.gov/hans-public/api/volcano/getUSVolcanoes data-present (container array has rows but extract yielded nothing)
+void https://api.github.com/search/users?q=type:user&per_page=1 data-present (JSON has content but declared keys absent)
+void https://ows.emodnet-humanactivities.eu/geoserver/emodnet/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=emodnet:vessel_density&outputFormat=application/json&bbox={lon_min},{lat_min},{lon_max},{lat_max} data-present (non-JSON body: HTML/XML/text)
+void https://oderest.rsl.wustl.edu/live2/?query=PRODUCT&target=Mars&IHID=MGS&IID=MOLA&PT=PEDR&output=XML data-present (non-JSON body: HTML/XML/text)
+void https://aa.usno.navy.mil/api/rstt/oneday?date={today}&coords=34.201,-118.171&tz=0 data-present (JSON has content but declared keys absent)
+void https://musicbrainz.org/ws/2/release?query=*&limit=1&fmt=json data-present (JSON has content but declared keys absent)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=299&OBJ_DATA=YES empty-response (JSON parsed but all containers empty)
+void https://api.neotomadb.org/v2.0/data/occurrences?ageyounger=0&ageolder=50000&limit=1 data-present (JSON has content but declared keys absent)
+void https://api.openalex.org/works?per-page=1 data-present (JSON has content but declared keys absent)
+void https://pypi.org/stats/packages/ fetch returned empty
+void https://api.stackexchange.com/2.3/tags?pagesize=1&order=desc&sort=popular&site=stackoverflow data-present (JSON has content but declared keys absent)
+void https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+COUNT(*)+FROM+ps+WHERE+pl_discmethod+like+'%25TESS%25'&format=json fetch returned empty
+void https://www.wis-tns.org/statistics fetch returned empty
+void https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+500+g.ra,g.dec,g.parallax,g.phot_g_mean_mag+FROM+gaiadr3.gaia_source+AS+g+JOIN+gaiadr3.panstarrs1_best_neighbour+AS+x+ON+g.source_id=x.source_id+WHERE+g.parallax+>+0+AND+g.phot_g_mean_mag+<+17 fetch returned empty
+void https://developer.uspto.gov/ptab-api/v2/patents?limit=1 data-present (non-JSON body: HTML/XML/text)
+void https://api.openbrewerydb.org/v1/breweries?per_page=200 data-present (container array has rows but extract yielded nothing)
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["historic"="memorial"](around:5000,{lat},{lon});out%20count; fetch returned empty
+void https://api.worldbank.org/v2/country/DEU/indicator/NY.GDP.MKTP.KD.ZG?format=json data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/BHS/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/BHR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/BGD/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/BRB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/BLR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/BEL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/BLZ/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/BEN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/BMU/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/BTN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/BOL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/BIH/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/BWA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/BRA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/VGB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/BRN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/BGR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/BFA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/BDI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/CPV/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/KHM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/CMR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/CAN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/CYM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/CAF/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/TCD/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/CHI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/CHL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/CHN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/COL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/COM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/COD/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/COG/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/CRI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/CIV/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/HRV/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/CUB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/CUW/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/CYP/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/CZE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/DNK/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/DJI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/DMA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/DOM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/ECU/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/EGY/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/SLV/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/GNQ/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/ERI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/EST/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/SWZ/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/ETH/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/FRO/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/FJI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/FIN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/FRA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/PYF/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/GAB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/GMB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/GEO/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/DEU/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/GHA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/GIB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/GRC/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/GRL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/GRD/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/GUM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/GTM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/GIN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/GNB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/GUY/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/HTI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/HND/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/HKG/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/HUN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/ISL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/IND/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/IDN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/IRN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/IRQ/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/IRL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/ISR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/ITA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/JAM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/JPN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/JOR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/KAZ/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/KEN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/KIR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/KOR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/XKX/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/KWT/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/KGZ/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/LAO/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/LVA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/LBN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/LSO/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/LBR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/LBY/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/LIE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/LTU/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/LUX/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/MAC/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/MDG/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/MWI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/MYS/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/MDV/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/MLI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/MLT/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/MHL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/MRT/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/MUS/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/MEX/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/FSM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/MDA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/MCO/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/MNG/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/MNE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/MAR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/MOZ/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/MMR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/NAM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/NRU/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/NPL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/NLD/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/NCL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/NZL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/NIC/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/NER/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/NGA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/PRK/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/MKD/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/MNP/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/NOR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/OMN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/PAK/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/PLW/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/PAN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/PNG/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/PRY/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/PER/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/PHL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/POL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/PRT/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/PRI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/QAT/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/ROU/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/RUS/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/RWA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/WSM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/SMR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/STP/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/SAU/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/SEN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/SRB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/SYC/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/SLE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/SGP/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/SXM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/SVK/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/SVN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/SLB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/SOM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/ZAF/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/SSD/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/ESP/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/LKA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/KNA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/LCA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/MAF/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/VCT/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/SDN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/SUR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/SWE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/CHE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/SYR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/TJK/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/TZA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/THA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/TLS/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/TGO/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/TON/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/TTO/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/TUN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/TUR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/TKM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/TCA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/TUV/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/UGA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/UKR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/ARE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/GBR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/USA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/URY/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/UZB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/VUT/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/VEN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/VNM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/VIR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/PSE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/YEM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/ZMB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/ZWE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/WLD/indicator/SP.DYN.LE00.IN?format=json&date=2023&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/WLD/indicator/SP.POP.MEDN?format=json&date=2023&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/WLD/indicator/SP.POP.TOTL?format=json data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/WLD/indicator/EN.POP.DNST?format=json&per_page=1&date=2023 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/WLD/indicator/SP.URB.TOTL.IN.ZS?format=json&date=2023&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://en.wikipedia.org/w/api.php?action=query&list=geosearch&gscoord={lat}|{lon}&gsradius=10000&gslimit=500&format=json data-present (JSON has content but declared keys absent)
+void https://api.open-meteo.com/v1/elevation?latitude={lat}&longitude={lon} data-present (JSON has content but declared keys absent)
+void https://icgem.gfz-potsdam.de/calcgrid?model=EGM2008&functype=geoid_undulation&lat={lat}&lon={lon}&format=gdf data-present (non-JSON body: HTML/XML/text)
+void https://macrostrat.org/api/v2/units?format=json data-present (JSON has content but declared keys absent)
+void https://api.opentopodata.org/v1/srtm30m?locations={grid} data-present (container array has rows but extract yielded nothing)
+void https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_plates.json data-present (JSON has content but declared keys absent)
+void https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=neutrinoless+double+beta+decay+limit&fields=titles,citation_count data-present (JSON has content but declared keys absent)
+void https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/domefuji/df-co2-dry-260ka-2007.txt data-present (non-JSON body: HTML/XML/text)
+void https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/epica_domec/edc-co2-2008.txt data-present (non-JSON body: HTML/XML/text)
+void https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/vostok/co2nat.txt data-present (non-JSON body: HTML/XML/text)
+void https://opendata.cern.ch/api/records/?size=1&page=1 data-present (JSON has content but declared keys absent)
+void https://api.crossref.org/works?query=ultraweak+biophoton+emission&rows=0 empty-response (JSON parsed but all containers empty)
+void https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=CMB+cold+spot+anomaly&fields=titles,citation_count data-present (JSON has content but declared keys absent)
+void https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=vacuum+metastability+Higgs&fields=titles,citation_count data-present (JSON has content but declared keys absent)
+void https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=temperature_1000hPa,temperature_950hPa,temperature_925hPa,temperature_900hPa,temperature_850hPa,temperature_800hPa,temperature_700hPa,temperature_600hPa,temperature_500hPa,temperature_400hPa,temperature_300hPa,temperature_250hPa,temperature_200hPa,temperature_150hPa,temperature_100hPa,temperature_70hPa,temperature_50hPa,relative_humidity_1000hPa,relative_humidity_950hPa,relative_humidity_925hPa,relative_humidity_850hPa,relative_humidity_700hPa,relative_humidity_500hPa,relative_humidity_300hPa,relative_humidity_200hPa,relative_humidity_100hPa,relative_humidity_50hPa,wind_speed_1000hPa,wind_speed_950hPa,wind_speed_925hPa,wind_speed_850hPa,wind_speed_700hPa,wind_speed_500hPa,wind_speed_300hPa,wind_speed_250hPa,wind_speed_200hPa,wind_speed_100hPa,wind_speed_70hPa,wind_speed_50hPa&timezone=auto data-present (JSON has content but declared keys absent)
+void https://api.eia.gov/v2/electricity/rto/region-sub-ba/data/?frequency=hourly&data[0]=value&api_key={eia_key} fetch returned empty
+void https://maps.emodnet.eu/wms/vessel_density?service=WMS&request=GetCapabilities fetch returned empty
+void https://stereo-ssc.nascom.nasa.gov/beacon/tables.shtml fetch returned empty
+void https://api.weather.bom.gov.au/v1/forecast/{lat},{lon} fetch returned empty
+void https://weather.cma.cn/api/now/54511 fetch returned empty
+void https://geofon.gfz.de/fdsnws/station/1/query?format=geojson&level=station&network=AF fetch returned empty
+void https://services.swpc.noaa.gov/products/solar-wind/plasma-1-day.json fetch returned empty
+void https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=THUL&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0 fetch returned empty
+void https://www.ndbc.noaa.gov/data/realtime2/46401.dart fetch returned empty
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='499'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&QUANTITIES='1,9,20,23,24,29' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='599'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&QUANTITIES='1,9,20,23,24,29' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='699'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&QUANTITIES='1,9,20,23,24,29' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-125544'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='10+m'&QUANTITIES='1,9,20,23,24,29' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='DES%3DC%2F2023+A3'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&VEC_TABLE='2'&REF_PLANE='ECLIPTIC' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='99942'&OBJ_DATA='YES'&MAKE_EPHEM='YES'&EPHEM_TYPE='ELEMENTS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+d'&REF_PLANE='ECLIPTIC' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-31'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='6+h'&VEC_TABLE='2'&REF_PLANE='ECLIPTIC' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-32'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='6+h'&VEC_TABLE='2'&REF_PLANE='ECLIPTIC' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-96'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&VEC_TABLE='2'&REF_PLANE='ECLIPTIC' data-present (non-JSON body: HTML/XML/text)
+void https://lgdc.uml.edu/common/DIDBGetValues?ursiCode=JR055&charName=foF2&DMUF=3000&fromDate={today}&toDate={today}&subdiv=hour&desc=false fetch returned empty
+void https://lgdc.uml.edu/common/DIDBGetValues?ursiCode=AT138&charName=foF2&DMUF=3000&fromDate={today}&toDate={today}&subdiv=hour&desc=false fetch returned empty
+void https://lgdc.uml.edu/common/DIDBGetValues?ursiCode=DB049&charName=foF2&DMUF=3000&fromDate={today}&toDate={today}&subdiv=hour&desc=false fetch returned empty
+void https://lgdc.uml.edu/common/DIDBGetValues?ursiCode=LS166&charName=foF2&DMUF=3000&fromDate={today}&toDate={today}&subdiv=hour&desc=false fetch returned empty
+void https://lgdc.uml.edu/common/DIDBGetValues?ursiCode=TO536&charName=foF2&DMUF=3000&fromDate={today}&toDate={today}&subdiv=hour&desc=false fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetData&observatoryIagaCode=NGK&dataStartDate={today}T00:00:00&dataDuration=P1D&elements=X,Y,Z,F&publicationState=adjusted&format=json fetch returned empty
+void https://grace.jpl.nasa.gov/media/documents/GMSL_RLv04_JPL_RL06.3_SLCC.txt fetch returned empty
+void https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+Family,n,e,sini,a,H+FROM+"J/Icarus/239/46/table3"+WHERE+n+IS+NOT+NULL+ORDER+BY+n+DESC fetch returned empty
+void https://www.seismicportal.eu/fdsnws/event/1/query?format=text&starttime={hour_ago}&lat={lat}&lon={lon}&maxradius=5&minmag=2.0 data-present (non-JSON body: HTML/XML/text)
+void https://api.waqi.info/feed/geo:{lat};{lon}/?token=demo data-present (JSON has content but declared keys absent)
+void https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=snowfall,snow_depth,temperature_2m,precipitation,cloud_cover,wind_speed_10m&timezone=auto empty-response (JSON parsed but all containers empty)
+void https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=shortwave_radiation,direct_radiation,diffuse_radiation,direct_normal_irradiance,global_tilted_irradiance,vapour_pressure_deficit,cape,evapotranspiration,et0_fao_evapotranspiration,visibility,freezing_level_height,snow_depth,precipitation_probability,weather_code&timezone=auto empty-response (JSON parsed but all containers empty)
+void https://air-quality-api.open-meteo.com/v1/air-quality?latitude={lat}&longitude={lon}&current=aerosol_optical_depth,dust,pm2_5,pm10 empty-response (JSON parsed but all containers empty)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Haumea%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27 empty-response (JSON parsed but all containers empty)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27 empty-response (JSON parsed but all containers empty)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-32%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27 empty-response (JSON parsed but all containers empty)
+void https://api.met.no/weatherapi/sunrise/3.0/sun?lat={lat}&lon={lon}&date={today}&offset=+00:00 data-present (JSON has content but declared keys absent)
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["internet_access"="wlan"](around:5000,{lat},{lon});out%20count; fetch returned empty
+void https://archive-api.open-meteo.com/v1/archive?latitude={lat}&longitude={lon}&start_date={yesterday}&end_date={yesterday}&hourly=soil_temperature_0_to_7cm,soil_temperature_7_to_28cm,soil_temperature_28_to_100cm,soil_moisture_0_to_7cm,soil_moisture_7_to_28cm,soil_moisture_28_to_100cm&timezone=auto data-present (JSON has content but declared keys absent)
+void https://ows.emodnet-humanactivities.eu/geoserver/emodnet/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=emodnet:vessel_density&outputFormat=application/json&bbox={lon_min},{lat_min},{lon_max},{lat_max} data-present (non-JSON body: HTML/XML/text)
+void https://aa.usno.navy.mil/api/rstt/oneday?date={today}&coords=34.201,-118.171&tz=0 data-present (JSON has content but declared keys absent)
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["historic"="memorial"](around:5000,{lat},{lon});out%20count; fetch returned empty
+void https://en.wikipedia.org/w/api.php?action=query&list=geosearch&gscoord={lat}|{lon}&gsradius=10000&gslimit=500&format=json data-present (JSON has content but declared keys absent)
+void https://api.open-meteo.com/v1/elevation?latitude={lat}&longitude={lon} data-present (JSON has content but declared keys absent)
+void https://icgem.gfz-potsdam.de/calcgrid?model=EGM2008&functype=geoid_undulation&lat={lat}&lon={lon}&format=gdf data-present (non-JSON body: HTML/XML/text)
+void https://api.opentopodata.org/v1/srtm30m?locations={grid} data-present (container array has rows but extract yielded nothing)
+void https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=temperature_1000hPa,temperature_950hPa,temperature_925hPa,temperature_900hPa,temperature_850hPa,temperature_800hPa,temperature_700hPa,temperature_600hPa,temperature_500hPa,temperature_400hPa,temperature_300hPa,temperature_250hPa,temperature_200hPa,temperature_150hPa,temperature_100hPa,temperature_70hPa,temperature_50hPa,relative_humidity_1000hPa,relative_humidity_950hPa,relative_humidity_925hPa,relative_humidity_850hPa,relative_humidity_700hPa,relative_humidity_500hPa,relative_humidity_300hPa,relative_humidity_200hPa,relative_humidity_100hPa,relative_humidity_50hPa,wind_speed_1000hPa,wind_speed_950hPa,wind_speed_925hPa,wind_speed_850hPa,wind_speed_700hPa,wind_speed_500hPa,wind_speed_300hPa,wind_speed_250hPa,wind_speed_200hPa,wind_speed_100hPa,wind_speed_70hPa,wind_speed_50hPa&timezone=auto data-present (JSON has content but declared keys absent)
+void https://api.eia.gov/v2/electricity/rto/region-sub-ba/data/?frequency=hourly&data[0]=value&api_key={eia_key} fetch returned empty
+void https://api.weather.bom.gov.au/v1/forecast/{lat},{lon} fetch returned empty
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='499'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&QUANTITIES='1,9,20,23,24,29' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='599'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&QUANTITIES='1,9,20,23,24,29' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='699'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&QUANTITIES='1,9,20,23,24,29' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-125544'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='10+m'&QUANTITIES='1,9,20,23,24,29' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='DES%3DC%2F2023+A3'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&VEC_TABLE='2'&REF_PLANE='ECLIPTIC' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='99942'&OBJ_DATA='YES'&MAKE_EPHEM='YES'&EPHEM_TYPE='ELEMENTS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+d'&REF_PLANE='ECLIPTIC' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-31'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='6+h'&VEC_TABLE='2'&REF_PLANE='ECLIPTIC' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-32'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='6+h'&VEC_TABLE='2'&REF_PLANE='ECLIPTIC' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-96'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&VEC_TABLE='2'&REF_PLANE='ECLIPTIC' data-present (non-JSON body: HTML/XML/text)
+void https://lgdc.uml.edu/common/DIDBGetValues?ursiCode=JR055&charName=foF2&DMUF=3000&fromDate={today}&toDate={today}&subdiv=hour&desc=false fetch returned empty
+void https://lgdc.uml.edu/common/DIDBGetValues?ursiCode=AT138&charName=foF2&DMUF=3000&fromDate={today}&toDate={today}&subdiv=hour&desc=false fetch returned empty
+void https://lgdc.uml.edu/common/DIDBGetValues?ursiCode=DB049&charName=foF2&DMUF=3000&fromDate={today}&toDate={today}&subdiv=hour&desc=false fetch returned empty
+void https://lgdc.uml.edu/common/DIDBGetValues?ursiCode=LS166&charName=foF2&DMUF=3000&fromDate={today}&toDate={today}&subdiv=hour&desc=false fetch returned empty
+void https://lgdc.uml.edu/common/DIDBGetValues?ursiCode=TO536&charName=foF2&DMUF=3000&fromDate={today}&toDate={today}&subdiv=hour&desc=false fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetData&observatoryIagaCode=NGK&dataStartDate={today}T00:00:00&dataDuration=P1D&elements=X,Y,Z,F&publicationState=adjusted&format=json fetch returned empty
+void https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/MMS1_FGM_SRVY_L2/variables/mms1_fgm_b_gsm_srvy_l2/data/{today}T00:00:00.000Z/{today}T06:00:00.000Z?format=csv fetch returned empty
+void https://www.minorplanetcenter.net/cgi-bin/checkmp.cgi?ty=c&head=N&TextArea=&radius=180&ra=&decl=&oc=500&e=J2000&resoc=&s=t&m=h&adir=N&oed=&e=J2000&dFormat=YYYY+MM+DD&css=modern&mot=check&dmot=p&si=t&uto=0&int=2&fmt=csv data-present (non-JSON body: HTML/XML/text)
+void https://www.nmdb.eu/nest/draw_graph.php?wget=1&stations[]=OULU&stations[]=JUNG&stations[]=THUL&stations[]=NEWK&tabchoice=1h&output=ascii&startdate_1={today}T00:00:00&enddate_1={today}T23:59:59 fetch returned empty
+void https://api.open-meteo.com/v1/forecast?latitude=80.0&longitude=0.0&hourly=temperature_2m,snowfall,snow_depth,frozen_precipitation_percent,wind_speed_10m&models=icon_seamless&forecast_days=3&format=json fetch returned empty
+void https://gracedb.ligo.org/api/superevents/?format=json&category=Production&ordering=-created&public=True&per_page=200 data-present (container array has rows but extract yielded nothing)
+void https://gracedb.ligo.org/api/superevents/?format=json&category=Production&public=True&ordering=-created&per_page=100 data-present (container array has rows but extract yielded nothing)
+void https://www.ncei.noaa.gov/access/monitoring/climate-at-a-glance/global/time-series/globe/pdsi/land/1/{month}/{year}/{year}.json fetch returned empty
+void https://www.ncei.noaa.gov/access/monitoring/drought/zscore-precip/global-zscore.json fetch returned empty
+void https://www.ncei.noaa.gov/access/monitoring/climate-at-a-glance/divisional/time-series/0101/spi/1/{month}/{year}/{year}.json fetch returned empty
+void https://www.ndbc.noaa.gov/data/realtime2/51407.dart data-present (non-JSON body: HTML/XML/text)
+void https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/epica_domec/dc_ch4_hol_fl02-noaa.txt data-present (non-JSON body: HTML/XML/text)
+void https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/vostok/deutnat.txt data-present (non-JSON body: HTML/XML/text)
+void https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/antarctica2015co2wais-noaa.txt data-present (non-JSON body: HTML/XML/text)
+void https://lasp.colorado.edu/lisird/latis/dap/sdo_eve_ssi_1nm_l3.csv?time>=2026-01-01&time<={today} data-present (non-JSON body: HTML/XML/text)
+void https://lasp.colorado.edu/lisird/latis/dap/eve_esp_l3.csv?time>={today} fetch returned empty
+void https://celestrak.org/SOCRATES/query.php?TIMEFRAME=24&MAX_PROB=0.001&LIMIT=200&FORMAT=json fetch returned empty
+void https://services.swpc.noaa.gov/products/solar-regions.json fetch returned empty
+void https://lasp.colorado.edu/data/sdo_eve/l3/2026/2026_208_eve_l3.csv fetch returned empty
+void https://api.marinespecies.org/rest/AphiaRecordsByMatchNames?scientificnames[]=Mola+mola&marine_only=true fetch returned empty
+void https://climate-api.open-meteo.com/v1/climate?latitude=0.0&longitude=0.0&start_year=2020&end_year=2030&models=CMCC_CM2_VHR4,FGOALS_f3_H&daily=temperature_2m_mean,temperature_2m_max,precipitation_sum data-present (keys exist but no rows extracted)
+void https://datacenter.iers.org/data/latestVersion/6_BULLETIN_A_ERFAEOP_V2013_002.txt fetch returned empty
+void https://data.giss.nasa.gov/gistemp/tabledata_v4/GLB.Ts+dSST.csv data-present (non-JSON body: HTML/XML/text)
+void https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_gr_gl.txt data-present (non-JSON body: HTML/XML/text)
+void https://www.ncei.noaa.gov/access/monitoring/climate-at-a-glance/global/time-series/globe/land/12/07/{year}.json fetch returned empty
+void https://gong2.nso.edu/HA/hag/?ref=hag&series=hag&date={year}.{month}.{day}&format=json data-present (non-JSON body: HTML/XML/text)
+void https://services.swpc.noaa.gov/json/solar_regions.json data-present (container array has rows but extract yielded nothing)
+void https://irsa.ipac.caltech.edu/cgi-bin/DUST/nph-dust?locstr={lat}+{lon}+gal&regSize=5&output_type=json data-present (non-JSON body: HTML/XML/text)
+void https://api.nasa.gov/DONKI/FLR?startDate=2026-08-08&endDate=2026-08-15&classType=X&api_key={NASA_API_KEY} data-present (JSON has content but declared keys absent)
+void https://api.obis.org/v3/occurrence?startdate={yesterday}&enddate={today}&size=200&fields=decimalLatitude,decimalLongitude,scientificName,eventDate empty-response (JSON parsed but all containers empty)
+void https://weather.cma.cn/api/map/alarm fetch returned empty
+void https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_500hPa,temperature_850hPa,geopotential_height_500hPa,geopotential_height_850hPa&timezone=auto empty-response (JSON parsed but all containers empty)
+void https://aviationweather.gov/api/data/pirep?bbox=-90,-180,90,180&hours=3&format=json data-present (container array has rows but extract yielded nothing)
+void https://aviationweather.gov/api/data/airsigmet?format=json&hours=3 data-present (container array has rows but extract yielded nothing)
+void https://services.swpc.noaa.gov/products/glotec/geojson_2d_urt.json data-present (JSON has content but declared keys absent)
+void https://ensemble-api.open-meteo.com/v1/ensemble?latitude={lat}&longitude={lon}&daily=temperature_2m_max,precipitation_sum&timezone=auto data-present (JSON has content but declared keys absent)
+void https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=soil_temperature_0cm,soil_temperature_6cm,soil_temperature_18cm,soil_temperature_54cm&timezone=auto empty-response (JSON parsed but all containers empty)
+void https://volcanoes.usgs.gov/vsc/api/volcanoApi/geojson data-present (container array has rows but extract yielded nothing)
+void https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json?expand=details&type=watertemp data-present (container array has rows but extract yielded nothing)
+void https://api.coral.tsr.lol/stations/gbr_central/current empty-response (JSON parsed but all containers empty)
+void https://api.coral.tsr.lol/stations/gbr_northern/current empty-response (JSON parsed but all containers empty)
+void https://ssd-api.jpl.nasa.gov/fireball.api data-present (JSON has content but declared keys absent)
+void https://retlector.eu/tle/active data-present (non-JSON body: HTML/XML/text)
+void https://services3.arcgis.com/GVgbJbqm8hXASVYi/arcgis/rest/services/PAGER_CAT/FeatureServer/0/query?where=1%3D1&geometry={lon_min}%2C{lat_min}%2C{lon_max}%2C{lat_max}&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=YEAR,MAG,DEPTH,DEATHS,INJURIES,LATITUDE,LONGITUDE,COUNTRY&f=json&resultRecordCount=500 data-present (JSON has content but declared keys absent)
+void https://api.obis.org/v3/statistics data-present (JSON has content but declared keys absent)
+void http://v4.boldsystems.org/index.php/API_Public/specimen?taxon=Plantae&geo=&format=json&limit=500 data-present (non-JSON body: HTML/XML/text)
+void https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_boundary_lines_land.geojson data-present (container array has rows but extract yielded nothing)
+void https://science-pds.cryosat.esa.int/oads/access/collection/CryoSat_Northern_Hemisphere_Sea_Ice_Thickness/latest/?format=json fetch returned empty
+void https://cdaweb.gsfc.nasa.gov/hapi/data?id=AC_H0_MFI&parameters=BGSEc,Magnitude&time.min={today}T00:00:00.000Z&time.max={today}T23:59:59.000Z&format=csv fetch returned empty
+void https://cdaweb.gsfc.nasa.gov/hapi/data?id=MMS1_FGM_SRVY_L2@0&parameters=mms1_fgm_b_gsm_srvy_l2&time.min={today}T00:00:00.000Z&time.max={today}T06:00:00.000Z&format=csv fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/catalog data-present (container array has rows but extract yielded nothing)
+void https://www.orfeus-eu.org/fdsnws/station/1/query?level=station&format=text&starttime=2020-01-01 data-present (non-JSON body: HTML/XML/text)
+void https://mangrove-atlas.sei.org/api/widgets/mangrove-cover/?location_id=country&startYear=2020&endYear=2020 fetch returned empty
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='DES%3DC%2F2023+A3'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='500@0'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='599'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4,20' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='499'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4,20' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='699'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4,20' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-31'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='500@0'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-32'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='500@0'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4' data-present (non-JSON body: HTML/XML/text)
+void https://exoplanetarchive.ipac.caltech.edu/TAP/sync?LANG=ADQL&FORMAT=json&QUERY=SELECT+pl_name,ra,dec,sy_dist,pl_orbper,pl_rade,pl_bmasse,pl_eqt,disc_year+FROM+ps+WHERE+default_flag=1+AND+ra+IS+NOT+NULL+ORDER+BY+sy_dist+ASC data-present (non-JSON body: HTML/XML/text)
+void https://www.ngdc.noaa.gov/hazel/hazard-service/api/v1/volcanoes?maxRows=2000&startRow=1 data-present (container array has rows but extract yielded nothing)
+void https://www.ncei.noaa.gov/pub/data/ghcn/daily/ghcnd-stations.txt data-present (non-JSON body: HTML/XML/text)
+void https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-month&dataTypes=TMAX,TMIN,PRCP,TAVG,SNOW&stations=USW00094728&startDate={year}-01-01&endDate={year}-{month}-{day}&format=json data-present (container array has rows but extract yielded nothing)
+void https://www.ncei.noaa.gov/access/world-ocean-database-select/dbsearch.html?DirectAccess=yes&type=json&depth=0&lat1=-90&lat2=90&lon1=-180&lon2=180&variable=T,S,O2&startDate={today}&endDate={today}&limit=300 data-present (non-JSON body: HTML/XML/text)
+void https://my.cmems-du.eu/motu-web/services data-present (non-JSON body: HTML/XML/text)
+void https://api.open-meteo.com/v1/forecast?latitude=50.0&longitude=10.0&daily=et0_fao_evapotranspiration,vapor_pressure_deficit&forecast_days=1&format=json fetch returned empty
+void https://ws.pangaea.de/oai/provider?verb=ListRecords&metadataPrefix=oai_dc&set=GNIR data-present (non-JSON body: HTML/XML/text)
+void https://www.sciencebase.gov/catalog/items?format=json&q=National+Land+Cover+Database&max=50&fields=id,title,body,spatial,contacts,tags data-present (container array has rows but extract yielded nothing)
+void https://woudc.org/api/records/observations/?dataset=UmkehrN14&limit=1000&sortby=-datetime data-present (non-JSON body: HTML/XML/text)
+void https://data-api.globalforestwatch.org/dataset/umd_tree_cover_loss/latest data-present (JSON has content but declared keys absent)
+void https://stac.eoapi.dev/collections data-present (JSON has content but declared keys absent)
+void https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=XENONnT+dark+matter&fields=titles,citation_count data-present (JSON has content but declared keys absent)
+void https://api.opentopodata.org/v1/eudem25m?locations={grid} data-present (container array has rows but extract yielded nothing)
+void https://geofon.gfz-potsdam.de/fdsnws/station/1/query?level=station&network=GE data-present (non-JSON body: HTML/XML/text)
+void https://service.earthscope.org/fdsnws/station/1/query?level=station&format=geocsv&starttime=2020-01-01 data-present (non-JSON body: HTML/XML/text)
+void https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name,epoch,H,diameter,albedo,class,neo&sb-kind=a&sb-group=neo data-present (container array has rows but extract yielded nothing)
+void https://www.ngdc.noaa.gov/geomag-web/calculators/calculateIgrfwmm?lat={lat}&lon={lon}&elevation=0&resultFormat=json&magneticComponent=x fetch returned empty
+void https://tle.ivanstanojevic.me/api/tle/?page-size=100 fetch returned empty
+void https://simbad.cds.unistra.fr/simbad/sim-tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+main_id,ra,dec,plx_value,sp_type,otype,V+FROM+basic+WHERE+plx_value>50+AND+ra+IS+NOT+NULL+ORDER+BY+plx_value+DESC fetch returned empty
+void https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+WISE,Cl,GLON,GLAT,Rad,HIIName,_RA_icrs,_DE_icrs+FROM+%22J/ApJS/212/1/wisecat%22+WHERE+_RA_icrs+IS+NOT+NULL+ORDER+BY+Rad+DESC fetch returned empty
+void https://erddap.marine.ie/erddap/tabledap/smartbay_obs_acoustic.csv?time,spl_full fetch returned empty
+void https://www.seismicportal.eu/fdsnws/event/1/query?format=text&starttime={hour_ago}&lat={lat}&lon={lon}&maxradius=5&minmag=2.0 data-present (non-JSON body: HTML/XML/text)
+void https://api.waqi.info/feed/geo:{lat};{lon}/?token=demo data-present (JSON has content but declared keys absent)
+void https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=snowfall,snow_depth,temperature_2m,precipitation,cloud_cover,wind_speed_10m&timezone=auto empty-response (JSON parsed but all containers empty)
+void https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=shortwave_radiation,direct_radiation,diffuse_radiation,direct_normal_irradiance,global_tilted_irradiance,vapour_pressure_deficit,cape,evapotranspiration,et0_fao_evapotranspiration,visibility,freezing_level_height,snow_depth,precipitation_probability,weather_code&timezone=auto empty-response (JSON parsed but all containers empty)
+void https://air-quality-api.open-meteo.com/v1/air-quality?latitude={lat}&longitude={lon}&current=aerosol_optical_depth,dust,pm2_5,pm10 empty-response (JSON parsed but all containers empty)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Haumea%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27 empty-response (JSON parsed but all containers empty)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27 empty-response (JSON parsed but all containers empty)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-32%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27 empty-response (JSON parsed but all containers empty)
+void https://api.met.no/weatherapi/sunrise/3.0/sun?lat={lat}&lon={lon}&date={today}&offset=+00:00 data-present (JSON has content but declared keys absent)
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["internet_access"="wlan"](around:5000,{lat},{lon});out%20count; fetch returned empty
+void https://archive-api.open-meteo.com/v1/archive?latitude={lat}&longitude={lon}&start_date={yesterday}&end_date={yesterday}&hourly=soil_temperature_0_to_7cm,soil_temperature_7_to_28cm,soil_temperature_28_to_100cm,soil_moisture_0_to_7cm,soil_moisture_7_to_28cm,soil_moisture_28_to_100cm&timezone=auto data-present (JSON has content but declared keys absent)
+void https://ows.emodnet-humanactivities.eu/geoserver/emodnet/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=emodnet:vessel_density&outputFormat=application/json&bbox={lon_min},{lat_min},{lon_max},{lat_max} data-present (non-JSON body: HTML/XML/text)
+void https://aa.usno.navy.mil/api/rstt/oneday?date={today}&coords=34.201,-118.171&tz=0 data-present (JSON has content but declared keys absent)
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["historic"="memorial"](around:5000,{lat},{lon});out%20count; fetch returned empty
+void https://en.wikipedia.org/w/api.php?action=query&list=geosearch&gscoord={lat}|{lon}&gsradius=10000&gslimit=500&format=json data-present (JSON has content but declared keys absent)
+void https://api.open-meteo.com/v1/elevation?latitude={lat}&longitude={lon} data-present (JSON has content but declared keys absent)
+void https://icgem.gfz-potsdam.de/calcgrid?model=EGM2008&functype=geoid_undulation&lat={lat}&lon={lon}&format=gdf data-present (non-JSON body: HTML/XML/text)
+void https://api.opentopodata.org/v1/srtm30m?locations={grid} data-present (container array has rows but extract yielded nothing)
+void https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=temperature_1000hPa,temperature_950hPa,temperature_925hPa,temperature_900hPa,temperature_850hPa,temperature_800hPa,temperature_700hPa,temperature_600hPa,temperature_500hPa,temperature_400hPa,temperature_300hPa,temperature_250hPa,temperature_200hPa,temperature_150hPa,temperature_100hPa,temperature_70hPa,temperature_50hPa,relative_humidity_1000hPa,relative_humidity_950hPa,relative_humidity_925hPa,relative_humidity_850hPa,relative_humidity_700hPa,relative_humidity_500hPa,relative_humidity_300hPa,relative_humidity_200hPa,relative_humidity_100hPa,relative_humidity_50hPa,wind_speed_1000hPa,wind_speed_950hPa,wind_speed_925hPa,wind_speed_850hPa,wind_speed_700hPa,wind_speed_500hPa,wind_speed_300hPa,wind_speed_250hPa,wind_speed_200hPa,wind_speed_100hPa,wind_speed_70hPa,wind_speed_50hPa&timezone=auto data-present (JSON has content but declared keys absent)
+void https://api.eia.gov/v2/electricity/rto/region-sub-ba/data/?frequency=hourly&data[0]=value&api_key={eia_key} fetch returned empty
+void https://api.weather.bom.gov.au/v1/forecast/{lat},{lon} fetch returned empty
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='499'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&QUANTITIES='1,9,20,23,24,29' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='599'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&QUANTITIES='1,9,20,23,24,29' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='699'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&QUANTITIES='1,9,20,23,24,29' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-125544'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='10+m'&QUANTITIES='1,9,20,23,24,29' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='DES%3DC%2F2023+A3'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&VEC_TABLE='2'&REF_PLANE='ECLIPTIC' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='99942'&OBJ_DATA='YES'&MAKE_EPHEM='YES'&EPHEM_TYPE='ELEMENTS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+d'&REF_PLANE='ECLIPTIC' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-31'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='6+h'&VEC_TABLE='2'&REF_PLANE='ECLIPTIC' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-32'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='6+h'&VEC_TABLE='2'&REF_PLANE='ECLIPTIC' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-96'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&VEC_TABLE='2'&REF_PLANE='ECLIPTIC' data-present (non-JSON body: HTML/XML/text)
+void https://lgdc.uml.edu/common/DIDBGetValues?ursiCode=JR055&charName=foF2&DMUF=3000&fromDate={today}&toDate={today}&subdiv=hour&desc=false fetch returned empty
+void https://lgdc.uml.edu/common/DIDBGetValues?ursiCode=AT138&charName=foF2&DMUF=3000&fromDate={today}&toDate={today}&subdiv=hour&desc=false fetch returned empty
+void https://lgdc.uml.edu/common/DIDBGetValues?ursiCode=DB049&charName=foF2&DMUF=3000&fromDate={today}&toDate={today}&subdiv=hour&desc=false fetch returned empty
+void https://lgdc.uml.edu/common/DIDBGetValues?ursiCode=LS166&charName=foF2&DMUF=3000&fromDate={today}&toDate={today}&subdiv=hour&desc=false fetch returned empty
+void https://lgdc.uml.edu/common/DIDBGetValues?ursiCode=TO536&charName=foF2&DMUF=3000&fromDate={today}&toDate={today}&subdiv=hour&desc=false fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetData&observatoryIagaCode=NGK&dataStartDate={today}T00:00:00&dataDuration=P1D&elements=X,Y,Z,F&publicationState=adjusted&format=json fetch returned empty
+void https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/MMS1_FGM_SRVY_L2/variables/mms1_fgm_b_gsm_srvy_l2/data/{today}T00:00:00.000Z/{today}T06:00:00.000Z?format=csv fetch returned empty
+void https://www.nmdb.eu/nest/draw_graph.php?wget=1&stations[]=OULU&stations[]=JUNG&stations[]=THUL&stations[]=NEWK&tabchoice=1h&output=ascii&startdate_1={today}T00:00:00&enddate_1={today}T23:59:59 fetch returned empty
+void https://www.ncei.noaa.gov/access/monitoring/climate-at-a-glance/global/time-series/globe/pdsi/land/1/{month}/{year}/{year}.json fetch returned empty
+void https://www.ncei.noaa.gov/access/monitoring/climate-at-a-glance/divisional/time-series/0101/spi/1/{month}/{year}/{year}.json fetch returned empty
+void https://lasp.colorado.edu/lisird/latis/dap/sdo_eve_ssi_1nm_l3.csv?time>=2026-01-01&time<={today} data-present (non-JSON body: HTML/XML/text)
+void https://lasp.colorado.edu/lisird/latis/dap/eve_esp_l3.csv?time>={today} fetch returned empty
+void https://www.ncei.noaa.gov/access/monitoring/climate-at-a-glance/global/time-series/globe/land/12/07/{year}.json fetch returned empty
+void https://gong2.nso.edu/HA/hag/?ref=hag&series=hag&date={year}.{month}.{day}&format=json data-present (non-JSON body: HTML/XML/text)
+void https://irsa.ipac.caltech.edu/cgi-bin/DUST/nph-dust?locstr={lat}+{lon}+gal&regSize=5&output_type=json data-present (non-JSON body: HTML/XML/text)
+void https://api.nasa.gov/DONKI/FLR?startDate=2026-08-08&endDate=2026-08-15&classType=X&api_key={NASA_API_KEY} data-present (JSON has content but declared keys absent)
+void https://api.obis.org/v3/occurrence?startdate={yesterday}&enddate={today}&size=200&fields=decimalLatitude,decimalLongitude,scientificName,eventDate empty-response (JSON parsed but all containers empty)
+void https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_500hPa,temperature_850hPa,geopotential_height_500hPa,geopotential_height_850hPa&timezone=auto empty-response (JSON parsed but all containers empty)
+void https://ensemble-api.open-meteo.com/v1/ensemble?latitude={lat}&longitude={lon}&daily=temperature_2m_max,precipitation_sum&timezone=auto data-present (JSON has content but declared keys absent)
+void https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=soil_temperature_0cm,soil_temperature_6cm,soil_temperature_18cm,soil_temperature_54cm&timezone=auto empty-response (JSON parsed but all containers empty)
+void https://services3.arcgis.com/GVgbJbqm8hXASVYi/arcgis/rest/services/PAGER_CAT/FeatureServer/0/query?where=1%3D1&geometry={lon_min}%2C{lat_min}%2C{lon_max}%2C{lat_max}&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=YEAR,MAG,DEPTH,DEATHS,INJURIES,LATITUDE,LONGITUDE,COUNTRY&f=json&resultRecordCount=500 data-present (JSON has content but declared keys absent)
+void https://cdaweb.gsfc.nasa.gov/hapi/data?id=AC_H0_MFI&parameters=BGSEc,Magnitude&time.min={today}T00:00:00.000Z&time.max={today}T23:59:59.000Z&format=csv fetch returned empty
+void https://cdaweb.gsfc.nasa.gov/hapi/data?id=MMS1_FGM_SRVY_L2@0&parameters=mms1_fgm_b_gsm_srvy_l2&time.min={today}T00:00:00.000Z&time.max={today}T06:00:00.000Z&format=csv fetch returned empty
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='DES%3DC%2F2023+A3'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='500@0'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='599'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4,20' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='499'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4,20' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='699'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4,20' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-31'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='500@0'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-32'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='500@0'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4' data-present (non-JSON body: HTML/XML/text)
+void https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-month&dataTypes=TMAX,TMIN,PRCP,TAVG,SNOW&stations=USW00094728&startDate={year}-01-01&endDate={year}-{month}-{day}&format=json data-present (container array has rows but extract yielded nothing)
+void https://www.ncei.noaa.gov/access/world-ocean-database-select/dbsearch.html?DirectAccess=yes&type=json&depth=0&lat1=-90&lat2=90&lon1=-180&lon2=180&variable=T,S,O2&startDate={today}&endDate={today}&limit=300 data-present (non-JSON body: HTML/XML/text)
+void https://api.opentopodata.org/v1/eudem25m?locations={grid} data-present (container array has rows but extract yielded nothing)
+void https://www.ngdc.noaa.gov/geomag-web/calculators/calculateIgrfwmm?lat={lat}&lon={lon}&elevation=0&resultFormat=json&magneticComponent=x fetch returned empty
+void https://api.nasa.gov/DONKI/FLR?startDate=2026-08-08&endDate=2026-08-15&classType=X&api_key={NASA_API_KEY} data-present (JSON has content but declared keys absent)
+void https://www.seismicportal.eu/fdsnws/event/1/query?format=text&starttime={hour_ago}&lat={lat}&lon={lon}&maxradius=5&minmag=2.0 data-present (non-JSON body: HTML/XML/text)
+void https://api.waqi.info/feed/geo:{lat};{lon}/?token=demo data-present (JSON has content but declared keys absent)
+void https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=snowfall,snow_depth,temperature_2m,precipitation,cloud_cover,wind_speed_10m&timezone=auto empty-response (JSON parsed but all containers empty)
+void https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=shortwave_radiation,direct_radiation,diffuse_radiation,direct_normal_irradiance,global_tilted_irradiance,vapour_pressure_deficit,cape,evapotranspiration,et0_fao_evapotranspiration,visibility,freezing_level_height,snow_depth,precipitation_probability,weather_code&timezone=auto empty-response (JSON parsed but all containers empty)
+void https://air-quality-api.open-meteo.com/v1/air-quality?latitude={lat}&longitude={lon}&current=aerosol_optical_depth,dust,pm2_5,pm10 empty-response (JSON parsed but all containers empty)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Haumea%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27 empty-response (JSON parsed but all containers empty)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27 empty-response (JSON parsed but all containers empty)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-32%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27 empty-response (JSON parsed but all containers empty)
+void https://api.met.no/weatherapi/sunrise/3.0/sun?lat={lat}&lon={lon}&date={today}&offset=+00:00 data-present (JSON has content but declared keys absent)
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["internet_access"="wlan"](around:5000,{lat},{lon});out%20count; fetch returned empty
+void https://archive-api.open-meteo.com/v1/archive?latitude={lat}&longitude={lon}&start_date={yesterday}&end_date={yesterday}&hourly=soil_temperature_0_to_7cm,soil_temperature_7_to_28cm,soil_temperature_28_to_100cm,soil_moisture_0_to_7cm,soil_moisture_7_to_28cm,soil_moisture_28_to_100cm&timezone=auto data-present (JSON has content but declared keys absent)
+void https://ows.emodnet-humanactivities.eu/geoserver/emodnet/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=emodnet:vessel_density&outputFormat=application/json&bbox={lon_min},{lat_min},{lon_max},{lat_max} data-present (non-JSON body: HTML/XML/text)
+void https://aa.usno.navy.mil/api/rstt/oneday?date={today}&coords=34.201,-118.171&tz=0 data-present (JSON has content but declared keys absent)
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["historic"="memorial"](around:5000,{lat},{lon});out%20count; fetch returned empty
+void https://en.wikipedia.org/w/api.php?action=query&list=geosearch&gscoord={lat}|{lon}&gsradius=10000&gslimit=500&format=json data-present (JSON has content but declared keys absent)
+void https://api.open-meteo.com/v1/elevation?latitude={lat}&longitude={lon} data-present (JSON has content but declared keys absent)
+void https://icgem.gfz-potsdam.de/calcgrid?model=EGM2008&functype=geoid_undulation&lat={lat}&lon={lon}&format=gdf data-present (non-JSON body: HTML/XML/text)
+void https://api.opentopodata.org/v1/srtm30m?locations={grid} data-present (container array has rows but extract yielded nothing)
+void https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=temperature_1000hPa,temperature_950hPa,temperature_925hPa,temperature_900hPa,temperature_850hPa,temperature_800hPa,temperature_700hPa,temperature_600hPa,temperature_500hPa,temperature_400hPa,temperature_300hPa,temperature_250hPa,temperature_200hPa,temperature_150hPa,temperature_100hPa,temperature_70hPa,temperature_50hPa,relative_humidity_1000hPa,relative_humidity_950hPa,relative_humidity_925hPa,relative_humidity_850hPa,relative_humidity_700hPa,relative_humidity_500hPa,relative_humidity_300hPa,relative_humidity_200hPa,relative_humidity_100hPa,relative_humidity_50hPa,wind_speed_1000hPa,wind_speed_950hPa,wind_speed_925hPa,wind_speed_850hPa,wind_speed_700hPa,wind_speed_500hPa,wind_speed_300hPa,wind_speed_250hPa,wind_speed_200hPa,wind_speed_100hPa,wind_speed_70hPa,wind_speed_50hPa&timezone=auto data-present (JSON has content but declared keys absent)
+void https://api.eia.gov/v2/electricity/rto/region-sub-ba/data/?frequency=hourly&data[0]=value&api_key={eia_key} fetch returned empty
+void https://api.weather.bom.gov.au/v1/forecast/{lat},{lon} fetch returned empty
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='499'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&QUANTITIES='1,9,20,23,24,29' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='599'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&QUANTITIES='1,9,20,23,24,29' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='699'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&QUANTITIES='1,9,20,23,24,29' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-125544'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='10+m'&QUANTITIES='1,9,20,23,24,29' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='DES%3DC%2F2023+A3'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&VEC_TABLE='2'&REF_PLANE='ECLIPTIC' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='99942'&OBJ_DATA='YES'&MAKE_EPHEM='YES'&EPHEM_TYPE='ELEMENTS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+d'&REF_PLANE='ECLIPTIC' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-31'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='6+h'&VEC_TABLE='2'&REF_PLANE='ECLIPTIC' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-32'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='6+h'&VEC_TABLE='2'&REF_PLANE='ECLIPTIC' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-96'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&VEC_TABLE='2'&REF_PLANE='ECLIPTIC' data-present (non-JSON body: HTML/XML/text)
+void https://lgdc.uml.edu/common/DIDBGetValues?ursiCode=JR055&charName=foF2&DMUF=3000&fromDate={today}&toDate={today}&subdiv=hour&desc=false fetch returned empty
+void https://lgdc.uml.edu/common/DIDBGetValues?ursiCode=AT138&charName=foF2&DMUF=3000&fromDate={today}&toDate={today}&subdiv=hour&desc=false fetch returned empty
+void https://lgdc.uml.edu/common/DIDBGetValues?ursiCode=DB049&charName=foF2&DMUF=3000&fromDate={today}&toDate={today}&subdiv=hour&desc=false fetch returned empty
+void https://lgdc.uml.edu/common/DIDBGetValues?ursiCode=LS166&charName=foF2&DMUF=3000&fromDate={today}&toDate={today}&subdiv=hour&desc=false fetch returned empty
+void https://lgdc.uml.edu/common/DIDBGetValues?ursiCode=TO536&charName=foF2&DMUF=3000&fromDate={today}&toDate={today}&subdiv=hour&desc=false fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetData&observatoryIagaCode=NGK&dataStartDate={today}T00:00:00&dataDuration=P1D&elements=X,Y,Z,F&publicationState=adjusted&format=json fetch returned empty
+void https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/MMS1_FGM_SRVY_L2/variables/mms1_fgm_b_gsm_srvy_l2/data/{today}T00:00:00.000Z/{today}T06:00:00.000Z?format=csv fetch returned empty
+void https://www.nmdb.eu/nest/draw_graph.php?wget=1&stations[]=OULU&stations[]=JUNG&stations[]=THUL&stations[]=NEWK&tabchoice=1h&output=ascii&startdate_1={today}T00:00:00&enddate_1={today}T23:59:59 fetch returned empty
+void https://www.ncei.noaa.gov/access/monitoring/climate-at-a-glance/global/time-series/globe/pdsi/land/1/{month}/{year}/{year}.json fetch returned empty
+void https://www.ncei.noaa.gov/access/monitoring/climate-at-a-glance/divisional/time-series/0101/spi/1/{month}/{year}/{year}.json fetch returned empty
+void https://lasp.colorado.edu/lisird/latis/dap/sdo_eve_ssi_1nm_l3.csv?time>=2026-01-01&time<={today} data-present (non-JSON body: HTML/XML/text)
+void https://lasp.colorado.edu/lisird/latis/dap/eve_esp_l3.csv?time>={today} fetch returned empty
+void https://www.ncei.noaa.gov/access/monitoring/climate-at-a-glance/global/time-series/globe/land/12/07/{year}.json fetch returned empty
+void https://gong2.nso.edu/HA/hag/?ref=hag&series=hag&date={year}.{month}.{day}&format=json data-present (non-JSON body: HTML/XML/text)
+void https://irsa.ipac.caltech.edu/cgi-bin/DUST/nph-dust?locstr={lat}+{lon}+gal&regSize=5&output_type=json data-present (non-JSON body: HTML/XML/text)
+void https://api.obis.org/v3/occurrence?startdate={yesterday}&enddate={today}&size=200&fields=decimalLatitude,decimalLongitude,scientificName,eventDate empty-response (JSON parsed but all containers empty)
+void https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_500hPa,temperature_850hPa,geopotential_height_500hPa,geopotential_height_850hPa&timezone=auto empty-response (JSON parsed but all containers empty)
+void https://ensemble-api.open-meteo.com/v1/ensemble?latitude={lat}&longitude={lon}&daily=temperature_2m_max,precipitation_sum&timezone=auto data-present (JSON has content but declared keys absent)
+void https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=soil_temperature_0cm,soil_temperature_6cm,soil_temperature_18cm,soil_temperature_54cm&timezone=auto empty-response (JSON parsed but all containers empty)
+void https://services3.arcgis.com/GVgbJbqm8hXASVYi/arcgis/rest/services/PAGER_CAT/FeatureServer/0/query?where=1%3D1&geometry={lon_min}%2C{lat_min}%2C{lon_max}%2C{lat_max}&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=YEAR,MAG,DEPTH,DEATHS,INJURIES,LATITUDE,LONGITUDE,COUNTRY&f=json&resultRecordCount=500 data-present (JSON has content but declared keys absent)
+void https://cdaweb.gsfc.nasa.gov/hapi/data?id=AC_H0_MFI&parameters=BGSEc,Magnitude&time.min={today}T00:00:00.000Z&time.max={today}T23:59:59.000Z&format=csv fetch returned empty
+void https://cdaweb.gsfc.nasa.gov/hapi/data?id=MMS1_FGM_SRVY_L2@0&parameters=mms1_fgm_b_gsm_srvy_l2&time.min={today}T00:00:00.000Z&time.max={today}T06:00:00.000Z&format=csv fetch returned empty
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='DES%3DC%2F2023+A3'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='500@0'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='599'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4,20' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='499'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4,20' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='699'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4,20' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-31'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='500@0'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-32'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='500@0'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4' data-present (non-JSON body: HTML/XML/text)
+void https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-month&dataTypes=TMAX,TMIN,PRCP,TAVG,SNOW&stations=USW00094728&startDate={year}-01-01&endDate={year}-{month}-{day}&format=json data-present (container array has rows but extract yielded nothing)
+void https://www.ncei.noaa.gov/access/world-ocean-database-select/dbsearch.html?DirectAccess=yes&type=json&depth=0&lat1=-90&lat2=90&lon1=-180&lon2=180&variable=T,S,O2&startDate={today}&endDate={today}&limit=300 data-present (non-JSON body: HTML/XML/text)
+void https://api.opentopodata.org/v1/eudem25m?locations={grid} data-present (container array has rows but extract yielded nothing)
+void https://www.ngdc.noaa.gov/geomag-web/calculators/calculateIgrfwmm?lat={lat}&lon={lon}&elevation=0&resultFormat=json&magneticComponent=x fetch returned empty
+void https://api.nasa.gov/DONKI/FLR?startDate=2026-08-08&endDate=2026-08-15&classType=X&api_key={NASA_API_KEY} data-present (JSON has content but declared keys absent)
+void https://www.seismicportal.eu/fdsnws/event/1/query?format=text&starttime={hour_ago}&lat={lat}&lon={lon}&maxradius=5&minmag=2.0 data-present (non-JSON body: HTML/XML/text)
+void https://api.waqi.info/feed/geo:{lat};{lon}/?token=demo data-present (JSON has content but declared keys absent)
+void https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=snowfall,snow_depth,temperature_2m,precipitation,cloud_cover,wind_speed_10m&timezone=auto empty-response (JSON parsed but all containers empty)
+void https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=shortwave_radiation,direct_radiation,diffuse_radiation,direct_normal_irradiance,global_tilted_irradiance,vapour_pressure_deficit,cape,evapotranspiration,et0_fao_evapotranspiration,visibility,freezing_level_height,snow_depth,precipitation_probability,weather_code&timezone=auto empty-response (JSON parsed but all containers empty)
+void https://air-quality-api.open-meteo.com/v1/air-quality?latitude={lat}&longitude={lon}&current=aerosol_optical_depth,dust,pm2_5,pm10 empty-response (JSON parsed but all containers empty)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Haumea%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27 empty-response (JSON parsed but all containers empty)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2710%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27 empty-response (JSON parsed but all containers empty)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-32%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27 empty-response (JSON parsed but all containers empty)
+void https://api.met.no/weatherapi/sunrise/3.0/sun?lat={lat}&lon={lon}&date={today}&offset=+00:00 data-present (JSON has content but declared keys absent)
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["internet_access"="wlan"](around:5000,{lat},{lon});out%20count; fetch returned empty
+void https://archive-api.open-meteo.com/v1/archive?latitude={lat}&longitude={lon}&start_date={yesterday}&end_date={yesterday}&hourly=soil_temperature_0_to_7cm,soil_temperature_7_to_28cm,soil_temperature_28_to_100cm,soil_moisture_0_to_7cm,soil_moisture_7_to_28cm,soil_moisture_28_to_100cm&timezone=auto data-present (JSON has content but declared keys absent)
+void https://ows.emodnet-humanactivities.eu/geoserver/emodnet/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=emodnet:vessel_density&outputFormat=application/json&bbox={lon_min},{lat_min},{lon_max},{lat_max} data-present (non-JSON body: HTML/XML/text)
+void https://aa.usno.navy.mil/api/rstt/oneday?date={today}&coords=34.201,-118.171&tz=0 data-present (JSON has content but declared keys absent)
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["historic"="memorial"](around:5000,{lat},{lon});out%20count; fetch returned empty
+void https://en.wikipedia.org/w/api.php?action=query&list=geosearch&gscoord={lat}|{lon}&gsradius=10000&gslimit=500&format=json data-present (JSON has content but declared keys absent)
+void https://api.open-meteo.com/v1/elevation?latitude={lat}&longitude={lon} data-present (JSON has content but declared keys absent)
+void https://icgem.gfz-potsdam.de/calcgrid?model=EGM2008&functype=geoid_undulation&lat={lat}&lon={lon}&format=gdf data-present (non-JSON body: HTML/XML/text)
+void https://api.opentopodata.org/v1/srtm30m?locations={grid} data-present (container array has rows but extract yielded nothing)
+void https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=temperature_1000hPa,temperature_950hPa,temperature_925hPa,temperature_900hPa,temperature_850hPa,temperature_800hPa,temperature_700hPa,temperature_600hPa,temperature_500hPa,temperature_400hPa,temperature_300hPa,temperature_250hPa,temperature_200hPa,temperature_150hPa,temperature_100hPa,temperature_70hPa,temperature_50hPa,relative_humidity_1000hPa,relative_humidity_950hPa,relative_humidity_925hPa,relative_humidity_850hPa,relative_humidity_700hPa,relative_humidity_500hPa,relative_humidity_300hPa,relative_humidity_200hPa,relative_humidity_100hPa,relative_humidity_50hPa,wind_speed_1000hPa,wind_speed_950hPa,wind_speed_925hPa,wind_speed_850hPa,wind_speed_700hPa,wind_speed_500hPa,wind_speed_300hPa,wind_speed_250hPa,wind_speed_200hPa,wind_speed_100hPa,wind_speed_70hPa,wind_speed_50hPa&timezone=auto data-present (JSON has content but declared keys absent)
+void https://api.eia.gov/v2/electricity/rto/region-sub-ba/data/?frequency=hourly&data[0]=value&api_key={eia_key} fetch returned empty
+void https://api.weather.bom.gov.au/v1/forecast/{lat},{lon} fetch returned empty
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='499'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&QUANTITIES='1,9,20,23,24,29' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='599'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&QUANTITIES='1,9,20,23,24,29' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='699'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&QUANTITIES='1,9,20,23,24,29' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-125544'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='10+m'&QUANTITIES='1,9,20,23,24,29' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='DES%3DC%2F2023+A3'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&VEC_TABLE='2'&REF_PLANE='ECLIPTIC' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='99942'&OBJ_DATA='YES'&MAKE_EPHEM='YES'&EPHEM_TYPE='ELEMENTS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+d'&REF_PLANE='ECLIPTIC' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-31'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='6+h'&VEC_TABLE='2'&REF_PLANE='ECLIPTIC' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-32'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='6+h'&VEC_TABLE='2'&REF_PLANE='ECLIPTIC' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-96'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&VEC_TABLE='2'&REF_PLANE='ECLIPTIC' data-present (non-JSON body: HTML/XML/text)
+void https://lgdc.uml.edu/common/DIDBGetValues?ursiCode=JR055&charName=foF2&DMUF=3000&fromDate={today}&toDate={today}&subdiv=hour&desc=false fetch returned empty
+void https://lgdc.uml.edu/common/DIDBGetValues?ursiCode=AT138&charName=foF2&DMUF=3000&fromDate={today}&toDate={today}&subdiv=hour&desc=false fetch returned empty
+void https://lgdc.uml.edu/common/DIDBGetValues?ursiCode=DB049&charName=foF2&DMUF=3000&fromDate={today}&toDate={today}&subdiv=hour&desc=false fetch returned empty
+void https://lgdc.uml.edu/common/DIDBGetValues?ursiCode=LS166&charName=foF2&DMUF=3000&fromDate={today}&toDate={today}&subdiv=hour&desc=false fetch returned empty
+void https://lgdc.uml.edu/common/DIDBGetValues?ursiCode=TO536&charName=foF2&DMUF=3000&fromDate={today}&toDate={today}&subdiv=hour&desc=false fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetData&observatoryIagaCode=NGK&dataStartDate={today}T00:00:00&dataDuration=P1D&elements=X,Y,Z,F&publicationState=adjusted&format=json fetch returned empty
+void https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/MMS1_FGM_SRVY_L2/variables/mms1_fgm_b_gsm_srvy_l2/data/{today}T00:00:00.000Z/{today}T06:00:00.000Z?format=csv fetch returned empty
+void https://www.nmdb.eu/nest/draw_graph.php?wget=1&stations[]=OULU&stations[]=JUNG&stations[]=THUL&stations[]=NEWK&tabchoice=1h&output=ascii&startdate_1={today}T00:00:00&enddate_1={today}T23:59:59 fetch returned empty
+void https://www.ncei.noaa.gov/access/monitoring/climate-at-a-glance/global/time-series/globe/pdsi/land/1/{month}/{year}/{year}.json fetch returned empty
+void https://www.ncei.noaa.gov/access/monitoring/climate-at-a-glance/divisional/time-series/0101/spi/1/{month}/{year}/{year}.json fetch returned empty
+void https://lasp.colorado.edu/lisird/latis/dap/sdo_eve_ssi_1nm_l3.csv?time>=2026-01-01&time<={today} data-present (non-JSON body: HTML/XML/text)
+void https://lasp.colorado.edu/lisird/latis/dap/eve_esp_l3.csv?time>={today} fetch returned empty
+void https://www.ncei.noaa.gov/access/monitoring/climate-at-a-glance/global/time-series/globe/land/12/07/{year}.json fetch returned empty
+void https://gong2.nso.edu/HA/hag/?ref=hag&series=hag&date={year}.{month}.{day}&format=json data-present (non-JSON body: HTML/XML/text)
+void https://irsa.ipac.caltech.edu/cgi-bin/DUST/nph-dust?locstr={lat}+{lon}+gal&regSize=5&output_type=json data-present (non-JSON body: HTML/XML/text)
+void https://api.obis.org/v3/occurrence?startdate={yesterday}&enddate={today}&size=200&fields=decimalLatitude,decimalLongitude,scientificName,eventDate empty-response (JSON parsed but all containers empty)
+void https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_500hPa,temperature_850hPa,geopotential_height_500hPa,geopotential_height_850hPa&timezone=auto empty-response (JSON parsed but all containers empty)
+void https://ensemble-api.open-meteo.com/v1/ensemble?latitude={lat}&longitude={lon}&daily=temperature_2m_max,precipitation_sum&timezone=auto data-present (JSON has content but declared keys absent)
+void https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=soil_temperature_0cm,soil_temperature_6cm,soil_temperature_18cm,soil_temperature_54cm&timezone=auto empty-response (JSON parsed but all containers empty)
+void https://services3.arcgis.com/GVgbJbqm8hXASVYi/arcgis/rest/services/PAGER_CAT/FeatureServer/0/query?where=1%3D1&geometry={lon_min}%2C{lat_min}%2C{lon_max}%2C{lat_max}&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=YEAR,MAG,DEPTH,DEATHS,INJURIES,LATITUDE,LONGITUDE,COUNTRY&f=json&resultRecordCount=500 data-present (JSON has content but declared keys absent)
+void https://cdaweb.gsfc.nasa.gov/hapi/data?id=AC_H0_MFI&parameters=BGSEc,Magnitude&time.min={today}T00:00:00.000Z&time.max={today}T23:59:59.000Z&format=csv fetch returned empty
+void https://cdaweb.gsfc.nasa.gov/hapi/data?id=MMS1_FGM_SRVY_L2@0&parameters=mms1_fgm_b_gsm_srvy_l2&time.min={today}T00:00:00.000Z&time.max={today}T06:00:00.000Z&format=csv fetch returned empty
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='DES%3DC%2F2023+A3'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='500@0'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='599'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4,20' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='499'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4,20' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='699'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4,20' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-31'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='500@0'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4' data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-32'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='500@0'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4' data-present (non-JSON body: HTML/XML/text)
+void https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-month&dataTypes=TMAX,TMIN,PRCP,TAVG,SNOW&stations=USW00094728&startDate={year}-01-01&endDate={year}-{month}-{day}&format=json data-present (container array has rows but extract yielded nothing)
+void https://www.ncei.noaa.gov/access/world-ocean-database-select/dbsearch.html?DirectAccess=yes&type=json&depth=0&lat1=-90&lat2=90&lon1=-180&lon2=180&variable=T,S,O2&startDate={today}&endDate={today}&limit=300 data-present (non-JSON body: HTML/XML/text)
+void https://api.opentopodata.org/v1/eudem25m?locations={grid} data-present (container array has rows but extract yielded nothing)
+void https://www.ngdc.noaa.gov/geomag-web/calculators/calculateIgrfwmm?lat={lat}&lon={lon}&elevation=0&resultFormat=json&magneticComponent=x fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=ALMT&start={yesterday}&end={today}&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=AUST&start={yesterday}&end={today}&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=BOUL&start={yesterday}&end={today}&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=CTWN&start={yesterday}&end={today}&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=DOMC&start={yesterday}&end={today}&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=ERMN&start={yesterday}&end={today}&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=FSMT&start={yesterday}&end={today}&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=GOOS&start={yesterday}&end={today}&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=HALF&start={yesterday}&end={today}&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=INVK&start={yesterday}&end={today}&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=KERG&start={yesterday}&end={today}&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=KIEL&start={yesterday}&end={today}&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=MOSC&start={yesterday}&end={today}&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=NAIN&start={yesterday}&end={today}&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=NRLK&start={yesterday}&end={today}&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=PWNK&start={yesterday}&end={today}&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=REYK&start={yesterday}&end={today}&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=SANA&start={yesterday}&end={today}&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=TBLS&start={yesterday}&end={today}&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=ULNB&start={yesterday}&end={today}&format=json&bins=3600 fetch returned empty
+void https://service.scedc.caltech.edu/fdsnws/event/1/query?format=geojson&minmagnitude=1.5&limit=500&orderby=time&starttime={today}T00:00:00 fetch returned empty
+void https://seismo.ethz.ch/fdsnws/event/1/query?format=geojson&minmagnitude=1.0&limit=200&orderby=time&starttime={today}T00:00:00 fetch returned empty
+void https://earthquake.alaska.edu/fdsnws/event/1/query?format=geojson&minmagnitude=2.0&limit=200&orderby=time&starttime={today}T00:00:00 fetch returned empty
+void https://power.larc.nasa.gov/api/temporal/monthly/point?parameters=ALLSKY_SFC_UV_INDEX&community=AG&longitude=0&latitude=0&start={year}&end={year}&format=JSON fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TTB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TUC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=UPS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VALL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VNA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VOS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VSS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WIC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WNG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/AC_H0_MFI/variables/BGSEc,Magnitude/data/{today}T00:00:00.000Z/{today}T23:59:59.000Z?format=csv fetch returned empty
+void https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/GOES16_L2_MAG/variables/Hp,He,Hn,B_Total/data/{today}T00:00:00.000Z/{today}T23:59:59.000Z?format=csv fetch returned empty
+void https://stat.ripe.net/data/bgp-updates/data.json?resource=0.0.0.0/0&starttime={hour_ago}&endtime={today} empty-response (JSON parsed but all containers empty)
+void http://www.nmdb.eu/nmdb/qtipart.php?station=MCMD&start={yesterday}&end={today}&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=NEWK&start={yesterday}&end={today}&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=OULU&start={yesterday}&end={today}&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=ROME&start={yesterday}&end={today}&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=SOPO&start={yesterday}&end={today}&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=THUL&start={yesterday}&end={today}&format=json&bins=3600 fetch returned empty
+void https://air-quality-api.open-meteo.com/v1/air-quality?latitude={lat}&longitude={lon}&current=us_aqi,us_aqi_pm2_5&timezone=auto empty-response (JSON parsed but all containers empty)
+void https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&minutely_15=lightning_potential&timezone=auto data-present (JSON has content but declared keys absent)
+void https://api.gbif.org/v1/occurrence/search?limit=20&hasCoordinate=true&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max} data-present (container array has rows but extract yielded nothing)
+void https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=soil_temperature_0cm,soil_temperature_6cm,soil_temperature_18cm,soil_temperature_54cm,soil_moisture_0_to_1cm,soil_moisture_1_to_3cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,soil_moisture_27_to_81cm&timezone=auto empty-response (JSON parsed but all containers empty)
+void https://marine-api.open-meteo.com/v1/marine?latitude={lat}&longitude={lon}&current=wave_height,wave_direction,wave_period,wind_wave_height,wind_wave_direction,wind_wave_period,swell_wave_height,swell_wave_direction,swell_wave_period&timezone=auto empty-response (JSON parsed but all containers empty)
+void https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetData&format=JSON&observatoryIagaCode=BOU&samplesPerDay=1440&dataStartDate={today}&dataDuration=1 data-present (JSON has content but declared keys absent)
+void https://api.open-meteo.com/v1/air-quality?latitude={lat}&longitude={lon}&current=european_aqi,european_aqi_pm2_5,european_aqi_pm10,european_aqi_nitrogen_dioxide,european_aqi_ozone,european_aqi_sulphur_dioxide fetch returned empty
+void https://api.gbif.org/v1/occurrence/search?taxon_key=212&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max}&limit=0 empty-response (JSON parsed but all containers empty)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27502%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27 empty-response (JSON parsed but all containers empty)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%273I%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500@0%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27 empty-response (JSON parsed but all containers empty)
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["highway"="speed_camera"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27301%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271%20d%27 empty-response (JSON parsed but all containers empty)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-98%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27 empty-response (JSON parsed but all containers empty)
+void https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=shortwave_radiation fetch returned empty
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27801%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27 empty-response (JSON parsed but all containers empty)
+void https://api.gbif.org/v1/occurrence/search?taxon_key=212&month={month}&hasCoordinate=true&limit=0 empty-response (JSON parsed but all containers empty)
+void https://modis.ornl.gov/rst/api/v1/MOD13Q1/subset?latitude={lat}&longitude={lon}&startDate=A2018049&endDate=A2018049&kmAboveBelow=0&kmLeftRight=0 data-present (JSON has content but declared keys absent)
+void https://api.obis.org/occurrence?lat={lat}&lon={lon}&radius=50&size=0 empty-response (JSON parsed but all containers empty)
+void https://usdmdataservices.unl.edu/api/USStatistics/GetDroughtSeverityStatisticsByAreaPercent?aoi=conus&startdate={week_ago}&enddate={today}&statisticsType=1 data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2790000001%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27 empty-response (JSON parsed but all containers empty)
+void https://www.gmrt.org/services/PointServer?longitude={lon}&latitude={lat}&format=json empty-response (JSON parsed but all containers empty)
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ABG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ABK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=AIA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ARS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ASP/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BDV/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BEL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BFO/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BOU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BRW/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=BSL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CKI/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CLF/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CMO/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CNB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CPL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CSY/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CTA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=CYG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DED/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DLT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DOU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=DUR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=EBR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=EYR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=FRD/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=FRN/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=FUR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GAN/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GCK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GDH/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GNG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GUA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=GUI/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HBK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HER/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HLP/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HON/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HRB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HRN/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HUA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=HYB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=IPM/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=IRT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=IZN/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=JAI/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KAK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KDU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KIR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KMH/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KNY/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=KOU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=LRM/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=LVV/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=LYC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MAB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MAW/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MCQG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MMB/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NAG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NEW/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NGK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NUR/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NVS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ORC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PAG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PEG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PHU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PIL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=PPT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=REU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SBA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SFS/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SHE/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SHU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SIT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SJG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SOD/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SPT/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=SUA/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TDC/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=THL/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=THY/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TIRM/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TLON/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TSU/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27DES%3D2101955%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27 empty-response (JSON parsed but all containers empty)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27Ceres%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27 empty-response (JSON parsed but all containers empty)
+void https://archive-api.open-meteo.com/v1/archive?latitude={lat}&longitude={lon}&start_date={yesterday}&end_date={yesterday}&hourly=shortwave_radiation,direct_radiation,diffuse_radiation,et0_fao_evapotranspiration,vapour_pressure_deficit&timezone=auto data-present (JSON has content but declared keys absent)
+void https://climate-api.open-meteo.com/v1/climate?latitude={lat}&longitude={lon}&start_date={today}&end_date={today}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum data-present (JSON has content but declared keys absent)
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=MCG/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NCK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={week_ago}&endtime={today}&minmagnitude=2.5&limit=200 data-present (JSON has content but declared keys absent)
+void https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetData&format=JSON&observatoryIagaCode=ESK&samplesPerDay=1440&dataStartDate={today}&dataDuration=1 data-present (keys exist but no rows extracted)
+void https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?site=GSFC&year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD15=1&AVG=10 data-present (non-JSON body: HTML/XML/text)
+void https://data.sensor.community/airrohr/v1/filter/area={lat},{lon},10 empty-response (JSON parsed but all containers empty)
+void https://api.electricitymap.org/v3/power-breakdown/latest?lat={lat}&lon={lon} fetch returned empty
+void https://api.weather.bom.gov.au/v1/observations/{lat},{lon} fetch returned empty
+void https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/ERG_HFA_L2_SPECTRA_60S/variables/spec_mW_E,spec_mW_B,freq/data/{today}T00:00:00.000Z/{today}T06:00:00.000Z?format=csv fetch returned empty
+void https://www.nmdb.eu/nest/draw_graph.php?wget=1&stations[]=OULU&tabchoice=1h&output=ascii&startdate_1={today}T00:00:00&enddate_1={today}T23:59:59 fetch returned empty
+void https://www.nmdb.eu/nest/draw_graph.php?wget=1&stations[]=SOPO&tabchoice=1h&output=ascii&startdate_1={today}T00:00:00&enddate_1={today}T23:59:59 fetch returned empty
+void https://noaadata.apps.nsidc.org/NOAA/G02156/data/4km/{year}/{year}{month}{day}_IMS4km_v1.3.nc fetch returned empty
+void https://gis.ngdc.noaa.gov/arcgis/rest/services/DEM_global_mosaic_hillshade/ImageServer/identify?geometry=%7B%22x%22:{lon},%22y%22:{lat}%7D&geometryType=esriGeometryPoint&returnGeometry=false&f=json empty-response (JSON parsed but all containers empty)
+void https://lasp.colorado.edu/lisird/latis/dap/noaa_radio_flux.csv?time>={today} empty-response (empty body)
+void https://lasp.colorado.edu/lisird/latis/dap/fism_flare_hr.csv?time>={today} fetch returned empty
+void https://wdc.kugi.kyoto-u.ac.jp/ae_realtime/{year}{month}/ae{year}{month}{day}.for.request fetch returned empty
+void https://gong2.nso.edu/oQR/zqs/?ref=zqs&series=zqs&date={year}.{month}.{day}&format=json data-present (non-JSON body: HTML/XML/text)
+void https://api.blitzortung.org/compressed/current_positions?lat={lat}&lon={lon}&range=500 fetch returned empty
+void https://data.blitzortung.org/contributors/0/stations/0/signals/0/{year}/{month}/{day}/{hour}/{minute}.json data-present (non-JSON body: HTML/XML/text)
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NGK/best-avail/PT1M/xyzf&start={today}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://ssd-api.jpl.nasa.gov/cad.api?dist-max=0.1&date-min=-7&date-max={today}&body=Earth&fullname=true&sort=dist&limit=50 empty-response (JSON parsed but all containers empty)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=air_temperature&application=batch16&begin_date={year}{month}{day}&end_date={year}{month}{day}&station=8518750&units=metric&time_zone=gmt&format=json data-present (container array has rows but extract yielded nothing)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=water_level&application=batch15&begin_date={year}{month}{day}&end_date={year}{month}{day}&station=8518750&datum=MLLW&units=metric&time_zone=gmt&format=json data-present (container array has rows but extract yielded nothing)
+void https://api.weather.bom.gov.au/v1/warnings/{lat},{lon} fetch returned empty
+void https://api.sunrise-sunset.org/json?lat={lat}&lng={lon}&formatted=0 empty-response (JSON parsed but all containers empty)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%27-170%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27 empty-response (JSON parsed but all containers empty)
+void https://www.ncei.noaa.gov/access/services/data/v1?dataset=daily-summaries&dataTypes=TMAX,TMIN,PRCP,SNOW,AWND&stations=GM000003026,GM000010501,UK000003668&startDate={today}&endDate={today}&format=json empty-response (JSON parsed but all containers empty)
+void https://air-quality-api.open-meteo.com/v1/air-quality?latitude={lat}&longitude={lon}&hourly=pm2_5,pm10,nitrogen_dioxide,ozone,european_aqi,us_aqi&forecast_days=5&format=json data-present (container array has rows but extract yielded nothing)
+void https://api.gbif.org/v1/occurrence/search?taxonKey=212&limit=200&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max} data-present (container array has rows but extract yielded nothing)
+void https://api.gbif.org/v1/occurrence/search?taxonKey=6&limit=200&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max} data-present (container array has rows but extract yielded nothing)
+void https://ssd-api.jpl.nasa.gov/cad.api?dist-max=1LD&date-min={today}&date-max=%2B365&body=Earth&fullname=true&diameter=true&limit=100 data-present (container array has rows but extract yielded nothing)
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=ESK/best-avail/PT1M/xyzf&start={yesterday}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M,PRECTOTCORR,ALLSKY_SFC_SW_DWN,RH2M,WS10M&community=AG&longitude={lon}&latitude={lat}&start={year}{month}01&end={today}&format=JSON fetch returned empty
+void https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-month&dataTypes=TMAX,TMIN,PRCP,TAVG,SNOW,SNWD&stations=GM000003026,GM000003946,UKM00003772,USW00094728&startDate={year}-01-01&endDate={today}&format=json data-present (container array has rows but extract yielded nothing)
+void https://www.ncei.noaa.gov/swdiws/json/nx3structure/{today} fetch returned empty
+void https://earthquakes.bgs.ac.uk/fdsnws/event/1/query?format=geojson&minmagnitude=1.0&limit=200&orderby=time&starttime={today}T00:00:00 fetch returned empty
+void https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month} data-present (JSON has content but declared keys absent)
+void https://wdc.kugi.kyoto-u.ac.jp/dst_realtime/{year}{month}/dst{year}{month}{day}.for.request fetch returned empty
+void https://firms.modaps.eosdis.nasa.gov/api/area/json/{nasa_key}/VIIRS_NOAA20_NRT/1/world fetch returned empty
+void https://api.sensor.community/v1/data/measurement?lat={lat}&lon={lon}&distance=5000&limit=50&sensor_type=17 fetch returned empty
+void https://gml.noaa.gov/aftp/data/radiation/solrad/realtime/abq/abq{year2}{yday}.dat fetch returned empty
+void https://cddis.nasa.gov/archive/gnss/products/ionex/{year}/{day}/COD0OPSFIN_{year}{day}0000_01D_01H_GIM.INX data-present (non-JSON body: HTML/XML/text)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=%2790000031%3B%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27VECTORS%27&CENTER=%27500%400%27&START_TIME=%27{today}%27&STOP_TIME=%27{tomorrow}%27&STEP_SIZE=%271+d%27 empty-response (JSON parsed but all containers empty)
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["power"="generator"]["generator:source"="wind"](around:200000,{lat},{lon});out%20100; fetch returned empty
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND='-31'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='6+h'&VEC_TABLE='2'&REF_PLANE='ECLIPTIC' empty-response (JSON parsed but all containers empty)
+void https://argovis-api.colorado.edu/heatContent?startDate={yesterday}T00:00:00Z&endDate={today}T00:00:00Z fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["internet_access"="wlan"](around:5000,{lat},{lon});out%20100; fetch returned empty
+void https://api.ember-climate.org/v1/electricity-generation?aggregate_by=country&date_from={year}-01-01&date_to={year}-12-31&format=json fetch returned empty
+void https://meta.icos-cp.eu/sparql?format=json&query=SELECT+?uri+?name+?lat+?lon+?alt+?country+?ecosys+WHERE+{?uri+a+<http://meta.icos-cp.eu/ontologies/cpmeta/ES>+;+<http://www.w3.org/2000/01/rdf-schema#label>+?name+;+<http://meta.icos-cp.eu/ontologies/cpmeta/hasLatitude>+?lat+;+<http://meta.icos-cp.eu/ontologies/cpmeta/hasLongitude>+?lon+} fetch returned empty
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND='99942'&OBJ_DATA='YES'&MAKE_EPHEM='YES'&EPHEM_TYPE='ELEMENTS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+d'&REF_PLANE='ECLIPTIC' empty-response (JSON parsed but all containers empty)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND='DES%3DC%2F2023+A3'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='500@0'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4' empty-response (JSON parsed but all containers empty)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND='599'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4,20' empty-response (JSON parsed but all containers empty)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND='499'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4,20' empty-response (JSON parsed but all containers empty)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND='699'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4,20' empty-response (JSON parsed but all containers empty)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND='-31'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='500@0'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4' empty-response (JSON parsed but all containers empty)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND='-32'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='500@0'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4' empty-response (JSON parsed but all containers empty)
+void https://acdisc.gesdisc.eosdis.nasa.gov/opendap/Aura_MLS_Level3/ML3DZO3.005/{year}/MLS-Aura_L3DM-O3_{year}d{day}.nc4.ascii?O3[0:1:0][0:1:35][0:1:60] fetch returned empty
+void https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-month&dataTypes=TMAX,TMIN,PRCP,TAVG&startDate={year}-{month}-01&endDate={year}-{month}-{day}&includeAttributes=false&format=json&limit=5000 fetch returned empty
+void https://psl.noaa.gov/thredds/ncss/Datasets/ncep.reanalysis.dailyavgs/surface/slp.{year}.nc?var=slp&north=90&west=-180&east=180&south=-90&disableLLSubset=on&disableProjSubset=on&horizStride=4&time_start={year}-{month}-{day}T00:00:00Z&time_end={year}-{month}-{day}T23:59:59Z&timeStride=1&accept=csv fetch returned empty
+void https://www.ncei.noaa.gov/access/world-ocean-database-select/wparms.json?dataset=OSD&variables=oxygen&time_from={year}-{month}-01&time_to={year}-{month}-{day}&lat_from=-90&lat_to=90&lon_from=-180&lon_to=180&depth_from=0&depth_to=1000&format=json fetch returned empty
+void https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&daily=et0_fao_evapotranspiration,vapor_pressure_deficit,growing_degree_days_base_0_limit_50&models=era5_seamless&forecast_days=1&format=json fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["historic"="memorial"](around:5000,{lat},{lon});out%20100; fetch returned empty

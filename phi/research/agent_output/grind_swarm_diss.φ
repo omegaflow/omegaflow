@@ -1,0 +1,103 @@
+# grind swarm_diss (2026-08-15)
+
+# ── Server ──
+# Host: swarm-diss.eo.esa.int — offizielle ESA-Swarm-Datenverteilung.
+# Server: Apache, X-Powered-By PHP/7.2.24. Plain HTTP, KEIN Login/S3/Bucket.
+# Mechanik: PHP-Directory-Browser. Zwei Routen:
+#   ?do=list&maxfiles=500&pos=N&file=<path>  → JSON-Listing (name,size,mtime,is_dir)
+#   ?do=download&file=<path>                 → Datei-Stream (Content-Disposition attachment)
+# Listing-Content-Type ist text/html (JSON-Body), Download ist application/zip.
+# Kein Auth-Header, keine Tokens, keine Rate-Limit-Wand in den Proben.
+
+# ── Pfad-Baum-Skizze (Top-Level unter /swarm) ──
+# swarm/
+#   Advanced/
+#     Accelerometer_Data/  (CalibratedAlongtrack/CrosstrackAccelerations)
+#     EEJ/
+#     Magnetic_Data/  (ASM_Burst_Mode_Data, ASM_VFM_Residuals, L1B_MAGxLR_0503/0603)
+#     Plasma_Data/
+#       2Hz_TII_Cross-track_Dataset/          ← TCT02 (SW_EXPT_EFIx_TCT02)
+#       16Hz_TII_Cross-track_Dataset/         ← TCT16 (SW_EXPT_EFIx_TCT16)
+#       2_Hz_Ion_Drift_Density_and_Effective_Mass_dataset/  ← SLIDEM (SW_PREL_EFIxIDM_2)
+#       2_Hz_Langmuir_Probe_Extended_Dataset/
+#       16_Hz_Faceplate_plasma_density/
+#       Provisional_Plasma_dataset/
+#       TDS_EFI_MUS_FP/
+#       TRACIS/  (TISH1B, TISL1B)
+#     Pre-studies/
+#     Swarm_SEU/
+#   Fast/
+#     Level1b/  (EFIx_LP, EFIxLPI, MAGx_CA/HR/LR, GPSx*, STRx*, SC_xDYN … — mtime 2023-11, eingefroren)
+#     Level2/   (AEJ, AOB, FAC, TEC — mtime 2024–2025)
+#   Level1b/
+#     Entire_mission_data/  → per Produkt (MAGx_LR/HR/CA, EFIx_LP, EFIxLPI, LP_x_CA,
+#                             GPSxNAV/RN/RO, STRxATT/EPF, SC_xDYN, MODx_SC, ASMxAUX, VFMxAUX, ORBCNT)
+#       + <Produkt>.txt  (Plain-Text-Dateipfad-Index, ~1 MB)
+#     Latest_baselines/   → gleiche Produktstruktur
+#   Level2daily/
+#     Entire_mission_data/  → ACC (AE/CAL/POD/VAL), AEJ (LPL/LPS/PBL/PBS), AOB (FAC),
+#                             DNS, EEF (TMS), EFI (TIE), FAC (LLS/TMS), IBI (TMS), IPD, MIT, NIX …
+#     Latest_baselines/
+#   Level2longterm/  (CFW, EGF, IBP, MCO, MCR, MIN, MIO, MLI, MMA, MTI, VOB)
+#   Multimission/  (Aeolus, CASSIOPE_e-POP, CHAMP, CryoSat-2, GOCE, GRACE, GRACE-FO,
+#                  Combined_Mission_Data/Conjunction)
+# Kein /Ancillary-Top-Level-Pfad (file=Ancillary → leeres Listing).
+
+# ── Produktfamilien ──
+# MAG:  SW_OPER_MAGx_LR_1B (1 Hz), SW_OPER_MAGx_HR_1B (50 Hz), SW_OPER_MAGx_CA_1B.
+#       Format .CDF.ZIP (ZIP enthält *.cdf — ASM_VFM_IC + MDR_MAG_LR etc.).
+#       MAGx_LR/Sat_A: 4638 Dateien, 2013-11-25 → 2026-08-11 (aktiv, ~4 Tage Latenz).
+#       MAGx_HR/Sat_A: ≥4500 Dateien, bis 2026-04-01 (aktiver als LR abweichend).
+# EFI:  SW_OPER_EFIx_LP_1B (2 Hz Langmuir-Probe), EFIxLPI (Ionen-Probe).
+#       EFIx_LP/Sat_A: 4621 Dateien, 2013-12-02 → 2026-08-11 (aktiv).
+#       Format .CDF.ZIP.
+# TII:  TCT02 (2 Hz Cross-track) + TCT16 (16 Hz Cross-track) — siehe TCT16-Befund.
+#       SLIDEM = SW_PREL_EFIxIDM_2 (2 Hz Ion Drift Density/Eff.Masse), .ZIP,
+#       Sat_A 2014-10-02 → 2025-03-31.
+#       TRACIS = SW_OPER_EFIxTISH1B/TISL1B (TII image), 2013 → (eingefroren).
+# FAC:  SW_OPER_FACATMS_2F (TMS), SW_OPER_FAC_LLS_2F (LLS), .ZIP.
+#       FACATMS_2F/Sat_A: 4673 Dateien, 2013-11-25 → 2026-08-09 (aktiv).
+# ACC:  Calibrated along-track/cross-track accelerations (Advanced/Accelerometer_Data).
+# Weitere L2daily: EEF (E-Feld), IBI, IPD, AEJ, AOB, DNS, EFI/TIE (bis 2025-11-30), MIT, NIX.
+# Format durchgängig: ZIP-Archive mit CDF-Nutzlast (bzw. .CDF.ZIP). Kein NetCDF/Zarr.
+
+# ── TCT16-Befund (prominent) ──
+# EXISTIERT. 16-Hz-TII-Cross-track-Nachfolger liegt auf swarm-diss:
+#   swarm/Advanced/Plasma_Data/16Hz_TII_Cross-track_Dataset/{Sat_A,Sat_B,Sat_C}/
+#   Dateiname: SW_EXPT_EFIx_TCT16_<YYYYMMDD>T<HHMMSS>_<YYYYMMDD>T<HHMMSS>_0401.ZIP
+#   Nutzlast: ZIP → *.cdf (ein CDF pro Datei).
+# Abdeckung:
+#   Sat_A: 5025 Dateien, 2013-12-12 → 2025-12-04
+#   Sat_B: 4944 Dateien,              → 2025-12-04
+#   Sat_C: 3988 Dateien, 2015-12-19 → 2025-12-04
+# Neueste Abdeckung = 2025-12-04 (identisch mit TCT02). TCT16 verlängert die
+# Abdeckung NICHT über TCT02 hinaus — es ist die 16-Hz-Variante desselben
+# Endes. Der E-Feld-Live-Feed-Stand bleibt: jüngste Probe 2025-12-04.
+# Format: CDF im ZIP. Download-Probe: HTTP 200, application/zip, ~31–220 MB/Datei.
+# Datum-Range-Verzeichnis: mtime 2025-12-20 (ReleaseNotes 2025-06-19).
+# ReleaseNotes: SW-RN-UoC-GS-004_TIICT_ReleaseNotes.pdf.
+
+# ── JSON-API-Befund ──
+# Kein Messwert-JSON/HAPI/REST. Nur ?do=list (Verzeichnis-Listing, enthält
+# name/size/mtime — keine Messwerte, keine Koordinaten). Proben alle 404:
+#   /api /json /odata /hapi /rest /Products /search.json /api/search.json
+# Die <Produkt>.txt-Indexe sind Plain-Text-Dateipfad-Listen (kein Messwert).
+# → Der Archivar kann swarm-diss NICHT als Field-Source konsumieren.
+#   CDF/ZIP ist parser-def, das Listing ist decline.
+
+# ── Dispositionen ──
+# decline (Registry — Verzeichnislistings ohne Messwert):
+#   https://swarm-diss.eo.esa.int/?do=list&file=swarm  (und alle Unterpfade)
+# parser-def (CDF/ZIP — Archivar-Parser kann CDF-Nutzlast nicht extrahieren):
+#   https://swarm-diss.eo.esa.int/?do=download&file=swarm/Advanced/Plasma_Data/16Hz_TII_Cross-track_Dataset/Sat_A/<datei>.ZIP   (TCT16)
+#   https://swarm-diss.eo.esa.int/?do=download&file=swarm/Advanced/Plasma_Data/2Hz_TII_Cross-track_Dataset/Sat_A/<datei>.ZIP    (TCT02)
+#   https://swarm-diss.eo.esa.int/?do=download&file=swarm/Level1b/Entire_mission_data/MAGx_LR/Sat_A/<datei>.CDF.ZIP
+#   https://swarm-diss.eo.esa.int/?do=download&file=swarm/Level2daily/Entire_mission_data/FAC/TMS/Sat_A/<datei>.ZIP
+# accepted: 0 (kein Messwert-JSON-Route gefunden → keine Block-Drafts).
+# dead: 0 (Server erreichbar, alle Routen antworten).
+
+# ── Notiz für die VirES-HAPI-TCT02-Quarantäne ──
+# TCT16 trägt denselben Abdeckungs-Endpunkt 2025-12-04 wie TCT02. Es löst die
+# Quarantäne des E-Feld-Live-Feeds NICHT (kein lebendes E-Feld auf swarm-diss).
+# Falls der Archivar CDF-Konsum lernt (parser-Erweiterung), wäre TCT16 die
+# 16-Hz-Quelle; bis dahin bleibt der VirES-HAPI-Archiv-Kompilat der einzige Weg.

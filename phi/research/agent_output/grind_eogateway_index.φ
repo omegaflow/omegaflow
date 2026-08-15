@@ -1,0 +1,313 @@
+# grind eogateway index (2026-08-15) -- 251 eintraege (91 missions + 115 campaigns + 45 instruments)
+#
+# Befund: ESA EO Gateway (Earth Online, earth.esa.int/eogateway) ist ein
+# Next.js/Liferay-SPA. Such-Backend = /eogateway/api/search/full_text
+# (GET, JSON). Pagination: pageNo=1..allPagesCount, 10 Items/Seite.
+# Such-Kategorien (taxonomyVocabularyId 6276318): All Categories, Missions,
+# Data, Tools, News, Events, Learn & Discover, Activities, Campaigns, FAQ.
+# Katalog-Inhaltstypen: Mission (category=Missions), Campaign (category=Campaigns),
+# Instrument (content-type Instrument, /instruments/<slug>, NUR ueber Sitemap +
+# Missions-Seiten erreichbar, KEINE Such-Kategorie), Organisation (ABSENT --
+# kein Organisations-Katalog im EO Gateway).
+# Missions-Verteilung: 69 Third Party, 9 Earth Explorers, 4 Heritage,
+# 4 Copernicus Sentinels, 2 Meteorological, 2 Scouts/SmallSats, 1 Earth Watch.
+# Datenzugang (Dissemination) liegt NICHT im Such-Item -- er steht auf der
+# /missions/<slug>/data-Seite bzw. im Instrumenten-Eintrag. Pro Mission
+# wurde die data-Seite geerntet (84/85 vorhanden).
+#
+# hint eogateway-api   https://earth.esa.int/eogateway/api/search/full_text?category={}&pageNo={}
+# hint eogateway-search https://earth.esa.int/eogateway/search?category=
+
+catalog https://earth.esa.int/eogateway/missions/biomass | Biomass | mission | Biomass | 
+catalog https://earth.esa.int/eogateway/missions/earthcare | EarthCARE | mission | EarthCARE | earthcarehandbook.earth.esa.int
+catalog https://earth.esa.int/eogateway/missions/swarm | Swarm | mission | Swarm | swarm-diss.eo.esa.int (CDF/ZIP); swarmhandbook.earth.esa.int
+catalog https://earth.esa.int/eogateway/missions/cryosat | CryoSat | mission | CryoSat | science-pds.cryosat.esa.int; scihub.copernicus.eu/gnss
+catalog https://earth.esa.int/eogateway/missions/smos | SMOS | mission | SMOS | smos-diss.eo.esa.int/oads (OADS)
+catalog https://earth.esa.int/eogateway/missions/flex | FLEX | mission | FLEX | 
+catalog https://earth.esa.int/eogateway/missions/aeolus | Aeolus | mission | Aeolus | scihub.copernicus.eu (aeolus-diss retired)
+catalog https://earth.esa.int/eogateway/missions/proba-v | PROBA-V | mission | PROBA-V | 
+catalog https://earth.esa.int/eogateway/missions/proba-1 | PROBA-1 | mission | PROBA-1 | earth.esa.int/aos (cat-1)
+catalog https://earth.esa.int/eogateway/missions/goce | GOCE | mission | GOCE | scihub.copernicus.eu / Earth Online archive
+catalog https://earth.esa.int/eogateway/missions/envisat | Envisat | mission | Envisat | scihub.copernicus.eu / Earth Online archive
+catalog https://earth.esa.int/eogateway/missions/ers | ERS | mission | ERS | scihub.copernicus.eu / Earth Online archive
+catalog https://earth.esa.int/eogateway/missions/constellr | constellr | mission | constellr | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/landsat-9 | Landsat-9 | mission | Landsat-9 | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/forest-2 | FOREST-2 | mission | FOREST-2 | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/phisat-2 | PhiSat-2 | mission | PhiSat-2 | 
+catalog https://earth.esa.int/eogateway/missions/worldview-legion | WorldView Legion | mission | WorldView Legion | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/hotsat-1 | HotSat-1 | mission | HotSat-1 | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/unseenlabs | Unseenlabs | mission | Unseenlabs | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/hydrognss | HydroGNSS | mission | HydroGNSS | 
+catalog https://earth.esa.int/eogateway/missions/mos-1-1b | MOS-1/1B | mission | MOS-1/1B | Earth Online archive (external)
+catalog https://earth.esa.int/eogateway/missions/kompsat-1 | KOMPSAT-1 | mission | KOMPSAT-1 | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/fsscat | FSSCat | mission | FSSCat | external provider (TPM)
+catalog https://swarmhandbook.earth.esa.int/ | Swarm Product Data Handbook | mission | Swarm Product Data Handbook | 
+catalog https://earthcarehandbook.earth.esa.int/ | EarthCARE Product Data Handbook | mission | EarthCARE Product Data Handbook | 
+catalog https://earth.esa.int/eogateway/missions/tansat | TanSat | mission | TanSat | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/pleiades-neo | Pléiades Neo | mission | Pléiades Neo | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/saocom | SAOCOM | mission | SAOCOM | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/cosmo-skymed-series | COSMO-SkyMed Series | mission | COSMO-SkyMed Series | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/cosmo-skymed-second-generation | COSMO-SkyMed Second Generation | mission | COSMO-SkyMed Second Generation | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/ghgsat | GHGSat | mission | GHGSat | external provider (TPM)
+catalog https://sentinels.copernicus.eu/web/sentinel/copernicus/sentinel-5p | Copernicus Sentinel-5P | mission | Copernicus Sentinel-5P | scihub.copernicus.eu / dataspace.copernicus.eu
+catalog https://sentinels.copernicus.eu/web/sentinel/copernicus/sentinel-3 | Copernicus Sentinel-3 | mission | Copernicus Sentinel-3 | scihub.copernicus.eu / dataspace.copernicus.eu
+catalog https://sentinels.copernicus.eu/web/sentinel/copernicus/sentinel-2 | Copernicus Sentinel-2 | mission | Copernicus Sentinel-2 | scihub.copernicus.eu / dataspace.copernicus.eu
+catalog https://sentinels.copernicus.eu/web/sentinel/copernicus/sentinel-1 | Copernicus Sentinel-1 | mission | Copernicus Sentinel-1 | scihub.copernicus.eu / dataspace.copernicus.eu
+catalog https://earth.esa.int/eogateway/missions/worldview-4 | WorldView-4 | mission | WorldView-4 | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/worldview-1 | WorldView-1 | mission | WorldView-1 | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/paz | PAZ | mission | PAZ | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/irs-1c-1d | IRS-1C and IRS-1D | mission | IRS-1C and IRS-1D | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/gos-1 | GOSAT Series | mission | GOSAT Series | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/landsat | Landsat Series | mission | Landsat Series | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/worldview | WorldView Series | mission | WorldView Series | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/dmc | DMC First Generation | mission | DMC First Generation | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/terrasar-x-and-tandem-x | TerraSAR-X and TanDEM-X | mission | TerraSAR-X and TanDEM-X | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/landsat-4-and-landsat-5 | Landsat-4 and Landsat-5 | mission | Landsat-4 and Landsat-5 | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/radarsat | RADARSAT | mission | RADARSAT | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/noaa | NOAA POES | mission | NOAA POES | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/landsat-1-to-landsat-3 | Landsat-1 to Landsat-3 | mission | Landsat-1 to Landsat-3 | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/irs-p6-resourcesat-1 | IRS-P6 (ResourceSat-1) | mission | IRS-P6 (ResourceSat-1) | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/gosat-2 | GOSAT-2 | mission | GOSAT-2 | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/geosat | GEOSAT | mission | GEOSAT | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/spot | SPOT | mission | SPOT | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/spire | Spire | mission | Spire | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/skysat | SkySat | mission | SkySat | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/planetscope | PlanetScope | mission | PlanetScope | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/iceye | ICEYE | mission | ICEYE | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/aura | Aura | mission | Aura | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/metop | MetOp | mission | MetOp | eumetsat (rom-saf.eumetsat.int)
+catalog https://earth.esa.int/eogateway/missions/meteosat-second-generation | Meteosat Second Generation | mission | Meteosat Second Generation | eumetsat
+catalog https://earth.esa.int/eogateway/missions/worldview-3 | WorldView-3 | mission | WorldView-3 | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/worldview-2 | WorldView-2 | mission | WorldView-2 | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/spot-7 | SPOT 7 | mission | SPOT 7 | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/spot-6 | SPOT 6 | mission | SPOT 6 | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/spot-5 | SPOT 5 | mission | SPOT 5 | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/spot-4 | SPOT 4 | mission | SPOT 4 | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/spot-3 | SPOT 3 | mission | SPOT 3 | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/spot-2 | SPOT 2 | mission | SPOT 2 | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/spot-1 | SPOT 1 | mission | SPOT 1 | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/seasat | Seasat | mission | Seasat | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/scisat-1 | SCISAT-1 | mission | SCISAT-1 | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/resourcesat-2 | IRS-R2 (ResourceSat-2) | mission | IRS-R2 (ResourceSat-2) | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/rapideye | RapidEye | mission | RapidEye | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/quickbird-2 | QuickBird-2 | mission | QuickBird-2 | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/pleiades | Pléiades | mission | Pléiades | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/odin | Odin | mission | Odin | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/oceansat-2 | OceanSat-2 | mission | OceanSat-2 | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/landsat-8 | Landsat-8 | mission | Landsat-8 | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/landsat-7 | Landsat-7 | mission | Landsat-7 | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/kompsat-2 | KOMPSAT-2 | mission | KOMPSAT-2 | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/jers-1 | JERS-1 | mission | JERS-1 | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/irs-p5 | IRS-P5 (Cartosat-1) | mission | IRS-P5 (Cartosat-1) | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/irs-1d | IRS-1D | mission | IRS-1D | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/irs-1c | IRS-1C | mission | IRS-1C | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/ikonos-2 | IKONOS-2 | mission | IKONOS-2 | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/grace | GRACE | mission | GRACE | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/gosat | GOSAT-1 | mission | GOSAT-1 | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/geoeye-1 | GeoEye-1 | mission | GeoEye-1 | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/geosat-2 | GEOSAT-2 | mission | GEOSAT-2 | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/geosat-1 | GEOSAT-1 | mission | GEOSAT-1 | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/cosmo-skymed | COSMO-SkyMed | mission | COSMO-SkyMed | external provider (TPM)
+catalog https://earth.esa.int/eogateway/missions/alos | ALOS-1 | mission | ALOS-1 | external provider (TPM)
+
+catalog https://earth.esa.int/eogateway/campaigns/cryo2iceex-silice-2022 | Cryo2IceEx/SILICE 2022 | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/sarsimht-ng | SARSimHT-NG | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/2022-seastarex | 2022 SEASTARex | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/cirfaex | CIRFAEx | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/airborne-quantum-gravimetry-airquantumgrav-2023 | AirQuantumGrav 2023 | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/finesse-at-andoya-2023 | FINESSE at Andøya 2023 | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/wivern-ex-uk | WIVERNex-UK | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/waddensar-airborne-bistatic-c-band-sar-experiment-to-demonstrate-different-acquisition-geometries | WaddenSAR | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/snowlab-ng | SnowLab-NG | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/tomosense | TomoSense | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/snowsum | SnowSum | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/hydrosoil | HydroSoil | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/sarsimht | SARSimHT | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/cryovex-icesat-2-summer-2019 | CryoVEx ICESat-2 Summer 2019 | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/snowlab | SnowLab | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/flexsense-2019 | FLEXSense 2019 | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/firmos | FIRMOS | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/sarsense-technical-assistance-for-airborne-measurements-during-the-sar-sentinel-experiment | SARSense 2019 | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/cryovex-icesat-2-spring-2019 | CryoVEx/ICESat-2 Spring 2019 | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/photoproxy-2019 | PhotoProxy 2019 | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/cimrex | CIMREx | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/icesar-2019 | IceSAR 2019 | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/olci-tandem | Sentinel-3 OLCI Tandem 2018 | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/cryovex-karen-antarctica-2017-2018 | CryoVEx/KAREN Antarctica 2017/18 | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/belsar-campaign-2018 | BelSAR 2018 | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/drift4skim | Drift4SKIM | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/flexsense-2018 | FLEXSense 2018 | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/wind-val-iii | WindVal III | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/cryovex-karen-2017 | CryoVEx KAREN 2017 | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/cold-atom-gravimetry-airborne-campaign | Cold atom gravimetry airborne campaign | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/borealscat | BorealScat | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/domex-3 | DOMEX-3 | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/cryovex-karen-2016-fall | CryoVEx KAREN 2016 Fall | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/soyflex-ii-2016 | SoyFLEX II 2016 | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/earthcare-preparation-campaign | EPATAN 2016 | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/gwex | GWEX | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/cryovex-2016-spring | CryoVEx 2016 Spring | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/afrisar-2016 | AfriSAR 2016 | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/polargap | PolarGap | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/afriscat | AfriScat | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/aromat-ii | AROMAT-II | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/wind-val-ii | WindVal II | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/soyflex-2015 | SoyFLEX 2015 | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/afrisar-2015 | AfriSAR 2015 | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/cryovex-ant-2014-to-2015 | CryoVExAnt 2014/2015 | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/airscattergnss | AirScatterGNSS | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/wind-val-i | WindVal I | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/flex-eu-2014 | FLEX EU 2014 | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/aromat-i | AROMAT-I | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/cryovex-asiras | CryoVEx ASIRAS 2014 | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/cryovex-aem | CryoVEx AEM | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/comex | COMEX | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/charadmexp | CHARADMexp | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/alptomoexp | AlpTomoExp | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/smosice | SMOSice | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/domecair-smos | DOMECair (SMOS) | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/domecair-goce | DOMECair (GOCE) | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/sen2exp | SEN2EXP | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/snowsar-nosrex-tvcexp-and-alpsar | SnowSAR (NOSREX, TVCEXP and ALPSAR) | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/flex-us | FLEX-US | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/tropiscat | TropiScat | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/hyflex | HYFLEX | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/kasar | KaSAR | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/c-mapexp | C-MAPExp | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/rove-1975-1981 | ROVE (1975-1981) | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/nosrex-i-ii-and-iii | NoSREx-I -II and -III | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/icesar | IceSAR 2012 | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/cryovex-2012 | CryoVEx 2012 | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/snowsar-poc-proof-of-concept | SnowSAR Proof Of Concept | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/polaris | POLARIS 2011 | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/essence | ESSenCe | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/cryovexground | CryoVExGround 2011 | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/cryovex-2011 | CryoVEx 2011 | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/cryovexant-2010-and-2011 | CryoVExAnt 2010/2011 | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/cryovex-2010 | CryoVEx 2010 | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/biosar-3 | BioSAR 2010 | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/cosmos-2005-2007-2008-2010 | CoSMOS 2005, 2007, 2008, 2010 | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/domex-2 | DOMEX-2 | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/premierex | PremierEX | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/agrisar | AgriSAR 2009 | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/sen3exp | SEN3EXP | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/tropisar | TropiSAR 2009 | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/thermopolis | THERMOPOLIS | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/polaris-proof-of-concept-2009 | POLARIS - Proof of Concept 2009 | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/cryovexant-2008-and-2009 | CryoVExAnt 2008/2009 | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/desirex-2008 | DESIREX 2008 | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/biosar-2 | BioSAR 2008 | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/polaris-proof-of-concept-2008 | POLARIS Proof of Concept 2008 | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/cryovex-2008 | CryoVEx 2008 | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/cryovex-2007 | CryoVEx 2007 | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/cefles2 | CEFLES2 | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/icesar-2007 | IceSAR 2007 | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/biosar | BioSAR 2007 | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/eagle | EAGLE | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/airfire | AIRFIRE | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/cosmos-2006 | CoSMOS 2006 | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/agrisar-2006 | AGRISAR 2006 | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/cryovex-2006 | CryoVEx 2006 | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/sen2flex | SEN2FLEX | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/cryovex-2005 | CryoVEx 2005 | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/aquiferex | AquiferEx | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/bacchus-doc | BACCHUS-DOC | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/walex | WALEX | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/sparc | SPARC | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/cryovex-2004 | CryoVEx 2004 | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/domex-1 | DOMEX-1 | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/indrex-2 | INDREX-2 | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/terrasar-sim | TerraSARSIM | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/cryovex-2003 | CryoVEx 2003 | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/lara | LaRA | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/losac | LOSAC | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/esag | ESAG | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/siflex | SIFLEX | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/wise | WISE | campaign |  | 
+catalog https://earth.esa.int/eogateway/campaigns/clare | CLARE | campaign |  | 
+
+catalog https://earth.esa.int/eogateway/instruments/aatsr | AATSR | instrument | Envisat | 
+catalog https://earth.esa.int/eogateway/instruments/acc-swarm | ACC (Swarm) | instrument | Swarm | 
+catalog https://earth.esa.int/eogateway/instruments/aladin | ALADIN | instrument | Aeolus | 
+catalog https://earth.esa.int/eogateway/instruments/asar | ASAR | instrument | Envisat | 
+catalog https://earth.esa.int/eogateway/instruments/asm | ASM | instrument | Swarm | 
+catalog https://earth.esa.int/eogateway/instruments/atlid | ATLID Overview | instrument | EarthCARE | 
+catalog https://earth.esa.int/eogateway/instruments/atsr | ATSR | instrument | ERS | 
+catalog https://earth.esa.int/eogateway/instruments/avnir-2 | AVNIR-2 | instrument | ALOS-1 | 
+catalog https://earth.esa.int/eogateway/instruments/bbr | BBR Overview | instrument | EarthCARE | 
+catalog https://earth.esa.int/eogateway/instruments/chris | CHRIS | instrument | PROBA-1 | 
+catalog https://earth.esa.int/eogateway/instruments/cpr | CPR Overview | instrument | EarthCARE | 
+catalog https://earth.esa.int/eogateway/instruments/doris | DORIS | instrument | Envisat | 
+catalog https://earth.esa.int/eogateway/instruments/efi | EFI | instrument | Swarm | 
+catalog https://earth.esa.int/eogateway/instruments/egg | EGG | instrument | GOCE | 
+catalog https://earth.esa.int/eogateway/instruments/etm-landsat-7- | Enhanced Thematic Mapper Plus (ETM+) | instrument | Landsat-7 | 
+catalog https://earth.esa.int/eogateway/instruments/gome | GOME | instrument | ERS | 
+catalog https://earth.esa.int/eogateway/instruments/gomos | GOMOS | instrument | Envisat | 
+catalog https://earth.esa.int/eogateway/instruments/gpsr-and-lrr-swarm | GPSR and LRR (Swarm) | instrument | Swarm | 
+catalog https://earth.esa.int/eogateway/instruments/hrc | HRC | instrument | PROBA-1 | 
+catalog https://earth.esa.int/eogateway/instruments/lrr-envisat | LRR (Envisat) | instrument | Envisat | 
+catalog https://earth.esa.int/eogateway/instruments/lrr-ers | LRR ERS | instrument | ERS | 
+catalog https://earth.esa.int/eogateway/instruments/meris | MERIS | instrument | Envisat | 
+catalog https://earth.esa.int/eogateway/instruments/mipas | MIPAS | instrument | Envisat | 
+catalog https://earth.esa.int/eogateway/instruments/miras | MIRAS | instrument | SMOS | 
+catalog https://earth.esa.int/eogateway/instruments/msi | MSI Overview | instrument | EarthCARE | 
+catalog https://earth.esa.int/eogateway/instruments/multi-spectral-scanner-mss- | Multi Spectral Scanner (MSS) | instrument | Landsat-1 to Landsat-3 | 
+catalog https://earth.esa.int/eogateway/instruments/mwr-ers | MWR (ERS) | instrument | ERS | 
+catalog https://earth.esa.int/eogateway/instruments/mwr | MWR (Envisat) | instrument | Envisat | 
+catalog https://earth.esa.int/eogateway/instruments/oli-landsat-8- | Operational Land Imager (OLI) | instrument | Landsat-8 | 
+catalog https://earth.esa.int/eogateway/instruments/palsar | PALSAR | instrument | ALOS-1 | 
+catalog https://earth.esa.int/eogateway/instruments/prare | PRARE | instrument | ERS | 
+catalog https://earth.esa.int/eogateway/instruments/prism | PRISM | instrument | ALOS-1 | 
+catalog https://earth.esa.int/eogateway/instruments/ra2 | RA-2 | instrument | Envisat | 
+catalog https://earth.esa.int/eogateway/instruments/ra-ers | RA (ERS) | instrument | ERS | 
+catalog https://earth.esa.int/eogateway/instruments/sar-ers | SAR (ERS) | instrument | ERS | 
+catalog https://earth.esa.int/eogateway/instruments/sar-jers-1- | SAR (JERS-1) | instrument | JERS-1 | 
+catalog https://earth.esa.int/eogateway/instruments/sciamachy | SCIAMACHY | instrument | Envisat | 
+catalog https://earth.esa.int/eogateway/instruments/siral | SIRAL | instrument | CryoSat | 
+catalog https://earth.esa.int/eogateway/instruments/ssti | SSTI | instrument | GOCE | 
+catalog https://earth.esa.int/eogateway/instruments/str-swarm | STR (Swarm) | instrument | Swarm | 
+catalog https://earth.esa.int/eogateway/instruments/thematic-mapper-tm- | Thematic Mapper (TM) | instrument | Landsat-4 and Landsat-5 | 
+catalog https://earth.esa.int/eogateway/instruments/tirs | Thermal Infra-Red Sensor (TIRS) | instrument | Landsat-8 | 
+catalog https://earth.esa.int/eogateway/instruments/vegetation-proba-v | Vegetation (VGT) | instrument | PROBA-V | 
+catalog https://earth.esa.int/eogateway/instruments/vfm | VFM | instrument | Swarm | 
+catalog https://earth.esa.int/eogateway/instruments/ws | Wind Scatterometer (WS) | instrument | ERS | 
+
+# -- providers --
+# ESA EO Gateway / Earth Online (251 records) -- earth.esa.int/eogateway
+#   Missions (91) -- earth.esa.int/eogateway/missions
+#     Earth Explorers (9)
+#     Heritage Missions (4)
+#     Earth Watch (1)
+#     Meteorological Missions (2)
+#     Copernicus Sentinels (4)
+#     Scouts and SmallSats (2)
+#     Third Party Missions (69)
+#   Campaigns (115) -- earth.esa.int/eogateway/campaigns
+#   Instruments (45) -- earth.esa.int/eogateway/instruments
+# eumetsat (rom-saf.eumetsat.int) (1 missions) -- MetOp
+# science-pds.cryosat.esa.int (1 missions) -- CryoSat
+# smos-diss.eo.esa.int/oads (OADS) (1 missions) -- SMOS
+# swarm-diss.eo.esa.int (CDF/ZIP) (1 missions) -- Swarm
+
+# -- grind-kandidaten --
+# Alle Datenzugangs-Routen mit physikalisch relevantem Messwert-Kanal,
+# die der Archivar noch nicht kennt (Abgleich phi/sources.phi + phi/dead_sources.phi).
+# Vollstaendig, ungerankt.
+# smos-diss.eo.esa.int/oads/access (SMOS OADS) -- L-Band-Brightness-Temperatur,
+#   Bodenfeuchte (thermal) + Ozean-Salzgehalt (em/diffusion). MIRAS-Interferometer.
+#   Absent in sources/dead. Naechster Probe: OADS-Download-Routen (Java-HTML-Portal).
+# swarm-diss.eo.esa.int (Swarm) -- Geomagnetfeld/E-Feld (em). CDF/ZIP -> parser-def.
+#   Dokumentiert in grind_swarm_diss.phi; Kandidat fuer CDF-Parser-Erweiterung.
+# science-pds.cryosat.esa.int (CryoSat) -- Radar-Altimetrie/Eis (em). dead_sources (1).
+# scihub.copernicus.eu (Copernicus Sentinels 1/2/3/5P) -- SAR-Rueckstreuung (em),
+#   optisch (em), Altimetrie (em). Absent in sources/dead.
+# dataspace.copernicus.eu (Copernicus) -- S3-Ocean/Marine, Sentinel-Katalog. dead_sources (2).
+# Aeolus -- aeolus-diss retired; Produkte via scihub/earthdata (em, Wind-LIDAR).
+# rom-saf.eumetsat.int (MetOp) -- GNSS-Radio-Okkultation (em) -- bereits in sources.phi.
+# vires.services (Swarm HAPI) -- bereits in sources.phi (3 Bloecke).
+#
+# -- Notizen --
+# Instrumente tragen KEINEN Dissemination-Link im Eintrag; sie zeigen nur
+# Quality-Control-Reports. Der Messwert-Zugang laeuft ueber die Mission-Data-Seite.
+# swarmhandbook.earth.esa.int + earthcarehandbook.earth.esa.int = Produkt-Handbuecher
+# (Dokumentation, kein Messwert -> decline).
