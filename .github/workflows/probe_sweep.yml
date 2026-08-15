@@ -36,7 +36,7 @@ jobs:
         echo "survivors: $(grep -c '^url ' phi/port/probe_all_survivors.φ)"
         echo "voids: $(grep -c '^url ' phi/port/probe_all_void.txt)"
     - name: urls
-      run: cargo run -- --urls phi/port/probe_url_candidates.txt
+      run: cargo run -- --urls phi/port/probe_url_candidates.txt --jina
     - name: upload
       if: always()
       uses: actions/upload-artifact@v4
@@ -47,6 +47,7 @@ jobs:
           phi/port/probe_all_void.txt
           phi/port/probe_live.txt
           phi/port/probe_url_void.txt
+          phi/port/probe_jina.txt
           phi/port/weights_*.txt
     - uses: actions/cache@v4
       if: always()

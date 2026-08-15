@@ -9095,7 +9095,7 @@ fn ci_mode(dir: &str) -> i32 {
     }
 }
 
-fn url_probe_mode(path: &str, env: &HashMap<String, String>, fetchone: bool) -> i32 {
+fn url_probe_mode(path: &str, env: &HashMap<String, String>, fetchone: bool, jina: bool) -> i32 {
     let content = match std::fs::read_to_string(path) {
         Ok(c) => c,
         Err(e) => {
@@ -9121,6 +9121,7 @@ fn url_probe_mode(path: &str, env: &HashMap<String, String>, fetchone: bool) -> 
     let void = std::sync::atomic::AtomicUsize::new(0);
     let live_lock = std::sync::Mutex::new(String::new());
     let void_lock = std::sync::Mutex::new(String::new());
+    let jina_lock = std::sync::Mutex::new(Vec::<String>::new());
     let next = std::sync::atomic::AtomicUsize::new(0);
     let workers = 8.min(total.max(1));
     std::thread::scope(|scope| {
@@ -9150,6 +9151,9 @@ fn url_probe_mode(path: &str, env: &HashMap<String, String>, fetchone: bool) -> 
                             .lock()
                             .unwrap()
                             .push_str(&format!("live {} | {}\n", kind, urls[i]));
+                        if jina && kind != "json" {
+                            jina_lock.lock().unwrap().push(urls[i].clone());
+                        }
                     }
                     None => {
                         void.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
@@ -9172,9 +9176,41 @@ fn url_probe_mode(path: &str, env: &HashMap<String, String>, fetchone: bool) -> 
         void_lock.into_inner().unwrap(),
     )
     .ok();
+    let mut jina_report = 0usize;
+    if jina {
+        let candidates = jina_lock.into_inner().unwrap();
+        let jina_out = std::sync::Mutex::new(String::new());
+        let jn = std::sync::atomic::AtomicUsize::new(0);
+        let n_cand = candidates.len();
+        let j_workers = 2.min(n_cand.max(1));
+        std::thread::scope(|scope| {
+            for _ in 0..j_workers {
+                scope.spawn(|| loop {
+                    let i = jn.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                    if i >= n_cand {
+                        break;
+                    }
+                    let wrapped = format!("https://r.jina.ai/{}", candidates[i]);
+                    let body = fetch_raw_probe(&wrapped, None, &[]);
+                    if let Some(b) = body {
+                        if parse_json(&b).is_some() {
+                            jina_out
+                                .lock()
+                                .unwrap()
+                                .push_str(&format!("jina-json | {}\n", candidates[i]));
+                        }
+                    }
+                    std::thread::sleep(std::time::Duration::from_millis(4000));
+                });
+            }
+        });
+        let out = jina_out.into_inner().unwrap();
+        jina_report = out.lines().count();
+        std::fs::write("phi/port/probe_jina.txt", out).ok();
+    }
     eprintln!(
-        "--urls: {} geprüft, {} live, {} void → phi/port/probe_live.txt + probe_url_void.txt",
-        total, live, void
+        "--urls: {} geprüft, {} live, {} void, {} jina-json → phi/port/probe_live.txt + probe_url_void.txt + probe_jina.txt",
+        total, live, void, jina_report
     );
     0
 }
@@ -9219,7 +9255,8 @@ fn main() {
                 }
             };
             let fetchone = args.iter().any(|a| a == "--fetchone");
-            std::process::exit(url_probe_mode(path, &env, fetchone));
+            let jina = args.iter().any(|a| a == "--jina");
+            std::process::exit(url_probe_mode(path, &env, fetchone, jina));
         }
         if args.len() > 1 && args[1] == "--probe" {
             let path = match args.get(2) {
