@@ -660,6 +660,41 @@ lat properties.Lat
 lon properties.Long
 field properties.SO2_Kilotons so2_emission_kt erfc diffusion kt 86400 0.0 0.0
 
+# ── Backlog-Kuration 2026-08-15 — NOAA GML Treibhausgas-Trends (diffusion, global) ──
+url https://gml.noaa.gov/webdata/ccgg/trends/ch4/ch4_mm_gl.txt
+ttl 86400
+format csv
+on earth 19.5362 -155.5763 0
+lastrow average atmosphere_ch4_ppb_global gaussian-inverse-square diffusion ppb 8640.0 0.0 0.0
+
+url https://gml.noaa.gov/webdata/ccgg/trends/n2o/n2o_mm_gl.txt
+ttl 86400
+format csv
+on earth 19.5362 -155.5763 0
+lastrow average atmosphere_n2o_ppb_global gaussian-inverse-square diffusion ppb 8640.0 0.0 0.0
+
+url https://gml.noaa.gov/webdata/ccgg/trends/sf6/sf6_mm_gl.txt
+ttl 86400
+format csv
+on earth 19.5362 -155.5763 0
+lastrow average atmosphere_sf6_ppt_global gaussian-inverse-square diffusion ppt 8640.0 0.0 0.0
+
+# NOAA GML Barrow Meteorologie (thermal, Arktis)
+url https://gml.noaa.gov/aftp/data/meteorology/in-situ/brw/met_brw_insitu_1_obop_hour_{year}.txt
+ttl 86400
+on earth 71.29 -156.57 0
+rows
+field 9 cryosphere_permafrost_temp_barrow_c exponential-decay thermal C 8640.0 0.0 0.0
+
+# ERDDAP AOML Drifter-Bojen (thermal, global SST)
+url https://erddap.aoml.noaa.gov/gdp/erddap/tabledap/drifter_hourly_qc.json?latitude,longitude,sst&time%3E=max(time)-7days
+ttl 3600
+on earth 0 0 0
+map table.rows
+lat 0
+lon 1
+field 2 hydrosphere_drifter_sst_k exponential-decay thermal K 360.0 0.0 0.0
+
 # ── Backlog-Kuration 2026-08-15 — NDBC Per-Station-Buoys (ersetzt toten ArcGIS-Block, Kraft-Labels korrigiert) ──
 
 url https://www.ndbc.noaa.gov/data/realtime2/41001.txt
