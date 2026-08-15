@@ -879,3 +879,33 @@ field wspd atmosphere_metar_wind_kt patch-levy advective kt 60.0 0.0 0.0
 field visib atmosphere_metar_visibility inverse-square em m 60.0 0.0 0.0
 
 
+# from gold359_b002_accepted.φ
+url https://webservices.ingv.it/fdsnws/event/1/query?format=geojson&minmagnitude=1.5&limit=200&orderby=time&starttime={today}T00:00:00
+ttl 60
+on earth 0 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.mag magnitude gaussian-inverse-square seismic-body Mw 6.0 0.0 0.0
+field properties.depth depth_km gaussian-inverse-square seismic-body km 6.0 0.0 0.0
+
+
+# from gold359_b002_accepted.φ
+url https://services.swpc.noaa.gov/json/goes/primary/xrays-3-day.json
+ttl 60
+at sun
+last flux noaa_goes_xray_flux_w_m2 inverse-square em W/m2 6.0 0.0 0.0
+
+
+# from gold359_b002_accepted.φ
+url https://services.swpc.noaa.gov/json/goes/primary/xrays-7-day.json
+ttl 60
+at sun
+last flux noaa_swpc_xray_flux_w_m2 inverse-square em W/m2 6.0 0.0 0.0
+
+
+# from batch_006_accepted.φ
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9497645&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 70.4114 -148.5317 0
+first data.v hydrosphere_tide_height_m_prudhoe_bay inverse-square gravity m 30.0 0.0 0.0

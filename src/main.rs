@@ -3845,6 +3845,7 @@ fn handle_ingress(stream: TcpStream, cfg: WsConfig) {
                                 1.0,
                                 Arc::new(HashMap::new()),
                                 None,
+                                None,
                             ))
                         })
                     };
@@ -4053,6 +4054,7 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                         Vec::new(),
                         1.0,
                         Arc::new(HashMap::new()),
+                        None,
                         None,
                     ))
                 })
@@ -5602,6 +5604,36 @@ fn angular_distance_deg(lat1: f64, lon1: f64, lat2: f64, lon2: f64) -> f64 {
     let dlon = (lon2 - lon1).to_radians();
     let a = ((r2 - r1) * 0.5).sin().powi(2) + r1.cos() * r2.cos() * (dlon * 0.5).sin().powi(2);
     (2.0 * a.sqrt().asin()).to_degrees()
+}
+
+fn substitute_test_templates(url: &str) -> String {
+    let mut u = url.to_string();
+    for (k, v) in [
+        ("{today}", "2026-08-07"),
+        ("{yesterday}", "2026-08-06"),
+        ("{tomorrow}", "2026-08-08"),
+        ("{now}", "2026-08-07T12:00:00Z"),
+        ("{year}", "2026"),
+        ("{month}", "08"),
+        ("{day}", "07"),
+        ("{lat}", "29.5"),
+        ("{lon}", "-95.0"),
+        ("{ra}", "0.0"),
+        ("{dec}", "0.0"),
+        ("{target}", "Ceres"),
+        ("{week_ago}", "2026-07-31"),
+        ("{hour_ago}", "2026-08-07T11:00:00Z"),
+        ("{body}", "ISS"),
+        ("{lon_min}", "-95.0"),
+        ("{lon_max}", "-94.0"),
+        ("{lat_min}", "29.0"),
+        ("{lat_max}", "30.0"),
+        ("{grid}", "29.5,-95.0|29.6,-95.0"),
+        ("{nearest_station}", "8518750"),
+    ] {
+        u = u.replace(k, v);
+    }
+    u
 }
 
 fn gold_kernel_for(force: &str) -> Option<(&'static str, &'static str)> {
@@ -10136,7 +10168,7 @@ field H comet_h_mag gaussian-inverse-square em mag 604800 0.0 0.0\n";
             for l in existing.lines() {
                 let t = l.trim_start();
                 if t.starts_with("url ") {
-                    seen.insert(t[4..].trim().to_string());
+                    seen.insert(super::substitute_test_templates(t[4..].trim()));
                 }
             }
             ok_text = existing;
@@ -10147,7 +10179,7 @@ field H comet_h_mag gaussian-inverse-square em mag 604800 0.0 0.0\n";
             for l in existing.lines() {
                 if let Some(u) = l.strip_prefix("void ") {
                     if let Some(end) = u.find(' ') {
-                        seen.insert(u[..end].to_string());
+                        seen.insert(u[..end].replace(' ', "%20"));
                     }
                 }
             }
@@ -10180,40 +10212,16 @@ field H comet_h_mag gaussian-inverse-square em mag 604800 0.0 0.0\n";
                     }
                     let srcs = super::parse_sources(&block);
                     for s in &srcs {
-                        if live.contains(&s.url) || !seen.insert(s.url.clone()) {
-                            break;
-                        }
                         if s.fanout_cap > 0 || s.format == "csv_zip" || s.format == "kernel_text" {
                             break;
                         }
                         limit -= 1;
-                        let mut url = s.url.clone();
-                        for (k, v) in [
-                            ("{today}", "2026-08-07"),
-                            ("{yesterday}", "2026-08-06"),
-                            ("{tomorrow}", "2026-08-08"),
-                            ("{now}", "2026-08-07T12:00:00Z"),
-                            ("{year}", "2026"),
-                            ("{month}", "08"),
-                            ("{day}", "07"),
-                            ("{lat}", "29.5"),
-                            ("{lon}", "-95.0"),
-                            ("{ra}", "0.0"),
-                            ("{dec}", "0.0"),
-                            ("{target}", "Ceres"),
-                            ("{week_ago}", "2026-07-31"),
-                            ("{hour_ago}", "2026-08-07T11:00:00Z"),
-                            ("{body}", "ISS"),
-                            ("{lon_min}", "-95.0"),
-                            ("{lon_max}", "-94.0"),
-                            ("{lat_min}", "29.0"),
-                            ("{lat_max}", "30.0"),
-                            ("{grid}", "29.5,-95.0|29.6,-95.0"),
-                            ("{nearest_station}", "8518750"),
-                        ] {
-                            url = url.replace(k, v);
-                        }
+                        let mut url = super::substitute_test_templates(&s.url);
                         url = super::resolve_secret(&url, &env);
+                        url = url.replace(' ', "%20");
+                        if live.contains(&s.url) || !seen.insert(url.clone()) {
+                            break;
+                        }
                         let headers = super::render_headers(&s.headers, &env);
                         let body = match super::fetch_raw_probe(&url, None, &headers) {
                             Some(b) => b,

@@ -546,10 +546,11 @@ Binary-PCK-Pakets oben).
   Per-Station-Tides superseded durch Fanout). Nächster Bestand:
   `archeology/sources/` — `--gold`-Konverter steht (mechanisch: force→kernel,
   tau=TTL/10, lat_key→lat, field_in→field, last_row→lastrow): 2573 Blöcke →
-  1191 parse-fähig → `phi/research/agent_output/gold_converted.φ`. Erster
-  Sweep: pre-CDN-Archiv ~50% tote URLs; Verifizierer nutzt jetzt
-  `fetch_raw_probe` (live, kurze Timeouts). Offen: Staging-Reset + gechunkte
-  Neuverifikation + semantische Kuration der Key-Mismatch-Fälle.
+  1191 parse-fähig → `phi/research/agent_output/gold_converted.φ`. **Sweep
+  terminiert (2026-08-15)**: 111 ok gestagt, 757 void diagnostiziert — das
+  pre-CDN-Archiv liefert ZERO neue Live-Quellen (historisches Register, keine
+  Live-Werte). Verifizierer-Dedupe keyed jetzt auf die substituierte URL
+  (Template-Varianten kollabieren), Leerzeichen werden %20-normalisiert.
 - `archeology/sources/sources_gold_pre-cdn_27k_359-domains.φ` (2572 Blöcke, alte
   force-Grammatik) + `sources_recovery_pre-cdn_25k_211-domains.φ` (1924): Migration
   nach Protokoll (docs/source_curation.md); die alte Grammatik wird derzeit noch
