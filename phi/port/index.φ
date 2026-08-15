@@ -10,6 +10,9 @@
 #   port/review_kandidaten.txt  197 Re-Review-Kandidaten aus dead_sources.φ
 #   port/provider_mengen.txt    echte Provider-Mengen vs. unser Crawl (nie "fertig" vortäuschen)
 #   katalog/provider_links.φ    JEDER Provider mit Original-Link (nichts versteckt)
+#   katalog/b2find_tags.φ       b2find-Tag-Vokabular (9.954 Tags mit Counts)
+#   port/library.φ              746 gewichtete Tags — die Linse des source_scanner
+#   port/weights_*.txt          Gewichtstabellen (source_scanner-Ausgänge)
 #   katalog/tap_index*.φ        64148+995+271+203+46 Katalog-IDs → tap_compiler-Route
 # Archiv (pre-cdn-Historie + erledigte Korpora):
 #   /home/johannes/projects/archive/archeology/          (pre-cdn)
@@ -89,3 +92,9 @@ infra port/netloc.txt
 infra port/netloc_per_datei.txt
 infra port/review_kandidaten.txt
 infra port/provider_mengen.txt
+infra port/library.φ
+infra port/weights_b2find_catalogs_index.txt
+infra port/weights_grind_eogateway_index.txt
+infra port/weights_archeology_gaps_index.txt
+infra katalog/b2find_tags.φ
+infra bin source_scanner

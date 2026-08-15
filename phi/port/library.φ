@@ -1,0 +1,749 @@
+# library — b2find-Tag-Vokabular gewichtet (Ratssitzung 2026-08-15, zweite Fassung)
+# format: <gewicht> <force|-> <tag...>
+# gewichte: potenz-von-2; force = der Kanal der Messung; - = kein Kanal
+-8 - Arts and Humanities
+-8 - Arkeologisk minne
+4 - DEPTH
+4 thermal Temperature
+-8 - Funerary
+4 - LATITUDE
+4 - LONGITUDE
+8 advective Pressure
+-4 - Drilling drill rig
+4 - Depth
+8 diffusion Salinity
+8 advective World Ocean Circulation Experiment WOCE
+-8 - Historical and Postglacial Tree Ring Archive of Hohenheim HISTRA
+-4 - Ocean Drilling Program ODP
+4 - Monitoring station
+8 advective Wind speed
+8 advective Wind direction
+8 em Baseline Surface Radiation Network BSRN
+-8 - Historical object
+8 diffusion Humidity
+8 em Radiosonde
+8 diffusion Joint Global Ocean Flux Study JGOFS
+4 - Longitude of event
+4 - Latitude of event
+8 gravity Tide gauge station
+8 diffusion Oxygen
+-4 - Deep Sea Drilling Project DSDP
+8 em Short wave downward GLOBAL radiation
+8 em Long wave downward radiation
+8 em Direct radiation
+8 em Diffuse radiation
+8 advective Station pressure
+8 thermal Fugacity of carbon dioxide water at sea surface temperature wet air
+8 diffusion Nitrate
+8 diffusion Practical salinity
+8 advective Current velocity
+8 diffusion Surface Ocean CO2 Atlas Project SOCAT
+-8 - extracted from the NCEP NCAR 40 Year Reanalysis Project
+-4 - Gravity corer Kiel type
+8 thermal Air temperature at 2 m height
+8 thermal Temperature at equilibration
+-4 - Gravity corer
+8 advective sea_water_pressure_due_to_sea_water
+8 diffusion EARTH SCIENCE gt OCEANS gt SALINITY DENSITY gt SALINITY
+4 thermal EARTH SCIENCE gt OCEANS gt OCEAN TEMPERATURE gt WATER TEMPERATURE
+8 advective EARTH SCIENCE gt OCEANS gt OCEAN PRESSURE gt WATER PRESSURE
+8 thermal sea_water_temperature
+-4 - Integrated Ocean Drilling Program International Ocean Discovery Program IODP
+8 advective Sea water pressure
+8 thermal Sea temperature in situ ITS 90 scale
+8 diffusion contaminant gases
+8 thermal xCO2 water at equilibrator temperature dry air
+8 electric Conductivity
+8 em Short wave upward REFLEX radiation
+8 diffusion sea_water_practical_salinity
+8 advective Pressure at equilibration
+8 em Long wave upward radiation
+8 diffusion xCO2 air
+8 diffusion extracted from GLOBALVIEW CO2
+4 - Latitude
+4 - Longitude
+8 thermal Partial pressure of carbon dioxide water at sea surface temperature wet air
+8 advective Drifter
+-8 - University of Bremen GeoB
+8 diffusion Carbon dioxide
+8 diffusion Chemistry
+8 advective drifting
+-4 - Counting
+8 advective Snow type
+8 advective Wind direction description
+-4 - Piston corer
+8 advective Precipitation Rain
+8 advective Wind force description
+8 em Irradiance
+-4 - Giant box corer
+8 electric sea_water_electrical_conductivity
+-8 - Species
+8 em spectroscopy
+8 advective Multidisciplinary drifting Observatory for the Study of Arctic Climate MOSAiC
+8 em Magnetic susceptibility
+8 advective Precipitation description
+-8 - Media
+8 em infrared photometry
+8 advective partial pressure
+-8 - Age model
+-8 - Elections
+4 - depth
+8 em photometry
+8 diffusion carbon dioxide
+8 thermal Fugacity of carbon dioxide water at equilibrator temperature wet air
+8 em Spectrosun
+8 diffusion Origin and Fate of Biogenic Particle Fluxes in the Ocean ORFOIS
+8 advective pressure
+8 diffusion humidity
+8 advective wind
+-8 - oral history
+-8 - Annen arkeologisk lokalitet
+4 - Station label
+8 advective winds
+-8 - reanalysis
+-8 - documents
+8 diffusion WOCE flag for aqueous CO2
+8 advective wind_speed
+8 advective wind_from_direction
+8 advective surface_partial_pressure_of_carbon_dioxide_in_sea_water
+8 advective surface_partial_pressure_of_carbon_dioxide_in_air
+8 diffusion specific_humidity
+8 thermal sea_surface_temperature
+8 diffusion sea_surface_salinity
+8 advective sea level air pressure
+8 diffusion relative_humidity
+8 diffusion Earth Science gt Oceans gt Salinity Density gt Salinity
+8 thermal Earth Science gt Oceans gt Ocean Temperature gt Sea Surface Temperature
+8 advective Earth Science gt Oceans gt Ocean Circulation gt Ocean Currents
+8 diffusion Earth Science gt Oceans gt Ocean Chemistry gt Carbon Dioxide
+8 diffusion Earth Science gt Oceans gt Ocean Chemistry gt Carbon
+8 advective Earth Science gt Atmosphere gt Atmospheric Winds gt Surface Winds
+8 diffusion Earth Science gt Atmosphere gt Atmospheric Water Vapor gt Humidity
+8 advective Earth Science gt Atmosphere gt Atmospheric Pressure gt Static Pressure
+8 advective Earth Science gt Atmosphere gt Atmospheric Pressure gt Sea Level Pressure
+8 thermal air_temperature_at_sea_level
+8 advective air_pressure_at_sea_level
+8 diffusion 100humidity
+-8 - Abundance estimate
+8 diffusion Biogeochemical Processes in the Oceans and Fluxes PROOF
+8 em Optical depth
+4 thermal Temperature of the water body
+8 em Ultraviolet b global
+8 advective Current direction
+-8 - History
+4 - latitude
+4 - longitude
+8 diffusion salinity
+8 diffusion Oxygen saturation
+4 thermal temperature
+-4 - Box corer
+-8 - Mediterranean Data Archaeology and Rescue MEDAR MEDATLAS
+-8 - EDUCATIONAL BACKGROUND
+8 diffusion Biogeochemical Ocean Flux Study BOFS
+8 advective Video In Situ Snowfall Sensor
+8 thermal xCO2 water at sea surface temperature dry air
+8 advective precipitation
+-8 - Christian Albrechts University
+8 em UV Radiometer
+-4 - Kasten corer
+8 advective currents
+-8 - Southern European Seas Assessing and Modelling Ecosystem Changes SESAME
+8 diffusion chemistry
+8 thermal sea surface temperature
+8 em Magnetic susceptibility meter
+8 advective circulation
+8 diffusion co2
+8 diffusion fCO2
+8 diffusion pco2
+8 diffusion xco2
+8 diffusion fco2
+4 - Section Top in meters composite depth
+8 diffusion Nitrate and Nitrite
+8 diffusion flux
+4 - position
+8 em Susceptibility
+8 em Inductively coupled plasma atomic emission spectroscope ICP AES
+8 thermal Sea surface temperature
+8 advective ice snow
+-8 - EMPLOYMENT HISTORY
+-8 - Religion and tradition
+8 diffusion Gas chromatography
+-8 - University of Cologne
+4 - Weather station meteorological observation
+8 em solar system astronomy
+8 em Optical beam attenuation coefficient
+-4 - Piston corer BGR type
+-4 - Calypso Corer
+8 em Wide band photometry
+-8 - education
+8 em Radiation
+-8 - chemical abundances
+8 advective Precipitation
+-8 - Historical_Peru
+8 em Radiolarians
+-8 - HISTORY
+-8 - Oral History
+8 em Isotope ratio mass spectrometry
+-8 - Education
+-8 - History of Science
+8 em Mass spectrometer Finnigan MAT 251
+8 diffusion Dissolved oxygen concentration
+-8 - Abundance
+-8 - Heritage site
+8 em infrared sources
+8 advective snowfall measurements
+-8 - Single species
+8 em radio sources
+4 - Cartesian coordinate
+8 em Spectral irradiance
+8 diffusion Wet chemistry
+8 diffusion Salinity of the water body
+-8 - Nannofossil abundance
+8 advective Currents
+8 thermal air temperature
+8 thermal Sea temperature from oxygen sensor ITS 90 scale
+8 advective Circulation
+8 thermal SEA SURFACE TEMPERATURE
+8 diffusion CO2 MOLE FRACTION IN DRY GAS
+8 diffusion CO2 FUGACITY
+8 advective River discharge
+8 diffusion Climate Biogeochemistry Interactions in the Tropical Ocean SFB754
+8 em Spectrophotometer Minolta CM 2002
+8 acoustic Sound velocity in water
+-8 - Binary Object Media Type
+8 em Color reflectance at 700 nm
+8 seismic-body 2011 Tohoku Mw9 0 earthquake
+8 advective wind speed
+-4 - number of days
+8 em Color reflectance at 400 nm
+4 - Research station
+-8 - Higher and further education
+-4 - Giant piston corer
+-8 - Universit\u00e4tsgeschichte
+-8 - Universit\u00e4t Halle Saale Halle Saale
+-8 - Martin Luther Universit\u00e4t Halle Wittenberg Halle Saale Wittenberg
+-4 - Biografienportal Sachsen Anhalt
+8 em Atomic absorption spectrometry AAS
+-4 - Catalogus Professorum Halensis
+8 em infrared astronomy
+8 em Hyperspectral radiometer
+8 em Photometry
+-8 - Religion and values
+8 advective Current direction description
+-4 - Trigger corer
+-4 - Number of observations
+8 advective Stream Gauging
+8 em Color reflectance at 460 nm
+8 em Color reflectance at 440 nm
+4 - River gauging station
+8 em Color reflectance at 680 nm
+8 em Color reflectance at 660 nm
+8 em Color reflectance at 640 nm
+8 em Color reflectance at 620 nm
+8 em Color reflectance at 600 nm
+8 em Color reflectance at 580 nm
+8 em Color reflectance at 560 nm
+8 em Color reflectance at 540 nm
+8 em Color reflectance at 520 nm
+8 em Color reflectance at 500 nm
+8 em Color reflectance at 480 nm
+8 em Color reflectance at 420 nm
+-4 - catalogs
+8 advective Global_River_Discharge
+-4 - Peat corer
+-8 - Oral history
+8 em Gamma ray attenuation porosity evaluator GRAPE
+8 diffusion Carbon dioxide water
+8 acoustic Acoustic Doppler Current Profiling ADCP
+8 thermal at equilibrator temperature wet air
+4 thermal Heat flow
+4 thermal effective temperature
+-8 - Media Studies
+-8 - EDUCATION
+-8 - Henrik 1970 Historiker
+-8 - massmedia
+4 - Position
+-8 - MEDIA
+8 em Color reflectance at 550 nm
+-8 - Compulsory and pre school education
+-8 - COMMUNICATION AND LANGUAGE
+8 advective Wind speed at 10 m height
+-4 - Total counts
+4 - Hyytiala Forestry Field Station
+-8 - Historical_Chile
+-8 - Leipzig University
+8 em Dobson Ozone Spectrophotometer
+8 em Color reflectance at 510 nm
+8 em Color reflectance at 450 nm
+8 diffusion Gastropoda
+8 em Color reflectance at 670 nm
+8 em Color reflectance at 650 nm
+8 em Color reflectance at 630 nm
+8 em Color reflectance at 610 nm
+8 em Color reflectance at 590 nm
+8 em Color reflectance at 570 nm
+8 em Color reflectance at 530 nm
+8 em Color reflectance at 490 nm
+8 em Color reflectance at 470 nm
+8 em Color reflectance at 430 nm
+8 em Color reflectance at 410 nm
+8 advective Recording current meter
+8 em Color reflectance at 690 nm
+8 diffusion Calculated using CO2SYS
+8 advective Wind speed at 2 m height
+-4 - Box corer Reineck
+8 thermal Air temperature at 10 m height
+8 advective Wind direction at 10 m height
+-8 - mass media
+4 - Latitude 2
+8 advective Wind direction at 2 m height
+8 advective South Atlantic in Late Quaternary Reconstruction of Budget and Currents SFB261
+8 em sloan photometry
+4 thermal Temperature gradient
+4 - Longitude 2
+-8 - Paleoceanography at T\u00fcbingen University GeoT\u00fc
+8 em Inductively coupled plasma mass spectrometry ICP MS
+-8 - Humanities and the Arts
+8 em radio continuum general
+-8 - climate simulation
+-4 - catalogues
+8 em solar system planets
+8 diffusion Chlorophyll a concentration
+-8 - European Reanalysis of Global Climate Observations ERA CLIM
+-8 - EDUCATIONAL CERTIFICATES
+8 em radio astronomy
+8 diffusion air humidity
+8 advective atmospheric pressure
+-8 - Cancelled cultural heritage
+-8 - HIGHER EDUCATION
+-8 - Radiolarians abundance
+-8 - KAT56 University
+-8 - HISTORIA
+8 em ultraviolet astronomy
+-8 - EDUCATIONAL COURSES
+-8 - simulation
+8 diffusion Oxygen probe
+-8 - astronomical models
+-8 - model output
+-4 - Hydrogen index
+8 em ccd photometry
+-8 - modeling
+8 electric electrical
+-8 - Religion und Werte
+8 diffusion oxygen
+8 em Mass spectrometer
+-4 - Russian corer
+8 advective Wind velocity
+4 - Depth comment
+-4 - Current sea ice maps for Arctic and Antarctic meereisportal de
+8 advective Current speed description
+8 em Spectrophotometry
+8 acoustic Acoustic Doppler Current Profiler
+-4 - Sampling drilling ice
+8 em incoming radiation intensity
+4 - Ice station
+-8 - Archaeology
+-8 - History and Archaeology
+-8 - Historia och arkeologi
+-8 - Year of Polar Prediction YOPP
+8 diffusion Geochemistry
+8 diffusion Partial pressure of carbon dioxide
+-8 - KAT76 Historical Studies Data
+8 advective Continuous Flow Analysis
+8 advective Present blowing snow
+4 - Marine Station Helgoland
+4 thermal Pyrolysis temperature maximum
+8 advective Profiling auto lagrangian circulation explorer
+-8 - elections
+8 em optical beam transmission
+8 em stellar spectral types
+8 em Corrected Susceptibility
+8 diffusion CTD with attached oxygen sensor
+-8 - EDUCATIONAL FEES
+8 em radio galaxies
+8 em Ultraviolet radiation
+8 em gamma ray astronomy
+8 advective Wind scale reference
+-8 - Registration number of species
+4 thermal Treatment temperature
+8 advective Water level
+8 em Solar radiation
+8 em broad band photometry
+-8 - Sociology of Population
+-8 - 10303 Population Studies
+-4 - Core drilling
+8 em Short wave downward radiation
+8 diffusion Biogeochemical Fluxes of Matter and Energy in the Deep Sea BIGSET
+-4 - Oxygen index
+8 diffusion Dissolved oxygen with modified Winkler Carpenter
+8 em Solar Light 501A
+8 diffusion mass CO2
+8 advective Current meter
+4 - Marion Island Research Station
+-8 - scheepshistorie
+-8 - historische mariene gegevens
+4 thermal Temperature recorder
+-8 - Species data set
+4 - Wadden Sea Station Sylt
+-8 - EDUCATIONAL INSTITUTIONS
+-4 - Counting 150 \u00b5m fraction
+8 advective Rotor current meter
+8 em Ultraviolet a global
+8 advective snow
+-8 - FURTHER EDUCATION
+-8 - Media and Communications
+8 em Radiation fluxes
+8 acoustic Shipboard Acoustic Doppler Current Profiling SADCP
+-4 - Push corer
+4 - Fractional day of the individual measurement relative to JULD of the station
+-4 - Counting 63 \u00b5m fraction
+8 diffusion Particle concentration
+8 em Net radiation
+-4 - Corrected counts
+-8 - Number of species
+-8 - and Prediction CLIMAP
+-8 - Diatom abundance
+-8 - NEWSPAPER READERSHIP
+-8 - Median
+8 em Total Ultraviolet Radiometer TUVR
+4 - European Station for Time Series in the Ocean Canary Islands ESTOC
+8 em Brewer Ozone Spectrophotometer
+8 advective wind direction
+-8 - planktic abundance
+8 advective Past blowing snow
+-4 - Piston corer Kiel type
+-8 - ELECTIONS
+-4 - Counting 125 \u00b5m fraction
+8 em radiocarbon
+-8 - Earth history tipping points
+-8 - Tilburg University
+-8 - religion
+-4 - Number of pings
+8 diffusion Partial pressure of oxygen
+-4 - IRD Counting Grobe
+-8 - Vocational education and training
+-4 - Number of conductivity measurements
+-4 - Number of temperature data
+-4 - number of gravel
+4 - Time series station
+4 thermal Temperature sensor
+8 diffusion sediment oxygen demand
+8 em radio continuum emission
+-8 - Plantago major media
+4 thermal Surface temperature
+4 - IODP Depth Scale Terminology
+8 electric Calculated from conductivity
+8 diffusion Sub seabed CO2 Storage Impact on Marine Ecosystems ECO2
+8 diffusion gas
+8 advective snow depth
+4 thermal water temperature
+4 - CTD profile
+4 - Carlini Jubany Station
+8 em Natural gamma ray
+-8 - Historisk arkeologisk lokalitet
+-8 - Historical heritage
+-8 - NEWSPAPERS
+-8 - VOCATIONAL EDUCATION CERTIFICATES
+4 thermal Miniature temperature recorder
+-8 - Population Characteristics
+8 em hst photometry
+-8 - and modeling
+4 - Sea soar profile
+8 diffusion NITRATE
+-8 - KAT55 Education
+-8 - Demography population
+-8 - vital statistics and censuses
+4 - Latitude of event 2
+8 acoustic Multibeam Echosounder
+8 diffusion CO2BaseSleipner
+8 diffusion Nitrate uptake rate
+-8 - VOCATIONAL EDUCATION
+4 - Longitude of event 2
+8 advective Snow thickness
+4 - Automatic weather station
+8 diffusion Troposphere composition and chemistry
+8 diffusion Oxygen sensor
+4 - Profile ID
+8 diffusion Carbon dioxide yield
+-8 - Biological Environment Species Fish Species of Commercial Interest
+-8 - Astronomical simulations
+4 - Georg Forster Station
+8 diffusion in situ oxygen concentration and in situ oxygen saturation
+8 diffusion flux per day
+8 diffusion Nitrate concentration
+4 thermal CENTRAL HEATING
+-8 - newspaper readership
+-4 - Count in assayed sample of biological entity specified elsewhere
+-4 - Vibro corer
+4 thermal Temperature thermistor
+8 em spectroscopic binary stars
+-8 - WELSH LANGUAGE
+-8 - Biomass Abundance Elemental composition
+8 advective ADCP
+8 diffusion multi level trace metal
+-8 - Arkeologisk enkeltminne
+8 em Susceptibility unit
+8 electric Electrical conductivity
+8 seismic-body Seismic reflection data
+-8 - EDUCATIONAL OPPORTUNITIES
+8 diffusion Concentration of coloured dissolved organic matter in seawater
+8 em ultraviolet photometry
+8 em apparent magnitude
+8 diffusion M\u00e9tropole Golfe de Gascogne
+4 thermal Heat Flow probe
+8 diffusion CO2 analyser
+8 diffusion Carbon dioxide estimation DOE
+8 diffusion Carbonate bomb M\u00fcller Gastner
+-8 - HIGHER EDUCATION INSTITUTIONS
+8 advective water level
+8 diffusion Methane Flux Control in Ocean Margin Sediments METROL
+8 em Mass spectrometry MS
+-4 - unsaturation index UK 37
+8 em Reflectance
+8 diffusion Marine Geochemistry AWI AWI_MarGeoChem
+-8 - EDUCATIONAL LEVELS
+4 thermal HEATING SYSTEMS
+-8 - EDUCATIONAL GRANTS
+8 diffusion Calculated based on oxygen number
+-8 - KAT57 Religion and Weltanschauung
+-4 - Sediment corer
+8 diffusion CO2
+-8 - Donn\u00e9es de simulation
+8 diffusion Hukseflux
+8 em Airborne electromagnetic EM induction sounding
+-8 - population migration
+-8 - Language and linguistics
+8 em Magnetic field
+8 advective Autonomous langrangian circulation explorer
+4 thermal heating
+8 seismic-body Seismic reflection profile
+-8 - GENERAL CERTIFICATE OF SECONDARY EDUCATION
+-8 - Censuses
+8 em magnetic
+-8 - Historicum net
+-4 - Fachportal Hexenforschung
+8 em Ultraviolet b diffuse
+8 advective Snow height
+8 em Ultraviolet b direct
+-4 - Production index
+-8 - abundance
+8 diffusion Fugacity of carbon dioxide in seawater
+8 diffusion aerosol
+8 em Optical backscattering coefficient
+8 advective Pressure sensor
+8 thermal soil temperature
+-8 - PREHISTORIE
+8 em Electro magnetic Bird EM Bird
+-4 - Counting by flow cytometer
+8 em Color reflectance at 730 nm
+8 em Color reflectance at 720 nm
+8 em Color reflectance at 710 nm
+-4 - BANK ACCOUNTS
+8 advective drift
+-8 - MARITAL HISTORY
+8 acoustic Echosounder
+4 thermal Heat flow probe
+-4 - total counts
+8 em Spectrophotometer Minolta CM 2022
+8 em Mass spectrometer Finnigan Delta S
+-8 - EDUCATIONAL STATUS
+4 - Depth of Secchi Disk
+8 em Radiolarian preservation
+8 em solar system
+8 em Radiometer
+-8 - news
+-8 - historical demography
+-8 - Columbia University LDEO
+8 diffusion Oxygen optode
+-8 - median
+8 em Inductively coupled plasma optical emission spectrometry
+8 diffusion Net community production of oxygen
+-8 - mass media use
+-8 - Plantago media
+8 advective Snow pit
+8 em RAMSES ACC hyperspectral radiometer
+8 em Geomagnetic observatory
+8 em magnetic fields
+-4 - Calypso Corer II
+8 em radio listening
+-8 - Humanities
+-4 - VITAL STATISTICS
+8 em Spectral radiance
+8 em radiolyssnande
+-8 - SECONDARY EDUCATION
+8 em RAMSES hyperspectral radiometer
+-4 - Sampling drilling in lake
+-8 - ORAL HISTORY
+-8 - Oncaea media
+8 diffusion xCO2 ambient atmosphere
+8 em Downwelling irradiance at 490 nanometers
+8 advective groundwater level
+4 - Open ocean station
+-4 - Country
+-8 - Historia
+-8 - CENSUS DATA
+8 em Infrared CO2 H2O gas analyzer
+-4 - Carbon Preference Index
+-8 - 10208 Sociology of Education
+8 em Gas chromatography Mass spectrometry GC MS
+8 advective Current speed
+-8 - CERTIFICATE OF SECONDARY EDUCATION
+8 em Magnetic moment
+8 em Downwelling irradiance at 380 nanometers
+-8 - mediaanv\u00e4ndning
+-8 - Abundance per volume
+-8 - population statistics
+-8 - DEMOGRAPHY POPULATION
+8 em Bacteria Proteobacteria Gammaproteobacteria
+4 - and uncorrected for sensor position
+-8 - AND CENSUSES
+8 em medium band photometry
+8 em Color reflectance at 390 nm
+8 em Color reflectance at 380 nm
+8 diffusion nitrate
+8 em Spectrofluorometry
+-4 - Hand push corer
+8 advective Benguela Stream
+8 gravity Aetideus giesbrechti
+8 em Raw downwelling irradiance at 490 nanometers
+-8 - ADULT EDUCATION
+8 em solar radiation
+-4 - Sampling drilling from ice
+-4 - Hiller corer
+-4 - counted analyzed
+8 gravity Aetideus armatus
+-8 - median destructive field of natural remanent magnetization
+-8 - P sequence deposition model
+8 diffusion Oxygen isotopes
+8 advective snowfall
+-8 - Photo sledge
+-4 - Russian sampler
+8 em Raw downwelling irradiance at 380 nanometers
+8 diffusion Hydrodynamics and Biogeochemical Fluxes in the Straits of the Cretan Arc PELAGOS
+-4 - Statistics as Topic
+4 thermal Temperature logger
+8 em Downwelling irradiance at 412 nanometers
+8 advective current velocity
+-8 - SCOTTISH CERTIFICATE OF EDUCATION
+4 - station\u00e4re Behandlungen
+-8 - Language resources
+-8 - BUSINESS AND TECHNOLOGY EDUCATION COUNCIL AWARDS
+-8 - communications and language
+8 diffusion biogeochemistry
+-8 - and Utrecht University NIOZ_UU
+-4 - Number of individuals
+-4 - Illite 5\u00c5 10\u00c5 Esquevin index
+4 - Section position
+-8 - PRIVATE EDUCATION
+-8 - parliamentary elections
+8 advective Snow fall sensor
+8 diffusion relative humidity
+4 - Depth water equivalent
+8 em Mass spectrometer VG Micromass 602
+-8 - ROYAL SOCIETY OF ARTS AWARDS
+8 diffusion Gross primary production of oxygen
+-8 - RELIGION
+8 diffusion Nutrients
+-4 - counts
+8 thermal soil surface temperature
+4 - Profile sampling
+8 em Raw downwelling irradiance at 412 nanometers
+4 - Incubation depth
+8 advective Automated flow cytometry
+-8 - listening to music
+8 em absolute magnitude
+-8 - Religion
+8 acoustic EXPOSURE TO NOISE
+-4 - Vegetation index
+-4 - Statistics
+8 diffusion EMODnet Chemistry
+-8 - POPULATION MIGRATION
+-4 - German Continental Deep Drilling Program
+8 diffusion Concentration or arrangement of sea ice
+-8 - SCOTTISH VOCATIONAL EDUCATION COUNCIL AWARDS
+-8 - abundance of metazoa
+8 em Radiocarbon
+-8 - Digitising and processing of historical records
+8 diffusion derived from SBE43 oxygen sensor
+8 diffusion CONTRACEPTIVE DEVICES
+8 em Alpha spectrometry
+-8 - stellar evolutionary models
+8 advective Calculated from pressure
+8 em RADIO LISTENING
+8 em Laser ablation inductively coupled plasma mass spectrometer LA ICP MS
+-4 - Branched and isoprenoid tetraether index
+-4 - Shannon Diversity Index
+4 - Sample position
+-4 - Counts
+8 diffusion Air chemistry observatory
+-4 - Number of measurements
+4 thermal heat
+4 - Kohnen Station
+8 diffusion Geochemistry and ecology of the Namibian upwelling system GENUS
+8 electric ELECTRIC POWER SUPPLY
+4 - maximum depth
+-4 - Livingstone corer
+8 em h alpha photometry
+-8 - Silicoflagellate abundance
+8 diffusion nutrients
+8 em Optical astronomy
+-8 - Educational policy
+8 em Color reflectance at 740 nm
+-8 - 10610 University Education
+4 - Soil profile
+8 diffusion GAS SUPPLY
+8 diffusion trace elements
+-8 - Life long continuing education
+-4 - Rotary core drilling
+8 em Magnetic tool face angle
+8 em Spectrophotometer on the Section Half Multisensor Logger SHMSL
+8 em Magnetic only tool face angle
+-8 - Languages and Literature
+-8 - Type of age model
+8 seismic-body Seismic
+-4 - Livingstone piston corer
+-4 - Dachnowski corer
+8 em radio spectroscopy
+8 advective Precipitation integrated
+-8 - MASS MEDIA
+8 diffusion Gas chromatography Flame Ionization Detection GC FID
+8 em Albedo
+-8 - secondary education
+-8 - music
+4 thermal Humidity Temperature probe
+4 thermal Calculated from internal temperature and conductivity
+8 em radio
+8 em Electromagnetic sounding EM
+-8 - election data
+-4 - number of years
+-8 - educational systems and institutions
+8 em Optical microscopy
+8 diffusion Soil moisture
+-8 - LANGUAGES
+8 em Downwelling photosynthetically available radiation
+8 diffusion Spongaster tetras
+4 - Weather Station
+8 em Mass spectrometer Finnigan Delta E
+-8 - Julia Historikerin
+8 seismic-body EARTH SCIENCE SOLID EARTH TECTONICS EARTHQUAKES
+-8 - educational institutions
+-8 - PRIMARY EDUCATION
+-8 - POPULATION
+4 - Neumayer Station
+-4 - Lycopodium counted
+4 thermal High temperature catalytic oxidation Sugimura Suzuki
+8 em Graphite furnace atomic absorption spectrometer GF AAS
+-8 - POPULATION DENSITY
+8 diffusion Determination of particulate matter concentration Gardner et al
+8 em Radiolarian zone
+4 thermal Pt 100 temperature sensor
+8 diffusion Flux of total mass
+4 thermal Curie temperature
+8 advective Climatic Variability of the Mediterranean Paleo circulation CLIVAMP
+-8 - archaeology
+-8 - Species richness
+-8 - Classical age modeling approach
+-4 - Uniform resource locator link to metadata file
+-8 - further education
+-4 - BUILDING SOCIETY ACCOUNTS
+-8 - Accumulation model

@@ -3,6 +3,7 @@ use omegaflow::dastcom::{
     accel_at_epoch, hill_radius_m, parse_record, speed_at_epoch, state_at, AsteroidRec,
     RECORD_STRIDE,
 };
+use omegaflow::force::{default_kernel_for, force_id_of, kernel_id_for_force};
 use omegaflow::inflate::unzip;
 use omegaflow::lsk::LeapSeconds;
 use omegaflow::pck::PckBody;
@@ -1040,7 +1041,18 @@ fn build_star_hash(bytes: &[u8], build_epoch: f64, cadence: f64, ttl: u64) -> St
     vmax *= Φ;
     let rho_cad = vmax * cadence;
     let shift = (2.0 * rho_cad).log2().ceil().clamp(0.0, 63.0) as i32;
-    let cell_size = 2f64.powi(shift);
+    let motion_cell = 2f64.powi(shift);
+    let mut span = 1.0f64;
+    for k in 0..3 {
+        let mut lo = f64::INFINITY;
+        let mut hi = f64::NEG_INFINITY;
+        for pos in &p0 {
+            lo = lo.min(pos[k]);
+            hi = hi.max(pos[k]);
+        }
+        span = span.max(hi - lo);
+    }
+    let cell_size = motion_cell.max(span / 1024.0);
     let mut cells: HashMap<CellKey, Vec<u32>> = HashMap::new();
     let mut cell_lo = (i64::MAX, i64::MAX, i64::MAX);
     let mut cell_hi = (i64::MIN, i64::MIN, i64::MIN);
@@ -2918,15 +2930,6 @@ fn kernel_id_of(name: &str) -> Option<u8> {
     }
 }
 
-fn kernel_for_force(force: u8) -> Option<u8> {
-    match force {
-        0 | 1 => Some(0),
-        2 | 3 | 4 | 7 | 8 => Some(1),
-        5 | 6 => Some(3),
-        _ => None,
-    }
-}
-
 fn extract_fields(ext: &Extract) -> &[FieldConfig] {
     match ext {
         Extract::Map { fields, .. }
@@ -2995,21 +2998,6 @@ struct BrowserSensor {
     force: u8,
     kernel: u8,
     ttl: f64,
-}
-
-fn force_id_of(name: &str) -> Option<u8> {
-    match name {
-        "em" => Some(0),
-        "gravity" => Some(1),
-        "acoustic" => Some(2),
-        "seismic-body" => Some(3),
-        "seismic-surface" => Some(4),
-        "thermal" => Some(5),
-        "diffusion" => Some(6),
-        "advective" => Some(7),
-        "electric" => Some(8),
-        _ => None,
-    }
 }
 
 fn sensor_config(name: &str) -> Option<BrowserSensor> {
@@ -3367,14 +3355,11 @@ impl Radiator for StderrRadiator {
             api_osc,
             dev_osc,
         );
-        if line == self.last_line {
-            return;
-        }
         let prev_len = self.last_line.chars().count();
         if self.interactive {
             let pad = " ".repeat(prev_len.saturating_sub(line.chars().count()));
             eprint!("\r{}{}", line, pad);
-        } else {
+        } else if line != self.last_line {
             eprintln!("{}", line);
         }
         self.last_line = line;
@@ -4918,7 +4903,7 @@ fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 };
                 let k = match kernel_id_of(parts[5]) {
                     Some(k) => k,
-                    None => match kernel_for_force(f) {
+                    None => match kernel_id_for_force(f) {
                         Some(k) => k,
                         None => continue,
                     },
@@ -4964,7 +4949,7 @@ fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 let fc = FieldConfig {
                     key: parts[1].to_string(),
                     name: parts[1].to_string(),
-                    kernel: match kernel_for_force(f) {
+                    kernel: match kernel_id_for_force(f) {
                         Some(k) => k,
                         None => continue,
                     },
@@ -5626,22 +5611,14 @@ fn angular_distance_deg(lat1: f64, lon1: f64, lat2: f64, lon2: f64) -> f64 {
     (2.0 * a.sqrt().asin()).to_degrees()
 }
 
-fn gold_kernel_for(force: &str) -> Option<(&'static str, &'static str)> {
-    match force {
-        "em" => Some(("inverse-square", "em")),
-        "gravity" => Some(("inverse-square", "gravity")),
-        "acoustic" => Some(("gaussian-inverse-square", "acoustic")),
-        "seismic-body" => Some(("gaussian-inverse-square", "seismic-body")),
-        "seismic-surface" => Some(("erfc", "seismic-surface")),
-        "thermal" => Some(("exponential-decay", "thermal")),
-        "diffusion" => Some(("gaussian-inverse-square", "diffusion")),
-        "advective" => Some(("patch-levy", "advective")),
-        _ => None,
-    }
-}
-
-fn gold_synth(directive: &str, force: &str, key: &str, name: &str, ttl: u64) -> Option<String> {
-    let (kernel, f) = gold_kernel_for(force)?;
+fn port_field_synth(
+    directive: &str,
+    force: &str,
+    key: &str,
+    name: &str,
+    ttl: u64,
+) -> Option<String> {
+    let (kernel, f) = default_kernel_for(force)?;
     let tau = if ttl > 0 {
         ((ttl as f64) / 10.0).max(1.0)
     } else {
@@ -5653,7 +5630,7 @@ fn gold_synth(directive: &str, force: &str, key: &str, name: &str, ttl: u64) -> 
     ))
 }
 
-fn convert_gold_block(block: &str) -> String {
+fn port_block(block: &str) -> String {
     let mut head: Vec<String> = Vec::new();
     let mut force = String::new();
     let mut ttl: u64 = 0;
@@ -5828,13 +5805,13 @@ fn convert_gold_block(block: &str) -> String {
         }
         let s = match parts[0] {
             "field" | "field_in" if parts.len() >= 3 => {
-                gold_synth("field", &force, parts[1], parts[2], ttl)
+                port_field_synth("field", &force, parts[1], parts[2], ttl)
             }
             "first" | "last" | "count" | "path" | "deep" if parts.len() >= 3 => {
-                gold_synth(parts[0], &force, parts[1], parts[2], ttl)
+                port_field_synth(parts[0], &force, parts[1], parts[2], ttl)
             }
             "last_row" if parts.len() >= 3 => {
-                gold_synth("lastrow", &force, parts[1], parts[2], ttl)
+                port_field_synth("lastrow", &force, parts[1], parts[2], ttl)
             }
             "last_line" if parts.len() >= 2 => Some(format!("lastline {}", parts[1])),
             "last_obj" if parts.len() >= 5 => {
@@ -5858,7 +5835,7 @@ fn convert_gold_block(block: &str) -> String {
             "regex" if parts.len() >= 3 => {
                 let name = parts[parts.len() - 1];
                 let pat = parts[1..parts.len() - 1].join(" ");
-                gold_synth("regex", &force, &pat, name, ttl)
+                port_field_synth("regex", &force, &pat, name, ttl)
             }
             _ => None,
         };
@@ -5870,9 +5847,9 @@ fn convert_gold_block(block: &str) -> String {
     out
 }
 
-fn gold_flush_block(block: &str, converted: &mut String, total: &mut usize, parsed: &mut usize) {
+fn flush_port_block(block: &str, converted: &mut String, total: &mut usize, parsed: &mut usize) {
     *total += 1;
-    let conv = convert_gold_block(block);
+    let conv = port_block(block);
     if !parse_sources(&conv).is_empty() {
         *parsed += 1;
         converted.push_str(&conv);
@@ -5880,15 +5857,16 @@ fn gold_flush_block(block: &str, converted: &mut String, total: &mut usize, pars
     }
 }
 
-fn gold_convert_mode(input: &str, output: &str) -> i32 {
+fn port_mode(input: &str, output: &str) -> i32 {
     let content = match std::fs::read_to_string(input) {
         Ok(c) => c,
         Err(_) => {
-            eprintln!("--gold: input unreadable: {}", input);
+            eprintln!("--port: input unreadable: {}", input);
             return 1;
         }
     };
-    let mut converted = String::from("# gold conversion (old → new grammar, mechanical)\n");
+    let mut converted =
+        String::from("# port conversion (source grammar → canonical grammar, mechanical)\n");
     let mut block = String::new();
     let mut total = 0usize;
     let mut parsed = 0usize;
@@ -5897,7 +5875,7 @@ fn gold_convert_mode(input: &str, output: &str) -> i32 {
         let t = line.trim_start();
         if t.starts_with("source ") {
             if !block.is_empty() {
-                gold_flush_block(&block, &mut converted, &mut total, &mut parsed);
+                flush_port_block(&block, &mut converted, &mut total, &mut parsed);
                 block = String::new();
             }
             in_source = true;
@@ -5907,7 +5885,7 @@ fn gold_convert_mode(input: &str, output: &str) -> i32 {
         }
         if t.starts_with("url ") && !in_source {
             if !block.is_empty() {
-                gold_flush_block(&block, &mut converted, &mut total, &mut parsed);
+                flush_port_block(&block, &mut converted, &mut total, &mut parsed);
                 block = String::new();
             }
             block.push_str(line);
@@ -5918,14 +5896,14 @@ fn gold_convert_mode(input: &str, output: &str) -> i32 {
         block.push('\n');
     }
     if !block.is_empty() {
-        gold_flush_block(&block, &mut converted, &mut total, &mut parsed);
+        flush_port_block(&block, &mut converted, &mut total, &mut parsed);
     }
     if std::fs::write(output, &converted).is_err() {
-        eprintln!("--gold: output unwritable: {}", output);
+        eprintln!("--port: output unwritable: {}", output);
         return 1;
     }
     eprintln!(
-        "--gold: {} blocks converted, {} parse in the current parser → {}",
+        "--port: {} blocks converted, {} parse in the current parser → {}",
         total, parsed, output
     );
     0
@@ -8986,22 +8964,22 @@ fn main() {
             };
             std::process::exit(ci_mode(dir));
         }
-        if args.len() > 1 && args[1] == "--gold" {
+        if args.len() > 1 && args[1] == "--port" {
             let input = match args.get(2) {
                 Some(s) => s.as_str(),
                 None => {
-                    eprintln!("--gold: input file argument absent");
+                    eprintln!("--port: input file argument absent");
                     std::process::exit(1);
                 }
             };
             let output = match args.get(3) {
                 Some(s) => s.as_str(),
                 None => {
-                    eprintln!("--gold: output file argument absent");
+                    eprintln!("--port: output file argument absent");
                     std::process::exit(1);
                 }
             };
-            std::process::exit(gold_convert_mode(input, output));
+            std::process::exit(port_mode(input, output));
         }
         if args.len() > 1 && args[1] == "--probe" {
             let path = match args.get(2) {
@@ -10320,19 +10298,17 @@ field temp temp_c\n";
     }
 
     #[test]
-    fn temp_gold_convert_check() {
-        let content =
-            std::fs::read_to_string("phi/port/queue/sources_gold_pre-cdn_27k_359-domains.φ")
-                .unwrap();
+    fn temp_port_convert_check() {
+        let content = std::fs::read_to_string("phi/port/queue/master.φ").unwrap();
         let mut blocks = 0usize;
         let mut parsed = 0usize;
         let mut with_extracts = 0usize;
         let mut block = String::new();
         for line in content.lines() {
             let t = line.trim_start();
-            if t.starts_with("url ") && !block.is_empty() {
+            if (t.starts_with("url ") || t.starts_with("source ")) && !block.is_empty() {
                 blocks += 1;
-                let conv = super::convert_gold_block(&block);
+                let conv = super::port_block(&block);
                 let srcs = super::parse_sources(&conv);
                 if !srcs.is_empty() {
                     parsed += 1;
@@ -10344,13 +10320,13 @@ field temp temp_c\n";
             block.push('\n');
         }
         eprintln!(
-            "gold convert: {} blocks, {} parsed, {} with extracts",
+            "port convert: {} blocks, {} parsed, {} with extracts",
             blocks, parsed, with_extracts
         );
     }
 
     #[test]
-    fn test_gold_convert_celestial_and_post() {
+    fn test_port_convert_celestial_and_post() {
         let has_field = |src: &super::SourceConfig| {
             src.extracts.iter().any(|e| match e {
                 super::Extract::CelestialMap { fields, .. } => !fields.is_empty(),
@@ -10359,7 +10335,7 @@ field temp temp_c\n";
             })
         };
         let celestial = "source oac\nttl 86400\nforce em\nurl https://api.example.org/{target}/\nverify false\ntarget SN2014J\nmap .\nlat_key ra\nlon_key dec\nfield name name\n";
-        let conv = super::convert_gold_block(celestial);
+        let conv = super::port_block(celestial);
         let srcs = super::parse_sources(&conv);
         assert_eq!(srcs.len(), 1);
         assert!(matches!(&srcs[0].frame, super::Frame::Barycenter { .. }));
@@ -10369,7 +10345,7 @@ field temp temp_c\n";
             .any(|e| matches!(e, super::Extract::CelestialMap { .. })));
         assert!(has_field(&srcs[0]));
         let post = "source stac\nttl 86400\nforce em\nurl https://example.org/search\nmethod post\nbody {\"collections\":[\"x\"],\"bbox\":[{lon_min},{lat_min},{lon_max},{lat_max}]}\nmap features\nlat_key properties.centroid.lat\nlon_key properties.centroid.lon\nfield id scene\n";
-        let conv = super::convert_gold_block(post);
+        let conv = super::port_block(post);
         let srcs = super::parse_sources(&conv);
         assert_eq!(srcs.len(), 1);
         assert!(matches!(&srcs[0].frame, super::Frame::Surface { .. }));
@@ -10383,7 +10359,7 @@ field temp temp_c\n";
             .any(|e| matches!(e, super::Extract::Map { .. })));
         assert!(has_field(&srcs[0]));
         let mast = "source mast\nttl 3600\nforce em\nurl https://example.org/tap\nformat votable\nmap data\nfield_in s_ra ra_deg\nfield_in s_dec dec_deg\nlat_key s_ra\nlon_key s_dec\n";
-        let conv = super::convert_gold_block(mast);
+        let conv = super::port_block(mast);
         let srcs = super::parse_sources(&conv);
         assert_eq!(srcs.len(), 1);
         assert!(matches!(&srcs[0].frame, super::Frame::Barycenter { .. }));
@@ -11504,8 +11480,8 @@ field temp temp_c\n";
 
     #[test]
     fn test_force_id_electric() {
-        assert_eq!(super::force_id_of("electric"), Some(8));
-        assert_eq!(super::force_id_of("biotic"), None);
-        assert_eq!(super::kernel_for_force(8), Some(1));
+        assert_eq!(omegaflow::force::force_id_of("electric"), Some(8));
+        assert_eq!(omegaflow::force::force_id_of("biotic"), None);
+        assert_eq!(omegaflow::force::kernel_id_for_force(8), Some(1));
     }
 }

@@ -489,6 +489,13 @@ docs/source_curation.md zeigen auf den Konsolidierungs-Zwischenstand vor
 phi/port/queue/ kopiert (getrackt).
 
 Offen (Detail in phi/port/ledger.φ, jede Zeile mit Zustand):
+- Die Linse: source_scanner (src/bin/source_scanner.rs) + library.φ (746
+  gewichtete b2find-Tags, Ratssitzung, Wort-Grenzen) + gate_weigh in
+  src/force.rs (force_id_of/kernel_id_for_force/default_kernel_for jetzt in
+  der Lib, A=A). Gewichtstabellen: phi/port/weights_*.txt. Sensor-Regel in
+  SOURCES_V2_SPEC §2. Folgewelle: NASA-CMR-Keywords + GBIF-Tags downloaden,
+  Library feinwägen; --port ersetzt --gold (port_mode/port_block), Test
+  temp_port_convert_check liest queue/master.φ.
 - Queue: 10 Untested-Korpora (14k/13k/15k/7k/2k/183l/astro/earth/exotic/
   candidate-staging), Gold 2572 + Recovery 1924 + 5701 Lost-Blocks (Join aus
   richest/params) — Port durch die Prozedur. Erster Port 2026-08-15: STAC
@@ -1028,17 +1035,6 @@ Offen (Detail in phi/port/ledger.φ, jede Zeile mit Zustand):
   sat480/nep105 — die System-Barycenter trägt de721 bereits). Offen
   (strukturell): Segment-Payloads lazy laden statt upfront, sonst wächst die
   Ramlast mit jeder Kernel-Generation.
-- **Branch-Zustand (2026-08-15, nach main-Pollution):** Die lokale `main`
-  wurde auf origin/main zurückgesetzt (update-ref — Arbeitsbaum und Staging
-  blieben unangetastet). Die während der Pollution entstandenen 14 echten
-  Commits (source-port-Pipeline, K05-BPC-Wiedereinbau, STAC-Konverter,
-  dead_sources-Audit) liegen rebased auf **`of_backup_localmain`**
-  (= origin/main + 14, fast-forward-fähig; die 8 Mond/CDN-Commits dieser
-  Session wurden als Duplikate übersprungen). Parallel laufen auf main neue
-  source-port-Commits der Kybernauten (ungepusht). Integration:
-  `git merge of_backup_localmain` nach Abgleich der doppelt angelegten
-  katalog-/ArcGIS-Arbeit. Regel: Commits nie auf der lokalen main fremder
-  Sessions — detached Worktrees.
 - Katalog-Kompilate seit 2026-08-15 im selben Job: cometels_compiler
   (cometels_flat.json), dcom5_compiler (dcom5_comets.json),
   tycho2_compiler --source bright (bright_stars.json),

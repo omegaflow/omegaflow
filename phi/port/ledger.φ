@@ -127,6 +127,14 @@ queue phi/port/queue/grind_nasa.φ
 note 26 NASA-Endpoints disponiert — offene Blöcke einbauen
 
 ausstehend
+bestand phi/port/library.φ
+note 746 b2find-Tags gewichtet (Ratssitzung, zweite Fassung, Wort-Grenzen) — source_scanner wendet die Linse an; Sensor-Regel jetzt in SOURCES_V2_SPEC §2; Folge-Wellen: NASA-CMR-Keywords + GBIF-Tags downloaden und einwägen, Library-Feinwägung an den Gewichtstabellen
+
+ausstehend
+bestand phi/katalog/b2find_tags.φ
+note 9.954 Tags mit Counts (live 2026-08-15) — das Vokabular der 1,47M Datasets; Quelle der Library
+
+ausstehend
 bestand /home/johannes/projects/archive/archeology/arena/
 note batch_01–21 — API-Vorschläge als Fließtext, ungeprüft (Recherche-Schatz)
 

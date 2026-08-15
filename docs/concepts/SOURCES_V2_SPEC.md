@@ -3,7 +3,7 @@
 Verified against the living parser (`load_sources` in `src/main.rs`). Every
 directive listed here has a parser arm. Directives without a parser arm are
 listed under „Non-Goals & Known Parser Gaps" as open work — writing them into a block today produces nothing
-(0 honored, silently).
+(unimplementiert).
 
 ## 0. Axiom
 
@@ -150,6 +150,22 @@ measurement.
 
 Identifiers, timestamps, strings, booleans — these are metadata, not field
 quantities.
+
+### The Sensor Rule
+
+The force of a measurement is the transduction channel of the sensor that
+measured it, never the classification attached afterwards. A hydrophone
+measures acoustic pressure (acoustic), a thermal camera measures radiation
+(thermal), a magnetometer measures flux density (em) — the sensor does not
+know what it is sensing.
+
+A record whose API delivers only the classification (e.g. "species X
+observed, count N") without the physical signal value (pressure, radiance,
+intensity, level) is a mapping, not a field measurement. Presence catalogs
+(GBIF-style checklists, eBird observations, sighting registries) therefore
+decline. When a raw sensor signal arrives with its physical τ (call duration,
+motion timescale), it manifests as a field oscillator — never as a catalog
+entry.
 
 ### Force assignment
 
