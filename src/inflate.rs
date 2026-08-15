@@ -176,7 +176,7 @@ fn decode_block(
     }
 }
 
-fn inflate(data: &[u8]) -> Option<Vec<u8>> {
+pub fn inflate(data: &[u8]) -> Option<Vec<u8>> {
     let mut br = BitReader {
         data,
         pos: 0,

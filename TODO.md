@@ -97,6 +97,17 @@ Epochs altern) — das ist die ehrliche Physik des Katalogs, die TTL-Frische
 regelt den Takt.
 Verbleibend: Kometen-Records (dcom5_le.dat, 976 B, Multi-Apparitionen) und
 der Asteroiden-SPK-Flatten-Pass (Familie spk im Index registriert).
+KOMETEN-TEIL GESCHLOSSEN (2026-08-15): `dist_scale`-Direktive (cmap,
+`dist`-Wert × Faktor → m, Tests parse+eval), `src/bin/cometels_compiler.rs`
+(MPC cometels.json.gz → gunzip → Elemente → Kepler zum Katalog-Epoch → Flat-
+JSON ra/dec/dist_au/H; e ≥ 1 übersprungen, 0 honored; 831 Records), CI-Schritt
+in kernel_flatten.yml, sources.φ-Block (cmap + dist_scale 1.495978707e11,
+ttl 604800, field H em mag). Horizons-Beweis 1P/Halley: Δ3,3″/Δ1,2″/
+Δ0,0018 au bei 35 au — Kepler-vs.-n-body-Drift, ehrliche Katalog-Physik.
+dist_scale entriegelt zugleich Magnetar (kpc) + ALFALFA (Mpc) — Einbau-Session
+steht aus (siehe Kurations-Einträge). Das CDN-Asset cometels_flat.json entsteht
+beim ersten CI-Lauf (GH_TOKEN lokal absent) — bis dahin manifestiert der Block
+0 (0 honored, kein live-Fallback auf die .gz-Quelle möglich).
 ```
 
 **K04** Tycho-2-Katalog (em)

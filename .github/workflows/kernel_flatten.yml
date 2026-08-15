@@ -65,6 +65,14 @@ jobs:
             --input kernels/dast5_le.dat \
             --out dastcom_asteroids.bin \
             --ci-mode
+      - name: Compile MPC cometels catalog and upload to CDN
+        run: |
+          curl -sSfL --retry 3 --max-time 600 -o kernels/cometels.json.gz \
+            https://www.minorplanetcenter.net/Extended_Files/cometels.json.gz
+          cargo run --release --bin cometels_compiler -- \
+            --input kernels/cometels.json.gz \
+            --out cometels_flat.json \
+            --ci-mode
       - name: Commit body manifest
         run: |
           git config user.name "omegaflow-bot"

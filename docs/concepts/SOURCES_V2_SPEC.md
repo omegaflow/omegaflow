@@ -64,6 +64,8 @@ unless it has `url` + `ttl` + a frame (`at`/`on`).
 | `pmra <key>` / `pmdec <key>` | 2 | Proper motion, mas/yr (cmap). |
 | `radvel <key>` | 2 | Radial velocity key (cmap). |
 | `dist <key>` | 2 | Distance key (cmap). |
+
+| `dist_scale <factor>` | 2 | Distance scale (cmap) — `dist` value × factor → meters. 1.495978707e11 = AU, 3.085677581e19 = kpc, 3.085677581e22 = Mpc. Default 1.0. |
 | `z <key>` | 2 | Redshift key (cmap) — Hubble-flow distance z·c/H0 (z > 0, else row skipped). |
 | `target <body>` | 2 | Target for ephemeris/vectors (`{target}` substitution). |
 | `catalog <name>` | 2 | Catalog identifier (`{catalog}` substitution). |
@@ -334,7 +336,9 @@ field properties.depth quake_depth_km gaussian-inverse-square seismic-body km 36
 - `map <arr>` or `cmap <arr>` or `rows <arr>`: the array to iterate.
 - `lat`, `lon`, `alt` (map) / `ra`, `dec`, `plx`, `pmra`, `pmdec`, `radvel`,
   `dist`, `z` (cmap): 2-token position keys. Units are fixed by physics:
-  deg, deg, m / deg, deg, mas, mas/yr, mas/yr, (km/s via scale), (m via scale), (redshift).
+  deg, deg, m / deg, deg, mas, mas/yr, mas/yr, (km/s via scale), (m via
+  `dist_scale`), (redshift). `dist_scale <factor>` scales the `dist` key into
+  meters (AU: 1.495978707e11, kpc: 3.085677581e19, Mpc: 3.085677581e22).
 - `field <key> <force> <unit> <tau>` (5-token, compact) or the 9-token long form
   `field <key> <name> <kernel> <force> <unit> <tau> <absorption> <advection>`
   after a map/cmap/rows directive attaches the field to that extract's rows.

@@ -389,6 +389,18 @@ format catalog_dastcom
 at sun
 ttl 86400
 
+# ── MPC cometels catalog (K03, compiled by cometels_compiler → minorplanetcenter.net) ──
+# 831 Kometen zum Katalog-Epoch via Kepler (e < 1); e >= 1 manifestieren 0.
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/cometels_flat.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+dist dist_au
+dist_scale 1.495978707e11
+field H comet_h_mag gaussian-inverse-square em mag 604800 0.0 0.0
+
 # ── Live API: USGS Earthquakes (seismic-surface) ──
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson
 ttl 60

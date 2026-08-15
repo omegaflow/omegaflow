@@ -4882,6 +4882,14 @@ fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     *dist_key = parts[1].to_string();
                 }
             }
+            "dist_scale" if parts.len() >= 2 => {
+                if let Ok(v) = parts[1].parse::<f64>() {
+                    if let Some(Extract::CelestialMap { dist_scale, .. }) = cur_extracts.last_mut()
+                    {
+                        *dist_scale = v;
+                    }
+                }
+            }
             "format" if parts.len() >= 2 => cur_format = parts[1].to_string(),
             "body" if parts.len() >= 2 => {
                 cur_body = Some(parts[1].to_string());
@@ -9235,6 +9243,104 @@ mod tests {
             ExtractResult::WithEphemeris(_, _) => panic!("unexpected ephemeris"),
         }
         let _ = std::fs::remove_file(&path);
+    }
+
+    #[test]
+    fn test_parse_sources_dist_scale() {
+        let phi = "url https://example.com/comets.json\n\
+ttl 604800\n\
+at sun\n\
+cmap .\n\
+ra ra\n\
+dec dec\n\
+dist dist_au\n\
+dist_scale 3.085677581e19\n\
+field H comet_h_mag gaussian-inverse-square em mag 604800 0.0 0.0\n";
+        let sources = parse_sources(phi);
+        assert_eq!(sources.len(), 1);
+        match &sources[0].extracts[0] {
+            Extract::CelestialMap { dist_scale, .. } => {
+                assert!((dist_scale - 3.085677581e19).abs() < 1e6);
+            }
+            _ => panic!("expected CelestialMap extract"),
+        }
+    }
+
+    #[test]
+    fn test_extract_cmap_dist_scale_kpc() {
+        let json = r#"[{"ra":0.0,"dec":0.0,"dist_kpc":1.0,"H":5.5}]"#;
+        let src = SourceConfig {
+            ttl: 604800,
+            url: "https://example.com/x".into(),
+            frame: Frame::Barycenter {
+                body_name: "sun".into(),
+                scale: 1.0,
+            },
+            format: "json".into(),
+            extracts: vec![Extract::CelestialMap {
+                arr_path: ".".into(),
+                ra_key: "ra".into(),
+                dec_key: "dec".into(),
+                dist_key: "dist_kpc".into(),
+                dist_scale: 3.085677581e19,
+                plx_key: String::new(),
+                z_key: String::new(),
+                pmra_key: String::new(),
+                pmdec_key: String::new(),
+                rv_key: String::new(),
+                rv_scale: 1.0,
+                epoch_key: String::new(),
+                fields: vec![FieldConfig {
+                    key: "H".into(),
+                    name: "comet_h_mag".into(),
+                    kernel: 0,
+                    force: 0,
+                    tau: 604800.0,
+                    absorption: 0.0,
+                    advection: 0.0,
+                }],
+            }],
+            headers: vec![],
+            post_body: None,
+            target: None,
+            catalog: None,
+            max_freq: None,
+            min_freq: None,
+            body: None,
+            stations_url: None,
+            stations_path: String::new(),
+            stations_lat: String::new(),
+            stations_lon: String::new(),
+            stations_id: String::new(),
+            flux_from_mag: None,
+            abs_mag_from: None,
+            catalog_epoch: None,
+            repeat_ra_bins: 0,
+            fanout_cap: 0,
+            stations_flatten: String::new(),
+            stations_filter: None,
+            fanout_delay: 0,
+        };
+        let fixture_lsk = LeapSeconds {
+            delta_t_a: 32.184,
+            deltas: vec![(37.0, 1483228800.0)],
+        };
+        match extract(&src, json, 8.0e8, &fixture_lsk) {
+            ExtractResult::Measurements(channels) => {
+                assert_eq!(channels.len(), 1);
+                assert_eq!(channels[0].1.name, "comet_h_mag");
+                assert_eq!(channels[0].0.value, 5.5);
+                if let Position::StateVector { p, .. } = channels[0].0.position {
+                    let expect = 3.085677581e19;
+                    assert!((p[0] - expect).abs() / expect < 1e-12);
+                    assert!(p[1].abs() / expect < 1e-12);
+                    assert!(p[2].abs() / expect < 1e-12);
+                } else {
+                    panic!("expected StateVector position");
+                }
+            }
+            ExtractResult::WithEphemeris(_, _) => panic!("unexpected ephemeris"),
+        }
     }
 
     #[test]
