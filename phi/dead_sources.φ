@@ -63,7 +63,7 @@ note Token besorgt + verifiziert (2026-08-15, HERMES_TOKEN in .secrets.local): /
 
 key-needed token
 url https://antares.noirlab.edu/api/v1/
-note SPA-Shell, API dahinter verlangt Account/Token. Registrierung: https://antares.noirlab.edu/ → Signup (Token im Account).
+note SPA-Shell, API dahinter verlangt Account/Token. Registrierung: https://antares.noirlab.edu/ → Signup (Token im Account). Recheck 2026-08-15 über die Grenze: GAVO-Mirror dc.g-vo.org/tap (antares.data, 5 921 Zeilen) trägt id/raj2000/dej2000/n_hits/ang_error/epoch_mjd — zugänglich ohne Key, aber nur Counts + Position → Decline per §3.2/§3.9 (Alerts ohne Feldwert).
 
 dead dns-unresolved
 url https://api.astro-colibri.com/api/

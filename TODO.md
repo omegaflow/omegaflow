@@ -595,6 +595,13 @@ Binary-PCK-Pakets oben).
   Tabellen > TOP-Cap über den Async-Endpoint, offen. Offen: IRSA/HEASARC/
   MAST-Inventare (gleiche --index-Methode), weitere Tabellen-Bulks aus
   phi/tap_index.φ (39 genutzte VizieR-Tabellen), Gaia-Archiv.
+- GAVO-Grenze (2026-08-15): dc.g-vo.org/tap inventarisiert → phi/tap_index_gavo.φ
+  (271 Tabellen, ~130 Schemata). tap_compiler um \uXXXX-Escapes erweitert
+  (GAVO-Deskriptionen). Zahler: gedr3dist.main = Bailer-Jones-Gaia-DR3-
+  Distanzen (r_med_geo pc, Join über gaia-Lite per source_id) — die
+  K04b-Folge-Quelle; antares.data/antares10.data = ANTARES-Mirror (5 921
+  Zeilen) — Recheck erledigt: Counts+Position → Decline (dead_sources.φ).
+  GAVO-sync kennt ebenfalls kein OFFSET/LIMIT — Paging bleibt UWS-Async.
 - FRB-Recherche (2026-08-15, „absent ist erst nach Recherche absent"): das
   Inventar liefert 2 FRB-Tabellen — FRBCAT 2016 (118, 18 z) + A&A 693/A279
   (2025, 24, 23 z, DM-Halo-Zerlegung, tausc) — beide live, Überlapp ≈ 0.

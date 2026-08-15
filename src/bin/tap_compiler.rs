@@ -125,6 +125,11 @@ impl<'a> Jp<'a> {
                         b'r' => s.push('\r'),
                         b'"' => s.push('"'),
                         b'\\' => s.push('\\'),
+                        b'u' => {
+                            let h = std::str::from_utf8(&self.b[self.i..self.i + 4]).ok()?;
+                            self.i += 4;
+                            s.push(char::from_u32(u32::from_str_radix(h, 16).ok()?)?);
+                        }
                         _ => return None,
                     }
                 }
