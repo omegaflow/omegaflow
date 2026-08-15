@@ -1,0 +1,12 @@
+# ── Copernicus — Crawl-Einstiege (2026-08-15) ──
+# live verifiziert: ads.atmosphere.copernicus.eu/api/catalogue/v1/collections (STAC,
+#   z.B. cams-global-greenhouse-gas-forecasts). cds.climate.copernicus.eu = gleiche API.
+# Recheck (von hier leer/blockiert): CMEMS catalogue.marine + Data Space STAC.
+# candidate = Crawl-Einstieg, nicht Messwert. Kein "gecrawlt" solange die Menge offen ist.
+
+candidate https://ads.atmosphere.copernicus.eu/api/catalogue/v1/collections
+candidate https://cds.climate.copernicus.eu/api/catalogue/v1/collections
+candidate https://catalogue.marine.copernicus.eu/api/records
+candidate https://catalogue.dataspace.copernicus.eu/stac/collections
+candidate https://land.copernicus.eu/en/products
+candidate https://emergency.copernicus.eu

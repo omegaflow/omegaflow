@@ -1,0 +1,8 @@
+# ── ArcGIS — Crawl-Einstiege (2026-08-15) ──
+# live verifiziert: arcgis.com/sharing/rest/search -> "total":10000 bei "water" (Pagination ueber start)
+# hub.arcgis.com/api/v3/search lebt; Gesamtmenge UNGEZAEHLT (REST-Suche liefert kein echtes Gesamttotal).
+# candidate = Crawl-Einstieg, nicht Messwert. Kein "gecrawlt" solange die Menge offen ist.
+
+candidate https://www.arcgis.com/sharing/rest/search?q=*&f=json&num=100&start=0
+candidate https://hub.arcgis.com/api/v3/search
+candidate https://livingatlas.arcgis.com/api/v3/datasets

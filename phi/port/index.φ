@@ -9,6 +9,7 @@
 #   port/netloc_per_datei.txt   welche Datei welchen Inhalt trägt (Top-5 je Datei)
 #   port/review_kandidaten.txt  197 Re-Review-Kandidaten aus dead_sources.φ
 #   port/provider_mengen.txt    echte Provider-Mengen vs. unser Crawl (nie "fertig" vortäuschen)
+#   katalog/provider_links.φ    JEDER Provider mit Original-Link (nichts versteckt)
 #   katalog/tap_index*.φ        64148+995+271+203+46 Katalog-IDs → tap_compiler-Route
 # Archiv (pre-cdn-Historie + erledigte Korpora):
 #   /home/johannes/projects/archive/archeology/          (pre-cdn)
@@ -60,6 +61,9 @@ ausstehend 0 katalog/grind_arcgis_index.φ
 ausstehend 0 katalog/terrapulse_catalog.φ
 ausstehend 0 katalog/esa_geomagnetic_catalog.φ
 ausstehend 0 katalog/archeology_gaps_index.φ
+ausstehend 0 katalog/arcgis_catalog.φ
+ausstehend 0 katalog/copernicus_catalog.φ
+ausstehend 0 katalog/provider_links.φ
 
 # ------------------------------------------------------------------
 # ERLEDIGT — im Archiv (read-only, /home/johannes/projects/archive/phi-research/)

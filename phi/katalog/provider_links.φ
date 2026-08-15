@@ -1,0 +1,66 @@
+# ── DATA-PROVIDER — Original-Links (2026-08-15) ──
+# Jeder Daten-Provider mit seinem ORIGINAL-Katalog-/API-Link. Nichts versteckt.
+# Format: provider <name> | <original-link> | <menge live verifiziert | ungezählt>
+# Die Menge ist die echte Provider-Menge (siehe port/provider_mengen.txt) — kein
+# Provider gilt als "gecrawlt", solange die Menge offen ist.
+
+# ── Registries / Metakataloge ──
+provider b2find https://b2find.eudat.eu/api/3/action/package_search | 1469856
+provider nasa-cmr https://cmr.earthdata.nasa.gov/search/collections | 54943
+provider gbif https://api.gbif.org/v1/ | 123629
+provider esa-eog https://earth.esa.int/eogateway/api/search/full_text | 8619
+
+# ── NASA ──
+provider nasa-donki https://api.nasa.gov/DONKI/ | 10 endpoints
+provider nasa-eonet https://eonet.gsfc.nasa.gov/api/v3/events | ungezählt
+provider nasa-cdaweb https://cdaweb.gsfc.nasa.gov/ | ungezählt
+provider nasa-power https://power.larc.nasa.gov/api/ | ungezählt
+provider nasa-firms https://firms.modaps.eosdis.nasa.gov/api/ | ungezählt
+provider nasa-cddis https://cddis.nasa.gov/ | ungezählt
+provider heasarc-xamin https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync | ungezählt
+
+# ── ESA ──
+provider esa-vires https://vires.services/hapi/ | 174
+provider esa-sentinel-hub https://www.sentinel-hub.com/ | ungezählt
+provider esa-open-hub https://scihub.copernicus.eu/ | ungezählt
+provider esa-esac https://www.cosmos.esa.int/web/esdc | ungezählt
+
+# ── Copernicus ──
+provider copernicus-atmosphere https://ads.atmosphere.copernicus.eu/api/catalogue/v1/collections | ungezählt
+provider copernicus-climate https://cds.climate.copernicus.eu/api/catalogue/v1/collections | ungezählt
+provider copernicus-marine https://catalogue.marine.copernicus.eu/api/records | ungezählt
+provider copernicus-dataspace https://catalogue.dataspace.copernicus.eu/stac/collections | ungezählt
+provider copernicus-land https://land.copernicus.eu/en/products | ungezählt
+provider copernicus-emergency https://emergency.copernicus.eu | ungezählt
+
+# ── ArcGIS ──
+provider arcgis-online https://www.arcgis.com/sharing/rest/search | ungezählt
+provider arcgis-hub https://hub.arcgis.com/api/v3/search | ungezählt
+provider arcgis-livingatlas https://livingatlas.arcgis.com/api/v3/datasets | ungezählt
+
+# ── Astronomie / TAP-Kataloge ──
+provider tapvizier https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync | 64148
+provider irsa https://irsa.ipac.caltech.edu/TAP/sync | 995
+provider gavo https://dc.g-vo.org/tap/sync | 271
+provider ari-gaia https://gaia.ari.uni-heidelberg.de/tap/sync | 203
+provider exoarchive https://exoplanetarchive.ipac.caltech.edu/TAP/sync | 46
+provider simbad https://simbad.u-strasbg.fr/simbad/ | ungezählt
+
+# ── Biodiversität ──
+provider inaturalist https://api.inaturalist.org/v1/ | ungezählt
+provider obis https://api.obis.org/ | ungezählt
+provider iucn https://apiv3.iucnredlist.org/ | ungezählt
+
+# ── Erde / Umwelt / Ozean / Atmosphäre ──
+provider noaa-ndbc https://www.ndbc.noaa.gov/ | ungezählt
+provider noaa-ncei https://www.ncei.noaa.gov/ | ungezählt
+provider noaa-tides https://api.tidesandcurrents.noaa.gov/ | ungezählt
+provider usgs-earthquake https://earthquake.usgs.gov/fdsnws/event/1/ | ungezählt
+provider bgs-geomag https://imag-data.bgs.ac.uk/GIN_V1/ | ungezählt
+provider open-meteo https://api.open-meteo.com/ | ungezählt
+provider worldbank https://api.worldbank.org/v2/ | ungezählt
+provider overpass-osm https://overpass-api.de/api/interpreter | ungezählt
+provider international-magnet https://www.intermagnet.org/ | ungezählt
+provider pegelonline https://www.pegelonline.wsv.de/ | ungezählt
+provider iris https://service.iris.edu/ | ungezählt
+provider emsc https://www.seismicportal.eu/ | ungezählt
