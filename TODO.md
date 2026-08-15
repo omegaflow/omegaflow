@@ -1028,6 +1028,17 @@ Offen (Detail in phi/port/ledger.φ, jede Zeile mit Zustand):
   sat480/nep105 — die System-Barycenter trägt de721 bereits). Offen
   (strukturell): Segment-Payloads lazy laden statt upfront, sonst wächst die
   Ramlast mit jeder Kernel-Generation.
+- **Branch-Zustand (2026-08-15, nach main-Pollution):** Die lokale `main`
+  wurde auf origin/main zurückgesetzt (update-ref — Arbeitsbaum und Staging
+  blieben unangetastet). Die während der Pollution entstandenen 14 echten
+  Commits (source-port-Pipeline, K05-BPC-Wiedereinbau, STAC-Konverter,
+  dead_sources-Audit) liegen rebased auf **`of_backup_localmain`**
+  (= origin/main + 14, fast-forward-fähig; die 8 Mond/CDN-Commits dieser
+  Session wurden als Duplikate übersprungen). Parallel laufen auf main neue
+  source-port-Commits der Kybernauten (ungepusht). Integration:
+  `git merge of_backup_localmain` nach Abgleich der doppelt angelegten
+  katalog-/ArcGIS-Arbeit. Regel: Commits nie auf der lokalen main fremder
+  Sessions — detached Worktrees.
 - Katalog-Kompilate seit 2026-08-15 im selben Job: cometels_compiler
   (cometels_flat.json), dcom5_compiler (dcom5_comets.json),
   tycho2_compiler --source bright (bright_stars.json),
