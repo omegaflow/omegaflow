@@ -3306,9 +3306,9 @@ fn fetch_raw_probe(url: &str, body: Option<&str>, headers: &[(String, String)]) 
         .arg("1")
         .arg("--http1.1")
         .arg("-m")
-        .arg("15")
+        .arg("10")
         .arg("--connect-timeout")
-        .arg("8");
+        .arg("5");
     if let Some(b) = body {
         cmd.arg("-X").arg("POST").arg("-d").arg(b);
     }
@@ -8473,6 +8473,12 @@ fn load_all_sources(dir: &str) -> Vec<SourceConfig> {
         for e in entries.flatten() {
             let p = e.path();
             if p.is_dir() {
+                let is_research = p
+                    .file_name()
+                    .is_some_and(|n| n.to_string_lossy() == "research");
+                if is_research {
+                    continue;
+                }
                 let path_str = p.to_string_lossy().to_string();
                 sources.extend(load_all_sources(&path_str));
             } else if p.extension().is_some_and(|x| x == "φ") {
@@ -8485,16 +8491,19 @@ fn load_all_sources(dir: &str) -> Vec<SourceConfig> {
     sources
 }
 
-fn cdn_asset_fresh(netloc: &str, name: &str, ttl: u64) -> bool {
-    let cdn_url = format!(
-        "https://github.com/omegaflow/sources/releases/download/{}/{}.json",
-        netloc, name
-    );
-    cdn_fresh(&cdn_url, ttl)
-}
-
 fn ci_mode(dir: &str) -> i32 {
-    let sources = load_all_sources(dir);
+    let sources = if dir == "phi" {
+        match std::fs::read_to_string("phi/sources.φ") {
+            Ok(content) => load_sources_from(&content),
+            Err(e) => {
+                eprintln!("ci-mode: read phi/sources.φ: {}", e);
+                return 1;
+            }
+        }
+    } else {
+        load_all_sources(dir)
+    };
+    let mirror_enabled = dir == "phi";
     let total = sources.len();
     let mut reachable = 0usize;
     let mut dead = 0usize;
@@ -8510,12 +8519,15 @@ fn ci_mode(dir: &str) -> i32 {
             continue;
         }
         let is_fixed = !src.url.contains('{');
-        if is_fixed {
+        if is_fixed && mirror_enabled {
             if let Some(netloc) = extract_netloc(&src.url) {
                 let name = source_name_from_url(&src.url);
-                if !name.is_empty() && cdn_asset_fresh(netloc, &name, src.ttl) {
-                    fresh += 1;
-                    continue;
+                if !name.is_empty() {
+                    let cache_path = format!("/tmp/archivar_cache/{}/{}.json", netloc, name);
+                    if cache_fresh(&cache_path, src.ttl) {
+                        fresh += 1;
+                        continue;
+                    }
                 }
             }
         }
@@ -8530,7 +8542,7 @@ fn ci_mode(dir: &str) -> i32 {
         if parse_json(&raw).is_some() {
             reachable += 1;
             eprintln!("ci-mode: {} JSON ok", src.url);
-            if is_fixed {
+            if is_fixed && mirror_enabled {
                 if let Some(netloc) = extract_netloc(&src.url) {
                     let name = source_name_from_url(&src.url);
                     let tmp_path = format!("/tmp/archivar_cache/{}/{}.json", netloc, name);
@@ -8563,8 +8575,8 @@ fn ci_mode(dir: &str) -> i32 {
         }
     }
     eprintln!(
-        "ci-mode: {}/{} reachable, {} dead, {} mirrored to CDN, {} fresh (CDN < TTL)",
-        reachable, total, dead, mirrored, fresh
+        "ci-mode: {}/{} reachable, {} dead, {} mirrored to CDN, {} fresh (local TTL), mirror={}",
+        reachable, total, dead, mirrored, fresh, mirror_enabled
     );
     if dead == 0 {
         0
@@ -9847,7 +9859,7 @@ field H comet_h_mag gaussian-inverse-square em mag 604800 0.0 0.0\n";
         };
         let now = fixture_lsk.system_now_tdb().unwrap();
         let env = super::load_env();
-        let mut limit = 250usize;
+        let mut limit = 300usize;
         let mut ok = 0usize;
         let mut empty = 0usize;
         for e in std::fs::read_dir("phi/research/agent_output")

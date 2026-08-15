@@ -735,6 +735,22 @@ ttl 600
 on earth 0.0 -75.2 35786023
 last value solar_euv_flux_wm2 inverse-square em W/m2 60.0 0.0 0.0
 
+# INGV Italien-Beben (seismic, offizielle FDSN)
+url https://webservices.ingv.it/fdsnws/event/1/query?format=geojson&minmagnitude=2.5&limit=200
+ttl 3600
+at earth
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field geometry.coordinates.2 geosphere_earthquake_depth_km erfc seismic-surface km 360.0 0.0 0.0
+field properties.mag geosphere_earthquake_mag erfc seismic-surface Mw 360.0 0.0 0.0
+
+# JMA Japan-Beben (seismic, offizieller Feed)
+url https://www.jma.go.jp/bosai/quake/data/list.json
+ttl 600
+on earth 35.68 139.69 0
+last mag geosphere_earthquakes_jma_recent_mag erfc seismic-surface Mw 60.0 0.0 0.0
+
 # ── Backlog-Kuration 2026-08-15 — NDBC Per-Station-Buoys (ersetzt toten ArcGIS-Block, Kraft-Labels korrigiert) ──
 
 url https://www.ndbc.noaa.gov/data/realtime2/41001.txt
