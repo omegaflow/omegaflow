@@ -116,7 +116,7 @@ note B2FIND-GESAMT (live verifiziert 2026-08-15): 1.469.856 Datasets. Wir haben 
 
 ausstehend
 bestand phi/katalog/esa_geomagnetic_catalog.φ
-note VirES-HAPI-Katalog: 174 Datasets (live /hapi/catalog verifiziert) — nur 63 gedraftet (grind_vires_full.φ), 111 offen. ESA jenseits VirES (Sentinel Hub, Open Access Hub, ESAC: XMM/Gaia/Herschel/Planck) nicht gecrawlt — ESA_LOGIN vorhanden, Credentials ESA_USER/ESA_PASS fehlen in .secrets.local
+note VirES-HAPI-Katalog: 174 Datasets (live /hapi/catalog verifiziert) — nur 63 gedraftet (grind_vires_full.φ), 111 offen. ESA jenseits VirES (Sentinel Hub, Open Access Hub, ESAC: XMM/Gaia/Herschel/Planck) nicht gecrawlt — ESA_USER/ESA_PASS liegen in .secrets.local, Login-Services können direkt geprobt werden
 
 ausstehend
 queue phi/port/queue/grind_nasa_donki.φ

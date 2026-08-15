@@ -1,8 +1,8 @@
 # ── ESA / Geomagnetik-Backlog (Linkliste 2026-08-15) ──
 # candidate = Endpoint physikalisch relevant; decline = Modell/Software/Referenz.
 # ESA-Login vorhanden (EO User Portal, Johannes Tyroller) — Login-geschützte
-# Services als key-needed: Credentials in .secrets.local (ESA_USER/ESA_PASS
-# fehlen noch), Token-Flow je Service.
+# Services als key-needed: ESA_USER/ESA_PASS liegen in .secrets.local,
+# Token-Flow je Service.
 
 # ── Swarm / VirES (HAPI, keyless verifiziert) ──
 integrated https://vires.services/hapi/data?id=SW_FAST_EFIA_LP_1B
@@ -85,7 +85,6 @@ decline https://en.wikipedia.org/wiki/K-index
 # title: Kp-Referenz (Wikipedia)
 
 # ── Offene Schritte ──
-# 1. ESA_USER/ESA_PASS in .secrets.local eintragen (Login vorhanden)
+# 1. Aeolus/SMOS mit ESA_USER/ESA_PASS aus .secrets.local proben (Token-Flow je Service)
 # 2. FAC/TCT-Blöcke (VirES, keyless) als nächste electric-Quellen
 # 3. INTERMAGNET-Fanout (stations via /hapi/catalog) als globales em-Feld
-# 4. Aeolus/SMOS nach Login-Verifikation (Token-Flow je Service)
