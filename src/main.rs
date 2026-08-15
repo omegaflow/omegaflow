@@ -2886,6 +2886,9 @@ struct SourceConfig {
     catalog_epoch: Option<f64>,
     repeat_ra_bins: u32,
     fanout_cap: u32,
+    stations_flatten: String,
+    stations_filter: Option<(String, String)>,
+    fanout_delay: u64,
 }
 
 struct FetchResult {
@@ -4170,6 +4173,9 @@ fn parse_sources(content: &str) -> Vec<SourceConfig> {
     let mut cur_catalog_epoch: Option<f64> = None;
     let mut cur_repeat_ra_bins: u32 = 0;
     let mut cur_fanout_cap: u32 = 0;
+    let mut cur_stations_flatten = String::new();
+    let mut cur_stations_filter: Option<(String, String)> = None;
+    let mut cur_fanout_delay: u64 = 0;
     let mut cur_frame: Option<Frame> = None;
     let mut active = false;
 
@@ -4209,6 +4215,9 @@ fn parse_sources(content: &str) -> Vec<SourceConfig> {
                             catalog_epoch: cur_catalog_epoch,
                             repeat_ra_bins: cur_repeat_ra_bins,
                             fanout_cap: cur_fanout_cap,
+                            stations_flatten: std::mem::take(&mut cur_stations_flatten),
+                            stations_filter: cur_stations_filter.take(),
+                            fanout_delay: cur_fanout_delay,
                         });
                     }
                 }
@@ -4251,6 +4260,9 @@ fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 cur_catalog_epoch = None;
                 cur_repeat_ra_bins = 0;
                 cur_fanout_cap = 0;
+                cur_stations_flatten = String::new();
+                cur_stations_filter = None;
+                cur_fanout_delay = 0;
                 cur_frame = None;
                 active = true;
             }
@@ -4900,6 +4912,15 @@ fn parse_sources(content: &str) -> Vec<SourceConfig> {
             "stations_lat" if parts.len() >= 2 => cur_stations_lat = parts[1].to_string(),
             "stations_lon" if parts.len() >= 2 => cur_stations_lon = parts[1].to_string(),
             "stations_id" if parts.len() >= 2 => cur_stations_id = parts[1].to_string(),
+            "stations_flatten" if parts.len() >= 2 => cur_stations_flatten = parts[1].to_string(),
+            "stations_filter" if parts.len() >= 3 => {
+                cur_stations_filter = Some((parts[1].to_string(), parts[2].to_string()));
+            }
+            "fanout_delay" if parts.len() >= 2 => {
+                if let Ok(v) = parts[1].parse::<u64>() {
+                    cur_fanout_delay = v;
+                }
+            }
             "fanout" if parts.len() >= 2 => {
                 if let Ok(v) = parts[1].parse::<u32>() {
                     cur_fanout_cap = v;
@@ -5325,18 +5346,38 @@ fn render_source_body(
     }
     Some(body)
 }
+fn angular_distance_deg(lat1: f64, lon1: f64, lat2: f64, lon2: f64) -> f64 {
+    let r1 = lat1.to_radians();
+    let r2 = lat2.to_radians();
+    let dlon = (lon2 - lon1).to_radians();
+    let a = ((r2 - r1) * 0.5).sin().powi(2) + r1.cos() * r2.cos() * (dlon * 0.5).sin().powi(2);
+    (2.0 * a.sqrt().asin()).to_degrees()
+}
+
 fn parse_station_entries(j: &JsonVal, src: &SourceConfig) -> Vec<StationEntry> {
     let arr = match jpath_val(j, &src.stations_path) {
         Some(JsonVal::Arr(a)) => a.iter().collect::<Vec<_>>(),
         _ => return Vec::new(),
     };
     let mut stations: Vec<StationEntry> = Vec::new();
-    for v in arr {
-        let id = match jpath_val(v, &src.stations_id) {
-            Some(JsonVal::Str(s)) => s.clone(),
-            Some(JsonVal::Num(n)) => n.to_string(),
-            _ => continue,
+    let mut push_entry = |id_ref: &JsonVal, lat: f64, lon: f64| {
+        let id = match id_ref {
+            JsonVal::Str(s) => s.clone(),
+            JsonVal::Num(n) => n.to_string(),
+            _ => return,
         };
+        stations.push(StationEntry { id, lat, lon });
+    };
+    let filter_ok = |v: &JsonVal| -> bool {
+        match &src.stations_filter {
+            Some((k, want)) => match jpath_val(v, k) {
+                Some(JsonVal::Str(s)) => s == want,
+                _ => false,
+            },
+            None => true,
+        }
+    };
+    for v in arr {
         let lat = match jpath(v, &src.stations_lat) {
             Some(l) => l,
             None => continue,
@@ -5345,7 +5386,24 @@ fn parse_station_entries(j: &JsonVal, src: &SourceConfig) -> Vec<StationEntry> {
             Some(l) => l,
             None => continue,
         };
-        stations.push(StationEntry { id, lat, lon });
+        if src.stations_flatten.is_empty() {
+            if filter_ok(v) {
+                match jpath_val(v, &src.stations_id) {
+                    Some(id_ref) => push_entry(id_ref, lat, lon),
+                    None => {}
+                }
+            }
+        } else if let Some(JsonVal::Arr(elems)) = jpath_val(v, &src.stations_flatten) {
+            for e in elems {
+                if !filter_ok(e) {
+                    continue;
+                }
+                match jpath_val(e, &src.stations_id) {
+                    Some(id_ref) => push_entry(id_ref, lat, lon),
+                    None => push_entry(v, lat, lon),
+                }
+            }
+        }
     }
     stations
 }
@@ -5377,31 +5435,64 @@ fn fanout_fetch(
         Some(v) => v,
         None => return channels,
     };
-    let stations = parse_station_entries(&j, src);
+    let mut stations = parse_station_entries(&j, src);
+    if let Frame::Surface { lat, lon, .. } = src.frame {
+        stations.sort_by(|a, b| {
+            angular_distance_deg(a.lat, a.lon, lat, lon)
+                .partial_cmp(&angular_distance_deg(b.lat, b.lon, lat, lon))
+                .unwrap_or(std::cmp::Ordering::Equal)
+        });
+    }
     let cap = src.fanout_cap as usize;
     let base_url = match render_url(&src.url, x, y, z, now, r, &body_name, eph, lsk) {
         Some(u) => u,
         None => return channels,
     };
     let body = render_source_body(src, x, y, z, now, r, eph, lsk);
-    for st in stations.into_iter().take(cap) {
-        let url = resolve_secret(&base_url.replace("{station}", &st.id), env);
-        let post = body.as_deref().map(|b| b.replace("{station}", &st.id));
-        let raw = match fetch_raw(&url, post.as_deref(), &headers, src.ttl) {
-            Some(v) => v,
-            None => continue,
-        };
-        if let ExtractResult::Measurements(mut cs) = extract(src, &raw, now, lsk) {
-            for (mut ch, fc) in cs.drain(..) {
-                ch.position = Position::Surface {
-                    body_name: body_name.clone(),
-                    lat: st.lat,
-                    lon: st.lon,
-                    alt: 0.0,
-                };
-                channels.push((ch, fc));
-            }
+    let window = 3usize;
+    let chunks: Vec<&StationEntry> = stations.iter().take(cap).collect();
+    for (wi, chunk) in chunks.chunks(window).enumerate() {
+        if wi > 0 && src.fanout_delay > 0 {
+            thread::sleep(std::time::Duration::from_secs(src.fanout_delay));
         }
+        thread::scope(|s| {
+            let handles: Vec<_> = chunk
+                .iter()
+                .map(|st| {
+                    let base_url = base_url.clone();
+                    let body = body.clone();
+                    let headers = headers.clone();
+                    let body_name = body_name.clone();
+                    let st = *st;
+                    s.spawn(move || -> Vec<(Channel, FieldConfig)> {
+                        let url = resolve_secret(&base_url.replace("{station}", &st.id), env);
+                        let post = body.as_deref().map(|b| b.replace("{station}", &st.id));
+                        let raw = match fetch_raw(&url, post.as_deref(), &headers, src.ttl) {
+                            Some(v) => v,
+                            None => return Vec::new(),
+                        };
+                        let mut out = Vec::new();
+                        if let ExtractResult::Measurements(mut cs) = extract(src, &raw, now, lsk) {
+                            for (mut ch, fc) in cs.drain(..) {
+                                ch.position = Position::Surface {
+                                    body_name: body_name.clone(),
+                                    lat: st.lat,
+                                    lon: st.lon,
+                                    alt: 0.0,
+                                };
+                                out.push((ch, fc));
+                            }
+                        }
+                        out
+                    })
+                })
+                .collect();
+            for h in handles {
+                if let Ok(v) = h.join() {
+                    channels.extend(v);
+                }
+            }
+        });
     }
     channels
 }
@@ -8028,6 +8119,9 @@ fn load_sources_from(content: &str) -> Vec<SourceConfig> {
                             catalog_epoch: None,
                             repeat_ra_bins: 0,
                             fanout_cap: 0,
+                            stations_flatten: String::new(),
+                            stations_filter: None,
+                            fanout_delay: 0,
                         });
                     }
                 }
@@ -8108,6 +8202,9 @@ fn load_sources_from(content: &str) -> Vec<SourceConfig> {
                 catalog_epoch: None,
                 repeat_ra_bins: 0,
                 fanout_cap: 0,
+                stations_flatten: String::new(),
+                stations_filter: None,
+                fanout_delay: 0,
             });
         }
     }
@@ -8863,6 +8960,9 @@ mod tests {
             catalog_epoch: None,
             repeat_ra_bins: 0,
             fanout_cap: 0,
+            stations_flatten: String::new(),
+            stations_filter: None,
+            fanout_delay: 0,
         };
         let fixture_lsk = super::LeapSeconds {
             delta_t_a: 32.184,
@@ -8911,6 +9011,9 @@ mod tests {
             catalog_epoch: None,
             repeat_ra_bins: 0,
             fanout_cap: 0,
+            stations_flatten: String::new(),
+            stations_filter: None,
+            fanout_delay: 0,
         };
         let fixture_lsk = super::LeapSeconds {
             delta_t_a: 32.184,
@@ -9007,6 +9110,9 @@ mod tests {
             catalog_epoch: None,
             repeat_ra_bins: 0,
             fanout_cap: 0,
+            stations_flatten: String::new(),
+            stations_filter: None,
+            fanout_delay: 0,
         };
         let fixture_lsk = LeapSeconds {
             delta_t_a: 32.184,
@@ -9088,6 +9194,9 @@ mod tests {
             catalog_epoch: None,
             repeat_ra_bins: 0,
             fanout_cap: 0,
+            stations_flatten: String::new(),
+            stations_filter: None,
+            fanout_delay: 0,
         };
         let fixture_lsk = LeapSeconds {
             delta_t_a: 32.184,
@@ -9150,6 +9259,9 @@ mod tests {
             catalog_epoch: None,
             repeat_ra_bins: 0,
             fanout_cap: 0,
+            stations_flatten: String::new(),
+            stations_filter: None,
+            fanout_delay: 0,
         };
         let stations = parse_station_entries(&j, &src);
         assert_eq!(stations.len(), 3);
@@ -9158,6 +9270,54 @@ mod tests {
         assert_eq!(stations[0].lon, -61.8);
         assert_eq!(stations[2].id, "7");
         assert_eq!(stations[2].lat, 52.5);
+    }
+
+    #[test]
+    fn test_parse_station_entries_flatten_filter() {
+        let j = parse_json(
+            r#"{"results":[{"coordinates":{"latitude":40.8,"longitude":-73.9},"sensors":[{"id":671,"parameter":{"name":"o3"}},{"id":673,"parameter":{"name":"pm25"}}]},{"coordinates":{"latitude":40.9,"longitude":-74.0},"sensors":[{"id":1097,"parameter":{"name":"pm25"}}]}]}"#,
+        )
+        .unwrap();
+        let src = SourceConfig {
+            ttl: 300,
+            url: "https://example.com/x".into(),
+            frame: Frame::Surface {
+                body_name: "earth".into(),
+                lat: 0.0,
+                lon: 0.0,
+                alt: 0.0,
+            },
+            format: "json".into(),
+            extracts: vec![],
+            headers: vec![],
+            post_body: None,
+            target: None,
+            catalog: None,
+            max_freq: None,
+            min_freq: None,
+            body: None,
+            stations_url: None,
+            stations_path: "results".into(),
+            stations_lat: "coordinates.latitude".into(),
+            stations_lon: "coordinates.longitude".into(),
+            stations_id: "id".into(),
+            flux_from_mag: None,
+            abs_mag_from: None,
+            catalog_epoch: None,
+            repeat_ra_bins: 0,
+            fanout_cap: 0,
+            stations_flatten: "sensors".into(),
+            stations_filter: Some(("parameter.name".into(), "pm25".into())),
+            fanout_delay: 0,
+        };
+        let stations = parse_station_entries(&j, &src);
+        assert_eq!(stations.len(), 2);
+        assert_eq!(stations[0].id, "673");
+        assert_eq!(stations[0].lat, 40.8);
+        assert_eq!(stations[0].lon, -73.9);
+        assert_eq!(stations[1].id, "1097");
+        assert_eq!(stations[1].lat, 40.9);
+        assert_eq!(stations[1].lon, -74.0);
     }
 
     #[test]
@@ -9211,6 +9371,9 @@ mod tests {
             catalog_epoch: None,
             repeat_ra_bins: 0,
             fanout_cap: 0,
+            stations_flatten: String::new(),
+            stations_filter: None,
+            fanout_delay: 0,
         };
         let body = r#"{"table":{"columnNames":["time","longitude","latitude","pres","temp"],"columnTypes":["String","double","double","float","float"],"rows":[["2026-07-30T21:40:30Z",-14.408395,34.49025,3.1,23.478],["2026-07-30T22:00:00Z",-12.5,35.0,1000.0,4.681]]}}"#;
         let fixture_lsk = super::LeapSeconds {
@@ -9685,6 +9848,9 @@ mod tests {
             catalog_epoch: None,
             repeat_ra_bins: 0,
             fanout_cap: 0,
+            stations_flatten: String::new(),
+            stations_filter: None,
+            fanout_delay: 0,
         };
         let channel = super::Channel {
             epoch: 0.0,
@@ -10001,6 +10167,9 @@ mod tests {
             catalog_epoch: None,
             repeat_ra_bins: 0,
             fanout_cap: 0,
+            stations_flatten: String::new(),
+            stations_filter: None,
+            fanout_delay: 0,
         };
         let empty_geojson =
             r#"{"type":"FeatureCollection","metadata":{"api":"2.7","count":0},"features":[]}"#;
@@ -10068,6 +10237,9 @@ mod tests {
             catalog_epoch: None,
             repeat_ra_bins: 0,
             fanout_cap: 0,
+            stations_flatten: String::new(),
+            stations_filter: None,
+            fanout_delay: 0,
         };
         let body = r#"{"latitude":-47.75,"longitude":78.87,"altitude":438.28,"velocity":27528.0}"#;
         let now = 8.4e8;

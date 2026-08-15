@@ -2,14 +2,14 @@
 # Format: <category> <reason> \n url <url> \n note <explanation>
 
 # ── OpenAQ ──
-# Recheck 2026-08-15: v2 (flacher globaler /v2/measurements) → 410 gone.
-# v3 hat KEINEN globalen Messwert-Endpoint mehr: /v3/measurements → 404,
-# Werte nur per /v3/sensors/{id}/measurements (Timeseries pro Sensor).
-# /v3/locations trägt Position + Sensor-Metadaten, aber keine Messwerte.
+# Integriert 2026-08-15 via P09 Fanout (phi/sources.φ: pm25-Sensoren, diffusion).
+# Ursprünglicher Befund: v2 (flacher globaler /v2/measurements) → 410 gone;
+# v3 ohne globalen Messwert-Endpoint — gelöst durch stations_flatten (Sensor-IDs
+# in Locations verschachtelt) + stations_filter parameter.name pm25 + Fanout.
 
-parser-def sensor-fanout
-url https://api.openaq.org/v3/measurements?parameter=pm25
-note Global flat measurements endpoint removed (v2 → 410, v3 /measurements → 404). Values only via per-sensor timeseries /v3/sensors/{id}/measurements — fan-out, no single fetch with position+value. locations = registry without values. AWS S3 archive is bulk parquet (no live JSON).
+integrated fanout-p09
+url https://api.openaq.org/v3/sensors/{station}/measurements
+note Global flat measurements endpoint removed (v2 → 410); values only per-sensor — resolved by P09 flatten+filter fanout, now live in phi/sources.φ (diffusion). AWS S3 archive is bulk parquet (no live JSON).
 
 # ── NOAA CDO (NCEI) ──
 # Integriert 2026-08-15 via P09 Fanout (phi/sources.φ: GHCND TMAX, thermal).

@@ -264,14 +264,14 @@ PARSER_MAGIC.md — gravity → body_radius statt c·τ als Extent-Herleitung.
 PARSER_MAGIC.md / EXTRACT_TYPES.md — geschachtelte Feldpfade und Flatten-Variante.
 ```
 
-**P09** Fanout: Parallelität + Präsenz-Sortierung
+**P09** Fanout vollständig — nur noch Feintuning offen
 ```
-Two-Stage-Fetch implementiert (2026-08-15): `fanout <cap>` + {station}-Template,
-Stationsliste über stations_url/path/lat/lon/id, per-Station-Datenfetch via
-fetch_raw (live, ohne Cache/CDN), Positions-Override auf Stations-lat/lon.
-NOAA CDO GHCND TMAX (thermal) lebt damit in phi/sources.φ. Offen: parallele
-Station-Fetches (heute sequenziell), Präsenz-Sortierung (heute API-Ordnung),
-OpenAQ-v3-Anbindung (Sensor-IDs sind in Locations verschachtelt).
+Parallelität (3er-Fenster + fanout_delay-Rate-Limit), Präsenz-Sortierung
+(angular distance zur Frame-Oberfläche) und OpenAQ-v3-Anbindung
+(stations_flatten + stations_filter) sind implementiert (2026-08-15).
+NOAA CDO (thermal) und OpenAQ pm25 (diffusion) leben im Fanout. Offen:
+echte Operator-Präsenz statt Frame-Punkt als Sortierzentrum, generisches
+Flatten über mehrere Ebenen.
 ```
 
 ---

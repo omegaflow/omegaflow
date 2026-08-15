@@ -74,7 +74,10 @@ unless it has `url` + `ttl` + a frame (`at`/`on`).
 | `catalog_epoch <yr>` | 2 | Catalog reference epoch (proper-motion propagation). |
 | `stations <url>` | 2 | Station list URL for `{nearest_station}` and `fanout` two-stage fetch. |
 | `stations_path/lat/lon/id <key>` | 2 | Station list keys (defaults: stations, lat, lng, id). |
-| `fanout <cap>` | 2 | Two-stage fetch: fetch the stations list, then fetch the block `url` per station (up to `cap` stations, API order) with `{station}` substituted by the station id. The extract's scalar channels are anchored at the station's lat/lon. Fetches are live (`fetch_raw`, no cache/CDN). |
+| `stations_flatten <arr_key>` | 2 | Flatten nested arrays (e.g. `sensors`) — each element becomes its own station; id from the element, lat/lon from the record. |
+| `stations_filter <key> <value>` | 3 | Keep only station elements whose `key` equals `value` (string match). |
+| `fanout <cap>` | 2 | Two-stage fetch: fetch the stations list, sort by angular distance to the frame's surface point (API order for barycentric frames), then fetch the block `url` per station (up to `cap` stations, 3 parallel fetches per window) with `{station}` substituted by the station id. The extract's scalar channels are anchored at the station's lat/lon. Fetches are live (`fetch_raw`, no cache/CDN). |
+| `fanout_delay <secs>` | 2 | Sleep between fanout fetch windows — respects API rate limits (e.g. OpenAQ free tier). |
 
 ### 1.1 URL template variables
 
