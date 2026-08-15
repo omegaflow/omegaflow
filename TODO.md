@@ -809,23 +809,17 @@ Binary-PCK-Pakets oben).
   · B2FIND tags=catalogs: VOLLSTÄNDIG — 1.082 Records, alle indexiert
     (b2find_catalogs_index.φ).
   · EO-Gateway: VOLLSTÄNDIG — 251 Einträge (grind_eogateway_index.φ).
-  · VirES-HAPI-Katalog: VOLLSTÄNDIG — alle 174 Datasets geprobt und
-    disponiert (grind_vires_full.φ): 64 Block-Drafts (GRACE-KBR gravity,
-    EFI-IDM-Ionendrift advective, TIE-Temperatur thermal, Querwinde, Dichten,
-    MAG-Serien), 13 integriert/gedraftet, Rest decline mit Begründung
-    (Modelle/Indizes/Flags/Kataloge).
-  · NASA-DONKI-Familie: VOLLSTÄNDIG — alle 10 Endpoints disponiert
-    (grind_nasa_donki.φ): CME accepted-Draft (191 Records, speed + lat/lon
-    plane-of-sky), SEP/GST/IPS/HSS/MPC/RBE/WSA/notifications decline mit
-    Begründung (SWPC deckt die Fluss-Kanäle), SSD/CME dead 404.
-  · ArcGIS: OFFEN — Lauf 1 (22 Keywords) indexierte nur Seite 1, Lauf 2
-    (47 Keywords) nur 2 Seiten (grind_arcgis_index.φ/deep.φ). Die
-    Vollpagination (alle Keywords, alle Seiten, jeder Service disponiert)
-    wurde gestartet und abgebrochen — als Auftrag offen.
-  · Die neuen Drafts (CME, 64 VirES) liegen als geprobte Drafts in den
-    grind-Dateien; Einbau in sources.φ erst nach Gate-Durchlauf
-    (test_live_sources_extract), der aktuell auf den Abschluss der
-    main.rs-Überarbeitung der Parallel-Session wartet.
+  · VirES-HAPI-Katalog: Inventar komplett (grind_vires_catalog.φ, 174
+    Datasets); die Vollprobe (174/174 disponiert, 64 Drafts) lag als
+    Agent-Ergebnis vor, die Datei ist jedoch ABSENT (Schreibverlust) —
+    Nachlauf in Blöcken offen (gleiches Muster wie ArcGIS-Blöcke).
+  · NASA-DONKI-Familie: 10/10 Endpoints disponiert (CME-Draft, 9 Decline),
+    Ergebnis-Datei ebenfalls ABSENT — Nachlauf in einem Block offen.
+  · ArcGIS: LÄUFT inkrementell in Blöcken (grind_arcgis_bNN.φ, 6 Keywords
+    pro Block, alle Seiten bis Relevanz-Erschöpfung, jeder neue
+    FeatureService geprobt und disponiert). Lauf 1 (22 Keywords, Seite 1)
+    und Lauf 2 (47 Keywords, 2 Seiten) waren gedeckelt — die Blöcke
+    übernehmen jetzt die vollständigen Paginationen.
 - **Source-Gate (2026-08-15):** `test_live_sources_extract` über das ganze
   Register: 76 ok / 2 void, jede Void mit datentragender Verifikation.
   Dispositionen:
