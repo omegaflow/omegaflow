@@ -573,6 +573,16 @@ Binary-PCK-Pakets oben).
   brüchig, nur Historie.
 - `archeology/failed_eph_rust/`: abgelöst durch src/ephemeris_compiler.rs + bsp_reader/pck.
 
+- TAP-Katalog-Pipeline (2026-08-15): `src/bin/tap_compiler.rs` manifestiert —
+  `--index` (tap_schema.tables → phi/tap_index.φ: TAPVizieR-Inventar 64 148
+  Tabellen), `--fetch-from` (ADQL TOP, FORMAT=json, --columns-Mapping → Flat-cmap),
+  `--ci-mode`. Erster Bulk: FRBCAT (J/other/PASA/33.45/frbcat, 118 Zeilen,
+  zHost→z, Beweis FRB 121102: DM 557, z 0,19273, Speak 0,4 Jy — exakt).
+  Befund: TAPVizieR-sync kennt kein OFFSET/LIMIT (nur TOP) — Paging für
+  Tabellen > TOP-Cap über den Async-Endpoint, offen. Offen: IRSA/HEASARC/
+  MAST-Inventare (gleiche --index-Methode), weitere Tabellen-Bulks aus
+  phi/tap_index.φ (39 genutzte VizieR-Tabellen), Gaia-Archiv.
+
 ---
 
 ### Validation

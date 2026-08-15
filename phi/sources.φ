@@ -444,6 +444,18 @@ format catalog_tycho
 at sun
 ttl 604800
 
+# ── FRBCAT (VizieR J/other/PASA/33.45, tap_compiler) — em cmap, Dist via z (Hubble) ──
+# 118 FRBs; nur die 18 mit zHost manifestieren (ohne z: absent, 0 honored).
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/frbcat_flat.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+z z
+field dm frb_dispersion inverse-square em pc/cm3 604800 0.0 0.0
+field speak frb_peak_flux inverse-square em Jy 604800 0.0 0.0
+
 # ── Live API: USGS Earthquakes (seismic-surface) ──
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson
 ttl 60

@@ -92,6 +92,14 @@ jobs:
             --input kernels/tgas.dat.gz \
             --out tgas_stars.bin \
             --ci-mode
+      - name: Compile FRBCAT via TAPVizieR and upload to CDN
+        run: |
+          cargo run --release --bin tap_compiler -- \
+            --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
+            --table J/other/PASA/33.45/frbcat \
+            --columns name:Name;ra:RAJ2000;dec:DEJ2000;z:zHost;dm:DM;speak:Speak \
+            --out frbcat_flat.json \
+            --ci-mode
       - name: Commit body manifest
         run: |
           git config user.name "omegaflow-bot"
