@@ -149,9 +149,10 @@ Block-Draft); `decline` (Force-Gate) → `dead_sources.φ`.
 erst recherchiert: alternative Endpoints, URL-Änderungen (API-Versionen,
 Redirects, Pfad-Renames) und Misspellings. `dead 404/400/5xx/dns/timeout`
 ist ein Recherche-Auftrag, keine Disposition. Wirklich declined sind nur
-zwei Fälle: (a) der Anbieter ist komplett abgeschaltet (kein öffentlicher
-Nachfolger), (b) die Quelle ist nicht-physikalisch (Force-Gate). Erst wenn
-die Recherche leer bleibt, wird `dead` mit `note` festgeschrieben, die den
+drei Fälle: (a) der Anbieter ist komplett abgeschaltet (kein öffentlicher
+Nachfolger), (b) die Quelle ist nicht-physikalisch (Force-Gate), (c) der
+Anbieter ist kommerziell (Bezahl/Proprietär-Zugang). Erst wenn die
+Recherche leer bleibt, wird `dead` mit `note` festgeschrieben, die den
 Recherche-Stand nennt (Alternativen geprüft, Fund: keine).
 
 ## 9. Fix-Rezepte + API-Fakten (hart erworben)
