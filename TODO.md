@@ -470,14 +470,13 @@ Binary-PCK-Pakets oben).
   Hurricanes-Sampler (Forecast-Track-Punkte, §Model), SIMBAD-TAP (VOTable
   trotz format=json).
 - `phi/research/agent_output/batch_*_accepted.φ` (32 Dateien, neue Grammatik):
-  629 Blöcke, 625 parse-fähig, 389 unique vs. live. `test_backlog_batches_verify`
-  (Verifizierer, merged über Läufe) hat 160 mit Samples verifiziert →
-  `staging_verified.φ`, ~250 diagnostiziert → `staging_empty.txt` (2026-08-15).
-  Integriert: ~46 kuratierte Blöcke (SWPC GOES Flux, Kp, OpenSky, Waterservices,
-  ACE L1, BOM, CO-OPS-Tiden-Fanout gravity, 29 NDBC-Buoys, GML CH4/N2O/SF6,
-  Barrow, AOML-Drifter). NIST-Beacon + ArcGIS-NDBC declined. Offen: die
-  übrigen ~100 Staging-Blöcke (INGV/JMA-Seismik, OOI-ERDDAP, weitere
-  SWPC-Varianten) + der 27k-Alte-Grammatik-Archeologie-Bestand.
+  **ausgeschöpft (2026-08-15)** — 629 Blöcke, 389 unique: alle klassifiziert
+  (live / staging_verified.φ / staging_empty.txt). Integriert: ~48 Blöcke
+  (SWPC GOES+EUV, Kp, ACE L1, OpenSky, Waterservices, CO-OPS-Tiden-Fanout
+  gravity, 29 NDBC-Buoys, GML CH4/N2O/SF6, Barrow, AOML-Drifter, OOI-pCO2,
+  BOM). Verbleibende Staging-Blöcke sind redundante Varianten (USGS-Historie,
+  Per-Station-Tides superseded durch Fanout). Nächster Bestand:
+  `archeology/sources/` (27k alte Grammatik, davon gold_27k_359-domains kuratiert).
 - `archeology/sources/sources_gold_pre-cdn_27k_359-domains.φ` (2572 Blöcke, alte
   force-Grammatik) + `sources_recovery_pre-cdn_25k_211-domains.φ` (1924): Migration
   nach Protokoll (docs/source_curation.md); die alte Grammatik wird derzeit noch
