@@ -8,6 +8,7 @@
 #   port/netloc.txt             Netloc-Counts (github.com-CDN, tapvizier, ndbc …)
 #   port/netloc_per_datei.txt   welche Datei welchen Inhalt trägt (Top-5 je Datei)
 #   port/review_kandidaten.txt  197 Re-Review-Kandidaten aus dead_sources.φ
+#   port/provider_mengen.txt    echte Provider-Mengen vs. unser Crawl (nie "fertig" vortäuschen)
 #   katalog/tap_index*.φ        64148+995+271+203+46 Katalog-IDs → tap_compiler-Route
 # Archiv (pre-cdn-Historie + erledigte Korpora):
 #   /home/johannes/projects/archive/archeology/          (pre-cdn)
@@ -83,3 +84,4 @@ infra port/master_urls.txt
 infra port/netloc.txt
 infra port/netloc_per_datei.txt
 infra port/review_kandidaten.txt
+infra port/provider_mengen.txt
