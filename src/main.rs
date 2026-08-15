@@ -1199,7 +1199,6 @@ fn query_hash(
         f64,
         f64,
     )>,
-    body_props: Option<&BodyProperties>,
     eph: &HashMap<String, BodyEphemeris>,
 ) {
     for osc in &hash.unbounded {
@@ -1303,7 +1302,7 @@ fn query_hash(
     for samples in visit {
         for osc in samples {
             let age = (t2 - osc.epoch).abs();
-            let causal_reach = kernel_extent(osc.kernel_id as u8, body_props, osc.tau);
+            let causal_reach = kernel_reach(osc.kernel_id as u8);
             let future_age = age + delta_t_cache;
             let reach = osc.extent.max(causal_reach)
                 + osc.vmax * future_age
@@ -1405,7 +1404,6 @@ fn sense_buffer(
             Some(a) => a,
             None => continue,
         };
-        let body_props = eph.get(body_name).and_then(|e| e.props.as_ref());
         query_hash(
             hash_cell,
             anchor,
@@ -1414,7 +1412,6 @@ fn sense_buffer(
             pad,
             delta_t_cache,
             records,
-            body_props,
             eph,
         );
     }
@@ -1426,7 +1423,6 @@ fn sense_buffer(
         pad,
         delta_t_cache,
         records,
-        None,
         eph,
     );
     if let Some(ash) = &buf.asteroids {
@@ -2956,9 +2952,6 @@ fn kernel_extent(kernel_id: u8, body_props: Option<&BodyProperties>, tau: f64) -
     if tau == 0.0 {
         return 0.0;
     }
-    if kernel_id == 0 || kernel_id == 6 {
-        return f64::INFINITY;
-    }
     let p = match body_props {
         Some(p) => p,
         None => return 0.0,
@@ -2980,6 +2973,14 @@ fn kernel_extent(kernel_id: u8, body_props: Option<&BodyProperties>, tau: f64) -
         return p.patch_levy * reach_time;
     }
     0.0
+}
+
+fn kernel_reach(kernel_id: u8) -> f64 {
+    if kernel_id == 0 || kernel_id == 6 {
+        f64::INFINITY
+    } else {
+        0.0
+    }
 }
 
 #[derive(Clone)]
@@ -7695,11 +7696,7 @@ fn anchor(
         .anchor_body()
         .and_then(|name| eph.get(name))
         .and_then(|e| e.props.as_ref());
-    let extent = if sensor.kernel == 0 || sensor.kernel == 6 {
-        body_props.map(|p| p.radius_m).unwrap_or(0.0)
-    } else {
-        kernel_extent(sensor.kernel, body_props, sensor.tau)
-    };
+    let extent = kernel_extent(sensor.kernel, body_props, sensor.tau);
     if extent.is_nan() {
         return None;
     }
