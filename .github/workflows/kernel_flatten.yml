@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: write
+  issues: write
 
 env:
   GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
@@ -44,7 +45,7 @@ jobs:
           git config user.email "bot@omegaflow.space"
           git add phi/sources_index.φ docs/reference/KERNEL_INDEX.md
           git diff --staged --quiet || git commit -m "kernel index $(date -u +'%Y-%m-%dT%H:%MZ')"
-          git pull --rebase origin main
+          git pull --rebase --autostash origin main
           git push
 
   bodies:
@@ -70,6 +71,7 @@ jobs:
           cargo run --release --bin horizons_compiler -- --ci-mode
       - name: Compile DASTCOM asteroid catalog and upload to CDN
         run: |
+          mkdir -p kernels
           curl -sSfL --retry 3 --max-time 7200 -o kernels/dast5_le.dat \
             https://ssd.jpl.nasa.gov/ftp/xfr/dast5_le.dat
           cargo run --release --bin dastcom_compiler -- \
@@ -82,7 +84,7 @@ jobs:
           git config user.email "bot@omegaflow.space"
           git add phi/sources_index.φ
           git diff --staged --quiet || git commit -m "body manifest $(date -u +'%Y-%m-%dT%H:%MZ')"
-          git pull --rebase origin main
+          git pull --rebase --autostash origin main
           git push
       - name: Report bodies void
         if: failure()
@@ -98,6 +100,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Prepare kernels dir
+        run: mkdir -p kernels
       - name: Compile sexagesimal catalogs and upload to CDN
         continue-on-error: true
         run: |
