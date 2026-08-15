@@ -1,0 +1,4 @@
+# Aufgelöst 2026-08-15: Alle 154 INTERMAGNET-Observatorien haben Koordinaten —
+# via GINServices GetCapabilities-XML (imag-data.bgs.ac.uk/GIN_V1/GINServices).
+# Die Archiv-Blöcke trugen nur 93; die vollständige Liste kommt aus dem
+# offiziellen Dienst, den der Fanout-Block jetzt als stations-URL nutzt.

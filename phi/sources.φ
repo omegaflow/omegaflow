@@ -818,13 +818,6 @@ field swarm_ion_density_cm3 swarm_ion_density_cm3 gaussian-inverse-square diffus
 field swarm_electron_temp_k swarm_electron_temp_k exponential-decay thermal K 3600 0.0 0.0
 field swarm_spacecraft_potential_v swarm_spacecraft_potential_v inverse-square electric V 3600 0.0 0.0
 
-# ── INTERMAGNET via BGS HAPI (em, Niemegk Observatorium) ──
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NGK/best-avail/PT1M/xyzf&start={hour_ago}&stop={now}&format=json
-ttl 3600
-on earth 52.07 12.68 0
-hapi f=magnetosphere_ngk_total_field_nt
-field magnetosphere_ngk_total_field_nt magnetosphere_ngk_total_field_nt inverse-square em nT 3600 0.0 0.0
-
 # ── Swarm FAC via VirES HAPI (electric — Feld-aligned Currents) ──
 url https://vires.services/hapi/data?id=SW_FAST_FACATMS_2F&start={hour_ago}&stop={now}&parameters=IRC,FAC&format=json
 ttl 3600
@@ -832,6 +825,16 @@ at earth
 hapi IRC=swarm_ionospheric_radial_current_uam2 FAC=swarm_field_aligned_current_uam2
 field swarm_ionospheric_radial_current_uam2 swarm_ionospheric_radial_current_uam2 inverse-square electric uA/m2 3600 0.0 0.0
 field swarm_field_aligned_current_uam2 swarm_field_aligned_current_uam2 inverse-square electric uA/m2 3600 0.0 0.0
+
+# ── INTERMAGNET Observatorien (em, 154 — Fanout über GINServices-Observatoriumsliste) ──
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id={station}/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+stations https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetCapabilities
+fanout 40
+fanout_delay 15
+ttl 86400
+on earth 52.5 13.4 0
+hapi f=magnetosphere_total_field_nt
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
 
 # ── Backlog-Kuration 2026-08-15 — NDBC Per-Station-Buoys (ersetzt toten ArcGIS-Block, Kraft-Labels korrigiert) ──
 

@@ -5896,6 +5896,32 @@ fn parse_station_entries(j: &JsonVal, src: &SourceConfig) -> Vec<StationEntry> {
     stations
 }
 
+fn parse_stations_xml(body: &str) -> Vec<StationEntry> {
+    let mut out = Vec::new();
+    for obs in body.split("<Observatory>").skip(1) {
+        let tag = |name: &str| -> Option<&str> {
+            let open = format!("<{}>", name);
+            let start = obs.find(&open)? + open.len();
+            let end = obs[start..].find(&format!("</{}>", name))? + start;
+            Some(&obs[start..end])
+        };
+        let code = match tag("Code") {
+            Some(c) => c.trim().to_string(),
+            None => continue,
+        };
+        let lat = match tag("Latitude").and_then(|s| s.trim().parse::<f64>().ok()) {
+            Some(v) => v,
+            None => continue,
+        };
+        let lon = match tag("Longitude").and_then(|s| s.trim().parse::<f64>().ok()) {
+            Some(v) => v,
+            None => continue,
+        };
+        out.push(StationEntry { id: code, lat, lon });
+    }
+    out
+}
+
 fn fanout_fetch(
     src: &SourceConfig,
     stations_url_tmpl: &str,
@@ -5922,11 +5948,10 @@ fn fanout_fetch(
         Some(v) => v,
         None => return channels,
     };
-    let j = match parse_json(&raw) {
-        Some(v) => v,
-        None => return channels,
+    let mut stations = match parse_json(&raw) {
+        Some(j) => parse_station_entries(&j, src),
+        None => parse_stations_xml(&raw),
     };
-    let mut stations = parse_station_entries(&j, src);
     let sort_center = match presence {
         Some((px, py, pz)) => icrs_to_body_surface(px, py, pz, now, &body_name, eph),
         None => None,
@@ -10172,6 +10197,19 @@ field H comet_h_mag gaussian-inverse-square em mag 604800 0.0 0.0\n";
             "gold convert: {} blocks, {} parsed, {} with extracts",
             blocks, parsed, with_extracts
         );
+    }
+
+    #[test]
+    #[test]
+    fn test_parse_stations_xml() {
+        let xml = "<?xml version=\"1.0\" ?><GINServices>\n <ObservatoryList>\n  <Observatory>\n   <Code>AAE</Code>\n   <Name>Addis Ababa</Name>\n   <Latitude>9.035</Latitude>   <Longitude>38.770</Longitude>   <Elevation>2441</Elevation>\n  </Observatory>\n  <Observatory>\n   <Code>YKC</Code>\n   <Latitude>62.48</Latitude>   <Longitude>-114.48</Longitude>   <Elevation>181</Elevation>\n  </Observatory>\n </ObservatoryList>\n</GINServices>";
+        let st = parse_stations_xml(xml);
+        assert_eq!(st.len(), 2);
+        assert_eq!(st[0].id, "AAE");
+        assert_eq!(st[0].lat, 9.035);
+        assert_eq!(st[0].lon, 38.770);
+        assert_eq!(st[1].id, "YKC");
+        assert_eq!(st[1].lat, 62.48);
     }
 
     #[test]
