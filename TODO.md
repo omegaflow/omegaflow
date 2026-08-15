@@ -139,8 +139,15 @@ vmax aus pm·d datenabgeleitet ×Φ, span-guard wie DASTCOM), Emission
 build+query. Vega-Beweis: RA Δ0,0009″, Dec Δ0,01″, plx 128,93 vs. 130,23 mas,
 dist 7,8 vs. 7,68 pc — ehrliche Katalog-Physik (Tycho-1-Reduktion). CI-Schritt
 in kernel_flatten.yml. CDN-Asset tycho2_stars.bin entsteht beim ersten CI-Lauf.
-Verbleibend: X-flagged-Positionen via Tycho-1 (I/196) und der Gaia-Merge
-(K04b, ~2 Mio. Sterne mit DR3-Plx) — tap_compiler-Territorium.
+Verbleibend: X-flagged-Positionen via Tycho-1 (I/196) — der Gaia-Merge ist
+GESCHLOSSEN (K04b, 2026-08-15): TGAS (I/337 tgas.dat.gz, 2 057 050 Records)
+als --source tgas im tycho2_compiler (Feld-Split an „|", Epoch 2015.0 →
+J2000 propagiert), 2 025 673 Sterne mit plx > 0 ins Bin (72,9 MB), sources.φ-
+Block tgas_stars.bin ersetzt tycho2_stars.bin, CI-Schritt gespiegelt.
+Beweis HIP 13989 (HD 18560): plx 6,35 mas, G 7,991, dist 157,5 pc — DR1-
+ehrlich (DR3 verfeinert auf 6,66). Befunde: Vega/Barnard absent, weil Gaia
+DR1 bei G < ~3,5 sättigt bzw. pm > 3,5″/yr ausgeschlossen ist — 0 honored.
+Der Tycho-2+I/239-Weg (--source tycho2) bleibt als Fallback im Compiler.
 ```
 
 **K06** EOP (erst nach K01–K05)

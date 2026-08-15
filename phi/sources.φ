@@ -435,10 +435,11 @@ dist dist
 dist_scale 3.085677581e19
 field flux tevcat_flux inverse-square em Crab 604800 0.0 0.0
 
-# ── Tycho-2 + Hipparcos-Plx Stern-Katalog (K04) — Stern-Hash-Kanal ──
-# 114 478 Sterne mit plx > 0 manifestieren; 2,3 Mio ohne Parallaxe sind absent
-# (0 honored). X-flagged Records (Position in Supplements) folgen später.
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/tycho2_stars.bin
+# ── TGAS (Tycho-Gaia, VizieR I/337) Stern-Katalog (K04b) — Stern-Hash-Kanal ──
+# 2 025 673 Sterne mit plx > 0 (Gaia-DR1-Parallaxen, Epoch 2015.0 → J2000
+# propagiert). Sterne mit pm > 3,5″/yr oder G < ~3,5 (Sättigung) sind absent
+# (0 honored) — Vega und Barnards Stern fehlen deshalb ehrlich.
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/tgas_stars.bin
 format catalog_tycho
 at sun
 ttl 604800

@@ -83,23 +83,14 @@ jobs:
             --input kernels/cometels.json.gz \
             --out cometels_flat.json \
             --ci-mode
-      - name: Compile Tycho-2 star catalog and upload to CDN
+      - name: Compile TGAS star catalog and upload to CDN
         run: |
-          mkdir -p kernels/tyc2
-          for i in 00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19; do
-            curl -sSfL --retry 3 --max-time 600 -o kernels/tyc2/tyc2.dat.$i.gz \
-              https://cdsarc.cds.unistra.fr/ftp/I/259/tyc2.dat.$i.gz
-          done
-          curl -sSfL --retry 3 --max-time 600 -o kernels/tyc2/suppl_1.dat.gz \
-            https://cdsarc.cds.unistra.fr/ftp/I/259/suppl_1.dat.gz
-          curl -sSfL --retry 3 --max-time 600 -o kernels/tyc2/suppl_2.dat.gz \
-            https://cdsarc.cds.unistra.fr/ftp/I/259/suppl_2.dat.gz
-          curl -sSfL --retry 3 --max-time 1200 -o kernels/tyc2/hip_main.dat \
-            https://cdsarc.cds.unistra.fr/ftp/I/239/hip_main.dat
+          curl -sSfL --retry 3 --max-time 3600 -o kernels/tgas.dat.gz \
+            https://cdsarc.cds.unistra.fr/ftp/I/337/tgas.dat.gz
           cargo run --release --bin tycho2_compiler -- \
-            --input-dir kernels/tyc2 \
-            --hip kernels/tyc2/hip_main.dat \
-            --out tycho2_stars.bin \
+            --source tgas \
+            --input kernels/tgas.dat.gz \
+            --out tgas_stars.bin \
             --ci-mode
       - name: Commit body manifest
         run: |

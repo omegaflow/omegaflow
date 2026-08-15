@@ -86,12 +86,46 @@ fn load_suppl(path: &str, map: &mut HashMap<(i32, i32, i32), SupplRow>) -> usize
     n
 }
 
-fn propagate_j1991_25(ra: f64, dec: f64, pm_ra: f64, pm_de: f64) -> (f64, f64) {
-    let dt_yr = 8.75;
+fn propagate(ra: f64, dec: f64, pm_ra: f64, pm_de: f64, dt_yr: f64) -> (f64, f64) {
     let dec_rad = dec.to_radians();
     let ra_j = ra + pm_ra / (3.6e6 * dec_rad.cos().max(1e-6)) * dt_yr;
     let dec_j = dec + pm_de / 3.6e6 * dt_yr;
     (ra_j, dec_j)
+}
+
+fn propagate_j1991_25(ra: f64, dec: f64, pm_ra: f64, pm_de: f64) -> (f64, f64) {
+    propagate(ra, dec, pm_ra, pm_de, 8.75)
+}
+
+fn parse_tgas_record(line: &str) -> Option<StarRow> {
+    let f: Vec<&str> = line.split('|').collect();
+    if f.len() < 54 {
+        return None;
+    }
+    let hip: i32 = f[0].trim().parse().ok().unwrap_or(0);
+    let ra = f[6].trim().parse::<f64>().ok()?;
+    let dec = f[8].trim().parse::<f64>().ok()?;
+    let plx = f[10].trim().parse::<f64>().ok()?;
+    if !(plx > 0.0) {
+        return None;
+    }
+    let pm_ra = f[12].trim().parse::<f64>().ok().unwrap_or(0.0);
+    let pm_de = f[14].trim().parse::<f64>().ok().unwrap_or(0.0);
+    let gmag = f[53].trim().parse::<f64>().ok()?;
+    let (ra_j, dec_j) = propagate(ra, dec, pm_ra, pm_de, -15.0);
+    if !ra_j.is_finite() || !dec_j.is_finite() || !gmag.is_finite() {
+        return None;
+    }
+    Some(StarRow {
+        hip,
+        ra_deg: ra_j,
+        dec_deg: dec_j,
+        pm_ra,
+        pm_de,
+        plx_mas: plx,
+        mag: gmag,
+        from_suppl: false,
+    })
 }
 
 fn parse_tyc2_record(
@@ -183,6 +217,8 @@ fn encode(row: &StarRow, out: &mut Vec<u8>) {
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();
+    let mut source: String = "tycho2".to_string();
+    let mut input: Option<String> = None;
     let mut input_dir: Option<String> = None;
     let mut hip: Option<String> = None;
     let mut out: Option<String> = None;
@@ -191,6 +227,14 @@ fn main() {
     let mut i = 1;
     while i < args.len() {
         match args[i].as_str() {
+            "--source" => {
+                source = args.get(i + 1).cloned().unwrap_or_default();
+                i += 1;
+            }
+            "--input" => {
+                input = args.get(i + 1).cloned();
+                i += 1;
+            }
             "--input-dir" => {
                 input_dir = args.get(i + 1).cloned();
                 i += 1;
@@ -211,6 +255,83 @@ fn main() {
             _ => {}
         }
         i += 1;
+    }
+    if source == "tgas" {
+        let input = match input {
+            Some(p) => p,
+            None => {
+                eprintln!("--input absent (tgas.dat.gz)");
+                std::process::exit(1);
+            }
+        };
+        let bytes = match std::fs::read(&input) {
+            Ok(b) => b,
+            Err(_) => {
+                eprintln!("read {} returned void", input);
+                std::process::exit(1);
+            }
+        };
+        let Some(text) = gunzip(&bytes) else {
+            eprintln!("gunzip {} returned void", input);
+            std::process::exit(1);
+        };
+        let mut rows: Vec<StarRow> = Vec::with_capacity(2_100_000);
+        let mut skipped = 0usize;
+        for line in String::from_utf8_lossy(&text).lines() {
+            match parse_tgas_record(line) {
+                Some(r) => rows.push(r),
+                None => skipped += 1,
+            }
+        }
+        if let Some(p) = probe {
+            for row in &rows {
+                if row.hip != p {
+                    continue;
+                }
+                eprintln!(
+                    "probe HIP {}: ra={:.8} dec={:.8} pmRA={} pmDE={} mas/yr plx={} mas Gmag={} dist={:.1} pc",
+                    row.hip,
+                    row.ra_deg,
+                    row.dec_deg,
+                    row.pm_ra,
+                    row.pm_de,
+                    row.plx_mas,
+                    row.mag,
+                    1000.0 / row.plx_mas
+                );
+                return;
+            }
+            eprintln!("probe: HIP {} not present", p);
+            return;
+        }
+        let out_path = match out {
+            Some(p) => p,
+            None => {
+                eprintln!("--out absent");
+                std::process::exit(1);
+            }
+        };
+        let mut buf = Vec::with_capacity(rows.len() * STAR_RECORD_STRIDE);
+        for row in &rows {
+            encode(row, &mut buf);
+        }
+        if let Ok(mut f) = std::fs::File::create(&out_path) {
+            let _ = f.write_all(&buf);
+        } else {
+            eprintln!("write {} returned void", out_path);
+            std::process::exit(1);
+        }
+        eprintln!(
+            "tgas: {} records written (plx>0), {} skipped, {} B → {}",
+            rows.len(),
+            skipped,
+            buf.len(),
+            out_path
+        );
+        if ci_mode {
+            let _ = upload_asset(&out_path);
+        }
+        return;
     }
     let dir = match input_dir {
         Some(d) => d,
