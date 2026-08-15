@@ -7819,7 +7819,14 @@ fn source_name_from_url(url: &str) -> String {
     }
 }
 
-fn probe_mode(path: &str, precise: bool, lat: f64, lon: f64, env: &HashMap<String, String>) -> i32 {
+fn probe_mode(
+    path: &str,
+    precise: bool,
+    lat: f64,
+    lon: f64,
+    env: &HashMap<String, String>,
+    fetchone: bool,
+) -> i32 {
     let content = match std::fs::read_to_string(path) {
         Ok(c) => c,
         Err(e) => {
@@ -7889,7 +7896,11 @@ fn probe_mode(path: &str, precise: bool, lat: f64, lon: f64, env: &HashMap<Strin
         let url = resolve_secret(&url, env);
         let url = url.replace("ZZ", "Z").replace("  ", " ");
         let headers = render_headers(&src.headers, env);
-        let raw = fetch_raw_probe(&url, None, &headers);
+        let raw = if fetchone {
+            fetch_one(&url, None, &headers, src.ttl)
+        } else {
+            fetch_raw_probe(&url, None, &headers)
+        };
         let parsed = raw.as_ref().and_then(|r| parse_json(r));
         let auto_ttl = raw.as_ref().and_then(|r| probe_ttl(r));
         let mut block = String::new();
@@ -9058,6 +9069,7 @@ fn main() {
                 }
             };
             let precise = args.iter().any(|a| a == "--precise");
+            let fetchone = args.iter().any(|a| a == "--fetchone");
             let mut lat = 0.0;
             let mut lon = 0.0;
             let mut i = 2;
@@ -9075,7 +9087,7 @@ fn main() {
                 }
                 i += 1;
             }
-            std::process::exit(probe_mode(path, precise, lat, lon, &env));
+            std::process::exit(probe_mode(path, precise, lat, lon, &env, fetchone));
         }
     }
     let loaded = load_sources();

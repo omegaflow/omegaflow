@@ -1,0 +1,1625 @@
+url https://qrng.anu.edu.au/API/jsonI.php?length=1&type=uint8
+ttl 60
+on earth -35.2809 149.13 0
+path data.0 quantum_entropy_anu inverse-square em 1 6 0.0 0.0
+
+url https://api.blitzortung.org/compressed/current_positions?lat={lat}&lon={lon}&range=500
+ttl 60
+on earth 0 0
+map .
+lat lat
+lon lon
+field utc atmosphere_lightning_strike_utc inverse-square em 1 6 0.0 0.0
+field peak atmosphere_lightning_peak_current_ka inverse-square em 1 6 0.0 0.0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/AFK?interval=1d&range=1d
+ttl 60
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+on earth 40.7128 -74.006 0
+field chart.result.0.meta.regularMarketPrice biosphere_region_africa_price inverse-square em 1 6 0.0 0.0
+field chart.result.0.meta.chartPreviousClose biosphere_region_africa_prev_close inverse-square em 1 6 0.0 0.0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/EWZ?interval=1d&range=1d
+ttl 60
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+on earth 40.7128 -74.006 0
+field chart.result.0.meta.regularMarketPrice biosphere_region_brazil_price inverse-square em 1 6 0.0 0.0
+field chart.result.0.meta.chartPreviousClose biosphere_region_brazil_prev_close inverse-square em 1 6 0.0 0.0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/FXI?interval=1d&range=1d
+ttl 60
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+on earth 40.7128 -74.006 0
+field chart.result.0.meta.regularMarketPrice biosphere_region_china_price inverse-square em 1 6 0.0 0.0
+field chart.result.0.meta.chartPreviousClose biosphere_region_china_prev_close inverse-square em 1 6 0.0 0.0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?interval=1d&range=1d
+ttl 60
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+on earth 40.7128 -74.006 0
+field chart.result.0.meta.regularMarketPrice biosphere_dollar_index_price inverse-square em 1 6 0.0 0.0
+field chart.result.0.meta.chartPreviousClose biosphere_dollar_index_prev_close inverse-square em 1 6 0.0 0.0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/BDRY?interval=1d&range=1d
+ttl 60
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+on earth 40.7128 -74.006 0
+field chart.result.0.meta.regularMarketPrice biosphere_leading_global_trade_proxy_price inverse-square em 1 6 0.0 0.0
+field chart.result.0.meta.chartPreviousClose biosphere_leading_global_trade_proxy_prev_close inverse-square em 1 6 0.0 0.0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/EEM?interval=1d&range=1d
+ttl 60
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+on earth 40.7128 -74.006 0
+field chart.result.0.meta.regularMarketPrice biosphere_emerging_markets_price inverse-square em 1 6 0.0 0.0
+field chart.result.0.meta.chartPreviousClose biosphere_emerging_markets_prev_close inverse-square em 1 6 0.0 0.0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/VGK?interval=1d&range=1d
+ttl 60
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+on earth 40.7128 -74.006 0
+field chart.result.0.meta.regularMarketPrice biosphere_region_europe_price inverse-square em 1 6 0.0 0.0
+field chart.result.0.meta.chartPreviousClose biosphere_region_europe_prev_close inverse-square em 1 6 0.0 0.0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/FM?interval=1d&range=1d
+ttl 60
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+on earth 40.7128 -74.006 0
+field chart.result.0.meta.regularMarketPrice biosphere_frontier_markets_price inverse-square em 1 6 0.0 0.0
+field chart.result.0.meta.chartPreviousClose biosphere_frontier_markets_prev_close inverse-square em 1 6 0.0 0.0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/EWG?interval=1d&range=1d
+ttl 60
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+on earth 40.7128 -74.006 0
+field chart.result.0.meta.regularMarketPrice biosphere_region_germany_price inverse-square em 1 6 0.0 0.0
+field chart.result.0.meta.chartPreviousClose biosphere_region_germany_prev_close inverse-square em 1 6 0.0 0.0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/GC%3DF?interval=1d&range=1d
+ttl 60
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+on earth 40.7128 -74.006 0
+field chart.result.0.meta.regularMarketPrice biosphere_commodity_gold_price inverse-square em 1 6 0.0 0.0
+field chart.result.0.meta.chartPreviousClose biosphere_commodity_gold_prev_close inverse-square em 1 6 0.0 0.0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/INDA?interval=1d&range=1d
+ttl 60
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+on earth 40.7128 -74.006 0
+field chart.result.0.meta.regularMarketPrice biosphere_region_india_price inverse-square em 1 6 0.0 0.0
+field chart.result.0.meta.chartPreviousClose biosphere_region_india_prev_close inverse-square em 1 6 0.0 0.0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/EWJ?interval=1d&range=1d
+ttl 60
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+on earth 40.7128 -74.006 0
+field chart.result.0.meta.regularMarketPrice biosphere_region_japan_price inverse-square em 1 6 0.0 0.0
+field chart.result.0.meta.chartPreviousClose biosphere_region_japan_prev_close inverse-square em 1 6 0.0 0.0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/ILF?interval=1d&range=1d
+ttl 60
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+on earth 40.7128 -74.006 0
+field chart.result.0.meta.regularMarketPrice biosphere_region_latin_america_price inverse-square em 1 6 0.0 0.0
+field chart.result.0.meta.chartPreviousClose biosphere_region_latin_america_prev_close inverse-square em 1 6 0.0 0.0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/EWW?interval=1d&range=1d
+ttl 60
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+on earth 40.7128 -74.006 0
+field chart.result.0.meta.regularMarketPrice biosphere_region_mexico_price inverse-square em 1 6 0.0 0.0
+field chart.result.0.meta.chartPreviousClose biosphere_region_mexico_prev_close inverse-square em 1 6 0.0 0.0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/KSA?interval=1d&range=1d
+ttl 60
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+on earth 40.7128 -74.006 0
+field chart.result.0.meta.regularMarketPrice biosphere_region_gulf_price inverse-square em 1 6 0.0 0.0
+field chart.result.0.meta.chartPreviousClose biosphere_region_gulf_prev_close inverse-square em 1 6 0.0 0.0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/CL%3DF?interval=1d&range=1d
+ttl 60
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+on earth 40.7128 -74.006 0
+field chart.result.0.meta.regularMarketPrice biosphere_commodity_oil_price inverse-square em 1 6 0.0 0.0
+field chart.result.0.meta.chartPreviousClose biosphere_commodity_oil_prev_close inverse-square em 1 6 0.0 0.0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/XLC?interval=1d&range=1d
+ttl 60
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+on earth 40.7128 -74.006 0
+field chart.result.0.meta.regularMarketPrice biosphere_sector_communication_price inverse-square em 1 6 0.0 0.0
+field chart.result.0.meta.chartPreviousClose biosphere_sector_communication_prev_close inverse-square em 1 6 0.0 0.0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/XLY?interval=1d&range=1d
+ttl 60
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+on earth 40.7128 -74.006 0
+field chart.result.0.meta.regularMarketPrice biosphere_sector_consumer_discretionary_price inverse-square em 1 6 0.0 0.0
+field chart.result.0.meta.chartPreviousClose biosphere_sector_consumer_discretionary_prev_close inverse-square em 1 6 0.0 0.0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/XLP?interval=1d&range=1d
+ttl 60
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+on earth 40.7128 -74.006 0
+field chart.result.0.meta.regularMarketPrice biosphere_sector_consumer_staples_price inverse-square em 1 6 0.0 0.0
+field chart.result.0.meta.chartPreviousClose biosphere_sector_consumer_staples_prev_close inverse-square em 1 6 0.0 0.0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/XLE?interval=1d&range=1d
+ttl 60
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+on earth 40.7128 -74.006 0
+field chart.result.0.meta.regularMarketPrice biosphere_sector_energy_price inverse-square em 1 6 0.0 0.0
+field chart.result.0.meta.chartPreviousClose biosphere_sector_energy_prev_close inverse-square em 1 6 0.0 0.0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/XLF?interval=1d&range=1d
+ttl 60
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+on earth 40.7128 -74.006 0
+field chart.result.0.meta.regularMarketPrice biosphere_sector_financials_price inverse-square em 1 6 0.0 0.0
+field chart.result.0.meta.chartPreviousClose biosphere_sector_financials_prev_close inverse-square em 1 6 0.0 0.0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/XLV?interval=1d&range=1d
+ttl 60
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+on earth 40.7128 -74.006 0
+field chart.result.0.meta.regularMarketPrice biosphere_sector_healthcare_price inverse-square em 1 6 0.0 0.0
+field chart.result.0.meta.chartPreviousClose biosphere_sector_healthcare_prev_close inverse-square em 1 6 0.0 0.0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/XLI?interval=1d&range=1d
+ttl 60
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+on earth 40.7128 -74.006 0
+field chart.result.0.meta.regularMarketPrice biosphere_sector_industrials_price inverse-square em 1 6 0.0 0.0
+field chart.result.0.meta.chartPreviousClose biosphere_sector_industrials_prev_close inverse-square em 1 6 0.0 0.0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/XLB?interval=1d&range=1d
+ttl 60
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+on earth 40.7128 -74.006 0
+field chart.result.0.meta.regularMarketPrice biosphere_sector_materials_price inverse-square em 1 6 0.0 0.0
+field chart.result.0.meta.chartPreviousClose biosphere_sector_materials_prev_close inverse-square em 1 6 0.0 0.0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/XLRE?interval=1d&range=1d
+ttl 60
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+on earth 40.7128 -74.006 0
+field chart.result.0.meta.regularMarketPrice biosphere_sector_real_estate_price inverse-square em 1 6 0.0 0.0
+field chart.result.0.meta.chartPreviousClose biosphere_sector_real_estate_prev_close inverse-square em 1 6 0.0 0.0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/XLK?interval=1d&range=1d
+ttl 60
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+on earth 40.7128 -74.006 0
+field chart.result.0.meta.regularMarketPrice biosphere_sector_technology_price inverse-square em 1 6 0.0 0.0
+field chart.result.0.meta.chartPreviousClose biosphere_sector_technology_prev_close inverse-square em 1 6 0.0 0.0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/XLU?interval=1d&range=1d
+ttl 60
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+on earth 40.7128 -74.006 0
+field chart.result.0.meta.regularMarketPrice biosphere_sector_utilities_price inverse-square em 1 6 0.0 0.0
+field chart.result.0.meta.chartPreviousClose biosphere_sector_utilities_prev_close inverse-square em 1 6 0.0 0.0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/SOXX?interval=1d&range=1d
+ttl 60
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+on earth 40.7128 -74.006 0
+field chart.result.0.meta.regularMarketPrice biosphere_leading_semiconductors_price inverse-square em 1 6 0.0 0.0
+field chart.result.0.meta.chartPreviousClose biosphere_leading_semiconductors_prev_close inverse-square em 1 6 0.0 0.0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/EZA?interval=1d&range=1d
+ttl 60
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+on earth 40.7128 -74.006 0
+field chart.result.0.meta.regularMarketPrice biosphere_region_south_africa_price inverse-square em 1 6 0.0 0.0
+field chart.result.0.meta.chartPreviousClose biosphere_region_south_africa_prev_close inverse-square em 1 6 0.0 0.0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/ASEA?interval=1d&range=1d
+ttl 60
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+on earth 40.7128 -74.006 0
+field chart.result.0.meta.regularMarketPrice biosphere_region_southeast_asia_price inverse-square em 1 6 0.0 0.0
+field chart.result.0.meta.chartPreviousClose biosphere_region_southeast_asia_prev_close inverse-square em 1 6 0.0 0.0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/IYT?interval=1d&range=1d
+ttl 60
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+on earth 40.7128 -74.006 0
+field chart.result.0.meta.regularMarketPrice biosphere_leading_transportation_price inverse-square em 1 6 0.0 0.0
+field chart.result.0.meta.chartPreviousClose biosphere_leading_transportation_prev_close inverse-square em 1 6 0.0 0.0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/%5ETNX?interval=1d&range=1d
+ttl 60
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+on earth 40.7128 -74.006 0
+field chart.result.0.meta.regularMarketPrice biosphere_interest_rate_10y_treasury inverse-square em 1 6 0.0 0.0
+field chart.result.0.meta.chartPreviousClose biosphere_interest_rate_10y_treasury_prev inverse-square em 1 6 0.0 0.0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/SPY?interval=1d&range=1d
+ttl 60
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+on earth 40.7128 -74.006 0
+field chart.result.0.meta.regularMarketPrice biosphere_region_usa_price inverse-square em 1 6 0.0 0.0
+field chart.result.0.meta.chartPreviousClose biosphere_region_usa_prev_close inverse-square em 1 6 0.0 0.0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/%5EVIX?interval=1d&range=1d
+ttl 60
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+on earth 41.8781 -87.6298 0
+field chart.result.0.meta.regularMarketPrice biosphere_fear_gauge_vix inverse-square em 1 6 0.0 0.0
+field chart.result.0.meta.chartPreviousClose biosphere_fear_gauge_vix_prev inverse-square em 1 6 0.0 0.0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/ACWI?interval=1d&range=1d
+ttl 60
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+on earth 40.7128 -74.006 0
+field chart.result.0.meta.regularMarketPrice biosphere_world_acwi_price inverse-square em 1 6 0.0 0.0
+field chart.result.0.meta.chartPreviousClose biosphere_world_acwi_prev_close inverse-square em 1 6 0.0 0.0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/URTH?interval=1d&range=1d
+ttl 60
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+on earth 40.7128 -74.006 0
+field chart.result.0.meta.regularMarketPrice biosphere_world_developed_price inverse-square em 1 6 0.0 0.0
+field chart.result.0.meta.chartPreviousClose biosphere_world_developed_prev_close inverse-square em 1 6 0.0 0.0
+
+url https://www.inex.ie/ixp/grapher/ixp?id=1&type=json
+ttl 60
+on earth 53.3 -6.2 0
+field statistics.curin biosphere_traffic_bits_in_per_s inverse-square em 1 6 0.0 0.0
+field statistics.curout biosphere_traffic_bits_out_per_s inverse-square em 1 6 0.0 0.0
+
+url https://api.irail.be/liveboard/?station=Brussels&format=json
+ttl 60
+on earth 50.8 4.3 0
+count departures.departure biosphere_train_departures_belgium inverse-square em 1 6 0.0 0.0
+
+url https://api.irishrail.ie/realtime/realtime.asmx/getStationDataByCodeXML?StationCode=BROC
+ttl 60
+format xml
+on earth 53.3 -6.2 0
+
+url https://transport.opendata.ch/v1/stationboard?station=Bern&limit=10
+ttl 60
+on earth 46.9 7.4 0
+count stationboard biosphere_transport_departures_bern inverse-square em 1 6 0.0 0.0
+
+url https://transport.opendata.ch/v1/stationboard?station=Zurich&limit=10
+ttl 60
+on earth 47.3 8.5 0
+count stationboard biosphere_transport_departures_zurich inverse-square em 1 6 0.0 0.0
+
+url https://www.wienerlinien.at/ogd_realtime/monitor?stopId=1234
+ttl 60
+on earth 48.2 16.3 0
+count data.monitors.0.lines biosphere_transport_lines_vienna inverse-square em 1 6 0.0 0.0
+
+url https://query1.finance.yahoo.com/v8/finance/chart/AAPL?interval=1d&range=1d
+ttl 60
+header User-Agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+on earth 40.7128 -74.006 0
+field chart.result.0.meta.regularMarketPrice biosphere_stock_price inverse-square em 1 6 0.0 0.0
+field chart.result.0.meta.chartPreviousClose biosphere_stock_prev_close inverse-square em 1 6 0.0 0.0
+
+url https://data.blitzortung.org/contributors/0/stations/0/signals/0/{year}/{month}/{day}/{hour}/{minute}.json
+ttl 60
+on earth 0 0
+map .
+lat lat
+lon lon
+field amplitude signal_amplitude gaussian-inverse-square acoustic 1 6 0.0 0.0
+field time signal_time gaussian-inverse-square acoustic 1 6 0.0 0.0
+field frequency signal_freq_hz gaussian-inverse-square acoustic 1 6 0.0 0.0
+field quality signal_quality gaussian-inverse-square acoustic 1 6 0.0 0.0
+
+url https://api.open-meteo.com/v1/forecast?latitude=46.95&longitude=7.86&current=shortwave_radiation,uv_index&timezone=auto
+ttl 60
+on earth 46.95 7.86 0
+field current.shortwave_radiation cosmic_radiation_shortwave_wm2 inverse-square em 1 6 0.0 0.0
+field current.uv_index cosmic_radiation_uv_index inverse-square em 1 6 0.0 0.0
+
+url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&limit=100&minmagnitude=2.5&orderby=time&start={today}T00:00:00
+ttl 60
+on earth 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.evid event_id gaussian-inverse-square seismic-body 1 6 0.0 0.0
+field properties.time event_time_utc gaussian-inverse-square seismic-body 1 6 0.0 0.0
+field properties.mag magnitude gaussian-inverse-square seismic-body 1 6 0.0 0.0
+field properties.depth depth_km gaussian-inverse-square seismic-body 1 6 0.0 0.0
+field properties.region geographic_region gaussian-inverse-square seismic-body 1 6 0.0 0.0
+
+url https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json
+ttl 60
+on earth 0 0 0
+field 0.bt exosphere_mag_bt_nt inverse-square em 1 6 0.0 0.0
+field 0.bz_gsm exosphere_mag_bz_gsm_nt inverse-square em 1 6 0.0 0.0
+
+url https://services.swpc.noaa.gov/json/goes/primary/xray-flares-latest.json
+ttl 60
+on earth 0 0 0
+field 0.current_int_xrlong exosphere_solar_flare_intensity inverse-square em 1 6 0.0 0.0
+field 0.current_class exosphere_solar_flare_class inverse-square em 1 6 0.0 0.0
+
+url https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json
+ttl 60
+on earth 0 0 0
+field 0.proton_speed exosphere_proton_speed_kms inverse-square em 1 6 0.0 0.0
+field 0.proton_density exosphere_proton_density_ncc inverse-square em 1 6 0.0 0.0
+field 0.proton_temperature exosphere_proton_temp_k inverse-square em 1 6 0.0 0.0
+
+url https://api.geonet.org.nz/tsunami/dart
+ttl 60
+on earth 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.stationID station_id gaussian-inverse-square acoustic 1 6 0.0 0.0
+field properties.name station_name gaussian-inverse-square acoustic 1 6 0.0 0.0
+field properties.type sensor_type gaussian-inverse-square acoustic 1 6 0.0 0.0
+field properties.depth depth_m gaussian-inverse-square acoustic 1 6 0.0 0.0
+
+url https://api.geonet.org.nz/quake?limit=200
+ttl 60
+on earth 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.mag magnitude gaussian-inverse-square seismic-body 1 6 0.0 0.0
+field properties.place locality gaussian-inverse-square seismic-body 1 6 0.0 0.0
+field properties.time event_time gaussian-inverse-square seismic-body 1 6 0.0 0.0
+field properties.depth depth_km gaussian-inverse-square seismic-body 1 6 0.0 0.0
+field properties.magnitude_type mag_type gaussian-inverse-square seismic-body 1 6 0.0 0.0
+
+url https://api.geonet.org.nz/quake?format=geojson&minmag=3&limit=100
+ttl 60
+on earth 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.mag magnitude gaussian-inverse-square seismic-body 1 6 0.0 0.0
+field properties.place locality gaussian-inverse-square seismic-body 1 6 0.0 0.0
+field properties.time event_time gaussian-inverse-square seismic-body 1 6 0.0 0.0
+field properties.depth depth_km gaussian-inverse-square seismic-body 1 6 0.0 0.0
+
+url https://data.raspberryshake.org/api/v2/shake?limit=500
+ttl 60
+on earth 0 0
+map .
+lat lat
+lon lon
+field code geosphere_rshake_event_station gaussian-inverse-square seismic-body 1 6 0.0 0.0
+field mag geosphere_rshake_event_magnitude gaussian-inverse-square seismic-body 1 6 0.0 0.0
+field time geosphere_rshake_event_time gaussian-inverse-square seismic-body 1 6 0.0 0.0
+field depth geosphere_rshake_event_depth_km gaussian-inverse-square seismic-body 1 6 0.0 0.0
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson
+ttl 60
+on earth 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field geometry.coordinates.2 geosphere_quake_depth_km erfc seismic-surface 1 6 0.0 0.0
+field properties.mag geosphere_quake_magnitude erfc seismic-surface 1 6 0.0 0.0
+field metadata.count seismic_count_24h erfc seismic-surface 1 6 0.0 0.0
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson
+ttl 60
+on earth 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field geometry.coordinates.2 geosphere_quake_depth_km erfc seismic-surface 1 6 0.0 0.0
+field properties.mag geosphere_quake_magnitude erfc seismic-surface 1 6 0.0 0.0
+
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_day.geojson
+ttl 60
+on earth 39.749 -105.221 0
+path features.0.properties.rms geosphere_earth_hum_rms erfc seismic-surface 1 6 0.0 0.0
+
+url https://erddap.incois.gov.in/erddap/tabledap/INCOIS_TSUNAMI_BPR.csv?latitude,longitude,time,water_pressure,sea_floor_depth&time>={today}T00:00:00Z&orderBy(%22time%22)
+ttl 60
+format text
+on earth 0 0
+rows .
+lat latitude
+lon longitude
+field water_pressure bottom_pressure_mbar gaussian-inverse-square acoustic 1 6 0.0 0.0
+field sea_floor_depth depth_m gaussian-inverse-square acoustic 1 6 0.0 0.0
+field time measurement_time gaussian-inverse-square acoustic 1 6 0.0 0.0
+
+url https://webservices.ingv.it/fdsnws/event/1/query?format=geojson&minmagnitude=1.5&limit=200&orderby=time&starttime={today}T00:00:00
+ttl 60
+on earth 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.mag magnitude gaussian-inverse-square seismic-body 1 6 0.0 0.0
+field properties.place locality gaussian-inverse-square seismic-body 1 6 0.0 0.0
+field properties.time event_time gaussian-inverse-square seismic-body 1 6 0.0 0.0
+field properties.depth depth_km gaussian-inverse-square seismic-body 1 6 0.0 0.0
+
+url http://irsc.ut.ac.ir/fdsnws/event/1/query?format=geojson&minmagnitude=2.0&limit=500&orderby=time&starttime={today}T00:00:00
+ttl 60
+on earth 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.mag magnitude gaussian-inverse-square seismic-body 1 6 0.0 0.0
+field properties.place locality gaussian-inverse-square seismic-body 1 6 0.0 0.0
+field properties.time event_time gaussian-inverse-square seismic-body 1 6 0.0 0.0
+field properties.depth depth_km gaussian-inverse-square seismic-body 1 6 0.0 0.0
+
+url https://api.p2pquake.net/v2/jma/quake?limit=100&order=-1
+ttl 60
+on earth 0 0
+map .
+lat earthquake.hypocenter.latitude
+lon earthquake.hypocenter.longitude
+field id event_id gaussian-inverse-square seismic-body 1 6 0.0 0.0
+field time event_time_jst gaussian-inverse-square seismic-body 1 6 0.0 0.0
+field earthquake.hypocenter.name epicenter_name gaussian-inverse-square seismic-body 1 6 0.0 0.0
+field earthquake.maxScale jma_max_intensity gaussian-inverse-square seismic-body 1 6 0.0 0.0
+field earthquake.magnitude magnitude gaussian-inverse-square seismic-body 1 6 0.0 0.0
+field earthquake.hypocenter.depth depth_km gaussian-inverse-square seismic-body 1 6 0.0 0.0
+field domesticTsunami tsunami_flag gaussian-inverse-square seismic-body 1 6 0.0 0.0
+
+url https://services.swpc.noaa.gov/json/goes/primary/magnetometers-1-day.json
+ttl 60
+on earth 0 -75.2 35786023
+last Hp magnetosphere_hp_nt inverse-square em 1 6 0.0 0.0
+last He magnetosphere_he_nt inverse-square em 1 6 0.0 0.0
+last total magnetosphere_bt_nt inverse-square em 1 6 0.0 0.0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=MCMD&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth -77.85 166.67 0
+path data.MCMD.1h.0.1 cosmic_neutron_flux_mcmurdo inverse-square em 1 6 0.0 0.0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=NEWK&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 39.68 -75.75 0
+path data.NEWK.1h.0.1 cosmic_neutron_flux_newark inverse-square em 1 6 0.0 0.0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=OULU&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 65.05 25.47 0
+path data.OULU.1h.0.1 cosmic_neutron_flux_oulu inverse-square em 1 6 0.0 0.0
+
+url https://www.nmdb.eu/nest/draw_graph.php?wget=1&stations[]=OULU&tabchoice=1h&output=ascii&startdate_1={today}T00:00:00&enddate_1={today}T23:59:59
+ttl 60
+format text
+on earth 65.05 25.47 0
+rows .
+field 0 datetime_utc inverse-square em 1 6 0.0 0.0
+field 1 oulu_count_rate_cph inverse-square em 1 6 0.0 0.0
+field 2 oulu_correction_factor inverse-square em 1 6 0.0 0.0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=ROME&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 41.9 12.5 0
+path data.ROME.1h.0.1 cosmic_neutron_flux_rome inverse-square em 1 6 0.0 0.0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=SOPO&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth -90 0 0
+path data.SOPO.1h.0.1 cosmic_neutron_flux_southpole inverse-square em 1 6 0.0 0.0
+
+url https://www.nmdb.eu/nest/draw_graph.php?wget=1&stations[]=SOPO&tabchoice=1h&output=ascii&startdate_1={today}T00:00:00&enddate_1={today}T23:59:59
+ttl 60
+format text
+on earth -90 0 0
+rows .
+field 0 datetime_utc inverse-square em 1 6 0.0 0.0
+field 1 sopo_count_rate_cph inverse-square em 1 6 0.0 0.0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=THUL&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 76.53 -68.74 0
+path data.THUL.1h.0.1 cosmic_neutron_flux_thule inverse-square em 1 6 0.0 0.0
+
+url https://services.swpc.noaa.gov/json/goes/primary/electron-1-day.json
+ttl 60
+on earth 0 0 0
+map .
+field 0 timestamp_utc inverse-square em 1 6 0.0 0.0
+field 1 electron_2mev_flux inverse-square em 1 6 0.0 0.0
+field 2 electron_04mev_flux inverse-square em 1 6 0.0 0.0
+
+url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
+ttl 60
+on earth 0 0 0
+map .
+field 0 timestamp_utc inverse-square em 1 6 0.0 0.0
+field 1 flux_10mev_p_cm2s inverse-square em 1 6 0.0 0.0
+field 2 flux_50mev_p_cm2s inverse-square em 1 6 0.0 0.0
+field 3 flux_100mev_p_cm2s inverse-square em 1 6 0.0 0.0
+
+url https://services.swpc.noaa.gov/json/goes/primary/xrays-3-day.json
+ttl 60
+on earth 0 0 0
+map .
+field time_tag observation_time inverse-square em 1 6 0.0 0.0
+field flux_long_1_8A flux_1_8A_W_m2 inverse-square em 1 6 0.0 0.0
+field flux_short_0_5_4A flux_0_5_4A_W_m2 inverse-square em 1 6 0.0 0.0
+
+url https://services.swpc.noaa.gov/json/goes/primary/xrays-1-day.json
+ttl 60
+on earth 0 0 0
+map .
+field 0 timestamp_utc inverse-square em 1 6 0.0 0.0
+field 1 flux_short_wm2 inverse-square em 1 6 0.0 0.0
+field 2 flux_long_wm2 inverse-square em 1 6 0.0 0.0
+
+url https://services.swpc.noaa.gov/products/alerts.json
+ttl 60
+on earth 0 0 0
+map .
+field time_tag alert_time_utc inverse-square em 1 6 0.0 0.0
+field message alert_message inverse-square em 1 6 0.0 0.0
+field issue_utc issue_time_utc inverse-square em 1 6 0.0 0.0
+
+url https://services.swpc.noaa.gov/products/solar-wind/mag-7-day.json
+ttl 60
+on earth 0 0 0
+map .
+field 0 datetime_utc inverse-square em 1 6 0.0 0.0
+field 1 bx_gsm_nT inverse-square em 1 6 0.0 0.0
+field 2 by_gsm_nT inverse-square em 1 6 0.0 0.0
+field 3 bz_gsm_nT inverse-square em 1 6 0.0 0.0
+field 4 bt_total_nT inverse-square em 1 6 0.0 0.0
+field 5 lat_gsm inverse-square em 1 6 0.0 0.0
+field 6 lon_gsm inverse-square em 1 6 0.0 0.0
+
+url https://services.swpc.noaa.gov/products/solar-wind/plasma-7-day.json
+ttl 60
+on earth 0 0 0
+map .
+field 0 datetime_utc inverse-square em 1 6 0.0 0.0
+field 1 density_proton_cm3 inverse-square em 1 6 0.0 0.0
+field 2 speed_km_s inverse-square em 1 6 0.0 0.0
+field 3 temperature_K inverse-square em 1 6 0.0 0.0
+
+url https://services.swpc.noaa.gov/json/goes/primary/xrays-7-day.json
+ttl 60
+on earth 0 0 0
+map .
+field 0 datetime_utc inverse-square em 1 6 0.0 0.0
+field 1 flux_short_0_5_4A inverse-square em 1 6 0.0 0.0
+field 2 flux_long_1_8A inverse-square em 1 6 0.0 0.0
+
+url https://beacon.nist.gov/beacon/2.0/pulse/last
+ttl 60
+on earth 39.9916 -105.2748 0
+path pulse.pulseIndex quantum_entropy_nist_beacon inverse-square em 1 6 0.0 0.0
+
+url https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-1-day.json
+ttl 60
+on earth 0 -75.2 35786023
+lastobj energy ">=2 MeV" flux radiation_electron_flux_2mev
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=ALMT&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 43.18 76.93 0
+path data.ALMT.1h.0.1 cosmic_neutron_flux_almaty inverse-square em 1 6 0.0 0.0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=AUST&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 30.27 -97.74 0
+path data.AUST.1h.0.1 cosmic_neutron_flux_austin inverse-square em 1 6 0.0 0.0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=BOUL&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 40.01 -105.27 0
+path data.BOUL.1h.0.1 cosmic_neutron_flux_boulder inverse-square em 1 6 0.0 0.0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=CTWN&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth -33.93 18.47 0
+path data.CTWN.1h.0.1 cosmic_neutron_flux_cape_town inverse-square em 1 6 0.0 0.0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=DOMC&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth -75.1 123.36 0
+path data.DOMC.1h.0.1 cosmic_neutron_flux_dome_c inverse-square em 1 6 0.0 0.0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=ERMN&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth -6.89 107.59 0
+path data.ERMN.1h.0.1 cosmic_neutron_flux_ermawan inverse-square em 1 6 0.0 0.0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=FSMT&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 60.02 -111.93 0
+path data.FSMT.1h.0.1 cosmic_neutron_flux_fort_smith inverse-square em 1 6 0.0 0.0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=GOOS&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 53.32 -60.42 0
+path data.GOOS.1h.0.1 cosmic_neutron_flux_goose_bay inverse-square em 1 6 0.0 0.0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=HALF&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 44.63 -63.59 0
+path data.HALF.1h.0.1 cosmic_neutron_flux_halifax inverse-square em 1 6 0.0 0.0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=INVK&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 68.36 -133.72 0
+path data.INVK.1h.0.1 cosmic_neutron_flux_inuvik inverse-square em 1 6 0.0 0.0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=KERG&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth -49.35 70.25 0
+path data.KERG.1h.0.1 cosmic_neutron_flux_kerguelen inverse-square em 1 6 0.0 0.0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=KIEL&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 54.34 10.12 0
+path data.KIEL.1h.0.1 cosmic_neutron_flux_kiel inverse-square em 1 6 0.0 0.0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=MOSC&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 55.75 37.57 0
+path data.MOSC.1h.0.1 cosmic_neutron_flux_moscow inverse-square em 1 6 0.0 0.0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=NAIN&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 56.55 -61.67 0
+path data.NAIN.1h.0.1 cosmic_neutron_flux_nain inverse-square em 1 6 0.0 0.0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=NRLK&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 69.35 88.2 0
+path data.NRLK.1h.0.1 cosmic_neutron_flux_norilsk inverse-square em 1 6 0.0 0.0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=PWNK&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 54.99 -85.44 0
+path data.PWNK.1h.0.1 cosmic_neutron_flux_peawanuck inverse-square em 1 6 0.0 0.0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=REYK&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 64.14 -21.9 0
+path data.REYK.1h.0.1 cosmic_neutron_flux_reykjavik inverse-square em 1 6 0.0 0.0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=SANA&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth -62.09 -58.4 0
+path data.SANA.1h.0.1 cosmic_neutron_flux_san_antonio inverse-square em 1 6 0.0 0.0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=TBLS&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 41.72 44.76 0
+path data.TBLS.1h.0.1 cosmic_neutron_flux_tbilisi inverse-square em 1 6 0.0 0.0
+
+url http://www.nmdb.eu/nmdb/qtipart.php?station=ULNB&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 47.92 106.92 0
+path data.ULNB.1h.0.1 cosmic_neutron_flux_ulan_bator inverse-square em 1 6 0.0 0.0
+
+url https://services.swpc.noaa.gov/json/goes/primary/differential-protons-1-day.json
+ttl 60
+on earth 0 -75.2 35786023
+lastobj energy "40300-73400 keV" flux radiation_proton_flux_40mev
+lastobj energy "83700-98500 keV" flux radiation_proton_flux_80mev
+
+url https://service.scedc.caltech.edu/fdsnws/event/1/query?format=geojson&minmagnitude=1.5&limit=500&orderby=time&starttime={today}T00:00:00
+ttl 60
+on earth 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.mag magnitude gaussian-inverse-square seismic-body 1 6 0.0 0.0
+field properties.place locality gaussian-inverse-square seismic-body 1 6 0.0 0.0
+field properties.time event_time_ms gaussian-inverse-square seismic-body 1 6 0.0 0.0
+field properties.depth depth_km gaussian-inverse-square seismic-body 1 6 0.0 0.0
+field properties.magType mag_type gaussian-inverse-square seismic-body 1 6 0.0 0.0
+field properties.net reporting_network gaussian-inverse-square seismic-body 1 6 0.0 0.0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=1.5&limit=1000&orderby=time&starttime={today}T00:00:00
+ttl 60
+on earth 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.mag magnitude gaussian-inverse-square seismic-body 1 6 0.0 0.0
+field properties.place locality gaussian-inverse-square seismic-body 1 6 0.0 0.0
+field properties.time event_time_utc_ms gaussian-inverse-square seismic-body 1 6 0.0 0.0
+field properties.depth depth_km gaussian-inverse-square seismic-body 1 6 0.0 0.0
+field properties.type event_type gaussian-inverse-square seismic-body 1 6 0.0 0.0
+field properties.net reporting_network gaussian-inverse-square seismic-body 1 6 0.0 0.0
+field properties.status review_status gaussian-inverse-square seismic-body 1 6 0.0 0.0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=6&limit=50&orderby=time&eventtype=earthquake
+ttl 60
+on earth 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.mag event_magnitude gaussian-inverse-square seismic-body 1 6 0.0 0.0
+field properties.place location_description gaussian-inverse-square seismic-body 1 6 0.0 0.0
+field properties.time event_time_utc gaussian-inverse-square seismic-body 1 6 0.0 0.0
+field properties.depth depth_km gaussian-inverse-square seismic-body 1 6 0.0 0.0
+field properties.alert alert_level gaussian-inverse-square seismic-body 1 6 0.0 0.0
+field properties.tsunami tsunami_warning gaussian-inverse-square seismic-body 1 6 0.0 0.0
+field properties.sig significance_score gaussian-inverse-square seismic-body 1 6 0.0 0.0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=2.5&orderby=time
+ttl 60
+on earth 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.mag earthquake_magnitude gaussian-inverse-square acoustic 1 6 0.0 0.0
+field properties.place earthquake_place gaussian-inverse-square acoustic 1 6 0.0 0.0
+field properties.time earthquake_time_epoch gaussian-inverse-square acoustic 1 6 0.0 0.0
+field properties.magType magnitude_type gaussian-inverse-square acoustic 1 6 0.0 0.0
+field properties.type seismic_event_type gaussian-inverse-square acoustic 1 6 0.0 0.0
+field properties.dmin epicentral_distance gaussian-inverse-square acoustic 1 6 0.0 0.0
+field properties.sig seismic_significance gaussian-inverse-square acoustic 1 6 0.0 0.0
+field properties.tsunami tsunami_alert_flag gaussian-inverse-square acoustic 1 6 0.0 0.0
+field properties.status seismic_review_status gaussian-inverse-square acoustic 1 6 0.0 0.0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=2.0&limit=500&orderby=magnitude
+ttl 60
+on earth 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.mag magnitude gaussian-inverse-square seismic-body 1 6 0.0 0.0
+field properties.place place gaussian-inverse-square seismic-body 1 6 0.0 0.0
+field properties.time event_time_epoch_ms gaussian-inverse-square seismic-body 1 6 0.0 0.0
+field properties.magType magnitude_type gaussian-inverse-square seismic-body 1 6 0.0 0.0
+field properties.depth depth_km gaussian-inverse-square seismic-body 1 6 0.0 0.0
+
+url https://scweb.cwa.gov.tw/api/v1/earthquake/latest?limit=200
+ttl 120
+on earth 0 0
+map .
+lat lat
+lon lon
+field id event_id gaussian-inverse-square seismic-body 1 12 0.0 0.0
+field int mag_local gaussian-inverse-square seismic-body 1 12 0.0 0.0
+field depth depth_km gaussian-inverse-square seismic-body 1 12 0.0 0.0
+field loc epicenter_location gaussian-inverse-square seismic-body 1 12 0.0 0.0
+field time event_time_tw gaussian-inverse-square seismic-body 1 12 0.0 0.0
+field int max gaussian-inverse-square seismic-body 1 12 0.0 0.0
+
+url https://seismo.ethz.ch/fdsnws/event/1/query?format=geojson&minmagnitude=1.0&limit=200&orderby=time&starttime={today}T00:00:00
+ttl 120
+on earth 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.mag magnitude gaussian-inverse-square seismic-body 1 12 0.0 0.0
+field properties.place locality gaussian-inverse-square seismic-body 1 12 0.0 0.0
+field properties.time event_time gaussian-inverse-square seismic-body 1 12 0.0 0.0
+field properties.depth depth_km gaussian-inverse-square seismic-body 1 12 0.0 0.0
+field properties.source_id event_source gaussian-inverse-square seismic-body 1 12 0.0 0.0
+
+url https://earthquake.tmd.go.th/earthquake_json.php?limit=200
+ttl 120
+on earth 0 0
+map .
+lat lat
+lon lon
+field id event_id gaussian-inverse-square seismic-body 1 12 0.0 0.0
+field mag magnitude gaussian-inverse-square seismic-body 1 12 0.0 0.0
+field dep depth_km gaussian-inverse-square seismic-body 1 12 0.0 0.0
+field loc epicenter_location gaussian-inverse-square seismic-body 1 12 0.0 0.0
+field tm event_time gaussian-inverse-square seismic-body 1 12 0.0 0.0
+field reg region gaussian-inverse-square seismic-body 1 12 0.0 0.0
+
+url https://gcn.gsfc.nasa.gov/amon_icecube_gold_bronze_events.html
+ttl 300
+format text
+on earth 0 0 0
+rows .
+field 0 event_type inverse-square em 1 30 0.0 0.0
+field 1 event_id inverse-square em 1 30 0.0 0.0
+field 2 ra_deg inverse-square em 1 30 0.0 0.0
+field 3 dec_deg inverse-square em 1 30 0.0 0.0
+field 4 energy inverse-square em 1 30 0.0 0.0
+field 5 signalness inverse-square em 1 30 0.0 0.0
+
+url https://services.swpc.noaa.gov/products/geospace/glm_lightning_density.json
+ttl 300
+on earth 0 0
+map .
+lat lat
+lon lon
+field flash_density atmosphere_glm_flash_density_perdeg2 inverse-square em 1 30 0.0 0.0
+
+url https://aviationweather.gov/api/data/metar?ids=EDDF,EDDM,EGLL,KJFK,RJTT&format=json
+ttl 300
+on earth 0 0
+map .
+lat lat
+lon lon
+field temp atmosphere_metar_temp_c gaussian-inverse-square acoustic 1 30 0.0 0.0
+field dewp atmosphere_metar_dewpoint_c gaussian-inverse-square acoustic 1 30 0.0 0.0
+field altim atmosphere_metar_pressure_hpa gaussian-inverse-square acoustic 1 30 0.0 0.0
+field wspd atmosphere_metar_wind_speed_kt gaussian-inverse-square acoustic 1 30 0.0 0.0
+field wdir atmosphere_metar_wind_direction_deg gaussian-inverse-square acoustic 1 30 0.0 0.0
+
+url https://earthquakes.bgs.ac.uk/fdsnws/event/1/query?format=geojson&minmagnitude=1.0&limit=200&orderby=time&starttime={today}T00:00:00
+ttl 300
+on earth 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.mag magnitude gaussian-inverse-square seismic-body 1 30 0.0 0.0
+field properties.place locality gaussian-inverse-square seismic-body 1 30 0.0 0.0
+field properties.time event_time gaussian-inverse-square seismic-body 1 30 0.0 0.0
+field properties.depth depth_km gaussian-inverse-square seismic-body 1 30 0.0 0.0
+field properties.source_catalog reporting_network gaussian-inverse-square seismic-body 1 30 0.0 0.0
+
+url https://api.energy-charts.info/ren_share
+ttl 300
+on earth 50 10 0
+last data.1.data biosphere_renewable_share_pct inverse-square em 1 30 0.0 0.0
+
+url https://api.inaturalist.org/v1/observations?per_page=1
+ttl 300
+on earth 0 0 0
+field total_results biosphere_inaturalist_obs_count inverse-square em 1 30 0.0 0.0
+
+url https://api.carbonintensity.org.uk/intensity
+ttl 300
+on earth 54 -2 0
+path data.0.intensity.actual technosphere_grid_carbon_intensity_gco2_kwh inverse-square em 1 30 0.0 0.0
+
+url http://www.bom.gov.au/fwo/marine_warnings.json
+ttl 300
+on earth 0 0
+map .
+lat lat
+lon lon
+field 0 issue_time gaussian-inverse-square diffusion 1 30 0.0 0.0
+field 1 warning_type gaussian-inverse-square diffusion 1 30 0.0 0.0
+field 2 region gaussian-inverse-square diffusion 1 30 0.0 0.0
+field 3 severity gaussian-inverse-square diffusion 1 30 0.0 0.0
+
+url http://reg.bom.gov.au/fwo/IDN60901/IDN60901.95765.json
+ttl 300
+on earth 0 0
+map observations.data
+lat lat
+lon lon
+field local_date_time observation_time gaussian-inverse-square diffusion 1 30 0.0 0.0
+field air_temp temperature_c gaussian-inverse-square diffusion 1 30 0.0 0.0
+field rel_hum relative_humidity_pct gaussian-inverse-square diffusion 1 30 0.0 0.0
+field wind_spd_kmh wind_speed_kmh gaussian-inverse-square diffusion 1 30 0.0 0.0
+field gust_kmh gust_speed_kmh gaussian-inverse-square diffusion 1 30 0.0 0.0
+field rain_trace rain_mm gaussian-inverse-square diffusion 1 30 0.0 0.0
+
+url https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/AC_H0_MFI/variables/BGSEc,Magnitude/data/{today}T00:00:00.000Z/{today}T23:59:59.000Z?format=csv
+ttl 300
+format text
+on earth 0 0 0
+rows .
+field 0 epoch_utc inverse-square em 1 30 0.0 0.0
+field 1 bx_gse_nT inverse-square em 1 30 0.0 0.0
+field 2 by_gse_nT inverse-square em 1 30 0.0 0.0
+field 3 bz_gse_nT inverse-square em 1 30 0.0 0.0
+field 4 b_magnitude_nT inverse-square em 1 30 0.0 0.0
+
+url https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/GOES16_L2_MAG/variables/Hp,He,Hn,B_Total/data/{today}T00:00:00.000Z/{today}T23:59:59.000Z?format=csv
+ttl 300
+format text
+on earth 0 -75.2 0
+rows .
+field 0 epoch_utc inverse-square em 1 30 0.0 0.0
+field 1 Hp_nT inverse-square em 1 30 0.0 0.0
+field 2 He_nT inverse-square em 1 30 0.0 0.0
+field 3 Hn_nT inverse-square em 1 30 0.0 0.0
+field 4 B_total_nT inverse-square em 1 30 0.0 0.0
+
+url https://www.emsc-csem.org/service/rss/rss.php?typ=felt&limit=100
+ttl 300
+format text
+on earth 0 0
+rows .
+lat lat
+lon lon
+field title event_title gaussian-inverse-square seismic-body 1 30 0.0 0.0
+field description event_description gaussian-inverse-square seismic-body 1 30 0.0 0.0
+field pubDate publication_date gaussian-inverse-square seismic-body 1 30 0.0 0.0
+field georss:point location_point gaussian-inverse-square seismic-body 1 30 0.0 0.0
+field emsc:magnitude magnitude gaussian-inverse-square seismic-body 1 30 0.0 0.0
+field emsc:depth depth_km gaussian-inverse-square seismic-body 1 30 0.0 0.0
+
+url https://www.epa.gov/sites/default/files/radnet/radnet_current_data.json
+ttl 300
+on earth 0 0
+map stations
+lat latitude
+lon longitude
+field stationId station_id inverse-square em 1 30 0.0 0.0
+field stationName station_name inverse-square em 1 30 0.0 0.0
+field state state_code inverse-square em 1 30 0.0 0.0
+field currentGamma gamma_dose_uR_h inverse-square em 1 30 0.0 0.0
+field measurement_date measurement_time inverse-square em 1 30 0.0 0.0
+
+url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}
+ttl 300
+on earth 0 0
+map .
+lat decimalLatitude
+lon decimalLongitude
+field key occurrence_id gaussian-inverse-square diffusion 1 30 0.0 0.0
+field species species_name gaussian-inverse-square diffusion 1 30 0.0 0.0
+field kingdom kingdom_name gaussian-inverse-square diffusion 1 30 0.0 0.0
+field phylum phylum_name gaussian-inverse-square diffusion 1 30 0.0 0.0
+field class class_name gaussian-inverse-square diffusion 1 30 0.0 0.0
+field order order_name gaussian-inverse-square diffusion 1 30 0.0 0.0
+field family family_name gaussian-inverse-square diffusion 1 30 0.0 0.0
+field eventDate observation_date gaussian-inverse-square diffusion 1 30 0.0 0.0
+
+url https://gcn.nasa.gov/api/v0.1/circulars?subject=GRB+optical&limit=100&format=json
+ttl 300
+on earth 0 0 0
+map items
+field circularId circular_id inverse-square em 1 30 0.0 0.0
+field subject report_subject inverse-square em 1 30 0.0 0.0
+field createdOn report_time_utc inverse-square em 1 30 0.0 0.0
+field submitter reporting_team inverse-square em 1 30 0.0 0.0
+
+url https://gcn.nasa.gov/api/v0.1/circulars?subject=IceCube&limit=100&format=json
+ttl 300
+on earth 0 0 0
+map items
+field circularId circular_id inverse-square em 1 30 0.0 0.0
+field subject subject_line inverse-square em 1 30 0.0 0.0
+field createdOn report_time_utc inverse-square em 1 30 0.0 0.0
+field submitter submitter_name inverse-square em 1 30 0.0 0.0
+
+url https://api.geonet.org.nz/tsunami/observation
+ttl 300
+on earth 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.time event_time gaussian-inverse-square acoustic 1 30 0.0 0.0
+field properties.intensity intensity_class gaussian-inverse-square acoustic 1 30 0.0 0.0
+field properties.height wave_height_m gaussian-inverse-square acoustic 1 30 0.0 0.0
+field properties.stationID station_id gaussian-inverse-square acoustic 1 30 0.0 0.0
+
+url https://api.geonet.org.nz/volcano/alert/level
+ttl 300
+on earth 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.volcanoID volcano_id gaussian-inverse-square seismic-body 1 30 0.0 0.0
+field properties.volcanoTitle volcano_name gaussian-inverse-square seismic-body 1 30 0.0 0.0
+field properties.level alert_level gaussian-inverse-square seismic-body 1 30 0.0 0.0
+field properties.activity activity_description gaussian-inverse-square seismic-body 1 30 0.0 0.0
+field properties.hazards hazard_description gaussian-inverse-square seismic-body 1 30 0.0 0.0
+
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&orderby=magnitude&limit=100
+ttl 300
+on earth 0 0 0
+geojson mag 0.0 0 geosphere_earthquake_mag 30 0.0 0.0
+
+url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&minmag=5&limit=100
+ttl 300
+on earth 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+alt geometry.coordinates.2
+field properties.mag geosphere_emsc_sig_magnitude inverse-square em 1 30 0.0 0.0
+field properties.flynn_region geosphere_emsc_sig_place inverse-square em 1 30 0.0 0.0
+field properties.time geosphere_emsc_sig_time inverse-square em 1 30 0.0 0.0
+field properties.depth geosphere_emsc_sig_depth inverse-square em 1 30 0.0 0.0
+
+url https://api.weather.gov/alerts/active
+ttl 300
+on earth 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.event weather_event_type inverse-square em 1 30 0.0 0.0
+field properties.severity alert_severity inverse-square em 1 30 0.0 0.0
+field properties.headline alert_headline inverse-square em 1 30 0.0 0.0
+field properties.areaDesc affected_area inverse-square em 1 30 0.0 0.0
+
+url https://api.weather.gov/alerts/active?event=Tsunami%20Warning
+ttl 300
+on earth 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.event weather_event_type inverse-square gravity 1 30 0.0 0.0
+field properties.severity alert_severity inverse-square gravity 1 30 0.0 0.0
+field properties.headline alert_headline inverse-square gravity 1 30 0.0 0.0
+field properties.areaDesc affected_area inverse-square gravity 1 30 0.0 0.0
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=50049000&parameterCd=00060&siteStatus=all
+ttl 300
+on earth 38.949 -77.365 0
+path value.timeSeries.0.values.0.value.0.value hydrosphere_river_flow_cfs erfc seismic-surface 1 30 0.0 0.0
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&bBox={lon_min},{lat_min},{lon_max},{lat_max}&parameterCd=00060&siteStatus=active
+ttl 300
+on earth 0 0
+map value.timeSeries
+lat sourceInfo.geoLocation.geogLocation.latitude
+lon sourceInfo.geoLocation.geogLocation.longitude
+field values.0.value.0.value hydrosphere_river_flow_cfs erfc seismic-surface 1 30 0.0 0.0
+
+url https://services.swpc.noaa.gov/json/goes/primary/differential-protons-3-day.json
+ttl 300
+on earth 0 0
+map .
+lat satellite_lat
+lon satellite_lon
+field time_tag observation_time inverse-square em 1 30 0.0 0.0
+field satellite satellite_id inverse-square em 1 30 0.0 0.0
+field energy_channel energy_channel_mev inverse-square em 1 30 0.0 0.0
+field flux proton_flux_pfu inverse-square em 1 30 0.0 0.0
+
+url https://gracedb.ligo.org/api/superevents/?format=json&category=Production&ordering=-created&public=True&per_page=200
+ttl 300
+on earth 0 0 0
+map superevents
+field superevent_id event_id inverse-square gravity 1 30 0.0 0.0
+field t_0 gps_time inverse-square gravity 1 30 0.0 0.0
+field far false_alarm_rate_Hz inverse-square gravity 1 30 0.0 0.0
+field classification.BNS p_bns inverse-square gravity 1 30 0.0 0.0
+field classification.BBH p_bbh inverse-square gravity 1 30 0.0 0.0
+field classification.NSBH p_nsbh inverse-square gravity 1 30 0.0 0.0
+field classification.Terrestrial p_terrestrial inverse-square gravity 1 30 0.0 0.0
+field distance.mean distance_mean_Mpc inverse-square gravity 1 30 0.0 0.0
+field distance.std distance_std_Mpc inverse-square gravity 1 30 0.0 0.0
+field created created_utc inverse-square gravity 1 30 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/41001.txt
+ttl 300
+format csv
+on earth 34.7 -72.4 0
+lastrow WDIR hydrosphere_buoy_41001_wind_dir gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WSPD hydrosphere_buoy_41001_wind_speed gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WVHT hydrosphere_buoy_41001_wave_height gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow DPD hydrosphere_buoy_41001_dominant_period gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow PRES hydrosphere_buoy_41001_pressure gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WTMP hydrosphere_buoy_41001_water_temp gaussian-inverse-square acoustic 1 30 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/42001.txt
+ttl 300
+format csv
+on earth 25.9 -89.67 0
+lastrow WDIR hydrosphere_buoy_42001_wind_dir gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WSPD hydrosphere_buoy_42001_wind_speed gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WVHT hydrosphere_buoy_42001_wave_height gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow DPD hydrosphere_buoy_42001_dominant_period gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow PRES hydrosphere_buoy_42001_pressure gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WTMP hydrosphere_buoy_42001_water_temp gaussian-inverse-square acoustic 1 30 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/42002.txt
+ttl 300
+format csv
+on earth 25.16 -94.42 0
+lastrow WDIR hydrosphere_buoy_42002_wind_dir gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WSPD hydrosphere_buoy_42002_wind_speed gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WVHT hydrosphere_buoy_42002_wave_height gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow DPD hydrosphere_buoy_42002_dominant_period gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow PRES hydrosphere_buoy_42002_pressure gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WTMP hydrosphere_buoy_42002_water_temp gaussian-inverse-square acoustic 1 30 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/42003.txt
+ttl 300
+format csv
+on earth 26.06 -85.82 0
+lastrow WDIR hydrosphere_buoy_42003_wind_dir gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WSPD hydrosphere_buoy_42003_wind_speed gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WVHT hydrosphere_buoy_42003_wave_height gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow DPD hydrosphere_buoy_42003_dominant_period gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow PRES hydrosphere_buoy_42003_pressure gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WTMP hydrosphere_buoy_42003_water_temp gaussian-inverse-square acoustic 1 30 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/42019.txt
+ttl 300
+format csv
+on earth 27.91 -95.35 0
+lastrow WDIR hydrosphere_buoy_42019_wind_dir gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WSPD hydrosphere_buoy_42019_wind_speed gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WVHT hydrosphere_buoy_42019_wave_height gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow DPD hydrosphere_buoy_42019_dominant_period gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow PRES hydrosphere_buoy_42019_pressure gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WTMP hydrosphere_buoy_42019_water_temp gaussian-inverse-square acoustic 1 30 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/42020.txt
+ttl 300
+format csv
+on earth 27.21 -96.66 0
+lastrow WDIR hydrosphere_buoy_42020_wind_dir gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WSPD hydrosphere_buoy_42020_wind_speed gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WVHT hydrosphere_buoy_42020_wave_height gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow DPD hydrosphere_buoy_42020_dominant_period gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow PRES hydrosphere_buoy_42020_pressure gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WTMP hydrosphere_buoy_42020_water_temp gaussian-inverse-square acoustic 1 30 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/42036.txt
+ttl 300
+format csv
+on earth 28.5 -84.52 0
+lastrow WDIR hydrosphere_buoy_42036_wind_dir gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WSPD hydrosphere_buoy_42036_wind_speed gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WVHT hydrosphere_buoy_42036_wave_height gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow DPD hydrosphere_buoy_42036_dominant_period gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow PRES hydrosphere_buoy_42036_pressure gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WTMP hydrosphere_buoy_42036_water_temp gaussian-inverse-square acoustic 1 30 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/42040.txt
+ttl 300
+format csv
+on earth 29.22 -88.23 0
+lastrow WDIR hydrosphere_buoy_42040_wind_dir gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WSPD hydrosphere_buoy_42040_wind_speed gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WVHT hydrosphere_buoy_42040_wave_height gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow DPD hydrosphere_buoy_42040_dominant_period gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow PRES hydrosphere_buoy_42040_pressure gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WTMP hydrosphere_buoy_42040_water_temp gaussian-inverse-square acoustic 1 30 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/42055.txt
+ttl 300
+format csv
+on earth 22.14 -91.39 0
+lastrow WDIR hydrosphere_buoy_42055_wind_dir gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WSPD hydrosphere_buoy_42055_wind_speed gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WVHT hydrosphere_buoy_42055_wave_height gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow DPD hydrosphere_buoy_42055_dominant_period gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow PRES hydrosphere_buoy_42055_pressure gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WTMP hydrosphere_buoy_42055_water_temp gaussian-inverse-square acoustic 1 30 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/44004.txt
+ttl 300
+format csv
+on earth 38.48 -70.68 0
+lastrow WDIR hydrosphere_buoy_44004_wind_dir gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WSPD hydrosphere_buoy_44004_wind_speed gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WVHT hydrosphere_buoy_44004_wave_height gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow DPD hydrosphere_buoy_44004_dominant_period gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow PRES hydrosphere_buoy_44004_pressure gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WTMP hydrosphere_buoy_44004_water_temp gaussian-inverse-square acoustic 1 30 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/44009.txt
+ttl 300
+format csv
+on earth 38.46 -74.7 0
+lastrow WDIR hydrosphere_buoy_44009_wind_dir gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WSPD hydrosphere_buoy_44009_wind_speed gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WVHT hydrosphere_buoy_44009_wave_height gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow DPD hydrosphere_buoy_44009_dominant_period gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow PRES hydrosphere_buoy_44009_pressure gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WTMP hydrosphere_buoy_44009_water_temp gaussian-inverse-square acoustic 1 30 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/44013.txt
+ttl 300
+format csv
+on earth 42.35 -70.69 0
+lastrow WDIR hydrosphere_buoy_44013_wind_dir gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WSPD hydrosphere_buoy_44013_wind_speed gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WVHT hydrosphere_buoy_44013_wave_height gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow DPD hydrosphere_buoy_44013_dominant_period gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow PRES hydrosphere_buoy_44013_pressure gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WTMP hydrosphere_buoy_44013_water_temp gaussian-inverse-square acoustic 1 30 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/44014.txt
+ttl 300
+format csv
+on earth 36.61 -74.84 0
+lastrow WDIR hydrosphere_buoy_44014_wind_dir gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WSPD hydrosphere_buoy_44014_wind_speed gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WVHT hydrosphere_buoy_44014_wave_height gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow DPD hydrosphere_buoy_44014_dominant_period gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow PRES hydrosphere_buoy_44014_pressure gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WTMP hydrosphere_buoy_44014_water_temp gaussian-inverse-square acoustic 1 30 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/44025.txt
+ttl 300
+format csv
+on earth 40.25 -73.17 0
+lastrow WDIR hydrosphere_buoy_44025_wind_dir gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WSPD hydrosphere_buoy_44025_wind_speed gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WVHT hydrosphere_buoy_44025_wave_height gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow DPD hydrosphere_buoy_44025_dominant_period gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow PRES hydrosphere_buoy_44025_pressure gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WTMP hydrosphere_buoy_44025_water_temp gaussian-inverse-square acoustic 1 30 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/46001.txt
+ttl 300
+format csv
+on earth 56.3 -148.17 0
+lastrow WDIR hydrosphere_buoy_46001_wind_dir gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WSPD hydrosphere_buoy_46001_wind_speed gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WVHT hydrosphere_buoy_46001_wave_height gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow DPD hydrosphere_buoy_46001_dominant_period gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow PRES hydrosphere_buoy_46001_pressure gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WTMP hydrosphere_buoy_46001_water_temp gaussian-inverse-square acoustic 1 30 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/46002.txt
+ttl 300
+format csv
+on earth 42.67 -124.82 0
+lastrow WDIR hydrosphere_buoy_46002_wind_dir gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WSPD hydrosphere_buoy_46002_wind_speed gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WVHT hydrosphere_buoy_46002_wave_height gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow DPD hydrosphere_buoy_46002_dominant_period gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow PRES hydrosphere_buoy_46002_pressure gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WTMP hydrosphere_buoy_46002_water_temp gaussian-inverse-square acoustic 1 30 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/46005.txt
+ttl 300
+format csv
+on earth 46.06 -124.96 0
+lastrow WDIR hydrosphere_buoy_46005_wind_dir gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WSPD hydrosphere_buoy_46005_wind_speed gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WVHT hydrosphere_buoy_46005_wave_height gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow DPD hydrosphere_buoy_46005_dominant_period gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow PRES hydrosphere_buoy_46005_pressure gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WTMP hydrosphere_buoy_46005_water_temp gaussian-inverse-square acoustic 1 30 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/46006.txt
+ttl 300
+format csv
+on earth 55.06 -137.07 0
+lastrow WDIR hydrosphere_buoy_46006_wind_dir gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WSPD hydrosphere_buoy_46006_wind_speed gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WVHT hydrosphere_buoy_46006_wave_height gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow DPD hydrosphere_buoy_46006_dominant_period gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow PRES hydrosphere_buoy_46006_pressure gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WTMP hydrosphere_buoy_46006_water_temp gaussian-inverse-square acoustic 1 30 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/46012.txt
+ttl 300
+format csv
+on earth 37.36 -122.88 0
+lastrow WDIR hydrosphere_buoy_46012_wind_dir gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WSPD hydrosphere_buoy_46012_wind_speed gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WVHT hydrosphere_buoy_46012_wave_height gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow DPD hydrosphere_buoy_46012_dominant_period gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow PRES hydrosphere_buoy_46012_pressure gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WTMP hydrosphere_buoy_46012_water_temp gaussian-inverse-square acoustic 1 30 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/46013.txt
+ttl 300
+format csv
+on earth 38.24 -123.3 0
+lastrow WDIR hydrosphere_buoy_46013_wind_dir gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WSPD hydrosphere_buoy_46013_wind_speed gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WVHT hydrosphere_buoy_46013_wave_height gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow DPD hydrosphere_buoy_46013_dominant_period gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow PRES hydrosphere_buoy_46013_pressure gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WTMP hydrosphere_buoy_46013_water_temp gaussian-inverse-square acoustic 1 30 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/46022.txt
+ttl 300
+format csv
+on earth 40.74 -124.54 0
+lastrow WDIR hydrosphere_buoy_46022_wind_dir gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WSPD hydrosphere_buoy_46022_wind_speed gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WVHT hydrosphere_buoy_46022_wave_height gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow DPD hydrosphere_buoy_46022_dominant_period gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow PRES hydrosphere_buoy_46022_pressure gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WTMP hydrosphere_buoy_46022_water_temp gaussian-inverse-square acoustic 1 30 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/46025.txt
+ttl 300
+format csv
+on earth 33.75 -119.2 0
+lastrow WDIR hydrosphere_buoy_46025_wind_dir gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WSPD hydrosphere_buoy_46025_wind_speed gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WVHT hydrosphere_buoy_46025_wave_height gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow DPD hydrosphere_buoy_46025_dominant_period gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow PRES hydrosphere_buoy_46025_pressure gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WTMP hydrosphere_buoy_46025_water_temp gaussian-inverse-square acoustic 1 30 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/46026.txt
+ttl 300
+format csv
+on earth 37.75 -122.84 0
+lastrow WDIR hydrosphere_buoy_46026_wind_dir gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WSPD hydrosphere_buoy_46026_wind_speed gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WVHT hydrosphere_buoy_46026_wave_height gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow DPD hydrosphere_buoy_46026_dominant_period gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow PRES hydrosphere_buoy_46026_pressure gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WTMP hydrosphere_buoy_46026_water_temp gaussian-inverse-square acoustic 1 30 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/46027.txt
+ttl 300
+format csv
+on earth 41.85 -124.38 0
+lastrow WDIR hydrosphere_buoy_46027_wind_dir gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WSPD hydrosphere_buoy_46027_wind_speed gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WVHT hydrosphere_buoy_46027_wave_height gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow DPD hydrosphere_buoy_46027_dominant_period gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow PRES hydrosphere_buoy_46027_pressure gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WTMP hydrosphere_buoy_46027_water_temp gaussian-inverse-square acoustic 1 30 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/46029.txt
+ttl 300
+format csv
+on earth 46.12 -124.51 0
+lastrow WDIR hydrosphere_buoy_46029_wind_dir gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WSPD hydrosphere_buoy_46029_wind_speed gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WVHT hydrosphere_buoy_46029_wave_height gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow DPD hydrosphere_buoy_46029_dominant_period gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow PRES hydrosphere_buoy_46029_pressure gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WTMP hydrosphere_buoy_46029_water_temp gaussian-inverse-square acoustic 1 30 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/46047.txt
+ttl 300
+format csv
+on earth 32.42 -119.53 0
+lastrow WDIR hydrosphere_buoy_46047_wind_dir gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WSPD hydrosphere_buoy_46047_wind_speed gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WVHT hydrosphere_buoy_46047_wave_height gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow DPD hydrosphere_buoy_46047_dominant_period gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow PRES hydrosphere_buoy_46047_pressure gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WTMP hydrosphere_buoy_46047_water_temp gaussian-inverse-square acoustic 1 30 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/46053.txt
+ttl 300
+format csv
+on earth 34.26 -119.86 0
+lastrow WDIR hydrosphere_buoy_46053_wind_dir gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WSPD hydrosphere_buoy_46053_wind_speed gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WVHT hydrosphere_buoy_46053_wave_height gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow DPD hydrosphere_buoy_46053_dominant_period gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow PRES hydrosphere_buoy_46053_pressure gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WTMP hydrosphere_buoy_46053_water_temp gaussian-inverse-square acoustic 1 30 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/46054.txt
+ttl 300
+format csv
+on earth 34.27 -120.68 0
+lastrow WDIR hydrosphere_buoy_46054_wind_dir gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WSPD hydrosphere_buoy_46054_wind_speed gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WVHT hydrosphere_buoy_46054_wave_height gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow DPD hydrosphere_buoy_46054_dominant_period gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow PRES hydrosphere_buoy_46054_pressure gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WTMP hydrosphere_buoy_46054_water_temp gaussian-inverse-square acoustic 1 30 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/46059.txt
+ttl 300
+format csv
+on earth 38.07 -124.03 0
+lastrow WDIR hydrosphere_buoy_46059_wind_dir gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WSPD hydrosphere_buoy_46059_wind_speed gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WVHT hydrosphere_buoy_46059_wave_height gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow DPD hydrosphere_buoy_46059_dominant_period gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow PRES hydrosphere_buoy_46059_pressure gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WTMP hydrosphere_buoy_46059_water_temp gaussian-inverse-square acoustic 1 30 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/46069.txt
+ttl 300
+format csv
+on earth 33.66 -120.2 0
+lastrow WDIR hydrosphere_buoy_46069_wind_dir gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WSPD hydrosphere_buoy_46069_wind_speed gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WVHT hydrosphere_buoy_46069_wave_height gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow DPD hydrosphere_buoy_46069_dominant_period gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow PRES hydrosphere_buoy_46069_pressure gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WTMP hydrosphere_buoy_46069_water_temp gaussian-inverse-square acoustic 1 30 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/46086.txt
+ttl 300
+format csv
+on earth 32.49 -118.02 0
+lastrow WDIR hydrosphere_buoy_46086_wind_dir gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WSPD hydrosphere_buoy_46086_wind_speed gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WVHT hydrosphere_buoy_46086_wave_height gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow DPD hydrosphere_buoy_46086_dominant_period gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow PRES hydrosphere_buoy_46086_pressure gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WTMP hydrosphere_buoy_46086_water_temp gaussian-inverse-square acoustic 1 30 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/51000.txt
+ttl 300
+format csv
+on earth 23.52 -153.82 0
+lastrow WDIR hydrosphere_buoy_51000_wind_dir gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WSPD hydrosphere_buoy_51000_wind_speed gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WVHT hydrosphere_buoy_51000_wave_height gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow DPD hydrosphere_buoy_51000_dominant_period gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow PRES hydrosphere_buoy_51000_pressure gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WTMP hydrosphere_buoy_51000_water_temp gaussian-inverse-square acoustic 1 30 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/51001.txt
+ttl 300
+format csv
+on earth 24.44 -162 0
+lastrow WDIR hydrosphere_buoy_51001_wind_dir gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WSPD hydrosphere_buoy_51001_wind_speed gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WVHT hydrosphere_buoy_51001_wave_height gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow DPD hydrosphere_buoy_51001_dominant_period gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow PRES hydrosphere_buoy_51001_pressure gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WTMP hydrosphere_buoy_51001_water_temp gaussian-inverse-square acoustic 1 30 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/51002.txt
+ttl 300
+format csv
+on earth 17.14 -157.8 0
+lastrow WDIR hydrosphere_buoy_51002_wind_dir gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WSPD hydrosphere_buoy_51002_wind_speed gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WVHT hydrosphere_buoy_51002_wave_height gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow DPD hydrosphere_buoy_51002_dominant_period gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow PRES hydrosphere_buoy_51002_pressure gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WTMP hydrosphere_buoy_51002_water_temp gaussian-inverse-square acoustic 1 30 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/51003.txt
+ttl 300
+format csv
+on earth 19.23 -160.75 0
+lastrow WDIR hydrosphere_buoy_51003_wind_dir gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WSPD hydrosphere_buoy_51003_wind_speed gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WVHT hydrosphere_buoy_51003_wave_height gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow DPD hydrosphere_buoy_51003_dominant_period gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow PRES hydrosphere_buoy_51003_pressure gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WTMP hydrosphere_buoy_51003_water_temp gaussian-inverse-square acoustic 1 30 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/51004.txt
+ttl 300
+format csv
+on earth 17.56 -152.39 0
+lastrow WDIR hydrosphere_buoy_51004_wind_dir gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WSPD hydrosphere_buoy_51004_wind_speed gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WVHT hydrosphere_buoy_51004_wave_height gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow DPD hydrosphere_buoy_51004_dominant_period gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow PRES hydrosphere_buoy_51004_pressure gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WTMP hydrosphere_buoy_51004_water_temp gaussian-inverse-square acoustic 1 30 0.0 0.0
+
+url https://www.ndbc.noaa.gov/data/realtime2/51005.txt
+ttl 300
+format csv
+on earth 11.69 -170.03 0
+lastrow WDIR hydrosphere_buoy_51005_wind_dir gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WSPD hydrosphere_buoy_51005_wind_speed gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WVHT hydrosphere_buoy_51005_wave_height gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow DPD hydrosphere_buoy_51005_dominant_period gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow PRES hydrosphere_buoy_51005_pressure gaussian-inverse-square acoustic 1 30 0.0 0.0
+lastrow WTMP hydrosphere_buoy_51005_water_temp gaussian-inverse-square acoustic 1 30 0.0 0.0
+
+url https://www.pegelonline.wsv.de/webservices/rest-api/v2/stations.json?includeCurrentMeasurement=true
+ttl 300
+on earth 0 0
+map .
+lat Latitude
+lon Longitude
+field timeseries.0.currentMeasurement.value hydrosphere_water_level_cm inverse-square gravity 1 30 0.0 0.0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1611400&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 21.9544 -159.3561 0
+first data.v hydrosphere_tide_height_m_nawiliwili inverse-square gravity 1 30 0.0 0.0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1612340&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 21.3033 -157.8645 0
+first data.v hydrosphere_tide_height_m_honolulu inverse-square gravity 1 30 0.0 0.0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1615680&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 20.8949 -156.469 0
+first data.v hydrosphere_tide_height_m_kahului_kahului_harbor inverse-square gravity 1 30 0.0 0.0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1617433&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 20.0366 -155.8294 0
+first data.v hydrosphere_tide_height_m_kawaihae inverse-square gravity 1 30 0.0 0.0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1619910&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 28.2117 -177.36 0
+first data.v hydrosphere_tide_height_m_sand_island_midway_islands inverse-square gravity 1 30 0.0 0.0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1630000&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 13.4434 144.6564 0
+first data.v hydrosphere_tide_height_m_apra_harbor_guam inverse-square gravity 1 30 0.0 0.0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1770000&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth -14.28 -170.69 0
+first data.v hydrosphere_tide_height_m_pago_pago_american_samoa inverse-square gravity 1 30 0.0 0.0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1820000&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 8.7317 167.7361 0
+first data.v hydrosphere_tide_height_m_kwajalein_marshall_islands inverse-square gravity 1 30 0.0 0.0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1890000&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 19.2906 166.6175 0
+first data.v hydrosphere_tide_height_m_wake_island_pacific_ocean inverse-square gravity 1 30 0.0 0.0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=2695535&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 32.3702 -64.6957 0
+first data.v hydrosphere_tide_height_m_bermuda_biological_station inverse-square gravity 1 30 0.0 0.0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8311030&product=water_level&datum=LWD&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 44.7028 -75.4944 0
+first data.v hydrosphere_tide_height_m_ogdensburg inverse-square gravity 1 30 0.0 0.0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8410140&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 44.9046 -66.9829 0
+first data.v hydrosphere_tide_height_m_eastport inverse-square gravity 1 30 0.0 0.0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8413320&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 44.3922 -68.2043 0
+first data.v hydrosphere_tide_height_m_bar_harbor inverse-square gravity 1 30 0.0 0.0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8418150&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 43.6581 -70.2442 0
+first data.v hydrosphere_tide_height_m_portland inverse-square gravity 1 30 0.0 0.0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8443970&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 42.3539 -71.0503 0
+first data.v hydrosphere_tide_height_m_boston inverse-square gravity 1 30 0.0 0.0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8447435&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 41.6885 -69.9511 0
+first data.v hydrosphere_tide_height_m_chatham inverse-square gravity 1 30 0.0 0.0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8461490&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 41.3717 -72.0956 0
+first data.v hydrosphere_tide_height_m_new_london inverse-square gravity 1 30 0.0 0.0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8516945&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 40.8103 -73.7649 0
+first data.v hydrosphere_tide_height_m_kings_point inverse-square gravity 1 30 0.0 0.0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8518962&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 42.0139 -73.9392 0
+first data.v hydrosphere_tide_height_m_turkey_point_hudson_river_nerr inverse-square gravity 1 30 0.0 0.0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8534720&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 39.3567 -74.418 0
+first data.v hydrosphere_tide_height_m_atlantic_city inverse-square gravity 1 30 0.0 0.0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8551762&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 39.5822 -75.589 0
+first data.v hydrosphere_tide_height_m_delaware_city inverse-square gravity 1 30 0.0 0.0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8570283&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 38.3283 -75.0917 0
+first data.v hydrosphere_tide_height_m_ocean_city_inlet inverse-square gravity 1 30 0.0 0.0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8575512&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 38.9839 -76.48 0
+first data.v hydrosphere_tide_height_m_annapolis inverse-square gravity 1 30 0.0 0.0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8632200&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 37.1652 -75.9884 0
+first data.v hydrosphere_tide_height_m_kiptopeke inverse-square gravity 1 30 0.0 0.0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8635750&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 37.9961 -76.4644 0
+first data.v hydrosphere_tide_height_m_lewisetta inverse-square gravity 1 30 0.0 0.0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8651370&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 36.1833 -75.7467 0
+first data.v hydrosphere_tide_height_m_duck inverse-square gravity 1 30 0.0 0.0
+

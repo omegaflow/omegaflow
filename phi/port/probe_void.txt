@@ -1,719 +1,2000 @@
-# declined: data-present (non-JSON body: HTML/XML/text)
-url https://vires.services/hapi/data?id=SW_FAST_EFIA_LP_1B&time.min=2026-08-13T12:00:00Z&time.max=2026-08-13T12:59:59Z
-ttl 86400
-at earth
+# declined: data-present (JSON has content but declared keys absent)
+url https://qrng.anu.edu.au/API/jsonI.php?length=1&type=uint8
+ttl 60
+on earth -35.2809 149.13 0.0
+# length = 1.0
+# uncertain field length — force/unit undetermined, review
+# data.0 = 191.0
+# uncertain field data.0 — force/unit undetermined, review
 
 # declined: fetch returned void
-url https://www.wis-tns.org/api/get/object
-ttl 3600
-at sun
+url https://api.blitzortung.org/compressed/current_positions?lat={lat}&lon={lon}&range=500
+ttl 60
+on earth 0.0 0.0 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://query1.finance.yahoo.com/v8/finance/chart/AFK?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://query1.finance.yahoo.com/v8/finance/chart/EWZ?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://query1.finance.yahoo.com/v8/finance/chart/FXI?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://query1.finance.yahoo.com/v8/finance/chart/BDRY?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://query1.finance.yahoo.com/v8/finance/chart/EEM?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://query1.finance.yahoo.com/v8/finance/chart/VGK?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://query1.finance.yahoo.com/v8/finance/chart/FM?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://query1.finance.yahoo.com/v8/finance/chart/EWG?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://query1.finance.yahoo.com/v8/finance/chart/GC%3DF?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://query1.finance.yahoo.com/v8/finance/chart/INDA?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://query1.finance.yahoo.com/v8/finance/chart/EWJ?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://query1.finance.yahoo.com/v8/finance/chart/ILF?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://query1.finance.yahoo.com/v8/finance/chart/EWW?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://query1.finance.yahoo.com/v8/finance/chart/KSA?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://query1.finance.yahoo.com/v8/finance/chart/CL%3DF?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://query1.finance.yahoo.com/v8/finance/chart/XLC?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://query1.finance.yahoo.com/v8/finance/chart/XLY?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://query1.finance.yahoo.com/v8/finance/chart/XLP?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://query1.finance.yahoo.com/v8/finance/chart/XLE?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://query1.finance.yahoo.com/v8/finance/chart/XLF?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://query1.finance.yahoo.com/v8/finance/chart/XLV?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://query1.finance.yahoo.com/v8/finance/chart/XLI?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://query1.finance.yahoo.com/v8/finance/chart/XLB?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://query1.finance.yahoo.com/v8/finance/chart/XLRE?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://query1.finance.yahoo.com/v8/finance/chart/XLK?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://query1.finance.yahoo.com/v8/finance/chart/XLU?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://query1.finance.yahoo.com/v8/finance/chart/SOXX?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://query1.finance.yahoo.com/v8/finance/chart/EZA?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://query1.finance.yahoo.com/v8/finance/chart/ASEA?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://query1.finance.yahoo.com/v8/finance/chart/IYT?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://query1.finance.yahoo.com/v8/finance/chart/%5ETNX?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://query1.finance.yahoo.com/v8/finance/chart/SPY?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://query1.finance.yahoo.com/v8/finance/chart/%5EVIX?interval=1d&range=1d
+ttl 60
+on earth 41.8781 -87.6298 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://query1.finance.yahoo.com/v8/finance/chart/ACWI?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://query1.finance.yahoo.com/v8/finance/chart/URTH?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0.0
+# fetch returned void
+
+# declined: empty-response (JSON parsed but all containers empty)
+url https://www.inex.ie/ixp/grapher/ixp?id=1&type=json
+ttl 60
+on earth 53.3 -6.2 0.0
+# statistics.averagein = 824761940533.6766
+# uncertain field statistics.averagein — force/unit undetermined, review
+# statistics.totalin = 9.88221509528046e16
+# uncertain field statistics.totalin — force/unit undetermined, review
+# statistics.averageout = 824543174952.2725
+# uncertain field statistics.averageout — force/unit undetermined, review
+# statistics.totalout = 9.879593867960634e16
+# uncertain field statistics.totalout — force/unit undetermined, review
+# statistics.maxin = 1193388478264.0
+# uncertain field statistics.maxin — force/unit undetermined, review
+# statistics.curin = 858074897120.0
+# uncertain field statistics.curin — force/unit undetermined, review
+# statistics.curout = 857380575312.0
+# uncertain field statistics.curout — force/unit undetermined, review
+# statistics.maxout = 1192627383680.0
+# uncertain field statistics.maxout — force/unit undetermined, review
+
+# declined: data-present (JSON has content but declared keys absent)
+url https://api.irail.be/liveboard/?station=Brussels&format=json
+ttl 60
+on earth 50.8 4.3 0.0
+# stationinfo.locationY = 50.848552 (str)
+# uncertain field stationinfo.locationY — force/unit undetermined, review
+# stationinfo.locationX = 4.321042 (str)
+# uncertain field stationinfo.locationX — force/unit undetermined, review
+# version = 1.4 (str)
+# uncertain field version — force/unit undetermined, review
+# stationinfo.locationY = 50.942813 (str)
+# uncertain field stationinfo.locationY — force/unit undetermined, review
+# stationinfo.locationX = 4.039653 (str)
+# uncertain field stationinfo.locationX — force/unit undetermined, review
+# platforminfo.normal = 1.0 (str)
+# uncertain field platforminfo.normal — force/unit undetermined, review
+# isExtra = 0.0 (str)
+# uncertain field isExtra — force/unit undetermined, review
+# delay = 0.0 (str)
+# uncertain field delay — force/unit undetermined, review
+# vehicleinfo.locationY = 0.0 (str)
+# uncertain field vehicleinfo.locationY — force/unit undetermined, review
+# vehicleinfo.locationX = 0.0 (str)
+# uncertain field vehicleinfo.locationX — force/unit undetermined, review
+# vehicleinfo.number = 3868.0 (str)
+# uncertain field vehicleinfo.number — force/unit undetermined, review
+# left = 0.0 (str)
+# uncertain field left — force/unit undetermined, review
+# canceled = 0.0 (str)
+# uncertain field canceled — force/unit undetermined, review
+# departures.number = 2.0 (str)
+# uncertain field departures.number — force/unit undetermined, review
+
+# declined: data-present (non-JSON body: HTML/XML/text)
+url https://api.irishrail.ie/realtime/realtime.asmx/getStationDataByCodeXML?StationCode=BROC
+ttl 60
+on earth 53.3 -6.2 0.0
+
+# declined: data-present (JSON has content but declared keys absent)
+url https://transport.opendata.ch/v1/stationboard?station=Bern&limit=10
+ttl 60
+on earth 46.9 7.4 0.0
+# station.coordinate.x = 46.948823
+# uncertain field station.coordinate.x — force/unit undetermined, review
+# station.coordinate.y = 7.439123
+# uncertain field station.coordinate.y — force/unit undetermined, review
+# number = 16.0 (str)
+# uncertain field number — force/unit undetermined, review
+# stop.delay = 1.0
+# uncertain field stop.delay — force/unit undetermined, review
+# stop.station.coordinate.y = 7.439123
+# uncertain field stop.station.coordinate.y — force/unit undetermined, review
+# stop.station.coordinate.x = 46.948823
+# uncertain field stop.station.coordinate.x — force/unit undetermined, review
+# passList.delay = 1.0
+# uncertain field passList.delay — force/unit undetermined, review
+
+# declined: data-present (JSON has content but declared keys absent)
+url https://transport.opendata.ch/v1/stationboard?station=Zurich&limit=10
+ttl 60
+on earth 47.3 8.5 0.0
+# stop.station.coordinate.x = 47.377847
+# uncertain field stop.station.coordinate.x — force/unit undetermined, review
+# stop.station.coordinate.y = 8.540502
+# uncertain field stop.station.coordinate.y — force/unit undetermined, review
+# number = 27.0 (str)
+# uncertain field number — force/unit undetermined, review
+# station.coordinate.y = 8.540502
+# uncertain field station.coordinate.y — force/unit undetermined, review
+# station.coordinate.x = 47.377847
+# uncertain field station.coordinate.x — force/unit undetermined, review
+
+# declined: data-present (container array has rows but extract yielded nothing)
+url https://www.wienerlinien.at/ogd_realtime/monitor?stopId=1234
+ttl 60
+on earth 48.2 16.3 0.0
+map data.monitors
+lon locationStop.geometry.coordinates.0 deg
+lat locationStop.geometry.coordinates.1 deg
+alt locationStop.geometry.coordinates.2 km
+# message.messageCode = 1.0
+# uncertain field message.messageCode — force/unit undetermined, review
+# locationStop.properties.municipalityId = 49000001.0
+# uncertain field locationStop.properties.municipalityId — force/unit undetermined, review
+# locationStop.properties.attributes.rbl = 1234.0
+# uncertain field locationStop.properties.attributes.rbl — force/unit undetermined, review
+# lines.departures.departure.vehicle.linienId = 435.0
+# uncertain field lines.departures.departure.vehicle.linienId — force/unit undetermined, review
+# lines.departures.departure.vehicle.richtungsId = 1.0 (str)
+# uncertain field lines.departures.departure.vehicle.richtungsId — force/unit undetermined, review
+# lines.departures.departure.departureTime.countdown = 4.0
+# uncertain field lines.departures.departure.departureTime.countdown — force/unit undetermined, review
+# lines.lineId = 435.0
+# uncertain field lines.lineId — force/unit undetermined, review
+# lines.richtungsId = 1.0 (str)
+# uncertain field lines.richtungsId — force/unit undetermined, review
+
+# declined: fetch returned void
+url https://query1.finance.yahoo.com/v8/finance/chart/AAPL?interval=1d&range=1d
+ttl 60
+on earth 40.7128 -74.006 0.0
+# fetch returned void
+
+# declined: data-present (non-JSON body: HTML/XML/text)
+url https://data.blitzortung.org/contributors/0/stations/0/signals/0/{year}/{month}/{day}/{hour}/{minute}.json
+ttl 60
+on earth 0.0 0.0 0.0
+
+# declined: data-present (JSON has content but declared keys absent)
+url https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json
+ttl 60
+on earth 0.0 0.0 0.0
+# precision by_gsm=1dp phi_gse=0dp bz_gse=2dp by_gse=1dp theta_gsm=1dp bx_gse=2dp theta_gse=0dp bx_gsm=2dp bz_gsm=2dp phi_gsm=0dp
+# by_gsm = -0.33
+# uncertain field by_gsm — force/unit undetermined, review
+# phi_gse = 161.84
+# uncertain field phi_gse — force/unit undetermined, review
+# max_telemetry_flag = 0.0
+# uncertain field max_telemetry_flag — force/unit undetermined, review
+# bz_gse = -3.35
+# uncertain field bz_gse — force/unit undetermined, review
+# by_gse = 0.88
+# uncertain field by_gse — force/unit undetermined, review
+# theta_gsm = -50.65
+# uncertain field theta_gsm — force/unit undetermined, review
+# overall_quality = 0.0
+# uncertain field overall_quality — force/unit undetermined, review
+# bt = 4.45
+field bt em nT 60
+# bx_gse = -2.8
+# uncertain field bx_gse — force/unit undetermined, review
+# theta_gse = -48.99
+# uncertain field theta_gse — force/unit undetermined, review
+# bx_gsm = -2.8
+# uncertain field bx_gsm — force/unit undetermined, review
+# bz_gsm = -3.46
+# uncertain field bz_gsm — force/unit undetermined, review
+# phi_gsm = 186.77
+# uncertain field phi_gsm — force/unit undetermined, review
+# max_data_flag = 0.0
+# uncertain field max_data_flag — force/unit undetermined, review
+
+# declined: data-present (JSON has content but declared keys absent)
+url https://services.swpc.noaa.gov/json/goes/primary/xray-flares-latest.json
+ttl 60
+on earth 0.0 0.0 0.0
+# current_int_xrlong = 0.002405480481684208
+field current_int_xrlong electric A 60
+# current_ratio = 0.014944436404540816
+field current_ratio electric A 60
+# max_xrlong = 3.2037544315244304e-6
+# uncertain field max_xrlong — force/unit undetermined, review
+# max_ratio = 0.21267540668484705
+# uncertain field max_ratio — force/unit undetermined, review
+
+# declined: data-present (JSON has content but declared keys absent)
+url https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json
+ttl 60
+on earth 0.0 0.0 0.0
+# precision proton_temperature=0dp proton_density=2dp proton_speed=1dp
+# proton_temperature = 53644.0
+field proton_temperature thermal C 3600
+# max_telemetry_flag = 0.0
+# uncertain field max_telemetry_flag — force/unit undetermined, review
+# proton_density = 6.3
+field proton_density diffusion p/cm3 3600
+# max_processing_flag = 0.0
+# uncertain field max_processing_flag — force/unit undetermined, review
+# max_error_count_flag = 0.0
+# uncertain field max_error_count_flag — force/unit undetermined, review
+# proton_speed = 342.88
+# uncertain field proton_speed — force/unit undetermined, review
+# max_sample_count_flag = 0.0
+# max_data_flag = 0.0
+# uncertain field max_data_flag — force/unit undetermined, review
+# max_range_flag = 0.0
+# uncertain field max_range_flag — force/unit undetermined, review
+# overall_quality = 0.0
+# uncertain field overall_quality — force/unit undetermined, review
+# max_convergence_flag = 0.0
+# uncertain field max_convergence_flag — force/unit undetermined, review
+
+# declined: fetch returned void
+url https://api.geonet.org.nz/tsunami/dart
+ttl 60
+on earth 0.0 0.0 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://api.geonet.org.nz/quake?limit=200
+ttl 60
+on earth 0.0 0.0 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://api.geonet.org.nz/quake?format=geojson&minmag=3&limit=100
+ttl 60
+on earth 0.0 0.0 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://data.raspberryshake.org/api/v2/shake?limit=500
+ttl 60
+on earth 0.0 0.0 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://erddap.incois.gov.in/erddap/tabledap/INCOIS_TSUNAMI_BPR.csv?latitude,longitude,time,water_pressure,sea_floor_depth&time>={today}T00:00:00Z&orderBy(%22time%22)
+ttl 60
+on earth 0.0 0.0 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url http://irsc.ut.ac.ir/fdsnws/event/1/query?format=geojson&minmagnitude=2.0&limit=500&orderby=time&starttime={today}T00:00:00
+ttl 60
+on earth 0.0 0.0 0.0
 # fetch returned void
 
 # declined: data-present (JSON has content but declared keys absent)
-url https://api.worldbank.org/v2/country/US/indicator/NY.GDP.MKTP.CD?format=json
-ttl 86400
-on earth 0.0 0.0 0.0
-# pages = 2.0
-# uncertain field pages — force/unit undetermined, review
-# sourceid = 2.0 (str)
-# uncertain field sourceid — force/unit undetermined, review
-# page = 1.0
-# uncertain field page — force/unit undetermined, review
-# per_page = 50.0
-# uncertain field per_page — force/unit undetermined, review
+url https://services.swpc.noaa.gov/json/goes/primary/magnetometers-1-day.json
+ttl 60
+on earth 0.0 -75.2 35786023.0
+# precision Hp=1dp Hn=2dp He=1dp
+# Hp = 113.28538513183594
+# uncertain field Hp — force/unit undetermined, review
+# Hn = 0.6550953388214111
+# uncertain field Hn — force/unit undetermined, review
+# He = 31.140710830688477
+# uncertain field He — force/unit undetermined, review
 
-# declined: data-present (JSON has content but declared keys absent)
-url https://b2find.eudat.eu/api/3/action/package_search?rows=1
-ttl 86400
-on earth 0.0 0.0 0.0
-# num_tags = 1.0
-# uncertain field num_tags — force/unit undetermined, review
-# tags.display_name = 150.0 (str)
-# uncertain field tags.display_name — force/unit undetermined, review
-# num_resources = 0.0
-# uncertain field num_resources — force/unit undetermined, review
+# declined: fetch returned void
+url http://www.nmdb.eu/nmdb/qtipart.php?station=MCMD&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth -77.85 166.67 0.0
+# fetch returned void
 
-# declined: data-present (keys exist but no rows extracted)
-url https://api.open-meteo.com/v1/forecast?latitude=29.5&longitude=-95.0&hourly=temperature_2m,wind_speed_10m
+# declined: fetch returned void
+url http://www.nmdb.eu/nmdb/qtipart.php?station=NEWK&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 39.68 -75.75 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url http://www.nmdb.eu/nmdb/qtipart.php?station=OULU&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 65.05 25.47 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://www.nmdb.eu/nest/draw_graph.php?wget=1&stations[]=OULU&tabchoice=1h&output=ascii&startdate_1={today}T00:00:00&enddate_1={today}T23:59:59
+ttl 60
+on earth 65.05 25.47 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url http://www.nmdb.eu/nmdb/qtipart.php?station=ROME&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 41.9 12.5 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url http://www.nmdb.eu/nmdb/qtipart.php?station=SOPO&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth -90.0 0.0 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://www.nmdb.eu/nest/draw_graph.php?wget=1&stations[]=SOPO&tabchoice=1h&output=ascii&startdate_1={today}T00:00:00&enddate_1={today}T23:59:59
+ttl 60
+on earth -90.0 0.0 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url http://www.nmdb.eu/nmdb/qtipart.php?station=THUL&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 76.53 -68.74 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://services.swpc.noaa.gov/json/goes/primary/electron-1-day.json
 ttl 60
 on earth 0.0 0.0 0.0
+# fetch returned void
+
+# declined: data-present (JSON has content but declared keys absent)
+url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
+ttl 60
+on earth 0.0 0.0 0.0
+# precision flux=0dp
+# flux = 2.494865894317627
+field flux em W/m2 3600
+
+# declined: data-present (JSON has content but declared keys absent)
+url https://services.swpc.noaa.gov/json/goes/primary/xrays-3-day.json
+ttl 60
+on earth 0.0 0.0 0.0
+# precision observed_flux=7dp flux=7dp electron_correction=9dp
+# observed_flux = 9.134370593244512e-9
+field observed_flux em W/m2 3600
+# flux = 9.999999717180685e-10
+field flux em W/m2 3600
+# electron_correction = 8.32813817908118e-9
+# uncertain field electron_correction — force/unit undetermined, review
+
+# declined: data-present (JSON has content but declared keys absent)
+url https://services.swpc.noaa.gov/json/goes/primary/xrays-1-day.json
+ttl 60
+on earth 0.0 0.0 0.0
+# precision flux=7dp observed_flux=7dp electron_correction=8dp
+# flux = 4.610656745285269e-9
+field flux em W/m2 3600
+# observed_flux = 1.371312929876467e-8
+field observed_flux em W/m2 3600
+# electron_correction = 9.102472553479402e-9
+# uncertain field electron_correction — force/unit undetermined, review
+
+# declined: data-present (JSON has content but declared keys absent)
+url https://services.swpc.noaa.gov/products/alerts.json
+ttl 60
+on earth 0.0 0.0 0.0
+
+# declined: fetch returned void
+url https://services.swpc.noaa.gov/products/solar-wind/mag-7-day.json
+ttl 60
+on earth 0.0 0.0 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://services.swpc.noaa.gov/products/solar-wind/plasma-7-day.json
+ttl 60
+on earth 0.0 0.0 0.0
+# fetch returned void
+
+# declined: data-present (JSON has content but declared keys absent)
+url https://services.swpc.noaa.gov/json/goes/primary/xrays-7-day.json
+ttl 60
+on earth 0.0 0.0 0.0
+# precision flux=7dp electron_correction=9dp observed_flux=7dp
+# flux = 9.999999717180685e-10
+field flux em W/m2 3600
+# electron_correction = 1.0464361599460403e-9
+# uncertain field electron_correction — force/unit undetermined, review
+# observed_flux = 9.999999717180685e-10
+field observed_flux em W/m2 3600
+
+# declined: data-present (JSON has content but declared keys absent)
+url https://beacon.nist.gov/beacon/2.0/pulse/last
+ttl 60
+on earth 39.9916 -105.2748 0.0
+# pulse.version = 2.0 (str)
+# uncertain field pulse.version — force/unit undetermined, review
+# pulse.period = 60000.0
+# uncertain field pulse.period — force/unit undetermined, review
+# pulse.external.statusCode = 0.0
+# uncertain field pulse.external.statusCode — force/unit undetermined, review
+# pulse.external.sourceId = 0.0 (str)
+# uncertain field pulse.external.sourceId — force/unit undetermined, review
+# pulse.external.value = 0.0 (str)
+# uncertain field pulse.external.value — force/unit undetermined, review
+# pulse.chainIndex = 2.0
+# uncertain field pulse.chainIndex — force/unit undetermined, review
+# pulse.pulseIndex = 1904249.0
+# uncertain field pulse.pulseIndex — force/unit undetermined, review
+# pulse.cipherSuite = 0.0
+# uncertain field pulse.cipherSuite — force/unit undetermined, review
+# pulse.statusCode = 0.0
+# uncertain field pulse.statusCode — force/unit undetermined, review
+
+# declined: data-present (JSON has content but declared keys absent)
+url https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-1-day.json
+ttl 60
+on earth 0.0 -75.2 35786023.0
+# precision flux=0dp
+# flux = 203.51905822753906
+field flux em W/m2 3600
+
+# declined: fetch returned void
+url http://www.nmdb.eu/nmdb/qtipart.php?station=ALMT&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 43.18 76.93 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url http://www.nmdb.eu/nmdb/qtipart.php?station=AUST&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 30.27 -97.74 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url http://www.nmdb.eu/nmdb/qtipart.php?station=BOUL&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 40.01 -105.27 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url http://www.nmdb.eu/nmdb/qtipart.php?station=CTWN&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth -33.93 18.47 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url http://www.nmdb.eu/nmdb/qtipart.php?station=DOMC&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth -75.1 123.36 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url http://www.nmdb.eu/nmdb/qtipart.php?station=ERMN&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth -6.89 107.59 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url http://www.nmdb.eu/nmdb/qtipart.php?station=FSMT&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 60.02 -111.93 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url http://www.nmdb.eu/nmdb/qtipart.php?station=GOOS&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 53.32 -60.42 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url http://www.nmdb.eu/nmdb/qtipart.php?station=HALF&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 44.63 -63.59 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url http://www.nmdb.eu/nmdb/qtipart.php?station=INVK&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 68.36 -133.72 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url http://www.nmdb.eu/nmdb/qtipart.php?station=KERG&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth -49.35 70.25 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url http://www.nmdb.eu/nmdb/qtipart.php?station=KIEL&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 54.34 10.12 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url http://www.nmdb.eu/nmdb/qtipart.php?station=MOSC&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 55.75 37.57 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url http://www.nmdb.eu/nmdb/qtipart.php?station=NAIN&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 56.55 -61.67 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url http://www.nmdb.eu/nmdb/qtipart.php?station=NRLK&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 69.35 88.2 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url http://www.nmdb.eu/nmdb/qtipart.php?station=PWNK&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 54.99 -85.44 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url http://www.nmdb.eu/nmdb/qtipart.php?station=REYK&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 64.14 -21.9 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url http://www.nmdb.eu/nmdb/qtipart.php?station=SANA&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth -62.09 -58.4 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url http://www.nmdb.eu/nmdb/qtipart.php?station=TBLS&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 41.72 44.76 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url http://www.nmdb.eu/nmdb/qtipart.php?station=ULNB&start={yesterday}&end={today}&format=json&bins=3600
+ttl 60
+on earth 47.92 106.92 0.0
+# fetch returned void
+
+# declined: data-present (JSON has content but declared keys absent)
+url https://services.swpc.noaa.gov/json/goes/primary/differential-protons-1-day.json
+ttl 60
+on earth 0.0 -75.2 35786023.0
+# precision flux=3dp
+# yaw_flip = 0.0
+# uncertain field yaw_flip — force/unit undetermined, review
+# flux = 0.001385740120895207
+field flux em W/m2 3600
+
+# declined: fetch returned void
+url https://service.scedc.caltech.edu/fdsnws/event/1/query?format=geojson&minmagnitude=1.5&limit=500&orderby=time&starttime={today}T00:00:00
+ttl 60
+on earth 0.0 0.0 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://scweb.cwa.gov.tw/api/v1/earthquake/latest?limit=200
+ttl 120
+on earth 0.0 0.0 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://seismo.ethz.ch/fdsnws/event/1/query?format=geojson&minmagnitude=1.0&limit=200&orderby=time&starttime={today}T00:00:00
+ttl 120
+on earth 0.0 0.0 0.0
+# fetch returned void
+
+# declined: empty-response (JSON parsed but all containers empty)
+url https://earthquake.tmd.go.th/earthquake_json.php?limit=200
+ttl 120
+on earth 0.0 0.0 0.0
+
+# declined: data-present (non-JSON body: HTML/XML/text)
+url https://gcn.gsfc.nasa.gov/amon_icecube_gold_bronze_events.html
+ttl 300
+on earth 0.0 0.0 0.0
+
+# declined: fetch returned void
+url https://services.swpc.noaa.gov/products/geospace/glm_lightning_density.json
+ttl 300
+on earth 0.0 0.0 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://earthquakes.bgs.ac.uk/fdsnws/event/1/query?format=geojson&minmagnitude=1.0&limit=200&orderby=time&starttime={today}T00:00:00
+ttl 300
+on earth 0.0 0.0 0.0
+# fetch returned void
+
+# declined: data-present (JSON has content but declared keys absent)
+url https://api.energy-charts.info/ren_share
+ttl 300
+on earth 50.0 10.0 0.0
+# xAxisValues.0 = 1786744800000.0
+# uncertain field xAxisValues.0 — force/unit undetermined, review
+# xAxisValues.1 = 1786745700000.0
+# uncertain field xAxisValues.1 — force/unit undetermined, review
+# xAxisValues.2 = 1786746600000.0
+# uncertain field xAxisValues.2 — force/unit undetermined, review
+# xAxisValues.3 = 1786747500000.0
+# uncertain field xAxisValues.3 — force/unit undetermined, review
+# xAxisValues.4 = 1786748400000.0
+# uncertain field xAxisValues.4 — force/unit undetermined, review
+# xAxisValues.5 = 1786749300000.0
+# uncertain field xAxisValues.5 — force/unit undetermined, review
+# xAxisValues.6 = 1786750200000.0
+# uncertain field xAxisValues.6 — force/unit undetermined, review
+# xAxisValues.7 = 1786751100000.0
+# uncertain field xAxisValues.7 — force/unit undetermined, review
+# xAxisValues.8 = 1786752000000.0
+# uncertain field xAxisValues.8 — force/unit undetermined, review
+# xAxisValues.9 = 1786752900000.0
+# uncertain field xAxisValues.9 — force/unit undetermined, review
+# xAxisValues.10 = 1786753800000.0
+# uncertain field xAxisValues.10 — force/unit undetermined, review
+# xAxisValues.11 = 1786754700000.0
+# uncertain field xAxisValues.11 — force/unit undetermined, review
+# xAxisValues.12 = 1786755600000.0
+# uncertain field xAxisValues.12 — force/unit undetermined, review
+# xAxisValues.13 = 1786756500000.0
+# uncertain field xAxisValues.13 — force/unit undetermined, review
+# xAxisValues.14 = 1786757400000.0
+# uncertain field xAxisValues.14 — force/unit undetermined, review
+# xAxisValues.15 = 1786758300000.0
+# uncertain field xAxisValues.15 — force/unit undetermined, review
+# xAxisValues.16 = 1786759200000.0
+# uncertain field xAxisValues.16 — force/unit undetermined, review
+# xAxisValues.17 = 1786760100000.0
+# uncertain field xAxisValues.17 — force/unit undetermined, review
+# xAxisValues.18 = 1786761000000.0
+# uncertain field xAxisValues.18 — force/unit undetermined, review
+# xAxisValues.19 = 1786761900000.0
+# uncertain field xAxisValues.19 — force/unit undetermined, review
+# xAxisValues.20 = 1786762800000.0
+# uncertain field xAxisValues.20 — force/unit undetermined, review
+# xAxisValues.21 = 1786763700000.0
+# uncertain field xAxisValues.21 — force/unit undetermined, review
+# xAxisValues.22 = 1786764600000.0
+# uncertain field xAxisValues.22 — force/unit undetermined, review
+# xAxisValues.23 = 1786765500000.0
+# uncertain field xAxisValues.23 — force/unit undetermined, review
+# xAxisValues.24 = 1786766400000.0
+# uncertain field xAxisValues.24 — force/unit undetermined, review
+# xAxisValues.25 = 1786767300000.0
+# uncertain field xAxisValues.25 — force/unit undetermined, review
+# xAxisValues.26 = 1786768200000.0
+# uncertain field xAxisValues.26 — force/unit undetermined, review
+# xAxisValues.27 = 1786769100000.0
+# uncertain field xAxisValues.27 — force/unit undetermined, review
+# xAxisValues.28 = 1786770000000.0
+# uncertain field xAxisValues.28 — force/unit undetermined, review
+# xAxisValues.29 = 1786770900000.0
+# uncertain field xAxisValues.29 — force/unit undetermined, review
+# xAxisValues.30 = 1786771800000.0
+# uncertain field xAxisValues.30 — force/unit undetermined, review
+# xAxisValues.31 = 1786772700000.0
+# uncertain field xAxisValues.31 — force/unit undetermined, review
+# xAxisValues.32 = 1786773600000.0
+# uncertain field xAxisValues.32 — force/unit undetermined, review
+# xAxisValues.33 = 1786774500000.0
+# uncertain field xAxisValues.33 — force/unit undetermined, review
+# xAxisValues.34 = 1786775400000.0
+# uncertain field xAxisValues.34 — force/unit undetermined, review
+# xAxisValues.35 = 1786776300000.0
+# uncertain field xAxisValues.35 — force/unit undetermined, review
+# xAxisValues.36 = 1786777200000.0
+# uncertain field xAxisValues.36 — force/unit undetermined, review
+# xAxisValues.37 = 1786778100000.0
+# uncertain field xAxisValues.37 — force/unit undetermined, review
+# xAxisValues.38 = 1786779000000.0
+# uncertain field xAxisValues.38 — force/unit undetermined, review
+# xAxisValues.39 = 1786779900000.0
+# uncertain field xAxisValues.39 — force/unit undetermined, review
+# xAxisValues.40 = 1786780800000.0
+# uncertain field xAxisValues.40 — force/unit undetermined, review
+# xAxisValues.41 = 1786781700000.0
+# uncertain field xAxisValues.41 — force/unit undetermined, review
+# xAxisValues.42 = 1786782600000.0
+# uncertain field xAxisValues.42 — force/unit undetermined, review
+# xAxisValues.43 = 1786783500000.0
+# uncertain field xAxisValues.43 — force/unit undetermined, review
+# xAxisValues.44 = 1786784400000.0
+# uncertain field xAxisValues.44 — force/unit undetermined, review
+# xAxisValues.45 = 1786785300000.0
+# uncertain field xAxisValues.45 — force/unit undetermined, review
+# xAxisValues.46 = 1786786200000.0
+# uncertain field xAxisValues.46 — force/unit undetermined, review
+# xAxisValues.47 = 1786787100000.0
+# uncertain field xAxisValues.47 — force/unit undetermined, review
+# xAxisValues.48 = 1786788000000.0
+# uncertain field xAxisValues.48 — force/unit undetermined, review
+# xAxisValues.49 = 1786788900000.0
+# uncertain field xAxisValues.49 — force/unit undetermined, review
+# xAxisValues.50 = 1786789800000.0
+# uncertain field xAxisValues.50 — force/unit undetermined, review
+# xAxisValues.51 = 1786790700000.0
+# uncertain field xAxisValues.51 — force/unit undetermined, review
+# xAxisValues.52 = 1786791600000.0
+# uncertain field xAxisValues.52 — force/unit undetermined, review
+# xAxisValues.53 = 1786792500000.0
+# uncertain field xAxisValues.53 — force/unit undetermined, review
+# xAxisValues.54 = 1786793400000.0
+# uncertain field xAxisValues.54 — force/unit undetermined, review
+# xAxisValues.55 = 1786794300000.0
+# uncertain field xAxisValues.55 — force/unit undetermined, review
+# xAxisValues.56 = 1786795200000.0
+# uncertain field xAxisValues.56 — force/unit undetermined, review
+# xAxisValues.57 = 1786796100000.0
+# uncertain field xAxisValues.57 — force/unit undetermined, review
+# xAxisValues.58 = 1786797000000.0
+# uncertain field xAxisValues.58 — force/unit undetermined, review
+# xAxisValues.59 = 1786797900000.0
+# uncertain field xAxisValues.59 — force/unit undetermined, review
+# xAxisValues.60 = 1786798800000.0
+# uncertain field xAxisValues.60 — force/unit undetermined, review
+# xAxisValues.61 = 1786799700000.0
+# uncertain field xAxisValues.61 — force/unit undetermined, review
+# xAxisValues.62 = 1786800600000.0
+# uncertain field xAxisValues.62 — force/unit undetermined, review
+# xAxisValues.63 = 1786801500000.0
+# uncertain field xAxisValues.63 — force/unit undetermined, review
+# xAxisValues.64 = 1786802400000.0
+# uncertain field xAxisValues.64 — force/unit undetermined, review
+# xAxisValues.65 = 1786803300000.0
+# uncertain field xAxisValues.65 — force/unit undetermined, review
+# xAxisValues.66 = 1786804200000.0
+# uncertain field xAxisValues.66 — force/unit undetermined, review
+# xAxisValues.67 = 1786805100000.0
+# uncertain field xAxisValues.67 — force/unit undetermined, review
+# xAxisValues.68 = 1786806000000.0
+# uncertain field xAxisValues.68 — force/unit undetermined, review
+# xAxisValues.69 = 1786806900000.0
+# uncertain field xAxisValues.69 — force/unit undetermined, review
+# xAxisValues.70 = 1786807800000.0
+# uncertain field xAxisValues.70 — force/unit undetermined, review
+# xAxisValues.71 = 1786808700000.0
+# uncertain field xAxisValues.71 — force/unit undetermined, review
+# xAxisValues.72 = 1786809600000.0
+# uncertain field xAxisValues.72 — force/unit undetermined, review
+# xAxisValues.73 = 1786810500000.0
+# uncertain field xAxisValues.73 — force/unit undetermined, review
+# xAxisValues.74 = 1786811400000.0
+# uncertain field xAxisValues.74 — force/unit undetermined, review
+# xAxisValues.75 = 1786812300000.0
+# uncertain field xAxisValues.75 — force/unit undetermined, review
+# xAxisValues.76 = 1786813200000.0
+# uncertain field xAxisValues.76 — force/unit undetermined, review
+# xAxisValues.77 = 1786814100000.0
+# uncertain field xAxisValues.77 — force/unit undetermined, review
+# xAxisValues.78 = 1786815000000.0
+# uncertain field xAxisValues.78 — force/unit undetermined, review
+# xAxisValues.79 = 1786815900000.0
+# uncertain field xAxisValues.79 — force/unit undetermined, review
+# xAxisValues.80 = 1786816800000.0
+# uncertain field xAxisValues.80 — force/unit undetermined, review
+# xAxisValues.81 = 1786817700000.0
+# uncertain field xAxisValues.81 — force/unit undetermined, review
+# xAxisValues.82 = 1786818600000.0
+# uncertain field xAxisValues.82 — force/unit undetermined, review
+# xAxisValues.83 = 1786819500000.0
+# uncertain field xAxisValues.83 — force/unit undetermined, review
+# xAxisValues.84 = 1786820400000.0
+# uncertain field xAxisValues.84 — force/unit undetermined, review
+# xAxisValues.85 = 1786821300000.0
+# uncertain field xAxisValues.85 — force/unit undetermined, review
+# xAxisValues.86 = 1786822200000.0
+# uncertain field xAxisValues.86 — force/unit undetermined, review
+# xAxisValues.87 = 1786823100000.0
+# uncertain field xAxisValues.87 — force/unit undetermined, review
+# xAxisValues.88 = 1786824000000.0
+# uncertain field xAxisValues.88 — force/unit undetermined, review
+# xAxisValues.89 = 1786824900000.0
+# uncertain field xAxisValues.89 — force/unit undetermined, review
+# xAxisValues.90 = 1786825800000.0
+# uncertain field xAxisValues.90 — force/unit undetermined, review
+# xAxisValues.91 = 1786826700000.0
+# uncertain field xAxisValues.91 — force/unit undetermined, review
+# xAxisValues.92 = 1786827600000.0
+# uncertain field xAxisValues.92 — force/unit undetermined, review
+# xAxisValues.93 = 1786828500000.0
+# uncertain field xAxisValues.93 — force/unit undetermined, review
+# xAxisValues.94 = 1786829400000.0
+# uncertain field xAxisValues.94 — force/unit undetermined, review
+# xAxisValues.95 = 1786830300000.0
+# uncertain field xAxisValues.95 — force/unit undetermined, review
+# xAxisValues.96 = 1786831200000.0
+# uncertain field xAxisValues.96 — force/unit undetermined, review
+# xAxisValues.97 = 1786832100000.0
+# uncertain field xAxisValues.97 — force/unit undetermined, review
+# xAxisValues.98 = 1786833000000.0
+# uncertain field xAxisValues.98 — force/unit undetermined, review
+# xAxisValues.99 = 1786833900000.0
+# uncertain field xAxisValues.99 — force/unit undetermined, review
+# xAxisValues.100 = 1786834800000.0
+# uncertain field xAxisValues.100 — force/unit undetermined, review
+# xAxisValues.101 = 1786835700000.0
+# uncertain field xAxisValues.101 — force/unit undetermined, review
+# xAxisValues.102 = 1786836600000.0
+# uncertain field xAxisValues.102 — force/unit undetermined, review
+# xAxisValues.103 = 1786837500000.0
+# uncertain field xAxisValues.103 — force/unit undetermined, review
+# xAxisValues.104 = 1786838400000.0
+# uncertain field xAxisValues.104 — force/unit undetermined, review
+# xAxisValues.105 = 1786839300000.0
+# uncertain field xAxisValues.105 — force/unit undetermined, review
+# xAxisValues.106 = 1786840200000.0
+# uncertain field xAxisValues.106 — force/unit undetermined, review
+# xAxisValues.107 = 1786841100000.0
+# uncertain field xAxisValues.107 — force/unit undetermined, review
+# xAxisValues.108 = 1786842000000.0
+# uncertain field xAxisValues.108 — force/unit undetermined, review
+# xAxisValues.109 = 1786842900000.0
+# uncertain field xAxisValues.109 — force/unit undetermined, review
+# xAxisValues.110 = 1786843800000.0
+# uncertain field xAxisValues.110 — force/unit undetermined, review
+# xAxisValues.111 = 1786844700000.0
+# uncertain field xAxisValues.111 — force/unit undetermined, review
+# xAxisValues.112 = 1786845600000.0
+# uncertain field xAxisValues.112 — force/unit undetermined, review
+# xAxisValues.113 = 1786846500000.0
+# uncertain field xAxisValues.113 — force/unit undetermined, review
+# xAxisValues.114 = 1786847400000.0
+# uncertain field xAxisValues.114 — force/unit undetermined, review
+# xAxisValues.115 = 1786848300000.0
+# uncertain field xAxisValues.115 — force/unit undetermined, review
+# xAxisValues.116 = 1786849200000.0
+# uncertain field xAxisValues.116 — force/unit undetermined, review
+# xAxisValues.117 = 1786850100000.0
+# uncertain field xAxisValues.117 — force/unit undetermined, review
+# xAxisValues.118 = 1786851000000.0
+# uncertain field xAxisValues.118 — force/unit undetermined, review
+# xAxisValues.119 = 1786851900000.0
+# uncertain field xAxisValues.119 — force/unit undetermined, review
+# xAxisValues.120 = 1786852800000.0
+# uncertain field xAxisValues.120 — force/unit undetermined, review
+# xAxisValues.121 = 1786853700000.0
+# uncertain field xAxisValues.121 — force/unit undetermined, review
+# xAxisValues.122 = 1786854600000.0
+# uncertain field xAxisValues.122 — force/unit undetermined, review
+# xAxisValues.123 = 1786855500000.0
+# uncertain field xAxisValues.123 — force/unit undetermined, review
+# xAxisValues.124 = 1786856400000.0
+# uncertain field xAxisValues.124 — force/unit undetermined, review
+# xAxisValues.125 = 1786857300000.0
+# uncertain field xAxisValues.125 — force/unit undetermined, review
+# xAxisValues.126 = 1786858200000.0
+# uncertain field xAxisValues.126 — force/unit undetermined, review
+# xAxisValues.127 = 1786859100000.0
+# uncertain field xAxisValues.127 — force/unit undetermined, review
+# xAxisValues.128 = 1786860000000.0
+# uncertain field xAxisValues.128 — force/unit undetermined, review
+# xAxisValues.129 = 1786860900000.0
+# uncertain field xAxisValues.129 — force/unit undetermined, review
+# xAxisValues.130 = 1786861800000.0
+# uncertain field xAxisValues.130 — force/unit undetermined, review
+# xAxisValues.131 = 1786862700000.0
+# uncertain field xAxisValues.131 — force/unit undetermined, review
+# xAxisValues.132 = 1786863600000.0
+# uncertain field xAxisValues.132 — force/unit undetermined, review
+# xAxisValues.133 = 1786864500000.0
+# uncertain field xAxisValues.133 — force/unit undetermined, review
+# xAxisValues.134 = 1786865400000.0
+# uncertain field xAxisValues.134 — force/unit undetermined, review
+# xAxisValues.135 = 1786866300000.0
+# uncertain field xAxisValues.135 — force/unit undetermined, review
+# xAxisValues.136 = 1786867200000.0
+# uncertain field xAxisValues.136 — force/unit undetermined, review
+# xAxisValues.137 = 1786868100000.0
+# uncertain field xAxisValues.137 — force/unit undetermined, review
+# xAxisValues.138 = 1786869000000.0
+# uncertain field xAxisValues.138 — force/unit undetermined, review
+# xAxisValues.139 = 1786869900000.0
+# uncertain field xAxisValues.139 — force/unit undetermined, review
+# xAxisValues.140 = 1786870800000.0
+# uncertain field xAxisValues.140 — force/unit undetermined, review
+# xAxisValues.141 = 1786871700000.0
+# uncertain field xAxisValues.141 — force/unit undetermined, review
+# xAxisValues.142 = 1786872600000.0
+# uncertain field xAxisValues.142 — force/unit undetermined, review
+# xAxisValues.143 = 1786873500000.0
+# uncertain field xAxisValues.143 — force/unit undetermined, review
+# xAxisValues.144 = 1786874400000.0
+# uncertain field xAxisValues.144 — force/unit undetermined, review
+# xAxisValues.145 = 1786875300000.0
+# uncertain field xAxisValues.145 — force/unit undetermined, review
+# xAxisValues.146 = 1786876200000.0
+# uncertain field xAxisValues.146 — force/unit undetermined, review
+# xAxisValues.147 = 1786877100000.0
+# uncertain field xAxisValues.147 — force/unit undetermined, review
+# xAxisValues.148 = 1786878000000.0
+# uncertain field xAxisValues.148 — force/unit undetermined, review
+# xAxisValues.149 = 1786878900000.0
+# uncertain field xAxisValues.149 — force/unit undetermined, review
+# xAxisValues.150 = 1786879800000.0
+# uncertain field xAxisValues.150 — force/unit undetermined, review
+# xAxisValues.151 = 1786880700000.0
+# uncertain field xAxisValues.151 — force/unit undetermined, review
+# xAxisValues.152 = 1786881600000.0
+# uncertain field xAxisValues.152 — force/unit undetermined, review
+# xAxisValues.153 = 1786882500000.0
+# uncertain field xAxisValues.153 — force/unit undetermined, review
+# xAxisValues.154 = 1786883400000.0
+# uncertain field xAxisValues.154 — force/unit undetermined, review
+# xAxisValues.155 = 1786884300000.0
+# uncertain field xAxisValues.155 — force/unit undetermined, review
+# xAxisValues.156 = 1786885200000.0
+# uncertain field xAxisValues.156 — force/unit undetermined, review
+# xAxisValues.157 = 1786886100000.0
+# uncertain field xAxisValues.157 — force/unit undetermined, review
+# xAxisValues.158 = 1786887000000.0
+# uncertain field xAxisValues.158 — force/unit undetermined, review
+# xAxisValues.159 = 1786887900000.0
+# uncertain field xAxisValues.159 — force/unit undetermined, review
+# xAxisValues.160 = 1786888800000.0
+# uncertain field xAxisValues.160 — force/unit undetermined, review
+# xAxisValues.161 = 1786889700000.0
+# uncertain field xAxisValues.161 — force/unit undetermined, review
+# xAxisValues.162 = 1786890600000.0
+# uncertain field xAxisValues.162 — force/unit undetermined, review
+# xAxisValues.163 = 1786891500000.0
+# uncertain field xAxisValues.163 — force/unit undetermined, review
+# xAxisValues.164 = 1786892400000.0
+# uncertain field xAxisValues.164 — force/unit undetermined, review
+# xAxisValues.165 = 1786893300000.0
+# uncertain field xAxisValues.165 — force/unit undetermined, review
+# xAxisValues.166 = 1786894200000.0
+# uncertain field xAxisValues.166 — force/unit undetermined, review
+# xAxisValues.167 = 1786895100000.0
+# uncertain field xAxisValues.167 — force/unit undetermined, review
+# xAxisValues.168 = 1786896000000.0
+# uncertain field xAxisValues.168 — force/unit undetermined, review
+# xAxisValues.169 = 1786896900000.0
+# uncertain field xAxisValues.169 — force/unit undetermined, review
+# xAxisValues.170 = 1786897800000.0
+# uncertain field xAxisValues.170 — force/unit undetermined, review
+# xAxisValues.171 = 1786898700000.0
+# uncertain field xAxisValues.171 — force/unit undetermined, review
+# xAxisValues.172 = 1786899600000.0
+# uncertain field xAxisValues.172 — force/unit undetermined, review
+# xAxisValues.173 = 1786900500000.0
+# uncertain field xAxisValues.173 — force/unit undetermined, review
+# xAxisValues.174 = 1786901400000.0
+# uncertain field xAxisValues.174 — force/unit undetermined, review
+# xAxisValues.175 = 1786902300000.0
+# uncertain field xAxisValues.175 — force/unit undetermined, review
+# xAxisValues.176 = 1786903200000.0
+# uncertain field xAxisValues.176 — force/unit undetermined, review
+# xAxisValues.177 = 1786904100000.0
+# uncertain field xAxisValues.177 — force/unit undetermined, review
+# xAxisValues.178 = 1786905000000.0
+# uncertain field xAxisValues.178 — force/unit undetermined, review
+# xAxisValues.179 = 1786905900000.0
+# uncertain field xAxisValues.179 — force/unit undetermined, review
+# xAxisValues.180 = 1786906800000.0
+# uncertain field xAxisValues.180 — force/unit undetermined, review
+# xAxisValues.181 = 1786907700000.0
+# uncertain field xAxisValues.181 — force/unit undetermined, review
+# xAxisValues.182 = 1786908600000.0
+# uncertain field xAxisValues.182 — force/unit undetermined, review
+# xAxisValues.183 = 1786909500000.0
+# uncertain field xAxisValues.183 — force/unit undetermined, review
+# xAxisValues.184 = 1786910400000.0
+# uncertain field xAxisValues.184 — force/unit undetermined, review
+# xAxisValues.185 = 1786911300000.0
+# uncertain field xAxisValues.185 — force/unit undetermined, review
+# xAxisValues.186 = 1786912200000.0
+# uncertain field xAxisValues.186 — force/unit undetermined, review
+# xAxisValues.187 = 1786913100000.0
+# uncertain field xAxisValues.187 — force/unit undetermined, review
+# xAxisValues.188 = 1786914000000.0
+# uncertain field xAxisValues.188 — force/unit undetermined, review
+# xAxisValues.189 = 1786914900000.0
+# uncertain field xAxisValues.189 — force/unit undetermined, review
+# xAxisValues.190 = 1786915800000.0
+# uncertain field xAxisValues.190 — force/unit undetermined, review
+# xAxisValues.191 = 1786916700000.0
+# uncertain field xAxisValues.191 — force/unit undetermined, review
+# data.0 = 43.6
+# uncertain field data.0 — force/unit undetermined, review
+# data.1 = 44.1
+# uncertain field data.1 — force/unit undetermined, review
+# data.2 = 43.9
+# uncertain field data.2 — force/unit undetermined, review
+# data.3 = 43.9
+# uncertain field data.3 — force/unit undetermined, review
+# data.4 = 44.4
+# uncertain field data.4 — force/unit undetermined, review
+# data.5 = 44.1
+# uncertain field data.5 — force/unit undetermined, review
+# data.6 = 43.7
+# uncertain field data.6 — force/unit undetermined, review
+# data.7 = 43.1
+# uncertain field data.7 — force/unit undetermined, review
+# data.8 = 42.9
+# uncertain field data.8 — force/unit undetermined, review
+# data.9 = 42.5
+# uncertain field data.9 — force/unit undetermined, review
+# data.10 = 42.2
+# uncertain field data.10 — force/unit undetermined, review
+# data.11 = 41.8
+# uncertain field data.11 — force/unit undetermined, review
+# data.12 = 40.6
+# uncertain field data.12 — force/unit undetermined, review
+# data.13 = 39.8
+# uncertain field data.13 — force/unit undetermined, review
+# data.14 = 38.8
+# uncertain field data.14 — force/unit undetermined, review
+# data.15 = 38.2
+# uncertain field data.15 — force/unit undetermined, review
+# data.16 = 38.2
+# uncertain field data.16 — force/unit undetermined, review
+# data.17 = 37.9
+# uncertain field data.17 — force/unit undetermined, review
+# data.18 = 37.2
+# uncertain field data.18 — force/unit undetermined, review
+# data.19 = 36.6
+# uncertain field data.19 — force/unit undetermined, review
+# data.20 = 36.2
+# uncertain field data.20 — force/unit undetermined, review
+# data.21 = 36.0
+# uncertain field data.21 — force/unit undetermined, review
+# data.22 = 35.5
+# uncertain field data.22 — force/unit undetermined, review
+# data.23 = 35.6
+# uncertain field data.23 — force/unit undetermined, review
+# data.24 = 37.0
+# uncertain field data.24 — force/unit undetermined, review
+# data.25 = 38.7
+# uncertain field data.25 — force/unit undetermined, review
+# data.26 = 39.4
+# uncertain field data.26 — force/unit undetermined, review
+# data.27 = 41.6
+# uncertain field data.27 — force/unit undetermined, review
+# data.28 = 45.5
+# uncertain field data.28 — force/unit undetermined, review
+# data.29 = 48.8
+# uncertain field data.29 — force/unit undetermined, review
+# data.30 = 52.0
+# uncertain field data.30 — force/unit undetermined, review
+# data.31 = 55.7
+# uncertain field data.31 — force/unit undetermined, review
+# data.32 = 63.0
+# uncertain field data.32 — force/unit undetermined, review
+# data.33 = 66.4
+# uncertain field data.33 — force/unit undetermined, review
+# data.34 = 70.5
+# uncertain field data.34 — force/unit undetermined, review
+# data.35 = 74.8
+# uncertain field data.35 — force/unit undetermined, review
+# data.36 = 77.0
+# uncertain field data.36 — force/unit undetermined, review
+# data.37 = 80.0
+# uncertain field data.37 — force/unit undetermined, review
+# data.38 = 84.6
+# uncertain field data.38 — force/unit undetermined, review
+# data.39 = 88.4
+# uncertain field data.39 — force/unit undetermined, review
+# data.40 = 93.1
+# uncertain field data.40 — force/unit undetermined, review
+# data.41 = 97.2
+# uncertain field data.41 — force/unit undetermined, review
+# data.42 = 100.5
+# uncertain field data.42 — force/unit undetermined, review
+# data.43 = 103.3
+# uncertain field data.43 — force/unit undetermined, review
+# data.44 = 103.2
+# uncertain field data.44 — force/unit undetermined, review
+# data.45 = 104.9
+# uncertain field data.45 — force/unit undetermined, review
+# data.46 = 108.3
+# uncertain field data.46 — force/unit undetermined, review
+# data.47 = 111.0
+# uncertain field data.47 — force/unit undetermined, review
+# data.48 = 114.0
+# uncertain field data.48 — force/unit undetermined, review
+# data.49 = 114.8
+# uncertain field data.49 — force/unit undetermined, review
+# data.50 = 116.4
+# uncertain field data.50 — force/unit undetermined, review
+# data.51 = 117.9
+# uncertain field data.51 — force/unit undetermined, review
+# data.52 = 118.7
+# uncertain field data.52 — force/unit undetermined, review
+# data.53 = 120.1
+# uncertain field data.53 — force/unit undetermined, review
+# data.54 = 121.2
+# uncertain field data.54 — force/unit undetermined, review
+# data.55 = 121.2
+# uncertain field data.55 — force/unit undetermined, review
+# data.56 = 117.8
+# uncertain field data.56 — force/unit undetermined, review
+# data.57 = 115.6
+# uncertain field data.57 — force/unit undetermined, review
+# data.58 = 114.3
+# uncertain field data.58 — force/unit undetermined, review
+# data.59 = 111.2
+# uncertain field data.59 — force/unit undetermined, review
+# data.60 = 108.3
+# uncertain field data.60 — force/unit undetermined, review
+# data.61 = 104.5
+# uncertain field data.61 — force/unit undetermined, review
+# data.62 = 100.7
+# uncertain field data.62 — force/unit undetermined, review
+# data.63 = 98.5
+# uncertain field data.63 — force/unit undetermined, review
+# data.64 = 95.3
+# uncertain field data.64 — force/unit undetermined, review
+# data.65 = 94.3
+# uncertain field data.65 — force/unit undetermined, review
+# data.66 = 88.6
+# uncertain field data.66 — force/unit undetermined, review
+# data.67 = 86.5
+# uncertain field data.67 — force/unit undetermined, review
+
+# declined: data-present (JSON has content but declared keys absent)
+url https://api.inaturalist.org/v1/observations?per_page=1
+ttl 300
+on earth 0.0 0.0 0.0
+# per_page = 1.0
+# uncertain field per_page — force/unit undetermined, review
+# total_results = 377464258.0
+# uncertain field total_results — force/unit undetermined, review
+# observed_on_details.week = 33.0
+# uncertain field observed_on_details.week — force/unit undetermined, review
+# observed_on_details.hour = 10.0
+# uncertain field observed_on_details.hour — force/unit undetermined, review
+# observed_on_details.month = 8.0
+# uncertain field observed_on_details.month — force/unit undetermined, review
+# observed_on_details.day = 15.0
+# uncertain field observed_on_details.day — force/unit undetermined, review
+# observed_on_details.year = 2026.0
+# uncertain field observed_on_details.year — force/unit undetermined, review
+# num_identification_agreements = 0.0
+# uncertain field num_identification_agreements — force/unit undetermined, review
+# oauth_application_id = 2.0
+# uncertain field oauth_application_id — force/unit undetermined, review
+# identifications_count = 0.0
+# uncertain field identifications_count — force/unit undetermined, review
+# cached_votes_total = 0.0
+# uncertain field cached_votes_total — force/unit undetermined, review
+# comments_count = 0.0
+# uncertain field comments_count — force/unit undetermined, review
+# created_at_details.day = 15.0
+# uncertain field created_at_details.day — force/unit undetermined, review
+# created_at_details.month = 8.0
+# uncertain field created_at_details.month — force/unit undetermined, review
+# created_at_details.year = 2026.0
+# uncertain field created_at_details.year — force/unit undetermined, review
+# created_at_details.hour = 12.0
+# uncertain field created_at_details.hour — force/unit undetermined, review
+# created_at_details.week = 33.0
+# uncertain field created_at_details.week — force/unit undetermined, review
+# num_identification_disagreements = 0.0
+# uncertain field num_identification_disagreements — force/unit undetermined, review
+# faves_count = 0.0
+# uncertain field faves_count — force/unit undetermined, review
+# user.activity_count = 128.0
+# uncertain field user.activity_count — force/unit undetermined, review
+# user.site_id = 1.0
+# uncertain field user.site_id — force/unit undetermined, review
+# user.observations_count = 128.0
+# uncertain field user.observations_count — force/unit undetermined, review
+# user.universal_search_rank = 128.0
+# uncertain field user.universal_search_rank — force/unit undetermined, review
+# user.identifications_count = 0.0
+# uncertain field user.identifications_count — force/unit undetermined, review
+# user.journal_posts_count = 0.0
+# uncertain field user.journal_posts_count — force/unit undetermined, review
+# user.species_count = 99.0
+# uncertain field user.species_count — force/unit undetermined, review
+# user.annotated_observations_count = 0.0
+# uncertain field user.annotated_observations_count — force/unit undetermined, review
+# site_id = 1.0
+# uncertain field site_id — force/unit undetermined, review
+# identification_disagreements_count = 0.0
+# uncertain field identification_disagreements_count — force/unit undetermined, review
+# page = 1.0
+# uncertain field page — force/unit undetermined, review
+
+# declined: data-present (JSON has content but declared keys absent)
+url https://api.carbonintensity.org.uk/intensity
+ttl 300
+on earth 54.0 -2.0 0.0
+# intensity.forecast = 109.0
+# uncertain field intensity.forecast — force/unit undetermined, review
+# intensity.actual = 112.0
+# uncertain field intensity.actual — force/unit undetermined, review
+
+# declined: fetch returned void
+url http://www.bom.gov.au/fwo/marine_warnings.json
+ttl 300
+on earth 0.0 0.0 0.0
+# fetch returned void
+
+# declined: data-present (container array has rows but extract yielded nothing)
+url http://reg.bom.gov.au/fwo/IDN60901/IDN60901.95765.json
+ttl 300
+on earth 0.0 0.0 0.0
+map observations.header
+lat observations.data.lat deg
+lon observations.data.lon deg
+# observations.data.sort_order = 0.0
+# observations.data.dewpt = 8.3
+field observations.data.dewpt thermal C 3600
+# observations.data.rel_hum = 96.0
+field observations.data.rel_hum diffusion % 86400
+# observations.data.rain_trace = 3.0 (str)
+field observations.data.rain_trace acoustic mm 60
+# observations.data.delta_t = 0.3
+# uncertain field observations.data.delta_t — force/unit undetermined, review
+# observations.data.gust_kmh = 0.0
+field observations.data.gust_kmh advective m/s 60
+# observations.data.air_temp = 8.9
+field observations.data.air_temp thermal C 3600
+# observations.data.apparent_t = 8.5
+# uncertain field observations.data.apparent_t — force/unit undetermined, review
+# observations.data.vis_km = 10.0 (str)
+field observations.data.vis_km em km 60
+# observations.data.gust_kt = 0.0
+field observations.data.gust_kt advective m/s 60
+# observations.data.wind_spd_kmh = 0.0
+field observations.data.wind_spd_kmh advective m/s 60
+# observations.data.wind_spd_kt = 0.0
+field observations.data.wind_spd_kt advective m/s 60
+
+# declined: fetch returned void
+url https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/AC_H0_MFI/variables/BGSEc,Magnitude/data/{today}T00:00:00.000Z/{today}T23:59:59.000Z?format=csv
+ttl 300
+on earth 0.0 0.0 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/GOES16_L2_MAG/variables/Hp,He,Hn,B_Total/data/{today}T00:00:00.000Z/{today}T23:59:59.000Z?format=csv
+ttl 300
+on earth 0.0 -75.2 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://www.emsc-csem.org/service/rss/rss.php?typ=felt&limit=100
+ttl 300
+on earth 0.0 0.0 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://www.epa.gov/sites/default/files/radnet/radnet_current_data.json
+ttl 300
+on earth 0.0 0.0 0.0
+# fetch returned void
+
+# declined: data-present (JSON has content but declared keys absent)
+url https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}
+ttl 300
+on earth 0.0 0.0 0.0
+# offset = 0.0
+# uncertain field offset — force/unit undetermined, review
+# limit = 300.0
+# uncertain field limit — force/unit undetermined, review
+# classifications.d7dddbf4-2cf0-4f39-9b2a-bb099caae36c.usage.key = 3189863.0 (str)
+# uncertain field classifications.d7dddbf4-2cf0-4f39-9b2a-bb099caae36c.usage.key — force/unit undetermined, review
+# classifications.d7dddbf4-2cf0-4f39-9b2a-bb099caae36c.acceptedUsage.key = 3189863.0 (str)
+# uncertain field classifications.d7dddbf4-2cf0-4f39-9b2a-bb099caae36c.acceptedUsage.key — force/unit undetermined, review
+# classifications.d7dddbf4-2cf0-4f39-9b2a-bb099caae36c.classification.key = 6.0 (str)
+# uncertain field classifications.d7dddbf4-2cf0-4f39-9b2a-bb099caae36c.classification.key — force/unit undetermined, review
+# kingdomKey = 6.0
+# uncertain field kingdomKey — force/unit undetermined, review
+# decimalLongitude = 24.566044
+# uncertain field decimalLongitude — force/unit undetermined, review
+# day = 1.0
+# uncertain field day — force/unit undetermined, review
+# individualCount = 4.0
+# uncertain field individualCount — force/unit undetermined, review
+# endDayOfYear = 213.0
+# uncertain field endDayOfYear — force/unit undetermined, review
+# orderKey = 933.0
+# key = 4906930859.0
+# uncertain field key — force/unit undetermined, review
+# year = 2026.0
+# uncertain field year — force/unit undetermined, review
+# gbifID = 4906930859.0 (str)
+# uncertain field gbifID — force/unit undetermined, review
+# month = 8.0
+# uncertain field month — force/unit undetermined, review
+# genusKey = 3189834.0
+# uncertain field genusKey — force/unit undetermined, review
+# phylumKey = 7707728.0
+# uncertain field phylumKey — force/unit undetermined, review
+# decimalLatitude = 60.059378
+# uncertain field decimalLatitude — force/unit undetermined, review
+# taxonKey = 3189863.0
+# uncertain field taxonKey — force/unit undetermined, review
+# organismQuantity = 4.0
+# uncertain field organismQuantity — force/unit undetermined, review
+# startDayOfYear = 213.0
+# uncertain field startDayOfYear — force/unit undetermined, review
+# http://unknown.org/crawl_attempt = 385.0 (str)
+field http://unknown.org/crawl_attempt thermal C 3600
+# speciesKey = 3189863.0
+# uncertain field speciesKey — force/unit undetermined, review
+# acceptedTaxonKey = 3189863.0
+# uncertain field acceptedTaxonKey — force/unit undetermined, review
+# familyKey = 6657.0
+# uncertain field familyKey — force/unit undetermined, review
+# classKey = 220.0
+# uncertain field classKey — force/unit undetermined, review
+# coordinateUncertaintyInMeters = 1.0
+# uncertain field coordinateUncertaintyInMeters — force/unit undetermined, review
+# crawlId = 385.0
+# uncertain field crawlId — force/unit undetermined, review
+
+# declined: fetch returned void
+url https://gcn.nasa.gov/api/v0.1/circulars?subject=GRB+optical&limit=100&format=json
+ttl 300
+on earth 0.0 0.0 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://gcn.nasa.gov/api/v0.1/circulars?subject=IceCube&limit=100&format=json
+ttl 300
+on earth 0.0 0.0 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://api.geonet.org.nz/tsunami/observation
+ttl 300
+on earth 0.0 0.0 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://api.geonet.org.nz/volcano/alert/level
+ttl 300
+on earth 0.0 0.0 0.0
+# fetch returned void
+
+# declined: data-present (container array has rows but extract yielded nothing)
+url https://api.weather.gov/alerts/active
+ttl 300
+on earth 0.0 0.0 0.0
+map features
+lon geometry.coordinates.0 deg
+lat geometry.coordinates.1 deg
+alt geometry.coordinates.2 km
+# properties.geocode.SAME.0 = 18045.0 (str)
+# uncertain field properties.geocode.SAME.0 — force/unit undetermined, review
+# properties.geocode.SAME.1 = 18165.0 (str)
+# uncertain field properties.geocode.SAME.1 — force/unit undetermined, review
+# properties.geocode.SAME.2 = 18171.0 (str)
+# uncertain field properties.geocode.SAME.2 — force/unit undetermined, review
+# @context.1.@version = 1.1 (str)
+# uncertain field @context.1.@version — force/unit undetermined, review
+
+# declined: empty-response (JSON parsed but all containers empty)
+url https://api.weather.gov/alerts/active?event=Tsunami%20Warning
+ttl 300
+on earth 0.0 0.0 0.0
+# @context.@version = 1.1 (str)
+# uncertain field @context.@version — force/unit undetermined, review
+
+# declined: data-present (container array has rows but extract yielded nothing)
+url https://waterservices.usgs.gov/nwis/iv/?format=json&sites=50049000&parameterCd=00060&siteStatus=all
+ttl 300
+on earth 38.949 -77.365 0.0
+map value.queryInfo.note
+lat value.timeSeries.sourceInfo.geoLocation.geogLocation.latitude deg
+lon value.timeSeries.sourceInfo.geoLocation.geogLocation.longitude deg
+# value.timeSeries.values.qualifier.qualifierID = 0.0
+# uncertain field value.timeSeries.values.qualifier.qualifierID — force/unit undetermined, review
+# value.timeSeries.values.method.methodID = 222220.0
+# uncertain field value.timeSeries.values.method.methodID — force/unit undetermined, review
+# value.timeSeries.values.value.value = 11.0 (str)
+# uncertain field value.timeSeries.values.value.value — force/unit undetermined, review
+# value.timeSeries.sourceInfo.siteCode.value = 50049000.0 (str)
+# uncertain field value.timeSeries.sourceInfo.siteCode.value — force/unit undetermined, review
+# value.timeSeries.variable.options.option.optionCode = 0.0 (str)
+# uncertain field value.timeSeries.variable.options.option.optionCode — force/unit undetermined, review
+# value.timeSeries.variable.oid = 45807197.0 (str)
+# uncertain field value.timeSeries.variable.oid — force/unit undetermined, review
+# value.timeSeries.variable.noDataValue = -999999.0
+# uncertain field value.timeSeries.variable.noDataValue — force/unit undetermined, review
+# value.timeSeries.variable.variableCode.value = 60.0 (str)
+# uncertain field value.timeSeries.variable.variableCode.value — force/unit undetermined, review
+# value.timeSeries.variable.variableCode.variableID = 45807197.0
+# uncertain field value.timeSeries.variable.variableCode.variableID — force/unit undetermined, review
+
+# declined: fetch returned void
+url https://waterservices.usgs.gov/nwis/iv/?format=json&bBox={lon_min},{lat_min},{lon_max},{lat_max}&parameterCd=00060&siteStatus=active
+ttl 300
+on earth 0.0 0.0 0.0
+# fetch returned void
+
+# declined: data-present (JSON has content but declared keys absent)
+url https://services.swpc.noaa.gov/json/goes/primary/differential-protons-3-day.json
+ttl 300
+on earth 0.0 0.0 0.0
+# precision flux=4dp
+# flux = 0.00029081094544380903
+field flux em W/m2 3600
+# yaw_flip = 0.0
+# uncertain field yaw_flip — force/unit undetermined, review
+
+# declined: data-present (JSON has content but declared keys absent)
+url https://gracedb.ligo.org/api/superevents/?format=json&category=Production&ordering=-created&public=True&per_page=200
+ttl 300
+on earth 0.0 0.0 0.0
+# numRows = 5988.0
+# uncertain field numRows — force/unit undetermined, review
+# t_0 = 1470844847.973722
+# uncertain field t_0 — force/unit undetermined, review
+# far = 9.110699364861297e-14
+# uncertain field far — force/unit undetermined, review
+# t_start = 1470844846.973722
+# uncertain field t_start — force/unit undetermined, review
+# t_end = 1470844848.973722
+# uncertain field t_end — force/unit undetermined, review
+# pipeline_preferred_events.gstlal.far = 9.110699364861297e-14
+# uncertain field pipeline_preferred_events.gstlal.far — force/unit undetermined, review
+# preferred_event_data.likelihood = 69.1133202018483
+# uncertain field preferred_event_data.likelihood — force/unit undetermined, review
+# preferred_event_data.reporting_latency = 182.841162
+# uncertain field preferred_event_data.reporting_latency — force/unit undetermined, review
+# preferred_event_data.nevents = 2.0
+# uncertain field preferred_event_data.nevents — force/unit undetermined, review
+# preferred_event_data.far = 9.110699364861297e-14
+# uncertain field preferred_event_data.far — force/unit undetermined, review
+
+# declined: fetch returned void
+url https://www.ndbc.noaa.gov/data/realtime2/42003.txt
+ttl 300
+on earth 26.06 -85.82 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://www.ndbc.noaa.gov/data/realtime2/42019.txt
+ttl 300
+on earth 27.91 -95.35 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://www.ndbc.noaa.gov/data/realtime2/42020.txt
+ttl 300
+on earth 27.21 -96.66 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://www.ndbc.noaa.gov/data/realtime2/42040.txt
+ttl 300
+on earth 29.22 -88.23 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://www.ndbc.noaa.gov/data/realtime2/44004.txt
+ttl 300
+on earth 38.48 -70.68 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://www.ndbc.noaa.gov/data/realtime2/51003.txt
+ttl 300
+on earth 19.23 -160.75 0.0
+# fetch returned void
+
+# declined: fetch returned void
+url https://www.ndbc.noaa.gov/data/realtime2/51005.txt
+ttl 300
+on earth 11.69 -170.03 0.0
+# fetch returned void
+
+# declined: data-present (container array has rows but extract yielded nothing)
+url https://www.pegelonline.wsv.de/webservices/rest-api/v2/stations.json?includeCurrentMeasurement=true
+ttl 300
+on earth 0.0 0.0 0.0
+# precision km=0dp number=0dp
 map .
 lat latitude deg
 lon longitude deg
-# utc_offset_seconds = 0.0
-# uncertain field utc_offset_seconds — force/unit undetermined, review
-# elevation = 4.0
-# uncertain field elevation — force/unit undetermined, review
-# hourly.wind_speed_10m.0 = 16.7
-# uncertain field hourly.wind_speed_10m.0 — force/unit undetermined, review
-# hourly.wind_speed_10m.1 = 13.2
-# uncertain field hourly.wind_speed_10m.1 — force/unit undetermined, review
-# hourly.wind_speed_10m.2 = 9.0
-# uncertain field hourly.wind_speed_10m.2 — force/unit undetermined, review
-# hourly.wind_speed_10m.3 = 8.2
-# uncertain field hourly.wind_speed_10m.3 — force/unit undetermined, review
-# hourly.wind_speed_10m.4 = 8.2
-# uncertain field hourly.wind_speed_10m.4 — force/unit undetermined, review
-# hourly.wind_speed_10m.5 = 8.2
-# uncertain field hourly.wind_speed_10m.5 — force/unit undetermined, review
-# hourly.wind_speed_10m.6 = 8.2
-# uncertain field hourly.wind_speed_10m.6 — force/unit undetermined, review
-# hourly.wind_speed_10m.7 = 7.6
-# uncertain field hourly.wind_speed_10m.7 — force/unit undetermined, review
-# hourly.wind_speed_10m.8 = 4.7
-# uncertain field hourly.wind_speed_10m.8 — force/unit undetermined, review
-# hourly.wind_speed_10m.9 = 4.3
-# uncertain field hourly.wind_speed_10m.9 — force/unit undetermined, review
-# hourly.wind_speed_10m.10 = 3.9
-# uncertain field hourly.wind_speed_10m.10 — force/unit undetermined, review
-# hourly.wind_speed_10m.11 = 7.0
-# uncertain field hourly.wind_speed_10m.11 — force/unit undetermined, review
-# hourly.wind_speed_10m.12 = 5.6
-# uncertain field hourly.wind_speed_10m.12 — force/unit undetermined, review
-# hourly.wind_speed_10m.13 = 2.9
-# uncertain field hourly.wind_speed_10m.13 — force/unit undetermined, review
-# hourly.wind_speed_10m.14 = 6.5
-# uncertain field hourly.wind_speed_10m.14 — force/unit undetermined, review
-# hourly.wind_speed_10m.15 = 9.2
-# uncertain field hourly.wind_speed_10m.15 — force/unit undetermined, review
-# hourly.wind_speed_10m.16 = 8.0
-# uncertain field hourly.wind_speed_10m.16 — force/unit undetermined, review
-# hourly.wind_speed_10m.17 = 10.9
-# uncertain field hourly.wind_speed_10m.17 — force/unit undetermined, review
-# hourly.wind_speed_10m.18 = 14.9
-# uncertain field hourly.wind_speed_10m.18 — force/unit undetermined, review
-# hourly.wind_speed_10m.19 = 16.8
-# uncertain field hourly.wind_speed_10m.19 — force/unit undetermined, review
-# hourly.wind_speed_10m.20 = 19.7
-# uncertain field hourly.wind_speed_10m.20 — force/unit undetermined, review
-# hourly.wind_speed_10m.21 = 20.2
-# uncertain field hourly.wind_speed_10m.21 — force/unit undetermined, review
-# hourly.wind_speed_10m.22 = 20.1
-# uncertain field hourly.wind_speed_10m.22 — force/unit undetermined, review
-# hourly.wind_speed_10m.23 = 20.0
-# uncertain field hourly.wind_speed_10m.23 — force/unit undetermined, review
-# hourly.wind_speed_10m.24 = 19.2
-# uncertain field hourly.wind_speed_10m.24 — force/unit undetermined, review
-# hourly.wind_speed_10m.25 = 14.5
-# uncertain field hourly.wind_speed_10m.25 — force/unit undetermined, review
-# hourly.wind_speed_10m.26 = 10.8
-# uncertain field hourly.wind_speed_10m.26 — force/unit undetermined, review
-# hourly.wind_speed_10m.27 = 7.9
-# uncertain field hourly.wind_speed_10m.27 — force/unit undetermined, review
-# hourly.wind_speed_10m.28 = 8.3
-# uncertain field hourly.wind_speed_10m.28 — force/unit undetermined, review
-# hourly.wind_speed_10m.29 = 9.0
-# uncertain field hourly.wind_speed_10m.29 — force/unit undetermined, review
-# hourly.wind_speed_10m.30 = 7.5
-# uncertain field hourly.wind_speed_10m.30 — force/unit undetermined, review
-# hourly.wind_speed_10m.31 = 7.1
-# uncertain field hourly.wind_speed_10m.31 — force/unit undetermined, review
-# hourly.wind_speed_10m.32 = 6.6
-# uncertain field hourly.wind_speed_10m.32 — force/unit undetermined, review
-# hourly.wind_speed_10m.33 = 5.8
-# uncertain field hourly.wind_speed_10m.33 — force/unit undetermined, review
-# hourly.wind_speed_10m.34 = 6.3
-# uncertain field hourly.wind_speed_10m.34 — force/unit undetermined, review
-# hourly.wind_speed_10m.35 = 7.3
-# uncertain field hourly.wind_speed_10m.35 — force/unit undetermined, review
-# hourly.wind_speed_10m.36 = 7.9
-# uncertain field hourly.wind_speed_10m.36 — force/unit undetermined, review
-# hourly.wind_speed_10m.37 = 5.3
-# uncertain field hourly.wind_speed_10m.37 — force/unit undetermined, review
-# hourly.wind_speed_10m.38 = 6.1
-# uncertain field hourly.wind_speed_10m.38 — force/unit undetermined, review
-# hourly.wind_speed_10m.39 = 7.2
-# uncertain field hourly.wind_speed_10m.39 — force/unit undetermined, review
-# hourly.wind_speed_10m.40 = 6.2
-# uncertain field hourly.wind_speed_10m.40 — force/unit undetermined, review
-# hourly.wind_speed_10m.41 = 0.7
-# uncertain field hourly.wind_speed_10m.41 — force/unit undetermined, review
-# hourly.wind_speed_10m.42 = 11.2
-# uncertain field hourly.wind_speed_10m.42 — force/unit undetermined, review
-# hourly.wind_speed_10m.43 = 13.4
-# uncertain field hourly.wind_speed_10m.43 — force/unit undetermined, review
-# hourly.wind_speed_10m.44 = 13.2
-# uncertain field hourly.wind_speed_10m.44 — force/unit undetermined, review
-# hourly.wind_speed_10m.45 = 14.1
-# uncertain field hourly.wind_speed_10m.45 — force/unit undetermined, review
-# hourly.wind_speed_10m.46 = 16.6
-# uncertain field hourly.wind_speed_10m.46 — force/unit undetermined, review
-# hourly.wind_speed_10m.47 = 17.4
-# uncertain field hourly.wind_speed_10m.47 — force/unit undetermined, review
-# hourly.wind_speed_10m.48 = 16.8
-# uncertain field hourly.wind_speed_10m.48 — force/unit undetermined, review
-# hourly.wind_speed_10m.49 = 11.9
-# uncertain field hourly.wind_speed_10m.49 — force/unit undetermined, review
-# hourly.wind_speed_10m.50 = 10.8
-# uncertain field hourly.wind_speed_10m.50 — force/unit undetermined, review
-# hourly.wind_speed_10m.51 = 10.0
-# uncertain field hourly.wind_speed_10m.51 — force/unit undetermined, review
-# hourly.wind_speed_10m.52 = 8.2
-# uncertain field hourly.wind_speed_10m.52 — force/unit undetermined, review
-# hourly.wind_speed_10m.53 = 6.9
-# uncertain field hourly.wind_speed_10m.53 — force/unit undetermined, review
-# hourly.wind_speed_10m.54 = 7.2
-# uncertain field hourly.wind_speed_10m.54 — force/unit undetermined, review
-# hourly.wind_speed_10m.55 = 7.1
-# uncertain field hourly.wind_speed_10m.55 — force/unit undetermined, review
-# hourly.wind_speed_10m.56 = 7.8
-# uncertain field hourly.wind_speed_10m.56 — force/unit undetermined, review
-# hourly.wind_speed_10m.57 = 6.8
-# uncertain field hourly.wind_speed_10m.57 — force/unit undetermined, review
-# hourly.wind_speed_10m.58 = 7.2
-# uncertain field hourly.wind_speed_10m.58 — force/unit undetermined, review
-# hourly.wind_speed_10m.59 = 7.9
-# uncertain field hourly.wind_speed_10m.59 — force/unit undetermined, review
-# hourly.wind_speed_10m.60 = 6.9
-# uncertain field hourly.wind_speed_10m.60 — force/unit undetermined, review
-# hourly.wind_speed_10m.61 = 7.2
-# uncertain field hourly.wind_speed_10m.61 — force/unit undetermined, review
-# hourly.wind_speed_10m.62 = 8.4
-# uncertain field hourly.wind_speed_10m.62 — force/unit undetermined, review
-# hourly.wind_speed_10m.63 = 8.0
-# uncertain field hourly.wind_speed_10m.63 — force/unit undetermined, review
-# hourly.wind_speed_10m.64 = 4.7
-# uncertain field hourly.wind_speed_10m.64 — force/unit undetermined, review
-# hourly.wind_speed_10m.65 = 4.4
-# uncertain field hourly.wind_speed_10m.65 — force/unit undetermined, review
-# hourly.wind_speed_10m.66 = 10.8
-# uncertain field hourly.wind_speed_10m.66 — force/unit undetermined, review
-# hourly.wind_speed_10m.67 = 17.1
-# uncertain field hourly.wind_speed_10m.67 — force/unit undetermined, review
-# hourly.wind_speed_10m.68 = 20.4
-# uncertain field hourly.wind_speed_10m.68 — force/unit undetermined, review
-# hourly.wind_speed_10m.69 = 19.6
-# uncertain field hourly.wind_speed_10m.69 — force/unit undetermined, review
-# hourly.wind_speed_10m.70 = 19.6
-# uncertain field hourly.wind_speed_10m.70 — force/unit undetermined, review
-# hourly.wind_speed_10m.71 = 19.9
-# uncertain field hourly.wind_speed_10m.71 — force/unit undetermined, review
-# hourly.wind_speed_10m.72 = 17.8
-# uncertain field hourly.wind_speed_10m.72 — force/unit undetermined, review
-# hourly.wind_speed_10m.73 = 14.1
-# uncertain field hourly.wind_speed_10m.73 — force/unit undetermined, review
-# hourly.wind_speed_10m.74 = 13.7
-# uncertain field hourly.wind_speed_10m.74 — force/unit undetermined, review
-# hourly.wind_speed_10m.75 = 13.1
-# uncertain field hourly.wind_speed_10m.75 — force/unit undetermined, review
-# hourly.wind_speed_10m.76 = 12.1
-# uncertain field hourly.wind_speed_10m.76 — force/unit undetermined, review
-# hourly.wind_speed_10m.77 = 12.5
-# uncertain field hourly.wind_speed_10m.77 — force/unit undetermined, review
-# hourly.wind_speed_10m.78 = 10.7
-# uncertain field hourly.wind_speed_10m.78 — force/unit undetermined, review
-# hourly.wind_speed_10m.79 = 10.6
-# uncertain field hourly.wind_speed_10m.79 — force/unit undetermined, review
-# hourly.wind_speed_10m.80 = 10.7
-# uncertain field hourly.wind_speed_10m.80 — force/unit undetermined, review
-# hourly.wind_speed_10m.81 = 9.9
-# uncertain field hourly.wind_speed_10m.81 — force/unit undetermined, review
-# hourly.wind_speed_10m.82 = 9.7
-# uncertain field hourly.wind_speed_10m.82 — force/unit undetermined, review
-# hourly.wind_speed_10m.83 = 9.7
-# uncertain field hourly.wind_speed_10m.83 — force/unit undetermined, review
-# hourly.wind_speed_10m.84 = 7.9
-# uncertain field hourly.wind_speed_10m.84 — force/unit undetermined, review
-# hourly.wind_speed_10m.85 = 7.8
-# uncertain field hourly.wind_speed_10m.85 — force/unit undetermined, review
-# hourly.wind_speed_10m.86 = 10.5
-# uncertain field hourly.wind_speed_10m.86 — force/unit undetermined, review
-# hourly.wind_speed_10m.87 = 10.3
-# uncertain field hourly.wind_speed_10m.87 — force/unit undetermined, review
-# hourly.wind_speed_10m.88 = 8.7
-# uncertain field hourly.wind_speed_10m.88 — force/unit undetermined, review
-# hourly.wind_speed_10m.89 = 9.4
-# uncertain field hourly.wind_speed_10m.89 — force/unit undetermined, review
-# hourly.wind_speed_10m.90 = 14.7
-# uncertain field hourly.wind_speed_10m.90 — force/unit undetermined, review
-# hourly.wind_speed_10m.91 = 22.6
-# uncertain field hourly.wind_speed_10m.91 — force/unit undetermined, review
-# hourly.wind_speed_10m.92 = 24.7
-# uncertain field hourly.wind_speed_10m.92 — force/unit undetermined, review
-# hourly.wind_speed_10m.93 = 25.0
-# uncertain field hourly.wind_speed_10m.93 — force/unit undetermined, review
-# hourly.wind_speed_10m.94 = 24.8
-# uncertain field hourly.wind_speed_10m.94 — force/unit undetermined, review
-# hourly.wind_speed_10m.95 = 23.5
-# uncertain field hourly.wind_speed_10m.95 — force/unit undetermined, review
-# hourly.wind_speed_10m.96 = 21.6
-# uncertain field hourly.wind_speed_10m.96 — force/unit undetermined, review
-# hourly.wind_speed_10m.97 = 19.2
-# uncertain field hourly.wind_speed_10m.97 — force/unit undetermined, review
-# hourly.wind_speed_10m.98 = 17.7
-# uncertain field hourly.wind_speed_10m.98 — force/unit undetermined, review
-# hourly.wind_speed_10m.99 = 16.5
-# uncertain field hourly.wind_speed_10m.99 — force/unit undetermined, review
-# hourly.wind_speed_10m.100 = 14.0
-# uncertain field hourly.wind_speed_10m.100 — force/unit undetermined, review
-# hourly.wind_speed_10m.101 = 13.0
-# uncertain field hourly.wind_speed_10m.101 — force/unit undetermined, review
-# hourly.wind_speed_10m.102 = 13.0
-# uncertain field hourly.wind_speed_10m.102 — force/unit undetermined, review
-# hourly.wind_speed_10m.103 = 13.2
-# uncertain field hourly.wind_speed_10m.103 — force/unit undetermined, review
-# hourly.wind_speed_10m.104 = 12.9
-# uncertain field hourly.wind_speed_10m.104 — force/unit undetermined, review
-# hourly.wind_speed_10m.105 = 11.6
-# uncertain field hourly.wind_speed_10m.105 — force/unit undetermined, review
-# hourly.wind_speed_10m.106 = 11.5
-# uncertain field hourly.wind_speed_10m.106 — force/unit undetermined, review
-# hourly.wind_speed_10m.107 = 11.2
-# uncertain field hourly.wind_speed_10m.107 — force/unit undetermined, review
-# hourly.wind_speed_10m.108 = 10.0
-# uncertain field hourly.wind_speed_10m.108 — force/unit undetermined, review
-# hourly.wind_speed_10m.109 = 8.2
-# uncertain field hourly.wind_speed_10m.109 — force/unit undetermined, review
-# hourly.wind_speed_10m.110 = 12.5
-# uncertain field hourly.wind_speed_10m.110 — force/unit undetermined, review
-# hourly.wind_speed_10m.111 = 12.8
-# uncertain field hourly.wind_speed_10m.111 — force/unit undetermined, review
-# hourly.wind_speed_10m.112 = 12.9
-# uncertain field hourly.wind_speed_10m.112 — force/unit undetermined, review
-# hourly.wind_speed_10m.113 = 14.4
-# uncertain field hourly.wind_speed_10m.113 — force/unit undetermined, review
-# hourly.wind_speed_10m.114 = 19.3
-# uncertain field hourly.wind_speed_10m.114 — force/unit undetermined, review
-# hourly.wind_speed_10m.115 = 25.4
-# uncertain field hourly.wind_speed_10m.115 — force/unit undetermined, review
-# hourly.wind_speed_10m.116 = 25.6
-# uncertain field hourly.wind_speed_10m.116 — force/unit undetermined, review
-# hourly.wind_speed_10m.117 = 24.4
-# uncertain field hourly.wind_speed_10m.117 — force/unit undetermined, review
-# hourly.wind_speed_10m.118 = 25.1
-# uncertain field hourly.wind_speed_10m.118 — force/unit undetermined, review
-# hourly.wind_speed_10m.119 = 23.5
-# uncertain field hourly.wind_speed_10m.119 — force/unit undetermined, review
-# hourly.wind_speed_10m.120 = 22.3
-# uncertain field hourly.wind_speed_10m.120 — force/unit undetermined, review
-# hourly.wind_speed_10m.121 = 19.9
-# uncertain field hourly.wind_speed_10m.121 — force/unit undetermined, review
-# hourly.wind_speed_10m.122 = 18.4
-# uncertain field hourly.wind_speed_10m.122 — force/unit undetermined, review
-# hourly.wind_speed_10m.123 = 17.2
-# uncertain field hourly.wind_speed_10m.123 — force/unit undetermined, review
-# hourly.wind_speed_10m.124 = 16.2
-# uncertain field hourly.wind_speed_10m.124 — force/unit undetermined, review
-# hourly.wind_speed_10m.125 = 15.3
-# uncertain field hourly.wind_speed_10m.125 — force/unit undetermined, review
-# hourly.wind_speed_10m.126 = 14.8
-# uncertain field hourly.wind_speed_10m.126 — force/unit undetermined, review
-# hourly.wind_speed_10m.127 = 14.1
-# uncertain field hourly.wind_speed_10m.127 — force/unit undetermined, review
-# hourly.wind_speed_10m.128 = 13.1
-# uncertain field hourly.wind_speed_10m.128 — force/unit undetermined, review
-# hourly.wind_speed_10m.129 = 12.2
-# uncertain field hourly.wind_speed_10m.129 — force/unit undetermined, review
-# hourly.wind_speed_10m.130 = 11.0
-# uncertain field hourly.wind_speed_10m.130 — force/unit undetermined, review
-# hourly.wind_speed_10m.131 = 10.0
-# uncertain field hourly.wind_speed_10m.131 — force/unit undetermined, review
-# hourly.wind_speed_10m.132 = 10.1
-# uncertain field hourly.wind_speed_10m.132 — force/unit undetermined, review
-# hourly.wind_speed_10m.133 = 11.1
-# uncertain field hourly.wind_speed_10m.133 — force/unit undetermined, review
-# hourly.wind_speed_10m.134 = 12.7
-# uncertain field hourly.wind_speed_10m.134 — force/unit undetermined, review
-# hourly.wind_speed_10m.135 = 14.2
-# uncertain field hourly.wind_speed_10m.135 — force/unit undetermined, review
-# hourly.wind_speed_10m.136 = 16.6
-# uncertain field hourly.wind_speed_10m.136 — force/unit undetermined, review
-# hourly.wind_speed_10m.137 = 20.9
-# uncertain field hourly.wind_speed_10m.137 — force/unit undetermined, review
-# hourly.wind_speed_10m.138 = 24.4
-# uncertain field hourly.wind_speed_10m.138 — force/unit undetermined, review
-# hourly.wind_speed_10m.139 = 25.4
-# uncertain field hourly.wind_speed_10m.139 — force/unit undetermined, review
-# hourly.wind_speed_10m.140 = 25.2
-# uncertain field hourly.wind_speed_10m.140 — force/unit undetermined, review
-# hourly.wind_speed_10m.141 = 24.6
-# uncertain field hourly.wind_speed_10m.141 — force/unit undetermined, review
-# hourly.wind_speed_10m.142 = 23.7
-# uncertain field hourly.wind_speed_10m.142 — force/unit undetermined, review
-# hourly.wind_speed_10m.143 = 22.3
-# uncertain field hourly.wind_speed_10m.143 — force/unit undetermined, review
-# hourly.wind_speed_10m.144 = 20.7
-# uncertain field hourly.wind_speed_10m.144 — force/unit undetermined, review
-# hourly.wind_speed_10m.145 = 18.8
-# uncertain field hourly.wind_speed_10m.145 — force/unit undetermined, review
-# hourly.wind_speed_10m.146 = 16.6
-# uncertain field hourly.wind_speed_10m.146 — force/unit undetermined, review
-# hourly.wind_speed_10m.147 = 14.8
-# uncertain field hourly.wind_speed_10m.147 — force/unit undetermined, review
-# hourly.wind_speed_10m.148 = 14.0
-# uncertain field hourly.wind_speed_10m.148 — force/unit undetermined, review
-# hourly.wind_speed_10m.149 = 14.1
-# uncertain field hourly.wind_speed_10m.149 — force/unit undetermined, review
-# hourly.wind_speed_10m.150 = 13.8
-# uncertain field hourly.wind_speed_10m.150 — force/unit undetermined, review
-# hourly.wind_speed_10m.151 = 12.6
-# uncertain field hourly.wind_speed_10m.151 — force/unit undetermined, review
-# hourly.wind_speed_10m.152 = 11.2
-# uncertain field hourly.wind_speed_10m.152 — force/unit undetermined, review
-# hourly.wind_speed_10m.153 = 10.1
-# uncertain field hourly.wind_speed_10m.153 — force/unit undetermined, review
-# hourly.wind_speed_10m.154 = 10.0
-# uncertain field hourly.wind_speed_10m.154 — force/unit undetermined, review
-# hourly.wind_speed_10m.155 = 10.3
-# uncertain field hourly.wind_speed_10m.155 — force/unit undetermined, review
-# hourly.wind_speed_10m.156 = 10.6
-# uncertain field hourly.wind_speed_10m.156 — force/unit undetermined, review
-# hourly.wind_speed_10m.157 = 10.8
-# uncertain field hourly.wind_speed_10m.157 — force/unit undetermined, review
-# hourly.wind_speed_10m.158 = 11.0
-# uncertain field hourly.wind_speed_10m.158 — force/unit undetermined, review
-# hourly.wind_speed_10m.159 = 11.9
-# uncertain field hourly.wind_speed_10m.159 — force/unit undetermined, review
-# hourly.wind_speed_10m.160 = 14.4
-# uncertain field hourly.wind_speed_10m.160 — force/unit undetermined, review
-# hourly.wind_speed_10m.161 = 18.2
-# uncertain field hourly.wind_speed_10m.161 — force/unit undetermined, review
-# hourly.wind_speed_10m.162 = 21.7
-# uncertain field hourly.wind_speed_10m.162 — force/unit undetermined, review
-# hourly.wind_speed_10m.163 = 23.7
-# uncertain field hourly.wind_speed_10m.163 — force/unit undetermined, review
-# hourly.wind_speed_10m.164 = 24.9
-# uncertain field hourly.wind_speed_10m.164 — force/unit undetermined, review
-# hourly.wind_speed_10m.165 = 24.9
-# uncertain field hourly.wind_speed_10m.165 — force/unit undetermined, review
-# hourly.wind_speed_10m.166 = 23.9
-# uncertain field hourly.wind_speed_10m.166 — force/unit undetermined, review
-# hourly.wind_speed_10m.167 = 22.4
-# uncertain field hourly.wind_speed_10m.167 — force/unit undetermined, review
-# hourly.temperature_2m.0 = 30.7
-# uncertain field hourly.temperature_2m.0 — force/unit undetermined, review
-# hourly.temperature_2m.1 = 29.6
-# uncertain field hourly.temperature_2m.1 — force/unit undetermined, review
-# hourly.temperature_2m.2 = 29.2
-# uncertain field hourly.temperature_2m.2 — force/unit undetermined, review
-# hourly.temperature_2m.3 = 28.7
-# uncertain field hourly.temperature_2m.3 — force/unit undetermined, review
-# hourly.temperature_2m.4 = 28.0
-# uncertain field hourly.temperature_2m.4 — force/unit undetermined, review
-# hourly.temperature_2m.5 = 27.6
-# uncertain field hourly.temperature_2m.5 — force/unit undetermined, review
-# hourly.temperature_2m.6 = 27.6
-# uncertain field hourly.temperature_2m.6 — force/unit undetermined, review
-# hourly.temperature_2m.7 = 27.2
-# uncertain field hourly.temperature_2m.7 — force/unit undetermined, review
-# hourly.temperature_2m.8 = 27.0
-# uncertain field hourly.temperature_2m.8 — force/unit undetermined, review
-# hourly.temperature_2m.9 = 27.1
-# uncertain field hourly.temperature_2m.9 — force/unit undetermined, review
-# hourly.temperature_2m.10 = 26.7
-# uncertain field hourly.temperature_2m.10 — force/unit undetermined, review
-# hourly.temperature_2m.11 = 26.3
-# uncertain field hourly.temperature_2m.11 — force/unit undetermined, review
-# hourly.temperature_2m.12 = 26.3
-# uncertain field hourly.temperature_2m.12 — force/unit undetermined, review
-# hourly.temperature_2m.13 = 28.0
-# uncertain field hourly.temperature_2m.13 — force/unit undetermined, review
-# hourly.temperature_2m.14 = 30.4
-# uncertain field hourly.temperature_2m.14 — force/unit undetermined, review
-# hourly.temperature_2m.15 = 31.4
-# uncertain field hourly.temperature_2m.15 — force/unit undetermined, review
-# hourly.temperature_2m.16 = 33.0
-# uncertain field hourly.temperature_2m.16 — force/unit undetermined, review
-# hourly.temperature_2m.17 = 33.3
-# uncertain field hourly.temperature_2m.17 — force/unit undetermined, review
-# hourly.temperature_2m.18 = 33.7
-# uncertain field hourly.temperature_2m.18 — force/unit undetermined, review
-# hourly.temperature_2m.19 = 34.2
-# uncertain field hourly.temperature_2m.19 — force/unit undetermined, review
-# hourly.temperature_2m.20 = 34.1
-# uncertain field hourly.temperature_2m.20 — force/unit undetermined, review
-# hourly.temperature_2m.21 = 33.7
-# uncertain field hourly.temperature_2m.21 — force/unit undetermined, review
-# hourly.temperature_2m.22 = 33.1
-# uncertain field hourly.temperature_2m.22 — force/unit undetermined, review
-# hourly.temperature_2m.23 = 32.2
-# uncertain field hourly.temperature_2m.23 — force/unit undetermined, review
-# hourly.temperature_2m.24 = 30.7
-# uncertain field hourly.temperature_2m.24 — force/unit undetermined, review
-# hourly.temperature_2m.25 = 28.7
-# uncertain field hourly.temperature_2m.25 — force/unit undetermined, review
-# hourly.temperature_2m.26 = 27.5
-# uncertain field hourly.temperature_2m.26 — force/unit undetermined, review
-# hourly.temperature_2m.27 = 26.7
-# uncertain field hourly.temperature_2m.27 — force/unit undetermined, review
-# hourly.temperature_2m.28 = 26.2
-# uncertain field hourly.temperature_2m.28 — force/unit undetermined, review
-# hourly.temperature_2m.29 = 25.7
-# uncertain field hourly.temperature_2m.29 — force/unit undetermined, review
-# hourly.temperature_2m.30 = 25.2
-# uncertain field hourly.temperature_2m.30 — force/unit undetermined, review
-# hourly.temperature_2m.31 = 24.6
-# uncertain field hourly.temperature_2m.31 — force/unit undetermined, review
-# hourly.temperature_2m.32 = 24.1
-# uncertain field hourly.temperature_2m.32 — force/unit undetermined, review
-# hourly.temperature_2m.33 = 24.3
-# uncertain field hourly.temperature_2m.33 — force/unit undetermined, review
-# hourly.temperature_2m.34 = 24.7
-# uncertain field hourly.temperature_2m.34 — force/unit undetermined, review
-# hourly.temperature_2m.35 = 24.6
-# uncertain field hourly.temperature_2m.35 — force/unit undetermined, review
-# hourly.temperature_2m.36 = 23.9
-# uncertain field hourly.temperature_2m.36 — force/unit undetermined, review
-# hourly.temperature_2m.37 = 26.2
-# uncertain field hourly.temperature_2m.37 — force/unit undetermined, review
-# hourly.temperature_2m.38 = 28.6
-# uncertain field hourly.temperature_2m.38 — force/unit undetermined, review
-# hourly.temperature_2m.39 = 30.0
-# uncertain field hourly.temperature_2m.39 — force/unit undetermined, review
-# hourly.temperature_2m.40 = 31.3
-# uncertain field hourly.temperature_2m.40 — force/unit undetermined, review
-# hourly.temperature_2m.41 = 32.7
-# uncertain field hourly.temperature_2m.41 — force/unit undetermined, review
-# hourly.temperature_2m.42 = 33.1
-# uncertain field hourly.temperature_2m.42 — force/unit undetermined, review
-# hourly.temperature_2m.43 = 33.4
-# uncertain field hourly.temperature_2m.43 — force/unit undetermined, review
-# hourly.temperature_2m.44 = 34.0
-# uncertain field hourly.temperature_2m.44 — force/unit undetermined, review
-# hourly.temperature_2m.45 = 34.1
-# uncertain field hourly.temperature_2m.45 — force/unit undetermined, review
-# hourly.temperature_2m.46 = 33.7
-# uncertain field hourly.temperature_2m.46 — force/unit undetermined, review
-# hourly.temperature_2m.47 = 32.4
-# uncertain field hourly.temperature_2m.47 — force/unit undetermined, review
-# hourly.temperature_2m.48 = 30.8
-# uncertain field hourly.temperature_2m.48 — force/unit undetermined, review
-# hourly.temperature_2m.49 = 28.5
-# uncertain field hourly.temperature_2m.49 — force/unit undetermined, review
-# hourly.temperature_2m.50 = 27.4
-# uncertain field hourly.temperature_2m.50 — force/unit undetermined, review
-# hourly.temperature_2m.51 = 26.8
-# uncertain field hourly.temperature_2m.51 — force/unit undetermined, review
-# hourly.temperature_2m.52 = 26.1
-# uncertain field hourly.temperature_2m.52 — force/unit undetermined, review
-# hourly.temperature_2m.53 = 25.5
-# uncertain field hourly.temperature_2m.53 — force/unit undetermined, review
-# hourly.temperature_2m.54 = 24.9
-# uncertain field hourly.temperature_2m.54 — force/unit undetermined, review
-# hourly.temperature_2m.55 = 24.6
-# uncertain field hourly.temperature_2m.55 — force/unit undetermined, review
-# hourly.temperature_2m.56 = 24.3
-# uncertain field hourly.temperature_2m.56 — force/unit undetermined, review
-# hourly.temperature_2m.57 = 24.0
-# uncertain field hourly.temperature_2m.57 — force/unit undetermined, review
-# hourly.temperature_2m.58 = 23.7
-# uncertain field hourly.temperature_2m.58 — force/unit undetermined, review
-# hourly.temperature_2m.59 = 23.6
-# uncertain field hourly.temperature_2m.59 — force/unit undetermined, review
-# hourly.temperature_2m.60 = 23.8
-# uncertain field hourly.temperature_2m.60 — force/unit undetermined, review
-# hourly.temperature_2m.61 = 25.6
-# uncertain field hourly.temperature_2m.61 — force/unit undetermined, review
-# hourly.temperature_2m.62 = 28.0
-# uncertain field hourly.temperature_2m.62 — force/unit undetermined, review
-# hourly.temperature_2m.63 = 30.2
-# uncertain field hourly.temperature_2m.63 — force/unit undetermined, review
-# hourly.temperature_2m.64 = 32.6
-# uncertain field hourly.temperature_2m.64 — force/unit undetermined, review
-# hourly.temperature_2m.65 = 34.4
-# uncertain field hourly.temperature_2m.65 — force/unit undetermined, review
-# hourly.temperature_2m.66 = 35.2
-# uncertain field hourly.temperature_2m.66 — force/unit undetermined, review
-# hourly.temperature_2m.67 = 35.1
-# uncertain field hourly.temperature_2m.67 — force/unit undetermined, review
-# hourly.temperature_2m.68 = 34.3
-# uncertain field hourly.temperature_2m.68 — force/unit undetermined, review
-# hourly.temperature_2m.69 = 33.9
-# uncertain field hourly.temperature_2m.69 — force/unit undetermined, review
-# hourly.temperature_2m.70 = 33.3
-# uncertain field hourly.temperature_2m.70 — force/unit undetermined, review
-# hourly.temperature_2m.71 = 32.2
-# uncertain field hourly.temperature_2m.71 — force/unit undetermined, review
-# hourly.temperature_2m.72 = 30.4
-# uncertain field hourly.temperature_2m.72 — force/unit undetermined, review
-# hourly.temperature_2m.73 = 28.4
-# uncertain field hourly.temperature_2m.73 — force/unit undetermined, review
-# hourly.temperature_2m.74 = 27.3
-# uncertain field hourly.temperature_2m.74 — force/unit undetermined, review
-# hourly.temperature_2m.75 = 27.1
-# uncertain field hourly.temperature_2m.75 — force/unit undetermined, review
-# hourly.temperature_2m.76 = 27.0
-# uncertain field hourly.temperature_2m.76 — force/unit undetermined, review
-# hourly.temperature_2m.77 = 27.0
-# uncertain field hourly.temperature_2m.77 — force/unit undetermined, review
-# hourly.temperature_2m.78 = 26.8
-# uncertain field hourly.temperature_2m.78 — force/unit undetermined, review
-# hourly.temperature_2m.79 = 26.6
-# uncertain field hourly.temperature_2m.79 — force/unit undetermined, review
-# hourly.temperature_2m.80 = 26.2
-# uncertain field hourly.temperature_2m.80 — force/unit undetermined, review
-# hourly.temperature_2m.81 = 25.8
-# uncertain field hourly.temperature_2m.81 — force/unit undetermined, review
-# hourly.temperature_2m.82 = 25.6
-# uncertain field hourly.temperature_2m.82 — force/unit undetermined, review
-# hourly.temperature_2m.83 = 25.3
-# uncertain field hourly.temperature_2m.83 — force/unit undetermined, review
-# hourly.temperature_2m.84 = 25.1
-# uncertain field hourly.temperature_2m.84 — force/unit undetermined, review
-# hourly.temperature_2m.85 = 26.6
-# uncertain field hourly.temperature_2m.85 — force/unit undetermined, review
-# hourly.temperature_2m.86 = 28.9
-# uncertain field hourly.temperature_2m.86 — force/unit undetermined, review
-# hourly.temperature_2m.87 = 31.0
-# uncertain field hourly.temperature_2m.87 — force/unit undetermined, review
-# hourly.temperature_2m.88 = 32.8
-# uncertain field hourly.temperature_2m.88 — force/unit undetermined, review
-# hourly.temperature_2m.89 = 34.6
-# uncertain field hourly.temperature_2m.89 — force/unit undetermined, review
-# hourly.temperature_2m.90 = 35.7
-# uncertain field hourly.temperature_2m.90 — force/unit undetermined, review
-# hourly.temperature_2m.91 = 35.3
-# uncertain field hourly.temperature_2m.91 — force/unit undetermined, review
-# hourly.temperature_2m.92 = 34.3
-# uncertain field hourly.temperature_2m.92 — force/unit undetermined, review
-# hourly.temperature_2m.93 = 33.6
-# uncertain field hourly.temperature_2m.93 — force/unit undetermined, review
-# hourly.temperature_2m.94 = 33.1
-# uncertain field hourly.temperature_2m.94 — force/unit undetermined, review
-# hourly.temperature_2m.95 = 32.2
-# uncertain field hourly.temperature_2m.95 — force/unit undetermined, review
-# hourly.temperature_2m.96 = 30.6
-# uncertain field hourly.temperature_2m.96 — force/unit undetermined, review
-# hourly.temperature_2m.97 = 28.9
-# uncertain field hourly.temperature_2m.97 — force/unit undetermined, review
-# hourly.temperature_2m.98 = 28.1
-# uncertain field hourly.temperature_2m.98 — force/unit undetermined, review
-# hourly.temperature_2m.99 = 27.5
-# uncertain field hourly.temperature_2m.99 — force/unit undetermined, review
-# hourly.temperature_2m.100 = 27.0
-# uncertain field hourly.temperature_2m.100 — force/unit undetermined, review
-# hourly.temperature_2m.101 = 26.5
-# uncertain field hourly.temperature_2m.101 — force/unit undetermined, review
-# hourly.temperature_2m.102 = 26.3
-# uncertain field hourly.temperature_2m.102 — force/unit undetermined, review
-# hourly.temperature_2m.103 = 25.9
-# uncertain field hourly.temperature_2m.103 — force/unit undetermined, review
-# hourly.temperature_2m.104 = 25.6
-# uncertain field hourly.temperature_2m.104 — force/unit undetermined, review
-# hourly.temperature_2m.105 = 25.5
-# uncertain field hourly.temperature_2m.105 — force/unit undetermined, review
-# hourly.temperature_2m.106 = 25.2
-# uncertain field hourly.temperature_2m.106 — force/unit undetermined, review
-# hourly.temperature_2m.107 = 24.7
-# uncertain field hourly.temperature_2m.107 — force/unit undetermined, review
-# hourly.temperature_2m.108 = 24.2
-# uncertain field hourly.temperature_2m.108 — force/unit undetermined, review
-# hourly.temperature_2m.109 = 25.5
-# uncertain field hourly.temperature_2m.109 — force/unit undetermined, review
-# hourly.temperature_2m.110 = 28.2
-# uncertain field hourly.temperature_2m.110 — force/unit undetermined, review
-# hourly.temperature_2m.111 = 30.6
-# uncertain field hourly.temperature_2m.111 — force/unit undetermined, review
-# hourly.temperature_2m.112 = 33.1
-# uncertain field hourly.temperature_2m.112 — force/unit undetermined, review
-# hourly.temperature_2m.113 = 35.0
-# uncertain field hourly.temperature_2m.113 — force/unit undetermined, review
-# hourly.temperature_2m.114 = 35.9
-# uncertain field hourly.temperature_2m.114 — force/unit undetermined, review
-# hourly.temperature_2m.115 = 35.3
-# uncertain field hourly.temperature_2m.115 — force/unit undetermined, review
-# hourly.temperature_2m.116 = 34.2
-# uncertain field hourly.temperature_2m.116 — force/unit undetermined, review
-# hourly.temperature_2m.117 = 33.9
-# uncertain field hourly.temperature_2m.117 — force/unit undetermined, review
-# hourly.temperature_2m.118 = 32.9
-# uncertain field hourly.temperature_2m.118 — force/unit undetermined, review
-# hourly.temperature_2m.119 = 31.7
-# uncertain field hourly.temperature_2m.119 — force/unit undetermined, review
-# hourly.temperature_2m.120 = 29.8
-# uncertain field hourly.temperature_2m.120 — force/unit undetermined, review
-# hourly.temperature_2m.121 = 27.7
-# uncertain field hourly.temperature_2m.121 — force/unit undetermined, review
-# hourly.temperature_2m.122 = 26.7
-# uncertain field hourly.temperature_2m.122 — force/unit undetermined, review
-# hourly.temperature_2m.123 = 26.4
-# uncertain field hourly.temperature_2m.123 — force/unit undetermined, review
-# hourly.temperature_2m.124 = 26.3
-# uncertain field hourly.temperature_2m.124 — force/unit undetermined, review
-# hourly.temperature_2m.125 = 26.2
-# uncertain field hourly.temperature_2m.125 — force/unit undetermined, review
-# hourly.temperature_2m.126 = 26.2
-# uncertain field hourly.temperature_2m.126 — force/unit undetermined, review
-# hourly.temperature_2m.127 = 25.8
-# uncertain field hourly.temperature_2m.127 — force/unit undetermined, review
-# hourly.temperature_2m.128 = 25.4
-# uncertain field hourly.temperature_2m.128 — force/unit undetermined, review
-# hourly.temperature_2m.129 = 25.1
-# uncertain field hourly.temperature_2m.129 — force/unit undetermined, review
-# hourly.temperature_2m.130 = 24.7
-# uncertain field hourly.temperature_2m.130 — force/unit undetermined, review
-# hourly.temperature_2m.131 = 24.3
-# uncertain field hourly.temperature_2m.131 — force/unit undetermined, review
-# hourly.temperature_2m.132 = 24.8
-# uncertain field hourly.temperature_2m.132 — force/unit undetermined, review
-# hourly.temperature_2m.133 = 26.6
-# uncertain field hourly.temperature_2m.133 — force/unit undetermined, review
-# hourly.temperature_2m.134 = 29.1
-# uncertain field hourly.temperature_2m.134 — force/unit undetermined, review
-# hourly.temperature_2m.135 = 31.4
-# uncertain field hourly.temperature_2m.135 — force/unit undetermined, review
-# hourly.temperature_2m.136 = 32.9
-# uncertain field hourly.temperature_2m.136 — force/unit undetermined, review
-# hourly.temperature_2m.137 = 34.2
-# uncertain field hourly.temperature_2m.137 — force/unit undetermined, review
-# hourly.temperature_2m.138 = 34.9
-# uncertain field hourly.temperature_2m.138 — force/unit undetermined, review
-# hourly.temperature_2m.139 = 35.0
-# uncertain field hourly.temperature_2m.139 — force/unit undetermined, review
-# hourly.temperature_2m.140 = 34.6
-# uncertain field hourly.temperature_2m.140 — force/unit undetermined, review
-# hourly.temperature_2m.141 = 33.9
-# uncertain field hourly.temperature_2m.141 — force/unit undetermined, review
-# hourly.temperature_2m.142 = 32.8
-# uncertain field hourly.temperature_2m.142 — force/unit undetermined, review
-# hourly.temperature_2m.143 = 31.4
-# uncertain field hourly.temperature_2m.143 — force/unit undetermined, review
-# hourly.temperature_2m.144 = 30.1
-# uncertain field hourly.temperature_2m.144 — force/unit undetermined, review
-# hourly.temperature_2m.145 = 28.9
-# uncertain field hourly.temperature_2m.145 — force/unit undetermined, review
-# hourly.temperature_2m.146 = 27.7
-# uncertain field hourly.temperature_2m.146 — force/unit undetermined, review
-# hourly.temperature_2m.147 = 26.9
-# uncertain field hourly.temperature_2m.147 — force/unit undetermined, review
-# hourly.temperature_2m.148 = 26.5
-# uncertain field hourly.temperature_2m.148 — force/unit undetermined, review
-# hourly.temperature_2m.149 = 26.5
-# uncertain field hourly.temperature_2m.149 — force/unit undetermined, review
-# hourly.temperature_2m.150 = 26.4
-# uncertain field hourly.temperature_2m.150 — force/unit undetermined, review
-# hourly.temperature_2m.151 = 26.1
-# uncertain field hourly.temperature_2m.151 — force/unit undetermined, review
-# hourly.temperature_2m.152 = 25.8
-# uncertain field hourly.temperature_2m.152 — force/unit undetermined, review
-# hourly.temperature_2m.153 = 25.6
-# uncertain field hourly.temperature_2m.153 — force/unit undetermined, review
-# hourly.temperature_2m.154 = 25.2
-# uncertain field hourly.temperature_2m.154 — force/unit undetermined, review
-# hourly.temperature_2m.155 = 24.8
-# uncertain field hourly.temperature_2m.155 — force/unit undetermined, review
-# hourly.temperature_2m.156 = 25.2
-# uncertain field hourly.temperature_2m.156 — force/unit undetermined, review
-# hourly.temperature_2m.157 = 26.9
-# uncertain field hourly.temperature_2m.157 — force/unit undetermined, review
-# hourly.temperature_2m.158 = 29.3
-# uncertain field hourly.temperature_2m.158 — force/unit undetermined, review
-# hourly.temperature_2m.159 = 31.4
-# uncertain field hourly.temperature_2m.159 — force/unit undetermined, review
-# hourly.temperature_2m.160 = 32.7
-# uncertain field hourly.temperature_2m.160 — force/unit undetermined, review
-# hourly.temperature_2m.161 = 33.7
-# uncertain field hourly.temperature_2m.161 — force/unit undetermined, review
-# hourly.temperature_2m.162 = 34.3
-# uncertain field hourly.temperature_2m.162 — force/unit undetermined, review
-# hourly.temperature_2m.163 = 34.3
-# uncertain field hourly.temperature_2m.163 — force/unit undetermined, review
-# hourly.temperature_2m.164 = 34.0
-# uncertain field hourly.temperature_2m.164 — force/unit undetermined, review
-# hourly.temperature_2m.165 = 33.4
-# uncertain field hourly.temperature_2m.165 — force/unit undetermined, review
-# hourly.temperature_2m.166 = 32.6
-# uncertain field hourly.temperature_2m.166 — force/unit undetermined, review
-# hourly.temperature_2m.167 = 31.6
-# uncertain field hourly.temperature_2m.167 — force/unit undetermined, review
+# km = 1.74
+# uncertain field km — force/unit undetermined, review
+# number = 48300105.0 (str)
+# uncertain field number — force/unit undetermined, review
+
+# declined: data-present (container array has rows but extract yielded nothing)
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1611400&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 21.9544 -159.3561 0.0
+map data
+lat metadata.lat deg
+lon metadata.lon deg
+# v = 0.559 (str)
+field v gravity m 3600
+# s = 0.024 (str)
+field s gravity m 3600
+
+# declined: data-present (container array has rows but extract yielded nothing)
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1612340&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 21.3033 -157.8645 0.0
+map data
+lat metadata.lat deg
+lon metadata.lon deg
+# v = 0.538 (str)
+field v gravity m 3600
+# s = 0.025 (str)
+field s gravity m 3600
+
+# declined: data-present (container array has rows but extract yielded nothing)
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1615680&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 20.8949 -156.469 0.0
+map data
+lon metadata.lon deg
+lat metadata.lat deg
+# s = 0.03 (str)
+field s gravity m 3600
+# v = 0.548 (str)
+field v gravity m 3600
+
+# declined: data-present (container array has rows but extract yielded nothing)
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1617433&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 20.0366 -155.8294 0.0
+map data
+lat metadata.lat deg
+lon metadata.lon deg
+# s = 0.029 (str)
+field s gravity m 3600
+# v = 0.646 (str)
+field v gravity m 3600
+
+# declined: data-present (container array has rows but extract yielded nothing)
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1619910&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 28.2117 -177.36 0.0
+map data
+lat metadata.lat deg
+lon metadata.lon deg
+# s = 0.056 (str)
+field s gravity m 3600
+# v = 0.532 (str)
+field v gravity m 3600
+
+# declined: data-present (container array has rows but extract yielded nothing)
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1630000&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 13.4434 144.6564 0.0
+map data
+lon metadata.lon deg
+lat metadata.lat deg
+# v = 0.255 (str)
+field v gravity m 3600
+# s = 0.021 (str)
+field s gravity m 3600
+
+# declined: data-present (container array has rows but extract yielded nothing)
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1770000&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth -14.28 -170.69 0.0
+map data
+lat metadata.lat deg
+lon metadata.lon deg
+# v = 0.337 (str)
+field v gravity m 3600
+# s = 0.018 (str)
+field s gravity m 3600
+
+# declined: data-present (container array has rows but extract yielded nothing)
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1820000&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 8.7317 167.7361 0.0
+map data
+lon metadata.lon deg
+lat metadata.lat deg
+# v = 1.035 (str)
+field v gravity m 3600
+# s = 0.041 (str)
+field s gravity m 3600
+
+# declined: data-present (container array has rows but extract yielded nothing)
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=1890000&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 19.2906 166.6175 0.0
+map data
+lon metadata.lon deg
+lat metadata.lat deg
+# v = 0.711 (str)
+field v gravity m 3600
+# s = 0.013 (str)
+field s gravity m 3600
+
+# declined: data-present (container array has rows but extract yielded nothing)
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=2695535&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 32.3702 -64.6957 0.0
+map data
+lat metadata.lat deg
+lon metadata.lon deg
+# v = 0.617 (str)
+field v gravity m 3600
+# s = 0.002 (str)
+field s gravity m 3600
+
+# declined: data-present (container array has rows but extract yielded nothing)
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8311030&product=water_level&datum=LWD&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 44.7028 -75.4944 0.0
+map data
+lon metadata.lon deg
+lat metadata.lat deg
+# v = 0.981 (str)
+field v gravity m 3600
+# s = 0.01 (str)
+field s gravity m 3600
+
+# declined: data-present (container array has rows but extract yielded nothing)
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8410140&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 44.9046 -66.9829 0.0
+map data
+lat metadata.lat deg
+lon metadata.lon deg
+# s = 0.011 (str)
+field s gravity m 3600
+# v = 5.721 (str)
+field v gravity m 3600
+
+# declined: data-present (container array has rows but extract yielded nothing)
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8413320&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 44.3922 -68.2043 0.0
+map data
+lon metadata.lon deg
+lat metadata.lat deg
+# v = 3.45 (str)
+field v gravity m 3600
+# s = 0.025 (str)
+field s gravity m 3600
+
+# declined: data-present (container array has rows but extract yielded nothing)
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8418150&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 43.6581 -70.2442 0.0
+map data
+lon metadata.lon deg
+lat metadata.lat deg
+# v = 2.831 (str)
+field v gravity m 3600
+# s = 0.028 (str)
+field s gravity m 3600
+
+# declined: data-present (container array has rows but extract yielded nothing)
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8443970&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 42.3539 -71.0503 0.0
+map data
+lon metadata.lon deg
+lat metadata.lat deg
+# v = 2.829 (str)
+field v gravity m 3600
+# s = 0.02 (str)
+field s gravity m 3600
+
+# declined: data-present (container array has rows but extract yielded nothing)
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8447435&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 41.6885 -69.9511 0.0
+map data
+lon metadata.lon deg
+lat metadata.lat deg
+# s = 0.014 (str)
+field s gravity m 3600
+# v = 1.153 (str)
+field v gravity m 3600
+
+# declined: data-present (container array has rows but extract yielded nothing)
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8461490&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 41.3717 -72.0956 0.0
+map data
+lat metadata.lat deg
+lon metadata.lon deg
+# s = 0.007 (str)
+field s gravity m 3600
+# v = 1.114 (str)
+field v gravity m 3600
+
+# declined: data-present (container array has rows but extract yielded nothing)
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8516945&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 40.8103 -73.7649 0.0
+map data
+lat metadata.lat deg
+lon metadata.lon deg
+# s = 0.015 (str)
+field s gravity m 3600
+# v = 2.522 (str)
+field v gravity m 3600
+
+# declined: data-present (container array has rows but extract yielded nothing)
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8518962&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 42.0139 -73.9392 0.0
+map data
+lat metadata.lat deg
+lon metadata.lon deg
+# v = 0.326 (str)
+field v gravity m 3600
+# s = 0.014 (str)
+field s gravity m 3600
+
+# declined: data-present (container array has rows but extract yielded nothing)
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8534720&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 39.3567 -74.418 0.0
+map data
+lon metadata.lon deg
+lat metadata.lat deg
+# v = 1.159 (str)
+field v gravity m 3600
+# s = 0.07 (str)
+field s gravity m 3600
+
+# declined: data-present (container array has rows but extract yielded nothing)
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8551762&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 39.5822 -75.589 0.0
+map data
+lat metadata.lat deg
+lon metadata.lon deg
+# s = 0.01 (str)
+field s gravity m 3600
+# v = 1.694 (str)
+field v gravity m 3600
+
+# declined: data-present (container array has rows but extract yielded nothing)
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8570283&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 38.3283 -75.0917 0.0
+map data
+lon metadata.lon deg
+lat metadata.lat deg
+# s = 0.007 (str)
+field s gravity m 3600
+# v = 0.813 (str)
+field v gravity m 3600
+
+# declined: data-present (container array has rows but extract yielded nothing)
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8575512&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 38.9839 -76.48 0.0
+map data
+lon metadata.lon deg
+lat metadata.lat deg
+# s = 0.012 (str)
+field s gravity m 3600
+# v = 0.29 (str)
+field v gravity m 3600
+
+# declined: data-present (container array has rows but extract yielded nothing)
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8632200&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 37.1652 -75.9884 0.0
+map data
+lat metadata.lat deg
+lon metadata.lon deg
+# s = 0.012 (str)
+field s gravity m 3600
+# v = 1.051 (str)
+field v gravity m 3600
+
+# declined: data-present (container array has rows but extract yielded nothing)
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8635750&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 37.9961 -76.4644 0.0
+map data
+lat metadata.lat deg
+lon metadata.lon deg
+# s = 0.009 (str)
+field s gravity m 3600
+# v = 0.408 (str)
+field v gravity m 3600
+
+# declined: data-present (container array has rows but extract yielded nothing)
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8651370&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 300
+on earth 36.1833 -75.7467 0.0
+map data
+lon metadata.lon deg
+lat metadata.lat deg
+# v = 1.058 (str)
+field v gravity m 3600
+# s = 0.044 (str)
+field s gravity m 3600
 

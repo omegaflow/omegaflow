@@ -1,0 +1,37 @@
+# Probe comparison — 2026-08-15
+# Corpus: 200 blocks sampled from stage/master_converted.φ (port output, 4486 parseable blocks).
+# Every fetch is real, every verdict is honest.
+
+## P1 — full probe (fetch → parse → auto-draft → extract verdict)
+survivors: 44/200 (22%) — real measurement feeds (USGS/INGV/seismicportal/
+p2pquake earthquake feeds, open-meteo, buoys)
+declined: 156
+  fetch returned void:              97   (49% — the pre-cdn corpus is largely stale)
+  data-present, rows, no extract:   30   (position found, field config absent)
+  data-present, keys absent:        23   (metadata catalogs — honest decline)
+  empty-response:                    3
+  non-JSON body:                     3
+
+## P2 — fetch level (extracted from P1 verdicts)
+fetched at all:       103/200 (52%)
+live-and-parsed:       44/103 (43% of fetched)
+
+## P3 — fetch paths (--fetchone = fetch_one CDN-first vs fetch_raw_probe live)
+fetch_one:        97 fetch-void, 44 survivors
+fetch_raw_probe:  97 fetch-void, 44 survivors
+Finding: identical. For unmanifested candidates the CDN layer degenerates to
+live fetch (the CDN serves only CI-manifested assets). No difference at probe
+level; the CDN matters only for registered sources.
+
+## P4 — does the lens predict survival?
+positive lens weight:   42/74 survivors  (57%)
+non-positive weight:     2/127 survivors ( 2%)
+mean lens weight: survivors 19.1 vs declined 1.1
+Finding: the lens separates probe survival by 28x. The pre-filter cuts the
+fetch volume by ~3x at a 2% survivor loss (the 2 lens-negative survivors).
+
+## Decision (standard probe pipeline)
+1. source_scanner (lens) weighs candidates.
+2. positive-weight candidates → --probe (full verdict, auto-draft).
+3. survivors → sources.φ review; voids → honest diagnosis into probe_void.txt.
+The lens is the pre-filter; the probe is the judge; the human reviews survivors.
