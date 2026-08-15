@@ -95,14 +95,8 @@ Oszillator bei Fenster-Mitte auf der Epoch-Position, Distanz 1,3 km.
 Befund: Kepler-Positionen driften vom n-body-Wahren (Elemente sind Zwei-Körper,
 Epochs altern) — das ist die ehrliche Physik des Katalogs, die TTL-Frische
 regelt den Takt.
-Verbleibend: Kometen-Records (dcom5_le.dat, 976-B-Records ab Byte 1811 =
-835-Header + 976-Null-Record; „Halley" bei 112, Note-Text 0..~75; f64-Orbit-
-Block nicht 8-aligned — echte Offsets unbestätigt, q=0,571 nirgends gefunden)
-und der Asteroiden-SPK-Flatten-Pass (Familie spk im Index registriert).
-Format-Doku liegt in dastcom5.zip/doc/README.txt (Zip ~1,3 GB — Range-Extract
-des README oder FORTRAN-Leser dxlook als Vorlage). Wert-Einordnung: cometels
-(831 Kometen, aktuelle Elemente) trägt den Kanal bereits; dcom5 bringt
-Multi-Apparitionen (Historie).
+Verbleibend: der Asteroiden-SPK-Flatten-Pass (Familie spk im Index
+registriert).
 KOMETEN-TEIL GESCHLOSSEN (2026-08-15): `dist_scale`-Direktive (cmap,
 `dist`-Wert × Faktor → m, Tests parse+eval), `src/bin/cometels_compiler.rs`
 (MPC cometels.json.gz → gunzip → Elemente → Kepler zum Katalog-Epoch → Flat-
@@ -129,6 +123,28 @@ benennt was IST.
 Das CDN-Asset cometels_flat.json entsteht beim ersten CI-Lauf (GH_TOKEN lokal
 absent) — bis dahin manifestiert der Block 0 (0 honored,
 kein live-Fallback auf die .gz-Quelle möglich).
+DCOM5-TEIL GESCHLOSSEN (2026-08-15): `src/bin/zip_range_extract.rs` (Zip-
+Range-Extraktor: EOCD → Central Directory → Member-Payload per HTTP-Range,
+curl + src/inflate.rs, 2 Tests) holt dastcom5/doc/README.txt (60 416 B) aus
+dastcom5.zip (515 MB, 47 Einträge) — die früheren Offset-Rätsel („835-Header
++ 976-Null-Record ab 1811", „f64-Block nicht 8-aligned", „q=0,571 nirgends")
+waren Fehl-Offsets: die Byte-Map fixiert EPOCH@16, MA@32, W@40, OM@48,
+IN@56, EC@64, A@72, QR@80, TP@88 (f64), H@578, G@582, M1@586, RAD@702,
+ALBEDO@722 (f32), SBNAM@760, DESIG@910, COMNAM@947 — H@578 ist nicht mal
+4-aligned, der 976-B-Record ist byte-gepackt. `parse_comet_record` +
+`comet_state_at` in src/dastcom.rs (2 Tests: Layout-Roundtrip,
+Zwei-Körper-Radius am Epoch), `src/bin/dcom5_compiler.rs` (4972 Records,
+2688 geschrieben, 2284 e ≥ 1 — 0 honored; Flat-cmap name/ra/dec/dist_au/H/M1,
+Kepler zum Record-Epoch), CI-Schritt in kernel_flatten.yml, sources.φ-Block
+(cmap + dist_scale, fields H + M1 em mag). Dev-Beweis 1P/Halley, 30 Records
+(29 „1P" von 1633920,5 = 239 v. Chr. bis 2418800,5 = 1910 + SB441-N16):
+1910-Record exakt (q 0,587208 = Literatur 0,5872, tp 2418781,68 =
+1910-04-20,18, e 0,9673); M1 = 5,5 über alle Records (JPL-Total-
+Magnitude), rad 5,5 km, albedo 0,04 — H = 99 (unbelegt) überall, der
+M1-Kanal trägt die Messung. Das 1986-Apparitions-Record heißt im Katalog
+SB441-N16 (tp 2446469,97 = 1986-02-09,47, e 0,96794, dist 28,8 au am
+Epoch 1968) — der Record-Name ist, was er ist. CDN-Asset dcom5_comets.json
+entsteht beim ersten CI-Lauf (0 honored bis dahin).
 ```
 
 **K04** Tycho-2-Katalog (em)
@@ -497,8 +513,8 @@ Binary-PCK-Pakets oben).
     (AERONET, IERS-EOP, Fireball/Sentry, Xamin-TAP, GONG2, GIRO-Ionosonde,
     e-CALLISTO …) — nächster Grind-Brocken; MASTER.md/DOMAIN_COVERAGE.md
     als Manifeste registriert.
-  · dead_sources-Migration der Grind-Dispositionen: mechanisch offen
-    (python-Merge aus grind_*.φ).
+  · dead_sources-Migration der Grind-Dispositionen: erledigt (273 Einträge,
+    mechanischer Merge aus grind_*.φ, Commit 4da86e4).
 - **Hapi-FieldConfig-Befund** (2026-08-15): bei hapi-Extracts ersetzt
   `hapi_found` die field-Zeilen-Config durch synthetisch {kernel:0, force:0,
   tau:0} (main.rs ~7469) — die deklarierten kernel/force/tau der
@@ -769,7 +785,8 @@ Binary-PCK-Pakets oben).
   via dastcom_compiler --ci-mode). Monatlich + workflow_dispatch. Upload-Fehler
   exiten seit 2026-08-15 laut (kein stilles let _ = mehr).
 - Katalog-Kompilate seit 2026-08-15 im selben Job: cometels_compiler
-  (cometels_flat.json), tycho2_compiler --source bright (bright_stars.json),
+  (cometels_flat.json), dcom5_compiler (dcom5_comets.json),
+  tycho2_compiler --source bright (bright_stars.json),
   tap_compiler DR3-Merge via ARI (--mag-bands + --star-bin + --union-bright →
   dr3_stars.bin), tap_compiler FRBCAT + A279, sexagesimal_compiler (Magnetar
   + TeVCat mit BZCAT4/Green/PSRCAT-Joins). Die CDN-Assets entstehen beim
