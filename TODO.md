@@ -33,8 +33,8 @@ K03-Zweig registriert (DASTCOM+Kepler). K02 geschlossen: src/bpc.rs
 Compiler/Runtime; Moon-PA-Merge parkt an K05. K03-Compiler-Einheit
 geschlossen: src/kepler.rs + src/bin/dastcom_compiler.rs (Dev-Beweis Ceres
 0,001″ gegen Horizons). 32 neue φ-Ephemeris-Blöcke für die Flattener-Monde
-(absent bis der Flattener-CI-Lauf die CDN-Assets trägt — 0 honored).
-0 Warnings, 0 Errors; Tests: 31 lib + 36 bin.
+(absent bis der Flattener-CI-Lauf die CDN-Assets trägt — ausstehend). P01 geschlossen (tote force-Direktive und 3-Token-field lehnt parse_sources laut ab).
+0 Warnings, 0 Errors; Tests: 34 lib + 36 bin.
 
 ---
 
@@ -50,7 +50,7 @@ Target-Enumeration) ist geschlossen; Git trägt es.
 **K02** Binary-PCK-Reader (Erde/Mond-Präzision)
 ```
 Modul src/bpc.rs auf daf.rs: DAF-Segmente Typ 2 (Chebyshev-Orientierung RA/Dec/W;
-Typ 3/20 werden gemeldet und übersprungen — 0 honored). Precedence-Regel:
+Typ 3/20 werden gemeldet und übersprungen — nicht implementiert). Precedence-Regel:
 Binary-PCK > Text-PCK (pck.req). Der Compiler sampelt das volle Orientierungsmodell
 und schreibt die stype-4-Nutationssektion (additiv: Chebyshev-Fit von voll − linear,
 RA/DEC/PM); die Runtime addiert sie in orientation_angles_at (K02 geschlossen —
@@ -58,7 +58,7 @@ Leser, Kanal, Protokoll-Doku, CI-Anschluss). Befund 2026-08-14: Text-PCKs der Mo
 tragen echte NUT_PREC-Reihen (Io −0,083°, Iapetus −0,451°, Uranus-Monde …) — sie
 fließen über die stype-4-Röhre. Binary-PCKs tragen NUR Orientierung (pck.req,
 Typen 2/3/20) — die CON-J2/J4-Behauptung war falsch; Mond-Harmonische liegen nicht
-in den Flattener-Wurzeln (bleiben j2/j4 = 0 honored, Kanal-Forschung: GRAIL-Modelle).
+in den Flattener-Wurzeln (j2/j4 bleiben offen — die Werte liegen in den GRAIL/Binary-PCK-Modellen).
 ```
 Verifikations-Befund moon_pa_de440_200625.bpc (Session 2026-08-14): Der
 DAF-Leser ist korrekt (Trailer, Record-Adressen, Fenster 1550–2650, Grad-9-Fits
@@ -75,35 +75,24 @@ Blöcke, ANGLES/AXES/UNITS- und MATRIX-Rotationen in SPICE-Reihenfolge,
 Mehrzeilen-Tupel, Ein-Level-Kettenregel, 3 Tests); der Flattener klassifiziert
 family fk, führt die Festrotation an (pa_frame_of-Hardcode entfernt) und hat
 einen --probe-Modus (--bpc + --fk + JD → PA/ME-Winkel + W-Drift).
-Moon-PA-Merge BEFUND + GEGENPROBE (2026-08-15): Probe J2000: bpc liefert
-pa=(-0,054°, 0,425°, W 2564°) mit W-Drift 0,23°/Tag — gemessen gegen
-Horizons (Observer 399@301, J2000): ObsSub-LON 301,996° / ObsSub-LAT
--10,972°. Die Kette (bpc + TKFRAME_31009) liefert (−10,6°, −1,7°) —
-Abweichung gemessen, der Fehler ist real, nicht die Interpretation:
-DAF-Header-Dump (ND=2, NI=5, Adressen 641/1280644 = exakt 40000 Records
-à 32 Doubles), Record-Dump (mid/radius exakt für das J2000-Fenster),
-NAIF-Typ-2-Spec (pck.req: [MID, RADIUS, RA, DEC, W]) — Leser und Datei
-sind spec-konform, die Winkel selbst tragen die Mondorientierung nicht.
-Befund: Die gespeicherte Frame trackt die oskulierende Orbit-Frame
-(T-Achse 10,6° neben der Erdlinie, E-Achse 17° neben der Orbitnormalen,
-Relativrotation 0,23°/Tag = Rotation−Orbitbewegung bei Apogäum) — die
-bpc-Winkel sind orbitreferenziert, nicht ICRF. Das tf selbst sagt: „both
-trajectory and lunar orientation data are stored in these ephemeris
-files" (moon_de440_250416.tf Z.53-55) — die DE440-Mondorientierung lebt
-in den SPK-Segmenten 310/311 (Euler-Winkel als Positionsvektor). Die
-TKFRAME_31009-Festrotation ist korrekt geparst, kann die Diskrepanz aber
-nicht tragen. Die CI-Selektion nimmt deshalb KEINE bpc/fk für den Mond —
-gemessen falsch würde der Kanal regredieren; der Live-Kanal bleibt die
-Text-PCK-IAU-Linear. Gegenprobe DE440-Paper (Park et al. 2021, AJ 161
-105, §2.4): die lunaren Libration-Winkel (φ, θ, ψ) sind definiert als
-φ = Knotenlänge ab ICRF-X, θ = Neigung der Mantel-Äquatorebene, ψ =
-Länge ab Knoten — die gespeicherten Werte entsprechen φ (RA −0,054° ≈
-Knoten bei 0° ✓), aber weder θ noch ψ (beide Kompositionen
-Rz(φ)Rx(θ)Rz(ψ) mit °/rad getestet). Offene Frage: Referenz der
-gespeicherten Winkel (gemessen orbit-tracking, 0,23°/Tag =
-Rotation−Orbitbewegung beim Apogäum) — Auflösung über die DE440-ASCII-
-Ephemeris-Lunar-Libration-Records (Ursprungsquelle des bpc) oder
-NAIFs bpc-Generierungsprogramm.
+Moon-PA-Merge BEFUND + GEGENPROBE (2026-08-15, vollständig gemessen): Die
+Datei speichert die DE440-Lunaren-Librationswinkel (φ, θ, ψ) — φ = Knoten
+in GRAD (−0,054° ≈ 0 ✓), θ = Neigung der Mantel-Äquatorebene in RADIANT
+(0,424855 rad = 24,343°; trackt die Nodal-Oszillation: 22,09° nach 5
+Jahren ✓), ψ = Twist in RADIANT (Drift 0,229987 rad/Tag = 13,177°/Tag =
+exakt die Rotationsrate; DE440-Header-Konstante 0,229944858937522340
+bestätigt ✓). Komposition lt. Park et al. 2021 §2.4: M = R3(φ)·R1(θ)·R3(ψ)
+— Pol-RA stimmt auf 0,05° (270,1° vs 269,9949°). Referenz korrigiert:
+Horizons ObsSub für CENTER='500@399' + TARGET='301' (sub-Erdpunkt auf dem
+Mond — die erste Query lieferte den sub-Mondpunkt auf der ERDE, das war
+die Phantom-Diskrepanz). Restdiskrepanz: Prime-Meridian-Ankerung ψ —
+Residual = zeitvariante Pol-Rotation 1–13° (ecliptischer vs. äquatorialer
+Knoten als ψ-Referenz + die PA→MER-Konstantmatrix aus Park-Table-1).
+Die CI-Selektion nimmt deshalb KEINE bpc/fk für den Mond — gemessen
+würde der Kanal 2–3° falschen Prime-Meridian tragen; der Live-Kanal
+bleibt Text-PCK-IAU. Verbleibender Schritt (klein, alles gemessen):
+ψ-Knotenkonvention + Park-Table-1-Matrix in die Komposition einsetzen
+und gegen die korrigierte ObsSub-Tabelle (7 Epochen) verifizieren.
 ```
 
 **K03** Kleinkörper-Katalog
@@ -118,7 +107,7 @@ query_asteroid_hash (Pre-Filter mit per-Record-Reach, Kepler-Evaluation zum
 Query-Zeitpunkt, Exact-Filter auf Hill+pad), Emission Massen- (GM m³/s²,
 kernel 0, force 1, τ ∞) + Radius-Kanal (m), Extent = Hill-Radius
 a·(GM/3GM_sun)^(1/3). **GM-Gate:** nur Körper mit gemessenem GM manifestieren
-(17 Records — alle anderen sind absent, 0 honored; das Gate löst zugleich die
+(17 Records — alle anderen sind absent (offen — GM ungemessen); das Gate löst zugleich die
 Mengenfrage: 17 statt 1,56 Mio. Kandidaten pro Query). WS-Beweis: Ceres-
 Oszillator bei Fenster-Mitte auf der Epoch-Position, Distanz 1,3 km.
 Befund: Kepler-Positionen driften vom n-body-Wahren (Elemente sind Zwei-Körper,
@@ -150,7 +139,7 @@ Verifikation 2026-08-15 (zweite Session): 5 Lib-Tests grün, Live-Läufe
 1 Crab = 2,4e-8 erg/cm²/s bei 1 TeV) — Umrechnung in SI offen, Unit-Token
 benennt was IST.
 Das CDN-Asset cometels_flat.json entsteht beim ersten CI-Lauf (GH_TOKEN lokal
-absent) — bis dahin manifestiert der Block 0 (0 honored,
+absent) — bis dahin manifestiert der Block 0 (ausstehend,
 kein live-Fallback auf die .gz-Quelle möglich).
 DCOM5-TEIL GESCHLOSSEN (2026-08-15): `src/bin/zip_range_extract.rs` (Zip-
 Range-Extraktor: EOCD → Central Directory → Member-Payload per HTTP-Range,
@@ -173,7 +162,7 @@ Magnitude), rad 5,5 km, albedo 0,04 — H = 99 (unbelegt) überall, der
 M1-Kanal trägt die Messung. Das 1986-Apparitions-Record heißt im Katalog
 SB441-N16 (tp 2446469,97 = 1986-02-09,47, e 0,96794, dist 28,8 au am
 Epoch 1968) — der Record-Name ist, was er ist. CDN-Asset dcom5_comets.json
-entsteht beim ersten CI-Lauf (0 honored bis dahin).
+entsteht beim ersten CI-Lauf (ausstehend bis dahin).
 ```
 
 **K04** Tycho-2-Katalog (em)
@@ -183,7 +172,7 @@ GESCHLOSSEN (2026-08-15): src/bin/tycho2_compiler.rs — VizieR I/259 tyc2.dat
 (T-flagged, 1 146; X-flagged-Main-Records ohne Position bleiben absent) mit
 Hipparcos-Join I/239 hip_main.dat (Plx + Johnson-V für Suppl-Zeilen; Suppl-
 Positionen J1991.25 → J2000 propagiert). 118 637 Sterne mit plx > 0 ins Bin
-(36-B-Stride), 2 330 545 ohne Parallaxe 0 honored. Runtime: format
+(36-B-Stride), 2 330 545 ohne Parallaxe offen. Runtime: format
 catalog_tycho + StarHash (Enclosure-Lemma, statisch auf Load-Epoch-Positionen,
 vmax aus pm·d datenabgeleitet ×Φ, span-guard wie DASTCOM), Emission
 10^(-0.4·mag) em, τ = ttl, extent 0 (Pixel-Scale-Softening). Test
@@ -203,7 +192,7 @@ J2000 propagiert), 2 025 673 Sterne mit plx > 0 ins Bin (72,9 MB), sources.φ-
 Block tgas_stars.bin ersetzt tycho2_stars.bin, CI-Schritt gespiegelt.
 Beweis HIP 13989 (HD 18560): plx 6,35 mas, G 7,991, dist 157,5 pc — DR1-
 ehrlich (DR3 verfeinert auf 6,66). Befunde: Vega/Barnard absent, weil Gaia
-DR1 bei G < ~3,5 sättigt bzw. pm > 3,5″/yr ausgeschlossen ist — 0 honored.
+DR1 bei G < ~3,5 sättigt bzw. pm > 3,5″/yr ausgeschlossen ist — offen (DR3-Merge trägt sie).
 Der Tycho-2+I/239-Weg (--source tycho2) bleibt als Compiler-Modus.
 SUPERSEDED am selben Tag (2026-08-15): der DR3-Merge (K04b-Welle, ARI
 Heidelberg, Bailer-Jones + Hipparcos-Helle) ersetzt tgas_stars.bin als
@@ -321,10 +310,10 @@ siehe M08). Der Ephemeriden-Compiler ist seit K01 tabellegetrieben
 
 **P01** Tote Grammatik wird still akzeptiert
 ```
-Der Parser akzeptiert die tote force-Direktive und den 3-Token-field (setzt τ=0)
-fehlerfrei → stille 0 Oszillatoren (0 honored, aber ohne sichtbares Signal).
-Entscheidung: laut ablehnen (Refused) oder Migration mit Lautsignal. Betrifft
-archeology/sources/* (alte force-Grammatik) und phi/research/batches/* (source-Köpfe).
+GESCHLOSSEN (2026-08-15): parse_sources lehnt die tote force-Direktive und den
+3-Token-field laut ab (eprintln Refused — kein stilles 0). Die alte Grammatik aus
+archeology/sources/* und phi/research/batches/* migriert der --gold-Konverter
+(Migration mit Lautsignal).
 ```
 
 **P02** SI-Konvertierung + Unit-Kraft-Matrix
@@ -524,7 +513,7 @@ Binary-PCK-Pakets oben).
   · B2FIND-Hints (grind_b2find.φ): 0 accepted — ICOS/TOAR key-needed,
     GEOFON quakeml-only, Rest Registry.
   · FRB (grind_frb.φ): FRBCAT1 tot (frbcat.org 000), CHIME via VizieR
-    J/ApJS/257/59/table2 lebt (536, ohne z → 0 honored, tap_compiler-Route).
+    J/ApJS/257/59/table2 lebt (536, ohne z → offen, tap_compiler-Route).
   · ArcGIS (grind_arcgis_index.φ + grind_arcgis_deep.φ): 440 + 620 Datasets
     indexiert, 131 + 358 Services geprobt, 32 Block-Drafts (17 + 15, thermal/
     seismic/diffusion/em/advective/gravity — Einbau offen).
@@ -803,8 +792,8 @@ Binary-PCK-Pakets oben).
 ### Validation
 
 - `--verify` CLI existiert (URL-Erreichbarkeit); lädt noch keine Quellen.
-- Tote Tokens (`force`, 3-Token-`field`, `field_in`, `pos`) werden laut P01 still
-  geparst — Lautablehnung fehlt.
+- `force` und der 3-Token-`field` lehnt `parse_sources` laut ab (Refused, P01
+  geschlossen); `field_in` migriert der `--gold`-Konverter, `pos` trägt keinen Arm.
 - Test-Limit der Curation über 200 Blöcke hinaus erhöhen; 6 Rest-FAILs sind
   Daten-Artefakte (docs/source_curation.md).
 - **Kanonisierung 2026-08-15:** `phi/sources.φ` (171 Blöcke), `phi/dead_sources.φ`
@@ -872,10 +861,10 @@ Binary-PCK-Pakets oben).
   ersten 200 Blöcke — Limit erhöhen, dann Grind-Einbau einschließt).
 - **VirES-Lag-Befund GESCHLOSSEN (2026-08-15):** FAST-Produkte haben ~10 h Lag
   (stopDate ≈ now−10 h) — die {hour_ago}/{now}-Fenster lagen außerhalb der
-  Abdeckung (400 time-outside-range → 0 honored). Fix: EFI/FACATMS/FAST-MAGA
+  Abdeckung (400 time-outside-range). Fix: EFI/FACATMS/FAST-MAGA
   nutzen jetzt `start={yesterday}T12:00:00Z&stop={yesterday}T13:00:00Z` mit
   ttl 86400 (Fenster endet im Abdeckungsbereich, ttl faltet den Lag ehrlich).
-  TCT02 bleibt Archiv-only (Abdeckung endet 2025-12-04, 400 → 0 honored).
+  TCT02 bleibt Archiv-only (Abdeckung endet 2025-12-04, 400 außerhalb der Abdeckung).
 - **Laufzeit-Browser (verifiziert 2026-08-14, Desktop GTX 970 / NVIDIA 580):**
   **Firefox = 60 fps stabil** mit der Per-Pixel-Membran (wgpu im Content-Prozess,
   kein Kill-on-Deadline-Watchdog) — der empfohlene Laufzeit-Browser.
@@ -929,7 +918,7 @@ Binary-PCK-Pakets oben).
   06:40, workflow_dispatch) scheitern bei Step „Flatten SPK bodies and upload
   to CDN" (ephemeris_compiler --ci-mode, exit 1 nach ~7,5 min — Upload-Pfad
   `exit(1)` bei upload_failed > 0). Folge: 32 Mond-Assets + alle Katalog-Assets
-  absent (0 honored). OMEGAFLOW_TOKEN braucht Contents-write auf
+  absent (ausstehend). OMEGAFLOW_TOKEN braucht Contents-write auf
   omegaflow/sources (secrets.template Z.26) — Rechte prüfen, dann erneuter
   Dispatch. Run-Logs 403-gated (Owner-Read). Offen: nach erfolgreichem
   Flatten Deckung der 32 Monde prüfen (irreguläre wie himalia evtl. via
@@ -943,7 +932,7 @@ Binary-PCK-Pakets oben).
   sexagesimal_compiler (Magnetar + TeVCat mit BZCAT4/Green/PSRCAT-Joins).
   Die CDN-Assets entstehen beim
   ersten Lauf nach dieser Welle — bis dahin manifestieren die Blöcke 0
-  (0 honored, dokumentiert je Block).
+  (ausstehend, dokumentiert je Block).
 - Quota-Befund 2026-08-15: `--verify phi` lud rekursiv die research-Batches
   (27k+ Quellen) und mirrorte jede per gh release upload — das Kontingent
   (5000/h) starb strukturell. Fix manifestiert: (1) Mirror nur für das
