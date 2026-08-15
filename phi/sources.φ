@@ -1,554 +1,88 @@
-url https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/gm_de440.tpc
-format kernel_text
-body gm_de440
-ttl 604800
-
-url https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00010.tpc
-format kernel_text
-body pck00010
-ttl 604800
-
-url https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/geophysical.ker
-format kernel_text
-body geophysical
-ttl 604800
-
-url https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls
-format kernel_text
-body naif0012
-ttl 604800
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_sun.bin
-format ephemeris_binary
-at sun
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_mercury.bin
-format ephemeris_binary
-at mercury
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_venus.bin
-format ephemeris_binary
-at venus
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_earth.bin
-format ephemeris_binary
-at earth
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_moon.bin
-format ephemeris_binary
-at moon
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_mars.bin
-format ephemeris_binary
-at mars
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_jupiter.bin
-format ephemeris_binary
-at jupiter
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_saturn.bin
-format ephemeris_binary
-at saturn
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_uranus.bin
-format ephemeris_binary
-at uranus
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_neptune.bin
-format ephemeris_binary
-at neptune
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_pluto.bin
-format ephemeris_binary
-at pluto
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_io.bin
-format ephemeris_binary
-at io
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_europa.bin
-format ephemeris_binary
-at europa
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_ganymede.bin
-format ephemeris_binary
-at ganymede
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_callisto.bin
-format ephemeris_binary
-at callisto
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_titan.bin
-format ephemeris_binary
-at titan
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_rhea.bin
-format ephemeris_binary
-at rhea
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_dione.bin
-format ephemeris_binary
-at dione
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_tethys.bin
-format ephemeris_binary
-at tethys
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_enceladus.bin
-format ephemeris_binary
-at enceladus
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_triton.bin
-format ephemeris_binary
-at triton
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_phobos.bin
-format ephemeris_binary
-at phobos
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_deimos.bin
-format ephemeris_binary
-at deimos
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_ceres.bin
-format ephemeris_binary
-at ceres
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_vesta.bin
-format ephemeris_binary
-at vesta
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_eris.bin
-format ephemeris_binary
-at eris
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_haumea.bin
-format ephemeris_binary
-at haumea
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_makemake.bin
-format ephemeris_binary
-at makemake
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_apophis.bin
-format ephemeris_binary
-at apophis
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_bennu.bin
-format ephemeris_binary
-at bennu
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_encke.bin
-format ephemeris_binary
-at encke
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_iss.bin
-format ephemeris_binary
-at iss
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_voyager1.bin
-format ephemeris_binary
-at voyager1
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_voyager2.bin
-format ephemeris_binary
-at voyager2
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_new_horizons.bin
-format ephemeris_binary
-at new_horizons
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_parker_solar_probe.bin
-format ephemeris_binary
-at parker_solar_probe
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_solar_orbiter.bin
-format ephemeris_binary
-at solar_orbiter
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_jwst.bin
-format ephemeris_binary
-at jwst
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_juno.bin
-format ephemeris_binary
-at juno
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_atlas_3i.bin
-format ephemeris_binary
-at atlas_3i
-ttl 86400
-
-# ── Flattener bodies (K01-K02): Jupiter moons beyond the Galileans ──
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_amalthea.bin
-format ephemeris_binary
-at amalthea
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_himalia.bin
-format ephemeris_binary
-at himalia
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_thebe.bin
-format ephemeris_binary
-at thebe
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_adrastea.bin
-format ephemeris_binary
-at adrastea
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_metis.bin
-format ephemeris_binary
-at metis
-ttl 86400
-
-# ── Flattener bodies: Saturn moons beyond the classical five ──
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_mimas.bin
-format ephemeris_binary
-at mimas
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_hyperion.bin
-format ephemeris_binary
-at hyperion
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_iapetus.bin
-format ephemeris_binary
-at iapetus
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_phoebe.bin
-format ephemeris_binary
-at phoebe
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_janus.bin
-format ephemeris_binary
-at janus
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_epimetheus.bin
-format ephemeris_binary
-at epimetheus
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_helene.bin
-format ephemeris_binary
-at helene
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_atlas.bin
-format ephemeris_binary
-at atlas
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_prometheus.bin
-format ephemeris_binary
-at prometheus
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_pandora.bin
-format ephemeris_binary
-at pandora
-ttl 86400
-
-# ── Flattener bodies: Uranus moons ──
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_ariel.bin
-format ephemeris_binary
-at ariel
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_umbriel.bin
-format ephemeris_binary
-at umbriel
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_titania.bin
-format ephemeris_binary
-at titania
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_oberon.bin
-format ephemeris_binary
-at oberon
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_miranda.bin
-format ephemeris_binary
-at miranda
-ttl 86400
-
-# ── Flattener bodies: Neptune moons beyond Triton ──
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_naiad.bin
-format ephemeris_binary
-at naiad
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_thalassa.bin
-format ephemeris_binary
-at thalassa
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_despina.bin
-format ephemeris_binary
-at despina
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_galatea.bin
-format ephemeris_binary
-at galatea
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_larissa.bin
-format ephemeris_binary
-at larissa
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_proteus.bin
-format ephemeris_binary
-at proteus
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_nereid.bin
-format ephemeris_binary
-at nereid
-ttl 86400
-
-# ── Flattener bodies: Pluto moons beyond Charon ──
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_charon.bin
-format ephemeris_binary
-at charon
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_nix.bin
-format ephemeris_binary
-at nix
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_hydra.bin
-format ephemeris_binary
-at hydra
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_kerberos.bin
-format ephemeris_binary
-at kerberos
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_styx.bin
-format ephemeris_binary
-at styx
-ttl 86400
-
-# ── DASTCOM5 asteroid catalog (K03) ──
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/dastcom_asteroids.bin
-format catalog_dastcom
-at sun
-ttl 86400
-
-# ── MPC cometels catalog (K03, compiled by cometels_compiler → minorplanetcenter.net) ──
-# 831 Kometen zum Katalog-Epoch via Kepler (e < 1); e >= 1 manifestieren 0.
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/cometels_flat.json
-ttl 604800
-at sun
-cmap .
-ra ra
-dec dec
-dist dist_au
-dist_scale 1.495978707e11
-field H comet_h_mag gaussian-inverse-square em mag 604800 0.0 0.0
-
-# ── DASTCOM5 comet apparition catalog (K03, compiled by dcom5_compiler → ssd.jpl.nasa.gov) ──
-# Multi-Apparitionen aus dcom5_le.dat (976-B-Records) zum Record-Epoch via Kepler (e < 1);
-# e >= 1 manifestieren 0. Record-Layout laut dastcom5/doc/README.txt (Byte-Map, Range-Extract).
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/dcom5_comets.json
-ttl 604800
-at sun
-cmap .
-ra ra
-dec dec
-dist dist_au
-dist_scale 1.495978707e11
-field H comet_h_mag gaussian-inverse-square em mag 604800 0.0 0.0
-field M1 comet_total_mag gaussian-inverse-square em mag 604800 0.0 0.0
-
-# ── NASA Exoplanet Archive pscomppars (compiled by tap_compiler → exoplanetarchive.ipac.caltech.edu) ──
-# 6309 bestätigte Exoplaneten mit sy_dist (pc); Zeilen ohne Distanz 0 honored (skip-null dist).
-# masse = pl_masse (M⊕, gravity, RV-Signatur), rade = pl_rade (R⊕, gravity) — unquoted (Oracle).
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/exoplanets.json
-ttl 604800
-at sun
-cmap .
-ra ra
-dec dec
-dist dist
-dist_scale 3.085677581e16
-field masse planet_mass gaussian-inverse-square gravity M_earth 604800 0.0 0.0
-field rade planet_radius gaussian-inverse-square gravity R_earth 604800 0.0 0.0
-
-# ── ALFALFA HI-Galaxienkatalog (em cmap; Dist in Mpc via dist_scale) ──
-url https://egg.astro.cornell.edu/alfalfa/data/a40files/a40.datafile1.csv
-ttl 604800
-format csv
-at sun
-cmap .
-ra RAdeg_HI
-dec Decdeg_HI
-dist Dist
-dist_scale 3.085677581e22
-field HIflux alfalfa_hi_flux gaussian-inverse-square em Jy_km/s 604800 0.0 0.0
-
-# ── McGill-Magnetar-Katalog (em cmap; Sexagesimal-Kompilat, Dist kpc) ──
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/magnetar_flat.json
-ttl 604800
-at sun
-cmap .
-ra ra
-dec dec
-dist dist
-dist_scale 3.085677581e19
-field flux magnetar_flux inverse-square em erg/cm2/s 604800 0.0 0.0
-
-# ── TeVCat2 γ-Quellenkatalog (em cmap; Sexagesimal-Kompilat, Dist kpc wenn gemessen) ──
-# Enrichment: z-Join (BZCAT4, <=3') + dist-Join (Green snrcat, <=0.1 deg) —
-# 67 von 360 mit z (Hubble), 78 mit dist (kpc). TeV-Zentroid vs. optische
-# Position ~2' (Mkn 421-Befund).
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/tevcat_flat.json
-ttl 604800
-at sun
-cmap .
-ra ra
-dec dec
-dist dist
-dist_scale 3.085677581e19
-z z
-field flux tevcat_flux inverse-square em Crab 604800 0.0 0.0
-
-# ── Gaia-DR3 + Bailer-Jones-Distanzen (K04b via ARI Heidelberg) — Stern-Hash-Kanal ──
-# 1 837 259 Sterne: 1 837 214 (G 1,94–11,5, r_med_geo via
-# gaiaedr3_complements.distances) + 45 Hipparcos-Helle (V<1,94 — Vega, Sirius,
-# Alpha Centauri; Gaia sättigt dort, ihre Parallaxen sind Hipparcos-Boden).
-# J2016→J2000 pm-propagiert; pm im Bin 0 (statisch, TTL-Woche ≈ 0,2″ Drift).
-# Ein Stern-Kanal — kein Fallback.
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/dr3_stars.bin
-format catalog_tycho
-at sun
-ttl 604800
-
-# ── FRBCAT (VizieR J/other/PASA/33.45, tap_compiler) — em cmap, Dist via z (Hubble) ──
-# 118 FRBs (Stand 2016); 18 mit zHost manifestieren, Rest absent. FRB 121102-Beweis.
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/frbcat_flat.json
-ttl 604800
-at sun
-cmap .
-ra ra
-dec dec
-z z
-field dm frb_dispersion inverse-square em pc/cm3 604800 0.0 0.0
-field speak frb_peak_flux inverse-square em Jy 604800 0.0 0.0
-
-# ── FRB-Studie A&A 693/A279 (2025, tap_compiler) — em cmap, z (Hubble) ──
-# 24 FRBs (2019–2023, TNS-Namen — praktisch kein Überlapp mit FRBCAT 2016);
-# 23 mit z. DM-Halo/Galaxie zerlegt, tausc = zeitliche Streuung.
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/frb_a279.json
-ttl 604800
-at sun
-cmap .
-ra ra
-dec dec
-z z
-field dm frb_dm_em inverse-square em pc/cm3 604800 0.0 0.0
-field tausc frb_scatter_ms gaussian-inverse-square em ms 604800 0.0 0.0
-
-# ── Live API: USGS Earthquakes (seismic-surface) ──
-url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson
-ttl 60
+url http://reg.bom.gov.au/fwo/IDN60901/IDN60901.95765.json
+ttl 300
 on earth 0 0 0
-map features
-lat geometry.coordinates.1
-lon geometry.coordinates.0
-field geometry.coordinates.2 geosphere_quake_depth_km erfc seismic-surface km 6.0 0.0 0.0
-field properties.mag geosphere_quake_magnitude erfc seismic-surface Mw 6.0 0.0 0.0
+map observations.data
+lat lat
+lon lon
+field air_temp atmosphere_bom_air_temp_c exponential-decay thermal C 30.0 0.0 0.0
+field rel_hum atmosphere_bom_relative_humidity_pct gaussian-inverse-square diffusion % 30.0 0.0 0.0
+field wind_spd_kmh atmosphere_bom_wind_speed_kmh patch-levy advective km/h 30.0 0.0 0.0
 
-# ── Live API: SWPC GOES X-ray Flux (em, solar) ──
-url https://services.swpc.noaa.gov/json/goes/primary/xrays-1-day.json
-ttl 60
+url https://api.adsb.lol/v2/point/{lat}/{lon}/250
+ttl 10
+on earth 52.5 13.4
+map ac
+lat lat
+lon lon
+field gs adsb_ground_speed_kmh gaussian-inverse-square advective km/h 1 0.0 0.0
+field track adsb_track_deg inverse-square em deg 1 0.0 0.0
+
+url https://api.nasa.gov/DONKI/FLR?startDate={week_ago}&endDate={today}&classType=X&api_key={NASA_API_KEY}
+ttl 3600
 at sun
-last flux noaa_goes_xray_flux_w_m2 inverse-square em W/m2 6.0 0.0 0.0
+regex classType":"X([0-9.]+) solar_flare_x_class_latest inverse-square em 1e-4W/m2 3600 0.0 0.0
 
-# ── Live API: SWPC Solar Wind 1-min (em, near-Earth) ──
-url https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json
-ttl 60
-at earth
-last proton_speed solar_wind_speed_km_s inverse-square em km/s 6.0 0.0 0.0
-last proton_density solar_wind_density_cm3 inverse-square em 1/cm3 6.0 0.0 0.0
-last proton_temperature solar_wind_temp_k inverse-square em K 6.0 0.0 0.0
-
-# ── Live API: SWPC Interplanetary Magnetic Field (em, near-Earth) ──
-url https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json
-ttl 60
-at earth
-last bt magnetosphere_imf_bt_nt inverse-square em nT 6.0 0.0 0.0
-last bz_gsm magnetosphere_imf_bz_nt inverse-square em nT 6.0 0.0 0.0
-
-# ── Live API: NOAA GOES Magnetometer (em, geostationary) ──
-url https://services.swpc.noaa.gov/json/goes/primary/magnetometers-1-day.json
-ttl 60
-on earth 0.0 -75.2 35786023
-last Hp magnetosphere_hp_nt inverse-square em nT 6.0 0.0 0.0
-last He magnetosphere_he_nt inverse-square em nT 6.0 0.0 0.0
-last total magnetosphere_bt_nt inverse-square em nT 6.0 0.0 0.0
-
-# ── Live API: FDSN Earthquake Query (seismic-surface, presence-window) ──
-url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={hour_ago}&latitude={lat}&longitude={lon}&maxradiuskm=500&minmagnitude=2.0
-ttl 60
+url https://api.openaq.org/v3/sensors/{station}/measurements?limit=1&datetime_from={yesterday}T00:00:00Z
+header X-API-Key {OPENAQ_API_KEY}
+ttl 21600
 on earth 0 0 0
-geojson mag 0.0 seismic_magnitude_mw seismic_depth_km 6.0 0.0 0.0
+stations https://api.openaq.org/v3/locations?limit=1000
+stations_path results
+stations_flatten sensors
+stations_filter parameter.name pm25
+stations_id id
+stations_lat coordinates.latitude
+stations_lon coordinates.longitude
+fanout 25
+fanout_delay 20
+last results.value openaq_pm25_ugm3 gaussian-inverse-square diffusion µg/m3 3600 0.0 0.0
 
-# ── Live API: AviationWeather METAR (acoustic, surface stations) ──
+url https://api.p2pquake.net/v2/jma/quake?limit=100&order=-1
+ttl 30
+at earth
+map .
+lat earthquake.hypocenter.latitude
+lon earthquake.hypocenter.longitude
+field earthquake.hypocenter.depth quake_depth_km gaussian-inverse-square seismic-body km 3600 0.0 0.0
+
+url https://api.purpleair.com/v1/sensors?fields=latitude,longitude,pm2.5&limit=5000
+ttl 3600
+on earth 0 0 0
+header X-API-Key {PURPLEAIR_KEY}
+map data
+lat 0
+lon 1
+field 2 purpleair_pm25_ugm3 gaussian-inverse-square diffusion µg/m3 3600 0.0 0.0
+
+url https://api.safecast.org/en-US/measurements.json?latitude={lat}&longitude={lon}&distance=5000
+ttl 300
+at earth
+map .
+lat latitude
+lon longitude
+epoch captured_at
+field value safecast_cpm inverse-square em cpm 3600 0.0 0.0
+
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station={station}&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
+ttl 3600
+on earth 0 0 0
+stations https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json?type=waterlevels&units=metric
+stations_path stations
+stations_id id
+stations_lat lat
+stations_lon lng
+fanout 40
+fanout_delay 10
+last data.v hydrosphere_tide_water_level_m inverse-square gravity m 3600 0.0 0.0
+
+url https://api.wolfx.jp/jma_eew.json
+ttl 5
+at earth
+map .
+lat Latitude
+lon Longitude
+field Depth eew_depth_km gaussian-inverse-square seismic-body km 300 0.0 0.0
+
 url https://aviationweather.gov/api/data/metar?ids=EDDF,EDDM,EGLL,KJFK,RJTT&format=json
 ttl 300
 on earth 0 0 0
@@ -561,220 +95,544 @@ field altim atmosphere_metar_pressure_hpa gaussian-inverse-square acoustic hPa 3
 field wspd atmosphere_metar_wind_speed_kt gaussian-inverse-square acoustic kt 30.0 0.0 0.0
 field wdir atmosphere_metar_wind_direction_deg gaussian-inverse-square acoustic deg 30.0 0.0 0.0
 
-# ── Live API: TNS Transient catalog (em, celestial) ──
-url https://www.wis-tns.org/system/files/tns_public_objects/tns_public_objects.csv.zip
-format csv_zip
-header user-agent tns_marker{"tns_id":4474,"type":"user","name":"omegaflow"}
-ttl 3600
-at sun
-abs_mag_from tns_transient_flux
-cmap .
-ra ra
-dec declination
-z redshift
-field discoverymag tns_transient_flux inverse-square em mag 3600 0.0 0.0
-
-# ── Live API: PurpleAir PM sensors (diffusion, global) ──
-url https://api.purpleair.com/v1/sensors?fields=latitude,longitude,pm2.5&limit=5000
-ttl 3600
+url https://data.pmel.noaa.gov/pmel/erddap/tabledap/all_pmel_co2_moorings.json?time,longitude,latitude,pCO2_air&time%3E=max(time)-7days
+ttl 86400
 on earth 0 0 0
-header X-API-Key {PURPLEAIR_KEY}
-map data
-lat 0
+map table.rows
+lat 2
 lon 1
-field 2 purpleair_pm25_ugm3 gaussian-inverse-square diffusion µg/m3 3600 0.0 0.0
+field 3 hydrosphere_pco2_mooring_uatm gaussian-inverse-square diffusion uatm 8640.0 0.0 0.0
 
-# ── Live API: NOAA CDO GHCND daily summaries (thermal, presence fan-out) ──
-url https://www.ncdc.noaa.gov/cdo-web/api/v2/data?datasetid=GHCND&startdate={week_ago}&enddate={yesterday}&datatypeid=TMAX&stationid={station}&limit=1&units=metric
-stations https://www.ncdc.noaa.gov/cdo-web/api/v2/stations?datasetid=GHCND&extent={lat_min},{lon_min},{lat_max},{lon_max}&limit=100
-stations_path results
-stations_id id
-stations_lat latitude
-stations_lon longitude
-fanout 50
-header token {NOAA_CDO_TOKEN}
-ttl 3600
-on earth 52.5 13.4
-last results.value noaa_ghcnd_tmax_c erfc thermal C 3600 0.0 0.0
-
-# ── Live API: OpenAQ PM2.5 sensors (diffusion, sensor fan-out) ──
-url https://api.openaq.org/v3/sensors/{station}/measurements?limit=1&datetime_from={yesterday}T00:00:00Z
-stations https://api.openaq.org/v3/locations?limit=1000
-stations_path results
-stations_flatten sensors
-stations_filter parameter.name pm25
-stations_id id
-stations_lat coordinates.latitude
-stations_lon coordinates.longitude
-fanout 25
-fanout_delay 20
-header X-API-Key {OPENAQ_API_KEY}
-ttl 21600
-on earth 0 0 0
-last results.value openaq_pm25_ugm3 gaussian-inverse-square diffusion µg/m3 3600 0.0 0.0
-
-# ── Backlog-Kuration 2026-08-15 — verifizierte, nicht-redundante Blöcke ──
-
-# SWPC GOES Partikel-Flux (em, geostationär)
-url https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-1-day.json
-ttl 60
-on earth 0.0 -75.2 35786023
-last flux radiation_electron_flux_2mev inverse-square em count 6.0 0.0 0.0
-
-url https://services.swpc.noaa.gov/json/goes/primary/differential-protons-1-day.json
-ttl 60
-on earth 0.0 -75.2 35786023
-last flux radiation_proton_flux_differential inverse-square em count 6.0 0.0 0.0
-
-url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
-ttl 60
-on earth 0.0 -75.2 35786023
-last flux radiation_proton_flux_integral inverse-square em count 6.0 0.0 0.0
-
-url https://services.swpc.noaa.gov/json/goes/primary/xray-flares-7-day.json
-ttl 60
-on earth 0.0 -75.2 35786023
-last max_xrlong solar_flare_xray_intensity inverse-square em W/m2 6.0 0.0 0.0
-
-url https://services.swpc.noaa.gov/json/solar-radio-flux.json
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson
 ttl 60
 on earth 0 0 0
-path 0.details.0.flux solar_radio_flux_sfu inverse-square em sfu 6.0 0.0 0.0
-
-url https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json
-ttl 180
-at earth
-last Kp magnetosphere_kp_index inverse-square em 1 18.0 0.0 0.0
-last a_running magnetosphere_kp_a_running inverse-square em 1 18.0 0.0 0.0
-
-# OpenSky globale Luftfahrzeuge (advective/em)
-url https://opensky-network.org/api/states/all
-ttl 10
-on earth 0 0 0
-map states
-lat 6
-lon 5
-alt 7
-field 9 biosphere_aircraft_velocity gaussian-inverse-square advective m/s 1.0 0.0 0.0
-field 11 biosphere_aircraft_vertical_rate gaussian-inverse-square advective m/s 1.0 0.0 0.0
-field 13 biosphere_aircraft_geo_altitude inverse-square em m 1.0 0.0 0.0
-
-# USGS Waterservices Fluss-Durchfluss (advective)
-url https://waterservices.usgs.gov/nwis/iv/?format=json&bBox={lon_min},{lat_min},{lon_max},{lat_max}&parameterCd=00060&siteStatus=active
-ttl 300
-on earth 0 0 0
-map value.timeSeries
-lat sourceInfo.geoLocation.geogLocation.latitude
-lon sourceInfo.geoLocation.geogLocation.longitude
-field values.0.value.0.value hydrosphere_river_flow_cfs erfc advective cfs 30.0 0.0 0.0
-
-# SWPC ACE L1 Magnetfeld + Plasma (em)
-url https://services.swpc.noaa.gov/json/ace/mag/ace_mag_1h.json
-ttl 3600
-at earth 0.99
-field 0.gsm_bx exosphere_ace_bx_gsm_nt inverse-square em nT 360.0 0.0 0.0
-field 0.gsm_by exosphere_ace_by_gsm_nt inverse-square em nT 360.0 0.0 0.0
-field 0.gsm_bz exosphere_ace_bz_gsm_nt inverse-square em nT 360.0 0.0 0.0
-field 0.bt exosphere_ace_bt_nt inverse-square em nT 360.0 0.0 0.0
-
-url https://services.swpc.noaa.gov/json/ace/swepam/ace_swepam_1h.json
-ttl 3600
-at earth 0.99
-field 0.speed exosphere_ace_speed_kms inverse-square em km/s 360.0 0.0 0.0
-field 0.dens exosphere_ace_dens_ncc inverse-square em n/cc 360.0 0.0 0.0
-field 0.temperature exosphere_ace_temp_k inverse-square em K 360.0 0.0 0.0
-
-# BOM Sydney Wetterbeobachtungen (thermal/diffusion/advective)
-url http://reg.bom.gov.au/fwo/IDN60901/IDN60901.95765.json
-ttl 300
-on earth 0 0 0
-map observations.data
-lat lat
-lon lon
-field air_temp atmosphere_bom_air_temp_c exponential-decay thermal C 30.0 0.0 0.0
-field rel_hum atmosphere_bom_relative_humidity_pct gaussian-inverse-square diffusion % 30.0 0.0 0.0
-field wind_spd_kmh atmosphere_bom_wind_speed_kmh patch-levy advective km/h 30.0 0.0 0.0
-
-# ── Live API: NOAA CO-OPS Tide Gauges (gravity, fan-out) ──
-url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station={station}&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
-stations https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json?type=waterlevels&units=metric
-stations_path stations
-stations_id id
-stations_lat lat
-stations_lon lng
-fanout 40
-fanout_delay 10
-ttl 3600
-on earth 0 0 0
-last data.v hydrosphere_tide_water_level_m inverse-square gravity m 3600 0.0 0.0
-
-# ── Host-Kuration Einbau 2026-08-15 — 9 neue Live-Quellen (Struktur-Befunde in TODO.md, Batch 1–3) ──
-
-url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&limit=100&minmagnitude=2.5&orderby=time&start={today}T00:00:00
-ttl 60
-at earth
 map features
 lat geometry.coordinates.1
 lon geometry.coordinates.0
-field properties.depth quake_depth_km gaussian-inverse-square seismic-body km 3600 0.0 0.0
+field geometry.coordinates.2 geosphere_quake_depth_km erfc seismic-surface km 6.0 0.0 0.0
+field properties.mag geosphere_quake_magnitude erfc seismic-surface Mw 6.0 0.0 0.0
 
-url https://api.adsb.lol/v2/point/{lat}/{lon}/250
-ttl 10
-on earth 52.5 13.4
-map ac
-lat lat
-lon lon
-field gs adsb_ground_speed_kmh gaussian-inverse-square advective km/h 1 0.0 0.0
-field track adsb_track_deg inverse-square em deg 1 0.0 0.0
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={hour_ago}&latitude={lat}&longitude={lon}&maxradiuskm=500&minmagnitude=2.0
+ttl 60
+on earth 0 0 0
+geojson mag 0.0 seismic_magnitude_mw seismic_depth_km 6.0 0.0 0.0
 
-url https://www.nhc.noaa.gov/CurrentStorms.json
-ttl 300
-at earth
-map activeStorms
-lat latitudeNumeric
-lon longitudeNumeric
-field intensity storm_intensity_kt gaussian-inverse-square advective knot 300 0.0 0.0
-field pressure storm_pressure_mb gaussian-inverse-square advective mb 300 0.0 0.0
+url https://egg.astro.cornell.edu/alfalfa/data/a40files/a40.datafile1.csv
+ttl 604800
+format csv
+at sun
+cmap .
+ra RAdeg_HI
+dec Decdeg_HI
+dist Dist
+dist_scale 3.085677581e22
+field HIflux alfalfa_hi_flux gaussian-inverse-square em Jy_km/s 604800 0.0 0.0
 
-url https://api.p2pquake.net/v2/jma/quake?limit=100&order=-1
-ttl 30
-at earth
-map .
-lat earthquake.hypocenter.latitude
-lon earthquake.hypocenter.longitude
-field earthquake.hypocenter.depth quake_depth_km gaussian-inverse-square seismic-body km 3600 0.0 0.0
+url https://environment.data.gov.uk/flood-monitoring/id/stations/{station}/readings.json?_limit=1
+ttl 900
+on earth 0 0 0
+stations https://environment.data.gov.uk/flood-monitoring/id/stations?_limit=500
+stations_path items
+stations_id notation
+stations_lat lat
+stations_lon long
+fanout 40
+last items.value hydrosphere_river_stage_m inverse-square gravity m 900.0 0.0 0.0
 
-url https://api.safecast.org/en-US/measurements.json?latitude={lat}&longitude={lon}&distance=5000
-ttl 300
-at earth
+url https://erddap.aoml.noaa.gov/gdp/erddap/tabledap/drifter_hourly_qc.json?latitude,longitude,sst&time%3E=max(time)-7days
+ttl 3600
+on earth 0 0 0
+map table.rows
+lat 0
+lon 1
+field 2 hydrosphere_drifter_sst_k exponential-decay thermal K 360.0 0.0 0.0
+
+url https://erddap.dataexplorer.oceanobservatories.org/erddap/tabledap/ooi-ga01sumo-sbd12-04-pco2aa000.csv?time,sea_surface_temperature,surface_partial_pressure_of_carbon_dioxide_in_sea_water
+ttl 86400
+format csv
+on earth 46.05 -125.0 0
+lastrow surface_partial_pressure_of_carbon_dioxide_in_sea_water hydrosphere_pco2_ooi_uatm gaussian-inverse-square diffusion uatm 8640.0 0.0 0.0
+lastrow sea_surface_temperature hydrosphere_sst_ooi_c exponential-decay thermal C 8640.0 0.0 0.0
+
+url https://firms.modaps.eosdis.nasa.gov/api/area/csv/{FIRMS_MAP_KEY}/MODIS_NRT/world/1
+ttl 3600
+format csv
+on earth 0 0 0
 map .
 lat latitude
 lon longitude
-epoch captured_at
-field value safecast_cpm inverse-square em cpm 3600 0.0 0.0
+field bright_ti4 biosphere_fire_modis_brightness_ti4_k gaussian-inverse-square thermal K 3600 0.0 0.0
+field frp biosphere_fire_modis_radiative_power_mw gaussian-inverse-square thermal MW 3600 0.0 0.0
 
-url https://resonanceone.app/api/now
-ttl 300
-at earth
-field schumann_frequency_hz resonance_schumann_hz inverse-square em Hz 600 0.0 0.0
-
-url https://api.wolfx.jp/jma_eew.json
-ttl 5
-at earth
-map .
-lat Latitude
-lon Longitude
-field Depth eew_depth_km gaussian-inverse-square seismic-body km 300 0.0 0.0
-
-url https://services7.arcgis.com/WSiUmUhlFx4CtMBB/arcgis/rest/services/SO2datanew/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+url https://firms.modaps.eosdis.nasa.gov/api/area/csv/{FIRMS_MAP_KEY}/VIIRS_NOAA20_NRT/world/1
 ttl 3600
-at earth
-map features
-lat properties.Lat
-lon properties.Long
-field properties.SO2_Kilotons so2_emission_kt erfc diffusion kt 86400 0.0 0.0
+format csv
+on earth 0 0 0
+map .
+lat latitude
+lon longitude
+field bright_ti4 biosphere_fire_noaa20_brightness_ti4_k gaussian-inverse-square thermal K 3600 0.0 0.0
+field frp biosphere_fire_noaa20_radiative_power_mw gaussian-inverse-square thermal MW 3600 0.0 0.0
 
-# ── Backlog-Kuration 2026-08-15 — NOAA GML Treibhausgas-Trends (diffusion, global) ──
+url https://firms.modaps.eosdis.nasa.gov/api/area/csv/{FIRMS_MAP_KEY}/VIIRS_SNPP_NRT/world/1
+ttl 3600
+format csv
+on earth 0 0 0
+map .
+lat latitude
+lon longitude
+field bright_ti4 biosphere_fire_snpp_brightness_ti4_k gaussian-inverse-square thermal K 3600 0.0 0.0
+field frp biosphere_fire_snpp_radiative_power_mw gaussian-inverse-square thermal MW 3600 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/cometels_flat.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+dist dist_au
+dist_scale 1.495978707e11
+field H comet_h_mag gaussian-inverse-square em mag 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/dastcom_asteroids.bin
+format catalog_dastcom
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/dcom5_comets.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+dist dist_au
+dist_scale 1.495978707e11
+field H comet_h_mag gaussian-inverse-square em mag 604800 0.0 0.0
+field M1 comet_total_mag gaussian-inverse-square em mag 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/dr3_stars.bin
+format catalog_tycho
+at sun
+ttl 604800
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_adrastea.bin
+format ephemeris_binary
+at adrastea
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_amalthea.bin
+format ephemeris_binary
+at amalthea
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_apophis.bin
+format ephemeris_binary
+at apophis
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_ariel.bin
+format ephemeris_binary
+at ariel
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_atlas.bin
+format ephemeris_binary
+at atlas
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_atlas_3i.bin
+format ephemeris_binary
+at atlas_3i
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_bennu.bin
+format ephemeris_binary
+at bennu
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_callisto.bin
+format ephemeris_binary
+at callisto
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_ceres.bin
+format ephemeris_binary
+at ceres
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_charon.bin
+format ephemeris_binary
+at charon
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_deimos.bin
+format ephemeris_binary
+at deimos
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_despina.bin
+format ephemeris_binary
+at despina
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_dione.bin
+format ephemeris_binary
+at dione
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_earth.bin
+format ephemeris_binary
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_enceladus.bin
+format ephemeris_binary
+at enceladus
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_encke.bin
+format ephemeris_binary
+at encke
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_epimetheus.bin
+format ephemeris_binary
+at epimetheus
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_eris.bin
+format ephemeris_binary
+at eris
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_europa.bin
+format ephemeris_binary
+at europa
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_galatea.bin
+format ephemeris_binary
+at galatea
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_ganymede.bin
+format ephemeris_binary
+at ganymede
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_haumea.bin
+format ephemeris_binary
+at haumea
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_helene.bin
+format ephemeris_binary
+at helene
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_himalia.bin
+format ephemeris_binary
+at himalia
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_hydra.bin
+format ephemeris_binary
+at hydra
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_hyperion.bin
+format ephemeris_binary
+at hyperion
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_iapetus.bin
+format ephemeris_binary
+at iapetus
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_io.bin
+format ephemeris_binary
+at io
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_iss.bin
+format ephemeris_binary
+at iss
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_janus.bin
+format ephemeris_binary
+at janus
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_juno.bin
+format ephemeris_binary
+at juno
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_jupiter.bin
+format ephemeris_binary
+at jupiter
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_jwst.bin
+format ephemeris_binary
+at jwst
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_kerberos.bin
+format ephemeris_binary
+at kerberos
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_larissa.bin
+format ephemeris_binary
+at larissa
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_makemake.bin
+format ephemeris_binary
+at makemake
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_mars.bin
+format ephemeris_binary
+at mars
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_mercury.bin
+format ephemeris_binary
+at mercury
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_metis.bin
+format ephemeris_binary
+at metis
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_mimas.bin
+format ephemeris_binary
+at mimas
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_miranda.bin
+format ephemeris_binary
+at miranda
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_moon.bin
+format ephemeris_binary
+at moon
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_naiad.bin
+format ephemeris_binary
+at naiad
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_neptune.bin
+format ephemeris_binary
+at neptune
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_nereid.bin
+format ephemeris_binary
+at nereid
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_new_horizons.bin
+format ephemeris_binary
+at new_horizons
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_nix.bin
+format ephemeris_binary
+at nix
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_oberon.bin
+format ephemeris_binary
+at oberon
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_pandora.bin
+format ephemeris_binary
+at pandora
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_parker_solar_probe.bin
+format ephemeris_binary
+at parker_solar_probe
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_phobos.bin
+format ephemeris_binary
+at phobos
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_phoebe.bin
+format ephemeris_binary
+at phoebe
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_pluto.bin
+format ephemeris_binary
+at pluto
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_prometheus.bin
+format ephemeris_binary
+at prometheus
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_proteus.bin
+format ephemeris_binary
+at proteus
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_rhea.bin
+format ephemeris_binary
+at rhea
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_saturn.bin
+format ephemeris_binary
+at saturn
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_solar_orbiter.bin
+format ephemeris_binary
+at solar_orbiter
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_styx.bin
+format ephemeris_binary
+at styx
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_sun.bin
+format ephemeris_binary
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_tethys.bin
+format ephemeris_binary
+at tethys
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_thalassa.bin
+format ephemeris_binary
+at thalassa
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_thebe.bin
+format ephemeris_binary
+at thebe
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_titan.bin
+format ephemeris_binary
+at titan
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_titania.bin
+format ephemeris_binary
+at titania
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_triton.bin
+format ephemeris_binary
+at triton
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_umbriel.bin
+format ephemeris_binary
+at umbriel
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_uranus.bin
+format ephemeris_binary
+at uranus
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_venus.bin
+format ephemeris_binary
+at venus
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_vesta.bin
+format ephemeris_binary
+at vesta
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_voyager1.bin
+format ephemeris_binary
+at voyager1
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_voyager2.bin
+format ephemeris_binary
+at voyager2
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/exoplanets.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+dist dist
+dist_scale 3.085677581e16
+field masse planet_mass gaussian-inverse-square gravity M_earth 604800 0.0 0.0
+field rade planet_radius gaussian-inverse-square gravity R_earth 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/frb_a279.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+z z
+field dm frb_dm_em inverse-square em pc/cm3 604800 0.0 0.0
+field tausc frb_scatter_ms gaussian-inverse-square em ms 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/frbcat_flat.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+z z
+field dm frb_dispersion inverse-square em pc/cm3 604800 0.0 0.0
+field speak frb_peak_flux inverse-square em Jy 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/magnetar_flat.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+dist dist
+dist_scale 3.085677581e19
+field flux magnetar_flux inverse-square em erg/cm2/s 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/tevcat_flat.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+dist dist
+dist_scale 3.085677581e19
+z z
+field flux tevcat_flux inverse-square em Crab 604800 0.0 0.0
+
+url https://gml.noaa.gov/aftp/data/meteorology/in-situ/brw/met_brw_insitu_1_obop_hour_{year}.txt
+ttl 86400
+on earth 71.29 -156.57 0
+rows
+field 9 cryosphere_permafrost_temp_barrow_c exponential-decay thermal C 8640.0 0.0 0.0
+
 url https://gml.noaa.gov/webdata/ccgg/trends/ch4/ch4_mm_gl.txt
 ttl 86400
 format csv
@@ -793,37 +651,202 @@ format csv
 on earth 19.5362 -155.5763 0
 lastrow average atmosphere_sf6_ppt_global gaussian-inverse-square diffusion ppt 8640.0 0.0 0.0
 
-# NOAA GML Barrow Meteorologie (thermal, Arktis)
-url https://gml.noaa.gov/aftp/data/meteorology/in-situ/brw/met_brw_insitu_1_obop_hour_{year}.txt
-ttl 86400
-on earth 71.29 -156.57 0
-rows
-field 9 cryosphere_permafrost_temp_barrow_c exponential-decay thermal C 8640.0 0.0 0.0
+url https://gracedb.ligo.org/api/superevents/?limit=10
+ttl 300
+at earth
+last superevents.far gravity_wave_far inverse-square gravity 1 300 0.0 0.0
 
-# ERDDAP AOML Drifter-Bojen (thermal, global SST)
-url https://erddap.aoml.noaa.gov/gdp/erddap/tabledap/drifter_hourly_qc.json?latitude,longitude,sst&time%3E=max(time)-7days
-ttl 3600
+url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id={station}/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
+ttl 86400
+on earth 52.5 13.4 0
+stations https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetCapabilities
+fanout 40
+fanout_delay 15
+hapi f=magnetosphere_total_field_nt
+field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://mars.nasa.gov/rss/api/?feed=weather&category=mars2020&feedtype=json
+ttl 86400
+on mars 18.445 77.45 0
+field sols.6.max_temp cosmos_mars2020_max_temp_c exponential-decay thermal C 86400 0.0 0.0
+field sols.6.min_temp cosmos_mars2020_min_temp_c exponential-decay thermal C 86400 0.0 0.0
+field sols.6.pressure cosmos_mars2020_pressure_pa gaussian-inverse-square acoustic Pa 86400 0.0 0.0
+
+url https://mars.nasa.gov/rss/api/?feed=weather&category=msl&feedtype=json
+ttl 86400
+on mars -4.5895 137.4417 0
+field soles.0.max_temp cosmos_mars_max_temp_c exponential-decay thermal C 86400 0.0 0.0
+field soles.0.min_temp cosmos_mars_min_temp_c exponential-decay thermal C 86400 0.0 0.0
+field soles.0.pressure cosmos_mars_pressure_pa gaussian-inverse-square acoustic Pa 86400 0.0 0.0
+field soles.0.max_gts_temp cosmos_mars_ground_max_temp_c exponential-decay thermal C 86400 0.0 0.0
+field soles.0.min_gts_temp cosmos_mars_ground_min_temp_c exponential-decay thermal C 86400 0.0 0.0
+
+url https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls
+format kernel_text
+body naif0012
+ttl 604800
+
+url https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/geophysical.ker
+format kernel_text
+body geophysical
+ttl 604800
+
+url https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/gm_de440.tpc
+format kernel_text
+body gm_de440
+ttl 604800
+
+url https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00010.tpc
+format kernel_text
+body pck00010
+ttl 604800
+
+url https://opensky-network.org/api/states/all
+ttl 10
 on earth 0 0 0
-map table.rows
-lat 0
-lon 1
-field 2 hydrosphere_drifter_sst_k exponential-decay thermal K 360.0 0.0 0.0
+map states
+lat 6
+lon 5
+alt 7
+field 9 biosphere_aircraft_velocity gaussian-inverse-square advective m/s 1.0 0.0 0.0
+field 11 biosphere_aircraft_vertical_rate gaussian-inverse-square advective m/s 1.0 0.0 0.0
+field 13 biosphere_aircraft_geo_altitude inverse-square em m 1.0 0.0 0.0
 
-# OOI Oregon-Schelf-Mooring pCO2 (diffusion, Ozean-Versauerung)
-url https://erddap.dataexplorer.oceanobservatories.org/erddap/tabledap/ooi-ga01sumo-sbd12-04-pco2aa000.csv?time,sea_surface_temperature,surface_partial_pressure_of_carbon_dioxide_in_sea_water
-ttl 86400
-format csv
-on earth 46.05 -125.0 0
-lastrow surface_partial_pressure_of_carbon_dioxide_in_sea_water hydrosphere_pco2_ooi_uatm gaussian-inverse-square diffusion uatm 8640.0 0.0 0.0
-lastrow sea_surface_temperature hydrosphere_sst_ooi_c exponential-decay thermal C 8640.0 0.0 0.0
+url https://resonanceone.app/api/now
+ttl 300
+at earth
+field schumann_frequency_hz resonance_schumann_hz inverse-square em Hz 600 0.0 0.0
 
-# GOES EUV-Flux (em)
+url https://seismic-api.science.unimelb.edu.au/today-quakes
+ttl 300
+at earth
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field geometry.coordinates.2 geosphere_quake_agos_depth_km erfc seismic-body km 3600 0.0 0.0
+field properties.magnitude geosphere_quake_agos_magnitude erfc seismic-body Mw 3600 0.0 0.0
+
+url https://services.swpc.noaa.gov/json/ace/mag/ace_mag_1h.json
+ttl 3600
+at earth 0.99
+field 0.gsm_bx exosphere_ace_bx_gsm_nt inverse-square em nT 360.0 0.0 0.0
+field 0.gsm_by exosphere_ace_by_gsm_nt inverse-square em nT 360.0 0.0 0.0
+field 0.gsm_bz exosphere_ace_bz_gsm_nt inverse-square em nT 360.0 0.0 0.0
+field 0.bt exosphere_ace_bt_nt inverse-square em nT 360.0 0.0 0.0
+
+url https://services.swpc.noaa.gov/json/ace/swepam/ace_swepam_1h.json
+ttl 3600
+at earth 0.99
+field 0.speed exosphere_ace_speed_kms inverse-square em km/s 360.0 0.0 0.0
+field 0.dens exosphere_ace_dens_ncc inverse-square em n/cc 360.0 0.0 0.0
+field 0.temperature exosphere_ace_temp_k inverse-square em K 360.0 0.0 0.0
+
+url https://services.swpc.noaa.gov/json/goes/primary/differential-protons-1-day.json
+ttl 60
+on earth 0.0 -75.2 35786023
+last flux radiation_proton_flux_differential inverse-square em count 6.0 0.0 0.0
+
 url https://services.swpc.noaa.gov/json/goes/primary/euvs-1-day.json
 ttl 600
 on earth 0.0 -75.2 35786023
 last value solar_euv_flux_wm2 inverse-square em W/m2 60.0 0.0 0.0
 
-# INGV Italien-Beben (seismic, offizielle FDSN)
+url https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-1-day.json
+ttl 60
+on earth 0.0 -75.2 35786023
+last flux radiation_electron_flux_2mev inverse-square em count 6.0 0.0 0.0
+
+url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
+ttl 60
+on earth 0.0 -75.2 35786023
+last flux radiation_proton_flux_integral inverse-square em count 6.0 0.0 0.0
+
+url https://services.swpc.noaa.gov/json/goes/primary/magnetometers-1-day.json
+ttl 60
+on earth 0.0 -75.2 35786023
+last Hp magnetosphere_hp_nt inverse-square em nT 6.0 0.0 0.0
+last He magnetosphere_he_nt inverse-square em nT 6.0 0.0 0.0
+last total magnetosphere_bt_nt inverse-square em nT 6.0 0.0 0.0
+
+url https://services.swpc.noaa.gov/json/goes/primary/xray-flares-7-day.json
+ttl 60
+on earth 0.0 -75.2 35786023
+last max_xrlong solar_flare_xray_intensity inverse-square em W/m2 6.0 0.0 0.0
+
+url https://services.swpc.noaa.gov/json/goes/primary/xrays-1-day.json
+ttl 60
+at sun
+last flux noaa_goes_xray_flux_w_m2 inverse-square em W/m2 6.0 0.0 0.0
+
+url https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json
+ttl 60
+at earth
+last bt magnetosphere_imf_bt_nt inverse-square em nT 6.0 0.0 0.0
+last bz_gsm magnetosphere_imf_bz_nt inverse-square em nT 6.0 0.0 0.0
+
+url https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json
+ttl 60
+at earth
+last proton_speed solar_wind_speed_km_s inverse-square em km/s 6.0 0.0 0.0
+last proton_density solar_wind_density_cm3 inverse-square em 1/cm3 6.0 0.0 0.0
+last proton_temperature solar_wind_temp_k inverse-square em K 6.0 0.0 0.0
+
+url https://services.swpc.noaa.gov/json/solar-radio-flux.json
+ttl 60
+on earth 0 0 0
+path 0.details.0.flux solar_radio_flux_sfu inverse-square em sfu 6.0 0.0 0.0
+
+url https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json
+ttl 180
+at earth
+last Kp magnetosphere_kp_index inverse-square em 1 18.0 0.0 0.0
+last a_running magnetosphere_kp_a_running inverse-square em 1 18.0 0.0 0.0
+
+url https://services7.arcgis.com/WSiUmUhlFx4CtMBB/arcgis/rest/services/SO2datanew/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 3600
+at earth
+map features
+lat properties.Lat
+lon properties.Long
+field properties.SO2_Kilotons so2_emission_kt erfc diffusion kt 86400 0.0 0.0
+
+url https://vires.services/hapi/data?id=SW_EXPT_EFIA_TCT02&start={hour_ago}&stop={now}&parameters=Ehx,Ehy,Ehz&format=json
+ttl 3600
+at earth
+hapi Ehx=swarm_electric_field_x_mvm Ehy=swarm_electric_field_y_mvm Ehz=swarm_electric_field_z_mvm
+field swarm_electric_field_x_mvm swarm_electric_field_x_mvm inverse-square electric mV/m 3600 0.0 0.0
+field swarm_electric_field_y_mvm swarm_electric_field_y_mvm inverse-square electric mV/m 3600 0.0 0.0
+field swarm_electric_field_z_mvm swarm_electric_field_z_mvm inverse-square electric mV/m 3600 0.0 0.0
+
+url https://vires.services/hapi/data?id=SW_FAST_EFIA_LP_1B&start={yesterday}T12:00:00Z&stop={yesterday}T13:00:00Z&parameters=N_ion,T_elec,Vs&format=json
+ttl 86400
+at earth
+hapi N_ion=swarm_ion_density_cm3 T_elec=swarm_electron_temp_k Vs=swarm_spacecraft_potential_v
+field swarm_ion_density_cm3 swarm_ion_density_cm3 gaussian-inverse-square diffusion cm-3 86400 0.0 0.0
+field swarm_electron_temp_k swarm_electron_temp_k exponential-decay thermal K 86400 0.0 0.0
+field swarm_spacecraft_potential_v swarm_spacecraft_potential_v inverse-square electric V 86400 0.0 0.0
+
+url https://vires.services/hapi/data?id=SW_FAST_FACATMS_2F&start={yesterday}T12:00:00Z&stop={yesterday}T13:00:00Z&parameters=IRC,FAC&format=json
+ttl 86400
+at earth
+hapi IRC=swarm_ionospheric_radial_current_uam2 FAC=swarm_field_aligned_current_uam2
+field swarm_ionospheric_radial_current_uam2 swarm_ionospheric_radial_current_uam2 inverse-square electric uA/m2 86400 0.0 0.0
+field swarm_field_aligned_current_uam2 swarm_field_aligned_current_uam2 inverse-square electric uA/m2 86400 0.0 0.0
+
+url https://vires.services/hapi/data?id=SW_FAST_MAGA_LR_1B&start={yesterday}T12:00:00Z&stop={yesterday}T13:00:00Z&parameters=F&format=json
+ttl 86400
+at earth
+hapi F=swarm_magnetic_field_intensity_nt
+field swarm_magnetic_field_intensity_nt swarm_magnetic_field_intensity_nt inverse-square em nT 86400 0.0 0.0
+
+url https://waterservices.usgs.gov/nwis/iv/?format=json&bBox={lon_min},{lat_min},{lon_max},{lat_max}&parameterCd=00060&siteStatus=active
+ttl 300
+on earth 0 0 0
+map value.timeSeries
+lat sourceInfo.geoLocation.geogLocation.latitude
+lon sourceInfo.geoLocation.geogLocation.longitude
+field values.0.value.0.value hydrosphere_river_flow_cfs erfc advective cfs 30.0 0.0 0.0
+
 url https://webservices.ingv.it/fdsnws/event/1/query?format=geojson&minmagnitude=2.5&limit=200
 ttl 3600
 at earth
@@ -833,42 +856,30 @@ lon geometry.coordinates.0
 field geometry.coordinates.2 geosphere_earthquake_depth_km erfc seismic-surface km 360.0 0.0 0.0
 field properties.mag geosphere_earthquake_mag erfc seismic-surface Mw 360.0 0.0 0.0
 
-# JMA Japan-Beben (seismic, offizieller Feed)
+url https://www.ioc-sealevelmonitoring.org/service.php?query=stationlist&format=json
+ttl 3600
+on earth 0 0 0
+map .
+lat Lat
+lon Lon
+field lastvalue hydrosphere_sealevel_m inverse-square gravity m 3600 0.0 0.0
+
 url https://www.jma.go.jp/bosai/quake/data/list.json
 ttl 600
 on earth 35.68 139.69 0
 last mag geosphere_earthquakes_jma_recent_mag erfc seismic-surface Mw 60.0 0.0 0.0
 
-# ── Swarm EFI via VirES HAPI (electric — erster Live-Feldwert!) ──
-# Lag ~10 h: Fenster endet im Abdeckungsbereich ({yesterday} 12–13 Uhr), ttl 86400 faltet den Lag
-url https://vires.services/hapi/data?id=SW_FAST_EFIA_LP_1B&start={yesterday}T12:00:00Z&stop={yesterday}T13:00:00Z&parameters=N_ion,T_elec,Vs&format=json
-ttl 86400
-at earth
-hapi N_ion=swarm_ion_density_cm3 T_elec=swarm_electron_temp_k Vs=swarm_spacecraft_potential_v
-field swarm_ion_density_cm3 swarm_ion_density_cm3 gaussian-inverse-square diffusion cm-3 86400 0.0 0.0
-field swarm_electron_temp_k swarm_electron_temp_k exponential-decay thermal K 86400 0.0 0.0
-field swarm_spacecraft_potential_v swarm_spacecraft_potential_v inverse-square electric V 86400 0.0 0.0
-
-# ── Swarm FAC via VirES HAPI (electric — Feld-aligned Currents) ──
-# Lag ~10 h: Fenster endet im Abdeckungsbereich, ttl 86400 faltet den Lag
-url https://vires.services/hapi/data?id=SW_FAST_FACATMS_2F&start={yesterday}T12:00:00Z&stop={yesterday}T13:00:00Z&parameters=IRC,FAC&format=json
-ttl 86400
-at earth
-hapi IRC=swarm_ionospheric_radial_current_uam2 FAC=swarm_field_aligned_current_uam2
-field swarm_ionospheric_radial_current_uam2 swarm_ionospheric_radial_current_uam2 inverse-square electric uA/m2 86400 0.0 0.0
-field swarm_field_aligned_current_uam2 swarm_field_aligned_current_uam2 inverse-square electric uA/m2 86400 0.0 0.0
-
-# ── INTERMAGNET Observatorien (em, 154 — Fanout über GINServices-Observatoriumsliste) ──
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id={station}/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-stations https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetCapabilities
-fanout 40
-fanout_delay 15
-ttl 86400
-on earth 52.5 13.4 0
-hapi f=magnetosphere_total_field_nt
-field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
-
-# ── Backlog-Kuration 2026-08-15 — NDBC Per-Station-Buoys (ersetzt toten ArcGIS-Block, Kraft-Labels korrigiert) ──
+url https://www.ncdc.noaa.gov/cdo-web/api/v2/data?datasetid=GHCND&startdate={week_ago}&enddate={yesterday}&datatypeid=TMAX&stationid={station}&limit=1&units=metric
+header token {NOAA_CDO_TOKEN}
+ttl 3600
+on earth 52.5 13.4
+stations https://www.ncdc.noaa.gov/cdo-web/api/v2/stations?datasetid=GHCND&extent={lat_min},{lon_min},{lat_max},{lon_max}&limit=100
+stations_path results
+stations_id id
+stations_lat latitude
+stations_lon longitude
+fanout 50
+last results.value noaa_ghcnd_tmax_c erfc thermal C 3600 0.0 0.0
 
 url https://www.ndbc.noaa.gov/data/realtime2/41001.txt
 ttl 300
@@ -1189,125 +1200,31 @@ lastrow DPD hydrosphere_buoy_51004_dominant_period gaussian-inverse-square acous
 lastrow PRES hydrosphere_buoy_51004_pressure gaussian-inverse-square advective hPa 30.0 0.0 0.0
 lastrow WTMP hydrosphere_buoy_51004_water_temp gaussian-inverse-square thermal degC 30.0 0.0 0.0
 
-# ── Grind-Einbau 2026-08-15 ──
-
-# Swarm EFI TCT02 — E-Feld-Stärke selbst (electric; experimentell, Abdeckung endet 2025-12-04 —
-# das {hour_ago}-Fenster liegt außerhalb → 400 time-outside-range → 0 honored; kein Live-E-Feld-Feed)
-url https://vires.services/hapi/data?id=SW_EXPT_EFIA_TCT02&start={hour_ago}&stop={now}&parameters=Ehx,Ehy,Ehz&format=json
-ttl 3600
-at earth
-hapi Ehx=swarm_electric_field_x_mvm Ehy=swarm_electric_field_y_mvm Ehz=swarm_electric_field_z_mvm
-field swarm_electric_field_x_mvm swarm_electric_field_x_mvm inverse-square electric mV/m 3600 0.0 0.0
-field swarm_electric_field_y_mvm swarm_electric_field_y_mvm inverse-square electric mV/m 3600 0.0 0.0
-field swarm_electric_field_z_mvm swarm_electric_field_z_mvm inverse-square electric mV/m 3600 0.0 0.0
-
-# Swarm A Magnetfeld 1 Hz NRT (em, fast track; Lag ~10 h — Fenster endet im
-# Abdeckungsbereich ({yesterday} 12–13 Uhr), ttl 86400 faltet den Lag)
-url https://vires.services/hapi/data?id=SW_FAST_MAGA_LR_1B&start={yesterday}T12:00:00Z&stop={yesterday}T13:00:00Z&parameters=F&format=json
-ttl 86400
-at earth
-hapi F=swarm_magnetic_field_intensity_nt
-field swarm_magnetic_field_intensity_nt swarm_magnetic_field_intensity_nt inverse-square em nT 86400 0.0 0.0
-
-# MSL REMS Mars-Wetter (thermal/acoustic, Gale-Krater; Wind-Sensor ausgefallen → 0 honored)
-url https://mars.nasa.gov/rss/api/?feed=weather&category=msl&feedtype=json
-ttl 86400
-on mars -4.5895 137.4417 0
-field soles.0.max_temp cosmos_mars_max_temp_c exponential-decay thermal C 86400 0.0 0.0
-field soles.0.min_temp cosmos_mars_min_temp_c exponential-decay thermal C 86400 0.0 0.0
-field soles.0.pressure cosmos_mars_pressure_pa gaussian-inverse-square acoustic Pa 86400 0.0 0.0
-field soles.0.max_gts_temp cosmos_mars_ground_max_temp_c exponential-decay thermal C 86400 0.0 0.0
-field soles.0.min_gts_temp cosmos_mars_ground_min_temp_c exponential-decay thermal C 86400 0.0 0.0
-
-# MEDA Perseverance Mars-Wetter (thermal/acoustic, Jezero; Feed eingefroren 2024-04-27 — zerfällt ehrlich zu 0 honored)
-url https://mars.nasa.gov/rss/api/?feed=weather&category=mars2020&feedtype=json
-ttl 86400
-on mars 18.445 77.45 0
-field sols.6.max_temp cosmos_mars2020_max_temp_c exponential-decay thermal C 86400 0.0 0.0
-field sols.6.min_temp cosmos_mars2020_min_temp_c exponential-decay thermal C 86400 0.0 0.0
-field sols.6.pressure cosmos_mars2020_pressure_pa gaussian-inverse-square acoustic Pa 86400 0.0 0.0
-
-# DONKI Sonnenflare X-Klasse (em; classType=X-Filter, leer ohne X-Flare → 0 honored)
-url https://api.nasa.gov/DONKI/FLR?startDate={week_ago}&endDate={today}&classType=X&api_key={NASA_API_KEY}
-ttl 3600
-at sun
-regex classType":"X([0-9.]+) solar_flare_x_class_latest inverse-square em 1e-4W/m2 3600 0.0 0.0
-
-# FIRMS VIIRS SNPP Aktivfeuer (thermal, 24h global)
-url https://firms.modaps.eosdis.nasa.gov/api/area/csv/{FIRMS_MAP_KEY}/VIIRS_SNPP_NRT/world/1
-ttl 3600
-format csv
-on earth 0 0 0
-map .
-lat latitude
-lon longitude
-field bright_ti4 biosphere_fire_snpp_brightness_ti4_k gaussian-inverse-square thermal K 3600 0.0 0.0
-field frp biosphere_fire_snpp_radiative_power_mw gaussian-inverse-square thermal MW 3600 0.0 0.0
-
-# FIRMS VIIRS NOAA-20 Aktivfeuer (thermal, 24h global)
-url https://firms.modaps.eosdis.nasa.gov/api/area/csv/{FIRMS_MAP_KEY}/VIIRS_NOAA20_NRT/world/1
-ttl 3600
-format csv
-on earth 0 0 0
-map .
-lat latitude
-lon longitude
-field bright_ti4 biosphere_fire_noaa20_brightness_ti4_k gaussian-inverse-square thermal K 3600 0.0 0.0
-field frp biosphere_fire_noaa20_radiative_power_mw gaussian-inverse-square thermal MW 3600 0.0 0.0
-
-# FIRMS MODIS Aktivfeuer (thermal, 24h global)
-url https://firms.modaps.eosdis.nasa.gov/api/area/csv/{FIRMS_MAP_KEY}/MODIS_NRT/world/1
-ttl 3600
-format csv
-on earth 0 0 0
-map .
-lat latitude
-lon longitude
-field bright_ti4 biosphere_fire_modis_brightness_ti4_k gaussian-inverse-square thermal K 3600 0.0 0.0
-field frp biosphere_fire_modis_radiative_power_mw gaussian-inverse-square thermal MW 3600 0.0 0.0
-
-# UniMelb AGOS Erdbeben (seismic-body; heute count:0 → 0 honored bis zum nächsten Event)
-url https://seismic-api.science.unimelb.edu.au/today-quakes
+url https://www.nhc.noaa.gov/CurrentStorms.json
 ttl 300
+at earth
+map activeStorms
+lat latitudeNumeric
+lon longitudeNumeric
+field intensity storm_intensity_kt gaussian-inverse-square advective knot 300 0.0 0.0
+field pressure storm_pressure_mb gaussian-inverse-square advective mb 300 0.0 0.0
+
+url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&limit=100&minmagnitude=2.5&orderby=time&start={today}T00:00:00
+ttl 60
 at earth
 map features
 lat geometry.coordinates.1
 lon geometry.coordinates.0
-field geometry.coordinates.2 geosphere_quake_agos_depth_km erfc seismic-body km 3600 0.0 0.0
-field properties.magnitude geosphere_quake_agos_magnitude erfc seismic-body Mw 3600 0.0 0.0
+field properties.depth quake_depth_km gaussian-inverse-square seismic-body km 3600 0.0 0.0
 
-# IOC Sea-Level-Station-Monitoring (gravity, stationlist + lastvalue; Keys sind Lat/Lon großgeschrieben)
-url https://www.ioc-sealevelmonitoring.org/service.php?query=stationlist&format=json
+url https://www.wis-tns.org/system/files/tns_public_objects/tns_public_objects.csv.zip
+format csv_zip
+header user-agent tns_marker{"tns_id":4474,"type":"user","name":"omegaflow"}
 ttl 3600
-on earth 0 0 0
-map .
-lat Lat
-lon Lon
-field lastvalue hydrosphere_sealevel_m inverse-square gravity m 3600 0.0 0.0
-
-# LIGO/Virgo/KAGRA Gravitationswellen-Superevents (gravity, far)
-url https://gracedb.ligo.org/api/superevents/?limit=10
-ttl 300
-at earth
-last superevents.far gravity_wave_far inverse-square gravity 1 300 0.0 0.0
-
-# Environment Agency Flusspegel-Fanout (gravity, UK)
-url https://environment.data.gov.uk/flood-monitoring/id/stations/{station}/readings.json?_limit=1
-stations https://environment.data.gov.uk/flood-monitoring/id/stations?_limit=500
-stations_path items
-stations_id notation
-stations_lat lat
-stations_lon long
-fanout 40
-ttl 900
-on earth 0 0 0
-last items.value hydrosphere_river_stage_m inverse-square gravity m 900.0 0.0 0.0
-
-# PMEL CO2-Moorings (diffusion, ERDDAP tabledap)
-url https://data.pmel.noaa.gov/pmel/erddap/tabledap/all_pmel_co2_moorings.json?time,longitude,latitude,pCO2_air&time%3E=max(time)-7days
-ttl 86400
-on earth 0 0 0
-map table.rows
-lat 2
-lon 1
-field 3 hydrosphere_pco2_mooring_uatm gaussian-inverse-square diffusion uatm 8640.0 0.0 0.0
+at sun
+abs_mag_from tns_transient_flux
+cmap .
+ra ra
+dec declination
+z redshift
+field discoverymag tns_transient_flux inverse-square em mag 3600 0.0 0.0

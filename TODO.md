@@ -766,6 +766,12 @@ Binary-PCK-Pakets oben).
   geparst — Lautablehnung fehlt.
 - Test-Limit der Curation über 200 Blöcke hinaus erhöhen; 6 Rest-FAILs sind
   Daten-Artefakte (docs/source_curation.md).
+- **Kanonisierung 2026-08-15:** `phi/sources.φ` (171 Blöcke), `phi/dead_sources.φ`
+  (1.056 unique) und `.secrets.local` (46 Keys) aufgeräumt und sortiert:
+  Blöcke alphabetisch nach URL, kommentarfrei, Direktiven in kanonischer
+  Reihenfolge, 1 Toter-Duplikat entfernt. File-Regeln jetzt in
+  `docs/concepts/SOURCES_V2_SPEC.md` §1.0 — jeder Einbau folgt der Spec,
+  keine Docstrings in den φ-Dateien.
 - **Secrets-Befund (2026-08-15):** Keys sind vollständig — `.secrets.local`
   liegt im Repo-ROOT (46 Keys inkl. NASA_API_KEY, FIRMS_MAP_KEY, ESA_USER/
   ESA_PASS) und wird via resolve_asset (CWD-relativ) geladen. DONKI-FLR und

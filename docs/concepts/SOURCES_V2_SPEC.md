@@ -28,6 +28,20 @@ Every directive starts at column 0. No indentation. One directive per line.
 post_body, stations, …) — nothing leaks between blocks. A block is refused
 unless it has `url` + `ttl` + a frame (`at`/`on`).
 
+### 1.0 File-level rules (canonical form of the φ files)
+
+- Blocks are sorted alphabetically by their `url` line (case-insensitive).
+- No comment lines. The φ file carries directives only — knowledge lives in
+  docs/TODO, not in docstrings.
+- One blank line between blocks; single trailing newline.
+- Directive order within a block: `url`, then block state (`ttl`, `format`,
+  `header`, `post_body`, `body` for kernel_text, `at`/`on`), then the fanout
+  family (`stations`, `stations_*`, `fanout`, `fanout_delay`), then extract
+  directives (`map`/`cmap`/`rows`/`flatten`, position keys, `hapi`, fields)
+  in their dependency order.
+- `phi/dead_sources.φ`: entries sorted by `url`; one disposition line, one
+  `url`, one `note`; blank line between entries; no duplicates per URL.
+
 | Directive | Tokens | Meaning |
 |-----------|--------|---------|
 | `url <u>` | 2 | API endpoint. Starts the block. Template variables: see „URL template variables" |
