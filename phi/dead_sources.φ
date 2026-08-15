@@ -518,6 +518,10 @@ dead 404
 url https://api.open-meteo.com/v1/air-quality?...european_aqi
 note HTTP 404 — Endpoint weg.
 
+decline model-forecast
+url https://api.open-meteo.com/v1/forecast?latitude=46.95&longitude=7.86&current=shortwave_radiation,uv_index&timezone=auto
+note forecast-API = Modellvorhersage, kein Messwert (Probe-Befund 2026-08-15: Daten parsen, Force-Gate lehnt ab).
+
 dead 404
 url https://api.openaq.org/v2/
 note HTTP 410 — Endpoint weg.
@@ -1209,6 +1213,34 @@ note HTTP 400 — URL-Fragment/Parameter unvollständig (Browser-Historie).
 decline superseded
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/aka2026nmpbnu.geojson
 note USGS-FDSN ist bereits live in phi/sources.φ.
+
+decline variant
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson
+note Variante der live-Quellen all_day + FDSN-Radius-Query (Probe-Befund 2026-08-15: Daten verifiziert, Register führt die kanonische Form).
+
+decline variant
+url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_day.geojson
+note Variante der live-Quellen all_day + FDSN-Radius-Query.
+
+decline variant
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=1.5&limit=1000&orderby=time&starttime={today}T00:00:00
+note Variante der live-FDSN-Quelle (anderer minmagnitude/limit-Filter).
+
+decline variant
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=2.0&limit=500&orderby=magnitude
+note Variante der live-FDSN-Quelle.
+
+decline variant
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=2.5&orderby=time
+note Variante der live-FDSN-Quelle.
+
+decline variant
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=6&limit=50&orderby=time&eventtype=earthquake
+note Variante der live-FDSN-Quelle.
+
+decline variant
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&orderby=magnitude&limit=100
+note Variante der live-FDSN-Quelle.
 
 dead 404
 url https://earthref.org/MagIC/api/v1/contribution/search?format=json&n_max_sites=100&n_max_locations=20&page=1&per_page=100&contribution_type=Paleomagnetism
@@ -3434,6 +3466,10 @@ dead 404
 url https://washdata.org/api/countries?format=json&service=drinking-water&year=
 note HTTP 404 — Endpoint weg.
 
+decline variant
+url https://webservices.ingv.it/fdsnws/event/1/query?format=geojson&minmagnitude=1.5&limit=200&orderby=time&starttime={today}T00:00:00
+note Variante der live-INGV-Quelle (live: minmagnitude=2.5, Probe-Befund 2026-08-15).
+
 decline no-physical-force
 url https://waterdata.usgs.gov/blog/index.json
 note Blog-Index.
@@ -4081,6 +4117,10 @@ note HTTP 404 — Endpoint weg.
 key-needed auth
 url https://www.space-track.org/api/v1/satellite/catalog
 note HTTP 401 — Token/Registrierung nötig.
+
+decline variant
+url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&minmag=5&limit=100
+note Variante der live-seismicportal-Quelle (live: minmagnitude=2.5, Probe-Befund 2026-08-15).
 
 decline
 url https://www.spc.noaa.gov/climo/reports/

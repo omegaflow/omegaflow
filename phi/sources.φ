@@ -425,6 +425,17 @@ lastrow DPD hydrosphere_buoy_46069_dominant_period gaussian-inverse-square acous
 lastrow PRES hydrosphere_buoy_46069_pressure gaussian-inverse-square advective hPa 30.0 0.0 0.0
 lastrow WTMP hydrosphere_buoy_46069_water_temp gaussian-inverse-square thermal C 30.0 0.0 0.0
 
+url https://www.ndbc.noaa.gov/data/realtime2/46086.txt
+ttl 300
+format csv
+on earth 32.49 -118.02 0
+lastrow WDIR hydrosphere_buoy_46086_wind_dir gaussian-inverse-square advective deg 30.0 0.0 0.0
+lastrow WSPD hydrosphere_buoy_46086_wind_speed gaussian-inverse-square advective m/s 30.0 0.0 0.0
+lastrow WVHT hydrosphere_buoy_46086_wave_height gaussian-inverse-square acoustic m 30.0 0.0 0.0
+lastrow DPD hydrosphere_buoy_46086_dominant_period gaussian-inverse-square acoustic s 30.0 0.0 0.0
+lastrow PRES hydrosphere_buoy_46086_pressure gaussian-inverse-square advective hPa 30.0 0.0 0.0
+lastrow WTMP hydrosphere_buoy_46086_water_temp gaussian-inverse-square thermal C 30.0 0.0 0.0
+
 url https://www.ndbc.noaa.gov/data/realtime2/51000.txt
 ttl 300
 format csv
