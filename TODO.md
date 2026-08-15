@@ -6,7 +6,7 @@ wird entfernt (Git trägt es). Kein Eintrag meldet Erledigtes als offen, kein of
 Punkt fehlt. Widerspricht ein Dokument dieser Datei, gilt diese Datei — solche
 Drift-Stellen sind unter „Doku-Drift" registriert.
 
-## Stand — 2026-08-15 (Katalog-Welle: K03-Kometen inkl. dcom5-Multi-Apparitionen, K04b Gaia-DR3+Bailer-Jones 1,84 Mio Sterne, Exoplanet-Bulk 6309, tap_compiler über TAPVizieR/GAVO/ARI/IRSA/ExoArchive, Enrichment-Matrix; LSK/PCK-Hochzeit, Binary v2, Protokoll v6, reine Per-Pixel-Membran, K01 geschlossen)
+## Stand — 2026-08-15 (Katalog-Welle: K03-Kometen inkl. dcom5-Multi-Apparitionen, K04b Gaia-DR3+Bailer-Jones 1,84 Mio Sterne, Exoplanet-Bulk 6309, tap_compiler über TAPVizieR/GAVO/ARI/IRSA/ExoArchive, Enrichment-Matrix; LSK/PCK-Hochzeit, K05-FK-Parser, Binary v2, Protokoll v6, reine Per-Pixel-Membran, K01 geschlossen)
 
 Zeit aus naif0012.tls (LSK-Reader, keine TT_MINUS_UTC-Konstante). PCK-Reader pck.rs
 (gm_de440, pck00010, geophysical.ker → GM/J2/J4/Radii/POLE). stype-1 v2: gcount=12,
@@ -70,11 +70,24 @@ Binary-PCK-Merge für den Mond parkt deshalb an K05 (FK-Kette) — der Leser ste
 
 **K05** FK-Frames (erweitert um den K02-Befund)
 ```
-moon_de440_250416.tf / moon_080317.tf / earth_assoc_itrf93.tf als
-Frame-Assoziationsquelle → hartcodierte Parent-/Name-Tabellen ersetzen
-(Bias-Befund unten). Trägt außerdem den Moon-PA-Merge: MOON_PA_DE440 (31008,
-PCK-Klasse 2, src/bpc.rs steht) + TKFRAME_31009-Festrotation = ME-Frame;
-erst dann trägt der Flattener die Binary-PCK-Präzision für den Mond.
+FK-TEIL GESCHLOSSEN (2026-08-15): src/fk.rs (Text-FK-Reader: FRAME_*/TKFRAME_*-
+Blöcke, ANGLES/AXES/UNITS- und MATRIX-Rotationen in SPICE-Reihenfolge,
+Mehrzeilen-Tupel, Ein-Level-Kettenregel, 3 Tests); der Flattener klassifiziert
+family fk, führt die Festrotation an (pa_frame_of-Hardcode entfernt) und hat
+einen --probe-Modus (--bpc + --fk + JD → PA/ME-Winkel + W-Drift).
+Moon-PA-Merge BEFUND (2026-08-15): der Merge steht, die Daten sind offen.
+Probe J2000: bpc liefert pa=(-0,054°, 0,425°, W 2564°) — die Winkel
+beschreiben KEINE Mondrotation (Pol wäre 269,99°/66,54°, W-Drift müsste
+13,176°/Tag sein, gemessen 0,23°/Tag). M_stored = M_wahr·R mit konstantem
+R (Rotation ~172° um (0,14; 0,78; 0,59)) — die gespeicherten Winkel sind
+die richtige Rotation bis auf eine konstante, unbekannte Rahmen-Definition.
+Die TKFRAME_31009-Festrotation (67,85"/78,69"/0,28", 3-2-1, ARCSECONDS)
+ist korrekt geparst und angewendet, kann die 66°-Pol-Diskrepanz aber nicht
+tragen (sie dreht nur 0,03°). Die CI-Selektion nimmt deshalb KEINE bpc/fk
+für den Mond — der Live-Kanal bleibt die Text-PCK-IAU-Linear (0 honored
+für die Binary-PCK-Präzision bis zur Referenz-Gegenprobe). Nächster Schritt:
+CSPICE-Gegenprobe der bpc-Evaluation (Referenz-Auswertung desselben Records)
+oder Record-Level-Dump gegen die NAIF-Typ-2-Spec.
 ```
 
 **K03** Kleinkörper-Katalog

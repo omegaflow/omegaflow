@@ -1,6 +1,7 @@
 use omegaflow::bpc::BpcFile;
 use omegaflow::bsp_reader::spk::SpkFile;
 use omegaflow::cdn::{body_url, upload_asset};
+use omegaflow::fk::FkFile;
 use omegaflow::pck::{neutral, PckBody};
 use std::collections::{BTreeMap, HashMap, HashSet, VecDeque};
 use std::io::Write;
@@ -78,14 +79,6 @@ fn pck_id_of(target: i32) -> i32 {
         8 => 899,
         9 => 999,
         other => other,
-    }
-}
-
-fn pa_frame_of(body: i32) -> Option<i32> {
-    match body {
-        301 => Some(31008),
-        399 => Some(31006),
-        _ => None,
     }
 }
 
@@ -239,9 +232,50 @@ fn rotation_matrix_from_angles(ra_deg: f64, dec_deg: f64, pm_deg: f64) -> [f64; 
     ]
 }
 
+fn angles_from_rotation_matrix(m: [f64; 9]) -> (f64, f64, f64) {
+    let sd = (m[2] * m[2] + m[8] * m[8]).sqrt();
+    let dec = sd.atan2(-m[5]).to_degrees();
+    let ra = (-m[3]).atan2(m[4]).to_degrees();
+    let w = m[2].atan2(m[8]).to_degrees();
+    let pm = ra + w;
+    (ra, dec, pm)
+}
+
+fn matmul(a: &[f64; 9], b: &[f64; 9]) -> [f64; 9] {
+    let mut o = [0.0f64; 9];
+    for r in 0..3 {
+        for c in 0..3 {
+            o[r * 3 + c] = a[r * 3] * b[c] + a[r * 3 + 1] * b[3 + c] + a[r * 3 + 2] * b[6 + c];
+        }
+    }
+    o
+}
+
+fn mat_transpose(m: &[f64; 9]) -> [f64; 9] {
+    [m[0], m[3], m[6], m[1], m[4], m[7], m[2], m[5], m[8]]
+}
+
+fn apply_fixed_rotation(
+    ra: f64,
+    dec: f64,
+    pm: f64,
+    rot: &[f64; 9],
+    wgccre: &PckBody,
+) -> (f64, f64, f64) {
+    let m_pa = rotation_matrix_from_angles(ra, dec, pm);
+    let m_me = matmul(&m_pa, &mat_transpose(rot));
+    let (ra2, dec2, pm2) = angles_from_rotation_matrix(m_me);
+    let lin_dec = wgccre.pole_dec_deg.unwrap_or(dec2);
+    if (dec2 - lin_dec).abs() > 90.0 {
+        return (ra2 + 180.0, -dec2, pm2 + 180.0);
+    }
+    (ra2, dec2, pm2)
+}
+
 fn full_orientation(
     wgccre: &PckBody,
     bpc_files: &[BpcFile],
+    fk: &FkFile,
     body_id: i32,
     jd: f64,
 ) -> Option<(f64, f64, f64)> {
@@ -250,9 +284,26 @@ fn full_orientation(
         if let Some(v) = bpc.orient(body_id, 1, et) {
             return Some(v);
         }
-        if let Some(pa) = pa_frame_of(body_id) {
-            if let Some(v) = bpc.orient(pa, 1, et) {
-                return Some(v);
+    }
+    for pa_frame in fk
+        .frames
+        .iter()
+        .filter(|f| f.class == 2 && f.center == body_id)
+    {
+        for bpc in bpc_files {
+            if let Some((ra, dec, pm)) = bpc.orient(pa_frame.id, 1, et) {
+                if let Some(child) = fk.tkframe_child_of(&pa_frame.name) {
+                    if let Some((rot, via)) = fk.tkframe_rotation(child.id) {
+                        let (ra2, dec2, pm2) = apply_fixed_rotation(ra, dec, pm, &rot, wgccre);
+                        eprintln!(
+                            "fk: {} ({}) → {} ({}) via {} — pa=({:.6},{:.6},{:.6}) me=({:.6},{:.6},{:.6})",
+                            pa_frame.name, pa_frame.id, child.name, child.id, via,
+                            ra, dec, pm, ra2, dec2, pm2
+                        );
+                        return Some((ra2, dec2, pm2));
+                    }
+                }
+                return Some((ra, dec, pm));
             }
         }
     }
@@ -276,6 +327,7 @@ fn linear_orientation(wgccre: &PckBody, jd: f64) -> Option<(f64, f64, f64)> {
 fn nutation_delta_fit(
     wgccre: &PckBody,
     bpc_files: &[BpcFile],
+    fk: &FkFile,
     body_id: i32,
     mid_jd: f64,
     half_jd: f64,
@@ -284,7 +336,7 @@ fn nutation_delta_fit(
     let mut samples: Vec<(f64, f64, f64)> = Vec::with_capacity(N_SAMPLES);
     for tau in &nodes {
         let jd = mid_jd + tau * half_jd;
-        let full = full_orientation(wgccre, bpc_files, body_id, jd)?;
+        let full = full_orientation(wgccre, bpc_files, fk, body_id, jd)?;
         let lin = linear_orientation(wgccre, jd)?;
         samples.push((full.0 - lin.0, full.1 - lin.1, full.2 - lin.2));
     }
@@ -301,6 +353,7 @@ fn extract_granules(
     target: i32,
     wgccre: &PckBody,
     bpc_files: &[BpcFile],
+    fk: &FkFile,
 ) -> (
     Vec<(f64, f64, Vec<f64>, Vec<f64>, Vec<f64>)>,
     Vec<(f64, [f64; 9])>,
@@ -362,11 +415,11 @@ fn extract_granules(
         if let Some((cx, cy, cz)) = chebyshev_fit(&combined, CHEBYSHEV_DEGREE) {
             granules.push((mid_jd, half_jd, cx, cy, cz));
         }
-        if let Some((ra, dec, pm)) = full_orientation(wgccre, bpc_files, pck_id, mid_jd) {
+        if let Some((ra, dec, pm)) = full_orientation(wgccre, bpc_files, fk, pck_id, mid_jd) {
             rotations.push((mid_jd, rotation_matrix_from_angles(ra, dec, pm)));
         }
         if let Some((nra, ndec, npm)) =
-            nutation_delta_fit(wgccre, bpc_files, pck_id, mid_jd, half_jd)
+            nutation_delta_fit(wgccre, bpc_files, fk, pck_id, mid_jd, half_jd)
         {
             nutation.push((mid_jd, half_jd, nra, ndec, npm));
         }
@@ -1006,9 +1059,18 @@ fn download_missing(entries: &[IndexEntry], dest: &str) -> Vec<String> {
     paths
 }
 
-fn classify(paths: &[String]) -> (Vec<String>, Vec<String>, Option<String>, Vec<String>) {
+fn classify(
+    paths: &[String],
+) -> (
+    Vec<String>,
+    Vec<String>,
+    Option<String>,
+    Vec<String>,
+    Vec<String>,
+) {
     let mut kernels = Vec::new();
     let mut bpcs = Vec::new();
+    let mut fks = Vec::new();
     let mut gm_text = String::new();
     let mut pck_text = String::new();
     for p in paths {
@@ -1027,6 +1089,10 @@ fn classify(paths: &[String]) -> (Vec<String>, Vec<String>, Option<String>, Vec<
             }
             "bpc" => {
                 bpcs.push(p.clone());
+                None
+            }
+            "fk" => {
+                fks.push(p.clone());
                 None
             }
             family => {
@@ -1056,7 +1122,7 @@ fn classify(paths: &[String]) -> (Vec<String>, Vec<String>, Option<String>, Vec<
     } else {
         Some(gm_text)
     };
-    (kernels, bpcs, gm, vec![pck_text])
+    (kernels, bpcs, gm, vec![pck_text], fks)
 }
 
 fn update_index_bodies(index_path: &str, bodies: &[String]) {
@@ -1082,6 +1148,7 @@ fn update_index_bodies(index_path: &str, bodies: &[String]) {
 fn flatten(
     kernels: &[String],
     bpcs: &[String],
+    fks: &[String],
     gm_text: Option<&str>,
     pck_text: Option<&str>,
     ci_mode: bool,
@@ -1101,6 +1168,13 @@ fn flatten(
         match BpcFile::open(bpc_path) {
             Ok(b) => bpc_files.push(b),
             Err(e) => eprintln!("open {}: {}", bpc_path, e),
+        }
+    }
+    let mut fk = FkFile::parse("");
+    for fk_path in fks {
+        match FkFile::open(fk_path) {
+            Ok(f) => fk.insert_file(f),
+            Err(e) => eprintln!("open {}: {}", fk_path, e),
         }
     }
     let pck_bodies: HashMap<i32, PckBody> = omegaflow::pck::parse(gm_text, pck_text);
@@ -1123,7 +1197,7 @@ fn flatten(
             if !has_coverage {
                 continue;
             }
-            let (g, r, n) = extract_granules(spk, &spk_files, *target_id, &wgccre, &bpc_files);
+            let (g, r, n) = extract_granules(spk, &spk_files, *target_id, &wgccre, &bpc_files, &fk);
             granules.extend(g);
             rotations.extend(r);
             nutation.extend(n);
@@ -1330,6 +1404,8 @@ fn main() {
     let mut gm_path: Option<String> = None;
     let mut pck_paths: Vec<String> = Vec::new();
     let mut bpc_paths: Vec<String> = Vec::new();
+    let mut fk_paths: Vec<String> = Vec::new();
+    let mut probe_jd: Option<f64> = None;
     let mut ci_mode = false;
     let mut index_path: Option<String> = None;
     let mut fetch_from: Option<String> = None;
@@ -1355,6 +1431,16 @@ fn main() {
                 if let Some(p) = args.get(i + 1) {
                     bpc_paths.push(p.clone());
                 }
+                i += 1;
+            }
+            "--fk" => {
+                if let Some(p) = args.get(i + 1) {
+                    fk_paths.push(p.clone());
+                }
+                i += 1;
+            }
+            "--probe" => {
+                probe_jd = args.get(i + 1).and_then(|s| s.parse().ok());
                 i += 1;
             }
             "--index" => {
@@ -1387,6 +1473,76 @@ fn main() {
         }
         i += 1;
     }
+    if let Some(jd) = probe_jd {
+        let mut fk = FkFile::parse("");
+        for fk_path in &fk_paths {
+            match FkFile::open(fk_path) {
+                Ok(f) => fk.insert_file(f),
+                Err(e) => eprintln!("open {}: {}", fk_path, e),
+            }
+        }
+        for f in &fk.frames {
+            eprintln!(
+                "fk frame {} {} class {} center {} tk={}",
+                f.id,
+                f.name,
+                f.class,
+                f.center,
+                f.tk.as_ref()
+                    .and_then(|t| t.relative.clone())
+                    .unwrap_or_default()
+            );
+        }
+        for bpc_path in &bpc_paths {
+            let b = match BpcFile::open(bpc_path) {
+                Ok(b) => b,
+                Err(e) => {
+                    eprintln!("open {}: {}", bpc_path, e);
+                    continue;
+                }
+            };
+            for frame in fk.frames.iter().filter(|f| f.class == 2) {
+                let et = (jd - J2000_EPOCH) * 86400.0;
+                let Some((ra, dec, pm)) = b.orient(frame.id, 1, et) else {
+                    continue;
+                };
+                eprintln!(
+                    "probe {} ({}) jd {}: pa=({:.6}, {:.6}, {:.6})",
+                    frame.name, frame.id, jd, ra, dec, pm
+                );
+                let Some(child) = fk.tkframe_child_of(&frame.name) else {
+                    continue;
+                };
+                let Some((rot, via)) = fk.tkframe_rotation(child.id) else {
+                    continue;
+                };
+                let m_pa = rotation_matrix_from_angles(ra, dec, pm);
+                let m_me = matmul(&m_pa, &mat_transpose(&rot));
+                let (ra2, dec2, pm2) = angles_from_rotation_matrix(m_me);
+                eprintln!(
+                    "probe {} ({}) via {}: me=({:.6}, {:.6}, {:.6})",
+                    child.name, child.id, via, ra2, dec2, pm2
+                );
+                let et2 = (jd + 10.0 - J2000_EPOCH) * 86400.0;
+                if let Some((ra3, dec3, pm3)) = b.orient(frame.id, 1, et2) {
+                    let m_me2 = matmul(
+                        &rotation_matrix_from_angles(ra3, dec3, pm3),
+                        &mat_transpose(&rot),
+                    );
+                    let (_, _, pm4) = angles_from_rotation_matrix(m_me2);
+                    let mut drift = pm4 - pm2;
+                    while drift > 180.0 {
+                        drift -= 360.0;
+                    }
+                    while drift < -180.0 {
+                        drift += 360.0;
+                    }
+                    eprintln!("probe: me-W-drift über 10 d = {:.6} deg/d", drift / 10.0);
+                }
+            }
+        }
+        return;
+    }
     if let Some(index_file) = &fetch_from {
         if index_path.is_none() {
             index_path = Some(index_file.clone());
@@ -1409,14 +1565,21 @@ fn main() {
             eprintln!("selected: {} ({}, {} B)", e.name, e.family, e.size);
         }
         let paths = download_missing(&selected, &dest);
-        let (kernels, bpcs, gm_text, pck_texts) = classify(&paths);
+        let (kernels, bpcs, gm_text, pck_texts, fks) = classify(&paths);
         let pck_merged: String = pck_texts.concat();
         let pck = if pck_merged.is_empty() {
             None
         } else {
             Some(pck_merged)
         };
-        let written = flatten(&kernels, &bpcs, gm_text.as_deref(), pck.as_deref(), ci_mode);
+        let written = flatten(
+            &kernels,
+            &bpcs,
+            &fks,
+            gm_text.as_deref(),
+            pck.as_deref(),
+            ci_mode,
+        );
         if ci_mode {
             if let Some(idx) = &index_path {
                 update_index_bodies(idx, &written);
@@ -1444,6 +1607,7 @@ fn main() {
     flatten(
         &kernel_paths,
         &bpc_paths,
+        &fk_paths,
         gm_text.as_deref(),
         pck_text.as_deref(),
         ci_mode,
