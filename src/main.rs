@@ -9298,7 +9298,14 @@ fn url_probe_mode(path: &str, env: &HashMap<String, String>, fetchone: bool, jin
         let jina_out = std::sync::Mutex::new(String::new());
         let jn = std::sync::atomic::AtomicUsize::new(0);
         let n_cand = candidates.len();
-        let j_workers = 2.min(n_cand.max(1));
+        let jina_key = env.get("JINA_API_KEY").cloned().unwrap_or_default();
+        let jina_headers: Vec<(String, String)> = if jina_key.is_empty() {
+            Vec::new()
+        } else {
+            vec![("Authorization".to_string(), format!("Bearer {}", jina_key))]
+        };
+        let j_workers = 4.min(n_cand.max(1));
+        let j_pacing = if jina_key.is_empty() { 4000u64 } else { 500u64 };
         std::thread::scope(|scope| {
             for _ in 0..j_workers {
                 scope.spawn(|| loop {
@@ -9307,7 +9314,7 @@ fn url_probe_mode(path: &str, env: &HashMap<String, String>, fetchone: bool, jin
                         break;
                     }
                     let wrapped = format!("https://r.jina.ai/{}", candidates[i]);
-                    let body = fetch_raw_probe(&wrapped, None, &[]);
+                    let body = fetch_raw_probe(&wrapped, None, &jina_headers);
                     if let Some(b) = body {
                         if parse_json(&b).is_some() {
                             jina_out
@@ -9316,7 +9323,7 @@ fn url_probe_mode(path: &str, env: &HashMap<String, String>, fetchone: bool, jin
                                 .push_str(&format!("jina-json | {}\n", candidates[i]));
                         }
                     }
-                    std::thread::sleep(std::time::Duration::from_millis(4000));
+                    std::thread::sleep(std::time::Duration::from_millis(j_pacing));
                 });
             }
         });
