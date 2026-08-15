@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" href="data:,">
 <title>omegaflow</title>
-<!-- omegaflow v1.0.0 | φ v5 -->
+<!-- omegaflow v1.0.0 | φ v6 -->
 <style>
 * { margin: 0; padding: 0; }
 html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; color: #c4b9a8; font-family: system-ui, sans-serif; }
@@ -317,7 +317,7 @@ fn field_spatial(d2: f32, d_mag: f32, extent: f32, kernel_id: u32, global_scale:
     let s2 = max(global_scale * global_scale, 1e-30);
 
     if (kernel_id == 0u || kernel_id == 6u) {
-        return 1.0 / max(d2, 1.0);
+        return 1.0 / (d2 + e2);
     } else if (kernel_id == 3u) {
         return erfc(d_mag / max(perceptual_extent * sqrt(2.0), global_scale));
     } else if (kernel_id == 2u) {
@@ -1087,7 +1087,14 @@ fn presence_probe() {
                 let line1 = `${PAD('PRESENCE',10)}${SEP}${line1A}${SEP}${line1B}${SEP}${line1C}`;
 
                 const nOsc = rawWindowResponse.count;
-                let line2A = PAD(`${nOsc} oscillators  Ω: ${probedOmega.toExponential(2)}  SSAA ${ssaa.toFixed(2)}×`, 44);
+                let dirSuffix = '';
+                if (rawWindowResponse.directive) {
+                    const dxd = rawWindowResponse.directive.x - xPresence;
+                    const dyd = rawWindowResponse.directive.y - yPresence;
+                    const dzd = rawWindowResponse.directive.z - zPresence;
+                    dirSuffix = `  archivar→ d: ${Math.hypot(dxd, dyd, dzd).toExponential(1)}m`;
+                }
+                let line2A = PAD(`${nOsc} oscillators  Ω: ${probedOmega.toExponential(2)}  SSAA ${ssaa.toFixed(2)}×`, 44) + dirSuffix;
 
                 let forceNonZero = '';
                 let forceZero = [];
