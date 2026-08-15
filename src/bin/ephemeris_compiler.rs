@@ -192,13 +192,22 @@ fn back_substitute(a: &[Vec<f64>], b: &[f64]) -> Vec<f64> {
     x
 }
 
-fn state_ssb(spk: &SpkFile, target: i32, et: f64) -> Option<[f64; 6]> {
-    if let Ok(s) = spk.state(target, 0, et) {
-        return Some(s);
+fn state_ssb_multi(kernels: &[SpkFile], target: i32, et: f64) -> Option<[f64; 6]> {
+    for spk in kernels {
+        if let Ok(s) = spk.state(target, 0, et) {
+            return Some(s);
+        }
     }
     let parent = parent_of(target)?;
-    let moon_state = spk.state(target, parent, et).ok()?;
-    let planet_state = state_ssb(spk, parent, et)?;
+    let mut moon_state = None;
+    for spk in kernels {
+        if let Ok(s) = spk.state(target, parent, et) {
+            moon_state = Some(s);
+            break;
+        }
+    }
+    let moon_state = moon_state?;
+    let planet_state = state_ssb_multi(kernels, parent, et)?;
     Some([
         moon_state[0] + planet_state[0],
         moon_state[1] + planet_state[1],
@@ -288,6 +297,7 @@ fn nutation_delta_fit(
 
 fn extract_granules(
     spk: &SpkFile,
+    all_kernels: &[SpkFile],
     target: i32,
     wgccre: &PckBody,
     bpc_files: &[BpcFile],
@@ -331,7 +341,7 @@ fn extract_granules(
         let mut valid = true;
         for tau in &cheb_nodes {
             let et = mid_et + tau * granule_half_sec;
-            match state_ssb(spk, target, et) {
+            match state_ssb_multi(all_kernels, target, et) {
                 Some([x, y, z, _, _, _]) => {
                     samples_x.push(x * 1000.0);
                     samples_y.push(y * 1000.0);
@@ -1113,7 +1123,7 @@ fn flatten(
             if !has_coverage {
                 continue;
             }
-            let (g, r, n) = extract_granules(spk, *target_id, &wgccre, &bpc_files);
+            let (g, r, n) = extract_granules(spk, &spk_files, *target_id, &wgccre, &bpc_files);
             granules.extend(g);
             rotations.extend(r);
             nutation.extend(n);

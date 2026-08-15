@@ -599,6 +599,7 @@ struct Buffer {
     inertial: SpatialHash,
     eph: Arc<HashMap<String, BodyEphemeris>>,
     asteroids: Option<Arc<AsteroidHash>>,
+    stars: Option<Arc<StarHash>>,
 }
 
 fn cell_of(p: [f64; 3], s: f64) -> CellKey {
@@ -700,6 +701,7 @@ fn build_buffer(
     cadence: f64,
     eph: Arc<HashMap<String, BodyEphemeris>>,
     asteroids: Option<Arc<AsteroidHash>>,
+    stars: Option<Arc<StarHash>>,
 ) -> Buffer {
     let mut body_samps: HashMap<String, Vec<Oscillator>> = HashMap::new();
     let mut inertial_samps = Vec::new();
@@ -719,6 +721,7 @@ fn build_buffer(
         inertial: build_spatial_hash(inertial_samps, cadence),
         eph,
         asteroids,
+        stars,
     }
 }
 
@@ -947,6 +950,209 @@ fn query_asteroid_hash(
                     0.0,
                 ));
             }
+        }
+    }
+}
+
+const STAR_RECORD_STRIDE: usize = 36;
+
+struct StarRec {
+    ra_deg: f64,
+    dec_deg: f64,
+    pm_ra_masyr: f64,
+    pm_de_masyr: f64,
+    plx_mas: f64,
+    flux: f64,
+}
+
+fn parse_star_record(b: &[u8]) -> Option<StarRec> {
+    if b.len() < STAR_RECORD_STRIDE {
+        return None;
+    }
+    let ra = f64::from_le_bytes(b[0..8].try_into().ok()?);
+    let dec = f64::from_le_bytes(b[8..16].try_into().ok()?);
+    let pm_ra = f32::from_le_bytes(b[16..20].try_into().ok()?) as f64;
+    let pm_de = f32::from_le_bytes(b[20..24].try_into().ok()?) as f64;
+    let plx = f32::from_le_bytes(b[24..28].try_into().ok()?) as f64;
+    let vt = f32::from_le_bytes(b[28..32].try_into().ok()?) as f64;
+    let flux = f32::from_le_bytes(b[32..36].try_into().ok()?) as f64;
+    if !ra.is_finite() || !dec.is_finite() || !(plx > 0.0) || !vt.is_finite() {
+        return None;
+    }
+    Some(StarRec {
+        ra_deg: ra,
+        dec_deg: dec,
+        pm_ra_masyr: pm_ra,
+        pm_de_masyr: pm_de,
+        plx_mas: plx,
+        flux,
+    })
+}
+
+fn star_position_at(rec: &StarRec, t2: f64) -> ([f64; 3], [f64; 3]) {
+    let dt_yr = t2 / (86400.0 * 365.25);
+    let dec_rad = rec.dec_deg.to_radians();
+    let ra = rec.ra_deg + rec.pm_ra_masyr / (3.6e6 * dec_rad.cos().max(1e-6)) * dt_yr;
+    let dec = rec.dec_deg + rec.pm_de_masyr / 3.6e6 * dt_yr;
+    let (sa, ca) = ra.to_radians().sin_cos();
+    let (sd, cd) = dec.to_radians().sin_cos();
+    let p_hat = [cd * ca, cd * sa, sd];
+    let d = (1000.0 / rec.plx_mas) * PARSEC_M;
+    let p = [p_hat[0] * d, p_hat[1] * d, p_hat[2] * d];
+    let mu_a = rec.pm_ra_masyr * MAS_YR_TO_RAD_S;
+    let mu_d = rec.pm_de_masyr * MAS_YR_TO_RAD_S;
+    let a_hat = [-sa, ca, 0.0];
+    let d_hat = [-sd * ca, -sd * sa, cd];
+    let vel = [
+        d * (mu_a * a_hat[0] + mu_d * d_hat[0]),
+        d * (mu_a * a_hat[1] + mu_d * d_hat[1]),
+        d * (mu_a * a_hat[2] + mu_d * d_hat[2]),
+    ];
+    (p, vel)
+}
+
+struct StarHash {
+    cell_size: f64,
+    vmax: f64,
+    ttl: f64,
+    build_epoch: f64,
+    cell_lo: CellKey,
+    cell_hi: CellKey,
+    cells: HashMap<CellKey, Vec<u32>>,
+    records: Vec<StarRec>,
+    p0: Vec<[f64; 3]>,
+}
+
+fn build_star_hash(bytes: &[u8], build_epoch: f64, cadence: f64, ttl: u64) -> StarHash {
+    let mut records: Vec<StarRec> = Vec::new();
+    let mut p0: Vec<[f64; 3]> = Vec::new();
+    let mut vmax = 0.0f64;
+    for chunk in bytes.chunks_exact(STAR_RECORD_STRIDE) {
+        let Some(rec) = parse_star_record(chunk) else {
+            continue;
+        };
+        let (p, v) = star_position_at(&rec, build_epoch);
+        let speed = (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]).sqrt();
+        vmax = vmax.max(speed);
+        records.push(rec);
+        p0.push(p);
+    }
+    vmax *= Φ;
+    let rho_cad = vmax * cadence;
+    let shift = (2.0 * rho_cad).log2().ceil().clamp(0.0, 63.0) as i32;
+    let cell_size = 2f64.powi(shift);
+    let mut cells: HashMap<CellKey, Vec<u32>> = HashMap::new();
+    let mut cell_lo = (i64::MAX, i64::MAX, i64::MAX);
+    let mut cell_hi = (i64::MIN, i64::MIN, i64::MIN);
+    for (i, pos) in p0.iter().enumerate() {
+        let c = cell_of(*pos, cell_size);
+        cell_lo.0 = cell_lo.0.min(c.0);
+        cell_lo.1 = cell_lo.1.min(c.1);
+        cell_lo.2 = cell_lo.2.min(c.2);
+        cell_hi.0 = cell_hi.0.max(c.0);
+        cell_hi.1 = cell_hi.1.max(c.1);
+        cell_hi.2 = cell_hi.2.max(c.2);
+        cells.entry(c).or_default().push(i as u32);
+    }
+    StarHash {
+        cell_size,
+        vmax,
+        ttl: ttl as f64,
+        build_epoch,
+        cell_lo,
+        cell_hi,
+        cells,
+        records,
+        p0,
+    }
+}
+
+fn query_star_hash(
+    hash: &StarHash,
+    center: [f64; 3],
+    t2: f64,
+    pad: f64,
+    delta_t_cache: f64,
+    records: &mut Vec<OscRecord>,
+) {
+    if hash.cells.is_empty() {
+        return;
+    }
+    let dt = (t2 - hash.build_epoch).abs() + delta_t_cache;
+    let rho = hash.vmax * dt + pad;
+    let s = hash.cell_size;
+    let qlo = cell_of([center[0] - rho, center[1] - rho, center[2] - rho], s);
+    let qhi = cell_of([center[0] + rho, center[1] + rho, center[2] + rho], s);
+    let lo = (
+        qlo.0.max(hash.cell_lo.0),
+        qlo.1.max(hash.cell_lo.1),
+        qlo.2.max(hash.cell_lo.2),
+    );
+    let hi = (
+        qhi.0.min(hash.cell_hi.0),
+        qhi.1.min(hash.cell_hi.1),
+        qhi.2.min(hash.cell_hi.2),
+    );
+    if lo.0 > hi.0 || lo.1 > hi.1 || lo.2 > hi.2 {
+        return;
+    }
+    let span = ((hi.0 - lo.0 + 1) as u64)
+        .saturating_mul((hi.1 - lo.1 + 1) as u64)
+        .saturating_mul((hi.2 - lo.2 + 1) as u64);
+    let visit: Vec<&Vec<u32>> = if span > hash.cells.len() as u64 * 4 {
+        hash.cells
+            .iter()
+            .filter(|(ck, _)| {
+                ck.0 >= lo.0
+                    && ck.0 <= hi.0
+                    && ck.1 >= lo.1
+                    && ck.1 <= hi.1
+                    && ck.2 >= lo.2
+                    && ck.2 <= hi.2
+            })
+            .map(|(_, v)| v)
+            .collect()
+    } else {
+        let mut out = Vec::new();
+        for cx in lo.0..=hi.0 {
+            for cy in lo.1..=hi.1 {
+                for cz in lo.2..=hi.2 {
+                    if let Some(indices) = hash.cells.get(&(cx, cy, cz)) {
+                        out.push(indices);
+                    }
+                }
+            }
+        }
+        out
+    };
+    for indices in visit {
+        for &i in indices {
+            let rec = &hash.records[i as usize];
+            let d = (1000.0 / rec.plx_mas) * PARSEC_M;
+            let mu_a = rec.pm_ra_masyr * MAS_YR_TO_RAD_S;
+            let mu_d = rec.pm_de_masyr * MAS_YR_TO_RAD_S;
+            let v_lin = d * mu_a.hypot(mu_d);
+            let reach = v_lin * dt + pad;
+            let p0 = hash.p0[i as usize];
+            let dx = p0[0] - center[0];
+            let dy = p0[1] - center[1];
+            let dz = p0[2] - center[2];
+            let dist2_p0 = dx * dx + dy * dy + dz * dz;
+            if dist2_p0 > reach * reach {
+                continue;
+            }
+            let (p, v) = star_position_at(rec, t2);
+            let ddx = p[0] - center[0];
+            let ddy = p[1] - center[1];
+            let ddz = p[2] - center[2];
+            let dist2 = ddx * ddx + ddy * ddy + ddz * ddz;
+            if dist2 > pad * pad {
+                continue;
+            }
+            records.push((
+                p[0], p[1], p[2], rec.flux, t2, hash.ttl, hash.ttl, 0.0, 0.0, 0.0, 0.0, 0.0, v[0],
+                v[1], v[2], 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+            ));
         }
     }
 }
@@ -1213,6 +1419,9 @@ fn sense_buffer(
     );
     if let Some(ash) = &buf.asteroids {
         query_asteroid_hash(ash, center, t2, pad, delta_t_cache, records);
+    }
+    if let Some(sh) = &buf.stars {
+        query_star_hash(sh, center, t2, pad, delta_t_cache, records);
     }
 }
 
@@ -2896,6 +3105,7 @@ struct FetchResult {
     channels: Vec<(Channel, FieldConfig)>,
     eph_update: Option<(String, BodyEphemeris)>,
     asteroid_hash: Option<Arc<AsteroidHash>>,
+    star_hash: Option<Arc<StarHash>>,
 }
 
 struct WsConfig {
@@ -3145,6 +3355,7 @@ struct Archive {
     pck_bodies: HashMap<i32, PckBody>,
     time: Arc<Mutex<Option<LeapSeconds>>>,
     asteroids: Option<Arc<AsteroidHash>>,
+    stars: Option<Arc<StarHash>>,
 }
 struct WsFrame {
     opcode: u8,
@@ -3550,6 +3761,7 @@ fn handle_ingress(stream: TcpStream, cfg: WsConfig) {
                                     Vec::new(),
                                     1.0,
                                     Arc::new(HashMap::new()),
+                                    None,
                                     None,
                                 ))
                             })
@@ -8677,12 +8889,14 @@ fn main() {
             1.0,
             body_ephemerides.clone(),
             None,
+            None,
         )),
         presence: HashMap::new(),
         origins: HashMap::new(),
         pck_bodies: HashMap::new(),
         time: time.clone(),
         asteroids: None,
+        stars: None,
     };
     let body_names: Arc<Vec<String>> = {
         let mut names: Vec<String> = archive
@@ -8792,6 +9006,9 @@ fn main() {
             if let Some(hash) = res.asteroid_hash {
                 archive.asteroids = Some(hash);
             }
+            if let Some(hash) = res.star_hash {
+                archive.stars = Some(hash);
+            }
             let src = &archive.sources[res.source_idx];
             for (channel, sensor) in &res.channels {
                 let track_origin = matches!(channel.position, Position::Source)
@@ -8870,6 +9087,7 @@ fn main() {
                             channels: Vec::new(),
                             eph_update: src_clone.body.clone().map(|b| (b, eph)),
                             asteroid_hash: None,
+                            star_hash: None,
                         });
                     }
                 });
@@ -8919,6 +9137,56 @@ fn main() {
                         channels: Vec::new(),
                         eph_update: None,
                         asteroid_hash: Some(Arc::new(hash)),
+                        star_hash: None,
+                    });
+                });
+                continue;
+            }
+            if archive.sources[i].format == "catalog_tycho" {
+                let url = archive.sources[i].url.clone();
+                let ftx = fetch_tx.clone();
+                let src_clone = archive.sources[i].clone();
+                let src_idx = i;
+                let src_ttl = src_clone.ttl;
+                let cadence_c = cadence;
+                let build_epoch = now;
+                archive.origins.entry(origin).or_insert(OriginState {
+                    fetched: now,
+                    prev_epoch: now,
+                    prev_abs: [0.0, 0.0, 0.0],
+                    prev_motion: None,
+                    resid_ema: 0.0,
+                    has_prev: false,
+                });
+                thread::spawn(move || {
+                    let name = url.rsplit('/').next().unwrap_or("stars").to_string();
+                    let tmp_path = format!("/tmp/omegaflow_catalog_{}", name);
+                    if !cache_fresh(&tmp_path, src_ttl) {
+                        let bytes = match fetch_raw_bytes(&url, src_ttl) {
+                            Some(b) => b,
+                            None => return,
+                        };
+                        if std::fs::write(&tmp_path, &bytes).is_err() {
+                            return;
+                        }
+                    }
+                    let bytes = match std::fs::read(&tmp_path) {
+                        Ok(b) => b,
+                        Err(_) => return,
+                    };
+                    let hash = build_star_hash(&bytes, build_epoch, cadence_c, src_ttl);
+                    eprintln!(
+                        "catalog_tycho: {} stars, cell_size {:.3e} m, vmax {:.1} m/s",
+                        hash.records.len(),
+                        hash.cell_size,
+                        hash.vmax
+                    );
+                    let _ = ftx.send(FetchResult {
+                        source_idx: src_idx,
+                        channels: Vec::new(),
+                        eph_update: None,
+                        asteroid_hash: None,
+                        star_hash: Some(Arc::new(hash)),
                     });
                 });
                 continue;
@@ -8965,6 +9233,7 @@ fn main() {
                             channels,
                             eph_update: None,
                             asteroid_hash: None,
+                            star_hash: None,
                         });
                     }
                 });
@@ -9061,6 +9330,7 @@ fn main() {
                             channels,
                             eph_update: None,
                             asteroid_hash: None,
+                            star_hash: None,
                         });
                     }
                     return;
@@ -9084,6 +9354,7 @@ fn main() {
                                 channels: Vec::new(),
                                 eph_update: src_clone.body.clone().map(|b| (b, eph)),
                                 asteroid_hash: None,
+                                star_hash: None,
                             });
                             v
                         }
@@ -9095,6 +9366,7 @@ fn main() {
                     channels,
                     eph_update: None,
                     asteroid_hash: None,
+                    star_hash: None,
                 });
             });
         }
@@ -9145,6 +9417,7 @@ fn main() {
                 cadence,
                 archive.body_ephemerides.clone(),
                 archive.asteroids.clone(),
+                archive.stars.clone(),
             ));
         }
         let f = archive.field.clone();

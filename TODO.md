@@ -569,11 +569,17 @@ Binary-PCK-Pakets oben).
   sources_index.φ; Horizons-Sonden via horizons_compiler --ci-mode; DASTCOM-Katalog
   via dastcom_compiler --ci-mode). Monatlich + workflow_dispatch. Upload-Fehler
   exiten seit 2026-08-15 laut (kein stilles let _ = mehr).
-- Quota-Befund 2026-08-15: Der --verify-Takt (5-min) lädt ~200 JSON-Assets pro Lauf
-  hoch (TTL 60–300 s → fast immer stale, ~2400 API-Calls/h) — das Kontingent
-  (5000/h) ist strukturell ausgelastet; der Flattener-Upload (~64 Calls) braucht
-  einen Slot nach dem Stunden-Reset. Die Write-Kadenz (CDN-write nur bei echtem
-  Bedarf) ist offene CI-Architektur.
+- Quota-Befund 2026-08-15: `--verify phi` lud rekursiv die research-Batches
+  (27k+ Quellen) und mirrorte jede per gh release upload — das Kontingent
+  (5000/h) starb strukturell. Fix manifestiert: (1) Mirror nur für das
+  kanonische Register (phi/sources.φ, `--verify phi`), (2) research-Dirs werden
+  nie gemirrort (Fetch-only-Gesundheitscheck im sources-Job), (3) Frische-Gate =
+  ausschließlich lokale TTL (`cache_fresh` auf /tmp/archivar_cache) — keine
+  CDN/API-Metadaten-Abfrage, (4) `cdn_asset_fresh` entfernt. API-Last des
+  Verify-Takts: ~0 (Uploads nur bei abgelaufener lokaler TTL der kanonischen
+  Festquellen). K01-Befund: SSB-Kette muss Kernel-übergreifend klettern
+  (jup365 hat (501,5), (5,0) lebt in de442) — `state_ssb_multi` fixiert;
+  Beweis: 8 Jupiter-Monde mit 6.848 Granulen, Ganymed mit stype-4-Nutation.
 - Das Python `refresh.yml` im sources-Repo (Kataloge/TAP/Gaia, Release v1.0) bleibt
   bis I02 auf Python — K01-Grenze.
 - CDN-Asset-Naming: `{name}.json` (ein Asset pro Quelle, CI überschreibt) — Konvention
