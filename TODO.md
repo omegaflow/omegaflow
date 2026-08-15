@@ -426,6 +426,12 @@ Binary-PCK-Pakets oben).
 
 ### Curation & Quellen
 
+- **TerraPulse-Katalog** (Crawl 2026-08-15, 25 Status-Seiten): 469 Quellen
+  klassifiziert in `phi/research/agent_output/terrapulse_catalog.φ` —
+  103 Kandidaten (NCEI-Stationsdaten/ISD, Kyoto-Dst, GFZ-Kp, USGS-Geomagnetism,
+  NMDB-Neutronen, INTERMAGNET-HAPI, GWOSC-Gravitationswellen, IceCube, SILSO,
+  WSPR/HamQSL, GLM-Blitz-NetCDF), 366 Decline (USDA/EPA/JRC-Inventare).
+  Block-Erstellung + Verifikation offen; GLM braucht NetCDF-Reader (electric).
 - TNS-Transienten (em, celestisch) live seit 2026-08-14: Vollkatalog
   `tns_public_objects.csv.zip` (`format csv_zip`, std-only Inflate in
   src/inflate.rs, z-Distanz via Redshift, abs_mag_from). ~20k

@@ -1,0 +1,943 @@
+# ── TerraPulse-Katalog (Crawl 2026-08-15, 25 Seiten, 469 Quellen) ──
+# candidate: physikalisch relevante Endpoints (heuristische Vorprüfung;
+# Block-Erstellung + Verifikation via test_backlog_batches_verify offen)
+candidate https://www.amsmeteors.org/members/api/open_api
+# title: American Meteor Society Fireballs
+candidate https://ssd-api.jpl.nasa.gov/fireball.api
+# title: CNEOS Bolide Fireballs
+candidate https://ssd-api.jpl.nasa.gov/cad.api?dist-max=0.05&#38;date-min=2000-01-01&#38;date-max=2100-01-01&#38;body=Earth&#38;sort=date
+# title: CNEOS Close Approach Data (near-Earth objects)
+candidate https://www.epa.gov/waterdata/get-nhdplus-national-hydrography-dataset-plus-data
+# title: Dataset National Hydrography Dataset Plus Nhdplus11
+candidate https://data.epa.gov/efservice/ERM_RESULT/
+# title: EPA RadNet (Environmental Radiation Monitoring)
+candidate https://data.epa.gov/efservice/ERM_RESULT/
+# title: EPA RadNet Stations (registry)
+candidate https://kp.gfz.de/
+# title: GFZ Kp/ap Geomagnetic Index (Niemegk)
+candidate https://gwosc.org/detector_status/
+# title: GWOSC Detector Status
+candidate https://gwosc.org/eventapi/jsonfull/allevents/
+# title: GWOSC Gravitational Wave Events
+candidate https://explore.globalmeteornetwork.org/gmn_data_store
+# title: Global Meteor Network
+candidate https://www.hamqsl.com/solarxml.php
+# title: HamQSL HF Propagation
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/01/
+# title: Hourly Precip 3240 01
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/02/
+# title: Hourly Precip 3240 02
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/03/
+# title: Hourly Precip 3240 03
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/04/
+# title: Hourly Precip 3240 04
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/05/
+# title: Hourly Precip 3240 05
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/06/
+# title: Hourly Precip 3240 06
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/07/
+# title: Hourly Precip 3240 07
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/08/
+# title: Hourly Precip 3240 08
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/09/
+# title: Hourly Precip 3240 09
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/10/
+# title: Hourly Precip 3240 10
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/11/
+# title: Hourly Precip 3240 11
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/12/
+# title: Hourly Precip 3240 12
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/13/
+# title: Hourly Precip 3240 13
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/14/
+# title: Hourly Precip 3240 14
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/14/
+# title: Hourly Precip 3240 14 2
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/15/
+# title: Hourly Precip 3240 15
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/16/
+# title: Hourly Precip 3240 16
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/17/
+# title: Hourly Precip 3240 17
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/18/
+# title: Hourly Precip 3240 18
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/19/
+# title: Hourly Precip 3240 19
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/20/
+# title: Hourly Precip 3240 20
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/21/
+# title: Hourly Precip 3240 21
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/22/
+# title: Hourly Precip 3240 22
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/23/
+# title: Hourly Precip 3240 23
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/24/
+# title: Hourly Precip 3240 24
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/25/
+# title: Hourly Precip 3240 25
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/26/
+# title: Hourly Precip 3240 26
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/27/
+# title: Hourly Precip 3240 27
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/28/
+# title: Hourly Precip 3240 28
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/29/
+# title: Hourly Precip 3240 29
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/30/
+# title: Hourly Precip 3240 30
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/31/
+# title: Hourly Precip 3240 31
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/32/
+# title: Hourly Precip 3240 32
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/33/
+# title: Hourly Precip 3240 33
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/34/
+# title: Hourly Precip 3240 34
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/35/
+# title: Hourly Precip 3240 35
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/36/
+# title: Hourly Precip 3240 36
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/37/
+# title: Hourly Precip 3240 37
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/38/
+# title: Hourly Precip 3240 38
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/39/
+# title: Hourly Precip 3240 39
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/40/
+# title: Hourly Precip 3240 40
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/41/
+# title: Hourly Precip 3240 41
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/42/
+# title: Hourly Precip 3240 42
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/43/
+# title: Hourly Precip 3240 43
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/44/
+# title: Hourly Precip 3240 44
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/45/
+# title: Hourly Precip 3240 45
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/46/
+# title: Hourly Precip 3240 46
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/47/
+# title: Hourly Precip 3240 47
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/48/
+# title: Hourly Precip 3240 48
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/48/
+# title: Hourly Precip 3240 48 2
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/50/
+# title: Hourly Precip 3240 50
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/51/
+# title: Hourly Precip 3240 51
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/66/
+# title: Hourly Precip 3240 66
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/67/
+# title: Hourly Precip 3240 67
+candidate https://www.ncei.noaa.gov/pub/data/hourly_precip-3240/91/
+# title: Hourly Precip 3240 91
+candidate https://www.ncei.noaa.gov/data/international-best-track-archive-for-climate-stewardship-ibtracs/v04r01/access/csv/
+# title: IBTrACS Global Tropical Cyclone Tracks
+candidate https://imag-data.bgs.ac.uk/GIN_V1/GINServices
+# title: INTERMAGNET Magnetic Observatories (registry)
+candidate https://imag-data.bgs.ac.uk
+# title: INTERMAGNET — Global Magnetic Observatory Network
+candidate https://dataverse.harvard.edu/api/access/datafile/7502710
+# title: IceCube Astrophysical Neutrino Alerts (IceCat-1)
+candidate https://ssd-api.jpl.nasa.gov/sbdb.api
+# title: JPL Small-Body Database + Close Approaches
+candidate https://wdc.kugi.kyoto-u.ac.jp/dst_realtime/presentmonth/
+# title: Kyoto WDC Real-time Dst
+candidate https://ssd.jpl.nasa.gov/api/horizons.api
+# title: Lunar/Solar Tidal Potential
+candidate https://www.ngdc.noaa.gov/geomag/data/poles/
+# title: Magnetic Pole Positions — NOAA NCEI
+candidate https://api.nasa.gov/DONKI/CME
+# title: NASA DONKI Coronal Mass Ejections (CME catalog)
+candidate https://api.nasa.gov/DONKI/FLR
+# title: NASA DONKI Solar Flares (FLR catalog)
+candidate https://api.nasa.gov/DONKI
+# title: NASA DONKI Space Weather
+candidate https://firms.modaps.eosdis.nasa.gov/api/area/
+# title: NASA FIRMS (VIIRS/MODIS Active Fire)
+candidate https://ssd-api.jpl.nasa.gov
+# title: NASA NEO (Fireballs + Close Approaches)
+candidate https://www.nhc.noaa.gov/CurrentStorms.json
+# title: NHC Active Storms (live fixes)
+candidate https://www.nmdb.eu/nest/draw_graph.php
+# title: NMDB Cosmic Ray Neutron Monitors
+candidate https://www.nmdb.eu/nest/
+# title: NMDB Neutron Monitor Stations (registry)
+candidate https://api.tidesandcurrents.noaa.gov/api/prod/datagetter
+# title: NOAA CO-OPS Tide-Gauge Stations (registry)
+candidate https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_daily_mlo.csv
+# title: NOAA CO2 + Methane
+candidate https://psl.noaa.gov/enso/mei/data/meiv2.data
+# title: NOAA Climate Indices
+candidate https://www.ncei.noaa.gov/data/global-hourly/
+# title: NOAA NCEI Integrated Surface Database (ISD) -- hourly station observations
+candidate https://api.tidesandcurrents.noaa.gov/api/prod/datagetter
+# title: NOAA Tides &amp; Currents
+candidate https://data.nasa.gov/docs/legacy/meteorite_landings/Meteorite_Landings.csv
+# title: Observed Meteorite Falls
+candidate https://air-quality-api.open-meteo.com/v1/air-quality
+# title: Open-Meteo Air Quality
+candidate https://www.spc.noaa.gov/climo/reports/
+# title: SPC Storm Reports
+candidate https://www.spc.noaa.gov/wcm/
+# title: SPC Tornado History (1950-2025)
+candidate https://www.ncei.noaa.gov/pub/access/cebrequests/satellite/GOES-R-Level-0-Readers/
+# title: Satellite Goes R Level 0 Readers
+candidate https://api.daac.asf.alaska.edu/services/search/param?platform=Sentinel-1&#38;intersectsWith=point%28-85.77+42.96%29&#38;start=2026-01-01T00:00:00&#38;output=geojson&#38;maxResults=10
+# title: Satellite Radar Climate Measurements
+candidate https://www.usgs.gov/centers/eros/science/usgs-eros-archive-aerial-photography-high-resolution-orthoimagery-hro?qt-science_center_objects=0#qt-science_center_objects
+# title: Science Usgs Eros Archive Aerial Photography High Resolution Orthoimagery Hro
+candidate https://www.ncei.noaa.gov/pub/data/swdi/stormevents/csvfiles/
+# title: Stormevents Csvfiles
+candidate https://usdmdataservices.unl.edu/api/
+# title: USDM Drought Monitor
+candidate https://earthquake.usgs.gov/fdsnws/event/1/query
+# title: USGS Earthquake
+candidate https://geomag.usgs.gov/ws/data/
+# title: USGS Geomagnetism -- observatory 1-minute vector data
+candidate https://volcanoes.usgs.gov/hans-public/api/volcano/
+# title: USGS Volcano Hazards
+candidate https://wspr.live
+# title: WSPR — Weak Signal Propagation Reporter
+candidate https://geodata.epa.gov/arcgis/rest/services/OAR_OAP/Wildfires/MapServer
+# title: Wildfires Mapserver
+candidate https://api.worldbank.org/v2/
+# title: World Bank Climate
+candidate https://data.worldbank.org
+# title: World Bank Energy Use per Capita (kg oil eq)
+
+# ── Decline-Material (366) ──
+decline https://boem-metaport-boem.hub.arcgis.com/api/download/v1/items/017615bd43ea404a8c578f479fadab43/csv?layers=0
+# title: 017615Bd43Ea404A8C578F479Fadab43 Csv
+decline https://pasteur.epa.gov/uploads/10.23719/1528532/BH_Data_V13.xlsx
+# title: 1528532 Bh Data V13.Xlsx
+decline https://pasteur.epa.gov/uploads/10.23719/1528532/BH_Data_V13.xlsx
+# title: 1528532 Bh Data V13.Xlsx 2
+decline https://pasteur.epa.gov/uploads/10.23719/1528532/BH_Data_WaterQuality_V4.xlsx
+# title: 1528532 Bh Data Waterquality V4.Xlsx
+decline https://catalog.data.gov/dataset/1987-2018-cyanobacteria-and-water-quality-data-for-20-reservoirs
+# title: 1987-2018 cyanobacteria and water quality data for 20 reservoirs
+decline https://catalog.data.gov/dataset/1990-2010-atmospheric-deposition-of-sulfur-and-nitrogen
+# title: 1990-2010 atmospheric deposition of Sulfur and nitrogen
+decline https://catalog.data.gov/dataset/2002-2017-anthropogenic-emissions-data-for-aq-model-us
+# title: 2002-2017 Anthropogenic Emissions Data for AQ Model US
+decline https://catalog.data.gov/dataset/2004-2017-geospatial-dataset-of-wild-and-prescribed-fire-activity-over-the-conterminous-un
+# title: 2004-2017 Geospatial Dataset of Wild and Prescribed Fire Activity Over the Conterminous United States
+decline https://catalog.data.gov/dataset/2008-average-fine-particulate-matter-pm2-5-concentrations-by-county
+# title: 2008 average fine particulate matter (PM2.5) concentrations by county
+decline https://catalog.data.gov/dataset/2009-usvi
+# title: 2009 USVI
+decline https://catalog.data.gov/dataset/2011-national-wetland-condition-assessment-diatom-dataset-41929
+# title: 2011 National Wetland Condition Assessment Diatom Dataset
+decline https://catalog.data.gov/dataset/2011-pr-survey-data
+# title: 2011 PR Survey data
+decline https://catalog.data.gov/dataset/2012-2022-state-level-greenhouse-gas-emission-totals-by-industry
+# title: 2012 2022 State Level Greenhouse Gas Emission Totals By Industry
+decline https://catalog.data.gov/dataset/2012-and-2013-air-quality-fused-surface-for-the-conterminous-u-s-map-service10
+# title: 2012 and 2013 Air Quality Fused Surface for the Conterminous U.S. Map Service
+decline https://catalog.data.gov/dataset/2012-2020-greenhouse-gas-national-and-state-level-emission-totals-by-industry
+# title: 2012-2020 Greenhouse Gas National- and State-Level Emission Totals by Industry
+decline https://catalog.data.gov/dataset/2012-2022-national-level-greenhouse-gas-emission-totals-by-industry
+# title: 2012-2022 National-Level Greenhouse Gas Emission Totals by Industry
+decline https://catalog.data.gov/dataset/2014-12-19-passive-no2-study-final-data-kovalcik-xlsx
+# title: 2014 12 19 Passive No2 Study Final Data Kovalcik Xlsx
+decline https://catalog.data.gov/dataset/2014-harsha-lake-flyover-water-chemsitry-data-used-for-turbidity-study
+# title: 2014 Harsha Lake Flyover Water Chemsitry Data Used For Turbidity Study
+decline https://catalog.data.gov/dataset/2014-taylorsville-harsha-lakes-flyover-water-chemsitry-data-used-for-portability-study
+# title: 2014 Taylorsville Harsha Lakes Flyover Water Chemsitry Data Used For Portability Study
+decline https://catalog.data.gov/dataset/2014harshalakeflyover-waterchemistrydatausedforchlorophyllstudy-xlsx
+# title: 2014Harshalakeflyover Waterchemistrydatausedforchlorophyllstudy Xlsx
+decline https://catalog.data.gov/dataset/2016-epa-national-wetland-condition-assessment-water-quality-data
+# title: 2016 Epa National Wetland Condition Assessment Water Quality Data
+decline https://catalog.data.gov/dataset/2016-u-s-electricity-generation-air-emissions-hazardous-waste-and-steam-emission-factors-b
+# title: 2016 U S Electricity Generation Air Emissions Hazardous Waste And Steam Emission Factors B
+decline https://catalog.data.gov/dataset/2018-csmi-lake-ontario-lower-food-aquatic-web-assessment-total-phosphorous-data
+# title: 2018 Csmi Lake Ontario Lower Food Aquatic Web Assessment Total Phosphorous Data
+decline https://catalog.data.gov/dataset/2019-elliott-et-al-nox-and-nh3-isotopic-signature-review-paper-dataset
+# title: 2019 Elliott Et Al Nox And Nh3 Isotopic Signature Review Paper Dataset
+decline https://catalog.data.gov/dataset/2020-2021-narragansett-bay-field-survey
+# title: 2020 2021 Narragansett Bay Field Survey
+decline https://catalog.data.gov/dataset/2021-2023-forecast
+# title: 2021 2023 Forecast
+decline https://catalog.data.gov/dataset/2022-grand-lake-st-marys-flow-cytometry-data-for-planktothrix
+# title: 2022 Grand Lake St Marys Flow Cytometry Data For Planktothrix
+decline https://catalog.data.gov/dataset/2022-grand-lake-st-marys-qpcr-data-for-microcystin-producers
+# title: 2022 Grand Lake St Marys Qpcr Data For Microcystin Producers
+decline https://catalog.data.gov/dataset/20222023saltpond-data-5-7-25
+# title: 20222023Saltpond Data 5 7 25
+decline https://catalog.data.gov/dataset/2023-grand-lake-st-marys-flow-cytometry-data-for-planktothrix
+# title: 2023 Grand Lake St Marys Flow Cytometry Data For Planktothrix
+decline https://catalog.data.gov/dataset/2023-grand-lake-st-marys-qpcr-data-for-microcystin-producers
+# title: 2023 Grand Lake St Marys Qpcr Data For Microcystin Producers
+decline https://catalog.data.gov/dataset/2024-grand-lake-st-marys-flow-cytometry-data-for-planktothrix
+# title: 2024 Grand Lake St Marys Flow Cytometry Data For Planktothrix
+decline https://catalog.data.gov/dataset/2024-grand-lake-st-marys-qpcr-data-for-microcystin-producers
+# title: 2024 Grand Lake St Marys Qpcr Data For Microcystin Producers
+decline https://catalog.data.gov/dataset/2025-grand-lake-st-marys-flow-cytometry-data-for-planktothrix
+# title: 2025 Grand Lake St Marys Flow Cytometry Data For Planktothrix
+decline https://catalog.data.gov/dataset/2025-grand-lake-st-marys-qpcr-data-for-microcystin-producers
+# title: 2025 Grand Lake St Marys Qpcr Data For Microcystin Producers
+decline https://www.ers.usda.gov/media/5501/us-dairy-situation-at-a-glance-monthly-and-annual.csv?v=27318
+# title: 5501 Us Dairy Situation At A Glance Monthly And Annual.Csv
+decline https://www.ers.usda.gov/media/5503/us-milk-production-and-related-data-quarterly-and-annual.csv?v=93527
+# title: 5503 Us Milk Production And Related Data Quarterly And Annual.Csv
+decline https://www.ers.usda.gov/media/5505/supply-and-utilization-of-dairy-product-categories-monthly-and-annual.csv?v=33662
+# title: 5505 Supply And Utilization Of Dairy Product Categories Monthly And Annual.Csv
+decline https://www.ers.usda.gov/media/5507/supply-and-utilization-of-milk-in-all-products-monthly-and-annual.csv?v=40369
+# title: 5507 Supply And Utilization Of Milk In All Products Monthly And Annual.Csv
+decline https://www.ers.usda.gov/media/5523/commercial-disappearance-for-dairy-product-categories-1995-2010.xlsx?v=87729
+# title: 5523 Commercial Disappearance For Dairy Product Categories 1995 2010.Xlsx
+decline https://www.ers.usda.gov/media/5524/commercial-disappearance-milk-in-all-products-1995-2010.xlsx?v=96608
+# title: 5524 Commercial Disappearance Milk In All Products 1995 2010.Xlsx
+decline https://www.ers.usda.gov/media/5525/milk-supply-and-utilization-of-all-dairy-products-1970-2010.xlsx?v=41741
+# title: 5525 Milk Supply And Utilization Of All Dairy Products 1970 2010.Xlsx
+decline https://www.ers.usda.gov/media/5526/number-and-size-of-milk-bottling-plants-1960-2007.xlsx?v=45849
+# title: 5526 Number And Size Of Milk Bottling Plants 1960 2007.Xlsx
+decline https://www.ers.usda.gov/media/5539/livestock-domestic-data-machine-readable-files.zip?v=96117
+# title: 5539 Livestock Domestic Data Machine Readable Files.Zip
+decline https://www.ers.usda.gov/media/5615/zip-file-contains-two-csv-files-one-with-export-data-and-one-with-import-data-files-include-monthly-and-annual-data-for-live-cattle-hogs-sheep-and-goats-as-well-as-beef-and-veal-pork-lamb-and-mutton-chicken-meat-turkey-meat-and-eggs.zip?v=50124
+# title: 5615 Zip File Contains Two Csv Files One With Export Data And One With Import Data Files Include Monthly And Annual Data For Live Cattle Hogs Sheep And Goats As Well As Beef And Veal Pork Lamb And Mutton Chicken Meat Turkey Meat And Eggs.Zip
+decline https://www.ers.usda.gov/media/5630/cropland-used-for-crops-1945-2017-by-state-the-sum-of-cropland-harvested-crop-failure-and-cultivated-summer-fallow.xlsx?v=94678
+# title: 5630 Cropland Used For Crops 1945 2017 By State The Sum Of Cropland Harvested Crop Failure And Cultivated Summer Fallow.Xlsx
+decline https://www.ers.usda.gov/media/5631/cropland-used-for-pasture-1945-2017-by-state-pasture-considered-to-be-in-long-term-crop-rotation-includes-some-land-used-for-pasture-that-could-have-been-cropped-without-additional-improvement.xlsx?v=33765
+# title: 5631 Cropland Used For Pasture 1945 2017 By State Pasture Considered To Be In Long Term Crop Rotation Includes Some Land Used For Pasture That Could Have Been Cropped Without Additional Improvement.Xlsx
+decline https://www.ers.usda.gov/media/5632/cropland-idled-1945-2017-by-state-land-completely-idled-and-lands-seeded-to-soil-improvement-crops-but-not-harvested-or-pastured.xlsx?v=42815
+# title: 5632 Cropland Idled 1945 2017 By State Land Completely Idled And Lands Seeded To Soil Improvement Crops But Not Harvested Or Pastured.Xlsx
+decline https://www.ers.usda.gov/media/5633/forest-use-land-grazed-1945-2017-by-state-woodland-grazed-in-farms-plus-estimates-of-forested-grazing-land-not-in-farms.xlsx?v=61118
+# title: 5633 Forest Use Land Grazed 1945 2017 By State Woodland Grazed In Farms Plus Estimates Of Forested Grazing Land Not In Farms.Xlsx
+decline https://www.ers.usda.gov/media/5634/forest-use-not-grazed-1945-2017-by-state-total-forest-use-land-minus-forest-use-land-grazed.xlsx?v=67787
+# title: 5634 Forest Use Not Grazed 1945 2017 By State Total Forest Use Land Minus Forest Use Land Grazed.Xlsx
+decline https://www.ers.usda.gov/media/5635/rural-transportation-1945-2017-by-state-area-covered-by-rural-highways-roads-railroad-rights-of-way-and-airport-facilities-excluding-military-bases-outside-of-urban-areas.xlsx?v=26227
+# title: 5635 Rural Transportation 1945 2017 By State Area Covered By Rural Highways Roads Railroad Rights Of Way And Airport Facilities Excluding Military Bases Outside Of Urban Areas.Xlsx
+decline https://www.ers.usda.gov/media/5636/rural-parks-and-wildlife-areas-1945-2017-by-state-land-in-federal-and-state-parks-wilderness-areas-and-wildlife-refuges.xlsx?v=83291
+# title: 5636 Rural Parks And Wildlife Areas 1945 2017 By State Land In Federal And State Parks Wilderness Areas And Wildlife Refuges.Xlsx
+decline https://www.ers.usda.gov/media/5637/defense-and-industrial-areas-1945-2017-by-state-land-managed-by-department-of-defense-and-department-of-energy.xlsx?v=53129
+# title: 5637 Defense And Industrial Areas 1945 2017 By State Land Managed By Department Of Defense And Department Of Energy.Xlsx
+decline https://www.ers.usda.gov/media/5638/miscellaneous-farmland-1945-2017-by-state-farmsteads-farm-roads-and-other-miscellaneous-farmland.xlsx?v=78460
+# title: 5638 Miscellaneous Farmland 1945 2017 By State Farmsteads Farm Roads And Other Miscellaneous Farmland.Xlsx
+decline https://www.ers.usda.gov/media/5640/cropland-1945-2017-by-state-the-sum-of-cropland-used-for-crops-cropland-idled-and-cropland-used-for-pasture.xlsx?v=67198
+# title: 5640 Cropland 1945 2017 By State The Sum Of Cropland Used For Crops Cropland Idled And Cropland Used For Pasture.Xlsx
+decline https://www.ers.usda.gov/media/5641/total-forest-use-land-1945-2017-by-state-the-sum-of-forest-use-land-grazed-and-forest-use-land-not-grazed.xlsx?v=70729
+# title: 5641 Total Forest Use Land 1945 2017 By State The Sum Of Forest Use Land Grazed And Forest Use Land Not Grazed.Xlsx
+decline https://www.ers.usda.gov/media/5642/grassland-pasture-and-range-1945-2017-by-state-grassland-and-other-nonforested-pasture-and-range-in-farms-plus-estimates-of-open-or-nonforested-grazing-lands-not-in-farms-does-not-include-cropland-used-for-pasture-or-forest-land-grazed.xlsx?v=91025
+# title: 5642 Grassland Pasture And Range 1945 2017 By State Grassland And Other Nonforested Pasture And Range In Farms Plus Estimates Of Open Or Nonforested Grazing Lands Not In Farms Does Not Include Cropland Used For Pasture Or Forest Land Grazed.Xlsx
+decline https://www.ers.usda.gov/media/5643/all-other-land-uses-1945-2017-by-state.xlsx?v=17459
+# title: 5643 All Other Land Uses 1945 2017 By State.Xlsx
+decline https://www.ers.usda.gov/media/5644/total-special-uses-1945-2017-by-state-the-sum-of-land-in-rural-transportation-rural-parks-and-wildlife-defense-and-industrial-plus-miscellaneous-farm-and-other-special-uses.xlsx?v=10789
+# title: 5644 Total Special Uses 1945 2017 By State The Sum Of Land In Rural Transportation Rural Parks And Wildlife Defense And Industrial Plus Miscellaneous Farm And Other Special Uses.Xlsx
+decline https://www.ers.usda.gov/media/5645/summary-table-1-major-uses-of-land-by-region-and-state-united-states-2017.xlsx?v=65758
+# title: 5645 Summary Table 1 Major Uses Of Land By Region And State United States 2017.Xlsx
+decline https://www.ers.usda.gov/media/5646/summary-table-2-major-uses-of-cropland-by-region-and-state-united-states-2017.xlsx?v=58463
+# title: 5646 Summary Table 2 Major Uses Of Cropland By Region And State United States 2017.Xlsx
+decline https://www.ers.usda.gov/media/5648/summary-table-3-total-cropland-used-for-crops-cropland-harvested-including-double-cropped-crop-failure-and-cultivated-summer-fallow-for-the-united-states-annual-1910-2025.csv?v=10889
+# title: 5648 Summary Table 3 Total Cropland Used For Crops Cropland Harvested Including Double Cropped Crop Failure And Cultivated Summer Fallow For The United States Annual 1910 2025.Csv
+decline https://www.ers.usda.gov/media/5649/summary-table-4-total-grazing-land-by-region-and-state-united-states-2017.xlsx?v=22996
+# title: 5649 Summary Table 4 Total Grazing Land By Region And State United States 2017.Xlsx
+decline https://www.ers.usda.gov/media/5650/summary-table-5-special-uses-of-land-by-region-and-state-united-states-2017.xlsx?v=15039
+# title: 5650 Summary Table 5 Special Uses Of Land By Region And State United States 2017.Xlsx
+decline https://www.ers.usda.gov/media/5651/total-land-1945-2017-by-state-the-sum-of-cropland-pasturerange-forest-use-land-special-uses-urban-area-and-other-land.xlsx?v=10110
+# title: 5651 Total Land 1945 2017 By State The Sum Of Cropland Pasturerange Forest Use Land Special Uses Urban Area And Other Land.Xlsx
+decline https://www.ers.usda.gov/media/5652/urban-area-1945-2017-by-state-densely-populated-areas-with-at-least-50000-people-urbanized-areas-and-densely-populated-areas-with-2500-to-50000-people-urban-clusters-intercensus-years-are-extrapolated.xlsx?v=48844
+# title: 5652 Urban Area 1945 2017 By State Densely Populated Areas With At Least 50000 People Urbanized Areas And Densely Populated Areas With 2500 To 50000 People Urban Clusters Intercensus Years Are Extrapolated.Xlsx
+decline https://www.ers.usda.gov/media/6171/grain-food-demand-other-demand-total-demand-production-and-implied-additional-supply-required-for-global-food-assessment-countries.csv?v=79379
+# title: 6171 Grain Food Demand Other Demand Total Demand Production And Implied Additional Supply Required For Global Food Assessment Countries.Csv
+decline https://www.ers.usda.gov/media/6478/us-bioenergy-statistics.csv?v=90159
+# title: 6478 Us Bioenergy Statistics.Csv
+decline https://www.ers.usda.gov/media/6495/summary-data-on-annual-food-imports-values-and-volume-by-food-category-and-source-country.csv?v=72124
+# title: 6495 Summary Data On Annual Food Imports Values And Volume By Food Category And Source Country.Csv
+decline https://catalog.data.gov/dataset/a-case-study-on-the-use-of-exposure-activity-ratios-ears-to-prioritize-sites-chemicals-and
+# title: A Case Study On The Use Of Exposure Activity Ratios Ears To Prioritize Sites Chemicals And
+decline https://catalog.data.gov/dataset/a-database-of-historical-benthic-invertebrate-biodiversity-spanning-182-years-in-narragans
+# title: A Database Of Historical Benthic Invertebrate Biodiversity Spanning 182 Years In Narragans
+decline https://catalog.data.gov/dataset/a-gridded-inventory-of-annual-20122018-u-s-anthropogenic-methane-emissions-associated-data
+# title: A Gridded Inventory Of Annual 20122018 U S Anthropogenic Methane Emissions Associated Data
+decline https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/AI4Peatlands/
+# title: AI4Peatlands
+decline https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/ALF-BIO/
+# title: ALF BIO
+decline https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/ANURE/
+# title: ANURE
+decline https://aqs.epa.gov/aqsweb/airdata/download_files.html
+# title: Airdata Download Files.Html
+decline https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/ALGAE-industry/
+# title: Algae Industry
+decline https://onemap-bia-geospatial.hub.arcgis.com/api/download/v1/items/c7e3a0513e8b4fa18e66e1f07075e52c/csv?layers=0
+# title: C7E3A0513E8B4Fa18E66E1F07075E52C Csv
+decline https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/CEMS-GLOFAS-RA/streamflow_analysis/
+# title: CEMS-GLOFAS-RA/streamflow_analysis
+decline https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/CoM/
+# title: Carbon Emissions
+decline https://www.ncei.noaa.gov/pub/access/cebrequests/2023lcdannual/
+# title: Cebrequests 2023Lcdannual
+decline https://www.ncei.noaa.gov/pub/access/cebrequests/engagement/
+# title: Cebrequests Engagement
+decline https://www.ncei.noaa.gov/pub/access/cebrequests/engineeringwx/
+# title: Cebrequests Engineeringwx
+decline https://www.ncei.noaa.gov/pub/access/cebrequests/surface/
+# title: Cebrequests Surface
+decline https://celestrak.org/pub/satcat.csv
+# title: CelesTrak SATCAT Reentries
+decline https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/CEMS-EFAS/
+# title: Copernicus Emergency Management Service - European Flood Awareness System
+decline https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/DROUGHTOBS/
+# title: DROUGHTOBS
+decline https://www.ncei.noaa.gov/pub/data/igra/data/data-por/
+# title: Data Data Por
+decline https://coastal.er.usgs.gov/data-release/doi-F7WW7FVW/data/SpringsCoastCarbonateData.zip
+# title: Data Springscoastcarbonatedata.Zip
+decline https://catalog.data.gov/dataset/2012-2020-greenhouse-gas-national-and-state-level-emission-totals-by-industry
+# title: Dataset 2012 2020 Greenhouse Gas National And State Level Emission Totals By Industry
+decline https://catalog.data.gov/dataset/2012-2022-state-level-greenhouse-gas-emission-totals-by-industry
+# title: Dataset 2012 2022 State Level Greenhouse Gas Emission Totals By Industry
+decline https://catalog.data.gov/dataset/3d-model-of-the-tuscarora-geothermal-area-a4b05
+# title: Dataset 3D Model Of The Tuscarora Geothermal Area A4B05
+decline https://catalog.data.gov/dataset/a-state-of-the-science-review-of-chemical-and-non-chemical-stressors-found-in-the-built-an-4e18a
+# title: Dataset A State Of The Science Review Of Chemical And Non Chemical Stressors Found In The Built An 4E18A
+decline https://catalog.data.gov/dataset/a-u-s-lead-exposure-hotspots-analysis
+# title: Dataset A U S Lead Exposure Hotspots Analysis
+decline https://catalog.data.gov/dataset/a-u-s-lead-exposure-hotspots-analysis
+# title: Dataset A U S Lead Exposure Hotspots Analysis 2
+decline https://catalog.data.gov/dataset/accumulation-of-pfas-in-vegetation-and-deep-soils
+# title: Dataset Accumulation Of Pfas In Vegetation And Deep Soils
+decline https://catalog.data.gov/dataset/acetamiprid-in-pollen-2018-science-hub-data-xlxs
+# title: Dataset Acetamiprid In Pollen 2018 Science Hub Data Xlxs
+decline https://catalog.data.gov/dataset/acres-brownfields-properties-c58ac
+# title: Dataset Acres Brownfields Properties C58Ac
+decline https://catalog.data.gov/dataset/acton-lake-methane-waldo-et-al-2020
+# title: Dataset Acton Lake Methane Waldo Et Al 2020
+decline https://catalog.data.gov/dataset/acute-exposure-guideline-levels-chemical-listing-d23ff
+# title: Dataset Acute Exposure Guideline Levels Chemical Listing D23Ff
+decline https://catalog.data.gov/dataset/aerial-sampling-of-emissions-from-biomass-pile-burns-in-oregon
+# title: Dataset Aerial Sampling Of Emissions From Biomass Pile Burns In Oregon
+decline https://catalog.data.gov/dataset/air-and-soil-data-files-from-sumas-study
+# title: Dataset Air And Soil Data Files From Sumas Study
+decline https://catalog.data.gov/dataset/air-emisisons-inventories
+# title: Dataset Air Emisisons Inventories
+decline https://catalog.data.gov/dataset/air-emissions-igd-ef_icis_air10
+# title: Dataset Air Emissions Igd Ef Icis Air10
+decline https://catalog.data.gov/dataset/air-monitoring-data-for-bp-spill-deepwater-horizon9
+# title: Dataset Air Monitoring Data For Bp Spill Deepwater Horizon9
+decline https://catalog.data.gov/dataset/air-quality-system-aqs-ambient-observations-2007-pm2-5-8508e
+# title: Dataset Air Quality System Aqs Ambient Observations 2007 Pm2 5 8508E
+decline https://catalog.data.gov/dataset/air-quality-system-aqs-ambient-observations-2008-lead-c745a
+# title: Dataset Air Quality System Aqs Ambient Observations 2008 Lead C745A
+decline https://catalog.data.gov/dataset/air-quality-system-aqs-ambient-observations-2008-ozone
+# title: Dataset Air Quality System Aqs Ambient Observations 2008 Ozone
+decline https://catalog.data.gov/dataset/air-quality-system-aqs-ambient-observations-2008-pm2-5
+# title: Dataset Air Quality System Aqs Ambient Observations 2008 Pm2 5
+decline https://catalog.data.gov/dataset/air-quality-system-aqs-monitoring-network-epa-oar-oaqps8
+# title: Dataset Air Quality System Aqs Monitoring Network Epa Oar Oaqps8
+decline https://catalog.data.gov/dataset/all-csmi-data-for-2006-2011-and-2016-needed-for-paper
+# title: Dataset All Csmi Data For 2006 2011 And 2016 Needed For Paper
+decline https://catalog.data.gov/dataset/all-pcddf-toc-and-lipid-data
+# title: Dataset All Pcddf Toc And Lipid Data
+decline https://catalog.data.gov/dataset/all-raw-data-used-to-generate-results
+# title: Dataset All Raw Data Used To Generate Results
+decline https://catalog.data.gov/dataset/alternative-fueling-station-locations-422f2
+# title: Dataset Alternative Fueling Station Locations 422F2
+decline https://catalog.data.gov/dataset/alternatives-assessment-dashboard-hazard-database-version-1-0-generated-12-07-2018
+# title: Dataset Alternatives Assessment Dashboard Hazard Database Version 1 0 Generated 12 07 2018
+decline https://catalog.data.gov/dataset/amendment-effectiveness-and-seasonal-variations-in-a-lead-contaminated-acidic-wetland
+# title: Dataset Amendment Effectiveness And Seasonal Variations In A Lead Contaminated Acidic Wetland
+decline https://catalog.data.gov/dataset/analysis-of-geothermal-resources-in-three-texas-counties-72bfa
+# title: Dataset Analysis Of Geothermal Resources In Three Texas Counties 72Bfa
+decline https://catalog.data.gov/dataset/andersonlake-datasets
+# title: Dataset Andersonlake Datasets
+decline https://catalog.data.gov/dataset/annual-u-s-electric-power-industry-estimated-emissions-by-state-from-1990-latest-year-avai
+# title: Dataset Annual U S Electric Power Industry Estimated Emissions By State From 1990 Latest Year Avai
+decline https://catalog.data.gov/dataset/arg-summarized-data2
+# title: Dataset Arg Summarized Data2
+decline https://catalog.data.gov/dataset/arsenic-safe-drinking-water-information-system-sdwis-federal-reports-advanced-search-tool
+# title: Dataset Arsenic Safe Drinking Water Information System Sdwis Federal Reports Advanced Search Tool
+decline https://catalog.data.gov/dataset/arys-mobile-monitoring-data-50m
+# title: Dataset Arys Mobile Monitoring Data 50M
+decline https://catalog.data.gov/dataset/assessing-dungeness-river-bmp-effectiveness-using-an-ecological-function-approach
+# title: Dataset Assessing Dungeness River Bmp Effectiveness Using An Ecological Function Approach
+decline https://catalog.data.gov/dataset/assessing-temporal-frequency-of-cyanobacterial-blooms-using-imagery-from-the-sentinel-3a-s
+# title: Dataset Assessing Temporal Frequency Of Cyanobacterial Blooms Using Imagery From The Sentinel 3A S
+decline https://catalog.data.gov/dataset/assessment-of-ohio-landfill-moisture-contents
+# title: Dataset Assessment Of Ohio Landfill Moisture Contents
+decline https://catalog.data.gov/dataset/automated-retrieval-and-evaluation-of-precipitation-data-sources-for-environmental-modelin
+# title: Dataset Automated Retrieval And Evaluation Of Precipitation Data Sources For Environmental Modelin
+decline https://catalog.data.gov/dataset/aw-betasdam-final-data-and-code
+# title: Dataset Aw Betasdam Final Data And Code
+decline https://catalog.data.gov/dataset/benthic-community-and-sediment-data-from-pensacola-bay-florida-2016
+# title: Dataset Benthic Community And Sediment Data From Pensacola Bay Florida 2016
+decline https://catalog.data.gov/dataset/benthic-cyanobacterial-accumulations-and-associated-cyanotoxins-in-coastal-urban-stormwate
+# title: Dataset Benthic Cyanobacterial Accumulations And Associated Cyanotoxins In Coastal Urban Stormwate
+decline https://catalog.data.gov/dataset/benthic-macroinvertebrate-community-response-to-environmental-changes-over-seven-decades-i
+# title: Dataset Benthic Macroinvertebrate Community Response To Environmental Changes Over Seven Decades I
+decline https://catalog.data.gov/dataset/benthichcb-datasets
+# title: Dataset Benthichcb Datasets
+decline https://catalog.data.gov/dataset/benton-harbor-drinking-water-study
+# title: Dataset Benton Harbor Drinking Water Study
+decline https://catalog.data.gov/dataset/biological-watershed-land-use-physiochemical-data-from-streams-sampled-in-the-georgia-coas
+# title: Dataset Biological Watershed Land Use Physiochemical Data From Streams Sampled In The Georgia Coas
+decline https://catalog.data.gov/dataset/biological-watershed-land-use-physiochemical-data-from-streams-sampled-in-the-georgia-coas
+# title: Dataset Biological Watershed Land Use Physiochemical Data From Streams Sampled In The Georgia Coas 2
+decline https://catalog.data.gov/dataset/bitter-creek-analysis-pedigree-data
+# title: Dataset Bitter Creek Analysis Pedigree Data
+decline https://catalog.data.gov/dataset/boise-slm-ambeint-data-2019-08-files
+# title: Dataset Boise Slm Ambeint Data 2019 08 Files
+decline https://catalog.data.gov/dataset/bsee-data-center-geographic-mapping-data-in-digital-format
+# title: Dataset Bsee Data Center Geographic Mapping Data In Digital Format
+decline https://catalog.data.gov/dataset/carbonate-chemistry-water-quality-coral-measurements
+# title: Dataset Carbonate Chemistry Water Quality Coral Measurements
+decline https://catalog.data.gov/dataset/census-tract-eqi
+# title: Dataset Census Tract Eqi
+decline https://catalog.data.gov/dataset/census-tract-eqi
+# title: Dataset Census Tract Eqi 2
+decline https://catalog.data.gov/dataset/cimek-water-chemistry
+# title: Dataset Cimek Water Chemistry
+decline https://catalog.data.gov/dataset/coal-mines-surface-and-underground
+# title: Dataset Coal Mines Surface And Underground
+decline https://catalog.data.gov/dataset/colorado-electrical-transmission-grid-aec27
+# title: Dataset Colorado Electrical Transmission Grid Aec27
+decline https://catalog.data.gov/dataset/colorado-regional-faults-0f0a3
+# title: Dataset Colorado Regional Faults 0F0A3
+decline https://catalog.data.gov/dataset/commercial-and-residential-hourly-load-profiles-for-all-tmy3-locations-in-the-united-state-bbc75
+# title: Dataset Commercial And Residential Hourly Load Profiles For All Tmy3 Locations In The United State Bbc75
+decline https://catalog.data.gov/dataset/concentrated-animal-feeding-operations-cafos-per-county-downloadable-package-us-2013-us-epa9
+# title: Dataset Concentrated Animal Feeding Operations Cafos Per County Downloadable Package Us 2013 Us Epa9
+decline https://catalog.data.gov/dataset/crude-oil-analysis-coa-database-510c1
+# title: Dataset Crude Oil Analysis Coa Database 510C1
+decline https://catalog.data.gov/dataset/crude-oil-and-petroleum-exports
+# title: Dataset Crude Oil And Petroleum Exports
+decline https://catalog.data.gov/dataset/data-for-a-review-of-polychlorinated-biphenyl-concentrations-in-environmental-media-worldw
+# title: Dataset Data For A Review Of Polychlorinated Biphenyl Concentrations In Environmental Media Worldw
+decline https://catalog.data.gov/dataset/dataset-for-coarse-particulate-organic-matter-connectivity
+# title: Dataset Dataset For Coarse Particulate Organic Matter Connectivity
+decline https://catalog.data.gov/dataset/dataset-of-leachate-parameters-from-an-elevated-temperature-landfill
+# title: Dataset Dataset Of Leachate Parameters From An Elevated Temperature Landfill
+decline https://catalog.data.gov/dataset/datasets-for-manuscript-logistics-network-management-of-livestock-waste-for-spatiotemporal
+# title: Dataset Datasets For Manuscript Logistics Network Management Of Livestock Waste For Spatiotemporal
+decline https://catalog.data.gov/dataset/derivation-and-characterization-of-environmental-hazard-concentrations-for-chemical-priori
+# title: Dataset Derivation And Characterization Of Environmental Hazard Concentrations For Chemical Priori
+decline https://catalog.data.gov/dataset/egs-collab-experiment-1-microseismic-monitoring-7570f
+# title: Dataset Egs Collab Experiment 1 Microseismic Monitoring 7570F
+decline https://catalog.data.gov/dataset/elevated-temperature-landfill-gas-characteristics
+# title: Dataset Elevated Temperature Landfill Gas Characteristics
+decline https://catalog.data.gov/dataset/energy-use-and-water-consumption-at-university-of-texas-at-austin
+# title: Dataset Energy Use And Water Consumption At University Of Texas At Austin
+decline https://echo.epa.gov/tools/data-downloads#downloads
+# title: Dataset Enforcement And Compliance History Online Echo Facilities8
+decline https://catalog.data.gov/dataset/enterprise-data-inventory
+# title: Dataset Enterprise Data Inventory
+decline https://catalog.data.gov/dataset/enviroatlas-303d-impairments-by-12-digit-huc-for-the-conterminous-united-states3
+# title: Dataset Enviroatlas 303D Impairments By 12 Digit Huc For The Conterminous United States3
+decline https://catalog.data.gov/dataset/enviroatlas-agricultural-water-demand-by-12-digit-huc-for-the-conterminous-united-states3
+# title: Dataset Enviroatlas Agricultural Water Demand By 12 Digit Huc For The Conterminous United States3
+decline https://catalog.data.gov/dataset/enviroatlas-cyanobacteria-index-for-the-continental-united-states3
+# title: Dataset Enviroatlas Cyanobacteria Index For The Continental United States3
+decline https://catalog.data.gov/dataset/enviroatlas-native-freshwater-aquatic-biodiversity-by-12-digit-huc-for-the-conterminous-united-4
+# title: Dataset Enviroatlas Native Freshwater Aquatic Biodiversity By 12 Digit Huc For The Conterminous United 4
+decline https://catalog.data.gov/dataset/environmental-monitoring-and-assessment-program-emap
+# title: Dataset Environmental Monitoring And Assessment Program Emap
+decline https://catalog.data.gov/dataset/epa-enforcement-and-compliance-history-online
+# title: Dataset Epa Enforcement And Compliance History Online
+decline https://catalog.data.gov/dataset/epa-facility-registry-service-frs-acres8
+# title: Dataset Epa Facility Registry Service Frs Acres8
+decline https://catalog.data.gov/dataset/epa-facility-registry-service-frs-er_chemicals9
+# title: Dataset Epa Facility Registry Service Frs Er Chemicals9
+decline https://catalog.data.gov/dataset/epa-facility-registry-service-frs-er_wtp7
+# title: Dataset Epa Facility Registry Service Frs Er Wtp7
+decline https://catalog.data.gov/dataset/epa-facility-registry-service-frs-facility-interests-dataset-download9
+# title: Dataset Epa Facility Registry Service Frs Facility Interests Dataset Download9
+decline https://catalog.data.gov/dataset/epa-facility-registry-service-frs-rmp6
+# title: Dataset Epa Facility Registry Service Frs Rmp6
+decline https://catalog.data.gov/dataset/epa-facility-registry-service-frs-sems8
+# title: Dataset Epa Facility Registry Service Frs Sems8
+decline https://catalog.data.gov/dataset/epa-geospatial-data-download-facility-and-site-information
+# title: Dataset Epa Geospatial Data Download Facility And Site Information
+decline https://catalog.data.gov/dataset/epa-long-term-monitoring-of-acidified-surface-waters
+# title: Dataset Epa Long Term Monitoring Of Acidified Surface Waters
+decline https://catalog.data.gov/dataset/epa-ord-2019-benthic-survey-of-the-three-bays-estuary-barnstable-ma
+# title: Dataset Epa Ord 2019 Benthic Survey Of The Three Bays Estuary Barnstable Ma
+decline https://catalog.data.gov/dataset/extreme-significant-wave-heights-for-us-coastal-waters-d39d0
+# title: Dataset Extreme Significant Wave Heights For Us Coastal Waters D39D0
+decline https://catalog.data.gov/dataset/fort-bliss-geothermal-area-data-temperature-profile-logs-schematic-model-and-cross-section-351a4
+# title: Dataset Fort Bliss Geothermal Area Data Temperature Profile Logs Schematic Model And Cross Section 351A4
+decline https://doi.org/10.1371/journal.pone.0108936.s001
+# title: Dataset Foy Lake Data
+decline https://catalog.data.gov/dataset/geologic-basin-boundaries-basins_ghgrp-gis-layer9
+# title: Dataset Geologic Basin Boundaries Basins Ghgrp Gis Layer9
+decline https://catalog.data.gov/dataset/geothermal-geodatabase-for-wagon-wheel-hot-springs-mineral-county-colorado-381c2
+# title: Dataset Geothermal Geodatabase For Wagon Wheel Hot Springs Mineral County Colorado 381C2
+decline https://catalog.data.gov/dataset/ghgsat-landfill-survey-dataset
+# title: Dataset Ghgsat Landfill Survey Dataset
+decline https://catalog.data.gov/dataset/global-cfdda-based-onshore-and-offshore-wind-potential-supply-curves-by-country-class-and--20f5c
+# title: Dataset Global Cfdda Based Onshore And Offshore Wind Potential Supply Curves By Country Class And  20F5C
+decline https://catalog.data.gov/dataset/global-non-floodplain-wetlands-africa13
+# title: Dataset Global Non Floodplain Wetlands Africa13
+decline https://catalog.data.gov/dataset/global-wetlands-south-america13
+# title: Dataset Global Wetlands South America13
+decline https://catalog.data.gov/dataset/gravity-data-for-west-central-colorado-1179e
+# title: Dataset Gravity Data For West Central Colorado 1179E
+decline https://www.epa.gov/ghgemissions/inventory-us-greenhouse-gas-emissions-and-sinks-1990-2022
+# title: Dataset Greenhouse Gas Data Publication Tool
+decline https://catalog.data.gov/dataset/high-resolution-floating-solar-pv-data
+# title: Dataset High Resolution Floating Solar Pv Data
+decline https://catalog.data.gov/dataset/hourly-energy-emission-factors-for-electricity-generation-in-the-united-states-00ec8
+# title: Dataset Hourly Energy Emission Factors For Electricity Generation In The United States 00Ec8
+decline https://catalog.data.gov/dataset/hurricane-katrina-murphy-oil-spill-boundary11
+# title: Dataset Hurricane Katrina Murphy Oil Spill Boundary11
+decline https://catalog.data.gov/dataset/india-direct-normal-global-horizontal-irradiance-solar-resources-249f3
+# title: Dataset India Direct Normal Global Horizontal Irradiance Solar Resources 249F3
+decline https://catalog.data.gov/dataset/industrial-assessment-centers-database
+# title: Dataset Industrial Assessment Centers Database
+decline https://catalog.data.gov/dataset/influence-of-reservoir-water-level-fluctuations-on-mercury-methylation-downstream-of-the-h
+# title: Dataset Influence Of Reservoir Water Level Fluctuations On Mercury Methylation Downstream Of The H
+decline https://catalog.data.gov/dataset/ingenious-great-basin-regional-dataset-compilation-a96d7
+# title: Dataset Ingenious Great Basin Regional Dataset Compilation A96D7
+decline https://catalog.data.gov/dataset/kmz-file-of-epa-ambient-ozone-monitors-5f2d8
+# title: Dataset Kmz File Of Epa Ambient Ozone Monitors 5F2D8
+decline https://catalog.data.gov/dataset/landfilled-waste-composition-dataset-version-1
+# title: Dataset Landfilled Waste Composition Dataset Version 1
+decline https://catalog.data.gov/dataset/level-iii-ecoregions-of-tennessee12
+# title: Dataset Level Iii Ecoregions Of Tennessee12
+decline https://catalog.data.gov/dataset/mangrove-wetland-carbon-cycling-data
+# title: Dataset Mangrove Wetland Carbon Cycling Data
+decline https://catalog.data.gov/dataset/matched-sentinel-2-spectral-data-and-chlorophyll-a-concentrations-2015-2020
+# title: Dataset Matched Sentinel 2 Spectral Data And Chlorophyll A Concentrations 2015 2020
+decline https://catalog.data.gov/dataset/minnesota-high-resolution-wind-resource-feb7d
+# title: Dataset Minnesota High Resolution Wind Resource Feb7D
+decline https://catalog.data.gov/dataset/missouri-high-resolution-wind-resource-44779
+# title: Dataset Missouri High Resolution Wind Resource 44779
+decline https://catalog.data.gov/dataset/national-coastal-condition-assessment-2015-datafiles-for-report-national-coastal-condition
+# title: Dataset National Coastal Condition Assessment 2015 Datafiles For Report National Coastal Condition
+decline https://www.epa.gov/national-aquatic-resource-surveys/reports-and-data-national-lakes-assessment-2022
+# title: Dataset National Lakes Assessment 2022 Datafiles For Report National Lakes Assessment The Fourth C
+decline https://catalog.data.gov/dataset/national-seagrass
+# title: Dataset National Seagrass
+decline https://catalog.data.gov/dataset/nationwide-collection-of-heat-flow-and-temperature-gradient-data-and-related-resources-27b66
+# title: Dataset Nationwide Collection Of Heat Flow And Temperature Gradient Data And Related Resources 27B66
+decline https://catalog.data.gov/dataset/new-jersey-njdep-epa-ord-soil-pfas-study
+# title: Dataset New Jersey Njdep Epa Ord Soil Pfas Study
+decline https://catalog.data.gov/dataset/newberry-volcano-joint-active-source-and-teleseismic-p-wave-tomography-slowness-model-and-
+# title: Dataset Newberry Volcano Joint Active Source And Teleseismic P Wave Tomography Slowness Model And
+decline https://catalog.data.gov/dataset/newberry-volcano-joint-active-source-and-teleseismic-p-wave-tomography-slowness-model-and-
+# title: Dataset Newberry Volcano Joint Active Source And Teleseismic P Wave Tomography Slowness Model And 2
+decline https://catalog.data.gov/dataset/next-generation-national-nutrient-inventory-for-nitrogen-and-phosphorus-1987-to-2017
+# title: Dataset Next Generation National Nutrient Inventory For Nitrogen And Phosphorus 1987 To 2017
+decline https://catalog.data.gov/dataset/nontargeted-analysis-of-surface-and-groundwaters-impacted-by-historic-pfas-waste-sites
+# title: Dataset Nontargeted Analysis Of Surface And Groundwaters Impacted By Historic Pfas Waste Sites
+decline https://catalog.data.gov/dataset/npl-superfund-site-boundaries-epa10
+# title: Dataset Npl Superfund Site Boundaries Epa10
+decline https://catalog.data.gov/dataset/nrel-mois-data-for-nwei-azura-october-2015-77c06
+# title: Dataset Nrel Mois Data For Nwei Azura October 2015 77C06
+decline https://catalog.data.gov/dataset/nwei-azura-data-for-march-2018-measured-by-mois-nrel-a3d10
+# title: Dataset Nwei Azura Data For March 2018 Measured By Mois Nrel A3D10
+decline https://catalog.data.gov/dataset/offshore-wind-composite-siting-exclusions-scenarios
+# title: Dataset Offshore Wind Composite Siting Exclusions Scenarios
+decline https://catalog.data.gov/dataset/oklahoma-high-resolution-wind-resource-22ac7
+# title: Dataset Oklahoma High Resolution Wind Resource 22Ac7
+decline https://catalog.data.gov/dataset/phosphorus-removal-capacity-arsenic-leaching-and-pfas-content-of-drinking-water-treatment-
+# title: Dataset Phosphorus Removal Capacity Arsenic Leaching And Pfas Content Of Drinking Water Treatment
+decline https://catalog.data.gov/dataset/prasa-coral-survey-data
+# title: Dataset Prasa Coral Survey Data
+decline https://catalog.data.gov/dataset/production-emissions-and-economic-as-well-as-historical-marketing-data-for-the-pulp-and-pa
+# title: Dataset Production Emissions And Economic As Well As Historical Marketing Data For The Pulp And Pa
+decline https://catalog.data.gov/dataset/project-hotspot-mountain-home-well-borehole-geophysics-database-d0582
+# title: Dataset Project Hotspot Mountain Home Well Borehole Geophysics Database D0582
+decline https://catalog.data.gov/dataset/publicly-reported-state-municipal-solid-waste-data-version-1
+# title: Dataset Publicly Reported State Municipal Solid Waste Data Version 1
+decline https://catalog.data.gov/dataset/rare-earth-element-data-from-acid-mine-drainage-and-refuse-piles-in-shamokin-pennsylvania
+# title: Dataset Rare Earth Element Data From Acid Mine Drainage And Refuse Piles In Shamokin Pennsylvania
+decline https://catalog.data.gov/dataset/report-on-u-s-methane-emissions-1990-2020-inventories-projections-and-opportunities-for-re
+# title: Dataset Report On U S Methane Emissions 1990 2020 Inventories Projections And Opportunities For Re
+decline https://catalog.data.gov/dataset/residential-energy-consumption-survey-recs-files-all-data-2015
+# title: Dataset Residential Energy Consumption Survey Recs Files All Data 2015
+decline https://catalog.data.gov/dataset/san-juan-bay-mangrove-stable-isotopesaccretion-rates2016
+# title: Dataset San Juan Bay Mangrove Stable Isotopesaccretion Rates2016
+decline https://catalog.data.gov/dataset/slip-and-dilation-tendency-analysis-of-mcginness-hills-geothermal-area-15149
+# title: Dataset Slip And Dilation Tendency Analysis Of Mcginness Hills Geothermal Area 15149
+decline https://catalog.data.gov/dataset/st-louis-river-water-quality-assessment-2012-2013
+# title: Dataset St Louis River Water Quality Assessment 2012 2013
+decline https://catalog.data.gov/dataset/state-energy-data-system-seds
+# title: Dataset State Energy Data System Seds
+decline https://catalog.data.gov/dataset/supply-chain-ghg-emission-factors-for-us-commodities-and-industries-v1-1
+# title: Dataset Supply Chain Ghg Emission Factors For Us Commodities And Industries V1 1
+decline https://catalog.data.gov/dataset/supply-chain-ghg-emission-factors-for-us-commodities-and-industries-v1-1-1
+# title: Dataset Supply Chain Ghg Emission Factors For Us Commodities And Industries V1 1 1
+decline https://catalog.data.gov/dataset/supply-chain-greenhouse-gas-emission-factors-for-us-industries-and-commodities
+# title: Dataset Supply Chain Greenhouse Gas Emission Factors For Us Industries And Commodities
+decline https://catalog.data.gov/dataset/supply-chain-greenhouse-gas-emission-factors-v1-2-by-naics-6
+# title: Dataset Supply Chain Greenhouse Gas Emission Factors V1 2 By Naics 6
+decline https://catalog.data.gov/dataset/supply-chain-greenhouse-gas-emission-factors-v1-3-by-naics-6
+# title: Dataset Supply Chain Greenhouse Gas Emission Factors V1 3 By Naics 6
+decline https://catalog.data.gov/dataset/sustainable-materials-management-smm-materials-and-waste-management-in-the-united-states-key-fa12
+# title: Dataset Sustainable Materials Management Smm Materials And Waste Management In The United States Key Fa12
+decline https://catalog.data.gov/dataset/sustainable-materials-management-smm-materials-and-waste-management-in-the-united-states-key-fa12
+# title: Dataset Sustainable Materials Management Smm Materials And Waste Management In The United States Key Fa12 2
+decline https://catalog.data.gov/dataset/swera-solar-and-wind-energy-resource-assessment
+# title: Dataset Swera Solar And Wind Energy Resource Assessment
+decline https://catalog.data.gov/dataset/systematic-evidence-mapping-of-the-impact-of-water-quality-stressors-on-coral-reef-health
+# title: Dataset Systematic Evidence Mapping Of The Impact Of Water Quality Stressors On Coral Reef Health
+decline https://catalog.data.gov/dataset/texas-high-resolution-wind-resource
+# title: Dataset Texas High Resolution Wind Resource
+decline https://catalog.data.gov/dataset/traci-spatial-eutrophication-characterization-factors-2020-10
+# title: Dataset Traci Spatial Eutrophication Characterization Factors 2020 10
+decline https://catalog.data.gov/dataset/traciv2-1-for-fedeflv1
+# title: Dataset Traciv2 1 For Fedeflv1
+decline https://catalog.data.gov/dataset/unh-tdp-imu-raw-data-and-processing-scripts-fall-2021-d571e
+# title: Dataset Unh Tdp Imu Raw Data And Processing Scripts Fall 2021 D571E
+decline https://catalog.data.gov/dataset/united-states-geothermal-supply-curves-2024
+# title: Dataset United States Geothermal Supply Curves 2024
+decline https://catalog.data.gov/dataset/united-states-land-based-wind-supply-curves-2023
+# title: Dataset United States Land Based Wind Supply Curves 2023
+decline https://catalog.data.gov/dataset/united-states-mid-atlantic-regional-high-resolution-wind-resource-09735
+# title: Dataset United States Mid Atlantic Regional High Resolution Wind Resource 09735
+decline https://catalog.data.gov/dataset/united-states-utility-scale-representative-profiles-2024
+# title: Dataset United States Utility Scale Representative Profiles 2024
+decline https://www.epa.gov/radiation/uranium-mines-and-mills-location-database-0
+# title: Dataset Uranium Location Database
+decline https://catalog.data.gov/dataset/us-doe-nnsa-and-dod-response-to-2011-fukushima-incident-radiological-air-samples
+# title: Dataset Us Doe Nnsa And Dod Response To 2011 Fukushima Incident Radiological Air Samples
+decline https://catalog.data.gov/dataset/us-doe-nnsa-and-dod-response-to-2011-fukushima-incident-radiological-soil-samples
+# title: Dataset Us Doe Nnsa And Dod Response To 2011 Fukushima Incident Radiological Soil Samples
+decline https://catalog.data.gov/dataset/us-epa-nonattainment-areas-and-designations-download-package9
+# title: Dataset Us Epa Nonattainment Areas And Designations Download Package9
+decline https://catalog.data.gov/dataset/us-epa-nonattainment-areas-and-designations8
+# title: Dataset Us Epa Nonattainment Areas And Designations8
+decline https://catalog.data.gov/dataset/us-municipal-desalination-plants-eb38f
+# title: Dataset Us Municipal Desalination Plants Eb38F
+decline https://catalog.data.gov/dataset/useeio-models-with-import-emission-factors-for-greenhouse-gases-for-2017-2022-from-exiobas
+# title: Dataset Useeio Models With Import Emission Factors For Greenhouse Gases For 2017 2022 From Exiobas
+decline https://catalog.data.gov/dataset/useeio-v1-1-matrices
+# title: Dataset Useeio V1 1 Matrices
+decline https://catalog.data.gov/dataset/utah-forge-interferometric-synthetic-aperture-radar-data-from-2023-and-2024-77d2a
+# title: Dataset Utah Forge Interferometric Synthetic Aperture Radar Data From 2023 And 2024 77D2A
+decline https://catalog.data.gov/dataset/utah-forge-logs-and-data-from-deep-well-58-32-mu-esw1-1e314
+# title: Dataset Utah Forge Logs And Data From Deep Well 58 32 Mu Esw1 1E314
+decline https://catalog.data.gov/dataset/utah-forge-well-56-32-drilling-data-and-logs-886e0
+# title: Dataset Utah Forge Well 56 32 Drilling Data And Logs 886E0
+decline https://catalog.data.gov/dataset/utah-forge-well-78b-32-daily-drilling-reports-and-logs-7efa9
+# title: Dataset Utah Forge Well 78B 32 Daily Drilling Reports And Logs 7Efa9
+decline https://catalog.data.gov/dataset/water-quality-and-related-data-for-western-long-island-sound
+# title: Dataset Water Quality And Related Data For Western Long Island Sound
+decline https://catalog.data.gov/dataset/water-temperature-in-mrb
+# title: Dataset Water Temperature In Mrb
+decline https://catalog.data.gov/dataset/wetlandnni-quantification-of-hydrologic-interception-of-nitrogen-national-nutrient-in-1987
+# title: Dataset Wetlandnni Quantification Of Hydrologic Interception Of Nitrogen National Nutrient In 1987
+decline https://catalog.data.gov/dataset/wind-for-schools-wind-turbine-data
+# title: Dataset Wind For Schools Wind Turbine Data
+decline https://www.nass.usda.gov/Research_and_Science/Cropland/Release/datasets/2008_30m_cdls.zip
+# title: Datasets 2008 30M Cdls.Zip
+decline https://www.nass.usda.gov/Research_and_Science/Cropland/Release/datasets/2009_30m_cdls.zip
+# title: Datasets 2009 30M Cdls.Zip
+decline https://www.nass.usda.gov/Research_and_Science/Cropland/Release/datasets/2010_30m_cdls.zip
+# title: Datasets 2010 30M Cdls.Zip
+decline https://www.nass.usda.gov/Research_and_Science/Cropland/Release/datasets/2011_30m_cdls.zip
+# title: Datasets 2011 30M Cdls.Zip
+decline https://www.nass.usda.gov/Research_and_Science/Cropland/Release/datasets/2012_30m_cdls.zip
+# title: Datasets 2012 30M Cdls.Zip
+decline https://www.nass.usda.gov/Research_and_Science/Cropland/Release/datasets/2013_30m_cdls.zip
+# title: Datasets 2013 30M Cdls.Zip
+decline https://www.nass.usda.gov/Research_and_Science/Cropland/Release/datasets/2014_30m_cdls.zip
+# title: Datasets 2014 30M Cdls.Zip
+decline https://www.nass.usda.gov/Research_and_Science/Cropland/Release/datasets/2015_30m_cdls.zip
+# title: Datasets 2015 30M Cdls.Zip
+decline https://www.nass.usda.gov/Research_and_Science/Cropland/Release/datasets/2016_30m_cdls.zip
+# title: Datasets 2016 30M Cdls.Zip
+decline https://www.nass.usda.gov/Research_and_Science/Cropland/Release/datasets/2017_30m_cdls.zip
+# title: Datasets 2017 30M Cdls.Zip
+decline https://www.nass.usda.gov/Research_and_Science/Cropland/Release/datasets/2018_30m_cdls.zip
+# title: Datasets 2018 30M Cdls.Zip
+decline https://www.nass.usda.gov/Research_and_Science/Cropland/Release/datasets/2019_30m_cdls.zip
+# title: Datasets 2019 30M Cdls.Zip
+decline https://www.nass.usda.gov/Research_and_Science/Cropland/Release/datasets/2020_30m_cdls.zip
+# title: Datasets 2020 30M Cdls.Zip
+decline https://www.nass.usda.gov/Research_and_Science/Cropland/Release/datasets/2021_30m_cdls.zip
+# title: Datasets 2021 30M Cdls.Zip
+decline https://www.nass.usda.gov/Research_and_Science/Cropland/Release/datasets/2022_30m_cdls.zip
+# title: Datasets 2022 30M Cdls.Zip
+decline https://www.nass.usda.gov/Research_and_Science/Cropland/Release/datasets/2023_30m_cdls.zip
+# title: Datasets 2023 30M Cdls.Zip
+decline https://www.nass.usda.gov/Research_and_Science/Cropland/Release/datasets/2024_10m_cdls.zip
+# title: Datasets 2024 10M Cdls.Zip
+decline https://www.nass.usda.gov/Research_and_Science/Cropland/Release/datasets/2024_30m_cdls.zip
+# title: Datasets 2024 30M Cdls.Zip
+decline https://www.nass.usda.gov/Research_and_Science/Cropland/Release/datasets/Hawaii_CDL_2023_2024.zip
+# title: Datasets Hawaii Cdl 2023 2024.Zip
+decline https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/DOPA/
+# title: Dopa
+decline https://irma.nps.gov/DataStore/DownloadFile/757344?Reference=2317824
+# title: Downloadfile 757344
+decline https://apps.fas.usda.gov/psdonline/downloads/psd_alldata_csv.zip
+# title: Downloads Psd Alldata Csv.Zip
+decline https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/EANR/
+# title: EANR
+decline https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/ECMLDATA/
+# title: ECMLDATA
+decline https://cds.climate.copernicus.eu/api/catalogue/v1/collections
+# title: ECMWF
+decline https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/ECOCLIM/
+# title: ECOCLIM
+decline https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/EIGL-Data/
+# title: EIGL Data
+decline https://www.seismicportal.eu
+# title: EMSC — European-Mediterranean Seismological Centre
+decline https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/ENSEMBLE/
+# title: ENSEMBLE
+decline https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/ENSEMBLES-BC/
+# title: ENSEMBLES BC
+decline https://www.epa.gov/national-aquatic-resource-surveys/data-national-aquatic-resource-surveys
+# title: EPA Data from the National Aquatic Resource Surveys
+decline https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/EU-CBM-HAT/
+# title: EU CBM HAT
+decline https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/EUCROPMAP/
+# title: EUCROPMAP
+decline https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/EURAD/
+# title: EURAD
+decline https://www.epa.gov/egrid/detailed-data
+# title: Egrid Detailed Data
+decline https://www.epa.gov/egrid/historical-egrid-data
+# title: Egrid Historical Egrid Data
+decline https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/EURDEP/
+# title: European Radiological Data Exchange Platform
+decline https://catalog.data.gov/dataset/extramural-research-emission-generation-resource-integrated-database-egrid
+# title: Extramural Research Emission Generation Resource Integrated Database Egrid
+decline https://www.fema.gov/api/open/v2/DisasterDeclarationsSummaries
+# title: FEMA Disaster Declarations (OpenFEMA)
+decline https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/FIGARO-E3/
+# title: FIGARO E3
+decline https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/FIGARO-REG/
+# title: FIGARO REG
+decline https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/FLOODS/
+# title: FLOODS
+decline https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/FOREST/
+# title: FOREST
+decline https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/FWPI/
+# title: FWPI
+decline https://files.airnowtech.org/
+# title: Files
+decline https://api.fink-portal.org/api/v1/
+# title: Fink ZTF Transient Alerts
+decline https://www.epa.gov/frs/epa-frs-facilities-state-single-file-csv-download
+# title: Frs Epa Frs Facilities State Single File Csv Download
+decline https://www.epa.gov/frs/epa-state-combined-csv-download-files
+# title: Frs Epa State Combined Csv Download Files
+decline https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/GECOutlook/
+# title: GEC Outlook
+decline https://data-api.globalforestwatch.org/dataset/nasa_viirs_fire_alerts/latest/query
+# title: GFW Fire Alerts
+decline https://geofon.gfz-potsdam.de
+# title: GFZ GEOFON — German Research Centre for Geosciences
+decline https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/GHG-INV/
+# title: GHG INV
+decline https://dataset.api.hub.geosphere.at/v1/datasets
+# title: GeoSource
+decline https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/GDW/
+# title: Global Dam Watch Database
+decline https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/GSWE/
+# title: Global Surface Water Explorer
+decline https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/IMAP-FP-dataset/
+# title: IMAP FP dataset
+decline https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/JRC-ENERNET/
+# title: JRC ENERNET
+decline https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/JRC-IDEES/
+# title: JRC IDEES
+decline https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/ALGAE-industry/
+# title: JRCAlgaeIndustry
+decline https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/KCBD-DATASETS/
+# title: KCBD DATASETS
+decline https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/LISCOAST/
+# title: LISCOAST
+decline https://ll.thespacedevs.com/2.2.0/
+# title: Launch Library 2 — Spaceflight Launches
+decline https://lda10g.alliance.unm.edu/metadata/lwa1/tbwspectra/
+# title: Long Wavelength Array (LWA) Radio Spectra
+decline https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/MAES/
+# title: MAES
+decline https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/MAPPE/
+# title: MAPPE
+decline https://power.larc.nasa.gov/api/temporal/daily/point
+# title: NASA POWER
+decline https://ladsweb.modaps.eosdis.nasa.gov/archive/allData/5200/VNP46A2/
+# title: NASA VIIRS Black Marble VNP46A2 -- nighttime light radiance
+decline https://nuforc.org
+# title: NUFORC — National UFO Reporting Center
+decline https://api.weather.gov/alerts/active
+# title: NWS Alerts
+decline https://www.epa.gov/national-aquatic-resource-surveys/data-national-aquatic-resource-surveys
+# title: National Aquatic Resource Surveys Data National Aquatic Resource Surveys
+decline https://www.epa.gov/national-aquatic-resource-surveys/data-national-aquatic-resource-surveys
+# title: National Aquatic Resource Surveys Data National Aquatic Resource Surveys 2
+decline https://flood-api.open-meteo.com/v1/flood
+# title: Open-Meteo Flood/River
+decline https://marine-api.open-meteo.com/v1/marine
+# title: Open-Meteo Marine
+decline https://api.open-meteo.com/v1/forecast
+# title: Open-Meteo Weather
+decline https://www.eia.gov/opendata/index.php#bulk-downloads
+# title: Opendata Index.Php
+decline https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/PVGIS/
+# title: PVGIS
+decline https://opendata.auger.org/catalog/
+# title: Pierre Auger Observatory UHECR Catalog
+decline https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/REMDB/
+# title: REMDB
+decline https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/S2-GOLD/
+# title: S2 Gold
+decline https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/SHERPA/
+# title: SHERPA
+decline https://www.spc.noaa.gov/products/outlook/
+# title: SPC Convective Outlook
+decline https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/SUCCAST/
+# title: SUCCAST
+decline https://www.ncei.noaa.gov/pub/access/cebrequests/satellite/ESPCNotifications/
+# title: Satellite Espcnotifications
+decline https://www.usgs.gov/centers/eros/science/usgs-eros-archive-declassified-data-declassified-satellite-imagery-1?qt-science_center_objects=0#qt-science_center_objects
+# title: Science Usgs Eros Archive Declassified Data Declassified Satellite Imagery 1
+decline https://www.usgs.gov/centers/eros/science/usgs-eros-archive-declassified-data-declassified-satellite-imagery-3
+# title: Science Usgs Eros Archive Declassified Data Declassified Satellite Imagery 3
+decline https://webservices.volcano.si.edu/geoserver/
+# title: Smithsonian Global Volcanism Program
+decline https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/STRATEGIC-TRADE-ATLAS/
+# title: Strategic Trade Atlas
+decline https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/TEDAM/
+# title: TEDAM
+decline https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/T-NET/
+# title: TNET
+decline https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/TRACE/
+# title: TRACE
+decline https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/TRIMIS/
+# title: TRIMIS
+decline https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/TOURISM/
+# title: Tourism
+decline https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/TransportEUAFIData/
+# title: Transport EUAFI Data
+decline https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/TRANSURANUS/
+# title: Transuranus
+decline https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/UNO-FilmsXPS/
+# title: UNO Films XPS
+decline https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/UPu-Gamma/
+# title: UPu Gamma
+decline https://www.ers.usda.gov/data-products/dairy-data
+# title: USDA Dairy Data (ERS)
+decline https://www.ers.usda.gov/data-products/livestock-and-meat-domestic-data
+# title: USDA Livestock and Meat Data (ERS)
+decline https://www.ers.usda.gov/data-products/major-land-uses
+# title: USDA Major Uses of Land in the United States (ERS)
+decline https://waterservices.usgs.gov/nwis/iv/
+# title: USGS Stream Gauges (registry)
+decline https://www.fema.gov/api/open/v1/FemaWebDisasterDeclarations
+# title: V1 Femawebdisasterdeclarations
+decline https://www.fema.gov/api/open/v1/IpawsArchivedAlerts
+# title: V1 Ipawsarchivedalerts
+decline https://www.fema.gov/api/open/v1/IpawsArchivedAlerts
+# title: V1 Ipawsarchivedalerts 2
+decline https://www.fema.gov/api/open/v1/NfipMultipleLossProperties
+# title: V1 Nfipmultiplelossproperties
+decline https://www.fema.gov/api/open/v2/DisasterDeclarationsSummaries
+# title: V2 Disasterdeclarationssummaries
+decline https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/VAIA_CBM_DATABASE/
+# title: VAIA CBM DATABASE
+decline https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/VECSEC-VOLTS/
+# title: VECSEC Volts
+decline https://data.worldbank.org
+# title: World Bank Forest Area (% of land area)
+decline https://data.worldbank.org
+# title: World Bank Population, total
