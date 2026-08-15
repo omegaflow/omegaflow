@@ -730,7 +730,6 @@ struct AsteroidHash {
     cell_size: f64,
     vmax: f64,
     amax: f64,
-    rmax: f64,
     epoch_min_secs: f64,
     ttl: f64,
     cell_lo: CellKey,
@@ -745,7 +744,6 @@ fn build_asteroid_hash(bytes: &[u8], cadence: f64, ttl: u64) -> AsteroidHash {
     let mut p0: Vec<[f64; 3]> = Vec::new();
     let mut vmax = 0.0f64;
     let mut amax = 0.0f64;
-    let mut rmax = 0.0f64;
     let mut epoch_min = f64::MAX;
     for chunk in bytes.chunks_exact(RECORD_STRIDE) {
         let rec = match parse_record(chunk) {
@@ -755,10 +753,9 @@ fn build_asteroid_hash(bytes: &[u8], cadence: f64, ttl: u64) -> AsteroidHash {
         if rec.number == 0 || rec.a_au <= 0.0 || rec.e >= 1.0 {
             continue;
         }
-        let hill = match hill_radius_m(&rec) {
-            Some(h) => h,
-            None => continue,
-        };
+        if hill_radius_m(&rec).is_none() {
+            continue;
+        }
         let (pos, vel) = match state_at(&rec, rec.epoch_jd) {
             Some(s) => s,
             None => continue,
@@ -768,14 +765,13 @@ fn build_asteroid_hash(bytes: &[u8], cadence: f64, ttl: u64) -> AsteroidHash {
         let epoch_secs = (rec.epoch_jd - J2000_EPOCH) * 86400.0;
         vmax = vmax.max(speed);
         amax = amax.max(accel);
-        rmax = rmax.max(hill);
         epoch_min = epoch_min.min(epoch_secs);
         records.push(rec);
         p0.push(pos);
     }
     vmax *= Φ;
     amax *= Φ;
-    let rho_cad = rmax + vmax * cadence + 0.5 * amax * cadence * cadence;
+    let rho_cad = vmax * cadence + 0.5 * amax * cadence * cadence;
     let shift = (2.0 * rho_cad).log2().ceil().clamp(0.0, 63.0) as i32;
     let cell_size = 2f64.powi(shift);
     let mut cells: HashMap<CellKey, Vec<u32>> = HashMap::new();
@@ -795,7 +791,6 @@ fn build_asteroid_hash(bytes: &[u8], cadence: f64, ttl: u64) -> AsteroidHash {
         cell_size,
         vmax,
         amax,
-        rmax,
         epoch_min_secs: if epoch_min == f64::MAX {
             0.0
         } else {
@@ -822,7 +817,7 @@ fn query_asteroid_hash(
         return;
     }
     let dt = (t2 - hash.epoch_min_secs).abs() + delta_t_cache;
-    let rho = hash.rmax + hash.vmax * dt + 0.5 * hash.amax * dt * dt + pad;
+    let rho = hash.vmax * dt + 0.5 * hash.amax * dt * dt + pad;
     let s = hash.cell_size;
     let qlo = cell_of([center[0] - rho, center[1] - rho, center[2] - rho], s);
     let qhi = cell_of([center[0] + rho, center[1] + rho, center[2] + rho], s);
@@ -1253,7 +1248,7 @@ fn query_hash(
         center[2] - anchor[2],
     ];
     let dt = (t2 - hash.epoch_min).abs() + delta_t_cache;
-    let rho = hash.rmax + hash.vmax * dt + 0.5 * hash.amax * dt * dt + pad;
+    let rho = hash.vmax * dt + 0.5 * hash.amax * dt * dt + pad;
     let s = hash.cell_size;
     let qlo = cell_of([qf[0] - rho, qf[1] - rho, qf[2] - rho], s);
     let qhi = cell_of([qf[0] + rho, qf[1] + rho, qf[2] + rho], s);
@@ -9318,11 +9313,10 @@ fn main() {
                     };
                     let hash = build_asteroid_hash(&bytes, cadence_c, src_ttl);
                     eprintln!(
-                        "\r\x1b[Kcatalog_dastcom: {} records, cell_size {:.3e} m, vmax {:.1} m/s, rmax {:.3e} m",
+                        "\r\x1b[Kcatalog_dastcom: {} records, cell_size {:.3e} m, vmax {:.1} m/s",
                         hash.records.len(),
                         hash.cell_size,
-                        hash.vmax,
-                        hash.rmax
+                        hash.vmax
                     );
                     let _ = ftx.send(FetchResult {
                         source_idx: src_idx,
