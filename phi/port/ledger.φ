@@ -126,6 +126,18 @@ ausstehend
 queue phi/port/queue/grind_nasa.φ
 note 26 NASA-Endpoints disponiert — offene Blöcke einbauen
 
+geparkt
+kandidat https://api.coral.tsr.lol/stations/southeast_florida/current
+note Auto-Draft fehlklassifizierte stress_level als Geschwindigkeit (ist Bleaching-Index) — Hand-Kuration: sst_min thermal, hs_90th acoustic, Korallen-Strömung advective
+
+geparkt
+kandidat https://api.waqi.info/feed/here/?token=demo
+note freier WAQI-Key — token=demo durch {WAQI_TOKEN} ersetzen; iaqi.*.v-Felder korrekt klassifizieren (pm25/co/no2 diffusion, t thermal, w advective) — Auto-Draft hatte sie als gravity m
+
+verifiziert
+bestand phi/port/batches/
+note CI-Probe-Sweep 2026-08-15 (Run 31898215331, 11m10s): 4.485 Blöcke geladen, 120 Survivors, 4.365 Voids — Review abgeschlossen: 2 Einbauten (GeoNet-NZ-Quake, PIREP), 68 Dispositionen in dead_sources.φ (53 variant, 22+19 model-forecast, 2 catalog, 2 no-physical, 1 counts), 2 park (coral, waqi)
+
 ausstehend
 bestand phi/port/library.φ
 note 746 b2find-Tags gewichtet (Ratssitzung, zweite Fassung, Wort-Grenzen) — source_scanner wendet die Linse an; Sensor-Regel jetzt in SOURCES_V2_SPEC §2; Folge-Wellen: NASA-CMR-Keywords + GBIF-Tags downloaden und einwägen, Library-Feinwägung an den Gewichtstabellen

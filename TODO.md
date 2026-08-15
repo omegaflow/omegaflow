@@ -500,10 +500,13 @@ Offen (Detail in phi/port/ledger.φ, jede Zeile mit Zustand):
   format free text + text_to_json (NDBC-Text), Headers gerendert,
   --fetchone für den Fetch-Vergleich. Wahrheitstest 2/7 (USGS 293 Samples,
   NDBC 7 Samples); Vergleich P1–P4 in probe_comparison.txt (Linse 57% vs
-  2%). CI: .github/workflows/probe_sweep.yml (wöchentlich + manuell) probt
-  probe_batch.φ, lädt survivors/void/weights als Artefakte; Review+Einbau
-  bleibt Session-Arbeit. Erster Einbau: NDBC 46086 in sources.φ, 10
-  Varianten/Modelle in dead_sources.φ. Nächste Welle: Batch 201–400.
+  2%). CI: .github/workflows/probe_sweep.yml (wöchentlich + manuell, 8
+  Threads + 300ms Pacing, kompletter Korpus in 11m10s) probt batches/,
+  lädt probe_all_survivors/probe_all_void/weights als Artefakte.
+  ERSTE WELLE 2026-08-15: 4.485 Blöcke → 120 Survivors → Review: GeoNet-NZ
+  + PIREP eingebaut, 68 Dispositionen (53 variant, 22 model-forecast …),
+  coral + waqi geparkt (Hand-Kuration/freier Key). Nächste Welle: neue
+  Kandidaten aus den Katalogen in batches/ nachrücken.
 - Queue: 10 Untested-Korpora (14k/13k/15k/7k/2k/183l/astro/earth/exotic/
   candidate-staging), Gold 2572 + Recovery 1924 + 5701 Lost-Blocks (Join aus
   richest/params) — Port durch die Prozedur. Erster Port 2026-08-15: STAC

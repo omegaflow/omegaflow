@@ -15,6 +15,15 @@ lon lon
 field gs adsb_ground_speed_kmh gaussian-inverse-square advective km/h 1 0.0 0.0
 field track adsb_track_deg inverse-square em deg 1 0.0 0.0
 
+url https://api.geonet.org.nz/quake?MMI=4
+ttl 60
+on earth 0 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+alt geometry.coordinates.2
+field properties.magnitude geonet_quake_magnitude gaussian-inverse-square seismic-body M 60.0 0.0 0.0
+
 url https://api.p2pquake.net/v2/jma/quake?limit=100&order=-1
 ttl 30
 at earth
@@ -131,6 +140,16 @@ field dewp atmosphere_metar_dewpoint_c gaussian-inverse-square acoustic C 30.0 0
 field altim atmosphere_metar_pressure_hpa gaussian-inverse-square acoustic hPa 30.0 0.0 0.0
 field wspd atmosphere_metar_wind_speed_kt gaussian-inverse-square acoustic kt 30.0 0.0 0.0
 field wdir atmosphere_metar_wind_direction_deg gaussian-inverse-square acoustic deg 30.0 0.0 0.0
+
+url https://aviationweather.gov/api/data/pirep?bbox=-90,-180,90,180&hours=3&format=json
+ttl 600
+on earth 0 0 0
+map .
+lat lat
+lon lon
+field temp atmosphere_pirep_temp_c gaussian-inverse-square thermal C 600.0 0.0 0.0
+field wspd atmosphere_pirep_wind_speed_kt gaussian-inverse-square advective kt 600.0 0.0 0.0
+field wdir atmosphere_pirep_wind_direction_deg gaussian-inverse-square advective deg 600.0 0.0 0.0
 
 url https://gracedb.ligo.org/api/superevents/?limit=10
 ttl 300
