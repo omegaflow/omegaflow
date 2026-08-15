@@ -616,19 +616,23 @@ Binary-PCK-Pakets oben).
   K04b-Folge-Quelle; antares.data/antares10.data = ANTARES-Mirror (5 921
   Zeilen) — Recheck erledigt: Counts+Position → Decline (dead_sources.φ).
   GAVO-sync kennt ebenfalls kein OFFSET/LIMIT — Paging bleibt UWS-Async.
-- K04b-Welle (2026-08-15): tap_compiler gewinnt UWS-Async-Client
+- K04b-Welle GESCHLOSSEN (2026-08-15): tap_compiler gewinnt UWS-Async-Client
   (submit/phase/results), VOTable-Reader (FIELDref-Self-Closing-Fix — der
-  stille None-Killer), --votable-Sync-Modus, GAVO-"columns"-Shape (statt
-  "metadata"), --order, --epoch (pm-Propagation → J2000, pmra/pmdec-Drop),
-  GAVO-Tabellen unquoted. Beweis: 20 000 hellste Sterne mit BJ-Distanzen
-  (mag 1,94–8,3, dist_pc) via gedr3dist.litewithdist (vor-gejoint — der
-  Join über 1,5 Mrd Zeilen ist der Sync-Killer). Befunde: GAVO-lite cutt
-  bei G<1,94 (Vega/Sirius absent — der Tycho2-Fallback trägt die hellen
-  30); GAVO-Async-Queue hing heute (2 Jobs PENDING) — der volle Merge
-  (G<11,5 = 1,97 Mio, rezeptfertig: --async + --epoch 2016 + litewithdist)
-  ersetzt TGAS, sobald die Queue liefert; CI-Schritt erst nach Verifikation
-  eintragen. CNS5 (5 909 Sterne, alle mit gaia_edr3_id) ⊂ DR3 — kein
-  separater Block nötig, die lokale Blase manifestiert im Merge.
+  stille None-Killer), --votable-Sync-Modus, --order, --epoch (pm-Propagation
+  → J2000, pmra/pmdec-Drop), --join (Alias-Join), --mag-bands (adaptive
+  Halbierung über COUNT, streaming pro Band), --star-bin (36-B-Records,
+  plx = 1000/dist_pc, pm 0 — statisch), Dict-Zeilen (ARI-Shape). Der Merge:
+  ARI Heidelberg (gaia.ari.uni-heidelberg.de, Sync-Cap 100k, mag-Indizes
+  0,2 s/COUNT — GAVO-Queue hing, aber ARI trägt gaiaedr3.gaia_source_lite
+  ⋈ gaiaedr3_complements.distances) → 1 837 214 Sterne mit Bailer-Jones-
+  Distanzen (G 1,94–11,5, 66 MB Bin), ersetzt TGAS in sources.φ. Beweis
+  HD 18560: BJ 177,8 pc (TGAS-DR1 sagte 157,5 — DR3 verfeinert). Befunde:
+  ARI-lite cutt bei G<1,94 (Vega/Sirius absent — Tycho2-Fallback trägt die
+  hellen ~30); GAVO-litewithdist ist der vor-gejointe, aber unindizierte
+  Zwilling; ARI inventarisiert (203 Tabellen → phi/tap_index_ari.φ);
+  GAVO-sync/ARI-sync ohne OFFSET/LIMIT — UWS-Async bleibt für
+  >100k-Einzelresultate. CNS5 (5 909 Sterne, alle mit gaia_edr3_id) ⊂ DR3
+  — kein separater Block, die lokale Blase manifestiert im Merge.
 - FRB-Recherche (2026-08-15, „absent ist erst nach Recherche absent"): das
   Inventar liefert 2 FRB-Tabellen — FRBCAT 2016 (118, 18 z) + A&A 693/A279
   (2025, 24, 23 z, DM-Halo-Zerlegung, tausc) — beide live, Überlapp ≈ 0.

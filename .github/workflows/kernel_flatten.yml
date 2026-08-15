@@ -101,14 +101,16 @@ jobs:
             --input kernels/cometels.json.gz \
             --out cometels_flat.json \
             --ci-mode
-      - name: Compile TGAS star catalog and upload to CDN
+      - name: Compile Gaia DR3 + Bailer-Jones star catalog and upload to CDN
         run: |
-          curl -sSfL --retry 3 --max-time 3600 -o kernels/tgas.dat.gz \
-            https://cdsarc.cds.unistra.fr/ftp/I/337/tgas.dat.gz
-          cargo run --release --bin tycho2_compiler -- \
-            --source tgas \
-            --input kernels/tgas.dat.gz \
-            --out tgas_stars.bin \
+          cargo run --release --bin tap_compiler -- \
+            --root https://gaia.ari.uni-heidelberg.de/tap/sync \
+            --table gaiadr3.gaia_source_lite \
+            --join gaiaedr3_complements.distances source_id \
+            --columns 'ra:t.ra;dec:t.dec;pmra:t.pmra;pmdec:t.pmdec;mag:t.phot_g_mean_mag;dist_pc:j.r_med_geo' \
+            --mag-bands 1.94 11.5 0.1 \
+            --epoch 2016 --limit 90000 --star-bin \
+            --out dr3_stars.bin \
             --ci-mode
       - name: Compile FRBCAT via TAPVizieR and upload to CDN
         run: |

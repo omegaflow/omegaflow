@@ -309,6 +309,156 @@ fn votable_rows(body: &str) -> Option<(Vec<String>, Vec<Vec<String>>)> {
     Some((fields, rows))
 }
 
+fn cell_num(c: &Json) -> Option<f64> {
+    match c {
+        Json::Num(v) => Some(*v),
+        Json::Str(s) => s.parse().ok(),
+        _ => None,
+    }
+}
+
+fn fetch_json_rows(root: &str, adql: &str) -> Option<(Vec<String>, Vec<Vec<String>>)> {
+    let body = tap_query(root, adql)?;
+    let m = match parse_json(&body) {
+        Some(Json::Obj(m)) => m,
+        _ => return None,
+    };
+    let meta = m
+        .get("metadata")
+        .or_else(|| m.get("columns"))
+        .and_then(as_arr)?;
+    let mut col_names = Vec::new();
+    for md in meta {
+        if let Some(o) = as_obj(md) {
+            if let Some(nm) = get_str(o, "name") {
+                col_names.push(nm);
+            }
+        }
+    }
+    let data = m.get("data").and_then(as_arr)?;
+    let mut rows = Vec::new();
+    for row in data {
+        let mut cells = Vec::new();
+        if let Some(r) = as_arr(row) {
+            for c in r {
+                cells.push(match c {
+                    Json::Str(s) => s.clone(),
+                    Json::Num(v) => format!("{}", v),
+                    _ => String::new(),
+                });
+            }
+        } else if let Some(o) = as_obj(row) {
+            for nm in &col_names {
+                cells.push(match o.get(nm) {
+                    Some(Json::Str(s)) => s.clone(),
+                    Some(Json::Num(v)) => format!("{}", v),
+                    _ => String::new(),
+                });
+            }
+        } else {
+            continue;
+        }
+        rows.push(cells);
+    }
+    Some((col_names, rows))
+}
+
+const STAR_BIN_STRIDE: usize = 36;
+
+fn star_record_bytes(cells: &[String], col_idx: &[(String, usize)]) -> Option<Vec<u8>> {
+    let get = |k: &str| -> Option<f64> {
+        col_idx
+            .iter()
+            .find(|(key, _)| key == k)
+            .and_then(|(_, i)| cells.get(*i))
+            .and_then(|s| s.parse::<f64>().ok())
+    };
+    let ra = get("ra")?;
+    let dec = get("dec")?;
+    let dist_pc = get("dist_pc")?;
+    let mag = get("mag")?;
+    if !(dist_pc > 0.0) || !ra.is_finite() || !dec.is_finite() || !mag.is_finite() {
+        return None;
+    }
+    let plx_mas = 1000.0 / dist_pc;
+    let flux = 10f64.powf(-0.4 * mag) as f32;
+    let mut out = Vec::with_capacity(STAR_BIN_STRIDE);
+    out.extend_from_slice(&ra.to_le_bytes());
+    out.extend_from_slice(&dec.to_le_bytes());
+    out.extend_from_slice(&0f32.to_le_bytes());
+    out.extend_from_slice(&0f32.to_le_bytes());
+    out.extend_from_slice(&(plx_mas as f32).to_le_bytes());
+    out.extend_from_slice(&(mag as f32).to_le_bytes());
+    out.extend_from_slice(&flux.to_le_bytes());
+    Some(out)
+}
+
+fn emit_rows(
+    col_idx: &[(String, usize)],
+    epoch_prop: Option<f64>,
+    cells_rows: &[Vec<String>],
+) -> Vec<String> {
+    let i_ra = col_idx.iter().find(|(k, _)| k == "ra").map(|(_, i)| *i);
+    let i_dec = col_idx.iter().find(|(k, _)| k == "dec").map(|(_, i)| *i);
+    let i_pmra = col_idx.iter().find(|(k, _)| k == "pmra").map(|(_, i)| *i);
+    let i_pmdec = col_idx.iter().find(|(k, _)| k == "pmdec").map(|(_, i)| *i);
+    let mut rows_out = Vec::new();
+    for cells in cells_rows {
+        let mut ra_v = i_ra
+            .and_then(|i| cells.get(i))
+            .and_then(|s| s.parse::<f64>().ok());
+        let mut dec_v = i_dec
+            .and_then(|i| cells.get(i))
+            .and_then(|s| s.parse::<f64>().ok());
+        if let (Some(epoch), Some(ra), Some(dec), Some(i_pmra), Some(i_pmdec)) =
+            (epoch_prop, ra_v, dec_v, i_pmra, i_pmdec)
+        {
+            let pmra = cells
+                .get(i_pmra)
+                .and_then(|s| s.parse::<f64>().ok())
+                .unwrap_or(0.0);
+            let pmdec = cells
+                .get(i_pmdec)
+                .and_then(|s| s.parse::<f64>().ok())
+                .unwrap_or(0.0);
+            ra_v = Some(ra + pmra / (3.6e6 * dec.to_radians().cos().max(1e-6)) * (2000.0 - epoch));
+            dec_v = Some(dec + pmdec / 3.6e6 * (2000.0 - epoch));
+        }
+        let mut obj = String::from("{");
+        let mut pos = 0;
+        for (k, i) in col_idx {
+            if epoch_prop.is_some() && (k == "pmra" || k == "pmdec") {
+                continue;
+            }
+            if pos > 0 {
+                obj.push(',');
+            }
+            pos += 1;
+            let out = if k == "ra" {
+                ra_v.map(|v| format!("{}", v))
+                    .unwrap_or_else(|| "null".to_string())
+            } else if k == "dec" {
+                dec_v
+                    .map(|v| format!("{}", v))
+                    .unwrap_or_else(|| "null".to_string())
+            } else {
+                let raw = cells.get(*i).map(|s| s.as_str()).unwrap_or("");
+                if raw.is_empty() {
+                    "null".to_string()
+                } else if raw.parse::<f64>().is_ok() {
+                    raw.to_string()
+                } else {
+                    json_string(raw)
+                }
+            };
+            obj.push_str(&format!("\"{}\":{}", k, out));
+        }
+        obj.push('}');
+        rows_out.push(obj);
+    }
+    rows_out
+}
+
 fn json_string(s: &str) -> String {
     let mut o = String::from("\"");
     for c in s.chars() {
@@ -358,6 +508,9 @@ fn main() {
     let mut epoch_prop: Option<f64> = None;
     let mut votable_flag = false;
     let mut order_by: Option<String> = None;
+    let mut join_spec: Option<(String, String)> = None;
+    let mut mag_bands: Option<(f64, f64, f64)> = None;
+    let mut star_bin = false;
     let mut i = 1;
     while i < args.len() {
         match args[i].as_str() {
@@ -393,6 +546,22 @@ fn main() {
                 i += 1;
             }
             "--votable" => votable_flag = true,
+            "--join" => {
+                join_spec = Some((
+                    args.get(i + 1).cloned().unwrap_or_default(),
+                    args.get(i + 2).cloned().unwrap_or_default(),
+                ));
+                i += 2;
+            }
+            "--star-bin" => star_bin = true,
+            "--mag-bands" => {
+                mag_bands = Some((
+                    args.get(i + 1).and_then(|s| s.parse().ok()).unwrap_or(0.0),
+                    args.get(i + 2).and_then(|s| s.parse().ok()).unwrap_or(0.0),
+                    args.get(i + 3).and_then(|s| s.parse().ok()).unwrap_or(0.1),
+                ));
+                i += 3;
+            }
             "--order" => {
                 order_by = args.get(i + 1).cloned();
                 i += 1;
@@ -433,16 +602,21 @@ fn main() {
         buf.push_str(&format!("# tap-inventar {}\n", root));
         let mut n = 0usize;
         for row in cols {
-            let Some(r) = as_arr(row) else { continue };
-            if r.len() < 4 {
+            let (name, schema, typ) = if let Some(r) = as_arr(row) {
+                if r.len() < 4 {
+                    continue;
+                }
+                (row_str(&r[0]), row_str(&r[2]), row_str(&r[1]))
+            } else if let Some(o) = as_obj(row) {
+                (
+                    o.get("table_name").map(row_str).unwrap_or_default(),
+                    o.get("schema_name").map(row_str).unwrap_or_default(),
+                    o.get("table_type").map(row_str).unwrap_or_default(),
+                )
+            } else {
                 continue;
-            }
-            buf.push_str(&format!(
-                "catalog {} {} {}\n",
-                row_str(&r[0]),
-                row_str(&r[2]),
-                row_str(&r[1])
-            ));
+            };
+            buf.push_str(&format!("catalog {} {} {}\n", name, schema, typ));
             n += 1;
         }
         if let Ok(mut f) = std::fs::File::create(&out_path) {
@@ -485,7 +659,13 @@ fn main() {
     } else {
         mapping
             .iter()
-            .map(|(_, c)| format!("\"{}\"", c))
+            .map(|(_, c)| {
+                if c.contains('.') {
+                    c.clone()
+                } else {
+                    format!("\"{}\"", c)
+                }
+            })
             .collect::<Vec<_>>()
             .join(",")
     };
@@ -494,17 +674,13 @@ fn main() {
     } else {
         table.clone()
     };
-    let adql = if async_mode.is_some() {
-        format!("SELECT {} FROM {}", cols_sel, table_ref)
-    } else {
-        let mut q = format!("SELECT TOP {} {} FROM {}", limit, cols_sel, table_ref);
-        if let Some(o) = &order_by {
-            q.push_str(&format!(" ORDER BY \"{}\"", o));
-        }
-        q
+    let from_clause = match &join_spec {
+        Some((jt, oc)) => format!("{} AS t JOIN {} AS j ON t.{} = j.{}", table_ref, jt, oc, oc),
+        None => table_ref.clone(),
     };
-    let mut cells_rows: Vec<Vec<String>> = Vec::new();
+    let cells_rows: Vec<Vec<String>>;
     if async_mode.is_some() {
+        let adql = format!("SELECT {} FROM {}", cols_sel, from_clause);
         let Some(poll) = async_mode else {
             unreachable!()
         };
@@ -519,7 +695,11 @@ fn main() {
         col_names = fields;
         cells_rows = rows;
     } else if votable_flag {
-        let Some(body) = tap_query_votable(&root, &adql) else {
+        let mut q = format!("SELECT TOP {} {} FROM {}", limit, cols_sel, from_clause);
+        if let Some(o) = &order_by {
+            q.push_str(&format!(" ORDER BY \"{}\"", o));
+        }
+        let Some(body) = tap_query_votable(&root, &q) else {
             eprintln!("query returned void");
             std::process::exit(1);
         };
@@ -536,52 +716,195 @@ fn main() {
                 std::process::exit(1);
             }
         }
+    } else if mag_bands.is_none() {
+        let mut q = format!("SELECT TOP {} {} FROM {}", limit, cols_sel, from_clause);
+        if let Some(o) = &order_by {
+            q.push_str(&format!(" ORDER BY \"{}\"", o));
+        }
+        match fetch_json_rows(&root, &q) {
+            Some((names, rows)) => {
+                col_names = names;
+                cells_rows = rows;
+            }
+            None => {
+                eprintln!("query returned void");
+                std::process::exit(1);
+            }
+        }
     } else {
-        let Some(body) = tap_query(&root, &adql) else {
-            eprintln!("query returned void");
-            std::process::exit(1);
-        };
-        let Some(Json::Obj(m)) = parse_json(&body) else {
-            eprintln!("json returned void");
-            std::process::exit(1);
-        };
-        let Some(meta) = m
-            .get("metadata")
-            .or_else(|| m.get("columns"))
-            .and_then(as_arr)
-        else {
-            eprintln!("metadata absent");
-            std::process::exit(1);
-        };
-        for md in meta {
-            if let Some(o) = as_obj(md) {
-                if let Some(nm) = get_str(o, "name") {
-                    col_names.push(nm);
+        let mag_col = mapping
+            .iter()
+            .find(|(k, _)| k == "mag")
+            .map(|(_, c)| c.clone());
+        let ranges: Vec<(f64, f64)> = match mag_bands {
+            Some((lo, hi, step)) => {
+                let mut queue = vec![(lo, hi)];
+                let mut out = Vec::new();
+                while let Some((a, b)) = queue.pop() {
+                    if b - a <= step {
+                        out.push((a, b));
+                        continue;
+                    }
+                    let w = mag_col
+                        .as_ref()
+                        .map(|mc| format!(" WHERE {} >= {} AND {} < {}", mc, a, mc, b))
+                        .unwrap_or_default();
+                    let count_adql = format!("SELECT COUNT(*) FROM {} {}", from_clause, w);
+                    let n = tap_query(&root, &count_adql)
+                        .and_then(|body| parse_json(&body))
+                        .and_then(|j| {
+                            let Json::Obj(m) = j else { return None };
+                            let data = m.get("data")?;
+                            let Json::Arr(rows) = data else { return None };
+                            match rows.first()? {
+                                Json::Arr(a) => a.first().and_then(cell_num),
+                                Json::Obj(o) => o
+                                    .get("COUNT_ALL")
+                                    .or_else(|| o.get("COUNT"))
+                                    .and_then(cell_num),
+                                _ => None,
+                            }
+                        })
+                        .unwrap_or(0.0) as usize;
+                    if n <= limit {
+                        out.push((a, b));
+                    } else {
+                        let mid = (a + b) / 2.0;
+                        queue.push((mid, b));
+                        queue.push((a, mid));
+                    }
                 }
+                out
             }
-        }
-        let Some(data) = m.get("data").and_then(as_arr) else {
-            eprintln!("data absent");
-            std::process::exit(1);
+            None => vec![(f64::NEG_INFINITY, f64::INFINITY)],
         };
-        for row in data {
-            let Some(r) = as_arr(row) else { continue };
-            let mut cells = Vec::new();
-            for c in r {
-                cells.push(match c {
-                    Json::Str(s) => s.clone(),
-                    Json::Num(v) => format!("{}", v),
-                    _ => String::new(),
-                });
+        let mut n_bands = 0usize;
+        let mut total = 0usize;
+        let mut col_idx_band: Option<Vec<(String, usize)>> = None;
+        let out_path_band = out.clone().unwrap_or_default();
+        let mut out_file: Option<std::fs::File> = None;
+        let mut first_row = true;
+        for (a, b) in ranges {
+            let w = mag_col
+                .as_ref()
+                .filter(|_| b.is_finite())
+                .map(|mc| format!(" WHERE {} >= {} AND {} < {}", mc, a, mc, b))
+                .unwrap_or_default();
+            let mut q = format!("SELECT TOP {} {} FROM {}", limit, cols_sel, from_clause);
+            q.push_str(&w);
+            if let Some(o) = &order_by {
+                q.push_str(&format!(" ORDER BY \"{}\"", o));
             }
-            cells_rows.push(cells);
+            match fetch_json_rows(&root, &q) {
+                Some((names, rows)) => {
+                    if col_names.is_empty() {
+                        col_names = names;
+                        let idx_of = |col: &str| -> Option<usize> {
+                            if let Some(n) = col.strip_prefix('@') {
+                                n.parse::<usize>().ok()
+                            } else {
+                                let base = col.rsplit('.').next().unwrap_or(col);
+                                col_names.iter().position(|c| c == base)
+                            }
+                        };
+                        col_idx_band = Some(
+                            mapping
+                                .iter()
+                                .filter_map(|(k, c)| idx_of(c).map(|i| (k.clone(), i)))
+                                .collect(),
+                        );
+                        if col_idx_band.as_ref().map(|v| v.len()).unwrap_or(0) != mapping.len() {
+                            for (k, c) in &mapping {
+                                if idx_of(c).is_none() {
+                                    eprintln!(
+                                        "column absent: {} ({}), available: {:?}",
+                                        c, k, col_names
+                                    );
+                                }
+                            }
+                            std::process::exit(1);
+                        }
+                    }
+                    let Some(ci) = col_idx_band.as_ref() else {
+                        continue;
+                    };
+                    if out_file.is_none() {
+                        if out_path_band.is_empty() {
+                            eprintln!("--out absent");
+                            std::process::exit(1);
+                        }
+                        match std::fs::File::create(&out_path_band) {
+                            Ok(f) => {
+                                out_file = Some(f);
+                            }
+                            Err(_) => {
+                                eprintln!("write {} returned void", out_path_band);
+                                std::process::exit(1);
+                            }
+                        }
+                    }
+                    let Some(f) = out_file.as_mut() else {
+                        continue;
+                    };
+                    if star_bin {
+                        for cells in &rows {
+                            if let Some(rec) = star_record_bytes(cells, ci) {
+                                let _ = f.write_all(&rec);
+                                total += 1;
+                            }
+                        }
+                        n_bands += 1;
+                        eprintln!(
+                            "band [{:.2}, {:.2}): +{} records (total {})",
+                            a,
+                            b,
+                            rows.len(),
+                            total
+                        );
+                        continue;
+                    }
+                    if !first_row {
+                        let _ = f.write_all(b"[");
+                        first_row = false;
+                    }
+                    let emitted = emit_rows(ci, epoch_prop, &rows);
+                    for r in &emitted {
+                        if !first_row {
+                            let _ = f.write_all(b",");
+                        }
+                        let _ = f.write_all(r.as_bytes());
+                        first_row = false;
+                    }
+                    total += emitted.len();
+                    n_bands += 1;
+                    eprintln!(
+                        "band [{:.2}, {:.2}): +{} (total {})",
+                        a,
+                        b,
+                        emitted.len(),
+                        total
+                    );
+                }
+                None => eprintln!("band [{}, {}) returned void", a, b),
+            }
         }
+        if let Some(mut f) = out_file {
+            if !star_bin {
+                let _ = f.write_all(b"]\n");
+            }
+        }
+        eprintln!("bands: {}, rows: {} → {}", n_bands, total, out_path_band);
+        if ci_mode && !out_path_band.is_empty() {
+            let _ = upload_asset(&out_path_band);
+        }
+        return;
     }
     let idx_of = |col: &str| -> Option<usize> {
         if let Some(n) = col.strip_prefix('@') {
             n.parse::<usize>().ok()
         } else {
-            col_names.iter().position(|c| c == col)
+            let base = col.rsplit('.').next().unwrap_or(col);
+            col_names.iter().position(|c| c == base)
         }
     };
     col_idx = mapping
@@ -596,64 +919,7 @@ fn main() {
         }
         std::process::exit(1);
     }
-    let i_ra = col_idx.iter().find(|(k, _)| k == "ra").map(|(_, i)| *i);
-    let i_dec = col_idx.iter().find(|(k, _)| k == "dec").map(|(_, i)| *i);
-    let i_pmra = col_idx.iter().find(|(k, _)| k == "pmra").map(|(_, i)| *i);
-    let i_pmdec = col_idx.iter().find(|(k, _)| k == "pmdec").map(|(_, i)| *i);
-    let mut rows_out: Vec<String> = Vec::new();
-    for cells in &cells_rows {
-        let mut ra_v = i_ra
-            .and_then(|i| cells.get(i))
-            .and_then(|s| s.parse::<f64>().ok());
-        let mut dec_v = i_dec
-            .and_then(|i| cells.get(i))
-            .and_then(|s| s.parse::<f64>().ok());
-        if let (Some(epoch), Some(ra), Some(dec), Some(i_pmra), Some(i_pmdec)) =
-            (epoch_prop, ra_v, dec_v, i_pmra, i_pmdec)
-        {
-            let pmra = cells
-                .get(i_pmra)
-                .and_then(|s| s.parse::<f64>().ok())
-                .unwrap_or(0.0);
-            let pmdec = cells
-                .get(i_pmdec)
-                .and_then(|s| s.parse::<f64>().ok())
-                .unwrap_or(0.0);
-            ra_v = Some(ra + pmra / (3.6e6 * dec.to_radians().cos().max(1e-6)) * (2000.0 - epoch));
-            dec_v = Some(dec + pmdec / 3.6e6 * (2000.0 - epoch));
-        }
-        let mut obj = String::from("{");
-        let mut pos = 0;
-        for (k, i) in &col_idx {
-            if epoch_prop.is_some() && (k == "pmra" || k == "pmdec") {
-                continue;
-            }
-            if pos > 0 {
-                obj.push(',');
-            }
-            pos += 1;
-            let out = if k == "ra" {
-                ra_v.map(|v| format!("{}", v))
-                    .unwrap_or_else(|| "null".to_string())
-            } else if k == "dec" {
-                dec_v
-                    .map(|v| format!("{}", v))
-                    .unwrap_or_else(|| "null".to_string())
-            } else {
-                let raw = cells.get(*i).map(|s| s.as_str()).unwrap_or("");
-                if raw.is_empty() {
-                    "null".to_string()
-                } else if raw.parse::<f64>().is_ok() {
-                    raw.to_string()
-                } else {
-                    json_string(raw)
-                }
-            };
-            obj.push_str(&format!("\"{}\":{}", k, out));
-        }
-        obj.push('}');
-        rows_out.push(obj);
-    }
+    let rows_out = emit_rows(&col_idx, epoch_prop, &cells_rows);
     eprintln!(
         "tap fetch: {} columns, {} rows",
         col_names.len(),

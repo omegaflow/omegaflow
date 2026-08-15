@@ -439,11 +439,12 @@ dist_scale 3.085677581e19
 z z
 field flux tevcat_flux inverse-square em Crab 604800 0.0 0.0
 
-# ── TGAS (Tycho-Gaia, VizieR I/337) Stern-Katalog (K04b) — Stern-Hash-Kanal ──
-# 2 025 673 Sterne mit plx > 0 (Gaia-DR1-Parallaxen, Epoch 2015.0 → J2000
-# propagiert). Sterne mit pm > 3,5″/yr oder G < ~3,5 (Sättigung) sind absent
-# (0 honored) — Vega und Barnards Stern fehlen deshalb ehrlich.
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/tgas_stars.bin
+# ── Gaia-DR3 + Bailer-Jones-Distanzen (K04b via ARI Heidelberg) — Stern-Hash-Kanal ──
+# 1 837 214 Sterne (G 1,94–11,5), r_med_geo via gaiaedr3_complements.distances,
+# J2016→J2000 pm-propagiert; pm im Bin 0 (statisch, TTL-Woche ≈ 0,2″ Drift).
+# Die hellen ~30 (G<1,94: Vega, Sirius, …) trägt der Tycho2-Fallback; TGAS ist
+# ersetzt (BJ statt roher DR1-Parallaxen — HD 18560: 177,8 pc).
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/dr3_stars.bin
 format catalog_tycho
 at sun
 ttl 604800
