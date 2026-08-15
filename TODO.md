@@ -925,28 +925,39 @@ Binary-PCK-Pakets oben).
   (TTL-ausgerichtet statt 5 min), (5) verify-Jobs ohne --release
   (Build-Minuten). Prinzip: der Healthcheck prüft, ob sich eine Quelle
   geändert hat (TTL-Ablauf → Fetch), nicht ob eine API gerade antwortet.
+- **Workflow-Entkopplung (2026-08-15):** push und Healthcheck sind getrennt —
+  `ci.yml` (push: cargo check + cargo test, `RUSTFLAGS: -D warnings`) vs.
+  `healthcheck.yml` (nur schedule 0/3h + dispatch; cd+sources zu EINEM
+  verify-Job verschmolzen — ein Cache-Key, kein Race; Mirror/Probe nie auf
+  push). `pages.yml` baut die 5 Cross-Release-Builds nur noch bei Änderungen
+  an src/**, static/**, Cargo.toml (paths-Filter) — Doku-Pushes kosten keine
+  Runner-Minuten mehr.
 - **Upload-Regel (2026-08-15, verbindlich):** CDN-Uploads laufen ausschließlich
   über die CI (`--ci-mode` in den Compilern, kernel_flatten.yml). Manuelle
   Uploads sind keine Option — Befund: der git-Remote-Token hat weder
   releases- noch actions-Rechte (404/403), die Struktur erzwingt CI. Der
   Remote-URL-Token gehört rotiert und auf credential-helper/SSH umgestellt.
 - `refresh-protected-data.yml` (Python inline) → Rust (Befund oben unter Infrastruktur).
-- Ephemeriden-Flatten läuft seit K01 in `kernel_flatten.yml`: Index-Job (voll rekursiver
-  --index-Crawl → phi/sources_index.φ + docs/reference/KERNEL_INDEX.md, Bot-Commit)
-  + Flatten-Job (--fetch-from --systems planets,jupiter,saturn,mars,uranus,neptune,pluto
-  --ci-mode → CDN-Assets ephemeris_{body}.bin, --clobber; Body-Manifest in
-  sources_index.φ; Horizons-Sonden via horizons_compiler --ci-mode; DASTCOM-Katalog
-  via dastcom_compiler --ci-mode). Monatlich + workflow_dispatch. Upload-Fehler
-  exiten seit 2026-08-15 laut (kein stilles let _ = mehr).
-- **Flattener-Befund (2026-08-15):** beide kernel-flatten-Runs (#3 01:40, #4
-  06:40, workflow_dispatch) scheitern bei Step „Flatten SPK bodies and upload
-  to CDN" (ephemeris_compiler --ci-mode, exit 1 nach ~7,5 min — Upload-Pfad
-  `exit(1)` bei upload_failed > 0). Folge: 32 Mond-Assets + alle Katalog-Assets
-  absent (ausstehend). OMEGAFLOW_TOKEN braucht Contents-write auf
-  omegaflow/sources (secrets.template Z.26) — Rechte prüfen, dann erneuter
-  Dispatch. Run-Logs 403-gated (Owner-Read). Offen: nach erfolgreichem
-  Flatten Deckung der 32 Monde prüfen (irreguläre wie himalia evtl. via
-  horizons_compiler-Liste bodies_stable statt SPK).
+- Ephemeriden-Flatten läuft seit K01 in `kernel_flatten.yml` — seit 2026-08-15 als
+  Drei-Job-Struktur: `index` (voll rekursiver --index-Crawl → phi/sources_index.φ +
+  docs/reference/KERNEL_INDEX.md, Artifact statt Mid-Run-Git-Kopplung, Bot-Commit)
+  + `bodies` (needs index, nutzt das Artifact: --fetch-from --systems
+  planets,jupiter,saturn,mars,uranus,neptune,pluto --ci-mode → CDN-Assets
+  ephemeris_{body}.bin, --clobber; Body-Manifest in sources_index.φ;
+  horizons_compiler --ci-mode; dastcom_compiler --ci-mode) + `catalogs` (läuft
+  parallel zum index, kein needs: alle Katalog-Kompilate, continue-on-error je
+  Katalog + Issue bei Void). Cron `17 5 1 * *` (05:17 UTC, kollisionsfrei zum
+  0/3h-Healthcheck) + workflow_dispatch. Failure-Issues je Job.
+- **Flattener-Befund (2026-08-15):** Runs #3/#4 scheiterten beim Upload-Step
+  (OMEGAFLOW_TOKEN auf dem 5000/h-API-Limit — die Push-Healthcheck-Flut hatte
+  die Quota gesprengt). Run #5 (nach Quota-Reset + Queue-Clearing) kam weiter:
+  SPK-Flatten + Horizons + DASTCOM luden durch (15 Monde + dastcom_asteroids.bin
+  im CDN), dann kippte der Sexagesimal-Step: unquotierte `;` in den
+  `--columns`-Argumenten (Bash-Split → tap_compiler bekam nur `name:Name`).
+  Fix manifestiert: alle `--columns` gequotet + Monolith in bodies/catalogs
+  gesplittet (Katalog-Fehler blockt nie wieder die Bodies). Offen: nach
+  erfolgreichem Flatten Deckung der 32 Monde prüfen (irreguläre wie himalia
+  evtl. via horizons_compiler-Liste bodies_stable statt SPK).
 - Katalog-Kompilate seit 2026-08-15 im selben Job: cometels_compiler
   (cometels_flat.json), dcom5_compiler (dcom5_comets.json),
   tycho2_compiler --source bright (bright_stars.json),
@@ -969,7 +980,9 @@ Binary-PCK-Pakets oben).
   (jup365 hat (501,5), (5,0) lebt in de442) — `state_ssb_multi` fixiert;
   Beweis: 8 Jupiter-Monde mit 6.848 Granulen, Ganymed mit stype-4-Nutation.
 - Das Python `refresh.yml` im sources-Repo (Kataloge/TAP/Gaia, Release v1.0) bleibt
-  bis I02 auf Python — K01-Grenze.
+  bis I02 auf Python — K01-Grenze. Entscheidung 2026-08-15: Abschaltung nach
+  Verifikation der Rust-Katalog-Kompilate im kernel_flatten-catalogs-Job
+  (ein Produzent pro Asset).
 - CDN-Asset-Naming: `{name}.json` (ein Asset pro Quelle, CI überschreibt) — Konvention
   ist der Resolver.
 

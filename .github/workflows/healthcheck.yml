@@ -3,18 +3,14 @@ on:
   workflow_dispatch:
   schedule:
     - cron: '0 */3 * * *'
-  push:
-    paths:
-      - 'src/**'
-      - 'phi/**'
-      - 'Cargo.toml'
 permissions:
   contents: write
   issues: write
 env:
   GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
 jobs:
-  cd:
+  verify:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -26,29 +22,6 @@ jobs:
           archivar-cache-
     - uses: actions-rust-lang/setup-rust-toolchain@v1
     - run: cargo run -- --verify phi
-    - uses: actions/cache@v4
-      if: always()
-      with:
-        path: /tmp/archivar_cache
-        key: archivar-cache-${{ github.run_id }}
-    - if: failure()
-      run: |
-        gh issue create --repo omegaflow/omegaflow \
-          --title "health: CDN mirror returned void" \
-          --body "CDN mirror job failed. Last commit: ${{ github.sha }}" \
-          --label health
-
-  sources:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - uses: actions/cache@v4
-      with:
-        path: /tmp/archivar_cache
-        key: archivar-cache-${{ github.run_id }}
-        restore-keys: |
-          archivar-cache-
-    - uses: actions-rust-lang/setup-rust-toolchain@v1
     - run: cargo run -- --verify phi/research
     - uses: actions/cache@v4
       if: always()
@@ -58,34 +31,8 @@ jobs:
     - if: failure()
       run: |
         gh issue create --repo omegaflow/omegaflow \
-          --title "health: source health returned void" \
-          --body "Source health job failed. Last commit: ${{ github.sha }}" \
-          --label health
-
-  build:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - uses: actions-rust-lang/setup-rust-toolchain@v1
-    - run: cargo check
-    - if: failure()
-      run: |
-        gh issue create --repo omegaflow/omegaflow \
-          --title "health: cargo check returned void" \
-          --body "Build job failed on ${{ github.sha }}" \
-          --label health
-
-  test:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - uses: actions-rust-lang/setup-rust-toolchain@v1
-    - run: cargo test
-    - if: failure()
-      run: |
-        gh issue create --repo omegaflow/omegaflow \
-          --title "health: cargo test returned void" \
-          --body "Test job failed on ${{ github.sha }}" \
+          --title "health: verify returned void" \
+          --body "Verify job failed. Last commit: ${{ github.sha }}" \
           --label health
 
   pages-verify:

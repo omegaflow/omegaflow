@@ -9,7 +9,7 @@ auf domain-basierten Releases im Repo `omegaflow/sources`.
 
 Der Rust-Server (Archivar) lädt nur diese öffentlichen Release-Assets — er sieht
 keinen API-Key. Fehlt ein Secret, wird die zugehörige Datenquelle schlicht
-übersprungen (0 honored).
+übersprungen (kein Secret hinterlegt).
 
 ## Secrets anlegen
 

@@ -3,13 +3,14 @@ name: kernel-flatten
 on:
   workflow_dispatch:
   schedule:
-    - cron: '17 3 1 * *'
+    - cron: '17 5 1 * *'
 
 permissions:
   contents: write
 
 env:
   GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
 
 jobs:
   index:
@@ -29,6 +30,14 @@ jobs:
         run: |
           cargo run --release --bin ephemeris_compiler -- \
             --summarize phi/sources_index.φ docs/reference/KERNEL_INDEX.md
+      - name: Upload index artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sources-index
+          path: |
+            phi/sources_index.φ
+            docs/reference/KERNEL_INDEX.md
+          retention-days: 7
       - name: Commit index
         run: |
           git config user.name "omegaflow-bot"
@@ -38,14 +47,16 @@ jobs:
           git pull --rebase origin main
           git push
 
-  flatten:
+  bodies:
     needs: index
     runs-on: ubuntu-latest
+    timeout-minutes: 180
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: main
       - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - uses: actions/download-artifact@v4
+        with:
+          name: sources-index
       - name: Flatten SPK bodies and upload to CDN
         run: |
           cargo run --release --bin ephemeris_compiler -- \
@@ -65,7 +76,30 @@ jobs:
             --input kernels/dast5_le.dat \
             --out dastcom_asteroids.bin \
             --ci-mode
+      - name: Commit body manifest
+        run: |
+          git config user.name "omegaflow-bot"
+          git config user.email "bot@omegaflow.space"
+          git add phi/sources_index.φ
+          git diff --staged --quiet || git commit -m "body manifest $(date -u +'%Y-%m-%dT%H:%MZ')"
+          git pull --rebase origin main
+          git push
+      - name: Report bodies void
+        if: failure()
+        run: |
+          gh issue create --repo omegaflow/omegaflow \
+            --title "flatten: bodies returned void" \
+            --body "Bodies job returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            --label health
+
+  catalogs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Compile sexagesimal catalogs and upload to CDN
+        continue-on-error: true
         run: |
           curl -sSfL --retry 3 --max-time 300 -o kernels/tabo1.csv \
             https://www.physics.mcgill.ca/~pulsar/magnetar/TabO1.csv
@@ -74,42 +108,73 @@ jobs:
           cargo run --release --bin tap_compiler -- \
             --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
             --table J/A+A/495/691/bzcat4 \
-            --columns name:Name;ra:RAJ2000;dec:DEJ2000;z:z \
-            --out kernels/blazars_z.json
+            --columns 'name:Name;ra:RAJ2000;dec:DEJ2000;z:z' \
+            --out kernels/blazars_z.json \
+            || gh issue create --repo omegaflow/omegaflow \
+                 --title "flatten: blazars_z returned void" \
+                 --body "blazars_z compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 --label health
           cargo run --release --bin tap_compiler -- \
             --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
             --table J/A+A/612/A1/snrcat \
-            --columns name:Source;ra:@8;dec:@9;dist:Dist \
-            --out kernels/snr_dist.json
+            --columns 'name:Source;ra:@8;dec:@9;dist:Dist' \
+            --out kernels/snr_dist.json \
+            || gh issue create --repo omegaflow/omegaflow \
+                 --title "flatten: snr_dist returned void" \
+                 --body "snr_dist compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 --label health
           cargo run --release --bin tap_compiler -- \
             --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
             --table B/psr/psr \
-            --columns name:Name;ra:RA2000;dec:DE2000;dist:Dist \
-            --out kernels/pulsar_dist.json
+            --columns 'name:Name;ra:RA2000;dec:DE2000;dist:Dist' \
+            --out kernels/pulsar_dist.json \
+            || gh issue create --repo omegaflow/omegaflow \
+                 --title "flatten: pulsar_dist returned void" \
+                 --body "pulsar_dist compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 --label health
           cargo run --release --bin sexagesimal_compiler -- \
-            --source magnetar --input kernels/tabo1.csv --out magnetar_flat.json --ci-mode
+            --source magnetar --input kernels/tabo1.csv --out magnetar_flat.json --ci-mode \
+            || gh issue create --repo omegaflow/omegaflow \
+                 --title "flatten: magnetar_flat returned void" \
+                 --body "magnetar_flat compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 --label health
           cargo run --release --bin sexagesimal_compiler -- \
             --source tevcat --input kernels/tevcat2.json \
             --join-z kernels/blazars_z.json --join-dist kernels/snr_dist.json \
             --join-dist2 kernels/pulsar_dist.json 0.0083 \
-            --out tevcat_flat.json --ci-mode
+            --out tevcat_flat.json --ci-mode \
+            || gh issue create --repo omegaflow/omegaflow \
+                 --title "flatten: tevcat_flat returned void" \
+                 --body "tevcat_flat compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 --label health
       - name: Compile MPC cometels catalog and upload to CDN
+        continue-on-error: true
         run: |
           curl -sSfL --retry 3 --max-time 600 -o kernels/cometels.json.gz \
             https://www.minorplanetcenter.net/Extended_Files/cometels.json.gz
           cargo run --release --bin cometels_compiler -- \
             --input kernels/cometels.json.gz \
             --out cometels_flat.json \
-            --ci-mode
+            --ci-mode \
+            || gh issue create --repo omegaflow/omegaflow \
+                 --title "flatten: cometels_flat returned void" \
+                 --body "cometels_flat compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 --label health
       - name: Compile DASTCOM5 comet apparition catalog and upload to CDN
+        continue-on-error: true
         run: |
           curl -sSfL --retry 3 --max-time 7200 -o kernels/dcom5_le.dat \
             https://ssd.jpl.nasa.gov/ftp/xfr/dcom5_le.dat
           cargo run --release --bin dcom5_compiler -- \
             --input kernels/dcom5_le.dat \
             --out dcom5_comets.json \
-            --ci-mode
+            --ci-mode \
+            || gh issue create --repo omegaflow/omegaflow \
+                 --title "flatten: dcom5_comets returned void" \
+                 --body "dcom5_comets compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 --label health
       - name: Compile exoplanet catalog and upload to CDN
+        continue-on-error: true
         run: |
           cargo run --release --bin tap_compiler -- \
             --root https://exoplanetarchive.ipac.caltech.edu/TAP/sync \
@@ -118,8 +183,13 @@ jobs:
             --columns 'name:pl_name;ra:ra;dec:dec;dist:sy_dist;masse:pl_masse;rade:pl_rade' \
             --skip-null dist \
             --out exoplanets.json \
-            --ci-mode
+            --ci-mode \
+            || gh issue create --repo omegaflow/omegaflow \
+                 --title "flatten: exoplanets returned void" \
+                 --body "exoplanets compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 --label health
       - name: Compile BZCAT5 blazar catalog and upload to CDN
+        continue-on-error: true
         run: |
           cargo run --release --bin tap_compiler -- \
             --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
@@ -127,8 +197,13 @@ jobs:
             --columns 'name:Name;ra:RAJ2000;dec:DEJ2000;z:z;flux:FR;typ:Class' \
             --skip-null z \
             --out bzcat5.json \
-            --ci-mode
+            --ci-mode \
+            || gh issue create --repo omegaflow/omegaflow \
+                 --title "flatten: bzcat5 returned void" \
+                 --body "bzcat5 compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 --label health
       - name: Compile Swift GRB catalog and upload to CDN
+        continue-on-error: true
         run: |
           cargo run --release --bin tap_compiler -- \
             --root https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync \
@@ -138,8 +213,13 @@ jobs:
             --columns 'name:name;ra:ra;dec:dec;z:redshift;fluence:bat_fluence;t90:bat_t90' \
             --skip-null z \
             --out swiftgrb.json \
-            --ci-mode
+            --ci-mode \
+            || gh issue create --repo omegaflow/omegaflow \
+                 --title "flatten: swiftgrb returned void" \
+                 --body "swiftgrb compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 --label health
       - name: Compile Gaia DR3 + Bailer-Jones star catalog and upload to CDN
+        continue-on-error: true
         run: |
           curl -sSfL --retry 3 --max-time 1200 -o kernels/hip_main.dat \
             https://cdsarc.cds.unistra.fr/ftp/I/239/hip_main.dat
@@ -154,28 +234,41 @@ jobs:
             --epoch 2016 --limit 90000 --star-bin \
             --union-bright kernels/bright_stars.json \
             --out dr3_stars.bin \
-            --ci-mode
+            --ci-mode \
+            || gh issue create --repo omegaflow/omegaflow \
+                 --title "flatten: dr3_stars returned void" \
+                 --body "dr3_stars compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 --label health
       - name: Compile FRBCAT via TAPVizieR and upload to CDN
+        continue-on-error: true
         run: |
           cargo run --release --bin tap_compiler -- \
             --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
             --table J/other/PASA/33.45/frbcat \
-            --columns name:Name;ra:RAJ2000;dec:DEJ2000;z:zHost;dm:DM;speak:Speak \
+            --columns 'name:Name;ra:RAJ2000;dec:DEJ2000;z:zHost;dm:DM;speak:Speak' \
             --out frbcat_flat.json \
-            --ci-mode
+            --ci-mode \
+            || gh issue create --repo omegaflow/omegaflow \
+                 --title "flatten: frbcat_flat returned void" \
+                 --body "frbcat_flat compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 --label health
       - name: Compile FRB A279 via TAPVizieR and upload to CDN
+        continue-on-error: true
         run: |
           cargo run --release --bin tap_compiler -- \
             --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
             --table J/A+A/693/A279/frbs \
-            --columns name:TNS;ra:RAJ2000;dec:DEJ2000;z:z;dm:DM;tausc:tausc \
+            --columns 'name:TNS;ra:RAJ2000;dec:DEJ2000;z:z;dm:DM;tausc:tausc' \
             --out frb_a279.json \
-            --ci-mode
-      - name: Commit body manifest
+            --ci-mode \
+            || gh issue create --repo omegaflow/omegaflow \
+                 --title "flatten: frb_a279 returned void" \
+                 --body "frb_a279 compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 --label health
+      - name: Report catalogs void
+        if: failure()
         run: |
-          git config user.name "omegaflow-bot"
-          git config user.email "bot@omegaflow.space"
-          git add phi/sources_index.φ
-          git diff --staged --quiet || git commit -m "body manifest $(date -u +'%Y-%m-%dT%H:%MZ')"
-          git pull --rebase origin main
-          git push
+          gh issue create --repo omegaflow/omegaflow \
+            --title "flatten: catalogs returned void" \
+            --body "Catalogs job returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            --label health
