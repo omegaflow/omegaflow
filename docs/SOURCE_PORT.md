@@ -141,10 +141,18 @@ Kernel-Vorgabe pro Force (Konverter): em/gravity → inverse-square, acoustic/
 seismic-body/diffusion → gaussian-inverse-square, seismic-surface → erfc,
 thermal → exponential-decay, advective → patch-levy.
 
-Klassifikation: (accepted) → `sources.φ`; `dead` (Endpoint weg) →
-`dead_sources.φ`; `parser-def` (Format unkonsumierbar) → `dead_sources.φ` mit
-Gap-Verweis (oder `park/` bei Block-Draft); `decline` (Force-Gate) →
-`dead_sources.φ`; `key-needed` (kostenfreie Registrierung) → `dead_sources.φ`.
+Klassifikation: (accepted) → `sources.φ`; `parser-def` (Format
+unkonsumierbar) → `dead_sources.φ` mit Gap-Verweis (oder `park/` bei
+Block-Draft); `decline` (Force-Gate) → `dead_sources.φ`.
+
+**Toter Endpoint ist kein Endzustand.** Funktioniert der Endpoint nicht, wird
+erst recherchiert: alternative Endpoints, URL-Änderungen (API-Versionen,
+Redirects, Pfad-Renames) und Misspellings. `dead 404/400/5xx/dns/timeout`
+ist ein Recherche-Auftrag, keine Disposition. Wirklich declined sind nur
+zwei Fälle: (a) der Anbieter ist komplett abgeschaltet (kein öffentlicher
+Nachfolger), (b) die Quelle ist nicht-physikalisch (Force-Gate). Erst wenn
+die Recherche leer bleibt, wird `dead` mit `note` festgeschrieben, die den
+Recherche-Stand nennt (Alternativen geprüft, Fund: keine).
 
 ## 9. Fix-Rezepte + API-Fakten (hart erworben)
 
@@ -182,6 +190,11 @@ Gap-Verweis (oder `park/` bei Block-Draft); `decline` (Force-Gate) →
   Content`) bereits (Test `test_parse_json_skips_jina_header`). `dead
   dns-unresolved/timeout/unreachable/ssl`-Einträge über das `r.jina.ai/`-
   Präfix erneut prüfen, bevor sie endgültig bleiben.
+- **Toter Endpoint → Recherche-Rezept**: (1) Status-/Docs-Seite des Anbieters
+  prüfen (Umzug, API-Version), (2) Sibling-Endpoints desselben Netloc,
+  (3) URL-Pfad auf Versions-Bumps/Renames, (4) Misspelling gegen den
+  Provider-Namen, (5) Jina-Präfix für Netzwerk-Blocks. Nur wenn all das leer
+  bleibt → `dead` mit `note`, die den Recherche-Stand nennt.
 - Der `--gold`-Konverter übernimmt: `url/format/header/target/catalog/
   flux_from_mag/abs_mag_from/catalog_epoch` direkt; `ttl`; `on/at`;
   numerisches `lat/lon/alt` → synthetisches `on earth`; `map/cmap/rows`;
