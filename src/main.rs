@@ -9346,6 +9346,120 @@ mod tests {
     }
 
     #[test]
+    fn test_backlog_batches_verify() {
+        let live: std::collections::HashSet<String> = super::load_sources()
+            .iter()
+            .map(|s| s.url.clone())
+            .collect();
+        let mut seen: std::collections::HashSet<String> = std::collections::HashSet::new();
+        let mut ok_text = String::from("# staging: backlog blocks verified with samples\n");
+        let mut void_text = String::new();
+        let fixture_lsk = super::LeapSeconds {
+            delta_t_a: 32.184,
+            deltas: vec![(37.0, 1483228800.0)],
+        };
+        let now = fixture_lsk.system_now_tdb().unwrap();
+        let env = super::load_env();
+        let mut limit = 180usize;
+        let mut ok = 0usize;
+        let mut empty = 0usize;
+        for e in std::fs::read_dir("phi/research/agent_output")
+            .unwrap()
+            .flatten()
+        {
+            let fname = e.file_name().to_string_lossy().to_string();
+            if !fname.ends_with("_accepted.φ") {
+                continue;
+            }
+            let content = std::fs::read_to_string(e.path()).unwrap();
+            let mut block = String::new();
+            for line in content.lines() {
+                let t = line.trim_start();
+                if t.starts_with("url ") && !block.is_empty() {
+                    if limit == 0 {
+                        break;
+                    }
+                    let srcs = super::parse_sources(&block);
+                    for s in &srcs {
+                        if live.contains(&s.url) || !seen.insert(s.url.clone()) {
+                            break;
+                        }
+                        if s.fanout_cap > 0 || s.format == "csv_zip" || s.format == "kernel_text" {
+                            break;
+                        }
+                        limit -= 1;
+                        let mut url = s.url.clone();
+                        for (k, v) in [
+                            ("{today}", "2026-08-07"),
+                            ("{yesterday}", "2026-08-06"),
+                            ("{tomorrow}", "2026-08-08"),
+                            ("{now}", "2026-08-07T12:00:00Z"),
+                            ("{year}", "2026"),
+                            ("{month}", "08"),
+                            ("{day}", "07"),
+                            ("{lat}", "29.5"),
+                            ("{lon}", "-95.0"),
+                            ("{ra}", "0.0"),
+                            ("{dec}", "0.0"),
+                            ("{target}", "Ceres"),
+                            ("{week_ago}", "2026-07-31"),
+                            ("{hour_ago}", "2026-08-07T11:00:00Z"),
+                            ("{body}", "ISS"),
+                            ("{lon_min}", "-95.0"),
+                            ("{lon_max}", "-94.0"),
+                            ("{lat_min}", "29.0"),
+                            ("{lat_max}", "30.0"),
+                            ("{grid}", "29.5,-95.0|29.6,-95.0"),
+                            ("{nearest_station}", "8518750"),
+                        ] {
+                            url = url.replace(k, v);
+                        }
+                        url = super::resolve_secret(&url, &env);
+                        let headers = super::render_headers(&s.headers, &env);
+                        let body = match super::fetch_one(&url, None, &headers, s.ttl) {
+                            Some(b) => b,
+                            None => {
+                                empty += 1;
+                                void_text.push_str(&format!(
+                                    "void {} {}\n",
+                                    url, "fetch returned empty"
+                                ));
+                                break;
+                            }
+                        };
+                        let n_samples = match super::extract(s, &body, now, &fixture_lsk) {
+                            super::ExtractResult::Measurements(v) => v.len(),
+                            super::ExtractResult::WithEphemeris(v, _) => v.len(),
+                        };
+                        if n_samples == 0 {
+                            empty += 1;
+                            void_text.push_str(&format!(
+                                "void {} {}\n",
+                                url,
+                                super::diagnose_no_samples(s, &body)
+                            ));
+                        } else {
+                            ok += 1;
+                            ok_text.push_str(&format!("# from {}\n", fname));
+                            ok_text.push_str(&block);
+                            ok_text.push('\n');
+                        }
+                    }
+                    block = String::new();
+                }
+                block.push_str(line);
+                block.push('\n');
+            }
+        }
+        eprintln!("=== BACKLOG VERIFY: {} ok, {} empty ===", ok, empty);
+        let ok_path = "phi/research/agent_output/staging_verified.φ";
+        let void_path = "phi/research/agent_output/staging_empty.txt";
+        std::fs::write(ok_path, &ok_text).unwrap();
+        std::fs::write(void_path, &void_text).unwrap();
+        eprintln!("staged: {} and {}", ok_path, void_path);
+    }
+
+    #[test]
     fn test_erddap_argo_map_extract() {
         let src = SourceConfig {
             ttl: 43200,

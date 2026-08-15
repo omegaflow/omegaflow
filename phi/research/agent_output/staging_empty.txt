@@ -1,0 +1,99 @@
+void http://www.nmdb.eu/nmdb/qtipart.php?station=ALMT&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=AUST&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=BOUL&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=CTWN&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=DOMC&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=ERMN&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=FSMT&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=GOOS&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=HALF&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=INVK&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=KERG&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=KIEL&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=MOSC&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=NAIN&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=NRLK&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=PWNK&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=REYK&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=SANA&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=TBLS&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=ULNB&start=2026-08-06&end=2026-08-07&format=json&bins=3600 fetch returned empty
+void https://service.scedc.caltech.edu/fdsnws/event/1/query?format=geojson&minmagnitude=1.5&limit=500&orderby=time&starttime=2026-08-07T00:00:00 fetch returned empty
+void https://services.swpc.noaa.gov/json/goes/primary/xray-flux-1-minute.json fetch returned empty
+void https://scweb.cwa.gov.tw/api/v1/earthquake/latest?limit=200 fetch returned empty
+void https://seismo.ethz.ch/fdsnws/event/1/query?format=geojson&minmagnitude=1.0&limit=200&orderby=time&starttime=2026-08-07T00:00:00 fetch returned empty
+void https://earthquake.tmd.go.th/earthquake_json.php?limit=200 empty-response (JSON parsed but all containers empty)
+void https://services.swpc.noaa.gov/products/geospace/glm_lightning_density.json fetch returned empty
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8760721&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow data-present (keys exist but no rows extracted)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8761927&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow data-present (keys exist but no rows extracted)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8764044&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow data-present (keys exist but no rows extracted)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8766072&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow data-present (keys exist but no rows extracted)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8767816&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow data-present (keys exist but no rows extracted)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8770613&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow data-present (keys exist but no rows extracted)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8772985&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow data-present (keys exist but no rows extracted)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8773037&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow data-present (keys exist but no rows extracted)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8775222&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow data-present (keys exist but no rows extracted)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8777812&product=water_level&datum=MSL&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow data-present (keys exist but no rows extracted)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9014070&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow data-present (keys exist but no rows extracted)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9052030&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow data-present (keys exist but no rows extracted)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9052076&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow data-present (keys exist but no rows extracted)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9063038&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow data-present (keys exist but no rows extracted)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9063053&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow data-present (keys exist but no rows extracted)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9063079&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow data-present (keys exist but no rows extracted)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9075014&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow data-present (keys exist but no rows extracted)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9075065&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow data-present (keys exist but no rows extracted)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9075080&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow data-present (keys exist but no rows extracted)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9087023&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow data-present (keys exist but no rows extracted)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9087031&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow data-present (keys exist but no rows extracted)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9087044&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow data-present (keys exist but no rows extracted)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9087057&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow data-present (keys exist but no rows extracted)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9087068&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow data-present (keys exist but no rows extracted)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9099018&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow data-present (keys exist but no rows extracted)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9099044&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow empty-response (JSON parsed but all containers empty)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9099064&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow data-present (keys exist but no rows extracted)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9099090&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow data-present (keys exist but no rows extracted)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9410170&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow data-present (keys exist but no rows extracted)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9410660&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow data-present (keys exist but no rows extracted)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9411340&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow data-present (keys exist but no rows extracted)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9412110&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow data-present (keys exist but no rows extracted)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9413450&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow data-present (keys exist but no rows extracted)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9414290&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow data-present (keys exist but no rows extracted)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9416131&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow data-present (keys exist but no rows extracted)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9416841&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow data-present (keys exist but no rows extracted)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9418767&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow data-present (keys exist but no rows extracted)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9419750&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow data-present (keys exist but no rows extracted)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9431647&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow data-present (keys exist but no rows extracted)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9435380&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow data-present (keys exist but no rows extracted)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9437540&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow data-present (keys exist but no rows extracted)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9440910&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow data-present (keys exist but no rows extracted)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9442396&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow data-present (keys exist but no rows extracted)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9444900&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow data-present (keys exist but no rows extracted)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9450460&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow data-present (keys exist but no rows extracted)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9451054&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow data-present (keys exist but no rows extracted)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9452210&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow data-present (keys exist but no rows extracted)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9452400&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow data-present (keys exist but no rows extracted)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9452634&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow data-present (keys exist but no rows extracted)
+void https://earthquake.alaska.edu/fdsnws/event/1/query?format=geojson&minmagnitude=2.0&limit=200&orderby=time&starttime=2026-08-07T00:00:00 fetch returned empty
+void https://www.ndbc.noaa.gov/data/realtime2/42003.txt fetch returned empty
+void https://www.ndbc.noaa.gov/data/realtime2/42019.txt fetch returned empty
+void https://www.ndbc.noaa.gov/data/realtime2/42020.txt fetch returned empty
+void https://www.ndbc.noaa.gov/data/realtime2/42040.txt fetch returned empty
+void https://www.ndbc.noaa.gov/data/realtime2/44004.txt fetch returned empty
+void https://power.larc.nasa.gov/api/temporal/monthly/point?parameters=ALLSKY_SFC_UV_INDEX&community=AG&longitude=0&latitude=0&start=2026&end=2026&format=JSON fetch returned empty
+void https://services.swpc.noaa.gov/json/geospace/geospace_dst_1_hour.json data-present (JSON has content but declared keys absent)
+void https://services.swpc.noaa.gov/json/planetary_k_index_1m.json data-present (JSON has content but declared keys absent)
+void https://webservices.ingv.it/fdsnws/event/1/query?format=geojson&minmagnitude=2.5&limit=200 empty-response (JSON parsed but all containers empty)
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TTB/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=TUC/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=UPS/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VALL/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VNA/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VOS/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=VSS/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WIC/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=WNG/best-avail/PT1M/xyzf&start=2026-08-06T00:00:00Z&stop=2026-08-07T12:00:00ZZ&format=json fetch returned empty
+void https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/AC_H0_MFI/variables/BGSEc,Magnitude/data/2026-08-07T00:00:00.000Z/2026-08-07T23:59:59.000Z?format=csv fetch returned empty
+void https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/GOES16_L2_MAG/variables/Hp,He,Hn,B_Total/data/2026-08-07T00:00:00.000Z/2026-08-07T23:59:59.000Z?format=csv fetch returned empty
+void https://www.ndbc.noaa.gov/data/realtime2/51003.txt fetch returned empty
+void https://www.ndbc.noaa.gov/data/realtime2/51005.txt fetch returned empty
+void https://www.pegelonline.wsv.de/webservices/rest-api/v2/stations.json?includeCurrentMeasurement=true data-present (container array has rows but extract yielded nothing)

@@ -1,6 +1,23 @@
 # ── Source Curation: Declined Sources ──
 # Format: <category> <reason> \n url <url> \n note <explanation>
 
+# ── NIST Randomness Beacon ──
+# Force Gate: Zufalls-Bits sind keine physikalische Messung — kein Organismus
+# kann Zufälligkeit als Feld wahrnehmen. pulseIndex ist zudem ein Zähler.
+
+decline no-physical-force
+url https://beacon.nist.gov/beacon/2.0/pulse/last
+note NIST randomness beacon — cryptographic entropy, no physical force. pulseIndex is a dropped counter. Batch-Agent hatte ihn fälschlich als em acceptiert.
+
+# ── NDBC ArcGIS FeatureServer ──
+# Dead: die Query liefert 400 „Invalid query parameters" (auch ohne
+# resultRecordCount). Ersatz: 29 verifizierte Per-Station-Buoys liegen in
+# phi/research/agent_output/staging_verified.φ (letzte-Session-Artefakt).
+
+dead invalid-query
+url https://services5.arcgis.com/7weheFjxuNkGGiZi/arcgis/rest/services/National_Data_Buoy_Center_Station_Observations/FeatureServer/0/query
+note ArcGIS FeatureServer rejects the query with 400 regardless of parameters. Replacement: 29 per-station NDBC buoy blocks verified in staging_verified.φ.
+
 # ── OpenAQ ──
 # Integriert 2026-08-15 via P09 Fanout (phi/sources.φ: pm25-Sensoren, diffusion).
 # Ursprünglicher Befund: v2 (flacher globaler /v2/measurements) → 410 gone;

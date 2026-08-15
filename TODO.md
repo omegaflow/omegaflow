@@ -470,7 +470,13 @@ Binary-PCK-Pakets oben).
   Hurricanes-Sampler (Forecast-Track-Punkte, §Model), SIMBAD-TAP (VOTable
   trotz format=json).
 - `phi/research/agent_output/batch_*_accepted.φ` (32 Dateien, neue Grammatik):
-  konvertierte Blöcke, die nie nach phi/sources.φ übernommen wurden.
+  629 Blöcke, 625 parse-fähig, 389 unique vs. live. `test_backlog_batches_verify`
+  (Verifizierer) hat 81 mit Samples verifiziert → `staging_verified.φ`,
+  99 diagnostiziert → `staging_empty.txt` (2026-08-15). Integriert: 8 kuratierte
+  Blöcke (SWPC GOES Flux-Familie, Kp-Index, OpenSky global, Waterservices).
+  NIST-Beacon decline (no-physical-force). Offen: ~70 verifizierte in Staging
+  (29 Per-Station-Buoys — Ersatz für den toten ArcGIS-NDBC-Block, ~20
+  Tides&Currents-Stationen, SWPC ACE, BOM) + ~290 unverifizierte Unique.
 - `archeology/sources/sources_gold_pre-cdn_27k_359-domains.φ` (2572 Blöcke, alte
   force-Grammatik) + `sources_recovery_pre-cdn_25k_211-domains.φ` (1924): Migration
   nach Protokoll (docs/source_curation.md); die alte Grammatik wird derzeit noch
