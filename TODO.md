@@ -955,9 +955,19 @@ Binary-PCK-Pakets oben).
   im CDN), dann kippte der Sexagesimal-Step: unquotierte `;` in den
   `--columns`-Argumenten (Bash-Split → tap_compiler bekam nur `name:Name`).
   Fix manifestiert: alle `--columns` gequotet + Monolith in bodies/catalogs
-  gesplittet (Katalog-Fehler blockt nie wieder die Bodies). Offen: nach
-  erfolgreichem Flatten Deckung der 32 Monde prüfen (irreguläre wie himalia
-  evtl. via horizons_compiler-Liste bodies_stable statt SPK).
+  gesplittet (Katalog-Fehler blockt nie wieder die Bodies).
+- **Kernel-Generations-Befund (2026-08-15):** Der Flatten schrieb 32 SPK-Körper,
+  aber 17 Monde fehlen, weil `select_system` nur die höchste Basis-Generation
+  lud: sat480 (nur Barycenter 699) statt sat441 (alle Saturn-Monde), jup387xl
+  (8 Monde, kein himalia) statt jup341, nep105 statt nep097. Die sechs
+  Aug-11-Assets (titan/tethys/rhea/enceladus/dione/triton) sind Stale-Reste der
+  sat441/nep097-Generation. Fix manifestiert: select_system kettet die zwei
+  besten Basen (sat480+sat441, nep105+nep097, jup387xl+jup365) mit Name-Dedupe
+  (der NAIF-generic-jup365-Eintrag mit 69632 B ist ein Crawl-Stub); himalia
+  (506) läuft über die Horizons-Liste bodies_stable, weil jup387xl/jup365 ihn
+  nicht tragen und jup341 (364 MB) allein für ihn zu teuer wäre. Offen:
+  CDN-Befund nach dem nächsten Flatten — falls nep097 die Neptun-Inneren
+  (803-808) nicht trägt, nep086 ketten.
 - Katalog-Kompilate seit 2026-08-15 im selben Job: cometels_compiler
   (cometels_flat.json), dcom5_compiler (dcom5_comets.json),
   tycho2_compiler --source bright (bright_stars.json),

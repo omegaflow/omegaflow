@@ -1005,12 +1005,29 @@ fn select_system(entries: &[IndexEntry], system: &str) -> Vec<IndexEntry> {
         .filter(|e| e.family == "spk-satellites" && e.name.starts_with(prefix))
         .cloned()
         .collect();
-    if let Some(best) = pick_spk(&spk) {
-        let base = base_of(&best.name);
-        for e in &spk {
-            if base_of(&e.name) == base {
-                out.push(e.clone());
-            }
+    let mut ranked = spk.clone();
+    ranked.sort_by(|a, b| {
+        numeric_of(&b.name)
+            .cmp(&numeric_of(&a.name))
+            .then(is_ssd(&b.url).cmp(&is_ssd(&a.url)))
+            .then(is_light(&b.name).cmp(&is_light(&a.name)))
+            .then(a.name.len().cmp(&b.name.len()))
+    });
+    let mut bases: Vec<String> = Vec::new();
+    for e in &ranked {
+        let base = base_of(&e.name);
+        if !bases.contains(&base) {
+            bases.push(base);
+        }
+        if bases.len() >= 2 {
+            break;
+        }
+    }
+    let mut pushed: HashSet<String> = HashSet::new();
+    for e in &spk {
+        let base = base_of(&e.name);
+        if bases.contains(&base) && pushed.insert(e.name.clone()) {
+            out.push(e.clone());
         }
     }
     let pck: Vec<IndexEntry> = entries

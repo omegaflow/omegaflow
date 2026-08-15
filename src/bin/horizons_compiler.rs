@@ -682,6 +682,7 @@ fn main() {
         ("Apophis", "apophis"),
         ("Bennu", "bennu"),
         ("90000031", "encke"),
+        ("506", "himalia"),
     ];
     let bodies_dynamic: &[(&str, &str)] = &[
         ("-125544", "iss"),
