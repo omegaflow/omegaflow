@@ -706,6 +706,11 @@ Binary-PCK-Pakets oben).
 
 ### CI Pipeline
 
+- **Upload-Regel (2026-08-15, verbindlich):** CDN-Uploads laufen ausschließlich
+  über die CI (`--ci-mode` in den Compilern, kernel_flatten.yml). Manuelle
+  Uploads sind keine Option — Befund: der git-Remote-Token hat weder
+  releases- noch actions-Rechte (404/403), die Struktur erzwingt CI. Der
+  Remote-URL-Token gehört rotiert und auf credential-helper/SSH umgestellt.
 - `refresh-protected-data.yml` (Python inline) → Rust (Befund oben unter Infrastruktur).
 - Ephemeriden-Flatten läuft seit K01 in `kernel_flatten.yml`: Index-Job (voll rekursiver
   --index-Crawl → phi/sources_index.φ + docs/reference/KERNEL_INDEX.md, Bot-Commit)
