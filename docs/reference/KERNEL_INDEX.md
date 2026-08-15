@@ -33,11 +33,11 @@ nicht geladen (keine Kameras, keine Bordzeit — NAIF-PDF-Bewertung).
 | System | SPK | PCK |
 |---|---|---|
 | planets | de721_full.bsp | pck00011.tpc |
-| jupiter | jup387xl.bsp | pck.jup365.tpc |
+| jupiter | jup365.bsp | pck.jup365.tpc |
 | saturn | sat441.bsp | pck.sat441.tpc |
 | mars | mar099s.bsp | pck.mar099.tpc |
 | uranus | ura184_part-3.bsp | pck.ura182.tpc |
-| neptune | nep105.bsp | pck.nep097.tpc |
+| neptune | nep097.bsp | pck.nep097.tpc |
 | pluto | plu060.bsp | pck.plu060.tpc |
 
 Auswahlregel: erste Ziffernfolge im Namen = Version, höchste gewinnt; bei
