@@ -1,5 +1,5 @@
-# library — gewichtete Tags (Ratssitzung 2026-08-15, fünfte Fassung)
-# Schichten: b2find + Klassenwörter + NASA-CMR + GBIF + NASA-GCMD-Leaves
+# library — gewichtete Tags (Ratssitzung 2026-08-15, siebte Fassung)
+# Schichten: b2find + Klassenwörter + CMR + GBIF + GCMD + SWPC/Gaia/CDAWeb/SIMBAD/ArcGIS
 # format: <gewicht> <force|-> <tag...>
 -8 - Arts and Humanities
 -8 - Arkeologisk minne
@@ -2265,3 +2265,97 @@
 8 advective wind waves
 -8 - woody biomass
 8 diffusion x-ray flux
+8 em suvi
+8 em kyoto dst
+8 em k index
+8 em geomagnetic
+8 em 10cm flux
+4 em solar cycle
+8 acoustic gong
+8 em glotec
+8 em total electron content
+8 em coronagraph
+4 em geospace
+4 em igsl
+4 em hipparcos
+4 em tycho2
+4 em bepicolombo
+4 em biosentinel
+4 em cirbe
+4 em cnofs
+4 em crres
+4 em csswe
+4 em dscovr
+4 em elfin
+4 em formosat-rocsat
+4 em geotail
+4 em giotto
+4 em hawkeye
+4 em ibex
+4 em imap
+4 em interball
+4 em isee
+4 em lexi
+4 em maven
+4 em mms
+4 em munin
+4 em ohzora
+4 em omni
+4 em pmc-turbo
+4 em prognoz
+4 em psp
+4 em psyche
+4 em radiojove
+4 em rbsp
+4 em rosetta
+4 em sakigake
+4 em sampex
+4 em sesame
+4 em snoe
+4 em soho
+4 em solar-orbiter
+4 em sondestrom
+4 em stelab
+4 em stereo
+4 em suisei
+4 em themis
+4 em timed
+4 em tracers
+4 em tss
+4 em twins
+4 em ulysses
+4 em voyager
+4 em aerocube
+4 em alouette
+4 em ampte
+4 em canopus
+4 em cassini
+4 em dmsp
+4 em goes
+4 em galileo
+4 em helios
+4 em juice
+4 em juno
+4 em mariner
+4 em new-horizons
+4 em pioneer
+4 em polar
+4 em iss
+-4 - cartografía
+-4 - cartografia
+-4 - altimetría
+-4 - altimetria
+-4 - fotogrametría
+-4 - fotogrametria
+-4 - planimetría
+-4 - planimetria
+-4 - toponimia
+-4 - restitución
+-4 - restitucion
+4 em imagery
+8 em pulsar
+8 em supernova remnant
+8 em blazar
+8 em quasar
+8 em hii
+8 gravity gravitational wave
