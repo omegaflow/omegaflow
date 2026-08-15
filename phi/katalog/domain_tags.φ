@@ -28,4 +28,6 @@ domain dc.g-vo.org | TAP | done | katalog/tap_index_gavo.φ
 domain gaia.ari.uni-heidelberg.de | TAP | done | katalog/tap_index_ari.φ
 domain exoplanetarchive.ipac.caltech.edu | TAP | done | katalog/tap_index_exoarchive.φ
 domain heasarc.gsfc.nasa.gov | Xamin TAP | done | katalog/tap_index_heasarc.φ
-domain services*.arcgis.com | REST/Item-Tags | offen | kein globaler Tag-Endpoint → Item-Crawl
+domain services*.arcgis.com | REST-Item-Crawl (12 Typen, ~84k Items) | done | katalog/arcgis_tags.φ (95.596 Tags)
+domain terrapulse | TerraPulse-Katalog (25 Seiten, 469 Quellen) | done | katalog/terrapulse_catalog.φ (103 candidate: NCEI 59, JPL 4, NASA 3…; 366 decline)
+domain catalog.data.gov | CKAN package_search | recheck | API „Not Found" — Katalog migriert, neuer Endpoint suchen
