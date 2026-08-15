@@ -170,6 +170,14 @@ Gap-Verweis (oder `park/` bei Block-Draft); `decline` (Force-Gate) →
 - Refused-Befunde des Ladens sind Source-Befunde, nie Parser-Fixes:
   `pos without body directive` → Block trägt `body <body>`; `no reference
   frame` → Block braucht `on`/`at`.
+- **Auth ist kein Hindernis** solange die Registrierung frei, public und
+  nicht-kommerziell ist (NASA Earthdata, NOAA, Copernicus, GBIF, …).
+  Kommerzielle/private Keys bleiben declined. Re-review-Kandidaten stehen in
+  `phi/port/review_kandidaten.txt` (aus `dead_sources.φ` gezogen).
+- **Jina-Reader** (`https://r.jina.ai/<url>`) umgeht Netzwerk-Blocks und
+  Git-Blocks (raw.githubusercontent, geo-Blockierung): `dead dns-unresolved/
+  timeout/unreachable/ssl`-Einträge erst über den Reader erneut prüfen,
+  bevor sie endgültig bleiben.
 - Der `--gold`-Konverter übernimmt: `url/format/header/target/catalog/
   flux_from_mag/abs_mag_from/catalog_epoch` direkt; `ttl`; `on/at`;
   numerisches `lat/lon/alt` → synthetisches `on earth`; `map/cmap/rows`;
