@@ -318,11 +318,16 @@ fn main() {
     let mut col_names: Vec<String> = Vec::new();
     let col_idx: Vec<(String, usize)>;
     let mut rows_out: Vec<String> = Vec::new();
-    let cols_sel = mapping
-        .iter()
-        .map(|(_, c)| format!("\"{}\"", c))
-        .collect::<Vec<_>>()
-        .join(",");
+    let any_positional = mapping.iter().any(|(_, c)| c.starts_with('@'));
+    let cols_sel = if any_positional {
+        "*".to_string()
+    } else {
+        mapping
+            .iter()
+            .map(|(_, c)| format!("\"{}\"", c))
+            .collect::<Vec<_>>()
+            .join(",")
+    };
     let adql = format!("SELECT TOP {} {} FROM \"{}\"", limit, cols_sel, table);
     let Some(body) = tap_query(&root, &adql) else {
         eprintln!("query returned void");
@@ -343,7 +348,13 @@ fn main() {
             }
         }
     }
-    let idx_of = |col: &str| -> Option<usize> { col_names.iter().position(|c| c == col) };
+    let idx_of = |col: &str| -> Option<usize> {
+        if let Some(n) = col.strip_prefix('@') {
+            n.parse::<usize>().ok()
+        } else {
+            col_names.iter().position(|c| c == col)
+        }
+    };
     col_idx = mapping
         .iter()
         .filter_map(|(k, c)| idx_of(c).map(|i| (k.clone(), i)))

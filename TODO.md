@@ -595,6 +595,14 @@ Binary-PCK-Pakets oben).
   CHIME-Katalog (536, ohne z) — außerhalb von VizieR. Offen: Union-Merge mit
   TNS-Namens-Normalisierung (FRB121102 ↔ FRB20121102A) + frbcat.org-CSV als
   Quelle (sexagesimal_compiler-Muster).
+- TeVCat-Enrichment (2026-08-15): --join-z (BZCAT4, J/A+A/495/691/bzcat4,
+  3149 Blazare, 2551 mit z) + --join-dist (Green snrcat J/A+A/612/A1, 282 SNR,
+  86 mit Dist) im sexagesimal_compiler (Nächster-Nachbar im Winkelabstand).
+  Befund: TeV-Zentroid vs. optische Position ~2′ (Mkn 421: 30″-Join verfehlt,
+  3′-Join trifft, z=0,03). Ergebnis: 67 von 360 TeVCat-Quellen mit z, 78 mit
+  dist. tap_compiler erweitert: @n-Index-Mapping (VizieR-Virtualspalten
+  _RA_icrs nur via SELECT * greifbar). Offen: Pulsar-Distanz-Join (ATNF-
+  PSRCAT-Mirror) für die PWN-Unterklasse, Name-basierter Fallback-Join.
 
 ---
 

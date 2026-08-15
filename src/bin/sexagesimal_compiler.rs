@@ -90,7 +90,71 @@ fn split_array(body: &str) -> Vec<String> {
     out
 }
 
-fn tevcat(input: &str, out_path: &str, probe: Option<&str>) -> usize {
+fn angular_sep_deg(ra1: f64, dec1: f64, ra2: f64, dec2: f64) -> f64 {
+    let (ra1, dec1, ra2, dec2) = (
+        ra1.to_radians(),
+        dec1.to_radians(),
+        ra2.to_radians(),
+        dec2.to_radians(),
+    );
+    let d = ((dec1 - dec2) / 2.0).sin().powi(2)
+        + dec1.cos() * dec2.cos() * ((ra1 - ra2) / 2.0).sin().powi(2);
+    2.0 * d.sqrt().clamp(-1.0, 1.0).asin().to_degrees()
+}
+
+fn join_catalog(rows: &mut Vec<String>, join_path: &str, key: &str, max_sep_deg: f64) -> usize {
+    let Ok(body) = std::fs::read_to_string(join_path) else {
+        eprintln!("join {} read returned void", join_path);
+        return 0;
+    };
+    let elements = split_array(&body);
+    let mut joined = 0usize;
+    for row in rows.iter_mut() {
+        if get_field(row, key).is_some() {
+            continue;
+        }
+        let (Some(ra), Some(dec)) = (
+            get_field(row, "ra").and_then(|s| s.parse::<f64>().ok()),
+            get_field(row, "dec").and_then(|s| s.parse::<f64>().ok()),
+        ) else {
+            continue;
+        };
+        let mut best: Option<(f64, String)> = None;
+        for el in &elements {
+            let (Some(jra), Some(jdec)) = (
+                get_field(el, "ra").and_then(|s| s.parse::<f64>().ok()),
+                get_field(el, "dec").and_then(|s| s.parse::<f64>().ok()),
+            ) else {
+                continue;
+            };
+            let Some(v) = get_field(el, key) else {
+                continue;
+            };
+            let Ok(_) = v.parse::<f64>() else { continue };
+            let d = angular_sep_deg(ra, dec, jra, jdec);
+            if d <= max_sep_deg && best.as_ref().map_or(true, |(bd, _)| d < *bd) {
+                best = Some((d, v));
+            }
+        }
+        if let Some((_, v)) = best {
+            let mut new = row.clone();
+            new.pop();
+            new.push_str(&format!(",\"{}\":{}", key, v));
+            new.push('}');
+            *row = new;
+            joined += 1;
+        }
+    }
+    joined
+}
+
+fn tevcat(
+    input: &str,
+    out_path: &str,
+    probe: Option<&str>,
+    join_z: Option<&str>,
+    join_dist: Option<&str>,
+) -> usize {
     let body = match std::fs::read_to_string(input) {
         Ok(b) => b,
         Err(e) => {
@@ -143,6 +207,14 @@ fn tevcat(input: &str, out_path: &str, probe: Option<&str>) -> usize {
         }
         row.push('}');
         rows.push(row);
+    }
+    if let Some(p) = join_z {
+        let n = join_catalog(&mut rows, p, "z", 0.05);
+        eprintln!("tevcat: {} Zeilen via z-Join (<=3')", n);
+    }
+    if let Some(p) = join_dist {
+        let n = join_catalog(&mut rows, p, "dist", 0.1);
+        eprintln!("tevcat: {} Zeilen via dist-Join (<=0.1 deg)", n);
     }
     if let Some(p) = probe {
         for r in &rows {
@@ -302,6 +374,8 @@ fn main() {
     let mut source: Option<String> = None;
     let mut input: Option<String> = None;
     let mut out: Option<String> = None;
+    let mut join_z: Option<String> = None;
+    let mut join_dist: Option<String> = None;
     let mut ci_mode = false;
     let mut probe: Option<String> = None;
     let mut i = 1;
@@ -317,6 +391,14 @@ fn main() {
             }
             "--out" => {
                 out = args.get(i + 1).cloned();
+                i += 1;
+            }
+            "--join-z" => {
+                join_z = args.get(i + 1).cloned();
+                i += 1;
+            }
+            "--join-dist" => {
+                join_dist = args.get(i + 1).cloned();
                 i += 1;
             }
             "--ci-mode" => ci_mode = true,
@@ -344,7 +426,13 @@ fn main() {
     };
     match source.as_deref() {
         Some("tevcat") => {
-            tevcat(&input, &out_path, probe.as_deref());
+            tevcat(
+                &input,
+                &out_path,
+                probe.as_deref(),
+                join_z.as_deref(),
+                join_dist.as_deref(),
+            );
         }
         Some("magnetar") => {
             magnetar(&input, &out_path, probe.as_deref());

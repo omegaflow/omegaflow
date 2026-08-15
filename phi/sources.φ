@@ -425,6 +425,9 @@ dist_scale 3.085677581e19
 field flux magnetar_flux inverse-square em erg/cm2/s 604800 0.0 0.0
 
 # ── TeVCat2 γ-Quellenkatalog (em cmap; Sexagesimal-Kompilat, Dist kpc wenn gemessen) ──
+# Enrichment: z-Join (BZCAT4, <=3') + dist-Join (Green snrcat, <=0.1 deg) —
+# 67 von 360 mit z (Hubble), 78 mit dist (kpc). TeV-Zentroid vs. optische
+# Position ~2' (Mkn 421-Befund).
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/tevcat_flat.json
 ttl 604800
 at sun
@@ -433,6 +436,7 @@ ra ra
 dec dec
 dist dist
 dist_scale 3.085677581e19
+z z
 field flux tevcat_flux inverse-square em Crab 604800 0.0 0.0
 
 # ── TGAS (Tycho-Gaia, VizieR I/337) Stern-Katalog (K04b) — Stern-Hash-Kanal ──
