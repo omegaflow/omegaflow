@@ -1288,7 +1288,7 @@ fn summarize(index_path: &str, out_path: &str) {
          pck.sat441/pck.jup365/pck.mar099/pck.ura182/pck.plu060, je .tpc) tragen\n\
          RADII + POLE für die Monde, aber KEINE J2/J4-Werte — die einzigen Treffer sind\n\
          Kommentarzeilen (BODYnnn_JCOEF-Dokumentation). Mond-Harmonische aus Text-PCKs\n\
-         manifestieren daher 0 (0 honored, keine Fabrikation). Echte Zonal-Terme liegen in\n\
+         manifestieren daher 0 (keine Fabrikation). Echte Zonal-Terme liegen in\n\
          den Binary-PCKs (moon_pa_de440, Satelliten-.bpc) — das ist K02. pck00010.tpc\n\
          deckt Phobos/Triton/Charon mit POLE+RADII ab; GM aller Körper kommt aus\n\
          gm_Horizons.pck (km³/s², Parser skaliert ×1e9).\n\n\
