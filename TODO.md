@@ -75,19 +75,35 @@ Blöcke, ANGLES/AXES/UNITS- und MATRIX-Rotationen in SPICE-Reihenfolge,
 Mehrzeilen-Tupel, Ein-Level-Kettenregel, 3 Tests); der Flattener klassifiziert
 family fk, führt die Festrotation an (pa_frame_of-Hardcode entfernt) und hat
 einen --probe-Modus (--bpc + --fk + JD → PA/ME-Winkel + W-Drift).
-Moon-PA-Merge BEFUND (2026-08-15): der Merge steht, die Daten sind offen.
-Probe J2000: bpc liefert pa=(-0,054°, 0,425°, W 2564°) — die Winkel
-beschreiben KEINE Mondrotation (Pol wäre 269,99°/66,54°, W-Drift müsste
-13,176°/Tag sein, gemessen 0,23°/Tag). M_stored = M_wahr·R mit konstantem
-R (Rotation ~172° um (0,14; 0,78; 0,59)) — die gespeicherten Winkel sind
-die richtige Rotation bis auf eine konstante, unbekannte Rahmen-Definition.
-Die TKFRAME_31009-Festrotation (67,85"/78,69"/0,28", 3-2-1, ARCSECONDS)
-ist korrekt geparst und angewendet, kann die 66°-Pol-Diskrepanz aber nicht
-tragen (sie dreht nur 0,03°). Die CI-Selektion nimmt deshalb KEINE bpc/fk
-für den Mond — der Live-Kanal bleibt die Text-PCK-IAU-Linear (0 honored
-für die Binary-PCK-Präzision bis zur Referenz-Gegenprobe). Nächster Schritt:
-CSPICE-Gegenprobe der bpc-Evaluation (Referenz-Auswertung desselben Records)
-oder Record-Level-Dump gegen die NAIF-Typ-2-Spec.
+Moon-PA-Merge BEFUND + GEGENPROBE (2026-08-15): Probe J2000: bpc liefert
+pa=(-0,054°, 0,425°, W 2564°) mit W-Drift 0,23°/Tag — gemessen gegen
+Horizons (Observer 399@301, J2000): ObsSub-LON 301,996° / ObsSub-LAT
+-10,972°. Die Kette (bpc + TKFRAME_31009) liefert (−10,6°, −1,7°) —
+Abweichung gemessen, der Fehler ist real, nicht die Interpretation:
+DAF-Header-Dump (ND=2, NI=5, Adressen 641/1280644 = exakt 40000 Records
+à 32 Doubles), Record-Dump (mid/radius exakt für das J2000-Fenster),
+NAIF-Typ-2-Spec (pck.req: [MID, RADIUS, RA, DEC, W]) — Leser und Datei
+sind spec-konform, die Winkel selbst tragen die Mondorientierung nicht.
+Befund: Die gespeicherte Frame trackt die oskulierende Orbit-Frame
+(T-Achse 10,6° neben der Erdlinie, E-Achse 17° neben der Orbitnormalen,
+Relativrotation 0,23°/Tag = Rotation−Orbitbewegung bei Apogäum) — die
+bpc-Winkel sind orbitreferenziert, nicht ICRF. Das tf selbst sagt: „both
+trajectory and lunar orientation data are stored in these ephemeris
+files" (moon_de440_250416.tf Z.53-55) — die DE440-Mondorientierung lebt
+in den SPK-Segmenten 310/311 (Euler-Winkel als Positionsvektor). Die
+TKFRAME_31009-Festrotation ist korrekt geparst, kann die Diskrepanz aber
+nicht tragen. Die CI-Selektion nimmt deshalb KEINE bpc/fk für den Mond —
+gemessen falsch würde der Kanal regredieren; der Live-Kanal bleibt die
+Text-PCK-IAU-Linear. Gegenprobe DE440-Paper (Park et al. 2021, AJ 161
+105, §2.4): die lunaren Libration-Winkel (φ, θ, ψ) sind definiert als
+φ = Knotenlänge ab ICRF-X, θ = Neigung der Mantel-Äquatorebene, ψ =
+Länge ab Knoten — die gespeicherten Werte entsprechen φ (RA −0,054° ≈
+Knoten bei 0° ✓), aber weder θ noch ψ (beide Kompositionen
+Rz(φ)Rx(θ)Rz(ψ) mit °/rad getestet). Offene Frage: Referenz der
+gespeicherten Winkel (gemessen orbit-tracking, 0,23°/Tag =
+Rotation−Orbitbewegung beim Apogäum) — Auflösung über die DE440-ASCII-
+Ephemeris-Lunar-Libration-Records (Ursprungsquelle des bpc) oder
+NAIFs bpc-Generierungsprogramm.
 ```
 
 **K03** Kleinkörper-Katalog
@@ -363,15 +379,16 @@ NOAA CDO (thermal) und OpenAQ pm25 (diffusion) leben im Fanout. Offen:
 generisches Flatten über mehrere Ebenen.
 ```
 
-**I04** CDN-Naming bei Param-Varianten — verifiziert kein Fehler
+**I04** CDN-Naming bei Param-Varianten — flacher Asset-Name fixiert
 ```
-Code-Review (2026-08-15): source_name_from_url verwirft die Query NICHT —
-?/&/= werden zu '/' im Asset-Namen, Param-Werte sind im Namen enthalten.
-Template-URLs ({lat} etc.) mirrornt die CI nicht (is_fixed-Gate) → CDN-first
-degradiert zu Live, kein Poisoning. Die früheren Symptome waren
-Fehlattribution: das `{}`-Body war die echte No-Data-Antwort der NOAA-CDO-API
-(andere Station/Datum), die open-meteo-Voids waren Konverter-Key-Mismatches.
-Eintrag als nicht-Existierend geschlossen.
+source_name_from_url mappt jetzt '/', '?', '&', '=' → '-' (flacher Name, kein
+Slash im Asset-Namen). Vorher wurden '?'/'&'/'=' zu '/' — Query-URLs erzeugten
+tiefe Pfade, gh lud nur den Basenamen hoch (Stray-Assets YES.json und
+_271_d_27.json aus einem transienten Horizons-Block; plus Basename-Kollisionen
+json.json/5000.json/-1.json/…). CDN-first-Konsum (fetch_one) und Mirror
+(ci_mode) teilen dieselbe Funktion → Produzent/Konsument bleiben konsistent.
+Template-URLs ({lat} etc.) bleiben is_fixed-gated (kein Mirror, Live-Fallback).
+Offen: Stray-/Basename-Assets im Release ssd.jpl.nasa.gov löschen.
 ```
 
 ---
@@ -825,6 +842,12 @@ Binary-PCK-Pakets oben).
   vom Probe nicht über die deklarierten Extracts verifiziert — CSV braucht
   format-csv-Konvertierung, hapi die hapi-Arm-Extraktion, regex den
   regex-Arm; alles im Runtime-Pfad vorhanden).
+- **TNS-Header-Fix (2026-08-15):** resolve_secret trennt JSON-Braces nicht von
+  Marker-Braces — `tns_marker{"tns_id":4474,...}` wurde als ein Marker-Key
+  gelesen → UA kollabierte zu „tns_marker" → wis-tns.org 403. Fix: Header als
+  Einzel-Marker `header user-agent {TNS_UA}` (sources.φ) + `.secrets.local`-
+  Eintrag `TNS_UA=tns_marker{...}` (verbatim). Offen: Marker (tns_id/type)
+  gegen die TNS-Registrierung verifizieren, falls weiterhin 403.
 - **Probe-Verifikation Grind-Einbau (2026-08-15):** --probe mit LSK auf die
   Grind-Einbau-Sektion: VirES-HAPI-Syntax (id=/start=/stop= und dataset=/
   time.min= sind beide gültig — 400er waren time-outside-range der
@@ -888,6 +911,15 @@ Binary-PCK-Pakets oben).
   sources_index.φ; Horizons-Sonden via horizons_compiler --ci-mode; DASTCOM-Katalog
   via dastcom_compiler --ci-mode). Monatlich + workflow_dispatch. Upload-Fehler
   exiten seit 2026-08-15 laut (kein stilles let _ = mehr).
+- **Flattener-Befund (2026-08-15):** beide kernel-flatten-Runs (#3 01:40, #4
+  06:40, workflow_dispatch) scheitern bei Step „Flatten SPK bodies and upload
+  to CDN" (ephemeris_compiler --ci-mode, exit 1 nach ~7,5 min — Upload-Pfad
+  `exit(1)` bei upload_failed > 0). Folge: 32 Mond-Assets + alle Katalog-Assets
+  absent (0 honored). OMEGAFLOW_TOKEN braucht Contents-write auf
+  omegaflow/sources (secrets.template Z.26) — Rechte prüfen, dann erneuter
+  Dispatch. Run-Logs 403-gated (Owner-Read). Offen: nach erfolgreichem
+  Flatten Deckung der 32 Monde prüfen (irreguläre wie himalia evtl. via
+  horizons_compiler-Liste bodies_stable statt SPK).
 - Katalog-Kompilate seit 2026-08-15 im selben Job: cometels_compiler
   (cometels_flat.json), dcom5_compiler (dcom5_comets.json),
   tycho2_compiler --source bright (bright_stars.json),
