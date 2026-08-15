@@ -252,9 +252,6 @@ impl FkFile {
         }
     }
 
-    /// Rotation des class-4-Frames relativ zu seinem RELATIVE-Frame.
-    /// Ein-Level-Ketten (RELATIVE zeigt auf einen class-2-Frame); tiefere
-    /// Ketten werden gemeldet und tragen keine Rotation (0 honored).
     pub fn tkframe_rotation(&self, frame_id: i32) -> Option<([f64; 9], String)> {
         let frame = self.frame(frame_id)?;
         let tk = frame.tk.as_ref()?;
