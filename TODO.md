@@ -190,7 +190,7 @@ braucht mindestens eine gemessene, physisch gate-konforme Quelle.
 | thermal | live: NOAA-CDO-Fanout (TMAX), AOML-Drifter, GML Barrow, Buoy-WTMP; DASTCOM H/Albedo + Yarkovsky-Listen; GOES-Thermal | K03 (Parameter); Kuration (Zeitreihen) |
 | diffusion | live: PurpleAir, OpenAQ-pm25-Fanout, GML CH4/N2O/SF6, OOI-pCO2; NOAA SWPC, NASA OMNI | Kuration |
 | advective | live: Waterservices-Rivers, OpenSky-Aircraft, Buoy-Wind; DSCOVR/SWPC (Solarwind), NOAA GFS | Kuration |
-| electric | live: Swarm EFI via VirES-HAPI (Raumfahrzeug-Potential Vs in V, Ionendichte, Elektronentemperatur). Open-End: E-Feld-Stärke selbst (EFI-TCT-Produkte), GLM-Blitz (NetCDF auf NOAA-S3 — NetCDF-Reader fehlt), GIC-Netze (nicht öffentlich) | Kuration |
+| electric | live: Swarm EFI (Raumfahrzeug-Potential Vs in V) + Swarm FAC (IRC/FAC-Ströme µA/m²) via VirES-HAPI. Open-End: E-Feld-Stärke selbst (EFI-TCT-Produkte), GLM-Blitz (NetCDF auf NOAA-S3 — NetCDF-Reader fehlt), GIC-Netze (nicht öffentlich) | Kuration |
 
 Device-Sensoren (M05) ergänzen die Kanäle lokal; das Radiatorium (M01/M02) ist die
 Aktuator-Seite. Der Kurations-Pfad ist unten registriert (Curation & Quellen).
@@ -434,17 +434,25 @@ Binary-PCK-Pakets oben).
   Block-Erstellung + Verifikation offen; GLM braucht NetCDF-Reader (electric).
 - **ESA/Geomagnetik-Backlog** (Linkliste 2026-08-15, ESA-Login vorhanden):
   `phi/research/agent_output/esa_geomagnetic_catalog.φ` — integriert: Swarm EFI
-  (electric/diffusion/thermal) + BGS-NGK (em). Kandidaten: Swarm FAC/TCT-E-Feld
-  (keyless, VirES), INTERMAGNET-Fanout (em, global), VirES-Aeolus (advective,
+  (electric/diffusion/thermal), Swarm FAC (electric, IRC/FAC-Ströme), BGS-NGK (em).
+  Kandidaten: Swarm TCT-E-Feld (keyless, VirES), VirES-Aeolus (advective,
   login), SMOS (diffusion, login), MERIS/SAR/Landsat (Raster, login).
   Modelle (IGRF/CHAOS/LCS/MF7/DTU-GVO) decline. ESA_USER/ESA_PASS-Platzhalter
   in .secrets.local angelegt.
-- **B2FIND/INTERMAGNET-Befund** (2026-08-15):
-  `phi/research/agent_output/b2find_intermagnet_catalog.φ` — B2FIND =
-  Metadaten-Registry (1,47 Mio, decline als Feld, Discovery-Hints: ICOS/ToAR/
-  LAGO/ICGEM/Pangaea/SeaNoe/TERENO). BGS-HAPI = **154 Observatorien** (3074
-  Datasets), aber ohne Koordinaten — Observatoriumsliste mit lat/lon suchen,
-  dann Fanout-Block (em, globales Magnetfeld-Netz).
+- **INTERMAGNET-Fanout live** (2026-08-15, `144a990`): 154 Observatorien über
+  GINServices-GetCapabilities-XML (`parse_stations_xml`-Fallback im Fanout —
+  die Antwort ist XML, kein JSON). Archiv-Befund: 376 Dateien/25.009
+  Vorkommen, aber nur 93 Codes je als URL-Block mit Koordinaten; die anderen
+  61 existierten nur als Katalog-Einträge (intermagnet.txt ×3). Fanout:
+  präsenz-sortiert, cap 40, BGS verlangt `Z`-Suffix an Zeitstempeln
+  (start={week_ago}T00:00:00Z). Offen: Ausbeute-Feinabstimmung (best-avail-
+  Aktualität variiert je Observatorium).
+- **Re-Kuratierungs-Kampagne** (nächster Brocken): `home_archiv_inventory.txt`
+  registriert die 376 Home-Archiv-Dateien mit 25.009 INTERMAGNET-Vorkommen —
+  der „riesen Bestand" (pre_cdn_history, omegaflow-phi-recovery, Schreibtisch/
+  Archiv) muss per --gold-Konverter + test_backlog_batches_verify neu kuratiert
+  werden. B2FIND (EUDAT, 1,47 Mio) = Registry-decline, Discovery-Hints: ICOS/
+  ToAR/LAGO/ICGEM/Pangaea/SeaNoe/TERENO (`b2find_intermagnet_catalog.φ`).
 - TNS-Transienten (em, celestisch) live seit 2026-08-14: Vollkatalog
   `tns_public_objects.csv.zip` (`format csv_zip`, std-only Inflate in
   src/inflate.rs, z-Distanz via Redshift, abs_mag_from). ~20k
