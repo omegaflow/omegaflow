@@ -5140,7 +5140,7 @@ fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     }
                 }
             }
-            "format" if parts.len() >= 2 => cur_format = parts[1].to_string(),
+            "format" if parts.len() >= 2 => cur_format = parts[1..].join(" "),
             "body" if parts.len() >= 2 => {
                 cur_body = Some(parts[1].to_string());
             }
@@ -6223,6 +6223,8 @@ fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> Extra
             .and_then(csv_to_json)
     } else if src.format == "csv" {
         csv_to_json(body)
+    } else if src.format == "free text" {
+        text_to_json(body)
     } else if src.format == "json" || src.format.is_empty() || src.format == "universal" {
         parse_json(body)
     } else {
@@ -7939,6 +7941,7 @@ fn probe_mode(path: &str, precise: bool, lat: f64, lon: f64, env: &HashMap<Strin
             }
         } else if let Some(ref r) = raw {
             if let Some(csv) = probe_csv(r) {
+                block.push_str("format free text\n");
                 block.push_str(&csv);
             }
         } else {
@@ -8328,6 +8331,55 @@ fn is_unit_name(name: &str) -> bool {
         || kl == "knots"
         || kl == "m/sec"
         || kl == "deg"
+}
+
+fn text_to_json(text: &str) -> Option<JsonVal> {
+    let header = text.lines().find_map(|line| {
+        let t = line.trim();
+        if !t.starts_with('#') {
+            return None;
+        }
+        let stripped = t.trim_start_matches('#').trim();
+        if stripped.is_empty() {
+            return None;
+        }
+        let cols: Vec<String> = stripped.split_whitespace().map(|s| s.to_string()).collect();
+        if cols.len() > 5 {
+            Some(cols)
+        } else {
+            None
+        }
+    })?;
+    let data = text.lines().find_map(|line| {
+        let t = line.trim();
+        if t.starts_with('#') {
+            return None;
+        }
+        let cols: Vec<String> = t.split_whitespace().map(|s| s.to_string()).collect();
+        if cols.len() >= header.len() {
+            Some(cols)
+        } else {
+            None
+        }
+    })?;
+    let mut obj = HashMap::new();
+    for (name, value) in header[5..].iter().zip(data[5..].iter()) {
+        let lower = name.to_lowercase();
+        if lower == "yy" || lower == "mm" || lower == "dd" || lower == "hh" || lower == "min" {
+            continue;
+        }
+        if is_unit_name(&lower) || is_drop_key(&lower) {
+            continue;
+        }
+        if let Ok(n) = value.parse::<f64>() {
+            obj.insert(name.clone(), JsonVal::Num(n));
+        }
+    }
+    if obj.is_empty() {
+        None
+    } else {
+        Some(JsonVal::Obj(obj))
+    }
 }
 
 fn probe_classify(key: &str) -> (&str, &str, f64) {
@@ -8762,7 +8814,7 @@ fn load_sources_from(content: &str) -> Vec<SourceConfig> {
                     cur_ttl = v;
                 }
             }
-            "format" if parts.len() >= 2 => cur_format = parts[1].to_string(),
+            "format" if parts.len() >= 2 => cur_format = parts[1..].join(" "),
             "at" if parts.len() >= 2 => {
                 let body = parts[1].to_string();
                 cur_body = Some(body.clone());

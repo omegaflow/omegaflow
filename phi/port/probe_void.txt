@@ -1,37 +1,4 @@
 # declined: data-present (non-JSON body: HTML/XML/text)
-url https://www.ndbc.noaa.gov/data/realtime2/42002.txt
-ttl 3600
-on earth 0.0 0.0 0.0
-# WDIR
-field WDIR advective deg 60
-# WSPD
-field WSPD advective m/s 60
-# GST
-field GST UNCERTAIN  0
-# WVHT
-field WVHT acoustic m 10
-# DPD
-field DPD UNCERTAIN  0
-# APD
-field APD UNCERTAIN  0
-# MWD
-field MWD UNCERTAIN  0
-# PRES
-field PRES advective hPa 60
-# ATMP
-field ATMP thermal C 3600
-# WTMP
-field WTMP thermal C 3600
-# DEWP
-field DEWP thermal C 3600
-# VIS
-field VIS em km 60
-# PTDY
-field PTDY UNCERTAIN  0
-# TIDE
-field TIDE UNCERTAIN  0
-
-# declined: data-present (non-JSON body: HTML/XML/text)
 url https://vires.services/hapi/data?id=SW_FAST_EFIA_LP_1B&time.min=2026-08-13T12:00:00Z&time.max=2026-08-13T12:59:59Z
 ttl 86400
 at earth
@@ -46,23 +13,23 @@ at sun
 url https://api.worldbank.org/v2/country/US/indicator/NY.GDP.MKTP.CD?format=json
 ttl 86400
 on earth 0.0 0.0 0.0
-# page = 1.0
-# uncertain field page — force/unit undetermined, review
 # pages = 2.0
 # uncertain field pages — force/unit undetermined, review
-# per_page = 50.0
-# uncertain field per_page — force/unit undetermined, review
 # sourceid = 2.0 (str)
 # uncertain field sourceid — force/unit undetermined, review
+# page = 1.0
+# uncertain field page — force/unit undetermined, review
+# per_page = 50.0
+# uncertain field per_page — force/unit undetermined, review
 
 # declined: data-present (JSON has content but declared keys absent)
 url https://b2find.eudat.eu/api/3/action/package_search?rows=1
 ttl 86400
 on earth 0.0 0.0 0.0
-# tags.display_name = 150.0 (str)
-# uncertain field tags.display_name — force/unit undetermined, review
 # num_tags = 1.0
 # uncertain field num_tags — force/unit undetermined, review
+# tags.display_name = 150.0 (str)
+# uncertain field tags.display_name — force/unit undetermined, review
 # num_resources = 0.0
 # uncertain field num_resources — force/unit undetermined, review
 
@@ -71,8 +38,12 @@ url https://api.open-meteo.com/v1/forecast?latitude=29.5&longitude=-95.0&hourly=
 ttl 60
 on earth 0.0 0.0 0.0
 map .
-lon longitude deg
 lat latitude deg
+lon longitude deg
+# utc_offset_seconds = 0.0
+# uncertain field utc_offset_seconds — force/unit undetermined, review
+# elevation = 4.0
+# uncertain field elevation — force/unit undetermined, review
 # hourly.wind_speed_10m.0 = 16.7
 # uncertain field hourly.wind_speed_10m.0 — force/unit undetermined, review
 # hourly.wind_speed_10m.1 = 13.2
@@ -745,8 +716,4 @@ lat latitude deg
 # uncertain field hourly.temperature_2m.166 — force/unit undetermined, review
 # hourly.temperature_2m.167 = 31.6
 # uncertain field hourly.temperature_2m.167 — force/unit undetermined, review
-# elevation = 4.0
-# uncertain field elevation — force/unit undetermined, review
-# utc_offset_seconds = 0.0
-# uncertain field utc_offset_seconds — force/unit undetermined, review
 
