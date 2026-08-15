@@ -10,7 +10,7 @@ esa-eog     8.619 Einträge       251 indexiert               8.368 offen
 vires       174 Datasets         63 gedraftet                111 offen
 vizier      64.148 Tabellen      39 genutzt                  64k offen (tap_compiler-Route)
 arcgis      ungezählt            440+620 Datasets indexiert  offen (Crawl-Einstiege: katalog/arcgis_catalog.φ)
-copernicus  ungezählt            wenige                      offen (Crawl-Einstiege: katalog/copernicus_catalog.φ)
+copernicus  CAMS 17 + C3S 173   geladen (katalog/copernicus_catalogues.φ)  Marine+DataSpace: Recheck (Domain löst nicht auf / 503)
 noaa        ungezählt            ~900 URLs (ndbc/ncdc/...)   offen (viele Portale)
 
 # Quellen der Live-Zahlen:

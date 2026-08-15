@@ -1,0 +1,194 @@
+# Copernicus — Atmosphäre (CAMS) + Klima (C3S) Kataloge, direkt, live 2026-08-15
+# Marine (CMEMS) + Data-Space: Domain löst nicht auf bzw. 503/Timeout — Recheck (auch via Jina blockiert)
+-- CAMS (17 Collections)
+cams-global-greenhouse-gas-forecasts | CAMS global greenhouse gas forecasts
+cams-global-reanalysis-eac4 | CAMS global reanalysis (EAC4)
+cams-europe-air-quality-reanalyses | CAMS European air quality reanalyses
+cams-global-greenhouse-gas-inversion | CAMS global inversion-optimised greenhouse gas fluxes and concentrations
+cams-europe-air-quality-forecasts-optimised-at-observation-sites | CAMS European air quality forecasts optimised at observation sites
+cams-gridded-solar-radiation | CAMS gridded solar radiation
+cams-global-fire-emissions-gfas | CAMS global biomass burning emissions based on fire radiative power (GFAS)
+"id":"contents/cams/2025-01-13-warning-cams-global-fire-emissions-gfas.md"	"id":"cams-global-ghg-reanalysis-egg4-monthly"
+"title":"CAMS global greenhouse gas reanalysis (EGG4) monthly averaged fields"	"id":"cams-global-ghg-reanalysis-egg4"
+"title":"CAMS global greenhouse gas reanalysis (EGG4)"	"id":"cams-global-atmospheric-composition-forecasts"
+"title":"CAMS global atmospheric composition forecasts"	"id":"cams-global-radiative-forcing-auxilliary-variables"
+"title":"CAMS global radiative forcing - auxilliary variables"	"id":"cams-global-radiative-forcings"
+"title":"CAMS global radiative forcings"	"id":"cams-global-emission-inventories"
+"title":"CAMS global emission inventories"	"id":"cams-europe-air-quality-forecasts"
+"title":"CAMS European air quality forecasts"	"id":"cams-solar-radiation-timeseries"
+"title":"CAMS solar radiation time-series"	"id":"cams-global-reanalysis-eac4-monthly"
+"title":"CAMS global reanalysis (EAC4) monthly averaged fields"	
+-- C3S (173 Collections)
+reanalysis-era5-single-levels | ERA5 hourly data on single levels from 1940 to present
+derived-era5-pressure-levels-daily-statistics | ERA5 post-processed daily statistics on pressure levels from 1940 to present
+reanalysis-era5-land | ERA5-Land hourly data from 1950 to present
+reanalysis-era5-single-levels-timeseries | ERA5 hourly time-series data on single levels from 1940 to present
+reanalysis-oras5 | ORAS5 global ocean reanalysis monthly data from 1958 to present
+"title":"Quality assessment of the dataset"	"id":"reanalysis-era5-pressure-levels"
+"title":"ERA5 hourly data on pressure levels from 1940 to present"	"id":"derived-era5-land-daily-statistics"
+"title":"ERA5-Land post-processed daily statistics from 1950 to present"	"id":"satellite-greenland-ice-sheet-velocity"
+"title":"Ice sheet velocity for Antarctica and Greenland derived from satellite observations"	"title":"Quality assessment of the dataset"
+derived-utci-historical | Thermal comfort indices derived from ERA5 reanalysis
+reanalysis-era5-land-timeseries | ERA5 Land hourly time-series data from 1950 to present
+satellite-sea-surface-temperature | Global sea surface temperature derived from satellite observations
+"title":"Quality assessment of the dataset"	"id":"contents/satellite/2026-01-14-warning-satellite-sea-surface-temperature.md"
+satellite-sea-ice-edge-type | Sea ice edge and type daily gridded data from 1978 to present derived from satellite observations
+"title":"Quality assessment of the dataset"	"id":"derived-era5-single-levels-daily-statistics"
+"title":"ERA5 post-processed daily statistics on single levels from 1940 to present"	"id":"sis-agrometeorological-indicators"
+"title":"Agrometeorological indicators from 1979 to present derived from reanalysis"	"title":"Quality assessment of the dataset"
+projections-cmip6 | CMIP6 climate projections
+"title":"Quality assessment of the dataset"	"id":"satellite-carbon-dioxide"
+"title":"Carbon dioxide data from 2002 to present derived from satellite observations"	"title":"Quality assessment of the dataset"
+insitu-observations-surface-marine | Global marine surface meteorological variables from 1850 to present from comprehensive in-situ observations
+satellite-methane | Methane data from 2002 to present derived from satellite observations
+"title":"Quality assessment of the dataset"	"id":"sis-hydrology-variables-derived-seasonal-forecast"
+"title":"Multi-model seasonal forecasts of river discharge for Europe from January 2021 to present"	"id":"contents/sis/2026-07-30-deprecated-sis-hydrology-variables-derived-seasonal-forecast.md"
+reanalysis-cerra-land | CERRA-Land sub-daily regional reanalysis data for Europe from 1984 to present
+sis-agrometeorological-indicators-timeseries | Agrometeorological indicators time-series from 1979 to present derived from reanalysis
+satellite-sea-ice-thickness | Sea ice thickness gridded data for the Arctic derived from satellite observations
+"title":"Quality assessment of the dataset"	"id":"satellite-soil-moisture"
+"title":"Soil moisture gridded data from 1978 to present"	"title":"Quality assessment of the dataset"
+derived-drought-historical-monthly | Monthly drought indices from 1940 to present derived from ERA5 reanalysis
+reanalysis-cerra-single-levels | CERRA sub-daily regional reanalysis data for Europe on single levels from 1984 to present
+"title":"Quality assessment of the dataset"	"id":"reanalysis-cerra-height-levels"
+"title":"CERRA sub-daily regional reanalysis data for Europe on height levels from 1984 to present"	"id":"reanalysis-cerra-model-levels"
+"title":"CERRA sub-daily regional reanalysis data for Europe on model levels from 1984 to present"	"id":"reanalysis-cerra-pressure-levels"
+"title":"CERRA sub-daily regional reanalysis data for Europe on pressure levels from 1984 to present"	"id":"reanalysis-era5-pressure-levels-timeseries"
+"title":"ERA5 hourly time-series data on pressure levels from 1940 to present"	"id":"satellite-fire-radiative-power"
+"title":"Fire radiative power and active fire pixels from 2020 to present derived from satellite observations"	"id":"sis-energy-global-reanalysis"
+"title":"Global climate and energy indicators from 1950 to present derived from reanalysis"	"id":"ecv-for-climate-change"
+"title":"Essential climate variables for assessment of climate variability from 1979 to present"	"id":"satellite-upper-troposphere-humidity"
+"title":"Upper tropospheric humidity gridded data derived from satellite observations"	"title":"Quality assessment of the dataset"
+reanalysis-era5-single-levels-monthly-means | ERA5 monthly averaged data on single levels from 1940 to present
+"title":"Quality assessment of the dataset"	"id":"reanalysis-era5-pressure-levels-monthly-means"
+"title":"ERA5 monthly averaged data on pressure levels from 1940 to present"	"title":"Quality assessment of the dataset"
+reanalysis-era5-land-monthly-means | ERA5-Land monthly averaged data from 1950 to present
+"title":"Quality assessment of the dataset"	"id":"satellite-land-surface-temperature"
+"title":"Land surface temperature monthly gridded data from 1995 to present derived from satellite observations"	"id":"seasonal-monthly-ocean"
+"title":"Seasonal forecast monthly averages of ocean variables"	"title":"Quality assessment of the dataset"
+seasonal-monthly-single-levels | Seasonal forecast monthly statistics on single levels
+"title":"Quality assessment of the dataset"	"id":"seasonal-monthly-pressure-levels"
+"title":"Seasonal forecast monthly statistics on pressure levels"	"title":"Quality assessment of the dataset"
+seasonal-postprocessed-pressure-levels | Seasonal forecast anomalies on pressure levels
+"title":"Quality assessment of the dataset"	"id":"seasonal-postprocessed-single-levels"
+"title":"Seasonal forecast anomalies on single levels"	"title":"Quality assessment of the dataset"
+seasonal-original-pressure-levels | Seasonal forecast subdaily data on pressure levels
+"title":"Quality assessment of the dataset"	"id":"seasonal-original-single-levels"
+"title":"Seasonal forecast daily and subdaily data on single levels"	"title":"Quality assessment of the dataset"
+satellite-earth-radiation-budget | Earth's radiation budget from 1979 to present derived from satellite observations
+"title":"Quality assessment of the dataset"	"id":"reanalysis-oras5-timeseries"
+"title":"ORAS5 global ocean reanalysis monthly time-series data from 1958 to present"	"id":"satellite-ist-sst-global"
+"title":"Combined sea surface and sea ice surface temperature data derived from satellite observations"	"id":"sis-hydrology-europe-seasonal"
+"title":"Multi-model hydrological seasonal forecasts and historical simulations for Europe"	"id":"sis-hydrology-europe-seasonal-reforecast"
+"title":"Multi-model hydrological seasonal reforecasts for Europe"	"id":"reanalysis-carra-pressure-levels"
+"title":"Arctic regional reanalysis on pressure levels from 1991 to present"	"title":"Quality assessment of the dataset"
+reanalysis-carra-model-levels | Arctic regional reanalysis on model levels from 1991 to present
+"title":"Quality assessment of the dataset"	"id":"reanalysis-carra-height-levels"
+"title":"Arctic regional reanalysis on height levels from 1991 to present"	"title":"Quality assessment of the dataset"
+reanalysis-carra-single-levels | Arctic regional reanalysis on single levels from 1991 to present
+"title":"Quality assessment of the dataset"	"id":"insitu-gridded-observations-europe"
+"title":"E-OBS daily gridded meteorological data for Europe from 1950 to present derived from in-situ observations"	"title":"Quality assessment of the dataset"
+sis-energy-derived-projections | Climate and energy indicators for Europe from 2005 to 2100 derived from climate projections
+insitu-observations-gruan-reference-network | In situ temperature, relative humidity and wind profiles from 2006 to March 2020 from the GRUAN reference network
+insitu-observations-near-surface-temperature-us-climate-reference-network | In situ observations of meteorological and soil variables from the US Climate Reference Network near the surface from 2006 to present
+insitu-observations-surface-land | Global land surface atmospheric variables from 1718 to present from comprehensive in-situ observations
+insitu-observations-woudc-ozone-total-column-and-profiles | In situ total column ozone and ozone soundings from 1924 to present from the World Ozone and Ultraviolet Radiation Data Centre
+insitu-observations-igra-baseline-network | In situ observations of meteorological variables from the Integrated Global Radiosounding Archive and the Radiosounding Harmonization dataset from 1978 onward
+satellite-sea-ice-concentration | Sea ice concentration from 1978 to present derived from satellite observations
+insitu-glaciers-extent | Glaciers distribution data from the Randolph Glacier Inventory for year 2000
+"title":"Quality assessment of the dataset"	"id":"sis-european-wind-storm-reanalysis"
+"title":"Windstorm tracks and footprints derived from reanalysis over Europe between 1940 to present"	"id":"projections-cordex-domains-single-levels"
+"title":"CORDEX regional climate model data on single levels"	"title":"Quality assessment of the dataset"
+satellite-precipitation-microwave-infrared | Daily and monthly Global Interpolated RAinFall Estimation (GIRAFE) data derived from satellite observations
+"title":"Quality assessment of the dataset"	"id":"satellite-lake-water-temperature"
+"title":"Lake surface water temperature from 1995 to present derived from satellite observations"	"title":"Quality assessment of the dataset"
+satellite-sea-level-global | Sea level gridded data from satellite observations for the global ocean from 1993 to present
+"title":"Quality assessment of the dataset"	"id":"satellite-ocean-colour"
+"title":"Ocean colour from 1997 to present derived from satellite observations"	"title":"Quality assessment of the dataset"
+derived-utci-historical-timeseries | Thermal comfort indices time-series derived from ERA5 reanalysis
+sis-energy-derived-reanalysis | Climate and energy indicators for Europe from 1979 to present derived from reanalysis
+"id":"contents/sis/2025-02-10-deprecated-dataset-sis-energy-derived-reanalysis.md"	"id":"satellite-precipitation"
+"title":"Precipitation monthly and daily gridded data from 1979 to present derived from satellite measurements"	"title":"Quality assessment of the dataset"
+satellite-snow-cover-extent | Snow cover extent from 1982 to present derived from satellite observations
+multi-origin-c3s-atlas | Gridded dataset underpinning the Copernicus Interactive Climate Atlas
+"title":"Quality assessment of the dataset"	"id":"sis-hydrology-meteorology-derived-projections"
+"title":"Temperature and precipitation climate impact indicators from 1970 to 2100 derived from European climate projections"	"id":"sis-biodiversity-era5-global"
+"title":"Global bioclimatic indicators from 1979 to 2018 derived from reanalysis"	"id":"sis-tourism-snow-indicators"
+"title":"Mountain tourism meteorological and snow indicators for Europe from 1950 to 2100 derived from reanalysis and climate projections"	"id":"sis-biodiversity-cmip5-global"
+"title":"Global bioclimatic indicators from 1950 to 2100 derived from climate projections"	"id":"sis-agroclimatic-indicators"
+"title":"Agroclimatic indicators from 1951 to 2099 derived from climate projections"	"id":"sis-european-wind-storm-indicators"
+"title":"Winter windstorm indicators for Europe from 1979 to 2021 derived from reanalysis"	"id":"sis-ocean-wave-timeseries"
+"title":"Ocean surface wave time series for the European coast from 1976 to 2100 derived from climate projections"	"id":"sis-temperature-statistics"
+"title":"Temperature statistics for Europe derived from climate projections"	"id":"sis-water-level-change-indicators-cmip6"
+"title":"Global sea level change indicators from 1950 to 2050 derived from reanalysis and high resolution CMIP6 climate projections"	"id":"reanalysis-pan-carra"
+"title":"pan-Arctic regional reanalysis sub-daily data from 1986 to present"	"id":"sis-health-vector"
+"title":"Climatic suitability for the presence and seasonal activity of the Aedes albopictus mosquito for Europe derived from climate projections"	"id":"sis-water-level-change-timeseries-cmip6"
+"title":"Global sea level change time series from 1950 to 2050 derived from reanalysis and high resolution CMIP6 climate projections"	"id":"sis-heat-and-cold-spells"
+"title":"Heat waves and cold spells in  Europe derived from climate projections"	"id":"sis-biodiversity-cmip5-regional"
+"title":"Downscaled bioclimatic indicators for selected regions from 1950 to 2100 derived from climate projections"	"id":"sis-marine-properties"
+"title":"Marine biogeochemistry data for the Northwest European Shelf and Mediterranean Sea from 2006 up to 2100 derived from climate projections"	"id":"sis-tourism-fire-danger-indicators"
+"title":"Fire danger indicators for Europe from 1970 to 2098 derived from climate projections"	"id":"sis-ecv-cmip5-bias-corrected"
+"title":"Essential climate variables for water sector applications derived from climate projections"	"id":"reanalysis-pan-carra-means"
+"title":"pan-Arctic regional reanalysis daily and monthly data from 1986 to present"	"id":"contents/reanalysis/2026-05-15-warning-reanalysis-pan-carra-means.md"
+sis-european-risk-extreme-precipitation-indicators | Extreme precipitation risk indicators for Europe and European cities from 1950 to 2019
+sis-hydrology-variables-derived-seasonal-reforecast | Multi-model seasonal reforecasts of river discharge for Europe
+"id":"contents/sis/2026-07-30-deprecated-sis-hydrology-variables-derived-seasonal-reforecast.md"	"id":"sis-biodiversity-era5-regional"
+"title":"Downscaled bioclimatic indicators for selected regions from 1979 to 2018 derived from reanalysis"	"id":"sis-ocean-wave-indicators"
+"title":"Ocean surface wave indicators for the European coast from 1977 to 2100 derived from climate projections"	"id":"sis-extreme-indices-cmip6"
+"title":"Climate extreme indices and heat stress indicators derived from CMIP6 global climate projections"	"id":"sis-ecde-climate-indicators"
+"title":"Climate indicators for Europe from 1940 to 2100 derived from reanalysis and climate projections"	"id":"satellite-snow-water-equivalent"
+"title":"Snow water equivalent for the Northern Hemisphere from 1979 to present derived from satellite observations"	"id":"insitu-observations-gnss"
+"title":"In-situ observations of water vapour and atmospheric delay from the ground-based GNSS network from 1996 to present"	"id":"insitu-comprehensive-upper-air-observation-network"
+"title":"Comprehensive Upper-air Observation Network from 1901 to present"	"id":"reanalysis-carra-means"
+"title":"Arctic regional reanalysis daily and monthly data from 1991 to present"	"id":"insitu-gridded-observations-alpine-precipitation"
+"title":"Alpine gridded monthly precipitation data since 1871 derived from in-situ observations"	"id":"derived-gridded-glacier-mass-change"
+"title":"Glacier mass change gridded data from 1976 to present derived from the Fluctuations of Glaciers Database"	"title":"Quality assessment of the dataset"
+satellite-ice-sheet-elevation-change | Ice sheet surface elevation change rate for Greenland and Antarctica from 1992 to present derived from satellite observations
+"title":"Quality assessment of the dataset"	"id":"satellite-terrestrial-water-storage"
+"title":"Terrestrial water storage anomaly data from 2002 to present derived from satellite gravimetry observations"	"id":"satellite-ist-sst-polar"
+"title":"Sea ice surface temperature derived from satellite observations"	"id":"satellite-humidity-profiles"
+"title":"Tropospheric humidity profiles averaged monthly and zonally from 2006 to present derived from satellite observations"	"title":"Quality assessment of the dataset"
+satellite-cloud-properties | Cloud properties global gridded monthly and daily data from 1979 to present derived from satellite observations
+"title":"Quality assessment of the dataset"	"id":"satellite-surface-radiation-budget"
+"title":"Surface radiation budget from 1979 to present derived from satellite observations"	"title":"Quality assessment of the dataset"
+sis-energy-pecd | Climate and energy related variables from the Pan-European Climate Database derived from reanalysis and climate projections
+satellite-aerosol-properties | Aerosol properties gridded data from 1995 to present derived from satellite observations
+"title":"Quality assessment of the dataset"	"id":"satellite-ozone-v1"
+"title":"Ozone monthly gridded data from 1970 to present derived from satellite observations"	"title":"Quality assessment of the dataset"
+satellite-lai-fapar | Leaf area index and fraction absorbed of photosynthetically active radiation 10-daily gridded data from 1981 to present
+"title":"Quality assessment of the dataset"	"id":"contents/satellite/2026-06-25-warning-satellite-lai-fapar.md"
+satellite-albedo | Surface albedo 10-daily gridded data from 1981 to present
+"title":"Quality assessment of the dataset"	"id":"contents/satellite/2026-06-25-warning-satellite-albedo.md"
+satellite-sea-ice-drift | Sea ice drift daily gridded data derived from satellite observations
+"title":"Quality assessment of the dataset"	"id":"satellite-ice-sheet-mass-balance"
+"title":"Gravimetric mass balance data for the Antarctic and Greenland ice sheets derived from satellite observations"	"title":"Quality assessment of the dataset"
+insitu-gridded-observations-nordic | Nordic gridded temperature and precipitation data from 1961 to present derived from in-situ observations
+satellite-lake-water-level | Lake water levels from 1992 to present derived from satellite observations
+"title":"Quality assessment of the dataset"	"id":"satellite-fire-burned-area"
+"title":"Fire burned area from 2001 to present derived from satellite observations"	"title":"Quality assessment of the dataset"
+satellite-total-column-water-vapour-land-ocean | Global monthly and daily high-spatial resolution of total column water vapour from 2002 to 2017 derived from satellite observations
+"title":"Quality assessment of the dataset"	"id":"satellite-land-cover"
+"title":"Land cover classification gridded maps from 1992 to present derived from satellite observations"	"title":"Quality assessment of the dataset"
+insitu-gridded-observations-global-and-regional | Temperature and precipitation gridded data for global and regional domains derived from in-situ and satellite observations
+sis-hydrology-variables-derived-projections | Hydrology-related climate impact indicators from 1970 to 2100 derived from bias adjusted European climate projections
+sis-european-wind-storm-synthetic-events | Synthetic windstorm events for Europe from 1986 to 2011
+satellite-total-column-water-vapour-ocean | Monthly and 6-hourly total column water vapour over ocean from 1988 to 2020 derived from satellite observations
+"title":"Quality assessment of the dataset"	"id":"satellite-precipitation-microwave"
+"title":"Precipitation monthly and daily gridded data from 2000 to 2017 derived from satellite microwave observations"	"title":"Quality assessment of the dataset"
+satellite-sea-surface-temperature-ensemble-product | Sea surface temperature daily gridded data from 1981 to 2016 derived from a multi-product satellite-based ensemble
+"title":"Quality assessment of the dataset"	"id":"contents/satellite/2026-01-14-warning-satellite-sea-surface-temperature.md"
+reanalysis-era5-complete | Complete ERA5 global atmospheric reanalysis
+projections-climate-atlas | Gridded monthly climate projection dataset underpinning the IPCC AR6 Interactive Atlas
+derived-reanalysis-energy-moisture-budget | Mass-consistent atmospheric energy and moisture budget monthly data from 1979 to present derived from ERA5 reanalysis
+projections-cmip6-decadal-prototype | CMIP6 predictions underpinning the C3S decadal prediction prototypes
+derived-near-surface-meteorological-variables | Near surface meteorological variables from 1979 to present derived from bias-corrected reanalysis
+projections-cmip5-daily-single-levels | CMIP5 daily data on single levels
+reanalysis-uerra-europe-complete | Complete UERRA regional reanalysis for Europe from 1961 to 2019
+reanalysis-uerra-europe-height-levels | UERRA regional reanalysis for Europe on height levels from 1961 to 2019
+reanalysis-uerra-europe-pressure-levels | UERRA regional reanalysis for Europe on pressure levels from 1961 to 2019
+reanalysis-uerra-europe-single-levels | UERRA regional reanalysis for Europe on single levels from 1961 to 2019
+reanalysis-uerra-europe-soil-levels | UERRA regional reanalysis for Europe on soil levels from 1961 to 2019
+projections-cmip5-daily-pressure-levels | CMIP5 daily data on pressure levels
+projections-cmip5-monthly-single-levels | CMIP5 monthly data on single levels
+projections-cmip5-monthly-pressure-levels | CMIP5 monthly data on pressure levels
+provider-c3s-data-rescue-without | Data Rescue Service from the Copernicus Climate Change Service
