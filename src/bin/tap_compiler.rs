@@ -169,6 +169,146 @@ fn tap_query(root: &str, adql: &str) -> Option<String> {
     }
 }
 
+fn tap_query_votable(root: &str, adql: &str) -> Option<String> {
+    let out = Command::new("curl")
+        .arg("-sSf")
+        .arg("-G")
+        .arg("--data-urlencode")
+        .arg("REQUEST=doQuery")
+        .arg("--data-urlencode")
+        .arg("LANG=ADQL")
+        .arg("--data-urlencode")
+        .arg("FORMAT=votable/td")
+        .arg("--data-urlencode")
+        .arg(format!("QUERY={}", adql))
+        .arg(root)
+        .output()
+        .ok()?;
+    if out.status.success() {
+        String::from_utf8(out.stdout).ok()
+    } else {
+        None
+    }
+}
+
+fn tap_async(root: &str, adql: &str, poll_secs: u64) -> Option<String> {
+    let base = root.replace("/tap/sync", "/tap/async");
+    let out = Command::new("curl")
+        .arg("-sS")
+        .arg("-D")
+        .arg("-")
+        .arg("-o")
+        .arg("/dev/null")
+        .arg("-X")
+        .arg("POST")
+        .arg("--data-urlencode")
+        .arg("REQUEST=doQuery")
+        .arg("--data-urlencode")
+        .arg("LANG=ADQL")
+        .arg("--data-urlencode")
+        .arg(format!("QUERY={}", adql))
+        .arg(&base)
+        .output()
+        .ok()?;
+    let headers = String::from_utf8_lossy(&out.stdout);
+    let job = headers
+        .lines()
+        .find(|l| l.to_lowercase().starts_with("location:"))
+        .map(|l| l["location:".len()..].trim().to_string())?;
+    eprintln!("uws job: {}", job);
+    let mut phase = String::new();
+    for _ in 0..(poll_secs / 10 + 1) {
+        phase = Command::new("curl")
+            .arg("-sS")
+            .arg(format!("{}/phase", job))
+            .output()
+            .ok()
+            .and_then(|o| String::from_utf8(o.stdout).ok())?
+            .trim()
+            .to_string();
+        if phase == "COMPLETED" {
+            break;
+        }
+        if phase == "ERROR" {
+            eprintln!("uws job ERROR");
+            return None;
+        }
+        std::thread::sleep(std::time::Duration::from_secs(10));
+    }
+    if phase != "COMPLETED" {
+        eprintln!("uws job phase: {} nach {} s", phase, poll_secs);
+        return None;
+    }
+    Command::new("curl")
+        .arg("-sS")
+        .arg("-m")
+        .arg("3600")
+        .arg(format!("{}/results/result", job))
+        .output()
+        .ok()
+        .and_then(|o| String::from_utf8(o.stdout).ok())
+}
+
+fn votable_rows(body: &str) -> Option<(Vec<String>, Vec<Vec<String>>)> {
+    let mut fields: Vec<String> = Vec::new();
+    for f in body.split("<FIELD").skip(1) {
+        let seg = match f.split_once('>') {
+            Some((s, _)) => s,
+            None => continue,
+        };
+        let name = if let Some(attr) = seg.split("name=\"").nth(1) {
+            attr.split_once('"')?.0.trim().to_string()
+        } else {
+            let inner = match f.split_once('>') {
+                Some((_, rest)) => match rest.split_once('<') {
+                    Some((i, _)) => i.trim().to_string(),
+                    None => continue,
+                },
+                None => continue,
+            };
+            if inner.is_empty() {
+                continue;
+            }
+            inner
+        };
+        fields.push(name);
+    }
+    let data = match body.split("<DATA>").nth(1) {
+        Some(d) => d,
+        None => {
+            eprintln!(
+                "votable: <DATA> absent, felder={} len={}",
+                fields.len(),
+                body.len()
+            );
+            return None;
+        }
+    };
+    let mut rows = Vec::new();
+    for tr in data.split("<TR>").skip(1) {
+        let end = match tr.split_once("</TR>") {
+            Some((e, _)) => e,
+            None => continue,
+        };
+        let mut cells = Vec::new();
+        for td in end.split("<TD>").skip(1) {
+            let raw = match td.split_once("</TD>") {
+                Some((r, _)) => r.trim(),
+                None => continue,
+            };
+            let v = if let Some(c) = raw.strip_prefix("<![CDATA[") {
+                c.strip_suffix("]]>").unwrap_or(c).trim().to_string()
+            } else {
+                raw.to_string()
+            };
+            cells.push(v);
+        }
+        rows.push(cells);
+    }
+    eprintln!("votable: {} fields, {} rows", fields.len(), rows.len());
+    Some((fields, rows))
+}
+
 fn json_string(s: &str) -> String {
     let mut o = String::from("\"");
     for c in s.chars() {
@@ -214,6 +354,10 @@ fn main() {
     let mut probe: Option<String> = None;
     let mut limit: usize = 50_000;
     let mut index_mode = false;
+    let mut async_mode: Option<u64> = None;
+    let mut epoch_prop: Option<f64> = None;
+    let mut votable_flag = false;
+    let mut order_by: Option<String> = None;
     let mut i = 1;
     while i < args.len() {
         match args[i].as_str() {
@@ -238,6 +382,19 @@ fn main() {
                     .get(i + 1)
                     .and_then(|s| s.parse().ok())
                     .unwrap_or(50_000);
+                i += 1;
+            }
+            "--async" => {
+                async_mode = args.get(i + 1).and_then(|s| s.parse().ok()).or(Some(600));
+                i += 1;
+            }
+            "--epoch" => {
+                epoch_prop = args.get(i + 1).and_then(|s| s.parse().ok());
+                i += 1;
+            }
+            "--votable" => votable_flag = true,
+            "--order" => {
+                order_by = args.get(i + 1).cloned();
                 i += 1;
             }
             "--ci-mode" => ci_mode = true,
@@ -322,7 +479,6 @@ fn main() {
     }
     let mut col_names: Vec<String> = Vec::new();
     let col_idx: Vec<(String, usize)>;
-    let mut rows_out: Vec<String> = Vec::new();
     let any_positional = mapping.iter().any(|(_, c)| c.starts_with('@'));
     let cols_sel = if any_positional {
         "*".to_string()
@@ -333,24 +489,92 @@ fn main() {
             .collect::<Vec<_>>()
             .join(",")
     };
-    let adql = format!("SELECT TOP {} {} FROM \"{}\"", limit, cols_sel, table);
-    let Some(body) = tap_query(&root, &adql) else {
-        eprintln!("query returned void");
-        std::process::exit(1);
+    let table_ref = if table.contains('/') {
+        format!("\"{}\"", table)
+    } else {
+        table.clone()
     };
-    let Some(Json::Obj(m)) = parse_json(&body) else {
-        eprintln!("json returned void");
-        std::process::exit(1);
+    let adql = if async_mode.is_some() {
+        format!("SELECT {} FROM {}", cols_sel, table_ref)
+    } else {
+        let mut q = format!("SELECT TOP {} {} FROM {}", limit, cols_sel, table_ref);
+        if let Some(o) = &order_by {
+            q.push_str(&format!(" ORDER BY \"{}\"", o));
+        }
+        q
     };
-    let Some(meta) = m.get("metadata").and_then(as_arr) else {
-        eprintln!("metadata absent");
-        std::process::exit(1);
-    };
-    for md in meta {
-        if let Some(o) = as_obj(md) {
-            if let Some(nm) = get_str(o, "name") {
-                col_names.push(nm);
+    let mut cells_rows: Vec<Vec<String>> = Vec::new();
+    if async_mode.is_some() {
+        let Some(poll) = async_mode else {
+            unreachable!()
+        };
+        let Some(body) = tap_async(&root, &adql, poll) else {
+            eprintln!("async returned void");
+            std::process::exit(1);
+        };
+        let Some((fields, rows)) = votable_rows(&body) else {
+            eprintln!("votable returned void");
+            std::process::exit(1);
+        };
+        col_names = fields;
+        cells_rows = rows;
+    } else if votable_flag {
+        let Some(body) = tap_query_votable(&root, &adql) else {
+            eprintln!("query returned void");
+            std::process::exit(1);
+        };
+        match votable_rows(&body) {
+            Some((fields, rows)) => {
+                col_names = fields;
+                cells_rows = rows;
             }
+            None => {
+                eprintln!(
+                    "votable returned void, body[:160] = {}",
+                    &body[..body.len().min(160)]
+                );
+                std::process::exit(1);
+            }
+        }
+    } else {
+        let Some(body) = tap_query(&root, &adql) else {
+            eprintln!("query returned void");
+            std::process::exit(1);
+        };
+        let Some(Json::Obj(m)) = parse_json(&body) else {
+            eprintln!("json returned void");
+            std::process::exit(1);
+        };
+        let Some(meta) = m
+            .get("metadata")
+            .or_else(|| m.get("columns"))
+            .and_then(as_arr)
+        else {
+            eprintln!("metadata absent");
+            std::process::exit(1);
+        };
+        for md in meta {
+            if let Some(o) = as_obj(md) {
+                if let Some(nm) = get_str(o, "name") {
+                    col_names.push(nm);
+                }
+            }
+        }
+        let Some(data) = m.get("data").and_then(as_arr) else {
+            eprintln!("data absent");
+            std::process::exit(1);
+        };
+        for row in data {
+            let Some(r) = as_arr(row) else { continue };
+            let mut cells = Vec::new();
+            for c in r {
+                cells.push(match c {
+                    Json::Str(s) => s.clone(),
+                    Json::Num(v) => format!("{}", v),
+                    _ => String::new(),
+                });
+            }
+            cells_rows.push(cells);
         }
     }
     let idx_of = |col: &str| -> Option<usize> {
@@ -372,23 +596,60 @@ fn main() {
         }
         std::process::exit(1);
     }
-    let Some(data) = m.get("data").and_then(as_arr) else {
-        eprintln!("data absent");
-        std::process::exit(1);
-    };
-    for row in data {
-        let Some(r) = as_arr(row) else { continue };
+    let i_ra = col_idx.iter().find(|(k, _)| k == "ra").map(|(_, i)| *i);
+    let i_dec = col_idx.iter().find(|(k, _)| k == "dec").map(|(_, i)| *i);
+    let i_pmra = col_idx.iter().find(|(k, _)| k == "pmra").map(|(_, i)| *i);
+    let i_pmdec = col_idx.iter().find(|(k, _)| k == "pmdec").map(|(_, i)| *i);
+    let mut rows_out: Vec<String> = Vec::new();
+    for cells in &cells_rows {
+        let mut ra_v = i_ra
+            .and_then(|i| cells.get(i))
+            .and_then(|s| s.parse::<f64>().ok());
+        let mut dec_v = i_dec
+            .and_then(|i| cells.get(i))
+            .and_then(|s| s.parse::<f64>().ok());
+        if let (Some(epoch), Some(ra), Some(dec), Some(i_pmra), Some(i_pmdec)) =
+            (epoch_prop, ra_v, dec_v, i_pmra, i_pmdec)
+        {
+            let pmra = cells
+                .get(i_pmra)
+                .and_then(|s| s.parse::<f64>().ok())
+                .unwrap_or(0.0);
+            let pmdec = cells
+                .get(i_pmdec)
+                .and_then(|s| s.parse::<f64>().ok())
+                .unwrap_or(0.0);
+            ra_v = Some(ra + pmra / (3.6e6 * dec.to_radians().cos().max(1e-6)) * (2000.0 - epoch));
+            dec_v = Some(dec + pmdec / 3.6e6 * (2000.0 - epoch));
+        }
         let mut obj = String::from("{");
-        for (pos, (k, i)) in col_idx.iter().enumerate() {
+        let mut pos = 0;
+        for (k, i) in &col_idx {
+            if epoch_prop.is_some() && (k == "pmra" || k == "pmdec") {
+                continue;
+            }
             if pos > 0 {
                 obj.push(',');
             }
-            let cell = match r.get(*i) {
-                Some(Json::Str(s)) => json_string(s),
-                Some(Json::Num(v)) => format!("{}", v),
-                _ => "null".to_string(),
+            pos += 1;
+            let out = if k == "ra" {
+                ra_v.map(|v| format!("{}", v))
+                    .unwrap_or_else(|| "null".to_string())
+            } else if k == "dec" {
+                dec_v
+                    .map(|v| format!("{}", v))
+                    .unwrap_or_else(|| "null".to_string())
+            } else {
+                let raw = cells.get(*i).map(|s| s.as_str()).unwrap_or("");
+                if raw.is_empty() {
+                    "null".to_string()
+                } else if raw.parse::<f64>().is_ok() {
+                    raw.to_string()
+                } else {
+                    json_string(raw)
+                }
             };
-            obj.push_str(&format!("\"{}\":{}", k, cell));
+            obj.push_str(&format!("\"{}\":{}", k, out));
         }
         obj.push('}');
         rows_out.push(obj);

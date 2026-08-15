@@ -608,6 +608,19 @@ Binary-PCK-Pakets oben).
   K04b-Folge-Quelle; antares.data/antares10.data = ANTARES-Mirror (5 921
   Zeilen) — Recheck erledigt: Counts+Position → Decline (dead_sources.φ).
   GAVO-sync kennt ebenfalls kein OFFSET/LIMIT — Paging bleibt UWS-Async.
+- K04b-Welle (2026-08-15): tap_compiler gewinnt UWS-Async-Client
+  (submit/phase/results), VOTable-Reader (FIELDref-Self-Closing-Fix — der
+  stille None-Killer), --votable-Sync-Modus, GAVO-"columns"-Shape (statt
+  "metadata"), --order, --epoch (pm-Propagation → J2000, pmra/pmdec-Drop),
+  GAVO-Tabellen unquoted. Beweis: 20 000 hellste Sterne mit BJ-Distanzen
+  (mag 1,94–8,3, dist_pc) via gedr3dist.litewithdist (vor-gejoint — der
+  Join über 1,5 Mrd Zeilen ist der Sync-Killer). Befunde: GAVO-lite cutt
+  bei G<1,94 (Vega/Sirius absent — der Tycho2-Fallback trägt die hellen
+  30); GAVO-Async-Queue hing heute (2 Jobs PENDING) — der volle Merge
+  (G<11,5 = 1,97 Mio, rezeptfertig: --async + --epoch 2016 + litewithdist)
+  ersetzt TGAS, sobald die Queue liefert; CI-Schritt erst nach Verifikation
+  eintragen. CNS5 (5 909 Sterne, alle mit gaia_edr3_id) ⊂ DR3 — kein
+  separater Block nötig, die lokale Blase manifestiert im Merge.
 - FRB-Recherche (2026-08-15, „absent ist erst nach Recherche absent"): das
   Inventar liefert 2 FRB-Tabellen — FRBCAT 2016 (118, 18 z) + A&A 693/A279
   (2025, 24, 23 z, DM-Halo-Zerlegung, tausc) — beide live, Überlapp ≈ 0.
