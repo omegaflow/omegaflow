@@ -1,0 +1,27 @@
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2026-08-14&endtime=2026-08-15
+ttl 3600
+on earth 0 0
+
+url https://www.ndbc.noaa.gov/data/realtime2/42002.txt
+ttl 3600
+on earth 0 0
+
+url https://vires.services/hapi/data?id=SW_FAST_EFIA_LP_1B&time.min=2026-08-13&time.max=2026-08-14
+ttl 86400
+at earth
+
+url https://www.wis-tns.org/api/get/object
+ttl 3600
+at sun
+
+url https://api.worldbank.org/v2/country/US/indicator/NY.GDP.MKTP.CD?format=json
+ttl 86400
+on earth 0 0
+
+url https://b2find.eudat.eu/api/3/action/package_search?rows=1
+ttl 86400
+on earth 0 0
+
+url https://api.open-meteo.com/v1/forecast?latitude=29.5&longitude=-95.0&hourly=temperature_2m,wind_speed_10m
+ttl 3600
+on earth 0 0

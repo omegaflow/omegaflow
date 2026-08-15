@@ -7836,6 +7836,16 @@ fn probe_mode(path: &str, precise: bool, lat: f64, lon: f64, env: &HashMap<Strin
             lsk = omegaflow::lsk::parse(&text);
         }
     }
+    if lsk.is_none() {
+        if let Some(text) = fetch_one(
+            "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls",
+            None,
+            &[],
+            86400,
+        ) {
+            lsk = omegaflow::lsk::parse(&text);
+        }
+    }
     let time_pair: Option<(f64, LeapSeconds)> = match lsk {
         Some(l) => match l.system_now_tdb() {
             Some(t) => Some((t, l)),
@@ -7958,10 +7968,11 @@ fn probe_mode(path: &str, precise: bool, lat: f64, lon: f64, env: &HashMap<Strin
             }
         }
     }
-    std::fs::write("probe_output.φ", &out).ok();
-    std::fs::write("probe_dead.φ", &dead).ok();
+    std::fs::create_dir_all("phi/port").ok();
+    std::fs::write("phi/port/probe_survivors.φ", &out).ok();
+    std::fs::write("phi/port/probe_void.txt", &dead).ok();
     eprintln!(
-        "probe: wrote probe_output.φ ({} verified) and probe_dead.φ ({} declined)",
+        "probe: wrote phi/port/probe_survivors.φ ({} verified) and phi/port/probe_void.txt ({} declined)",
         accepted, declined
     );
     0
