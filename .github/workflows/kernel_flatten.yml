@@ -101,6 +101,14 @@ jobs:
             --input kernels/cometels.json.gz \
             --out cometels_flat.json \
             --ci-mode
+      - name: Compile DASTCOM5 comet apparition catalog and upload to CDN
+        run: |
+          curl -sSfL --retry 3 --max-time 7200 -o kernels/dcom5_le.dat \
+            https://ssd.jpl.nasa.gov/ftp/xfr/dcom5_le.dat
+          cargo run --release --bin dcom5_compiler -- \
+            --input kernels/dcom5_le.dat \
+            --out dcom5_comets.json \
+            --ci-mode
       - name: Compile Gaia DR3 + Bailer-Jones star catalog and upload to CDN
         run: |
           curl -sSfL --retry 3 --max-time 1200 -o kernels/hip_main.dat \
