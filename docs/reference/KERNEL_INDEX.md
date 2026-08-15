@@ -52,7 +52,7 @@ Die Mond-Text-PCKs (ssd.jpl.nasa.gov/ftp/misc/pck/
 pck.sat441/pck.jup365/pck.mar099/pck.ura182/pck.plu060, je .tpc) tragen
 RADII + POLE für die Monde, aber KEINE J2/J4-Werte — die einzigen Treffer sind
 Kommentarzeilen (BODYnnn_JCOEF-Dokumentation). Mond-Harmonische aus Text-PCKs
-manifestieren daher 0 (0 honored, keine Fabrikation). Echte Zonal-Terme liegen in
+manifestieren daher 0 (keine Fabrikation). Echte Zonal-Terme liegen in
 den Binary-PCKs (moon_pa_de440, Satelliten-.bpc) — das ist K02. pck00010.tpc
 deckt Phobos/Triton/Charon mit POLE+RADII ab; GM aller Körper kommt aus
 gm_Horizons.pck (km³/s², Parser skaliert ×1e9).
