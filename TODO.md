@@ -626,7 +626,11 @@ Binary-PCK-Pakets oben).
   0,2 s/COUNT — GAVO-Queue hing, aber ARI trägt gaiaedr3.gaia_source_lite
   ⋈ gaiaedr3_complements.distances) → 1 837 214 Sterne mit Bailer-Jones-
   Distanzen (G 1,94–11,5, 66 MB Bin), ersetzt TGAS in sources.φ. Beweis
-  HD 18560: BJ 177,8 pc (TGAS-DR1 sagte 157,5 — DR3 verfeinert). Befunde:
+  HD 18560: BJ 177,8 pc (TGAS-DR1 sagte 157,5 — DR3 verfeinert). Laziness
+  behoben (2026-08-15): --source bright im tycho2_compiler (Hipparcos V<1,94,
+  J1991.25→J2000 — 45 Sterne: Vega 7,76 pc, Sirius 2,64 pc, Alpha Centauri
+  1,347 pc) + --union-bright im tap_compiler → 1 837 259 Sterne in EINEM
+  Kanal, kein Fallback-Block. Befunde:
   ARI-lite cutt bei G<1,94 (Vega/Sirius absent — Tycho2-Fallback trägt die
   hellen ~30); GAVO-litewithdist ist der vor-gejointe, aber unindizierte
   Zwilling; ARI inventarisiert (203 Tabellen → phi/tap_index_ari.φ);

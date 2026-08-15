@@ -409,6 +409,75 @@ fn main() {
         }
         return;
     }
+    if source == "bright" {
+        let input = match input {
+            Some(p) => p,
+            None => {
+                eprintln!("--input absent (hip_main.dat)");
+                std::process::exit(1);
+            }
+        };
+        let data = match std::fs::read(&input) {
+            Ok(b) => b,
+            Err(_) => {
+                eprintln!("read {} returned void", input);
+                std::process::exit(1);
+            }
+        };
+        let text = String::from_utf8_lossy(&data);
+        let mut rows = Vec::new();
+        for line in text.lines() {
+            let b = line.as_bytes();
+            if b.len() < 104 {
+                continue;
+            }
+            let (Some(ra), Some(dec)) = (num(b, 52, 63), num(b, 65, 76)) else {
+                continue;
+            };
+            let plx = num(b, 80, 86).unwrap_or(0.0);
+            let vmag = num(b, 42, 46).unwrap_or(99.0);
+            if !(plx > 0.0) || !(vmag < 1.94) {
+                continue;
+            }
+            let pm_ra = num(b, 88, 95).unwrap_or(0.0);
+            let pm_de = num(b, 97, 104).unwrap_or(0.0);
+            let (ra_j, dec_j) = propagate(ra, dec, pm_ra, pm_de, 8.75);
+            rows.push(format!(
+                "{{\"ra\":{},\"dec\":{},\"mag\":{},\"dist_pc\":{}}}",
+                ra_j,
+                dec_j,
+                vmag,
+                1000.0 / plx
+            ));
+        }
+        let out_path = match out {
+            Some(p) => p,
+            None => {
+                eprintln!("--out absent");
+                std::process::exit(1);
+            }
+        };
+        let mut buf = String::from("[");
+        for (k, r) in rows.iter().enumerate() {
+            if k > 0 {
+                buf.push(',');
+            }
+            buf.push_str(r);
+        }
+        buf.push_str("]\n");
+        if let Ok(mut f) = std::fs::File::create(&out_path) {
+            let _ = f.write_all(buf.as_bytes());
+        } else {
+            eprintln!("write {} returned void", out_path);
+            std::process::exit(1);
+        }
+        eprintln!(
+            "bright: {} records (V<1.94, plx>0) → {}",
+            rows.len(),
+            out_path
+        );
+        return;
+    }
     let dir = match input_dir {
         Some(d) => d,
         None => {

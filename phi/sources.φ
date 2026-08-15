@@ -440,10 +440,11 @@ z z
 field flux tevcat_flux inverse-square em Crab 604800 0.0 0.0
 
 # ── Gaia-DR3 + Bailer-Jones-Distanzen (K04b via ARI Heidelberg) — Stern-Hash-Kanal ──
-# 1 837 214 Sterne (G 1,94–11,5), r_med_geo via gaiaedr3_complements.distances,
+# 1 837 259 Sterne: 1 837 214 (G 1,94–11,5, r_med_geo via
+# gaiaedr3_complements.distances) + 45 Hipparcos-Helle (V<1,94 — Vega, Sirius,
+# Alpha Centauri; Gaia sättigt dort, ihre Parallaxen sind Hipparcos-Boden).
 # J2016→J2000 pm-propagiert; pm im Bin 0 (statisch, TTL-Woche ≈ 0,2″ Drift).
-# Die hellen ~30 (G<1,94: Vega, Sirius, …) trägt der Tycho2-Fallback; TGAS ist
-# ersetzt (BJ statt roher DR1-Parallaxen — HD 18560: 177,8 pc).
+# Ein Stern-Kanal — kein Fallback.
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/dr3_stars.bin
 format catalog_tycho
 at sun

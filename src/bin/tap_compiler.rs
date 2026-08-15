@@ -511,6 +511,7 @@ fn main() {
     let mut join_spec: Option<(String, String)> = None;
     let mut mag_bands: Option<(f64, f64, f64)> = None;
     let mut star_bin = false;
+    let mut union_bright: Option<String> = None;
     let mut i = 1;
     while i < args.len() {
         match args[i].as_str() {
@@ -554,6 +555,10 @@ fn main() {
                 i += 2;
             }
             "--star-bin" => star_bin = true,
+            "--union-bright" => {
+                union_bright = args.get(i + 1).cloned();
+                i += 1;
+            }
             "--mag-bands" => {
                 mag_bands = Some((
                     args.get(i + 1).and_then(|s| s.parse().ok()).unwrap_or(0.0),
@@ -888,9 +893,49 @@ fn main() {
                 None => eprintln!("band [{}, {}) returned void", a, b),
             }
         }
-        if let Some(mut f) = out_file {
+        if let Some(mut f) = out_file.take() {
             if !star_bin {
                 let _ = f.write_all(b"]\n");
+            }
+            if star_bin {
+                if let Some(up) = &union_bright {
+                    if let Ok(text) = std::fs::read_to_string(up) {
+                        if let Some(Json::Arr(rows)) = parse_json(&text) {
+                            let mut added = 0usize;
+                            for r in &rows {
+                                if let Some(o) = as_obj(r) {
+                                    let get = |k: &str| -> Option<f64> {
+                                        match o.get(k) {
+                                            Some(Json::Num(v)) => Some(*v),
+                                            Some(Json::Str(s)) => s.parse().ok(),
+                                            _ => None,
+                                        }
+                                    };
+                                    if let (Some(ra), Some(dec), Some(mag), Some(dist_pc)) =
+                                        (get("ra"), get("dec"), get("mag"), get("dist_pc"))
+                                    {
+                                        if dist_pc > 0.0 && ra.is_finite() && dec.is_finite() {
+                                            let plx_mas = 1000.0 / dist_pc;
+                                            let flux = 10f64.powf(-0.4 * mag) as f32;
+                                            let mut rec = Vec::with_capacity(STAR_BIN_STRIDE);
+                                            rec.extend_from_slice(&ra.to_le_bytes());
+                                            rec.extend_from_slice(&dec.to_le_bytes());
+                                            rec.extend_from_slice(&0f32.to_le_bytes());
+                                            rec.extend_from_slice(&0f32.to_le_bytes());
+                                            rec.extend_from_slice(&(plx_mas as f32).to_le_bytes());
+                                            rec.extend_from_slice(&(mag as f32).to_le_bytes());
+                                            rec.extend_from_slice(&flux.to_le_bytes());
+                                            let _ = f.write_all(&rec);
+                                            added += 1;
+                                        }
+                                    }
+                                }
+                            }
+                            total += added;
+                            eprintln!("union-bright: +{} records (total {})", added, total);
+                        }
+                    }
+                }
             }
         }
         eprintln!("bands: {}, rows: {} → {}", n_bands, total, out_path_band);
