@@ -65,6 +65,16 @@ jobs:
             --input kernels/dast5_le.dat \
             --out dastcom_asteroids.bin \
             --ci-mode
+      - name: Compile sexagesimal catalogs and upload to CDN
+        run: |
+          curl -sSfL --retry 3 --max-time 300 -o kernels/tabo1.csv \
+            https://www.physics.mcgill.ca/~pulsar/magnetar/TabO1.csv
+          curl -sSfL --retry 3 --max-time 300 -o kernels/tevcat2.json \
+            https://tevcat2.tevcat.org/api/sources
+          cargo run --release --bin sexagesimal_compiler -- \
+            --source magnetar --input kernels/tabo1.csv --out magnetar_flat.json --ci-mode
+          cargo run --release --bin sexagesimal_compiler -- \
+            --source tevcat --input kernels/tevcat2.json --out tevcat_flat.json --ci-mode
       - name: Compile MPC cometels catalog and upload to CDN
         run: |
           curl -sSfL --retry 3 --max-time 600 -o kernels/cometels.json.gz \

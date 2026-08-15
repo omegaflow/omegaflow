@@ -106,8 +106,16 @@ ttl 604800, field H em mag). Horizons-Beweis 1P/Halley: Δ3,3″/Δ1,2″/
 Δ0,0018 au bei 35 au — Kepler-vs.-n-body-Drift, ehrliche Katalog-Physik.
 dist_scale entriegelt zugleich Magnetar (kpc) + ALFALFA (Mpc). ALFALFA lebt
 (2026-08-15: format csv + csv_to_json-Arm im Extract-Kern, Block in sources.φ,
-RAdeg_HI/Decdeg_HI dezimal, HIflux Jy·km/s, Test Mpc→m). Das CDN-Asset
-cometels_flat.json entsteht beim ersten CI-Lauf (GH_TOKEN lokal
+RAdeg_HI/Decdeg_HI dezimal, HIflux Jy·km/s, Test Mpc→m). SEXAGESIMAL-GAP
+GESCHLOSSEN (2026-08-15): `src/sexagesimal.rs` (RA-Stunden/Decl-Grade → deg,
+Space- und Colon-Separatoren, Signum, 5 Tests) + `src/bin/sexagesimal_compiler.rs`
+(--source tevcat|magnetar → Flat-JSON ra/dec/dist/flux; CSV mit gequoteten
+Komma-Feldern; TeVCat „2.0 kpc"→kpc-Parser). Dev-Beweise: TeVCat Crab
+83,6329°/+22,0145° (360 Quellen, 1 Skip) und Magnetar SGR 1806-20
+272,16390°/−20,41107°/8,7 kpc (31/31, 0 Skips) — exakt die Katalogwerte.
+φ-Blöcke magnetar_flat.json + tevcat_flat.json (cmap, dist_scale
+3,085677581e19, field flux em) + CI-Schritt in kernel_flatten.yml.
+Das CDN-Asset cometels_flat.json entsteht beim ersten CI-Lauf (GH_TOKEN lokal
 absent) — bis dahin manifestiert der Block 0 (0 honored,
 kein live-Fallback auf die .gz-Quelle möglich).
 ```

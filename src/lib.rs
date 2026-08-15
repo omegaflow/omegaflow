@@ -6,3 +6,4 @@ pub mod inflate;
 pub mod kepler;
 pub mod lsk;
 pub mod pck;
+pub mod sexagesimal;
