@@ -232,44 +232,47 @@ fn rotation_matrix_from_angles(ra_deg: f64, dec_deg: f64, pm_deg: f64) -> [f64; 
     ]
 }
 
-fn angles_from_rotation_matrix(m: [f64; 9]) -> (f64, f64, f64) {
-    let sd = (m[2] * m[2] + m[8] * m[8]).sqrt();
-    let dec = sd.atan2(-m[5]).to_degrees();
-    let ra = (-m[3]).atan2(m[4]).to_degrees();
-    let w = m[2].atan2(m[8]).to_degrees();
-    let pm = ra + w;
-    (ra, dec, pm)
-}
-
 fn matmul(a: &[f64; 9], b: &[f64; 9]) -> [f64; 9] {
     let mut o = [0.0f64; 9];
-    for r in 0..3 {
-        for c in 0..3 {
-            o[r * 3 + c] = a[r * 3] * b[c] + a[r * 3 + 1] * b[3 + c] + a[r * 3 + 2] * b[6 + c];
+    for j in 0..3 {
+        for i in 0..3 {
+            o[3 * j + i] = a[i] * b[3 * j] + a[3 + i] * b[3 * j + 1] + a[6 + i] * b[3 * j + 2];
         }
     }
     o
 }
 
-fn mat_transpose(m: &[f64; 9]) -> [f64; 9] {
-    [m[0], m[3], m[6], m[1], m[4], m[7], m[2], m[5], m[8]]
+fn libration_matrix(phi_deg: f64, theta_rad: f64, psi_rad: f64) -> [f64; 9] {
+    let (sp, cp) = phi_deg.to_radians().sin_cos();
+    let (st, ct) = theta_rad.sin_cos();
+    let (ss, cs) = psi_rad.sin_cos();
+    let r3p = [cp, sp, 0.0, -sp, cp, 0.0, 0.0, 0.0, 1.0];
+    let r1t = [1.0, 0.0, 0.0, 0.0, ct, st, 0.0, -st, ct];
+    let r3s = [cs, ss, 0.0, -ss, cs, 0.0, 0.0, 0.0, 1.0];
+    matmul(&matmul(&r3p, &r1t), &r3s)
 }
 
-fn apply_fixed_rotation(
-    ra: f64,
-    dec: f64,
-    pm: f64,
-    rot: &[f64; 9],
-    wgccre: &PckBody,
-) -> (f64, f64, f64) {
-    let m_pa = rotation_matrix_from_angles(ra, dec, pm);
-    let m_me = matmul(&m_pa, &mat_transpose(rot));
-    let (ra2, dec2, pm2) = angles_from_rotation_matrix(m_me);
-    let lin_dec = wgccre.pole_dec_deg.unwrap_or(dec2);
-    if (dec2 - lin_dec).abs() > 90.0 {
-        return (ra2 + 180.0, -dec2, pm2 + 180.0);
-    }
-    (ra2, dec2, pm2)
+fn iau_angles_from_matrix(m: [f64; 9]) -> (f64, f64, f64) {
+    let p = [m[6], m[7], m[8]];
+    let ra = p[1].atan2(p[0]).to_degrees();
+    let dec = p[2].asin().to_degrees();
+    let n_norm = (p[0] * p[0] + p[1] * p[1]).sqrt();
+    let n = [-p[1] / n_norm, p[0] / n_norm, 0.0];
+    let t = [m[0], m[1], m[2]];
+    let t_dot_p = t[0] * p[0] + t[1] * p[1] + t[2] * p[2];
+    let tp = [
+        t[0] - t_dot_p * p[0],
+        t[1] - t_dot_p * p[1],
+        t[2] - t_dot_p * p[2],
+    ];
+    let n_cross_tp = [
+        n[1] * tp[2] - n[2] * tp[1],
+        n[2] * tp[0] - n[0] * tp[2],
+        n[0] * tp[1] - n[1] * tp[0],
+    ];
+    let w_num = n_cross_tp[0] * p[0] + n_cross_tp[1] * p[1] + n_cross_tp[2] * p[2];
+    let w_den = n[0] * tp[0] + n[1] * tp[1] + n[2] * tp[2];
+    (ra, dec, w_num.atan2(w_den).to_degrees())
 }
 
 fn full_orientation(
@@ -280,31 +283,32 @@ fn full_orientation(
     jd: f64,
 ) -> Option<(f64, f64, f64)> {
     let et = (jd - J2000_EPOCH) * 86400.0;
-    for bpc in bpc_files {
-        if let Some(v) = bpc.orient(body_id, 1, et) {
-            return Some(v);
-        }
-    }
     for pa_frame in fk
         .frames
         .iter()
         .filter(|f| f.class == 2 && f.center == body_id)
     {
         for bpc in bpc_files {
-            if let Some((ra, dec, pm)) = bpc.orient(pa_frame.id, 1, et) {
-                if let Some(child) = fk.tkframe_child_of(&pa_frame.name) {
-                    if let Some((rot, via)) = fk.tkframe_rotation(child.id) {
-                        let (ra2, dec2, pm2) = apply_fixed_rotation(ra, dec, pm, &rot, wgccre);
-                        eprintln!(
-                            "fk: {} ({}) → {} ({}) via {} — pa=({:.6},{:.6},{:.6}) me=({:.6},{:.6},{:.6})",
-                            pa_frame.name, pa_frame.id, child.name, child.id, via,
-                            ra, dec, pm, ra2, dec2, pm2
-                        );
-                        return Some((ra2, dec2, pm2));
-                    }
+            let Some((phi, theta, psi)) = bpc.orient(pa_frame.id, 1, et) else {
+                continue;
+            };
+            let m_pa = libration_matrix(phi, theta, psi);
+            let m_me = match fk.tkframe_child_of(&pa_frame.name) {
+                Some(child) => match fk.tkframe_rotation(child.id) {
+                    Some((rot, _)) => matmul(&m_pa, &rot),
+                    None => m_pa,
+                },
+                None => m_pa,
+            };
+            let (mut ra2, mut dec2, mut w2) = iau_angles_from_matrix(m_me);
+            if let Some((_, lin_dec, _)) = linear_orientation(wgccre, jd) {
+                if (dec2 - lin_dec).abs() > 90.0 {
+                    ra2 += 180.0;
+                    dec2 = -dec2;
+                    w2 += 180.0;
                 }
-                return Some((ra, dec, pm));
             }
+            return Some((ra2, dec2, w2));
         }
     }
     let tc = (jd - J2000_EPOCH) / 36525.0;
@@ -988,6 +992,22 @@ fn select_system(entries: &[IndexEntry], system: &str) -> Vec<IndexEntry> {
         {
             out.push(e.clone());
         }
+        let bpc: Vec<IndexEntry> = entries
+            .iter()
+            .filter(|e| e.family == "bpc" && e.name.starts_with("moon_pa"))
+            .cloned()
+            .collect();
+        if let Some(best) = pick_spk(&bpc) {
+            out.push(best);
+        }
+        let fk_sel: Vec<IndexEntry> = entries
+            .iter()
+            .filter(|e| e.family == "fk" && e.name.starts_with("moon_de440"))
+            .cloned()
+            .collect();
+        if let Some(best) = pick_spk(&fk_sel) {
+            out.push(best);
+        }
         out.sort_by(|a, b| numeric_of(&a.name).cmp(&numeric_of(&b.name)));
         return out;
     }
@@ -1536,12 +1556,12 @@ fn main() {
             };
             for frame in fk.frames.iter().filter(|f| f.class == 2) {
                 let et = (jd - J2000_EPOCH) * 86400.0;
-                let Some((ra, dec, pm)) = b.orient(frame.id, 1, et) else {
+                let Some((phi, theta, psi)) = b.orient(frame.id, 1, et) else {
                     continue;
                 };
                 eprintln!(
-                    "probe {} ({}) jd {}: pa=({:.6}, {:.6}, {:.6})",
-                    frame.name, frame.id, jd, ra, dec, pm
+                    "probe {} ({}) jd {}: phi={:.6} deg theta={:.9} rad psi={:.9} rad",
+                    frame.name, frame.id, jd, phi, theta, psi
                 );
                 let Some(child) = fk.tkframe_child_of(&frame.name) else {
                     continue;
@@ -1549,21 +1569,17 @@ fn main() {
                 let Some((rot, via)) = fk.tkframe_rotation(child.id) else {
                     continue;
                 };
-                let m_pa = rotation_matrix_from_angles(ra, dec, pm);
-                let m_me = matmul(&m_pa, &mat_transpose(&rot));
-                let (ra2, dec2, pm2) = angles_from_rotation_matrix(m_me);
+                let m_me = matmul(&libration_matrix(phi, theta, psi), &rot);
+                let (ra2, dec2, w2) = iau_angles_from_matrix(m_me);
                 eprintln!(
                     "probe {} ({}) via {}: me=({:.6}, {:.6}, {:.6})",
-                    child.name, child.id, via, ra2, dec2, pm2
+                    child.name, child.id, via, ra2, dec2, w2
                 );
                 let et2 = (jd + 10.0 - J2000_EPOCH) * 86400.0;
-                if let Some((ra3, dec3, pm3)) = b.orient(frame.id, 1, et2) {
-                    let m_me2 = matmul(
-                        &rotation_matrix_from_angles(ra3, dec3, pm3),
-                        &mat_transpose(&rot),
-                    );
-                    let (_, _, pm4) = angles_from_rotation_matrix(m_me2);
-                    let mut drift = pm4 - pm2;
+                if let Some((phi2, theta2, psi2)) = b.orient(frame.id, 1, et2) {
+                    let m_me2 = matmul(&libration_matrix(phi2, theta2, psi2), &rot);
+                    let (_, _, w3) = iau_angles_from_matrix(m_me2);
+                    let mut drift = w3 - w2;
                     while drift > 180.0 {
                         drift -= 360.0;
                     }

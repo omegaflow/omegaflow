@@ -6,7 +6,7 @@ wird entfernt (Git trägt es). Kein Eintrag meldet Erledigtes als offen, kein of
 Punkt fehlt. Widerspricht ein Dokument dieser Datei, gilt diese Datei — solche
 Drift-Stellen sind unter „Doku-Drift" registriert.
 
-## Stand — 2026-08-15 (Katalog-Welle: K03-Kometen inkl. dcom5-Multi-Apparitionen, K04b Gaia-DR3+Bailer-Jones 1,84 Mio Sterne, Exoplanet-Bulk 6309, tap_compiler über TAPVizieR/GAVO/ARI/IRSA/ExoArchive, Enrichment-Matrix; LSK/PCK-Hochzeit, K05-FK-Parser, Binary v2, Protokoll v6, reine Per-Pixel-Membran, K01 geschlossen)
+## Stand — 2026-08-15 (Katalog-Welle: K03-Kometen inkl. dcom5-Multi-Apparitionen, K04b Gaia-DR3+Bailer-Jones 1,84 Mio Sterne, Exoplanet-Bulk 6309, tap_compiler über TAPVizieR/GAVO/ARI/IRSA/ExoArchive, Enrichment-Matrix; LSK/PCK-Hochzeit, Binary v2, Protokoll v6, reine Per-Pixel-Membran, K01 geschlossen, K05 geschlossen)
 
 Zeit aus naif0012.tls (LSK-Reader, keine TT_MINUS_UTC-Konstante). PCK-Reader pck.rs
 (gm_de440, pck00010, geophysical.ker → GM/J2/J4/Radii/POLE). stype-1 v2: gcount=12,
@@ -30,11 +30,14 @@ NAIF-ID↔Name-Tabelle docs/reference/naif_body_ids.tsv; gm_Horizons.pck als
 GM-Quelle; Horizons-Compiler trägt --ci-mode. Kleinkörper-Flatten-Pass ist am
 K03-Zweig registriert (DASTCOM+Kepler). K02 geschlossen: src/bpc.rs
 (Binary-PCK-Leser, DAF Typ 2) + stype-4-Nutationssektion (additiv) in
-Compiler/Runtime; Moon-PA-Merge parkt an K05. K03-Compiler-Einheit
+Compiler/Runtime. K03-Compiler-Einheit
 geschlossen: src/kepler.rs + src/bin/dastcom_compiler.rs (Dev-Beweis Ceres
-0,001″ gegen Horizons). 32 neue φ-Ephemeris-Blöcke für die Flattener-Monde
+0,001″ gegen Horizons). K05 geschlossen: FK-Frames + Mond-BPC-Merge
+(libration_matrix, IAU-Extraktion, select_system moon_pa*.bpc +
+moon_de440*.tf, Probe 0,009°/0,018°/0,077° gegen IAU-Vollmodell).
+32 neue φ-Ephemeris-Blöcke für die Flattener-Monde
 (absent bis der Flattener-CI-Lauf die CDN-Assets trägt — ausstehend). P01 geschlossen (tote force-Direktive und 3-Token-field lehnt parse_sources laut ab).
-0 Warnings, 0 Errors; Tests: 31 lib + 36 bin.
+0 Warnings, 0 Errors; Tests: 34 lib + 34 bin.
 
 ---
 
@@ -60,41 +63,41 @@ fließen über die stype-4-Röhre. Binary-PCKs tragen NUR Orientierung (pck.req,
 Typen 2/3/20) — die CON-J2/J4-Behauptung war falsch; Mond-Harmonische liegen nicht
 in den Flattener-Wurzeln (j2/j4 bleiben offen — die Werte liegen in den GRAIL/Binary-PCK-Modellen).
 ```
-Verifikations-Befund moon_pa_de440_200625.bpc (Session 2026-08-14): Der
-DAF-Leser ist korrekt (Trailer, Record-Adressen, Fenster 1550–2650, Grad-9-Fits
-verifiziert) — aber die gespeicherten Winkel folgen nicht der IAU-Pol-Konvention:
-bei J2000 liefert die Datei Pol ≈ (RA −0,05°, DEC +0,43°) und W-Drift 0,23°/Tag
-statt 13,176°/Tag. Die SPICE-Kette geht über MOON_PA_DE440 (31008) + TKFRAME_31009
-(67,85"/78,69"/0,28", AXES 3-2-1, ARCSECONDS, moon_de440_250416.tf). Der
-Binary-PCK-Merge für den Mond parkt deshalb an K05 (FK-Kette) — der Leser steht.
+Verifikations-Befund moon_pa_de440_200625.bpc: Der DAF-Leser ist korrekt
+(Trailer, Record-Adressen, Fenster 1550–2650, Grad-9-Fits verifiziert).
+Die Slots sind die DE440-Lunarlibrationswinkel (φ in GRAD, θ/ψ in RADIANT) —
+keine IAU-Pol-Winkel. Der frühere „0,23°/Tag statt 13,176°/Tag"-Befund war
+die ψ-Rotationsrate in RADIANT (0,229987 rad/Tag = 13,177°/Tag). Merge in
+K05 geschlossen.
 
-**K05** FK-Frames (erweitert um den K02-Befund)
+**K05** FK-Frames + Mond-BPC-Merge
 ```
 FK-TEIL GESCHLOSSEN (2026-08-15): src/fk.rs (Text-FK-Reader: FRAME_*/TKFRAME_*-
 Blöcke, ANGLES/AXES/UNITS- und MATRIX-Rotationen in SPICE-Reihenfolge,
 Mehrzeilen-Tupel, Ein-Level-Kettenregel, 3 Tests); der Flattener klassifiziert
 family fk, führt die Festrotation an (pa_frame_of-Hardcode entfernt) und hat
 einen --probe-Modus (--bpc + --fk + JD → PA/ME-Winkel + W-Drift).
-Moon-PA-Merge GELÖST + VERIFIZIERT (2026-08-15), Code auf Wunsch zurückgenommen
-— Übergabe: docs/plans/K05_mond_bpc_uebergabe.md (Rezept komplett). Die
-bpc-Slots sind die DE440-Lunarlibrationswinkel (Park et al. 2021, AJ 161
-105, §2.4): Slot 0 = φ (Knoten, GRAD; −0,054° ≈ 0 ✓), Slot 1 = θ
-(Neigung, RADIANT; 24,343°, trackt die Nodal-Oszillation ✓), Slot 2 = ψ
-(Twist, RADIANT; Drift 0,229987 rad/Tag = 13,177°/Tag = exakt die
-Rotationsrate, DE440-Header-Konstante 0,229944858937522340 ✓). Die
-„0,23°/Tag-Anomalie" war Grad-vs-Radiant. Komposition: r_I =
-R3(φ)·R1(θ)·R3(ψ)·r_PA (Standard-Spaltenmatrizen, Gl. 8) + Gl. 19
-(r_MER = R_x(0,2785″)R_y(−78,6944″)R_z(67,8526″)r_PA — die
-tf-TKFRAME_31009 trägt davon die Inverse, M_ICRF←ME = M_PA·M_tk).
-Probe-Verifikation J2000: me = (269,986°, 65,672°, W 41,159°) gegen das
-IAU-Vollmodell (269,9949°, 65,654°, 41,236°) — 0,02°/0,08° Abweichung,
-W-Drift +13,186°/Tag ✓. Horizons-Referenz: CENTER='500@399' + TARGET='301'
-(sub-Erdpunkt auf dem MOND — die umgekehrte Query liefert den
-sub-Mondpunkt auf der Erde, das war die Phantom-Diskrepanz). Der
-Live-Kanal bleibt Text-PCK-IAU, bis die nächste Session das Rezept
-(Spaltenlayout-matmul, Libration-Matrix, IAU-Extraktion, select_system
-moon_pa*.bpc + moon_de440*.tf) einbaut — rotation_matrix_from_angles
-und die stype-3-Röhre bleiben unangetastet.
+Moon-PA-Merge GESCHLOSSEN (2026-08-15): Komposition eingebaut — matmul auf
+Spaltenlayout, libration_matrix R3(φ)·R1(θ)·R3(ψ) (Standard-Spaltenmatrizen),
+full_orientation: M_ICRF←ME = M_PA·M_tk (tkframe_rotation(31009) direkt,
+ohne Transpose), IAU-Extraktion (Pol = Spalte 2, W über den aufsteigenden
+Knoten, Zweig-Umklappung gegen die Linear-Dec), Probe nutzt dieselben
+Helfer, select_system (planets) zieht moon_pa*.bpc + moon_de440*.tf (CI
+automatisch). bpc-Slots = DE440-Lunarlibrationswinkel (Park et al. 2021,
+AJ 161 105, §2.4): Slot 0 = φ (Knoten, GRAD; −0,054° ≈ 0), Slot 1 = θ
+(Neigung, RADIANT; 24,343°), Slot 2 = ψ (Twist, RADIANT; Drift
+0,229987 rad/Tag = 13,177°/Tag = exakt die Rotationsrate). Probe J2000:
+me = (269,986°, 65,672°, 41,159°), W-Drift +13,186°/Tag — gegen das
+IAU-Vollmodell (269,9949°, 65,654°, 41,236°) 0,009°/0,018°/0,077°.
+Flatten: Mond 12556 stype-4-Sektionen (Delta = DE440 − Text-PCK-linear);
+die Delta-Basis bleibt das pure Linear (Runtime-Binary trägt kein
+nut_ra/nut_dec — parse_ephemeris_binary setzt beide None), die
+Text-PCK-NUT-Serien fließen über die stype-4-Röhre (K02-Design,
+Jupiter-Serie 12556 Sektionen bestätigt). Horizons-Referenz:
+CENTER='500@399' + TARGET='301' (sub-Erdpunkt auf dem MOND — die
+umgekehrte Query liefert den sub-Mondpunkt auf der Erde, das war die
+Phantom-Diskrepanz). rotation_matrix_from_angles und die stype-3-Röhre
+blieben unangetastet (Erd-Stationen live verifiziert).
 ```
 
 **K03** Kleinkörper-Katalog
