@@ -6,7 +6,7 @@ wird entfernt (Git trägt es). Kein Eintrag meldet Erledigtes als offen, kein of
 Punkt fehlt. Widerspricht ein Dokument dieser Datei, gilt diese Datei — solche
 Drift-Stellen sind unter „Doku-Drift" registriert.
 
-## Stand — 2026-08-15 (Katalog-Welle: K03-Kometen inkl. dcom5-Multi-Apparitionen, K04b Gaia-DR3+Bailer-Jones 1,84 Mio Sterne, Exoplanet-Bulk 6309, tap_compiler über TAPVizieR/GAVO/ARI/IRSA/ExoArchive, Enrichment-Matrix; LSK/PCK-Hochzeit, Binary v2, Protokoll v6, reine Per-Pixel-Membran, K01 geschlossen, K05 geschlossen)
+## Stand — 2026-08-15 (Katalog-Welle: K03-Kometen inkl. dcom5-Multi-Apparitionen, K04b Gaia-DR3+Bailer-Jones 1,84 Mio Sterne, Exoplanet-Bulk 6309, tap_compiler über TAPVizieR/GAVO/ARI/IRSA/ExoArchive, Enrichment-Matrix; LSK/PCK-Hochzeit, Binary v2, Protokoll v6, reine Per-Pixel-Membran, K01 geschlossen, K05 geschlossen; wgpu-mono: native Mathematikerin als Radiator, Messstation nach mod relay extrahiert)
 
 Zeit aus naif0012.tls (LSK-Reader, keine TT_MINUS_UTC-Konstante). PCK-Reader pck.rs
 (gm_de440, pck00010, geophysical.ker → GM/J2/J4/Radii/POLE). stype-1 v2: gcount=12,
@@ -17,8 +17,11 @@ body_channels sendet ausschließlich {body}.mass (GM, Kernel 0, gravity) und
 {body}.radius. fs evaluiert osc_field für jeden Pixel (kontinuierliche Mathematik,
 keine Stützstellen, keine Interpolation); Nebra-Rampe t2 = clamp((log2(Ω_total)+14)/22, 0, 1)
 (4 mix()-Segmente Blau→Cyan→Orange→Weiß) IST die Tonemap; Ω_total = Σ|omegas[k]|.
-Exposure-Kette getilgt (keine lvls, keine e/E). SSAA als dichtere Messung: q/Q in
-Φ-Schritten (1.00–8.00, Start 1.00×), Canvas-Backing skaliert, CSS nativ.
+Exposure-Kette im Browser getilgt (keine lvls, keine e/E); die native
+Mathematikerin trägt e/E (±2¹) als vp.expose_ex.x-Offset in der Rampe.
+SSAA als dichtere Messung: q/Q in
+Φ-Schritten (1.00–8.00, Start 1.00×), Canvas-Backing skaliert, CSS nativ;
+nativ via Surface-Rekonfiguration (Backing = Fenster × dpr × ssaa).
 28 lokale v2-Binaries unter /tmp/omegaflow_eph_*.bin (Meter, verifiziert).
 K01 geschlossen: kernel_flatten.yml (Rust-Flattener-CI) ersetzt
 generate-ephemerides.yml; ephemeris_compiler mit --index (voller rekursiver
@@ -37,7 +40,53 @@ geschlossen: src/kepler.rs + src/bin/dastcom_compiler.rs (Dev-Beweis Ceres
 moon_de440*.tf, Probe 0,009°/0,018°/0,077° gegen IAU-Vollmodell).
 32 neue φ-Ephemeris-Blöcke für die Flattener-Monde
 (absent bis der Flattener-CI-Lauf die CDN-Assets trägt — ausstehend). P01 geschlossen (tote force-Direktive und 3-Token-field lehnt parse_sources laut ab).
-0 Warnings, 0 Errors; Tests: 34 lib + 34 bin.
+0 Warnings, 0 Errors; Tests: 41 lib + 36 bin (1 vorbestehender FAIL:
+test_parse_stations_xml, „aae" vs „AAE" — BGS-lowercase gegen Fixture-Assertion,
+parse_stations_xml in diesem Zug unberührt).
+
+---
+
+### wgpu-mono — nativer Monolith
+
+```
+GESCHLOSSEN (2026-08-15): Cargo-Features gpu (default, wgpu 24 + winit 0.30 +
+pollster) und browser_relay (TCP/WS-Relay auf 1618). src/relay.rs trägt den
+verbatim verschobenen Messstations-Block (TcpRadiator, WsConfig, WsFrame,
+handle_ingress inkl. HTTP-Routen + WS-Ingress + 168-B-v6-Serialisierung,
+read/write_ws_*, sha1/base64, emit, PORT_CONST); src/mathematikerin.rs trägt
+die MathematikerinRadiator (winit-Loop im eigenen Thread, 2 Pipelines
+Render+Compute-Probe, VP-Uniform 128 B, field/meta-Storage mit Kapazitäts-
+Wachstum, Backpressure via on_submitted_work_done), den in-process-Packer
+(field 12/meta 12 f32 aus dem 21-f64-Record, x_rel = x − presence, val roh —
+WGSL foldet) und den Golden-Test gegen die verifizierte Tabelle
+(tm.z=force, tm.w=absorption, mt.x=extent, mt.z=kernel, mp.w=j2, mg.x=j4,
+mg.y=r_eq). Navigation 1:1 zum Browser: Pfeile = Pan (Shift ×4), PageUp/Down,
+s = Halt, b = Orient-Reset, Drag links = Orient (GRID_TO_ANGLE 2^62), Drag
+rechts = Pan, Rad = ÷2^(dy/128), +/- = ×4/÷4, q/Q = SSAA ×/÷ Φ (1.0–8.0),
+,/. = Zeit-Thrust tThrustTarget ∓64 (tPresence += (1+tThrust)·dt,
+exponentielle Relaxation wie im Browser), e/E = Exposure ±2¹ als
+vp.expose_ex.x-Rampen-Offset, 1–9 = Sprung auf die Baryzentrum-Position der
+Körper 1–9 (body_names-Ordnung = BODY_REGISTRY-Ordnung, grid 2^28). Presence
+→ presence_tx ab gridStep-Schwelle (range = max(w,h)·sf·grid·2), in-process
+sense_buffer pro Feld-Update + bei Fensterbewegung (pad = volle Diagonale =
+Browser-Extent, cache_interval = clamp(gridStep/30000, Φ, Φ·10)).
+WGSL-Fix mg.y: rd = mg.y (r_eq aus meta[9]) statt mg.z (meta[10] = 0) — der
+J2/J4-Zonal-Term erhält die echten Äquatorialradien, in membrane.wgsl UND
+static/index.html (Messstation-Parität). Nackter Build (--no-default-features
+ohne Feature) wird via compile_error refused (keine Wahrnehmungsfläche — kein
+gpu, kein browser_relay); CI/Compiler bauen mit --no-default-features
+--features browser_relay (std-only, kein wgpu) — CI-Workflows beim Merge
+entsprechend anpassen.
+```
+Offen:
+- Gamepad-Atom (gilrs oder rohes /dev/input; Kern-Navigation
+  Tasten/Drag/Rad/q/Q/,/. trägt allein)
+- test_parse_stations_xml: Fixture-Assertion „AAE" vs BGS-lowercase „aae" —
+  vorbestehend auf main, nicht von diesem Zug berührt
+- Fenster-Verifikation beim Operator ausstehend: schwarz (0 honored) →
+  Sonne rendert, Drag instant, e/E, 1–9; Risiko Vulkan/GL auf Intel HD 515
+- test_backlog_batches_verify + test_live_sources_extract laufen >60 s
+  (Suite ~855 s)
 
 ---
 
