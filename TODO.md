@@ -471,13 +471,13 @@ Binary-PCK-Pakets oben).
   trotz format=json).
 - `phi/research/agent_output/batch_*_accepted.φ` (32 Dateien, neue Grammatik):
   629 Blöcke, 625 parse-fähig, 389 unique vs. live. `test_backlog_batches_verify`
-  (Verifizierer) hat 81 mit Samples verifiziert → `staging_verified.φ`,
-  99 diagnostiziert → `staging_empty.txt` (2026-08-15). Integriert: 8 kuratierte
-  Blöcke (SWPC GOES Flux, Kp, OpenSky, Waterservices) + ACE L1 (2) + BOM +
-  CO-OPS-Tiden-Fanout (gravity) + 29 NDBC-Buoys (Kraft-Labels korrigiert;
-  die 20 Tides&Currents-Stationen im Staging sind durch den Tiden-Fanout
-  superseded). NIST-Beacon + ArcGIS-NDBC declined. Offen: ~290 unverifizierte
-  Unique, SWPC ACE-Verbleib im Staging.
+  (Verifizierer, merged über Läufe) hat 160 mit Samples verifiziert →
+  `staging_verified.φ`, ~250 diagnostiziert → `staging_empty.txt` (2026-08-15).
+  Integriert: ~46 kuratierte Blöcke (SWPC GOES Flux, Kp, OpenSky, Waterservices,
+  ACE L1, BOM, CO-OPS-Tiden-Fanout gravity, 29 NDBC-Buoys, GML CH4/N2O/SF6,
+  Barrow, AOML-Drifter). NIST-Beacon + ArcGIS-NDBC declined. Offen: die
+  übrigen ~100 Staging-Blöcke (INGV/JMA-Seismik, OOI-ERDDAP, weitere
+  SWPC-Varianten) + der 27k-Alte-Grammatik-Archeologie-Bestand.
 - `archeology/sources/sources_gold_pre-cdn_27k_359-domains.φ` (2572 Blöcke, alte
   force-Grammatik) + `sources_recovery_pre-cdn_25k_211-domains.φ` (1924): Migration
   nach Protokoll (docs/source_curation.md); die alte Grammatik wird derzeit noch
