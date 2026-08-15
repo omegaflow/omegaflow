@@ -1,0 +1,378 @@
+# ESA eogateway — Data-Titel direkt (full_text Voll-Pagination 432 Seiten, live 2026-08-15)
+# 376 Data-Titel extrahiert; Titel mit escapeten Anführungszeichen werden vom Extrakt unterschlagen (Untergrenze)
+2022 SEASTARex
+ADAM Surface Reflectance Database v4.0
+Aeolus Additional Products
+Aeolus Baseline 16 Products
+Aeolus EOL Products
+Aeolus L0 Products
+Aeolus L2C Products
+AfriSAR 2015
+AfriSAR 2016
+AfriScat
+AGRISAR 2006
+AgriSAR 2009
+Airborne Quantum Gravimetry (AirQuantumGrav 2023)
+AIRFIRE
+AirScatterGNSS
+ALOS African Coverage ESA archive
+ALOS AVNIR-2 L1C
+ALOS PALSAR International Polar Year Antarctica
+ALOS PALSAR products
+ALOS PRISM L1B
+ALOS PRISM L1C
+ALOS PRISM L1C European Coverage Cloud Free
+AlpTomoExp
+Announcement of Opportunity for Aeolus Cal/Val
+Announcement of Opportunity for ALTIUS Cal/Val
+Announcement of Opportunity for constellr
+Announcement of Opportunity for Dragon 6
+Announcement of opportunity for FLEX cal/val
+Announcement of Opportunity for FOREST data
+Announcement of Opportunity for HotSat-1
+Announcement of Opportunity for NoR
+Announcement of Opportunity for S3VT (Sentinel-3 Validation Team)
+Announcement of Opportunity for SAOCOM
+Announcement of Opportunity for Spire data
+Announcement of Opportunity for Unseenlabs data
+AquiferEx
+AROMAT-I
+AROMAT-II
+Atmospheric Thematic Data Product [MWR_TDPATM]
+Aura OMI complete NASA dataset
+AVHRR L1B/1C Local Area Coverage Imagery
+BACCHUS-DOC
+BelSAR 2018
+Biomass Auxiliary
+Biomass Auxiliary products for the Commissioning Team
+Biomass Auxiliary restricted
+Biomass Cal/Val
+Biomass Level 0
+Biomass Level-0 products for the Commissioning Team
+Biomass Level 1A
+Biomass Level-1a products for the Commissioning Team
+Biomass Level 1B
+Biomass Level-1b products for the Commissioning Team
+Biomass Level 1C
+Biomass Level-1c products for the Commissioning Team
+Biomass Level 2A
+Biomass Level-2a products for the Commissioning Team
+Biomass Level 2B
+Biomass Simulated Data
+BioSAR 2007
+BioSAR 2008
+BioSAR 2010
+BorealScat
+CartoSat-1 archive and Euro-Maps 3D Digital Surface Model
+CEFLES2
+CHARADMexp
+CIMREx
+CIRFAEx
+CLARE
+CLOSED - Announcement of Opportunity for S5PVT (Sentinel-5 Precursor Calibration and Validation Team)
+CLOSED - EarthCARE Calibration and Validation Announcement of Opportunity
+Closed ESA announcement of opportunities
+C-MAPExp
+Cold atom gravimetry airborne campaign
+COMEX
+constellr Sample Data
+CoSMOS 2005, 2007, 2008, 2010
+CoSMOS 2006
+COSMO-SkyMed ESA archive
+COSMO-SkyMed First Generation sample data
+COSMO-SkyMed full archive and tasking
+COSMO SkyMed Second Generation Sample Data
+Cryo2IceEx/SILICE 2022
+CryoSat Data Samples
+CryoSat Ice Level 1
+CryoSat Ice Level 2
+CryoSat Ocean Level 1
+CryoSat Ocean Level 2
+CryoSat products
+CryoTEMPO
+CryoTEMPO-EOLIS
+CryoVEx 2003
+CryoVEx 2004
+CryoVEx 2005
+CryoVEx 2006
+CryoVEx 2007
+CryoVEx 2008
+CryoVEx 2010
+CryoVEx 2011
+CryoVEx 2012
+CryoVEx 2016 Spring
+CryoVEx AEM
+CryoVExAnt 2008/2009
+CryoVExAnt 2010/2011
+CryoVExAnt 2014/2015
+CryoVEx ASIRAS 2014
+CryoVExGround 2011
+CryoVEx/ICESat-2 Spring 2019
+CryoVEx ICESat-2 Summer 2019
+CryoVEx KAREN 2016 Fall
+CryoVEx KAREN 2017
+CryoVEx/KAREN Antarctica 2017/18
+DESIREX 2008
+DOMECair (GOCE)
+DOMECair (SMOS)
+DOMEX-1
+DOMEX-2
+DOMEX-3
+Drift4SKIM
+EAGLE
+EarthCARE Auxiliary Data for Cal/Val Users
+EarthCARE ESA L2 Products
+EarthCARE ESA L2 Products for Cal/Val Users
+EarthCARE ESA L2 Products for the Commissioning Team
+EarthCARE JAXA L2 Products
+EarthCARE JAXA L2 Products for Cal/Val Users
+EarthCARE JAXA L2 Products for the Commissioning Team
+EarthCARE L0 and L1 Products for the Commissioning Team
+EarthCARE L1 Products
+EarthCARE L1 Products for Cal/Val Users
+EarthCARE Orbit Data
+EarthCARE X-MET L1D Products
+Envisat AATSR L1B Brightness Temperature/Radiance [ENV_AT_1_RBT]
+Envisat ASAR AP Co- and Cross-polar L0 [ASA_APC/APH/APV_0P]
+Envisat ASAR AP Medium Resolution L1  [ASA_APM_1P]
+Envisat ASAR AP Precision L1 [ASA_APP_1P]
+Envisat ASAR AP Single-Look Complex L1 [ASA_APS_1P]
+Envisat ASAR Global Monitoring L1  [ASA_GM1_1P]
+Envisat ASAR IM L0 [ASA_IM__0P]
+Envisat ASAR IM Medium Resolution L1 [ASA_IMM_1P]
+Envisat ASAR IM Precision L1 [ASA_IMP_1P]
+Envisat ASAR IM Single Look Complex L1 [ASA_IMS_1P]
+Envisat ASAR Wave Cross Spectra Imagette L1 [ASA_WVS_1P]
+Envisat ASAR Wave SLC and Cross-Spectra Imagettes L1 [ASA_WVI_1P]
+Envisat ASAR WM Ocean Wave Spectra L2  [ASA_WVW_2P]
+Envisat ASAR WS L0 [ASA_WS__0P]
+Envisat ASAR WS Medium Resolution L1 [ASA_WSM_1P]
+Envisat ASAR WS Single Look Complex L1  [ASA_WSS_1P]
+Envisat DORIS Doppler [DOR_DOP_1P]
+Envisat DORIS Precise Orbit [DOR_VOR_AX]
+Envisat GOMOS Geolocated Calibrated Transmission Spectra and Photometer Fluxes [GOM_TRA_1P]
+Envisat GOMOS Level 1b - Limb spectra [GOM_LIM_1P]
+Envisat GOMOS Level 2 - Atmospheric constituents profiles [GOM_NL__2P]
+Envisat GOMOS Level 2 - Atmospheric constituents profiles - Gridded User Friendly Product [GOMOS_UFP_gridded]
+Envisat GOMOS Level 2 - Atmospheric constituents profiles - User Friendly Product [GOMOS_UFP]
+Envisat GOMOS Level 2 - Residual extinction [GOM_EXT_2P]
+Envisat MERIS Full Resolution - Level 1 [MER_FRS_1P/ME_1_FRG]
+Envisat MERIS Full Resolution - Level 2 [MER_FRS_2P/ME_2_FRG]
+Envisat MERIS Reduced Resolution - Level 1 [MER_RR__1P/ME_1_RRG]
+Envisat MERIS Reduced Resolution - Level 2 [MER_RR__2P/ME_2_RRG]
+Envisat MIPAS L1 - Geo-located and calibrated atmospheric spectra [MIP_NL__1P]
+Envisat MIPAS L2 - Temperature, pressure and atmospheric constituents profiles [MIPAS_2PS/2PE]
+Envisat SCIAMACHY Level 1b [SCI_____1P]
+Envisat SCIAMACHY Level 2 - Limb Ozone [SCI_LIMBO3]
+Envisat SCIAMACHY Level 2 [SCI_____2P]
+EPATAN 2016
+ERS-1/2 SAR IM L0 [SAR_IM__0P]
+ERS-1/2 SAR IM Medium Resolution L1 [SAR_IMM_1P]
+ERS-1/2 SAR IM Precision L1  [SAR_IMP_1P]
+ERS-1/2 SAR IM Single Look Complex L1 [SAR_IMS_1P]
+ERS-1/2 SCATTEROMETER Nominal Resolution back-scattering measurements, Ocean Wind field [UWI]
+ERS-1/2 SCATTEROMETER Ocean Wind field and Sea Ice probability [ASPS20.H/ASPS20.N]
+ERS-2 GOME Spectral Product L1
+ERS-2 GOME Total Column Amount of Trace Gases Product
+ERS-2 SCATTEROMETER Surface Soil Moisture Time Series and Orbit product in High and Nominal Resolution [SSM.H/N.TS - SSM.H/N]
+ERS ATSR L1B Brightness Temperature/Radiance [ER1_AT_1_RBT / ER2_AT_1_RBT]
+ERS PRARE Precise Orbit Product (ERS.ORB.POD/ERS.ORB/PRC)
+ERS SAR & Envisat ASAR Alaska mountains - L1 (IM/AP)
+ERS SAR & Envisat ASAR Alps mountains - L1 (IM/AP)
+ERS SAR & Envisat ASAR Austria coverage - L1 (IM)
+ERS SAR & Envisat ASAR Iceland mountains - L1 (IM/AP)
+ERS SAR & Envisat ASAR Italy volcanoes - L1 (IM)
+ERS SAR & Envisat ASAR Pyrenees mountains - L1 (IM/AP)
+ERS SAR & Envisat ASAR Scandinavia mountains - L1 (IM/AP)
+ERS SAR Svalbard coverage - L1 (IM)
+ESAG
+ESSenCe
+European Cities: Cartosat-1 Euro-Maps 3D
+External Calibration and Validation of the Biomass Mission
+FINESSE at Andøya 2023
+FIRMOS
+FLEX EU 2014
+FLEXSense 2018
+FLEXSense 2019
+FLEX Test Products
+FLEX-US
+FSSCat products
+Fundamental Data Record for Atmospheric Composition [ATMOS__L1B]
+Fundamental Data Records for Altimetry [ALT_FDR___]
+Fundamental Data Records for Radiometry [MWR_FDR___]
+GeoEye-1 ESA archive
+GeoEye-1 full archive and tasking
+GEOSAT-1 and 2 ESA archive
+GEOSAT-1 full archive and tasking
+GEOSAT-1 sample data
+GEOSAT-2 full archive and tasking
+GEOSAT-2 Portugal Coverage 2021
+GEOSAT-2 Sample Data
+GEOSAT-2 Spain Coverage
+GHGSat archive and tasking
+GOCE Global Gravity Field Models and Grids
+GOCE Level 1
+GOCE Level 2
+GOCE TEC and ROTI
+GOCE Telemetry
+GOCE Thermosphere Data
+GOME Total Column Water Vapour Climate product
+GOSAT-2 TANSO FTS-2 and CAI-2 full archive and new products
+GOSAT TANSO FTS and CAI full archive and new products
+GRACE-A and GRACE-B Level 1B,  Level 1B combined and Level 2 Data Products
+GWEX
+HydroSoil
+HYFLEX
+IceSAR 2007
+IceSAR 2012
+IceSAR 2019
+ICEYE ESA archive
+ICEYE full archive and tasking
+ICEYE Sample Data
+IKONOS ESA archive
+Image 2006 European coverage
+Image 2007 European coverage
+INDREX-2
+Inland Waters Thematic Data Product [ALT_TDP_IW]
+IRS-1C/1D European coverage
+IRS-1C/1D Full archive
+IRS-P5 (Cartosat-1) Sample Data
+IRS-P6 (ResourceSat-1) Sample Data
+IRS-R2 (ResourceSat-2) Sample Data
+JERS-1 OPS (Optical Sensor) Very Near Infrared Radiometer (VNIR) System Corrected Products level 1
+JERS-1 SAR Level 1 Precision Image
+JERS-1 SAR Level 1 Single Look Complex Image
+KaSAR
+KOMPSAT-1 Coverage of 50 European Cities
+KOMPSAT-2 ESA archive
+Land Ice Thematic Data Product [ALT_TDP_LI]
+Landsat 5 TM European and Mediterranean Countries Cloud Free Collection
+Landsat 5 TM Europe and North Africa Coverage 1984-85
+Landsat 5 TM Europe and North Africa Coverage 1986-89
+Landsat 5 TM Europe and North Africa Coverage 1995-98
+Landsat 7 ETM+ European and Mediterranean Countries Cloud Free Collection
+Landsat-8 and 9 OLI/TIRS worldwide data products
+Landsat ETM+ ESA archive
+Landsat MSS ESA Archive
+Landsat RBV
+Landsat TM ESA archive
+LaRA
+LOSAC
+MOS-1/1B ESA Orthorectified Map-oriented Products [MES_GEC_1P]
+MOS-1/1B ESA System Corrected Map-oriented Products [MES_GES_1P]
+MOS-1/1B ESA System Corrected VTIR Products [VTI_SYC_1P]
+NoSREx-I -II and -III
+Ocean and Coastal Topography Thematic Data Product [ALT_TDP_OC]
+OceanSat-2 data
+Ocean Waves Thematic Data Product [ALT_TDP_WA]
+Odin OSIRIS data products
+Odin SMR data products
+PAZ ESA archive
+PAZ Full Archive and New Tasking
+PAZ Sample Data
+PhotoProxy 2019
+PlanetScope ESA archive
+PlanetScope Full Archive
+PlanetScope Sample Data
+Pléiades ESA archive
+Pléiades full archive and tasking
+Pléiades Neo ESA Archive
+Pléiades Neo full archive and tasking
+Pléiades Neo Sample Data
+Pléiades Sample Data
+PolarGap
+POLARIS 2011
+POLARIS Proof of Concept 2008
+POLARIS - Proof of Concept 2009
+PremierEX
+PROBA-1 CHRIS Level 1A
+PROBA-1 HRC
+PROBA-V 1 km, 333 m, and 100 m products
+QuickBird-2 ESA archive
+QuickBird full archive
+RADARSAT-1 & 2 full archive and tasking
+RADARSAT-1 ESA Archive
+RADARSAT-2 ESA archive
+RADARSAT Sample Data
+RapidEye ESA archive
+RapidEye Full archive
+RapidEye Sample Data
+RapidEye South America
+RapidEye time series for Sentinel-2
+ResourceSat-1/IRS-P6 full archive
+ResourceSat-2 full archive and tasking
+ROVE (1975-1981)
+SAOCOM Europe data products
+SARSense 2019
+SARSimHT
+SARSimHT-NG
+SciSat-1: ACE-FTS and MAESTRO
+Sea Ice Thematic Data Product [ALT_TDP_SI]
+SeaSat ESA archive
+SEN2EXP
+SEN2FLEX
+SEN3EXP
+Sentinel-3 OLCI Tandem 2018
+SIFLEX
+SkySat ESA archive
+SkySat Full Archive and New Tasking
+SkySat Sample Data
+SMOS Auxiliary Data
+SMOS - CryoSat L4 Sea Ice Thickness
+SMOSice
+SMOS L1 and L2 Science data
+SMOS L3 Daily Wind Speed
+SMOS L3 Sea Ice Thickness
+SMOS NRT Data Products
+SMOS NRT L2 Swath Wind Speed
+SMOS Soil Freeze and Thaw State
+SMOS Tropical Cyclone Wind Radii Fixes
+SnowLab
+SnowLab-NG
+SnowSAR (NOSREX, TVCEXP and ALPSAR)
+SnowSAR Proof Of Concept
+SnowSum
+SoyFLEX 2015
+SoyFLEX II 2016
+SPARC
+SPOT 1-5 ESA archive
+SPOT 4-5 Take5  ESA archive
+SPOT 6 and 7 ESA archive
+SPOT 6 Sample Data
+SPOT-6 to 7 full archive and tasking
+Swarm Core
+Swarm Geodesy/Gravity
+Swarm Ionosphere/Magnetosphere
+Swarm Level 1B
+Swarm Level 2 daily
+Swarm Level 2 longterm
+Swarm Lithosphere
+Swarm Mantle
+Swarm Oceans
+Swarm Space Weather
+Swarm Thermosphere
+TanSat AGCS and CAPI products
+TerraSARSIM
+TerraSAR-X ESA archive
+TerraSAR-X Sample Data
+TerraSAR-X/TanDEM-X full archive and tasking
+THERMOPOLIS
+TomoSense
+TropForest - ALOS, GEOSAT-1 & KOMPSAT-2 optical coverages over tropical forests
+TropiSAR 2009
+TropiScat
+VT GOCE Data
+WaddenSAR
+WALEX
+WindVal I
+WindVal II
+WindVal III
+WISE
+WIVERNex-UK
+WorldView-1 full archive and tasking
+WorldView-2 European Cities
+WorldView-2 full archive and tasking
+WorldView-3 full archive and tasking
+WorldView-4 Full Archive
+WorldView ESA archive
+WorldView Legion full archive and tasking
