@@ -496,6 +496,14 @@ Offen (Detail in phi/port/ledger.φ, jede Zeile mit Zustand):
   SOURCES_V2_SPEC §2. Folgewelle: NASA-CMR-Keywords + GBIF-Tags downloaden,
   Library feinwägen; --port ersetzt --gold (port_mode/port_block), Test
   temp_port_convert_check liest queue/master.φ.
+- Probe-Stufe: --probe mit LSK-Selbstholung, Auto-Draft (walk_json_probe),
+  format free text + text_to_json (NDBC-Text), Headers gerendert,
+  --fetchone für den Fetch-Vergleich. Wahrheitstest 2/7 (USGS 293 Samples,
+  NDBC 7 Samples); Vergleich P1–P4 in probe_comparison.txt (Linse 57% vs
+  2%). CI: .github/workflows/probe_sweep.yml (wöchentlich + manuell) probt
+  probe_batch.φ, lädt survivors/void/weights als Artefakte; Review+Einbau
+  bleibt Session-Arbeit. Erster Einbau: NDBC 46086 in sources.φ, 10
+  Varianten/Modelle in dead_sources.φ. Nächste Welle: Batch 201–400.
 - Queue: 10 Untested-Korpora (14k/13k/15k/7k/2k/183l/astro/earth/exotic/
   candidate-staging), Gold 2572 + Recovery 1924 + 5701 Lost-Blocks (Join aus
   richest/params) — Port durch die Prozedur. Erster Port 2026-08-15: STAC

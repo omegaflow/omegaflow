@@ -1,0 +1,42 @@
+name: Probe-Sweep
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '23 3 * * 1'
+permissions:
+  contents: write
+env:
+  RUSTFLAGS: -D warnings
+jobs:
+  sweep:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/cache@v4
+      with:
+        path: /tmp/archivar_cache
+        key: archivar-cache-${{ github.run_id }}
+        restore-keys: |
+          archivar-cache-
+    - uses: actions-rust-lang/setup-rust-toolchain@v1
+    - name: lens
+      run: |
+        for f in phi/katalog/b2find_catalogs_index.φ phi/katalog/grind_eogateway_index.φ phi/katalog/archeology_gaps_index.φ phi/katalog/terrapulse_catalog.φ phi/katalog/gaia_swpc_vokabular.φ phi/katalog/simbad_otypes.φ phi/katalog/inaturalist_vokabular.φ phi/katalog/nasa_cmr_tags.φ phi/katalog/gbif_tags.φ; do
+          cargo run --quiet --bin source_scanner -- phi/port/library.φ "$f" || true
+        done
+    - name: probe
+      run: cargo run -- --probe phi/port/probe_batch.φ
+    - name: upload
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: probe-results
+        path: |
+          phi/port/probe_survivors.φ
+          phi/port/probe_void.txt
+          phi/port/weights_*.txt
+    - uses: actions/cache@v4
+      if: always()
+      with:
+        path: /tmp/archivar_cache
+        key: archivar-cache-${{ github.run_id }}

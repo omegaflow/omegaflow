@@ -72,23 +72,34 @@ queue phi/port/queue/sources_astro_untested_30-astro.φ
 note 30 Blöcke, alte Grammatik — kein URL im kanonischen Register; --gold + Sweep, dann Disposition
 ```
 
-## 5. Workflow-Prozedur (kein neuer Parser-Modus)
+## 5. Workflow-Prozedur (Trichter: Linse → Probe → Review)
 
-Die Kette existiert bereits; das Protokoll kettet sie nur. Pro Korpus:
+Pro Korpus:
 
-1. `cargo run -- --gold phi/port/queue/<korpus>.φ phi/port/stage/<korpus>_converted.φ`
-   — mechanische Old→New-Konvertierung (Lautsignal: der Konverter meldet
-   Blöcke, die nicht parse-fähig sind; `source`-Köpfe, `method`, `pos` und
-   unbekannte Direktiven fallen — siehe §9).
-2. `cargo test -- test_backlog_batches_verify -- --nocapture` — der Sweep
-   liest `phi/port/stage/*_converted.φ`, substituiert Templates mit der
-   Fixture, fetcht (Secrets via `render_headers`), extrahiert mit
-   `extract` + `diagnose_no_samples` und schreibt `staging_verified.φ`
-   (Samples da) bzw. `staging_empty.txt` (`void <url> <diagnose>`).
-3. Disposition: verified-Blöcke nach §1.0-Regeln in `phi/sources.φ` einbauen;
-   void/decline in `phi/dead_sources.φ`; `ledger.φ`-Eintrag aktualisieren oder
-   entfernen (disponiert). Erschöpfte Queue-Datei aus `queue/` entfernen.
-4. `cargo check` 0/0; ein Commit, der TODO.md im selben Schritt aktualisiert.
+1. `cargo run -- --port phi/port/queue/<korpus>.φ phi/port/stage/<korpus>_converted.φ`
+   — mechanische Quellgrammatik→kanonisch-Konvertierung (Lautsignal: der
+   Konverter meldet Blöcke, die nicht parse-fähig sind; `source`-Köpfe,
+   `method`, `pos` und unbekannte Direktiven fallen — siehe §9).
+2. Linse: `cargo run --bin source_scanner -- phi/port/library.φ <katalog.φ>`
+   — die gewichtete Tag-Library (Ratssitzungen, 2.358 Tags) wiegt die
+   Kandidaten; positive Gewichte sind die Probe-Kandidaten.
+3. Probe: `cargo run -- --probe <blöcke.φ>` — fetch → parse →
+   `walk_json_probe`-Auto-Draft → `extract`-Verdict. Überlebende (echte
+   Samples) nach `phi/port/probe_survivors.φ`, ehrliche Diagnosen nach
+   `phi/port/probe_void.txt`. Befunde: `phi/port/probe_comparison.txt`
+   (Linse 57% vs 2% Survivor-Rate, fetch_one == fetch_raw_probe für
+   unmanifestierte Kandidaten).
+4. Review (Mensch): Survivor-Duplikate gegen `phi/sources.φ` prüfen;
+   Force-Gate; echte Neue nach §1.0 in `phi/sources.φ`, Varianten/Modelle/
+   Tote nach `phi/dead_sources.φ`; `ledger.φ` aktualisieren; den nächsten
+   Batch in `phi/port/probe_batch.φ` nachrücken.
+5. `cargo check` 0/0; ein Commit, der TODO.md im selben Schritt aktualisiert.
+
+**CI-Schleife:** `.github/workflows/probe_sweep.yml` (wöchentlich + manuell)
+läuft die mechanischen Stufen — Linse über die Kataloge + `--probe` über
+`phi/port/probe_batch.φ` — und lädt `probe_survivors.φ` / `probe_void.txt` /
+`weights_*.txt` als Artefakte hoch. Die Review bleibt in der Session: Artefakt
+herunterladen → Schritt 4 → Commit. Die CI probt, der Mensch prüft.
 
 Per-Block-Kuration (neue Kandidaten, nicht mechanisch):
 URL-Templates füllen → `curl`-Erreichbarkeit → Struktur prüfen (200er-HTML ist
