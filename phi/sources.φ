@@ -826,21 +826,23 @@ on earth 35.68 139.69 0
 last mag geosphere_earthquakes_jma_recent_mag erfc seismic-surface Mw 60.0 0.0 0.0
 
 # ── Swarm EFI via VirES HAPI (electric — erster Live-Feldwert!) ──
-url https://vires.services/hapi/data?id=SW_FAST_EFIA_LP_1B&start={hour_ago}&stop={now}&parameters=N_ion,T_elec,Vs&format=json
-ttl 3600
+# Lag ~10 h: Fenster endet im Abdeckungsbereich ({yesterday} 12–13 Uhr), ttl 86400 faltet den Lag
+url https://vires.services/hapi/data?id=SW_FAST_EFIA_LP_1B&start={yesterday}T12:00:00Z&stop={yesterday}T13:00:00Z&parameters=N_ion,T_elec,Vs&format=json
+ttl 86400
 at earth
 hapi N_ion=swarm_ion_density_cm3 T_elec=swarm_electron_temp_k Vs=swarm_spacecraft_potential_v
-field swarm_ion_density_cm3 swarm_ion_density_cm3 gaussian-inverse-square diffusion cm-3 3600 0.0 0.0
-field swarm_electron_temp_k swarm_electron_temp_k exponential-decay thermal K 3600 0.0 0.0
-field swarm_spacecraft_potential_v swarm_spacecraft_potential_v inverse-square electric V 3600 0.0 0.0
+field swarm_ion_density_cm3 swarm_ion_density_cm3 gaussian-inverse-square diffusion cm-3 86400 0.0 0.0
+field swarm_electron_temp_k swarm_electron_temp_k exponential-decay thermal K 86400 0.0 0.0
+field swarm_spacecraft_potential_v swarm_spacecraft_potential_v inverse-square electric V 86400 0.0 0.0
 
 # ── Swarm FAC via VirES HAPI (electric — Feld-aligned Currents) ──
-url https://vires.services/hapi/data?id=SW_FAST_FACATMS_2F&start={hour_ago}&stop={now}&parameters=IRC,FAC&format=json
-ttl 3600
+# Lag ~10 h: Fenster endet im Abdeckungsbereich, ttl 86400 faltet den Lag
+url https://vires.services/hapi/data?id=SW_FAST_FACATMS_2F&start={yesterday}T12:00:00Z&stop={yesterday}T13:00:00Z&parameters=IRC,FAC&format=json
+ttl 86400
 at earth
 hapi IRC=swarm_ionospheric_radial_current_uam2 FAC=swarm_field_aligned_current_uam2
-field swarm_ionospheric_radial_current_uam2 swarm_ionospheric_radial_current_uam2 inverse-square electric uA/m2 3600 0.0 0.0
-field swarm_field_aligned_current_uam2 swarm_field_aligned_current_uam2 inverse-square electric uA/m2 3600 0.0 0.0
+field swarm_ionospheric_radial_current_uam2 swarm_ionospheric_radial_current_uam2 inverse-square electric uA/m2 86400 0.0 0.0
+field swarm_field_aligned_current_uam2 swarm_field_aligned_current_uam2 inverse-square electric uA/m2 86400 0.0 0.0
 
 # ── INTERMAGNET Observatorien (em, 154 — Fanout über GINServices-Observatoriumsliste) ──
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id={station}/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
@@ -1175,7 +1177,8 @@ lastrow WTMP hydrosphere_buoy_51004_water_temp gaussian-inverse-square thermal d
 
 # ── Grind-Einbau 2026-08-15 ──
 
-# Swarm EFI TCT02 — E-Feld-Stärke selbst (electric; experimentell, 2013-12 bis 2025-12)
+# Swarm EFI TCT02 — E-Feld-Stärke selbst (electric; experimentell, Abdeckung endet 2025-12-04 —
+# das {hour_ago}-Fenster liegt außerhalb → 400 time-outside-range → 0 honored; kein Live-E-Feld-Feed)
 url https://vires.services/hapi/data?id=SW_EXPT_EFIA_TCT02&start={hour_ago}&stop={now}&parameters=Ehx,Ehy,Ehz&format=json
 ttl 3600
 at earth
@@ -1184,12 +1187,13 @@ field swarm_electric_field_x_mvm swarm_electric_field_x_mvm inverse-square elect
 field swarm_electric_field_y_mvm swarm_electric_field_y_mvm inverse-square electric mV/m 3600 0.0 0.0
 field swarm_electric_field_z_mvm swarm_electric_field_z_mvm inverse-square electric mV/m 3600 0.0 0.0
 
-# Swarm A Magnetfeld 1 Hz (em, operational)
-url https://vires.services/hapi/data?id=SW_OPER_MAGA_LR_1B&start={hour_ago}&stop={now}&parameters=F&format=json
-ttl 3600
+# Swarm A Magnetfeld 1 Hz NRT (em, fast track; Lag ~10 h — Fenster endet im
+# Abdeckungsbereich ({yesterday} 12–13 Uhr), ttl 86400 faltet den Lag)
+url https://vires.services/hapi/data?id=SW_FAST_MAGA_LR_1B&start={yesterday}T12:00:00Z&stop={yesterday}T13:00:00Z&parameters=F&format=json
+ttl 86400
 at earth
 hapi F=swarm_magnetic_field_intensity_nt
-field swarm_magnetic_field_intensity_nt swarm_magnetic_field_intensity_nt inverse-square em nT 3600 0.0 0.0
+field swarm_magnetic_field_intensity_nt swarm_magnetic_field_intensity_nt inverse-square em nT 86400 0.0 0.0
 
 # MSL REMS Mars-Wetter (thermal/acoustic, Gale-Krater; Wind-Sensor ausgefallen → 0 honored)
 url https://mars.nasa.gov/rss/api/?feed=weather&category=msl&feedtype=json
@@ -1223,8 +1227,8 @@ on earth 0 0 0
 map .
 lat latitude
 lon longitude
-field bright_ti4 biosphere_fire_brightness_ti4_k gaussian-inverse-square thermal K 3600 0.0 0.0
-field frp biosphere_fire_radiative_power_mw gaussian-inverse-square thermal MW 3600 0.0 0.0
+field bright_ti4 biosphere_fire_snpp_brightness_ti4_k gaussian-inverse-square thermal K 3600 0.0 0.0
+field frp biosphere_fire_snpp_radiative_power_mw gaussian-inverse-square thermal MW 3600 0.0 0.0
 
 # FIRMS VIIRS NOAA-20 Aktivfeuer (thermal, 24h global)
 url https://firms.modaps.eosdis.nasa.gov/api/area/csv/{FIRMS_MAP_KEY}/VIIRS_NOAA20_NRT/world/1
@@ -1234,8 +1238,8 @@ on earth 0 0 0
 map .
 lat latitude
 lon longitude
-field bright_ti4 biosphere_fire_brightness_ti4_k gaussian-inverse-square thermal K 3600 0.0 0.0
-field frp biosphere_fire_radiative_power_mw gaussian-inverse-square thermal MW 3600 0.0 0.0
+field bright_ti4 biosphere_fire_noaa20_brightness_ti4_k gaussian-inverse-square thermal K 3600 0.0 0.0
+field frp biosphere_fire_noaa20_radiative_power_mw gaussian-inverse-square thermal MW 3600 0.0 0.0
 
 # FIRMS MODIS Aktivfeuer (thermal, 24h global)
 url https://firms.modaps.eosdis.nasa.gov/api/area/csv/{FIRMS_MAP_KEY}/MODIS_NRT/world/1
@@ -1245,8 +1249,8 @@ on earth 0 0 0
 map .
 lat latitude
 lon longitude
-field bright_ti4 biosphere_fire_brightness_ti4_k gaussian-inverse-square thermal K 3600 0.0 0.0
-field frp biosphere_fire_radiative_power_mw gaussian-inverse-square thermal MW 3600 0.0 0.0
+field bright_ti4 biosphere_fire_modis_brightness_ti4_k gaussian-inverse-square thermal K 3600 0.0 0.0
+field frp biosphere_fire_modis_radiative_power_mw gaussian-inverse-square thermal MW 3600 0.0 0.0
 
 # UniMelb AGOS Erdbeben (seismic-body; heute count:0 → 0 honored bis zum nächsten Event)
 url https://seismic-api.science.unimelb.edu.au/today-quakes
@@ -1255,16 +1259,16 @@ at earth
 map features
 lat geometry.coordinates.1
 lon geometry.coordinates.0
-field geometry.coordinates.2 geosphere_quake_depth_km erfc seismic-body km 3600 0.0 0.0
-field properties.magnitude geosphere_quake_magnitude erfc seismic-body Mw 3600 0.0 0.0
+field geometry.coordinates.2 geosphere_quake_agos_depth_km erfc seismic-body km 3600 0.0 0.0
+field properties.magnitude geosphere_quake_agos_magnitude erfc seismic-body Mw 3600 0.0 0.0
 
-# IOC Sea-Level-Station-Monitoring (gravity, stationlist + lastvalue)
+# IOC Sea-Level-Station-Monitoring (gravity, stationlist + lastvalue; Keys sind Lat/Lon großgeschrieben)
 url https://www.ioc-sealevelmonitoring.org/service.php?query=stationlist&format=json
 ttl 3600
 on earth 0 0 0
 map .
-lat lat
-lon lon
+lat Lat
+lon Lon
 field lastvalue hydrosphere_sealevel_m inverse-square gravity m 3600 0.0 0.0
 
 # LIGO/Virgo/KAGRA Gravitationswellen-Superevents (gravity, far)

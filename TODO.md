@@ -758,12 +758,12 @@ Binary-PCK-Pakets oben).
   Probe-Design ausgenommen ({station}). Offen: Extract-Verifikation der
   MSL/MEDA-field-Pfade end-to-end (test_live_sources_extract deckt nur die
   ersten 200 Blöcke — Limit erhöhen, dann Grind-Einbau einschließt).
-- **VirES-Lag-Befund (2026-08-15):** FAST-Produkte haben ~10 h Lag (stopDate
-  ≈ now−10 h) — die {hour_ago}/{now}-Fenster der bestehenden EFIA/FACATMS-
-  Blöcke liegen außerhalb der Abdeckung (400 → 0 honored), solange der Lag
-  das Fenster überschreitet. Der neue FAST-MAGA-Block nutzt {yesterday}T23
-  →{now} (lag-tolerant). Die bestehenden VirES-Blöcke auf dasselbe
-  Fenster-Muster prüfen.
+- **VirES-Lag-Befund GESCHLOSSEN (2026-08-15):** FAST-Produkte haben ~10 h Lag
+  (stopDate ≈ now−10 h) — die {hour_ago}/{now}-Fenster lagen außerhalb der
+  Abdeckung (400 time-outside-range → 0 honored). Fix: EFI/FACATMS/FAST-MAGA
+  nutzen jetzt `start={yesterday}T12:00:00Z&stop={yesterday}T13:00:00Z` mit
+  ttl 86400 (Fenster endet im Abdeckungsbereich, ttl faltet den Lag ehrlich).
+  TCT02 bleibt Archiv-only (Abdeckung endet 2025-12-04, 400 → 0 honored).
 - **Laufzeit-Browser (verifiziert 2026-08-14, Desktop GTX 970 / NVIDIA 580):**
   **Firefox = 60 fps stabil** mit der Per-Pixel-Membran (wgpu im Content-Prozess,
   kein Kill-on-Deadline-Watchdog) — der empfohlene Laufzeit-Browser.
