@@ -769,14 +769,18 @@ Binary-PCK-Pakets oben).
 - **Secrets-Befund (2026-08-15):** Keys sind vollständig — `.secrets.local`
   liegt im Repo-ROOT (46 Keys inkl. NASA_API_KEY, FIRMS_MAP_KEY, ESA_USER/
   ESA_PASS) und wird via resolve_asset (CWD-relativ) geladen. DONKI-FLR und
-  FIRMS fetchen 200 mit Key (manuell verifiziert). Der frühere
-  „marker absent"-Befund war Probe-Mechanik: --probe lief aus /tmp/opencode
-  ohne die Asset-Datei im CWD — bei Probe-Läufen außerhalb des Repo-Roots
-  `.secrets.local` verlinken. Die verbleibenden Probe-Declines der
-  Grind-Einbau-Sektion sind Probe-Artefakte (synthetisierte Configs: HAPI-/
-  CSV-/Regex-Blöcke werden vom Probe nicht über die deklarierten Extracts
-  verifiziert — CSV braucht format-csv-Konvertierung, hapi die hapi-Arm-
-  Extraktion, regex den regex-Arm; alles im Runtime-Pfad vorhanden).
+  FIRMS fetchen 200 mit Key (manuell verifiziert). GitHub-Secrets-Parität
+  hergestellt: 19 lokal-neue Keys (ESA_USER/PASS, ARBIMON, GBIF, MOVEBANK,
+  PURPLEAIR, SUPERMAG_PASS, TNS, HERMES, PROXY, TRANSIT511, WILDLIFE_INSIGHTS,
+  tedp_*) nach GitHub synchronisiert — 46 lokal = 46 GitHub (tedp_* werden
+  von GitHub uppercased). Der frühere „marker absent"-Befund war
+  Probe-Mechanik: --probe lief aus /tmp/opencode ohne die Asset-Datei im
+  CWD — bei Probe-Läufen außerhalb des Repo-Roots `.secrets.local`
+  verlinken. Die verbleibenden Probe-Declines der Grind-Einbau-Sektion sind
+  Probe-Artefakte (synthetisierte Configs: HAPI-/CSV-/Regex-Blöcke werden
+  vom Probe nicht über die deklarierten Extracts verifiziert — CSV braucht
+  format-csv-Konvertierung, hapi die hapi-Arm-Extraktion, regex den
+  regex-Arm; alles im Runtime-Pfad vorhanden).
 - **Probe-Verifikation Grind-Einbau (2026-08-15):** --probe mit LSK auf die
   Grind-Einbau-Sektion: VirES-HAPI-Syntax (id=/start=/stop= und dataset=/
   time.min= sind beide gültig — 400er waren time-outside-range der
