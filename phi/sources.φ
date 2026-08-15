@@ -415,6 +415,20 @@ dist_scale 1.495978707e11
 field H comet_h_mag gaussian-inverse-square em mag 604800 0.0 0.0
 field M1 comet_total_mag gaussian-inverse-square em mag 604800 0.0 0.0
 
+# ── NASA Exoplanet Archive pscomppars (compiled by tap_compiler → exoplanetarchive.ipac.caltech.edu) ──
+# 6309 bestätigte Exoplaneten mit sy_dist (pc); Zeilen ohne Distanz 0 honored (skip-null dist).
+# masse = pl_masse (M⊕, gravity, RV-Signatur), rade = pl_rade (R⊕, gravity) — unquoted (Oracle).
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/exoplanets.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+dist dist
+dist_scale 3.085677581e16
+field masse planet_mass gaussian-inverse-square gravity M_earth 604800 0.0 0.0
+field rade planet_radius gaussian-inverse-square gravity R_earth 604800 0.0 0.0
+
 # ── ALFALFA HI-Galaxienkatalog (em cmap; Dist in Mpc via dist_scale) ──
 url https://egg.astro.cornell.edu/alfalfa/data/a40files/a40.datafile1.csv
 ttl 604800

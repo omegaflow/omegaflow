@@ -6,7 +6,7 @@ wird entfernt (Git trägt es). Kein Eintrag meldet Erledigtes als offen, kein of
 Punkt fehlt. Widerspricht ein Dokument dieser Datei, gilt diese Datei — solche
 Drift-Stellen sind unter „Doku-Drift" registriert.
 
-## Stand — 2026-08-15 (Katalog-Welle: K03-Kometen inkl. dcom5-Multi-Apparitionen, K04b Gaia-DR3+Bailer-Jones 1,84 Mio Sterne, tap_compiler über TAPVizieR/GAVO/ARI, Enrichment-Matrix; LSK/PCK-Hochzeit, Binary v2, Protokoll v6, reine Per-Pixel-Membran, K01 geschlossen)
+## Stand — 2026-08-15 (Katalog-Welle: K03-Kometen inkl. dcom5-Multi-Apparitionen, K04b Gaia-DR3+Bailer-Jones 1,84 Mio Sterne, Exoplanet-Bulk 6309, tap_compiler über TAPVizieR/GAVO/ARI/IRSA/ExoArchive, Enrichment-Matrix; LSK/PCK-Hochzeit, Binary v2, Protokoll v6, reine Per-Pixel-Membran, K01 geschlossen)
 
 Zeit aus naif0012.tls (LSK-Reader, keine TT_MINUS_UTC-Konstante). PCK-Reader pck.rs
 (gm_de440, pck00010, geophysical.ker → GM/J2/J4/Radii/POLE). stype-1 v2: gcount=12,
@@ -591,8 +591,12 @@ Binary-PCK-Pakets oben).
     dynamische lat/lon-Keys); in sources.φ noch nicht live (nur Spec-Beispiel)
   Recheck-Liste erweitert: Argovis (korrekte Query), sensor.community airrohr
   (area-ID), environment.data.gov.uk Readings-Endpoint, BGS-GIN Observation-
-  Endpoint, IRSA-Gator (spatial-Syntax), Exoplanet-Archiv TAP, ACTRIS, GTN-P,
-  GONG, OceanNetworks, OMNIWeb, AstDyS. SERVIR-SMAP/1km: Service entfernt (404).
+  Endpoint, IRSA-Gator (TAP-Route aufgelöst 2026-08-15: --votable-Arm trägt
+  das 995-Tabellen-Inventar; die Gator-CSV-Syntax bleibt offen),
+  Exoplanet-Archiv TAP (aufgelöst 2026-08-15: pscomppars-Bulk live,
+  Overrule der Grind-Disposition — siehe TAP-Pipeline-Eintrag), ACTRIS,
+  GTN-P, GONG, OceanNetworks, OMNIWeb, AstDyS. SERVIR-SMAP/1km: Service
+  entfernt (404).
 - Host-Kuration Batch 3 (2026-08-15, 160 Kandidaten): 107 mechanische + 47
   klassifizierte Dispositionen in `phi/dead_sources.φ`. 5 weitere Accept-
   Kandidaten (Stand: siehe Einbau-Eintrag):
@@ -676,9 +680,24 @@ Binary-PCK-Pakets oben).
   Befund: TAPVizieR-sync kennt kein OFFSET/LIMIT (nur TOP). Paging gelöst
   (ARI, 2026-08-15): mag-Band-Adaption (--mag-bands: COUNT-Halbierung,
   Streaming pro Band) bei indizierten Mirrors; UWS-Async bleibt für
-  nicht-bandbare Resultate (Queue-abhängig). Offen: IRSA/HEASARC/
-  MAST-Inventare (gleiche --index-Methode), weitere Tabellen-Bulks aus
-  phi/tap_index.φ (39 genutzte VizieR-Tabellen), Gaia-Archiv.
+  nicht-bandbare Resultate (Queue-abhängig). Inventar-Welle
+  GESCHLOSSEN (2026-08-15): IRSA (995 Tabellen → phi/tap_index_irsa.φ) und
+  Exoplanet-Archiv (46 Tabellen → phi/tap_index_exoarchive.φ) inventarisiert;
+  tap_compiler gewinnt dafür --index --votable (Feldnamen-Mapping),
+  JSON-Top-Level-Array, \/-\b-\f-Escapes, --style mast (POST-Form),
+  --cols-unquoted (Oracle-Identifier), --skip-null, HTTP-Status-Diagnostik.
+  Exoplanet-Beweis-Bulk: pscomppars (sy_dist pc, pl_masse M⊕, pl_rade R⊕,
+  6309 Zeilen, skip-null dist) — 51 Peg b: dist 15,4614 pc + ra/dec exakt,
+  pl_masse 193,88 M⊕ (Archiv-Spalte). Overrule der Grind-Disposition
+  „decline catalog (kein Live-Messwert)" (grind_nasa.φ Z.65, dead_sources
+  Z.3669): seit der Katalog-Welle (K03/K04) sind statische Messwert-Kataloge
+  Kanal-Spezies — Gaia-DR3-Präzedenz (1,84 Mio statische Sterne, live);
+  Planeten-Masse ist das Exo-Analogon des DASTCOM-GM-Gates (gravity).
+  HEASARC: tap_schema.tables antwortet
+  0 Zeilen (Sync lebt, Schema leer) — Inventar-Route offen (Xamin-Metadaten
+  separat); MAST: tap-sync 404 (nginx) — MAST bleibt key-needed
+  (dead_sources.φ). Offen: weitere Tabellen-Bulks aus phi/tap_index.φ
+  (39 genutzte VizieR-Tabellen), Gaia-Archiv (Parallel-Session-Grind).
 - GAVO-Grenze (2026-08-15): dc.g-vo.org/tap inventarisiert → phi/tap_index_gavo.φ
   (271 Tabellen, ~130 Schemata). tap_compiler um \uXXXX-Escapes erweitert
   (GAVO-Deskriptionen). Zahler: gedr3dist.main = Bailer-Jones-Gaia-DR3-
@@ -687,8 +706,8 @@ Binary-PCK-Pakets oben).
   Zeilen) — Recheck erledigt: Counts+Position → Decline (dead_sources.φ).
   GAVO-sync kennt ebenfalls kein OFFSET/LIMIT; GAVO-litewithdist ist
   unindiziert (Band-COUNTs 20s+) — der Merge lief über ARI (indiziert).
-  GAVO-Async-Queue hing am 15.08. (2 Jobs PENDING) — Queue-Zustand beim
-  nächsten Versuch erneut prüfen.
+  GAVO-Async-Queue hing am 15.08. (2 Jobs PENDING) — Recheck am selben Tag:
+  Probe-Job o234nz95 blieb 90 s PENDING, Queue hängt weiterhin.
 - K04b-Welle GESCHLOSSEN (2026-08-15): tap_compiler gewinnt UWS-Async-Client
   (submit/phase/results), VOTable-Reader (FIELDref-Self-Closing-Fix — der
   stille None-Killer), --votable-Sync-Modus, --order, --epoch (pm-Propagation
@@ -816,9 +835,11 @@ Binary-PCK-Pakets oben).
 - Katalog-Kompilate seit 2026-08-15 im selben Job: cometels_compiler
   (cometels_flat.json), dcom5_compiler (dcom5_comets.json),
   tycho2_compiler --source bright (bright_stars.json),
-  tap_compiler DR3-Merge via ARI (--mag-bands + --star-bin + --union-bright →
-  dr3_stars.bin), tap_compiler FRBCAT + A279, sexagesimal_compiler (Magnetar
-  + TeVCat mit BZCAT4/Green/PSRCAT-Joins). Die CDN-Assets entstehen beim
+  tap_compiler Exoplanet-Bulk (pscomppars, --cols-unquoted + --skip-null dist
+  → exoplanets.json), tap_compiler DR3-Merge via ARI (--mag-bands +
+  --star-bin + --union-bright → dr3_stars.bin), tap_compiler FRBCAT + A279,
+  sexagesimal_compiler (Magnetar + TeVCat mit BZCAT4/Green/PSRCAT-Joins).
+  Die CDN-Assets entstehen beim
   ersten Lauf nach dieser Welle — bis dahin manifestieren die Blöcke 0
   (0 honored, dokumentiert je Block).
 - Quota-Befund 2026-08-15: `--verify phi` lud rekursiv die research-Batches

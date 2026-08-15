@@ -123,7 +123,10 @@ impl<'a> Jp<'a> {
                         b'n' => s.push('\n'),
                         b't' => s.push('\t'),
                         b'r' => s.push('\r'),
+                        b'b' => s.push('\u{8}'),
+                        b'f' => s.push('\u{c}'),
                         b'"' => s.push('"'),
+                        b'/' => s.push('/'),
                         b'\\' => s.push('\\'),
                         b'u' => {
                             let h = std::str::from_utf8(&self.b[self.i..self.i + 4]).ok()?;
@@ -165,6 +168,11 @@ fn tap_query(root: &str, adql: &str) -> Option<String> {
     if out.status.success() {
         String::from_utf8(out.stdout).ok()
     } else {
+        eprintln!(
+            "tap_query http {}: {}",
+            out.status,
+            String::from_utf8_lossy(&out.stderr).trim()
+        );
         None
     }
 }
@@ -187,6 +195,11 @@ fn tap_query_votable(root: &str, adql: &str) -> Option<String> {
     if out.status.success() {
         String::from_utf8(out.stdout).ok()
     } else {
+        eprintln!(
+            "tap_query_votable http {}: {}",
+            out.status,
+            String::from_utf8_lossy(&out.stderr).trim()
+        );
         None
     }
 }
@@ -319,23 +332,32 @@ fn cell_num(c: &Json) -> Option<f64> {
 
 fn fetch_json_rows(root: &str, adql: &str) -> Option<(Vec<String>, Vec<Vec<String>>)> {
     let body = tap_query(root, adql)?;
-    let m = match parse_json(&body) {
-        Some(Json::Obj(m)) => m,
+    let parsed = parse_json(&body)?;
+    let (meta_opt, data) = match &parsed {
+        Json::Obj(m) => (
+            m.get("metadata")
+                .or_else(|| m.get("columns"))
+                .and_then(as_arr),
+            m.get("data").and_then(as_arr),
+        ),
+        Json::Arr(a) => (None, Some(a)),
         _ => return None,
     };
-    let meta = m
-        .get("metadata")
-        .or_else(|| m.get("columns"))
-        .and_then(as_arr)?;
     let mut col_names = Vec::new();
-    for md in meta {
-        if let Some(o) = as_obj(md) {
-            if let Some(nm) = get_str(o, "name") {
-                col_names.push(nm);
+    if let Some(meta) = meta_opt {
+        for md in meta {
+            if let Some(o) = as_obj(md) {
+                if let Some(nm) = get_str(o, "name") {
+                    col_names.push(nm);
+                }
             }
         }
+    } else if let Some(Json::Obj(o)) = data.as_ref().and_then(|d| d.first()) {
+        for k in o.keys() {
+            col_names.push(k.clone());
+        }
     }
-    let data = m.get("data").and_then(as_arr)?;
+    let data = data?;
     let mut rows = Vec::new();
     for row in data {
         let mut cells = Vec::new();
@@ -397,11 +419,13 @@ fn emit_rows(
     col_idx: &[(String, usize)],
     epoch_prop: Option<f64>,
     cells_rows: &[Vec<String>],
+    skip_null: Option<&str>,
 ) -> Vec<String> {
     let i_ra = col_idx.iter().find(|(k, _)| k == "ra").map(|(_, i)| *i);
     let i_dec = col_idx.iter().find(|(k, _)| k == "dec").map(|(_, i)| *i);
     let i_pmra = col_idx.iter().find(|(k, _)| k == "pmra").map(|(_, i)| *i);
     let i_pmdec = col_idx.iter().find(|(k, _)| k == "pmdec").map(|(_, i)| *i);
+    let i_skip = skip_null.and_then(|k| col_idx.iter().find(|(kk, _)| kk == k).map(|(_, i)| *i));
     let mut rows_out = Vec::new();
     for cells in cells_rows {
         let mut ra_v = i_ra
@@ -410,6 +434,14 @@ fn emit_rows(
         let mut dec_v = i_dec
             .and_then(|i| cells.get(i))
             .and_then(|s| s.parse::<f64>().ok());
+        if ra_v.is_none() || dec_v.is_none() {
+            continue;
+        }
+        if let Some(i) = i_skip {
+            if cells.get(i).and_then(|s| s.parse::<f64>().ok()).is_none() {
+                continue;
+            }
+        }
         if let (Some(epoch), Some(ra), Some(dec), Some(i_pmra), Some(i_pmdec)) =
             (epoch_prop, ra_v, dec_v, i_pmra, i_pmdec)
         {
@@ -504,6 +536,7 @@ fn main() {
     let mut probe: Option<String> = None;
     let mut limit: usize = 50_000;
     let mut index_mode = false;
+    let mut style = String::from("uws");
     let mut async_mode: Option<u64> = None;
     let mut epoch_prop: Option<f64> = None;
     let mut votable_flag = false;
@@ -512,6 +545,8 @@ fn main() {
     let mut mag_bands: Option<(f64, f64, f64)> = None;
     let mut star_bin = false;
     let mut union_bright: Option<String> = None;
+    let mut skip_null: Option<String> = None;
+    let mut cols_unquoted = false;
     let mut i = 1;
     while i < args.len() {
         match args[i].as_str() {
@@ -571,12 +606,24 @@ fn main() {
                 order_by = args.get(i + 1).cloned();
                 i += 1;
             }
+            "--skip-null" => {
+                skip_null = args.get(i + 1).cloned();
+                i += 1;
+            }
+            "--cols-unquoted" => cols_unquoted = true,
             "--ci-mode" => ci_mode = true,
             "--probe" => {
                 probe = args.get(i + 1).cloned();
                 i += 1;
             }
             "--index" => index_mode = true,
+            "--style" => {
+                style = args
+                    .get(i + 1)
+                    .cloned()
+                    .unwrap_or_else(|| "uws".to_string());
+                i += 1;
+            }
             _ => {}
         }
         i += 1;
@@ -590,44 +637,133 @@ fn main() {
     };
     if index_mode {
         let adql = "SELECT table_name, table_type, schema_name, description FROM tap_schema.tables";
-        let Some(body) = tap_query(&root, adql) else {
-            eprintln!("index query returned void");
-            std::process::exit(1);
+        let mast = style == "mast";
+        let fetch = |format: &str| -> Option<String> {
+            let mut cmd = Command::new("curl");
+            cmd.arg("-sS").arg("-m").arg("120");
+            if mast {
+                cmd.arg("-X")
+                    .arg("POST")
+                    .arg("--data-urlencode")
+                    .arg(format!("query={}", adql))
+                    .arg("--data-urlencode")
+                    .arg(format!("format={}", format));
+            } else {
+                cmd.arg("-G")
+                    .arg("--data-urlencode")
+                    .arg("REQUEST=doQuery")
+                    .arg("--data-urlencode")
+                    .arg("LANG=ADQL")
+                    .arg("--data-urlencode")
+                    .arg(format!("FORMAT={}", format))
+                    .arg("--data-urlencode")
+                    .arg(format!("QUERY={}", adql));
+            }
+            let out = cmd.arg(&root).output().ok()?;
+            if !out.status.success() {
+                eprintln!(
+                    "index http {}: {}",
+                    out.status,
+                    String::from_utf8_lossy(&out.stderr).trim()
+                );
+                return None;
+            }
+            String::from_utf8(out.stdout).ok()
         };
-        let Some(Json::Obj(m)) = parse_json(&body) else {
-            eprintln!("index json returned void");
-            std::process::exit(1);
+        let preview = |label: &str, body: &str| {
+            let flat: String = body
+                .chars()
+                .filter(|c| !c.is_whitespace())
+                .take(240)
+                .collect();
+            eprintln!("{} body[240]: {}", label, flat);
         };
-        let Some(cols) = m.get("data").and_then(as_arr) else {
-            eprintln!("index data absent");
-            std::process::exit(1);
-        };
+        let mut triples: Vec<(String, String, String)> = Vec::new();
+        if votable_flag {
+            let Some(body) = fetch("votable") else {
+                eprintln!("index query returned void");
+                std::process::exit(1);
+            };
+            let Some((fields, rows)) = votable_rows(&body) else {
+                preview("votable", &body);
+                eprintln!("index votable returned void");
+                std::process::exit(1);
+            };
+            let pos = |name: &str| fields.iter().position(|f| f.eq_ignore_ascii_case(name));
+            let (Some(tn), Some(tt), Some(sn)) =
+                (pos("table_name"), pos("table_type"), pos("schema_name"))
+            else {
+                eprintln!("index votable columns absent: {:?}", fields);
+                std::process::exit(1);
+            };
+            for r in &rows {
+                let name = r.get(tn).cloned().unwrap_or_default();
+                if name.is_empty() {
+                    continue;
+                }
+                let schema = r.get(sn).cloned().unwrap_or_default();
+                let typ = r.get(tt).cloned().unwrap_or_default();
+                triples.push((name, schema, typ));
+            }
+        } else {
+            let Some(body) = fetch("json") else {
+                eprintln!("index query returned void");
+                std::process::exit(1);
+            };
+            let parsed = match parse_json(&body) {
+                Some(p) => p,
+                None => {
+                    preview("json", &body);
+                    let dump = "/tmp/opencode/tap_index_body.txt";
+                    if let Ok(mut f) = std::fs::File::create(dump) {
+                        let _ = f.write_all(body.as_bytes());
+                    }
+                    eprintln!(
+                        "index json returned void, body → {} ({} B)",
+                        dump,
+                        body.len()
+                    );
+                    std::process::exit(1);
+                }
+            };
+            let cols = match &parsed {
+                Json::Obj(m) => m.get("data").and_then(as_arr),
+                Json::Arr(a) => Some(a),
+                _ => None,
+            };
+            let Some(cols) = cols else {
+                preview("json-data", &body);
+                eprintln!("index data absent");
+                std::process::exit(1);
+            };
+            for row in cols {
+                let (name, schema, typ) = if let Some(r) = as_arr(row) {
+                    if r.len() < 4 {
+                        continue;
+                    }
+                    (row_str(&r[0]), row_str(&r[2]), row_str(&r[1]))
+                } else if let Some(o) = as_obj(row) {
+                    (
+                        o.get("table_name").map(row_str).unwrap_or_default(),
+                        o.get("schema_name").map(row_str).unwrap_or_default(),
+                        o.get("table_type").map(row_str).unwrap_or_default(),
+                    )
+                } else {
+                    continue;
+                };
+                triples.push((name, schema, typ));
+            }
+        }
         let out_path = out.unwrap_or_else(|| "tap_index.φ".to_string());
         let mut buf = String::new();
         buf.push_str(&format!("# tap-inventar {}\n", root));
-        let mut n = 0usize;
-        for row in cols {
-            let (name, schema, typ) = if let Some(r) = as_arr(row) {
-                if r.len() < 4 {
-                    continue;
-                }
-                (row_str(&r[0]), row_str(&r[2]), row_str(&r[1]))
-            } else if let Some(o) = as_obj(row) {
-                (
-                    o.get("table_name").map(row_str).unwrap_or_default(),
-                    o.get("schema_name").map(row_str).unwrap_or_default(),
-                    o.get("table_type").map(row_str).unwrap_or_default(),
-                )
-            } else {
-                continue;
-            };
+        for (name, schema, typ) in &triples {
             buf.push_str(&format!("catalog {} {} {}\n", name, schema, typ));
-            n += 1;
         }
         if let Ok(mut f) = std::fs::File::create(&out_path) {
             let _ = f.write_all(buf.as_bytes());
         }
-        eprintln!("tap index: {} tables → {}", n, out_path);
+        eprintln!("tap index: {} tables → {}", triples.len(), out_path);
         return;
     }
     let table = match table {
@@ -661,6 +797,12 @@ fn main() {
     let any_positional = mapping.iter().any(|(_, c)| c.starts_with('@'));
     let cols_sel = if any_positional {
         "*".to_string()
+    } else if cols_unquoted {
+        mapping
+            .iter()
+            .map(|(_, c)| c.clone())
+            .collect::<Vec<_>>()
+            .join(",")
     } else {
         mapping
             .iter()
@@ -872,7 +1014,7 @@ fn main() {
                         let _ = f.write_all(b"[");
                         first_row = false;
                     }
-                    let emitted = emit_rows(ci, epoch_prop, &rows);
+                    let emitted = emit_rows(ci, epoch_prop, &rows, skip_null.as_deref());
                     for r in &emitted {
                         if !first_row {
                             let _ = f.write_all(b",");
@@ -964,7 +1106,7 @@ fn main() {
         }
         std::process::exit(1);
     }
-    let rows_out = emit_rows(&col_idx, epoch_prop, &cells_rows);
+    let rows_out = emit_rows(&col_idx, epoch_prop, &cells_rows, skip_null.as_deref());
     eprintln!(
         "tap fetch: {} columns, {} rows",
         col_names.len(),

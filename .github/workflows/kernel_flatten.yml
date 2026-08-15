@@ -109,6 +109,16 @@ jobs:
             --input kernels/dcom5_le.dat \
             --out dcom5_comets.json \
             --ci-mode
+      - name: Compile exoplanet catalog and upload to CDN
+        run: |
+          cargo run --release --bin tap_compiler -- \
+            --root https://exoplanetarchive.ipac.caltech.edu/TAP/sync \
+            --table pscomppars \
+            --cols-unquoted \
+            --columns 'name:pl_name;ra:ra;dec:dec;dist:sy_dist;masse:pl_masse;rade:pl_rade' \
+            --skip-null dist \
+            --out exoplanets.json \
+            --ci-mode
       - name: Compile Gaia DR3 + Bailer-Jones star catalog and upload to CDN
         run: |
           curl -sSfL --retry 3 --max-time 1200 -o kernels/hip_main.dat \
