@@ -695,6 +695,20 @@ lat 0
 lon 1
 field 2 hydrosphere_drifter_sst_k exponential-decay thermal K 360.0 0.0 0.0
 
+# OOI Oregon-Schelf-Mooring pCO2 (diffusion, Ozean-Versauerung)
+url https://erddap.dataexplorer.oceanobservatories.org/erddap/tabledap/ooi-ga01sumo-sbd12-04-pco2aa000.csv?time,sea_surface_temperature,surface_partial_pressure_of_carbon_dioxide_in_sea_water
+ttl 86400
+format csv
+on earth 46.05 -125.0 0
+lastrow surface_partial_pressure_of_carbon_dioxide_in_sea_water hydrosphere_pco2_ooi_uatm gaussian-inverse-square diffusion uatm 8640.0 0.0 0.0
+lastrow sea_surface_temperature hydrosphere_sst_ooi_c exponential-decay thermal C 8640.0 0.0 0.0
+
+# GOES EUV-Flux (em)
+url https://services.swpc.noaa.gov/json/goes/primary/euvs-1-day.json
+ttl 600
+on earth 0.0 -75.2 35786023
+last value solar_euv_flux_wm2 inverse-square em W/m2 60.0 0.0 0.0
+
 # ── Backlog-Kuration 2026-08-15 — NDBC Per-Station-Buoys (ersetzt toten ArcGIS-Block, Kraft-Labels korrigiert) ──
 
 url https://www.ndbc.noaa.gov/data/realtime2/41001.txt
