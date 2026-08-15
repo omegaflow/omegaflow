@@ -209,7 +209,7 @@ braucht mindestens eine gemessene, physisch gate-konforme Quelle.
 | thermal | live: NOAA-CDO-Fanout (TMAX), AOML-Drifter, GML Barrow, Buoy-WTMP; DASTCOM H/Albedo + Yarkovsky-Listen; GOES-Thermal | K03 (Parameter); Kuration (Zeitreihen) |
 | diffusion | live: PurpleAir, OpenAQ-pm25-Fanout, GML CH4/N2O/SF6, OOI-pCO2; NOAA SWPC, NASA OMNI | Kuration |
 | advective | live: Waterservices-Rivers, OpenSky-Aircraft, Buoy-Wind; DSCOVR/SWPC (Solarwind), NOAA GFS | Kuration |
-| electric | live: Swarm EFI (Vs) + FAC (IRC/FAC-Ströme) + FAST-MAGA-LR (em, NRT) via VirES-HAPI; TCT02-E-Feld = Archiv-only (Abdeckung endet 2025-12-04, {hour_ago}-Fenster außerhalb → 400 → 0 honored) | GLM-Blitz (NetCDF-Reader fehlt), GIC-Netze (nicht öffentlich), Live-E-Feld-Stärke (kein Feed existiert) |
+| electric | live: Swarm EFI (Vs) + FAC (IRC/FAC-Ströme) + FAST-MAGA-LR (em, NRT) via VirES-HAPI; TCT02-E-Feld = Quarantäne (Abdeckung endet 2025-12-04, kein Live-Feed; grind_einbau_2026-08-15_pending.φ) | GLM-Blitz (NetCDF-Reader fehlt), GIC-Netze (nicht öffentlich), Live-E-Feld-Stärke (kein Feed existiert) |
 
 Device-Sensoren (M05) ergänzen die Kanäle lokal; das Radiatorium (M01/M02) ist die
 Aktuator-Seite. Der Kurations-Pfad ist unten registriert (Curation & Quellen).
@@ -783,6 +783,20 @@ Binary-PCK-Pakets oben).
   Reihenfolge, 1 Toter-Duplikat entfernt. File-Regeln jetzt in
   `docs/concepts/SOURCES_V2_SPEC.md` §1.0 — jeder Einbau folgt der Spec,
   keine Docstrings in den φ-Dateien.
+- **Source-Gate (2026-08-15):** `test_live_sources_extract` über das ganze
+  Register (Limit 600, Parallel-Session): 75 ok / 5 void. Dispositionen:
+  DONKI-FLR + AGOS = legitim leer (Fixture-Fenster ohne X-Flare / count:0),
+  Safecast = Fixture-LSK-Artefakt (prä-2017-Epoch-Zeilen fallen mit dem
+  Minimal-LSK; Produktions-LSK parst 1972+), opensky = 429 Rate-Limit
+  (transient), TCT02 = Abdeckung beendet (→ Quarantäne
+  `grind_einbau_2026-08-15_pending.φ`). Gate-Regel jetzt in
+  docs/source_curation.md: keine Source ohne Probe+Verify+händische
+  Kuration. Secret-Leak im Test-Logging gefixt (Void-Zeilen drucken
+  Templates statt aufgelöster URLs — die Parser-Tests leaken keine Keys
+  mehr in die Konsole). Offen: EA-Fanout-Runtime-Verifikation (Fanout wird
+  vom Test designbedingt übersprungen — die Fanout-Mechanik trägt CO-OPS/
+  OpenAQ/BGS/NOAA-CDO; die EA-Keys brauchen einen Lauf der Live-Fanout-
+  Extraktion).
 - **Secrets-Befund (2026-08-15):** Keys sind vollständig — `.secrets.local`
   liegt im Repo-ROOT (46 Keys inkl. NASA_API_KEY, FIRMS_MAP_KEY, ESA_USER/
   ESA_PASS) und wird via resolve_asset (CWD-relativ) geladen. DONKI-FLR und

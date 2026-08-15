@@ -828,14 +828,6 @@ lat properties.Lat
 lon properties.Long
 field properties.SO2_Kilotons so2_emission_kt erfc diffusion kt 86400 0.0 0.0
 
-url https://vires.services/hapi/data?id=SW_EXPT_EFIA_TCT02&start={hour_ago}&stop={now}&parameters=Ehx,Ehy,Ehz&format=json
-ttl 3600
-at earth
-hapi Ehx=swarm_electric_field_x_mvm Ehy=swarm_electric_field_y_mvm Ehz=swarm_electric_field_z_mvm
-field swarm_electric_field_x_mvm swarm_electric_field_x_mvm inverse-square electric mV/m 3600 0.0 0.0
-field swarm_electric_field_y_mvm swarm_electric_field_y_mvm inverse-square electric mV/m 3600 0.0 0.0
-field swarm_electric_field_z_mvm swarm_electric_field_z_mvm inverse-square electric mV/m 3600 0.0 0.0
-
 url https://vires.services/hapi/data?id=SW_FAST_EFIA_LP_1B&start={yesterday}T12:00:00Z&stop={yesterday}T13:00:00Z&parameters=N_ion,T_elec,Vs&format=json
 ttl 86400
 at earth

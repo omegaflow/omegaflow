@@ -10325,7 +10325,7 @@ field H comet_h_mag gaussian-inverse-square em mag 604800 0.0 0.0\n";
                                 empty += 1;
                                 void_text.push_str(&format!(
                                     "void {} {}\n",
-                                    url, "fetch returned empty"
+                                    s.url, "fetch returned empty"
                                 ));
                                 break;
                             }
@@ -10338,7 +10338,7 @@ field H comet_h_mag gaussian-inverse-square em mag 604800 0.0 0.0\n";
                             empty += 1;
                             void_text.push_str(&format!(
                                 "void {} {}\n",
-                                url,
+                                s.url,
                                 super::diagnose_no_samples(s, &body)
                             ));
                         } else {
@@ -11140,7 +11140,7 @@ field H comet_h_mag gaussian-inverse-square em mag 604800 0.0 0.0\n";
             let body = match super::fetch_one(&url, None, &headers, s.ttl) {
                 Some(b) => b,
                 None => {
-                    empty.push((url, "fetch returned empty".into()));
+                    empty.push((s.url.clone(), "fetch returned empty".into()));
                     continue;
                 }
             };
@@ -11148,7 +11148,7 @@ field H comet_h_mag gaussian-inverse-square em mag 604800 0.0 0.0\n";
                 super::ExtractResult::Measurements(v) => {
                     if v.is_empty() {
                         let diag = super::diagnose_no_samples(s, &body);
-                        empty.push((url, format!("no samples ({})", diag)));
+                        empty.push((s.url.clone(), format!("no samples ({})", diag)));
                     } else {
                         ok += 1;
                     }
@@ -11156,7 +11156,7 @@ field H comet_h_mag gaussian-inverse-square em mag 604800 0.0 0.0\n";
                 super::ExtractResult::WithEphemeris(v, _) => {
                     if v.is_empty() {
                         let diag = super::diagnose_no_samples(s, &body);
-                        empty.push((url, format!("no samples ({})", diag)));
+                        empty.push((s.url.clone(), format!("no samples ({})", diag)));
                     } else {
                         ok += 1;
                     }

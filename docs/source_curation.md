@@ -99,6 +99,22 @@ note <why parser-def>
 
 Manual verification is required. `cargo check` only validates syntax.
 
+## The Gate (2026-08-15)
+
+No source enters `phi/sources.φ` without ALL of:
+
+1. `--probe` (with LSK) fetch verification — the URL fetches and the response
+   is data-bearing (or the void is diagnosed).
+2. `test_live_sources_extract` extraction — the parser itself extracts
+   samples from the declared block. Legitimately-empty responses under the
+   fixture dates count as pass only when documented with the reason.
+3. Manual curation per `docs/concepts/SOURCES_V2_SPEC.md` §2/§3/§6/§9:
+   force assignment, physical unit from the API, τ per §1.2, drop rules,
+   every key verified against the live response.
+
+Failing blocks stay out of `phi/sources.φ` — quarantine in
+`phi/research/batches/*_pending.φ` or a disposition in `phi/dead_sources.φ`.
+
 ## The pending list (current work)
 
 The pending list lives in `archeology/sources/sources_*_untested_*` (the

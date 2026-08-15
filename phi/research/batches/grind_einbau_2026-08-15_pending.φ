@@ -1,0 +1,19 @@
+# grind_einbau_2026-08-15_pending — Quarantäne der Grind-Einbau-Welle
+# Gate (docs/source_curation.md): keine Source geht in phi/sources.φ ohne
+# (1) --probe-Fetch-Verifikation, (2) test_live_sources_extract-Extraktion
+# (Samples oder dokumentiert-legitim-leer), (3) händische Kuration nach
+# SOURCES_V2_SPEC §2/§3/§6/§9.
+
+# ── Swarm EFI TCT02 — E-Feld-Stärke (electric) ──
+# Verify-Befund 2026-08-15: fetch returned empty — Datensatz-Abdeckung endet
+# 2025-12-04 ({hour_ago}-Fenster liegt außerhalb → HAPI 1405 time-outside-
+# range → 400). Kein Live-E-Feld-Feed existiert. Block bleibt in Quarantäne,
+# bis eine Quelle mit lebender E-Feld-Stärke gegrindet ist (oder als
+# Archiv-Kompilat mit festem Fenster auf CDN gelegt wird).
+url https://vires.services/hapi/data?id=SW_EXPT_EFIA_TCT02&start={hour_ago}&stop={now}&parameters=Ehx,Ehy,Ehz&format=json
+ttl 3600
+at earth
+hapi Ehx=swarm_electric_field_x_mvm Ehy=swarm_electric_field_y_mvm Ehz=swarm_electric_field_z_mvm
+field swarm_electric_field_x_mvm swarm_electric_field_x_mvm inverse-square electric mV/m 3600 0.0 0.0
+field swarm_electric_field_y_mvm swarm_electric_field_y_mvm inverse-square electric mV/m 3600 0.0 0.0
+field swarm_electric_field_z_mvm swarm_electric_field_z_mvm inverse-square electric mV/m 3600 0.0 0.0

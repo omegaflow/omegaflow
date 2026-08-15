@@ -30,7 +30,8 @@ unless it has `url` + `ttl` + a frame (`at`/`on`).
 
 ### 1.0 File-level rules (canonical form of the φ files)
 
-- Blocks are sorted alphabetically by their `url` line (case-insensitive).
+- Blocks are sorted by their `ttl` value (ascending — the ω() fetch cadence
+  order), then alphabetically by their `url` line (case-insensitive).
 - No comment lines. The φ file carries directives only — knowledge lives in
   docs/TODO, not in docstrings.
 - One blank line between blocks; single trailing newline.
