@@ -11308,10 +11308,10 @@ field temp temp_c\n";
         let xml = "<?xml version=\"1.0\" ?><GINServices>\n <ObservatoryList>\n  <Observatory>\n   <Code>AAE</Code>\n   <Name>Addis Ababa</Name>\n   <Latitude>9.035</Latitude>   <Longitude>38.770</Longitude>   <Elevation>2441</Elevation>\n  </Observatory>\n  <Observatory>\n   <Code>YKC</Code>\n   <Latitude>62.48</Latitude>   <Longitude>-114.48</Longitude>   <Elevation>181</Elevation>\n  </Observatory>\n </ObservatoryList>\n</GINServices>";
         let st = parse_stations_xml(xml);
         assert_eq!(st.len(), 2);
-        assert_eq!(st[0].id, "AAE");
+        assert_eq!(st[0].id, "aae");
         assert_eq!(st[0].lat, 9.035);
         assert_eq!(st[0].lon, 38.770);
-        assert_eq!(st[1].id, "YKC");
+        assert_eq!(st[1].id, "ykc");
         assert_eq!(st[1].lat, 62.48);
     }
 
