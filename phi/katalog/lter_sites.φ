@@ -1,0 +1,1393 @@
+# LTER/DEIMS — Sites (deims.org/api/sites, live 2026-08-16)
+# format: <koordinaten POINT(lon lat)> | <titel> — 1391 LTER-Mess-Standorte mit Position
+POINT (-6.95 41.3333) | LTSER-Sabor - Portugal
+POINT (-71.6638224 -30.6580983) | Fray Jorge Experimental Site - Chile
+POINT (-73.6667 -41.8834) | Senda Darwin Biological Station - Chile
+POINT (123.4 41.5167) | Shenyang Experimental Station of Ecology - China
+POINT (114.533 35.0167) | Fengqiu Experimental Station for Agro-ecology Chinese Academy of Sciences - China
+POINT (114.683 37.8833) | Luancheng Agricultural Ecological Station - China
+POINT (111.4333 28.9167) | Taoyuan Agricultural Ecological Station - China
+POINT (126.917 47.45) | Hailun Agricultural Ecological Station - China
+POINT (116.57 36.829) | Yucheng Comprehensive Experiment Station - China
+POINT (120.6984 31.5497) | Changshu Agro-Ecological Experimental Station - China
+POINT (116.9283 28.2058) | Yingtan Ecological Experimental Station of Red Soil - China
+POINT (115.067 26.7333) | Qianyanzhou Agricultural Experimental Station of Red Soil and Hilly Land - China
+POINT (105.27 31.16) | Yanting Agricultural Ecological Station on Purple Soil - China
+POINT (109.317 36.85) | Ansai Integrated Experimental Station on Water and Soil Conservation - China
+POINT (107.667 35.2) | Changwu Agro-Ecological Experimental Station in Loess Plateau - China
+POINT (100.117 39.3333) | Linze Inland River Basin Research Station - China
+POINT (91.34 29.6) | Lhasa Qing-Zang (Tibet) Plateau Ecosystem Research Station - China
+POINT (80.85 40.6167) | Akesu Water Balance Research Station - China
+POINT (108.3258 24.7417) | Huanjiang Observation and Research Station for Karst Ecosystems, Chinese Academy of Sciences - China
+POINT (128.1 42.4) | Changbai Mountain Forest Ecosystem Research Station - China
+POINT (115.4333 39.9667) | Beijing Forest Ecological Station - China
+POINT (109.606309 26.849115) | Huitong Research Station of Forest Ecosystem - China
+POINT (112.5309 23.1723) | Dinghu Mountain Research of Forest Ecosystem - China
+POINT (112.9 22.6833) | Heshan Mountain Integrated Experimental Station of Hilly Land - China
+POINT (103.883 31.6833) | Maoxian Mountain Ecosystem Research Station - China
+POINT (101.983 29.5667) | Gongga Mountain Observation and Experimental Station of Alpine Ecosystem - China
+POINT (101.0276 24.5439) | Ailao Mountain Research Station of Sub-tropical Forest Ecosystem - China
+POINT (101.2769 21.9194) | Xishuangbanna Research Station of Tropical Forest - China
+POINT (110.4854 31.3228) | Shennongjia Biodiversity Research Station - China
+POINT (116.7 43.6333) | Inner Mongolia Research Station of Grassland Ecosystem - China
+POINT (101.317 37.6167) | Haibei Research Station of Alpine Meadow Ecosystem - China
+POINT (133.517 47.5833) | Sanjiang Plain Marsh Ecological Experimental Station - China
+POINT (120.7 43.9167) | Naiman Desertification Research Station - China
+POINT (110.183 39.4833) | Ordos Sandland Ecological Research Station - China
+POINT (87.9167 44.2833) | Fukang Desert Ecological Research Station - China
+POINT (105.0001 37.4601) | Shapotou Desert Research and Experiment Station - China
+POINT (80.72917 37.01583) | Cele Desert Research Station - China
+POINT (114.383 30.55) | Donghu Experimental Station for Lake Ecosystem - China
+POINT (120.217 31.4) | Taihu Laboratory for Lake Ecosystem Research - China
+POINT (120.25 36.1) | Jiaozhou Bay Marine Ecosystem Research Station - China
+POINT (109.467 18.217) | Sanya Tropical Marine Boplogical Research Station - China
+POINT (116.3378 40.008579) | Beijing Urban Ecosystem Research Station - China
+POINT (-85.3342973 10.3834132) | Estacion Biologica Palo Verde - Costa Rica
+POINT (-82.9589 8.7858) | Las Cruces Biological Station - Costa Rica
+POINT (-84.0211 10.4256) | Estacion Biologica La Selva - Costa Rica
+POINT (142.2682 44.7238) | Nakagawa Experimental Forest - North Hokkaido Experimental Forests - Japan
+POINT (130.41 32.54) | Nagaura Tidalflats, Kumamoto University - Japan
+POINT (131.15 32.0667) | Aya research site - Japan
+POINT (130.518235 33.63829) | Kasuya Research Forest - Japan
+POINT (137.333 36.15) | Takayama site - Japan
+POINT (128.217 26.75) | Yona Field - Japan
+POINT (141.583 42.6834) | Tomakomai Experimental Forest - Japan
+POINT (137.16822 35.217812) | The North Valley and South Valley experimental catchment, Akazu Research Forest - Japan
+POINT (140.783 42.6) | Lake Toya - Japan
+POINT (141.933 39.333) | Otsuchi Bay - Japan
+POINT (135.023 34.5834) | Awajishima - Japan
+POINT (138.8 35.9333) | Chichibu cool temperate deciduous broad-leaved natural forest - Japan
+POINT (130.7488 31.6665) | Kagoshima Bay - Japan
+POINT (140.383 36.0447) | Lake Kasumigaura long-term monitoring station - Japan
+POINT (132.949 35.4472) | Lake Shinji and Lake Nakaumi - Japan
+POINT (140.583 36.9333) | Ogawa Forest Reserve - Japan
+POINT (135.337 33.6925) | Shirahama - Japan
+POINT (135.517 34.0667) | Wakayama Forest Research Station - Japan
+POINT (138.347 36.5236) | Sugadaira Research Station, Mountain Science Center - Japan
+POINT (144.837 43.021) | Akkeshi-ko estuary and Akkeshi Bay - Japan
+POINT (143.507109 43.304068) | Ashoro Research Forest, Kyushu University - Japan
+POINT (140.858 35.695) | Choshi Rocky Shore - Japan
+POINT (138.75 35.4333) | Fuji Hokuroku Flux Observation Site - Japan
+POINT (139.833 38.1333) | Zaisho-daira, Kaname river, Yamagata - Japan
+POINT (140.755055 38.770207) | Kawatabi special research area of the Japanese IBP - Japan
+POINT (140.184 35.1206) | Kominato Rocky Shore - Japan
+POINT (140.06 35.12) | Fukuroyamasawa Experimental Watershed - Japan
+POINT (136 34.9667) | Kiryu Experimental Watershed - Japan
+POINT (139.417 36.5333) | Kusaki - Japan
+POINT (141.5664 42.7246) | Tomakomai Research Site - Japan
+POINT (138.759 35.9583) | Ooyamazawa Riparian Forest Research Site - Japan
+POINT (133.6 33.6333) | Reihoku Field - Japan
+POINT (138.433 38.2) | Sado Station of Niigata University Forest - Japan
+POINT (131.144096 32.372505) | Shiiba Research Forest, Kyushu University - Japan
+POINT (139.48 36.52) | Shojin-sawa, Mt.Takahara, Tochigi - Japan
+POINT (139.4 35.6333) | Field Museum Tamakyuryo - Japan
+POINT (131.303973 31.855437) | Miyazaki University Forests - Japan
+POINT (132.266057 34.274581) | Suou-nada and Aki-nada in Seto Inland Sea - Japan
+POINT (127.86532 26.636917) | Sesoko Island Area - Japan
+POINT (139.2252 35.0017) | Deep-sea in Sagami Bay - Japan
+POINT (128.453 37.7386) | Mt. Gyebangsan - Korea (the Republic of)
+POINT (127.156 37.7441) | Gwangneung Experimental Forest - Korea (the Republic of)
+POINT (127.992 34.7597) | Mt.Geumsan - Korea (the Republic of)
+POINT (129.3 37.2334) | Samcheok - Korea (the Republic of)
+POINT (126.542 33.3125) | Jeju island - Korea (the Republic of)
+POINT (127.7130459 35.3369426) | Mt. Jiri - Korea (the Republic of)
+POINT (128.0822096 36.8893204) | Mt. Wolaksan - Korea (the Republic of)
+POINT (126.967 37.5334) | Mt. Namsan - Korea (the Republic of)
+POINT (35.4667 -16) | Mulanje Mountain Conservation Area - Malawi
+POINT (-103.85 26.39) | Mapimi - Mexico
+POINT (-99.4972 25.1) | Ecosistemas del Altiplano Mex-LTER - Mexico
+POINT (-101.7 21.5) | GRACILIS Mex-LTER - Mexico
+POINT (-105.044 19.4986) | Chamela Mex-LTER - Mexico
+POINT (-103.417 19.3) | Manantlan Mex-LTER - Mexico
+POINT (-97.4 19.4153) | Alchichica Mex-LTER - Mexico
+POINT (-95.0741 18.5852) | Los Tuxtlas Mex-LTER - Mexico
+POINT (-104.65 19.1) | Ecosistemas Costeros Mex-LTER - Mexico
+POINT (-96.38 19.59) | La Mancha Mex-LTER - Mexico
+POINT (100.45 51.6667) | Lake Hovsgol MLTER Site - Mongolia
+POINT (15.040941 -23.562153) | Gobabeb - Namibia
+POINT (125.063 7.8809) | Mt. Musuan Ecological Research - Philippines (the)
+POINT (123.635 8.2347) | Mt. Malindang - Philippines (the)
+POINT (126.185 6.7181) | Mt. Hamiguitan - Philippines (the)
+POINT (123.283 9.0667) | Apo Island Marine Sanctuary - Philippines
+POINT (122.3881 17.03908) | Palanan Forest Dynamics Plot - Philippines (the)
+POINT (25.98722 -33.88177) | Algoa Bay Sentinel Site - South Africa
+POINT (23.9093 -34.05412) | Tsitsikamma National Park Marine Protected Area - South Africa
+POINT (31.3361 -24.3936) | South African Wildlife College, Tree Plots - South Africa
+POINT (18.950891 -33.979355) | Jonkershoek Valley - South Africa
+POINT (22.268082 -33.165436) | Tierberg Karoo Research Station - South Africa
+POINT (121.585 24.7664) | Fushan - Taiwan
+POINT (121.4 24.5833) | Yuan-yang Lake - Taiwan
+POINT (120.85 24.55) | Nanjenshan - Taiwan
+POINT (120.9 23.4667) | TataChia - Taiwan
+POINT (120.833 21.8333) | Kenting Coral Reef - Taiwan
+POINT (120.467 23.6333) | Yuin Lin branch station - Taiwan
+POINT (120.4 23.5667) | Chi-Kuo branch station - Taiwan
+POINT (120.470899 23.484378) | Chia-Yi branch station - Taiwan
+POINT (100.8667 14.5) | Sakaerat Environmental Research Station - Thailand
+POINT (98.9 18.75) | Kok Ma Watershed Research Station - Thailand
+POINT (-106.885161 34.354311) | Sevilleta - United States of America
+POINT (-122.169 44.2323) | H. J. Andrews Experimental Forest - United States of America
+POINT (-75.1667 37.5) | Virginia Coast Reserve LTER - United States of America
+POINT (-148.25480126902 64.739756182473) | Bonanza Creek LTER - United States of America
+POINT (162 -78) | McMurdo Dry Valleys LTER - Antarctica
+POINT (-77.3142 39.7248) | Gwynns Falls Watershed - United States of America
+POINT (-105.653 40.0715) | Niwot Ridge - United States of America
+POINT (-147.268 65.271) | Caribou-Poker Creeks Research Watershed - United States of America
+POINT (-111.573 33.2131) | Central Arizona-Phoenix LTER - United States of America
+POINT (-93.2253 45.4427) | Cedar Creek Ecosystem Science Reserve - United States of America
+POINT (-80.938 25.4386) | Taylor Slough/Panhandle - United States of America
+POINT (-80.7274 25.7615) | Shark River Slough - United States of America
+POINT (-81.339605 31.40971) | Georgia Coastal Ecosystems LTER - United States of America
+POINT (-71.805 43.962) | Hubbard Brook Experimental Forest - United States of America
+POINT (-72.23 42.55) | Harvard Forest - United States of America
+POINT (-106.741 32.617) | Jornada Basin LTER (JRN) - United States of America
+POINT (-85.4044 42.4199) | Kellogg Biological Station - United States of America
+POINT (-149.67 -17.38) | Moorea Coral Reef LTER - French Polynesia
+POINT (-89.325 43.298) | North Temperate Lakes LTER - United States of America
+POINT (-119.8422 34.4125) | Santa Barbara Coastal LTER - United States of America
+POINT (-103.568 41.0086) | Pawnee National Grassland - United States of America
+POINT (-70.9444 7.3667) | Estacion de Investigacion Caparo - Venezuela
+POINT (-61.5333 10.35) | Estacion Biologica Rancho Grande Dr. Alberto Fernandez-Y Lopez - Venezuela
+POINT (-64.1167 11.0667) | Estacion de Investigaciones Marinas - Venezuela (Bolivarian Republic of)
+POINT (-61.5333 5.6667) | Estacion Cientifica Parupa - Venezuela
+POINT (-62.5 8.1667) | Estacion de Investigaciones Forestales El Merey - Venezuela (Bolivarian Republic of)
+POINT (-62.5 8.1667) | Estacion de Investigaciones La Iguana - Venezuela (Bolivarian Republic of)
+POINT (-65.8836 10.4784) | Instituto de Biologica Experimental IBE Arboretum - Venezuela (Bolivarian Republic of)
+POINT (10.85 60.7) | Apelsvoll - Norway
+POINT (11.0167 46.0167) | Beano - Italy
+POINT (24.295 61.8474) | Hyyti\u00e4l\u00e4 SMEAR II LTER - Finland
+POINT (11.3394 51.7295) | TERENO Harz/Central German Lowland LTER - Germany
+POINT (11.5833 50.95) | Jena - Germany
+POINT (0.124819 46.4203) | Lusignan - France
+POINT (3.87639 43.6814) | Montpellier Ecotron - France
+POINT (0.956111 44.4939) | Pierroton - France
+POINT (3.58417 43.7414) | Puechabon - France
+POINT (7.68333 44.8833) | Tetto Frati - Italy
+POINT (7.53917 47.5025) | Therwil - Switzerland
+POINT (11.9333 42.1833) | Tolfa-Allumiere - Italy
+POINT (0.639722 51.4089) | Silwood Park Ecotron - United Kingdom
+POINT (22.8333 58.5) | West Estonian Archipelago - Estonia
+POINT (33.3903 46.1356) | Ascania-Nova - Ukraine
+POINT (21.5833 53.7667) | Lake Mikolajskie - Poland
+POINT (22.6126 49.576) | Solina-Myczkowce cascade system - Poland
+POINT (21 52.5) | Zegrzynski Reservoir - Poland
+POINT (22.65 56.2667) | Kamanos State Strict N. Reserve - Lithuania
+POINT (18.9472 50.2106) | Katowice - Poland
+POINT (18.87 50.4669) | Tarnowskie Gry - Poland
+POINT (18.2752 52.2833) | Konin - Poland
+POINT (26.6 55.6167) | Lake Druksiai - Lithuania
+POINT (24.5 54) | Cepkeliai State Strict N. Reserve and the Katra River - Lithuania
+POINT (21.85 58.3833) | Vilsandi - Estonia
+POINT (19.6008 46.6558) | Nagybugac Forest Reserve - Hungary
+POINT (19.3072 47.0914) | Kunpeszer_forest_reserve - Hungary
+POINT (19.3475 46.7242) | Kozoserdo_forest_reserve - Hungary
+POINT (19.415194 46.864376) | VULCAN Kiskunsag, KISKUN LTER - Hungary
+POINT (-7.86464 42.34) | Baixa Limia-Xurs / Ourense (ES-SNE) - Spain
+POINT (11.5623 46.3879) | IT02-Forests of the Alps - Italy
+POINT (-70.855407191106 42.725175955131) | Plum Island Ecosystems - United States of America
+POINT (-149.593695 68.627745) | Arctic Tundra LTER - United States of America
+POINT (-65.7015 18.3607) | Luquillo Long-Term Ecological Research - Puerto Rico
+POINT (-64.0529 -64.7743) | Palmer Station LTER - United States of America
+POINT (-83.5 35) | Blue Ridge Physiographic Province - United States of America
+POINT (-117.293512 32.866092) | California Current Ecosystem - United States of America
+POINT (171.517 -75.6957) | IT17-Antarctica Research Station - Antarctica
+POINT (12.2747 45.337) | IT16-Lagoon of Venice - Italy
+POINT (-67.65 -54.9167) | Omora Ethnobotanical Park Cape Horn LTER - Chile
+POINT (12.8145 45.3075) | IT12-Northern Adriatic Sea - Italy
+POINT (7.06472 48.6742) | Hesse - France
+POINT (139.967 36.9167) | Ecological research site of Fujinitayama - Japan
+POINT (132.483 35.15) | Ecological research site of Hinanohara - Japan
+POINT (35.1679 30.1443) | SAWA Platform - Jordan
+POINT (10.4333 51.8667) | Lange Bramke - Germany
+POINT (16.2087 65.9586) | Vindelfj\u00e4llens Research Station (Vindelfj\u00e4llens forskningsstation) - Sweden
+POINT (19.5333 46.7667) | Kiskun Restoration Experiments, KISKUN LTER - Hungary
+POINT (19.3833 46.8) | Kiskun Site Network (Jedlik), KISKUN LTER - Hungary
+POINT (9.159164 40.58101) | IT10-Lake ecosystems of Sardinia - Italy
+POINT (13.5881 41.8494) | Collelongo-Selva Piana ABR1 - Italy
+POINT (-3.18748 37.0855) | Sierra Nevada Global-Change Observatory (UGR-JA) - Spain
+POINT (10.9496 46.2609) | LTSER Lago di Tovel - Italy
+POINT (29.61055 67.7481) | V\u00e4rri\u00f6 Research Station (V\u00e4rri\u00f6 LTER) - Finland
+POINT (0.933333 42.566667) | Aiguestortes / Lleida (ES-SNE) - Spain
+POINT (8.63403 45.9547) | Lago Maggiore - Italy
+POINT (7.91529 45.3253) | Lago di Candia - Italy
+POINT (19.810109 45.157278) | Fruska gora - Serbia
+POINT (8.3 59.85) | Moesvatn - Norway
+POINT (27.696 42.4171) | Sozopol - Black Sea - Bulgaria
+POINT (13.815 65.061) | Boergefjell - Norway
+POINT (19.7833 68.7167) | Dividalen - Norway
+POINT (12.1667 62.0167) | Gutulia - Norway
+POINT (6.43333 58.55) | Lund - Norway
+POINT (8.83333 58.95) | Solhomfjell - Norway
+POINT (19.8364 63.5643) | Ore estuary (Orefjarden), Umea Marine Sciences Centre (LTER) - Sweden
+POINT (8.1918 58.4389) | Birkenes - Norway
+POINT (0.85 43.2667) | LTSER Zone Atelier Pyr\u00e9n\u00e9es-Garonne - France
+POINT (16.498 56.619) | Station Linn\u00e9, \u00d6land - Sweden
+POINT (13.12118 56.714322) | T\u00f6nnersj\u00f6heden Experimental Forest and research station - Sweden
+POINT (10.744 45.2009) | Bosco Fontana - Italy
+POINT (21.3936 43.7547) | Velika Morava - Serbia
+POINT (26.004286 55.463407) | Aukstaitija Integrated Monitoring Station - Lithuania
+POINT (7.867495 45.871472) | Istituto Scientifico Angelo Mosso (MOSSO) - Italy
+POINT (4 79) | LTER Observatory HAUSGARTEN - Germany
+POINT (16.65 48.8667) | Devin thermophilous woods - Czechia
+POINT (23.8667 52.75) | Bialowieza National Park - Poland
+POINT (34.777321 30.750973) | Avdat (AVD) - Israel
+POINT (34.590175 31.356532) | Gilat (GLT), LTSER Northern Negev - Israel
+POINT (35.590467 32.927578) | Karei Deshe (KRD) - Israel
+POINT (34.6 31.7333) | Nizzanim (NIM) - Israel
+POINT (34.943776 32.547174) | Ramat Hanadiv (RHD) - Israel
+POINT (34.762735 31.309056) | Shagririm (SGM), LTSER Northern Negev - Israel
+POINT (27.0131 69.757) | Kevo Research Station (Kevo LTER) - Finland
+POINT (25.041429 61.053687) | Lammi LTER - Finland
+POINT (23.249023 59.844446) | Western Gulf of Finland LTER site WelFin - Finland
+POINT (29.3167 66.3667) | Oulanka Research Station (Oulanka LTER) - Finland
+POINT (19.459 51.77) | The City of Lodz LTSER - Poland
+POINT (20.5808 52.3253) | Kampinoski National Park - Poland
+POINT (19.923611 51.433333) | The Sulejow Reservoir LTER - Poland
+POINT (12.0225 58.0581) | Lake G\u00e5rdsj\u00f6n catchment - Sweden
+POINT (7.908508 45.646804) | Comune Fontainemore, Riserva Naturale Mont Mars (MARS) - Italy
+POINT (12.7 54.4333) | Darss-Zingst Bodden - Germany
+POINT (23.135 57.2167) | LTSER Engure - Latvia
+POINT (24.991794 57.876067) | Mazsalaca Pine - Latvia
+POINT (24.3333 56.8333) | Reservoir of Riga Hydropower Station on the River Daugava - Latvia
+POINT (24.339609 57.814301) | Randu meadows - Latvia
+POINT (17.8886 48.3033) | Bab - Slovakia
+POINT (19.6719 49.2178) | Jalovecka dolina - Slovakia
+POINT (19.069098 48.633852) | Kremnicke vrchy Ecological Experimental Station - Slovakia
+POINT (14.1994 40.6942) | IT13-Gulf of Naples - Italy
+POINT (13.8475 50.0028) | Krivoklat forests and xeric grasslands - Czechia
+POINT (23.127 43.1207) | Petrohan-Ponor - Bulgaria
+POINT (14.3764 60.8906) | Siljansfors Experimental Forest - Sweden
+POINT (-4.28166 55.0022) | Loch Grannoch - United Kingdom
+POINT (-4.50766 56.2286) | Loch Tinker - United Kingdom
+POINT (-4.54834 56.2118) | Loch Chon - United Kingdom
+POINT (14.905531692224 59.753738864032) | Kindla, IM-site SE15 - Sweden
+POINT (18.110613625107 63.858162713541) | Gammtratten, IM-site SE16 - Sweden
+POINT (14.9 59.5667) | B\u00e4lgsj\u00f6n - Sweden
+POINT (15.25 59.9167) | Masby - Sweden
+POINT (19.4197 43.9183) | Tara - Serbia
+POINT (20.8563 43.3018) | Kopaonik National Park - Serbia
+POINT (8.666364 40.551715) | Lago Bidighinzu - Italy
+POINT (9.545 40.328) | Lago Cedrino - Italy
+POINT (8.451 40.611) | Lago Cuga - Italy
+POINT (9.151 40.588) | Lago Monte Lerno - Italy
+POINT (8.562 40.479) | Lago Temo - Italy
+POINT (9.314797 40.555061) | Lago Sos Canales - Italy
+POINT (8.291 41.057) | Golfo dell\u0027Asinara - Italy
+POINT (10.6205 45.5806) | Lago di Garda - Italy
+POINT (24.0667 45.1) | LTSER Neajlov catchment - Romania
+POINT (19.3833 46.8) | KISKUN LTER - Hungary
+POINT (14.481397 48.825626) | Rimov reservoir - Czechia
+POINT (12.6514 50.0333) | Lysina \u0026 Pluhuv Bor catchments - Czechia
+POINT (13.5792 49.0177) | Mountain spruce forests - Czechia
+POINT (14.4139 49.7661) | Slapy reservoir - Czechia
+POINT (13.8667 48.7833) | Glacial lakes - Czechia
+POINT (29.343232 45.202807) | Danube Delta Biosphere Reserve - Romania
+POINT (25.3333 45.4333) | Bucegi-Piatra Craiului National Park - Romania
+POINT (22.8697 45.4097) | Retezat Biosphere Reserve - Romania
+POINT (34.754562 31.310052) | LTSER Northern Negev - Israel
+POINT (35.022582 31.787875) | Kdoshim (KDO) - Israel
+POINT (35.1514 30.4169) | Arava Platform (ARV) - Israel
+POINT (34.902072 30.588964) | Ramon (RMN) - Israel
+POINT (35.052 31.34486) | Yatir (YTR), LTSER Northern Negev - Israel
+POINT (20.161672 49.125286) | Tatra National Park - Slovakia
+POINT (34.654577827889 31.2704421983) | Park Shaked (PSK), LTSER Northern Negev - Israel
+POINT (27.9339 43.1861) | Black Sea - Bulgaria
+POINT (1.02941 42.9549) | OZCAR-RI SNO_KARST Baget karstic experimental catchment - France
+POINT (17.7 46.8333) | Lake Balaton LTER Site, Balaton LTER - Hungary
+POINT (17.7 46.8333) | Balaton LTSER - Hungary
+POINT (17.1833 46.6333) | Kis-Balaton Site, Balaton LTER - Hungary
+POINT (21.2833 55.5667) | Lithuanian Coastal Site (LT-04 Nagliai, Curonian Spit NP) - Lithuania
+POINT (21.886757 56.008507) | Zemaitija Integrated Monitoring Station: LTER_EU_LT_006 - Lithuania
+POINT (12.1661 46.886) | Lago Anterselva - Italy
+POINT (11.495411 46.360163) | Passo Lavaz\u00e8 TRE1 - Italy
+POINT (7.693052 45.919105) | Cime Bianche (IT19 Aosta Valley) - Italy
+POINT (13.5792 49.0177) | LTSER Silva Gabreta - Czechia
+POINT (27.064 44.0945) | Srebarna - Bulgaria
+POINT (13.70765 45.699111) | Golfo di Trieste - Italy
+POINT (23.8545 42.0649) | Yundola - Bulgaria
+POINT (23.4084 42.487) | Plana - Bulgaria
+POINT (23.6729 41.7626) | Mesta River - Bulgaria
+POINT (-3.96083 52.7958) | Llyn Cwm Mynach - United Kingdom
+POINT (10.399749 44.287141) | Appennino settentrionale - Italy
+POINT (15.0989 41.9283) | Foce Saccione-Bonifica Ramitelli (Campobasso) - Italy
+POINT (20.8167 69.0333) | Kilpisj\u00e4rvi Biological Station (Kilpisj\u00e4rvi LTER) - Finland
+POINT (8.400248 45.817692) | Lago di Orta - Italy
+POINT (25.48 61.85) | Lake P\u00e4ij\u00e4nne LTER - Finland
+POINT (13.5933 46.4894) | Tarvisio FRI2 - Italy
+POINT (0.0169 40.54) | Spanish ICP-Forests Level II Plots Network (Plot code 06 Qi) - Spain
+POINT (24.9958 45.0288) | Mihaesti-sessile oak - Romania
+POINT (25.5892 45.5069) | Predeal-spruce - Romania
+POINT (-6.7325 37.1553) | Spanish ICP-Forests Level II Plots Network (Plot code 10 Ppa) - Spain
+POINT (-8.71 42.7381) | Spanish ICP-Forests Level II Plots Network (Plot code 102 Ppr) - Spain
+POINT (-6.4433 40.1906) | Spanish ICP-Forests Level II Plots Network (Plot code 11 Qs) - Spain
+POINT (-1.3481 42.9998) | Spanish ICP-Forests Level II Plots Network (Plot code 115 Fs) - Spain
+POINT (-0.7289 40.3233) | Spanish ICP-Forests Level II Plots Network (Plot code 22 Pn) - Spain
+POINT (-0.6314 38.5197) | Spanish ICP-Forests Level II Plots Network (Plot code 25 Ph) - Spain
+POINT (26.1775 44.510833) | Stefanesti-oak - Romania
+POINT (-4.0789 38.1822) | Spanish ICP-Forests Level II Plots Network (Plot code 26 Qi) - Spain
+POINT (-2.8842 41.8686) | Spanish ICP-Forests Level II Plots Network (Plot code 30 Ps) - Spain
+POINT (-4.5575 42.8664) | Spanish ICP-Forests Level II Plots Network (Plot code 33 Qpe) - Spain
+POINT (-4.2892 41.3536) | Spanish ICP-Forests Level II Plots Network (Plot code 37 Ppr) - Spain
+POINT (-0.3192 39.3467) | Spanish ICP-Forests Level II Plots Network (Plot code 54 Ph) - Spain
+POINT (8.42143 46.5765) | ALPFOR - Switzerland
+POINT (19.537239301626 48.63954226967) | Polana Biosphere Reserve (Hukavsky grun) - Slovakia
+POINT (24.2091 67.99725) | Pallas LTER observatory - Finland
+POINT (-8.88333 42.55) | Illas Atlanticas / Pontevedra (ES-SNE) - Spain
+POINT (11.2117 50.8675) | DFG Exploratories for large-scale and long-term functional biodiversity research - Germany
+POINT (10.4762 51.158) | DFG_Biodiversity_Exploratory_Hainich-Duen - Germany
+POINT (8.713 47.044) | Alptal-Nitrogen-addition - Switzerland
+POINT (9.0670726 47.1650464) | Schaenis - Switzerland
+POINT (8.7125782 47.0486366) | Alptal - Switzerland
+POINT (7.7623374 46.7003438) | Beatenberg - Switzerland
+POINT (7.4166536 47.2251551) | Bettlachstock - Switzerland
+POINT (9.8888024 46.4921451) | Celerina - Switzerland
+POINT (8.812172 46.4468172) | Chironico - Switzerland
+POINT (9.8552112 46.8153458) | Davos Seehornwald - Switzerland
+POINT (9.0080555 46.1248982) | Isone - Switzerland
+POINT (6.2908547 46.2298528) | Jussy - Switzerland
+POINT (9.5646678 46.6980544) | Lantsch - Switzerland
+POINT (6.6580421 46.5837664) | Lausanne - Switzerland
+POINT (7.4359392 46.2685558) | Lens - Switzerland
+POINT (10.2300874 46.662501) | Nationalpark - Switzerland
+POINT (8.535683 47.6837031) | Neunkirch - Switzerland
+POINT (8.8341613 46.0226119) | Novaggio - Switzerland
+POINT (8.2267566 47.3995354) | Othmarsingen - Switzerland
+POINT (7.8583245 46.2968789) | Visp - Switzerland
+POINT (7.8867633 47.2740627) | Vordemwald - Switzerland
+POINT (1.0809558 43.5549378) | OZCAR-RI Aurade Catchment - France
+POINT (9.87 46.77) | Stillberg - Switzerland
+POINT (-60.3479 -62.6337) | Livingstone Island - Antarctica
+POINT (24.3333 57.8) | River Salaca - Latvia
+POINT (24.9558 47.3217) | Rodnei Calimani - Romania
+POINT (25.2697 45.4331) | Fundata-beech - Romania
+POINT (-61.6093 16.072) | OZCAR-RI ObsErA - Capesterre - Prise d\u0027eau - Guadeloupe
+POINT (17.599 58.8382) | Asko Laboratory, Himmerfjarden, Stockholm University Baltic Sea Centre (LTER) - Sweden
+POINT (16.785613 48.808842) | Lednice - Horni Les - Czechia
+POINT (23.1341 41.3664) | Belasitsa - Bulgaria
+POINT (9.38938 48.4374) | DFG_Biodiversity_Exploratory_SchwaebischeAlb - Germany
+POINT (13.7695 53.0071) | DFG_Biodiversity_Exploratory_Schorfheide-Chorin - Germany
+POINT (14.25 40.808) | LTER MareChiara - Italy
+POINT (14.3884455 45.7584152) | Cerknica Lake - Slovenia
+POINT (13.989188 45.665428) | \u0160kocjan Caves - Slovenia
+POINT (14.203526 45.782493) | Postojna-Planina Cave System - Slovenia
+POINT (13.4404717 49.0219208) | \u0160umava mires - Czechia
+POINT (15.7041 50.7148) | Mountain catchment - Czechia
+POINT (11.83 3.166) | OZCAR-RI M-TROPICS Cameroon - Cameroon
+POINT (76.45 11.73) | OZCAR-RI M-TROPICS India - India
+POINT (3.850393 43.716509) | OZCAR-RI SNO_KARST MEDYCYSS-Multi scalE observatory of flooD dYnamiCs and hYdrodynamicS in karSt - France
+POINT (6.35 44.13) | OZCAR-RI Draix-Bleone observatory - France
+POINT (6.2 47.1) | OZCAR-RI SNO_KARST Jurassic Karst site - France
+POINT (0.03 42.65) | Ordesa y Monte Perdido / Huesca ES - Spain
+POINT (16.9456 48.6669) | South-Moravian floodplain forests - Czechia
+POINT (18.5222 49.4486) | Beskydy natural forests - Czechia
+POINT (14.7067 48.6664) | Zofin natural forests - Czechia
+POINT (13.8253 48.9325) | Sumava natural forests - Czechia
+POINT (10.075131 42.584217) | Isola di Pianosa - Italy
+POINT (7.196789 48.213914) | OZCAR-RI OHGE Strengbach Watershed OHGE Observatoire Hydro-G\u00e9ochimique de l\u0027Environnement - France
+POINT (20.4389 47.9594) | Var-hegy Forest Reserve Site, Sikfokut LTER - Hungary
+POINT (13.395191 48.960629) | National Park Bavarian Forest - Germany
+POINT (-60 -6) | OZCAR-RI HYBAM Hydrology and Geochemistry of the Amazon basin - Bolivia, Brazil, Colombia, Ecuador, Peru
+POINT (13.0192 42.9614) | Montagna di Torricchio - Italy
+POINT (9.25751 45.9967) | Lago di Como - Italy
+POINT (10.24 54.099) | Bornhoeved Lake District - Germany
+POINT (-3.843425 57.114196) | Allt a\u0027Mharcaidh - United Kingdom
+POINT (-2.55 56.9) | Birnie Burn - United Kingdom
+POINT (-1.21667 52.6833) | Bradgate Brook - United Kingdom
+POINT (-0.85 51.1833) | Alice Holt - United Kingdom
+POINT (-0.63333 52.8333) | Cringle Brook - United Kingdom
+POINT (-2.98333 54.35) | Esthwaite Water - United Kingdom
+POINT (-2.55 56.9) | Glensaugh - United Kingdom
+POINT (1.576298 52.739227) | Hickling Broad - United Kingdom
+POINT (-6.0667 54.45) | Hillsborough - United Kingdom
+POINT (-4.01558 53.0143) | Llyn Llagi - United Kingdom
+POINT (-2.91667 57.0833) | Loch Davan - United Kingdom
+POINT (-4.400677 55.070464) | Loch Dee - United Kingdom
+POINT (-4.43333 56.2333) | Loch Katrine - United Kingdom
+POINT (-2.91667 57.0667) | Loch Kinord - United Kingdom
+POINT (-4.68333 56.2167) | Loch Lomond - United Kingdom
+POINT (86.813 27.9635) | IT11-Himalayan Lakes - Nepal
+POINT (-3.231869 56.958636) | Lochnagar - United Kingdom
+POINT (-7.81667 54.4667) | Lower Lough Erne - United Kingdom
+POINT (-6.38333 54.55) | Lough Neagh - United Kingdom
+POINT (-4.199318 55.841666) | Lower River Clyde - United Kingdom
+POINT (-4.026817 53.072471) | Nant Teyrn - United Kingdom
+POINT (-3.910108 50.777686) | North Wyke - United Kingdom
+POINT (86.807948 27.965353) | Lago Piramide Superiore - Nepal
+POINT (86.812424 27.963143) | Lago Piramide Inferiore - Nepal
+POINT (10.4386 43.5094) | Colognole TOS1 - Italy
+POINT (12.046354 41.962278) | Monumento Naturale Torre Flavia (Roma) - Italy
+POINT (13.406738 37.90865) | Ficuzza SIC1 - Italy
+POINT (-8.703898 40.67166) | LTSER Ria de Aveiro - Portugal
+POINT (11.9028 42.8306) | Monte Rufeno LAZ1 - Italy
+POINT (0.083972 51.047443) | Old Lodge - United Kingdom
+POINT (-7.04822055 54.70749417) | Owenkillew River - United Kingdom
+POINT (1.343113 52.734803) | River Bure - United Kingdom
+POINT (-6.51667 55.2) | River Bush - United Kingdom
+POINT (-1.82532846 51.75465393) | River Coln - United Kingdom
+POINT (-1.63333 55.3333) | River Coquet - United Kingdom
+POINT (-4.477349 54.95273) | River Cree - United Kingdom
+POINT (-2.6 54.6333) | River Eden (Cumbria) - United Kingdom
+POINT (-2.93333 56.3167) | River Eden (Fife) - United Kingdom
+POINT (0.168516 51.175635) | River Eden (Kent) - United Kingdom
+POINT (-0.668346 54.460574) | River Esk - United Kingdom
+POINT (-5.6 57.75) | River Ewe - United Kingdom
+POINT (-3.512303 50.807225) | River Exe - United Kingdom
+POINT (-2.198444 50.679492) | River Frome - United Kingdom
+POINT (-7.990648 54.499455) | River Garvary - United Kingdom
+POINT (-1.35 51.4167) | River Lambourn - United Kingdom
+POINT (-1.66667 53.1667) | River Lathkill - United Kingdom
+POINT (-3.1 57.6167) | River Spey at Fochabers - United Kingdom
+POINT (-5 55.0833) | River Stinchar - United Kingdom
+POINT (-2.78107047 55.60309219) | River Tweed - United Kingdom
+POINT (-2.66667 51.7833) | River Wye - United Kingdom
+POINT (-0.372 51.804) | Rothamsted - United Kingdom
+POINT (-3.300364 54.482432) | Scoat Tarn - United Kingdom
+POINT (-2.21203446 55.48985291) | Sourhope - United Kingdom
+POINT (1.531365 52.665493) | Upton Broad - United Kingdom
+POINT (-2.95 54.3833) | Windermere - United Kingdom
+POINT (-3.38333 56.1833) | Loch Leven - United Kingdom
+POINT (1.419674 52.69923) | Wroxham Broad - United Kingdom
+POINT (-3.73202 52.4539) | Afon Gwy - United Kingdom
+POINT (12.0186 58.054) | G\u00e5rdsj\u00f6n, IM-site SE04 - Sweden
+POINT (-3.70487 52.4749) | Afon Hafren - United Kingdom
+POINT (-5.61074 56.7592) | Allt na Coire nan Con - United Kingdom
+POINT (22.415 51.5083) | West Polesie Biosphere Reserve - Poland
+POINT (29.11 65.58) | Kuusamo LTSER - Finland
+POINT (-4.437275 55.06986) | Dargall Lane - United Kingdom
+POINT (-4.00572 50.5004) | Narrator Brook - United Kingdom
+POINT (19.4064 46.8778) | LTER Fulophaza Site, KISKUN LTER - Hungary
+POINT (9.59829 46.242147) | Val Masino LOM1 - Italy
+POINT (19.62641 46.664519) | Bugac-Orgovany Site, KISKUN LTER - Hungary
+POINT (19.4667 46.7833) | Orgovany Site, KISKUN LTER - Hungary
+POINT (12.9411 53.4292) | National Park Mueritz - Germany
+POINT (15.5398 50.7666) | Arctic-alpine tundra - Czechia
+POINT (-61.69324 16.17602) | OZCAR-RI ObsErA - Bras-David - Maison de la For\u00eat - Guadeloupe
+POINT (18.816522 68.353729) | Abisko Scientific Research Station - Sweden
+POINT (17.4261 48.8542) | Certoryje-Vojsicke Louky meadows - Czechia
+POINT (164.542 -75.133) | Mooring D: Western Ross Sea, TerraNova Bay Polynya - Italy
+POINT (18.6334 59.8352) | Erken Laboratory - Sweden
+POINT (-3.25942 54.4282) | Burnmoor Tarn - United Kingdom
+POINT (15.4723 59.7289) | Grims\u00f6 Wildlife Research Station - Sweden
+POINT (13.1027 55.66917) | L\u00f6nnstorp Research Station - Sweden
+POINT (14.782713 57.164325) | Asa Experimental Forest and Research Station - Sweden
+POINT (19.766378 64.244376) | Svartberget Research Station - Sweden
+POINT (11.761 46.286) | Valbona - Italy
+POINT (8.93333 54.3167) | National Park Schleswig-Holstein Wadden Sea - Germany
+POINT (11.4336 46.5868) | Renon BOL1 - Italy
+POINT (164.133 -74.7167) | Macrosito Baia Terranova (MBT) - Italy
+POINT (5.47878914 44.056284048125) | OZCAR-RI SNO_KARST Environmental Research Observatory Site of fontaine de Vaucluse - LSBB - France
+POINT (11.8787 51.3919) | TERENO - Bad Lauchstaedt - Germany
+POINT (11.2585 51.8617) | TERENO - Bode catchment - Germany
+POINT (11.7158 51.6197) | TERENO - Friedeburg - Germany
+POINT (11.8487 51.5613) | TERENO - Gimritz - Germany
+POINT (11.4409 51.6333) | TERENO - Greifenhagen - Germany
+POINT (11.7305 51.3767) | TERENO - Schafstaedt - Germany
+POINT (17.477247 54.68578) | Slowi\u0144ski National Park - Poland
+POINT (19.990163 49.26971) | Tatrzanski National Park - Poland
+POINT (21.4354 49.4867) | Magurski National Park - Poland
+POINT (11.0473 51.6502) | TERENO - Siptenfelde - Germany
+POINT (11.4528 52.0766) | TERENO - Wanzleben - Germany
+POINT (19.5303 49.6044) | Babiog\u00f3rski National Park - Poland
+POINT (22.6645 49.098) | Bieszczadzki National Park - Poland
+POINT (9.56667 51.7667) | Solling - Germany
+POINT (15.5921 50.8086) | Karkonoski National Park - Poland
+POINT (13.8 53.36) | AgroScapeLab Quillow (ZALF) - Germany
+POINT (16.4068 50.4575) | National Park G\u00f3r Stolowych - Poland
+POINT (8.978149 51.146107) | Nationalpark Kellerwald-Edersee - Germany
+POINT (20.3634 49.421) | Pieninski National Park - Poland
+POINT (19.8242 50.1908) | Ojcowski National Park - Poland
+POINT (10.8689 36.8714) | OZCAR-RI OMERE Kamech catchment - France
+POINT (22.9925 50.5745) | Roztoczanski National Park - Poland
+POINT (16.7931 52.2556) | Wielkopolski National Park - Poland
+POINT (18.9371 49.6604) | Brenna - Poland
+POINT (18.9664 49.663) | Salmopol - Poland
+POINT (12.1502 58.3641) | Skogaryd Research Catchment - Sweden
+POINT (3.6673 44.1301) | OZCAR-RI OHMCV Tourgueille catchment - France
+POINT (3.8298 44.0951) | OZCAR-RI OHMCV Valescure catchment - France
+POINT (102.16891 19.85241) | OZCAR-RI M-TROPICS, Houay Pano - Lao People\u0027s Democratic Republic
+POINT (100.38933 18.23072) | OZCAR-RI M-TROPICS, Huay Ma Nai - Thailand
+POINT (105.48541 20.95569) | OZCAR-RI M-TROPICS, Dong Cao - Viet Nam
+POINT (12.16983 44.60741) | Valli di Comacchio - Italy
+POINT (12.31853 44.81409) | Sacca di Goro - Italy
+POINT (10.452089 51.079407) | National Park Hainich - Germany
+POINT (14.8336 42.0422) | Foce Trigno-Marina di Petacciato (Campobasso) - Italy
+POINT (3.82 44.37) | OZCAR-RI OHMCV Mont Loz\u00e8re catchment - France
+POINT (6.3344525998678 50.502834134042) | TERENO - W\u00fcstebach - Germany
+POINT (9.269139 50.267302) | Rhine-Main-Observatory - Germany
+POINT (13.8 52.8333) | Schorfheide-Chorin - Germany
+POINT (3.32138 43.4919) | OZCAR-RI OMERE Roujan catchment - France
+POINT (23.8294 67.3544) | Kolari Field Site - Finland
+POINT (7.9 54.18333333) | Helgoland Roads - Germany
+POINT (8.36439 47.4783) | Laegeren - Switzerland
+POINT (14.551446609716 57.113713127124) | Aneboda, IM-site SE14 - Sweden
+POINT (35.393057 32.920856) | Meron (MRN) - Israel
+POINT (16.179999 38.427214) | Piano Limina CAL1 - Italy
+POINT (14.258 41.0758) | IT03-Forest of the Apennines - Italy
+POINT (17.2818 40.4817) | IT22 - Mar Piccolo of Taranto - Italy
+POINT (-5.96875 54.1585) | Blue Lough - United Kingdom
+POINT (-1.82528 53.493) | River Etherow - United Kingdom
+POINT (-7.00554 54.7394) | Coneyglen Burn - United Kingdom
+POINT (-6.00247 54.1573) | Bencrom River - United Kingdom
+POINT (-6.15483 55.1009) | Beagh\u0027s Burn - United Kingdom
+POINT (-2.38333 54.6833) | Moor House - Upper Teesdale - United Kingdom
+POINT (-2.377684 54.695746) | Trout Beck - United Kingdom
+POINT (-1.658088 51.130695) | Porton Down - United Kingdom
+POINT (-1.3333 51.7667) | Wytham - United Kingdom
+POINT (24.9333 60.1667) | Helsinki Metropolitan Area HMA-LTSER - Finland
+POINT (-8.78876 38.0172) | Mata de Sines - Portugal
+POINT (-8.0936 38.4325) | LTsER-Montado - Portugal
+POINT (-7.0396 38.1755) | Herdade da Coitadinha - Portugal
+POINT (-8.33305 39.1386) | Machuqueira do Grou - Portugal
+POINT (-8.81871 38.8376) | Companhia das Lez\u00edrias - Portugal
+POINT (-8.57045 38.1069) | Herdade da Ribeira Abaixo - Portugal
+POINT (-7.02157 38.0648) | Herdade da Contenda - Portugal
+POINT (-3.6667 57.0833) | Cairngorms National Park LTSER - United Kingdom
+POINT (-3.692048 39.132826) | Las Tablas de Daimiel National Park - Spain
+POINT (24.08993 35.41344) | LTSER Platform Koiliaris Critical Zone Observatory - Greece
+POINT (-3.73024 52.466) | Plynlimon - United Kingdom
+POINT (26.75 58.65) | Saarejrve - Estonia
+POINT (9.389 45.667) | IT08-Southern Alpine Lakes - Italy
+POINT (4.4133 50.746) | Sonian Forest - Belgium
+POINT (3.03722 51.0697) | Ichtegem - Wijnendale Forest - Belgium
+POINT (3.798124 50.975029) | Gontrode - Aelmoeseneie Forest - Belgium
+POINT (5.056656 51.402029) | Ravels Forest - Belgium
+POINT (4.51972 51.3078) | Brasschaat - De Inslag - Belgium
+POINT (4.248877 51.115283) | Scheldt Estuary and its alluvial plains - Belgium
+POINT (8.191037 46.175611) | Lago Paione Superiore - Italy
+POINT (8.189401 46.169017) | Lago Paione Inferiore - Italy
+POINT (10.0456 44.3818) | Lago Scuro Parmense - Italy
+POINT (10.0069 44.4019) | Lago Santo Parmense - Italy
+POINT (10.29 44.4025) | IT09-Mountain Lakes - Italy
+POINT (9.73 60.37) | Langtjern - Norway
+POINT (8.1 59.5) | Storgama - Norway
+POINT (8.96 58.96) | Solhomfjell2 - Norway
+POINT (8.86 61.42) | Ovre Heimdalsvatn - Norway
+POINT (10.8 59.36) | Heia - Norway
+POINT (11.15 63.69) | Hotran - Norway
+POINT (10.84 60.88) | Kolstad - Norway
+POINT (11.4 60.11) | Mordre - Norway
+POINT (14.82 67.28) | Naurstad - Norway
+POINT (10.83 59.68) | Skuterud - Norway
+POINT (5.68 58.73) | Time - Norway
+POINT (8.46 58.34) | Vasshaglona - Norway
+POINT (9.06 61.12) | Volbu - Norway
+POINT (139 -67) | LTSER Zone Atelier Antarctique - Antarctica
+POINT (5.98746 46.7054) | LTSER Zone Atelier Arc Jurassien - France
+POINT (4.5 45.45) | LTSER Zone Atelier Bassin du Rh\u00f4ne - France
+POINT (-4.51 48.28) | LTSER Zone Atelier Brest Iroise - France
+POINT (7.74 48.58) | LTSER Zone Atelier Environnementale Urbaine - France
+POINT (26.545715 -19.129681) | LTSER Zone Atelier Hwange - Zimbabwe
+POINT (1 47) | LTSER Zone Atelier Loire - France
+POINT (6.185099 48.691803) | LTSER Zone Atelier du Bassin de la Moselle - France
+POINT (-0.374908 46.236556) | LTSER Zone Atelier Plaine et Val de Sevre - France
+POINT (6.4 44.8) | LTSER Zone Atelier Alpes - France
+POINT (2.35 48.85) | LTSER Zone Atelier Seine - France
+POINT (-1.53333 48.6) | LTSER Zone Atelier Armorique - France
+POINT (5.25 53.25) | LTSER Wadden Sea Area - Netherlands
+POINT (-2.8317 47.989) | OZCAR-RI AgrHyS Environmental Research Observatory - France
+POINT (2.407173 41.763979) | Parque Natural del Montseny - Spain
+POINT (10.5 62.75) | Endalen - Norway
+POINT (11.83 62.68) | Soelendet - Norway
+POINT (-3.9714 40.8736) | Spanish ICP-Forests Level II Plots Network (Plot code 05 Ps) - Spain
+POINT (7.524679 60.593601) | Alpine Research Center - Finse - Norway
+POINT (9.5 62.3333) | Dovrefjell/Central Scandes (Code: NO-DOV) - Norway
+POINT (5.46775 60.3817) | Espeland Marine Biological Station - Norway
+POINT (8.88333 62.7833) | Kaarvatn - Norway
+POINT (30 69.45) | Norwegian Institute of Bioeconomy Research, NIBIO Svanhovd - Norway
+POINT (11.9333 78.9167) | Sverdrup Research Station Ny-lesund LSF - Norway
+POINT (10.59 63.36) | Jonsvatnet - Norway
+POINT (8.237686 58.383467) | Birkenes calibrated catchment - Norway
+POINT (5.6 58.8) | Skas-Heigre - Norway
+POINT (20.446181 47.927118) | Sikfokut LTER - Hungary
+POINT (35.127448549366 30.138002596392) | Shita Wadi - Israel
+POINT (-6.39 36.97) | Do\u00f1ana Long-Term Socio-ecological Research Platform - Spain
+POINT (-2.2871 37.0848) | The Arid Iberian South East LTSER Platform - Spain
+POINT (19.541 51.1858) | The Pilica River LTER - Poland
+POINT (19.8847 51.3528) | The UNESCO/UNEP the Pilica River Demonstration Site - Poland
+POINT (28.0023 44.9624) | Braila Islands - Romania
+POINT (3.1 48.9) | OZCAR-RI ORACLE/BVRE Orgeval - France
+POINT (4.4998 44.5811) | OZCAR-RI OHMCV Olivier de Serres catchment - France
+POINT (2.13 9.58) | OZCAR-RI AMMA-CATCH Upper Oueme Basin Mesosite - Benin
+POINT (2.12 13.52) | OZCAR-RI AMMA-CATCH Niamey Square Degree Mesosite - Niger
+POINT (-1.5 16) | OZCAR-RI AMMA-CATCH Gourma Mesosite - Mali
+POINT (-107 20.3) | Arrecifes del Pacifico Mex-LTER - Mexico
+POINT (-3.8 53.1) | Conwy catchment - United Kingdom
+POINT (-90 21.05) | Ecosistemas Costeros de la Peninsula de Yucatan Mex-LTER - Mexico
+POINT (16.6967 49.4436) | Rajec-Nemcice - Czechia
+POINT (14.7703 49.0247) | T\u0159ebo\u0148 wet meadows - Czechia
+POINT (13.3682 42.156928) | Appennino centrale: Velino-Duchessa - Italy
+POINT (12.02 43.12) | IT01- Apennines - High elevation Ecosystems - Italy
+POINT (14.085206 42.086116) | Appennino centro-meridionale: Majella-Matese - Italy
+POINT (-4.03333 53.0667) | Yr Wyddfa/Snowdon - United Kingdom
+POINT (-4.43032 55.0934) | Round Loch of Glenhead - United Kingdom
+POINT (-3.81667 57.1) | Cairngorms (ECN site) - United Kingdom
+POINT (8.61 55.68) | N\u00f8rholm Hede - Denmark
+POINT (12.676506 50.209359) | Sokolov post-mining ecosystems - Czechia
+POINT (14.099665023386 47.495121014384) | Agricultural Research and Education Centre Raumberg-Gumpenstein - Austria
+POINT (14.444136161386 47.842246069311) | LTER Z\u00f6belboden - Austria
+POINT (14.5 47.6667) | LTSER Platform Eisenwurzen (EW) - Austria
+POINT (15.000858 47.743299) | Wilderness Area D\u00fcrrenstein-Lassingtal - Austria
+POINT (15.083443 47.799967) | Pristine Forest Rothwald (part of D\u00fcrrenstein Wilderness Area) - Austria
+POINT (14.6045 47.5331) | Johnsbachtal - Austria
+POINT (14.637 47.592) | Ges\u00e4use National Park - Austria
+POINT (15.149292 47.62202) | Hochschwab (AT-HSW) GLORIA - Austria
+POINT (11.098057 47.041162) | GLORIA Master Site Schrankogel (AT-SCH), Stubaier Alpen - Austria
+POINT (12.106934 47.244059) | LTSER Platform Austrian Central Alps (ACA) - Austria
+POINT (11.3 47.1167) | Stubai (combination of Neustift meadows and Kaserstattalm) - Austria
+POINT (12.6167 47.1333) | Oberes Stubachtal - Austria
+POINT (12.59266 47.131773) | Stubacher Sonnblickkees - Austria
+POINT (12.659651 47.126197) | Totenkopfkees - Austria
+POINT (12.6677 47.1117) | \u00d6denwinkelkees - Austria
+POINT (12.655 47.1333) | Unteres Riffelkees - Austria
+POINT (12.667429 47.145944) | Kleineiserkees - Austria
+POINT (12.58073 47.134926) | Landeggkees - Austria
+POINT (12.6057 47.1339) | Unterer Eisboden See - Austria
+POINT (10.8314 46.8336) | Rofental - Austria
+POINT (10.7667 46.7893411) | Hintereisferner - Austria
+POINT (10.8234 46.789) | Hochjochferner - Austria
+POINT (10.8161 46.8773) | Vernagtferner - Austria
+POINT (11.6392 47.5806) | Achenkirch-M\u00fchleggerk\u00f6pfl (ACH-Mue) - Austria
+POINT (11.014779 47.229166) | Gossenk\u00f6llesee - Austria
+POINT (10.889153 47.194728) | Piburger See - Austria
+POINT (11.0249 46.8671) | Obergurgl - Austria
+POINT (10.743833 46.94343) | Kaunertal: From glacier to community - Austria
+POINT (10.224291 46.954164) | Jamtalferner - Austria
+POINT (15.0528 47.8528) | WasserCluster Lunz - Austria
+POINT (14.39282 47.77236) | Kalkalpen National Park - Austria
+POINT (15.2211 48.1295) | Rottenhaus / Grabenegg - Austria
+POINT (14.3444 47.5806) | Puergschachen Moor - Austria
+POINT (13.3477 47.8453) | Research Department for Limnology Mondsee - Austria
+POINT (16.745707 48.196245) | Fuchsenbigl - Austria
+POINT (14.74073625 48.68009675) | Weitra (WEI) - Austria
+POINT (16.07491 47.08548) | F\u00fcrstenfeld (FF) - Austria
+POINT (16.764476 47.767853) | LTSER Platform Pannonischer Raum - Austria
+POINT (15.6561525 47.634805) | ICP_Forests_Austria, M\u00fcrzzuschlag (ICP_FO_AU15) - Austria
+POINT (13.34982 47.88181) | ICP_Forests_Austria, Mondsee (ICP_FO_AU11) - Austria
+POINT (14.10986 47.0617425) | ICP_Forests_Austria, Murau (ICP_FO_AU16) - Austria
+POINT (12.404305 47.3315275) | ICP_Forests_Austria, Jochberg (ICP_FO_AU17) - Austria
+POINT (16.046396 48.120395) | Klausen-Leopoldsdorf Long term forest monitoring - Austria
+POINT (16.563365 47.4872475) | ICP_Forests_Austria, Unterpullendorf (ICP_FO_AU2) - Austria
+POINT (12.9577 47.0541) | Sonnblick Observatory - Austria
+POINT (15.9 46.93) | WegenerNet Feldbach Region - Austria
+POINT (12.366529 55.695044) | Vestskoven - Denmark
+POINT (9.191 44.3045) | Marine Area of Portofino Promontory - Italy
+POINT (7.3061 45.5294) | IT23 - Gran Paradiso National Park - Italy
+POINT (18.24 40.44) | Acquatina - Italy
+POINT (18.441 40.202) | Alimini - Italy
+POINT (18.3307203 40.3646591) | IT24 - Lagoons of Salento - Italy
+POINT (10.06793 45.722307) | Lake Iseo - Italy
+POINT (12.5 45.302) | Golfo di Venezia - Italy
+POINT (169.092 -76.7) | Mooring A: Southwestern Ross Sea, Ross Island - Antarctica
+POINT (12.46897 44.7505) | Delta del Po e Costa Romagnola - Italy
+POINT (9.992889 44.002684) | Eastern Ligurian Sea - Italy
+POINT (10 44) | IT15 - Ligurian Sea - Italy
+POINT (175.085 -74.0105) | Mooring B: North Central Ross Sea, Joides Basin - Antarctica
+POINT (13.887333 40.758167) | LTER Lacco Ameno - Italy
+POINT (13.554978 42.44625) | Appennino centrale: Gran Sasso d\u0027Italia - Italy
+POINT (9.53639 40.92273) | Golfo di Olbia - Italy
+POINT (8.399391 40.879845) | IT14-Marine ecosystems of Sardinia - Italy
+POINT (8.481445 39.939768) | Laguna di Cabras - Italy
+POINT (8.576 39.861) | Laguna di Santa Giusta - Italy
+POINT (8.566718 39.82344) | Laguna di S\u0027Ena Arrubia - Italy
+POINT (7.69194 45.7825) | IT19 - HIGH ELEVATION SITES IN THE NORTHWESTERN ALPS - Italy
+POINT (7.56 45.83) | Torgnon Larch forest Tronchaney (IT19 Aosta Valley) - Italy
+POINT (7.5790279272562 45.846063181777) | Torgnon grassland Tellinod (IT19 Aosta Valley) - Italy
+POINT (7.6 45.65) | Mont Avic Gloria (IT19 Aosta Valley) - Italy
+POINT (12.1 43.133) | Lake Trasimeno - Italy
+POINT (12.1919 44.4836) | IT07-Lagoons of Po River Delta - Italy
+POINT (12.4 41.745) | Tenuta di Castelporziano - Italy
+POINT (13.2 43.7) | Transetto Senigallia-Susak - Italy
+POINT (12.0848 46.6936) | Lago Braies - Italy
+POINT (11.296 46.4296) | Lago Piccolo di Monticolo - Italy
+POINT (16.2824 47.7037) | Lehrforst Rosalia - Austria
+POINT (8.623364 50.669793) | Krofdorf - Germany
+POINT (10.579786 46.686294) | Mazia-Matsch Grassland - Italy
+POINT (10.6157 46.6928) | IT25 - Val Mazia-Matschertal - Italy
+POINT (10.6476 46.7118) | Mazia-Matsch River - Italy
+POINT (-3.26667 55.7667) | Whim Bog - United Kingdom
+POINT (19.9894 49.1733) | Tatras - alpine summits - Slovakia
+POINT (10.630335343358 46.694268981206) | Mazia-Matsch Forest - Italy
+POINT (10.696478 46.776376) | Mazia-Matsch Alpine - Italy
+POINT (31.3273 -23.5537) | Welverdiend-South African Wildlife College - South Africa
+POINT (29.23851 -28.99485) | Cathedral Peak research catchments - South Africa
+POINT (146.683758 -43.098625) | TERN Warra Tall Eucalypt SuperSite - Australia
+POINT (145.447016 -16.103172) | TERN Far North Queensland Rainforest SuperSite - Daintree - Australia
+POINT (120.654139 -30.191333) | TERN Great Western Woodlands SuperSite - Australia
+POINT (152.872026 -27.388998) | TERN South East Queensland Peri-urban SuperSite - Samford - Australia
+POINT (-8.827 41.900704) | LTSER Minho Estuary - Portugal
+POINT (144.713548 -4.383659) | Wanang, Papua New Guinea - Papua New Guinea
+POINT (4.404831 51.39136) | Heathland reserve De Zoom-Kalmthoutse heide - Belgium
+POINT (-8.751211 37.713816) | LTSER MIRA ESTUARY - Portugal
+POINT (2.557 51.086) | Westhoek Coastal Dunes - Belgium
+POINT (140.587683 -34.002717) | TERN Calperum Mallee SuperSite - Australia
+POINT (144.0944 -37.4222) | TERN Wombat Stringybark Eucalypt SuperSite - Australia
+POINT (4.74613 50.55159) | Lonz\u00e9e - Belgium
+POINT (145.026214 -36.67305) | TERN Victorian Dry Eucalypt SuperSite - Whroo - Australia
+POINT (22.03 -33.19) | Wolwekraal Nature Reserve - South Africa
+POINT (-3.4286 47.74665) | OZCAR-RI H+ PLOEMEUR - GUIDEL CZO - France
+POINT (130.794355 -13.179121) | TERN Litchfield Savanna SuperSite - Australia
+POINT (150.723611 -33.615278) | TERN Cumberland Plain SuperSite - Australia
+POINT (17.965833 -29.688333) | Goegap Nature Reserve - South Africa
+POINT (148.151667 -35.656611) | TERN Tumbarumba Wet Eucalypt SuperSite - Australia
+POINT (4.402202 50.025461) | Baileux - La Sormone - Belgium
+POINT (13.549606 45.546825) | Gulf of Trieste - Slovenia
+POINT (13.936152 46.365497) | Pokljuka - Slovenia
+POINT (13.648776 52.438074) | M\u00fcggelsee - Germany
+POINT (-80.893056 25.286389) | Florida Coastal Everglades - United States of America
+POINT (0.714316666667 40.673119444444) | LTER Delta del Ebro - Spain
+POINT (140.855 39.1103) | Kanumazawa Riparian Research Forest - Japan
+POINT (4.833078 49.956052) | Willerzie - Belgium
+POINT (4.647222 50.816667) | Doode Bemde - Belgium
+POINT (3.12022 51.14772) | FORBIO Zedelgem - Belgium
+POINT (133.256893 -22.400554) | TERN Alice Mulga SuperSite - Australia
+POINT (5.626886 50.964926) | National Park Hoge Kempen - Belgium
+POINT (5.31167 51.165) | FORBIO Hechtel-Eksel - Belgium
+POINT (4.97689 49.99653) | FORBIO Gedinne - Belgium
+POINT (4.97689 49.99653) | FORBIO Gedinne Gribelle - Belgium
+POINT (4.98497 49.97614) | FORBIO Gedinne Gouverneurs - Belgium
+POINT (5.617837 50.223421) | Dochamps - Belgium
+POINT (6.103082 50.584837) | Baelen - Belgium
+POINT (5.221667 50.053889) | Tellin - Belgium
+POINT (2.9955 51.58) | VLIZ Thornton Buoy - Belgium
+POINT (4.680811 50.801767) | Forest of Meerdaal - Belgium
+POINT (5.570279 49.530055) | Ruette - Belgium
+POINT (4.279227 50.114882) | Chimay - Belgium
+POINT (4.602746 50.680566) | Louvain-la-Neuve - Belgium
+POINT (3.585405 45.977082) | LTSER Zone Atelier Territoires Uranif\u00e8res - France
+POINT (4.6164 50.7668) | Nature Reserve Rode Forest and Laan Valley - Belgium
+POINT (5.998052 50.305068) | Vielsalm Terrestrial Observatory - Belgium
+POINT (5.33333333 51.1) | Valley of the Zwarte Beek (upper course) - Belgium
+POINT (6.0124 50.57122) | Waroneu - Belgium
+POINT (6.07388 50.56096) | La Robinette - Belgium
+POINT (5.3088 51.1651) | Bosland - Belgium
+POINT (3.4801 51.0758) | Lake Kraenepoel - Belgium
+POINT (10.57195 56.229671) | Nationalpark Mols Bjerge - Denmark
+POINT (145.773177565 -37.6470122631) | AusLTER - Victorian Tall Eucalypt Forest Plot Network - Australia
+POINT (-52.072552 -32) | Patos Lagoon Estuary and Adjacent Coast - Brazil
+POINT (135.999264 35.216494) | Lake Biwa - Japan
+POINT (137.684732 35.839016) | Kiso River - Japan
+POINT (140.02692 36.05392) | Mase paddy flux site - Japan
+POINT (135.840893 34.790246) | Yamashiro Experimental Forest - Japan
+POINT (141.3992786 42.9965132) | Sapporo Hitsujigaoka Exprimental Forest - Japan
+POINT (140.47 40.35) | Mt. Hakkoda Site - Japan
+POINT (139.861 38.555) | Kaminagawa, Yamagata University Research Forest - Japan
+POINT (140.565333 36.014722) | Lake Kitaura - Japan
+POINT (-2.830841 48.006143) | OZCAR-RI AgrHyS Environmental Research Observatory Site of Kervidy-Naizin - France
+POINT (-4.127452 47.944406) | OZCAR-RI AgrHyS Environmental Research Observatory Site of Kerbernez - France
+POINT (148.475022458 -34.977428443) | AusLTER - Nanangroe Plantation Plot Network - Australia
+POINT (-5.7931 39.9347) | Spanish ICP-Forests Level II Plots Network (Plot code 07Qi) - Spain
+POINT (3.221694 43.970038) | OZCAR-RI H+ Larzac - France
+POINT (-56.66061 -21.18678) | Parque Nacional da Serra da Bodoquena - Brazil
+POINT (150.693703037 -35.1512507536) | AusLTER - Jervis Bay Booderee National Park Plot Network - Australia
+POINT (3 57) | North Sea Benthos Observatory - Germany
+POINT (-52 -26) | Araucaria Forests of Southern Brazil - Brazil
+POINT (4.69 45.74) | OZCAR-RI OTHU Yzeron experimental catchment - France
+POINT (145.624176 -17.035678) | TERN - LTERN - Connell Rainforest Plot Network - Davies Creek - Australia
+POINT (153.125199 -28.215875) | TERN - LTERN - Connell Rainforest Plot Network - O\u0027Reilly\u0027s - Australia
+POINT (138.339844653 -23.6227451384) | AusLTER - Desert Ecology Plot Network - Australia
+POINT (2.704444 51.464833) | Belgian coastal waters and sand bank systems - Belgium
+POINT (2.704444 51.464833) | Simon Stevin Research Vessel - Belgium
+POINT (2.704444 51.464833) | VLIZ Marine Observatory - Belgium
+POINT (-42.5509 -19.6833) | Atlantic Forest and Lacustrine System of the middle Rio Doce - Brazil
+POINT (144.688969 -20.762424) | AusLTER - Desert Uplands Plot Network - Australia
+POINT (141.095626787 -33.3764656292) | AusLTER - Mallee Plot Network - Australia
+POINT (132.275722331 -13.2380149959) | AusLTER - Three Parks Savanna Fire-Effects Plot Network - Australia
+POINT (-37.335649221186 -8.483792226053) | Catimbau National Park, STDF, Caatinga - Brazil
+POINT (142.0197 44.9173) | Teshio Experimental Forest - North Hokkaido Experimental Forests - Japan
+POINT (142.261025 44.364964) | Uryu Experimental Forest - North Hokkaido Experimental Forests - Japan
+POINT (145.431410036 -16.8577848758) | AusLTER - Tropical Rainforest Plot Network - Australia
+POINT (150.9 -34.23) | AusLTER - Upland Heath Swamps Plot Network - Dharawal National Park, Sydney Basin, NSW, Australia - Australia
+POINT (-48.695833 -25.314167) | Lagamar - Brazil
+POINT (124.93715545434 41.841145652867) | Qingyuan Forest CERN, Chinese Academy of Sciences - China
+POINT (112.8 29.5) | Dongting Lake Station of Wetland Eco-system - China
+POINT (-47.9035 -15.966572) | AGCV: CERRADO - Bras\u00edlia, APA Gama Cabe\u00e7a de Veado - Brazil
+POINT (-51.231072 -23.025358) | Brazilian North Parana state Seasonal Atlantic Forest - Brazil
+POINT (-43.0333 -22.6833) | Guanabara Bay, Rio de Janeiro - Brazil
+POINT (105.7517 26.366) | Puding Karst Ecosystem Research Station - China
+POINT (4.6872 50.8008) | Dijleland - Belgium
+POINT (147.153061055 -36.9555905757) | AusLTER - Victorian Alpine Plot Network - Australia
+POINT (150.84936426 -33.8724412996) | AusLTER - Woodland Restoration Plot Network - Australia
+POINT (-52.35266667 -14.70709722) | Cerrado-Amazonia Transition - Brazil
+POINT (13.747716 45.98945) | Fondek - Slovenia
+POINT (13.861909 45.670203) | Gropajski bori - Slovenia
+POINT (0.405888 46.556267) | OZCAR-RI H+ Poitiers - France
+POINT (14.402911 46.28778) | Brdo - Slovenia
+POINT (14.787981 45.544073) | Borovec - Slovenia
+POINT (15.062737 46.096138) | Lontov\u017e - Slovenia
+POINT (15.422166 45.876688) | Krakovski gozd - Slovenia
+POINT (16.510589 46.496003) | Murska \u0161uma - Slovenia
+POINT (15.399272 46.458465) | Tratice - Slovenia
+POINT (-61.60599 -1.866587) | Ja\u00fa National Park - Brazil
+POINT (78.920166 17.294504) | OZCAR-RI H+ - Hyderabad - India
+POINT (-45.1123 -23.3633) | Functional Gradient of Atlantic Forest - Brazil
+POINT (-48.24 -19.1) | PELD-TMSG: Cerrado ecosystems in the region of the Tri\u00e2ngulo Mineiro and Southeast of Goi\u00e1s - Brazil
+POINT (2.9534783 39.415092) | H+ Majorque - France
+POINT (5.483399 43.941204) | OZCAR-RI H+ LSBB (Low Noise Underground Laboratory) - France
+POINT (-42.909328 -22.471718) | Central Fluminense Mosaic of Parks and Reserves (Mosaico Central Fluminense) - Brazil
+POINT (21.491191 -30.684007) | Square Kilometre Array (SKA) Meerkat Area - South Africa
+POINT (20.61386 -26.475522) | Kalahari Gemsbok National Park - South Africa
+POINT (24.1396 -33.59034) | Baviaanskloof - South Africa
+POINT (-32.421574 -3.856428) | Brazilian Oceanic Islands - PELD/ILOC - Brazil
+POINT (-47.95305556 -22.16902778) | The Ecology of UHE Carlos Botelho (Lobo-Broa Reservoir) and its watershed, S\u00e3o Paulo, Brazil - Brazil
+POINT (-8.819962 40.133577) | LTSER MONDEGO ESTUARY - Portugal
+POINT (6.3 43.233) | OZCAR-RI REAL COLLOBRIER Catchments - France
+POINT (-8.86498 41.8697) | LTSER-ESTUARIES - Portugal
+POINT (-46.4904 -24.0848) | STRUCTURE AND DYNAMICS OF COMMUNITIES IN COASTAL RIVERS AND STREAMS FROM THE ATLANTIC FOREST - ITANHA\u00c9M RIVER BASIN. - Brazil
+POINT (18.375 -34.16667) | Table Mountain Chain - South Africa
+POINT (-52.927778 -18.106389) | Parque Nacional das Emas - Brazil
+POINT (-56.376191 -16.51029) | North Pantanal - Brazil
+POINT (-51.705112 -18.934928) | Atlantic Forest Remnants in Goi\u00e1s State - Brazil
+POINT (17.797942 -30.165851) | Namaqua National Park, Skilpad Wildflower Reserve - South Africa
+POINT (20.008944 -31.789614) | Roggeveld post-fire plots - South Africa
+POINT (21.895758 -31.036906) | Carnarvon Experimental Farm (Biesieslaagte) - South Africa
+POINT (-42 -23) | Upwelling ecosystem of Cabo Frio (RJ) - Brazil
+POINT (-43.53805 -19.36694) | CAMPOS RUPESTRES DA SERRA DO CIP\u00d3-MG - Brazil
+POINT (-53.2569444444 -22.765) | The Upper Paran\u00e1 River Floodplain - Brazil
+POINT (-41.5302777778 -22.1763888889) | Restingas and coastal lagoons of the northern Rio de Janeiro - Brazil
+POINT (-38.511069 -18.306802) | Abrolhos Bank - Brazil
+POINT (-59 -2.1) | Uatum\u00e3 Sustainable Development Reserve - Brazil
+POINT (4.566664 43.540509) | Camargue Biosphere Reserve - France
+POINT (23.9214661 35.2894858) | Samaria National Park - Greece
+POINT (-8.2415908 41.8386561) | Peneda-Ger\u00eas - Portugal
+POINT (20.94131 40.97418) | Ohrid and Prespa - North Macedonia
+POINT (7.473547 60.1040713) | Hardangervidda National Park - Norway
+POINT (18.7 68.3204103) | Abisko National Park - Sweden
+POINT (-17.8557875 28.6551008) | La Palma Island - Spain
+POINT (16.3149389 41.0044279) | Murgia Alta - Italy
+POINT (31.455117 -24.025157) | Kruger National Park - South Africa
+POINT (9.011637 43.273621) | Pelagos Sanctuary - France, Italy, Monaco
+POINT (9.406651 42.847785) | Cap Corse MPA - France
+POINT (17.347588 35.830465) | Mediterranean LME - France, Greece, Italy, Malta, Spain
+POINT (19.981755 49.270893) | Tatra National Park - Poland
+POINT (19.963489 49.231538) | Tatra Mountains Biosphere Reserve - Poland, Slovakia
+POINT (-84.244911 18.906803) | Caribbean LME - Belize, Costa Rica, Cuba, Dominican Republic, Honduras, Mexico, Panama
+POINT (55.536384 -21.115141) | R\u00e9union National Park - France
+POINT (-76.663096 39.216607) | Baltimore Ecosystem Study LTER - United States of America
+POINT (-96.574987 39.095385) | Konza Prairie LTER - United States of America
+POINT (-83.45428 35.04826) | Coweeta LTER - United States of America
+POINT (145.607253 -17.127134) | TERN Robson Creek Rainforest - Australia
+POINT (153.079877 -27.630083) | TERN South East Queensland Peri-urban SuperSite - Karawatha Forest - Australia
+POINT (5.815613 52.228746) | LTSER Veluwe - Netherlands
+POINT (-8.4855 38.4855) | Montado in Alentejo Natura 2000 sites - Portugal
+POINT (102.30743408 3.12482912) | Pasoh Research Forest Reserve - Malaysia
+POINT (11.074772 51.843905) | TERENO - Harsleben - Germany
+POINT (10.4273 43.519) | IT04-Mediterranean forest - Italy
+POINT (23.698883 38.04697) | LTSER Platform Hydrologic Observatory of Athens - Greece
+POINT (21.656048 36.993249) | Navarino Environmental Observatory - Greece
+POINT (25.66975 35.337718) | Finokalia Atmospheric Observatory - Greece
+POINT (26.240962 39.167246) | Lesvos Biodiversity Observatory - Greece
+POINT (22.764836 39.713069) | Pinios Hydrologic Observatory - Greece
+POINT (10.04167 54.51667) | Boknis Eck Time Series Station (SW Baltic Sea) - Germany
+POINT (13 41) | IT20 - Central Italy coastal dunes - Italy
+POINT (5.64332 58.90451971) | NINA Aquatic Research Station, Ims - Norway
+POINT (128.0819 38.01743) | Ecological research site of Mt. Jumbongsan - Korea (the Republic of)
+POINT (121.0598 15.87278) | Pantabangan Forest Dynamics Plot - Philippines (the)
+POINT (123.9273 13.05111) | Bacman Forest Dynamics Plot - Philippines
+POINT (121.2 14.1333) | Mt. Makiling Forest Reserve - Philippines (the)
+POINT (124.66601 11.1452) | Leyte Forest Dynamics Plot - Philippines (the)
+POINT (125.105728 10.500823) | Silago Forest Dynamics Plot - Philippines (the)
+POINT (123.1232 10.47937) | Northern Negros Forest Dynamics Plot - Philippines (the)
+POINT (123.1977 9.33625) | Southern Negros Forest Dynamics Plot - Philippines (the)
+POINT (124.925 8.12833) | Mt. Kitanglad - Philippines (the)
+POINT (125.269215 6.984657) | Mt. Apo Forest Dynamics Plot - Philippines (the)
+POINT (34.772014 30.79316) | LTSER Negev highland - Israel
+POINT (30.201055 45.256111) | Marine research station \u0022Zmiinyi island\u0022 - Ukraine
+POINT (30.336094 46.456144) | Research monitoring station \u0022Petrodolinskoye\u0022 - Ukraine
+POINT (15.148333 48.154917) | Hydrological Open Air Laboratory HOAL Petzenkirchen - Austria
+POINT (6.16061 45.160584) | OZCAR-RI Glacioclim Saint-Sorlin Glacier - France
+POINT (6.996095 45.944977) | OZCAR-RI Glacioclim Argentiere glacier - France
+POINT (6.942368 45.90264) | OZCAR-RI Glacioclim Mer de Glace Glacier - France
+POINT (6.627209 45.298346) | OZCAR-RI Glacioclim Gebroulaz glacier - France
+POINT (6.3994 45.0168) | PermaFrance Laurichard rock glacier - France
+POINT (6.111913 45.116619) | OZCAR-RI Glacioclim Sarennes Glacier - France
+POINT (-123.33 -75.1) | OZCAR-RI Glacioclim Dome C site - Antarctica
+POINT (139.909191 -66.692889) | OZCAR-RI Glacioclim Cap Prud\u0027Homme Site - Antarctica
+POINT (-68.167 -16.25) | OZCAR-RI Glacioclim Zongo Glacier - Bolivia
+POINT (-78.14 -0.48) | OZCAR-RI Glacioclim Antizana glacier - Ecuador
+POINT (86.86 27.71) | OZCAR-RI Glacioclim Mera glacier - Nepal
+POINT (0.14 42.77) | OZCAR-RI Glacioclim Ossoue Glacier - France
+POINT (6.8519 45.8432) | OZCAR-RI Glacioclim Col du Dome - France
+POINT (6.19166 45) | PermaFrance Deux Alpes - France
+POINT (6.887625 45.878403) | PermaFrance Aiguille du Midi - France
+POINT (6.80925 45.86582) | PermaFrance Derochoir - France
+POINT (6.378679 45.056985) | PermaFrance Vallon de Roche Noire - France
+POINT (6 45) | PermaFrance R\u00e9seau \u00e9boulis froids - France
+POINT (6.11 45.12) | OZCAR-RI Glacioclim Col du Lac Blanc - France
+POINT (4.31277778 51.28334444) | Ketenisse - Belgium
+POINT (4.255 51.33388889) | Paardenschor - Belgium
+POINT (4.17222222 51.08555556) | Lippenbroek - Belgium
+POINT (4.2618 51.117409) | Notelaar - Belgium
+POINT (5.77 45.3) | OZCAR-RI Glacioclim Col de Porte - France
+POINT (26.916503 70.53039) | Climate-Ecological Observatory for Arctic Tundra - Norway
+POINT (20.124834 48.887371) | Kralova hola - Slovakia
+POINT (-35.1680555556 -5.89611111111) | BR_Natal_Restinga_Forest - Brazil
+POINT (-116.75 43.205) | D-DIRT at Reynold\u0027s Creek CZO - United States of America
+POINT (-77.205644 37.326024) | VCU Rice Rivers Center 280 - United States of America
+POINT (13.5285787 54.0445794) | Hanshagen - Germany
+POINT (-83.66861 9.89555) | CATIE - The Tropical Agricultural Research and Higher Education Center - Costa Rica
+POINT (30 70.3) | Climate-Ecological Observatory for Arctic Tundra: Varanger - Norway
+POINT (15.730575 78.206799) | Climate-Ecological Observatory for Arctic Tundra: Svalbard - Svalbard and Jan Mayen
+POINT (68.702 60.8891) | Mukhrino field station of Yugra State University - Russian Federation
+POINT (117.921022 29.102744) | BEF China Main Experiment - China
+POINT (-68.711392 -56.523878) | Diego Ramirez LTER Site - Chile
+POINT (-67.246533 -55.956461) | Cape Horn Island LTER Site - Chile
+POINT (18.947467804 48.553233825) | Stiavnicke vrchy - Slovakia
+POINT (22.354749 49.077123) | Poloniny National Park LTSER - Slovakia
+POINT (24.635922 47.585075) | Rodna Mountains alpine zone - Romania
+POINT (24.609567 45.597353) | F\u0103g\u0103ra\u0219 Mountains alpine zone - Romania
+POINT (23.660143 45.345084) | Par\u00e2ng Mountains alpine zone - Romania
+POINT (17.57913 48.376203) | Trnava LTSER - Slovakia
+POINT (74.339900926346 34.020187020802) | HIMADRI site Jammu \u0026 Kashmir - India
+POINT (0.5934927 40.6735219) | Ebro Delta - Spain
+POINT (11.88333333 51.38333333) | MyDiv - Germany
+POINT (11.222351 52.086563) | TERENO - Hohes Holz - Germany
+POINT (-56.07138889 -15.73083333) | BR_Fazenda_Miranda-Brazil - Brazil
+POINT (-56.40475 -16.50391667) | BR_Baia_das_Pedras-Brazil - Brazil
+POINT (10.23827 46.64066) | CH-SN1-MBU - Switzerland
+POINT (10.23393 46.64411) | CH-SN1-MCH - Switzerland
+POINT (10.17101 46.71551) | CH-SN1-CUO - Switzerland
+POINT (10.266388 52.839444) | Luess intensive monitoring site - Germany
+POINT (7.8591667 52.907778) | Augustendorf intensive forest monitoring site - Germany
+POINT (10.046667 51.528333) | G\u00f6ttinger Wald intensive forest monitoring site - Germany
+POINT (9.9025 53.177778) | Ehrhorn intensive monitoring site - Germany
+POINT (10.42853 46.73549) | CH-SN2-MCS - Switzerland
+POINT (10.3379 46.64559) | CH-SN2-MIN - Switzerland
+POINT (10.33078 46.69445) | CH-SN2-MDG - Switzerland
+POINT (10.38811 46.7085) | CH-SN2-PPL - Switzerland
+POINT (126.66 34.35) | Wando arboretum forest - Korea (the Republic of)
+POINT (128 37) | Pyeongchang model forest - Korea (the Republic of)
+POINT (127.2639 35.1714) | Ecological research site of Mt. Jirisan - Korea (the Republic of)
+POINT (120.81638888889 21.966388888889) | Kenting Karst Forest Dynamics Plot - Taiwan
+POINT (23.951682 49.917312) | Research station \u0022Roztochia landscape-geophysical station\u0022 - Ukraine
+POINT (7.67626 53.74397) | National Park Lower Saxony Wadden Sea - Germany
+POINT (35.065 31.71277778) | Matta - Israel
+POINT (7.09 49.67) | National Park Hunsr\u00fcck-Hochwald - Germany
+POINT (14.487763 46.117064) | Gameljne - Slovenia
+POINT (13.916721 45.54346) | Podgorski Kras - Slovenia
+POINT (4.3287709 50.9281205) | Meise Botanic Garden - Belgium
+POINT (-65.8167 18.3333) | Luquillo Forest Dynamics Plot - Puerto Rico
+POINT (24.575555 48.179722) | The mountain station \u0022Chornohirskiy geographical station\u0022 - Ukraine
+POINT (21.102075 55.518591) | Curonian Spit National Park - Lithuania
+POINT (21.370342 55.340626) | Nemunas Delta Regional Park - Lithuania
+POINT (6.295724 50.627297) | TERENO - Rollesbroich - Germany
+POINT (6.4473888 50.8658839) | TERENO - Selhausen - Germany
+POINT (6.31 50.84) | TERENO - Eifel Lower Rhine Valley - Germany
+POINT (135.750685 35.322382) | Ashiu Forest Research Station - Japan
+POINT (-40.12416667 -19.95222222) | Eastern Brazil Marine Ecoregion Coastal Habitats - Espirito Santo - Brazil
+POINT (28.404305555 -35.320972225) | Agulhas System Climate Array - South Africa
+POINT (7.7761411 47.4384813) | H\u00f6lstein - Switzerland
+POINT (-54.9055556 -2.5313889) | PELD DO OESTE DO PAR\u00c1 (POPA) - Brazil
+POINT (21.145931 55.381689) | Curonian lagoon biosphere polygon - Lithuania
+POINT (-52.4131 -12.91904) | PELD Tanguro Ranch - Brazil
+POINT (-35.091 -8.771) | Tamandar\u00e9 Coastal-Marine Complex, APA Costa dos Corais - Brazil
+POINT (-44.95638889 -14.07527778) | Veredas of Minas Gerais: local anthropogenic effects and global climate change - Brazil
+POINT (15.343 -30.7965) | Benthic Trawl Experiment - South Africa
+POINT (98.37225 7.612929) | Koh Racha Yai - Thailand
+POINT (20.2417 63.8106) | R\u00f6b\u00e4cksdalen Field Research Station - Sweden
+POINT (-35.61638889 -9.5475) | PELD Coral Coast Alagoas - Brazil
+POINT (13.858135 46.28332) | Lake Bohinj - Slovenia
+POINT (25.578232 40.456875) | LTSER Platform Samothraki Nature Observatory - Greece
+POINT (-72.83555556 44.50694444) | Mansfield Vermont USA - United States of America
+POINT (35.284663438797 31.727906785441) | Wadi Nar station - Palestine
+POINT (6.096944 50.06806) | Fischbach Nr 2 - Luxembourg
+POINT (6.113611 49.78917) | Roost Nr 7 - Luxembourg
+POINT (6.1175 49.64944) | Bereldange Nr 10 - Luxembourg
+POINT (6.3425 49.79389) | Consdorf Nr 8 - Luxembourg
+POINT (6.30528 49.72237) | Beidweiler - Luxembourg
+POINT (-70.8833 40.6967) | Northeast U.S. Shelf LTER - United States of America
+POINT (-3.465012 53.054884) | Clocaenog: Long-term monitoring site for climate change research - United Kingdom
+POINT (135.665833 33.669166) | Nanki-kozagawa - Wakayama Experimental Forest, Hokakido University - Japan
+POINT (23.14 57.357) | Engure marine site - Latvia
+POINT (8.677139 50.105607) | City of Frankfurt - habitat mapping - Germany
+POINT (3.364189 51.362307) | Zwin Nature Park - Belgium
+POINT (-61.6714292 3.3558107) | PELD Florestas de Roraima - Brazil
+POINT (-70.155556 -20.82) | Estaci\u00f3n Atacama UC - Oasis de Niebla Alto Patache - Chile
+POINT (-72.75 -41.534) | Centro de Investigaci\u00f3n y Educaci\u00f3n Parque Katalapi - Chile
+POINT (-72.25 -42.22) | Centro Cient\u00edfico Huinay - Chile
+POINT (-73.53 -46.274722) | Estaci\u00f3n Patagonia de Investigaciones Interdisciplinarias UC - Chile
+POINT (126.5294 33.3643) | Ecological research site of Mt. Halla San - Korea (the Republic of)
+POINT (-71.633333 -33.5) | Estaci\u00f3n Costera de Investigaciones Marinas, Las Cruces - Chile
+POINT (18.6097 67.9115) | Tarfala Research Station - Sweden
+POINT (9.320916 56.081214) | HOBE - the Danish hydrological observatory - Denmark
+POINT (31.521211 37.772399) | Lake Bey\u015fehir - Turkey
+POINT (7.6121082 46.3027884) | Pfynwald - Switzerland
+POINT (2.28047 47.32169) | OZCAR-RI PEATLAND La Guette - France
+POINT (6.171098 46.824722) | OZCAR-RI PEATLAND Frasne - France
+POINT (-1.18724 48.44219) | OZCAR-RI PEATLAND Landemarais - France
+POINT (1.4238 42.80258) | OZCAR-RI PEATLAND Bernadouze - France
+POINT (-49.5145443 -28.1816033) | Biodiversity of Santa Catarina: studing the association between landscape and biological diversity in two protected areas of Santa Catarina State - Brazil
+POINT (-48.865 -16.593) | Functional connectivity and anthropogenic effects in agriculture landscapes: a case study in Brazilian Cerrado - Brazil
+POINT (1.147014 43.446285) | OZCAR-RI Regional Spatial Observatory in the South West France - France
+POINT (1.783311111111 47.8641389) | LTSER Zone Atelier Loire - Mareau-aux-Pr\u00e9s Islands - France
+POINT (0.770772222222 47.1476833) | LTSER Zone Atelier Loire - Louroux Watershed - France
+POINT (3.28 48.45) | LTSER Zone Atelier Seine - Plaine alluviale de la Bass\u00e9e - France
+POINT (13.2595011 50.5901328) | Nacetin forest research plots - Czechia
+POINT (1.9373 47.8503) | OZCAR-RI SNO_KARST Karst Val d\u0027Orl\u00e9ans - France
+POINT (1.11 49.46) | OZCAR-RI SNO_Karst : Karst Craie - France
+POINT (4.3472984 43.8373489) | OZCAR-RI SNO_Karst Fontaine_de_Nimes - France
+POINT (0.700098 45.198472) | OZCAR-RI SNO_Karst Karsts Aquitains - France
+POINT (0.85 43.2667) | OZCAR-RI ROSES Groundwater network observatory - France
+POINT (34.8905472 32.489472) | Morris Kahn Marine Research Station - Israel
+POINT (5.514 43.21) | OZCAR-RI SNO_KARST Mediterranean and coastal site of Port-Miou - France
+POINT (13.03038597107 53.150708250618) | Lake Stechlin - Germany
+POINT (3.324722 46.42) | LTSER Zone Atelier Loire - Downstream Allier River - France
+POINT (0.4676948 49.469905) | LTSER Zone Atelier Seine - Estuaire de la Seine - France
+POINT (116.93 -32.44) | TERN Boyagin Wandoo Woodlands SuperSite - Australia
+POINT (115.71 -31.37) | TERN Gingin Banksia Woodland SuperSite - Australia
+POINT (144.32 -23.46) | TERN Mitchell Grass Rangeland SuperSite - Australia
+POINT (23.562241 -18.097581) | Mudumu - Namibia
+POINT (3.645217 50.860648) | Bos t\u0027Ename - Belgium
+POINT (18.5368725 49.5020972) | Bily Kriz - Czechia
+POINT (-149 59) | Northern Gulf of Alaska - United States of America
+POINT (-156.56479 71.32894) | Beaufort Lagoon Ecosystems LTER - United States of America
+POINT (-59.85 2.69) | Anthropic impacts on the tropical forest of central Amazon - Brazil
+POINT (-43.582207 -19.291999) | Campos Rupestres da Serra do Cip\u00f3 - Brazil
+POINT (-35.61638889 -9.5475) | CORAL COAST ALAGOAS - Brazil
+POINT (23.147507 41.205523) | Lake Kerkini National Park - Greece
+POINT (16.65 48.8667) | Thermophilous forests - Czechia
+POINT (5.5242 51.2781) | Beverbeek - Belgium
+POINT (3.266474 51.156055) | Leiemeersen - Belgium
+POINT (13.474424 54.078026) | Coastal Deciduous Forests North-Eastern Germany - Germany
+POINT (12.919862 47.558043) | National Park Berchtesgaden - Germany
+POINT (12.299688 51.366949) | Floodplain Platform Central Germany - Germany
+POINT (15.1507544 50.8306642) | Bed\u0159ichov catchment and reservoir - Czechia
+POINT (-45.4811782 -22.6898797) | Parque Estadual de Campos do Jord\u00e3o (PELD-PECJ) LTER - Brazil
+POINT (144.6167 43.31667) | Hokkaido Forest Research Station, Shibecha/Shiranuka - Japan
+POINT (138.22504 35.340144) | Ikawa Forest Station - Japan
+POINT (-71.28731 44.06388) | Bartlett Experimental Forest NEON - United States of America
+POINT (-72.17266 42.5369) | Harvard Forest \u0026 Quabbin Watershed NEON - United States of America
+POINT (-72.32963 42.47179) | Lower Hop Brook NEON - United States of America
+POINT (-77.979278 39.094908) | Blandy Experimental Farm NEON - United States of America
+POINT (-76.56001 38.89008) | Smithsonian Environmental Research Center NEON - United States of America
+POINT (-78.1395 38.89292) | Smithsonian Conservation Biology Institute NEON - United States of America
+POINT (-78.14678 38.89332) | Posey Creek NEON - United States of America
+POINT (-77.98322 39.09564) | Lewis Run NEON - United States of America
+POINT (-67.0769 18.02125) | Lajas Experimental Station NEON - United States of America
+POINT (-66.98676 18.11352) | Rio Cupeyes NEON - United States of America
+POINT (-66.8687 17.96955) | Guanica Forest NEON - United States of America
+POINT (-66.7985 18.1741) | R\u00edo Yahuecas NEON - United States of America
+POINT (-84.46861 31.19484) | The Jones Center At Ichauway NEON - United States of America
+POINT (-84.4374 31.18542) | Flint River NEON - United States of America
+POINT (-81.99343 29.68927) | Ordway-Swisher Biological Station NEON - United States of America
+POINT (-81.415901 28.097935) | Disney Wilderness Preserve NEON - United States of America
+POINT (-82.00909 29.67647) | Lake Barco NEON - United States of America
+POINT (-82.01617 29.68705) | Lake Suggs NEON - United States of America
+POINT (-96.44197 38.94428) | McDiffett Creek NEON - United States of America
+POINT (-96.60336 39.10506) | Kings Creek NEON - United States of America
+POINT (-96.56309 39.10077) | Konza Prairie Biological Station NEON - United States of America
+POINT (-95.19215 39.04043) | University of Kansas Field Station NEON - United States of America
+POINT (-96.61295 39.11044) | Konza Prairie Agroecosystem NEON - United States of America
+POINT (-89.704767 45.998269) | Little Rock Lake NEON - United States of America
+POINT (-89.58637 45.50894) | Steigerwaldt \u2013 Chequamegon NEON - United States of America
+POINT (-89.47825 46.21111) | Crampton Lake NEON - United States of America
+POINT (-89.53725 46.23388) | University of Notre Dame Environmental Research Center NEON - United States of America
+POINT (-89.58571 45.49369) | Treehaven NEON - United States of America
+POINT (-83.50195 35.68896) | Great Smoky Mountains National Park NEON - United States of America
+POINT (-83.50379 35.69043) | LeConte Creek NEON - United States of America
+POINT (-84.28041 35.95947) | Walker Branch NEON - United States of America
+POINT (-84.2826 35.96412) | Oak Ridge NEON - United States of America
+POINT (-80.52484 37.37828) | Mountain Lake Biological Station NEON - United States of America
+POINT (-88.16122 31.85388) | Black Warrior River NEON - United States of America
+POINT (-87.80389 32.54172) | Dead Lake NEON - United States of America
+POINT (-87.40813 32.95966) | Mayfield Creek NEON - United States of America
+POINT (-87.39327 32.95046) | Talladega National Forest NEON - United States of America
+POINT (-88.16122 31.85388) | Lenoir Landing NEON - United States of America
+POINT (-88.16107 31.8521) | Lower Tombigbee River NEON - United States of America
+POINT (-105.54592 40.27591) | Rocky Mountains NEON - United States of America
+POINT (-104.7456 40.81553) | Central Plains Experimental Range NEON - United States of America
+POINT (-102.4471 39.75825) | Arikaree River NEON - United States of America
+POINT (-103.0293 40.4619) | North Sterling NEON - United States of America
+POINT (-99.10656 47.16165) | Dakota Coteau Field Site NEON - United States of America
+POINT (-99.11388 47.15909) | Prairie Lake NEON - United States of America
+POINT (-99.24136 47.12823) | Chase Lake National Wildlife Refuge NEON - United States of America
+POINT (-99.25055 47.12999) | Prairie Pothole NEON - United States of America
+POINT (-100.91535 46.76972) | Northern Great Plains Research Laboratory NEON - United States of America
+POINT (-99.05879 35.41059) | Marvin Klemme Range Research Station NEON - United States of America
+POINT (-96.6242 34.44422) | Blue River NEON - United States of America
+POINT (-97.78226 33.37859) | Pringle Creek NEON - United States of America
+POINT (-97.57 33.401231) | Lyndon B. Johnson National Grassland NEON - United States of America
+POINT (-110.58715 44.95011) | Blacktail Deer Creek NEON - United States of America
+POINT (-110.53914 44.95348) | Yellowstone National Park NEON - United States of America
+POINT (-109.38827 38.2433) | Moab NEON - United States of America
+POINT (-105.58237 40.05425) | Niwot Ridge NEON - United States of America
+POINT (-105.9154 39.89137) | West St. Louis Creek NEON - United States of America
+POINT (-105.54487 40.03496) | Como Creek NEON - United States of America
+POINT (-111.5069 33.74906) | Sycamore Creek NEON - United States of America
+POINT (-106.84254 32.59068) | Jornada Experimental Range NEON - United States of America
+POINT (-110.83549 31.91068) | Santa Rita Experimental Range NEON - United States of America
+POINT (-111.79765 40.78374) | Red Butte Creek NEON - United States of America
+POINT (-112.47947 40.180101) | Onaqui NEON - United States of America
+POINT (-121.93196 45.79125) | Martha Creek NEON - United States of America
+POINT (-122.16555 44.2596) | McRae Creek NEON - United States of America
+POINT (-121.95191 45.82049) | Wind River Experimental Forest NEON - United States of America
+POINT (-122.33033 45.76243) | Abby Road NEON - United States of America
+POINT (-119.02699 36.95528) | Teakettle Creek \u2013 Watershed 2 NEON - United States of America
+POINT (-119.256 37.058) | Upper Big Creek NEON - United States of America
+POINT (-119.73228 37.10878) | San Joaquin Experimental Range NEON - United States of America
+POINT (-119.26219 37.03337) | Soaproot Saddle NEON - United States of America
+POINT (-119.00602 37.00583) | Lower Teakettle NEON - United States of America
+POINT (-156.61936 71.28241) | Utqia\u0121vik NEON - United States of America
+POINT (-149.37047 68.66109) | Toolik Field Station NEON - United States of America
+POINT (-149.610636 68.630692) | Toolik Lake NEON - United States of America
+POINT (-149.14302 68.66975) | Oksrukuyik Creek NEON - United States of America
+POINT (-147.50258 65.15401) | Caribou-Poker Creeks Research Watershed NEON - United States of America
+POINT (-147.50246 65.15306) | Caribou Creek NEON - United States of America
+POINT (-149.21334 63.87569) | Healy NEON - United States of America
+POINT (-145.75136 63.88112) | Delta Junction NEON - United States of America
+POINT (-155.31731 19.55309) | Pu\u0027u Maka\u0027ala Natural Area Reserve NEON - United States of America
+POINT (16.615562 48.21638) | Rutzendorf, MUBIL Trial - Austria
+POINT (16.560292 48.198304) | Experimental Farm Gross-Enzersdorf - Austria
+POINT (6.821094 48.270969) | LTSER Zone Atelier du Bassin de la Moselle - Vosges Acidification Observatory - France
+POINT (32.791958 39.773182) | Lake Eymir and Lake Mogan - Turkey
+POINT (34.9453 32.5524324) | Ramat Hanadiv LTSER Platform - Israel
+POINT (7.14274 45.29806) | Bessanese high-elevation experimental site - Italy
+POINT (16.801572 47.770772) | Nationalpark Neusiedler See - Seewinkel - Austria
+POINT (16.765909 47.768868) | LTER Biologische Station Neusiedler See - Austria
+POINT (14.56751 44.599796) | Cres - Lo\u0161inj - Croatia
+POINT (16.193385 43.004526) | Vi\u0161ki akvatorij - Croatia
+POINT (17.543278 42.920675) | Malostonski zaljev - Croatia
+POINT (12.41 45.2025) | Tegn\u00f9e di Chioggia - Italy
+POINT (11.907157 44.977424) | Delta del Po: tratto terminale e delta veneto - Italy
+POINT (12.267686 44.941775) | Delta del Po - Italy
+POINT (13.41 45.63) | Trezze San Pietro e Bardelli - Italy
+POINT (2.704444 51.464833) | ILVO monitoring network of the Belgian Coastal Waters - Belgium
+POINT (6.39989 45.036359) | Platform Lautaret - Guisane - Haute Romanche - France
+POINT (14.71451 47.950061) | Hoferm\u00fchle Landslide Monitoring Site - Austria
+POINT (-73.201561 -39.640317) | Bosque Experimental San Martin - Chile
+POINT (5.7730337470526 49.176734533918) | LTSER Zone Atelier du Bassin de la Moselle - Orne Watershed - France
+POINT (15.019013 47.980148) | Gresten - Am Salcher Landslide Observatory - Austria
+POINT (15.119226 48.015044) | Brandstatt Landslide Monitoring Site - Austria
+POINT (33.07053 35.073121) | PERISTERONA Watershed - Cyprus
+POINT (32.865646 34.942918) | TROODOS Mount Olympia - Cyprus
+POINT (7.750089 53.766528) | Coastal Observatory Spiekeroog - Germany
+POINT (6.941986 51.509084) | Emscher Catchment - Germany
+POINT (-16.456267 14.494402) | OZCAR-RI AMMA-CATCH Niakhar complementary site - Senegal
+POINT (19.700538194 46.17449307) | Sun\u010dani sala\u0161 - Serbia
+POINT (14.672919 50.192259) | Elbe River - Czechia
+POINT (21.962078 60.239661) | Archipelago Research Institute (Seili LTER) - Finland
+POINT (12.404147 47.108531) | LTER Hohe Tauern National Park (NPHT) - Austria
+POINT (15.019228 47.979941) | LTER NoeSLIDE - Austria
+POINT (23.314447 40.108685) | Sani Environmental Observatory - Greece
+POINT (13.610601 47.481272) | Hallst\u00e4tter Glacier - Austria
+POINT (12.339511 47.123045) | Venedigerkees - Austria
+POINT (10.788403 46.838166) | Kaunertal: Kesselwandferner/Gepatschferner glacier and the proglacial area - Austria
+POINT (13.598199 47.486249) | Vegetation monitoring in glacier forefields on the Dachstein glaciers - Austria
+POINT (11.559135 55.378352) | Suserup - Denmark
+POINT (4.174281 51.10431) | Durme debouchment - Belgium
+POINT (146.189138 -19.887285) | TERN Fletcherview Tropical Rangeland SuperSite and Critical Zone Observatory - Australia
+POINT (12.378429 47.085283) | Mullwitzkees - Austria
+POINT (13.641436 56.941278) | Bolmen Research Station - Sweden
+POINT (-93.180285 44.986838) | Minneapolis-St.Paul LTER - United States of America
+POINT (28.841981341837 -28.783630136915) | Mont-Aux-Sources LTSER - Lesotho, South Africa
+POINT (8.239918 58.384232) | Birkenes site cluster - Norway
+POINT (31.182976 -29.912184) | KwaZulu-Natal Bight Sentinel Site - South Africa
+POINT (11.087952 60.35742) | Hurdal site cluster - Norway
+POINT (29.30603 70.401533) | Varanger site cluster - Norway
+POINT (15.732422 78.160161) | Svalbard site cluster - Norway
+POINT (8.514404 61.590311) | South Norwegian Mountain Range site cluster - Norway
+POINT (5.73761 58.785063) | J\u00e6ren site cluster - Norway
+POINT (18.627319 69.07822) | M\u00e5lselva site cluster - Norway
+POINT (10.601807 63.351744) | Tr\u00f8ndelag site cluster - Norway
+POINT (11.087952 63.543276) | Moose and forest dynamics in Tr\u00f8ndelag - Norway
+POINT (8.23999 58.38393) | Birkenes intensive forest monitoring plot (ICP Forests Level II) - Norway
+POINT (11.07749 60.3719) | Hurdal intensive forest monitoring plot (ICP Forests Level II) - Norway
+POINT (5.7704044578675 48.758836342916) | LTSER Zone Atelier du Bassin de la Moselle - For\u00eat de la Reine Observatory - France
+POINT (138.469362 35.943928) | Yatsugatake-Kawakami - Japan
+POINT (16.694278 48.417423) | Ziegelwald - Austria
+POINT (16.735621918498 48.411198569803) | Klosterwald - Austria
+POINT (16.700616 48.391394) | Bl\u00fctenwald - Austria
+POINT (8.4399 55.01553) | Sylt Roads - Germany
+POINT (14.619570857209 47.527735344211) | Ges\u00e4use-Johnsbachtal - Austria
+POINT (10.724797 51.816938) | TERENO - Holtemme - Germany
+POINT (10.889983 51.737017) | TERENO - Rappbode - Germany
+POINT (-4.823341 43.253127) | Global Change Observatory of Picos de Europa Socio-Ecosystems - Spain
+POINT (-6.256199 36.892801) | Guadalquivir Estuary Long-Term Socio-Ecological Research - Spain
+POINT (13.833911 52.878038) | Hydrological research site \u0022Britz\u0022 - Germany
+POINT (23.405542 42.02744) | Parangalitsa - Bulgaria
+POINT (13.646135 50.538946) | Post-mining lakes - Czechia
+POINT (-3.244722 55.793333) | Auchencorth Moss - United Kingdom
+POINT (11.060788 47.831638) | TERENO - Fendt - Germany
+POINT (-5.429966 57.492061) | Loch Coire Fionnaraich - United Kingdom
+POINT (-0.934491 54.412994) | Danby Beck - United Kingdom
+POINT (-3.44097 56.91437) | Baddoch Burn - United Kingdom
+POINT (149.796009 -24.81624) | Brigalow Catchment Study - Australia
+POINT (34.955274 32.826395) | The National Institute of Oceanography - Haifa - Israel
+POINT (35.552015 32.868671) | Lake Kinneret - Israel
+POINT (5.972357 59.535281) | Vikedal site cluster - Norway
+POINT (10.219688 61.850946) | Atna site cluster - Norway
+POINT (28.558434 43.826457) | Sulphidic aquifer of South Dobrogea - Romania
+POINT (-90.365982 -0.644414) | Galapagos Islands National Park - Ecuador
+POINT (26.036224 58.257282) | Lake V\u00f5rtsj\u00e4rv automated buoy station - Estonia
+POINT (6.400864 45.048573) | Lautaret - Roche Noire - France
+POINT (3.449707 43.653913) | Mediterranean Plateaux, Piedmonts and Plains (P3M) platform - France
+POINT (6.360505 44.140206) | OZCAR-RI Draix-Bleone observatory Draix site - France
+POINT (6.217318 44.172213) | OZCAR-RI Draix-Bleone observatory Galabre site - France
+POINT (8.222634 48.560746) | Nationalpark Schwarzwald - Germany
+POINT (14.244902 53.011268) | Nationalpark Unteres Odertal - Germany
+POINT (10.168362 46.877771) | LTSER Platform Oberes Paznaun - Austria
+POINT (55.496686 -20.961801) | OZCAR-RI OZC-R Bassin de la Rivi\u00e8re des Pluies - France, R\u00e9union
+POINT (55.740166 -21.346624) | OZCAR-RI OZC-R For\u00eat de Mare Longue - France, R\u00e9union
+POINT (10.973282 46.879954) | eLTER Tyrolean High Mountains - Austria
+POINT (10.952597 47.211995) | eLTER Tyrolean Lakes - Austria
+POINT (0.973663 43.329274) | Vall\u00e9es et Coteaux de Gascogne - France
+POINT (-2.2291946433111 48.00406151765) | Platform Atlantic Anthropogenic Landscape - France
+POINT (135.681388 34.764055) | Forest Types, Botanical Gardens, Osaka Metropolitan University - Japan
+POINT (10.29091 43.73202) | San Rossore 2 - Italy
+POINT (13.41897 56.09763) | Hyltemossa - Sweden
+POINT (7.13943 45.49091) | Nivolet - Italy
+POINT (-1.79635 48.1184) | Mejusseaume - France
+POINT (11.456168 47.80918) | Mooseurach - Germany
+POINT (7.5981 47.933) | Hartheim - Germany
+POINT (17.479504 60.0865) | Norunda - Sweden
+POINT (2.780096 48.476357) | Fontainebleau-Barbeau - France
+POINT (-0.956092 44.493652) | Bilos - France
+POINT (13.56515 50.96256) | Tharandt - Germany
+POINT (25.4 42.616944) | Valley of Roses - Bulgaria
+POINT (1.958181 47.942121) | Obscure_BV Egoutier - France
+POINT (2.483333 47.816667) | OPTMix - France
+POINT (3.9827 44.1571) | P3M - Galeizon - France
+POINT (19.454272 51.760917) | \u0141\u00f3d\u017a downtown NBS area - Poland
+POINT (23.0039995 46.5073722) | Apuseni National Park - Romania
+POINT (2.666667 41.68) | Blanes Bay Microbial Observatory (BBMO) - Spain
+POINT (11.309 47.122) | eLTER Tyrolean Mountain Grassland and -Forest - Austria
+POINT (13.51259 50.95004) | Grillenburg - Germany
+POINT (3.02065 49.87211) | Estrees-Mons A28 - France
+POINT (23.95952 60.64183) | Lettosuo - Finland
+POINT (13.52238 50.89306) | Klingenberg - Germany
+POINT (-52.9248 5.2787) | Guyaflux - French Guiana
+POINT (19.55654 64.18203) | Degero - Sweden
+POINT (4.968113 50.311874) | Dorinne - Belgium
+POINT (12.750297 45.740482) | Lison - Italy
+POINT (1.237878 43.496437) | Lamasquere - France
+POINT (10.91463 51.09973) | Gebesee - Germany
+POINT (-53.51413 69.25349) | Disko - Greenland
+POINT (-51.386066 64.130936) | Nuuk Fen - Greenland
+POINT (1.95191 48.84422) | Grignon - France
+POINT (1.37474 43.572857) | Toulouse - France
+POINT (11.644645 55.48587) | Soroe - Denmark
+POINT (13.315827 52.457233) | Berlin-Rothenburgstrasse - Germany
+POINT (-20.555773 74.48152) | Zackenberg Fen - Greenland
+POINT (2.7349 45.6444) | Laqueuille - France
+POINT (24.502472 0.814444) | Yangambi - Congo (the Democratic Republic of the)
+POINT (-20.550869 74.4733) | Zackenberg Gras - Greenland
+POINT (11.755371 43.707097) | Monte Bondone - Italy
+POINT (5.67865 43.24079) | Font-Blanche - France
+POINT (8.151694 40.606174) | Arca di Noe - Le Prigionette - Italy
+POINT (14.957444 40.52375) | Borgo Cioffi - Italy
+POINT (5.74355 52.166447) | Loobos - Netherlands
+POINT (10.063477 50.679927) | Hetzdorf - Germany
+POINT (-3.581543 40.279002) | Las Majadas de Ti\u00e9tar - Spain
+POINT (25.1328 35.33613) | Heraklion Kornarou - Greece
+POINT (25.13017 35.32343) | Heraklion Mastabas - Greece
+POINT (11.255111 43.774464) | Osservatorio Ximeniano Firenze - Italy
+POINT (10.4487 52.2966) | Braunschweig - Germany
+POINT (11.3275 47.80639) | Schechenfilz Nord - Germany
+POINT (-8.001742 53.040253) | Gurteen Farm - Ireland
+POINT (8.704878 53.87706) | Cuxhaven Stationary FerryBox Platform - Germany
+POINT (4.6624384 51.29747) | Westmalle2 - Belgium
+POINT (4.6572485 51.296432) | Westmalle1 - Belgium
+POINT (-6.499806 52.298187) | Johnstown Castle - Ireland
+POINT (18.984339 57.430061) | SE-MFT-\u00d6stergarnsholm - Sweden
+POINT (5.31187 48.53816) | Montiers sur Saulx - France
+POINT (27.2347 63.16358) | Anttila - Finland
+POINT (21.4989 39.5434) | Pertouli - Greece
+POINT (-4.217 50.25) | UK-FOS-Western Channel Observatory - United Kingdom
+POINT (-9.89284 53.45647) | Leam West - Ireland
+POINT (12.101398 55.680683) | Risoe - Denmark
+POINT (14.2504 40.8741) | Parco Urbano di Capodimonte - Italy
+POINT (8.575956 40.716957) | Sassari - Italy
+POINT (-15.5 29.166667) | ESTOC - Spain
+POINT (-7.253945 52.94873) | Dooary - Ireland
+POINT (-24.5 17.6) | Cape Verde Ocean Observatory - Germany
+POINT (-4.9321167 41.8154861) | CIBA - Spain
+POINT (-9.903889 53.326111) | Mace Head - Ireland
+POINT (6.95543 52.1757) | Amtsvenn - Germany
+POINT (-7.641774 53.32309) | Clara Raised Bog - Ireland
+POINT (7.58049 47.56173) | Basel Klingelbergstrasse - Switzerland
+POINT (11.10478 52.029648) | Grosses Bruch - Germany
+POINT (18.7746 41.5705) | IT-FOS-E2M3A - Italy
+POINT (9.09247 53.4126) | Oberklenkendorf - Germany
+POINT (11.03261 47.57083) | Graswang - Germany
+POINT (24.209179 67.99724) | Lompolojankka - Finland
+POINT (13.64393 52.97343) | Kienhorst - Germany
+POINT (-6.9643 61.9847) | Koltur Research Station - Faroe Islands
+POINT (11.9228333 78.92355) | AWIPEV Arctic Research Base - Svalbard and Jan Mayen
+POINT (74.43831389 42.51262778) | Adygine Research Station - Kyrgyzstan
+POINT (1.21 42.495969) | Alt Pirineu Natural Park - Spain
+POINT (-53.67305 66.9357056) | Arctic DTU Research Station - Greenland
+POINT (-53.51724444 69.25337222) | Arctic Station - Greenland
+POINT (-156.66741111 71.32495278) | Barrow Arctic Research Center and Barrow Environmental Observatory - United States of America
+POINT (-76.16263333 57.74778056) | CEN Boniface River Field Station - Canada
+POINT (-80.03164722 73.14178056) | CEN Bylot Island Field Station - Canada
+POINT (-65.93333333 58.7) | CEN Kangiqsualujjuaq SUKUIJARVIK Research Station - Canada
+POINT (-77.60741111 53.79333611) | CEN Radisson Ecological Research Station - Canada
+POINT (-75.63962222 62) | CEN Salluit Research Station - Canada
+POINT (-76.54916667 56) | CEN Umiujaq Research Station - Canada
+POINT (-74.20753889 83.07681944) | CEN Ward Hunt Island Research Station - Canada
+POINT (-100.107422 52.588032) | CEN Whapmagoostui-Kuujjuarapik Research Station - Canada
+POINT (-74.61688333 56.33777222) | CEN Clearwater Lake Research Station - Canada
+POINT (11.92590833 78.92353611) | CNR Arctic Station \u201cDirigibile Italia\u201d - Svalbard and Jan Mayen
+POINT (-22.71268889 64.04101667) | Sudurnes Science and Learning Center - Iceland
+POINT (-133.72012222 68.35596667) | Western Arctic Research Centre (WARC) - Canada
+POINT (-16.66203056 81.60146111) | Villum Research Station (VRS) - Greenland
+POINT (11.92940653 78.92475642) | UK Arctic Research Station - Svalbard and Jan Mayen
+POINT (-105.05783611 69.118475) | Canadian High Arctic Research Station (CHARS) - Canada
+POINT (29.13524 70.3310322) | Skoarrojohka \u2013 Arctic Tundra research station - Norway
+POINT (-114.6552249 50.6453387) | RB Miller Station - Canada
+POINT (-93.81902222 58.73745278) | Churchill Northern Studies Centre - Canada
+POINT (-69.21725668 77.46482148) | DMI Geophysical Observatory Qaanaaq - Greenland
+POINT (15.65875626 78.22325206) | Czech Arctic Research Station of Josef Svoboda - Svalbard and Jan Mayen
+POINT (-38.45867825 72.58054944) | Summit Station - Greenland
+POINT (-35.99373333 75.62986667) | EGRIP (East Greenland Ice Core Project) Field Station - Greenland
+POINT (-89.82338611 75.43131944) | Flashline Mars Arctic Research Station - Greenland
+POINT (15.54028056 77.00147693) | Hornsund Polish Polar Station - Svalbard and Jan Mayen
+POINT (15.1784361 77.0710722) | Stanislaw Baranowski Polar Station - Svalbard and Jan Mayen
+POINT (-68.23562562 51.46431817) | Uapishka research station - Canada
+POINT (-13.70558768 65.29420755) | Sk\u00e1lanes - Iceland
+POINT (-37.91450243 65.68097972) | Sermilik Research Station - Greenland
+POINT (-15.95168333 66.45621667) | Rif Field Station - Iceland
+POINT (-85.94083333 79.98888889) | Polar Environment Atmospheric Research Laboratory (PEARL) - Canada
+POINT (-68.52236389 63.75117222) | Nunavut Research Institute - Canada
+POINT (11.82658719 78.67573227) | Nicolaus Copernicus University Polar Station \u201cHahut\u201d (NCUPS) - Svalbard and Jan Mayen
+POINT (11.93472222 78.92555556) | Netherlands\u2019 Arctic Station - Svalbard and Jan Mayen
+POINT (32.537705 -27.374054) | SAEON Maputaland Coastal Plain site - South Africa
+POINT (-95.87719722 68.62456944) | M\u2019Clintock Channel Polar Research Cabins - Canada
+POINT (-21.62971111 64.72675556) | Litla Skar\u00f0 - Iceland
+POINT (-60.141828 53.5255974) | Labrador Institute Research Station - Canada
+POINT (-17.36450277 65.70601312) | China Iceland Arctic Research Observatory - Iceland
+POINT (-138.41072222 61.02738889) | Kluane Lake Research Station - Canada
+POINT (27.51548333 64.40442222) | Kainuu Fisheries Research Station - Finland
+POINT (-81.80315278 69.37608056) | Igloolik Research Center - Canada
+POINT (-51.383333333333 64.1475) | Kobbefjord - Greenland
+POINT (32.361982 -28.301811) | SAEON St Lucia site - South Africa
+POINT (16.45465962 78.68043321) | Adam Mickiewicz University Polar Station - Svalbard and Jan Mayen
+POINT (10.970152 47.316619) | Forest-Atmosphere-Interaction-Research Site Obermieming - Austria
+POINT (4.5386811882815 43.550260146888) | LTSER Zone Atelier Sant\u00e9 et Environnement en Camargue - France
+POINT (-3.066688 53.592818) | Ainsdale Sand Dune Slacks LTE - United Kingdom
+POINT (4.874153 49.328695) | LTSER Zone Atelier environnementale rurale Argonne - France
+POINT (14.321348 46.9557511) | Kollerhube - Lehrforst - Austria
+POINT (9.078969 63.056926) | Taagdalen - Norway
+POINT (16.364822 48.062424) | Laxenburg Schlosspark - Austria
+POINT (33.980713 36.295754) | East Mediterranean coasts and G\u00f6ksu Delta - T\u00fcrkiye
+POINT (25.01986 60.21845) | SMEAR-Agri Viikki - Finland
+POINT (24.961109 60.202818) | Kumpula Helsinki / SMEAR III - Finland
+POINT (14.267069 51.604392) | Chicken Creek - Germany
+POINT (-48.514008 -25.667832) | Guaragua\u00e7u River - Brazil
+POINT (-93.727663 49.660135) | IISD Experimental Lakes Area - Canada
+POINT (-53.616083 -30.978733) | PELD - South Brazilian Grasslands - Brazil
+POINT (5.054763 49.484247) | Domaine de Belval-Bois-des-Dames - France
+POINT (24.81453 -28.858397) | Benfontein Private Nature Reserve - South Africa
+POINT (12.917175 53.660865) | TERENO - Northeast German Lowland Observatory - Germany
+POINT (-3.572338 51.030775) | Wildwood Grove \u2013 Dulverton - United Kingdom
+POINT (148.781931 -35.52020104) | AMRF - Ginini Flats - Australia
+POINT (148.374791 -36.26469601) | AMRF - Geehi - Australia
+POINT (148.43065 -36.3731306) | AMRF - Aqueduct - Australia
+POINT (148.2999113 -36.475672) | AMRF - Cruiser - Australia
+POINT (147.251893 -36.877349) | AMRF - Ruined Castle - Australia
+POINT (147.297721 -36.908554) | AMRF - Cope Hut - Australia
+POINT (146.570869 -42.100258) | AMRF- Ben\u0027s Marsh - Australia
+POINT (147.0880484 -42.09021337) | AMRF - Silver Plains - Australia
+POINT (2.342584 48.911895) | LTSER Zone Atelier Seine - Axe Seine - France
+POINT (14.240907 46.706596) | Metschacher Moos - Austria
+POINT (11.305185 47.783844) | Osterseen - Germany
+POINT (5.259008 53.253529) | LTER-site Wadden Sea - Netherlands

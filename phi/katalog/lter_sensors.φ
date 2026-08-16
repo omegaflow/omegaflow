@@ -1,0 +1,85 @@
+# LTER/DEIMS — Sensoren (deims.org/api/sensors, live 2026-08-16)
+# format: <id-suffix> | <titel> — Messinstrumente/Variablen
+fb583610-fe71-4793-b1a9-43097ed5c3e3 | LTER Zöbelboden Austria precipitation WW
+143310e3-10d6-405a-9b09-72b37e7fb958 | Water Content Reflectometer CS650 Campbell Scientific
+1affc8e6-f332-4d4f-8ac2-0e84a018c33c | Temperature probe T107 Campbell Scientific
+ed6aedf8-5344-49d5-b539-badacdc2ed07 | ROTRONIC HygroClip S3
+b7782990-307a-4ab8-8f4a-f6e1663cba47 | Hukseflux Thermal sensor STP01
+3a93338d-934e-46c2-bc3e-955b996d4b79 | TCAV Averaging soil thermocouple probe Campbell Scientific
+28133f7f-db98-4a77-af69-6c42e53c2df0 | Hukseflux Thermal sensor HFP01SC
+85957534-9ba2-49d6-b00a-f77c7de7e889 | Delta-T Device Profile Probe PR2
+4a7ad644-f2e7-4224-965b-ec5ef5365655 | Li-Cor LI-190SA Quantum Sensor
+ba92fcf8-d8de-4c6e-a8b6-075ba6d7cf06 | Kipp&Zonen NetRadiometer NRLite
+60ff8bad-9c3a-46c2-bf29-d1895eeecd68 | Young Wind Monitor 05103
+a5119301-bd84-4b07-9e92-b41375d4c99d | Lake Jyväsjärvi Meteorological Station
+f5cc2d2f-2802-4989-b49a-187b888f88ca | Lake Jyväsjärvi Automated Water Quality Monitoring Station
+3fece59a-5d19-4ff8-aa7a-2b9c57c58850 | Lake Konnevesi Meteorological Station
+4ef0627d-ffde-46f2-8fc5-51a3352e1cf2 | Lake Konnevesi Automated Water Quality Monitoring Station
+fc1d49ec-d75a-4aa0-81f2-275f473d5fef | Meteorological Station
+388d0fb6-dd56-47ef-8dd4-503893b79260 | Stage Height
+ee819b84-4ead-4c7e-aadf-f66d87fbfae2 | Saso station of Niigata University Forest
+588b4026-ea1f-4357-ad3e-fabdd7de382c | HOBO U23 Pro v2 Temperature/Relative Humidity at Gh_LL7
+711f21c9-9caf-4c8c-a14b-9a3b3068d2ba | HOBO U23 Pro v2 Temperature/Relative Humidity at Rh_LL1
+fa6a538a-2754-417a-9c3e-090fead4cf73 | HOBO U23 Pro v2 Temperature/Relative Humidity at S-bf_LL2
+500fd92b-621f-4a57-a726-dd213814510d | HOBO U23 Pro v2 Temperature/Relative Humidity at R-M1858_LL3
+9eb14d2e-f798-4656-b491-f34adb0784a0 | HOBO U23 Pro v2 Temperature/Relative Humidity at HM_LL4
+0838f4cd-ac15-41fa-a9c4-fbe5636653b8 | HOBO U23 Pro v2 Temperature/Relative Humidity at Kk_LL5
+ba7a310a-4759-4410-89d2-a8bd1883312d | HOBO U23 Pro v2 Temperature/Relative Humidity at O-p_LL6
+7feec552-9ce1-4d74-af52-40d8760e6d0a | HOBO U23 Pro v2 Temperature/Relative Humidity at Fk_LL8
+5897f5a3-7395-46f3-916f-09fa198ccbb8 | Onset ONS-TMC1-HD Temperature at Gh_BL7
+af705eaf-01f3-4b56-b096-97ec13d37c40 | Onset ONS-TMC1-HD Temperature at Fk_BL8
+776c2381-3387-4958-95c0-40c0b6647f79 | Onset ONS-TMC1-HD Temerature at O-p_BL6
+87a5fddf-2687-491c-aa8e-3e838fd0ad95 | Onset ONS-TMC1-HD Temperature at Kk_BL5
+abcd156b-e6b5-4d90-b155-9a60065007fb | Onset ONS-TMC1-HD Temperature at HM_BL4
+9b2fc780-7269-4c0a-b09c-f99a4c5683d6 | Onset ONS-TMC1-HD Temperature at R-M1858_BL3
+6eea85a3-9986-487c-9de8-075f9112dba7 | Onset ONS-TMC1-HD Temperature at S-bf_BL2
+49e0218e-5f7d-4ec7-972b-8bda81dee9cb | Onset ONS-TMC1-HD Temperature at Rh_BL1
+a80fcec7-89a1-4ece-9a24-81774e31c4bd | Onset ONS-TMC6-HD Temperature at Rh_BL1
+8a8a2b8e-bcc6-453d-b0a0-d9f7abfc50f8 | Onset ONS-TMC6-HD Temperature at S-bf_BL2
+4798e071-8d63-40ef-8ebb-19228fbb0417 | Onset ONS-TMC6-HD Temperature at R-M1858_BL3
+991e0abd-6a5e-4c9e-8176-0db6ff2321fa | Onset ONS-TMC6-HD Temperature at HM_BL4
+9f4be386-6e70-46ee-ae89-16437e753582 | Onset ONS-TMC6-HD Temperature at Kk_BL5
+bbdcac17-7734-4e75-8ba9-6482d3423673 | Onset ONS-TMC6-HD Temperature at O-p_BL6
+d755a9ab-224e-4906-8020-0b27422f2619 | Onset ONS-TMC6-HD Temperature at Gh_BL7
+4b146838-1d5d-4711-9be4-e20a2b068a52 | Onset ONS-TMC6-HD Temperature at Fk_BL8
+a85e625a-9af3-490c-9823-168bbe75b33f | Meter Envrionment ECH2O EC-5 Moisture at Rh_BL1
+6834550e-5ed1-4410-abe9-51d3962cac97 | Meter Envrionment ECH2O EC-5 Moisture at S-bf_BL2
+85e3bdda-7316-48a2-adfd-616826f04650 | Meter Envrionment ECH2O EC-5 Moisture at R-M1858_BL3
+ed7726e1-d8a6-462b-bbef-ad55efdffc42 | Meter Envrionment ECH2O EC-5 Moisture at HM_BL4
+2a1863fc-c3a0-4ef7-8625-aa84e22183e0 | Meter Envrionment ECH2O EC-5 Moisture at Kk_BL5
+f7f953b6-f78e-48ba-86fd-a23a39b84238 | Meter Envrionment ECH2O EC-5 Moisture at O-p_BL6
+466d8bac-a03d-4f07-9986-5ea488736b69 | Meter Envrionment ECH2O EC-5 Moisture at Gh_BL7
+514070e4-e8bb-4bfd-a044-eea5b8c265e1 | Meter Envrionment ECH2O EC-5 Moisture at Fk_BL8
+d81d9c3d-03bd-44d6-9b0e-f03bd5a9f6ad | Kerkini weather station
+6033bd8f-9b79-4800-a9d1-e6f503f9d8a2 |  Lithotopos Dam water level station
+779ee8b9-5921-4091-b003-4aa76f426692 | Mesaia water level station
+ac9cf335-dd97-4465-9aa4-00009b50d1ce | Climate Station XS6
+32dd889a-d93d-47d7-98ea-00ff6e749cea | Climate Station S2
+8cb0ba52-358a-41ee-b700-444ab8e117b6 | Climate Station M5
+99ee76bf-eb94-43dd-ae2e-0d250a2f0b85 | Climate Station S3
+87165ef9-09f0-470a-b945-8e1eb404c27b | Climate Station S4
+3768f423-6de1-411c-8854-f9d545594dac | Climate Station B1
+ca63dd04-245d-43e6-9fb4-406f36a6fcc8 | Climate Station B2
+964e3c09-aeb8-4a0c-b0a7-02eaa7df74f9 | Climate Station F6
+9956a34d-b903-460f-83a1-2910db42ce3d | Climate Station M1
+4801dd08-acf7-4e1f-81b9-eff136fe1d17 | Climate Station M2
+81745e6a-cac5-43b5-994d-cccdff2d0d31 | Climate Station I1
+384b08fb-0e99-4932-8bc3-d8a9d441392c | Climate Station M3
+fdef84e0-8965-4c73-96f3-a8ad383c4fe9 | Climate Station M4
+115e55f5-25c6-45ee-b490-393269e7bb06 | Climate Station M4 Snow
+a05cf0d5-73a7-4a7d-b8f7-e24a18bb1498 | Climate Station P1
+835c3a93-d709-41e9-828a-05b67bd8cffa | Climate Station I3
+482da4f3-f29f-40a8-9954-7d5ec17caa5c | Climate Station P3
+b31721af-4471-4576-b3bf-c91649ad793d | Climate Station P2
+3845475c-4aec-4dd7-83b4-0ab6ba95db35 | Climate Station B3
+57977dae-df45-4622-a739-03f7128b3bad | Gealog NTC Temperature Sensors at R-M1971_WS
+9fce997a-8d97-4dbd-a7c2-eb6d5293c005 | Hygroclip Air Temperature/Air Humidity Sensor at R-M1971_WS
+d466810d-426e-4c9c-80b1-e4c2f8d27a6d | HOBO TidbiT v2 Water Temperature Data Logger at R-M1971_WS
+9056b150-3874-4564-aa68-6c5eccadbe50 | Temperature data loggers
+c8c1bbb8-024a-47cd-a4c4-564469e2d3fc | Albedometer
+82635223-a4f4-498c-b283-9c95999d9d2f | Moldaenke FluoroProbe sensor
+3881fa56-f5f7-4640-963c-1dc9129112aa | 21004873-21061
+8e010248-f3e8-4c3a-bf5c-2d9e8cf20915 | Shikmona buoy - Haifa
+7f90e3db-3621-44de-9676-26a5bedfdee4 | Hadera station
+2af339dd-a956-471f-9406-b0f74bacd579 | Meteorological station
+05e53a6e-bb71-42e1-a422-541746cba9f8 | IoT sensor for rock tempereture and solar radiation monitoring
