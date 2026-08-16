@@ -78,6 +78,64 @@ struct CompOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f };
 @group(0) @binding(0) var<uniform> deep_vp: VP;
 @group(0) @binding(1) var<storage, read> deep_pt: array<vec4f>;
 @group(0) @binding(2) var<storage, read> deep_ex: array<vec4f>;
+@group(0) @binding(6) var cent_tex: texture_2d<f32>;
+
+fn lsum(x: i32, y: i32) -> f32 {
+    let c = textureLoad(cent_tex, vec2i(x, y), 0).xyz;
+    return c.r + c.g + c.b;
+}
+
+@compute @workgroup_size(1)
+fn field_centroid() {
+    let w = f32(vp.surface.x);
+    let h = f32(vp.surface.y);
+    let cx0 = w * 0.5;
+    let cy0 = h * 0.5;
+    var bx = 0;
+    var by = 0;
+    var bl = -1.0;
+    for (var dy = -32.0; dy < 32.0; dy = dy + 1.0) {
+        for (var dx = -32.0; dx < 32.0; dx = dx + 1.0) {
+            let px = i32(cx0) + i32(dx);
+            let py = i32(cy0) + i32(dy);
+            if (px < 0 || py < 0 || px >= i32(w) || py >= i32(h)) { continue; }
+            let l = lsum(px, py);
+            if (l > bl) {
+                bl = l;
+                bx = px;
+                by = py;
+            }
+        }
+    }
+    if (bl > 1e-30) {
+        var ox = 0.0;
+        var oy = 0.0;
+        if (bx > 0 && bx + 1 < i32(w)) {
+            let lm = lsum(bx - 1, by);
+            let l0v = lsum(bx, by);
+            let lp = lsum(bx + 1, by);
+            let denom = lm - 2.0 * l0v + lp;
+            if (denom < -1e-30) {
+                ox = (lm - lp) / (2.0 * denom);
+            }
+        }
+        if (by > 0 && by + 1 < i32(h)) {
+            let lm = lsum(bx, by - 1);
+            let l0v = lsum(bx, by);
+            let lp = lsum(bx, by + 1);
+            let denom = lm - 2.0 * l0v + lp;
+            if (denom < -1e-30) {
+                oy = (lm - lp) / (2.0 * denom);
+            }
+        }
+        probe_out[9] = f32(bx) + ox - cx0;
+        probe_out[10] = f32(by) + oy - cy0;
+    } else {
+        probe_out[9] = 0.0;
+        probe_out[10] = 0.0;
+    }
+    probe_out[11] = bl;
+}
 
 struct DeepPtVOut { @builtin(position) pos: vec4f, @location(0) @interpolate(flat) flux: f32 };
 
@@ -11868,7 +11926,8 @@ mod mathematikerin {
             let (tx, rx) = mpsc::sync_channel::<Arc<Buffer>>(2);
             let (req_tx, req_rx) =
                 mpsc::sync_channel::<(Arc<Buffer>, [f64; 3], f64, f64, f64, f64)>(1);
-            let (res_tx, res_rx) = mpsc::sync_channel::<(PackedWindow, Vec<f32>, Vec<f32>, f64)>(2);
+            let (res_tx, res_rx) =
+                mpsc::sync_channel::<(PackedWindow, Vec<f32>, Vec<f32>, f64, [f64; 3])>(2);
             let shutdown = Arc::new(AtomicBool::new(false));
             let shutdown_clone = shutdown.clone();
             thread::spawn(move || loop {
@@ -11897,7 +11956,7 @@ mod mathematikerin {
                 let packed_deep_pt = pack_deep_pt(&pt_src, center);
                 let packed_deep_ex = pack_deep_ex(&ex_src, center);
                 if res_tx
-                    .send((packed, packed_deep_pt, packed_deep_ex, t))
+                    .send((packed, packed_deep_pt, packed_deep_ex, t, center))
                     .is_err()
                 {
                     break;
@@ -12046,7 +12105,7 @@ mod mathematikerin {
     struct NativeApp {
         rx: mpsc::Receiver<Arc<Buffer>>,
         req_tx: mpsc::SyncSender<(Arc<Buffer>, [f64; 3], f64, f64, f64, f64)>,
-        res_rx: mpsc::Receiver<(PackedWindow, Vec<f32>, Vec<f32>, f64)>,
+        res_rx: mpsc::Receiver<(PackedWindow, Vec<f32>, Vec<f32>, f64, [f64; 3])>,
         presence_tx: mpsc::Sender<(f64, f64, f64, f64, f64)>,
         body_names: Arc<Vec<String>>,
         time: Arc<Mutex<Option<LeapSeconds>>>,
@@ -12065,6 +12124,7 @@ mod mathematikerin {
         membrane_view: Option<wgpu::TextureView>,
         membrane_sampler: Option<wgpu::Sampler>,
         probe_pipe: Option<wgpu::ComputePipeline>,
+        centroid_pipe: Option<wgpu::ComputePipeline>,
         probe_layout: Option<wgpu::BindGroupLayout>,
         render_layout: Option<wgpu::BindGroupLayout>,
         render_bind: Option<wgpu::BindGroup>,
@@ -12124,13 +12184,17 @@ mod mathematikerin {
         frame_ms_max: f64,
         last_hud: Option<std::time::Instant>,
         sun_centered: bool,
+        centering: bool,
+        center_iter: u32,
+        centroid: [f32; 3],
+        packed_center: [f64; 3],
     }
 
     impl NativeApp {
         fn new(
             rx: mpsc::Receiver<Arc<Buffer>>,
             req_tx: mpsc::SyncSender<(Arc<Buffer>, [f64; 3], f64, f64, f64, f64)>,
-            res_rx: mpsc::Receiver<(PackedWindow, Vec<f32>, Vec<f32>, f64)>,
+            res_rx: mpsc::Receiver<(PackedWindow, Vec<f32>, Vec<f32>, f64, [f64; 3])>,
             presence_tx: mpsc::Sender<(f64, f64, f64, f64, f64)>,
             sensor_tx: mpsc::Sender<Vec<(String, f64, f64)>>,
             body_names: Arc<Vec<String>>,
@@ -12158,6 +12222,7 @@ mod mathematikerin {
                 membrane_view: None,
                 membrane_sampler: None,
                 probe_pipe: None,
+                centroid_pipe: None,
                 probe_layout: None,
                 render_layout: None,
                 render_bind: None,
@@ -12218,6 +12283,10 @@ mod mathematikerin {
                 frame_ms_max: 0.0,
                 last_hud: None,
                 sun_centered: false,
+                centering: false,
+                center_iter: 0,
+                centroid: [0.0, 0.0, 0.0],
+                packed_center: [0.0, 0.0, 0.0],
             }
         }
 
@@ -12277,6 +12346,7 @@ mod mathematikerin {
                     self.p = [0.0, 0.0, 0.0];
                     self.v = [0.0, 0.0, 0.0];
                     self.t0 = self.t_presence;
+                    self.centering = false;
                     self.consider_resend();
                 }
                 KeyCode::KeyB => {
@@ -12329,6 +12399,8 @@ mod mathematikerin {
             self.v = [0.0, 0.0, 0.0];
             self.t0 = self.t_presence;
             self.grid_step = JUMP_GRID;
+            self.centering = true;
+            self.center_iter = 0;
             self.consider_resend();
         }
 
@@ -12407,6 +12479,7 @@ mod mathematikerin {
                     },
                 ],
             }));
+            self.rebuild_probe_bind();
         }
 
         fn vp_data(&self) -> [f32; 32] {
@@ -12452,16 +12525,10 @@ mod mathematikerin {
             let Some(device) = self.device.clone() else {
                 return;
             };
-            let Some(probe_layout) = self.probe_layout.clone() else {
-                return;
-            };
             let Some(render_layout) = self.render_layout.clone() else {
                 return;
             };
             let Some(vp_buf) = self.vp_buf.clone() else {
-                return;
-            };
-            let Some(probe_buf) = self.probe_buf.clone() else {
                 return;
             };
             let n = self.packed_count;
@@ -12508,36 +12575,6 @@ mod mathematikerin {
                 usage: wgpu::BufferUsages::STORAGE,
                 mapped_at_creation: false,
             });
-            let probe_bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
-                label: None,
-                layout: &probe_layout,
-                entries: &[
-                    wgpu::BindGroupEntry {
-                        binding: 0,
-                        resource: field_buf.as_entire_binding(),
-                    },
-                    wgpu::BindGroupEntry {
-                        binding: 1,
-                        resource: meta_buf.as_entire_binding(),
-                    },
-                    wgpu::BindGroupEntry {
-                        binding: 2,
-                        resource: vp_buf.as_entire_binding(),
-                    },
-                    wgpu::BindGroupEntry {
-                        binding: 3,
-                        resource: probe_buf.as_entire_binding(),
-                    },
-                    wgpu::BindGroupEntry {
-                        binding: 4,
-                        resource: prep_buf.as_entire_binding(),
-                    },
-                    wgpu::BindGroupEntry {
-                        binding: 5,
-                        resource: param_buf.as_entire_binding(),
-                    },
-                ],
-            });
             let render_bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
                 label: None,
                 layout: &render_layout,
@@ -12568,8 +12605,72 @@ mod mathematikerin {
             self.meta_buf = Some(meta_buf);
             self.prep_buf = Some(prep_buf);
             self.param_buf = Some(param_buf);
-            self.probe_bind = Some(probe_bind);
             self.render_bind = Some(render_bind);
+            self.rebuild_probe_bind();
+        }
+
+        fn rebuild_probe_bind(&mut self) {
+            let Some(device) = self.device.clone() else {
+                return;
+            };
+            let Some(probe_layout) = self.probe_layout.clone() else {
+                return;
+            };
+            let Some(field_buf) = self.field_buf.clone() else {
+                return;
+            };
+            let Some(meta_buf) = self.meta_buf.clone() else {
+                return;
+            };
+            let Some(vp_buf) = self.vp_buf.clone() else {
+                return;
+            };
+            let Some(probe_buf) = self.probe_buf.clone() else {
+                return;
+            };
+            let Some(membrane_view) = self.membrane_view.clone() else {
+                return;
+            };
+            let Some(prep_buf) = self.prep_buf.clone() else {
+                return;
+            };
+            let Some(param_buf) = self.param_buf.clone() else {
+                return;
+            };
+            self.probe_bind = Some(device.create_bind_group(&wgpu::BindGroupDescriptor {
+                label: None,
+                layout: &probe_layout,
+                entries: &[
+                    wgpu::BindGroupEntry {
+                        binding: 0,
+                        resource: field_buf.as_entire_binding(),
+                    },
+                    wgpu::BindGroupEntry {
+                        binding: 1,
+                        resource: meta_buf.as_entire_binding(),
+                    },
+                    wgpu::BindGroupEntry {
+                        binding: 2,
+                        resource: vp_buf.as_entire_binding(),
+                    },
+                    wgpu::BindGroupEntry {
+                        binding: 3,
+                        resource: probe_buf.as_entire_binding(),
+                    },
+                    wgpu::BindGroupEntry {
+                        binding: 4,
+                        resource: prep_buf.as_entire_binding(),
+                    },
+                    wgpu::BindGroupEntry {
+                        binding: 5,
+                        resource: param_buf.as_entire_binding(),
+                    },
+                    wgpu::BindGroupEntry {
+                        binding: 6,
+                        resource: wgpu::BindingResource::TextureView(&membrane_view),
+                    },
+                ],
+            }));
         }
 
         fn ensure_deep_capacity(&mut self) {
@@ -12713,6 +12814,18 @@ mod mathematikerin {
                     pass.set_bind_group(0, bind, &[]);
                     pass.dispatch_workgroups(1, 1, 1);
                 }
+                if let (Some(pipe), Some(bind)) =
+                    (self.centroid_pipe.as_ref(), self.probe_bind.as_ref())
+                {
+                    pass.set_pipeline(pipe);
+                    pass.set_bind_group(0, bind, &[]);
+                    pass.dispatch_workgroups(1, 1, 1);
+                }
+            }
+            if let (Some(probe_buf), Some(probe_read)) =
+                (self.probe_buf.as_ref(), self.probe_read.as_ref())
+            {
+                encoder.copy_buffer_to_buffer(probe_buf, 0, probe_read, 0, 48);
             }
             if let Some(mem_view) = self.membrane_view.as_ref() {
                 let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
@@ -12880,6 +12993,16 @@ mod mathematikerin {
                         e.binding = 5;
                         e
                     },
+                    wgpu::BindGroupLayoutEntry {
+                        binding: 6,
+                        visibility: wgpu::ShaderStages::COMPUTE,
+                        ty: wgpu::BindingType::Texture {
+                            sample_type: wgpu::TextureSampleType::Float { filterable: false },
+                            view_dimension: wgpu::TextureViewDimension::D2,
+                            multisampled: false,
+                        },
+                        count: None,
+                    },
                 ],
             });
             let render_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
@@ -12962,6 +13085,14 @@ mod mathematikerin {
                 layout: Some(&probe_pipe_layout),
                 module: &module,
                 entry_point: Some("presence_probe"),
+                compilation_options: Default::default(),
+                cache: None,
+            });
+            let centroid_pipe = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+                label: None,
+                layout: Some(&probe_pipe_layout),
+                module: &module,
+                entry_point: Some("field_centroid"),
                 compilation_options: Default::default(),
                 cache: None,
             });
@@ -13156,13 +13287,13 @@ mod mathematikerin {
             });
             let probe_buf = device.create_buffer(&wgpu::BufferDescriptor {
                 label: None,
-                size: 36,
+                size: 48,
                 usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC,
                 mapped_at_creation: false,
             });
             let probe_read = device.create_buffer(&wgpu::BufferDescriptor {
                 label: None,
-                size: 36,
+                size: 48,
                 usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
                 mapped_at_creation: false,
             });
@@ -13177,6 +13308,7 @@ mod mathematikerin {
             self.comp_layout = Some(comp_layout);
             self.membrane_sampler = Some(membrane_sampler);
             self.probe_pipe = Some(probe_pipe);
+            self.centroid_pipe = Some(centroid_pipe);
             self.probe_layout = Some(probe_layout);
             self.render_layout = Some(render_layout);
             self.deep_pt_pipe = Some(deep_pt_pipe);
@@ -13257,6 +13389,15 @@ mod mathematikerin {
                 self.p[1] -= fu[1] * pan_speed;
                 self.p[2] -= fu[2] * pan_speed;
             }
+            let panning = self.keys.contains(&KeyCode::ArrowRight)
+                || self.keys.contains(&KeyCode::ArrowLeft)
+                || self.keys.contains(&KeyCode::ArrowUp)
+                || self.keys.contains(&KeyCode::ArrowDown)
+                || self.keys.contains(&KeyCode::PageUp)
+                || self.keys.contains(&KeyCode::PageDown);
+            if panning {
+                self.centering = false;
+            }
             if let Ok(field) = self.rx.try_recv() {
                 self.latest_field = Some(field);
                 self.sense();
@@ -13268,10 +13409,12 @@ mod mathematikerin {
                         self.p = pos;
                         self.t0 = self.t_presence;
                         self.sun_centered = true;
+                        self.centering = true;
+                        self.center_iter = 0;
                     }
                 }
             }
-            while let Ok((packed, pt, ex, t)) = self.res_rx.try_recv() {
+            while let Ok((packed, pt, ex, t, pc)) = self.res_rx.try_recv() {
                 self.packed_count = packed.count;
                 self.packed_field = packed.field;
                 self.packed_meta = packed.meta;
@@ -13282,6 +13425,7 @@ mod mathematikerin {
                 self.packed_deep_ex = ex;
                 self.deep_ex_count = (self.packed_deep_ex.len() / 8) as u32;
                 self.deep_dirty = true;
+                self.packed_center = pc;
             }
             self.consider_resend();
             self.sensors.frame_interval = (raw / 1000.0).max(0.001);
@@ -13292,36 +13436,62 @@ mod mathematikerin {
                 self.last_hud = Some(now_i);
                 self.sensors.flush();
                 let mut omega = 0.0f32;
-                if let (Some(device), Some(queue), Some(probe_buf), Some(probe_read)) = (
-                    self.device.clone(),
-                    self.queue.clone(),
-                    self.probe_buf.clone(),
-                    self.probe_read.clone(),
-                ) {
-                    let mut enc =
-                        device.create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
-                    enc.copy_buffer_to_buffer(&probe_buf, 0, &probe_read, 0, 36);
-                    queue.submit(std::iter::once(enc.finish()));
+                if let (Some(device), Some(probe_read)) =
+                    (self.device.clone(), self.probe_read.clone())
+                {
                     let mapped = Arc::new(AtomicBool::new(false));
                     let m2 = mapped.clone();
                     let slice = probe_read.slice(..);
                     slice.map_async(wgpu::MapMode::Read, move |r| {
                         m2.store(r.is_ok(), Ordering::SeqCst);
                     });
-                    let deadline = std::time::Instant::now() + std::time::Duration::from_millis(5);
+                    let deadline = std::time::Instant::now() + std::time::Duration::from_millis(10);
                     while !mapped.load(Ordering::SeqCst) && std::time::Instant::now() < deadline {
                         device.poll(wgpu::Maintain::Poll);
                     }
                     if mapped.load(Ordering::SeqCst) {
                         let data = slice.get_mapped_range();
-                        for k in 0..9 {
+                        let mut cent = [0.0f32; 3];
+                        for k in 0..12 {
                             let mut b = [0u8; 4];
                             b.copy_from_slice(&data[k * 4..k * 4 + 4]);
-                            omega += f32::from_le_bytes(b);
+                            let v = f32::from_le_bytes(b);
+                            if k < 9 {
+                                omega += v;
+                            } else {
+                                cent[k - 9] = v;
+                            }
                         }
                         drop(data);
+                        self.centroid = cent;
                     }
                     probe_read.unmap();
+                }
+                if self.centering {
+                    let [px, py, pz] = self.pos();
+                    let fresh = (px - self.packed_center[0]).abs() < 1e-3 * self.grid_step
+                        && (py - self.packed_center[1]).abs() < 1e-3 * self.grid_step
+                        && (pz - self.packed_center[2]).abs() < 1e-3 * self.grid_step;
+                    let lum = self.centroid[2];
+                    if fresh && lum > 1e-30 {
+                        let ox = self.centroid[0] as f64 / 3.0;
+                        let oy = self.centroid[1] as f64;
+                        if ox.abs() < 0.25 && oy.abs() < 0.25 {
+                            self.centering = false;
+                        } else {
+                            let (fr, fu, _) = self.frame();
+                            let s = self.grid_step;
+                            self.p[0] += fr[0] * ox * s - fu[0] * oy * s;
+                            self.p[1] += fr[1] * ox * s - fu[1] * oy * s;
+                            self.p[2] += fr[2] * ox * s - fu[2] * oy * s;
+                            self.t0 = self.t_presence;
+                            self.center_iter += 1;
+                            if self.center_iter >= 5 {
+                                self.centering = false;
+                            }
+                            self.sense();
+                        }
+                    }
                 }
                 let [x, y, z] = self.pos();
                 let fps = self.frame_count as f64;
@@ -13329,7 +13499,7 @@ mod mathematikerin {
                 let ms_max = self.frame_ms_max;
                 self.frame_ms_max = 0.0;
                 eprintln!(
-                "φ window: t {:.2} | Ω {:.3} | fps {:.0} | ssaa {:.2} | grid 2^{} | x {:.3e} y {:.3e} z {:.3e} | {} near | {} deep | b {}x{} | maxms {:.0}",
+                "φ window: t {:.2} | Ω {:.3} | fps {:.0} | ssaa {:.2} | grid 2^{} | x {:.3e} y {:.3e} z {:.3e} | {} near | {} deep | c {:.2} {:.2} | b {}x{} | maxms {:.0}",
                 self.t_presence,
                 omega,
                 fps,
@@ -13340,6 +13510,8 @@ mod mathematikerin {
                 z,
                 self.packed_count,
                 self.deep_pt_count + self.deep_ex_count,
+                self.centroid[0],
+                self.centroid[1],
                 self.backing.0,
                 self.backing.1,
                 ms_max,
@@ -13423,6 +13595,7 @@ mod mathematikerin {
                                     fr[1] * dx * self.grid_step - fu[1] * dy * self.grid_step;
                                 self.p[2] -=
                                     fr[2] * dx * self.grid_step - fu[2] * dy * self.grid_step;
+                                self.centering = false;
                                 self.consider_resend();
                             }
                             _ => {}
@@ -13472,7 +13645,7 @@ mod mathematikerin {
         presence_tx: mpsc::Sender<(f64, f64, f64, f64, f64)>,
         sensor_tx: mpsc::Sender<Vec<(String, f64, f64)>>,
         req_tx: mpsc::SyncSender<(Arc<Buffer>, [f64; 3], f64, f64, f64, f64)>,
-        res_rx: mpsc::Receiver<(PackedWindow, Vec<f32>, Vec<f32>, f64)>,
+        res_rx: mpsc::Receiver<(PackedWindow, Vec<f32>, Vec<f32>, f64, [f64; 3])>,
         body_names: Arc<Vec<String>>,
         time: Arc<Mutex<Option<LeapSeconds>>>,
         shutdown: Arc<AtomicBool>,
