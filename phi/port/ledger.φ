@@ -148,7 +148,7 @@ note --draft-context (Welle 3,5): 4.977 ausstehend → 123 celestial (Netloc-Set
 
 ausstehend
 bestand phi/katalog/vizier_gold_catalogs.φ
-note tap_compiler-Durchlauf-Queue: 729 VizieR-Kataloge mit physikalischen Spalten (mag/flux/redshift/velocity/parallax/plx/period) aus der TOP-100000-Stichprobe von tap_schema.columns (Untergrenze, live 2026-08-16). Pro Katalog: tap_compiler --table + --columns + CI-Schritt (Muster bzcat5/swiftgrb/gcvs). GCVS (B/gcvs/gcvs_cat) als Beweis kompiliert (50k Zeilen) + CI-Schritt + sources.φ-Block (mag + period)
+note tap_compiler-Durchlauf-Queue: 729 VizieR-Kataloge mit physikalischen Spalten (mag/flux/redshift/velocity/parallax/plx/period) aus der TOP-100000-Stichprobe von tap_schema.columns (Untergrenze, live 2026-08-16). Pro Katalog: tap_compiler --table + --columns + CI-Schritt (Muster bzcat5/swiftgrb). Kompiliert + eingebaut (2026-08-16): GCVS (50k, mag+period), ATNF-Pulsare (2451, p0+dm+s1400), Asiago-Supernovae (5280, z+mag), Weiße Zwerge (3115, mag+teff) — alle mit CI-Schritt + sources.φ-Block
 
 verifiziert
 bestand phi/port/batches/

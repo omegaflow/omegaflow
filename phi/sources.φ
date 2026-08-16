@@ -1244,7 +1244,27 @@ ra ra
 dec dec
 dist dist
 dist_scale 3.085677581e19
-field flux magnetar_flux inverse-square em erg/cm2/s 604800 0.0 0.0
+z z
+field pb magnetar_period_s gaussian-inverse-square em s 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/psr.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+field p0 pulsar_period_s gaussian-inverse-square em s 604800 0.0 0.0
+field dm pulsar_dm_pccm3 inverse-square em pc/cm3 604800 0.0 0.0
+field s1400 pulsar_flux_1400mhz_mjy inverse-square em mJy 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/sncat.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+z z
+field mag sn_max_mag gaussian-inverse-square em mag 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/swiftgrb.json
 ttl 604800
@@ -1265,6 +1285,15 @@ dist dist
 dist_scale 3.085677581e19
 z z
 field flux tevcat_flux inverse-square em Crab 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/wd.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+field mag wd_vmag gaussian-inverse-square em mag 604800 0.0 0.0
+field teff wd_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
 
 url https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls
 format kernel_text
