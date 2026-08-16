@@ -401,14 +401,16 @@ fn presence_probe() {
     for (var k = 0u; k < 9u; k = k + 1u) { omega_total += abs(omegas[k]); }
     if (omega_total < 1e-30) { discard; }
 
-    let t2 = clamp((log2(omega_total) + 14.0) / 22.0, 0.0, 1.0);
+    let olog = log2(omega_total);
+    let t2 = clamp((olog + 14.0 + vp.expose_ex.x) / 22.0, 0.0, 1.0);
 
     let c = mix(vec3f(0.0, 0.02, 0.1), vec3f(0.0, 0.3, 0.8), clamp(t2 * 4.0, 0.0, 1.0));
     let c2 = mix(c, vec3f(0.2, 0.8, 1.0), clamp((t2 - 0.25) * 4.0, 0.0, 1.0));
     let c3 = mix(c2, vec3f(1.0, 0.7, 0.1), clamp((t2 - 0.5) * 4.0, 0.0, 1.0));
     let c4 = mix(c3, vec3f(1.0, 1.0, 1.0), clamp((t2 - 0.75) * 4.0, 0.0, 1.0));
+    let fade = clamp((olog - log2(1e-30)) / (-14.0 - log2(1e-30)), 0.0, 1.0);
 
-    return vec4f(c4, 1.0);
+    return vec4f(c4 * fade, 1.0);
 }
 `;
         let fieldCanvas = document.createElement('canvas');

@@ -48,7 +48,40 @@ struct VOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f };
 }
 
 @group(0) @binding(0) var<uniform> deep_vp: VP;
-@group(0) @binding(1) var<storage, read> deep: array<vec4f>;
+@group(0) @binding(1) var<storage, read> deep_pt: array<vec4f>;
+@group(0) @binding(2) var<storage, read> deep_ex: array<vec4f>;
+
+struct DeepPtVOut { @builtin(position) pos: vec4f, @location(0) flux: f32 };
+
+@vertex fn deep_pt_vs(@builtin(vertex_index) i: u32) -> DeepPtVOut {
+    let count = u32(deep_vp.expose_lo.x);
+    var out: DeepPtVOut;
+    out.pos = vec4f(0.0, 0.0, 0.0, 1.0);
+    out.flux = 0.0;
+    if (i >= count) { return out; }
+    let data = deep_pt[i];
+    let w = deep_vp.surface.x;
+    let h = deep_vp.surface.y;
+    let scale = deep_vp.surface.w;
+    let sx = dot(data.xyz, deep_vp.right.xyz) / (0.5 * w * scale);
+    let sy = -dot(data.xyz, deep_vp.up.xyz) / (0.5 * h * scale);
+    out.pos = vec4f(sx, sy, 0.0, 1.0);
+    out.flux = data.w;
+    return out;
+}
+
+@fragment fn deep_pt_fs(in: DeepPtVOut) -> @location(0) vec4f {
+    let aflux = abs(in.flux);
+    if (aflux < 1e-30) { discard; }
+    let olog = log2(aflux);
+    let t2 = clamp((olog + 14.0 + deep_vp.expose_ex.x) / 22.0, 0.0, 1.0);
+    let fade = clamp((olog - log2(1e-30)) / (-14.0 - log2(1e-30)), 0.0, 1.0);
+    let c = mix(vec3f(0.0, 0.02, 0.1), vec3f(0.0, 0.3, 0.8), clamp(t2 * 4.0, 0.0, 1.0));
+    let c2 = mix(c, vec3f(0.2, 0.8, 1.0), clamp((t2 - 0.25) * 4.0, 0.0, 1.0));
+    let c3 = mix(c2, vec3f(1.0, 0.7, 0.1), clamp((t2 - 0.5) * 4.0, 0.0, 1.0));
+    let c4 = mix(c3, vec3f(1.0, 1.0, 1.0), clamp((t2 - 0.75) * 4.0, 0.0, 1.0));
+    return vec4f(c4 * fade, 1.0);
+}
 
 struct DeepVOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f, @location(1) color: vec3f };
 
@@ -68,7 +101,7 @@ fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
 }
 
 @vertex fn deep_vs(@builtin(vertex_index) i: u32) -> DeepVOut {
-    let count = u32(deep_vp.expose_lo.x);
+    let count = u32(deep_vp.expose_lo.y);
     var out: DeepVOut;
     out.pos = vec4f(0.0, 0.0, 0.0, 1.0);
     out.uv = vec2f(0.0);
@@ -80,8 +113,8 @@ fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
         vec2f(-1.0, -1.0), vec2f(1.0, -1.0), vec2f(1.0, 1.0),
         vec2f(-1.0, -1.0), vec2f(1.0, 1.0), vec2f(-1.0, 1.0)
     );
-    let data = deep[id * 2u];
-    let props_in = deep[id * 2u + 1u];
+    let data = deep_ex[id * 2u];
+    let props_in = deep_ex[id * 2u + 1u];
     let w = deep_vp.surface.x;
     let h = deep_vp.surface.y;
     let scale = deep_vp.surface.w;
@@ -301,14 +334,16 @@ fn presence_probe() {
         + abs(o6) + abs(o7) + abs(o8);
     if (omega_total < 1e-30) { discard; }
 
-    let t2 = clamp((log2(omega_total) + 14.0 + vp.expose_ex.x) / 22.0, 0.0, 1.0);
+    let olog = log2(omega_total);
+    let t2 = clamp((olog + 14.0 + vp.expose_ex.x) / 22.0, 0.0, 1.0);
 
     let c = mix(vec3f(0.0, 0.02, 0.1), vec3f(0.0, 0.3, 0.8), clamp(t2 * 4.0, 0.0, 1.0));
     let c2 = mix(c, vec3f(0.2, 0.8, 1.0), clamp((t2 - 0.25) * 4.0, 0.0, 1.0));
     let c3 = mix(c2, vec3f(1.0, 0.7, 0.1), clamp((t2 - 0.5) * 4.0, 0.0, 1.0));
     let c4 = mix(c3, vec3f(1.0, 1.0, 1.0), clamp((t2 - 0.75) * 4.0, 0.0, 1.0));
+    let fade = clamp((olog - log2(1e-30)) / (-14.0 - log2(1e-30)), 0.0, 1.0);
 
-    return vec4f(c4, 1.0);
+    return vec4f(c4 * fade, 1.0);
 }
 "#;
 
@@ -1982,7 +2017,7 @@ mod archivar {
         t2: f64,
         pad: f64,
         delta_t_cache: f64,
-        out: &mut Vec<[f64; 5]>,
+        out: &mut Vec<[f64; 6]>,
     ) {
         let Some(sh) = &buf.stars else {
             return;
@@ -1990,7 +2025,7 @@ mod archivar {
         let mut records: Vec<OscRecord> = Vec::new();
         query_star_hash(sh, center, t2, pad, delta_t_cache, &mut records);
         for r in records {
-            out.push([r.0, r.1, r.2, r.3, sh.ttl]);
+            out.push([r.0, r.1, r.2, r.3, sh.ttl, 0.0]);
         }
     }
 
@@ -11749,14 +11784,25 @@ mod mathematikerin {
         }
     }
 
-    pub fn pack_deep(stars: &[[f64; 5]], presence: [f64; 3]) -> Vec<f32> {
+    pub fn pack_deep_pt(stars: &[[f64; 6]], presence: [f64; 3]) -> Vec<f32> {
+        let mut out = Vec::with_capacity(stars.len() * 4);
+        for s in stars {
+            out.push((s[0] - presence[0]) as f32);
+            out.push((s[1] - presence[1]) as f32);
+            out.push((s[2] - presence[2]) as f32);
+            out.push(s[3] as f32);
+        }
+        out
+    }
+
+    pub fn pack_deep_ex(stars: &[[f64; 6]], presence: [f64; 3]) -> Vec<f32> {
         let mut out = Vec::with_capacity(stars.len() * 8);
         for s in stars {
             out.push((s[0] - presence[0]) as f32);
             out.push((s[1] - presence[1]) as f32);
             out.push((s[2] - presence[2]) as f32);
             out.push(s[3] as f32);
-            out.push(0.0);
+            out.push(s[5] as f32);
             out.push(s[4] as f32);
             out.push(0.0);
             out.push(0.0);
@@ -11778,8 +11824,9 @@ mod mathematikerin {
             time: Arc<Mutex<Option<LeapSeconds>>>,
         ) -> Self {
             let (tx, rx) = mpsc::sync_channel::<Arc<Buffer>>(2);
-            let (req_tx, req_rx) = mpsc::sync_channel::<(Arc<Buffer>, [f64; 3], f64, f64, f64)>(1);
-            let (res_tx, res_rx) = mpsc::sync_channel::<(PackedWindow, Vec<f32>, f64)>(2);
+            let (req_tx, req_rx) =
+                mpsc::sync_channel::<(Arc<Buffer>, [f64; 3], f64, f64, f64, f64)>(1);
+            let (res_tx, res_rx) = mpsc::sync_channel::<(PackedWindow, Vec<f32>, Vec<f32>, f64)>(2);
             let shutdown = Arc::new(AtomicBool::new(false));
             let shutdown_clone = shutdown.clone();
             thread::spawn(move || loop {
@@ -11789,15 +11836,28 @@ mod mathematikerin {
                 while let Ok(newer) = req_rx.try_recv() {
                     req = newer;
                 }
-                let (field, center, t, pad, cache_interval) = req;
+                let (field, center, t, pad, cache_interval, grid_step) = req;
                 let mut records: Vec<Record> = Vec::new();
                 let eph = field.eph.clone();
                 sense_membrane(&field, center, t, pad, cache_interval, &mut records, &eph);
                 let packed = pack_window(&records, center);
-                let mut deep: Vec<[f64; 5]> = Vec::new();
+                let mut deep: Vec<[f64; 6]> = Vec::new();
                 sense_deep(&field, center, t, pad, cache_interval, &mut deep);
-                let packed_deep = pack_deep(&deep, center);
-                if res_tx.send((packed, packed_deep, t)).is_err() {
+                let mut pt_src: Vec<[f64; 6]> = Vec::new();
+                let mut ex_src: Vec<[f64; 6]> = Vec::new();
+                for s in &deep {
+                    if s[5] / grid_step < 1.0 {
+                        pt_src.push(*s);
+                    } else {
+                        ex_src.push(*s);
+                    }
+                }
+                let packed_deep_pt = pack_deep_pt(&pt_src, center);
+                let packed_deep_ex = pack_deep_ex(&ex_src, center);
+                if res_tx
+                    .send((packed, packed_deep_pt, packed_deep_ex, t))
+                    .is_err()
+                {
                     break;
                 }
             });
@@ -11943,8 +12003,8 @@ mod mathematikerin {
 
     struct NativeApp {
         rx: mpsc::Receiver<Arc<Buffer>>,
-        req_tx: mpsc::SyncSender<(Arc<Buffer>, [f64; 3], f64, f64, f64)>,
-        res_rx: mpsc::Receiver<(PackedWindow, Vec<f32>, f64)>,
+        req_tx: mpsc::SyncSender<(Arc<Buffer>, [f64; 3], f64, f64, f64, f64)>,
+        res_rx: mpsc::Receiver<(PackedWindow, Vec<f32>, Vec<f32>, f64)>,
         presence_tx: mpsc::Sender<(f64, f64, f64, f64, f64)>,
         body_names: Arc<Vec<String>>,
         time: Arc<Mutex<Option<LeapSeconds>>>,
@@ -11978,12 +12038,17 @@ mod mathematikerin {
         packed_dirty: bool,
         last_response_epoch: f64,
 
-        packed_deep: Vec<f32>,
-        deep_count: u32,
+        packed_deep_pt: Vec<f32>,
+        packed_deep_ex: Vec<f32>,
+        deep_pt_count: u32,
+        deep_ex_count: u32,
         deep_dirty: bool,
-        deep_vbuf: Option<wgpu::Buffer>,
-        deep_cap: u32,
-        deep_pipe: Option<wgpu::RenderPipeline>,
+        deep_pt_vbuf: Option<wgpu::Buffer>,
+        deep_ex_vbuf: Option<wgpu::Buffer>,
+        deep_pt_cap: u32,
+        deep_ex_cap: u32,
+        deep_pt_pipe: Option<wgpu::RenderPipeline>,
+        deep_ex_pipe: Option<wgpu::RenderPipeline>,
         deep_bind: Option<wgpu::BindGroup>,
         deep_layout: Option<wgpu::BindGroupLayout>,
 
@@ -12015,8 +12080,8 @@ mod mathematikerin {
     impl NativeApp {
         fn new(
             rx: mpsc::Receiver<Arc<Buffer>>,
-            req_tx: mpsc::SyncSender<(Arc<Buffer>, [f64; 3], f64, f64, f64)>,
-            res_rx: mpsc::Receiver<(PackedWindow, Vec<f32>, f64)>,
+            req_tx: mpsc::SyncSender<(Arc<Buffer>, [f64; 3], f64, f64, f64, f64)>,
+            res_rx: mpsc::Receiver<(PackedWindow, Vec<f32>, Vec<f32>, f64)>,
             presence_tx: mpsc::Sender<(f64, f64, f64, f64, f64)>,
             sensor_tx: mpsc::Sender<Vec<(String, f64, f64)>>,
             body_names: Arc<Vec<String>>,
@@ -12057,12 +12122,17 @@ mod mathematikerin {
                 packed_count: 0,
                 packed_dirty: false,
                 last_response_epoch: 0.0,
-                packed_deep: Vec::new(),
-                deep_count: 0,
+                packed_deep_pt: Vec::new(),
+                packed_deep_ex: Vec::new(),
+                deep_pt_count: 0,
+                deep_ex_count: 0,
                 deep_dirty: false,
-                deep_vbuf: None,
-                deep_cap: 0,
-                deep_pipe: None,
+                deep_pt_vbuf: None,
+                deep_ex_vbuf: None,
+                deep_pt_cap: 0,
+                deep_ex_cap: 0,
+                deep_pt_pipe: None,
+                deep_ex_pipe: None,
                 deep_bind: None,
                 deep_layout: None,
                 p: [0.0, 0.0, 0.0],
@@ -12124,7 +12194,7 @@ mod mathematikerin {
             let cache_interval = (self.grid_step / 30000.0).clamp(Φ, Φ * 10.0);
             let _ = self
                 .req_tx
-                .try_send((field, center, t, pad, cache_interval));
+                .try_send((field, center, t, pad, cache_interval, self.grid_step));
         }
 
         fn consider_resend(&mut self) {
@@ -12258,8 +12328,8 @@ mod mathematikerin {
                 0.0,
                 0.0,
                 0.0,
-                self.deep_count as f32,
-                0.0,
+                self.deep_pt_count as f32,
+                self.deep_ex_count as f32,
                 0.0,
                 0.0,
                 self.exposure,
@@ -12401,25 +12471,45 @@ mod mathematikerin {
             let Some(device) = self.device.clone() else {
                 return;
             };
-            let n = self.deep_count;
-            if self.deep_cap >= n {
+            let n_pt = self.deep_pt_count;
+            let n_ex = self.deep_ex_count;
+            if self.deep_pt_cap >= n_pt && self.deep_ex_cap >= n_ex {
                 return;
             }
-            let mut c = if self.deep_cap > 0 {
-                self.deep_cap
-            } else {
-                1024
-            };
-            while c < n {
-                c <<= 1;
+            if self.deep_pt_cap < n_pt {
+                let mut c = if self.deep_pt_cap > 0 {
+                    self.deep_pt_cap
+                } else {
+                    1024
+                };
+                while c < n_pt {
+                    c <<= 1;
+                }
+                self.deep_pt_cap = c;
+                self.deep_pt_vbuf = Some(device.create_buffer(&wgpu::BufferDescriptor {
+                    label: None,
+                    size: c as u64 * 16,
+                    usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+                    mapped_at_creation: false,
+                }));
             }
-            self.deep_cap = c;
-            self.deep_vbuf = Some(device.create_buffer(&wgpu::BufferDescriptor {
-                label: None,
-                size: c as u64 * 32,
-                usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
-                mapped_at_creation: false,
-            }));
+            if self.deep_ex_cap < n_ex {
+                let mut c = if self.deep_ex_cap > 0 {
+                    self.deep_ex_cap
+                } else {
+                    1024
+                };
+                while c < n_ex {
+                    c <<= 1;
+                }
+                self.deep_ex_cap = c;
+                self.deep_ex_vbuf = Some(device.create_buffer(&wgpu::BufferDescriptor {
+                    label: None,
+                    size: c as u64 * 32,
+                    usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+                    mapped_at_creation: false,
+                }));
+            }
             self.rebuild_deep_bind();
         }
 
@@ -12433,7 +12523,10 @@ mod mathematikerin {
             let Some(vp_buf) = self.vp_buf.clone() else {
                 return;
             };
-            let Some(deep_vbuf) = self.deep_vbuf.clone() else {
+            let Some(deep_pt_vbuf) = self.deep_pt_vbuf.clone() else {
+                return;
+            };
+            let Some(deep_ex_vbuf) = self.deep_ex_vbuf.clone() else {
                 return;
             };
             self.deep_bind = Some(device.create_bind_group(&wgpu::BindGroupDescriptor {
@@ -12446,7 +12539,11 @@ mod mathematikerin {
                     },
                     wgpu::BindGroupEntry {
                         binding: 1,
-                        resource: deep_vbuf.as_entire_binding(),
+                        resource: deep_pt_vbuf.as_entire_binding(),
+                    },
+                    wgpu::BindGroupEntry {
+                        binding: 2,
+                        resource: deep_ex_vbuf.as_entire_binding(),
                     },
                 ],
             }));
@@ -12473,8 +12570,11 @@ mod mathematikerin {
             }
             if self.deep_dirty {
                 self.ensure_deep_capacity();
-                if let Some(sb) = &self.deep_vbuf {
-                    queue.write_buffer(sb, 0, &le_bytes_f32(&self.packed_deep));
+                if let Some(sb) = &self.deep_pt_vbuf {
+                    queue.write_buffer(sb, 0, &le_bytes_f32(&self.packed_deep_pt));
+                }
+                if let Some(sb) = &self.deep_ex_vbuf {
+                    queue.write_buffer(sb, 0, &le_bytes_f32(&self.packed_deep_ex));
                 }
                 self.deep_dirty = false;
             }
@@ -12531,12 +12631,22 @@ mod mathematikerin {
                     pass.set_bind_group(0, bind, &[]);
                     pass.draw(0..6, 0..1);
                 }
-                if let (Some(pipe), Some(bind)) = (self.deep_pipe.as_ref(), self.deep_bind.as_ref())
+                if let (Some(pipe), Some(bind)) =
+                    (self.deep_pt_pipe.as_ref(), self.deep_bind.as_ref())
                 {
-                    if self.deep_count > 0 {
+                    if self.deep_pt_count > 0 {
                         pass.set_pipeline(pipe);
                         pass.set_bind_group(0, bind, &[]);
-                        pass.draw(0..self.deep_count * 6, 0..1);
+                        pass.draw(0..self.deep_pt_count, 0..1);
+                    }
+                }
+                if let (Some(pipe), Some(bind)) =
+                    (self.deep_ex_pipe.as_ref(), self.deep_bind.as_ref())
+                {
+                    if self.deep_ex_count > 0 {
+                        pass.set_pipeline(pipe);
+                        pass.set_bind_group(0, bind, &[]);
+                        pass.draw(0..self.deep_ex_count * 6, 0..1);
                     }
                 }
             }
@@ -12762,16 +12872,27 @@ mod mathematikerin {
                         },
                         count: None,
                     },
+                    wgpu::BindGroupLayoutEntry {
+                        binding: 2,
+                        visibility: wgpu::ShaderStages::VERTEX,
+                        ty: wgpu::BindingType::Buffer {
+                            ty: wgpu::BufferBindingType::Storage { read_only: true },
+                            has_dynamic_offset: false,
+                            min_binding_size: None,
+                        },
+                        count: None,
+                    },
                 ],
             });
-            let deep_pipe_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+            let deep_ex_pipe_layout =
+                device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+                    label: None,
+                    bind_group_layouts: &[&deep_layout],
+                    push_constant_ranges: &[],
+                });
+            let deep_ex_pipe = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
                 label: None,
-                bind_group_layouts: &[&deep_layout],
-                push_constant_ranges: &[],
-            });
-            let deep_pipe = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
-                label: None,
-                layout: Some(&deep_pipe_layout),
+                layout: Some(&deep_ex_pipe_layout),
                 vertex: wgpu::VertexState {
                     module: &module,
                     entry_point: Some("deep_vs"),
@@ -12808,6 +12929,45 @@ mod mathematikerin {
                 multiview: None,
                 cache: None,
             });
+            let deep_pt_pipe = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+                label: None,
+                layout: Some(&deep_ex_pipe_layout),
+                vertex: wgpu::VertexState {
+                    module: &module,
+                    entry_point: Some("deep_pt_vs"),
+                    compilation_options: Default::default(),
+                    buffers: &[],
+                },
+                fragment: Some(wgpu::FragmentState {
+                    module: &module,
+                    entry_point: Some("deep_pt_fs"),
+                    compilation_options: Default::default(),
+                    targets: &[Some(wgpu::ColorTargetState {
+                        format,
+                        blend: Some(wgpu::BlendState {
+                            color: wgpu::BlendComponent {
+                                src_factor: wgpu::BlendFactor::One,
+                                dst_factor: wgpu::BlendFactor::One,
+                                operation: wgpu::BlendOperation::Add,
+                            },
+                            alpha: wgpu::BlendComponent {
+                                src_factor: wgpu::BlendFactor::One,
+                                dst_factor: wgpu::BlendFactor::One,
+                                operation: wgpu::BlendOperation::Add,
+                            },
+                        }),
+                        write_mask: wgpu::ColorWrites::ALL,
+                    })],
+                }),
+                primitive: wgpu::PrimitiveState {
+                    topology: wgpu::PrimitiveTopology::PointList,
+                    ..Default::default()
+                },
+                depth_stencil: None,
+                multisample: wgpu::MultisampleState::default(),
+                multiview: None,
+                cache: None,
+            });
             let vp_buf = device.create_buffer(&wgpu::BufferDescriptor {
                 label: None,
                 size: 128,
@@ -12836,7 +12996,8 @@ mod mathematikerin {
             self.probe_pipe = Some(probe_pipe);
             self.probe_layout = Some(probe_layout);
             self.render_layout = Some(render_layout);
-            self.deep_pipe = Some(deep_pipe);
+            self.deep_pt_pipe = Some(deep_pt_pipe);
+            self.deep_ex_pipe = Some(deep_ex_pipe);
             self.vp_buf = Some(vp_buf);
             self.probe_buf = Some(probe_buf);
             self.probe_read = Some(probe_read);
@@ -12917,14 +13078,16 @@ mod mathematikerin {
                 self.latest_field = Some(field);
                 self.sense();
             }
-            while let Ok((packed, stars, t)) = self.res_rx.try_recv() {
+            while let Ok((packed, pt, ex, t)) = self.res_rx.try_recv() {
                 self.packed_count = packed.count;
                 self.packed_field = packed.field;
                 self.packed_meta = packed.meta;
                 self.packed_dirty = true;
                 self.last_response_epoch = t;
-                self.packed_deep = stars;
-                self.deep_count = (self.packed_deep.len() / 8) as u32;
+                self.packed_deep_pt = pt;
+                self.deep_pt_count = (self.packed_deep_pt.len() / 4) as u32;
+                self.packed_deep_ex = ex;
+                self.deep_ex_count = (self.packed_deep_ex.len() / 8) as u32;
                 self.deep_dirty = true;
             }
             self.consider_resend();
@@ -12983,7 +13146,7 @@ mod mathematikerin {
                 y,
                 z,
                 self.packed_count,
-                self.deep_count,
+                self.deep_pt_count + self.deep_ex_count,
                 self.backing.0,
                 self.backing.1,
                 ms_max,
@@ -13112,8 +13275,8 @@ mod mathematikerin {
         rx: mpsc::Receiver<Arc<Buffer>>,
         presence_tx: mpsc::Sender<(f64, f64, f64, f64, f64)>,
         sensor_tx: mpsc::Sender<Vec<(String, f64, f64)>>,
-        req_tx: mpsc::SyncSender<(Arc<Buffer>, [f64; 3], f64, f64, f64)>,
-        res_rx: mpsc::Receiver<(PackedWindow, Vec<f32>, f64)>,
+        req_tx: mpsc::SyncSender<(Arc<Buffer>, [f64; 3], f64, f64, f64, f64)>,
+        res_rx: mpsc::Receiver<(PackedWindow, Vec<f32>, Vec<f32>, f64)>,
         body_names: Arc<Vec<String>>,
         time: Arc<Mutex<Option<LeapSeconds>>>,
         shutdown: Arc<AtomicBool>,
@@ -13184,25 +13347,25 @@ mod mathematikerin {
         #[test]
         fn pack_deep_presence_relative() {
             let presence = [1.0e3, 2.0e3, 3.0e3];
-            let deep: [[f64; 5]; 2] = [
-                [6001.0, 7002.0, 8003.0, 42.5, 2.72e10],
-                [-999.0, 4002.0, 1003.0, -7.25, 86400.0],
+            let deep: [[f64; 6]; 2] = [
+                [6001.0, 7002.0, 8003.0, 42.5, 2.72e10, 0.0],
+                [-999.0, 4002.0, 1003.0, -7.25, 86400.0, 0.0],
             ];
-            let packed = pack_deep(&deep, presence);
-            assert_eq!(packed.len(), 16);
-            assert_eq!(packed[0], 5001.0);
-            assert_eq!(packed[1], 5002.0);
-            assert_eq!(packed[2], 5003.0);
-            assert_eq!(packed[3], 42.5);
-            assert_eq!(packed[4], 0.0);
-            assert_eq!(packed[5], 2.72e10);
-            assert_eq!(packed[6], 0.0);
-            assert_eq!(packed[7], 0.0);
-            assert_eq!(packed[8], -1999.0);
-            assert_eq!(packed[9], 2002.0);
-            assert_eq!(packed[10], -1997.0);
-            assert_eq!(packed[11], -7.25);
-            assert_eq!(packed[13], 86400.0);
+            let pt = pack_deep_pt(&deep, presence);
+            assert_eq!(pt.len(), 8);
+            assert_eq!(pt[0], 5001.0);
+            assert_eq!(pt[1], 5002.0);
+            assert_eq!(pt[2], 5003.0);
+            assert_eq!(pt[3], 42.5);
+            assert_eq!(pt[4], -1999.0);
+            assert_eq!(pt[5], 2002.0);
+            assert_eq!(pt[6], -1997.0);
+            assert_eq!(pt[7], -7.25);
+            let ex = pack_deep_ex(&deep, presence);
+            assert_eq!(ex.len(), 16);
+            assert_eq!(ex[4], 0.0);
+            assert_eq!(ex[5], 2.72e10);
+            assert_eq!(ex[13], 86400.0);
         }
     }
 }
