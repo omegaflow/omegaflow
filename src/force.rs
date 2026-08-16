@@ -88,9 +88,32 @@ pub fn parse_library(content: &str) -> Vec<TagWeight> {
     lib
 }
 
+fn netloc_matches(hay: &str, netloc: &str) -> bool {
+    let lower = hay.to_lowercase();
+    let nl = netloc.to_lowercase();
+    let mut rest = lower.as_str();
+    while let Some(pos) = rest.find(&nl) {
+        let before_ok = pos == 0 || rest[..pos].ends_with("://");
+        let tail = &rest[pos + nl.len()..];
+        let after_ok = tail.is_empty()
+            || tail.starts_with('/')
+            || tail.starts_with(':')
+            || tail.starts_with('?')
+            || tail.starts_with('&')
+            || tail.starts_with('#');
+        if before_ok && after_ok {
+            return true;
+        }
+        rest = &rest[pos + 1..];
+    }
+    false
+}
+
 fn tag_matches(hay: &str, tag: &str) -> bool {
     if tag.contains(' ') || tag.contains('_') {
         hay.contains(tag)
+    } else if tag.contains('.') {
+        netloc_matches(hay, tag)
     } else {
         hay.split(|c: char| !c.is_ascii_alphanumeric())
             .any(|w| w.eq_ignore_ascii_case(tag))
@@ -206,6 +229,20 @@ mod tests {
         let g3 = gate_weigh("propagated-solar-wind.json", &lib2);
         assert_eq!(g3.weight, -8);
         assert!(g3.matched.iter().any(|m| m == "absent:position"));
+    }
+
+    #[test]
+    fn test_netloc_boundary() {
+        let lib = parse_library("4 - www.ndbc.noaa.gov\n");
+        let g = gate_weigh("https://www.ndbc.noaa.gov/data/realtime2/42002.txt", &lib);
+        assert_eq!(g.weight, 4);
+        let g2 = gate_weigh("https://data.pmel.noaa.gov/x", &lib);
+        assert_eq!(g2.weight, 0);
+        let lib2 = parse_library("4 - ndbc.noaa.gov\n");
+        let g3 = gate_weigh("https://www.ndbc.noaa.gov/x", &lib2);
+        assert_eq!(g3.weight, 0);
+        let g4 = gate_weigh("https://ndbc.noaa.gov/x", &lib2);
+        assert_eq!(g4.weight, 4);
     }
 
     #[test]
