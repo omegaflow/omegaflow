@@ -23,6 +23,25 @@ Die Membran dieses Standes rendert 1× direkt in die Swapchain (additives
 Blend), der Deep-Renderer (Quads + 1-px-Punkte) ist intakt; helle Sterne
 tragen t2 ≈ 0,7 auf der Nebra-Rampe, 0 deep bei 2^31 ist korrekt.
 
+## Fortschritts-Verzeichnis — 2026-08-16
+
+docs/surveys/fortschritt.md ist das vollständige Verzeichnis der
+Session-Erkenntnisse (Hashes: b4743be, ffb58d5, a9b25d6, session-2026-08-16,
+fd666f5b, eb96d1f). Offen aus dem Verzeichnis:
+
+- Deep-Lieferung richtungsbasiert: Sterne über den Sichtkegel statt
+  radius-begrenzt — das Browser-Verhalten (1,84 Mio Sterne, flüssiger
+  Deep-Sky-Zoom bei 0 near Membran-Quellen)
+- Zell-Achse: Messpunkt-Vergröberung, ehrlich gegen die
+  8-Bit-Display-Quantisierung (Struktur-Radius 14-39 px bei 8 Bit,
+  auswertung.md §1-2) — der Hebel gegen die ~130-ms-Restkosten
+- Relay-Trailer: gen u64 + 9×Ω f64 für browser_relay (~80 B)
+- Deep-Upload-Stille: deep_dirty feuert bei jedem Sense — 29-MB-Sterne
+  werden auch unverändert hochgeladen
+- Rgba8Unorm-Nachmessung mit intel_gpu_top gegen die ~200-ms-Baseline
+- Backing-Verifikation beim Operator: 1920×1080 nativ 1:1 (b4743be) —
+  bestätigen, dass Linien und Qualität erledigt sind
+
 ## Stand — 2026-08-16 (Katalog-Welle: K03-Kometen inkl. dcom5-Multi-Apparitionen, K04b Gaia-DR3+Bailer-Jones 1,84 Mio Sterne, Exoplanet-Bulk 6309, tap_compiler über TAPVizieR/GAVO/ARI/IRSA/ExoArchive, Enrichment-Matrix; LSK/PCK-Hochzeit, Binary v2, Protokoll v6, reine Per-Pixel-Membran, K01 geschlossen, K05 geschlossen; wgpu-mono-Titan: EINE Datei, Kreis an der Wurzel, archivar/mathematikerin/relay als Inline-Geschwister)
 
 Zeit aus naif0012.tls (LSK-Reader, keine TT_MINUS_UTC-Konstante). PCK-Reader pck.rs
