@@ -1170,6 +1170,16 @@ dec dec
 z z
 field flux bzcat5_radio_flux_mjy gaussian-inverse-square em mJy 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/cbdata.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+field mag1 cb_mag1 gaussian-inverse-square em mag 604800 0.0 0.0
+field m1 cb_primary_mass gaussian-inverse-square gravity M_sun 604800 0.0 0.0
+field m2 cb_secondary_mass gaussian-inverse-square gravity M_sun 604800 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/cometels_flat.json
 ttl 604800
 at sun
@@ -1255,6 +1265,35 @@ dist dist
 dist_scale 3.085677581e19
 z z
 field pb magnetar_period_s gaussian-inverse-square em s 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/merlin.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+field freq merlin_frequency_hz inverse-square em Hz 604800 0.0 0.0
+field ampflux merlin_amplitude_flux inverse-square em Jy 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/pastel.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+field teff pastel_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
+field logg pastel_logg gaussian-inverse-square gravity dex 604800 0.0 0.0
+field mag pastel_vmag gaussian-inverse-square em mag 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/polarbase.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+field teff polarbase_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
+field logg polarbase_logg gaussian-inverse-square gravity dex 604800 0.0 0.0
+field mag polarbase_vmag gaussian-inverse-square em mag 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/psr.json
 ttl 604800

@@ -334,6 +334,62 @@ jobs:
                  --title "flatten: sb9 returned void" \
                  --body "sb9 compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
                  --label health
+      - name: Compile PASTEL stellar-parameter catalog and upload to CDN
+        continue-on-error: true
+        run: |
+          cargo run --release --bin tap_compiler -- \
+            --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
+            --table "B/pastel/pastel" \
+            --columns 'ra:RAdeg;dec:DEdeg;teff:Teff;logg:logg;mag:Vmag' \
+            --skip-null teff \
+            --out pastel.json \
+            --ci-mode \
+            || gh issue create --repo omegaflow/omegaflow \
+                 --title "flatten: pastel returned void" \
+                 --body "pastel compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 --label health
+      - name: Compile cataclysmic-binary catalog and upload to CDN
+        continue-on-error: true
+        run: |
+          cargo run --release --bin tap_compiler -- \
+            --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
+            --table "B/cb/cbdata" \
+            --columns 'ra:RAJ2000;dec:DEJ2000;mag1:mag1;m1:M1;m2:M2' \
+            --skip-null mag1 \
+            --out cbdata.json \
+            --ci-mode \
+            || gh issue create --repo omegaflow/omegaflow \
+                 --title "flatten: cbdata returned void" \
+                 --body "cbdata compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 --label health
+      - name: Compile polarimetry catalog and upload to CDN
+        continue-on-error: true
+        run: |
+          cargo run --release --bin tap_compiler -- \
+            --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
+            --table "B/polarbase/polarbase" \
+            --columns 'ra:RA_ICRS;dec:DE_ICRS;teff:Teff;logg:logg;mag:Vmag' \
+            --skip-null teff \
+            --out polarbase.json \
+            --ci-mode \
+            || gh issue create --repo omegaflow/omegaflow \
+                 --title "flatten: polarbase returned void" \
+                 --body "polarbase compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 --label health
+      - name: Compile MERLIN radio-interferometry catalog and upload to CDN
+        continue-on-error: true
+        run: |
+          cargo run --release --bin tap_compiler -- \
+            --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
+            --table "B/merlin/merlin" \
+            --columns 'ra:RAJ2000;dec:DEJ2000;freq:Freq;ampflux:AmpFlux' \
+            --skip-null freq \
+            --out merlin.json \
+            --ci-mode \
+            || gh issue create --repo omegaflow/omegaflow \
+                 --title "flatten: merlin returned void" \
+                 --body "merlin compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 --label health
       - name: Compile Gaia DR3 + Bailer-Jones star catalog and upload to CDN
         continue-on-error: true
         run: |
