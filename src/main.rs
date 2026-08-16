@@ -67,11 +67,15 @@ struct DeepPtVOut { @builtin(position) pos: vec4f, @location(0) @interpolate(fla
         vec2f(-1.0, -1.0), vec2f(1.0, 1.0), vec2f(-1.0, 1.0)
     );
     let data = deep_pt[id];
+    let dir = data.xyz / max(length(data.xyz), 1e-9);
+    if (dot(dir, deep_vp.forward.xyz) < 0.0) {
+        out.flux = 0.0;
+        return out;
+    }
     let w = deep_vp.surface.x;
     let h = deep_vp.surface.y;
-    let scale = deep_vp.surface.w;
-    let sx = dot(data.xyz, deep_vp.right.xyz) / (0.5 * w * scale);
-    let sy = -dot(data.xyz, deep_vp.up.xyz) / (0.5 * h * scale);
+    let sx = dot(dir, deep_vp.right.xyz);
+    let sy = -dot(dir, deep_vp.up.xyz);
     let corner = quad[i % 6u];
     let clip = vec2f(
         sx + (corner.x * 2.2) / w * 2.0,
@@ -87,7 +91,7 @@ struct DeepPtVOut { @builtin(position) pos: vec4f, @location(0) @interpolate(fla
     let aflux = abs(in.flux);
     if (aflux < 1e-30) { discard; }
     let olog = log2(aflux);
-    let t2 = clamp((olog + 14.0 + deep_vp.expose_ex.x) / 22.0, 0.0, 1.0);
+    let t2 = clamp((olog + 18.0 + deep_vp.expose_ex.x) / 22.0, 0.0, 1.0);
     let fade = clamp((olog - log2(1e-30)) / (-14.0 - log2(1e-30)), 0.0, 1.0);
     let c = mix(vec3f(0.0, 0.02, 0.1), vec3f(0.0, 0.3, 0.8), clamp(t2 * 4.0, 0.0, 1.0));
     let c2 = mix(c, vec3f(0.2, 0.8, 1.0), clamp((t2 - 0.25) * 4.0, 0.0, 1.0));
@@ -350,13 +354,23 @@ fn presence_probe() {
     let olog = log2(omega_total);
     let t2 = clamp((olog + 14.0 + vp.expose_ex.x) / 22.0, 0.0, 1.0);
 
-    let c = mix(vec3f(0.0, 0.02, 0.1), vec3f(0.0, 0.3, 0.8), clamp(t2 * 4.0, 0.0, 1.0));
-    let c2 = mix(c, vec3f(0.2, 0.8, 1.0), clamp((t2 - 0.25) * 4.0, 0.0, 1.0));
-    let c3 = mix(c2, vec3f(1.0, 0.7, 0.1), clamp((t2 - 0.5) * 4.0, 0.0, 1.0));
-    let c4 = mix(c3, vec3f(1.0, 1.0, 1.0), clamp((t2 - 0.75) * 4.0, 0.0, 1.0));
+    let a = vec3f(0.0, 0.02, 0.1);
+    let b = vec3f(0.0, 0.3, 0.8);
+    let c = vec3f(0.2, 0.8, 1.0);
+    let d = vec3f(1.0, 0.7, 0.1);
+    let e = vec3f(1.0, 1.0, 1.0);
+    let color = mix(
+        mix(
+            mix(mix(a, b, smoothstep(0.0, 0.25, t2)), c, smoothstep(0.25, 0.5, t2)),
+            d,
+            smoothstep(0.5, 0.75, t2),
+        ),
+        e,
+        smoothstep(0.75, 1.0, t2),
+    );
     let fade = clamp((olog - log2(1e-30)) / (-14.0 - log2(1e-30)), 0.0, 1.0);
 
-    return vec4f(c4 * fade, 1.0);
+    return vec4f(color * fade, 1.0);
 }
 "#;
 
@@ -497,15 +511,9 @@ struct StarRec {
     flux: f64,
 }
 struct StarHash {
-    cell_size: f64,
-    vmax: f64,
     ttl: f64,
-    build_epoch: f64,
-    cell_lo: CellKey,
-    cell_hi: CellKey,
-    cells: HashMap<CellKey, Vec<u32>>,
     records: Vec<StarRec>,
-    p0: Vec<[f64; 3]>,
+    dirs: Vec<[f64; 3]>,
 }
 #[derive(Clone, Debug)]
 enum Position {
@@ -714,6 +722,7 @@ mod archivar {
     const HUBBLE_H0: f64 = 70000.0 / (PARSEC_M * 1.0e6);
     const MAS_YR_TO_RAD_S: f64 = 4.84813681109536e-9 / 31557600.0;
     const CELESTIAL_SPHERE_RADIUS_M: f64 = 1.0e3 * PARSEC_M;
+    const STAR_FLUX_FLOOR: f64 = 1e-4;
 
     pub fn resolve_asset(rel: &str) -> std::path::PathBuf {
         let cwd_candidate = std::path::PathBuf::from(rel);
@@ -1553,7 +1562,7 @@ mod archivar {
         })
     }
 
-    fn star_position_at(rec: &StarRec, t2: f64) -> ([f64; 3], [f64; 3]) {
+    fn star_position_at(rec: &StarRec, t2: f64) -> [f64; 3] {
         let dt_yr = t2 / (86400.0 * 365.25);
         let dec_rad = rec.dec_deg.to_radians();
         let ra = rec.ra_deg + rec.pm_ra_masyr / (3.6e6 * dec_rad.cos().max(1e-6)) * dt_yr;
@@ -1562,161 +1571,25 @@ mod archivar {
         let (sd, cd) = dec.to_radians().sin_cos();
         let p_hat = [cd * ca, cd * sa, sd];
         let d = (1000.0 / rec.plx_mas) * PARSEC_M;
-        let p = [p_hat[0] * d, p_hat[1] * d, p_hat[2] * d];
-        let mu_a = rec.pm_ra_masyr * MAS_YR_TO_RAD_S;
-        let mu_d = rec.pm_de_masyr * MAS_YR_TO_RAD_S;
-        let a_hat = [-sa, ca, 0.0];
-        let d_hat = [-sd * ca, -sd * sa, cd];
-        let vel = [
-            d * (mu_a * a_hat[0] + mu_d * d_hat[0]),
-            d * (mu_a * a_hat[1] + mu_d * d_hat[1]),
-            d * (mu_a * a_hat[2] + mu_d * d_hat[2]),
-        ];
-        (p, vel)
+        [p_hat[0] * d, p_hat[1] * d, p_hat[2] * d]
     }
 
-    fn build_star_hash(bytes: &[u8], build_epoch: f64, cadence: f64, ttl: u64) -> StarHash {
+    fn build_star_hash(bytes: &[u8], build_epoch: f64, ttl: u64) -> StarHash {
         let mut records: Vec<StarRec> = Vec::new();
-        let mut p0: Vec<[f64; 3]> = Vec::new();
-        let mut vmax = 0.0f64;
+        let mut dirs: Vec<[f64; 3]> = Vec::new();
         for chunk in bytes.chunks_exact(STAR_RECORD_STRIDE) {
             let Some(rec) = parse_star_record(chunk) else {
                 continue;
             };
-            let (p, v) = star_position_at(&rec, build_epoch);
-            let speed = (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]).sqrt();
-            vmax = vmax.max(speed);
+            let p = star_position_at(&rec, build_epoch);
+            let d = (p[0] * p[0] + p[1] * p[1] + p[2] * p[2]).sqrt().max(1.0);
             records.push(rec);
-            p0.push(p);
-        }
-        vmax *= Φ;
-        let rho_cad = vmax * cadence;
-        let shift = (2.0 * rho_cad).log2().ceil().clamp(0.0, 63.0) as i32;
-        let motion_cell = 2f64.powi(shift);
-        let mut span = 1.0f64;
-        for k in 0..3 {
-            let mut lo = f64::INFINITY;
-            let mut hi = f64::NEG_INFINITY;
-            for pos in &p0 {
-                lo = lo.min(pos[k]);
-                hi = hi.max(pos[k]);
-            }
-            span = span.max(hi - lo);
-        }
-        let cell_size = motion_cell.max(span / 1024.0);
-        let mut cells: HashMap<CellKey, Vec<u32>> = HashMap::new();
-        let mut cell_lo = (i64::MAX, i64::MAX, i64::MAX);
-        let mut cell_hi = (i64::MIN, i64::MIN, i64::MIN);
-        for (i, pos) in p0.iter().enumerate() {
-            let c = cell_of(*pos, cell_size);
-            cell_lo.0 = cell_lo.0.min(c.0);
-            cell_lo.1 = cell_lo.1.min(c.1);
-            cell_lo.2 = cell_lo.2.min(c.2);
-            cell_hi.0 = cell_hi.0.max(c.0);
-            cell_hi.1 = cell_hi.1.max(c.1);
-            cell_hi.2 = cell_hi.2.max(c.2);
-            cells.entry(c).or_default().push(i as u32);
+            dirs.push([p[0] / d, p[1] / d, p[2] / d]);
         }
         StarHash {
-            cell_size,
-            vmax,
             ttl: ttl as f64,
-            build_epoch,
-            cell_lo,
-            cell_hi,
-            cells,
             records,
-            p0,
-        }
-    }
-
-    fn query_star_hash(
-        hash: &StarHash,
-        center: [f64; 3],
-        t2: f64,
-        pad: f64,
-        delta_t_cache: f64,
-        records: &mut Vec<OscRecord>,
-    ) {
-        if hash.cells.is_empty() {
-            return;
-        }
-        let dt = (t2 - hash.build_epoch).abs() + delta_t_cache;
-        let rho = hash.vmax * dt + pad;
-        let s = hash.cell_size;
-        let qlo = cell_of([center[0] - rho, center[1] - rho, center[2] - rho], s);
-        let qhi = cell_of([center[0] + rho, center[1] + rho, center[2] + rho], s);
-        let lo = (
-            qlo.0.max(hash.cell_lo.0),
-            qlo.1.max(hash.cell_lo.1),
-            qlo.2.max(hash.cell_lo.2),
-        );
-        let hi = (
-            qhi.0.min(hash.cell_hi.0),
-            qhi.1.min(hash.cell_hi.1),
-            qhi.2.min(hash.cell_hi.2),
-        );
-        if lo.0 > hi.0 || lo.1 > hi.1 || lo.2 > hi.2 {
-            return;
-        }
-        let span = (hi.0.saturating_sub(lo.0).saturating_add(1) as u64)
-            .saturating_mul(hi.1.saturating_sub(lo.1).saturating_add(1) as u64)
-            .saturating_mul(hi.2.saturating_sub(lo.2).saturating_add(1) as u64);
-        let visit: Vec<&Vec<u32>> = if span > hash.cells.len() as u64 * 4 {
-            hash.cells
-                .iter()
-                .filter(|(ck, _)| {
-                    ck.0 >= lo.0
-                        && ck.0 <= hi.0
-                        && ck.1 >= lo.1
-                        && ck.1 <= hi.1
-                        && ck.2 >= lo.2
-                        && ck.2 <= hi.2
-                })
-                .map(|(_, v)| v)
-                .collect()
-        } else {
-            let mut out = Vec::new();
-            for cx in lo.0..=hi.0 {
-                for cy in lo.1..=hi.1 {
-                    for cz in lo.2..=hi.2 {
-                        if let Some(indices) = hash.cells.get(&(cx, cy, cz)) {
-                            out.push(indices);
-                        }
-                    }
-                }
-            }
-            out
-        };
-        for indices in visit {
-            for &i in indices {
-                let rec = &hash.records[i as usize];
-                let d = (1000.0 / rec.plx_mas) * PARSEC_M;
-                let mu_a = rec.pm_ra_masyr * MAS_YR_TO_RAD_S;
-                let mu_d = rec.pm_de_masyr * MAS_YR_TO_RAD_S;
-                let v_lin = d * mu_a.hypot(mu_d);
-                let reach = v_lin * dt + pad;
-                let p0 = hash.p0[i as usize];
-                let dx = p0[0] - center[0];
-                let dy = p0[1] - center[1];
-                let dz = p0[2] - center[2];
-                let dist2_p0 = dx * dx + dy * dy + dz * dz;
-                if dist2_p0 > reach * reach {
-                    continue;
-                }
-                let (p, v) = star_position_at(rec, t2);
-                let ddx = p[0] - center[0];
-                let ddy = p[1] - center[1];
-                let ddz = p[2] - center[2];
-                let dist2 = ddx * ddx + ddy * ddy + ddz * ddz;
-                if dist2 > pad * pad {
-                    continue;
-                }
-                records.push((
-                    p[0], p[1], p[2], rec.flux, t2, hash.ttl, hash.ttl, 0.0, 0.0, 0.0, 0.0, 0.0,
-                    v[0], v[1], v[2], 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-                ));
-            }
+            dirs,
         }
     }
 
@@ -2025,21 +1898,16 @@ mod archivar {
         }
     }
 
-    pub fn sense_deep(
-        buf: &Buffer,
-        center: [f64; 3],
-        t2: f64,
-        pad: f64,
-        delta_t_cache: f64,
-        out: &mut Vec<[f64; 6]>,
-    ) {
+    pub fn sense_deep(buf: &Buffer, out: &mut Vec<[f64; 6]>) {
         let Some(sh) = &buf.stars else {
             return;
         };
-        let mut records: Vec<OscRecord> = Vec::new();
-        query_star_hash(sh, center, t2, pad, delta_t_cache, &mut records);
-        for r in records {
-            out.push([r.0, r.1, r.2, r.3, sh.ttl, 0.0]);
+        for (i, rec) in sh.records.iter().enumerate() {
+            if rec.flux < STAR_FLUX_FLOOR {
+                continue;
+            }
+            let dir = sh.dirs[i];
+            out.push([dir[0], dir[1], dir[2], rec.flux, sh.ttl, 0.0]);
         }
     }
 
@@ -9974,7 +9842,6 @@ mod archivar {
                     let src_clone = archive.sources[i].clone();
                     let src_idx = i;
                     let src_ttl = src_clone.ttl;
-                    let cadence_c = cadence;
                     let build_epoch = now;
                     archive.origins.entry(origin).or_insert(OriginState {
                         fetched: now,
@@ -10000,13 +9867,8 @@ mod archivar {
                             Ok(b) => b,
                             Err(_) => return,
                         };
-                        let hash = build_star_hash(&bytes, build_epoch, cadence_c, src_ttl);
-                        eprintln!(
-                            "\r\x1b[Kcatalog_tycho: {} stars, cell_size {:.3e} m, vmax {:.1} m/s",
-                            hash.records.len(),
-                            hash.cell_size,
-                            hash.vmax
-                        );
+                        let hash = build_star_hash(&bytes, build_epoch, src_ttl);
+                        eprintln!("\r\x1b[Kcatalog_tycho: {} stars", hash.records.len());
                         let _ = ftx.send(FetchResult {
                             source_idx: src_idx,
                             channels: Vec::new(),
@@ -11012,7 +10874,7 @@ field temp temp_c\n";
         }
 
         #[test]
-        fn test_star_hash_build_and_query() {
+        fn test_star_hash_directions() {
             let mut bin = Vec::new();
             bin.extend_from_slice(&0f64.to_le_bytes());
             bin.extend_from_slice(&0f64.to_le_bytes());
@@ -11021,18 +10883,13 @@ field temp temp_c\n";
             bin.extend_from_slice(&100f32.to_le_bytes());
             bin.extend_from_slice(&0f32.to_le_bytes());
             bin.extend_from_slice(&1f32.to_le_bytes());
-            let hash = build_star_hash(&bin, 0.0, 1.0, 604800);
+            let hash = build_star_hash(&bin, 0.0, 604800);
             assert_eq!(hash.records.len(), 1);
-            let d = 10.0 * PARSEC_M;
-            let mut records: Vec<OscRecord> = Vec::new();
-            query_star_hash(&hash, [0.0, 0.0, 0.0], 0.0, d * 1.001, 0.0, &mut records);
-            assert_eq!(records.len(), 1);
-            assert!((records[0].0 - d).abs() / d < 1e-9);
-            assert_eq!(records[0].3, 1.0);
-            assert_eq!(records[0].6, 604800.0);
-            let mut outside: Vec<OscRecord> = Vec::new();
-            query_star_hash(&hash, [2.0 * d, 0.0, 0.0], 0.0, d * 0.5, 0.0, &mut outside);
-            assert!(outside.is_empty());
+            assert_eq!(hash.dirs.len(), 1);
+            let dir = hash.dirs[0];
+            assert!((dir[0] - 1.0).abs() < 1e-9);
+            assert!(dir[1].abs() < 1e-9);
+            assert!(dir[2].abs() < 1e-9);
             let mut short = [0u8; 4];
             short.copy_from_slice(&0f32.to_le_bytes());
             assert!(parse_star_record(&short).is_none());
@@ -12552,23 +12409,23 @@ mod mathematikerin {
         }
     }
 
-    pub fn pack_deep_pt(stars: &[[f64; 6]], presence: [f64; 3]) -> Vec<f32> {
+    pub fn pack_deep_pt(stars: &[[f64; 6]]) -> Vec<f32> {
         let mut out = Vec::with_capacity(stars.len() * 4);
         for s in stars {
-            out.push((s[0] - presence[0]) as f32);
-            out.push((s[1] - presence[1]) as f32);
-            out.push((s[2] - presence[2]) as f32);
+            out.push(s[0] as f32);
+            out.push(s[1] as f32);
+            out.push(s[2] as f32);
             out.push(s[3] as f32);
         }
         out
     }
 
-    pub fn pack_deep_ex(stars: &[[f64; 6]], presence: [f64; 3]) -> Vec<f32> {
+    pub fn pack_deep_ex(stars: &[[f64; 6]]) -> Vec<f32> {
         let mut out = Vec::with_capacity(stars.len() * 8);
         for s in stars {
-            out.push((s[0] - presence[0]) as f32);
-            out.push((s[1] - presence[1]) as f32);
-            out.push((s[2] - presence[2]) as f32);
+            out.push(s[0] as f32);
+            out.push(s[1] as f32);
+            out.push(s[2] as f32);
             out.push(s[3] as f32);
             out.push(s[5] as f32);
             out.push(s[4] as f32);
@@ -12610,7 +12467,7 @@ mod mathematikerin {
                 sense_membrane(&field, center, t, pad, cache_interval, &mut records, &eph);
                 let packed = pack_window(&records, center);
                 let mut deep: Vec<[f64; 6]> = Vec::new();
-                sense_deep(&field, center, t, pad, cache_interval, &mut deep);
+                sense_deep(&field, &mut deep);
                 let mut pt_src: Vec<[f64; 6]> = Vec::new();
                 let mut ex_src: Vec<[f64; 6]> = Vec::new();
                 for s in &deep {
@@ -12620,8 +12477,8 @@ mod mathematikerin {
                         ex_src.push(*s);
                     }
                 }
-                let packed_deep_pt = pack_deep_pt(&pt_src, center);
-                let packed_deep_ex = pack_deep_ex(&ex_src, center);
+                let packed_deep_pt = pack_deep_pt(&pt_src);
+                let packed_deep_ex = pack_deep_ex(&ex_src);
                 if res_tx
                     .send((packed, packed_deep_pt, packed_deep_ex, t))
                     .is_err()
@@ -13289,7 +13146,7 @@ mod mathematikerin {
                     mapped_at_creation: false,
                 }));
             }
-            if self.deep_ex_cap < n_ex {
+            if self.deep_ex_cap < n_ex || self.deep_ex_vbuf.is_none() {
                 let mut c = if self.deep_ex_cap > 0 {
                     self.deep_ex_cap
                 } else {
@@ -14419,23 +14276,22 @@ mod mathematikerin {
         }
 
         #[test]
-        fn pack_deep_presence_relative() {
-            let presence = [1.0e3, 2.0e3, 3.0e3];
+        fn pack_deep_directions() {
             let deep: [[f64; 6]; 2] = [
                 [6001.0, 7002.0, 8003.0, 42.5, 2.72e10, 0.0],
                 [-999.0, 4002.0, 1003.0, -7.25, 86400.0, 0.0],
             ];
-            let pt = pack_deep_pt(&deep, presence);
+            let pt = pack_deep_pt(&deep);
             assert_eq!(pt.len(), 8);
-            assert_eq!(pt[0], 5001.0);
-            assert_eq!(pt[1], 5002.0);
-            assert_eq!(pt[2], 5003.0);
+            assert_eq!(pt[0], 6001.0);
+            assert_eq!(pt[1], 7002.0);
+            assert_eq!(pt[2], 8003.0);
             assert_eq!(pt[3], 42.5);
-            assert_eq!(pt[4], -1999.0);
-            assert_eq!(pt[5], 2002.0);
-            assert_eq!(pt[6], -1997.0);
+            assert_eq!(pt[4], -999.0);
+            assert_eq!(pt[5], 4002.0);
+            assert_eq!(pt[6], 1003.0);
             assert_eq!(pt[7], -7.25);
-            let ex = pack_deep_ex(&deep, presence);
+            let ex = pack_deep_ex(&deep);
             assert_eq!(ex.len(), 16);
             assert_eq!(ex[4], 0.0);
             assert_eq!(ex[5], 2.72e10);
