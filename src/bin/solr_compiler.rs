@@ -32,6 +32,11 @@ fn main() {
     let mut query: String = String::from("*:*");
     let mut pages: usize = 100;
     let mut rows: usize = 1000;
+    let mut fields: Vec<String> = vec![
+        "entry_acronym_s".to_string(),
+        "entry_name_s".to_string(),
+        "entry_type_s".to_string(),
+    ];
     let mut i = 1;
     while i < args.len() {
         match args[i].as_str() {
@@ -55,6 +60,13 @@ fn main() {
                 rows = args.get(i + 1).and_then(|s| s.parse().ok()).unwrap_or(1000);
                 i += 1;
             }
+            "--fields" => {
+                fields = args
+                    .get(i + 1)
+                    .map(|s| s.split(',').map(|x| x.trim().to_string()).collect())
+                    .unwrap_or(fields);
+                i += 1;
+            }
             _ => {}
         }
         i += 1;
@@ -74,16 +86,21 @@ fn main() {
         let mut cursor = 0usize;
         let mut gained = 0usize;
         loop {
-            let Some(acr) = extract_field(&body, "entry_acronym_s", &mut cursor) else {
+            let mut vals = Vec::new();
+            let mut ok = true;
+            for f in &fields {
+                match extract_field(&body, f, &mut cursor) {
+                    Some(v) => vals.push(v.to_string()),
+                    None => {
+                        ok = false;
+                        break;
+                    }
+                }
+            }
+            if !ok {
                 break;
-            };
-            let Some(name) = extract_field(&body, "entry_name_s", &mut cursor) else {
-                break;
-            };
-            let Some(typ) = extract_field(&body, "entry_type_s", &mut cursor) else {
-                break;
-            };
-            buf.push_str(&format!("{} | {} | {}\n", acr, name, typ));
+            }
+            buf.push_str(&format!("{}\n", vals.join(" | ")));
             gained += 1;
         }
         total += gained;
