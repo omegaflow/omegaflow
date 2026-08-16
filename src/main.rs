@@ -12123,6 +12123,7 @@ mod mathematikerin {
         frame_count: u64,
         frame_ms_max: f64,
         last_hud: Option<std::time::Instant>,
+        sun_centered: bool,
     }
 
     impl NativeApp {
@@ -12216,6 +12217,7 @@ mod mathematikerin {
                 frame_count: 0,
                 frame_ms_max: 0.0,
                 last_hud: None,
+                sun_centered: false,
             }
         }
 
@@ -13259,6 +13261,16 @@ mod mathematikerin {
                 self.latest_field = Some(field);
                 self.sense();
             }
+            if !self.sun_centered && self.t_presence > 0.0 {
+                if let Some(field) = self.latest_field.clone() {
+                    let eph = field.eph.clone();
+                    if let Some(pos) = body_barycenter_position("sun", self.t_presence, &eph) {
+                        self.p = pos;
+                        self.t0 = self.t_presence;
+                        self.sun_centered = true;
+                    }
+                }
+            }
             while let Ok((packed, pt, ex, t)) = self.res_rx.try_recv() {
                 self.packed_count = packed.count;
                 self.packed_field = packed.field;
@@ -13362,6 +13374,9 @@ mod mathematikerin {
                 }
                 WindowEvent::KeyboardInput { event, .. } => {
                     if let PhysicalKey::Code(code) = event.physical_key {
+                        if code == KeyCode::Escape && event.state == ElementState::Pressed {
+                            event_loop.exit();
+                        }
                         match event.state {
                             ElementState::Pressed => {
                                 if !self.keys.contains(&code) {
@@ -13436,7 +13451,7 @@ mod mathematikerin {
                     };
                     self.sensors.record_sample("event.wheel.deltaY", dy);
                     if dy != 0.0 {
-                        self.grid_step /= 2f64.powf(dy / 128.0);
+                        self.grid_step *= 2f64.powf(dy / 128.0);
                         self.consider_resend();
                     }
                 }
