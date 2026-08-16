@@ -100,7 +100,9 @@ fn osc_field(j: u32, rel: vec3f, dt: f32) -> vec2f {
         let p2 = (3.0 * cos_t * cos_t - 1.0) * 0.5;
         let p4 = (35.0 * cos_t * cos_t * cos_t * cos_t - 30.0 * cos_t * cos_t + 3.0) * 0.125;
         let rd = mg.y / max(d_mag, 1.0);
-        sk *= 1.0 - mp.w * rd * rd * p2 - mg.x * rd * rd * rd * rd * p4;
+        if (rd < 1.0) {
+            sk *= 1.0 - mp.w * rd * rd * p2 - mg.x * rd * rd * rd * rd * p4;
+        }
     }
     return vec2f(val_eff * sk, f32(ft));
 }
@@ -11469,10 +11471,37 @@ mod mathematikerin {
             time: Arc<Mutex<Option<LeapSeconds>>>,
         ) -> Self {
             let (tx, rx) = mpsc::sync_channel::<Arc<Buffer>>(2);
+            let (req_tx, req_rx) = mpsc::sync_channel::<(Arc<Buffer>, [f64; 3], f64, f64, f64)>(1);
+            let (res_tx, res_rx) = mpsc::sync_channel::<(PackedWindow, f64)>(2);
             let shutdown = Arc::new(AtomicBool::new(false));
             let shutdown_clone = shutdown.clone();
+            thread::spawn(move || loop {
+                let Ok(mut req) = req_rx.recv() else {
+                    break;
+                };
+                while let Ok(newer) = req_rx.try_recv() {
+                    req = newer;
+                }
+                let (field, center, t, pad, cache_interval) = req;
+                let mut records: Vec<Record> = Vec::new();
+                let eph = field.eph.clone();
+                sense_buffer(&field, center, t, pad, cache_interval, &mut records, &eph);
+                let packed = pack_window(&records, center);
+                if res_tx.send((packed, t)).is_err() {
+                    break;
+                }
+            });
             let handle = thread::spawn(move || {
-                run_window(rx, presence_tx, sensor_tx, body_names, time, shutdown_clone);
+                run_window(
+                    rx,
+                    presence_tx,
+                    sensor_tx,
+                    req_tx,
+                    res_rx,
+                    body_names,
+                    time,
+                    shutdown_clone,
+                );
             });
             Self {
                 tx,
@@ -11604,6 +11633,8 @@ mod mathematikerin {
 
     struct NativeApp {
         rx: mpsc::Receiver<Arc<Buffer>>,
+        req_tx: mpsc::SyncSender<(Arc<Buffer>, [f64; 3], f64, f64, f64)>,
+        res_rx: mpsc::Receiver<(PackedWindow, f64)>,
         presence_tx: mpsc::Sender<(f64, f64, f64, f64, f64)>,
         body_names: Arc<Vec<String>>,
         time: Arc<Mutex<Option<LeapSeconds>>>,
@@ -11663,6 +11694,8 @@ mod mathematikerin {
     impl NativeApp {
         fn new(
             rx: mpsc::Receiver<Arc<Buffer>>,
+            req_tx: mpsc::SyncSender<(Arc<Buffer>, [f64; 3], f64, f64, f64)>,
+            res_rx: mpsc::Receiver<(PackedWindow, f64)>,
             presence_tx: mpsc::Sender<(f64, f64, f64, f64, f64)>,
             sensor_tx: mpsc::Sender<Vec<(String, f64, f64)>>,
             body_names: Arc<Vec<String>>,
@@ -11671,6 +11704,8 @@ mod mathematikerin {
         ) -> Self {
             Self {
                 rx,
+                req_tx,
+                res_rx,
                 presence_tx,
                 body_names,
                 time,
@@ -11756,15 +11791,9 @@ mod mathematikerin {
             let hy = self.size.1 as f64 * self.scale_factor * self.grid_step * 0.5;
             let pad = 2.0 * (hx * hx + hy * hy).sqrt();
             let cache_interval = (self.grid_step / 30000.0).clamp(Φ, Φ * 10.0);
-            let mut records: Vec<Record> = Vec::new();
-            let eph = field.eph.clone();
-            sense_buffer(&field, center, t, pad, cache_interval, &mut records, &eph);
-            let packed = pack_window(&records, center);
-            self.packed_count = packed.count;
-            self.packed_field = packed.field;
-            self.packed_meta = packed.meta;
-            self.packed_dirty = true;
-            self.last_response_epoch = t;
+            let _ = self
+                .req_tx
+                .try_send((field, center, t, pad, cache_interval));
         }
 
         fn consider_resend(&mut self) {
@@ -12356,6 +12385,13 @@ mod mathematikerin {
                 self.latest_field = Some(field);
                 self.sense();
             }
+            while let Ok((packed, t)) = self.res_rx.try_recv() {
+                self.packed_count = packed.count;
+                self.packed_field = packed.field;
+                self.packed_meta = packed.meta;
+                self.packed_dirty = true;
+                self.last_response_epoch = t;
+            }
             self.consider_resend();
             self.sensors.frame_interval = (raw / 1000.0).max(0.001);
             if self
@@ -12381,7 +12417,10 @@ mod mathematikerin {
                     slice.map_async(wgpu::MapMode::Read, move |r| {
                         m2.store(r.is_ok(), Ordering::SeqCst);
                     });
-                    device.poll(wgpu::Maintain::Wait);
+                    let deadline = std::time::Instant::now() + std::time::Duration::from_millis(5);
+                    while !mapped.load(Ordering::SeqCst) && std::time::Instant::now() < deadline {
+                        device.poll(wgpu::Maintain::Poll);
+                    }
                     if mapped.load(Ordering::SeqCst) {
                         let data = slice.get_mapped_range();
                         for k in 0..9 {
@@ -12529,6 +12568,8 @@ mod mathematikerin {
         rx: mpsc::Receiver<Arc<Buffer>>,
         presence_tx: mpsc::Sender<(f64, f64, f64, f64, f64)>,
         sensor_tx: mpsc::Sender<Vec<(String, f64, f64)>>,
+        req_tx: mpsc::SyncSender<(Arc<Buffer>, [f64; 3], f64, f64, f64)>,
+        res_rx: mpsc::Receiver<(PackedWindow, f64)>,
         body_names: Arc<Vec<String>>,
         time: Arc<Mutex<Option<LeapSeconds>>>,
         shutdown: Arc<AtomicBool>,
@@ -12541,7 +12582,16 @@ mod mathematikerin {
             Err(_) => return,
         };
         event_loop.set_control_flow(ControlFlow::Poll);
-        let mut app = NativeApp::new(rx, presence_tx, sensor_tx, body_names, time, shutdown);
+        let mut app = NativeApp::new(
+            rx,
+            req_tx,
+            res_rx,
+            presence_tx,
+            sensor_tx,
+            body_names,
+            time,
+            shutdown,
+        );
         let _ = event_loop.run_app(&mut app);
     }
 

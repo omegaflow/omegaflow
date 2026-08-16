@@ -358,7 +358,9 @@ fn osc_field(j: u32, rel: vec3f, dt: f32) -> vec2f {
         let p2 = (3.0 * cos_t * cos_t - 1.0) * 0.5;
         let p4 = (35.0 * cos_t * cos_t * cos_t * cos_t - 30.0 * cos_t * cos_t + 3.0) * 0.125;
         let rd = mg.y / max(d_mag, 1.0);
-        sk *= 1.0 - mp.w * rd * rd * p2 - mg.x * rd * rd * rd * rd * p4;
+        if (rd < 1.0) {
+            sk *= 1.0 - mp.w * rd * rd * p2 - mg.x * rd * rd * rd * rd * p4;
+        }
     }
     return vec2f(val_eff * sk, f32(ft));
 }
