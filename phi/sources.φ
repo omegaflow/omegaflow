@@ -1191,6 +1191,15 @@ dist_scale 1.495978707e11
 field H comet_h_mag gaussian-inverse-square em mag 604800 0.0 0.0
 field M1 comet_total_mag gaussian-inverse-square em mag 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/denis.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+field jmag denis_j_mag gaussian-inverse-square em mag 604800 0.0 0.0
+field kmag denis_k_mag gaussian-inverse-square em mag 604800 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/dr3_stars.bin
 format catalog_tycho
 at sun
@@ -1257,6 +1266,15 @@ field p0 pulsar_period_s gaussian-inverse-square em s 604800 0.0 0.0
 field dm pulsar_dm_pccm3 inverse-square em pc/cm3 604800 0.0 0.0
 field s1400 pulsar_flux_1400mhz_mjy inverse-square em mJy 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/sb9.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+field mag1 sb9_primary_mag gaussian-inverse-square em mag 604800 0.0 0.0
+field mag2 sb9_secondary_mag gaussian-inverse-square em mag 604800 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/sncat.json
 ttl 604800
 at sun
@@ -1286,6 +1304,16 @@ dist_scale 3.085677581e19
 z z
 field flux tevcat_flux inverse-square em Crab 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/vsx.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+field max vsx_max_mag gaussian-inverse-square em mag 604800 0.0 0.0
+field min vsx_min_mag gaussian-inverse-square em mag 604800 0.0 0.0
+field period vsx_period_d gaussian-inverse-square em d 604800 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/wd.json
 ttl 604800
 at sun
@@ -1294,6 +1322,16 @@ ra ra
 dec dec
 field mag wd_vmag gaussian-inverse-square em mag 604800 0.0 0.0
 field teff wd_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/wds.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+field mag1 wds_primary_mag gaussian-inverse-square em mag 604800 0.0 0.0
+field mag2 wds_secondary_mag gaussian-inverse-square em mag 604800 0.0 0.0
+field sep wds_separation_arcsec gaussian-inverse-square em arcsec 604800 0.0 0.0
 
 url https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls
 format kernel_text
