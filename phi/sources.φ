@@ -1255,6 +1255,16 @@ dec dec
 field mag gcvs_mag_max gaussian-inverse-square em mag 604800 0.0 0.0
 field period gcvs_period_d gaussian-inverse-square em d 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/lmxbdata.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+field mag1 lmxb_mag1 gaussian-inverse-square em mag 604800 0.0 0.0
+field m1 lmxb_primary_mass gaussian-inverse-square gravity M_sun 604800 0.0 0.0
+field m2 lmxb_secondary_mass gaussian-inverse-square gravity M_sun 604800 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/magnetar_flat.json
 ttl 604800
 at sun

@@ -362,6 +362,20 @@ jobs:
                  --title "flatten: cbdata returned void" \
                  --body "cbdata compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
                  --label health
+      - name: Compile LMXB catalog and upload to CDN
+        continue-on-error: true
+        run: |
+          cargo run --release --bin tap_compiler -- \
+            --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
+            --table "B/cb/lmxbdata" \
+            --columns 'ra:RAJ2000;dec:DEJ2000;mag1:mag1;m1:M1;m2:M2' \
+            --skip-null m1 \
+            --out lmxbdata.json \
+            --ci-mode \
+            || gh issue create --repo omegaflow/omegaflow \
+                 --title "flatten: lmxbdata returned void" \
+                 --body "lmxbdata compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 --label health
       - name: Compile polarimetry catalog and upload to CDN
         continue-on-error: true
         run: |

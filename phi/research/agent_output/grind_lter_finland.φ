@@ -1,0 +1,22 @@
+# grind lter-finland (2026-08-16)
+# LTER-Finnland-See-Messstationen (DEIMS-Sites Jyväsjärvi/Konnevesi/Päijänne) —
+# Live-Daten-API-Suche. Rein forschend — keine Änderung an sources.φ / dead_sources.φ.
+# Dispositionen: accepted / decline / note / candidate / parser-def.
+
+# ── 1. JYU-Stationen (Campbell-Wetter + autom. Wasserqualität, Jyväsjärvi/Konnevesi) — note ──
+note no-public-api
+url http://www.paijanne.org
+note DEIMS-Site „Lake Päijänne LTER" (28a399bc-e90f-43c2-a17d-2556b9644868) verweist auf paijanne.org — absent (DNS löst 130.234.10.201, Port 80/443 antworten nicht, HTTP 000). Die JYU-Campbell-Wetterstationen („year-round 1-min", Wind/Temperatur/Solar/Regen/Druck) haben KEINE öffentliche Live-API. Kontakt juha.karjalainen@jyu.fi (DEIMS-Site-Manager). LTER-Fi-Website (lter.fi) absent.
+
+# ── 2. SYKE Wassertemperatur (thermal) — candidate ──
+candidate https://wwwi3.ymparisto.fi/i3/RealTime/data/WST1403901.txt
+note 200 ok, text/plain, semikolon-CSV „Datum;Zeit;Wert" (15-min, live). Konnevesi, etelä (Code 1403901, Gerät YDOC) + Päijänne, pohj. (WST1404610). Kraft: thermal (Wassertemperatur °C). Position steht NICHT im Datenfile — separat in der Stations-HTML (ETRS-TM35FIN N/E) → parser-def (Position-Separation + ETRS-TM35FIN→WGS84-Umrechnung nötig). Jyväsjärvi selbst absent in diesem Netz.
+
+# ── 3. SYKE Wasserstand (gravity) — candidate ──
+candidate https://wwwi3.ymparisto.fi/i3/RealTime/data/W071.txt
+note 200 ok, text/plain. Wasserstand-Stationen (hydrostatischer Pegel, Kraft gravity). Position separat in der HTML (ETRS-TM35FIN N/E). Gleicher parser-def wie WST (Position-Separation).
+
+# ── 4. Nenäinniemi-Wetter (Päijänne-Ufer, privat) — decline ──
+decline private-station
+url http://www.jyv-weather.info/clientraw.txt
+note 200 ok, text/plain, Weather-Display-Realtimeformat (Wind=advective, Temperatur=thermal, Druck=em). Privatstation, nicht-institutionell → decline (Spec §Kurations-Regel). JSON-API absent, nur clientraw.txt.
