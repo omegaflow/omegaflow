@@ -12123,6 +12123,7 @@ mod mathematikerin {
         frame_count: u64,
         frame_ms_max: f64,
         last_hud: Option<std::time::Instant>,
+        sun_follow: bool,
     }
 
     impl NativeApp {
@@ -12216,6 +12217,7 @@ mod mathematikerin {
                 frame_count: 0,
                 frame_ms_max: 0.0,
                 last_hud: None,
+                sun_follow: true,
             }
         }
 
@@ -12275,6 +12277,7 @@ mod mathematikerin {
                     self.p = [0.0, 0.0, 0.0];
                     self.v = [0.0, 0.0, 0.0];
                     self.t0 = self.t_presence;
+                    self.sun_follow = true;
                     self.consider_resend();
                 }
                 KeyCode::KeyB => {
@@ -12327,6 +12330,7 @@ mod mathematikerin {
             self.v = [0.0, 0.0, 0.0];
             self.t0 = self.t_presence;
             self.grid_step = JUMP_GRID;
+            self.sun_follow = false;
             self.consider_resend();
         }
 
@@ -13255,6 +13259,25 @@ mod mathematikerin {
                 self.p[1] -= fu[1] * pan_speed;
                 self.p[2] -= fu[2] * pan_speed;
             }
+            let panning = self.keys.contains(&KeyCode::ArrowRight)
+                || self.keys.contains(&KeyCode::ArrowLeft)
+                || self.keys.contains(&KeyCode::ArrowUp)
+                || self.keys.contains(&KeyCode::ArrowDown)
+                || self.keys.contains(&KeyCode::PageUp)
+                || self.keys.contains(&KeyCode::PageDown);
+            if panning {
+                self.sun_follow = false;
+            }
+            if self.sun_follow {
+                if let Some(field) = self.latest_field.clone() {
+                    let eph = field.eph.clone();
+                    if let Some(pos) = body_barycenter_position("sun", self.t_presence, &eph) {
+                        self.p = pos;
+                        self.v = [0.0, 0.0, 0.0];
+                        self.t0 = self.t_presence;
+                    }
+                }
+            }
             if let Ok(field) = self.rx.try_recv() {
                 self.latest_field = Some(field);
                 self.sense();
@@ -13408,6 +13431,7 @@ mod mathematikerin {
                                     fr[1] * dx * self.grid_step - fu[1] * dy * self.grid_step;
                                 self.p[2] -=
                                     fr[2] * dx * self.grid_step - fu[2] * dy * self.grid_step;
+                                self.sun_follow = false;
                                 self.consider_resend();
                             }
                             _ => {}
