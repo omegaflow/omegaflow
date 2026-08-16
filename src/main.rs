@@ -47,6 +47,34 @@ struct VOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f };
     return out;
 }
 
+@group(0) @binding(0) var membrane_tex: texture_2d<f32>;
+@group(0) @binding(1) var membrane_sampler: sampler;
+
+struct CompOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f };
+
+@vertex fn comp_vs(@builtin(vertex_index) i: u32) -> CompOut {
+    var p = array<vec2f, 6>(
+        vec2f(-1.0, -1.0), vec2f(1.0, -1.0), vec2f(1.0, 1.0),
+        vec2f(-1.0, -1.0), vec2f(1.0, 1.0), vec2f(-1.0, 1.0)
+    );
+    var out: CompOut;
+    out.pos = vec4f(p[i], 0.0, 1.0);
+    out.uv = vec2f(p[i].x * 0.5 + 0.5, 0.5 - p[i].y * 0.5);
+    return out;
+}
+
+@fragment fn comp_fs(in: CompOut) -> @location(0) vec4f {
+    let px = in.pos.x;
+    let py = in.pos.y;
+    let tw = f32(textureDimensions(membrane_tex).x);
+    let th = f32(textureDimensions(membrane_tex).y);
+    let v = (py + 0.5) / th;
+    let r = textureSample(membrane_tex, membrane_sampler, vec2f((3.0 * px + 0.5) / tw, v)).r;
+    let g = textureSample(membrane_tex, membrane_sampler, vec2f((3.0 * px + 1.5) / tw, v)).g;
+    let b = textureSample(membrane_tex, membrane_sampler, vec2f((3.0 * px + 2.5) / tw, v)).b;
+    return vec4f(r, g, b, 1.0);
+}
+
 @group(0) @binding(0) var<uniform> deep_vp: VP;
 @group(0) @binding(1) var<storage, read> deep_pt: array<vec4f>;
 @group(0) @binding(2) var<storage, read> deep_ex: array<vec4f>;
@@ -66,8 +94,8 @@ struct DeepPtVOut { @builtin(position) pos: vec4f, @location(0) @interpolate(fla
         vec2f(-1.0, -1.0), vec2f(1.0, 1.0), vec2f(-1.0, 1.0)
     );
     let data = deep_pt[id];
-    let w = deep_vp.surface.x;
-    let h = deep_vp.surface.y;
+    let w = deep_vp.expose_lo.z;
+    let h = deep_vp.expose_lo.w;
     let scale = deep_vp.surface.w;
     let sx = dot(data.xyz, deep_vp.right.xyz) / (0.5 * w * scale);
     let sy = -dot(data.xyz, deep_vp.up.xyz) / (0.5 * h * scale);
@@ -126,8 +154,8 @@ fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
     );
     let data = deep_ex[id * 2u];
     let props_in = deep_ex[id * 2u + 1u];
-    let w = deep_vp.surface.x;
-    let h = deep_vp.surface.y;
+    let w = deep_vp.expose_lo.z;
+    let h = deep_vp.expose_lo.w;
     let scale = deep_vp.surface.w;
     let sx = dot(data.xyz, deep_vp.right.xyz) / (0.5 * w * scale);
     let sy = -dot(data.xyz, deep_vp.up.xyz) / (0.5 * h * scale);
@@ -270,8 +298,11 @@ fn presence_probe() {
     let w = vp.surface.x;
     let h = vp.surface.y;
     let scale = vp.surface.w;
-    let pixel_rel = (in.uv.x - 0.5) * w * scale * vp.right.xyz
-        + (0.5 - in.uv.y) * h * scale * vp.up.xyz;
+    let px = in.pos.x;
+    let py = in.pos.y;
+    let cx = px + 0.5 - w * 0.5;
+    let cy = h * 0.5 - (py + 0.5);
+    let pixel_rel = cx * scale * vp.right.xyz + cy * scale * vp.up.xyz;
 
     var o0 = 0.0;
     var o1 = 0.0;
@@ -12027,6 +12058,12 @@ mod mathematikerin {
         device: Option<wgpu::Device>,
         queue: Option<wgpu::Queue>,
         render_pipe: Option<wgpu::RenderPipeline>,
+        comp_pipe: Option<wgpu::RenderPipeline>,
+        comp_bind: Option<wgpu::BindGroup>,
+        comp_layout: Option<wgpu::BindGroupLayout>,
+        membrane_tex: Option<wgpu::Texture>,
+        membrane_view: Option<wgpu::TextureView>,
+        membrane_sampler: Option<wgpu::Sampler>,
         probe_pipe: Option<wgpu::ComputePipeline>,
         probe_layout: Option<wgpu::BindGroupLayout>,
         render_layout: Option<wgpu::BindGroupLayout>,
@@ -12113,6 +12150,12 @@ mod mathematikerin {
                 device: None,
                 queue: None,
                 render_pipe: None,
+                comp_pipe: None,
+                comp_bind: None,
+                comp_layout: None,
+                membrane_tex: None,
+                membrane_view: None,
+                membrane_sampler: None,
                 probe_pipe: None,
                 probe_layout: None,
                 render_layout: None,
@@ -12313,13 +12356,62 @@ mod mathematikerin {
             surface.configure(device, &config);
             self.config = Some(config);
             self.backing = (w.max(1), h.max(1));
+            self.membrane_tex = Some(device.create_texture(&wgpu::TextureDescriptor {
+                label: None,
+                size: wgpu::Extent3d {
+                    width: self.backing.0 * 3,
+                    height: self.backing.1,
+                    depth_or_array_layers: 1,
+                },
+                mip_level_count: 1,
+                sample_count: 1,
+                dimension: wgpu::TextureDimension::D2,
+                format: wgpu::TextureFormat::Rgba32Float,
+                usage: wgpu::TextureUsages::RENDER_ATTACHMENT
+                    | wgpu::TextureUsages::TEXTURE_BINDING,
+                view_formats: &[],
+            }));
+            self.membrane_view = self
+                .membrane_tex
+                .as_ref()
+                .map(|t| t.create_view(&wgpu::TextureViewDescriptor::default()));
+            self.rebuild_comp_bind();
+        }
+
+        fn rebuild_comp_bind(&mut self) {
+            let Some(device) = self.device.clone() else {
+                return;
+            };
+            let Some(comp_layout) = self.comp_layout.clone() else {
+                return;
+            };
+            let Some(membrane_view) = self.membrane_view.clone() else {
+                return;
+            };
+            let Some(membrane_sampler) = self.membrane_sampler.clone() else {
+                return;
+            };
+            self.comp_bind = Some(device.create_bind_group(&wgpu::BindGroupDescriptor {
+                label: None,
+                layout: &comp_layout,
+                entries: &[
+                    wgpu::BindGroupEntry {
+                        binding: 0,
+                        resource: wgpu::BindingResource::TextureView(&membrane_view),
+                    },
+                    wgpu::BindGroupEntry {
+                        binding: 1,
+                        resource: wgpu::BindingResource::Sampler(&membrane_sampler),
+                    },
+                ],
+            }));
         }
 
         fn vp_data(&self) -> [f32; 32] {
             let (fr, fu, ff) = self.frame();
             let [x, y, z] = self.pos();
             [
-                self.backing.0 as f32,
+                self.backing.0 as f32 * 3.0,
                 self.backing.1 as f32,
                 self.packed_count as f32,
                 self.grid_step as f32,
@@ -12341,8 +12433,8 @@ mod mathematikerin {
                 0.0,
                 self.deep_pt_count as f32,
                 self.deep_ex_count as f32,
-                0.0,
-                0.0,
+                self.backing.0 as f32,
+                self.backing.1 as f32,
                 self.exposure,
                 self.last_response_epoch as f32,
                 0.0,
@@ -12620,6 +12712,29 @@ mod mathematikerin {
                     pass.dispatch_workgroups(1, 1, 1);
                 }
             }
+            if let Some(mem_view) = self.membrane_view.as_ref() {
+                let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+                    label: None,
+                    color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+                        view: mem_view,
+                        resolve_target: None,
+                        ops: wgpu::Operations {
+                            load: wgpu::LoadOp::Clear(wgpu::Color::BLACK),
+                            store: wgpu::StoreOp::Store,
+                        },
+                    })],
+                    depth_stencil_attachment: None,
+                    occlusion_query_set: None,
+                    timestamp_writes: None,
+                });
+                if let (Some(pipe), Some(bind)) =
+                    (self.render_pipe.as_ref(), self.render_bind.as_ref())
+                {
+                    pass.set_pipeline(pipe);
+                    pass.set_bind_group(0, bind, &[]);
+                    pass.draw(0..6, 0..1);
+                }
+            }
             {
                 let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                     label: None,
@@ -12635,8 +12750,7 @@ mod mathematikerin {
                     occlusion_query_set: None,
                     timestamp_writes: None,
                 });
-                if let (Some(pipe), Some(bind)) =
-                    (self.render_pipe.as_ref(), self.render_bind.as_ref())
+                if let (Some(pipe), Some(bind)) = (self.comp_pipe.as_ref(), self.comp_bind.as_ref())
                 {
                     pass.set_pipeline(pipe);
                     pass.set_bind_group(0, bind, &[]);
@@ -12827,19 +12941,8 @@ mod mathematikerin {
                     entry_point: Some("fs"),
                     compilation_options: Default::default(),
                     targets: &[Some(wgpu::ColorTargetState {
-                        format,
-                        blend: Some(wgpu::BlendState {
-                            color: wgpu::BlendComponent {
-                                src_factor: wgpu::BlendFactor::One,
-                                dst_factor: wgpu::BlendFactor::One,
-                                operation: wgpu::BlendOperation::Add,
-                            },
-                            alpha: wgpu::BlendComponent {
-                                src_factor: wgpu::BlendFactor::One,
-                                dst_factor: wgpu::BlendFactor::One,
-                                operation: wgpu::BlendOperation::Add,
-                            },
-                        }),
+                        format: wgpu::TextureFormat::Rgba32Float,
+                        blend: None,
                         write_mask: wgpu::ColorWrites::ALL,
                     })],
                 }),
@@ -12859,6 +12962,70 @@ mod mathematikerin {
                 entry_point: Some("presence_probe"),
                 compilation_options: Default::default(),
                 cache: None,
+            });
+            let comp_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+                label: None,
+                entries: &[
+                    wgpu::BindGroupLayoutEntry {
+                        binding: 0,
+                        visibility: wgpu::ShaderStages::FRAGMENT,
+                        ty: wgpu::BindingType::Texture {
+                            sample_type: wgpu::TextureSampleType::Float { filterable: false },
+                            view_dimension: wgpu::TextureViewDimension::D2,
+                            multisampled: false,
+                        },
+                        count: None,
+                    },
+                    wgpu::BindGroupLayoutEntry {
+                        binding: 1,
+                        visibility: wgpu::ShaderStages::FRAGMENT,
+                        ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::NonFiltering),
+                        count: None,
+                    },
+                ],
+            });
+            let comp_pipe_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+                label: None,
+                bind_group_layouts: &[&comp_layout],
+                push_constant_ranges: &[],
+            });
+            let comp_pipe = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+                label: None,
+                layout: Some(&comp_pipe_layout),
+                vertex: wgpu::VertexState {
+                    module: &module,
+                    entry_point: Some("comp_vs"),
+                    compilation_options: Default::default(),
+                    buffers: &[],
+                },
+                fragment: Some(wgpu::FragmentState {
+                    module: &module,
+                    entry_point: Some("comp_fs"),
+                    compilation_options: Default::default(),
+                    targets: &[Some(wgpu::ColorTargetState {
+                        format,
+                        blend: None,
+                        write_mask: wgpu::ColorWrites::ALL,
+                    })],
+                }),
+                primitive: wgpu::PrimitiveState {
+                    topology: wgpu::PrimitiveTopology::TriangleList,
+                    ..Default::default()
+                },
+                depth_stencil: None,
+                multisample: wgpu::MultisampleState::default(),
+                multiview: None,
+                cache: None,
+            });
+            let membrane_sampler = device.create_sampler(&wgpu::SamplerDescriptor {
+                label: None,
+                address_mode_u: wgpu::AddressMode::ClampToEdge,
+                address_mode_v: wgpu::AddressMode::ClampToEdge,
+                address_mode_w: wgpu::AddressMode::ClampToEdge,
+                mag_filter: wgpu::FilterMode::Nearest,
+                min_filter: wgpu::FilterMode::Nearest,
+                mipmap_filter: wgpu::FilterMode::Nearest,
+                ..Default::default()
             });
             let deep_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
                 label: None,
@@ -13004,6 +13171,9 @@ mod mathematikerin {
             self.device = Some(device);
             self.queue = Some(queue);
             self.render_pipe = Some(render_pipe);
+            self.comp_pipe = Some(comp_pipe);
+            self.comp_layout = Some(comp_layout);
+            self.membrane_sampler = Some(membrane_sampler);
             self.probe_pipe = Some(probe_pipe);
             self.probe_layout = Some(probe_layout);
             self.render_layout = Some(render_layout);
