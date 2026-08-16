@@ -11,9 +11,11 @@ default-run = "omegaflow"
 
 [features]
 browser_relay = []
+gamepad = ["dep:gilrs"]
 
 [dependencies]
 wgpu = "24"
 winit = "0.30"
 pollster = "0.4"
 serialport = { version = "4", default-features = false }
+gilrs = { version = "0.11", optional = true }

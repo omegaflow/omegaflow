@@ -12462,7 +12462,7 @@ mod mathematikerin {
     use std::thread;
 
     use winit::application::ApplicationHandler;
-    use winit::event::{ElementState, MouseButton, MouseScrollDelta, WindowEvent};
+    use winit::event::{ElementState, MouseButton, MouseScrollDelta, TouchPhase, WindowEvent};
     use winit::event_loop::{ActiveEventLoop, ControlFlow, EventLoopBuilder};
     use winit::keyboard::{KeyCode, PhysicalKey};
     use winit::platform::wayland::EventLoopBuilderExtWayland;
@@ -12478,6 +12478,9 @@ mod mathematikerin {
     const FIELD_BACKING_SCALE: f64 = 1.0;
     const EMA_FACTOR: f64 = 0.05;
     const THRUST_STEP: f64 = 64.0;
+    const JUMP_BODIES: [&str; 9] = [
+        "sun", "mercury", "venus", "earth", "mars", "jupiter", "saturn", "uranus", "neptune",
+    ];
 
     pub type Record = (
         f64,
@@ -12825,10 +12828,16 @@ mod mathematikerin {
         exposure: f32,
         t_thrust: f64,
         t_thrust_target: f64,
+        t_frozen: bool,
         keys: HashSet<KeyCode>,
         shift: bool,
         cursor: Option<(f64, f64)>,
         drag_button: Option<MouseButton>,
+        touches: HashMap<u64, (f64, f64)>,
+        tap: Option<(std::time::Instant, (f64, f64))>,
+        press: Option<(std::time::Instant, u64, (f64, f64))>,
+        #[cfg(feature = "gamepad")]
+        gilrs: Option<gilrs::Gilrs>,
         last_tick: Option<std::time::Instant>,
         stable_tick: f64,
         size: (u32, u32),
@@ -12908,10 +12917,16 @@ mod mathematikerin {
                 exposure: 0.0,
                 t_thrust: 0.0,
                 t_thrust_target: 0.0,
+                t_frozen: false,
                 keys: HashSet::new(),
                 shift: false,
                 cursor: None,
                 drag_button: None,
+                touches: HashMap::new(),
+                tap: None,
+                press: None,
+                #[cfg(feature = "gamepad")]
+                gilrs: gilrs::GilrsBuilder::new().build().ok(),
                 last_tick: None,
                 stable_tick: 0.0,
                 size: (1280, 800),
@@ -12943,6 +12958,11 @@ mod mathematikerin {
                 q_rotate(self.q, [0.0, 1.0, 0.0]),
                 q_rotate(self.q, [0.0, 0.0, 1.0]),
             )
+        }
+
+        fn fold(&mut self) {
+            self.p = self.pos();
+            self.t0 = self.t_presence;
         }
 
         fn sense(&mut self) {
@@ -12981,10 +13001,18 @@ mod mathematikerin {
         fn key_action(&mut self, code: KeyCode) {
             match code {
                 KeyCode::KeyS => {
+                    self.fold();
+                    self.v = [0.0, 0.0, 0.0];
+                    self.consider_resend();
+                }
+                KeyCode::Home | KeyCode::Digit0 => {
                     self.p = [0.0, 0.0, 0.0];
                     self.v = [0.0, 0.0, 0.0];
                     self.t0 = self.t_presence;
                     self.consider_resend();
+                }
+                KeyCode::Space => {
+                    self.t_frozen = !self.t_frozen;
                 }
                 KeyCode::KeyB => {
                     self.q = [1.0, 0.0, 0.0, 0.0];
@@ -13022,10 +13050,13 @@ mod mathematikerin {
         }
 
         fn jump(&mut self, idx: usize) {
-            let Some(name) = self.body_names.get(idx) else {
+            let Some(target) = JUMP_BODIES.get(idx) else {
                 return;
             };
             let Some(field) = self.latest_field.clone() else {
+                return;
+            };
+            let Some(name) = self.body_names.iter().find(|n| n.as_str() == *target) else {
                 return;
             };
             let eph = field.eph.clone();
@@ -13813,38 +13844,181 @@ mod mathematikerin {
             }
             self.t_thrust += (self.t_thrust_target - self.t_thrust)
                 * (1.0 - (-raw / self.stable_tick.max(raw)).exp());
-            self.t_presence += (1.0 + self.t_thrust) * raw / 1000.0;
-            let pan_speed = self.grid_step * if self.shift { 4.0 } else { 1.0 } * raw / 1000.0;
+            if !self.t_frozen {
+                self.t_presence += (1.0 + self.t_thrust) * raw / 1000.0;
+            }
             let (fr, fu, ff) = self.frame();
+            let thrust_speed = self.grid_step * raw / 1000.0;
+            let pan_speed = self.grid_step * if self.shift { 4.0 } else { 1.0 } * raw / 1000.0;
+            let mut thrust = [0.0f64; 3];
+            let mut pan = [0.0f64; 3];
             if self.keys.contains(&KeyCode::ArrowRight) {
-                self.p[0] += fr[0] * pan_speed;
-                self.p[1] += fr[1] * pan_speed;
-                self.p[2] += fr[2] * pan_speed;
+                if self.shift {
+                    for i in 0..3 {
+                        pan[i] += fr[i];
+                    }
+                } else {
+                    for i in 0..3 {
+                        thrust[i] += fr[i];
+                    }
+                }
             }
             if self.keys.contains(&KeyCode::ArrowLeft) {
-                self.p[0] -= fr[0] * pan_speed;
-                self.p[1] -= fr[1] * pan_speed;
-                self.p[2] -= fr[2] * pan_speed;
+                if self.shift {
+                    for i in 0..3 {
+                        pan[i] -= fr[i];
+                    }
+                } else {
+                    for i in 0..3 {
+                        thrust[i] -= fr[i];
+                    }
+                }
             }
             if self.keys.contains(&KeyCode::ArrowUp) {
-                self.p[0] += ff[0] * pan_speed;
-                self.p[1] += ff[1] * pan_speed;
-                self.p[2] += ff[2] * pan_speed;
+                if self.shift {
+                    for i in 0..3 {
+                        pan[i] += ff[i];
+                    }
+                } else {
+                    for i in 0..3 {
+                        thrust[i] += ff[i];
+                    }
+                }
             }
             if self.keys.contains(&KeyCode::ArrowDown) {
-                self.p[0] -= ff[0] * pan_speed;
-                self.p[1] -= ff[1] * pan_speed;
-                self.p[2] -= ff[2] * pan_speed;
+                if self.shift {
+                    for i in 0..3 {
+                        pan[i] -= ff[i];
+                    }
+                } else {
+                    for i in 0..3 {
+                        thrust[i] -= ff[i];
+                    }
+                }
             }
             if self.keys.contains(&KeyCode::PageUp) {
-                self.p[0] += fu[0] * pan_speed;
-                self.p[1] += fu[1] * pan_speed;
-                self.p[2] += fu[2] * pan_speed;
+                for i in 0..3 {
+                    pan[i] += fu[i];
+                }
             }
             if self.keys.contains(&KeyCode::PageDown) {
-                self.p[0] -= fu[0] * pan_speed;
-                self.p[1] -= fu[1] * pan_speed;
-                self.p[2] -= fu[2] * pan_speed;
+                for i in 0..3 {
+                    pan[i] -= fu[i];
+                }
+            }
+            if thrust != [0.0, 0.0, 0.0] {
+                self.fold();
+                for i in 0..3 {
+                    self.v[i] += thrust[i] * thrust_speed;
+                }
+                self.consider_resend();
+            }
+            if pan != [0.0, 0.0, 0.0] {
+                for i in 0..3 {
+                    self.p[i] += pan[i] * pan_speed;
+                }
+                self.consider_resend();
+            }
+            if self.v != [0.0, 0.0, 0.0] {
+                self.consider_resend();
+            }
+            #[cfg(feature = "gamepad")]
+            {
+                let mut gilrs_state = self.gilrs.take();
+                if let Some(gilrs) = gilrs_state.as_mut() {
+                    while let Some(ev) = gilrs.next_event() {
+                        if let gilrs::EventType::ButtonPressed(button, _) = ev.event {
+                            match button {
+                                gilrs::Button::South => {
+                                    self.fold();
+                                    self.v = [0.0, 0.0, 0.0];
+                                }
+                                gilrs::Button::East => self.jump(0),
+                                gilrs::Button::North => {
+                                    self.p = [0.0, 0.0, 0.0];
+                                    self.v = [0.0, 0.0, 0.0];
+                                    self.t0 = self.t_presence;
+                                }
+                                gilrs::Button::West => self.t_frozen = !self.t_frozen,
+                                gilrs::Button::Start => {
+                                    self.shutdown.store(true, Ordering::SeqCst);
+                                }
+                                _ => {}
+                            }
+                        }
+                    }
+                    if let Some((_, gp)) = gilrs.gamepads().next() {
+                        let rx = gp.value(gilrs::Axis::LeftStickX);
+                        let ry = gp.value(gilrs::Axis::LeftStickY);
+                        let lx = gp.value(gilrs::Axis::RightStickX);
+                        let ly = gp.value(gilrs::Axis::RightStickY);
+                        let l2 = gp.value(gilrs::Axis::LeftZ);
+                        let r2 = gp.value(gilrs::Axis::RightZ);
+                        let roll = if gp.is_pressed(gilrs::Button::LeftTrigger) {
+                            -1.0
+                        } else if gp.is_pressed(gilrs::Button::RightTrigger) {
+                            1.0
+                        } else {
+                            0.0
+                        };
+                        let (fr, fu, ff) = self.frame();
+                        let rot = self.grid_step * raw / 1000.0 / GRID_TO_ANGLE;
+                        if rx.abs() > 0.15 {
+                            self.q = q_norm(q_mul(q_axis_angle(fu, rx as f64 * rot), self.q));
+                        }
+                        if ry.abs() > 0.15 {
+                            self.q = q_norm(q_mul(q_axis_angle(fr, ry as f64 * rot), self.q));
+                        }
+                        if roll != 0.0 {
+                            self.q = q_norm(q_mul(q_axis_angle(ff, roll * rot), self.q));
+                        }
+                        let pan_sp = self.grid_step * raw / 1000.0;
+                        if lx.abs() > 0.15 || ly.abs() > 0.15 {
+                            self.p[0] += fr[0] * lx as f64 * pan_sp + fu[0] * ly as f64 * pan_sp;
+                            self.p[1] += fr[1] * lx as f64 * pan_sp + fu[1] * ly as f64 * pan_sp;
+                            self.p[2] += fr[2] * lx as f64 * pan_sp + fu[2] * ly as f64 * pan_sp;
+                            self.consider_resend();
+                        }
+                        if l2 > 0.2 {
+                            self.grid_step *= 1.0 + l2 as f64 * raw / 1000.0;
+                            self.consider_resend();
+                        }
+                        if r2 > 0.2 {
+                            self.grid_step /= 1.0 + r2 as f64 * raw / 1000.0;
+                            self.consider_resend();
+                        }
+                        let thrust_sp = self.grid_step * raw / 1000.0;
+                        let mut thrust = [0.0f64; 3];
+                        if gp.is_pressed(gilrs::Button::DPadUp) {
+                            thrust[0] += ff[0];
+                            thrust[1] += ff[1];
+                            thrust[2] += ff[2];
+                        }
+                        if gp.is_pressed(gilrs::Button::DPadDown) {
+                            thrust[0] -= ff[0];
+                            thrust[1] -= ff[1];
+                            thrust[2] -= ff[2];
+                        }
+                        if gp.is_pressed(gilrs::Button::DPadRight) {
+                            thrust[0] += fr[0];
+                            thrust[1] += fr[1];
+                            thrust[2] += fr[2];
+                        }
+                        if gp.is_pressed(gilrs::Button::DPadLeft) {
+                            thrust[0] -= fr[0];
+                            thrust[1] -= fr[1];
+                            thrust[2] -= fr[2];
+                        }
+                        if thrust != [0.0, 0.0, 0.0] {
+                            self.fold();
+                            self.v[0] += thrust[0] * thrust_sp;
+                            self.v[1] += thrust[1] * thrust_sp;
+                            self.v[2] += thrust[2] * thrust_sp;
+                            self.consider_resend();
+                        }
+                    }
+                }
+                self.gilrs = gilrs_state;
             }
             if let Ok(field) = self.rx.try_recv() {
                 self.latest_field = Some(field);
@@ -13957,6 +14131,10 @@ mod mathematikerin {
                 }
                 WindowEvent::KeyboardInput { event, .. } => {
                     if let PhysicalKey::Code(code) = event.physical_key {
+                        if code == KeyCode::Escape && event.state == ElementState::Pressed {
+                            event_loop.exit();
+                            return;
+                        }
                         match event.state {
                             ElementState::Pressed => {
                                 if !self.keys.contains(&code) {
@@ -13980,7 +14158,7 @@ mod mathematikerin {
                     if let Some((lx, ly)) = self.cursor {
                         let dx = px - lx;
                         let dy = py - ly;
-                        let (fr, fu, _) = self.frame();
+                        let (fr, fu, ff) = self.frame();
                         match self.drag_button {
                             Some(MouseButton::Left) => {
                                 if dx != 0.0 {
@@ -13992,6 +14170,14 @@ mod mathematikerin {
                                 if dy != 0.0 {
                                     self.q = q_norm(q_mul(
                                         q_axis_angle(fr, dy * self.grid_step / GRID_TO_ANGLE),
+                                        self.q,
+                                    ));
+                                }
+                            }
+                            Some(MouseButton::Middle) => {
+                                if dx != 0.0 {
+                                    self.q = q_norm(q_mul(
+                                        q_axis_angle(ff, dx * self.grid_step / GRID_TO_ANGLE),
                                         self.q,
                                     ));
                                 }
@@ -14039,6 +14225,116 @@ mod mathematikerin {
                     if delta != 0.0 {
                         self.grid_step /= 2f64.powf(delta / 512.0);
                         self.consider_resend();
+                    }
+                }
+                WindowEvent::Touch(touch) => {
+                    let pos = touch.location.to_logical::<f64>(self.scale_factor);
+                    let p = (pos.x, pos.y);
+                    let id = touch.id;
+                    match touch.phase {
+                        TouchPhase::Started => {
+                            if self.touches.is_empty() {
+                                self.press = Some((std::time::Instant::now(), id, p));
+                            }
+                            self.touches.insert(id, p);
+                        }
+                        TouchPhase::Moved => {
+                            if let Some(prev) = self.touches.insert(id, p) {
+                                let dx = p.0 - prev.0;
+                                let dy = p.1 - prev.1;
+                                let (fr, fu, ff) = self.frame();
+                                if self.touches.len() == 1 {
+                                    if dx != 0.0 {
+                                        self.q = q_norm(q_mul(
+                                            q_axis_angle(fu, dx * self.grid_step / GRID_TO_ANGLE),
+                                            self.q,
+                                        ));
+                                    }
+                                    if dy != 0.0 {
+                                        self.q = q_norm(q_mul(
+                                            q_axis_angle(fr, dy * self.grid_step / GRID_TO_ANGLE),
+                                            self.q,
+                                        ));
+                                    }
+                                } else if self.touches.len() == 2 {
+                                    if let Some(o) = self
+                                        .touches
+                                        .iter()
+                                        .find(|(k, _)| **k != id)
+                                        .map(|(_, v)| *v)
+                                    {
+                                        let (cx0, cy0) =
+                                            ((prev.0 + o.0) / 2.0, (prev.1 + o.1) / 2.0);
+                                        let (cx1, cy1) = ((p.0 + o.0) / 2.0, (p.1 + o.1) / 2.0);
+                                        let d0 = ((prev.0 - o.0).powi(2) + (prev.1 - o.1).powi(2))
+                                            .sqrt()
+                                            .max(1.0);
+                                        let d1 = ((p.0 - o.0).powi(2) + (p.1 - o.1).powi(2))
+                                            .sqrt()
+                                            .max(1.0);
+                                        let mdx = cx1 - cx0;
+                                        let mdy = cy1 - cy0;
+                                        self.p[0] -= fr[0] * mdx * self.grid_step
+                                            - fu[0] * mdy * self.grid_step;
+                                        self.p[1] -= fr[1] * mdx * self.grid_step
+                                            - fu[1] * mdy * self.grid_step;
+                                        self.p[2] -= fr[2] * mdx * self.grid_step
+                                            - fu[2] * mdy * self.grid_step;
+                                        self.grid_step /= d1 / d0;
+                                        let a0 = (prev.1 - o.1).atan2(prev.0 - o.0);
+                                        let a1 = (p.1 - o.1).atan2(p.0 - o.0);
+                                        if (a1 - a0).abs() > 1e-6 {
+                                            self.q =
+                                                q_norm(q_mul(q_axis_angle(ff, a1 - a0), self.q));
+                                        }
+                                        self.consider_resend();
+                                    }
+                                }
+                                if let Some((t0, pid, sp)) = self.press {
+                                    if pid == id && (p.0 - sp.0).abs() + (p.1 - sp.1).abs() > 12.0 {
+                                        self.press = None;
+                                    } else if t0.elapsed() > std::time::Duration::from_millis(600) {
+                                        self.t_frozen = !self.t_frozen;
+                                        self.press = None;
+                                    }
+                                }
+                            }
+                        }
+                        TouchPhase::Ended | TouchPhase::Cancelled => {
+                            self.touches.remove(&id);
+                            if let Some((t0, pid, sp)) = self.press {
+                                if pid == id {
+                                    let elapsed = t0.elapsed();
+                                    let still = (p.0 - sp.0).abs() + (p.1 - sp.1).abs() < 12.0;
+                                    if still && elapsed < std::time::Duration::from_millis(300) {
+                                        let now = std::time::Instant::now();
+                                        let double = self
+                                            .tap
+                                            .map(|(last, lp)| {
+                                                now.duration_since(last)
+                                                    < std::time::Duration::from_millis(300)
+                                                    && (p.0 - lp.0).abs() + (p.1 - lp.1).abs()
+                                                        < 24.0
+                                            })
+                                            .unwrap_or(false);
+                                        if double {
+                                            self.p = [0.0, 0.0, 0.0];
+                                            self.v = [0.0, 0.0, 0.0];
+                                            self.t0 = self.t_presence;
+                                            self.consider_resend();
+                                            self.tap = None;
+                                        } else {
+                                            self.tap = Some((now, p));
+                                        }
+                                    } else if still
+                                        && elapsed >= std::time::Duration::from_millis(600)
+                                    {
+                                        self.t_frozen = !self.t_frozen;
+                                    }
+                                }
+                                self.press = None;
+                            }
+                        }
                     }
                 }
                 WindowEvent::RedrawRequested => self.render(),
