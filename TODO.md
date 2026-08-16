@@ -87,6 +87,36 @@ Offen:
 
 ---
 
+### wgpu-mono — Deep-Sky-Plenum (zwei Regime, eine Wahrheit)
+
+Offen:
+- Stern-Pfad trennen: Fixsterne und ferne Quellen (Tycho/Gaia, TNS, ALFALFA,
+  TeVCat, Quasare) wandern aus dem Membran-Record-Array in einen eigenen
+  Punkt-Buffer (exakte ICRS-Position + Fluss — keine Propagation, keine
+  Kernel, keine Faltung; Position ist die Wahrheit: eine Punktquelle ohne
+  Ausdehnung hat ihr Bild an ihrem Ort, der Kernel ist an ihrem eigenen
+  Pixel die Identität)
+- Deep-Sky-Render (Compute, O(Quellen im Fenster), 1 Thread pro Objekt):
+  Projektion auf die Presence-Fläche (dieselben fr/fu/ff wie die Membran),
+  Nebra-Rampe auf den Fluss; Punktquellen = 1 Pixel; Quellen mit scheinbarer
+  Ausdehnung (Magellansche Wolken, nahe Nebel) = projiziertes Splat-Quad
+  ihrer gemessenen Form
+- Membran misst nur noch die dynamischen Kräfte (Körper, Monde, Asteroiden,
+  Sonden, Stationen) — deren 1/d²-Gradient auf dem Fenster sichtbar ist;
+  das Sonnensystem ist das Regime, in dem wir uns DURCH das Feld bewegen
+- Regime-Kriterium: tybbasiert (statische Quelle vs. dynamische Kraft) —
+  kein Umschaltpunkt nach Schwellenwert, kein Zoom-Schalter
+- Die Physik der zwei Regime: nah = Membran misst die Superposition;
+  fern = parallel einfallendes Licht, das Fenster PROJIZIERT (ein Teleskop);
+  4 Billionen „der Wert ist 0"-Rechnungen entfallen
+- Sternenhintergrund (integrierter Glow der 1/d²-Schwänze aller Sterne,
+  Milchstraße) als eigener Folge-Atom: einmalige tiefaufgelöste Integration,
+  glattes Feld, keine Per-Pixel-Arbeit
+- Galaxien-Zoom wird damit erstmals möglich: der Nachthimmel ist die
+  Punktwolke
+
+---
+
 ### wgpu-mono — Titan: eine Datei
 
 ```
