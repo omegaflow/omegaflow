@@ -7885,7 +7885,12 @@ fn probe_one(
         }
         if let Some(ref mp) = map_path {
             if !coords.is_empty() {
-                block.push_str(&format!("map {}\n", mp));
+                let container = if coords.contains("ra ") || coords.contains("dec ") {
+                    "cmap"
+                } else {
+                    "map"
+                };
+                block.push_str(&format!("{} {}\n", container, mp));
             }
         }
         if !coords.is_empty() {
@@ -8304,8 +8309,6 @@ fn is_drop_key(key: &str) -> bool {
         || kl == "noaa_scale"
         || kl == "class"
         || kl == "classtype"
-        || kl == "ra"
-        || kl == "dec"
         || kl == "sample_size"
         || kl.ends_with("_size")
 }
@@ -8322,6 +8325,10 @@ fn is_coord_key(key: &str) -> bool {
         || kl == "depth"
         || kl == "solar_lat"
         || kl == "solar_lon"
+        || kl == "ra"
+        || kl == "dec"
+        || kl.contains("raj2000")
+        || kl.contains("dej2000")
 }
 
 fn probe_csv(raw: &str) -> Option<String> {
@@ -8711,6 +8718,10 @@ fn coord_directive(key: &str) -> &'static str {
     let kl = key.to_lowercase();
     if kl == "altitude" || kl == "alt" || kl.contains("depth") {
         "alt"
+    } else if kl == "ra" || kl.contains("raj2000") {
+        "ra"
+    } else if kl == "dec" || kl.contains("dej2000") {
+        "dec"
     } else if kl.contains("lon") || kl == "lng" {
         "lon"
     } else {
@@ -9112,6 +9123,8 @@ fn derive_frame(parsed: &JsonVal, coords: &str) -> (String, String) {
             "on earth 0 0\n".to_string(),
             "geographic coords".to_string(),
         )
+    } else if coords.contains("ra ") || coords.contains("dec ") {
+        ("at sun\n".to_string(), "celestial coords".to_string())
     } else if json_has_key_ci(parsed, "ra") && json_has_key_ci(parsed, "dec") {
         ("at sun\n".to_string(), "celestial ra/dec".to_string())
     } else {
@@ -9181,7 +9194,13 @@ fn draft_url_mode(path: &str, env: &HashMap<String, String>, fetchone: bool) -> 
                         block.push_str(&frame);
                         if let Some(ref mp) = map_path {
                             if !coords.is_empty() {
-                                block.push_str(&format!("map {}\n", mp));
+                                let container = if coords.contains("ra ") || coords.contains("dec ")
+                                {
+                                    "cmap"
+                                } else {
+                                    "map"
+                                };
+                                block.push_str(&format!("{} {}\n", container, mp));
                             }
                         }
                         if !coords.is_empty() {
@@ -10958,6 +10977,23 @@ field temp temp_c\n";
             .any(|e| matches!(e, super::Extract::CelestialMap { .. })));
         assert!(has_field(&srcs[0]));
     }
+    #[test]
+    fn test_walk_celestial_cmap() {
+        let j =
+            super::parse_json("{\"results\":[{\"ra\":1.5,\"dec\":-2.5,\"mag\":12.3}]}").unwrap();
+        let mut fields = String::new();
+        let mut coords = String::new();
+        let mut map_path: Option<String> = None;
+        let mut budget = 48usize;
+        super::walk_json_probe(&j, "", &mut fields, &mut coords, &mut map_path, &mut budget);
+        assert!(coords.contains("ra "));
+        assert!(coords.contains("dec "));
+        assert_eq!(map_path.as_deref(), Some("results"));
+        assert!(fields.contains("field"));
+        let (frame, _) = super::derive_frame(&j, &coords);
+        assert!(frame.starts_with("at sun"));
+    }
+
     #[test]
     fn test_parse_stations_xml() {
         let xml = "<?xml version=\"1.0\" ?><GINServices>\n <ObservatoryList>\n  <Observatory>\n   <Code>AAE</Code>\n   <Name>Addis Ababa</Name>\n   <Latitude>9.035</Latitude>   <Longitude>38.770</Longitude>   <Elevation>2441</Elevation>\n  </Observatory>\n  <Observatory>\n   <Code>YKC</Code>\n   <Latitude>62.48</Latitude>   <Longitude>-114.48</Longitude>   <Elevation>181</Elevation>\n  </Observatory>\n </ObservatoryList>\n</GINServices>";
