@@ -1,5 +1,5 @@
-# library — gewichtete Tags (Ratssitzung 2026-08-15, siebte Fassung)
-# Schichten: b2find + Klassenwörter + CMR + GBIF + GCMD + SWPC/Gaia/CDAWeb/SIMBAD/ArcGIS
+# library — gewichtete Tags (Ratssitzung 2026-08-16, achte Fassung)
+# Schichten: b2find + Klassenwörter + CMR + GBIF + GCMD + SWPC/Gaia/CDAWeb/SIMBAD/ArcGIS + Harvester-Kataloge (BCO-DMO/ICOS/SEANOE/IGETS/Dryad/INRAE/LTER/CMR)
 # format: <gewicht> <force|-> <tag...>
 -8 - Arts and Humanities
 -8 - Arkeologisk minne
@@ -2359,3 +2359,17 @@
 8 em quasar
 8 em hii
 8 gravity gravitational wave
+8 gravity gravimeter
+8 gravity tide
+8 gravity geodetic
+8 thermal borehole
+8 diffusion nitrogen
+8 diffusion chlorofluorocarbons
+8 diffusion halocarbons
+8 diffusion hydrocarbon
+8 diffusion isotope
+8 diffusion isotopes
+8 diffusion redox
+8 electric redox potential
+8 em magnetotelluric
+-8 - inversion
