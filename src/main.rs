@@ -6225,6 +6225,8 @@ fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> Extra
         csv_to_json(body)
     } else if src.format == "free text" {
         text_to_json(body)
+    } else if src.format == "tap" {
+        parse_json(body).and_then(|j| tap_to_json(&j))
     } else if src.format == "json" || src.format.is_empty() || src.format == "universal" {
         parse_json(body)
     } else {
@@ -9106,6 +9108,47 @@ fn ci_mode(dir: &str) -> i32 {
     }
 }
 
+fn tap_to_json(val: &JsonVal) -> Option<JsonVal> {
+    let obj = match val {
+        JsonVal::Obj(m) => m,
+        _ => return None,
+    };
+    let metadata = match obj.get("metadata") {
+        Some(JsonVal::Arr(a)) => a,
+        _ => return None,
+    };
+    let data = match obj.get("data") {
+        Some(JsonVal::Arr(a)) => a,
+        _ => return None,
+    };
+    let mut names: Vec<String> = Vec::new();
+    for m in metadata {
+        if let JsonVal::Obj(mo) = m {
+            if let Some(JsonVal::Str(name)) = mo.get("name") {
+                names.push(name.clone());
+            }
+        }
+    }
+    if names.is_empty() {
+        return None;
+    }
+    let mut rows: Vec<JsonVal> = Vec::new();
+    for d in data {
+        if let JsonVal::Arr(row) = d {
+            let mut row_map = HashMap::new();
+            for (name, cell) in names.iter().zip(row.iter()) {
+                row_map.insert(name.clone(), cell.clone());
+            }
+            rows.push(JsonVal::Obj(row_map));
+        }
+    }
+    if rows.is_empty() {
+        None
+    } else {
+        Some(JsonVal::Arr(rows))
+    }
+}
+
 fn json_has_key_ci(val: &JsonVal, target: &str) -> bool {
     match val {
         JsonVal::Obj(map) => {
@@ -9175,12 +9218,14 @@ fn draft_url_mode(path: &str, env: &HashMap<String, String>, fetchone: bool) -> 
                 };
                 if let Some(body) = raw {
                     if let Some(parsed) = parse_json(&body) {
+                        let tap_flat = tap_to_json(&parsed);
+                        let effective = tap_flat.as_ref().unwrap_or(&parsed);
                         let mut fields = String::new();
                         let mut coords = String::new();
                         let mut map_path: Option<String> = None;
                         let mut budget = 48usize;
                         walk_json_probe(
-                            &parsed,
+                            effective,
                             "",
                             &mut fields,
                             &mut coords,
@@ -9188,9 +9233,12 @@ fn draft_url_mode(path: &str, env: &HashMap<String, String>, fetchone: bool) -> 
                             &mut budget,
                         );
                         let ttl = probe_ttl(&body).unwrap_or(86400);
-                        let (frame, reason) = derive_frame(&parsed, &coords);
+                        let (frame, reason) = derive_frame(effective, &coords);
                         let mut block = format!("url {}\n", urls[i]);
                         block.push_str(&format!("ttl {}\n", ttl));
+                        if tap_flat.is_some() {
+                            block.push_str("format tap\n");
+                        }
                         block.push_str(&frame);
                         if let Some(ref mp) = map_path {
                             if !coords.is_empty() {
@@ -10991,6 +11039,32 @@ field temp temp_c\n";
         assert_eq!(map_path.as_deref(), Some("results"));
         assert!(fields.contains("field"));
         let (frame, _) = super::derive_frame(&j, &coords);
+        assert!(frame.starts_with("at sun"));
+    }
+
+    #[test]
+    fn test_tap_to_json_rows() {
+        let j = super::parse_json(
+            "{\"metadata\":[{\"name\":\"RAJ2000\"},{\"name\":\"DEJ2000\"},{\"name\":\"Ksmag\"}],\"data\":[[1.5,-2.5,12.3],[3.0,4.0,10.1]]}",
+        )
+        .unwrap();
+        let flat = super::tap_to_json(&j).unwrap();
+        let mut fields = String::new();
+        let mut coords = String::new();
+        let mut map_path: Option<String> = None;
+        let mut budget = 48usize;
+        super::walk_json_probe(
+            &flat,
+            "",
+            &mut fields,
+            &mut coords,
+            &mut map_path,
+            &mut budget,
+        );
+        assert!(coords.contains("ra RAJ2000"));
+        assert!(coords.contains("dec DEJ2000"));
+        assert_eq!(map_path.as_deref(), Some("."));
+        let (frame, _) = super::derive_frame(&flat, &coords);
         assert!(frame.starts_with("at sun"));
     }
 
