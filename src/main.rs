@@ -11688,6 +11688,7 @@ mod mathematikerin {
         inflight: Arc<AtomicU32>,
         sensors: NativeSensors,
         frame_count: u64,
+        last_render: Option<std::time::Instant>,
         last_hud: Option<std::time::Instant>,
     }
 
@@ -11760,6 +11761,7 @@ mod mathematikerin {
                     frame_interval: 0.016,
                 },
                 frame_count: 0,
+                last_render: None,
                 last_hud: None,
             }
         }
@@ -12029,10 +12031,16 @@ mod mathematikerin {
         }
 
         fn render(&mut self) {
-            self.frame_count += 1;
             if self.inflight.load(Ordering::Relaxed) > 2 {
                 return;
             }
+            if let Some(prev) = self.last_render {
+                if prev.elapsed().as_secs_f64() < 1.0 / 60.0 {
+                    return;
+                }
+            }
+            self.last_render = Some(std::time::Instant::now());
+            self.frame_count += 1;
             let Some(device) = self.device.clone() else {
                 return;
             };
@@ -12429,8 +12437,8 @@ mod mathematikerin {
                             omega += f32::from_le_bytes(b);
                         }
                         drop(data);
-                        probe_read.unmap();
                     }
+                    probe_read.unmap();
                 }
                 let [x, y, z] = self.pos();
                 let fps = self.frame_count as f64;
