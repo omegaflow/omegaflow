@@ -6,7 +6,7 @@ wird entfernt (Git trägt es). Kein Eintrag meldet Erledigtes als offen, kein of
 Punkt fehlt. Widerspricht ein Dokument dieser Datei, gilt diese Datei — solche
 Drift-Stellen sind unter „Doku-Drift" registriert.
 
-## Stand — 2026-08-16 (Katalog-Welle: K03-Kometen inkl. dcom5-Multi-Apparitionen, K04b Gaia-DR3+Bailer-Jones 1,84 Mio Sterne, Exoplanet-Bulk 6309, tap_compiler über TAPVizieR/GAVO/ARI/IRSA/ExoArchive, Enrichment-Matrix; LSK/PCK-Hochzeit, Binary v2, Protokoll v6, reine Per-Pixel-Membran, K01 geschlossen, K05 geschlossen; wgpu-mono-Titan: EINE Datei, Kreis an der Wurzel, archivar/mathematikerin/relay als Inline-Geschwister)
+## Stand — 2026-08-16 (Katalog-Welle: K03-Kometen inkl. dcom5-Multi-Apparitionen, K04b Gaia-DR3+Bailer-Jones 1,84 Mio Sterne, Exoplanet-Bulk 6309, tap_compiler über TAPVizieR/GAVO/ARI/IRSA/ExoArchive, Enrichment-Matrix; LSK/PCK-Hochzeit, Binary v2, Protokoll v6, reine Per-Pixel-Membran, K01 geschlossen, K05 geschlossen; wgpu-mono-Titan: EINE Datei, Kreis an der Wurzel, archivar/mathematikerin/relay als Inline-Geschwister; Generation + Tiled Source Culling: Buffer = Nachricht, Zähler = Protokoll, Stille = Optimierung)
 
 Zeit aus naif0012.tls (LSK-Reader, keine TT_MINUS_UTC-Konstante). PCK-Reader pck.rs
 (gm_de440, pck00010, geophysical.ker → GM/J2/J4/Radii/POLE). stype-1 v2: gcount=12,
@@ -70,10 +70,13 @@ willkürliche Konstante, Kommentar, verfälschte Flanke.
 GPU-Neumessung gepipt nach dem Fix: unverändert ~200 ms bei 133 Oszillator-
 Messungen — die Thermal-Kopplungsthese ist falsifiziert; die Membran ist
 shader-gebunden (~1,5 ms je Oszillator-Messung über 3 Mio Punkte auf der
-HD 520). Die Tile-Haut (a092f01, zurückgedreht) bleibt der nächste Hebel —
-dann mit Rgba8Unorm und intel_gpu_top.
+HD 520). Die Tile-Haut (a092f01, zurückgedreht) ist seit dem Generation-
++ Culling-Atom manifestiert (siehe eigener Abschnitt) — mit Rgba8Unorm
+und intel_gpu_top steht die Nachmessung aus.
 ```
 Offen:
+- Tile-Haut-Nachmessung mit Rgba8Unorm und intel_gpu_top (Vergleich gegen
+  die ~200-ms-Baseline; die Leerfenster-Rahmen liegen live bei ~19-22 ms)
 - Phasen-Invariante der Audio-Noten dokumentieren: sr = 44100, ganzzahlige
   Frequenzen (220 + 110·kernel + 55·force), 1-s-Noten → glatter Nulldurchgang
   am Tick-Ende; bei sr-/Frequenzwechsel bricht sie
@@ -82,32 +85,121 @@ Offen:
 - clamp(0,1) richtet negative Messwerte gleich (alter Fleck, Sensory)
 - Merge mit main (Downloads/main.rs = main-HEAD + AudioRadiator-Patch,
   verworfen) später entscheiden
-- test_parse_stations_xml: Fixture-Assertion „AAE" vs BGS-lowercase „aae" —
-  vorbestehend auf main, von diesem Zug unberührt
 
 ---
 
 ### wgpu-mono — Survey: Messpunkt-Verteilung
 
+```
+GESCHLOSSEN (2026-08-16): docs/surveys/auswertung.md ist die selbsttragende
+Auswertung (die Rohrunden liegen unter /home/johannes/Schreibtisch/survey/).
+Gewählte Verteilung: Messpunkte = uniformes Pixel-Raster (Nyquist-Wahrheit,
+f32-Grundwahrheit: 1/d² trägt Struktur bis ~16,8 Mio px — Zell-Vergröberung
+wäre bei f32-Treue Fabrication), die Ökonomie kommt von der Quellen-Achse:
+Tiled Source Culling mit ε = 2⁻ⁿ, n = 23 Grund (f32-Wahrheit), Budgetdruck
+relaxiert n bis 8 (Display-Quantisierung — ausgesprochene Messpolitik).
+Verworfen (Rejected-Register in der Auswertung §5): Ω-Token, Feld-Hash,
+Efferenzkopie, Fovea-primär, gelernte Platzierung, hex/jitter/quasi-random,
+Meta-Oszillator-LOD, CVT, Sparse Grids, Compressive Sensing,
+Subpixel-Emitter, Heartbeat.
+```
+
+### wgpu-mono — Generation + Tiled Source Culling (der Survey-Atom)
+
+```
+GESCHLOSSEN (2026-08-16): „Der Buffer ist die Nachricht. Der Zähler ist das
+Protokoll. Die Stille ist die Optimierung."
+- Generations-Architektur: Der Worker vergleicht die gepackten f32-Bytes
+  mit dem letzten gesendeten Stand — identisch → kein Senden (Stille-Gate),
+  sonst gen += 1 (u64 in der res-Nachricht; atomar in Wirkung über das
+  mpsc-send). Die Mathematikerin lädt nur bei gen-Wechsel — Doppelpuffer
+  A/B mit Bind-Group-Swap gegen Torn Reads.
+- HUD-Ω + Fenster-Zentroid kommen aus den Archivar-f64-Akkumulatoren
+  (hud_probe: dokumentierte Gesetzesform + 7 Kernel in f64, erfc_f64 =
+  dieselbe Abramowitz-Stegun-Approximation wie die WGSL-erfc). mapAsync,
+  probe_read, probe_buf, centroid_pipe, field_centroid getilgt — der
+  Map-Timeout unter Last ist strukturell weg. presence_probe bleibt
+  (Propagation prep/param, nicht HUD).
+- Tiled Source Culling: tile_cull-Compute-Pass (workgroup = Kachel 16×16 =
+  2⁴ px, 64 Threads, Shared-Memory-Max-Reduktion, Shared-Atomics für die
+  Slots — KEINE globalen Atomics, KEINE Fragment-Atomics; Befund:
+  Fragment-Atomics auf ANV/HD 520 verloren das Device), Kachel-Listen als
+  tile_flat/tile_count (plain u32, 64 Slots je Kachel), Überlauf-Flag
+  cull_ctl[1] → Fragment wertet bei Überlauf das volle Feld aus (kein
+  Lichtverlust, ehrlich langsam). Kull-Kriterium: bound < ε·M
+  (bound = |val_eff|·K(d2_min) mit Val-Faltung und J2/J4-Faktor; M =
+  stärkster Kachel-Beitrag via Workgroup-Reduktion). ε = 2⁻ⁿ,
+  n = 23 Grund, Relaxation n→8 nur unter Budgetdruck (die 8-Bit-
+  Quantisierung der Nebra-Rampe — der Sensor ist das Display).
+- Budget-Regler: exponentiell geglättete Frame-Zeit (÷4) gegen die
+  Display-Periode 16,6 ms; > 16,6 → n−1, < 8,3 → n+1, Hysterese,
+  n ∈ [8,23], 1-Hz-Kadenz.
+- parse_stations_xml-Fix aus main portiert (Fixture-Assertion „aae"/„ykc" —
+  der Parser lowercase ist die Wahrheit, BGS liefert uppercase).
+- Zentrier-Runaway getilgt: hud_probe subtrahierte bw/2/bh/2 von bereits
+  präsenz-zentrierten Koordinaten (Zentroid einer zentrierten Quelle =
+  (−bw/2, −bh/2) statt (0,0)) und das y-Vorzeichen war gegen die
+  GPU-Pixel-Konvention (y-abwärts) — jeder Zentrier-Schritt sprang
+  ~1152 px × grid_step = 2,4e12 m, der Körper erschien kurz und
+  verschwand. Fix: Offset ohne Verschiebung, y negiert. Live: Zentrieren
+  ruht bei c −0.00 −0.00, die Sonne bleibt (Ω 28,8 konstant).
+- VP-Slot-Kollision getilgt: cull_n/tiles_x lagen auf vp 20/21, die WGSL
+  las expose_lo.x/.y = Slots 16/17 = deep_pt_count/deep_ex_count — ε war
+  exp2(−deep_pt_count) (0 oder 1 statt 2⁻ⁿ: bei 0 deep wurde nur die
+  stärkste Quelle je Kachel gehalten — Fabrication; tiles_x = 0 ließ alle
+  Kachel-Zeilen kollidieren). Fix: cull_n/tiles_x auf die freien Slots
+  22/23 (expose_hi.z/w), WGSL liest expose_hi. Deep-Zählungen/W/H bleiben
+  in expose_lo (16-19, a2a764b-Layout, unberührt).
+- Deepfield-Lebensbeweis: temporärer Deep-Zoom (grid 2^46) — 74 deep
+  Sterne liefern an (Stern-Hash-Query, Pack, Upload, Deep-Renderer);
+  bei 2^31 ist 0 deep der ehrliche Zustand (5c3cf9d „0 stars bei 2^31
+  korrekt"; Sterne ab ~2^44, Proxima 4,2 ly ≈ 2^45,5). Kein Reset hat den
+  wgpu-mono-Baum berührt (git status: nur Session-Änderungen +
+  Parallel-Session-Port-Dateien; main-Rückstellung ist die dokumentierte
+  of_backup_localmain-Chirurgie der Parallel-Session).
+- Deep-Leuchten normalisiert: Stern-Flux (10^(−0,4·mag)) lag unter dem
+  Rampen-Fuß (t2 < 0 → schwarze Punkte) — deep_gain = 8 − log2(max|flux|)
+  des gelieferten Satzes, exponentielle Relaxation (÷4 je Sense), fährt in
+  vp 20 (expose_hi.x); der hellste gelieferte Stern = Rampen-Weiß, 22
+  Stops darunter = Schwarz. deep_pt_fs/deep_fs lesen expose_hi.x mit.
+- Kull bei Sense-Kadenz statt je Frame: die Kachel-Listen sind genau so
+  frisch wie das gefrorene Feld, das sie gattern; cull_due = gen-Wechsel
+  oder Backing-Wechsel; der 35k-Workgroup-Pass läuft nur noch beim Sense.
+  Überlauf-Flag fährt als cull_ctl[1]-Readback (8 B, mapAsync in der
+  1-Hz-Kadenz) ins HUD (ovf) und ist die zweite Regler-Zahl: ovf → n−2;
+  schwere Frames (> 4× Display-Periode) → n−2, sonst das 1-Schritt-Gesetz.
+- Membran-Raster 3× → 1×: die Subpixel-Spalten (eb96d1f, 9 Mio Messzellen)
+  messen dreimal dasselbe RGB — das Display (der Sensor) hat eine
+  Emitterzelle je Kanal und Pixel, comp_fs faltet die Spalten ohnehin
+  in ein Pixel. Befund: ~540 ms → ~250 ms im Sonnen-Nahfeld, und das
+  Device überlebt (der ~500-ms-Batch trippte den Compositor-Watchdog —
+  „Parent device is lost"). Die dichtere Messung trägt der Operator über
+  ssaa (q/Q). MEMBRANE_COLS = 1 (2⁰); die 3×-Natur bleibt im
+  Git (eb96d1f). Rest-Kosten im Sonnen-Nahfeld ~250 ms = der fixe
+  3-Mio-Raster-Overhead — der Messpunkt-Hebel (Zell-Achse) ist der
+  nächste (siehe offener Punkt unten).
+- Live-Beweis (HD 520, 2304×1296): Sonne sichtbar (Ω 28,8, 122 near),
+  kein Device Lost, gen 0→10, Stille stabil (gen 10 über 8 s ruhendes
+  Feld), Regler 23→16→22, Zentrieren konvergiert über den
+  Archivar-Zentroid, leeres Fenster ~19-22 ms.
+```
 Offen:
-- docs/surveys/messpunkt-verteilung.md liegt aus — die Antworten mehrerer
-  LLMs (GLM eingegangen, weitere ausstehend) werden gesammelt und gegen
-  die Randbedingungen des Surveys geprüft (Ground Truth = Messung,
-  hardware-agnostisch: das Konzept leitet sich aus dem Gesetz und der
-  f32-Auflösung ab, die Hardware tritt nur über das Frame-Budget ein)
-- Die gewählte Verteilung + Budget-Skalierung wird danach auf dem Titanen
-  manifestiert (Archivar-Sampler → Messpunkt-Liste → Membran misst nur
-  dort; Zellen-Anzeige vs. Interpolation als offene Philosophie-Frage)
-- KONSENS der Shared-Memory-Runde (docs/surveys/auswertung.md): das
-  Ω-Token (Kandidat 10) ist verworfen — die Architektur heißt
-  EIN Buffer + EIN atomarer u64-Generationszähler + Stille (kein Schreiben
-  bei stationärem Feld); Doppelpuffer gegen Torn Reads; HUD-Ω direkt aus
-  den Archivar-Akkumulatoren (kein GPU-Map-Readback, löst den Map-Timeout);
-  Budget-Regelung = zwei Zahlen (Frame-Zeit + Messpunktzahl) → Zellweite.
-  FRISCHE SESSION: Generations-Architektur manifestieren + die
-  Verteilungs-Verdikte der Council/Extension-Runden lesen
-  (/home/johannes/Schreibtisch/survey/*_Council, *_Extension) und die
-  Messpunkt-Verteilung wählen.
+- Deep-Upload-Stille: deep_dirty feuert bei jedem Sense — die 29-MB-Sterne
+  (1,84 Mio) werden auch unverändert hochgeladen (die 100-200-ms-Spikes
+  bei count=0). Das Stille-Gate des Membran-Feldes auf den Deep-Pfad
+  erweitern (Vergleich der gepackten Deep-Bytes, gen-Domäne getrennt).
+- Zell-Achse (Punkt-Vergröberung, Kandidat 5): eigenes Paket — ehrlich
+  nur mit der ausgesprochenen Display-Sensor-Lesart (Struktur-Radius
+  ~14-39 px bei 8 Bit), erst wenn die Messung zeigt, dass Kulling das
+  Budget nicht trägt; sonst Fenster-verkleinern/Bildrate-verlassen.
+- Relay-Trailer: gen u64 + 9×Ω f64 für browser_relay (~80 B) — bewusst
+  verschoben; der Browser behält die Objekt-Identität bis dahin.
+- Sonnen-Nahfeld: TILE_SLOTS-Überlauf feuert bei 120 nahen Quellen → Voll-
+  Loop-Frames (553-575 ms) bis der Regler n entspannt hat; die Relaxation
+  (1 Stufe/s) ist das ehrliche Gesetz — beobachten, ob der Überlauf als
+  zweite Regler-Zahl (n−2 bei Überlauf) nötig wird.
+- Kachel-Granularität vs. ssaa: bei ssaa ≥ 2 übersteigt die Kachelzahl den
+  Head-Budget (2¹⁷) → ehrlicher Voll-Loop (cull_fits-Gate).
 
 ---
 
@@ -1258,3 +1350,17 @@ Offen (Detail in phi/port/ledger.φ, jede Zeile mit Zustand):
 - Yahoo Finance → forceless, DROP.
 - Hexagon-Grid, Quadtree-AMR, temporale Akkumulation, Blue-Noise-Rieseln,
   Nahfeld-Splitting → Interpolations-/Zeit-Lügen (Council-Urteil, WGSL_ SHADER.md).
+- Ω-Token am Presence-Punkt (0D-Probe für 2D-Fenster, Readback-Reibung),
+  Feld-Hash (kostet mehr als Schweigen), Efferenzkopie/ΔΩ-Vorhersage
+  (Protokoll-Reibung, wo Shared Memory reicht), GPU-Sonde als
+  Änderungskriterium → Survey-Runde, docs/surveys/auswertung.md §5.
+- Fovea als Primärverteilung (operator-zentriert, nicht feld-eigen),
+  gelernte Platzierung (A = A verletzt), hex/jitter/quasi-random als
+  Primärstrategie, Meta-Oszillator-LOD ohne Multipol-Öffnungswinkel,
+  CVT-Lloyd pro Frame, Sparse Grids/Compressive Sensing/Neural Fields
+  (Interpolation), Subpixel-Emitter-Abtastung (durch die eigene
+  3×-Messung widerlegt), 1-Hz-Heartbeat (Stille reicht) →
+  docs/surveys/auswertung.md §5.
+- Zell-Vergröberung bei wörtlicher f32-Treue → Fabrication; ehrlich nur
+  als ausgesprochene Display-Sensor-Messpolitik (auswertung.md §1) — als
+  zweites Paket registriert, nicht verworfen.

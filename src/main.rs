@@ -30,9 +30,19 @@ fn fold_eff(d_mag: f32, raw: f32, t: f32, ttl: f32, force_type: u32, advective_v
 @group(0) @binding(0) var<storage, read> field: array<vec4f>;
 @group(0) @binding(1) var<storage, read> props: array<vec4f>;
 @group(0) @binding(2) var<uniform> vp: VP;
-@group(0) @binding(3) var<storage, read_write> probe_out: array<f32>;
+@group(0) @binding(3) var<storage, read_write> tile_flat: array<u32>;
 @group(0) @binding(4) var<storage, read_write> prep: array<vec4f>;
 @group(0) @binding(5) var<storage, read_write> param: array<vec4f>;
+@group(0) @binding(6) var<storage, read_write> tile_count: array<u32>;
+@group(0) @binding(7) var<storage, read_write> cull_ctl: array<u32>;
+
+var<workgroup> cull_red: array<f32, 64>;
+var<workgroup> sm_src: array<u32, 64>;
+var<workgroup> wcnt: atomic<u32>;
+
+const TILE: u32 = 16u;
+const TILE_SLOTS: u32 = 64u;
+const MEMBRANE_COLS: f32 = 1.0;
 
 struct VOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f };
 
@@ -69,73 +79,15 @@ struct CompOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f };
     let tw = f32(textureDimensions(membrane_tex).x);
     let th = f32(textureDimensions(membrane_tex).y);
     let v = (py + 0.5) / th;
-    let r = textureSample(membrane_tex, membrane_sampler, vec2f((3.0 * px + 0.5) / tw, v)).r;
-    let g = textureSample(membrane_tex, membrane_sampler, vec2f((3.0 * px + 1.5) / tw, v)).g;
-    let b = textureSample(membrane_tex, membrane_sampler, vec2f((3.0 * px + 2.5) / tw, v)).b;
+    let r = textureSample(membrane_tex, membrane_sampler, vec2f((MEMBRANE_COLS * px + 0.5) / tw, v)).r;
+    let g = textureSample(membrane_tex, membrane_sampler, vec2f((MEMBRANE_COLS * px + 0.5) / tw, v)).g;
+    let b = textureSample(membrane_tex, membrane_sampler, vec2f((MEMBRANE_COLS * px + 0.5) / tw, v)).b;
     return vec4f(r, g, b, 1.0);
 }
 
 @group(0) @binding(0) var<uniform> deep_vp: VP;
 @group(0) @binding(1) var<storage, read> deep_pt: array<vec4f>;
 @group(0) @binding(2) var<storage, read> deep_ex: array<vec4f>;
-@group(0) @binding(6) var cent_tex: texture_2d<f32>;
-
-fn lsum(x: i32, y: i32) -> f32 {
-    let c = textureLoad(cent_tex, vec2i(x, y), 0).xyz;
-    return c.r + c.g + c.b;
-}
-
-@compute @workgroup_size(1)
-fn field_centroid() {
-    let w = f32(vp.surface.x);
-    let h = f32(vp.surface.y);
-    let cx0 = w * 0.5;
-    let cy0 = h * 0.5;
-    var bx = 0;
-    var by = 0;
-    var bl = -1.0;
-    for (var dy = -32.0; dy < 32.0; dy = dy + 1.0) {
-        for (var dx = -32.0; dx < 32.0; dx = dx + 1.0) {
-            let px = i32(cx0) + i32(dx);
-            let py = i32(cy0) + i32(dy);
-            if (px < 0 || py < 0 || px >= i32(w) || py >= i32(h)) { continue; }
-            let l = lsum(px, py);
-            if (l > bl) {
-                bl = l;
-                bx = px;
-                by = py;
-            }
-        }
-    }
-    if (bl > 1e-30) {
-        var ox = 0.0;
-        var oy = 0.0;
-        if (bx > 0 && bx + 1 < i32(w)) {
-            let lm = lsum(bx - 1, by);
-            let l0v = lsum(bx, by);
-            let lp = lsum(bx + 1, by);
-            let denom = lm - 2.0 * l0v + lp;
-            if (denom < -1e-30) {
-                ox = (lm - lp) / (2.0 * denom);
-            }
-        }
-        if (by > 0 && by + 1 < i32(h)) {
-            let lm = lsum(bx, by - 1);
-            let l0v = lsum(bx, by);
-            let lp = lsum(bx, by + 1);
-            let denom = lm - 2.0 * l0v + lp;
-            if (denom < -1e-30) {
-                oy = (lm - lp) / (2.0 * denom);
-            }
-        }
-        probe_out[9] = f32(bx) + ox - cx0;
-        probe_out[10] = f32(by) + oy - cy0;
-    } else {
-        probe_out[9] = 0.0;
-        probe_out[10] = 0.0;
-    }
-    probe_out[11] = bl;
-}
 
 struct DeepPtVOut { @builtin(position) pos: vec4f, @location(0) @interpolate(flat) flux: f32 };
 
@@ -171,7 +123,7 @@ struct DeepPtVOut { @builtin(position) pos: vec4f, @location(0) @interpolate(fla
     let aflux = abs(in.flux);
     if (aflux < 1e-30) { discard; }
     let olog = log2(aflux);
-    let t2 = clamp((olog + 14.0 + deep_vp.expose_ex.x) / 22.0, 0.0, 1.0);
+    let t2 = clamp((olog + 14.0 + deep_vp.expose_ex.x + deep_vp.expose_hi.x) / 22.0, 0.0, 1.0);
     let fade = clamp((olog - log2(1e-30)) / (-14.0 - log2(1e-30)), 0.0, 1.0);
     let c = mix(vec3f(0.0, 0.02, 0.1), vec3f(0.0, 0.3, 0.8), clamp(t2 * 4.0, 0.0, 1.0));
     let c2 = mix(c, vec3f(0.2, 0.8, 1.0), clamp((t2 - 0.25) * 4.0, 0.0, 1.0));
@@ -230,7 +182,7 @@ fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
     out.uv = corner;
     let flux = data.w;
     let lum = clamp(
-        (log2(abs(flux) + 1e-30) + 14.0 + deep_vp.expose_ex.x) / 22.0,
+        (log2(abs(flux) + 1e-30) + 14.0 + deep_vp.expose_ex.x + deep_vp.expose_hi.x) / 22.0,
         0.0,
         1.0,
     );
@@ -322,8 +274,6 @@ fn osc_field(j: u32, rel: vec3f, pre: vec4f) -> vec2f {
 @compute @workgroup_size(1)
 fn presence_probe() {
     let count = u32(vp.surface.z);
-    var omegas = array<f32, 9>();
-    for (var i = 0u; i < 9u; i = i + 1u) { omegas[i] = 0.0; }
     let dt = vp.presence.w - vp.expose_ex.y;
     let v_obs = vec3f(vp.right.w, vp.up.w, vp.forward.w) * C_VACUUM;
     for (var j = 0u; j < count; j = j + 1u) {
@@ -343,11 +293,131 @@ fn presence_probe() {
             fast = 1.0;
         }
         param[j] = vec4f(f32(ft), mt.x, f32(kid), fast);
-        let c = osc_field(j, vec3f(0.0), pre);
-        let f = u32(c.y);
-        if (f < 9u) { omegas[f] += c.x; }
     }
-    for (var i = 0u; i < 9u; i = i + 1u) { probe_out[i] = omegas[i]; }
+}
+
+fn cull_bound(j: u32, tx: u32, ty: u32) -> f32 {
+    let pre = prep[j];
+    let tm = field[j * 3u + 1u];
+    let fm = field[j * 3u + 2u];
+    let mt = props[j * 3u];
+    let mp = props[j * 3u + 1u];
+    let mg = props[j * 3u + 2u];
+    let scale = vp.surface.w;
+    let h = vp.surface.y;
+    let sx = dot(pre.xyz, vp.right.xyz) / scale;
+    let sy = dot(pre.xyz, vp.up.xyz) / scale;
+    let sz = dot(pre.xyz, vp.forward.xyz);
+    let xmin = f32(tx * TILE) / MEMBRANE_COLS + 0.5 / MEMBRANE_COLS - vp.expose_lo.z * 0.5;
+    let xmax = f32((tx + 1u) * TILE) / MEMBRANE_COLS + 0.5 / MEMBRANE_COLS - vp.expose_lo.z * 0.5;
+    let ymax = h * 0.5 - f32(ty * TILE);
+    let ymin = h * 0.5 - f32((ty + 1u) * TILE);
+    let dx = max(max(xmin - sx, sx - xmax), 0.0);
+    let dy = max(max(ymin - sy, sy - ymax), 0.0);
+    let d2_min = (dx * dx + dy * dy) * scale * scale + sz * sz;
+    let ddx = max(abs(sx - xmin), abs(sx - xmax));
+    let ddy = max(abs(sy - ymin), abs(sy - ymax));
+    let d2_max = (ddx * ddx + ddy * ddy) * scale * scale + sz * sz;
+    let ft = u32(tm.z);
+    let kid = u32(mt.z);
+    let v = select(PROPAGATION_SPEED[ft], fm.x, ft == 7u && fm.x > 0.0);
+    let temporal = abs(vp.presence.w - tm.x);
+    let corr = select(min(temporal, sqrt(d2_max) / v), 0.0, v == 0.0 || d2_max == 0.0);
+    var val = abs(pre.w);
+    if (corr > tm.y * 1e-4) {
+        val = abs(pre.w) * exp(corr / max(tm.y, 1e-9));
+    }
+    var b = val * field_spatial(d2_min, sqrt(d2_min), mt.x, kid, scale, f32(tm.w));
+    if ((kid == 0u || kid == 6u) && ft == 1u) {
+        b *= 1.0 + abs(mp.w) + abs(mg.x);
+    }
+    return b;
+}
+
+@compute @workgroup_size(64)
+fn tile_cull(@builtin(workgroup_id) wg: vec3u, @builtin(local_invocation_index) li: u32) {
+    let tiles_x = u32(vp.expose_hi.w);
+    let tile = wg.x + wg.y * tiles_x;
+    let count = u32(vp.surface.z);
+    if (count == 0u) { return; }
+    let tx = wg.x;
+    let ty = wg.y;
+    var local_max = 0.0;
+    for (var j = li; j < count; j = j + 64u) {
+        local_max = max(local_max, cull_bound(j, tx, ty));
+    }
+    cull_red[li] = local_max;
+    if (li == 0u) {
+        atomicStore(&wcnt, 0u);
+    }
+    workgroupBarrier();
+    for (var off = 32u; off > 0u; off = off >> 1u) {
+        if (li < off) {
+            cull_red[li] = max(cull_red[li], cull_red[li + off]);
+        }
+        workgroupBarrier();
+    }
+    let eps = exp2(-max(vp.expose_hi.z, 0.0));
+    let thr = eps * cull_red[0];
+    workgroupBarrier();
+    for (var j = li; j < count; j = j + 64u) {
+        if (cull_bound(j, tx, ty) < thr) { continue; }
+        let slot = atomicAdd(&wcnt, 1u);
+        if (slot >= TILE_SLOTS) {
+            cull_ctl[1] = 1u;
+        } else {
+            sm_src[slot] = j;
+        }
+    }
+    workgroupBarrier();
+    if (li == 0u) {
+        let k = min(atomicLoad(&wcnt), TILE_SLOTS);
+        tile_count[tile] = k;
+        for (var q = 0u; q < k; q = q + 1u) {
+            tile_flat[tile * TILE_SLOTS + q] = sm_src[q];
+        }
+    }
+}
+
+fn eval_source(j: u32, pixel_rel: vec3f, scale: f32) -> vec2f {
+    let pre = prep[j];
+    let p = param[j];
+    let delta = pre.xyz - pixel_rel;
+    let d2 = dot(delta, delta);
+    let ft = u32(p.x);
+    var contrib = 0.0;
+    if (p.w > 0.5) {
+        let e2 = max(max(p.y * p.y, scale * scale), 1e-30);
+        contrib = pre.w / (d2 + e2);
+    } else {
+        let tm = field[j * 3u + 1u];
+        let fm = field[j * 3u + 2u];
+        let mt = props[j * 3u];
+        let mp = props[j * 3u + 1u];
+        let mg = props[j * 3u + 2u];
+        let d_mag = sqrt(d2);
+        let kid = u32(mt.z);
+        let v = select(PROPAGATION_SPEED[ft], fm.x, ft == 7u && fm.x > 0.0);
+        let temporal = abs(vp.presence.w - tm.x);
+        var val = pre.w;
+        let corr = select(min(temporal, d_mag / v), 0.0, v == 0.0 || d_mag == 0.0);
+        if (corr > tm.y * 1e-4) {
+            val = pre.w * exp(corr / max(tm.y, 1e-9));
+        }
+        var sk = field_spatial(d2, d_mag, mt.x, kid, scale, f32(tm.w));
+        if ((kid == 0u || kid == 6u) && ft == 1u) {
+            let dhat = delta / max(d_mag, 1e-9);
+            let cos_t = clamp(dot(dhat, mp.xyz), -1.0, 1.0);
+            let p2 = (3.0 * cos_t * cos_t - 1.0) * 0.5;
+            let p4 = (35.0 * cos_t * cos_t * cos_t * cos_t - 30.0 * cos_t * cos_t + 3.0) * 0.125;
+            let rd2 = mg.y * mg.y / max(d2, 1.0);
+            if (rd2 < 1.0) {
+                sk *= 1.0 - mp.w * rd2 * p2 - mg.x * rd2 * rd2 * p4;
+            }
+        }
+        contrib = val * sk;
+    }
+    return vec2f(contrib, f32(ft));
 }
 
 @fragment fn fs(in: VOut) -> @location(0) vec4f {
@@ -358,7 +428,7 @@ fn presence_probe() {
     let scale = vp.surface.w;
     let px = in.pos.x;
     let py = in.pos.y;
-    let cx = px / 3.0 + 1.0 / 6.0 - vp.expose_lo.z * 0.5;
+    let cx = px / MEMBRANE_COLS + 0.5 / MEMBRANE_COLS - vp.expose_lo.z * 0.5;
     let cy = h * 0.5 - (py + 0.5);
     let pixel_rel = cx * scale * vp.right.xyz + cy * scale * vp.up.xyz;
 
@@ -371,62 +441,59 @@ fn presence_probe() {
     var o6 = 0.0;
     var o7 = 0.0;
     var o8 = 0.0;
-    for (var j = 0u; j < count; j = j + 1u) {
-        let pre = prep[j];
-        let p = param[j];
-        let delta = pre.xyz - pixel_rel;
-        let d2 = dot(delta, delta);
-        let ft = u32(p.x);
-        var contrib = 0.0;
-        if (p.w > 0.5) {
-            let e2 = max(max(p.y * p.y, scale * scale), 1e-30);
-            contrib = pre.w / (d2 + e2);
-        } else {
-            let tm = field[j * 3u + 1u];
-            let fm = field[j * 3u + 2u];
-            let mt = props[j * 3u];
-            let mp = props[j * 3u + 1u];
-            let mg = props[j * 3u + 2u];
-            let d_mag = sqrt(d2);
-            let kid = u32(mt.z);
-            let v = select(PROPAGATION_SPEED[ft], fm.x, ft == 7u && fm.x > 0.0);
-            let temporal = abs(vp.presence.w - tm.x);
-            var val = pre.w;
-            let corr = select(min(temporal, d_mag / v), 0.0, v == 0.0 || d_mag == 0.0);
-            if (corr > tm.y * 1e-4) {
-                val = pre.w * exp(corr / max(tm.y, 1e-9));
+    let tiles_x = u32(vp.expose_hi.w);
+    if (cull_ctl[1] == 0u) {
+        let t = u32(py / f32(TILE)) * tiles_x + u32(px / f32(TILE));
+        let k = tile_count[t];
+        let base = t * TILE_SLOTS;
+        for (var q = 0u; q < k; q = q + 1u) {
+            let c = eval_source(tile_flat[base + q], pixel_rel, scale);
+            let contrib = c.x;
+            let ft = u32(c.y);
+            if (ft == 0u) {
+                o0 += contrib;
+            } else if (ft == 1u) {
+                o1 += contrib;
+            } else if (ft == 2u) {
+                o2 += contrib;
+            } else if (ft == 3u) {
+                o3 += contrib;
+            } else if (ft == 4u) {
+                o4 += contrib;
+            } else if (ft == 5u) {
+                o5 += contrib;
+            } else if (ft == 6u) {
+                o6 += contrib;
+            } else if (ft == 7u) {
+                o7 += contrib;
+            } else if (ft == 8u) {
+                o8 += contrib;
             }
-            var sk = field_spatial(d2, d_mag, mt.x, kid, scale, f32(tm.w));
-            if ((kid == 0u || kid == 6u) && ft == 1u) {
-                let dhat = delta / max(d_mag, 1e-9);
-                let cos_t = clamp(dot(dhat, mp.xyz), -1.0, 1.0);
-                let p2 = (3.0 * cos_t * cos_t - 1.0) * 0.5;
-                let p4 = (35.0 * cos_t * cos_t * cos_t * cos_t - 30.0 * cos_t * cos_t + 3.0) * 0.125;
-                let rd2 = mg.y * mg.y / max(d2, 1.0);
-                if (rd2 < 1.0) {
-                    sk *= 1.0 - mp.w * rd2 * p2 - mg.x * rd2 * rd2 * p4;
-                }
-            }
-            contrib = val * sk;
         }
-        if (ft == 0u) {
-            o0 += contrib;
-        } else if (ft == 1u) {
-            o1 += contrib;
-        } else if (ft == 2u) {
-            o2 += contrib;
-        } else if (ft == 3u) {
-            o3 += contrib;
-        } else if (ft == 4u) {
-            o4 += contrib;
-        } else if (ft == 5u) {
-            o5 += contrib;
-        } else if (ft == 6u) {
-            o6 += contrib;
-        } else if (ft == 7u) {
-            o7 += contrib;
-        } else if (ft == 8u) {
-            o8 += contrib;
+    } else {
+        for (var j = 0u; j < count; j = j + 1u) {
+            let c = eval_source(j, pixel_rel, scale);
+            let contrib = c.x;
+            let ft = u32(c.y);
+            if (ft == 0u) {
+                o0 += contrib;
+            } else if (ft == 1u) {
+                o1 += contrib;
+            } else if (ft == 2u) {
+                o2 += contrib;
+            } else if (ft == 3u) {
+                o3 += contrib;
+            } else if (ft == 4u) {
+                o4 += contrib;
+            } else if (ft == 5u) {
+                o5 += contrib;
+            } else if (ft == 6u) {
+                o6 += contrib;
+            } else if (ft == 7u) {
+                o7 += contrib;
+            } else if (ft == 8u) {
+                o8 += contrib;
+            }
         }
     }
 
@@ -449,6 +516,12 @@ fn presence_probe() {
 
 const Φ: f64 = 1.618033988749895;
 const CHEBYSHEV_N: usize = 18;
+const TILE_PX: u32 = 16;
+const TILE_HEAD_CAP: u32 = 1 << 17;
+const TILE_SLOTS_U32: u32 = 64;
+const CULL_N_MIN: u32 = 8;
+const CULL_N_MAX: u32 = 23;
+const DISPLAY_PERIOD_MS: f64 = 16.6;
 
 #[derive(Clone)]
 struct BodyProperties {
@@ -10672,10 +10745,10 @@ field temp temp_c\n";
             let xml = "<?xml version=\"1.0\" ?><GINServices>\n <ObservatoryList>\n  <Observatory>\n   <Code>AAE</Code>\n   <Name>Addis Ababa</Name>\n   <Latitude>9.035</Latitude>   <Longitude>38.770</Longitude>   <Elevation>2441</Elevation>\n  </Observatory>\n  <Observatory>\n   <Code>YKC</Code>\n   <Latitude>62.48</Latitude>   <Longitude>-114.48</Longitude>   <Elevation>181</Elevation>\n  </Observatory>\n </ObservatoryList>\n</GINServices>";
             let st = parse_stations_xml(xml);
             assert_eq!(st.len(), 2);
-            assert_eq!(st[0].id, "AAE");
+            assert_eq!(st[0].id, "aae");
             assert_eq!(st[0].lat, 9.035);
             assert_eq!(st[0].lon, 38.770);
-            assert_eq!(st[1].id, "YKC");
+            assert_eq!(st[1].id, "ykc");
             assert_eq!(st[1].lat, 62.48);
         }
 
@@ -11910,6 +11983,104 @@ mod mathematikerin {
         out
     }
 
+    const PROP_SPEED_F64: [f64; 9] = [C, C, 343.0, 6000.0, 3000.0, 0.3, 0.05, 1.0, C];
+
+    fn erfc_f64(x: f64) -> f64 {
+        let xa = x.abs();
+        let t = 1.0 / (1.0 + 0.3275911 * xa);
+        let poly = t
+            * (0.254829592
+                + t * (-0.284496736 + t * (1.421413741 + t * (-1.453152027 + t * 1.061405429))));
+        let y = poly * (-xa * xa).exp();
+        if x < 0.0 {
+            2.0 - y
+        } else {
+            y
+        }
+    }
+
+    fn field_spatial_f64(
+        d2: f64,
+        d_mag: f64,
+        extent: f64,
+        kernel_id: f64,
+        scale: f64,
+        absorption: f64,
+    ) -> f64 {
+        let perceptual_extent = extent.max(scale);
+        let e2 = (perceptual_extent * perceptual_extent).max(1e-30);
+        let s2 = (scale * scale).max(1e-30);
+        if kernel_id == 0.0 || kernel_id == 6.0 {
+            1.0 / (d2 + e2)
+        } else if kernel_id == 3.0 {
+            erfc_f64(d_mag / (perceptual_extent * 2.0f64.sqrt()).max(scale))
+        } else if kernel_id == 2.0 {
+            (-d2 / (2.0 * e2.max(s2))).exp() / (d_mag + s2.sqrt())
+        } else if kernel_id == 4.0 {
+            (-d_mag / perceptual_extent.max(scale)).exp()
+        } else if kernel_id == 5.0 {
+            let alpha = absorption.clamp(0.0, 1.0);
+            let beta = 1.6;
+            let core = (-d2 / (2.0 * e2.max(s2))).exp();
+            let tail = e2.max(s2).powf(beta * 0.5) / (d2 + s2).max(s2).powf(beta * 0.5);
+            (1.0 - alpha) * core + alpha * tail
+        } else {
+            (-d2 / (2.0 * e2.max(s2))).exp() / (d2 + s2).max(s2)
+        }
+    }
+
+    pub fn hud_probe(
+        records: &[Record],
+        center: [f64; 3],
+        t: f64,
+        scale: f64,
+        fr: &[f64; 3],
+        fu: &[f64; 3],
+    ) -> ([f64; 9], [f64; 3]) {
+        let mut omegas = [0.0f64; 9];
+        let mut w_sum = 0.0f64;
+        let mut cx = 0.0f64;
+        let mut cy = 0.0f64;
+        for r in records {
+            let dx = r.0 - center[0];
+            let dy = r.1 - center[1];
+            let dz = r.2 - center[2];
+            let d2 = dx * dx + dy * dy + dz * dz;
+            let d = d2.sqrt();
+            let ft = r.9 as usize;
+            let v = if ft == 7 && r.11 > 0.0 {
+                r.11
+            } else if ft < 9 {
+                PROP_SPEED_F64[ft]
+            } else {
+                C
+            };
+            let temporal = (t - r.4).abs();
+            let retarded = if v == 0.0 || d == 0.0 {
+                temporal
+            } else {
+                (temporal - d / v).max(0.0)
+            };
+            let val_eff = r.3 * (-retarded / r.5.max(1e-9)).exp();
+            let contrib = val_eff * field_spatial_f64(d2, d, r.7, r.8, scale, r.10);
+            if ft < 9 {
+                omegas[ft] += contrib;
+            }
+            let w = contrib.abs();
+            w_sum += w;
+            cx += w * (fr[0] * dx + fr[1] * dy + fr[2] * dz) / scale;
+            cy += w * (fu[0] * dx + fu[1] * dy + fu[2] * dz) / scale;
+        }
+        (
+            omegas,
+            [
+                if w_sum > 0.0 { cx / w_sum } else { 0.0 },
+                if w_sum > 0.0 { -cy / w_sum } else { 0.0 },
+                w_sum,
+            ],
+        )
+    }
+
     pub struct MathematikerinRadiator {
         tx: mpsc::SyncSender<Arc<Buffer>>,
         shutdown: Arc<AtomicBool>,
@@ -11924,10 +12095,28 @@ mod mathematikerin {
             time: Arc<Mutex<Option<LeapSeconds>>>,
         ) -> Self {
             let (tx, rx) = mpsc::sync_channel::<Arc<Buffer>>(2);
-            let (req_tx, req_rx) =
-                mpsc::sync_channel::<(Arc<Buffer>, [f64; 3], f64, f64, f64, f64)>(1);
-            let (res_tx, res_rx) =
-                mpsc::sync_channel::<(PackedWindow, Vec<f32>, Vec<f32>, f64, [f64; 3])>(2);
+            let (req_tx, req_rx) = mpsc::sync_channel::<(
+                Arc<Buffer>,
+                [f64; 3],
+                f64,
+                f64,
+                f64,
+                f64,
+                [f64; 3],
+                [f64; 3],
+            )>(1);
+            let (res_tx, res_rx) = mpsc::sync_channel::<(
+                PackedWindow,
+                Vec<f32>,
+                Vec<f32>,
+                f64,
+                [f64; 3],
+                u64,
+                [f64; 9],
+                [f64; 3],
+            )>(2);
+            let mut generation: u64 = 0;
+            let mut last_packed: Option<(Vec<f32>, Vec<f32>)> = None;
             let shutdown = Arc::new(AtomicBool::new(false));
             let shutdown_clone = shutdown.clone();
             thread::spawn(move || loop {
@@ -11937,7 +12126,7 @@ mod mathematikerin {
                 while let Ok(newer) = req_rx.try_recv() {
                     req = newer;
                 }
-                let (field, center, t, pad, cache_interval, grid_step) = req;
+                let (field, center, t, pad, cache_interval, grid_step, fr, fu) = req;
                 let mut records: Vec<Record> = Vec::new();
                 let eph = field.eph.clone();
                 sense_membrane(&field, center, t, pad, cache_interval, &mut records, &eph);
@@ -11955,11 +12144,29 @@ mod mathematikerin {
                 }
                 let packed_deep_pt = pack_deep_pt(&pt_src, center);
                 let packed_deep_ex = pack_deep_ex(&ex_src, center);
-                if res_tx
-                    .send((packed, packed_deep_pt, packed_deep_ex, t, center))
-                    .is_err()
-                {
-                    break;
+                let (hud_omega, hud_centroid) = hud_probe(&records, center, t, grid_step, &fr, &fu);
+                let changed = match &last_packed {
+                    Some(l) => packed.field != l.0 || packed.meta != l.1,
+                    None => true,
+                };
+                if changed {
+                    generation += 1;
+                    last_packed = Some((packed.field.clone(), packed.meta.clone()));
+                    if res_tx
+                        .send((
+                            packed,
+                            packed_deep_pt,
+                            packed_deep_ex,
+                            t,
+                            center,
+                            generation,
+                            hud_omega,
+                            hud_centroid,
+                        ))
+                        .is_err()
+                    {
+                        break;
+                    }
                 }
             });
             let handle = thread::spawn(move || {
@@ -12113,8 +12320,26 @@ mod mathematikerin {
 
     struct NativeApp {
         rx: mpsc::Receiver<Arc<Buffer>>,
-        req_tx: mpsc::SyncSender<(Arc<Buffer>, [f64; 3], f64, f64, f64, f64)>,
-        res_rx: mpsc::Receiver<(PackedWindow, Vec<f32>, Vec<f32>, f64, [f64; 3])>,
+        req_tx: mpsc::SyncSender<(
+            Arc<Buffer>,
+            [f64; 3],
+            f64,
+            f64,
+            f64,
+            f64,
+            [f64; 3],
+            [f64; 3],
+        )>,
+        res_rx: mpsc::Receiver<(
+            PackedWindow,
+            Vec<f32>,
+            Vec<f32>,
+            f64,
+            [f64; 3],
+            u64,
+            [f64; 9],
+            [f64; 3],
+        )>,
         presence_tx: mpsc::Sender<(f64, f64, f64, f64, f64)>,
         body_names: Arc<Vec<String>>,
         time: Arc<Mutex<Option<LeapSeconds>>>,
@@ -12133,26 +12358,40 @@ mod mathematikerin {
         membrane_view: Option<wgpu::TextureView>,
         membrane_sampler: Option<wgpu::Sampler>,
         probe_pipe: Option<wgpu::ComputePipeline>,
-        centroid_pipe: Option<wgpu::ComputePipeline>,
+        cull_pipe: Option<wgpu::ComputePipeline>,
         probe_layout: Option<wgpu::BindGroupLayout>,
         render_layout: Option<wgpu::BindGroupLayout>,
         render_bind: Option<wgpu::BindGroup>,
+        render_bind_b: Option<wgpu::BindGroup>,
         probe_bind: Option<wgpu::BindGroup>,
         field_buf: Option<wgpu::Buffer>,
         meta_buf: Option<wgpu::Buffer>,
+        field_buf_b: Option<wgpu::Buffer>,
+        meta_buf_b: Option<wgpu::Buffer>,
         vp_buf: Option<wgpu::Buffer>,
-        probe_buf: Option<wgpu::Buffer>,
-        probe_read: Option<wgpu::Buffer>,
+        tile_flat_buf: Option<wgpu::Buffer>,
+        tile_count_buf: Option<wgpu::Buffer>,
+        cull_ctl_buf: Option<wgpu::Buffer>,
+        cull_read: Option<wgpu::Buffer>,
         prep_buf: Option<wgpu::Buffer>,
         param_buf: Option<wgpu::Buffer>,
         field_cap: u32,
+        field_pair: u32,
         backing: (u32, u32),
 
         latest_field: Option<Arc<Buffer>>,
         packed_field: Vec<f32>,
         packed_meta: Vec<f32>,
         packed_count: u32,
-        packed_dirty: bool,
+        field_generation: u64,
+        uploaded_generation: u64,
+        hud_omega: [f64; 9],
+        hud_centroid: [f64; 3],
+        cull_n: u32,
+        frame_ms_smooth: f64,
+        deep_gain: f64,
+        last_cull_backing: (u32, u32),
+        cull_overflow: u32,
         last_response_epoch: f64,
 
         packed_deep_pt: Vec<f32>,
@@ -12195,15 +12434,32 @@ mod mathematikerin {
         sun_centered: bool,
         centering: bool,
         center_iter: u32,
-        centroid: [f32; 3],
         packed_center: [f64; 3],
     }
 
     impl NativeApp {
         fn new(
             rx: mpsc::Receiver<Arc<Buffer>>,
-            req_tx: mpsc::SyncSender<(Arc<Buffer>, [f64; 3], f64, f64, f64, f64)>,
-            res_rx: mpsc::Receiver<(PackedWindow, Vec<f32>, Vec<f32>, f64, [f64; 3])>,
+            req_tx: mpsc::SyncSender<(
+                Arc<Buffer>,
+                [f64; 3],
+                f64,
+                f64,
+                f64,
+                f64,
+                [f64; 3],
+                [f64; 3],
+            )>,
+            res_rx: mpsc::Receiver<(
+                PackedWindow,
+                Vec<f32>,
+                Vec<f32>,
+                f64,
+                [f64; 3],
+                u64,
+                [f64; 9],
+                [f64; 3],
+            )>,
             presence_tx: mpsc::Sender<(f64, f64, f64, f64, f64)>,
             sensor_tx: mpsc::Sender<Vec<(String, f64, f64)>>,
             body_names: Arc<Vec<String>>,
@@ -12231,25 +12487,39 @@ mod mathematikerin {
                 membrane_view: None,
                 membrane_sampler: None,
                 probe_pipe: None,
-                centroid_pipe: None,
+                cull_pipe: None,
                 probe_layout: None,
                 render_layout: None,
                 render_bind: None,
+                render_bind_b: None,
                 probe_bind: None,
                 field_buf: None,
                 meta_buf: None,
+                field_buf_b: None,
+                meta_buf_b: None,
                 vp_buf: None,
-                probe_buf: None,
-                probe_read: None,
+                tile_flat_buf: None,
+                tile_count_buf: None,
+                cull_ctl_buf: None,
+                cull_read: None,
                 prep_buf: None,
                 param_buf: None,
                 field_cap: 0,
+                field_pair: 0,
                 backing: (1, 1),
                 latest_field: None,
                 packed_field: Vec::new(),
                 packed_meta: Vec::new(),
                 packed_count: 0,
-                packed_dirty: false,
+                field_generation: 0,
+                uploaded_generation: 0,
+                hud_omega: [0.0; 9],
+                hud_centroid: [0.0; 3],
+                cull_n: 23,
+                frame_ms_smooth: 0.0,
+                deep_gain: 0.0,
+                last_cull_backing: (0, 0),
+                cull_overflow: 0,
                 last_response_epoch: 0.0,
                 packed_deep_pt: Vec::new(),
                 packed_deep_ex: Vec::new(),
@@ -12294,7 +12564,6 @@ mod mathematikerin {
                 sun_centered: false,
                 centering: false,
                 center_iter: 0,
-                centroid: [0.0, 0.0, 0.0],
                 packed_center: [0.0, 0.0, 0.0],
             }
         }
@@ -12326,9 +12595,17 @@ mod mathematikerin {
             let hy = self.size.1 as f64 * self.scale_factor * self.grid_step * 0.5;
             let pad = 2.0 * (hx * hx + hy * hy).sqrt();
             let cache_interval = (self.grid_step / 30000.0).clamp(Φ, Φ * 10.0);
-            let _ = self
-                .req_tx
-                .try_send((field, center, t, pad, cache_interval, self.grid_step));
+            let (fr, fu, _) = self.frame();
+            let _ = self.req_tx.try_send((
+                field,
+                center,
+                t,
+                pad,
+                cache_interval,
+                self.grid_step,
+                fr,
+                fu,
+            ));
         }
 
         fn consider_resend(&mut self) {
@@ -12442,7 +12719,7 @@ mod mathematikerin {
             self.membrane_tex = Some(device.create_texture(&wgpu::TextureDescriptor {
                 label: None,
                 size: wgpu::Extent3d {
-                    width: self.backing.0 * 3,
+                    width: self.backing.0,
                     height: self.backing.1,
                     depth_or_array_layers: 1,
                 },
@@ -12495,7 +12772,7 @@ mod mathematikerin {
             let (fr, fu, ff) = self.frame();
             let [x, y, z] = self.pos();
             [
-                self.backing.0 as f32 * 3.0,
+                self.backing.0 as f32,
                 self.backing.1 as f32,
                 self.packed_count as f32,
                 self.grid_step as f32,
@@ -12515,10 +12792,10 @@ mod mathematikerin {
                 self.deep_ex_count as f32,
                 self.backing.0 as f32,
                 self.backing.1 as f32,
+                self.deep_gain as f32,
                 0.0,
-                0.0,
-                0.0,
-                0.0,
+                self.cull_n as f32,
+                (self.backing.0).div_ceil(TILE_PX) as f32,
                 self.exposure,
                 self.last_response_epoch as f32,
                 0.0,
@@ -12572,6 +12849,18 @@ mod mathematikerin {
                 usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
                 mapped_at_creation: false,
             });
+            let field_buf_b = device.create_buffer(&wgpu::BufferDescriptor {
+                label: None,
+                size: c as u64 * 48,
+                usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+                mapped_at_creation: false,
+            });
+            let meta_buf_b = device.create_buffer(&wgpu::BufferDescriptor {
+                label: None,
+                size: c as u64 * 48,
+                usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+                mapped_at_creation: false,
+            });
             let prep_buf = device.create_buffer(&wgpu::BufferDescriptor {
                 label: None,
                 size: c as u64 * 16,
@@ -12584,37 +12873,101 @@ mod mathematikerin {
                 usage: wgpu::BufferUsages::STORAGE,
                 mapped_at_creation: false,
             });
-            let render_bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
-                label: None,
-                layout: &render_layout,
-                entries: &[
-                    wgpu::BindGroupEntry {
-                        binding: 0,
-                        resource: field_buf.as_entire_binding(),
-                    },
-                    wgpu::BindGroupEntry {
-                        binding: 1,
-                        resource: meta_buf.as_entire_binding(),
-                    },
-                    wgpu::BindGroupEntry {
-                        binding: 2,
-                        resource: vp_buf.as_entire_binding(),
-                    },
-                    wgpu::BindGroupEntry {
-                        binding: 4,
-                        resource: prep_buf.as_entire_binding(),
-                    },
-                    wgpu::BindGroupEntry {
-                        binding: 5,
-                        resource: param_buf.as_entire_binding(),
-                    },
-                ],
-            });
+            let tile_flat = self.tile_flat_buf.clone();
+            let tile_count = self.tile_count_buf.clone();
+            let cull_ctl = self.cull_ctl_buf.clone();
+            let (render_bind, render_bind_b) = match (tile_flat, tile_count, cull_ctl) {
+                (Some(tile_flat_buf), Some(tile_count_buf), Some(cull_ctl_buf)) => {
+                    let a = device.create_bind_group(&wgpu::BindGroupDescriptor {
+                        label: None,
+                        layout: &render_layout,
+                        entries: &[
+                            wgpu::BindGroupEntry {
+                                binding: 0,
+                                resource: field_buf.as_entire_binding(),
+                            },
+                            wgpu::BindGroupEntry {
+                                binding: 1,
+                                resource: meta_buf.as_entire_binding(),
+                            },
+                            wgpu::BindGroupEntry {
+                                binding: 2,
+                                resource: vp_buf.as_entire_binding(),
+                            },
+                            wgpu::BindGroupEntry {
+                                binding: 3,
+                                resource: tile_flat_buf.as_entire_binding(),
+                            },
+                            wgpu::BindGroupEntry {
+                                binding: 4,
+                                resource: prep_buf.as_entire_binding(),
+                            },
+                            wgpu::BindGroupEntry {
+                                binding: 5,
+                                resource: param_buf.as_entire_binding(),
+                            },
+                            wgpu::BindGroupEntry {
+                                binding: 6,
+                                resource: tile_count_buf.as_entire_binding(),
+                            },
+                            wgpu::BindGroupEntry {
+                                binding: 7,
+                                resource: cull_ctl_buf.as_entire_binding(),
+                            },
+                        ],
+                    });
+                    let b = device.create_bind_group(&wgpu::BindGroupDescriptor {
+                        label: None,
+                        layout: &render_layout,
+                        entries: &[
+                            wgpu::BindGroupEntry {
+                                binding: 0,
+                                resource: field_buf_b.as_entire_binding(),
+                            },
+                            wgpu::BindGroupEntry {
+                                binding: 1,
+                                resource: meta_buf_b.as_entire_binding(),
+                            },
+                            wgpu::BindGroupEntry {
+                                binding: 2,
+                                resource: vp_buf.as_entire_binding(),
+                            },
+                            wgpu::BindGroupEntry {
+                                binding: 3,
+                                resource: tile_flat_buf.as_entire_binding(),
+                            },
+                            wgpu::BindGroupEntry {
+                                binding: 4,
+                                resource: prep_buf.as_entire_binding(),
+                            },
+                            wgpu::BindGroupEntry {
+                                binding: 5,
+                                resource: param_buf.as_entire_binding(),
+                            },
+                            wgpu::BindGroupEntry {
+                                binding: 6,
+                                resource: tile_count_buf.as_entire_binding(),
+                            },
+                            wgpu::BindGroupEntry {
+                                binding: 7,
+                                resource: cull_ctl_buf.as_entire_binding(),
+                            },
+                        ],
+                    });
+                    (Some(a), Some(b))
+                }
+                _ => (None, None),
+            };
             self.field_buf = Some(field_buf);
             self.meta_buf = Some(meta_buf);
+            self.field_buf_b = Some(field_buf_b);
+            self.meta_buf_b = Some(meta_buf_b);
             self.prep_buf = Some(prep_buf);
             self.param_buf = Some(param_buf);
-            self.render_bind = Some(render_bind);
+            self.render_bind = render_bind;
+            self.render_bind_b = render_bind_b;
+            self.field_pair = 0;
+            self.uploaded_generation = 0;
             self.rebuild_probe_bind();
         }
 
@@ -12634,10 +12987,13 @@ mod mathematikerin {
             let Some(vp_buf) = self.vp_buf.clone() else {
                 return;
             };
-            let Some(probe_buf) = self.probe_buf.clone() else {
+            let Some(tile_flat_buf) = self.tile_flat_buf.clone() else {
                 return;
             };
-            let Some(membrane_view) = self.membrane_view.clone() else {
+            let Some(tile_count_buf) = self.tile_count_buf.clone() else {
+                return;
+            };
+            let Some(cull_ctl_buf) = self.cull_ctl_buf.clone() else {
                 return;
             };
             let Some(prep_buf) = self.prep_buf.clone() else {
@@ -12664,7 +13020,7 @@ mod mathematikerin {
                     },
                     wgpu::BindGroupEntry {
                         binding: 3,
-                        resource: probe_buf.as_entire_binding(),
+                        resource: tile_flat_buf.as_entire_binding(),
                     },
                     wgpu::BindGroupEntry {
                         binding: 4,
@@ -12676,7 +13032,11 @@ mod mathematikerin {
                     },
                     wgpu::BindGroupEntry {
                         binding: 6,
-                        resource: wgpu::BindingResource::TextureView(&membrane_view),
+                        resource: tile_count_buf.as_entire_binding(),
+                    },
+                    wgpu::BindGroupEntry {
+                        binding: 7,
+                        resource: cull_ctl_buf.as_entire_binding(),
                     },
                 ],
             }));
@@ -12773,15 +13133,21 @@ mod mathematikerin {
             let Some(queue) = self.queue.clone() else {
                 return;
             };
-            if self.packed_dirty {
+            if self.field_generation != self.uploaded_generation {
                 self.ensure_capacity();
-                if let Some(fb) = &self.field_buf {
+                let (fb, mb) = if self.field_pair == 0 {
+                    (self.field_buf_b.as_ref(), self.meta_buf_b.as_ref())
+                } else {
+                    (self.field_buf.as_ref(), self.meta_buf.as_ref())
+                };
+                if let Some(fb) = fb {
                     write_f32(&queue, fb, &self.packed_field);
                 }
-                if let Some(mb) = &self.meta_buf {
+                if let Some(mb) = mb {
                     write_f32(&queue, mb, &self.packed_meta);
                 }
-                self.packed_dirty = false;
+                self.field_pair ^= 1;
+                self.uploaded_generation = self.field_generation;
             }
             if self.deep_dirty {
                 self.ensure_deep_capacity();
@@ -12810,6 +13176,24 @@ mod mathematikerin {
                 .create_view(&wgpu::TextureViewDescriptor::default());
             let mut encoder =
                 device.create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
+            let tiles_x = (self.backing.0).div_ceil(TILE_PX);
+            let tiles_y = self.backing.1.div_ceil(TILE_PX);
+            let cull_fits = tiles_x as u64 * tiles_y as u64 <= TILE_HEAD_CAP as u64;
+            let cull_due = self.field_generation != self.uploaded_generation
+                || self.backing != self.last_cull_backing;
+            if let Some(cc) = self.cull_ctl_buf.as_ref() {
+                if cull_due && cull_fits {
+                    encoder.clear_buffer(cc, 0, Some(8));
+                } else if cull_due {
+                    queue.write_buffer(cc, 4, &1u32.to_le_bytes());
+                }
+            }
+            if cull_due {
+                if let (Some(cc), Some(cr)) = (self.cull_ctl_buf.as_ref(), self.cull_read.as_ref())
+                {
+                    encoder.copy_buffer_to_buffer(cc, 0, cr, 0, 8);
+                }
+            }
             {
                 let mut pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor::default());
                 if let (Some(pipe), Some(bind)) =
@@ -12820,17 +13204,17 @@ mod mathematikerin {
                     pass.dispatch_workgroups(1, 1, 1);
                 }
                 if let (Some(pipe), Some(bind)) =
-                    (self.centroid_pipe.as_ref(), self.probe_bind.as_ref())
+                    (self.cull_pipe.as_ref(), self.probe_bind.as_ref())
                 {
-                    pass.set_pipeline(pipe);
-                    pass.set_bind_group(0, bind, &[]);
-                    pass.dispatch_workgroups(1, 1, 1);
+                    let tiles_x = (self.backing.0).div_ceil(TILE_PX);
+                    let tiles_y = self.backing.1.div_ceil(TILE_PX);
+                    if cull_due && cull_fits && tiles_x > 0 && tiles_y > 0 {
+                        pass.set_pipeline(pipe);
+                        pass.set_bind_group(0, bind, &[]);
+                        pass.dispatch_workgroups(tiles_x, tiles_y, 1);
+                        self.last_cull_backing = self.backing;
+                    }
                 }
-            }
-            if let (Some(probe_buf), Some(probe_read)) =
-                (self.probe_buf.as_ref(), self.probe_read.as_ref())
-            {
-                encoder.copy_buffer_to_buffer(probe_buf, 0, probe_read, 0, 48);
             }
             if let Some(mem_view) = self.membrane_view.as_ref() {
                 let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
@@ -12847,9 +13231,12 @@ mod mathematikerin {
                     occlusion_query_set: None,
                     timestamp_writes: None,
                 });
-                if let (Some(pipe), Some(bind)) =
-                    (self.render_pipe.as_ref(), self.render_bind.as_ref())
-                {
+                let render_bind = if self.field_pair == 0 {
+                    self.render_bind.as_ref()
+                } else {
+                    self.render_bind_b.as_ref()
+                };
+                if let (Some(pipe), Some(bind)) = (self.render_pipe.as_ref(), render_bind) {
                     pass.set_pipeline(pipe);
                     pass.set_bind_group(0, bind, &[]);
                     pass.draw(0..6, 0..1);
@@ -12998,15 +13385,15 @@ mod mathematikerin {
                         e.binding = 5;
                         e
                     },
-                    wgpu::BindGroupLayoutEntry {
-                        binding: 6,
-                        visibility: wgpu::ShaderStages::COMPUTE,
-                        ty: wgpu::BindingType::Texture {
-                            sample_type: wgpu::TextureSampleType::Float { filterable: false },
-                            view_dimension: wgpu::TextureViewDimension::D2,
-                            multisampled: false,
-                        },
-                        count: None,
+                    {
+                        let mut e = storage_entry(false, wgpu::ShaderStages::COMPUTE);
+                        e.binding = 6;
+                        e
+                    },
+                    {
+                        let mut e = storage_entry(false, wgpu::ShaderStages::COMPUTE);
+                        e.binding = 7;
+                        e
                     },
                 ],
             });
@@ -13035,12 +13422,27 @@ mod mathematikerin {
                     },
                     {
                         let mut e = storage_entry(false, wgpu::ShaderStages::FRAGMENT);
+                        e.binding = 3;
+                        e
+                    },
+                    {
+                        let mut e = storage_entry(false, wgpu::ShaderStages::FRAGMENT);
                         e.binding = 4;
                         e
                     },
                     {
                         let mut e = storage_entry(false, wgpu::ShaderStages::FRAGMENT);
                         e.binding = 5;
+                        e
+                    },
+                    {
+                        let mut e = storage_entry(false, wgpu::ShaderStages::FRAGMENT);
+                        e.binding = 6;
+                        e
+                    },
+                    {
+                        let mut e = storage_entry(false, wgpu::ShaderStages::FRAGMENT);
+                        e.binding = 7;
                         e
                     },
                 ],
@@ -13093,11 +13495,11 @@ mod mathematikerin {
                 compilation_options: Default::default(),
                 cache: None,
             });
-            let centroid_pipe = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+            let cull_pipe = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
                 label: None,
                 layout: Some(&probe_pipe_layout),
                 module: &module,
-                entry_point: Some("field_centroid"),
+                entry_point: Some("tile_cull"),
                 compilation_options: Default::default(),
                 cache: None,
             });
@@ -13290,15 +13692,29 @@ mod mathematikerin {
                 usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
                 mapped_at_creation: false,
             });
-            let probe_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            let tile_flat_buf = device.create_buffer(&wgpu::BufferDescriptor {
                 label: None,
-                size: 48,
-                usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC,
+                size: TILE_HEAD_CAP as u64 * TILE_SLOTS_U32 as u64 * 4,
+                usage: wgpu::BufferUsages::STORAGE,
                 mapped_at_creation: false,
             });
-            let probe_read = device.create_buffer(&wgpu::BufferDescriptor {
+            let tile_count_buf = device.create_buffer(&wgpu::BufferDescriptor {
                 label: None,
-                size: 48,
+                size: TILE_HEAD_CAP as u64 * 4,
+                usage: wgpu::BufferUsages::STORAGE,
+                mapped_at_creation: false,
+            });
+            let cull_ctl_buf = device.create_buffer(&wgpu::BufferDescriptor {
+                label: None,
+                size: 8,
+                usage: wgpu::BufferUsages::STORAGE
+                    | wgpu::BufferUsages::COPY_DST
+                    | wgpu::BufferUsages::COPY_SRC,
+                mapped_at_creation: false,
+            });
+            let cull_read = device.create_buffer(&wgpu::BufferDescriptor {
+                label: None,
+                size: 8,
                 usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
                 mapped_at_creation: false,
             });
@@ -13313,14 +13729,16 @@ mod mathematikerin {
             self.comp_layout = Some(comp_layout);
             self.membrane_sampler = Some(membrane_sampler);
             self.probe_pipe = Some(probe_pipe);
-            self.centroid_pipe = Some(centroid_pipe);
+            self.cull_pipe = Some(cull_pipe);
             self.probe_layout = Some(probe_layout);
             self.render_layout = Some(render_layout);
             self.deep_pt_pipe = Some(deep_pt_pipe);
             self.deep_ex_pipe = Some(deep_ex_pipe);
             self.vp_buf = Some(vp_buf);
-            self.probe_buf = Some(probe_buf);
-            self.probe_read = Some(probe_read);
+            self.tile_flat_buf = Some(tile_flat_buf);
+            self.tile_count_buf = Some(tile_count_buf);
+            self.cull_ctl_buf = Some(cull_ctl_buf);
+            self.cull_read = Some(cull_read);
             self.reconfigure();
             self.ensure_capacity();
         }
@@ -13419,11 +13837,11 @@ mod mathematikerin {
                     }
                 }
             }
-            while let Ok((packed, pt, ex, t, pc)) = self.res_rx.try_recv() {
+            while let Ok((packed, pt, ex, t, pc, generation, hud, cent)) = self.res_rx.try_recv() {
                 self.packed_count = packed.count;
                 self.packed_field = packed.field;
                 self.packed_meta = packed.meta;
-                self.packed_dirty = true;
+                self.field_generation = generation;
                 self.last_response_epoch = t;
                 self.packed_deep_pt = pt;
                 self.deep_pt_count = (self.packed_deep_pt.len() / 4) as u32;
@@ -13431,6 +13849,19 @@ mod mathematikerin {
                 self.deep_ex_count = (self.packed_deep_ex.len() / 8) as u32;
                 self.deep_dirty = true;
                 self.packed_center = pc;
+                self.hud_omega = hud;
+                self.hud_centroid = cent;
+                let mut flux_max = 0.0f64;
+                for k in (3..self.packed_deep_pt.len()).step_by(4) {
+                    flux_max = flux_max.max((self.packed_deep_pt[k] as f64).abs());
+                }
+                for k in (3..self.packed_deep_ex.len()).step_by(8) {
+                    flux_max = flux_max.max((self.packed_deep_ex[k] as f64).abs());
+                }
+                if flux_max > 0.0 {
+                    let target = 8.0 - flux_max.log2();
+                    self.deep_gain += (target - self.deep_gain) * 0.25;
+                }
             }
             self.consider_resend();
             self.sensors.frame_interval = (raw / 1000.0).max(0.001);
@@ -13441,12 +13872,33 @@ mod mathematikerin {
                 self.last_hud = Some(now_i);
                 self.sensors.flush();
                 let mut omega = 0.0f32;
-                if let (Some(device), Some(probe_read)) =
-                    (self.device.clone(), self.probe_read.clone())
+                for k in 0..9 {
+                    omega += self.hud_omega[k] as f32;
+                }
+                let ms_peak = self.frame_ms_max;
+                self.frame_ms_smooth += (ms_peak - self.frame_ms_smooth) / 4.0;
+                if self.cull_overflow == 1 && self.cull_n > CULL_N_MIN + 1 {
+                    self.cull_n -= 2;
+                    self.frame_ms_smooth = 0.0;
+                } else if self.frame_ms_smooth > DISPLAY_PERIOD_MS * 4.0
+                    && self.cull_n > CULL_N_MIN + 1
+                {
+                    self.cull_n -= 2;
+                    self.frame_ms_smooth = 0.0;
+                } else if self.frame_ms_smooth > DISPLAY_PERIOD_MS && self.cull_n > CULL_N_MIN {
+                    self.cull_n -= 1;
+                    self.frame_ms_smooth = 0.0;
+                } else if self.frame_ms_smooth < DISPLAY_PERIOD_MS / 2.0 && self.cull_n < CULL_N_MAX
+                {
+                    self.cull_n += 1;
+                    self.frame_ms_smooth = 0.0;
+                }
+                if let (Some(device), Some(cull_read)) =
+                    (self.device.clone(), self.cull_read.clone())
                 {
                     let mapped = Arc::new(AtomicBool::new(false));
                     let m2 = mapped.clone();
-                    let slice = probe_read.slice(..);
+                    let slice = cull_read.slice(..);
                     slice.map_async(wgpu::MapMode::Read, move |r| {
                         m2.store(r.is_ok(), Ordering::SeqCst);
                     });
@@ -13456,31 +13908,22 @@ mod mathematikerin {
                     }
                     if mapped.load(Ordering::SeqCst) {
                         let data = slice.get_mapped_range();
-                        let mut cent = [0.0f32; 3];
-                        for k in 0..12 {
-                            let mut b = [0u8; 4];
-                            b.copy_from_slice(&data[k * 4..k * 4 + 4]);
-                            let v = f32::from_le_bytes(b);
-                            if k < 9 {
-                                omega += v;
-                            } else {
-                                cent[k - 9] = v;
-                            }
-                        }
+                        let mut b = [0u8; 4];
+                        b.copy_from_slice(&data[4..8]);
+                        self.cull_overflow = u32::from_le_bytes(b);
                         drop(data);
-                        self.centroid = cent;
                     }
-                    probe_read.unmap();
+                    cull_read.unmap();
                 }
                 if self.centering {
                     let [px, py, pz] = self.pos();
                     let fresh = (px - self.packed_center[0]).abs() < 1e-3 * self.grid_step
                         && (py - self.packed_center[1]).abs() < 1e-3 * self.grid_step
                         && (pz - self.packed_center[2]).abs() < 1e-3 * self.grid_step;
-                    let lum = self.centroid[2];
+                    let lum = self.hud_centroid[2];
                     if fresh && lum > 1e-30 {
-                        let ox = self.centroid[0] as f64 / 3.0;
-                        let oy = self.centroid[1] as f64;
+                        let ox = self.hud_centroid[0];
+                        let oy = self.hud_centroid[1];
                         if ox.abs() < 0.25 && oy.abs() < 0.25 {
                             self.centering = false;
                         } else {
@@ -13504,7 +13947,7 @@ mod mathematikerin {
                 let ms_max = self.frame_ms_max;
                 self.frame_ms_max = 0.0;
                 eprintln!(
-                "φ window: t {:.2} | Ω {:.3} | fps {:.0} | ssaa {:.2} | grid 2^{} | x {:.3e} y {:.3e} z {:.3e} | {} near | {} deep | c {:.2} {:.2} | b {}x{} | maxms {:.0}",
+                "φ window: t {:.2} | Ω {:.3} | fps {:.0} | ssaa {:.2} | grid 2^{} | x {:.3e} y {:.3e} z {:.3e} | {} near | {} deep | c {:.2} {:.2} | b {}x{} | maxms {:.0} | gen {} | n {} | ovf {} | dg {:.1}",
                 self.t_presence,
                 omega,
                 fps,
@@ -13515,11 +13958,15 @@ mod mathematikerin {
                 z,
                 self.packed_count,
                 self.deep_pt_count + self.deep_ex_count,
-                self.centroid[0],
-                self.centroid[1],
+                self.hud_centroid[0],
+                self.hud_centroid[1],
                 self.backing.0,
                 self.backing.1,
                 ms_max,
+                self.field_generation,
+                self.cull_n,
+                self.cull_overflow,
+                self.deep_gain,
             );
             }
             event_loop.set_control_flow(ControlFlow::WaitUntil(
@@ -13649,8 +14096,26 @@ mod mathematikerin {
         rx: mpsc::Receiver<Arc<Buffer>>,
         presence_tx: mpsc::Sender<(f64, f64, f64, f64, f64)>,
         sensor_tx: mpsc::Sender<Vec<(String, f64, f64)>>,
-        req_tx: mpsc::SyncSender<(Arc<Buffer>, [f64; 3], f64, f64, f64, f64)>,
-        res_rx: mpsc::Receiver<(PackedWindow, Vec<f32>, Vec<f32>, f64, [f64; 3])>,
+        req_tx: mpsc::SyncSender<(
+            Arc<Buffer>,
+            [f64; 3],
+            f64,
+            f64,
+            f64,
+            f64,
+            [f64; 3],
+            [f64; 3],
+        )>,
+        res_rx: mpsc::Receiver<(
+            PackedWindow,
+            Vec<f32>,
+            Vec<f32>,
+            f64,
+            [f64; 3],
+            u64,
+            [f64; 9],
+            [f64; 3],
+        )>,
         body_names: Arc<Vec<String>>,
         time: Arc<Mutex<Option<LeapSeconds>>>,
         shutdown: Arc<AtomicBool>,
