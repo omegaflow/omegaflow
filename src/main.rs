@@ -9304,8 +9304,45 @@ const CELESTIAL_NETLOCS: &[&str] = &[
     "astrocats.space",
 ];
 
-fn draft_frame_guess(url: &str, context: &str) -> (String, String) {
+fn build_frame_registry() -> HashMap<String, String> {
+    let mut map: HashMap<String, String> = HashMap::new();
+    for path in ["phi/sources.φ", "phi/dead_sources.φ"] {
+        let Ok(content) = std::fs::read_to_string(path) else {
+            continue;
+        };
+        let mut cur_url: Option<String> = None;
+        for line in content.lines() {
+            let t = line.trim();
+            if let Some(rest) = t.strip_prefix("url ") {
+                cur_url = Some(rest.trim().to_string());
+            } else if let Some(url) = &cur_url {
+                if t.starts_with("on ") {
+                    if let Some(nl) = extract_netloc(url) {
+                        map.entry(nl.to_string())
+                            .or_insert_with(|| "on earth".to_string());
+                    }
+                } else if let Some(rest) = t.strip_prefix("at ") {
+                    let body = rest.split_whitespace().next().unwrap_or("sun");
+                    if let Some(nl) = extract_netloc(url) {
+                        map.entry(nl.to_string())
+                            .or_insert_with(|| format!("at {}", body));
+                    }
+                }
+            }
+        }
+    }
+    map
+}
+
+fn draft_frame_guess(
+    url: &str,
+    context: &str,
+    registry: &HashMap<String, String>,
+) -> (String, String) {
     let netloc = extract_netloc(url).unwrap_or_default();
+    if let Some(f) = registry.get(netloc) {
+        return (format!("{}\n", f), format!("netloc-registry: {}", f));
+    }
     for n in CELESTIAL_NETLOCS {
         if netloc == *n || netloc.ends_with(n) {
             return ("at sun\n".to_string(), "celestial netloc".to_string());
@@ -9383,6 +9420,16 @@ fn draft_context_mode(path: &str) -> i32 {
             }
         }
     }
+    let registry = build_frame_registry();
+    let mut reg = String::from(
+        "# frame-registry — netloc → frame, selbstlernend aus sources.φ + dead_sources.φ\n",
+    );
+    let mut reg_keys: Vec<(&String, &String)> = registry.iter().collect();
+    reg_keys.sort();
+    for (nl, f) in reg_keys {
+        reg.push_str(&format!("{} | {}\n", nl, f));
+    }
+    std::fs::write("phi/port/frame_registry.φ", reg).ok();
     let mut out = String::new();
     let mut celestial = 0usize;
     let mut terrestrial = 0usize;
@@ -9408,7 +9455,7 @@ fn draft_context_mode(path: &str) -> i32 {
             continue;
         }
         let context = context_map.get(url).cloned().unwrap_or_default();
-        let (frame, reason) = draft_frame_guess(url, &context);
+        let (frame, reason) = draft_frame_guess(url, &context, &registry);
         if frame.is_empty() {
             pending += 1;
             out.push_str(b);
@@ -9442,6 +9489,83 @@ fn draft_context_mode(path: &str) -> i32 {
         celestial,
         terrestrial,
         pending
+    );
+    0
+}
+
+fn gate_learn_mode() -> i32 {
+    let mut delta: Vec<(i32, String, String)> = Vec::new();
+    let mut seen: std::collections::HashSet<String> = std::collections::HashSet::new();
+    if let Ok(content) = std::fs::read_to_string("phi/sources.φ") {
+        for line in content.lines() {
+            let t = line.trim();
+            if let Some(rest) = t.strip_prefix("url ") {
+                if let Some(nl) = extract_netloc(rest.trim()) {
+                    if seen.insert(format!("+{}", nl)) {
+                        delta.push((4, "-".to_string(), nl.to_string()));
+                    }
+                }
+            }
+        }
+    }
+    if let Ok(content) = std::fs::read_to_string("phi/dead_sources.φ") {
+        for line in content.lines() {
+            let t = line.trim();
+            if let Some(rest) = t.strip_prefix("url ") {
+                if let Some(nl) = extract_netloc(rest.trim()) {
+                    if seen.insert(format!("-{}", nl)) {
+                        delta.push((-4, "-".to_string(), nl.to_string()));
+                    }
+                }
+            }
+        }
+    }
+    let (mut pos, mut neg) = (0usize, 0usize);
+    for (w, _, _) in &delta {
+        if *w > 0 {
+            pos += 1;
+        } else {
+            neg += 1;
+        }
+    }
+    let mut d = String::from(
+        "# gate-delta — netloc-Gewichte, selbstlernend aus sources.φ (+) + dead_sources.φ (−)\n",
+    );
+    for (w, f, tag) in &delta {
+        d.push_str(&format!("{} {} {}\n", w, f, tag));
+    }
+    std::fs::write("phi/port/library_gate_delta.φ", d).ok();
+    let library = std::fs::read_to_string("phi/port/library.φ").unwrap_or_default();
+    let delta_lines: Vec<String> = delta
+        .iter()
+        .map(|(w, f, tag)| format!("{} {} {}", w, f, tag))
+        .collect();
+    let mut seen2: std::collections::HashSet<String> = std::collections::HashSet::new();
+    let mut out = String::new();
+    for line in library
+        .lines()
+        .chain(delta_lines.iter().map(|s| s.as_str()))
+    {
+        if line.starts_with('#') {
+            out.push_str(line);
+            out.push('\n');
+            continue;
+        }
+        let parts: Vec<&str> = line.splitn(3, char::is_whitespace).collect();
+        if parts.len() < 3 {
+            continue;
+        }
+        if seen2.insert(parts[2].to_string()) {
+            out.push_str(line);
+            out.push('\n');
+        }
+    }
+    std::fs::write("phi/port/library.φ", out).ok();
+    eprintln!(
+        "--learn-gate: {} netloc-Gewichte ({} positiv, {} negativ) → library.φ + library_gate_delta.φ",
+        delta.len(),
+        pos,
+        neg
     );
     0
 }
@@ -9603,6 +9727,9 @@ fn main() {
                 }
             };
             std::process::exit(port_mode(input, output));
+        }
+        if args.len() > 1 && args[1] == "--learn-gate" {
+            std::process::exit(gate_learn_mode());
         }
         if args.len() > 1 && args[1] == "--draft-context" {
             let path = match args.get(2) {

@@ -89,7 +89,7 @@ pub fn parse_library(content: &str) -> Vec<TagWeight> {
 }
 
 fn tag_matches(hay: &str, tag: &str) -> bool {
-    if tag.contains(' ') || tag.contains('_') {
+    if tag.contains(' ') || tag.contains('_') || tag.contains('.') {
         hay.contains(tag)
     } else {
         hay.split(|c: char| !c.is_ascii_alphanumeric())
