@@ -390,6 +390,17 @@ jobs:
                  --title "flatten: merlin returned void" \
                  --body "merlin compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
                  --label health
+      - name: Compile PANGAEA sediment core 758961 and upload to CDN
+        continue-on-error: true
+        run: |
+          cargo run --release --bin pangaea_compiler -- \
+            --id PANGAEA.758961 \
+            --out pangaea_758961.json \
+            --ci-mode \
+            || gh issue create --repo omegaflow/omegaflow \
+                 --title "flatten: pangaea_758961 returned void" \
+                 --body "pangaea_758961 compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 --label health
       - name: Compile Gaia DR3 + Bailer-Jones star catalog and upload to CDN
         continue-on-error: true
         run: |

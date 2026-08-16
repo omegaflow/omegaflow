@@ -1275,6 +1275,16 @@ dec dec
 field freq merlin_frequency_hz inverse-square em Hz 604800 0.0 0.0
 field ampflux merlin_amplitude_flux inverse-square em Jy 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/pangaea_758961.json
+ttl 604800
+on earth 0 0 0
+map .
+lat lat
+lon lon
+field sr_mg_kg pangaea_sr_mg_kg gaussian-inverse-square diffusion mg/kg 604800 0.0 0.0
+field nd_mg_kg pangaea_nd_mg_kg gaussian-inverse-square diffusion mg/kg 604800 0.0 0.0
+field carb_detr pangaea_carb_detr_pct gaussian-inverse-square diffusion pct 604800 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/pastel.json
 ttl 604800
 at sun

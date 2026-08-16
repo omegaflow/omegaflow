@@ -36,3 +36,12 @@
 #   GFZ ICGEM: icgem.gfz-potsdam.de (302 → Endpoint neu entdecken)
 #   SEANOE:    www.seanoe.org (OAI-Endpoint neu entdecken)
 #   LTER:      lter-europe.net (302 → Endpoint neu entdecken)
+
+# Verifizierte Endpoints (Subagent-Recherche, live 2026-08-16):
+#   SEANOE:      https://www.seanoe.org/oai/OAIHandler (OAI-PMH, oai_dc)
+#   LTER/DEIMS:  https://deims.org/api/sites (1391 Sites) + /api/activities (Datasets)
+#   GFZ ICGEM:   https://icgem.gfz.de/json_modelmap/name?modeltype=longtime (114 Gravitationsmodelle)
+#   GFZ DOIDB:   http://doidb.wdc-terra.org/oaip/oai (OAI-PMH, sets DOIDB.GFZ/ICGEM/IGETS)
+#   INRAE:       https://data.inrae.fr/api/search?q=*&type=dataset (Dataverse, 6255 Datasets)
+#   WDCC/CERA:   https://www.wdc-climate.de/ui/solr/select?q=*:*&wt=json (2.796.923 Einträge)
+#   IGETS:       via DOIDB set DOIDB.IGETS (DOIs 10.5880/igets.*)
