@@ -11,10 +11,9 @@ Drift-Stellen sind unter „Doku-Drift" registriert.
 Laufend (2026-08-16): CI-Schritte + sources.φ-Blöcke für alle 12 Kataloge
 angepasst (--crossmatch 'I/355/paramp:RA_ICRS:DE_ICRS:Dist' → dist_pc),
 wd trägt plx (eigene Parallaxe). Kompiliert + live auf CDN: cbdata, merlin,
-psr, sb9, corot, wd, gcvs. Offen: denis, pastel, polarbase, vsx, wds, mktypes
+psr, sb9, corot, wd, gcvs, denis, pastel, wds, vsx, mktypes. Offen: polarbase
 (Crossmatch gegen I/355/paramp ist bei parallelen Anfragen trunkierend —
-sequenzielle Gruppen, async-Pfad mit TOP-Limit erweitert). evs_cat (B1950)
-bleibt Gap. Auftrag: docs/AUFTRAG-crossmatch.md.
+läuft einzeln). evs_cat (B1950) bleibt Gap. Auftrag: docs/AUFTRAG-crossmatch.md.
 
 ## Rückroll — 2026-08-16, auf fd666f5b
 
