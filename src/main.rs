@@ -51,13 +51,14 @@ struct VOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f };
 @group(0) @binding(1) var<storage, read> deep_pt: array<vec4f>;
 @group(0) @binding(2) var<storage, read> deep_ex: array<vec4f>;
 
-struct DeepPtVOut { @builtin(position) pos: vec4f, @location(0) @interpolate(flat) flux: f32 };
+struct DeepPtVOut { @builtin(position) pos: vec4f, @location(0) @interpolate(flat) flux: f32, @location(1) uv: vec2f };
 
 @vertex fn deep_pt_vs(@builtin(vertex_index) i: u32) -> DeepPtVOut {
     let count = u32(deep_vp.expose_lo.x);
     var out: DeepPtVOut;
     out.pos = vec4f(0.0, 0.0, 0.0, 1.0);
     out.flux = 0.0;
+    out.uv = vec2f(0.0);
     if (count == 0u) { return out; }
     let id = i / 6u;
     if (id >= count) { return out; }
@@ -73,10 +74,11 @@ struct DeepPtVOut { @builtin(position) pos: vec4f, @location(0) @interpolate(fla
     let sy = -dot(data.xyz, deep_vp.up.xyz) / (0.5 * h * scale);
     let corner = quad[i % 6u];
     let clip = vec2f(
-        sx + (corner.x * 1.0) / w * 2.0,
-        sy + (corner.y * 1.0) / h * 2.0,
+        sx + (corner.x * 2.2) / w * 2.0,
+        sy + (corner.y * 2.2) / h * 2.0,
     );
     out.pos = vec4f(clip, 0.0, 1.0);
+    out.uv = corner;
     out.flux = data.w;
     return out;
 }
@@ -91,7 +93,8 @@ struct DeepPtVOut { @builtin(position) pos: vec4f, @location(0) @interpolate(fla
     let c2 = mix(c, vec3f(0.2, 0.8, 1.0), clamp((t2 - 0.25) * 4.0, 0.0, 1.0));
     let c3 = mix(c2, vec3f(1.0, 0.7, 0.1), clamp((t2 - 0.5) * 4.0, 0.0, 1.0));
     let c4 = mix(c3, vec3f(1.0, 1.0, 1.0), clamp((t2 - 0.75) * 4.0, 0.0, 1.0));
-    return vec4f(c4 * fade, 1.0);
+    let glow = exp(-1.8 * dot(in.uv, in.uv));
+    return vec4f(c4 * fade * glow, 1.0);
 }
 
 struct DeepVOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f, @location(1) color: vec3f };
@@ -155,8 +158,7 @@ fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
 
 @fragment fn deep_fs(in: DeepVOut) -> @location(0) vec4f {
     let dist = length(in.uv);
-    if (dist > 1.0) { discard; }
-    let intensity = 1.0 - dist * dist;
+    let intensity = exp(-2.5 * dist * dist);
     let noise = fract(sin(dot(in.pos.xy, vec2f(12.9898, 78.233))) * 43758.5453);
     let analog_intensity = intensity * (0.9 + noise * 0.1);
     let hdr_color = in.color * analog_intensity;
