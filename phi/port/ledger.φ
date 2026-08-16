@@ -148,7 +148,7 @@ note --draft-context (Welle 3,5): 4.977 ausstehend → 123 celestial (Netloc-Set
 
 ausstehend
 bestand phi/katalog/vizier_gold_catalogs.φ
-note tap_compiler-Durchlauf-Queue: 729 VizieR-Kataloge mit physikalischen Spalten (mag/flux/redshift/velocity/parallax/plx/period) aus der TOP-100000-Stichprobe von tap_schema.columns (Untergrenze, live 2026-08-16). Pro Katalog: tap_compiler --table + --columns + CI-Schritt (Muster bzcat5/swiftgrb). Kompiliert + eingebaut (2026-08-16): GCVS (50k, mag+period), ATNF-Pulsare (2451, p0+dm+s1400), Asiago-Supernovae (5280, z+mag), Weiße Zwerge (3115, mag+teff) — alle mit CI-Schritt + sources.φ-Block
+note tap_compiler-Durchlauf-Queue: 729 VizieR-Kataloge mit physikalischen Spalten (mag/flux/redshift/velocity/parallax/plx/period) aus der TOP-100000-Stichprobe von tap_schema.columns (Untergrenze, live 2026-08-16). Pro Katalog: tap_compiler --table + --columns + CI-Schritt (Muster bzcat5/swiftgrb). Kompiliert + eingebaut (2026-08-16): GCVS (50k, mag+period), ATNF-Pulsare (2451, p0+dm+s1400), Asiago-Supernovae (5280, z+mag), Weiße Zwerge (3115, mag+teff), LMXB (36, M1/M2 gravity+mag — GRS 1915+105 M1=10,1 M_sun verifiziert, live auf CDN) — alle mit CI-Schritt + sources.φ-Block
 
 ausstehend
 bestand phi/katalog/b2find_provider_map.φ
@@ -357,6 +357,10 @@ note --gold-Konverter fällt method/body (POST) — STAC/landsatlook-Kandidaten 
 ausstehend
 parser-gap GLMNetCDF
 note GLM-Blitz (electric-Kanal) — NetCDF-Reader fehlt
+
+ausstehend
+kandidat https://wwwi3.ymparisto.fi/i3/RealTime/data/WST1403901.txt
+note SYKE-Finnland-See (thermal, Wassertemperatur 15-min, Konnevesi/Päijänne) — grind_lter_finland.φ. Position separat (ETRS-TM35FIN N/E in Stations-HTML) → parser-def: Position-Separation + ETRS-TM35FIN→WGS84. Schwester: Wasserstand W071.txt (gravity). JYU-Stationen (Jyväsjärvi) ohne öffentliche API (paijanne.org absent)
 
 ausstehend
 kraft-kanal acoustic
