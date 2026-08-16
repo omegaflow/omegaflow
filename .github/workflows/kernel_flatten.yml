@@ -278,6 +278,62 @@ jobs:
                  --title "flatten: wd returned void" \
                  --body "wd compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
                  --label health
+      - name: Compile VSX variable-star index and upload to CDN
+        continue-on-error: true
+        run: |
+          cargo run --release --bin tap_compiler -- \
+            --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
+            --table "B/vsx/vsx" \
+            --columns 'ra:RAJ2000;dec:DEJ2000;max:max;min:min;period:Period' \
+            --skip-null max \
+            --out vsx.json \
+            --ci-mode \
+            || gh issue create --repo omegaflow/omegaflow \
+                 --title "flatten: vsx returned void" \
+                 --body "vsx compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 --label health
+      - name: Compile DENIS infrared catalog and upload to CDN
+        continue-on-error: true
+        run: |
+          cargo run --release --bin tap_compiler -- \
+            --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
+            --table "B/denis/denis" \
+            --columns 'ra:RAJ2000;dec:DEJ2000;imag:Imag;jmag:Jmag;kmag:Kmag' \
+            --skip-null jmag \
+            --out denis.json \
+            --ci-mode \
+            || gh issue create --repo omegaflow/omegaflow \
+                 --title "flatten: denis returned void" \
+                 --body "denis compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 --label health
+      - name: Compile WDS double-star catalog and upload to CDN
+        continue-on-error: true
+        run: |
+          cargo run --release --bin tap_compiler -- \
+            --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
+            --table "B/wds/wds" \
+            --columns 'ra:RAJ2000;dec:DEJ2000;mag1:mag1;mag2:mag2;sep:sep1' \
+            --skip-null mag1 \
+            --out wds.json \
+            --ci-mode \
+            || gh issue create --repo omegaflow/omegaflow \
+                 --title "flatten: wds returned void" \
+                 --body "wds compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 --label health
+      - name: Compile SB9 spectroscopic-binary catalog and upload to CDN
+        continue-on-error: true
+        run: |
+          cargo run --release --bin tap_compiler -- \
+            --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
+            --table "B/sb9/main" \
+            --columns 'ra:RAJ2000;dec:DEJ2000;mag1:mag1;mag2:mag2' \
+            --skip-null mag1 \
+            --out sb9.json \
+            --ci-mode \
+            || gh issue create --repo omegaflow/omegaflow \
+                 --title "flatten: sb9 returned void" \
+                 --body "sb9 compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 --label health
       - name: Compile Gaia DR3 + Bailer-Jones star catalog and upload to CDN
         continue-on-error: true
         run: |
