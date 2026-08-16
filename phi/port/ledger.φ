@@ -433,3 +433,11 @@ note gaia_dist vsx (B/vsx/vsx): 49568 Zeilen, 37413 mit Gaia-Distanz — live au
 verifiziert
 bestand phi/katalog/vizier_gold_catalogs.φ
 note gaia_dist mktypes (B/mk/mktypes): 35219 Zeilen, 18272 mit Gaia-Distanz — live auf CDN
+
+verifiziert
+bestand phi/katalog/vizier_gold_catalogs.φ
+note gaia_dist polarbase (B/polarbase/polarbase): 299 eindeutige Positionen (Polarimetrie-Katalog, viele Beobachtungen pro Stern, MAX-Dedup), 62 mit Gaia-Distanz — live auf CDN
+
+geparkt
+kandidat B/gcvs/evs_cat
+note evs_cat trägt B1950-Koordinaten (Epoche, nicht J2000) — Crossmatch gegen I/355/paramp würde fehlmatchen; Katalog ausgelassen (Gap der Crossmatch-Welle)
