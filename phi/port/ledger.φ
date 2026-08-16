@@ -152,11 +152,11 @@ note tap_compiler-Durchlauf-Queue: 729 VizieR-Kataloge mit physikalischen Spalte
 
 ausstehend
 bestand phi/katalog/b2find_provider_map.φ
-note „jeden Katalog"-Kampagne: 37 Provider der b2find-Wissenschafts-Tags (LTER 707, PANGAEA 321, INRAE 56, GFZ 22, SEANOE 11, WDCC 10 …). b2find ist Metadaten-Register (url:null), die Provider sind die Kataloge. Endpoints: PANGAEA-OAI verifiziert, GFZ-ICGEM/SEANOE/LTER neu zu entdecken
+note „jeden Katalog"-Kampagne: 37 Provider der b2find-Wissenschafts-Tags (LTER 707, PANGAEA 321, INRAE 56, GFZ 22, SEANOE 11, WDCC 10 …). Befund 2026-08-16: die Provider-Kataloge (LTER/DEIMS/PANGAEA/b2find) sind — wie CMR — Metadaten-Register: Sites tragen POINT-Koordinaten (lter_sites.φ, 1391) und Sensoren tragen Instrument-Typen (lter_sensors.φ, 83), aber KEINE Live-Daten-URL (deims.org/api/sensors/{id} → nur sensorType/observedProperty, kein Daten-Link). Live-Daten liegen in Provider-APIs (PASTA, JYU-Finnland-Seen), die gegrindet werden müssen — die Kataloge speisen die Grind-Queue mit Provider-Name + Standort, nicht mit URLs. Konsequenz: „Harvest→Probe" ist die falsche Form für diese Kataloge; die richtige Nutzung ist Kompilat (tap_compiler/pangaea_compiler für statische Messwerte) + Grind (für Live-Endpoints). Grind-Lead: LTER-Finnland-Seen (Jyväsjärvi/Konnevesi/Päijänne, „online year-round 1-min", Kontakt juha.karjalainen@jyu.fi) — Live-API beim JYU-Provider suchen
 
 ausstehend
 bestand phi/katalog/pangaea_catalog.φ
-note PANGAEA-OAI (ws.pangaea.de/oai/provider, ~430k Datasets) — Stichprobe 3.000 Collection-Datasets geerntet (DOI+titel). Voll-Harvest als CI-Aufgabe; Daten-Zugriff: Collection-Seite → Member → .tab (format=textfile gibt 400 für Collections) — pangaea_compiler-Muster analog tap_compiler nötig
+note PANGAEA-OAI (ws.pangaea.de/oai/provider, ~430k Datasets) — Stichprobe 3.000 Collection-Datasets geerntet (DOI+titel). Befund 2026-08-16: PANGAEA ist wie CMR/LTER/DEIMS/b2find ein Metadaten-Register — DOI+titel, KEINE Live-Daten-URL (Datenzugriff: Collection-Seite → Member → .tab). Voll-Harvest als CI-Aufgabe; pangaea_compiler-Muster analog tap_compiler nötig — der Messwert liegt im .tab-Export, nicht in einer JSON-API
 
 ausstehend
 bestand phi/katalog/_adapter_queue
