@@ -87,6 +87,20 @@ Offen:
 
 ---
 
+### wgpu-mono — Survey: Messpunkt-Verteilung
+
+Offen:
+- docs/surveys/messpunkt-verteilung.md liegt aus — die Antworten mehrerer
+  LLMs (GLM eingegangen, weitere ausstehend) werden gesammelt und gegen
+  die Randbedingungen des Surveys geprüft (Ground Truth = Messung,
+  hardware-agnostisch: das Konzept leitet sich aus dem Gesetz und der
+  f32-Auflösung ab, die Hardware tritt nur über das Frame-Budget ein)
+- Die gewählte Verteilung + Budget-Skalierung wird danach auf dem Titanen
+  manifestiert (Archivar-Sampler → Messpunkt-Liste → Membran misst nur
+  dort; Zellen-Anzeige vs. Interpolation als offene Philosophie-Frage)
+
+---
+
 ### wgpu-mono — Deep-Sky-Plenum (zwei Regime, eine Wahrheit)
 
 ```
