@@ -23,6 +23,29 @@ Die Membran dieses Standes rendert 1× direkt in die Swapchain (additives
 Blend), der Deep-Renderer (Quads + 1-px-Punkte) ist intakt; helle Sterne
 tragen t2 ≈ 0,7 auf der Nebra-Rampe, 0 deep bei 2^31 ist korrekt.
 
+## Eine Version — 2026-08-16, Konsolidierung
+
+main ist jetzt die EINZIGE Linie: Monolith (Rückroll-Stand fd666f5b +
+Backing-Fix) + Parallel-Session-Wellen (welle 3/4, ff auf cc5cbd3) +
+die Katalog/Harvester-Welle per Cherry-Pick (29 Commits, ff-Liste).
+main-browser (44ca172) ist eingefroren — alle Neuarbeit läuft auf main.
+`parallel-welle-2026-08-16` sichert den Parallel-Stand vor der Fusion.
+cargo check 0/0, 42 Tests grün, Live: 116 near bei 2^31, 1920×1080.
+
+Aus main-browser NICHT übernommen (8 Commits, src/main.rs-Nacharbeit
+gegen den mod-archivar-Umbau — Hand-Port als eigene Session):
+
+- 44ca172 Himmelssphäre + --crossmatch (CELESTIAL_SPHERE_RADIUS_M in
+  extract(); tap_compiler --crossmatch I/355/paramp; 2 Tests; der
+  lmxbdata-Block mit dist_pc-Werten ist bereits über 0cfde44 da)
+- 2256839 route_key Frame-Registry + 5 Tests
+- f9f2389 derive_frame + frame_learned.φ
+- 74b808a frame_registry.φ + --learn-gate + tag_matches-Netloc
+- 8a0145f TAP-Zeilen-Mapping (tap_to_json, format tap)
+- 858c71b cmap-Draft (ra/dec walk)
+- 5fc0d1a --draft-context-Modus + Workflow-Schritt
+- a4eb3c2 JINA_API_KEY-Pacing (Authorization-Bearer, Workflow-Secret)
+
 ## Fortschritts-Verzeichnis — 2026-08-16
 
 docs/surveys/fortschritt.md ist das vollständige Verzeichnis der
