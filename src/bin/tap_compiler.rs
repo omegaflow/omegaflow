@@ -356,6 +356,8 @@ fn tap_async(root: &str, adql: &str, poll_secs: u64) -> Option<String> {
         .arg("--data-urlencode")
         .arg("LANG=ADQL")
         .arg("--data-urlencode")
+        .arg("FORMAT=votable")
+        .arg("--data-urlencode")
         .arg(format!("QUERY={}", adql))
         .arg(&base)
         .output()
@@ -1033,7 +1035,7 @@ fn main() {
     };
     let mut cells_rows: Vec<Vec<String>>;
     if async_mode.is_some() {
-        let adql = format!("SELECT {} FROM {}", cols_sel, from_clause);
+        let adql = format!("SELECT TOP {} {} FROM {}", limit, cols_sel, from_clause);
         let Some(poll) = async_mode else {
             unreachable!()
         };

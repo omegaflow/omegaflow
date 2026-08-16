@@ -1185,6 +1185,8 @@ at sun
 cmap .
 ra ra
 dec dec
+dist dist_pc
+dist_scale 3.085677581e16
 field mag1 cb_mag1 gaussian-inverse-square em mag 604800 0.0 0.0
 field m1 cb_primary_mass gaussian-inverse-square gravity M_sun 604800 0.0 0.0
 field m2 cb_secondary_mass gaussian-inverse-square gravity M_sun 604800 0.0 0.0
@@ -1198,6 +1200,18 @@ dec dec
 dist dist_au
 dist_scale 1.495978707e11
 field H comet_h_mag gaussian-inverse-square em mag 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/corot.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+dist dist_pc
+dist_scale 3.085677581e16
+field mag corot_vmag gaussian-inverse-square em mag 604800 0.0 0.0
+field teff corot_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
+field logg corot_logg gaussian-inverse-square gravity dex 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/dcom5_comets.json
 ttl 604800
@@ -1216,6 +1230,8 @@ at sun
 cmap .
 ra ra
 dec dec
+dist dist_pc
+dist_scale 3.085677581e16
 field jmag denis_j_mag gaussian-inverse-square em mag 604800 0.0 0.0
 field kmag denis_k_mag gaussian-inverse-square em mag 604800 0.0 0.0
 
@@ -1261,6 +1277,8 @@ at sun
 cmap .
 ra ra
 dec dec
+dist dist_pc
+dist_scale 3.085677581e16
 field mag gcvs_mag_max gaussian-inverse-square em mag 604800 0.0 0.0
 field period gcvs_period_d gaussian-inverse-square em d 604800 0.0 0.0
 
@@ -1293,8 +1311,20 @@ at sun
 cmap .
 ra ra
 dec dec
+dist dist_pc
+dist_scale 3.085677581e16
 field freq merlin_frequency_hz inverse-square em Hz 604800 0.0 0.0
 field ampflux merlin_amplitude_flux inverse-square em Jy 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/mktypes.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+dist dist_pc
+dist_scale 3.085677581e16
+field mag mktypes_mag gaussian-inverse-square em mag 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/pangaea_758961.json
 ttl 604800
@@ -1312,6 +1342,8 @@ at sun
 cmap .
 ra ra
 dec dec
+dist dist_pc
+dist_scale 3.085677581e16
 field teff pastel_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
 field logg pastel_logg gaussian-inverse-square gravity dex 604800 0.0 0.0
 field mag pastel_vmag gaussian-inverse-square em mag 604800 0.0 0.0
@@ -1322,6 +1354,8 @@ at sun
 cmap .
 ra ra
 dec dec
+dist dist_pc
+dist_scale 3.085677581e16
 field teff polarbase_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
 field logg polarbase_logg gaussian-inverse-square gravity dex 604800 0.0 0.0
 field mag polarbase_vmag gaussian-inverse-square em mag 604800 0.0 0.0
@@ -1332,6 +1366,8 @@ at sun
 cmap .
 ra ra
 dec dec
+dist dist_pc
+dist_scale 3.085677581e16
 field p0 pulsar_period_s gaussian-inverse-square em s 604800 0.0 0.0
 field dm pulsar_dm_pccm3 inverse-square em pc/cm3 604800 0.0 0.0
 field s1400 pulsar_flux_1400mhz_mjy inverse-square em mJy 604800 0.0 0.0
@@ -1342,6 +1378,8 @@ at sun
 cmap .
 ra ra
 dec dec
+dist dist_pc
+dist_scale 3.085677581e16
 field mag1 sb9_primary_mag gaussian-inverse-square em mag 604800 0.0 0.0
 field mag2 sb9_secondary_mag gaussian-inverse-square em mag 604800 0.0 0.0
 
@@ -1380,6 +1418,8 @@ at sun
 cmap .
 ra ra
 dec dec
+dist dist_pc
+dist_scale 3.085677581e16
 field max vsx_max_mag gaussian-inverse-square em mag 604800 0.0 0.0
 field min vsx_min_mag gaussian-inverse-square em mag 604800 0.0 0.0
 field period vsx_period_d gaussian-inverse-square em d 604800 0.0 0.0
@@ -1390,6 +1430,7 @@ at sun
 cmap .
 ra ra
 dec dec
+plx plx
 field mag wd_vmag gaussian-inverse-square em mag 604800 0.0 0.0
 field teff wd_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
 
@@ -1399,6 +1440,8 @@ at sun
 cmap .
 ra ra
 dec dec
+dist dist_pc
+dist_scale 3.085677581e16
 field mag1 wds_primary_mag gaussian-inverse-square em mag 604800 0.0 0.0
 field mag2 wds_secondary_mag gaussian-inverse-square em mag 604800 0.0 0.0
 field sep wds_separation_arcsec gaussian-inverse-square em arcsec 604800 0.0 0.0
