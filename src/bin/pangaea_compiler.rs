@@ -1,3 +1,4 @@
+use omegaflow::cdn::upload_asset;
 use std::env;
 use std::fs;
 use std::process::Command;
@@ -164,6 +165,7 @@ fn main() {
     let args: Vec<String> = env::args().collect();
     let mut id: Option<String> = None;
     let mut out: Option<String> = None;
+    let mut ci_mode = false;
     let mut i = 1;
     while i < args.len() {
         match args[i].as_str() {
@@ -175,6 +177,7 @@ fn main() {
                 out = args.get(i + 1).cloned();
                 i += 1;
             }
+            "--ci-mode" => ci_mode = true,
             _ => {}
         }
         i += 1;
@@ -236,6 +239,9 @@ fn main() {
     }
     if let Some(path) = out {
         let _ = fs::write(&path, buf);
+        if ci_mode {
+            let _ = upload_asset(&path);
+        }
         eprintln!("pangaea: {} rows → {} · {}", total, path, meta);
     } else {
         eprintln!("pangaea: {} rows · {} (--out absent)", total, meta);
