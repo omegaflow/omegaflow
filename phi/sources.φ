@@ -1270,6 +1270,8 @@ at sun
 cmap .
 ra ra
 dec dec
+dist dist_pc
+dist_scale 3.085677581e16
 field mag1 lmxb_mag1 gaussian-inverse-square em mag 604800 0.0 0.0
 field m1 lmxb_primary_mass gaussian-inverse-square gravity M_sun 604800 0.0 0.0
 field m2 lmxb_secondary_mass gaussian-inverse-square gravity M_sun 604800 0.0 0.0

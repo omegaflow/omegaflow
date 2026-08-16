@@ -679,6 +679,8 @@ fn main() {
     let mut votable_flag = false;
     let mut order_by: Option<String> = None;
     let mut join_spec: Option<(String, String)> = None;
+    let mut crossmatch_spec: Option<String> = None;
+    let mut xmatch_radius: f64 = 1.5;
     let mut mag_bands: Option<(f64, f64, f64)> = None;
     let mut star_bin = false;
     let mut union_bright: Option<String> = None;
@@ -728,6 +730,14 @@ fn main() {
                     args.get(i + 2).cloned().unwrap_or_default(),
                 ));
                 i += 2;
+            }
+            "--crossmatch" => {
+                crossmatch_spec = args.get(i + 1).cloned();
+                i += 1;
+            }
+            "--xmatch-radius" => {
+                xmatch_radius = args.get(i + 1).and_then(|s| s.parse().ok()).unwrap_or(1.5);
+                i += 1;
             }
             "--star-bin" => star_bin = true,
             "--union-bright" => {
@@ -923,7 +933,7 @@ fn main() {
             std::process::exit(1);
         }
     };
-    let mapping: Vec<(String, String)> = columns
+    let mut mapping: Vec<(String, String)> = columns
         .split(';')
         .filter(|s| !s.is_empty())
         .filter_map(|s| {
@@ -938,37 +948,90 @@ fn main() {
     let mut col_names: Vec<String> = Vec::new();
     let col_idx: Vec<(String, usize)>;
     let any_positional = mapping.iter().any(|(_, c)| c.starts_with('@'));
-    let cols_sel = if any_positional {
-        "*".to_string()
-    } else if cols_unquoted {
-        mapping
-            .iter()
-            .map(|(_, c)| c.clone())
-            .collect::<Vec<_>>()
-            .join(",")
-    } else {
-        mapping
-            .iter()
-            .map(|(_, c)| {
-                if c.contains('.') {
-                    c.clone()
-                } else {
-                    format!("\"{}\"", c)
-                }
-            })
-            .collect::<Vec<_>>()
-            .join(",")
-    };
     let table_ref = if table.contains('/') {
         format!("\"{}\"", table)
     } else {
         table.clone()
     };
-    let from_clause = match &join_spec {
-        Some((jt, oc)) => format!("{} AS t JOIN {} AS j ON t.{} = j.{}", table_ref, jt, oc, oc),
-        None => table_ref.clone(),
+    let xq = |c: &str| -> String {
+        if c.contains('.') {
+            c.to_string()
+        } else {
+            format!("\"{}\"", c)
+        }
     };
-    let cells_rows: Vec<Vec<String>>;
+    let (cols_sel, from_clause) = match &crossmatch_spec {
+        Some(spec) => {
+            let parts: Vec<&str> = spec.split(':').collect();
+            if parts.len() != 4 {
+                eprintln!("--crossmatch format: table:ra_col:dec_col:dist_col");
+                std::process::exit(1);
+            }
+            let (xtable, xra, xdec, xdist) = (parts[0], parts[1], parts[2], parts[3]);
+            let cat_ra = mapping
+                .iter()
+                .find(|(k, _)| k == "ra")
+                .map(|(_, c)| c.clone());
+            let cat_dec = mapping
+                .iter()
+                .find(|(k, _)| k == "dec")
+                .map(|(_, c)| c.clone());
+            let (Some(cra), Some(cdec)) = (cat_ra, cat_dec) else {
+                eprintln!("--crossmatch needs ra + dec in --columns");
+                std::process::exit(1);
+            };
+            let radius_deg = xmatch_radius / 3600.0;
+            let fc = format!(
+                "{} AS t LEFT JOIN \"{}\" AS j ON 1=CONTAINS(POINT('ICRS', t.{}, t.{}), CIRCLE('ICRS', j.{}, j.{}, {}))",
+                table_ref,
+                xtable,
+                xq(&cra),
+                xq(&cdec),
+                xq(xra),
+                xq(xdec),
+                radius_deg
+            );
+            let cs = if any_positional {
+                eprintln!("--crossmatch needs named columns, not @positional");
+                std::process::exit(1);
+            } else {
+                let mut s = mapping
+                    .iter()
+                    .map(|(_, c)| format!("t.{}", xq(c)))
+                    .collect::<Vec<_>>()
+                    .join(",");
+                s.push_str(&format!(", j.{} AS \"dist_pc\"", xq(xdist)));
+                s
+            };
+            mapping.push(("dist_pc".to_string(), "dist_pc".to_string()));
+            (cs, fc)
+        }
+        None => {
+            let cs = if any_positional {
+                "*".to_string()
+            } else if cols_unquoted {
+                mapping
+                    .iter()
+                    .map(|(_, c)| c.clone())
+                    .collect::<Vec<_>>()
+                    .join(",")
+            } else {
+                mapping
+                    .iter()
+                    .map(|(_, c)| xq(c))
+                    .collect::<Vec<_>>()
+                    .join(",")
+            };
+            let fc = match &join_spec {
+                Some((jt, oc)) => {
+                    format!("{} AS t JOIN {} AS j ON t.{} = j.{}", table_ref, jt, oc, oc)
+                }
+                None => table_ref.clone(),
+            };
+            (cs, fc)
+        }
+    };
+    let mut cells_rows: Vec<Vec<String>>;
     if async_mode.is_some() {
         let adql = format!("SELECT {} FROM {}", cols_sel, from_clause);
         let Some(poll) = async_mode else {
@@ -1255,6 +1318,43 @@ fn main() {
             }
         }
         std::process::exit(1);
+    }
+    if crossmatch_spec.is_some() {
+        let ra_i = col_idx.iter().find(|(k, _)| k == "ra").map(|(_, i)| *i);
+        let dec_i = col_idx.iter().find(|(k, _)| k == "dec").map(|(_, i)| *i);
+        let dist_i = col_idx
+            .iter()
+            .find(|(k, _)| k == "dist_pc")
+            .map(|(_, i)| *i);
+        if let (Some(ri), Some(di)) = (ra_i, dec_i) {
+            use std::collections::HashMap;
+            let mut seen: HashMap<(String, String), usize> = HashMap::new();
+            let mut keep: Vec<Vec<String>> = Vec::with_capacity(cells_rows.len());
+            for row in cells_rows.into_iter() {
+                let key = (
+                    row.get(ri).cloned().unwrap_or_default(),
+                    row.get(di).cloned().unwrap_or_default(),
+                );
+                let has_dist = dist_i
+                    .map(|i2| row.get(i2).map(|s| !s.is_empty()).unwrap_or(false))
+                    .unwrap_or(false);
+                match seen.get(&key) {
+                    Some(&idx) => {
+                        let stored_has_dist = dist_i
+                            .map(|i2| keep[idx].get(i2).map(|s| !s.is_empty()).unwrap_or(false))
+                            .unwrap_or(false);
+                        if has_dist && !stored_has_dist {
+                            keep[idx] = row;
+                        }
+                    }
+                    None => {
+                        seen.insert(key, keep.len());
+                        keep.push(row);
+                    }
+                }
+            }
+            cells_rows = keep;
+        }
     }
     let rows_out = emit_rows(&col_idx, epoch_prop, &cells_rows, skip_null.as_deref());
     eprintln!(

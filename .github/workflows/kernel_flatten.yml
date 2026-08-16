@@ -384,6 +384,7 @@ jobs:
             --table "B/cb/lmxbdata" \
             --columns 'ra:RAJ2000;dec:DEJ2000;mag1:mag1;m1:M1;m2:M2' \
             --skip-null m1 \
+            --crossmatch 'I/355/paramp:RA_ICRS:DE_ICRS:Dist' \
             --out lmxbdata.json \
             --ci-mode \
             || gh issue create --repo omegaflow/omegaflow \

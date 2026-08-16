@@ -26,6 +26,7 @@ const PARSEC_M: f64 = 3.085677581e16;
 const C_LIGHT: f64 = 299792458.0;
 const HUBBLE_H0: f64 = 70000.0 / (PARSEC_M * 1.0e6);
 const MAS_YR_TO_RAD_S: f64 = 4.84813681109536e-9 / 31557600.0;
+const CELESTIAL_SPHERE_RADIUS_M: f64 = 1.0e3 * PARSEC_M;
 
 fn resolve_asset(rel: &str) -> std::path::PathBuf {
     let cwd_candidate = std::path::PathBuf::from(rel);
@@ -7257,15 +7258,15 @@ fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> Extra
                                         if !z_key.is_empty() {
                                             match jpath(v, z_key) {
                                                 Some(z) if z > 0.0 => z * C_LIGHT / HUBBLE_H0,
-                                                _ => continue,
+                                                _ => CELESTIAL_SPHERE_RADIUS_M,
                                             }
                                         } else if !dist_key.is_empty() {
                                             match jpath(v, dist_key) {
                                                 Some(dd) if dd > 0.0 => dd * dist_scale,
-                                                _ => continue,
+                                                _ => CELESTIAL_SPHERE_RADIUS_M,
                                             }
                                         } else {
-                                            continue;
+                                            CELESTIAL_SPHERE_RADIUS_M
                                         }
                                     }
                                 }
@@ -7276,20 +7277,20 @@ fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> Extra
                                         if !z_key.is_empty() {
                                             match jpath(v, z_key) {
                                                 Some(z) if z > 0.0 => z * C_LIGHT / HUBBLE_H0,
-                                                _ => continue,
+                                                _ => CELESTIAL_SPHERE_RADIUS_M,
                                             }
                                         } else {
-                                            continue;
+                                            CELESTIAL_SPHERE_RADIUS_M
                                         }
                                     }
                                 }
                             } else if !z_key.is_empty() {
                                 match jpath(v, z_key) {
                                     Some(z) if z > 0.0 => z * C_LIGHT / HUBBLE_H0,
-                                    _ => continue,
+                                    _ => CELESTIAL_SPHERE_RADIUS_M,
                                 }
                             } else {
-                                continue;
+                                CELESTIAL_SPHERE_RADIUS_M
                             };
                             let ra = ra_deg.to_radians();
                             let dec = dec_deg.to_radians();
@@ -10963,6 +10964,156 @@ field temp temp_c\n";
                 assert_eq!(channels[0].0.value, 5.5);
                 if let Position::StateVector { p, .. } = channels[0].0.position {
                     let expect = 3.085677581e19;
+                    assert!((p[0] - expect).abs() / expect < 1e-12);
+                    assert!(p[1].abs() / expect < 1e-12);
+                    assert!(p[2].abs() / expect < 1e-12);
+                } else {
+                    panic!("expected StateVector position");
+                }
+            }
+            ExtractResult::WithEphemeris(_, _) => panic!("unexpected ephemeris"),
+        }
+    }
+
+    #[test]
+    fn test_extract_cmap_no_distance_reference_sphere() {
+        let json = r#"[{"ra":0.0,"dec":0.0,"H":5.5}]"#;
+        let src = SourceConfig {
+            ttl: 604800,
+            url: "https://example.com/x".into(),
+            frame: Frame::Barycenter {
+                body_name: "sun".into(),
+                scale: 1.0,
+            },
+            format: "json".into(),
+            extracts: vec![Extract::CelestialMap {
+                arr_path: ".".into(),
+                ra_key: "ra".into(),
+                dec_key: "dec".into(),
+                dist_key: String::new(),
+                dist_scale: 1.0,
+                plx_key: String::new(),
+                z_key: String::new(),
+                pmra_key: String::new(),
+                pmdec_key: String::new(),
+                rv_key: String::new(),
+                rv_scale: 1.0,
+                epoch_key: String::new(),
+                fields: vec![FieldConfig {
+                    key: "H".into(),
+                    name: "comet_h_mag".into(),
+                    kernel: 0,
+                    force: 0,
+                    tau: 604800.0,
+                    absorption: 0.0,
+                    advection: 0.0,
+                }],
+            }],
+            headers: vec![],
+            post_body: None,
+            target: None,
+            catalog: None,
+            max_freq: None,
+            min_freq: None,
+            body: None,
+            stations_url: None,
+            stations_path: String::new(),
+            stations_lat: String::new(),
+            stations_lon: String::new(),
+            stations_id: String::new(),
+            flux_from_mag: None,
+            abs_mag_from: None,
+            catalog_epoch: None,
+            repeat_ra_bins: 0,
+            fanout_cap: 0,
+            stations_flatten: String::new(),
+            stations_filter: None,
+            fanout_delay: 0,
+        };
+        let fixture_lsk = LeapSeconds {
+            delta_t_a: 32.184,
+            deltas: vec![(37.0, 1483228800.0)],
+        };
+        match extract(&src, json, 8.0e8, &fixture_lsk) {
+            ExtractResult::Measurements(channels) => {
+                assert_eq!(channels.len(), 1);
+                if let Position::StateVector { p, .. } = channels[0].0.position {
+                    let expect = CELESTIAL_SPHERE_RADIUS_M;
+                    assert!((p[0] - expect).abs() / expect < 1e-12);
+                    assert!(p[1].abs() / expect < 1e-12);
+                    assert!(p[2].abs() / expect < 1e-12);
+                } else {
+                    panic!("expected StateVector position");
+                }
+            }
+            ExtractResult::WithEphemeris(_, _) => panic!("unexpected ephemeris"),
+        }
+    }
+
+    #[test]
+    fn test_extract_cmap_null_dist_reference_sphere() {
+        let json = r#"[{"ra":0.0,"dec":0.0,"dist_pc":null,"H":5.5}]"#;
+        let src = SourceConfig {
+            ttl: 604800,
+            url: "https://example.com/x".into(),
+            frame: Frame::Barycenter {
+                body_name: "sun".into(),
+                scale: 1.0,
+            },
+            format: "json".into(),
+            extracts: vec![Extract::CelestialMap {
+                arr_path: ".".into(),
+                ra_key: "ra".into(),
+                dec_key: "dec".into(),
+                dist_key: "dist_pc".into(),
+                dist_scale: 3.085677581e16,
+                plx_key: String::new(),
+                z_key: String::new(),
+                pmra_key: String::new(),
+                pmdec_key: String::new(),
+                rv_key: String::new(),
+                rv_scale: 1.0,
+                epoch_key: String::new(),
+                fields: vec![FieldConfig {
+                    key: "H".into(),
+                    name: "comet_h_mag".into(),
+                    kernel: 0,
+                    force: 0,
+                    tau: 604800.0,
+                    absorption: 0.0,
+                    advection: 0.0,
+                }],
+            }],
+            headers: vec![],
+            post_body: None,
+            target: None,
+            catalog: None,
+            max_freq: None,
+            min_freq: None,
+            body: None,
+            stations_url: None,
+            stations_path: String::new(),
+            stations_lat: String::new(),
+            stations_lon: String::new(),
+            stations_id: String::new(),
+            flux_from_mag: None,
+            abs_mag_from: None,
+            catalog_epoch: None,
+            repeat_ra_bins: 0,
+            fanout_cap: 0,
+            stations_flatten: String::new(),
+            stations_filter: None,
+            fanout_delay: 0,
+        };
+        let fixture_lsk = LeapSeconds {
+            delta_t_a: 32.184,
+            deltas: vec![(37.0, 1483228800.0)],
+        };
+        match extract(&src, json, 8.0e8, &fixture_lsk) {
+            ExtractResult::Measurements(channels) => {
+                assert_eq!(channels.len(), 1);
+                if let Position::StateVector { p, .. } = channels[0].0.position {
+                    let expect = CELESTIAL_SPHERE_RADIUS_M;
                     assert!((p[0] - expect).abs() / expect < 1e-12);
                     assert!(p[1].abs() / expect < 1e-12);
                     assert!(p[2].abs() / expect < 1e-12);
