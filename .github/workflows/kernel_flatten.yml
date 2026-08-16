@@ -236,6 +236,48 @@ jobs:
                  --title "flatten: gcvs_cat returned void" \
                  --body "gcvs_cat compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
                  --label health
+      - name: Compile ATNF pulsar catalog and upload to CDN
+        continue-on-error: true
+        run: |
+          cargo run --release --bin tap_compiler -- \
+            --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
+            --table "B/psr/psr" \
+            --columns 'ra:RAJ2000;dec:DEJ2000;p0:P0;dm:DM;s1400:S1400' \
+            --skip-null dm \
+            --out psr.json \
+            --ci-mode \
+            || gh issue create --repo omegaflow/omegaflow \
+                 --title "flatten: psr returned void" \
+                 --body "psr compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 --label health
+      - name: Compile Asiago supernova catalog and upload to CDN
+        continue-on-error: true
+        run: |
+          cargo run --release --bin tap_compiler -- \
+            --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
+            --table "B/sn/sncat" \
+            --columns 'ra:RAJ2000;dec:DEJ2000;z:z;mag:MaxMag' \
+            --skip-null z \
+            --out sncat.json \
+            --ci-mode \
+            || gh issue create --repo omegaflow/omegaflow \
+                 --title "flatten: sncat returned void" \
+                 --body "sncat compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 --label health
+      - name: Compile white-dwarf catalog and upload to CDN
+        continue-on-error: true
+        run: |
+          cargo run --release --bin tap_compiler -- \
+            --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
+            --table "B/wd/catalog" \
+            --columns 'ra:RAB1950;dec:DEB1950;mag:Vmag;teff:Teff;plx:Plx' \
+            --skip-null mag \
+            --out wd.json \
+            --ci-mode \
+            || gh issue create --repo omegaflow/omegaflow \
+                 --title "flatten: wd returned void" \
+                 --body "wd compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 --label health
       - name: Compile Gaia DR3 + Bailer-Jones star catalog and upload to CDN
         continue-on-error: true
         run: |
