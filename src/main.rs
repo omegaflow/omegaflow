@@ -47,6 +47,33 @@ struct VOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f };
     return out;
 }
 
+@group(0) @binding(0) var<uniform> star_vp: VP;
+
+struct StarVOut { @builtin(position) pos: vec4f, @location(0) flux: f32 };
+
+@vertex fn star_vs(@location(0) data: vec4f) -> StarVOut {
+    let w = star_vp.surface.x;
+    let h = star_vp.surface.y;
+    let scale = star_vp.surface.w;
+    let sx = dot(data.xyz, star_vp.right.xyz) / (0.5 * w * scale);
+    let sy = -dot(data.xyz, star_vp.up.xyz) / (0.5 * h * scale);
+    var out: StarVOut;
+    out.pos = vec4f(sx, sy, 0.0, 1.0);
+    out.flux = data.w;
+    return out;
+}
+
+@fragment fn star_fs(in: StarVOut) -> @location(0) vec4f {
+    let aflux = abs(in.flux);
+    if (aflux < 1e-30) { discard; }
+    let t2 = clamp((log2(aflux) + 14.0 + star_vp.expose_ex.x) / 22.0, 0.0, 1.0);
+    let c = mix(vec3f(0.0, 0.02, 0.1), vec3f(0.0, 0.3, 0.8), clamp(t2 * 4.0, 0.0, 1.0));
+    let c2 = mix(c, vec3f(0.2, 0.8, 1.0), clamp((t2 - 0.25) * 4.0, 0.0, 1.0));
+    let c3 = mix(c2, vec3f(1.0, 0.7, 0.1), clamp((t2 - 0.5) * 4.0, 0.0, 1.0));
+    let c4 = mix(c3, vec3f(1.0, 1.0, 1.0), clamp((t2 - 0.75) * 4.0, 0.0, 1.0));
+    return vec4f(c4, 1.0);
+}
+
 fn erfc(x: f32) -> f32 {
     let xa = abs(x);
     let t = 1.0 / (1.0 + 0.3275911 * xa);
@@ -1797,6 +1824,7 @@ mod archivar {
         }
     }
 
+    #[cfg(feature = "browser_relay")]
     pub fn sense_buffer(
         buf: &Buffer,
         center: [f64; 3],
@@ -1859,6 +1887,64 @@ mod archivar {
         }
         if let Some(sh) = &buf.stars {
             query_star_hash(sh, center, t2, pad, delta_t_cache, records);
+        }
+    }
+
+    pub fn sense_membrane(
+        buf: &Buffer,
+        center: [f64; 3],
+        t2: f64,
+        pad: f64,
+        delta_t_cache: f64,
+        records: &mut Vec<OscRecord>,
+        eph: &HashMap<String, BodyEphemeris>,
+    ) {
+        for (body_name, hash_cell) in &buf.bodies {
+            let anchor = match body_barycenter_position(body_name, t2, eph) {
+                Some(a) => a,
+                None => continue,
+            };
+            query_hash(
+                hash_cell,
+                anchor,
+                center,
+                t2,
+                pad,
+                delta_t_cache,
+                records,
+                eph,
+            );
+        }
+        query_hash(
+            &buf.inertial,
+            [0.0, 0.0, 0.0],
+            center,
+            t2,
+            pad,
+            delta_t_cache,
+            records,
+            eph,
+        );
+        if let Some(ash) = &buf.asteroids {
+            query_asteroid_hash(ash, center, t2, pad, delta_t_cache, records);
+        }
+    }
+
+    pub fn sense_stars(
+        buf: &Buffer,
+        center: [f64; 3],
+        t2: f64,
+        pad: f64,
+        delta_t_cache: f64,
+        out: &mut Vec<[f64; 4]>,
+    ) {
+        let Some(sh) = &buf.stars else {
+            return;
+        };
+        let mut records: Vec<OscRecord> = Vec::new();
+        query_star_hash(sh, center, t2, pad, delta_t_cache, &mut records);
+        for r in records {
+            out.push([r.0, r.1, r.2, r.3]);
         }
     }
 
@@ -11525,7 +11611,7 @@ field temp temp_c\n";
 }
 mod mathematikerin {
     use super::*;
-    use crate::archivar::{body_barycenter_position, sense_buffer, system_now};
+    use crate::archivar::{body_barycenter_position, sense_membrane, sense_stars, system_now};
     use std::collections::{HashMap, HashSet};
     use std::sync::atomic::{AtomicBool, Ordering};
     use std::sync::{mpsc, Arc, Mutex};
@@ -11617,6 +11703,17 @@ mod mathematikerin {
         }
     }
 
+    pub fn pack_stars(stars: &[[f64; 4]], presence: [f64; 3]) -> Vec<f32> {
+        let mut out = Vec::with_capacity(stars.len() * 4);
+        for s in stars {
+            out.push((s[0] - presence[0]) as f32);
+            out.push((s[1] - presence[1]) as f32);
+            out.push((s[2] - presence[2]) as f32);
+            out.push(s[3] as f32);
+        }
+        out
+    }
+
     pub struct MathematikerinRadiator {
         tx: mpsc::SyncSender<Arc<Buffer>>,
         shutdown: Arc<AtomicBool>,
@@ -11632,7 +11729,7 @@ mod mathematikerin {
         ) -> Self {
             let (tx, rx) = mpsc::sync_channel::<Arc<Buffer>>(2);
             let (req_tx, req_rx) = mpsc::sync_channel::<(Arc<Buffer>, [f64; 3], f64, f64, f64)>(1);
-            let (res_tx, res_rx) = mpsc::sync_channel::<(PackedWindow, f64)>(2);
+            let (res_tx, res_rx) = mpsc::sync_channel::<(PackedWindow, Vec<f32>, f64)>(2);
             let shutdown = Arc::new(AtomicBool::new(false));
             let shutdown_clone = shutdown.clone();
             thread::spawn(move || loop {
@@ -11645,9 +11742,12 @@ mod mathematikerin {
                 let (field, center, t, pad, cache_interval) = req;
                 let mut records: Vec<Record> = Vec::new();
                 let eph = field.eph.clone();
-                sense_buffer(&field, center, t, pad, cache_interval, &mut records, &eph);
+                sense_membrane(&field, center, t, pad, cache_interval, &mut records, &eph);
                 let packed = pack_window(&records, center);
-                if res_tx.send((packed, t)).is_err() {
+                let mut stars: Vec<[f64; 4]> = Vec::new();
+                sense_stars(&field, center, t, pad, cache_interval, &mut stars);
+                let packed_stars = pack_stars(&stars, center);
+                if res_tx.send((packed, packed_stars, t)).is_err() {
                     break;
                 }
             });
@@ -11794,7 +11894,7 @@ mod mathematikerin {
     struct NativeApp {
         rx: mpsc::Receiver<Arc<Buffer>>,
         req_tx: mpsc::SyncSender<(Arc<Buffer>, [f64; 3], f64, f64, f64)>,
-        res_rx: mpsc::Receiver<(PackedWindow, f64)>,
+        res_rx: mpsc::Receiver<(PackedWindow, Vec<f32>, f64)>,
         presence_tx: mpsc::Sender<(f64, f64, f64, f64, f64)>,
         body_names: Arc<Vec<String>>,
         time: Arc<Mutex<Option<LeapSeconds>>>,
@@ -11828,6 +11928,14 @@ mod mathematikerin {
         packed_dirty: bool,
         last_response_epoch: f64,
 
+        packed_stars: Vec<f32>,
+        star_count: u32,
+        stars_dirty: bool,
+        star_vbuf: Option<wgpu::Buffer>,
+        star_cap: u32,
+        star_pipe: Option<wgpu::RenderPipeline>,
+        star_bind: Option<wgpu::BindGroup>,
+
         p: [f64; 3],
         v: [f64; 3],
         t0: f64,
@@ -11857,7 +11965,7 @@ mod mathematikerin {
         fn new(
             rx: mpsc::Receiver<Arc<Buffer>>,
             req_tx: mpsc::SyncSender<(Arc<Buffer>, [f64; 3], f64, f64, f64)>,
-            res_rx: mpsc::Receiver<(PackedWindow, f64)>,
+            res_rx: mpsc::Receiver<(PackedWindow, Vec<f32>, f64)>,
             presence_tx: mpsc::Sender<(f64, f64, f64, f64, f64)>,
             sensor_tx: mpsc::Sender<Vec<(String, f64, f64)>>,
             body_names: Arc<Vec<String>>,
@@ -11898,6 +12006,13 @@ mod mathematikerin {
                 packed_count: 0,
                 packed_dirty: false,
                 last_response_epoch: 0.0,
+                packed_stars: Vec::new(),
+                star_count: 0,
+                stars_dirty: false,
+                star_vbuf: None,
+                star_cap: 0,
+                star_pipe: None,
+                star_bind: None,
                 p: [0.0, 0.0, 0.0],
                 v: [0.0, 0.0, 0.0],
                 t0: 0.0,
@@ -12230,6 +12345,31 @@ mod mathematikerin {
             self.render_bind = Some(render_bind);
         }
 
+        fn ensure_star_capacity(&mut self) {
+            let Some(device) = self.device.clone() else {
+                return;
+            };
+            let n = self.star_count;
+            if self.star_cap >= n {
+                return;
+            }
+            let mut c = if self.star_cap > 0 {
+                self.star_cap
+            } else {
+                1024
+            };
+            while c < n {
+                c <<= 1;
+            }
+            self.star_cap = c;
+            self.star_vbuf = Some(device.create_buffer(&wgpu::BufferDescriptor {
+                label: None,
+                size: c as u64 * 16,
+                usage: wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST,
+                mapped_at_creation: false,
+            }));
+        }
+
         fn render(&mut self) {
             let t0 = std::time::Instant::now();
             self.frame_count += 1;
@@ -12248,6 +12388,13 @@ mod mathematikerin {
                     queue.write_buffer(mb, 0, &le_bytes_f32(&self.packed_meta));
                 }
                 self.packed_dirty = false;
+            }
+            if self.stars_dirty {
+                self.ensure_star_capacity();
+                if let Some(sb) = &self.star_vbuf {
+                    queue.write_buffer(sb, 0, &le_bytes_f32(&self.packed_stars));
+                }
+                self.stars_dirty = false;
             }
             let vp = self.vp_data();
             let mut bytes = [0u8; 128];
@@ -12301,6 +12448,18 @@ mod mathematikerin {
                     pass.set_pipeline(pipe);
                     pass.set_bind_group(0, bind, &[]);
                     pass.draw(0..6, 0..1);
+                }
+                if let (Some(pipe), Some(bind), Some(vbuf)) = (
+                    self.star_pipe.as_ref(),
+                    self.star_bind.as_ref(),
+                    self.star_vbuf.as_ref(),
+                ) {
+                    if self.star_count > 0 {
+                        pass.set_pipeline(pipe);
+                        pass.set_bind_group(0, bind, &[]);
+                        pass.set_vertex_buffer(0, vbuf.slice(..));
+                        pass.draw(0..self.star_count, 0..1);
+                    }
                 }
             }
             queue.submit(std::iter::once(encoder.finish()));
@@ -12502,6 +12661,71 @@ mod mathematikerin {
                 compilation_options: Default::default(),
                 cache: None,
             });
+            let star_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+                label: None,
+                entries: &[wgpu::BindGroupLayoutEntry {
+                    binding: 0,
+                    visibility: wgpu::ShaderStages::VERTEX_FRAGMENT,
+                    ty: wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Uniform,
+                        has_dynamic_offset: false,
+                        min_binding_size: None,
+                    },
+                    count: None,
+                }],
+            });
+            let star_pipe_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+                label: None,
+                bind_group_layouts: &[&star_layout],
+                push_constant_ranges: &[],
+            });
+            let star_pipe = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+                label: None,
+                layout: Some(&star_pipe_layout),
+                vertex: wgpu::VertexState {
+                    module: &module,
+                    entry_point: Some("star_vs"),
+                    compilation_options: Default::default(),
+                    buffers: &[wgpu::VertexBufferLayout {
+                        array_stride: 16,
+                        step_mode: wgpu::VertexStepMode::Vertex,
+                        attributes: &[wgpu::VertexAttribute {
+                            format: wgpu::VertexFormat::Float32x4,
+                            offset: 0,
+                            shader_location: 0,
+                        }],
+                    }],
+                },
+                fragment: Some(wgpu::FragmentState {
+                    module: &module,
+                    entry_point: Some("star_fs"),
+                    compilation_options: Default::default(),
+                    targets: &[Some(wgpu::ColorTargetState {
+                        format,
+                        blend: Some(wgpu::BlendState {
+                            color: wgpu::BlendComponent {
+                                src_factor: wgpu::BlendFactor::One,
+                                dst_factor: wgpu::BlendFactor::One,
+                                operation: wgpu::BlendOperation::Add,
+                            },
+                            alpha: wgpu::BlendComponent {
+                                src_factor: wgpu::BlendFactor::One,
+                                dst_factor: wgpu::BlendFactor::One,
+                                operation: wgpu::BlendOperation::Add,
+                            },
+                        }),
+                        write_mask: wgpu::ColorWrites::ALL,
+                    })],
+                }),
+                primitive: wgpu::PrimitiveState {
+                    topology: wgpu::PrimitiveTopology::PointList,
+                    ..Default::default()
+                },
+                depth_stencil: None,
+                multisample: wgpu::MultisampleState::default(),
+                multiview: None,
+                cache: None,
+            });
             let vp_buf = device.create_buffer(&wgpu::BufferDescriptor {
                 label: None,
                 size: 128,
@@ -12520,6 +12744,14 @@ mod mathematikerin {
                 usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
                 mapped_at_creation: false,
             });
+            let star_bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
+                label: None,
+                layout: &star_layout,
+                entries: &[wgpu::BindGroupEntry {
+                    binding: 0,
+                    resource: vp_buf.as_entire_binding(),
+                }],
+            });
             self.window = Some(window);
             self.surface = Some(surface);
             self.config = Some(config);
@@ -12529,6 +12761,8 @@ mod mathematikerin {
             self.probe_pipe = Some(probe_pipe);
             self.probe_layout = Some(probe_layout);
             self.render_layout = Some(render_layout);
+            self.star_pipe = Some(star_pipe);
+            self.star_bind = Some(star_bind);
             self.vp_buf = Some(vp_buf);
             self.probe_buf = Some(probe_buf);
             self.probe_read = Some(probe_read);
@@ -12609,12 +12843,15 @@ mod mathematikerin {
                 self.latest_field = Some(field);
                 self.sense();
             }
-            while let Ok((packed, t)) = self.res_rx.try_recv() {
+            while let Ok((packed, stars, t)) = self.res_rx.try_recv() {
                 self.packed_count = packed.count;
                 self.packed_field = packed.field;
                 self.packed_meta = packed.meta;
                 self.packed_dirty = true;
                 self.last_response_epoch = t;
+                self.packed_stars = stars;
+                self.star_count = (self.packed_stars.len() / 4) as u32;
+                self.stars_dirty = true;
             }
             self.consider_resend();
             self.sensors.frame_interval = (raw / 1000.0).max(0.001);
@@ -12662,7 +12899,7 @@ mod mathematikerin {
                 let ms_max = self.frame_ms_max;
                 self.frame_ms_max = 0.0;
                 eprintln!(
-                "φ fenster: t {:.2} | Ω {:.3} | fps {:.0} | ssaa {:.2} | grid 2^{} | x {:.3e} y {:.3e} z {:.3e} | {} osc | b {}x{} | maxms {:.0}",
+                "φ fenster: t {:.2} | Ω {:.3} | fps {:.0} | ssaa {:.2} | grid 2^{} | x {:.3e} y {:.3e} z {:.3e} | {} osc | {} stars | b {}x{} | maxms {:.0}",
                 self.t_presence,
                 omega,
                 fps,
@@ -12672,6 +12909,7 @@ mod mathematikerin {
                 y,
                 z,
                 self.packed_count,
+                self.star_count,
                 self.backing.0,
                 self.backing.1,
                 ms_max,
@@ -12801,7 +13039,7 @@ mod mathematikerin {
         presence_tx: mpsc::Sender<(f64, f64, f64, f64, f64)>,
         sensor_tx: mpsc::Sender<Vec<(String, f64, f64)>>,
         req_tx: mpsc::SyncSender<(Arc<Buffer>, [f64; 3], f64, f64, f64)>,
-        res_rx: mpsc::Receiver<(PackedWindow, f64)>,
+        res_rx: mpsc::Receiver<(PackedWindow, Vec<f32>, f64)>,
         body_names: Arc<Vec<String>>,
         time: Arc<Mutex<Option<LeapSeconds>>>,
         shutdown: Arc<AtomicBool>,
@@ -12867,6 +13105,25 @@ mod mathematikerin {
             assert_eq!(m[9], 7021.0);
             assert_eq!(m[10], 0.0);
             assert_eq!(m[11], 0.0);
+        }
+
+        #[test]
+        fn pack_stars_presence_relative() {
+            let presence = [1.0e3, 2.0e3, 3.0e3];
+            let stars: [[f64; 4]; 2] = [
+                [6001.0, 7002.0, 8003.0, 42.5],
+                [-999.0, 4002.0, 1003.0, -7.25],
+            ];
+            let packed = pack_stars(&stars, presence);
+            assert_eq!(packed.len(), 8);
+            assert_eq!(packed[0], 5001.0);
+            assert_eq!(packed[1], 5002.0);
+            assert_eq!(packed[2], 5003.0);
+            assert_eq!(packed[3], 42.5);
+            assert_eq!(packed[4], -1999.0);
+            assert_eq!(packed[5], 2002.0);
+            assert_eq!(packed[6], -1997.0);
+            assert_eq!(packed[7], -7.25);
         }
     }
 }

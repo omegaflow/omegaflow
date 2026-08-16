@@ -89,31 +89,29 @@ Offen:
 
 ### wgpu-mono — Deep-Sky-Plenum (zwei Regime, eine Wahrheit)
 
+```
+GESCHLOSSEN (2026-08-16, erster Atom): Der Stern-Pfad ist getrennt und
+geplottet. sense_membrane (Körper+Inertial+Asteroiden) und sense_stars
+(Fixsterne aus dem StarHash, exakte ICRS-Position + Fluss) laufen getrennt;
+sense_buffer bleibt unverändert fürs Relay (v6-Vertrag, Sterne als Records).
+pack_stars: (x−presence, y−presence, z−presence, flux) als f32 vec4 je Stern.
+Der Stern-Render ist ein Punkt-Render-Pass (PointList, 1 Thread = 1 Stern,
+1 Pixel — die Punktquelle hat ihr Bild an ihrem Ort): star_vs projiziert
+dot(rel, right/up)/(0.5·w/h·scale) auf NDC (y negiert — Membran-Konvention),
+star_fs wendet DIESELBE Nebra-Rampe auf |flux| an (log2-Rampe + Exposure —
+das Plotten ist die Membran-Messung am Ort des Sterns, kein anderes Gesetz),
+|flux| < 1e-30 → discard (0 honored). Sterne erscheinen bei Galaxien-Zoom;
+bei 2³¹ korrekt 0 stars im HUD. Golden-Tests: pack_stars presence-relativ
+grün, Packing-Tabelle unberührt. Kein Splatting, kein Quad für Sterne.
+```
 Offen:
-- Stern-Pfad trennen: Fixsterne und ferne Quellen (Tycho/Gaia, TNS, ALFALFA,
-  TeVCat, Quasare) wandern aus dem Membran-Record-Array in einen eigenen
-  Punkt-Buffer (exakte ICRS-Position + Fluss — keine Propagation, keine
-  Kernel, keine Faltung; Position ist die Wahrheit: eine Punktquelle ohne
-  Ausdehnung hat ihr Bild an ihrem Ort, der Kernel ist an ihrem eigenen
-  Pixel die Identität)
-- Deep-Sky-Render (Compute, O(Quellen im Fenster), 1 Thread pro Objekt):
-  Projektion auf die Presence-Fläche (dieselben fr/fu/ff wie die Membran),
-  Nebra-Rampe auf den Fluss; Punktquellen = 1 Pixel; Quellen mit scheinbarer
-  Ausdehnung (Magellansche Wolken, nahe Nebel) = projiziertes Splat-Quad
-  ihrer gemessenen Form
-- Membran misst nur noch die dynamischen Kräfte (Körper, Monde, Asteroiden,
-  Sonden, Stationen) — deren 1/d²-Gradient auf dem Fenster sichtbar ist;
-  das Sonnensystem ist das Regime, in dem wir uns DURCH das Feld bewegen
-- Regime-Kriterium: tybbasiert (statische Quelle vs. dynamische Kraft) —
-  kein Umschaltpunkt nach Schwellenwert, kein Zoom-Schalter
-- Die Physik der zwei Regime: nah = Membran misst die Superposition;
-  fern = parallel einfallendes Licht, das Fenster PROJIZIERT (ein Teleskop);
-  4 Billionen „der Wert ist 0"-Rechnungen entfallen
-- Sternenhintergrund (integrierter Glow der 1/d²-Schwänze aller Sterne,
-  Milchstraße) als eigener Folge-Atom: einmalige tiefaufgelöste Integration,
-  glattes Feld, keine Per-Pixel-Arbeit
-- Galaxien-Zoom wird damit erstmals möglich: der Nachthimmel ist die
-  Punktwolke
+- Quellen mit scheinbarer Ausdehnung (Magellansche Wolken, nahe Nebel):
+  projiziertes Splat-Quad ihrer gemessenen Form (Flächenquellen-Pfad)
+- Farbe der Sterne: der Katalog trägt ra/dec/pm/plx/flux — keine B-V/Farbe;
+  falls eine Farbspalte im Binärkatalog existiert, Temperatur→Farbe ableiten
+- Sternenhintergrund (integrierter Glow der 1/d²-Schwänze, Milchstraße) als
+  eigener Folge-Atom: einmalige tiefaufgelöste Integration, glattes Feld
+- Galaxien-Zoom-Verifikation beim Operator ausstehend (Sternzahl im HUD)
 
 ---
 
