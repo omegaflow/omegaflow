@@ -32,15 +32,8 @@ phi/port/probe_all_survivors.φ
 phi/port/probe_survivors.φ
 phi/port/probe_void.txt
 phi/port/probe_drafts.φ
-<<<<<<< HEAD
-=======
-phi/port/probe_drafts.φ
 phi/port/probe_drafts_enriched.φ
 
-# Compiler-Flat-jsons (gehen zum CDN, nicht ins Repo)
-phi/port/*.json
-phi/port/probe_jina.txt
->>>>>>> b96e038 (Namens-/Struktur-Vereinheitlichung: Harvester vs. Compiler getrennt — oai/dataverse/solr/deims_compiler → *_harvester (ernten Metadaten → phi/katalog/), tap/pangaea bleiben *_compiler (kompilieren Messwerte → Flat-json + Block); docs/concepts/HARVESTER.md definiert die drei Rollen; Compiler-Flat-jsons gitignored (CDN-Zwischenstufen))
 # Compiler-Flat-jsons (gehen zum CDN, nicht ins Repo)
 phi/port/*.json
 phi/port/probe_jina.txt

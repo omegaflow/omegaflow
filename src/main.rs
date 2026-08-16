@@ -711,6 +711,7 @@ mod archivar {
     const C_LIGHT: f64 = 299792458.0;
     const HUBBLE_H0: f64 = 70000.0 / (PARSEC_M * 1.0e6);
     const MAS_YR_TO_RAD_S: f64 = 4.84813681109536e-9 / 31557600.0;
+    const CELESTIAL_SPHERE_RADIUS_M: f64 = 1.0e3 * PARSEC_M;
 
     pub fn resolve_asset(rel: &str) -> std::path::PathBuf {
         let cwd_candidate = std::path::PathBuf::from(rel);
@@ -5853,6 +5854,8 @@ mod archivar {
             csv_to_json(body)
         } else if src.format == "free text" {
             text_to_json(body)
+        } else if src.format == "tap" {
+            parse_json(body).and_then(|j| tap_to_json(&j))
         } else if src.format == "json" || src.format.is_empty() || src.format == "universal" {
             parse_json(body)
         } else {
@@ -6895,15 +6898,15 @@ mod archivar {
                                             if !z_key.is_empty() {
                                                 match jpath(v, z_key) {
                                                     Some(z) if z > 0.0 => z * C_LIGHT / HUBBLE_H0,
-                                                    _ => continue,
+                                                    _ => CELESTIAL_SPHERE_RADIUS_M,
                                                 }
                                             } else if !dist_key.is_empty() {
                                                 match jpath(v, dist_key) {
                                                     Some(dd) if dd > 0.0 => dd * dist_scale,
-                                                    _ => continue,
+                                                    _ => CELESTIAL_SPHERE_RADIUS_M,
                                                 }
                                             } else {
-                                                continue;
+                                                CELESTIAL_SPHERE_RADIUS_M
                                             }
                                         }
                                     }
@@ -6914,20 +6917,20 @@ mod archivar {
                                             if !z_key.is_empty() {
                                                 match jpath(v, z_key) {
                                                     Some(z) if z > 0.0 => z * C_LIGHT / HUBBLE_H0,
-                                                    _ => continue,
+                                                    _ => CELESTIAL_SPHERE_RADIUS_M,
                                                 }
                                             } else {
-                                                continue;
+                                                CELESTIAL_SPHERE_RADIUS_M
                                             }
                                         }
                                     }
                                 } else if !z_key.is_empty() {
                                     match jpath(v, z_key) {
                                         Some(z) if z > 0.0 => z * C_LIGHT / HUBBLE_H0,
-                                        _ => continue,
+                                        _ => CELESTIAL_SPHERE_RADIUS_M,
                                     }
                                 } else {
-                                    continue;
+                                    CELESTIAL_SPHERE_RADIUS_M
                                 };
                                 let ra = ra_deg.to_radians();
                                 let dec = dec_deg.to_radians();
@@ -7425,6 +7428,55 @@ mod archivar {
         })
     }
 
+    fn route_segments(url: &str) -> Option<(String, Vec<String>)> {
+        let after = url
+            .strip_prefix("https://")
+            .or_else(|| url.strip_prefix("http://"))?;
+        let (netloc, rest) = match after.split_once('/') {
+            Some((n, r)) => (n, r),
+            None => (after, ""),
+        };
+        let host = netloc.strip_prefix("www.").unwrap_or(netloc);
+        let path = rest.split(|c| c == '?' || c == '#').next().unwrap_or("");
+        let mut segs: Vec<String> = Vec::new();
+        for s in path.split('/') {
+            if s.is_empty() {
+                continue;
+            }
+            let seg = if s.starts_with('{') && s.ends_with('}') {
+                "*".to_string()
+            } else {
+                s.to_string()
+            };
+            segs.push(seg);
+        }
+        Some((host.to_string(), segs))
+    }
+
+    fn route_key(url: &str) -> Option<String> {
+        let (host, segs) = route_segments(url)?;
+        if segs.is_empty() {
+            Some(host)
+        } else {
+            Some(format!("{}/{}", host, segs.join("/")))
+        }
+    }
+
+    fn route_prefix_keys(url: &str) -> Vec<String> {
+        let Some((host, segs)) = route_segments(url) else {
+            return Vec::new();
+        };
+        let mut keys = vec![host.clone()];
+        let mut acc = host;
+        for s in segs {
+            acc.push('/');
+            acc.push_str(&s);
+            keys.push(acc.clone());
+        }
+        keys.reverse();
+        keys
+    }
+
     fn source_name_from_url(url: &str) -> String {
         let s1 = match url.strip_prefix("https://") {
             Some(s) => s,
@@ -7532,7 +7584,12 @@ mod archivar {
             }
             if let Some(ref mp) = map_path {
                 if !coords.is_empty() {
-                    block.push_str(&format!("map {}\n", mp));
+                    let container = if coords.contains("ra ") || coords.contains("dec ") {
+                        "cmap"
+                    } else {
+                        "map"
+                    };
+                    block.push_str(&format!("{} {}\n", container, mp));
                 }
             }
             if !coords.is_empty() {
@@ -7951,8 +8008,6 @@ mod archivar {
             || kl == "noaa_scale"
             || kl == "class"
             || kl == "classtype"
-            || kl == "ra"
-            || kl == "dec"
             || kl == "sample_size"
             || kl.ends_with("_size")
     }
@@ -7969,6 +8024,10 @@ mod archivar {
             || kl == "depth"
             || kl == "solar_lat"
             || kl == "solar_lon"
+            || kl == "ra"
+            || kl == "dec"
+            || kl.contains("raj2000")
+            || kl.contains("dej2000")
     }
 
     fn probe_csv(raw: &str) -> Option<String> {
@@ -8359,6 +8418,10 @@ mod archivar {
         let kl = key.to_lowercase();
         if kl == "altitude" || kl == "alt" || kl.contains("depth") {
             "alt"
+        } else if kl == "ra" || kl.contains("raj2000") {
+            "ra"
+        } else if kl == "dec" || kl.contains("dej2000") {
+            "dec"
         } else if kl.contains("lon") || kl == "lng" {
             "lon"
         } else {
@@ -8743,6 +8806,47 @@ mod archivar {
         }
     }
 
+    fn tap_to_json(val: &JsonVal) -> Option<JsonVal> {
+        let obj = match val {
+            JsonVal::Obj(m) => m,
+            _ => return None,
+        };
+        let metadata = match obj.get("metadata") {
+            Some(JsonVal::Arr(a)) => a,
+            _ => return None,
+        };
+        let data = match obj.get("data") {
+            Some(JsonVal::Arr(a)) => a,
+            _ => return None,
+        };
+        let mut names: Vec<String> = Vec::new();
+        for m in metadata {
+            if let JsonVal::Obj(mo) = m {
+                if let Some(JsonVal::Str(name)) = mo.get("name") {
+                    names.push(name.clone());
+                }
+            }
+        }
+        if names.is_empty() {
+            return None;
+        }
+        let mut rows: Vec<JsonVal> = Vec::new();
+        for d in data {
+            if let JsonVal::Arr(row) = d {
+                let mut row_map = HashMap::new();
+                for (name, cell) in names.iter().zip(row.iter()) {
+                    row_map.insert(name.clone(), cell.clone());
+                }
+                rows.push(JsonVal::Obj(row_map));
+            }
+        }
+        if rows.is_empty() {
+            None
+        } else {
+            Some(JsonVal::Arr(rows))
+        }
+    }
+
     fn json_has_key_ci(val: &JsonVal, target: &str) -> bool {
         match val {
             JsonVal::Obj(map) => {
@@ -8760,6 +8864,8 @@ mod archivar {
                 "on earth 0 0\n".to_string(),
                 "geographic coords".to_string(),
             )
+        } else if coords.contains("ra ") || coords.contains("dec ") {
+            ("at sun\n".to_string(), "celestial coords".to_string())
         } else if json_has_key_ci(parsed, "ra") && json_has_key_ci(parsed, "dec") {
             ("at sun\n".to_string(), "celestial ra/dec".to_string())
         } else {
@@ -8792,6 +8898,7 @@ mod archivar {
             .collect();
         let total = urls.len();
         let out_lock = std::sync::Mutex::new(String::new());
+        let learned_lock = std::sync::Mutex::new(HashMap::<String, String>::new());
         let drafted = std::sync::atomic::AtomicUsize::new(0);
         let next = std::sync::atomic::AtomicUsize::new(0);
         let workers = 8.min(total.max(1));
@@ -8810,12 +8917,14 @@ mod archivar {
                     };
                     if let Some(body) = raw {
                         if let Some(parsed) = parse_json(&body) {
+                            let tap_flat = tap_to_json(&parsed);
+                            let effective = tap_flat.as_ref().unwrap_or(&parsed);
                             let mut fields = String::new();
                             let mut coords = String::new();
                             let mut map_path: Option<String> = None;
                             let mut budget = 48usize;
                             walk_json_probe(
-                                &parsed,
+                                effective,
                                 "",
                                 &mut fields,
                                 &mut coords,
@@ -8823,13 +8932,31 @@ mod archivar {
                                 &mut budget,
                             );
                             let ttl = probe_ttl(&body).unwrap_or(86400);
-                            let (frame, reason) = derive_frame(&parsed, &coords);
+                            let (frame, reason) = derive_frame(effective, &coords);
+                            if !frame.is_empty() {
+                                if let Some(rk) = route_key(&urls[i]) {
+                                    learned_lock
+                                        .lock()
+                                        .unwrap()
+                                        .entry(rk)
+                                        .or_insert_with(|| frame.trim_end().to_string());
+                                }
+                            }
                             let mut block = format!("url {}\n", urls[i]);
                             block.push_str(&format!("ttl {}\n", ttl));
+                            if tap_flat.is_some() {
+                                block.push_str("format tap\n");
+                            }
                             block.push_str(&frame);
                             if let Some(ref mp) = map_path {
                                 if !coords.is_empty() {
-                                    block.push_str(&format!("map {}\n", mp));
+                                    let container =
+                                        if coords.contains("ra ") || coords.contains("dec ") {
+                                            "cmap"
+                                        } else {
+                                            "map"
+                                        };
+                                    block.push_str(&format!("{} {}\n", container, mp));
                                 }
                             }
                             if !coords.is_empty() {
@@ -8852,9 +8979,350 @@ mod archivar {
         let drafted = drafted.load(std::sync::atomic::Ordering::Relaxed);
         std::fs::create_dir_all("phi/port").ok();
         std::fs::write("phi/port/probe_drafts.φ", out_lock.into_inner().unwrap()).ok();
+        let learned = learned_lock.into_inner().unwrap();
         eprintln!(
-            "--draft: {} Kandidaten, {} Blöcke gedraftet → phi/port/probe_drafts.φ",
-            total, drafted
+        "--draft: {} Kandidaten, {} Blöcke gedraftet, {} Frames gelernt → phi/port/probe_drafts.φ + phi/port/frame_learned.φ",
+        total,
+        drafted,
+        learned.len()
+    );
+        learn_frames(&learned);
+        0
+    }
+
+    const CELESTIAL_NETLOCS: &[&str] = &[
+        "tapvizier.cds.unistra.fr",
+        "vizier.cds.unistra.fr",
+        "cds.unistra.fr",
+        "irsa.ipac.caltech.edu",
+        "dc.g-vo.org",
+        "gaia.ari.uni-heidelberg.de",
+        "exoplanetarchive.ipac.caltech.edu",
+        "heasarc.gsfc.nasa.gov",
+        "simbad.u-strasbg.fr",
+        "gea.esac.esa.int",
+        "wis-tns.org",
+        "ssd.jpl.nasa.gov",
+        "ssd-api.jpl.nasa.gov",
+        "naif.jpl.nasa.gov",
+        "archive.stsci.edu",
+        "mast.stsci.edu",
+        "archive.gemini.edu",
+        "archive.nrao.edu",
+        "skyserver.sdss.org",
+        "atnf.csiro.au",
+        "noirlab.edu",
+        "eso.org",
+        "astrocats.space",
+    ];
+
+    fn draft_frame_guess(
+        url: &str,
+        context: &str,
+        registry: &HashMap<String, String>,
+    ) -> (String, String) {
+        let netloc = extract_netloc(url).unwrap_or_default();
+        for key in route_prefix_keys(url) {
+            if let Some(f) = registry.get(&key) {
+                return (format!("{}\n", f), format!("route-registry: {}", f));
+            }
+        }
+        for n in CELESTIAL_NETLOCS {
+            if netloc == *n || netloc.ends_with(n) {
+                return ("at sun\n".to_string(), "celestial netloc".to_string());
+            }
+        }
+        let lower = context.to_lowercase();
+        for w in [
+            "station",
+            "buoy",
+            "quake",
+            "earthquake",
+            "weather",
+            "wind",
+            "temperature",
+            "water",
+            "tide",
+            "sea ",
+            "ocean",
+            "snow",
+            "rain",
+            "seismic",
+            "metar",
+            "airport",
+            "pegel",
+            "air quality",
+            "hurricane",
+        ] {
+            if lower.contains(w) {
+                return (
+                    "on earth 0 0\n".to_string(),
+                    format!("terrestrial vocab: {}", w.trim()),
+                );
+            }
+        }
+        ("".to_string(), "frame ausstehend".to_string())
+    }
+
+    fn build_frame_registry() -> HashMap<String, String> {
+        let mut map: HashMap<String, String> = HashMap::new();
+        for path in ["phi/sources.φ", "phi/dead_sources.φ"] {
+            let Ok(content) = std::fs::read_to_string(path) else {
+                continue;
+            };
+            let mut cur_url: Option<String> = None;
+            for line in content.lines() {
+                let t = line.trim();
+                if let Some(rest) = t.strip_prefix("url ") {
+                    cur_url = Some(rest.trim().to_string());
+                } else if let Some(url) = &cur_url {
+                    if t.starts_with("on ") {
+                        if let Some(rk) = route_key(url) {
+                            map.entry(rk).or_insert_with(|| "on earth".to_string());
+                        }
+                    } else if let Some(rest) = t.strip_prefix("at ") {
+                        let body = rest.split_whitespace().next().unwrap_or("sun");
+                        if let Some(rk) = route_key(url) {
+                            map.entry(rk).or_insert_with(|| format!("at {}", body));
+                        }
+                    }
+                }
+            }
+        }
+        if let Ok(content) = std::fs::read_to_string("phi/port/frame_learned.φ") {
+            for line in content.lines() {
+                let t = line.trim();
+                if t.is_empty() || t.starts_with('#') {
+                    continue;
+                }
+                if let Some((nl, frame)) = t.split_once('|') {
+                    let nl = nl.trim();
+                    let frame = frame.trim();
+                    if !nl.is_empty() && !frame.is_empty() {
+                        map.entry(nl.to_string())
+                            .or_insert_with(|| frame.to_string());
+                    }
+                }
+            }
+        }
+        map
+    }
+
+    fn learn_frames(new: &HashMap<String, String>) {
+        let mut map: HashMap<String, String> = HashMap::new();
+        if let Ok(content) = std::fs::read_to_string("phi/port/frame_learned.φ") {
+            for line in content.lines() {
+                let t = line.trim();
+                if t.is_empty() || t.starts_with('#') {
+                    continue;
+                }
+                if let Some((nl, frame)) = t.split_once('|') {
+                    map.insert(nl.trim().to_string(), frame.trim().to_string());
+                }
+            }
+        }
+        for (nl, frame) in new {
+            map.entry(nl.to_string())
+                .or_insert_with(|| frame.to_string());
+        }
+        let mut out = String::from(
+            "# frame-learned — Route (host/Pfad, Query gestrippt) → frame, selbstlernend aus Probe-Antworten (--draft)\n",
+        );
+        let mut keys: Vec<(&String, &String)> = map.iter().collect();
+        keys.sort();
+        for (nl, frame) in keys {
+            out.push_str(&format!("{} | {}\n", nl, frame));
+        }
+        std::fs::create_dir_all("phi/port").ok();
+        std::fs::write("phi/port/frame_learned.φ", out).ok();
+    }
+
+    fn draft_context_mode(path: &str) -> i32 {
+        let drafts = match std::fs::read_to_string(path) {
+            Ok(c) => c,
+            Err(e) => {
+                eprintln!("--draft-context: read {}: {}", path, e);
+                return 1;
+            }
+        };
+        let mut context_map: HashMap<String, String> = HashMap::new();
+        for dir in ["phi/katalog", "phi/port"] {
+            if let Ok(rd) = std::fs::read_dir(dir) {
+                for e in rd.flatten() {
+                    let name = e.file_name().to_string_lossy().to_string();
+                    let relevant = (dir == "phi/katalog" && name.ends_with(".φ"))
+                        || (dir == "phi/port"
+                            && name.starts_with("weights_")
+                            && name.ends_with(".txt"));
+                    if !relevant {
+                        continue;
+                    }
+                    if let Ok(c) = std::fs::read_to_string(e.path()) {
+                        for l in c.lines() {
+                            let t = l.trim();
+                            if let Some(pos) = t.find("http") {
+                                let u = t[pos..]
+                                    .split_whitespace()
+                                    .next()
+                                    .unwrap_or("")
+                                    .trim_end_matches(|ch| ch == ',' || ch == '|' || ch == ';');
+                                if u.starts_with("http") {
+                                    context_map
+                                        .entry(u.to_string())
+                                        .or_insert_with(|| t.to_string());
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        let registry = build_frame_registry();
+        let mut reg = String::from(
+            "# frame-registry — Route (host/Pfad, Query gestrippt) → frame, selbstlernend aus sources.φ + dead_sources.φ + frame_learned.φ\n",
+        );
+        let mut reg_keys: Vec<(&String, &String)> = registry.iter().collect();
+        reg_keys.sort();
+        for (nl, f) in reg_keys {
+            reg.push_str(&format!("{} | {}\n", nl, f));
+        }
+        std::fs::write("phi/port/frame_registry.φ", reg).ok();
+        let mut out = String::new();
+        let mut celestial = 0usize;
+        let mut terrestrial = 0usize;
+        let mut pending = 0usize;
+        for block in drafts.split("\n\n") {
+            let b = block.trim();
+            if b.is_empty() {
+                continue;
+            }
+            let mut url = "";
+            let mut is_pending = false;
+            for l in b.lines() {
+                if l.starts_with("url ") {
+                    url = l.trim_start_matches("url ").trim();
+                }
+                if l == "# frame: frame ausstehend" {
+                    is_pending = true;
+                }
+            }
+            if !is_pending || url.is_empty() {
+                out.push_str(b);
+                out.push_str("\n\n");
+                continue;
+            }
+            let context = context_map.get(url).cloned().unwrap_or_default();
+            let (frame, reason) = draft_frame_guess(url, &context, &registry);
+            if frame.is_empty() {
+                pending += 1;
+                out.push_str(b);
+                out.push_str("\n\n");
+                continue;
+            }
+            let mut lines: Vec<String> = Vec::new();
+            for l in b.lines() {
+                if l == "# frame: frame ausstehend" {
+                    lines.push(format!("# frame: {}", reason));
+                    continue;
+                }
+                lines.push(l.to_string());
+                if l.starts_with("ttl ") {
+                    lines.push(frame.trim_end().to_string());
+                }
+            }
+            if frame.starts_with("at sun") {
+                celestial += 1;
+            } else {
+                terrestrial += 1;
+            }
+            out.push_str(&lines.join("\n"));
+            out.push_str("\n\n");
+        }
+        std::fs::create_dir_all("phi/port").ok();
+        std::fs::write("phi/port/probe_drafts_enriched.φ", out).ok();
+        eprintln!(
+            "--draft-context: {} ausstehend → {} celestial, {} terrestrial, {} bleiben ausstehend → phi/port/probe_drafts_enriched.φ",
+            celestial + terrestrial + pending,
+            celestial,
+            terrestrial,
+            pending
+        );
+        0
+    }
+
+    fn gate_learn_mode() -> i32 {
+        let mut delta: Vec<(i32, String, String)> = Vec::new();
+        let mut seen: std::collections::HashSet<String> = std::collections::HashSet::new();
+        if let Ok(content) = std::fs::read_to_string("phi/sources.φ") {
+            for line in content.lines() {
+                let t = line.trim();
+                if let Some(rest) = t.strip_prefix("url ") {
+                    if let Some(nl) = extract_netloc(rest.trim()) {
+                        if seen.insert(format!("+{}", nl)) {
+                            delta.push((4, "-".to_string(), nl.to_string()));
+                        }
+                    }
+                }
+            }
+        }
+        if let Ok(content) = std::fs::read_to_string("phi/dead_sources.φ") {
+            for line in content.lines() {
+                let t = line.trim();
+                if let Some(rest) = t.strip_prefix("url ") {
+                    if let Some(nl) = extract_netloc(rest.trim()) {
+                        if seen.insert(format!("-{}", nl)) {
+                            delta.push((-4, "-".to_string(), nl.to_string()));
+                        }
+                    }
+                }
+            }
+        }
+        let (mut pos, mut neg) = (0usize, 0usize);
+        for (w, _, _) in &delta {
+            if *w > 0 {
+                pos += 1;
+            } else {
+                neg += 1;
+            }
+        }
+        let mut d = String::from(
+            "# gate-delta — netloc-Gewichte, selbstlernend aus sources.φ (+) + dead_sources.φ (−)\n",
+        );
+        for (w, f, tag) in &delta {
+            d.push_str(&format!("{} {} {}\n", w, f, tag));
+        }
+        std::fs::write("phi/port/library_gate_delta.φ", d).ok();
+        let library = std::fs::read_to_string("phi/port/library.φ").unwrap_or_default();
+        let delta_lines: Vec<String> = delta
+            .iter()
+            .map(|(w, f, tag)| format!("{} {} {}", w, f, tag))
+            .collect();
+        let mut seen2: std::collections::HashSet<String> = std::collections::HashSet::new();
+        let mut out = String::new();
+        for line in library
+            .lines()
+            .chain(delta_lines.iter().map(|s| s.as_str()))
+        {
+            if line.starts_with('#') {
+                out.push_str(line);
+                out.push('\n');
+                continue;
+            }
+            let parts: Vec<&str> = line.splitn(3, char::is_whitespace).collect();
+            if parts.len() < 3 {
+                continue;
+            }
+            if seen2.insert(parts[2].to_string()) {
+                out.push_str(line);
+                out.push('\n');
+            }
+        }
+        std::fs::write("phi/port/library.φ", out).ok();
+        eprintln!(
+            "--learn-gate: {} netloc-Gewichte ({} positiv, {} negativ) → library.φ + library_gate_delta.φ",
+            delta.len(),
+            pos,
+            neg
         );
         0
     }
@@ -8951,7 +9419,14 @@ mod archivar {
             let jina_out = std::sync::Mutex::new(String::new());
             let jn = std::sync::atomic::AtomicUsize::new(0);
             let n_cand = candidates.len();
-            let j_workers = 2.min(n_cand.max(1));
+            let jina_key = env.get("JINA_API_KEY").cloned().unwrap_or_default();
+            let jina_headers: Vec<(String, String)> = if jina_key.is_empty() {
+                Vec::new()
+            } else {
+                vec![("Authorization".to_string(), format!("Bearer {}", jina_key))]
+            };
+            let j_workers = 4.min(n_cand.max(1));
+            let j_pacing = if jina_key.is_empty() { 4000u64 } else { 500u64 };
             std::thread::scope(|scope| {
                 for _ in 0..j_workers {
                     scope.spawn(|| loop {
@@ -8960,7 +9435,7 @@ mod archivar {
                             break;
                         }
                         let wrapped = format!("https://r.jina.ai/{}", candidates[i]);
-                        let body = fetch_raw_probe(&wrapped, None, &[]);
+                        let body = fetch_raw_probe(&wrapped, None, &jina_headers);
                         if let Some(b) = body {
                             if parse_json(&b).is_some() {
                                 jina_out
@@ -8969,7 +9444,7 @@ mod archivar {
                                     .push_str(&format!("jina-json | {}\n", candidates[i]));
                             }
                         }
-                        std::thread::sleep(std::time::Duration::from_millis(4000));
+                        std::thread::sleep(std::time::Duration::from_millis(j_pacing));
                     });
                 }
             });
@@ -9074,6 +9549,19 @@ mod archivar {
                     }
                 };
                 std::process::exit(port_mode(input, output));
+            }
+            if args.len() > 1 && args[1] == "--learn-gate" {
+                std::process::exit(gate_learn_mode());
+            }
+            if args.len() > 1 && args[1] == "--draft-context" {
+                let path = match args.get(2) {
+                    Some(s) => s.as_str(),
+                    None => {
+                        eprintln!("--draft-context: file argument absent");
+                        std::process::exit(1);
+                    }
+                };
+                std::process::exit(draft_context_mode(path));
             }
             if args.len() > 1 && args[1] == "--draft" {
                 let path = match args.get(2) {
@@ -10085,8 +10573,9 @@ mod archivar {
             let body = r#"[{"ra":89.8,"declination":53.6,"redshift":0.027,"discoverymag":19.8},{"ra":35.0,"declination":-24.4,"redshift":0.0,"discoverymag":19.4}]"#;
             match extract(&src, body, 8.0e8, &fixture_lsk) {
                 ExtractResult::Measurements(channels) => {
-                    assert_eq!(channels.len(), 1);
+                    assert_eq!(channels.len(), 2);
                     assert_eq!(channels[0].1.name, "tns_transient_flux");
+                    assert_eq!(channels[1].1.name, "tns_transient_flux");
                 }
                 ExtractResult::WithEphemeris(_, _) => panic!("unexpected ephemeris"),
             }
@@ -10168,8 +10657,9 @@ mod archivar {
             };
             match extract(&src, path.to_str().unwrap(), 8.0e8, &fixture_lsk) {
                 ExtractResult::Measurements(channels) => {
-                    assert_eq!(channels.len(), 1);
+                    assert_eq!(channels.len(), 2);
                     assert_eq!(channels[0].1.name, "tns_transient_flux");
+                    assert_eq!(channels[1].1.name, "tns_transient_flux");
                 }
                 ExtractResult::WithEphemeris(_, _) => panic!("unexpected ephemeris"),
             }
@@ -10279,6 +10769,156 @@ field temp temp_c\n";
                     assert_eq!(channels[0].0.value, 5.5);
                     if let Position::StateVector { p, .. } = channels[0].0.position {
                         let expect = 3.085677581e19;
+                        assert!((p[0] - expect).abs() / expect < 1e-12);
+                        assert!(p[1].abs() / expect < 1e-12);
+                        assert!(p[2].abs() / expect < 1e-12);
+                    } else {
+                        panic!("expected StateVector position");
+                    }
+                }
+                ExtractResult::WithEphemeris(_, _) => panic!("unexpected ephemeris"),
+            }
+        }
+
+        #[test]
+        fn test_extract_cmap_no_distance_reference_sphere() {
+            let json = r#"[{"ra":0.0,"dec":0.0,"H":5.5}]"#;
+            let src = SourceConfig {
+                ttl: 604800,
+                url: "https://example.com/x".into(),
+                frame: Frame::Barycenter {
+                    body_name: "sun".into(),
+                    scale: 1.0,
+                },
+                format: "json".into(),
+                extracts: vec![Extract::CelestialMap {
+                    arr_path: ".".into(),
+                    ra_key: "ra".into(),
+                    dec_key: "dec".into(),
+                    dist_key: String::new(),
+                    dist_scale: 1.0,
+                    plx_key: String::new(),
+                    z_key: String::new(),
+                    pmra_key: String::new(),
+                    pmdec_key: String::new(),
+                    rv_key: String::new(),
+                    rv_scale: 1.0,
+                    epoch_key: String::new(),
+                    fields: vec![FieldConfig {
+                        key: "H".into(),
+                        name: "comet_h_mag".into(),
+                        kernel: 0,
+                        force: 0,
+                        tau: 604800.0,
+                        absorption: 0.0,
+                        advection: 0.0,
+                    }],
+                }],
+                headers: vec![],
+                post_body: None,
+                target: None,
+                catalog: None,
+                max_freq: None,
+                min_freq: None,
+                body: None,
+                stations_url: None,
+                stations_path: String::new(),
+                stations_lat: String::new(),
+                stations_lon: String::new(),
+                stations_id: String::new(),
+                flux_from_mag: None,
+                abs_mag_from: None,
+                catalog_epoch: None,
+                repeat_ra_bins: 0,
+                fanout_cap: 0,
+                stations_flatten: String::new(),
+                stations_filter: None,
+                fanout_delay: 0,
+            };
+            let fixture_lsk = LeapSeconds {
+                delta_t_a: 32.184,
+                deltas: vec![(37.0, 1483228800.0)],
+            };
+            match extract(&src, json, 8.0e8, &fixture_lsk) {
+                ExtractResult::Measurements(channels) => {
+                    assert_eq!(channels.len(), 1);
+                    if let Position::StateVector { p, .. } = channels[0].0.position {
+                        let expect = CELESTIAL_SPHERE_RADIUS_M;
+                        assert!((p[0] - expect).abs() / expect < 1e-12);
+                        assert!(p[1].abs() / expect < 1e-12);
+                        assert!(p[2].abs() / expect < 1e-12);
+                    } else {
+                        panic!("expected StateVector position");
+                    }
+                }
+                ExtractResult::WithEphemeris(_, _) => panic!("unexpected ephemeris"),
+            }
+        }
+
+        #[test]
+        fn test_extract_cmap_null_dist_reference_sphere() {
+            let json = r#"[{"ra":0.0,"dec":0.0,"dist_pc":null,"H":5.5}]"#;
+            let src = SourceConfig {
+                ttl: 604800,
+                url: "https://example.com/x".into(),
+                frame: Frame::Barycenter {
+                    body_name: "sun".into(),
+                    scale: 1.0,
+                },
+                format: "json".into(),
+                extracts: vec![Extract::CelestialMap {
+                    arr_path: ".".into(),
+                    ra_key: "ra".into(),
+                    dec_key: "dec".into(),
+                    dist_key: "dist_pc".into(),
+                    dist_scale: 3.085677581e16,
+                    plx_key: String::new(),
+                    z_key: String::new(),
+                    pmra_key: String::new(),
+                    pmdec_key: String::new(),
+                    rv_key: String::new(),
+                    rv_scale: 1.0,
+                    epoch_key: String::new(),
+                    fields: vec![FieldConfig {
+                        key: "H".into(),
+                        name: "comet_h_mag".into(),
+                        kernel: 0,
+                        force: 0,
+                        tau: 604800.0,
+                        absorption: 0.0,
+                        advection: 0.0,
+                    }],
+                }],
+                headers: vec![],
+                post_body: None,
+                target: None,
+                catalog: None,
+                max_freq: None,
+                min_freq: None,
+                body: None,
+                stations_url: None,
+                stations_path: String::new(),
+                stations_lat: String::new(),
+                stations_lon: String::new(),
+                stations_id: String::new(),
+                flux_from_mag: None,
+                abs_mag_from: None,
+                catalog_epoch: None,
+                repeat_ra_bins: 0,
+                fanout_cap: 0,
+                stations_flatten: String::new(),
+                stations_filter: None,
+                fanout_delay: 0,
+            };
+            let fixture_lsk = LeapSeconds {
+                delta_t_a: 32.184,
+                deltas: vec![(37.0, 1483228800.0)],
+            };
+            match extract(&src, json, 8.0e8, &fixture_lsk) {
+                ExtractResult::Measurements(channels) => {
+                    assert_eq!(channels.len(), 1);
+                    if let Position::StateVector { p, .. } = channels[0].0.position {
+                        let expect = CELESTIAL_SPHERE_RADIUS_M;
                         assert!((p[0] - expect).abs() / expect < 1e-12);
                         assert!(p[1].abs() / expect < 1e-12);
                         assert!(p[2].abs() / expect < 1e-12);
@@ -10578,6 +11218,49 @@ field temp temp_c\n";
                 .any(|e| matches!(e, super::Extract::CelestialMap { .. })));
             assert!(has_field(&srcs[0]));
         }
+        #[test]
+        fn test_walk_celestial_cmap() {
+            let j = super::parse_json("{\"results\":[{\"ra\":1.5,\"dec\":-2.5,\"mag\":12.3}]}")
+                .unwrap();
+            let mut fields = String::new();
+            let mut coords = String::new();
+            let mut map_path: Option<String> = None;
+            let mut budget = 48usize;
+            super::walk_json_probe(&j, "", &mut fields, &mut coords, &mut map_path, &mut budget);
+            assert!(coords.contains("ra "));
+            assert!(coords.contains("dec "));
+            assert_eq!(map_path.as_deref(), Some("results"));
+            assert!(fields.contains("field"));
+            let (frame, _) = super::derive_frame(&j, &coords);
+            assert!(frame.starts_with("at sun"));
+        }
+
+        #[test]
+        fn test_tap_to_json_rows() {
+            let j = super::parse_json(
+                "{\"metadata\":[{\"name\":\"RAJ2000\"},{\"name\":\"DEJ2000\"},{\"name\":\"Ksmag\"}],\"data\":[[1.5,-2.5,12.3],[3.0,4.0,10.1]]}",
+            )
+            .unwrap();
+            let flat = super::tap_to_json(&j).unwrap();
+            let mut fields = String::new();
+            let mut coords = String::new();
+            let mut map_path: Option<String> = None;
+            let mut budget = 48usize;
+            super::walk_json_probe(
+                &flat,
+                "",
+                &mut fields,
+                &mut coords,
+                &mut map_path,
+                &mut budget,
+            );
+            assert!(coords.contains("ra RAJ2000"));
+            assert!(coords.contains("dec DEJ2000"));
+            assert_eq!(map_path.as_deref(), Some("."));
+            let (frame, _) = super::derive_frame(&flat, &coords);
+            assert!(frame.starts_with("at sun"));
+        }
+
         #[test]
         fn test_parse_stations_xml() {
             let xml = "<?xml version=\"1.0\" ?><GINServices>\n <ObservatoryList>\n  <Observatory>\n   <Code>AAE</Code>\n   <Name>Addis Ababa</Name>\n   <Latitude>9.035</Latitude>   <Longitude>38.770</Longitude>   <Elevation>2441</Elevation>\n  </Observatory>\n  <Observatory>\n   <Code>YKC</Code>\n   <Latitude>62.48</Latitude>   <Longitude>-114.48</Longitude>   <Elevation>181</Elevation>\n  </Observatory>\n </ObservatoryList>\n</GINServices>";
@@ -11698,6 +12381,75 @@ field temp temp_c\n";
             assert_eq!(omegaflow::force::force_id_of("electric"), Some(8));
             assert_eq!(omegaflow::force::force_id_of("biotic"), None);
             assert_eq!(omegaflow::force::kernel_id_for_force(8), Some(1));
+        }
+
+        #[test]
+        fn test_route_key_strips_query_and_www() {
+            assert_eq!(
+                route_key(
+                    "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&limit=2"
+                ),
+                Some("earthquake.usgs.gov/fdsnws/event/1/query".to_string())
+            );
+            assert_eq!(
+                route_key("https://www.example.com/"),
+                Some("example.com".to_string())
+            );
+        }
+
+        #[test]
+        fn test_route_key_normalizes_template() {
+            assert_eq!(
+                route_key("https://api.example.com/{lat}/{lon}"),
+                Some("api.example.com/*/*".to_string())
+            );
+        }
+
+        #[test]
+        fn test_route_prefix_keys_most_specific_first() {
+            let keys = route_prefix_keys(
+                "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson",
+            );
+            assert_eq!(
+                keys,
+                vec![
+                    "earthquake.usgs.gov/fdsnws/event/1/query".to_string(),
+                    "earthquake.usgs.gov/fdsnws/event/1".to_string(),
+                    "earthquake.usgs.gov/fdsnws/event".to_string(),
+                    "earthquake.usgs.gov/fdsnws".to_string(),
+                    "earthquake.usgs.gov".to_string(),
+                ]
+            );
+        }
+
+        #[test]
+        fn test_frame_registry_distinguishes_routes_on_one_host() {
+            let mut reg: HashMap<String, String> = HashMap::new();
+            reg.insert(
+                "api.example.com/weather".to_string(),
+                "on earth".to_string(),
+            );
+            reg.insert(
+                "api.example.com/asteroids".to_string(),
+                "at sun".to_string(),
+            );
+            let (weather, _) =
+                draft_frame_guess("https://api.example.com/weather?city=berlin", "", &reg);
+            let (asteroids, _) =
+                draft_frame_guess("https://api.example.com/asteroids/433", "", &reg);
+            assert_eq!(weather, "on earth\n");
+            assert_eq!(asteroids, "at sun\n");
+        }
+
+        #[test]
+        fn test_frame_registry_prefix_fallback() {
+            let mut reg: HashMap<String, String> = HashMap::new();
+            reg.insert(
+                "api.example.com/weather".to_string(),
+                "on earth".to_string(),
+            );
+            let (frame, _) = draft_frame_guess("https://api.example.com/weather/current", "", &reg);
+            assert_eq!(frame, "on earth\n");
         }
     }
 }
