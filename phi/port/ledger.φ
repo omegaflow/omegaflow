@@ -381,3 +381,7 @@ note Zeitreihen-Kuration offen (Waterservices/OpenSky lebt; Wind-Messquelle fehl
 ausstehend
 kraft-kanal diffusion
 note Zeitreihen-Kuration offen (PurpleAir/OpenAQ/GML/OOI leben; weitere Quellen grinden)
+
+verifiziert
+bestand phi/katalog/vizier_gold_catalogs.φ
+note Crossmatch-Welle 2026-08-16 (gaia_dist): 12 distanzlose Kataloge mit tap_compiler --crossmatch gegen I/355/paramp (dist_pc) nachkompiliert; wd nutzt eigene Parallaxe (plx), evs_cat (B1950) ausgelassen. Async-Pfad trägt TOP-Limit. Pro Katalog ein Ledger-Eintrag folgt mit der Kompilierung.
