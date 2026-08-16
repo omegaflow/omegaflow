@@ -98,6 +98,16 @@ Offen:
 - Die gewählte Verteilung + Budget-Skalierung wird danach auf dem Titanen
   manifestiert (Archivar-Sampler → Messpunkt-Liste → Membran misst nur
   dort; Zellen-Anzeige vs. Interpolation als offene Philosophie-Frage)
+- KONSENS der Shared-Memory-Runde (docs/surveys/auswertung.md): das
+  Ω-Token (Kandidat 10) ist verworfen — die Architektur heißt
+  EIN Buffer + EIN atomarer u64-Generationszähler + Stille (kein Schreiben
+  bei stationärem Feld); Doppelpuffer gegen Torn Reads; HUD-Ω direkt aus
+  den Archivar-Akkumulatoren (kein GPU-Map-Readback, löst den Map-Timeout);
+  Budget-Regelung = zwei Zahlen (Frame-Zeit + Messpunktzahl) → Zellweite.
+  FRISCHE SESSION: Generations-Architektur manifestieren + die
+  Verteilungs-Verdikte der Council/Extension-Runden lesen
+  (/home/johannes/Schreibtisch/survey/*_Council, *_Extension) und die
+  Messpunkt-Verteilung wählen.
 
 ---
 
