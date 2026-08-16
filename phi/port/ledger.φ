@@ -162,9 +162,9 @@ ausstehend
 bestand phi/katalog/_adapter_queue
 note FEHLENDE ADAPTER (Zugriffsmuster, verifizierte Endpoints): sparql_harvester (ICOS meta.icos-cp.eu/sparql), erddap_harvester (BCO-DMO erddap.bco-dmo.org, NOAA/PMEL), stac_harvester (Planetary Computer, Copernicus Data Space, NASA Earthdata), csw_harvester (SeaDataNet/EMODnet, INSPIRE, GEOSS), xml_harvester (re3data >3000 Repositorien, MGDS marine-geo.org). INSTANZEN (kein neuer Adapter, nur --root/--fields): TAP (ESO, CADC, MAST, SDSS, Chandra, EPN-TAP), Dataverse (Harvard 100k+, Borealis, UNC), OAI (arXiv, Dryad, institutionelle DSpace). BEWUSST NICHT (Sensor-Regel/Force-Gate): GBIF/OBIS/iNaturalist → presence-catalog decline; DKRZ/CMIP6/ERA5 → model-forecast decline
 
-ausstehend
+verifiziert
 bestand phi/katalog/cmr_catalog.φ
-note NASA-CMR komplett (54.944 Earthdata-Collections) via rest_harvester (jpath feed.entry) — der größte Live-Erdbeobachtungs-Bestand; als Probe-Kandidaten in die Queue gießen
+note NASA-CMR komplett (54.944 Earthdata-Collections) via rest_harvester (jpath feed.entry). Welle 2026-08-16: gelenst (phi/port/weights_cmr.txt, 54.953 ranked) — die Linse rankt korrekt (pCO2→diffusion +132, Wind→advective +116), ABER der Bestand ist archival: Collections (NOAA_NCEI-Accessions, SCAR/SCIOPS, DAACs) tragen nur Landing-Page-Links (niwa.co.nz, envidat.ch), keine Live-JSON-API; Datenzugriff ist OPeNDAP/NetCDF + Earthdata-Login → NetCDF-Reader-Gap (GLMNetCDF) + Earthdata-Auth nötig. „In die Queue gießen" erbringt Void — CMR ist keine Live-Probe-Quelle. Der Live-Wert liegt bei den Provider-Katalogen (b2find/PANGAEA/LTER), nicht bei CMR
 
 verifiziert
 bestand phi/port/batches/
