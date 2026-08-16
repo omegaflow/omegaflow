@@ -25,23 +25,20 @@ jobs:
         for f in phi/katalog/b2find_catalogs_index.φ phi/katalog/grind_eogateway_index.φ phi/katalog/archeology_gaps_index.φ phi/katalog/terrapulse_catalog.φ phi/katalog/gaia_swpc_vokabular.φ phi/katalog/simbad_otypes.φ phi/katalog/inaturalist_vokabular.φ phi/katalog/nasa_cmr_tags.φ phi/katalog/gbif_tags.φ; do
           cargo run --quiet --bin source_scanner -- phi/port/library.φ "$f" || true
         done
-    - name: probe
-      run: |
-        echo '# kumulative Survivors aller Batch-Proben' > phi/port/probe_all_survivors.φ
-        echo '# kumulative Voids aller Batch-Proben' > phi/port/probe_all_void.txt
-        for f in phi/port/batches/batch_*.φ; do
-          cargo run -- --probe "$f"
-          cat phi/port/probe_survivors.φ >> phi/port/probe_all_survivors.φ
-          cat phi/port/probe_void.txt >> phi/port/probe_all_void.txt
-        done
-        echo "survivors: $(grep -c '^url ' phi/port/probe_all_survivors.φ)"
-        echo "voids: $(grep -c '^url ' phi/port/probe_all_void.txt)"
     - name: urls
       run: cargo run -- --urls phi/port/probe_url_candidates.txt --jina
     - name: draft
       run: cargo run -- --draft phi/port/probe_live.txt
     - name: draft-context
       run: cargo run -- --draft-context phi/port/probe_drafts.φ
+    - name: probe
+      run: |
+        awk 'BEGIN{RS=""} !/frame: frame ausstehend/{print $0 "\n"}' phi/port/probe_drafts_enriched.φ > /tmp/probe_wave.φ
+        cargo run -- --probe /tmp/probe_wave.φ
+        mv phi/port/probe_survivors.φ phi/port/probe_all_survivors.φ
+        mv phi/port/probe_void.txt phi/port/probe_all_void.txt
+        echo "survivors: $(grep -c '^url ' phi/port/probe_all_survivors.φ || true)"
+        echo "voids: $(grep -c '^url ' phi/port/probe_all_void.txt || true)"
     - name: upload
       if: always()
       uses: actions/upload-artifact@v4
