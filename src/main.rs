@@ -31,6 +31,8 @@ fn fold_eff(d_mag: f32, raw: f32, t: f32, ttl: f32, force_type: u32, advective_v
 @group(0) @binding(1) var<storage, read> props: array<vec4f>;
 @group(0) @binding(2) var<uniform> vp: VP;
 @group(0) @binding(3) var<storage, read_write> probe_out: array<f32>;
+@group(0) @binding(4) var<storage, read_write> prep: array<vec4f>;
+@group(0) @binding(5) var<storage, read_write> param: array<vec4f>;
 
 struct VOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f };
 
@@ -77,22 +79,29 @@ fn field_spatial(d2: f32, d_mag: f32, extent: f32, kernel_id: u32, global_scale:
     }
 }
 
-fn osc_field(j: u32, rel: vec3f, dt: f32) -> vec2f {
-    let m = field[j * 3u];
+fn val_eff_at(pre: vec4f, tm: vec4f, ft: u32, v: f32, d_mag: f32) -> f32 {
+    let temporal = abs(vp.presence.w - tm.x);
+    var val = pre.w;
+    let corr = select(min(temporal, d_mag / v), 0.0, v == 0.0 || d_mag == 0.0);
+    if (corr > tm.y * 1e-4) {
+        val = pre.w * exp(corr / max(tm.y, 1e-9));
+    }
+    return val;
+}
+
+fn osc_field(j: u32, rel: vec3f, pre: vec4f) -> vec2f {
     let tm = field[j * 3u + 1u];
     let fm = field[j * 3u + 2u];
     let mt = props[j * 3u];
     let mp = props[j * 3u + 1u];
     let mg = props[j * 3u + 2u];
-    let v_obs = vec3f(vp.right.w, vp.up.w, vp.forward.w) * C_VACUUM;
-    let v_rel = fm.yzw - v_obs;
-    let propagated = m.xyz + v_rel * dt;
-    let delta = propagated - rel;
+    let delta = pre.xyz - rel;
     let d2 = dot(delta, delta);
     let d_mag = sqrt(d2);
     let ft = u32(tm.z);
     let kid = u32(mt.z);
-    let val_eff = fold_eff(d_mag, m.w, tm.x, tm.y, ft, fm.x);
+    let v = select(PROPAGATION_SPEED[ft], fm.x, ft == 7u && fm.x > 0.0);
+    let val_eff = val_eff_at(pre, tm, ft, v, d_mag);
     var sk = field_spatial(d2, d_mag, mt.x, kid, vp.surface.w, f32(tm.w));
     if ((kid == 0u || kid == 6u) && ft == 1u) {
         let dhat = delta / max(d_mag, 1e-9);
@@ -113,10 +122,27 @@ fn presence_probe() {
     var omegas = array<f32, 9>();
     for (var i = 0u; i < 9u; i = i + 1u) { omegas[i] = 0.0; }
     let dt = vp.presence.w - vp.expose_ex.y;
+    let v_obs = vec3f(vp.right.w, vp.up.w, vp.forward.w) * C_VACUUM;
     for (var j = 0u; j < count; j = j + 1u) {
-        let c = osc_field(j, vec3f(0.0), dt);
-        let ft = u32(c.y);
-        if (ft < 9u) { omegas[ft] += c.x; }
+        let m = field[j * 3u];
+        let tm = field[j * 3u + 1u];
+        let fm = field[j * 3u + 2u];
+        let mt = props[j * 3u];
+        let v_rel = fm.yzw - v_obs;
+        let propagated = m.xyz + v_rel * dt;
+        let temporal = abs(vp.presence.w - tm.x);
+        let pre = vec4f(propagated, m.w * exp(-temporal / max(tm.y, 1e-9)));
+        prep[j] = pre;
+        let ft = u32(tm.z);
+        let kid = u32(mt.z);
+        var fast = 0.0;
+        if ((kid == 0u || kid == 6u) && (ft != 1u) && (temporal < tm.y * 1e-4)) {
+            fast = 1.0;
+        }
+        param[j] = vec4f(f32(ft), mt.x, f32(kid), fast);
+        let c = osc_field(j, vec3f(0.0), pre);
+        let f = u32(c.y);
+        if (f < 9u) { omegas[f] += c.x; }
     }
     for (var i = 0u; i < 9u; i = i + 1u) { probe_out[i] = omegas[i]; }
 }
@@ -129,18 +155,77 @@ fn presence_probe() {
     let scale = vp.surface.w;
     let pixel_rel = (in.uv.x - 0.5) * w * scale * vp.right.xyz
         + (0.5 - in.uv.y) * h * scale * vp.up.xyz;
-    let dt = vp.presence.w - vp.expose_ex.y;
 
-    var omegas = array<f32, 9>();
-    for (var k = 0u; k < 9u; k = k + 1u) { omegas[k] = 0.0; }
+    var o0 = 0.0;
+    var o1 = 0.0;
+    var o2 = 0.0;
+    var o3 = 0.0;
+    var o4 = 0.0;
+    var o5 = 0.0;
+    var o6 = 0.0;
+    var o7 = 0.0;
+    var o8 = 0.0;
     for (var j = 0u; j < count; j = j + 1u) {
-        let osc = osc_field(j, pixel_rel, dt);
-        let ft = u32(osc.y);
-        if (ft < 9u) { omegas[ft] += osc.x; }
+        let pre = prep[j];
+        let p = param[j];
+        let delta = pre.xyz - pixel_rel;
+        let d2 = dot(delta, delta);
+        let ft = u32(p.x);
+        var contrib = 0.0;
+        if (p.w > 0.5) {
+            let e2 = max(max(p.y * p.y, scale * scale), 1e-30);
+            contrib = pre.w / (d2 + e2);
+        } else {
+            let tm = field[j * 3u + 1u];
+            let fm = field[j * 3u + 2u];
+            let mt = props[j * 3u];
+            let mp = props[j * 3u + 1u];
+            let mg = props[j * 3u + 2u];
+            let d_mag = sqrt(d2);
+            let kid = u32(mt.z);
+            let v = select(PROPAGATION_SPEED[ft], fm.x, ft == 7u && fm.x > 0.0);
+            let temporal = abs(vp.presence.w - tm.x);
+            var val = pre.w;
+            let corr = select(min(temporal, d_mag / v), 0.0, v == 0.0 || d_mag == 0.0);
+            if (corr > tm.y * 1e-4) {
+                val = pre.w * exp(corr / max(tm.y, 1e-9));
+            }
+            var sk = field_spatial(d2, d_mag, mt.x, kid, scale, f32(tm.w));
+            if ((kid == 0u || kid == 6u) && ft == 1u) {
+                let dhat = delta / max(d_mag, 1e-9);
+                let cos_t = clamp(dot(dhat, mp.xyz), -1.0, 1.0);
+                let p2 = (3.0 * cos_t * cos_t - 1.0) * 0.5;
+                let p4 = (35.0 * cos_t * cos_t * cos_t * cos_t - 30.0 * cos_t * cos_t + 3.0) * 0.125;
+                let rd2 = mg.y * mg.y / max(d2, 1.0);
+                if (rd2 < 1.0) {
+                    sk *= 1.0 - mp.w * rd2 * p2 - mg.x * rd2 * rd2 * p4;
+                }
+            }
+            contrib = val * sk;
+        }
+        if (ft == 0u) {
+            o0 += contrib;
+        } else if (ft == 1u) {
+            o1 += contrib;
+        } else if (ft == 2u) {
+            o2 += contrib;
+        } else if (ft == 3u) {
+            o3 += contrib;
+        } else if (ft == 4u) {
+            o4 += contrib;
+        } else if (ft == 5u) {
+            o5 += contrib;
+        } else if (ft == 6u) {
+            o6 += contrib;
+        } else if (ft == 7u) {
+            o7 += contrib;
+        } else if (ft == 8u) {
+            o8 += contrib;
+        }
     }
 
-    var omega_total = 0.0;
-    for (var k = 0u; k < 9u; k = k + 1u) { omega_total += abs(omegas[k]); }
+    let omega_total = abs(o0) + abs(o1) + abs(o2) + abs(o3) + abs(o4) + abs(o5)
+        + abs(o6) + abs(o7) + abs(o8);
     if (omega_total < 1e-30) { discard; }
 
     let t2 = clamp((log2(omega_total) + 14.0 + vp.expose_ex.x) / 22.0, 0.0, 1.0);
@@ -11368,7 +11453,7 @@ mod mathematikerin {
     use super::*;
     use crate::archivar::{body_barycenter_position, sense_buffer, system_now};
     use std::collections::{HashMap, HashSet};
-    use std::sync::atomic::{AtomicBool, AtomicU32, Ordering};
+    use std::sync::atomic::{AtomicBool, Ordering};
     use std::sync::{mpsc, Arc, Mutex};
     use std::thread;
 
@@ -11386,6 +11471,7 @@ mod mathematikerin {
     const GRID_INIT: f64 = 2147483648.0;
     const JUMP_GRID: f64 = 268435456.0;
     const SSAA_MAX: f32 = 8.0;
+    const FIELD_BACKING_SCALE: f64 = 1.0;
     const EMA_FACTOR: f64 = 0.05;
     const THRUST_STEP: f64 = 64.0;
 
@@ -11656,6 +11742,8 @@ mod mathematikerin {
         vp_buf: Option<wgpu::Buffer>,
         probe_buf: Option<wgpu::Buffer>,
         probe_read: Option<wgpu::Buffer>,
+        prep_buf: Option<wgpu::Buffer>,
+        param_buf: Option<wgpu::Buffer>,
         field_cap: u32,
         backing: (u32, u32),
 
@@ -11685,10 +11773,9 @@ mod mathematikerin {
         size: (u32, u32),
         scale_factor: f64,
         last_sent: (f64, f64, f64, f64),
-        inflight: Arc<AtomicU32>,
         sensors: NativeSensors,
         frame_count: u64,
-        last_render: Option<std::time::Instant>,
+        frame_ms_max: f64,
         last_hud: Option<std::time::Instant>,
     }
 
@@ -11727,6 +11814,8 @@ mod mathematikerin {
                 vp_buf: None,
                 probe_buf: None,
                 probe_read: None,
+                prep_buf: None,
+                param_buf: None,
                 field_cap: 0,
                 backing: (1, 1),
                 latest_field: None,
@@ -11754,14 +11843,13 @@ mod mathematikerin {
                 size: (1280, 800),
                 scale_factor: 1.0,
                 last_sent: (0.0, 0.0, 0.0, 0.0),
-                inflight: Arc::new(AtomicU32::new(0)),
                 sensors: NativeSensors {
                     oscs: HashMap::new(),
                     tx: sensor_tx,
                     frame_interval: 0.016,
                 },
                 frame_count: 0,
-                last_render: None,
+                frame_ms_max: 0.0,
                 last_hud: None,
             }
         }
@@ -11888,8 +11976,16 @@ mod mathematikerin {
                 Some(c) => c.clone(),
                 None => return,
             };
-            let w = (self.size.0 as f64 * self.scale_factor * self.ssaa as f64).round() as u32;
-            let h = (self.size.1 as f64 * self.scale_factor * self.ssaa as f64).round() as u32;
+            let w = (self.size.0 as f64
+                * self.scale_factor
+                * self.ssaa as f64
+                * FIELD_BACKING_SCALE as f64)
+                .round() as u32;
+            let h = (self.size.1 as f64
+                * self.scale_factor
+                * self.ssaa as f64
+                * FIELD_BACKING_SCALE as f64)
+                .round() as u32;
             config.width = w.max(1);
             config.height = h.max(1);
             surface.configure(device, &config);
@@ -11984,6 +12080,18 @@ mod mathematikerin {
                 usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
                 mapped_at_creation: false,
             });
+            let prep_buf = device.create_buffer(&wgpu::BufferDescriptor {
+                label: None,
+                size: c as u64 * 16,
+                usage: wgpu::BufferUsages::STORAGE,
+                mapped_at_creation: false,
+            });
+            let param_buf = device.create_buffer(&wgpu::BufferDescriptor {
+                label: None,
+                size: c as u64 * 16,
+                usage: wgpu::BufferUsages::STORAGE,
+                mapped_at_creation: false,
+            });
             let probe_bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
                 label: None,
                 layout: &probe_layout,
@@ -12004,6 +12112,14 @@ mod mathematikerin {
                         binding: 3,
                         resource: probe_buf.as_entire_binding(),
                     },
+                    wgpu::BindGroupEntry {
+                        binding: 4,
+                        resource: prep_buf.as_entire_binding(),
+                    },
+                    wgpu::BindGroupEntry {
+                        binding: 5,
+                        resource: param_buf.as_entire_binding(),
+                    },
                 ],
             });
             let render_bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
@@ -12022,24 +12138,26 @@ mod mathematikerin {
                         binding: 2,
                         resource: vp_buf.as_entire_binding(),
                     },
+                    wgpu::BindGroupEntry {
+                        binding: 4,
+                        resource: prep_buf.as_entire_binding(),
+                    },
+                    wgpu::BindGroupEntry {
+                        binding: 5,
+                        resource: param_buf.as_entire_binding(),
+                    },
                 ],
             });
             self.field_buf = Some(field_buf);
             self.meta_buf = Some(meta_buf);
+            self.prep_buf = Some(prep_buf);
+            self.param_buf = Some(param_buf);
             self.probe_bind = Some(probe_bind);
             self.render_bind = Some(render_bind);
         }
 
         fn render(&mut self) {
-            if self.inflight.load(Ordering::Relaxed) > 2 {
-                return;
-            }
-            if let Some(prev) = self.last_render {
-                if prev.elapsed().as_secs_f64() < 1.0 / 60.0 {
-                    return;
-                }
-            }
-            self.last_render = Some(std::time::Instant::now());
+            let t0 = std::time::Instant::now();
             self.frame_count += 1;
             let Some(device) = self.device.clone() else {
                 return;
@@ -12111,13 +12229,12 @@ mod mathematikerin {
                     pass.draw(0..6, 0..1);
                 }
             }
-            self.inflight.fetch_add(1, Ordering::Relaxed);
             queue.submit(std::iter::once(encoder.finish()));
-            let counter = self.inflight.clone();
-            queue.on_submitted_work_done(move || {
-                counter.fetch_sub(1, Ordering::Relaxed);
-            });
             frame.present();
+            let ms = t0.elapsed().as_secs_f64() * 1000.0;
+            if ms > self.frame_ms_max {
+                self.frame_ms_max = ms;
+            }
         }
 
         fn init_gpu(&mut self, event_loop: &ActiveEventLoop) {
@@ -12149,6 +12266,11 @@ mod mathematikerin {
                     Some(a) => a,
                     None => return,
                 };
+            let info = adapter.get_info();
+            eprintln!(
+                "adapter: {} | {:?} | {:?} | {}",
+                info.name, info.backend, info.device_type, info.driver_info
+            );
             let (device, queue) = match pollster::block_on(
                 adapter.request_device(&wgpu::DeviceDescriptor::default(), None),
             ) {
@@ -12200,6 +12322,16 @@ mod mathematikerin {
                         e.binding = 3;
                         e
                     },
+                    {
+                        let mut e = storage_entry(false, wgpu::ShaderStages::COMPUTE);
+                        e.binding = 4;
+                        e
+                    },
+                    {
+                        let mut e = storage_entry(false, wgpu::ShaderStages::COMPUTE);
+                        e.binding = 5;
+                        e
+                    },
                 ],
             });
             let render_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
@@ -12224,6 +12356,16 @@ mod mathematikerin {
                             min_binding_size: None,
                         },
                         count: None,
+                    },
+                    {
+                        let mut e = storage_entry(false, wgpu::ShaderStages::FRAGMENT);
+                        e.binding = 4;
+                        e
+                    },
+                    {
+                        let mut e = storage_entry(false, wgpu::ShaderStages::FRAGMENT);
+                        e.binding = 5;
+                        e
                     },
                 ],
             });
@@ -12443,8 +12585,10 @@ mod mathematikerin {
                 let [x, y, z] = self.pos();
                 let fps = self.frame_count as f64;
                 self.frame_count = 0;
+                let ms_max = self.frame_ms_max;
+                self.frame_ms_max = 0.0;
                 eprintln!(
-                "φ fenster: t {:.2} | Ω {:.3} | fps {:.0} | ssaa {:.2} | grid 2^{} | x {:.3e} y {:.3e} z {:.3e} | {} osc",
+                "φ fenster: t {:.2} | Ω {:.3} | fps {:.0} | ssaa {:.2} | grid 2^{} | x {:.3e} y {:.3e} z {:.3e} | {} osc | b {}x{} | maxms {:.0}",
                 self.t_presence,
                 omega,
                 fps,
@@ -12454,8 +12598,14 @@ mod mathematikerin {
                 y,
                 z,
                 self.packed_count,
+                self.backing.0,
+                self.backing.1,
+                ms_max,
             );
             }
+            event_loop.set_control_flow(ControlFlow::WaitUntil(
+                std::time::Instant::now() + std::time::Duration::from_millis(16),
+            ));
             if let Some(window) = self.window.as_ref() {
                 window.request_redraw();
             }
