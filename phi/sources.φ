@@ -1227,6 +1227,15 @@ z z
 field dm frb_dispersion inverse-square em pc/cm3 604800 0.0 0.0
 field speak frb_peak_flux inverse-square em Jy 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/gcvs_cat.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+field mag gcvs_mag_max gaussian-inverse-square em mag 604800 0.0 0.0
+field period gcvs_period_d gaussian-inverse-square em d 604800 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/magnetar_flat.json
 ttl 604800
 at sun

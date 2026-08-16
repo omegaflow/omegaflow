@@ -222,6 +222,20 @@ jobs:
                  --title "flatten: swiftgrb returned void" \
                  --body "swiftgrb compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
                  --label health
+      - name: Compile GCVS variable-star catalog and upload to CDN
+        continue-on-error: true
+        run: |
+          cargo run --release --bin tap_compiler -- \
+            --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
+            --table "B/gcvs/gcvs_cat" \
+            --columns 'ra:RAJ2000;dec:DEJ2000;mag:magMax;period:Period' \
+            --skip-null mag \
+            --out gcvs_cat.json \
+            --ci-mode \
+            || gh issue create --repo omegaflow/omegaflow \
+                 --title "flatten: gcvs_cat returned void" \
+                 --body "gcvs_cat compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 --label health
       - name: Compile Gaia DR3 + Bailer-Jones star catalog and upload to CDN
         continue-on-error: true
         run: |
