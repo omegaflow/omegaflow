@@ -3247,12 +3247,20 @@ url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Historica
 note ArcGIS-Proxy seismischer Daten.
 
 decline variant
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/NOAA_METAR_current_wind_speed_direction_v1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+note ArcGIS-Proxy der METAR-Winddaten (live: aviationweather.gov direkt, Probe-Befund 2026-08-16).
+
+decline variant
 url https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/USGS_Seismic_Data_v1/FeatureServer/0/query?where=1%3D1&outFields=mag,sig,felt,cdi,mmi,tsunami,longitude,latitude,depth&outSR=4326&f=geojson&resultRecordCount=2000
 note ArcGIS-Proxy seismischer Daten.
 
 decline variant
 url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/USGS_Seismic_Data_v1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
 note ArcGIS-Proxy seismischer Daten.
+
+decline presence-catalog
+url https://services9.arcgis.com/rLkpFp1GxgPDr9HL/arcgis/rest/services/eDNA_Species_Detected/FeatureServer/0/query?where=1%3D1&outFields=*&f=geojson&resultRecordCount=500
+note eDNA-Artnachweis = Präsenz-Kartierung, kein Feld-Messwert (Sensor-Regel, Probe-Befund 2026-08-16).
 
 dead
 url https://services.arcgis.com/1kuuRiUAOfF5pwAn/arcgis/rest/services/Hurricane_Miley/FeatureServer
