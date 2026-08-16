@@ -19,30 +19,32 @@ const PROPAGATION_SPEED: array<f32, 9> = array<f32, 9>(
     1.0,
     C_VACUUM,
 );
+fn fold_eff(d_mag: f32, raw: f32, t: f32, ttl: f32, force_type: u32, advective_v: f32) -> f32 {
+    let v_const = PROPAGATION_SPEED[force_type];
+    let v = select(v_const, advective_v, force_type == 7u && advective_v > 0.0);
+    let temporal = abs(vp.presence.w - t);
+    var retarded = select(temporal - d_mag / v, temporal, v == 0.0 || d_mag == 0.0);
+    retarded = max(retarded, 0.0);
+    return raw * exp(-retarded / max(ttl, 1e-9));
+}
 @group(0) @binding(0) var<storage, read> field: array<vec4f>;
 @group(0) @binding(1) var<storage, read> props: array<vec4f>;
 @group(0) @binding(2) var<uniform> vp: VP;
 @group(0) @binding(3) var<storage, read_write> probe_out: array<f32>;
-@group(0) @binding(4) var out_tex: texture_storage_2d<rgba32float, write>;
+@group(0) @binding(4) var<storage, read_write> prep: array<vec4f>;
+@group(0) @binding(5) var<storage, read_write> param: array<vec4f>;
 
-@group(0) @binding(0) var membrane_tex: texture_2d<f32>;
-@group(0) @binding(1) var membrane_sampler: sampler;
+struct VOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f };
 
-struct BlitOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f };
-
-@vertex fn blit_vs(@builtin(vertex_index) i: u32) -> BlitOut {
+@vertex fn vs(@builtin(vertex_index) i: u32) -> VOut {
     var p = array<vec2f, 6>(
         vec2f(-1.0, -1.0), vec2f(1.0, -1.0), vec2f(1.0, 1.0),
         vec2f(-1.0, -1.0), vec2f(1.0, 1.0), vec2f(-1.0, 1.0)
     );
-    var out: BlitOut;
+    var out: VOut;
     out.pos = vec4f(p[i], 0.0, 1.0);
     out.uv = vec2f(p[i].x * 0.5 + 0.5, 0.5 - p[i].y * 0.5);
     return out;
-}
-
-@fragment fn blit_fs(in: BlitOut) -> @location(0) vec4f {
-    return textureSample(membrane_tex, membrane_sampler, in.uv);
 }
 
 fn erfc(x: f32) -> f32 {
@@ -77,57 +79,83 @@ fn field_spatial(d2: f32, d_mag: f32, extent: f32, kernel_id: u32, global_scale:
     }
 }
 
-fn measure(rel: vec3f, m: vec4f, tm: vec4f, mt: vec4f, mp: vec4f, mg: vec4f, fm: vec4f) -> vec2f {    let delta = m.xyz - rel;
-    let d2 = dot(delta, delta);
-    let ft = u32(tm.z);
-    let kid = u32(mt.z);
+fn val_eff_at(pre: vec4f, tm: vec4f, ft: u32, v: f32, d_mag: f32) -> f32 {
     let temporal = abs(vp.presence.w - tm.x);
-    let scale = vp.surface.w;
-    if ((kid == 0u || kid == 6u) && ft != 1u && temporal < tm.y * 1e-4) {
-        let e2 = max(max(mt.x * mt.x, scale * scale), 1e-30);
-        return vec2f(m.w / (d2 + e2), f32(ft));
-    }
-    let d_mag = sqrt(d2);
-    let v = select(PROPAGATION_SPEED[ft], fm.x, ft == 7u && fm.x > 0.0);
-    var val = m.w;
+    var val = pre.w;
     let corr = select(min(temporal, d_mag / v), 0.0, v == 0.0 || d_mag == 0.0);
     if (corr > tm.y * 1e-4) {
-        val = m.w * exp(corr / max(tm.y, 1e-9));
+        val = pre.w * exp(corr / max(tm.y, 1e-9));
     }
-    var sk = field_spatial(d2, d_mag, mt.x, kid, scale, f32(tm.w));
+    return val;
+}
+
+fn osc_field(j: u32, rel: vec3f, pre: vec4f) -> vec2f {
+    let tm = field[j * 3u + 1u];
+    let fm = field[j * 3u + 2u];
+    let mt = props[j * 3u];
+    let mp = props[j * 3u + 1u];
+    let mg = props[j * 3u + 2u];
+    let delta = pre.xyz - rel;
+    let d2 = dot(delta, delta);
+    let d_mag = sqrt(d2);
+    let ft = u32(tm.z);
+    let kid = u32(mt.z);
+    let v = select(PROPAGATION_SPEED[ft], fm.x, ft == 7u && fm.x > 0.0);
+    let val_eff = val_eff_at(pre, tm, ft, v, d_mag);
+    var sk = field_spatial(d2, d_mag, mt.x, kid, vp.surface.w, f32(tm.w));
     if ((kid == 0u || kid == 6u) && ft == 1u) {
         let dhat = delta / max(d_mag, 1e-9);
         let cos_t = clamp(dot(dhat, mp.xyz), -1.0, 1.0);
         let p2 = (3.0 * cos_t * cos_t - 1.0) * 0.5;
         let p4 = (35.0 * cos_t * cos_t * cos_t * cos_t - 30.0 * cos_t * cos_t + 3.0) * 0.125;
-        let rd2 = mg.y * mg.y / max(d2, 1.0);
-        if (rd2 < 1.0) {
-            sk *= 1.0 - mp.w * rd2 * p2 - mg.x * rd2 * rd2 * p4;
+        let rd = mg.y / max(d_mag, 1.0);
+        if (rd < 1.0) {
+            sk *= 1.0 - mp.w * rd * rd * p2 - mg.x * rd * rd * rd * rd * p4;
         }
     }
-    return vec2f(val * sk, f32(ft));
+    return vec2f(val_eff * sk, f32(ft));
 }
 
-const BLOCK: u32 = 64u;
-var<workgroup> shared_pos: array<vec4f, 64>;
-var<workgroup> shared_tm: array<vec4f, 64>;
-var<workgroup> shared_fm: array<vec4f, 64>;
-var<workgroup> shared_mt: array<vec4f, 64>;
-var<workgroup> shared_mp: array<vec4f, 64>;
-var<workgroup> shared_mg: array<vec4f, 64>;
-
-@compute @workgroup_size(16, 16)
-fn membrane(@builtin(global_invocation_id) gid: vec3u, @builtin(local_invocation_index) lid: u32) {
-    let w = u32(vp.surface.x);
-    let h = u32(vp.surface.y);
+@compute @workgroup_size(1)
+fn presence_probe() {
     let count = u32(vp.surface.z);
+    var omegas = array<f32, 9>();
+    for (var i = 0u; i < 9u; i = i + 1u) { omegas[i] = 0.0; }
+    let dt = vp.presence.w - vp.expose_ex.y;
+    let v_obs = vec3f(vp.right.w, vp.up.w, vp.forward.w) * C_VACUUM;
+    for (var j = 0u; j < count; j = j + 1u) {
+        let m = field[j * 3u];
+        let tm = field[j * 3u + 1u];
+        let fm = field[j * 3u + 2u];
+        let mt = props[j * 3u];
+        let v_rel = fm.yzw - v_obs;
+        let propagated = m.xyz + v_rel * dt;
+        let temporal = abs(vp.presence.w - tm.x);
+        let pre = vec4f(propagated, m.w * exp(-temporal / max(tm.y, 1e-9)));
+        prep[j] = pre;
+        let ft = u32(tm.z);
+        let kid = u32(mt.z);
+        var fast = 0.0;
+        if ((kid == 0u || kid == 6u) && (ft != 1u) && (temporal < tm.y * 1e-4)) {
+            fast = 1.0;
+        }
+        param[j] = vec4f(f32(ft), mt.x, f32(kid), fast);
+        let c = osc_field(j, vec3f(0.0), pre);
+        let f = u32(c.y);
+        if (f < 9u) { omegas[f] += c.x; }
+    }
+    for (var i = 0u; i < 9u; i = i + 1u) { probe_out[i] = omegas[i]; }
+}
+
+@fragment fn fs(in: VOut) -> @location(0) vec4f {
+    let count = u32(vp.surface.z);
+    if (count == 0u) { discard; }
+    let w = vp.surface.x;
+    let h = vp.surface.y;
     let scale = vp.surface.w;
-    let px = gid.x;
-    let py = gid.y;
-    if (px >= w || py >= h) { return; }
-    let cx = f32(px) + 0.5 - f32(w) * 0.5;
-    let cy = f32(h) * 0.5 - (f32(py) + 0.5);
-    let pixel_rel = cx * scale * vp.right.xyz + cy * scale * vp.up.xyz;
+    let pixel_rel = (in.uv.x - 0.5) * w * scale * vp.right.xyz
+        + (0.5 - in.uv.y) * h * scale * vp.up.xyz;
+
     var o0 = 0.0;
     var o1 = 0.0;
     var o2 = 0.0;
@@ -137,78 +165,78 @@ fn membrane(@builtin(global_invocation_id) gid: vec3u, @builtin(local_invocation
     var o6 = 0.0;
     var o7 = 0.0;
     var o8 = 0.0;
-    for (var base = 0u; base < count; base += BLOCK) {
-        let n = min(BLOCK, count - base);
-        for (var i = lid; i < n; i = i + 256u) {
-            let j = base + i;
-            shared_pos[i] = field[j * 3u];
-            shared_tm[i] = field[j * 3u + 1u];
-            shared_fm[i] = field[j * 3u + 2u];
-            shared_mt[i] = props[j * 3u];
-            shared_mp[i] = props[j * 3u + 1u];
-            shared_mg[i] = props[j * 3u + 2u];
-        }
-        workgroupBarrier();
-        for (var i = 0u; i < n; i = i + 1u) {
-            let c = measure(pixel_rel, shared_pos[i], shared_tm[i], shared_mt[i], shared_mp[i], shared_mg[i], shared_fm[i]);
-            let ft = u32(c.y);
-            if (ft == 0u) {
-                o0 += c.x;
-            } else if (ft == 1u) {
-                o1 += c.x;
-            } else if (ft == 2u) {
-                o2 += c.x;
-            } else if (ft == 3u) {
-                o3 += c.x;
-            } else if (ft == 4u) {
-                o4 += c.x;
-            } else if (ft == 5u) {
-                o5 += c.x;
-            } else if (ft == 6u) {
-                o6 += c.x;
-            } else if (ft == 7u) {
-                o7 += c.x;
-            } else if (ft == 8u) {
-                o8 += c.x;
+    for (var j = 0u; j < count; j = j + 1u) {
+        let pre = prep[j];
+        let p = param[j];
+        let delta = pre.xyz - pixel_rel;
+        let d2 = dot(delta, delta);
+        let ft = u32(p.x);
+        var contrib = 0.0;
+        if (p.w > 0.5) {
+            let e2 = max(max(p.y * p.y, scale * scale), 1e-30);
+            contrib = pre.w / (d2 + e2);
+        } else {
+            let tm = field[j * 3u + 1u];
+            let fm = field[j * 3u + 2u];
+            let mt = props[j * 3u];
+            let mp = props[j * 3u + 1u];
+            let mg = props[j * 3u + 2u];
+            let d_mag = sqrt(d2);
+            let kid = u32(mt.z);
+            let v = select(PROPAGATION_SPEED[ft], fm.x, ft == 7u && fm.x > 0.0);
+            let temporal = abs(vp.presence.w - tm.x);
+            var val = pre.w;
+            let corr = select(min(temporal, d_mag / v), 0.0, v == 0.0 || d_mag == 0.0);
+            if (corr > tm.y * 1e-4) {
+                val = pre.w * exp(corr / max(tm.y, 1e-9));
             }
+            var sk = field_spatial(d2, d_mag, mt.x, kid, scale, f32(tm.w));
+            if ((kid == 0u || kid == 6u) && ft == 1u) {
+                let dhat = delta / max(d_mag, 1e-9);
+                let cos_t = clamp(dot(dhat, mp.xyz), -1.0, 1.0);
+                let p2 = (3.0 * cos_t * cos_t - 1.0) * 0.5;
+                let p4 = (35.0 * cos_t * cos_t * cos_t * cos_t - 30.0 * cos_t * cos_t + 3.0) * 0.125;
+                let rd2 = mg.y * mg.y / max(d2, 1.0);
+                if (rd2 < 1.0) {
+                    sk *= 1.0 - mp.w * rd2 * p2 - mg.x * rd2 * rd2 * p4;
+                }
+            }
+            contrib = val * sk;
         }
-        workgroupBarrier();
+        if (ft == 0u) {
+            o0 += contrib;
+        } else if (ft == 1u) {
+            o1 += contrib;
+        } else if (ft == 2u) {
+            o2 += contrib;
+        } else if (ft == 3u) {
+            o3 += contrib;
+        } else if (ft == 4u) {
+            o4 += contrib;
+        } else if (ft == 5u) {
+            o5 += contrib;
+        } else if (ft == 6u) {
+            o6 += contrib;
+        } else if (ft == 7u) {
+            o7 += contrib;
+        } else if (ft == 8u) {
+            o8 += contrib;
+        }
     }
+
     let omega_total = abs(o0) + abs(o1) + abs(o2) + abs(o3) + abs(o4) + abs(o5)
         + abs(o6) + abs(o7) + abs(o8);
-    if (omega_total < 1e-30) {
-        textureStore(out_tex, vec2i(i32(px), i32(py)), vec4f(0.0, 0.0, 0.0, 1.0));
-    } else {
-        let t2 = clamp((log2(omega_total) + 14.0 + vp.expose_ex.x) / 22.0, 0.0, 1.0);
-        let c = mix(vec3f(0.0, 0.02, 0.1), vec3f(0.0, 0.3, 0.8), clamp(t2 * 4.0, 0.0, 1.0));
-        let c2 = mix(c, vec3f(0.2, 0.8, 1.0), clamp((t2 - 0.25) * 4.0, 0.0, 1.0));
-        let c3 = mix(c2, vec3f(1.0, 0.7, 0.1), clamp((t2 - 0.5) * 4.0, 0.0, 1.0));
-        let c4 = mix(c3, vec3f(1.0, 1.0, 1.0), clamp((t2 - 0.75) * 4.0, 0.0, 1.0));
-        textureStore(out_tex, vec2i(i32(px), i32(py)), vec4f(c4, 1.0));
-    }
-}
+    if (omega_total < 1e-30) { discard; }
 
-@compute @workgroup_size(1)
-fn presence_probe() {
-    let count = u32(vp.surface.z);
-    var omegas = array<f32, 9>();
-    for (var i = 0u; i < 9u; i = i + 1u) { omegas[i] = 0.0; }
-    for (var j = 0u; j < count; j = j + 1u) {
-        let c = measure(
-            vec3f(0.0),
-            field[j * 3u],
-            field[j * 3u + 1u],
-            props[j * 3u],
-            props[j * 3u + 1u],
-            props[j * 3u + 2u],
-            field[j * 3u + 2u],
-        );
-        let ft = u32(c.y);
-        if (ft < 9u) { omegas[ft] += c.x; }
-    }
-    for (var i = 0u; i < 9u; i = i + 1u) { probe_out[i] = omegas[i]; }
-}
+    let t2 = clamp((log2(omega_total) + 14.0 + vp.expose_ex.x) / 22.0, 0.0, 1.0);
 
+    let c = mix(vec3f(0.0, 0.02, 0.1), vec3f(0.0, 0.3, 0.8), clamp(t2 * 4.0, 0.0, 1.0));
+    let c2 = mix(c, vec3f(0.2, 0.8, 1.0), clamp((t2 - 0.25) * 4.0, 0.0, 1.0));
+    let c3 = mix(c2, vec3f(1.0, 0.7, 0.1), clamp((t2 - 0.5) * 4.0, 0.0, 1.0));
+    let c4 = mix(c3, vec3f(1.0, 1.0, 1.0), clamp((t2 - 0.75) * 4.0, 0.0, 1.0));
+
+    return vec4f(c4, 1.0);
+}
 "#;
 
 const Φ: f64 = 1.618033988749895;
@@ -11703,23 +11731,19 @@ mod mathematikerin {
         config: Option<wgpu::SurfaceConfiguration>,
         device: Option<wgpu::Device>,
         queue: Option<wgpu::Queue>,
-        membrane_pipe: Option<wgpu::ComputePipeline>,
+        render_pipe: Option<wgpu::RenderPipeline>,
         probe_pipe: Option<wgpu::ComputePipeline>,
         probe_layout: Option<wgpu::BindGroupLayout>,
-        membrane_layout: Option<wgpu::BindGroupLayout>,
-        blit_pipe: Option<wgpu::RenderPipeline>,
-        blit_bind: Option<wgpu::BindGroup>,
-        blit_layout: Option<wgpu::BindGroupLayout>,
-        membrane_bind: Option<wgpu::BindGroup>,
+        render_layout: Option<wgpu::BindGroupLayout>,
+        render_bind: Option<wgpu::BindGroup>,
         probe_bind: Option<wgpu::BindGroup>,
-        membrane_tex: Option<wgpu::Texture>,
-        membrane_view: Option<wgpu::TextureView>,
-        membrane_sampler: Option<wgpu::Sampler>,
         field_buf: Option<wgpu::Buffer>,
         meta_buf: Option<wgpu::Buffer>,
         vp_buf: Option<wgpu::Buffer>,
         probe_buf: Option<wgpu::Buffer>,
         probe_read: Option<wgpu::Buffer>,
+        prep_buf: Option<wgpu::Buffer>,
+        param_buf: Option<wgpu::Buffer>,
         field_cap: u32,
         backing: (u32, u32),
 
@@ -11779,23 +11803,19 @@ mod mathematikerin {
                 config: None,
                 device: None,
                 queue: None,
-                membrane_pipe: None,
+                render_pipe: None,
                 probe_pipe: None,
                 probe_layout: None,
-                membrane_layout: None,
-                blit_pipe: None,
-                blit_bind: None,
-                blit_layout: None,
-                membrane_bind: None,
+                render_layout: None,
+                render_bind: None,
                 probe_bind: None,
-                membrane_tex: None,
-                membrane_view: None,
-                membrane_sampler: None,
                 field_buf: None,
                 meta_buf: None,
                 vp_buf: None,
                 probe_buf: None,
                 probe_read: None,
+                prep_buf: None,
+                param_buf: None,
                 field_cap: 0,
                 backing: (1, 1),
                 latest_field: None,
@@ -11971,25 +11991,6 @@ mod mathematikerin {
             surface.configure(device, &config);
             self.config = Some(config);
             self.backing = (w.max(1), h.max(1));
-            self.membrane_tex = Some(device.create_texture(&wgpu::TextureDescriptor {
-                label: None,
-                size: wgpu::Extent3d {
-                    width: self.backing.0,
-                    height: self.backing.1,
-                    depth_or_array_layers: 1,
-                },
-                mip_level_count: 1,
-                sample_count: 1,
-                dimension: wgpu::TextureDimension::D2,
-                format: wgpu::TextureFormat::Rgba32Float,
-                usage: wgpu::TextureUsages::STORAGE_BINDING | wgpu::TextureUsages::TEXTURE_BINDING,
-                view_formats: &[],
-            }));
-            self.membrane_view = self
-                .membrane_tex
-                .as_ref()
-                .map(|t| t.create_view(&wgpu::TextureViewDescriptor::default()));
-            self.rebuild_membrane_bind();
         }
 
         fn vp_data(&self) -> [f32; 32] {
@@ -12038,6 +12039,9 @@ mod mathematikerin {
             let Some(probe_layout) = self.probe_layout.clone() else {
                 return;
             };
+            let Some(render_layout) = self.render_layout.clone() else {
+                return;
+            };
             let Some(vp_buf) = self.vp_buf.clone() else {
                 return;
             };
@@ -12076,6 +12080,18 @@ mod mathematikerin {
                 usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
                 mapped_at_creation: false,
             });
+            let prep_buf = device.create_buffer(&wgpu::BufferDescriptor {
+                label: None,
+                size: c as u64 * 16,
+                usage: wgpu::BufferUsages::STORAGE,
+                mapped_at_creation: false,
+            });
+            let param_buf = device.create_buffer(&wgpu::BufferDescriptor {
+                label: None,
+                size: c as u64 * 16,
+                usage: wgpu::BufferUsages::STORAGE,
+                mapped_at_creation: false,
+            });
             let probe_bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
                 label: None,
                 layout: &probe_layout,
@@ -12096,42 +12112,19 @@ mod mathematikerin {
                         binding: 3,
                         resource: probe_buf.as_entire_binding(),
                     },
+                    wgpu::BindGroupEntry {
+                        binding: 4,
+                        resource: prep_buf.as_entire_binding(),
+                    },
+                    wgpu::BindGroupEntry {
+                        binding: 5,
+                        resource: param_buf.as_entire_binding(),
+                    },
                 ],
             });
-            self.field_buf = Some(field_buf);
-            self.meta_buf = Some(meta_buf);
-            self.probe_bind = Some(probe_bind);
-            self.rebuild_membrane_bind();
-        }
-
-        fn rebuild_membrane_bind(&mut self) {
-            let Some(device) = self.device.clone() else {
-                return;
-            };
-            let Some(membrane_layout) = self.membrane_layout.clone() else {
-                return;
-            };
-            let Some(blit_layout) = self.blit_layout.clone() else {
-                return;
-            };
-            let Some(membrane_sampler) = self.membrane_sampler.clone() else {
-                return;
-            };
-            let Some(membrane_view) = self.membrane_view.clone() else {
-                return;
-            };
-            let Some(vp_buf) = self.vp_buf.clone() else {
-                return;
-            };
-            let Some(field_buf) = self.field_buf.clone() else {
-                return;
-            };
-            let Some(meta_buf) = self.meta_buf.clone() else {
-                return;
-            };
-            let membrane_bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
+            let render_bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
                 label: None,
-                layout: &membrane_layout,
+                layout: &render_layout,
                 entries: &[
                     wgpu::BindGroupEntry {
                         binding: 0,
@@ -12147,26 +12140,20 @@ mod mathematikerin {
                     },
                     wgpu::BindGroupEntry {
                         binding: 4,
-                        resource: wgpu::BindingResource::TextureView(&membrane_view),
+                        resource: prep_buf.as_entire_binding(),
+                    },
+                    wgpu::BindGroupEntry {
+                        binding: 5,
+                        resource: param_buf.as_entire_binding(),
                     },
                 ],
             });
-            let blit_bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
-                label: None,
-                layout: &blit_layout,
-                entries: &[
-                    wgpu::BindGroupEntry {
-                        binding: 0,
-                        resource: wgpu::BindingResource::TextureView(&membrane_view),
-                    },
-                    wgpu::BindGroupEntry {
-                        binding: 1,
-                        resource: wgpu::BindingResource::Sampler(&membrane_sampler),
-                    },
-                ],
-            });
-            self.membrane_bind = Some(membrane_bind);
-            self.blit_bind = Some(blit_bind);
+            self.field_buf = Some(field_buf);
+            self.meta_buf = Some(meta_buf);
+            self.prep_buf = Some(prep_buf);
+            self.param_buf = Some(param_buf);
+            self.probe_bind = Some(probe_bind);
+            self.render_bind = Some(render_bind);
         }
 
         fn render(&mut self) {
@@ -12212,17 +12199,6 @@ mod mathematikerin {
             {
                 let mut pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor::default());
                 if let (Some(pipe), Some(bind)) =
-                    (self.membrane_pipe.as_ref(), self.membrane_bind.as_ref())
-                {
-                    pass.set_pipeline(pipe);
-                    pass.set_bind_group(0, bind, &[]);
-                    pass.dispatch_workgroups(
-                        (self.backing.0 + 15) / 16,
-                        (self.backing.1 + 15) / 16,
-                        1,
-                    );
-                }
-                if let (Some(pipe), Some(bind)) =
                     (self.probe_pipe.as_ref(), self.probe_bind.as_ref())
                 {
                     pass.set_pipeline(pipe);
@@ -12245,7 +12221,8 @@ mod mathematikerin {
                     occlusion_query_set: None,
                     timestamp_writes: None,
                 });
-                if let (Some(pipe), Some(bind)) = (self.blit_pipe.as_ref(), self.blit_bind.as_ref())
+                if let (Some(pipe), Some(bind)) =
+                    (self.render_pipe.as_ref(), self.render_bind.as_ref())
                 {
                     pass.set_pipeline(pipe);
                     pass.set_bind_group(0, bind, &[]);
@@ -12345,62 +12322,50 @@ mod mathematikerin {
                         e.binding = 3;
                         e
                     },
+                    {
+                        let mut e = storage_entry(false, wgpu::ShaderStages::COMPUTE);
+                        e.binding = 4;
+                        e
+                    },
+                    {
+                        let mut e = storage_entry(false, wgpu::ShaderStages::COMPUTE);
+                        e.binding = 5;
+                        e
+                    },
                 ],
             });
-            let membrane_layout =
-                device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-                    label: None,
-                    entries: &[
-                        {
-                            let mut e = storage_entry(true, wgpu::ShaderStages::COMPUTE);
-                            e.binding = 0;
-                            e
-                        },
-                        {
-                            let mut e = storage_entry(true, wgpu::ShaderStages::COMPUTE);
-                            e.binding = 1;
-                            e
-                        },
-                        wgpu::BindGroupLayoutEntry {
-                            binding: 2,
-                            visibility: wgpu::ShaderStages::COMPUTE,
-                            ty: wgpu::BindingType::Buffer {
-                                ty: wgpu::BufferBindingType::Uniform,
-                                has_dynamic_offset: false,
-                                min_binding_size: None,
-                            },
-                            count: None,
-                        },
-                        wgpu::BindGroupLayoutEntry {
-                            binding: 4,
-                            visibility: wgpu::ShaderStages::COMPUTE,
-                            ty: wgpu::BindingType::StorageTexture {
-                                access: wgpu::StorageTextureAccess::WriteOnly,
-                                format: wgpu::TextureFormat::Rgba32Float,
-                                view_dimension: wgpu::TextureViewDimension::D2,
-                            },
-                            count: None,
-                        },
-                    ],
-                });
-            let blit_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+            let render_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
                 label: None,
                 entries: &[
+                    {
+                        let mut e = storage_entry(true, wgpu::ShaderStages::FRAGMENT);
+                        e.binding = 0;
+                        e
+                    },
+                    {
+                        let mut e = storage_entry(true, wgpu::ShaderStages::FRAGMENT);
+                        e.binding = 1;
+                        e
+                    },
                     wgpu::BindGroupLayoutEntry {
-                        binding: 0,
+                        binding: 2,
                         visibility: wgpu::ShaderStages::FRAGMENT,
-                        ty: wgpu::BindingType::Texture {
-                            sample_type: wgpu::TextureSampleType::Float { filterable: false },
-                            view_dimension: wgpu::TextureViewDimension::D2,
-                            multisampled: false,
+                        ty: wgpu::BindingType::Buffer {
+                            ty: wgpu::BufferBindingType::Uniform,
+                            has_dynamic_offset: false,
+                            min_binding_size: None,
                         },
                         count: None,
                     },
-                    wgpu::BindGroupLayoutEntry {
-                        binding: 1,
-                        visibility: wgpu::ShaderStages::FRAGMENT,
-                        ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::NonFiltering),
-                        count: None,
+                    {
+                        let mut e = storage_entry(false, wgpu::ShaderStages::FRAGMENT);
+                        e.binding = 4;
+                        e
+                    },
+                    {
+                        let mut e = storage_entry(false, wgpu::ShaderStages::FRAGMENT);
+                        e.binding = 5;
+                        e
                     },
                 ],
             });
@@ -12410,33 +12375,39 @@ mod mathematikerin {
                     bind_group_layouts: &[&probe_layout],
                     push_constant_ranges: &[],
                 });
-            let membrane_pipe_layout =
+            let render_pipe_layout =
                 device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
                     label: None,
-                    bind_group_layouts: &[&membrane_layout],
+                    bind_group_layouts: &[&render_layout],
                     push_constant_ranges: &[],
                 });
-            let blit_pipe_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+            let render_pipe = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
                 label: None,
-                bind_group_layouts: &[&blit_layout],
-                push_constant_ranges: &[],
-            });
-            let blit_pipe = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
-                label: None,
-                layout: Some(&blit_pipe_layout),
+                layout: Some(&render_pipe_layout),
                 vertex: wgpu::VertexState {
                     module: &module,
-                    entry_point: Some("blit_vs"),
+                    entry_point: Some("vs"),
                     compilation_options: Default::default(),
                     buffers: &[],
                 },
                 fragment: Some(wgpu::FragmentState {
                     module: &module,
-                    entry_point: Some("blit_fs"),
+                    entry_point: Some("fs"),
                     compilation_options: Default::default(),
                     targets: &[Some(wgpu::ColorTargetState {
                         format,
-                        blend: None,
+                        blend: Some(wgpu::BlendState {
+                            color: wgpu::BlendComponent {
+                                src_factor: wgpu::BlendFactor::One,
+                                dst_factor: wgpu::BlendFactor::One,
+                                operation: wgpu::BlendOperation::Add,
+                            },
+                            alpha: wgpu::BlendComponent {
+                                src_factor: wgpu::BlendFactor::One,
+                                dst_factor: wgpu::BlendFactor::One,
+                                operation: wgpu::BlendOperation::Add,
+                            },
+                        }),
                         write_mask: wgpu::ColorWrites::ALL,
                     })],
                 }),
@@ -12456,24 +12427,6 @@ mod mathematikerin {
                 entry_point: Some("presence_probe"),
                 compilation_options: Default::default(),
                 cache: None,
-            });
-            let membrane_pipe = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
-                label: None,
-                layout: Some(&membrane_pipe_layout),
-                module: &module,
-                entry_point: Some("membrane"),
-                compilation_options: Default::default(),
-                cache: None,
-            });
-            let membrane_sampler = device.create_sampler(&wgpu::SamplerDescriptor {
-                label: None,
-                address_mode_u: wgpu::AddressMode::ClampToEdge,
-                address_mode_v: wgpu::AddressMode::ClampToEdge,
-                address_mode_w: wgpu::AddressMode::ClampToEdge,
-                mag_filter: wgpu::FilterMode::Nearest,
-                min_filter: wgpu::FilterMode::Nearest,
-                mipmap_filter: wgpu::FilterMode::Nearest,
-                ..Default::default()
             });
             let vp_buf = device.create_buffer(&wgpu::BufferDescriptor {
                 label: None,
@@ -12498,13 +12451,10 @@ mod mathematikerin {
             self.config = Some(config);
             self.device = Some(device);
             self.queue = Some(queue);
-            self.membrane_pipe = Some(membrane_pipe);
+            self.render_pipe = Some(render_pipe);
             self.probe_pipe = Some(probe_pipe);
             self.probe_layout = Some(probe_layout);
-            self.membrane_layout = Some(membrane_layout);
-            self.blit_pipe = Some(blit_pipe);
-            self.blit_layout = Some(blit_layout);
-            self.membrane_sampler = Some(membrane_sampler);
+            self.render_layout = Some(render_layout);
             self.vp_buf = Some(vp_buf);
             self.probe_buf = Some(probe_buf);
             self.probe_read = Some(probe_read);
