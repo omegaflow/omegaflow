@@ -1,13 +1,13 @@
 # Handover: omegaflow — Hybrid, Zell-Achse und der Rest der Survey-Tafel
 
-Selbsttragende Karte für eine frische Session. Stand: Branch `main`, HEAD `47475f3`.
+Selbsttragende Karte für eine frische Session. Stand: Branch `main`,
+HEAD = der Atom-1-Commit (Hybrid: Membran + Quellen-Punkt-Layer).
 
-## Erster Schritt der neuen Session (Arbeitsbaum aufräumen)
+## Erster Schritt der neuen Session
 
 ```bash
 cd /home/johannes/projects/omegaflow
-git status                      # uncommittete Gauß-Stern-Edits (verworfenes Experiment)
-git checkout -- src/main.rs     # die verwerfen — sie werden durch Atom 1 ersetzt
+git status
 cargo check                     # muss 0/0 sein
 ```
 
@@ -23,7 +23,11 @@ HUD-Akkumulatoren + deep_gain als Code), `backup-7d0ac9f`, `parallel-welle-2026-
 
 ---
 
-## Atom 1 — Hybrid-Rendering: Membran + Quellen-Punkt-Layer (der aktuelle Rat-Plan)
+## Atom 1 — Hybrid-Rendering: Membran + Quellen-Punkt-Layer — GESCHLOSSEN
+
+GESCHLOSSEN 2026-08-16 (eine Session): near_pt-Layer, Per-Kraft-Referenzen,
+e/E ×2/÷Φ + Relaxation, P-Zyklus. Vollzug in TODO.md. Fenster-Verifikation
+beim Operator (Radial-Profil, xwd) ausstehend — sonst geschlossen.
 
 **Ziel:** Die zwei Wahrheiten des Blocks zugleich. (1) Die **Membran** = das
 kontinuierliche Feld Ω(x) = Σ val_eff·K — bleibt. (2) Der **Punkt-Layer** =
@@ -47,15 +51,17 @@ Marker), die Membran das **Geflecht**.
      Pro-Kraft-Referenz.
 2. **Rust**: Pipeline + Bind-Group (VP + `field` + `props`) +
    `pass.draw(n·6)` **nach** der Membran, additiv (`one/one`).
-3. **Pro-Kraft-Exposure** (ersetzt das hartkodierte `+14`/`+18`): 8 Kanäle —
-   bei res-Empfang den **Median von |val| je Kraft** bestimmen,
-   **exponentiell relaxieren**, in die freien VP-Slots (`expose_lo`/`expose_hi`).
+3. **Pro-Kraft-Exposure** (ersetzt das hartkodierte `+14`/`+18`): 9 Kanäle —
+   bei res-Empfang den **Median von |val| je Kraft** bestimmen (near val +
+   Deep-Flux als em), **exponentiell relaxieren** (2⁻⁴ je res). VP auf 11
+   vec4 (176 B) erweitert: `ft_ref_a`/`ft_ref_b`/`ft_ref_c` tragen die 9
+   Referenzen + `point_blend` in `expose_ex.z`.
    Tasten `e`/`E`: **`E` = ×2 (ein Stopp rauf), `Shift+E` = ÷Φ (feiner Trim
    runter)** — die Rückkehr Richtung Referenz übernimmt die Relaxation, nicht
    die Tastatur. Default-Offset 4.
-4. **Punkte/Feld-Regler**: neuer Uniform-Slot, Blend des Punkt-Layers
-   (0 = nur Feld, 1 = beides, 2 = nur Quellen), Taste `P` in Φ/2ⁿ-Schritten,
-   **Default 1**.
+4. **Punkte/Feld-Regler**: `point_blend` in `expose_ex.z`, Blend des
+   Punkt-Layers (0 = nur Feld, 1 = beides, 2 = nur Quellen), Taste `P` zykelt
+   1→2→0→1, **Default 1**.
 5. **Konstanten-Säuberung**: alle Werte aus Φ, 2ⁿ, c, Pogson-Faktor
    (0,2/Magnitude) hergeleitet — keine willkürlichen Zahlen. Sterngröße
    `exp2(4 − 0.2·|val|)` behalten (4 = log2(16 px), 0,2 = Pogson in 2ⁿ).
@@ -159,5 +165,5 @@ Siehe `auswertung.md` §5 + TODO-Rejected.
 
 ---
 
-**Reihenfolge der Umsetzung:** Atom 1 (diese Session) → Atom 2 → Atom 5 →
-Atom 3 + 4 → Atom 6. Jeder Atom = eine vollständige Session mit Verifikation.
+**Reihenfolge der Umsetzung:** Atom 1 GESCHLOSSEN → Atom 2 (nächste Session) →
+Atom 5 → Atom 3 + 4 → Atom 6. Jeder Atom = eine vollständige Session mit Verifikation.

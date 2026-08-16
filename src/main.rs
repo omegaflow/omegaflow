@@ -5,7 +5,7 @@ use std::collections::HashMap;
 use std::sync::Arc;
 
 const MEMBRANE_WGSL: &str = r#"
-struct VP { surface: vec4f, right: vec4f, up: vec4f, forward: vec4f, expose_lo: vec4f, expose_hi: vec4f, expose_ex: vec4f, presence: vec4f };
+struct VP { surface: vec4f, right: vec4f, up: vec4f, forward: vec4f, expose_lo: vec4f, expose_hi: vec4f, expose_ex: vec4f, presence: vec4f, ft_ref_a: vec4f, ft_ref_b: vec4f, ft_ref_c: vec4f };
 const C_VACUUM: f32 = 299792458.0;
 const AUDIO_SPEED_AIR: f32 = 343.0;
 const PROPAGATION_SPEED: array<f32, 9> = array<f32, 9>(
@@ -33,6 +33,22 @@ fn fold_eff(d_mag: f32, raw: f32, t: f32, ttl: f32, force_type: u32, advective_v
 @group(0) @binding(3) var<storage, read_write> probe_out: array<f32>;
 @group(0) @binding(4) var<storage, read_write> prep: array<vec4f>;
 @group(0) @binding(5) var<storage, read_write> param: array<vec4f>;
+
+fn ft_ref(ft: u32) -> f32 {
+    if (ft == 0u) { return vp.ft_ref_a.x; }
+    if (ft == 1u) { return vp.ft_ref_a.y; }
+    if (ft == 2u) { return vp.ft_ref_a.z; }
+    if (ft == 3u) { return vp.ft_ref_a.w; }
+    if (ft == 4u) { return vp.ft_ref_b.x; }
+    if (ft == 5u) { return vp.ft_ref_b.y; }
+    if (ft == 6u) { return vp.ft_ref_b.z; }
+    if (ft == 7u) { return vp.ft_ref_b.w; }
+    return vp.ft_ref_c.x;
+}
+
+fn ft_ref_floor(ft: u32) -> f32 {
+    return max(ft_ref(ft), 1e-30);
+}
 
 struct VOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f };
 
@@ -91,9 +107,9 @@ struct DeepPtVOut { @builtin(position) pos: vec4f, @location(0) @interpolate(fla
 @fragment fn deep_pt_fs(in: DeepPtVOut) -> @location(0) vec4f {
     let aflux = abs(in.flux);
     if (aflux < 1e-30) { discard; }
-    let olog = log2(aflux);
-    let t2 = clamp((olog + 18.0 + deep_vp.expose_ex.x) / 22.0, 0.0, 1.0);
-    let fade = clamp((olog - log2(1e-30)) / (-14.0 - log2(1e-30)), 0.0, 1.0);
+    let olog = log2(aflux) - log2(ft_ref_floor(0u));
+    let t2 = clamp((olog + deep_vp.expose_ex.x) / 22.0, 0.0, 1.0);
+    let fade = clamp((olog - log2(1e-30)) / (-deep_vp.expose_ex.x - log2(1e-30)), 0.0, 1.0);
     let c = mix(vec3f(0.0, 0.02, 0.1), vec3f(0.0, 0.3, 0.8), clamp(t2 * 4.0, 0.0, 1.0));
     let c2 = mix(c, vec3f(0.2, 0.8, 1.0), clamp((t2 - 0.25) * 4.0, 0.0, 1.0));
     let c3 = mix(c2, vec3f(1.0, 0.7, 0.1), clamp((t2 - 0.5) * 4.0, 0.0, 1.0));
@@ -152,7 +168,7 @@ fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
     out.uv = corner;
     let flux = data.w;
     let lum = clamp(
-        (log2(abs(flux) + 1e-30) + 14.0 + deep_vp.expose_ex.x) / 22.0,
+        (log2(abs(flux) + 1e-30) - log2(ft_ref_floor(0u)) + deep_vp.expose_ex.x) / 22.0,
         0.0,
         1.0,
     );
@@ -169,6 +185,61 @@ fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
     let hdr_color = in.color * analog_intensity;
     let mapped_color = log2(hdr_color * 4.0 + vec3f(1.0)) / 8.0;
     return vec4f(clamp(mapped_color, vec3f(0.0), vec3f(1.0)), 1.0);
+}
+
+struct NearPtVOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f, @location(1) @interpolate(flat) val_eff: f32, @location(2) @interpolate(flat) ft: u32, @location(3) @interpolate(flat) tau: f32, @location(4) @interpolate(flat) half_px: f32 };
+
+@vertex fn near_pt_vs(@builtin(vertex_index) i: u32) -> NearPtVOut {
+    let count = u32(vp.surface.z);
+    var out: NearPtVOut;
+    out.pos = vec4f(0.0, 0.0, 0.0, 1.0);
+    out.uv = vec2f(0.0);
+    out.val_eff = 0.0;
+    out.ft = 0u;
+    out.tau = 0.0;
+    out.half_px = 0.0;
+    if (count == 0u) { return out; }
+    let id = i / 6u;
+    if (id >= count) { return out; }
+    var quad = array<vec2f, 6>(
+        vec2f(-1.0, -1.0), vec2f(1.0, -1.0), vec2f(1.0, 1.0),
+        vec2f(-1.0, -1.0), vec2f(1.0, 1.0), vec2f(-1.0, 1.0)
+    );
+    let tm = field[id * 3u + 1u];
+    let mt = props[id * 3u];
+    let pre = prep[id];
+    let w = vp.surface.x;
+    let h = vp.surface.y;
+    let scale = vp.surface.w;
+    let half_px = clamp(mt.x / scale, 0.5, 16.0);
+    let sx = dot(pre.xyz, vp.right.xyz) / (0.5 * w * scale);
+    let sy = -dot(pre.xyz, vp.up.xyz) / (0.5 * h * scale);
+    let corner = quad[i % 6u];
+    out.pos = vec4f(
+        sx + (corner.x * half_px) / w * 2.0,
+        sy + (corner.y * half_px) / h * 2.0,
+        0.0,
+        1.0,
+    );
+    out.uv = corner;
+    out.val_eff = pre.w;
+    out.ft = u32(tm.z);
+    out.tau = mt.y;
+    out.half_px = half_px;
+    return out;
+}
+
+@fragment fn near_pt_fs(in: NearPtVOut) -> @location(0) vec4f {
+    let aflux = abs(in.val_eff);
+    if (aflux < 1e-30) { discard; }
+    let r2 = dot(in.uv, in.uv) * in.half_px * in.half_px;
+    let a = exp(-r2 * 0.5);
+    if (a < 1.0 / 256.0) { discard; }
+    let olog = log2(aflux + 1e-30) - log2(ft_ref_floor(in.ft));
+    let lum = clamp(olog / 8.0 + 0.5, 0.0, 1.0);
+    let hue = fract(log2(max(in.tau, 1.0)) / 16.0);
+    let rgb = hsl_to_rgb(hue, 1.0, lum);
+    return vec4f(rgb * a, a);
 }
 
 fn erfc(x: f32) -> f32 {
@@ -348,12 +419,15 @@ fn presence_probe() {
         }
     }
 
-    let omega_total = abs(o0) + abs(o1) + abs(o2) + abs(o3) + abs(o4) + abs(o5)
-        + abs(o6) + abs(o7) + abs(o8);
+    let omega_total = abs(o0) / ft_ref_floor(0u) + abs(o1) / ft_ref_floor(1u)
+        + abs(o2) / ft_ref_floor(2u) + abs(o3) / ft_ref_floor(3u)
+        + abs(o4) / ft_ref_floor(4u) + abs(o5) / ft_ref_floor(5u)
+        + abs(o6) / ft_ref_floor(6u) + abs(o7) / ft_ref_floor(7u)
+        + abs(o8) / ft_ref_floor(8u);
     if (omega_total < 1e-30) { discard; }
 
     let olog = log2(omega_total);
-    let t2 = clamp((olog + 14.0 + vp.expose_ex.x) / 22.0, 0.0, 1.0);
+    let t2 = clamp((olog + vp.expose_ex.x) / 22.0, 0.0, 1.0);
 
     let a = vec3f(0.0, 0.02, 0.1);
     let b = vec3f(0.0, 0.3, 0.8);
@@ -369,7 +443,7 @@ fn presence_probe() {
         e,
         smoothstep(0.75, 1.0, t2),
     );
-    let fade = clamp((olog - log2(1e-30)) / (-14.0 - log2(1e-30)), 0.0, 1.0);
+    let fade = clamp((olog - log2(1e-30)) / (-vp.expose_ex.x - log2(1e-30)), 0.0, 1.0);
 
     return vec4f(color * fade, 1.0);
 }
@@ -12338,6 +12412,9 @@ mod mathematikerin {
     const SSAA_MAX: f32 = 8.0;
     const FIELD_BACKING_SCALE: f64 = 1.0;
     const EMA_FACTOR: f64 = 0.05;
+    const EXPOSE_OFFSET_BASE: f32 = 4.0;
+    const OFFSET_RELAX: f32 = 0.03125;
+    const REF_RELAX: f32 = 0.0625;
     const THRUST_STEP: f64 = 64.0;
     const JUMP_BODIES: [&str; 9] = [
         "sun", "mercury", "venus", "earth", "mars", "jupiter", "saturn", "uranus", "neptune",
@@ -12435,6 +12512,70 @@ mod mathematikerin {
             out.push(0.0);
         }
         out
+    }
+
+    pub fn force_ref_medians(field: &[f32], deep_pt: &[f32], deep_ex: &[f32]) -> [Option<f32>; 9] {
+        let mut hist: [[u32; 256]; 9] = [[0; 256]; 9];
+        let mut sum: [[f32; 256]; 9] = [[0.0; 256]; 9];
+        let mut n: [u32; 9] = [0; 9];
+        for f in field.chunks_exact(12) {
+            let ft = f[6] as i64;
+            if !(0..=8).contains(&ft) {
+                continue;
+            }
+            let v = f[3];
+            if !v.is_finite() || v == 0.0 {
+                continue;
+            }
+            let l = v.abs().log2();
+            let b = log2_bin_of(l);
+            hist[ft as usize][b] += 1;
+            sum[ft as usize][b] += l;
+            n[ft as usize] += 1;
+        }
+        for f in deep_pt.chunks_exact(4) {
+            let v = f[3];
+            if !v.is_finite() || v == 0.0 {
+                continue;
+            }
+            let l = v.abs().log2();
+            let b = log2_bin_of(l);
+            hist[0][b] += 1;
+            sum[0][b] += l;
+            n[0] += 1;
+        }
+        for f in deep_ex.chunks_exact(8) {
+            let v = f[3];
+            if !v.is_finite() || v == 0.0 {
+                continue;
+            }
+            let l = v.abs().log2();
+            let b = log2_bin_of(l);
+            hist[0][b] += 1;
+            sum[0][b] += l;
+            n[0] += 1;
+        }
+        let mut meds = [None; 9];
+        for ft in 0..9 {
+            if n[ft] == 0 {
+                continue;
+            }
+            let target = (n[ft] + 1) / 2;
+            let mut cum = 0u32;
+            let mut bin = 0usize;
+            while cum < target && bin < 256 {
+                cum += hist[ft][bin];
+                if cum < target {
+                    bin += 1;
+                }
+            }
+            meds[ft] = Some((sum[ft][bin] / hist[ft][bin] as f32).exp2());
+        }
+        meds
+    }
+
+    fn log2_bin_of(l: f32) -> usize {
+        ((l + 126.0) as i32).clamp(0, 255) as usize
     }
 
     pub struct MathematikerinRadiator {
@@ -12676,6 +12817,7 @@ mod mathematikerin {
         deep_ex_cap: u32,
         deep_pt_pipe: Option<wgpu::RenderPipeline>,
         deep_ex_pipe: Option<wgpu::RenderPipeline>,
+        near_pt_pipe: Option<wgpu::RenderPipeline>,
         deep_bind: Option<wgpu::BindGroup>,
         deep_layout: Option<wgpu::BindGroupLayout>,
 
@@ -12686,7 +12828,9 @@ mod mathematikerin {
         q: [f64; 4],
         grid_step: f64,
         ssaa: f32,
-        exposure: f32,
+        expose_offset: f32,
+        point_blend: u32,
+        force_ref: [f32; 9],
         t_thrust: f64,
         t_thrust_target: f64,
         t_frozen: bool,
@@ -12766,6 +12910,7 @@ mod mathematikerin {
                 deep_ex_cap: 0,
                 deep_pt_pipe: None,
                 deep_ex_pipe: None,
+                near_pt_pipe: None,
                 deep_bind: None,
                 deep_layout: None,
                 p: [0.0, 0.0, 0.0],
@@ -12775,7 +12920,9 @@ mod mathematikerin {
                 q: [1.0, 0.0, 0.0, 0.0],
                 grid_step: GRID_INIT,
                 ssaa: 1.0,
-                exposure: 0.0,
+                expose_offset: EXPOSE_OFFSET_BASE,
+                point_blend: 1,
+                force_ref: [0.0; 9],
                 t_thrust: 0.0,
                 t_thrust_target: 0.0,
                 t_frozen: false,
@@ -12895,7 +13042,14 @@ mod mathematikerin {
                     self.reconfigure();
                 }
                 KeyCode::KeyE => {
-                    self.exposure += if self.shift { -1.0 } else { 1.0 };
+                    self.expose_offset = if self.shift {
+                        self.expose_offset / Φ as f32
+                    } else {
+                        self.expose_offset * 2.0
+                    };
+                }
+                KeyCode::KeyP => {
+                    self.point_blend = (self.point_blend + 1) % 3;
                 }
                 KeyCode::Digit1 => self.jump(0),
                 KeyCode::Digit2 => self.jump(1),
@@ -12959,7 +13113,7 @@ mod mathematikerin {
             self.backing = (w.max(1), h.max(1));
         }
 
-        fn vp_data(&self) -> [f32; 32] {
+        fn vp_data(&self) -> [f32; 44] {
             let (fr, fu, ff) = self.frame();
             let [x, y, z] = self.pos();
             [
@@ -12987,15 +13141,39 @@ mod mathematikerin {
                 0.0,
                 (GRID_DEEP_GRID / self.grid_step).max(1.0) as f32,
                 0.0,
-                self.exposure,
+                self.expose_offset,
                 self.last_response_epoch as f32,
-                0.0,
+                self.point_blend as f32,
                 0.0,
                 x as f32,
                 y as f32,
                 z as f32,
                 self.t_presence as f32,
+                self.force_ref[0],
+                self.force_ref[1],
+                self.force_ref[2],
+                self.force_ref[3],
+                self.force_ref[4],
+                self.force_ref[5],
+                self.force_ref[6],
+                self.force_ref[7],
+                self.force_ref[8],
+                0.0,
+                0.0,
+                0.0,
             ]
+        }
+
+        fn relax_force_refs(&mut self) {
+            let meds = force_ref_medians(
+                &self.packed_field,
+                &self.packed_deep_pt,
+                &self.packed_deep_ex,
+            );
+            for (ft, m) in meds.iter().enumerate() {
+                let target = m.unwrap_or(0.0);
+                self.force_ref[ft] += (target - self.force_ref[ft]) * REF_RELAX;
+            }
         }
 
         fn ensure_capacity(&mut self) {
@@ -13234,7 +13412,7 @@ mod mathematikerin {
                 self.deep_dirty = false;
             }
             let vp = self.vp_data();
-            let mut bytes = [0u8; 128];
+            let mut bytes = [0u8; 176];
             for (i, x) in vp.iter().enumerate() {
                 bytes[i * 4..i * 4 + 4].copy_from_slice(&x.to_le_bytes());
             }
@@ -13279,12 +13457,23 @@ mod mathematikerin {
                     occlusion_query_set: None,
                     timestamp_writes: None,
                 });
-                if let (Some(pipe), Some(bind)) =
-                    (self.render_pipe.as_ref(), self.render_bind.as_ref())
-                {
-                    pass.set_pipeline(pipe);
-                    pass.set_bind_group(0, bind, &[]);
-                    pass.draw(0..6, 0..1);
+                if self.point_blend != 2 {
+                    if let (Some(pipe), Some(bind)) =
+                        (self.render_pipe.as_ref(), self.render_bind.as_ref())
+                    {
+                        pass.set_pipeline(pipe);
+                        pass.set_bind_group(0, bind, &[]);
+                        pass.draw(0..6, 0..1);
+                    }
+                }
+                if self.point_blend != 0 {
+                    if let (Some(pipe), Some(bind)) =
+                        (self.near_pt_pipe.as_ref(), self.render_bind.as_ref())
+                    {
+                        pass.set_pipeline(pipe);
+                        pass.set_bind_group(0, bind, &[]);
+                        pass.draw(0..self.packed_count * 6, 0..1);
+                    }
                 }
                 if let (Some(pipe), Some(bind)) =
                     (self.deep_pt_pipe.as_ref(), self.deep_bind.as_ref())
@@ -13423,18 +13612,18 @@ mod mathematikerin {
                 label: None,
                 entries: &[
                     {
-                        let mut e = storage_entry(true, wgpu::ShaderStages::FRAGMENT);
+                        let mut e = storage_entry(true, wgpu::ShaderStages::VERTEX_FRAGMENT);
                         e.binding = 0;
                         e
                     },
                     {
-                        let mut e = storage_entry(true, wgpu::ShaderStages::FRAGMENT);
+                        let mut e = storage_entry(true, wgpu::ShaderStages::VERTEX_FRAGMENT);
                         e.binding = 1;
                         e
                     },
                     wgpu::BindGroupLayoutEntry {
                         binding: 2,
-                        visibility: wgpu::ShaderStages::FRAGMENT,
+                        visibility: wgpu::ShaderStages::VERTEX_FRAGMENT,
                         ty: wgpu::BindingType::Buffer {
                             ty: wgpu::BufferBindingType::Uniform,
                             has_dynamic_offset: false,
@@ -13443,12 +13632,12 @@ mod mathematikerin {
                         count: None,
                     },
                     {
-                        let mut e = storage_entry(false, wgpu::ShaderStages::FRAGMENT);
+                        let mut e = storage_entry(false, wgpu::ShaderStages::VERTEX_FRAGMENT);
                         e.binding = 4;
                         e
                     },
                     {
-                        let mut e = storage_entry(false, wgpu::ShaderStages::FRAGMENT);
+                        let mut e = storage_entry(false, wgpu::ShaderStages::VERTEX_FRAGMENT);
                         e.binding = 5;
                         e
                     },
@@ -13632,9 +13821,48 @@ mod mathematikerin {
                 multiview: None,
                 cache: None,
             });
+            let near_pt_pipe = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+                label: None,
+                layout: Some(&render_pipe_layout),
+                vertex: wgpu::VertexState {
+                    module: &module,
+                    entry_point: Some("near_pt_vs"),
+                    compilation_options: Default::default(),
+                    buffers: &[],
+                },
+                fragment: Some(wgpu::FragmentState {
+                    module: &module,
+                    entry_point: Some("near_pt_fs"),
+                    compilation_options: Default::default(),
+                    targets: &[Some(wgpu::ColorTargetState {
+                        format,
+                        blend: Some(wgpu::BlendState {
+                            color: wgpu::BlendComponent {
+                                src_factor: wgpu::BlendFactor::One,
+                                dst_factor: wgpu::BlendFactor::One,
+                                operation: wgpu::BlendOperation::Add,
+                            },
+                            alpha: wgpu::BlendComponent {
+                                src_factor: wgpu::BlendFactor::One,
+                                dst_factor: wgpu::BlendFactor::One,
+                                operation: wgpu::BlendOperation::Add,
+                            },
+                        }),
+                        write_mask: wgpu::ColorWrites::ALL,
+                    })],
+                }),
+                primitive: wgpu::PrimitiveState {
+                    topology: wgpu::PrimitiveTopology::TriangleList,
+                    ..Default::default()
+                },
+                depth_stencil: None,
+                multisample: wgpu::MultisampleState::default(),
+                multiview: None,
+                cache: None,
+            });
             let vp_buf = device.create_buffer(&wgpu::BufferDescriptor {
                 label: None,
-                size: 128,
+                size: 176,
                 usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
                 mapped_at_creation: false,
             });
@@ -13662,6 +13890,7 @@ mod mathematikerin {
             self.render_layout = Some(render_layout);
             self.deep_pt_pipe = Some(deep_pt_pipe);
             self.deep_ex_pipe = Some(deep_ex_pipe);
+            self.near_pt_pipe = Some(near_pt_pipe);
             self.vp_buf = Some(vp_buf);
             self.probe_buf = Some(probe_buf);
             self.probe_read = Some(probe_read);
@@ -13690,6 +13919,7 @@ mod mathematikerin {
             };
             self.last_tick = Some(now_i);
             self.stable_tick = self.stable_tick * (1.0 - EMA_FACTOR) + raw * EMA_FACTOR;
+            self.expose_offset += (EXPOSE_OFFSET_BASE - self.expose_offset) * OFFSET_RELAX;
             if let Some(t) = system_now(&self.time) {
                 if self.t_presence == 0.0 {
                     self.t_presence = t;
@@ -13896,6 +14126,7 @@ mod mathematikerin {
                 self.packed_deep_ex = ex;
                 self.deep_ex_count = (self.packed_deep_ex.len() / 8) as u32;
                 self.deep_dirty = true;
+                self.relax_force_refs();
             }
             self.consider_resend();
             self.sensors.frame_interval = (raw / 1000.0).max(0.001);
@@ -13943,7 +14174,7 @@ mod mathematikerin {
                 let ms_max = self.frame_ms_max;
                 self.frame_ms_max = 0.0;
                 eprintln!(
-                "φ window: t {:.2} | Ω {:.3} | fps {:.0} | ssaa {:.2} | grid 2^{} | x {:.3e} y {:.3e} z {:.3e} | {} near | {} deep | b {}x{} | maxms {:.0}",
+                "φ window: t {:.2} | Ω {:.3} | fps {:.0} | ssaa {:.2} | grid 2^{} | x {:.3e} y {:.3e} z {:.3e} | {} near | {} deep | b {}x{} | maxms {:.0} | off {:.2} | blend {}",
                 self.t_presence,
                 omega,
                 fps,
@@ -13957,6 +14188,8 @@ mod mathematikerin {
                 self.backing.0,
                 self.backing.1,
                 ms_max,
+                self.expose_offset,
+                self.point_blend,
             );
             }
             event_loop.set_control_flow(ControlFlow::WaitUntil(
@@ -14298,6 +14531,54 @@ mod mathematikerin {
             assert_eq!(ex[4], 0.0);
             assert_eq!(ex[5], 2.72e10);
             assert_eq!(ex[13], 86400.0);
+        }
+
+        #[test]
+        fn force_ref_medians_routes_forces_and_honors_zero() {
+            let mut field = vec![0.0f32; 48];
+            field[3] = 4.0;
+            field[15] = 4.0;
+            field[27] = -2.0;
+            field[30] = 2.0;
+            field[39] = 0.0;
+            field[42] = 8.0;
+            let meds = force_ref_medians(
+                &field,
+                &[0.0, 0.0, 0.0, 4.0],
+                &[0.0, 0.0, 0.0, 4.0, 0.0, 0.0, 0.0, 0.0],
+            );
+            assert_eq!(meds[0].unwrap(), 4.0);
+            assert_eq!(meds[1], None);
+            assert_eq!(meds[2].unwrap(), 2.0);
+            for ft in 3..9 {
+                assert_eq!(meds[ft], None);
+            }
+        }
+
+        #[test]
+        fn force_ref_medians_relaxes_absent_channels_to_zero() {
+            let mut app = NativeApp {
+                force_ref: [7.0; 9],
+                ..NativeApp::new(
+                    mpsc::channel().1,
+                    mpsc::sync_channel(1).0,
+                    mpsc::sync_channel(2).1,
+                    mpsc::channel().0,
+                    mpsc::channel().0,
+                    Arc::new(Vec::new()),
+                    Arc::new(Mutex::new(None)),
+                    Arc::new(AtomicBool::new(false)),
+                )
+            };
+            app.packed_field = vec![0.0; 12];
+            app.packed_deep_pt = Vec::new();
+            app.packed_deep_ex = Vec::new();
+            for _ in 0..64 {
+                app.relax_force_refs();
+            }
+            for ft in 0..9 {
+                assert!(app.force_ref[ft] < 0.2);
+            }
         }
     }
 }

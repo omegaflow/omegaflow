@@ -74,10 +74,16 @@ Zeit aus naif0012.tls (LSK-Reader, keine TT_MINUS_UTC-Konstante). PCK-Reader pck
 (+ pole, j2, j4, r_eq); JS field 12 + meta 12 floats, WGSL field[j*3]/props[j*3].
 body_channels sendet ausschließlich {body}.mass (GM, Kernel 0, gravity) und
 {body}.radius. fs evaluiert osc_field für jeden Pixel (kontinuierliche Mathematik,
-keine Stützstellen, keine Interpolation); Nebra-Rampe t2 = clamp((log2(Ω_total)+14)/22, 0, 1)
-(4 mix()-Segmente Blau→Cyan→Orange→Weiß) IST die Tonemap; Ω_total = Σ|omegas[k]|.
-Exposure-Kette im Browser getilgt (keine lvls, keine e/E); die native
-Mathematikerin trägt e/E (±2¹) als vp.expose_ex.x-Offset in der Rampe.
+keine Stützstellen, keine Interpolation); Nebra-Rampe t2 = clamp((log2(Ω_total)+offset)/22, 0, 1)
+(4 mix()-Segmente Blau→Cyan→Orange→Weiß) IST die Tonemap; Ω_total = Σ|omegas[k]|/ref_k
+mit ref_k = Per-Kraft-Luminanzreferenz (Median |val| je Kraft, near val + Deep-Flux
+als em, Relaxation 2⁻⁴ je res, Kanäle ohne Messung relaxieren Richtung 0).
+e/E: ×2/÷Φ, Default-Offset 4 = 2², Relaxation 2⁻⁵ je Frame Richtung Default.
+P zykelt den Quellen-Punkt-Layer 1→2→0→1 (beides → nur Quellen → nur Feld).
+Der Punkt-Layer (near_pt) zeichnet je Oszillator ein Gauß-Punkt
+±clamp(extent/scale, 2⁻¹, 2⁴) px mit e^(−r²/2), τ-Farbton und
+|val_eff|-Helligkeit gegen ref_k; Membran und Punkte teilen
+field/props/vp/prep/param (ein Buffer, ein Gesetz). VP = 11 vec4 (176 B).
 SSAA als dichtere Messung: q/Q in
 Φ-Schritten (1.00–8.00, Start 1.00×), Canvas-Backing skaliert, CSS nativ;
 nativ via Surface-Rekonfiguration (Backing = Fenster × dpr × ssaa).
@@ -102,6 +108,38 @@ moon_de440*.tf, Probe 0,009°/0,018°/0,077° gegen IAU-Vollmodell).
 0 Warnings, 0 Errors; Tests: 41 lib + 36 bin (1 vorbestehender FAIL:
 test_parse_stations_xml, „aae" vs „AAE" — BGS-lowercase gegen Fixture-Assertion,
 parse_stations_xml in diesem Zug unberührt; Golden-Test grün).
+
+---
+
+### wgpu-mono — Hybrid: Membran + Quellen-Punkt-Layer (Atom 1)
+
+```
+GESCHLOSSEN (2026-08-16): Zwei Wahrheiten des Blocks zugleich — der Punkt
+zeigt das Wesen, die Membran das Geflecht, ohne Doppelzählung (die
+Rose-Formel 0.02/(r²+0.02) war der 1/d²-Kernel selbst). near_pt_vs/near_pt_fs
+in MEMBRANE_WGSL: Quad ±clamp(extent/scale, 2⁻¹, 2⁴) px, Falloff e^(−r²/2)
+(σ = 1 = Pixelkorn), discard unter 2⁻⁸ (8-Bit-Display-Wahrheit), τ-Farbton
+fract(log2(τ)/16) via hsl_to_rgb, Helligkeit clamp(log2(|val_eff|/ref_k)/8 +
+0.5, 0, 1) (2³ Oktaven um die Referenz), val_eff aus prep (Faltung wie
+Membran). Membran und Punkte teilen field/props/vp/prep/param über
+render_layout (Stages VERTEX_FRAGMENT) — ein Buffer, ein Gesetz.
+Per-Kraft-Exposure ersetzt die Hardcodes +14/+18: ref_k = Median |val| je
+Kraft (near val + Deep-Flux als em), Histogramm über 256 log2-Bins
+(f32-Exponentenbereich, geometrischer Bin-Mittelwert), Relaxation 2⁻⁴ je
+res; Kanäle ohne Messung relaxieren Richtung 0 (0 honored). VP 8 → 11
+vec4 (176 B): ft_ref_a/b/c tragen 9 Kraft-Referenzen + point_blend.
+Operator-Offset: Default 4 = 2², E = ×2 (ein Stopp rauf), Shift+E = ÷Φ
+(feiner Trim), Relaxation 2⁻⁵ je Frame Richtung Default — die Rückkehr
+übernimmt die Relaxation, nicht die Tastatur. P zykelt 1→2→0→1 (beides →
+nur Quellen → nur Feld), Default 1. Tonemap: Ω_total = Σ|o_k|/ref_k,
+t2 = clamp((log2(Ω_total) + offset)/22, 0, 1); Fade-Rampe an die
+Tonemap-Null (−offset) verankert. Golden-Test grün, 4 mathematikerin-
+Tests grün.
+```
+Offen:
+- Fenster-Verifikation beim Operator (Radial-Profil, e/E/P) ausstehend —
+  der Bildschirm gehört dem Operator, nicht dieser Session
+- Browser-Station (fieldShader) trägt den Punkt-Layer nicht — main-only
 
 ---
 
