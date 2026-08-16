@@ -1,0 +1,13 @@
+# BODC — PDL (POST-REST bodc.ac.uk/.../api/search, live 2026-08-16)
+# format: <doi> | <titel>
+# Befund: der Endpoint liefert nur 10 Ergebnisse/Request (Search-Backend, keine Pagination) — Voll-Katalog über EDMED oder Query-Crawl
+b3fe4c0f-8d7a-11e2-93c8-1803734a77fb | PML Benthic Survey redox measurements from four sites (Cawsand, L4, Rame and Jennycliff) in the Western English Channel surveyed bimonthly from January 2010 to May 2011.
+abe54321-0187-4a2f-99c6-35ad85bd7eef | Simultaneous quantification of in situ infaunal activity and pore-water metal concentrations: establishment of benthic ecosystem process-function relations.
+41479c42-4dfb-4da9-be97-4c532ce13922 | Rates of nitrogen fixation in surface waters by stable-isotope mass spectrometry during the AMT programme cruise AMT14.
+ea6e6cee-8d7d-11e2-bbe0-1803734a77fb | PML Benthic Survey nutrient concentration data from a benthic flux survey experiment at 4 different study sites of Plymouth, South West England, between 2008 and 2011.
+ed97f20f-8d7e-11e2-b183-1803734a77fb | PML Benthic Survey water column nutrient concentrations from 4 different benthic study sites off Plymouth, South West England, between 2008 and 2011.
+ad314fa1-7118-11e2-938c-1803734a77fb | Nutrient concentration profiles from long term time series at station E1 in the Western English Channel from 2002 to 2012.
+075f8000-7114-11e2-907f-1803734a77fb | Nutrient concentration profiles from long term time series at Station L4 in the Western English Channel from 2000 to 2012.
+8c34ed9e-711f-11e2-95a8-1803734a77fb | <em>Calanus helgolandicus</em> weekly egg production at site L4 (50 15'N, 4 13'W) in the Western English Channel from 1992 to 2012.
+aa8a7d00-8d7c-11e2-ab1c-1803734a77fb | PML Benthic Survey microbial gene abundance data from four sites (Jennycliff, Cawsand, Rame and L4) in the Western English Channel surveyed bimonthly from July 2008 to May 2011.
+0ad59521-712e-11e2-824b-1803734a77fb | Plymouth Marine Laboratory Benthic Survey macrofauna abundance and biomass data set from four sites in the Western English Channel surveyed bimonthly from 2008 to 2010 containing the data from the samples analysed as at December 2012.
