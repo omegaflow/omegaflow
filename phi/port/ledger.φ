@@ -385,3 +385,35 @@ note Zeitreihen-Kuration offen (PurpleAir/OpenAQ/GML/OOI leben; weitere Quellen 
 verifiziert
 bestand phi/katalog/vizier_gold_catalogs.φ
 note Crossmatch-Welle 2026-08-16 (gaia_dist): 12 distanzlose Kataloge mit tap_compiler --crossmatch gegen I/355/paramp (dist_pc) nachkompiliert; wd nutzt eigene Parallaxe (plx), evs_cat (B1950) ausgelassen. Async-Pfad trägt TOP-Limit. Pro Katalog ein Ledger-Eintrag folgt mit der Kompilierung.
+
+verifiziert
+bestand phi/katalog/vizier_gold_catalogs.φ
+note gaia_dist cbdata (B/cb/cbdata): 1404 Zeilen, 281 mit Gaia-Distanz — live auf CDN
+
+verifiziert
+bestand phi/katalog/vizier_gold_catalogs.φ
+note gaia_dist merlin (B/merlin/merlin): 1688 Zeilen, 406 mit Gaia-Distanz — live auf CDN
+
+verifiziert
+bestand phi/katalog/vizier_gold_catalogs.φ
+note gaia_dist psr (B/psr/psr): 2395 Zeilen, 91 mit Gaia-Distanz — live auf CDN
+
+verifiziert
+bestand phi/katalog/vizier_gold_catalogs.φ
+note gaia_dist sb9 (B/sb9/main): 3845 Zeilen, 1684 mit Gaia-Distanz — live auf CDN
+
+verifiziert
+bestand phi/katalog/vizier_gold_catalogs.φ
+note gaia_dist corot (B/corot/Bright_star): 144 Zeilen, 76 mit Gaia-Distanz — live auf CDN
+
+verifiziert
+bestand phi/katalog/vizier_gold_catalogs.φ
+note gaia_dist wd (B/wd/catalog): 3115 Zeilen, eigene Parallaxe (plx → Distanz) — live auf CDN
+
+verifiziert
+bestand phi/katalog/vizier_gold_catalogs.φ
+note gaia_dist gcvs_cat (B/gcvs/gcvs_cat): 49092 Zeilen, 25478 mit Gaia-Distanz — live auf CDN
+
+verifiziert
+bestand phi/katalog/vizier_gold_catalogs.φ
+note gaia_dist denis (B/denis/denis): 31577 Zeilen, 22335 mit Gaia-Distanz — live auf CDN
