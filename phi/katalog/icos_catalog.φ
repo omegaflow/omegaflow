@@ -1,0 +1,202 @@
+# ICOS — Carbon Portal (sparql_harvester, Stichprobe 200, live 2026-08-16)
+# format: <object-uri> | <title>
+https://meta.icos-cp.eu/objects/iS2ubFLw7HNbyKz_pHcJ89uL | FLEXINVERT inversion results for 2009-2018 for specific regions of Europe
+https://meta.icos-cp.eu/objects/a0zA6R8JA71qs_ymAbUDKezx | FLEXINVERT inversion results for 2009-2018 for specific regions of Europe
+https://meta.icos-cp.eu/objects/JLgFt_jI7hk96uxAskgwT1ji | FLEXINVERT inversion results for 2009-2018 for specific regions of Europe
+https://meta.icos-cp.eu/objects/tHVK8qsnmsNyBKx4LQBe2oLh | LUMIA inversion results for 2009-2018 for specific regions of Europe (using all sites)
+https://meta.icos-cp.eu/objects/uSx7Cz096oAP5iMAC9iRrqBJ | LUMIA inversion results for 2009-2018 for specific regions of Europe (using all sites)
+https://meta.icos-cp.eu/objects/PiJSmhmbhhQck4XMqUO_yVCa | LUMIA inversion results for 2009-2018 for specific regions of Europe (using all sites)
+https://meta.icos-cp.eu/objects/-FreNRXmOc5-l2C17cgNdjZn | PYVAR-CHIMERE inversion results for 2009-2018 for specific regions of Europe (all sites)
+https://meta.icos-cp.eu/objects/WbqbbFU_gpGluCuyMjjft1Cu | PYVAR-CHIMERE inversion results for 2009-2018 for specific regions of Europe (all sites)
+https://meta.icos-cp.eu/objects/LpvcT3VdvpK86vwB22a7eWkh | LUMIA inversion results for 2009-2018 for specific regions of Europe
+https://meta.icos-cp.eu/objects/iCE_Qg4wxCLFrzWlJ40_LW-w | LUMIA inversion results for 2009-2018 for specific regions of Europe
+https://meta.icos-cp.eu/objects/mP7Syr2esEs2-0lImmOFNHae | LUMIA inversion results for 2009-2018 for specific regions of Europe
+https://meta.icos-cp.eu/objects/30MZO49MXclcLkcMUYDn-lDO | JenaCarboScopeRegional inversion results for 2009-2018 for specific regions of Europe
+https://meta.icos-cp.eu/objects/92-q3tF-Xc5o7zCiFRfRkCgF | JenaCarboScopeRegional inversion results for 2009-2018 for specific regions of Europe
+https://meta.icos-cp.eu/objects/v7F35GQJywjPWsXQzgbduV34 | JenaCarboScopeRegional inversion results for 2009-2018 for specific regions of Europe (using all sites)
+https://meta.icos-cp.eu/objects/8tqF6OWAEL3m3lqK5aHFSM70 | JenaCarboScopeRegional inversion results for 2009-2018 for specific regions of Europe (using all sites)
+https://meta.icos-cp.eu/objects/Ah4jwS4j4b8y9Y0KGLxcnF46 | JenaCarboScopeRegional inversion results for 2009-2018 for specific regions of Europe (using all sites)
+https://meta.icos-cp.eu/objects/UmPV0V-Wf8uCWiZ76aJ6wGtz | PYVAR-CHIMERE inversion results for 2009-2018 for specific regions of Europe (all sites) 
+https://meta.icos-cp.eu/objects/ttqFeUgi27slDxmO9UUie4Ai | NAME-HB inversion results for 2009-2018 for specific regions of Europe
+https://meta.icos-cp.eu/objects/DUhRdeHjPNS316wjtBFuVvTd | NAME-HB inversion results for 2009-2018 for specific regions of Europe (climatological NEE prior)
+https://meta.icos-cp.eu/objects/Z7JikmvAc6Ov63fra-pnzdcG | LUMIA inversion results for 2009-2018 for specific regions of Europe  (climatological NEE prior)
+https://meta.icos-cp.eu/objects/Gp28J_n7jsJAG4azLn4CeAB9 | FLEXINVERT inversion results for 2009-2018 for specific regions of Europe (climatological NEE prior)
+https://meta.icos-cp.eu/objects/LUsmlLQ_wVxVgxeriOPa87jy | 	JenaCarboScopeRegional inversion results for 2009-2018 for specific regions of Europe 
+https://meta.icos-cp.eu/objects/Np2CvUSM7qOglOMTHTJPq5e9 | JenaCarboScopeRegional inversion results for 2009-2018 for specific regions of Europe  (climatological NEE prior)
+https://meta.icos-cp.eu/objects/w2p1hp_ltZmw3LxRcBcTP1aq | Global CO2 annual mean fluxes from the CarbonTracker Europe inversion in GCB2022, aggregated over TRANSCOM regions.
+https://meta.icos-cp.eu/objects/oZfEQmR52WCPomMxjLIC69a- | Global CO2 fluxes from the CarbonTracker Europe inversion in GCB2022, aggregated over combinations of TRANSCOM regions.
+https://meta.icos-cp.eu/objects/GXDUIFAHMyKZIZbqp0Yly3or | Global CO2 fluxes from the CarbonTracker Europe inversion in GCB2023, aggregated over combinations of TRANSCOM regions.
+https://meta.icos-cp.eu/objects/PZdIsOctOixapWum6R-rUN8h | Global CO2 fluxes from the CarbonTracker Europe inversion in GCB2023, aggregated over TRANSCOM regions.
+https://meta.icos-cp.eu/objects/dxTFsuvG9sI3M0nGCgYNg22X | Increased water-use efficiency and reduced COâ uptake by plants during droughts at a continental-scale
+https://meta.icos-cp.eu/objects/EiJUQipylAKdSk9j1_kz_5qP | Changes in surface hydrology, soil moisture, and Gross Primary Productivity in the Amazon during the 2015/2016 El NiÃ±o
+https://meta.icos-cp.eu/objects/9v-ug2z3IcLVwDWpcG7ASKpW | Output from 3D model for â17O (COâ)
+https://meta.icos-cp.eu/objects/DfN4sMmTlsR_vb_BcK8h4Gul | Aggregated regional estimates of net atmosphere-land CO2 fluxes from the five atmospheric inversions and 16 Dynamic Global Vegetation Models, supplemental data to Bastos et al, 2019 (https://doi.org-xxxx)
+https://meta.icos-cp.eu/objects/AIzLVgxMUQOoKUa7zPzw4Z7U | Modeled CO2 concentration from several inversions for 2009-2018
+https://meta.icos-cp.eu/objects/HJxB3lMucYTGl6LjclNc-Eos | Modeled CO2 concentration from Drought 2028 inversions for 2009-2018
+https://meta.icos-cp.eu/objects/Fp6EuDnl_7hIh_CVvnGWNJ1s | Supplemental dataset of "Impacts of extreme summers on European ecosystems: a comparative analysis of 2003, 2010 and 2018" by Bastos et al, 2019 (https://doi.org/10.1098/rstb.2019.0507)
+https://meta.icos-cp.eu/objects/vR7oArkRfkpcPrfDNXt8525F | Supplemental dataset of "Impacts of extreme summers on European ecosystems: a comparative analysis of 2003, 2010 and 2018" by Bastos et al, 2019 (https://doi.org/10.1098/rstb.2019.0507)
+https://meta.icos-cp.eu/dcat/objects/lzLUoyiDP_MdgYUkCrSF4gd3 | ICOSETC_IT-BFt_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/-62XeWPFJHiG_yJGvlljdZ9g | ICOSETC_FI-Var_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/tThgaPPe_2MziZz6wLitvR12 | ICOSETC_IT-Lsn_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/2JicENWhwe9cjrD5SyKHhTzU | ICOSETC_FI-Ken_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/UuBf7xaMbgbIVclxbq_ZD9pB | ICOSETC_FR-Tou_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/t41H9N2GMTJL33VQWhxS7RMR | ICOSETC_FR-LGt_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/E4Xm_4CfgdmdEFoni2AjKk4K | ICOSETC_FR-Aur_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/KwxVZfaDJciix2NLnsC3Bxzc | ICOSETC_FR-EM2_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/LwPhm54rxJeRFpT8Eohj2TA4 | ICOSETC_DE-Hai_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/K5IFfWWJ0dG_sRbRsDm3yGQp | ICOSETC_DK-Gds_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/DT67Niwl4RN6BvLWMYa7B8o9 | ICOSETC_IT-Tor_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/gDoAlPK25ObbnSEhWZLL7y08 | ICOSETC_DE-Kli_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/_3jvoSwdem-qpm48TSOTUA7M | ICOSETC_DE-Gri_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/EqDNfea8CmY5ZA3vThOL0502 | ICOSETC_BE-Bra_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/QFcvJJzuqNwXf50NOnPQ2S6O | ICOSETC_DK-Skj_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/DSLRwJxpEYeQ0J_AEAmvHF3s | ICOSETC_FI-Let_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/Eoslerd17jD19hJAyHgnmBci | ICOSETC_GL-Dsk_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/1bL128gLx7e415ItKgU8f7gV | ICOSETC_DE-RuR_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/a8dK2WCFwn-79C6cxmy2rNFc | ICOSETC_BE-Vie_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/nS89EjGAAXKqH4wznfx35xj6 | ICOSETC_BE-Maa_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/gQZeZnFl2pHdYfZE-e0o_KXU | ICOSETC_CH-Dav_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/RqQ6UrHcHscdwQ4lfU39bd-6 | ICOSETC_SE-Htm_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/VXxHpRWwVJ26zNyVwcMExG4y | ICOSETC_FR-Fon_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/3wPqdjARd17Wcxp64hLxdNh_ | ICOSETC_DE-Geb_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/wBfF2oJRjnpjEEKBhfBPfkoi | ICOSETC_DE-HoH_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/7kSNedzXNNajwuFssOku3ZWY | ICOSETC_FI-Sii_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/wfgyng2TgjxpfCSZYQyxorqG | ICOSETC_FI-Hyy_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/UdcQudfbeC4vlKiLDi171wjw | ICOSETC_IT-SR2_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/lsE3UbXD8HOAwB9Waav-bVSF | ICOSETC_DE-Tha_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/CGMU1AcD1HpbhJA-2csV_iJc | ICOSETC_FR-Bil_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/hXXQRmr0LWGIPXtRMh9GXa9P | ICOSETC_IT-Cp2_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/AQkeUlosB336FxC7gNA6_F0I | ICOSETC_DE-RuS_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/LGrviDerPlKnIbrxqdqC3RzF | ICOSETC_SE-Deg_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/8P6u6WR0FOT-TowVtUqDo0VH | ICOSETC_DK-Vng_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/DDvxJ-2OoBO44AGePSxpN8-2 | ICOSETC_SE-Nor_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/99gAK7xqcSkk7SRKDwZz1KJT | ICOSETC_BE-Lon_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/0wBKUBmuyFX1RXRxFT_UmwKp | ICOSETC_SE-Svb_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/JPsqhZjlnc6DI7sZLRZv_faO | ICOSETC_FI-Kvr_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/tpAbml4oX9zJrsiYvJ8PWGfC | ICOSETC_BE-Lcr_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/H3JuEZOLrC_3Z8S-lfVBECpu | ICOSETC_FR-Mej_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/9kTZs-WWolX0mUAsyq9ZM0ot | ICOSETC_FI-Kmp_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/hzZ73hWVpgyjMalrX7T31tdq | ICOSETC_GL-NuF_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/7OcZqJEV-Hln4cULBFwrQ20h | ICOSETC_GF-Guy_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/gbRytGN0cjkkHWB__Q34OSIL | ICOSETC_CZ-wet_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/JhEP9E7ZyJoy59VmdApHBGzY | ICOSETC_FR-Lam_ARCHIVE_INTERIM_L2.zip
+https://meta.icos-cp.eu/objects/gOCeKeUX10a_jkalql9MeYIb | European Obspack compilation of atmospheric methane data from ICOS and non-ICOS European stations for the period 1984-2023; obspack_ch4_466_GLOBALVIEWplus_v8.0_2023-03-08
+https://meta.icos-cp.eu/objects/Tmhrc1057dBpXB8x9AiuZ6o9 | European Obspack compilation of atmospheric methane data from ICOS and non-ICOS European stations for the period 1984-2023; obspack_ch4_466_GLOBALVIEWplus_v8.0_2023-03-08
+https://meta.icos-cp.eu/objects/2ESjwQy1qQRMEtcpiYPun2RO | European Obspack compilation of atmospheric carbon dioxide data from ICOS and non-ICOS European stations for the period 1972-2022; obspack_co2_466_GLOBALVIEWplus_v8.0_2023-03-08
+https://meta.icos-cp.eu/objects/mRn4FmvUY9SLyb94pS2kHdOJ | European Obspack compilation of atmospheric carbon dioxide data from ICOS and non-ICOS European stations for the period 1972-2022; obspack_co2_466_GLOBALVIEWplus_v8.0_2023-03-08
+https://meta.icos-cp.eu/objects/LanbXT01aOXeet3g1suP_7aJ | European Obspack compilation of atmospheric methane data from ICOS and non-ICOS European stations for the period 1984-2023; obspack_ch4_466_GLOBALVIEWplus_v8.0_2023-03-30
+https://meta.icos-cp.eu/objects/UqPhG00TNqHmcRybZ1e43ZX9 | European Obspack compilation of atmospheric carbon dioxide data from ICOS and non-ICOS European stations for the period 1972-2022; obspack_co2_466_GLOBALVIEWplus_v8.0_2023-03-30
+https://meta.icos-cp.eu/objects/tTSiOB9qwAr6nTlkyyJLiaA3 | The FluxnetEO dataset (Landsat) for stations in Americas: US-SuM, US-SuS, US-SuW, US-Syv, US-Ton, US-Tw1, US-Tw2, US-Tw3, US-Tw4, US-Tw5, US-Twt, US-Tx2, US-Tx3, US-Tx4, US-Tx5, US-Tx6, US-Tx7, US-Tx9, US-ULM, US-UM3, US-UMB, US-UMd, US-UND, US-Uaf, US-Upa, US-Var, US-Vcm, US-Vcp, US-Vcs, US-WBW, US-WCr, US-WOD, US-WPT, US-Wdn, US-Wgr, US-Whs, US-Wi0, US-Wi1, US-Wi2, US-Wi3, US-Wi4, US-Wi5, US-Wi6, US-Wi7, US-Wi8, US-Wi9, US-Wjs, US-Wkg, US-Wlr, US-Wpp, US-Wrc, US-Wwt, US-Ylw, US-xBR
+https://meta.icos-cp.eu/objects/PFol2kNJAWJKFz-MNT3NYWMA | The FluxnetEO dataset (Landsat) for stations in Americas: US-Men, US-Mj1, US-Mj2, US-Mpj, US-Myb, US-NC1, US-NC2, US-NC3, US-NC4, US-NGB, US-NGC, US-NMj, US-NOG, US-NR1, US-NR2, US-Ne1, US-Ne2, US-Ne3, US-Nrf, US-Nrs, US-OF1, US-OF2, US-ONA, US-ORv, US-OSB, US-OWC, US-Oho, US-PFa, US-PHM, US-PLM, US-Pnp, US-Pon, US-Prr, US-RFE, US-RFW, US-RRC, US-Rls, US-Rms, US-Ro1, US-Ro2, US-Ro3, US-Ro4, US-Ro5, US-Ro6, US-Rwe, US-Rwf, US-Rws, US-SB1, US-SB2, US-SCc, US-SCd, US-SCf, US-SCg, US-SCs, US-SCw, US-SDU, US-SER, US-SFP, US-SHC, US-SHS, US-SJ1, US-SJ2, US-SO2, US-SO3, US-SO4, US-SP1, US-SP2, US-SP3, US-SP4, US-SRC, US-SRE, US-SRG, US-SRM, US-SSH, US-SdH, US-Seg, US-Ses, US-Shd, US-Skr, US-Slt, US-Snd, US-Sne, US-Snf, US-Srr, US-StJ, US-StS, US-Sta
+https://meta.icos-cp.eu/objects/EitcSnh71LAonidCl4zJHNu7 | The FluxnetEO dataset (Landsat) for stations in Americas: US-Men, US-Mj1, US-Mj2, US-Mpj, US-Myb, US-NC1, US-NC2, US-NC3, US-NC4, US-NGB, US-NGC, US-NMj, US-NOG, US-NR1, US-NR2, US-Ne1, US-Ne2, US-Ne3, US-Nrf, US-Nrs, US-OF1, US-OF2, US-ONA, US-ORv, US-OSB, US-OWC, US-Oho, US-PFa, US-PHM, US-PLM, US-Pnp, US-Pon, US-Prr, US-RFE, US-RFW, US-RRC, US-Rls, US-Rms, US-Ro1, US-Ro2, US-Ro3, US-Ro4, US-Ro5, US-Ro6, US-Rwe, US-Rwf, US-Rws, US-SB1, US-SB2, US-SCc, US-SCd, US-SCf, US-SCg, US-SCs, US-SCw, US-SDU, US-SER, US-SFP, US-SHC, US-SHS, US-SJ1, US-SJ2, US-SO2, US-SO3, US-SO4, US-SP1, US-SP2, US-SP3, US-SP4, US-SRC, US-SRE, US-SRG, US-SRM, US-SSH, US-SdH, US-Seg, US-Ses, US-Shd, US-Skr, US-Slt, US-Snd, US-Sne, US-Snf, US-Srr, US-StJ, US-StS, US-Sta
+https://meta.icos-cp.eu/objects/unMhqKAcWPQ1LT7VwWcmHwSw | Remove_this_landing_page-The FluxnetEO dataset (Landsat) for stations in Americas
+https://meta.icos-cp.eu/objects/NoYcezUbWEOBD5oiCqbGsxqj | Remove_this_landing_page-The FluxnetEO dataset (Landsat) for stations in Europe
+https://meta.icos-cp.eu/objects/CKOiKHPlzIrS9ggvAy_3h4JO | The FluxnetEO dataset (MODIS) for African stations located in Burkina Faso, Botswana, Republic of the Congo, Ghana, Mali, Sudan, Senegal, South Africa, and Zambia
+https://meta.icos-cp.eu/objects/v5I599Ki5nI8OG0FEMlZaM-1 | The FluxnetEO dataset (MODIS) for American stations located in Argentina, Brazil, Chile, Costa Rica, French Guiana, Greenland, Mexico, Panama, and Peru
+https://meta.icos-cp.eu/objects/hss_1KK4Q2tTHtbukDS01HAG | The FluxnetEO dataset (MODIS) for American stations located in Canada
+https://meta.icos-cp.eu/objects/4JPsN7hq9sjaJNBNOWBU7g7G | The FluxnetEO dataset (MODIS) for American stations located in Canada
+https://meta.icos-cp.eu/objects/wssMbn0QhNm4gQzxR44pcoIs | The FluxnetEO dataset (MODIS) for American stations located in United States (0)
+https://meta.icos-cp.eu/objects/mByY42L75m_z_NPF-zCvpRZP | The FluxnetEO dataset (MODIS) for American stations located in United States (0)
+https://meta.icos-cp.eu/objects/g-ZyYKDro9imkp4fIqBgcqRB | The FluxnetEO dataset (MODIS) for American stations located in United States (1)
+https://meta.icos-cp.eu/objects/8L71Ah0Yc6G0hy11UHlb1hDp | The FluxnetEO dataset (MODIS) for American stations located in United States (1)
+https://meta.icos-cp.eu/objects/8rbA7wLGbj8n_h9uAgFZK8c2 | The FluxnetEO dataset (MODIS) for American stations located in United States (2)
+https://meta.icos-cp.eu/objects/FYxwSpDKveXLmD7vhJD0Xchy | The FluxnetEO dataset (MODIS) for American stations located in United States (2)
+https://meta.icos-cp.eu/objects/u5tK-wVbvB96HRDfF6TrC0dm | The FluxnetEO dataset (MODIS) for American stations located in United States (3)
+https://meta.icos-cp.eu/objects/2ln4_UYEY9DmMuzT7rIowLUF | The FluxnetEO dataset (MODIS) for American stations located in United States (3)
+https://meta.icos-cp.eu/objects/-2srjA78sIsQCgSIoG4CCr6t | The FluxnetEO dataset (MODIS) for Asian stations located in China
+https://meta.icos-cp.eu/objects/wfMZb04jmUcwtfafIl_6EL4- | The FluxnetEO dataset (MODIS) for Asian stations located in China
+https://meta.icos-cp.eu/objects/fD9dA8ScBA0rBEa09ArD_X29 | The FluxnetEO dataset (MODIS) for Asian stations located in Indonesia, Israel, Japan, South Korea, Malaysia, and Taiwan
+https://meta.icos-cp.eu/objects/J8CKv0_dSzLwtwetVDke-xPx | The FluxnetEO dataset (MODIS) for European stations located in Austria, Belgium, Switzerland, Czechia, Denmark, Hungary, Ireland, and Iceland
+https://meta.icos-cp.eu/objects/FE89EVf8g-ZGoD41nbqUYXga | The FluxnetEO dataset (MODIS) for European stations located in Austria, Belgium, Switzerland, Czechia, Denmark, Hungary, Ireland, and Iceland
+https://meta.icos-cp.eu/objects/El8K50dvOvAUbmrUktUGVLS6 | The FluxnetEO dataset (MODIS) for European stations located in Germany
+https://meta.icos-cp.eu/objects/jWVxI35I_zdduuXVLyaPh81u | The FluxnetEO dataset (MODIS) for European stations located in Germany
+https://meta.icos-cp.eu/objects/hF0x5YM1lgoyTge7vwHCdwis | The FluxnetEO dataset (MODIS) for European stations located in Spain, Finland, and France
+https://meta.icos-cp.eu/objects/WWLB6-UQP3gULKFnLtNSOE1q | The FluxnetEO dataset (MODIS) for European stations located in Spain, Finland, and France
+https://meta.icos-cp.eu/objects/-VHPexRLmHJkbShD7EMG7Atk | The FluxnetEO dataset (MODIS) for European stations located in Italy
+https://meta.icos-cp.eu/objects/6N4RkC2bn8B_IjhhrgsQlekq | The FluxnetEO dataset (MODIS) for European stations located in Italy
+https://meta.icos-cp.eu/objects/DwQ18YNv6YN4ELts5LwmbQZw | The FluxnetEO dataset (MODIS) for European stations located in Netherlands, Norway, Poland, Portugal, Sweden, Svalbard and Jan Mayen, Slovakia, and United Kingdom
+https://meta.icos-cp.eu/objects/SAJvNkwNHcKDreAzCSFGzysr | The FluxnetEO dataset (MODIS) for Oceanian stations located in Australia, and Vanuatu
+https://meta.icos-cp.eu/objects/qtCBVnL4CL_GGscXknBHLPFN | The FluxnetEO dataset (MODIS) for Oceanian stations located in Australia, and Vanuatu
+https://meta.icos-cp.eu/objects/FDfX1qvooKyoZcfHKl2ZAfJs | The FluxnetEO dataset (Landsat) for African stations located in Botswana, Republic of the Congo, Ghana, Sudan, Senegal, South Africa, and Zambia
+https://meta.icos-cp.eu/objects/jXpGVjjq88p5Jy7lhWAXE-Gs | The FluxnetEO dataset (Landsat) for Asian stations located in Indonesia, Japan, and Malaysia
+https://meta.icos-cp.eu/objects/isu3DuPzvXYAXHp5L0GmzOW7 | The FluxnetEO dataset (Landsat) for American stations located in Argentina, Brazil, French Guiana, Greenland, and Panama
+https://meta.icos-cp.eu/objects/nDL9FbIAJOQnB4U_F2M-SsRu | The FluxnetEO dataset (Landsat) for European stations located in Netherlands, Poland, Portugal, Sweden, Svalbard and Jan Mayen, Slovakia, and United Kingdom
+https://meta.icos-cp.eu/objects/Pxn446CVNFlaIrnt_Ia65gjw | The FluxnetEO dataset (Landsat) for Asian stations located in China
+https://meta.icos-cp.eu/objects/LCF0MrZ6r3Q5J3lYV6400FuV | The FluxnetEO dataset (Landsat) for Asian stations located in China
+https://meta.icos-cp.eu/objects/STtDZft1RKW85OTpVlX89w6K | The FluxnetEO dataset (Landsat) for European stations located in Germany
+https://meta.icos-cp.eu/objects/I-aTvaq0A-IElgJ9kzUH7Bl_ | The FluxnetEO dataset (Landsat) for European stations located in Germany
+https://meta.icos-cp.eu/objects/YgkR3D0Zm8q631sZ5uWX3iDi | The FluxnetEO dataset (Landsat) for European stations located in Russia
+https://meta.icos-cp.eu/objects/9T3-BOZijabC--l4BRyGOYMH | The FluxnetEO dataset (Landsat) for Oceanian stations located in Australia, and Vanuatu
+https://meta.icos-cp.eu/objects/kB8psY4wBvB7t1Hbsoytfz5I | The FluxnetEO dataset (Landsat) for Oceanian stations located in Australia, and Vanuatu
+https://meta.icos-cp.eu/objects/O2wzjvBSss9oj7aW3Icu4_jv | The FluxnetEO dataset (Landsat) for American stations located in United States (0)
+https://meta.icos-cp.eu/objects/vGEl83Yxp8FZrCl70zXPxvEK | The FluxnetEO dataset (Landsat) for American stations located in United States (0)
+https://meta.icos-cp.eu/objects/koxcGgkI7dDipnTiFyB-RTR5 | The FluxnetEO dataset (Landsat) for American stations located in United States (1)
+https://meta.icos-cp.eu/objects/ZuevHvc4WJSQ7xDnGzxjRP6V | The FluxnetEO dataset (Landsat) for American stations located in United States (1)
+https://meta.icos-cp.eu/objects/oN2QF3TlPNqFlD7BW1ZM1BgM | The FluxnetEO dataset (Landsat) for American stations located in United States (2)
+https://meta.icos-cp.eu/objects/x0teHnb3jIkGcftUoGz3h1kR | The FluxnetEO dataset (Landsat) for American stations located in United States (2)
+https://meta.icos-cp.eu/objects/nMgh9EFcXpYqDSqAa7qJQJzd | The FluxnetEO dataset (Landsat) for American stations located in United States (3)
+https://meta.icos-cp.eu/objects/3gQI94pwTgUXbAQQ5lU0WTZs | The FluxnetEO dataset (Landsat) for American stations located in United States (3)
+https://meta.icos-cp.eu/objects/u3qCXzSCRqCJg_mcyQ2uaow6 | The FluxnetEO dataset (Landsat) for European stations located in Austria, Belgium, Switzerland, Czechia, Denmark, Hungary, Ireland, and Iceland
+https://meta.icos-cp.eu/objects/7fy3giopmjT1BWA-xmFzax8d | The FluxnetEO dataset (Landsat) for European stations located in Austria, Belgium, Switzerland, Czechia, Denmark, Hungary, Ireland, and Iceland
+https://meta.icos-cp.eu/objects/9fVDSRzL-ZjbMRgOG3aP-SV6 | The FluxnetEO dataset (Landsat) for European stations located in Spain, Finland, and France
+https://meta.icos-cp.eu/objects/BxLJRA8Vm8oXgOzDZdv_aUKO | The FluxnetEO dataset (Landsat) for European stations located in Spain, Finland, and France
+https://meta.icos-cp.eu/objects/E3c-L9vyfgVrBW0YK4zrvtwa | The FluxnetEO dataset (Landsat) for European stations located in Italy
+https://meta.icos-cp.eu/objects/GOohD9UclUiztk6VuA_y5MZT | The FluxnetEO dataset (Landsat) for European stations located in Italy
+https://meta.icos-cp.eu/objects/NOtbz-J9CFSM4aerq-MqIS6_ | The FluxnetEO dataset (Landsat) for American stations located in Canada
+https://meta.icos-cp.eu/objects/iKUdOY4NZrCMEqhub4bywDip | The FluxnetEO dataset (Landsat) for American stations located in Canada
+https://meta.icos-cp.eu/objects/FzbLgRmHd-dzBZkbsYfx7TM4 | The FluxnetEO dataset (MODIS) for African stations located in Botswana, Republic of the Congo, Ghana, Sudan, Senegal, South Africa, and Zambia
+https://meta.icos-cp.eu/objects/NCn1mz4prhkDBdWW9EIZ1Jhd | The FluxnetEO dataset (MODIS) for Asian stations located in Indonesia, Israel, Japan, and Malaysia
+https://meta.icos-cp.eu/objects/SwsdatGa_M7IivTORpuMwyt7 | The FluxnetEO dataset (MODIS) for European stations located in Netherlands, Poland, Portugal, Sweden, Svalbard and Jan Mayen, Slovakia, and United Kingdom
+https://meta.icos-cp.eu/objects/qQPZJVTW33k0LB6qdIT33gIV | The FluxnetEO dataset (MODIS) for European stations located in Russia
+https://meta.icos-cp.eu/objects/ape1VtD__gnN-Clh2I-w3kSP | The FluxnetEO dataset (MODIS) for American stations located in Argentina, Brazil, French Guiana, Greenland, and Panama
+https://meta.icos-cp.eu/objects/z8XvWI70A3dYR7Iv8WSFzrsS | The FluxnetEO dataset (Landsat) for African stations located in Burkina Faso, Botswana, Republic of the Congo, Ghana, Mali, Sudan, Senegal, South Africa, and Zambia
+https://meta.icos-cp.eu/objects/EtshhevzPJh21rsusTspuIwA | The FluxnetEO dataset (Landsat) for American stations located in Argentina, Brazil, Chile, Costa Rica, French Guiana, Greenland, Mexico, Panama, and Peru
+https://meta.icos-cp.eu/objects/a0tgJfUQfRORv8IbVAZ-aU1I | The FluxnetEO dataset (Landsat) for European stations located in Netherlands, Norway, Poland, Portugal, Sweden, Svalbard and Jan Mayen, Slovakia, and United Kingdom
+https://meta.icos-cp.eu/objects/VDa2N0DQMM2r6hv296F1Gd1h | The FluxnetEO dataset (Landsat) for Asian stations located in Indonesia, Israel, Japan, South Korea, Malaysia, and Taiwan
+https://meta.icos-cp.eu/objects/G8UaZwTEoaeUhIiPVQ2qiOGN | The FluxnetEO dataset (Landsat) for Eurasian stations located in Russia
+https://meta.icos-cp.eu/objects/fpGN9k5Qv2EsBvXWpWoxyunu | The FluxnetEO dataset (MODIS) for Eurasian stations located in Russia
+https://meta.icos-cp.eu/objects/iMJdhEIRvKqkyjK7FPz5iW8Z | GAW paper data
+https://meta.icos-cp.eu/objects/LkvPVF13en5mqAdvbCmYL1xF | GAW paper data
+https://meta.icos-cp.eu/objects/iaerVQDSWtgDKnQKHnUueSdN | GAW paper key results
+https://meta.icos-cp.eu/objects/gK1KINixh7arRdkUDa8nbN2_ | GAW paper key results
+https://meta.icos-cp.eu/objects/wIrU4_bb2C74Al01I3d9WyzB | European Obspack compilation of atmospheric methane data from ICOS and non-ICOS European stations for the period 1984-2023; obspack_ch4_466_GLOBALVIEWplus_v8.0_2023-04-26
+https://meta.icos-cp.eu/collections/v3hFDthkGOxWCbzDePhzObJi | European Obspack compilation of atmospheric methane data from ICOS and non-ICOS European stations for the period 1984-2023; obspack_ch4_466_GLOBALVIEWplus_v8.0_2023-04-26
+https://meta.icos-cp.eu/objects/S-xEwOkeQGvwyRhKGs0oVut4 | European Obspack compilation of atmospheric carbon dioxide data from ICOS and non-ICOS European stations for the period 1972-2023; obspack_co2_466_GLOBALVIEWplus_v8.0_2023-04-26
+https://meta.icos-cp.eu/collections/dFf3IHIsnCHgUxruNR6OaeGF | European Obspack compilation of atmospheric carbon dioxide data from ICOS and non-ICOS European stations for the period 1972-2023; obspack_co2_466_GLOBALVIEWplus_v8.0_2023-04-26
+https://meta.icos-cp.eu/dcat/objects/OkN6nN5Xo6nkgCsAiTGPmuni | ICOSETC_CZ-BK1_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/0cFJUABzxJ2G1ZDQIumE0B48 | ICOSETC_CZ-Lnz_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/XwjjOtTdh19ZaK2dwBL96-n7 | ICOSETC_DE-BeR_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/EiTr3A-jyHuZ2KBz7S4LX6vJ | ICOSETC_DK-Sor_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/Y2euNkJW33Ufp37jnhg6CLi0 | ICOSETC_IT-Ren_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/gMRK0tAktrDK9-kHJJqWZ156 | ICOSETC_FR-Gri_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/2np8RK5ipvz5i990AZuPTJjP | ICOSETC_FR-Pue_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/F-G5vQgZoETBk51CAvxUjaKb | ICOSETC_SE-Sto_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/wjvno8_AXs-_4ubvBGS7Uz6L | ICOSETC_DE-Har_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/RqXJCin7S7YuLRqS9EdAqvYK | ICOSETC_DE-Msr_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/i7hYDPrAvDnSVQ1JkEcUeAOl | ICOSETC_IT-Niv_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/loEm6U1XKuPdXjGw-s7s4nZT | ICOSETC_GL-ZaH_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/UqdNjO2s2nrgYMkdtQ17D9y2 | ICOSETC_UK-AMo_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/qTnzLbkaWR39hA8ot-56l8b1 | ICOSETC_FR-Hes_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/1OrpltsqESk76IbTNMirbrIt | ICOSETC_CD-Ygb_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/dcat/objects/LusDXrC0yUCp14AIhi666TEb | ICOSETC_DE-RuW_ARCHIVE_L2.zip
+https://meta.icos-cp.eu/objects/VKlq15j3Ks10SOm7mngJgH-i | European Obspack compilation of atmospheric carbon dioxide data from ICOS and non-ICOS European stations for the period 1972-2023; obspack_co2_466_GLOBALVIEWplus_v9.0_2023-08-06
+https://meta.icos-cp.eu/collections/xr3M5dI5u1WpTTVA-CpJG9oS | European Obspack compilation of atmospheric carbon dioxide data from ICOS and non-ICOS European stations for the period 1972-2023; obspack_co2_466_GLOBALVIEWplus_v9.0_2023-08-06
+https://meta.icos-cp.eu/objects/DwxPNnCLPcfwiz666ZkKHlg3 | European Obspack compilation of atmospheric methane data from ICOS and non-ICOS European stations for the period 1984-2023; obspack_ch4_466_GLOBALVIEWplus_v9.0_2023-08-06
+https://meta.icos-cp.eu/objects/yz6v5BRkyGX_PjwUyNtAThdU | European Obspack compilation of atmospheric methane data from ICOS and non-ICOS European stations for the period 1984-2023; obspack_ch4_466_GLOBALVIEWplus_v9.0_2023-08-06
+https://meta.icos-cp.eu/objects/5-kp-zFm31bQs47leuuGCBTZ | European Obspack compilation of atmospheric carbon dioxide data from ICOS and non-ICOS European stations for the period 1972-2023; obspack_co2_466_GLOBALVIEWplus_v9.0_2023-08-08
+https://meta.icos-cp.eu/collections/jZmPQrzKUOMrsPNprO3eXQPo | European Obspack compilation of atmospheric carbon dioxide data from ICOS and non-ICOS European stations for the period 1972-2023; obspack_co2_466_GLOBALVIEWplus_v9.0_2023-08-08
+https://meta.icos-cp.eu/objects/aiJFhlOOh9puAR0fUXgyqdR3 | European Obspack compilation of atmospheric methane data from ICOS and non-ICOS European stations for the period 1984-2023; obspack_ch4_466_GLOBALVIEWplus_v9.0_2023-08-08
+https://meta.icos-cp.eu/collections/lUP0Xnygo1fJI6Rv4NW_QoGl | European Obspack compilation of atmospheric methane data from ICOS and non-ICOS European stations for the period 1984-2023; obspack_ch4_466_GLOBALVIEWplus_v9.0_2023-08-08
+https://meta.icos-cp.eu/collections/AkiCL83umMVLRNYc2Za3d7Qx | European Obspack compilation of atmospheric methane data from ICOS and non-ICOS European stations for the period 1984-2023; obspack_ch4_466_GLOBALVIEWplus_v9.0_2023-08-08
+https://meta.icos-cp.eu/objects/ZZwlNi4a8_AFsscsxp603t5t | European Obspack compilation of atmospheric carbon dioxide data from ICOS and non-ICOS European stations for the period 1972-2023; obspack_co2_466_GVeu_20230913
+https://meta.icos-cp.eu/collections/HtJjMgef4sR-xnbmSGHqQOEi | European Obspack compilation of atmospheric carbon dioxide data from ICOS and non-ICOS European stations for the period 1972-2023; obspack_co2_466_GVeu_20230913
+https://meta.icos-cp.eu/objects/dgKp8SHU0NIyBSxehyG6zHVu | European Obspack compilation of atmospheric methane data from ICOS and non-ICOS European stations for the period 1984-2023; obspack_ch4_466_GVeu_20230913
+https://meta.icos-cp.eu/objects/PMoylcEsDFJY7MeWhWgdlovt | Global N2O Budget 1980-2020: modelled gridded emission data
+https://meta.icos-cp.eu/objects/WrjjUbzpWxqE07Oz40euqt6l | European Obspack compilation of atmospheric methane data from ICOS and non-ICOS European stations for the period 1984-2024; obspack_ch4_466_GVeu_20240201
+https://meta.icos-cp.eu/objects/LvxGBy-fmhF4scPJznwN2LXd | European Obspack compilation of atmospheric carbon dioxide data from ICOS and non-ICOS European stations for the period 1972-2024; obspack_co2_466_GVeu_20240201
+https://meta.icos-cp.eu/objects/GBQpzyexn9uyTr29--LPvG6r | Supplemental data to Global Methane Budget 2024: 2000-2020
+https://meta.icos-cp.eu/objects/hpMHHXLTM-yhCWujxG2uTB84 | Supplemental data to Global Methane Budget 2024: 2000-2020
+https://meta.icos-cp.eu/objects/ngPlu-Q0dtDcDx2wMFTNOtnZ | MIRAMARE fixed station data collected as part of the ATL2MED demonstration experiment 2019-2020
+https://meta.icos-cp.eu/objects/an-PJSKTiEVHj3H0gA8ak3lG | PALOMA fixed station data collected as part of the ATL2MED demonstration experiment 2019-2020
+https://meta.icos-cp.eu/objects/Z9bGSnVObyglR0o8zcvmIXBz | W1M3A fixed station data collected as part of the ATL2MED demonstration experiment 2019-2020
+https://meta.icos-cp.eu/objects/mxGAeRL4UPrNdz08p7dBxVpR | Data from Saildrone 1030 during the ATL2MED demonstration experiment 2019-2020
