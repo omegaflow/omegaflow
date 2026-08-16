@@ -48,30 +48,76 @@ struct VOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f };
 }
 
 @group(0) @binding(0) var<uniform> deep_vp: VP;
+@group(0) @binding(1) var<storage, read> deep: array<vec4f>;
 
-struct DeepVOut { @builtin(position) pos: vec4f, @location(0) flux: f32 };
+struct DeepVOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f, @location(1) color: vec3f };
 
-@vertex fn deep_vs(@location(0) data: vec4f) -> DeepVOut {
+fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
+    let hp = fract(h) * 6.0;
+    let c = (1.0 - abs(2.0 * l - 1.0)) * s;
+    let x = c * (1.0 - abs(hp % 2.0 - 1.0));
+    let m = l - c * 0.5;
+    var rgb01: vec3f;
+    if (hp < 1.0) { rgb01 = vec3f(c, x, 0.0); }
+    else if (hp < 2.0) { rgb01 = vec3f(x, c, 0.0); }
+    else if (hp < 3.0) { rgb01 = vec3f(0.0, c, x); }
+    else if (hp < 4.0) { rgb01 = vec3f(0.0, x, c); }
+    else if (hp < 5.0) { rgb01 = vec3f(x, 0.0, c); }
+    else { rgb01 = vec3f(c, 0.0, x); }
+    return rgb01 + vec3f(m);
+}
+
+@vertex fn deep_vs(@builtin(vertex_index) i: u32) -> DeepVOut {
+    let count = u32(deep_vp.expose_lo.x);
+    var out: DeepVOut;
+    out.pos = vec4f(0.0, 0.0, 0.0, 1.0);
+    out.uv = vec2f(0.0);
+    out.color = vec3f(0.0);
+    if (count == 0u) { return out; }
+    let id = i / 6u;
+    if (id >= count) { return out; }
+    var quad = array<vec2f, 6>(
+        vec2f(-1.0, -1.0), vec2f(1.0, -1.0), vec2f(1.0, 1.0),
+        vec2f(-1.0, -1.0), vec2f(1.0, 1.0), vec2f(-1.0, 1.0)
+    );
+    let data = deep[id * 2u];
+    let props_in = deep[id * 2u + 1u];
     let w = deep_vp.surface.x;
     let h = deep_vp.surface.y;
     let scale = deep_vp.surface.w;
     let sx = dot(data.xyz, deep_vp.right.xyz) / (0.5 * w * scale);
     let sy = -dot(data.xyz, deep_vp.up.xyz) / (0.5 * h * scale);
-    var out: DeepVOut;
-    out.pos = vec4f(sx, sy, 0.0, 1.0);
-    out.flux = data.w;
+    let extent = props_in.x;
+    let tau = props_in.y;
+    let w_f = max(w, h);
+    let point_size_px = clamp(extent / scale, 0.5, w_f);
+    let corner = quad[i % 6u];
+    let clip = vec2f(
+        sx + (corner.x * point_size_px) / w * 2.0,
+        sy + (corner.y * point_size_px) / h * 2.0,
+    );
+    out.pos = vec4f(clip, 0.0, 1.0);
+    out.uv = corner;
+    let flux = data.w;
+    let lum = clamp(
+        (log2(abs(flux) + 1e-30) + 14.0 + deep_vp.expose_ex.x) / 22.0,
+        0.0,
+        1.0,
+    );
+    let hue = fract(log2(max(tau, 1.0)) / 16.0 + props_in.z);
+    out.color = hsl_to_rgb(hue, 0.35, 0.15 + lum * 0.85);
     return out;
 }
 
 @fragment fn deep_fs(in: DeepVOut) -> @location(0) vec4f {
-    let aflux = abs(in.flux);
-    if (aflux < 1e-30) { discard; }
-    let t2 = clamp((log2(aflux) + 14.0 + deep_vp.expose_ex.x) / 22.0, 0.0, 1.0);
-    let c = mix(vec3f(0.0, 0.02, 0.1), vec3f(0.0, 0.3, 0.8), clamp(t2 * 4.0, 0.0, 1.0));
-    let c2 = mix(c, vec3f(0.2, 0.8, 1.0), clamp((t2 - 0.25) * 4.0, 0.0, 1.0));
-    let c3 = mix(c2, vec3f(1.0, 0.7, 0.1), clamp((t2 - 0.5) * 4.0, 0.0, 1.0));
-    let c4 = mix(c3, vec3f(1.0, 1.0, 1.0), clamp((t2 - 0.75) * 4.0, 0.0, 1.0));
-    return vec4f(c4, 1.0);
+    let dist = length(in.uv);
+    if (dist > 1.0) { discard; }
+    let intensity = 1.0 - dist * dist;
+    let noise = fract(sin(dot(in.pos.xy, vec2f(12.9898, 78.233))) * 43758.5453);
+    let analog_intensity = intensity * (0.9 + noise * 0.1);
+    let hdr_color = in.color * analog_intensity;
+    let mapped_color = log2(hdr_color * 4.0 + vec3f(1.0)) / 8.0;
+    return vec4f(clamp(mapped_color, vec3f(0.0), vec3f(1.0)), 1.0);
 }
 
 fn erfc(x: f32) -> f32 {
@@ -1936,7 +1982,7 @@ mod archivar {
         t2: f64,
         pad: f64,
         delta_t_cache: f64,
-        out: &mut Vec<[f64; 4]>,
+        out: &mut Vec<[f64; 5]>,
     ) {
         let Some(sh) = &buf.stars else {
             return;
@@ -1944,7 +1990,7 @@ mod archivar {
         let mut records: Vec<OscRecord> = Vec::new();
         query_star_hash(sh, center, t2, pad, delta_t_cache, &mut records);
         for r in records {
-            out.push([r.0, r.1, r.2, r.3]);
+            out.push([r.0, r.1, r.2, r.3, sh.ttl]);
         }
     }
 
@@ -11703,13 +11749,17 @@ mod mathematikerin {
         }
     }
 
-    pub fn pack_deep(stars: &[[f64; 4]], presence: [f64; 3]) -> Vec<f32> {
-        let mut out = Vec::with_capacity(stars.len() * 4);
+    pub fn pack_deep(stars: &[[f64; 5]], presence: [f64; 3]) -> Vec<f32> {
+        let mut out = Vec::with_capacity(stars.len() * 8);
         for s in stars {
             out.push((s[0] - presence[0]) as f32);
             out.push((s[1] - presence[1]) as f32);
             out.push((s[2] - presence[2]) as f32);
             out.push(s[3] as f32);
+            out.push(0.0);
+            out.push(s[4] as f32);
+            out.push(0.0);
+            out.push(0.0);
         }
         out
     }
@@ -11744,7 +11794,7 @@ mod mathematikerin {
                 let eph = field.eph.clone();
                 sense_membrane(&field, center, t, pad, cache_interval, &mut records, &eph);
                 let packed = pack_window(&records, center);
-                let mut deep: Vec<[f64; 4]> = Vec::new();
+                let mut deep: Vec<[f64; 5]> = Vec::new();
                 sense_deep(&field, center, t, pad, cache_interval, &mut deep);
                 let packed_deep = pack_deep(&deep, center);
                 if res_tx.send((packed, packed_deep, t)).is_err() {
@@ -11935,6 +11985,7 @@ mod mathematikerin {
         deep_cap: u32,
         deep_pipe: Option<wgpu::RenderPipeline>,
         deep_bind: Option<wgpu::BindGroup>,
+        deep_layout: Option<wgpu::BindGroupLayout>,
 
         p: [f64; 3],
         v: [f64; 3],
@@ -12013,6 +12064,7 @@ mod mathematikerin {
                 deep_cap: 0,
                 deep_pipe: None,
                 deep_bind: None,
+                deep_layout: None,
                 p: [0.0, 0.0, 0.0],
                 v: [0.0, 0.0, 0.0],
                 t0: 0.0,
@@ -12206,7 +12258,7 @@ mod mathematikerin {
                 0.0,
                 0.0,
                 0.0,
-                0.0,
+                self.deep_count as f32,
                 0.0,
                 0.0,
                 0.0,
@@ -12364,9 +12416,39 @@ mod mathematikerin {
             self.deep_cap = c;
             self.deep_vbuf = Some(device.create_buffer(&wgpu::BufferDescriptor {
                 label: None,
-                size: c as u64 * 16,
-                usage: wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST,
+                size: c as u64 * 32,
+                usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
                 mapped_at_creation: false,
+            }));
+            self.rebuild_deep_bind();
+        }
+
+        fn rebuild_deep_bind(&mut self) {
+            let Some(device) = self.device.clone() else {
+                return;
+            };
+            let Some(deep_layout) = self.deep_layout.clone() else {
+                return;
+            };
+            let Some(vp_buf) = self.vp_buf.clone() else {
+                return;
+            };
+            let Some(deep_vbuf) = self.deep_vbuf.clone() else {
+                return;
+            };
+            self.deep_bind = Some(device.create_bind_group(&wgpu::BindGroupDescriptor {
+                label: None,
+                layout: &deep_layout,
+                entries: &[
+                    wgpu::BindGroupEntry {
+                        binding: 0,
+                        resource: vp_buf.as_entire_binding(),
+                    },
+                    wgpu::BindGroupEntry {
+                        binding: 1,
+                        resource: deep_vbuf.as_entire_binding(),
+                    },
+                ],
             }));
         }
 
@@ -12449,16 +12531,12 @@ mod mathematikerin {
                     pass.set_bind_group(0, bind, &[]);
                     pass.draw(0..6, 0..1);
                 }
-                if let (Some(pipe), Some(bind), Some(vbuf)) = (
-                    self.deep_pipe.as_ref(),
-                    self.deep_bind.as_ref(),
-                    self.deep_vbuf.as_ref(),
-                ) {
+                if let (Some(pipe), Some(bind)) = (self.deep_pipe.as_ref(), self.deep_bind.as_ref())
+                {
                     if self.deep_count > 0 {
                         pass.set_pipeline(pipe);
                         pass.set_bind_group(0, bind, &[]);
-                        pass.set_vertex_buffer(0, vbuf.slice(..));
-                        pass.draw(0..self.deep_count, 0..1);
+                        pass.draw(0..self.deep_count * 6, 0..1);
                     }
                 }
             }
@@ -12661,22 +12739,34 @@ mod mathematikerin {
                 compilation_options: Default::default(),
                 cache: None,
             });
-            let star_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+            let deep_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
                 label: None,
-                entries: &[wgpu::BindGroupLayoutEntry {
-                    binding: 0,
-                    visibility: wgpu::ShaderStages::VERTEX_FRAGMENT,
-                    ty: wgpu::BindingType::Buffer {
-                        ty: wgpu::BufferBindingType::Uniform,
-                        has_dynamic_offset: false,
-                        min_binding_size: None,
+                entries: &[
+                    wgpu::BindGroupLayoutEntry {
+                        binding: 0,
+                        visibility: wgpu::ShaderStages::VERTEX_FRAGMENT,
+                        ty: wgpu::BindingType::Buffer {
+                            ty: wgpu::BufferBindingType::Uniform,
+                            has_dynamic_offset: false,
+                            min_binding_size: None,
+                        },
+                        count: None,
                     },
-                    count: None,
-                }],
+                    wgpu::BindGroupLayoutEntry {
+                        binding: 1,
+                        visibility: wgpu::ShaderStages::VERTEX,
+                        ty: wgpu::BindingType::Buffer {
+                            ty: wgpu::BufferBindingType::Storage { read_only: true },
+                            has_dynamic_offset: false,
+                            min_binding_size: None,
+                        },
+                        count: None,
+                    },
+                ],
             });
             let deep_pipe_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
                 label: None,
-                bind_group_layouts: &[&star_layout],
+                bind_group_layouts: &[&deep_layout],
                 push_constant_ranges: &[],
             });
             let deep_pipe = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
@@ -12686,15 +12776,7 @@ mod mathematikerin {
                     module: &module,
                     entry_point: Some("deep_vs"),
                     compilation_options: Default::default(),
-                    buffers: &[wgpu::VertexBufferLayout {
-                        array_stride: 16,
-                        step_mode: wgpu::VertexStepMode::Vertex,
-                        attributes: &[wgpu::VertexAttribute {
-                            format: wgpu::VertexFormat::Float32x4,
-                            offset: 0,
-                            shader_location: 0,
-                        }],
-                    }],
+                    buffers: &[],
                 },
                 fragment: Some(wgpu::FragmentState {
                     module: &module,
@@ -12718,7 +12800,7 @@ mod mathematikerin {
                     })],
                 }),
                 primitive: wgpu::PrimitiveState {
-                    topology: wgpu::PrimitiveTopology::PointList,
+                    topology: wgpu::PrimitiveTopology::TriangleList,
                     ..Default::default()
                 },
                 depth_stencil: None,
@@ -12744,14 +12826,7 @@ mod mathematikerin {
                 usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
                 mapped_at_creation: false,
             });
-            let deep_bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
-                label: None,
-                layout: &star_layout,
-                entries: &[wgpu::BindGroupEntry {
-                    binding: 0,
-                    resource: vp_buf.as_entire_binding(),
-                }],
-            });
+            self.deep_layout = Some(deep_layout);
             self.window = Some(window);
             self.surface = Some(surface);
             self.config = Some(config);
@@ -12762,7 +12837,6 @@ mod mathematikerin {
             self.probe_layout = Some(probe_layout);
             self.render_layout = Some(render_layout);
             self.deep_pipe = Some(deep_pipe);
-            self.deep_bind = Some(deep_bind);
             self.vp_buf = Some(vp_buf);
             self.probe_buf = Some(probe_buf);
             self.probe_read = Some(probe_read);
@@ -12850,7 +12924,7 @@ mod mathematikerin {
                 self.packed_dirty = true;
                 self.last_response_epoch = t;
                 self.packed_deep = stars;
-                self.deep_count = (self.packed_deep.len() / 4) as u32;
+                self.deep_count = (self.packed_deep.len() / 8) as u32;
                 self.deep_dirty = true;
             }
             self.consider_resend();
@@ -13110,20 +13184,25 @@ mod mathematikerin {
         #[test]
         fn pack_deep_presence_relative() {
             let presence = [1.0e3, 2.0e3, 3.0e3];
-            let stars: [[f64; 4]; 2] = [
-                [6001.0, 7002.0, 8003.0, 42.5],
-                [-999.0, 4002.0, 1003.0, -7.25],
+            let deep: [[f64; 5]; 2] = [
+                [6001.0, 7002.0, 8003.0, 42.5, 2.72e10],
+                [-999.0, 4002.0, 1003.0, -7.25, 86400.0],
             ];
-            let packed = pack_deep(&stars, presence);
-            assert_eq!(packed.len(), 8);
+            let packed = pack_deep(&deep, presence);
+            assert_eq!(packed.len(), 16);
             assert_eq!(packed[0], 5001.0);
             assert_eq!(packed[1], 5002.0);
             assert_eq!(packed[2], 5003.0);
             assert_eq!(packed[3], 42.5);
-            assert_eq!(packed[4], -1999.0);
-            assert_eq!(packed[5], 2002.0);
-            assert_eq!(packed[6], -1997.0);
-            assert_eq!(packed[7], -7.25);
+            assert_eq!(packed[4], 0.0);
+            assert_eq!(packed[5], 2.72e10);
+            assert_eq!(packed[6], 0.0);
+            assert_eq!(packed[7], 0.0);
+            assert_eq!(packed[8], -1999.0);
+            assert_eq!(packed[9], 2002.0);
+            assert_eq!(packed[10], -1997.0);
+            assert_eq!(packed[11], -7.25);
+            assert_eq!(packed[13], 86400.0);
         }
     }
 }

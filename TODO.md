@@ -90,37 +90,36 @@ Offen:
 ### wgpu-mono — Deep-Sky-Plenum (zwei Regime, eine Wahrheit)
 
 ```
-GESCHLOSSEN (2026-08-16, erster Atom): Der Deep-Space-Pfad ist getrennt und
-geplottet — nicht „Sterne", sondern die tiefe Punktwolke (jedes Deep-Space-
-Objekt trägt seine eigenen Eigenschaften). sense_membrane
-(Körper+Inertial+Asteroiden) und sense_deep (Fixsterne aus dem StarHash,
-exakte ICRS-Position + Fluss) laufen getrennt; sense_buffer bleibt
-unverändert fürs Relay (v6-Vertrag). pack_deep: (x−presence, y−presence,
-z−presence, flux) als f32 vec4 je Objekt. Der Deep-Render ist ein
-Punkt-Render-Pass (PointList, 1 Thread = 1 Objekt, 1 Pixel): deep_vs
-projiziert dot(rel, right/up)/(0.5·w/h·scale) auf NDC (y negiert —
-Membran-Konvention), deep_fs wendet DIESELBE Nebra-Rampe auf |flux| an —
-das Plotten ist die Membran-Messung am Ort des Objekts, kein anderes
-Gesetz; |flux| < 1e-30 → discard (0 honored). HUD zeigt deep-Zahl.
-Rotverschiebung-Befund: der Code-Pfad lebt vollständig (z_key →
-z·c/H₀ in Extract::CelestialMap, main.rs ~6803, mit plx→z→dist-Kette) —
-entfernt wurden nur die QUELLEN: die 174 universe_/astro_-Blöcke verließen
-sources.φ im „rebuild from live-verified data only" (c648462); sie kehren
-über den einen Pfad (SOURCE_PORT) oder die CDN-Kataloge zurück.
+GESCHLOSSEN (2026-08-16, zweiter Atom): Der alte Deepspace-Renderer ist
+zurück — die Archäologie fand drei Wege vor der Protokoll-Umstellung
+(1-px-Punkte → ausdehnungs-skalierte Punkte mit Deckeln 64px/20%-Viewport
+→ ungedeckelte Quads mit radialer Falloff), die v5-Membran hatte Deepspace
+und Nahfeld vermischt. Jetzt: pro Objekt ein Quad (6 Vertices aus dem
+Storage-Buffer, kein Vertex-Buffer), point_size_px = clamp(extent/scale,
+0,5, w_f) — die wahre Winkelgröße, obere Grenze = Viewport (Physik);
+deep_fs: kreisförmiger Fußabdruck (|uv|>1 → discard), radiale Falloff
+1−dist², Analog-Korn; Farbton aus den Eigenschaften (fract(log2(τ)/16) +
+Hue-Offset-Slot), Helligkeit = die heutige Nebra-Rampe auf |flux|. Der
+Deep-Buffer trägt jetzt ZWEI vec4 je Objekt: (x_rel, y_rel, z_rel, flux) +
+(extent, τ, hue_offset, 0) — der Träger ALLER Deepspace-Eigenschaften;
+extent aus den Daten → Quellen mit scheinbarer Ausdehnung (Nebel,
+Magellansche Wolken) bekommen ihre wahre Winkelgröße automatisch. Die
+Deep-Zahl reist in vp.expose_lo.x. sense_deep liefert (pos, flux, τ);
+Sterne: extent 0 (Punkt), τ = hash.ttl, hue_offset 0. Golden-Test auf
+8-Float-Records grün.
 ```
 Offen:
-- Deep-Space-Oszillatoren (Quasare, Schwarze Löcher, ALFALFA, TeVCat, TNS)
-  in den Plot-Pfad führen: die z-Eigenschaft reist heute nicht mit — sie
-  wird zur Distanz verrechnet und verworfen. Der Deep-Puffer bekommt eine
-  zweite vec4 (Eigenschaften: z, scheinbare Größe, Farbindex) — die
-  Extraktion muss z als Eigenschaft bis in den Plot tragen
-- Quellen mit scheinbarer Ausdehnung (Magellansche Wolken, nahe Nebel):
-  projiziertes Splat-Quad ihrer gemessenen Form
+- Deep-Oszillatoren (Quasare, Schwarze Löcher, ALFALFA, TeVCat, TNS) in
+  den Pfad führen: z reist als Eigenschaft (Props-vec4, Slot frei) —
+  die Extraktion verrechnet z heute zur Distanz und verwirft es
 - Farbe der Sterne: der Katalog trägt ra/dec/pm/plx/flux — keine Farbspalte;
-  falls eine im Binärkatalog existiert, Temperatur→Farbe ableiten
+  falls eine im Binärkatalog existiert, Temperatur→Hue ableiten
 - Sternenhintergrund (integrierter Glow der 1/d²-Schwänze, Milchstraße):
   einmalige tiefaufgelöste Integration, glattes Feld
-- Galaxien-Zoom-Verifikation beim Operator ausstehend (deep-Zahl im HUD)
+- Relativistische Aberration (dopp, Q01) des alten Renderers ist mit der
+  Membran-Rewrite gegangen — für den Deep-Pfad als eigener Atom prüfen
+- Galaxien-Zoom-Verifikation beim Operator ausstehend (deep-Zahl im HUD;
+  bei grid 2^39 noch 0 — Proxima bei 4,2 ly ≈ 2^45,5)
 
 ---
 
