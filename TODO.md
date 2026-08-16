@@ -6,7 +6,7 @@ wird entfernt (Git trägt es). Kein Eintrag meldet Erledigtes als offen, kein of
 Punkt fehlt. Widerspricht ein Dokument dieser Datei, gilt diese Datei — solche
 Drift-Stellen sind unter „Doku-Drift" registriert.
 
-## Stand — 2026-08-15 (Katalog-Welle: K03-Kometen inkl. dcom5-Multi-Apparitionen, K04b Gaia-DR3+Bailer-Jones 1,84 Mio Sterne, Exoplanet-Bulk 6309, tap_compiler über TAPVizieR/GAVO/ARI/IRSA/ExoArchive, Enrichment-Matrix; LSK/PCK-Hochzeit, Binary v2, Protokoll v6, reine Per-Pixel-Membran, K01 geschlossen, K05 geschlossen; wgpu-mono: native Mathematikerin als Radiator, Messstation nach mod relay extrahiert)
+## Stand — 2026-08-16 (Katalog-Welle: K03-Kometen inkl. dcom5-Multi-Apparitionen, K04b Gaia-DR3+Bailer-Jones 1,84 Mio Sterne, Exoplanet-Bulk 6309, tap_compiler über TAPVizieR/GAVO/ARI/IRSA/ExoArchive, Enrichment-Matrix; LSK/PCK-Hochzeit, Binary v2, Protokoll v6, reine Per-Pixel-Membran, K01 geschlossen, K05 geschlossen; wgpu-mono-Titan: EINE Datei, Kreis an der Wurzel, archivar/mathematikerin/relay als Inline-Geschwister)
 
 Zeit aus naif0012.tls (LSK-Reader, keine TT_MINUS_UTC-Konstante). PCK-Reader pck.rs
 (gm_de440, pck00010, geophysical.ker → GM/J2/J4/Radii/POLE). stype-1 v2: gcount=12,
@@ -42,51 +42,48 @@ moon_de440*.tf, Probe 0,009°/0,018°/0,077° gegen IAU-Vollmodell).
 (absent bis der Flattener-CI-Lauf die CDN-Assets trägt — ausstehend). P01 geschlossen (tote force-Direktive und 3-Token-field lehnt parse_sources laut ab).
 0 Warnings, 0 Errors; Tests: 41 lib + 36 bin (1 vorbestehender FAIL:
 test_parse_stations_xml, „aae" vs „AAE" — BGS-lowercase gegen Fixture-Assertion,
-parse_stations_xml in diesem Zug unberührt).
+parse_stations_xml in diesem Zug unberührt; Golden-Test grün).
 
 ---
 
-### wgpu-mono — nativer Monolith
+### wgpu-mono — Titan: eine Datei
 
 ```
-GESCHLOSSEN (2026-08-15): Cargo-Features gpu (default, wgpu 24 + winit 0.30 +
-pollster) und browser_relay (TCP/WS-Relay auf 1618). src/relay.rs trägt den
-verbatim verschobenen Messstations-Block (TcpRadiator, WsConfig, WsFrame,
-handle_ingress inkl. HTTP-Routen + WS-Ingress + 168-B-v6-Serialisierung,
-read/write_ws_*, sha1/base64, emit, PORT_CONST); src/mathematikerin.rs trägt
-die MathematikerinRadiator (winit-Loop im eigenen Thread, 2 Pipelines
-Render+Compute-Probe, VP-Uniform 128 B, field/meta-Storage mit Kapazitäts-
-Wachstum, Backpressure via on_submitted_work_done), den in-process-Packer
-(field 12/meta 12 f32 aus dem 21-f64-Record, x_rel = x − presence, val roh —
-WGSL foldet) und den Golden-Test gegen die verifizierte Tabelle
-(tm.z=force, tm.w=absorption, mt.x=extent, mt.z=kernel, mp.w=j2, mg.x=j4,
-mg.y=r_eq). Navigation 1:1 zum Browser: Pfeile = Pan (Shift ×4), PageUp/Down,
-s = Halt, b = Orient-Reset, Drag links = Orient (GRID_TO_ANGLE 2^62), Drag
-rechts = Pan, Rad = ÷2^(dy/128), +/- = ×4/÷4, q/Q = SSAA ×/÷ Φ (1.0–8.0),
-,/. = Zeit-Thrust tThrustTarget ∓64 (tPresence += (1+tThrust)·dt,
-exponentielle Relaxation wie im Browser), e/E = Exposure ±2¹ als
-vp.expose_ex.x-Rampen-Offset, 1–9 = Sprung auf die Baryzentrum-Position der
-Körper 1–9 (body_names-Ordnung = BODY_REGISTRY-Ordnung, grid 2^28). Presence
-→ presence_tx ab gridStep-Schwelle (range = max(w,h)·sf·grid·2), in-process
-sense_buffer pro Feld-Update + bei Fensterbewegung (pad = volle Diagonale =
-Browser-Extent, cache_interval = clamp(gridStep/30000, Φ, Φ·10)).
-WGSL-Fix mg.y: rd = mg.y (r_eq aus meta[9]) statt mg.z (meta[10] = 0) — der
-J2/J4-Zonal-Term erhält die echten Äquatorialradien, in membrane.wgsl UND
-static/index.html (Messstation-Parität). Nackter Build (--no-default-features
-ohne Feature) wird via compile_error refused (keine Wahrnehmungsfläche — kein
-gpu, kein browser_relay); CI/Compiler bauen mit --no-default-features
---features browser_relay (std-only, kein wgpu) — CI-Workflows beim Merge
-entsprechend anpassen.
+GESCHLOSSEN (2026-08-16): Der Monolith ist EINE Datei: src/main.rs. Die
+Crate-Wurzel ist der Kreis: geteiltes Vokabular (trait Radiator, Buffer,
+Oscillator, OscillatorSource, Motion + impl, SpatialHash, CellKey, Frame,
+Position, Channel, FieldConfig, Extract, BrowserSensor, SourceConfig,
+BodyEphemeris/Properties, AsteroidHash, StarHash/StarRec, LeapSeconds,
+CHEBYSHEV_N, Φ) + MEMBRANE_WGSL als Raw-String-const ganz oben. Drei
+gleichberechtigte Stimmen als Inline-Module: mod archivar (std-only nackt:
+Quellen, Fetch, LSK/PCK, Ephemeriden, build_buffer, sense-Oberfläche,
+ω-Loop main_flow, AudioRadiator, StderrRadiator, Tests), mod mathematikerin
+(wgpu nackt: winit-Loop, Fullscreen borderless, 2 Pipelines, VP-Uniform,
+Packer + Golden-Test, Navigation 1:1, recordSample-Engine: Maus/Rad/Tasten
+als Oszillatoren → sensor_tx, stderr-HUD 1 Hz mit t/Ω (Probe-Readback
+map_async)/FPS/SSAA/grid/x y z), mod relay (#[cfg(feature = "browser_relay")]
+WS-Server 1618 — das einzige optionale Kleid). fn main() ruft
+archivar::main_flow(). Dependencies hart: wgpu 24, winit 0.30, pollster 0.4,
+serialport 4 OHNE default-features (termios, kein libudev — kein
+Build-Zeit-Systempaket, keine udev-Library in der Exe). Serial-Ingress im
+Archivar: /dev-Scan via std::fs::read_dir (ttyACM*/ttyUSB*), 115200 8N1,
+Zeilen key=value → Oszillatoren in sensor_tx (unbekannte Schlüssel: 0
+honored, Force-Gate); Presence-Schlüssel lat/lon/alt/body/spd/hdg wie im
+Browser. ω-Loop ankert native Sensoren an der Geräte-Präsenz
+(Position::StateVector an der device-Presence, tau aus frame_interval).
+scalar_of liest JsonVal::Bool als 1/0. Gates: default 0/0,
+browser_relay 0/0, 41 lib-Tests, Golden-Test grün.
 ```
 Offen:
-- Gamepad-Atom (gilrs oder rohes /dev/input; Kern-Navigation
-  Tasten/Drag/Rad/q/Q/,/. trägt allein)
+- Fenster-Verifikation beim Operator ausstehend: Vollbild schwarz (0
+  honored) → Sonne zentriert (Presence 0,0,0), Drag instant, ,/. Zeit-Thrust,
+  e/E Exposure, 1–9 Sprünge; Risiko Vulkan/GL auf Intel HD 515
+- In-Fenster-HUD (Bitmap-Overlay) als Folge-Atom; stderr-HUD trägt vorerst
+- Gamepad-Atom (serielle Ingress-Vokabel deckt ESP32; HID-Gamepad offen)
 - test_parse_stations_xml: Fixture-Assertion „AAE" vs BGS-lowercase „aae" —
-  vorbestehend auf main, nicht von diesem Zug berührt
-- Fenster-Verifikation beim Operator ausstehend: schwarz (0 honored) →
-  Sonne rendert, Drag instant, e/E, 1–9; Risiko Vulkan/GL auf Intel HD 515
-- test_backlog_batches_verify + test_live_sources_extract laufen >60 s
-  (Suite ~855 s)
+  vorbestehend auf main, von diesem Zug unberührt
+- CI: Compiler-Builds zahlen den wgpu-Compile mit (harte Dependency);
+  kein libudev-dev nötig (serialport ohne default-features)
 
 ---
 

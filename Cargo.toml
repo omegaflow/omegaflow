@@ -10,11 +10,10 @@ homepage = "https://omegaflow.space"
 default-run = "omegaflow"
 
 [features]
-default = ["gpu"]
-gpu = ["dep:wgpu", "dep:winit", "dep:pollster"]
 browser_relay = []
 
 [dependencies]
-wgpu = { version = "24", optional = true }
-winit = { version = "0.30", optional = true }
-pollster = { version = "0.4", optional = true }
+wgpu = "24"
+winit = "0.30"
+pollster = "0.4"
+serialport = { version = "4", default-features = false }
