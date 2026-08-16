@@ -1,0 +1,38 @@
+# b2find Provider-Map — Organisationen der Wissenschafts-Tags (climate/geophysics/oceanography/seismology/observation/interdisciplinary/nuclear), live 2026-08-16
+# format: <count> <organisation> — die Kataloge, die hinter dem ungenutzten b2find-Bestand stehen
+    707 LTER
+    321 PANGAEA
+     56 INRAE
+     34 CESSDA
+     22 GFZ Data Services
+     15 IGETS - International Geodynamics and Earth Tide Service
+     13 TU Wien
+     11 SEANOE
+     10 WDCC
+     10 ISIS Neutron and Muon Source
+     10 FID GEO
+      7 WSM - World Stress Map
+      7 RADAR
+      6 EUDAT
+      3 GIPP - Geophysical Instrument Pool Potsdam 
+      3 DataverseNO
+      2 UHH-RDR
+      2 PIK - Potsdam Institute for Climate Impact Research
+      2 ICGEM - International Centre for Global Earth Models
+      2 heiDATA
+      2 FMI
+      2 DataverseNL
+      2 DANS Data Station Archaeology
+      2 CORA.RDR
+      1 UCL
+      1 Sextant
+      1 SDDB - Scientific Drilling Database
+      1 EDMOND
+      1 DANS Data Station Physical and Technical Sciences
+      1 DANS Data Station Life Sciences
+
+# Bekannte Katalog-Endpoints (verifiziert 2026-08-16):
+#   PANGAEA:  https://ws.pangaea.de/oai/provider (OAI-PMH, ~430k Datasets)
+#   GFZ ICGEM: icgem.gfz-potsdam.de (302 → Endpoint neu entdecken)
+#   SEANOE:    www.seanoe.org (OAI-Endpoint neu entdecken)
+#   LTER:      lter-europe.net (302 → Endpoint neu entdecken)
