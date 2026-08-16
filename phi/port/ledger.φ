@@ -158,6 +158,14 @@ ausstehend
 bestand phi/katalog/pangaea_catalog.φ
 note PANGAEA-OAI (ws.pangaea.de/oai/provider, ~430k Datasets) — Stichprobe 3.000 Collection-Datasets geerntet (DOI+titel). Voll-Harvest als CI-Aufgabe; Daten-Zugriff: Collection-Seite → Member → .tab (format=textfile gibt 400 für Collections) — pangaea_compiler-Muster analog tap_compiler nötig
 
+ausstehend
+bestand phi/katalog/_adapter_queue
+note FEHLENDE ADAPTER (Zugriffsmuster, verifizierte Endpoints): sparql_harvester (ICOS meta.icos-cp.eu/sparql), erddap_harvester (BCO-DMO erddap.bco-dmo.org, NOAA/PMEL), stac_harvester (Planetary Computer, Copernicus Data Space, NASA Earthdata), csw_harvester (SeaDataNet/EMODnet, INSPIRE, GEOSS), xml_harvester (re3data >3000 Repositorien, MGDS marine-geo.org). INSTANZEN (kein neuer Adapter, nur --root/--fields): TAP (ESO, CADC, MAST, SDSS, Chandra, EPN-TAP), Dataverse (Harvard 100k+, Borealis, UNC), OAI (arXiv, Dryad, institutionelle DSpace). BEWUSST NICHT (Sensor-Regel/Force-Gate): GBIF/OBIS/iNaturalist → presence-catalog decline; DKRZ/CMIP6/ERA5 → model-forecast decline
+
+ausstehend
+bestand phi/katalog/cmr_catalog.φ
+note NASA-CMR komplett (54.944 Earthdata-Collections) via rest_harvester (jpath feed.entry) — der größte Live-Erdbeobachtungs-Bestand; als Probe-Kandidaten in die Queue gießen
+
 verifiziert
 bestand phi/port/batches/
 note CI-Probe-Sweep 2026-08-15 (Run 31898215331, 11m10s): 4.485 Blöcke geladen, 120 Survivors, 4.365 Voids — Review abgeschlossen: 2 Einbauten (GeoNet-NZ-Quake, PIREP), 68 Dispositionen in dead_sources.φ (53 variant, 22+19 model-forecast, 2 catalog, 2 no-physical, 1 counts), 2 park (coral, waqi)
