@@ -46,6 +46,47 @@ parse_stations_xml in diesem Zug unberührt; Golden-Test grün).
 
 ---
 
+### wgpu-mono — Titan: AudioRadiator-Entkopplung (die letzte Lüge getilgt)
+
+```
+GESCHLOSSEN (2026-08-16): AudioRadiator hatte den Milliarden-Schleifen-Bug:
+dur = tau·44100 als u32, synchron im ω-Loop — für tau = 86400 sind das
+3,8e9 sin()+exp()+push pro Oszillator pro Tick; der 1-Hz-Takt kollabierte.
+Fix: reine Funktion note_samples(val, tau, kernel, force, sr) mit
+dur = min(tau·16, 1.0)·sr — 16 = 2⁴ Zeitkonstanten (exp(−16) ≈ 1,1e-7,
+f32-Floor) und 1,0 s = die Kadenz; Hüllkurve exp(−t/(tau·sr)) mit
+UNGEDECKELTEM tau (die Flanke trägt immer die wahre Ordnung — ein
+2-s-Deckel hätte einen fabrizierten Zeitkoeffizienten eingeführt).
+tau-Semantik: 0/negativ → Stille (0 honored, kein Klick), NaN → übersprungen,
+∞ → gehaltener 1-s-Ton (flache Flanke — unendliche Ausdehnung zerfällt nie),
+0,016 → 0,256-s-Note. Entkopplung nach Mathematikerin-Muster: eigener Thread,
+sync_channel(1), accept() = try_send + is_terminal-Tor, recv_timeout +
+Shutdown-Flag, write_all-Fehler beendet den Thread (tote Leitung = Stille).
+Golden-Test-Matrix {0, −1, NaN, 0,016, 86400, ∞} + exakte exp(−t/tau)-Prüfung
+grün. Kadenz-Regression bestanden: Statuszeile wieder ~1 Hz (10 Zeilen/65 s
+statt 2/50 s). Die Variante in Downloads/main.rs (AUDIO_MAX_NOTE_SECONDS=2.0,
+Hüllkurve an den Deckel gebunden, 5-Zeilen-Kommentar) wurde verworfen —
+willkürliche Konstante, Kommentar, verfälschte Flanke.
+GPU-Neumessung gepipt nach dem Fix: unverändert ~200 ms bei 133 Oszillator-
+Messungen — die Thermal-Kopplungsthese ist falsifiziert; die Membran ist
+shader-gebunden (~1,5 ms je Oszillator-Messung über 3 Mio Punkte auf der
+HD 520). Die Tile-Haut (a092f01, zurückgedreht) bleibt der nächste Hebel —
+dann mit Rgba8Unorm und intel_gpu_top.
+```
+Offen:
+- Phasen-Invariante der Audio-Noten dokumentieren: sr = 44100, ganzzahlige
+  Frequenzen (220 + 110·kernel + 55·force), 1-s-Noten → glatter Nulldurchgang
+  am Tick-Ende; bei sr-/Frequenzwechsel bricht sie
+- TcpRadiator trägt send/unbeschränkt statt try_send/sync_channel(1) —
+  Vertragsheilung (Gremium/Mycelium)
+- clamp(0,1) richtet negative Messwerte gleich (alter Fleck, Sensory)
+- Merge mit main (Downloads/main.rs = main-HEAD + AudioRadiator-Patch,
+  verworfen) später entscheiden
+- test_parse_stations_xml: Fixture-Assertion „AAE" vs BGS-lowercase „aae" —
+  vorbestehend auf main, von diesem Zug unberührt
+
+---
+
 ### wgpu-mono — Titan: eine Datei
 
 ```

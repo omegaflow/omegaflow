@@ -583,6 +583,7 @@ mod archivar {
     use omegaflow::pck::PckBody;
     use std::io::{IsTerminal, Write};
     use std::process::Command;
+    use std::sync::atomic::{AtomicBool, Ordering};
     use std::sync::{mpsc, Mutex};
     use std::thread;
     use std::time::{SystemTime, UNIX_EPOCH};
@@ -3392,14 +3393,98 @@ mod archivar {
     }
 
     const AUDIO_SAMPLE_RATE: u32 = 44100;
+    const AUDIO_DECAY_TIME_CONSTANTS: f32 = 16.0;
+
+    fn note_samples(
+        val: f32,
+        tau: f64,
+        kernel_id: f64,
+        force_type: f64,
+        sample_rate: u32,
+    ) -> Vec<f32> {
+        if !(tau > 0.0) {
+            return Vec::new();
+        }
+        let amp = val.clamp(0.0, 1.0);
+        let dur = ((tau as f32 * AUDIO_DECAY_TIME_CONSTANTS).min(1.0) * sample_rate as f32) as u32;
+        if dur == 0 {
+            return Vec::new();
+        }
+        let freq = SONIFICATION_ROOT_FREQ
+            + kernel_id as f32 * SONIFICATION_KERNEL_STEP
+            + force_type as f32 * SONIFICATION_FORCE_STEP;
+        let tau_samples = tau as f32 * sample_rate as f32;
+        let mut samples = Vec::with_capacity(dur as usize);
+        for t in 0..dur {
+            let phase = 2.0 * std::f32::consts::PI * freq * t as f32 / sample_rate as f32;
+            let decay = (-(t as f32) / tau_samples).exp();
+            samples.push(amp * phase.sin() * decay);
+        }
+        samples
+    }
+
+    fn render_field(field: &Buffer, sample_rate: u32) -> Vec<u8> {
+        let mut samples: Vec<f32> = Vec::new();
+        for hash in field
+            .bodies
+            .values()
+            .chain(std::iter::once(&field.inertial))
+        {
+            for v in hash.cells.values().chain(std::iter::once(&hash.unbounded)) {
+                for s in v {
+                    samples.extend_from_slice(&note_samples(
+                        s.val as f32,
+                        s.tau,
+                        s.kernel_id,
+                        s.force_type,
+                        sample_rate,
+                    ));
+                }
+            }
+        }
+        let mut bytes = Vec::with_capacity(samples.len() * 4);
+        for s in &samples {
+            bytes.extend_from_slice(&s.to_le_bytes());
+        }
+        bytes
+    }
 
     struct AudioRadiator {
-        sample_rate: u32,
+        field_tx: mpsc::SyncSender<Arc<Buffer>>,
+        shutdown: Arc<AtomicBool>,
+        _thread: Option<thread::JoinHandle<()>>,
     }
 
     impl AudioRadiator {
         fn new(sample_rate: u32) -> Self {
-            Self { sample_rate }
+            let (field_tx, field_rx) = mpsc::sync_channel::<Arc<Buffer>>(1);
+            let shutdown = Arc::new(AtomicBool::new(false));
+            let shutdown_clone = shutdown.clone();
+            let handle = thread::spawn(move || loop {
+                let field = match field_rx.recv_timeout(std::time::Duration::from_millis(200)) {
+                    Ok(f) => f,
+                    Err(mpsc::RecvTimeoutError::Timeout) => {
+                        if shutdown_clone.load(Ordering::SeqCst) {
+                            break;
+                        }
+                        continue;
+                    }
+                    Err(mpsc::RecvTimeoutError::Disconnected) => break,
+                };
+                let bytes = render_field(&field, sample_rate);
+                if bytes.is_empty() {
+                    continue;
+                }
+                let mut out = std::io::stdout();
+                if out.write_all(&bytes).is_err() || out.flush().is_err() {
+                    break;
+                }
+            });
+            Self {
+                field_tx,
+                shutdown,
+                _thread: Some(handle),
+            }
         }
     }
 
@@ -3408,46 +3493,13 @@ mod archivar {
             if std::io::stdout().is_terminal() {
                 return;
             }
-            let mut out = std::io::stdout();
-            let mut samples: Vec<f32> = Vec::new();
-            for hash in field
-                .bodies
-                .values()
-                .chain(std::iter::once(&field.inertial))
-            {
-                for v in hash.cells.values().chain(std::iter::once(&hash.unbounded)) {
-                    for s in v {
-                        if !s.tau.is_finite() {
-                            continue;
-                        }
-                        let amp = (s.val as f32).clamp(0.0, 1.0);
-                        let dur = (s.tau as f32 * self.sample_rate as f32).max(1.0) as u32;
-                        let freq = SONIFICATION_ROOT_FREQ
-                            + s.kernel_id as f32 * SONIFICATION_KERNEL_STEP
-                            + s.force_type as f32 * SONIFICATION_FORCE_STEP;
-                        let tau_samples = (s.tau as f32 * self.sample_rate as f32) as u32;
-                        let envelope_samples = if tau_samples > 0 {
-                            tau_samples.min(dur)
-                        } else {
-                            dur
-                        };
-                        for t in 0..dur {
-                            let phase = 2.0 * std::f32::consts::PI * freq * t as f32
-                                / self.sample_rate as f32;
-                            let decay = (-(t as f32) / envelope_samples as f32).exp();
-                            samples.push(amp * phase.sin() * decay);
-                        }
-                    }
-                }
-            }
-            if !samples.is_empty() {
-                let mut bytes = Vec::with_capacity(samples.len() * 4);
-                for s in &samples {
-                    bytes.extend_from_slice(&s.to_le_bytes());
-                }
-                let _ = out.write_all(&bytes);
-                let _ = out.flush();
-            }
+            let _ = self.field_tx.try_send(field);
+        }
+    }
+
+    impl Drop for AudioRadiator {
+        fn drop(&mut self) {
+            self.shutdown.store(true, Ordering::SeqCst);
         }
     }
 
@@ -9591,6 +9643,28 @@ mod archivar {
     mod tests {
         use super::*;
         use std::collections::HashMap;
+
+        #[test]
+        fn audio_note_tau_matrix() {
+            let sr = 44100u32;
+            assert_eq!(note_samples(1.0, 0.0, 0.0, 0.0, sr).len(), 0);
+            assert_eq!(note_samples(1.0, -1.0, 0.0, 0.0, sr).len(), 0);
+            assert_eq!(note_samples(1.0, f64::NAN, 0.0, 0.0, sr).len(), 0);
+            assert_eq!(note_samples(1.0, 0.016, 0.0, 0.0, sr).len(), 11289);
+            assert_eq!(note_samples(1.0, 86400.0, 0.0, 0.0, sr).len(), 44100);
+            assert_eq!(note_samples(1.0, f64::INFINITY, 0.0, 0.0, sr).len(), 44100);
+            for tau in [0.5, 86400.0] {
+                let samples = note_samples(1.0, tau, 0.0, 0.0, sr);
+                for (t, s) in samples.iter().enumerate() {
+                    let phase = 2.0 * std::f32::consts::PI * 220.0 * t as f32 / sr as f32;
+                    let decay = (-(t as f32) / (tau as f32 * sr as f32)).exp();
+                    assert!(
+                        (*s - phase.sin() * decay).abs() < 1e-6,
+                        "sample {t} bei tau {tau} weicht von exp(-t/tau) ab"
+                    );
+                }
+            }
+        }
 
         fn full_fixture_lsk() -> super::LeapSeconds {
             super::LeapSeconds {
