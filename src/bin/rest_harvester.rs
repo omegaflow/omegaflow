@@ -189,6 +189,27 @@ fn curl(url: &str) -> Option<String> {
     }
 }
 
+fn curl_post(url: &str, body: &str) -> Option<String> {
+    let out = Command::new("curl")
+        .arg("-sSL")
+        .arg("-m")
+        .arg("120")
+        .arg("-X")
+        .arg("POST")
+        .arg("-H")
+        .arg("Content-Type: application/json")
+        .arg("-d")
+        .arg(body)
+        .arg(url)
+        .output()
+        .ok()?;
+    if out.status.success() {
+        Some(String::from_utf8_lossy(&out.stdout).into_owned())
+    } else {
+        None
+    }
+}
+
 fn main() {
     let args: Vec<String> = env::args().collect();
     let mut root: Option<String> = None;
@@ -198,6 +219,7 @@ fn main() {
     let mut out: Option<String> = None;
     let mut pages: usize = 100;
     let mut size: usize = 100;
+    let mut post: Option<String> = None;
     let mut i = 1;
     while i < args.len() {
         match args[i].as_str() {
@@ -229,6 +251,10 @@ fn main() {
                 size = args.get(i + 1).and_then(|s| s.parse().ok()).unwrap_or(100);
                 i += 1;
             }
+            "--post" => {
+                post = args.get(i + 1).cloned();
+                i += 1;
+            }
             _ => {}
         }
         i += 1;
@@ -242,13 +268,25 @@ fn main() {
     let mut buf = String::new();
     let mut total = 0usize;
     for p in 0..pages {
+        let body = match &post {
+            Some(tmpl) => Some(
+                tmpl.replace("{page}", &(p + 1).to_string())
+                    .replace("{start}", &(p * size).to_string())
+                    .replace("{size}", &size.to_string()),
+            ),
+            None => None,
+        };
         let url = root
             .replace("{page}", &(p + 1).to_string())
             .replace("{size}", &size.to_string());
-        let Some(body) = curl(&url) else {
+        let fetched = match &body {
+            Some(b) => curl_post(&url, b),
+            None => curl(&url),
+        };
+        let Some(resp) = fetched else {
             break;
         };
-        let Some(parsed) = parse_json(&body) else {
+        let Some(parsed) = parse_json(&resp) else {
             break;
         };
         let Some(items_json) = jpath(&parsed, &items) else {
