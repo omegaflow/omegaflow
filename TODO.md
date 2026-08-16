@@ -6,6 +6,16 @@ wird entfernt (Git trägt es). Kein Eintrag meldet Erledigtes als offen, kein of
 Punkt fehlt. Widerspricht ein Dokument dieser Datei, gilt diese Datei — solche
 Drift-Stellen sind unter „Doku-Drift" registriert.
 
+## Crossmatch-Welle — distanzlose Kataloge mit Gaia-Distanz
+
+Offen (2026-08-16): 12 distanzlose Sternkataloge tragen nur ra/dec und fallen
+auf die Referenz-Sphäre (1 kpc). Mit tap_compiler --crossmatch
+('I/355/paramp:RA_ICRS:DE_ICRS:Dist') echte Gaia-Distanzen (dist_pc) holen:
+gcvs, cbdata, denis, merlin, pastel, polarbase, psr, sb9, vsx, wds + neu
+CoRoT (B/corot/Bright_star), mktypes (B/mk/mktypes). wd bekommt plx (eigene
+Parallaxe, kein Crossmatch). evs_cat (B1950) bleibt Gap. Muster: lmxbdata.
+Auftrag: docs/AUFTRAG-crossmatch.md.
+
 ## Rückroll — 2026-08-16, auf fd666f5b
 
 Der wgpu-mono-Branch wurde auf fd666f5b (HUD-Semantik) zurückgesetzt —
