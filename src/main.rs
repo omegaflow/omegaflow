@@ -7780,6 +7780,55 @@ fn extract_netloc(url: &str) -> Option<&str> {
     })
 }
 
+fn route_segments(url: &str) -> Option<(String, Vec<String>)> {
+    let after = url
+        .strip_prefix("https://")
+        .or_else(|| url.strip_prefix("http://"))?;
+    let (netloc, rest) = match after.split_once('/') {
+        Some((n, r)) => (n, r),
+        None => (after, ""),
+    };
+    let host = netloc.strip_prefix("www.").unwrap_or(netloc);
+    let path = rest.split(|c| c == '?' || c == '#').next().unwrap_or("");
+    let mut segs: Vec<String> = Vec::new();
+    for s in path.split('/') {
+        if s.is_empty() {
+            continue;
+        }
+        let seg = if s.starts_with('{') && s.ends_with('}') {
+            "*".to_string()
+        } else {
+            s.to_string()
+        };
+        segs.push(seg);
+    }
+    Some((host.to_string(), segs))
+}
+
+fn route_key(url: &str) -> Option<String> {
+    let (host, segs) = route_segments(url)?;
+    if segs.is_empty() {
+        Some(host)
+    } else {
+        Some(format!("{}/{}", host, segs.join("/")))
+    }
+}
+
+fn route_prefix_keys(url: &str) -> Vec<String> {
+    let Some((host, segs)) = route_segments(url) else {
+        return Vec::new();
+    };
+    let mut keys = vec![host.clone()];
+    let mut acc = host;
+    for s in segs {
+        acc.push('/');
+        acc.push_str(&s);
+        keys.push(acc.clone());
+    }
+    keys.reverse();
+    keys
+}
+
 fn source_name_from_url(url: &str) -> String {
     let s1 = match url.strip_prefix("https://") {
         Some(s) => s,
@@ -9236,11 +9285,11 @@ fn draft_url_mode(path: &str, env: &HashMap<String, String>, fetchone: bool) -> 
                         let ttl = probe_ttl(&body).unwrap_or(86400);
                         let (frame, reason) = derive_frame(effective, &coords);
                         if !frame.is_empty() {
-                            if let Some(nl) = extract_netloc(&urls[i]) {
+                            if let Some(rk) = route_key(&urls[i]) {
                                 learned_lock
                                     .lock()
                                     .unwrap()
-                                    .entry(nl.to_string())
+                                    .entry(rk)
                                     .or_insert_with(|| frame.trim_end().to_string());
                             }
                         }
@@ -9331,15 +9380,13 @@ fn build_frame_registry() -> HashMap<String, String> {
                 cur_url = Some(rest.trim().to_string());
             } else if let Some(url) = &cur_url {
                 if t.starts_with("on ") {
-                    if let Some(nl) = extract_netloc(url) {
-                        map.entry(nl.to_string())
-                            .or_insert_with(|| "on earth".to_string());
+                    if let Some(rk) = route_key(url) {
+                        map.entry(rk).or_insert_with(|| "on earth".to_string());
                     }
                 } else if let Some(rest) = t.strip_prefix("at ") {
                     let body = rest.split_whitespace().next().unwrap_or("sun");
-                    if let Some(nl) = extract_netloc(url) {
-                        map.entry(nl.to_string())
-                            .or_insert_with(|| format!("at {}", body));
+                    if let Some(rk) = route_key(url) {
+                        map.entry(rk).or_insert_with(|| format!("at {}", body));
                     }
                 }
             }
@@ -9382,7 +9429,7 @@ fn learn_frames(new: &HashMap<String, String>) {
             .or_insert_with(|| frame.to_string());
     }
     let mut out = String::from(
-        "# frame-learned — netloc → frame, selbstlernend aus Probe-Antworten (--draft)\n",
+        "# frame-learned — Route (host/Pfad, Query gestrippt) → frame, selbstlernend aus Probe-Antworten (--draft)\n",
     );
     let mut keys: Vec<(&String, &String)> = map.iter().collect();
     keys.sort();
@@ -9399,8 +9446,10 @@ fn draft_frame_guess(
     registry: &HashMap<String, String>,
 ) -> (String, String) {
     let netloc = extract_netloc(url).unwrap_or_default();
-    if let Some(f) = registry.get(netloc) {
-        return (format!("{}\n", f), format!("netloc-registry: {}", f));
+    for key in route_prefix_keys(url) {
+        if let Some(f) = registry.get(&key) {
+            return (format!("{}\n", f), format!("route-registry: {}", f));
+        }
     }
     for n in CELESTIAL_NETLOCS {
         if netloc == *n || netloc.ends_with(n) {
@@ -9481,7 +9530,7 @@ fn draft_context_mode(path: &str) -> i32 {
     }
     let registry = build_frame_registry();
     let mut reg = String::from(
-        "# frame-registry — netloc → frame, selbstlernend aus sources.φ + dead_sources.φ\n",
+        "# frame-registry — Route (host/Pfad, Query gestrippt) → frame, selbstlernend aus sources.φ + dead_sources.φ + frame_learned.φ\n",
     );
     let mut reg_keys: Vec<(&String, &String)> = registry.iter().collect();
     reg_keys.sort();
@@ -12368,5 +12417,70 @@ field temp temp_c\n";
         assert_eq!(omegaflow::force::force_id_of("electric"), Some(8));
         assert_eq!(omegaflow::force::force_id_of("biotic"), None);
         assert_eq!(omegaflow::force::kernel_id_for_force(8), Some(1));
+    }
+
+    #[test]
+    fn test_route_key_strips_query_and_www() {
+        assert_eq!(
+            route_key("https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&limit=2"),
+            Some("earthquake.usgs.gov/fdsnws/event/1/query".to_string())
+        );
+        assert_eq!(
+            route_key("https://www.example.com/"),
+            Some("example.com".to_string())
+        );
+    }
+
+    #[test]
+    fn test_route_key_normalizes_template() {
+        assert_eq!(
+            route_key("https://api.example.com/{lat}/{lon}"),
+            Some("api.example.com/*/*".to_string())
+        );
+    }
+
+    #[test]
+    fn test_route_prefix_keys_most_specific_first() {
+        let keys =
+            route_prefix_keys("https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson");
+        assert_eq!(
+            keys,
+            vec![
+                "earthquake.usgs.gov/fdsnws/event/1/query".to_string(),
+                "earthquake.usgs.gov/fdsnws/event/1".to_string(),
+                "earthquake.usgs.gov/fdsnws/event".to_string(),
+                "earthquake.usgs.gov/fdsnws".to_string(),
+                "earthquake.usgs.gov".to_string(),
+            ]
+        );
+    }
+
+    #[test]
+    fn test_frame_registry_distinguishes_routes_on_one_host() {
+        let mut reg: HashMap<String, String> = HashMap::new();
+        reg.insert(
+            "api.example.com/weather".to_string(),
+            "on earth".to_string(),
+        );
+        reg.insert(
+            "api.example.com/asteroids".to_string(),
+            "at sun".to_string(),
+        );
+        let (weather, _) =
+            draft_frame_guess("https://api.example.com/weather?city=berlin", "", &reg);
+        let (asteroids, _) = draft_frame_guess("https://api.example.com/asteroids/433", "", &reg);
+        assert_eq!(weather, "on earth\n");
+        assert_eq!(asteroids, "at sun\n");
+    }
+
+    #[test]
+    fn test_frame_registry_prefix_fallback() {
+        let mut reg: HashMap<String, String> = HashMap::new();
+        reg.insert(
+            "api.example.com/weather".to_string(),
+            "on earth".to_string(),
+        );
+        let (frame, _) = draft_frame_guess("https://api.example.com/weather/current", "", &reg);
+        assert_eq!(frame, "on earth\n");
     }
 }

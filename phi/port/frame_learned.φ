@@ -1,2 +1,3 @@
-# frame-learned — netloc → frame, selbstlernend aus Probe-Antworten (--draft)
+# frame-learned — Route (host/Pfad, Query gestrippt) → frame, selbstlernend aus Probe-Antworten (--draft)
 earthquake.usgs.gov | on earth 0 0
+earthquake.usgs.gov/fdsnws/event/1/query | on earth 0 0
