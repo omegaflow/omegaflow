@@ -300,7 +300,7 @@ fn presence_probe() {
     let scale = vp.surface.w;
     let px = in.pos.x;
     let py = in.pos.y;
-    let cx = px + 0.5 - w * 0.5;
+    let cx = px / 3.0 + 1.0 / 6.0 - vp.expose_lo.z * 0.5;
     let cy = h * 0.5 - (py + 0.5);
     let pixel_rel = cx * scale * vp.right.xyz + cy * scale * vp.up.xyz;
 
