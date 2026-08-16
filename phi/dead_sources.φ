@@ -3094,6 +3094,10 @@ dead invalid-query
 url https://services5.arcgis.com/7weheFjxuNkGGiZi/arcgis/rest/services/National_Data_Buoy_Center_Station_Observations/FeatureServer/0/query
 note ArcGIS FeatureServer rejects the query with 400 regardless of parameters. Replacement: 29 per-station NDBC buoy blocks verified in staging_verified.φ.
 
+decline variant
+url https://services5.arcgis.com/7weheFjxuNkGGiZi/arcgis/rest/services/National_Data_Buoy_Center_Station_Observations/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+note ArcGIS-Proxy der NDBC-Bojen-Beobachtungen (live: ndbc.noaa.gov direkt, Probe-Befund 2026-08-16).
+
 dead
 url https://services5.arcgis.com/bz1uwWPKUInZBK94/arcgis/rest/services/CA_Lightning_Data_Public_View/FeatureServer/0
 note grind: grind_arcgis_index.φ
@@ -3237,6 +3241,10 @@ note Hurrikans: f=json fehlt — mit f=geojson accept-würdig (Recheck).
 decline model-forecast
 url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Active_Hurricanes_Sampler/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
 note Recheck: f=json liefert Forecast-Track-Punkte (TAU/FCSTPRD/VALIDTIME) — Modell-/Vorhersagedaten, nicht die aktuelle Messung. NHC-CurrentStorms bleibt der accept-würdige Live-Feed (lebt jetzt in sources.φ).
+
+decline variant
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Active_Hurricanes_v1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+note Hurrikan-Track-Proxy (live: NHC direkt; Track = Modellprognose).
 
 decline variant
 url https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Historical_Quakes/FeatureServer/0/query?where=1%3D1&outFields=mag,sig,felt,cdi,mmi,tsunami,depth,latitude,longitude&outSR=4326&f=geojson&resultRecordCount=5000
