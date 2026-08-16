@@ -51,21 +51,32 @@ struct VOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f };
 @group(0) @binding(1) var<storage, read> deep_pt: array<vec4f>;
 @group(0) @binding(2) var<storage, read> deep_ex: array<vec4f>;
 
-struct DeepPtVOut { @builtin(position) pos: vec4f, @location(0) flux: f32 };
+struct DeepPtVOut { @builtin(position) pos: vec4f, @location(0) @interpolate(flat) flux: f32 };
 
 @vertex fn deep_pt_vs(@builtin(vertex_index) i: u32) -> DeepPtVOut {
     let count = u32(deep_vp.expose_lo.x);
     var out: DeepPtVOut;
     out.pos = vec4f(0.0, 0.0, 0.0, 1.0);
     out.flux = 0.0;
-    if (i >= count) { return out; }
-    let data = deep_pt[i];
+    if (count == 0u) { return out; }
+    let id = i / 6u;
+    if (id >= count) { return out; }
+    var quad = array<vec2f, 6>(
+        vec2f(-1.0, -1.0), vec2f(1.0, -1.0), vec2f(1.0, 1.0),
+        vec2f(-1.0, -1.0), vec2f(1.0, 1.0), vec2f(-1.0, 1.0)
+    );
+    let data = deep_pt[id];
     let w = deep_vp.surface.x;
     let h = deep_vp.surface.y;
     let scale = deep_vp.surface.w;
     let sx = dot(data.xyz, deep_vp.right.xyz) / (0.5 * w * scale);
     let sy = -dot(data.xyz, deep_vp.up.xyz) / (0.5 * h * scale);
-    out.pos = vec4f(sx, sy, 0.0, 1.0);
+    let corner = quad[i % 6u];
+    let clip = vec2f(
+        sx + (corner.x * 1.0) / w * 2.0,
+        sy + (corner.y * 1.0) / h * 2.0,
+    );
+    out.pos = vec4f(clip, 0.0, 1.0);
     out.flux = data.w;
     return out;
 }
@@ -12637,7 +12648,7 @@ mod mathematikerin {
                     if self.deep_pt_count > 0 {
                         pass.set_pipeline(pipe);
                         pass.set_bind_group(0, bind, &[]);
-                        pass.draw(0..self.deep_pt_count, 0..1);
+                        pass.draw(0..self.deep_pt_count * 6, 0..1);
                     }
                 }
                 if let (Some(pipe), Some(bind)) =
@@ -12960,7 +12971,7 @@ mod mathematikerin {
                     })],
                 }),
                 primitive: wgpu::PrimitiveState {
-                    topology: wgpu::PrimitiveTopology::PointList,
+                    topology: wgpu::PrimitiveTopology::TriangleList,
                     ..Default::default()
                 },
                 depth_stencil: None,
