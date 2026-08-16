@@ -9200,6 +9200,7 @@ fn draft_url_mode(path: &str, env: &HashMap<String, String>, fetchone: bool) -> 
         .collect();
     let total = urls.len();
     let out_lock = std::sync::Mutex::new(String::new());
+    let learned_lock = std::sync::Mutex::new(HashMap::<String, String>::new());
     let drafted = std::sync::atomic::AtomicUsize::new(0);
     let next = std::sync::atomic::AtomicUsize::new(0);
     let workers = 8.min(total.max(1));
@@ -9234,6 +9235,15 @@ fn draft_url_mode(path: &str, env: &HashMap<String, String>, fetchone: bool) -> 
                         );
                         let ttl = probe_ttl(&body).unwrap_or(86400);
                         let (frame, reason) = derive_frame(effective, &coords);
+                        if !frame.is_empty() {
+                            if let Some(nl) = extract_netloc(&urls[i]) {
+                                learned_lock
+                                    .lock()
+                                    .unwrap()
+                                    .entry(nl.to_string())
+                                    .or_insert_with(|| frame.trim_end().to_string());
+                            }
+                        }
                         let mut block = format!("url {}\n", urls[i]);
                         block.push_str(&format!("ttl {}\n", ttl));
                         if tap_flat.is_some() {
@@ -9271,10 +9281,14 @@ fn draft_url_mode(path: &str, env: &HashMap<String, String>, fetchone: bool) -> 
     let drafted = drafted.load(std::sync::atomic::Ordering::Relaxed);
     std::fs::create_dir_all("phi/port").ok();
     std::fs::write("phi/port/probe_drafts.φ", out_lock.into_inner().unwrap()).ok();
+    let learned = learned_lock.into_inner().unwrap();
     eprintln!(
-        "--draft: {} Kandidaten, {} Blöcke gedraftet → phi/port/probe_drafts.φ",
-        total, drafted
+        "--draft: {} Kandidaten, {} Blöcke gedraftet, {} Frames gelernt → phi/port/probe_drafts.φ + phi/port/frame_learned.φ",
+        total,
+        drafted,
+        learned.len()
     );
+    learn_frames(&learned);
     0
 }
 
@@ -9331,7 +9345,52 @@ fn build_frame_registry() -> HashMap<String, String> {
             }
         }
     }
+    if let Ok(content) = std::fs::read_to_string("phi/port/frame_learned.φ") {
+        for line in content.lines() {
+            let t = line.trim();
+            if t.is_empty() || t.starts_with('#') {
+                continue;
+            }
+            if let Some((nl, frame)) = t.split_once('|') {
+                let nl = nl.trim();
+                let frame = frame.trim();
+                if !nl.is_empty() && !frame.is_empty() {
+                    map.entry(nl.to_string())
+                        .or_insert_with(|| frame.to_string());
+                }
+            }
+        }
+    }
     map
+}
+
+fn learn_frames(new: &HashMap<String, String>) {
+    let mut map: HashMap<String, String> = HashMap::new();
+    if let Ok(content) = std::fs::read_to_string("phi/port/frame_learned.φ") {
+        for line in content.lines() {
+            let t = line.trim();
+            if t.is_empty() || t.starts_with('#') {
+                continue;
+            }
+            if let Some((nl, frame)) = t.split_once('|') {
+                map.insert(nl.trim().to_string(), frame.trim().to_string());
+            }
+        }
+    }
+    for (nl, frame) in new {
+        map.entry(nl.to_string())
+            .or_insert_with(|| frame.to_string());
+    }
+    let mut out = String::from(
+        "# frame-learned — netloc → frame, selbstlernend aus Probe-Antworten (--draft)\n",
+    );
+    let mut keys: Vec<(&String, &String)> = map.iter().collect();
+    keys.sort();
+    for (nl, frame) in keys {
+        out.push_str(&format!("{} | {}\n", nl, frame));
+    }
+    std::fs::create_dir_all("phi/port").ok();
+    std::fs::write("phi/port/frame_learned.φ", out).ok();
 }
 
 fn draft_frame_guess(
