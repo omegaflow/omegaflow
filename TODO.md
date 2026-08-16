@@ -90,28 +90,37 @@ Offen:
 ### wgpu-mono — Deep-Sky-Plenum (zwei Regime, eine Wahrheit)
 
 ```
-GESCHLOSSEN (2026-08-16, erster Atom): Der Stern-Pfad ist getrennt und
-geplottet. sense_membrane (Körper+Inertial+Asteroiden) und sense_stars
-(Fixsterne aus dem StarHash, exakte ICRS-Position + Fluss) laufen getrennt;
-sense_buffer bleibt unverändert fürs Relay (v6-Vertrag, Sterne als Records).
-pack_stars: (x−presence, y−presence, z−presence, flux) als f32 vec4 je Stern.
-Der Stern-Render ist ein Punkt-Render-Pass (PointList, 1 Thread = 1 Stern,
-1 Pixel — die Punktquelle hat ihr Bild an ihrem Ort): star_vs projiziert
-dot(rel, right/up)/(0.5·w/h·scale) auf NDC (y negiert — Membran-Konvention),
-star_fs wendet DIESELBE Nebra-Rampe auf |flux| an (log2-Rampe + Exposure —
-das Plotten ist die Membran-Messung am Ort des Sterns, kein anderes Gesetz),
-|flux| < 1e-30 → discard (0 honored). Sterne erscheinen bei Galaxien-Zoom;
-bei 2³¹ korrekt 0 stars im HUD. Golden-Tests: pack_stars presence-relativ
-grün, Packing-Tabelle unberührt. Kein Splatting, kein Quad für Sterne.
+GESCHLOSSEN (2026-08-16, erster Atom): Der Deep-Space-Pfad ist getrennt und
+geplottet — nicht „Sterne", sondern die tiefe Punktwolke (jedes Deep-Space-
+Objekt trägt seine eigenen Eigenschaften). sense_membrane
+(Körper+Inertial+Asteroiden) und sense_deep (Fixsterne aus dem StarHash,
+exakte ICRS-Position + Fluss) laufen getrennt; sense_buffer bleibt
+unverändert fürs Relay (v6-Vertrag). pack_deep: (x−presence, y−presence,
+z−presence, flux) als f32 vec4 je Objekt. Der Deep-Render ist ein
+Punkt-Render-Pass (PointList, 1 Thread = 1 Objekt, 1 Pixel): deep_vs
+projiziert dot(rel, right/up)/(0.5·w/h·scale) auf NDC (y negiert —
+Membran-Konvention), deep_fs wendet DIESELBE Nebra-Rampe auf |flux| an —
+das Plotten ist die Membran-Messung am Ort des Objekts, kein anderes
+Gesetz; |flux| < 1e-30 → discard (0 honored). HUD zeigt deep-Zahl.
+Rotverschiebung-Befund: der Code-Pfad lebt vollständig (z_key →
+z·c/H₀ in Extract::CelestialMap, main.rs ~6803, mit plx→z→dist-Kette) —
+entfernt wurden nur die QUELLEN: die 174 universe_/astro_-Blöcke verließen
+sources.φ im „rebuild from live-verified data only" (c648462); sie kehren
+über den einen Pfad (SOURCE_PORT) oder die CDN-Kataloge zurück.
 ```
 Offen:
+- Deep-Space-Oszillatoren (Quasare, Schwarze Löcher, ALFALFA, TeVCat, TNS)
+  in den Plot-Pfad führen: die z-Eigenschaft reist heute nicht mit — sie
+  wird zur Distanz verrechnet und verworfen. Der Deep-Puffer bekommt eine
+  zweite vec4 (Eigenschaften: z, scheinbare Größe, Farbindex) — die
+  Extraktion muss z als Eigenschaft bis in den Plot tragen
 - Quellen mit scheinbarer Ausdehnung (Magellansche Wolken, nahe Nebel):
-  projiziertes Splat-Quad ihrer gemessenen Form (Flächenquellen-Pfad)
-- Farbe der Sterne: der Katalog trägt ra/dec/pm/plx/flux — keine B-V/Farbe;
-  falls eine Farbspalte im Binärkatalog existiert, Temperatur→Farbe ableiten
-- Sternenhintergrund (integrierter Glow der 1/d²-Schwänze, Milchstraße) als
-  eigener Folge-Atom: einmalige tiefaufgelöste Integration, glattes Feld
-- Galaxien-Zoom-Verifikation beim Operator ausstehend (Sternzahl im HUD)
+  projiziertes Splat-Quad ihrer gemessenen Form
+- Farbe der Sterne: der Katalog trägt ra/dec/pm/plx/flux — keine Farbspalte;
+  falls eine im Binärkatalog existiert, Temperatur→Farbe ableiten
+- Sternenhintergrund (integrierter Glow der 1/d²-Schwänze, Milchstraße):
+  einmalige tiefaufgelöste Integration, glattes Feld
+- Galaxien-Zoom-Verifikation beim Operator ausstehend (deep-Zahl im HUD)
 
 ---
 
