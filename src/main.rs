@@ -74,8 +74,9 @@ struct DeepPtVOut { @builtin(position) pos: vec4f, @location(0) @interpolate(fla
     }
     let w = deep_vp.surface.x;
     let h = deep_vp.surface.y;
-    let sx = dot(dir, deep_vp.right.xyz);
-    let sy = -dot(dir, deep_vp.up.xyz);
+    let mag = max(deep_vp.expose_hi.z, 1.0);
+    let sx = dot(dir, deep_vp.right.xyz) * mag;
+    let sy = -dot(dir, deep_vp.up.xyz) * mag;
     let corner = quad[i % 6u];
     let clip = vec2f(
         sx + (corner.x * 2.2) / w * 2.0,
@@ -12332,6 +12333,7 @@ mod mathematikerin {
     const C: f64 = 299792458.0;
     const GRID_TO_ANGLE: f64 = 4611686018427387904.0;
     const GRID_INIT: f64 = 2147483648.0;
+    const GRID_DEEP_GRID: f64 = 70368744177664.0;
     const JUMP_GRID: f64 = 268435456.0;
     const SSAA_MAX: f32 = 8.0;
     const FIELD_BACKING_SCALE: f64 = 1.0;
@@ -12983,7 +12985,7 @@ mod mathematikerin {
                 0.0,
                 0.0,
                 0.0,
-                0.0,
+                (GRID_DEEP_GRID / self.grid_step).max(1.0) as f32,
                 0.0,
                 self.exposure,
                 self.last_response_epoch as f32,
