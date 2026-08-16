@@ -6,6 +6,23 @@ wird entfernt (Git trägt es). Kein Eintrag meldet Erledigtes als offen, kein of
 Punkt fehlt. Widerspricht ein Dokument dieser Datei, gilt diese Datei — solche
 Drift-Stellen sind unter „Doku-Drift" registriert.
 
+## Rückroll — 2026-08-16, auf fd666f5b
+
+Der wgpu-mono-Branch wurde auf fd666f5b (HUD-Semantik) zurückgesetzt —
+der letzte Stand vor der Subpixel-Explosion (eb96d1f: 567 ms = 3× Membran,
+9 Mio Messzellen, Rgba32Float-Ziel ohne additives Blend, Comp-Pass) und
+vor der Reparatur-Kette (9825e31, c8d4ce2, a2a764b, 637f4e3, 668e51b).
+Zurückgedreht damit auch: sun_follow, field_centroid/Auto-Zentrierung,
+VP-Slot-Churn. Die Session-Bauten (Generations-Architektur, Tiled Source
+Culling, HUD-Akkumulatoren, deep_gain, Budget-Regler) liegen versioniert
+auf dem Branch session-2026-08-16; die Survey-Auswertung steht in
+docs/surveys/ (messpunkt-verteilung.md, auswertung.md). Der Konsens
+(EIN Buffer + EIN Generationszähler + Stille; ε-Kulling 2⁻ⁿ, n ∈ [8, 23])
+bleibt als Ausgangspunkt für einen späteren, nicht-aufgeblähten Anlauf.
+Die Membran dieses Standes rendert 1× direkt in die Swapchain (additives
+Blend), der Deep-Renderer (Quads + 1-px-Punkte) ist intakt; helle Sterne
+tragen t2 ≈ 0,7 auf der Nebra-Rampe, 0 deep bei 2^31 ist korrekt.
+
 ## Stand — 2026-08-16 (Katalog-Welle: K03-Kometen inkl. dcom5-Multi-Apparitionen, K04b Gaia-DR3+Bailer-Jones 1,84 Mio Sterne, Exoplanet-Bulk 6309, tap_compiler über TAPVizieR/GAVO/ARI/IRSA/ExoArchive, Enrichment-Matrix; LSK/PCK-Hochzeit, Binary v2, Protokoll v6, reine Per-Pixel-Membran, K01 geschlossen, K05 geschlossen; wgpu-mono-Titan: EINE Datei, Kreis an der Wurzel, archivar/mathematikerin/relay als Inline-Geschwister)
 
 Zeit aus naif0012.tls (LSK-Reader, keine TT_MINUS_UTC-Konstante). PCK-Reader pck.rs
