@@ -12680,9 +12680,18 @@ mod mathematikerin {
                 return;
             };
             let _ = window.focus_window();
-            let inner = window.inner_size();
-            self.size = (inner.width.max(1), inner.height.max(1));
-            self.scale_factor = window.scale_factor();
+            let (sw, sh) = match window.current_monitor() {
+                Some(m) => {
+                    let ms = m.size();
+                    (ms.width.max(1), ms.height.max(1))
+                }
+                None => {
+                    let inner = window.inner_size();
+                    (inner.width.max(1), inner.height.max(1))
+                }
+            };
+            self.size = (sw, sh);
+            self.scale_factor = 1.0;
             let window = Arc::new(window);
             let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor::default());
             let surface = match instance.create_surface(window.clone()) {
@@ -13183,8 +13192,12 @@ mod mathematikerin {
                     self.size = (size.width.max(1), size.height.max(1));
                     self.reconfigure();
                 }
-                WindowEvent::ScaleFactorChanged { scale_factor, .. } => {
-                    self.scale_factor = scale_factor;
+                WindowEvent::ScaleFactorChanged { .. } => {
+                    if let Some(m) = self.window.as_ref().and_then(|w| w.current_monitor()) {
+                        let ms = m.size();
+                        self.size = (ms.width.max(1), ms.height.max(1));
+                    }
+                    self.scale_factor = 1.0;
                     self.reconfigure();
                 }
                 WindowEvent::ModifiersChanged(m) => {
