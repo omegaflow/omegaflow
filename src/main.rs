@@ -12022,12 +12022,21 @@ mod mathematikerin {
         [(angle / 2.0).cos(), axis[0] * s, axis[1] * s, axis[2] * s]
     }
 
-    fn le_bytes_f32(v: &[f32]) -> Vec<u8> {
-        let mut out = Vec::with_capacity(v.len() * 4);
-        for x in v {
-            out.extend_from_slice(&x.to_le_bytes());
+    fn write_f32(queue: &wgpu::Queue, buffer: &wgpu::Buffer, v: &[f32]) {
+        if v.is_empty() {
+            return;
         }
-        out
+        let size = match wgpu::BufferSize::new((v.len() * 4) as u64) {
+            Some(s) => s,
+            None => return,
+        };
+        let mut view = match queue.write_buffer_with(buffer, 0, size) {
+            Some(view) => view,
+            None => return,
+        };
+        for (i, x) in v.iter().enumerate() {
+            view[i * 4..i * 4 + 4].copy_from_slice(&x.to_le_bytes());
+        }
     }
 
     fn storage_entry(
@@ -12767,32 +12776,28 @@ mod mathematikerin {
             if self.packed_dirty {
                 self.ensure_capacity();
                 if let Some(fb) = &self.field_buf {
-                    queue.write_buffer(fb, 0, &le_bytes_f32(&self.packed_field));
+                    write_f32(&queue, fb, &self.packed_field);
                 }
                 if let Some(mb) = &self.meta_buf {
-                    queue.write_buffer(mb, 0, &le_bytes_f32(&self.packed_meta));
+                    write_f32(&queue, mb, &self.packed_meta);
                 }
                 self.packed_dirty = false;
             }
             if self.deep_dirty {
                 self.ensure_deep_capacity();
                 if let Some(sb) = &self.deep_pt_vbuf {
-                    queue.write_buffer(sb, 0, &le_bytes_f32(&self.packed_deep_pt));
+                    write_f32(&queue, sb, &self.packed_deep_pt);
                 }
                 if let Some(sb) = &self.deep_ex_vbuf {
-                    queue.write_buffer(sb, 0, &le_bytes_f32(&self.packed_deep_ex));
+                    write_f32(&queue, sb, &self.packed_deep_ex);
                 }
                 self.deep_dirty = false;
             }
             let vp = self.vp_data();
-            let mut bytes = [0u8; 128];
-            for (i, x) in vp.iter().enumerate() {
-                bytes[i * 4..i * 4 + 4].copy_from_slice(&x.to_le_bytes());
-            }
             let Some(vp_buf) = self.vp_buf.as_ref() else {
                 return;
             };
-            queue.write_buffer(vp_buf, 0, &bytes);
+            write_f32(&queue, vp_buf, &vp);
             let Some(surface) = self.surface.as_ref() else {
                 return;
             };
