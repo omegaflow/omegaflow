@@ -10,10 +10,18 @@ Drift-Stellen sind unter „Doku-Drift" registriert.
 
 Offen (2026-08-17): Die Sync-Crossmatches gegen I/355/paramp waren für die
 großen Kataloge serverseitig trunkiert (Sync-Zeitlimit). pastel ist vollständig
-(37.064 Zeilen, 20.883 Gaia-Distanzen). Offen: wds (Chunk-Merge läuft, 8
-RA-Bänder à 45°), mktypes (8 Bänder à 4,5°), denis (16 Bänder à 22,5°) —
-chunkweise per `--where`, Merge bis 50-k-Umfang, Upload, Ledger-Korrektur.
-Werkzeug: `phi/port/chunk_master.py` (fortsetzbar, Chunks in phi/port/).
+(37.064 Zeilen, 20.883 Gaia-Distanzen). Offen: wds, mktypes, denis — chunkweise
+per `--where`, voller Umfang (Cap raus, mktypes 80 Bänder), Upload,
+Ledger-Korrektur. Werkzeug: `phi/port/chunk_master.py` (fortsetzbar, Chunks
+in phi/port/).
+
+## Archivar — Membran-scoped Cache statt Blockuniversum
+
+Offen (2026-08-17): Der Archivar lädt flache Katalog-Assets komplett in den
+Spatial Hash — das ganze Feld im Speicher. Die Membran braucht nur die Hülle
+um die Presence-Weltlinie (dilatierter Suchradius). Richtung: räumlich gebinnte
+Assets (HEALPix), der Archivar holt nur die Bins, die die Hülle überlappen.
+Kein NASA-Denken — nur was die Membran benötigt.
 
 ## Rückroll — 2026-08-16, auf fd666f5b
 
