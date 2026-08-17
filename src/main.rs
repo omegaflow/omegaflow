@@ -11026,6 +11026,87 @@ field temp temp_c\n";
         }
 
         #[test]
+        fn test_extract_cmap_pm_radvel_plx() {
+            let json = r#"[{"ra":0.0,"dec":0.0,"plx":100.0,"pmra":1000.0,"pmdec":2000.0,"rv":50.0,"H":5.5}]"#;
+            let src = SourceConfig {
+                ttl: 604800,
+                url: "https://example.com/x".into(),
+                frame: Frame::Barycenter {
+                    body_name: "sun".into(),
+                    scale: 1.0,
+                },
+                format: "json".into(),
+                extracts: vec![Extract::CelestialMap {
+                    arr_path: ".".into(),
+                    ra_key: "ra".into(),
+                    dec_key: "dec".into(),
+                    dist_key: String::new(),
+                    dist_scale: 1.0,
+                    plx_key: "plx".into(),
+                    z_key: String::new(),
+                    pmra_key: "pmra".into(),
+                    pmdec_key: "pmdec".into(),
+                    rv_key: "rv".into(),
+                    rv_scale: 1.0,
+                    epoch_key: String::new(),
+                    fields: vec![FieldConfig {
+                        key: "H".into(),
+                        name: "comet_h_mag".into(),
+                        kernel: 0,
+                        force: 0,
+                        tau: 604800.0,
+                        absorption: 0.0,
+                        advection: 0.0,
+                    }],
+                }],
+                headers: vec![],
+                post_body: None,
+                target: None,
+                catalog: None,
+                max_freq: None,
+                min_freq: None,
+                body: None,
+                stations_url: None,
+                stations_path: String::new(),
+                stations_lat: String::new(),
+                stations_lon: String::new(),
+                stations_id: String::new(),
+                flux_from_mag: None,
+                abs_mag_from: None,
+                catalog_epoch: None,
+                repeat_ra_bins: 0,
+                fanout_cap: 0,
+                stations_flatten: String::new(),
+                stations_filter: None,
+                fanout_delay: 0,
+            };
+            let fixture_lsk = LeapSeconds {
+                delta_t_a: 32.184,
+                deltas: vec![(37.0, 1483228800.0)],
+            };
+            match extract(&src, json, 8.0e8, &fixture_lsk) {
+                ExtractResult::Measurements(channels) => {
+                    assert_eq!(channels.len(), 1);
+                    if let Position::StateVector { p, v, .. } = channels[0].0.position {
+                        let d = super::PARSEC_M * 1000.0 / 100.0;
+                        assert!((p[0] - d).abs() / d < 1e-12);
+                        assert!(p[1].abs() < 1.0);
+                        assert!(p[2].abs() < 1.0);
+                        let mu_a = 1000.0 * super::MAS_YR_TO_RAD_S;
+                        let mu_d = 2000.0 * super::MAS_YR_TO_RAD_S;
+                        let expect_v = [50.0, d * mu_a, d * mu_d];
+                        assert!((v[0] - expect_v[0]).abs() < 1e-6);
+                        assert!((v[1] - expect_v[1]).abs() < 1e-6);
+                        assert!((v[2] - expect_v[2]).abs() < 1e-6);
+                    } else {
+                        panic!("expected StateVector position");
+                    }
+                }
+                ExtractResult::WithEphemeris(_, _) => panic!("unexpected ephemeris"),
+            }
+        }
+
+        #[test]
         fn test_extract_cmap_no_distance_reference_sphere() {
             let json = r#"[{"ra":0.0,"dec":0.0,"H":5.5}]"#;
             let src = SourceConfig {

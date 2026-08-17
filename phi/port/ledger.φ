@@ -156,7 +156,7 @@ note „jeden Katalog"-Kampagne: 37 Provider der b2find-Wissenschafts-Tags (LTER
 
 ausstehend
 bestand phi/katalog/pangaea_catalog.φ
-note PANGAEA-OAI (ws.pangaea.de/oai/provider, ~430k Datasets) — Stichprobe 3.000 Collection-Datasets geerntet (DOI+titel). Befund 2026-08-16: PANGAEA ist wie CMR/LTER/DEIMS/b2find ein Metadaten-Register — DOI+titel, KEINE Live-Daten-URL (Datenzugriff: Collection-Seite → Member → .tab). Voll-Harvest als CI-Aufgabe; pangaea_compiler-Muster analog tap_compiler nötig — der Messwert liegt im .tab-Export, nicht in einer JSON-API
+note PANGAEA-OAI (ws.pangaea.de/oai/provider): Voll-Harvest 2026-08-17 erledigt — 446.802 Datasets in phi/katalog/pangaea_catalog_full.φ (DOI+titel). Befund: PANGAEA ist wie CMR/LTER/DEIMS/b2find ein Metadaten-Register — DOI+titel, KEINE Live-Daten-URL (Datenzugriff: Collection-Seite → Member → .tab). pangaea_compiler-Muster analog tap_compiler nötig — der Messwert liegt im .tab-Export, nicht in einer JSON-API
 
 ausstehend
 bestand phi/katalog/_adapter_queue
@@ -301,10 +301,6 @@ note kepler_map-Bahnlöser fehlt (Extract existiert, Kepler-Gleichungs-Bahnrechn
 ausstehend
 parser-gap P05
 note HorizonsVec: 0B-Fetches + falsche Timestamps
-
-ausstehend
-parser-gap P06
-note cmap pmra/pmdec/radvel-Füllung (Eigenbewegung einspeisen); plx-Füllung offen
 
 ausstehend
 parser-gap P08
