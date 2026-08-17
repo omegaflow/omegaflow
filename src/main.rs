@@ -10234,6 +10234,9 @@ mod archivar {
                                     &archive.body_ephemerides,
                                 ) {
                                     osc.source = OscillatorSource::Body;
+                                    if channel.name.ends_with(".radius") {
+                                        osc.extent = props.radius_m;
+                                    }
                                     all.push(osc);
                                 }
                             }
@@ -12602,17 +12605,25 @@ mod mathematikerin {
         out
     }
 
-    pub fn force_ref_medians(field: &[f32], deep_pt: &[f32], deep_ex: &[f32]) -> [Option<f32>; 9] {
+    pub fn force_ref_medians(
+        field: &[f32],
+        meta: &[f32],
+        deep_pt: &[f32],
+        deep_ex: &[f32],
+    ) -> [Option<f32>; 9] {
         let mut hist: [[u32; 256]; 9] = [[0; 256]; 9];
         let mut sum: [[f32; 256]; 9] = [[0.0; 256]; 9];
         let mut n: [u32; 9] = [0; 9];
-        for f in field.chunks_exact(12) {
+        for (j, f) in field.chunks_exact(12).enumerate() {
             let ft = f[6] as i64;
             if !(0..=8).contains(&ft) {
                 continue;
             }
             let v = f[3];
             if !v.is_finite() || v == 0.0 {
+                continue;
+            }
+            if v.abs() == meta[j * 12] {
                 continue;
             }
             let l = v.abs().log2();
@@ -13261,12 +13272,19 @@ mod mathematikerin {
         fn relax_force_refs(&mut self) {
             let meds = force_ref_medians(
                 &self.packed_field,
+                &self.packed_meta,
                 &self.packed_deep_pt,
                 &self.packed_deep_ex,
             );
             for (ft, m) in meds.iter().enumerate() {
-                let target = m.unwrap_or(0.0);
-                self.force_ref[ft] += (target - self.force_ref[ft]) * REF_RELAX;
+                let Some(median) = m else {
+                    continue;
+                };
+                if self.force_ref[ft] == 0.0 {
+                    self.force_ref[ft] = *median;
+                    continue;
+                }
+                self.force_ref[ft] += (median - self.force_ref[ft]) * REF_RELAX;
             }
         }
 
@@ -14644,6 +14662,7 @@ mod mathematikerin {
             field[42] = 8.0;
             let meds = force_ref_medians(
                 &field,
+                &[0.0; 48],
                 &[0.0, 0.0, 0.0, 4.0],
                 &[0.0, 0.0, 0.0, 4.0, 0.0, 0.0, 0.0, 0.0],
             );
@@ -14656,7 +14675,7 @@ mod mathematikerin {
         }
 
         #[test]
-        fn force_ref_medians_relaxes_absent_channels_to_zero() {
+        fn force_ref_medians_holds_reference_on_absence() {
             let mut app = NativeApp {
                 force_ref: [7.0; 9],
                 ..NativeApp::new(
@@ -14671,14 +14690,52 @@ mod mathematikerin {
                 )
             };
             app.packed_field = vec![0.0; 12];
+            app.packed_meta = vec![0.0; 12];
             app.packed_deep_pt = Vec::new();
             app.packed_deep_ex = Vec::new();
             for _ in 0..64 {
                 app.relax_force_refs();
             }
             for ft in 0..9 {
-                assert!(app.force_ref[ft] < 0.2);
+                assert_eq!(app.force_ref[ft], 7.0);
             }
+        }
+
+        #[test]
+        fn force_ref_medians_skips_length_annotations() {
+            let mut field = vec![0.0f32; 24];
+            let mut meta = vec![0.0f32; 24];
+            field[3] = 2.0f32.powi(20);
+            field[6] = 1.0;
+            meta[0] = 2.0f32.powi(20);
+            field[15] = 2.0f32.powi(45);
+            field[18] = 1.0;
+            let meds = force_ref_medians(&field, &meta, &[], &[]);
+            assert_eq!(meds[1].unwrap(), 2.0f32.powi(45));
+        }
+
+        #[test]
+        fn force_ref_snaps_on_first_sight() {
+            let mut app = NativeApp {
+                force_ref: [0.0; 9],
+                ..NativeApp::new(
+                    mpsc::channel().1,
+                    mpsc::sync_channel(1).0,
+                    mpsc::sync_channel(2).1,
+                    mpsc::channel().0,
+                    mpsc::channel().0,
+                    Arc::new(Vec::new()),
+                    Arc::new(Mutex::new(None)),
+                    Arc::new(AtomicBool::new(false)),
+                )
+            };
+            app.packed_field = vec![0.0; 12];
+            app.packed_field[3] = 8.0;
+            app.packed_meta = vec![0.0; 12];
+            app.packed_deep_pt = Vec::new();
+            app.packed_deep_ex = Vec::new();
+            app.relax_force_refs();
+            assert_eq!(app.force_ref[0], 8.0);
         }
     }
 }

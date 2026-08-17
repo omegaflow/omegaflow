@@ -439,7 +439,7 @@ fn write_binary(
     nutation: &[(f64, f64, Vec<f64>, Vec<f64>, Vec<f64>)],
     wgccre: &PckBody,
 ) -> bool {
-    let mut n_sections: u32 = 2;
+    let mut n_sections: u32 = 3;
     if !rotations.is_empty() {
         n_sections += 1;
     }

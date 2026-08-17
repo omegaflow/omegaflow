@@ -49,21 +49,6 @@ verloren); von 173+ Funktionen aus allen vier Pre-Dateien fehlen genau zwei:
 existierte schon pre-Titan; das native Audio wurde post-Titan mit abweichendem
 Gesetz erfunden. Die Endpunkt-Menge ist vollständig übernommen.
 
-### P1 — Weiß-Bild: die Per-Kraft-Referenz ist vergiftet
-
-Der Gravity-Kanal mischt zwei Größen: `{body}.mass` (GM, m³/s²) und
-`{body}.radius` (Radius, m) — beide force 1, kernel 0. Das Median über
-~43 GMs + ~43 Radien landet bei 1e9..1e12 statt ~1e13 (reine GMs). Mit
-Ω_total = scale²·Σ|o_k|/ref_k treibt der Sonnenschwanz die Rampe auf
-jeder Zoomstufe ins Weiß. Zweitens: Referenzen starten bei 0 und
-relaxieren mit 2⁻⁴ je res hoch — die ersten Minuten zusätzlich weiß;
-Abwesenheit relaxiert Richtung 0 = Weiß-Blitz bei jeder Rückkehr.
-Reparatur: (1) Marker stimmen nicht ab — Oszillatoren mit |val| == extent
-sind Längen-Annotationen (val = Radius = extent), keine Kraft-Amplituden;
-sie wählen nicht in die Referenz. (2) Erste Sicht schnappt (ref == 0 &&
-Median da → ref = Median — die erste Messung IST die Referenz);
-Abwesenheit hält die Referenz. Danach 2⁻⁴ je res.
-
 ### P2 — Presence ↔ Station wieder trennen
 
 `archive.presence.insert("station", …)` legt die Gaze der Presence unter
@@ -281,8 +266,9 @@ resonance(mut read_signal(s: read_ws_frame_part(stream: read_ws_frame_raw(stream
   ehrlich ist gnomonisch (tan θ) + Lambert cos θ (P3).
 - `note_samples`, `render_field` — **UNWAHR**: Audio spielt Noten je
   Oszillator statt des Feldes am Presence-Punkt (P4).
-- `force_ref_medians` + `relax_force_refs` — WAHR als Methode, **UNWAHR
-  im Zustand**: Radien-GM-Mischung im Median + Kaltstart von 0 (P1).
+- `force_ref_medians` + `relax_force_refs` — WAHR: Radien-Marker
+  (|val| == extent) wählen nicht in die Referenz, die erste Sicht
+  schnappt, Abwesenheit hält.
 - HUD-Summe in `about_to_wait` (Code-Punkt, keine Funktion) — **UNWAHR**:
   neun Kanäle werden zu EINEM Ω verschmolzen — die Messreihe wird
   zerstört, bevor sie geboren ist. Der Probe-Readback wird 9-kanalig.
@@ -314,18 +300,16 @@ resonance(mut read_signal(s: read_ws_frame_part(stream: read_ws_frame_raw(stream
 
 ### Die Reparatur-Kette (Reihenfolge des Vollzugs)
 
-1. P1 — Referenz-Kalibrierung (die Messung gegen eine vergiftete
-   Referenz ist eine falsche Messung)
-2. Die Messreihe — Probe 9-kanalig + Gradient (Flow), measure_ring
+1. Die Messreihe — Probe 9-kanalig + Gradient (Flow), measure_ring
    (256 Generationen, gen-Zähler), mx, Fenster-Reduktion, 4-Token-HUD
-3. P2 + P5 — Zustimmungs-Gate und Presence↔Station-Trennung (Ethik
+2. P2 + P5 — Zustimmungs-Gate und Presence↔Station-Trennung (Ethik
    §5/§6 werden Code)
-4. P3 + P4 — Deep lebt (gnomonisch, star_position_at, endliches τ) +
+3. P3 + P4 — Deep lebt (gnomonisch, star_position_at, endliches τ) +
    ein Gesetz, fünf Medien (Audio = Probe-Ωₖ durch mx²); die Exposure
    atmet wieder mit dem Echo (Ethik §9)
-5. ε-Kulling / atmende Membran — der Hebel wartet auf die Messreihe,
+4. ε-Kulling / atmende Membran — der Hebel wartet auf die Messreihe,
    die das Budget erst ehrlich zeigt
-6. P6 — ⌘K, 2-Finger-Zeit, f-Toggle, Deep-Link-Init, Puffer-Schrumpf,
+5. P6 — ⌘K, 2-Finger-Zeit, f-Toggle, Deep-Link-Init, Puffer-Schrumpf,
    Dithering, 3-zeiliger HUD
 
 ## Offene Arbeit aus den geschlossenen Atomen (2026-08-16/17)
@@ -642,6 +626,9 @@ heute auf den Bestand unter /home/johannes/projects/archive/archeology/.
   Abschaltung nach Verifikation der Rust-Katalog-Kompilate im
   kernel_flatten-catalogs-Job (ein Produzent pro Asset)
 - CDN-Asset-Naming: `{name}.json` — Konvention ist der Resolver (Regel)
+- kernel_flatten-Neulauf: ephemeris_compiler n_sections 2→3 (rotationslose
+  Körper wurden verworfen, Rotation abgeschnitten) — CDN-Neukompilat
+  verifizieren (rotationslose Körper laden, Rotations-Matrizen präsent)
 
 ## Feature Backlog
 
