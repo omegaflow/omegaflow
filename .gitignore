@@ -38,6 +38,3 @@ phi/port/probe_drafts_enriched.φ
 # Compiler-Flat-jsons (gehen zum CDN, nicht ins Repo)
 phi/port/*.json
 phi/port/probe_jina.txt
-
-# Große Harvest-Vollinventare (reproduzierbar, Re-Harvest im Ledger)
-phi/katalog/pangaea_catalog_full.φ
