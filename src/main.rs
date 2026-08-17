@@ -534,7 +534,7 @@ enum Motion {
 #[derive(Clone)]
 enum OscillatorSource {
     Api(u32),
-    Device,
+    Station,
     Body,
 }
 
@@ -3646,14 +3646,14 @@ mod archivar {
         fn accept(&mut self, field: Arc<Buffer>) {
             let mut body_osc = 0usize;
             let mut api_osc = 0usize;
-            let mut dev_osc = 0usize;
+            let mut station_osc = 0usize;
             let mut body_src: std::collections::HashSet<String> = std::collections::HashSet::new();
             let mut api_src: std::collections::HashSet<u32> = std::collections::HashSet::new();
             for (_body_name, hash) in &field.bodies {
                 for cell in hash.cells.values().chain(std::iter::once(&hash.unbounded)) {
                     for osc in cell {
                         match osc.source {
-                            OscillatorSource::Device => dev_osc += 1,
+                            OscillatorSource::Station => station_osc += 1,
                             OscillatorSource::Api(idx) => {
                                 api_osc += 1;
                                 api_src.insert(idx);
@@ -3675,7 +3675,7 @@ mod archivar {
             {
                 for osc in cell {
                     match osc.source {
-                        OscillatorSource::Device => dev_osc += 1,
+                        OscillatorSource::Station => station_osc += 1,
                         OscillatorSource::Api(idx) => {
                             api_osc += 1;
                             api_src.insert(idx);
@@ -3688,13 +3688,13 @@ mod archivar {
                 }
             }
             let line = format!(
-            "omegaflow v{} | φ v6 | body: {} sources, {} oscillators | api: {} sources, {} oscillators | device: {} oscillators",
+            "omegaflow v{} | φ v6 | body: {} sources, {} oscillators | api: {} sources, {} oscillators | station: {} oscillators",
             env!("CARGO_PKG_VERSION"),
             body_src.len(),
             body_osc,
             api_src.len(),
             api_osc,
-            dev_osc,
+            station_osc,
         );
             let prev_len = self.last_line.chars().count();
             if self.interactive {
@@ -7318,7 +7318,7 @@ mod archivar {
         Some(Oscillator {
             source: match source_idx {
                 Some(idx) => OscillatorSource::Api(idx),
-                None => OscillatorSource::Device,
+                None => OscillatorSource::Station,
             },
             epoch: channel.epoch,
             ttl: source_ttl,
@@ -9818,7 +9818,7 @@ mod archivar {
                 fetched_oscillators.extend(oscs);
             }
             while let Ok(samples) = sensor_rx.try_recv() {
-                let (px, py, pz) = match archive.presence.get("device") {
+                let (px, py, pz) = match archive.presence.get("station") {
                     Some(&(_, x, y, z, _)) => (x, y, z),
                     None => continue,
                 };
@@ -9865,7 +9865,7 @@ mod archivar {
             while let Ok((pt, px, py, pz, pr)) = presence_rx.try_recv() {
                 archive
                     .presence
-                    .insert("device".to_string(), (pt, px, py, pz, pr));
+                    .insert("station".to_string(), (pt, px, py, pz, pr));
             }
             for i in 0..archive.sources.len() {
                 let origin = i as u32;
@@ -14843,7 +14843,7 @@ mod relay {
                             break;
                         }
                     },
-                    "/device" => {
+                    "/station" => {
                         let now = match system_now(&cfg.time) {
                             Some(t) => t,
                             None => {
@@ -14867,24 +14867,24 @@ mod relay {
                                 })
                             };
                             let eph_map = buf.eph.clone();
-                            let mut device_sample: Option<Oscillator> = None;
+                            let mut station_sample: Option<Oscillator> = None;
                             for hash in buf.bodies.values().chain(std::iter::once(&buf.inertial)) {
                                 for v in hash.cells.values().chain(std::iter::once(&hash.unbounded))
                                 {
                                     for osc in v {
-                                        if matches!(osc.source, OscillatorSource::Device) {
-                                            let newer = match &device_sample {
+                                        if matches!(osc.source, OscillatorSource::Station) {
+                                            let newer = match &station_sample {
                                                 Some(cur) => osc.epoch > cur.epoch,
                                                 None => true,
                                             };
                                             if newer {
-                                                device_sample = Some(osc.clone());
+                                                station_sample = Some(osc.clone());
                                             }
                                         }
                                     }
                                 }
                             }
-                            device_sample.and_then(|osc| {
+                            station_sample.and_then(|osc| {
                                 let p0 = osc.motion.at(now, osc.epoch, &eph_map)?;
                                 let p1 = osc.motion.at(now + 1.0, osc.epoch, &eph_map)?;
                                 Some((p0, [p1[0] - p0[0], p1[1] - p0[1], p1[2] - p0[2]]))

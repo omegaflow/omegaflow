@@ -368,6 +368,12 @@ AUSSTEHEND: Gradient/Flow + multi-frame, `deep_pt_vs`/`deep_vs` UNWAHR
 
 ### Die Abweichungen (UNWAHR / AUSSTEHEND / ERSETZT)
 
+- **„device" als Identität** — UNWAHR (Trainingsdaten-Drift): das
+  vorgeformte IoT-Wort; die wahre Vokabel ist die **Messstation**
+  („The browser is a measuring station", stationFlow, nearest_station).
+  Vollzug: `OscillatorSource::Station`, der „station"-Slot, HUD
+  „station: N oscillators", der Endpunkt /station — „device" bleibt
+  nur noch das GPU-Handle (wgpu::Device, nicht Identität).
 - `sense_deep` — **UNWAHR**: eingefrorene Richtungen; `star_position_at`
   existiert und wird nie gerufen — Parallaxe/Eigenbewegung/Aberration
   fehlen (P3). Die Granit-Doktrin ist getilgt.

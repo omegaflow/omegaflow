@@ -13,13 +13,13 @@ Force and τ are the field's physical signature. A field without a declared
 without a physical unit is metadata — it cannot manifest in the block universe.
 
 All oscillators are equal. API oscillators (fetched channels), Body
-oscillators (ephemeris bodies with radius), and Device oscillators (browser
-station sensors) carry the same 12-value record, pass through the same
-Enclosure Lemma, and are manifested by the Mathematikerin onto every
-radiator — window, audio, stderr, serial, USB, BT, HID. No source class is
-privileged. Every fetched response is mirrored to the CDN by the CI Archivar
-(release tag = API netloc); local Archivars read the CDN first and fall back
-to the live API.
+oscillators (ephemeris bodies with radius), and Station oscillators (the
+measuring station's sensors) carry the same 12-value record, pass through
+the same Enclosure Lemma, and are manifested by the Mathematikerin onto
+every radiator — window, audio, stderr, serial, USB, BT, HID. No source
+class is privileged. Every fetched response is mirrored to the CDN by the
+CI Archivar (release tag = API netloc); local Archivars read the CDN
+first and fall back to the live API.
 
 ## 1. Directive Table
 
