@@ -614,6 +614,30 @@ lon longitude
 field bright_ti4 biosphere_fire_snpp_brightness_ti4_k gaussian-inverse-square thermal K 3600 0.0 0.0
 field frp biosphere_fire_snpp_radiative_power_mw gaussian-inverse-square thermal MW 3600 0.0 0.0
 
+url https://frost.met.no/observations/v0.jsonld?sources={station}&referencetime=latest&elements=air_temperature&timeoffsets=default&levels=default
+header Authorization {FROST_BASIC_AUTH}
+ttl 3600
+on earth 0 0 0
+stations https://frost.met.no/sources/v0.jsonld?types=SensorSystem&elements=air_temperature&fields=id,geometry
+stations_path data
+stations_id id
+stations_lat geometry.coordinates.1
+stations_lon geometry.coordinates.0
+fanout 40
+first data.0.observations.value frost_air_temperature_c gaussian-inverse-square thermal C 3600 0.0 0.0
+
+url https://frost.met.no/observations/v0.jsonld?sources={station}&referencetime=latest&elements=wind_speed&timeoffsets=default&levels=default
+header Authorization {FROST_BASIC_AUTH}
+ttl 3600
+on earth 0 0 0
+stations https://frost.met.no/sources/v0.jsonld?types=SensorSystem&elements=wind_speed&fields=id,geometry
+stations_path data
+stations_id id
+stations_lat geometry.coordinates.1
+stations_lon geometry.coordinates.0
+fanout 40
+first data.0.observations.value frost_wind_speed_ms gaussian-inverse-square advective m/s 3600 0.0 0.0
+
 url https://services.swpc.noaa.gov/json/ace/mag/ace_mag_1h.json
 ttl 3600
 at earth 0.99
@@ -1192,6 +1216,7 @@ dec dec
 dist dist_pc
 pmra pmra
 pmdec pmdec
+radvel rv
 dist_scale 3.085677581e16
 field mag1 cb_mag1 gaussian-inverse-square em mag 604800 0.0 0.0
 field m1 cb_primary_mass gaussian-inverse-square gravity M_sun 604800 0.0 0.0
@@ -1218,6 +1243,7 @@ dec dec
 dist dist_pc
 pmra pmra
 pmdec pmdec
+radvel rv
 dist_scale 3.085677581e16
 field mag corot_vmag gaussian-inverse-square em mag 604800 0.0 0.0
 field teff corot_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
@@ -1245,6 +1271,7 @@ dec dec
 dist dist_pc
 pmra pmra
 pmdec pmdec
+radvel rv
 dist_scale 3.085677581e16
 field jmag denis_j_mag gaussian-inverse-square em mag 604800 0.0 0.0
 field kmag denis_k_mag gaussian-inverse-square em mag 604800 0.0 0.0
@@ -1295,6 +1322,7 @@ dec dec
 dist dist_pc
 pmra pmra
 pmdec pmdec
+radvel rv
 dist_scale 3.085677581e16
 field mag gcvs_mag_max gaussian-inverse-square em mag 604800 0.0 0.0
 field period gcvs_period_d gaussian-inverse-square em d 604800 0.0 0.0
@@ -1309,6 +1337,7 @@ dec dec
 dist dist_pc
 pmra pmra
 pmdec pmdec
+radvel rv
 dist_scale 3.085677581e16
 field mag1 lmxb_mag1 gaussian-inverse-square em mag 604800 0.0 0.0
 field m1 lmxb_primary_mass gaussian-inverse-square gravity M_sun 604800 0.0 0.0
@@ -1334,6 +1363,7 @@ dec dec
 dist dist_pc
 pmra pmra
 pmdec pmdec
+radvel rv
 dist_scale 3.085677581e16
 field freq merlin_frequency_hz inverse-square em Hz 604800 0.0 0.0
 field ampflux merlin_amplitude_flux inverse-square em Jy 604800 0.0 0.0
@@ -1348,6 +1378,7 @@ dec dec
 dist dist_pc
 pmra pmra
 pmdec pmdec
+radvel rv
 dist_scale 3.085677581e16
 field mag mktypes_mag gaussian-inverse-square em mag 604800 0.0 0.0
 
@@ -1371,6 +1402,7 @@ dec dec
 dist dist_pc
 pmra pmra
 pmdec pmdec
+radvel rv
 dist_scale 3.085677581e16
 field teff pastel_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
 field logg pastel_logg gaussian-inverse-square gravity logg 604800 0.0 0.0
@@ -1386,6 +1418,7 @@ dec dec
 dist dist_pc
 pmra pmra
 pmdec pmdec
+radvel rv
 dist_scale 3.085677581e16
 field teff polarbase_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
 field logg polarbase_logg gaussian-inverse-square gravity logg 604800 0.0 0.0
@@ -1400,6 +1433,7 @@ dec dec
 dist dist_pc
 pmra pmra
 pmdec pmdec
+radvel rv
 dist_scale 3.085677581e16
 field p0 pulsar_period_s gaussian-inverse-square em s 604800 0.0 0.0
 field dm pulsar_dm_pccm3 inverse-square em pc/cm3 604800 0.0 0.0
@@ -1415,6 +1449,7 @@ dec dec
 dist dist_pc
 pmra pmra
 pmdec pmdec
+radvel rv
 dist_scale 3.085677581e16
 field mag1 sb9_primary_mag gaussian-inverse-square em mag 604800 0.0 0.0
 field mag2 sb9_secondary_mag gaussian-inverse-square em mag 604800 0.0 0.0
@@ -1459,6 +1494,7 @@ dec dec
 dist dist_pc
 pmra pmra
 pmdec pmdec
+radvel rv
 dist_scale 3.085677581e16
 field max vsx_max_mag gaussian-inverse-square em mag 604800 0.0 0.0
 field min vsx_min_mag gaussian-inverse-square em mag 604800 0.0 0.0
@@ -1485,6 +1521,7 @@ dec dec
 dist dist_pc
 pmra pmra
 pmdec pmdec
+radvel rv
 dist_scale 3.085677581e16
 field mag1 wds_primary_mag gaussian-inverse-square em mag 604800 0.0 0.0
 field mag2 wds_secondary_mag gaussian-inverse-square em mag 604800 0.0 0.0
