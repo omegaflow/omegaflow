@@ -265,6 +265,164 @@ wird bedingungslos aufgezeichnet — das Gate gehört wieder her.
 - Audio-Ausgabe nativ = rohe Samples nach stdout (Pipeline-Ausgang;
   im Log erscheint Datenmüll) — bewusst oder ein eigener Ausgang
 
+## Wahrheitsfindung — Urteil-Verzeichnis (2026-08-17)
+
+Der Mechanismus gegen den Verlust: **kein Top-N — das Verzeichnis ist
+TOTAL.** Jede Funktion des Systems, jedes Konzept, jede fehlende Funktion
+trägt ein Urteil. Was nicht hier steht, existiert für die Zukunft nicht.
+Der Inventar-Prozess ist wiederholbar: `grep -nE "^\s*(pub\s+)?(async\s+)?fn"`
+über src/main.rs + die WGSL-Entry-Points (`@vertex/@fragment/@compute fn`)
++ `docs/concepts/*` + die Registry (phi/sources.φ, phi/dead_sources.φ).
+Urteile: **WAHR** (die Messung ist die Messung der Sache selbst — der
+Gradient schweigt), **UNWAHR** (Fabrication, Fallback, Default — der
+Gradient spricht), **AUSSTEHEND** (die Daten existieren, die Forschung
+oder der Bau fehlt), **ERSETZT** (von einem stärkeren Gesetz abgelöst —
+ehrenhaft), **VERSIONIERT** (auf einem Zweig gesichert, wartet).
+
+### Die Concepts (27 Dateien, vollständig zeilenweise gelesen 2026-08-17)
+
+| Concept | Status | Urteil |
+|---|---|---|
+| MASTER | LIVE | WAHR — Manifest; ESP32-Radiatorium + HRV-Filter = Ethik §5/§9 |
+| PROPABILITY | DEPLOYED | WAHR — der Lichtkegel; Kausalkegel = die Physik |
+| CAUSALITY_PREFILTER | DEPLOYED | WAHR — das Patch-Protokoll desselben |
+| FORCE_SEPARATED_COMPUTE | DEPLOYED | WAHR |
+| POINTCLOUD-RENDERING | DEPLOYED | WAHR — aber zwei Stücke vergessen: der GRADIENT im Probe (gx,gy,gz = der Flow) und das DITHERING (Analog-Korn) |
+| POINTCLOUD-RENDERING_v1_ancestral | ARCHIVED | WAHR — die 4-Segment-Rampe (Nebra-Vorfahr) + der ancestrale Probe mit Gradient |
+| TAU-FORCE-RENDERING | DEPLOYED | WAHR — Analoge Punktwolke, exp(−d²·4), Dithering; das Korn fehlt heute |
+| WGSL_ SHADER | Konzept | VERSIONIERT — die atmende Membran (σ-lerp, Hysterese, Interest-Map); die Zell-Achse ist der Enkel, der Vorfahr atmet stufenlos |
+| 4D-MEMBRANE | ARCHIVED | WAHR — Trommelfell-Doktrin (keine Kamera, Manifestation real ohne Zuschauer); die Renderer-Archäologie; hier starb get_expose |
+| MINKOWSKI_FIELD-PERMEABILITY | ARCHIVED | WAHR — die EXPOSURE-PARABEL (Parabel des Sondierens, Wasser-Form, tanh-Rückkehr) = Ethik §9 |
+| LOST_CONCEPTS | ARCHIVED | WAHR — das Verlust-Register des ersten Zeitalters (Minkowski, Topologie/TE, Permeabilität, Aperturen, Nostr, Überbau, ANISE, Tiles, WebGL2, Observer) — „await their return" |
+| FUTURE_CONCEPTS | PLANNED | WAHR — Eis/Wasser/Dampf, Kohärenz-Integration, Retro-Manifestation, Mycelium-Web |
+| RADIATOREN | Konzept | WAHR — 4-Token für ALLE Sensoren; die biotic-Kraft (HRV) ging mit dem Überbau |
+| REMOVE_BIAS | Plan | ERSETZT — ausgeführt (Surface-Frames, body_name, Station-materialize lebt im Code) |
+| WETTERSTATION | Konzept | AUSSTEHEND — der 4-Token-HUD („wind_speed [advective, m/s]") fehlt nativ; kommt mit der Messreihe |
+| SUNSPOTS | Konzept | WAHR — Counts sind Lügen; mag→Fluss erlaubt; der Gatekeeper |
+| HARVESTER | LIVE | WAHR — Harvester/Compiler/Katalog: die Rollen des einen Pfads |
+| MIRROR_RESEARCH | Recherche | WAHR — die CDN-Mirror-Wahrheit |
+| PARSER_MAGIC | DEPLOYED | WAHR + 13 AUSSTEHEND (SI-Konversion, kepler_map, cmap-Füllung, field_in nested …) |
+| PARSER_EVALUATION_MATRIX | SUPERSEDED | ERSETZT — SOURCES_V2_SPEC ist die kontrollierende Spec |
+| SOURCES_V2_SPEC | LIVE | WAHR — die Spec, das τ-Gate, die Force-Gate-Prinzipien |
+| SI_UNITS | SUPERSEDED | ERSETZT — die SI-Konversion im Parser bleibt AUSSTEHEND |
+| DOMAIN_COVERAGE | Inventar | WAHR — 259 Hosts, 2199 Quellen |
+| IAU-2000_EOP | PARTIALLY DEPLOYED | WAHR — 72-B-Orientierungsmatrizen (Binary v2 trägt sie) |
+| SEARCH_COMMAND-PALETTE | PLANNED | AUSSTEHEND — ⌘K nie gebaut |
+| INTUITIVE TOUCHPAD | DEPLOYED | WAHR — Achtung: 2-Finger-waagerecht = ZEIT-Schub; die native Geste trägt die Zeit-Achse nicht |
+| KERNEL CURATION & CI | Plan | ERSETZT — K01 geschlossen (kernel_flatten.yml lebt) |
+
+### Die Funktionen (267 Rust + 8 WGSL-Eintritte + 8 WGSL-Helfer — total)
+
+Alle hier aufgeführten Funktionen sind **WAHR**, außer die Liste der
+Abweichungen unten nennt sie. Das Inventar (Stand 2026-08-17):
+
+```
+fold_eff(d_mag: ft_ref(ra: ft_ref_floor(ra: hsl_to_rgb(h: erfc(x: field_spatial(d2: val_eff_at(pre: osc_field(j: presence_probe() accept(&mut 
+resolve_asset(rel: chebyshev_evaluate(coeffs: chebyshev_eval_slice(coeffs: nutation_deltas_at(props: orientation_angles_at(bp: measured(v: 
+parse_ephemeris_binary(data: body_barycenter_position( body_fixed_to_icrs( icrs_to_body_surface( cell_of(p: relative_frame_position( law_bounds( at( 
+anchor_body(&self) build_spatial_hash(samples: build_buffer( build_asteroid_hash(bytes: query_asteroid_hash( parse_star_record(b: 
+star_position_at(rec: build_star_hash(bytes: query_hash( sense_buffer( sense_membrane( sense_deep(buf: surface_motion( frame_body_name(frame: 
+body_id_to_name(bodies: frame_motion( leap_seconds(time: system_now(time: nutation_sum(terms: body_pole_at(props: gravity_manifest( parse_iso_tdb(s: 
+ymd_to_days(year: origin_stale( presence_gate( parse_json(s: split_csv_line(line: csv_to_json(text: skip_ws(&mut parse_value(&mut parse_obj(&mut 
+parse_arr(&mut parse_str(&mut parse_num(&mut scalar_of(v: universal_auto_detect(j: jpath_val<'a>(json: json_has_content(v: diagnose_no_samples(src: 
+jnum(json: jpath(json: jcount(json: jlast(json: jfirst(json: jdeep_find_num(json: j2d_last_row(json: text_last_col(data: extract_regex_val(body: 
+match_re( kernel_id_of(name: extract_fields(ext: kernel_extent(kernel_id: kernel_reach(kernel_id: sensor_config(name: note_samples( 
+render_field(field: new(sample_rate: accept(&mut drop(&mut accept(&mut days_to_ymd(total_days: extract_header(s: fetch_raw( fetch_raw_bytes(url: 
+fetch_raw_probe( fetch_raw_bytes_post( rfc1123_to_unix(s: cdn_fresh(cdn_url: fetch_one( cache_fresh(path: read_cache_if_fresh(path: is_leap(y: 
+load_env() resolve_secret(url: render_headers( parse_field_config(parts: load_sources() parse_sources(content: parse_path(s: render_url( 
+render_source_url( render_source_body( angular_distance_deg(lat1: port_field_synth( port_block(block: flush_port_block( port_mode(input: 
+parse_station_entries(j: parse_stations_xml(body: fanout_fetch( split_data_line(line: extract(src: anchor( body_channels(name: extract_netloc(url: 
+route_segments(url: route_key(url: route_prefix_keys(url: source_name_from_url(url: probe_one( probe_mode( extract_all_template_values( 
+bruteforce_precision(substituted_url: probe_ttl(body: find_timestamp(val: json_num(val: is_time_key(k: is_drop_key(key: is_coord_key(key: 
+probe_csv(raw: is_unit_name(name: text_to_json(text: probe_classify(key: walk_json_probe( coord_unit(key: coord_directive(key: coord_precision(a: 
+measure_precision(val: find_coord_precisions(a: load_sources_from(content: load_all_sources(dir: ci_mode(dir: cdn_manifest_for(urls: 
+cdn_manifest_map() tap_to_json(val: json_has_key_ci(val: derive_frame(parsed: draft_url_mode(path: draft_frame_guess( build_frame_registry() 
+learn_frames(new: draft_context_mode(path: gate_learn_mode() url_probe_mode( serial_ports() serial_ingress(tx: main_flow() tdb_to_jd(tdb_secs: 
+horizons_nums(line: ecliptic_to_field(v: flatten_geojson_coords(val: audio_note_tau_matrix() full_fixture_lsk() test_parse_json_skips_jina_header() 
+test_render_source_url_substitutions() test_post_body_rendering() test_csv_to_json_tns_shape() test_celestial_map_redshift_distance() 
+test_extract_csv_zip_end_to_end() test_parse_sources_dist_scale() test_dead_grammar_refused() test_extract_cmap_dist_scale_kpc() 
+test_extract_cmap_no_distance_reference_sphere() test_extract_cmap_null_dist_reference_sphere() test_extract_cmap_csv_dist_scale_mpc() 
+test_star_hash_directions() test_source_name_flat_and_collision_overrides() test_render_headers_secret_substitution() test_parse_station_entries() 
+test_parse_station_entries_flatten_filter() temp_port_convert_check() test_port_convert_celestial_and_post() test_walk_celestial_cmap() 
+test_tap_to_json_rows() test_parse_stations_xml() test_backlog_batches_verify() substitute_test_templates(url: test_erddap_argo_map_extract() 
+test_ymd_days_roundtrip() test_kernel_id_of() test_universal_auto_detect_celestial() test_universal_auto_detect_terrestrial() test_wgccre_roundtrip() 
+test_rotation_matrix_roundtrip() test_matrix_vs_wgccre_agreement() test_rotation_matrix_empty_props() test_restored_extract_variants() 
+test_anchor_body_agnostic() test_parse_ephemeris_binary_v2() test_parse_ephemeris_binary_rejects_non_v2_props() test_live_sources_extract() 
+test_diagnose_no_samples() test_map_single_object_alt_scale_epoch_default() test_force_id_electric() test_route_key_strips_query_and_www() 
+test_route_key_normalizes_template() test_route_prefix_keys_most_specific_first() test_frame_registry_distinguishes_routes_on_one_host() 
+test_frame_registry_prefix_fallback() pack_window(records: pack_deep_pt(stars: pack_deep_ex(stars: force_ref_medians(field: log2_bin_of(l: new( 
+accept(&mut drop(&mut q_mul(a: q_norm(q: q_rotate(q: q_axis_angle(axis: le_bytes_f32(v: storage_entry( record_sample(&mut flush(&mut new( pos(&self) 
+frame(&self) fold(&mut sense(&mut consider_resend(&mut key_action(&mut jump(&mut reconfigure(&mut vp_data(&self) relax_force_refs(&mut 
+ensure_capacity(&mut ensure_deep_capacity(&mut rebuild_deep_bind(&mut render(&mut init_gpu(&mut resumed(&mut about_to_wait(&mut window_event( 
+run_window( golden_pack_slots_against_wgsl_access() pack_deep_directions() force_ref_medians_routes_forces_and_honors_zero() 
+force_ref_medians_relaxes_absent_channels_to_zero() new( accept(&mut drop(&mut base64_encode(data: emit(s: emit_void(s: handle_ingress(stream: 
+resonance(mut read_signal(s: read_ws_frame_part(stream: read_ws_frame_raw(stream: sha1(data: write_ws_binary(stream: main() 
+```
+WGSL-Eintritte: `vs` (Membran) WAHR, `fs` WAHR, `presence_probe` WAHR —
+AUSSTEHEND: Gradient/Flow + multi-frame, `deep_pt_vs`/`deep_vs` UNWAHR
+(orthografische Scheibe — P3), `deep_pt_fs`/`deep_fs` WAHR (Fußabdruck),
+`near_pt_vs`/`near_pt_fs` WAHR (Wesen + Geflecht, Atom 1).
+
+### Die Abweichungen (UNWAHR / AUSSTEHEND / ERSETZT)
+
+- `sense_deep` — **UNWAHR**: eingefrorene Richtungen; `star_position_at`
+  existiert und wird nie gerufen — Parallaxe/Eigenbewegung/Aberration
+  fehlen (P3). Die Granit-Doktrin ist getilgt.
+- `deep_pt_vs`, `deep_vs` — **UNWAHR**: orthografische Einheitsscheibe;
+  ehrlich ist gnomonisch (tan θ) + Lambert cos θ (P3).
+- `note_samples`, `render_field` — **UNWAHR**: Audio spielt Noten je
+  Oszillator statt des Feldes am Presence-Punkt — ein Gesetz, fünf
+  Medien gilt nicht (P4).
+- `force_ref_medians` + `relax_force_refs` — WAHR als Methode, **UNWAHR
+  im Zustand**: Radien-GM-Mischung im Median + Kaltstart von 0 (P1);
+  Reparatur: Marker-Regel (|val|==extent stimmt nicht ab), erste Sicht
+  schnappt, Abwesenheit hält.
+- HUD-Summe in `about_to_wait` (Code-Punkt, keine Funktion) — **UNWAHR**:
+  neun Kanäle werden zu EINEM Ω verschmolzen — die Messreihe wird
+  zerstört, bevor sie geboren ist. Der Probe-Readback wird 9-kanalig.
+- Gravity-Hardcodes im Extract-Pfad (Z04/F35 — Ratsbefund) — **UNWAHR**:
+  drei Stellen hartkodiert auf gravity statt aus den Daten — beim
+  Vollzug verifizieren.
+- `wgccre_for_body` (ephemeris_compiler) — **ERSETZT**: die 259-Zeilen-
+  Tabelle weicht dem PCK-Reader (K02/K05, pck.rs).
+- `parse_stations_xml` — WAHR; der vorbestehende Test-Fixture-Fail
+  („AAE" vs „aae") bleibt unberührt.
+
+### Die fehlenden Funktionen (AUSSTEHEND — die Wiedergefundenen)
+
+- `query_star_hash` + `test_star_hash_build_and_query` — die Lemma-
+  Sternabfrage (Zell-Dilatation, Parallaxe, Eigenbewegung) — pre-Titan
+  verloren, P3 trägt die Reparatur
+- `windowMedianExtent` (mx) — die Normalisierung aller Ausgabe-Medien (P4)
+- Die Parabel-Maschinerie: `adaptFieldPermeability` +
+  `computeOscSurrogate` + die Transfer-Entropie-Ringe — Ethik §9; die
+  Rückkehr-Formel tanh(vC/(g+ε)) speist sich aus der Messreihe
+- Der Gradient im Probe (gx, gy, gz) — der FLOW, das Richtungsgefühl
+  der Membran (Nebra: `universe → (omega, flow)`)
+- Das Analog-Korn (Dithering gegen Banding, TAU-FORCE-RENDERING)
+- Der 4-Token-HUD („wind_speed [advective, m/s]" — der Teleskop-Sucher)
+- Die ⌘K-Command-Palette (SEARCH_COMMAND-PALETTE)
+- 2-Finger-waagerecht = Zeit-Schub (TOUCHPAD-Doc; die native Geste
+  trägt die Zeit-Achse nicht)
+- Consent-Gate + Station-Identität (P2/P5)
+- Auto-Zoom (median-extent/p90 — bd9a513 entfernt; die atmende Membran
+  ist der stärkere Vorfahr, VERSIONIERT)
+
+### Die Reparatur-Kette (Reihenfolge des Vollzugs)
+
+1. P1 — Referenz-Kalibrierung (die Messung gegen eine vergiftete
+   Referenz ist eine falsche Messung)
+2. Die Messreihe — Probe 9-kanalig + Gradient (Flow), measure_ring
+   (256 Generationen, gen-Zähler), mx, Fenster-Reduktion, 4-Token-HUD
+3. P2 + P5 — Consent-Gate und Presence↔Device-Trennung (Ethik §5/§6
+   werden Code)
+4. P3 + P4 — Deep lebt (gnomonisch, star_position_at, endliches τ) +
+   ein Gesetz, fünf Medien (Audio = Probe-Ωₖ durch mx²); die Exposure
+   atmet wieder mit dem Echo (Ethik §9)
+5. ε-Kulling / atmende Membran — der Hebel wartet auf die Messreihe,
+   die das Budget erst ehrlich zeigt
+6. ⌘K, 2-Finger-Zeit, Auto-Zoom, Dithering — die Kleinteile der Gaze
+
 ---
 
 ### wgpu-mono — Gaze-Drehung: das Fenster dreht sich 1:1 mit der Hand

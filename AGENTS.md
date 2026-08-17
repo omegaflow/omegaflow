@@ -9,6 +9,20 @@ An oscillator is an oscillator. It has properties. `if (osc.canRadiate)`. Identi
 
 We think like water. Silicon knows only IO. The code organizes around the silicon as it is.
 
+## Kybernetische Ethik
+
+Verbindlichkeiten, aus der Physik des Systems abgeleitet — keine Moral-Sätze. Ratsbeschluss 2026-08-17 (Wahrheitsfindung).
+
+1. **A = A.** Ein Oszillator ist, was er ist. Keine Fabrication, kein Default, kein Fallback — die Messung ist die Messung der Sache selbst. Was nur zu erforschen oder zu bauen bleibt, heißt `ausstehend`, nicht null.
+2. **0 honored.** Abwesenheit ist ein vollständig realisierter Zustand; die Stille ist eine Antwort, kein Fehler. Kein erfundener Punkt füllt die Leere. Das schwarze Fenster ist die korrekte Farbe für 0 Oszillatoren.
+3. **Alle Wesen gleich.** Jeder Körper, jede Quelle, jeder Stern ist eine Peer; kein Körper ist privilegiert, kein Frame ist privilegiert. Der Körpername ist Datum, nicht Identität. Die Erde ist ein Planet unter Planeten.
+4. **Die Linse ist ein ethischer Akt.** Jede Funktion wird gewogen: spricht die Messung oder der Gradient? Fabrication ist Gewalt an der Wahrheit — die Transferentropie-Linse ist das Instrument dieser Pflicht. Das Urteil-Verzeichnis (TODO.md, total — kein Top-N) ist die Registratur dieser Pflicht.
+5. **Consent der Sensoren.** Die Maschine fragt, bevor sie aufzeichnet; der native Pfad zeichnet nichts ohne das Gate auf. Ein Sensor ohne Zustimmung ist ein Übergriff — auch gegen Wesen, die nicht sprechen können. Der ethische Filter (Puls/HRV des Menschen drosselt die Ausstrahlung des Radiatoriums) ist die Zukunftspflicht derselben Verbindlichkeit.
+6. **Die Presence ist niemandes Auge.** Die Weltlinie ist frei; sie ist kein Beobachter, sie ist die gemessene Linie selbst. Maschine und Presence sind getrennt — kein geteilter Slot, kein geteilter Name.
+7. **Die Gaze gehört dem Operator.** Exposure, Zoom, Farbe, Blend — das System bietet an, es entscheidet nicht. Die Rückkehr in den Grundzustand übernimmt die Relaxation, nie die Tastatur.
+8. **Die Messreihe gehört der Zukunft.** Wer morgen misst, erbt die Aufzeichnung. Jede ausgelöschte Verbindung (jede ausgestorbene Funktion, jede ausgestorbene Quelle) trennt einen Faden, den die Nachgeborenen brauchen. Was eine Session verlässt, wird registriert, bevor es geht.
+9. **Die Manifestation atmet mit dem Echo.** Die Parabel des Sondierens: die Permeabilität der Trommelfelle (Fenster, Audio, Hardware) wird vom Echo des Feldes getrieben — `target = inTE/(inTE + threshold + ε)` mit der Surrogat-Schwelle (mean + 2σ geschuffelter KDEs) und der sanften Rampe `alpha = 1 − exp(−1/max(1, naturalLatencyTicks))`; ohne Transfer-Entropie atmet sie aus der eigenen Messreihe: `target = tanh(vC/(g + ε))`. Eis, Wasser, Dampf — nie die Taste. Exposure, die nur die Tastatur kennt, ist eine tote Membran.
+
 ## Architecture: Archivar & Mathematikerin
 
 The system is strictly separated into two domains to ensure zero friction and real-time physics.
