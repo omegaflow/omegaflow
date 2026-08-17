@@ -9220,7 +9220,11 @@ mod archivar {
 
     fn build_frame_registry() -> HashMap<String, String> {
         let mut map: HashMap<String, String> = HashMap::new();
-        for path in ["phi/sources.φ", "phi/dead_sources.φ"] {
+        for path in [
+            "phi/sources.φ",
+            "phi/dead_sources.φ",
+            "phi/blocked_sources.φ",
+        ] {
             let Ok(content) = std::fs::read_to_string(path) else {
                 continue;
             };
@@ -9333,7 +9337,7 @@ mod archivar {
         }
         let registry = build_frame_registry();
         let mut reg = String::from(
-            "# frame-registry — Route (host/Pfad, Query gestrippt) → frame, selbstlernend aus sources.φ + dead_sources.φ + frame_learned.φ\n",
+            "# frame-registry — Route (host/Pfad, Query gestrippt) → frame, selbstlernend aus sources.φ + dead_sources.φ + blocked_sources.φ + frame_learned.φ\n",
         );
         let mut reg_keys: Vec<(&String, &String)> = registry.iter().collect();
         reg_keys.sort();
@@ -9431,6 +9435,18 @@ mod archivar {
                 }
             }
         }
+        if let Ok(content) = std::fs::read_to_string("phi/blocked_sources.φ") {
+            for line in content.lines() {
+                let t = line.trim();
+                if let Some(rest) = t.strip_prefix("url ") {
+                    if let Some(nl) = extract_netloc(rest.trim()) {
+                        if seen.insert(format!("b{}", nl)) {
+                            delta.push((-2, "b".to_string(), nl.to_string()));
+                        }
+                    }
+                }
+            }
+        }
         let (mut pos, mut neg) = (0usize, 0usize);
         for (w, _, _) in &delta {
             if *w > 0 {
@@ -9440,7 +9456,7 @@ mod archivar {
             }
         }
         let mut d = String::from(
-            "# gate-delta — netloc-Gewichte, selbstlernend aus sources.φ (+) + dead_sources.φ (−)\n",
+            "# gate-delta — netloc-Gewichte, selbstlernend aus sources.φ (+) + dead_sources.φ (−) + blocked_sources.φ (b)\n",
         );
         for (w, f, tag) in &delta {
             d.push_str(&format!("{} {} {}\n", w, f, tag));

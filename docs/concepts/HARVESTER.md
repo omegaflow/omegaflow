@@ -41,7 +41,7 @@ Bestand. Er ist die QUEUE: aus jedem Eintrag wird (a) ein Compiler-Aufruf
 
 ```
 Harvester  →  Katalog (phi/katalog/)  →  Compiler (Flat-json + Block)  →  sources.φ
-                                      →  Probe     (Live-Verdict)       →  sources.φ / dead_sources.φ
+                                      →  Probe     (Live-Verdict)       →  sources.φ / dead_sources.φ / blocked_sources.φ
 ```
 
 ## Benennungsregel

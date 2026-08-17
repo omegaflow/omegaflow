@@ -42,6 +42,9 @@ unless it has `url` + `ttl` + a frame (`at`/`on`).
   in their dependency order.
 - `phi/dead_sources.φ`: entries sorted by `url`; one disposition line, one
   `url`, one `note`; blank line between entries; no duplicates per URL.
+  NUR `dead`/`decline`/`integrated`.
+- `phi/blocked_sources.φ`: same format; `key-needed`/`parser-def` —
+  blockiert, gewollt, nicht tot.
 
 | Directive | Tokens | Meaning |
 |-----------|--------|---------|
@@ -548,7 +551,8 @@ for each block in the legacy corpus:
     on … alt: convert km → m (parser expects meters)
 
     if block has ≥1 manifesting field → write to phi/sources.φ
-    else → write to phi/dead_sources.φ with the decline reason
+    else → write to phi/dead_sources.φ (decline) / phi/blocked_sources.φ
+           (key-needed / parser-def) with the reason
 ```
 
 ## 10. Non-Goals & Known Parser Gaps

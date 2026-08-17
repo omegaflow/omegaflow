@@ -28,7 +28,8 @@ registrierten Ort.
 | `phi/port/prompt.φ` | Port-Vorlage für Agenten (Korpus → Disposition). |
 | `phi/katalog/` | Katalog-Inventare (tap_index*, b2find, eogateway, VirES, ArcGIS, TerraPulse, ESA, archeology_gaps). |
 | `phi/sources.φ` | Das kanonische Register (Annahme-Ziel). |
-| `phi/dead_sources.φ` | Das Dispositions-Register (dead/parser-def/decline/key-needed). |
+| `phi/dead_sources.φ` | Dispositionen: `dead`/`decline`/`integrated`. |
+| `phi/blocked_sources.φ` | Dispositionen: `key-needed`/`parser-def` — blockiert, gewollt. |
 | `/home/johannes/projects/archive/` | Externes Archiv: `archeology/` (pre-cdn) + `phi-research/` (batches, probe_batches, Dispositionen). |
 | `docs/concepts/SOURCES_V2_SPEC.md` | Die Kontroll-Spec (Grammatik, τ-Gate, Force-Unit-Registry, File-Regeln). |
 
@@ -42,7 +43,13 @@ Extracts in Abhängigkeitsreihenfolge.
 
 `phi/dead_sources.φ`: Einträge sortiert nach `url`; eine Dispositionszeile,
 eine `url`-Zeile, eine `note`-Zeile; Leerzeile zwischen Einträgen; keine
-Duplikate pro URL.
+Duplikate pro URL. Enthält NUR `dead` (abgeschaltet) + `decline`
+(nicht-physikalisch/kommerziell) + `integrated` (tote URL, live via
+Fanout-Route in `sources.φ`).
+
+`phi/blocked_sources.φ`: gleiches Format; `key-needed` (Key frei
+registrierbar, `.secrets.local`) + `parser-def` (Gap-Verweis) — blockiert,
+gewollt, nicht tot.
 
 ## 4. Zustandsmaschine + ledger.φ
 
@@ -52,7 +59,7 @@ Zustände: `ausstehend | verifiziert | void | geparkt | disponiert`.
 - `verifiziert` — Sweep lief, Samples extrahiert, Merge in die Register steht aus
 - `void` — Sweep lief, alle URLs void (diagnostiziert) — Korpus ist erschöpft
 - `geparkt` — Kandidat wartet auf einen Parser-Gap (Gap im Eintrag benannt)
-- `disponiert` — in `sources.φ` / `dead_sources.φ` eingegangen; Eintrag wird entfernt (Git trägt ihn)
+- `disponiert` — in `sources.φ` / `dead_sources.φ` / `blocked_sources.φ` eingegangen; Eintrag wird entfernt (Git trägt ihn)
 
 Ledger-Format (wie dead_sources.φ, φ-Textformat):
 
@@ -155,8 +162,9 @@ seismic-body/diffusion → gaussian-inverse-square, seismic-surface → erfc,
 thermal → exponential-decay, advective → patch-levy.
 
 Klassifikation: (accepted) → `sources.φ`; `parser-def` (Format
-unkonsumierbar) → `dead_sources.φ` mit Gap-Verweis (oder `park/` bei
-Block-Draft); `decline` (Force-Gate) → `dead_sources.φ`.
+unkonsumierbar) → `blocked_sources.φ` mit Gap-Verweis (oder `park/` bei
+Block-Draft); `key-needed` → `blocked_sources.φ` mit Key-Marker;
+`decline` (Force-Gate) → `dead_sources.φ`.
 
 **Toter Endpoint ist kein Endzustand.** Funktioniert der Endpoint nicht, wird
 erst recherchiert: alternative Endpoints, URL-Änderungen (API-Versionen,
