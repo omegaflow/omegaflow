@@ -7286,9 +7286,6 @@ mod archivar {
         }
         if !extracted.is_empty() {
             for (name, val) in &extracted {
-                let hapi_found = effective_extracts
-                    .iter()
-                    .any(|ext| matches!(ext, Extract::Hapi(_)));
                 let fc = effective_extracts.iter().find_map(|ext| match ext {
                     Extract::Field(fc)
                     | Extract::First(fc)
@@ -7307,19 +7304,6 @@ mod archivar {
                     }
                     _ => None,
                 });
-                let fc: Option<&FieldConfig> = if hapi_found {
-                    Some(&FieldConfig {
-                        key: name.clone(),
-                        name: name.clone(),
-                        kernel: 0,
-                        force: 0,
-                        tau: 0.0,
-                        absorption: 0.0,
-                        advection: 0.0,
-                    })
-                } else {
-                    fc
-                };
                 if let Some(fc) = fc {
                     let mut raw = Some(*val);
                     if let Some(ref mag_key) = src.flux_from_mag {

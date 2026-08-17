@@ -311,10 +311,6 @@ parser-gap P08
 note field_in nested + Flatten-Extract (geschachtelte Feldpfade, generisches Flatten über mehrere Ebenen)
 
 ausstehend
-parser-gap HapiFieldConfig
-note hapi_found ersetzt field-Config durch synthetisch {kernel:0, force:0, tau:0} — deklarierte kernel/force/tau der HAPI-Blöcke erreichen den Oszillator nicht
-
-ausstehend
 parser-gap SignumFaltung
 note Halbspären-Spalten (Mauna-Loa-CO2, Fireball-API) — Signum-Faltung fehlt
 
