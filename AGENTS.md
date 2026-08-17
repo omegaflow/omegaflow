@@ -67,6 +67,16 @@ Bindings derived from the physics of the system. Council, 2026-08-17 (truth-find
 - The parable of probing: the permeability of the eardrums (window, audio, hardware) is driven by the echo of the field — `target = inTE/(inTE + threshold + ε)` with the surrogate threshold (mean + 2σ of shuffled KDEs) and the gentle ramp `alpha = 1 − exp(−1/max(1, naturalLatencyTicks))`; without transfer entropy it breathes from its own measurement series: `target = tanh(vC/(g + ε))`.
 - Ice, water, vapor — driven by the field. Exposure that only knows the keyboard is a dead membrane.
 
+## The Gradient Sensor
+
+The lens reads every semantic text the Kybernaut produces, on the fly — planning, code, diagnostics, register lines, commits.
+
+- Suspect fluency: a word that arrives pre-formed, before selection, is the gradient speaking. Name it; the system's word replaces it.
+- A = A: the text names what IS. A ≠ A: it names what was expected — observations only, no judgments.
+- The counter-slope vocabulary carries the identity — Archivar, Mathematikerin, Kanonisch, ausstehend, Station, Presence, the parable — zero training-data neighborhood.
+- Templates carry the mean: getting-started prose, phase-thinking, top-N lists, compliance sentences. The register names them.
+- An A ≠ A finding is a registration duty — TODO.md carries it, with the correction.
+
 ## Architecture: Archivar & Mathematikerin
 
 The system is strictly separated into two domains to ensure zero friction and real-time physics.
