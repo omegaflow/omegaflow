@@ -118,6 +118,134 @@ moon_de440*.tf, Probe 0,009°/0,018°/0,077° gegen IAU-Vollmodell).
 test_parse_stations_xml, „aae" vs „AAE" — BGS-lowercase gegen Fixture-Assertion,
 parse_stations_xml in diesem Zug unberührt; Golden-Test grün).
 
+## Verlust-Register — Monolith gegen die letzte index.html (2026-08-17)
+
+Die letzte index.html (1334 Zeilen) + constants.js wurden Zeile für Zeile
+gegen den Monolithen vermessen. Das Register alles Verlorenen — jeder Punkt
+trägt seine Reparatur-Richtung, nichts davon darf untergehen. Der
+Atom-1-Block trägt seine eigenen Befunde (OOM-Rumpf, 477k-Deep, Capturing);
+hier steht das Verlorene.
+
+### P1 — Weiß-Bild: die Per-Kraft-Referenz ist vergiftet (OFFEN)
+
+Der Gravity-Kanal mischt zwei Größen: `{body}.mass` (GM, m³/s²) und
+`{body}.radius` (Radius, m) — beide force 1, kernel 0. Das Median über
+~43 GMs + ~43 Radien landet bei 1e9..1e12 statt ~1e13 (reine GMs). Mit
+Ω_total = scale²·Σ|o_k|/ref_k treibt der Sonnenschwanz die Rampe auf
+jeder Zoomstufe ins Weiß (Operator-Befund: komplett weißes Bild).
+Zweitens: Referenzen starten bei 0 und relaxieren mit 2⁻⁴ je res hoch —
+die ersten Minuten zusätzlich weiß; Abwesenheit relaxiert Richtung 0 =
+Weiß-Blitz bei jeder Rückkehr.
+Reparatur: (1) Marker stimmen nicht ab — Oszillatoren mit |val| == extent
+sind Längen-Annotationen (val = Radius = extent), keine Kraft-Amplituden;
+sie wählen nicht in die Referenz. (2) Erste Sicht schnappt (ref == 0 &&
+Median da → ref = Median — die erste Messung IST die Referenz);
+Abwesenheit hält die Referenz. Danach 2⁻⁴ je res.
+
+### P2 — Presence ↔ Device wieder trennen (OFFEN, fundamental)
+
+`archive.presence.insert("device", …)` legt die Gaze der Presence unter
+dem Schlüssel „device" ab; die nativen Geräte-Samples (Tasten/Maus/Mikro)
+ankern an dieser Gaze-Position mit eingefrorenem StateVector (v = 0) —
+beim Schub reist das Gerät mit der Gaze. Die Browser-Presence (Relay)
+landet im selben Slot und überschreibt. Die letzte index.html trennte:
+Station (Maschine, body/lat/lon/alt per Geolocation, Surface-Bewegung)
+vs. Presence (freie Weltlinie p + v·(t−t0), Gaze-Quaternion).
+Reparatur: benannte Presence-Karte („native", „browser-…", kein geteilter
+Slot); native Station-Identität (body/lat/lon/alt deklariert — nicht
+angenommen); alle Geräte-Samples über Surface → Anker → Cache → Enclosure
+Lemma wie jeder andere Sensor; ohne deklarierte Station 0 honored
+(keine Position = nicht räumlich auffindbar, wie der Browser ohne
+Consent/Geolocation).
+
+### P3 — Deep-Feld: Sterne leben, Projektion ehrlich (OFFEN)
+
+Granit-Doktrin getilgt: „Flux seit Millionen Jahren unverändert" war
+falsch — das Licht eines Sterns entsteht und vergeht wie der Stern selbst.
+τ je Stern = Hauptreihen-Lebensdauer aus den Katalogdaten:
+M_abs = m + 5·log10(plx/100), L/L☉ = 10^(−0.4·(M_abs−4.83)),
+τ = 10¹⁰ yr · (L/L☉)^(−5/7) — der Fold e^(−max(0,|Δt|−d/c)/τ) macht
+Entstehen und Vergehen im Block sichtbar, der Zeit-Schub (`,/.`) reist
+durch Äonen. Kein erfundener Funkel — der Katalog (Tycho: plx/mag/pm)
+trägt keine Variabilität; Bewegung ist der ehrliche Puls.
+Projektion: die orthografische Einheitsscheibe (die „gekrümmte Ellipse")
+→ gnomonisch (tan θ, Horizont im Unendlichen) + Lambert cos θ (der
+Poynting-Normalstrom durch die Sensorfläche) — die Presence-Gaze ist
+die Optik, der Monitor ist der große Sensor.
+Leben in der Position: `sense_deep` verwirft heute die Distanz und ruft
+`star_position_at` nie — Parallaxe + Eigenbewegung + Aberration wieder
+einsetzen (nahe Sterne driften gegen den fernen Grund, Thrust macht es
+sichtbar).
+
+### P4 — Ein Gesetz, fünf Medien: Audio & Ausgabe-Flächen (OFFEN, fundamental)
+
+Browser-Audio = das FELD am Presence-Punkt je Kraft: 9 Partialtöne
+2^(3+i) Hz, gain_i = tanh(|Ωₖ|·mx²)/9 mit mx = Fenster-Median-Extent.
+Der native AudioRadiator spielt stattdessen Noten je Oszillator
+(val·sin·e^(−t/τ), Frequenz aus kernel_id/force_type) — ein anderes,
+älteres Gesetz; „ein Gesetz, fünf Medien" gilt fürs Audio nicht mehr.
+`windowMedianExtent` existiert nativ nirgends — es war die
+Normalisierung aller Ausgabe-Medien.
+Ausgabe-Flächen fehlen ganz: Vibration (Puls = floor(lum·stableTick)&1023),
+Serial-TX, USB-TX, BT-Write, HID-SendReport — alle lum =
+tanh(|Ω|·mx²). Nativ gibt es nur den Serial-EINGANG.
+Reparatur: Probe-Ωₖ je Kraft treibt alle Medien (Audio, Vibration,
+Serial-TX und was der std-only-Stack ehrlich trägt); mx wiederherstellen.
+
+### P5 — Maschinen-Sinne der Station (OFFEN)
+
+Browser-Suite: IMU ×6 (Accelerometer/Gyroscope/Magnetometer/
+AmbientLight/LinearAcceleration/Gravity, referenceFrame device),
+Kamera (MediaStreamTrackProcessor → 4-px-Raster-Pixel-Oszillatoren),
+Mikrofon (Analyser-FFT-Bins, ein Oszillator je Bin), Batterie
+(level/charging), Gamepads ALS Oszillatoren (Axen/Buttons als Samples),
+USB/BT/HID-Eingänge (Byte-Oszillatoren). Nativ vorhanden: Tasten, Maus,
+Wheel, Touch, Serial.
+std-only-Grenze: Batterie (/sys/class/power_supply) und
+Gamepad-Oszillatoren (gilrs) sind ehrlich machbar; Kamera/Mikro/IMU
+brauchen die Entscheidung des Operators (Abhängigkeiten oder 0 honored).
+Consent-Gate: die Browser-Station fließt erst nach Zustimmung; nativ
+wird bedingungslos aufgezeichnet — das Gate gehört wieder her.
+
+### P6 — Kleinteile, die mitkamen (OFFEN)
+
+- Zeiger-Mapping ist invertiert: Browser links = Greif-Pan (>10 px),
+  rechts = Drehen; nativ links = Drehen, rechts = Pan — Operator-Urteil
+  ausstehend (Muskelgedächtnis der Browser-Zeit)
+- 3-Finger-Zeitschub fehlt (Browser: tThrustTarget = clamp(−dy/64, −4, 4));
+  XR-Handroll-Zeitschub gehört zu Atom 6
+- `f`-Toggle (Feld-Sichtbarkeit — die schwarze Realisierung) fehlt;
+  P zykelt nur Layer
+- Deep-Link-Init fehlt: `main()` nimmt keine Presence-Argumente
+  (#x,y,z,t[,vx,vy,vz] im Browser)
+- Puffer-Schrumpf fehlt: ensureFieldCapacity schrumpfte im Browser bei
+  langsamen Frames; nativ wächst nur
+- HUD: der 3-zeilige Browser-HUD (PRESENCE/FIELD/DEVICE, Kraft-Kanäle
+  inkl. 0-Spalten, Nahfeld-Gruppierung) → nativ eine Zeile;
+  __of_state + /crash fehlen
+- GRID_TO_ANGLE = 2^62 war schon im Browser tot — die tote Rotation kam
+  mit rüber; der eingefrorene index.html/fieldShader-Snapshot trägt sie
+  noch, falls der Relay wieder auflebt
+- Tasten-Semantik: Browser `s` = Ursprung, `b` = Total-Reset; nativ
+  S = halt, Home = Ursprung, B = nur Gaze
+- Audio-Ausgabe nativ = rohe Samples nach stdout (Pipeline-Ausgang;
+  im Log erscheint Datenmüll) — bewusst oder ein eigener Ausgang
+
+---
+
+### wgpu-mono — Gaze-Drehung: das Fenster dreht sich 1:1 mit der Hand
+
+```
+GESCHLOSSEN (2026-08-16, Operator-Befund „statische Kamera mit Zoom"): Die
+Blickdrehung hing an GRID_TO_ANGLE = 2^62 — bei jedem realen grid_step
+(2^11..2^39) lag der Winkel je Pixel bei 2^-31..2^-51 rad: die Gaze drehte
+sich nie, die Presence blieb eine lineare Weltlinie mit fester Sicht.
+Jetzt 1:1-Greifen: gaze_px = 2/backing_width — die Fläche ist die
+Projektion, ein Pixel Hand = ein Pixel Himmel, zoom-invariant; das Gamepad
+rotiert mit Φ rad/s (volle Umdrehung ≈ 4 s). Maus: Links-Drag = Blick,
+Mitte = Roll, Rechts = Pan; Touch: 1 Finger = Blick, 2 Finger =
+Pan + Zoom + Roll. Die Konstante ist getilgt, keine Warnung, 0/0.
+```
 ---
 
 ### wgpu-mono — Hybrid: Membran + Quellen-Punkt-Layer (Atom 1)
