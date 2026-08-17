@@ -34,20 +34,20 @@ fn fold_eff(d_mag: f32, raw: f32, t: f32, ttl: f32, force_type: u32, advective_v
 @group(0) @binding(4) var<storage, read_write> prep: array<vec4f>;
 @group(0) @binding(5) var<storage, read_write> param: array<vec4f>;
 
-fn ft_ref(ft: u32) -> f32 {
-    if (ft == 0u) { return vp.ft_ref_a.x; }
-    if (ft == 1u) { return vp.ft_ref_a.y; }
-    if (ft == 2u) { return vp.ft_ref_a.z; }
-    if (ft == 3u) { return vp.ft_ref_a.w; }
-    if (ft == 4u) { return vp.ft_ref_b.x; }
-    if (ft == 5u) { return vp.ft_ref_b.y; }
-    if (ft == 6u) { return vp.ft_ref_b.z; }
-    if (ft == 7u) { return vp.ft_ref_b.w; }
-    return vp.ft_ref_c.x;
+fn ft_ref(ra: vec4f, rb: vec4f, rc: vec4f, ft: u32) -> f32 {
+    if (ft == 0u) { return ra.x; }
+    if (ft == 1u) { return ra.y; }
+    if (ft == 2u) { return ra.z; }
+    if (ft == 3u) { return ra.w; }
+    if (ft == 4u) { return rb.x; }
+    if (ft == 5u) { return rb.y; }
+    if (ft == 6u) { return rb.z; }
+    if (ft == 7u) { return rb.w; }
+    return rc.x;
 }
 
-fn ft_ref_floor(ft: u32) -> f32 {
-    return max(ft_ref(ft), 1e-30);
+fn ft_ref_floor(ra: vec4f, rb: vec4f, rc: vec4f, ft: u32) -> f32 {
+    return max(ft_ref(ra, rb, rc, ft), 1e-30);
 }
 
 struct VOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f };
@@ -107,7 +107,7 @@ struct DeepPtVOut { @builtin(position) pos: vec4f, @location(0) @interpolate(fla
 @fragment fn deep_pt_fs(in: DeepPtVOut) -> @location(0) vec4f {
     let aflux = abs(in.flux);
     if (aflux < 1e-30) { discard; }
-    let olog = log2(aflux) - log2(ft_ref_floor(0u));
+    let olog = log2(aflux) - log2(ft_ref_floor(deep_vp.ft_ref_a, deep_vp.ft_ref_b, deep_vp.ft_ref_c, 0u));
     let t2 = clamp((olog + deep_vp.expose_ex.x) / 22.0, 0.0, 1.0);
     let fade = clamp((olog - log2(1e-30)) / (-deep_vp.expose_ex.x - log2(1e-30)), 0.0, 1.0);
     let c = mix(vec3f(0.0, 0.02, 0.1), vec3f(0.0, 0.3, 0.8), clamp(t2 * 4.0, 0.0, 1.0));
@@ -168,7 +168,10 @@ fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
     out.uv = corner;
     let flux = data.w;
     let lum = clamp(
-        (log2(abs(flux) + 1e-30) - log2(ft_ref_floor(0u)) + deep_vp.expose_ex.x) / 22.0,
+        (log2(abs(flux) + 1e-30)
+            - log2(ft_ref_floor(deep_vp.ft_ref_a, deep_vp.ft_ref_b, deep_vp.ft_ref_c, 0u))
+            + deep_vp.expose_ex.x)
+            / 22.0,
         0.0,
         1.0,
     );
@@ -205,9 +208,10 @@ struct NearPtVOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f, @loca
         vec2f(-1.0, -1.0), vec2f(1.0, -1.0), vec2f(1.0, 1.0),
         vec2f(-1.0, -1.0), vec2f(1.0, 1.0), vec2f(-1.0, 1.0)
     );
+    let pre = field[id * 3u];
     let tm = field[id * 3u + 1u];
+    let fm = field[id * 3u + 2u];
     let mt = props[id * 3u];
-    let pre = prep[id];
     let w = vp.surface.x;
     let h = vp.surface.y;
     let scale = vp.surface.w;
@@ -222,7 +226,7 @@ struct NearPtVOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f, @loca
         1.0,
     );
     out.uv = corner;
-    out.val_eff = pre.w;
+    out.val_eff = fold_eff(length(pre.xyz), pre.w, tm.x, tm.y, u32(tm.z), fm.x);
     out.ft = u32(tm.z);
     out.tau = mt.y;
     out.half_px = half_px;
@@ -235,7 +239,7 @@ struct NearPtVOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f, @loca
     let r2 = dot(in.uv, in.uv) * in.half_px * in.half_px;
     let a = exp(-r2 * 0.5);
     if (a < 1.0 / 256.0) { discard; }
-    let olog = log2(aflux + 1e-30) - log2(ft_ref_floor(in.ft));
+    let olog = log2(aflux + 1e-30) - log2(ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, in.ft));
     let lum = clamp(olog / 8.0 + 0.5, 0.0, 1.0);
     let hue = fract(log2(max(in.tau, 1.0)) / 16.0);
     let rgb = hsl_to_rgb(hue, 1.0, lum);
@@ -419,11 +423,15 @@ fn presence_probe() {
         }
     }
 
-    let omega_total = abs(o0) / ft_ref_floor(0u) + abs(o1) / ft_ref_floor(1u)
-        + abs(o2) / ft_ref_floor(2u) + abs(o3) / ft_ref_floor(3u)
-        + abs(o4) / ft_ref_floor(4u) + abs(o5) / ft_ref_floor(5u)
-        + abs(o6) / ft_ref_floor(6u) + abs(o7) / ft_ref_floor(7u)
-        + abs(o8) / ft_ref_floor(8u);
+    let omega_total = abs(o0) / ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, 0u)
+        + abs(o1) / ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, 1u)
+        + abs(o2) / ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, 2u)
+        + abs(o3) / ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, 3u)
+        + abs(o4) / ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, 4u)
+        + abs(o5) / ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, 5u)
+        + abs(o6) / ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, 6u)
+        + abs(o7) / ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, 7u)
+        + abs(o8) / ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, 8u);
     if (omega_total < 1e-30) { discard; }
 
     let olog = log2(omega_total);
@@ -7422,7 +7430,16 @@ mod archivar {
         keys
     }
 
-    fn source_name_from_url(url: &str) -> String {
+    fn fnv1a64(data: &str) -> u64 {
+        let mut h: u64 = 0xcbf2_9ce4_8422_2325;
+        for b in data.bytes() {
+            h ^= b as u64;
+            h = h.wrapping_mul(0x100_0000_01b3);
+        }
+        h
+    }
+
+    fn source_name_legacy(url: &str) -> String {
         let s1 = match url.strip_prefix("https://") {
             Some(s) => s,
             None => url,
@@ -7461,6 +7478,10 @@ mod archivar {
         } else {
             cleaned.trim_matches('-').to_string()
         }
+    }
+
+    fn source_name_from_url(url: &str) -> String {
+        format!("{}-{:016x}", source_name_legacy(url), fnv1a64(url))
     }
 
     fn probe_one(
@@ -8751,6 +8772,114 @@ mod archivar {
         }
     }
 
+    fn rename_cdn_mode() -> i32 {
+        let content = match std::fs::read_to_string("phi/sources.φ") {
+            Ok(c) => c,
+            Err(e) => {
+                eprintln!("rename-cdn: read phi/sources.φ: {}", e);
+                return 1;
+            }
+        };
+        let sources = load_sources_from(&content);
+        let probe_dir = "/tmp/archivar_cache/rename_probe";
+        let mut renamed = 0u32;
+        let mut already = 0u32;
+        let mut old_absent = 0u32;
+        let mut equal = 0u32;
+        for src in &sources {
+            if src.url.starts_with("https://github.com/omegaflow/sources")
+                || src.format == "ephemeris_binary"
+                || src.format == "catalog_dastcom"
+                || src.format == "csv_zip"
+                || src.format == "kernel_text"
+            {
+                continue;
+            }
+            if src.url.contains('{') {
+                continue;
+            }
+            let Some(netloc) = extract_netloc(&src.url) else {
+                continue;
+            };
+            let new_name = source_name_from_url(&src.url);
+            let old_name = source_name_legacy(&src.url);
+            if new_name == old_name {
+                equal += 1;
+                continue;
+            }
+            let dl_new = Command::new("gh")
+                .arg("release")
+                .arg("download")
+                .arg(netloc)
+                .arg("-p")
+                .arg(format!("{}.json", new_name))
+                .arg("-D")
+                .arg(probe_dir)
+                .arg("--clobber")
+                .arg("--repo")
+                .arg("omegaflow/sources")
+                .output();
+            if dl_new.as_ref().map(|o| o.status.success()).unwrap_or(false) {
+                already += 1;
+                continue;
+            }
+            let old_path = format!("{}/{}.json", probe_dir, old_name);
+            let _ = std::fs::remove_file(&old_path);
+            let dl_old = Command::new("gh")
+                .arg("release")
+                .arg("download")
+                .arg(netloc)
+                .arg("-p")
+                .arg(format!("{}.json", old_name))
+                .arg("-O")
+                .arg(format!("{}.json", new_name))
+                .arg("-D")
+                .arg(probe_dir)
+                .arg("--clobber")
+                .arg("--repo")
+                .arg("omegaflow/sources")
+                .output();
+            let new_path = format!("{}/{}.json", probe_dir, new_name);
+            if !dl_old.as_ref().map(|o| o.status.success()).unwrap_or(false)
+                || !std::path::Path::new(&new_path).exists()
+            {
+                old_absent += 1;
+                continue;
+            }
+            let up = Command::new("gh")
+                .arg("release")
+                .arg("upload")
+                .arg(netloc)
+                .arg(&new_path)
+                .arg("--clobber")
+                .arg("--repo")
+                .arg("omegaflow/sources")
+                .output();
+            if up.as_ref().map(|o| o.status.success()).unwrap_or(false) {
+                let _ = Command::new("gh")
+                    .arg("release")
+                    .arg("delete-asset")
+                    .arg(netloc)
+                    .arg(format!("{}.json", old_name))
+                    .arg("--yes")
+                    .arg("--repo")
+                    .arg("omegaflow/sources")
+                    .output();
+                renamed += 1;
+                eprintln!(
+                    "rename-cdn: {}/{}.json → {}.json",
+                    netloc, old_name, new_name
+                );
+            }
+            let _ = std::fs::remove_file(&new_path);
+        }
+        eprintln!(
+            "rename-cdn: {} renamed, {} new name present, {} old asset absent, {} equal names",
+            renamed, already, old_absent, equal
+        );
+        0
+    }
+
     fn tap_to_json(val: &JsonVal) -> Option<JsonVal> {
         let obj = match val {
             JsonVal::Obj(m) => m,
@@ -9477,6 +9606,9 @@ mod archivar {
                     }
                 };
                 std::process::exit(ci_mode(dir));
+            }
+            if args.len() > 1 && args[1] == "--rename-cdn" {
+                std::process::exit(rename_cdn_mode());
             }
             if args.len() > 1 && args[1] == "--port" {
                 let input = match args.get(2) {
@@ -10968,6 +11100,22 @@ field temp temp_c\n";
             let mut short = [0u8; 4];
             short.copy_from_slice(&0f32.to_le_bytes());
             assert!(parse_star_record(&short).is_none());
+        }
+
+        #[test]
+        fn test_source_name_hash_injective() {
+            let slash = source_name_from_url("https://h/api/a/b");
+            let dash = source_name_from_url("https://h/api/a-b");
+            assert_ne!(slash, dash);
+            let q1 = source_name_from_url("https://h/api?station=1");
+            let q2 = source_name_from_url("https://h/api?station=2");
+            assert_ne!(q1, q2);
+            let again = source_name_from_url("https://h/api?station=1");
+            assert_eq!(q1, again);
+            let buoy1 = source_name_from_url("https://www.ndbc.noaa.gov/data/realtime/41009.txt");
+            let buoy2 = source_name_from_url("https://www.ndbc.noaa.gov/data/realtime/41010.txt");
+            assert_ne!(buoy1, buoy2);
+            assert!(source_name_from_url("https://h/api/a/b").contains('-'));
         }
 
         #[test]
@@ -13509,8 +13657,12 @@ mod mathematikerin {
             let attrs = WindowAttributes::default()
                 .with_title("omegaflow φ")
                 .with_fullscreen(Some(Fullscreen::Borderless(None)));
-            let Ok(window) = event_loop.create_window(attrs) else {
-                return;
+            let window = match event_loop.create_window(attrs) {
+                Ok(w) => w,
+                Err(e) => {
+                    eprintln!("window creation returned: {}", e);
+                    return;
+                }
             };
             let _ = window.focus_window();
             let (sw, sh) = match window.current_monitor() {
@@ -13529,7 +13681,10 @@ mod mathematikerin {
             let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor::default());
             let surface = match instance.create_surface(window.clone()) {
                 Ok(s) => s,
-                Err(_) => return,
+                Err(e) => {
+                    eprintln!("surface creation returned: {}", e);
+                    return;
+                }
             };
             let adapter =
                 match pollster::block_on(instance.request_adapter(&wgpu::RequestAdapterOptions {
@@ -13538,7 +13693,10 @@ mod mathematikerin {
                     force_fallback_adapter: false,
                 })) {
                     Some(a) => a,
-                    None => return,
+                    None => {
+                        eprintln!("adapter request returned void");
+                        return;
+                    }
                 };
             let info = adapter.get_info();
             eprintln!(
@@ -13549,7 +13707,10 @@ mod mathematikerin {
                 adapter.request_device(&wgpu::DeviceDescriptor::default(), None),
             ) {
                 Ok(dq) => dq,
-                Err(_) => return,
+                Err(e) => {
+                    eprintln!("device request returned: {}", e);
+                    return;
+                }
             };
             let caps = surface.get_capabilities(&adapter);
             let format = caps.formats[0];
@@ -13632,12 +13793,12 @@ mod mathematikerin {
                         count: None,
                     },
                     {
-                        let mut e = storage_entry(false, wgpu::ShaderStages::VERTEX_FRAGMENT);
+                        let mut e = storage_entry(false, wgpu::ShaderStages::FRAGMENT);
                         e.binding = 4;
                         e
                     },
                     {
-                        let mut e = storage_entry(false, wgpu::ShaderStages::VERTEX_FRAGMENT);
+                        let mut e = storage_entry(false, wgpu::ShaderStages::FRAGMENT);
                         e.binding = 5;
                         e
                     },

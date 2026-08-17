@@ -136,9 +136,36 @@ t2 = clamp((log2(Ω_total) + offset)/22, 0, 1); Fade-Rampe an die
 Tonemap-Null (−offset) verankert. Golden-Test grün, 4 mathematikerin-
 Tests grün.
 ```
+VERIFIZIERT (gleiche Session, HD 520/Vulkan, 1920×1080, Live-Betrieb):
+Fenster rendert — HUD 116–123 near, 477 547 deep; blend 2 (Membran aus)
+60 fps / maxms 25 vs. 6–15 fps / maxms 72–375 mit Membran — die P-Gate-
+Messung selbst belegt die Membran-Kosten. blend 2: schwarzer Grund
+(0 honored) + die Quellen-Punkte (Sonne-Kanal-Cluster, Planeten 1–2 px
+hart, peak 255 — die ehrliche Pixel-Einheit, Subpixel weiter refused).
+blend 1: Membran-Boden ~35/255 über das ganze Fenster (die 1/d²-Schwänze).
+Zwei wgpu-Validierungsfehler gefunden und behoben: (1) ft_ref las das
+globale vp — im Deep-Eintrittspunkt kollidierte uniform-vp mit
+storage-deep_ex auf g0b2 („Bindings for [8] conflict") → die drei
+Referenz-vec4s reisen jetzt als Argumente (deep_vp dort, vp in der
+Membran). (2) VERTEX_WRITABLE_STORAGE: render_layout hatte prep/param
+schreibbar auf VERTEX_FRAGMENT erweitert → zurück auf FRAGMENT-schreibbar;
+near_pt_vs liest kein prep mehr — Position aus field, val_eff via fold_eff
+(DAS Gesetz, kein Duplikat). Stille Voids benannt: create_window/
+create_surface/request_device/request_adapter drucken den Befund des
+Streams statt `Err(_) => return`. Capturing-Befund: das Fullscreen-Fenster
+ist am Compositor vorbei redirectet — xwd/flameshot/root-Captures zeigen
+den Desktop; das Fenster selbst via `ffmpeg -f x11grab -window_id <id>`.
+```
 Offen:
-- Fenster-Verifikation beim Operator (Radial-Profil, e/E/P) ausstehend —
-  der Bildschirm gehört dem Operator, nicht dieser Session
+- Radial-Profil eines isolierten breiten Gauß-Punkts (e^(−r²/2)) am Fenster
+  ausstehend — die breiten em-Punkte stapeln sich im Sonnen-Cluster, und
+  der In-Session-Zoom erreichte das Fenster nicht (Fokus); Messung + e/E/P-
+  Gefühl gehören dem Operator
+- OOM-Befund (dmesg): Ein Lauf, dessen GPU-Thread beim Pipeline-Bau
+  panikte, lief als Rumpf weiter (Archivar + Audio) und fraß 3,2 GB —
+  der tote GPU-Thread ist nicht der tote Prozess; eigener Atom
+- 477 547 deep je Sense ohne Richtungsfilter (TODO: Deep-Lieferung
+  richtungsbasiert) — treibt Speicher und maxms
 - Browser-Station (fieldShader) trägt den Punkt-Layer nicht — main-only
 
 ---

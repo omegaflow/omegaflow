@@ -26,8 +26,11 @@ HUD-Akkumulatoren + deep_gain als Code), `backup-7d0ac9f`, `parallel-welle-2026-
 ## Atom 1 — Hybrid-Rendering: Membran + Quellen-Punkt-Layer — GESCHLOSSEN
 
 GESCHLOSSEN 2026-08-16 (eine Session): near_pt-Layer, Per-Kraft-Referenzen,
-e/E ×2/÷Φ + Relaxation, P-Zyklus. Vollzug in TODO.md. Fenster-Verifikation
-beim Operator (Radial-Profil, xwd) ausstehend — sonst geschlossen.
+e/E ×2/÷Φ + Relaxation, P-Zyklus. Vollzug in TODO.md. In-Session-verifiziert
+(HD 520/Vulkan): Fenster rendert, P-Gate schaltet Membran 35/255-Grund ↔
+schwarz, Punkte sichtbar (Sonne-Cluster, Planeten 1-px); zwei wgpu-Bindungs-
+Fehler behoben (deep_ex/vp-Kollision, VERTEX_WRITABLE_STORAGE). Offen beim
+Operator: Radial-Profil eines breiten Punkts nach Zoom-in, e/E-Gefühl.
 
 **Ziel:** Die zwei Wahrheiten des Blocks zugleich. (1) Die **Membran** = das
 kontinuierliche Feld Ω(x) = Σ val_eff·K — bleibt. (2) Der **Punkt-Layer** =
