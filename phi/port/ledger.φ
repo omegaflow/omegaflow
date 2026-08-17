@@ -204,7 +204,7 @@ note rekonstruiert: 10 Endpoints (1 accepted CME + 8 decline + 1 dead SSD-404) i
 
 ausstehend
 nachlauf kandidat Mauna-Loa-CO2 + Fireball-API
-note 4 TerraPulse-Drafts stehen; Signum-Faltung der Hemisphären-Spalten fehlt — Parser-Gap
+note 4 TerraPulse-Drafts stehen; fold-Direktive lebt (mean|diff|sum, absent Halbspalte → kein Oszillator) — Mauna-Loa mean/diff entschieden; Fireball-Operator unverifiziert (Live-Verifikation offen)
 
 ausstehend
 bestand phi/research/batches/
@@ -286,33 +286,33 @@ verifiziert
 kandidat https://api.safecast.org
 note measurements.json-Variante byte-identisch zur Live-Variante — bereits live
 
-ausstehend
+verifiziert
 parser-gap P03
-note per-row τ-Override + vel-Einheitenkonvertierung
+note implementiert 2026-08-17: convert_to_si → Option<f64> am Anker (unconverted → Oszillator manifestiert nicht, stderr registriert), vel <key> [unit], tau_key <key> (0 schließt das Gate)
 
-ausstehend
+verifiziert
 parser-gap P04
-note kepler_map-Bahnlöser fehlt (Extract existiert, Kepler-Gleichungs-Bahnrechnung fehlt)
+note implementiert 2026-08-17: keplermap-Key-Direktiven a/e/i/om/w/ma/epoch/qr/tp verdrahtet; Ausführung über kepler.rs elements_to_icrs_state (mpcorb q→a, tp→M); Test: Erdbahn ~1 AU, ~29,78 km/s
 
-ausstehend
+verifiziert
 parser-gap P05
-note HorizonsVec: 0B-Fetches + falsche Timestamps
+note implementiert 2026-08-17: {jd_now}/{jd_start}/{jd_end} in render_url (TDB, 6 Stellen); Live-vectors-Block bleibt Kurationsfrage (dead_sources.φ deklariert Horizons als Compiler-Eingang)
 
-ausstehend
+verifiziert
 parser-gap P08
-note field_in nested + Flatten-Extract (geschachtelte Feldpfade, generisches Flatten über mehrere Ebenen)
+note implementiert 2026-08-17: field_in wird im Parser explizit refused+registriert (--gold migriert zu field, nested Pfade via jpath); Flatten generisch: geom leer → Zeilen-Koordinaten, geom ohne "coordinates" → Wert selbst als Koordinaten-Array (mehrstufig)
 
-ausstehend
+verifiziert
 parser-gap SignumFaltung
-note Halbspären-Spalten (Mauna-Loa-CO2, Fireball-API) — Signum-Faltung fehlt
+note implementiert 2026-08-17: fold <op> <key_a> <key_b> <force> <unit> <tau> (mean|diff|sum, absent Halbspalte → kein Oszillator); Fireball-Operator unverifiziert
 
-ausstehend
+verifiziert
 parser-gap PostBodyMigration
-note --gold-Konverter fällt method/body (POST) — STAC/landsatlook-Kandidaten brauchen post_body-Übernahme
+note implementiert 2026-08-17: --gold-Konverter mappt method POST + body (auch nicht-{-Formen: JSON-Array, form-encoded) → post_body; body ohne method bleibt kernel_text-body
 
-ausstehend
+verifiziert
 parser-gap GLMNetCDF
-note GLM-Blitz (electric-Kanal) — NetCDF-Reader fehlt
+note Ratsurteil 2026-08-17: GLM = em (NIR-Photodetektor 777,4 nm, Wert = optische Energie J, τ = Blitzdauer), ArcGIS-GOES_GLM_Bolides-Route — kein netCDF-Reader nötig; netCDF-3 std-only gehört zum Struktur-Reader-Atom, netCDF-4/HDF5 pending
 
 ausstehend
 kandidat https://wwwi3.ymparisto.fi/i3/RealTime/data/WST1403901.txt
@@ -324,7 +324,7 @@ note Kuration offen: GONG/SOHO Helioseismologie als Messquelle
 
 ausstehend
 kraft-kanal electric
-note Kuration offen: GLM-Blitz (NetCDF), GIC-Netze (nicht öffentlich), Live-E-Feldstärke (kein Feed existiert)
+note Kuration offen: GIC-Netze (nicht öffentlich), Live-E-Feldstärke (kein Feed existiert); GLM ist em (optisch), nicht electric (Ratsurteil 2026-08-17); WWLLN-VLF radio-em vs. Entladung-electric bleibt Force-Gate-Frage
 
 ausstehend
 kraft-kanal thermal
@@ -376,7 +376,7 @@ note gaia_dist denis (B/denis/denis): 31577 Zeilen, 22335 mit Gaia-Distanz — l
 
 verifiziert
 bestand phi/katalog/vizier_gold_catalogs.φ
-note gaia_dist pastel (B/pastel/pastel): 21612 Zeilen, 12345 mit Gaia-Distanz — live auf CDN
+note gaia_dist pastel (B/pastel/pastel): 37064 Zeilen voll (Chunk-Merge, 8 RA-Bänder), 20883 mit Gaia-Distanz — live auf CDN
 
 verifiziert
 bestand phi/katalog/vizier_gold_catalogs.φ
@@ -388,7 +388,7 @@ note gaia_dist vsx (B/vsx/vsx): 49568 Zeilen, 37413 mit Gaia-Distanz — live au
 
 verifiziert
 bestand phi/katalog/vizier_gold_catalogs.φ
-note gaia_dist mktypes (B/mk/mktypes): 35219 Zeilen, 18272 mit Gaia-Distanz — live auf CDN
+note gaia_dist mktypes (B/mk/mktypes): 686886 Zeilen voll (Chunk-Merge, 80 RA-Bänder à 4,5°), 347856 mit Gaia-Distanz — live auf CDN. Sync-Workflow-Schritt entfernt (Clobber-Gefahr)
 
 verifiziert
 bestand phi/katalog/vizier_gold_catalogs.φ

@@ -9,10 +9,11 @@ Drift-Stellen sind unter „Doku-Drift" registriert.
 ## Crossmatch-Welle — Vollständigkeit der großen Kataloge
 
 Offen (2026-08-17): Die Sync-Crossmatches gegen I/355/paramp waren für die
-großen Kataloge serverseitig trunkiert (Sync-Zeitlimit). pastel ist vollständig
-(37.064 Zeilen, 20.883 Gaia-Distanzen), wds vollständig (136.548 Zeilen,
-76.482 Gaia-Distanzen, live). Offen: mktypes (80 Bänder), denis (16 Bänder) —
-chunkweise per `--where`, Upload, Ledger-Korrektur. Werkzeug:
+großen Kataloge serverseitig trunkiert (Sync-Zeitlimit). pastel vollständig
+(37.064 Zeilen, 20.883 Gaia-Distanzen, live), wds vollständig (136.548 Zeilen,
+76.482 Gaia-Distanzen, live), mktypes vollständig (686.886 Zeilen, 347.856
+Gaia-Distanzen, live). Offen: denis (16 Bänder) — chunkweise per `--where`,
+Upload, Ledger-Korrektur. Werkzeug:
 `phi/port/chunk_master.py` (fortsetzbar, Chunks in phi/port/).
 
 ## Archivar — Membran-scoped Cache statt Blockuniversum
@@ -148,10 +149,10 @@ wartet).
 | SUNSPOTS | Konzept | WAHR — Counts sind Lügen; mag→Fluss erlaubt; der Gatekeeper |
 | HARVESTER | LIVE | WAHR — Harvester/Compiler/Katalog: die Rollen des einen Pfads |
 | MIRROR_RESEARCH | Recherche | WAHR — die CDN-Mirror-Wahrheit |
-| PARSER_MAGIC | DEPLOYED | WAHR + 13 AUSSTEHEND (SI-Konversion, kepler_map, cmap-Füllung, field_in nested …) |
+| PARSER_MAGIC | DEPLOYED | WAHR + 8 AUSSTEHEND (SI-Konversion, kepler_map, field_in nested, Flatten, vectors-JD erledigt 2026-08-17; cmap-Füllung, Auto-Frame, extent pro Force offen) |
 | PARSER_EVALUATION_MATRIX | SUPERSEDED | ERSETZT — SOURCES_V2_SPEC ist die kontrollierende Spec |
 | SOURCES_V2_SPEC | LIVE | WAHR — die Spec, das τ-Gate, die Force-Gate-Prinzipien |
-| SI_UNITS | SUPERSEDED | ERSETZT — die SI-Konversion im Parser bleibt AUSSTEHEND |
+| SI_UNITS | SUPERSEDED | ERSETZT — SI-Konversion total (Option<f64> am Anker, unconverted = unmanifested + registriert; mag/Mw/dex/Crab/counts pending Kuration) |
 | DOMAIN_COVERAGE | Inventar | WAHR — 259 Hosts, 2199 Quellen |
 | IAU-2000_EOP | PARTIALLY DEPLOYED | WAHR — 72-B-Orientierungsmatrizen (Binary v2 trägt sie) |
 | SEARCH_COMMAND-PALETTE | PLANNED | AUSSTEHEND — ⌘K nie gebaut |
@@ -364,45 +365,6 @@ Ephemeriden-Compiler ist seit K01 tabellegetrieben.
 
 ## Parser & Spec (P02–P09)
 
-**P02** SI-Konvertierung + Unit-Kraft-Matrix
-```
-convert_to_si + allowed_units_for_force (PARSER_EVALUATION_MATRIX.md); inkl.
-mag → W/m². SOURCES_V2_SPEC: „units are documentation slots" — heute roher
-Durchfluss.
-```
-**P03** per-row τ-Override + vel-Einheitenkonvertierung
-```
-z-Redshift-Key ist implementiert (TNS lebt). Rest: τ-Override je Zeile,
-vel m/s fix.
-```
-**P04** kepler_map-Bahnlöser fehlt
-```
-Extract existiert, Kepler-Gleichungs-Bahnrechnung fehlt (PARSER_MAGIC.md).
-```
-**P05** HorizonsVec: 0B-Fetches + falsche Timestamps
-```
-Horizons-Text-Extract produziert leere/zeitversetzte Samples.
-```
-**P06** cmap: pmra/pmdec/radvel-Füllung
-```
-pmra/pmdec/radvel sind optional (Absenz = Geschwindigkeit 0). Verbleibt:
-echte Füllung der Eigenbewegung/Radialgeschwindigkeit (Gaia-Werte
-einspeisen); plx-Füllung bleibt offen.
-```
-**P07** extent-pro-Force
-```
-gravity → body_radius statt c·τ als Extent-Herleitung.
-```
-**P08** `field_in` nested + Flatten-Extract
-```
-Geschachtelte Feldpfade und Flatten-Variante (EXTRACT_TYPES.md).
-```
-**P09** Fanout-Feintuning
-```
-Generisches Flatten über mehrere Ebenen (der Rest — Parallelität,
-Präsenz-Sortierung, URL-Rendering, OpenAQ — ist implementiert).
-```
-
 ## Infrastruktur (I01–I03)
 
 **I01** Universal Anomaly Reporter
@@ -492,15 +454,29 @@ Offen (Detail in phi/port/ledger.φ):
   (CME-Draft, Datei ABSENT)
 - Park: Pegelonline, USGS-Geomag, GWOSC/GraceDB (Skymap), DSN, CENC,
   JMA-Quake (cod-String), SDSS-SkyServer
+- Rats-Befund Harvester-Binaries (2026-08-17): kafka_harvester/fdsn_harvester
+  als eigenständige Binaries zulässig — std-only bindet den Archivar-Runtime
+  (main.rs/lib.rs), nicht die Produktions-Tools (Präzedenz: wgpu-Build,
+  harte Dependency). Reihenfolge: (1) Force-Gate zuerst — Alert-Ströme ohne
+  Feldwert am Punkt fallen (ANTARES, dead_sources.φ); Trigger+Signifikanz =
+  Nachricht, rekonstruierte Energie/magpsf/Luminosity-Distance = Messwert.
+  (2) REST-Pull zuerst: GCN circulars/notices, IceCube, GraceDB, MPC tragen
+  REST → rest_harvester deckt sie, kein neuer Decoder. (3) Nur ZTF
+  (Kafka+Avro, IRSA-Auth declined) und FDSN dataselect (miniSEED-Zeitreihe)
+  brauchen echte Decoder — beide AUSSTEHEND hinter dem Gate; miniSEED-Frage:
+  wie zerfällt eine Waveform in Oszillatoren? (4) Hand-Client vs. Crate:
+  AUSSTEHEND — fällig erst, wenn ein Kafka-only-Feed das Gate passiert;
+  dann Hand-Client (std::net::TcpStream), wenn Session-Atom bleibt, sonst
+  Crate als harte Dependency (wgpu-Analogie).
 - Rechecks: Argovis, sensor.community, environment.data.gov.uk, BGS-GIN,
   IRSA-Gator-CSV, ACTRIS, GTN-P, GONG, OceanNetworks, OMNIWeb, AstDyS,
   SuperMAG, WOUDC, AAVSO-VSX, ATNF-PSRCAT, TESS-Target-CSV,
   Tides&Currents-Datagetter, coastwatch/ifremer/emodnet-ERDDAP, PMEL,
   SERVIR/NDBC/Hurricanes-ArcGIS, AFAD tadas, MPC-Unterrouten,
   SWPC ace_mag_1h
-- Parser-Gaps: P02–P08, HapiFieldConfig, SignumFaltung,
-  PostBodyMigration, GLMNetCDF; Kraft-Abdeckung
-  acoustic/electric/thermal/advective/diffusion-Kuration
+- Kraft-Abdeckung: acoustic/electric/thermal/advective/diffusion-Kuration
+  offen — electric: GIC-Netze + Live-E-Feldstärke (kein Feed); GLM ist em
+  (Ratsurteil), WWLLN radio-em vs. Entladung-electric bleibt Force-Gate-Frage
 
 Doku-Drift (behoben 2026-08-17): Alle `archeology/`-Referenzen zeigen
 heute auf den Bestand unter /home/johannes/projects/archive/archeology/.
@@ -509,7 +485,86 @@ heute auf den Bestand unter /home/johannes/projects/archive/archeology/.
 
 - TerraPulse-Katalog: 103 Kandidaten klassifiziert
   (phi/research/agent_output/terrapulse_catalog.φ) — Block-Erstellung +
-  Verifikation offen; GLM braucht NetCDF-Reader (electric)
+  Verifikation offen. GLM (Ratsurteil 2026-08-17): GOES_GLM_Bolides-
+  ArcGIS-GeoJSON ist die Route — Kraft `em` (NIR-Photodetektor 777,4 nm,
+  Wert = detektierte optische Energie J, τ = Blitzdauer via `tau_key`),
+  NICHT electric; netCDF entfällt für GLM. Block-Erstellung pending
+  Live-Verifikation.
+- SI-Konversion total (Ratsurteil 2026-08-17): `convert_to_si` →
+  `Option<f64>`, angewendet am Anker für alle Feldwerte; unbekannte/
+  logarithmische Einheit → Oszillator manifestiert nicht, stderr
+  registriert die Einheit (einmal pro Unit). Linear angewandt: deg/arcsec
+  → rad (Feldinventar: Richtungs-Winkel), M_sun/M_earth/R_earth, MW
+  (Fall-Exaktheit gegen Mw/M), d, uatm, mb, n/cc, cfs, %, psu, DU,
+  pc/cm3, km/s, mJy, mg/kg, erg/cm2, µA/m2. `vel <key> [unit]` +
+  `tau_key <key>` (0 schließt das Gate, absent = Feld-τ). Pending
+  Kuration (unconverted, logarithmisch/Referenz): mag, Mw, M, dex, cpm,
+  Crab, Jy_km/s, sfu, counts/s — betroffene Katalog-Felder (denis/gcvs/
+  pastel/wds/vsx/mktypes/polarbase/sb9/corot/sn/wd/comet-Magnituden):
+  flux_from_mag/abs_mag_from-Deklaration je Quelle offen.
+- HorizonsVec-Fetch (Ratsurteil 2026-08-17): `{jd_now}`/`{jd_start}`/
+  `{jd_end}` in `render_url` (TDB, 6 Stellen) — die 0B-Ursache
+  (Kalenderdaten im JD-Feld) ist behoben. Ein Live-`vectors`-Block in
+  sources.φ bleibt Kurationsfrage: dead_sources.φ:3090 deklariert
+  Horizons als Compiler-Eingang, keine Live-Quelle.
+- Bestands-Abgleich mit LLM-Befunden (2026-08-17): Quellen, die andere
+  Modelle als „fehlend" meldeten, aber bereits registriert sind — nicht
+  erneut gräben. Live in phi/sources.φ: NOAA SWPC (GOES/ACE/DSCOVR/Kp/
+  DONKI), USGS Earthquake, EMSC/seismicportal, INGV, ARGO-Drifter
+  (erddap.aoml), OOI, PMEL-CO2, GraceDB superevents. Geparkt in
+  phi/dead_sources.φ: eROSITA, ALeRCE, Fink, ANTARES, LSST-TAP, GEBCO,
+  ALMA, NRAO, NOIRLab-AstroArchive, IceCube-HESE, GCN, Fermi-LAT, MPC,
+  IERS, CDDIS, OBIS, CASDA, Euclid, VAMDC/CDMS. Indexiert
+  (tap_index_*/tapvizier): SDSS, LAMOST, Hipparcos, UCAC4/5, AllWISE,
+  Pan-STARRS, Chandra-Log, XMM-Newton.
+- Katalog-Lücken (genuin, verifiziert gegen alle drei Register): Photometrie/
+  Spektroskopie — 2MASS PSC, RAVE DR6, APOGEE/GALAH; SDSS als Feldquelle
+  (nur Crossmatch indexiert). Extragalaktisch — NED, HyperLEDA/PGC, GLADE+.
+  Radio-Kontinuum (Achse leer) — NVSS, FIRST, TGSS ADR, SUMSS, RACS, LoTSS,
+  VLASS. High-Energy — Fermi 4FGL-DR4, Chandra CSC 2.1, AMS-02.
+  Sonnensystem — PDS (Instrumentendaten); MPC-Live (mpcorb_extended.json.gz).
+  TAP-Indexe — MAST, CADC, ESASky, NOIRLab Data Lab, NED. Terrestrisch —
+  EarthScope-FDSN, EPOS, SeaDataNet, Smithsonian GVP, Natural Earth.
+- Zeitkritisch: Gaia DR4 (2. Dez 2026) — dr4_stars.bin + DR4-Schema im
+  tap_compiler (5,5 a, halbierte Parallaxenfehler, Gaia-Exoplaneten).
+  Rubin LSST DR1 (Ende Juni 2028), Alerts live (Broker declined). GCVS-Stand
+  prüfen (HEASARC-Update Juni 2026 vs. gcvs_cat.json).
+- Katalog-Lücken Welle II (Recherche 2026-08-17): Diffusion/Chemorezeption
+  unbesetzt — TCCON (verifiziert, tccondata.org, Registrierung); pending
+  Verifikation: AGAGE, NDACC, WDCGG, GLODAP, EBAS (THREDDS/REST je Anbieter
+  prüfen). electric: WWLLN (registriert/restringiert) — Force-Gate klären
+  (radio-em vs. Entladung-electric), sonst refused. em terrestrisch: NSRDB/
+  BSRN (Bodensolar fehlt) — NSRDB pending Verifikation. gravity: BGI/GGP-
+  Bodengravimetrie (IGETS nur indexiert) — pending Verifikation.
+- Zeitkritisch II: SPHEREx (IRSA VOAPI + AWS S3 + FITS, Quick-Release live,
+  Voll-Katalog 2026 — verifiziert), DESI DR1 (NOIRLab Astro Data Lab TAP,
+  ~18 Mio Spektren — verifiziert), Roman (2027), 4MOST/WEAVE (2026) —
+  unverified. Gaia DR4/LSST bleiben wie notiert.
+- Struktur-Reader (Voraussetzung für SPHEREx/DESI/GLODAP): FITS-
+  Binärtabellen, Parquet/Arrow, netCDF/HDF5 — fehlen im Code; OPeNDAP-
+  Integration steht aus. Reihenfolge (Ratsurteil 2026-08-17): netCDF-3
+  (classic) std-only zuerst, netCDF-4/HDF5 `pending` (eigener Atom);
+  GLM braucht keinen netCDF-Reader (ArcGIS-GeoJSON-Route, Kraft em).
+- Crossmatch indexiert → live heben: GALEX-GUVcat (UV), SkyMapper DR4,
+  UKIDSS/VISTA/VIKING (NIR), DES DR2/Legacy Surveys DR10.
+- Katalog-Lücken Welle III (Recherche 2026-08-17, gegen alle Register verifiziert).
+  Dedupe — Parallel-Befunde meldeten als „fehlend", was bereits registriert ist:
+  INTERMAGNET live (sources.φ BGS-GIN-HAPI), HAPI-Extract existiert
+  (grind_vires_catalog), GRACE-FO live (VirES-KBR), SuperMAG/AAVSO/GIRO/
+  SuperDARN/MODVOLC/EarthScope-FDSN/EPA-RadNet/Water-Quality-Portal/STAC/Zarr/
+  RUCSoundings in dead_sources, GLEAM/VLBI-ICRF + Sentinel-5P/ICEYE/DORIS
+  indexiert, LAMOST/UCAC/SDSS/XMM in tap_index. Nicht erneut gräben.
+- Katalog-Lücken Welle III (genuin): electric — AMPERE, GloCAEM, USArray-MT;
+  diffusion — EMEP/CCC, WDCRG, European Waterbase; em — NEUBrew (UV), THEMIS/
+  ASI (Polarlicht, CDF), COSMOS2025/COSMOS-Web, INTEGRAL, ATLAS-RefCat2,
+  Subaru HSC-SSP, TIC; kosmisch/Neutrino — CREDO, KM3NeT; Geodäsie — ILRS,
+  IVS-EOP, DORIS-Live, GRACE-FO-Mascons (L2/L3); Atmosphäre/Ozean — E-GVAP,
+  Wyoming-Soundings, BGC-Argo-live, IOOS-HFRNet, NOAA-NRS (Ozean-Lärm),
+  MIROVA. Zugriffsarten pending Verifikation (unverified).
+- Zeitkritisch III: Euclid DR1 (Okt 2026), SDSS-V, eROSITA-DR2 (Juli 2026
+  erschienen — prüfen ob via HEASARC-tap_index erreichbar).
+- Struktur-Reader II: CDF, GRIB-2, GeoParquet, OGC-SensorThings — fehlen;
+  SeedLink/Streaming vom Rats-Befund (REST-Pull zuerst) abgedeckt.
 - ESA/Geomagnetik: Swarm TCT-E-Feld (keyless), VirES-Aeolus, SMOS,
   MERIS/SAR/Landsat Kandidaten
 - INTERMAGNET-Fanout (154 Observatorien live): Ausbeute-Feintuning offen
@@ -521,8 +576,11 @@ heute auf den Bestand unter /home/johannes/projects/archive/archeology/.
   IERS-EOP, Fireball/Sentry, Xamin-TAP, GONG2, GIRO-Ionosonde,
   e-CALLISTO …) als nächster Grind; FRB-Union-Merge mit
   TNS-Namens-Normalisierung (FRB121102 ↔ FRB20121102A) + frbcat.org-CSV
-  als Quelle; Mauna-Loa-CO2 + Fireball-API (Signum-Faltung der
-  Halbspären-Spalten fehlt — Parser-Gap)
+  als Quelle; Mauna-Loa-CO2 + Fireball-API: `fold <op> <key_a> <key_b>
+  <force> <unit> <tau>` lebt (mean|diff|sum, absent Halbspalte → kein
+  Oszillator) — Mauna-Loa `mean` (Hintergrund) + optional `diff`
+  (Gradient) entschieden; Fireball-Operator (sum vs. mean) unverifiziert
+  — Live-Verifikation offen
 - Host-Kuration offen: CENC (Keyed Object No1..NoN), JMA-Quake (Position
   im cod-String), Pegelonline (Fanout-Block steht aus — P09), GWOSC/
   GraceDB (Position nur via Skymap), DSN (statische Dish-Positionen),
