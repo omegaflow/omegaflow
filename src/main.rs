@@ -749,8 +749,6 @@ enum Extract {
     },
     Hapi(Vec<(String, String)>),
     XmlCount(String, String),
-    Ephemeris(String),
-    Vectors(String),
 }
 #[derive(Clone)]
 struct FieldConfig {
@@ -849,6 +847,40 @@ fn is_moment_magnitude(t: &str) -> bool {
         t.trim().to_ascii_lowercase().as_str(),
         "mw" | "mww" | "mwc" | "mwb" | "mwr" | "mwp" | "mwpd" | "mi"
     )
+}
+
+#[derive(Clone)]
+struct Anomaly {
+    category: &'static str,
+    url: String,
+    details: String,
+}
+
+static ANOMALIES: std::sync::Mutex<Vec<Anomaly>> = std::sync::Mutex::new(Vec::new());
+
+fn report_anomaly(category: &'static str, url: &str, details: &str) {
+    if let Ok(mut v) = ANOMALIES.lock() {
+        v.push(Anomaly {
+            category,
+            url: url.to_string(),
+            details: details.to_string(),
+        });
+    }
+}
+
+fn take_anomalies() -> Vec<Anomaly> {
+    match ANOMALIES.lock() {
+        Ok(mut v) => std::mem::take(&mut *v),
+        Err(_) => Vec::new(),
+    }
+}
+
+fn anomaly_issue_body(anomalies: &[Anomaly]) -> String {
+    let mut body = String::from("| Category | URL | Details |\n|---|---|---|\n");
+    for a in anomalies {
+        body.push_str(&format!("| {} | {} | {} |\n", a.category, a.url, a.details));
+    }
+    body
 }
 
 fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
@@ -961,9 +993,9 @@ mod archivar {
         cwd_candidate
     }
 
-    const ECLIPTIC_OBLIQUITY: f64 = 0.409092804;
     const GAUSS_K: f64 = 0.01720209895;
     const SURFACE_MOTION_DT: f64 = 0.01;
+    const MAX_OSCILLATORS: usize = 1 << 21;
 
     fn chebyshev_evaluate(coeffs: &[f64; CHEBYSHEV_N], tau: f64) -> f64 {
         let mut b0 = 0.0;
@@ -2069,33 +2101,15 @@ mod archivar {
         let span = (hi.0.saturating_sub(lo.0).saturating_add(1) as u64)
             .saturating_mul(hi.1.saturating_sub(lo.1).saturating_add(1) as u64)
             .saturating_mul(hi.2.saturating_sub(lo.2).saturating_add(1) as u64);
-        let visit: Vec<&Vec<Oscillator>> = if span > hash.cells.len() as u64 * 4 {
-            hash.cells
-                .iter()
-                .filter(|(ck, _)| {
-                    ck.0 >= lo.0
-                        && ck.0 <= hi.0
-                        && ck.1 >= lo.1
-                        && ck.1 <= hi.1
-                        && ck.2 >= lo.2
-                        && ck.2 <= hi.2
-                })
-                .map(|(_, v)| v)
-                .collect()
-        } else {
-            let mut out = Vec::new();
-            for cx in lo.0..=hi.0 {
-                for cy in lo.1..=hi.1 {
-                    for cz in lo.2..=hi.2 {
-                        if let Some(samples) = hash.cells.get(&(cx, cy, cz)) {
-                            out.push(samples);
-                        }
-                    }
-                }
-            }
-            out
+        let in_box = |ck: &CellKey| {
+            ck.0 >= lo.0
+                && ck.0 <= hi.0
+                && ck.1 >= lo.1
+                && ck.1 <= hi.1
+                && ck.2 >= lo.2
+                && ck.2 <= hi.2
         };
-        for samples in visit {
+        let mut emit = |samples: &Vec<Oscillator>| {
             for osc in samples {
                 let age = (t2 - osc.epoch).abs();
                 let causal_reach = kernel_reach(osc.kernel_id as u8);
@@ -2160,6 +2174,23 @@ mod archivar {
                     j4,
                     r_eq,
                 ));
+            }
+        };
+        if span > hash.cells.len() as u64 * 4 {
+            for (ck, v) in &hash.cells {
+                if in_box(ck) {
+                    emit(v);
+                }
+            }
+        } else {
+            for cx in lo.0..=hi.0 {
+                for cy in lo.1..=hi.1 {
+                    for cz in lo.2..=hi.2 {
+                        if let Some(v) = hash.cells.get(&(cx, cy, cz)) {
+                            emit(v);
+                        }
+                    }
+                }
             }
         }
     }
@@ -3181,8 +3212,6 @@ mod archivar {
                         }
                         Extract::LastObj(_, _, _, _)
                         | Extract::LastLine(_)
-                        | Extract::Ephemeris(_)
-                        | Extract::Vectors(_)
                         | Extract::XmlCount(_, _) => {
                             if json_has_content(&j) {
                                 key_found = true;
@@ -4931,11 +4960,11 @@ mod archivar {
                         parts[2].to_string(),
                     ));
                 }
-                "ephemeris" if parts.len() >= 2 => {
-                    cur_extracts.push(Extract::Ephemeris(parts[1].to_string()));
-                }
-                "vectors" if parts.len() >= 2 => {
-                    cur_extracts.push(Extract::Vectors(parts[1].to_string()));
+                "ephemeris" | "vectors" => {
+                    eprintln!(
+                        "{} refused: Horizons-text extract is superseded by format ephemeris_binary + body channels (value would be a fabricated range)",
+                        parts[0]
+                    );
                 }
                 "field" if parts.len() == 6 => {
                     let f = match force_id_of(parts[2]) {
@@ -6432,277 +6461,6 @@ mod archivar {
                 Extract::XmlCount(tag, n) => {
                     let count = body.matches(&format!("<{}>", tag)).count() as f64;
                     extracted.insert(n.clone(), count);
-                }
-                Extract::Ephemeris(n) => {
-                    let ht = if let Some(ref j) = parsed_json {
-                        if let JsonVal::Obj(m) = j {
-                            if let Some(JsonVal::Str(s)) = m.get("result") {
-                                s.clone()
-                            } else {
-                                eprintln!("EPH result key absent, fmt={}", src.format);
-                                body.to_string()
-                            }
-                        } else {
-                            eprintln!("EPH root not object, fmt={}", src.format);
-                            body.to_string()
-                        }
-                    } else {
-                        eprintln!(
-                            "EPH body not JSON, fmt={} len={} lead={:?}",
-                            src.format,
-                            body.len(),
-                            &body[..body.len().min(120)]
-                        );
-                        body.to_string()
-                    };
-                    if let Some(soe) = ht.find("$$SOE") {
-                        let a = &ht[soe + 5..];
-                        let e = match a.find("$EOE") {
-                            Some(i) => i,
-                            None => continue,
-                        };
-                        let blk = &a[..e];
-                        let mut rows: Vec<(f64, [f64; 3], [f64; 3], Option<f64>)> = Vec::new();
-                        let mut cur_jd: Option<f64> = None;
-                        let mut cur_p: Option<[f64; 3]> = None;
-                        let mut cur_v: Option<[f64; 3]> = None;
-                        let mut cur_rg: Option<f64> = None;
-                        for line in blk.lines() {
-                            let t = line.trim();
-                            if t.is_empty() {
-                                continue;
-                            }
-                            let c0 = match t.chars().next() {
-                                Some(c) => c,
-                                None => continue,
-                            };
-                            if c0.is_ascii_digit() {
-                                if let (Some(jd), Some(p), Some(v)) = (cur_jd, cur_p, cur_v) {
-                                    rows.push((jd, p, v, cur_rg));
-                                }
-                                cur_jd = t
-                                    .split('=')
-                                    .next()
-                                    .and_then(|s| s.trim().parse::<f64>().ok());
-                                cur_p = None;
-                                cur_v = None;
-                                cur_rg = None;
-                            } else if t.starts_with("VX") {
-                                cur_v = horizons_nums(t, ["VX", "VY", "VZ"]);
-                            } else if t.starts_with('X') {
-                                cur_p = horizons_nums(t, ["X", "Y", "Z"]);
-                            } else if t.starts_with("LT") {
-                                if let Some(r) = horizons_nums(t, ["RG", "LT", "RR"]) {
-                                    cur_rg = Some(r[0]);
-                                }
-                            }
-                        }
-                        if let (Some(jd), Some(p), Some(v)) = (cur_jd, cur_p, cur_v) {
-                            rows.push((jd, p, v, cur_rg));
-                        }
-                        if let Some(&(jd0, p0k, v0k, rg0)) = rows.first() {
-                            let p0 = ecliptic_to_field([
-                                p0k[0] * 1000.0,
-                                p0k[1] * 1000.0,
-                                p0k[2] * 1000.0,
-                            ]);
-                            let row_epoch = (jd0 - J2000_EPOCH) * 86400.0;
-                            let v = if rows.len() > 1 {
-                                let &(jd1, p1k, _, _) = match rows.last() {
-                                    Some(r) => r,
-                                    None => return ExtractResult::Measurements(Vec::new()),
-                                };
-                                let p1 = ecliptic_to_field([
-                                    p1k[0] * 1000.0,
-                                    p1k[1] * 1000.0,
-                                    p1k[2] * 1000.0,
-                                ]);
-                                let dt = (jd1 - jd0) * 86400.0;
-                                if dt > 0.0 {
-                                    [
-                                        (p1[0] - p0[0]) / dt,
-                                        (p1[1] - p0[1]) / dt,
-                                        (p1[2] - p0[2]) / dt,
-                                    ]
-                                } else {
-                                    ecliptic_to_field([
-                                        v0k[0] * 1000.0,
-                                        v0k[1] * 1000.0,
-                                        v0k[2] * 1000.0,
-                                    ])
-                                }
-                            } else {
-                                ecliptic_to_field([
-                                    v0k[0] * 1000.0,
-                                    v0k[1] * 1000.0,
-                                    v0k[2] * 1000.0,
-                                ])
-                            };
-                            let shift = now - row_epoch;
-                            let p_now = [
-                                p0[0] + v[0] * shift,
-                                p0[1] + v[1] * shift,
-                                p0[2] + v[2] * shift,
-                            ];
-                            if let Some(rg) = rg0 {
-                                channels.push((
-                                    Channel {
-                                        epoch: now,
-                                        position: Position::StateVector {
-                                            p: p_now,
-                                            v,
-                                            track: true,
-                                        },
-                                        name: n.clone(),
-                                        value: rg * 1000.0,
-                                    },
-                                    FieldConfig {
-                                        key: n.clone(),
-                                        name: n.clone(),
-                                        kernel: 0,
-                                        force: 1,
-                                        tau: f64::INFINITY,
-                                        absorption: 0.0,
-                                        advection: 0.0,
-                                        unit: String::new(),
-                                        fold: None,
-                                    },
-                                ));
-                            }
-                        }
-                    }
-                }
-                Extract::Vectors(n) => {
-                    let ht = if let Some(ref j) = parsed_json {
-                        if let JsonVal::Obj(m) = j {
-                            if let Some(JsonVal::Str(s)) = m.get("result") {
-                                s.clone()
-                            } else {
-                                eprintln!("VEC result key absent, fmt={}", src.format);
-                                body.to_string()
-                            }
-                        } else {
-                            eprintln!("VEC root not object, fmt={}", src.format);
-                            body.to_string()
-                        }
-                    } else {
-                        eprintln!(
-                            "VEC body not JSON, fmt={} len={} lead={:?}",
-                            src.format,
-                            body.len(),
-                            body.get(..40.min(body.len()))
-                        );
-                        body.to_string()
-                    };
-                    if let Some(soe) = ht.find("$$SOE") {
-                        let a = &ht[soe + 5..];
-                        let e = match a.find("$EOE") {
-                            Some(i) => i,
-                            None => continue,
-                        };
-                        let blk = &a[..e];
-                        let mut cur_jd: Option<f64> = None;
-                        let mut cur_p: Option<[f64; 3]> = None;
-                        let mut cur_v: Option<[f64; 3]> = None;
-                        let mut cur_rg: Option<f64> = None;
-                        for line in blk.lines() {
-                            let t = line.trim();
-                            if t.is_empty() {
-                                continue;
-                            }
-                            let c0 = match t.chars().next() {
-                                Some(c) => c,
-                                None => continue,
-                            };
-                            if c0.is_ascii_digit() {
-                                if let (Some(jd), Some(p), Some(v)) = (cur_jd, cur_p, cur_v) {
-                                    let p_f = ecliptic_to_field([
-                                        p[0] * 1000.0,
-                                        p[1] * 1000.0,
-                                        p[2] * 1000.0,
-                                    ]);
-                                    let v_f = ecliptic_to_field([
-                                        v[0] * 1000.0,
-                                        v[1] * 1000.0,
-                                        v[2] * 1000.0,
-                                    ]);
-                                    let row_epoch = (jd - J2000_EPOCH) * 86400.0;
-                                    if let Some(rg) = cur_rg {
-                                        channels.push((
-                                            Channel {
-                                                epoch: row_epoch,
-                                                position: Position::StateVector {
-                                                    p: p_f,
-                                                    v: v_f,
-                                                    track: true,
-                                                },
-                                                name: n.clone(),
-                                                value: rg * 1000.0,
-                                            },
-                                            FieldConfig {
-                                                key: n.clone(),
-                                                name: n.clone(),
-                                                kernel: 0,
-                                                force: 1,
-                                                tau: f64::INFINITY,
-                                                absorption: 0.0,
-                                                advection: 0.0,
-                                                unit: String::new(),
-                                                fold: None,
-                                            },
-                                        ));
-                                    }
-                                }
-                                cur_jd = t
-                                    .split('=')
-                                    .next()
-                                    .and_then(|s| s.trim().parse::<f64>().ok());
-                                cur_p = None;
-                                cur_v = None;
-                                cur_rg = None;
-                            } else if t.starts_with("VX") {
-                                cur_v = horizons_nums(t, ["VX", "VY", "VZ"]);
-                            } else if t.starts_with('X') {
-                                cur_p = horizons_nums(t, ["X", "Y", "Z"]);
-                            } else if t.starts_with("LT") {
-                                if let Some(r) = horizons_nums(t, ["RG", "LT", "RR"]) {
-                                    cur_rg = Some(r[0]);
-                                }
-                            }
-                        }
-                        if let (Some(jd), Some(p), Some(v)) = (cur_jd, cur_p, cur_v) {
-                            let p_f =
-                                ecliptic_to_field([p[0] * 1000.0, p[1] * 1000.0, p[2] * 1000.0]);
-                            let v_f =
-                                ecliptic_to_field([v[0] * 1000.0, v[1] * 1000.0, v[2] * 1000.0]);
-                            let row_epoch = (jd - J2000_EPOCH) * 86400.0;
-                            if let Some(rg) = cur_rg {
-                                channels.push((
-                                    Channel {
-                                        epoch: row_epoch,
-                                        position: Position::StateVector {
-                                            p: p_f,
-                                            v: v_f,
-                                            track: true,
-                                        },
-                                        name: n.clone(),
-                                        value: rg * 1000.0,
-                                    },
-                                    FieldConfig {
-                                        key: n.clone(),
-                                        name: n.clone(),
-                                        kernel: 0,
-                                        force: 1,
-                                        tau: f64::INFINITY,
-                                        absorption: 0.0,
-                                        advection: 0.0,
-                                        unit: String::new(),
-                                        fold: None,
-                                    },
-                                ));
-                            }
-                        }
-                    }
                 }
                 Extract::LastObj(fk, fv, ek, n) => {
                     if let Some(ref j) = parsed_json {
@@ -9101,141 +8859,7 @@ mod archivar {
         }
     }
     fn load_sources_from(content: &str) -> Vec<SourceConfig> {
-        let mut sources = Vec::new();
-        let mut cur_ttl: u64 = 0;
-        let mut cur_url = String::new();
-        let mut cur_body: Option<String> = None;
-        let mut cur_frame: Option<Frame> = None;
-        let mut cur_format = String::new();
-        for line in content.lines() {
-            let line = line.trim();
-            if line.is_empty() || line.starts_with('#') {
-                continue;
-            }
-            let parts: Vec<&str> = line.split_whitespace().collect();
-            if parts.is_empty() {
-                continue;
-            }
-            match parts[0] {
-                "url" if parts.len() >= 2 => {
-                    if cur_ttl > 0 && !cur_url.is_empty() {
-                        if cur_format == "kernel_text" || cur_frame.is_some() {
-                            sources.push(SourceConfig {
-                                ttl: cur_ttl,
-                                url: std::mem::take(&mut cur_url),
-                                frame: match cur_frame.clone() {
-                                    Some(f) => f,
-                                    None => Frame::Manifest,
-                                },
-                                format: std::mem::take(&mut cur_format),
-                                extracts: Vec::new(),
-                                headers: Vec::new(),
-                                post_body: None,
-                                target: None,
-                                catalog: None,
-                                max_freq: None,
-                                min_freq: None,
-                                body: cur_body.clone(),
-                                stations_url: None,
-                                stations_path: String::from("stations"),
-                                stations_lat: String::from("lat"),
-                                stations_lon: String::from("lng"),
-                                stations_id: String::from("id"),
-                                flux_from_mag: None,
-                                abs_mag_from: None,
-                                catalog_epoch: None,
-                                repeat_ra_bins: 0,
-                                fanout_cap: 0,
-                                stations_flatten: String::new(),
-                                stations_filter: None,
-                                fanout_delay: 0,
-                            });
-                        }
-                    }
-                    cur_url = parts[1].to_string();
-                    cur_frame = None;
-                    cur_body = None;
-                    cur_ttl = 0;
-                    cur_format.clear();
-                }
-                "ttl" if parts.len() >= 2 => {
-                    if let Ok(v) = parts[1].parse::<u64>() {
-                        cur_ttl = v;
-                    }
-                }
-                "format" if parts.len() >= 2 => cur_format = parts[1..].join(" "),
-                "at" if parts.len() >= 2 => {
-                    let body = parts[1].to_string();
-                    cur_body = Some(body.clone());
-                    cur_frame = Some(Frame::Barycenter {
-                        body_name: body,
-                        scale: 1.0,
-                    });
-                }
-                "on" if parts.len() >= 4 => {
-                    let body = parts[1].to_string();
-                    let Ok(lat) = parts[2].parse::<f64>() else {
-                        continue;
-                    };
-                    let Ok(lon) = parts[3].parse::<f64>() else {
-                        continue;
-                    };
-                    let alt: f64 = match parts.get(4) {
-                        Some(s) => match s.parse::<f64>() {
-                            Ok(a) => a,
-                            Err(_) => continue,
-                        },
-                        None => 0.0,
-                    };
-                    cur_body = Some(body.clone());
-                    cur_frame = Some(Frame::Surface {
-                        body_name: body,
-                        lat,
-                        lon,
-                        alt,
-                    });
-                }
-                "body" if parts.len() >= 2 => {
-                    cur_body = Some(parts[1].to_string());
-                }
-                _ => {}
-            }
-        }
-        if cur_ttl > 0 && !cur_url.is_empty() {
-            if cur_format == "kernel_text" || cur_frame.is_some() {
-                sources.push(SourceConfig {
-                    ttl: cur_ttl,
-                    url: cur_url,
-                    frame: match cur_frame.clone() {
-                        Some(f) => f,
-                        None => Frame::Manifest,
-                    },
-                    format: std::mem::take(&mut cur_format),
-                    extracts: Vec::new(),
-                    headers: Vec::new(),
-                    post_body: None,
-                    target: None,
-                    catalog: None,
-                    max_freq: None,
-                    min_freq: None,
-                    body: cur_body,
-                    stations_url: None,
-                    stations_path: String::from("stations"),
-                    stations_lat: String::from("lat"),
-                    stations_lon: String::from("lng"),
-                    stations_id: String::from("id"),
-                    flux_from_mag: None,
-                    abs_mag_from: None,
-                    catalog_epoch: None,
-                    repeat_ra_bins: 0,
-                    fanout_cap: 0,
-                    stations_flatten: String::new(),
-                    stations_filter: None,
-                    fanout_delay: 0,
-                });
-            }
-        }
-        sources
+        parse_sources(content)
     }
 
     fn load_all_sources(dir: &str) -> Vec<SourceConfig> {
@@ -9318,6 +8942,7 @@ mod archivar {
                 Some(r) => r,
                 None => {
                     eprintln!("ci-mode: fetch returned void for {}", src.url);
+                    report_anomaly("API Unreachable", &src.url, "fetch returned void");
                     dead += 1;
                     continue;
                 }
@@ -9360,6 +8985,7 @@ mod archivar {
                 }
             } else {
                 eprintln!("ci-mode: {} JSON parse void", src.url);
+                report_anomaly("Malformed Data", &src.url, "JSON parse void");
                 dead += 1;
             }
         }
@@ -9367,6 +8993,40 @@ mod archivar {
         "ci-mode: {}/{} reachable, {} dead, {} mirrored to CDN, {} fresh (local TTL), {} template-skipped, mirror={}",
         reachable, total, dead, mirrored, fresh, template_skipped, mirror_enabled
     );
+        let anomalies = take_anomalies();
+        if !anomalies.is_empty() && std::env::var("GH_TOKEN").is_ok() {
+            let date = match SystemTime::now().duration_since(UNIX_EPOCH) {
+                Ok(d) => {
+                    let (y, m, d) = days_to_ymd(d.as_secs() / 86400);
+                    format!("{}-{:02}-{:02}", y, m, d)
+                }
+                Err(_) => "clock-unavailable".to_string(),
+            };
+            let title = format!("[Automated CI Report] Omegaflow Anomalies ({})", date);
+            let body = anomaly_issue_body(&anomalies);
+            match Command::new("gh")
+                .arg("issue")
+                .arg("create")
+                .arg("--repo")
+                .arg("omegaflow/omegaflow")
+                .arg("--title")
+                .arg(&title)
+                .arg("--label")
+                .arg("anomaly-report")
+                .arg("--body")
+                .arg(&body)
+                .output()
+            {
+                Ok(o) if o.status.success() => {
+                    eprintln!(
+                        "ci-mode: anomaly issue created ({} anomalies)",
+                        anomalies.len()
+                    )
+                }
+                Ok(o) => eprintln!("ci-mode: gh issue create exited {:?}", o.status.code()),
+                Err(e) => eprintln!("ci-mode: gh issue create: {}", e),
+            }
+        }
         if dead == 0 {
             0
         } else {
@@ -10888,11 +10548,19 @@ mod archivar {
                 });
             }
             {
-                let mut all: Vec<Oscillator> = Vec::new();
-                all.append(&mut fetched_oscillators);
                 let old = archive.field.clone();
                 let mut hashes: Vec<&SpatialHash> = old.bodies.values().collect();
                 hashes.push(&old.inertial);
+                let retained_estimate: usize = hashes
+                    .iter()
+                    .map(|h| h.cells.values().map(|v| v.len()).sum::<usize>() + h.unbounded.len())
+                    .sum();
+                let mut all: Vec<Oscillator> = Vec::with_capacity(
+                    fetched_oscillators.len()
+                        + retained_estimate
+                        + archive.body_ephemerides.len() * 2,
+                );
+                all.append(&mut fetched_oscillators);
                 for hash in hashes {
                     for v in hash.cells.values().chain(std::iter::once(&hash.unbounded)) {
                         for s in v {
@@ -10929,6 +10597,15 @@ mod archivar {
                         }
                     }
                 }
+                if all.len() > MAX_OSCILLATORS {
+                    let dropped = all.len() - MAX_OSCILLATORS;
+                    all.sort_by(|a, b| b.epoch.total_cmp(&a.epoch));
+                    all.truncate(MAX_OSCILLATORS);
+                    eprintln!(
+                        "oscillator cap {} reached — {} dropped (newest kept)",
+                        MAX_OSCILLATORS, dropped
+                    );
+                }
                 archive.field = Arc::new(build_buffer(
                     all,
                     cadence,
@@ -10952,26 +10629,6 @@ mod archivar {
     }
     fn tdb_to_jd(tdb_secs: f64) -> f64 {
         tdb_secs / 86400.0 + J2000_EPOCH
-    }
-
-    fn horizons_nums(line: &str, keys: [&str; 3]) -> Option<[f64; 3]> {
-        let mut out = [0.0; 3];
-        for (i, k) in keys.iter().enumerate() {
-            let p = line.find(k)?;
-            let r =
-                line[p + k.len()..].trim_start_matches(|c: char| c == '=' || c == ' ' || c == '\t');
-            let end = match r.find(|c: char| c.is_whitespace()) {
-                Some(pos) => pos,
-                None => r.len(),
-            };
-            out[i] = r[..end].parse().ok()?;
-        }
-        Some(out)
-    }
-
-    fn ecliptic_to_field(v: [f64; 3]) -> [f64; 3] {
-        let (c, s) = (ECLIPTIC_OBLIQUITY.cos(), ECLIPTIC_OBLIQUITY.sin());
-        [v[0], v[1] * c - v[2] * s, v[1] * s + v[2] * c]
     }
 
     fn flatten_geojson_coords(val: &[JsonVal]) -> Vec<(f64, f64, Option<f64>)> {
@@ -11577,6 +11234,28 @@ field temp temp_c\n";
             assert!(convert_to_si(5.0, "mag").is_none());
             assert!(convert_to_si(1.0, "dex").is_none());
             assert!(convert_to_si(0.0, "").is_some());
+        }
+
+        #[test]
+        fn test_anomaly_reporter() {
+            report_anomaly(
+                "API Unreachable",
+                "https://example.org/x",
+                "fetch returned void",
+            );
+            report_anomaly("Malformed Data", "https://example.org/y", "JSON parse void");
+            let anomalies = take_anomalies();
+            assert_eq!(anomalies.len(), 2);
+            assert_eq!(anomalies[0].category, "API Unreachable");
+            assert_eq!(anomalies[0].url, "https://example.org/x");
+            assert_eq!(anomalies[1].category, "Malformed Data");
+            let body = anomaly_issue_body(&anomalies);
+            assert!(body.starts_with("| Category | URL | Details |\n|---|---|---|\n"));
+            assert!(
+                body.contains("| API Unreachable | https://example.org/x | fetch returned void |")
+            );
+            assert!(body.contains("| Malformed Data | https://example.org/y | JSON parse void |"));
+            assert!(take_anomalies().is_empty());
         }
 
         #[test]

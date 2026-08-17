@@ -321,36 +321,18 @@ resonance(mut read_signal(s: read_ws_frame_part(stream: read_ws_frame_raw(stream
 
 ## Zentrismus / Hack / Fabrikation / Daten zweiter Klasse / Bias
 
-**H11** Hot-Path-Clones: `all.push(s.clone())` jeden Tick
-```
-Quell-Liste wird im Loop kloniert statt referenziert.
-```
-**H12** `query_hash` klont Zellen-Referenzen
-```
-out.push(samples) — Zell-Container wird pro Treffer kopiert.
-```
-**D07** Kein Oszillator-Cap in Rust
-```
-Das Frontend beschneidet über maxBufferSize; Rust kennt kein Cap.
-```
-**B05** ISS bekommt spezielles Datenfenster
-```
-Horizons-Compiler: let months = if *name == "iss" { 0.9 } else { 1.0 };
-```
-**B06** Hardcodierte Body-Listen in Compilern
-```
-horizons_compiler.rs wgccre_for_body-Tabelle (→ PCK, siehe M08). Der
-Ephemeriden-Compiler ist seit K01 tabellegetrieben.
-```
-
 ## Parser & Spec (P02–P09)
 
 ## Infrastruktur (I01–I03)
 
 **I01** Universal Anomaly Reporter
 ```
-GitHub-Issue via gh; Kategorien: Physics Mismatch, API Unreachable, Empty,
-Malformed, Invalid (PARSER_EVALUATION_MATRIX.md).
+Kern erledigt 2026-08-17: report_anomaly/take_anomalies + anomaly_issue_body +
+gh-Issue-Emission am ci-mode-Ende (Titel [Automated CI Report], Label
+anomaly-report, ein kombiniertes Issue). Verdrahtet: API Unreachable
+(fetch void), Malformed Data (JSON parse void). Offen: Physics Mismatch
+(force↔unit-Matrix in den Parser), Empty Data (Extraction im ci-mode),
+Invalid Syntax (Parser-Hook).
 ```
 **I02** refresh-protected-data: Python → Rust
 ```
@@ -364,7 +346,7 @@ Auth-Header-Support steht (PurpleAir lebt mit X-API-Key). Verbleibend:
 Basic-Auth (base64 user:pass) für GBIF (GBIF selbst ist decline).
 ```
 
-## Membran & Wahrnehmung (M01–M08)
+## Membran & Wahrnehmung (M01–M07)
 
 **M01** WebSerial flow-Protokoll
 ```
@@ -402,11 +384,6 @@ WETTERSTATION.md: Konsole als 4-Token-Spiegel `name [force, unit]: SI-Wert`.
 ```
 SEARCH_COMMAND-PALETTE.md: SIMBAD-TAP-Objektsuche (Presence-Jump), lokaler
 Source-Index, Force-Filter, 3 Phasen.
-```
-**M08** Horizons-Zwillingstabelle löschen
-```
-wgccre_for_body in horizons_compiler → PCK (stype-4-Nutation ist Teil des
-Binary-PCK-Pakets).
 ```
 
 ## Source-Port — der eine Pfad

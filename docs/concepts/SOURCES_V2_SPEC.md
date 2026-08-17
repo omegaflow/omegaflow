@@ -71,7 +71,7 @@ unless it has `url` + `ttl` + a frame (`at`/`on`).
 | `celestialpolygon <arr> <radius> [epoch] [val]` | 3–5 | Celestial polygon. |
 | `keplermap <arr> [a] [e] [i]` | 2–5 | Kepler elements map. Positional short form sets a/e/i keys. All element keys are overridable via 2-token key directives: `a`, `e`, `i`, `om`, `w`, `ma`, `epoch`, `qr`, `tp` (deg for angles, AU for a/q, JD for epoch/tp). MPC element set: `qr` (perihelion) → a = q/(1−e), `tp` (perihelion time) → M = n·(epoch−tp). Solver: `src/kepler.rs` `elements_to_icrs_state` (heliocentric ICRS). |
 | `hapi <k=v>…` | ≥2 | HAPI parameters. Values manifest only when paired with a τ-carrying `field` of the same name. |
-| `ephemeris <target>` / `vectors <target>` | 2 | Horizons ephemeris/state-vector extracts. |
+| `ephemeris <target>` / `vectors <target>` | 2 | Refused (2026-08-17). The Horizons-text extract fabricated a range-as-gravity value; the body's honest gravity (GM) is provided by `format ephemeris_binary` + the body channels. |
 | `lat <key>` / `lon <key>` | 2 | Row position keys (map). Fixed unit: deg. |
 | `alt <key> [unit]` | 2–3 | Row altitude key (map). Unit: `m` (default) \| `km` \| `ft` \| `cm` \| `mm` \| `-m` \| `-km` (negative = depth). Absent `alt` directive → surface datum 0. |
 | `epoch <key>` | 2 | Row epoch key (map, keplermap). ISO string or unix seconds. Absent → fetch time. |
@@ -339,7 +339,7 @@ ICRS origin at the body's barycenter. Used for:
 - Solar phenomena (`at sun`)
 - Heliospheric spacecraft at L1 (`at sun`)
 - Celestial catalogs with ICRS sky coordinates (`at sun`)
-- Planetary ephemeris targets — the body is the TARGET, not the frame (`target mars` + `at sun`)
+- Planetary ephemeris targets — the body is the TARGET, not the frame (`target mars` + `at sun`); the position comes from `format ephemeris_binary`, never a text-vector value
 - Orbiting satellites whose position is data-carried (map keys + `at sun`)
 
 ### `on <body> <lat> <lon> [alt]`

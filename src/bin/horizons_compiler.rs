@@ -5,253 +5,6 @@ const GRANULE_DAYS: f64 = 32.0;
 const N_SAMPLES: usize = 25;
 const MAGIC_HEADER: [u8; 4] = [0xCF, 0x86, 0x01, 0x00];
 
-struct BodyProps {
-    a0_deg: f64,
-    da0_dt_deg_per_century: f64,
-    d0_deg: f64,
-    dd0_dt_deg_per_century: f64,
-    w0_deg: f64,
-    dw_dt_deg_per_day: f64,
-    radius_m: f64,
-    flattening: f64,
-}
-
-fn wgccre_for_body(body: &str) -> Option<BodyProps> {
-    match body {
-        "sun" => Some(BodyProps {
-            a0_deg: 286.13,
-            da0_dt_deg_per_century: 0.0,
-            d0_deg: 63.87,
-            dd0_dt_deg_per_century: 0.0,
-            w0_deg: 84.176,
-            dw_dt_deg_per_day: 14.1844,
-            radius_m: 696000000.0,
-            flattening: 0.0,
-        }),
-        "mercury" => Some(BodyProps {
-            a0_deg: 281.01,
-            da0_dt_deg_per_century: -0.033,
-            d0_deg: 61.45,
-            dd0_dt_deg_per_century: -0.005,
-            w0_deg: 329.548,
-            dw_dt_deg_per_day: 6.1385,
-            radius_m: 2439700.0,
-            flattening: 0.0,
-        }),
-        "venus" => Some(BodyProps {
-            a0_deg: 272.76,
-            da0_dt_deg_per_century: 0.0,
-            d0_deg: 67.16,
-            dd0_dt_deg_per_century: 0.0,
-            w0_deg: 160.20,
-            dw_dt_deg_per_day: -1.4814,
-            radius_m: 6051800.0,
-            flattening: 0.0,
-        }),
-        "earth" => Some(BodyProps {
-            a0_deg: 0.0,
-            da0_dt_deg_per_century: 0.0,
-            d0_deg: 90.0,
-            dd0_dt_deg_per_century: 0.0,
-            w0_deg: 190.147,
-            dw_dt_deg_per_day: 360.9856235,
-            radius_m: 6378136.6,
-            flattening: 0.0033527,
-        }),
-        "moon" => Some(BodyProps {
-            a0_deg: 269.9949,
-            da0_dt_deg_per_century: 0.0031,
-            d0_deg: 66.5392,
-            dd0_dt_deg_per_century: 0.013,
-            w0_deg: 38.3213,
-            dw_dt_deg_per_day: 13.17635815,
-            radius_m: 1737400.0,
-            flattening: 0.0,
-        }),
-        "mars" => Some(BodyProps {
-            a0_deg: 317.68143,
-            da0_dt_deg_per_century: -0.1061,
-            d0_deg: 52.88650,
-            dd0_dt_deg_per_century: -0.0609,
-            w0_deg: 176.630,
-            dw_dt_deg_per_day: 350.89198226,
-            radius_m: 3396190.0,
-            flattening: 0.00589,
-        }),
-        "jupiter" => Some(BodyProps {
-            a0_deg: 268.056595,
-            da0_dt_deg_per_century: -0.006499,
-            d0_deg: 64.495303,
-            dd0_dt_deg_per_century: 0.002413,
-            w0_deg: 284.95,
-            dw_dt_deg_per_day: 870.536,
-            radius_m: 71492000.0,
-            flattening: 0.06487,
-        }),
-        "saturn" => Some(BodyProps {
-            a0_deg: 40.589,
-            da0_dt_deg_per_century: -0.036,
-            d0_deg: 83.537,
-            dd0_dt_deg_per_century: -0.004,
-            w0_deg: 38.90,
-            dw_dt_deg_per_day: 810.7939024,
-            radius_m: 60268000.0,
-            flattening: 0.09796,
-        }),
-        "uranus" => Some(BodyProps {
-            a0_deg: 257.311,
-            da0_dt_deg_per_century: 0.0,
-            d0_deg: -15.175,
-            dd0_dt_deg_per_century: 0.0,
-            w0_deg: 203.81,
-            dw_dt_deg_per_day: -501.1600928,
-            radius_m: 25559000.0,
-            flattening: 0.02293,
-        }),
-        "neptune" => Some(BodyProps {
-            a0_deg: 299.36,
-            da0_dt_deg_per_century: 0.70,
-            d0_deg: 43.46,
-            dd0_dt_deg_per_century: -0.51,
-            w0_deg: 253.18,
-            dw_dt_deg_per_day: 536.3128492,
-            radius_m: 24764000.0,
-            flattening: 0.0171,
-        }),
-        "pluto" => Some(BodyProps {
-            a0_deg: 132.993,
-            da0_dt_deg_per_century: 0.0,
-            d0_deg: -6.163,
-            dd0_dt_deg_per_century: 0.0,
-            w0_deg: 302.695,
-            dw_dt_deg_per_day: 56.3625225,
-            radius_m: 1188300.0,
-            flattening: 0.0,
-        }),
-        "io" => Some(BodyProps {
-            a0_deg: 268.05,
-            da0_dt_deg_per_century: -0.009,
-            d0_deg: 64.50,
-            dd0_dt_deg_per_century: 0.003,
-            w0_deg: 200.39,
-            dw_dt_deg_per_day: 203.4889538,
-            radius_m: 1821600.0,
-            flattening: 0.0,
-        }),
-        "europa" => Some(BodyProps {
-            a0_deg: 268.08,
-            da0_dt_deg_per_century: -0.009,
-            d0_deg: 64.51,
-            dd0_dt_deg_per_century: 0.003,
-            w0_deg: 35.98,
-            dw_dt_deg_per_day: 101.3747235,
-            radius_m: 1560800.0,
-            flattening: 0.0,
-        }),
-        "ganymede" => Some(BodyProps {
-            a0_deg: 268.20,
-            da0_dt_deg_per_century: -0.009,
-            d0_deg: 64.57,
-            dd0_dt_deg_per_century: 0.003,
-            w0_deg: 44.064,
-            dw_dt_deg_per_day: 50.3176081,
-            radius_m: 2631200.0,
-            flattening: 0.0,
-        }),
-        "callisto" => Some(BodyProps {
-            a0_deg: 268.72,
-            da0_dt_deg_per_century: -0.009,
-            d0_deg: 64.83,
-            dd0_dt_deg_per_century: 0.003,
-            w0_deg: 259.51,
-            dw_dt_deg_per_day: 21.5710715,
-            radius_m: 2410300.0,
-            flattening: 0.0,
-        }),
-        "titan" => Some(BodyProps {
-            a0_deg: 36.41,
-            da0_dt_deg_per_century: -0.036,
-            d0_deg: 83.94,
-            dd0_dt_deg_per_century: -0.004,
-            w0_deg: 189.64,
-            dw_dt_deg_per_day: 22.5769768,
-            radius_m: 2575500.0,
-            flattening: 0.0,
-        }),
-        "triton" => Some(BodyProps {
-            a0_deg: 299.36,
-            da0_dt_deg_per_century: 0.70,
-            d0_deg: 43.46,
-            dd0_dt_deg_per_century: -0.51,
-            w0_deg: 296.53,
-            dw_dt_deg_per_day: -61.2572637,
-            radius_m: 1353400.0,
-            flattening: 0.0,
-        }),
-        "enceladus" => Some(BodyProps {
-            a0_deg: 40.66,
-            da0_dt_deg_per_century: -0.036,
-            d0_deg: 83.52,
-            dd0_dt_deg_per_century: -0.004,
-            w0_deg: 36.41,
-            dw_dt_deg_per_day: 262.7318996,
-            radius_m: 252100.0,
-            flattening: 0.0,
-        }),
-        "rhea" => Some(BodyProps {
-            a0_deg: 40.38,
-            da0_dt_deg_per_century: -0.036,
-            d0_deg: 83.55,
-            dd0_dt_deg_per_century: -0.004,
-            w0_deg: 345.65,
-            dw_dt_deg_per_day: 79.6900478,
-            radius_m: 763800.0,
-            flattening: 0.0,
-        }),
-        "dione" => Some(BodyProps {
-            a0_deg: 40.66,
-            da0_dt_deg_per_century: -0.036,
-            d0_deg: 83.52,
-            dd0_dt_deg_per_century: -0.004,
-            w0_deg: 357.00,
-            dw_dt_deg_per_day: 131.5349316,
-            radius_m: 561400.0,
-            flattening: 0.0,
-        }),
-        "tethys" => Some(BodyProps {
-            a0_deg: 50.41,
-            da0_dt_deg_per_century: -0.036,
-            d0_deg: 83.55,
-            dd0_dt_deg_per_century: -0.004,
-            w0_deg: 299.11,
-            dw_dt_deg_per_day: 190.6979086,
-            radius_m: 531100.0,
-            flattening: 0.0,
-        }),
-        "phobos" => Some(BodyProps {
-            a0_deg: 317.68,
-            da0_dt_deg_per_century: -0.108,
-            d0_deg: 54.46,
-            dd0_dt_deg_per_century: -0.061,
-            w0_deg: 165.00,
-            dw_dt_deg_per_day: 1128.844759,
-            radius_m: 11260.0,
-            flattening: 0.0,
-        }),
-        "deimos" => Some(BodyProps {
-            a0_deg: 317.68,
-            da0_dt_deg_per_century: -0.108,
-            d0_deg: 54.46,
-            dd0_dt_deg_per_century: -0.061,
-            w0_deg: 240.00,
-            dw_dt_deg_per_day: 285.161891,
-            radius_m: 6230.0,
-            flattening: 0.0,
-        }),
-        _ => None,
-    }
-}
-
 fn chebyshev_nodes(n: usize) -> Vec<f64> {
     let mut nodes = Vec::with_capacity(n);
     for k in 0..n {
@@ -357,10 +110,9 @@ fn write_binary(
     body_name: &str,
     granules: &[(f64, f64, Vec<f64>, Vec<f64>, Vec<f64>)],
     rotations: &[(f64, [f64; 9])],
-    wgccre: Option<&BodyProps>,
     gm_m3_s2: Option<f64>,
 ) {
-    let has_props = wgccre.is_some() || gm_m3_s2.is_some();
+    let has_props = gm_m3_s2.is_some();
     let mut n_sections: u32 = 2;
     if has_props {
         n_sections += 1;
@@ -394,20 +146,16 @@ fn write_binary(
         buf.extend_from_slice(&12u32.to_le_bytes());
         buf.extend_from_slice(&17u32.to_le_bytes());
         buf.extend_from_slice(&0u32.to_le_bytes());
-        let row = |f: fn(&BodyProps) -> f64| match wgccre {
-            Some(w) => f(w),
-            None => 0.0,
-        };
         let params: [f64; 12] = [
-            row(|w| w.a0_deg),
-            row(|w| w.da0_dt_deg_per_century),
-            row(|w| w.d0_deg),
-            row(|w| w.dd0_dt_deg_per_century),
-            row(|w| w.w0_deg),
-            row(|w| w.dw_dt_deg_per_day),
-            row(|w| w.radius_m),
-            row(|w| w.radius_m),
-            row(|w| w.radius_m * (1.0 - w.flattening)),
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
             0.0,
             0.0,
             match gm_m3_s2 {
@@ -689,16 +437,16 @@ fn main() {
         ("616", "prometheus"),
         ("617", "pandora"),
     ];
-    let bodies_dynamic: &[(&str, &str)] = &[
-        ("-125544", "iss"),
-        ("-31", "voyager1"),
-        ("-32", "voyager2"),
-        ("-98", "new_horizons"),
-        ("-96", "parker_solar_probe"),
-        ("-144", "solar_orbiter"),
-        ("-170", "jwst"),
-        ("-61", "juno"),
-        ("2020-047A", "atlas_3i"),
+    let bodies_dynamic: &[(&str, &str, f64)] = &[
+        ("-125544", "iss", 0.9),
+        ("-31", "voyager1", 1.0),
+        ("-32", "voyager2", 1.0),
+        ("-98", "new_horizons", 1.0),
+        ("-96", "parker_solar_probe", 1.0),
+        ("-144", "solar_orbiter", 1.0),
+        ("-170", "jwst", 1.0),
+        ("-61", "juno", 1.0),
+        ("2020-047A", "atlas_3i", 1.0),
     ];
     let bodies_retry: &[(&str, &str)] = &[];
     let ci_mode = std::env::args().any(|a| a == "--ci-mode");
@@ -707,12 +455,11 @@ fn main() {
         if granules.is_empty() {
             return;
         }
-        let wgccre = wgccre_for_body(body_name);
-        if wgccre.is_none() && gm_m3_s2.is_none() {
-            eprintln!("  {}: granules only, no PCK/Horizons properties", body_name);
+        if gm_m3_s2.is_none() {
+            eprintln!("  {}: granules only, no Horizons GM", body_name);
         }
         let path = format!("ephemeris_{}.bin", body_name);
-        write_binary(&path, body_name, &granules, &[], wgccre.as_ref(), gm_m3_s2);
+        write_binary(&path, body_name, &granules, &[], gm_m3_s2);
         if ci_mode && !omegaflow::cdn::upload_asset(&path) {
             eprintln!("upload: {} did not reach the CDN", path);
             std::process::exit(1);
@@ -722,10 +469,9 @@ fn main() {
         eprintln!("  {} (Horizons stable)", name);
         run_body(cmd, name, 12.0, 30.0);
     }
-    for (cmd, name) in bodies_dynamic {
-        let months = if *name == "iss" { 0.9 } else { 1.0 };
+    for (cmd, name, months) in bodies_dynamic {
         eprintln!("  {} (Horizons dynamic, {:.1}mo)", name, months);
-        run_body(cmd, name, months, 5.0);
+        run_body(cmd, name, *months, 5.0);
     }
     for (cmd, name) in bodies_retry {
         eprintln!("  {} (Horizons retry)", name);
