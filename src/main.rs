@@ -3,6 +3,7 @@ use omegaflow::dastcom::AsteroidRec;
 pub use omegaflow::lsk::LeapSeconds;
 use std::collections::HashMap;
 use std::sync::Arc;
+use std::sync::OnceLock;
 
 const MEMBRANE_WGSL: &str = r#"
 struct VP { surface: vec4f, right: vec4f, up: vec4f, forward: vec4f, expose_lo: vec4f, expose_hi: vec4f, expose_ex: vec4f, presence: vec4f, ft_ref_a: vec4f, ft_ref_b: vec4f, ft_ref_c: vec4f };
@@ -3986,9 +3987,16 @@ mod archivar {
         headers: &[(String, String)],
         ttl: u64,
     ) -> Option<String> {
+        let manifest = cdn_manifest_map();
+        let asset_name = |u: &str| -> String {
+            manifest
+                .get(u)
+                .cloned()
+                .unwrap_or_else(|| source_name_from_url(u))
+        };
         if !url.starts_with("https://github.com/omegaflow/sources") {
             if let Some(netloc) = extract_netloc(url) {
-                let name = source_name_from_url(url);
+                let name = asset_name(url);
                 if !name.is_empty() {
                     let cache_path = format!("/tmp/archivar_cache/{}/{}.json", netloc, name);
                     if let Some(cached) = read_cache_if_fresh(&cache_path, ttl) {
@@ -4013,7 +4021,7 @@ mod archivar {
         let live = fetch_raw(url, body, headers, ttl);
         if let Some(ref r) = live {
             if let Some(netloc) = extract_netloc(url) {
-                let name = source_name_from_url(url);
+                let name = asset_name(url);
                 if !name.is_empty() {
                     let cache_path = format!("/tmp/archivar_cache/{}/{}.json", netloc, name);
                     if let Some(parent) = std::path::Path::new(&cache_path).parent() {
@@ -7431,16 +7439,7 @@ mod archivar {
         keys
     }
 
-    fn fnv1a64(data: &str) -> u64 {
-        let mut h: u64 = 0xcbf2_9ce4_8422_2325;
-        for b in data.bytes() {
-            h ^= b as u64;
-            h = h.wrapping_mul(0x100_0000_01b3);
-        }
-        h
-    }
-
-    fn source_name_legacy(url: &str) -> String {
+    fn source_name_from_url(url: &str) -> String {
         let s1 = match url.strip_prefix("https://") {
             Some(s) => s,
             None => url,
@@ -7479,10 +7478,6 @@ mod archivar {
         } else {
             cleaned.trim_matches('-').to_string()
         }
-    }
-
-    fn source_name_from_url(url: &str) -> String {
-        format!("{}-{:016x}", source_name_legacy(url), fnv1a64(url))
     }
 
     fn probe_one(
@@ -8703,7 +8698,11 @@ mod archivar {
                 continue;
             }
             let netloc = extract_netloc(&src.url);
-            let name = source_name_from_url(&src.url);
+            let manifest = cdn_manifest_map();
+            let name = manifest
+                .get(&src.url)
+                .cloned()
+                .unwrap_or_else(|| source_name_from_url(&src.url));
             let cache_path = match (&netloc, &name) {
                 (Some(nl), nm) if !nm.is_empty() => {
                     Some(format!("/tmp/archivar_cache/{}/{}.json", nl, nm))
@@ -8735,7 +8734,10 @@ mod archivar {
                 }
                 if mirror_enabled {
                     if let Some(netloc) = extract_netloc(&src.url) {
-                        let name = source_name_from_url(&src.url);
+                        let name = manifest
+                            .get(&src.url)
+                            .cloned()
+                            .unwrap_or_else(|| source_name_from_url(&src.url));
                         let tmp_path = format!("/tmp/archivar_cache/{}/{}.json", netloc, name);
                         if std::fs::write(&tmp_path, &raw).is_ok() {
                             if let Ok(_gh) = std::env::var("GH_TOKEN") {
@@ -8773,112 +8775,39 @@ mod archivar {
         }
     }
 
-    fn rename_cdn_mode() -> i32 {
-        let content = match std::fs::read_to_string("phi/sources.φ") {
-            Ok(c) => c,
-            Err(e) => {
-                eprintln!("rename-cdn: read phi/sources.φ: {}", e);
-                return 1;
-            }
-        };
-        let sources = load_sources_from(&content);
-        let probe_dir = "/tmp/archivar_cache/rename_probe";
-        let mut renamed = 0u32;
-        let mut already = 0u32;
-        let mut old_absent = 0u32;
-        let mut equal = 0u32;
-        for src in &sources {
-            if src.url.starts_with("https://github.com/omegaflow/sources")
-                || src.format == "ephemeris_binary"
-                || src.format == "catalog_dastcom"
-                || src.format == "csv_zip"
-                || src.format == "kernel_text"
-            {
+    fn cdn_manifest_for(urls: impl Iterator<Item = String>) -> HashMap<String, String> {
+        let mut map = HashMap::new();
+        let mut seen: HashMap<String, u32> = HashMap::new();
+        for url in urls {
+            if url.starts_with("https://github.com/omegaflow/sources") {
                 continue;
             }
-            if src.url.contains('{') {
-                continue;
-            }
-            let Some(netloc) = extract_netloc(&src.url) else {
-                continue;
+            let name = source_name_from_url(&url);
+            let k = match seen.get_mut(&name) {
+                Some(n) => {
+                    *n += 1;
+                    *n
+                }
+                None => {
+                    seen.insert(name, 1);
+                    continue;
+                }
             };
-            let new_name = source_name_from_url(&src.url);
-            let old_name = source_name_legacy(&src.url);
-            if new_name == old_name {
-                equal += 1;
-                continue;
-            }
-            let dl_new = Command::new("gh")
-                .arg("release")
-                .arg("download")
-                .arg(netloc)
-                .arg("-p")
-                .arg(format!("{}.json", new_name))
-                .arg("-D")
-                .arg(probe_dir)
-                .arg("--clobber")
-                .arg("--repo")
-                .arg("omegaflow/sources")
-                .output();
-            if dl_new.as_ref().map(|o| o.status.success()).unwrap_or(false) {
-                already += 1;
-                continue;
-            }
-            let old_path = format!("{}/{}.json", probe_dir, old_name);
-            let _ = std::fs::remove_file(&old_path);
-            let dl_old = Command::new("gh")
-                .arg("release")
-                .arg("download")
-                .arg(netloc)
-                .arg("-p")
-                .arg(format!("{}.json", old_name))
-                .arg("-O")
-                .arg(format!("{}.json", new_name))
-                .arg("-D")
-                .arg(probe_dir)
-                .arg("--clobber")
-                .arg("--repo")
-                .arg("omegaflow/sources")
-                .output();
-            let new_path = format!("{}/{}.json", probe_dir, new_name);
-            if !dl_old.as_ref().map(|o| o.status.success()).unwrap_or(false)
-                || !std::path::Path::new(&new_path).exists()
-            {
-                old_absent += 1;
-                continue;
-            }
-            let up = Command::new("gh")
-                .arg("release")
-                .arg("upload")
-                .arg(netloc)
-                .arg(&new_path)
-                .arg("--clobber")
-                .arg("--repo")
-                .arg("omegaflow/sources")
-                .output();
-            if up.as_ref().map(|o| o.status.success()).unwrap_or(false) {
-                let _ = Command::new("gh")
-                    .arg("release")
-                    .arg("delete-asset")
-                    .arg(netloc)
-                    .arg(format!("{}.json", old_name))
-                    .arg("--yes")
-                    .arg("--repo")
-                    .arg("omegaflow/sources")
-                    .output();
-                renamed += 1;
-                eprintln!(
-                    "rename-cdn: {}/{}.json → {}.json",
-                    netloc, old_name, new_name
-                );
-            }
-            let _ = std::fs::remove_file(&new_path);
+            map.insert(url, format!("{}-{}", name, k));
         }
-        eprintln!(
-            "rename-cdn: {} renamed, {} new name present, {} old asset absent, {} equal names",
-            renamed, already, old_absent, equal
-        );
-        0
+        map
+    }
+
+    fn cdn_manifest_map() -> &'static HashMap<String, String> {
+        static MANIFEST: OnceLock<HashMap<String, String>> = OnceLock::new();
+        MANIFEST.get_or_init(|| {
+            if let Ok(content) = std::fs::read_to_string("phi/sources.φ") {
+                let sources = load_sources_from(&content);
+                cdn_manifest_for(sources.iter().map(|s| s.url.clone()))
+            } else {
+                HashMap::new()
+            }
+        })
     }
 
     fn tap_to_json(val: &JsonVal) -> Option<JsonVal> {
@@ -9607,9 +9536,6 @@ mod archivar {
                     }
                 };
                 std::process::exit(ci_mode(dir));
-            }
-            if args.len() > 1 && args[1] == "--rename-cdn" {
-                std::process::exit(rename_cdn_mode());
             }
             if args.len() > 1 && args[1] == "--port" {
                 let input = match args.get(2) {
@@ -11104,10 +11030,7 @@ field temp temp_c\n";
         }
 
         #[test]
-        fn test_source_name_hash_injective() {
-            let slash = source_name_from_url("https://h/api/a/b");
-            let dash = source_name_from_url("https://h/api/a-b");
-            assert_ne!(slash, dash);
+        fn test_source_name_flat_and_collision_overrides() {
             let q1 = source_name_from_url("https://h/api?station=1");
             let q2 = source_name_from_url("https://h/api?station=2");
             assert_ne!(q1, q2);
@@ -11116,7 +11039,19 @@ field temp temp_c\n";
             let buoy1 = source_name_from_url("https://www.ndbc.noaa.gov/data/realtime/41009.txt");
             let buoy2 = source_name_from_url("https://www.ndbc.noaa.gov/data/realtime/41010.txt");
             assert_ne!(buoy1, buoy2);
-            assert!(source_name_from_url("https://h/api/a/b").contains('-'));
+            let slash = source_name_from_url("https://h/api/a/b");
+            let dash = source_name_from_url("https://h/api/a-b");
+            assert_eq!(slash, dash);
+            let map = cdn_manifest_for(
+                ["https://h/api/a/b", "https://h/api/a-b"]
+                    .into_iter()
+                    .map(|s| s.to_string()),
+            );
+            assert_eq!(
+                map.get("https://h/api/a-b").unwrap(),
+                &format!("{}-2", slash)
+            );
+            assert!(!map.contains_key("https://h/api/a/b"));
         }
 
         #[test]
@@ -12554,7 +12489,6 @@ mod mathematikerin {
 
     const Φ: f64 = 1.618033988749895;
     const C: f64 = 299792458.0;
-    const GRID_TO_ANGLE: f64 = 4611686018427387904.0;
     const GRID_INIT: f64 = 2147483648.0;
     const GRID_DEEP_GRID: f64 = 70368744177664.0;
     const JUMP_GRID: f64 = 268435456.0;
@@ -14215,7 +14149,7 @@ mod mathematikerin {
                             0.0
                         };
                         let (fr, fu, ff) = self.frame();
-                        let rot = self.grid_step * raw / 1000.0 / GRID_TO_ANGLE;
+                        let rot = Φ * raw / 1000.0;
                         if rx.abs() > 0.15 {
                             self.q = q_norm(q_mul(q_axis_angle(fu, rx as f64 * rot), self.q));
                         }
@@ -14415,27 +14349,19 @@ mod mathematikerin {
                         let dx = px - lx;
                         let dy = py - ly;
                         let (fr, fu, ff) = self.frame();
+                        let gaze_px = 2.0 / self.backing.0.max(1) as f64;
                         match self.drag_button {
                             Some(MouseButton::Left) => {
                                 if dx != 0.0 {
-                                    self.q = q_norm(q_mul(
-                                        q_axis_angle(fu, dx * self.grid_step / GRID_TO_ANGLE),
-                                        self.q,
-                                    ));
+                                    self.q = q_norm(q_mul(q_axis_angle(fu, dx * gaze_px), self.q));
                                 }
                                 if dy != 0.0 {
-                                    self.q = q_norm(q_mul(
-                                        q_axis_angle(fr, dy * self.grid_step / GRID_TO_ANGLE),
-                                        self.q,
-                                    ));
+                                    self.q = q_norm(q_mul(q_axis_angle(fr, dy * gaze_px), self.q));
                                 }
                             }
                             Some(MouseButton::Middle) => {
                                 if dx != 0.0 {
-                                    self.q = q_norm(q_mul(
-                                        q_axis_angle(ff, dx * self.grid_step / GRID_TO_ANGLE),
-                                        self.q,
-                                    ));
+                                    self.q = q_norm(q_mul(q_axis_angle(ff, dx * gaze_px), self.q));
                                 }
                             }
                             Some(MouseButton::Right) => {
@@ -14499,18 +14425,15 @@ mod mathematikerin {
                                 let dx = p.0 - prev.0;
                                 let dy = p.1 - prev.1;
                                 let (fr, fu, ff) = self.frame();
+                                let gaze_px = 2.0 / self.backing.0.max(1) as f64;
                                 if self.touches.len() == 1 {
                                     if dx != 0.0 {
-                                        self.q = q_norm(q_mul(
-                                            q_axis_angle(fu, dx * self.grid_step / GRID_TO_ANGLE),
-                                            self.q,
-                                        ));
+                                        self.q =
+                                            q_norm(q_mul(q_axis_angle(fu, dx * gaze_px), self.q));
                                     }
                                     if dy != 0.0 {
-                                        self.q = q_norm(q_mul(
-                                            q_axis_angle(fr, dy * self.grid_step / GRID_TO_ANGLE),
-                                            self.q,
-                                        ));
+                                        self.q =
+                                            q_norm(q_mul(q_axis_angle(fr, dy * gaze_px), self.q));
                                     }
                                 } else if self.touches.len() == 2 {
                                     if let Some(o) = self
