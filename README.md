@@ -13,7 +13,7 @@ Protocol v6: 168 bytes, 21 × f64 LE per oscillator; frame `0xCF 0x86 0x06 [resp
 
 Certainty: `e^(−max(0, |Δt| − d/v_force) / ttl)`
 
-`cargo run` → the native presence window (ESC closes it).
+`cargo run` → the presence window (ESC closes it).
 
 Archivar modes: `--verify <dir>`, `--port <in> [out]`, `--probe`, `--learn-gate`, `--draft-context <p>`, `--draft <p>`, `--urls <p>`
 
