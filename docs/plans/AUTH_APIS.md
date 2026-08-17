@@ -115,8 +115,8 @@ retired (ERDDAP → NOAA/EMODnet umgestellt).
 | **OpenTopography** | `portal.opentopography.org` | Demo-Key | frei | EM | erweitert | https://opentopography.org/ |
 | **Smithsonian Open Access** | `api.si.edu` | Key | frei | EM | fehlt | https://api.data.gov/signup/ (SI-Key via api.data.gov) |
 | **PurpleAir** | `api.purpleair.com/v1/` | Key | frei | Diffusion | Key erstellt 2026-06-23 | https://develop.purpleair.com/ |
-| **Arbimon** | `arbimon.rfcx.org` API | Token | frei | Acoustic | E-Mail verifiziert 2026-08-08 | https://arbimon.rfcx.org/ |
-| **Wildlife Insights** | `www.wildlifeinsights.org` API | Key | frei | EM | approved 2026-08-12 | https://www.wildlifeinsights.org/ |
+| **Arbimon** | `arbimon.rfcx.org` API | Token | frei | Acoustic | ~~E-Mail verifiziert 2026-08-08~~ → decline projekt-gebunden | https://arbimon.rfcx.org/ |
+| **Wildlife Insights** | `www.wildlifeinsights.org` API | Key | frei | EM | ~~approved 2026-08-12~~ → decline projekt-gebunden | https://www.wildlifeinsights.org/ |
 
 ## D. Niedrig — viel Aufwand, wenig Mehrwert
 
@@ -127,6 +127,85 @@ retired (ERDDAP → NOAA/EMODnet umgestellt).
 | **BOM Space Weather** | `sws-data.sws.bom.gov.au` | Key | UV als Text verfügbar | https://sws-data.sws.bom.gov.au/ |
 | **ThingSpeak** | `thingspeak.com` | Key | unstrukturiert | https://thingspeak.com/account/create |
 | **EarthNetworks** | `api.earthnetworks.com` | Key | paid | https://www.earthnetworks.com/ |
+
+## E. Offene Registrierungen (key-needed ohne Secret)
+
+Stand 2026-08-17 — aus `phi/blocked_sources.φ` (key-needed) gegen `.secrets.local`
+abgeglichen. Leere Stubs liegen in `.secrets.local`.
+
+**Grundsatz CDN-Redistribution:** Alle Messwerte werden auf das CDN (GitHub
+Releases) manifestiert und öffentlich redistribuiert. Es kommen NUR APIs infrage,
+deren Lizenz/ToS Redistribution erlauben (Public Domain, CC0, CC-BY, OGL/NLOD).
+Kommerzielle/proprietäre APIs und solche mit Redistributionsverbot sind entfernt.
+Das Urteil ist im Register vollzogen: die 19 Hosts stehen in
+`phi/blocked_sources.φ` als `decline redistribution` / `decline no-physical-force`
+(mit Verdikt-Note, Stand 2026-08-17) und in `phi/interesting_domains.φ` §5.
+
+| Host | Secret (Stub) | Auth | Lizenz | Registrierung |
+|---|---|---|---|---|
+| archive.opensearch.ceda.ac.uk | `CEDA_USER`/`CEDA_PASS` | Login (OpenID) | OGL/CC (UK) | https://archive.ceda.ac.uk/ (Token-API: services.ceda.ac.uk/api/token/create/) |
+| data.icos-cp.eu | `ICOS_USER`/`ICOS_PASS` | Login | CC-BY 4.0 | https://data.icos-cp.eu/ (cpauth.icos-cp.eu — Account vorhanden) |
+| frost.met.no | `FROST_CLIENT_ID` | Client-ID | NLOD/CC | https://frost.met.no/ (Client registrieren) |
+| gracedb.ligo.org | ~~`GRACEDB_TOKEN`~~ | ~~Auth~~ | offen (Alerts) | ~~https://gracedb.ligo.org/~~ — refused: Private-Events verlangt LVC/MOU-Gruppenmitgliedschaft, kein Self-Service; public superevents offen in sources.φ. |
+| lasair-ztf.lsst.ac.uk | `LASAIR_TOKEN` | Token | offen | https://lasair-ztf.lsst.ac.uk/profile/ (API-Token angezeigt) |
+| mast.stsci.edu | `MAST_TOKEN` | Token | Public Domain | https://mast.stsci.edu/ (TESS/HST/JWST-Photometrie, em — Token vorhanden) |
+| toar-data.fz-juelich.de | `TOAR_USER`/`TOAR_PASS` | Login | offen | https://toar-data.fz-juelich.de/ (API v2 vorhanden — Registrierung pending 2026-08-17) |
+
+**Geklärt — offen ohne Key (aus key-needed entfernt, Stand 2026-08-17):**
+
+| Host | Befund |
+|---|---|
+| alerce.online | ZTF-Database-API (`api.alerce.online/ztf/v1`) laut ALeRCE-Service-Doku „without needing any authentication" — offen, kein Token. `ALERCE_TOKEN`-Stub entfernt. |
+| data.cosmic.ucar.edu | GNSS-RO/-R/Suominet laut UCAR „no need for a login to access these data"; curl 200 auf allen drei Pfaden. `CDAAC_USER`/`CDAAC_PASS`-Stubs entfernt. |
+| climate-themetoffice.hub.arcgis.com | Met-Office-Climate-Data-Portal: „You do not need to log in to download the data"; ArcGIS-REST-FeatureServer + OGC-API-Records-Search-API, offen. `METOFFICE_CLIMATE_KEY`-Stub entfernt. |
+| irsa.ipac.caltech.edu | Kein API-Token. Öffentliche Daten (WISE/NEOWISE/2MASS/Spitzer/SPHEREx/Euclid/ZTF-DR24) offen auf AWS S3 Open Data (anonymous). Proprietäres ZTF via IPAC-SSO (`curl --user email:passwort`). Verbleibt `decline redundant` — ZTF über Lasair/ALeRCE. `IRSA_AUTH`→`IRSA_USER`/`IRSA_PASS`. |
+| marinecadastre.gov | Kein Live-API — AIS-Bulk-Downloads (CSV/GDB) auf Azure-Blob, Public Domain, „Bulk data downloads are still available"; AccessAIS-Bestellservice derzeit pausiert. `MARINECADASTRE_KEY`-Stub entfernt. |
+| sios-svalbard.org | SIOS-User-Account nur für Working-Group/Committee/Katalog-Edit/SESS — „You do not need a SIOS user account if you want to access/search on the Data Portal or download data". Datenzugriff offen (Station-Data-REST `/rest/stations/data.json` curl 200; Blue-Cloud ohne AAI). `SIOS_TOKEN`-Stub entfernt. |
+
+### Entfernt — kommerziell / proprietär / Redistribution verboten
+
+| Host | Grund |
+|---|---|
+| api.electricitymap.org | kommerziell (Daten proprietär) |
+| api.maptiler.com | kommerzielle Tiles |
+| api.sncf.com | kommerziell (ToS) |
+| api.z.ai | kommerziell (AI-Modell, kein Messwert) |
+| bgp.tools | kommerziell, Redistribution eingeschränkt |
+| docs.sentinel-hub.com | kommerziell (Subscription) |
+| dev.meteostat.net / meteostat.net | kommerziell (paid) |
+| www.dxpredictor.com | kommerziell |
+| www.reddit.com | kommerziell (ToS: keine Redistribution) |
+| api.protectedplanet.net | WDPA — Redistribution eingeschränkt |
+| api.resourcewatch.org | WRI — ToS/Redistribution unklar |
+| data.blitzortung.org | Community-Lizenz, nicht-kommerziell, Redistribution eingeschränkt |
+| gateway.api.globalfishingwatch.org | ToS — Redistribution eingeschränkt |
+| data.lsst.cloud | LSST — proprietäre Frist |
+
+### Entfernt — kein Messwert (Force-Gate)
+
+| Host | Grund |
+|---|---|
+| crates.io | Paket-Registry |
+| api.europeana.eu | Kultur-Metadaten |
+| api.semanticscholar.org | Bibliographie |
+| www.peeringdb.com | Netz-Infrastruktur |
+
+### Open — kein Key nötig (403 = Bot-Block / User-Agent)
+
+| Host | Anmerkung |
+|---|---|
+| api.sensor.community | offen; 403 = Bot-Block (UA/Header) |
+| api.worldbank.org | offen; 403 = Bot-Block |
+| climateknowledgeportal.worldbank.org | offen |
+| volcano.si.edu | offen (GVP) |
+| www.bom.gov.au | offen; 403 = Bot-Block/Geo |
+| www.epa.gov | offen |
+| www.ngdc.noaa.gov | offen |
+| weather.cma.cn | offen |
+| lisn.igp.gob.pe | offen |
+| www3.mbari.org | offen |
+| overpass-api.de | offen; 429/403 = Rate-Limit |
+| overpass.kumi.systems | offen; Rate-Limit |
 
 ---
 
@@ -141,9 +220,9 @@ retired (ERDDAP → NOAA/EMODnet umgestellt).
 
 ## Nächste Schritte
 
-1. **Keys-Status (2026-08-14):** Alle physisch nutzbaren Keys sind besorgt und in
-   `.secrets.local` — verbleibend sind nur Decline-Fälle (Arbimon/Wildlife Insights
-   projekt-gebunden, TNG Simulation). Kein weiterer Key nötig.
+1. **Keys-Status (2026-08-17):** Kern-Keys sind besorgt. Offene, redistributions-konforme
+   Registrierungen warten in Sektion E auf Einlösung; kommerzielle/proprietäre APIs
+   sind ausgeschlossen (CDN-Redistribution).
 
 2. Werte in `.secrets.local` eintragen (gitignored, keine Keys committen)
 3. **Neue Quellen einbauen** (nächste Sessions):

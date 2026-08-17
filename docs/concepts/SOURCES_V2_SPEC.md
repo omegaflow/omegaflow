@@ -59,7 +59,7 @@ unless it has `url` + `ttl` + a frame (`at`/`on`).
 | `map <arr>` | 2 | Iterate JSON array; each row an oscillator (data-carried lat/lon). |
 | `cmap <arr>` | 2 | Celestial map; ICRS from ra/dec + plx/dist/z keys. |
 | `rows <arr>` | 2 | Table rows (column-index or header-name lookup). |
-| `flatten <arr> [geom] [epoch]` | 2–4 | Flatten nested array geometry. |
+| `flatten <arr> [geom] [epoch]` | 2–4 | Flatten nested coordinate arrays (GeoJSON geometry or bare coordinate arrays, any depth). `geom` empty → the row itself carries the coordinates (`coordinates` key or array). `geom` without a `coordinates` child → the resolved value itself is the coordinate array. Each [lon, lat, z] leaf becomes a Surface oscillator. |
 | `field <key> <force> <unit> <tau>` | 5 | **Scalar physical measurement.** Key = JSON path (dot-notation). Kernel = force default (see „Force → default kernel"). τ in seconds, must be > 0. |
 | `field <key> <force> <unit> <tau> <kernel>` | 6 | Same, with explicit kernel name. |
 | `field <key> <name> <kernel> <force> <unit> <tau> <absorption> <advection>` | 9 | Legacy long form. τ > 0 required. |
@@ -69,13 +69,15 @@ unless it has `url` + `ttl` + a frame (`at`/`on`).
 | `geojson <mag_key> <min_mag> <out1> <out2> <tau> <absorption> <advection>` | 8 | GeoJSON event extract. |
 | `cmrpolygon <arr> [epoch] [alt] [val]` | 2–5 | CMR polygon centroids. |
 | `celestialpolygon <arr> <radius> [epoch] [val]` | 3–5 | Celestial polygon. |
-| `keplermap <arr> [a] [e] [i]` | 2–5 | Kepler elements map. |
+| `keplermap <arr> [a] [e] [i]` | 2–5 | Kepler elements map. Positional short form sets a/e/i keys. All element keys are overridable via 2-token key directives: `a`, `e`, `i`, `om`, `w`, `ma`, `epoch`, `qr`, `tp` (deg for angles, AU for a/q, JD for epoch/tp). MPC element set: `qr` (perihelion) → a = q/(1−e), `tp` (perihelion time) → M = n·(epoch−tp). Solver: `src/kepler.rs` `elements_to_icrs_state` (heliocentric ICRS). |
 | `hapi <k=v>…` | ≥2 | HAPI parameters. Values manifest only when paired with a τ-carrying `field` of the same name. |
 | `ephemeris <target>` / `vectors <target>` | 2 | Horizons ephemeris/state-vector extracts. |
 | `lat <key>` / `lon <key>` | 2 | Row position keys (map). Fixed unit: deg. |
 | `alt <key> [unit]` | 2–3 | Row altitude key (map). Unit: `m` (default) \| `km` \| `ft` \| `cm` \| `mm` \| `-m` \| `-km` (negative = depth). Absent `alt` directive → surface datum 0. |
-| `epoch <key>` | 2 | Row epoch key (map). ISO string or unix seconds. Absent → fetch time. |
-| `vel <key>` / `trk <key>` / `vr <key>` | 2 | Row motion keys (map): speed m/s, track deg, vertical rate m/s → SurfaceFlow. |
+| `epoch <key>` | 2 | Row epoch key (map, keplermap). ISO string or unix seconds. Absent → fetch time. |
+| `vel <key> [unit]` / `trk <key>` / `vr <key>` | 2–3 | Row motion keys (map): speed, track deg, vertical rate → SurfaceFlow. `vel` unit: `m/s` (default) \| `km/h` \| `km/s` \| `mph` \| `knot` — the scale applies to `vel` and `vr`. Unknown unit → directive refused. |
+| `tau_key <key>` | 2 | Per-row τ (map/cmap/rows). Seconds per row: absent/non-numeric → the field's τ stands; > 0 → overrides the field's τ for that row; == 0 → τ-Gate closes (row manifests nothing); < 0 → no oscillator. |
+| `mag_type_key <key>` | 2 | Magnitude type per row (map/geojson). When a field's unit is `Mw`, the row's type gates the moment conversion: moment-based (`mw`/`mww`/`mwc`/`mwb`/`mwr`/`mwp`/`mwpd`/`mi`, case-insensitive) → M0 = 10^(1,5·m+9,1) exact; non-moment (`ml`/`md`/`mb`/`mh`/`ms`/`m`/`Mj`) → no exact SI from magnitude alone → the field does not fabricate a moment (manifests nothing). Absent type → the block's `Mw` declaration stands. |
 | `val <key>` | 2 | Restrict map fields to the named field. |
 | `ra <key>` / `dec <key>` | 2 | ICRS deg (cmap). |
 | `plx <key>` | 2 | Parallax, mas (cmap). |
@@ -91,6 +93,7 @@ unless it has `url` + `ttl` + a frame (`at`/`on`).
 | `repeat ra <min> <max> <bins>` | 5 | RA-binned repeat (`{bin}`/`{repeat_bin}`). Short form: `repeat <bins>`. |
 | `flux_from_mag <key>` | 2 | Derive flux 10^(−0.4·mag). Conflicts with abs_mag_from (block refused). |
 | `abs_mag_from <key>` | 2 | Derive absolute magnitude. |
+| `fold <op> <key_a> <key_b> <force> <unit> <tau>` | 7 | Fold two columns of one row into one value (map/cmap/flatten/rows). `op`: `mean` = (a+b)/2 (well-mixed background), `diff` = a−b (hemisphere gradient, the signum carrier), `sum` = a+b (total quantity). Absent/non-numeric operand → no oscillator (no half-fold). Kernel = force default; name = `fold_<op>_<a>_<b>`. Any other `op` → refused. |
 | `catalog_epoch <yr>` | 2 | Catalog reference epoch (proper-motion propagation). |
 | `stations <url>` | 2 | Station list URL for `{nearest_station}` and `fanout` two-stage fetch. |
 | `stations_path/lat/lon/id <key>` | 2 | Station list keys (defaults: stations, lat, lng, id). |
@@ -111,6 +114,9 @@ Time (from the Archivar clock, TDB→UTC): `{today}` `{yesterday}` `{tomorrow}`
 `{today_ymd}` `{today_plus_365}` `{t_start}` `{t_end}` `{now}` `{now_minus_1}`
 `{now_minus_2}` `{hour_ago}` `{week_ago}` `{week_ago_nodashes}` `{year}` `{year2}`
 `{month}` `{day}` `{yday}` `{hour}` `{minute}` `{unix_now}` `{unix_now_plus_3600}`.
+TDB/Julian (from the Archivar clock, TDB, 6 decimal places — 0,086 s
+resolution): `{jd_now}` (current JD), `{jd_start}` (jd_now − 1 day),
+`{jd_end}` (jd_now). For Horizons-style vector requests.
 Declared: `{target}` `{catalog}` `{max_freq}` `{min_freq}`.
 Any remaining `{MARKER}` resolves from the environment (`.env` /
 `.secrets.local`); an absent marker substitutes void and logs to stderr.
@@ -560,14 +566,25 @@ for each block in the legacy corpus:
 This spec defines the canonical DATA FORMAT as the parser accepts it today.
 It does not define:
 - Extract variant unification (`first`→`field`, `lastrow`→`field` — separate session)
-- SI conversion functions (units are documentation slots; values pass through raw)
 - Anomaly reporting
 
+SI conversion (implemented 2026-08-17, Ratsurteil): `convert_to_si` returns
+`Option<f64>` and is applied at the anchor to every field value. Known units
+convert to SI (linear where defined, plus the exact non-linear arms `Mw` →
+seismic moment N·m, `logg` → 10^x·0.01 m/s², `Crab` → 2.4e-14 W/m²,
+`Jy_km/s` → 1e-23 W/m², `cpm` → 1e-6/(334·3600) Sv/s, bGeigie-Nano
+factor). An unknown or still-ambiguous unit (mag, M, dex, sfu, counts/s)
+makes the oscillator stay unmanifested (`unconverted`, registered once per
+unit on stderr — pending curation, never a raw pass-through). `deg`/`arcsec`
+convert to rad (the field inventory carries direction angles). Per-row τ:
+`tau_key <key>`; `vel <key> [unit]`.
+
 Directives that appear in legacy corpora but have **no parser arm** (writing
-them produces nothing): `body`, `pos`, `method`, `source`, `field_in`,
-`lat_key`/`lon_key`/`alt_key`, `extent`, `reach_ttl`, `note`, `tau`
-(as key directive), `force biotic`. Open parser work: per-row τ override,
-SI conversion for `field` values and `vel` (m/s fixed today). Map rows
+them produces nothing): `body`, `pos`, `source`, `lat_key`/`lon_key`/`alt_key`,
+`extent`, `reach_ttl`, `note`, `tau` (as key directive), `force biotic`.
+`method` is consumed only by the `--gold` port converter (POST → `post_body`).
+`field_in` is refused with a registration line: the `--gold` port migrates it
+to `field` (nested dot-paths and array indices survive via jpath). Map rows
 without an `epoch` key anchor at fetch time; map rows without an `alt` key
 anchor at the surface datum (0 m); single-object responses iterate as one
 row.

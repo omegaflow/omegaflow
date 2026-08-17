@@ -1,6 +1,6 @@
 # Parser Magic
 
-STATUS: DEPLOYED (sections 1-11 of Present) / PARTIALLY DEPLOYED (Missing items 1-13)
+STATUS: DEPLOYED (sections 1-11 of Present) / PARTIALLY DEPLOYED (Missing items 1-2, 5-8, 11-13)
 
 ---
 
@@ -14,7 +14,7 @@ STATUS: DEPLOYED (sections 1-11 of Present) / PARTIALLY DEPLOYED (Missing items 
 
 **4. Schema-Sniffing** (`universal_auto_detect`, line 852-950): Erkennt automatisch Sternkataloge (ra/dec + optional plx/pmra/pmdec/radvel → CelestialMap) und Tracking-Daten (lat/lon + optional vel/trk/vr → Map). Keine Config nötig, reine Struktur-Heuristik.
 
-**5. ~40-Variable Template DSL** (line 2873-3017): `{today}`, `{yesterday}`, `{hour_ago}`, `{week_ago}`, `{grid}` (4×4-Punktegitter), `{lat_min}/{lat_max}`, `{unix_now_plus_3600}`, `{SECRET_NAME}` — jede Quelle definiert ihr eigenes Datumsformat/BBox/Grid ohne API-spezifischen Code.
+**5. ~40-Variable Template DSL** (line 2873-3017): `{today}`, `{yesterday}`, `{hour_ago}`, `{week_ago}`, `{grid}` (4×4-Punktegitter), `{lat_min}/{lat_max}`, `{unix_now_plus_3600}`, `{SECRET_NAME}` — jede Quelle definiert ihr eigenes Datumsformat/BBox/Grid ohne API-spezifischen Code. Seit 2026-08-17 auch `{jd_now}`/`{jd_start}`/`{jd_end}` (TDB, 6 Stellen).
 
 **6. Physics-Driven Spatial Partitioning** (line 252-305): `law_bounds` schätzt v und a per finiter Differenzen, skaliert mit Φ als Sicherheitsmarge. Zellengröße aus `rmax + vmax·cadence + 0.5·amax·cadence²`, aufgerundet zur nächsten Zweierpotenz.
 
@@ -32,21 +32,23 @@ STATUS: DEPLOYED (sections 1-11 of Present) / PARTIALLY DEPLOYED (Missing items 
 
 **9. Quellentreue url-first Parsing**: Block-Trennung über Leerzeilen. `url` als Anker, `flush!()` bei nächstem `url`. Kein `source <name>`-Anker mehr.
 
-**10. Extract-Types**: Field, Last, Count, GeojsonEvents, Path, Map, CelestialMap, Rows.
+**10. Extract-Types**: Field, Last, Count, GeojsonEvents, Path, Map, CelestialMap, Rows. Seit 2026-08-17: `fold <op> <key_a> <key_b> <force> <unit> <tau>` (mean|diff|sum), `tau_key <key>` (per-row τ, 0 schließt das Gate), `vel <key> [unit]`.
 
 **11. Body-Agnostic Media Constants**: `v_sound`, `v_seismic_p/s`, `alpha_thermal`, `d_diffusion`, `v_advective` per BodyProperties aus Ephemeris-Binary stype==2.
 
+**12. SI-Konversion total (2026-08-17)**: `convert_to_si` → `Option<f64>` am Anker; unbekannte/logarithmische Einheit → Oszillator manifestiert nicht (stderr registriert). `deg`/`arcsec` → rad, M_sun/M_earth/R_earth, MW (Fall-exakt gegen Mw/M), d, uatm, mb, n/cc, cfs, %, psu, DU, pc/cm3.
+
 ---
 
-## Missing — 13 parser gaps
+## Missing — 8 parser gaps
 
 **1. Auto-Frame aus `lat_key`/`lon_key`** — Sources mit `lat_key`/`lon_key` und `map` aber ohne `lat`/`lon` werden refused weil `has_data_position` nur für Map/GeojsonEvents/CelestialMap gilt. Wenn `lat_key` gesetzt, Frame=Data setzen.
 
 **2. `extent` pro Force-Type verbessern** — EM-Sample mit `C_LIGHT * tau` als extent ist gigantisch. Gravity-Bodies bräuchten `extent = body_radius`, nicht `c * τ`.
 
-**3. `kepler_map` Parsing** — MPC/JPL Asteroid-Daten: EPOCH, EC, QR, TP, OM, W, IN, H, G. Extract-Typ existiert, Kepler-Parser fehlt.
+**3. ~~`kepler_map` Parsing~~** — ERLEDIGT 2026-08-17: Key-Direktiven a/e/i/om/w/ma/epoch/qr/tp verdrahtet, MPC q→a + tp→M, Solver `src/kepler.rs::elements_to_icrs_state`.
 
-**4. `vectors` / Horizons Text Parser** — `Extract::Vectors` implementiert aber Fetches geben 0B weil URL-Templates falsche Timestamps setzen.
+**4. ~~`vectors` / Horizons Text Parser~~** — ERLEDIGT 2026-08-17: `{jd_now}`/`{jd_start}`/`{jd_end}` (TDB) — die Kalenderdaten-im-JD-Feld-Ursache ist behoben. Ein Live-`vectors`-Block bleibt Kurationsfrage.
 
 **5. `cmap` Celestial Map Parsing** — RA/Dec (deg), Parallaxe (mas → Distanz), Proper Motion (mas/yr → 6D State), Radialgeschwindigkeit. Keys im SourceConfig vorhanden, Parser füllt sie nicht.
 
@@ -56,9 +58,9 @@ STATUS: DEPLOYED (sections 1-11 of Present) / PARTIALLY DEPLOYED (Missing items 
 
 **8. `map` als Frame-Indikator** — Wenn `map` gesetzt UND `lat_key`/`lon_key` existieren, sollte Frame=Data automatisch folgen.
 
-**9. `field_in` Nested Support** — `field_in <index> <name>` nur für flache Arrays. Nested paths nicht unterstützt.
+**9. ~~`field_in` Nested Support~~** — ERLEDIGT 2026-08-17: `field_in` wird im Parser refused+registriert; der `--gold`-Port migriert zu `field`, nested Pfade (dot + Array-Index) laufen über jpath.
 
-**10. `Flatten` Extract-Type** — `Extract::Flatten` existiert aber kaum genutzt. Generischer Array-Flattener für CSV/JSON/GeoJSON.
+**10. ~~`Flatten` Extract-Type~~** — ERLEDIGT 2026-08-17: generischer Flattener — geom leer → Zeilen-Koordinaten, geom ohne `coordinates`-Kind → Wert selbst als Koordinaten-Array, mehrstufig rekursiv.
 
 **11. Unbekannte Force → Fallback** — Wenn `force_constants` `None` zurückgibt, wird Source refused. Sanfter Fallback wäre möglich, ist aber per AGENTS.md abgelehnt.
 

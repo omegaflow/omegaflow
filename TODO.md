@@ -245,7 +245,9 @@ resonance(mut read_signal(s: read_ws_frame_part(stream: read_ws_frame_raw(stream
 - Der 4-Token-HUD („wind_speed [advective, m/s]" — der Teleskop-Sucher)
 - Die ⌘K-Command-Palette (M07)
 - 2-Finger-waagerecht = Zeit-Schub (P6; die Geste des Touchpad-Docs)
-- Zustimmungs-Gate + Station-Identität (P2/P5)
+- Zustimmungs-Gate + Sensor-Identität (P2/P5; Ratsurteil 2026-08-17:
+  Klasse `Sensor` statt `Station`, Marker-Oszillator entfernt, Deklaration
+  ist Konfiguration)
 - Auto-Zoom (median-extent/p90 — bd9a513 entfernt; die atmende Membran
   ist der stärkere Vorfahr, VERSIONIERT)
 
@@ -262,6 +264,14 @@ resonance(mut read_signal(s: read_ws_frame_part(stream: read_ws_frame_raw(stream
    Dithering, 3-zeiliger HUD
 
 ## Offene Arbeit aus den geschlossenen Atomen (2026-08-16/17)
+
+- Operator-Urteil entschieden (2026-08-17): KEIN GPS-Oszillator. Position ist
+  eine Koordinate, keine Kraft — die Force-Gate-Litmus lehnt sie ab (sensor_config
+  gibt für gps/gnss None). Die Sensorwerte sind bereits am deklarierten Körper
+  verankert (Position::Surface → ECEF → ICRS/TDB). Der gemalte Marker (value 0.0,
+  force gravity, τ ∞) ist entfernt. Die Presence hat mit dem GPS der Station
+  NICHTS zu tun — die Weltlinie ist frei, Maschine und Presence bleiben getrennt
+  (Ethik: „the presence is agnostic").
 
 - Radial-Profil eines isolierten breiten Gauß-Punkts (e^(−r²/2)) am
   Fenster ausstehend — Messung + e/E/P-Gefühl gehören dem Operator
@@ -311,14 +321,6 @@ resonance(mut read_signal(s: read_ws_frame_part(stream: read_ws_frame_raw(stream
 
 ## Zentrismus / Hack / Fabrikation / Daten zweiter Klasse / Bias
 
-**Z04** Ephemeris-Kanäle hardcoded auf gravity
-```
-tau: 86400.0 * 365.0, kernel: 0, force: 1 — drei Stellen im Extract-Pfad.
-```
-**Z08** Station-Daten verworfen ohne Körper-Ephemeriden
-```
-/station-Pfad: st_lat/st_lon/st_alt-Gate ohne eph
-```
 **H11** Hot-Path-Clones: `all.push(s.clone())` jeden Tick
 ```
 Quell-Liste wird im Loop kloniert statt referenziert.
@@ -327,21 +329,9 @@ Quell-Liste wird im Loop kloniert statt referenziert.
 ```
 out.push(samples) — Zell-Container wird pro Treffer kopiert.
 ```
-**F33** Geschwindigkeit `[0.0, 0.0, 0.0]` — CelestialPolygon
-```
-CelestialPolygon: v: [0.0, 0.0, 0.0],
-```
-**F35** State-Vector hardcoded gravity
-```
-kernel: 0, force: 1, tau: 86400.0 * 365.0, (drei Stellen — gleicher Befund wie oben)
-```
 **D07** Kein Oszillator-Cap in Rust
 ```
 Das Frontend beschneidet über maxBufferSize; Rust kennt kein Cap.
-```
-**D08** `/station` scannt nur Station-Quellen
-```
-matches!(osc.source, OscillatorSource::Station) — API-Quellen fehlen im Scan.
 ```
 **B05** ISS bekommt spezielles Datenfenster
 ```
@@ -509,15 +499,20 @@ ERLEDIGT (convert_to_si-Arme, 2026-08-17):
 - `cpm` → ×1e-6/(334·3600) Sv/s (safecast; bGeigie-Nano-Firmware-Konstante
   NANO_CPM_FACTOR 334, verifiziert im Quellcode NanoConfig.h).
 
-Registrierte Einschränkung (keine Fälschung, ein Name): Die Erdbeben-
-Summary-Magnituden der FDSN/GeoNet-Feeds sind im Typ gemischt (MLv/M/Mw,
-die GeoJSON trägt den Typ nicht). Die Moment-Abbildung M0 = 10^(1,5·m+9,1)
-ist die seismologische Standard-Schätzung „moment from magnitude"; die
-Typ-Abweichung ist ein systematischer Offset, den die pro-Kraft normierte
-Rendierung aufnimmt. Der Magnitudentyp pro Event wäre über FDSN `MagType`
-(FDSN-Events-Format) erforschbar — ein Enrichment, kein Blocker. Sekundär-
-bänder (kmag/M1/mag2/min) bleiben dark, weil `flux_from_mag` eine Primär-
-band-Direktive ist (eine Skala pro Block).
+Magnitudentyp pro Event (erledigt 2026-08-17, verifiziert per Live-Abruf):
+- `mag_type_key <key>`-Direktive (map/geojson) liest den Typ pro Zeile.
+- Moment-basiert (mw/mww/mwc/mwb/mwr/mwp/mwpd/mi, case-insensitiv) →
+  M0 = 10^(1,5·m+9,1) exakt. Nicht-moment (ml/md/mb/mh/ms/m/Mj) →
+  keine exakte SI-Konversion aus der Magnitude allein → der Oszillator
+  fälscht kein Moment (manifestiert nicht).
+- Verdrahtet: USGS-Summary + INGV (`properties.magType`), USGS-fdsnws
+  (`magType`). Die Mehrheit kleiner Events (ml/md/mb) manifestiert daher
+  keinen Momentwert — ehrlich, weil eine Lokal-/Raumwellen-/Dauer-Magnitude
+  kein lineares SI ist; Position + Tiefe bleiben.
+- Ohne Typ-Feld: GeoNet (netMag gemischt), JMA/P2PQuake (Mj ≈ Mw in 4,5–7,5),
+  EEW (als Mw behandelt) — Block deklariert `Mw` als Moment-Proxy (die
+  Standard-Schätzung). Sekundärbänder (kmag/M1/mag2/min) bleiben dark, weil
+  `flux_from_mag` eine Primärband-Direktive ist (eine Skala pro Block).
 
 Betroffen, aber unentschieden (0 honored: die Daten existieren, die
 Konversion ist bekannt oder erforschbar — pending, keine Fälschung):
