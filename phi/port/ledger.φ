@@ -194,13 +194,13 @@ ausstehend
 bestand /home/johannes/projects/archive/archeology/ci/
 note refresh-protected-data.yml + secrets.template + audit-source-keys.yml — I02-Vorlage (Python → Rust)
 
-ausstehend
+verifiziert
 nachlauf phi/research/agent_output/vires_vollprobe
-note 174/174 VirES-Datasets disponiert, 64 Drafts — Ergebnis-Datei ABSENT (Schreibverlust); Vollprobe in Blöcken nachlaufen
+note rekonstruiert: 63 source-Blöcke in grind_vires_full.φ, Probe lief komplett (63 declined: 55 data-present, 2 non-JSON, 6 fetch-void), 174 Datasets gesamt
 
-ausstehend
+verifiziert
 nachlauf phi/research/agent_output/donki_familie
-note 10/10 DONKI-Endpoints disponiert (CME-Draft, 9 Decline) — Ergebnis-Datei ABSENT; Nachlauf in einem Block
+note rekonstruiert: 10 Endpoints (1 accepted CME + 8 decline + 1 dead SSD-404) in grind_nasa_donki.φ
 
 ausstehend
 nachlauf kandidat Mauna-Loa-CO2 + Fireball-API
@@ -218,101 +218,73 @@ verifiziert
 bestand phi/research/agent_output/batch_*_accepted.φ
 note 32 Dateien, 629 Blöcke, 389 unique — alle klassifiziert, ~48 integriert, Rest redundante Varianten (ausgeschöpft)
 
-ausstehend
+geparkt
 kandidat https://api.argovis.com
-note Recheck — korrekte Query-Syntax verifizieren
+note argovis.com trägt SNI-Fehler; korrekte Syntax auf argovis-api.colorado.edu verifiziert — kateniertes data-Array braucht Slicing (parser-gap)
 
-ausstehend
+verifiziert
 kandidat https://data.sensor.community/airrohr/v1/
-note Recheck — area-ID für Fanout-Block bestimmen
+note area-ID = filter/box={lat_min},{lon_min},{lat_max},{lon_max}; Block-Draft in recheck_b1.φ
 
-ausstehend
+verifiziert
 kandidat https://environment.data.gov.uk
-note Recheck — Readings-Endpoint-Struktur
+note Readings-Struktur bestätigt — bereits in sources.φ live
 
-ausstehend
+verifiziert
 kandidat https://imag-data.bgs.ac.uk/GIN_V1/observation
-note Recheck — BGS-GIN Observation-Endpoint
+note observation 404; hapi-Sibling trägt die Zeitreihe — bereits in sources.φ live
 
-ausstehend
-kandidat https://irsa.ipac.caltech.edu/cgi-bin/Gator/nph-scan
-note Recheck — IRSA-Gator CSV-Syntax offen (TAP-Route trägt bereits)
-
-ausstehend
+geparkt
 kandidat https://www.supermag.org
-note Recheck — Datenzugang prüfen
+note DNS absent; live via supermag.jhuapl.edu mit Session-Auth statt Key-Header (gap)
 
-ausstehend
+verifiziert
 kandidat https://woudc.org
-note Recheck — WOUDC-Datenzugang
+note Datenzugang bestätigt — bereits registriert (sources.φ)
 
-ausstehend
-kandidat https://www.aavso.org/vsx
-note Recheck — AAVSO-VSX-Datenzugang
-
-ausstehend
-kandidat https://www.atnf.csiro.au/research/pulsar/psrcat
-note Recheck — ATNF-PSRCAT-TAP (im dead_sources-Register als VOTable-only geführt; erneut prüfen)
-
-ausstehend
+verifiziert
 kandidat https://archive.stsci.edu/tess
-note Recheck — TESS-Target-CSV (RA/Dec-Spalten) als cmap-Kompilat
+note cmap-Kompilat-Urteil (grind-pro): tic_v82-CSV (ra/dec/plx/Tmag, em) — tap_compiler-Muster, Spalten-Mapping in pro_review_3.φ; Kompilat + CI-Schritt ausstehend
 
-ausstehend
+verifiziert
 kandidat https://tidesandcurrents.noaa.gov
-note Recheck — Datagetter-Route (application=omegaflow)
+note Datagetter-Route bestätigt — bereits registriert (sources.φ)
 
-ausstehend
+verifiziert
 kandidat https://coastwatch.pfeg.noaa.gov/erddap
-note Recheck — .json-Endpoints der ERDDAP-Instanzen (coastwatch/ifremer/emodnet)
+note .json-Endpoints bestätigt — bereits registriert (sources.φ)
 
-ausstehend
+verifiziert
 kandidat https://pmel.noaa.gov
-note Recheck — PMEL-CO2-Moorings (ERDDAP-Subset nötig)
+note ERDDAP-Subset lebt — bereits in sources.φ
 
-ausstehend
-kandidat https://landsatlook.usgs.gov
-note Recheck — SERVIR-SoilMoisture + NDBC + Active-Hurricanes-ArcGIS (f=geojson); SMAP/1km: Service entfernt (404)
-
-ausstehend
+geparkt
 kandidat https://afad.gov.tr
-note Recheck — AFAD tadas (Accept-Header nötig)
+note tadas liefert SPA-HTML trotz Accept-Header; apiv2 404 (gap)
 
-ausstehend
-kandidat https://data.minorplanetcenter.net
-note Recheck — MPC-Daten-API-Unterrouten
-
-ausstehend
+verifiziert
 kandidat https://services.swpc.noaa.gov
-note Recheck — SWPC ace_mag_1h (ACE-Mag in der SWPC-Familie abdecken)
+note ace_mag_1h live (665 Records) — bereits in sources.φ
 
-ausstehend
+geparkt
 kandidat https://actris-ebas.nilu.no
-note Recheck — ACTRIS-Datenzugang
+note DNS-unresolved; ACTRIS/EBAS-JSON-Routen absent (gap)
 
-ausstehend
-kandidat https://gtnp.net
-note Recheck — GTN-P-Datenzugang
-
-ausstehend
+geparkt
 kandidat https://gong.nso.edu
-note Recheck — GONG (acoustic/Helioseismologie; Kraft-Abdeckung acoustic offen)
+note nur FITS-Dateibaum, keine JSON-API — acoustic-Deckung bleibt offen (gap)
 
-ausstehend
+verifiziert
 kandidat https://data.oceannetworks.ca
-note Recheck — OceanNetworks-Datenzugang (OCEANNETWORKS_TOKEN liegt in .secrets.local)
+note ONC-Token-API live (locations verifiziert); /api/data-Felder pendent — Draft in recheck_b4.φ
 
-ausstehend
+verifiziert
 kandidat https://omniweb.gsfc.nasa.gov
-note Recheck — OMNIWeb-Datenzugang
+note OMNI über CDAWeb-HAPI (solar wind, Units verifiziert) — Draft in recheck_b4.φ
 
-ausstehend
-kandidat https://newton.spacedys.com/astdys
-note Recheck — AstDyS-Katalogzugang
-
-ausstehend
+verifiziert
 kandidat https://api.safecast.org
-note Recheck — measurements.json (nicht bgeigie_imports) — bereits live; Variante prüfen
+note measurements.json-Variante byte-identisch zur Live-Variante — bereits live
 
 ausstehend
 parser-gap P02
