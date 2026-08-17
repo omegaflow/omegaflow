@@ -10,10 +10,10 @@ Drift-Stellen sind unter „Doku-Drift" registriert.
 
 Offen (2026-08-17): Die Sync-Crossmatches gegen I/355/paramp waren für die
 großen Kataloge serverseitig trunkiert (Sync-Zeitlimit). pastel ist vollständig
-(37.064 Zeilen, 20.883 Gaia-Distanzen). Offen: wds, mktypes, denis — chunkweise
-per `--where`, voller Umfang (Cap raus, mktypes 80 Bänder), Upload,
-Ledger-Korrektur. Werkzeug: `phi/port/chunk_master.py` (fortsetzbar, Chunks
-in phi/port/).
+(37.064 Zeilen, 20.883 Gaia-Distanzen), wds vollständig (136.548 Zeilen,
+76.482 Gaia-Distanzen, live). Offen: mktypes (80 Bänder), denis (16 Bänder) —
+chunkweise per `--where`, Upload, Ledger-Korrektur. Werkzeug:
+`phi/port/chunk_master.py` (fortsetzbar, Chunks in phi/port/).
 
 ## Archivar — Membran-scoped Cache statt Blockuniversum
 

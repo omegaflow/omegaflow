@@ -424,7 +424,7 @@ note gaia_dist pastel (B/pastel/pastel): 21612 Zeilen, 12345 mit Gaia-Distanz �
 
 verifiziert
 bestand phi/katalog/vizier_gold_catalogs.φ
-note gaia_dist wds (B/wds/wds): 40663 Zeilen, 22856 mit Gaia-Distanz — live auf CDN
+note gaia_dist wds (B/wds/wds): 136548 Zeilen voll (Chunk-Merge, 8 RA-Bänder), 76482 mit Gaia-Distanz — live auf CDN. Sync-Workflow-Schritt entfernt (Clobber-Gefahr)
 
 verifiziert
 bestand phi/katalog/vizier_gold_catalogs.φ
