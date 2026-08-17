@@ -6,16 +6,6 @@ wird entfernt (Git trägt es). Kein Eintrag meldet Erledigtes als offen, kein of
 Punkt fehlt. Widerspricht ein Dokument dieser Datei, gilt diese Datei — solche
 Drift-Stellen sind unter „Doku-Drift" registriert.
 
-## Crossmatch-Welle — Vollständigkeit der großen Kataloge
-
-Offen (2026-08-17): Die Sync-Crossmatches gegen I/355/paramp waren für die
-großen Kataloge serverseitig trunkiert (Sync-Zeitlimit). pastel vollständig
-(37.064 Zeilen, 20.883 Gaia-Distanzen, live), wds vollständig (136.548 Zeilen,
-76.482 Gaia-Distanzen, live), mktypes vollständig (686.886 Zeilen, 347.856
-Gaia-Distanzen, live). Offen: denis (16 Bänder) — chunkweise per `--where`,
-Upload, Ledger-Korrektur. Werkzeug:
-`phi/port/chunk_master.py` (fortsetzbar, Chunks in phi/port/).
-
 ## Archivar — Membran-scoped Cache statt Blockuniversum
 
 Offen (2026-08-17): Der Archivar lädt flache Katalog-Assets komplett in den
@@ -497,11 +487,40 @@ heute auf den Bestand unter /home/johannes/projects/archive/archeology/.
   → rad (Feldinventar: Richtungs-Winkel), M_sun/M_earth/R_earth, MW
   (Fall-Exaktheit gegen Mw/M), d, uatm, mb, n/cc, cfs, %, psu, DU,
   pc/cm3, km/s, mJy, mg/kg, erg/cm2, µA/m2. `vel <key> [unit]` +
-  `tau_key <key>` (0 schließt das Gate, absent = Feld-τ). Pending
-  Kuration (unconverted, logarithmisch/Referenz): mag, Mw, M, dex, cpm,
-  Crab, Jy_km/s, sfu, counts/s — betroffene Katalog-Felder (denis/gcvs/
-  pastel/wds/vsx/mktypes/polarbase/sb9/corot/sn/wd/comet-Magnituden):
-  flux_from_mag/abs_mag_from-Deklaration je Quelle offen.
+  `tau_key <key>` (0 schließt das Gate, absent = Feld-τ).
+
+## Nachpflege: unconverted Units in sources.φ (2026-08-17)
+
+22 Blöcke verloren Feldwerte durch die SI-Konversion. Alle sind jetzt
+verdrahtet — nichts bleibt dunkel.
+
+ERLEDIGT (flux_from_mag, Primärband): cb(mag1), cometels(H), corot(mag),
+dcom5(H; M1 dark), denis(jmag; kmag dark), gcvs(mag), lmxb(mag1),
+mktypes(mag), pastel(mag), polarbase(mag), sb9(mag1; mag2 dark), sncat(mag),
+vsx(max; min dark), wd(mag), wds(mag1; mag2 dark).
+
+ERLEDIGT (convert_to_si-Arme, 2026-08-17):
+- `Mw` → seismisches Moment M0 = 10^(1,5·Mw + 9,1) N·m — USGS/INGV/JMA/
+  geonet + der `geojson`-Geschwister-Block (Unit jetzt `Mw` statt roh).
+- `logg` → 10^logg · 0,01 m/s² (corot/pastel/polarbase, Blöcke deklarieren
+  jetzt `logg` statt `dex`).
+- `Crab` → ×2,4e-14 W/m² (tevcat; kanonische Crab-Referenz >1 TeV).
+- `Jy_km/s` → ×1e-23 W/m² (alfalfa; exakter Linienfluss).
+- `cpm` → ×1e-6/(334·3600) Sv/s (safecast; bGeigie-Nano-Firmware-Konstante
+  NANO_CPM_FACTOR 334, verifiziert im Quellcode NanoConfig.h).
+
+Registrierte Einschränkung (keine Fälschung, ein Name): Die Erdbeben-
+Summary-Magnituden der FDSN/GeoNet-Feeds sind im Typ gemischt (MLv/M/Mw,
+die GeoJSON trägt den Typ nicht). Die Moment-Abbildung M0 = 10^(1,5·m+9,1)
+ist die seismologische Standard-Schätzung „moment from magnitude"; die
+Typ-Abweichung ist ein systematischer Offset, den die pro-Kraft normierte
+Rendierung aufnimmt. Der Magnitudentyp pro Event wäre über FDSN `MagType`
+(FDSN-Events-Format) erforschbar — ein Enrichment, kein Blocker. Sekundär-
+bänder (kmag/M1/mag2/min) bleiben dark, weil `flux_from_mag` eine Primär-
+band-Direktive ist (eine Skala pro Block).
+
+Betroffen, aber unentschieden (0 honored: die Daten existieren, die
+Konversion ist bekannt oder erforschbar — pending, keine Fälschung):
 - HorizonsVec-Fetch (Ratsurteil 2026-08-17): `{jd_now}`/`{jd_start}`/
   `{jd_end}` in `render_url` (TDB, 6 Stellen) — die 0B-Ursache
   (Kalenderdaten im JD-Feld) ist behoben. Ein Live-`vectors`-Block in

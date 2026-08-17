@@ -372,7 +372,7 @@ note gaia_dist gcvs_cat (B/gcvs/gcvs_cat): 49092 Zeilen, 25478 mit Gaia-Distanz 
 
 verifiziert
 bestand phi/katalog/vizier_gold_catalogs.φ
-note gaia_dist denis (B/denis/denis): 31577 Zeilen, 22335 mit Gaia-Distanz — live auf CDN
+note gaia_dist denis (B/denis/denis): 525260 Zeilen voll (Chunk-Merge, 16 RA-Bänder à 22,5°), 384371 mit Gaia-Distanz — live auf CDN. Sync-Workflow-Schritt entfernt (Clobber-Gefahr)
 
 verifiziert
 bestand phi/katalog/vizier_gold_catalogs.φ
