@@ -682,6 +682,7 @@ fn main() {
     let mut where_clause: Option<String> = None;
     let mut join_spec: Option<(String, String)> = None;
     let mut crossmatch_spec: Option<String> = None;
+    let mut crossmatch_pm: Option<String> = None;
     let mut xmatch_radius: f64 = 1.5;
     let mut mag_bands: Option<(f64, f64, f64)> = None;
     let mut star_bin = false;
@@ -735,6 +736,10 @@ fn main() {
             }
             "--crossmatch" => {
                 crossmatch_spec = args.get(i + 1).cloned();
+                i += 1;
+            }
+            "--crossmatch-pm" => {
+                crossmatch_pm = args.get(i + 1).cloned();
                 i += 1;
             }
             "--xmatch-radius" => {
@@ -997,7 +1002,7 @@ fn main() {
                 xq(xdec),
                 radius_deg
             );
-            let cs = if any_positional {
+            let mut cs = if any_positional {
                 eprintln!("--crossmatch needs named columns, not @positional");
                 std::process::exit(1);
             } else {
@@ -1009,6 +1014,15 @@ fn main() {
                 s.push_str(&format!(", j.{} AS \"dist_pc\"", xq(xdist)));
                 s
             };
+            if let Some(pm) = &crossmatch_pm {
+                let parts: Vec<&str> = pm.split(':').collect();
+                for (alias, idx) in [("pmra", 0usize), ("pmdec", 1), ("plx", 2)] {
+                    if let Some(pc) = parts.get(idx).filter(|c| !c.is_empty()) {
+                        cs.push_str(&format!(", j.{} AS \"{}\"", xq(pc), alias));
+                        mapping.push((alias.to_string(), alias.to_string()));
+                    }
+                }
+            }
             mapping.push(("dist_pc".to_string(), "dist_pc".to_string()));
             (cs, fc)
         }

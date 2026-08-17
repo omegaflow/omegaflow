@@ -244,7 +244,8 @@ jobs:
             --table "B/gcvs/gcvs_cat" \
             --columns 'ra:RAJ2000;dec:DEJ2000;mag:magMax;period:Period' \
             --skip-null mag \
-            --crossmatch 'I/355/paramp:RA_ICRS:DE_ICRS:Dist' \
+            --crossmatch 'I/355/gaiadr3:RA_ICRS:DE_ICRS:Dist' \
+            --crossmatch-pm 'pmRA:pmDE:Plx' \
             --out gcvs_cat.json \
             --ci-mode \
             || gh issue create --repo omegaflow/omegaflow \
@@ -259,7 +260,8 @@ jobs:
             --table "B/psr/psr" \
             --columns 'ra:RAJ2000;dec:DEJ2000;p0:P0;dm:DM;s1400:S1400' \
             --skip-null dm \
-            --crossmatch 'I/355/paramp:RA_ICRS:DE_ICRS:Dist' \
+            --crossmatch 'I/355/gaiadr3:RA_ICRS:DE_ICRS:Dist' \
+            --crossmatch-pm 'pmRA:pmDE:Plx' \
             --out psr.json \
             --ci-mode \
             || gh issue create --repo omegaflow/omegaflow \
@@ -302,7 +304,8 @@ jobs:
             --table "B/vsx/vsx" \
             --columns 'ra:RAJ2000;dec:DEJ2000;max:max;min:min;period:Period' \
             --skip-null max \
-            --crossmatch 'I/355/paramp:RA_ICRS:DE_ICRS:Dist' \
+            --crossmatch 'I/355/gaiadr3:RA_ICRS:DE_ICRS:Dist' \
+            --crossmatch-pm 'pmRA:pmDE:Plx' \
             --out vsx.json \
             --ci-mode \
             || gh issue create --repo omegaflow/omegaflow \
@@ -317,7 +320,8 @@ jobs:
             --table "B/sb9/main" \
             --columns 'ra:RAJ2000;dec:DEJ2000;mag1:mag1;mag2:mag2' \
             --skip-null mag1 \
-            --crossmatch 'I/355/paramp:RA_ICRS:DE_ICRS:Dist' \
+            --crossmatch 'I/355/gaiadr3:RA_ICRS:DE_ICRS:Dist' \
+            --crossmatch-pm 'pmRA:pmDE:Plx' \
             --out sb9.json \
             --ci-mode \
             || gh issue create --repo omegaflow/omegaflow \
@@ -332,7 +336,8 @@ jobs:
             --table "B/cb/cbdata" \
             --columns 'ra:RAJ2000;dec:DEJ2000;mag1:mag1;m1:M1;m2:M2' \
             --skip-null mag1 \
-            --crossmatch 'I/355/paramp:RA_ICRS:DE_ICRS:Dist' \
+            --crossmatch 'I/355/gaiadr3:RA_ICRS:DE_ICRS:Dist' \
+            --crossmatch-pm 'pmRA:pmDE:Plx' \
             --out cbdata.json \
             --ci-mode \
             || gh issue create --repo omegaflow/omegaflow \
@@ -347,7 +352,8 @@ jobs:
             --table "B/cb/lmxbdata" \
             --columns 'ra:RAJ2000;dec:DEJ2000;mag1:mag1;m1:M1;m2:M2' \
             --skip-null m1 \
-            --crossmatch 'I/355/paramp:RA_ICRS:DE_ICRS:Dist' \
+            --crossmatch 'I/355/gaiadr3:RA_ICRS:DE_ICRS:Dist' \
+            --crossmatch-pm 'pmRA:pmDE:Plx' \
             --out lmxbdata.json \
             --ci-mode \
             || gh issue create --repo omegaflow/omegaflow \
@@ -362,7 +368,8 @@ jobs:
             --table "B/corot/Bright_star" \
             --columns 'ra:RAJ2000;dec:DEJ2000;mag:Vmag;teff:Teff;logg:logg' \
             --skip-null mag \
-            --crossmatch 'I/355/paramp:RA_ICRS:DE_ICRS:Dist' \
+            --crossmatch 'I/355/gaiadr3:RA_ICRS:DE_ICRS:Dist' \
+            --crossmatch-pm 'pmRA:pmDE:Plx' \
             --out corot.json \
             --ci-mode \
             || gh issue create --repo omegaflow/omegaflow \
@@ -377,7 +384,8 @@ jobs:
             --table "B/polarbase/polarbase" \
             --columns 'ra:RA_ICRS;dec:DE_ICRS;teff:Teff;logg:logg;mag:Vmag' \
             --skip-null teff \
-            --crossmatch 'I/355/paramp:RA_ICRS:DE_ICRS:Dist' \
+            --crossmatch 'I/355/gaiadr3:RA_ICRS:DE_ICRS:Dist' \
+            --crossmatch-pm 'pmRA:pmDE:Plx' \
             --out polarbase.json \
             --ci-mode \
             || gh issue create --repo omegaflow/omegaflow \
@@ -392,7 +400,8 @@ jobs:
             --table "B/merlin/merlin" \
             --columns 'ra:RAJ2000;dec:DEJ2000;freq:Freq;ampflux:AmpFlux' \
             --skip-null freq \
-            --crossmatch 'I/355/paramp:RA_ICRS:DE_ICRS:Dist' \
+            --crossmatch 'I/355/gaiadr3:RA_ICRS:DE_ICRS:Dist' \
+            --crossmatch-pm 'pmRA:pmDE:Plx' \
             --out merlin.json \
             --ci-mode \
             || gh issue create --repo omegaflow/omegaflow \
