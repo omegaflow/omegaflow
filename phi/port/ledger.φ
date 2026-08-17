@@ -307,10 +307,6 @@ parser-gap P06
 note cmap pmra/pmdec/radvel-Füllung (Eigenbewegung einspeisen); plx-Füllung offen
 
 ausstehend
-parser-gap P07
-note extent-pro-Force (gravity → body_radius statt c·τ)
-
-ausstehend
 parser-gap P08
 note field_in nested + Flatten-Extract (geschachtelte Feldpfade, generisches Flatten über mehrere Ebenen)
 

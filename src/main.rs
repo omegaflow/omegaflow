@@ -3582,7 +3582,12 @@ mod archivar {
         }
     }
 
-    pub fn kernel_extent(kernel_id: u8, body_props: Option<&BodyProperties>, tau: f64) -> f64 {
+    pub fn kernel_extent(
+        force_type: u8,
+        kernel_id: u8,
+        body_props: Option<&BodyProperties>,
+        tau: f64,
+    ) -> f64 {
         if tau == 0.0 {
             return 0.0;
         }
@@ -3590,6 +3595,9 @@ mod archivar {
             Some(p) => p,
             None => return 0.0,
         };
+        if force_type == 1 {
+            return p.radius_m;
+        }
         let reach_time = tau;
         if kernel_id == 1 {
             return p.gaussian_inverse_square * reach_time;
@@ -7461,7 +7469,7 @@ mod archivar {
             .anchor_body()
             .and_then(|name| eph.get(name))
             .and_then(|e| e.props.as_ref());
-        let extent = kernel_extent(sensor.kernel, body_props, sensor.tau);
+        let extent = kernel_extent(sensor.force, sensor.kernel, body_props, sensor.tau);
         if extent.is_nan() {
             return None;
         }
@@ -10317,7 +10325,7 @@ mod archivar {
                 let mut r = 0.0_f64;
                 for ext in &archive.sources[i].extracts {
                     for fc in extract_fields(ext) {
-                        r = f64::max(r, kernel_extent(fc.kernel, body_props, fc.tau));
+                        r = f64::max(r, kernel_extent(fc.force, fc.kernel, body_props, fc.tau));
                     }
                 }
                 if r == 0.0 {
@@ -10472,9 +10480,6 @@ mod archivar {
                                     &archive.body_ephemerides,
                                 ) {
                                     osc.source = OscillatorSource::Body;
-                                    if channel.name.ends_with(".radius") {
-                                        osc.extent = props.radius_m;
-                                    }
                                     all.push(osc);
                                 }
                             }
