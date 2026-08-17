@@ -42,7 +42,7 @@ def chunk_catalog(name, table, columns, skip_null, ra_col, bands):
                 done.append(rows)
                 continue
             os.remove(out)
-        w = f'"t.{ra_col}" >= {lo} AND "t.{ra_col}" < {hi}'
+        w = f't."{ra_col}" >= {lo} AND t."{ra_col}" < {hi}'
         cmd = ["./target/debug/tap_compiler", "--root", R, "--table", table,
                "--columns", columns, "--skip-null", skip_null,
                "--crossmatch", "I/355/gaiadr3:RA_ICRS:DE_ICRS:Dist",
