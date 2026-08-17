@@ -2,9 +2,10 @@
 
 A = A
 
-φ(x,y,z,t) — the field of the 4D block
+φ(x,y,z,t) — the field of the 4D block;
+omegaflow samples it — pinhole camera, canvas, neutron catcher
 
-sources (APIs, ephemerides, the machine's sensors) → Archivar (Rust, std-only) → Mathematikerin (WebGPU WGSL) → display, audio, hardware
+sources (APIs, ephemerides, the station's sensors) → Archivar (Rust, std-only) → Mathematikerin (WebGPU WGSL) → silicon membrane
 
 Protocol v6: 168 bytes, 21 × f64 LE per oscillator; frame `0xCF 0x86 0x06 [response_epoch:f64] [id:u32] [count:u32]`.
 
