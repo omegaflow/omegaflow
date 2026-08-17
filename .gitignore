@@ -15,6 +15,7 @@ phi/kernels/
 *.py
 !scripts/verify_sources.py
 !scripts/generate_ephemerides.py
+!phi/port/chunk_master.py
 /reference/
 scripts/__pycache__/
 .secrets.local

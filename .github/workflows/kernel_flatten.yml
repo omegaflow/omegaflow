@@ -309,36 +309,6 @@ jobs:
                  --title "flatten: vsx returned void" \
                  --body "vsx compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
                  --label health
-      - name: Compile DENIS infrared catalog and upload to CDN
-        continue-on-error: true
-        run: |
-          cargo run --release --bin tap_compiler -- \
-            --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
-            --table "B/denis/denis" \
-            --columns 'ra:RAJ2000;dec:DEJ2000;imag:Imag;jmag:Jmag;kmag:Kmag' \
-            --skip-null jmag \
-            --crossmatch 'I/355/paramp:RA_ICRS:DE_ICRS:Dist' \
-            --out denis.json \
-            --ci-mode \
-            || gh issue create --repo omegaflow/omegaflow \
-                 --title "flatten: denis returned void" \
-                 --body "denis compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 --label health
-      - name: Compile WDS double-star catalog and upload to CDN
-        continue-on-error: true
-        run: |
-          cargo run --release --bin tap_compiler -- \
-            --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
-            --table "B/wds/wds" \
-            --columns 'ra:RAJ2000;dec:DEJ2000;mag1:mag1;mag2:mag2;sep:sep1' \
-            --skip-null mag1 \
-            --crossmatch 'I/355/paramp:RA_ICRS:DE_ICRS:Dist' \
-            --out wds.json \
-            --ci-mode \
-            || gh issue create --repo omegaflow/omegaflow \
-                 --title "flatten: wds returned void" \
-                 --body "wds compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 --label health
       - name: Compile SB9 spectroscopic-binary catalog and upload to CDN
         continue-on-error: true
         run: |
@@ -353,21 +323,6 @@ jobs:
             || gh issue create --repo omegaflow/omegaflow \
                  --title "flatten: sb9 returned void" \
                  --body "sb9 compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 --label health
-      - name: Compile PASTEL stellar-parameter catalog and upload to CDN
-        continue-on-error: true
-        run: |
-          cargo run --release --bin tap_compiler -- \
-            --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
-            --table "B/pastel/pastel" \
-            --columns 'ra:RAdeg;dec:DEdeg;teff:Teff;logg:logg;mag:Vmag' \
-            --skip-null teff \
-            --crossmatch 'I/355/paramp:RA_ICRS:DE_ICRS:Dist' \
-            --out pastel.json \
-            --ci-mode \
-            || gh issue create --repo omegaflow/omegaflow \
-                 --title "flatten: pastel returned void" \
-                 --body "pastel compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
                  --label health
       - name: Compile cataclysmic-binary catalog and upload to CDN
         continue-on-error: true
@@ -413,21 +368,6 @@ jobs:
             || gh issue create --repo omegaflow/omegaflow \
                  --title "flatten: corot returned void" \
                  --body "corot compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-                 --label health
-      - name: Compile MK spectral-types catalog and upload to CDN
-        continue-on-error: true
-        run: |
-          cargo run --release --bin tap_compiler -- \
-            --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
-            --table "B/mk/mktypes" \
-            --columns 'ra:RAJ2000;dec:DEJ2000;mag:Mag' \
-            --skip-null mag \
-            --crossmatch 'I/355/paramp:RA_ICRS:DE_ICRS:Dist' \
-            --out mktypes.json \
-            --ci-mode \
-            || gh issue create --repo omegaflow/omegaflow \
-                 --title "flatten: mktypes returned void" \
-                 --body "mktypes compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
                  --label health
       - name: Compile polarimetry catalog and upload to CDN
         continue-on-error: true
