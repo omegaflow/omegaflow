@@ -443,11 +443,13 @@ fn main() {
             let pm_de = num(b, 97, 104).unwrap_or(0.0);
             let (ra_j, dec_j) = propagate(ra, dec, pm_ra, pm_de, 8.75);
             rows.push(format!(
-                "{{\"ra\":{},\"dec\":{},\"mag\":{},\"dist_pc\":{}}}",
+                "{{\"ra\":{},\"dec\":{},\"mag\":{},\"dist_pc\":{},\"pmra\":{},\"pmdec\":{}}}",
                 ra_j,
                 dec_j,
                 vmag,
-                1000.0 / plx
+                1000.0 / plx,
+                pm_ra,
+                pm_de
             ));
         }
         let out_path = match out {

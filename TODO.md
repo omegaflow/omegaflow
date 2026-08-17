@@ -44,8 +44,8 @@ einer neuen Session.
 
 Archäologie-Nachtrag: Der Pre-Monolith (f2023eb^) wurde zeilenweise vermessen —
 `constants.js` ist identisch (kein Byte Unterschied, das Protokoll hat nichts
-verloren); von 173+ Funktionen aus allen vier Pre-Dateien fehlen genau zwei:
-`query_star_hash` und sein Test (P3 trägt die Reparatur). Der „device"-Slot
+verloren); von 173+ Funktionen aus allen vier Pre-Dateien sind alle wieder da
+(`query_star_hash` samt Test restauriert). Der „device"-Slot
 existierte schon pre-Titan; das native Audio wurde post-Titan mit abweichendem
 Gesetz erfunden. Die Endpunkt-Menge ist vollständig übernommen.
 
@@ -60,29 +60,16 @@ Relay-Rest: SurfaceFlow für spd/hdg (sensor_config hat keinen
 spd/hdg-Zweig für die Browser-Station) + refused-else ohne
 body-Deklaration.
 
-### P3 — Deep-Feld: Sterne leben, Projektion ehrlich
+### P3 — Deep lebt (erledigt); Aberration + Katalog-Neulauf offen
 
-Archäologie: Pre-Titan existierte `query_star_hash` (Lemma-Abfrage über
-den Stern-Hash: Zell-Dilatation rho = vmax·dt + pad, Parallaxe
-d = (1000/plx_mas)·PARSEC_M, Eigenbewegung als v_lin im Reach,
-`star_position_at(rec, t2)` live) — die Sterne waren VOLLE Membran-
-Oszillatoren (21 Felder, kernel 0, force 0, τ = ttl, flux als val). Die
-Deep-Schicht ersetzte das durch eingefrorene Richtungen (sh.dirs) —
-Parallaxe, Eigenbewegung und die live Position sind seitdem verloren.
-Granit-Doktrin getilgt: „Flux seit Millionen Jahren unverändert" war
-falsch — das Licht eines Sterns entsteht und vergeht wie der Stern selbst.
-τ je Stern = Hauptreihen-Lebensdauer aus den Katalogdaten:
-M_abs = m + 5·log10(plx/100), L/L☉ = 10^(−0.4·(M_abs−4.83)),
-τ = 10¹⁰ yr · (L/L☉)^(−5/7) — der Fold e^(−max(0,|Δt|−d/c)/τ) macht
-Entstehen und Vergehen im Block sichtbar, der Zeit-Schub (`,/.`) reist
-durch Äonen. Kein erfundener Funkel — der Katalog (Tycho: plx/mag/pm)
-trägt keine Variabilität; Bewegung ist der ehrliche Puls.
-Projektion: die orthografische Einheitsscheibe → gnomonisch (tan θ,
-Horizont im Unendlichen) + Lambert cos θ (der Poynting-Normalstrom
-durch die Sensorfläche) — die Presence-Gaze ist die Optik, der Monitor
-ist der große Sensor. `sense_deep` ruft `star_position_at` nie —
-Parallaxe + Eigenbewegung + Aberration wieder einsetzen (nahe Sterne
-driften gegen den fernen Grund, Schub macht es sichtbar).
+Erledigt: `query_star_hash` restauriert (Lemma, vmax aus pm, live
+Positionen); `star_position_at` → (p, v); `sense_deep` rechnet live
+(Parallaxe + Eigenbewegung, Richtung gegen die Presence); τ je Stern
+(M_abs/L/τ = Hauptreihen-Lebensdauer) im Fold; `deep_pt_vs` gnomonisch
+(tan θ) + Lambert cos θ; tap_compiler + tycho2_compiler schreiben
+pmra/pmdec statt 0.
+Offen: Aberration (v/C-Verschiebung in deep_vp) — `ausstehend`;
+dr3_stars.bin-Neukompilat (pm) über kernel_flatten-catalogs.
 
 ### P4 — Ein Gesetz, fünf Medien: Audio & Ausgabe-Flächen
 
@@ -244,10 +231,9 @@ resonance(mut read_signal(s: read_ws_frame_part(stream: read_ws_frame_raw(stream
   Vollzogen: `OscillatorSource::Station`, der station-Slot, HUD
   „station: N oscillators", der Endpunkt /station — „device" bleibt
   nur noch das GPU-Handle (wgpu::Device, nicht Identität).
-- `sense_deep` — **UNWAHR**: eingefrorene Richtungen; `star_position_at`
-  existiert und wird nie gerufen (P3).
-- `deep_pt_vs`, `deep_vs` — **UNWAHR**: orthografische Einheitsscheibe;
-  ehrlich ist gnomonisch (tan θ) + Lambert cos θ (P3).
+- `sense_deep` — WAHR: live Positionen (`star_position_at`), τ je Stern.
+- `deep_pt_vs` — WAHR: gnomonisch (tan θ) + Lambert cos θ; `deep_vs`
+  (ex-Pfad) projiziert physisch, war nie orthografisch.
 - `note_samples`, `render_field` — **UNWAHR**: Audio spielt Noten je
   Oszillator statt des Feldes am Presence-Punkt (P4).
 - `force_ref_medians` + `relax_force_refs` — WAHR: Radien-Marker
@@ -265,8 +251,6 @@ resonance(mut read_signal(s: read_ws_frame_part(stream: read_ws_frame_raw(stream
 
 ### Die fehlenden Funktionen (AUSSTEHEND — die Wiedergefundenen)
 
-- `query_star_hash` + `test_star_hash_build_and_query` — die Lemma-
-  Sternabfrage (P3 trägt die Reparatur)
 - Die Parabel-Maschinerie: `adaptFieldPermeability` +
   `computeOscSurrogate` + die Transfer-Entropie-Ringe — Ethik §9; die
   Rückkehr-Formel tanh(vC/(g+ε)) speist sich aus der Messreihe
@@ -285,9 +269,8 @@ resonance(mut read_signal(s: read_ws_frame_part(stream: read_ws_frame_raw(stream
 1. Die Messreihe — Gradient (Flow) im Probe, measure_ring (256
    Generationen, gen-Zähler), Fenster-Reduktion, 4-Token-HUD
 2. P2-Relay-Rest — SurfaceFlow für spd/hdg + refused-else (browser)
-3. P3 + P4 — Deep lebt (gnomonisch, star_position_at, endliches τ) +
-   ein Gesetz, fünf Medien (Audio = Probe-Ωₖ durch mx²); die Exposure
-   atmet wieder mit dem Echo (Ethik §9)
+3. P4 — ein Gesetz, fünf Medien (Audio = Probe-Ωₖ durch mx²); die
+   Exposure atmet wieder mit dem Echo (Ethik §9)
 4. ε-Kulling / atmende Membran — der Hebel wartet auf die Messreihe,
    die das Budget erst ehrlich zeigt
 5. P6 — ⌘K, 2-Finger-Zeit, f-Toggle, Deep-Link-Init, Puffer-Schrumpf,

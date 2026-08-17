@@ -85,15 +85,16 @@ struct DeepPtVOut { @builtin(position) pos: vec4f, @location(0) @interpolate(fla
     );
     let data = deep_pt[id];
     let dir = data.xyz / max(length(data.xyz), 1e-9);
-    if (dot(dir, deep_vp.forward.xyz) < 0.0) {
+    let df = dot(dir, deep_vp.forward.xyz);
+    if (df <= 0.0) {
         out.flux = 0.0;
         return out;
     }
     let w = deep_vp.surface.x;
     let h = deep_vp.surface.y;
     let mag = max(deep_vp.expose_hi.z, 1.0);
-    let sx = dot(dir, deep_vp.right.xyz) * mag;
-    let sy = -dot(dir, deep_vp.up.xyz) * mag;
+    let sx = dot(dir, deep_vp.right.xyz) / df * mag;
+    let sy = -dot(dir, deep_vp.up.xyz) / df * mag;
     let corner = quad[i % 6u];
     let clip = vec2f(
         sx + (corner.x * 2.2) / w * 2.0,
@@ -101,7 +102,7 @@ struct DeepPtVOut { @builtin(position) pos: vec4f, @location(0) @interpolate(fla
     );
     out.pos = vec4f(clip, 0.0, 1.0);
     out.uv = corner;
-    out.flux = data.w;
+    out.flux = data.w * df;
     return out;
 }
 
@@ -595,11 +596,25 @@ struct StarRec {
     pm_de_masyr: f64,
     plx_mas: f64,
     flux: f64,
+    mag: f64,
+    tau: f64,
 }
 struct StarHash {
-    ttl: f64,
     records: Vec<StarRec>,
-    dirs: Vec<[f64; 3]>,
+    #[cfg(feature = "browser_relay")]
+    cell_size: f64,
+    #[cfg(feature = "browser_relay")]
+    vmax: f64,
+    #[cfg(feature = "browser_relay")]
+    build_epoch: f64,
+    #[cfg(feature = "browser_relay")]
+    cell_lo: CellKey,
+    #[cfg(feature = "browser_relay")]
+    cell_hi: CellKey,
+    #[cfg(feature = "browser_relay")]
+    cells: HashMap<CellKey, Vec<u32>>,
+    #[cfg(feature = "browser_relay")]
+    p0: Vec<[f64; 3]>,
 }
 #[derive(Clone, Debug)]
 enum Position {
@@ -1640,9 +1655,9 @@ mod archivar {
         let pm_ra = f32::from_le_bytes(b[16..20].try_into().ok()?) as f64;
         let pm_de = f32::from_le_bytes(b[20..24].try_into().ok()?) as f64;
         let plx = f32::from_le_bytes(b[24..28].try_into().ok()?) as f64;
-        let vt = f32::from_le_bytes(b[28..32].try_into().ok()?) as f64;
+        let mag = f32::from_le_bytes(b[28..32].try_into().ok()?) as f64;
         let flux = f32::from_le_bytes(b[32..36].try_into().ok()?) as f64;
-        if !ra.is_finite() || !dec.is_finite() || !(plx > 0.0) || !vt.is_finite() {
+        if !ra.is_finite() || !dec.is_finite() || !(plx > 0.0) || !mag.is_finite() {
             return None;
         }
         Some(StarRec {
@@ -1652,10 +1667,12 @@ mod archivar {
             pm_de_masyr: pm_de,
             plx_mas: plx,
             flux,
+            mag,
+            tau: 0.0,
         })
     }
 
-    fn star_position_at(rec: &StarRec, t2: f64) -> [f64; 3] {
+    fn star_position_at(rec: &StarRec, t2: f64) -> ([f64; 3], [f64; 3]) {
         let dt_yr = t2 / (86400.0 * 365.25);
         let dec_rad = rec.dec_deg.to_radians();
         let ra = rec.ra_deg + rec.pm_ra_masyr / (3.6e6 * dec_rad.cos().max(1e-6)) * dt_yr;
@@ -1664,25 +1681,181 @@ mod archivar {
         let (sd, cd) = dec.to_radians().sin_cos();
         let p_hat = [cd * ca, cd * sa, sd];
         let d = (1000.0 / rec.plx_mas) * PARSEC_M;
-        [p_hat[0] * d, p_hat[1] * d, p_hat[2] * d]
+        let p = [p_hat[0] * d, p_hat[1] * d, p_hat[2] * d];
+        let mu_a = rec.pm_ra_masyr * MAS_YR_TO_RAD_S;
+        let mu_d = rec.pm_de_masyr * MAS_YR_TO_RAD_S;
+        let a_hat = [-sa, ca, 0.0];
+        let d_hat = [-sd * ca, -sd * sa, cd];
+        let vel = [
+            d * (mu_a * a_hat[0] + mu_d * d_hat[0]),
+            d * (mu_a * a_hat[1] + mu_d * d_hat[1]),
+            d * (mu_a * a_hat[2] + mu_d * d_hat[2]),
+        ];
+        (p, vel)
     }
 
-    fn build_star_hash(bytes: &[u8], build_epoch: f64, ttl: u64) -> StarHash {
+    fn build_star_hash(
+        bytes: &[u8],
+        #[cfg(feature = "browser_relay")] build_epoch: f64,
+        #[cfg(feature = "browser_relay")] cadence: f64,
+    ) -> StarHash {
         let mut records: Vec<StarRec> = Vec::new();
-        let mut dirs: Vec<[f64; 3]> = Vec::new();
         for chunk in bytes.chunks_exact(STAR_RECORD_STRIDE) {
-            let Some(rec) = parse_star_record(chunk) else {
+            let Some(mut rec) = parse_star_record(chunk) else {
                 continue;
             };
-            let p = star_position_at(&rec, build_epoch);
-            let d = (p[0] * p[0] + p[1] * p[1] + p[2] * p[2]).sqrt().max(1.0);
+            let m_abs = rec.mag + 5.0 * (rec.plx_mas / 100.0).log10();
+            let lum = 10f64.powf(-0.4 * (m_abs - 4.83));
+            rec.tau = 1e10 * 365.25 * 86400.0 * lum.powf(-5.0 / 7.0);
             records.push(rec);
-            dirs.push([p[0] / d, p[1] / d, p[2] / d]);
         }
+        #[cfg(feature = "browser_relay")]
+        let (cell_size, vmax, build_epoch, cell_lo, cell_hi, cells, p0) = {
+            let mut p0: Vec<[f64; 3]> = Vec::new();
+            let mut vmax = 0.0f64;
+            for rec in &records {
+                let (p, v) = star_position_at(rec, build_epoch);
+                let speed = (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]).sqrt();
+                vmax = vmax.max(speed);
+                p0.push(p);
+            }
+            vmax *= Φ;
+            let rho_cad = vmax * cadence;
+            let shift = (2.0 * rho_cad).log2().ceil().clamp(0.0, 63.0) as i32;
+            let motion_cell = 2f64.powi(shift);
+            let mut span = 1.0f64;
+            for k in 0..3 {
+                let mut lo = f64::INFINITY;
+                let mut hi = f64::NEG_INFINITY;
+                for pos in &p0 {
+                    lo = lo.min(pos[k]);
+                    hi = hi.max(pos[k]);
+                }
+                span = span.max(hi - lo);
+            }
+            let cell_size = motion_cell.max(span / 1024.0);
+            let mut cells: HashMap<CellKey, Vec<u32>> = HashMap::new();
+            let mut cell_lo = (i64::MAX, i64::MAX, i64::MAX);
+            let mut cell_hi = (i64::MIN, i64::MIN, i64::MIN);
+            for (i, pos) in p0.iter().enumerate() {
+                let c = cell_of(*pos, cell_size);
+                cell_lo.0 = cell_lo.0.min(c.0);
+                cell_lo.1 = cell_lo.1.min(c.1);
+                cell_lo.2 = cell_lo.2.min(c.2);
+                cell_hi.0 = cell_hi.0.max(c.0);
+                cell_hi.1 = cell_hi.1.max(c.1);
+                cell_hi.2 = cell_hi.2.max(c.2);
+                cells.entry(c).or_default().push(i as u32);
+            }
+            (cell_size, vmax, build_epoch, cell_lo, cell_hi, cells, p0)
+        };
         StarHash {
-            ttl: ttl as f64,
             records,
-            dirs,
+            #[cfg(feature = "browser_relay")]
+            cell_size,
+            #[cfg(feature = "browser_relay")]
+            vmax,
+            #[cfg(feature = "browser_relay")]
+            build_epoch,
+            #[cfg(feature = "browser_relay")]
+            cell_lo,
+            #[cfg(feature = "browser_relay")]
+            cell_hi,
+            #[cfg(feature = "browser_relay")]
+            cells,
+            #[cfg(feature = "browser_relay")]
+            p0,
+        }
+    }
+
+    #[cfg(feature = "browser_relay")]
+    fn query_star_hash(
+        hash: &StarHash,
+        center: [f64; 3],
+        t2: f64,
+        pad: f64,
+        delta_t_cache: f64,
+        records: &mut Vec<OscRecord>,
+    ) {
+        if hash.cells.is_empty() {
+            return;
+        }
+        let dt = (t2 - hash.build_epoch).abs() + delta_t_cache;
+        let rho = hash.vmax * dt + pad;
+        let s = hash.cell_size;
+        let qlo = cell_of([center[0] - rho, center[1] - rho, center[2] - rho], s);
+        let qhi = cell_of([center[0] + rho, center[1] + rho, center[2] + rho], s);
+        let lo = (
+            qlo.0.max(hash.cell_lo.0),
+            qlo.1.max(hash.cell_lo.1),
+            qlo.2.max(hash.cell_lo.2),
+        );
+        let hi = (
+            qhi.0.min(hash.cell_hi.0),
+            qhi.1.min(hash.cell_hi.1),
+            qhi.2.min(hash.cell_hi.2),
+        );
+        if lo.0 > hi.0 || lo.1 > hi.1 || lo.2 > hi.2 {
+            return;
+        }
+        let span = (hi.0.saturating_sub(lo.0).saturating_add(1) as u64)
+            .saturating_mul(hi.1.saturating_sub(lo.1).saturating_add(1) as u64)
+            .saturating_mul(hi.2.saturating_sub(lo.2).saturating_add(1) as u64);
+        let visit: Vec<&Vec<u32>> = if span > hash.cells.len() as u64 * 4 {
+            hash.cells
+                .iter()
+                .filter(|(ck, _)| {
+                    ck.0 >= lo.0
+                        && ck.0 <= hi.0
+                        && ck.1 >= lo.1
+                        && ck.1 <= hi.1
+                        && ck.2 >= lo.2
+                        && ck.2 <= hi.2
+                })
+                .map(|(_, v)| v)
+                .collect()
+        } else {
+            let mut out = Vec::new();
+            for cx in lo.0..=hi.0 {
+                for cy in lo.1..=hi.1 {
+                    for cz in lo.2..=hi.2 {
+                        if let Some(indices) = hash.cells.get(&(cx, cy, cz)) {
+                            out.push(indices);
+                        }
+                    }
+                }
+            }
+            out
+        };
+        for indices in visit {
+            for &i in indices {
+                let rec = &hash.records[i as usize];
+                let d = (1000.0 / rec.plx_mas) * PARSEC_M;
+                let mu_a = rec.pm_ra_masyr * MAS_YR_TO_RAD_S;
+                let mu_d = rec.pm_de_masyr * MAS_YR_TO_RAD_S;
+                let v_lin = d * mu_a.hypot(mu_d);
+                let reach = v_lin * dt + pad;
+                let p0 = hash.p0[i as usize];
+                let dx = p0[0] - center[0];
+                let dy = p0[1] - center[1];
+                let dz = p0[2] - center[2];
+                let dist2_p0 = dx * dx + dy * dy + dz * dz;
+                if dist2_p0 > reach * reach {
+                    continue;
+                }
+                let (p, v) = star_position_at(rec, t2);
+                let ddx = p[0] - center[0];
+                let ddy = p[1] - center[1];
+                let ddz = p[2] - center[2];
+                let dist2 = ddx * ddx + ddy * ddy + ddz * ddz;
+                if dist2 > pad * pad {
+                    continue;
+                }
+                records.push((
+                    p[0], p[1], p[2], rec.flux, t2, rec.tau, rec.tau, 0.0, 0.0, 0.0, 0.0, 0.0,
+                    v[0], v[1], v[2], 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                ));
+            }
         }
     }
 
@@ -1991,16 +2164,21 @@ mod archivar {
         }
     }
 
-    pub fn sense_deep(buf: &Buffer, out: &mut Vec<[f64; 6]>) {
+    pub fn sense_deep(buf: &Buffer, center: [f64; 3], t2: f64, out: &mut Vec<[f64; 6]>) {
         let Some(sh) = &buf.stars else {
             return;
         };
-        for (i, rec) in sh.records.iter().enumerate() {
+        for rec in &sh.records {
             if rec.flux < STAR_FLUX_FLOOR {
                 continue;
             }
-            let dir = sh.dirs[i];
-            out.push([dir[0], dir[1], dir[2], rec.flux, sh.ttl, 0.0]);
+            let (p, _) = star_position_at(rec, t2);
+            let rel = [p[0] - center[0], p[1] - center[1], p[2] - center[2]];
+            let d = (rel[0] * rel[0] + rel[1] * rel[1] + rel[2] * rel[2]).sqrt();
+            if d <= 0.0 {
+                continue;
+            }
+            out.push([rel[0] / d, rel[1] / d, rel[2] / d, rec.flux, rec.tau, 0.0]);
         }
     }
 
@@ -10058,7 +10236,10 @@ mod archivar {
                     let src_clone = archive.sources[i].clone();
                     let src_idx = i;
                     let src_ttl = src_clone.ttl;
+                    #[cfg(feature = "browser_relay")]
                     let build_epoch = now;
+                    #[cfg(feature = "browser_relay")]
+                    let cadence_c = cadence;
                     archive.origins.entry(origin).or_insert(OriginState {
                         fetched: now,
                         prev_epoch: now,
@@ -10083,7 +10264,10 @@ mod archivar {
                             Ok(b) => b,
                             Err(_) => return,
                         };
-                        let hash = build_star_hash(&bytes, build_epoch, src_ttl);
+                        #[cfg(feature = "browser_relay")]
+                        let hash = build_star_hash(&bytes, build_epoch, cadence_c);
+                        #[cfg(not(feature = "browser_relay"))]
+                        let hash = build_star_hash(&bytes);
                         eprintln!("\r\x1b[Kcatalog_tycho: {} stars", hash.records.len());
                         let _ = ftx.send(FetchResult {
                             source_idx: src_idx,
@@ -11127,7 +11311,7 @@ field temp temp_c\n";
         }
 
         #[test]
-        fn test_star_hash_directions() {
+        fn test_star_records_build_tau() {
             let mut bin = Vec::new();
             bin.extend_from_slice(&0f64.to_le_bytes());
             bin.extend_from_slice(&0f64.to_le_bytes());
@@ -11136,16 +11320,40 @@ field temp temp_c\n";
             bin.extend_from_slice(&100f32.to_le_bytes());
             bin.extend_from_slice(&0f32.to_le_bytes());
             bin.extend_from_slice(&1f32.to_le_bytes());
-            let hash = build_star_hash(&bin, 0.0, 604800);
+            #[cfg(feature = "browser_relay")]
+            let hash = build_star_hash(&bin, 0.0, 1.0);
+            #[cfg(not(feature = "browser_relay"))]
+            let hash = build_star_hash(&bin);
             assert_eq!(hash.records.len(), 1);
-            assert_eq!(hash.dirs.len(), 1);
-            let dir = hash.dirs[0];
-            assert!((dir[0] - 1.0).abs() < 1e-9);
-            assert!(dir[1].abs() < 1e-9);
-            assert!(dir[2].abs() < 1e-9);
+            assert!(hash.records[0].tau > 0.0);
+            let (p, _) = star_position_at(&hash.records[0], 0.0);
+            let d = 10.0 * PARSEC_M;
+            assert!((p[0] - d).abs() / d < 1e-9);
             let mut short = [0u8; 4];
             short.copy_from_slice(&0f32.to_le_bytes());
             assert!(parse_star_record(&short).is_none());
+        }
+
+        #[cfg(feature = "browser_relay")]
+        #[test]
+        fn test_star_hash_build_and_query() {
+            let mut bin = Vec::new();
+            bin.extend_from_slice(&0f64.to_le_bytes());
+            bin.extend_from_slice(&0f64.to_le_bytes());
+            bin.extend_from_slice(&0f32.to_le_bytes());
+            bin.extend_from_slice(&0f32.to_le_bytes());
+            bin.extend_from_slice(&100f32.to_le_bytes());
+            bin.extend_from_slice(&0f32.to_le_bytes());
+            bin.extend_from_slice(&1f32.to_le_bytes());
+            let hash = build_star_hash(&bin, 0.0, 1.0);
+            assert_eq!(hash.p0.len(), 1);
+            let d = 10.0 * PARSEC_M;
+            assert!((hash.p0[0][0] - d).abs() / d < 1e-9);
+            let mut records: Vec<OscRecord> = Vec::new();
+            query_star_hash(&hash, [0.0, 0.0, 0.0], 0.0, d * 2.0, 0.0, &mut records);
+            assert_eq!(records.len(), 1);
+            assert!((records[0].0 - d).abs() / d < 1e-9);
+            assert_eq!(records[0].3, 1.0);
         }
 
         #[test]
@@ -12821,7 +13029,7 @@ mod mathematikerin {
                 sense_membrane(&field, center, t, pad, cache_interval, &mut records, &eph);
                 let packed = pack_window(&records, center);
                 let mut deep: Vec<[f64; 6]> = Vec::new();
-                sense_deep(&field, &mut deep);
+                sense_deep(&field, center, t, &mut deep);
                 let mut pt_src: Vec<[f64; 6]> = Vec::new();
                 let mut ex_src: Vec<[f64; 6]> = Vec::new();
                 for s in &deep {

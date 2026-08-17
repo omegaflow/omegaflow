@@ -538,6 +538,8 @@ fn star_record_bytes(cells: &[String], col_idx: &[(String, usize)]) -> Option<Ve
     let dec = get("dec")?;
     let dist_pc = get("dist_pc")?;
     let mag = get("mag")?;
+    let pmra = get("pmra").unwrap_or(0.0);
+    let pmdec = get("pmdec").unwrap_or(0.0);
     if !(dist_pc > 0.0) || !ra.is_finite() || !dec.is_finite() || !mag.is_finite() {
         return None;
     }
@@ -546,8 +548,8 @@ fn star_record_bytes(cells: &[String], col_idx: &[(String, usize)]) -> Option<Ve
     let mut out = Vec::with_capacity(STAR_BIN_STRIDE);
     out.extend_from_slice(&ra.to_le_bytes());
     out.extend_from_slice(&dec.to_le_bytes());
-    out.extend_from_slice(&0f32.to_le_bytes());
-    out.extend_from_slice(&0f32.to_le_bytes());
+    out.extend_from_slice(&(pmra as f32).to_le_bytes());
+    out.extend_from_slice(&(pmdec as f32).to_le_bytes());
     out.extend_from_slice(&(plx_mas as f32).to_le_bytes());
     out.extend_from_slice(&(mag as f32).to_le_bytes());
     out.extend_from_slice(&flux.to_le_bytes());
@@ -598,9 +600,6 @@ fn emit_rows(
         let mut obj = String::from("{");
         let mut pos = 0;
         for (k, i) in col_idx {
-            if epoch_prop.is_some() && (k == "pmra" || k == "pmdec") {
-                continue;
-            }
             if pos > 0 {
                 obj.push(',');
             }
@@ -1287,12 +1286,14 @@ fn main() {
                                     {
                                         if dist_pc > 0.0 && ra.is_finite() && dec.is_finite() {
                                             let plx_mas = 1000.0 / dist_pc;
+                                            let pmra = get("pmra").unwrap_or(0.0);
+                                            let pmdec = get("pmdec").unwrap_or(0.0);
                                             let flux = 10f64.powf(-0.4 * mag) as f32;
                                             let mut rec = Vec::with_capacity(STAR_BIN_STRIDE);
                                             rec.extend_from_slice(&ra.to_le_bytes());
                                             rec.extend_from_slice(&dec.to_le_bytes());
-                                            rec.extend_from_slice(&0f32.to_le_bytes());
-                                            rec.extend_from_slice(&0f32.to_le_bytes());
+                                            rec.extend_from_slice(&(pmra as f32).to_le_bytes());
+                                            rec.extend_from_slice(&(pmdec as f32).to_le_bytes());
                                             rec.extend_from_slice(&(plx_mas as f32).to_le_bytes());
                                             rec.extend_from_slice(&(mag as f32).to_le_bytes());
                                             rec.extend_from_slice(&flux.to_le_bytes());
