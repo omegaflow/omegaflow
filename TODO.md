@@ -23,6 +23,15 @@ um die Presence-Weltlinie (dilatierter Suchradius). Richtung: räumlich gebinnte
 Assets (HEALPix), der Archivar holt nur die Bins, die die Hülle überlappen.
 Kein NASA-Denken — nur was die Membran benötigt.
 
+## CI — Chunk-Kompilation der großen Kataloge
+
+Offen (2026-08-17): Die Sync-Schritte für pastel/wds/mktypes/denis sind aus
+kernel_flatten.yml entfernt (sie clobberten die vollen Chunk-Assets mit
+trunkierten Sync-Ergebnissen). Der volle Chunk-Lauf lebt lokal in
+`phi/port/chunk_master.py` (fortsetzbar). Nächstes: Chunk-Kompilation als
+CI-Schritt (die 4 Kataloge laufen im monatlichen Workflow mit), ohne Python
+— Rust-Weg: `tap_compiler --chunk-bands` mit Merge.
+
 ## Surveys — die Messungen der Sessions
 
 docs/surveys/fortschritt.md (Session-Erkenntnisse, Hash-Verweise),
