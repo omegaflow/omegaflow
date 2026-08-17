@@ -854,9 +854,6 @@ mod archivar {
     const ECLIPTIC_OBLIQUITY: f64 = 0.409092804;
     const AU: f64 = 1.495978707e11;
     const GAUSS_K: f64 = 0.01720209895;
-    const SONIFICATION_ROOT_FREQ: f32 = 220.0;
-    const SONIFICATION_KERNEL_STEP: f32 = 110.0;
-    const SONIFICATION_FORCE_STEP: f32 = 55.0;
     const SURFACE_MOTION_DT: f64 = 0.01;
 
     fn chebyshev_evaluate(coeffs: &[f64; CHEBYSHEV_N], tau: f64) -> f64 {
@@ -3713,107 +3710,69 @@ mod archivar {
     }
 
     const AUDIO_SAMPLE_RATE: u32 = 44100;
-    const AUDIO_DECAY_TIME_CONSTANTS: f32 = 16.0;
-
-    fn note_samples(
-        val: f32,
-        tau: f64,
-        kernel_id: f64,
-        force_type: f64,
-        sample_rate: u32,
-    ) -> Vec<f32> {
-        if !(tau > 0.0) {
-            return Vec::new();
-        }
-        let amp = val.clamp(0.0, 1.0);
-        let dur = ((tau as f32 * AUDIO_DECAY_TIME_CONSTANTS).min(1.0) * sample_rate as f32) as u32;
-        if dur == 0 {
-            return Vec::new();
-        }
-        let freq = SONIFICATION_ROOT_FREQ
-            + kernel_id as f32 * SONIFICATION_KERNEL_STEP
-            + force_type as f32 * SONIFICATION_FORCE_STEP;
-        let tau_samples = tau as f32 * sample_rate as f32;
-        let mut samples = Vec::with_capacity(dur as usize);
-        for t in 0..dur {
-            let phase = 2.0 * std::f32::consts::PI * freq * t as f32 / sample_rate as f32;
-            let decay = (-(t as f32) / tau_samples).exp();
-            samples.push(amp * phase.sin() * decay);
-        }
-        samples
-    }
-
-    fn render_field(field: &Buffer, sample_rate: u32) -> Vec<u8> {
-        let mut samples: Vec<f32> = Vec::new();
-        for hash in field
-            .bodies
-            .values()
-            .chain(std::iter::once(&field.inertial))
-        {
-            for v in hash.cells.values().chain(std::iter::once(&hash.unbounded)) {
-                for s in v {
-                    samples.extend_from_slice(&note_samples(
-                        s.val as f32,
-                        s.tau,
-                        s.kernel_id,
-                        s.force_type,
-                        sample_rate,
-                    ));
-                }
-            }
-        }
-        let mut bytes = Vec::with_capacity(samples.len() * 4);
-        for s in &samples {
-            bytes.extend_from_slice(&s.to_le_bytes());
-        }
-        bytes
-    }
+    const AUDIO_BUFFER_SAMPLES: usize = 1024;
 
     struct AudioRadiator {
-        field_tx: mpsc::SyncSender<Arc<Buffer>>,
         shutdown: Arc<AtomicBool>,
         _thread: Option<thread::JoinHandle<()>>,
     }
 
     impl AudioRadiator {
-        fn new(sample_rate: u32) -> Self {
-            let (field_tx, field_rx) = mpsc::sync_channel::<Arc<Buffer>>(1);
+        fn new(rx: mpsc::Receiver<crate::mathematikerin::AudioFrame>) -> Self {
             let shutdown = Arc::new(AtomicBool::new(false));
             let shutdown_clone = shutdown.clone();
-            let handle = thread::spawn(move || loop {
-                let field = match field_rx.recv_timeout(std::time::Duration::from_millis(200)) {
-                    Ok(f) => f,
-                    Err(mpsc::RecvTimeoutError::Timeout) => {
-                        if shutdown_clone.load(Ordering::SeqCst) {
+            let emit = !std::io::stdout().is_terminal();
+            let handle = thread::spawn(move || {
+                let mut frame = crate::mathematikerin::AudioFrame {
+                    omega: [0.0; 9],
+                    mx: 1.0,
+                };
+                let mut phase: [f32; 9] = [0.0; 9];
+                let two_pi = 2.0 * std::f32::consts::PI;
+                loop {
+                    match rx.try_recv() {
+                        Ok(f) => {
+                            frame = f;
+                            while let Ok(newer) = rx.try_recv() {
+                                frame = newer;
+                            }
+                        }
+                        Err(mpsc::TryRecvError::Disconnected) => break,
+                        Err(mpsc::TryRecvError::Empty) => {}
+                    }
+                    if shutdown_clone.load(Ordering::SeqCst) {
+                        break;
+                    }
+                    let mut samples = Vec::with_capacity(AUDIO_BUFFER_SAMPLES);
+                    for _ in 0..AUDIO_BUFFER_SAMPLES {
+                        let mut s = 0.0f32;
+                        for i in 0..9 {
+                            let freq = 2f32.powi(3 + i as i32);
+                            let gain = (frame.omega[i].abs() * frame.mx * frame.mx).tanh() / 9.0;
+                            phase[i] += two_pi * freq / AUDIO_SAMPLE_RATE as f32;
+                            s += gain * phase[i].sin();
+                        }
+                        samples.push(s);
+                    }
+                    if emit {
+                        let mut bytes = Vec::with_capacity(samples.len() * 4);
+                        for s in &samples {
+                            bytes.extend_from_slice(&s.to_le_bytes());
+                        }
+                        let mut out = std::io::stdout();
+                        if out.write_all(&bytes).is_err() || out.flush().is_err() {
                             break;
                         }
-                        continue;
                     }
-                    Err(mpsc::RecvTimeoutError::Disconnected) => break,
-                };
-                let bytes = render_field(&field, sample_rate);
-                if bytes.is_empty() {
-                    continue;
-                }
-                let mut out = std::io::stdout();
-                if out.write_all(&bytes).is_err() || out.flush().is_err() {
-                    break;
+                    thread::sleep(std::time::Duration::from_millis(
+                        (AUDIO_BUFFER_SAMPLES as u64 * 1000 / AUDIO_SAMPLE_RATE as u64).max(1),
+                    ));
                 }
             });
             Self {
-                field_tx,
                 shutdown,
                 _thread: Some(handle),
             }
-        }
-    }
-
-    impl Radiator for AudioRadiator {
-        fn accept(&mut self, field: Arc<Buffer>) {
-            if std::io::stdout().is_terminal() {
-                return;
-            }
-            let _ = self.field_tx.try_send(field);
         }
     }
 
@@ -9937,12 +9896,14 @@ mod archivar {
         let mut radiators: Vec<Box<dyn Radiator>> = Vec::new();
         #[cfg(feature = "browser_relay")]
         let presence_relay_tx = presence_tx.clone();
+        let (audio_tx, audio_rx) = mpsc::channel::<crate::mathematikerin::AudioFrame>();
         let mr = crate::mathematikerin::MathematikerinRadiator::new(
             presence_tx,
             sensor_tx.clone(),
             body_names.clone(),
             time.clone(),
             consent.clone(),
+            audio_tx,
         );
         let mr_shutdown = mr.shutdown_flag();
         radiators.push(Box::new(mr));
@@ -9960,7 +9921,7 @@ mod archivar {
             );
             radiators.push(Box::new(sr));
         }
-        radiators.push(Box::new(AudioRadiator::new(AUDIO_SAMPLE_RATE)));
+        let _audio = AudioRadiator::new(audio_rx);
         radiators.push(Box::new(StderrRadiator {
             last_line: String::new(),
             interactive: std::io::stderr().is_terminal(),
@@ -10610,28 +10571,6 @@ mod archivar {
     mod tests {
         use super::*;
         use std::collections::HashMap;
-
-        #[test]
-        fn audio_note_tau_matrix() {
-            let sr = 44100u32;
-            assert_eq!(note_samples(1.0, 0.0, 0.0, 0.0, sr).len(), 0);
-            assert_eq!(note_samples(1.0, -1.0, 0.0, 0.0, sr).len(), 0);
-            assert_eq!(note_samples(1.0, f64::NAN, 0.0, 0.0, sr).len(), 0);
-            assert_eq!(note_samples(1.0, 0.016, 0.0, 0.0, sr).len(), 11289);
-            assert_eq!(note_samples(1.0, 86400.0, 0.0, 0.0, sr).len(), 44100);
-            assert_eq!(note_samples(1.0, f64::INFINITY, 0.0, 0.0, sr).len(), 44100);
-            for tau in [0.5, 86400.0] {
-                let samples = note_samples(1.0, tau, 0.0, 0.0, sr);
-                for (t, s) in samples.iter().enumerate() {
-                    let phase = 2.0 * std::f32::consts::PI * 220.0 * t as f32 / sr as f32;
-                    let decay = (-(t as f32) / (tau as f32 * sr as f32)).exp();
-                    assert!(
-                        (*s - phase.sin() * decay).abs() < 1e-6,
-                        "sample {t} bei tau {tau} weicht von exp(-t/tau) ab"
-                    );
-                }
-            }
-        }
 
         fn full_fixture_lsk() -> super::LeapSeconds {
             super::LeapSeconds {
@@ -12860,6 +12799,12 @@ mod mathematikerin {
         pub count: u32,
     }
 
+    #[derive(Clone, Copy)]
+    pub struct AudioFrame {
+        pub omega: [f32; 9],
+        pub mx: f32,
+    }
+
     pub fn pack_window(records: &[Record], presence: [f64; 3]) -> PackedWindow {
         let n = records.len();
         let mut field = vec![0.0f32; n * 12];
@@ -13009,6 +12954,7 @@ mod mathematikerin {
             body_names: Arc<Vec<String>>,
             time: Arc<Mutex<Option<LeapSeconds>>>,
             consent: Arc<AtomicBool>,
+            audio_tx: mpsc::Sender<AudioFrame>,
         ) -> Self {
             let (tx, rx) = mpsc::sync_channel::<Arc<Buffer>>(2);
             let (req_tx, req_rx) =
@@ -13059,6 +13005,7 @@ mod mathematikerin {
                     time,
                     shutdown_clone,
                     consent,
+                    audio_tx,
                 );
             });
             Self {
@@ -13204,6 +13151,7 @@ mod mathematikerin {
         time: Arc<Mutex<Option<LeapSeconds>>>,
         shutdown: Arc<AtomicBool>,
         consent: Arc<AtomicBool>,
+        audio_tx: mpsc::Sender<AudioFrame>,
 
         window: Option<Arc<Window>>,
         surface: Option<wgpu::Surface<'static>>,
@@ -13293,6 +13241,7 @@ mod mathematikerin {
             time: Arc<Mutex<Option<LeapSeconds>>>,
             shutdown: Arc<AtomicBool>,
             consent: Arc<AtomicBool>,
+            audio_tx: mpsc::Sender<AudioFrame>,
         ) -> Self {
             Self {
                 rx,
@@ -13303,6 +13252,7 @@ mod mathematikerin {
                 time,
                 shutdown,
                 consent,
+                audio_tx,
                 window: None,
                 surface: None,
                 config: None,
@@ -14642,6 +14592,10 @@ mod mathematikerin {
                     probe_read.unmap();
                 }
                 let mx = self.window_median_extent();
+                let _ = self.audio_tx.send(AudioFrame {
+                    omega: self.probe_omega,
+                    mx,
+                });
                 let [x, y, z] = self.pos();
                 let fps = self.frame_count as f64;
                 self.frame_count = 0;
@@ -14929,6 +14883,7 @@ mod mathematikerin {
         time: Arc<Mutex<Option<LeapSeconds>>>,
         shutdown: Arc<AtomicBool>,
         consent: Arc<AtomicBool>,
+        audio_tx: mpsc::Sender<AudioFrame>,
     ) {
         let mut builder = EventLoopBuilder::<()>::default();
         EventLoopBuilderExtX11::with_any_thread(&mut builder, true);
@@ -14948,6 +14903,7 @@ mod mathematikerin {
             time,
             shutdown,
             consent,
+            audio_tx,
         );
         let _ = event_loop.run_app(&mut app);
     }
@@ -15054,6 +15010,7 @@ mod mathematikerin {
                     Arc::new(Mutex::new(None)),
                     Arc::new(AtomicBool::new(false)),
                     Arc::new(AtomicBool::new(false)),
+                    mpsc::channel().0,
                 )
             };
             app.packed_field = vec![0.0; 12];
@@ -15095,6 +15052,7 @@ mod mathematikerin {
                     Arc::new(Mutex::new(None)),
                     Arc::new(AtomicBool::new(false)),
                     Arc::new(AtomicBool::new(false)),
+                    mpsc::channel().0,
                 )
             };
             app.packed_field = vec![0.0; 12];
@@ -15119,6 +15077,7 @@ mod mathematikerin {
                     Arc::new(Mutex::new(None)),
                     Arc::new(AtomicBool::new(false)),
                     Arc::new(AtomicBool::new(false)),
+                    mpsc::channel().0,
                 )
             };
             app.packed_meta = vec![0.0; 36];
@@ -15141,6 +15100,7 @@ mod mathematikerin {
                     Arc::new(Mutex::new(None)),
                     Arc::new(AtomicBool::new(false)),
                     Arc::new(AtomicBool::new(false)),
+                    mpsc::channel().0,
                 )
             };
             app.packed_meta = vec![0.0; 12];
@@ -15169,7 +15129,7 @@ mod relay {
     }
     pub struct TcpRadiator {
         shutdown: Arc<AtomicBool>,
-        field_tx: mpsc::Sender<Arc<Buffer>>,
+        field_tx: mpsc::SyncSender<Arc<Buffer>>,
         _thread: Option<thread::JoinHandle<()>>,
     }
 
@@ -15184,7 +15144,7 @@ mod relay {
             presence_tx: mpsc::Sender<(String, f64, f64, f64, f64, f64)>,
             time: Arc<Mutex<Option<LeapSeconds>>>,
         ) -> Self {
-            let (field_tx, field_rx) = mpsc::channel::<Arc<Buffer>>();
+            let (field_tx, field_rx) = mpsc::sync_channel::<Arc<Buffer>>(1);
             let listener = match TcpListener::bind(format!("127.0.0.1:{}", port)) {
                 Ok(l) => {
                     eprintln!("serving on http://127.0.0.1:{}", port);
@@ -15250,7 +15210,7 @@ mod relay {
 
     impl Radiator for TcpRadiator {
         fn accept(&mut self, field: Arc<Buffer>) {
-            let _ = self.field_tx.send(field);
+            let _ = self.field_tx.try_send(field);
         }
     }
 

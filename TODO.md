@@ -71,21 +71,15 @@ pmra/pmdec statt 0.
 Offen: Aberration (v/C-Verschiebung in deep_vp) — `ausstehend`;
 dr3_stars.bin-Neukompilat (pm) über kernel_flatten-catalogs.
 
-### P4 — Ein Gesetz, fünf Medien: Audio & Ausgabe-Flächen
+### P4 — Ein Gesetz, fünf Medien: Audio erledigt; Ausgabe-Flächen offen
 
-Browser-Audio = das FELD am Presence-Punkt je Kraft: 9 Partialtöne
-2^(3+i) Hz, gain_i = tanh(|Ωₖ|·mx²)/9 mit mx = Fenster-Median-Extent.
-Der native AudioRadiator spielt stattdessen Noten je Oszillator
-(val·sin·e^(−t/τ), Frequenz aus kernel_id/force_type) — ein anderes
-Gesetz. Pre-Titan gab es gar kein natives Audio; das native Medium
-wurde post-Titan mit dieser abweichenden Physik erfunden.
-`windowMedianExtent` (mx) ist wiederhergestellt — die Normalisierung
-aller Ausgabe-Medien. Ausgabe-Flächen fehlen noch ganz:
-Vibration (Puls = floor(lum·stableTick)&1023), Serial-TX, USB-TX,
-BT-Write, HID-SendReport — alle lum = tanh(|Ω|·mx²). Nativ gibt es nur
-den Serial-EINGANG.
-Reparatur: Probe-Ωₖ je Kraft treibt alle Medien (Audio, Vibration,
-Serial-TX und was der std-only-Stack ehrlich trägt).
+Erledigt: AudioRadiator spielt die 9 Partialtöne 2^(3+i) Hz,
+gain_i = tanh(|Ωₖ|·mx²)/9 aus `probe_omega[9]` × mx (AudioFrame-Kanal);
+`note_samples`/`render_field` getilgt; TcpRadiator trägt
+`sync_channel(1)` + `try_send` (Vertrag geheilt).
+Offen: Serial-TX, Vibration (Puls = floor(lum·stableTick)&1023),
+USB-TX, BT-Write, HID-SendReport — alle lum = tanh(|Ω|·mx²), nativ
+gibt es nur den Serial-EINGANG; das Fluss-Protokoll gehört zu M01.
 
 ### P5 — Maschinen-Sinne: Batterie + Zustimmung erledigt
 
@@ -234,8 +228,8 @@ resonance(mut read_signal(s: read_ws_frame_part(stream: read_ws_frame_raw(stream
 - `sense_deep` — WAHR: live Positionen (`star_position_at`), τ je Stern.
 - `deep_pt_vs` — WAHR: gnomonisch (tan θ) + Lambert cos θ; `deep_vs`
   (ex-Pfad) projiziert physisch, war nie orthografisch.
-- `note_samples`, `render_field` — **UNWAHR**: Audio spielt Noten je
-  Oszillator statt des Feldes am Presence-Punkt (P4).
+- `note_samples`, `render_field` — getilgt; AudioRadiator spielt die
+  9 Partialtöne aus `probe_omega[9]` × mx (P4).
 - `force_ref_medians` + `relax_force_refs` — WAHR: Radien-Marker
   (|val| == extent) wählen nicht in die Referenz, die erste Sicht
   schnappt, Abwesenheit hält.
@@ -269,8 +263,8 @@ resonance(mut read_signal(s: read_ws_frame_part(stream: read_ws_frame_raw(stream
 1. Die Messreihe — Gradient (Flow) im Probe, measure_ring (256
    Generationen, gen-Zähler), Fenster-Reduktion, 4-Token-HUD
 2. P2-Relay-Rest — SurfaceFlow für spd/hdg + refused-else (browser)
-3. P4 — ein Gesetz, fünf Medien (Audio = Probe-Ωₖ durch mx²); die
-   Exposure atmet wieder mit dem Echo (Ethik §9)
+3. P4-Rest — Ausgabe-Flächen (Serial-TX, Vibration, USB/BT/HID) über
+   lum = tanh(|Ω|·mx²); die Exposure atmet wieder mit dem Echo (Ethik §9)
 4. ε-Kulling / atmende Membran — der Hebel wartet auf die Messreihe,
    die das Budget erst ehrlich zeigt
 5. P6 — ⌘K, 2-Finger-Zeit, f-Toggle, Deep-Link-Init, Puffer-Schrumpf,
