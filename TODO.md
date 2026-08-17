@@ -6,6 +6,15 @@ wird entfernt (Git trägt es). Kein Eintrag meldet Erledigtes als offen, kein of
 Punkt fehlt. Widerspricht ein Dokument dieser Datei, gilt diese Datei — solche
 Drift-Stellen sind unter „Doku-Drift" registriert.
 
+## Crossmatch-Welle — Vollständigkeit der großen Kataloge
+
+Offen (2026-08-17): Die Sync-Crossmatches gegen I/355/paramp waren für die
+großen Kataloge serverseitig trunkiert (Sync-Zeitlimit). pastel ist vollständig
+(37.064 Zeilen, 20.883 Gaia-Distanzen). Offen: wds (Chunk-Merge läuft, 8
+RA-Bänder à 45°), mktypes (8 Bänder à 4,5°), denis (16 Bänder à 22,5°) —
+chunkweise per `--where`, Merge bis 50-k-Umfang, Upload, Ledger-Korrektur.
+Werkzeug: `phi/port/chunk_master.py` (fortsetzbar, Chunks in phi/port/).
+
 ## Rückroll — 2026-08-16, auf fd666f5b
 
 Der wgpu-mono-Branch wurde auf fd666f5b (HUD-Semantik) zurückgesetzt —

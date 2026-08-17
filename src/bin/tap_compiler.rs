@@ -680,6 +680,7 @@ fn main() {
     let mut epoch_prop: Option<f64> = None;
     let mut votable_flag = false;
     let mut order_by: Option<String> = None;
+    let mut where_clause: Option<String> = None;
     let mut join_spec: Option<(String, String)> = None;
     let mut crossmatch_spec: Option<String> = None;
     let mut xmatch_radius: f64 = 1.5;
@@ -756,6 +757,10 @@ fn main() {
             }
             "--order" => {
                 order_by = args.get(i + 1).cloned();
+                i += 1;
+            }
+            "--where" => {
+                where_clause = args.get(i + 1).cloned();
                 i += 1;
             }
             "--skip-null" => {
@@ -1035,7 +1040,10 @@ fn main() {
     };
     let mut cells_rows: Vec<Vec<String>>;
     if async_mode.is_some() {
-        let adql = format!("SELECT TOP {} {} FROM {}", limit, cols_sel, from_clause);
+        let mut adql = format!("SELECT TOP {} {} FROM {}", limit, cols_sel, from_clause);
+        if let Some(w) = &where_clause {
+            adql.push_str(&format!(" WHERE {}", w));
+        }
         let Some(poll) = async_mode else {
             unreachable!()
         };
@@ -1051,6 +1059,9 @@ fn main() {
         cells_rows = rows;
     } else if votable_flag {
         let mut q = format!("SELECT TOP {} {} FROM {}", limit, cols_sel, from_clause);
+        if let Some(w) = &where_clause {
+            q.push_str(&format!(" WHERE {}", w));
+        }
         if let Some(o) = &order_by {
             q.push_str(&format!(" ORDER BY \"{}\"", o));
         }
@@ -1073,6 +1084,9 @@ fn main() {
         }
     } else if mag_bands.is_none() {
         let mut q = format!("SELECT TOP {} {} FROM {}", limit, cols_sel, from_clause);
+        if let Some(w) = &where_clause {
+            q.push_str(&format!(" WHERE {}", w));
+        }
         if let Some(o) = &order_by {
             q.push_str(&format!(" ORDER BY \"{}\"", o));
         }
