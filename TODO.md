@@ -178,9 +178,9 @@ p + v·(t−t0), Gaze-Quaternion).
 Reparatur: benannte Presence-Karte („native", „browser-…", kein geteilter
 Slot); native Station-Identität (body/lat/lon/alt deklariert — nicht
 angenommen); alle Geräte-Samples über Surface → Anker → Cache → Enclosure
-Lemma wie jeder andere Sensor; ohne deklarierte Station 0 honored
-(keine Position = nicht räumlich auffindbar, wie der Browser ohne
-Consent/Geolocation).
+Lemma wie jeder andere Sensor; ohne deklarierte Station bleiben die
+Samples `refused` — die Maschine HAT eine Position, die Deklaration ist
+`ausstehend` (wie der Browser ohne Zustimmung/Geolocation).
 
 ### P3 — Deep-Feld: Sterne leben, Projektion ehrlich (OFFEN)
 
@@ -236,8 +236,10 @@ Mikrofon (Analyser-FFT-Bins, ein Oszillator je Bin), Batterie
 USB/BT/HID-Eingänge (Byte-Oszillatoren). Nativ vorhanden: Tasten, Maus,
 Wheel, Touch, Serial.
 std-only-Grenze: Batterie (/sys/class/power_supply) und
-Gamepad-Oszillatoren (gilrs) sind ehrlich machbar; Kamera/Mikro/IMU
-brauchen die Entscheidung des Operators (Abhängigkeiten oder 0 honored).
+Gamepad-Oszillatoren (gilrs) sind ehrlich machbar; Kamera/Mikro/IMU —
+die Daten existieren, der Sensor-Pfad fehlt: `ausstehend`, nicht
+0 honored; die Entscheidung des Operators betrifft nur die
+Abhängigkeiten.
 Consent-Gate: die Browser-Station fließt erst nach Zustimmung; nativ
 wird bedingungslos aufgezeichnet — das Gate gehört wieder her.
 
@@ -268,8 +270,9 @@ wird bedingungslos aufgezeichnet — das Gate gehört wieder her.
 ## Wahrheitsfindung — Urteil-Verzeichnis (2026-08-17)
 
 Der Mechanismus gegen den Verlust: **kein Top-N — das Verzeichnis ist
-TOTAL.** Jede Funktion des Systems, jedes Konzept, jede fehlende Funktion
-trägt ein Urteil. Was nicht hier steht, existiert für die Zukunft nicht.
+vollständig.** Jede Funktion des Systems, jedes Konzept, jede fehlende
+Funktion trägt ein Urteil. Was nicht hier steht, existiert für die
+Zukunft nicht.
 Der Inventar-Prozess ist wiederholbar: `grep -nE "^\s*(pub\s+)?(async\s+)?fn"`
 über src/main.rs + die WGSL-Entry-Points (`@vertex/@fragment/@compute fn`)
 + `docs/concepts/*` + die Registry (phi/sources.φ, phi/dead_sources.φ).
@@ -281,7 +284,7 @@ ehrenhaft), **VERSIONIERT** (auf einem Zweig gesichert, wartet).
 
 ### Die Concepts (27 Dateien, vollständig zeilenweise gelesen 2026-08-17)
 
-| Concept | Status | Urteil |
+| Konzept | Stand | Urteil |
 |---|---|---|
 | MASTER | LIVE | WAHR — Manifest; ESP32-Radiatorium + HRV-Filter = Ethik §5/§9 |
 | PROPABILITY | DEPLOYED | WAHR — der Lichtkegel; Kausalkegel = die Physik |
