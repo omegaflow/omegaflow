@@ -6,6 +6,15 @@ wird entfernt (Git trägt es). Kein Eintrag meldet Erledigtes als offen, kein of
 Punkt fehlt. Widerspricht ein Dokument dieser Datei, gilt diese Datei — solche
 Drift-Stellen sind unter „Doku-Drift" registriert.
 
+## Sternkinematik — Eigenbewegung + Radialgeschwindigkeit
+
+Offen (2026-08-17, Nacht-Lauf): Crossmatch auf I/355/gaiadr3 liefert jetzt
+pmRA/pmDE/Plx/RV (--crossmatch-pm). 13 cmap-Blöcke tragen pmra/pmdec/radvel
+(3D-Raumgeschwindigkeit). Recompile läuft: kleine/mittlere Kataloge (cbdata/
+merlin/psr/sb9/corot/polarbase/vsx/gcvs) via recompile_small.sh, große
+(pastel/wds/mktypes/denis) via phi/port/chunk_master.py (fortsetzbar). Nach
+Abschluss: Ledger-Eintrag + TODO schließen.
+
 ## Archivar — Membran-scoped Cache statt Blockuniversum
 
 Offen (2026-08-17): Der Archivar lädt flache Katalog-Assets komplett in den
