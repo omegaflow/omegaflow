@@ -754,6 +754,50 @@ struct FieldConfig {
     tau: f64,
     absorption: f64,
     advection: f64,
+    unit: String,
+}
+
+fn convert_to_si(value: f64, unit: &str) -> f64 {
+    match unit.trim().to_lowercase().as_str() {
+        "" | "m" | "s" | "k" | "kg" | "pa" | "w" | "w/m2" | "w/m²" | "t" | "hz" | "v" | "a"
+        | "rad" | "m/s" | "m/s2" | "m/s²" => value,
+        "km" => value * 1e3,
+        "cm" => value * 1e-2,
+        "mm" => value * 1e-3,
+        "hpa" => value * 100.0,
+        "nt" => value * 1e-9,
+        "gal" => value * 1e-2,
+        "mgal" => value * 1e-5,
+        "km/h" | "kmh" => value / 3.6,
+        "knot" | "kt" => value * 0.514444,
+        "c" | "°c" => value + 273.15,
+        "ppm" => value * 1e-6,
+        "ppb" => value * 1e-9,
+        "jy" => value * 1e-26,
+        "au" => value * 1.495978707e11,
+        "pc" => value * 3.085677581e16,
+        "ev" => value * 1.602176634e-19,
+        "ft" => value * 0.3048,
+        "mg/m3" | "mg/m³" => value * 1e-6,
+        "ug/m3" | "ug/m³" | "µg/m3" | "µg/m³" => value * 1e-9,
+        "m3/s" | "m³/s" => value,
+        _ => value,
+    }
+}
+
+fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
+    match force {
+        0 => &["w", "w/m2", "t", "nt", "ev", "jy", "hz", "m", "km"],
+        1 => &["m/s2", "gal", "mgal", "kg", "au", "pc", "t", "nt"],
+        2 => &["pa", "m", "mm", "hz"],
+        3 => &["m", "mm", "m/s2", "gal", "pa", "hz"],
+        4 => &["m", "mm", "cm", "pa", "m/s"],
+        5 => &["k", "c", "w/m2", "w", "j"],
+        6 => &["ppm", "ppb", "mg/m3", "psu", "ntu", "hpa"],
+        7 => &["m/s", "km/h", "knot", "m3/s", "pa", "m"],
+        8 => &["v/m", "v", "a", "s/m"],
+        _ => &[],
+    }
 }
 
 struct BrowserSensor {
@@ -2840,6 +2884,7 @@ mod archivar {
                     tau: 0.0,
                     absorption: 0.0,
                     advection: 0.0,
+                    unit: String::new(),
                 });
             }
             if first.contains_key("extent") {
@@ -2851,6 +2896,7 @@ mod archivar {
                     tau: 0.0,
                     absorption: 0.0,
                     advection: 0.0,
+                    unit: String::new(),
                 });
             }
             if first.contains_key("tau") {
@@ -2862,6 +2908,7 @@ mod archivar {
                     tau: 0.0,
                     absorption: 0.0,
                     advection: 0.0,
+                    unit: String::new(),
                 });
             }
             vec![Extract::CelestialMap {
@@ -2895,6 +2942,7 @@ mod archivar {
                     tau: 0.0,
                     absorption: 0.0,
                     advection: 0.0,
+                    unit: String::new(),
                 });
             }
             if first.contains_key("extent") {
@@ -2906,6 +2954,7 @@ mod archivar {
                     tau: 0.0,
                     absorption: 0.0,
                     advection: 0.0,
+                    unit: String::new(),
                 });
             }
             vec![Extract::Map {
@@ -4512,6 +4561,7 @@ mod archivar {
                         tau,
                         absorption,
                         advection,
+                        unit: String::new(),
                     };
                     cur_extracts.push(Extract::First(fc));
                 }
@@ -4528,6 +4578,7 @@ mod archivar {
                         tau,
                         absorption,
                         advection,
+                        unit: String::new(),
                     };
                     cur_extracts.push(Extract::Last(fc));
                 }
@@ -4544,6 +4595,7 @@ mod archivar {
                         tau: 0.0,
                         absorption: 0.0,
                         advection: 0.0,
+                        unit: String::new(),
                     }));
                 }
                 "lastrow" if parts.len() >= 9 => {
@@ -4559,6 +4611,7 @@ mod archivar {
                         tau,
                         absorption,
                         advection,
+                        unit: String::new(),
                     };
                     cur_extracts.push(Extract::LastRow(fc));
                 }
@@ -4586,6 +4639,7 @@ mod archivar {
                         tau,
                         absorption,
                         advection,
+                        unit: String::new(),
                     };
                     cur_extracts.push(Extract::ObjLast(fc));
                 }
@@ -4633,6 +4687,7 @@ mod archivar {
                         tau,
                         absorption,
                         advection,
+                        unit: String::new(),
                     };
                     cur_extracts.push(Extract::Path(fc));
                 }
@@ -4649,6 +4704,7 @@ mod archivar {
                         tau,
                         absorption,
                         advection,
+                        unit: String::new(),
                     };
                     cur_extracts.push(Extract::Deep(fc));
                 }
@@ -4665,6 +4721,7 @@ mod archivar {
                         tau,
                         absorption,
                         advection,
+                        unit: String::new(),
                     };
                     cur_extracts.push(Extract::Regex(fc));
                 }
@@ -4802,6 +4859,7 @@ mod archivar {
                         tau,
                         absorption: 0.0,
                         advection: 0.0,
+                        unit: parts[3].to_string(),
                     };
                     if let Some(ext) = cur_extracts.last_mut() {
                         let fields: Option<&mut Vec<FieldConfig>> = match ext {
@@ -4843,6 +4901,7 @@ mod archivar {
                         tau,
                         absorption: 0.0,
                         advection: 0.0,
+                        unit: parts[3].to_string(),
                     };
                     if let Some(ext) = cur_extracts.last_mut() {
                         let fields: Option<&mut Vec<FieldConfig>> = match ext {
@@ -4900,6 +4959,7 @@ mod archivar {
                         tau,
                         absorption,
                         advection,
+                        unit: parts[5].to_string(),
                     };
                     if let Some(Extract::Map { fields, .. }) = cur_extracts.last_mut() {
                         fields.push(fc);
@@ -6254,6 +6314,7 @@ mod archivar {
                                         tau: 86400.0 * 365.0,
                                         absorption: 0.0,
                                         advection: 0.0,
+                                        unit: String::new(),
                                     },
                                 ));
                             }
@@ -6335,6 +6396,7 @@ mod archivar {
                                                 tau: 86400.0 * 365.0,
                                                 absorption: 0.0,
                                                 advection: 0.0,
+                                                unit: String::new(),
                                             },
                                         ));
                                     }
@@ -6382,6 +6444,7 @@ mod archivar {
                                         tau: 86400.0 * 365.0,
                                         absorption: 0.0,
                                         advection: 0.0,
+                                        unit: String::new(),
                                     },
                                 ));
                             }
@@ -7202,6 +7265,7 @@ mod archivar {
                                                             tau: *tau,
                                                             absorption: *absorption,
                                                             advection: *advection,
+                                                            unit: String::new(),
                                                         },
                                                     ));
                                                     channels.push((
@@ -7226,6 +7290,7 @@ mod archivar {
                                                             tau: *tau,
                                                             absorption: *absorption,
                                                             advection: *advection,
+                                                            unit: String::new(),
                                                         },
                                                     ));
                                                 }
@@ -7474,7 +7539,7 @@ mod archivar {
             amax,
             p0f,
             motion: motion.clone(),
-            val: channel.value,
+            val: convert_to_si(channel.value, &sensor.unit),
             name: channel.name.clone(),
         })
     }
@@ -7496,6 +7561,7 @@ mod archivar {
                 tau: f64::INFINITY,
                 absorption: 0.0,
                 advection: 0.0,
+                unit: String::new(),
             },
         ));
         if let Some(gm) = props.gm {
@@ -7514,6 +7580,7 @@ mod archivar {
                     tau: f64::INFINITY,
                     absorption: 0.0,
                     advection: 0.0,
+                    unit: String::new(),
                 },
             ));
         }
@@ -8477,6 +8544,13 @@ mod archivar {
                         prefix
                     ));
                 } else if force != "DROP" {
+                    let unit_lc = unit.to_lowercase();
+                    let in_registry = force_id_of(&force)
+                        .map(|fid| allowed_units_for_force(fid).contains(&unit_lc.as_str()))
+                        .unwrap_or(false);
+                    if !in_registry {
+                        out.push_str(&format!("# unit {} not in force registry — review\n", unit));
+                    }
                     out.push_str(&format!("field {} {} {} {}\n", prefix, force, unit, tau));
                 }
             }
@@ -8501,6 +8575,16 @@ mod archivar {
                             prefix
                         ));
                     } else if force != "DROP" {
+                        let unit_lc = unit.to_lowercase();
+                        let in_registry = force_id_of(&force)
+                            .map(|fid| allowed_units_for_force(fid).contains(&unit_lc.as_str()))
+                            .unwrap_or(false);
+                        if !in_registry {
+                            out.push_str(&format!(
+                                "# unit {} not in force registry — review\n",
+                                unit
+                            ));
+                        }
                         out.push_str(&format!("field {} {} {} {}\n", prefix, force, unit, tau));
                     }
                 }
@@ -10068,6 +10152,7 @@ mod archivar {
                         tau: effective_tau,
                         absorption: 0.0,
                         advection: 0.0,
+                        unit: String::new(),
                     };
                     let channel = Channel {
                         epoch: now,
@@ -10490,6 +10575,7 @@ mod archivar {
                         tau: f64::INFINITY,
                         absorption: 0.0,
                         advection: 0.0,
+                        unit: String::new(),
                     };
                     if let Some(mut osc) = anchor(
                         &channel,
@@ -10788,6 +10874,7 @@ mod archivar {
                         tau: 3600.0,
                         absorption: 0.0,
                         advection: 0.0,
+                        unit: String::new(),
                     }],
                 }],
                 headers: vec![],
@@ -10873,6 +10960,7 @@ mod archivar {
                         tau: 3600.0,
                         absorption: 0.0,
                         advection: 0.0,
+                        unit: String::new(),
                     }],
                 }],
                 headers: vec![],
@@ -10980,6 +11068,7 @@ field temp temp_c\n";
                         tau: 604800.0,
                         absorption: 0.0,
                         advection: 0.0,
+                        unit: String::new(),
                     }],
                 }],
                 headers: vec![],
@@ -11057,6 +11146,7 @@ field temp temp_c\n";
                         tau: 604800.0,
                         absorption: 0.0,
                         advection: 0.0,
+                        unit: String::new(),
                     }],
                 }],
                 headers: vec![],
@@ -11107,6 +11197,29 @@ field temp temp_c\n";
         }
 
         #[test]
+        fn test_convert_to_si() {
+            let close = |a: f64, b: f64| assert!((a - b).abs() < 1e-9, "{a} vs {b}");
+            close(convert_to_si(5.0, "km"), 5000.0);
+            close(convert_to_si(1000.0, "hPa"), 100000.0);
+            close(convert_to_si(30.0, "nT"), 30e-9);
+            close(convert_to_si(20.0, "C"), 293.15);
+            close(convert_to_si(2.0, "mgal"), 2e-5);
+            close(convert_to_si(3.0, "ppm"), 3e-6);
+            close(convert_to_si(72.0, "km/h"), 20.0);
+            close(convert_to_si(7.0, "m"), 7.0);
+            close(convert_to_si(9.0, "weird"), 9.0);
+            close(convert_to_si(-1.0, "km"), -1000.0);
+        }
+
+        #[test]
+        fn test_allowed_units_for_force() {
+            assert!(allowed_units_for_force(0).contains(&"nt"));
+            assert!(allowed_units_for_force(5).contains(&"k"));
+            assert!(allowed_units_for_force(7).contains(&"m/s"));
+            assert!(allowed_units_for_force(9).is_empty());
+        }
+
+        #[test]
         fn test_extract_cmap_no_distance_reference_sphere() {
             let json = r#"[{"ra":0.0,"dec":0.0,"H":5.5}]"#;
             let src = SourceConfig {
@@ -11138,6 +11251,7 @@ field temp temp_c\n";
                         tau: 604800.0,
                         absorption: 0.0,
                         advection: 0.0,
+                        unit: String::new(),
                     }],
                 }],
                 headers: vec![],
@@ -11213,6 +11327,7 @@ field temp temp_c\n";
                         tau: 604800.0,
                         absorption: 0.0,
                         advection: 0.0,
+                        unit: String::new(),
                     }],
                 }],
                 headers: vec![],
@@ -11290,6 +11405,7 @@ field temp temp_c\n";
                         tau: 604800.0,
                         absorption: 0.0,
                         advection: 0.0,
+                        unit: String::new(),
                     }],
                 }],
                 headers: vec![],
@@ -11814,6 +11930,7 @@ field temp temp_c\n";
                         tau: 0.0,
                         absorption: 0.0,
                         advection: 0.0,
+                        unit: String::new(),
                     }],
                     lon_sign: None,
                 }],
@@ -12295,6 +12412,7 @@ field temp temp_c\n";
                     tau: 0.0,
                     absorption: 0.0,
                     advection: 0.0,
+                    unit: String::new(),
                 })],
                 headers: vec![],
                 post_body: None,
@@ -12336,6 +12454,7 @@ field temp temp_c\n";
                 tau: 60.0,
                 absorption: 0.0,
                 advection: 0.0,
+                unit: String::new(),
             };
             let mut cx: [f64; super::CHEBYSHEV_N] = [0.0; super::CHEBYSHEV_N];
             cx[0] = 1.5e9;
@@ -12625,6 +12744,7 @@ field temp temp_c\n";
                         tau: 0.0,
                         absorption: 0.0,
                         advection: 0.0,
+                        unit: String::new(),
                     }],
                     lon_sign: None,
                 }],
@@ -12695,6 +12815,7 @@ field temp temp_c\n";
                         tau: 1.0,
                         absorption: 0.0,
                         advection: 0.0,
+                        unit: String::new(),
                     }],
                     lon_sign: None,
                 }],
@@ -15747,6 +15868,7 @@ mod relay {
                                     tau: effective_tau,
                                     absorption: 0.0,
                                     advection: 0.0,
+                                    unit: String::new(),
                                 };
                                 if value.is_finite() {
                                     channels.push((
@@ -15797,6 +15919,7 @@ mod relay {
                                 tau: effective_tau,
                                 absorption: 0.0,
                                 advection: 0.0,
+                                unit: String::new(),
                             };
                             if value.is_finite() {
                                 channels.push((

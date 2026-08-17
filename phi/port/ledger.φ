@@ -287,10 +287,6 @@ kandidat https://api.safecast.org
 note measurements.json-Variante byte-identisch zur Live-Variante — bereits live
 
 ausstehend
-parser-gap P02
-note SI-Konvertierung + Unit-Kraft-Matrix (convert_to_si + allowed_units_for_force) — heute roher Durchfluss
-
-ausstehend
 parser-gap P03
 note per-row τ-Override + vel-Einheitenkonvertierung
 
