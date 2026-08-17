@@ -165,11 +165,21 @@ Streams statt `Err(_) => return`. Capturing-Befund: das Fullscreen-Fenster
 ist am Compositor vorbei redirectet — xwd/flameshot/root-Captures zeigen
 den Desktop; das Fenster selbst via `ffmpeg -f x11grab -window_id <id>`.
 ```
+KORREKTUR (Operator-Befund, gleiche Session): Ω_total = Σ|o_k|/ref_k mit
+val-Einheit-Referenzen zog die Membran ~60 Dekaden unter die Sichtbarkeit —
+o_k trägt val·m⁻² (Kernel), ref_k nur val; die Feldstruktur starb, übrig
+blieben die Punkte. Die Pixel-Fläche (scale², Nyquist) macht den Kernel
+dimensionslos: Ω_total = scale²·Σ|o_k|/ref_k — am Ort einer Punktquelle
+gilt scale²·o = val, das Wesen deckt sich mit der Membran; die Referenz
+bleibt val-Einheit und dient Punkten UND Membran. Zoom-Invarianz folgt.
+```
 Offen:
 - Radial-Profil eines isolierten breiten Gauß-Punkts (e^(−r²/2)) am Fenster
   ausstehend — die breiten em-Punkte stapeln sich im Sonnen-Cluster, und
   der In-Session-Zoom erreichte das Fenster nicht (Fokus); Messung + e/E/P-
   Gefühl gehören dem Operator
+- Sternenhimmel relativ zur Live-Em-Referenz statt absolut (+18) — das
+  Operator-Urteil entscheidet, ob der absolute Anker zurückkehrt
 - OOM-Befund (dmesg): Ein Lauf, dessen GPU-Thread beim Pipeline-Bau
   panikte, lief als Rumpf weiter (Archivar + Audio) und fraß 3,2 GB —
   der tote GPU-Thread ist nicht der tote Prozess; eigener Atom

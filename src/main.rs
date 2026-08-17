@@ -423,7 +423,7 @@ fn presence_probe() {
         }
     }
 
-    let omega_total = abs(o0) / ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, 0u)
+    let omega_total = (abs(o0) / ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, 0u)
         + abs(o1) / ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, 1u)
         + abs(o2) / ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, 2u)
         + abs(o3) / ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, 3u)
@@ -431,7 +431,8 @@ fn presence_probe() {
         + abs(o5) / ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, 5u)
         + abs(o6) / ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, 6u)
         + abs(o7) / ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, 7u)
-        + abs(o8) / ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, 8u);
+        + abs(o8) / ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, 8u))
+        * scale * scale;
     if (omega_total < 1e-30) { discard; }
 
     let olog = log2(omega_total);
