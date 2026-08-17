@@ -57,7 +57,8 @@
     },
     "general": {
       "mode": "subagent",
-      "model": "deepseek/deepseek-v4-pro",
+      "model": "deepseek/deepseek-v4-flash",
+      "description": "General research and multi-step execution that needs no architectural judgment — use for routine investigation, verification, and parallelizable units of work.",
       "permission": {
         "edit": "deny"
       }
@@ -79,6 +80,7 @@
     "grind-flash": {
       "mode": "subagent",
       "model": "deepseek/deepseek-v4-flash",
+      "description": "Routine source-port work that needs bash+edit but no judgment: API reachability verification (curl), catalog harvesting, mechanical recheck batches, --probe review of obvious cases. No Force-Gate decisions.",
       "permission": {
         "edit": "allow",
         "bash": "allow"
@@ -87,6 +89,7 @@
     "grind-pro": {
       "mode": "subagent",
       "model": "deepseek/deepseek-v4-pro",
+      "description": "Judgment source-port work: Force-Gate litmus classification, parser-gap research, novel source curation, kraft-kanal research. Not for mechanical harvest/verify/recheck.",
       "permission": {
         "edit": "allow",
         "bash": "allow"
