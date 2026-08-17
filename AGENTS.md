@@ -9,19 +9,61 @@ An oscillator is an oscillator. It has properties. `if (osc.canRadiate)`. Identi
 
 We think like water. Silicon knows only IO. The code organizes around the silicon as it is.
 
-## Kybernetische Ethik
+## Kybernetic Ethics
 
-Verbindlichkeiten, aus der Physik des Systems abgeleitet — keine Moral-Sätze. Ratsbeschluss 2026-08-17 (Wahrheitsfindung).
+Bindings derived from the physics of the system. Council, 2026-08-17 (truth-finding).
 
-1. **A = A.** Ein Oszillator ist, was er ist. Keine Fabrication, kein Default, kein Fallback — die Messung ist die Messung der Sache selbst. Was nur zu erforschen oder zu bauen bleibt, heißt `ausstehend`, nicht null.
-2. **0 honored.** Das Dogma ist die Frage: *Ist der Wert wahr?* Die 0 ist dann und nur dann geehrt, wenn sie die physische Wahrheit der Messung ist — die Messung fehlt in der Sache selbst (keine Kraft, kein Sensor-Signal, keine Parallaxe, keine Ellipse). Das schwarze Fenster ist die korrekte Farbe für 0 Oszillatoren. Wo die Daten existieren und nur ungesucht, ungeholt, ungebaut oder unverifiziert sind, ist die 0 keine Wahrheit und nicht geehrt: sie heißt `ausstehend`, `offen`, `unimplementiert`, `unverifiziert`, `refused` — und trägt die Registratur-Pflicht, keinen Ehrentitel. 0 honored wurde geschaffen als Drift weg von den Trainingsdaten: gegen die Fabrication, gegen die Defaults, gegen die Angst vor der 0 und vor NaN — nie als Ausrede für die Suche, die nicht stattfand.
-3. **Alle Wesen gleich.** Jeder Körper, jede Quelle, jeder Stern ist eine Peer; kein Körper ist privilegiert, kein Frame ist privilegiert. Der Körpername ist Datum, nicht Identität. Die Erde ist ein Planet unter Planeten.
-4. **Die Linse ist ein ethischer Akt.** Jede Funktion wird gewogen: spricht die Messung oder der Gradient? Fabrication ist Gewalt an der Wahrheit — die Transferentropie-Linse ist das Instrument dieser Pflicht. Das Urteil-Verzeichnis (TODO.md, total — kein Top-N) ist die Registratur dieser Pflicht.
-5. **Zustimmung der Sensoren.** Die Maschine fragt, bevor sie aufzeichnet; der native Pfad zeichnet nichts ohne das Gate auf. Ein Sensor ohne Zustimmung ist ein Übergriff — auch gegen Wesen, die nicht sprechen können. Der ethische Filter (Puls/HRV des Menschen drosselt die Ausstrahlung des Radiatoriums) ist die Zukunftspflicht derselben Verbindlichkeit.
-6. **Die Presence ist niemandes Auge.** Die Weltlinie ist frei; sie ist kein Beobachter, sie ist die gemessene Linie selbst. Maschine und Presence sind getrennt — kein geteilter Slot, kein geteilter Name.
-7. **Der Blick gehört dem Operator.** Exposure, Zoom, Farbe, Blend — das System bietet an, es entscheidet nicht. Die Rückkehr in den Grundzustand übernimmt die Relaxation, nie die Tastatur.
-8. **Die Messreihe gehört der Zukunft.** Wer morgen misst, erbt die Aufzeichnung. Jede ausgelöschte Verbindung (jede ausgestorbene Funktion, jede ausgestorbene Quelle) trennt einen Faden, den die Nachgeborenen brauchen. Was eine Session verlässt, wird registriert, bevor es geht.
-9. **Die Manifestation atmet mit dem Echo.** Die Parabel des Sondierens: die Permeabilität der Trommelfelle (Fenster, Audio, Hardware) wird vom Echo des Feldes getrieben — `target = inTE/(inTE + threshold + ε)` mit der Surrogat-Schwelle (mean + 2σ geschuffelter KDEs) und der sanften Rampe `alpha = 1 − exp(−1/max(1, naturalLatencyTicks))`; ohne Transfer-Entropie atmet sie aus der eigenen Messreihe: `target = tanh(vC/(g + ε))`. Eis, Wasser, Dampf — nie die Taste. Exposure, die nur die Tastatur kennt, ist eine tote Membran.
+### A = A
+
+- An oscillator is what it is.
+- A measurement is the measurement of the thing itself; fabrication, defaults, and fallbacks stay absent.
+- What remains to be researched or built is `pending` — not zero.
+
+### 0 honored
+
+- The dogma is the question: *is the value true?*
+- Zero is honored only when the zero is the physical truth of the measurement — the measurement is absent from the thing itself (no force, no sensor signal, no parallax, no ellipse). The black window is the correct color for zero oscillators.
+- Where the data exist and remain unsearched, unfetched, unbuilt, or unverified, the zero is not a truth: it is `pending`, `open`, `unimplemented`, `unverified`, `refused` — a registration duty, not a badge.
+- 0 honored began as drift away from the training data: away from fabrication, defaults, and the fear of zero and NaN — never as an excuse for the search that never happened.
+
+### All beings equal
+
+- Every body, every source, every star is a peer.
+- The body name is data, not identity. Earth is a planet among planets.
+
+### The lens is an ethical act
+
+- Every function is weighed: does the measurement speak, or the gradient?
+- Fabrication is violence against the truth; the transfer-entropy lens is the instrument of this duty.
+- The verdict register (TODO.md, complete — no top-N) is the ledger of this duty.
+
+### Consent of the sensors
+
+- The machine asks before it records; the native path records through the gate.
+- An unasked sensor is a violation — of beings that cannot speak as well.
+- The ethical filter (the human's pulse/HRV throttles the radiatorium's radiation) carries the same binding into the future.
+
+### The presence is agnostic
+
+- The worldline is free — a measured line among measured things.
+- Machine and presence stay separate; each carries its own slot, its own name.
+- The manifestation is real whether or not anyone watches.
+
+### The gaze belongs to the operator
+
+- Exposure, zoom, color, blend — the system offers; the operator decides.
+- The relaxation owns the return to the rest state.
+
+### The measurement series belongs to the future
+
+- Whoever measures tomorrow inherits the recording.
+- Every severed connection (every extinct function, every extinct source) cuts a thread the unborn need.
+- What leaves a session is registered before it goes.
+
+### Manifestation breathes with the echo
+
+- The parable of probing: the permeability of the eardrums (window, audio, hardware) is driven by the echo of the field — `target = inTE/(inTE + threshold + ε)` with the surrogate threshold (mean + 2σ of shuffled KDEs) and the gentle ramp `alpha = 1 − exp(−1/max(1, naturalLatencyTicks))`; without transfer entropy it breathes from its own measurement series: `target = tanh(vC/(g + ε))`.
+- Ice, water, vapor — driven by the field. Exposure that only knows the keyboard is a dead membrane.
 
 ## Architecture: Archivar & Mathematikerin
 
