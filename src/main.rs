@@ -12936,6 +12936,7 @@ mod mathematikerin {
         expose_offset: f32,
         point_blend: u32,
         force_ref: [f32; 9],
+        probe_omega: [f32; 9],
         t_thrust: f64,
         t_thrust_target: f64,
         t_frozen: bool,
@@ -13028,6 +13029,7 @@ mod mathematikerin {
                 expose_offset: EXPOSE_OFFSET_BASE,
                 point_blend: 1,
                 force_ref: [0.0; 9],
+                probe_omega: [0.0; 9],
                 t_thrust: 0.0,
                 t_thrust_target: 0.0,
                 t_frozen: false,
@@ -13286,6 +13288,21 @@ mod mathematikerin {
                 }
                 self.force_ref[ft] += (median - self.force_ref[ft]) * REF_RELAX;
             }
+        }
+
+        fn window_median_extent(&self) -> f32 {
+            let mut exts = Vec::with_capacity(self.packed_meta.len() / 12);
+            for m in self.packed_meta.chunks_exact(12) {
+                let e = m[0];
+                if e > 0.0 && e.is_finite() {
+                    exts.push(e);
+                }
+            }
+            if exts.is_empty() {
+                return 1.0;
+            }
+            exts.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
+            exts[exts.len() / 2]
         }
 
         fn ensure_capacity(&mut self) {
@@ -14261,7 +14278,6 @@ mod mathematikerin {
             {
                 self.last_hud = Some(now_i);
                 self.sensors.flush();
-                let mut omega = 0.0f32;
                 if let (Some(device), Some(queue), Some(probe_buf), Some(probe_read)) = (
                     self.device.clone(),
                     self.queue.clone(),
@@ -14287,21 +14303,31 @@ mod mathematikerin {
                         for k in 0..9 {
                             let mut b = [0u8; 4];
                             b.copy_from_slice(&data[k * 4..k * 4 + 4]);
-                            omega += f32::from_le_bytes(b);
+                            self.probe_omega[k] = f32::from_le_bytes(b);
                         }
                         drop(data);
                     }
                     probe_read.unmap();
                 }
+                let mx = self.window_median_extent();
                 let [x, y, z] = self.pos();
                 let fps = self.frame_count as f64;
                 self.frame_count = 0;
                 let ms_max = self.frame_ms_max;
                 self.frame_ms_max = 0.0;
                 eprintln!(
-                "φ window: t {:.2} | Ω {:.3} | fps {:.0} | ssaa {:.2} | grid 2^{} | x {:.3e} y {:.3e} z {:.3e} | {} near | {} deep | b {}x{} | maxms {:.0} | off {:.2} | blend {}",
+                "φ window: t {:.2} | Ω {:+.2} {:+.2} {:+.2} {:+.2} {:+.2} {:+.2} {:+.2} {:+.2} {:+.2} | mx {:.2e} | fps {:.0} | ssaa {:.2} | grid 2^{} | x {:.3e} y {:.3e} z {:.3e} | {} near | {} deep | b {}x{} | maxms {:.0} | off {:.2} | blend {}",
                 self.t_presence,
-                omega,
+                self.probe_omega[0],
+                self.probe_omega[1],
+                self.probe_omega[2],
+                self.probe_omega[3],
+                self.probe_omega[4],
+                self.probe_omega[5],
+                self.probe_omega[6],
+                self.probe_omega[7],
+                self.probe_omega[8],
+                mx,
                 fps,
                 self.ssaa,
                 self.grid_step.log2().round() as i64,
@@ -14736,6 +14762,45 @@ mod mathematikerin {
             app.packed_deep_ex = Vec::new();
             app.relax_force_refs();
             assert_eq!(app.force_ref[0], 8.0);
+        }
+
+        #[test]
+        fn window_median_extent_medians_positive_extents() {
+            let mut app = NativeApp {
+                ..NativeApp::new(
+                    mpsc::channel().1,
+                    mpsc::sync_channel(1).0,
+                    mpsc::sync_channel(2).1,
+                    mpsc::channel().0,
+                    mpsc::channel().0,
+                    Arc::new(Vec::new()),
+                    Arc::new(Mutex::new(None)),
+                    Arc::new(AtomicBool::new(false)),
+                )
+            };
+            app.packed_meta = vec![0.0; 36];
+            app.packed_meta[0] = 30.0;
+            app.packed_meta[12] = 10.0;
+            app.packed_meta[24] = 20.0;
+            assert_eq!(app.window_median_extent(), 20.0);
+        }
+
+        #[test]
+        fn window_median_extent_neutral_on_absence() {
+            let mut app = NativeApp {
+                ..NativeApp::new(
+                    mpsc::channel().1,
+                    mpsc::sync_channel(1).0,
+                    mpsc::sync_channel(2).1,
+                    mpsc::channel().0,
+                    mpsc::channel().0,
+                    Arc::new(Vec::new()),
+                    Arc::new(Mutex::new(None)),
+                    Arc::new(AtomicBool::new(false)),
+                )
+            };
+            app.packed_meta = vec![0.0; 12];
+            assert_eq!(app.window_median_extent(), 1.0);
         }
     }
 }

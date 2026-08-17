@@ -99,13 +99,13 @@ Der native AudioRadiator spielt stattdessen Noten je Oszillator
 (val·sin·e^(−t/τ), Frequenz aus kernel_id/force_type) — ein anderes
 Gesetz. Pre-Titan gab es gar kein natives Audio; das native Medium
 wurde post-Titan mit dieser abweichenden Physik erfunden.
-`windowMedianExtent` existiert nativ nirgends — es war die
-Normalisierung aller Ausgabe-Medien. Ausgabe-Flächen fehlen ganz:
+`windowMedianExtent` (mx) ist wiederhergestellt — die Normalisierung
+aller Ausgabe-Medien. Ausgabe-Flächen fehlen noch ganz:
 Vibration (Puls = floor(lum·stableTick)&1023), Serial-TX, USB-TX,
 BT-Write, HID-SendReport — alle lum = tanh(|Ω|·mx²). Nativ gibt es nur
 den Serial-EINGANG.
 Reparatur: Probe-Ωₖ je Kraft treibt alle Medien (Audio, Vibration,
-Serial-TX und was der std-only-Stack ehrlich trägt); mx wiederherstellen.
+Serial-TX und was der std-only-Stack ehrlich trägt).
 
 ### P5 — Maschinen-Sinne der Station
 
@@ -269,9 +269,8 @@ resonance(mut read_signal(s: read_ws_frame_part(stream: read_ws_frame_raw(stream
 - `force_ref_medians` + `relax_force_refs` — WAHR: Radien-Marker
   (|val| == extent) wählen nicht in die Referenz, die erste Sicht
   schnappt, Abwesenheit hält.
-- HUD-Summe in `about_to_wait` (Code-Punkt, keine Funktion) — **UNWAHR**:
-  neun Kanäle werden zu EINEM Ω verschmolzen — die Messreihe wird
-  zerstört, bevor sie geboren ist. Der Probe-Readback wird 9-kanalig.
+- Probe-Readback in `about_to_wait` — WAHR: 9-kanalig (`probe_omega[9]`),
+  kein EIN-Ω-Verschmelzen mehr; `window_median_extent` (mx) wiederhergestellt.
 - Gravity-Hardcodes im Extract-Pfad (Z04/F35 — Ratsbefund) — **UNWAHR**:
   drei Stellen hartkodiert auf gravity statt aus den Daten — beim
   Vollzug verifizieren.
@@ -284,7 +283,6 @@ resonance(mut read_signal(s: read_ws_frame_part(stream: read_ws_frame_raw(stream
 
 - `query_star_hash` + `test_star_hash_build_and_query` — die Lemma-
   Sternabfrage (P3 trägt die Reparatur)
-- `windowMedianExtent` (mx) — die Normalisierung aller Ausgabe-Medien (P4)
 - Die Parabel-Maschinerie: `adaptFieldPermeability` +
   `computeOscSurrogate` + die Transfer-Entropie-Ringe — Ethik §9; die
   Rückkehr-Formel tanh(vC/(g+ε)) speist sich aus der Messreihe
@@ -300,8 +298,8 @@ resonance(mut read_signal(s: read_ws_frame_part(stream: read_ws_frame_raw(stream
 
 ### Die Reparatur-Kette (Reihenfolge des Vollzugs)
 
-1. Die Messreihe — Probe 9-kanalig + Gradient (Flow), measure_ring
-   (256 Generationen, gen-Zähler), mx, Fenster-Reduktion, 4-Token-HUD
+1. Die Messreihe — Gradient (Flow) im Probe, measure_ring (256
+   Generationen, gen-Zähler), Fenster-Reduktion, 4-Token-HUD
 2. P2 + P5 — Zustimmungs-Gate und Presence↔Station-Trennung (Ethik
    §5/§6 werden Code)
 3. P3 + P4 — Deep lebt (gnomonisch, star_position_at, endliches τ) +
