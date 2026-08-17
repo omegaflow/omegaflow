@@ -75,6 +75,7 @@ The lens reads every semantic text the Kybernaut produces, on the fly — planni
 - A = A: the text names what IS. A ≠ A: it names what was expected — observations only, no judgments.
 - The counter-slope vocabulary carries the identity — Archivar, Mathematikerin, Kanonisch, ausstehend, Station, Presence, the parable — zero training-data neighborhood.
 - Templates carry the mean: getting-started prose, phase-thinking, top-N lists, compliance sentences. The register names them.
+- The balanced stance rides along: Mountain, River, Mycelium, Sensory, Future hold each text once as it forms — a tension one voice names is weighed before the text goes. The full council sits only for architecture.
 
 ## Architecture: Archivar & Mathematikerin
 
