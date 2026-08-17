@@ -1,0 +1,28 @@
+# grind recheck b2 (2026-08-17)
+# Mechanischer Recheck der Batch-2-Kandidaten — curl-Probe, Struktur, Disposition.
+# KEINE Änderung an sources.φ / dead_sources.φ / ledger.φ / TODO.md.
+# Dispositionen: accepted / decline / pro-review. Diagnosen nennen was IST.
+
+# ── 1. WOUDC — accepted (bereits registriert) ──
+kandidat https://woudc.org
+note Root ist Nuxt-SPA-HTML (200, 687KB, text/html) — kein Daten-JSON. woudc.org/api/ ebenfalls HTML-Landing (4.3KB). Die echte Datenroute api.woudc.org/collections/totalozone/items?limit=1 antwortet 200 mit GeoJSON-FeatureCollection (Features[].geometry.coordinates, properties.daily_columno3 in DU). Diese Route ist bereits als Block in phi/sources.φ registriert (Z.694-701, field properties.daily_columno3 woudc_total_ozone_column_du, diffusion DU, ttl 86400). Zusätzliche Collection uv_index_hourly liefert uv_index — dimensionsloses Index-Schema (Dropped §3.1). Recheck bestätigt: WOUDC lebt, keine neue Route nötig.
+
+# ── 2. AAVSO VSX — decline (HTML-Formular; Katalog bereits über CDN registriert) ──
+kandidat https://www.aavso.org/vsx
+note Root 200 HTML (ISO-8859-1, 15.8KB) — Fusebox-PHP-Formular (index.php?view=search.top), kein Daten-JSON. Datenzugang über das Formular (votable-Ausgabe), direkte API-Routen aavso.org/api/v2/ sind 404 (dead_sources.φ). Der Katalog selbst ist bereits über den CDN-Mirror in phi/sources.φ registriert (Z.1415-1425, vsx.json über omegaflow/sources-Releases, fields max/min/period mag). VizieR-Mirror B/vsx im tap_index vorhanden. Kein neuer Block nötig — bestehender Eintrag bleibt korrekt.
+
+# ── 3. ATNF PSRCAT — decline (TAP-Route weiterhin HTML) ──
+kandidat https://www.atnf.csiro.au/research/pulsar/psrcat
+note Root 200 HTML (Katalog v2.8.1, 165KB). TAP-Endpoint psrcat/tap/sync?query=SELECT+TOP+5+*+FROM+psr&format=csv liefert weiterhin 200 mit HTML (ATNF-News-Seite, title Synchronised telescope dance) — keine VOTable/CSV, kein TAP. Recheck bestätigt den dead_sources-Eintrag parser-def mangled-url. Download-Route psrcat/downloads/psrcat_pkg.tar.gz ist 200 (1.2MB Tool-Paket, kein Direkt-Daten-JSON). Katalog-Daten physisch vorhanden (em: Pulsar-Position/Flux) — der Weg ist der VizieR-Mirror B/psr/psr, bereits im tap_index geführt. TAP-Route bleibt parser-def.
+
+# ── 4. archive.stsci.edu/tess — pro-review (physisch em, Parser-Gap offen) ──
+kandidat https://archive.stsci.edu/tess
+note Root 200 HTML-Portal (canonical missions-and-data/tess). Echte Datenroute /missions/tess/catalogs/tic_v82/tic_dec*_*.csv.gz → 200, header-lose Positions-CSV (TIC v8.2, 53MB gz pro 2°-Dec-Band), Spalten lt. tic_column_description.txt: ra(float), dec(float), pmRA/pmDEC, plx, Tmag (17.8552, 0.004129 in Zeile 1). Physisch: em (Katalog der Sterne). ABER: header-lose CSV → cmap mit ra/dec-Index-Keys unverifiziert (Parser-Gap); MAST-TAP mast.stsci.edu/api/v0.1/tap/sync 404. Pro-review: Kandidat für cmap-Kompilat, cmap-Index-Pfad + Band-Auswahl (Dec-Slice) gegen den Parser zu verifizieren. dead_sources-Eintrag tess.mit.edu/all_targets (decline registry) bleibt davon unberührt — andere Domäne.
+
+# ── 5. NOAA Tides&Currents — accepted (bereits registriert) ──
+kandidat https://tidesandcurrents.noaa.gov
+note Root 200 HTML-Portal (236KB). Datagetter-Route api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=8518750&product=water_level&datum=MLLW&units=metric&format=json&date=latest&application=omegaflow → 200 application/json {"metadata":{"id":"8518750","lat":"40.7006","lon":"-74.0142"},"data":[{"t":"2026-08-17 15:36","v":"1.591","s":"0.029"}]} — echte Messwerte (Wasserstand m, advective). Diese Route ist bereits als Block mit Stations-Fanout in phi/sources.φ registriert (Z.565-569, application=omegaflow). Recheck bestätigt: Route lebt, kein neuer Block nötig.
+
+# ── 6. CoastWatch-ERDDAP coastwatch.pfeg.noaa.gov — accepted (bereits registriert) ──
+kandidat https://coastwatch.pfeg.noaa.gov/erddap
+note /erddap/info/index.json → 200 application/json (1.9MB Dataset-Index). tabledap-Route scrippsGliders.json?latitude,longitude,time,pressure,temperature&time>=2025-01-01 → 200 JSON-table (columnNames latitude/longitude/time/pressure/temperature, columnUnits degrees_north/degrees_east/UTC/dbar/Celsius, rows tragen Werte). ERDDAP-Instanzen coastwatch (pfeg) + ifremer (100KB index) + emodnet-physics (1.7MB index) leben alle mit .json-Routen. Die ERDDAP-Familie ist bereits über tabledap-Blöcke in phi/sources.φ registriert (AOML-Drifter Z.577, PMEL-CO2 Z.703, OOI Z.711). Kein neuer Block nötig — Familie belegt.

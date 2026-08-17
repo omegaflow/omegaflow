@@ -1,0 +1,966 @@
+# grind arcgis b18 (2026-08-15) — keywords: soil gas, water vapor
+# keyword soil gas
+dataset Nonfunctional Soil Gas Monitoring Points - Methane | https://services6.arcgis.com/RUXG8JzUbZvRVIxG/arcgis/rest/services/Defunct_MPs_H2S/FeatureServer/18
+candidate https://services6.arcgis.com/RUXG8JzUbZvRVIxG/arcgis/rest/services/Defunct_MPs_H2S/FeatureServer/18
+note felder: OBJECTID, Screened_Interval, balance, baro_pressure, ch4_percent, co2_percent, date, field_notes, gem_h2s_ppm, gem_purge_duration_sec, jerome_h2s_ppm, latitude, longitude, monitoring_point, o2_percent, peak_ch4_percent, start_time, static_pressure
+dataset Gas Lines | https://services5.arcgis.com/nip9boeHfv9Av5yj/arcgis/rest/services/Gas_Lines/FeatureServer/0
+candidate https://services5.arcgis.com/nip9boeHfv9Av5yj/arcgis/rest/services/Gas_Lines/FeatureServer/0
+note felder: Id, Line_Type, OBJECTID, Shape__Length, Type
+dataset Eugene Gas Stations | https://services3.arcgis.com/F7NiRLGNbA2hh7gE/arcgis/rest/services/Eugene_Gas_Stations/FeatureServer/0
+candidate https://services3.arcgis.com/F7NiRLGNbA2hh7gE/arcgis/rest/services/Eugene_Gas_Stations/FeatureServer/0
+note felder: GlobalID, Match_addr, ObjectID, Score, Status, USER_Address, USER_Gas_Station, USER_Map_Tax_Lot_Number, USER_Permit_Information
+dataset Gas | https://services6.arcgis.com/s3ZVfsWPHgxFM2HE/arcgis/rest/services/Gas/FeatureServer
+candidate-leer https://services6.arcgis.com/s3ZVfsWPHgxFM2HE/arcgis/rest/services/Gas/FeatureServer
+note 0 rows, felder unbekannt
+dataset Gas lines in SC | https://services1.arcgis.com/x5wCko8UnSi4h0CB/arcgis/rest/services/Gas_lines_in_SC/FeatureServer/0
+candidate https://services1.arcgis.com/x5wCko8UnSi4h0CB/arcgis/rest/services/Gas_lines_in_SC/FeatureServer/0
+note felder: FID, Length, Operator, Pipeline_T, Shape__Len, Shape__Length, Source, Typepipe, Updated
+dataset Gas Services | https://services6.arcgis.com/s3ZVfsWPHgxFM2HE/arcgis/rest/services/Gas/FeatureServer/6
+candidate https://services6.arcgis.com/s3ZVfsWPHgxFM2HE/arcgis/rest/services/Gas/FeatureServer/6
+note felder: Abandoned, Address_No, Depth, Install_Da, Length_Fee, MAOP, Material, Meter_Loca, OBJECTID, OBJECTID_1, Pressure, Service_Ca, Service__1, Service__2, Service__3, Service__4, Shape_STLe, Shape__Length
+dataset Gas Valves | https://services6.arcgis.com/s3ZVfsWPHgxFM2HE/arcgis/rest/services/Gas/FeatureServer/1
+candidate https://services6.arcgis.com/s3ZVfsWPHgxFM2HE/arcgis/rest/services/Gas/FeatureServer/1
+note felder: ID, OBJECTID, OBJECTID_1, Pilot_No, Rotation, Size, Source, Type
+dataset Natural Gas Providers | https://services1.arcgis.com/4ZdJfkWE583IARCX/arcgis/rest/services/UTL_Natural_Gas_Providers/FeatureServer/0
+candidate https://services1.arcgis.com/4ZdJfkWE583IARCX/arcgis/rest/services/UTL_Natural_Gas_Providers/FeatureServer/0
+note felder: FID, GlobalID, NAME, NAME_2, Shape_STAr, Shape_STLe, Shape__Area, Shape__Length
+dataset FSP Soil Gas Sample Locations | https://services8.arcgis.com/mPA0OhWS1FQlNJrb/arcgis/rest/services/FSP_Soil_Gas_Sample_Locations/FeatureServer/0
+candidate https://services8.arcgis.com/mPA0OhWS1FQlNJrb/arcgis/rest/services/FSP_Soil_Gas_Sample_Locations/FeatureServer/0
+note felder: OBJECTID, RA, SampleLocation, Type, X, Y
+dataset Gas Mains | https://services6.arcgis.com/s3ZVfsWPHgxFM2HE/arcgis/rest/services/GAS_20230413/FeatureServer/5
+candidate https://services6.arcgis.com/s3ZVfsWPHgxFM2HE/arcgis/rest/services/GAS_20230413/FeatureServer/5
+note felder: Inside_Dia, Install_Da, Length_Fee, MAOP, Manufactur, Material, OBJECTID, Outside_Di, Pilot, Pressure, Referen_10, Referen_11, Referenc_1, Referenc_2, Referenc_3, Referenc_4, Referenc_5, Referenc_6
+dataset Gas Services | https://services6.arcgis.com/s3ZVfsWPHgxFM2HE/arcgis/rest/services/GAS_20230413/FeatureServer/4
+candidate https://services6.arcgis.com/s3ZVfsWPHgxFM2HE/arcgis/rest/services/GAS_20230413/FeatureServer/4
+note felder: Address_No, Depth, Install_Da, Length_Fee, MAOP, Material, Meter_Loca, OBJECTID, Pressure, Service_Ca, Service__1, Service__2, Service__3, Service__4, Shape_STLe, Shape__Length, Size_Inche, Status
+dataset GAS 20230413 | https://services6.arcgis.com/s3ZVfsWPHgxFM2HE/arcgis/rest/services/GAS_20230413/FeatureServer
+candidate-leer https://services6.arcgis.com/s3ZVfsWPHgxFM2HE/arcgis/rest/services/GAS_20230413/FeatureServer
+note 0 rows, felder unbekannt
+dataset Pipelines Gas | https://services7.arcgis.com/8BCxIKxxRBT1Jsaz/arcgis/rest/services/Pipelines_Gas/FeatureServer/0
+candidate https://services7.arcgis.com/8BCxIKxxRBT1Jsaz/arcgis/rest/services/Pipelines_Gas/FeatureServer/0
+note felder: Constraint_, Consultees, Contact_De, FID, HSE_Ref_No, ID, Pipeline_N, Pipeline_O, Pipeline_U, Pressure, Shape__Area, Shape__Length, TRANSCO_In, easting, northing
+dataset Oil and Gas | https://services.arcgis.com/BG6nSlhZSAWtExvp/arcgis/rest/services/OilandGas_Robinson/FeatureServer/0
+candidate https://services.arcgis.com/BG6nSlhZSAWtExvp/arcgis/rest/services/OilandGas_Robinson/FeatureServer/0
+note felder: CONTENTS, DIAK_CDE, FIPS_CNTRY, NAME, OBJECTID, SIZE_
+dataset Gas Plants | https://services6.arcgis.com/c1FJKWaVzCO0hGcI/arcgis/rest/services/OGD_GasPlants/FeatureServer/0
+candidate https://services6.arcgis.com/c1FJKWaVzCO0hGcI/arcgis/rest/services/OGD_GasPlants/FeatureServer/0
+note felder: OBJECTID, gasplantid, location, name, operator, status
+dataset Gas Fields - Potential storage | https://services.arcgis.com/jDGuO8tYggdCCnUJ/arcgis/rest/services/NGLStorageMap/FeatureServer/8
+candidate https://services.arcgis.com/jDGuO8tYggdCCnUJ/arcgis/rest/services/NGLStorageMap/FeatureServer/8
+note felder: Name, OBJECTID, Shape__Area, Shape__Length
+dataset Gas Valve | https://services1.arcgis.com/wqUJgYYL9SHyZZcr/arcgis/rest/services/gasDemo/FeatureServer/1
+candidate https://services1.arcgis.com/wqUJgYYL9SHyZZcr/arcgis/rest/services/gasDemo/FeatureServer/1
+note felder: ANSIPressureRating, AncillaryRole, BondedIndicator, ClockwiseToClose, Comments, CreationUser, DateCreated, DateModified, Depth, DepthToNut, Diameter, DimensionTie1, DimensionTie2, EmerIsolationSysObjectID, EmerIsolationSysStatus, Enabled, EquipmentID, FacilityID
+dataset Gas site | https://services5.arcgis.com/cpgdsIbocdHzzLIc/arcgis/rest/services/External_Utilities/FeatureServer/2
+candidate https://services5.arcgis.com/cpgdsIbocdHzzLIc/arcgis/rest/services/External_Utilities/FeatureServer/2
+note felder: ACTION_DTT, GDO_GID, NOTES1, OBJECTID, OPER_AND_S, SITE_NAME, SITE_TYPE, STATUS
+dataset oil gas production | https://services4.arcgis.com/3Gy6zyvWSR2Q8akX/arcgis/rest/services/oil_gas_production/FeatureServer/0
+candidate https://services4.arcgis.com/3Gy6zyvWSR2Q8akX/arcgis/rest/services/oil_gas_production/FeatureServer/0
+note felder: FID, FIELD_NAME, Shape__Area, Shape__Length, SumOfgas_1, SumOfoil_1, SumOfwat_1, TotGasOil_
+dataset Gas Stations | https://services8.arcgis.com/2Oj4p0oK7rnTYNHA/arcgis/rest/services/Gas_Stations/FeatureServer/0
+candidate https://services8.arcgis.com/2Oj4p0oK7rnTYNHA/arcgis/rest/services/Gas_Stations/FeatureServer/0
+note felder: Loc_name, Match_addr, ObjectID, USER_Address, USER_Business_Name, USER_Expiration_Date, USER_File_, USER_License_, USER_NAICS_Code, USER_NAICS_Code_Group, USER_NAICS_Title_from_NAICS_Cod
+dataset Gas Pipe | https://services5.arcgis.com/cpgdsIbocdHzzLIc/arcgis/rest/services/External_Utilities/FeatureServer/1
+candidate https://services5.arcgis.com/cpgdsIbocdHzzLIc/arcgis/rest/services/External_Utilities/FeatureServer/1
+note felder: ABANDONED, BPD_km, DIAMETER_m, Length, MOP_Bar, NG_OWNED, OBJECTID, OBJECTID_1, PIPELINE_P, PIPE_NAME, PIPE_No, STEEL_GRAD, WALL_THICK, YEAR_COMMI
+dataset Gas Fuel | https://services2.arcgis.com/vJlmDE1PmdTcJF0N/arcgis/rest/services/Gas_Fuel/FeatureServer/0
+candidate https://services2.arcgis.com/vJlmDE1PmdTcJF0N/arcgis/rest/services/Gas_Fuel/FeatureServer/0
+note felder: Address, FID, GlobalID, Id, Name, OBJECTID, Phone, Town, Township, Type, Website
+dataset Gas Service Valves | https://services6.arcgis.com/s3ZVfsWPHgxFM2HE/arcgis/rest/services/Gas/FeatureServer/2
+candidate https://services6.arcgis.com/s3ZVfsWPHgxFM2HE/arcgis/rest/services/Gas/FeatureServer/2
+note felder: OBJECTID, OBJECTID_1, Rotation, Size, Source, Type
+dataset Gas Utility | https://services3.arcgis.com/hEQy6nIL6IiyuNf1/arcgis/rest/services/Gas_Utility/FeatureServer
+candidate-leer https://services3.arcgis.com/hEQy6nIL6IiyuNf1/arcgis/rest/services/Gas_Utility/FeatureServer
+note 0 rows, felder unbekannt
+dataset gas buffer | https://services1.arcgis.com/43Lm3JYE3nM91DAF/arcgis/rest/services/gas_buffer/FeatureServer
+candidate-leer https://services1.arcgis.com/43Lm3JYE3nM91DAF/arcgis/rest/services/gas_buffer/FeatureServer
+note 0 rows, felder unbekannt
+dataset Gas Pipeline | https://services5.arcgis.com/e3s32HQULbIDRwBs/arcgis/rest/services/Gas_Pipeline/FeatureServer/2
+candidate https://services5.arcgis.com/e3s32HQULbIDRwBs/arcgis/rest/services/Gas_Pipeline/FeatureServer/2
+note felder: Comments, CreationDate, Creator, Description, EditDate, Editor, GlobalID, Name, OBJECTID, Owner, Shape__Length
+dataset National Grid Gas | https://services6.arcgis.com/s3ZVfsWPHgxFM2HE/arcgis/rest/services/GAS_20230413/FeatureServer/3
+candidate https://services6.arcgis.com/s3ZVfsWPHgxFM2HE/arcgis/rest/services/GAS_20230413/FeatureServer/3
+note felder: Diameter, Install_Ye, Material, OBJECTID, Pressure, SHAPE_STLe, Shape__Length
+dataset Gas Swing Ties | https://services6.arcgis.com/s3ZVfsWPHgxFM2HE/arcgis/rest/services/Gas/FeatureServer/3
+candidate https://services6.arcgis.com/s3ZVfsWPHgxFM2HE/arcgis/rest/services/Gas/FeatureServer/3
+note felder: Length, OBJECTID, OBJECTID_1, Shape_STLe, Shape__Length, Type
+dataset New Gas Valves | https://services3.arcgis.com/ubipOx65ptjBcDZM/arcgis/rest/services/New_Gas_Valves/FeatureServer/0
+candidate https://services3.arcgis.com/ubipOx65ptjBcDZM/arcgis/rest/services/New_Gas_Valves/FeatureServer/0
+note felder: GlobalID, Greasable, Make, Material, OBJECTID, PSI, Valve_Number, Valve_Type
+dataset Soil Gas Locations May 2019 | https://services7.arcgis.com/cNktaqM1RaL4elpV/arcgis/rest/services/Mission_Village_Web_Map_ArcPro_WFL1/FeatureServer/1
+candidate https://services7.arcgis.com/cNktaqM1RaL4elpV/arcgis/rest/services/Mission_Village_Web_Map_ArcPro_WFL1/FeatureServer/1
+note felder: ClosePhase, FID, LabelID, Results, SampleID, Status
+dataset Gas Pipelines (Proposed) | https://services5.arcgis.com/Mc2lczOZGUNC7Ov5/arcgis/rest/services/ENERGY_AND_MINING_Oil_and_Gas/FeatureServer/16
+candidate https://services5.arcgis.com/Mc2lczOZGUNC7Ov5/arcgis/rest/services/ENERGY_AND_MINING_Oil_and_Gas/FeatureServer/16
+note felder: Access_Lev, Comments, County, Diameter, OBJECTID, Owner, Pipeline, Product, Shape__Length, Status, System
+dataset Natural Gas Processing Plants | https://services1.arcgis.com/0MSEUqKaxRlEPj5g/arcgis/rest/services/Natural_Gas_Processing_Plants/FeatureServer/2
+candidate https://services1.arcgis.com/0MSEUqKaxRlEPj5g/arcgis/rest/services/Natural_Gas_Processing_Plants/FeatureServer/2
+note felder: ADDRESS, CITY, COMPNAME, COUNTRY, COUNTY, COUNTYFIPS, FACID, LATITUDE, LONGITUDE, NAICS_CODE, NAICS_DESC, NAME, NGPPID, OBJECTID, OPERATOR, OPERCITY, OPERSTATE, POSREL
+dataset Gas Main Valves | https://services6.arcgis.com/s3ZVfsWPHgxFM2HE/arcgis/rest/services/GAS_20230413/FeatureServer/1
+candidate https://services6.arcgis.com/s3ZVfsWPHgxFM2HE/arcgis/rest/services/GAS_20230413/FeatureServer/1
+note felder: Diameter_I, ID, Location, OBJECTID
+dataset Gas Service Valve | https://services6.arcgis.com/s3ZVfsWPHgxFM2HE/arcgis/rest/services/GAS_20230413/FeatureServer/0
+candidate https://services6.arcgis.com/s3ZVfsWPHgxFM2HE/arcgis/rest/services/GAS_20230413/FeatureServer/0
+note felder: OBJECTID, Rotation, Size_, Source, Type
+dataset Gas Pipelines (Existing) | https://services5.arcgis.com/Mc2lczOZGUNC7Ov5/arcgis/rest/services/ENERGY_AND_MINING_Oil_and_Gas/FeatureServer/15
+candidate https://services5.arcgis.com/Mc2lczOZGUNC7Ov5/arcgis/rest/services/ENERGY_AND_MINING_Oil_and_Gas/FeatureServer/15
+note felder: Access_Lev, Comments, County, Diameter, OBJECTID, Owner, Pipeline, Product, Shape__Length, Status, System
+dataset Proposed Natural Gas Generators (2019) | https://services1.arcgis.com/AbQpv9doWn5so44u/arcgis/rest/services/Proposed_Natural_Gas_Generators_(2019)/FeatureServer/0
+candidate https://services1.arcgis.com/AbQpv9doWn5so44u/arcgis/rest/services/Proposed_Natural_Gas_Generators_(2019)/FeatureServer/0
+note felder: County, Current_Month, Current_Year, Effective_Month, Effective_Year, Energy_Source_1, Generator_ID, Latitude, Longitude, Nameplate_Capacity__MW_, ObjectId, Plant_Code, Plant_Name, Prime_Mover, Sector_Name, State, Status, Summer_Capacity__MW_
+dataset Murray Soil Gas | https://services5.arcgis.com/bPacKTm9cauMXVfn/arcgis/rest/services/Murray_Soil_Gas/FeatureServer/0
+candidate https://services5.arcgis.com/bPacKTm9cauMXVfn/arcgis/rest/services/Murray_Soil_Gas/FeatureServer/0
+note felder: Benzene, Carbon_Tetrachloride, Chlorobenzene, Chloroform, Ethylbenzene, F1_1_1_2_Tetrachloroethane, F1_1_1_Trichloroethane, F1_1_2_Trichloroethane, F1_1_2_Trichlorotrifluoroethane, F1_1_Dichloroethane, F1_1_Dichloroethene, F1_2_3_Trichlorobenzene, F1_2_3_Trichloropropane, F1_2_4_Trichlorobenzene, F1_2_4_Trimethylbenzene, F1_2_Dibromoethane__EDB_, F1_2_Dichlorobenzene, F1_2_Dichloroethane
+dataset GAS onderweg | https://services1.arcgis.com/f775wJa96VSHSd7k/arcgis/rest/services/GAS_onderweg/FeatureServer/0
+candidate https://services1.arcgis.com/f775wJa96VSHSd7k/arcgis/rest/services/GAS_onderweg/FeatureServer/0
+note felder: CreationDate, Creator, EditDate, Editor, GlobalID, Info, OBJECTID, Toestand, Type, meldpunt
+dataset Polos de processamento de gás natural | https://services6.arcgis.com/I9CTS4kjOw8Dsslu/arcgis/rest/services/Polos_de_processamento_de_g%C3%A1s_natural/FeatureServer/1
+candidate https://services6.arcgis.com/I9CTS4kjOw8Dsslu/arcgis/rest/services/Polos_de_processamento_de_g%C3%A1s_natural/FeatureServer/1
+note felder: Classifica, Entrada, FID, Fonte, MMm3d, Municipio, Nome, Proprietar, Situacao, UF
+dataset Gas | https://services6.arcgis.com/7he6XdQyT8BzSLMa/arcgis/rest/services/Gas/FeatureServer/0
+candidate https://services6.arcgis.com/7he6XdQyT8BzSLMa/arcgis/rest/services/Gas/FeatureServer/0
+note felder: COD, FID, Shape_Leng, Shape__Length, Tipo_matri
+dataset Proposed Mountaineer Natural Gas Liquid Storage | https://services.arcgis.com/jDGuO8tYggdCCnUJ/arcgis/rest/services/NGLStorageMap/FeatureServer/2
+candidate https://services.arcgis.com/jDGuO8tYggdCCnUJ/arcgis/rest/services/NGLStorageMap/FeatureServer/2
+note felder: Lat, Latitude, Longitude, Name2, OBJECTID, Plant, Status, Storage
+dataset Natural Gas Processing Plants | https://services5.arcgis.com/Mc2lczOZGUNC7Ov5/arcgis/rest/services/ENERGY_AND_MINING_Oil_and_Gas/FeatureServer/6
+candidate https://services5.arcgis.com/Mc2lczOZGUNC7Ov5/arcgis/rest/services/ENERGY_AND_MINING_Oil_and_Gas/FeatureServer/6
+note felder: Access_Lev, BTU_Conten, Cap_MMcfd, City, Comments, County, Dry_Stor, Latitude, Longitude, NGL_Stor, OBJECTID, Operator, Owner, Period, Plant_Flow, Plant_Name, Source, State
+dataset gas distribution network | https://services6.arcgis.com/8RWEO35G1ALMME0I/arcgis/rest/services/gas_distribution_network1/FeatureServer/1
+candidate https://services6.arcgis.com/8RWEO35G1ALMME0I/arcgis/rest/services/gas_distribution_network1/FeatureServer/1
+note felder: DIAMETER, FUNCTION_, MATERIAL, OBJECTID, OPPRESS_BA, PRESSLEVEL, Shape__Length
+dataset Compressed Natural Gas Stations | https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/Compressed_Natural_Gas_Stations/FeatureServer/0
+candidate https://services1.arcgis.com/44C95LOqZjbh8Row/arcgis/rest/services/Compressed_Natural_Gas_Stations/FeatureServer/0
+note felder: Access_Cod, Access_D_1, Access_Day, Access_Det, BD_Blend_1, BD_Blends, Cards_Acce, City, Country, Date_Last, E85_Blende, EV_Connect, EV_DC_Fast, EV_Level1, EV_Level2, EV_Netwo_1, EV_Network, EV_Other_I
+dataset PA Gas Plants 2019 | https://services2.arcgis.com/OmhjjQKPQ4s7vrAK/arcgis/rest/services/PA_GasPlants2019_Updated/FeatureServer/0
+candidate https://services2.arcgis.com/OmhjjQKPQ4s7vrAK/arcgis/rest/services/PA_GasPlants2019_Updated/FeatureServer/0
+note felder: Address, Applicant, Applicatio, Approximat, Category, City, County, FID, Fuel_s_, Kind, Latitude, Longitude, Municipali, PA_issued, Plan_Appro, Project_Ph, Region, Zip
+dataset Active Oil and Gas Wells | https://services9.arcgis.com/EGheeB0VDT6EarZv/arcgis/rest/services/Active_Oil_and_Gas_Wells/FeatureServer/0
+candidate https://services9.arcgis.com/EGheeB0VDT6EarZv/arcgis/rest/services/Active_Oil_and_Gas_Wells/FeatureServer/0
+note felder: API, AbandonDat, ConfRelDat, Confidenti, CoordsSu_1, CoordsSurf, County, Dir_Direct, Dir_EW, Dir_Horiz, Dir_NS, Dir_Vert, DrkFloor_E, FORKLIFT_H, FieldName, FootageEW, FootageNS, GISStatusT
+dataset Oil and Gas Photos | https://services.arcgis.com/jDGuO8tYggdCCnUJ/arcgis/rest/services/OG_photos_11082013/FeatureServer/0
+candidate https://services.arcgis.com/jDGuO8tYggdCCnUJ/arcgis/rest/services/OG_photos_11082013/FeatureServer/0
+note felder: GlobalID, OBJECTID, activity_type, attribution, caption, date, email, facility_type, incident_type, latitude, longitude, photo_1, photo_2, photo_3
+dataset Gas Production by County | https://services5.arcgis.com/Mc2lczOZGUNC7Ov5/arcgis/rest/services/ENERGY_AND_MINING_Oil_and_Gas/FeatureServer/20
+candidate https://services5.arcgis.com/Mc2lczOZGUNC7Ov5/arcgis/rest/services/ENERGY_AND_MINING_Oil_and_Gas/FeatureServer/20
+note felder: Access_Lev, Comments, County, OBJECTID, Prod_2010, Prod_2011, Prod_2012, Prod_2013, Prod_2014, Prod_2015, Prod_2016, Prod_2017, Prod_2018, Prod_2019, Prod_2020, Shape__Area, Shape__Length
+dataset MMB Oil and Gas | https://services2.arcgis.com/DRQySz3VhPgOv7Bo/arcgis/rest/services/MMB_Oil_and_Gas/FeatureServer/3
+candidate https://services2.arcgis.com/DRQySz3VhPgOv7Bo/arcgis/rest/services/MMB_Oil_and_Gas/FeatureServer/3
+note felder: Acres, County, OBJECTID, Shape__Area, Shape__Length, TownshipRangeSection
+dataset GAS SITE | https://services.arcgis.com/Qo2anKIAMzIEkIJB/arcgis/rest/services/NationalTransmission/FeatureServer/4
+decline https://services.arcgis.com/Qo2anKIAMzIEkIJB/arcgis/rest/services/NationalTransmission/FeatureServer/4
+note arcgis-error-body
+dataset Natural Gas Underground Storage | https://services3.arcgis.com/943LBv9FP414WfDO/arcgis/rest/services/Gas_Transmission_Underground_Storage/FeatureServer/0
+candidate https://services3.arcgis.com/943LBv9FP414WfDO/arcgis/rest/services/Gas_Transmission_Underground_Storage/FeatureServer/0
+note felder: FID, OBJECTID, company, field, mapshortnm, objectid_1, x, y
+dataset Natural gas AZ | https://services1.arcgis.com/Ezk9fcjSUkeadg6u/arcgis/rest/services/Natural_gas_AZ/FeatureServer/0
+candidate https://services1.arcgis.com/Ezk9fcjSUkeadg6u/arcgis/rest/services/Natural_gas_AZ/FeatureServer/0
+note felder: FID, Operator, Shape_Leng, Shape__Len, Shape__Length, Status, TYPEPIPE
+dataset Abandoned Oil and Gas Wells | https://services9.arcgis.com/EGheeB0VDT6EarZv/arcgis/rest/services/Abandoned_Oil_and_Gas_Wells/FeatureServer/0
+candidate https://services9.arcgis.com/EGheeB0VDT6EarZv/arcgis/rest/services/Abandoned_Oil_and_Gas_Wells/FeatureServer/0
+note felder: API, AbandonDat, ConfRelDat, Confidenti, CoordsSu_1, CoordsSurf, County, Dir_Direct, Dir_EW, Dir_Horiz, Dir_NS, Dir_Vert, DrkFloor_E, FORKLIFT_H, FieldName, FootageEW, FootageNS, GISStatusT
+dataset California Natural Gas Service Area | https://services3.arcgis.com/bWPjFyq029ChCGur/arcgis/rest/services/Natural_Gas_Service_Area/FeatureServer/0
+candidate https://services3.arcgis.com/bWPjFyq029ChCGur/arcgis/rest/services/Natural_Gas_Service_Area/FeatureServer/0
+note felder: ABR, CATEGORY, OBJECTID_1, SERVICE, Shape__Area, Shape__Length
+dataset ENERGY AND MINING - Oil and Gas | https://services5.arcgis.com/Mc2lczOZGUNC7Ov5/arcgis/rest/services/ENERGY_AND_MINING_Oil_and_Gas/FeatureServer
+candidate-leer https://services5.arcgis.com/Mc2lczOZGUNC7Ov5/arcgis/rest/services/ENERGY_AND_MINING_Oil_and_Gas/FeatureServer
+note 0 rows, felder unbekannt
+dataset Gas Pipeline | https://services8.arcgis.com/g9mppFwSsmIw9E0Z/arcgis/rest/services/APA_Group_Pipeline/FeatureServer/0
+candidate https://services8.arcgis.com/g9mppFwSsmIw9E0Z/arcgis/rest/services/APA_Group_Pipeline/FeatureServer/0
+note felder: AssetID, AssetName, OBJECTID, Shape__Length
+dataset Natural gas consumption by suburb | https://services1.arcgis.com/cNVyNtjGVZybOQWZ/arcgis/rest/services/gasconsumptionbysuburb_200506_201415/FeatureServer/0
+candidate https://services1.arcgis.com/cNVyNtjGVZybOQWZ/arcgis/rest/services/gasconsumptionbysuburb_200506_201415/FeatureServer/0
+note felder: F2005_06, F2006_07, F2007_08, F2008_09, F2009_10, F2010_11, F2011_12, F2012_13, F2013_14, F2014_15, F2015_16, F2016_17, F2017_18, F2018_19, FID, NAME, Shape__Area, Shape__Length
+dataset Natural gas consumption by sector | https://services1.arcgis.com/cNVyNtjGVZybOQWZ/arcgis/rest/services/NaturalGasConsumption_CityofSydney200506_201415/FeatureServer/0
+candidate https://services1.arcgis.com/cNVyNtjGVZybOQWZ/arcgis/rest/services/NaturalGasConsumption_CityofSydney200506_201415/FeatureServer/0
+note felder: F2005_06, F2006_07, F2007_08, F2008_09, F2009_10, F2010_11, F2011_12, F2012_13, F2013_14, F2014_15, F2015_16, F2016_17, F2017_18, F2018_19, FID, Sector_Level2
+dataset Arkansas Oil and Gas Wells | https://gis.arkansas.gov/arcgis/rest/services/FEATURESERVICES/Utilities/FeatureServer/5
+candidate https://gis.arkansas.gov/arcgis/rest/services/FEATURESERVICES/Utilities/FeatureServer/5
+note felder: coordinates_county, coordinates_depthbottom, coordinates_e_w, coordinates_elevationtype, coordinates_footage_e_w, coordinates_footage_n_s, coordinates_latitude, coordinates_longitude, coordinates_meas_ref, coordinates_meas_type, coordinates_n_s, coordinates_pkey, coordinates_q, coordinates_qq, coordinates_qqq, coordinates_rng, coordinates_rng_dir, coordinates_sec
+dataset Oil & Gas Unit Agreements (BLM) | https://services5.arcgis.com/Mc2lczOZGUNC7Ov5/arcgis/rest/services/ENERGY_AND_MINING_Oil_and_Gas/FeatureServer/22
+candidate https://services5.arcgis.com/Mc2lczOZGUNC7Ov5/arcgis/rest/services/ENERGY_AND_MINING_Oil_and_Gas/FeatureServer/22
+note felder: AFSNum, Access_Lev, CaseAcres, Comment, ContDate, ContractNum, County, EffDate, GISAcres, OBJECTID, Operator, PercFed, PercNonFed, SerialNrFull, Shape__Area, Shape__Length, Status, UnitName
+dataset Natural gas intensity by suburb | https://services1.arcgis.com/cNVyNtjGVZybOQWZ/arcgis/rest/services/gasintensitybysuburb_200506_201415/FeatureServer/0
+candidate https://services1.arcgis.com/cNVyNtjGVZybOQWZ/arcgis/rest/services/gasintensitybysuburb_200506_201415/FeatureServer/0
+note felder: F2005_06, F2006_07, F2007_08, F2008_09, F2009_10, F2010_11, F2011_12, F2012_13, F2013_14, F2014_15, F2015_16, F2016_17, F2017_18, F2018_19, FID, NAME, Shape__Area, Shape__Length
+dataset Natural gas intensity by sector | https://services1.arcgis.com/cNVyNtjGVZybOQWZ/arcgis/rest/services/Natural_gas_intensity_by_sector/FeatureServer/0
+candidate https://services1.arcgis.com/cNVyNtjGVZybOQWZ/arcgis/rest/services/Natural_gas_intensity_by_sector/FeatureServer/0
+note felder: F2005_06, F2006_07, F2007_08, F2008_09, F2009_10, F2010_11, F2011_12, F2012_13, F2013_14, F2014_15, F2015_16, F2016_17, F2017_18, F2018_19, ObjectId, Sector_Level2
+dataset Certified Gas Areas | https://services1.arcgis.com/q2CglofYX6ACNEeu/arcgis/rest/services/KCC_Certified_Gas_Areas/FeatureServer/0
+candidate https://services1.arcgis.com/q2CglofYX6ACNEeu/arcgis/rest/services/KCC_Certified_Gas_Areas/FeatureServer/0
+note felder: Cell_Phone, Color, Company_ID, Company_Na, Docket, FID, Level_, Main_Phone, Management, OBJECTID, SWKI, Shape_Area, Shape_Leng, Shape__Area, Shape__Length, Status
+dataset UGI Central Penn Gas | https://services1.arcgis.com/6NNMHuq8MYlPbI46/arcgis/rest/services/SEDA_COG_Regions_Map/FeatureServer/1
+candidate https://services1.arcgis.com/6NNMHuq8MYlPbI46/arcgis/rest/services/SEDA_COG_Regions_Map/FeatureServer/1
+note felder: CLASS_OF_1, CLASS_OF_M, COUNTY, COUNTY_1, Company_ID, Company_Na, Denotation, FED_AID_UR, FED_ID_NUM, FIPS_AREA_, FIPS_COUNT, FIPS_MUN_1, FIPS_MUN_C, FIPS_MUN_P, FIPS_NAME, FIPS_SQ_MI, MSLINK, MUNICIPAL1
+dataset Columbia Gas Of Pennsylvania | https://services1.arcgis.com/6NNMHuq8MYlPbI46/arcgis/rest/services/SEDA_COG_Regions_Map/FeatureServer/2
+candidate https://services1.arcgis.com/6NNMHuq8MYlPbI46/arcgis/rest/services/SEDA_COG_Regions_Map/FeatureServer/2
+note felder: CLASS_OF_M, COUNTY, Classifica, Company_ID, Company_Na, County_1, County_Num, F10, F11, F12, F13, F14, F15, F8, F9, FED_AID_UR, FED_ID_NUM, FIPS_AREA_
+dataset Natural Gas (Vector) | https://services7.arcgis.com/8G10QCd84QpdcTJ9/arcgis/rest/services/GDC_Utilities_Other/FeatureServer/1
+candidate https://services7.arcgis.com/8G10QCd84QpdcTJ9/arcgis/rest/services/GDC_Utilities_Other/FeatureServer/1
+note felder: FNODE_, LENGTH, LPOLY_, NGC_PIPELI, NGC_PIPE_1, OBJECTID, RPOLY_, Shape__Length, TNODE_, TYPE
+dataset EORI Oil and Gas Fields | https://services8.arcgis.com/GVHDOiLGusXYn1fZ/arcgis/rest/services/EORI_Oil_Gas_Fields_OilGasComingled_WFL1/FeatureServer/0
+candidate https://services8.arcgis.com/GVHDOiLGusXYn1fZ/arcgis/rest/services/EORI_Oil_Gas_Fields_OilGasComingled_WFL1/FeatureServer/0
+note felder: FLD_NAME, FLD_NAME_P, OBJECTID, OG_Class, Shape__Area, Shape__Length
+dataset Gas Pipe | https://services8.arcgis.com/V9zL6jzLdVCgrx6S/arcgis/rest/services/Misc/FeatureServer/2
+candidate https://services8.arcgis.com/V9zL6jzLdVCgrx6S/arcgis/rest/services/Misc/FeatureServer/2
+note felder: Accuracy, Cover, Diameter, Draw_Date, FID, GlobalID, LENGTH_GEO, Material, Ref_Draw, Shape__Length, Status, Surveyed, Type
+dataset Natural Gas Transmission Lines | https://services2.arcgis.com/S8zZg9pg23JUEexQ/arcgis/rest/services/UTILITY_Natural_Gas_Transmission_Lines_spf/FeatureServer/0
+candidate https://services2.arcgis.com/S8zZg9pg23JUEexQ/arcgis/rest/services/UTILITY_Natural_Gas_Transmission_Lines_spf/FeatureServer/0
+note felder: OBJECTID, Shape__Length
+dataset Natural Gas Compressor Stations | https://services3.arcgis.com/6kmcRUkHohgDzKog/arcgis/rest/services/Utility_Locations/FeatureServer/3
+decline https://services3.arcgis.com/6kmcRUkHohgDzKog/arcgis/rest/services/Utility_Locations/FeatureServer/3
+note arcgis-error-body
+dataset Gas Survey | https://services1.arcgis.com/fxbQnDtMt7hioiEV/arcgis/rest/services/Gas_Survey/FeatureServer/0
+candidate https://services1.arcgis.com/fxbQnDtMt7hioiEV/arcgis/rest/services/Gas_Survey/FeatureServer/0
+note felder: Address, Call, Contact, CreationDate, Creator, Date, EditDate, Editor, Email, Emergency, Hazards, Name, OBJECTID, One_Call, Purpose, Telephone, UDP_Law
+dataset Utah Oil/Gas Wells | https://services.arcgis.com/jDGuO8tYggdCCnUJ/arcgis/rest/services/UtahOilGasWells/FeatureServer/0
+candidate https://services.arcgis.com/jDGuO8tYggdCCnUJ/arcgis/rest/services/UtahOilGasWells/FeatureServer/0
+note felder: ACCT_NUM, ALT_ADDRES, API, BOND_NUMBE, BOND_TYPE, CA_NUMBER, CBMETHANE_, COMPANY_NA, CONF_DATE, CONF_FLAG, COORDS_BHL, COORDS_B_1, COORDS_SUR, COORDS_S_1, COUNTY, DIRECTIONA, ELEVATION, FIELD_NAME
+dataset Oil and Gas Resource Area | https://services5.arcgis.com/vNzamREXvX2WcX6d/arcgis/rest/services/Oil_and_Gas_Resource_Area_7344b/FeatureServer/0
+candidate https://services5.arcgis.com/vNzamREXvX2WcX6d/arcgis/rest/services/Oil_and_Gas_Resource_Area_7344b/FeatureServer/0
+note felder: Shape__Area, Shape__Length, feature_name, feature_name_fr, objectid
+dataset Oil and Gas Resource Area | https://services5.arcgis.com/vNzamREXvX2WcX6d/arcgis/rest/services/Oil_and_Gas_Resource_Area/FeatureServer/0
+candidate https://services5.arcgis.com/vNzamREXvX2WcX6d/arcgis/rest/services/Oil_and_Gas_Resource_Area/FeatureServer/0
+note felder: Shape__Area, Shape__Length, feature_name, feature_name_fr, objectid
+dataset MMB Oil and Gas Active Lease | https://services2.arcgis.com/DRQySz3VhPgOv7Bo/arcgis/rest/services/MMB_Oil_and_Gas_Active_Lease/FeatureServer/1
+candidate https://services2.arcgis.com/DRQySz3VhPgOv7Bo/arcgis/rest/services/MMB_Oil_and_Gas_Active_Lease/FeatureServer/1
+note felder: AgreementNumber, BeyondPrimTerm, County, OBJECTID, OGLeaseAcres, OGLeaseLegal, PrimaryCustomer, Shape__Area, Shape__Length, TownshipRangeSection
+dataset Mont Gas | https://services3.arcgis.com/aaZhjjkUqOHS7oRg/arcgis/rest/services/Mont_Gas/FeatureServer/0
+candidate https://services3.arcgis.com/aaZhjjkUqOHS7oRg/arcgis/rest/services/Mont_Gas/FeatureServer/0
+note felder: ABBREV, Comment, Data_Date, FOLDER, NAME, OBJECTID, PSC_ID, PSC_Reg, Shape__Area, Shape__Length, TYPE_CODE
+dataset SGN Gas Pipe | https://services6.arcgis.com/69xzlSZAGOD0C4No/arcgis/rest/services/SGN_Gas_Pipe/FeatureServer/0
+candidate https://services6.arcgis.com/69xzlSZAGOD0C4No/arcgis/rest/services/SGN_Gas_Pipe/FeatureServer/0
+note felder: ABANDONED, Building_Proximity_Distance_K, CreationDate, Creator, Diameter_mm, EditDate, Editor, Gas_Pipe_Name, GlobalID, National_Grid_Owned, OBJECTID_1, Shape__Length
+dataset Gas Valve | https://services7.arcgis.com/mbo4CkTxRxNUaNGx/arcgis/rest/services/GasNetwork_bf3cec5ce4c44cbb9ae55a80bc3696c5/FeatureServer/6
+decline https://services7.arcgis.com/mbo4CkTxRxNUaNGx/arcgis/rest/services/GasNetwork_bf3cec5ce4c44cbb9ae55a80bc3696c5/FeatureServer/6
+note arcgis-error-body
+dataset Gas Valve | https://services7.arcgis.com/mbo4CkTxRxNUaNGx/arcgis/rest/services/GasNetwork_742787922a1d4fb28aff0106285d2a96/FeatureServer/6
+decline https://services7.arcgis.com/mbo4CkTxRxNUaNGx/arcgis/rest/services/GasNetwork_742787922a1d4fb28aff0106285d2a96/FeatureServer/6
+note arcgis-error-body
+dataset UGI Penn Natural Gas Inc | https://services1.arcgis.com/6NNMHuq8MYlPbI46/arcgis/rest/services/SEDA_COG_Regions_Map/FeatureServer/3
+candidate https://services1.arcgis.com/6NNMHuq8MYlPbI46/arcgis/rest/services/SEDA_COG_Regions_Map/FeatureServer/3
+note felder: CLASS_OF_1, CLASS_OF_M, COUNTY, COUNTY1, Company_ID, Company_Na, County_1, Denotation, FED_AID_UR, FED_ID_NUM, FIPS_AREA_, FIPS_COUNT, FIPS_MUN_1, FIPS_MUN_C, FIPS_MUN_P, FIPS_NAME, FIPS_SQ_MI, MSLINK
+dataset MI Natural Gas Transmission Pipelines | https://services3.arcgis.com/943LBv9FP414WfDO/arcgis/rest/services/GAS_TRANSMISSION_PIPELINES_ACTIVE_MERGED_SIMPLIFIED_MI/FeatureServer/22
+candidate https://services3.arcgis.com/943LBv9FP414WfDO/arcgis/rest/services/GAS_TRANSMISSION_PIPELINES_ACTIVE_MERGED_SIMPLIFIED_MI/FeatureServer/22
+note felder: OBJECTID, Operator, Shape__Length, ShortName
+dataset Gas Stations California | https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/Gas_Stations_California/FeatureServer
+candidate-leer https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/Gas_Stations_California/FeatureServer
+note 0 rows, felder unbekannt
+dataset Gas Tapcard | https://services1.arcgis.com/CRjnKyCe3OfYTMC3/arcgis/rest/services/Tapcards/FeatureServer/0
+candidate https://services1.arcgis.com/CRjnKyCe3OfYTMC3/arcgis/rest/services/Tapcards/FeatureServer/0
+note felder: CreationDate, Creator, EditDate, Editor, OBJECTID, Parcel_Tap_Points_OWN1, Parcel_Tap_Points_OWN2, Parcel_Tap_Points_PADDR1, Parcel_Tap_Points_PIN, Parcel_Tap_Points_RECORDDT, Parcel_Tap_Points_SALEVAL, Taps_Output_ADDRESS, Taps_Output_APARTMENT, Taps_Output_CUSTOMERACCOUNTNUMB, Taps_Output_DEPT, Taps_Output_DWGTYPE, Taps_Output_F15, Taps_Output_FILENO
+dataset Gas Pipeline Corridor | https://services8.arcgis.com/g9mppFwSsmIw9E0Z/arcgis/rest/services/APA_Group_Pipeline/FeatureServer/1
+candidate https://services8.arcgis.com/g9mppFwSsmIw9E0Z/arcgis/rest/services/APA_Group_Pipeline/FeatureServer/1
+note felder: MI_PRINX, OBJECTID, Shape__Area, Shape__Length, blank
+dataset Municipal Gas Distribution Systems in Kentucky | https://services3.arcgis.com/ghsX9CKghMvyYjBU/arcgis/rest/services/Municipal_Gas_Distribution/FeatureServer/0
+candidate https://services3.arcgis.com/ghsX9CKghMvyYjBU/arcgis/rest/services/Municipal_Gas_Distribution/FeatureServer/0
+note felder: City, MAP_NAME, OBJECTID, PSCNAME1, PSCNAME2, PSC_ID, Shape__Area, Shape__Length
+dataset Gas Utility District | https://services.arcgis.com/KYvXadMcgf0K1EzK/arcgis/rest/services/District_Gas_Utility/FeatureServer/0
+candidate https://services.arcgis.com/KYvXadMcgf0K1EzK/arcgis/rest/services/District_Gas_Utility/FeatureServer/0
+note felder: DATE_CREAT, FID, ID, NAME, RESOLUTION
+dataset Natural gas storage and oil fields | https://services6.arcgis.com/bHvCSEXG5vuDez0K/arcgis/rest/services/IL_Oil_Gas_GasStor_Fields_Buffer_2024_Py/FeatureServer/0
+candidate https://services6.arcgis.com/bHvCSEXG5vuDez0K/arcgis/rest/services/IL_Oil_Gas_GasStor_Fields_Buffer_2024_Py/FeatureServer/0
+note felder: FID, FIELDCODE, FIELDNAME, FIELDTYPE, FieldSumma, Shape__Area, Shape__Length
+dataset Natural Gas Utility Service Areas | https://services3.arcgis.com/943LBv9FP414WfDO/arcgis/rest/services/NATURAL_GAS_UTILITY_SERVICE_AREA_MI_WFL1/FeatureServer/27
+candidate https://services3.arcgis.com/943LBv9FP414WfDO/arcgis/rest/services/NATURAL_GAS_UTILITY_SERVICE_AREA_MI_WFL1/FeatureServer/27
+note felder: Customers, Name, OBJECTID, Phone, Shape__Area, Shape__Length, Type, Website
+dataset Natural Gas Power Plants | https://services3.arcgis.com/943LBv9FP414WfDO/arcgis/rest/services/Power_Plants/FeatureServer/1
+candidate https://services3.arcgis.com/943LBv9FP414WfDO/arcgis/rest/services/Power_Plants/FeatureServer/1
+note felder: Bat_MW, Bio_MW, City, Coal_MW, County, Crude_MW, Geo_MW, HydroPS_MW, Hydro_MW, Install_MW, Latitude, Longitude, NG_MW, Nuclear_MW, OBJECTID, OBJECTID_1, Other_MW, Period
+dataset Gas Lamp | https://services8.arcgis.com/22aEWILt579igsi8/arcgis/rest/services/Tracking_and_Traceability_WFL1/FeatureServer/18
+decline https://services8.arcgis.com/22aEWILt579igsi8/arcgis/rest/services/Tracking_and_Traceability_WFL1/FeatureServer/18
+note arcgis-error-body
+dataset DFB Gas Stations | https://services1.arcgis.com/yJ4j7ns7W6juha0m/arcgis/rest/services/DFBGasStations/FeatureServer/0
+candidate https://services1.arcgis.com/yJ4j7ns7W6juha0m/arcgis/rest/services/DFBGasStations/FeatureServer/0
+note felder: ACCESSTOGE, APPLIES, BULKPRODUC, BULKSTORAG, CANOPERATE, CITY, COMMENTS, CONFIRMEDB, CONFIRMEDD, COUNTYNAME, CREDITCARO, DISPENSERS, ELECTRONIC, FACILITYID, FACILITYST, GENCAPACIT, GENCAPAC_1, GENERATORO
+dataset Oil and Gas Fields | https://services2.arcgis.com/ZOdjAzAQ2B0f85zi/arcgis/rest/services/Oil_and_Gas_Fields/FeatureServer/0
+candidate https://services2.arcgis.com/ZOdjAzAQ2B0f85zi/arcgis/rest/services/Oil_and_Gas_Fields/FeatureServer/0
+note felder: ACTIVEPROD, APPROXACRE, AVGDEPTH, AVGDEPTHSL, CUMM_GAS, CUMM_OIL, FIELD_KID, FIELD_NAME, FIELD_TYPE, FORMATIONS, LASTGASPRO, LASTGASWEL, LASTGDATE, LASTODATE, LASTOILPRO, LASTOILWEL, MAXGASWELL, MAXOILWELL
+dataset State Natural Gas Reserves | https://services1.arcgis.com/82YxYqy3f0s2D9c4/arcgis/rest/services/StateNaturalGasReserves/FeatureServer/0
+candidate https://services1.arcgis.com/82YxYqy3f0s2D9c4/arcgis/rest/services/StateNaturalGasReserves/FeatureServer/0
+note felder: DRAWSEQ, Ergy_Ex_Per_Cap, NatGas_Cons, NatGas_Cost, NatGas_Prod, NatGas_Wells, Nat_Gas_Reserv, OBJECTID, Oil_Cons, Oil_Cost, Oil_Prod, Oil_Reserv, Rotary_Rigs, STATE_ABBR, STATE_FIPS, STATE_NAME, SUB_REGION, Tot_Egry_Cons
+dataset Saskatchewan Oil & Gas Pools | https://services8.arcgis.com/JrQQNwjMR0NKUS54/arcgis/rest/services/OilGas2025_shp/FeatureServer/0
+candidate https://services8.arcgis.com/JrQQNwjMR0NKUS54/arcgis/rest/services/OilGas2025_shp/FeatureServer/0
+note felder: FID, GEOAREA, HECTARES, POOLCODE, POOLNAME, POOLTYPE, Shape__Area, Shape__Length, ZONETYPE
+dataset Gas Roads Virginia | https://services.arcgis.com/F7DSX1DSNSiWmOqh/arcgis/rest/services/Gas_Roads_Virginia/FeatureServer/0
+candidate https://services.arcgis.com/F7DSX1DSNSiWmOqh/arcgis/rest/services/Gas_Roads_Virginia/FeatureServer/0
+note felder: GlobalID_2, Length_mi, OBJECTID_1, Shape__Length, creationda, creator, editdate, editor, globalid, name, objectid, st_length_
+dataset Petroleum Contaminated Soil Remediation Permits | https://services2.arcgis.com/kCu40SDxsCGcuUWO/arcgis/rest/services/Petroleum_Contaminated_Soil_Remediation_Permits/FeatureServer/0
+candidate https://services2.arcgis.com/kCu40SDxsCGcuUWO/arcgis/rest/services/Petroleum_Contaminated_Soil_Remediation_Permits/FeatureServer/0
+note felder: Close_Out_Date, Expiration_Date, Incident___of_Source, OBJECTID, Old_Permit_Number, Permit_Address, Permit_City, Permit_County, Permit_Issued, Permit_Name, Permit_Number, Permit_Rescinded, Permit_Type_Abbrv, Permit_Zip_Code, Permitee_Name, RO_Code, RO_Manager, dedicated
+dataset Natural Gas Market Hubs EIA | https://services1.arcgis.com/ajkPMiuiqxF9xEgP/arcgis/rest/services/Natural_Gas_Market_Hubs_EIA/FeatureServer/0
+candidate https://services1.arcgis.com/ajkPMiuiqxF9xEgP/arcgis/rest/services/Natural_Gas_Market_Hubs_EIA/FeatureServer/0
+note felder: Adminstr, Authority, Avgdaily, City, County_1, FID, Hub_name, Latitude, Longitude, Maxthru, Notes, Numcust, Operator, Platform, Rates, Region, State, Status
+dataset Gas Leak Survey Area | https://services1.arcgis.com/1pXnFsHirWAc6772/arcgis/rest/services/2015_Gas_Leak_Survey_Web_Map/FeatureServer/2
+candidate https://services1.arcgis.com/1pXnFsHirWAc6772/arcgis/rest/services/2015_Gas_Leak_Survey_Web_Map/FeatureServer/2
+note felder: AREACOVERED, COMMENTS, CREATED_DATE, CREATED_USER, CREATIONDATE, CREATIONUSER, FACILITYID, GLOBALID, LAST_EDITED_DATE, LAST_EDITED_USER, LEAKSURVEYAREAID, LEAKSURVEYDATE, LEAKSURVEYFREQUENCY, LOCATION, MILESOFMAIN, MODIFYDATE, MODIFYUSER, NEXTLEAKSURVEYDATE
+dataset Franchise Gas | https://services2.arcgis.com/1UvBaQ5y1ubjUPmd/arcgis/rest/services/Franchise_Gas/FeatureServer/0
+candidate https://services2.arcgis.com/1UvBaQ5y1ubjUPmd/arcgis/rest/services/Franchise_Gas/FeatureServer/0
+note felder: ADDRESS1, ADDRESS2, BOND_AMOUNT, BOND_EXPIRATION_DATE, CITY, COMMENTS, CONTACT_1, CONTACT_2, CONTACT_3, CONTACT_4, CONTACT_5, DATE_LAST_REVIEWED, DBA, EDIT_SYS_DT, EXPIRATION_DATE, EXPIRED_CODE, EXTENTION, FAX_NUMBER
+dataset Natural Gas | https://services5.arcgis.com/SUeybBEm1HHE5R6V/arcgis/rest/services/HUBServiceAreas/FeatureServer/4
+candidate https://services5.arcgis.com/SUeybBEm1HHE5R6V/arcgis/rest/services/HUBServiceAreas/FeatureServer/4
+note felder: OBJECTID, Services_A, Shape__Area, Shape__Length
+dataset Natural Gas Storage Regions | https://services7.arcgis.com/FGr1D95XCGALKXqM/arcgis/rest/services/Natural_Gas_Storage_Regions/FeatureServer/0
+candidate https://services7.arcgis.com/FGr1D95XCGALKXqM/arcgis/rest/services/Natural_Gas_Storage_Regions/FeatureServer/0
+note felder: FID, Region, Shape_Area, Shape_Leng, Shape__Area, Shape__Length
+dataset Oil Gas Fields | https://services.arcgis.com/3xOwF6p0r7IHIjfn/arcgis/rest/services/Oil_Gas_Fields/FeatureServer/0
+candidate https://services.arcgis.com/3xOwF6p0r7IHIjfn/arcgis/rest/services/Oil_Gas_Fields/FeatureServer/0
+note felder: Area, Field_Name, Field_No, Field_Type, GOR, OBJECTID, Shape__Area, Shape__Length, TR
+dataset Oil and Gas Wells Map View | https://services2.arcgis.com/ZOdjAzAQ2B0f85zi/arcgis/rest/services/Oil_and_Gas_Wells_Map_View/FeatureServer/0
+candidate https://services2.arcgis.com/ZOdjAzAQ2B0f85zi/arcgis/rest/services/Oil_and_Gas_Wells_Map_View/FeatureServer/0
+note felder: API_NUMBER, CHK_ACO, CHK_ACTIVE, CHK_CORE, CHK_COREIMG, CHK_CUTTINGS, CHK_DST, CHK_HORIZONTAL, CHK_LAS, CHK_LAS3, CHK_PAPER, CHK_PRECAMB, CHK_SCAN, CHK_TOP, COMPLETION_DATE, COMPLETION_DATE_TXT, COMPLETION_YEAR, COUNTY
+dataset MS Natural Gas Pipelines | https://services1.arcgis.com/fI7ToVSY6ywRM8Si/arcgis/rest/services/MS_Natural_Gas_Pipelines/FeatureServer
+candidate-leer https://services1.arcgis.com/fI7ToVSY6ywRM8Si/arcgis/rest/services/MS_Natural_Gas_Pipelines/FeatureServer
+note 0 rows, felder unbekannt
+dataset MS Natural Gas Pipelines | https://services1.arcgis.com/fI7ToVSY6ywRM8Si/arcgis/rest/services/MS_Natural_Gas_Pipelines/FeatureServer/0
+candidate https://services1.arcgis.com/fI7ToVSY6ywRM8Si/arcgis/rest/services/MS_Natural_Gas_Pipelines/FeatureServer/0
+note felder: OBJECTID, OBJECTID_1, OperatorNa, Shape_Leng
+dataset WellSTAR Oil and Gas Wells | https://services1.arcgis.com/ZIL9uO234SBBPGL7/arcgis/rest/services/WellSTAR_Oil_and_Gas_Wells/FeatureServer/0
+candidate https://services1.arcgis.com/ZIL9uO234SBBPGL7/arcgis/rest/services/WellSTAR_Oil_and_Gas_Wells/FeatureServer/0
+note felder: API, AreaName, BaseMeridi, CountyName, District, FieldName, GISSource, Latitude, LeaseName, Longitude, OBJECTID, OBJECTID_1, OperatorCo, OperatorNa, Place, Range, Section, SpudDate
+dataset Tuberia Primaria Gas | https://services1.arcgis.com/lHSB5M3vxFT82S7P/arcgis/rest/services/P_Gas_GE/FeatureServer/10
+candidate https://services1.arcgis.com/lHSB5M3vxFT82S7P/arcgis/rest/services/P_Gas_GE/FeatureServer/10
+note felder: CODIGO_VALVULA, DIAMETRO, ESTADO, FABRICANTE, LONGITUD, MATERIAL, NOMBRE_CIRCUITO, OBJECTID, SIMBOLOGIA, SUBRED, Shape__Length, UNIDAD_MEDIDA
+dataset Nodo Anillos Gas | https://services1.arcgis.com/lHSB5M3vxFT82S7P/arcgis/rest/services/P_Gas_GE/FeatureServer/5
+candidate https://services1.arcgis.com/lHSB5M3vxFT82S7P/arcgis/rest/services/P_Gas_GE/FeatureServer/5
+note felder: CODIGO_VALVULA, DIAMETRO, ESTADO, MATERIAL, NOMBRE_CIRCUITO, OBJECTID, ROTACION, SIMBOLOGIA, TIPO_NODO, UNIDAD_MEDIDA
+dataset Oil and Gas Fields and Well Locations | https://services.arcgis.com/ZzrwjTRez6FJiOq4/arcgis/rest/services/oil_fields_wells/FeatureServer
+candidate-leer https://services.arcgis.com/ZzrwjTRez6FJiOq4/arcgis/rest/services/oil_fields_wells/FeatureServer
+note 0 rows, felder unbekannt
+dataset Gas Lines  | https://services2.arcgis.com/A1oRcvECJ7UaClOw/arcgis/rest/services/Gas_Lines_/FeatureServer/0
+candidate https://services2.arcgis.com/A1oRcvECJ7UaClOw/arcgis/rest/services/Gas_Lines_/FeatureServer/0
+note felder: Color, Elevation, Entity, FID_, Handle, Layer, Linetype, OBJECTID, Shape__Length, Text, Thickness
+dataset Nodo Arterias Gas | https://services1.arcgis.com/lHSB5M3vxFT82S7P/arcgis/rest/services/P_Gas_GE/FeatureServer/6
+candidate https://services1.arcgis.com/lHSB5M3vxFT82S7P/arcgis/rest/services/P_Gas_GE/FeatureServer/6
+note felder: CODIGO_VALVULA, DIAMETRO, ESTADO, MATERIAL, NOMBRE_CIRCUITO, OBJECTID, ROTACION, SIMBOLOGIA, TIPO_NODO, UNIDAD_MEDIDA
+dataset Válvula Dedicada Gas | https://services1.arcgis.com/lHSB5M3vxFT82S7P/arcgis/rest/services/P_Gas_GE/FeatureServer/4
+candidate https://services1.arcgis.com/lHSB5M3vxFT82S7P/arcgis/rest/services/P_Gas_GE/FeatureServer/4
+note felder: CODIGO_VALVULA, DIAMETRO, ESTADO, MATERIAL, NOMBRE_CIRCUITO, OBJECTID, PROPIETARIO, PROYECTO, ROTACION, SIMBOLOGIA, SUBRED, UNIDAD_MEDIDA
+dataset Oil and Gas Leases | https://services2.arcgis.com/ZOdjAzAQ2B0f85zi/arcgis/rest/services/Leases/FeatureServer/0
+candidate https://services2.arcgis.com/ZOdjAzAQ2B0f85zi/arcgis/rest/services/Leases/FeatureServer/0
+note felder: ABBREVIATED_TO_4_CHARS, CODE, COMMENTS, CORRECTIONS, COUNTY_CODE, CUMULATIVE_PRODUCTION, CUMULATIVE_YEAR_ENDED, CUMULATIVE_YEAR_STARTED, DATA_SOURCE, DEPTH_OF_WELL, DEPT_MOTOR_VEHICLES_ABBREV, DEPT_WATER_RESOURCES_CODE, FEET_EAST_FROM_REFERENCE, FEET_NORTH_FROM_REFERENCE, FIELD_CODE_DOR, FIELD_KID, FIELD_KID_SOURCE, FIELD_NAME
+dataset Oil and Gas Facilities | https://services1.arcgis.com/qr14biwnHA6Vis6l/arcgis/rest/services/Oil_and_GasFacilities/FeatureServer/0
+candidate https://services1.arcgis.com/qr14biwnHA6Vis6l/arcgis/rest/services/Oil_and_GasFacilities/FeatureServer/0
+note felder: Flyout, LLink, OBJECTID, facility_id, facility_status, facility_type, lat, long, utm_x, utm_y
+dataset Nodo Primario Gas | https://services1.arcgis.com/lHSB5M3vxFT82S7P/arcgis/rest/services/P_Gas_GE/FeatureServer/7
+candidate https://services1.arcgis.com/lHSB5M3vxFT82S7P/arcgis/rest/services/P_Gas_GE/FeatureServer/7
+note felder: CODIGO_VALVULA, DIAMETRO, ESTADO, FABRICANTE, OBJECTID, ROTACION, SIMBOLOGIA, TIPO_NODO, UNIDAD_MEDIDA
+dataset P Gas GE | https://services1.arcgis.com/lHSB5M3vxFT82S7P/arcgis/rest/services/P_Gas_GE/FeatureServer
+candidate-leer https://services1.arcgis.com/lHSB5M3vxFT82S7P/arcgis/rest/services/P_Gas_GE/FeatureServer
+note 0 rows, felder unbekannt
+dataset Natural Gas Transmission Pipeline | https://services-ap1.arcgis.com/ry1jWJjaLhqVCFK6/arcgis/rest/services/Natural_Gas_Transmission_Pipeline/FeatureServer/0
+candidate https://services-ap1.arcgis.com/ry1jWJjaLhqVCFK6/arcgis/rest/services/Natural_Gas_Transmission_Pipeline/FeatureServer/0
+note felder: FID, ID, LINE_ID, OWNER, STATUS, Shape__Length
+dataset Válvula Primaria Gas | https://services1.arcgis.com/lHSB5M3vxFT82S7P/arcgis/rest/services/P_Gas_GE/FeatureServer/3
+candidate https://services1.arcgis.com/lHSB5M3vxFT82S7P/arcgis/rest/services/P_Gas_GE/FeatureServer/3
+note felder: CODIGO_VALVULA, DIAMETRO, ESTADO, FABRICANTE, MATERIAL, OBJECTID, PROYECTO, ROTACION, SIMBOLOGIA, UNIDAD_MEDIDA
+dataset State Natural Gas Cost | https://services1.arcgis.com/82YxYqy3f0s2D9c4/arcgis/rest/services/State_NaturalGasCost/FeatureServer/0
+candidate https://services1.arcgis.com/82YxYqy3f0s2D9c4/arcgis/rest/services/State_NaturalGasCost/FeatureServer/0
+note felder: DRAWSEQ, Ergy_Ex_Per_Cap, NatGas_Cons, NatGas_Cost, NatGas_Prod, NatGas_Wells, Nat_Gas_Reserv, OBJECTID, Oil_Cons, Oil_Cost, Oil_Prod, Oil_Reserv, Rotary_Rigs, STATE_ABBR, STATE_FIPS, STATE_NAME, SUB_REGION, Tot_Egry_Cons
+dataset Oil Natural Gas Field | https://services7.arcgis.com/BJisQXdgVScP0JMy/arcgis/rest/services/Oil_Natural_Gas_Field/FeatureServer/5
+candidate https://services7.arcgis.com/BJisQXdgVScP0JMy/arcgis/rest/services/Oil_Natural_Gas_Field/FeatureServer/5
+note felder: AREA_ACRE, District, District_L, District_p, FID, FIELD_CODE, NAME, Shape__Area, Shape__Length
+dataset Gas Lines | https://services8.arcgis.com/fwjy3Yp3GA7O9xjM/arcgis/rest/services/Gas_Lines/FeatureServer/0
+candidate https://services8.arcgis.com/fwjy3Yp3GA7O9xjM/arcgis/rest/services/Gas_Lines/FeatureServer/0
+note felder: FID, MyData, Operator, Shape_Leng, Shape__Length, Status, TYPEPIPE
+dataset Gas Fields | https://services.arcgis.com/jDGuO8tYggdCCnUJ/arcgis/rest/services/Gas_Fields/FeatureServer/11
+candidate https://services.arcgis.com/jDGuO8tYggdCCnUJ/arcgis/rest/services/Gas_Fields/FeatureServer/11
+note felder: Company, County, Field, Field_Type, ID, Latitude, Longitude, OBJECTID, Period, Region, Reservoir, Source, State, Status, base_gas, fld_cap, fld_code, maxdeliv
+dataset Fundamental Soil Layer | https://services1.arcgis.com/VuN78wcRdq1Oj69W/arcgis/rest/services/LandParcelMapData/FeatureServer/1
+candidate https://services1.arcgis.com/VuN78wcRdq1Oj69W/arcgis/rest/services/LandParcelMapData/FeatureServer/1
+note felder: AREAH, DOMNZSC, DOMSOI, DRAIN_CLAS, FLOOD_CLAS, GlobalID, MAINSOIL, NIFSL, NIFSL_ID, NZGSOIGRP, NZSC, OBJECTID, ORDER_, PERMEABILI, PHASE, PH_CLASS, SERIES, SOIL
+dataset Oil and Gas Wells | https://services2.arcgis.com/ZOdjAzAQ2B0f85zi/arcgis/rest/services/Oil_and_Gas_Wells/FeatureServer/0
+candidate https://services2.arcgis.com/ZOdjAzAQ2B0f85zi/arcgis/rest/services/Oil_and_Gas_Wells/FeatureServer/0
+note felder: API_NUMBER, API_NUM_NODASH, CHK_ACO, CHK_ACTIVE, CHK_CORE, CHK_COREIMG, CHK_CUTTINGS, CHK_DST, CHK_HORIZONTAL, CHK_LAS, CHK_LAS3, CHK_PAPER, CHK_PRECAMB, CHK_SCAN, CHK_TOP, COMMENTS, COMPLETION_DATE, COMPLETION_DATE_TXT
+dataset Descontaminacion Gas | https://services1.arcgis.com/hcmP7kr0Cx3AcTJk/arcgis/rest/services/Descontaminacion_Gas/FeatureServer/0
+candidate https://services1.arcgis.com/hcmP7kr0Cx3AcTJk/arcgis/rest/services/Descontaminacion_Gas/FeatureServer/0
+note felder: ACTUACIONE, ENTIDADES_, ESTADO, FECHA_DE_R, FECHA_DE_T, FECHA_FIN, FECHA_INIC, FID, INFORMACIO, LAT, LONG, OBSERVACIO, TIPO, Url_foto
+dataset Geology Oil and Gas Fields - Philippines | https://services.arcgis.com/Djjoop3BmZekEtDo/arcgis/rest/services/Geology_Oil_and_Gas_Fields_-_Philippines/FeatureServer/0
+decline https://services.arcgis.com/Djjoop3BmZekEtDo/arcgis/rest/services/Geology_Oil_and_Gas_Fields_-_Philippines/FeatureServer/0
+note arcgis-error-body
+dataset State Natural Gas Consumption | https://services1.arcgis.com/82YxYqy3f0s2D9c4/arcgis/rest/services/State_NaturalGasConsumption/FeatureServer/0
+candidate https://services1.arcgis.com/82YxYqy3f0s2D9c4/arcgis/rest/services/State_NaturalGasConsumption/FeatureServer/0
+note felder: DRAWSEQ, Ergy_Ex_Per_Cap, NatGas_Cons, NatGas_Cost, NatGas_Prod, NatGas_Wells, Nat_Gas_Reserv, OBJECTID, Oil_Cons, Oil_Cost, Oil_Prod, Oil_Reserv, Rotary_Rigs, STATE_ABBR, STATE_FIPS, STATE_NAME, SUB_REGION, Tot_Egry_Cons
+dataset City of South Bend Natural Gas Usage: 2011 - 2013 (Historic) | https://services1.arcgis.com/0n2NelSAfR7gTkr1/arcgis/rest/services/City_of_South_Bend_Natural_Gas_Usage/FeatureServer/0
+candidate https://services1.arcgis.com/0n2NelSAfR7gTkr1/arcgis/rest/services/City_of_South_Bend_Natural_Gas_Usage/FeatureServer/0
+note felder: Department, FID, Month, Month_Number, Month_and_Year, Natural_Gas_Usage__Therms_, Year
+dataset DTE Gas Mains | https://services2.arcgis.com/L81TiOwAPO1ZvU9b/arcgis/rest/services/DTE_Gas_Mains/FeatureServer/0
+candidate https://services2.arcgis.com/L81TiOwAPO1ZvU9b/arcgis/rest/services/DTE_Gas_Mains/FeatureServer/0
+note felder: CreationDate, Creator, Date_End, Date_Start, Details, EditDate, Editor, OBJECTID, Project_Number, Shape__Length
+dataset Zona indicativa rete gas Canobbio | https://services7.arcgis.com/6WqrMZFtSnzyHTRl/arcgis/rest/services/ZonaReteGas/FeatureServer/0
+candidate https://services7.arcgis.com/6WqrMZFtSnzyHTRl/arcgis/rest/services/ZonaReteGas/FeatureServer/0
+note felder: FID, Id, Shape__Area, Shape__Length
+dataset Gas Distribution System Overlapping Polygons in Kentucky | https://services3.arcgis.com/ghsX9CKghMvyYjBU/arcgis/rest/services/Gas_Distribution_Overlap_poly/FeatureServer/0
+candidate https://services3.arcgis.com/ghsX9CKghMvyYjBU/arcgis/rest/services/Gas_Distribution_Overlap_poly/FeatureServer/0
+note felder: DestinationObjectClassName, DestinationObjectID, OBJECTID, OriginObjectClassName, OriginObjectID, RuleDescription, RuleType, Shape__Area, Shape__Length, isException
+dataset Natural Gas Processing Plants | https://services.arcgis.com/jDGuO8tYggdCCnUJ/arcgis/rest/services/Natural_Gas_Processing_Plants/FeatureServer/0
+candidate https://services.arcgis.com/jDGuO8tYggdCCnUJ/arcgis/rest/services/Natural_Gas_Processing_Plants/FeatureServer/0
+note felder: BTU_Conten, Cap_MMcfd, City, County, Dry_Stor, FID, Latitude, Loc_Source, Longitude, NGL_Stor, Operator, Owner, Period, Plant_Flow, Plant_Name, Source, State, ZipCode
+dataset Natural Gas Processing Plants | https://services2.arcgis.com/d0NFID1O0ng4wccB/arcgis/rest/services/Natural_Gas_Processing_Plants/FeatureServer/0
+candidate https://services2.arcgis.com/d0NFID1O0ng4wccB/arcgis/rest/services/Natural_Gas_Processing_Plants/FeatureServer/0
+note felder: BTU_Conten, Cap_MMcfd, City, County, Dry_Stor, FID, Latitude, Longitude, NGL_Stor, Operator, Owner, Period, Plant_Flow, Plant_Name, Source, State, ZipCode
+dataset Colorado Oil/Gas Wells | https://services.arcgis.com/jDGuO8tYggdCCnUJ/arcgis/rest/services/CA_OG_Activity/FeatureServer/3
+candidate https://services.arcgis.com/jDGuO8tYggdCCnUJ/arcgis/rest/services/CA_OG_Activity/FeatureServer/3
+note felder: API, API_County, API_Label, Api_Seq, Citing_Typ, Dir_E_W, Dir_N_S, Dist_E_W, Dist_N_S, Facil_Id, Facil_Stat, Facil_Type, Field_Code, Field_Name, Ground_Ele, Latitude, Loc_ID, Loc_Name
+dataset relevant oil gas | https://services.arcgis.com/jDGuO8tYggdCCnUJ/arcgis/rest/services/SD_1182018/FeatureServer/0
+candidate https://services.arcgis.com/jDGuO8tYggdCCnUJ/arcgis/rest/services/SD_1182018/FeatureServer/0
+note felder: API_Numb_1, API_Numb_2, API_Number, Bottom_Hol, Cores_Avai, County, DatabaseRe, Database_1, Date_Issue, Date_Spud, Date_plug, Elogs_File, Enhanced_R, Export_Dat, Ground_Sur, Kelly_Bush, Measured_D, OBJECTID
+dataset Energy Pipelines - Oil and Gas | https://portal.igs.indiana.edu/arcgis/rest/services/Energy_Pipelines_Oil_Gas/FeatureServer/0
+candidate https://portal.igs.indiana.edu/arcgis/rest/services/Energy_Pipelines_Oil_Gas/FeatureServer/0
+note felder: CO_NAME, GlobalID, LENGTH, OBJECTID, PIPE_CLASS, PIPE_SIZE, PIPE_TYPE, Shape__Length
+dataset CA Energy Commission - Gas Stations | https://services.arcgis.com/BLN4oKB0N1YSgvY8/arcgis/rest/services/CA_GasStations/FeatureServer/0
+candidate https://services.arcgis.com/BLN4oKB0N1YSgvY8/arcgis/rest/services/CA_GasStations/FeatureServer/0
+note felder: City, Confidence, Facility_Address, Facility_Name, Full_Address, Low_Income, OBJECTID, Operational_Designation, PIC, STATE, Source, ZIP_Code
+dataset ROMO SOIL Soil Units | https://services1.arcgis.com/fBc8EJBxQRMcHlei/arcgis/rest/services/ROMO_SOILS_Soils_py_NAD83_1/FeatureServer/0
+candidate https://services1.arcgis.com/fBc8EJBxQRMcHlei/arcgis/rest/services/ROMO_SOILS_Soils_py_NAD83_1/FeatureServer/0
+note felder: ACRES, AREASYMBOL, CREATEDATE, CREATEUSER, DATAACCESS, EDITDATE, EDITUSER, GEOMETRYID, GROUPCODE, GROUPNAME, GlobalID, MAPMETHOD, MAPSOURCE, MUKEY, MUNAME, MUSYM, NOTES, OBJECTID
+dataset Pensacola Brownfield Soil Health | https://services.arcgis.com/eoP5lsTDzcIUyaQZ/arcgis/rest/services/Pensacola_Brownfield_Soil_Health/FeatureServer/0
+candidate https://services.arcgis.com/eoP5lsTDzcIUyaQZ/arcgis/rest/services/Pensacola_Brownfield_Soil_Health/FeatureServer/0
+note felder: Al_Igeo, Al_ppm, Ar_Igeo, Ar_ppm, Arsenic_CF, Cadmium_CF, Cd_Igeo, Cd_ppm, Copper_CF, CreationDate, Creator, Cu_Igeo, Cu_ppm, Date, EditDate, Editor, FID, Latitude
+dataset PECO PECO Energy Gas Potential WebLayer | https://services3.arcgis.com/agWTKEK7X5K1Bx7o/arcgis/rest/services/parcels/FeatureServer/0
+candidate https://services3.arcgis.com/agWTKEK7X5K1Bx7o/arcgis/rest/services/parcels/FeatureServer/0
+note felder: OBJECTID, Shape__Area, Shape__Length, gasPotential
+dataset Oil   gas potential by watershed | https://services1.arcgis.com/754BERmVIq3RqSf8/arcgis/rest/services/Oil___gas_potential_by_watershed/FeatureServer/0
+candidate https://services1.arcgis.com/754BERmVIq3RqSf8/arcgis/rest/services/Oil___gas_potential_by_watershed/FeatureServer/0
+note felder: AreaAcres, BigGameCorridor, HUC10, Name, NativeTrout, OBJECTID, Shape__Area, Shape__Length, WellsPerSqMi, cntWells, huc10_temp93_11_wtd, majPotential, pctBLM, pctNPS, pctOther, pctPrivate, pctState, pctTribal
+dataset Texas Oil and Gas Leases | https://services.arcgis.com/jDGuO8tYggdCCnUJ/arcgis/rest/services/Leases/FeatureServer/0
+candidate https://services.arcgis.com/jDGuO8tYggdCCnUJ/arcgis/rest/services/Leases/FeatureServer/0
+note felder: ALL_DEPTHS, APPLICATIO, BONUS_AMOU, BONUS_AM_1, CURRENT_GR, CURRENT_NE, DEPTH_FROM, DEPTH_FR_1, DEPTH_LAND, DEPTH_TO, DEPTH_TO_T, DEP_FROM_F, DEP_TO_FOR, EFFECTIVE_, FID, FIELD_NAME, FIRST_WELL, FIRST_WE_1
+dataset Soil Landscapes - GS - 042026 | https://services-ap1.arcgis.com/vqtMOSC0GftEI0Lx/arcgis/rest/services/Soil_Landscapes/FeatureServer/0
+candidate https://services-ap1.arcgis.com/vqtMOSC0GftEI0Lx/arcgis/rest/services/Soil_Landscapes/FeatureServer/0
+note felder: FID, Shape__Area, Shape__Length, ag_land__1, ag_land_cl, avocado_tr, bamboo_dry, banana_dry, banana_tri, blackbutt_, capsicum_s, capsicum_w, carribean_, cf_frost, choko_spra, citrus_tri, concept, cp_rainfal
+dataset SOIL GROUPS | https://services1.arcgis.com/SIYkiqjmENweC50g/arcgis/rest/services/SOIL_GROUPS/FeatureServer/0
+candidate https://services1.arcgis.com/SIYkiqjmENweC50g/arcgis/rest/services/SOIL_GROUPS/FeatureServer/0
+note felder: FID, HYDROGRP, Shape_STAr, Shape_STLe, Shape__Area, Shape__Length
+dataset Natural Gas Processing Plant | https://services.arcgis.com/4OV0eRKiLAYkbH2J/arcgis/rest/services/Natural_Gas_Processing_Plant/FeatureServer/0
+decline https://services.arcgis.com/4OV0eRKiLAYkbH2J/arcgis/rest/services/Natural_Gas_Processing_Plant/FeatureServer/0
+note arcgis-error-body
+dataset PECO Energy Gas Potential WebLayer | https://services3.arcgis.com/uhXQCh3djCD8zBfu/arcgis/rest/services/parcels/FeatureServer/0
+candidate https://services3.arcgis.com/uhXQCh3djCD8zBfu/arcgis/rest/services/parcels/FeatureServer/0
+note felder: OBJECTID, Shape__Area, Shape__Length, gasPotential
+# keyword water vapor
+dataset VAPOR DE AGUA | https://services7.arcgis.com/aQBFMi4aGYPqGK07/arcgis/rest/services/VAPOR_DE_AGUA/FeatureServer/0
+candidate https://services7.arcgis.com/aQBFMi4aGYPqGK07/arcgis/rest/services/VAPOR_DE_AGUA/FeatureServer/0
+note felder: FID, Shape__Area, Shape__Length, VAPOR_KgM2, gridcode
+dataset Sampled Vapor Pin Locations | https://services5.arcgis.com/bPacKTm9cauMXVfn/arcgis/rest/services/336_387_WallTube_Shapefiles/FeatureServer/1
+candidate https://services5.arcgis.com/bPacKTm9cauMXVfn/arcgis/rest/services/336_387_WallTube_Shapefiles/FeatureServer/1
+note felder: FID, Id
+dataset Vapor Pressure Deficit (1981 to 2010 Normal) | https://services1.arcgis.com/Ezk9fcjSUkeadg6u/arcgis/rest/services/vpdmean_clim19812010/FeatureServer/0
+candidate https://services1.arcgis.com/Ezk9fcjSUkeadg6u/arcgis/rest/services/vpdmean_clim19812010/FeatureServer/0
+note felder: FID, Id, Shape__Area, Shape__Length, gridcode, vpd_kpa
+dataset BaylorU Steamed Water Utilities | https://services8.arcgis.com/t4l5MlZWeZ3C03RW/arcgis/rest/services/BaylorU_Steamed_Water_Utilities/FeatureServer
+candidate-leer https://services8.arcgis.com/t4l5MlZWeZ3C03RW/arcgis/rest/services/BaylorU_Steamed_Water_Utilities/FeatureServer
+note 0 rows, felder unbekannt
+dataset Steam Water - Direct Buried | https://services8.arcgis.com/t4l5MlZWeZ3C03RW/arcgis/rest/services/BaylorU_Steamed_Water_Utilities/FeatureServer/1
+candidate https://services8.arcgis.com/t4l5MlZWeZ3C03RW/arcgis/rest/services/BaylorU_Steamed_Water_Utilities/FeatureServer/1
+note felder: CreationDate, Creator, Diameter, EditDate, Editor, GlobalID, Material, OBJECTID, Shape__Length
+dataset Steam Water - Direct Buried Return | https://services8.arcgis.com/t4l5MlZWeZ3C03RW/arcgis/rest/services/BaylorU_Steamed_Water_Utilities/FeatureServer/2
+candidate https://services8.arcgis.com/t4l5MlZWeZ3C03RW/arcgis/rest/services/BaylorU_Steamed_Water_Utilities/FeatureServer/2
+note felder: CreationDate, Creator, Diameter, EditDate, Editor, GlobalID, Material, OBJECTID, Shape__Length
+dataset Walter Piano Vapor Intrusion Area of Investigation | https://services.arcgis.com/cJ9YHowT8TU7DUyn/arcgis/rest/services/Main_St_Well_Field_boundary_WFL1/FeatureServer/2
+candidate https://services.arcgis.com/cJ9YHowT8TU7DUyn/arcgis/rest/services/Main_St_Well_Field_boundary_WFL1/FeatureServer/2
+note felder: OBJECTID, Shape__Area, Shape__Length
+dataset Lusher Street Vapor Intrusion Area of Concern | https://services.arcgis.com/cJ9YHowT8TU7DUyn/arcgis/rest/services/Main_St_Well_Field_boundary_WFL1/FeatureServer/0
+candidate https://services.arcgis.com/cJ9YHowT8TU7DUyn/arcgis/rest/services/Main_St_Well_Field_boundary_WFL1/FeatureServer/0
+note felder: OBJECTID, Shape__Area, Shape__Length
+dataset Lusher Street VI Area of Concern Boundary WFL1 | https://services.arcgis.com/cJ9YHowT8TU7DUyn/arcgis/rest/services/Lusher_Street_VI_Area_of_Concern_Boundary_WFL1/FeatureServer/0
+candidate https://services.arcgis.com/cJ9YHowT8TU7DUyn/arcgis/rest/services/Lusher_Street_VI_Area_of_Concern_Boundary_WFL1/FeatureServer/0
+note felder: OBJECTID, Shape__Area, Shape__Length
+dataset Vapor Case Zone | https://services.arcgis.com/g1fRTDLeMgspWrYp/arcgis/rest/services/VaporCaseZone/FeatureServer/0
+candidate https://services.arcgis.com/g1fRTDLeMgspWrYp/arcgis/rest/services/VaporCaseZone/FeatureServer/0
+note felder: CaseMgr, GlobalID, OBJECTID, Shape__Area, Shape__Length, Zone
+dataset DSCP Vapor Sample Locs | https://services8.arcgis.com/Ptmjp8NrmPDxapXD/arcgis/rest/services/DSCP_VI_Basemap_DATA_view_layer/FeatureServer/0
+candidate https://services8.arcgis.com/Ptmjp8NrmPDxapXD/arcgis/rest/services/DSCP_VI_Basemap_DATA_view_layer/FeatureServer/0
+note felder: OBJECTID, bldg, sys_loc_code
+dataset Water Laterals | https://services.arcgis.com/uFSCv839a7S1MRb7/arcgis/rest/services/Water_Laterals/FeatureServer/0
+candidate https://services.arcgis.com/uFSCv839a7S1MRb7/arcgis/rest/services/Water_Laterals/FeatureServer/0
+note felder: FACILITYID, LOCATION, MATERIAL, OBJECTID, SERVICETYPE, SIZE, Shape__Length
+dataset Main Street Well Field Vapor Intrusion Area of Investigation | https://services.arcgis.com/cJ9YHowT8TU7DUyn/arcgis/rest/services/Main_St_Well_Field_boundary_WFL1/FeatureServer/7
+candidate https://services.arcgis.com/cJ9YHowT8TU7DUyn/arcgis/rest/services/Main_St_Well_Field_boundary_WFL1/FeatureServer/7
+note felder: OBJECTID, Shape__Area, Shape__Length
+dataset Water Mains | https://services.arcgis.com/uFSCv839a7S1MRb7/arcgis/rest/services/Water_Main/FeatureServer/0
+candidate https://services.arcgis.com/uFSCv839a7S1MRb7/arcgis/rest/services/Water_Main/FeatureServer/0
+note felder: FACILITYID, LOCATION, MAINSIZE, MAINTYPE, MATERIAL, OBJECTID, Shape__Length
+dataset Water Main | https://services6.arcgis.com/deAS8KeQ1ASFd1S2/arcgis/rest/services/Martinsburg_Water_Distribution_Pipes/FeatureServer/515001
+candidate https://services6.arcgis.com/deAS8KeQ1ASFd1S2/arcgis/rest/services/Martinsburg_Water_Distribution_Pipes/FeatureServer/515001
+note felder: OBJECTID, Shape__Length, adddetails, assetid, assettype, creationdate, creator, designtype, diameter, esrignss_avg_h_rms, esrignss_avg_v_rms, esrignss_manual_locations, esrignss_worst_fixtype, esrignss_worst_h_rms, esrignss_worst_v_rms, globalid, inservicedate, installdate
+dataset Water Zones | https://services7.arcgis.com/xBaYvpTc0JtqK5u2/arcgis/rest/services/Current_Water_Zones/FeatureServer/0
+candidate https://services7.arcgis.com/xBaYvpTc0JtqK5u2/arcgis/rest/services/Current_Water_Zones/FeatureServer/0
+note felder: FID, Name, Shape_Area, Shape_Leng, Shape__Area, Shape__Length
+dataset Water Main | https://services6.arcgis.com/hijIcquGnJsR08JY/arcgis/rest/services/WaterUpdate/FeatureServer/8
+candidate https://services6.arcgis.com/hijIcquGnJsR08JY/arcgis/rest/services/WaterUpdate/FeatureServer/8
+note felder: Comment, CreationDate, Creator, Diameter, EditDate, Editor, GlobalID, Locality, Material, OBJECTID, PipeDepth, PipeFunction, PipeLength, PressureZone, Project, STNAME, Shape__Length_2, Status
+dataset Water Tank | https://services6.arcgis.com/hijIcquGnJsR08JY/arcgis/rest/services/WaterUpdate/FeatureServer/7
+candidate https://services6.arcgis.com/hijIcquGnJsR08JY/arcgis/rest/services/WaterUpdate/FeatureServer/7
+note felder: CreationDate, CreationDate_1, Creator, Creator_1, EditDate, EditDate_1, Editor, Editor_1, Elev, GlobalID, Laititude, Locality, Longitude, OBJECTID, TankCapacity, TankHeight, TankLocation, TankName
+dataset Water Hydrants | https://services.arcgis.com/uFSCv839a7S1MRb7/arcgis/rest/services/Water_Hydrants/FeatureServer/0
+candidate https://services.arcgis.com/uFSCv839a7S1MRb7/arcgis/rest/services/Water_Hydrants/FeatureServer/0
+note felder: FACILITYID, LOCATION, LOC_STRNAME, LOC_STRNUM, LOC_STRTYPE, OBJECTID, OWNERSHIP
+dataset Water Valves | https://services.arcgis.com/uFSCv839a7S1MRb7/arcgis/rest/services/Water_Valves/FeatureServer/0
+candidate https://services.arcgis.com/uFSCv839a7S1MRb7/arcgis/rest/services/Water_Valves/FeatureServer/0
+note felder: FACILITYID, LIFECYCLESTATUS, LOCATION, OBJECTID, SIZE, VALVETYPE, VALVE_USE
+dataset Water Meter DCUs | https://services.arcgis.com/uFSCv839a7S1MRb7/arcgis/rest/services/Water_Meter_DCUs/FeatureServer/0
+candidate https://services.arcgis.com/uFSCv839a7S1MRb7/arcgis/rest/services/Water_Meter_DCUs/FeatureServer/0
+note felder: BUFFER_DISTANCE_m, DATATYPE, FACILITYID, FULLADDR, Location, OBJECTID
+dataset Water Bodies | https://services1.arcgis.com/I6XnrlnguPDoEObn/arcgis/rest/services/Water_Bodies/FeatureServer/0
+candidate https://services1.arcgis.com/I6XnrlnguPDoEObn/arcgis/rest/services/Water_Bodies/FeatureServer/0
+note felder: GlobalID, HYNAME, HYTYPE, OBJECTID, Shape__Area, Shape__Length
+dataset Water Main | https://services6.arcgis.com/KEzHLslVRHHoUXir/arcgis/rest/services/WaterDistributionSystem_540600ddade242bca5152512f857e4b4/FeatureServer/515001
+candidate-leer https://services6.arcgis.com/KEzHLslVRHHoUXir/arcgis/rest/services/WaterDistributionSystem_540600ddade242bca5152512f857e4b4/FeatureServer/515001
+note 0 rows, felder unbekannt
+dataset water lines | https://services7.arcgis.com/iGhwVqNkIclIbj1y/arcgis/rest/services/lines/FeatureServer/0
+decline https://services7.arcgis.com/iGhwVqNkIclIbj1y/arcgis/rest/services/lines/FeatureServer/0
+note arcgis-error-body
+dataset Water Treatment | https://services.arcgis.com/mrvsguor7fEXSaqM/arcgis/rest/services/Water_Treatment/FeatureServer/0
+candidate https://services.arcgis.com/mrvsguor7fEXSaqM/arcgis/rest/services/Water_Treatment/FeatureServer/0
+note felder: Constructi, Image, Name, Number, OBJECTID, OBJECTID_1, PID, PNTID, Website
+dataset Water Wells | https://services.arcgis.com/rt1leD4Hj3sLGHNL/arcgis/rest/services/Water_Wells/FeatureServer/4
+candidate https://services.arcgis.com/rt1leD4Hj3sLGHNL/arcgis/rest/services/Water_Wells/FeatureServer/4
+note felder: ABANDON_FY, CA_PROJECT, CLOSED_HPP_, COMMENTS, CONSTRUCT_DATE, EAM_MAP_ID, EDITTRACK_NUM, FACILITYID, FINANCE, FISCAL_CODE, GPS_DATE, GPS_Z_ELEV, GPS_Z_LOC, GlobalID, HOSEOUTLETSIZE, HYD_MAKE, HYD_MFG, HYD_MODEL
+dataset Water | https://services3.arcgis.com/EksqEpNbvM07IZjR/arcgis/rest/services/TerrainNRM_Water/FeatureServer
+candidate-leer https://services3.arcgis.com/EksqEpNbvM07IZjR/arcgis/rest/services/TerrainNRM_Water/FeatureServer
+note 0 rows, felder unbekannt
+dataset Water Reservoirs | https://services7.arcgis.com/2ECs938g489DMWjt/arcgis/rest/services/Regional_Water_Reservoirs/FeatureServer/0
+candidate https://services7.arcgis.com/2ECs938g489DMWjt/arcgis/rest/services/Regional_Water_Reservoirs/FeatureServer/0
+note felder: BWL__m_, Capacity, Const_Date, Control_eq, DMAs, Depth, Flex_Coup, Geo_Opus, Geotec_Rev, HFR_SLS, HFR_ULS, In_Protect, Inlet_Loc, Inlet_NRV, New_Class, OBJECTID, Old_Class, Outlet_ASV
+dataset Water Flow Valves | https://services7.arcgis.com/ScLuo8VREMYorAkO/arcgis/rest/services/Open_Data_Water_Flow_Valves/FeatureServer/0
+candidate https://services7.arcgis.com/ScLuo8VREMYorAkO/arcgis/rest/services/Open_Data_Water_Flow_Valves/FeatureServer/0
+note felder: ASSETGROUP, ASSETTYPE, Compkey, GLOBALID, LegacyID, OBJECTID, accountid, assetid, constructionstatus, diameter, installdate, maintby, notes, ownedby
+dataset Water | https://services9.arcgis.com/lpwU2gGjquNvlyyN/arcgis/rest/services/Water/FeatureServer/0
+decline https://services9.arcgis.com/lpwU2gGjquNvlyyN/arcgis/rest/services/Water/FeatureServer/0
+note arcgis-error-body
+dataset Water Storage | https://services.arcgis.com/rt1leD4Hj3sLGHNL/arcgis/rest/services/Water_Storage/FeatureServer/3
+candidate https://services.arcgis.com/rt1leD4Hj3sLGHNL/arcgis/rest/services/Water_Storage/FeatureServer/3
+note felder: ABANDON_FY, CA_PROJECT, CLOSED_HPP_, COMMENTS, CONSTRUCT_DATE, EAM_MAP_ID, EDITTRACK_NUM, FACILITYID, FINANCE, FISCAL_CODE, GPS_DATE, GPS_Z_ELEV, GPS_Z_LOC, GlobalID, HOSEOUTLETSIZE, HYD_MAKE, HYD_MFG, HYD_MODEL
+dataset Water Storage Tanks view | https://services3.arcgis.com/arjIZiPnUOHQnhsl/arcgis/rest/services/Water_Storage_Tanks_/FeatureServer/0
+candidate https://services3.arcgis.com/arjIZiPnUOHQnhsl/arcgis/rest/services/Water_Storage_Tanks_/FeatureServer/0
+note felder: Address_Number, Capacity, CreationDate, Creator, EditDate, Editor, GlobalID, Height, Lining_Type, Manufacturer, Material, OBJECTID, OpenGov_ID, Street, Water_Tank_Type, Width
+dataset Water Pressure Zones | https://services1.arcgis.com/tZhkGVr1gXGPSz0S/arcgis/rest/services/Water_Pressure_Zones/FeatureServer/3
+candidate https://services1.arcgis.com/tZhkGVr1gXGPSz0S/arcgis/rest/services/Water_Pressure_Zones/FeatureServer/3
+note felder: CreationDate, Creator, EditDate, Editor, GlobalID, OBJECTID, SOURCE_SHP, Shape__Area, Shape__Length, TYLERID, Zone_Name
+dataset water | https://services.arcgis.com/S6jIPb0RwFTS01gX/arcgis/rest/services/water/FeatureServer
+candidate-leer https://services.arcgis.com/S6jIPb0RwFTS01gX/arcgis/rest/services/water/FeatureServer
+note 0 rows, felder unbekannt
+dataset Water Points | https://services.arcgis.com/rt1leD4Hj3sLGHNL/arcgis/rest/services/Water_Points/FeatureServer/28
+candidate https://services.arcgis.com/rt1leD4Hj3sLGHNL/arcgis/rest/services/Water_Points/FeatureServer/28
+note felder: ABANDON_FY, CA_PROJECT, CLOSED_HPP_, COMMENTS, CONSTRUCT_DATE, EAM_MAP_ID, EDITTRACK_NUM, FACILITYID, FINANCE, FISCAL_CODE, GPS_DATE, GPS_Z_ELEV, GPS_Z_LOC, GlobalID, HOSEOUTLETSIZE, HYD_MAKE, HYD_MFG, HYD_MODEL
+dataset Water Mobile App | https://services.arcgis.com/5iWzb1srkjPDXmpL/arcgis/rest/services/Water_Mobile_App/FeatureServer
+candidate-leer https://services.arcgis.com/5iWzb1srkjPDXmpL/arcgis/rest/services/Water_Mobile_App/FeatureServer
+note 0 rows, felder unbekannt
+dataset Water Access Sites | https://gis.popecountymn.gov/arcgis/rest/services/Recreation/WaterAccessSites/FeatureServer/0
+dead https://gis.popecountymn.gov/arcgis/rest/services/Recreation/WaterAccessSites/FeatureServer/0
+note fetch-void
+dataset Water Distribution Infrastructure | https://services.arcgis.com/5iWzb1srkjPDXmpL/arcgis/rest/services/Water_Distribution_Infrastructure/FeatureServer
+candidate-leer https://services.arcgis.com/5iWzb1srkjPDXmpL/arcgis/rest/services/Water_Distribution_Infrastructure/FeatureServer
+note 0 rows, felder unbekannt
+dataset Water | https://services1.arcgis.com/faTiISwEuJk1lvB1/arcgis/rest/services/Water/FeatureServer
+candidate-leer https://services1.arcgis.com/faTiISwEuJk1lvB1/arcgis/rest/services/Water/FeatureServer
+note 0 rows, felder unbekannt
+dataset Water | https://services.arcgis.com/SOVgyYCFVBkOrKDZ/arcgis/rest/services/Water/FeatureServer
+candidate-leer https://services.arcgis.com/SOVgyYCFVBkOrKDZ/arcgis/rest/services/Water/FeatureServer
+note 0 rows, felder unbekannt
+dataset Martinsburg Water Distribution Valves | https://services6.arcgis.com/deAS8KeQ1ASFd1S2/arcgis/rest/services/Martinsburg_Water_Distribution_Valves/FeatureServer
+candidate-leer https://services6.arcgis.com/deAS8KeQ1ASFd1S2/arcgis/rest/services/Martinsburg_Water_Distribution_Valves/FeatureServer
+note 0 rows, felder unbekannt
+dataset Water | https://services6.arcgis.com/gTVQjOemHjQpAWul/arcgis/rest/services/Water/FeatureServer
+candidate-leer https://services6.arcgis.com/gTVQjOemHjQpAWul/arcgis/rest/services/Water/FeatureServer
+note 0 rows, felder unbekannt
+dataset Martinsburg Water Distribution Pipes | https://services6.arcgis.com/deAS8KeQ1ASFd1S2/arcgis/rest/services/Martinsburg_Water_Distribution_Pipes/FeatureServer
+candidate-leer https://services6.arcgis.com/deAS8KeQ1ASFd1S2/arcgis/rest/services/Martinsburg_Water_Distribution_Pipes/FeatureServer
+note 0 rows, felder unbekannt
+dataset OLD WATER Mains | https://services5.arcgis.com/oHyVM17u2FMyV4oB/arcgis/rest/services/W_Main/FeatureServer/0
+candidate https://services5.arcgis.com/oHyVM17u2FMyV4oB/arcgis/rest/services/W_Main/FeatureServer/0
+note felder: Constructi, DRAWING, Diameter, Enabled, Engineered, Entity, GlobalID, LEN, Layer, LeadJoint, MC_Comment, MainID, Material, NOTES, OBJECTID, Owner, PERMIT_NUM, Shape_Leng
+dataset Water Network | https://services.arcgis.com/rt1leD4Hj3sLGHNL/arcgis/rest/services/Water_Network/FeatureServer/29
+candidate https://services.arcgis.com/rt1leD4Hj3sLGHNL/arcgis/rest/services/Water_Network/FeatureServer/29
+note felder: ABANDON_FY, AB_COMMENT, CA_PROJECT, COMMENT, CONSTRUCT_DATE, DIAMETER_, EAM_MAP_ID, EDITTRACK_NUM, FACILITYID, FINANCE, FISCAL_CODE, GPS_DATE, GlobalID, LINE_TYPE, MATERIAL, NW_FILENAME, NW_FOLDER, NW_PATH
+dataset OLD Water Mains | https://services5.arcgis.com/oHyVM17u2FMyV4oB/arcgis/rest/services/W_Main/FeatureServer
+candidate-leer https://services5.arcgis.com/oHyVM17u2FMyV4oB/arcgis/rest/services/W_Main/FeatureServer
+note 0 rows, felder unbekannt
+dataset Water Meters | https://services.arcgis.com/rt1leD4Hj3sLGHNL/arcgis/rest/services/Water_Meters/FeatureServer/5
+candidate https://services.arcgis.com/rt1leD4Hj3sLGHNL/arcgis/rest/services/Water_Meters/FeatureServer/5
+note felder: ABANDON_FY, CA_PROJECT, CLOSED_HPP_, COMMENTS, CONSTRUCT_DATE, EAM_MAP_ID, EDITTRACK_NUM, FACILITYID, FINANCE, FISCAL_CODE, GPS_DATE, GPS_Z_ELEV, GPS_Z_LOC, GlobalID, HOSEOUTLETSIZE, HYD_MAKE, HYD_MFG, HYD_MODEL
+dataset Water Fittings | https://services.arcgis.com/rt1leD4Hj3sLGHNL/arcgis/rest/services/Water_Fittings/FeatureServer/2
+candidate https://services.arcgis.com/rt1leD4Hj3sLGHNL/arcgis/rest/services/Water_Fittings/FeatureServer/2
+note felder: ABANDON_FY, CA_PROJECT, CLOSED_HPP_, COMMENTS, CONSTRUCT_DATE, EAM_MAP_ID, EDITTRACK_NUM, FACILITYID, FINANCE, FISCAL_CODE, GPS_DATE, GPS_Z_ELEV, GPS_Z_LOC, GlobalID, HOSEOUTLETSIZE, HYD_MAKE, HYD_MFG, HYD_MODEL
+dataset Water Pump | https://services2.arcgis.com/CnkB6jCzAsyli34z/arcgis/rest/services/OpenData_WaterInfrastructure/FeatureServer/13
+candidate https://services2.arcgis.com/CnkB6jCzAsyli34z/arcgis/rest/services/OpenData_WaterInfrastructure/FeatureServer/13
+note felder: ASSETGROUP, ASSETTYPE, ASSOCIATIONSTATUS, DMASubnetworkName, GLOBALID, ISCONNECTED, ISSUBNETWORKCONTROLLER, IsolationSubnetworkName, OBJECTID, PressureSubnetworkName, SUBNETWORKCONTROLLERNAME, SUPPORTEDSUBNETWORKNAME, SUPPORTINGSUBNETWORKNAME, SystemSubnetworkName, TERMINALCONFIGURATION, TIERNAME, TIERRANK, VALIDATIONSTATUS
+dataset Water Supply Boundary | https://services6.arcgis.com/KEzHLslVRHHoUXir/arcgis/rest/services/WaterDistributionSystem_540600ddade242bca5152512f857e4b4/FeatureServer/910507
+candidate-leer https://services6.arcgis.com/KEzHLslVRHHoUXir/arcgis/rest/services/WaterDistributionSystem_540600ddade242bca5152512f857e4b4/FeatureServer/910507
+note 0 rows, felder unbekannt
+dataset Water Mains | https://services.arcgis.com/rt1leD4Hj3sLGHNL/arcgis/rest/services/Water_Mains/FeatureServer/6
+candidate https://services.arcgis.com/rt1leD4Hj3sLGHNL/arcgis/rest/services/Water_Mains/FeatureServer/6
+note felder: ABANDON_FY, AB_COMMENT, CA_PROJECT, COMMENT, CONSTRUCT_DATE, DIAMETER_, EAM_MAP_ID, EDITTRACK_NUM, FACILITYID, FINANCE, FISCAL_CODE, GPS_DATE, GlobalID, LINE_TYPE, MATERIAL, NW_FILENAME, NW_FOLDER, NW_PATH
+dataset Water Test Stations | https://services7.arcgis.com/iMHDvyzuG2Q2tuit/arcgis/rest/services/WaterTestStations/FeatureServer/0
+candidate https://services7.arcgis.com/iMHDvyzuG2Q2tuit/arcgis/rest/services/WaterTestStations/FeatureServer/0
+note felder: ADDRESS, COMMENT, Enabled, FID, GPS, GPSDATE, GPSYEAR, INSTALLDAT, LASTEDITOR, LASTUPDATE, MAP_ID, POINT_X, POINT_Y, created_da, created_us, last_edi_1, last_edite
+dataset Water Storage Boundary | https://services6.arcgis.com/KEzHLslVRHHoUXir/arcgis/rest/services/WaterDistributionSystem_540600ddade242bca5152512f857e4b4/FeatureServer/910503
+candidate-leer https://services6.arcgis.com/KEzHLslVRHHoUXir/arcgis/rest/services/WaterDistributionSystem_540600ddade242bca5152512f857e4b4/FeatureServer/910503
+note 0 rows, felder unbekannt
+dataset Drinking Water Intakes | https://mercator.env.nm.gov/server/rest/services/dwb/drinking_water_intakes/FeatureServer/0
+dead https://mercator.env.nm.gov/server/rest/services/dwb/drinking_water_intakes/FeatureServer/0
+note fetch-void
+dataset Water Distribution System | https://services6.arcgis.com/KEzHLslVRHHoUXir/arcgis/rest/services/WaterDistributionSystem_540600ddade242bca5152512f857e4b4/FeatureServer
+candidate-leer https://services6.arcgis.com/KEzHLslVRHHoUXir/arcgis/rest/services/WaterDistributionSystem_540600ddade242bca5152512f857e4b4/FeatureServer
+note 0 rows, felder unbekannt
+dataset Water Mains | https://services3.arcgis.com/A7O8YnTNtzRPIn7T/arcgis/rest/services/Cityworks_WaterMapAGOL/FeatureServer/12
+candidate https://services3.arcgis.com/A7O8YnTNtzRPIn7T/arcgis/rest/services/Cityworks_WaterMapAGOL/FeatureServer/12
+note felder: ACTIVEFLAG, CONDITION, DESIGNLEN, DIAMETER, ENABLED, FACILITYID, GIS_ENTRY_STAGE, INSPECTDATE, INSTALLDATE, LIFECYCLESTATUS, LOCATION, MAINTBY, MATERIAL, OBJECTID, OWNEDBY, REMARKS, SOURCE, Shape__Length
+dataset Water Mains | https://services3.arcgis.com/A7O8YnTNtzRPIn7T/arcgis/rest/services/CityWorks_WaterNetwork/FeatureServer/12
+candidate https://services3.arcgis.com/A7O8YnTNtzRPIn7T/arcgis/rest/services/CityWorks_WaterNetwork/FeatureServer/12
+note felder: ACTIVEFLAG, CONDITION, DESIGNLEN, DIAMETER, ENABLED, FACILITYID, GIS_ENTRY_STAGE, INSPECTDATE, INSTALLDATE, LIFECYCLESTATUS, LOCATION, MAINTBY, MATERIAL, OBJECTID, OWNEDBY, REMARKS, SOURCE, Shape__Length
+dataset Round Rock Water Customers | https://services.arcgis.com/KaARkuoKF9vrGr3P/arcgis/rest/services/Round_Rock_Water_Customers2/FeatureServer/3
+candidate https://services.arcgis.com/KaARkuoKF9vrGr3P/arcgis/rest/services/Round_Rock_Water_Customers2/FeatureServer/3
+note felder: OBJECTID, Phone, Shape__Area, Shape__Length, WaterServiceProvider, Website
+dataset Water CCN | https://services6.arcgis.com/N6Lzvtb46cpxThhu/ArcGIS/rest/services/Water_CCN_Service_Areas/FeatureServer/210
+candidate https://services6.arcgis.com/N6Lzvtb46cpxThhu/ArcGIS/rest/services/Water_CCN_Service_Areas/FeatureServer/210
+note felder: CCN_NO, CCN_NO2, CCN_TYPE, COUNTY, DBA_NAME, OBJECTID, STATUS, Shape__Area, Shape__Length, TYPE, UTILITY
+dataset Area Water CCNs | https://maps.pflugervilletx.gov/arcgis/rest/services/Water/Water_CCNs/FeatureServer/0
+candidate https://maps.pflugervilletx.gov/arcgis/rest/services/Water/Water_CCNs/FeatureServer/0
+note felder: CCN, OBJECTID, UTILITY
+dataset Water Main | https://services8.arcgis.com/h40jF5eUWi8ndmHe/arcgis/rest/services/WaterSystem2018/FeatureServer/8
+candidate https://services8.arcgis.com/h40jF5eUWi8ndmHe/arcgis/rest/services/WaterSystem2018/FeatureServer/8
+note felder: ACTIVEFLAG, CondRate, ConseqRate, County, CriticalRate, DIAMETER, ENABLED, EstReplaceYr, FACILITYID, FailProbRate, GlobalID, INSTALLDATE, InstallYr, LASTEDITOR, LASTUPDATE, LifeSpan, LocDescription, MAINTBY
+dataset Water Protection | https://services1.arcgis.com/faTiISwEuJk1lvB1/arcgis/rest/services/Water/FeatureServer/5
+candidate https://services1.arcgis.com/faTiISwEuJk1lvB1/arcgis/rest/services/Water/FeatureServer/5
+note felder: Acreage, BufferDist, CreationDate, Creator, EditDate, Editor, Id, OBJECTID, Ord_link, Ord_num, Shape__Area, Shape__Length, WPA_NAME, WP_Type, watershd
+dataset Water | https://services5.arcgis.com/09JsFDXeRqZYiaZt/arcgis/rest/services/Water/FeatureServer/0
+candidate https://services5.arcgis.com/09JsFDXeRqZYiaZt/arcgis/rest/services/Water/FeatureServer/0
+note felder: ATTRIBUTE, NAME, OBJECTID, OBJECTID_1, Shape_Leng
+dataset Water | https://services2.arcgis.com/RMSabPClYIvVQ6Si/arcgis/rest/services/Water/FeatureServer
+candidate-leer https://services2.arcgis.com/RMSabPClYIvVQ6Si/arcgis/rest/services/Water/FeatureServer
+note 0 rows, felder unbekannt
+dataset Water Sampling Station | https://services2.arcgis.com/CnkB6jCzAsyli34z/arcgis/rest/services/OpenData_WaterInfrastructure/FeatureServer/203
+candidate https://services2.arcgis.com/CnkB6jCzAsyli34z/arcgis/rest/services/OpenData_WaterInfrastructure/FeatureServer/203
+note felder: ASSETGROUP, ASSETTYPE, ASSOCIATIONSTATUS, DMASubnetworkName, GLOBALID, ISCONNECTED, ISSUBNETWORKCONTROLLER, IsolationSubnetworkName, OBJECTID, PressureSubnetworkName, SUBNETWORKCONTROLLERNAME, SUPPORTEDSUBNETWORKNAME, SUPPORTINGSUBNETWORKNAME, SystemSubnetworkName, TERMINALCONFIGURATION, TIERNAME, TIERRANK, VALIDATIONSTATUS
+dataset Water lines | https://services7.arcgis.com/PGBL5tcxnT4UyhZ8/arcgis/rest/services/Water_lines/FeatureServer/4
+candidate https://services7.arcgis.com/PGBL5tcxnT4UyhZ8/arcgis/rest/services/Water_lines/FeatureServer/4
+note felder: Address, Asset_Class, Asset_ID, Asset_Owner, Asset_Type, Community, DS_Invert, DS_Node, Diameter, GlobalID, Install_Date, Material, OBJECTID, Shape__Length, Short_ID, US_Invert, US_Node
+dataset Water Districts view | https://services3.arcgis.com/arjIZiPnUOHQnhsl/arcgis/rest/services/Water_Districts_view/FeatureServer/0
+candidate https://services3.arcgis.com/arjIZiPnUOHQnhsl/arcgis/rest/services/Water_Districts_view/FeatureServer/0
+note felder: CreationDate, Creator, EditDate, Editor, GlobalID, OBJECTID, Provider_Website, Service_Provider, Shape__Area, Shape__Length
+dataset Water ServiceArea | https://services6.arcgis.com/RLW8Rymck77KYbSO/arcgis/rest/services/City_of_Milton_Water_System_View/FeatureServer/8
+candidate https://services6.arcgis.com/RLW8Rymck77KYbSO/arcgis/rest/services/City_of_Milton_Water_System_View/FeatureServer/8
+note felder: FID
+dataset Water Mains | https://services1.arcgis.com/VVapzOPgBae5joyC/arcgis/rest/services/YarmouthWater/FeatureServer/1
+candidate https://services1.arcgis.com/VVapzOPgBae5joyC/arcgis/rest/services/YarmouthWater/FeatureServer/1
+note felder: ASSETID, COMMENTS, CRITRATE, CVALUE, DIAMETER, ESVCLIFE, LABEL, LOCDESC, LSTEDIT, LSTUPDAT, MATERIAL, OBJECTID, OPSTATUS, OWNER, PREFIX, PRESRANGE, PRESZONE, RecImpReas
+dataset Water Mains | https://services1.arcgis.com/VVapzOPgBae5joyC/arcgis/rest/services/Kingston_Field_Collector/FeatureServer/5
+candidate https://services1.arcgis.com/VVapzOPgBae5joyC/arcgis/rest/services/Kingston_Field_Collector/FeatureServer/5
+note felder: ACTIVEFLAG, DIAMETER, ENABLED, FACILITYID, GlobalID, INSTALLDATE, LASTEDITOR, LASTUPDATE, Label, MAINTBY, MATERIAL, OBJECTID, OWNEDBY, Shape__Length, TRANSMISS, WATERTYPE, created_date, created_user
+dataset Water Tower | https://services.arcgis.com/nVsqScUI2D25Zqg0/arcgis/rest/services/Water_Online_Map/FeatureServer/3
+candidate https://services.arcgis.com/nVsqScUI2D25Zqg0/arcgis/rest/services/Water_Online_Map/FeatureServer/3
+note felder: AdministrativeArea, AncillaryRole, Comments, Diameter, Elevation, Enabled, FacilityID, GlobalID, InstallDate, LifecycleStatus, LocationDescription, OBJECTID, OperationalArea, Subtype, WaterType, WorkorderID
+dataset Water Main | https://services8.arcgis.com/ypkXCswguc83gYmk/arcgis/rest/services/water_display_publish_WM_AGOL/FeatureServer/55
+candidate https://services8.arcgis.com/ypkXCswguc83gYmk/arcgis/rest/services/water_display_publish_WM_AGOL/FeatureServer/55
+note felder: COMMENTS, COMPKEY, COMPTYPE, CONTRACT_NUM, Collected_By, DEPTHMSRDBY, DEPTHMSRDDATE, DEPTHNOTES, DEPTHTOPMAIN, DRAWINGNUM, Data_Source, Date_Collected, ESRIGNSS_ALTITUDE, ESRIGNSS_FIXTYPE, ESRIGNSS_H_RMS, ESRIGNSS_LATITUDE, ESRIGNSS_LONGITUDE, ESRIGNSS_NUMSATS
+dataset Water Hydrants | https://services6.arcgis.com/gTVQjOemHjQpAWul/arcgis/rest/services/Water/FeatureServer/2
+candidate https://services6.arcgis.com/gTVQjOemHjQpAWul/arcgis/rest/services/Water/FeatureServer/2
+note felder: BURYDEPTH, CONDITION, CONTRACTOR, DRAIN, FACILITYID, FLOW, FLUSHINGORDER, GlobalID, INSPECT, INSTALLDATE, LASTEDITOR, LASTSERVICE, LASTUPDATE, LOCDESC, MANUFACTURER, NOOUTLET, NOTES, OBJECTID
+dataset Water Valves view | https://services3.arcgis.com/arjIZiPnUOHQnhsl/arcgis/rest/services/Water_Valves_view/FeatureServer/0
+candidate https://services3.arcgis.com/arjIZiPnUOHQnhsl/arcgis/rest/services/Water_Valves_view/FeatureServer/0
+note felder: Close_Direction, Comments, CreationDate, Creator, Easting, EditDate, Editor, Enabled, GlobalID, Install_Date, Northing, OBJECTID, OPNUT_Depth, Operational, Replace_Date, Responsible_Party, Retire_Date, Valve_Size
+dataset Water Connection | https://services6.arcgis.com/ynGHe0Yy1JG8d8DW/arcgis/rest/services/Water_Connections/FeatureServer/0
+candidate https://services6.arcgis.com/ynGHe0Yy1JG8d8DW/arcgis/rest/services/Water_Connections/FeatureServer/0
+note felder: Date, GlobalID, Inspector_Name, No_meter, Notes, OBJECTID, Status_Connection, Water_Pressure, created_date, created_user, last_edited_date, last_edited_user
+dataset water breaks | https://services5.arcgis.com/goPFkmBByvkfaCD7/arcgis/rest/services/water_breaks/FeatureServer/0
+candidate https://services5.arcgis.com/goPFkmBByvkfaCD7/arcgis/rest/services/water_breaks/FeatureServer/0
+note felder: Before_Rep, Date_, ID, Location, OBJECTID, YEAR
+dataset Water Meters | https://services3.arcgis.com/A7O8YnTNtzRPIn7T/arcgis/rest/services/CityWorks_WaterNetwork_subset/FeatureServer/6
+candidate https://services3.arcgis.com/A7O8YnTNtzRPIn7T/arcgis/rest/services/CityWorks_WaterNetwork_subset/FeatureServer/6
+note felder: Account_Description, Account_Number, Account_Type, Account_Units, Automatic_Head_Factor, Billing_Category, Billing_Cycle, Building_Permit_Number, Civic_Address_City, Civic_Address_House, Civic_Address_Postal_Code, Civic_Address_Province, Civic_Address_Street, Civic_Address_Unit, Contract_Number, FACILITYID, Folio_Number, Full_Flow
+dataset Water Supply Areas | https://services6.arcgis.com/56eqCzQ5SZhBaDST/arcgis/rest/services/Water_Supply_Areas/FeatureServer/14
+candidate https://services6.arcgis.com/56eqCzQ5SZhBaDST/arcgis/rest/services/Water_Supply_Areas/FeatureServer/14
+note felder: GlobalID, Name, OBJECTID, Shape__Area, Shape__Length, created_date, created_user, last_edited_date, last_edited_user
+dataset Water Main | https://services5.arcgis.com/PwbtiIod8IBSgKGS/arcgis/rest/services/Water_Main/FeatureServer/0
+candidate https://services5.arcgis.com/PwbtiIod8IBSgKGS/arcgis/rest/services/Water_Main/FeatureServer/0
+note felder: CASING, CATHODIC_PROTECTION, CLASS, CREATIONDATE, CREATOR, EDITDATE, EDITOR, Enabled, GlobalID, INSTALLDT, LAYER, LOCNO, MATERIAL, MATERIAL_NOTES, NOTES, OBJECTID, POLY_WRAPPED, SIZE
+dataset Water Bodies | https://services8.arcgis.com/8uNn4c0F8yIY2Bio/arcgis/rest/services/Water_Bodies/FeatureServer/0
+candidate https://services8.arcgis.com/8uNn4c0F8yIY2Bio/arcgis/rest/services/Water_Bodies/FeatureServer/0
+note felder: GlobalID, OBJECTID, Shape__Area, Shape__Length, code, fclass, name, osm_id
+dataset Water Storage | https://utility.arcgis.com/usrsvcs/servers/88066e3676024a5aae9e87ae138bb5ca/rest/services/COPO_Water_Cart/FeatureServer/4
+candidate https://utility.arcgis.com/usrsvcs/servers/88066e3676024a5aae9e87ae138bb5ca/rest/services/COPO_Water_Cart/FeatureServer/4
+note felder: Aset_Name, Asset_ID_, Asset_Sort, Capicity_MG, ConfidenceScore, Construction_Type, Date_Constructed, Dimensions, GlobalID, Name, OBJECTID, Zone_Served, created_date, created_user, last_edited_date, last_edited_user
+dataset Water Wells | https://utility.arcgis.com/usrsvcs/servers/88066e3676024a5aae9e87ae138bb5ca/rest/services/COPO_Water_Cart/FeatureServer/3
+candidate https://utility.arcgis.com/usrsvcs/servers/88066e3676024a5aae9e87ae138bb5ca/rest/services/COPO_Water_Cart/FeatureServer/3
+note felder: Asset_ID_, Asset_Name, Asset_Sort, Certificate_Agreement, Comment, ConfidenceScore, Description, Diam__Depth, GlobalID, InstallDate, Installed_Cap_GPM, Location, Name, OBJECTID, Quantity_ACRE_FT, Quantity_GPM, created_date, created_user
+dataset Water Hydrants | https://services1.arcgis.com/VVapzOPgBae5joyC/arcgis/rest/services/Kingston_Field_Collector/FeatureServer/2
+candidate https://services1.arcgis.com/VVapzOPgBae5joyC/arcgis/rest/services/Kingston_Field_Collector/FeatureServer/2
+note felder: ACTIVEFLAG, Color, Comment, Distance, ENABLED, FACILITYID, FLOW, GlobalID, INSTALLDATE, LASTEDITOR, LASTSERVICE, LASTUPDATE, LOCDESC, MAINTBY, MANUFACTURER, OBJECTID, OPERABLE, OWNEDBY
+dataset Utility Water | https://services6.arcgis.com/s3ZVfsWPHgxFM2HE/arcgis/rest/services/Utility_Water/FeatureServer
+candidate-leer https://services6.arcgis.com/s3ZVfsWPHgxFM2HE/arcgis/rest/services/Utility_Water/FeatureServer
+note 0 rows, felder unbekannt
+dataset Water Hydrants | https://utility.arcgis.com/usrsvcs/servers/88066e3676024a5aae9e87ae138bb5ca/rest/services/COPO_Water_Cart/FeatureServer/5
+candidate https://utility.arcgis.com/usrsvcs/servers/88066e3676024a5aae9e87ae138bb5ca/rest/services/COPO_Water_Cart/FeatureServer/5
+note felder: Asset_ID_, Asset_Name, Asset_Sort, BarrelLength, Brand2, Condition_Rate1_10, ConfidenceScore, FACILITYKEY, FLOW, GlobalID, HYDRCOND, INSPECTOR, Inspection_2018, Install_Date, LOCDESC, MTCERQRD, NOTES, Next_Maint_Date
+dataset Water Fittings | https://services1.arcgis.com/VVapzOPgBae5joyC/arcgis/rest/services/Kingston_Field_Collector/FeatureServer/1
+candidate https://services1.arcgis.com/VVapzOPgBae5joyC/arcgis/rest/services/Kingston_Field_Collector/FeatureServer/1
+note felder: ACTIVEFLAG, ENABLED, FACILITYID, FITTINGTYPE, GlobalID, INSTALLDATE, LASTEDITOR, LASTUPDATE, LOCDESC, MAINTBY, OBJECTID, OWNEDBY, ROTATION, created_date, created_user, last_edited_date, last_edited_user
+dataset Water Pumps | https://services1.arcgis.com/VVapzOPgBae5joyC/arcgis/rest/services/Kingston_Field_Collector/FeatureServer/3
+candidate https://services1.arcgis.com/VVapzOPgBae5joyC/arcgis/rest/services/Kingston_Field_Collector/FeatureServer/3
+note felder: ACTIVEFLAG, AncillaryRole, DESHEAD, DESIGNGPM, DISCHDIAM, DYNHEAD, ELEVATION, ENABLED, FACILITYID, GlobalID, INLETDIAM, INSTALLDATE, LASTEDITOR, LASTUPDATE, LOCDESC, MAINTBY, MAXOPDISC, MAXOPHEAD
+dataset Water Connection | https://services6.arcgis.com/ynGHe0Yy1JG8d8DW/arcgis/rest/services/Water_Connections_final/FeatureServer/0
+candidate https://services6.arcgis.com/ynGHe0Yy1JG8d8DW/arcgis/rest/services/Water_Connections_final/FeatureServer/0
+note felder: Date, GlobalID, Inspector_Name, Meter_size, No_Meters_Not_Working, No_Meters_working, No_meter, Notes, OBJECTID, Status_Connection, Water_Pressure, created_date, created_user, last_edited_date, last_edited_user
+dataset Water - Fittings | https://services3.arcgis.com/A7O8YnTNtzRPIn7T/arcgis/rest/services/CityWorks_WaterNetwork_subset/FeatureServer/7
+candidate https://services3.arcgis.com/A7O8YnTNtzRPIn7T/arcgis/rest/services/CityWorks_WaterNetwork_subset/FeatureServer/7
+note felder: ACTIVEFLAG, ENABLED, FACILITYID, FITTINGTYPE, INSTALLDATE, LOCDESC, MAINTBY, OBJECTID, OWNEDBY, ROTATION
+dataset Water Meter | https://services6.arcgis.com/q4conq57GX6jE1aJ/arcgis/rest/services/CCWA_Water_Service_27APR22/FeatureServer/17
+candidate https://services6.arcgis.com/q4conq57GX6jE1aJ/arcgis/rest/services/CCWA_Water_Service_27APR22/FeatureServer/17
+note felder: Address, AsBuiltFullPath, AsBuiltNumber, AsBuiltPath, Comments, Condition, Date, FID, GlobalID, Irrigation, OBJECTID, Phase, RouteNum, RouteNumbe, SeqNumber, Size, Status, Subdivision
+dataset Water Main | https://services8.arcgis.com/ypkXCswguc83gYmk/arcgis/rest/services/water_display_publish_WM_AGOL/FeatureServer/54
+candidate https://services8.arcgis.com/ypkXCswguc83gYmk/arcgis/rest/services/water_display_publish_WM_AGOL/FeatureServer/54
+note felder: COMMENTS, COMPKEY, COMPTYPE, CONTRACT_NUM, Collected_By, DEPTHMSRDBY, DEPTHMSRDDATE, DEPTHNOTES, DEPTHTOPMAIN, DIAMETER, DRAWINGNUM, Data_Source, Date_Collected, ESRIGNSS_ALTITUDE, ESRIGNSS_FIXTYPE, ESRIGNSS_H_RMS, ESRIGNSS_LATITUDE, ESRIGNSS_LONGITUDE
+dataset OB Water Infrastructure pv | https://services1.arcgis.com/FNsEJ848HT5uDOHD/arcgis/rest/services/OB_Water_Infrastructure_pv/FeatureServer
+candidate-leer https://services1.arcgis.com/FNsEJ848HT5uDOHD/arcgis/rest/services/OB_Water_Infrastructure_pv/FeatureServer
+note 0 rows, felder unbekannt
+dataset Water Meters | https://services3.arcgis.com/A7O8YnTNtzRPIn7T/arcgis/rest/services/Cityworks_WaterMapAGOL/FeatureServer/6
+candidate https://services3.arcgis.com/A7O8YnTNtzRPIn7T/arcgis/rest/services/Cityworks_WaterMapAGOL/FeatureServer/6
+note felder: Account_Description, Account_Number, Account_Type, Account_Units, Automatic_Head_Factor, Billing_Category, Billing_Cycle, Building_Permit_Number, Civic_Address_City, Civic_Address_House, Civic_Address_Postal_Code, Civic_Address_Province, Civic_Address_Street, Civic_Address_Unit, Contract_Number, FACILITYID, Folio_Number, Full_Flow
+dataset WATER VALVES | https://services5.arcgis.com/YUkinYsOcPOGZTMe/arcgis/rest/services/CulinaryWaterBaseMap2022/FeatureServer/9
+candidate https://services5.arcgis.com/YUkinYsOcPOGZTMe/arcgis/rest/services/CulinaryWaterBaseMap2022/FeatureServer/9
+note felder: Address, CONDITION, Contractor, CreationDate, CreationDate_1, Creator, Creator_1, DepthFt, Details, EditDate, EditDate_1, Editor, Editor_1, GlobalID, Install_Da, LID_ELEV, LastExercisedBy, LastExercisedDate
+dataset Water Valve | https://services3.arcgis.com/RfpmnkSAQleRbndX/arcgis/rest/services/Utility/FeatureServer/12
+candidate https://services3.arcgis.com/RfpmnkSAQleRbndX/arcgis/rest/services/Utility/FeatureServer/12
+note felder: ANCILLARYROLE, BONDEDINDICATOR, CIP_NUMBER, COMMENTS, CONDITION, COUNTYOWNED, CPSYSTEMSTATUS, CREATED_DATE, CREATED_USER, CREATIONDATE, CREATIONUSER, CTY_PERMIT_NUM, DATA_COLLECTOR, DATEMODIFIED, ELEVATION, EMERISOLATIONSYSSTATUS, ENABLED, FACILITYID
+dataset Water - Hydrants | https://services3.arcgis.com/A7O8YnTNtzRPIn7T/arcgis/rest/services/CityWorks_WaterNetwork_subset/FeatureServer/0
+candidate https://services3.arcgis.com/A7O8YnTNtzRPIn7T/arcgis/rest/services/CityWorks_WaterNetwork_subset/FeatureServer/0
+note felder: ACTIVEFLAG, CONDITION, ENABLED, FACILITYID, FLOW, GIS_ENTRY_STAGE, INSPECTDATE, INSTALLDATE, LASTSERVICE, LIFECYCLESTATUS, LOCATION, LOCDESC, MAINTBY, MANUFACTURER, OBJECTID, OPERABLE, OWNEDBY, PORT25
+dataset Water Facilities | https://services.arcgis.com/04HiymDgLlsbhaV4/arcgis/rest/services/Water_Facilities/FeatureServer/0
+candidate https://services.arcgis.com/04HiymDgLlsbhaV4/arcgis/rest/services/Water_Facilities/FeatureServer/0
+note felder: ADDRESS, ADDRESSID, ANCILLARYROLE, COMMENTS, COMPKEY, COMPTYPE, COORD_X, COORD_Y, COORD_Z, DESCRIPTION, ELEVATION, ENABLED, FACILITYNO, GLOBALID, INSTALLDATE, MODELID, OBJECTID, OWNERSHIP
+dataset Water Connection | https://services6.arcgis.com/ynGHe0Yy1JG8d8DW/arcgis/rest/services/Water_Connections_regions_2018/FeatureServer/0
+candidate https://services6.arcgis.com/ynGHe0Yy1JG8d8DW/arcgis/rest/services/Water_Connections_regions_2018/FeatureServer/0
+note felder: Date, GlobalID, Inspector_Name, Meter_size, No_Meters_Not_Working, No_Meters_working, No_meter, Notes, OBJECTID, Region, Status_Connection, Water_Pressure, created_date, created_user, last_edited_date, last_edited_user
+dataset Water Districts | https://services.arcgis.com/hVnyNvwbpFFPDV5j/arcgis/rest/services/Water_Districts/FeatureServer/0
+candidate https://services.arcgis.com/hVnyNvwbpFFPDV5j/arcgis/rest/services/Water_Districts/FeatureServer/0
+note felder: AGENCYNAME, AGENCYUNIQ, Date_Data_, GlobalID, LASTMODIFI, MODIFIEDBY, OBJECTID, OBJECTID_1, ORIG_FID, SOURCE, SOURCECOMM, Shape__Area, Shape__Length
+dataset Water Mains view | https://services3.arcgis.com/arjIZiPnUOHQnhsl/arcgis/rest/services/Water_Lines_view/FeatureServer/0
+candidate https://services3.arcgis.com/arjIZiPnUOHQnhsl/arcgis/rest/services/Water_Lines_view/FeatureServer/0
+note felder: Asset_Status, CreationDate, Creator, Diameter, EditDate, Editor, GlobalID, Install_Date, Length, Line_Use, Location_Description, Material, Notes, OBJECTID, OpenGov_ID, Replace_Date, Responsible_Party, Retire_Date
+dataset Water Main | https://utility.arcgis.com/usrsvcs/servers/3116075536d64536ba834159820b6f1a/rest/services/IA_Nevada/Nevada_Water_Utilities/FeatureServer/11
+candidate https://utility.arcgis.com/usrsvcs/servers/3116075536d64536ba834159820b6f1a/rest/services/IA_Nevada/Nevada_Water_Utilities/FeatureServer/11
+note felder: CollectionStatus, Depth, Documents, GlobalID, InstallDate, InstalledBy, LifecycleStatus, MainID, Notes, OBJECTID, PipeDiameter, PipeLength, PipeMaterial, ProjectNumber, RecordDrawings, RouteDescription, Shape__Length, created_date
+dataset Water Valve | https://services6.arcgis.com/Vdk8uHgdgYx8ZqS6/arcgis/rest/services/WaterMainsArcGISOnline/FeatureServer/0
+candidate https://services6.arcgis.com/Vdk8uHgdgYx8ZqS6/arcgis/rest/services/WaterMainsArcGISOnline/FeatureServer/0
+note felder: GlobalID, OBJECTID, UNITID
+dataset Water Mains | https://services3.arcgis.com/aVepqWph7Jkj1aWl/arcgis/rest/services/CityofYankton_WATER/FeatureServer/0
+candidate https://services3.arcgis.com/aVepqWph7Jkj1aWl/arcgis/rest/services/CityofYankton_WATER/FeatureServer/0
+note felder: ACTIVEFLAG, DIAMETER, ENABLED, FACILITYID, GlobalID, INSTALLDATE, LASTEDITOR, LASTUPDATE, MAINTBY, MATERIAL, OBJECTID, OWNEDBY, Shape__Length, WATERTYPE
+dataset Water Vaults | https://services5.arcgis.com/YUkinYsOcPOGZTMe/arcgis/rest/services/CulinaryWaterBaseMap2022/FeatureServer/17
+candidate https://services5.arcgis.com/YUkinYsOcPOGZTMe/arcgis/rest/services/CulinaryWaterBaseMap2022/FeatureServer/17
+note felder: AlterTech_Notes, Contractor, CreationDate, Creator, Dimensions, EditDate, Editor, GlobalID, Hatch_type, OBJECTID, Reviewed_by_AlterTech, Shape__Area, Shape__Length, Type, UniqueID, Validate_Updated_Fields, Ventilation, Year_Installed
+dataset WATER TANKS | https://services5.arcgis.com/YUkinYsOcPOGZTMe/arcgis/rest/services/CulinaryWaterBaseMap2022/FeatureServer/15
+candidate https://services5.arcgis.com/YUkinYsOcPOGZTMe/arcgis/rest/services/CulinaryWaterBaseMap2022/FeatureServer/15
+note felder: AREA, AlterTech_Notes, CreationDate, Creator, ELEVATION, EditDate, Editor, GlobalID, LAYER, OBJECTID, RADIUS, Reviewed_by_AlterTech, Shape_Leng, Shape__Area, Shape__Length, UniqueID, VOLUME, Validate_Updated_Fields
+dataset WATER LINES | https://services5.arcgis.com/YUkinYsOcPOGZTMe/arcgis/rest/services/CulinaryWaterBaseMap2022/FeatureServer/11
+candidate https://services5.arcgis.com/YUkinYsOcPOGZTMe/arcgis/rest/services/CulinaryWaterBaseMap2022/FeatureServer/11
+note felder: AlterTech_Notes, Contractor, Diameter, Diameter_dec, Entity, GlobalID, Installed, Layer, Line_Type, Material, OBJECTID, Reviewed_by_AlterTech, Shape__Length, Street_Name, Subdivision, Text_, Type, UniqueID
+dataset Water Laterals | https://services5.arcgis.com/YUkinYsOcPOGZTMe/arcgis/rest/services/CulinaryWaterBaseMap2022/FeatureServer/10
+candidate https://services5.arcgis.com/YUkinYsOcPOGZTMe/arcgis/rest/services/CulinaryWaterBaseMap2022/FeatureServer/10
+note felder: Address, AlterTech_Notes, Contractor, Customer_Side_Material, Entity, GlobalID, Handle, Install_Date, Layer, Line_Type, Material, OBJECTID, OBJECTID_1, Reviewed_by_AlterTech, Shape__Length, Size, Subdivision, Text_
+dataset Water Leaks | https://services6.arcgis.com/q4conq57GX6jE1aJ/arcgis/rest/services/CCWA_Water_Service_27APR22/FeatureServer/16
+candidate https://services6.arcgis.com/q4conq57GX6jE1aJ/arcgis/rest/services/CCWA_Water_Service_27APR22/FeatureServer/16
+note felder: Address, Comments, DOT_Num, Damage_By, Date, Emergency, GlobalID, Loc_Number, Loc_Number2, Material, OBJECTID, Repair_By, Type, Unique_ID, WrkOrdrNum, created_date, created_user, last_edited_date
+dataset Water Hydrant | https://services2.arcgis.com/CnkB6jCzAsyli34z/arcgis/rest/services/OpenData_WaterInfrastructure/FeatureServer/115
+candidate https://services2.arcgis.com/CnkB6jCzAsyli34z/arcgis/rest/services/OpenData_WaterInfrastructure/FeatureServer/115
+note felder: ASSETGROUP, ASSETTYPE, ASSOCIATIONSTATUS, DMASubnetworkName, GLOBALID, ISCONNECTED, ISSUBNETWORKCONTROLLER, IsolationSubnetworkName, OBJECTID, PressureSubnetworkName, SUBNETWORKCONTROLLERNAME, SUPPORTEDSUBNETWORKNAME, SUPPORTINGSUBNETWORKNAME, SystemSubnetworkName, TERMINALCONFIGURATION, TIERNAME, TIERRANK, VALIDATIONSTATUS
+dataset Water - Hydrants | https://services3.arcgis.com/A7O8YnTNtzRPIn7T/arcgis/rest/services/CityWorks_WaterNetwork/FeatureServer/0
+candidate https://services3.arcgis.com/A7O8YnTNtzRPIn7T/arcgis/rest/services/CityWorks_WaterNetwork/FeatureServer/0
+note felder: ACTIVEFLAG, CONDITION, ENABLED, FACILITYID, FLOW, GIS_ENTRY_STAGE, INSPECTDATE, INSTALLDATE, LASTSERVICE, LIFECYCLESTATUS, LOCATION, LOCDESC, MAINTBY, MANUFACTURER, OBJECTID, OPERABLE, OWNEDBY, PORT25
+dataset Water - Fittings | https://services3.arcgis.com/A7O8YnTNtzRPIn7T/arcgis/rest/services/CityWorks_WaterNetwork/FeatureServer/7
+candidate https://services3.arcgis.com/A7O8YnTNtzRPIn7T/arcgis/rest/services/CityWorks_WaterNetwork/FeatureServer/7
+note felder: ACTIVEFLAG, ENABLED, FACILITYID, FITTINGTYPE, INSTALLDATE, LOCDESC, MAINTBY, OBJECTID, OWNEDBY, ROTATION
+dataset Water Main | https://services2.arcgis.com/RMSabPClYIvVQ6Si/arcgis/rest/services/Water/FeatureServer/14
+candidate https://services2.arcgis.com/RMSabPClYIvVQ6Si/arcgis/rest/services/Water/FeatureServer/14
+note felder: CIPP_LINER, CIPP_LINER_INSIDE_DIAMETER, CIPP_LINING_DATE, CIPP_LINING_NOTES, CIPP_LINING_TYPE, DESIGN_DATE, EDITED_BY, EDIT_TYPE, EFF_DATE, ELEVATION, Enabled, GlobalID, HIST_ID, INACT_DATE, INSTALL_DATE, INSTALL_DECADE, LAST_UPDATE, LOCATE_DATE
+dataset Water Mains | https://services6.arcgis.com/gTVQjOemHjQpAWul/arcgis/rest/services/Water/FeatureServer/4
+candidate https://services6.arcgis.com/gTVQjOemHjQpAWul/arcgis/rest/services/Water/FeatureServer/4
+note felder: CAPACITY, CONDITION, CONTRACTOR, CreationDate, Creator, DESCR, DIAMETER, EditDate, Editor, FACILITYID, GlobalID, INSTALLDATE, LENGTH, Lead, MATERIAL, NOTES, OBJECTID, OWNEDBY
+dataset Water Hydrant | https://utility.arcgis.com/usrsvcs/servers/3116075536d64536ba834159820b6f1a/rest/services/IA_Nevada/Nevada_Water_Utilities/FeatureServer/3
+candidate https://utility.arcgis.com/usrsvcs/servers/3116075536d64536ba834159820b6f1a/rest/services/IA_Nevada/Nevada_Water_Utilities/FeatureServer/3
+note felder: AddressNumber, AddressStreet, AuxiliaryGateValve, CalculatedPressure, ClockwiseToClose, CollectionStatus, Documents, ESRIGNSS_ALTITUDE, ESRIGNSS_AVG_H_RMS, ESRIGNSS_AVG_POSITIONS, ESRIGNSS_AVG_V_RMS, ESRIGNSS_CORRECTIONAGE, ESRIGNSS_DIRECTION, ESRIGNSS_FIXDATETIME, ESRIGNSS_FIXTYPE, ESRIGNSS_HDOP, ESRIGNSS_H_RMS, ESRIGNSS_H_STDDEV
+dataset Water Meters | https://services3.arcgis.com/A7O8YnTNtzRPIn7T/arcgis/rest/services/CityWorks_WaterNetwork/FeatureServer/6
+candidate https://services3.arcgis.com/A7O8YnTNtzRPIn7T/arcgis/rest/services/CityWorks_WaterNetwork/FeatureServer/6
+note felder: Account_Description, Account_Number, Account_Type, Account_Units, Automatic_Head_Factor, Billing_Category, Billing_Cycle, Building_Permit_Number, Civic_Address_City, Civic_Address_House, Civic_Address_Postal_Code, Civic_Address_Province, Civic_Address_Street, Civic_Address_Unit, Contract_Number, FACILITYID, Folio_Number, Full_Flow
+dataset Future Water Project Land | https://services-ap1.arcgis.com/ry1jWJjaLhqVCFK6/arcgis/rest/services/Futre_Water_Project_Land/FeatureServer/0
+candidate https://services-ap1.arcgis.com/ry1jWJjaLhqVCFK6/arcgis/rest/services/Futre_Water_Project_Land/FeatureServer/0
+note felder: Assess_ID, Calc_Area, FID, Rid, Shape__Area, Shape__Length, Status, Valn_Ref
+dataset Water Mains | https://utility.arcgis.com/usrsvcs/servers/88066e3676024a5aae9e87ae138bb5ca/rest/services/COPO_Water_Cart/FeatureServer/0
+candidate https://utility.arcgis.com/usrsvcs/servers/88066e3676024a5aae9e87ae138bb5ca/rest/services/COPO_Water_Cart/FeatureServer/0
+note felder: Asset_ID_, Asset_Sort, ConfidenceScore, GlobalID, InstallDate, Layer, Linetype, Notes, OBJECTID, OBJECTID_1, SIZE_, Shape__Length, created_date, created_user, last_edited_date, last_edited_user
+dataset Water Valves | https://utility.arcgis.com/usrsvcs/servers/88066e3676024a5aae9e87ae138bb5ca/rest/services/COPO_Water_Cart/FeatureServer/6
+candidate https://utility.arcgis.com/usrsvcs/servers/88066e3676024a5aae9e87ae138bb5ca/rest/services/COPO_Water_Cart/FeatureServer/6
+note felder: Angle, Asset_ID_, Asset_Name, Asset_Sort, ConfidenceScore, Date_Observed, GPS, GlobalID_1, InstallDate, Layer, NOTES, OBJECTID, Operationa, Turns_Valve, created_date, created_user, last_edited_date, last_edited_user
+dataset Water Fittings | https://services3.arcgis.com/A7O8YnTNtzRPIn7T/arcgis/rest/services/Cityworks_WaterMapAGOL/FeatureServer/7
+candidate https://services3.arcgis.com/A7O8YnTNtzRPIn7T/arcgis/rest/services/Cityworks_WaterMapAGOL/FeatureServer/7
+note felder: ACTIVEFLAG, ENABLED, FACILITYID, FITTINGTYPE, INSTALLDATE, LOCDESC, MAINTBY, OBJECTID, OWNEDBY, ROTATION
+dataset Water Mains | https://services5.arcgis.com/cdBxbTWz2yE2cVD3/arcgis/rest/services/Layers2/FeatureServer/6
+candidate https://services5.arcgis.com/cdBxbTWz2yE2cVD3/arcgis/rest/services/Layers2/FeatureServer/6
+note felder: ACTIVEFLAG, CreationDate, Creator, DIAMETER, ENABLED, EditDate, Editor, FACILITYID, GlobalID, INSTALLDATE, LASTEDITOR, LASTUPDATE, MAINTBY, MATERIAL, OBJECTID, OWNEDBY, Shape__Length, TRANSMISS
+dataset Water Manhole | https://utility.arcgis.com/usrsvcs/servers/3116075536d64536ba834159820b6f1a/rest/services/IA_Nevada/Nevada_Water_Utilities/FeatureServer/2
+candidate https://utility.arcgis.com/usrsvcs/servers/3116075536d64536ba834159820b6f1a/rest/services/IA_Nevada/Nevada_Water_Utilities/FeatureServer/2
+note felder: AddressNumber, AddressStreet, CollectionStatus, Condition, Documents, ESRIGNSS_ALTITUDE, ESRIGNSS_AVG_H_RMS, ESRIGNSS_AVG_POSITIONS, ESRIGNSS_AVG_V_RMS, ESRIGNSS_CORRECTIONAGE, ESRIGNSS_DIRECTION, ESRIGNSS_FIXDATETIME, ESRIGNSS_FIXTYPE, ESRIGNSS_HDOP, ESRIGNSS_H_RMS, ESRIGNSS_H_STDDEV, ESRIGNSS_LATITUDE, ESRIGNSS_LONGITUDE
+dataset Water Meter | https://utility.arcgis.com/usrsvcs/servers/3116075536d64536ba834159820b6f1a/rest/services/IA_Nevada/Nevada_Water_Utilities/FeatureServer/7
+candidate https://utility.arcgis.com/usrsvcs/servers/3116075536d64536ba834159820b6f1a/rest/services/IA_Nevada/Nevada_Water_Utilities/FeatureServer/7
+note felder: AccountID, AddressNumber, AddressStreet, CollectionStatus, CriticalCustomer, CustomerType, Documents, ESRIGNSS_ALTITUDE, ESRIGNSS_AVG_H_RMS, ESRIGNSS_AVG_POSITIONS, ESRIGNSS_AVG_V_RMS, ESRIGNSS_CORRECTIONAGE, ESRIGNSS_DIRECTION, ESRIGNSS_FIXDATETIME, ESRIGNSS_FIXTYPE, ESRIGNSS_HDOP, ESRIGNSS_H_RMS, ESRIGNSS_H_STDDEV
+dataset Water Hydrants | https://services-ap1.arcgis.com/lnVW0dLI3fvST2hd/arcgis/rest/services/Water_Hydrant_view/FeatureServer/0
+candidate https://services-ap1.arcgis.com/lnVW0dLI3fvST2hd/arcgis/rest/services/Water_Hydrant_view/FeatureServer/0
+note felder: CLASS, DIAMETER_MM, ENABLED, FUNCTIONAL_LOC, GIS_DESCRIPTION, GIS_SYSTEM_STATUS, GIS_USER_STATUS, HYDRANT_LINING, HYDRANT_MATERIAL, HYDRANT_PROTECTION, HYDRANT_TYPE, HYDRANT_USE, OBJECTID, OBJECT_TYPE, ROTATION, SAPOBJECTID, SUPERORD_EQUIP, WATER_CATEGORY
+dataset Water Service | https://services2.arcgis.com/RMSabPClYIvVQ6Si/arcgis/rest/services/Water/FeatureServer/16
+candidate https://services2.arcgis.com/RMSabPClYIvVQ6Si/arcgis/rest/services/Water/FeatureServer/16
+note felder: DESIGN_DATE, EDITED_BY, EDIT_TYPE, EFF_DATE, ELEVATION, Enabled, GlobalID, HIST_ID, INACT_DATE, INSTALL_DATE, INSTALL_DECADE, LAST_UPDATE, LOCATE_DATE, LOCATION, MODEL_ID, MODEL_NOTES, NOTE, OBJECTID
+dataset Water Structures | https://services8.arcgis.com/h40jF5eUWi8ndmHe/arcgis/rest/services/WaterSystem2018/FeatureServer/10
+candidate https://services8.arcgis.com/h40jF5eUWi8ndmHe/arcgis/rest/services/WaterSystem2018/FeatureServer/10
+note felder: ACTIVEFLAG, AncillaryRole, EASTING, ENABLED, FACILITYID, GlobalID, INSTALLDATE, LASTEDITOR, LASTUPDATE, LOCDESC, MAINTBY, NAME, NORTHING, OBJECTID, OPDATE, OWNEDBY, ROTATION, STRUCTTYPE
+dataset Water Reservoir | https://services2.arcgis.com/RMSabPClYIvVQ6Si/arcgis/rest/services/Water/FeatureServer/11
+candidate https://services2.arcgis.com/RMSabPClYIvVQ6Si/arcgis/rest/services/Water/FeatureServer/11
+note felder: BASE_ELEV, CAPACITY_MG, DESIGN_DATE, EDITED_BY, EFF_DATE, Enabled, GlobalID, INACT_DATE, LAST_UPDATE, LOCATE_DATE, LOW_WATER_ELEV, MODEL_ID, NOTE_, OBJECTID, OVERFLOW_ELEV, WARES_LABEL, WARES_NAME, WARES_OID
+dataset Water Fitting | https://services2.arcgis.com/CnkB6jCzAsyli34z/arcgis/rest/services/OpenData_WaterInfrastructure/FeatureServer/113
+candidate https://services2.arcgis.com/CnkB6jCzAsyli34z/arcgis/rest/services/OpenData_WaterInfrastructure/FeatureServer/113
+note felder: ASSETGROUP, ASSETTYPE, ASSOCIATIONSTATUS, DMASubnetworkName, GLOBALID, ISCONNECTED, IsolationSubnetworkName, OBJECTID, PressureSubnetworkName, SUPPORTEDSUBNETWORKNAME, SUPPORTINGSUBNETWORKNAME, SystemSubnetworkName, VALIDATIONSTATUS, acquisitioncost, angle, assetid, barcode, bondedinsulated
+dataset Water Service | https://services2.arcgis.com/7a7OULZOTqe87h9O/arcgis/rest/services/Water_Service/FeatureServer
+candidate-leer https://services2.arcgis.com/7a7OULZOTqe87h9O/arcgis/rest/services/Water_Service/FeatureServer
+note 0 rows, felder unbekannt
+dataset HWL Water | https://services5.arcgis.com/RVMSajYQji1bjmZ4/arcgis/rest/services/Water/FeatureServer/1
+candidate https://services5.arcgis.com/RVMSajYQji1bjmZ4/arcgis/rest/services/Water/FeatureServer/1
+note felder: Diameter, Enabled, InstallDate, MainLineType, Material, OBJECTID, Owner, Shape__Length
+dataset WATER METER | https://services5.arcgis.com/YUkinYsOcPOGZTMe/arcgis/rest/services/CulinaryWaterBaseMap2022/FeatureServer/8
+candidate https://services5.arcgis.com/YUkinYsOcPOGZTMe/arcgis/rest/services/CulinaryWaterBaseMap2022/FeatureServer/8
+note felder: Accuracy, Address, AlterTech_Notes, CONDITION, Contractor, CreationDate, Creator, Details, EditDate, Editor, FID, GlobalID, Install_Da, LID_ELEV, LastTestedBy, LastTestedDate, MeterID, MeterLocID
+dataset water | https://services1.arcgis.com/3fjYPqJf7qalQMlb/arcgis/rest/services/water/FeatureServer
+candidate-leer https://services1.arcgis.com/3fjYPqJf7qalQMlb/arcgis/rest/services/water/FeatureServer
+note 0 rows, felder unbekannt
+dataset Water Tank | https://services2.arcgis.com/iLsFVn6d1pmqKEfA/arcgis/rest/services/Water_Sprypoint/FeatureServer/12
+candidate https://services2.arcgis.com/iLsFVn6d1pmqKEfA/arcgis/rest/services/Water_Sprypoint/FeatureServer/12
+note felder: BaseElevation, BlockRange, Capacity, CreateBy, CreateDate, FeatureID, GlobalID, InstallDate, LifeCycleStatus, Location, MaintStarID, MaintainedBy, OBJECTID, OwnedBy, PressureZone, RevBy, RevComments, RevDate
+dataset Water Structure | https://services2.arcgis.com/CnkB6jCzAsyli34z/arcgis/rest/services/OpenData_WaterInfrastructure/FeatureServer/24
+candidate https://services2.arcgis.com/CnkB6jCzAsyli34z/arcgis/rest/services/OpenData_WaterInfrastructure/FeatureServer/24
+note felder: ASSETGROUP, ASSETTYPE, ASSOCIATIONSTATUS, GLOBALID, OBJECTID, SUBNETWORKNAME, Shape__Area, Shape__Length, VALIDATIONSTATUS, acquisitioncost, assetid, barcode, cofdate, cofscore, condition, conditiondate, creationdate, creator
+dataset Water Meter | https://services2.arcgis.com/CnkB6jCzAsyli34z/arcgis/rest/services/OpenData_WaterInfrastructure/FeatureServer/10
+candidate https://services2.arcgis.com/CnkB6jCzAsyli34z/arcgis/rest/services/OpenData_WaterInfrastructure/FeatureServer/10
+note felder: ASSETGROUP, ASSETTYPE, ASSOCIATIONSTATUS, DMASubnetworkName, GLOBALID, ISCONNECTED, ISSUBNETWORKCONTROLLER, IsolationSubnetworkName, OBJECTID, PressureSubnetworkName, SUBNETWORKCONTROLLERNAME, SUPPORTEDSUBNETWORKNAME, SUPPORTINGSUBNETWORKNAME, SystemSubnetworkName, TERMINALCONFIGURATION, TIERNAME, TIERRANK, VALIDATIONSTATUS
+dataset Water Casing | https://services2.arcgis.com/CnkB6jCzAsyli34z/arcgis/rest/services/OpenData_WaterInfrastructure/FeatureServer/112
+candidate https://services2.arcgis.com/CnkB6jCzAsyli34z/arcgis/rest/services/OpenData_WaterInfrastructure/FeatureServer/112
+note felder: ASSETGROUP, ASSETTYPE, ASSOCIATIONSTATUS, FLOWDIRECTION, GLOBALID, OBJECTID, SUBNETWORKNAME, Shape__Length, VALIDATIONSTATUS, acquisitioncost, assetid, barcode, cofdate, cofscore, condition, conditiondate, creationdate, creator
+dataset Water | https://services1.arcgis.com/3fjYPqJf7qalQMlb/arcgis/rest/services/water/FeatureServer/6
+candidate https://services1.arcgis.com/3fjYPqJf7qalQMlb/arcgis/rest/services/water/FeatureServer/6
+note felder: EDITOR_NAME, EDIT_DATE, LAYER, OBJECTID, Shape__Area, Shape__Length, TEXT, TYPE, created_date, created_user, last_edited_date, last_edited_user
+dataset Water Mains | https://services2.arcgis.com/iLsFVn6d1pmqKEfA/arcgis/rest/services/Water_Sprypoint/FeatureServer/0
+candidate https://services2.arcgis.com/iLsFVn6d1pmqKEfA/arcgis/rest/services/Water_Sprypoint/FeatureServer/0
+note felder: BlockRange, CreateBy, CreateDate, DateInstalled, DateServiced, Diameter, EasementDocument, Enabled, GlobalID, InEasement, IsPrivate, LifeCycleStatus, Location, MaintStarID, MaintainedBy, Material, MaterialClass, Notes
+dataset Water Lateral | https://services2.arcgis.com/iLsFVn6d1pmqKEfA/arcgis/rest/services/Water_Sprypoint/FeatureServer/1
+candidate https://services2.arcgis.com/iLsFVn6d1pmqKEfA/arcgis/rest/services/Water_Sprypoint/FeatureServer/1
+note felder: BlockRange, CreateBy, CreateDate, DateInstalled, DateServiced, Diameter, EasementDocument, Enabled, GlobalID, InEasement, IsPrivate, LateralType, LifeCycleStatus, Location, MaintStarID, MaintainedBy, Notes, OBJECTID
+dataset Water Meter | https://services2.arcgis.com/iLsFVn6d1pmqKEfA/arcgis/rest/services/Water_Sprypoint/FeatureServer/4
+candidate https://services2.arcgis.com/iLsFVn6d1pmqKEfA/arcgis/rest/services/Water_Sprypoint/FeatureServer/4
+note felder: BlockRange, CreateBy, CreateDate, Diameter, Elevation, Enabled, FeatureID, GlobalID, InstallDate, LifeCycleStatus, Location, MaintStarID, MaintainedBy, MeterType, OBJECTID, OwnedBy, PressureZone, RevBy
+dataset Water Mains | https://services7.arcgis.com/jxbz2f5FyYXw438P/arcgis/rest/services/Water_Mains_10cf6871f7e24e5487656c9431bcb3d0/FeatureServer
+candidate-leer https://services7.arcgis.com/jxbz2f5FyYXw438P/arcgis/rest/services/Water_Mains_10cf6871f7e24e5487656c9431bcb3d0/FeatureServer
+note 0 rows, felder unbekannt
+dataset Water Pump Station Boundary | https://services6.arcgis.com/KEzHLslVRHHoUXir/arcgis/rest/services/WaterDistributionSystem_540600ddade242bca5152512f857e4b4/FeatureServer/910505
+candidate-leer https://services6.arcgis.com/KEzHLslVRHHoUXir/arcgis/rest/services/WaterDistributionSystem_540600ddade242bca5152512f857e4b4/FeatureServer/910505
+note 0 rows, felder unbekannt
+dataset Water Main | https://services.arcgis.com/5iWzb1srkjPDXmpL/arcgis/rest/services/Water_Main/FeatureServer/0
+candidate https://services.arcgis.com/5iWzb1srkjPDXmpL/arcgis/rest/services/Water_Main/FeatureServer/0
+note felder: ACTIVEFLAG, ASBUILTREF, COMMENTS, CONDITION, CONDITIOND, CRITICALAS, DEPRECIATE, DIAMETER, DIGITAL_LE, DISTRICT, ENABLED, FACILITYID, FID, GlobalID, INSTALLDAT, INSTALLVAL, INSTALLYEA, LASTEDITOR
+dataset Water Issues | https://services2.arcgis.com/PWJUSsdoJDp7SgLj/arcgis/rest/services/Water_Issues_7bd54939fca94f4aa8c52fff0abf2edd/FeatureServer/0
+candidate https://services2.arcgis.com/PWJUSsdoJDp7SgLj/arcgis/rest/services/Water_Issues_7bd54939fca94f4aa8c52fff0abf2edd/FeatureServer/0
+note felder: Asset, CreationDate, Creator, EditDate, Editor, GlobalID, OBJECTID, Status, comments, date_resolved, observation_type, requires_attention
+dataset Water Issues | https://services2.arcgis.com/PWJUSsdoJDp7SgLj/arcgis/rest/services/Water_Issues_db5bf9a07e174f51b3630cbd44da3c3d/FeatureServer/0
+candidate https://services2.arcgis.com/PWJUSsdoJDp7SgLj/arcgis/rest/services/Water_Issues_db5bf9a07e174f51b3630cbd44da3c3d/FeatureServer/0
+note felder: Asset, CreationDate, Creator, EditDate, Editor, GlobalID, OBJECTID, Status, comments, date_resolved, observation_type, requires_attention
+dataset Water Issues | https://services.arcgis.com/YKu9KTHe0ln1JUmf/arcgis/rest/services/Water_Issues/FeatureServer/0
+candidate https://services.arcgis.com/YKu9KTHe0ln1JUmf/arcgis/rest/services/Water_Issues/FeatureServer/0
+note felder: Asset, CreationDate, Creator, EditDate, Editor, GlobalID, OBJECTID, Status, comments, date_resolved, observation_type, requires_attention
+dataset Water Meters | https://services8.arcgis.com/GMTk2nwk5uIyuDun/arcgis/rest/services/Water_Public/FeatureServer/1
+candidate https://services8.arcgis.com/GMTk2nwk5uIyuDun/arcgis/rest/services/Water_Public/FeatureServer/1
+note felder: ACCOUNTID, ACTIVEFLAG, BACKFLOW_DEVICE, BACKFLOW_PIPE_SIZE, BACKFLOW_SERIAL_NO, BACKFLOW_TYPE, COMMENTS, CONNECTION_CONFIG, CRITICAL, DIALS_NO, ENABLED, FACILITYID, FIXED_ZERO_NO, GPS, INSTALLDATE, LAST_TEST_DATE, LOCATIONID, LOCDESC
+dataset Water Pumps | https://services8.arcgis.com/GMTk2nwk5uIyuDun/arcgis/rest/services/Water_Public/FeatureServer/5
+candidate https://services8.arcgis.com/GMTk2nwk5uIyuDun/arcgis/rest/services/Water_Public/FeatureServer/5
+note felder: ACTIVEFLAG, AncillaryRole, COMMENTS, DATA_SRC, DESHEAD, DESIGNGPM, DISCHDIAM, DYNHEAD, ELEVATION, ENABLED, FACILITYID, GPS, INLETDIAM, INSTALLDATE, LOCDESC, MAINTBY, MAXOPDISC, MAXOPHEAD
+dataset Inactive Drinking Water Sources | https://mercator.env.nm.gov/server/rest/services/dwb/drinking_water_sources/FeatureServer/2
+dead https://mercator.env.nm.gov/server/rest/services/dwb/drinking_water_sources/FeatureServer/2
+note fetch-void
+dataset Water Service Connections | https://services3.arcgis.com/A7O8YnTNtzRPIn7T/arcgis/rest/services/Cityworks_WaterMapAGOL/FeatureServer/10
+candidate https://services3.arcgis.com/A7O8YnTNtzRPIn7T/arcgis/rest/services/Cityworks_WaterMapAGOL/FeatureServer/10
+note felder: ACTIVEFLAG, ADDRESS, CONDITION, DIAMETER, ENABLED, FACILITYID, GIS_ENTRY_STAGE, INSPECTDATE, INSTALLDATE, LIFECYCLESTATUS, LINETYPE, LOCATION, LOCDESC, Locations, MAINTBY, MATERIAL, OBJECTID, OWNEDBY
+dataset Water Meter | https://maps.ci.yuma.az.us/arcgis/rest/services/Lucity/UTWaterDistribution/FeatureServer/5
+dead https://maps.ci.yuma.az.us/arcgis/rest/services/Lucity/UTWaterDistribution/FeatureServer/5
+note fetch-void
+dataset Water All | https://services3.arcgis.com/aVepqWph7Jkj1aWl/arcgis/rest/services/Water_All/FeatureServer/0
+candidate https://services3.arcgis.com/aVepqWph7Jkj1aWl/arcgis/rest/services/Water_All/FeatureServer/0
+note felder: LAYER, OBJECTID, Shape__Length
+dataset Regional Water Pump Stations | https://services7.arcgis.com/2ECs938g489DMWjt/arcgis/rest/services/Regional_Water_Pump_Stations/FeatureServer/0
+candidate https://services7.arcgis.com/2ECs938g489DMWjt/arcgis/rest/services/Regional_Water_Pump_Stations/FeatureServer/0
+note felder: acquisition_code, acquisition_date, alias, asset_id, condition_grade, current_value, date_decommissioned, date_installed, dma_zone, duty_flow_ls, duty_head_m, expected_life, globalid, historic_id, icp_number, key_, location, maintenance
+dataset Water Valves | https://services2.arcgis.com/7a7OULZOTqe87h9O/arcgis/rest/services/Water_Service/FeatureServer/2
+candidate https://services2.arcgis.com/7a7OULZOTqe87h9O/arcgis/rest/services/Water_Service/FeatureServer/2
+note felder: ABOVEGROUNDOPERATED, ACCESSPOINT, ANCILLARYROLE, ASSETID, BUSINESSUNIT, COMMENTS, COUNTY, CREATEDBY, CREATEDDATE, DATASOURCE, DATASOURCEDATE, DATASOURCEGPSPDOP, DATASOURCEWORKORDERID, DETAILONFILE, DETAILSHEETNUMBER, DIAMETER, DIRECTIONTOOPEN, ENABLED
+dataset Water Valves | https://services6.arcgis.com/YI96y1cjzU9fyyXk/arcgis/rest/services/Longview_Water_22X34/FeatureServer/2
+decline https://services6.arcgis.com/YI96y1cjzU9fyyXk/arcgis/rest/services/Longview_Water_22X34/FeatureServer/2
+note arcgis-error-body
+dataset Water Tank | https://services6.arcgis.com/YI96y1cjzU9fyyXk/arcgis/rest/services/Longview_Water_22X34/FeatureServer/3
+decline https://services6.arcgis.com/YI96y1cjzU9fyyXk/arcgis/rest/services/Longview_Water_22X34/FeatureServer/3
+note arcgis-error-body
+dataset Water Connections | https://services6.arcgis.com/ynGHe0Yy1JG8d8DW/arcgis/rest/services/Water_Connections/FeatureServer
+candidate-leer https://services6.arcgis.com/ynGHe0Yy1JG8d8DW/arcgis/rest/services/Water_Connections/FeatureServer
+note 0 rows, felder unbekannt
+dataset Water Service Connections | https://services3.arcgis.com/A7O8YnTNtzRPIn7T/arcgis/rest/services/CityWorks_WaterNetwork/FeatureServer/10
+candidate https://services3.arcgis.com/A7O8YnTNtzRPIn7T/arcgis/rest/services/CityWorks_WaterNetwork/FeatureServer/10
+note felder: ACTIVEFLAG, ADDRESS, CONDITION, DIAMETER, ENABLED, FACILITYID, GIS_ENTRY_STAGE, INSPECTDATE, INSTALLDATE, LIFECYCLESTATUS, LINETYPE, LOCATION, LOCDESC, Locations, MAINTBY, MATERIAL, OBJECTID, OWNEDBY
+dataset Water Issues | https://services.arcgis.com/yU6CY0Ife62CollW/arcgis/rest/services/Water_Issues/FeatureServer/0
+candidate https://services.arcgis.com/yU6CY0Ife62CollW/arcgis/rest/services/Water_Issues/FeatureServer/0
+note felder: Asset, CreationDate, Creator, EditDate, Editor, GlobalID, OBJECTID, Status, comments, date_resolved, observation_type, requires_attention
+dataset Water Issues | https://services1.arcgis.com/pQrVKbO4a0hhA72L/arcgis/rest/services/Water_Issues/FeatureServer/0
+candidate https://services1.arcgis.com/pQrVKbO4a0hhA72L/arcgis/rest/services/Water_Issues/FeatureServer/0
+note felder: Asset, CreationDate, Creator, EditDate, Editor, GlobalID, OBJECTID, Status, comments, date_resolved, observation_type, requires_attention
+dataset Water Issues | https://services9.arcgis.com/WAqWnERqM2ce1oen/arcgis/rest/services/Water_Issues/FeatureServer/0
+candidate https://services9.arcgis.com/WAqWnERqM2ce1oen/arcgis/rest/services/Water_Issues/FeatureServer/0
+note felder: Asset, CreationDate, Creator, EditDate, Editor, GlobalID, OBJECTID, Status, comments, date_resolved, observation_type, requires_attention
+dataset Water | https://services1.arcgis.com/UWYHeuuJISiGmgXx/arcgis/rest/services/Water/FeatureServer/19
+candidate https://services1.arcgis.com/UWYHeuuJISiGmgXx/arcgis/rest/services/Water/FeatureServer/19
+note felder: GlobalID, NAME, OBJECTID, SUBTYPE, SYMBOL, Shape__Area, Shape__Length, TYPE, URL, WATER
+dataset Water Sprypoint | https://services2.arcgis.com/iLsFVn6d1pmqKEfA/arcgis/rest/services/Water_Sprypoint/FeatureServer
+candidate-leer https://services2.arcgis.com/iLsFVn6d1pmqKEfA/arcgis/rest/services/Water_Sprypoint/FeatureServer
+note 0 rows, felder unbekannt
+dataset Water Hydrants | https://services8.arcgis.com/GMTk2nwk5uIyuDun/arcgis/rest/services/Water_Public/FeatureServer/4
+candidate https://services8.arcgis.com/GMTk2nwk5uIyuDun/arcgis/rest/services/Water_Public/FeatureServer/4
+note felder: ACTIVEFLAG, DIR_OPEN, ENABLED, FACILITYID, FLOW, GPS, INSTALLDATE, LABELS, LASTSERVICE, LOCDESC, MAINTBY, MANUFACTURER, MODEL_NOS, OBJECTID, OPERABLE, OWNEDBY, PLAN_DATE, PLAN_NOS
+dataset Water Structures | https://services8.arcgis.com/GMTk2nwk5uIyuDun/arcgis/rest/services/Water_Public/FeatureServer/10
+candidate https://services8.arcgis.com/GMTk2nwk5uIyuDun/arcgis/rest/services/Water_Public/FeatureServer/10
+note felder: ACTIVEFLAG, COMMENTS, DATA_SRC, FACILITYID, GPS, INSTALLDATE, LOCDESC, MAINTBY, NAME, OBJECTID, OPDATE, OWNEDBY, PLAN_DATE, PLAN_NOS, STRUCTTYPE, Shape__Area, Shape__Length, X
+dataset Water Mains | https://services.arcgis.com/X3EAXocno9eyvCvV/arcgis/rest/services/WATER/FeatureServer/10
+candidate https://services.arcgis.com/X3EAXocno9eyvCvV/arcgis/rest/services/WATER/FeatureServer/10
+note felder: ASSET_TYPE, CONDITION, CONDITIONDATE, CONTRACTOR, CRITICALITY, CreationDate, Creator, DEPTH_BURIED, DESIGN_PRESSURE, DIAMETER, DIRECTION, ENABLED, EditDate, Editor, FACILITYID, FACILITY_NAME, FEATURE_ID, GlobalID
+dataset Water Tanks | https://services.arcgis.com/X3EAXocno9eyvCvV/arcgis/rest/services/WATER/FeatureServer/0
+candidate https://services.arcgis.com/X3EAXocno9eyvCvV/arcgis/rest/services/WATER/FeatureServer/0
+note felder: ASSET_TYPE, CAPACITY, CONDITION, CONDITIONDATE, CONTRACTOR, CreationDate, Creator, DATE_INSTALLED, DIAMETER, ELEV_BOTTOM, ELEV_GROUND, ELEV_OVERFLOW, ELEV_TOP, ENABLED, EditDate, Editor, FACILITYID, FEATURE_ID
+dataset Water Valves | https://services.arcgis.com/X3EAXocno9eyvCvV/arcgis/rest/services/WATER/FeatureServer/3
+candidate https://services.arcgis.com/X3EAXocno9eyvCvV/arcgis/rest/services/WATER/FeatureServer/3
+note felder: ASSET_TYPE, CEDRA_MOD, CLR, CONDITION, CONDITIONDATE, CONTRACTOR, CreationDate, Creator, DATE_INSTALLED, DEPTH_TO_NUT, DEVICE_SID, DEVICE_UID, DIAMETER, DIRECTION, ENABLED, ENG_NUM, EditDate, Editor
+dataset Water Public | https://services8.arcgis.com/GMTk2nwk5uIyuDun/arcgis/rest/services/Water_Public/FeatureServer
+candidate-leer https://services8.arcgis.com/GMTk2nwk5uIyuDun/arcgis/rest/services/Water_Public/FeatureServer
+note 0 rows, felder unbekannt
+dataset CityofYankton WATER | https://services3.arcgis.com/aVepqWph7Jkj1aWl/arcgis/rest/services/CityofYankton_WATER/FeatureServer
+candidate-leer https://services3.arcgis.com/aVepqWph7Jkj1aWl/arcgis/rest/services/CityofYankton_WATER/FeatureServer
+note 0 rows, felder unbekannt
+dataset Regional Water Pipes | https://services7.arcgis.com/2ECs938g489DMWjt/arcgis/rest/services/Regional_Water_Pipes/FeatureServer/0
+candidate https://services7.arcgis.com/2ECs938g489DMWjt/arcgis/rest/services/Regional_Water_Pipes/FeatureServer/0
+note felder: Shape__Length, acquisition_code, acquisition_date, asset_id, capacity_m3, condition_grade, criticality, date_decommissioned, date_installed, date_lined, diameter_mm, dma_zone, end_node_id, external_protection, external_protection_date, globalid, historic_id, joint_type
+dataset Water Casings | https://services7.arcgis.com/5dZNGIYSzc3DArKf/arcgis/rest/services/Sewer_Water_AIA/FeatureServer/16
+candidate https://services7.arcgis.com/5dZNGIYSzc3DArKf/arcgis/rest/services/Sewer_Water_AIA/FeatureServer/16
+note felder: ACTIVEFLAG, Comments, DIAMETER, Enabled, FACILITYID, GlobalID, INSTALLDATE, LASTEDITOR, LASTUPDATE, MAINTBY, MATERIAL, OBJECTID, OWNEDBY, RECORDLENG, Shape__Length, created_date, created_user, last_edited_date
+dataset Water Node | https://services7.arcgis.com/kkiBaYsUIhK1wEpz/arcgis/rest/services/Assets_Water/FeatureServer/1
+candidate https://services7.arcgis.com/kkiBaYsUIhK1wEpz/arcgis/rest/services/Assets_Water/FeatureServer/1
+note felder: Asset_Reference, Asset_Type, Bend_Type, Material, OBJECTID, Service_Area, Size_Inlet, Size_Outlet, Structure_Type
+dataset Water Management Areas | https://services1.arcgis.com/TWsoAGve3wb3oFHK/arcgis/rest/services/WaterManagementArea/FeatureServer/0
+candidate https://services1.arcgis.com/TWsoAGve3wb3oFHK/arcgis/rest/services/WaterManagementArea/FeatureServer/0
+note felder: AreaHA, GlobalID, ManagementCode, ManagementZone, ManagementZoneLabel, OBJECTID, Shape__Area, Shape__Length
+dataset Water Valve | https://services7.arcgis.com/kkiBaYsUIhK1wEpz/arcgis/rest/services/Assets_Water/FeatureServer/0
+candidate https://services7.arcgis.com/kkiBaYsUIhK1wEpz/arcgis/rest/services/Assets_Water/FeatureServer/0
+note felder: Asset_Reference, Asset_Type, Material, OBJECTID, Service_Area, Size
+dataset Water Fittings | https://services7.arcgis.com/5dZNGIYSzc3DArKf/arcgis/rest/services/Sewer_Water_AIA/FeatureServer/13
+candidate https://services7.arcgis.com/5dZNGIYSzc3DArKf/arcgis/rest/services/Sewer_Water_AIA/FeatureServer/13
+note felder: ACTIVEFLAG, ENABLED, Easting, Elevation, FACILITYID, FITTINGTYPE, GlobalID, INSTALLDATE, LASTEDITOR, LASTUPDATE, LOCDESC, MAINTBY, Northing, OBJECTID, OWNEDBY, ROTATION, created_date, created_user

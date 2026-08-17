@@ -1,0 +1,529 @@
+# grind arcgis b13 (2026-08-15) — keywords: soil temperature, ice thickness, glacier mass balance, sea ice, lake temperature, river temperature
+# keyword soil temperature
+dataset Minnesota Six-Inch Soil Temperature Network | https://enterprise.gisdata.mn.gov/aghost/rest/services/us_mn_state_mda/geos_soil_temp_network/FeatureServer/0
+candidate https://enterprise.gisdata.mn.gov/aghost/rest/services/us_mn_state_mda/geos_soil_temp_network/FeatureServer/0
+note felder: lat, long, name, objectid, source, url
+dataset Minnesota Six-Inch Soil Temperature Network | https://enterprise-dev.gisdata.mn.gov/aghost/rest/services/us_mn_state_mda/geos_soil_temp_network/FeatureServer/0
+decline https://enterprise-dev.gisdata.mn.gov/aghost/rest/services/us_mn_state_mda/geos_soil_temp_network/FeatureServer/0
+note arcgis-error-body
+dataset Soil Chem Data at Subsurface  | https://services3.arcgis.com/EbocRUnjE7nGM2SS/arcgis/rest/services/MergePtsSubsurface_ex/FeatureServer/0
+candidate https://services3.arcgis.com/EbocRUnjE7nGM2SS/arcgis/rest/services/MergePtsSubsurface_ex/FeatureServer/0
+note felder: BulkCond, Coeff, Date, Easting, Moisture, Name, Northing, OBJECTID, Pore, Temp_
+dataset Soil Chem Data at Surface | https://services3.arcgis.com/EbocRUnjE7nGM2SS/arcgis/rest/services/MergePtsSurface_ex/FeatureServer/0
+candidate https://services3.arcgis.com/EbocRUnjE7nGM2SS/arcgis/rest/services/MergePtsSurface_ex/FeatureServer/0
+note felder: BulkCond, Coeff, Date, Easting, Moisture, Name, Northing, OBJECTID, Pore, Temp_
+dataset ZMB Soil Type Classification | https://services3.arcgis.com/t6lYS2Pmd8iVx1fy/arcgis/rest/services/ZMB_Soil_Type_Classification/FeatureServer/0
+candidate https://services3.arcgis.com/t6lYS2Pmd8iVx1fy/arcgis/rest/services/ZMB_Soil_Type_Classification/FeatureServer/0
+note felder: COL_CL1, COL_CL2, COL_SCO, DEP_CL1, DEP_CL2, DEP_SCO, DOMINANT, DOM_DESC, DRAIN_CL, DRAIN_CL2, DRAIN_SCO, Drain_text, FID, Hectares, IUCN_PERC, LSCAPE, LSCAPE_CLA, LSCAPE_PER
+dataset Soil Pits | https://services.arcgis.com/tWF28TdwCm3ZaV7m/arcgis/rest/services/Soil_Pits/FeatureServer/0
+candidate https://services.arcgis.com/tWF28TdwCm3ZaV7m/arcgis/rest/services/Soil_Pits/FeatureServer/0
+note felder: FID, Lat, Lon, Name, Type
+dataset Soil | https://services8.arcgis.com/igBDALC1d4lzXni2/arcgis/rest/services/Soil/FeatureServer/0
+candidate https://services8.arcgis.com/igBDALC1d4lzXni2/arcgis/rest/services/Soil/FeatureServer/0
+note felder: ACRES, AREA, CreationDate, Creator, DXF_TEXT, EditDate, Editor, GlobalID, HECTARES, MONTCOSOIL, MONTCOSO_1, MUSYM, OBJECTID, PERIMETER, Shape__Area, Shape__Length
+dataset Soil collector | https://services1.arcgis.com/ze0XBzU1FXj94DJq/arcgis/rest/services/Soil_collector/FeatureServer/0
+candidate https://services1.arcgis.com/ze0XBzU1FXj94DJq/arcgis/rest/services/Soil_collector/FeatureServer/0
+note felder: CreationDate, Creator, EditDate, Editor, Group_name, Infiltration, Notes, OBJECTID, Site_description, Soil_Management, Soil_nitrogen, Soil_phosphorus, pH
+dataset Soil | https://services1.arcgis.com/QB0VWfqR9MD4lF0F/arcgis/rest/services/Soil/FeatureServer/0
+candidate https://services1.arcgis.com/QB0VWfqR9MD4lF0F/arcgis/rest/services/Soil/FeatureServer/0
+note felder: CREATE_DATE, CREATOR, LASTEDITOR, LASTUPDATE, LAST_EDITOR, LAST_EDIT_DATE, OBJECTID, SOILDESC, SOILTYPE, SOIL_LEGEND, Shape__Area, Shape__Length
+dataset FSL New Zealand Soil Classification | https://services7.arcgis.com/8G10QCd84QpdcTJ9/arcgis/rest/services/Soils/FeatureServer/3
+candidate https://services7.arcgis.com/8G10QCd84QpdcTJ9/arcgis/rest/services/Soils/FeatureServer/3
+note felder: OBJECTID, SHAPE_fid, Shape__Area, Shape__Length, nzsc_class, nzsc_group, nzsc_order
+dataset Soil Associations 2006 | https://services-ap1.arcgis.com/lnVW0dLI3fvST2hd/arcgis/rest/services/Soil_Associations_2006/FeatureServer/0
+candidate https://services-ap1.arcgis.com/lnVW0dLI3fvST2hd/arcgis/rest/services/Soil_Associations_2006/FeatureServer/0
+note felder: DOMINANT_TYPE, GLOBALID, OBJECTID, PARENT_MATERIAL, SOIL_ASSOCIATION, SOIL_TYPE, SOURCES, Shape__Area, Shape__Length
+dataset Soil P | https://services5.arcgis.com/vOad1MCGZ9okh7Uc/arcgis/rest/services/Soil_P/FeatureServer/0
+candidate https://services5.arcgis.com/vOad1MCGZ9okh7Uc/arcgis/rest/services/Soil_P/FeatureServer/0
+note felder: AREA, CLASS1, FID, GAUT_GE_, GAUT_GE_ID, GROUP_, LIMIT, PERIMETER, Shape__Area, Shape__Length
+dataset Soil | https://services5.arcgis.com/pweYHqdOby1TE9DD/arcgis/rest/services/Soil/FeatureServer/0
+candidate https://services5.arcgis.com/pweYHqdOby1TE9DD/arcgis/rest/services/Soil/FeatureServer/0
+note felder: DOMORDER, DOMORDPER, DOMSUBORD, DOMSUBPER, DRAINCLASS, DRNCLASSPER, FARMCLASS, GROUPPER, HYDRICLIST, HYDRICPER, HYDRICRATE, HYDROGROUP, IRRCLASS, LASTEDITOR, LASTUPDATE, NONIRRCLASS, OBJECTID, SOILDESC
+dataset Soil Drainage | https://services1.arcgis.com/NWUiNpFLGIf9gkGi/arcgis/rest/services/Soils_Drainage/FeatureServer/0
+decline https://services1.arcgis.com/NWUiNpFLGIf9gkGi/arcgis/rest/services/Soils_Drainage/FeatureServer/0
+note arcgis-error-body
+dataset GEOG 2012 Soil | https://services6.arcgis.com/rX5atNlsxFq7LIpv/arcgis/rest/services/GEOG_2012_Soil/FeatureServer
+candidate-leer https://services6.arcgis.com/rX5atNlsxFq7LIpv/arcgis/rest/services/GEOG_2012_Soil/FeatureServer
+note 0 rows, felder unbekannt
+dataset Soil SJ | https://services.arcgis.com/HJzgwvlNIXssnQar/arcgis/rest/services/Soil_SJ/FeatureServer/0
+candidate https://services.arcgis.com/HJzgwvlNIXssnQar/arcgis/rest/services/Soil_SJ/FeatureServer/0
+note felder: Id, Join_Count, LENGHT_KM, OBJECTID, RIVER_NAME, Shape__Area, Shape__Length, TARGET_FID, aimag_code, aimag_name
+dataset Hot Spots temperature | https://services1.arcgis.com/uuGbGoEZiBHMlQWc/arcgis/rest/services/Hot%20Spots%20temperature/FeatureServer/0
+candidate https://services1.arcgis.com/uuGbGoEZiBHMlQWc/arcgis/rest/services/Hot%20Spots%20temperature/FeatureServer/0
+note felder: GiPValue, GiZScore, Gi_Bin, OBJECTID, SOURCE_ID, temperature
+dataset Soil | https://wpbgisportal.wpb.org/server/rest/services/Land/Soil/FeatureServer/0
+dead https://wpbgisportal.wpb.org/server/rest/services/Land/Soil/FeatureServer/0
+note fetch-void
+dataset Soil Permeability Phosphorus Retention | https://services3.arcgis.com/DkDI7U7oNtqFwb5V/arcgis/rest/services/Soil_Permeability_Phosphorus_Retention/FeatureServer/0
+candidate https://services3.arcgis.com/DkDI7U7oNtqFwb5V/arcgis/rest/services/Soil_Permeability_Phosphorus_Retention/FeatureServer/0
+note felder: OBJECTID, Percolation_Rate, Phosphorus_Retention_Capability, Soil_ID, Soil_Type
+dataset Soil Survey | https://services1.arcgis.com/0DaVqrPt2eyXUS9g/arcgis/rest/services/SoilSurvey/FeatureServer/0
+candidate https://services1.arcgis.com/0DaVqrPt2eyXUS9g/arcgis/rest/services/SoilSurvey/FeatureServer/0
+note felder: AREASYMBOL, FARMLAND, FID, GlobalID, MUKEY, MUSYM, SOILTYPE, SPATIALVER, Shape__Area, Shape__Length
+dataset R4 Caribou Targhee NF Soil Climate | https://services1.arcgis.com/gGHDlz6USftL5Pau/arcgis/rest/services/R4_Caribou_Targhee_NF_Soil_Climate/FeatureServer/0
+candidate https://services1.arcgis.com/gGHDlz6USftL5Pau/arcgis/rest/services/R4_Caribou_Targhee_NF_Soil_Climate/FeatureServer/0
+note felder: FID, GSM_MU, MU_name, OBJECTID_1, OBJECTID_2, Shape_Le_1, Shape_Leng, Shape__Area, Shape__Length, soil_clima
+dataset soil miravalle gdb | https://services5.arcgis.com/FKwcDz27wRAj4HUT/arcgis/rest/services/soil_miravalle_gdb/FeatureServer/0
+candidate https://services5.arcgis.com/FKwcDz27wRAj4HUT/arcgis/rest/services/soil_miravalle_gdb/FeatureServer/0
+note felder: Area, Diss_flag, N_G1, OBJECTID, ORIG_FID, Percent_, Shape_Leng, Shape__Area, Shape__Length
+dataset OMAFRA Soil CLI DataView | https://services5.arcgis.com/zEv9BLFdYq38maPG/arcgis/rest/services/OMAFRA_Soil_CLI_DataView/FeatureServer/0
+candidate https://services5.arcgis.com/zEv9BLFdYq38maPG/arcgis/rest/services/OMAFRA_Soil_CLI_DataView/FeatureServer/0
+note felder: ACCURACY, ACRES, ATEXTURE1, ATEXTURE2, ATEXTURE3, CLASS1, CLASS2, CLASS3, CLI1, CLI1_1, CLI1_2, CLI2, CLI2_1, CLI2_2, CLI3, CLI3_1, CLI3_2, CLI_SYS
+dataset NRCS Soil Survey | https://services1.arcgis.com/4ZdJfkWE583IARCX/arcgis/rest/services/NRCS_Soil_Survey/FeatureServer/0
+candidate https://services1.arcgis.com/4ZdJfkWE583IARCX/arcgis/rest/services/NRCS_Soil_Survey/FeatureServer/0
+note felder: AREASYMBOL, CAC02, CAPABILITY, DEP2WATTBL, DRAINAGE, ERODIBILIT, FID, FLOODFREQ, GlobalID, HYDRIC, HYDSOILGP, IMPORTANCE, KFACTOR, KSAT, MUKEY, MUSYM, NR_CAPCLAS, NR_CAPSUBC
+dataset NZ Soil Classification | https://services8.arcgis.com/rH83DoI7Xdq2nG28/arcgis/rest/services/NZ_Soil_Classification/FeatureServer/0
+candidate https://services8.arcgis.com/rH83DoI7Xdq2nG28/arcgis/rest/services/NZ_Soil_Classification/FeatureServer/0
+note felder: FID, SHAPE_fid, Shape__Area, Shape__Length, nzsc_class, nzsc_group, nzsc_order
+dataset Hot Spots temperature | https://services1.arcgis.com/uuGbGoEZiBHMlQWc/arcgis/rest/services/Hot%20Spots%20temperature/FeatureServer/0
+candidate https://services1.arcgis.com/uuGbGoEZiBHMlQWc/arcgis/rest/services/Hot%20Spots%20temperature/FeatureServer/0
+note felder: GiPValue, GiZScore, Gi_Bin, OBJECTID, SOURCE_ID, temperature
+dataset Soil Depth | https://services6.arcgis.com/ALxeDxaeNjQo1Mf0/arcgis/rest/services/Soil_Depth/FeatureServer/2
+candidate https://services6.arcgis.com/ALxeDxaeNjQo1Mf0/arcgis/rest/services/Soil_Depth/FeatureServer/2
+note felder: OBJECTID, Shape__Area, Shape__Length, SibDepth
+dataset YELL Soil Types | https://services1.arcgis.com/fBc8EJBxQRMcHlei/arcgis/rest/services/YELL_Soil_Types/FeatureServer/4
+candidate https://services1.arcgis.com/fBc8EJBxQRMcHlei/arcgis/rest/services/YELL_Soil_Types/FeatureServer/4
+note felder: AREA, GENERAL, GEN_COLORNAMES, GlobalID, MapUnitName, MapUnitSymbol, NAME, OBJECTID, PERIMETER, Shape__Area, Shape__Length, VALUE, Y_SOILS_, Y_SOILS_ID
+dataset Soil Orders of Canada | https://services3.arcgis.com/r1DAbOCe3TVLhm7J/arcgis/rest/services/Soil_Orders_of_Canada/FeatureServer/0
+candidate https://services3.arcgis.com/r1DAbOCe3TVLhm7J/arcgis/rest/services/Soil_Orders_of_Canada/FeatureServer/0
+note felder: OBJECTID, SLC_SOIL_ORDER_V31_22_ID, SOIL_ORDER_NAME_EN, SOIL_ORDER_NAME_FR, SOIL_ORDER_PCNT, Shape__Area, Shape__Length
+dataset Soil Texture | https://services6.arcgis.com/ALxeDxaeNjQo1Mf0/arcgis/rest/services/Soil_Texture/FeatureServer/1
+candidate https://services6.arcgis.com/ALxeDxaeNjQo1Mf0/arcgis/rest/services/Soil_Texture/FeatureServer/1
+note felder: OBJECTID, Shape__Area, Shape__Length, Texture
+dataset WP Soil Map Units | https://services1.arcgis.com/p3PJ7q6ieSpZVYZl/arcgis/rest/services/WP_Soil_Map_Units/FeatureServer/2
+candidate https://services1.arcgis.com/p3PJ7q6ieSpZVYZl/arcgis/rest/services/WP_Soil_Map_Units/FeatureServer/2
+note felder: OBJECTID, Shape__Area, Shape__Length, airtempa_h, airtempa_l, airtempa_r, albedodry_h, albedodry_l, albedodry_r, alfisols_pct, andisols_pct, areasymbol, aridisols_pct, aspectccwise, aspectcwise, aspectrep, awmmfpwwta, aws0100wta
+dataset MMRP Soil Map | https://services5.arcgis.com/vjkLPve5QPd1xqEn/arcgis/rest/services/MMRP_Soil_Map/FeatureServer/0
+candidate https://services5.arcgis.com/vjkLPve5QPd1xqEn/arcgis/rest/services/MMRP_Soil_Map/FeatureServer/0
+note felder: AREASYMBOL, FID, GlobalID, MUKEY, MUSYM, SPATIALVER, Shape__Area, Shape__Length
+dataset Soil Survey - dissolved | https://services1.arcgis.com/0DaVqrPt2eyXUS9g/arcgis/rest/services/SoilSurveyDISS/FeatureServer/0
+candidate https://services1.arcgis.com/0DaVqrPt2eyXUS9g/arcgis/rest/services/SoilSurveyDISS/FeatureServer/0
+note felder: FARMLAND, FID, GlobalID, MUKEY, MUSYM, SOILTYPE, Shape__Area, Shape__Length
+dataset Farmland from Soil Survey, Berrien County, MI | https://services2.arcgis.com/djh8oO0rYU7YdX5J/arcgis/rest/services/Soil_Berrien_Farm_Dissolve/FeatureServer/0
+candidate https://services2.arcgis.com/djh8oO0rYU7YdX5J/arcgis/rest/services/Soil_Berrien_Farm_Dissolve/FeatureServer/0
+note felder: ACRES, OBJECTID, Shape__Area, Shape__Length, farmlndcl
+dataset Soil Drainage | https://services6.arcgis.com/ALxeDxaeNjQo1Mf0/arcgis/rest/services/Soil_Drainage/FeatureServer/5
+candidate https://services6.arcgis.com/ALxeDxaeNjQo1Mf0/arcgis/rest/services/Soil_Drainage/FeatureServer/5
+note felder: Drainage, OBJECTID, Shape__Area, Shape__Length
+dataset Soil Temperature Monitoring Station | https://services1.arcgis.com/7EzQnrfw48ewO24q/arcgis/rest/services/Soil_Temperature_Monitoring_Station/FeatureServer/0
+candidate https://services1.arcgis.com/7EzQnrfw48ewO24q/arcgis/rest/services/Soil_Temperature_Monitoring_Station/FeatureServer/0
+note felder: Elevation_, FID, Latitude, Longitude, Station
+dataset USDA Soil Survey | https://services1.arcgis.com/BajuNXbtZNiBKFkx/arcgis/rest/services/USDA_Soil_Survey/FeatureServer/0
+candidate https://services1.arcgis.com/BajuNXbtZNiBKFkx/arcgis/rest/services/USDA_Soil_Survey/FeatureServer/0
+note felder: AREASYMBOL, MUKEY, MUSYM, OBJECTID, SPATIALVER, SSAVersion, SSAVersionEst, Shape__Area, Shape__Length
+dataset CIG Soil Sampling Campaign | https://services1.arcgis.com/x4h61KaW16vFs7PM/arcgis/rest/services/CIG_Soil_Sampling_Campaign/FeatureServer/0
+candidate https://services1.arcgis.com/x4h61KaW16vFs7PM/arcgis/rest/services/CIG_Soil_Sampling_Campaign/FeatureServer/0
+note felder: Bottom_Depth__cm_, Farm_Location, Island, Lab_, Latitude, Longitude, ObjectId, Order_, Project, Sample_Collection_Date, Sample__, Site_ID, Top_Depth__cm_, Year
+dataset Soil Classification Soilorder | https://services6.arcgis.com/ALxeDxaeNjQo1Mf0/arcgis/rest/services/Soil_Classification_Soilorder/FeatureServer/4
+candidate https://services6.arcgis.com/ALxeDxaeNjQo1Mf0/arcgis/rest/services/Soil_Classification_Soilorder/FeatureServer/4
+note felder: NZSCOrder, OBJECTID, Shape__Area, Shape__Length, SoilFactsheetURL
+dataset Public - Soil Sampling | https://services2.arcgis.com/6C78kWd627zdd1LB/arcgis/rest/services/Public___Soil_Sampling/FeatureServer/0
+candidate https://services2.arcgis.com/6C78kWd627zdd1LB/arcgis/rest/services/Public___Soil_Sampling/FeatureServer/0
+note felder: CARBON_CONTENT, CID, COMMENTS, DATE_COLLECTED, GlobalID, OBJECTID, PLANT_COMMUNITY, SAMPLE_NAME, SOIL_TYPE, SURVEYOR
+dataset Soil Expansive Potential | https://services2.arcgis.com/GQhSReJEO6f7tsvy/arcgis/rest/services/Soil_Expansive_Potential/FeatureServer/0
+candidate https://services2.arcgis.com/GQhSReJEO6f7tsvy/arcgis/rest/services/Soil_Expansive_Potential/FeatureServer/0
+note felder: AREASYMBOL, COMPPCT_R, EXPANSIVE, LEP_MAX, MUKEY, MUSYM, OBJECTID, SPATIALVER, Shape__Area, Shape__Length
+dataset Soil Subsidence Potential | https://services2.arcgis.com/GQhSReJEO6f7tsvy/arcgis/rest/services/Soil_Subsidence_Potential/FeatureServer/0
+candidate https://services2.arcgis.com/GQhSReJEO6f7tsvy/arcgis/rest/services/Soil_Subsidence_Potential/FeatureServer/0
+note felder: AREASYMBOL, MUKEY, MUSYM, OBJECTID, SPATIALVER, SUBSIDENCE, SUBSIDINIR, Shape__Area, Shape__Length
+dataset Soil Dominant Component | https://services2.arcgis.com/GQhSReJEO6f7tsvy/arcgis/rest/services/Soil_Dominant_Component/FeatureServer/0
+candidate https://services2.arcgis.com/GQhSReJEO6f7tsvy/arcgis/rest/services/Soil_Dominant_Component/FeatureServer/0
+note felder: AIRTEMPA_H, AIRTEMPA_L, AIRTEMPA_R, ALBEDODRY_H, ALBEDODRY_L, ALBEDODRY_R, AREASYMBOL, ASPECTCCWISE, ASPECTCWISE, ASPECTREP, CASTORIEINDEX, COKEY, COMPKIND, COMPNAME, COMPPCT_H, COMPPCT_L, COMPPCT_R, CONSTREESHRUBGRP
+dataset Municipality of Chatham Kent's - Land Surface Temperature | https://services1.arcgis.com/BlSm9A1poQIGIz9S/arcgis/rest/services/Municipality_of_Chatham_Kents_-_Land_Surface_Temperature/FeatureServer/119
+candidate https://services1.arcgis.com/BlSm9A1poQIGIz9S/arcgis/rest/services/Municipality_of_Chatham_Kents_-_Land_Surface_Temperature/FeatureServer/119
+note felder: LSTRANGE, OBJECTID
+dataset Soil in Jasper County | https://services6.arcgis.com/f6278XvXrNz6PmsX/arcgis/rest/services/Soil_in_Jasper_County/FeatureServer/1
+candidate https://services6.arcgis.com/f6278XvXrNz6PmsX/arcgis/rest/services/Soil_in_Jasper_County/FeatureServer/1
+note felder: AREASYMBOL, Cost, Grade, MUKEY, MUSYM, NirrCpCls, OBJECTID, SPATIALVER, Shape__Area, Shape__Length
+dataset National Soil Map | https://utility.arcgis.com/usrsvcs/servers/608cab5c64ae44789d65582007fb2350/rest/services/NationalSoilMap/FeatureServer/0
+candidate https://utility.arcgis.com/usrsvcs/servers/608cab5c64ae44789d65582007fb2350/rest/services/NationalSoilMap/FeatureServer/0
+note felder: ASSOC_SOIL, CROP_LU, DESC_, DOM_SOILS, DRAINAGE, DRAINS_TO, FERTILITY, GEOLOGY, HABITATS, MAP_SYMBOL, MUSID, MU_NAME, OBJECTID, SITE, SOILGUIDE, SOILSCAPE, Shape__Area, Shape__Length
+dataset Agric Lands | https://services6.arcgis.com/ORHI7r9uOruyZ2iR/arcgis/rest/services/Agric_Lands/FeatureServer/0
+candidate https://services6.arcgis.com/ORHI7r9uOruyZ2iR/arcgis/rest/services/Agric_Lands/FeatureServer/0
+note felder: Area_norm, Area_score, BD_score, CEC_score, Compactness_norm, Consolidation_Priority, EC_penalty, GlobalID, Irrigation_Priority, Land_Explanation, Land_Explanation_Color, Land_Quality_Score_v2, NDVI_score, OBJECTID, ORIG_FID, ORIG_OID, Policy_Priority, Precip_score
+dataset Soil Landscape Block Diagram | https://services.arcgis.com/SXbDpmb7xQkk44JV/arcgis/rest/services/Soil_Landscape_Block_Diagram/FeatureServer/0
+candidate https://services.arcgis.com/SXbDpmb7xQkk44JV/arcgis/rest/services/Soil_Landscape_Block_Diagram/FeatureServer/0
+note felder: Caption_1, CreationDate, Creator, EditDate, Editor, GlobalID, Issue_date, Link, Link_to_png_file, OBJECTID, Series_or_higher_taxa, State, Survey_area_or_publication_titl, USER_File_Code, area_symbol, displayedonmap, label, mlra
+dataset Fundamental Soil Layer (FSL) | https://services1.arcgis.com/VuN78wcRdq1Oj69W/arcgis/rest/services/Soils_Inventory_used_for_Local_Maps/FeatureServer/7
+candidate https://services1.arcgis.com/VuN78wcRdq1Oj69W/arcgis/rest/services/Soils_Inventory_used_for_Local_Maps/FeatureServer/7
+note felder: AREAH, CARBON_CLA, CARBON_EST, CARBON_MAX, CARBON_MID, CARBON_MIN, CARBON_MOD, CARBON_VAR, CEC_CLASS, CEC_EST, CEC_MAX, CEC_MID, CEC_MIN, CEC_MOD, CEC_VAR, DOMNZSC, DOMSOI, DRAIN_CLAS
+# done soil temperature
+# keyword ice thickness
+dataset ASCE Ice MRI500 | https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/ASCE_Ice_Vectors/FeatureServer/1
+candidate https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/ASCE_Ice_Vectors/FeatureServer/1
+note felder: FID, Id, Shape__Area, Shape__Length, gridcode
+dataset ASCE Ice MRI1400 | https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/ASCE_Ice_Vectors/FeatureServer/3
+candidate https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/ASCE_Ice_Vectors/FeatureServer/3
+note felder: FID, Id, Shape__Area, Shape__Length, gridcode
+dataset ASCE Ice MRI1000 | https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/ASCE_Ice_Vectors/FeatureServer/2
+candidate https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/ASCE_Ice_Vectors/FeatureServer/2
+note felder: FID, Id, Shape__Area, Shape__Length, gridcode
+dataset ASCE Ice MRI250 | https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/ASCE_Ice_Vectors/FeatureServer/0
+candidate https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/ASCE_Ice_Vectors/FeatureServer/0
+note felder: FID, Id, Shape__Area, Shape__Length, gridcode
+dataset Ice Hazard Vectors | https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/ASCE_Ice_Vectors/FeatureServer
+candidate-leer https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/ASCE_Ice_Vectors/FeatureServer
+note 0 rows, felder unbekannt
+dataset Surficial Unconsolidated Thickness Contours | https://portal.igs.indiana.edu/arcgis/rest/services/Surficial_Unconsolidated_Thickness_Contours/FeatureServer/108
+decline https://portal.igs.indiana.edu/arcgis/rest/services/Surficial_Unconsolidated_Thickness_Contours/FeatureServer/108
+note arcgis-error-body
+dataset Thickness range of Utica Shale Formation in NYS | https://services.arcgis.com/jDGuO8tYggdCCnUJ/arcgis/rest/services/Thickness_range_of_Utica_Shale_Formation_in_NYS/FeatureServer/0
+candidate https://services.arcgis.com/jDGuO8tYggdCCnUJ/arcgis/rest/services/Thickness_range_of_Utica_Shale_Formation_in_NYS/FeatureServer/0
+note felder: FID, max, min, range, sq_mi
+dataset Glacial Drift Thickness | https://gis.saskatchewan.ca/egis/rest/services/Economy/Regional_Datasets_and_Compilations/FeatureServer/9
+decline https://gis.saskatchewan.ca/egis/rest/services/Economy/Regional_Datasets_and_Compilations/FeatureServer/9
+note arcgis-error-body
+dataset Seelyville Coal Member Thickness 2011 | https://portal.igs.indiana.edu/arcgis/rest/services/SeelyvilleCoalMember_Thickness_2011/FeatureServer/55
+candidate https://portal.igs.indiana.edu/arcgis/rest/services/SeelyvilleCoalMember_Thickness_2011/FeatureServer/55
+note felder: GRIDCODE, GlobalID, ID, OBJECTID, ORIG_FID, Shape__Area, Shape__Length, Thickness
+dataset Danville Coal Member Thickness 2011 | https://portal.igs.indiana.edu/arcgis/rest/services/DanvilleCoalMember_Thickness_2011/FeatureServer/28
+candidate https://portal.igs.indiana.edu/arcgis/rest/services/DanvilleCoalMember_Thickness_2011/FeatureServer/28
+note felder: GRIDCODE, GlobalID, ID, OBJECTID, ORIG_FID, Shape__Area, Shape__Length, Thickness
+dataset Ice thickness measurements | https://services8.arcgis.com/TPZVNjs5FHOJFiCS/arcgis/rest/services/Shapefiles/FeatureServer/10
+candidate https://services8.arcgis.com/TPZVNjs5FHOJFiCS/arcgis/rest/services/Shapefiles/FeatureServer/10
+note felder: FID, Glacier, Method, Reference, Thickness, X, Y
+dataset Thickness OptimizedHotSpots | https://services1.arcgis.com/YiULsZbgRKmBtdZN/arcgis/rest/services/RegolithThickness_cdenc06_WFL1/FeatureServer/0
+candidate https://services1.arcgis.com/YiULsZbgRKmBtdZN/arcgis/rest/services/RegolithThickness_cdenc06_WFL1/FeatureServer/0
+note felder: GiPValue, GiZScore, Gi_Bin, NNeighbors, OBJECTID, SOURCE_ID, THICKNESS
+dataset Ice-Flow Indicators | https://gis.saskatchewan.ca/egis/rest/services/Economy/Regional_Datasets_and_Compilations/FeatureServer/1
+decline https://gis.saskatchewan.ca/egis/rest/services/Economy/Regional_Datasets_and_Compilations/FeatureServer/1
+note arcgis-error-body
+dataset Springfield Coal Member Thickness 2011 | https://portal.igs.indiana.edu/arcgis/rest/services/SpringfieldCoalMember_Thickness_2011/FeatureServer/66
+candidate https://portal.igs.indiana.edu/arcgis/rest/services/SpringfieldCoalMember_Thickness_2011/FeatureServer/66
+note felder: GlobalID, Legend, OBJECTID, Shape__Area, Shape__Length
+dataset Thickness of Glacial Sediments in New Jersey | https://services1.arcgis.com/QWdNfRs7lkPq4g4Q/arcgis/rest/services/Thickness_of_Glacial_Sediments_in_New_Jersey/FeatureServer/0
+candidate https://services1.arcgis.com/QWdNfRs7lkPq4g4Q/arcgis/rest/services/Thickness_of_Glacial_Sediments_in_New_Jersey/FeatureServer/0
+note felder: GLOBALID, OBJECTID, RANGE, SYMBOL, Shape__Area, Shape__Length
+dataset Glacial Sediment Thickness | https://services1.arcgis.com/FjPcSmEFuDYlIdKC/arcgis/rest/services/Thickness_of_Glacial_Sediment_in_Connecticut_and_Long_Island_Sound_Set/FeatureServer/1
+candidate https://services1.arcgis.com/FjPcSmEFuDYlIdKC/arcgis/rest/services/Thickness_of_Glacial_Sediment_in_Connecticut_and_Long_Island_Sound_Set/FeatureServer/1
+note felder: OBJECTID, SYM, Shape__Area, Shape__Length, THICKI_FT
+dataset TxDOT Base Thickness | https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/TxDOT_Base_Thickness/FeatureServer/0
+candidate https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/TxDOT_Base_Thickness/FeatureServer/0
+note felder: ASSET_ID, ASSET_NM, BASE_THCK, BEGIN_DFO, END_DFO, EXT_DATE, GID, OBJECTID, RDBD_TYPE, RTE_NBR, RTE_NM, RTE_PRFX, RTE_SFX, SYSTEM, Shape__Length
+dataset ICE Data | https://services.arcgis.com/8lRhdTsQyJpO52F1/arcgis/rest/services/ICE_Data_View/FeatureServer/0
+candidate https://services.arcgis.com/8lRhdTsQyJpO52F1/arcgis/rest/services/ICE_Data_View/FeatureServer/0
+note felder: COMBO_TRUCK, COMBO_TRUCK_NORM, COMP_SCORE, CORRIDOR_DESC, CORRIDOR_ID, COUNTY_NAME, COUNTY_NUMBER, DIVIDED_HIGHWAY, EFFECTIVE_END_DATE, EFFECTIVE_START_DATE, FED_FUNCTIONAL_CLASS, FROM_MEASURE, FROM_REF_POST, FROM_REF_POST_OFFSET, GLOBALID, IRI_NORM, LENGTH_MILE, NEED
+# done ice thickness
+# keyword glacier mass balance
+dataset Glacier 2016 only | https://services1.arcgis.com/0BLakgVcDpWpuh4i/arcgis/rest/services/Glacier_Jayawijaya/FeatureServer/7
+candidate https://services1.arcgis.com/0BLakgVcDpWpuh4i/arcgis/rest/services/Glacier_Jayawijaya/FeatureServer/7
+note felder: Area_Ha, Name, OBJECTID, Shape__Area, Shape__Length
+dataset Glacier 2018 only | https://services1.arcgis.com/0BLakgVcDpWpuh4i/arcgis/rest/services/Glacier_Jayawijaya/FeatureServer/6
+candidate https://services1.arcgis.com/0BLakgVcDpWpuh4i/arcgis/rest/services/Glacier_Jayawijaya/FeatureServer/6
+note felder: Area_Ha, Name, OBJECTID, Shape__Area, Shape__Length
+dataset Glacier 2028 only | https://services1.arcgis.com/0BLakgVcDpWpuh4i/arcgis/rest/services/Glacier_Jayawijaya/FeatureServer/3
+candidate https://services1.arcgis.com/0BLakgVcDpWpuh4i/arcgis/rest/services/Glacier_Jayawijaya/FeatureServer/3
+note felder: Area_Ha, Name, OBJECTID, Shape__Area, Shape__Length
+dataset 2025 mass balance | https://services2.arcgis.com/supi6xDj3qduY1gn/arcgis/rest/services/Asia_SoC25_Glaciers_WFL1/FeatureServer/0
+candidate https://services2.arcgis.com/supi6xDj3qduY1gn/arcgis/rest/services/Asia_SoC25_Glaciers_WFL1/FeatureServer/0
+note felder: GEN_LOCATION, GLACIER_REGION_CODE, GLACIER_SUBREGION_CODE, Glacier_Name, INVESTIGATOR_SPONSORING_AGENCY, LAT, LON, No, OBJECTID, SPEC_LOCATION, WGMS_ID, Y2025, Y2025_X, Y2025_Y, mb, mb_absolute
+dataset Galloway 2021 Current Account Balance | https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/Galloway_2021_Current_Account_Balance/FeatureServer/0
+candidate https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/Galloway_2021_Current_Account_Balance/FeatureServer/0
+note felder: Country_Code, Country_Name, F1960, F1961, F1962, F1963, F1964, F1965, F1966, F1967, F1968, F1969, F1970, F1971, F1972, F1973, F1974, F1975
+dataset Water Balance | https://services2.arcgis.com/gmEC1e2ecZnyynki/arcgis/rest/services/Water_Balance/FeatureServer/0
+candidate https://services2.arcgis.com/gmEC1e2ecZnyynki/arcgis/rest/services/Water_Balance/FeatureServer/0
+note felder: BASIN_1, BASIN_2, BASIN_3, DEFIC_1990, DEFIC_2000, DEFIC_2010, DEF_00_10, DEF_2010, DEM1990, DEM2000, DEM2010, DEM_CENTER, FID, KE_BASIN, Shape__Area, Shape__Length, YIELDD_GRO, YIELD_SURF
+dataset Mass Transit District | https://services.arcgis.com/iPiPjILCMYxPZWTc/arcgis/rest/services/Mass_Transit_District/FeatureServer/0
+candidate https://services.arcgis.com/iPiPjILCMYxPZWTc/arcgis/rest/services/Mass_Transit_District/FeatureServer/0
+note felder: District_Name, GlobalID, OBJECTID, Shape__Area, Shape__Length, Tax_Year, Unit_Code, WebSite
+dataset Current Account Balance for Countries Around the World in 2019 | https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/Galloway_2021_Current_Account_Balance/FeatureServer
+candidate-leer https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/Galloway_2021_Current_Account_Balance/FeatureServer
+note 0 rows, felder unbekannt
+dataset Water Balance Grid | https://services1.arcgis.com/d0ZCwU7eGKVeNiEE/arcgis/rest/services/WaterBalanceData_SWP/FeatureServer/1
+candidate https://services1.arcgis.com/d0ZCwU7eGKVeNiEE/arcgis/rest/services/WaterBalanceData_SWP/FeatureServer/1
+note felder: ET_Actual, Evapotranspiration, OBJECTID, Precipitation, Recharge, Recharge_Actual, Runoff, Runoff_Actual, Shape__Area, Shape__Length
+dataset Mass balance data | https://services6.arcgis.com/HJzJQeO8rbTv2jiF/arcgis/rest/services/Mass_balance_data_20201019/FeatureServer/0
+candidate https://services6.arcgis.com/HJzJQeO8rbTv2jiF/arcgis/rest/services/Mass_balance_data_20201019/FeatureServer/0
+note felder: DateGroup, Emissions, ObjectId
+dataset Mass Audubon Signage Inventory | https://services.arcgis.com/ak79o5kZ71mxOX3m/arcgis/rest/services/Mass_Audubon_Signage_Inventory/FeatureServer/0
+candidate https://services.arcgis.com/ak79o5kZ71mxOX3m/arcgis/rest/services/Mass_Audubon_Signage_Inventory/FeatureServer/0
+note felder: Branding, Comments, Condition, Employee_Name, OBJECTID, Record_Date, Sanctuary, SignClass, SignType, Sign_Height, Sign_Mount, Sign_Width, Task, Town
+dataset Balance 5años | https://services3.arcgis.com/uZrwedu11XCCdHk1/arcgis/rest/services/Balance_5a%C3%B1os/FeatureServer/0
+candidate https://services3.arcgis.com/uZrwedu11XCCdHk1/arcgis/rest/services/Balance_5a%C3%B1os/FeatureServer/0
+note felder: Id, OBJECTID, Shape__Area, Shape__Length, gridcode
+dataset Balance 1año | https://services3.arcgis.com/uZrwedu11XCCdHk1/arcgis/rest/services/Balance_1a%C3%B1o/FeatureServer/4
+candidate https://services3.arcgis.com/uZrwedu11XCCdHk1/arcgis/rest/services/Balance_1a%C3%B1o/FeatureServer/4
+note felder: Id, OBJECTID, Shape__Area, Shape__Length, gridcode
+dataset Glacier Retreat Induced Potential Future Lakes of the Copper River Basin | https://services8.arcgis.com/8bLomDDRcQnERKr2/arcgis/rest/services/Copper_FutureLakes/FeatureServer/0
+candidate https://services8.arcgis.com/8bLomDDRcQnERKr2/arcgis/rest/services/Copper_FutureLakes/FeatureServer/0
+note felder: Area_km2, FID, FILENAME, GlaID, Gla_Lake, LakeID, Shape__Area, Shape__Length, gridcode
+dataset Mass Shootings Database 1982 to 2019 | https://services1.arcgis.com/igNkUJZ7SGoMjDNi/arcgis/rest/services/Mass_Shootings_Database_1982_to_2019/FeatureServer/0
+candidate https://services1.arcgis.com/igNkUJZ7SGoMjDNi/arcgis/rest/services/Mass_Shootings_Database_1982_to_2019/FeatureServer/0
+note felder: ObjectId, age_of_shooter, case_, date, fatalities, gender, injured, latitude, location, location2, longitude, mental_health_details, mental_health_sources, prior_signs_mental_health_issue, race, sources, sources_additional_age, summary
+dataset Mass Food Distribution | https://services.arcgis.com/tNJpAOha4mODLkXz/arcgis/rest/services/Mass_Food_Distribution/FeatureServer/0
+candidate https://services.arcgis.com/tNJpAOha4mODLkXz/arcgis/rest/services/Mass_Food_Distribution/FeatureServer/0
+note felder: Address, Comment, Council_District, Day_of_Operation, Hours_of_Operation, ID, Location_Name, ObjectId, Sponsor_Organization, X, Y, Zipcode
+dataset Mass Beaches Aggregated | https://services.arcgis.com/2gdL2gxYNFY2TOUb/arcgis/rest/services/Mass_Beaches_Aggregated/FeatureServer/0
+candidate https://services.arcgis.com/2gdL2gxYNFY2TOUb/arcgis/rest/services/Mass_Beaches_Aggregated/FeatureServer/0
+note felder: ACECID, ACEC_ACRES, ADMIN_BY, AnalysisArea, DES_DATE, Join_ID, NAME, OBJECTID, OBJECTID_1, POLY_ACRES, Point_Count, Point_Count_1, REGION, SECRETARY, Shape__Area, Shape__Length
+dataset Mass Beaches Aggregated | https://services.arcgis.com/2gdL2gxYNFY2TOUb/arcgis/rest/services/Mass_Beaches_Aggregated/FeatureServer
+candidate-leer https://services.arcgis.com/2gdL2gxYNFY2TOUb/arcgis/rest/services/Mass_Beaches_Aggregated/FeatureServer
+note 0 rows, felder unbekannt
+dataset Fund Balance | https://services.arcgis.com/seTexOicoRXDvRsJ/arcgis/rest/services/OpenData/FeatureServer/3
+candidate https://services.arcgis.com/seTexOicoRXDvRsJ/arcgis/rest/services/OpenData/FeatureServer/3
+note felder: APPLIED_DATE, BUILDING_CODE, COMPLETED_DATE, CONSTRUCTION_CATEGORY, CREATED_DATE_TIME, DESCRIPTION, FILING_NUMBER, ISSUED_DATE, JOB_VALUATION, JURISDICTION, LEGAL_DESCRIPTION, LOCATION, OBJECTID, ORIGINAL_ADDRESS_1, ORIGINAL_ADDRESS_2, ORIGINAL_CITY, ORIGINAL_STATE, ORIGINAL_ZIP
+dataset Mass Beaches Cluster | https://services.arcgis.com/2gdL2gxYNFY2TOUb/arcgis/rest/services/Mass_Beaches_Cluster/FeatureServer/0
+candidate https://services.arcgis.com/2gdL2gxYNFY2TOUb/arcgis/rest/services/Mass_Beaches_Cluster/FeatureServer/0
+note felder: CLUSTER_ID, COLOR_ID, EXEMPLAR, OBJECTID, OUTLIER, PROB, SOURCE_ID, STABILITY
+dataset Balance 30 años | https://services3.arcgis.com/uZrwedu11XCCdHk1/arcgis/rest/services/Balance_30_a%C3%B1os/FeatureServer/0
+candidate https://services3.arcgis.com/uZrwedu11XCCdHk1/arcgis/rest/services/Balance_30_a%C3%B1os/FeatureServer/0
+note felder: Id, OBJECTID, Shape__Area, Shape__Length, gridcode
+dataset Balance 50 años | https://services3.arcgis.com/uZrwedu11XCCdHk1/arcgis/rest/services/Balance_50_a%C3%B1os/FeatureServer/0
+candidate https://services3.arcgis.com/uZrwedu11XCCdHk1/arcgis/rest/services/Balance_50_a%C3%B1os/FeatureServer/0
+note felder: Id, OBJECTID, Shape__Area, Shape__Length, gridcode
+dataset Balance 20 años | https://services3.arcgis.com/uZrwedu11XCCdHk1/arcgis/rest/services/Balance_20_a%C3%B1os/FeatureServer/0
+candidate https://services3.arcgis.com/uZrwedu11XCCdHk1/arcgis/rest/services/Balance_20_a%C3%B1os/FeatureServer/0
+note felder: Id, OBJECTID, Shape__Area, Shape__Length, gridcode
+dataset Mass Care Localities Public | https://services3.arcgis.com/qVupYidwzMKkDQzr/arcgis/rest/services/Mass_Care_Localities_Public/FeatureServer/0
+candidate https://services3.arcgis.com/qVupYidwzMKkDQzr/arcgis/rest/services/Mass_Care_Localities_Public/FeatureServer/0
+note felder: ARC_Region, CSB, FIPS_num, GlobalID, Local_DSS_HS, Local_Health_District, LocalityLabel, OBJECTID, PDC, SMS, Shape__Area, Shape__Length, VDEM_region, VDH_Region, VDSS_Region
+dataset Balance 100 años | https://services3.arcgis.com/uZrwedu11XCCdHk1/arcgis/rest/services/Balance_100_a%C3%B1os/FeatureServer/0
+candidate https://services3.arcgis.com/uZrwedu11XCCdHk1/arcgis/rest/services/Balance_100_a%C3%B1os/FeatureServer/0
+note felder: Id, OBJECTID, Shape__Area, Shape__Length, gridcode
+dataset Balance 10 años | https://services3.arcgis.com/uZrwedu11XCCdHk1/arcgis/rest/services/Balance_10_a%C3%B1os/FeatureServer/0
+candidate https://services3.arcgis.com/uZrwedu11XCCdHk1/arcgis/rest/services/Balance_10_a%C3%B1os/FeatureServer/0
+note felder: Id, OBJECTID, Shape__Area, Shape__Length, gridcode
+dataset Mass Beaches Within ACECS | https://services.arcgis.com/2gdL2gxYNFY2TOUb/arcgis/rest/services/Mass_Beaches_Within_ACECS/FeatureServer/0
+candidate https://services.arcgis.com/2gdL2gxYNFY2TOUb/arcgis/rest/services/Mass_Beaches_Within_ACECS/FeatureServer/0
+note felder: ACECID, ACEC_ACRES, ADMIN_BY, AnalysisArea, DES_DATE, NAME, OBJECTID, OBJECTID_1, POLY_ACRES, Point_Count, REGION, SECRETARY, Shape__Area, Shape__Length
+dataset Mass Plantings | https://services.arcgis.com/Mh1AYiEF22sva4s8/arcgis/rest/services/Public_Purdue_Arboretum_Plants/FeatureServer/1
+candidate https://services.arcgis.com/Mh1AYiEF22sva4s8/arcgis/rest/services/Public_Purdue_Arboretum_Plants/FeatureServer/1
+note felder: OBJECTID, PlantCount, Shape__Area, Shape__Length, assessed_value, assetid, benefits, campus, co2, collectedby, commonname, cultivar, district, energy, family, genus, globalid, habit
+dataset Higher Mass Limit Vehicles Map WFL1 | https://services1.arcgis.com/E5n4f1VY84i0xSjy/arcgis/rest/services/Higher_Mass_Limit_Vehicles_Map_WFL1/FeatureServer/0
+candidate https://services1.arcgis.com/E5n4f1VY84i0xSjy/arcgis/rest/services/Higher_Mass_Limit_Vehicles_Map_WFL1/FeatureServer/0
+note felder: NE_DESCR, NE_GROUP, NE_ID, NE_NAME_1, OBJECTID, Shape__Length
+dataset Food Balance WIC Methodology | https://services2.arcgis.com/6Lv0D4YJVb4vr6VH/arcgis/rest/services/Food_Balance_Score_WIC_Methodology/FeatureServer/2
+candidate https://services2.arcgis.com/6Lv0D4YJVb4vr6VH/arcgis/rest/services/Food_Balance_Score_WIC_Methodology/FeatureServer/2
+note felder: AFFGEOID, ALAND, AWATER, COUNTYFP, CntyGEO, County, Descriptio, FoodBal, Food_Bal, Fringe, Fringe_Mil, GEOID, Healthy, Healthy_Mi, IN_FID, LSAD, Match, NAME
+dataset am zone bal | https://services.arcgis.com/0TU5BETrBlnIhvOx/arcgis/rest/services/am_zone_bal/FeatureServer/0
+decline https://services.arcgis.com/0TU5BETrBlnIhvOx/arcgis/rest/services/am_zone_bal/FeatureServer/0
+note arcgis-error-body
+dataset Buffer of Mass shootings 2022 | https://services2.arcgis.com/yvwHSwAamLDJNzPK/arcgis/rest/services/Buffer_of_Mass_shootings_2022/FeatureServer/0
+candidate https://services2.arcgis.com/yvwHSwAamLDJNzPK/arcgis/rest/services/Buffer_of_Mass_shootings_2022/FeatureServer/0
+note felder: AnalysisArea, BUFF_DIST, City_or_county, Date, Description, F__Injured, F__Killed, Name, OBJECTID, ORIG_FID, Total
+dataset AK 1990 overall glacier covered area | https://services1.arcgis.com/fBc8EJBxQRMcHlei/arcgis/rest/services/Glacier_Change_in_Alaska_MAP_WFL1/FeatureServer/3
+candidate https://services1.arcgis.com/fBc8EJBxQRMcHlei/arcgis/rest/services/Glacier_Change_in_Alaska_MAP_WFL1/FeatureServer/3
+note felder: Area, Aspect, BgnDate, CenLat, CenLon, Connect, EndDate, FID, Form, GLIMSId, GN_area, GN_comp_ye, Glacier_YEAR, Linkages, Lmax, Name, O1Region, O2Region
+dataset Glacier National Park Fires KLL | https://services1.arcgis.com/CD5mKowwN6nIaqd8/arcgis/rest/services/Glacier_National_Park_Fires_KLL/FeatureServer/0
+candidate https://services1.arcgis.com/CD5mKowwN6nIaqd8/arcgis/rest/services/Glacier_National_Park_Fires_KLL/FeatureServer/0
+note felder: Acres, Name, OBJECTID, Shape__Area, Shape__Length
+dataset Food Balance Score WIC Methodology | https://services2.arcgis.com/6Lv0D4YJVb4vr6VH/arcgis/rest/services/Food_Balance_Score_WIC_Methodology/FeatureServer
+candidate-leer https://services2.arcgis.com/6Lv0D4YJVb4vr6VH/arcgis/rest/services/Food_Balance_Score_WIC_Methodology/FeatureServer
+note 0 rows, felder unbekannt
+dataset Mass Timber Projects | https://services.arcgis.com/JL4BwWcjcPuWhBm9/arcgis/rest/services/Mass_Timber_Projects/FeatureServer/2
+candidate https://services.arcgis.com/JL4BwWcjcPuWhBm9/arcgis/rest/services/Mass_Timber_Projects/FeatureServer/2
+note felder: OBJECTID, category, coordinatesCorrected, id, lat, latProvided, lng, lngProvided, projectName, projectSlug, reviewed, url
+dataset Nearest Car Washes WI to Balance of State | https://services2.arcgis.com/82iS1Pc7dgs3LFZv/arcgis/rest/services/Nearest_Car_Washes_WI_to_Balance_of_State/FeatureServer
+candidate-leer https://services2.arcgis.com/82iS1Pc7dgs3LFZv/arcgis/rest/services/Nearest_Car_Washes_WI_to_Balance_of_State/FeatureServer
+note 0 rows, felder unbekannt
+dataset Mass Greenway | https://services.arcgis.com/ONuuV4O5ETfdTBvB/arcgis/rest/services/Mass_Greenway/FeatureServer/0
+candidate https://services.arcgis.com/ONuuV4O5ETfdTBvB/arcgis/rest/services/Mass_Greenway/FeatureServer/0
+note felder: FID, Shape__Length, cartodb_id, datetime_m, direction, ecg_review, feet, line_type, meters, miles, pline_id, signed, spine, title
+dataset Find Locations in Mass Movements | https://services.arcgis.com/Sf0q24s0oDKgX14j/arcgis/rest/services/Find_Locations_in_Mass_Movements/FeatureServer/0
+candidate https://services.arcgis.com/Sf0q24s0oDKgX14j/arcgis/rest/services/Find_Locations_in_Mass_Movements/FeatureServer/0
+note felder: Departamento, EventDate, ID, InvMassMovementID, Latitude, Longitude, MovementSubtype, MovementSubtypeID, MovementType, MovementTypeID, Municipio, OBJECTID, Vereda
+dataset UK trading with the world : Balance of Trade 2015 | https://services.arcgis.com/XSeYKQzfXnEgju9o/arcgis/rest/services/UK_Balance_of_Trade_2015/FeatureServer/0
+candidate https://services.arcgis.com/XSeYKQzfXnEgju9o/arcgis/rest/services/UK_Balance_of_Trade_2015/FeatureServer/0
+note felder: FID, Shape__Area, Shape__Length, UK_Bal2015, sovereignt
+dataset The Austrian glacier inventory GI 2, 1998 | https://services.arcgis.com/Sf0q24s0oDKgX14j/arcgis/rest/services/glacier_2/FeatureServer
+candidate-leer https://services.arcgis.com/Sf0q24s0oDKgX14j/arcgis/rest/services/glacier_2/FeatureServer
+note 0 rows, felder unbekannt
+dataset Glacier National Park Trails | https://services2.arcgis.com/DRQySz3VhPgOv7Bo/arcgis/rest/services/Glacier_National_Park_Trails/FeatureServer/0
+candidate https://services2.arcgis.com/DRQySz3VhPgOv7Bo/arcgis/rest/services/Glacier_National_Park_Trails/FeatureServer/0
+note felder: AREA, ASSETID, CLASS, DATA_SRC, DESC_SEG, DESIG, EDITDATE, FID, Meters, Miles, NAME, Publish, ROUTE_NO, SEG_NO, STATCODE, STATUS, SUBDIST, Shape__Length
+dataset Find Clusters for Mass Shootings WFL1   Mass Shootings | https://services1.arcgis.com/pQgwaiEQW04NbsJ0/arcgis/rest/services/Find_Clusters_for_Mass_Shootings_WFL1___Mass_Shootings/FeatureServer/0
+candidate https://services1.arcgis.com/pQgwaiEQW04NbsJ0/arcgis/rest/services/Find_Clusters_for_Mass_Shootings_WFL1___Mass_Shootings/FeatureServer/0
+note felder: CLUSTER_ID, COLOR_ID, OBJECTID, SOURCE_ID
+dataset Buffer of Mass shootings 2019 10 miles | https://services2.arcgis.com/yvwHSwAamLDJNzPK/arcgis/rest/services/Buffer_of_Mass_shootings_2019_10_miles/FeatureServer/0
+candidate https://services2.arcgis.com/yvwHSwAamLDJNzPK/arcgis/rest/services/Buffer_of_Mass_shootings_2019_10_miles/FeatureServer/0
+note felder: AnalysisArea, BUFF_DIST, City_or_county, Date, Description, F__Injured, F__Killed, Name, OBJECTID, ORIG_FID, Total
+dataset Unassigned Fund Balance | https://services3.arcgis.com/YgrExeJfxG5F4At7/arcgis/rest/services/Unassigned_Fund_Balance/FeatureServer/0
+candidate https://services3.arcgis.com/YgrExeJfxG5F4At7/arcgis/rest/services/Unassigned_Fund_Balance/FeatureServer/0
+note felder: As_of_June_30_, FID, Policy_Minimum, Unassigned_Fund_Balance_as_a_pe
+# done glacier mass balance
+# keyword sea ice
+dataset Sea Ice Cover | https://services.arcgis.com/As5CFN3ThbQpy8Ph/arcgis/rest/services/SeaIce_Cover/FeatureServer/0
+candidate https://services.arcgis.com/As5CFN3ThbQpy8Ph/arcgis/rest/services/SeaIce_Cover/FeatureServer/0
+note felder: AreaCalcul, Area_sqkm, Average10y, Average5yr, AverageAll, BestWorst, Delta, F_AREA, INDEX_, INDEX_1, Label, Label_1, OBJECTID, TotalSIY_1, TotalSIYr, Year, Year_1, Year_Sho_1
+dataset Yearly Sea Ice Cover | https://services.arcgis.com/As5CFN3ThbQpy8Ph/arcgis/rest/services/Yearly_SeaIceCover/FeatureServer/0
+candidate https://services.arcgis.com/As5CFN3ThbQpy8Ph/arcgis/rest/services/Yearly_SeaIceCover/FeatureServer/0
+note felder: Area_sqkm, FID, Year
+dataset Sea Ice Conditions | https://services7.arcgis.com/oRWmoPPtXpdPlArx/arcgis/rest/services/NLUIS_Layers_for_Online_2024_02_29_Final/FeatureServer/19
+candidate https://services7.arcgis.com/oRWmoPPtXpdPlArx/arcgis/rest/services/NLUIS_Layers_for_Online_2024_02_29_Final/FeatureServer/19
+note felder: Comments, Feature, GlobalID, NTS, OBJECTID, Theme, URL, Unit
+dataset North America Sea Ice | https://services7.arcgis.com/oF9CDB4lUYF7Um9q/arcgis/rest/services/North_American_Glaciers_and_Sea_Ice/FeatureServer/2
+candidate https://services7.arcgis.com/oF9CDB4lUYF7Um9q/arcgis/rest/services/North_American_Glaciers_and_Sea_Ice/FeatureServer/2
+note felder: EDIT, EDIT_DATE, OBJECTID, Shape_Leng, Shape__Area, Shape__Length, TYPE, UIDENT
+dataset Sea Ice July 1979 | https://services.arcgis.com/ld3ZUQ1nPsV3RdE7/arcgis/rest/services/SeaIceJuly1979/FeatureServer/0
+candidate https://services.arcgis.com/ld3ZUQ1nPsV3RdE7/arcgis/rest/services/SeaIceJuly1979/FeatureServer/0
+note felder: AreaCalcul, Area_sqkm, Average10y, Average5yr, AverageAll, BestWorst, Delta, F_AREA, INDEX_, INDEX_1, Label, Label_1, OBJECTID, TotalSIY_1, TotalSIYr, Year, Year_1, Year_Sho_1
+dataset sea ice  | https://services1.arcgis.com/lDFzr3JyGEn5Eymu/arcgis/rest/services/ThreatsAnalysisLayers/FeatureServer/8
+candidate https://services1.arcgis.com/lDFzr3JyGEn5Eymu/arcgis/rest/services/ThreatsAnalysisLayers/FeatureServer/8
+note felder: GlobalID, Id, OBJECTID, Shape__Area, Shape__Length, gridcode
+dataset Sea Ice Union 1979 2015 | https://services3.arcgis.com/vQ3OYhyPnynK3Zqb/arcgis/rest/services/Sea_Ice_Union_1979_2015/FeatureServer/0
+candidate https://services3.arcgis.com/vQ3OYhyPnynK3Zqb/arcgis/rest/services/Sea_Ice_Union_1979_2015/FeatureServer/0
+note felder: FID, MiSqKm, SQKM, Shape__Area, Shape__Length, Type, analysis_1, analysisda, fid_1, fid_2, month, month_2, name, name_2, objectid, objectid_2, year, year_2
+dataset Sea Ice Extent in Northern Hemisphere Feb 2017 | https://services4.arcgis.com/QdHwhlbx61LR3TWb/arcgis/rest/services/Sea_Ice_Extent_for_February__1979_2022_WFL1/FeatureServer/6
+candidate https://services4.arcgis.com/QdHwhlbx61LR3TWb/arcgis/rest/services/Sea_Ice_Extent_for_February__1979_2022_WFL1/FeatureServer/6
+note felder: Area_SqKM, FID, FID_1, Shape__Area, Shape__Length
+dataset Sea Ice Extent in Northern Hemisphere Feb 1999 | https://services4.arcgis.com/QdHwhlbx61LR3TWb/arcgis/rest/services/Sea_Ice_Extent_for_February__1979_2022_WFL1/FeatureServer/24
+candidate https://services4.arcgis.com/QdHwhlbx61LR3TWb/arcgis/rest/services/Sea_Ice_Extent_for_February__1979_2022_WFL1/FeatureServer/24
+note felder: Area_SqKM, FID, FID_1, Shape__Area, Shape__Length
+dataset Sea Ice Extent in Northern Hemisphere Feb 2015 | https://services4.arcgis.com/QdHwhlbx61LR3TWb/arcgis/rest/services/Sea_Ice_Extent_for_February__1979_2022_WFL1/FeatureServer/8
+candidate https://services4.arcgis.com/QdHwhlbx61LR3TWb/arcgis/rest/services/Sea_Ice_Extent_for_February__1979_2022_WFL1/FeatureServer/8
+note felder: Area_SqKM, FID, FID_1, Shape__Area, Shape__Length
+dataset Sea Ice Extent in Northern Hemisphere Feb 2008 | https://services4.arcgis.com/QdHwhlbx61LR3TWb/arcgis/rest/services/Sea_Ice_Extent_for_February__1979_2022_WFL1/FeatureServer/15
+candidate https://services4.arcgis.com/QdHwhlbx61LR3TWb/arcgis/rest/services/Sea_Ice_Extent_for_February__1979_2022_WFL1/FeatureServer/15
+note felder: Area_SqKM, FID, FID_1, Shape__Area, Shape__Length
+dataset Sea Ice Extent in Northern Hemisphere Feb 2011 | https://services4.arcgis.com/QdHwhlbx61LR3TWb/arcgis/rest/services/Sea_Ice_Extent_for_February__1979_2022_WFL1/FeatureServer/12
+candidate https://services4.arcgis.com/QdHwhlbx61LR3TWb/arcgis/rest/services/Sea_Ice_Extent_for_February__1979_2022_WFL1/FeatureServer/12
+note felder: Area_SqKM, FID, FID_1, Shape__Area, Shape__Length
+dataset Sea Ice Extent in Northern Hemisphere Feb 2006 | https://services4.arcgis.com/QdHwhlbx61LR3TWb/arcgis/rest/services/Sea_Ice_Extent_for_February__1979_2022_WFL1/FeatureServer/17
+candidate https://services4.arcgis.com/QdHwhlbx61LR3TWb/arcgis/rest/services/Sea_Ice_Extent_for_February__1979_2022_WFL1/FeatureServer/17
+note felder: Area_SqKM, FID, FID_1, Shape__Area, Shape__Length
+dataset Sea Ice Extent in Northern Hemisphere Feb 1982 | https://services4.arcgis.com/QdHwhlbx61LR3TWb/arcgis/rest/services/Sea_Ice_Extent_for_February__1979_2022_WFL1/FeatureServer/41
+candidate https://services4.arcgis.com/QdHwhlbx61LR3TWb/arcgis/rest/services/Sea_Ice_Extent_for_February__1979_2022_WFL1/FeatureServer/41
+note felder: FID, FID_1, Shape__Area, Shape__Length
+dataset Sea Ice Extent in Northern Hemisphere Feb 1989 | https://services4.arcgis.com/QdHwhlbx61LR3TWb/arcgis/rest/services/Sea_Ice_Extent_for_February__1979_2022_WFL1/FeatureServer/34
+candidate https://services4.arcgis.com/QdHwhlbx61LR3TWb/arcgis/rest/services/Sea_Ice_Extent_for_February__1979_2022_WFL1/FeatureServer/34
+note felder: FID, FID_1, Shape__Area, Shape__Length
+dataset Sea Ice Extent in Northern Hemisphere Feb 1985 | https://services4.arcgis.com/QdHwhlbx61LR3TWb/arcgis/rest/services/Sea_Ice_Extent_for_February__1979_2022_WFL1/FeatureServer/38
+candidate https://services4.arcgis.com/QdHwhlbx61LR3TWb/arcgis/rest/services/Sea_Ice_Extent_for_February__1979_2022_WFL1/FeatureServer/38
+note felder: FID, FID_1, Shape__Area, Shape__Length
+dataset HistoricalSummerSeaIce | https://services.arcgis.com/hRUr1F8lE8Jq2uJo/arcgis/rest/services/HistoricalSummerSeaIce/FeatureServer/0
+candidate https://services.arcgis.com/hRUr1F8lE8Jq2uJo/arcgis/rest/services/HistoricalSummerSeaIce/FeatureServer/0
+note felder: AreaCalcul, Average10y, Average5yr, AverageAll, BestWorst, Delta, F_AREA, INDEX_, INDEX_1, InPoly_FID, Label, Label_1, OBJECTID, SmoPgnFlag, TotalSIY_1, TotalSIYr, Year, Year_1
+dataset SEIADW Fig11 Sea ice drift buoy track lines | https://services-eu1.arcgis.com/0uK40YtWoUkQMlYW/arcgis/rest/services/SEIADW_Fig11_Sea_ice_drift_buoy_track_lines/FeatureServer/0
+candidate https://services-eu1.arcgis.com/0uK40YtWoUkQMlYW/arcgis/rest/services/SEIADW_Fig11_Sea_ice_drift_buoy_track_lines/FeatureServer/0
+note felder: OBJECTID, Shape__Length, TRANSID
+# done sea ice
+# keyword lake temperature
+dataset Daily Lake Surface Temperatures via Satellite | https://services9.arcgis.com/Xfgaa99GQbmU66Mb/arcgis/rest/services/Daily_Lake_Surface_Temperatures_via_Satellite/FeatureServer/0
+decline https://services9.arcgis.com/Xfgaa99GQbmU66Mb/arcgis/rest/services/Daily_Lake_Surface_Temperatures_via_Satellite/FeatureServer/0
+note arcgis-error-body
+dataset NB Alliance of Lake Associations: Water Column Profile | https://services.arcgis.com/DzkBIV3ztulDZBgc/arcgis/rest/services/NBLakeAssocWaterColumnProfile/FeatureServer/0
+candidate https://services.arcgis.com/DzkBIV3ztulDZBgc/arcgis/rest/services/NBLakeAssocWaterColumnProfile/FeatureServer/0
+note felder: Cond, CrewLead, DO_mgl, GlobalID, ImageRecor, Notes, OBJECTID, ProjName, ProjType, ProjectID, ProjectID1, SamDepth, SampDate, Secchi, SiteID, SiteLat, SiteLong, TotalDepth
+dataset Lake Erie Basin | https://services7.arcgis.com/Tk0IbKIKhaoYn5sa/arcgis/rest/services/Lake_Erie_Basin/FeatureServer/0
+candidate https://services7.arcgis.com/Tk0IbKIKhaoYn5sa/arcgis/rest/services/Lake_Erie_Basin/FeatureServer/0
+note felder: LAKE, OBJECTID, Shape__Area, Shape__Length
+dataset Salt Lake City | https://services3.arcgis.com/0qqgtkiivMeWLvWg/arcgis/rest/services/Salt_Lake_City/FeatureServer/7
+candidate https://services3.arcgis.com/0qqgtkiivMeWLvWg/arcgis/rest/services/Salt_Lake_City/FeatureServer/7
+note felder: Acronym, Address, AftHrPhone, COUNTYNBR, COUNTYSEAT, Comments, ENTITYNBR, FID, FIPS, GNIS, GlobalID, IMSCOLOR, MINNAME, NAME, POPLASTCEN, POPLASTEST, Phone, SALESTAXID
+dataset Lake Erie depth contours | https://services.arcgis.com/v01gqwM5QqNysAAi/arcgis/rest/services/Lake_Erie_depth_contours/FeatureServer/16
+candidate https://services.arcgis.com/v01gqwM5QqNysAAi/arcgis/rest/services/Lake_Erie_depth_contours/FeatureServer/16
+note felder: DEPTH, DEPTH_SL, FID, SOURCE, Shape__Length, ZVALUE
+dataset Moses Lake | https://services3.arcgis.com/EhVTEJ0Ki1rmDSHF/arcgis/rest/services/ML_Basin/FeatureServer/0
+candidate https://services3.arcgis.com/EhVTEJ0Ki1rmDSHF/arcgis/rest/services/ML_Basin/FeatureServer/0
+note felder: Shape__Area, Shape__Length, area, created_date, created_user, globalid, lake_id, last_edited_date, last_edited_user, objectid
+dataset Temperature | https://services1.arcgis.com/OoHBsnqevYljcMGr/arcgis/rest/services/Chiocca_Lakeshen/FeatureServer/3
+candidate-leer https://services1.arcgis.com/OoHBsnqevYljcMGr/arcgis/rest/services/Chiocca_Lakeshen/FeatureServer/3
+note 0 rows, felder unbekannt
+dataset Fish CRCA Lake Report 2021 | https://services3.arcgis.com/DkDI7U7oNtqFwb5V/arcgis/rest/services/Fish_CRCA_Lake_Report_2021/FeatureServer/0
+candidate https://services3.arcgis.com/DkDI7U7oNtqFwb5V/arcgis/rest/services/Fish_CRCA_Lake_Report_2021/FeatureServer/0
+note felder: ARA_SUMMARY_ID, Common_N, Family_Com, Family_Sci, GEL_NAME_I, High_Range, Low_Range, Mid_Range, OBJECTID, PictureURL, Temp_Pref, Upper_Lethal_Limit
+dataset Moses Lake Basin | https://services3.arcgis.com/EhVTEJ0Ki1rmDSHF/arcgis/rest/services/Moses_Lake_Basin/FeatureServer/1
+candidate https://services3.arcgis.com/EhVTEJ0Ki1rmDSHF/arcgis/rest/services/Moses_Lake_Basin/FeatureServer/1
+note felder: Shape__Area, Shape__Length, area, created_date, created_user, globalid, lake_id, last_edited_date, last_edited_user, objectid
+dataset Marsh Lake | https://services6.arcgis.com/ym4vv2kwBujSjhwm/arcgis/rest/services/Marsh_Lake/FeatureServer/0
+candidate https://services6.arcgis.com/ym4vv2kwBujSjhwm/arcgis/rest/services/Marsh_Lake/FeatureServer/0
+note felder: Comments, HUC4, ListingBasis, Name, OBJECTID, Review, Shape__Area, Shape__Length, State, WaterType
+dataset GIS Lake | https://services.arcgis.com/O8ZpeBC0xLM5nL34/arcgis/rest/services/SPDC_Lake/FeatureServer/0
+candidate https://services.arcgis.com/O8ZpeBC0xLM5nL34/arcgis/rest/services/SPDC_Lake/FeatureServer/0
+note felder: GlobalID, Name, OBJECTID, Shape__Area, Shape__Length
+dataset temperature annual | https://services.arcgis.com/fwF8e4aLR6TRWtqM/arcgis/rest/services/temperature_annual/FeatureServer/0
+candidate https://services.arcgis.com/fwF8e4aLR6TRWtqM/arcgis/rest/services/temperature_annual/FeatureServer/0
+note felder: FID, Shape__Area, Shape__Length, TEMPER, Temperatur
+dataset Global Temperature 1981-2010 | https://services.arcgis.com/Lq3V5RFuTBC9I7kv/arcgis/rest/services/Monthly_Global_Temperature_1981_2010/FeatureServer/8
+candidate https://services.arcgis.com/Lq3V5RFuTBC9I7kv/arcgis/rest/services/Monthly_Global_Temperature_1981_2010/FeatureServer/8
+note felder: OBJECTID, Shape__Area, Shape__Length, tasApr, tasAug, tasDec, tasFeb, tasJan, tasJul, tasJun, tasMar, tasMay, tasNov, tasOct, tasSep
+dataset LOCA2-Ensemble SSP5-8.5 Temperature Variables | https://services3.arcgis.com/0Fs3HcaFfvzXvm7w/arcgis/rest/services/LOCA2_Ensemble_SSP585_Temperature_Variables_1950_2100/FeatureServer
+candidate-leer https://services3.arcgis.com/0Fs3HcaFfvzXvm7w/arcgis/rest/services/LOCA2_Ensemble_SSP585_Temperature_Variables_1950_2100/FeatureServer
+note 0 rows, felder unbekannt
+dataset LOCA2-Ensemble SSP3-7.0 Temperature Variables | https://services3.arcgis.com/0Fs3HcaFfvzXvm7w/arcgis/rest/services/LOCA2_Ensemble_SSP370_Temperature_Variables_1950_2100/FeatureServer
+candidate-leer https://services3.arcgis.com/0Fs3HcaFfvzXvm7w/arcgis/rest/services/LOCA2_Ensemble_SSP370_Temperature_Variables_1950_2100/FeatureServer
+note 0 rows, felder unbekannt
+dataset Lake Simcoe | https://services.arcgis.com/rGKxabTU9mcXMw7k/arcgis/rest/services/Lake_Simcoe/FeatureServer/0
+candidate https://services.arcgis.com/rGKxabTU9mcXMw7k/arcgis/rest/services/Lake_Simcoe/FeatureServer/0
+note felder: AREAINHECT, DB2GSE_ST_, DB2GSE_Sde, FID, NAME, Shape__Area, Shape__Length
+# done lake temperature
+# keyword river temperature
+dataset SWAM - Kennebecasis River Temperature Logger Data June 2016 | https://services.arcgis.com/DzkBIV3ztulDZBgc/arcgis/rest/services/SWAM_TempLoggersKennRJune2016_July13_2016/FeatureServer/0
+candidate https://services.arcgis.com/DzkBIV3ztulDZBgc/arcgis/rest/services/SWAM_TempLoggersKennRJune2016_July13_2016/FeatureServer/0
+note felder: Adjtemp, CrewLead, Date, FID_, GlobalID, OBJECTID, ProjName, ProjType, ProjectID, Timetxt, lat, long
+dataset Bear River Temperature PUBLIC | https://utility.arcgis.com/usrsvcs/servers/1c607d6767fa404ca3fe055f80d82c9f/rest/services/Bear_River_Temp/FeatureServer/0
+candidate https://utility.arcgis.com/usrsvcs/servers/1c607d6767fa404ca3fe055f80d82c9f/rest/services/Bear_River_Temp/FeatureServer/0
+note felder: AUID, CWF, CreationDate, Creator, EditDate, Editor, FC, GlobalID, HIRESREACH, NAME, OBJECTID, OBJECTID_1, OI, PBC, PWS, RCHCODE, RiverName, ShapeSTLen
+dataset Columbia River Basin ensemble median projected temperature change (°F) 1990s 2070s | https://services1.arcgis.com/ixD30sld6F8MQ7V5/arcgis/rest/services/pnw_8_temp_2070_50/FeatureServer/0
+candidate https://services1.arcgis.com/ixD30sld6F8MQ7V5/arcgis/rest/services/pnw_8_temp_2070_50/FeatureServer/0
+note felder: FID, GRID_CODE, POINTID, POINT_X, POINT_Y
+dataset Klamath River Basin ensemble median projected temperature change (°F) 1990s 2070s | https://services1.arcgis.com/ixD30sld6F8MQ7V5/arcgis/rest/services/cali_5_temp_2070_50/FeatureServer/0
+candidate https://services1.arcgis.com/ixD30sld6F8MQ7V5/arcgis/rest/services/cali_5_temp_2070_50/FeatureServer/0
+note felder: FID, GRID_CODE, POINTID, POINT_X, POINT_Y
+dataset Missouri River Basin ensemble median projected temperature change (°F) 1990s 2070s | https://services1.arcgis.com/ixD30sld6F8MQ7V5/arcgis/rest/services/mo_27_temp_2070_50/FeatureServer/0
+candidate https://services1.arcgis.com/ixD30sld6F8MQ7V5/arcgis/rest/services/mo_27_temp_2070_50/FeatureServer/0
+note felder: FID, GRID_CODE, POINTID, POINT_X, POINT_Y
+dataset Colorado River Basin ensemble median projected temperature change (°F) 1990s 2070s | https://services1.arcgis.com/ixD30sld6F8MQ7V5/arcgis/rest/services/colo_14_temp_2070_50_webm/FeatureServer/0
+candidate https://services1.arcgis.com/ixD30sld6F8MQ7V5/arcgis/rest/services/colo_14_temp_2070_50_webm/FeatureServer/0
+note felder: FID, GRID_CODE, POINTID, POINT_X, POINT_Y
+dataset Truckee River Basin ensemble median projected temperature change (°F) 1990s 2070s | https://services1.arcgis.com/ixD30sld6F8MQ7V5/arcgis/rest/services/gbas_3839_temp_2070_50/FeatureServer/0
+candidate https://services1.arcgis.com/ixD30sld6F8MQ7V5/arcgis/rest/services/gbas_3839_temp_2070_50/FeatureServer/0
+note felder: FID, GRID_CODE, POINTID, POINT_X, POINT_Y
+dataset Sacramento-San Joaquin River Basin ensemble median projected temperature change (°F) 1990s 2070s | https://services1.arcgis.com/ixD30sld6F8MQ7V5/arcgis/rest/services/cali_3543_temp_2070_50/FeatureServer/0
+candidate https://services1.arcgis.com/ixD30sld6F8MQ7V5/arcgis/rest/services/cali_3543_temp_2070_50/FeatureServer/0
+note felder: FID, GRID_CODE, POINTID, POINT_X, POINT_Y
+dataset Scotland River Temperature Monitoring Network (Kyle of Sutherland Rivers) | https://services9.arcgis.com/hcjzBecR9qsBGtxr/arcgis/rest/services/Kyle_Temp_Sens_PP/FeatureServer/0
+decline https://services9.arcgis.com/hcjzBecR9qsBGtxr/arcgis/rest/services/Kyle_Temp_Sens_PP/FeatureServer/0
+note arcgis-error-body
+dataset IR22 - River AUs - Temperature | https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Oregon_Snake_River_TMDL_Map/FeatureServer/31
+candidate https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Oregon_Snake_River_TMDL_Map/FeatureServer/31
+note felder: AU_Description, AU_ID, AU_LenMiles, AU_Name, AU_delist, AU_parameter_category, Assessment, HUC_10, HUC_12, HUC_6, HUC_8, HU_10_NAME, HU_12_NAME, HU_6_NAME, HU_8_NAME, OBJECTID, Pollutant, Rationale
+dataset WCH-380 River Upwelling Areas - High Temperature | https://services8.arcgis.com/0fu8WGujjdRBAiQR/arcgis/rest/services/Temp_WCH380_Polygons/FeatureServer/0
+candidate https://services8.arcgis.com/0fu8WGujjdRBAiQR/arcgis/rest/services/Temp_WCH380_Polygons/FeatureServer/0
+note felder: AltMode, Base, Clamped, Extruded, FID, FolderPath, Name, PopupInfo, Shape_Area, Shape_Leng, Shape__Area, Shape__Length, Snippet, SymbolID
+dataset Moyola River MiniDOT Metrics View | https://services-eu1.arcgis.com/kswen6BYexuc1SUk/arcgis/rest/services/Moyola_River_MiniDOT_Metrics_View_/FeatureServer
+candidate-leer https://services-eu1.arcgis.com/kswen6BYexuc1SUk/arcgis/rest/services/Moyola_River_MiniDOT_Metrics_View_/FeatureServer
+note 0 rows, felder unbekannt
+dataset Blackwater River MiniDOT Metrics View | https://services-eu1.arcgis.com/kswen6BYexuc1SUk/arcgis/rest/services/Blackwater_River_MiniDOT_Metrics_View_/FeatureServer
+candidate-leer https://services-eu1.arcgis.com/kswen6BYexuc1SUk/arcgis/rest/services/Blackwater_River_MiniDOT_Metrics_View_/FeatureServer
+note 0 rows, felder unbekannt
+dataset Maine River MiniDOT Metrics View | https://services-eu1.arcgis.com/kswen6BYexuc1SUk/arcgis/rest/services/Maine_River_MiniDOT_Metrics_View_/FeatureServer
+candidate-leer https://services-eu1.arcgis.com/kswen6BYexuc1SUk/arcgis/rest/services/Maine_River_MiniDOT_Metrics_View_/FeatureServer
+note 0 rows, felder unbekannt
+dataset Ballinderry River MiniDOT Metrics View | https://services-eu1.arcgis.com/kswen6BYexuc1SUk/arcgis/rest/services/Ballinderry_River_MiniDOT_Metrics_View_/FeatureServer
+candidate-leer https://services-eu1.arcgis.com/kswen6BYexuc1SUk/arcgis/rest/services/Ballinderry_River_MiniDOT_Metrics_View_/FeatureServer
+note 0 rows, felder unbekannt
+dataset Upper Bann River MiniDOT Metrics View | https://services-eu1.arcgis.com/kswen6BYexuc1SUk/arcgis/rest/services/Upper_Bann_River_MiniDOT_Metrics_View_/FeatureServer
+candidate-leer https://services-eu1.arcgis.com/kswen6BYexuc1SUk/arcgis/rest/services/Upper_Bann_River_MiniDOT_Metrics_View_/FeatureServer
+note 0 rows, felder unbekannt
+dataset Temperature | https://services1.arcgis.com/AhXvNWFdL7hH4TjJ/arcgis/rest/services/Temperature/FeatureServer/10
+candidate https://services1.arcgis.com/AhXvNWFdL7hH4TjJ/arcgis/rest/services/Temperature/FeatureServer/10
+note felder: ALT_m, DO_mg_perL, DO_percent, Date, FNU, Field15, Lat, Long, OBJECTID, SAL_ppt, Specific_Conductance, TSS_mg_perL, Time, deg_C, mmHg, pH
+dataset Spokane River Keeper Water Temperature Data | https://services9.arcgis.com/gQvcDPR9t5JG6bVL/arcgis/rest/services/Spokane_River_Keeper_Water_Temperature_Data/FeatureServer/0
+candidate https://services9.arcgis.com/gQvcDPR9t5JG6bVL/arcgis/rest/services/Spokane_River_Keeper_Water_Temperature_Data/FeatureServer/0
+note felder: Address, Aquifier_Test_Conducted, City, Comment, Coordinate_System, County, Ecology_FacilitySite_ID, Elevation, Elevation_Accuracy, Elevation_Collection_Method, Elevation_Datum, Elevation_Of, Elevation_Units, End_Date, End_Time, F10, F11, F12
+dataset Six Mile River MiniDOT Metrics View | https://services-eu1.arcgis.com/kswen6BYexuc1SUk/arcgis/rest/services/Six_Mile_River_MiniDOT_Metrics_View_/FeatureServer
+candidate-leer https://services-eu1.arcgis.com/kswen6BYexuc1SUk/arcgis/rest/services/Six_Mile_River_MiniDOT_Metrics_View_/FeatureServer
+note 0 rows, felder unbekannt
+dataset Rogue River Maximum Weekly Average Temperature 2021 | https://services1.arcgis.com/754BERmVIq3RqSf8/arcgis/rest/services/Rogue_River_Maximum_Weekly_Average_Temperature_2021_WFL1/FeatureServer
+candidate-leer https://services1.arcgis.com/754BERmVIq3RqSf8/arcgis/rest/services/Rogue_River_Maximum_Weekly_Average_Temperature_2021_WFL1/FeatureServer
+note 0 rows, felder unbekannt
+dataset Thermograph locations | https://services1.arcgis.com/m2P61lEGyIFsbZ6I/arcgis/rest/services/Thermograph_locations/FeatureServer/0
+candidate https://services1.arcgis.com/m2P61lEGyIFsbZ6I/arcgis/rest/services/Thermograph_locations/FeatureServer/0
+note felder: OBJECTID, ORIG_FID, avg_aug_14_21, avg_aug_2014, avg_aug_2015, avg_aug_2016, avg_aug_2017, avg_aug_2018, avg_aug_2019, avg_aug_2020, avg_aug_2021, id, name, pendant, x_coord, y_coord
+dataset Colorado River Basin Rivers | https://services1.arcgis.com/osPHyJW29upTLmlM/arcgis/rest/services/Colorado_River_Basin_Rivers/FeatureServer/0
+candidate https://services1.arcgis.com/osPHyJW29upTLmlM/arcgis/rest/services/Colorado_River_Basin_Rivers/FeatureServer/0
+note felder: FID, Id, NAME
+dataset Rogue River Maximum Weekly Average Temperature 2021 2 WFL1 | https://services1.arcgis.com/754BERmVIq3RqSf8/arcgis/rest/services/Rogue_River_Maximum_Weekly_Average_Temperature_2021_2_WFL1/FeatureServer
+candidate-leer https://services1.arcgis.com/754BERmVIq3RqSf8/arcgis/rest/services/Rogue_River_Maximum_Weekly_Average_Temperature_2021_2_WFL1/FeatureServer
+note 0 rows, felder unbekannt
+dataset Rogue River Basin Temperature TMDL map (Feature service) | https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Rogue_River_Basin_Temperature_TMDL_map_WFL1/FeatureServer
+candidate-leer https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Rogue_River_Basin_Temperature_TMDL_map_WFL1/FeatureServer
+note 0 rows, felder unbekannt
+dataset SWAM - McLeod Brook Temperature Logger Data July 2016 | https://services.arcgis.com/DzkBIV3ztulDZBgc/arcgis/rest/services/SWAM_TempLoggersMcLeodBrookJuly2016_Aug8_2016/FeatureServer/0
+candidate https://services.arcgis.com/DzkBIV3ztulDZBgc/arcgis/rest/services/SWAM_TempLoggersMcLeodBrookJuly2016_Aug8_2016/FeatureServer/0
+note felder: CrewLead, Date, GlobalID, OBJECTID, ProjName, ProjType, ProjectID, Stream, Temperatur, Time, lat, lon, timetxt
+dataset nClimGrid Historical Observations Temperature Variables | https://services3.arcgis.com/0Fs3HcaFfvzXvm7w/arcgis/rest/services/nClimGrid_Historical_Observations_Temperature_Variables/FeatureServer
+candidate-leer https://services3.arcgis.com/0Fs3HcaFfvzXvm7w/arcgis/rest/services/nClimGrid_Historical_Observations_Temperature_Variables/FeatureServer
+note 0 rows, felder unbekannt
+# done river temperature

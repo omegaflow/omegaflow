@@ -1,0 +1,34 @@
+# nachlauf donki familie (2026-08-17)
+# verlorenes Session-Artefakt phi/research/agent_output/donki_familie.φ rekonstruiert
+# aus phi/port/queue/grind_nasa_donki.φ (10/10 Endpoints disponiert, Ergebnis-Datei ABSENT).
+# Fenster 2026-07-01 .. 2026-08-15, api_key={NASA_API_KEY}. FLR lebt bereits in sources.φ Z.502 — nicht wiederholt.
+
+kandidat https://api.nasa.gov/DONKI/CME?startDate={week_ago}&endDate={today}&api_key={NASA_API_KEY}
+note accepted — CME-Block-Draft. Probe 200, 191 CME-Records; Messwert = cmeAnalyses[0].speed (km/s, plane-of-sky, Weißlicht-Koronagraph → em). Position: latitude = heliographische Breite, longitude = plane-of-sky-Projektion; 46 Analyses longitude=null → keine Position (0 honored). Block-Draft: map . + deep auf cmeAnalyses.0, at sun, ttl 3600.
+
+kandidat https://api.nasa.gov/DONKI/SEP?startDate={week_ago}&endDate={today}&api_key={NASA_API_KEY}
+note decline event-catalog — Probe 200, 6 Records; instruments.displayName = Energie-Schwellen-String (z.B. MODEL: REleASE:ACE/EPAM 15.8-39.8 MeV), kein numerischer Fluss (pfu) im Payload → Ereignis-Katalog ohne Messwert.
+
+kandidat https://api.nasa.gov/DONKI/GST?startDate={week_ago}&endDate={today}&api_key={NASA_API_KEY}
+note decline dimensionless — Probe 200, 3 Records; allKpIndex kpIndex dimensionslos (6.0, 7.33); SOURCES_V2_SPEC §3.1 listet kp_index explizit. SWPC deckt Kp live (noaa-planetary-k-index in sources.φ Z.98).
+
+kandidat https://api.nasa.gov/DONKI/IPS?startDate={week_ago}&endDate={today}&api_key={NASA_API_KEY}
+note decline event-catalog — Probe 200, 20 Records; kein speed-Feld, location ist String, instruments sind Detektoren → Schock-Detektions-Katalog ohne Messwert.
+
+kandidat https://api.nasa.gov/DONKI/HSS?startDate={week_ago}&endDate={today}&api_key={NASA_API_KEY}
+note decline event-catalog — Probe 200, 6 Records; kein speed-Feld, kein numerischer Messwert, nur Detektions-Record (Instrumente + Zeit).
+
+kandidat https://api.nasa.gov/DONKI/MPC?startDate={week_ago}&endDate={today}&api_key={NASA_API_KEY}
+note decline model — Probe 200, 3 Records; alle instruments.displayName = MODEL: SWMF (Space Weather Modeling Framework) → Modell-Produkt, keine Sensor-Messung.
+
+kandidat https://api.nasa.gov/DONKI/RBE?startDate={week_ago}&endDate={today}&api_key={NASA_API_KEY}
+note decline event-catalog — Probe 200, 5 Records; instruments.displayName = Energie-Schwellen-String (z.B. GOES-P: SEISS >2MeV), kein Fluss-Zahlenwert im Payload.
+
+kandidat https://api.nasa.gov/DONKI/WSAEnlilSimulations?startDate={week_ago}&endDate={today}&api_key={NASA_API_KEY}
+note decline model — Probe 200, 190 Records; kp_135/kp_18/kp_90/kp_180/rmin_re/au sind MHD-Modell-Forecast-Werte, keine Messung.
+
+kandidat https://api.nasa.gov/DONKI/SSD?startDate={week_ago}&endDate={today}&api_key={NASA_API_KEY}
+note dead 404 — Route api.nasa.gov/DONKI/SSD existiert nicht im DONKI-Endpoint-Set (9 kB HTML).
+
+kandidat https://api.nasa.gov/DONKI/notifications?startDate={week_ago}&endDate={today}&api_key={NASA_API_KEY}
+note decline registry — Probe 200, 67 Records; messageBody = Alert-Katalog (Benachrichtigungen), Registry ohne Messwert.

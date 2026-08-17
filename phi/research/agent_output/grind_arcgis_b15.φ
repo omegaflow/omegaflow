@@ -1,0 +1,1165 @@
+# grind arcgis b15 (2026-08-15) — keywords: ionosonde, air quality sensor, pm10, ozone sensor, thermal anomaly, volcano monitoring
+# keyword ionosonde
+# keyword air quality sensor
+dataset Air Quality Sensor | https://services2.arcgis.com/iLWAxhpxafhOza2U/arcgis/rest/services/Air_Quality_Sensor/FeatureServer/0
+candidate https://services2.arcgis.com/iLWAxhpxafhOza2U/arcgis/rest/services/Air_Quality_Sensor/FeatureServer/0
+note felder: BMP280_Temperature__C_, Barometric_Pressure__Pa_, Battery__V_, CO2_Concentration__low_pass_fil, CO2_Concentration__ppm_, CO2_Sensor_Status, CO2_Sensor_Temperature__C_, Capacitor_Voltage_1__V_, Capacitor_Voltage_2__V_, Date_Time, Humidity____, ObjectId, Raw_IR_Reading, Raw_IR_Reading__low_pass_filter, Temperature__C_
+dataset Air quality sensor density | https://services3.arcgis.com/zAmy2uQQIuJsmD8h/arcgis/rest/services/Air_quality_sensor_density/FeatureServer
+candidate-leer https://services3.arcgis.com/zAmy2uQQIuJsmD8h/arcgis/rest/services/Air_quality_sensor_density/FeatureServer
+note 0 rows, felder unbekannt
+dataset AirNow National Air Quality Index (AQI) Forecast for Today and Tomorrow | https://services.arcgis.com/cJ9YHowT8TU7DUyn/arcgis/rest/services/AirNow_National_Air_Quality_Index_(AQI)_Forecast/FeatureServer
+candidate-leer https://services.arcgis.com/cJ9YHowT8TU7DUyn/arcgis/rest/services/AirNow_National_Air_Quality_Index_(AQI)_Forecast/FeatureServer
+note 0 rows, felder unbekannt
+dataset Air Quality Monitoring | https://services.arcgis.com/cJ9YHowT8TU7DUyn/arcgis/rest/services/Air%20Now%20Current%20Monitor%20Data%20Public/FeatureServer/0
+candidate https://services.arcgis.com/cJ9YHowT8TU7DUyn/arcgis/rest/services/Air%20Now%20Current%20Monitor%20Data%20Public/FeatureServer/0
+note felder: AQSID, CountryCode, DataSource, EPARegion, Elevation, GMTOffset, Latitude, LocalTimeString, Longitude, MonitorType, OZONE, OZONEPM_AQI, OZONEPM_AQI_LABEL, OZONEPM_AQI_SORT, OZONE_AQI, OZONE_AQI_LABEL, OZONE_AQI_SORT, OZONE_Measured
+dataset Air quality across Philadelphia, 2021 | https://services7.arcgis.com/s3vGpGobX9nzlLH3/arcgis/rest/services/Idw_airqualityround_rast2vect/FeatureServer/172
+candidate https://services7.arcgis.com/s3vGpGobX9nzlLH3/arcgis/rest/services/Idw_airqualityround_rast2vect/FeatureServer/172
+note felder: Id, OBJECTID, Shape__Area, Shape__Length, gridcode
+dataset Air Quality Network Sensor Locations | https://services1.arcgis.com/cRvLdSPAsRupRo7I/arcgis/rest/services/Air_Quality_Network_Sensor_Locations_WFL1/FeatureServer/0
+candidate https://services1.arcgis.com/cRvLdSPAsRupRo7I/arcgis/rest/services/Air_Quality_Network_Sensor_Locations_WFL1/FeatureServer/0
+note felder: ADDRESS, F10, F11, F12, F13, F6, F7, F8, F9, HOBO_ID_, OBJECTID, OLD_HOBO_ID__, POLE__, SITE__
+dataset Air quality sensor potential sites January 2025 | https://services1.arcgis.com/EjjnBtwS9ivTGI8x/arcgis/rest/services/Air_quality_sensor_potential_sites_Oct_2024/FeatureServer/0
+candidate https://services1.arcgis.com/EjjnBtwS9ivTGI8x/arcgis/rest/services/Air_quality_sensor_potential_sites_Oct_2024/FeatureServer/0
+note felder: Latitude, Longitude, ObjectId, Sensor_Name
+dataset Real-Time Air Quality FIU Miami Campus - Stations | https://services2.arcgis.com/FtJyXM7nBotS8g5t/arcgis/rest/services/Real_Time_Air_Quality_FIU_Miami_Campus_Stations/FeatureServer/0
+candidate https://services2.arcgis.com/FtJyXM7nBotS8g5t/arcgis/rest/services/Real_Time_Air_Quality_FIU_Miami_Campus_Stations/FeatureServer/0
+note felder: ObjectId, cadence_seconds, data_provider, instrument, measurement_fields, notes, pi, platform_id, platform_label, sensor_id, source
+dataset Air Quality Management Areas (AQMAs) | https://services3.arcgis.com/APHjSHuFMGWVZFgQ/arcgis/rest/services/Air_Quality_Management_Areas_(AQMAs)/FeatureServer/0
+candidate https://services3.arcgis.com/APHjSHuFMGWVZFgQ/arcgis/rest/services/Air_Quality_Management_Areas_(AQMAs)/FeatureServer/0
+note felder: AQMAName, Ammended, Declared, FID, FID_1, Id, Shape__Are, Shape__Area, Shape__Len, Shape__Length, Status
+dataset Community Air Quality Monitoring Sensor Data | https://services3.arcgis.com/dty2kHktVXHrqO8i/arcgis/rest/services/cleanincle_sensors/FeatureServer/0
+candidate https://services3.arcgis.com/dty2kHktVXHrqO8i/arcgis/rest/services/cleanincle_sensors/FeatureServer/0
+note felder: OBJECTID, co2_ppm, datetime_utc, device_eui, device_number, humidity, latitude, location_name, longitude, pm_10_0, pm_2_5
+dataset Air Quality | https://services5.arcgis.com/9Ux8a8QK4ElCQAam/arcgis/rest/services/Traffic_Sensors/FeatureServer/5
+candidate https://services5.arcgis.com/9Ux8a8QK4ElCQAam/arcgis/rest/services/Traffic_Sensors/FeatureServer/5
+note felder: Area_, F_Code_, F_Easting_, F_Type_, House_No, Northing_, OBJECTID, Street_, Year_2009, Year_2010, Year_2011, Year_2012, Year_2013, Year_2014, Year_2015, Year_2016, Year_2017, Year_2018
+dataset South Bend Air Quality Daily Averages | https://services1.arcgis.com/0n2NelSAfR7gTkr1/arcgis/rest/services/South_Bend_Air_Quality_Daily_Averages/FeatureServer/0
+candidate https://services1.arcgis.com/0n2NelSAfR7gTkr1/arcgis/rest/services/South_Bend_Air_Quality_Daily_Averages/FeatureServer/0
+note felder: Carbon_Monoxide, Humidity, Nitrogen_Dioxide, OBJECTID, PM_1, PM_10, PM_10_Particle_Count, PM_1_Particle_Count, PM_2_5, PM_2_5_Particle_Count, Sulfur_Dioxide, Temperature, elevation, entries, latitude, longitude, nickname, timestamp
+dataset Purple Air PM2 5 Data From Sensors Within Los Angeles County | https://services.arcgis.com/RmCCgQtiZLDCtblq/arcgis/rest/services/Purple_Air_PM2_5_Data_From_Sensors_Within_Los_Angeles_County/FeatureServer/0
+candidate https://services.arcgis.com/RmCCgQtiZLDCtblq/arcgis/rest/services/Purple_Air_PM2_5_Data_From_Sensors_Within_Los_Angeles_County/FeatureServer/0
+note felder: OBJECTID, altitude, channel_flags, channel_flags_auto, channel_flags_manual, channel_state, confidence, confidence_auto, confidence_manual, date_created, firmware_upgrade, firmware_version, hardware, icon, last_modified, last_seen, latitude, led_brightness
+dataset AirQuality MASTER.csv | https://services1.arcgis.com/FNSBkbt9MsC1V9Cx/arcgis/rest/services/AirQualityAVG/FeatureServer/2
+candidate https://services1.arcgis.com/FNSBkbt9MsC1V9Cx/arcgis/rest/services/AirQualityAVG/FeatureServer/2
+note felder: Classification, Days_Over100, Days_Over150, Days_Over50, GlobalID, Name, OBJECTID, Object_ID, Sensor_Type, X_long, Y_lat, avg_, high, low
+dataset Air Quality Sensors | https://services6.arcgis.com/dQFzaYk2ngJmjVgE/arcgis/rest/services/Air_Quality_Sensors/FeatureServer/0
+candidate https://services6.arcgis.com/dQFzaYk2ngJmjVgE/arcgis/rest/services/Air_Quality_Sensors/FeatureServer/0
+note felder: Installed, LAT, LONG, ObjectId, Product, Project, SLID
+dataset RTS Air Quality Management Areas | https://services-eu1.arcgis.com/vvroVTbi2vf6btcj/arcgis/rest/services/RTS%20Air%20Quality%20Management%20Areas/FeatureServer/0
+candidate https://services-eu1.arcgis.com/vvroVTbi2vf6btcj/arcgis/rest/services/RTS%20Air%20Quality%20Management%20Areas/FeatureServer/0
+note felder: OBJECTID, SHAPE__Are, SHAPE__Len, Shape__Area, Shape__Length, aqma_id, aqma_ref, area_km2, area_m2, benzene, benzene_lv, change_log, descriptio, fid_, la_id, la_ons_id, la_ons_nam, local_auth
+dataset Yosemite National Park - Air Quality Sensor Data | https://services1.arcgis.com/fBc8EJBxQRMcHlei/arcgis/rest/services/YOSE_AIR_AirQualitySensorData_tbl/FeatureServer/3
+candidate https://services1.arcgis.com/fBc8EJBxQRMcHlei/arcgis/rest/services/YOSE_AIR_AirQualitySensorData_tbl/FeatureServer/3
+note felder: CREATEDATE, CREATEUSER, DATAACCESS, EDITDATE, EDITUSER, FEATUREID, GROUPCODE, GROUPNAME, METRICTIMESPAN, NOTES, OBJECTID, OZONE, OZONEAQI, OZONEAQICAT, OZONERAW, OZONEUNIT, OZONEUPDTTIME, OZONEUPDTTIMETXT
+dataset Air Quality Survey | https://services.arcgis.com/afSMGVsC7QlRK1kZ/arcgis/rest/services/AirQualitySurvey2015Update/FeatureServer/0
+candidate https://services.arcgis.com/afSMGVsC7QlRK1kZ/arcgis/rest/services/AirQualitySurvey2015Update/FeatureServer/0
+note felder: Address, CAS, City_1, Date, Description, HRV, HRV_Types, Name, ObjectID, Parameter, Results, Sample_ID, State, Units, Units1, Zip
+dataset Nearest Public Schools to Air Quality (Points) | https://services8.arcgis.com/0gRM6SgszdsgUDIk/arcgis/rest/services/Nearest_Public_Schools_to_Air_Quality_(Points)/FeatureServer/0
+candidate https://services8.arcgis.com/0gRM6SgszdsgUDIk/arcgis/rest/services/Nearest_Public_Schools_to_Air_Quality_(Points)/FeatureServer/0
+note felder: ADDRESS, CITY, COUNTRY, COUNTY, COUNTYFIPS, DISTRICTID, END_GRADE, ENROLLMENT, FT_TEACHER, LATITUDE, LEVEL_, LONGITUDE, NAICS_CODE, NAICS_DESC, NCESID, Name, OBJECTID, ORIG_FID
+dataset Nearest Public Schools to Air Quality (Points) | https://services8.arcgis.com/0gRM6SgszdsgUDIk/arcgis/rest/services/Nearest_Public_Schools_to_Air_Quality_(Points)/FeatureServer
+candidate-leer https://services8.arcgis.com/0gRM6SgszdsgUDIk/arcgis/rest/services/Nearest_Public_Schools_to_Air_Quality_(Points)/FeatureServer
+note 0 rows, felder unbekannt
+dataset Los Angeles air quality observations | https://services6.arcgis.com/pFWVG7Xj9WtTyZlk/arcgis/rest/services/Los_Angeles_air_quality_observations/FeatureServer
+candidate-leer https://services6.arcgis.com/pFWVG7Xj9WtTyZlk/arcgis/rest/services/Los_Angeles_air_quality_observations/FeatureServer
+note 0 rows, felder unbekannt
+dataset NC Clean Air Act | https://services.arcgis.com/SXbDpmb7xQkk44JV/arcgis/rest/services/NC_Clean_Air_Act/FeatureServer/0
+candidate https://services.arcgis.com/SXbDpmb7xQkk44JV/arcgis/rest/services/NC_Clean_Air_Act/FeatureServer/0
+note felder: AREA_NAME, COMPOSID, FID, FID_NC_C_1, FID_NC_Cle, Shape_Leng, Shape__Area, Shape__Length
+# keyword pm10
+dataset PM10 2009 | https://services1.arcgis.com/aWbTzyAB0gBPCAL0/arcgis/rest/services/Interpolacja/FeatureServer/0
+candidate https://services1.arcgis.com/aWbTzyAB0gBPCAL0/arcgis/rest/services/Interpolacja/FeatureServer/0
+note felder: EoI_code, F36d_09, GlobalID, MCcode, Method, OBJECTID, Station_na, XML_date, area_type, avg_09, cov_09, elevation, latitude, local_code, longitude, res_lr_36d, res_lr_avg, station_ty
+dataset PM10 2010 | https://services1.arcgis.com/aWbTzyAB0gBPCAL0/arcgis/rest/services/Interpolacja/FeatureServer/1
+candidate https://services1.arcgis.com/aWbTzyAB0gBPCAL0/arcgis/rest/services/Interpolacja/FeatureServer/1
+note felder: EoI_code, GlobalID, OBJECTID, Station_na, area_type, elevation, latitude, local_code, longitude, pm10_36mda, pm10_avg, station_ty
+dataset NO2 PM10 traffic | https://services.arcgis.com/LcQjj2sL7Txk9Lag/arcgis/rest/services/NO2_PM10_traffic/FeatureServer
+candidate-leer https://services.arcgis.com/LcQjj2sL7Txk9Lag/arcgis/rest/services/NO2_PM10_traffic/FeatureServer
+note 0 rows, felder unbekannt
+dataset NO2 PM10 background | https://services.arcgis.com/LcQjj2sL7Txk9Lag/arcgis/rest/services/NO2_PM10_background/FeatureServer
+candidate-leer https://services.arcgis.com/LcQjj2sL7Txk9Lag/arcgis/rest/services/NO2_PM10_background/FeatureServer
+note 0 rows, felder unbekannt
+dataset PM10 24hr Calculations (ug/m3) | https://services.arcgis.com/CXBb7LAjgIIdcsPt/arcgis/rest/services/Air_Quality_PM10_24hr_Calcs/FeatureServer/1
+candidate https://services.arcgis.com/CXBb7LAjgIIdcsPt/arcgis/rest/services/Air_Quality_PM10_24hr_Calcs/FeatureServer/1
+note felder: AU_NAME, AU_NO, Airshed, Census_Are, OBJECTID, PM10_24_hr, Region, Shape_Leng, TLA
+dataset Air Quality PM10 24hr Calcs | https://services.arcgis.com/CXBb7LAjgIIdcsPt/arcgis/rest/services/Air_Quality_PM10_24hr_Calcs/FeatureServer
+candidate-leer https://services.arcgis.com/CXBb7LAjgIIdcsPt/arcgis/rest/services/Air_Quality_PM10_24hr_Calcs/FeatureServer
+note 0 rows, felder unbekannt
+dataset pm10 | https://services1.arcgis.com/7DRakJXKPEhwv0fM/arcgis/rest/services/pm10/FeatureServer/0
+candidate https://services1.arcgis.com/7DRakJXKPEhwv0fM/arcgis/rest/services/pm10/FeatureServer/0
+note felder: GiPValue, GiZScore, Gi_Bin, Gi_Text, NNeighbors, OBJECTID, PM10, SOURCE_ID
+dataset PM10 annual mean Modelled Roadside 2022 | https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_annual_mean_Modelled_Roadside_2022/FeatureServer/0
+candidate https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_annual_mean_Modelled_Roadside_2022/FeatureServer/0
+note felder: SHAPE__Length, census_id, compliance_metric, compliance_status, dft_count_point_id, globalid, la_name, la_unique_code, objectid, region, road_classification, road_length_km, road_number, unit, value, zone_name, zone_unique_code
+dataset Concentrazione PM10 | https://services3.arcgis.com/jiXW75yUEzuPStZi/arcgis/rest/services/Concentrazione_PM10/FeatureServer/0
+candidate https://services3.arcgis.com/jiXW75yUEzuPStZi/arcgis/rest/services/Concentrazione_PM10/FeatureServer/0
+note felder: COMUNE, Concentrazione_PM10, OBJECTID, SHAPE_Leng
+dataset PM10 annual mean Fixed Measurements 2023 | https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_annual_mean_Fixed_Measurements_2023/FeatureServer/0
+candidate https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_annual_mean_Fixed_Measurements_2023/FeatureServer/0
+note felder: aggregating_period, compliance_metric, compliance_status, country, data_capture_percent, easting, eoi_code, globalid, la_name, la_unique_code, northing, objectid, objective_type, pollutant, site_code, site_name, site_type, unit
+dataset PM10 annual mean Modelled Roadside 2021 | https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_annual_mean_Modelled_Roadside_2021/FeatureServer/0
+candidate https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_annual_mean_Modelled_Roadside_2021/FeatureServer/0
+note felder: SHAPE__Length, census_id, compliance_metric, compliance_status, dft_count_point_id, globalid, la_name, la_unique_code, objectid, region, road_classification, road_length_km, road_number, unit, value, zone_name, zone_unique_code
+dataset PM10 annual mean Modelled Roadside 2024 | https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_annual_mean_Modelled_Roadside_2024/FeatureServer/0
+candidate https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_annual_mean_Modelled_Roadside_2024/FeatureServer/0
+note felder: SHAPE__Length, census_id, compliance_metric, compliance_status, dft_count_point_id, la_name, la_unique_code, objectid, region, road_classification, road_length_km, road_number, unit, value, zone_name, zone_unique_code
+dataset PM10 annual mean Modelled Background 2023 | https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_annual_mean_Modelled_Background_2023/FeatureServer/0
+candidate https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_annual_mean_Modelled_Background_2023/FeatureServer/0
+note felder: SHAPE__Area, SHAPE__Length, compliance_metric, compliance_status, easting, globalid, gridcode, la_name, la_unique_code, northing, objectid, unit, value, zone_name, zone_unique_code
+dataset PM10 annual mean Modelled Background 2022 | https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_annual_mean_Modelled_Background_2022/FeatureServer/0
+candidate https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_annual_mean_Modelled_Background_2022/FeatureServer/0
+note felder: SHAPE__Area, SHAPE__Length, compliance_metric, compliance_status, easting, globalid, gridcode, la_name, la_unique_code, northing, objectid, unit, value, zone_name, zone_unique_code
+dataset PM10 annual mean Modelled Background 2020 | https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_annual_mean_Modelled_Background_2020/FeatureServer/0
+candidate https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_annual_mean_Modelled_Background_2020/FeatureServer/0
+note felder: SHAPE__Area, SHAPE__Length, compliance_metric, compliance_status, easting, globalid, gridcode, la_name, la_unique_code, northing, objectid, unit, value, zone_name, zone_unique_code
+dataset PM10 annual mean Modelled Roadside 2023 | https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_annual_mean_Modelled_Roadside_2023/FeatureServer/0
+candidate https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_annual_mean_Modelled_Roadside_2023/FeatureServer/0
+note felder: SHAPE__Length, census_id, compliance_metric, compliance_status, dft_count_point_id, globalid, la_name, la_unique_code, objectid, region, road_classification, road_length_km, road_number, unit, value, zone_name, zone_unique_code
+dataset PM10 annual mean Modelled Background 2021 | https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_annual_mean_Modelled_Background_2021/FeatureServer/0
+candidate https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_annual_mean_Modelled_Background_2021/FeatureServer/0
+note felder: SHAPE__Area, SHAPE__Length, compliance_metric, compliance_status, easting, globalid, gridcode, la_name, la_unique_code, northing, objectid, unit, value, zone_name, zone_unique_code
+dataset PM10 annual mean Modelled Roadside 2020 | https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_annual_mean_Modelled_Roadside_2020/FeatureServer/0
+candidate https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_annual_mean_Modelled_Roadside_2020/FeatureServer/0
+note felder: SHAPE__Length, census_id, compliance_metric, compliance_status, dft_count_point_id, globalid, la_name, la_unique_code, objectid, region, road_classification, road_length_km, road_number, unit, value, zone_name, zone_unique_code
+dataset PM10 annual mean Fixed Measurements 2022 | https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_annual_mean_Fixed_Measurements_2022/FeatureServer/0
+candidate https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_annual_mean_Fixed_Measurements_2022/FeatureServer/0
+note felder: aggregating_period, compliance_metric, compliance_status, country, data_capture_percent, easting, eoi_code, la_name, la_unique_code, northing, objectid, objective_type, pollutant, site_code, site_name, site_type, unit, url
+dataset PM10 annual mean Fixed Measurements 2021 | https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_annual_mean_Fixed_Measurements_2021/FeatureServer/0
+candidate https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_annual_mean_Fixed_Measurements_2021/FeatureServer/0
+note felder: aggregating_period, compliance_metric, compliance_status, country, data_capture_percent, easting, eoi_code, globalid, la_name, la_unique_code, northing, objectid, objective_type, pollutant, site_code, site_name, site_type, unit
+dataset PM10 annual mean Fixed Measurements 2024 | https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_annual_mean_Fixed_Measurements_2024/FeatureServer/0
+candidate https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_annual_mean_Fixed_Measurements_2024/FeatureServer/0
+note felder: aggregating_period, compliance_metric, compliance_status, country, data_capture_percent, easting, eoi_code, la_name, la_unique_code, northing, objectid, objective_type, pollutant, site_code, site_name, site_type, unit, url
+dataset PM10 annual mean Fixed Measurements 2020 | https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_annual_mean_Fixed_Measurements_2020/FeatureServer/0
+candidate https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_annual_mean_Fixed_Measurements_2020/FeatureServer/0
+note felder: aggregating_period, compliance_metric, compliance_status, country, data_capture_percent, easting, eoi_code, globalid, la_name, la_unique_code, northing, objectid, objective_type, pollutant, site_code, site_name, site_type, unit
+dataset PM10 annual mean Modelled Background 2024 | https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_annual_mean_Modelled_Background_2024/FeatureServer/0
+candidate https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_annual_mean_Modelled_Background_2024/FeatureServer/0
+note felder: SHAPE__Area, SHAPE__Length, compliance_metric, compliance_status, easting, gridcode, la_name, la_unique_code, northing, objectid, unit, value, zone_name, zone_unique_code
+dataset Emissions de PM10 totales en kg en 2023 | https://services7.arcgis.com/FPRT1cIkPKcq73uN/arcgis/rest/services/Emissions_de_PM10_totales_en_kg_en_2023/FeatureServer/0
+candidate https://services7.arcgis.com/FPRT1cIkPKcq73uN/arcgis/rest/services/Emissions_de_PM10_totales_en_kg_en_2023/FeatureServer/0
+note felder: OBJECTID, Shape__Area, Shape__Length, agr2023tot, ai2023tot, at2023tot, code_epci, dec2023tot, emi_tot, nom_dpt, nom_epci, nrj2023tot, prod2023tot, res2023tot, rte2023tot, ter2023tot, ts2005tot, ts2008tot
+dataset PM10 days above 50 Fixed Measurements 2020 | https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_days_above_50_Fixed_Measurements_2020/FeatureServer/0
+candidate https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_days_above_50_Fixed_Measurements_2020/FeatureServer/0
+note felder: aggregating_period, compliance_metric, compliance_status, country, data_capture_percent, easting, eoi_code, globalid, la_name, la_unique_code, northing, objectid, objective_type, pollutant, site_code, site_name, site_type, unit
+dataset LAEI Grid PM10 Emissions Sources | https://services-eu1.arcgis.com/6Rz3gIlJa2hbPzwH/arcgis/rest/services/LAEI_2019_Grid_PM10_Emissions_Sources/FeatureServer/0
+decline https://services-eu1.arcgis.com/6Rz3gIlJa2hbPzwH/arcgis/rest/services/LAEI_2019_Grid_PM10_Emissions_Sources/FeatureServer/0
+note arcgis-error-body
+dataset PM10 days above 50 Fixed Measurements 2024 | https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_days_above_50_Fixed_Measurements_2024/FeatureServer/0
+candidate https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_days_above_50_Fixed_Measurements_2024/FeatureServer/0
+note felder: aggregating_period, compliance_metric, compliance_status, country, data_capture_percent, easting, eoi_code, la_name, la_unique_code, northing, objectid, objective_type, pollutant, site_code, site_name, site_type, unit, url
+dataset PM10 days above 50 Fixed Measurements 2023 | https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_days_above_50_Fixed_Measurements_2023/FeatureServer/0
+candidate https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_days_above_50_Fixed_Measurements_2023/FeatureServer/0
+note felder: aggregating_period, compliance_metric, compliance_status, country, data_capture_percent, easting, eoi_code, globalid, la_name, la_unique_code, northing, objectid, objective_type, pollutant, site_code, site_name, site_type, unit
+dataset PM10 days above 50 Fixed Measurements 2022 | https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_days_above_50_Fixed_Measurements_2022/FeatureServer/0
+candidate https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_days_above_50_Fixed_Measurements_2022/FeatureServer/0
+note felder: aggregating_period, compliance_metric, compliance_status, country, data_capture_percent, easting, eoi_code, la_name, la_unique_code, northing, objectid, objective_type, pollutant, site_code, site_name, site_type, unit, url
+dataset PM10 days above 50 Fixed Measurements 2021 | https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_days_above_50_Fixed_Measurements_2021/FeatureServer/0
+candidate https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_days_above_50_Fixed_Measurements_2021/FeatureServer/0
+note felder: aggregating_period, compliance_metric, compliance_status, country, data_capture_percent, easting, eoi_code, globalid, la_name, la_unique_code, northing, objectid, objective_type, pollutant, site_code, site_name, site_type, unit
+dataset PM10 days above 50 Modelled Roadside 2021 | https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_days_above_50_Modelled_Roadside_2021/FeatureServer/0
+candidate https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_days_above_50_Modelled_Roadside_2021/FeatureServer/0
+note felder: SHAPE__Length, census_id, compliance_metric, compliance_status, dft_count_point_id, globalid, la_name, la_unique_code, objectid, region, road_classification, road_length_km, road_number, unit, value, zone_name, zone_unique_code
+dataset Annual mean PM10 concentration observed at background stations, 2010 (EEA-32) | https://services.arcgis.com/LcQjj2sL7Txk9Lag/arcgis/rest/services/NO2_PM10_background/FeatureServer/1
+candidate https://services.arcgis.com/LcQjj2sL7Txk9Lag/arcgis/rest/services/NO2_PM10_background/FeatureServer/1
+note felder: ID, city_code, city_name, component_caption, component_code, component_name, measurement_european_group_code, measurement_unit, station_european_code, station_latitude_deg, station_legend, station_longitude_deg, station_type_of_area, statistic_shortname, statistic_value, statistics_average_group, statistics_percentage_valid, statistics_year
+dataset PM10 days above 50 Modelled Roadside 2022 | https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_days_above_50_Modelled_Roadside_2022/FeatureServer/0
+candidate https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_days_above_50_Modelled_Roadside_2022/FeatureServer/0
+note felder: SHAPE__Length, census_id, compliance_metric, compliance_status, dft_count_point_id, globalid, la_name, la_unique_code, objectid, region, road_classification, road_length_km, road_number, unit, value, zone_name, zone_unique_code
+dataset PM10 days above 50 Modelled Roadside 2023 | https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_days_above_50_Modelled_Roadside_2023/FeatureServer/0
+candidate https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_days_above_50_Modelled_Roadside_2023/FeatureServer/0
+note felder: SHAPE__Length, census_id, compliance_metric, compliance_status, dft_count_point_id, globalid, la_name, la_unique_code, objectid, region, road_classification, road_length_km, road_number, unit, value, zone_name, zone_unique_code
+dataset PM10 days above 50 Modelled Roadside 2020 | https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_days_above_50_Modelled_Roadside_2020/FeatureServer/0
+candidate https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_days_above_50_Modelled_Roadside_2020/FeatureServer/0
+note felder: SHAPE__Length, census_id, compliance_metric, compliance_status, dft_count_point_id, globalid, la_name, la_unique_code, objectid, region, road_classification, road_length_km, road_number, unit, value, zone_name, zone_unique_code
+dataset Annual mean PM10 concentration observed at traffic stations, 2010 (EEA-32) | https://services.arcgis.com/LcQjj2sL7Txk9Lag/arcgis/rest/services/NO2_PM10_traffic/FeatureServer/1
+candidate https://services.arcgis.com/LcQjj2sL7Txk9Lag/arcgis/rest/services/NO2_PM10_traffic/FeatureServer/1
+note felder: ID, city_code, city_name, component_caption, component_code, component_name, measurement_european_group_code, measurement_unit, station_european_code, station_latitude_deg, station_legend, station_longitude_deg, station_type_of_area, statistic_shortname, statistic_value, statistics_average_group, statistics_percentage_valid, statistics_year
+dataset PM10 days above 50 Modelled Background 2020 | https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_days_above_50_Modelled_Background_2020/FeatureServer/0
+candidate https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_days_above_50_Modelled_Background_2020/FeatureServer/0
+note felder: SHAPE__Area, SHAPE__Length, compliance_metric, compliance_status, easting, globalid, gridcode, la_name, la_unique_code, northing, objectid, unit, value, zone_name, zone_unique_code
+dataset Hot Spots PM10 | https://services1.arcgis.com/7DRakJXKPEhwv0fM/arcgis/rest/services/Hot_Spots_PM10/FeatureServer/0
+candidate https://services1.arcgis.com/7DRakJXKPEhwv0fM/arcgis/rest/services/Hot_Spots_PM10/FeatureServer/0
+note felder: GiPValue, GiZScore, Gi_Bin, Gi_Text, NNeighbors, OBJECTID, PM10, SOURCE_ID
+dataset PM10 days above 50 Modelled Roadside 2024 | https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_days_above_50_Modelled_Roadside_2024/FeatureServer/0
+candidate https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_days_above_50_Modelled_Roadside_2024/FeatureServer/0
+note felder: SHAPE__Length, census_id, compliance_metric, compliance_status, dft_count_point_id, la_name, la_unique_code, objectid, region, road_classification, road_length_km, road_number, unit, value, zone_name, zone_unique_code
+dataset Emissions de PM10 du secteur dechets en kg en 2023 | https://services7.arcgis.com/FPRT1cIkPKcq73uN/arcgis/rest/services/Emissions_de_PM10_du_secteur_dechets_en_kg_en_2023/FeatureServer/0
+candidate https://services7.arcgis.com/FPRT1cIkPKcq73uN/arcgis/rest/services/Emissions_de_PM10_du_secteur_dechets_en_kg_en_2023/FeatureServer/0
+note felder: OBJECTID, Shape__Area, Shape__Length, code_epci, dec2005tot, dec2008tot, dec2010tot, dec2012tot, dec2014tot, dec2015tot, dec2018tot, dec2019tot, dec2021tot, dec2023anr, dec2023ar, dec2023gn, dec2023hc, dec2023pp
+dataset Emissions de PM10 du secteur industrie en kg en 2023 | https://services7.arcgis.com/FPRT1cIkPKcq73uN/arcgis/rest/services/Emissions_de_PM10_du_secteur_industrie_en_kg_en_2023/FeatureServer/0
+candidate https://services7.arcgis.com/FPRT1cIkPKcq73uN/arcgis/rest/services/Emissions_de_PM10_du_secteur_industrie_en_kg_en_2023/FeatureServer/0
+note felder: OBJECTID, Shape__Area, Shape__Length, ai2005tot, ai2008tot, ai2010tot, ai2012tot, ai2014tot, ai2015tot, ai2018tot, ai2019tot, ai2021tot, ai2023anr, ai2023ar, ai2023boi, ai2023cms, ai2023elc, ai2023gn
+dataset PM10 days above 50 Modelled Background 2022 | https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_days_above_50_Modelled_Background_2022/FeatureServer/0
+candidate https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_days_above_50_Modelled_Background_2022/FeatureServer/0
+note felder: SHAPE__Area, SHAPE__Length, compliance_metric, compliance_status, easting, globalid, gridcode, la_name, la_unique_code, northing, objectid, unit, value, zone_name, zone_unique_code
+dataset PM10 days above 50 Modelled Background 2021 | https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_days_above_50_Modelled_Background_2021/FeatureServer/0
+candidate https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_days_above_50_Modelled_Background_2021/FeatureServer/0
+note felder: SHAPE__Area, SHAPE__Length, compliance_metric, compliance_status, easting, globalid, gridcode, la_name, la_unique_code, northing, objectid, unit, value, zone_name, zone_unique_code
+dataset PM10 days above 50 Modelled Background 2023 | https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_days_above_50_Modelled_Background_2023/FeatureServer/0
+candidate https://ukair.maps.rcdo.co.uk/ukairserver/rest/services/Hosted/PM10_days_above_50_Modelled_Background_2023/FeatureServer/0
+note felder: SHAPE__Area, SHAPE__Length, compliance_metric, compliance_status, easting, globalid, gridcode, la_name, la_unique_code, northing, objectid, unit, value, zone_name, zone_unique_code
+dataset Hot Spots PM10` | https://services1.arcgis.com/7DRakJXKPEhwv0fM/arcgis/rest/services/Hot_Spots_PM10%60/FeatureServer/0
+candidate https://services1.arcgis.com/7DRakJXKPEhwv0fM/arcgis/rest/services/Hot_Spots_PM10%60/FeatureServer/0
+note felder: GiPValue, GiZScore, Gi_Bin, Gi_Text, NNeighbors, OBJECTID, PM10, SOURCE_ID
+dataset Emissions de PM10 du secteur routier en kg en 2023 | https://services7.arcgis.com/FPRT1cIkPKcq73uN/arcgis/rest/services/Emissions_de_PM10_du_secteur_routier_en_kg_en_2023/FeatureServer/0
+candidate https://services7.arcgis.com/FPRT1cIkPKcq73uN/arcgis/rest/services/Emissions_de_PM10_du_secteur_routier_en_kg_en_2023/FeatureServer/0
+note felder: OBJECTID, Shape__Area, Shape__Length, code_epci, emi_rou, nom_dpt, nom_epci, rte2005tot, rte2008tot, rte2010tot, rte2012tot, rte2014tot, rte2015tot, rte2018tot, rte2019tot, rte2021tot, rte2023gn, rte2023hc
+dataset Emissions de PM10 du secteur residentiel en kg en 2023 | https://services7.arcgis.com/FPRT1cIkPKcq73uN/arcgis/rest/services/Emissions_de_PM10_du_secteur_residentiel_en_kg_en_2023/FeatureServer/0
+candidate https://services7.arcgis.com/FPRT1cIkPKcq73uN/arcgis/rest/services/Emissions_de_PM10_du_secteur_residentiel_en_kg_en_2023/FeatureServer/0
+note felder: OBJECTID, Shape__Area, Shape__Length, code_epci, emi_res, nom_dpt, nom_epci, res2005tot, res2008tot, res2010tot, res2012tot, res2014tot, res2015tot, res2018tot, res2019tot, res2021tot, res2023boi, res2023gn
+dataset Emissions de PM10 du secteur energie en kg en 2023 | https://services7.arcgis.com/FPRT1cIkPKcq73uN/arcgis/rest/services/Emissions_de_PM10_du_secteur_energie_en_kg_en_2023/FeatureServer/0
+candidate https://services7.arcgis.com/FPRT1cIkPKcq73uN/arcgis/rest/services/Emissions_de_PM10_du_secteur_energie_en_kg_en_2023/FeatureServer/0
+note felder: OBJECTID, Shape__Area, Shape__Length, code_epci, emi_bra, nom_dpt, nom_epci, nrj2005tot, nrj2008tot, nrj2010tot, nrj2012tot, nrj2014tot, nrj2015tot, nrj2018tot, nrj2019tot, nrj2021tot, nrj2023anr, nrj2023ar
+dataset Emissions de PM10 du secteur agriculture en kg en 2023 | https://services7.arcgis.com/FPRT1cIkPKcq73uN/arcgis/rest/services/Emissions_de_PM10_du_secteur_agriculture_en_kg_en_2023/FeatureServer/0
+candidate https://services7.arcgis.com/FPRT1cIkPKcq73uN/arcgis/rest/services/Emissions_de_PM10_du_secteur_agriculture_en_kg_en_2023/FeatureServer/0
+note felder: OBJECTID, Shape__Area, Shape__Length, agr2005tot, agr2008tot, agr2010tot, agr2012tot, agr2014tot, agr2015tot, agr2018tot, agr2019tot, agr2021tot, agr2023gn, agr2023hc, agr2023pp, agr2023tot, code_epci, emi_agr
+dataset Emissions de PM10 du secteur tertiaire en kg en 2023 | https://services7.arcgis.com/FPRT1cIkPKcq73uN/arcgis/rest/services/Emissions_de_PM10_du_secteur_tertiaire_en_kg_en_2023/FeatureServer/0
+candidate https://services7.arcgis.com/FPRT1cIkPKcq73uN/arcgis/rest/services/Emissions_de_PM10_du_secteur_tertiaire_en_kg_en_2023/FeatureServer/0
+note felder: OBJECTID, Shape__Area, Shape__Length, code_epci, emi_ter, nom_dpt, nom_epci, ter2005tot, ter2008tot, ter2010tot, ter2012tot, ter2014tot, ter2015tot, ter2018tot, ter2019tot, ter2021tot, ter2023boi, ter2023gn
+dataset Hot Spots PM10 2 | https://services1.arcgis.com/7DRakJXKPEhwv0fM/arcgis/rest/services/Hot_Spots_PM10_2/FeatureServer/0
+candidate https://services1.arcgis.com/7DRakJXKPEhwv0fM/arcgis/rest/services/Hot_Spots_PM10_2/FeatureServer/0
+note felder: GiPValue, GiZScore, Gi_Bin, Gi_Text, NNeighbors, OBJECTID, PM10, SOURCE_ID
+dataset Minori e PM10 | https://services3.arcgis.com/jiXW75yUEzuPStZi/arcgis/rest/services/Minori_e_PM10/FeatureServer/0
+candidate https://services3.arcgis.com/jiXW75yUEzuPStZi/arcgis/rest/services/Minori_e_PM10/FeatureServer/0
+note felder: COD_CM, COD_PRO, COD_REG, COMUNE, FLAG_CM, OBJECTID, ORIG_FID, PRO_COM, SHAPE_Leng, T6_CLASSI_MINORI, T6_CLASSI_PM10, T6_INCROCIO_INDICATORI_MINORI_P, T6_MEDIA_ANNUALE_PM10, T6_NUMERO_MINORI_0_17_ANNI
+dataset Emissions de PM10 du secteur non routier en kg en 2023 | https://services7.arcgis.com/FPRT1cIkPKcq73uN/arcgis/rest/services/Emissions_de_PM10_du_secteur_non_routier_en_kg_en_2023/FeatureServer/0
+candidate https://services7.arcgis.com/FPRT1cIkPKcq73uN/arcgis/rest/services/Emissions_de_PM10_du_secteur_non_routier_en_kg_en_2023/FeatureServer/0
+note felder: OBJECTID, Shape__Area, Shape__Length, at2005tot, at2008tot, at2010tot, at2012tot, at2014tot, at2015tot, at2018tot, at2019tot, at2021tot, at2023hc, at2023pp, at2023tot, code_epci, emi_tnr, nom_dpt
+dataset 新港測站PM10玫瑰圖 | https://services1.arcgis.com/XgbJTM2lwaBqFO3f/arcgis/rest/services/%E6%96%B0%E6%B8%AF%E6%B8%AC%E7%AB%99PM10%E7%8E%AB%E7%91%B0%E5%9C%96/FeatureServer/0
+candidate https://services1.arcgis.com/XgbJTM2lwaBqFO3f/arcgis/rest/services/%E6%96%B0%E6%B8%AF%E6%B8%AC%E7%AB%99PM10%E7%8E%AB%E7%91%B0%E5%9C%96/FeatureServer/0
+note felder: AreaName, County, GlobalID, Lat, Lon, Name, OBJECTID, SiteAdress, SiteEngNam, Sitetype, Township
+dataset pm10 p | https://services2.arcgis.com/MzCtPDSne0rpIt7V/arcgis/rest/services/pm10_p/FeatureServer/0
+candidate https://services2.arcgis.com/MzCtPDSne0rpIt7V/arcgis/rest/services/pm10_p/FeatureServer/0
+note felder: F2025_01_04_00_00_00, F2025_01_04_01_00_00, F2025_01_04_02_00_00, F2025_01_04_03_00_00, F2025_01_04_04_00_00, F2025_01_04_05_00_00, F2025_01_04_06_00_00, F2025_01_04_07_00_00, F2025_01_04_08_00_00, F2025_01_04_09_00_00, F2025_01_04_10_00_00, F2025_01_04_11_00_00, F2025_01_04_12_00_00, F2025_01_04_13_00_00, F2025_01_04_14_00_00, F2025_01_04_15_00_00, F2025_01_04_16_00_00, F2025_01_04_17_00_00
+dataset Emissions de PM10 du secteur production chaleur froid en kg en 2023 | https://services7.arcgis.com/FPRT1cIkPKcq73uN/arcgis/rest/services/Emissions_de_PM10_du_secteur_production_chaleur_froid_en_kg_en_2023/FeatureServer/0
+candidate https://services7.arcgis.com/FPRT1cIkPKcq73uN/arcgis/rest/services/Emissions_de_PM10_du_secteur_production_chaleur_froid_en_kg_en_2023/FeatureServer/0
+note felder: OBJECTID, Shape__Area, Shape__Length, code_epci, emi_pro, nom_dpt, nom_epci, prod2005tot, prod2008tot, prod2010tot, prod2012tot, prod2014tot, prod2015tot, prod2018tot, prod2019tot, prod2021tot, prod2023anr, prod2023ar
+dataset AirQuality PM10 | https://portal.esrikr.com/arcgis/rest/services/Hosted/Air_Korea_%EB%8C%80%EA%B8%B0%EC%A7%88%EC%A0%95%EB%B3%B4/FeatureServer/3
+candidate https://portal.esrikr.com/arcgis/rest/services/Hosted/Air_Korea_%EB%8C%80%EA%B8%B0%EC%A7%88%EC%A0%95%EB%B3%B4/FeatureServer/3
+note felder: datatime, lat, lon, objectid, pm10grade, pm10value, sidoname, stationname
+dataset PM10 Annual Non Attainment Areas (1987 Standard) | https://gisdata.in.gov/server/rest/services/Hosted/PM10_Annual_Non_Attainment_Areas_1987_Standard/FeatureServer/0
+candidate https://gisdata.in.gov/server/rest/services/Hosted/PM10_Annual_Non_Attainment_Areas_1987_Standard/FeatureServer/0
+note felder: SHAPE__Area, SHAPE__Length, aggregatio, area_name, cdd_effect, cdd_fina_1, cdd_fina_2, cdd_final_, cdd_prop_1, cdd_prop_2, cdd_propos, classifi_1, classifi_2, classifi_3, classifi_4, classifica, composit_1, current_st
+dataset Arizona PM10 Nonattainment Areas | https://services1.arcgis.com/mpVYz37anSdrK4d8/arcgis/rest/services/Arizona_PM10_Nonattainment_Areas/FeatureServer/0
+candidate https://services1.arcgis.com/mpVYz37anSdrK4d8/arcgis/rest/services/Arizona_PM10_Nonattainment_Areas/FeatureServer/0
+note felder: AREA_NAME, COMPOSID, OBJECTID, Shape__Area, Shape__Length, area_name_1, class, composid_1, naastatus, pollorder, pollutant, revoked_std, rptdate
+dataset Cities and PM 10 | https://services1.arcgis.com/UpxtrwRYNaXVpkGe/arcgis/rest/services/Cities_and_PM_10/FeatureServer/9
+candidate https://services1.arcgis.com/UpxtrwRYNaXVpkGe/arcgis/rest/services/Cities_and_PM_10/FeatureServer/9
+note felder: OBJECTID, Shape__Area, Shape__Length
+dataset expo moyan pm10 2022 zas | https://services1.arcgis.com/HzzPcgRsxxyIZdlU/arcgis/rest/services/exp_centre_val_de_loire_zas_2022/FeatureServer/2
+decline https://services1.arcgis.com/HzzPcgRsxxyIZdlU/arcgis/rest/services/exp_centre_val_de_loire_zas_2022/FeatureServer/2
+note arcgis-error-body
+dataset Pm2 5 and Pm10 | https://services1.arcgis.com/B4MnusZHL3vmqU3t/arcgis/rest/services/Pm2_5_and_Pm10/FeatureServer/0
+candidate https://services1.arcgis.com/B4MnusZHL3vmqU3t/arcgis/rest/services/Pm2_5_and_Pm10/FeatureServer/0
+note felder: County, Days_CO, Days_NO2, Days_Ozone, Days_PM10, Days_PM2_5, Days_SO2, Days_with_AQI, F90th_Percentile_AQI, Good_Days, Hazardous_Days, Max_AQI, Median_AQI, Moderate_Days, OBJECTID, State, Unhealthy_Days, Unhealthy_for_Sensitive_Groups_
+dataset exp grand est region 2019 pm10 moyan | https://services3.arcgis.com/Is0UwT37raQYl9Jj/arcgis/rest/services/exp_grand_est_region_2019_pm10_moyan/FeatureServer/0
+candidate https://services3.arcgis.com/Is0UwT37raQYl9Jj/arcgis/rest/services/exp_grand_est_region_2019_pm10_moyan/FeatureServer/0
+note felder: GlobalID, OBJECTID_1, Shape__Area, Shape__Length, annee, id_poll_ue, id_zas, lib_zas, nom_poll, pop_exp_hab, pop_insee_hab, surf_en_depassement, surf_totale, the_geom, type_za, valeur_reg
+dataset exp grand est region 2021 pm10 nbrj | https://services3.arcgis.com/Is0UwT37raQYl9Jj/arcgis/rest/services/exp_grand_est_region_2021_pm10_nbrj/FeatureServer/0
+candidate https://services3.arcgis.com/Is0UwT37raQYl9Jj/arcgis/rest/services/exp_grand_est_region_2021_pm10_nbrj/FeatureServer/0
+note felder: GlobalID, OBJECTID_1, Shape__Area, Shape__Length, annee, id_poll_ue, id_zas, lib_zas, nom_poll, pop_exp_hab, pop_insee_hab, surf_en_depassement, surf_totale, the_geom, type_za, valeur_reg
+dataset exp grand est region 2021 pm10 moyan | https://services3.arcgis.com/Is0UwT37raQYl9Jj/arcgis/rest/services/exp_grand_est_region_2021_pm10_moyan/FeatureServer/0
+candidate https://services3.arcgis.com/Is0UwT37raQYl9Jj/arcgis/rest/services/exp_grand_est_region_2021_pm10_moyan/FeatureServer/0
+note felder: GlobalID, OBJECTID_1, Shape__Area, Shape__Length, annee, id_poll_ue, id_zas, lib_zas, nom_poll, pop_exp_hab, pop_insee_hab, surf_en_depassement, surf_totale, the_geom, type_za, valeur_reg
+dataset exp grand est zas 2019 pm10 nbrj | https://services3.arcgis.com/Is0UwT37raQYl9Jj/arcgis/rest/services/exp_grand_est_zas_2019_pm10_nbrj/FeatureServer/0
+candidate https://services3.arcgis.com/Is0UwT37raQYl9Jj/arcgis/rest/services/exp_grand_est_zas_2019_pm10_nbrj/FeatureServer/0
+note felder: GlobalID, OBJECTID, Shape__Area, Shape__Length, annee, id_poll_ue, id_zas, lib_zas, nom_poll, pop_exp_hab, pop_insee_hab, surf_en_depassement, surf_totale, the_geom, type_za, valeur_reg
+dataset exp grand est zas 2020 pm10 nbrj | https://services3.arcgis.com/Is0UwT37raQYl9Jj/arcgis/rest/services/exp_grand_est_zas_2020_pm10_nbrj/FeatureServer/0
+candidate https://services3.arcgis.com/Is0UwT37raQYl9Jj/arcgis/rest/services/exp_grand_est_zas_2020_pm10_nbrj/FeatureServer/0
+note felder: GlobalID, OBJECTID, Shape__Area, Shape__Length, annee, id_poll_ue, id_zas, lib_zas, nom_poll, pop_exp_hab, pop_insee_hab, surf_en_depassement, surf_totale, the_geom, type_za, valeur_reg
+dataset exp grand est zas 2020 pm10 moyan | https://services3.arcgis.com/Is0UwT37raQYl9Jj/arcgis/rest/services/exp_grand_est_zas_2020_pm10_moyan/FeatureServer/0
+candidate https://services3.arcgis.com/Is0UwT37raQYl9Jj/arcgis/rest/services/exp_grand_est_zas_2020_pm10_moyan/FeatureServer/0
+note felder: GlobalID, OBJECTID, Shape__Area, Shape__Length, annee, id_poll_ue, id_zas, lib_zas, nom_poll, pop_exp_hab, pop_insee_hab, surf_en_depassement, surf_totale, the_geom, type_za, valeur_reg
+dataset exp grand est region 2018 pm10 nbrj | https://services3.arcgis.com/Is0UwT37raQYl9Jj/arcgis/rest/services/exp_grand_est_region_2018_pm10_nbrj/FeatureServer/0
+candidate https://services3.arcgis.com/Is0UwT37raQYl9Jj/arcgis/rest/services/exp_grand_est_region_2018_pm10_nbrj/FeatureServer/0
+note felder: GlobalID, OBJECTID_1, Shape__Area, Shape__Length, annee, id_poll_ue, id_zas, lib_zas, nom_poll, pop_exp_hab, pop_insee_hab, surf_en_depassement, surf_totale, the_geom, type_za, valeur_reg
+dataset exp grand est region 2018 pm10 moyan | https://services3.arcgis.com/Is0UwT37raQYl9Jj/arcgis/rest/services/exp_grand_est_region_2018_pm10_moyan/FeatureServer/0
+candidate https://services3.arcgis.com/Is0UwT37raQYl9Jj/arcgis/rest/services/exp_grand_est_region_2018_pm10_moyan/FeatureServer/0
+note felder: GlobalID, OBJECTID_1, Shape__Area, Shape__Length, annee, id_poll_ue, id_zas, lib_zas, nom_poll, pop_exp_hab, pop_insee_hab, surf_en_depassement, surf_totale, the_geom, type_za, valeur_reg
+dataset exp grand est zas 2021 pm10 moyan | https://services3.arcgis.com/Is0UwT37raQYl9Jj/arcgis/rest/services/exp_grand_est_zas_2021_pm10_moyan/FeatureServer/0
+candidate https://services3.arcgis.com/Is0UwT37raQYl9Jj/arcgis/rest/services/exp_grand_est_zas_2021_pm10_moyan/FeatureServer/0
+note felder: GlobalID, OBJECTID, Shape__Area, Shape__Length, annee, id_poll_ue, id_zas, lib_zas, nom_poll, pop_exp_hab, pop_insee_hab, surf_en_depassement, surf_totale, the_geom, type_za, valeur_reg
+dataset exp grand est zas 2022 pm10 moyan | https://services3.arcgis.com/Is0UwT37raQYl9Jj/arcgis/rest/services/exp_grand_est_zas_2022_pm10_moyan/FeatureServer/0
+candidate https://services3.arcgis.com/Is0UwT37raQYl9Jj/arcgis/rest/services/exp_grand_est_zas_2022_pm10_moyan/FeatureServer/0
+note felder: GlobalID, OBJECTID, Shape__Area, Shape__Length, annee, id_poll_ue, id_zas, lib_zas, nom_poll, pop_exp_hab, pop_insee_hab, surf_en_depassement, surf_totale, the_geom, type_za, valeur_reg
+dataset exp grand est region 2019 pm10 nbrj | https://services3.arcgis.com/Is0UwT37raQYl9Jj/arcgis/rest/services/exp_grand_est_region_2019_pm10_nbrj/FeatureServer/0
+candidate https://services3.arcgis.com/Is0UwT37raQYl9Jj/arcgis/rest/services/exp_grand_est_region_2019_pm10_nbrj/FeatureServer/0
+note felder: GlobalID, OBJECTID_1, Shape__Area, Shape__Length, annee, id_poll_ue, id_zas, lib_zas, nom_poll, pop_exp_hab, pop_insee_hab, surf_en_depassement, surf_totale, the_geom, type_za, valeur_reg
+dataset exp grand est region 2022 pm10 nbrj | https://services3.arcgis.com/Is0UwT37raQYl9Jj/arcgis/rest/services/exp_grand_est_region_2022_pm10_nbrj/FeatureServer/0
+candidate https://services3.arcgis.com/Is0UwT37raQYl9Jj/arcgis/rest/services/exp_grand_est_region_2022_pm10_nbrj/FeatureServer/0
+note felder: GlobalID, OBJECTID_1, Shape__Area, Shape__Length, annee, id_poll_ue, id_zas, lib_zas, nom_poll, pop_exp_hab, pop_insee_hab, surf_en_depassement, surf_totale, the_geom, type_za, valeur_reg
+dataset exp grand est zas 2021 pm10 nbrj | https://services3.arcgis.com/Is0UwT37raQYl9Jj/arcgis/rest/services/exp_grand_est_zas_2021_pm10_nbrj/FeatureServer/0
+candidate https://services3.arcgis.com/Is0UwT37raQYl9Jj/arcgis/rest/services/exp_grand_est_zas_2021_pm10_nbrj/FeatureServer/0
+note felder: GlobalID, OBJECTID, Shape__Area, Shape__Length, annee, id_poll_ue, id_zas, lib_zas, nom_poll, pop_exp_hab, pop_insee_hab, surf_en_depassement, surf_totale, the_geom, type_za, valeur_reg
+dataset exp grand est zas 2022 pm10 nbrj | https://services3.arcgis.com/Is0UwT37raQYl9Jj/arcgis/rest/services/exp_grand_est_zas_2022_pm10_nbrj/FeatureServer/0
+candidate https://services3.arcgis.com/Is0UwT37raQYl9Jj/arcgis/rest/services/exp_grand_est_zas_2022_pm10_nbrj/FeatureServer/0
+note felder: GlobalID, OBJECTID, Shape__Area, Shape__Length, annee, id_poll_ue, id_zas, lib_zas, nom_poll, pop_exp_hab, pop_insee_hab, surf_en_depassement, surf_totale, the_geom, type_za, valeur_reg
+dataset exp grand est zas 2018 pm10 nbrj | https://services3.arcgis.com/Is0UwT37raQYl9Jj/arcgis/rest/services/exp_grand_est_zas_2018_pm10_nbrj/FeatureServer/0
+candidate https://services3.arcgis.com/Is0UwT37raQYl9Jj/arcgis/rest/services/exp_grand_est_zas_2018_pm10_nbrj/FeatureServer/0
+note felder: GlobalID, OBJECTID, Shape__Area, Shape__Length, annee, id_poll_ue, id_zas, lib_zas, nom_poll, pop_exp_hab, pop_insee_hab, surf_en_depassement, surf_totale, the_geom, type_za, valeur_reg
+dataset exp grand est zas 2018 pm10 moyan | https://services3.arcgis.com/Is0UwT37raQYl9Jj/arcgis/rest/services/exp_grand_est_zas_2018_pm10_moyan/FeatureServer/0
+candidate https://services3.arcgis.com/Is0UwT37raQYl9Jj/arcgis/rest/services/exp_grand_est_zas_2018_pm10_moyan/FeatureServer/0
+note felder: GlobalID, OBJECTID, Shape__Area, Shape__Length, annee, id_poll_ue, id_zas, lib_zas, nom_poll, pop_exp_hab, pop_insee_hab, surf_en_depassement, surf_totale, the_geom, type_za, valeur_reg
+dataset exp grand est zas 2019 pm10 moyan | https://services3.arcgis.com/Is0UwT37raQYl9Jj/arcgis/rest/services/exp_grand_est_zas_2019_pm10_moyan/FeatureServer/0
+candidate https://services3.arcgis.com/Is0UwT37raQYl9Jj/arcgis/rest/services/exp_grand_est_zas_2019_pm10_moyan/FeatureServer/0
+note felder: GlobalID, OBJECTID, Shape__Area, Shape__Length, annee, id_poll_ue, id_zas, lib_zas, nom_poll, pop_exp_hab, pop_insee_hab, surf_en_depassement, surf_totale, the_geom, type_za, valeur_reg
+dataset exp grand est region 2020 pm10 nbrj | https://services3.arcgis.com/Is0UwT37raQYl9Jj/arcgis/rest/services/exp_grand_est_region_2020_pm10_nbrj/FeatureServer/0
+candidate https://services3.arcgis.com/Is0UwT37raQYl9Jj/arcgis/rest/services/exp_grand_est_region_2020_pm10_nbrj/FeatureServer/0
+note felder: GlobalID, OBJECTID_1, Shape__Area, Shape__Length, annee, id_poll_ue, id_zas, lib_zas, nom_poll, pop_exp_hab, pop_insee_hab, surf_en_depassement, surf_totale, the_geom, type_za, valeur_reg
+dataset exp grand est region 2020 pm10 moyan | https://services3.arcgis.com/Is0UwT37raQYl9Jj/arcgis/rest/services/exp_grand_est_region_2020_pm10_moyan/FeatureServer/0
+candidate https://services3.arcgis.com/Is0UwT37raQYl9Jj/arcgis/rest/services/exp_grand_est_region_2020_pm10_moyan/FeatureServer/0
+note felder: GlobalID, OBJECTID_1, Shape__Area, Shape__Length, annee, id_poll_ue, id_zas, lib_zas, nom_poll, pop_exp_hab, pop_insee_hab, surf_en_depassement, surf_totale, the_geom, type_za, valeur_reg
+dataset exp grand est region 2022 pm10 moyan | https://services3.arcgis.com/Is0UwT37raQYl9Jj/arcgis/rest/services/exp_grand_est_region_2022_pm10_moyan/FeatureServer/0
+candidate https://services3.arcgis.com/Is0UwT37raQYl9Jj/arcgis/rest/services/exp_grand_est_region_2022_pm10_moyan/FeatureServer/0
+note felder: GlobalID, OBJECTID_1, Shape__Area, Shape__Length, annee, id_poll_ue, id_zas, lib_zas, nom_poll, pop_exp_hab, pop_insee_hab, surf_en_depassement, surf_totale, the_geom, type_za, valeur_reg
+dataset PM10 | https://services6.arcgis.com/X1hbPlhSi6O5YknX/arcgis/rest/services/PM10/FeatureServer/0
+candidate https://services6.arcgis.com/X1hbPlhSi6O5YknX/arcgis/rest/services/PM10/FeatureServer/0
+note felder: AREA_SQ_KM, FID, I_SOx_t_km, LAND_AREA_, MV_CO_PC_d, MV_CO_t__1, MV_CO_t_km, MV_NOx_PC_, MV_NOx_t_1, MV_NOx_t_k, OBJECTID_1, PM10_PC_di, PM10_t_k_1, PM10_t_km_, PM25_PC_di, PM25_t_k_1, PM25_t_km_, Shape_Leng
+dataset pm10 | https://services1.arcgis.com/ZIL9uO234SBBPGL7/arcgis/rest/services/pm10/FeatureServer/0
+candidate https://services1.arcgis.com/ZIL9uO234SBBPGL7/arcgis/rest/services/pm10/FeatureServer/0
+note felder: AB, CERR_CODE, CHAPIS, CO, COID, DIS, DISN, FACID, FCITY, FNAME, FSIC, FSTREET, FZIP, ObjectId, PM10, TS
+dataset PM10 | https://services2.arcgis.com/yvwHSwAamLDJNzPK/arcgis/rest/services/PM10/FeatureServer/0
+candidate https://services2.arcgis.com/yvwHSwAamLDJNzPK/arcgis/rest/services/PM10/FeatureServer/0
+note felder: AQI, Adm2_EN, Adm2_ZH, CO, Date, F5, F5_scale, Location, NO2, O3, OBJECTID, OBJECTID_1, PM10, SO2, Shape__Area, Shape__Length, highest_temp, lowest_temp
+dataset expo moyan pm10 nbrj 2022 zas | https://services1.arcgis.com/HzzPcgRsxxyIZdlU/arcgis/rest/services/exp_centre_val_de_loire_zas_2022/FeatureServer/0
+decline https://services1.arcgis.com/HzzPcgRsxxyIZdlU/arcgis/rest/services/exp_centre_val_de_loire_zas_2022/FeatureServer/0
+note arcgis-error-body
+dataset PM10 Wind Exposure Risk Screening - Southern SJV V3 | https://services2.arcgis.com/bYBANhmQGwSSLC0l/arcgis/rest/services/PM10WindExposureRiskScreening_SouthernSJVV3/FeatureServer/0
+candidate https://services2.arcgis.com/bYBANhmQGwSSLC0l/arcgis/rest/services/PM10WindExposureRiskScreening_SouthernSJVV3/FeatureServer/0
+note felder: OBJECTID, bare_soil_percent, cdl_sample_values, cdl_valid_samples, cell_id, ces_score, ces_value, comppct_r, comppct_r_soil, corridor_proximity, crop_fallow_source, crop_or_fallow_exposure, days_since_rain, drainagecl, drainagecl_soil, hydgrp, hydgrp_soil, lat
+dataset Maricopa County PM10 Nonattainment Boundary | https://services1.arcgis.com/MdyCMZnX1raZ7TS3/arcgis/rest/services/PM10_Nonattainment_Area/FeatureServer/0
+candidate https://services1.arcgis.com/MdyCMZnX1raZ7TS3/arcgis/rest/services/PM10_Nonattainment_Area/FeatureServer/0
+note felder: ACRES, FID, INPM10, Shape__Area, Shape__Length
+dataset pm10 | https://services1.arcgis.com/z6ySw6ky7wfXvfDE/arcgis/rest/services/pm10/FeatureServer/0
+decline https://services1.arcgis.com/z6ySw6ky7wfXvfDE/arcgis/rest/services/pm10/FeatureServer/0
+note arcgis-error-body
+dataset UNBasemap Boundary Line | https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/UNBasemap_Boundary_Line/FeatureServer/0
+candidate https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/UNBasemap_Boundary_Line/FeatureServer/0
+note felder: BDYTYP, BDY_TYPE, ISO3CD, OBJECTID, OBJECTID_12, Shape__Length, Type
+dataset Country Line Boundaries | https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/Global_MAP_Flat_Projection/FeatureServer/2
+candidate https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/Global_MAP_Flat_Projection/FeatureServer/2
+note felder: BDYTYP, BDY_TYPE, ISO3CD, OBJECTID, OBJECTID_1, OBJECTID_12, Shape__Length, Type
+dataset Country Polygon | https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/UNBASEMAP_/FeatureServer/3
+candidate https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/UNBASEMAP_/FeatureServer/3
+note felder: ISO3CD, MAP_COLOR, MAP_LABEL, OBJECTID, OBJECTID_1, ROMNAM, STATUS, Shape__Area, Shape__Length
+dataset Country Boundaries | https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/UNBASEMAP_/FeatureServer/2
+candidate https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/UNBASEMAP_/FeatureServer/2
+note felder: BDY_TYPE, OBJECTID, OBJECTID_1, OBJECTID_12, Shape__Length, Type
+dataset Shorelines | https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/UNBASEMAP_/FeatureServer/1
+candidate https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/UNBASEMAP_/FeatureServer/1
+note felder: BDYTYP, BDY_TYPE, ISO3CD, OBJECTID, OBJECTID_1, OBJECTID_12, Shape_Leng, Shape__Length
+dataset Country Boundaries | https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/UNBASEMAP_White_Boundaries/FeatureServer/2
+candidate https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/UNBASEMAP_White_Boundaries/FeatureServer/2
+note felder: BDY_TYPE, OBJECTID, OBJECTID_1, OBJECTID_12, Shape__Length, Type
+dataset Schools with high level of PM10 | https://services.arcgis.com/sBNET8PhKOBoxZI7/arcgis/rest/services/Schools_with_high_level_of_PM10/FeatureServer/0
+candidate https://services.arcgis.com/sBNET8PhKOBoxZI7/arcgis/rest/services/Schools_with_high_level_of_PM10/FeatureServer/0
+note felder: AQHI_D1, AQHI_D2, AQHI_D3, AQHI_D4, AQHI_D5, AQHI_D6, AQHI_Mar, AQHI_May, Address, Easting, Latitude, Longitude, NO2_D1, NO2_D2, NO2_D3, NO2_D4, NO2_D5, NO2_D6
+dataset PM10 | https://services5.arcgis.com/uID8wkC2Vn7MxK6S/arcgis/rest/services/PM10/FeatureServer/0
+candidate https://services5.arcgis.com/uID8wkC2Vn7MxK6S/arcgis/rest/services/PM10/FeatureServer/0
+note felder: ARC_Single, AddBldg, AddNum, AddNumFrom, AddNumTo, AddRange, Addr_type, Adres, BldgName, BldgType, Block, City, Country, Czas_usred, DisplayX, DisplayY, Distance, District
+dataset exp centre val de loire 2022 pm10 moyan | https://services1.arcgis.com/HzzPcgRsxxyIZdlU/arcgis/rest/services/exp_centre_val_de_loire_region_2022/FeatureServer/1
+decline https://services1.arcgis.com/HzzPcgRsxxyIZdlU/arcgis/rest/services/exp_centre_val_de_loire_region_2022/FeatureServer/1
+note arcgis-error-body
+dataset pm10 CUNDINAMARCA | https://services8.arcgis.com/XnN79i2zv7tQsjdM/arcgis/rest/services/PM10_CAR/FeatureServer/1
+candidate https://services8.arcgis.com/XnN79i2zv7tQsjdM/arcgis/rest/services/PM10_CAR/FeatureServer/1
+note felder: Autoridad, Concentrac, Municipio, OID, Par_Metro
+dataset exp centre val de loire 2022 pm10 nbrj | https://services1.arcgis.com/HzzPcgRsxxyIZdlU/arcgis/rest/services/exp_centre_val_de_loire_region_2022/FeatureServer/0
+decline https://services1.arcgis.com/HzzPcgRsxxyIZdlU/arcgis/rest/services/exp_centre_val_de_loire_region_2022/FeatureServer/0
+note arcgis-error-body
+dataset Countries Separated with associated territories | https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/Global_MAP_Flat_Projection/FeatureServer/5
+candidate https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/Global_MAP_Flat_Projection/FeatureServer/5
+note felder: ISO3CD, M49Code, MAP_COLOR, MAP_LABEL, OBJECTID, OBJECTID_1, ROMNAM, STATUS, Shape__Area, Shape__Length
+dataset UNBASEMAP White Boundaries | https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/UNBASEMAP_White_Boundaries_/FeatureServer
+candidate-leer https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/UNBASEMAP_White_Boundaries_/FeatureServer
+note 0 rows, felder unbekannt
+dataset PM10 CAR | https://services8.arcgis.com/XnN79i2zv7tQsjdM/arcgis/rest/services/PM10_CAR/FeatureServer
+candidate-leer https://services8.arcgis.com/XnN79i2zv7tQsjdM/arcgis/rest/services/PM10_CAR/FeatureServer
+note 0 rows, felder unbekannt
+dataset PM10 CUNDINAMARCA | https://services8.arcgis.com/XnN79i2zv7tQsjdM/arcgis/rest/services/PM10_CUNDINAMARCA/FeatureServer
+candidate-leer https://services8.arcgis.com/XnN79i2zv7tQsjdM/arcgis/rest/services/PM10_CUNDINAMARCA/FeatureServer
+note 0 rows, felder unbekannt
+dataset Lakes | https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/UNBASEMAP_White_Boundaries_/FeatureServer/0
+candidate https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/UNBASEMAP_White_Boundaries_/FeatureServer/0
+note felder: Name, OBJECTID, OBJECTID_1, OBJECTID_12, OBJECTID_2, Shape_Le_1, Shape_Leng, Shape__Area, Shape__Length
+dataset UNBASEMAP White Boundaries | https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/UNBASEMAP_White_Boundaries/FeatureServer
+candidate-leer https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/UNBASEMAP_White_Boundaries/FeatureServer
+note 0 rows, felder unbekannt
+dataset Shorelines | https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/UNBASEMAP_White_Boundaries/FeatureServer/1
+candidate https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/UNBASEMAP_White_Boundaries/FeatureServer/1
+note felder: BDYTYP, BDY_TYPE, ISO3CD, OBJECTID, OBJECTID_1, OBJECTID_12, Shape_Leng, Shape__Length
+dataset Major Lakes | https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/Global_MAP_Flat_Projection/FeatureServer/0
+candidate https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/Global_MAP_Flat_Projection/FeatureServer/0
+note felder: Name, OBJECTID, OBJECTID_1, OBJECTID_12, OBJECTID_2, Shape_Le_1, Shape_Leng, Shape__Area, Shape__Length
+dataset PM10 MJ | https://services9.arcgis.com/XzFo5ArWiIwKyBgo/arcgis/rest/services/PM10_MJ/FeatureServer/0
+candidate https://services9.arcgis.com/XzFo5ArWiIwKyBgo/arcgis/rest/services/PM10_MJ/FeatureServer/0
+note felder: Adres, Data_uruch, Data_zamkn, F01_01_202, F01_02_202, F01_03_202, F01_04_202, F01_05_202, F01_06_202, F01_07_202, F01_08_202, F01_09_202, F01_10_202, F01_11_202, F01_12_202, F02_01_202, F02_02_202, F02_03_202
+dataset pm10 CUNDINAMARCA | https://services8.arcgis.com/XnN79i2zv7tQsjdM/arcgis/rest/services/PM10_CUNDINAMARCA/FeatureServer/1
+candidate https://services8.arcgis.com/XnN79i2zv7tQsjdM/arcgis/rest/services/PM10_CUNDINAMARCA/FeatureServer/1
+note felder: Autoridad, Concentrac, Municipio, OID, Par_Metro
+dataset Aggregation of OpenAQ Recent Conditions in Air Quality   OpenAQ   PM10 to CO2 Emissions per capita | https://services.arcgis.com/tKsJAIiLjd90D5q2/arcgis/rest/services/Aggregation_of_OpenAQ_Recent_Conditions_in_Air_Quality___OpenAQ___PM10_to_CO2_Emissions_per_capita/FeatureServer/0
+candidate https://services.arcgis.com/tKsJAIiLjd90D5q2/arcgis/rest/services/Aggregation_of_OpenAQ_Recent_Conditions_in_Air_Quality___OpenAQ___PM10_to_CO2_Emissions_per_capita/FeatureServer/0
+note felder: AGE_10_14, AGE_10_14_1, AGE_15_19, AGE_15_19_1, AGE_20_24, AGE_20_24_1, AGE_25_34, AGE_25_34_1, AGE_35_44, AGE_35_44_1, AGE_45_54, AGE_45_54_1, AGE_55_64, AGE_55_64_1, AGE_5_9, AGE_5_9_1, AGE_65_74, AGE_65_74_1
+dataset Country Boundaries | https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/UNBASEMAP_White_Boundaries_/FeatureServer/2
+candidate https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/UNBASEMAP_White_Boundaries_/FeatureServer/2
+note felder: BDY_TYPE, OBJECTID, OBJECTID_1, OBJECTID_12, Shape__Length, Type
+dataset Global MAP Flat Projection | https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/Global_MAP_Flat_Projection/FeatureServer
+candidate-leer https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/Global_MAP_Flat_Projection/FeatureServer
+note 0 rows, felder unbekannt
+dataset Unsettled Territory | https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/Global_MAP_Flat_Projection/FeatureServer/3
+candidate https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/Global_MAP_Flat_Projection/FeatureServer/3
+note felder: ISO3CD, MAP_COLOR, MAP_LABEL, OBJECTID, OBJECTID_1, ROMNAM, STATUS, Shape_Leng, Shape__Area, Shape__Length
+dataset Sacramento PM 10 Planning Area | https://services6.arcgis.com/YBp5dUuxCMd8W1EI/arcgis/rest/services/Planning_Area_Sacramento_PM10/FeatureServer/0
+candidate https://services6.arcgis.com/YBp5dUuxCMd8W1EI/arcgis/rest/services/Planning_Area_Sacramento_PM10/FeatureServer/0
+note felder: DesAreaNam, FID, Shape_STAr, Shape_STLe
+dataset Countries Combined with associated territories | https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/Global_MAP_Flat_Projection/FeatureServer/4
+candidate https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/Global_MAP_Flat_Projection/FeatureServer/4
+note felder: ISO3CD, M49Code, MAP_COLOR, MAP_LABEL, OBJECTID, OBJECTID_1, ROMNAM, STATUS, Shape__Area, Shape__Length
+dataset Shorelines | https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/UNBASEMAP_White_Boundaries_/FeatureServer/1
+candidate https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/UNBASEMAP_White_Boundaries_/FeatureServer/1
+note felder: BDYTYP, BDY_TYPE, ISO3CD, OBJECTID, OBJECTID_1, OBJECTID_12, Shape_Leng, Shape__Length
+dataset Lakes | https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/UNBASEMAP_White_Boundaries/FeatureServer/0
+candidate https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/UNBASEMAP_White_Boundaries/FeatureServer/0
+note felder: Name, OBJECTID, OBJECTID_1, OBJECTID_12, OBJECTID_2, Shape_Le_1, Shape_Leng, Shape__Area, Shape__Length
+dataset Shorelines | https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/Global_MAP_Flat_Projection/FeatureServer/1
+candidate https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/Global_MAP_Flat_Projection/FeatureServer/1
+note felder: BDYTYP, BDY_TYPE, ISO3CD, OBJECTID, OBJECTID_1, OBJECTID_12, Shape_Leng, Shape__Length
+dataset UNBASEMAP | https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/UNBASEMAP_/FeatureServer
+candidate-leer https://services6.arcgis.com/C0HVLQJI37vYnazu/arcgis/rest/services/UNBASEMAP_/FeatureServer
+note 0 rows, felder unbekannt
+dataset Interpolacja | https://services1.arcgis.com/aWbTzyAB0gBPCAL0/arcgis/rest/services/Interpolacja/FeatureServer
+candidate-leer https://services1.arcgis.com/aWbTzyAB0gBPCAL0/arcgis/rest/services/Interpolacja/FeatureServer
+note 0 rows, felder unbekannt
+dataset Actual pm10 | https://services2.arcgis.com/RQcpPaCpMAXzUI5g/arcgis/rest/services/Denver_PM10_WFL1/FeatureServer/0
+candidate https://services2.arcgis.com/RQcpPaCpMAXzUI5g/arcgis/rest/services/Denver_PM10_WFL1/FeatureServer/0
+note felder: MAX_ACTUAL, MAX_PROJ, OBJECTID, Shape__Area, Shape__Length, city, first_city, id
+dataset Proj pm10 | https://services2.arcgis.com/RQcpPaCpMAXzUI5g/arcgis/rest/services/Wuhan_PM10_WFL1/FeatureServer/1
+candidate https://services2.arcgis.com/RQcpPaCpMAXzUI5g/arcgis/rest/services/Wuhan_PM10_WFL1/FeatureServer/1
+note felder: ADM0_EN, ADM0_PCODE, ADM0_ZH, ADM1_EN, ADM1_PCODE, ADM1_ZH, ADM2_EN, ADM2_PCODE, ADM2_ZH, Adm2_CAP, Admin_type, Field, MAX_AFTER, MAX_PROJ, OBJECTID, OBJECTID_1, Shape__Area, Shape__Length
+dataset PM10 Emissions | https://services1.arcgis.com/i9MtZ1vtgD3gTnyL/arcgis/rest/services/PM10_Emissions/FeatureServer/0
+candidate https://services1.arcgis.com/i9MtZ1vtgD3gTnyL/arcgis/rest/services/PM10_Emissions/FeatureServer/0
+note felder: Input_FID, OBJECTID, PM_05, PM_10, PM_15, PM_20, PM_20H, PM_20T, PM_30, PM_30H, PM_30T, POINTID, Shape__Area, Shape__Length, pro_PM_30
+dataset PM10 2012 | https://services1.arcgis.com/x9D40zPeQJc4nxza/arcgis/rest/services/PM10_2012/FeatureServer/0
+candidate https://services1.arcgis.com/x9D40zPeQJc4nxza/arcgis/rest/services/PM10_2012/FeatureServer/0
+note felder: KN1kmDK, OBJECTID, PM10_2012
+dataset Proj pm10 | https://services2.arcgis.com/RQcpPaCpMAXzUI5g/arcgis/rest/services/Denver_PM10_WFL1/FeatureServer/1
+candidate https://services2.arcgis.com/RQcpPaCpMAXzUI5g/arcgis/rest/services/Denver_PM10_WFL1/FeatureServer/1
+note felder: MAX_ACTUAL, MAX_PROJ, OBJECTID, Shape__Area, Shape__Length, city, first_city, id
+dataset Eugene Springfield PM10 Maintenance Area | https://services5.arcgis.com/9s1YtFmLS0YTl10F/arcgis/rest/services/Eugene_Springfield_PM10_Maintenance_Area/FeatureServer/0
+candidate https://services5.arcgis.com/9s1YtFmLS0YTl10F/arcgis/rest/services/Eugene_Springfield_PM10_Maintenance_Area/FeatureServer/0
+note felder: Area, COUNTY, FID, NAME, Shape__Area, Shape__Length, Status
+dataset Annual mean NO2 concentration observed at traffic stations, 2010 (EEA-32) | https://services.arcgis.com/LcQjj2sL7Txk9Lag/arcgis/rest/services/NO2_PM10_traffic/FeatureServer/0
+candidate https://services.arcgis.com/LcQjj2sL7Txk9Lag/arcgis/rest/services/NO2_PM10_traffic/FeatureServer/0
+note felder: ID, city_code, city_name, component_caption, component_code, component_name, measurement_european_group_code, measurement_unit, station_european_code, station_latitude_deg, station_legend, station_longitude_deg, station_type_of_area, statistic_shortname, statistic_value, statistics_average_group, statistics_percentage_valid, statistics_year
+dataset Actual pm10 | https://services2.arcgis.com/RQcpPaCpMAXzUI5g/arcgis/rest/services/Wuhan_PM10_WFL1/FeatureServer/0
+candidate https://services2.arcgis.com/RQcpPaCpMAXzUI5g/arcgis/rest/services/Wuhan_PM10_WFL1/FeatureServer/0
+note felder: ADM0_EN, ADM0_PCODE, ADM0_ZH, ADM1_EN, ADM1_PCODE, ADM1_ZH, ADM2_EN, ADM2_PCODE, ADM2_ZH, Adm2_CAP, Admin_type, Field, MAX_AFTER, MAX_PROJ, OBJECTID, OBJECTID_1, Shape__Area, Shape__Length
+# keyword ozone sensor
+dataset Federal Clean Air Act Ozone Attainment California | https://services.arcgis.com/jDGuO8tYggdCCnUJ/arcgis/rest/services/Federal%20CAA%20Ozone%20Standard%20Compliance/FeatureServer/0
+candidate https://services.arcgis.com/jDGuO8tYggdCCnUJ/arcgis/rest/services/Federal%20CAA%20Ozone%20Standard%20Compliance/FeatureServer/0
+note felder: ABASIN_NAM, ADIST_TYPE, ADIS_NAME, AREA, AREA_NAME, BAY, BAYSPLINTE, CONAME, CO_NUM, Classific, DESIG_DATE, HR_DESIGN, ISLANDNAME, NON_DESCR, OBJECTID, PERIMETER
+dataset Sensor Locations | https://services.arcgis.com/o6oETlrWetREI1A2/arcgis/rest/services/Sensor_Locations/FeatureServer/0
+candidate https://services.arcgis.com/o6oETlrWetREI1A2/arcgis/rest/services/Sensor_Locations/FeatureServer/0
+note felder: Notes, OBJECTID
+dataset Highest Locations in Ozone (O3) | https://services6.arcgis.com/a523XM128lX5Nsff/arcgis/rest/services/Highest_Locations_in_Ozone_(O3)/FeatureServer/0
+candidate https://services6.arcgis.com/a523XM128lX5Nsff/arcgis/rest/services/Highest_Locations_in_Ozone_(O3)/FeatureServer/0
+note felder: BOROUGH, DATA_VALUE, GEOCODE, GEONAME, NOTES, OBJECTID, Shape__Area, Shape__Length
+dataset Hot Spots Ozone LA | https://services9.arcgis.com/2ynJbr9BE17vXxR8/arcgis/rest/services/Hot_Spots_Ozone_LA/FeatureServer/0
+candidate https://services9.arcgis.com/2ynJbr9BE17vXxR8/arcgis/rest/services/Hot_Spots_Ozone_LA/FeatureServer/0
+note felder: GiPValue, GiZScore, Gi_Bin, Gi_Text, NNeighbors, OBJECTID, Ozone, SOURCE_ID
+dataset CA Ozone Attainment | https://services.arcgis.com/jDGuO8tYggdCCnUJ/arcgis/rest/services/CA%20Ozone%20Standard%20Compliance/FeatureServer/0
+candidate https://services.arcgis.com/jDGuO8tYggdCCnUJ/arcgis/rest/services/CA%20Ozone%20Standard%20Compliance/FeatureServer/0
+note felder: BASIN_NAME, CO_NAME, DIS_NAME, NO2, O3, OBJECTID, PB, SO2, VRP
+dataset Gorey Ozone O3 Level | https://services-eu1.arcgis.com/SEIHigRppeVyVssQ/arcgis/rest/services/Gorey_Ozone_O3_Level/FeatureServer
+candidate-leer https://services-eu1.arcgis.com/SEIHigRppeVyVssQ/arcgis/rest/services/Gorey_Ozone_O3_Level/FeatureServer
+note 0 rows, felder unbekannt
+# keyword thermal anomaly
+dataset Anomaly | https://services.arcgis.com/EEOLw7FvbUFCdg7T/arcgis/rest/services/Anomaly/FeatureServer/0
+candidate https://services.arcgis.com/EEOLw7FvbUFCdg7T/arcgis/rest/services/Anomaly/FeatureServer/0
+note felder: FID, result
+dataset VIIRS GRDM Thermal Hotspots | https://services5.arcgis.com/G8Pqo3DzH8fIDN8F/arcgis/rest/services/VIIRS%20GRDM%20Thermal%20Hotspots/FeatureServer/0
+candidate https://services5.arcgis.com/G8Pqo3DzH8fIDN8F/arcgis/rest/services/VIIRS%20GRDM%20Thermal%20Hotspots/FeatureServer/0
+note felder: OBJECTID, acq_date, acq_time, bright_ti4, bright_ti5, confidence, daynight, esritimeutc, frp, hours_old, latitude, longitude, satellite, scan, track, version
+dataset Thermal Cover | https://services1.arcgis.com/gGHDlz6USftL5Pau/arcgis/rest/services/Thermal_Cover/FeatureServer/0
+candidate https://services1.arcgis.com/gGHDlz6USftL5Pau/arcgis/rest/services/Thermal_Cover/FeatureServer/0
+note felder: Acres, Id, OBJECTID, Shape__Area, Shape__Length, Treatment
+dataset MODIS Thermal - Last 48 hours | https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/MODIS_Thermal_v1/FeatureServer/0
+candidate https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/MODIS_Thermal_v1/FeatureServer/0
+note felder: ACQ_DATE, BRIGHTNESS, BRIGHT_T31, CONFIDENCE, DAYNIGHT, DAY_OF_ACQ, FRP, HOURS_OLD, OBJECTID, SATELLITE, SCAN, TRACK, VERSION
+dataset Idaho Thermal Springs | https://services.arcgis.com/WLhB60Nqwp4NnHz3/arcgis/rest/services/Idaho_Thermal_Springs/FeatureServer/0
+candidate https://services.arcgis.com/WLhB60Nqwp4NnHz3/arcgis/rest/services/Idaho_Thermal_Springs/FeatureServer/0
+note felder: County, FeatureType, Flow, FlowMeasurementProcedure, FlowUnits, Label, LatDegree, LatWGS84, LocationUncertaintyStatement, LonWGS84, LongDegree, MeasurementSource, Name, OBJECTID, OtherIdentifier, PLSS_Meridians, Range, RelatedWaterChemistry
+dataset Temperature Anomaly 2019 | https://services8.arcgis.com/22aEWILt579igsi8/arcgis/rest/services/Temperature_Anomaly_2019/FeatureServer/0
+decline https://services8.arcgis.com/22aEWILt579igsi8/arcgis/rest/services/Temperature_Anomaly_2019/FeatureServer/0
+note arcgis-error-body
+dataset Subcatchment Thermal Pollution 2014 | https://services6.arcgis.com/sbUjYcF5FKWKRP5Q/arcgis/rest/services/Subcatchment_Thermal_Pollution_2014/FeatureServer/0
+candidate https://services6.arcgis.com/sbUjYcF5FKWKRP5Q/arcgis/rest/services/Subcatchment_Thermal_Pollution_2014/FeatureServer/0
+note felder: InPoly_FID, MaxSimpTol, MinSimpTol, OBJECTID, SEQ_subcat_health_2014_v1_Th_10, SEQ_subcat_health_2014_v1_Th_11, SEQ_subcat_health_2014_v1_Th_12, SEQ_subcat_health_2014_v1_Th_13, SEQ_subcat_health_2014_v1_Th_14, SEQ_subcat_health_2014_v1_Th_15, SEQ_subcat_health_2014_v1_Th_16, SEQ_subcat_health_2014_v1_Th_17, SEQ_subcat_health_2014_v1_Th_18, SEQ_subcat_health_2014_v1_Th_19, SEQ_subcat_health_2014_v1_Th_20, SEQ_subcat_health_2014_v1_Th_21, SEQ_subcat_health_2014_v1_Th_22, SEQ_subcat_health_2014_v1_Th_23
+dataset MODIS Thermal (last 48 hours) | https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/MODIS_Thermal_v1/FeatureServer/0
+candidate https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/MODIS_Thermal_v1/FeatureServer/0
+note felder: ACQ_DATE, BRIGHTNESS, BRIGHT_T31, CONFIDENCE, DAYNIGHT, DAY_OF_ACQ, FRP, HOURS_OLD, OBJECTID, SATELLITE, SCAN, TRACK, VERSION
+dataset Shallow Thermal Anomaly | https://services.arcgis.com/9WalTuY1Cd9VF0qZ/arcgis/rest/services/Salton_Sea/FeatureServer/3
+candidate https://services.arcgis.com/9WalTuY1Cd9VF0qZ/arcgis/rest/services/Salton_Sea/FeatureServer/3
+note felder: OBJECTID, Shape__Length
+dataset RI Magnetic Anomaly NAD83 SP 1702 | https://services2.arcgis.com/JlQfDvP4s2tZttI1/arcgis/rest/services/RI_Magnetic_Anomaly_NAD83_SP_1702/FeatureServer/47
+candidate https://services2.arcgis.com/JlQfDvP4s2tZttI1/arcgis/rest/services/RI_Magnetic_Anomaly_NAD83_SP_1702/FeatureServer/47
+note felder: BUFFER, CLUSTER_ID, CONTRACTOR, DATAURL, DATE_COLL, DURATION, Meta_html, Meta_xml, OBJECTID, ORG, PROGRAM, PROJECT, PROJ_ID, SIG, SIGNAL_STR, SIG_TYPE, TARGET_ID, X
+dataset MODIS Thermal v1 | https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/MODIS_Thermal_v1/FeatureServer
+candidate-leer https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/MODIS_Thermal_v1/FeatureServer
+note 0 rows, felder unbekannt
+dataset Anomaly Table | https://services5.arcgis.com/d9GYSMTpCbyaTZd4/arcgis/rest/services/survey123_279ac555264d4f6daa4b66a3ba329e6a/FeatureServer
+candidate-leer https://services5.arcgis.com/d9GYSMTpCbyaTZd4/arcgis/rest/services/survey123_279ac555264d4f6daa4b66a3ba329e6a/FeatureServer
+note 0 rows, felder unbekannt
+dataset Thermal | https://services.arcgis.com/OyQSj1pH4BbLFtEC/arcgis/rest/services/Thermal/FeatureServer/0
+candidate https://services.arcgis.com/OyQSj1pH4BbLFtEC/arcgis/rest/services/Thermal/FeatureServer/0
+note felder: BLN_ATTAIN, COMID, DTE_CREATE, FID, GNIS_ID, GNIS_NAME, INT_ASSESS, INT_LENGTH, INT_WAVE_S, OBJECTID, OBJECTID_1, REACHCODE, SHAPELEN, SOURCE_CAU, STR_ASSESS, STR_ATTAIN, STR_HUC, Shape_Leng
+dataset Thermal Shoreline | https://services3.arcgis.com/EwkJaDLjGSzTj66q/arcgis/rest/services/Thermal_Shoreline/FeatureServer/7
+candidate https://services3.arcgis.com/EwkJaDLjGSzTj66q/arcgis/rest/services/Thermal_Shoreline/FeatureServer/7
+note felder: OBJECTID, Shape__Length
+dataset Puffer von Thermal Networks Gas | https://services7.arcgis.com/QJAXFtWNqmmdPqVr/arcgis/rest/services/Puffer_von_Thermal_Networks_Gas/FeatureServer/0
+candidate https://services7.arcgis.com/QJAXFtWNqmmdPqVr/arcgis/rest/services/Puffer_von_Thermal_Networks_Gas/FeatureServer/0
+note felder: AnalysisArea, BUFF_DIST, BeginningOfOperation, Contact, Energy, EnergySource1, EnergySource2, HouseConnections, Mail, Name, NetLength, OBJECTID, ORIG_FID, Operator, OperatorAddress, Phone, Place, PositionAccuracy
+dataset Current Thermal | https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Current_Thermal/FeatureServer/0
+candidate https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Current_Thermal/FeatureServer/0
+note felder: COMID, FID, HUC10, HUC6, HUC8, Shape__Length, StreamOrde, Strm_Name, Temp_crs, Thermal_c_, Thermal_cu, WSDistrict, rid, tempcrscat
+dataset Puffer von Thermal Networks Fossile | https://services7.arcgis.com/QJAXFtWNqmmdPqVr/arcgis/rest/services/Puffer_von_Thermal_Networks_Fossile/FeatureServer/0
+candidate https://services7.arcgis.com/QJAXFtWNqmmdPqVr/arcgis/rest/services/Puffer_von_Thermal_Networks_Fossile/FeatureServer/0
+note felder: AnalysisArea, BUFF_DIST, BeginningOfOperation, Contact, Energy, EnergySource1, EnergySource2, HouseConnections, Mail, Name, NetLength, OBJECTID, ORIG_FID, Operator, OperatorAddress, Phone, Place, PositionAccuracy
+dataset EFLR thermal site selection comments | https://services6.arcgis.com/g8SXAozbYSngoxcz/arcgis/rest/services/EFLR_thermal_site_selection_comments/FeatureServer/0
+candidate https://services6.arcgis.com/g8SXAozbYSngoxcz/arcgis/rest/services/EFLR_thermal_site_selection_comments/FeatureServer/0
+note felder: GlobalID, Notes, OBJECTID
+dataset Thermal levels | https://services.arcgis.com/fwF8e4aLR6TRWtqM/arcgis/rest/services/Thermal_levels/FeatureServer/0
+candidate https://services.arcgis.com/fwF8e4aLR6TRWtqM/arcgis/rest/services/Thermal_levels/FeatureServer/0
+note felder: AMPLI_TERM, Dif_Temper, FID, Shape__Area, Shape__Length
+dataset Thermal Surface | https://services1.arcgis.com/W47q82gM5Y2xNen1/arcgis/rest/services/Thermal_Surface/FeatureServer
+candidate-leer https://services1.arcgis.com/W47q82gM5Y2xNen1/arcgis/rest/services/Thermal_Surface/FeatureServer
+note 0 rows, felder unbekannt
+dataset Buffer of Global Monthly Temperature Anomaly (Latest) | https://services1.arcgis.com/7CPYy0u5Z9IAJ2OG/arcgis/rest/services/Buffer_of_Global_Monthly_Temperature_Anomaly_(Latest)/FeatureServer/0
+candidate https://services1.arcgis.com/7CPYy0u5Z9IAJ2OG/arcgis/rest/services/Buffer_of_Global_Monthly_Temperature_Anomaly_(Latest)/FeatureServer/0
+note felder: AnalysisArea, Anomaly, BUFF_DIST, Date_, OBJECTID, ORIG_FID
+dataset Satellite (VIIRS) Thermal Hotspots and Fire Activity | https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Satellite_VIIRS_Thermal_Hotspots_and_Fire_Activity/FeatureServer/0
+candidate https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Satellite_VIIRS_Thermal_Hotspots_and_Fire_Activity/FeatureServer/0
+note felder: OBJECTID, acq_date, acq_time, bright_ti4, bright_ti5, confidence, daynight, esritimeutc, frp, hours_old, latitude, longitude, satellite, scan, track, version
+dataset Satellite (VIIRS) Thermal Hotspots and Fire Activity | https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Satellite_VIIRS_Thermal_Hotspots_and_Fire_Activity/FeatureServer/3
+decline https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Satellite_VIIRS_Thermal_Hotspots_and_Fire_Activity/FeatureServer/3
+note arcgis-error-body
+dataset Satellite (VIIRS) Thermal Hotspots and Fire Activity | https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Satellite_VIIRS_Thermal_Hotspots_and_Fire_Activity/FeatureServer/1
+decline https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Satellite_VIIRS_Thermal_Hotspots_and_Fire_Activity/FeatureServer/1
+note arcgis-error-body
+dataset Satellite (VIIRS) Thermal Hotspots and Fire Activity | https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Satellite_VIIRS_Thermal_Hotspots_and_Fire_Activity/FeatureServer/7
+decline https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Satellite_VIIRS_Thermal_Hotspots_and_Fire_Activity/FeatureServer/7
+note arcgis-error-body
+dataset Satellite (VIIRS) Thermal Hotspots and Fire Activity | https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Satellite_VIIRS_Thermal_Hotspots_and_Fire_Activity/FeatureServer/8
+decline https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Satellite_VIIRS_Thermal_Hotspots_and_Fire_Activity/FeatureServer/8
+note arcgis-error-body
+dataset Satellite (VIIRS) Thermal Hotspots and Fire Activity | https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Satellite_VIIRS_Thermal_Hotspots_and_Fire_Activity/FeatureServer/5
+decline https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Satellite_VIIRS_Thermal_Hotspots_and_Fire_Activity/FeatureServer/5
+note arcgis-error-body
+dataset Satellite (VIIRS) Thermal Hotspots and Fire Activity | https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Satellite_VIIRS_Thermal_Hotspots_and_Fire_Activity/FeatureServer/2
+decline https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Satellite_VIIRS_Thermal_Hotspots_and_Fire_Activity/FeatureServer/2
+note arcgis-error-body
+dataset Satellite (VIIRS) Thermal Hotspots and Fire Activity | https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Satellite_VIIRS_Thermal_Hotspots_and_Fire_Activity/FeatureServer/4
+decline https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Satellite_VIIRS_Thermal_Hotspots_and_Fire_Activity/FeatureServer/4
+note arcgis-error-body
+dataset Satellite VIIRS Thermal Hotspots and Fire Activity | https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Satellite_VIIRS_Thermal_Hotspots_and_Fire_Activity/FeatureServer
+candidate-leer https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Satellite_VIIRS_Thermal_Hotspots_and_Fire_Activity/FeatureServer
+note 0 rows, felder unbekannt
+dataset Satellite (VIIRS) Thermal Hotspots and Fire Activity | https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Satellite_VIIRS_Thermal_Hotspots_and_Fire_Activity/FeatureServer/6
+decline https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Satellite_VIIRS_Thermal_Hotspots_and_Fire_Activity/FeatureServer/6
+note arcgis-error-body
+dataset Temperature Anomaly State | https://services1.arcgis.com/ZwA0Q1mheCEc5yXS/arcgis/rest/services/TempAnomalyState/FeatureServer/0
+candidate https://services1.arcgis.com/ZwA0Q1mheCEc5yXS/arcgis/rest/services/TempAnomalyState/FeatureServer/0
+note felder: Average_Temperature_Anomaly__F_, FID, State
+dataset 30 mi Buffer of Global Yearly Temperature Anomaly (1880   present)   Yearly Temperature Anomaly | https://services1.arcgis.com/7CPYy0u5Z9IAJ2OG/arcgis/rest/services/30_mi_Buffer_of_Global_Yearly_Temperature_Anomaly_(1880___present)___Yearly_Temperature_Anomaly/FeatureServer/0
+dead https://services1.arcgis.com/7CPYy0u5Z9IAJ2OG/arcgis/rest/services/30_mi_Buffer_of_Global_Yearly_Temperature_Anomaly_(1880___present)___Yearly_Temperature_Anomaly/FeatureServer/0
+note fetch-void
+dataset 15 mi Buffer of Global Yearly Temperature Anomaly (1880   present)   Yearly Temperature Anomaly | https://services1.arcgis.com/7CPYy0u5Z9IAJ2OG/arcgis/rest/services/15_mi_Buffer_of_Global_Yearly_Temperature_Anomaly_(1880___present)___Yearly_Temperature_Anomaly/FeatureServer/0
+candidate https://services1.arcgis.com/7CPYy0u5Z9IAJ2OG/arcgis/rest/services/15_mi_Buffer_of_Global_Yearly_Temperature_Anomaly_(1880___present)___Yearly_Temperature_Anomaly/FeatureServer/0
+note felder: AnalysisArea, Anomaly, BUFF_DIST, Date_, OBJECTID, ORIG_FID
+dataset anomaly salt | https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/BOEM_Seafloor_Anomalies_June_2019/FeatureServer/10
+candidate https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/BOEM_Seafloor_Anomalies_June_2019/FeatureServer/10
+note felder: FID, Feature, Shape__Area, Shape__Length
+dataset Thermal idw surface | https://services1.arcgis.com/W47q82gM5Y2xNen1/arcgis/rest/services/Thermal_Surface/FeatureServer/1
+candidate https://services1.arcgis.com/W47q82gM5Y2xNen1/arcgis/rest/services/Thermal_Surface/FeatureServer/1
+note felder: Classes, FID, Shape_Leng, Shape__Area, Shape__Length, Value_Max, Value_Min
+dataset anomaly fans | https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/BOEM_Seafloor_Anomalies_June_2019/FeatureServer/9
+candidate https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/BOEM_Seafloor_Anomalies_June_2019/FeatureServer/9
+note felder: FID, Feature, Shape__Area, Shape__Length
+dataset anomaly slumps | https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/BOEM_Seafloor_Anomalies_June_2019/FeatureServer/11
+candidate https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/BOEM_Seafloor_Anomalies_June_2019/FeatureServer/11
+note felder: FID, Feature, Shape__Area, Shape__Length
+dataset anomaly channels | https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/BOEM_Seafloor_Anomalies_June_2019/FeatureServer/4
+candidate https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/BOEM_Seafloor_Anomalies_June_2019/FeatureServer/4
+note felder: FID, ShapeName, Shape__Length, Type
+dataset anomaly Cretaceous | https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/BOEM_Seafloor_Anomalies_June_2019/FeatureServer/5
+candidate https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/BOEM_Seafloor_Anomalies_June_2019/FeatureServer/5
+note felder: FEATURE, FID, Shape__Area, Shape__Length
+dataset SK Thermal Asset Boundary | https://services6.arcgis.com/fuL1oiT04UsHtQS8/arcgis/rest/services/CVE_Territories_20250121_gdb/FeatureServer/0
+candidate https://services6.arcgis.com/fuL1oiT04UsHtQS8/arcgis/rest/services/CVE_Territories_20250121_gdb/FeatureServer/0
+note felder: BOUNDARY_TYPE, LABEL, NAME, OBJECTID, STATUS, Shape__Area, Shape__Length, YEAR
+dataset 50 mi Buffer of Global Yearly Temperature Anomaly (1880   present)   Yearly Temperature Anomaly | https://services1.arcgis.com/7CPYy0u5Z9IAJ2OG/arcgis/rest/services/50_mi_Buffer_of_Global_Yearly_Temperature_Anomaly_(1880___present)___Yearly_Temperature_Anomaly/FeatureServer/0
+candidate https://services1.arcgis.com/7CPYy0u5Z9IAJ2OG/arcgis/rest/services/50_mi_Buffer_of_Global_Yearly_Temperature_Anomaly_(1880___present)___Yearly_Temperature_Anomaly/FeatureServer/0
+note felder: AnalysisArea, Anomaly, BUFF_DIST, Date_, OBJECTID, ORIG_FID
+dataset Thermal Fitting | https://services1.arcgis.com/VVapzOPgBae5joyC/arcgis/rest/services/Tempe_Thermal/FeatureServer/3
+candidate https://services1.arcgis.com/VVapzOPgBae5joyC/arcgis/rest/services/Tempe_Thermal/FeatureServer/3
+note felder: AssetManager, AssetOwner, CampusID, Comments, FeatureID, FittingType, GlobalID, InstallationYear, LocationDescription, LocationSource, MediaLink, OBJECTID, OperationalStatus, ThermalType, UpdateNote
+dataset MODIS Thermal (Last 48 hours) | https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/MODIS_Thermal_v1/FeatureServer/2
+decline https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/MODIS_Thermal_v1/FeatureServer/2
+note arcgis-error-body
+dataset Thermal Trap | https://services1.arcgis.com/VVapzOPgBae5joyC/arcgis/rest/services/Tempe_Thermal/FeatureServer/0
+candidate-leer https://services1.arcgis.com/VVapzOPgBae5joyC/arcgis/rest/services/Tempe_Thermal/FeatureServer/0
+note 0 rows, felder unbekannt
+dataset MODIS Thermal (Last 7 days) | https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/MODIS_Thermal_v1/FeatureServer/3
+decline https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/MODIS_Thermal_v1/FeatureServer/3
+note arcgis-error-body
+dataset MODIS Thermal (Last 7 days) | https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/MODIS_Thermal_v1/FeatureServer/1
+candidate https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/MODIS_Thermal_v1/FeatureServer/1
+note felder: ACQ_DATE, BRIGHTNESS, BRIGHT_T31, CONFIDENCE, DAYNIGHT, DAY_OF_ACQ, FRP, HOURS_OLD, OBJECTID, SATELLITE, SCAN, TRACK, VERSION
+dataset anomaly fans | https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/BOEM%20Seafloor%20Anomalies/FeatureServer/9
+candidate https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/BOEM%20Seafloor%20Anomalies/FeatureServer/9
+note felder: FID, Feature, Shape__Area, Shape__Length
+dataset anomaly channels | https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/BOEM%20Seafloor%20Anomalies/FeatureServer/4
+candidate https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/BOEM%20Seafloor%20Anomalies/FeatureServer/4
+note felder: FID, Feature, Shape__Length
+dataset anomaly sinkhole | https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/BOEM%20Seafloor%20Anomalies/FeatureServer/31
+candidate https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/BOEM%20Seafloor%20Anomalies/FeatureServer/31
+note felder: FID, Feature, Shape__Area, Shape__Length
+dataset anomaly furrows | https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/BOEM%20Seafloor%20Anomalies/FeatureServer/32
+candidate https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/BOEM%20Seafloor%20Anomalies/FeatureServer/32
+note felder: FID, Feature, Shape__Area, Shape__Length
+dataset Buffer of Location of Thermal Power Plant | https://services3.arcgis.com/YQCEjQxFE8ly192R/arcgis/rest/services/Buffer%20of%20Location%20of%20Thermal%20Power%20Plant/FeatureServer/0
+candidate https://services3.arcgis.com/YQCEjQxFE8ly192R/arcgis/rest/services/Buffer%20of%20Location%20of%20Thermal%20Power%20Plant/FeatureServer/0
+note felder: AnalysisArea, BUFF_DIST, Capacity__, District, GlobalID, Location, Name, OBJECTID_1, ORIG_FID, ObjectID, Operator, Reference, Region, Sector, State, Units, x, y
+dataset anomaly Cretaceous | https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/BOEM%20Seafloor%20Anomalies/FeatureServer/5
+candidate https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/BOEM%20Seafloor%20Anomalies/FeatureServer/5
+note felder: FID, Feature, Shape__Area, Shape__Length
+dataset anomaly slumps | https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/BOEM%20Seafloor%20Anomalies/FeatureServer/11
+candidate https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/BOEM%20Seafloor%20Anomalies/FeatureServer/11
+note felder: FID, Feature, Shape__Area, Shape__Length
+dataset Temple EM anomaly f04 | https://services8.arcgis.com/Xaau0gw76U9WVqLN/arcgis/rest/services/Temple_EM_anomaly_f04/FeatureServer/26
+candidate https://services8.arcgis.com/Xaau0gw76U9WVqLN/arcgis/rest/services/Temple_EM_anomaly_f04/FeatureServer/26
+note felder: Anomaly_FRQ, OBJECTID, Shape__Area, Shape__Length
+dataset emple EM anomaly f11 | https://services8.arcgis.com/Xaau0gw76U9WVqLN/arcgis/rest/services/emple_EM_anomaly_f11/FeatureServer/19
+candidate https://services8.arcgis.com/Xaau0gw76U9WVqLN/arcgis/rest/services/emple_EM_anomaly_f11/FeatureServer/19
+note felder: Anomaly_FRQ, OBJECTID, Shape__Area, Shape__Length
+dataset Temple EM anomaly f02 | https://services8.arcgis.com/Xaau0gw76U9WVqLN/arcgis/rest/services/Temple_EM_anomaly_f02/FeatureServer/28
+candidate https://services8.arcgis.com/Xaau0gw76U9WVqLN/arcgis/rest/services/Temple_EM_anomaly_f02/FeatureServer/28
+note felder: Anomaly_FRQ, OBJECTID, Shape__Area, Shape__Length
+dataset Temple EM anomaly f06 | https://services8.arcgis.com/Xaau0gw76U9WVqLN/arcgis/rest/services/Temple_EM_anomaly_f06/FeatureServer/24
+candidate https://services8.arcgis.com/Xaau0gw76U9WVqLN/arcgis/rest/services/Temple_EM_anomaly_f06/FeatureServer/24
+note felder: Anomaly_FRQ, OBJECTID, Shape__Area, Shape__Length
+dataset Temple EM anomaly f07 | https://services8.arcgis.com/Xaau0gw76U9WVqLN/arcgis/rest/services/Temple_EM_anomaly_f07/FeatureServer/23
+candidate https://services8.arcgis.com/Xaau0gw76U9WVqLN/arcgis/rest/services/Temple_EM_anomaly_f07/FeatureServer/23
+note felder: Anomaly_FRQ, OBJECTID, Shape__Area, Shape__Length
+dataset Trabuco Thermal Obliques (Feature) | https://www.ocgis.com/uav/rest/services/Survey/Trabuco_Thermal_Obliques/FeatureServer/0
+dead https://www.ocgis.com/uav/rest/services/Survey/Trabuco_Thermal_Obliques/FeatureServer/0
+note fetch-void
+dataset Temple EM anomaly f09 | https://services8.arcgis.com/Xaau0gw76U9WVqLN/arcgis/rest/services/Temple_EM_anomaly_f09/FeatureServer/21
+candidate https://services8.arcgis.com/Xaau0gw76U9WVqLN/arcgis/rest/services/Temple_EM_anomaly_f09/FeatureServer/21
+note felder: Anomaly_FRQ, OBJECTID, Shape__Area, Shape__Length
+dataset Temple EM anomaly f12 | https://services8.arcgis.com/Xaau0gw76U9WVqLN/arcgis/rest/services/Temple_EM_anomaly_f12/FeatureServer/18
+candidate https://services8.arcgis.com/Xaau0gw76U9WVqLN/arcgis/rest/services/Temple_EM_anomaly_f12/FeatureServer/18
+note felder: Anomaly_FRQ, Labels, OBJECTID, Shape__Area, Shape__Length
+dataset Tempe Thermal | https://services1.arcgis.com/VVapzOPgBae5joyC/arcgis/rest/services/Tempe_Thermal/FeatureServer
+candidate-leer https://services1.arcgis.com/VVapzOPgBae5joyC/arcgis/rest/services/Tempe_Thermal/FeatureServer
+note 0 rows, felder unbekannt
+dataset Region 5 Filter Anomaly River Flow Table | https://services.arcgis.com/XG15cJAlne2vxtgt/arcgis/rest/services/anomaly_filter/FeatureServer/0
+candidate https://services.arcgis.com/XG15cJAlne2vxtgt/arcgis/rest/services/anomaly_filter/FeatureServer/0
+note felder: FID, Oid, anom_cat_14day
+dataset Temple EM anomaly f08 | https://services8.arcgis.com/Xaau0gw76U9WVqLN/arcgis/rest/services/Temple_EM_anomaly_f08/FeatureServer/22
+candidate https://services8.arcgis.com/Xaau0gw76U9WVqLN/arcgis/rest/services/Temple_EM_anomaly_f08/FeatureServer/22
+note felder: Anomaly_FRQ, OBJECTID, Shape__Area, Shape__Length
+dataset Temple EM anomaly f10 | https://services8.arcgis.com/Xaau0gw76U9WVqLN/arcgis/rest/services/Temple_EM_anomaly_f10/FeatureServer/20
+candidate https://services8.arcgis.com/Xaau0gw76U9WVqLN/arcgis/rest/services/Temple_EM_anomaly_f10/FeatureServer/20
+note felder: Anomaly_FRQ, OBJECTID, Shape__Area, Shape__Length
+dataset anomaly Cretaceous talus | https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/BOEM_Seafloor_Anomalies_June_2019/FeatureServer/6
+candidate https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/BOEM_Seafloor_Anomalies_June_2019/FeatureServer/6
+note felder: FID, Feature, Shape__Area, Shape__Length
+dataset anomaly relic patchreefs | https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/BOEM_Seafloor_Anomalies_June_2019/FeatureServer/7
+candidate https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/BOEM_Seafloor_Anomalies_June_2019/FeatureServer/7
+note felder: FID, Feature, Shape__Area, Shape__Length
+dataset seep anomaly pockmarks | https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/BOEM_Seafloor_Anomalies_June_2019/FeatureServer/13
+candidate https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/BOEM_Seafloor_Anomalies_June_2019/FeatureServer/13
+note felder: FID, Feature, Shape__Area, Shape__Length
+dataset seep anomaly positives | https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/BOEM_Seafloor_Anomalies_June_2019/FeatureServer/14
+candidate https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/BOEM_Seafloor_Anomalies_June_2019/FeatureServer/14
+note felder: FID, Feature, Shape__Area, Shape__Length
+dataset Thermal Network Structure | https://services1.arcgis.com/VVapzOPgBae5joyC/arcgis/rest/services/Tempe_Thermal/FeatureServer/2
+candidate-leer https://services1.arcgis.com/VVapzOPgBae5joyC/arcgis/rest/services/Tempe_Thermal/FeatureServer/2
+note 0 rows, felder unbekannt
+dataset Buffer of MODIS Thermal Activity-MODIS Thermal (Last 24 hours) | https://services2.arcgis.com/wi1yEacfYjH5viqb/arcgis/rest/services/Buffer%20of%20MODIS%20Thermal%20Activity-MODIS%20Thermal%20(Last%2024%20hours)/FeatureServer/0
+candidate https://services2.arcgis.com/wi1yEacfYjH5viqb/arcgis/rest/services/Buffer%20of%20MODIS%20Thermal%20Activity-MODIS%20Thermal%20(Last%2024%20hours)/FeatureServer/0
+note felder: ACQ_DATE, AnalysisArea, BRIGHTNESS, BRIGHT_T31, BUFF_DIST, CONFIDENCE, DAYNIGHT, FRP, OBJECTID, ORIG_FID, SATELLITE, SCAN, TRACK, VERSION
+dataset Thermal System Valve | https://services1.arcgis.com/VVapzOPgBae5joyC/arcgis/rest/services/Tempe_Thermal/FeatureServer/1
+candidate-leer https://services1.arcgis.com/VVapzOPgBae5joyC/arcgis/rest/services/Tempe_Thermal/FeatureServer/1
+note 0 rows, felder unbekannt
+dataset Thermal Underground Structure | https://services1.arcgis.com/VVapzOPgBae5joyC/arcgis/rest/services/Tempe_Thermal/FeatureServer/5
+candidate https://services1.arcgis.com/VVapzOPgBae5joyC/arcgis/rest/services/Tempe_Thermal/FeatureServer/5
+note felder: AssetManager, AssetOwner, CampusID, Comments, DrainType, FeatureID, GlobalID, InstallationYear, LocationDescription, LocationSource, MediaLink, OBJECTID, OperationalStatus, StructureFloorElevation, StructureHeight, StructureLength, StructureMaterial, StructureWidth
+dataset Thermal Access Cover | https://services1.arcgis.com/VVapzOPgBae5joyC/arcgis/rest/services/Tempe_Thermal/FeatureServer/6
+candidate https://services1.arcgis.com/VVapzOPgBae5joyC/arcgis/rest/services/Tempe_Thermal/FeatureServer/6
+note felder: AccessCondition, AccessLength, AccessMaterial, AccessShape, AccessType, AccessWidth, AssetManager, AssetOwner, CampusID, Comments, FeatureID, GlobalID, InstallationYear, LocationDescription, LocationSource, MediaLink, OBJECTID, OperationalStatus
+dataset Thermal Network Structure | https://services1.arcgis.com/VVapzOPgBae5joyC/arcgis/rest/services/Tempe_Thermal/FeatureServer/11
+decline https://services1.arcgis.com/VVapzOPgBae5joyC/arcgis/rest/services/Tempe_Thermal/FeatureServer/11
+note arcgis-error-body
+dataset Thermal Hotspots | https://services3.arcgis.com/o98K21Ga5N91Ugjw/arcgis/rest/services/Thermal_Hotspots/FeatureServer/0
+candidate https://services3.arcgis.com/o98K21Ga5N91Ugjw/arcgis/rest/services/Thermal_Hotspots/FeatureServer/0
+note felder: Acres, Downtown, Id, OBJECTID, Shape__Area, Shape__Length, gridcode
+dataset seep anomaly flows | https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/BOEM_Seafloor_Anomalies_June_2019/FeatureServer/12
+candidate https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/BOEM_Seafloor_Anomalies_June_2019/FeatureServer/12
+note felder: FID, Feature, Shape__Area, Shape__Length
+dataset seep anomaly negatives | https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/BOEM_Seafloor_Anomalies_June_2019/FeatureServer/18
+candidate https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/BOEM_Seafloor_Anomalies_June_2019/FeatureServer/18
+note felder: FID, Feature, Shape__Area, Shape__Length
+dataset Vorhersage Global Yearly Temperature Anomaly | https://services2.arcgis.com/avPnMsVZCi41V9RF/arcgis/rest/services/Vorhersage_Global_Yearly_Temperature_Anomaly/FeatureServer/0
+candidate https://services2.arcgis.com/avPnMsVZCi41V9RF/arcgis/rest/services/Vorhersage_Global_Yearly_Temperature_Anomaly/FeatureServer/0
+note felder: AnalysisArea, Classes, OBJECTID, ORIG_FID, Value_Max, Value_Min
+dataset Thermal Expansion Joint | https://services1.arcgis.com/VVapzOPgBae5joyC/arcgis/rest/services/Tempe_Thermal/FeatureServer/4
+candidate-leer https://services1.arcgis.com/VVapzOPgBae5joyC/arcgis/rest/services/Tempe_Thermal/FeatureServer/4
+note 0 rows, felder unbekannt
+dataset Thermal Points Shataparna | https://services2.arcgis.com/4aUxCaDLaSFPHO9o/arcgis/rest/services/Thermal_Points_Shataparna/FeatureServer/0
+candidate-leer https://services2.arcgis.com/4aUxCaDLaSFPHO9o/arcgis/rest/services/Thermal_Points_Shataparna/FeatureServer/0
+note 0 rows, felder unbekannt
+dataset seep anomaly pockmarks | https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/BOEM%20Seafloor%20Anomalies/FeatureServer/13
+candidate https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/BOEM%20Seafloor%20Anomalies/FeatureServer/13
+note felder: FID, Feature, Shape__Area, Shape__Length
+dataset High Anomaly Locations | https://services8.arcgis.com/3Rz4sVvwsvwrkMv6/arcgis/rest/services/High_Anomaly_Locations/FeatureServer/0
+decline https://services8.arcgis.com/3Rz4sVvwsvwrkMv6/arcgis/rest/services/High_Anomaly_Locations/FeatureServer/0
+note arcgis-error-body
+dataset Thermal Hotspots and Fire Activity MODIS Buffer | https://services.arcgis.com/OLiydejKCZTGhvWg/arcgis/rest/services/Thermal_Hotspots_and_Fire_Activity_MODIS_Buffer/FeatureServer/0
+candidate https://services.arcgis.com/OLiydejKCZTGhvWg/arcgis/rest/services/Thermal_Hotspots_and_Fire_Activity_MODIS_Buffer/FeatureServer/0
+note felder: ACQ_DATE, AnalysisArea, BRIGHTNESS, BRIGHT_T31, BUFF_DIST, CONFIDENCE, DAYNIGHT, FRP, OBJECTID, ORIG_FID, SATELLITE, SCAN, TRACK, VERSION
+dataset anomaly relic patchreefs | https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/BOEM%20Seafloor%20Anomalies/FeatureServer/7
+candidate https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/BOEM%20Seafloor%20Anomalies/FeatureServer/7
+note felder: FID, Feature, Shape__Area, Shape__Length
+dataset seep anomaly negatives | https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/BOEM%20Seafloor%20Anomalies/FeatureServer/18
+candidate https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/BOEM%20Seafloor%20Anomalies/FeatureServer/18
+note felder: FID, Feature, Shape__Area, Shape__Length
+dataset anomaly Cretaceous talus | https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/BOEM%20Seafloor%20Anomalies/FeatureServer/6
+candidate https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/BOEM%20Seafloor%20Anomalies/FeatureServer/6
+note felder: FID, Feature, Shape__Area, Shape__Length
+dataset seep anomaly flows | https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/BOEM%20Seafloor%20Anomalies/FeatureServer/12
+candidate https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/BOEM%20Seafloor%20Anomalies/FeatureServer/12
+note felder: FID, Feature, Shape__Area, Shape__Length
+dataset Architektenprojekt Thermen | https://services2.arcgis.com/lKwB42uXpb8Mwu4v/arcgis/rest/services/Architektenprojekt_Thermen/FeatureServer/0
+candidate https://services2.arcgis.com/lKwB42uXpb8Mwu4v/arcgis/rest/services/Architektenprojekt_Thermen/FeatureServer/0
+note felder: Address, Architect, Architectural_style, Building_owner, Current_Owner, Date_of_construction, GlobalID, Monument_protection, Name, OBJECTID, Photo, Restoration, Year_of_construction, description_1, description_2
+dataset Thermal Refuge | https://services6.arcgis.com/g8SXAozbYSngoxcz/arcgis/rest/services/Thermal_Refuge/FeatureServer
+candidate-leer https://services6.arcgis.com/g8SXAozbYSngoxcz/arcgis/rest/services/Thermal_Refuge/FeatureServer
+note 0 rows, felder unbekannt
+dataset Thermal Imagery Extents | https://services3.arcgis.com/58WV6GqBWodG9Kll/arcgis/rest/services/Thermal_Imagery_Extents/FeatureServer/0
+decline https://services3.arcgis.com/58WV6GqBWodG9Kll/arcgis/rest/services/Thermal_Imagery_Extents/FeatureServer/0
+note arcgis-error-body
+dataset Whitehorse Potential Thermal Sites | https://services7.arcgis.com/1u7CynHXB4p6TdWb/arcgis/rest/services/Whitehorse_Potential_Thermal_Sites/FeatureServer/0
+candidate https://services7.arcgis.com/1u7CynHXB4p6TdWb/arcgis/rest/services/Whitehorse_Potential_Thermal_Sites/FeatureServer/0
+note felder: FID, Name, TYPE
+dataset Thermal Underground Structure | https://services1.arcgis.com/VVapzOPgBae5joyC/arcgis/rest/services/Tempe_Thermal/FeatureServer/10
+decline https://services1.arcgis.com/VVapzOPgBae5joyC/arcgis/rest/services/Tempe_Thermal/FeatureServer/10
+note arcgis-error-body
+dataset seep anomaly positives | https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/BOEM%20Seafloor%20Anomalies/FeatureServer/14
+candidate https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/BOEM%20Seafloor%20Anomalies/FeatureServer/14
+note felder: FID, Feature, Shape__Area, Shape__Length
+dataset Low Anomaly Locations | https://services8.arcgis.com/3Rz4sVvwsvwrkMv6/arcgis/rest/services/Low_Anomaly_Locations/FeatureServer/0
+decline https://services8.arcgis.com/3Rz4sVvwsvwrkMv6/arcgis/rest/services/Low_Anomaly_Locations/FeatureServer/0
+note arcgis-error-body
+dataset Thermal Imagery Extents | https://services3.arcgis.com/58WV6GqBWodG9Kll/arcgis/rest/services/Thermal_Imagery_Extents/FeatureServer/1
+candidate https://services3.arcgis.com/58WV6GqBWodG9Kll/arcgis/rest/services/Thermal_Imagery_Extents/FeatureServer/1
+note felder: FID, REST_Url, Shape__Area, Shape__Length, location
+dataset seep anomaly mud volcanoes | https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/BOEM_Seafloor_Anomalies_June_2019/FeatureServer/22
+candidate https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/BOEM_Seafloor_Anomalies_June_2019/FeatureServer/22
+note felder: FID, Feature, Shape__Area, Shape__Length
+dataset seep anomaly confirmed corals | https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/BOEM_Seafloor_Anomalies_June_2019/FeatureServer/26
+candidate https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/BOEM_Seafloor_Anomalies_June_2019/FeatureServer/26
+note felder: FID, Feature, Shape__Area, Shape__Length
+dataset seep anomaly confirmed carbonate | https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/BOEM_Seafloor_Anomalies_June_2019/FeatureServer/29
+candidate https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/BOEM_Seafloor_Anomalies_June_2019/FeatureServer/29
+note felder: FID, Feature, Shape__Area, Shape__Length
+dataset Thermal Springs | https://services1.arcgis.com/Ezk9fcjSUkeadg6u/arcgis/rest/services/Thermal_Springs/FeatureServer/10
+candidate https://services1.arcgis.com/Ezk9fcjSUkeadg6u/arcgis/rest/services/Thermal_Springs/FeatureServer/10
+note felder: Classifica, County, DataEntryS, Descriptio, FID, FeatureTyp, Flow, FlowContin, FlowMeas_1, FlowMeasur, FlowUnits, GlobalID, Label, LandLeaseO, LatDegree, LocationUn, LongDegree, Measuremen
+dataset seep anomaly confirmed hydrate | https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/BOEM_Seafloor_Anomalies_June_2019/FeatureServer/28
+candidate https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/BOEM_Seafloor_Anomalies_June_2019/FeatureServer/28
+note felder: FID, Feature, Shape__Area, Shape__Length
+dataset SDG 06 - Water Anomaly (ISciences) | https://services7.arcgis.com/IyvyFk20mB7Wpc95/arcgis/rest/services/Water_Anomaly_ISciences_View/FeatureServer/0
+candidate https://services7.arcgis.com/IyvyFk20mB7Wpc95/arcgis/rest/services/Water_Anomaly_ISciences_View/FeatureServer/0
+note felder: COUNTRY, ISO, OBJECTID, Shape__Area, Shape__Length, country_iso, country_name, pop_deficit_10_20, pop_deficit_20_40, pop_deficit_3_5, pop_deficit_5_10, pop_deficit_gt_40, pop_deficit_lt_3, pop_surplus_10_20, pop_surplus_20_40, pop_surplus_3_5, pop_surplus_5_10, pop_surplus_gt_40
+dataset anomaly confirmed relic patchreefs | https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/BOEM_Seafloor_Anomalies_June_2019/FeatureServer/8
+candidate https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/BOEM_Seafloor_Anomalies_June_2019/FeatureServer/8
+note felder: FID, Feature, Shape__Area, Shape__Length
+dataset seep anomaly confirmed organisms | https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/BOEM_Seafloor_Anomalies_June_2019/FeatureServer/27
+candidate https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/BOEM_Seafloor_Anomalies_June_2019/FeatureServer/27
+note felder: FID, Feature, Shape__Area, Shape__Length
+dataset Thermal Expansion and Acoustic Velocity Data | https://services2.arcgis.com/jQV6VMr2Loovu7GU/arcgis/rest/services/DIG_2026_0006_Thermal_Expansivity_Acoustic_Velocity/FeatureServer/4
+candidate https://services2.arcgis.com/jQV6VMr2Loovu7GU/arcgis/rest/services/DIG_2026_0006_Thermal_Expansivity_Acoustic_Velocity/FeatureServer/4
+note felder: Depth_m, Domain, G_fin_Gpa, G_ini_Gpa, Gen_lith, KB_el_m28, K_fin_Gpa, K_ini_Gpa, Lat_NAD83, Long_NAD83, OBJECTID, Pc_MPa, Publisher, Sample_ID, Temp_fin_C, Temp_ini_C, Ther_exp_1_C, UWI
+dataset Buffer of (VIIRS) Thermal Hotspots and Fire Activity | https://services.arcgis.com/7CRlmWNEbeCqEJ6a/arcgis/rest/services/Buffer_of_(VIIRS)_Thermal_Hotspots_and_Fire_Activity/FeatureServer/0
+candidate https://services.arcgis.com/7CRlmWNEbeCqEJ6a/arcgis/rest/services/Buffer_of_(VIIRS)_Thermal_Hotspots_and_Fire_Activity/FeatureServer/0
+note felder: AnalysisArea, BUFF_DIST, OBJECTID
+dataset seep anomaly confirmed carbonate | https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/BOEM%20Seafloor%20Anomalies/FeatureServer/29
+candidate https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/BOEM%20Seafloor%20Anomalies/FeatureServer/29
+note felder: FID, Feature, Shape__Area, Shape__Length
+dataset seep anomaly mud volcanoes | https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/BOEM%20Seafloor%20Anomalies/FeatureServer/22
+candidate https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/BOEM%20Seafloor%20Anomalies/FeatureServer/22
+note felder: FID, Feature, Shape__Area, Shape__Length
+dataset seep anomaly confirmed corals | https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/BOEM%20Seafloor%20Anomalies/FeatureServer/26
+candidate https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/BOEM%20Seafloor%20Anomalies/FeatureServer/26
+note felder: FID, Feature, Shape__Area, Shape__Length
+dataset seep anomaly confirmed organisms | https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/BOEM%20Seafloor%20Anomalies/FeatureServer/27
+candidate https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/BOEM%20Seafloor%20Anomalies/FeatureServer/27
+note felder: FID, Feature, Shape__Area, Shape__Length
+dataset Oiwake Potato Anomaly Top 1000 | https://services1.arcgis.com/vtIFKqGmW1wohBxY/arcgis/rest/services/260625_Oiwake_M3M_0_1cm_top1000/FeatureServer/0
+candidate https://services1.arcgis.com/vtIFKqGmW1wohBxY/arcgis/rest/services/260625_Oiwake_M3M_0_1cm_top1000/FeatureServer/0
+note felder: FID, Shape__Area, Shape__Length, ann_id, area, geo_x, geo_y, grade, p_score, parent_nam, rank
+dataset thermal refuge polygons | https://services6.arcgis.com/g8SXAozbYSngoxcz/arcgis/rest/services/Thermal_Refuge/FeatureServer/1
+candidate https://services6.arcgis.com/g8SXAozbYSngoxcz/arcgis/rest/services/Thermal_Refuge/FeatureServer/1
+note felder: OBJECTID, Shape__Area, Shape__Length, feature, status
+dataset PinellasCo Thermal ExposurePoints | https://services.arcgis.com/f5HgUpxURgEzTccH/arcgis/rest/services/PinellasCo_Thermal_ExposurePoints/FeatureServer/1
+candidate https://services.arcgis.com/f5HgUpxURgEzTccH/arcgis/rest/services/PinellasCo_Thermal_ExposurePoints/FeatureServer/1
+note felder: AcquisitionDate, CamHeading, CamRoll, Image, Name, OBJECTID, OIType, SortOrder
+dataset seep anomaly positives confirmed gas | https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/BOEM_Seafloor_Anomalies_June_2019/FeatureServer/17
+candidate https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/BOEM_Seafloor_Anomalies_June_2019/FeatureServer/17
+note felder: FID, Feature, Shape__Area, Shape__Length
+dataset seep anomaly negatives confirmed gas | https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/BOEM_Seafloor_Anomalies_June_2019/FeatureServer/21
+candidate https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/BOEM_Seafloor_Anomalies_June_2019/FeatureServer/21
+note felder: FID, Feature, Shape__Area, Shape__Length
+dataset Satellite VIIRS Thermal Clip | https://services2.arcgis.com/RQcpPaCpMAXzUI5g/arcgis/rest/services/Historical_Thermal_Hotspots_and_Fire_Activity_in_California_WFL1/FeatureServer/0
+candidate https://services2.arcgis.com/RQcpPaCpMAXzUI5g/arcgis/rest/services/Historical_Thermal_Hotspots_and_Fire_Activity_in_California_WFL1/FeatureServer/0
+note felder: OBJECTID, OBJECTID_1, acq_date, acq_time, bright_ti4, bright_ti5, confidence, daynight, esritimeut, frp, hours_old, latitude, longitude, satellite, scan, track, version
+dataset seep anomaly negatives possible oil | https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/BOEM_Seafloor_Anomalies_June_2019/FeatureServer/19
+candidate https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/BOEM_Seafloor_Anomalies_June_2019/FeatureServer/19
+note felder: FID, Feature, Shape__Area, Shape__Length
+dataset seep anomaly negatives confirmed oil | https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/BOEM_Seafloor_Anomalies_June_2019/FeatureServer/20
+candidate https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/BOEM_Seafloor_Anomalies_June_2019/FeatureServer/20
+note felder: FID, Feature, Shape__Area, Shape__Length
+dataset seep anomaly positives confirmed oil | https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/BOEM_Seafloor_Anomalies_June_2019/FeatureServer/16
+candidate https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/BOEM_Seafloor_Anomalies_June_2019/FeatureServer/16
+note felder: FID, Feature, Shape__Area, Shape__Length
+dataset seep anomaly confirmed mud volcanoes | https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/BOEM_Seafloor_Anomalies_June_2019/FeatureServer/23
+candidate https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/BOEM_Seafloor_Anomalies_June_2019/FeatureServer/23
+note felder: FID, Feature, Shape__Area, Shape__Length
+dataset CCNRD Thermal Refuge Assessment - Found TributaryConfluences | https://services8.arcgis.com/ZXMBUOxDBbivoAgJ/arcgis/rest/services/Found_TributaryConfluences/FeatureServer/0
+candidate https://services8.arcgis.com/ZXMBUOxDBbivoAgJ/arcgis/rest/services/Found_TributaryConfluences/FeatureServer/0
+note felder: Average_de, Bank, Cover_type, Creator, Date_and_T, Describe_P, Differenti, Dominant_s, F1_C_diffe, F2_C_diffe, FID, Habitat_Un, Max_depth, Max_temp_p, Min_depth, Min_temp_p, Number_and, ObjectID
+dataset Thermal Refuge polylines | https://services6.arcgis.com/g8SXAozbYSngoxcz/arcgis/rest/services/Thermal_Refuge/FeatureServer/0
+candidate https://services6.arcgis.com/g8SXAozbYSngoxcz/arcgis/rest/services/Thermal_Refuge/FeatureServer/0
+note felder: Feature, OBJECTID, Shape__Length, status
+dataset seep anomaly positives possible oil | https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/BOEM_Seafloor_Anomalies_June_2019/FeatureServer/15
+candidate https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/BOEM_Seafloor_Anomalies_June_2019/FeatureServer/15
+note felder: FID, Feature, Shape__Area, Shape__Length
+dataset seep anomaly confirmed buried carbonate | https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/BOEM_Seafloor_Anomalies_June_2019/FeatureServer/30
+candidate https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/BOEM_Seafloor_Anomalies_June_2019/FeatureServer/30
+note felder: FID, Feature, Shape__Area, Shape__Length
+dataset EsriBuildingE Thermal Video ExposurePoints | https://services1.arcgis.com/uujCiiEZAflDbdxE/arcgis/rest/services/EsriBuildingE_Thermal_Video_ExposurePoints/FeatureServer/1
+candidate https://services1.arcgis.com/uujCiiEZAflDbdxE/arcgis/rest/services/EsriBuildingE_Thermal_Video_ExposurePoints/FeatureServer/1
+note felder: AcquisitionDate, AvgHtAG, CamHeading, CamPitch, CamRoll, FarDist, HFOV, Image, Name, NearDist, OBJECTID, OffsetFromStart, VFOV
+dataset SDG 06 - Water Anomaly Changes (ISciences) | https://services7.arcgis.com/IyvyFk20mB7Wpc95/arcgis/rest/services/SDG_06__Water_Anomaly_Changes_ISciences_1/FeatureServer/0
+candidate https://services7.arcgis.com/IyvyFk20mB7Wpc95/arcgis/rest/services/SDG_06__Water_Anomaly_Changes_ISciences_1/FeatureServer/0
+note felder: ObjectId, country_iso, country_name, pop_deficit_10_20, pop_deficit_20_40, pop_deficit_3_5, pop_deficit_5_10, pop_deficit_gt_40, pop_deficit_lt_3, pop_frac_deficit_10_20, pop_frac_deficit_20_40, pop_frac_deficit_3_5, pop_frac_deficit_5_10, pop_frac_deficit_gt_40, pop_frac_deficit_lt_3, pop_frac_surplus_10_20, pop_frac_surplus_20_40, pop_frac_surplus_3_5
+dataset seep anomaly positives possible oil | https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/BOEM%20Seafloor%20Anomalies/FeatureServer/15
+candidate https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/BOEM%20Seafloor%20Anomalies/FeatureServer/15
+note felder: FID, Feature, Shape__Area, Shape__Length
+dataset seep anomaly negatives confirmed oil | https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/BOEM%20Seafloor%20Anomalies/FeatureServer/20
+candidate https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/BOEM%20Seafloor%20Anomalies/FeatureServer/20
+note felder: FID, Feature, Shape__Area, Shape__Length
+dataset Macedonia Village Thermal Imagery Index | https://services.arcgis.com/IBZpB6oNXY4mCIej/arcgis/rest/services/thermal_Macedonia_Village/FeatureServer/0
+candidate https://services.arcgis.com/IBZpB6oNXY4mCIej/arcgis/rest/services/thermal_Macedonia_Village/FeatureServer/0
+note felder: FID, Name
+dataset Summarize Satellite (VIIRS) Thermal Hotspots and Fire Activity within Buffer | https://services8.arcgis.com/CBiB2HwHGXUi8D4Y/arcgis/rest/services/Summarize_Satellite_(VIIRS)_Thermal_Hotspots_and_Fire_Activity_within_Buffer/FeatureServer/0
+candidate https://services8.arcgis.com/CBiB2HwHGXUi8D4Y/arcgis/rest/services/Summarize_Satellite_(VIIRS)_Thermal_Hotspots_and_Fire_Activity_within_Buffer/FeatureServer/0
+note felder: AnalysisArea, BUFF_DIST, Fire, GNIS_ID, OBJECTID, ORIG_FID, PARKNAME, Point_Count, REGION, STATE, Shape_Leng, UNIT_CODE, UNIT_NAME, UNIT_TYPE, YR2009, YR2010, YR2011, YR2012
+dataset CCNRD Thermal Refuge Assessment - Found ColdSeeps | https://services8.arcgis.com/ZXMBUOxDBbivoAgJ/arcgis/rest/services/Found_ColdSeeps/FeatureServer/0
+candidate https://services8.arcgis.com/ZXMBUOxDBbivoAgJ/arcgis/rest/services/Found_ColdSeeps/FeatureServer/0
+note felder: Average_de, Bank, Cover_type, Creator, Date_and_T, Describe_P, Differenti, Dominant_s, F1_C_diffe, F2_C_diffe, FID, Habitat_Un, Max_depth, Max_temp_p, Min_depth, Min_temp_p, Number_and, ObjectID
+dataset Buffer of Satellite (MODIS) Thermal Hotspots and Fire Activity   copy | https://services1.arcgis.com/MZpayUgkWmMH97ji/arcgis/rest/services/Buffer_of_Satellite_(MODIS)_Thermal_Hotspots_and_Fire_Activity___copy/FeatureServer/0
+candidate https://services1.arcgis.com/MZpayUgkWmMH97ji/arcgis/rest/services/Buffer_of_Satellite_(MODIS)_Thermal_Hotspots_and_Fire_Activity___copy/FeatureServer/0
+note felder: ACQ_DATE, AnalysisArea, BRIGHTNESS, BRIGHT_T31, BUFF_DIST, CONFIDENCE, DAYNIGHT, FRP, OBJECTID, ORIG_FID, SATELLITE, SCAN, TRACK, VERSION
+dataset Describe distribution of Satellite (VIIRS) Thermal Hotspots and Fire Activity | https://services1.arcgis.com/xnOV358bj0tLwxji/arcgis/rest/services/Describe_distribution_of_Satellite_(VIIRS)_Thermal_Hotspots_and_Fire_Activity/FeatureServer/0
+candidate https://services1.arcgis.com/xnOV358bj0tLwxji/arcgis/rest/services/Describe_distribution_of_Satellite_(VIIRS)_Thermal_Hotspots_and_Fire_Activity/FeatureServer/0
+note felder: OBJECTID, SOURCE_ID
+dataset seep anomaly confirmed mud volcanoes oil | https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/BOEM_Seafloor_Anomalies_June_2019/FeatureServer/24
+candidate https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/BOEM_Seafloor_Anomalies_June_2019/FeatureServer/24
+note felder: FID, Feature, Shape__Area, Shape__Length
+dataset Solar Projects -  Renewable Energy Transmission Initiative (RETI) [ds490] | https://services2.arcgis.com/Uq9r85Potqm3MfRV/arcgis/rest/services/biosds490_fpu/FeatureServer/0
+candidate https://services2.arcgis.com/Uq9r85Potqm3MfRV/arcgis/rest/services/biosds490_fpu/FeatureServer/0
+note felder: ASSOC_CREZ, Acres, BVUNIQUE_I, CREZ_BVUNI, Comments, MW, OBJECTID, OBJECTID_1, PROJECT_ID, Project_Ty, Reviewed, Shape__Area, Shape__Length
+dataset Boquet River SkydioX10 Thermal Photos | https://services1.arcgis.com/YiULsZbgRKmBtdZN/arcgis/rest/services/Boquet_River_SkydioX10_Thermal_Photos/FeatureServer/1
+candidate https://services1.arcgis.com/YiULsZbgRKmBtdZN/arcgis/rest/services/Boquet_River_SkydioX10_Thermal_Photos/FeatureServer/1
+note felder: DateTime, Direction, Name, OBJECTID, Path, X, Y, Z
+dataset Describe distribution of Satellite (VIIRS) Thermal Hotspots and Fire Activity | https://services1.arcgis.com/xnOV358bj0tLwxji/arcgis/rest/services/Describe_distribution_of_Satellite_(VIIRS)_Thermal_Hotspots_and_Fire_Activity/FeatureServer
+candidate-leer https://services1.arcgis.com/xnOV358bj0tLwxji/arcgis/rest/services/Describe_distribution_of_Satellite_(VIIRS)_Thermal_Hotspots_and_Fire_Activity/FeatureServer
+note 0 rows, felder unbekannt
+dataset seep anomaly confirmed mud volcanoes gas | https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/BOEM_Seafloor_Anomalies_June_2019/FeatureServer/25
+candidate https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/BOEM_Seafloor_Anomalies_June_2019/FeatureServer/25
+note felder: FID, Feature, Shape__Area, Shape__Length
+dataset Rcover 5cm | https://services2.arcgis.com/XSv3KNGfmrd1txPN/arcgis/rest/services/Rcover_5cm/FeatureServer/16
+candidate https://services2.arcgis.com/XSv3KNGfmrd1txPN/arcgis/rest/services/Rcover_5cm/FeatureServer/16
+note felder: Field1, Field10, Field11, Field12, Field13, Field14, Field2, Field3, Field4, Field5, Field6, Field7, Field8, Field9, OBJECTID, Shape__Area, Shape__Length, Units
+dataset Thermal Areas 2013 | https://services1.arcgis.com/0MSEUqKaxRlEPj5g/arcgis/rest/services/Thermal_Areas_2013/FeatureServer/0
+candidate https://services1.arcgis.com/0MSEUqKaxRlEPj5g/arcgis/rest/services/Thermal_Areas_2013/FeatureServer/0
+note felder: AREA, Chem_Type, FID, NAME, PERIMETER, Shape__Area, Shape__Length, THERM_AREA, THERM_AR_1, TIG_pts, Th_Active
+dataset seep anomaly confirmed mud volcanoes gas | https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/BOEM%20Seafloor%20Anomalies/FeatureServer/25
+candidate https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/BOEM%20Seafloor%20Anomalies/FeatureServer/25
+note felder: FID, Feature, Shape__Area, Shape__Length
+dataset seep anomaly confirmed mud volcanoes oil | https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/BOEM%20Seafloor%20Anomalies/FeatureServer/24
+candidate https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/BOEM%20Seafloor%20Anomalies/FeatureServer/24
+note felder: FID, Feature, Shape__Area, Shape__Length
+dataset Reefs - Mean SST Anomaly, February 2020 | https://services5.arcgis.com/65nQ6lypeJh7OW1K/arcgis/rest/services/GBR_Marine_Heatwave_Feb2020_Reefs/FeatureServer/1
+candidate https://services5.arcgis.com/65nQ6lypeJh7OW1K/arcgis/rest/services/GBR_Marine_Heatwave_Feb2020_Reefs/FeatureServer/1
+note felder: Max_SST, Mean_SST, NAME, OBJECTID, Shape__Area, Shape__Length
+# keyword volcano monitoring
+dataset NZ Volcano Status | https://services.arcgis.com/XTtANUDT8Va4DLwI/arcgis/rest/services/Volcano_Status/FeatureServer/0
+candidate https://services.arcgis.com/XTtANUDT8Va4DLwI/arcgis/rest/services/Volcano_Status/FeatureServer/0
+note felder: AlertLevel, OBJECTID, activity, hazards, volcanoID, volcanoTitle
+dataset Volcano Status Layer | https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Volcano_Status_Public/FeatureServer/0
+candidate https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/Volcano_Status_Public/FeatureServer/0
+note felder: Alert_Date, Alert_Level, Color_Code, Latitude, Link, Longitude, ObjectId, Observation, Region, Threat, Volcano_Name
+dataset Volcano Locations | https://services.arcgis.com/j3JVMGycAs95su2E/arcgis/rest/services/Volcano_Locations/FeatureServer/1
+candidate https://services.arcgis.com/j3JVMGycAs95su2E/arcgis/rest/services/Volcano_Locations/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Buffer of Volcano | https://services2.arcgis.com/NzAqpeLbvbvoP3qh/arcgis/rest/services/Buffer_of_Volcano/FeatureServer/0
+candidate https://services2.arcgis.com/NzAqpeLbvbvoP3qh/arcgis/rest/services/Buffer_of_Volcano/FeatureServer/0
+note felder: AnalysisArea, BUFF_DIST, OBJECTID
+dataset Volcano Locations | https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/Volcano_Locations/FeatureServer/0
+candidate https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/Volcano_Locations/FeatureServer/0
+note felder: COUNTRY, ELEVATION, ID, LATITUDE, LOCATION, LONGITUDE, MORPHOLOGY, NAME, OBJECTID, OID, STATUS, TIME_ERUPT
+dataset Volcano edit | https://services2.arcgis.com/TSIJRCUq2X813XVI/arcgis/rest/services/Volcano_edit/FeatureServer/0
+candidate https://services2.arcgis.com/TSIJRCUq2X813XVI/arcgis/rest/services/Volcano_edit/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano EditBS | https://services.arcgis.com/8df8p0NlLFEShl0r/arcgis/rest/services/Volcano_EditBS/FeatureServer/0
+candidate https://services.arcgis.com/8df8p0NlLFEShl0r/arcgis/rest/services/Volcano_EditBS/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Trail camera monitoring 2025 | https://services8.arcgis.com/tLTSDTGJU2nBvXWZ/arcgis/rest/services/Trail_camera_monitoring_2025/FeatureServer/0
+candidate https://services8.arcgis.com/tLTSDTGJU2nBvXWZ/arcgis/rest/services/Trail_camera_monitoring_2025/FeatureServer/0
+note felder: CameraID, DateInstalled, DeviceType, Line, OBJECTID, Ownership, Status
+dataset Volcano Edit | https://services1.arcgis.com/ZozYr1WfCwexXgcn/arcgis/rest/services/Volcano_Edit/FeatureServer/0
+candidate https://services1.arcgis.com/ZozYr1WfCwexXgcn/arcgis/rest/services/Volcano_Edit/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services7.arcgis.com/iNLmn3DMjnu5wEKf/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/1
+candidate https://services7.arcgis.com/iNLmn3DMjnu5wEKf/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Japan an | https://services7.arcgis.com/nCr2TeL1BX3Jz4dE/arcgis/rest/services/Volcano_Japan_an/FeatureServer/1
+candidate https://services7.arcgis.com/nCr2TeL1BX3Jz4dE/arcgis/rest/services/Volcano_Japan_an/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL | https://services6.arcgis.com/EDFKKZivVyfUwPAb/arcgis/rest/services/Volcano_Data_WFL/FeatureServer/0
+candidate https://services6.arcgis.com/EDFKKZivVyfUwPAb/arcgis/rest/services/Volcano_Data_WFL/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services1.arcgis.com/S1CsUOA0hPmVW39L/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services1.arcgis.com/S1CsUOA0hPmVW39L/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL | https://services6.arcgis.com/AZvnIky2AKQNH37M/arcgis/rest/services/Volcano_Data_WFL/FeatureServer/1
+candidate https://services6.arcgis.com/AZvnIky2AKQNH37M/arcgis/rest/services/Volcano_Data_WFL/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data2 WFL1 | https://services1.arcgis.com/0EOqWPtpCmgQr2ay/arcgis/rest/services/Volcano_Data2_WFL1/FeatureServer/1
+candidate https://services1.arcgis.com/0EOqWPtpCmgQr2ay/arcgis/rest/services/Volcano_Data2_WFL1/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data2 WFL1 | https://services1.arcgis.com/NUSHso3rgWERZOFF/arcgis/rest/services/Volcano_Data2_WFL1/FeatureServer/0
+candidate https://services1.arcgis.com/NUSHso3rgWERZOFF/arcgis/rest/services/Volcano_Data2_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano DataAT WFL1 | https://services9.arcgis.com/EGheeB0VDT6EarZv/arcgis/rest/services/Volcano_DataAT_WFL1/FeatureServer/0
+candidate https://services9.arcgis.com/EGheeB0VDT6EarZv/arcgis/rest/services/Volcano_DataAT_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano DataJTucci WFL1 | https://services9.arcgis.com/EGheeB0VDT6EarZv/arcgis/rest/services/Volcano_DataJTucci_WFL1/FeatureServer/0
+candidate https://services9.arcgis.com/EGheeB0VDT6EarZv/arcgis/rest/services/Volcano_DataJTucci_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano data 2021 | https://services9.arcgis.com/EGheeB0VDT6EarZv/arcgis/rest/services/Volcano_data_2021/FeatureServer/1
+candidate https://services9.arcgis.com/EGheeB0VDT6EarZv/arcgis/rest/services/Volcano_data_2021/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFLTA | https://services1.arcgis.com/Hi6kEmQzn9cl2oYk/arcgis/rest/services/Volcano_Data_WFLTA/FeatureServer/0
+candidate https://services1.arcgis.com/Hi6kEmQzn9cl2oYk/arcgis/rest/services/Volcano_Data_WFLTA/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1KF | https://services3.arcgis.com/o98K21Ga5N91Ugjw/arcgis/rest/services/Volcano_Data_WFL1KF/FeatureServer/0
+candidate https://services3.arcgis.com/o98K21Ga5N91Ugjw/arcgis/rest/services/Volcano_Data_WFL1KF/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL13 | https://services3.arcgis.com/o98K21Ga5N91Ugjw/arcgis/rest/services/Volcano_Data_WFL13/FeatureServer/0
+candidate https://services3.arcgis.com/o98K21Ga5N91Ugjw/arcgis/rest/services/Volcano_Data_WFL13/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services1.arcgis.com/wQnFk5ouCfPzTlPw/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services1.arcgis.com/wQnFk5ouCfPzTlPw/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services8.arcgis.com/ZjzjBZiX52cj1yI4/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+decline https://services8.arcgis.com/ZjzjBZiX52cj1yI4/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note arcgis-error-body
+dataset Volcano Data WFL1 | https://services1.arcgis.com/CtMjdUqInecbPao9/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services1.arcgis.com/CtMjdUqInecbPao9/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services6.arcgis.com/JUmUgCafSWdOK8hF/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/1
+candidate https://services6.arcgis.com/JUmUgCafSWdOK8hF/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL2 | https://services1.arcgis.com/FLgshDLgxaIsVNWq/arcgis/rest/services/Volcano_Data_WFL2/FeatureServer/0
+candidate https://services1.arcgis.com/FLgshDLgxaIsVNWq/arcgis/rest/services/Volcano_Data_WFL2/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Datax WFL1 | https://services1.arcgis.com/cc7nIINtrZ67dyVJ/arcgis/rest/services/Volcano_Datax_WFL1/FeatureServer/0
+candidate https://services1.arcgis.com/cc7nIINtrZ67dyVJ/arcgis/rest/services/Volcano_Datax_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services9.arcgis.com/8S9gOTu7oX7gWRzY/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services9.arcgis.com/8S9gOTu7oX7gWRzY/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL11 | https://services1.arcgis.com/JXBurs0uwQlwOiHt/arcgis/rest/services/Volcano_Data_WFL11/FeatureServer/0
+candidate https://services1.arcgis.com/JXBurs0uwQlwOiHt/arcgis/rest/services/Volcano_Data_WFL11/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services1.arcgis.com/VVapzOPgBae5joyC/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services1.arcgis.com/VVapzOPgBae5joyC/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services.arcgis.com/rt1leD4Hj3sLGHNL/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services.arcgis.com/rt1leD4Hj3sLGHNL/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL | https://services1.arcgis.com/Hi6kEmQzn9cl2oYk/arcgis/rest/services/Volcano_Data_WFL/FeatureServer/0
+candidate https://services1.arcgis.com/Hi6kEmQzn9cl2oYk/arcgis/rest/services/Volcano_Data_WFL/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services9.arcgis.com/t3za8OFZOk73M7ZV/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services9.arcgis.com/t3za8OFZOk73M7ZV/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services8.arcgis.com/dfZ21yoAkWF4CZDM/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services8.arcgis.com/dfZ21yoAkWF4CZDM/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL123 | https://services.arcgis.com/B7NI2jUD81lCgSpx/arcgis/rest/services/Volcano_Data_WFL123/FeatureServer/0
+candidate https://services.arcgis.com/B7NI2jUD81lCgSpx/arcgis/rest/services/Volcano_Data_WFL123/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data1 WFL1 | https://services6.arcgis.com/EDFKKZivVyfUwPAb/arcgis/rest/services/Volcano_Data1_WFL1/FeatureServer/1
+candidate https://services6.arcgis.com/EDFKKZivVyfUwPAb/arcgis/rest/services/Volcano_Data1_WFL1/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services7.arcgis.com/5BuOLzIgpnBR3EDS/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+decline https://services7.arcgis.com/5BuOLzIgpnBR3EDS/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note arcgis-error-body
+dataset Volcano Data WFL1 | https://services1.arcgis.com/Hi6kEmQzn9cl2oYk/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services1.arcgis.com/Hi6kEmQzn9cl2oYk/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1X | https://services1.arcgis.com/0EOqWPtpCmgQr2ay/arcgis/rest/services/Volcano_Data_WFL1X/FeatureServer/0
+candidate https://services1.arcgis.com/0EOqWPtpCmgQr2ay/arcgis/rest/services/Volcano_Data_WFL1X/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Edit  AH | https://services7.arcgis.com/Pnb1I1OCft25NDcq/arcgis/rest/services/Volcano_Edit__AH/FeatureServer/0
+candidate https://services7.arcgis.com/Pnb1I1OCft25NDcq/arcgis/rest/services/Volcano_Edit__AH/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services9.arcgis.com/EGheeB0VDT6EarZv/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services9.arcgis.com/EGheeB0VDT6EarZv/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services5.arcgis.com/uHUn9WY0PBQ9glRa/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services5.arcgis.com/uHUn9WY0PBQ9glRa/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL12 | https://services.arcgis.com/B7NI2jUD81lCgSpx/arcgis/rest/services/Volcano_Data_WFL12/FeatureServer/0
+candidate https://services.arcgis.com/B7NI2jUD81lCgSpx/arcgis/rest/services/Volcano_Data_WFL12/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services5.arcgis.com/fxnFqGOVRzV4g6ac/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services5.arcgis.com/fxnFqGOVRzV4g6ac/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL11 | https://services5.arcgis.com/jiMf0aA1PuNh05ev/arcgis/rest/services/Volcano_Data_WFL11/FeatureServer/0
+candidate https://services5.arcgis.com/jiMf0aA1PuNh05ev/arcgis/rest/services/Volcano_Data_WFL11/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL2 | https://services.arcgis.com/o6oETlrWetREI1A2/arcgis/rest/services/Volcano_Data_WFL2/FeatureServer/0
+candidate https://services.arcgis.com/o6oETlrWetREI1A2/arcgis/rest/services/Volcano_Data_WFL2/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFLA | https://services1.arcgis.com/SIYkiqjmENweC50g/arcgis/rest/services/Volcano_Data_WFLA/FeatureServer/0
+candidate https://services1.arcgis.com/SIYkiqjmENweC50g/arcgis/rest/services/Volcano_Data_WFLA/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL | https://services1.arcgis.com/SIYkiqjmENweC50g/arcgis/rest/services/Volcano_Data_WFL/FeatureServer/0
+candidate https://services1.arcgis.com/SIYkiqjmENweC50g/arcgis/rest/services/Volcano_Data_WFL/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data  WFL1 | https://services6.arcgis.com/EDFKKZivVyfUwPAb/arcgis/rest/services/Volcano_Data__WFL1/FeatureServer/0
+candidate https://services6.arcgis.com/EDFKKZivVyfUwPAb/arcgis/rest/services/Volcano_Data__WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 | https://services6.arcgis.com/EDFKKZivVyfUwPAb/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+candidate https://services6.arcgis.com/EDFKKZivVyfUwPAb/arcgis/rest/services/Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Edit11 | https://services.arcgis.com/B7NI2jUD81lCgSpx/arcgis/rest/services/Volcano_Edit11/FeatureServer/0
+candidate https://services.arcgis.com/B7NI2jUD81lCgSpx/arcgis/rest/services/Volcano_Edit11/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Edit1 | https://services1.arcgis.com/QsZ6YNp8DCrBlhlg/arcgis/rest/services/Volcano_Edit1/FeatureServer/0
+candidate https://services1.arcgis.com/QsZ6YNp8DCrBlhlg/arcgis/rest/services/Volcano_Edit1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Monitoring Lakes | https://services2.arcgis.com/uqzY8RRiGhwsxu6K/arcgis/rest/services/chloride_monitoring_12_5_22/FeatureServer/2
+candidate https://services2.arcgis.com/uqzY8RRiGhwsxu6K/arcgis/rest/services/chloride_monitoring_12_5_22/FeatureServer/2
+note felder: GlobalID, OBJECTID, Sample_Loc, Shape__Length
+dataset Monitoring Sites | https://services2.arcgis.com/uqzY8RRiGhwsxu6K/arcgis/rest/services/chloride_monitoring_12_5_22/FeatureServer/1
+candidate https://services2.arcgis.com/uqzY8RRiGhwsxu6K/arcgis/rest/services/chloride_monitoring_12_5_22/FeatureServer/1
+note felder: Chloride_S, GlobalID, OBJECTID, Site
+dataset Monitoring | https://services3.arcgis.com/3Eo29lCQFYaxtvoK/arcgis/rest/services/Monitoring/FeatureServer
+candidate-leer https://services3.arcgis.com/3Eo29lCQFYaxtvoK/arcgis/rest/services/Monitoring/FeatureServer
+note 0 rows, felder unbekannt
+dataset Geothermal Monitoring Wells | https://services1.arcgis.com/TWsoAGve3wb3oFHK/arcgis/rest/services/NERMN_Monitoring_Sites_Aquarius/FeatureServer/7
+candidate https://services1.arcgis.com/TWsoAGve3wb3oFHK/arcgis/rest/services/NERMN_Monitoring_Sites_Aquarius/FeatureServer/7
+note felder: Elevation, Identifier, Latitude, LocationID, LocationName, LocationTypeName, Longitude, OBJECTID, TagId, TagKey, TagValue
+dataset Volcano Hazards | https://services1.arcgis.com/0MSEUqKaxRlEPj5g/arcgis/rest/services/CaliforniaVolcano_HazardZones/FeatureServer/0
+decline https://services1.arcgis.com/0MSEUqKaxRlEPj5g/arcgis/rest/services/CaliforniaVolcano_HazardZones/FeatureServer/0
+note arcgis-error-body
+dataset Volcano Data WFL1 Grajzer | https://services.arcgis.com/Sf0q24s0oDKgX14j/arcgis/rest/services/Volcano_Data_WFL1_Grajzer/FeatureServer/1
+candidate https://services.arcgis.com/Sf0q24s0oDKgX14j/arcgis/rest/services/Volcano_Data_WFL1_Grajzer/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 sab2309 | https://services2.arcgis.com/IsDCghZ73NgoYoz5/arcgis/rest/services/Volcano_Data_WFL1_sab2309/FeatureServer/0
+candidate https://services2.arcgis.com/IsDCghZ73NgoYoz5/arcgis/rest/services/Volcano_Data_WFL1_sab2309/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data new WFL1 | https://services.arcgis.com/B7NI2jUD81lCgSpx/arcgis/rest/services/Volcano_Data_new_WFL1/FeatureServer/0
+candidate https://services.arcgis.com/B7NI2jUD81lCgSpx/arcgis/rest/services/Volcano_Data_new_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 Lowe | https://services1.arcgis.com/FLgshDLgxaIsVNWq/arcgis/rest/services/Volcano_Data_WFL1_Lowe/FeatureServer/0
+candidate https://services1.arcgis.com/FLgshDLgxaIsVNWq/arcgis/rest/services/Volcano_Data_WFL1_Lowe/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 sb | https://services9.arcgis.com/EGheeB0VDT6EarZv/arcgis/rest/services/Volcano_Data_WFL1_sb/FeatureServer/0
+candidate https://services9.arcgis.com/EGheeB0VDT6EarZv/arcgis/rest/services/Volcano_Data_WFL1_sb/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data Aziz WFL1 | https://services2.arcgis.com/4XlTp6SwwtAtXgjj/arcgis/rest/services/Volcano_Data_Aziz_WFL1/FeatureServer/0
+candidate https://services2.arcgis.com/4XlTp6SwwtAtXgjj/arcgis/rest/services/Volcano_Data_Aziz_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 JZ | https://services.arcgis.com/8df8p0NlLFEShl0r/arcgis/rest/services/Volcano_Data_WFL1_JZ/FeatureServer/0
+candidate https://services.arcgis.com/8df8p0NlLFEShl0r/arcgis/rest/services/Volcano_Data_WFL1_JZ/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data1 WFL1 Strubhar | https://services.arcgis.com/Mst6sJ6aFGwWU3UM/arcgis/rest/services/Volcano_Data1_WFL1_Strubhar/FeatureServer/0
+candidate https://services.arcgis.com/Mst6sJ6aFGwWU3UM/arcgis/rest/services/Volcano_Data1_WFL1_Strubhar/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 Leas593 | https://services1.arcgis.com/ZIL9uO234SBBPGL7/arcgis/rest/services/Volcano_Data_WFL1_Leas593/FeatureServer/0
+candidate https://services1.arcgis.com/ZIL9uO234SBBPGL7/arcgis/rest/services/Volcano_Data_WFL1_Leas593/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Butts Volcano Data WFL1 | https://services3.arcgis.com/o98K21Ga5N91Ugjw/arcgis/rest/services/Butts_Volcano_Data_WFL1/FeatureServer/1
+candidate https://services3.arcgis.com/o98K21Ga5N91Ugjw/arcgis/rest/services/Butts_Volcano_Data_WFL1/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data Ayman2 WFL1 | https://services6.arcgis.com/LJrPNKwIorL58gSK/arcgis/rest/services/Volcano_Data_Ayman2_WFL1/FeatureServer/1
+decline https://services6.arcgis.com/LJrPNKwIorL58gSK/arcgis/rest/services/Volcano_Data_Ayman2_WFL1/FeatureServer/1
+note arcgis-error-body
+dataset Volcano Data Jang WFL1 | https://services3.arcgis.com/o98K21Ga5N91Ugjw/arcgis/rest/services/Volcano_Data_Jang_WFL1/FeatureServer/1
+candidate https://services3.arcgis.com/o98K21Ga5N91Ugjw/arcgis/rest/services/Volcano_Data_Jang_WFL1/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 2 | https://services1.arcgis.com/JXBurs0uwQlwOiHt/arcgis/rest/services/Volcano_Data_WFL1_2/FeatureServer/0
+candidate https://services1.arcgis.com/JXBurs0uwQlwOiHt/arcgis/rest/services/Volcano_Data_WFL1_2/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 CES | https://services3.arcgis.com/nV0HyP5uKL48nAKr/arcgis/rest/services/Volcano_Data_WFL1_CES/FeatureServer/0
+candidate https://services3.arcgis.com/nV0HyP5uKL48nAKr/arcgis/rest/services/Volcano_Data_WFL1_CES/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data AQ WFL | https://services1.arcgis.com/wQnFk5ouCfPzTlPw/arcgis/rest/services/Volcano_Data_AQ_WFL/FeatureServer/1
+candidate https://services1.arcgis.com/wQnFk5ouCfPzTlPw/arcgis/rest/services/Volcano_Data_AQ_WFL/FeatureServer/1
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 BW | https://services6.arcgis.com/Sjtjj6zwMH9eAgbl/arcgis/rest/services/Volcano_Data_WFL1_BW/FeatureServer/0
+candidate https://services6.arcgis.com/Sjtjj6zwMH9eAgbl/arcgis/rest/services/Volcano_Data_WFL1_BW/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL KM | https://services9.arcgis.com/8S9gOTu7oX7gWRzY/arcgis/rest/services/Volcano_Data_WFL9/FeatureServer/0
+candidate https://services9.arcgis.com/8S9gOTu7oX7gWRzY/arcgis/rest/services/Volcano_Data_WFL9/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 LM | https://services6.arcgis.com/g8UFRtSVbIQ13QqQ/arcgis/rest/services/Volcano_Data_WFL1_LM/FeatureServer/0
+candidate https://services6.arcgis.com/g8UFRtSVbIQ13QqQ/arcgis/rest/services/Volcano_Data_WFL1_LM/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 EJC | https://services6.arcgis.com/ZVM1rEuVZjtC1Wwk/arcgis/rest/services/Volcano_Data_WFL1_EJC/FeatureServer/0
+candidate https://services6.arcgis.com/ZVM1rEuVZjtC1Wwk/arcgis/rest/services/Volcano_Data_WFL1_EJC/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset JC Volcano Data WFL1 | https://services1.arcgis.com/0EOqWPtpCmgQr2ay/arcgis/rest/services/JC_Volcano_Data_WFL1/FeatureServer/0
+candidate https://services1.arcgis.com/0EOqWPtpCmgQr2ay/arcgis/rest/services/JC_Volcano_Data_WFL1/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Volcano Data WFL1 Berube | https://services1.arcgis.com/Hi6kEmQzn9cl2oYk/arcgis/rest/services/Volcano_Data_WFL1_Berube/FeatureServer/0
+candidate https://services1.arcgis.com/Hi6kEmQzn9cl2oYk/arcgis/rest/services/Volcano_Data_WFL1_Berube/FeatureServer/0
+note felder: Agent, Country, De, De_1, De_12, De_12_13, Dy, EQ, Elevation, F_Mill, Field23, Latitude, Location, Longitude, Mo, Name, Num, Num_1
+dataset Chloride Monitoring Lakes | https://services2.arcgis.com/uqzY8RRiGhwsxu6K/arcgis/rest/services/chloride_monitoring_2_23_21/FeatureServer/1
+candidate https://services2.arcgis.com/uqzY8RRiGhwsxu6K/arcgis/rest/services/chloride_monitoring_2_23_21/FeatureServer/1
+note felder: GlobalID, OBJECTID, Sample_Loc, Shape__Length
+dataset Geothermal Groundwater Monitoring Wells | https://services1.arcgis.com/TWsoAGve3wb3oFHK/arcgis/rest/services/NERMN_Monitoring_Sites_Aquarius/FeatureServer/6
+candidate https://services1.arcgis.com/TWsoAGve3wb3oFHK/arcgis/rest/services/NERMN_Monitoring_Sites_Aquarius/FeatureServer/6
+note felder: Elevation, Identifier, Latitude, LocationID, LocationName, LocationTypeName, Longitude, OBJECTID, TagId, TagKey, TagValue
+dataset MS4 Monitoring Outfall | https://services1.arcgis.com/8eq00iyMv7Ls2xme/arcgis/rest/services/MonitoringMap_Sites/FeatureServer/1
+candidate https://services1.arcgis.com/8eq00iyMv7Ls2xme/arcgis/rest/services/MonitoringMap_Sites/FeatureServer/1
+note felder: CMapNo, OBJECTID, OUtfall_ID, Type, UniqueID
+dataset Ambient Monitoring Site | https://services1.arcgis.com/8eq00iyMv7Ls2xme/arcgis/rest/services/MonitoringMap_Sites/FeatureServer/2
+candidate https://services1.arcgis.com/8eq00iyMv7Ls2xme/arcgis/rest/services/MonitoringMap_Sites/FeatureServer/2
+note felder: OBJECTID, Plot_Ammonia, Plot_Chlorophyll, Plot_EColi, Plot_TN, Plot_TP, Plot_TSS, Station_ID, Waterbody
+dataset NERMN Monitoring Sites (Aquarius) | https://services1.arcgis.com/TWsoAGve3wb3oFHK/arcgis/rest/services/NERMN_Monitoring_Sites_Aquarius/FeatureServer
+candidate-leer https://services1.arcgis.com/TWsoAGve3wb3oFHK/arcgis/rest/services/NERMN_Monitoring_Sites_Aquarius/FeatureServer
+note 0 rows, felder unbekannt
+dataset Monitoring Sites | https://services.arcgis.com/v400IkDOw1ad7Yad/arcgis/rest/services/VolunteerStreamMonitoring_View/FeatureServer/0
+candidate https://services.arcgis.com/v400IkDOw1ad7Yad/arcgis/rest/services/VolunteerStreamMonitoring_View/FeatureServer/0
+note felder: Active, Channel_Name, CreationDate, Creator, EditDate, Editor, GID, GlobalID, OBJECTID, Site_ID, created_da, created_us, last_edi_1, last_edite

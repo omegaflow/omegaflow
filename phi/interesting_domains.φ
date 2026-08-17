@@ -1,0 +1,457 @@
+# phi/interesting_domains.φ — lebensfähige Kandidaten (nicht declined)
+# Aus phi/blocked_sources.φ (alle key-needed/parser-def) + phi/dead_sources.φ (nur Recheck-Potenzial).
+# Stand 2026-08-17. declined / integrated / grind-routed / junk / Host-Tote ausgeschlossen.
+# Abschnitt 2 trägt die Befunde der Recherche der Host-Toten (Tippfehler / Umzug / Nachfolger).
+
+# Redistributions-Verdikt (CDN): kommerzielle/proprietäre + Nicht-Messwert-Hosts sind in 1/3/4 markiert — Abschnitt 5.
+## 1. Kandidaten
+
+host actris.nilu.no klassifiziert parser-def html — ACTRIS-Aerosol-Messdaten (diffusion, echt) hinter Web-Frontend.
+host ads.atmosphere.copernicus.eu klassifiziert key-needed auth — CAMS Atmosphere Data Store — Daten hinter Registrierung.
+host alerce.online klassifiziert key-needed blocked — HTTP 403 — Auth-Gate oder Bot-Block. Recheck 2026-08-17: Explorer-interne Route; Datenroute api.alerce.online/ztf/v1 offen ohne Token.
+host antares.noirlab.edu klassifiziert decline no-physical-force — nur Counts/Position, kein Feldwert (Verdikt 2026-08-17).
+host api.eia.gov klassifiziert dead timeout — Operation timed out after 12002 milliseconds with 0 bytes received
+host api.electricitymap.org klassifiziert key-needed auth — HTTP 401 — Token/Registrierung nötig. — decline redistribution (CDN)
+host api.europeana.eu klassifiziert key-needed auth — HTTP 401 — Token/Registrierung nötig. — decline no-physical-force (CDN)
+host api.fink-portal.org klassifiziert dead unreachable — Fink: DNS löst auf (157.136.255.32), aber Connect schlägt fehl (curl 000) — vom Archivar-Netz nicht erreich…
+host api.gdeltproject.org klassifiziert dead timeout — Connection timed out after 12000 milliseconds
+host api.ioda.caida.org klassifiziert dead timeout — Connection timed out after 12000 milliseconds
+host api.maptiler.com klassifiziert key-needed blocked — HTTP 403 — Auth-Gate oder Bot-Block. — decline redistribution (CDN)
+host api.nasa.gov klassifiziert key-needed blocked — HTTP 403 — Auth-Gate oder Bot-Block.
+host api.networkrail.co.uk klassifiziert decline no-physical-force — Zugpositionen, kein natürlicher Feldwert (Verdikt 2026-08-17).
+host api.open-elevation.com klassifiziert dead 5xx — HTTP 500 — Server antwortet nicht brauchbar.
+host api.protectedplanet.net klassifiziert key-needed auth — HTTP 401 — Token/Registrierung nötig. — decline redistribution (CDN)
+host api.rainviewer.com klassifiziert parser-def radar-tiles — Radarreflektivität (EM-Messung) liegt in PNG-Tiles; JSON ist nur Tile-Katalog (past[].path) — kein numerisc…
+host api.resourcewatch.org klassifiziert key-needed blocked — HTTP 403 — Auth-Gate oder Bot-Block. — decline redistribution (CDN)
+host api.semanticscholar.org klassifiziert key-needed rate-limit — HTTP 429 — Rate-Limit; Schlüssel/Registrierung nötig. — decline no-physical-force (CDN)
+host api.sensor.community klassifiziert key-needed blocked — HTTP 403 — Auth-Gate oder Bot-Block.
+host api.si.edu klassifiziert key-needed blocked — HTTP 403 — Auth-Gate oder Bot-Block.
+host api.sncf.com klassifiziert key-needed auth — HTTP 401 — Token/Registrierung nötig. — decline redistribution (CDN)
+host api.spacexdata.com klassifiziert dead 5xx — HTTP 525 — Server antwortet nicht brauchbar.
+host api.wolfx.jp klassifiziert parser-def keyed-object — grind: grind_host.φ
+host api.worldbank.org klassifiziert key-needed blocked — HTTP 403 — Auth-Gate oder Bot-Block.
+host api.z.ai klassifiziert key-needed auth — HTTP 401 — Token/Registrierung nötig. — decline redistribution (CDN)
+host api3.geo.admin.ch klassifiziert parser-def html — GeoAdmin liefert JSON bei f=json — HTML-Popup-Format gewählt.
+host apiv3.iucnredlist.org klassifiziert key-needed blocked — HTTP 403 — Auth-Gate oder Bot-Block.
+host appeears.earthdatacloud.nasa.gov klassifiziert key-needed auth — AppEEARS verlangt Earthdata-Login.
+host archive.nrao.edu klassifiziert parser-def votable — NRAO-TAP liefert VOTable.
+host archive.opensearch.ceda.ac.uk klassifiziert key-needed auth — CEDA-Archiv verlangt Login.
+host archive.swot.podaac.earthdata.nasa.gov klassifiziert key-needed auth — HTTP 401 — Token/Registrierung nötig.
+host archives.esac.esa.int klassifiziert parser-def archive-login — grind: grind_planetary.φ
+host argovis.colorado.edu klassifiziert parser-def html — Argovis (Argo-Profile, thermal echt): nackte Route liefert HTML-Fehler — korrekte Query (startDate/endDate)…
+host atmos.nmsu.edu klassifiziert parser-def archive — grind: grind_planetary.φ
+host bgp.tools klassifiziert key-needed blocked — HTTP 403 — Auth-Gate oder Bot-Block. — decline redistribution (CDN)
+host bhuvan-vec2.nrsc.gov.in klassifiziert parser-def wfs — WFS-Capability-Dokument.
+host bmkg-restapi.vercel.app klassifiziert dead 5xx — HTTP 503 — Server antwortet nicht brauchbar.
+host casda.csiro.au klassifiziert parser-def votable — CASDA/VAST: TAP liefert ausschließlich VOTable (XML) — kein VOTable-Row-Extract im Parser.
+host casu.ast.cam.ac.uk klassifiziert dead unreachable — Failed to connect to casu.ast.cam.ac.uk port 443 after 78 ms: Couldn't connect to server
+host ccafs-climate.org klassifiziert dead redirect-loop — Maximum (50) redirects followed
+host cdaac-www.cosmic.ucar.edu klassifiziert key-needed auth — HTTP 401 — Token/Registrierung nötig. Recheck 2026-08-17: Datenroute data.cosmic.ucar.edu offen ohne Login (CDAAC_USER/PASS entfernt).
+host cdaweb.gsfc.nasa.gov klassifiziert dead timeout — Operation timed out after 12000 milliseconds with 0 bytes received
+host cddis.nasa.gov klassifiziert parser-def grid-earthernet-login — grind: grind_nasa.φ
+host celestrak.com klassifiziert dead timeout — Connection timed out after 12001 milliseconds
+host celestrak.org klassifiziert dead timeout — Connection timed out after 12001 milliseconds
+host cgi.minorplanetcenter.net klassifiziert parser-def cgi — CGI-Formular; MPC-API existiert separat.
+host chain.physics.unb.ca klassifiziert dead unreachable — Failed to connect to chain.physics.unb.ca port 443 after 210 ms: Couldn't connect to server
+host climate-themetoffice.hub.arcgis.com klassifiziert open — Met-Office-Climate-Data-Portal, offen ohne Login (ArcGIS-REST + OGC-API-Records). — METOFFICE_CLIMATE_KEY entfernt.
+host climate.metoffice.cloud klassifiziert key-needed blocked — HTTP 403 — Auth-Gate oder Bot-Block. (Dashboard-Route; Datenroute offen im Portal, siehe climate-themetoffice.hub.arcgis.com)
+host climateknowledgeportal.worldbank.org klassifiziert key-needed blocked — HTTP 403 — Auth-Gate oder Bot-Block.
+host cmr.earthdata.nasa.gov klassifiziert dead timeout — Operation timed out after 12000 milliseconds with 18895778 bytes received
+host coastwatch.noaa.gov klassifiziert parser-def erddap-index — ERDDAP-Instanz; .json/.csv-Endpoints vorhanden — echten Datensatz wählen.
+host coastwatch.pfeg.noaa.gov klassifiziert dead timeout — Operation timed out after 11141 milliseconds with 1935855 bytes received
+host crates.io klassifiziert key-needed blocked — HTTP 403 — Auth-Gate oder Bot-Block. — decline no-physical-force (CDN)
+host darts.isas.jaxa.jp klassifiziert parser-def html — XRISM-Beobachtungskatalog — format=json greift nicht (HTML).
+host data-api.globalforestwatch.org klassifiziert key-needed blocked — HTTP 403 — Auth-Gate oder Bot-Block.
+host data-gis.unep-wcmc.org klassifiziert parser-def arcgis-index — ArcGIS-Index ohne f=json.
+host data.blitzortung.org klassifiziert key-needed auth — HTTP 401 — Token/Registrierung nötig. — decline redistribution (CDN)
+host data.epa.gov klassifiziert parser-def — grind: grind_terrapulse_a.φ
+host data.icos-cp.eu klassifiziert key-needed account — grind: grind_b2find.φ
+host data.lpdaac.earthdatacloud.nasa.gov klassifiziert key-needed auth — HTTP 401 — Token/Registrierung nötig.
+host data.lsst.cloud klassifiziert key-needed auth — HTTP 401 — Token/Registrierung nötig. — decline redistribution (CDN)
+host data.minorplanetcenter.net klassifiziert parser-def index — Nur API-Index (23 B). Unter-Routen tragen Asteroiden-Bahndaten (em, celestisch) — Einzel-Route prüfen.
+host data.nsidc.earthdatacloud.nasa.gov klassifiziert key-needed auth — ICESat-2 ATL03 (LIDAR, em echt) — signierte Cloudfront-URL, Earthdata-Login.
+host data.oceannetworks.ca klassifiziert parser-def html — Ocean Networks Canada (Ozeansensoren, echt) — OpenAPI-Frontend, Messwert-Routen dahinter.
+host data.sensor.community klassifiziert parser-def empty-param — area= leer → 2 B. Mit Gebiets-ID liefert der Archive-Endpoint PM2.5-Messwerte (diffusion, echt) — Recheck.
+host dc.zah.uni-heidelberg.de klassifiziert parser-def votable — GAVO-TAP-Landing — VOTable-Antworten.
+host dev.meteostat.net klassifiziert key-needed auth — Meteostat-Dev-Docs — API verlangt Key. — decline redistribution (CDN)
+host docs.sentinel-hub.com klassifiziert key-needed auth — Sentinel-Hub verlangt Key/Subscription. — decline redistribution (CDN)
+host ebird.org klassifiziert key-needed auth — eBird-API verlangt Key (Login-Redirect).
+host epic.gsfc.nasa.gov klassifiziert parser-def imagery — EPIC-Bilder sind die EM-Messung; JSON trägt nur Bildnamen/Geometrie-Metadata.
+host erddap.dataexplorer.oceanobservatories.org klassifiziert dead timeout — Operation timed out after 11103 milliseconds with 359917 bytes received
+host erddap.emodnet-physics.eu klassifiziert parser-def rss — ERDDAP-RSS; dieselbe Instanz liefert .json/.csv.
+host erddap.gml.noaa.gov klassifiziert dead unreachable — Failed to connect to erddap.gml.noaa.gov port 443 after 340 ms: Couldn't connect to server
+host erddap.ifremer.fr klassifiziert parser-def erddap-index — ERDDAP-Instanz — .json-Endpoints vorhanden.
+host erddap.marine.ie klassifiziert dead timeout — Operation timed out after 12000 milliseconds with 2129061 bytes received
+host exoplanetarchive.ipac.caltech.edu klassifiziert parser-def docs — Exoplanet-Archiv-TAP (em celestial, echt) — Docs-Seite; TAP-Endpoint direkt prüfen.
+host fenixservices.fao.org klassifiziert dead 5xx — HTTP 521 — Server antwortet nicht brauchbar.
+host fermi.gsfc.nasa.gov klassifiziert parser-def cgi — CGI-Formular.
+host frost.met.no klassifiziert key-needed auth — HTTP 401 — Token/Registrierung nötig. Recheck 2026-08-17: Client-Credentials erstellt (FROST_CLIENT_ID/SECRET).
+host gateway.api.globalfishingwatch.org klassifiziert key-needed auth — HTTP 401 — Token/Registrierung nötig. — decline redistribution (CDN)
+host gcn.nasa.gov klassifiziert parser-def kafka-spa — GCN: HTML/SPA + Kafka-Stream (GCN/Kafka), kein GET-JSON — Archivar hat nur curl/GET/POST.
+host geodesy.unr.edu klassifiziert dead timeout — Connection timed out after 12001 milliseconds
+host geomag.usgs.gov klassifiziert parser-def — grind: grind_terrapulse_a.φ
+host gis1.servirglobal.net klassifiziert parser-def arcgis-missing-f — SERVIR-Bodenfeuchte: f=json fehlt in URL — mit f=json accept-würdig (Recheck).
+host gong2.nso.edu klassifiziert parser-def html — GONG-H-alpha-Sonnenbilder (em, echt) — format=json greift nicht auf dieser Route.
+host gracedb.ligo.org klassifiziert refused — Private-Events verlangt LVC/MOU-Gruppenmitgliedschaft; public superevents offen in sources.φ (Verdikt 2026-08-17).
+host gtnp.arcticportal.org klassifiziert parser-def html — GTN-P-Bodentemperatur (thermal, echt) — HTML-Frontend.
+host gwosc.org klassifiziert parser-def — grind: grind_terrapulse_a.φ
+host imag-data.bgs.ac.uk klassifiziert parser-def capabilities — BGS-GIN (INTERMAGNET-Magnetfeld, em echt): nur Capabilities/Observatoriumsliste — Observation-Endpoint träg…
+host impc.dlr.de klassifiziert dead timeout — Operation timed out after 12000 milliseconds with 7464101 out of 8987150 bytes received
+host ioda.caida.org klassifiziert dead timeout — Connection timed out after 12002 milliseconds
+host irsa.ipac.caltech.edu klassifiziert decline redundant — ZTF über Lasair/ALeRCE abgedeckt (Verdikt 2026-08-17). Gator/TAP-Route inventarisiert (phi/katalog/tap_index_irsa.φ, provider irsa TAP/sync, 995 Tabellen). Recheck 2026-08-17: kein Token — öffentliche Daten offen auf AWS S3 Open Data, proprietäres ZTF via IPAC-SSO (email+passwort).
+host kp.gfz-potsdam.de klassifiziert dead 5xx — HTTP 500 — Server antwortet nicht brauchbar.
+host kp.gfz.de klassifiziert dead 5xx — HTTP 500 — Server antwortet nicht brauchbar.
+host lasair-ztf.lsst.ac.uk klassifiziert key-needed auth — HTTP 401 — Token/Registrierung nötig. Recheck 2026-08-17: LASAIR_TOKEN im Profil vorhanden.
+host lisa-ldc.lal.in2p3.fr klassifiziert dead timeout — Connection timed out after 12002 milliseconds
+host lisn.igp.gob.pe klassifiziert key-needed blocked — HTTP 403 — Auth-Gate oder Bot-Block.
+host lpdaacsvc.cr.usgs.gov klassifiziert key-needed auth — GEDI (LIDAR-Baumhöhe, em) hinter Earthdata-Login.
+host marinecadastre.gov klassifiziert decline no-physical-force — Schiffspositionen, kein natürlicher Feldwert (Verdikt 2026-08-17).
+host mast.stsci.edu klassifiziert key-needed auth — MAST verlangt Token. Verdikt 2026-08-17: TESS/HST/JWST-Photometrie (em) — echter Feldwert; MAST_TOKEN vorhanden, Kandidat zurück (TIC-Katalog, CSV-Kompilat).
+host meteostat.net klassifiziert key-needed auth — Meteostat verlangt API-Key (key=). — decline redistribution (CDN)
+host my-api.plantnet.org klassifiziert key-needed auth — HTTP 401 — Token/Registrierung nötig.
+host my.cmems-du.eu klassifiziert key-needed auth — CMEMS-DU verlangt Login; zudem Modellprodukt.
+host newton.spacedys.com klassifiziert parser-def html — AstDyS (Asteroiden-Dynamik, echt) — HTML; JSON-Route prüfen.
+host nrt.cmems-du.eu klassifiziert key-needed auth — CMEMS-NRT verlangt Login.
+host nrt3.modaps.eosdis.nasa.gov klassifiziert key-needed auth — VIIRS-Aktivfeuer (thermal, echt) hinter Earthdata-Login.
+host oceanwatch.pifsc.noaa.gov klassifiziert dead timeout — Operation timed out after 12000 milliseconds with 15339792 bytes received
+host omniweb.gsfc.nasa.gov klassifiziert parser-def cgi — OMNI-Solarwind (Plasma/IMF, em echt) — CGI-Formular.
+host opendap.earthdata.nasa.gov klassifiziert key-needed auth — HTTP 401 — Token/Registrierung nötig.
+host overpass-api.de klassifiziert key-needed blocked — HTTP 403 — Auth-Gate oder Bot-Block.
+host overpass.kumi.systems klassifiziert key-needed blocked — HTTP 403 — Auth-Gate oder Bot-Block.
+host pds-geosciences.wustl.edu klassifiziert parser-def raster-ascii — grind: grind_planetary.φ
+host polarwatch.noaa.gov klassifiziert dead 5xx — HTTP 500 — Server antwortet nicht brauchbar.
+host quickstats.nass.usda.gov klassifiziert decline no-physical-force — Agrarstatistik, kein physischer Messwert (Verdikt 2026-08-17).
+host rucsoundings.noaa.gov klassifiziert dead unreachable — Failed to connect to rucsoundings.noaa.gov port 443 after 1573 ms: Couldn't connect to server
+host science-pds.cryosat.esa.int klassifiziert dead 5xx — HTTP 500 — Server antwortet nicht brauchbar.
+host scimma.org klassifiziert parser-def pubsub — SCiMMA/Hopskotch: Pub/Sub-Messaging (Apache Pulsar), kein GET-JSON.
+host sedac.ciesin.columbia.edu klassifiziert dead timeout — Connection timed out after 12002 milliseconds
+host services.sentinel-hub.com klassifiziert dead 5xx — HTTP 503 — Server antwortet nicht brauchbar.
+host services.usanpn.org klassifiziert dead timeout — Operation timed out after 12002 milliseconds with 1 bytes received
+host services1.arcgis.com klassifiziert parser-def arcgis-missing-f — f=json fehlt — Inhalt unklar, Recheck.
+host services2.arcgis.com klassifiziert dead timeout — Connection timed out after 12001 milliseconds
+host services6.arcgis.com klassifiziert parser-def — grind: grind_arcgis_index.φ
+host services9.arcgis.com klassifiziert parser-def arcgis-missing-f — Hurrikans: f=json fehlt — mit f=geojson accept-würdig (Recheck).
+host simbad.u-strasbg.fr klassifiziert parser-def votable — SIMBAD-TAP liefert VOTable-XML trotz format=json — kein JSON-Row-Extract möglich (parser-def).
+host sios-svalbard.org klassifiziert offen — Station-Data-REST offen; SIOS-Account nur für WG/Committee/Katalog-Edit, nicht für Datenzugriff (Verdikt 2026-08-17).
+host skyserver.sdss.org klassifiziert parser-def html — SDSS-SQL-Suche liefert HTML statt JSON über diese Route — JSON-Route prüfen.
+host ssd-api.jpl.nasa.gov klassifiziert parser-def — grind: grind_terrapulse_a.φ
+host supermag.jhuapl.edu klassifiziert key-needed logon — SuperMAG (Boden-Magnetometer, em echt). Web-Service-API (services/data.php|indices.php|inventory.php) braucht NUR logon=<name>, KEIN Passwort. Registriert 2026-08-17: Username=omegaflow. ABER: API liefert Server-Fehler — shell_exec „Unable to execute .../db-get -check logon" (PHP-Fatal, db-get-Binary nicht ausführbar). Server-Fault bei SuperMAG, keine Client-Sache.
+host tadas.afad.gov.tr klassifiziert parser-def html — AFAD-Erdbebenliste liefert HTML statt JSON — Accept-Header/Route prüfen (seismisch, accept-würdig bei JSON).
+host tapvizier.u-strasbg.fr klassifiziert dead 5xx — HTTP 501 — Server antwortet nicht brauchbar.
+host time.nist.gov klassifiziert dead timeout — Connection timed out after 12002 milliseconds
+host tle.ivanstanojevic.me klassifiziert dead timeout — Operation timed out after 12003 milliseconds with 0 bytes received
+host toar-data.fz-juelich.de klassifiziert key-needed auth — Registrierung pending (2026-08-17).
+host v4.boldsystems.org klassifiziert dead 5xx — HTTP 500 — Server antwortet nicht brauchbar.
+host volcano.si.edu klassifiziert key-needed blocked — HTTP 403 — Auth-Gate oder Bot-Block.
+host vsx.aavso.org klassifiziert parser-def html — AAVSO-VSX (Veränderlichen-Katalog, em celestisch) — 74 B HTML; Parameter-Form prüfen.
+host weather.cma.cn klassifiziert key-needed blocked — HTTP 403 — Auth-Gate oder Bot-Block.
+host webservices.volcano.si.edu klassifiziert dead timeout — Operation timed out after 12001 milliseconds with 712691 bytes received
+host whale.fm klassifiziert decline no-physical-force — Zooniverse-Klassifikationen, keine Messung (Verdikt 2026-08-17).
+host woudc.org klassifiziert parser-def html — WOUDC (Ozon/UV, em echt) — HTML-Landing; Daten-Route prüfen.
+host www.atnf.csiro.au klassifiziert parser-def mangled-url — ATNF-PSRCAT-TAP (Pulsar-Katalog, em celestisch) — URL auf News-Seite umgeleitet; TAP-Endpoint direkt prüfen.
+host www.bom.gov.au klassifiziert key-needed blocked — HTTP 403 — Auth-Gate oder Bot-Block.
+host www.dxpredictor.com klassifiziert key-needed blocked — HTTP 403 — Auth-Gate oder Bot-Block. — decline redistribution (CDN)
+host www.epa.gov klassifiziert key-needed blocked — HTTP 403 — Auth-Gate oder Bot-Block.
+host www.frbcat.org klassifiziert dead unreachable — FRBCAT: Host löst auf (ASTRON), Connect schlägt fehl. FRB-Katalog, kein Live-Messwert.
+host www.hamqsl.com klassifiziert parser-def — grind: grind_terrapulse_a.φ
+host www.irsn.fr klassifiziert dead 5xx — HTTP 503 — Server antwortet nicht brauchbar.
+host www.minorplanetcenter.net klassifiziert parser-def cgi — CGI-Formular; MPC-API existiert separat.
+host www.movebank.org klassifiziert key-needed auth — HTTP 401 — Token/Registrierung nötig.
+host www.ngdc.noaa.gov klassifiziert key-needed blocked — HTTP 403 — Auth-Gate oder Bot-Block.
+host www.peeringdb.com klassifiziert key-needed rate-limit — HTTP 429 — Rate-Limit; Schlüssel/Registrierung nötig. — decline no-physical-force (CDN)
+host www.reddit.com klassifiziert key-needed blocked — HTTP 403 — Auth-Gate oder Bot-Block. — decline redistribution (CDN)
+host www.space-track.org klassifiziert key-needed auth — HTTP 401 — Token/Registrierung nötig.
+host www.swift.ac.uk klassifiziert parser-def html-fits — Swift UKSSDC: GRB-Katalog als Web-Formulare + FITS, kein JSON-Endpoint (pfade 404).
+host www.waterqualitydata.us klassifiziert dead timeout — Operation timed out after 11365 milliseconds with 0 bytes received
+host www.wis-tns.org klassifiziert key-needed blocked — HTTP 403 — Auth-Gate oder Bot-Block.
+host www.worldpop.org klassifiziert dead 5xx — HTTP 500 — Server antwortet nicht brauchbar.
+host www3.mbari.org klassifiziert key-needed blocked — HTTP 403 — Auth-Gate oder Bot-Block.
+
+## 2. Befunde (Tippfehler / Umzug / Nachfolger)
+# Recherche der Host-Toten (dead dns/ssl/transport/404). Nur per Fetch Verifiziertes; Rest ausstehend.
+
+### Umzug / Nachfolger (verifiziert)
+befund api.astro-colibri.com → astro-colibri.science — AstroCOLIBRI-API, api-Host aufgegeben.
+befund api.earthnetworks.com → developer.earthnetworks.com — Sferic-API-Portal.
+befund api.eurobis.org → api.obis.org — EurOBIS-Daten über OBIS (obis = presence-catalog, Gate beachten).
+befund api.marinespecies.org → www.marinespecies.org/rest/ — WoRMS-REST (registry, Gate beachten).
+befund api.sne.space → github.com/astrocatalogs/supernovae — Open-Supernova-Catalog als GitHub-JSON.
+befund api.superdarn.ca → superdarn.ca — SuperDARN-Canada-Download/Real-Time-Convection.
+befund apidev.uis.unesco.org → api.uis.unesco.org — Produktions-API antwortet (JSON).
+befund dsn.jpl.nasa.gov → eyes.nasa.gov/dsn/data/dsn.xml — DSN-Now-Feed (Accept-Kandidat, TODO).
+befund erddap.aodn.org.au → portal.aodn.org.au — AODN-Datenportal.
+befund erddap.saeon.ac.za → catalogue.saeon.ac.za — SAEON-Katalog.
+befund faostat4.fao.org → data.apps.fao.org — FAOSTAT-Katalogorganisation.
+befund gdp.aoml.noaa.gov → erddap.aoml.noaa.gov — Drifter-Daten via AOML-ERDDAP.
+befund its-live-data.jpl.nasa.gov → its-live.jpl.nasa.gov + stac.itslive.cloud — ITS_LIVE-Gletschervelozität.
+befund masie_ice.apps.nsidc.org → noaadata.apps.nsidc.org — G02135-Sea-Ice-Index.
+befund masie_web.apps.nsidc.org → noaadata.apps.nsidc.org — MASIE-CSV (G02186).
+befund modisrest.ornl.gov → modis.ornl.gov — REST-Webservice (Tippfehler im Host).
+befund esa-sst-cci-browser.ceda.ac.uk → climate.esa.int — ESA-CCI-SST-Reihen.
+befund geoserver.efas.eu → www.efas.eu — CEMS-Floods (EFAS).
+befund sdc3.astronomers.skatelescope.org → www.skatelescope.org — SKAO-Science-Data-Challenges.
+befund usdm.climate.gov → droughtmonitor.unl.edu — US-Drought-Monitor.
+befund www2.usgs.gov → www.usgs.gov — www2-Virtual-Host eingestellt (Daten: waterservices.usgs.gov, live).
+befund ztf.alerce.online → alerce.online — ALeRCE (TAP-Migration, siehe dead_sources-Note).
+befund gtnp.net → gtnpdatabase.org — GTN-P-Datenbank (Arctic Portal/AWI).
+befund api.blitzortung.org → data.blitzortung.org — Blitzortung-Datenhost (key-needed, Abschnitt 1).
+befund globalland.vgt.vito.be → land.copernicus.eu — CLMS, VITO-Global-Land dort fortgeführt.
+befund api.ember-climate.org → api.ember-energy.org — Ember v2 (Strom = Force-Gate prüfen).
+befund api.boldsystems.org → portal.boldsystems.org/api — BOLD-v4-API (molecular, Gate beachten).
+befund cems.ecmwf.int → european-flood.emergency.copernicus.eu — CEMS-Floods (EFAS/GloFAS).
+befund kauai.ccmc.gsfc.nasa.gov → iswa.ccmc.gsfc.nasa.gov — iSWA-System/API.
+befund www.globalfiredata.org → www.geo.vu.nl/~gwerf/GFED/GFED4/ — GFED4 (Autorenspiegel).
+befund api.reliefweb.int → api.reliefweb.int/v2/ — V2 live (V1 410).
+befund iagos.aeris-data.fr → services.iagos-data.fr — IAGOS-REST.
+befund api.openaq.org → api.openaq.org/v3/ — bereits integriert (fanout-p09 in sources.φ).
+
+### Tippfehler (verifiziert)
+befund api.ioda.ioda.caida.org → ioda.caida.org — doppeltes „ioda"-Segment.
+
+### Route lebt (404 war falsche Route — Recheck)
+befund api.adsabs.harvard.edu — /v1/search/query → 401 (Token nötig), API aktiv.
+befund api.weather.bom.gov.au — /v1/locations → live JSON.
+befund api.ebird.org — /v2/ → 403 (Key), API aktiv.
+befund api.entur.io — /journey-planner/v3/graphql (POST).
+befund api.digitransit.fi — Root antwortet.
+befund data.raspberryshake.org — /fdsnws/ aktiv.
+befund heatflow.world → portal.heatflow.world.
+befund www.fripon.org → fireball.fripon.org.
+befund macrostrat.org — API-Root unter /api.
+
+### Server lebt, Verbindung prüfen (ssl/transport)
+befund erddap.incois.gov.in — incois.gov.in lebt; SSL-Kette prüfen (-k).
+befund tsunami.incois.gov.in — incois.gov.in lebt; Subdomain/SSL prüfen.
+befund sepem.eu — http:// lebt; https kaputt.
+befund www.arpansa.gov.au — Root lebt; API-Pfad neu prüfen.
+befund usdmdataservices.unl.edu — Server lebt; USDM auf droughtmonitor.unl.edu.
+
+### tot (kein Nachfolger verifiziert)
+befund api.farmsense.net — tot.
+befund api.ebeard.org — tot (NXDOMAIN, auch ebeard.org).
+befund dods.wh.gov — tot (NXDOMAIN).
+befund soa.smext.faa.gov — tot (NXDOMAIN).
+befund surveys.coast.noaa.gov — tot (NXDOMAIN).
+
+### unverifiziert (ausstehend)
+befund api.fisheries.noaa.gov — ausstehend.
+befund api.mbari.org — ausstehend.
+befund catalogue.clms.copernicus.eu — ausstehend.
+befund lpa.esac.esa.int — ausstehend.
+befund world.openagritechdata.org — ausstehend.
+befund p.pn-mt.cm — ausstehend (.cm-TLD, Host unplausibel).
+befund p.ntrlst.rg — ausstehend (.rg keine gültige TLD).
+befund lightning.gld — ausstehend (.gld keine gültige TLD).
+befund lightningwa.info — ausstehend.
+befund modvolc.ov.ingv.it — ausstehend.
+befund easd.esac.esa.int — ausstehend.
+befund global-flood-monitor.org — ausstehend.
+befund iono4d.iri-ap.ru — ausstehend.
+befund mangrove-atlas.sei.org — ausstehend.
+befund quantumrandomnumbergenerator.net — ausstehend.
+befund service.das.earthscope.org — ausstehend.
+befund sisal.ees.ucdavis.edu — ausstehend.
+befund www.lido-ifremer.fr — ausstehend.
+befund worldtimeapi.org — ausstehend.
+befund api.astrocats.space — ausstehend (DNS ok, Server antwortet nicht).
+befund www.seis-insight.eu — ausstehend (DNS ok, Server antwortet nicht).
+
+## 3. API-Key benötigt (key-needed)
+# Gruppiert nach Schlüssel-Mechanismus. Kandidaten aus phi/blocked_sources.φ.
+# Bereits live (api.purpleair, firms.modaps) und Force-Gate-declined (query1.finance.yahoo.com) ausgeschlossen.
+
+### 403 — Auth-Gate / Bot-Block
+key-needed alerce.online — HTTP 403 — Auth-Gate oder Bot-Block. Recheck 2026-08-17: Datenroute api.alerce.online/ztf/v1 offen ohne Token.
+key-needed api.maptiler.com — HTTP 403 — Auth-Gate oder Bot-Block. — decline redistribution (CDN)
+key-needed api.nasa.gov — NASA-API-Key (neo-Feed 403; DONKI FLR api-key).
+key-needed api.networkrail.co.uk — Verdikt 2026-08-17: decline no-physical-force (Zugpositionen).
+key-needed api.resourcewatch.org — HTTP 403 — Auth-Gate oder Bot-Block. — decline redistribution (CDN)
+key-needed api.sensor.community — HTTP 403 — Auth-Gate oder Bot-Block.
+key-needed api.si.edu — HTTP 403 — Auth-Gate oder Bot-Block.
+key-needed api.worldbank.org — HTTP 403 — Auth-Gate oder Bot-Block.
+key-needed apiv3.iucnredlist.org — HTTP 403 — Auth-Gate oder Bot-Block.
+key-needed bgp.tools — HTTP 403 — Auth-Gate oder Bot-Block. — decline redistribution (CDN)
+key-needed climate.metoffice.cloud — HTTP 403 — Auth-Gate oder Bot-Block. Recheck 2026-08-17: Datenroute offen im Climate-Data-Portal (climate-themetoffice.hub.arcgis.com).
+key-needed climateknowledgeportal.worldbank.org — HTTP 403 — Auth-Gate oder Bot-Block.
+key-needed crates.io — HTTP 403 — Auth-Gate oder Bot-Block. — decline no-physical-force (CDN)
+key-needed data-api.globalforestwatch.org — HTTP 403 — Auth-Gate oder Bot-Block.
+key-needed lisn.igp.gob.pe — HTTP 403 — Auth-Gate oder Bot-Block.
+key-needed overpass-api.de — HTTP 403 — Auth-Gate oder Bot-Block.
+key-needed overpass.kumi.systems — HTTP 403 — Auth-Gate oder Bot-Block.
+key-needed volcano.si.edu — HTTP 403 — Auth-Gate oder Bot-Block.
+key-needed weather.cma.cn — HTTP 403 — Auth-Gate oder Bot-Block.
+key-needed whale.fm — HTTP 403 — Auth-Gate oder Bot-Block. Verdikt 2026-08-17: decline no-physical-force (Zooniverse-Klassifikationen).
+key-needed www.bom.gov.au — HTTP 403 — Auth-Gate oder Bot-Block.
+key-needed www.dxpredictor.com — HTTP 403 — Auth-Gate oder Bot-Block. — decline redistribution (CDN)
+key-needed www.epa.gov — HTTP 403 — Auth-Gate oder Bot-Block.
+key-needed www.ngdc.noaa.gov — HTTP 403 — Auth-Gate oder Bot-Block.
+key-needed www.reddit.com — HTTP 403 — Auth-Gate oder Bot-Block. — decline redistribution (CDN)
+key-needed www.wis-tns.org — HTTP 403 — Auth-Gate oder Bot-Block.
+key-needed www3.mbari.org — HTTP 403 — Auth-Gate oder Bot-Block.
+
+### 401 — Token / Registrierung
+key-needed ads.atmosphere.copernicus.eu — CAMS Atmosphere Data Store — Daten hinter Registrierung.
+key-needed api.electricitymap.org — HTTP 401 — Token/Registrierung nötig. — decline redistribution (CDN)
+key-needed api.europeana.eu — HTTP 401 — Token/Registrierung nötig. — decline no-physical-force (CDN)
+key-needed api.protectedplanet.net — HTTP 401 — Token/Registrierung nötig. — decline redistribution (CDN)
+key-needed api.sncf.com — HTTP 401 — Token/Registrierung nötig. — decline redistribution (CDN)
+key-needed api.z.ai — HTTP 401 — Token/Registrierung nötig. — decline redistribution (CDN)
+key-needed appeears.earthdatacloud.nasa.gov — AppEEARS verlangt Earthdata-Login.
+key-needed archive.opensearch.ceda.ac.uk — CEDA-Archiv verlangt Login.
+key-needed archive.swot.podaac.earthdata.nasa.gov — HTTP 401 — Token/Registrierung nötig.
+key-needed cdaac-www.cosmic.ucar.edu — HTTP 401 — Token/Registrierung nötig. Recheck 2026-08-17: Datenroute data.cosmic.ucar.edu offen ohne Login.
+key-needed data.blitzortung.org — HTTP 401 — Token/Registrierung nötig. — decline redistribution (CDN)
+key-needed data.lpdaac.earthdatacloud.nasa.gov — HTTP 401 — Token/Registrierung nötig.
+key-needed data.lsst.cloud — HTTP 401 — Token/Registrierung nötig. — decline redistribution (CDN)
+key-needed data.nsidc.earthdatacloud.nasa.gov — ICESat-2 ATL03 (LIDAR, em echt) — signierte Cloudfront-URL, Earthdata-Login.
+key-needed dev.meteostat.net — Meteostat-Dev-Docs — API verlangt Key. — decline redistribution (CDN)
+key-needed docs.sentinel-hub.com — Sentinel-Hub verlangt Key/Subscription. — decline redistribution (CDN)
+key-needed ebird.org — eBird-API verlangt Key (Login-Redirect).
+key-needed frost.met.no — HTTP 401 — Token/Registrierung nötig. Recheck 2026-08-17: FROST_CLIENT_ID/SECRET erstellt.
+key-needed gateway.api.globalfishingwatch.org — HTTP 401 — Token/Registrierung nötig. — decline redistribution (CDN)
+key-needed gracedb.ligo.org — refused: Gruppenmitgliedschaft (LVC/MOU), kein Self-Service; public superevents offen (Verdikt 2026-08-17).
+key-needed irsa.ipac.caltech.edu — Verdikt 2026-08-17: decline redundant (ZTF über Lasair/ALeRCE; TAP inventarisiert). Kein Token — S3 offen / IPAC-SSO.
+key-needed lasair-ztf.lsst.ac.uk — HTTP 401 — Token/Registrierung nötig. Recheck 2026-08-17: LASAIR_TOKEN im Profil vorhanden.
+key-needed lpdaacsvc.cr.usgs.gov — GEDI (LIDAR-Baumhöhe, em) hinter Earthdata-Login.
+key-needed marinecadastre.gov — Verdikt 2026-08-17: decline no-physical-force (Schiffspositionen, kein Feldwert).
+key-needed mast.stsci.edu — MAST verlangt Token. Verdikt 2026-08-17: TESS/HST/JWST-Photometrie (em) — Kandidat, MAST_TOKEN vorhanden.
+key-needed meteostat.net — Meteostat verlangt API-Key (key=). — decline redistribution (CDN)
+key-needed my-api.plantnet.org — HTTP 401 — Token/Registrierung nötig.
+key-needed my.cmems-du.eu — CMEMS-DU verlangt Login; zudem Modellprodukt.
+key-needed nrt.cmems-du.eu — CMEMS-NRT verlangt Login.
+key-needed nrt3.modaps.eosdis.nasa.gov — VIIRS-Aktivfeuer (thermal, echt) hinter Earthdata-Login.
+key-needed opendap.earthdata.nasa.gov — HTTP 401 — Token/Registrierung nötig.
+key-needed quickstats.nass.usda.gov — HTTP 401 — Token/Registrierung nötig. Verdikt 2026-08-17: decline no-physical-force (Agrarstatistik).
+key-needed sios-svalbard.org — offen ohne Account (Datenzugriff); SIOS-Account nur WG/Committee/Katalog (Verdikt 2026-08-17).
+key-needed toar-data.fz-juelich.de — Registrierung pending (2026-08-17).
+key-needed www.movebank.org — HTTP 401 — Token/Registrierung nötig.
+key-needed www.space-track.org — HTTP 401 — Token/Registrierung nötig.
+
+### Token / Account
+key-needed antares.noirlab.edu — Verdikt 2026-08-17: decline no-physical-force (nur Counts/Position, kein Feldwert).
+key-needed data.icos-cp.eu — grind: grind_b2find.φ
+
+### 429 — Rate-Limit
+key-needed api.semanticscholar.org — HTTP 429 — Rate-Limit; Schlüssel/Registrierung nötig. — decline no-physical-force (CDN)
+key-needed www.peeringdb.com — HTTP 429 — Rate-Limit; Schlüssel/Registrierung nötig. — decline no-physical-force (CDN)
+
+# gesamt: 67 Hosts
+
+## 4. Abgleich .secrets.local
+# Key-Status der key-needed Hosts (Abschnitt 3). "→ VAR" = Schlüssel liegt in .secrets.local.
+
+### Key vorhanden
+key api.nasa.gov → NASA_API_KEY
+key api.si.edu → SI_API_KEY
+key apiv3.iucnredlist.org → IUCN_TOKEN
+key www.wis-tns.org → TNS_API_KEY + TNS_UA
+key ebird.org → EBIRD_API_KEY
+key www.movebank.org → MOVEBANK_TOKEN (+USER/PASS)
+key my-api.plantnet.org → PLANTNET_KEY
+key www.space-track.org → SPACETRACK_USER/PASS
+key data-api.globalforestwatch.org → GFW_USER/PASS
+key my.cmems-du.eu → CMEMS_USER/PASS
+key nrt.cmems-du.eu → CMEMS_USER/PASS
+key appeears.earthdatacloud.nasa.gov → EARTHDATA_EDL_TOKEN
+key archive.swot.podaac.earthdata.nasa.gov → EARTHDATA_EDL_TOKEN
+key data.lpdaac.earthdatacloud.nasa.gov → EARTHDATA_EDL_TOKEN
+key data.nsidc.earthdatacloud.nasa.gov → EARTHDATA_EDL_TOKEN
+key lpdaacsvc.cr.usgs.gov → EARTHDATA_EDL_TOKEN
+key opendap.earthdata.nasa.gov → EARTHDATA_EDL_TOKEN
+key nrt3.modaps.eosdis.nasa.gov → EARTHDATA_EDL_TOKEN
+key ads.atmosphere.copernicus.eu → CDS_API_KEY (CAMS-Lizenz unklar)
+
+### Key vorhanden, Host außerhalb Abschnitt 3 (Port offen)
+key api.eia.gov → EIA_API_KEY
+key api.adsabs.harvard.edu → NASA_ADS_TOKEN
+key data.oceannetworks.ca → OCEANNETWORKS_TOKEN
+key supermag.jhuapl.edu → SUPERMAG_USER=omegaflow (logon-only; API aktuell Server-Fault db-get)
+key api.openaq.org → OPENAQ_API_KEY (bereits live, fanout-p09)
+key frost.met.no → FROST_CLIENT_ID (Secret vorhanden, nur für nicht-öffentliche Daten)
+key lasair-ztf.lsst.ac.uk → LASAIR_TOKEN (Recheck 2026-08-17: Token im Profil)
+key climate-themetoffice.hub.arcgis.com → offen (kein Key nötig)
+key mast.stsci.edu → MAST_TOKEN (Verdikt 2026-08-17 aufgehoben: TESS/HST/JWST em)
+
+### Key fehlt (Key-Erwerb ausstehend)
+# Offen ohne Key (Recheck 2026-08-17): alerce.online (api.alerce.online/ztf/v1), cdaac/cosmic (data.cosmic.ucar.edu).
+key decline api.electricitymap.org — decline redistribution (CDN)
+key decline api.europeana.eu — decline no-physical-force (CDN)
+key decline api.maptiler.com — decline redistribution (CDN)
+key fehlt api.networkrail.co.uk — decline no-physical-force (Verdikt 2026-08-17)
+key decline api.protectedplanet.net — decline redistribution (CDN)
+key decline api.resourcewatch.org — decline redistribution (CDN)
+key decline api.semanticscholar.org — decline no-physical-force (CDN)
+key fehlt api.sensor.community
+key decline api.sncf.com — decline redistribution (CDN)
+key fehlt api.worldbank.org
+key decline api.z.ai — decline redistribution (CDN)
+key fehlt antares.noirlab.edu — decline no-physical-force (Verdikt 2026-08-17)
+key fehlt archive.opensearch.ceda.ac.uk
+key decline bgp.tools — decline redistribution (CDN)
+key fehlt climate.metoffice.cloud
+key fehlt climateknowledgeportal.worldbank.org
+key decline crates.io — decline no-physical-force (CDN)
+key decline data.blitzortung.org — decline redistribution (CDN)
+key fehlt data.icos-cp.eu
+key decline data.lsst.cloud — decline redistribution (CDN)
+key decline dev.meteostat.net — decline redistribution (CDN)
+key decline docs.sentinel-hub.com — decline redistribution (CDN)
+key fehlt gracedb.ligo.org — refused (Gruppenmitgliedschaft LVC/MOU, kein Self-Service; public offen)
+key decline gateway.api.globalfishingwatch.org — decline redistribution (CDN)
+key fehlt irsa.ipac.caltech.edu — decline redundant (Verdikt 2026-08-17). Kein Token: S3 offen / IPAC-SSO (email+passwort).
+key fehlt lisn.igp.gob.pe
+key decline meteostat.net — decline redistribution (CDN)
+key fehlt overpass-api.de
+key fehlt overpass.kumi.systems
+key fehlt quickstats.nass.usda.gov — decline no-physical-force (Verdikt 2026-08-17)
+key fehlt sios-svalbard.org — offen ohne Key (Datenzugriff; Account nur WG/Committee)
+key fehlt toar-data.fz-juelich.de — Registrierung pending
+key fehlt volcano.si.edu
+key fehlt weather.cma.cn
+key fehlt whale.fm — decline no-physical-force (Verdikt 2026-08-17)
+key fehlt www.bom.gov.au
+key decline www.dxpredictor.com — decline redistribution (CDN)
+key fehlt www.epa.gov
+key fehlt www.ngdc.noaa.gov
+key decline www.peeringdb.com — decline no-physical-force (CDN)
+key decline www.reddit.com — decline redistribution (CDN)
+key fehlt www3.mbari.org
+
+## 5. Redistributions-Verdikt (CDN)
+# Stand 2026-08-17 — Grundsatz: Alle Messwerte werden auf das CDN (GitHub Releases)
+# manifestiert und öffentlich redistribuiert. Nur Lizenzen mit Redistribution
+# (Public Domain, CC0, CC-BY, OGL/NLOD) sind akzeptiert. Kommerzielle/proprietäre
+# APIs und Nicht-Messwerte sind ausgeschlossen — siehe docs/plans/AUTH_APIS.md §E.
+
+### decline redistribution (kommerziell / proprietär / Redistribution verboten)
+verdict api.electricitymap.org — kommerziell (Daten proprietär) — CDN-Ausschluss.
+verdict api.maptiler.com — kommerzielle Tiles — CDN-Ausschluss.
+verdict api.sncf.com — kommerziell (ToS) — CDN-Ausschluss.
+verdict api.z.ai — kommerziell (AI-Modell, kein Messwert) — CDN-Ausschluss.
+verdict bgp.tools — kommerziell, Redistribution eingeschränkt — CDN-Ausschluss.
+verdict docs.sentinel-hub.com — kommerziell (Subscription) — CDN-Ausschluss.
+verdict dev.meteostat.net — kommerziell (paid) — CDN-Ausschluss.
+verdict meteostat.net — kommerziell (paid) — CDN-Ausschluss.
+verdict www.dxpredictor.com — kommerziell — CDN-Ausschluss.
+verdict www.reddit.com — kommerziell (ToS: keine Redistribution) — CDN-Ausschluss.
+verdict api.protectedplanet.net — WDPA — Redistribution eingeschränkt — CDN-Ausschluss.
+verdict api.resourcewatch.org — WRI — ToS/Redistribution unklar — CDN-Ausschluss.
+verdict data.blitzortung.org — Community-Lizenz, nicht-kommerziell, Redistribution eingeschränkt — CDN-Ausschluss.
+verdict gateway.api.globalfishingwatch.org — ToS — Redistribution eingeschränkt — CDN-Ausschluss.
+verdict data.lsst.cloud — LSST — proprietäre Frist — CDN-Ausschluss.
+
+### decline no-physical-force (kein Messwert, Force-Gate)
+verdict crates.io — Paket-Registry — kein Messwert.
+verdict api.europeana.eu — Kultur-Metadaten — kein Messwert.
+verdict api.semanticscholar.org — Bibliographie — kein Messwert.
+verdict www.peeringdb.com — Netz-Infrastruktur — kein Messwert.
+verdict api.networkrail.co.uk — Zugpositionen (hergestellte Objekte) — kein natürlicher Feldwert.
+verdict marinecadastre.gov — Schiffspositionen (hergestellte Objekte) — kein natürlicher Feldwert.
+verdict quickstats.nass.usda.gov — Agrarstatistik — kein physischer Messwert.
+verdict whale.fm — Zooniverse-Klassifikationen — keine Messung.
+verdict antares.noirlab.edu — nur Counts/Position, kein Feldwert.
+
+### decline redundant (durch andere Quellen abgedeckt)
+verdict irsa.ipac.caltech.edu — ZTF über Lasair/ALeRCE abgedeckt; TAP inventarisiert. Kein Token: öffentliche Daten offen auf AWS S3 Open Data, proprietäres ZTF via IPAC-SSO.
+# mast.stsci.edu — Verdikt 2026-08-17 aufgehoben (TESS/HST/JWST-Photometrie em, MAST_TOKEN vorhanden).
+

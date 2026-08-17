@@ -1,0 +1,35 @@
+# recheck b1 (2026-08-17) — grind-flash: 6 Kandidaten re-probt (Endpoint + Struktur + Force-Gate)
+# Klassifikationen: accepted / decline / gap / pro-review. Draft-Bloecke inline. Register unveraendert.
+
+kandidat https://api.argovis.com
+gap
+note api.argovis.com sendet beim TLS-Handshake einen SNI-Fehler (tlsv1 unrecognized name; DNS loest auf AWS-IPs) — der lebende API-Host ist https://argovis-api.colorado.edu. Korrekte Query-Syntax verifiziert: GET /argo?startDate=ISO&endDate=ISO&box=[[lonMin,latMin],[lonMax,latMax]]&data=temperature,salinity,pressure → 200 JSON-Array aus Profil-Objekten mit geolocation.coordinates (lon,lat), timestamp und data (katenierte Messreihe) + data_info (Variablen/Units: pressure decibar, salinity psu, temperature degree_Celsius). Ohne data-Parameter traegt die Antwort nur Position, Zeitstempel und Variablen-Liste (position-only). Physik echt: Argo-CTD (temperature→thermal, salinity→diffusion, pressure→gravity). parser-merkmal: das data-Feld ist ein flaches Array aus den Messreihen ALLER angefragten Variablen hintereinander (Split-Punkte pro Profil variabel) — eine Variable ist ohne Schnitt-Schema nicht per Dot-Path adressierbar; tiefenaufgeloeste Manifestation braucht je Tiefen-Level alt=-tiefe (meter) je Profil.
+
+kandidat https://data.sensor.community/airrohr/v1/
+accepted
+note Root-Pfad 404 (wie dead-Eintrag), die Archive-Routes leben: filter/area={lat},{lon},{radius} → 200 JSON, filter/box={lat1},{lon1},{lat2},{lon2} → 200 JSON, filter/type=SDS011 → 200 JSON (P1=PM10, P2=PM2.5 je Messung), filter/station_id={id} → 200 leeres Array. area-ID fuer den Fenster-Block: filter/box={lat_min},{lon_min},{lat_max},{lon_max} — das Presence-Fenster ist die area, verifiziert (box=52,13,53,14 lieferte Berliner SDS011-Messungen). Physik echt: PM→diffusion ug/m3. caveat: sensordatavalues ist ein Array, dessen Variablen je Sensortyp wechseln (SDS011: P1,P2; DHT22: temperature,humidity) — index 0/1 ist nur fuer PM-Sensoren stabil P1/P2; indoor-Sensoren (location.indoor=1) sind im Fenster nicht herausfilterbar.
+url https://data.sensor.community/airrohr/v1/filter/box={lat_min},{lon_min},{lat_max},{lon_max}
+ttl 300
+on earth 0 0 0
+map .
+lat location.latitude
+lon location.longitude
+field sensordatavalues.0.value air_pm10_ugm3 gaussian-inverse-square diffusion μg/m3 30 0.0 0.0
+field sensordatavalues.1.value air_pm25_ugm3 gaussian-inverse-square diffusion μg/m3 30 0.0 0.0
+
+kandidat https://environment.data.gov.uk
+accepted
+note Readings-Endpoint-Struktur verifiziert: /flood-monitoring/id/stations/{station}/readings.json?_limit=3 → 200 JSON {"meta":{"publisher":...},"items":[{@id,dateTime,measure,value,quality}]}, value = Pegel in m, items.value bei _limit=1 ein Wert. Der Block lebt bereits in sources.φ (hydrosphere_river_stage_m gravity m, fanout 40 ueber /id/stations). Recheck bestaetigt: Endpoint lebt, Struktur deckt den existierenden Block.
+
+kandidat https://imag-data.bgs.ac.uk/GIN_V1/observation
+accepted
+note /GIN_V1/observation und /GIN_V1/observation/catalog → 404. Recherche: die Beobachtungs-Zeitreihe (INTERMAGNET 1-min XYZF) traegt der hapi-Sibling: /GIN_V1/hapi/data?id=ABK/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json → 200 JSON HAPI 3.1, data-Zeilen [timestamp,[X,Y,Z],F] in nT — der Block lebt bereits in sources.φ (magnetosphere_total_field_nt em nT, fanout 40 ueber GINServices?Request=GetCapabilities, die die ObservatoryList mit IagaCode+Lat/Lon liefert). GINServices?Request=GetData&format=JSON antwortet 400 "Missing observatory code" (obsCode/IagaCode/obs abgelehnt — Parameter-Name nicht gefunden), aber hapi traegt dieselben Zeitreihen.
+
+kandidat https://irsa.ipac.caltech.edu/cgi-bin/Gator/nph-scan
+accepted
+url https://irsa.ipac.caltech.edu/cgi-bin/Gator/nph-scan
+note nph-scan → 200 HTML "Gator Catalog List" (Browser-Formular, kein Daten-Endpoint). Die CSV-Syntax ist jetzt geschlossen: nph-query?catalog=allwise_p3as_psd&spatial=box&objstr=RA,Dec&size=arcsec&outfmt=1&selcols=ra,dec,w1mpro → 200 text/plain, fixlen-Tabelle mit Datenzeilen (w1mpro mag; RowsRetrieved=2) — objstr statt des frueher falschen ra/dec. redundant — kein neuer Block (TAP-Route inventarisiert, phi/katalog/tap_index_irsa.φ, provider irsa TAP/sync, 995 Tabellen). Gator-CSV lebt, deckt aber keinen neuen Kanal.
+
+kandidat https://www.supermag.org
+gap
+note www.supermag.org: DNS loest nicht. Lebender Host supermag.jhuapl.edu: 200 HTML (Root und /mag/?fidelity=low&start=...&end=...&sites=KAK&format=json liefert das HTML "Download Data"-Formular). Datenzugang: Download laeuft ueber eine Login-Session (Formular-POST + Session-Cookie). .secrets.local traegt SUPERMAG_USER + SUPERMAG_PASS — die Session-Auth (Login-POST + Cookie-Jar) ist ein Parser-Gap, kein Key-Problem. Naechster Schritt: Session-Probe mit den gespeicherten Credentials. Physik echt: Boden-Magnetometer-Netz em nT. parser-merkmal: Session-Auth-Fluss (Login-POST + Cookie-Jar) fuer den /mag/-Download-Endpoint.

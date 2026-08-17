@@ -1,0 +1,667 @@
+# grind arcgis b16 (2026-08-15) — keywords: ground displacement, borehole tilt, atmospheric pressure, wind profiler, tsunami gauge, tide gauge
+# keyword ground displacement
+dataset TAR Active Faults | https://services2.arcgis.com/Z0aWguFDHESYteHT/arcgis/rest/services/TAR_Active_Faults/FeatureServer/1
+candidate https://services2.arcgis.com/Z0aWguFDHESYteHT/arcgis/rest/services/TAR_Active_Faults/FeatureServer/1
+note felder: FID, Shape__Length, displ, last_event, name, rec_interv, slip_rate, slip_type
+dataset Ground Displacement (2022) | https://services2.arcgis.com/NlsizNmbMFiinWw4/arcgis/rest/services/Wildfire_Induced_Earthflows_within_Deadman_Watershed_WFL1/FeatureServer/0
+candidate https://services2.arcgis.com/NlsizNmbMFiinWw4/arcgis/rest/services/Wildfire_Induced_Earthflows_within_Deadman_Watershed_WFL1/FeatureServer/0
+note felder: CODE, COHERENCE, D20220509, D20220521, D20220602, D20220614, D20220626, D20220708, D20220720, D20220801, D20220813, D20220825, D20220906, D20220918, D20220930, D20221012, D20221024, EFF_AREA
+dataset Vulnerability to Displacement | https://services1.arcgis.com/zdB7qR0BtYrg0Xpl/arcgis/rest/services/VTD26_MapData/FeatureServer/0
+candidate https://services1.arcgis.com/zdB7qR0BtYrg0Xpl/arcgis/rest/services/VTD26_MapData/FeatureServer/0
+note felder: CWEdAve, CWMedHHIncome, DIST_NUM, EdIScore, GEOID_Num, GEOID_TRACT, MHIScore, Median_HouseholdIncome, NAME, NBHD_ID, NBHD_NAME, Nmbr_Age25Plus, Nmbr_Age25Plus_LessThanBA, Nmbr_CWOccupiedUnits, Nmbr_CWOccupiedUnitsWithRenters, Nmbr_OccupiedUnits, Nmbr_OccupiedUnitsWithRenters, OBJECTID
+dataset fishing ground EmergingHotSpotAnalysis | https://services8.arcgis.com/22aEWILt579igsi8/arcgis/rest/services/fishing_ground_EmergingHotSpotAnalysis/FeatureServer/0
+decline https://services8.arcgis.com/22aEWILt579igsi8/arcgis/rest/services/fishing_ground_EmergingHotSpotAnalysis/FeatureServer/0
+note arcgis-error-body
+dataset Ground Control Points | https://services8.arcgis.com/wU8B1yHHaE2kdIET/arcgis/rest/services/Ground_Control_Points/FeatureServer/0
+candidate https://services8.arcgis.com/wU8B1yHHaE2kdIET/arcgis/rest/services/Ground_Control_Points/FeatureServer/0
+note felder: ControlNumber, ControlPointID, ControlPointName, ControlPointNotes, GlobalID, LocalElev, OBJECTID, esrignss_altitude, esrignss_avg_h_rms, esrignss_avg_positions, esrignss_avg_v_rms, esrignss_correctionage, esrignss_direction, esrignss_fixdatetime, esrignss_fixtype, esrignss_h_rms, esrignss_h_stddev, esrignss_hdop
+# keyword borehole tilt
+dataset Bama Borehole Drilling Information | https://services9.arcgis.com/cijYK4z9O9mDnNnO/arcgis/rest/services/Bama_Borehole_Drilling_Information/FeatureServer
+decline https://services9.arcgis.com/cijYK4z9O9mDnNnO/arcgis/rest/services/Bama_Borehole_Drilling_Information/FeatureServer
+note arcgis-error-body
+dataset IE GSI Bedrock Boreholes (Unverified) 100k Ireland (ROI) ITM Download | https://gsi.geodata.gov.ie/server/rest/services/Bedrock/IE_GSI_Bedrock_Boreholes_Unverified_100K_IE26_ITM/FeatureServer/0
+dead https://gsi.geodata.gov.ie/server/rest/services/Bedrock/IE_GSI_Bedrock_Boreholes_Unverified_100K_IE26_ITM/FeatureServer/0
+note fetch-void
+dataset Borehole | https://services5.arcgis.com/OCY4MgI6bGqUzBPm/arcgis/rest/services/60727311_MLPSA_land_soil/FeatureServer/0
+candidate https://services5.arcgis.com/OCY4MgI6bGqUzBPm/arcgis/rest/services/60727311_MLPSA_land_soil/FeatureServer/0
+note felder: BGS_ID, BSUFF, CONFIDENTI, EASTING, GRID_REFER, LENGTH, LOCATION, NAME, NORTHING, NUMB, OBJECTID, ORIGINAL_N, QS, REGNO, RT, SIR_ACCNO
+dataset Borehole Access  | https://services6.arcgis.com/ulN9afthBXe6fgco/arcgis/rest/services/Borehole_Investigations/FeatureServer/2
+candidate https://services6.arcgis.com/ulN9afthBXe6fgco/arcgis/rest/services/Borehole_Investigations/FeatureServer/2
+note felder: AltMode, Base, BeginTime, Clamped, EndTime, Extruded, FolderPath, Name, OBJECTID, PopupInfo, Shape__Length, Snippet, SymbolID, TimeSpan, TimeStamp
+dataset Borehole Field | https://services.arcgis.com/b3fMqPOmotX6SV4k/arcgis/rest/services/Swannee_Neighborhood__Geothermal_Competition_WFL1/FeatureServer/6
+candidate https://services.arcgis.com/b3fMqPOmotX6SV4k/arcgis/rest/services/Swannee_Neighborhood__Geothermal_Competition_WFL1/FeatureServer/6
+note felder: FID, Name, NoteType, Notes, Shape_Leng, Shape__Area, Shape__Length, created_da, created_us, last_edi_1, last_edite
+dataset Borehole Point | https://services5.arcgis.com/KEZIbVsXEvL1ZLY5/arcgis/rest/services/27175_Dunsapie_Survey/FeatureServer/23
+candidate-leer https://services5.arcgis.com/KEZIbVsXEvL1ZLY5/arcgis/rest/services/27175_Dunsapie_Survey/FeatureServer/23
+note 0 rows, felder unbekannt
+dataset Auki Borehole | https://services3.arcgis.com/SfudOxhLKCrT28ZW/arcgis/rest/services/StoryMap_to_Publish_v2/FeatureServer/5
+candidate https://services3.arcgis.com/SfudOxhLKCrT28ZW/arcgis/rest/services/StoryMap_to_Publish_v2/FeatureServer/5
+note felder: Assest_No, OBJECTID, capacity, casing_dia, date_inspe, drill_dia_, facility, facility_c, facility_n, id, id_0, latitude, longitude, network_co, network_na, pumping_he, remarks, sketch
+dataset borehole 2024 | https://services1.arcgis.com/O1Rm75XW8zZczaHP/arcgis/rest/services/MRD_WFL1/FeatureServer/3
+candidate https://services1.arcgis.com/O1Rm75XW8zZczaHP/arcgis/rest/services/MRD_WFL1/FeatureServer/3
+note felder: FID, borehole_1, borehole_d, borehole_i, borehole_n, completion, date_time_, district, division, drilling_t, elevation, intented_s, island, latitude, lining, lithology, location, longitude
+dataset Planned Borehole | https://services9.arcgis.com/Lk41p1MmPvGNgRCz/arcgis/rest/services/Sprocket_Energy_Spill_at_05_13_WFL1/FeatureServer/0
+candidate https://services9.arcgis.com/Lk41p1MmPvGNgRCz/arcgis/rest/services/Sprocket_Energy_Spill_at_05_13_WFL1/FeatureServer/0
+note felder: FID, GlobalID, Id
+dataset Waterpoint/Borehole | https://services.arcgis.com/6cwZ3ahONdhhnVyL/arcgis/rest/services/Hobatere_WFL1/FeatureServer/5
+candidate https://services.arcgis.com/6cwZ3ahONdhhnVyL/arcgis/rest/services/Hobatere_WFL1/FeatureServer/5
+note felder: Borehole_Number, CONS_ID, Comments, Edited_By, GlobalID, Information_Last_Edit_Date, Information_Source_File, Information_Verified, Lat, Location_Name, Location_Type, Long, NAME, Natural_source_size, OBJECTID, Original_Source, RUWS_Number, Source_availability
+dataset BOREHOLE POINTS | https://services5.arcgis.com/M6zu9I5Mi62A0yQO/arcgis/rest/services/fieldCollecteddata/FeatureServer/1
+candidate https://services5.arcgis.com/M6zu9I5Mi62A0yQO/arcgis/rest/services/fieldCollecteddata/FeatureServer/1
+note felder: BH_ID, DEPTH, OBJECTID, X, Y, Z, bh_txt
+dataset Borehole Components | https://services3.arcgis.com/Kb9idbuOS9ILjfGd/arcgis/rest/services/Water/FeatureServer/0
+candidate-leer https://services3.arcgis.com/Kb9idbuOS9ILjfGd/arcgis/rest/services/Water/FeatureServer/0
+note 0 rows, felder unbekannt
+dataset Borehole Logs | https://services.arcgis.com/DCPX1PuggGH4Tici/arcgis/rest/services/Borehole%20Logs/FeatureServer/0
+candidate https://services.arcgis.com/DCPX1PuggGH4Tici/arcgis/rest/services/Borehole%20Logs/FeatureServer/0
+note felder: ALTITUDE_ft, CAPT_PROJ, CreationDate, Creator, DGSID, DRILL_DATE, E_UTM_m, EditDate, Editor, GlobalID, HOLE_DEPTH_ft, LATITUDE, LINK, LOCALID, LONGITUDE, NOTES, N_UTM_m, OBJECTID
+dataset borehole storage | https://services8.arcgis.com/z7Qx1l2dIAfemAAZ/arcgis/rest/services/Lagring_view/FeatureServer/9
+decline https://services8.arcgis.com/z7Qx1l2dIAfemAAZ/arcgis/rest/services/Lagring_view/FeatureServer/9
+note arcgis-error-body
+dataset Borehole Logs | https://services2.arcgis.com/gmEC1e2ecZnyynki/arcgis/rest/services/Borehole_Logs/FeatureServer/1
+candidate https://services2.arcgis.com/gmEC1e2ecZnyynki/arcgis/rest/services/Borehole_Logs/FeatureServer/1
+note felder: OBJECTID
+dataset Borehole Field | https://services.arcgis.com/b3fMqPOmotX6SV4k/arcgis/rest/services/Borehole_Field/FeatureServer/6
+candidate https://services.arcgis.com/b3fMqPOmotX6SV4k/arcgis/rest/services/Borehole_Field/FeatureServer/6
+note felder: FID, Name, NoteType, Notes, Shape_Leng, Shape__Area, Shape__Length, created_da, created_us, last_edi_1, last_edite
+dataset Borehole Point | https://services5.arcgis.com/KEZIbVsXEvL1ZLY5/arcgis/rest/services/27836_Survey/FeatureServer/8
+candidate-leer https://services5.arcgis.com/KEZIbVsXEvL1ZLY5/arcgis/rest/services/27836_Survey/FeatureServer/8
+note 0 rows, felder unbekannt
+dataset LBI Borehole | https://services3.arcgis.com/pKves1c0n6gyoHMM/arcgis/rest/services/Mukono_Surveyed_School_WFL1/FeatureServer/2
+candidate https://services3.arcgis.com/pKves1c0n6gyoHMM/arcgis/rest/services/Mukono_Surveyed_School_WFL1/FeatureServer/2
+note felder: Beneficiar, Bore_type, Borehole_C, District, FID, FID_, Latitude, Longitude, Region, Village_Co, Year
+dataset borehole xy | https://services1.arcgis.com/qr14biwnHA6Vis6l/arcgis/rest/services/borehole_xy/FeatureServer/0
+candidate https://services1.arcgis.com/qr14biwnHA6Vis6l/arcgis/rest/services/borehole_xy/FeatureServer/0
+note felder: API_WELL_NUMBER, BOTM_AREA_CODE, BOTM_BLOCK_NUMBER, BOTM_LATITUDE, BOTM_LEASE_NUMBER, BOTM_LONGITUDE, COMPANY_NAME, ID, OBJECTID, SURF_LATITUDE, SURF_LEASE_NUMBER, SURF_LONGITUDE, UNDWTR_COMP_STUB, WATER_DEPTH, WELL_NAME, WELL_NAME_SUFFIX
+dataset ERCO BOREHOLE | https://services.arcgis.com/Cif2vyIafUMtRuVN/arcgis/rest/services/659183_0000_4GDD_0001_PreliminaryAlignment/FeatureServer/7
+candidate https://services.arcgis.com/Cif2vyIafUMtRuVN/arcgis/rest/services/659183_0000_4GDD_0001_PreliminaryAlignment/FeatureServer/7
+note felder: CREATE_DATE, CREATE_USER, DESCRIPTION, EASTING, EDIT_DATE, EDIT_USER, FEATURE, GlobalID, NAME, NORTHING, OBJECTID, VERSION
+dataset BOREHOLE LOG | https://services6.arcgis.com/Av3KhOzUMUMSORVt/arcgis/rest/services/service_f47eea0c19a54b238f3722ec74c2fc1a/FeatureServer
+decline https://services6.arcgis.com/Av3KhOzUMUMSORVt/arcgis/rest/services/service_f47eea0c19a54b238f3722ec74c2fc1a/FeatureServer
+note arcgis-error-body
+# keyword atmospheric pressure
+dataset Pressure Monitoring Areas | https://services.arcgis.com/U5e5v7pUT7BNl3dr/arcgis/rest/services/Pressure_Monitoring_Areas/FeatureServer/0
+candidate https://services.arcgis.com/U5e5v7pUT7BNl3dr/arcgis/rest/services/Pressure_Monitoring_Areas/FeatureServer/0
+note felder: Id, OBJECTID, Shape__Area, Shape__Length
+dataset Pressure Zones  | https://services6.arcgis.com/ZGYHIuOAkxkv8laH/arcgis/rest/services/Pressure_Zones_/FeatureServer/0
+candidate https://services6.arcgis.com/ZGYHIuOAkxkv8laH/arcgis/rest/services/Pressure_Zones_/FeatureServer/0
+note felder: Area_Acres, Color, Elevation, Entity, FID, Layer, LineWt, Linetype, RefName, Shape_Leng, Shape__Area, Shape__Length
+dataset Water Pressure Boundary Areas | https://services.arcgis.com/apTfC6SUmnNfnxuF/arcgis/rest/services/Water_Pressure_Boundary_Areas/FeatureServer/0
+candidate https://services.arcgis.com/apTfC6SUmnNfnxuF/arcgis/rest/services/Water_Pressure_Boundary_Areas/FeatureServer/0
+note felder: ACRES, AREA_ID, CENTROID_X, CENTROID_Y, FID, NAME, OBJECTID, Shape__Area, Shape__Length, TOTAL_ACRE, TTRRSS
+dataset Water Pressure Zones | https://services2.arcgis.com/CnkB6jCzAsyli34z/arcgis/rest/services/OpenData_WaterInfrastructure/FeatureServer/25
+candidate https://services2.arcgis.com/CnkB6jCzAsyli34z/arcgis/rest/services/OpenData_WaterInfrastructure/FeatureServer/25
+note felder: GlobalID, OBJECTID, Shape__Area, Shape__Length, ZoneName, created_date, created_user, creationdate, creator, last_edited_date, last_edited_user, lastupdate, updatedby
+dataset Low Pressure Sewer Main | https://services2.arcgis.com/NIkzUpjDtspiBG0j/arcgis/rest/services/Low_Pressure_Sewer_Main/FeatureServer/0
+candidate https://services2.arcgis.com/NIkzUpjDtspiBG0j/arcgis/rest/services/Low_Pressure_Sewer_Main/FeatureServer/0
+note felder: ACTIVEFLAG, ASSOC_FACI, DIAMETER, ENABLED, ESMT_MAINT, FACILITYID, FID, INSTALLDAT, LENGTH, MAINTBY, MATERIAL, OBJECTID, ORIG_ID, OWNEDBY, SHAPE_STLe, Shape__Length, WATERSHED, WATERTYPE
+dataset Pressure Exemption Areas | https://services5.arcgis.com/8SdjYDkJx9faF4I2/arcgis/rest/services/Pressure_Exemption_Areas/FeatureServer/0
+candidate https://services5.arcgis.com/8SdjYDkJx9faF4I2/arcgis/rest/services/Pressure_Exemption_Areas/FeatureServer/0
+note felder: Category, FID, PressureRa, Shape__Area, Shape__Length
+dataset Parksville Water High Pressure | https://services7.arcgis.com/6Ys1qjTn2qXd9VRQ/arcgis/rest/services/Parksville_Water_High_Pressure/FeatureServer/88
+candidate https://services7.arcgis.com/6Ys1qjTn2qXd9VRQ/arcgis/rest/services/Parksville_Water_High_Pressure/FeatureServer/88
+note felder: Description, GlobalID, GlobalID_2, Notes, OBJECTID, Shape__Area, Shape__Length, WaterHighPressureID
+dataset Hot Spots Pressure | https://services6.arcgis.com/FYV0Jn1BW3FWy4XQ/arcgis/rest/services/Hot%20Spots%20Pressure/FeatureServer/0
+candidate https://services6.arcgis.com/FYV0Jn1BW3FWy4XQ/arcgis/rest/services/Hot%20Spots%20Pressure/FeatureServer/0
+note felder: GiPValue, GiZScore, Gi_Bin, Gi_Text, NNeighbors, OBJECTID, Pressure, SOURCE_ID
+dataset High Blood Pressure Prevalence | https://services.arcgis.com/707Mk8fFdkSwTkI9/arcgis/rest/services/High_Blood_Pressure_Prevalence/FeatureServer/0
+candidate https://services.arcgis.com/707Mk8fFdkSwTkI9/arcgis/rest/services/High_Blood_Pressure_Prevalence/FeatureServer/0
+note felder: AGE_10_14, AGE_15_19, AGE_20_24, AGE_25_34, AGE_35_44, AGE_45_54, AGE_55_64, AGE_5_9, AGE_65_74, AGE_75_84, AGE_85_UP, AGE_UNDER5, AMERI_ES, ASIAN, AVE_FAM_SZ, AVE_HH_SZ, Abridged_l, BLACK
+dataset Water Pressure Valve | https://services7.arcgis.com/ScLuo8VREMYorAkO/arcgis/rest/services/Open_Data_Water_Pressure_Valve2/FeatureServer/0
+candidate https://services7.arcgis.com/ScLuo8VREMYorAkO/arcgis/rest/services/Open_Data_Water_Pressure_Valve2/FeatureServer/0
+note felder: ASSETGROUP, ASSETTYPE, Compkey, GLOBALID, LegacyID, OBJECTID, accountid, assetid, constructionstatus, diameter, installdate, maintby, notes, ownedby
+dataset Blood Pressure And Weight Kiosk | https://services.arcgis.com/ykpntM6e3tHvzKRJ/arcgis/rest/services/BloodPressureAndWeightKiosk/FeatureServer/0
+candidate https://services.arcgis.com/ykpntM6e3tHvzKRJ/arcgis/rest/services/BloodPressureAndWeightKiosk/FeatureServer/0
+note felder: FacilityCity, FacilityFullStreetAddress, FacilityID, FacilityName, FacilityZipCode, KioskLocation, OBJECTID, PictureWebLink
+dataset Hurricane Ivan Pressure Data | https://services1.arcgis.com/TQSFiGYN0xveoERF/arcgis/rest/services/ivanpts/FeatureServer/0
+candidate https://services1.arcgis.com/TQSFiGYN0xveoERF/arcgis/rest/services/ivanpts/FeatureServer/0
+note felder: CATEGORY, Date, HURALLL020, LAT, LENGTH, LENGTH_1, LONG, OBJECTID, OBJECTID_1, PRESSURE, WIND_KTS, WIND_MPH
+dataset Static Pressure (psi) | https://services.arcgis.com/U5e5v7pUT7BNl3dr/arcgis/rest/services/Analysis_Results_South_Route/FeatureServer/0
+candidate https://services.arcgis.com/U5e5v7pUT7BNl3dr/arcgis/rest/services/Analysis_Results_South_Route/FeatureServer/0
+note felder: ELEVATION, ID, OBJECTID, PRESSURE
+dataset Static Pressure (psi) | https://services.arcgis.com/U5e5v7pUT7BNl3dr/arcgis/rest/services/WAWSA_Analysis_Results_North_Route/FeatureServer/0
+candidate https://services.arcgis.com/U5e5v7pUT7BNl3dr/arcgis/rest/services/WAWSA_Analysis_Results_North_Route/FeatureServer/0
+note felder: ELEVATION, ID, OBJECTID, PRESSURE
+dataset CFWI SFWMD Atmospheric Sites | https://services1.arcgis.com/sDAPyc2rGRn7vf9B/arcgis/rest/services/CFWI_SFWMD_Atmospheric_Sites/FeatureServer/0
+candidate https://services1.arcgis.com/sDAPyc2rGRn7vf9B/arcgis/rest/services/CFWI_SFWMD_Atmospheric_Sites/FeatureServer/0
+note felder: COLLECTION_AGENCY, DATA_HYPERLINK, DATESTAMP_LAST_UPDATED, DMIT_WORK_PLAN_SITE, LAND_SURFACE_ELEV, LATITUDE_DD, LATITUDE_DMS, LONGITUDE_DD, LONGITUDE_DMS, NOAA_NBR, OBJECTID, RAIN_END, RAIN_START, RECORDER_TYPE, SITE_ID, SITE_NAME, SITE_STATUS, USGS_SITE_NBR
+dataset Pressure | https://services1.arcgis.com/AhXvNWFdL7hH4TjJ/arcgis/rest/services/Pressure/FeatureServer/0
+candidate https://services1.arcgis.com/AhXvNWFdL7hH4TjJ/arcgis/rest/services/Pressure/FeatureServer/0
+note felder: ALT_m, DO_mg_perL, DO_percent, Date, FNU, Lat, Long, OBJECTID, SAL_ppt, Specific_Conductance, TSS_mg_perL, Time, deg_C, mmHg, pH
+dataset Water Pressure 2020 | https://services1.arcgis.com/OAm9Y82zSLuLES1a/arcgis/rest/services/Water_Pressure_2020/FeatureServer/0
+candidate https://services1.arcgis.com/OAm9Y82zSLuLES1a/arcgis/rest/services/Water_Pressure_2020/FeatureServer/0
+note felder: Id, OBJECTID, ORIG_FID, Pressure, Shape__Area, Shape__Length, gridcode
+dataset Water Pressure Zones | https://services7.arcgis.com/ScLuo8VREMYorAkO/arcgis/rest/services/Aquatera_Water_Distribution_System_Data_view/FeatureServer/109
+candidate https://services7.arcgis.com/ScLuo8VREMYorAkO/arcgis/rest/services/Aquatera_Water_Distribution_System_Data_view/FeatureServer/109
+note felder: GlobalID, OBJECTID, Shape__Area, Shape__Length, ZONENAME
+dataset Barwon Water Pressure Sewer Pipes | https://services8.arcgis.com/uLK1YQYKdEhgFHsx/arcgis/rest/services/Barwon_Water_Sewer_Assets/FeatureServer/2
+candidate https://services8.arcgis.com/uLK1YQYKdEhgFHsx/arcgis/rest/services/Barwon_Water_Sewer_Assets/FeatureServer/2
+note felder: BW_ASSET_ID, DOWNSTREAM_COVELEV, DOWNSTREAM_INVELEV, DOWNSTREAM_NODE, DOWNSTREAM_NSL, FEATURE_QUALITY, GENERAL_TEXT, Latitude, Longitude, OBJECTID, PIPE_CLASS, PIPE_DIA, PIPE_GRADIENT, PIPE_LENGTH, PIPE_MATERIAL, PIPE_TYPE, Shape__Length, UPSTREAM_COVELEV
+dataset Water Pressure Viewer | https://services1.arcgis.com/OAm9Y82zSLuLES1a/arcgis/rest/services/Water_Pressure_Viewer/FeatureServer/0
+candidate https://services1.arcgis.com/OAm9Y82zSLuLES1a/arcgis/rest/services/Water_Pressure_Viewer/FeatureServer/0
+note felder: Id, OBJECTID, ORIG_FID, Pressure, Shape__Area, Shape__Length, gridcode
+dataset PRESSURE PLANES 10 2024 | https://services6.arcgis.com/8FCipc4uuUgyEpbK/arcgis/rest/services/REFERENCE_USGS_GRID/FeatureServer/0
+candidate https://services6.arcgis.com/8FCipc4uuUgyEpbK/arcgis/rest/services/REFERENCE_USGS_GRID/FeatureServer/0
+note felder: OBJECTID, PRESS_PLN, PRESS_ZONE, Shape_Leng, Shape__Area, Shape__Length, WTP, created_date, created_user, last_edited_date, last_edited_user
+dataset Affected Pressure Zone | https://services6.arcgis.com/owWvZrhAebKdV9M4/arcgis/rest/services/Affected_Area_WFL1/FeatureServer/0
+candidate https://services6.arcgis.com/owWvZrhAebKdV9M4/arcgis/rest/services/Affected_Area_WFL1/FeatureServer/0
+note felder: Color, FID, Name, OBJECTID, SHAPE_Leng, Shape__Area, Shape__Length
+dataset Water Pressure Zones | https://services1.arcgis.com/tZhkGVr1gXGPSz0S/arcgis/rest/services/Water_Pressure_Zones/FeatureServer/3
+candidate https://services1.arcgis.com/tZhkGVr1gXGPSz0S/arcgis/rest/services/Water_Pressure_Zones/FeatureServer/3
+note felder: CreationDate, Creator, EditDate, Editor, GlobalID, OBJECTID, SOURCE_SHP, Shape__Area, Shape__Length, TYLERID, Zone_Name
+dataset Regional Water Pressure Control Valves | https://services7.arcgis.com/2ECs938g489DMWjt/arcgis/rest/services/Regional_Water_Pressure_Control_Valves1/FeatureServer/0
+candidate https://services7.arcgis.com/2ECs938g489DMWjt/arcgis/rest/services/Regional_Water_Pressure_Control_Valves1/FeatureServer/0
+note felder: acquisition_code, acquisition_date, actuation, asset_id, condition_grade, configuration, current_value, date_decommissioned, date_installed, diameter_mm, dma_zone, expected_life, globalid, historic_id, key_, location, location_accuracy, maintenance
+dataset Pressure Main | https://services1.arcgis.com/VVapzOPgBae5joyC/arcgis/rest/services/Pressure_Main/FeatureServer/1
+candidate https://services1.arcgis.com/VVapzOPgBae5joyC/arcgis/rest/services/Pressure_Main/FeatureServer/1
+note felder: ASSETTAG, BRIDGCROSN, CHANGEBY, CHANGEDATE, COF_SCORE, COF_SCORE_DATE, COMNT, CORCONTY, CREATDATE, CREATNAME, CRITCCOD, DEPTH, DESCRIPTION, DIAMT, DISPLAYID, EDITDATE, EDITNAME, ELEVT
+dataset Barwon Water Decommissioned Pressure Sewer Pipes | https://services8.arcgis.com/uLK1YQYKdEhgFHsx/arcgis/rest/services/Barwon_Water_Sewer_Assets/FeatureServer/3
+candidate https://services8.arcgis.com/uLK1YQYKdEhgFHsx/arcgis/rest/services/Barwon_Water_Sewer_Assets/FeatureServer/3
+note felder: BW_ASSET_ID, DCM_DATE, DOWNSTREAM_COVELEV, DOWNSTREAM_INVELEV, DOWNSTREAM_NODE, DOWNSTREAM_NSL, FEATURE_QUALITY, GENERAL_TEXT, Latitude, Longitude, OBJECTID, PIPE_CLASS, PIPE_DIA, PIPE_GRADIENT, PIPE_LENGTH, PIPE_MATERIAL, PIPE_TYPE, Shape__Length
+dataset Pressure (psi) Pumping 20in Only - With Demands | https://services.arcgis.com/U5e5v7pUT7BNl3dr/arcgis/rest/services/WAWSA_Analysis_Results_North_Route/FeatureServer/3
+candidate https://services.arcgis.com/U5e5v7pUT7BNl3dr/arcgis/rest/services/WAWSA_Analysis_Results_North_Route/FeatureServer/3
+note felder: ELEVATION, ID, OBJECTID, PRESSURE
+dataset Pressure (psi) Pumping 20in Only - With Demands | https://services.arcgis.com/U5e5v7pUT7BNl3dr/arcgis/rest/services/Analysis_Results_South_Route/FeatureServer/3
+candidate https://services.arcgis.com/U5e5v7pUT7BNl3dr/arcgis/rest/services/Analysis_Results_South_Route/FeatureServer/3
+note felder: ELEVATION, ID, OBJECTID, PRESSURE
+dataset Pressure Zones | https://services7.arcgis.com/Z3MHTaTojSxUKayj/arcgis/rest/services/Pressure_Zones/FeatureServer/0
+candidate https://services7.arcgis.com/Z3MHTaTojSxUKayj/arcgis/rest/services/Pressure_Zones/FeatureServer/0
+note felder: Assessment, Block1, Block2, Book1, Book2, CalcAcreag, DeededAcre, FID, ForestAcre, GIS_PIDLin, Lot1, Lot2, MailAddr_1, MailAddres, MailCity, MailState, MailZip, MetesBound
+dataset AGOL Water Pressure Zones | https://services3.arcgis.com/nPsPH23NWoWmXQgb/arcgis/rest/services/AGOL_Water_Pressure_Zones/FeatureServer/0
+candidate https://services3.arcgis.com/nPsPH23NWoWmXQgb/arcgis/rest/services/AGOL_Water_Pressure_Zones/FeatureServer/0
+note felder: CreationDate, Creator, EditDate, Editor, GlobalID, Layer, OBJECTID, PressureZ, Shape__Area, Shape__Length
+dataset NZ  Pressure Subsurface | https://services.arcgis.com/88JjSknPvkqWkkTZ/arcgis/rest/services/NZ__Pressure_Subsurface/FeatureServer/0
+candidate https://services.arcgis.com/88JjSknPvkqWkkTZ/arcgis/rest/services/NZ__Pressure_Subsurface/FeatureServer/0
+note felder: CASRN, CHEMICALNM, CSTMFLD1, CSTMFLD2, CSTMFLD3, CSTMFLD4, CSTMFLD5, DEPTH, DEPTHUNIT, EBATCH, ELEV, ENDDEPTH, EUID, FACCD, FACID, FID, LATITUDE, LOCNM
+dataset Pressure (psi) Gravity Flow - 20in only - With demands | https://services.arcgis.com/U5e5v7pUT7BNl3dr/arcgis/rest/services/Analysis_Results_South_Route/FeatureServer/1
+candidate https://services.arcgis.com/U5e5v7pUT7BNl3dr/arcgis/rest/services/Analysis_Results_South_Route/FeatureServer/1
+note felder: ELEVATION, ID, OBJECTID, PRESSURE
+dataset Pressure Plane | https://maps.pflugervilletx.gov/arcgis/rest/services/CityWorks/Pressure_Plane/FeatureServer
+candidate-leer https://maps.pflugervilletx.gov/arcgis/rest/services/CityWorks/Pressure_Plane/FeatureServer
+note 0 rows, felder unbekannt
+dataset Q2 Atmospheric | https://services9.arcgis.com/fHI7RBkPjgW9Ynd6/arcgis/rest/services/Q2_Atmospheric/FeatureServer
+decline https://services9.arcgis.com/fHI7RBkPjgW9Ynd6/arcgis/rest/services/Q2_Atmospheric/FeatureServer
+note arcgis-error-body
+dataset Pressure (psi) Gravity Flow - 20in only - With demands | https://services.arcgis.com/U5e5v7pUT7BNl3dr/arcgis/rest/services/WAWSA_Analysis_Results_North_Route/FeatureServer/1
+candidate https://services.arcgis.com/U5e5v7pUT7BNl3dr/arcgis/rest/services/WAWSA_Analysis_Results_North_Route/FeatureServer/1
+note felder: ELEVATION, ID, OBJECTID, PRESSURE
+dataset PI Pressure Zones | https://services2.arcgis.com/lq8ckeKIV54RicQC/arcgis/rest/services/Areas_Service/FeatureServer/0
+candidate https://services2.arcgis.com/lq8ckeKIV54RicQC/arcgis/rest/services/Areas_Service/FeatureServer/0
+note felder: GMIID, GlobalID, ID, LENGTH, OBJECTID, Shape__Length
+dataset Culinary Pressure Zones | https://services2.arcgis.com/lq8ckeKIV54RicQC/arcgis/rest/services/Areas_Service/FeatureServer/1
+candidate https://services2.arcgis.com/lq8ckeKIV54RicQC/arcgis/rest/services/Areas_Service/FeatureServer/1
+note felder: GMIID, GlobalID, OBJECTID, PRESSURE_Z, PRESSUR_ID, Shape__Length
+dataset Q3 Atmospheric | https://services9.arcgis.com/fHI7RBkPjgW9Ynd6/arcgis/rest/services/Q3_Atmospheric/FeatureServer
+decline https://services9.arcgis.com/fHI7RBkPjgW9Ynd6/arcgis/rest/services/Q3_Atmospheric/FeatureServer
+note arcgis-error-body
+dataset Power Pressure Retail | https://services1.arcgis.com/M0t6YWjmKfNetUqN/arcgis/rest/services/Power_Pressure_Retail/FeatureServer
+candidate-leer https://services1.arcgis.com/M0t6YWjmKfNetUqN/arcgis/rest/services/Power_Pressure_Retail/FeatureServer
+note 0 rows, felder unbekannt
+dataset Low Pressure Systems | https://services7.arcgis.com/p0Gk2nDbPs7KEqSZ/arcgis/rest/services/LowPressureSystem_1/FeatureServer/0
+candidate https://services7.arcgis.com/p0Gk2nDbPs7KEqSZ/arcgis/rest/services/LowPressureSystem_1/FeatureServer/0
+note felder: ACCEPT, ALIGNMENT, DELTA, DNINVERT, FILEREF, GEN_NOTES, INFSRC, NEW_IDS, OBJECTID, OLD_ID, Owner, PIPLNTH, PIPMAT, Rehabbed, SFSWR_, SFSWR_ID, SIZE, SLOPE
+dataset July Average Pressure Distribution | https://services2.arcgis.com/aXTewkgzKIzzrF67/arcgis/rest/services/July_Average_Pressure_Distribution/FeatureServer
+candidate-leer https://services2.arcgis.com/aXTewkgzKIzzrF67/arcgis/rest/services/July_Average_Pressure_Distribution/FeatureServer
+note 0 rows, felder unbekannt
+dataset Pressure Main | https://services6.arcgis.com/Zxi0tO6aDNjJ72il/arcgis/rest/services/sanMains_view/FeatureServer/1
+candidate https://services6.arcgis.com/Zxi0tO6aDNjJ72il/arcgis/rest/services/sanMains_view/FeatureServer/1
+note felder: AM_FLAG, ASSET_TYPE, CATEGORY, Community, Diameter, FacID, FromElev, FromNode, HIST_ID, HistID2, INST_DATE, InstDate, MaintBy, Material, OBJECTID, OwnBy, Shape__Length, SrcName
+dataset Q4 Atmospheric | https://services9.arcgis.com/fHI7RBkPjgW9Ynd6/arcgis/rest/services/Atmospheric_Q4/FeatureServer
+decline https://services9.arcgis.com/fHI7RBkPjgW9Ynd6/arcgis/rest/services/Atmospheric_Q4/FeatureServer
+note arcgis-error-body
+dataset Q1 Atmospheric | https://services9.arcgis.com/fHI7RBkPjgW9Ynd6/arcgis/rest/services/Q1_Atmospheric/FeatureServer
+decline https://services9.arcgis.com/fHI7RBkPjgW9Ynd6/arcgis/rest/services/Q1_Atmospheric/FeatureServer
+note arcgis-error-body
+dataset City of Pittsburg Pressure Main | https://services1.arcgis.com/WZmLIEWWo5y2UnpH/arcgis/rest/services/City_of_Pittsburg_Pressure_Main/FeatureServer/0
+candidate https://services1.arcgis.com/WZmLIEWWo5y2UnpH/arcgis/rest/services/City_of_Pittsburg_Pressure_Main/FeatureServer/0
+note felder: ACTIVEFLAG, CITY, CreationDate, Creator, DIAMETER, ENABLED, EditDate, Editor, FACILITYID, GlobalID, INSTALLDATE, LASTEDITOR, LASTUPDATE, MAINTBY, MATERIAL, OBJECTID, OWNEDBY, Shape_STLength_1
+dataset U.S Blood Pressure Medication Nonadherence 2019 | https://services3.arcgis.com/ZvidGQkLaDJxRSJ2/arcgis/rest/services/US_Blood_Pressure_Medication_Nonadherence_2019/FeatureServer/0
+candidate https://services3.arcgis.com/ZvidGQkLaDJxRSJ2/arcgis/rest/services/US_Blood_Pressure_Medication_Nonadherence_2019/FeatureServer/0
+note felder: AIA_A_35UP, AIA_A_4564, AIA_A_65UP, AIA_A_ALL, AIA_A_PREM, AIA_F_35UP, AIA_F_4564, AIA_F_65UP, AIA_F_ALL, AIA_F_PREM, AIA_M_35UP, AIA_M_4564, AIA_M_65UP, AIA_M_ALL, AIA_M_PREM, ALL_A_35UP, ALL_A_4564, ALL_A_65UP
+dataset California Pressure interpolation | https://services.arcgis.com/6dxqrE38upDMg1va/arcgis/rest/services/California_Pressure_interpolation/FeatureServer/0
+candidate https://services.arcgis.com/6dxqrE38upDMg1va/arcgis/rest/services/California_Pressure_interpolation/FeatureServer/0
+note felder: AnalysisArea, Classes, OBJECTID, ORIG_FID, Value_Max, Value_Min
+dataset California Pressure Interpolation | https://services.arcgis.com/eoP5lsTDzcIUyaQZ/arcgis/rest/services/California_Pressure_Interpolation/FeatureServer/0
+candidate https://services.arcgis.com/eoP5lsTDzcIUyaQZ/arcgis/rest/services/California_Pressure_Interpolation/FeatureServer/0
+note felder: AnalysisArea, Classes, OBJECTID, ORIG_FID, Value_Max, Value_Min
+dataset Pressure Sewer Valve | https://services6.arcgis.com/E4zmITc5k3J3fWRw/arcgis/rest/services/Pressure_Sewer_Valve/FeatureServer/0
+candidate https://services6.arcgis.com/E4zmITc5k3J3fWRw/arcgis/rest/services/Pressure_Sewer_Valve/FeatureServer/0
+note felder: Distancefromhouse, GlobalID, OBJECTID
+dataset Water Pressure Areas | https://services6.arcgis.com/dpaY3zboICQILFY5/arcgis/rest/services/Water_Pressure_Areas/FeatureServer/0
+candidate https://services6.arcgis.com/dpaY3zboICQILFY5/arcgis/rest/services/Water_Pressure_Areas/FeatureServer/0
+note felder: F__created, F__modified, F__owner, GlobalID, OBJECTID_1, Shape__Area, Shape__Length, elevation, id, name, objectid
+dataset Pressure Zones FGDB WFL1 | https://services8.arcgis.com/C7YHeGRObxzp5wWl/arcgis/rest/services/Pressure_Zones_FGDB_WFL1/FeatureServer
+candidate-leer https://services8.arcgis.com/C7YHeGRObxzp5wWl/arcgis/rest/services/Pressure_Zones_FGDB_WFL1/FeatureServer
+note 0 rows, felder unbekannt
+dataset Model Pressure 24hr | https://services.arcgis.com/3SZ6e0uCvPROr4mS/arcgis/rest/services/Wessex_Water_Leakage_Datasets_Scenario_2/FeatureServer/7
+candidate https://services.arcgis.com/3SZ6e0uCvPROr4mS/arcgis/rest/services/Wessex_Water_Leakage_Datasets_Scenario_2/FeatureServer/7
+note felder: A3690001, A3893014, A4492001, A5291001, A5689001, A5888201, A6587003, A6786001, A7286001, A7679001, A8184002, F1, H3486001, H3893009, H3893011, H4193005, H4196001, H5179004
+dataset Flow Pressure 15min | https://services.arcgis.com/3SZ6e0uCvPROr4mS/arcgis/rest/services/Wessex_Water_Leakage_Datasets_Scenario_2/FeatureServer/6
+candidate https://services.arcgis.com/3SZ6e0uCvPROr4mS/arcgis/rest/services/Wessex_Water_Leakage_Datasets_Scenario_2/FeatureServer/6
+note felder: Asset, Date_of_Reading, Measure, OBJECTID, Type, Unit, Value
+dataset Model Pressure 24hr | https://services.arcgis.com/3SZ6e0uCvPROr4mS/arcgis/rest/services/Wessex_Water_Leakage_Scenario_1_Data_/FeatureServer/7
+candidate https://services.arcgis.com/3SZ6e0uCvPROr4mS/arcgis/rest/services/Wessex_Water_Leakage_Scenario_1_Data_/FeatureServer/7
+note felder: A5473017, A5480001, A5777002, A6274007, A6673012, F1, H5071008, H5071015, H5172019, H5181002, H5181003, H5270006, H5270013, H5271001, H5271002, H5272003, H5272019, H5273002
+dataset Flow Pressure 15min | https://services.arcgis.com/3SZ6e0uCvPROr4mS/arcgis/rest/services/Wessex_Water_Leakage_Datasets_Scenario_3/FeatureServer/6
+candidate https://services.arcgis.com/3SZ6e0uCvPROr4mS/arcgis/rest/services/Wessex_Water_Leakage_Datasets_Scenario_3/FeatureServer/6
+note felder: Asset, Date_of_Reading, Measure, OBJECTID, Type, Unit, Value
+dataset Flow Pressure 15min | https://services.arcgis.com/3SZ6e0uCvPROr4mS/arcgis/rest/services/Wessex_Water_Leakage_Scenario_1_Data_/FeatureServer/6
+candidate https://services.arcgis.com/3SZ6e0uCvPROr4mS/arcgis/rest/services/Wessex_Water_Leakage_Scenario_1_Data_/FeatureServer/6
+note felder: Asset, Date_of_Reading, Measure, OBJECTID, Type, Unit, Value
+dataset Model Pressure 24hr | https://services.arcgis.com/3SZ6e0uCvPROr4mS/arcgis/rest/services/Wessex_Water_Leakage_Datasets_Scenario_3/FeatureServer/7
+candidate https://services.arcgis.com/3SZ6e0uCvPROr4mS/arcgis/rest/services/Wessex_Water_Leakage_Datasets_Scenario_3/FeatureServer/7
+note felder: A0011001, A0301001, A0610001, A0707001, A1806002, A3339021, A3841013, A4840003, A5334002, A5434002, A5531022, A5743002, A5802004, A6026001, A6037002, A6241006, A6400001, A6541003
+dataset Sewer Pipe Pressure | https://services.arcgis.com/3vStCH7NDoBOZ5zn/arcgis/rest/services/Sewer_Pipe_Pressure/FeatureServer/1
+candidate https://services.arcgis.com/3vStCH7NDoBOZ5zn/arcgis/rest/services/Sewer_Pipe_Pressure/FeatureServer/1
+note felder: ALIGNMENT_M, ASSET_LEVEL_ACCURACY, ASSET_POSITIONAL_ACCURACY, AVERAGE_DEPTH_M, CLASS, CREATED_DATE, CREATED_USER, DATA_SOURCE, DIAMETER_MM, DOWNSTREAM_INVERT_LEVEL, DOWNSTREAM_SURFACE_LEVEL, FROM_SAPID, FUNCTIONAL_LOC, GCW_JOINT_TYPE, GIS_ACQUISITION_METHOD, GIS_ACQUISITION_PROJECT, GIS_ASSET_FUNDING_BASIS, GIS_CUSTODIAN
+dataset OM 8 High pressure gas pipeline | https://services-ap1.arcgis.com/xYbmdyJFb3eEmMJp/arcgis/rest/services/OM08_High_Pressure_Gas_Pipeline/FeatureServer/0
+candidate https://services-ap1.arcgis.com/xYbmdyJFb3eEmMJp/arcgis/rest/services/OM08_High_Pressure_Gas_Pipeline/FeatureServer/0
+note felder: APPROVEDATE, AREA_SUBBLOCKS, AUTHORISEDHOLDERID, AUTHORISEDHOLDERNAME, DISPLAYNAME, DIVISION, EXPIRYDATE, LODGEDATE, NATIVETITLECATEGORY, NONCURRENTDATE, OBJECTID, PERMITID, PERMITMINERALS, PERMITNAME, PERMITNUMBER, PERMITPURPOSE, PERMITSTATE, PERMITSTATUS
+dataset Flow Pressure 15min | https://services.arcgis.com/3SZ6e0uCvPROr4mS/arcgis/rest/services/Wessex_Water_Leakage_Datasets_Scenario_4/FeatureServer/6
+candidate https://services.arcgis.com/3SZ6e0uCvPROr4mS/arcgis/rest/services/Wessex_Water_Leakage_Datasets_Scenario_4/FeatureServer/6
+note felder: Asset, Date_of_Reading, Measure, OBJECTID, Type, Unit, Value
+dataset Model Pressure 24hr | https://services.arcgis.com/3SZ6e0uCvPROr4mS/arcgis/rest/services/Wessex_Water_Leakage_Datasets_Scenario_4/FeatureServer/7
+candidate https://services.arcgis.com/3SZ6e0uCvPROr4mS/arcgis/rest/services/Wessex_Water_Leakage_Datasets_Scenario_4/FeatureServer/7
+note felder: A1433001, A1617001, A1835001, A2738048, AN204, AN206, F1, H0925001, H1025002, H1116041, H1117013, H1217008, H1219001, H1221001, H1223001, H1224001, H1315001, H1315005
+dataset Prévision de Pressure Stationsbryan | https://services4.arcgis.com/OPhxd5ObDcY1uc4Z/arcgis/rest/services/Pr%C3%A9vision_de_Pressure_Stationsbryan/FeatureServer/0
+candidate https://services4.arcgis.com/OPhxd5ObDcY1uc4Z/arcgis/rest/services/Pr%C3%A9vision_de_Pressure_Stationsbryan/FeatureServer/0
+note felder: AnalysisArea, Classes, OBJECTID, Value_Max, Value_Min
+dataset U.S. High Blood Pressure Medication Nonadherence 2017 | https://services3.arcgis.com/ZvidGQkLaDJxRSJ2/arcgis/rest/services/High_Blood_Pressure_Medication_Nonadherence/FeatureServer/0
+candidate https://services3.arcgis.com/ZvidGQkLaDJxRSJ2/arcgis/rest/services/High_Blood_Pressure_Medication_Nonadherence/FeatureServer/0
+note felder: ESRI_OID, Shape__Area, Shape__Length, county, diuradh, htnadh_aian, htnadh_all, htnadh_api, htnadh_black, htnadh_hisp, htnadh_white, rasadh, state_name, stcty_fips
+dataset U.S. High Blood Pressure Medication Nonadherence 2018 | https://services3.arcgis.com/ZvidGQkLaDJxRSJ2/arcgis/rest/services/High_Blood_Pressure_Medication_Nonadherence_2018/FeatureServer/0
+candidate https://services3.arcgis.com/ZvidGQkLaDJxRSJ2/arcgis/rest/services/High_Blood_Pressure_Medication_Nonadherence_2018/FeatureServer/0
+note felder: ESRI_OID, OBJECTID, Shape_Leng, Shape__Area, Shape__Length, cnty_fips, cnty_name, htnadh_aian, htnadh_all, htnadh_api, htnadh_black, htnadh_hisp, htnadh_white, state_abbr, state_fips, state_name, stcty_fips
+dataset Cumulative Habitat Pressure Scores | https://services2.arcgis.com/ouI9Ksmf4blkssRx/arcgis/rest/services/PSE_SCA_Cumulative_Habitat_Pressures/FeatureServer/0
+candidate https://services2.arcgis.com/ouI9Ksmf4blkssRx/arcgis/rest/services/PSE_SCA_Cumulative_Habitat_Pressures/FeatureServer/0
+note felder: FID, Shape__Area, Shape__Length, fish_pass, human_dev, hydrologic, rollup, surfc_ersn, veg_qlty, wtr_qlty, wtr_qnty, wtrshd_fid
+dataset Pressure Reducing Valves | https://services6.arcgis.com/K1lNAJS47937pgZy/arcgis/rest/services/Pressure_Reducing_Valves/FeatureServer/0
+candidate https://services6.arcgis.com/K1lNAJS47937pgZy/arcgis/rest/services/Pressure_Reducing_Valves/FeatureServer/0
+note felder: AID, ASSETGROUP, ASSETTYPE, ASSOCIATIONSTATUS, GLOBALID, ISCONNECTED, ISSUBNETWORKCONTROLLER, OBJECTID, PressureSubnetworkName, SUBNETWORKCONTROLLERNAME, SUPPORTEDSUBNETWORKNAME, SUPPORTINGSUBNETWORKNAME, SystemSubnetworkName, TERMINALCONFIGURATION, TIERNAME, TIERRANK, accountadded, accountid
+dataset California Pressure Interpolation March11 | https://services.arcgis.com/6dxqrE38upDMg1va/arcgis/rest/services/California_Pressure_Interpolation_March11/FeatureServer/0
+candidate https://services.arcgis.com/6dxqrE38upDMg1va/arcgis/rest/services/California_Pressure_Interpolation_March11/FeatureServer/0
+note felder: AnalysisArea, Classes, OBJECTID, ORIG_FID, Value_Max, Value_Min
+dataset DC26 Atmospheric | https://services2.arcgis.com/RQcpPaCpMAXzUI5g/arcgis/rest/services/DC26_Atmospheric/FeatureServer/0
+candidate https://services2.arcgis.com/RQcpPaCpMAXzUI5g/arcgis/rest/services/DC26_Atmospheric/FeatureServer/0
+note felder: DataLink, Description, FID, LabelName, Media, device, easting, northing
+dataset Table RIDEM CoastalAccess Pressure | https://services7.arcgis.com/7EbO0sDrpxYJfbeG/arcgis/rest/services/Table_RIDEM_CoastalAccess_Pressure/FeatureServer/11
+candidate https://services7.arcgis.com/7EbO0sDrpxYJfbeG/arcgis/rest/services/Table_RIDEM_CoastalAccess_Pressure/FeatureServer/11
+note felder: BEACH_BANK, CHARTER_BOAT, COUNTY, COUNTY_CODE, INTERVAL, KOD, MAN_MADE, MONTH, OBJECTID, OFFSHORE, PRIVATE_RENTAL_BOAT, SHORE, SITE_EXTERNAL_ID, SITE_GROUP, SITE_NAME, STATE, STATE_CODE
+dataset Sanitary Pressure Main brightly | https://services9.arcgis.com/Y5r51kWdLgfUjL39/arcgis/rest/services/Sanitary_Pressure_Main_brightly/FeatureServer/0
+candidate https://services9.arcgis.com/Y5r51kWdLgfUjL39/arcgis/rest/services/Sanitary_Pressure_Main_brightly/FeatureServer/0
+note felder: ACTIVEFLAG, Comments, DIAMETER, ENABLED, FACILITYID, GlobalID, INSTALLDATE, LASTEDITOR, LASTUPDATE, LegacyID, MAINTBY, MATERIAL, OBJECTID, OWNEDBY, Shape__Length, WATERTYPE, created_date, created_user
+dataset Pressure Zones | https://services5.arcgis.com/JisFYcK2mIVg9ueP/arcgis/rest/services/Pressure_Zones1/FeatureServer/15
+candidate https://services5.arcgis.com/JisFYcK2mIVg9ueP/arcgis/rest/services/Pressure_Zones1/FeatureServer/15
+note felder: All_PZ, GlobalID, OBJECTID, PZ_SUBZONE, P_ZONE, Shape__Area, Shape__Length, created_date, created_user, last_edited_date, last_edited_user
+dataset Vorhersage für OpenWeathermap Circle - Pressure | https://services1.arcgis.com/wdMHWK8xfn32LjIy/arcgis/rest/services/Vorhersage%20f%C3%BCr%20OpenWeathermap_Circle%20-%20Pressure/FeatureServer/0
+decline https://services1.arcgis.com/wdMHWK8xfn32LjIy/arcgis/rest/services/Vorhersage%20f%C3%BCr%20OpenWeathermap_Circle%20-%20Pressure/FeatureServer/0
+note arcgis-error-body
+dataset Pressure Indicator Values | https://services2.arcgis.com/ouI9Ksmf4blkssRx/arcgis/rest/services/PSE_SCA_Pressure_Indicator_Values/FeatureServer/197
+candidate https://services2.arcgis.com/ouI9Ksmf4blkssRx/arcgis/rest/services/PSE_SCA_Pressure_Indicator_Values/FeatureServer/197
+note felder: FID, LINEAR_DEV, MINES, Shape__Area, Shape__Length, WATER_LIC, WTRSHD_FID, eca, forest_dst, i_d_defltn, imprv_srfc, riprn_dst, road_den, strm_x_den, tlca, waste_wtr
+dataset California Pressure Interpolation 09062019 | https://services.arcgis.com/eoP5lsTDzcIUyaQZ/arcgis/rest/services/California_Pressure_Interpolation_09062019/FeatureServer/0
+candidate https://services.arcgis.com/eoP5lsTDzcIUyaQZ/arcgis/rest/services/California_Pressure_Interpolation_09062019/FeatureServer/0
+note felder: AnalysisArea, Classes, OBJECTID, ORIG_FID, Value_Max, Value_Min
+dataset SFM 5 High pressure gas pipeline | https://services-ap1.arcgis.com/xYbmdyJFb3eEmMJp/arcgis/rest/services/SFM05_High_Pressure_Gas_Pipeline/FeatureServer/0
+candidate https://services-ap1.arcgis.com/xYbmdyJFb3eEmMJp/arcgis/rest/services/SFM05_High_Pressure_Gas_Pipeline/FeatureServer/0
+note felder: APPROVEDATE, AREA_SUBBLOCKS, AUTHORISEDHOLDERID, AUTHORISEDHOLDERNAME, DISPLAYNAME, DIVISION, EXPIRYDATE, LODGEDATE, NATIVETITLECATEGORY, NONCURRENTDATE, OBJECTID, PERMITID, PERMITMINERALS, PERMITNAME, PERMITNUMBER, PERMITPURPOSE, PERMITSTATE, PERMITSTATUS
+dataset Colorado's Current Pressure Prediction Interpolation | https://services1.arcgis.com/AhXvNWFdL7hH4TjJ/arcgis/rest/services/Colorado's%20Current%20Pressure%20Prediction%20Interpolation/FeatureServer/0
+candidate https://services1.arcgis.com/AhXvNWFdL7hH4TjJ/arcgis/rest/services/Colorado's%20Current%20Pressure%20Prediction%20Interpolation/FeatureServer/0
+note felder: AnalysisArea, Classes, OBJECTID, ORIG_FID, Value_Max, Value_Min
+dataset PACs atmospheric | https://services1.arcgis.com/CQDK7abdVpczSUjn/arcgis/rest/services/Online_export_nov16th2020/FeatureServer/2
+candidate https://services1.arcgis.com/CQDK7abdVpczSUjn/arcgis/rest/services/Online_export_nov16th2020/FeatureServer/2
+note felder: Land_use, OBJECTID, SiteID, Yr_2012, Yr_2013, Yr_2014, Yr_2015
+dataset Interpolated Current Pressure Prediction California | https://services1.arcgis.com/AhXvNWFdL7hH4TjJ/arcgis/rest/services/Interpolated%20Current%20Pressure%20Prediction%20California/FeatureServer/0
+candidate https://services1.arcgis.com/AhXvNWFdL7hH4TjJ/arcgis/rest/services/Interpolated%20Current%20Pressure%20Prediction%20California/FeatureServer/0
+note felder: AnalysisArea, Classes, OBJECTID, ORIG_FID, Value_Max, Value_Min
+dataset Sewer Pipe Non Pressure | https://services.arcgis.com/3vStCH7NDoBOZ5zn/arcgis/rest/services/Sewer_Pipe_Non_Pressure/FeatureServer/1
+candidate https://services.arcgis.com/3vStCH7NDoBOZ5zn/arcgis/rest/services/Sewer_Pipe_Non_Pressure/FeatureServer/1
+note felder: ALIGNMENT_M, ASSET_LEVEL_ACCURACY, ASSET_POSITIONAL_ACCURACY, AVERAGE_DEPTH_M, CLASS, CREATED_DATE, CREATED_USER, DATA_SOURCE, DIAMETER_MM, DOWNSTREAM_INVERT_LEVEL, DOWNSTREAM_SURFACE_LEVEL, FROM_SAPID, FUNCTIONAL_LOC, GCW_JOINT_TYPE, GIS_ACQUISITION_METHOD, GIS_ACQUISITION_PROJECT, GIS_ASSET_FUNDING_BASIS, GIS_CUSTODIAN
+dataset Vapor Pressure Deficit (1981 to 2010 Normal) | https://services1.arcgis.com/Ezk9fcjSUkeadg6u/arcgis/rest/services/vpdmean_clim19812010/FeatureServer/0
+candidate https://services1.arcgis.com/Ezk9fcjSUkeadg6u/arcgis/rest/services/vpdmean_clim19812010/FeatureServer/0
+note felder: FID, Id, Shape__Area, Shape__Length, gridcode, vpd_kpa
+dataset Pressure Zones AGOL | https://services.arcgis.com/KaARkuoKF9vrGr3P/arcgis/rest/services/Pressure_Zones_AGOL/FeatureServer/0
+candidate https://services.arcgis.com/KaARkuoKF9vrGr3P/arcgis/rest/services/Pressure_Zones_AGOL/FeatureServer/0
+note felder: ADDRESS, COLOR, CONDITION, CONDITION_DATE, ELEVATION, ENTITY, GlobalID, INSTALL_DATE, LAYER, LOCATION, OBJECTID, PP_ELEV_, STATUS, Shape__Area, Shape__Length, THICKNESS, UID, WARRANTY_DATE
+dataset Hurricane Matthew Track2 | https://services2.arcgis.com/j80Jz20at6Bi0thr/arcgis/rest/services/Hurricane_Matthew_WFL1/FeatureServer/0
+candidate https://services2.arcgis.com/j80Jz20at6Bi0thr/arcgis/rest/services/Hurricane_Matthew_WFL1/FeatureServer/0
+note felder: Date, Lat, Lon, OBJECTID, Pressure, Storm_Type, Time, Wind__mph_
+dataset Pressure Zones | https://services5.arcgis.com/JisFYcK2mIVg9ueP/arcgis/rest/services/Pressure_Zones/FeatureServer/13
+candidate https://services5.arcgis.com/JisFYcK2mIVg9ueP/arcgis/rest/services/Pressure_Zones/FeatureServer/13
+note felder: GlobalID, OBJECTID, PZ_SUBZONE, P_ZONE, Shape__Area, Shape__Length, created_date, created_user, last_edited_date, last_edited_user
+dataset Visitor pressure symbolised map WFL1 | https://services1.arcgis.com/FQMgDfaSplXrXkUI/arcgis/rest/services/Visitor_pressure_symbolised_map_WFL1/FeatureServer/0
+candidate https://services1.arcgis.com/FQMgDfaSplXrXkUI/arcgis/rest/services/Visitor_pressure_symbolised_map_WFL1/FeatureServer/0
+note felder: OBJECTID, Shape__Area, Shape__Length
+dataset Pressure Reducing Valve | https://services5.arcgis.com/JisFYcK2mIVg9ueP/arcgis/rest/services/Pressure_Reducing_Valve1/FeatureServer/6
+candidate https://services5.arcgis.com/JisFYcK2mIVg9ueP/arcgis/rest/services/Pressure_Reducing_Valve1/FeatureServer/6
+note felder: ASSETGROUP, ASSETTYPE, ASSOCIATIONSTATUS, BuryDepth, Clean_Route, DMASubnetworkName, DownstreamPSIG, Elevation, GISOBJID, GLOBALID, HydrantInspection_Route, ISCONNECTED, ISSUBNETWORKCONTROLLER, InforLifecycleStatus, IsolationSubnetworkName, LocationDescription, MTUInstallDate, MTUNumber
+dataset Pressure Regulating Valves PRV | https://services9.arcgis.com/ivAMP6vRMPA12GAA/arcgis/rest/services/Pressure_Regulating_Valves_PRV/FeatureServer/0
+candidate https://services9.arcgis.com/ivAMP6vRMPA12GAA/arcgis/rest/services/Pressure_Regulating_Valves_PRV/FeatureServer/0
+note felder: Address, AssetName, Elevation, From_Zone, Latitude, Longitude, MainValves, Name, Notes, OBJECTID, PressureSetting_Inlet, PressureSetting_Outlet, StreetName, To_Zone, ValveSize
+dataset Water Pressure Main (Public View) | https://services.arcgis.com/0H6bQdxd9223gQB5/arcgis/rest/services/Water_Pressure_Main_Collab/FeatureServer/6
+candidate https://services.arcgis.com/0H6bQdxd9223gQB5/arcgis/rest/services/Water_Pressure_Main_Collab/FeatureServer/6
+note felder: ADMINISTRATIVEAREA, ASSETID, CONDITION, CONDITIONDATE, DATE_MOD, DEPTH, DIAMETER, DateAccepted, ENABLED, EXTERIORCOATING, FILE_PATH, FLOWMEASUREMENTTYPE, GLOBALID, GROUNDSURFACETYPE, INSTALLDATE, ISINMODEL, JOINTTYPE, LIFECYCLESTATUS
+dataset Pressure Derived Inverted Brownish Blue | https://services4.arcgis.com/wyNGOB7qusRtCAPP/arcgis/rest/services/Pressure%20Derived%20Inverted%20Brownish%20Blue/FeatureServer/0
+candidate https://services4.arcgis.com/wyNGOB7qusRtCAPP/arcgis/rest/services/Pressure%20Derived%20Inverted%20Brownish%20Blue/FeatureServer/0
+note felder: AGE_10_14, AGE_15_19, AGE_20_24, AGE_25_34, AGE_35_44, AGE_45_54, AGE_55_64, AGE_5_9, AGE_65_74, AGE_75_84, AGE_85_UP, AGE_UNDER5, AMERI_ES, ASIAN, AVE_FAM_SZ, AVE_HH_SZ, AVG_SALE07, AVG_SIZE07
+dataset Map 9   Visitor Pressure WFL1 | https://services1.arcgis.com/FQMgDfaSplXrXkUI/arcgis/rest/services/Map_9___Visitor_Pressure_WFL1/FeatureServer/0
+candidate https://services1.arcgis.com/FQMgDfaSplXrXkUI/arcgis/rest/services/Map_9___Visitor_Pressure_WFL1/FeatureServer/0
+note felder: OBJECTID, Shape__Area, Shape__Length
+dataset Pressure Colorado TI | https://services4.arcgis.com/wyNGOB7qusRtCAPP/arcgis/rest/services/Pressure%20Colorado%20TI/FeatureServer/0
+candidate https://services4.arcgis.com/wyNGOB7qusRtCAPP/arcgis/rest/services/Pressure%20Colorado%20TI/FeatureServer/0
+note felder: AnalysisArea, Classes, OBJECTID, Value_Max, Value_Min
+dataset OM 8 High pressure gas pipeline 400m buffer | https://services-ap1.arcgis.com/xYbmdyJFb3eEmMJp/arcgis/rest/services/OM08_High_Pressure_Gas_Pipeline_Buffer_400m/FeatureServer/0
+candidate https://services-ap1.arcgis.com/xYbmdyJFb3eEmMJp/arcgis/rest/services/OM08_High_Pressure_Gas_Pipeline_Buffer_400m/FeatureServer/0
+note felder: OBJECTID, Shape__Area, Shape__Length
+dataset High Pressure Pipelines | https://services.arcgis.com/ix1ny7KGzblW5l6Y/arcgis/rest/services/High_Pressure_Pipelines/FeatureServer/0
+candidate https://services.arcgis.com/ix1ny7KGzblW5l6Y/arcgis/rest/services/High_Pressure_Pipelines/FeatureServer/0
+note felder: AREA_CD, DIAMETER, ENVIRO, ENVIRO_CD, EXPECT_FLW, EX_COAT, EX_COAT_CD, FIELD, FROM_FC, FROM_FC_CD, FROM_LOC, FROM_RAW, GDM_APPROV, GDM_UPI, H2S, INT_PRO, INT_PRO_CD, JOINT
+dataset High Pressure Plane Area | https://services.arcgis.com/rt1leD4Hj3sLGHNL/arcgis/rest/services/High_Pressure_Plane_Area/FeatureServer/20
+candidate https://services.arcgis.com/rt1leD4Hj3sLGHNL/arcgis/rest/services/High_Pressure_Plane_Area/FeatureServer/20
+note felder: GlobalID, OBJECTID, Shape__Area, Shape__Length
+dataset Water Pressure Zones | https://services7.arcgis.com/p0Gk2nDbPs7KEqSZ/arcgis/rest/services/WaterPressureZone_1/FeatureServer/0
+candidate https://services7.arcgis.com/p0Gk2nDbPs7KEqSZ/arcgis/rest/services/WaterPressureZone_1/FeatureServer/0
+note felder: OBJECTID, OBJECTID_1, Shape_Leng, Shape__Area, Shape__Length, Zone
+dataset NRW CuRVe Condition Pressure On Air Acidification | https://services.arcgis.com/hQoYDJEEJMaPw8Sy/arcgis/rest/services/NRW_CuRVe_Condition_Pressure_On_Air_Acidification/FeatureServer/0
+candidate https://services.arcgis.com/hQoYDJEEJMaPw8Sy/arcgis/rest/services/NRW_CuRVe_Condition_Pressure_On_Air_Acidification/FeatureServer/0
+note felder: Acid_Av, Cd_APacid, GRID_SQ, NH, NOx, OBJECTID, SO, Shape__Area, Shape__Length
+dataset Pressure Networks | https://services6.arcgis.com/vrLPdyHblOFZTbv8/arcgis/rest/services/Pressure_Networks/FeatureServer
+candidate-leer https://services6.arcgis.com/vrLPdyHblOFZTbv8/arcgis/rest/services/Pressure_Networks/FeatureServer
+note 0 rows, felder unbekannt
+dataset Pressure Valve | https://services6.arcgis.com/deAS8KeQ1ASFd1S2/arcgis/rest/services/Martinsburg_Water_Distribution_Valves/FeatureServer/501003
+candidate https://services6.arcgis.com/deAS8KeQ1ASFd1S2/arcgis/rest/services/Martinsburg_Water_Distribution_Valves/FeatureServer/501003
+note felder: ESRIGNSS_ALTITUDE, ESRIGNSS_AVG_H_RMS, ESRIGNSS_AVG_POSITIONS, ESRIGNSS_AVG_V_RMS, ESRIGNSS_CORRECTIONAGE, ESRIGNSS_DIRECTION, ESRIGNSS_FIXDATETIME, ESRIGNSS_FIXTYPE, ESRIGNSS_HDOP, ESRIGNSS_H_RMS, ESRIGNSS_H_STDDEV, ESRIGNSS_LATITUDE, ESRIGNSS_LONGITUDE, ESRIGNSS_NUMSATS, ESRIGNSS_PDOP, ESRIGNSS_POSITIONSOURCETYPE, ESRIGNSS_RECEIVER, ESRIGNSS_SPEED
+dataset Current Pressure Prediction for Calif 22 Dec 2015 | https://services.arcgis.com/IZtlGBUe4KTzLOl4/arcgis/rest/services/Current%20Pressure%20Prediction%20for%20Calif%2022%20Dec%202015/FeatureServer/0
+decline https://services.arcgis.com/IZtlGBUe4KTzLOl4/arcgis/rest/services/Current%20Pressure%20Prediction%20for%20Calif%2022%20Dec%202015/FeatureServer/0
+note arcgis-error-body
+dataset Current Pressure Prediction for Calif 22 Dec 2015 | https://services6.arcgis.com/FsXvBaPMxdANs50s/arcgis/rest/services/Current%20Pressure%20Prediction%20for%20Calif%2022%20Dec%202015/FeatureServer/0
+candidate https://services6.arcgis.com/FsXvBaPMxdANs50s/arcgis/rest/services/Current%20Pressure%20Prediction%20for%20Calif%2022%20Dec%202015/FeatureServer/0
+note felder: AnalysisArea, Classes, OBJECTID, ORIG_FID, Shape__Area, Shape__Length, Value_Max, Value_Min
+dataset Pressure Bien 9 15 20 | https://services.arcgis.com/Ywxx29kRZEPq7K5N/arcgis/rest/services/Pressure_Bien_9_15_20/FeatureServer/0
+candidate https://services.arcgis.com/Ywxx29kRZEPq7K5N/arcgis/rest/services/Pressure_Bien_9_15_20/FeatureServer/0
+note felder: AnalysisArea, Classes, OBJECTID, Value_Max, Value_Min
+dataset California State Pressure Interpolation 9 11 19 | https://services.arcgis.com/eoP5lsTDzcIUyaQZ/arcgis/rest/services/California_State_Pressure_Interpolation_9_11_19/FeatureServer/0
+candidate https://services.arcgis.com/eoP5lsTDzcIUyaQZ/arcgis/rest/services/California_State_Pressure_Interpolation_9_11_19/FeatureServer/0
+note felder: AnalysisArea, Classes, OBJECTID, ORIG_FID, Value_Max, Value_Min
+dataset Pressure Ally Meter | https://services9.arcgis.com/uQOQwm8wzEWxnuGz/arcgis/rest/services/Pressure_Ally_Meter/FeatureServer/0
+candidate https://services9.arcgis.com/uQOQwm8wzEWxnuGz/arcgis/rest/services/Pressure_Ally_Meter/FeatureServer/0
+note felder: Address, GlobalID, Installed, OBJECTID, Recordings
+dataset Pressure Rapp 10 29 24 | https://services.arcgis.com/Ywxx29kRZEPq7K5N/arcgis/rest/services/Pressure_Rapp_10_29_24/FeatureServer/0
+candidate https://services.arcgis.com/Ywxx29kRZEPq7K5N/arcgis/rest/services/Pressure_Rapp_10_29_24/FeatureServer/0
+note felder: AnalysisArea, Classes, OBJECTID, ORIG_FID, Value_Max, Value_Min
+dataset Pressure Nichols 11 1 22 | https://services.arcgis.com/Ywxx29kRZEPq7K5N/arcgis/rest/services/Pressure_Nichols_11_1_22/FeatureServer/0
+candidate https://services.arcgis.com/Ywxx29kRZEPq7K5N/arcgis/rest/services/Pressure_Nichols_11_1_22/FeatureServer/0
+note felder: AnalysisArea, Classes, OBJECTID, ORIG_FID, Value_Max, Value_Min
+dataset Pressure Main | https://services6.arcgis.com/mjEvhc9AE3ceAXtG/arcgis/rest/services/Pressure_Main/FeatureServer/76
+candidate https://services6.arcgis.com/mjEvhc9AE3ceAXtG/arcgis/rest/services/Pressure_Main/FeatureServer/76
+note felder: Contract, DIAMETER, GlobalID, MATERIAL, NOTES, OBJECTID, Shape__Length, System
+dataset PRESSURE PLANES | https://services6.arcgis.com/8FCipc4uuUgyEpbK/arcgis/rest/services/PRESSURE_PLANES/FeatureServer/1
+candidate https://services6.arcgis.com/8FCipc4uuUgyEpbK/arcgis/rest/services/PRESSURE_PLANES/FeatureServer/1
+note felder: OBJECTID, PRESS_PLN, PRESS_ZONE, Shape_Leng, Shape__Area, Shape__Length, WTP, created_date, created_user, last_edited_date, last_edited_user
+dataset PRESSURE PLANES | https://services6.arcgis.com/8FCipc4uuUgyEpbK/arcgis/rest/services/PRESSURE_PLANES/FeatureServer
+candidate-leer https://services6.arcgis.com/8FCipc4uuUgyEpbK/arcgis/rest/services/PRESSURE_PLANES/FeatureServer
+note 0 rows, felder unbekannt
+dataset Water Pressure Districts | https://services1.arcgis.com/NqY8dnPSEdMJhuRw/arcgis/rest/services/Water_Pressure_Districts/FeatureServer/0
+candidate https://services1.arcgis.com/NqY8dnPSEdMJhuRw/arcgis/rest/services/Water_Pressure_Districts/FeatureServer/0
+note felder: District, OBJECTID, Shape__Area, Shape__Length
+dataset Pressure Dunbar 9 17 2020 | https://services.arcgis.com/Ywxx29kRZEPq7K5N/arcgis/rest/services/Pressure_Dunbar_9_17_2020/FeatureServer/0
+candidate https://services.arcgis.com/Ywxx29kRZEPq7K5N/arcgis/rest/services/Pressure_Dunbar_9_17_2020/FeatureServer/0
+note felder: AnalysisArea, Classes, OBJECTID, Value_Max, Value_Min
+dataset Sewer Pressure Main (public view) | https://services.arcgis.com/0H6bQdxd9223gQB5/arcgis/rest/services/Sewer_Pressure_Main_Collab/FeatureServer/3
+candidate https://services.arcgis.com/0H6bQdxd9223gQB5/arcgis/rest/services/Sewer_Pressure_Main_Collab/FeatureServer/3
+note felder: ADMINISTRATIVEAREA, ASSETID, CONDITION, CONDITIONDATE, DATE_MOD, DEPTH, DIAMETER, ENABLED, EXTERIORCOATING, FILE_PATH, FLOWMEASUREMENTTYPE, GROUNDSURFACETYPE, GlobalID, INSTALLDATE, JOINTTYPE, LIFECYCLESTATUS, LININGTYPE, LOCATION
+dataset Water Pressure Zones | https://services8.arcgis.com/OaQlLqKJW3ki0q5w/arcgis/rest/services/Water_Pressure_Zones/FeatureServer/0
+candidate https://services8.arcgis.com/OaQlLqKJW3ki0q5w/arcgis/rest/services/Water_Pressure_Zones/FeatureServer/0
+note felder: COMMENTS, FACILITYID, GlobalID, HIGHELEVATION, HIGHPRESSURE, HYDRGRADE, LOWELEVATION, LOWPRESSURE, Mapped, OBJECTID, OWNEDBY, Old_Facility_ID, Shape__Area, Shape__Length, ZONENAME, created_date, created_user, last_edited_date
+dataset Adriatic Sea Pressure by HHI | https://services8.arcgis.com/tDYJmhP975urQUZt/arcgis/rest/services/Adriatic_Sea_Pressure_by_HHI/FeatureServer/0
+candidate https://services8.arcgis.com/tDYJmhP975urQUZt/arcgis/rest/services/Adriatic_Sea_Pressure_by_HHI/FeatureServer/0
+note felder: LastMeasuredDateTime, ObjectId, hcpr, name, p3t, type
+dataset High Blood Pressure Prevalence | https://services5.arcgis.com/Oi0pPHGAViVjGHHo/arcgis/rest/services/High_Blood_Pressure_Prevalence/FeatureServer/0
+candidate https://services5.arcgis.com/Oi0pPHGAViVjGHHo/arcgis/rest/services/High_Blood_Pressure_Prevalence/FeatureServer/0
+note felder: ACCESS2_Crude95CI, ACCESS2_CrudePrev, ARTHRITIS_Crude95CI, ARTHRITIS_CrudePrev, BINGE_Crude95CI, BINGE_CrudePrev, BPHIGH_Crude95CI, BPHIGH_CrudePrev, BPMED_Crude95CI, BPMED_CrudePrev, CANCER_Crude95CI, CANCER_CrudePrev, CASTHMA_Crude95CI, CASTHMA_CrudePrev, CERVICAL_Crude95CI, CERVICAL_CrudePrev, CHD_Crude95CI, CHD_CrudePrev
+dataset Sewer Buffer | https://services6.arcgis.com/tNgqqEFlzKrVeDPz/arcgis/rest/services/Sewer_Buffer/FeatureServer/78
+candidate https://services6.arcgis.com/tNgqqEFlzKrVeDPz/arcgis/rest/services/Sewer_Buffer/FeatureServer/78
+note felder: BufferDistance, OBJECTID, PermitType, SewerLineType, Shape__Area, Shape__Length
+dataset Pressure Regulator | https://services3.arcgis.com/UQmsHRnw5pL8AvPx/arcgis/rest/services/Maintenance_Remote_Control_Valve_and_Pressure_Regulator_IDs_Web_Map/FeatureServer/0
+decline https://services3.arcgis.com/UQmsHRnw5pL8AvPx/arcgis/rest/services/Maintenance_Remote_Control_Valve_and_Pressure_Regulator_IDs_Web_Map/FeatureServer/0
+note arcgis-error-body
+dataset Predation Pressure | https://services6.arcgis.com/IrCHt1arNMmYtNtb/arcgis/rest/services/Vegetation_cover/FeatureServer/7
+candidate https://services6.arcgis.com/IrCHt1arNMmYtNtb/arcgis/rest/services/Vegetation_cover/FeatureServer/7
+note felder: Blue, Canopy, Conduct, Depth, GlobalID, Gravel, Green, Id, Macrofauna, Meandering, Morphology, OBJECTID, Orange, Predation, Red, Salinity, Temp, Vegetation
+dataset Pipes By Pressure | https://services7.arcgis.com/mbo4CkTxRxNUaNGx/arcgis/rest/services/GasPressure/FeatureServer/5
+decline https://services7.arcgis.com/mbo4CkTxRxNUaNGx/arcgis/rest/services/GasPressure/FeatureServer/5
+note arcgis-error-body
+dataset Stations intersect Florida Predictions - Pressure | https://services4.arcgis.com/wyNGOB7qusRtCAPP/arcgis/rest/services/Stations%20intersect%20Florida%20Predictions%20-%20Pressure/FeatureServer/0
+candidate https://services4.arcgis.com/wyNGOB7qusRtCAPP/arcgis/rest/services/Stations%20intersect%20Florida%20Predictions%20-%20Pressure/FeatureServer/0
+note felder: AnalysisArea, Classes, OBJECTID, Value_Max, Value_Min
+dataset Water Pressure Zone | https://services3.arcgis.com/qrcTTRTwUoS8N47o/arcgis/rest/services/wPressureZone/FeatureServer/0
+candidate https://services3.arcgis.com/qrcTTRTwUoS8N47o/arcgis/rest/services/wPressureZone/FeatureServer/0
+note felder: ACTIVE, OBJECTID, ORACLE_ID, PRESSURE_FT, PRESSURE_ZONE_NUM, REMARKS, Shape__Area, Shape__Length, TBFID
+dataset Predation Pressure | https://services6.arcgis.com/IrCHt1arNMmYtNtb/arcgis/rest/services/Seatrout/FeatureServer/7
+candidate https://services6.arcgis.com/IrCHt1arNMmYtNtb/arcgis/rest/services/Seatrout/FeatureServer/7
+note felder: Blue, Canopy, Conduct, Depth, GlobalID, Gravel, Green, Id, Macrofauna, Meandering, Morphology, OBJECTID, Orange, Predation, Red, Salinity, Temp, Vegetation
+dataset Predation Pressure | https://services6.arcgis.com/IrCHt1arNMmYtNtb/arcgis/rest/services/Sea_Trout/FeatureServer/7
+candidate https://services6.arcgis.com/IrCHt1arNMmYtNtb/arcgis/rest/services/Sea_Trout/FeatureServer/7
+note felder: Blue, Canopy, Conduct, Depth, GlobalID, Gravel, Green, Id, Macrofauna, Meandering, Morphology, OBJECTID, Orange, Predation, Red, Salinity, Temp, Vegetation
+dataset Water Pressure Zone Lines | https://services7.arcgis.com/p0Gk2nDbPs7KEqSZ/arcgis/rest/services/WaterPressureZoneLine_1/FeatureServer/0
+candidate https://services7.arcgis.com/p0Gk2nDbPs7KEqSZ/arcgis/rest/services/WaterPressureZoneLine_1/FeatureServer/0
+note felder: ELEV, LENGTH, OBJECTID, OBJECTID_1, SFWTZON_, SFWTZON_ID, Shape_Leng, Shape__Length, ZONSRVD
+dataset Pressure Reducing Valve | https://services5.arcgis.com/JisFYcK2mIVg9ueP/arcgis/rest/services/Pressure_Reducing_Valve/FeatureServer/6
+candidate https://services5.arcgis.com/JisFYcK2mIVg9ueP/arcgis/rest/services/Pressure_Reducing_Valve/FeatureServer/6
+note felder: AccessType, Comments, Diameter, DownstreamPSIG, Elevation, FacilityID, GlobalID, Height, Insp_Route, InstallDate, IsCriticalValve, IsLocated, LifecycleStatus, LocationDescription, Manufacturer, OBJECTID, PilotControl, PressureHigh
+dataset Pressure zone shp | https://services9.arcgis.com/eNX73FDxjlKFtCtH/arcgis/rest/services/Pressure_zone_shp/FeatureServer/0
+candidate https://services9.arcgis.com/eNX73FDxjlKFtCtH/arcgis/rest/services/Pressure_zone_shp/FeatureServer/0
+note felder: COUNTYFP10, FID, Name, Shape_Area, Shape_Leng, Shape__Area, Shape__Length
+dataset Pressure Valve view | https://services1.arcgis.com/D6kuB4ZPsSI0QrTo/arcgis/rest/services/Pressure_Valve_view/FeatureServer/0
+candidate https://services1.arcgis.com/D6kuB4ZPsSI0QrTo/arcgis/rest/services/Pressure_Valve_view/FeatureServer/0
+note felder: AssetID, AssetType, ClayVal_Model, ClayVal_ServiceDate, ClayVal_Size, DataSource, Diameter_in, FieldVerified, GlobalID, InVault, InstallDate, Manufacturer, OBJECTID, Pressure_psi, ProjectName, VaultDrain
+dataset Enriched CONVERGENCE  Heart Disease  Stroke  High Blood Pressure | https://services6.arcgis.com/6dv3XZo0UE4So5ot/arcgis/rest/services/Enriched_CONVERGENCE__Heart_Disease__Stroke__High_Blood_Pressure/FeatureServer/0
+candidate https://services6.arcgis.com/6dv3XZo0UE4So5ot/arcgis/rest/services/Enriched_CONVERGENCE__Heart_Disease__Stroke__High_Blood_Pressure/FeatureServer/0
+note felder: ACCESS2_Crude95CI, ACCESS2_CrudePrev, ARTHRITIS_Crude95CI, ARTHRITIS_CrudePrev, BINGE_Crude95CI, BINGE_CrudePrev, BPHIGH_Crude95CI, BPHIGH_CrudePrev, BPMED_Crude95CI, BPMED_CrudePrev, CANCER_Crude95CI, CANCER_CrudePrev, CASTHMA_Crude95CI, CASTHMA_CrudePrev, CHD_Crude95CI, CHD_CrudePrev, CHECKUP_Crude95CI, CHECKUP_CrudePrev
+dataset Pressure Stewardson 9 28 2021 | https://services.arcgis.com/Ywxx29kRZEPq7K5N/arcgis/rest/services/Pressure_Stewardson_9_28_2021/FeatureServer/0
+candidate https://services.arcgis.com/Ywxx29kRZEPq7K5N/arcgis/rest/services/Pressure_Stewardson_9_28_2021/FeatureServer/0
+note felder: AnalysisArea, Classes, OBJECTID, ORIG_FID, Value_Max, Value_Min
+dataset Planning Atmospheric Pollution  | https://services-eu1.arcgis.com/nvL9EDc30lviBdlc/arcgis/rest/services/Planning_Atmospheric_Pollution_/FeatureServer/0
+candidate https://services-eu1.arcgis.com/nvL9EDc30lviBdlc/arcgis/rest/services/Planning_Atmospheric_Pollution_/FeatureServer/0
+note felder: FID, Shape__Area, Shape__Length, app_date, app_decn_d, app_no, appeal_dec, appeal_lod, apptype, areaha, decision, decn_date, location, officer, ogc_fid, parish, proposal, type
+dataset Water Pressure District | https://services.arcgis.com/rYz782eMbySr2srL/arcgis/rest/services/Water_Pressure_District/FeatureServer/0
+candidate https://services.arcgis.com/rYz782eMbySr2srL/arcgis/rest/services/Water_Pressure_District/FeatureServer/0
+note felder: DISTRICTID, OBJECTID, OBJECTID_1, SHAPE_Leng, Shape__Area, Shape__Length
+dataset Water pressure zones | https://services9.arcgis.com/rLkpFp1GxgPDr9HL/arcgis/rest/services/Water_pressure_zones/FeatureServer/0
+candidate https://services9.arcgis.com/rLkpFp1GxgPDr9HL/arcgis/rest/services/Water_pressure_zones/FeatureServer/0
+note felder: Data_Source, Data_Title, Date_Updated, Date_of_Publication, Description, Metadata, More_Information, OBJECTID, Point_of_Contact, Shape__Length, WATER_P_ID
+dataset Water Pressure Zones | https://services5.arcgis.com/RmXXW3PwBZGOxlSe/arcgis/rest/services/Water_Pressure_Zones/FeatureServer/0
+candidate https://services5.arcgis.com/RmXXW3PwBZGOxlSe/arcgis/rest/services/Water_Pressure_Zones/FeatureServer/0
+note felder: ABANDONED, AssetID, COMMENTS, GlobalID, INSTALLDATESRC, LASTEDITOR, LASTUPDATE, OBJECTID, Shape__Area, Shape__Length, UtilityConnections, ZONEID, ZONENAME, ZONEPRESSURE, ZONESTATUS
+dataset Pressure Dellis 9 15 2020 | https://services.arcgis.com/Ywxx29kRZEPq7K5N/arcgis/rest/services/Pressure_Dellis_9_15_2020/FeatureServer/0
+candidate https://services.arcgis.com/Ywxx29kRZEPq7K5N/arcgis/rest/services/Pressure_Dellis_9_15_2020/FeatureServer/0
+note felder: AnalysisArea, Classes, OBJECTID, Value_Max, Value_Min
+dataset Pressure Cheyney 9 15 20 | https://services.arcgis.com/Ywxx29kRZEPq7K5N/arcgis/rest/services/Pressure_Cheyney_9_15_20/FeatureServer/0
+candidate https://services.arcgis.com/Ywxx29kRZEPq7K5N/arcgis/rest/services/Pressure_Cheyney_9_15_20/FeatureServer/0
+note felder: AnalysisArea, Classes, OBJECTID, Value_Max, Value_Min
+dataset interpolated pressure CA February 2 2020 | https://services.arcgis.com/q3Zg9ERurv23iysr/arcgis/rest/services/interpolated_pressure_CA_February_2_2020/FeatureServer/0
+candidate https://services.arcgis.com/q3Zg9ERurv23iysr/arcgis/rest/services/interpolated_pressure_CA_February_2_2020/FeatureServer/0
+note felder: AnalysisArea, Classes, OBJECTID, ORIG_FID, Value_Max, Value_Min
+dataset Park Pressure: ParkPressureNew | https://services.arcgis.com/RmCCgQtiZLDCtblq/arcgis/rest/services/Park_Pressure_ParkPressureNew/FeatureServer/0
+candidate https://services.arcgis.com/RmCCgQtiZLDCtblq/arcgis/rest/services/Park_Pressure_ParkPressureNew/FeatureServer/0
+note felder: FIRST_AcresPer10, FIRST_PARK_NAME, FIRST_ParkAcres, FIRST_PopServ, FIRST_STUD_AR__1, FIRST_STUD_AR__2, OBJECTID, SHAPE_Area, SHAPE_Length, ToolkitI_1, UNIT_ID, uni
+dataset Pressure Miller 9 15 20 | https://services.arcgis.com/Ywxx29kRZEPq7K5N/arcgis/rest/services/Pressure_Miller_9_15_20/FeatureServer/0
+candidate https://services.arcgis.com/Ywxx29kRZEPq7K5N/arcgis/rest/services/Pressure_Miller_9_15_20/FeatureServer/0
+note felder: AnalysisArea, Classes, OBJECTID, Value_Max, Value_Min
+dataset Adriatic Sea Pressure by HHI (View) | https://services8.arcgis.com/tDYJmhP975urQUZt/arcgis/rest/services/Adriatic_Sea_Pressure_by_HHI_(View)/FeatureServer/0
+candidate https://services8.arcgis.com/tDYJmhP975urQUZt/arcgis/rest/services/Adriatic_Sea_Pressure_by_HHI_(View)/FeatureServer/0
+note felder: LastMeasuredDateTime, ObjectId, hcpr, name, p3t
+dataset High Pressure Gas Pipeline | https://services7.arcgis.com/S7DHOirgbYgdtrbR/arcgis/rest/services/High_Pressure_Gas_Pipeline_NPS_view/FeatureServer/0
+candidate https://services7.arcgis.com/S7DHOirgbYgdtrbR/arcgis/rest/services/High_Pressure_Gas_Pipeline_NPS_view/FeatureServer/0
+note felder: GlobalID, OBJECTID, Status
+dataset Oregon air pressure Feb 2 2020 | https://services.arcgis.com/q3Zg9ERurv23iysr/arcgis/rest/services/Oregon_air_pressure_Feb_2_2020/FeatureServer/0
+candidate https://services.arcgis.com/q3Zg9ERurv23iysr/arcgis/rest/services/Oregon_air_pressure_Feb_2_2020/FeatureServer/0
+note felder: AnalysisArea, Classes, OBJECTID, ORIG_FID, Value_Max, Value_Min
+dataset Water Pressure | https://services.arcgis.com/qDOnMQ2aoGtLgVxL/arcgis/rest/services/Water_Pressure/FeatureServer
+candidate-leer https://services.arcgis.com/qDOnMQ2aoGtLgVxL/arcgis/rest/services/Water_Pressure/FeatureServer
+note 0 rows, felder unbekannt
+dataset Water Pressure Zones | https://services.arcgis.com/YCM10gnCAvCoAhpj/arcgis/rest/services/Water_Pressure_Zones/FeatureServer/7
+candidate https://services.arcgis.com/YCM10gnCAvCoAhpj/arcgis/rest/services/Water_Pressure_Zones/FeatureServer/7
+note felder: Label_KWL, NAME, OBJECTID, Shape__Area, Shape__Length, Zone
+dataset Catchment Pressure | https://services7.arcgis.com/aQPIo9CLnYoGfISV/arcgis/rest/services/Catchment_Pressure/FeatureServer/0
+candidate https://services7.arcgis.com/aQPIo9CLnYoGfISV/arcgis/rest/services/Catchment_Pressure/FeatureServer/0
+note felder: FinalScore, OBJECTID, Pressure, Shape__Area, Shape__Length, Wetland
+dataset development pressure score | https://services3.arcgis.com/6QuzuucBh0MLJk7u/arcgis/rest/services/development_pressure_score/FeatureServer/0
+candidate https://services3.arcgis.com/6QuzuucBh0MLJk7u/arcgis/rest/services/development_pressure_score/FeatureServer/0
+note felder: ACRES_GIS, DEV_SCORE, DIST_ELEC, OBJECTID, PROPS_DEV, SCORE_DEV, SCORE_ELEC, SCORE_HWAY, SCORE_SEW, SCORE_WAT, Shape__Area, Shape__Length, TAX_ID
+dataset High Blood Pressure | https://services3.arcgis.com/0OPQIK59PJJqLK0A/arcgis/rest/services/High_BP_and_Percent_Poverty_WFL1/FeatureServer/0
+candidate https://services3.arcgis.com/0OPQIK59PJJqLK0A/arcgis/rest/services/High_BP_and_Percent_Poverty_WFL1/FeatureServer/0
+note felder: FID, Shape_Leng, Shape__Area, Shape__Length, Value, cnty_fips, cnty_name, state_abbr, state_fips, state_name
+dataset Percentage High Blood Pressure | https://services3.arcgis.com/0OPQIK59PJJqLK0A/arcgis/rest/services/Poverty_Level_with_High_Blood_Pressure_WFL1/FeatureServer/0
+candidate https://services3.arcgis.com/0OPQIK59PJJqLK0A/arcgis/rest/services/Poverty_Level_with_High_Blood_Pressure_WFL1/FeatureServer/0
+note felder: FID, Shape_Leng, Shape__Area, Shape__Length, Value, cnty_fips, cnty_name, state_abbr, state_fips, state_name
+dataset Pressure Contour (5psi) | https://services3.arcgis.com/qrcTTRTwUoS8N47o/arcgis/rest/services/wPressureContour/FeatureServer/0
+candidate https://services3.arcgis.com/qrcTTRTwUoS8N47o/arcgis/rest/services/wPressureContour/FeatureServer/0
+note felder: CONTOUR, ID, OBJECTID, Shape__Length
+dataset Pressure Keen 9 17 20 | https://services.arcgis.com/Ywxx29kRZEPq7K5N/arcgis/rest/services/Pressure_Keen_9_17_20/FeatureServer/0
+candidate https://services.arcgis.com/Ywxx29kRZEPq7K5N/arcgis/rest/services/Pressure_Keen_9_17_20/FeatureServer/0
+note felder: AnalysisArea, Classes, OBJECTID, Value_Max, Value_Min
+dataset High Blood Pressure | https://services3.arcgis.com/s1ixCFa0Wqrg0KxB/arcgis/rest/services/High_Blood_Pressure/FeatureServer/49
+candidate https://services3.arcgis.com/s1ixCFa0Wqrg0KxB/arcgis/rest/services/High_Blood_Pressure/FeatureServer/49
+note felder: ACCESS2_Cr, ACCESS2__1, ARTHRITIS1, ARTHRITIS_, BINGE_Cr_1, BINGE_Crud, BPHIGH_C_1, BPHIGH_Cru, BPMED_Cr_1, BPMED_Crud, CANCER_C_1, CANCER_Cru, CASTHMA_Cr, CASTHMA__1, CERVICAL_1, CERVICAL_C, CHD_Crude9, CHD_CrudeP
+dataset Pressure Zones | https://services1.arcgis.com/XxHmL09eFqJWI0gE/arcgis/rest/services/Water_Reference_Layers/FeatureServer/11
+candidate https://services1.arcgis.com/XxHmL09eFqJWI0gE/arcgis/rest/services/Water_Reference_Layers/FeatureServer/11
+note felder: GlobalID, OBJECTID, Shape__Area, Shape__Length, Zone
+dataset Water Pressure  Valve | https://services1.arcgis.com/ZMQyarkhNAnn8lip/arcgis/rest/services/Water_PRD/FeatureServer/10
+candidate https://services1.arcgis.com/ZMQyarkhNAnn8lip/arcgis/rest/services/Water_PRD/FeatureServer/10
+note felder: ASSETTYPE, GLOBALID, OBJECTID, assetid, diameter, highpressuresetting, inservicedate, installdate, lifecyclestatus, lowpressuresetting, maintby, manufacturer, model, normalstatus, notes, operable, ownedby, presentstatus
+dataset CityWorks High Pressure Water Lines | https://services.arcgis.com/H9W1xrHipXQYSaRp/arcgis/rest/services/CityWorks_High_Pressure_Water_Lines/FeatureServer/0
+candidate https://services.arcgis.com/H9W1xrHipXQYSaRp/arcgis/rest/services/CityWorks_High_Pressure_Water_Lines/FeatureServer/0
+note felder: OBJECTID, Shape__Length
+# keyword wind profiler
+dataset Wind Zones Hosted | https://services2.arcgis.com/Ce3DhLRthdwbHlfF/arcgis/rest/services/Wind_Zones/FeatureServer/0
+candidate https://services2.arcgis.com/Ce3DhLRthdwbHlfF/arcgis/rest/services/Wind_Zones/FeatureServer/0
+note felder: IBC_Risk_Cat_III_IV_vult, IBC_Risk_Cat_II_vult, IBC_Risk_Cat_I_vult, OBJECTID, PUBDATE, Shape__Area, Shape__Length, WindZone
+dataset Wind Farms | https://services2.arcgis.com/j80Jz20at6Bi0thr/arcgis/rest/services/Wind_Farms_/FeatureServer/0
+candidate https://services2.arcgis.com/j80Jz20at6Bi0thr/arcgis/rest/services/Wind_Farms_/FeatureServer/0
+note felder: Appeal_Outcome, Appeal_Status, Application_Reference, Decision, Decision_Date, Determination_Outcome, Distance_from_appeal_site_kms, Easting, Height_to_tip_m, Installed_Capacity_MW, Last_Decision_Date, Latitude, Longitude, Main_Location, Megawatts, Name, No_of_Turbines, Northing
+dataset Wind Turbine publicview | https://services6.arcgis.com/rtNHzl5XDmZaetYm/arcgis/rest/services/Wind_Turbine_publicview/FeatureServer/0
+candidate https://services6.arcgis.com/rtNHzl5XDmZaetYm/arcgis/rest/services/Wind_Turbine_publicview/FeatureServer/0
+note felder: BLADE_LENGTH, CL_NON_FREEHOLD_DISPOSITION_ID, COMMENTS, EFFECTIVE_DATETIME, GEOMETRY_UPDATE_DATETIME, GlobalID, HUB_HEIGHT, IN_SERVICE_DATE, LOCATION_ACCURACY, NUMBER_OF_BLADES, OBJECTID, OGF_ID, OWNER_COMPANY_NAME, RATED_CAPACITY, ROTOR_DIAMETER, TOTAL_TURBINE_HEIGHT, TURBINE_MANUFACTURER, WIND_FARM_NAME
+dataset Wind Farm Locations | https://services1.arcgis.com/0MSEUqKaxRlEPj5g/arcgis/rest/services/Wind_Farm_Locations/FeatureServer/1
+candidate https://services1.arcgis.com/0MSEUqKaxRlEPj5g/arcgis/rest/services/Wind_Farm_Locations/FeatureServer/1
+note felder: FID, Latitude, Longitude, Name, Production, Type, Units, Year
+dataset Wind Power Suitability | https://services3.arcgis.com/0OPQIK59PJJqLK0A/arcgis/rest/services/WindPowerSuitabilityPolygon/FeatureServer/0
+candidate https://services3.arcgis.com/0OPQIK59PJJqLK0A/arcgis/rest/services/WindPowerSuitabilityPolygon/FeatureServer/0
+note felder: Id, OBJECTID, Shape__Area, Shape__Length, gridcode
+dataset Wind Turbine | https://services.arcgis.com/5qKEuQWJpvVjCQ6W/arcgis/rest/services/WindSiteSystem_viewing_3bbeae12db484a188af1b96425984447/FeatureServer/0
+candidate https://services.arcgis.com/5qKEuQWJpvVjCQ6W/arcgis/rest/services/WindSiteSystem_viewing_3bbeae12db484a188af1b96425984447/FeatureServer/0
+note felder: ESRIGNSS_ALTITUDE, ESRIGNSS_AVG_H_RMS, ESRIGNSS_AVG_POSITIONS, ESRIGNSS_AVG_V_RMS, ESRIGNSS_CORRECTIONAGE, ESRIGNSS_DIRECTION, ESRIGNSS_FIXDATETIME, ESRIGNSS_FIXTYPE, ESRIGNSS_HDOP, ESRIGNSS_H_RMS, ESRIGNSS_H_STDDEV, ESRIGNSS_LATITUDE, ESRIGNSS_LONGITUDE, ESRIGNSS_NUMSATS, ESRIGNSS_PDOP, ESRIGNSS_POSITIONSOURCETYPE, ESRIGNSS_RECEIVER, ESRIGNSS_SPEED
+dataset Wind Strategy (CDP2016 - 2022) WIW | https://services.arcgis.com/hQOfkHGHCu8mgDpG/arcgis/rest/services/Wind_Strategy_CDP2016_2022/FeatureServer/0
+candidate https://services.arcgis.com/hQOfkHGHCu8mgDpG/arcgis/rest/services/Wind_Strategy_CDP2016_2022/FeatureServer/0
+note felder: OBJECTID, Shape__Area, Shape__Length, Wind_Strat, url
+dataset RES Unsuitable Wind Areas | https://services6.arcgis.com/Pd1cyjBoR66OI0XF/arcgis/rest/services/RES_Unsuitable_Wind_Areas/FeatureServer/0
+candidate https://services6.arcgis.com/Pd1cyjBoR66OI0XF/arcgis/rest/services/RES_Unsuitable_Wind_Areas/FeatureServer/0
+note felder: OBJECTID, Shape__Area, Shape__Length
+dataset Wind Turbines | https://services1.arcgis.com/MfbPb778y5QTu2Wv/arcgis/rest/services/Wind_Turbines/FeatureServer/0
+candidate https://services1.arcgis.com/MfbPb778y5QTu2Wv/arcgis/rest/services/Wind_Turbines/FeatureServer/0
+note felder: Blade_Top, Easting, Hub_Height, Northing, OBJECTID, OnOffshore, Planning_R, PublishYN, Rotor_Diam, Site_Name, Status, TurbineNo, kW
+# keyword tsunami gauge
+dataset Tide Gauge or Deep Ocean Gauge Tsunami Wave Observations | https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/Natural_Hazards/FeatureServer/1
+candidate https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/Natural_Hazards/FeatureServer/1
+note felder: AREA, ARR_DAY, ARR_HOUR, ARR_MIN, COMMENTS, COUNTRY, DAMAGE_AMO, DAMAGE_DES, DAMAGE_MIL, DATE_STRIN, DAY, DEATHS, DEATHS_AMO, DEATHS_DES, DIST_FROM_, DOUBTFUL, DRAWING_OR, EVENT_REGI
+dataset Tsunami | https://services3.arcgis.com/cTnMkBRk4HWkUCRo/arcgis/rest/services/Tsunami/FeatureServer
+candidate-leer https://services3.arcgis.com/cTnMkBRk4HWkUCRo/arcgis/rest/services/Tsunami/FeatureServer
+note 0 rows, felder unbekannt
+dataset Via Evacuacion Tsunami | https://services6.arcgis.com/7he6XdQyT8BzSLMa/arcgis/rest/services/Riesgos/FeatureServer/1
+candidate https://services6.arcgis.com/7he6XdQyT8BzSLMa/arcgis/rest/services/Riesgos/FeatureServer/1
+note felder: FID, Nombre, OBJECTID, Shape_Leng, Shape__Length, creacion, nom_com, nom_prov, nom_reg
+dataset AS Tsunami Inundation Converted | https://services.arcgis.com/XG15cJAlne2vxtgt/arcgis/rest/services/AS_Tsunami_Inundation_Converted/FeatureServer/0
+candidate https://services.arcgis.com/XG15cJAlne2vxtgt/arcgis/rest/services/AS_Tsunami_Inundation_Converted/FeatureServer/0
+note felder: OBJECTID, Polygons_CopyFeatures_AltMode, Polygons_CopyFeatures_Base, Polygons_CopyFeatures_Clamped, Polygons_CopyFeatures_Extruded, Polygons_CopyFeatures_FolderPat, Polygons_CopyFeatures_Name, Polygons_CopyFeatures_PopupInfo, Polygons_CopyFeatures_Snippet, Polygons_CopyFeatures_SymbolID, Shape__Area, Shape__Length, Sheet1__Flow_Depth, Sheet1__Name, Sheet1__ObjectID
+dataset Área Mayor Hojancha (Tsunami) v1 | https://services3.arcgis.com/vF5meFYES9JqHHlg/arcgis/rest/services/%C3%81rea_Mayor_Hojancha_(Tsunami)2/FeatureServer/0
+candidate https://services3.arcgis.com/vF5meFYES9JqHHlg/arcgis/rest/services/%C3%81rea_Mayor_Hojancha_(Tsunami)2/FeatureServer/0
+note felder: BUFF_DIST, BUFF_DIST_, CONTOUR, DN, DN_2, DN_3, FID, FID_Area_m, FID_Hermos, FID_Pana_1, FID_Panama, FID_deli_c, GRIDCODE_2, ID_12, Id, Id_1, InPoly_FID, InPoly_F_1
+dataset Área Mayor Esparza (Tsunami) v1 | https://services3.arcgis.com/vF5meFYES9JqHHlg/arcgis/rest/services/%C3%81rea_Mayor_Esparza/FeatureServer/0
+candidate https://services3.arcgis.com/vF5meFYES9JqHHlg/arcgis/rest/services/%C3%81rea_Mayor_Esparza/FeatureServer/0
+note felder: BUFF_DIST, BUFF_DIST_, CONTOUR, DN, DN_2, DN_3, FID, FID_Area_m, FID_Hermos, FID_Pana_1, FID_Panama, FID_deli_c, GRIDCODE_2, ID_12, Id, Id_1, InPoly_FID, InPoly_F_1
+dataset Área Mayor Garabito (Tsunami) v1 | https://services3.arcgis.com/vF5meFYES9JqHHlg/arcgis/rest/services/%C3%81rea_Mayor_Garabito/FeatureServer/0
+candidate https://services3.arcgis.com/vF5meFYES9JqHHlg/arcgis/rest/services/%C3%81rea_Mayor_Garabito/FeatureServer/0
+note felder: BUFF_DIST, BUFF_DIST_, CONTOUR, DN, DN_2, DN_3, FID, FID_Area_m, FID_Hermos, FID_Pana_1, FID_Panama, FID_deli_c, GRIDCODE_2, ID_12, Id, Id_1, InPoly_FID, InPoly_F_1
+dataset Área Mayor Siquirres (Tsunami) v1 | https://services3.arcgis.com/vF5meFYES9JqHHlg/arcgis/rest/services/%C3%81rea_Mayor_Siquirres_(Tsunami)2/FeatureServer/0
+candidate https://services3.arcgis.com/vF5meFYES9JqHHlg/arcgis/rest/services/%C3%81rea_Mayor_Siquirres_(Tsunami)2/FeatureServer/0
+note felder: BUFF_DIST, BUFF_DIST_, CONTOUR, DN, DN_2, DN_3, FID, FID_Area_m, FID_Hermos, FID_Pana_1, FID_Panama, FID_deli_c, GRIDCODE_2, ID_12, Id, Id_1, InPoly_FID, InPoly_F_1
+# keyword tide gauge
+dataset tide gauge  | https://services3.arcgis.com/nV0HyP5uKL48nAKr/arcgis/rest/services/2024_01_13_WFL1/FeatureServer/2
+candidate https://services3.arcgis.com/nV0HyP5uKL48nAKr/arcgis/rest/services/2024_01_13_WFL1/FeatureServer/2
+note felder: Contour, Id, OBJECTID, Shape__Length
+dataset tide gauge  | https://services3.arcgis.com/nV0HyP5uKL48nAKr/arcgis/rest/services/2024_01_13___test_WFL1/FeatureServer/2
+candidate https://services3.arcgis.com/nV0HyP5uKL48nAKr/arcgis/rest/services/2024_01_13___test_WFL1/FeatureServer/2
+note felder: Contour, Id, OBJECTID, Shape__Length
+dataset tide gauge  | https://services3.arcgis.com/nV0HyP5uKL48nAKr/arcgis/rest/services/South_Portland___all_dates_WFL1/FeatureServer/8
+candidate https://services3.arcgis.com/nV0HyP5uKL48nAKr/arcgis/rest/services/South_Portland___all_dates_WFL1/FeatureServer/8
+note felder: Contour, Id, OBJECTID, Shape__Length
+dataset tide gauge | https://services3.arcgis.com/nV0HyP5uKL48nAKr/arcgis/rest/services/tide_gauge/FeatureServer/1
+candidate https://services3.arcgis.com/nV0HyP5uKL48nAKr/arcgis/rest/services/tide_gauge/FeatureServer/1
+note felder: Contour, Id, OBJECTID, Shape__Length
+dataset Tide Gauge | https://services1.arcgis.com/QHK2l9cSYhemgg5s/arcgis/rest/services/Catlett_Infrastructure_WFL1/FeatureServer/4
+candidate https://services1.arcgis.com/QHK2l9cSYhemgg5s/arcgis/rest/services/Catlett_Infrastructure_WFL1/FeatureServer/4
+note felder: FID, Id
+dataset Monterey Tide Gauge | https://services1.arcgis.com/eGSDp8lpKe5izqVc/arcgis/rest/services/Monterey_tidegauge/FeatureServer/0
+candidate https://services1.arcgis.com/eGSDp8lpKe5izqVc/arcgis/rest/services/Monterey_tidegauge/FeatureServer/0
+note felder: Data_Type, Latitude, Longitude, NOAA_Website, Name, ObjectId, Tide_Gauge_Number
+dataset Tide Gauge - City | https://services5.arcgis.com/PADY1WtQSQ4Ijq5k/arcgis/rest/services/Rosemont_transect_and_tide_gauge_view_layers/FeatureServer/72
+candidate https://services5.arcgis.com/PADY1WtQSQ4Ijq5k/arcgis/rest/services/Rosemont_transect_and_tide_gauge_view_layers/FeatureServer/72
+note felder: GlobalID, Lat_Y, Long_X, Notes, OBJECTID, created_date, created_user, last_edited_date, last_edited_user
+dataset Station Tide Gauge | https://services5.arcgis.com/2ZRAaoTSJbQ20ceg/arcgis/rest/services/ISMPN9_New/FeatureServer/4
+candidate https://services5.arcgis.com/2ZRAaoTSJbQ20ceg/arcgis/rest/services/ISMPN9_New/FeatureServer/4
+note felder: ATTR_1, FID, LAYER, NAME
+dataset Tide Gauge Analysis | https://services3.arcgis.com/16nyMR1mdhEaLG41/arcgis/rest/services/VB_HWSI_Data_WFL1/FeatureServer/0
+candidate https://services3.arcgis.com/16nyMR1mdhEaLG41/arcgis/rest/services/VB_HWSI_Data_WFL1/FeatureServer/0
+note felder: AGENCY, AGENCY_1, CATEGORY, CATEGORY_1, LATDD, LATDD_1, LONGDD, LONGDD_1, OBJECTID, OBJECTID_1, ObjectID_12, SITENAME, SITENAME_1, SITENO, SITENO_1, SITEURL, SITEURL_1, avg_high
+dataset tide gauge trends | https://services1.arcgis.com/DbPykcCwUUYq5zKg/arcgis/rest/services/tide_gauge_trends/FeatureServer/0
+candidate https://services1.arcgis.com/DbPykcCwUUYq5zKg/arcgis/rest/services/tide_gauge_trends/FeatureServer/0
+note felder: ObjectId, lat, lon, name, trend_M2, trend_S2
+dataset La Jolla Tide Gauge | https://services1.arcgis.com/eGSDp8lpKe5izqVc/arcgis/rest/services/LaJolla_tidegauge/FeatureServer/0
+candidate https://services1.arcgis.com/eGSDp8lpKe5izqVc/arcgis/rest/services/LaJolla_tidegauge/FeatureServer/0
+note felder: Data_Type, Latitude, Longitude, NOAA_Website, Name, ObjectId, Tide_Gauge_Number
+dataset NOAA Tide Gauge (8658120) | https://services1.arcgis.com/EhkUu6sHoRi5xjBh/arcgis/rest/services/CE_Wetlands_2/FeatureServer/0
+candidate https://services1.arcgis.com/EhkUu6sHoRi5xjBh/arcgis/rest/services/CE_Wetlands_2/FeatureServer/0
+note felder: OBJECTID, SiteName
+dataset JOA Tide Gauge Quickcapture | https://services.arcgis.com/2zRtyrQ6q4mGrLJK/arcgis/rest/services/JOA_QuickCapture_Dta/FeatureServer/0
+decline https://services.arcgis.com/2zRtyrQ6q4mGrLJK/arcgis/rest/services/JOA_QuickCapture_Dta/FeatureServer/0
+note arcgis-error-body
+dataset SLR Tide Gauge Map  | https://services1.arcgis.com/qTQ6qYkHpxlu0G82/arcgis/rest/services/SLR_Tide_Gauge_Map_WFL1/FeatureServer
+candidate-leer https://services1.arcgis.com/qTQ6qYkHpxlu0G82/arcgis/rest/services/SLR_Tide_Gauge_Map_WFL1/FeatureServer
+note 0 rows, felder unbekannt
+dataset tide gauge duration web | https://services1.arcgis.com/DbPykcCwUUYq5zKg/arcgis/rest/services/tide_gauge_duration_web/FeatureServer/0
+candidate https://services1.arcgis.com/DbPykcCwUUYq5zKg/arcgis/rest/services/tide_gauge_duration_web/FeatureServer/0
+note felder: F01cm, F10cm, F20cm, F30cm, ObjectId, lat, lon
+dataset EU Tide Gauge Network | https://services-eu1.arcgis.com/2zdLB7oo67wV4Ezg/arcgis/rest/services/EU%20Tide%20Gauge%20Network/FeatureServer/0
+candidate https://services-eu1.arcgis.com/2zdLB7oo67wV4Ezg/arcgis/rest/services/EU%20Tide%20Gauge%20Network/FeatureServer/0
+note felder: Abstract, Are_tidal_predictions__availabl, Base_station_software__1, Base_station_software__2, Contact_details_1, Contact_details_2, Contact_details_3, Contact_details_4, Contact_details_5, Contact_details_6, Contact_details_7, Contact_details_8, Contact_details_for_information, Country_LocationGauge, Data_collection___water_level_l, Data_collection__water_level_me, Data_collection_status__water_l, Data_portal_1
+dataset Tide Gauge Use Survey form | https://services1.arcgis.com/8afa2OJLR9gBeOd0/arcgis/rest/services/survey123_197d6a51f96642e499f816ad252856bc_form/FeatureServer/0
+decline https://services1.arcgis.com/8afa2OJLR9gBeOd0/arcgis/rest/services/survey123_197d6a51f96642e499f816ad252856bc_form/FeatureServer/0
+note arcgis-error-body
+dataset tide gauge 2024-01-13 | https://services3.arcgis.com/nV0HyP5uKL48nAKr/arcgis/rest/services/South_Portland___all_dates_WFL1/FeatureServer/4
+candidate https://services3.arcgis.com/nV0HyP5uKL48nAKr/arcgis/rest/services/South_Portland___all_dates_WFL1/FeatureServer/4
+note felder: Contour, Id, OBJECTID, Shape__Length
+dataset PCRAFI II Vanuatu Tide Gauge | https://services8.arcgis.com/CUmNtIQbeViHMRkD/arcgis/rest/services/Vanuatu_Asset_Exposure_Mao_WFL1/FeatureServer/1
+decline https://services8.arcgis.com/CUmNtIQbeViHMRkD/arcgis/rest/services/Vanuatu_Asset_Exposure_Mao_WFL1/FeatureServer/1
+note arcgis-error-body
+dataset tide gauge 2024-03-10 | https://services3.arcgis.com/nV0HyP5uKL48nAKr/arcgis/rest/services/South_Portland___all_dates_WFL1/FeatureServer/6
+candidate https://services3.arcgis.com/nV0HyP5uKL48nAKr/arcgis/rest/services/South_Portland___all_dates_WFL1/FeatureServer/6
+note felder: Contour, Id, OBJECTID, Shape__Length
+dataset 2025 Tide Gauge Use Survey form | https://services2.arcgis.com/okXm0pb6aWH6XOGI/arcgis/rest/services/survey123_337a1404292448f79afede9cf348259c_form/FeatureServer/0
+decline https://services2.arcgis.com/okXm0pb6aWH6XOGI/arcgis/rest/services/survey123_337a1404292448f79afede9cf348259c_form/FeatureServer/0
+note arcgis-error-body
+dataset Boston Harbor Tidal Gauge Data Table | https://services.arcgis.com/SvSKeSQcFJgqad7l/arcgis/rest/services/Boston_Harbor_Tidal_Gauge_Data_Table/FeatureServer/0
+candidate https://services.arcgis.com/SvSKeSQcFJgqad7l/arcgis/rest/services/Boston_Harbor_Tidal_Gauge_Data_Table/FeatureServer/0
+note felder: ObjectId, ob, pred, times
+dataset 92139 Tide Gauge Monthly Service form | https://services3.arcgis.com/QAbtVO1pKnUKxc8G/arcgis/rest/services/survey123_a4ad18b77d4d4d1d8600e9a979f7556b_form/FeatureServer/0
+decline https://services3.arcgis.com/QAbtVO1pKnUKxc8G/arcgis/rest/services/survey123_a4ad18b77d4d4d1d8600e9a979f7556b_form/FeatureServer/0
+note arcgis-error-body
+dataset TG Stations | https://services2.arcgis.com/T7iULq65Kp9Elquk/arcgis/rest/services/TG_Stations/FeatureServer/0
+candidate https://services2.arcgis.com/T7iULq65Kp9Elquk/arcgis/rest/services/TG_Stations/FeatureServer/0
+note felder: FID, URL, lat, lon, name, place, sensor, type
+dataset EAA Rain Gauge System | https://services2.arcgis.com/p0kPTvyvhLmiT5Ha/arcgis/rest/services/RainGaugeSystem/FeatureServer
+candidate-leer https://services2.arcgis.com/p0kPTvyvhLmiT5Ha/arcgis/rest/services/RainGaugeSystem/FeatureServer
+note 0 rows, felder unbekannt
+dataset Wessex Water Catchment Rain Gauge Data | https://services.arcgis.com/3SZ6e0uCvPROr4mS/arcgis/rest/services/Wessex_Water_Catchment_Rain_Gauge_Data_view/FeatureServer/0
+candidate https://services.arcgis.com/3SZ6e0uCvPROr4mS/arcgis/rest/services/Wessex_Water_Catchment_Rain_Gauge_Data_view/FeatureServer/0
+note felder: DailyRainfall, DailyRainfallUnits, Date, Easting, GridRef, Northing, OBJECTID, SiteName

@@ -1,0 +1,63 @@
+# grind-flash recheck b3 (2026-08-17)
+# Mechanischer Source-Recheck — kein Force-Gate-Endurteil, kein Commit, keine Änderung an sources.φ / dead_sources.φ / ledger.φ / TODO.md.
+# Dispositionen: accepted / decline / gap / pro-review. Draft-Blöcke inline, kein Markdown in Drafts. Diagnosen nennen was IST.
+
+# ── 1. PMEL CO2-Moorings (ERDDAP-Subset) — accepted (bereits live) ──
+kandidat https://pmel.noaa.gov
+note 200 html (Portal). Der ERDDAP-Subset data.pmel.noaa.gov/pmel/erddap/tabledap/all_pmel_co2_moorings.json?time,longitude,latitude,pCO2_air&time%3E=max(time)-7days → 200 JSON, Spalten time,longitude,latitude,pCO2_air; rows tragen uatm-Werte, Zeitfenster 2025-08-14..2025-08-21 (7-Tage-Fenster), null-Zellen (Messung absent, 0 honored). Block lebt in sources.φ Z.703 — Konfiguration bestätigt. Die .csv-Varianten (dead_sources.φ Z.1186/1190: timeout/400) bleiben korrekt; die .json-Subset-Route ist die lebende Datenroute.
+accepted https://data.pmel.noaa.gov/pmel/erddap/tabledap/all_pmel_co2_moorings.json?time,longitude,latitude,pCO2_air&time%3E=max(time)-7days
+url https://data.pmel.noaa.gov/pmel/erddap/tabledap/all_pmel_co2_moorings.json?time,longitude,latitude,pCO2_air&time%3E=max(time)-7days
+ttl 86400
+force diffusion
+on earth 0 0 0
+map table.rows
+lat 2
+lon 1
+field 3 hydrosphere_pco2_mooring_uatm gaussian-inverse-square diffusion uatm 8640.0 0.0 0.0
+
+# ── 2. landsatlook.usgs.gov (SERVIR-SoilMoisture + NDBC + Active-Hurricanes ArcGIS) — decline, sub-Befunde pro-review ──
+kandidat https://landsatlook.usgs.gov
+note 200 html — React-Viewer („Loading LandsatLook..."), keine Datenzeilen. Sub-Proben: SERVIR-SoilMoisture gis1.servirglobal.net/Global/SoilMoisture → 200 JSON MapServer-Metadaten, Layer 0 = Mosaic Layer (Raster/Imagery), /0/query ohne Zeilen-Werte (Werte in Tiles); Active-Hurricanes services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Active_Hurricanes_Sampler/FeatureServer/0/query f=geojson → 200 FeatureCollection, Felder FCSTPRD/TAU/VALIDTIME/ADVISNUM/SSNUM/MAXWIND/GUST/MSLP, erster Rekord ADVDATE 2015-07 post-tropical.
+decline imagery-viewer
+url https://landsatlook.usgs.gov
+note Imagery-Viewer ohne Zeilen-Messwerte.
+pro-review https://gis1.servirglobal.net/Global/SoilMoisture
+note derived-Satellit (abgeleitetes SMAP-L3-Produkt, Raster-Mosaic) — Force-Gate offen.
+pro-review https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Active_Hurricanes_Sampler/FeatureServer/0/query
+note Forecast-Track-Punkte (model-forecast, Felder FCSTPRD/ADVISNUM) — Force-Gate offen.
+
+kandidat https://services5.arcgis.com/7weheFjxuNkGGiZi/arcgis/rest/services/National_Data_Buoy_Center_Station_Observations/FeatureServer/0/query
+note pro-review — dead_sources.φ Z.3093 „invalid-query" ist überholt. Mit where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=5 → 200 FeatureCollection, exceededTransferLimit=true, Live-Messwerte (YYYY/MM/DD/hh 2026-08-17, LastUpdate/PullUTC 2026-08-17, Daten heutig): WDIR/WSPD/GST/WVHT/DPD/APD/MWD/PRES/ATMP/WTMP/TIDE + lat/lon pro Station. Force-Gate: direkte Bojen-Sensoren (Wind advective, Welle acoustic, Wassertemperatur thermal, Druck advective) — physikalisch, nicht abgeleitet. Redundant zu den 29 per-Station-NDBC-Blöcken (sources.φ Z.191-510) — Konsolidierung zu einem einzelnen map/fanout-Block ist Kurationsentscheidung.
+
+# ── 3. AFAD tadas — gap (parser-def html bestätigt) ──
+kandidat https://afad.gov.tr
+note 200 html (Portal). tadas.afad.gov.tr/api/event/list?limit=200 → 200 text/html auch mit „Accept: application/json" — Angular-SPA (app-root „Loading..."), kein JSON. Recherche-Stand: deprem.afad.gov.tr/apiv2/event/last?size=5 → 404; deprem.afad.gov.tr/lastdb → 200 Angular-SPA; tadas via r.jina.ai → „Loading...". Keine öffentliche JSON-Route gefunden. Seismische Messung (seismic-body) bleibt accept-würdig, sobald eine JSON-Route existiert. dead_sources.φ Z.3582 parser-def html bestätigt.
+gap parser-def html
+url https://tadas.afad.gov.tr/api/event/list?limit=200
+note SPA-HTML trotz Accept: application/json; apiv2 404; lastdb SPA; Jina „Loading...". Recherche-Stand: keine öffentliche JSON-Route.
+
+# ── 4. MPC-Daten-API-Unterrouten — pro-review ──
+kandidat https://data.minorplanetcenter.net
+note API-Root /api/ → 200 JSON {"hello":"world"} (Placeholder, 23 B). Alle geprüften Daten-Unterrouten → 404: get_obs, neocp, statistics, orbits, get_mpcorb, statistics?start_date=2024-01-01, openapi.json, docs; comet_e.json → 404 (nginx). Doku minorplanetcenter.net/mpc/api → 404 (auch r.jina.ai: Timeout). Recherche-Stand: statischer Katalog www.minorplanetcenter.net/iau/ECS/MPCAT-OBS/MPCAT-OBS.html → 200 (html, cmap-Rohdaten, der lebende Nachfolger). Die Daten-API ist funktional absent (Root lebt als Placeholder); Entscheidung offen (API-Reset abwarten vs. MPCOBS-Katalog-Port) — pro-review, dead_sources.φ Z.1154 Einzel-Route-Prüfung damit abgeschlossen.
+pro-review url https://data.minorplanetcenter.net/api/get_obs
+pro-review url https://data.minorplanetcenter.net/api/neocp
+pro-review url https://data.minorplanetcenter.net/api/statistics
+
+# ── 5. SWPC ace_mag_1h — accepted (bereits live) ──
+kandidat https://services.swpc.noaa.gov
+note ace/mag/ace_mag_1h.json → 200 JSON, 665 Records; Elemente tragen time_tag, gse_bx/by/bz, gsm_bx/by/bz, gsm_lat/lon, bt. Feldpfade 0.gsm_bx/0.gsm_by/0.gsm_bz/0.bt passen zum Block sources.φ Z.615. ACE-Mag ist in der SWPC-Familie abgedeckt (ace_mag_1h.json + ace_swepam_1h.json, beide live).
+accepted https://services.swpc.noaa.gov/json/ace/mag/ace_mag_1h.json
+url https://services.swpc.noaa.gov/json/ace/mag/ace_mag_1h.json
+ttl 3600
+at earth 0.99
+field 0.gsm_bx exosphere_ace_bx_gsm_nt inverse-square em nT 360.0 0.0 0.0
+field 0.gsm_by exosphere_ace_by_gsm_nt inverse-square em nT 360.0 0.0 0.0
+field 0.gsm_bz exosphere_ace_bz_gsm_nt inverse-square em nT 360.0 0.0 0.0
+field 0.bt exosphere_ace_bt_nt inverse-square em nT 360.0 0.0 0.0
+
+# ── 6. ACTRIS-Datenzugang — gap (dns-unresolved, Recherche genannt) ──
+kandidat https://actris-ebas.nilu.no
+note DNS-unresolved (curl 6, Host existiert nicht). Recherche-Stand: actris.nilu.no → 200 SPA-Portal (17503 B; /api/measurements liefert dieselbe SPA) — dead_sources.φ Z.178 parser-def html bestätigt; actris-data.nilu.no → DNS-unresolved; ebas-data.nilu.no → 200 html (Root), /api/v1/ → 404, /api/v1/station → 404 — dead_sources.φ Z.1466 bestätigt; ebas.nilu.no → 200 WordPress-Infoseite (keine Daten-API). ACTRIS-Datenzugang (EBAS) hat aktuell keine öffentliche JSON-Route.
+gap dns-unresolved
+url https://actris-ebas.nilu.no
+note Host absent; ACTRIS-Datenzugang hinter SPA; EBAS-REST-Route 404. Jina unversucht — der SPA (actris.nilu.no) koennte den echten Endpoint tragen; ein r.jina.ai-Versuch steht aus.

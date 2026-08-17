@@ -1,0 +1,58 @@
+# grind recheck b4 (2026-08-17) — mechanischer Source-Recheck, 6 Kandidaten
+# Force-Gate-Endentscheidung offen: ambivalente Fälle als pro-review markiert
+# Diagnosen nennen was IST. Klassen: accepted | decline | gap | pro-review
+# Draft-Blöcke inline: accepted → sources.φ-Block, decline → dead_sources.φ-Eintrag
+
+kandidat https://gtnp.net
+note DNS löst nicht auf — curl: could not resolve host gtnp.net; r.jina.ai: Domain gtnp.net could not be resolved (HTTP 422). Recherche-Rezept (§9): gtnp.org ist fremdbelegt (Redirect zu samen-gemeente-hardenberg.nl, nicht GTN-P); data.gtnp.net löst DNS nicht auf; der lebende GTN-P-Host ist gtnp.arcticportal.org (Joomla-Portal-Home live), dessen /api/-Route HTML liefert (parser-def html, registriert in dead_sources.φ). Die Messgröße wäre thermal (Permafrost-Bodentemperatur) — kein Force-Gate-Entscheidungsfall, die Disposition ruht auf dem DNS-Befund.
+disposition decline
+dead dns
+url https://gtnp.net
+note DNS löst nicht auf (curl + r.jina.ai bestätigt). Recherche-Stand: gtnp.org fremdbelegt (Redirect samen-gemeente-hardenberg.nl), data.gtnp.net DNS nicht aufgelöst; lebender GTN-P-Host gtnp.arcticportal.org/api/ = parser-def html (registriert). Daten wären thermal (Permafrost-Bodentemperatur) — kein Force-Gate-Grund.
+
+kandidat https://gong.nso.edu
+note Portal live (HTTP 200, HTML). gong.nso.edu/data/ leitet auf gong2.nso.edu/archive/patch.pl?menutype=s (HTTP 403); gong2.nso.edu/HA/hag/ = Apache-Verzeichnisbaum (YYYYMM/ → FITS-Dateien), format=json auf dieser Route liefert HTML-Galerie (parser-def html, registriert). Messungen physisch echt: Dopplergramm-LOS-Velocity = acoustic (Helioseismologie, p-Moden), Magnetogramm = em, H-alpha = em. Parser-Gap: FITS-Binärverzeichnisbäume sind für den Parser unkonsumierbar; kein JSON-Kanal. Kraft-Deckung acoustic bliebe offen, solange kein FITS-Kanal existiert.
+disposition gap
+note Parser-Gap FITS: gong.nso.edu liefert Daten als FITS-Dateibaum, kein JSON-Kanal; Dopplergramm-Velocity wäre acoustic, Magnetogramm em. Kanal-Hinweis für späteren FITS-Reader (park/).
+
+kandidat https://data.oceannetworks.ca
+note /api/ leitet auf /OpenAPI (Swagger-UI HTML, parser-def html registriert). Token-API live: /api/locations?token= liefert JSON-Array (1989 Stationen, Keys locationCode, lat, lon, depth, hasDeviceData, deployments); /api/devices ohne Token = HTTP 401 (Auth real); OCEANNETWORKS_TOKEN liegt in .secrets.local. Messwerte = Ozeansensoren (Temperatur thermal C, Salinität diffusion PSU, Strömung advective m/s, Druck advective hPa) — physisch, kein Force-Gate-Zweifel. Offen: /api/data-Routen-Parameter und Feld-Keys/Units brauchen eine Token-Probe; der Draft trägt den verifizierten Kanal + Stations-Mapping, die field-Linien sind pendent.
+disposition accepted
+url https://data.oceannetworks.ca/api/data?token={OCEANNETWORKS_TOKEN}&locationCode={station}
+ttl 1800
+at earth
+stations https://data.oceannetworks.ca/api/locations?token={OCEANNETWORKS_TOKEN}
+stations_path .
+stations_id locationCode
+stations_lat lat
+stations_lon lon
+fanout 8
+fanout_delay 10
+note field-Linien pendent: /api/data-Antwortstruktur (Feld-Keys + Units) per Token-Probe verifizieren, dann field-Linien nach Verifikation ergänzen — Temperatur thermal C, Salinität diffusion PSU, Strömung advective m/s, Druck advective hPa als Erwartung, nicht als Fakt.
+
+kandidat https://omniweb.gsfc.nasa.gov
+note Root = HTML-Formular (parser-def cgi, registriert). Recherche-Rezept (§9): die Messdaten laufen über CDAWeb HAPI — https://cdaweb.gsfc.nasa.gov/hapi/info?id=OMNI2_H0_MRG1HR liefert live JSON mit allen Parametern und Einheiten (B-Feld nT em, flow speed km/s advective, Dichte per cc diffusion, Temperatur K thermal, E-Feld mV/m electric, Flow-Pressure nPa advective). Zweiter Kanal: spdf.gsfc.nasa.gov/pub/data/omni/low_res_omni/omni2_YYYY.dat (ASCII, omni2_2026.dat aktuell 2026-08-06). Daten-Lag ~ 2-4 Wochen (OMNI2 ground-reprocessed, letzter B-Feld-Stand 2026-07-20) — Zeitfenster rückwärts; HAPI-Dataset trägt Fill-Werte (999.9 …) — Fill-Skip ist Parser-Seite.
+disposition accepted
+url https://cdaweb.gsfc.nasa.gov/hapi/data?id=OMNI2_H0_MRG1HR&start={week_ago}T00:00:00Z&stop={now}Z&parameters=V1800,N1800,T1800,BX_GSE1800,BY_GSM1800,BZ_GSM1800,E1800,Pressure1800&format=json
+ttl 3600
+at sun
+hapi V1800=omni_solarwind_flow_speed_kms N1800=omni_solarwind_density_percc T1800=omni_solarwind_temp_k BX_GSE1800=omni_imf_bx_gse_nt BY_GSM1800=omni_imf_by_gsm_nt BZ_GSM1800=omni_imf_bz_gsm_nt E1800=omni_solarwind_electric_field_mvm Pressure1800=omni_solarwind_pressure_npa
+field omni_solarwind_flow_speed_kms omni_solarwind_flow_speed_kms patch-levy advective km/s 3600 0.0 0.0
+field omni_solarwind_density_percc omni_solarwind_density_percc gaussian-inverse-square diffusion p/cm3 3600 0.0 0.0
+field omni_solarwind_temp_k omni_solarwind_temp_k exponential-decay thermal K 3600 0.0 0.0
+field omni_imf_bx_gse_nt omni_imf_bx_gse_nt inverse-square em nT 3600 0.0 0.0
+field omni_imf_by_gsm_nt omni_imf_by_gsm_nt inverse-square em nT 3600 0.0 0.0
+field omni_imf_bz_gsm_nt omni_imf_bz_gsm_nt inverse-square em nT 3600 0.0 0.0
+field omni_solarwind_electric_field_mvm omni_solarwind_electric_field_mvm gaussian-inverse-square electric mV/m 3600 0.0 0.0
+field omni_solarwind_pressure_npa omni_solarwind_pressure_npa patch-levy advective nPa 3600 0.0 0.0
+
+kandidat https://newton.spacedys.com/astdys
+note Root live (HTML-Portal). astdys2/index.php?pc=3.0&type=all&format=json&limit=5 liefert HTML (Designation-Query-Formular) statt JSON — format=json greift nicht auf dieser Route; /astdys/files = HTTP 404; die JSON-Route pc=1.1.0&n=433&format=json ist jetzt Anubis-Proof-of-Work-Bot-Block (Challenge-Seite statt JSON). Force-Gate unentschieden: Orbital-Elemente (a, e, i) sind Modell-Fits, kein direkter Messwert; ra/dec werden nicht direkt geliefert (Ephemeriden-Rechnung nötig).
+disposition pro-review
+url https://newton.spacedys.com/astdys2/index.php?pc=3.0&type=all&format=json&limit=500
+note format=json liefert HTML; JSON-Routen Anubis-Proof-of-Work-Bot-Block; astdys/files 404. Jina (Headless-Browser) auf der PoW-Route unversucht. Force-Gate offen — Orbital-Elemente = Modell-Fit, kein direkter Messwert; ra/dec nicht direkt geliefert.
+
+kandidat https://api.safecast.org
+note measurements.json live: HTTP 200, application/json, JSON-Array mit value, unit (cpm), latitude, longitude, captured_at. Variante ohne en-US-Präfix (https://api.safecast.org/measurements.json?limit=3) byte-identisch zur en-US-Variante (8157 Bytes beide). Block bereits in sources.φ (url api.safecast.org/en-US/measurements.json, ttl 300, at earth, map ., field value safecast_cpm inverse-square em cpm 3600) — bestätigt. bgeigie_imports bleibt decline (Import-Registry, registriert). Kein neuer Block-Draft nötig, Variante verifiziert.
+disposition accepted
+note bereit live in sources.φ; /measurements.json und en-US-Variante byte-identisch; Block bestätigt.

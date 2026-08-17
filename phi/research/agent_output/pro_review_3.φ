@@ -1,0 +1,48 @@
+# grind pro-review 3 (2026-08-17)
+# Force-Gate-Urteil + Routen-Recherche fuer 3 ambivalente grind-flash-Kandidaten.
+# KEINE Aenderung an sources.φ / dead_sources.φ / ledger.φ / TODO.md — nur Urteil + fertige Drafts.
+# Dispositionen: cmap-Kompilat / dead mit Recherche-Stand / accepted. Diagnosen nennen was IST.
+
+# ── 1. TIC (TESS Input Catalog) — cmap-Kompilat (tap_compiler-Muster) ──
+kandidat https://archive.stsci.edu/tess
+note Force-Gate: TIC traegt Stern-Messwerte, kein bloesses Target-Register — ra/dec (ICRS-Position), plx (Parallaxe/Distanz, mas), pmRA/pmDEC (Eigenbewegung), Tmag/Bmag/Vmag/Jmag/Hmag/Kmag/GAIAmag (Helligkeit in mehreren Baendern), dazu Teff/mass/rad/d/lum (abgeleitete Sternparameter). Ein Auge evolviert genau fuer dieses Licht; em. Der Messwert ist die Substanz des Katalogs, nicht ein Register von Ziel-IDs. Routen-Recherche: MAST-Portalpfad /tess/catalogs/tic_v82/ 404; kanonische Route ist /missions/tess/catalogs/tic_v82/ (200). Struktur: header.csv (Spaltennamen, ~150 Spalten, [ra]:Float [dec]:Float [plx]:Float [pmRA]/[pmDEC]:Float [Tmag]:Float ...) + tic_dec*_*.csv.gz (headerlose Daten-Baender, 2°-Dec-Slices). MAST-TAP mast.stsci.edu/api/v0.1/tap/sync 404; MAST-Cone catalogs.mast.stsci.edu/api/v0.1/tic 404 — kein Live-TAP, der Weg ist das CSV-Kompilat. Header.csv liefert die Spaltennamen fuer die headerlosen Daten-Baender (kein Parser-Gap nach Kompilation). Column-Mapping (ra/dec/mag): ra→ra, dec→dec, plx→plx (mas), Tmag→mag (em). Spalten-Mapping: ra, dec, plx, Tmag.
+url https://archive.stsci.edu/missions/tess/catalogs/tic_v82/
+
+# Kompilat-Block (nach tap_compiler, GCVS-Muster — CDN-Asset, nicht die Roh-CSV):
+url https://github.com/omegaflow/sources/releases/download/archive.stsci.edu/tic_v82.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+plx plx
+field Tmag tic_tmag gaussian-inverse-square em mag 604800 0.0 0.0
+
+# ── 2. MPC-Daten-API — dead mit Recherche-Stand (Scaffold, kein JSON-Weg) ──
+kandidat https://data.minorplanetcenter.net
+note Force-Gate: astrometrische Beobachtungen sind physisch em (Asteroiden-Position ra/dec + Helligkeit mag) — ein Teleskop ist ein Auge; KEIN decline. Aber der Endpoint ist kein Datenweg: data.minorplanetcenter.net/ → 200 HTML (MPC-Homepage). data.minorplanetcenter.net/api/ → 200 {"hello":"world"} (23 B, Platzhalter). get-obs (Bindestrich, der aktuelle Name) ist ein lebender Scaffold, funktional nicht nutzbar: GET ohne Content-Type → 501 content_type_error „use application/json"; GET mit Content-Type: application/json → 400 general_error „get-obs failed ... Failed to decode JSON object" (Handler verlangt JSON-Body, den GET nicht traegt); POST → 405 Method Not Allowed. get-identifications POST → 404; get-observations/observations/openapi.json/docs → 404; minorplanetcenter.net/api/ → 404; minorplanetcenter.net/iau/ECS/MPC-OBS/ → 404. MPCOBS/Observation-DB (der Nachfolger) ist nur als HTML erreichbar: minorplanetcenter.net/db_search → 200 HTML-Formular; data.minorplanetcenter.net/explorer/ → 200 HTML-Web-App; www.minorplanetcenter.net/iau/ECS/MPCAT-OBS/MPCAT-OBS.html → 200 HTML (statischer Katalog-Download, cmap-Rohdaten). Keine maschinenlesbare JSON-Route gefunden — Recherche erschoept.
+dead scaffold
+url https://data.minorplanetcenter.net
+note API-Root /api/ = Platzhalter {"hello":"world"}; get-obs 501/405/400 (Scaffold, kein JSON-Body-Weg); Observation-DB (MPCOBS) nur als HTML (db_search-Formular, explorer/-Web-App, MPCAT-OBS.html-Katalog). Geprueft: get-obs, get_obs, get-identifications, get-observations, observations, openapi.json, docs, iau/ECS/MPC-OBS. 2026-08-17.
+
+# ── 3. NDBC-ArcGIS-Bojen (f=geojson) — accepted, ueberholt dead_sources.φ Z.3093/Z.3098 ──
+kandidat https://services5.arcgis.com/7weheFjxuNkGGiZi/arcgis/rest/services/National_Data_Buoy_Center_Station_Observations/FeatureServer/0/query
+note Force-Gate: Live-Bojen-Messwerte (Layer „Latest Buoy Observations", 889 Features, heutig 2026-08-17) — direkte Sensoren, nicht abgeleitet. Wind (WDIR/WSPD/GST) → advective (Luftmassen-Advektion); Welle (WVHT/DPD/APD/MWD) → acoustic (Oberflaechen-Schwerewelle); Luft-/Wassertemperatur (ATMP/WTMP) → thermal; Druck (PRES/PTDY) → advective; Tide/Wasserstand (TIDE) → gravity (tidal). Ein Fisch/Wal evolviert genau diese Sinne. f=geojson liefert 200 FeatureCollection, Features[].geometry.coordinates [lon,lat] + properties.{STN,LAT,LON,WDIR,WSPD,GST,WVHT,DPD,APD,MWD,PRES,PTDY,ATMP,WTMP,DEWP,VIS,TIDE,LastUpdate,PullUTC}. Ueberholt dead_sources.φ Z.3093 „dead invalid-query" (400-Befund) und Z.3098 „decline variant" (f=json) — beide sind durch die lebende f=geojson-Route ersetzt. Redundant zu den 29 per-Station-NDBC-Bloecken (sources.φ Z.191-510) — dieser eine map-Block konsolidiert das Feld; die per-Station-Bloecke bleiben als Station-Singletons bestehen (Kurationsentscheidung). Feldpfade properties.*, Position geometry.coordinates.1/0.
+url https://services5.arcgis.com/7weheFjxuNkGGiZi/arcgis/rest/services/National_Data_Buoy_Center_Station_Observations/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 300
+at earth
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.WDIR hydrosphere_ndbc_buoy_wind_dir gaussian-inverse-square advective deg 30.0 0.0 0.0
+field properties.WSPD hydrosphere_ndbc_buoy_wind_speed gaussian-inverse-square advective m/s 30.0 0.0 0.0
+field properties.GST hydrosphere_ndbc_buoy_gust gaussian-inverse-square advective m/s 30.0 0.0 0.0
+field properties.WVHT hydrosphere_ndbc_buoy_wave_height gaussian-inverse-square acoustic m 30.0 0.0 0.0
+field properties.DPD hydrosphere_ndbc_buoy_dominant_period gaussian-inverse-square acoustic s 30.0 0.0 0.0
+field properties.APD hydrosphere_ndbc_buoy_avg_period gaussian-inverse-square acoustic s 30.0 0.0 0.0
+field properties.MWD hydrosphere_ndbc_buoy_mean_wave_dir gaussian-inverse-square acoustic deg 30.0 0.0 0.0
+field properties.PRES hydrosphere_ndbc_buoy_pressure gaussian-inverse-square advective hPa 30.0 0.0 0.0
+field properties.PTDY hydrosphere_ndbc_buoy_pressure_tendency gaussian-inverse-square advective hPa 30.0 0.0 0.0
+field properties.ATMP hydrosphere_ndbc_buoy_air_temp erfc thermal C 30.0 0.0 0.0
+field properties.WTMP hydrosphere_ndbc_buoy_water_temp erfc thermal C 30.0 0.0 0.0
+field properties.TIDE hydrosphere_ndbc_buoy_tide inverse-square gravity m 30.0 0.0 0.0

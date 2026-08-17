@@ -1,0 +1,574 @@
+# grind arcgis b17 (2026-08-15) — keywords: pyranometer, pyrgeometer, net radiometer, ceilometer, disdrometer, soil gas
+# keyword pyranometer
+dataset Weather stations 2024 | https://services.arcgis.com/4Ko8f1mCWFLyY4NV/arcgis/rest/services/Weather_stations_2024/FeatureServer/0
+candidate https://services.arcgis.com/4Ko8f1mCWFLyY4NV/arcgis/rest/services/Weather_stations_2024/FeatureServer/0
+note felder: Canopy_Cover, CreationDate, Creator, Distance_to_nearest_tree, EditDate, Editor, Elevation, GlobalID, Habitat_Type, Installation_Date_and_Time, Nearest_tree_DBH, OBJECTID, Pyranometer_Height, Pyranometer_Orientation, Site_Notes, Temp_RH_Height, Wind_Height, Wind_Sensor_Orientation
+dataset WSU Ag Weather Net | https://services6.arcgis.com/zVYgR9Ot2OtGUKXu/arcgis/rest/services/WSU_Ag_Weather_Net/FeatureServer/0
+candidate https://services6.arcgis.com/zVYgR9Ot2OtGUKXu/arcgis/rest/services/WSU_Ag_Weather_Net/FeatureServer/0
+note felder: AgWx_URL, Air_Temperature_Probe, Barometric_Pressure_Sensor, County, Data_Quality_Review_Date, Installation_Date, Latitude_N_, Leaf_Wetness_Sensor, Longitude_W_, OBJECTID, Pyranometer, Rainfall_Sensor, Relative_Humidity_Probe, Second__additional__Air_Tempera, Second__additional__Rainfall_Se, Soil_Moisture_Probe_at_8_inch_d, Soil_Series, Soil_Temperature_Probe_at_2_inc
+# keyword pyrgeometer
+# keyword net radiometer
+dataset Net Trap Fishing | https://services.arcgis.com/82C0E4OYu0hT3hkh/arcgis/rest/services/Net_Trap_Fishing/FeatureServer/0
+candidate https://services.arcgis.com/82C0E4OYu0hT3hkh/arcgis/rest/services/Net_Trap_Fishing/FeatureServer/0
+note felder: AGEGroup, Age, Coastal_To, DistTravel, FID, GBRManagem, HomePostco, HowFarTrav, LGA, Lat, LocLatitud, LocLongitu, LocationEn, Location_r, Long, NRM_REGION, Net_trapFi, NettrapFis
+dataset Net Areas | https://services1.arcgis.com/CvuPhqcTQpZPT9qY/arcgis/rest/services/Net_Office_Application/FeatureServer/1
+candidate https://services1.arcgis.com/CvuPhqcTQpZPT9qY/arcgis/rest/services/Net_Office_Application/FeatureServer/1
+note felder: NETADMIN, NETID, NETNAME, Names, OBJECTID, Shape__Area, Shape__Length
+dataset Net Areas | https://services1.arcgis.com/CvuPhqcTQpZPT9qY/arcgis/rest/services/Net_office_map/FeatureServer/1
+candidate https://services1.arcgis.com/CvuPhqcTQpZPT9qY/arcgis/rest/services/Net_office_map/FeatureServer/1
+note felder: NETADMIN, NETID, NETNAME, Names, OBJECTID, Shape__Area, Shape__Length
+dataset net offices | https://services1.arcgis.com/CvuPhqcTQpZPT9qY/arcgis/rest/services/Net_office_map/FeatureServer/0
+candidate https://services1.arcgis.com/CvuPhqcTQpZPT9qY/arcgis/rest/services/Net_office_map/FeatureServer/0
+note felder: NETADDRESS, NETADMIN, NETFAX, NETID, NETNAME, NETPHONE, OBJECTID, PLUS4, ZIPCODE, img_url
+dataset Net Office Locations | https://services1.arcgis.com/CvuPhqcTQpZPT9qY/arcgis/rest/services/Net_office_map/FeatureServer
+candidate-leer https://services1.arcgis.com/CvuPhqcTQpZPT9qY/arcgis/rest/services/Net_office_map/FeatureServer
+note 0 rows, felder unbekannt
+dataset Net Office Application | https://services1.arcgis.com/CvuPhqcTQpZPT9qY/arcgis/rest/services/Net_Office_Application/FeatureServer
+candidate-leer https://services1.arcgis.com/CvuPhqcTQpZPT9qY/arcgis/rest/services/Net_Office_Application/FeatureServer
+note 0 rows, felder unbekannt
+dataset Gill-net Operation Areas | https://services1.arcgis.com/RTK5Unh1Z71JKIiR/arcgis/rest/services/HotspotsFishingAreas/FeatureServer/4
+candidate https://services1.arcgis.com/RTK5Unh1Z71JKIiR/arcgis/rest/services/HotspotsFishingAreas/FeatureServer/4
+note felder: Beach, No_, OBJECTID, x, y
+dataset Gill-net Operation Areas | https://services1.arcgis.com/RTK5Unh1Z71JKIiR/arcgis/rest/services/HotspotsFishingAreas/FeatureServer/0
+candidate https://services1.arcgis.com/RTK5Unh1Z71JKIiR/arcgis/rest/services/HotspotsFishingAreas/FeatureServer/0
+note felder: F1, OBJECTID, x, y
+dataset Gill-net Operation Areas | https://services1.arcgis.com/RTK5Unh1Z71JKIiR/arcgis/rest/services/HotspotsFishingAreas/FeatureServer/3
+candidate https://services1.arcgis.com/RTK5Unh1Z71JKIiR/arcgis/rest/services/HotspotsFishingAreas/FeatureServer/3
+note felder: Boat_Regis, Fishing_Ba, Fishing_Ge, Income__RM, Name, No, OBJECTID, Remarks, X, Y
+dataset SOL - Net Migration - 복사 | https://services.arcgis.com/BG6nSlhZSAWtExvp/arcgis/rest/services/countries2016_PopGrowth_NetMigration/FeatureServer/0
+candidate https://services.arcgis.com/BG6nSlhZSAWtExvp/arcgis/rest/services/countries2016_PopGrowth_NetMigration/FeatureServer/0
+note felder: Country, NetMigYear, NetMigrati, OBJECTID, Pop_GR_RTY, Pop_gr_rt
+dataset net | https://services6.arcgis.com/XQE8ytiMiEqt5gCv/arcgis/rest/services/%D0%A2%D0%B5%D1%81%D1%82%D0%BE%D0%B2%D0%B8%D0%B9_%D1%81%D0%B5%D1%80%D0%B2%D1%96%D1%81/FeatureServer/1
+decline https://services6.arcgis.com/XQE8ytiMiEqt5gCv/arcgis/rest/services/%D0%A2%D0%B5%D1%81%D1%82%D0%BE%D0%B2%D0%B8%D0%B9_%D1%81%D0%B5%D1%80%D0%B2%D1%96%D1%81/FeatureServer/1
+note arcgis-error-body
+dataset Global Net Migration (2007-2020) | https://services.arcgis.com/BG6nSlhZSAWtExvp/arcgis/rest/services/netmigBeta/FeatureServer/0
+candidate https://services.arcgis.com/BG6nSlhZSAWtExvp/arcgis/rest/services/netmigBeta/FeatureServer/0
+note felder: COUNTRY, Migrants_1000_pop_2007_, Migrants_1000_pop_2012_, Migrants_1000_pop_2017_, Migrants_1000_pop_2020_, OBJECTID, netmigration_2007, netmigration_2012, netmigration_2017, netmigration_2020
+dataset Summarize OilfieldSpillsBAA within Net Tillable Land | https://services.arcgis.com/xYjDUN35YwdCEcMm/arcgis/rest/services/Summarize_OilfieldSpillsBAA_within_Net_Tillable_Land/FeatureServer/0
+candidate https://services.arcgis.com/xYjDUN35YwdCEcMm/arcgis/rest/services/Summarize_OilfieldSpillsBAA_within_Net_Tillable_Land/FeatureServer/0
+note felder: Acres, AnalysisArea, DESCRIPTOR, FID_ATSSection, FID_FinalSoil, FILE_NAME, Join_ID, M, OBJECTID, PID, Point_Count, RA, RGE, SEC, TRM, TWP
+dataset Summarize OilfieldSpillsBAA within Net Tillable Land | https://services.arcgis.com/xYjDUN35YwdCEcMm/arcgis/rest/services/Summarize_OilfieldSpillsBAA_within_Net_Tillable_Land/FeatureServer
+candidate-leer https://services.arcgis.com/xYjDUN35YwdCEcMm/arcgis/rest/services/Summarize_OilfieldSpillsBAA_within_Net_Tillable_Land/FeatureServer
+note 0 rows, felder unbekannt
+dataset Find Locations in NET Inventory Assessment | https://services9.arcgis.com/mxpFc8oFRyNIV03y/arcgis/rest/services/Find_Locations_in_NET_Inventory_Assessment/FeatureServer/0
+candidate https://services9.arcgis.com/mxpFc8oFRyNIV03y/arcgis/rest/services/Find_Locations_in_NET_Inventory_Assessment/FeatureServer/0
+note felder: Bridgesills_other, CreationDate, Creator, D, EditDate, Editor, OBJECTID, Water_other, ada_parking_sign, blazetrail_sign_visible, boardwalk_comments, boardwalk_condition, boardwalk_height_off_ground_in, boardwalk_length_ft_, boardwalk_material_sills, boardwalk_sills_other, boardwalk_supports, boardwalk_supports_other
+dataset Net Configuration One | https://services1.arcgis.com/uOC3Nk10N6PrghUq/arcgis/rest/services/Net_Configuration_One/FeatureServer/2
+candidate https://services1.arcgis.com/uOC3Nk10N6PrghUq/arcgis/rest/services/Net_Configuration_One/FeatureServer/2
+note felder: FID, Id, Shape__Length
+dataset Net Configuration Four | https://services1.arcgis.com/uOC3Nk10N6PrghUq/arcgis/rest/services/Net_Configuration_Four/FeatureServer/1
+candidate https://services1.arcgis.com/uOC3Nk10N6PrghUq/arcgis/rest/services/Net_Configuration_Four/FeatureServer/1
+note felder: FID, Id, Shape__Length
+dataset Radiometer | https://services3.arcgis.com/yNYLA0jxavf9Ecrz/arcgis/rest/services/Playa_Sites/FeatureServer/0
+candidate https://services3.arcgis.com/yNYLA0jxavf9Ecrz/arcgis/rest/services/Playa_Sites/FeatureServer/0
+note felder: Comment, GlobalID, OBJECTID, xcoordinat, ycoordinat
+dataset Net Neutrality Index (ZIPs) | https://services.arcgis.com/AgwDJMQH12AGieWa/arcgis/rest/services/Final_Map_WFL1/FeatureServer/2
+candidate https://services.arcgis.com/AgwDJMQH12AGieWa/arcgis/rest/services/Final_Map_WFL1/FeatureServer/2
+note felder: AVGDI_CY, AVGFMSZ_CY, AVGHHSZ_CY, AVGHINC_CY, AVGNW_CY, F_Percent_Adults_With_HighSpeed, ID, MEDAGE_CY, MEDDI_CY, MEDHINC_CY, MEDNW_CY, MP19001a_B, MP19001a_I, MP19003a_B, MP19003a_I, MP19004a_B, MP19004a_I, MP19005a_B
+dataset Buffer of 2021 Safety Net Dental Clinics | https://services1.arcgis.com/7r2Wl09a1Apy459r/arcgis/rest/services/Buffer_of_2021_Safety_Net_Dental_Clinics/FeatureServer/0
+candidate https://services1.arcgis.com/7r2Wl09a1Apy459r/arcgis/rest/services/Buffer_of_2021_Safety_Net_Dental_Clinics/FeatureServer/0
+note felder: Address, AnalysisArea, BUFF_DIST, City, Clinic_County, Clinic_Name, Non_Traditional_Programs, OBJECTID, ORIG_FID, Service_Type, State, Zip
+dataset Net Neutrality Index (Counties) | https://services.arcgis.com/AgwDJMQH12AGieWa/arcgis/rest/services/Final_Map_WFL1/FeatureServer/1
+candidate https://services.arcgis.com/AgwDJMQH12AGieWa/arcgis/rest/services/Final_Map_WFL1/FeatureServer/1
+note felder: AVGDI_CY, AVGFMSZ_CY, AVGHHSZ_CY, AVGHINC_CY, AVGNW_CY, ID, MEDAGE_CY, MEDDI_CY, MEDHINC_CY, MEDNW_CY, MP19001a_B, MP19001a_I, MP19003a_B, MP19003a_I, MP19004a_B, MP19004a_I, MP19005a_B, MP19005a_I
+dataset European Eel Fyke Net | https://services-eu1.arcgis.com/tnPmSZbB6GEKJjh8/arcgis/rest/services/FykeNetSummary/FeatureServer/0
+candidate https://services-eu1.arcgis.com/tnPmSZbB6GEKJjh8/arcgis/rest/services/FykeNetSummary/FeatureServer/0
+note felder: OBJECTID, avgLengthTotalCm, avgMassKg, calcLengthClass10_19Cm, calcLengthClass20_29Cm, calcLengthClass30_39Cm, calcLengthClass40_49Cm, calcLengthClass50_59Cm, calcLengthClass5_9Cm, calcLengthClass60_69Cm, calcLengthClass70_79Cm, calcLengthClass_80Cm, catchmentName, cdSpecies, cntEels, cntFishMeasured, cntNetNights, cntSamplingNights
+dataset Mist Net Location | https://services2.arcgis.com/eQgAMgHr2CRobt2r/arcgis/rest/services/Mist_Net_Location/FeatureServer/42
+candidate https://services2.arcgis.com/eQgAMgHr2CRobt2r/arcgis/rest/services/Mist_Net_Location/FeatureServer/42
+note felder: BuildDate, Contact, ContactEma, CreationDa, Creator, EditDate, Editor, GlobalID, MapEnable, Notes, OBJECTID, RemovedDat, ResLnDesc, ResLnID, ResLnName, ResLnType, Section, Shape_Leng
+dataset Pickleball Net | https://services1.arcgis.com/jTMGdwGfKulaQiS9/arcgis/rest/services/Pickleball_Net/FeatureServer/29
+candidate https://services1.arcgis.com/jTMGdwGfKulaQiS9/arcgis/rest/services/Pickleball_Net/FeatureServer/29
+note felder: Name, OID
+dataset Clam Net Survey results | https://services2.arcgis.com/SbxFMy5nFd6wmwCw/arcgis/rest/services/survey123_69c4c9023a39443fa2cce66bf43ddade_results/FeatureServer/0
+candidate https://services2.arcgis.com/SbxFMy5nFd6wmwCw/arcgis/rest/services/survey123_69c4c9023a39443fa2cce66bf43ddade_results/FeatureServer/0
+note felder: Contact_Email, Contact_Name, Contact_Phone_Number, CreationDate, Creator, EditDate, Editor, Net_Removal_Status, _date, color, entanglementburied, entanglementburied_other, globalid, location_at_site, mesh_other, mesh_size, net_descri_other, net_description
+dataset Net Migration | https://services1.arcgis.com/PsDtSYIjNsyfjwcX/arcgis/rest/services/Net_Migration/FeatureServer/0
+candidate https://services1.arcgis.com/PsDtSYIjNsyfjwcX/arcgis/rest/services/Net_Migration/FeatureServer/0
+note felder: County, OBJECTID, PopulationChange, Rank, Year
+dataset Enriched Target Welltower Senior Housing Triple Net US | https://services5.arcgis.com/PYQDcdc0d8h6iad8/arcgis/rest/services/Enriched_Target_Welltower_Senior_Housing_Triple_Net_US/FeatureServer/0
+candidate https://services5.arcgis.com/PYQDcdc0d8h6iad8/arcgis/rest/services/Enriched_Target_Welltower_Senior_Housing_Triple_Net_US/FeatureServer/0
+note felder: Address, City, Country, ENRICH_FID, HasData, ID, MEDIA55UFY, OBJECTID, Operator_Name, POPDENS_FY, POPGRWCYFY, Property_Name, SENIOR_FY, State, THHFY40, THHFY41, THHFY42, THHFY44
+dataset NET Metrotel 22 region | https://services6.arcgis.com/JxyiVV791zIv6raR/arcgis/rest/services/NET_Metrotel_22_region/FeatureServer/0
+decline https://services6.arcgis.com/JxyiVV791zIv6raR/arcgis/rest/services/NET_Metrotel_22_region/FeatureServer/0
+note arcgis-error-body
+dataset Bestaand net | https://services.arcgis.com/zmBQLV64TsFvEpV0/arcgis/rest/services/Kwaliteitsnetwerk_goederenvervoer_2015/FeatureServer/16
+candidate https://services.arcgis.com/zmBQLV64TsFvEpV0/arcgis/rest/services/Kwaliteitsnetwerk_goederenvervoer_2015/FeatureServer/16
+note felder: GME_NAAM, OBJECTID, OBJECTID_1, STT_NAAM, WEGBEHSRT, WEGNUMMER, WPS_NAMNEN, WVK_
+dataset Net Fishing Byelaw | https://services6.arcgis.com/7sEZiHncz1HK9dhD/arcgis/rest/services/Net_Fishing_Byelaw/FeatureServer/324
+candidate https://services6.arcgis.com/7sEZiHncz1HK9dhD/arcgis/rest/services/Net_Fishing_Byelaw/FeatureServer/324
+note felder: Activity, IFCA, Link, Management, OBJECTID, Shape__Area, Shape__Length, Theme
+dataset Net crop change | https://services.arcgis.com/nGt4QxSblgDfeJn9/arcgis/rest/services/Net_crop_change/FeatureServer/0
+candidate https://services.arcgis.com/nGt4QxSblgDfeJn9/arcgis/rest/services/Net_crop_change/FeatureServer/0
+note felder: CNTY_FIPS, FIPS, NAME, OBJECTID, SQMI, STATE_NAME, Shape__Area, Shape__Length, abs_total_change, change_driver, corn_45_count, corn_change, corn_curt_count, cotton_45_count, cotton_change, cotton_curt_count, driver_other, rice_45_count
+dataset Safety Net Clinics | https://services1.arcgis.com/Ezk9fcjSUkeadg6u/arcgis/rest/services/Safety_Net_Clinics/FeatureServer/0
+candidate https://services1.arcgis.com/Ezk9fcjSUkeadg6u/arcgis/rest/services/Safety_Net_Clinics/FeatureServer/0
+note felder: ARC_Single, AddBldg, AddNum, AddNumFrom, AddNumTo, AddRange, Addr_type, Address, BldgName, BldgType, Block, City, Clinic, Country, DisplayX, DisplayY, Distance, District
+dataset Linnton NET WFL1 | https://services2.arcgis.com/6Miy5NqQWjMYTGFY/arcgis/rest/services/Linnton_NET_WFL1/FeatureServer
+candidate-leer https://services2.arcgis.com/6Miy5NqQWjMYTGFY/arcgis/rest/services/Linnton_NET_WFL1/FeatureServer
+note 0 rows, felder unbekannt
+dataset NET Community Partnerships view | https://services.arcgis.com/jXi5GuMZwfCYtZP9/arcgis/rest/services/NET_Community_Partnerships_view/FeatureServer/0
+candidate https://services.arcgis.com/jXi5GuMZwfCYtZP9/arcgis/rest/services/NET_Community_Partnerships_view/FeatureServer/0
+note felder: Community, DateRange, FlyerUpdate, NumberViolationsCorrected, NumberofProperties, OBJECTID, Shape__Area, Shape__Length, Status
+dataset Net Enrollment in Primary School  | https://services5.arcgis.com/wXYNaciObHUosEnt/arcgis/rest/services/Net_Enrollment_in_Primary_School/FeatureServer/1
+candidate https://services5.arcgis.com/wXYNaciObHUosEnt/arcgis/rest/services/Net_Enrollment_in_Primary_School/FeatureServer/1
+note felder: OBJECTID, Region_Names_Region, Regions_S_16_NEPS_F, Shape__Area, Shape__Length
+dataset Radio Meter | https://services2.arcgis.com/L4ywDaHbEfVZyfpl/arcgis/rest/services/OD_Water/FeatureServer/2
+decline https://services2.arcgis.com/L4ywDaHbEfVZyfpl/arcgis/rest/services/OD_Water/FeatureServer/2
+note arcgis-error-body
+dataset Water Net Gain catchment scale prioritisation | https://services3.arcgis.com/Bb8lfThdhugyc4G3/arcgis/rest/services/Water_Net_Gain_catchment_scale_prioritisation/FeatureServer/0
+candidate https://services3.arcgis.com/Bb8lfThdhugyc4G3/arcgis/rest/services/Water_Net_Gain_catchment_scale_prioritisation/FeatureServer/0
+note felder: Ar_RAFS_st, AreaRAFsCorrected, AreaRAFsDivCatchArea, Area_RAFS, N_RAFS_st, No_RAFS, OBJECTID, Priority, Shape__Area, Shape__Length, cams_stand, cams_sum, rbd_id, wb_id, wb_name
+dataset % Net Enrolment Rate in Public  Primary School | https://services7.arcgis.com/iEMmryaM5E3wkdnU/arcgis/rest/services/_Net_Enrolment_Rate_in_Public_Primary_School/FeatureServer/0
+candidate https://services7.arcgis.com/iEMmryaM5E3wkdnU/arcgis/rest/services/_Net_Enrolment_Rate_in_Public_Primary_School/FeatureServer/0
+note felder: BECPassEng, BECPassMat, BECPassSci, BECPassSoc, CAPITAL, Code170, Completi_1, Completion, DISTRICT, FARM_TYPE, JSSFemale, JSSPTR, JSSSeating, JSSTextboo, JSSToilets, JSSTrained, JSSWater, JSSWriting
+dataset 1.4.1 Net Enrolment Rate at National Level | https://services8.arcgis.com/4nQEMj8vd1ryiZdd/arcgis/rest/services/National_Net_Enrolment_Rate/FeatureServer/0
+decline https://services8.arcgis.com/4nQEMj8vd1ryiZdd/arcgis/rest/services/National_Net_Enrolment_Rate/FeatureServer/0
+note arcgis-error-body
+dataset Net Absorption Over 500000 | https://services6.arcgis.com/DckzUAOD3r8jgOBE/arcgis/rest/services/Net_Absorption_Over_500000/FeatureServer/0
+candidate https://services6.arcgis.com/DckzUAOD3r8jgOBE/arcgis/rest/services/Net_Absorption_Over_500000/FeatureServer/0
+note felder: As_Of, City, Inventory_SF, Market_Rent_SF, Net_Absorption_SF_12_Mo, OBJECTID, Period, Population, Property_Class_Name, Slice, State, Under_Construction_SF
+dataset Net Enrollment in Primary School  | https://services5.arcgis.com/wXYNaciObHUosEnt/arcgis/rest/services/Net_Enrollment_in_Primary_School/FeatureServer/0
+candidate https://services5.arcgis.com/wXYNaciObHUosEnt/arcgis/rest/services/Net_Enrollment_in_Primary_School/FeatureServer/0
+note felder: OBJECTID, Regions_S_16_NEPS_M, Regions_S_16_Region, Shape__Area, Shape__Length
+dataset Net Enrollment in Primary School | https://services5.arcgis.com/wXYNaciObHUosEnt/arcgis/rest/services/Net_Enrollment_in_Primary_School/FeatureServer
+candidate-leer https://services5.arcgis.com/wXYNaciObHUosEnt/arcgis/rest/services/Net_Enrollment_in_Primary_School/FeatureServer
+note 0 rows, felder unbekannt
+dataset Net Enrollment Rate in Elementary Education at National Level | https://services8.arcgis.com/4nQEMj8vd1ryiZdd/arcgis/rest/services/National_Elementary_Net_Enrolment_Rate/FeatureServer/0
+decline https://services8.arcgis.com/4nQEMj8vd1ryiZdd/arcgis/rest/services/National_Elementary_Net_Enrolment_Rate/FeatureServer/0
+note arcgis-error-body
+dataset Net Metering Restricted Area | https://services1.arcgis.com/xbWF6o8qyXoMFa8L/arcgis/rest/services/Net_Metering_Area/FeatureServer/5
+candidate https://services1.arcgis.com/xbWF6o8qyXoMFa8L/arcgis/rest/services/Net_Metering_Area/FeatureServer/5
+note felder: OBJECTID, Shape__Area, Shape__Length
+dataset 1.4.1 Net Enrolment Rate at Regional Level | https://services8.arcgis.com/4nQEMj8vd1ryiZdd/arcgis/rest/services/Regional_Net_Enrolment_Rate/FeatureServer/0
+decline https://services8.arcgis.com/4nQEMj8vd1ryiZdd/arcgis/rest/services/Regional_Net_Enrolment_Rate/FeatureServer/0
+note arcgis-error-body
+dataset Front Range Net Worth Test | https://services6.arcgis.com/J9BlKa2dYSKi7MdQ/arcgis/rest/services/blapidus__54e651ab6a9e4606/FeatureServer/0
+candidate https://services6.arcgis.com/J9BlKa2dYSKi7MdQ/arcgis/rest/services/blapidus__54e651ab6a9e4606/FeatureServer/0
+note felder: CreationDate, Creator, EditDate, Editor, OBJECTID, SITE_DESC, SITE_NAME, Shape__Area, Shape__Length
+dataset Crossing Locations for 123 Net | https://services3.arcgis.com/ySzhFSJfYeginRjx/arcgis/rest/services/Crossing_Locations_for_123_Net/FeatureServer/0
+candidate https://services3.arcgis.com/ySzhFSJfYeginRjx/arcgis/rest/services/Crossing_Locations_for_123_Net/FeatureServer/0
+note felder: Comments, CrossingNum, GlobalID, OBJECTID
+dataset Water Net Gain - feature prioritisation | https://services3.arcgis.com/Bb8lfThdhugyc4G3/arcgis/rest/services/Filtered_RAFs_clipped_pilot_catchments_UPDATED_SOIL_GROUP/FeatureServer/0
+candidate https://services3.arcgis.com/Bb8lfThdhugyc4G3/arcgis/rest/services/Filtered_RAFs_clipped_pilot_catchments_UPDATED_SOIL_GROUP/FeatureServer/0
+note felder: Hab_net, Join_Count, OBJECTID, PHI_hab, SOIL_GROUP, Shape__Area, Shape__Length, area_m2
+dataset FOLU Net Sink | https://services7.arcgis.com/KkRmyZMLoUMZ3HNT/arcgis/rest/services/FOLU_Net_Sink/FeatureServer/0
+decline https://services7.arcgis.com/KkRmyZMLoUMZ3HNT/arcgis/rest/services/FOLU_Net_Sink/FeatureServer/0
+note arcgis-error-body
+dataset % Net Enrolment Rate in Public Junior High School | https://services7.arcgis.com/iEMmryaM5E3wkdnU/arcgis/rest/services/_Net_Enrolment_Rate_in_Public_Junior_High_School/FeatureServer/0
+candidate https://services7.arcgis.com/iEMmryaM5E3wkdnU/arcgis/rest/services/_Net_Enrolment_Rate_in_Public_Junior_High_School/FeatureServer/0
+note felder: BECPassEng, BECPassMat, BECPassSci, BECPassSoc, CAPITAL, Code170, Completi_1, Completion, DISTRICT, FARM_TYPE, JSSFemale, JSSPTR, JSSSeating, JSSTextboo, JSSToilets, JSSTrained, JSSWater, JSSWriting
+dataset % Net Enrolment Rate in Public Junior High School | https://services7.arcgis.com/iEMmryaM5E3wkdnU/arcgis/rest/services/1419c80c_e850_11e1_8f3e_12313d166c30/FeatureServer/0
+candidate https://services7.arcgis.com/iEMmryaM5E3wkdnU/arcgis/rest/services/1419c80c_e850_11e1_8f3e_12313d166c30/FeatureServer/0
+note felder: BECPassEng, BECPassMat, BECPassSci, BECPassSoc, CAPITAL, Code170, Completi_1, Completion, Control, DISTRICT, District_1, F170_FID, F170code, FARM_TYPE, JSSFemales, JSSPTR, JSSRepeate, JSSSeating
+dataset C NET | https://services3.arcgis.com/QNigVjGgKJyRqtd9/arcgis/rest/services/C_NET/FeatureServer
+candidate-leer https://services3.arcgis.com/QNigVjGgKJyRqtd9/arcgis/rest/services/C_NET/FeatureServer
+note 0 rows, felder unbekannt
+dataset PRACTICE NET | https://services2.arcgis.com/Ax17MufLaTdpFneh/arcgis/rest/services/PRACTICE_NET/FeatureServer/0
+candidate https://services2.arcgis.com/Ax17MufLaTdpFneh/arcgis/rest/services/PRACTICE_NET/FeatureServer/0
+note felder: ASSET_ID, ASSET_SUB_, Asset_Cate, FID, Park_Name, Shape__Length, Suburb, Ward
+dataset AZ Safety Net Facilities | https://services1.arcgis.com/Ezk9fcjSUkeadg6u/arcgis/rest/services/SN2025Map_WFL1/FeatureServer/0
+candidate https://services1.arcgis.com/Ezk9fcjSUkeadg6u/arcgis/rest/services/SN2025Map_WFL1/FeatureServer/0
+note felder: ADHSName, Action, Address, CYID, Category, City, County, DistrictID, DistrictName, Facility, FacilityAbbv, FacilityType, LYID, Latitude, License, Longitude, MergeMap, MergeMapKeep
+dataset First Net Service in Alaska | https://services.arcgis.com/fX5IGselyy1TirdY/arcgis/rest/services/First_Net_Service_Area_in_Alaska/FeatureServer/0
+candidate https://services.arcgis.com/fX5IGselyy1TirdY/arcgis/rest/services/First_Net_Service_Area_in_Alaska/FeatureServer/0
+note felder: DBA, OBJECTID, Shape__Area, Shape__Length, SqMiles
+dataset Net Zero | https://services8.arcgis.com/g8Oe3PuI0Ug7r5wL/arcgis/rest/services/Net_Zero/FeatureServer/19
+candidate https://services8.arcgis.com/g8Oe3PuI0Ug7r5wL/arcgis/rest/services/Net_Zero/FeatureServer/19
+note felder: OBJECTID, area_ha, carbon_balance, carbon_balance_ha, crops, distribution, emissions, field_margins, food_drink_laundry, fuels, habitats, hedgerows, in_field_trees, inputs, inventory, livestock, materials, net_zero
+dataset Drought-Net experiments (GIS685) | https://services3.arcgis.com/NLHBHJt7gvEcsduu/arcgis/rest/services/GIS685/FeatureServer/0
+candidate https://services3.arcgis.com/NLHBHJt7gvEcsduu/arcgis/rest/services/GIS685/FeatureServer/0
+note felder: DATACODE, DATAID, Drought, NAME, OBJECTID, OBJECTID_1, PLOT, SHAPE_Leng, Shape__Area, Shape__Length
+dataset % Net Enrolment Rate in Public Junior High Schools | https://services7.arcgis.com/iEMmryaM5E3wkdnU/arcgis/rest/services/_Net_Enrolment_Rate_in_Public_Junior_High_Schools/FeatureServer/0
+candidate https://services7.arcgis.com/iEMmryaM5E3wkdnU/arcgis/rest/services/_Net_Enrolment_Rate_in_Public_Junior_High_Schools/FeatureServer/0
+note felder: CAPITAL, Code170, Completi_1, Completion, Control, DISTRICT, District_1, F170_FID, F170code, FARM_TYPE, JSSBECEngl, JSSBECMath, JSSBECScie, JSSBECSoci, JSSFemales, JSSPTR, JSSRepeate, JSSSeating
+dataset % Net Enrolment Rate in Public Primary Schools | https://services7.arcgis.com/iEMmryaM5E3wkdnU/arcgis/rest/services/1d96976c_e570_11e1_b167_12313d166c30/FeatureServer/0
+candidate https://services7.arcgis.com/iEMmryaM5E3wkdnU/arcgis/rest/services/1d96976c_e570_11e1_b167_12313d166c30/FeatureServer/0
+note felder: BECPassEng, BECPassMat, BECPassSci, BECPassSoc, CAPITAL, Code170, Completi_1, Completion, Control, DISTRICT, District_1, F170_FID, F170code, FARM_TYPE, JSSFemales, JSSPTR, JSSRepeate, JSSSeating
+dataset AZ Safety Net Facilities | https://services1.arcgis.com/Ezk9fcjSUkeadg6u/arcgis/rest/services/SN2024Map_WFL1/FeatureServer/6
+candidate https://services1.arcgis.com/Ezk9fcjSUkeadg6u/arcgis/rest/services/SN2024Map_WFL1/FeatureServer/6
+note felder: ADHSName, Action_, Address, Category, CensusTract, City, County, DistrictID, EDWID23, EDWID24, Group_, Latitude, LicEffective, LicExpiri, License, Longitude, Longname, McaidCert
+dataset First Net Service in Alaska | https://services3.arcgis.com/3NvWZvRqANiCzqqd/arcgis/rest/services/First_Net_Service_Area_in_Alaska/FeatureServer/0
+candidate https://services3.arcgis.com/3NvWZvRqANiCzqqd/arcgis/rest/services/First_Net_Service_Area_in_Alaska/FeatureServer/0
+note felder: DBA, OBJECTID, Shape__Area, Shape__Length, SqMiles
+dataset 2022 Fishing Net | https://services.arcgis.com/82C0E4OYu0hT3hkh/arcgis/rest/services/2022_Fishing_Net/FeatureServer/0
+candidate https://services.arcgis.com/82C0E4OYu0hT3hkh/arcgis/rest/services/2022_Fishing_Net/FeatureServer/0
+note felder: CENTROID_X, CENTROID_Y, CPUE__kg_d, CPUE_kg, Calendar_Y, Discarded, FID, Fishery, Fishing_Da, GRID_CODE, Grid, Lic_num, Licences, Region, Retained_1, Retained_n, Retained_w, SHAPE_Area
+dataset % Net Enrolment Rate in Public Primary Schools | https://services7.arcgis.com/iEMmryaM5E3wkdnU/arcgis/rest/services/98c9ba0a_e6d7_11e1_8f3e_12313d166c30/FeatureServer/0
+candidate https://services7.arcgis.com/iEMmryaM5E3wkdnU/arcgis/rest/services/98c9ba0a_e6d7_11e1_8f3e_12313d166c30/FeatureServer/0
+note felder: CAPITAL, Code170, Completi_1, Completion, Control, DISTRICT, District_1, F170_FID, F170code, FARM_TYPE, JSSBECEngl, JSSBECMath, JSSBECScie, JSSBECSoci, JSSFemales, JSSPTR, JSSRepeate, JSSSeating
+dataset Net Conversion- Groundworks Map Ontario layers | https://services7.arcgis.com/2yAm9dFr5Sk8XULx/arcgis/rest/services/brianna_OOHAWilkins_Net_Conversion_Groundwork/FeatureServer
+candidate-leer https://services7.arcgis.com/2yAm9dFr5Sk8XULx/arcgis/rest/services/brianna_OOHAWilkins_Net_Conversion_Groundwork/FeatureServer
+note 0 rows, felder unbekannt
+dataset Drought Net | https://services.arcgis.com/djZgF6YJCuO8rbmH/arcgis/rest/services/Drought_Net/FeatureServer/0
+candidate https://services.arcgis.com/djZgF6YJCuO8rbmH/arcgis/rest/services/Drought_Net/FeatureServer/0
+note felder: DATACODE, DATAID, Drought, FID, NAME, OBJECTID, PLOT, SHAPE_Area, SHAPE_Leng, Shape__Area, Shape__Length
+dataset % Net Enrolment Rate in Public Primary School | https://services7.arcgis.com/iEMmryaM5E3wkdnU/arcgis/rest/services/420b076e_e538_11e1_adb7_12313d166c30/FeatureServer/0
+candidate https://services7.arcgis.com/iEMmryaM5E3wkdnU/arcgis/rest/services/420b076e_e538_11e1_adb7_12313d166c30/FeatureServer/0
+note felder: BECPassEng, BECPassMat, BECPassSci, BECPassSoc, CAPITAL, Code170, Completi_1, Completion, Control, DISTRICT, District_1, F170_FID, F170code, FARM_TYPE, JSSFemale, JSSPTR, JSSSeating, JSSTextboo
+dataset Net Tillable Land | https://services.arcgis.com/xYjDUN35YwdCEcMm/arcgis/rest/services/Erase_Merge_SOILFINAL/FeatureServer/0
+candidate https://services.arcgis.com/xYjDUN35YwdCEcMm/arcgis/rest/services/Erase_Merge_SOILFINAL/FeatureServer/0
+note felder: Acres, AnalysisArea, DESCRIPTOR, FID_ATSSection, FID_FinalSoil, FILE_NAME, M, OBJECTID, PID, RA, RGE, SEC, TRM, TWP
+dataset 2020 Fishing Net | https://services.arcgis.com/82C0E4OYu0hT3hkh/arcgis/rest/services/2020_Fishing_Net/FeatureServer/0
+candidate https://services.arcgis.com/82C0E4OYu0hT3hkh/arcgis/rest/services/2020_Fishing_Net/FeatureServer/0
+note felder: CENTROID_X, CENTROID_Y, CPUE__kg_d, CPUE_kg, Calendar_Y, Discarded, FID, Fishery, Fishing_Da, GRID_CODE, Grid, Lic_num, Licences, Region, Retained_1, Retained_n, Retained_w, SHAPE_Area
+dataset net migration | https://services4.arcgis.com/3Gy6zyvWSR2Q8akX/arcgis/rest/services/net_migration/FeatureServer/0
+candidate https://services4.arcgis.com/3Gy6zyvWSR2Q8akX/arcgis/rest/services/net_migration/FeatureServer/0
+note felder: F2010_2011, F2011_2012, F2012_2013, F2013_2014, F2014_2015, FID, NAME, Shape__Area, Shape__Length
+dataset 2021 Fishing Net | https://services.arcgis.com/82C0E4OYu0hT3hkh/arcgis/rest/services/2021_Fishing_Net/FeatureServer/0
+candidate https://services.arcgis.com/82C0E4OYu0hT3hkh/arcgis/rest/services/2021_Fishing_Net/FeatureServer/0
+note felder: CENTROID_X, CENTROID_Y, CPUE__kg_d, CPUE_kg, Calendar_Y, Discarded, FID, Fishery, Fishing_Da, GRID_CODE, Grid, Lic_num, Licences, Region, Retained_1, Retained_n, Retained_w, SHAPE_Area
+dataset AMRD Gill Net Samples | https://services7.arcgis.com/jcVUvxpWnajErgCr/arcgis/rest/services/AMRD_Gill_Net_Samples/FeatureServer/0
+candidate https://services7.arcgis.com/jcVUvxpWnajErgCr/arcgis/rest/services/AMRD_Gill_Net_Samples/FeatureServer/0
+note felder: Area, CreationDate, Creator, Dissolved_Oxygen, EditDate, Editor, FID, GlobalID, Id, Initials, Length_01, Length_02, Length_03, Length_04, Length_05, Length_06, Length_07, Length_08
+dataset AZ Safety Net Facilities | https://services1.arcgis.com/Ezk9fcjSUkeadg6u/arcgis/rest/services/AZRuralHealthSafetyNet2023Joins_WFL1/FeatureServer/6
+candidate https://services1.arcgis.com/Ezk9fcjSUkeadg6u/arcgis/rest/services/AZRuralHealthSafetyNet2023Joins_WFL1/FeatureServer/6
+note felder: Action_, Address, Category, City, County, DISTRICTID, FIPS, GEOID, Group_, LOCATION, LONGNAME, Latitude, Longitude, MergeMap, NAME, NAMELSAD, NameMap, NameMapShort
+dataset % Net Enrolment Rate in Public Junior High School | https://services7.arcgis.com/iEMmryaM5E3wkdnU/arcgis/rest/services/8624e0e4_e585_11e1_902d_12313d166c30/FeatureServer/0
+candidate https://services7.arcgis.com/iEMmryaM5E3wkdnU/arcgis/rest/services/8624e0e4_e585_11e1_902d_12313d166c30/FeatureServer/0
+note felder: BECPassEng, BECPassMat, BECPassSci, BECPassSoc, CAPITAL, Code170, Completi_1, Completion, Control, DISTRICT, District_1, F170_FID, F170code, FARM_TYPE, JSSFemale, JSSPTR, JSSSeating, JSSTextboo
+dataset Lake Horowhenua Gill net locations | https://services3.arcgis.com/fp1tibNcN9mbExhG/arcgis/rest/services/Lake_Horowhenua_Gill_net_locations/FeatureServer/5
+candidate https://services3.arcgis.com/fp1tibNcN9mbExhG/arcgis/rest/services/Lake_Horowhenua_Gill_net_locations/FeatureServer/5
+note felder: Fish_Method, Latitude, Longitude, Name, OBJECTID
+dataset SEIADW Box1 Fig01 CTD and net stations | https://services-eu1.arcgis.com/0uK40YtWoUkQMlYW/arcgis/rest/services/SEIADW_Box1_Fig01_CTD_and_net_stations/FeatureServer/0
+candidate https://services-eu1.arcgis.com/0uK40YtWoUkQMlYW/arcgis/rest/services/SEIADW_Box1_Fig01_CTD_and_net_stations/FeatureServer/0
+note felder: Lattitude, Longitude, OBJECTID, OBJECTID_1, StationTyp
+dataset Net 10 WFL1 | https://services3.arcgis.com/ISdh2Ac8C7owhYkS/arcgis/rest/services/Net_10_WFL1/FeatureServer
+decline https://services3.arcgis.com/ISdh2Ac8C7owhYkS/arcgis/rest/services/Net_10_WFL1/FeatureServer
+note arcgis-error-body
+dataset Net Lease Assets | https://services9.arcgis.com/gWLuAXa8FOT1b9sw/arcgis/rest/services/Net_Lease_Assets/FeatureServer/0
+candidate https://services9.arcgis.com/gWLuAXa8FOT1b9sw/arcgis/rest/services/Net_Lease_Assets/FeatureServer/0
+note felder: AUTO_UNIQUE_ID_2019_06_24_rw_Ne, Address, Asset_Type, City, InvestmentCode, InvestmentName, Latitude, Longitude, MeasurementType, MeasurementValue, OBJECTID, State, Strategy, Zip
+dataset fluvius ls net | https://services.arcgis.com/hWi2R0uD5qZn8sOW/arcgis/rest/services/Fluvius_Data/FeatureServer/1
+candidate https://services.arcgis.com/hWi2R0uD5qZn8sOW/arcgis/rest/services/Fluvius_Data/FeatureServer/1
+note felder: Ev_type, FID, Gemeente, LS_net, MS_net, OBJECTID, Postcode, Shape_Leng, Shape__Length, StraatSegm, Straatnaam, datum_amt, mut_id
+dataset NET 10 HOUSES | https://services3.arcgis.com/ISdh2Ac8C7owhYkS/arcgis/rest/services/Net_10_WFL1/FeatureServer/2
+decline https://services3.arcgis.com/ISdh2Ac8C7owhYkS/arcgis/rest/services/Net_10_WFL1/FeatureServer/2
+note arcgis-error-body
+dataset HH Net Worth $1,000,000 or Greater ( ) by Counties | https://services9.arcgis.com/hiOdEKPmaSCNIHUh/arcgis/rest/services/tjoconnor__52fadf3dcafc4594/FeatureServer/1
+candidate https://services9.arcgis.com/hiOdEKPmaSCNIHUh/arcgis/rest/services/tjoconnor__52fadf3dcafc4594/FeatureServer/1
+note felder: CreationDate, Creator, DESCRIPTION, EditDate, Editor, ID, OBJECTID, Shape__Area, Shape__Length, Z9JU0W8Q5KXI, Z9JU0W8Q5KXI_P, thematic_value
+dataset Net Migration | https://services1.arcgis.com/VAI453sU9tG9rSmh/arcgis/rest/services/WorldGeo_HumanCulture_features/FeatureServer
+decline https://services1.arcgis.com/VAI453sU9tG9rSmh/arcgis/rest/services/WorldGeo_HumanCulture_features/FeatureServer
+note arcgis-error-body
+dataset Maryland Finfish - Active Pound Net Sites | https://mdgeodata.md.gov/imap/rest/services/Biota/MD_Finfish/FeatureServer/11
+candidate https://mdgeodata.md.gov/imap/rest/services/Biota/MD_Finfish/FeatureServer/11
+note felder: InLatDD, InLongDInD, OBJECTID, OutLatDD, OutLongDD, Shape__Length
+dataset Cast net in use | https://services7.arcgis.com/vcKbN1YXJ8PizkLK/arcgis/rest/services/Cast_net_in_use/FeatureServer/0
+candidate https://services7.arcgis.com/vcKbN1YXJ8PizkLK/arcgis/rest/services/Cast_net_in_use/FeatureServer/0
+note felder: Cast_nets_in_use, FID, lat, long
+dataset Net Migration Between Provinces (2010) | https://services1.arcgis.com/qN3V93cYGMKQCOxL/arcgis/rest/services/Net_Migration_Between_Provinces_2010_/FeatureServer/0
+candidate https://services1.arcgis.com/qN3V93cYGMKQCOxL/arcgis/rest/services/Net_Migration_Between_Provinces_2010_/FeatureServer/0
+note felder: OBJECTID_1, ObjectId, Prov1_EN, Prov1_X, Prov1_Y, Prov2_EN, Prov2_X, Prov2_Y, Shape_Leng, Shape__Length, abs_net, net__in_ou
+dataset Net Migration Between Provinces (2010) | https://services7.arcgis.com/iEMmryaM5E3wkdnU/arcgis/rest/services/Net_Migration_Between_Provinces_2010_/FeatureServer/0
+candidate https://services7.arcgis.com/iEMmryaM5E3wkdnU/arcgis/rest/services/Net_Migration_Between_Provinces_2010_/FeatureServer/0
+note felder: OBJECTID_1, ObjectId, Prov1_EN, Prov1_X, Prov1_Y, Prov2_EN, Prov2_X, Prov2_Y, Shape_Leng, Shape__Length, abs_net, net__in_ou
+dataset No Net Fishing | https://services5.arcgis.com/YFNj7IqppWGZsn5o/arcgis/rest/services/Protected_Areas/FeatureServer/3
+candidate https://services5.arcgis.com/YFNj7IqppWGZsn5o/arcgis/rest/services/Protected_Areas/FeatureServer/3
+note felder: Area_Km, ET_ID, Easting, ID, Lat, Long, Name, Northing, OBJECTID, Shape__Area, Shape__Length
+dataset Local Plan - NET Safeguarding Area | https://services.arcgis.com/yvqphKcf9bBSnjX1/arcgis/rest/services/Local_Plan___NET_Safeguarding_Area/FeatureServer/30
+candidate https://services.arcgis.com/yvqphKcf9bBSnjX1/arcgis/rest/services/Local_Plan___NET_Safeguarding_Area/FeatureServer/30
+note felder: Created_Date, District_Code, District_Name, OBJECTID, OrganisationURI, Originator, Policy_Ref, Shape__Area, Shape__Length
+dataset Cities with 2023 Net Worth | https://services1.arcgis.com/CNPdEkvnGl65jCX8/arcgis/rest/services/City_2023_Net_Worth/FeatureServer/0
+candidate https://services1.arcgis.com/CNPdEkvnGl65jCX8/arcgis/rest/services/City_2023_Net_Worth/FeatureServer/0
+note felder: NAME, NAME_1718138957183, ObjectId, Shape__Area, Shape__Length, networth_NW0_CY, networth_NW100_CY, networth_NW150_CY, networth_NW15_CY, networth_NW1M_CY, networth_NW1PT5M_CY, networth_NW250_CY, networth_NW2M_CY, networth_NW35_CY, networth_NW500_CY, networth_NW50_CY, networth_NW75_CY
+dataset U.S. Counties with HH Net Worth Over 1,000,000 | https://services9.arcgis.com/hiOdEKPmaSCNIHUh/arcgis/rest/services/tjoconnor__52fadf3dcafc4594/FeatureServer
+candidate-leer https://services9.arcgis.com/hiOdEKPmaSCNIHUh/arcgis/rest/services/tjoconnor__52fadf3dcafc4594/FeatureServer
+note 0 rows, felder unbekannt
+dataset Net Zero Constraints | https://maps.scotent.co.uk/server/rest/services/Services/Net_Zero_Constraints/FeatureServer
+dead https://maps.scotent.co.uk/server/rest/services/Services/Net_Zero_Constraints/FeatureServer
+note fetch-void
+dataset 2021 Median Net Worth by Block Groups - Corona City | https://services3.arcgis.com/7MKTbjxhcpJtAnqo/arcgis/rest/services/jweiss_oceanwestcp_com_BA_Exported_Map_6/FeatureServer/0
+candidate https://services3.arcgis.com/7MKTbjxhcpJtAnqo/arcgis/rest/services/jweiss_oceanwestcp_com_BA_Exported_Map_6/FeatureServer/0
+note felder: DESCRIPTION, ID, MEDNW_CY, OBJECTID, Shape__Area, Shape__Length, ThematicValue
+dataset Secondary School Places Allocation System School Net Boundaries in Hong Kong | https://services3.arcgis.com/6j1KwZfY2fZrfNMR/arcgis/rest/services/Secondary_School_Places_Allocation_System_School_Net_Boundaries_in_Hong_Kong/FeatureServer/0
+candidate https://services3.arcgis.com/6j1KwZfY2fZrfNMR/arcgis/rest/services/Secondary_School_Places_Allocation_System_School_Net_Boundaries_in_Hong_Kong/FeatureServer/0
+note felder: ADDRESS_EN, ADDRESS_TC, DATASET_EN, DATASET_TC, LASTUPDATE, NAME_EN, NAME_TC, NSEARCH01_EN, NSEARCH01_TC, NSEARCH02_EN, NSEARCH02_TC, NSEARCH03_EN, NSEARCH03_TC, NSEARCH04_EN, NSEARCH04_TC, NSEARCH05_EN, NSEARCH05_TC, NSEARCH06_EN
+dataset Bay Area - 2021 Average Net Worth by Census Tracts | https://services3.arcgis.com/7MKTbjxhcpJtAnqo/arcgis/rest/services/jweiss_oceanwestcp_com_BA_Exported_Map_15/FeatureServer/0
+candidate https://services3.arcgis.com/7MKTbjxhcpJtAnqo/arcgis/rest/services/jweiss_oceanwestcp_com_BA_Exported_Map_15/FeatureServer/0
+note felder: AVGNW_CY, DESCRIPTION, ID, OBJECTID, Shape__Area, Shape__Length, ThematicValue
+dataset MCS 2026 Net Import Reliance Table | https://services.arcgis.com/v01gqwM5QqNysAAi/arcgis/rest/services/MCS_2026_Net_Import_Reliance_Table/FeatureServer/0
+candidate https://services.arcgis.com/v01gqwM5QqNysAAi/arcgis/rest/services/MCS_2026_Net_Import_Reliance_Table/FeatureServer/0
+note felder: Commodity, Commodity__Formatted, Commodity__Original_Text, Leading_import_sources__2020_2024, Net_import_reliance_percent_txt, OBJECTID, Percent_US_Import_Reliance__num
+dataset Southeast Alaska Closed Waters Salmon Net Fisheries | https://services.arcgis.com/VdkVOAHovLuozJG4/arcgis/rest/services/SEAK_ClosedWaters_SalmonNetFisheries/FeatureServer
+candidate-leer https://services.arcgis.com/VdkVOAHovLuozJG4/arcgis/rest/services/SEAK_ClosedWaters_SalmonNetFisheries/FeatureServer
+note 0 rows, felder unbekannt
+dataset Targeted San Fran Net Worth HHI SF | https://services5.arcgis.com/LGTJWfnE6CJdd5tX/arcgis/rest/services/Targeted%20San%20Fran%20Net%20Worth%20HHI%20SF/FeatureServer/0
+decline https://services5.arcgis.com/LGTJWfnE6CJdd5tX/arcgis/rest/services/Targeted%20San%20Fran%20Net%20Worth%20HHI%20SF/FeatureServer/0
+note arcgis-error-body
+dataset Net Zero Porject WFL1 | https://services8.arcgis.com/oHICVpGrCiKD6Mgr/arcgis/rest/services/Net_Zero_Porject_WFL1/FeatureServer
+candidate-leer https://services8.arcgis.com/oHICVpGrCiKD6Mgr/arcgis/rest/services/Net_Zero_Porject_WFL1/FeatureServer
+note 0 rows, felder unbekannt
+dataset Caillou Lake - Whiskey Island Net Change (1998 - 2017) | https://services1.arcgis.com/lDFzr3JyGEn5Eymu/arcgis/rest/services/SWIPE/FeatureServer
+candidate-leer https://services1.arcgis.com/lDFzr3JyGEn5Eymu/arcgis/rest/services/SWIPE/FeatureServer
+note 0 rows, felder unbekannt
+dataset FEWS NET - Humanatarian Assistance | https://services.arcgis.com/Djjoop3BmZekEtDo/arcgis/rest/services/FEWSNET_Data_Feb2020/FeatureServer/0
+decline https://services.arcgis.com/Djjoop3BmZekEtDo/arcgis/rest/services/FEWSNET_Data_Feb2020/FeatureServer/0
+note arcgis-error-body
+dataset Zero Net Use ADU | https://services1.arcgis.com/P5Mv5GY5S66M8Z1Q/arcgis/rest/services/Zero_Net_Use_ADU/FeatureServer/0
+candidate https://services1.arcgis.com/P5Mv5GY5S66M8Z1Q/arcgis/rest/services/Zero_Net_Use_ADU/FeatureServer/0
+note felder: Name, OBJECTID, Shape__Area, Shape__Length
+dataset EPD-Net Partners | https://services1.arcgis.com/5hM12kUbM5soE48F/arcgis/rest/services/EPD-Net_Sponsorlar/FeatureServer/0
+candidate https://services1.arcgis.com/5hM12kUbM5soE48F/arcgis/rest/services/EPD-Net_Sponsorlar/FeatureServer/0
+note felder: GlobalID, Kurum, OBJECTID, Partner, SponsorlukTuru, URL
+dataset New York Power Authority Net Generation  MWh | https://services1.arcgis.com/k8WRSCmxGgCwZufI/arcgis/rest/services/New_York_Power_Authority_Net_Generation__MWh/FeatureServer/0
+candidate https://services1.arcgis.com/k8WRSCmxGgCwZufI/arcgis/rest/services/New_York_Power_Authority_Net_Generation__MWh/FeatureServer/0
+note felder: NYPA_Facility_Name, Net_Generation__MWh_, ObjectId, Year
+dataset Local Plan - Proposed NET Stop (Indicative) | https://services.arcgis.com/yvqphKcf9bBSnjX1/arcgis/rest/services/Local_Plan___Proposed_NET_Stop__Indicative_/FeatureServer/36
+candidate https://services.arcgis.com/yvqphKcf9bBSnjX1/arcgis/rest/services/Local_Plan___Proposed_NET_Stop__Indicative_/FeatureServer/36
+note felder: Created_Date, District_Code, District_Name, Easting, Lat, Long, Name, Northing, OBJECTID, OrganisationURI, Originator, Policy_Ref
+dataset Mean Expected Net Value Change by POD | https://services5.arcgis.com/rqUExxGU0vzKhYXX/arcgis/rest/services/eNVC_by_POD/FeatureServer/0
+candidate https://services5.arcgis.com/rqUExxGU0vzKhYXX/arcgis/rest/services/eNVC_by_POD/FeatureServer/0
+note felder: AREA, COUNT_, MAX_, MEAN, MEDIAN, MIN_, OBJECTID, PCT90, PODEditor, RANGE, STD, SUM_, Shape__Area, Shape__Length, TOID, TOID_1
+dataset Alaskan Closed Waters Salmon Net Fisheries | https://services9.arcgis.com/6EuFgO4fLTqfNOhu/arcgis/rest/services/SEAK_ClosedWaters_SalmonNetFisheries__4480343850328283795/FeatureServer/0
+candidate https://services9.arcgis.com/6EuFgO4fLTqfNOhu/arcgis/rest/services/SEAK_ClosedWaters_SalmonNetFisheries__4480343850328283795/FeatureServer/0
+note felder: FID, GlobalID, closurenam, closuretyp, district, lat_dd, lat_ddm, lat_ddm_la, long_dd, long_ddm, long_ddm_l, management, point_desc, regulation, section
+dataset EsriNET Zugangspunkte | https://services3.arcgis.com/WZg6TZ9xcqvNG8iw/arcgis/rest/services/EsriNET_Zugangspunkte/FeatureServer/0
+decline https://services3.arcgis.com/WZg6TZ9xcqvNG8iw/arcgis/rest/services/EsriNET_Zugangspunkte/FeatureServer/0
+note arcgis-error-body
+dataset Net Moves Clustering | https://services3.arcgis.com/58WV6GqBWodG9Kll/arcgis/rest/services/Net_Moves_Clustering/FeatureServer/0
+candidate https://services3.arcgis.com/58WV6GqBWodG9Kll/arcgis/rest/services/Net_Moves_Clustering/FeatureServer/0
+note felder: ALAND, ALAND_1, AWATER, AWATER_1, CBSAFP, CLASSFP, COType, COUNT1, COUNTYFP, COUNTYFP_1, COUNTYNS, CSAFP, FUNCSTAT, FUNCSTAT_1, GEOID, GEOID_1, GISJOIN, GISJOIN_1
+dataset Pharr Net Zones | https://services.arcgis.com/Uj8MycSVzMEzm7ey/arcgis/rest/services/Pharr_Net_Zones/FeatureServer/0
+decline https://services.arcgis.com/Uj8MycSVzMEzm7ey/arcgis/rest/services/Pharr_Net_Zones/FeatureServer/0
+note arcgis-error-body
+dataset NET Directory | https://services8.arcgis.com/PeY4XZhsIFEEKEcb/arcgis/rest/services/NET_Directory/FeatureServer/0
+candidate https://services8.arcgis.com/PeY4XZhsIFEEKEcb/arcgis/rest/services/NET_Directory/FeatureServer/0
+note felder: BEECN_Resources, COALIT, Channel_Primary, Channel_Secondary, Council_District, District_Link, Inactive, Jurisdiction, NAME, NET_Team_Name, Neighborhoods_Included, OBJECTID, PBEM_Liaison, PBEM_Liaison_Contact, Shape__Area, Shape__Area_2, Shape__Length, Shape__Length_2
+dataset EsriNET Zugangspunkte | https://services3.arcgis.com/WZg6TZ9xcqvNG8iw/arcgis/rest/services/EsriNET_Zugangspunkte/FeatureServer/11
+candidate https://services3.arcgis.com/WZg6TZ9xcqvNG8iw/arcgis/rest/services/EsriNET_Zugangspunkte/FeatureServer/11
+note felder: Art, Besitzer, FID_, Gemeinde, GlobalID, Id, KRIMI, NP, NSG, OBJECTID, ONB_NUMMER, Ortznetz, SACHB, X, Y
+dataset Net Zero Montpelier WFL1 | https://services1.arcgis.com/HmwnYiJTBZ4UkySc/arcgis/rest/services/Net_Zero_Montpelier_WFL1/FeatureServer
+candidate-leer https://services1.arcgis.com/HmwnYiJTBZ4UkySc/arcgis/rest/services/Net_Zero_Montpelier_WFL1/FeatureServer
+note 0 rows, felder unbekannt
+dataset MOZ area | https://services3.arcgis.com/HZiQ86FNEvCVDWWt/arcgis/rest/services/Map5/FeatureServer/7
+candidate https://services3.arcgis.com/HZiQ86FNEvCVDWWt/arcgis/rest/services/Map5/FeatureServer/7
+note felder: AREA, CAPTION, GlobalID, ID, OBJECTID, PERIMETER, Shape__Area, Shape__Length
+dataset Coral polygon-data | https://services3.arcgis.com/HZiQ86FNEvCVDWWt/arcgis/rest/services/Map5/FeatureServer/1
+candidate https://services3.arcgis.com/HZiQ86FNEvCVDWWt/arcgis/rest/services/Map5/FeatureServer/1
+note felder: FID_1, GlobalID, OBJECTID, Shape__Area, Shape__Length
+dataset STP EEZ | https://services3.arcgis.com/HZiQ86FNEvCVDWWt/arcgis/rest/services/Map5/FeatureServer/10
+candidate https://services3.arcgis.com/HZiQ86FNEvCVDWWt/arcgis/rest/services/Map5/FeatureServer/10
+note felder: GlobalID, OBJECTID, Shape__Area, Shape__Length, area_km2, geoname, iso_ter1, iso_ter2, iso_ter3, mrgid, mrgid_eez, mrgid_sov1, mrgid_sov2, mrgid_sov3, mrgid_ter1, mrgid_ter2, mrgid_ter3, pol_type
+dataset MOZ EEZ | https://services3.arcgis.com/HZiQ86FNEvCVDWWt/arcgis/rest/services/Map5/FeatureServer/8
+candidate https://services3.arcgis.com/HZiQ86FNEvCVDWWt/arcgis/rest/services/Map5/FeatureServer/8
+note felder: GlobalID, OBJECTID, Shape__Area, Shape__Length, area_km2, geoname, iso_ter1, iso_ter2, iso_ter3, mrgid, mrgid_eez, mrgid_sov1, mrgid_sov2, mrgid_sov3, mrgid_ter1, mrgid_ter2, mrgid_ter3, pol_type
+dataset Mangrove polygon-data | https://services3.arcgis.com/HZiQ86FNEvCVDWWt/arcgis/rest/services/Map5/FeatureServer/3
+candidate https://services3.arcgis.com/HZiQ86FNEvCVDWWt/arcgis/rest/services/Map5/FeatureServer/3
+note felder: FID_1, GlobalID, OBJECTID, Shape__Area, Shape__Length
+dataset Seagrass point-data | https://services3.arcgis.com/HZiQ86FNEvCVDWWt/arcgis/rest/services/Map5/FeatureServer/6
+candidate https://services3.arcgis.com/HZiQ86FNEvCVDWWt/arcgis/rest/services/Map5/FeatureServer/6
+note felder: Area, DATA_TYPE, DATE_TYPE, END_DATE, FAMILY, F_ID, GENUS, GlobalID, Habitat, ISO3, LAYER_NAME, LOC_DEF, Latitude, Longitude, METADATA_I, NAME, OBJECTID, ORIG_NAME
+dataset Map vs5 | https://services3.arcgis.com/HZiQ86FNEvCVDWWt/arcgis/rest/services/Map5/FeatureServer
+candidate-leer https://services3.arcgis.com/HZiQ86FNEvCVDWWt/arcgis/rest/services/Map5/FeatureServer
+note 0 rows, felder unbekannt
+dataset Net Migration Rates (2023) | https://services4.arcgis.com/5NoxTJZhHPyku3px/arcgis/rest/services/Net_Migration_Rates_(2023)/FeatureServer/0
+candidate https://services4.arcgis.com/5NoxTJZhHPyku3px/arcgis/rest/services/Net_Migration_Rates_(2023)/FeatureServer/0
+note felder: AFF_ISO, COUNTRY, COUNTRYAFF, FID, FID_1, ISO, Net, Region, SHAPE_Area, SHAPE_Leng, Shape__Area, Shape__Length, Subregion
+dataset Seagrass polygon-data | https://services3.arcgis.com/HZiQ86FNEvCVDWWt/arcgis/rest/services/Map5/FeatureServer/5
+candidate https://services3.arcgis.com/HZiQ86FNEvCVDWWt/arcgis/rest/services/Map5/FeatureServer/5
+note felder: GlobalID, Id, OBJECTID, OBJECTID_1, OBJECTID_2, Shape_Le_1, Shape_Leng, Shape__Area, Shape__Length, gridcode, layer, path
+dataset Species occurrence | https://services3.arcgis.com/HZiQ86FNEvCVDWWt/arcgis/rest/services/Map5/FeatureServer/0
+candidate https://services3.arcgis.com/HZiQ86FNEvCVDWWt/arcgis/rest/services/Map5/FeatureServer/0
+note felder: AMBI_ecological_group, Citation, Date_verified, Environment, Functional_group__Adult_, Functional_group__Adult_2, Functional_group__larva_, Gastronomic_value, Habitat, OBJECTID, Organização_Marta, Taxon_Info, Trophic_Guild__1_, Trophic_Guild__2_, Type, Verification_type, Verified_by, authorship
+dataset Mangrove point-data | https://services3.arcgis.com/HZiQ86FNEvCVDWWt/arcgis/rest/services/Map5/FeatureServer/4
+candidate https://services3.arcgis.com/HZiQ86FNEvCVDWWt/arcgis/rest/services/Map5/FeatureServer/4
+note felder: Area, F_ID, GlobalID, Habitat, Latitude, Longitude, Name, OBJECTID, References_
+dataset STP area | https://services3.arcgis.com/HZiQ86FNEvCVDWWt/arcgis/rest/services/Map5/FeatureServer/9
+candidate https://services3.arcgis.com/HZiQ86FNEvCVDWWt/arcgis/rest/services/Map5/FeatureServer/9
+note felder: AREA, CAPTION, GlobalID, ID, OBJECTID, PERIMETER, Shape__Area, Shape__Length
+dataset Coral point-data | https://services3.arcgis.com/HZiQ86FNEvCVDWWt/arcgis/rest/services/Map5/FeatureServer/2
+candidate https://services3.arcgis.com/HZiQ86FNEvCVDWWt/arcgis/rest/services/Map5/FeatureServer/2
+note felder: Area, BLEACHING_, CODE, CORAL_EXIS, CORAL_FAMI, CORAL_SPEC, COUNTRY, COUNTRY_CO, DEPTH, F_ID, GlobalID, Habitat, ID, ISLAND_NAM, IUCNCAT_CO, LAT, LITTORAL_E, LOCATION
+dataset National Hydrography Dataset (NHD) - Hydro Net Junctions | https://services5.arcgis.com/bykQ7FaL2oSIxFNa/arcgis/rest/services/NHD_Hydro_Net_Junctions/FeatureServer/0
+candidate https://services5.arcgis.com/bykQ7FaL2oSIxFNa/arcgis/rest/services/NHD_Hydro_Net_Junctions/FeatureServer/0
+note felder: ENABLED, OBJECTID
+dataset BlockGroup with 2023 Median Net Worth | https://services1.arcgis.com/CNPdEkvnGl65jCX8/arcgis/rest/services/BlockGroup_with_2023_Median_Net_Worth/FeatureServer/0
+candidate https://services1.arcgis.com/CNPdEkvnGl65jCX8/arcgis/rest/services/BlockGroup_with_2023_Median_Net_Worth/FeatureServer/0
+note felder: GEOID, GEOID_1718314997719, NAMELSAD, ObjectId, Shape__Area, Shape__Length, networth_MEDNW_CY
+dataset Net Pond Change, 2009-2019 | https://services.arcgis.com/QVENGdaPbd4LUkLV/arcgis/rest/services/NetPondChange/FeatureServer/72
+candidate https://services.arcgis.com/QVENGdaPbd4LUkLV/arcgis/rest/services/NetPondChange/FeatureServer/72
+note felder: Classes, OBJECTID, Shape__Area, Shape__Length, Value_Max, Value_Min
+dataset Net Financial Assets | https://services6.arcgis.com/jn1I20RxqyRF1ljA/arcgis/rest/services/Net_Financial_Assets/FeatureServer/0
+candidate https://services6.arcgis.com/jn1I20RxqyRF1ljA/arcgis/rest/services/Net_Financial_Assets/FeatureServer/0
+note felder: Edited, NetAssetsOrDebt, OBJECTID, Target, TargetDescription, Year
+dataset Targeted SF within Net Worth $500,000 and HHI $200,000 | https://services5.arcgis.com/LGTJWfnE6CJdd5tX/arcgis/rest/services/Targeted%20SF%20within%20Net%20Worth%20$500,000%20and%20HHI%20$200,000/FeatureServer/0
+decline https://services5.arcgis.com/LGTJWfnE6CJdd5tX/arcgis/rest/services/Targeted%20SF%20within%20Net%20Worth%20$500,000%20and%20HHI%20$200,000/FeatureServer/0
+note arcgis-error-body
+dataset Liquid Net Map 2 | https://services5.arcgis.com/LGTJWfnE6CJdd5tX/arcgis/rest/services/Liquid_Net_Map_2/FeatureServer/0
+decline https://services5.arcgis.com/LGTJWfnE6CJdd5tX/arcgis/rest/services/Liquid_Net_Map_2/FeatureServer/0
+note arcgis-error-body
+dataset Liquid Net Map 1 | https://services5.arcgis.com/LGTJWfnE6CJdd5tX/arcgis/rest/services/Liquid_Net_Map_1/FeatureServer/0
+decline https://services5.arcgis.com/LGTJWfnE6CJdd5tX/arcgis/rest/services/Liquid_Net_Map_1/FeatureServer/0
+note arcgis-error-body
+dataset Net growth 2016 | https://services6.arcgis.com/4VKUUfImpyJbJJ8O/arcgis/rest/services/Net_growth_2016/FeatureServer/0
+candidate https://services6.arcgis.com/4VKUUfImpyJbJJ8O/arcgis/rest/services/Net_growth_2016/FeatureServer/0
+note felder: ALAND, AWATER, Field, MortaAllsp2016, MortaHdw2016, MortaSfw2016, NAME, NetGrowthAllsp2016, NetGrowthHdw2016, NetGrowthSfw2016, OBJECTID, ORIG_FID, RemovHdw2016, RemovSfw2016, RemovalAllsp2016, STATEFP, STATEFPNo, STUSPS
+dataset Mobile Bay Gill Net Areas | https://services7.arcgis.com/jcVUvxpWnajErgCr/arcgis/rest/services/Mobile_Bay_Gill_Net_Areas/FeatureServer/0
+candidate https://services7.arcgis.com/jcVUvxpWnajErgCr/arcgis/rest/services/Mobile_Bay_Gill_Net_Areas/FeatureServer/0
+note felder: AMRD_Area, Area, FID, Id, OBJECTID, Shape_Area, Shape_Leng, Shape__Area, Shape__Length, Water_Body
+dataset net migration extra | https://services7.arcgis.com/zX8NTiUjIKUVyth8/arcgis/rest/services/net_migration_extra/FeatureServer/0
+candidate https://services7.arcgis.com/zX8NTiUjIKUVyth8/arcgis/rest/services/net_migration_extra/FeatureServer/0
+note felder: Continent, Economy, FID, ISO3_Code, ISO3_Txt, Income, NMRate, Name_Eng, Name_Gr, Shape_Area, Shape_Leng, Shape__Area, Shape__Length, date, in_, out, population
+dataset Recreational Programs City Active Net | https://services1.arcgis.com/qAo1OsXi67t7XgmS/arcgis/rest/services/Recreational_Programs_City_Active_Net/FeatureServer/0
+candidate https://services1.arcgis.com/qAo1OsXi67t7XgmS/arcgis/rest/services/Recreational_Programs_City_Active_Net/FeatureServer/0
+note felder: ACTIVITY_CATEGORY, ACTIVITY_DEPT, ACTIVITY_END_DATE, ACTIVITY_NAME, ACTIVITY_NUMBER, ACTIVITY_OTHER_CATEGORY, ACTIVITY_START_DATE, ACTIVITY_STATUS, ACTIVITY_SUBACTIVITY, ACTIVITY_TYPE, CENTER, DAYS_OF_WEEK, END_TIME, ENROLLMENT_STATUS, FACILITY, FILL_RATE, HOLDS, INSTRUCTOR
+dataset Net Shoreline Movement | https://services-eu1.arcgis.com/kswen6BYexuc1SUk/arcgis/rest/services/Historic_Shoreline_Analysis/FeatureServer/5
+candidate https://services-eu1.arcgis.com/kswen6BYexuc1SUk/arcgis/rest/services/Historic_Shoreline_Analysis/FeatureServer/5
+note felder: Azimuth, BaselineID, EPR, EPRunc, GroupID, LCI99_7, LR2, LRR, LSE, NSM, OBJECTID, SCE, Shape__Length, ShrCount, TCD, TransOrder, TransectID, WCI99_7
+dataset Residential Non Homestead Net Tax | https://services9.arcgis.com/LLh6i97mwBitl1k5/arcgis/rest/services/Residential_Non_Homestead_Net_Tax/FeatureServer/0
+candidate https://services9.arcgis.com/LLh6i97mwBitl1k5/arcgis/rest/services/Residential_Non_Homestead_Net_Tax/FeatureServer/0
+note felder: County, Local_NET_Tax_by_Class_Total, Name, OBJECTID, Residential_Non_Homestead_NET_T, Shape__Area, Shape__Length, Year
+dataset MCS 2026 Greater than 50% Net Import Reliance | https://services.arcgis.com/v01gqwM5QqNysAAi/arcgis/rest/services/MCS_2026__50__Net_Import_Reliance/FeatureServer/0
+candidate https://services.arcgis.com/v01gqwM5QqNysAAi/arcgis/rest/services/MCS_2026__50__Net_Import_Reliance/FeatureServer/0
+note felder: Commodities_Formatted, Commodities_List, Commodities_Original, CommodityCount, Commodity_Count, Country, Country_Name, Import_Reliance_Label, LA_Country, Mineral_Formatted__Used_to_map_to_Mineral_Usage_Table, Mineral_Reliance_List, OBJECTID, Percent_US_Import_Reliance__num, Percent_US_Import_Reliance__text, Shape__Area, Shape__Length, Symbology_Class
+dataset FEWS NET - IPC Phase Feb. 2020 | https://services.arcgis.com/Djjoop3BmZekEtDo/arcgis/rest/services/FEWSNET_Data_Feb2020/FeatureServer/1
+decline https://services.arcgis.com/Djjoop3BmZekEtDo/arcgis/rest/services/FEWSNET_Data_Feb2020/FeatureServer/1
+note arcgis-error-body
+dataset Recoverable Heat SW (South West Net Zero Hub) | https://services-eu1.arcgis.com/ENFsE2EJtWeb7nzI/arcgis/rest/services/SW_Net_Zero_Hub_Recoverable_Heat/FeatureServer/0
+decline https://services-eu1.arcgis.com/ENFsE2EJtWeb7nzI/arcgis/rest/services/SW_Net_Zero_Hub_Recoverable_Heat/FeatureServer/0
+note arcgis-error-body
+dataset Fiber Net Leasing | https://services.arcgis.com/hdlG36cOubTzNDBb/arcgis/rest/services/Fiber_Routes_Government__UltraMontgomery/FeatureServer/0
+candidate https://services.arcgis.com/hdlG36cOubTzNDBb/arcgis/rest/services/Fiber_Routes_Government__UltraMontgomery/FeatureServer/0
+note felder: OBJECTID, Shape__Length, cableid, designated, ea1, locateid, medium, ospgid, ospgid_1, placement, spanid, spanid_1, spantypeid
+dataset Turtle Hotspots | https://services1.arcgis.com/RTK5Unh1Z71JKIiR/arcgis/rest/services/HotspotsFishingAreas/FeatureServer/2
+candidate https://services1.arcgis.com/RTK5Unh1Z71JKIiR/arcgis/rest/services/HotspotsFishingAreas/FeatureServer/2
+note felder: IDENT, LAT, LONG_, Location, OBJECTID, TYPE, X, X_PROJ, Y, Y_PROJ
+dataset Beaches | https://services1.arcgis.com/RTK5Unh1Z71JKIiR/arcgis/rest/services/HotspotsFishingAreas/FeatureServer/1
+candidate https://services1.arcgis.com/RTK5Unh1Z71JKIiR/arcgis/rest/services/HotspotsFishingAreas/FeatureServer/1
+note felder: F2008_Nesti, OBJECTID, X, Y
+dataset HotspotsFishingAreas | https://services1.arcgis.com/RTK5Unh1Z71JKIiR/arcgis/rest/services/HotspotsFishingAreas/FeatureServer
+candidate-leer https://services1.arcgis.com/RTK5Unh1Z71JKIiR/arcgis/rest/services/HotspotsFishingAreas/FeatureServer
+note 0 rows, felder unbekannt
+dataset Safety Net Facilities | https://services1.arcgis.com/Ezk9fcjSUkeadg6u/arcgis/rest/services/EMS_and_Safety_Net_WFL1/FeatureServer/1
+candidate https://services1.arcgis.com/Ezk9fcjSUkeadg6u/arcgis/rest/services/EMS_and_Safety_Net_WFL1/FeatureServer/1
+note felder: ADHSName, Action_, Address, Category, CensusTract, City, County, DistrictID, EDWID23, EDWID24, Group_, Latitude, LicEffective, LicExpiri, License, Longitude, Longname, McaidCert
+dataset CA State Senate Districts | https://services.arcgis.com/RmCCgQtiZLDCtblq/arcgis/rest/services/Location_Service_Info/FeatureServer/83
+candidate https://services.arcgis.com/RmCCgQtiZLDCtblq/arcgis/rest/services/Location_Service_Info/FeatureServer/83
+note felder: CreationDate, Creator, DIST_STSEN, EditDate, Editor, OBJECTID, Shape__Area, Shape__Length
+dataset CA State Assembly Districts | https://services.arcgis.com/RmCCgQtiZLDCtblq/arcgis/rest/services/Location_Service_Info/FeatureServer/82
+candidate https://services.arcgis.com/RmCCgQtiZLDCtblq/arcgis/rest/services/Location_Service_Info/FeatureServer/82
+note felder: CreationDate, Creator, DIST_STASS, EditDate, Editor, OBJECTID, Shape__Area, Shape__Length
+dataset US Congressional Districts | https://services.arcgis.com/RmCCgQtiZLDCtblq/arcgis/rest/services/Location_Service_Info/FeatureServer/81
+candidate https://services.arcgis.com/RmCCgQtiZLDCtblq/arcgis/rest/services/Location_Service_Info/FeatureServer/81
+note felder: CreationDate, Creator, DIST_CONG, EditDate, Editor, OBJECTID, Shape__Area, Shape__Length
+dataset Flood Maintenance Boundary | https://services.arcgis.com/RmCCgQtiZLDCtblq/arcgis/rest/services/Location_Service_Info/FeatureServer/20
+candidate https://services.arcgis.com/RmCCgQtiZLDCtblq/arcgis/rest/services/Location_Service_Info/FeatureServer/20
+note felder: ACRE, CreationDate, Creator, DPW_FLOOD_MAINTENANCE_BDRY_ARE, EditDate, Editor, FLD_BDYS_, FLD_BDYS_I, MAINT_AREA, MYARD, NUMBER_, OBJECTID, PERIMETER, SQ_MILES, SYARD, Shape__Area, Shape__Length
+dataset Construction Permit Office | https://services.arcgis.com/RmCCgQtiZLDCtblq/arcgis/rest/services/Location_Service_Info/FeatureServer/6
+candidate https://services.arcgis.com/RmCCgQtiZLDCtblq/arcgis/rest/services/Location_Service_Info/FeatureServer/6
+note felder: CreationDate, Creator, EditDate, Editor, OBJECTID, PO, Shape__Area, Shape__Length
+dataset City Boundaries | https://services.arcgis.com/RmCCgQtiZLDCtblq/arcgis/rest/services/Location_Service_Info/FeatureServer/0
+candidate https://services.arcgis.com/RmCCgQtiZLDCtblq/arcgis/rest/services/Location_Service_Info/FeatureServer/0
+note felder: ABBR, CITY_LABEL, CITY_NAME, CITY_TYPE, COLOR_EGIS, FEAT_TYPE, OBJECTID, OF_AREA_SM, PHONE, Shape__Area, Shape__Length, URL, created_date, created_user, last_edited_date, last_edited_user
+dataset CSMD Cities Yards | https://services.arcgis.com/RmCCgQtiZLDCtblq/arcgis/rest/services/Location_Service_Info/FeatureServer/15
+candidate https://services.arcgis.com/RmCCgQtiZLDCtblq/arcgis/rest/services/Location_Service_Info/FeatureServer/15
+note felder: CITY, CreationDate, Creator, EditDate, Editor, OBJECTID, YARD
+dataset Waterworks District Boundaries | https://services.arcgis.com/RmCCgQtiZLDCtblq/arcgis/rest/services/Location_Service_Info/FeatureServer/21
+candidate https://services.arcgis.com/RmCCgQtiZLDCtblq/arcgis/rest/services/Location_Service_Info/FeatureServer/21
+note felder: ADDRESS, AGENCY_NAME, CREATED_DA, CREATED_US, CreationDate, Creator, DISTRICT, EFF_DATE, EditDate, Editor, FORM_DATE, LAFCO_ANNE, LAST_EDITE, LAST_EDI_1, OBJECTID, OBJECTID_1, PHONE, REGION
+dataset Targeted SF for HHI 200K with Net Worth of $500K | https://services5.arcgis.com/LGTJWfnE6CJdd5tX/arcgis/rest/services/Targeted%20SF%20for%20HHI%20200K%20with%20Net%20Worth%20of%20$500K/FeatureServer/0
+decline https://services5.arcgis.com/LGTJWfnE6CJdd5tX/arcgis/rest/services/Targeted%20SF%20for%20HHI%20200K%20with%20Net%20Worth%20of%20$500K/FeatureServer/0
+note arcgis-error-body
+dataset Tree Crew RMD Offices | https://services.arcgis.com/RmCCgQtiZLDCtblq/arcgis/rest/services/Location_Service_Info/FeatureServer/10
+candidate https://services.arcgis.com/RmCCgQtiZLDCtblq/arcgis/rest/services/Location_Service_Info/FeatureServer/10
+note felder: ADDRESS, CITY, CreationDate, Creator, EditDate, Editor, OBJECTID, PHONE, RMD_NUM, STATE, Shape__Area, Shape__Length, ZIP
+dataset Countywide Statistical Areas | https://services.arcgis.com/RmCCgQtiZLDCtblq/arcgis/rest/services/Location_Service_Info/FeatureServer/4
+candidate https://services.arcgis.com/RmCCgQtiZLDCtblq/arcgis/rest/services/Location_Service_Info/FeatureServer/4
+note felder: CITY_TYPE, COMMUNITY, CreationDate, Creator, EditDate, Editor, Feat_Type, LABEL, LCITY, OBJECTID, SOURCE, Shape__Area, Shape__Length
+dataset Location Service Info | https://services.arcgis.com/RmCCgQtiZLDCtblq/arcgis/rest/services/Location_Service_Info/FeatureServer
+candidate-leer https://services.arcgis.com/RmCCgQtiZLDCtblq/arcgis/rest/services/Location_Service_Info/FeatureServer
+note 0 rows, felder unbekannt
+dataset LACFCD Parcels | https://services.arcgis.com/RmCCgQtiZLDCtblq/arcgis/rest/services/Location_Service_Info/FeatureServer/22
+candidate https://services.arcgis.com/RmCCgQtiZLDCtblq/arcgis/rest/services/Location_Service_Info/FeatureServer/22
+note felder: Estate, Facility, FileLink, MapLink, Map_No, Note, OBJECTID, Parcel_No, QA, Shape__Area, Shape__Length, create_date, create_editor, update_date, update_editor
+dataset Tree Net Inlets   B Pods | https://services-ap1.arcgis.com/38lmAqtkEsaNGT6T/arcgis/rest/services/Tree_Net_Inlets___B_Pods/FeatureServer/0
+candidate https://services-ap1.arcgis.com/38lmAqtkEsaNGT6T/arcgis/rest/services/Tree_Net_Inlets___B_Pods/FeatureServer/0
+note felder: ID, OBJECTID, WSUD_Type, asset_class, asset_id, asset_name, asset_subclass, asset_subtype, asset_type, construction_date, hierarchy, last_renewal, location, ownership, suburb
+dataset BSD Offices Info | https://services.arcgis.com/RmCCgQtiZLDCtblq/arcgis/rest/services/Location_Service_Info/FeatureServer/16
+candidate https://services.arcgis.com/RmCCgQtiZLDCtblq/arcgis/rest/services/Location_Service_Info/FeatureServer/16
+note felder: CreationDate, Creator, EditDate, Editor, FACILITY_NAME, OBJECTID, OFFICE_EMAIL, SHORT_NAME
+dataset LA City Council Districts | https://services.arcgis.com/RmCCgQtiZLDCtblq/arcgis/rest/services/Location_Service_Info/FeatureServer/84
+candidate https://services.arcgis.com/RmCCgQtiZLDCtblq/arcgis/rest/services/Location_Service_Info/FeatureServer/84
+note felder: CreationDate, Creator, DISTRICT, DIST_MEMBER, EditDate, Editor, MEMBER, OBJECTID, Shape__Area, Shape__Length
+dataset Waste Collection Service Area | https://services.arcgis.com/RmCCgQtiZLDCtblq/arcgis/rest/services/Location_Service_Info/FeatureServer/18
+candidate https://services.arcgis.com/RmCCgQtiZLDCtblq/arcgis/rest/services/Location_Service_Info/FeatureServer/18
+note felder: ADDRESS, AREA, AREA_NAME, CreationDate, Creator, DESCRIPTIO, EditDate, Editor, FA_GDD_ID, FA_GDD_ID_ROUTING, LABEL, OBJECTID, OBJECTID_1, PERIMETER, PHONE_NO, PICKUP_DAY, SCHEDULE, SYMBOL
+dataset SMD Operation Map Grid | https://services.arcgis.com/RmCCgQtiZLDCtblq/arcgis/rest/services/Location_Service_Info/FeatureServer/14
+candidate https://services.arcgis.com/RmCCgQtiZLDCtblq/arcgis/rest/services/Location_Service_Info/FeatureServer/14
+note felder: ADJ, ADJ_NA, CAT_NO, CREATED_DATE, CREATED_USER, GLOBALID, IM_NO, IM_NO1, LAST_EDITED_DATE, LAST_EDITED_USER, MAP, MAP_ID, OBJECTID, OBJECTID_1, SAN_ID, SAN_NO, SUP, Shape__Area
+dataset Landscape Maintenance District Zones | https://services.arcgis.com/RmCCgQtiZLDCtblq/arcgis/rest/services/Location_Service_Info/FeatureServer/11
+candidate https://services.arcgis.com/RmCCgQtiZLDCtblq/arcgis/rest/services/Location_Service_Info/FeatureServer/11
+note felder: ADDRESS, CITY, CONTMON, CREATED_DATE, CREATED_USER, CreationDate, Creator, DISTRICT, EditDate, Editor, GLOBALID, LAST_EDITED_DATE, LAST_EDITED_USER, OBJECTID, OFFICE, PHONE, PHONEAH, PHONECM
+dataset Antiporda 2021 Energy Imports by Net Percentage use of Countries | https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/Antiporda_2021_Energy_Imports/FeatureServer
+candidate-leer https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/Antiporda_2021_Energy_Imports/FeatureServer
+note 0 rows, felder unbekannt
+dataset Net Zero Waste Heat Sites | https://services1.arcgis.com/YswvgzOodUvqkoCN/arcgis/rest/services/Net_Zero_Waste_Heat_Sites/FeatureServer/0
+candidate https://services1.arcgis.com/YswvgzOodUvqkoCN/arcgis/rest/services/Net_Zero_Waste_Heat_Sites/FeatureServer/0
+note felder: HEAT_PUMP_OUTPUTS, LAST_UPDATED, MEASURED_FLOW, MORE_DET_FEAS, NOTE, PKID, SITE_ID, Shape__Area, Shape__Length, TEMP, TFL_RANKING
+dataset EPD Cities | https://services.arcgis.com/RmCCgQtiZLDCtblq/arcgis/rest/services/Location_Service_Info/FeatureServer/8
+candidate https://services.arcgis.com/RmCCgQtiZLDCtblq/arcgis/rest/services/Location_Service_Info/FeatureServer/8
+note felder: ADDRESS, AREA, CITY, CITY_CODE, CITY_NAME, CreationDate, Creator, ENV_PROGRM, EditDate, Editor, HOURS, IW, JUR_AREA, JUR_OFFICE, JUR_UNIT, LEN, OBJECTID, OBJECTID_1
+dataset Supervisorial Districts | https://services.arcgis.com/RmCCgQtiZLDCtblq/arcgis/rest/services/Location_Service_Info/FeatureServer/1
+candidate https://services.arcgis.com/RmCCgQtiZLDCtblq/arcgis/rest/services/Location_Service_Info/FeatureServer/1
+note felder: CreationDate, Creator, DISTRICT, EditDate, Editor, LABEL, OBJECTID, Shape__Area, Shape__Length
+# keyword ceilometer
+# keyword disdrometer
+dataset Disdrometer | https://services6.arcgis.com/IY2ZgUFE4X0MHqLW/arcgis/rest/services/Convect_GIS_Oct_18_2023_WFL1/FeatureServer/22
+candidate https://services6.arcgis.com/IY2ZgUFE4X0MHqLW/arcgis/rest/services/Convect_GIS_Oct_18_2023_WFL1/FeatureServer/22
+note felder: IOP_Designation, Instrument_Provider, Meso_Scale_Designation, OBJECTID, Staff_Headcount
+dataset Disdrometer | https://services6.arcgis.com/IY2ZgUFE4X0MHqLW/arcgis/rest/services/Convect_GIS_Oct_9_2023_WFL1/FeatureServer/20
+candidate https://services6.arcgis.com/IY2ZgUFE4X0MHqLW/arcgis/rest/services/Convect_GIS_Oct_9_2023_WFL1/FeatureServer/20
+note felder: IOP_Designation, Instrument_Provider, Meso_Scale_Designation, OBJECTID, Staff_Headcount
+dataset Disdrometer | https://services6.arcgis.com/IY2ZgUFE4X0MHqLW/arcgis/rest/services/Convect_GIS_Oct_5_2023_WFL1/FeatureServer/19
+candidate https://services6.arcgis.com/IY2ZgUFE4X0MHqLW/arcgis/rest/services/Convect_GIS_Oct_5_2023_WFL1/FeatureServer/19
+note felder: IOP_Designation, Instrument_Provider, Meso_Scale_Designation, OBJECTID, Staff_Headcount
+dataset Disdrometer | https://services6.arcgis.com/IY2ZgUFE4X0MHqLW/arcgis/rest/services/Convect_GIS_Oct_16_2023_WFL1/FeatureServer/21
+candidate https://services6.arcgis.com/IY2ZgUFE4X0MHqLW/arcgis/rest/services/Convect_GIS_Oct_16_2023_WFL1/FeatureServer/21
+note felder: IOP_Designation, Instrument_Provider, Meso_Scale_Designation, OBJECTID, Staff_Headcount
+dataset Disdrometer | https://services6.arcgis.com/IY2ZgUFE4X0MHqLW/arcgis/rest/services/Convect_GIS_Oct_11_2023_WFL1/FeatureServer/20
+candidate https://services6.arcgis.com/IY2ZgUFE4X0MHqLW/arcgis/rest/services/Convect_GIS_Oct_11_2023_WFL1/FeatureServer/20
+note felder: IOP_Designation, Instrument_Provider, Meso_Scale_Designation, OBJECTID, Staff_Headcount
+dataset Disdrometer | https://services6.arcgis.com/IY2ZgUFE4X0MHqLW/arcgis/rest/services/Convect_GIS_Oct_27_2023_WFL1/FeatureServer/22
+candidate https://services6.arcgis.com/IY2ZgUFE4X0MHqLW/arcgis/rest/services/Convect_GIS_Oct_27_2023_WFL1/FeatureServer/22
+note felder: Elevation, IOP_Designation, Instrument_Provider, Lat, Lon, Meso_Scale_Designation, OBJECTID, Staff_Headcount
+dataset Disdrometer | https://services6.arcgis.com/IY2ZgUFE4X0MHqLW/arcgis/rest/services/Convect_GIS_Oct_4_2023_WFL1/FeatureServer/19
+candidate https://services6.arcgis.com/IY2ZgUFE4X0MHqLW/arcgis/rest/services/Convect_GIS_Oct_4_2023_WFL1/FeatureServer/19
+note felder: IOP_Designation, Instrument_Provider, Meso_Scale_Designation, OBJECTID, Staff_Headcount
+dataset Disdrometer | https://services6.arcgis.com/IY2ZgUFE4X0MHqLW/arcgis/rest/services/Convect_GIS_Database_WFL1/FeatureServer/16
+decline https://services6.arcgis.com/IY2ZgUFE4X0MHqLW/arcgis/rest/services/Convect_GIS_Database_WFL1/FeatureServer/16
+note arcgis-error-body
+dataset Disdrometer | https://services6.arcgis.com/IY2ZgUFE4X0MHqLW/arcgis/rest/services/Convect_GIS_Nov_1_2023_WFL1/FeatureServer/23
+candidate https://services6.arcgis.com/IY2ZgUFE4X0MHqLW/arcgis/rest/services/Convect_GIS_Nov_1_2023_WFL1/FeatureServer/23
+note felder: Elevation, IOP_Designation, Instrument_Provider, Lat, Lon, Meso_Scale_Designation, OBJECTID, Staff_Headcount
+dataset Disdrometer | https://services6.arcgis.com/IY2ZgUFE4X0MHqLW/arcgis/rest/services/Convect_GIS_Oct_26_2023_WFL1/FeatureServer/22
+candidate https://services6.arcgis.com/IY2ZgUFE4X0MHqLW/arcgis/rest/services/Convect_GIS_Oct_26_2023_WFL1/FeatureServer/22
+note felder: IOP_Designation, Instrument_Provider, Meso_Scale_Designation, OBJECTID, Staff_Headcount
+dataset Disdrometer | https://services6.arcgis.com/IY2ZgUFE4X0MHqLW/arcgis/rest/services/Convect_GIS_Oct_11_2023_V_2_WFL1/FeatureServer/20
+candidate https://services6.arcgis.com/IY2ZgUFE4X0MHqLW/arcgis/rest/services/Convect_GIS_Oct_11_2023_V_2_WFL1/FeatureServer/20
+note felder: IOP_Designation, Instrument_Provider, Meso_Scale_Designation, OBJECTID, Staff_Headcount
+dataset Disdrometer | https://services6.arcgis.com/IY2ZgUFE4X0MHqLW/arcgis/rest/services/Convect_GIS_Oct_3_2023_WFL1/FeatureServer/16
+candidate https://services6.arcgis.com/IY2ZgUFE4X0MHqLW/arcgis/rest/services/Convect_GIS_Oct_3_2023_WFL1/FeatureServer/16
+note felder: IOP_Designation, Instrument_Provider, Meso_Scale_Designation, OBJECTID, Staff_Headcount
+dataset Disdrometer | https://services6.arcgis.com/IY2ZgUFE4X0MHqLW/arcgis/rest/services/Convect_GIS_Sept_2023_WFL1/FeatureServer/16
+candidate https://services6.arcgis.com/IY2ZgUFE4X0MHqLW/arcgis/rest/services/Convect_GIS_Sept_2023_WFL1/FeatureServer/16
+note felder: IOP_Designation, Instrument_Provider, Meso_Scale_Designation, OBJECTID, Staff_Headcount
+dataset Disdrometer Locations | https://services.arcgis.com/rGKxabTU9mcXMw7k/arcgis/rest/services/Disdrometer_Locations/FeatureServer/1
+candidate https://services.arcgis.com/rGKxabTU9mcXMw7k/arcgis/rest/services/Disdrometer_Locations/FeatureServer/1
+note felder: AltMode, Base, FolderPath, HasLabel, LabelID, Name, OBJECTID, PopupInfo, Snippet, SymbolID
+dataset combined data | https://services.arcgis.com/rGKxabTU9mcXMw7k/arcgis/rest/services/combined_data/FeatureServer/0
+candidate https://services.arcgis.com/rGKxabTU9mcXMw7k/arcgis/rest/services/combined_data/FeatureServer/0
+note felder: Air_Temperature_SDI_1_7_deg_C, Avg_Hailstone_Hits_SDI_0_1_hit_, Baro_Pressure_SDI_1_9_mb, Date_Time, Hail_10___15mm_0_2__, Hail_15___20mm_0_3__, Hail_20___25mm_0_4__, Hail_25___30mm_0_5__, Hail_30___35mm_0_6__, Hail_35___40mm_0_7__, Hail_40___45mm_0_8__, Hail_45___50mm_0_9__, Hail_50___55mm_0_10__, Hail_55___60mm_0_11__, Hail_5___10mm_0_1__, Hail_60___65mm_0_12__, Hail_65___70mm_0_13__, Hail_70___75mm_0_14__
+dataset NHP Research Database (Public Layer) | https://services.arcgis.com/rGKxabTU9mcXMw7k/arcgis/rest/services/NHP_Research_Database_(Public_Layer)/FeatureServer/0
+candidate https://services.arcgis.com/rGKxabTU9mcXMw7k/arcgis/rest/services/NHP_Research_Database_(Public_Layer)/FeatureServer/0
+note felder: CreationDate, Creator, EditDate, Editor, EventSummaryMapAvailable, EventSummaryMapLink, UniqueID, _3d_scan, _3d_scan_link, bagcodes_sectioned, confirmation, damage_summary, date, day, direction_motion, direction_notes, disdrometer_data, disdrometer_data_link
+# keyword soil gas
+dataset EORI Oil Gas Fields OilGasComingled WFL1 | https://services8.arcgis.com/GVHDOiLGusXYn1fZ/arcgis/rest/services/EORI_Oil_Gas_Fields_OilGasComingled_WFL1/FeatureServer
+candidate-leer https://services8.arcgis.com/GVHDOiLGusXYn1fZ/arcgis/rest/services/EORI_Oil_Gas_Fields_OilGasComingled_WFL1/FeatureServer
+note 0 rows, felder unbekannt
+dataset Gas Features | https://services8.arcgis.com/t4l5MlZWeZ3C03RW/arcgis/rest/services/BaylorU_Gas_Utilities_Atmos/FeatureServer/0
+candidate https://services8.arcgis.com/t4l5MlZWeZ3C03RW/arcgis/rest/services/BaylorU_Gas_Utilities_Atmos/FeatureServer/0
+note felder: GlobalID, OBJECTID
+dataset Guder soil type | https://services8.arcgis.com/oTalEaSXAuyNT7xf/arcgis/rest/services/Guder_soil_type/FeatureServer/0
+candidate https://services8.arcgis.com/oTalEaSXAuyNT7xf/arcgis/rest/services/Guder_soil_type/FeatureServer/0
+note felder: DOMSOI, FAOSOIL, FID, K_factor, PHASE1, SNUM, Shape__Area, Shape__Length, Soil_type
