@@ -22,7 +22,7 @@ map features
 lat geometry.coordinates.1
 lon geometry.coordinates.0
 alt geometry.coordinates.2
-field properties.magnitude geonet_quake_magnitude gaussian-inverse-square seismic-body M 60.0 0.0 0.0
+field properties.magnitude geonet_quake_magnitude gaussian-inverse-square seismic-body Mw 60.0 0.0 0.0
 
 url https://api.p2pquake.net/v2/jma/quake?limit=100&order=-1
 ttl 30
@@ -36,6 +36,7 @@ url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson
 ttl 60
 on earth 0 0 0
 map features
+mag_type_key properties.magType
 lat geometry.coordinates.1
 lon geometry.coordinates.0
 field geometry.coordinates.2 geosphere_quake_depth_km erfc seismic-surface km 6.0 0.0 0.0
@@ -45,6 +46,7 @@ url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={h
 ttl 60
 on earth 0 0 0
 geojson mag 0.0 seismic_magnitude_mw seismic_depth_km 6.0 0.0 0.0
+mag_type_key magType
 
 url https://services.arcgis.com/wjcPoefzjpzCgffS/arcgis/rest/services/Environment_Canada_Wind_Speed_and_Direction/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
 ttl 86400
@@ -639,6 +641,7 @@ url https://webservices.ingv.it/fdsnws/event/1/query?format=geojson&minmagnitude
 ttl 3600
 at earth
 map features
+mag_type_key properties.magType
 lat geometry.coordinates.1
 lon geometry.coordinates.0
 field geometry.coordinates.2 geosphere_earthquake_depth_km erfc seismic-surface km 360.0 0.0 0.0
@@ -1183,6 +1186,7 @@ url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/cbda
 ttl 604800
 at sun
 cmap .
+flux_from_mag mag1
 ra ra
 dec dec
 dist dist_pc
@@ -1195,6 +1199,7 @@ url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/come
 ttl 604800
 at sun
 cmap .
+flux_from_mag H
 ra ra
 dec dec
 dist dist_au
@@ -1205,18 +1210,20 @@ url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/coro
 ttl 604800
 at sun
 cmap .
+flux_from_mag mag
 ra ra
 dec dec
 dist dist_pc
 dist_scale 3.085677581e16
 field mag corot_vmag gaussian-inverse-square em mag 604800 0.0 0.0
 field teff corot_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
-field logg corot_logg gaussian-inverse-square gravity dex 604800 0.0 0.0
+field logg corot_logg gaussian-inverse-square gravity logg 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/dcom5_comets.json
 ttl 604800
 at sun
 cmap .
+flux_from_mag H
 ra ra
 dec dec
 dist dist_au
@@ -1228,6 +1235,7 @@ url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/deni
 ttl 604800
 at sun
 cmap .
+flux_from_mag jmag
 ra ra
 dec dec
 dist dist_pc
@@ -1275,6 +1283,7 @@ url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/gcvs
 ttl 604800
 at sun
 cmap .
+flux_from_mag mag
 ra ra
 dec dec
 dist dist_pc
@@ -1286,6 +1295,7 @@ url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/lmxb
 ttl 604800
 at sun
 cmap .
+flux_from_mag mag1
 ra ra
 dec dec
 dist dist_pc
@@ -1320,6 +1330,7 @@ url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/mkty
 ttl 604800
 at sun
 cmap .
+flux_from_mag mag
 ra ra
 dec dec
 dist dist_pc
@@ -1340,24 +1351,26 @@ url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/past
 ttl 604800
 at sun
 cmap .
+flux_from_mag mag
 ra ra
 dec dec
 dist dist_pc
 dist_scale 3.085677581e16
 field teff pastel_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
-field logg pastel_logg gaussian-inverse-square gravity dex 604800 0.0 0.0
+field logg pastel_logg gaussian-inverse-square gravity logg 604800 0.0 0.0
 field mag pastel_vmag gaussian-inverse-square em mag 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/polarbase.json
 ttl 604800
 at sun
 cmap .
+flux_from_mag mag
 ra ra
 dec dec
 dist dist_pc
 dist_scale 3.085677581e16
 field teff polarbase_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
-field logg polarbase_logg gaussian-inverse-square gravity dex 604800 0.0 0.0
+field logg polarbase_logg gaussian-inverse-square gravity logg 604800 0.0 0.0
 field mag polarbase_vmag gaussian-inverse-square em mag 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/psr.json
@@ -1376,6 +1389,7 @@ url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/sb9.
 ttl 604800
 at sun
 cmap .
+flux_from_mag mag1
 ra ra
 dec dec
 dist dist_pc
@@ -1387,6 +1401,7 @@ url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/snca
 ttl 604800
 at sun
 cmap .
+flux_from_mag mag
 ra ra
 dec dec
 z z
@@ -1416,6 +1431,7 @@ url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/vsx.
 ttl 604800
 at sun
 cmap .
+flux_from_mag max
 ra ra
 dec dec
 dist dist_pc
@@ -1428,6 +1444,7 @@ url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/wd.j
 ttl 604800
 at sun
 cmap .
+flux_from_mag mag
 ra ra
 dec dec
 plx plx
@@ -1438,6 +1455,7 @@ url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/wds.
 ttl 604800
 at sun
 cmap .
+flux_from_mag mag1
 ra ra
 dec dec
 dist dist_pc

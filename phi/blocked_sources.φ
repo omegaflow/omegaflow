@@ -1,3 +1,5 @@
+# Verdicts (Stand 2026-08-17): decline redistribution / decline no-physical-force tragen CDN-Redistributions-Urteile (kommerziell / kein Messwert) — siehe interesting_domains.φ §5.
+
 key-needed blocked
 url http://api.nasa.gov/neo/rest/v1/feed?start
 note HTTP 403 — Auth-Gate oder Bot-Block.
@@ -52,27 +54,27 @@ note CAMS Atmosphere Data Store — Daten hinter Registrierung.
 
 key-needed blocked
 url https://alerce.online/api/v1/objects/?format=json&ndet__gte=5&lastmjd__gte=
-note HTTP 403 — Auth-Gate oder Bot-Block.
+note HTTP 403 — Auth-Gate oder Bot-Block. Recheck 2026-08-17: Explorer-interne Route; echte Datenroute ist api.alerce.online/ztf/v1 — laut Service-Doku „without needing any authentication", offen ohne Token (ALERCE_TOKEN entfernt).
 
-key-needed token
+decline no-physical-force
 url https://antares.noirlab.edu/api/v1/
-note SPA-Shell, API dahinter verlangt Account/Token. Registrierung: https://antares.noirlab.edu/ → Signup (Token im Account). Recheck 2026-08-15 über die Grenze: GAVO-Mirror dc.g-vo.org/tap (antares.data, 5 921 Zeilen) trägt id/raj2000/dej2000/n_hits/ang_error/epoch_mjd — zugänglich ohne Key, aber nur Counts + Position → Decline per §3.2/§3.9 (Alerts ohne Feldwert).
+note Recheck 2026-08-17: Portal-Login (antares.noirlab.edu) ist NICHT der API-Zugang — API-Credentials werden nur per Anfrage beim ANTARES-Team vergeben (antares-client-Doku „Obtaining Credentials"). GAVO-Mirror dc.g-vo.org/tap (antares.data, 5 921 Zeilen) trägt id/raj2000/dej2000/n_hits/ang_error/epoch_mjd — zugänglich ohne Key, aber nur Counts + Position → Decline per §3.2/§3.9 (Alerts ohne Feldwert). Verdikt 2026-08-17: kein natürlicher Feldwert (nur Counts/Position) — CDN-Redistribution irrelevant, decline no-physical-force.
 
-key-needed auth
+decline no-physical-force
 url https://antares.noirlab.edu/api/v1/locus/?format=json&created__gte=
-note ANTARES verlangt Token (siehe Eintrag oben).
+note ANTARES verlangt Token (siehe Eintrag oben). Verdikt 2026-08-17: decline no-physical-force.
 
-key-needed auth
+decline redistribution
 url https://api.electricitymap.org/v3/carbon-intensity/latest
-note HTTP 401 — Token/Registrierung nötig.
+note HTTP 401 — Token/Registrierung nötig. Verdikt 2026-08-17: kommerziell (Daten proprietär) — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E).
 
-key-needed auth
+decline no-physical-force
 url https://api.europeana.eu/record/v2/search.json?query=*&qf=place
-note HTTP 401 — Token/Registrierung nötig.
+note HTTP 401 — Token/Registrierung nötig. Verdikt 2026-08-17: Kultur-Metadaten — kein Messwert, kein Live-Signal (AUTH_APIS.md §E).
 
-key-needed blocked
+decline redistribution
 url https://api.maptiler.com/maps/basic-v2-dark/style.json
-note HTTP 403 — Auth-Gate oder Bot-Block.
+note HTTP 403 — Auth-Gate oder Bot-Block. Verdikt 2026-08-17: kommerzielle Tiles — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E).
 
 parser-def
 url https://api.nasa.gov/DONKI/CME
@@ -82,13 +84,13 @@ key-needed api-key
 url https://api.nasa.gov/DONKI/FLR
 note grind: grind_terrapulse_b.φ
 
-key-needed blocked
+decline no-physical-force
 url https://api.networkrail.co.uk/v1/gtfs-rt/feeds
-note HTTP 403 — Auth-Gate oder Bot-Block.
+note Recheck 2026-08-17: kein separater API-Key — Zugang ist das Portal-Login datafeeds.networkrail.co.uk (User/Pass); STOMP auf datafeeds.networkrail.co.uk:61618 + Static Feeds via authentifiziertem HTTP GET. Verdikt 2026-08-17: Zugpositionen sind hergestellte Objekte, kein natürlicher Feldwert — kein Sensor-Organ einer nicht-menschlichen Spezies evolviert diese Messung; decline no-physical-force.
 
-key-needed auth
+decline redistribution
 url https://api.protectedplanet.net/v3/protected_areas?with_geometry=true&latitude=
-note HTTP 401 — Token/Registrierung nötig.
+note HTTP 401 — Token/Registrierung nötig. Verdikt 2026-08-17: WDPA — Redistribution eingeschränkt — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E).
 
 key-needed blocked
 url https://api.purpleair.com/v1/sensors?fields=latitude,longitude,pm2.5&limit=5000
@@ -98,13 +100,13 @@ parser-def radar-tiles
 url https://api.rainviewer.com/public/weather-maps.json
 note Radarreflektivität (EM-Messung) liegt in PNG-Tiles; JSON ist nur Tile-Katalog (past[].path) — kein numerischer Messwert im JSON.
 
-key-needed blocked
+decline redistribution
 url https://api.resourcewatch.org/v1/geostore?lat=
-note HTTP 403 — Auth-Gate oder Bot-Block.
+note HTTP 403 — Auth-Gate oder Bot-Block. Verdikt 2026-08-17: WRI — ToS/Redistribution unklar — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E).
 
-key-needed rate-limit
+decline no-physical-force
 url https://api.semanticscholar.org/graph/v1/paper/search?query=*&limit=1
-note HTTP 429 — Rate-Limit; Schlüssel/Registrierung nötig.
+note HTTP 429 — Rate-Limit; Schlüssel/Registrierung nötig. Verdikt 2026-08-17: Bibliographie — kein Messwert, kein Live-Signal (AUTH_APIS.md §E).
 
 key-needed blocked
 url https://api.sensor.community/v1/data/measurement?lat=
@@ -118,9 +120,9 @@ key-needed blocked
 url https://api.si.edu/openaccess/api/v1.0/content/search?q=
 note HTTP 403 — Auth-Gate oder Bot-Block.
 
-key-needed auth
+decline redistribution
 url https://api.sncf.com/v1/coverage/sncf/stop_areas/
-note HTTP 401 — Token/Registrierung nötig.
+note HTTP 401 — Token/Registrierung nötig. Verdikt 2026-08-17: kommerziell (ToS) — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E).
 
 parser-def docs
 url https://api.tidesandcurrents.noaa.gov/api/prod/
@@ -130,13 +132,13 @@ parser-def keyed-object
 url https://api.wolfx.jp/cenc_eqlist.json
 note grind: grind_host.φ
 
-key-needed auth
+decline redistribution
 url https://api.z.ai/api/coding/paas/v4
-note HTTP 401 — Token/Registrierung nötig.
+note HTTP 401 — Token/Registrierung nötig. Verdikt 2026-08-17: kommerziell (AI-Modell, kein Messwert) — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E).
 
-key-needed auth
+decline redistribution
 url https://api.z.ai/api/coding/paas/v4`
-note HTTP 401 — Token/Registrierung nötig.
+note HTTP 401 — Token/Registrierung nötig. Verdikt 2026-08-17: kommerziell (AI-Modell, kein Messwert) — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E).
 
 key-needed auth
 url https://appeears.earthdatacloud.nasa.gov/api/
@@ -166,9 +168,9 @@ parser-def archive
 url https://atmos.nmsu.edu/PDS/data/
 note grind: grind_planetary.φ
 
-key-needed blocked
+decline redistribution
 url https://bgp.tools/table.json
-note HTTP 403 — Auth-Gate oder Bot-Block.
+note HTTP 403 — Auth-Gate oder Bot-Block. Verdikt 2026-08-17: kommerziell, Redistribution eingeschränkt — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E).
 
 parser-def wfs
 url https://bhuvan-vec2.nrsc.gov.in/bhuvan/wfs
@@ -180,7 +182,7 @@ note CASDA/VAST: TAP liefert ausschließlich VOTable (XML) — kein VOTable-Row-
 
 key-needed auth
 url https://cdaac-www.cosmic.ucar.edu/cdaac/rest/users/catalog/cosmic2/
-note HTTP 401 — Token/Registrierung nötig.
+note HTTP 401 — Token/Registrierung nötig. Recheck 2026-08-17: CDAAC-REST-Host verlangt Login; echte Datenroute data.cosmic.ucar.edu (gnss-ro/gnss-r/suominet) ist offen — „no need for a login to access these data", curl 200 (CDAAC_USER/PASS entfernt).
 
 parser-def grid-earthernet-login
 url https://cddis.nasa.gov/archive/grace/
@@ -192,7 +194,7 @@ note CGI-Formular; MPC-API existiert separat.
 
 key-needed blocked
 url https://climate.metoffice.cloud/amoc.csv
-note HTTP 403 — Auth-Gate oder Bot-Block.
+note HTTP 403 — Auth-Gate oder Bot-Block. Recheck 2026-08-17: das ist die Climate-Dashboard-Route; die Datenroute ist das Climate-Data-Portal climate-themetoffice.hub.arcgis.com — „You do not need to log in to download the data", ArcGIS-REST-FeatureServer + OGC-API-Records-Search-API offen (METOFFICE_CLIMATE_KEY entfernt, .secrets.local).
 
 key-needed blocked
 url https://climateknowledgeportal.worldbank.org/api/
@@ -206,9 +208,9 @@ parser-def erddap-index
 url https://coastwatch.noaa.gov/erddap/
 note ERDDAP-Instanz; .json/.csv-Endpoints vorhanden — echten Datensatz wählen.
 
-key-needed blocked
+decline no-physical-force
 url https://crates.io/api/v1/crates?per_page=1
-note HTTP 403 — Auth-Gate oder Bot-Block.
+note HTTP 403 — Auth-Gate oder Bot-Block. Verdikt 2026-08-17: Paket-Registry — kein Messwert, kein Live-Signal (AUTH_APIS.md §E).
 
 parser-def html
 url https://darts.isas.jaxa.jp/astro/xrism/api/v1/observations?format=json&release=DR1&status=public&limit=50
@@ -222,9 +224,9 @@ parser-def arcgis-index
 url https://data-gis.unep-wcmc.org/server/rest/services/Hosted/
 note ArcGIS-Index ohne f=json.
 
-key-needed auth
+decline redistribution
 url https://data.blitzortung.org/Data/Protected/strikes.json
-note HTTP 401 — Token/Registrierung nötig.
+note HTTP 401 — Token/Registrierung nötig. Verdikt 2026-08-17: Community-Lizenz, nicht-kommerziell, Redistribution eingeschränkt — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E).
 
 parser-def
 url https://data.epa.gov/efservice/ERM_RESULT/
@@ -242,9 +244,9 @@ key-needed auth
 url https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/GEDI02_A.002/GEDI02_A_2025188131609_O37201_02_T03282_02_004_02_V002/GEDI02_A_2025188131609_O37201_02_T03282_02_004_02_V002.cmr.xml
 note HTTP 401 — Token/Registrierung nötig.
 
-key-needed auth
+decline redistribution
 url https://data.lsst.cloud/api/tap
-note HTTP 401 — Token/Registrierung nötig.
+note HTTP 401 — Token/Registrierung nötig. Verdikt 2026-08-17: LSST — proprietäre Frist — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E).
 
 parser-def index
 url https://data.minorplanetcenter.net/api/
@@ -266,13 +268,13 @@ parser-def votable
 url https://dc.zah.uni-heidelberg.de/tap/
 note GAVO-TAP-Landing — VOTable-Antworten.
 
-key-needed auth
+decline redistribution
 url https://dev.meteostat.net/api/stations/nearby.html
-note Meteostat-Dev-Docs — API verlangt Key.
+note Meteostat-Dev-Docs — API verlangt Key. Verdikt 2026-08-17: kommerziell (paid) — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E).
 
-key-needed auth
+decline redistribution
 url https://docs.sentinel-hub.com/api/latest/
-note Sentinel-Hub verlangt Key/Subscription.
+note Sentinel-Hub verlangt Key/Subscription. Verdikt 2026-08-17: kommerziell (Subscription) — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E).
 
 key-needed auth
 url https://ebird.org/api/key
@@ -304,11 +306,11 @@ note FIRMS-Aktivfeuer (VIIRS/MODIS, thermal echt) — MAP_KEY nötig.
 
 key-needed auth
 url https://frost.met.no/observations/v0.jsonld?sources=SN18700&elements=air_temperature&referencetime=
-note HTTP 401 — Token/Registrierung nötig.
+note HTTP 401 — Token/Registrierung nötig. Recheck 2026-08-17: Client-Credentials erstellt (FROST_CLIENT_ID/FROST_CLIENT_SECRET in .secrets.local) — normaler Abruf braucht nur die Client-ID; Secret nur für nicht-öffentliche Daten.
 
-key-needed auth
+decline redistribution
 url https://gateway.api.globalfishingwatch.org/v3/
-note HTTP 401 — Token/Registrierung nötig.
+note HTTP 401 — Token/Registrierung nötig. Verdikt 2026-08-17: ToS — Redistribution eingeschränkt — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E).
 
 parser-def kafka-spa
 url https://gcn.nasa.gov/circulars
@@ -330,9 +332,9 @@ parser-def html
 url https://gong2.nso.edu/HA/hag/?ref=hag&series=hag&date=2026.08.07&format=json
 note GONG-H-alpha-Sonnenbilder (em, echt) — format=json greift nicht auf dieser Route.
 
-key-needed auth-401
+refused
 url https://gracedb.ligo.org/api/events/
-note grind: grind_host.φ
+note Recheck 2026-08-17: Auth-Fehler — "successfully authenticated but session does not contain group membership". Private-Events-API verlangt LVC-/MOU-Gruppenmitgliedschaft (gw-astronomy.org), kein Self-Service-Token. Public superevents (gracedb.ligo.org/api/superevents/) bleibt ohne Auth in sources.φ live (line 175). GRACEDB_TOKEN-Stub entfernt.
 
 parser-def html
 url https://gtnp.arcticportal.org/api/
@@ -350,17 +352,17 @@ parser-def usage-error
 url https://irsa.ipac.caltech.edu/cgi-bin/Gator/nph-query?catalog=allwise_p3as_psd&spatial=box&ra=0.0&dec=0.0&size=14400&outfmt=1&selcols=designation,ra,dec,w1mpro,w2mpro,w3mpro,w4mpro,ph_qual
 note Gator lebt, aber Parameter-Form falsch (Usage-Error) — korrekte spatial-Syntax verwenden. Recheck.
 
-key-needed auth
+decline redundant
 url https://irsa.ipac.caltech.edu/ibe/
-note IRSA erreichbar (200), ZTF-Alert-Daten verlangen IRSA-Auth (zudem Stream/Catalog-Query, kein keyless GET-Feld). Registrierung: https://irsa.ipac.caltech.edu/applications/Register/
+note IRSA erreichbar (200). Recheck 2026-08-17: IRSA hat KEINEN API-Token — (a) öffentliche Daten (WISE/NEOWISE/2MASS/Spitzer/SPHEREx/Euclid/ZTF-DR24) offen auf AWS S3 Open Data (nasa-irsa-wise, ipac-irsa-ztf usw., anonymous, kein Key); (b) proprietäres ZTF via IPAC-SSO (curl --user email:passwort). Verdikt 2026-08-17 bleibt decline redundant: ZTF-Photometrie über Lasair/ALeRCE abgedeckt, übrige IRSA-Holdings (WISE/2MASS) sind Bulk-Kataloge ohne Live-Feldwert.
 
 key-needed auth
 url https://lasair-ztf.lsst.ac.uk/api/cone/
-note HTTP 401 — Token/Registrierung nötig.
+note HTTP 401 — Token/Registrierung nötig. Recheck 2026-08-17: API-Token im Lasair-Profil (LASAIR_TOKEN in .secrets.local).
 
 key-needed auth
 url https://lasair-ztf.lsst.ac.uk/api/cone/?ra=180.0&dec=30.0&radius=10.0&
-note HTTP 401 — Token/Registrierung nötig.
+note HTTP 401 — Token/Registrierung nötig. Recheck 2026-08-17: LASAIR_TOKEN vorhanden.
 
 key-needed blocked
 url https://lisn.igp.gob.pe/api/v1/stations?format=json&status=operational
@@ -374,17 +376,17 @@ key-needed auth
 url https://lpdaacsvc.cr.usgs.gov/appeears/api/point/sample?product=GEDI02_A.002&layer=rh100&lat=0&lon=0&format=json
 note GEDI hinter Earthdata-Login.
 
-key-needed auth
+decline no-physical-force
 url https://marinecadastre.gov/ais/api/v1/locations?bbox=
-note AIS-Schiffspositionen (advective, echt) — Key nötig.
+note Recheck 2026-08-17: kein Live-API — AIS-Daten als Bulk-Downloads (CSV.zst/GDB) auf Azure-Blob, Public Domain; AccessAIS-Bestellservice derzeit pausiert (MARINECADASTRE_KEY entfernt, .secrets.local). Verdikt 2026-08-17: Schiffspositionen sind hergestellte Objekte, kein natürlicher Feldwert; decline no-physical-force.
 
 key-needed auth
 url https://mast.stsci.edu/api/v0/
-note MAST verlangt Token für API-Zugriff.
+note MAST verlangt Token für API-Zugriff. Verdikt 2026-08-17 aufgehoben (decline redundant): TESS/HST/JWST-Photometrie ist em (Sternenlicht) — echter Feldwert. MAST_TOKEN vorhanden (.secrets.local). TIC-Katalog (ra/dec/plx/Tmag) via CSV-Kompilat recheck_b2 — MAST-TAP mast.stsci.edu/api/v0.1/tap/sync 404, kein Live-TAP; Weg ist das CSV-Kompilat.
 
-key-needed auth
+decline redistribution
 url https://meteostat.net/api/stations/search?country=RU&limit=200&key=
-note Meteostat verlangt API-Key (key=).
+note Meteostat verlangt API-Key (key=). Verdikt 2026-08-17: kommerziell (paid) — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E).
 
 key-needed auth
 url https://my-api.plantnet.org/v2/identify/all?api-key=
@@ -442,13 +444,13 @@ key-needed rate-limit
 url https://query1.finance.yahoo.com/v8/finance/chart/%5ETNX
 note HTTP 429 — Rate-Limit; Schlüssel/Registrierung nötig.
 
-key-needed auth
+decline no-physical-force
 url https://quickstats.nass.usda.gov/api/api_GET/?key=
-note HTTP 401 — Token/Registrierung nötig.
+note HTTP 401 — Token/Registrierung nötig. Verdikt 2026-08-17: Agrarstatistik, kein physischer Messwert — decline no-physical-force.
 
-key-needed auth
+decline no-physical-force
 url https://quickstats.nass.usda.gov/api/api_GET/?key=REDACTED&commodity_desc=CORN&statisticcat_desc=PRODUCTION&format=JSON
-note HTTP 401 — Token/Registrierung nötig.
+note HTTP 401 — Token/Registrierung nötig. Verdikt 2026-08-17: Agrarstatistik, kein physischer Messwert — decline no-physical-force.
 
 parser-def pubsub
 url https://scimma.org/
@@ -470,9 +472,9 @@ parser-def votable
 url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20100%20ra%2Cdec%20FROM%20basic%20WHERE%20otype%3D%27HVC%27
 note SIMBAD-TAP liefert VOTable-XML trotz format=json — kein JSON-Row-Extract möglich (parser-def).
 
-key-needed auth
+offen
 url https://sios-svalbard.org/metsis/api/datasets?format=json&limit=200&subject=atmosphere
-note HTTP 401 — Token/Registrierung nötig.
+note Recheck 2026-08-17: SIOS-User-Account ist NICHT nötig für Data-Portal-Zugriff/Download („You do not need a SIOS user account if you want to access/search on the Data Portal or download data" — nur für Working-Group/Committee/Katalog-Edit). Offene Route: Station-Data-REST https://sios-svalbard.org/rest/stations/data.json (curl 200); Blue-Cloud „No AAI enforced for normal browsing". SIOS_TOKEN-Stub entfernt.
 
 parser-def html
 url https://skyserver.sdss.org/dr18/SearchTools/sql?cmd=SELECT+TOP+3000+ra,dec,z,psfMag_r,psfMag_g+FROM+SpecObj+WHERE+class%3D%27QSO%27+AND+z+BETWEEN+0.1+AND+3.0+AND+zWarning%3D0&format=json
@@ -484,7 +486,7 @@ note grind: grind_terrapulse_a.φ
 
 parser-def html
 url https://supermag.jhuapl.edu/mag/?fidelity=low&format=json&
-note SuperMAG (Boden-Magnetometer, em echt) — HTML statt JSON; API-Route prüfen.
+note SuperMAG (Boden-Magnetometer, em echt). HTML-Route (mag/) ist das Download-Formular; Web-Service-API services/data.php?fmt=json&logon=<name>&start=...&extent=...&station=... braucht NUR logon, KEIN Passwort. Registriert 2026-08-17 (Username=omegaflow). ABER: API liefert PHP-Fatal — shell_exec „Unable to execute .../db-get -check logon" (Server-Fault bei SuperMAG, db-get-Binary nicht ausführbar).
 
 parser-def html
 url https://tadas.afad.gov.tr/api/event/list?limit=200
@@ -496,7 +498,7 @@ note Docs; Datagetter-Endpoint trägt echte Wasserstände — Recheck (siehe Bat
 
 key-needed auth
 url https://toar-data.fz-juelich.de/api/v2/data/map/
-note grind: grind_b2find.φ
+note grind: grind_b2find.φ. Registrierung pending (2026-08-17) — Ozon-Messwerte (diffusion) hinter TOAR-II-User-Registration; /data/timeseries/ POST-only.
 
 key-needed blocked
 url https://volcano.si.edu/api/v1/activity?format=json&weeks=4&status=eruption
@@ -514,9 +516,9 @@ key-needed blocked
 url https://weather.cma.cn/api/now/54511
 note HTTP 403 — Auth-Gate oder Bot-Block.
 
-key-needed blocked
+decline no-physical-force
 url https://whale.fm/api/v1/sounds/recent
-note HTTP 403 — Auth-Gate oder Bot-Block.
+note HTTP 403 — Auth-Gate oder Bot-Block. Verdikt 2026-08-17: Zooniverse-Klassifikationen (whale.fm ist ein Zooniverse-Projekt) sind keine Messung — decline no-physical-force.
 
 parser-def html
 url https://woudc.org/api/
@@ -526,9 +528,9 @@ parser-def mangled-url
 url https://www.atnf.csiro.au/research/pulsar/psrcat/tap/sync?query=SELECT+TOP+10+*+FROM+psr&format=csv
 note ATNF-PSRCAT-TAP (Pulsar-Katalog, em celestisch) — URL auf News-Seite umgeleitet; TAP-Endpoint direkt prüfen.
 
-key-needed blocked
+decline redistribution
 url https://www.dxpredictor.com/api/v1/ionosonde/fof2
-note HTTP 403 — Auth-Gate oder Bot-Block.
+note HTTP 403 — Auth-Gate oder Bot-Block. Verdikt 2026-08-17: kommerziell — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E).
 
 key-needed blocked
 url https://www.epa.gov/sites/default/files/2020-02/radnet_data.csv
@@ -550,13 +552,13 @@ key-needed blocked
 url https://www.ngdc.noaa.gov/gazetteer/rest/feature?typeCode=Ridge&format=json&maxResults=2000
 note HTTP 403 — Auth-Gate oder Bot-Block.
 
-key-needed rate-limit
+decline no-physical-force
 url https://www.peeringdb.com/api/ix
-note HTTP 429 — Rate-Limit; Schlüssel/Registrierung nötig.
+note HTTP 429 — Rate-Limit; Schlüssel/Registrierung nötig. Verdikt 2026-08-17: Netz-Infrastruktur — kein Messwert, kein Live-Signal (AUTH_APIS.md §E).
 
-key-needed blocked
+decline redistribution
 url https://www.reddit.com/dev/api/
-note HTTP 403 — Auth-Gate oder Bot-Block.
+note HTTP 403 — Auth-Gate oder Bot-Block. Verdikt 2026-08-17: kommerziell (ToS: keine Redistribution) — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E).
 
 key-needed auth
 url https://www.space-track.org/api/v1/satellite/catalog
