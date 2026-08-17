@@ -112,7 +112,7 @@ note 46 Exoplanet-Archiv-Tabellen — pscomppars erledigt; weitere Bulks offen
 
 ausstehend
 bestand phi/katalog/b2find_catalogs_index.φ
-note B2FIND-GESAMT (live verifiziert 2026-08-15): 1.469.856 Datasets. Wir haben 1.082 (=tags:catalogs, 0,07%). Fehlende Tags (live counts): climate 985, geophysics 161, model 63, oceanography 61, seismology 22, observation 14, interdisciplinary 8, nuclear 6 … — Voll-Crawl über sämtliche science-Tags ausstehend, danach Grind-Kandidaten ziehen. Der 1,47M-Bulk ist größtenteils per-File-Records, das Ziel sind die getaggten Science-Datasets
+note B2FIND-GESAMT (live 2026-08-17): 1.470.033 Datasets. Host-Umzug: b2find.dkrz.de löst DNS nicht mehr — der lebende Host ist b2find.eudat.eu (CKAN package_search, count identisch 1,47M). Voll-Crawl über sämtliche science-Tags läuft (1445 force-gemappte Tags aus library.φ → phi/katalog/b2find_science_catalogs.φ); tags:catalogs war 1.082 (IVOA/VizieR). Ziel: getaggte Science-Datasets → Grind-Kandidaten. Der 1,47M-Bulk ist größtenteils per-File-Records
 
 ausstehend
 bestand phi/katalog/esa_geomagnetic_catalog.φ
