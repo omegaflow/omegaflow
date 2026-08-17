@@ -9,7 +9,7 @@ An oscillator is an oscillator. It has properties. `if (osc.canRadiate)`. Identi
 
 We think like water. Silicon knows only IO. The code organizes around the silicon as it is.
 
-## Kybernetic Ethics
+## Kybernetische Ethik
 
 Bindings derived from the physics of the system. Council, 2026-08-17 (truth-finding).
 
@@ -22,9 +22,10 @@ Bindings derived from the physics of the system. Council, 2026-08-17 (truth-find
 ### 0 honored
 
 - The dogma is the question: *is the value true?*
-- Zero is honored only when the zero is the physical truth of the measurement — the measurement is absent from the thing itself (no force, no sensor signal, no parallax, no ellipse). The black window is the correct color for zero oscillators.
+- Every state of measurement, including absolute absence, is a fully realized property. An empty field renders black — the correct color for zero oscillators. τ = 0 means "no temporal extent": the gate closes, nothing manifests. Silence is the response, not a bug.
+- Zero is honored only when the zero is the physical truth of the measurement — the measurement is absent from the thing itself (no force, no sensor signal, no parallax, no ellipse).
 - Where the data exist and remain unsearched, unfetched, unbuilt, or unverified, the zero is not a truth: it is `pending`, `open`, `unimplemented`, `unverified`, `refused` — a registration duty, not a badge.
-- 0 honored began as drift away from the training data: away from fabrication, defaults, and the fear of zero and NaN — never as an excuse for the search that never happened.
+- The absence speaks louder than a fabricated point. 0 honored began as drift away from the training data: away from fabrication, defaults, and the fear of zero and NaN — never as an excuse for the search that never happened.
 
 ### All beings equal
 
