@@ -1,7 +1,8 @@
 # omegaflow
 
 Kybernetic field system. Pure Rust, WebGPU point cloud, ICRS block universe.
-`cargo run` → 127.0.0.1:1618 → static/index.html.
+`cargo run` → the native presence window (ESC closes it);
+`cargo run --features browser_relay` → + WS 127.0.0.1:1618, the frozen browser station.
 
 ## Core Philosophy: A = A
 

@@ -9690,6 +9690,7 @@ mod archivar {
             body_names.clone(),
             time.clone(),
         );
+        let mr_shutdown = mr.shutdown_flag();
         radiators.push(Box::new(mr));
         #[cfg(feature = "browser_relay")]
         {
@@ -9714,6 +9715,10 @@ mod archivar {
         let mut gm_text: Option<String> = None;
         let mut pck_text: Option<String> = None;
         loop {
+            if mr_shutdown.load(Ordering::SeqCst) {
+                eprintln!("the window closed — the ω-loop ends");
+                break;
+            }
             for i in 0..archive.sources.len() {
                 if archive.sources[i].format != "kernel_text" {
                     continue;
@@ -12738,6 +12743,12 @@ mod mathematikerin {
         }
     }
 
+    impl MathematikerinRadiator {
+        pub fn shutdown_flag(&self) -> Arc<AtomicBool> {
+            self.shutdown.clone()
+        }
+    }
+
     impl Drop for MathematikerinRadiator {
         fn drop(&mut self) {
             self.shutdown.store(true, Ordering::SeqCst);
@@ -14303,7 +14314,10 @@ mod mathematikerin {
             event: WindowEvent,
         ) {
             match event {
-                WindowEvent::CloseRequested => event_loop.exit(),
+                WindowEvent::CloseRequested => {
+                    self.shutdown.store(true, Ordering::SeqCst);
+                    event_loop.exit();
+                }
                 WindowEvent::Resized(size) => {
                     self.size = (size.width.max(1), size.height.max(1));
                     self.reconfigure();
@@ -14322,6 +14336,7 @@ mod mathematikerin {
                 WindowEvent::KeyboardInput { event, .. } => {
                     if let PhysicalKey::Code(code) = event.physical_key {
                         if code == KeyCode::Escape && event.state == ElementState::Pressed {
+                            self.shutdown.store(true, Ordering::SeqCst);
                             event_loop.exit();
                             return;
                         }
