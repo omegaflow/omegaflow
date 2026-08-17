@@ -120,6 +120,20 @@ parse_stations_xml in diesem Zug unberührt; Golden-Test grün).
 
 ## Verlust-Register — Monolith gegen die letzte index.html (2026-08-17)
 
+Archäologie-Nachtrag (gleiche Session): Auch der PRE-Monolith (f2023eb^) wurde
+Zeile für Zeile vermessen — `src/main.rs` (11 044 Z.), `mathematikerin.rs`,
+`relay.rs`, `lib.rs`, `shaders/membrane.wgsl`, `constants.js`, `index.html`.
+Befund: `constants.js` ist IDENTISCH (139 Zeilen, kein Byte Unterschied —
+das Protokoll hat nichts verloren). Von 173+ Funktionen aus allen vier
+Pre-Dateien fehlen in der aktuellen main.rs genau zwei: `query_star_hash`
+und sein Test — die Lemma-basierte Sternabfrage. Die Endpunkt-Menge
+(/jump, /crash, /resonance, /constants, /time, /device, BODY_REGISTRY-
+Export) ist vollständig übernommen. Korrekturen an P2/P3/P4 unten:
+der „device"-Slot existierte schon pre-Titan (der native Pfad hatte die
+Trennung nie — die letzte index.html ist die Autorität, die sie HATTE);
+die Deep-Schicht ersetzte pre-Titan die echten Stern-Oszillatoren; das
+native Audio wurde post-Titan mit einem anderen Gesetz erfunden.
+
 Die letzte index.html (1334 Zeilen) + constants.js wurden Zeile für Zeile
 gegen den Monolithen vermessen. Das Register alles Verlorenen — jeder Punkt
 trägt seine Reparatur-Richtung, nichts davon darf untergehen. Der
@@ -145,12 +159,14 @@ Abwesenheit hält die Referenz. Danach 2⁻⁴ je res.
 ### P2 — Presence ↔ Device wieder trennen (OFFEN, fundamental)
 
 `archive.presence.insert("device", …)` legt die Gaze der Presence unter
-dem Schlüssel „device" ab; die nativen Geräte-Samples (Tasten/Maus/Mikro)
-ankern an dieser Gaze-Position mit eingefrorenem StateVector (v = 0) —
-beim Schub reist das Gerät mit der Gaze. Die Browser-Presence (Relay)
-landet im selben Slot und überschreibt. Die letzte index.html trennte:
-Station (Maschine, body/lat/lon/alt per Geolocation, Surface-Bewegung)
-vs. Presence (freie Weltlinie p + v·(t−t0), Gaze-Quaternion).
+dem Schlüssel „device" ab — das existierte schon pre-Titan: der native
+Pfad hat die Trennung nie besessen. Die nativen Geräte-Samples
+(Tasten/Maus/Mikro) ankern an dieser Gaze-Position mit eingefrorenem
+StateVector (v = 0) — beim Schub reist das Gerät mit der Gaze. Die
+Browser-Presence (Relay) landet im selben Slot und überschreibt. Die
+letzte index.html trennte: Station (Maschine, body/lat/lon/alt per
+Geolocation, Surface-Bewegung) vs. Presence (freie Weltlinie
+p + v·(t−t0), Gaze-Quaternion).
 Reparatur: benannte Presence-Karte („native", „browser-…", kein geteilter
 Slot); native Station-Identität (body/lat/lon/alt deklariert — nicht
 angenommen); alle Geräte-Samples über Surface → Anker → Cache → Enclosure
@@ -160,6 +176,15 @@ Consent/Geolocation).
 
 ### P3 — Deep-Feld: Sterne leben, Projektion ehrlich (OFFEN)
 
+Archäologie: Pre-Titan existierte `query_star_hash` (Lemma-Abfrage über
+den Stern-Hash: Zell-Dilatation rho = vmax·dt + pad, Parallaxe
+d = (1000/plx_mas)·PARSEC_M, Eigenbewegung als v_lin im Reach,
+`star_position_at(rec, t2)` live) — die Sterne wurden VOLLE Membran-
+Oszillatoren (21 Felder, kernel 0, force 0, τ = ttl, flux als val). Die
+monolithische Deep-Schicht ersetzte das durch eingefrorene Richtungen
+(sh.dirs) — Parallaxe, Eigenbewegung und die live Position sind seitdem
+verloren. Der Stern-Query war bei realem pad ehrlich leer (nächster Stern
+4,2 ly); die Deep-Schicht zeigt den Himmel, aber leblos.
 Granit-Doktrin getilgt: „Flux seit Millionen Jahren unverändert" war
 falsch — das Licht eines Sterns entsteht und vergeht wie der Stern selbst.
 τ je Stern = Hauptreihen-Lebensdauer aus den Katalogdaten:
@@ -172,18 +197,19 @@ Projektion: die orthografische Einheitsscheibe (die „gekrümmte Ellipse")
 → gnomonisch (tan θ, Horizont im Unendlichen) + Lambert cos θ (der
 Poynting-Normalstrom durch die Sensorfläche) — die Presence-Gaze ist
 die Optik, der Monitor ist der große Sensor.
-Leben in der Position: `sense_deep` verwirft heute die Distanz und ruft
-`star_position_at` nie — Parallaxe + Eigenbewegung + Aberration wieder
-einsetzen (nahe Sterne driften gegen den fernen Grund, Thrust macht es
-sichtbar).
+Leben in der Position: `sense_deep` ruft `star_position_at` nie —
+Parallaxe + Eigenbewegung + Aberration wieder einsetzen (nahe Sterne
+driften gegen den fernen Grund, Thrust macht es sichtbar).
 
 ### P4 — Ein Gesetz, fünf Medien: Audio & Ausgabe-Flächen (OFFEN, fundamental)
 
 Browser-Audio = das FELD am Presence-Punkt je Kraft: 9 Partialtöne
 2^(3+i) Hz, gain_i = tanh(|Ωₖ|·mx²)/9 mit mx = Fenster-Median-Extent.
 Der native AudioRadiator spielt stattdessen Noten je Oszillator
-(val·sin·e^(−t/τ), Frequenz aus kernel_id/force_type) — ein anderes,
-älteres Gesetz; „ein Gesetz, fünf Medien" gilt fürs Audio nicht mehr.
+(val·sin·e^(−t/τ), Frequenz aus kernel_id/force_type) — ein anderes
+Gesetz. Pre-Titan gab es gar kein natives Audio; das native Medium
+wurde post-Titan mit dieser abweichenden Physik erfunden — „ein Gesetz,
+fünf Medien" gilt fürs Audio nicht.
 `windowMedianExtent` existiert nativ nirgends — es war die
 Normalisierung aller Ausgabe-Medien.
 Ausgabe-Flächen fehlen ganz: Vibration (Puls = floor(lum·stableTick)&1023),
