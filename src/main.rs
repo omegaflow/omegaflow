@@ -535,6 +535,7 @@ enum Motion {
 enum OscillatorSource {
     Api(u32),
     Station,
+    StationDeclared,
     Body,
 }
 
@@ -623,6 +624,13 @@ enum Position {
         v: [f64; 3],
         track: bool,
     },
+}
+#[derive(Clone)]
+struct StationIdentity {
+    body_name: String,
+    lat: f64,
+    lon: f64,
+    alt: f64,
 }
 #[derive(Clone)]
 struct Channel {
@@ -3653,7 +3661,9 @@ mod archivar {
                 for cell in hash.cells.values().chain(std::iter::once(&hash.unbounded)) {
                     for osc in cell {
                         match osc.source {
-                            OscillatorSource::Station => station_osc += 1,
+                            OscillatorSource::Station | OscillatorSource::StationDeclared => {
+                                station_osc += 1
+                            }
                             OscillatorSource::Api(idx) => {
                                 api_osc += 1;
                                 api_src.insert(idx);
@@ -3675,7 +3685,9 @@ mod archivar {
             {
                 for osc in cell {
                     match osc.source {
-                        OscillatorSource::Station => station_osc += 1,
+                        OscillatorSource::Station | OscillatorSource::StationDeclared => {
+                            station_osc += 1
+                        }
                         OscillatorSource::Api(idx) => {
                             api_osc += 1;
                             api_src.insert(idx);
@@ -3712,6 +3724,7 @@ mod archivar {
         body_ephemerides: Arc<HashMap<String, BodyEphemeris>>,
         field: Arc<Buffer>,
         presence: HashMap<String, (f64, f64, f64, f64, f64)>,
+        station: Option<StationIdentity>,
         origins: HashMap<Origin, OriginState>,
         pck_bodies: HashMap<i32, PckBody>,
         time: Arc<Mutex<Option<LeapSeconds>>>,
@@ -9523,6 +9536,42 @@ mod archivar {
         }
     }
 
+    fn battery_ingress(tx: mpsc::Sender<Vec<(String, f64, f64)>>) {
+        loop {
+            let mut batch: Vec<(String, f64, f64)> = Vec::new();
+            if let Ok(entries) = std::fs::read_dir("/sys/class/power_supply") {
+                for entry in entries.flatten() {
+                    let path = entry.path();
+                    let read_num = |name: &str| -> Option<f64> {
+                        std::fs::read_to_string(path.join(name))
+                            .ok()
+                            .and_then(|s| s.trim().parse::<f64>().ok())
+                    };
+                    let capacity = read_num("capacity");
+                    let voltage = read_num("voltage_now").map(|v| v / 1e6);
+                    let current = read_num("current_now").map(|a| a / 1e6);
+                    let status = std::fs::read_to_string(path.join("status")).unwrap_or_default();
+                    if let Some(c) = capacity {
+                        batch.push(("battery.level".to_string(), c, 60.0));
+                    }
+                    if let Some(v) = voltage {
+                        batch.push(("battery.voltage".to_string(), v, 60.0));
+                    }
+                    if let Some(a) = current {
+                        batch.push(("battery.current".to_string(), a, 10.0));
+                    }
+                    if status.trim() == "Charging" {
+                        batch.push(("battery.charging".to_string(), 1.0, 60.0));
+                    }
+                }
+            }
+            if !batch.is_empty() {
+                let _ = tx.send(batch);
+            }
+            thread::sleep(std::time::Duration::from_secs(5));
+        }
+    }
+
     pub fn main_flow() {
         let env = Arc::new(load_env());
         {
@@ -9620,10 +9669,35 @@ mod archivar {
                 std::process::exit(probe_mode(path, precise, lat, lon, &env, fetchone));
             }
         }
+        let station: Option<StationIdentity> = std::env::args().skip(1).find_map(|a| {
+            let rest = a.strip_prefix("#body=")?;
+            let parts: Vec<&str> = rest.split(',').collect();
+            if parts.len() < 3 {
+                return None;
+            }
+            let lat: f64 = parts[1].parse().ok()?;
+            let lon: f64 = parts[2].parse().ok()?;
+            let alt: f64 = parts.get(3).and_then(|s| s.parse().ok()).unwrap_or(0.0);
+            Some(StationIdentity {
+                body_name: parts[0].to_string(),
+                lat,
+                lon,
+                alt,
+            })
+        });
+        if station.is_none() {
+            eprintln!(
+                "native station undeclared — device samples refused (declare via #body=<body>,<lat>,<lon>,<alt>)"
+            );
+        }
         let loaded = load_sources();
         let (sensor_tx, sensor_rx) = mpsc::channel::<Vec<(String, f64, f64)>>();
+        let consent = Arc::new(AtomicBool::new(false));
+        eprintln!("record consent: press Y (record) or N (silent) in the membrane window");
         let serial_tx = sensor_tx.clone();
         thread::spawn(move || serial_ingress(serial_tx));
+        let battery_tx = sensor_tx.clone();
+        thread::spawn(move || battery_ingress(battery_tx));
         #[cfg(feature = "browser_relay")]
         let port: u16 = match std::env::var("PORT").ok().and_then(|s| s.parse().ok()) {
             Some(p) => p,
@@ -9634,7 +9708,7 @@ mod archivar {
         let (osc_tx, osc_rx) = mpsc::channel::<Vec<Oscillator>>();
         #[cfg(not(feature = "browser_relay"))]
         let osc_rx = mpsc::channel::<Vec<Oscillator>>().1;
-        let (presence_tx, presence_rx) = mpsc::channel::<(f64, f64, f64, f64, f64)>();
+        let (presence_tx, presence_rx) = mpsc::channel::<(String, f64, f64, f64, f64, f64)>();
         let body_ephemerides = Arc::new(HashMap::new());
         #[cfg(feature = "browser_relay")]
         let index_html = match std::fs::read(resolve_asset("static/index.html")) {
@@ -9664,6 +9738,7 @@ mod archivar {
                 None,
             )),
             presence: HashMap::new(),
+            station,
             origins: HashMap::new(),
             pck_bodies: HashMap::new(),
             time: time.clone(),
@@ -9689,6 +9764,7 @@ mod archivar {
             sensor_tx.clone(),
             body_names.clone(),
             time.clone(),
+            consent.clone(),
         );
         let mr_shutdown = mr.shutdown_flag();
         radiators.push(Box::new(mr));
@@ -9823,9 +9899,11 @@ mod archivar {
                 fetched_oscillators.extend(oscs);
             }
             while let Ok(samples) = sensor_rx.try_recv() {
-                let (px, py, pz) = match archive.presence.get("station") {
-                    Some(&(_, x, y, z, _)) => (x, y, z),
-                    None => continue,
+                if !consent.load(Ordering::SeqCst) {
+                    continue;
+                }
+                let Some(station) = archive.station.clone() else {
+                    continue;
                 };
                 for (name, value, tau) in samples {
                     let Some(bs) = sensor_config(&name) else {
@@ -9846,10 +9924,11 @@ mod archivar {
                     };
                     let channel = Channel {
                         epoch: now,
-                        position: Position::StateVector {
-                            p: [px, py, pz],
-                            v: [0.0, 0.0, 0.0],
-                            track: false,
+                        position: Position::Surface {
+                            body_name: station.body_name.clone(),
+                            lat: station.lat,
+                            lon: station.lon,
+                            alt: station.alt,
                         },
                         name: fc.name.clone(),
                         value,
@@ -9867,10 +9946,8 @@ mod archivar {
                     }
                 }
             }
-            while let Ok((pt, px, py, pz, pr)) = presence_rx.try_recv() {
-                archive
-                    .presence
-                    .insert("station".to_string(), (pt, px, py, pz, pr));
+            while let Ok((name, pt, px, py, pz, pr)) = presence_rx.try_recv() {
+                archive.presence.insert(name, (pt, px, py, pz, pr));
             }
             for i in 0..archive.sources.len() {
                 let origin = i as u32;
@@ -10241,6 +10318,40 @@ mod archivar {
                                 }
                             }
                         }
+                    }
+                }
+                if let Some(station) = archive.station.clone() {
+                    let channel = Channel {
+                        name: "station".to_string(),
+                        value: 0.0,
+                        position: Position::Surface {
+                            body_name: station.body_name.clone(),
+                            lat: station.lat,
+                            lon: station.lon,
+                            alt: station.alt,
+                        },
+                        epoch: now,
+                    };
+                    let sensor = FieldConfig {
+                        key: "station".to_string(),
+                        name: "station".to_string(),
+                        kernel: 0,
+                        force: 1,
+                        tau: f64::INFINITY,
+                        absorption: 0.0,
+                        advection: 0.0,
+                    };
+                    if let Some(mut osc) = anchor(
+                        &channel,
+                        &sensor,
+                        86400.0,
+                        None,
+                        None,
+                        None,
+                        &archive.body_ephemerides,
+                    ) {
+                        osc.source = OscillatorSource::StationDeclared;
+                        all.push(osc);
                     }
                 }
                 archive.field = Arc::new(build_buffer(
@@ -12685,10 +12796,11 @@ mod mathematikerin {
 
     impl MathematikerinRadiator {
         pub fn new(
-            presence_tx: mpsc::Sender<(f64, f64, f64, f64, f64)>,
+            presence_tx: mpsc::Sender<(String, f64, f64, f64, f64, f64)>,
             sensor_tx: mpsc::Sender<Vec<(String, f64, f64)>>,
             body_names: Arc<Vec<String>>,
             time: Arc<Mutex<Option<LeapSeconds>>>,
+            consent: Arc<AtomicBool>,
         ) -> Self {
             let (tx, rx) = mpsc::sync_channel::<Arc<Buffer>>(2);
             let (req_tx, req_rx) =
@@ -12738,6 +12850,7 @@ mod mathematikerin {
                     body_names,
                     time,
                     shutdown_clone,
+                    consent,
                 );
             });
             Self {
@@ -12878,10 +12991,11 @@ mod mathematikerin {
         rx: mpsc::Receiver<Arc<Buffer>>,
         req_tx: mpsc::SyncSender<(Arc<Buffer>, [f64; 3], f64, f64, f64, f64)>,
         res_rx: mpsc::Receiver<(PackedWindow, Vec<f32>, Vec<f32>, f64)>,
-        presence_tx: mpsc::Sender<(f64, f64, f64, f64, f64)>,
+        presence_tx: mpsc::Sender<(String, f64, f64, f64, f64, f64)>,
         body_names: Arc<Vec<String>>,
         time: Arc<Mutex<Option<LeapSeconds>>>,
         shutdown: Arc<AtomicBool>,
+        consent: Arc<AtomicBool>,
 
         window: Option<Arc<Window>>,
         surface: Option<wgpu::Surface<'static>>,
@@ -12965,11 +13079,12 @@ mod mathematikerin {
             rx: mpsc::Receiver<Arc<Buffer>>,
             req_tx: mpsc::SyncSender<(Arc<Buffer>, [f64; 3], f64, f64, f64, f64)>,
             res_rx: mpsc::Receiver<(PackedWindow, Vec<f32>, Vec<f32>, f64)>,
-            presence_tx: mpsc::Sender<(f64, f64, f64, f64, f64)>,
+            presence_tx: mpsc::Sender<(String, f64, f64, f64, f64, f64)>,
             sensor_tx: mpsc::Sender<Vec<(String, f64, f64)>>,
             body_names: Arc<Vec<String>>,
             time: Arc<Mutex<Option<LeapSeconds>>>,
             shutdown: Arc<AtomicBool>,
+            consent: Arc<AtomicBool>,
         ) -> Self {
             Self {
                 rx,
@@ -12979,6 +13094,7 @@ mod mathematikerin {
                 body_names,
                 time,
                 shutdown,
+                consent,
                 window: None,
                 surface: None,
                 config: None,
@@ -13109,7 +13225,9 @@ mod mathematikerin {
             self.last_sent = (x, y, z, self.grid_step);
             let range =
                 self.size.0.max(self.size.1) as f64 * self.scale_factor * self.grid_step * 2.0;
-            let _ = self.presence_tx.send((self.t_presence, x, y, z, range));
+            let _ = self
+                .presence_tx
+                .send(("native".to_string(), self.t_presence, x, y, z, range));
             self.sense();
         }
 
@@ -13119,6 +13237,12 @@ mod mathematikerin {
                     self.fold();
                     self.v = [0.0, 0.0, 0.0];
                     self.consider_resend();
+                }
+                KeyCode::KeyY => {
+                    self.consent.store(true, Ordering::SeqCst);
+                }
+                KeyCode::KeyN => {
+                    self.consent.store(false, Ordering::SeqCst);
                 }
                 KeyCode::Home | KeyCode::Digit0 => {
                     self.p = [0.0, 0.0, 0.0];
@@ -14315,9 +14439,15 @@ mod mathematikerin {
                 self.frame_count = 0;
                 let ms_max = self.frame_ms_max;
                 self.frame_ms_max = 0.0;
+                let rec = if self.consent.load(Ordering::SeqCst) {
+                    "on"
+                } else {
+                    "silent"
+                };
                 eprintln!(
-                "φ window: t {:.2} | Ω {:+.2} {:+.2} {:+.2} {:+.2} {:+.2} {:+.2} {:+.2} {:+.2} {:+.2} | mx {:.2e} | fps {:.0} | ssaa {:.2} | grid 2^{} | x {:.3e} y {:.3e} z {:.3e} | {} near | {} deep | b {}x{} | maxms {:.0} | off {:.2} | blend {}",
+                "φ window: t {:.2} | rec {} | Ω {:+.2} {:+.2} {:+.2} {:+.2} {:+.2} {:+.2} {:+.2} {:+.2} {:+.2} | mx {:.2e} | fps {:.0} | ssaa {:.2} | grid 2^{} | x {:.3e} y {:.3e} z {:.3e} | {} near | {} deep | b {}x{} | maxms {:.0} | off {:.2} | blend {}",
                 self.t_presence,
+                rec,
                 self.probe_omega[0],
                 self.probe_omega[1],
                 self.probe_omega[2],
@@ -14583,13 +14713,14 @@ mod mathematikerin {
 
     fn run_window(
         rx: mpsc::Receiver<Arc<Buffer>>,
-        presence_tx: mpsc::Sender<(f64, f64, f64, f64, f64)>,
+        presence_tx: mpsc::Sender<(String, f64, f64, f64, f64, f64)>,
         sensor_tx: mpsc::Sender<Vec<(String, f64, f64)>>,
         req_tx: mpsc::SyncSender<(Arc<Buffer>, [f64; 3], f64, f64, f64, f64)>,
         res_rx: mpsc::Receiver<(PackedWindow, Vec<f32>, Vec<f32>, f64)>,
         body_names: Arc<Vec<String>>,
         time: Arc<Mutex<Option<LeapSeconds>>>,
         shutdown: Arc<AtomicBool>,
+        consent: Arc<AtomicBool>,
     ) {
         let mut builder = EventLoopBuilder::<()>::default();
         EventLoopBuilderExtX11::with_any_thread(&mut builder, true);
@@ -14608,6 +14739,7 @@ mod mathematikerin {
             body_names,
             time,
             shutdown,
+            consent,
         );
         let _ = event_loop.run_app(&mut app);
     }
@@ -14713,6 +14845,7 @@ mod mathematikerin {
                     Arc::new(Vec::new()),
                     Arc::new(Mutex::new(None)),
                     Arc::new(AtomicBool::new(false)),
+                    Arc::new(AtomicBool::new(false)),
                 )
             };
             app.packed_field = vec![0.0; 12];
@@ -14753,6 +14886,7 @@ mod mathematikerin {
                     Arc::new(Vec::new()),
                     Arc::new(Mutex::new(None)),
                     Arc::new(AtomicBool::new(false)),
+                    Arc::new(AtomicBool::new(false)),
                 )
             };
             app.packed_field = vec![0.0; 12];
@@ -14776,6 +14910,7 @@ mod mathematikerin {
                     Arc::new(Vec::new()),
                     Arc::new(Mutex::new(None)),
                     Arc::new(AtomicBool::new(false)),
+                    Arc::new(AtomicBool::new(false)),
                 )
             };
             app.packed_meta = vec![0.0; 36];
@@ -14796,6 +14931,7 @@ mod mathematikerin {
                     mpsc::channel().0,
                     Arc::new(Vec::new()),
                     Arc::new(Mutex::new(None)),
+                    Arc::new(AtomicBool::new(false)),
                     Arc::new(AtomicBool::new(false)),
                 )
             };
@@ -14820,7 +14956,7 @@ mod relay {
         constants_js: Vec<u8>,
         field_rx: mpsc::Receiver<Arc<Buffer>>,
         osc_tx: mpsc::Sender<Vec<Oscillator>>,
-        presence_tx: mpsc::Sender<(f64, f64, f64, f64, f64)>,
+        presence_tx: mpsc::Sender<(String, f64, f64, f64, f64, f64)>,
         time: Arc<Mutex<Option<LeapSeconds>>>,
     }
     pub struct TcpRadiator {
@@ -14837,7 +14973,7 @@ mod relay {
             index_html: Vec<u8>,
             constants_js: Vec<u8>,
             osc_tx: mpsc::Sender<Vec<Oscillator>>,
-            presence_tx: mpsc::Sender<(f64, f64, f64, f64, f64)>,
+            presence_tx: mpsc::Sender<(String, f64, f64, f64, f64, f64)>,
             time: Arc<Mutex<Option<LeapSeconds>>>,
         ) -> Self {
             let (field_tx, field_rx) = mpsc::channel::<Arc<Buffer>>();
@@ -15009,7 +15145,7 @@ mod relay {
                                 for v in hash.cells.values().chain(std::iter::once(&hash.unbounded))
                                 {
                                     for osc in v {
-                                        if matches!(osc.source, OscillatorSource::Station) {
+                                        if matches!(osc.source, OscillatorSource::StationDeclared) {
                                             let newer = match &station_sample {
                                                 Some(cur) => osc.epoch > cur.epoch,
                                                 None => true,
@@ -15270,7 +15406,14 @@ mod relay {
                                     let pt = f64::from_le_bytes(pb8);
                                     if cursor.read_exact(&mut pb8).is_ok() {
                                         let pr = f64::from_le_bytes(pb8);
-                                        let _ = cfg.presence_tx.send((pt, px, py, pz, pr));
+                                        let _ = cfg.presence_tx.send((
+                                            "browser".to_string(),
+                                            pt,
+                                            px,
+                                            py,
+                                            pz,
+                                            pr,
+                                        ));
                                         if cursor.read_exact(&mut pb8).is_ok() {
                                             delta_t_cache = f64::from_le_bytes(pb8);
                                         }

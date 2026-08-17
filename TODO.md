@@ -49,23 +49,16 @@ verloren); von 173+ Funktionen aus allen vier Pre-Dateien fehlen genau zwei:
 existierte schon pre-Titan; das native Audio wurde post-Titan mit abweichendem
 Gesetz erfunden. Die Endpunkt-Menge ist vollständig übernommen.
 
-### P2 — Presence ↔ Station wieder trennen
+### P2 — Presence ↔ Station getrennt; Relay-Rest offen
 
-`archive.presence.insert("station", …)` legt die Gaze der Presence unter
-dem Stations-Schlüssel ab — das existierte schon pre-Titan (damals hieß
-der Schlüssel „device"): der native Pfad hat die Trennung nie besessen.
-Die nativen Geräte-Samples (Tasten/Maus/Mikro) ankern an der Gaze-Position
-mit eingefrorenem StateVector (v = 0) — beim Schub reist die Maschine mit
-der Gaze. Die Browser-Presence (Relay) landet im selben Slot und
-überschreibt. Die letzte index.html trennte: Station (Maschine,
-body/lat/lon/alt per Geolocation, Surface-Bewegung) vs. Presence (freie
-Weltlinie p + v·(t−t0), Blick-Quaternion).
-Reparatur: benannte Presence-Karte („native", „browser-…", kein geteilter
-Slot); native Station-Identität (body/lat/lon/alt deklariert — nicht
-angenommen); alle Geräte-Samples über Surface → Anker → Cache → Enclosure
-Lemma wie jeder andere Sensor; ohne deklarierte Station bleiben die
-Samples `refused` — die Maschine HAT eine Position, die Deklaration ist
-`ausstehend` (wie der Browser ohne Zustimmung/Geolocation).
+Nativ erledigt: benannte Presence-Karte („native" / „browser"), native
+Station-Identität via Deep-Link (#body=<body>,<lat>,<lon>,<alt>),
+Geräte-Samples ankern über Surface (deklarierte Station), `refused`
+ohne Station und ohne Zustimmung; `/station` meldet die Maschine
+(OscillatorSource::StationDeclared).
+Relay-Rest: SurfaceFlow für spd/hdg (sensor_config hat keinen
+spd/hdg-Zweig für die Browser-Station) + refused-else ohne
+body-Deklaration.
 
 ### P3 — Deep-Feld: Sterne leben, Projektion ehrlich
 
@@ -107,22 +100,13 @@ den Serial-EINGANG.
 Reparatur: Probe-Ωₖ je Kraft treibt alle Medien (Audio, Vibration,
 Serial-TX und was der std-only-Stack ehrlich trägt).
 
-### P5 — Maschinen-Sinne der Station
+### P5 — Maschinen-Sinne: Batterie + Zustimmung erledigt
 
-Browser-Suite: IMU ×6 (Accelerometer/Gyroscope/Magnetometer/
-AmbientLight/LinearAcceleration/Gravity, referenceFrame device),
-Kamera (MediaStreamTrackProcessor → 4-px-Raster-Pixel-Oszillatoren),
-Mikrofon (Analyser-FFT-Bins, ein Oszillator je Bin), Batterie
-(level/charging), Gamepads ALS Oszillatoren (Axen/Buttons als Samples),
-USB/BT/HID-Eingänge (Byte-Oszillatoren). Nativ vorhanden: Tasten, Maus,
-Wheel, Touch, Serial.
-std-only-Grenze: Batterie (/sys/class/power_supply) und
-Gamepad-Oszillatoren (gilrs) sind ehrlich machbar; Kamera/Mikro/IMU —
-die Daten existieren, der Sensor-Pfad fehlt: `ausstehend`, nicht
-0 honored; die Entscheidung des Operators betrifft nur die
-Abhängigkeiten.
-Zustimmungs-Gate: die Browser-Station fließt erst nach Zustimmung; nativ
-wird bedingungslos aufgezeichnet — das Gate gehört wieder her.
+Nativ erledigt: Batterie (/sys/class/power_supply → battery.level/
+voltage/current/charging), Zustimmungs-Gate (Y/N im Membran-Fenster,
+Gate an der Aufzeichnung).
+Ausstehend: Kamera/Mikro/IMU (die Daten existieren, der Sensor-Pfad
+fehlt); Gamepad-Oszillatoren hinter --features gamepad (gilrs).
 
 ### P6 — Kleinteile der Gaze
 
@@ -300,8 +284,7 @@ resonance(mut read_signal(s: read_ws_frame_part(stream: read_ws_frame_raw(stream
 
 1. Die Messreihe — Gradient (Flow) im Probe, measure_ring (256
    Generationen, gen-Zähler), Fenster-Reduktion, 4-Token-HUD
-2. P2 + P5 — Zustimmungs-Gate und Presence↔Station-Trennung (Ethik
-   §5/§6 werden Code)
+2. P2-Relay-Rest — SurfaceFlow für spd/hdg + refused-else (browser)
 3. P3 + P4 — Deep lebt (gnomonisch, star_position_at, endliches τ) +
    ein Gesetz, fünf Medien (Audio = Probe-Ωₖ durch mx²); die Exposure
    atmet wieder mit dem Echo (Ethik §9)
