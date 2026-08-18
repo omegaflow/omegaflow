@@ -368,7 +368,7 @@ note gaia_dist wd (B/wd/catalog): 3115 Zeilen, eigene Parallaxe (plx → Distanz
 
 verifiziert
 bestand phi/katalog/vizier_gold_catalogs.φ
-note gaia_dist gcvs_cat (B/gcvs/gcvs_cat): 49092 Zeilen, 25478 mit Gaia-Distanz — live auf CDN
+note gaia_dist gcvs_cat (B/gcvs/gcvs_cat): 60644 Zeilen voll (Chunk-Merge), 31622 mit Gaia-Distanz — live auf CDN — Eigenbewegung+RV: 56365 pmra, 22926 rv (gaiadr3) — Farbe: 31622 gaia_teff, 56432 bpmag (gaiadr3)
 
 verifiziert
 bestand phi/katalog/vizier_gold_catalogs.φ
