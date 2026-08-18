@@ -110,7 +110,7 @@ note HTTP 429 — Rate-Limit; Schlüssel/Registrierung nötig. Verdikt 2026-08-1
 
 key-needed blocked
 url https://api.sensor.community/v1/data/measurement?lat=
-note HTTP 403 — Auth-Gate oder Bot-Block.
+note HTTP 403 — Auth-Gate oder Bot-Block. Recheck b4 2026-08-18: Route /airrohr/v1/sensor/ 404, Host-Root 403 — bestätigt blocked.
 
 key-needed blocked
 url https://api.sensor.community/v1/data/measurement?limit=10000
@@ -262,7 +262,7 @@ note Ocean Networks Canada (Ozeansensoren, echt) — OpenAPI-Frontend, Messwert-
 
 parser-def empty-param
 url https://data.sensor.community/airrohr/v1/filter/area=
-note area= leer → 2 B. Mit Gebiets-ID liefert der Archive-Endpoint PM2.5-Messwerte (diffusion, echt) — Recheck.
+note area= leer → 2 B. Recheck b4 2026-08-18: data.sensor.community/airrohr/v1/sensor/ 404 HTML, Host-Root 403; archive.sensor.community Root 200 (Verzeichnisbaum, PM2.5 per Gebiets-ID) — parser-def bleibt.
 
 parser-def votable
 url https://dc.zah.uni-heidelberg.de/tap/
@@ -342,7 +342,7 @@ note grind: grind_terrapulse_a.φ
 
 parser-def capabilities
 url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetCapabilities&Format=json
-note BGS-GIN (INTERMAGNET-Magnetfeld, em echt): nur Capabilities/Observatoriumsliste — Observation-Endpoint trägt Zeitreihen. Recheck.
+note BGS-GIN (INTERMAGNET-Magnetfeld, em echt): nur Capabilities/Observatoriumsliste — Observation-Endpoint trägt Zeitreihen. Recheck b4 2026-08-18: geomag.bgs.ac.uk SAA-Route 404, Portal lebt; HAPI-Route (imag-data.bgs.ac.uk/hapi) ist live in sources.φ.
 
 parser-def usage-error
 url https://irsa.ipac.caltech.edu/cgi-bin/Gator/nph-query?catalog=allwise_p3as_psd&spatial=box&ra=0.0&dec=0.0&size=14400&outfmt=1&selcols=designation,ra,dec,w1mpro,w2mpro,w3mpro,w4mpro,ph_qual
@@ -571,3 +571,19 @@ note HTTP 403 — Auth-Gate oder Bot-Block.
 key-needed blocked
 url https://www3.mbari.org/lobo/getLOBOdata.pl?&sta=M0&from=now-7d&to=now&format=json
 note HTTP 403 — Auth-Gate oder Bot-Block.
+
+dead
+url https://www.astrouw.edu.pl/~jskowron/OGLE/
+note Recheck b4 2026-08-18: 404 HTML — OGLE-Pfad absent. Katalog via VizieR (tap_index) vorhanden.
+
+parser-def html
+url https://www.astrouw.edu.pl/asas/
+note Recheck b4 2026-08-18: 200 HTML-Portal (ACVS/AASC-Kataloge, Photometrie-Downloads), formularbasiert, kein JSON-Kanal.
+
+dead
+url https://geomag.bgs.ac.uk/data_service/data/magnetic_indices/saa/
+note Recheck b4 2026-08-18: 404 HTML — SAA-Route absent; Portal lebt. HAPI-Route (imag-data.bgs.ac.uk/hapi) ist live in sources.φ.
+
+dead
+url https://www.ncei.noaa.gov/access/land-based-station-data/land-based-in-situ/climate-normals/
+note Recheck b4 2026-08-18: 404 HTML (Drupal) — Route absent. NOAA-Seite lebt; climate-at-a-glance/services-Routen sind in sources.φ/masternote registriert.

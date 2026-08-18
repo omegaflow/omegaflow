@@ -24,7 +24,7 @@ host api.protectedplanet.net klassifiziert key-needed auth — HTTP 401 — Toke
 host api.rainviewer.com klassifiziert parser-def radar-tiles — Radarreflektivität (EM-Messung) liegt in PNG-Tiles; JSON ist nur Tile-Katalog (past[].path) — kein numerisc…
 host api.resourcewatch.org klassifiziert key-needed blocked — HTTP 403 — Auth-Gate oder Bot-Block. — decline redistribution (CDN)
 host api.semanticscholar.org klassifiziert key-needed rate-limit — HTTP 429 — Rate-Limit; Schlüssel/Registrierung nötig. — decline no-physical-force (CDN)
-host api.sensor.community klassifiziert key-needed blocked — HTTP 403 — Auth-Gate oder Bot-Block.
+host api.sensor.community klassifiziert key-needed blocked — HTTP 403 — Auth-Gate oder Bot-Block. Recheck b4 2026-08-18: /airrohr/v1/sensor/ 404, Host-Root 403 — bestätigt.
 host api.si.edu klassifiziert key-needed blocked — HTTP 403 — Auth-Gate oder Bot-Block.
 host api.sncf.com klassifiziert key-needed auth — HTTP 401 — Token/Registrierung nötig. — decline redistribution (CDN)
 host api.spacexdata.com klassifiziert dead 5xx — HTTP 525 — Server antwortet nicht brauchbar.
@@ -71,12 +71,13 @@ host data.lsst.cloud klassifiziert key-needed auth — HTTP 401 — Token/Regist
 host data.minorplanetcenter.net klassifiziert parser-def index — Nur API-Index (23 B). Unter-Routen tragen Asteroiden-Bahndaten (em, celestisch) — Einzel-Route prüfen.
 host data.nsidc.earthdatacloud.nasa.gov klassifiziert key-needed auth — ICESat-2 ATL03 (LIDAR, em echt) — signierte Cloudfront-URL, Earthdata-Login.
 host data.oceannetworks.ca klassifiziert parser-def html — Ocean Networks Canada (Ozeansensoren, echt) — OpenAPI-Frontend, Messwert-Routen dahinter.
-host data.sensor.community klassifiziert parser-def empty-param — area= leer → 2 B. Mit Gebiets-ID liefert der Archive-Endpoint PM2.5-Messwerte (diffusion, echt) — Recheck.
+host data.sensor.community klassifiziert parser-def empty-param — area= leer → 2 B. Recheck b4 2026-08-18: /airrohr/v1/sensor/ 404, archive.sensor.community Root 200 (Verzeichnisbaum, PM2.5 per Gebiets-ID) — parser-def bleibt.
 host dc.zah.uni-heidelberg.de klassifiziert parser-def votable — GAVO-TAP-Landing — VOTable-Antworten.
 host dev.meteostat.net klassifiziert key-needed auth — Meteostat-Dev-Docs — API verlangt Key. — decline redistribution (CDN)
 host docs.sentinel-hub.com klassifiziert key-needed auth — Sentinel-Hub verlangt Key/Subscription. — decline redistribution (CDN)
 host ebird.org klassifiziert key-needed auth — eBird-API verlangt Key (Login-Redirect).
 host epic.gsfc.nasa.gov klassifiziert parser-def imagery — EPIC-Bilder sind die EM-Messung; JSON trägt nur Bildnamen/Geometrie-Metadata.
+host environment.data.gov.uk klassifiziert integrated — Flood-Monitoring lebt in sources.φ (readings-Fanout); Recheck b4 2026-08-18 bestätigt: Stations-Register 200 JSON (4894 items), Messwert auf readings-Route.
 host erddap.dataexplorer.oceanobservatories.org klassifiziert dead timeout — Operation timed out after 11103 milliseconds with 359917 bytes received
 host erddap.emodnet-physics.eu klassifiziert parser-def rss — ERDDAP-RSS; dieselbe Instanz liefert .json/.csv.
 host erddap.gml.noaa.gov klassifiziert dead unreachable — Failed to connect to erddap.gml.noaa.gov port 443 after 340 ms: Couldn't connect to server
@@ -95,7 +96,7 @@ host gong2.nso.edu klassifiziert parser-def html — GONG-H-alpha-Sonnenbilder (
 host gracedb.ligo.org klassifiziert refused — Private-Events verlangt LVC/MOU-Gruppenmitgliedschaft; public superevents offen in sources.φ (Verdikt 2026-08-17).
 host gtnp.arcticportal.org klassifiziert parser-def html — GTN-P-Bodentemperatur (thermal, echt) — HTML-Frontend.
 host gwosc.org klassifiziert parser-def — grind: grind_terrapulse_a.φ
-host imag-data.bgs.ac.uk klassifiziert parser-def capabilities — BGS-GIN (INTERMAGNET-Magnetfeld, em echt): nur Capabilities/Observatoriumsliste — Observation-Endpoint träg…
+host imag-data.bgs.ac.uk klassifiziert parser-def capabilities — BGS-GIN (INTERMAGNET-Magnetfeld, em echt): nur Capabilities/Observatoriumsliste — Observation-Endpoint träg… Recheck b4 2026-08-18: geomag.bgs.ac.uk SAA-Route 404, Portal lebt; HAPI-Route (imag-data.bgs.ac.uk/hapi) ist live in sources.φ.
 host impc.dlr.de klassifiziert dead timeout — Operation timed out after 12000 milliseconds with 7464101 out of 8987150 bytes received
 host ioda.caida.org klassifiziert dead timeout — Connection timed out after 12002 milliseconds
 host irsa.ipac.caltech.edu klassifiziert decline redundant — ZTF über Lasair/ALeRCE abgedeckt (Verdikt 2026-08-17). Gator/TAP-Route inventarisiert (phi/katalog/tap_index_irsa.φ, provider irsa TAP/sync, 995 Tabellen). Recheck 2026-08-17: kein Token — öffentliche Daten offen auf AWS S3 Open Data, proprietäres ZTF via IPAC-SSO (email+passwort).
@@ -143,7 +144,7 @@ host tle.ivanstanojevic.me klassifiziert dead timeout — Operation timed out af
 host toar-data.fz-juelich.de klassifiziert key-needed auth — Registrierung pending (2026-08-17).
 host v4.boldsystems.org klassifiziert dead 5xx — HTTP 500 — Server antwortet nicht brauchbar.
 host volcano.si.edu klassifiziert key-needed blocked — HTTP 403 — Auth-Gate oder Bot-Block.
-host vsx.aavso.org klassifiziert parser-def html — AAVSO-VSX (Veränderlichen-Katalog, em celestisch) — 74 B HTML; Parameter-Form prüfen.
+host vsx.aavso.org klassifiziert parser-def html — AAVSO-VSX (Veränderlichen-Katalog, em celestisch) — 74 B HTML; Parameter-Form prüfen. Recheck b4 2026-08-18: Suchformular, kein JSON; Katalog via CDN-Mirror in sources.φ (vsx.json) — kein neuer Block nötig.
 host weather.cma.cn klassifiziert key-needed blocked — HTTP 403 — Auth-Gate oder Bot-Block.
 host webservices.volcano.si.edu klassifiziert dead timeout — Operation timed out after 12001 milliseconds with 712691 bytes received
 host whale.fm klassifiziert decline no-physical-force — Zooniverse-Klassifikationen, keine Messung (Verdikt 2026-08-17).
