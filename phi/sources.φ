@@ -537,6 +537,14 @@ lon properties.dec_long_va
 field properties.Temperature dc_wq_temperature_c erfc thermal C 3600 0.0 0.0
 field properties.Turbidity dc_wq_turbidity_ntu erfc diffusion ntu 3600 0.0 0.0
 
+url https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/USGS_Stream_Temperatures_/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 3600
+at earth
+map features
+lat properties.latitude
+lon properties.longitude
+field properties.value usgs_stream_temp_c erfc thermal C 3600 0.0 0.0
+
 url https://api.openaq.org/v3/sensors/{station}/measurements?limit=1&datetime_from={yesterday}T00:00:00Z
 header X-API-Key {OPENAQ_API_KEY}
 ttl 21600
@@ -1037,6 +1045,14 @@ map features
 lat properties.latitude
 lon properties.longitude
 field properties.measurevalue_psu wqp_salinity_psu erfc diffusion psu 86400 0.0 0.0
+
+url https://services1.arcgis.com/qr14biwnHA6Vis6l/arcgis/rest/services/Water_Temperature/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 86400
+at earth
+map features
+lat properties.latitude
+lon properties.longitude
+field properties.measurevalue_degc wqp_water_temp_c erfc thermal C 86400 0.0 0.0
 
 url https://egg.astro.cornell.edu/alfalfa/data/a40files/a40.datafile1.csv
 ttl 604800

@@ -4084,3 +4084,39 @@ note arcgis_b5 2026-08-18: Feldsurvey, 36 Stichproben — statisch.
 decline duplicate
 url https://services1.arcgis.com/qTQ6qYkHpxlu0G82/arcgis/rest/services/DC_Water_Quality_Site_6500_16/FeatureServer/0
 note arcgis_b5 2026-08-18: Schwester-Layer von DC_Water_Quality_Site_6500 (gleiche SiteID/Koordinaten).
+
+decline duplicate
+url https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/Water_Temperature/FeatureServer/0
+note arcgis_b5 2026-08-18: gleicher WQP-Wassertemperatur-Archiv wie qr14biwnHA6Vis6l (anderer Verleger).
+
+decline kein-feld
+url https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/USGS_Live_Water_Data/FeatureServer/0
+note arcgis_b5 2026-08-18: value parameter-gemischt (flow/temperatur/gage height), keine feste Einheit; temperatur-Teilsatz lebt im Schwester-Block USGS_Stream_Temperatures.
+
+decline static
+url https://services.arcgis.com/6PlwRVjhNvRFkKtA/arcgis/rest/services/Lake_Champlain_Surface_Water_Temperature/FeatureServer/0
+note arcgis_b5 2026-08-18: Polygon-See-Segmente ohne Zeitbezug.
+
+decline static
+url https://services5.arcgis.com/hEkStteCvWjRBrR0/arcgis/rest/services/MobileBaykeeperWaterTempData_view_layer/FeatureServer/0
+note arcgis_b5 2026-08-18: Felderhebungs-Kampagne 2016-2022, kein lebender Kanal.
+
+decline unit-arm
+url https://services.arcgis.com/hRUr1F8lE8Jq2uJo/arcgis/rest/services/Southwest_Seismograph_Stations_HR/FeatureServer/0
+note arcgis_b5 2026-08-18: PGA/PGV-Einheiten undeklariert, Übungs-Szenario (Kopie desselben Datensatzes bei 4 Verlegern).
+
+decline unit-arm
+url https://services1.arcgis.com/9EaMOKdAJPqXoeF1/arcgis/rest/services/PL2___Map_Update_WFL1/FeatureServer/19
+note arcgis_b5 2026-08-18: Starkbeben-Einzelereignis (Vrancea), PGA/PGV/SAPGA-Einheiten undeklariert.
+
+decline abgeleitet-tiefe
+url https://services.arcgis.com/ue9rwulIoeLEI9bj/arcgis/rest/services/Strong_Earthquakes_2018_2020/FeatureServer/0
+note arcgis_b5 2026-08-18: Hypozentrum-Tiefe = abgeleitetes Koordinaten-Attribut, Magnitude dimensionslos.
+
+decline abgeleitet-tiefe
+url https://services.arcgis.com/ue9rwulIoeLEI9bj/arcgis/rest/services/Strong_Earthquakes_2012_2014/FeatureServer/0
+note arcgis_b5 2026-08-18: Hypozentrum-Tiefe = abgeleitetes Koordinaten-Attribut, Magnitude dimensionslos.
+
+decline static
+url https://services9.arcgis.com/ISxsdAFVQu7s0bli/arcgis/rest/services/Turbidity/FeatureServer/0
+note arcgis_b5 2026-08-18: Einzelwert je Punkt ohne Zeitbezug.

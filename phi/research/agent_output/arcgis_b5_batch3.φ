@@ -1,0 +1,67 @@
+# arcgis b5 batch3 (2026-08-18) — thermal/seismic/diffusion Welle, letzte block-reife Kandidaten (RESTBATCH)
+# Agent: grind-pro. curl-only. Beobachtende Sprache — Diagnosen nennen was IST, kein Wert erfunden (A = A).
+# Regeln: kein cargo, keine Register-Edits, keine src/-Edits. Route: /query?where=1%3D1&outFields=*&outSR=4326&f=geojson.
+# Dispositionen: accepted (vollständiger sources.φ-Draft-Block) / decline <grund> (static|duplicate|kein-feld|abgeleitet-tiefe|unit-arm).
+# Force-Gate-Präzedenz (aus Batch 1+2 übernommen): Erdbeben-Hypozentrum-TIEFE ist ein invertiertes, abgeleitetes
+# Koordinaten-Attribut — KEIN Feldwert am Punkt → decline abgeleitet-tiefe. Magnitude dimensionslos = kein Feld.
+# Einheiten nur aus dem Register (lowercase): thermal k|c|w/m2|w|j|mw; diffusion ppm|ppb|mg/m3|ug/m3|mg/kg|psu|ntu|%|pct|hpa|uatm|du|cm-3;
+# seismic-body m|mm|km|m/s2|gal|pa|hz|mw. Felder mit anderer Einheit → pending Unit-Arm, nicht in den Draft.
+# Verifizierte Kandidaten: 11.
+
+candidate https://services1.arcgis.com/qr14biwnHA6Vis6l/arcgis/rest/services/Water_Temperature/FeatureServer/0
+note GeoJSON lebt (WQP-Instanz, gleicher Verleger wie der lebende Salinity-Block). measurevalue_degc numerisch befüllt (Probe 28.0/23.3), measureunit belegt "deg C". lat/lon flach in properties.latitude/longitude (zusätzlich geometry). Wassertemperatur = thermal c (erfc). depthheight_m (Proben-Tiefe) außerhalb der Unit-Liste → pending Unit-Arm, nicht gezogen.
+disposition accepted
+url https://services1.arcgis.com/qr14biwnHA6Vis6l/arcgis/rest/services/Water_Temperature/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 86400
+at earth
+map features
+lat properties.latitude
+lon properties.longitude
+field properties.measurevalue_degc wqp_water_temp_c erfc thermal c 86400 0.0 0.0
+
+candidate https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/USGS_Stream_Temperatures_/FeatureServer/0
+note GeoJSON lebt. value numerisch (Probe 20.6/15.9), parameter "temperature" (String, bestätigt die Größe), timestamp 2026 (lebend). lat/lon flach in properties.latitude/longitude (zusätzlich geometry). USGS-NWIS-Konvention: Wassertemperatur in °C → thermal c (erfc). parameter ist Metadaten-String, value ist der Messwert.
+disposition accepted
+url https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/USGS_Stream_Temperatures_/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 3600
+at earth
+map features
+lat properties.latitude
+lon properties.longitude
+field properties.value usgs_stream_temp_c erfc thermal c 3600 0.0 0.0
+
+candidate https://services6.arcgis.com/2DGR1sZBUvcPcd8Z/arcgis/rest/services/Water_Temperature/FeatureServer/0
+note GeoJSON lebt (measurevalue_degc 9.5/9.6, measureunit "deg C"). Derselbe WQP-Wassertemperatur-Archiv wie qr14biwnHA6Vis6l (identische Felder, anderer Verleger). Kein neuer Kanal.
+disposition decline duplicate
+
+candidate https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/USGS_Live_Water_Data/FeatureServer/0
+note GeoJSON lebt, aber value ist parameter-gemischt: Probe liefert parameter "flow" (Durchfluss, Probe 90.8/356). Ein einziges value-Feld trägt je Zeile eine andere physikalische Größe (flow/temperatur/gage height) — keine feste Einheit. Der temperatur-spezifische Teilsatz lebt bereits im Schwester-Block USGS_Stream_Temperatures. value als Einzelfeld nicht manifestierbar.
+disposition decline kein-feld
+
+candidate https://services.arcgis.com/6PlwRVjhNvRFkKtA/arcgis/rest/services/Lake_Champlain_Surface_Water_Temperature/FeatureServer/0
+note GeoJSON lebt (TEMP 5.9/3.9). Aber Geometrie ist Polygon (See-Segmente SEG_NAME, je ein TEMP-Wert), kein Punkt und kein Zeitbezug — eingefrorene Seeoberflächen-Karte ohne Zeitreihe. Kein lebender Kanal.
+disposition decline static
+
+candidate https://services5.arcgis.com/hEkStteCvWjRBrR0/arcgis/rest/services/MobileBaykeeperWaterTempData_view_layer/FeatureServer/0
+note GeoJSON lebt (Water_Temp 15/18 numerisch, Latitude/Longitude). Titel trägt 2016-2022, Probe Date_Sampl 2016 — einmalige Felderhebungs-Kampagne, kein lebender Kanal.
+disposition decline static
+
+candidate https://services.arcgis.com/hRUr1F8lE8Jq2uJo/arcgis/rest/services/Southwest_Seismograph_Stations_HR/FeatureServer/0
+note GeoJSON lebt (PGA 25.76/7.82, PGV 11.57/7.86). PGA/PGV-Einheit in der API nicht deklariert; PGV (cm/s) außerhalb des seismic-body-Registers, PGA (gal|%g|m/s2) unentschieden → pending Unit-Arm. Zugleich einmaliges Erdbeben-Übungs-Szenario (Ejercicio, Esri-Marketing); vier weitere Verleger (EjercicioINOCAR, DY9OWdnt80g8Xt7D Stations, MA14Su4yNGn53wNB Stations1, zOnyumh63cMmLBBH Stations) führen dieselben drei Stationen — Kopie desselben Datensatzes.
+disposition decline unit-arm
+
+candidate https://services1.arcgis.com/9EaMOKdAJPqXoeF1/arcgis/rest/services/PL2___Map_Update_WFL1/FeatureServer/19
+note GeoJSON lebt (ohne geometry; Position = sta_lat/sta_lon). Starkbeben-Recordsatz eines einzelnen Erdbebens (eq_lat 45.87/eq_lon 27.15, Vrancea): PGA_HNE/PGV_HNE/SAPGA je Komponente. Einheiten der API nicht deklariert (PGA cm/s2|gal|%g unentschieden; PGV cm/s außerhalb Register; SAPGA_ratio dimensionslos) → pending Unit-Arm. Einmaliger Ereignis-Datensatz, kein lebender Kanal.
+disposition decline unit-arm
+
+candidate https://services.arcgis.com/ue9rwulIoeLEI9bj/arcgis/rest/services/Strong_Earthquakes_2018_2020/FeatureServer/0
+note GeoJSON lebt (depth 10/66 km, magnitude 6/6.7). depth ist Hypozentrum-Tiefe — ein invertiertes, abgeleitetes Koordinaten-Attribut, kein Feldwert am Punkt → abgeleitet-tiefe. magnitude dimensionslos (kein Moment-Typ belegt) = kein Feld. Force-Gate-Präzedenz aus Batch 1+2.
+disposition decline abgeleitet-tiefe
+
+candidate https://services.arcgis.com/ue9rwulIoeLEI9bj/arcgis/rest/services/Strong_Earthquakes_2012_2014/FeatureServer/0
+note GeoJSON lebt (depth_km 365.3/10, magnitude 6.8/5.7). Gleicher Befund wie Strong_Earthquakes_2018_2020: Hypozentrum-Tiefe = abgeleitetes Koordinaten-Attribut, Magnitude dimensionslos. Kein manifestierendes Feld.
+disposition decline abgeleitet-tiefe
+
+candidate https://services9.arcgis.com/ISxsdAFVQu7s0bli/arcgis/rest/services/Turbidity/FeatureServer/0
+note GeoJSON lebt (Turbidity 11.23/15.44 numerisch, Position nur in geometry). Kein Zeitfeld, kein Einheiten-Suffix im Feldnamen, ein Einzelwert je Punkt — eingefrorener Proben-Snapshot ohne Zeitbezug. Kein lebender Kanal.
+disposition decline static

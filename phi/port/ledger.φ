@@ -473,5 +473,9 @@ bestand phi/research/agent_output/arcgis_b5_batch2.φ
 note ArcGIS-Welle Batch 2 (2026-08-18): 12 verifiziert — 3 Blöcke integriert (WQP-Salinität psu, DMF-Temp C, DC-WQ Temp+Turbidität); 4 Erdbeben-Tiefen-Kataloge deferiert (Hypozentrum-Tiefe = abgeleitet); 5 decline (2 duplicate, 1 kein-latlon, 2 static). Pending Unit-Arm: µS/cm.
 
 verifiziert
+bestand phi/research/agent_output/arcgis_b5_batch3.φ
+note ArcGIS-Welle Restbatch (2026-08-18): 11 verifiziert — 2 Blöcke integriert (WQP-Wassertemperatur + USGS-Stream-Temperatur, beide thermal C); 9 decline (2 abgeleitet-tiefe, 2 unit-arm, 3 static, 1 duplicate, 1 kein-feld). WELLE KOMPLETT: 35 Kandidaten über 3 Batches — 10 Blöcke integriert, 25 decline/deferiert, 5 Erdbeben-Tiefen-Kataloge pro-review pending.
+
+verifiziert
 bestand phi/research/agent_output/recheck_b1.φ
 note sensor.community-Urteil (2026-08-18): die b1-Box-Route lebt — filter/box=...&type=SDS011 liefert 200 JSON (P1/P2 je Messung); integriert in sources.φ (ttl 300, on earth, PM1/PM2.5 diffusion μg/m3). Caveat bleibt: indoor-Sensoren (location.indoor=1) im Fenster nicht herausfilterbar. Die api.sensor.community-403- und /airrohr/v1/-Root-404-Einträge bleiben (anderer Host/Route).

@@ -82,15 +82,22 @@ Dazu zwei Ernte-Folgen (Befunde der grind-flash-Agenten 2026-08-18):
   NEOWISE für die Körper, wo DASTCOM einen abgeleiteten (nicht gemessenen)
   Radius trägt — registriert, nicht entschieden.
 
-Sternfarbe-RENDERING (Operator-Wunsch „ich mag die Farben"): Die Farbe ist
-geerntet (Teff/BPmag/RPmag in den JSONs), aber die WGSL muss sie noch malen
-— BP−RP/Teff → RGB statt reiner Luminanz. Kleinster Schritt, schließt den
-Bogen.
+- ~~Sternfarbe-RENDERING~~ — WAHR (2026-08-18): Protokoll v7 — der
+  Oszillator-Record trägt 22 × f64 (176 B), der 22. f64 ist der
+  vereinheitlichte Farbindex BP−RP (absent = 0 → Weiß, 0 honored).
+  Ernte: `tap_compiler` schreibt bpmag−rpmag in den 40-B-Sternbin
+  (`dr3_stars.bin`, 36 B + f32 Farbe); `tycho2_compiler` erntet B−V aus
+  hip_main und transformiert über die Gaia-DR3-Doku-Relation (5. Ordnung)
+  auf BP−RP. WGSL `temperature_to_rgb`: BP−RP → Teff (Pecaut & Mamajek
+  2013, EEM-Zwerg-Lokus, linear interpoliert) → RGB (Helland-Polynome);
+  malt `deep_pt_fs`/`deep_fs`/`near_pt_fs`; Flux-Rampe und Tau-Hash-Hue der
+  em-Quellen sind getilgt, Tolman-Dämpfung bleibt. Der alte 36-B-Sternbin
+  stirbt (`chunks_exact(40)`), kein Dual-Stride.
 
 Weitere neue Quellen (grind-pro, heikler Join/Parsing): LCDB-Rotations-
 achsen (Pol, nicht nur Periode), DAMIT-Formmodelle (3D-Formen → j2/r_eq).
 
-Empfohlene Reihenfolge: Sternfarbe-Rendering → Hill/Abplattung → LCDB/DAMIT.
+Empfohlene Reihenfolge: Hill/Abplattung → LCDB/DAMIT.
 
 ## Surveys — die Messungen der Sessions
 
@@ -536,9 +543,10 @@ Offen (Detail in phi/port/ledger.φ):
   28 Blöcke → manueller Port
 - Bestand: 38 offene VizieR-Bulks, IRSA/GAVO/ARI/ExoArchive-Inventare,
   GCNS/MWSC, VirES-Drafts (erledigt 2026-08-18), ArcGIS-Drafts
-  (24 in b5 verarbeitet, ~8 offen), 103 TerraPulse-Kandidaten (erledigt),
-  77 Archeology-Gaps, ESA-Kandidaten (Aeolus key-needed, SMOS parser-def),
-  FRB-Union, Arena/Foundation/Research-Schatz im Archiv
+  (erledigt 2026-08-18 — 35 verifiziert, 10 Blöcke integriert),
+  103 TerraPulse-Kandidaten (erledigt), 77 Archeology-Gaps,
+  ESA-Kandidaten (Aeolus key-needed, SMOS parser-def), FRB-Union,
+  Arena/Foundation/Research-Schatz im Archiv
 - Nachlauf: VirES-Vollprobe (64 Drafts, Datei ABSENT) + DONKI-Familie
   (CME-Draft, Datei ABSENT)
 - Park: Pegelonline, USGS-Geomag, GWOSC/GraceDB (Skymap), DSN, CENC,
