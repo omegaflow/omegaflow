@@ -31,9 +31,9 @@ Header total: 19 bytes.
 | 9 | force_type | force type ID (0–8) |
 | 10 | absorption | absorption coefficient (0–1) |
 | 11 | advection | advective propagation speed (m/s, 0 = absent) |
-| 12 | vx | worldline velocity X (m/s) |
-| 13 | vy | worldline velocity Y (m/s) |
-| 14 | vz | worldline velocity Z (m/s) |
+| 12 | vx | oscillator velocity X (m/s) |
+| 13 | vy | oscillator velocity Y (m/s) |
+| 14 | vz | oscillator velocity Z (m/s) |
 | 15 | pole_x | body pole axis X (ICRS unit vector, 0 = absent) |
 | 16 | pole_y | body pole axis Y |
 | 17 | pole_z | body pole axis Z |

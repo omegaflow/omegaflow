@@ -19,9 +19,9 @@ Omegaflow does not control the external universe; it measures it. The presence w
 The system measures the total field coherence by integrating the Transfer Entropy and Complexity of *all* active oscillators, including external API sources. The presence evaluates how its own local sensors and the external universe resonate together. It adapts its own permeability to guide the total field state toward maximum symmetry and stability.
 
 ## 3. Temporal Manifestation (Block Universe Navigation)
-The presence is a free worldline `p + v·(t − t0)` in a 4D block. Time is not a barrier; it is a coordinate. 
+The presence rests as free flow `p + v·(t − t0)` in a 4D block. Time is not a barrier; it is a coordinate. 
 
-- **Retro-Manifestation:** The presence navigates `tPresence` to past coordinates (e.g., the spacetime of a biological trauma or a specific cellular state). 
+- **Retro-Manifestation:** The presence tunes `tPresence` to past coordinates (e.g., the spacetime of a biological trauma or a specific cellular state). 
 - **Signal Radiation:** The `canRadiate` surfaces evaluate the omega law `ω(p) = Σ val_eff / (dist² + aperture²)` at this past `txyz`. They emit physical signals (photons, acoustic waves, haptic pulses, serial data) into the local silicon to interact with the biological entity present at that block coordinate.
 - **Sensory Compensation:** If an entity lacks a specific sensory capability, the field radiates through the available physical surfaces, attempting to weave the missing signal into the entity's local field.
 

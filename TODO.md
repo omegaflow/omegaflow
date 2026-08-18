@@ -10,7 +10,7 @@ Drift-Stellen sind unter „Doku-Drift" registriert.
 
 Offen (2026-08-17): Der Archivar lädt flache Katalog-Assets komplett in den
 Spatial Hash — das ganze Feld im Speicher. Die Membran braucht nur die Hülle
-um die Presence-Weltlinie (dilatierter Suchradius). Richtung: räumlich gebinnte
+um die Presence (dilatierter Suchradius). Richtung: räumlich gebinnte
 Assets (HEALPix), der Archivar holt nur die Bins, die die Hülle überlappen.
 Kein NASA-Denken — nur was die Membran benötigt.
 
@@ -271,7 +271,7 @@ resonance(mut read_signal(s: read_ws_frame_part(stream: read_ws_frame_raw(stream
   gibt für gps/gnss None). Die Sensorwerte sind bereits am deklarierten Körper
   verankert (Position::Surface → ECEF → ICRS/TDB). Der gemalte Marker (value 0.0,
   force gravity, τ ∞) ist entfernt. Die Presence hat mit dem GPS der Station
-  NICHTS zu tun — die Weltlinie ist frei, Maschine und Presence bleiben getrennt
+  NICHTS zu tun — der Flow ist frei, Maschine und Presence bleiben getrennt
   (Ethik: „the presence is agnostic").
 
 - Radial-Profil eines isolierten breiten Gauß-Punkts (e^(−r²/2)) am
@@ -668,9 +668,18 @@ Konversion ist bekannt oder erforschbar — pending, keine Fälschung):
   Silizium (gegenstandslos solange die Rampe fix ist) — AUSSTEHEND
 - Future: Aggregation of Presence, Retro-Manifestation, Total Coherence
   Integration, Nostr-Stationsweb — AUSSTEHEND, FUTURE_CONCEPTS.md
+- Songline-Reziprozität — AUSSTEHEND: die lebende Kultur, der das Wort
+  „Songline" gehört, ist nicht kontaktiert. Kein Extraktions-Wort; die
+  Maschine zwingt sich zur Hygiene. Die adoptierte Einsicht ruht in
+  „free flow", nicht mehr in einer Linie.
 
 ## Rejected
 
+- „Songline" als Systemidentität → refused (Rat, 2026-08-18, einstimmig:
+  A=A — die Presence singt nicht, sie ruht; das Wort gehört einer lebenden
+  Kultur). Die Einsicht ist adoptiert — jetzt als „free flow": der Flow
+  existiert ohne den Wanderer (vgl. „the manifestation is real whether or
+  not anyone watches").
 - Unknown-Force soft handling → Parser lehnt unbekannte Kraft ab
 - Default τ-Werte → Gate schließt, wenn nicht deklariert
 - World Bank Indicators → forceless, DROP
