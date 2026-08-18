@@ -779,6 +779,7 @@ enum Extract {
         fields: Vec<FieldConfig>,
         lat_sign: Option<String>,
         lon_sign: Option<String>,
+        epoch_scale: f64,
         tau_key: String,
         mag_type_key: String,
     },
@@ -3208,6 +3209,7 @@ mod archivar {
                 fields,
                 lat_sign: None,
                 lon_sign: None,
+                epoch_scale: 1.0,
                 tau_key: String::new(),
                 mag_type_key: String::new(),
             }]
@@ -4972,6 +4974,7 @@ mod archivar {
                         fields: Vec::new(),
                         lat_sign: None,
                         lon_sign: None,
+                        epoch_scale: 1.0,
                         tau_key: String::new(),
                         mag_type_key: String::new(),
                     });
@@ -5507,6 +5510,13 @@ mod archivar {
                 "lon_sign" if parts.len() >= 2 => {
                     if let Some(Extract::Map { lon_sign, .. }) = cur_extracts.last_mut() {
                         *lon_sign = Some(parts[1].to_string());
+                    }
+                }
+                "epoch_scale" if parts.len() >= 2 => {
+                    if let Ok(s) = parts[1].parse::<f64>() {
+                        if let Some(Extract::Map { epoch_scale, .. }) = cur_extracts.last_mut() {
+                            *epoch_scale = s;
+                        }
                     }
                 }
                 "alt" if parts.len() >= 2 => {
@@ -6869,6 +6879,7 @@ mod archivar {
                     fields,
                     lat_sign,
                     lon_sign,
+                    epoch_scale,
                     tau_key,
                     mag_type_key,
                 } => {
@@ -6955,10 +6966,12 @@ mod archivar {
                                                     continue;
                                                 }
                                             }
-                                            JsonVal::Num(n) => match lsk.unix_to_tdb(*n) {
-                                                Some(t) => t,
-                                                None => continue,
-                                            },
+                                            JsonVal::Num(n) => {
+                                                match lsk.unix_to_tdb(*n * epoch_scale) {
+                                                    Some(t) => t,
+                                                    None => continue,
+                                                }
+                                            }
                                             _ => continue,
                                         }
                                     } else {
@@ -12731,6 +12744,7 @@ field temp temp_c\n";
                     }],
                     lat_sign: None,
                     lon_sign: None,
+                    epoch_scale: 1.0,
                     tau_key: String::new(),
                     mag_type_key: String::new(),
                 }],
@@ -13555,6 +13569,7 @@ field temp temp_c\n";
                     }],
                     lat_sign: None,
                     lon_sign: None,
+                    epoch_scale: 1.0,
                     tau_key: String::new(),
                     mag_type_key: String::new(),
                 }],
@@ -13631,6 +13646,7 @@ field temp temp_c\n";
                     }],
                     lat_sign: None,
                     lon_sign: None,
+                    epoch_scale: 1.0,
                     tau_key: String::new(),
                     mag_type_key: String::new(),
                 }],
@@ -13719,6 +13735,7 @@ field temp temp_c\n";
                     }],
                     lat_sign: None,
                     lon_sign: None,
+                    epoch_scale: 1.0,
                     tau_key: "row_tau".into(),
                     mag_type_key: String::new(),
                 }],
@@ -13903,6 +13920,7 @@ field temp temp_c\n";
                     ],
                     lat_sign: None,
                     lon_sign: None,
+                    epoch_scale: 1.0,
                     tau_key: String::new(),
                     mag_type_key: String::new(),
                 }],
@@ -14287,6 +14305,7 @@ field temp temp_c\n";
                     }],
                     lat_sign: Some("4".into()),
                     lon_sign: Some("6".into()),
+                    epoch_scale: 1.0,
                     tau_key: String::new(),
                     mag_type_key: String::new(),
                 }],
@@ -14387,6 +14406,7 @@ field temp temp_c\n";
                     }],
                     lat_sign: None,
                     lon_sign: None,
+                    epoch_scale: 1.0,
                     tau_key: String::new(),
                     mag_type_key: "magType".into(),
                 }],

@@ -660,6 +660,17 @@ epoch 0
 field 1 geosphere_fireball_radiated_energy_e10j inverse-square em e10j 3600 0.0 0.0
 field 2 geosphere_fireball_impact_energy_kt inverse-square em kt_tnt 3600 0.0 0.0
 
+url https://services.arcgis.com/xYjDUN35YwdCEcMm/arcgis/rest/services/GOES_GLM_Bolides/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 3600
+at earth
+map features
+lat properties.detected_latitude
+lon properties.detected_detected_longitude
+epoch properties.detected_start_time
+epoch_scale 0.001
+tau_key properties.detected_duration
+field properties.detected_energy glm_bolide_radiant_energy_j inverse-square em J 3600 0.0 0.0
+
 url https://services.swpc.noaa.gov/json/ace/mag/ace_mag_1h.json
 ttl 3600
 at earth 0.99

@@ -312,7 +312,7 @@ note implementiert 2026-08-17: --gold-Konverter mappt method POST + body (auch n
 
 verifiziert
 parser-gap GLMNetCDF
-note Ratsurteil 2026-08-17: GLM = em (NIR-Photodetektor 777,4 nm, Wert = optische Energie J, τ = Blitzdauer), ArcGIS-GOES_GLM_Bolides-Route — kein netCDF-Reader nötig; netCDF-3 std-only gehört zum Struktur-Reader-Atom, netCDF-4/HDF5 pending. Gelöst 2026-08-18: CNEOS fireball.api (ssd-api.jpl.nasa.gov) lebt keyless und ist jetzt live in sources.φ — `lat_sign`/`lon_sign` (neue map-Direktiven, N/S→lat-negativ, E/W→lon-negativ), `epoch 0` (ISO-Space-Format erweitert in parse_iso_tdb), energy = e10j (J·10¹⁰), impact-e = kt_tnt (kt TNT, 4.184e12 J). ArcGIS-Bolides bleibt pending (detected_energy-Einheit ungeklärt).
+note Ratsurteil 2026-08-17: GLM = em (NIR-Photodetektor 777,4 nm, Wert = optische Energie J, τ = Blitzdauer), ArcGIS-GOES_GLM_Bolides-Route — kein netCDF-Reader nötig; netCDF-3 std-only gehört zum Struktur-Reader-Atom, netCDF-4/HDF5 pending. Gelöst 2026-08-18: BEIDE Routen leben jetzt in sources.φ. (a) CNEOS fireball.api (ssd-api.jpl.nasa.gov, keyless) — `lat_sign`/`lon_sign` (N/S,E/W→Vorzeichen), energy = e10j (J·10¹⁰), impact-e = kt_tnt. (b) ArcGIS GOES_GLM_Bolides — detected_energy ist die GLM-L2-LCFA-Radiant-Energie in J (SI, Faktor 1; NOAA PUG Vol.5 §5.26: "units of measure ... 'joules'", scale_factor 1.52597E-15), KEINE Konvertierung zur CNEOS-Gesamtenergie ohne Bolide-Modell — verschiedene Messgrößen, nicht vergleichbar. `epoch_scale 0.001` (detected_start_time in ms), `tau_key detected_duration` (Blitzdauer).
 
 ausstehend
 kandidat https://wwwi3.ymparisto.fi/i3/RealTime/data/WST1403901.txt
