@@ -372,7 +372,7 @@ note gaia_dist gcvs_cat (B/gcvs/gcvs_cat): 49092 Zeilen, 25478 mit Gaia-Distanz 
 
 verifiziert
 bestand phi/katalog/vizier_gold_catalogs.φ
-note gaia_dist denis (B/denis/denis): 525260 Zeilen voll (Chunk-Merge, 16 RA-Bänder à 22,5°), 384371 mit Gaia-Distanz — live auf CDN. Sync-Workflow-Schritt entfernt (Clobber-Gefahr) — Eigenbewegung+RV: 437915 pmra, 50758 rv (gaiadr3)
+note gaia_dist denis (B/denis/denis): 525260 Zeilen voll (Chunk-Merge, 16 RA-Bänder à 22,5°), 384371 mit Gaia-Distanz — live auf CDN. Sync-Workflow-Schritt entfernt (Clobber-Gefahr) — Eigenbewegung+RV: 437915 pmra, 50758 rv (gaiadr3) — Farbe: 366671 gaia_teff, 449641 bpmag, 455882 gmag (gaiadr3)
 
 verifiziert
 bestand phi/katalog/vizier_gold_catalogs.φ
@@ -401,3 +401,5 @@ note evs_cat trägt B1950-Koordinaten (Epoche, nicht J2000) — Crossmatch gegen
 verifiziert
 bestand phi/katalog/vizier_gold_catalogs.φ
 note Sternkinematik 2026-08-17: Crossmatch auf I/355/gaiadr3 liefert pmra/pmdec/rv (radvel) für alle 12 Sternkataloge — 3D-Raumgeschwindigkeit live auf CDN.
+
+note Sternfarbe 2026-08-18: gaiadr3-Crossmatch liefert Teff/BPmag/RPmag/Gmag für alle 12 Sternkataloge — Farbe+Temperatur+Photometrie live auf CDN (Rendering folgt).
