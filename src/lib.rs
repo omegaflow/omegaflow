@@ -7,5 +7,6 @@ pub mod force;
 pub mod inflate;
 pub mod kepler;
 pub mod lsk;
+pub mod netcdf;
 pub mod pck;
 pub mod sexagesimal;

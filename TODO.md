@@ -687,11 +687,11 @@ Konversion ist bekannt oder erforschbar — pending, keine Fälschung):
   Voll-Katalog 2026 — verifiziert), DESI DR1 (NOIRLab Astro Data Lab TAP,
   ~18 Mio Spektren — verifiziert), Roman (2027), 4MOST/WEAVE (2026) —
   unverified. Gaia DR4/LSST bleiben wie notiert.
-- Struktur-Reader (Voraussetzung für SPHEREx/DESI/GLODAP): FITS-
-  Binärtabellen, Parquet/Arrow, netCDF/HDF5 — fehlen im Code; OPeNDAP-
-  Integration steht aus. Reihenfolge (Ratsurteil 2026-08-17): netCDF-3
-  (classic) std-only zuerst, netCDF-4/HDF5 `pending` (eigener Atom);
-  GLM braucht keinen netCDF-Reader (ArcGIS-GeoJSON-Route, Kraft em).
+- Struktur-Reader (Voraussetzung für SPHEREx/DESI/GLODAP): netCDF-3
+  (CDF-1 + CDF-2, std-only) in src/netcdf.rs — erledigt; CDF-5 bleibt
+  `pending` (eigener Atom). Offen: FITS-Binärtabellen, Parquet/Arrow,
+  netCDF-4/HDF5, OPeNDAP-Integration. GLM braucht keinen netCDF-Reader
+  (ArcGIS-GeoJSON-Route, Kraft em).
 - Crossmatch indexiert → live heben: GALEX-GUVcat (UV), SkyMapper DR4,
   UKIDSS/VISTA/VIKING (NIR), DES DR2/Legacy Surveys DR10.
 - Katalog-Lücken Welle III (Recherche 2026-08-17, gegen alle Register verifiziert).
