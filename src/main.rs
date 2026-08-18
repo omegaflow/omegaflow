@@ -184,50 +184,32 @@ fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
     return rgb01 + vec3f(m);
 }
 
+fn lerp_color(x0: f32, t0: f32, x1: f32, t1: f32, ci: f32) -> f32 {
+    return mix(t0, t1, (ci - x0) / (x1 - x0));
+}
+
 fn bp_rp_to_teff(ci: f32) -> f32 {
-    const locus: array<vec2f, 31> = array<vec2f, 31>(
-        vec2f(-0.120, 10700.0),
-        vec2f(-0.037, 9700.0),
-        vec2f(0.005, 9300.0),
-        vec2f(0.068, 8800.0),
-        vec2f(0.110, 8600.0),
-        vec2f(0.194, 8100.0),
-        vec2f(0.320, 7590.0),
-        vec2f(0.377, 7220.0),
-        vec2f(0.490, 6820.0),
-        vec2f(0.587, 6550.0),
-        vec2f(0.694, 6180.0),
-        vec2f(0.784, 5930.0),
-        vec2f(0.823, 5770.0),
-        vec2f(0.850, 5660.0),
-        vec2f(0.900, 5480.0),
-        vec2f(0.983, 5270.0),
-        vec2f(1.100, 5100.0),
-        vec2f(1.340, 4600.0),
-        vec2f(1.530, 4300.0),
-        vec2f(1.730, 3990.0),
-        vec2f(1.840, 3850.0),
-        vec2f(2.090, 3660.0),
-        vec2f(2.230, 3560.0),
-        vec2f(2.500, 3430.0),
-        vec2f(2.940, 3210.0),
-        vec2f(3.350, 3060.0),
-        vec2f(3.710, 2930.0),
-        vec2f(4.160, 2810.0),
-        vec2f(4.650, 2680.0),
-        vec2f(4.860, 2570.0),
-        vec2f(5.100, 2420.0),
-    );
-    if (ci <= locus[0].x) { return locus[0].y; }
-    for (var i = 1u; i < 31u; i = i + 1u) {
-        let b = locus[i];
-        if (ci <= b.x) {
-            let a = locus[i - 1u];
-            let t = (ci - a.x) / max(b.x - a.x, 1e-6);
-            return mix(a.y, b.y, t);
-        }
-    }
-    return locus[30].y;
+    if (ci <= -0.120) { return 10700.0; }
+    if (ci <= -0.037) { return lerp_color(-0.120, 10700.0, -0.037, 9700.0, ci); }
+    if (ci <= 0.005) { return lerp_color(-0.037, 9700.0, 0.005, 9300.0, ci); }
+    if (ci <= 0.110) { return lerp_color(0.005, 9300.0, 0.110, 8600.0, ci); }
+    if (ci <= 0.194) { return lerp_color(0.110, 8600.0, 0.194, 8100.0, ci); }
+    if (ci <= 0.320) { return lerp_color(0.194, 8100.0, 0.320, 7590.0, ci); }
+    if (ci <= 0.490) { return lerp_color(0.320, 7590.0, 0.490, 6820.0, ci); }
+    if (ci <= 0.694) { return lerp_color(0.490, 6820.0, 0.694, 6180.0, ci); }
+    if (ci <= 0.850) { return lerp_color(0.694, 6180.0, 0.850, 5660.0, ci); }
+    if (ci <= 0.983) { return lerp_color(0.850, 5660.0, 0.983, 5270.0, ci); }
+    if (ci <= 1.100) { return lerp_color(0.983, 5270.0, 1.100, 5100.0, ci); }
+    if (ci <= 1.340) { return lerp_color(1.100, 5100.0, 1.340, 4600.0, ci); }
+    if (ci <= 1.530) { return lerp_color(1.340, 4600.0, 1.530, 4300.0, ci); }
+    if (ci <= 1.840) { return lerp_color(1.530, 4300.0, 1.840, 3850.0, ci); }
+    if (ci <= 2.230) { return lerp_color(1.840, 3850.0, 2.230, 3560.0, ci); }
+    if (ci <= 2.940) { return lerp_color(2.230, 3560.0, 2.940, 3210.0, ci); }
+    if (ci <= 3.350) { return lerp_color(2.940, 3210.0, 3.350, 3060.0, ci); }
+    if (ci <= 4.160) { return lerp_color(3.350, 3060.0, 4.160, 2810.0, ci); }
+    if (ci <= 4.650) { return lerp_color(4.160, 2810.0, 4.650, 2680.0, ci); }
+    if (ci <= 5.100) { return lerp_color(4.650, 2680.0, 5.100, 2420.0, ci); }
+    return 2420.0;
 }
 
 fn teff_to_rgb(teff: f32) -> vec3f {
@@ -16804,7 +16786,7 @@ mod mathematikerin {
                 self.deep_pt_cap = c;
                 self.deep_pt_vbuf = Some(device.create_buffer(&wgpu::BufferDescriptor {
                     label: None,
-                    size: c as u64 * 16,
+                    size: c as u64 * 32,
                     usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
                     mapped_at_creation: false,
                 }));
