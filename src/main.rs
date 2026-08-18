@@ -715,6 +715,7 @@ struct Buffer {
     eph: Arc<HashMap<String, BodyEphemeris>>,
     asteroids: Option<Arc<AsteroidHash>>,
     stars: Option<Arc<StarHash>>,
+    occluders: Option<Arc<OccluderSet>>,
 }
 struct AsteroidHash {
     cell_size: f64,
@@ -754,6 +755,9 @@ struct StarHash {
     cells: HashMap<CellKey, Vec<u32>>,
     #[cfg(feature = "browser_relay")]
     p0: Vec<[f64; 3]>,
+}
+struct OccluderSet {
+    records: Vec<AsteroidRec>,
 }
 #[derive(Clone, Debug)]
 enum Position {
@@ -1151,7 +1155,7 @@ mod archivar {
     use std::sync::{mpsc, Mutex};
     use std::thread;
     use std::time::{SystemTime, UNIX_EPOCH};
-    const J2000_EPOCH: f64 = 2451545.0;
+    pub const J2000_EPOCH: f64 = 2451545.0;
     const PARSEC_M: f64 = 3.085677581e16;
     const C_LIGHT: f64 = 299792458.0;
     const HUBBLE_H0: f64 = 70000.0 / (PARSEC_M * 1.0e6);
@@ -1731,6 +1735,7 @@ mod archivar {
         eph: Arc<HashMap<String, BodyEphemeris>>,
         asteroids: Option<Arc<AsteroidHash>>,
         stars: Option<Arc<StarHash>>,
+        occluders: Option<Arc<OccluderSet>>,
     ) -> Buffer {
         let mut body_samps: HashMap<String, Vec<Oscillator>> = HashMap::new();
         let mut inertial_samps = Vec::new();
@@ -1751,6 +1756,7 @@ mod archivar {
             eph,
             asteroids,
             stars,
+            occluders,
         }
     }
 
@@ -1818,6 +1824,24 @@ mod archivar {
             records,
             p0,
         }
+    }
+
+    fn build_occluder_set(bytes: &[u8]) -> OccluderSet {
+        let mut records: Vec<AsteroidRec> = Vec::new();
+        for chunk in bytes.chunks_exact(RECORD_STRIDE) {
+            let rec = match parse_record(chunk) {
+                Some(r) => r,
+                None => continue,
+            };
+            if rec.number == 0 || rec.a_au <= 0.0 || rec.e >= 1.0 {
+                continue;
+            }
+            if !(rec.radius_km > 0.0) {
+                continue;
+            }
+            records.push(rec);
+        }
+        OccluderSet { records }
     }
 
     fn query_asteroid_hash(
@@ -4076,6 +4100,7 @@ mod archivar {
         eph_update: Option<(String, BodyEphemeris)>,
         asteroid_hash: Option<Arc<AsteroidHash>>,
         star_hash: Option<Arc<StarHash>>,
+        occluders: Option<Arc<OccluderSet>>,
     }
 
     const AUDIO_SAMPLE_RATE: u32 = 44100;
@@ -4235,6 +4260,7 @@ mod archivar {
         time: Arc<Mutex<Option<LeapSeconds>>>,
         asteroids: Option<Arc<AsteroidHash>>,
         stars: Option<Arc<StarHash>>,
+        occluders: Option<Arc<OccluderSet>>,
     }
 
     fn days_to_ymd(total_days: u64) -> (u32, u32, u32) {
@@ -10684,6 +10710,7 @@ mod archivar {
                 body_ephemerides.clone(),
                 None,
                 None,
+                None,
             )),
             presence: HashMap::new(),
             declared_body,
@@ -10692,6 +10719,7 @@ mod archivar {
             time: time.clone(),
             asteroids: None,
             stars: None,
+            occluders: None,
         };
         let body_names: Arc<Vec<String>> = {
             let mut names: Vec<String> = archive
@@ -10887,6 +10915,9 @@ mod archivar {
                 if let Some(hash) = res.star_hash {
                     archive.stars = Some(hash);
                 }
+                if let Some(occluders) = res.occluders {
+                    archive.occluders = Some(occluders);
+                }
                 let src = &archive.sources[res.source_idx];
                 for (channel, sensor) in &res.channels {
                     let track_origin = matches!(channel.position, Position::Source)
@@ -10999,6 +11030,7 @@ mod archivar {
                                     eph_update: src_clone.body.clone().map(|b| (b, eph)),
                                     asteroid_hash: None,
                                     star_hash: None,
+                                    occluders: None,
                                 });
                             }
                         });
@@ -11037,11 +11069,13 @@ mod archivar {
                             Err(_) => return,
                         };
                         let hash = build_asteroid_hash(&bytes, cadence_c, src_ttl);
+                        let occluders = build_occluder_set(&bytes);
                         eprintln!(
-                        "\r\x1b[Kcatalog_dastcom: {} records, cell_size {:.3e} m, vmax {:.1} m/s",
+                        "\r\x1b[Kcatalog_dastcom: {} records, cell_size {:.3e} m, vmax {:.1} m/s, okkluder {}",
                         hash.records.len(),
                         hash.cell_size,
-                        hash.vmax
+                        hash.vmax,
+                        occluders.records.len()
                     );
                         let _ = ftx.send(FetchResult {
                             source_idx: src_idx,
@@ -11049,6 +11083,7 @@ mod archivar {
                             eph_update: None,
                             asteroid_hash: Some(Arc::new(hash)),
                             star_hash: None,
+                            occluders: Some(Arc::new(occluders)),
                         });
                     });
                     continue;
@@ -11098,6 +11133,7 @@ mod archivar {
                             eph_update: None,
                             asteroid_hash: None,
                             star_hash: Some(Arc::new(hash)),
+                            occluders: None,
                         });
                     });
                     continue;
@@ -11145,6 +11181,7 @@ mod archivar {
                                 eph_update: None,
                                 asteroid_hash: None,
                                 star_hash: None,
+                                occluders: None,
                             });
                         }
                     });
@@ -11242,6 +11279,7 @@ mod archivar {
                                 eph_update: None,
                                 asteroid_hash: None,
                                 star_hash: None,
+                                occluders: None,
                             });
                         }
                         return;
@@ -11267,6 +11305,7 @@ mod archivar {
                                     eph_update: src_clone.body.clone().map(|b| (b, eph)),
                                     asteroid_hash: None,
                                     star_hash: None,
+                                    occluders: None,
                                 });
                                 v
                             }
@@ -11279,6 +11318,7 @@ mod archivar {
                         eph_update: None,
                         asteroid_hash: None,
                         star_hash: None,
+                        occluders: None,
                     });
                 });
             }
@@ -11347,6 +11387,7 @@ mod archivar {
                     archive.body_ephemerides.clone(),
                     archive.asteroids.clone(),
                     archive.stars.clone(),
+                    archive.occluders.clone(),
                 ));
             }
             let f = archive.field.clone();
@@ -14661,7 +14702,10 @@ field temp temp_c\n";
 }
 mod mathematikerin {
     use super::*;
-    use crate::archivar::{body_barycenter_position, sense_deep, sense_membrane, system_now};
+    use crate::archivar::{
+        body_barycenter_position, sense_deep, sense_membrane, system_now, J2000_EPOCH,
+    };
+    use omegaflow::dastcom::state_at;
     use std::collections::{HashMap, HashSet};
     use std::sync::atomic::{AtomicBool, Ordering};
     use std::sync::{mpsc, Arc, Mutex};
@@ -15009,6 +15053,177 @@ mod mathematikerin {
         ((l + 126.0) as i32).clamp(0, 255) as usize
     }
 
+    const OCC_CELL_RAD: f64 = 1e-3;
+    const OCC_LAT_BANDS: i32 = 3142;
+    const OCC_LON_BANDS: i32 = 6284;
+    const OCC_REFRESH_T: f64 = 60.0;
+    const OCC_REFRESH_R: f64 = 1.0e8;
+    const OCC_SCAN_T: f64 = 1.0;
+
+    struct OccIndex {
+        t: f64,
+        center: [f64; 3],
+        cells: HashMap<(i32, i32), Vec<u32>>,
+        scan_t: f64,
+        scan_center: [f64; 3],
+        scan_barriers: Vec<f32>,
+        scan_events: Vec<(u32, f64, f64)>,
+    }
+
+    #[derive(Clone, Default)]
+    struct OccReport {
+        events: Vec<(u32, f64, f64)>,
+    }
+
+    fn occ_dir_cell(dir: [f64; 3]) -> (i32, i32) {
+        let z = dir[2].clamp(-1.0, 1.0);
+        let dec = z.asin();
+        let ra = dir[1].atan2(dir[0]);
+        let lat = ((dec + std::f64::consts::FRAC_PI_2) / OCC_CELL_RAD) as i32;
+        let lon = ((ra + std::f64::consts::PI) / OCC_CELL_RAD) as i32;
+        (
+            lat.clamp(0, OCC_LAT_BANDS - 1),
+            lon.rem_euclid(OCC_LON_BANDS),
+        )
+    }
+
+    fn occ_dir_to_radec(dir: [f64; 3]) -> (f64, f64) {
+        let dec = dir[2].clamp(-1.0, 1.0).asin().to_degrees();
+        let mut ra = dir[1].atan2(dir[0]).to_degrees();
+        if ra < 0.0 {
+            ra += 360.0;
+        }
+        (ra, dec)
+    }
+
+    fn occ_hits_ray(cb: [f64; 3], dir: [f64; 3], r: f64, gm: f64) -> bool {
+        let c2 = cb[0] * cb[0] + cb[1] * cb[1] + cb[2] * cb[2];
+        if c2 < r * r {
+            return false;
+        }
+        let tproj = cb[0] * dir[0] + cb[1] * dir[1] + cb[2] * dir[2];
+        if tproj <= 0.0 {
+            return false;
+        }
+        let perp2 = c2 - tproj * tproj;
+        let r_eff = (r - 4.0 * gm * c2.sqrt() / (C * C * r.max(1e-9))).max(0.0);
+        perp2 < r_eff * r_eff
+    }
+
+    fn occulting_barriers(
+        occluders: &[AsteroidRec],
+        index: &mut Option<OccIndex>,
+        deep: &[[f64; 6]],
+        center: [f64; 3],
+        t: f64,
+        barriers: &mut Vec<f32>,
+    ) -> OccReport {
+        if occluders.is_empty() || deep.is_empty() {
+            return OccReport::default();
+        }
+        let rebuild = match index.as_ref() {
+            None => true,
+            Some(i) => {
+                (t - i.t).abs() > OCC_REFRESH_T
+                    || (center[0] - i.center[0]).abs() > OCC_REFRESH_R
+                    || (center[1] - i.center[1]).abs() > OCC_REFRESH_R
+                    || (center[2] - i.center[2]).abs() > OCC_REFRESH_R
+            }
+        };
+        if rebuild {
+            let t_jd = t / 86400.0 + J2000_EPOCH;
+            let mut cells: HashMap<(i32, i32), Vec<u32>> = HashMap::new();
+            for (i, rec) in occluders.iter().enumerate() {
+                let Some((p, _)) = state_at(rec, t_jd) else {
+                    continue;
+                };
+                let cb = [p[0] - center[0], p[1] - center[1], p[2] - center[2]];
+                let d = (cb[0] * cb[0] + cb[1] * cb[1] + cb[2] * cb[2]).sqrt();
+                if d <= 0.0 {
+                    continue;
+                }
+                cells
+                    .entry(occ_dir_cell([cb[0] / d, cb[1] / d, cb[2] / d]))
+                    .or_default()
+                    .push(i as u32);
+            }
+            *index = Some(OccIndex {
+                t,
+                center,
+                cells,
+                scan_t: f64::NEG_INFINITY,
+                scan_center: [f64::INFINITY; 3],
+                scan_barriers: Vec::new(),
+                scan_events: Vec::new(),
+            });
+        }
+        let idx = match index.as_mut() {
+            Some(i) => i,
+            None => return OccReport::default(),
+        };
+        let scan_stale = (t - idx.scan_t).abs() > OCC_SCAN_T
+            || (center[0] - idx.scan_center[0]).abs() > OCC_REFRESH_R
+            || (center[1] - idx.scan_center[1]).abs() > OCC_REFRESH_R
+            || (center[2] - idx.scan_center[2]).abs() > OCC_REFRESH_R;
+        if scan_stale {
+            let t_jd = t / 86400.0 + J2000_EPOCH;
+            let mut events: Vec<(u32, f64, f64)> = Vec::new();
+            let mut scan_barriers: Vec<f32> = Vec::new();
+            let mut barrier_seen: Vec<u32> = Vec::new();
+            for s in deep {
+                let dir = [s[0], s[1], s[2]];
+                let (la, lo) = occ_dir_cell(dir);
+                let mut hit_ids: Vec<u32> = Vec::new();
+                for dla in -1..=1 {
+                    for dlo in -1..=1 {
+                        let cell = (la + dla, (lo + dlo).rem_euclid(OCC_LON_BANDS));
+                        if let Some(ids) = idx.cells.get(&cell) {
+                            for &oc in ids {
+                                if !hit_ids.contains(&oc) {
+                                    hit_ids.push(oc);
+                                }
+                            }
+                        }
+                    }
+                }
+                for oc in hit_ids {
+                    let rec = &occluders[oc as usize];
+                    let Some((p, _)) = state_at(rec, t_jd) else {
+                        continue;
+                    };
+                    let cb = [p[0] - center[0], p[1] - center[1], p[2] - center[2]];
+                    let r = rec.radius_km as f64 * 1000.0;
+                    let gm = rec.gm_km3_s2 as f64 * 1.0e9;
+                    if occ_hits_ray(cb, dir, r, gm) {
+                        let (ra, dec) = occ_dir_to_radec(dir);
+                        events.push((rec.number, ra, dec));
+                        if !barrier_seen.contains(&oc) {
+                            barrier_seen.push(oc);
+                            scan_barriers.extend_from_slice(&[
+                                cb[0] as f32,
+                                cb[1] as f32,
+                                cb[2] as f32,
+                                r as f32,
+                                gm as f32,
+                                0.0,
+                                0.0,
+                                0.0,
+                            ]);
+                        }
+                    }
+                }
+            }
+            idx.scan_t = t;
+            idx.scan_center = center;
+            idx.scan_barriers = scan_barriers;
+            idx.scan_events = events;
+        }
+        barriers.extend_from_slice(&idx.scan_barriers);
+        OccReport {
+            events: idx.scan_events.clone(),
+        }
+    }
+
     pub struct MathematikerinRadiator {
         tx: mpsc::SyncSender<Arc<Buffer>>,
         shutdown: Arc<AtomicBool>,
@@ -15029,59 +15244,76 @@ mod mathematikerin {
             let (req_tx, req_rx) =
                 mpsc::sync_channel::<(Arc<Buffer>, [f64; 3], f64, f64, f64, f64)>(1);
             let (res_tx, res_rx) =
-                mpsc::sync_channel::<(PackedWindow, Vec<f32>, Vec<f32>, Vec<f32>, f64)>(2);
+                mpsc::sync_channel::<(PackedWindow, Vec<f32>, Vec<f32>, Vec<f32>, f64, OccReport)>(
+                    2,
+                );
             let shutdown = Arc::new(AtomicBool::new(false));
             let shutdown_clone = shutdown.clone();
-            thread::spawn(move || loop {
-                let Ok(mut req) = req_rx.recv() else {
-                    break;
-                };
-                while let Ok(newer) = req_rx.try_recv() {
-                    req = newer;
-                }
-                let (field, center, t, pad, cache_interval, grid_step) = req;
-                let mut records: Vec<Record> = Vec::new();
-                let eph = field.eph.clone();
-                sense_membrane(&field, center, t, pad, cache_interval, &mut records, &eph);
-                let packed = pack_window(&records, center);
-                let mut deep: Vec<[f64; 6]> = Vec::new();
-                sense_deep(&field, center, t, &mut deep);
-                let mut pt_src: Vec<[f64; 6]> = Vec::new();
-                let mut ex_src: Vec<[f64; 6]> = Vec::new();
-                for s in &deep {
-                    if s[5] / grid_step < 1.0 {
-                        pt_src.push(*s);
+            thread::spawn(move || {
+                let mut occ_index: Option<OccIndex> = None;
+                loop {
+                    let Ok(mut req) = req_rx.recv() else {
+                        break;
+                    };
+                    while let Ok(newer) = req_rx.try_recv() {
+                        req = newer;
+                    }
+                    let (field, center, t, pad, cache_interval, grid_step) = req;
+                    let mut records: Vec<Record> = Vec::new();
+                    let eph = field.eph.clone();
+                    sense_membrane(&field, center, t, pad, cache_interval, &mut records, &eph);
+                    let packed = pack_window(&records, center);
+                    let mut deep: Vec<[f64; 6]> = Vec::new();
+                    sense_deep(&field, center, t, &mut deep);
+                    let mut pt_src: Vec<[f64; 6]> = Vec::new();
+                    let mut ex_src: Vec<[f64; 6]> = Vec::new();
+                    for s in &deep {
+                        if s[5] / grid_step < 1.0 {
+                            pt_src.push(*s);
+                        } else {
+                            ex_src.push(*s);
+                        }
+                    }
+                    let packed_deep_pt = pack_deep_pt(&pt_src);
+                    let packed_deep_ex = pack_deep_ex(&ex_src);
+                    let mut barriers: Vec<f32> = Vec::with_capacity(eph.len() * 8);
+                    for (name, e) in eph.iter() {
+                        let Some(props) = &e.props else {
+                            continue;
+                        };
+                        if props.radius_m <= 0.0 {
+                            continue;
+                        }
+                        let Some(pos) = body_barycenter_position(name, t, &eph) else {
+                            continue;
+                        };
+                        barriers.push((pos[0] - center[0]) as f32);
+                        barriers.push((pos[1] - center[1]) as f32);
+                        barriers.push((pos[2] - center[2]) as f32);
+                        barriers.push(props.radius_m as f32);
+                        barriers.push(props.gm.unwrap_or(0.0) as f32);
+                        barriers.push(0.0);
+                        barriers.push(0.0);
+                        barriers.push(0.0);
+                    }
+                    let occ = if let Some(oset) = &field.occluders {
+                        occulting_barriers(
+                            &oset.records,
+                            &mut occ_index,
+                            &deep,
+                            center,
+                            t,
+                            &mut barriers,
+                        )
                     } else {
-                        ex_src.push(*s);
-                    }
-                }
-                let packed_deep_pt = pack_deep_pt(&pt_src);
-                let packed_deep_ex = pack_deep_ex(&ex_src);
-                let mut barriers: Vec<f32> = Vec::with_capacity(eph.len() * 8);
-                for (name, e) in eph.iter() {
-                    let Some(props) = &e.props else {
-                        continue;
+                        OccReport::default()
                     };
-                    if props.radius_m <= 0.0 {
-                        continue;
+                    if res_tx
+                        .send((packed, packed_deep_pt, packed_deep_ex, barriers, t, occ))
+                        .is_err()
+                    {
+                        break;
                     }
-                    let Some(pos) = body_barycenter_position(name, t, &eph) else {
-                        continue;
-                    };
-                    barriers.push((pos[0] - center[0]) as f32);
-                    barriers.push((pos[1] - center[1]) as f32);
-                    barriers.push((pos[2] - center[2]) as f32);
-                    barriers.push(props.radius_m as f32);
-                    barriers.push(props.gm.unwrap_or(0.0) as f32);
-                    barriers.push(0.0);
-                    barriers.push(0.0);
-                    barriers.push(0.0);
-                }
-                if res_tx
-                    .send((packed, packed_deep_pt, packed_deep_ex, barriers, t))
-                    .is_err()
-                {
-                    break;
                 }
             });
             let handle = thread::spawn(move || {
@@ -15236,7 +15468,7 @@ mod mathematikerin {
     struct NativeApp {
         rx: mpsc::Receiver<Arc<Buffer>>,
         req_tx: mpsc::SyncSender<(Arc<Buffer>, [f64; 3], f64, f64, f64, f64)>,
-        res_rx: mpsc::Receiver<(PackedWindow, Vec<f32>, Vec<f32>, Vec<f32>, f64)>,
+        res_rx: mpsc::Receiver<(PackedWindow, Vec<f32>, Vec<f32>, Vec<f32>, f64, OccReport)>,
         presence_tx: mpsc::Sender<(String, f64, f64, f64, f64, f64)>,
         body_names: Arc<Vec<String>>,
         time: Arc<Mutex<Option<LeapSeconds>>>,
@@ -15289,6 +15521,8 @@ mod mathematikerin {
         deep_layout: Option<wgpu::BindGroupLayout>,
         packed_barriers: Vec<f32>,
         barriers_buf: Option<wgpu::Buffer>,
+        occ_report: OccReport,
+        occ_prev: Vec<u32>,
 
         p: [f64; 3],
         v: [f64; 3],
@@ -15341,7 +15575,7 @@ mod mathematikerin {
         fn new(
             rx: mpsc::Receiver<Arc<Buffer>>,
             req_tx: mpsc::SyncSender<(Arc<Buffer>, [f64; 3], f64, f64, f64, f64)>,
-            res_rx: mpsc::Receiver<(PackedWindow, Vec<f32>, Vec<f32>, Vec<f32>, f64)>,
+            res_rx: mpsc::Receiver<(PackedWindow, Vec<f32>, Vec<f32>, Vec<f32>, f64, OccReport)>,
             presence_tx: mpsc::Sender<(String, f64, f64, f64, f64, f64)>,
             sensor_tx: mpsc::Sender<Vec<(String, f64, f64)>>,
             body_names: Arc<Vec<String>>,
@@ -15404,6 +15638,8 @@ mod mathematikerin {
                 deep_layout: None,
                 packed_barriers: Vec::new(),
                 barriers_buf: None,
+                occ_report: OccReport::default(),
+                occ_prev: Vec::new(),
                 p: [0.0, 0.0, 0.0],
                 v: [0.0, 0.0, 0.0],
                 t0: 0.0,
@@ -16708,7 +16944,7 @@ mod mathematikerin {
                 self.latest_field = Some(field);
                 self.sense();
             }
-            while let Ok((packed, pt, ex, barriers, t)) = self.res_rx.try_recv() {
+            while let Ok((packed, pt, ex, barriers, t, occ)) = self.res_rx.try_recv() {
                 self.packed_count = packed.count;
                 self.packed_field = packed.field;
                 self.packed_meta = packed.meta;
@@ -16720,6 +16956,7 @@ mod mathematikerin {
                 self.deep_ex_count = (self.packed_deep_ex.len() / 8) as u32;
                 self.deep_dirty = true;
                 self.packed_barriers = barriers;
+                self.occ_report = occ;
                 self.relax_force_refs();
             }
             self.consider_resend();
@@ -16857,7 +17094,7 @@ mod mathematikerin {
                     ));
                 }
                 eprintln!(
-                "φ window: t {:.2} | rec {} | gen {} | flow {:+.2} {:+.2} {:+.2} | {} | mx {:.2e} | fps {:.0} | ssaa {:.2} | grid 2^{} | x {:.3e} y {:.3e} z {:.3e} | {} near | {} deep | b {}x{} | maxms {:.0} | ema {:.1} | perm {:.2} | off {:.2} | blend {}",
+                "φ window: t {:.2} | rec {} | gen {} | flow {:+.2} {:+.2} {:+.2} | {} | mx {:.2e} | fps {:.0} | ssaa {:.2} | grid 2^{} | x {:.3e} y {:.3e} z {:.3e} | {} near | {} deep | okkl {} | b {}x{} | maxms {:.0} | ema {:.1} | perm {:.2} | off {:.2} | blend {}",
                 self.t_presence,
                 rec,
                 self.ring_gen,
@@ -16874,6 +17111,7 @@ mod mathematikerin {
                 z,
                 self.packed_count,
                 self.deep_pt_count + self.deep_ex_count,
+                self.occ_report.events.len(),
                 self.backing.0,
                 self.backing.1,
                 ms_max,
@@ -16882,6 +17120,26 @@ mod mathematikerin {
                 self.expose_offset,
                 self.point_blend,
             );
+                {
+                    let mut cur: Vec<u32> = self.occ_report.events.iter().map(|e| e.0).collect();
+                    cur.sort_unstable();
+                    cur.dedup();
+                    if cur != self.occ_prev {
+                        self.occ_prev = cur;
+                        if self.occ_report.events.is_empty() {
+                            eprintln!("okkl: 0 — das Feld ist frei");
+                        } else {
+                            let mut line = String::new();
+                            for (i, &(num, ra, dec)) in self.occ_report.events.iter().enumerate() {
+                                if i > 0 {
+                                    line.push_str(" | ");
+                                }
+                                line.push_str(&format!("{} vor @({:.3}°, {:.3}°)", num, ra, dec));
+                            }
+                            eprintln!("okkl: {} — {}", self.occ_report.events.len(), line);
+                        }
+                    }
+                }
             }
             event_loop.set_control_flow(ControlFlow::WaitUntil(
                 std::time::Instant::now() + std::time::Duration::from_millis(16),
@@ -17126,7 +17384,7 @@ mod mathematikerin {
         presence_tx: mpsc::Sender<(String, f64, f64, f64, f64, f64)>,
         sensor_tx: mpsc::Sender<Vec<(String, f64, f64)>>,
         req_tx: mpsc::SyncSender<(Arc<Buffer>, [f64; 3], f64, f64, f64, f64)>,
-        res_rx: mpsc::Receiver<(PackedWindow, Vec<f32>, Vec<f32>, Vec<f32>, f64)>,
+        res_rx: mpsc::Receiver<(PackedWindow, Vec<f32>, Vec<f32>, Vec<f32>, f64, OccReport)>,
         body_names: Arc<Vec<String>>,
         time: Arc<Mutex<Option<LeapSeconds>>>,
         shutdown: Arc<AtomicBool>,
@@ -17263,6 +17521,27 @@ mod mathematikerin {
             for ft in 3..9 {
                 assert_eq!(meds[ft], None);
             }
+        }
+
+        #[test]
+        fn occ_hits_ray_geometry() {
+            assert!(occ_hits_ray([10.0, 0.0, 0.0], [1.0, 0.0, 0.0], 1.0, 0.0));
+            assert!(!occ_hits_ray([10.0, 2.0, 0.0], [1.0, 0.0, 0.0], 1.0, 0.0));
+            assert!(!occ_hits_ray([-10.0, 0.0, 0.0], [1.0, 0.0, 0.0], 1.0, 0.0));
+            assert!(!occ_hits_ray([0.5, 0.0, 0.0], [1.0, 0.0, 0.0], 1.0, 0.0));
+            let limb = [10.0, 0.99, 0.0];
+            assert!(occ_hits_ray(limb, [1.0, 0.0, 0.0], 1.0, 0.0));
+            assert!(!occ_hits_ray(limb, [1.0, 0.0, 0.0], 1.0, 1.0e30));
+        }
+
+        #[test]
+        fn occ_dir_cell_maps_and_wraps() {
+            let (lat_n, _) = occ_dir_cell([0.0, 0.0, 1.0]);
+            assert_eq!(lat_n, OCC_LAT_BANDS - 1);
+            let (lat_s, _) = occ_dir_cell([0.0, 0.0, -1.0]);
+            assert_eq!(lat_s, 0);
+            let (_, lon) = occ_dir_cell([-1.0, -1e-9, 0.0]);
+            assert!(lon < OCC_LON_BANDS / 2);
         }
 
         #[test]
@@ -17630,6 +17909,7 @@ mod relay {
                                         Arc::new(HashMap::new()),
                                         None,
                                         None,
+                                        None,
                                     ))
                                 })
                             };
@@ -17712,6 +17992,7 @@ mod relay {
                                     Vec::new(),
                                     1.0,
                                     Arc::new(HashMap::new()),
+                                    None,
                                     None,
                                     None,
                                 ))
@@ -17927,6 +18208,7 @@ mod relay {
                             Vec::new(),
                             1.0,
                             Arc::new(HashMap::new()),
+                            None,
                             None,
                             None,
                         ))

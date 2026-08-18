@@ -43,10 +43,20 @@ NEOWISE/AKARI in `phi/katalog/asteroid_diameters_*.φ`). Offen ist die
 Nutzung — reine Geometrie, die sonst nirgends liegt, weil alles einen
 ICRS-4D-Rahmen teilt:
 
-- Stellare Okkultationen (Flaggschiff): |Winkelabstand(Asteroid, Stern)| <
-  Asteroidenradius — Asteroidenbahn (DASTCOM) × Sternposition (gaia) ×
-  Presence (Erde) × Zeit, live über alle Paare. Kein Katalog speichert das.
-- Hill-Sphäre je Asteroid: r = a·(1−e)·(m/3M☉)^⅓ (Bahn + GM).
+- ~~Stellare Okkultationen (Flaggschiff)~~ — ERLEDIGT (2026-08-18): der
+  Okkluder-Satz (radius-gegatet, DASTCOM-Records mit radius_km>0) baut ein
+  Richtungs-Raster (~1e-3 rad) relativ zur Presence; pro Scan (1 Hz) werden
+  die deep-Sterne gegen die Okkluder der Zelle±1 getestet (Ray-Sphäre mit
+  Gravitations-Limb r_eff = R − 4GM|C|/(c²R)), Treffer als Barrieren an den
+  `barriers`-Buffer angehängt — die WGSL dimmt den Stern physisch hinter dem
+  Fels (kein WGSL-Change). Register: HUD `okkl N` + Ereigniszeile (Asteroid-
+  Nr. + Sternrichtung). Grenze: der Scan taktet 1 Hz (Ereignisse dauern
+  Sekunden); subsekündige Ultra-Nah-Passagen (NEO <0,01 AU) entkommen dem
+  Raster — registriert, nicht gemessen.
+- Hill-Sphäre je Asteroid: r = a·(1−e)·(m/3M☉)^⅓ — Formel repariert
+  (2026-08-18, der (1−e)-Faktor fehlte); `hill_radius_m` ist heute nur
+  Gate (is_none im Hash), der Wert fließt nirgends — Manifestation (Hill-
+  Radius als räumliche Reichweite) bleibt offen.
 - Hydrostatische Abplattung aus Rotation: Rotationsperiode (LCDB) + Radius
   (NEOWISE) + Dichte (Masse) → Oblatheit im Gleichgewicht (drei Kataloge
   übereinander, niemand macht das systematisch).
@@ -76,8 +86,8 @@ Bogen.
 Weitere neue Quellen (grind-pro, heikler Join/Parsing): LCDB-Rotations-
 achsen (Pol, nicht nur Periode), DAMIT-Formmodelle (3D-Formen → j2/r_eq).
 
-Empfohlene Reihenfolge: Sternfarbe-Rendering → Okkultationen → Hill/
-Abplattung → Massen-Lücken → LCDB/DAMIT.
+Empfohlene Reihenfolge: Sternfarbe-Rendering → Hill/Abplattung → Massen-
+Integration (INPOP25c-GM in den DASTCOM-Kompiler) → NEOWISE-Join → LCDB/DAMIT.
 
 ## Surveys — die Messungen der Sessions
 
@@ -146,8 +156,8 @@ fehlt); Gamepad-Oszillatoren hinter --features gamepad (gilrs).
   implementiert heute 2-Finger Pan+Zoom+Roll ohne Zeit-Achse)
 - `f`-Toggle (Feld-Sichtbarkeit — die schwarze Realisierung) fehlt;
   P zykelt nur Layer
-- Deep-Link-Init fehlt: `main()` nimmt keine Presence-Argumente
-  (#x,y,z,t[,vx,vy,vz] im Browser)
+- Deep-Link-Init `#x,<x>,<y>,<z>,<t>` existiert (Position+Zeit,
+  main.rs presence_init); die Geschwindigkeit `[,vx,vy,vz]` fehlt
 - Puffer-Schrumpf fehlt: ensureFieldCapacity schrumpfte im Browser bei
   langsamen Frames; nativ wächst nur
 - HUD: der 3-zeilige Browser-HUD (PRESENCE/FIELD/STATION, Kraft-Kanäle
@@ -334,8 +344,8 @@ resonance(mut read_signal(s: read_ws_frame_part(stream: read_ws_frame_raw(stream
    die Permeabilität. Fenster bleibt beim Operator. Offen: ε-Kulling
    (Tiled Culling — handover-atome.md Atom 4, eigener Port; auswertung.md:
    Kulling trägt das Budget nicht).
-5. P6 — ⌘K, 2-Finger-Zeit, f-Toggle, Deep-Link-Init, Puffer-Schrumpf,
-   Dithering, 3-zeiliger HUD
+5. P6 — ⌘K, 2-Finger-Zeit, f-Toggle, Deep-Link-Geschwindigkeit (vx,vy,vz),
+   Puffer-Schrumpf, Dithering, 3-zeiliger HUD
 
 ## Offene Arbeit aus den geschlossenen Atomen (2026-08-16/17)
 

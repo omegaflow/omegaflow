@@ -203,10 +203,10 @@ pub fn accel_at_epoch(rec: &AsteroidRec) -> Option<f64> {
 
 pub fn hill_radius_m(rec: &AsteroidRec) -> Option<f64> {
     let gm = rec.gm_km3_s2 as f64 * 1.0e9;
-    if !(gm > 0.0) || !(rec.a_au > 0.0) {
+    if !(gm > 0.0) || !(rec.a_au > 0.0) || !(rec.e < 1.0) {
         return None;
     }
-    Some(rec.a_au * AU_M * (gm / (3.0 * GM_SUN_M3_S2)).cbrt())
+    Some(rec.a_au * AU_M * (1.0 - rec.e) * (gm / (3.0 * GM_SUN_M3_S2)).cbrt())
 }
 
 #[cfg(test)]
@@ -300,6 +300,22 @@ mod tests {
     fn ceres_hill_radius_physics() {
         let r = hill_radius_m(&ceres()).unwrap();
         assert!(r > 1.0e8 && r < 4.0e8, "hill radius {} m", r);
+    }
+
+    #[test]
+    fn hill_radius_scales_with_eccentricity() {
+        let base = ceres();
+        let r0 = hill_radius_m(&base).unwrap();
+        let mut eccentric = base;
+        eccentric.e = 0.5;
+        let r1 = hill_radius_m(&eccentric).unwrap();
+        let expected = r0 * (1.0 - 0.5) / (1.0 - 0.07687465013145245);
+        assert!(
+            (r1 - expected).abs() / expected < 1e-12,
+            "{} vs {}",
+            r1,
+            expected
+        );
     }
 
     #[test]
