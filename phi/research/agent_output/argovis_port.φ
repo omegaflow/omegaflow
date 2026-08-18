@@ -1,0 +1,65 @@
+# argovis port probe (2026-08-18) — grind-flash
+# Lebende Route verifiziert, Antwortstruktur erforscht, Entscheidung: parser-pending.
+# Register und src/ unberührt (Silizium-Tabu). Probe-Queries: 8 Live-Curls + OpenAPI-Spec.
+
+## Lebende Route
+
+url https://argovis-api.colorado.edu/argo
+host-status lebend (api.argovis.com antwortet am TLS-Handshake mit unrecognized name — der b1-Befund bleibt)
+query-Syntax GET /argo?startDate={ISO}&endDate={ISO}&box=[[lonMin,latMin],[lonMax,latMax]]&data={variablen}
+status-200 box mit Profilen liefert 200 JSON-Array (verifiziert, Box 159..161/-26..-25 → 1 Profil)
+status-200 global ein Tag ohne box → 432 Profile, 4.8 MB
+status-404 box ohne Treffer → Body `[]` — die API-Diagnose „Region ohne Profile", kein toter Endpoint
+status-400 startDate/endDate ohne T-Suffix → OpenAPI-Format-Validation (RFC3339 date-time ist bindend)
+status-400 unbekannte Parameter (measurand, perPage) → „Unknown query parameter"
+status-413 sehr großer temporospatialer Extent → die API bittet um kleinere Fenster
+Parameter laut OpenAPI-Spec (core-spec.json, repo argovis/argovis_api, branch server): id, startDate, endDate, polygon, box, center+radius, metadata, platform, platform_type, positionqc, source, compression=minimal, data, verticalRange (presRange veraltet). Box = [lon,lat]-Paare lower-left + upper-right (Mercator).
+
+## Antwortstruktur (Fakten, live verifiziert)
+
+JSON-Array aus Profil-Objekten. Je Profil:
+- geolocation {"type":"Point","coordinates":[lon,lat]} — lon = Index 0, lat = Index 1
+- timestamp ISO-8601 UTC (z.B. 2026-08-15T23:55:42.002Z)
+- _id "<platform>_<cycle>", cycle_number, profile_direction, vertical_sampling_scheme, basin, source
+- data: Liste von Arrays — EIN Array pro angefragter Variable in Anfrage-Reihenfolge; pressure wird immer als letzte Achse angehängt. data=temperature → [temperature, pressure]; data=temperature,salinity → [temperature, salinity, pressure]. Alle Arrays gleicher Länge (935 Level).
+- data_info: transponierte Tabelle:
+  - data_info[0] = Variablennamen ["temperature","salinity","pressure"]
+  - data_info[1] = Attribut-Namen ["units","data_keys_mode"]
+  - data_info[2] = Werte je Variable [["degree_Celsius","R"],["psu","R"],["decibar","R"]] — data_info[2][i][0] = Einheit, data_info[2][i][1] = mode
+- Jedes data-Array ist eine MEHRSTUFIGE Vertikalprofil-Reihe: Temperatur 21.775 °C bei 1 dbar … 2.537 °C bei 1858 dbar; die pressure-Reihe ist die Tiefen-Achse (dbar ≈ 1 m).
+
+Anmerkung zu b1: „flaches Array mit variablen Split-Punkten" beschreibt die alte API-Fassung. Die lebende Antwort liefert pro Variable ein eigenes Array — die Split-Frage existiert nicht, data[i] gehört data_info[0][i].
+
+## Entscheidung: Einzelwert ja/nein
+
+nein — data mit data=temperature als EINZIGER Variable ist eine Vertikalprofil-Reihe (935 Level), kein Skalarwert pro Profil. Der data-Parameter kennt nur Variablennamen, all, except-data-values und QC-Flags; die numerischen Tokens im Schema sind QC-Filter (parse_data_qsp im Server-Quellcode), keine Tiefen-Niveaus. verticalRange/presRange entfernen nur Level außerhalb eines Bereichs — es bliebe eine Serie, und jede Bereichswahl wäre willkürliche Level-Wahl. Ein data.0-Dot-Path wäre Fabrikation (0 honored). Einzelwert-Block ist NICHT möglich.
+
+## Disposition
+
+parser-pending
+
+## parser-spezifikation (für die Rust-Kybernautin)
+
+Request:
+```
+GET https://argovis-api.colorado.edu/argo
+  ?startDate={fenster_start RFC3339 date-time}
+  &endDate={fenster_ende RFC3339 date-time}
+  &box=[[lonMin,latMin],[lonMax,latMax]]
+  &data=temperature,salinity,pressure
+```
+box = Presence-Fenster (lon/lat-Min/Max, Mercator). Fenster zeitlich/örtlich begrenzt halten (413 bei sehr großem Extent).
+
+Parse-Schritte:
+1. HTTP 200 → JSON-Array aus Profil-Objekten. HTTP 404 mit []-Body → leeres Feld, 0 honored (Diagnose: „Region ohne Profile"). HTTP 400 → Query ungültig (RFC3339-T, Parameter-Name).
+2. Je Profil-Objekt:
+   - lat = geolocation.coordinates[1], lon = geolocation.coordinates[0]
+   - epoch = parse(timestamp) (ISO-8601 UTC)
+   - Druck-Achse: Index j = data_info[0].indexOf("pressure"); pressure-Reihe = data[j] in dbar
+   - Je Variable i (Name = data_info[0][i], Einheit = data_info[2][i][0]):
+     - Per-Level-Expansion: je Level k ein Oscillator bei (lon, lat, alt = −pressure[k]) mit val = data[i][k]; 1 dbar ≈ 1 m, alt negativ unter der Oberfläche.
+     - Ein Profil expanziert in so viele Oscillatoren wie Level.
+3. τ-Gate: ein Feld ohne deklariertes tau erzeugt keine Oscillatoren (0 honored). Level, die in der Antwort fehlen (null nach QC-Filter), bleiben Lücken.
+4. Physik-Zuordnung (Argo-CTD): temperature → thermal degree_Celsius; salinity → diffusion psu; pressure → gravity decibar.
+
+kein Draft-Block — ein Block mit willkürlicher Level-Wahl wäre Fabrikation. Der Parser expanziert ehrlich über alle Level.

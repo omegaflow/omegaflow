@@ -551,9 +551,9 @@ Offen (Detail in phi/port/ledger.φ):
   INTEGRIERT in sources.φ: OceanNetworks-CTD (4 Kanäle), OMNIWeb-HAPI
   (8 Felder), SDSS SkyServerWS (cz/velDisp + photoObj-psfMag),
   sensor.community (PM1/PM2.5), NDBC (1 FeatureServer-Block, 912
-  Stationen). OFFEN: Argovis-Port (b1-Route verifiziert, flaches
-  data-Array), SuperMAG (leading-line + Positions-Join), MPCOBS + TIC
-  (eigene Compiler-Atome).
+  Stationen). OFFEN (src/ — Rust-Kybernautin): Argovis-Per-Level-Parser
+  (alt=−pressure), SuperMAG (leading-line + Positions-Join), MPCOBS +
+  TIC-Compiler (Eingangsformate gesichtet in compiler_inputs.φ).
 - Kraft-Abdeckung: acoustic/electric/thermal/advective/diffusion-Kuration
   offen — electric: GIC-Netze + Live-E-Feldstärke (kein Feed); GLM ist em
   (Ratsurteil), WWLLN radio-em vs. Entladung-electric bleibt Force-Gate-Frage
@@ -702,15 +702,16 @@ Konversion ist bekannt oder erforschbar — pending, keine Fälschung):
   im cod-String), Pegelonline (Fanout-Block steht aus — P09), GWOSC/
   GraceDB (Position nur via Skymap), DSN (statische Dish-Positionen),
   USGS-Geomag (Komponenten-Timeseries)
-- Rechecks offen (Stand b5 2026-08-18): Argovis-Port (b1: lebende
-  Query argovis-api.colorado.edu verifiziert, data-Feld = katenierte
-  Messreihe — Split-Schema fehlt), SuperMAG (leading-line strip +
-  inventory-Positions-Join — server-seitiger db-get-Fehler — +
-  station-Filter-Semantik). NDBC-Konsolidierung vollzogen (912 Stationen
-  verifiziert). sensor.community integriert (Box-Route filter/box&type=SDS011,
-  indoor-Caveat bleibt). SDSS-photoObj integriert (photoObj.z = modelMag_z,
-  spec-z nur über specObj-Join). MPCOBS + TIC: eigene Compiler-Atome
-  (packed-MPC-Records; header-lose CSV + header.csv).
+- Rechecks offen (Stand 2026-08-18, alle src/ — Rust-Kybernautin):
+  Argovis-Per-Level-Parser (Route lebt, data = Vertikalprofil-Array je
+  Variable, 935 Level; Expansion alt=−pressure[dbar] — spec in
+  phi/research/agent_output/argovis_port.φ), SuperMAG (leading-line strip
+  + inventory-Positions-Join — server-seitiger db-get-Fehler — +
+  station-Filter-Semantik; phi/-Zugang logon-only ist geklärt).
+  NDBC-Konsolidierung vollzogen (912 Stationen verifiziert).
+  sensor.community integriert. SDSS-photoObj integriert (photoObj.z =
+  modelMag_z). MPCOBS + TIC: Eingangsformate gesichtet
+  (compiler_inputs.φ) — Compiler-Bau = src/.
 - TAP-Katalog-Pipeline: weitere VizieR-Bulks aus phi/tap_index.φ (39
   genutzte Tabellen, BZCAT5 erledigt), Gaia-Archiv (GCNS/MWSC);
   GAVO-Async-Queue-Beobachtung offen

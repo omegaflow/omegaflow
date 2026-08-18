@@ -1,0 +1,121 @@
+# Compiler-Eingangsformate — Sichtung (2026-08-18)
+# Agent: grind-flash. Nur curl/Beobachtung, keine Register-Edits, keine src/-Edits, kein cargo.
+# Auftrag: phi/port/ledger.φ trägt zwei ausstehende Compiler-Atome: mpcobs-katalog, tic-kompilat.
+# Diese Datei dokumentiert die Rohdaten-Formate für die künftigen Compiler — als Dokumentation, KEIN Code.
+# Datenquellen wurden live gesichtet (200-Antworten), Spalten aus den Rohzeilen verifiziert.
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 1. MPCOBS — MPC Astrometrie-Beobachtungsarchiv (MPCAT-OBS)
+# ─────────────────────────────────────────────────────────────────────────────
+#
+# Portal: https://www.minorplanetcenter.net/iau/ECS/MPCAT-OBS/MPCAT-OBS.html (200, HTML)
+# Katalogseite listet vier gz-Dateien:
+#   NumObs.txt.gz   — nummerierte Kleinplaneten
+#   UnnObs.txt.gz   — unnummerierte Kleinplaneten
+#   CmtObs.txt.gz   — Kometen
+#   SatObs.txt.gz   — natürliche irreguläre Monde der Riesenplaneten
+# Stand: vollständig bis zur MPC-Charge 2026 APR. 14; Midmonth-Varianten bis MPS-Charge 20251126.
+# MD5-Prüfsummen stehen auf der Katalogseite (je Datei, z.B. NumObs cc15d80f3026bd939831ffc0580cc0e5).
+#
+# Eingangsformat: gzip-gepackte, reine Text-Datensätze, 80 Spalten je Zeile, KEIN Header,
+# KEINE Kommentarzeilen (Zeile 1 ist bereits ein Messdatensatz). Record = 80 Spalten.
+#
+# Spalten/Layout (verifiziert anhand gz|gunzip|head-Zeilen + offizieller Formatspezifikation
+# docs.minorplanetcenter.net/mpc-ops-docs/observations/mpc1992-format/ und /iau/info/References.html):
+#
+#   Spalte 1–5      A5   packed Nummer (0-aufgefüllt rechtsbündig; Nummern >99999 base-62-gepackt
+#                        wie A0000=100000); bei unnummerierten Objekten leer
+#   Spalte 6–12     A7   packed vorläufige Bezeichnung (Kometen/Satelliten-Sonderfälle siehe unten)
+#   Spalte 13       A1   Entdeckungs-Sternchen „*" (nur Entdeckungsbeobachtung)
+#   Spalte 14       A1   Note 1 (alphabetische Publikationsnotiz oder Programmcode)
+#   Spalte 15       A1   Note 2 (J2000-Adjustierung „A", Aufnahmetechnik P/e/C/B/T/M, X/x unterdrückte
+#                        Entdeckungsbeobachtung, …)
+#   Spalte 16–31    A16  Beobachtungsdatum „YYYY MM DD.ddddd" (UTC, J2000-konform archiviert,
+#                        Tag üblicherweise 5 Dezimalstellen; Jahr voll vierstellig, KEIN Pack)
+#   Spalte 32            leer
+#   Spalte 33–44    A12  RA J2000 „HH MM SS.ddd" (Sekunden 2–3 Dezimalstellen)
+#   Spalte 45–56    A12  Dekl J2000 „sDD MM SS.dd" (Sekunden 1–2 Dezimalstellen)
+#   Spalte 57–65         (9 Spalten) — im Archiv-Record NICHT durchgehend leer; siehe Anmerkung
+#   Spalte 66–71    A6   Helligkeit F5.2 + Band A1 (z.B. „ 5.96J"; Band fehlt bei alten Datensätzen)
+#   Spalte 72–77    A6   gepackte Referenz (komprimiert; siehe References.html — unterer Teil des
+#                        Archiv-Layouts, in der offiziellen Submission-Spez 73–77)
+#   Spalte 78–80    A3   Observatoriumscode (3-stellig; zwei Codes möglich bei geteilten Aufnahmen)
+#
+# Beobachtete Beispielzeile (2000, Ceres, CCD):
+#   00001         C2000 04 06.31600 12 21 58.174+15 23 45.06          5.96Jli0331G91
+#   → datum=„2000 04 06.31600", ra=„12 21 58.174", dec=„+15 23 45.06", mag=„5.96", band=„J",
+#     referenz=„i0331" (MPS-gepackt), obs_code=„G91"
+# Alte Beispielzeile (1970, J70S01N mit Entdeckungs-Sternchen):
+#   00232J70S01N* A1970 09 29.82890 22 13 16.75 -12 32 43.6 J70P00R  15.5   M4635095
+#   → designation=„J70S01N", datum=„1970 09 29.82890", ra=„22 13 16.75", dec=„-12 32 43.6",
+#     referenz_alt=„J70P00R" (Spalten 57–63 belegt), mag=„15.5", referenz=„M4635", obs_code=„095"
+#
+# Anmerkung Spalten 57–65: Bei älteren Datensätzen tragen Spalten 57–63 eine zweite
+# („lesbare") Referenz (z.B. „J70P00R", „J34C00V"); neuere Zeilen sind dort leer.
+# Der kompakte Referenzcode steht bei Spalten 72–77 (5–6 Zeichen, z.B. „M4635", „i0331").
+# Größenordnung: NumObs.txt.gz ≈ 9,1 GB unkomprimiert; midmonth ≈ 8,6 GB.
+#
+# Was der Compiler tun muss (mpcobs-katalog):
+#   - gz streamen, 80-Spalten-Records parsen (kein CSV, feste Feldbreiten)
+#   - datum → TDB-Epoche (Parse-Jahres/Viertelstellig, Tag dezimal; J2000-Offset beachten)
+#   - ra/dec (J2000, sexagesimal) → ICRS-Radiant; packed-Nummer/Bezeichnung → Identität
+#   - Helligkeit + Band + Observatoriumscode übernehmen; Referenzcode als Herkunft
+#   - 0 honored: fehlende Helligkeit/Referenz/Obs-Code als Spalten-Leerheit, nicht fabricieren
+#   - pro Objekt viele Records (Beobachtungsserien) → keine Dedup ohne Prüfung
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 2. TIC — TESS Input Catalog v8.2
+# ─────────────────────────────────────────────────────────────────────────────
+#
+# Portal: https://archive.stsci.edu/missions/tess/catalogs/tic_v82/ (200, HTML-Verzeichnisindex)
+# Spaltenlegende: https://archive.stsci.edu/missions/tess/catalogs/tic_v82/tic_column_description.txt
+#                 (200, 125 Zeilen „[name] [SQL-Typ]", 125 Spalten)
+# Typ-Schema:     https://archive.stsci.edu/missions/tess/catalogs/tic_v82/header.csv
+#                 (200, eine Zeile, 1932 Bytes: [Name]:[Typ],… — ist die Typ-Referenz, NICHT ein Header)
+#
+# Eingangsformat: header-lose CSV-Dateien (keine Headerzeile in den Daten-Bändern!), gz-gepackt,
+#                 125 Felder pro Zeile, Komma-getrennt, Float/Integer/String ohne Anführungszeichen.
+#                 Der erste Datenwert von Band 00_00N ist z.B. „1669554699,20190415,…" (ID, version).
+#
+# Band-Namenskonvention (2°-Dec-Bänder, 90 Dateien, md5sum.txt verifiziert):
+#   tic_dec{DD}_00{S}__{DD+2}_00{S}.csv.gz
+#   Beispiele: tic_dec00_00N__02_00N.csv.gz, tic_dec02_00S__00_00N.csv.gz,
+#              tic_dec88_00N__90_00N.csv.gz, tic_dec90_00S__88_00S.csv.gz
+#   Nordhalbkugel: dec 0→90; Südhalbkugel: dec −2→−90; je Band 2° Breite.
+#   Nördliche Bänder sind klein (Polar-Band 88–90N: 24 MB gz), äquatoriale groß
+#   (00–02N: 4,5 GB gz; einige Süd-Bänder bis 10 GB gz).
+#
+# Relevante Spalten (Position 1-basiert in der CSV-Reihenfolge; 125 Spalten gesamt):
+#   1   ID           bigint   TIC-ID (Primärschlüssel, Zeilen-Sortierung)
+#   2   version      varchar  Katalogversion, z.B. „20190415" (TIC v8.2)
+#   14  ra           float    ICRS RA in Grad (Degrees, nicht Sexagesimal!)
+#   15  dec          float    ICRS Dec in Grad
+#   17  pmRA         real     Eigenbewegung RA in mas/Jahr
+#   18  e_pmRA       real     Fehler
+#   19  pmDEC        real     Eigenbewegung Dec in mas/Jahr
+#   20  e_pmDEC      real     Fehler
+#   22  plx          real     Parallaxe in mas
+#   23  e_plx        real     Fehler
+#   61  Tmag         real     TESS-Helligkeit (T-Band)
+#   62  e_Tmag       real     Fehler
+#   80  d            real     Entfernung in pc (Gaia-Ableitung / photometrisch)
+#   81  e_d          real     Fehler (unterer/oberer Fehler als eneg_dist/epos_dist bei 103/104)
+#   65  Teff, 71 rad, 73 mass, 66+68+70+72+74 e_*-Fehler, 78 lumclass — Sternparameter
+#
+# Beispiel-Band-Zeile (tic_dec00_00N__02_00N.csv.gz, Zeile 1):
+#   1669554699,20190415,,,,,1237668709446715445,,4273013759661204992,,,STAR,gaia2,
+#   277.607570911876,1.2240118537091499E-2,… → ra=277.6076°, dec=+0.01224°
+#   (RA in Grad mit vollem Float-Bereich, dec als kleine positive Zahl direkt unter dem Äquator)
+#
+# Was der Compiler tun muss (tic-kompilat):
+#   - Band-Dateien nach Dec-Bereich auswählen (2°-Bänder), gz streamen, header-lose CSV parsen
+#   - ra/dec aus Grad (Float) direkt als ICRS übernehmen (kein Sexagesimal-Convert)
+#   - plx → Distanz: photometrische Sterne tragen plx=0 (0 honored, nicht fabricieren);
+#     wo d-Spalte belegt, übernehmen; sonst 1/plx nur bei e_plx sinnvoll
+#   - pmRA/pmDEC (mas/a) als Geschwindigkeits-Props übernehmen; Eigenbewegung ist Messung
+#   - Tmag als em-Messwert (Sterne, force em); Tmag=0 bei einigen Nicht-Sternen → 0 honored
+#   - Duplikate: duplicate_id (Spalte 88) + disposition („DUPLICATE") prüfen; echte Positions-IDs
+#   - 125 Spalten fix; header.csv als Typ-Schema (Integer/Float/String je Spalte) nutzbar
+#
+# Verifikation: Band-Zugriff 200, header-lose CSV bestätigt, 125 Felder/Zeile bestätigt,
+# md5sum.txt mit 90 Bändern bestätigt. Erster Datenwert je Band = TIC-ID, keine Headerzeile.

@@ -404,13 +404,13 @@ note Sternkinematik 2026-08-17: Crossmatch auf I/355/gaiadr3 liefert pmra/pmdec/
 
 note Sternfarbe 2026-08-18: gaiadr3-Crossmatch liefert Teff/BPmag/RPmag/Gmag für alle 12 Sternkataloge — Farbe+Temperatur+Photometrie live auf CDN (Rendering folgt).
 
-ausstehend
+verifiziert
 bestand phi/katalog/asteroid_gm_inpop25c.φ
-note Quelle gefunden (2026-08-18): INPOP25c postfit Massen J/A+A/705/A189/tablea1 (MPC, massINPOP25c kg, sigma) trägt alle vier — GM = M·G geerntet in phi/katalog/asteroid_gm_inpop25c.φ (45→4.239e8, 87→1.219e9, 90→7.034e7, 216→3.153e8 m³/s²). Zweitquelle Goffin J/A+A/565/A56 (Typ „s"=Satellit belegt Begleiter-Ursprung; Antiope-Lücke). Force-Gate: gravity (Bahndynamik, kein Bulk-Dichte-Modell). Integration offen: GM als BodyProperty im DASTCOM-Kompiler (Kompilat-Join, wie NEOWISE-Durchmesser-Join).
+note Quelle gefunden und geerntet (2026-08-18): INPOP25c postfit Massen J/A+A/705/A189/tablea1 (MPC, massINPOP25c kg, sigma) trägt alle vier — GM = M·G in phi/katalog/asteroid_gm_inpop25c.φ (45→4.239e8, 87→1.219e9, 90→7.034e7, 216→3.153e8 m³/s²). Zweitquelle Goffin J/A+A/565/A56 (Typ „s"=Satellit belegt Begleiter-Ursprung; Antiope-Lücke). Force-Gate: gravity. INTEGRIERT (3fea875): `dastcom_compiler --gm` füllt gm_km3_s2 wo DASTCOM 0 trägt — 45/87/90/216 tragen echte GM (Limb-Dämpfung + Hill-Sphäre greifen für alle vier).
 
-ausstehend
+verifiziert
 bestand phi/katalog/asteroid_diameters_neowise.φ
-note NEOWISE/AKARI-Join: Durchmesser+Albedo (129.771) geerntet (neowise + asteroid_diameters_akari.φ) — Join „Asteroid → Durchmesser als Feld" in die Asteroiden-Blöcke offen (grind-pro-Join-Urteil, per Asteroiden-Bezeichnung); TODO Z.65–67
+note NEOWISE/AKARI-Join: Durchmesser+Albedo geerntet (asteroid_diameters_neowise.φ + asteroid_diameters_akari.φ, Format „num | diam_km | albedo"), Join-Key = Asteroidennummer. INTEGRIERT (3fea875): `dastcom_compiler --diameters` (NEOWISE primär, AKARI füllt Lücken; radius_km = diam/2 wo DASTCOM 0 trägt) — ~130k Asteroiden okkludieren mit echtem IR-Durchmesser, vorhandene Radien bleiben (0 honored, kein Ersetzen).
 
 verifiziert
 bestand phi/research/agent_output/recheck_b5_flash.φ
@@ -438,7 +438,15 @@ note pro_review_b5: Urteil gefällt und vollzogen (2026-08-18) — 30 per-Statio
 
 parser-gap
 kandidat https://supermag.jhuapl.edu/services/data.php
-note pro_review_b5: Daten-Route lebt (logon-only, kein Passwort — data.php?fmt=json&logon=omegaflow, echtes nT-JSON je Minute/Station; der frühere Server-Fault war nicht reproduzierbar). Offen: führende „OK"-Zeile (leading-line strip), Positions-Join über inventory.php (server-seitiger db-get-Fehler schlägt bei inventory weiterhin fehl — keine Station→Position-Zuordnung abrufbar), station=-Filter-Semantik unverifiziert.
+note pro_review_b5: Daten-Route lebt (logon-only, kein Passwort — data.php?fmt=json&logon=omegaflow, echtes nT-JSON je Minute/Station). AUFTEILUNG (2026-08-18): phi/-Zugang ist geklärt (logon=omegaflow als Query-Parameter, kein Key); src/-Parser-Logik bleibt pending für die Rust-Kybernautin — (1) leading-line „OK"-Strip vor dem JSON-Array, (2) Positions-Join über inventory.php (server-seitiger db-get-Fehler), (3) station=-Filter-Semantik unverifiziert.
+
+parser-gap
+kandidat https://argovis-api.colorado.edu/argo
+note Argovis-Port (2026-08-18): Route lebt (box/startDate RFC3339/data-Parameter; 404 mit []-Body = „Region ohne Profile", kein toter Endpoint). data liefert pro Variable ein Vertikalprofil-Array (935 Level) — kein Skalar. Einzelwert-Block wäre willkürliche Level-Wahl = Fabrikation. Parser-pending für die Rust-Kybernautin: Per-Level-Expansion (je Level ein Oscillator, alt = −pressure[dbar], val = data[i][k]; temperature thermal C, salinity diffusion psu, pressure gravity decibar). Spec: phi/research/agent_output/argovis_port.φ.
+
+ausstehend
+bestand phi/research/agent_output/compiler_inputs.φ
+note Compiler-Eingangsformate gesichtet (2026-08-18): MPCOBS = 4 gz-Dateien (NumObs/UnnObs/CmtObs/SatObs), header-lose 80-Spalten-Festbreiten-Records (Datum Sp.16-31, RA Sp.33-44, Dec Sp.45-56 J2000, Helligkeit+Band Sp.66-71, Obs-Code Sp.78-80); TIC v8.2 = header-lose CSV, 125 Felder, 2°-Dec-Bänder tic_dec{DD}_00{S}__{DD+2}_00{S}.csv.gz (90 Bänder), ra/dec/pmRA/pmDEC/plx/Tmag. Die Compiler (src/bin/) baut die Rust-Kybernautin.
 
 parser-gap
 kandidat https://dc.actris.nilu.no/data
