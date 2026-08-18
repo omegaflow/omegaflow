@@ -1038,6 +1038,17 @@ field properties.ATMP buoy_46092_air_temp_c erfc thermal C 86400 0.0 0.0
 field properties.WTMP buoy_46092_water_temp_c erfc thermal C 86400 0.0 0.0
 field properties.PRES buoy_46092_pressure_hpa gaussian-inverse-square advective hPa 86400 0.0 0.0
 
+url https://argovis-api.colorado.edu/argo?startDate={week_ago}T00:00:00Z&endDate={now}Z&box=[[{lon_min},{lat_min}],[{lon_max},{lat_max}]]&data=temperature,salinity,pressure
+ttl 86400
+on earth 0 0 0
+profile .
+lat geolocation.coordinates.1
+lon geolocation.coordinates.0
+epoch timestamp
+pressure pressure
+field temperature argo_temperature_c erfc thermal C 86400 0.0 0.0
+field salinity argo_salinity_psu erfc diffusion psu 86400 0.0 0.0
+
 url https://services1.arcgis.com/qr14biwnHA6Vis6l/arcgis/rest/services/Salinity/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
 ttl 86400
 at earth
@@ -1168,6 +1179,29 @@ dist dist
 dist_scale 3.085677581e16
 field masse planet_mass gaussian-inverse-square gravity M_earth 604800 0.0 0.0
 field rade planet_radius gaussian-inverse-square gravity R_earth 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/exoplanets.json
+format transit
+ttl 604800
+at sun
+transitmap data
+tra ra
+tdec dec
+tdist dist
+tdist_scale 3.085677581e16
+ta orbsmax
+te orbeccen
+ti orbincl
+tw orblper
+ttranmid tranmid
+tperiod orbper
+trp rade
+trs strad
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/tess_lightcurves.bin
+format lightcurve
+ttl 604800
+at sun
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/frb_a279.json
 ttl 604800

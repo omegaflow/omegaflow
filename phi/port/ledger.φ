@@ -438,11 +438,11 @@ note pro_review_b5: Urteil gefällt und vollzogen (2026-08-18) — 30 per-Statio
 
 parser-gap
 kandidat https://supermag.jhuapl.edu/services/data.php
-note pro_review_b5: Daten-Route lebt (logon-only, kein Passwort — data.php?fmt=json&logon=omegaflow, echtes nT-JSON je Minute/Station). AUFTEILUNG (2026-08-18): phi/-Zugang ist geklärt (logon=omegaflow als Query-Parameter, kein Key); src/-Parser-Logik bleibt pending für die Rust-Kybernautin — (1) leading-line „OK"-Strip vor dem JSON-Array, (2) Positions-Join über inventory.php (server-seitiger db-get-Fehler), (3) station=-Filter-Semantik unverifiziert.
+note pro_review_b5 + 2026-08-18: leading-line „OK"-Strip implementiert (src/). ABER Server-Fault REPRODUZIERT (2026-08-18): data.php UND inventory.php werfen `shell_exec: Unable to execute db-get -check logon` (db-get-Binary auf dem SuperMAG-Server nicht ausführbar). Solange der Server faultet, fließt kein nT-JSON — Positions-Join (inventory.php) + station=-Filter bleiben pending (server-seitig blockiert, nicht parser-seitig). phi/-Zugang bleibt logon-only (kein Key).
 
-parser-gap
+verifiziert
 kandidat https://argovis-api.colorado.edu/argo
-note Argovis-Port (2026-08-18): Route lebt (box/startDate RFC3339/data-Parameter; 404 mit []-Body = „Region ohne Profile", kein toter Endpoint). data liefert pro Variable ein Vertikalprofil-Array (935 Level) — kein Skalar. Einzelwert-Block wäre willkürliche Level-Wahl = Fabrikation. Parser-pending für die Rust-Kybernautin: Per-Level-Expansion (je Level ein Oscillator, alt = −pressure[dbar], val = data[i][k]; temperature thermal C, salinity diffusion psu, pressure gravity decibar). Spec: phi/research/agent_output/argovis_port.φ.
+note Argovis-Port ERLEDIGT (2026-08-18): ProfileMap-Extract (directive `profile`) + Per-Level-Expansion implementiert in src/ (alt = −pressure[dbar], val = data[i][k] je Level; temperature thermal C, salinity diffusion psu). Block lebt in sources.φ (box={lon_min}/{lat_min}/{lon_max}/{lat_max}, data=temperature,salinity,pressure). Spec: phi/research/agent_output/argovis_port.φ.
 
 ausstehend
 bestand phi/research/agent_output/compiler_inputs.φ

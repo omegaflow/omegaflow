@@ -470,7 +470,7 @@ note grind: grind_terrapulse_a.φ
 
 parser-def html
 url https://supermag.jhuapl.edu/mag/?fidelity=low&format=json&
-note SuperMAG (Boden-Magnetometer, em nT). HTML-Route (mag/) ist das Download-Formular; die Web-Service-Route services/data.php?fmt=json&logon=<name>&start=...&extent=...&station=... lebt (pro_review_b5 2026-08-18: 200, echtes nT-JSON je Minute/Station, logon=omegaflow reicht, kein Passwort — der frühere Server-Fault war nicht reproduzierbar). Parser-Items offen: führende „OK"-Zeile vor dem JSON-Array (leading-line strip) + Positions-Join über inventory.php (Struktur unverifiziert) + station=-Filter-Semantik unverifiziert.
+note SuperMAG (Boden-Magnetometer, em nT). HTML-Route (mag/) ist das Download-Formular; die Web-Service-Route services/data.php?fmt=json&logon=<name>&start=...&extent=...&station=... liefert echtes nT-JSON je Minute/Station, logon=omegaflow reicht, kein Passwort. 2026-08-18: leading-line „OK"-Strip implementiert (src/); aber Server-Fault REPRODUZIERT — data.php UND inventory.php werfen `db-get -check logon`-shell_exec-Fehler (db-get-Binary auf dem SuperMAG-Server nicht ausführbar). Positions-Join + station-Filter bleiben server-blockiert.
 
 parser-def html
 url https://tadas.afad.gov.tr/api/event/list?limit=200

@@ -14,6 +14,44 @@ um die Presence (dilatierter Suchradius). Richtung: räumlich gebinnte
 Assets (HEALPix), der Archivar holt nur die Bins, die die Hülle überlappen.
 Kein NASA-Denken — nur was die Membran benötigt.
 
+## Die Sphären des Unsichtbaren — Atom 1: Der Schatten
+
+- ~~Transit-Schatten~~ — ERLEDIGT (2026-08-18): pscomppars-Ernte um die
+  Bahnelemente (orbsmax/orbeccen/orbincl/orblper/tranmid/orbper) + strad
+  erweitert (kernel_flatten.yml); `format transit` + `transitmap`-Extrakt
+  bauen das PlanetSet (Stern-Anker ra/dec/dist; Kepler-Sky-Offset aus
+  tranmid + Periode, Ω-frei — der Schatten braucht keinen Azimut). Der
+  f64-Fold im Radiator paart Deep-Sterne mit ihren Wirtsplaneten
+  (Richtungs-Zellen 1e-3 rad, 2"-Match nach Eigenbewegungs-Korrektur der
+  Katalogposition, Katalog-Epoche J2016) und dimmt den Sternfluss um
+  1 − (R_p/R_s)², wenn der Planet bei presence.t die Sternscheibe deckt.
+  HUD `transit N`. Grenze registriert: der 3D-Orbit des Planetenpunkts
+  bleibt ausstehend — Ω (Azimut im Sky-Frame) ist ungemessen; der Schatten
+  ist Ω-frei, ein Punktorbit wäre geraten. Fehlt ein Element → kein
+  Schatten (0 honored).
+- ~~TESS-Pulsation~~ — ERLEDIGT (2026-08-18): `tess_compiler`
+  (exoplanetarchive-TAP-Ziel-Liste → MAST v0-invoke SPOC-2-min-Suche →
+  Download/file `_lc.fits`; `src/fits.rs` BINARY_TABLE-Leser — Offsets aus
+  TFORM/TBCOL, kein hartkodiertes Byte; PDCSAP_FLUX vor SAP_FLUX,
+  QUALITY≠0 + NaN verworfen) → `tess_lightcurves.bin` (TSS1, stern-indiziert,
+  sortierte [t, flux], Kadenz = Median der Lücken). `format lightcurve`
+  lädt das Asset; der Radiator emittiert pro Sense einen em-Oszillator je
+  Stern im Fenster: val = ehrlicher Nachbar-Sample, epoch = Sample-Epoche,
+  ttl = Kadenz — jenseits des Kurvenendes kein Oszillator (Lesart A, keine
+  Extrapolation). Der Gaia-Stern lebt mit Kepler-Dimmung weiter; Theorie
+  und Messung sitzen am selben Himmelsort.
+- MAST_TOKEN als CI-Secret: der Betreiber setzt `MAST_TOKEN` im Repo
+  (kernel_flatten.yml referenziert es; lokal liest der Compiler
+  .secrets.local). Bis dahin läuft die Ernte lokal mit `--ci-mode`.
+- Gewicht registriert: tess_lightcurves.bin ~500 MB (alle bestätigten
+  Transit-Wirte, SPOC-2-min). Der Archivar lädt es ganz; räumlich
+  gebinnte Kurven-Assets bleiben pending (Membran-scoped Cache).
+- Atom 2 (Ringe: eigener rings-Buffer + WGSL ring_transmission,
+  Literatur-τ mit Provenienz) — offen, eigene Session.
+- Atom 3 (Warp: Linsen-Kompiler — Gaia-BH-Kandidaten + ATNF-Pulsare mit
+  gemessener Masse; WD-Modell-Massen ausstehend; f64-Fold-Muster aus
+  Atom 1) — offen, eigene Session.
+
 ## Archivar — lokaler Crossmatch zweier Quellen (pending)
 
 Offen (2026-08-18). Anwendungsfall: Lasair (ZTF-Transienten, live, em) trägt
@@ -620,10 +658,10 @@ heute auf den Bestand unter /home/johannes/projects/archive/archeology/.
 22 Blöcke verloren Feldwerte durch die SI-Konversion. Alle sind jetzt
 verdrahtet — nichts bleibt dunkel.
 
-Pending Unit-Arme (ArcGIS b5, 2026-08-18): F (Fahrenheit, CHPL-Lufttemperatur),
-μg/L (Chlorophyll, CREST-Boje), mg/L (Sauerstoff, CREST-Boje), µS/cm
-(Leitfähigkeit, DC/DMF) — die Felder existieren in den Quellen,
-manifestieren erst mit dem convert_to_si-Arm.
+Pending Unit-Arme (2026-08-18): F (Fahrenheit, CHPL-Lufttemperatur), μg/L
+(Chlorophyll, CREST-Boje), mg/L (Sauerstoff, CREST-Boje) — die Felder
+existieren in den Quellen, manifestieren erst mit dem convert_to_si-Arm.
+(µS/cm erledigt 2026-08-18 — DC/DMF-Leitfähigkeit manifestiert jetzt.)
 
 ERLEDIGT (flux_from_mag, Primärband): cb(mag1), cometels(H), corot(mag),
 dcom5(H; M1 dark), denis(jmag; kmag dark), gcvs(mag), lmxb(mag1),
@@ -741,11 +779,10 @@ Konversion ist bekannt oder erforschbar — pending, keine Fälschung):
   GraceDB (Position nur via Skymap), DSN (statische Dish-Positionen),
   USGS-Geomag (Komponenten-Timeseries)
 - Rechecks offen (Stand 2026-08-18, alle src/ — Rust-Kybernautin):
-  Argovis-Per-Level-Parser (Route lebt, data = Vertikalprofil-Array je
-  Variable, 935 Level; Expansion alt=−pressure[dbar] — spec in
-  phi/research/agent_output/argovis_port.φ), SuperMAG (leading-line strip
-  + inventory-Positions-Join — server-seitiger db-get-Fehler — +
-  station-Filter-Semantik; phi/-Zugang logon-only ist geklärt).
+  Argovis-Per-Level-Parser ERLEDIGT (ProfileMap-Extract + Block in
+  sources.φ); SuperMAG: leading-line „OK"-Strip erledigt, aber
+  Positions-Join + station-Filter bleiben server-blockiert (db-get-Fault
+  reproduziert 2026-08-18; phi/-Zugang logon-only geklärt).
   NDBC-Konsolidierung vollzogen (912 Stationen verifiziert).
   sensor.community integriert. SDSS-photoObj integriert (photoObj.z =
   modelMag_z). MPCOBS + TIC: Eingangsformate gesichtet

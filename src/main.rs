@@ -1019,6 +1019,8 @@ struct Buffer {
     asteroids: Option<Arc<AsteroidHash>>,
     stars: Option<Arc<StarHash>>,
     occluders: Option<Arc<OccluderSet>>,
+    planets: Option<Arc<PlanetSet>>,
+    curves: Option<Arc<CurveSet>>,
 }
 struct AsteroidHash {
     cell_size: f64,
@@ -1062,6 +1064,30 @@ struct StarHash {
 }
 struct OccluderSet {
     records: Vec<AsteroidRec>,
+}
+struct PlanetRec {
+    star_p: [f64; 3],
+    a_au: f64,
+    e: f64,
+    incl_deg: f64,
+    w_deg: f64,
+    tranmid_jd: f64,
+    period_days: f64,
+    rp_m: f64,
+    rs_m: f64,
+}
+struct PlanetSet {
+    records: Vec<PlanetRec>,
+}
+struct CurveStar {
+    ra_deg: f64,
+    dec_deg: f64,
+    plx_mas: f64,
+    cadence: f64,
+    samples: Vec<(f64, f32)>,
+}
+struct CurveSet {
+    stars: Vec<CurveStar>,
 }
 #[derive(Clone, Debug)]
 enum Position {
@@ -1160,6 +1186,15 @@ enum Extract {
         fields: Vec<FieldConfig>,
         tau_key: String,
     },
+    ProfileMap {
+        arr_path: String,
+        lat_key: String,
+        lon_key: String,
+        epoch_key: String,
+        pressure_var: String,
+        pressure_scale: f64,
+        fields: Vec<FieldConfig>,
+    },
     Rows {
         last_line: bool,
         fields: Vec<FieldConfig>,
@@ -1197,6 +1232,21 @@ enum Extract {
         q_key: String,
         tp_key: String,
         fields: Vec<FieldConfig>,
+    },
+    TransitMap {
+        arr_path: String,
+        ra_key: String,
+        dec_key: String,
+        dist_key: String,
+        dist_scale: f64,
+        a_key: String,
+        e_key: String,
+        i_key: String,
+        w_key: String,
+        tranmid_key: String,
+        period_key: String,
+        rp_key: String,
+        rs_key: String,
     },
     Hapi(Vec<(String, String)>),
     XmlCount(String, String),
@@ -1257,6 +1307,7 @@ fn convert_to_si(value: f64, unit: &str) -> Option<f64> {
         "ug/m3" | "ug/m³" | "µg/m3" | "µg/m³" => Some(value * 1e-9),
         "ua/m2" | "ua/m²" | "µa/m2" | "µa/m²" => Some(value * 1e-6),
         "mv/m" => Some(value * 1e-3),
+        "us/cm" => Some(value * 1e-4),
         "uatm" => Some(value * 0.101325),
         "erg/cm2" => Some(value * 1e-3),
         "m3/s" | "m³/s" => Some(value),
@@ -1377,7 +1428,7 @@ fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
             "m/s", "km/h", "km/s", "knot", "kt", "m3/s", "cfs", "pa", "hpa", "mb", "m", "decibar",
             "npa",
         ],
-        8 => &["v/m", "v", "a", "s/m", "ua/m2", "mv/m"],
+        8 => &["v/m", "v", "a", "s/m", "ua/m2", "mv/m", "us/cm"],
         _ => &[],
     }
 }
@@ -1448,6 +1499,7 @@ trait Radiator: Send + Sync {
 }
 mod archivar {
     use super::*;
+    use crate::mathematikerin::{build_curve_set, build_planet_set};
     use omegaflow::dastcom::{
         accel_at_epoch, hill_radius_m, parse_record, speed_at_epoch, state_at, RECORD_STRIDE,
     };
@@ -1461,7 +1513,7 @@ mod archivar {
     use std::thread;
     use std::time::{SystemTime, UNIX_EPOCH};
     pub const J2000_EPOCH: f64 = 2451545.0;
-    const PARSEC_M: f64 = 3.085677581e16;
+    pub const PARSEC_M: f64 = 3.085677581e16;
     const C_LIGHT: f64 = 299792458.0;
     const HUBBLE_H0: f64 = 70000.0 / (PARSEC_M * 1.0e6);
     const MAS_YR_TO_RAD_S: f64 = 4.84813681109536e-9 / 31557600.0;
@@ -1872,7 +1924,7 @@ mod archivar {
 
     type Origin = u32;
 
-    type OscRecord = (
+    pub type OscRecord = (
         f64,
         f64,
         f64,
@@ -2042,6 +2094,8 @@ mod archivar {
         asteroids: Option<Arc<AsteroidHash>>,
         stars: Option<Arc<StarHash>>,
         occluders: Option<Arc<OccluderSet>>,
+        planets: Option<Arc<PlanetSet>>,
+        curves: Option<Arc<CurveSet>>,
     ) -> Buffer {
         let mut body_samps: HashMap<String, Vec<Oscillator>> = HashMap::new();
         let mut inertial_samps = Vec::new();
@@ -2063,6 +2117,8 @@ mod archivar {
             asteroids,
             stars,
             occluders,
+            planets,
+            curves,
         }
     }
 
@@ -2329,7 +2385,7 @@ mod archivar {
         })
     }
 
-    fn star_position_at(rec: &StarRec, t2: f64) -> ([f64; 3], [f64; 3]) {
+    pub fn star_position_at(rec: &StarRec, t2: f64) -> ([f64; 3], [f64; 3]) {
         let dt_yr = t2 / (86400.0 * 365.25);
         let dec_rad = rec.dec_deg.to_radians();
         let ra = rec.ra_deg + rec.pm_ra_masyr / (3.6e6 * dec_rad.cos().max(1e-6)) * dt_yr;
@@ -2852,11 +2908,17 @@ mod archivar {
         }
     }
 
-    pub fn sense_deep(buf: &Buffer, center: [f64; 3], t2: f64, out: &mut Vec<[f64; 7]>) {
+    pub fn sense_deep(
+        buf: &Buffer,
+        center: [f64; 3],
+        t2: f64,
+        out: &mut Vec<[f64; 7]>,
+        factors: &HashMap<usize, f64>,
+    ) {
         let Some(sh) = &buf.stars else {
             return;
         };
-        for rec in &sh.records {
+        for (si, rec) in sh.records.iter().enumerate() {
             if rec.flux < STAR_FLUX_FLOOR {
                 continue;
             }
@@ -2866,11 +2928,15 @@ mod archivar {
             if d <= 0.0 {
                 continue;
             }
+            let flux = match factors.get(&si) {
+                Some(f) => rec.flux * f,
+                None => rec.flux,
+            };
             out.push([
                 rel[0] / d,
                 rel[1] / d,
                 rel[2] / d,
-                rec.flux,
+                flux,
                 rec.tau,
                 0.0,
                 rec.color_index,
@@ -3648,7 +3714,7 @@ mod archivar {
         }
     }
 
-    fn jpath_val<'a>(json: &'a JsonVal, path: &str) -> Option<&'a JsonVal> {
+    pub fn jpath_val<'a>(json: &'a JsonVal, path: &str) -> Option<&'a JsonVal> {
         if path.is_empty() || path == "." {
             return Some(json);
         }
@@ -3737,6 +3803,9 @@ mod archivar {
                         }
                         | Extract::KeplerMap {
                             arr_path, fields, ..
+                        }
+                        | Extract::ProfileMap {
+                            arr_path, fields, ..
                         } => {
                             if let Some(JsonVal::Arr(arr)) = jpath_val(&j, arr_path) {
                                 if !arr.is_empty() {
@@ -3752,6 +3821,13 @@ mod archivar {
                         Extract::Rows { .. } | Extract::GeojsonEvents { .. } | Extract::Hapi(_) => {
                             if json_has_content(&j) {
                                 arr_has_rows = true;
+                            }
+                        }
+                        Extract::TransitMap { arr_path, .. } => {
+                            if let Some(JsonVal::Arr(arr)) = jpath_val(&j, arr_path) {
+                                if !arr.is_empty() {
+                                    arr_has_rows = true;
+                                }
                             }
                         }
                         Extract::Field(FieldConfig { key, .. })
@@ -3800,7 +3876,7 @@ mod archivar {
         }
     }
 
-    fn jnum(json: &JsonVal, key: &str) -> Option<f64> {
+    pub fn jnum(json: &JsonVal, key: &str) -> Option<f64> {
         if key.contains('.') {
             return jpath_val(json, key).and_then(scalar_of);
         }
@@ -4304,6 +4380,7 @@ mod archivar {
             | Extract::CmrPolygon { fields, .. }
             | Extract::CelestialPolygon { fields, .. }
             | Extract::KeplerMap { fields, .. } => fields,
+            Extract::TransitMap { .. } => &[],
             Extract::Field(fc)
             | Extract::First(fc)
             | Extract::Last(fc)
@@ -4451,6 +4528,8 @@ mod archivar {
         asteroid_hash: Option<Arc<AsteroidHash>>,
         star_hash: Option<Arc<StarHash>>,
         occluders: Option<Arc<OccluderSet>>,
+        planets: Option<Arc<PlanetSet>>,
+        curves: Option<Arc<CurveSet>>,
     }
 
     const AUDIO_SAMPLE_RATE: u32 = 44100;
@@ -4611,6 +4690,8 @@ mod archivar {
         asteroids: Option<Arc<AsteroidHash>>,
         stars: Option<Arc<StarHash>>,
         occluders: Option<Arc<OccluderSet>>,
+        planets: Option<Arc<PlanetSet>>,
+        curves: Option<Arc<CurveSet>>,
     }
 
     fn days_to_ymd(total_days: u64) -> (u32, u32, u32) {
@@ -5429,6 +5510,17 @@ mod archivar {
                         tau_key: String::new(),
                     });
                 }
+                "profile" if parts.len() >= 2 => {
+                    cur_extracts.push(Extract::ProfileMap {
+                        arr_path: parts[1].to_string(),
+                        lat_key: String::new(),
+                        lon_key: String::new(),
+                        epoch_key: String::new(),
+                        pressure_var: String::new(),
+                        pressure_scale: 1.0,
+                        fields: Vec::new(),
+                    });
+                }
                 "rows" => {
                     cur_extracts.push(Extract::Rows {
                         last_line: false,
@@ -5713,6 +5805,23 @@ mod archivar {
                         fields: Vec::new(),
                     });
                 }
+                "transitmap" if parts.len() >= 2 => {
+                    cur_extracts.push(Extract::TransitMap {
+                        arr_path: parts[1].to_string(),
+                        ra_key: String::new(),
+                        dec_key: String::new(),
+                        dist_key: String::new(),
+                        dist_scale: 3.085677581e16,
+                        a_key: String::new(),
+                        e_key: String::new(),
+                        i_key: String::new(),
+                        w_key: String::new(),
+                        tranmid_key: String::new(),
+                        period_key: String::new(),
+                        rp_key: String::new(),
+                        rs_key: String::new(),
+                    });
+                }
                 "hapi" if parts.len() >= 2 => {
                     let mut params = Vec::new();
                     for s in &parts[1..] {
@@ -5913,6 +6022,9 @@ mod archivar {
                     } else if let Some(Extract::KeplerMap { fields, .. }) = cur_extracts.last_mut()
                     {
                         fields.push(fc);
+                    } else if let Some(Extract::ProfileMap { fields, .. }) = cur_extracts.last_mut()
+                    {
+                        fields.push(fc);
                     } else {
                         cur_extracts.push(Extract::Field(fc.clone()));
                     }
@@ -5924,16 +6036,20 @@ mod archivar {
                         &format!("field arity {}: {}", parts.len(), line),
                     );
                 }
-                "lat" if parts.len() >= 2 => {
-                    if let Some(Extract::Map { lat_key, .. }) = cur_extracts.last_mut() {
+                "lat" if parts.len() >= 2 => match cur_extracts.last_mut() {
+                    Some(Extract::Map { lat_key, .. })
+                    | Some(Extract::ProfileMap { lat_key, .. }) => {
                         *lat_key = parts[1].to_string();
                     }
-                }
-                "lon" if parts.len() >= 2 => {
-                    if let Some(Extract::Map { lon_key, .. }) = cur_extracts.last_mut() {
+                    _ => {}
+                },
+                "lon" if parts.len() >= 2 => match cur_extracts.last_mut() {
+                    Some(Extract::Map { lon_key, .. })
+                    | Some(Extract::ProfileMap { lon_key, .. }) => {
                         *lon_key = parts[1].to_string();
                     }
-                }
+                    _ => {}
+                },
                 "lat_sign" if parts.len() >= 2 => {
                     if let Some(Extract::Map { lat_sign, .. }) = cur_extracts.last_mut() {
                         *lat_sign = Some(parts[1].to_string());
@@ -5973,11 +6089,27 @@ mod archivar {
                 }
                 "epoch" if parts.len() >= 2 => match cur_extracts.last_mut() {
                     Some(Extract::Map { epoch_key, .. })
-                    | Some(Extract::KeplerMap { epoch_key, .. }) => {
+                    | Some(Extract::KeplerMap { epoch_key, .. })
+                    | Some(Extract::ProfileMap { epoch_key, .. }) => {
                         *epoch_key = parts[1].to_string();
                     }
                     _ => {}
                 },
+                "pressure" if parts.len() >= 2 => {
+                    if let Some(Extract::ProfileMap {
+                        pressure_var,
+                        pressure_scale,
+                        ..
+                    }) = cur_extracts.last_mut()
+                    {
+                        *pressure_var = parts[1].to_string();
+                        if parts.len() >= 3 {
+                            if let Ok(s) = parts[2].parse::<f64>() {
+                                *pressure_scale = s;
+                            }
+                        }
+                    }
+                }
                 "a" if parts.len() >= 2 => {
                     if let Some(Extract::KeplerMap { a_key, .. }) = cur_extracts.last_mut() {
                         *a_key = parts[1].to_string();
@@ -6174,6 +6306,70 @@ mod archivar {
                         {
                             *dist_scale = v;
                         }
+                    }
+                }
+                "tra" if parts.len() >= 2 => {
+                    if let Some(Extract::TransitMap { ra_key, .. }) = cur_extracts.last_mut() {
+                        *ra_key = parts[1].to_string();
+                    }
+                }
+                "tdec" if parts.len() >= 2 => {
+                    if let Some(Extract::TransitMap { dec_key, .. }) = cur_extracts.last_mut() {
+                        *dec_key = parts[1].to_string();
+                    }
+                }
+                "tdist" if parts.len() >= 2 => {
+                    if let Some(Extract::TransitMap { dist_key, .. }) = cur_extracts.last_mut() {
+                        *dist_key = parts[1].to_string();
+                    }
+                }
+                "tdist_scale" if parts.len() >= 2 => {
+                    if let Ok(v) = parts[1].parse::<f64>() {
+                        if let Some(Extract::TransitMap { dist_scale, .. }) =
+                            cur_extracts.last_mut()
+                        {
+                            *dist_scale = v;
+                        }
+                    }
+                }
+                "ta" if parts.len() >= 2 => {
+                    if let Some(Extract::TransitMap { a_key, .. }) = cur_extracts.last_mut() {
+                        *a_key = parts[1].to_string();
+                    }
+                }
+                "te" if parts.len() >= 2 => {
+                    if let Some(Extract::TransitMap { e_key, .. }) = cur_extracts.last_mut() {
+                        *e_key = parts[1].to_string();
+                    }
+                }
+                "ti" if parts.len() >= 2 => {
+                    if let Some(Extract::TransitMap { i_key, .. }) = cur_extracts.last_mut() {
+                        *i_key = parts[1].to_string();
+                    }
+                }
+                "tw" if parts.len() >= 2 => {
+                    if let Some(Extract::TransitMap { w_key, .. }) = cur_extracts.last_mut() {
+                        *w_key = parts[1].to_string();
+                    }
+                }
+                "ttranmid" if parts.len() >= 2 => {
+                    if let Some(Extract::TransitMap { tranmid_key, .. }) = cur_extracts.last_mut() {
+                        *tranmid_key = parts[1].to_string();
+                    }
+                }
+                "tperiod" if parts.len() >= 2 => {
+                    if let Some(Extract::TransitMap { period_key, .. }) = cur_extracts.last_mut() {
+                        *period_key = parts[1].to_string();
+                    }
+                }
+                "trp" if parts.len() >= 2 => {
+                    if let Some(Extract::TransitMap { rp_key, .. }) = cur_extracts.last_mut() {
+                        *rp_key = parts[1].to_string();
+                    }
+                }
+                "trs" if parts.len() >= 2 => {
+                    if let Some(Extract::TransitMap { rs_key, .. }) = cur_extracts.last_mut() {
+                        *rs_key = parts[1].to_string();
                     }
                 }
                 "format" if parts.len() >= 2 => cur_format = parts[1..].join(" "),
@@ -7132,6 +7328,10 @@ mod archivar {
         } else if src.format == "tap" {
             parse_json(body).and_then(|j| tap_to_json(&j))
         } else if src.format == "json" || src.format.is_empty() || src.format == "universal" {
+            let body = body
+                .strip_prefix("OK")
+                .and_then(|r| r.strip_prefix('\n').or_else(|| r.strip_prefix("\r\n")))
+                .unwrap_or(body);
             parse_json(body)
         } else {
             None
@@ -7464,6 +7664,118 @@ mod archivar {
                                                 value: val,
                                             },
                                             eff_fc,
+                                        ));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                Extract::ProfileMap {
+                    arr_path,
+                    lat_key,
+                    lon_key,
+                    epoch_key,
+                    pressure_var,
+                    pressure_scale,
+                    fields,
+                } => {
+                    if let Some(ref j) = parsed_json {
+                        let rows: Vec<&JsonVal> = match jpath_val(j, arr_path) {
+                            Some(JsonVal::Arr(arr)) => arr.iter().collect(),
+                            Some(obj @ JsonVal::Obj(_)) => vec![obj],
+                            _ => Vec::new(),
+                        };
+                        for v in rows {
+                            let lat = jpath(v, &lat_key);
+                            let lon = jpath(v, &lon_key);
+                            if let (Some(la), Some(lo)) = (lat, lon) {
+                                let epoch = if epoch_key.is_empty() {
+                                    now
+                                } else if let Some(ev) = jpath_val(v, &epoch_key) {
+                                    match ev {
+                                        JsonVal::Str(s) => {
+                                            if let Some(t) = parse_iso_tdb(s, lsk) {
+                                                t
+                                            } else {
+                                                continue;
+                                            }
+                                        }
+                                        JsonVal::Num(n) => match lsk.unix_to_tdb(*n) {
+                                            Some(t) => t,
+                                            None => continue,
+                                        },
+                                        _ => continue,
+                                    }
+                                } else {
+                                    continue;
+                                };
+                                let data = match jpath_val(v, "data") {
+                                    Some(JsonVal::Arr(d)) => d,
+                                    _ => continue,
+                                };
+                                let (var_names, pressure_idx) = match jpath_val(v, "data_info") {
+                                    Some(JsonVal::Arr(info)) => {
+                                        let names: Vec<String> = match info.first() {
+                                            Some(JsonVal::Arr(n)) => n
+                                                .iter()
+                                                .filter_map(|e| match e {
+                                                    JsonVal::Str(s) => Some(s.clone()),
+                                                    _ => None,
+                                                })
+                                                .collect(),
+                                            _ => Vec::new(),
+                                        };
+                                        let pidx = names.iter().position(|n| n == pressure_var);
+                                        (names, pidx)
+                                    }
+                                    _ => (Vec::new(), None),
+                                };
+                                let pidx = match pressure_idx {
+                                    Some(i) => i,
+                                    None => continue,
+                                };
+                                let pressure = match data.get(pidx) {
+                                    Some(JsonVal::Arr(p)) => p,
+                                    _ => continue,
+                                };
+                                let n_levels = pressure.len();
+                                for fc in fields {
+                                    let vidx = match var_names.iter().position(|n| *n == fc.key) {
+                                        Some(i) => i,
+                                        None => continue,
+                                    };
+                                    let values = match data.get(vidx) {
+                                        Some(JsonVal::Arr(a)) => a,
+                                        _ => continue,
+                                    };
+                                    for k in 0..n_levels {
+                                        let p = match pressure.get(k) {
+                                            Some(JsonVal::Num(x)) => *x,
+                                            _ => continue,
+                                        };
+                                        let val = match values.get(k) {
+                                            Some(JsonVal::Num(x)) => *x,
+                                            _ => continue,
+                                        };
+                                        if val.is_nan() {
+                                            continue;
+                                        }
+                                        let position = Position::Surface {
+                                            body_name: frame_body_name(&src.frame),
+                                            lat: la,
+                                            lon: lo,
+                                            alt: -p * pressure_scale,
+                                        };
+                                        channels.push((
+                                            Channel {
+                                                z: 0.0,
+                                                epoch,
+                                                position,
+                                                name: fc.name.clone(),
+                                                value: val,
+                                            },
+                                            fc.clone(),
                                         ));
                                     }
                                 }
@@ -8307,6 +8619,7 @@ mod archivar {
                         }
                     }
                 }
+                Extract::TransitMap { .. } => {}
             }
         }
         if !extracted.is_empty() {
@@ -11082,6 +11395,8 @@ mod archivar {
                 None,
                 None,
                 None,
+                None,
+                None,
             )),
             presence: HashMap::new(),
             declared_body,
@@ -11091,6 +11406,8 @@ mod archivar {
             asteroids: None,
             stars: None,
             occluders: None,
+            planets: None,
+            curves: None,
         };
         let body_names: Arc<Vec<String>> = {
             let mut names: Vec<String> = archive
@@ -11289,6 +11606,12 @@ mod archivar {
                 if let Some(occluders) = res.occluders {
                     archive.occluders = Some(occluders);
                 }
+                if let Some(planets) = res.planets {
+                    archive.planets = Some(planets);
+                }
+                if let Some(curves) = res.curves {
+                    archive.curves = Some(curves);
+                }
                 let src = &archive.sources[res.source_idx];
                 for (channel, sensor) in &res.channels {
                     let track_origin = matches!(channel.position, Position::Source)
@@ -11403,6 +11726,8 @@ mod archivar {
                                     asteroid_hash: None,
                                     star_hash: None,
                                     occluders: None,
+                                    planets: None,
+                                    curves: None,
                                 });
                             }
                         });
@@ -11456,6 +11781,8 @@ mod archivar {
                             asteroid_hash: Some(Arc::new(hash)),
                             star_hash: None,
                             occluders: Some(Arc::new(occluders)),
+                            planets: None,
+                            curves: None,
                         });
                     });
                     continue;
@@ -11506,6 +11833,97 @@ mod archivar {
                             asteroid_hash: None,
                             star_hash: Some(Arc::new(hash)),
                             occluders: None,
+                            planets: None,
+                            curves: None,
+                        });
+                    });
+                    continue;
+                }
+                if archive.sources[i].format == "transit" {
+                    let url = archive.sources[i].url.clone();
+                    let ftx = fetch_tx.clone();
+                    let src_clone = archive.sources[i].clone();
+                    let src_idx = i;
+                    let src_ttl = src_clone.ttl;
+                    archive.origins.entry(origin).or_insert(OriginState {
+                        fetched: now,
+                        prev_epoch: now,
+                        prev_abs: [0.0, 0.0, 0.0],
+                        prev_motion: None,
+                        resid_ema: 0.0,
+                        has_prev: false,
+                    });
+                    thread::spawn(move || {
+                        let name = url.rsplit('/').next().unwrap_or("planets").to_string();
+                        let tmp_path = format!("/tmp/omegaflow_catalog_{}", name);
+                        if !cache_fresh(&tmp_path, src_ttl) {
+                            let bytes = match fetch_raw_bytes(&url, src_ttl) {
+                                Some(b) => b,
+                                None => return,
+                            };
+                            if std::fs::write(&tmp_path, &bytes).is_err() {
+                                return;
+                            }
+                        }
+                        let body = match std::fs::read_to_string(&tmp_path) {
+                            Ok(b) => b,
+                            Err(_) => return,
+                        };
+                        let planets = build_planet_set(&src_clone, &body);
+                        eprintln!("\r\x1b[Ktransit: {} planeten", planets.records.len());
+                        let _ = ftx.send(FetchResult {
+                            source_idx: src_idx,
+                            channels: Vec::new(),
+                            eph_update: None,
+                            asteroid_hash: None,
+                            star_hash: None,
+                            occluders: None,
+                            planets: Some(Arc::new(planets)),
+                            curves: None,
+                        });
+                    });
+                    continue;
+                }
+                if archive.sources[i].format == "lightcurve" {
+                    let url = archive.sources[i].url.clone();
+                    let ftx = fetch_tx.clone();
+                    let src_idx = i;
+                    let src_ttl = archive.sources[i].ttl;
+                    archive.origins.entry(origin).or_insert(OriginState {
+                        fetched: now,
+                        prev_epoch: now,
+                        prev_abs: [0.0, 0.0, 0.0],
+                        prev_motion: None,
+                        resid_ema: 0.0,
+                        has_prev: false,
+                    });
+                    thread::spawn(move || {
+                        let name = url.rsplit('/').next().unwrap_or("curves").to_string();
+                        let tmp_path = format!("/tmp/omegaflow_catalog_{}", name);
+                        if !cache_fresh(&tmp_path, src_ttl) {
+                            let bytes = match fetch_raw_bytes(&url, src_ttl) {
+                                Some(b) => b,
+                                None => return,
+                            };
+                            if std::fs::write(&tmp_path, &bytes).is_err() {
+                                return;
+                            }
+                        }
+                        let bytes = match std::fs::read(&tmp_path) {
+                            Ok(b) => b,
+                            Err(_) => return,
+                        };
+                        let curves = build_curve_set(&bytes);
+                        eprintln!("\r\x1b[Klightcurve: {} sterne", curves.stars.len());
+                        let _ = ftx.send(FetchResult {
+                            source_idx: src_idx,
+                            channels: Vec::new(),
+                            eph_update: None,
+                            asteroid_hash: None,
+                            star_hash: None,
+                            occluders: None,
+                            planets: None,
+                            curves: Some(Arc::new(curves)),
                         });
                     });
                     continue;
@@ -11554,6 +11972,8 @@ mod archivar {
                                 asteroid_hash: None,
                                 star_hash: None,
                                 occluders: None,
+                                planets: None,
+                                curves: None,
                             });
                         }
                     });
@@ -11652,6 +12072,8 @@ mod archivar {
                                 asteroid_hash: None,
                                 star_hash: None,
                                 occluders: None,
+                                planets: None,
+                                curves: None,
                             });
                         }
                         return;
@@ -11678,6 +12100,8 @@ mod archivar {
                                     asteroid_hash: None,
                                     star_hash: None,
                                     occluders: None,
+                                    planets: None,
+                                    curves: None,
                                 });
                                 v
                             }
@@ -11691,6 +12115,8 @@ mod archivar {
                         asteroid_hash: None,
                         star_hash: None,
                         occluders: None,
+                        planets: None,
+                        curves: None,
                     });
                 });
             }
@@ -11760,6 +12186,8 @@ mod archivar {
                     archive.asteroids.clone(),
                     archive.stars.clone(),
                     archive.occluders.clone(),
+                    archive.planets.clone(),
+                    archive.curves.clone(),
                 ));
             }
             let f = archive.field.clone();
@@ -12934,6 +13362,35 @@ field temp temp_c\n";
                 "port convert: {} blocks, {} parsed, {} with extracts",
                 blocks, parsed, with_extracts
             );
+        }
+
+        #[test]
+        fn test_profile_map_parse() {
+            let block = "url https://argovis-api.colorado.edu/argo?data=temperature,salinity,pressure\nttl 86400\non earth 0 0 0\nprofile .\nlat geolocation.coordinates.1\nlon geolocation.coordinates.0\nepoch timestamp\npressure pressure\nfield temperature argo_temperature_c erfc thermal C 86400 0.0 0.0\nfield salinity argo_salinity_psu erfc diffusion psu 86400 0.0 0.0\n";
+            let srcs = super::parse_sources(block);
+            assert_eq!(srcs.len(), 1);
+            let prof = srcs[0].extracts.iter().find_map(|e| match e {
+                super::Extract::ProfileMap {
+                    pressure_var,
+                    fields,
+                    lat_key,
+                    lon_key,
+                    ..
+                } => Some((
+                    pressure_var.clone(),
+                    fields,
+                    lat_key.clone(),
+                    lon_key.clone(),
+                )),
+                _ => None,
+            });
+            let (pv, fields, lk, ok) = prof.expect("ProfileMap extract fehlt");
+            assert_eq!(pv, "pressure");
+            assert_eq!(lk, "geolocation.coordinates.1");
+            assert_eq!(ok, "geolocation.coordinates.0");
+            assert_eq!(fields.len(), 2);
+            assert_eq!(fields[0].key, "temperature");
+            assert_eq!(fields[1].key, "salinity");
         }
 
         #[test]
@@ -15080,9 +15537,11 @@ field temp temp_c\n";
 mod mathematikerin {
     use super::*;
     use crate::archivar::{
-        body_barycenter_position, sense_deep, sense_membrane, system_now, J2000_EPOCH,
+        body_barycenter_position, jnum, jpath_val, parse_json, sense_deep, sense_membrane,
+        star_position_at, system_now, JsonVal, OscRecord, J2000_EPOCH, PARSEC_M,
     };
     use omegaflow::dastcom::state_at;
+    use omegaflow::force::kernel_id_for_force;
     use std::collections::{HashMap, HashSet};
     use std::sync::atomic::{AtomicBool, Ordering};
     use std::sync::{mpsc, Arc, Mutex};
@@ -15441,6 +15900,388 @@ mod mathematikerin {
     const OCC_REFRESH_T: f64 = 60.0;
     const OCC_REFRESH_R: f64 = 1.0e8;
     const OCC_SCAN_T: f64 = 1.0;
+    const CATALOG_EPOCH_SECS: f64 = 16.0 * 31557600.0;
+    const TRANSIT_MATCH_COS: f64 = 1.0 - 4.7e-11;
+    const R_EARTH_M: f64 = 6.371e6;
+    const R_SUN_M: f64 = 6.957e8;
+
+    struct TransitIndex {
+        t: f64,
+        center: [f64; 3],
+        cells: HashMap<(i32, i32), Vec<u32>>,
+    }
+
+    pub fn build_planet_set(src: &SourceConfig, body: &str) -> PlanetSet {
+        let mut records = Vec::new();
+        let keys = match src.extracts.iter().find_map(|e| match e {
+            Extract::TransitMap {
+                arr_path,
+                ra_key,
+                dec_key,
+                dist_key,
+                dist_scale,
+                a_key,
+                e_key,
+                i_key,
+                w_key,
+                tranmid_key,
+                period_key,
+                rp_key,
+                rs_key,
+            } => Some((
+                arr_path.clone(),
+                ra_key.clone(),
+                dec_key.clone(),
+                dist_key.clone(),
+                *dist_scale,
+                a_key.clone(),
+                e_key.clone(),
+                i_key.clone(),
+                w_key.clone(),
+                tranmid_key.clone(),
+                period_key.clone(),
+                rp_key.clone(),
+                rs_key.clone(),
+            )),
+            _ => None,
+        }) {
+            Some(k) => k,
+            None => return PlanetSet { records },
+        };
+        let Some(j) = parse_json(body) else {
+            return PlanetSet { records };
+        };
+        let Some(JsonVal::Arr(arr)) = jpath_val(&j, &keys.0) else {
+            return PlanetSet { records };
+        };
+        for v in arr {
+            let Some(ra_deg) = jnum(v, &keys.1) else {
+                continue;
+            };
+            let Some(dec_deg) = jnum(v, &keys.2) else {
+                continue;
+            };
+            let Some(dist_pc) = jnum(v, &keys.3) else {
+                continue;
+            };
+            if dist_pc <= 0.0 {
+                continue;
+            }
+            let Some(a_au) = jnum(v, &keys.5) else {
+                continue;
+            };
+            let Some(e) = jnum(v, &keys.6) else {
+                continue;
+            };
+            let Some(incl_deg) = jnum(v, &keys.7) else {
+                continue;
+            };
+            let w_deg = match jnum(v, &keys.8) {
+                Some(w) => w,
+                None if e <= 0.0 => 0.0,
+                None => continue,
+            };
+            let Some(tranmid_jd) = jnum(v, &keys.9) else {
+                continue;
+            };
+            let Some(period_days) = jnum(v, &keys.10) else {
+                continue;
+            };
+            let Some(rp_re) = jnum(v, &keys.11) else {
+                continue;
+            };
+            let Some(rs_rsun) = jnum(v, &keys.12) else {
+                continue;
+            };
+            if !(a_au > 0.0 && e >= 0.0 && e < 1.0 && period_days > 0.0) {
+                continue;
+            }
+            if !(rp_re > 0.0 && rs_rsun > 0.0) {
+                continue;
+            }
+            let ra = ra_deg.to_radians();
+            let dec = dec_deg.to_radians();
+            let (sa, ca) = ra.sin_cos();
+            let (sd, cd) = dec.sin_cos();
+            let d_m = dist_pc * keys.4;
+            let p_hat = [cd * ca, cd * sa, sd];
+            records.push(PlanetRec {
+                star_p: [p_hat[0] * d_m, p_hat[1] * d_m, p_hat[2] * d_m],
+                a_au,
+                e,
+                incl_deg,
+                w_deg,
+                tranmid_jd,
+                period_days,
+                rp_m: rp_re * R_EARTH_M,
+                rs_m: rs_rsun * R_SUN_M,
+            });
+        }
+        PlanetSet { records }
+    }
+
+    fn sky_offset_m(rec: &PlanetRec, t: f64) -> f64 {
+        let t_jd = t / 86400.0 + J2000_EPOCH;
+        let dt_days = t_jd - rec.tranmid_jd;
+        let n = std::f64::consts::TAU / rec.period_days;
+        let a_m = rec.a_au * omegaflow::kepler::AU_M;
+        let cos_i = rec.incl_deg.to_radians().cos();
+        if rec.e <= 0.0 {
+            let phase = (n * dt_days).rem_euclid(std::f64::consts::TAU);
+            let (sin_p, cos_p) = phase.sin_cos();
+            return a_m * (sin_p * sin_p + cos_p * cos_p * cos_i * cos_i).sqrt();
+        }
+        let e = rec.e;
+        let nu_t = std::f64::consts::FRAC_PI_2 - rec.w_deg.to_radians();
+        let sq = (1.0 - e).sqrt();
+        let cq = (1.0 + e).sqrt();
+        let e_t = 2.0 * ((sq * (nu_t * 0.5).sin()).atan2(cq * (nu_t * 0.5).cos()));
+        let m_t = e_t - e * e_t.sin();
+        let m = (m_t + n * dt_days).rem_euclid(std::f64::consts::TAU);
+        let ecc = omegaflow::kepler::solve_kepler_ecc(m, e);
+        let cos_e = ecc.cos();
+        let r_m = a_m * (1.0 - e * cos_e);
+        let denom = 1.0 - e * cos_e;
+        let sin_nu = (1.0 - e * e).sqrt() * ecc.sin() / denom;
+        let cos_nu = (cos_e - e) / denom;
+        let w = rec.w_deg.to_radians();
+        let (sw, cw) = w.sin_cos();
+        let x = r_m * (cos_nu * cw - sin_nu * sw);
+        let y = r_m * (sin_nu * cw + cos_nu * sw);
+        (x * x + y * y * cos_i * cos_i).sqrt()
+    }
+
+    fn transit_factors(
+        pset: &PlanetSet,
+        index: &mut Option<TransitIndex>,
+        stars: &StarHash,
+        center: [f64; 3],
+        t: f64,
+    ) -> HashMap<usize, f64> {
+        let mut out: HashMap<usize, f64> = HashMap::new();
+        if pset.records.is_empty() || stars.records.is_empty() {
+            return out;
+        }
+        let rebuild = match index.as_ref() {
+            None => true,
+            Some(ix) => {
+                (t - ix.t).abs() > OCC_REFRESH_T
+                    || (center[0] - ix.center[0]).abs() > OCC_REFRESH_R
+                    || (center[1] - ix.center[1]).abs() > OCC_REFRESH_R
+                    || (center[2] - ix.center[2]).abs() > OCC_REFRESH_R
+            }
+        };
+        if rebuild {
+            let mut cells: HashMap<(i32, i32), Vec<u32>> = HashMap::new();
+            for (si, rec) in stars.records.iter().enumerate() {
+                let (p, _) = star_position_at(rec, t);
+                let cb = [p[0] - center[0], p[1] - center[1], p[2] - center[2]];
+                let d = (cb[0] * cb[0] + cb[1] * cb[1] + cb[2] * cb[2]).sqrt();
+                if d <= 0.0 {
+                    continue;
+                }
+                cells
+                    .entry(occ_dir_cell([cb[0] / d, cb[1] / d, cb[2] / d]))
+                    .or_default()
+                    .push(si as u32);
+            }
+            *index = Some(TransitIndex { t, center, cells });
+        }
+        let Some(ix) = index.as_ref() else {
+            return out;
+        };
+        for prec in &pset.records {
+            let hb = [
+                prec.star_p[0] - center[0],
+                prec.star_p[1] - center[1],
+                prec.star_p[2] - center[2],
+            ];
+            let dhb = (hb[0] * hb[0] + hb[1] * hb[1] + hb[2] * hb[2]).sqrt();
+            if dhb <= 0.0 {
+                continue;
+            }
+            let host_cell = occ_dir_cell([hb[0] / dhb, hb[1] / dhb, hb[2] / dhb]);
+            for dla in -1..=1 {
+                for dlo in -1..=1 {
+                    let cell = (
+                        host_cell.0 + dla,
+                        (host_cell.1 + dlo).rem_euclid(OCC_LON_BANDS),
+                    );
+                    let Some(ids) = ix.cells.get(&cell) else {
+                        continue;
+                    };
+                    for &si in ids {
+                        let rec = &stars.records[si as usize];
+                        let (p, vel) = star_position_at(rec, t);
+                        let dt_cat = t - CATALOG_EPOCH_SECS;
+                        let h = [
+                            prec.star_p[0] + vel[0] * dt_cat,
+                            prec.star_p[1] + vel[1] * dt_cat,
+                            prec.star_p[2] + vel[2] * dt_cat,
+                        ];
+                        let dh = (h[0] * h[0] + h[1] * h[1] + h[2] * h[2]).sqrt();
+                        if dh <= 0.0 {
+                            continue;
+                        }
+                        let cbp = [p[0] - center[0], p[1] - center[1], p[2] - center[2]];
+                        let dp = (cbp[0] * cbp[0] + cbp[1] * cbp[1] + cbp[2] * cbp[2]).sqrt();
+                        if dp <= 0.0 {
+                            continue;
+                        }
+                        let cosang = (cbp[0] * h[0] + cbp[1] * h[1] + cbp[2] * h[2]) / (dp * dh);
+                        if cosang < TRANSIT_MATCH_COS {
+                            continue;
+                        }
+                        let offset = sky_offset_m(prec, t);
+                        if offset >= prec.rp_m {
+                            continue;
+                        }
+                        let ratio = prec.rp_m / prec.rs_m;
+                        let depth = 1.0 - ratio * ratio;
+                        out.entry(si as usize)
+                            .and_modify(|f| *f *= depth)
+                            .or_insert(depth);
+                    }
+                }
+            }
+        }
+        out
+    }
+
+    fn take_u32(bytes: &[u8], off: &mut usize) -> Option<u32> {
+        let raw: [u8; 4] = bytes.get(*off..*off + 4)?.try_into().ok()?;
+        *off += 4;
+        Some(u32::from_le_bytes(raw))
+    }
+
+    fn take_f64(bytes: &[u8], off: &mut usize) -> Option<f64> {
+        let raw: [u8; 8] = bytes.get(*off..*off + 8)?.try_into().ok()?;
+        *off += 8;
+        Some(f64::from_le_bytes(raw))
+    }
+
+    fn take_f32(bytes: &[u8], off: &mut usize) -> Option<f32> {
+        let raw: [u8; 4] = bytes.get(*off..*off + 4)?.try_into().ok()?;
+        *off += 4;
+        Some(f32::from_le_bytes(raw))
+    }
+
+    pub fn build_curve_set(bytes: &[u8]) -> CurveSet {
+        let mut stars = Vec::new();
+        if bytes.len() < 8 || &bytes[0..4] != b"TSS1" {
+            return CurveSet { stars };
+        }
+        let mut off = 4usize;
+        let Some(n_stars) = take_u32(bytes, &mut off) else {
+            return CurveSet { stars };
+        };
+        for _ in 0..n_stars {
+            let Some(ra_deg) = take_f64(bytes, &mut off) else {
+                return CurveSet { stars };
+            };
+            let Some(dec_deg) = take_f64(bytes, &mut off) else {
+                return CurveSet { stars };
+            };
+            let Some(plx_mas) = take_f64(bytes, &mut off) else {
+                return CurveSet { stars };
+            };
+            let Some(n_samples) = take_u32(bytes, &mut off) else {
+                return CurveSet { stars };
+            };
+            let mut samples = Vec::with_capacity(n_samples as usize);
+            for _ in 0..n_samples {
+                let Some(t) = take_f64(bytes, &mut off) else {
+                    return CurveSet { stars };
+                };
+                let Some(f) = take_f32(bytes, &mut off) else {
+                    return CurveSet { stars };
+                };
+                samples.push((t, f));
+            }
+            if samples.len() < 2 {
+                continue;
+            }
+            let mut gaps: Vec<f64> = samples
+                .windows(2)
+                .map(|w| w[1].0 - w[0].0)
+                .filter(|g| *g > 0.0)
+                .collect();
+            if gaps.is_empty() {
+                continue;
+            }
+            gaps.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
+            let cadence = gaps[gaps.len() / 2];
+            stars.push(CurveStar {
+                ra_deg,
+                dec_deg,
+                plx_mas,
+                cadence,
+                samples,
+            });
+        }
+        CurveSet { stars }
+    }
+
+    fn emit_curves(
+        cset: &CurveSet,
+        center: [f64; 3],
+        t: f64,
+        pad: f64,
+        records: &mut Vec<OscRecord>,
+    ) {
+        let kernel = kernel_id_for_force(0).unwrap_or(0);
+        for star in &cset.stars {
+            if star.plx_mas <= 0.0 || star.samples.len() < 2 {
+                continue;
+            }
+            let d_m = (1000.0 / star.plx_mas) * PARSEC_M;
+            let ra = star.ra_deg.to_radians();
+            let dec = star.dec_deg.to_radians();
+            let (sa, ca) = ra.sin_cos();
+            let (sd, cd) = dec.sin_cos();
+            let p = [cd * ca * d_m, cd * sa * d_m, sd * d_m];
+            let rel = [p[0] - center[0], p[1] - center[1], p[2] - center[2]];
+            let dist = (rel[0] * rel[0] + rel[1] * rel[1] + rel[2] * rel[2]).sqrt();
+            if dist > pad {
+                continue;
+            }
+            let idx = star.samples.partition_point(|s| s.0 <= t);
+            if idx == 0 || idx >= star.samples.len() {
+                continue;
+            }
+            let (t_a, f_a) = star.samples[idx - 1];
+            let (t_b, f_b) = star.samples[idx];
+            let (t_s, f_s) = if (t - t_a).abs() <= (t_b - t).abs() {
+                (t_a, f_a)
+            } else {
+                (t_b, f_b)
+            };
+            records.push((
+                p[0],
+                p[1],
+                p[2],
+                f_s as f64,
+                t_s,
+                star.cadence,
+                star.cadence,
+                0.0,
+                kernel as f64,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+            ));
+        }
+    }
 
     struct OccIndex {
         t: f64,
@@ -15455,6 +16296,7 @@ mod mathematikerin {
     #[derive(Clone, Default)]
     struct OccReport {
         events: Vec<(u32, f64, f64)>,
+        transits: usize,
     }
 
     fn occ_dir_cell(dir: [f64; 3]) -> (i32, i32) {
@@ -15603,6 +16445,7 @@ mod mathematikerin {
         barriers.extend_from_slice(&idx.scan_barriers);
         OccReport {
             events: idx.scan_events.clone(),
+            transits: 0,
         }
     }
 
@@ -15638,6 +16481,7 @@ mod mathematikerin {
             let shutdown_clone = shutdown.clone();
             thread::spawn(move || {
                 let mut occ_index: Option<OccIndex> = None;
+                let mut transit_index: Option<TransitIndex> = None;
                 let mut generation: u64 = 0;
                 let mut last_bytes: Vec<u8> = Vec::new();
                 loop {
@@ -15651,9 +16495,17 @@ mod mathematikerin {
                     let mut records: Vec<Record> = Vec::new();
                     let eph = field.eph.clone();
                     sense_membrane(&field, center, t, pad, cache_interval, &mut records, &eph);
+                    if let Some(cset) = &field.curves {
+                        emit_curves(cset, center, t, pad, &mut records);
+                    }
                     let packed = pack_window(&records, center);
+                    let mut transit_factors_map: HashMap<usize, f64> = HashMap::new();
+                    if let (Some(pset), Some(sh)) = (&field.planets, &field.stars) {
+                        transit_factors_map =
+                            transit_factors(pset, &mut transit_index, sh, center, t);
+                    }
                     let mut deep: Vec<[f64; 7]> = Vec::new();
-                    sense_deep(&field, center, t, &mut deep);
+                    sense_deep(&field, center, t, &mut deep, &transit_factors_map);
                     let mut pt_src: Vec<[f64; 7]> = Vec::new();
                     let mut ex_src: Vec<[f64; 7]> = Vec::new();
                     for s in &deep {
@@ -15685,7 +16537,7 @@ mod mathematikerin {
                         barriers.push(0.0);
                         barriers.push(0.0);
                     }
-                    let occ = if let Some(oset) = &field.occluders {
+                    let mut occ = if let Some(oset) = &field.occluders {
                         occulting_barriers(
                             &oset.records,
                             &mut occ_index,
@@ -15697,6 +16549,7 @@ mod mathematikerin {
                     } else {
                         OccReport::default()
                     };
+                    occ.transits = transit_factors_map.len();
                     let mut key = Vec::with_capacity(
                         packed.field.len() * 4
                             + packed.meta.len() * 4
@@ -16245,7 +17098,11 @@ mod mathematikerin {
                 "t {:.2}  x {:.3e}  y {:.3e}  z {:.3e}",
                 self.t_presence, x, y, z
             );
-            let mut l3 = format!("okkl {}", self.occ_report.events.len());
+            let mut l3 = format!(
+                "okkl {} | transit {}",
+                self.occ_report.events.len(),
+                self.occ_report.transits
+            );
             for (num, ra, dec) in &self.occ_report.events {
                 l3.push_str(&format!(" | {} ({:.1},{:.1})", num, ra, dec));
             }
@@ -17954,7 +18811,7 @@ mod mathematikerin {
                 }
                 self.hud_raster(&force_tokens, te_opt);
                 eprintln!(
-                "φ window: t {:.2} | rec {} | gen {} | flow {:+.2} {:+.2} {:+.2} | {} | mx {:.2e} | fps {:.0} | ssaa {:.2} | grid 2^{} | x {:.3e} y {:.3e} z {:.3e} | {} near | {} deep | okkl {} | cull {} | b {}x{} | maxms {:.0} | ema {:.1} | perm {:.2} | off {:.2} | blend {}",
+                "φ window: t {:.2} | rec {} | gen {} | flow {:+.2} {:+.2} {:+.2} | {} | mx {:.2e} | fps {:.0} | ssaa {:.2} | grid 2^{} | x {:.3e} y {:.3e} z {:.3e} | {} near | {} deep | okkl {} | transit {} | cull {} | b {}x{} | maxms {:.0} | ema {:.1} | perm {:.2} | off {:.2} | blend {}",
                 self.t_presence,
                 rec,
                 self.ring_gen,
@@ -17972,6 +18829,7 @@ mod mathematikerin {
                 self.packed_count,
                 self.deep_pt_count + self.deep_ex_count,
                 self.occ_report.events.len(),
+                self.occ_report.transits,
                 self.cull_n,
                 self.backing.0,
                 self.backing.1,
