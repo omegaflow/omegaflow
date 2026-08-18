@@ -519,12 +519,19 @@ Offen (Detail in phi/port/ledger.φ):
   AUSSTEHEND — fällig erst, wenn ein Kafka-only-Feed das Gate passiert;
   dann Hand-Client (std::net::TcpStream), wenn Session-Atom bleibt, sonst
   Crate als harte Dependency (wgpu-Analogie).
-- Rechecks: Argovis, sensor.community, environment.data.gov.uk, BGS-GIN,
-  IRSA-Gator-CSV, ACTRIS, GTN-P, GONG, OceanNetworks, OMNIWeb, AstDyS,
-  SuperMAG, WOUDC, AAVSO-VSX, ATNF-PSRCAT, TESS-Target-CSV,
-  Tides&Currents-Datagetter, coastwatch/ifremer/emodnet-ERDDAP, PMEL,
-  SERVIR/NDBC/Hurricanes-ArcGIS, AFAD tadas, MPC-Unterrouten,
-  SWPC ace_mag_1h
+- Rechecks b1–b5 (2026-08-17/18): erledigt — WOUDC, Tides&Currents,
+  ERDDAP-Familie (coastwatch/ifremer/emodnet/PMEL), SWPC ace_mag_1h,
+  BGS-GIN-HAPI, IRSA-Gator-CSV, environment.data.gov.uk, GTN-P (dead dns),
+  GONG (FITS-Gap), Safecast (live bestätigt), VSX/PSRCAT (decline,
+  VizieR-Mirror), AFAD-tadas (SPA bestätigt), AstDyS (decline model-fit),
+  SERVIR-SoilMoisture (decline derived-product), Hurricanes-ArcGIS
+  (decline model-forecast), MPC-Unterrouten (Scaffold), TESS-Target-CSV.
+  INTEGRIERT in sources.φ: OceanNetworks-CTD (3 Kanäle), OMNIWeb-HAPI
+  (6 Felder), SDSS SkyServerWS (cz/velDisp). OFFEN: Argovis-Port
+  (b1-Route verifiziert, flaches data-Array), sensor.community
+  (b1-Draft vs. b4-Blockiert — Urteil offen), SuperMAG (leading-line +
+  Positions-Join), SDSS-photoObj (psfMag-z unklar), NDBC-Konsolidierung
+  (Vollzug), MPCOBS + TIC (eigene Compiler-Atome).
 - Kraft-Abdeckung: acoustic/electric/thermal/advective/diffusion-Kuration
   offen — electric: GIC-Netze + Live-E-Feldstärke (kein Feed); GLM ist em
   (Ratsurteil), WWLLN radio-em vs. Entladung-electric bleibt Force-Gate-Frage
@@ -557,6 +564,11 @@ heute auf den Bestand unter /home/johannes/projects/archive/archeology/.
 
 22 Blöcke verloren Feldwerte durch die SI-Konversion. Alle sind jetzt
 verdrahtet — nichts bleibt dunkel.
+
+Pending Unit-Arme (b5 2026-08-18): decibar (OceanNetworks-Druck),
+mV/m (OMNI E1800), nPa (OMNI Pressure1800) — die Kanäle existieren und
+sind verifiziert, die Felder manifestieren erst mit dem
+convert_to_si-Arm.
 
 ERLEDIGT (flux_from_mag, Primärband): cb(mag1), cometels(H), corot(mag),
 dcom5(H; M1 dark), denis(jmag; kmag dark), gcvs(mag), lmxb(mag1),
@@ -673,12 +685,16 @@ Konversion ist bekannt oder erforschbar — pending, keine Fälschung):
   im cod-String), Pegelonline (Fanout-Block steht aus — P09), GWOSC/
   GraceDB (Position nur via Skymap), DSN (statische Dish-Positionen),
   USGS-Geomag (Komponenten-Timeseries)
-- Rechecks offen: Argovis, sensor.community, environment.data.gov.uk,
-  BGS-GIN, IRSA-Gator (Gator-CSV-Syntax), ACTRIS, GTN-P, GONG,
-  OceanNetworks, OMNIWeb, AstDyS, SERVIR-SoilMoisture, NDBC, AFAD-tadas
-  (Accept-Header), Safecast (bgeigie), MPC-Daten-API-Unterrouten,
-  SWPC ace_mag_1h, SuperMAG, WOUDC, AAVSO-VSX, ATNF-PSRCAT-TAP,
-  SDSS-SkyServer-SQL, TESS-Target-CSV
+- Rechecks offen (Stand b5 2026-08-18): Argovis-Port (b1: lebende
+  Query argovis-api.colorado.edu verifiziert, data-Feld = katenierte
+  Messreihe — Split-Schema fehlt), sensor.community (b1-Draft
+  filter/box verifiziert vs. b4-Spiegelung api.sensor.community 403 —
+  Integrations-Urteil offen), SuperMAG (leading-line strip +
+  inventory-Positions-Join + station-Filter-Semantik), SDSS-photoObj
+  (psfMag-Spalten, z unklar). NDBC-Konsolidierung: Urteil gefällt
+  (1 FeatureServer-map-Block ersetzt 30 per-Station-Blöcke) — Vollzug
+  ausstehend, Transfer-Limit unverifiziert. MPCOBS + TIC: eigene
+  Compiler-Atome (packed-MPC-Records; header-lose CSV + header.csv).
 - TAP-Katalog-Pipeline: weitere VizieR-Bulks aus phi/tap_index.φ (39
   genutzte Tabellen, BZCAT5 erledigt), Gaia-Archiv (GCNS/MWSC);
   GAVO-Async-Queue-Beobachtung offen

@@ -1,0 +1,44 @@
+# grind recheck b5 (2026-08-18) — drei benannte Nachlauf-Proben aus b3/b4
+# Agent: grind-flash. Mechanisch, curl-only. Beobachtende Sprache — Diagnosen nennen was IST.
+# Regeln: kein tapvizier.cds.unistra.fr (Quota), kein cargo build/check/run, keine Register-Edits.
+# Dispositionen: lebendig | dead | parser-gap | auth | void. Draft-Blöcke inline nach SOURCES_V2_SPEC.
+# Keine Tokens aus .secrets.local — die Draft-URLs tragen den Platzhalter {OCEANNETWORKS_TOKEN}.
+# Verifizierte Daten-Routen: 3 (oceannetworks /api/scalardata, actris dc.actris.nilu.no/data, sdss SkyServerWS SqlSearch).
+
+kandidat https://data.oceannetworks.ca
+note Token-Route /api/data existiert nicht (404 mit allen Parameter-Formen der b4-Vermutung). Der lebende Datenkanal traegt /api/scalardata (verifiziert): method=getByLocation&token={OCEANNETWORKS_TOKEN}&locationCode={station}&deviceCategoryCode=CTD&dateFrom=-PT1H&outputFormat=Object&sensorCategoryCodes=temperature → 200 application/json. Struktur: Objekt mit sensorData[] (je Kanal: sensorCode, sensorName, sensorCategoryCode, unitOfMeasure, actualSamples, data). outputFormat=Array (default) → data = parallele Arrays sampleTimes/values/qaqcFlags; outputFormat=Object → data = Array aus Objekten {sampleTime, value, qaqcFlag} (die map-taugliche Form). Zeit-Key: sampleTime (ISO-8601 UTC mit Millis, parser-kompatibel via parse_iso_tdb). Koordinaten-Quelle: die Daten-Antwort traegt keine Koordinaten — die Position kommt aus der Stationsliste (locations service: lat/lon/depth). Verifizierte Kanäle SCVIP CTD: Temperature C, salinity psu, Pressure decibar, cond S/m, Sound_Speed m/s, depth m, density/sigmaT/SIGMA_THETA kg/m3. Strömung (ADCP): scalardata liefert fuer ADCP300KHZ an FGPD (dateFrom=-P2H und -P1D) kein sensorData — die Route traegt die Stroemung nicht (0 honored, keine Feld-Linie erfunden). Stationsliste filtert per deviceCategoryCode=CTD → 597 Stationen (595 mit lat/lon). Stations-depth-Sign variiert (SCVIP +298 m, CWB10 -0.15 m) und ist per fanout nicht anbindbar (kein stations_alt-Directive) — Rows anker auf Stations-lat/lon, Oberflaechen-Datum. Swagger-Spec hinter Login (302 → /Login); die Oeffentliche Doku liegt im Confluence (O2A space, scalardata service) und nennt dateFrom-Duration-Form (-P1H) sowie die sensorCategoryCodes-Variante.
+disposition lebendig
+url https://data.oceannetworks.ca/api/scalardata?method=getByLocation&token={OCEANNETWORKS_TOKEN}&locationCode={station}&deviceCategoryCode=CTD&dateFrom=-PT1H&outputFormat=Object&sensorCategoryCodes=temperature
+ttl 1800
+at earth
+stations https://data.oceannetworks.ca/api/locations?token={OCEANNETWORKS_TOKEN}&deviceCategoryCode=CTD
+stations_path .
+stations_id locationCode
+stations_lat lat
+stations_lon lon
+fanout 8
+fanout_delay 10
+map sensorData.0.data
+epoch sampleTime
+field value oceannetworks_ctd_temperature_c erfc thermal C 1800 0.0 0.0
+note Geschwister-Kanäle (gleicher Block, nur sensorCategoryCodes + Feld-Linie ersetzt, je Station je Kanal ein Block): salinity → diffusion psu erfc; pressure → advective decibar gaussian-inverse-square; conductivity → electric S/m gaussian-inverse-square. Beide Verteilungen folgen demselben Pfad sensorData.0.data mit epoch sampleTime und field value.
+
+kandidat https://actris.nilu.no
+note b3-Nachlauf (Jina-Versuch beendet): r.jina.ai auf https://actris.nilu.no rendert die SPA als statisches Navigationsmenue (Data/Services/About/Documentation — kein Endpoint im Markup); r.jina.ai auf actris.nilu.no/api/measurements liefert dieselbe Menue-Seite (der API-Pfad traegt dieselbe SPA-Shell); r.jina.ai auf ebas-data.nilu.no/api/v1 bestaetigt 404 (Text „File or directory not found"). curl: alle actris.nilu.no-Routen (/, /search, /api/measurements, /basket) liefern die 17503-B-SPA-Shell bzw. 302 auf dc.actris.nilu.no. ABER: die SPA traegt einen echten JSON-Datenkanal — dc.actris.nilu.no/data (data-url des bootstrap-table auf /search, Accept: application/json) → 200 application/json-Objekt: total=324754 Messreihen, rows (10 je Seite) mit title, lat, lon, alt, time_period_begin, time_period_end, content_information (Variablennamen-Array), object_of_interest, matrix, facility_name, download_url (NetCDF ueber thredds.nilu.no/fileServer/ebas_doi/), opendap_url (thredds dodsC), pid/DOI. Die rows tragen KEINE numerischen Messwerte — die Werte liegen in den NetCDF-Dateien hinter thredds (OPeNDAP). Der Kanal ist ein Messreihen-Inventar (Series-Metadaten mit lat/lon, ohne Wert): fuer map/extract per §3.9 wertlos, die numerischen Werte brauchen einen NetCDF/DAP-Kanal. b3-Gap praezisiert: keine öffentliche Skalar-JSON-Route, aber ein verifizierter Katalog-JSON-Kanal.
+disposition parser-gap
+url https://dc.actris.nilu.no/data
+note Katalog-JSON lebt (324754 Reihen, lat/lon je Reihe); numerische Werte in NetCDF hinter thredds.nilu.no (DAP dodsC) — ein NetCDF-Reader ist der offene Kanal.
+
+kandidat https://skyserver.sdss.org
+note Die registrierte Route dr18/SearchTools/sql?cmd=...&format=json liefert HTML (200 text/html, 105951 B — SQL-Search-Formularseite, keine Datenzeilen); format=csv und der dr19-Pfad liefern dieselbe HTML-Seite (105913 B / 113410 B). Die JSON-Route lebt beim WebService-Sibling: dr18/SkyServerWS/SearchTools/SqlSearch?cmd=...&format=json → 200 application/json, Struktur [{"TableName":"Table1","Rows":[{"ra":..,"dec":..,"z":..},...]},{"TableName":"SqlQuery",...}] — map-Pfad 0.Rows (jpath-Array-Index); format=csv → 200 text/plain mit Header-Zeile (#Table1, ra,dec,z). Die WS-SpecObj-View traegt ra/dec/z/cz/velDisp (Filter class='QSO' AND zWarning=0 wirksam, 1000 Rows bei TOP 1000); psfMag_r/psfMag_g sind in der WS-SpecObj-View nicht vorhanden (500 JSON-Fehler „Invalid column name psfMag_r") — die psfMag-Spalten liegen in photoObj (verifiziert: psfMag_r/g/i da, aber photoObj-z ohne klar belegte Bedeutung). Der Register-Eintrag (SearchTools/sql → HTML, parser-def) bleibt korrekt; der SkyServerWS-Sibling ist der lebende JSON/CSV-Kanal mit Zeilen-Messwerten.
+disposition lebendig
+url https://skyserver.sdss.org/dr18/SkyServerWS/SearchTools/SqlSearch?cmd=SELECT+TOP+3000+ra,dec,z,cz,velDisp+FROM+SpecObj+WHERE+class%3D%27QSO%27+AND+zWarning%3D0&format=json
+ttl 604800
+at sun
+cmap 0.Rows
+ra ra
+dec dec
+z z
+field cz sdss_specobj_cz_kms inverse-square em km/s 604800 0.0 0.0
+field velDisp sdss_specobj_veldisp_kms inverse-square em km/s 604800 0.0 0.0
+note Mag-Felder (psfMag_r/g/i) via photoObj-Query erreichbar, deren z-Spalte ist unklar — getrennte Verifikation vor der Aufnahme (0 honored, nichts erfinden).

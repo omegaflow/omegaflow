@@ -411,3 +411,35 @@ note DASTCOM trägt GM=0 für 45 Eugenia, 87 Sylvia, 90 Antiope, 216 Kleopatra �
 ausstehend
 bestand phi/katalog/asteroid_diameters_neowise.φ
 note NEOWISE/AKARI-Join: Durchmesser+Albedo (129.771) geerntet (neowise + asteroid_diameters_akari.φ) — Join „Asteroid → Durchmesser als Feld" in die Asteroiden-Blöcke offen (grind-pro-Join-Urteil, per Asteroiden-Bezeichnung); TODO Z.65–67
+
+verifiziert
+bestand phi/research/agent_output/recheck_b5_flash.φ
+note OceanNetworks /api/scalardata lebt (token in URL, outputFormat=Object, sensorData.0.data mit sampleTime/value/qaqcFlag; 597 CTD-Stationen) — 3 Kanäle integriert in sources.φ (temperature C thermal, salinity psu diffusion, conductivity S/m electric). Druck-Kanal (decibar) pending: Unit-Arm fehlt in convert_to_si. Strömung (ADCP) trägt die Route nicht (0 honored).
+
+verifiziert
+bestand phi/research/agent_output/recheck_b4.φ
+note OMNIWeb integriert (CDAWeb-HAPI OMNI2_H0_MRG1HR, at sun): 6 Felder — V1800 km/s advective, N1800 cm-3 diffusion, T1800 K thermal, BX/BY/BZ nT em. E1800 (mV/m) + Pressure1800 (nPa) pending: Unit-Arme fehlen.
+
+verifiziert
+bestand phi/research/agent_output/recheck_b5_flash.φ
+note SDSS SkyServerWS SqlSearch integriert (dr18, 200 JSON 0.Rows, cmap z→Distanz, cz/velDisp advective km/s). psfMag-Spalten liegen in photoObj, deren z unklar — getrennte Verifikation offen. Die registrierte SearchTools/sql-Route bleibt parser-def html.
+
+ausstehend
+bestand mpcobs-katalog
+note pro_review_b5: MPC-Daten-API ist Scaffold (Root-Placeholder, Unterrouten 404); der lebende statische Bestand ist MPCOBS (MPCAT-OBS .txt.gz, astrometrische Beobachtungen ra/dec+mag, em) — Kompilat-Kandidat mit eigenem Compiler-Atom (packed-MPC-Records, kein TAP).
+
+ausstehend
+bestand tic-kompilat
+note pro_review_b5: TIC v8.2 (archive.stsci.edu/tess) — header-lose Positions-CSV + header.csv; eigener Compiler-Atom (Muster tycho2_compiler), MAST-TIC in TODO; nach Kompilation kein Parser-Gap (ra/dec/plx/Tmag indexiert).
+
+ausstehend
+bestand ndbc-konsolidierung
+note pro_review_b5: Urteil gefällt — 30 per-Station-Blöcke (sources.φ, realtime2/{station}.txt) → 1 FeatureServer-map-Block (services5.arcgis.com National_Data_Buoy_Center_Station_Observations, alle Felder + GST/APD/MWD/ATMP/TIDE). Vollzug ausstehend (Block-Ersetzung); FeatureServer-Zeilenzahl unter resultRecordCount=2000 unverifiziert (exceededTransferLimit=true gemeldet).
+
+parser-gap
+kandidat https://supermag.jhuapl.edu/services/data.php
+note pro_review_b5: Daten-Route lebt (logon-only, kein Passwort — data.php?fmt=json&logon=omegaflow, echtes nT-JSON je Minute/Station; der frühere Server-Fault war nicht reproduzierbar). Offen: führende „OK"-Zeile (leading-line strip), Positions-Join über inventory.php (unverifiziert), station=-Filter-Semantik unverifiziert.
+
+parser-gap
+kandidat https://dc.actris.nilu.no/data
+note recheck_b5: Katalog-JSON lebt (324754 Reihen mit lat/lon, ohne numerische Werte); die Werte liegen in NetCDF hinter thredds.nilu.no (OPeNDAP) — NetCDF-Reader ist der offene Kanal.

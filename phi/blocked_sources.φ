@@ -46,7 +46,7 @@ note HTTP 403 — Auth-Gate oder Bot-Block.
 
 parser-def html
 url https://actris.nilu.no/api/measurements/
-note ACTRIS-Aerosol-Messdaten (diffusion, echt) hinter Web-Frontend.
+note ACTRIS-Aerosol-Messdaten (diffusion, echt) hinter Web-Frontend. Recheck b5 2026-08-18: Jina rendert die SPA als statisches Menü; der SPA-Katalog dc.actris.nilu.no/data lebt (324754 Messreihen mit lat/lon, OHNE numerische Werte) — die Werte liegen in NetCDF hinter thredds.nilu.no (OPeNDAP). NetCDF-Reader ist der offene Kanal.
 
 key-needed auth
 url https://ads.atmosphere.copernicus.eu/api/retrieve/v1/
@@ -250,7 +250,7 @@ note HTTP 401 — Token/Registrierung nötig. Verdikt 2026-08-17: LSST — propr
 
 parser-def index
 url https://data.minorplanetcenter.net/api/
-note Nur API-Index (23 B). Unter-Routen tragen Asteroiden-Bahndaten (em, celestisch) — Einzel-Route prüfen.
+note Nur API-Index (23 B) — Scaffold bestätigt (pro_review_b5 2026-08-18): alle Daten-Unterrouten 404. Der lebende statische Bestand ist MPCOBS (www.minorplanetcenter.net/iau/ECS/MPCAT-OBS/MPCAT-OBS.html, .txt.gz astrometrische Beobachtungen, em echt) — Kompilat-Kandidat mit eigenem Compiler-Atom (packed-MPC-Records, kein TAP). Ledger registriert.
 
 key-needed auth
 url https://data.nsidc.earthdatacloud.nasa.gov/nsidc-cumulus-prod-public/ATLAS/ATL03/007/2026/05/18/ATL03_20260518015745_09753111_007_01.iso.xml
@@ -319,10 +319,6 @@ note grind: grind_terrapulse_a.φ
 parser-def nested-timeseries-nullpadding
 url https://geomag.usgs.gov/ws/data/?id=BOU&type=adjusted&format=json
 note grind: grind_host.φ
-
-parser-def arcgis-missing-f
-url https://gis1.servirglobal.net/arcgis/rest/services/Global/SoilMoisture/MapServer/0/query?where=1%3D1&geometry=
-note SERVIR-Bodenfeuchte: f=json fehlt in URL — mit f=json accept-würdig (Recheck).
 
 parser-def html
 url https://gong2.nso.edu/HA/hag/?ref=hag&series=hag&date=2026.08.07&format=json
@@ -396,10 +392,6 @@ key-needed auth
 url https://my.cmems-du.eu/erddap/griddap/cmems_mod_glo_phy_my_0.083deg_P1D-m.csv?uo%5Blast%5D%5B0%5D%5B
 note CMEMS-DU verlangt Login; zudem Modellprodukt.
 
-parser-def html
-url https://newton.spacedys.com/astdys2/index.php?pc=3.0&type=all&format=json&limit=500
-note AstDyS (Asteroiden-Dynamik, echt) — HTML; JSON-Route prüfen.
-
 key-needed auth
 url https://nrt.cmems-du.eu/erddap/
 note CMEMS-NRT verlangt Login.
@@ -460,10 +452,6 @@ parser-def
 url https://services6.arcgis.com/bdPqSfflsdgFRVVM/arcgis/rest/services/Syracuse_Road_Temperatures/FeatureServer/0
 note grind: grind_arcgis_index.φ
 
-parser-def arcgis-missing-f
-url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Active_Hurricanes_Sampler/FeatureServer/0/query
-note Hurrikans: f=json fehlt — mit f=geojson accept-würdig (Recheck).
-
 parser-def votable
 url https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT%20TOP%20100%20ra%2Cdec%20FROM%20basic%20WHERE%20otype%3D%27HVC%27
 note SIMBAD-TAP liefert VOTable-XML trotz format=json — kein JSON-Row-Extract möglich (parser-def).
@@ -474,7 +462,7 @@ note Recheck 2026-08-17: SIOS-User-Account ist NICHT nötig für Data-Portal-Zug
 
 parser-def html
 url https://skyserver.sdss.org/dr18/SearchTools/sql?cmd=SELECT+TOP+3000+ra,dec,z,psfMag_r,psfMag_g+FROM+SpecObj+WHERE+class%3D%27QSO%27+AND+z+BETWEEN+0.1+AND+3.0+AND+zWarning%3D0&format=json
-note SDSS-SQL-Suche liefert HTML statt JSON über diese Route — JSON-Route prüfen.
+note Diese Route liefert HTML (Formularseite). Die JSON-Route lebt beim SkyServerWS-Sibling (dr18/SkyServerWS/SearchTools/SqlSearch, 200 JSON 0.Rows) — integriert in sources.φ (recheck_b5 2026-08-18). psfMag-Spalten liegen in photoObj, deren z unklar — getrennte Verifikation offen.
 
 parser-def
 url https://ssd-api.jpl.nasa.gov/fireball.api
@@ -482,7 +470,7 @@ note grind: grind_terrapulse_a.φ
 
 parser-def html
 url https://supermag.jhuapl.edu/mag/?fidelity=low&format=json&
-note SuperMAG (Boden-Magnetometer, em echt). HTML-Route (mag/) ist das Download-Formular; Web-Service-API services/data.php?fmt=json&logon=<name>&start=...&extent=...&station=... braucht NUR logon, KEIN Passwort. Registriert 2026-08-17 (Username=omegaflow). ABER: API liefert PHP-Fatal — shell_exec „Unable to execute .../db-get -check logon" (Server-Fault bei SuperMAG, db-get-Binary nicht ausführbar).
+note SuperMAG (Boden-Magnetometer, em nT). HTML-Route (mag/) ist das Download-Formular; die Web-Service-Route services/data.php?fmt=json&logon=<name>&start=...&extent=...&station=... lebt (pro_review_b5 2026-08-18: 200, echtes nT-JSON je Minute/Station, logon=omegaflow reicht, kein Passwort — der frühere Server-Fault war nicht reproduzierbar). Parser-Items offen: führende „OK"-Zeile vor dem JSON-Array (leading-line strip) + Positions-Join über inventory.php (Struktur unverifiziert) + station=-Filter-Semantik unverifiziert.
 
 parser-def html
 url https://tadas.afad.gov.tr/api/event/list?limit=200

@@ -4020,3 +4020,15 @@ note curl: curl: (1) Protocol "s3" not supported or disabled in libcurl
 decline counts
 url https://api.obis.org/v3/statistics
 note Statistik-Zaehlwerte, keine Ereignis-Records (Probe-Befund 2026-08-15).
+
+decline model-fit
+url https://newton.spacedys.com/astdys2/index.php?pc=3.0&type=all&format=json&limit=500
+note pro_review_b5 2026-08-18: Orbital-Elemente (a,e,i) sind Modell-Fits, kein Messwert am Punkt; JSON-Route hinter Anubis-PoW (Jina liefert Markdown statt JSON). H/V-Helligkeit (em) läge nur als Markdown-Text vor — kein Feld überlebt Force-Gate + Zugang.
+
+decline derived-product
+url https://gis1.servirglobal.net/arcgis/rest/services/Global/SoilMoisture/MapServer/0/query?where=1%3D1&geometry=
+note pro_review_b5 2026-08-18: SMAP-L3-SoilMoisture ist Modell-Inversion aus Brightness-Temperatur — die Messung des Sensors ist TB (em), nicht die invertierte Bodenfeuchte; Raster-Tiles ohne Zeilen-Werte. Litmus scheitert.
+
+decline model-forecast
+url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Active_Hurricanes_Sampler/FeatureServer/0/query
+note pro_review_b5 2026-08-18: Forecast-Track-Punkte (FCSTPRD/ADVISNUM) — Prognose, kein Feld am Punkt. Den gemessenen Sturm (Wind/Druck) trägt der Layer nicht.

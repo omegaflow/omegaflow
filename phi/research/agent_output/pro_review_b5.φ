@@ -1,0 +1,65 @@
+# grind pro-review b5 (2026-08-18)
+# Pro-Review-Welle b5 — der Urteils-Haufen der Recheck-Wellen b1–b4. Force-Gate-Litmus, Parser-Gap-Urteil, Zugangs-Urteil.
+# KEINE Aenderung an sources.φ / dead_sources.φ / blocked_sources.φ / port/ledger.φ / TODO.md — nur Befunde + Urteile + fertige Drafts.
+# Dispositionen: accepted / decline / gap / pro-review-bleibt. Diagnosen nennen was IST.
+
+# ── 1. AstDyS — decline model-fit ──
+kandidat https://newton.spacedys.com/astdys2/index.php?pc=3.0&type=all&format=json&limit=500
+disposition decline
+note Jina (r.jina.ai, Headless) loest die Anubis-Proof-of-Work-Route: pc=1.1.0&n=433&format=json liefert ueber Jina den Inhalt als Markdown (Kepler-Elemente a/e/i/Ω/ω/M, H=10.9 mag, V=14.04 mag, Ephemeriden ra/dec). Zugang bestaetigt — aber als Markdown, kein parser-konsumierbares JSON (Parser-Gap). Force-Gate: Orbital-Elemente sind Modell-Fits (Least-Squares an Astrometrie), kein direkter Messwert am Punkt — der Litmus („Sinnesorgan fuer grosse Halbachse?") scheitert. ra/dec sind Ephemeriden-Rechnung, keine Messung. Einzig ehrlicher Messwert: H/V-Helligkeit (em, reflektiertes Sonnenlicht) — der steht in derselben Markdown-Seite, nicht als JSON-Feld. Kein Feld ueberlebt Force-Gate + Zugang.
+
+# ── 2. MPC-Daten-API — gap (Scaffold) + MPCOBS bestand ──
+kandidat https://data.minorplanetcenter.net/api/
+disposition gap
+note API-Root /api/ = Platzhalter {"hello":"world"} (23 B); Daten-Unterrouten (get_obs/neocp/statistics/orbits) 404. MPCOBS-Route geprueft: www.minorplanetcenter.net/iau/ECS/MPCAT-OBS/MPCAT-OBS.html = 200 HTML-Katalog (17408 B), Rohdaten als .txt.gz (NumObs/UnnObs/CmtObs/SatObs, Stand 2026 APR 14) — astrometrische Beobachtungen (ra/dec + mag, em echt). Urteil: die Daten-API ist ein ungefuelltes Scaffold → gap (Reset abwarten). MPCOBS ist ein lebender statischer Bestand → cmap-Kompilat-Kandidat mit EIGENEM Compiler-Atom (packed-MPC-Records, kein TAP — nicht tap_compiler). Kein unmittelbar manifestierender Block: die API hat keine JSON-Datenroute, MPCOBS braucht erst den Compiler.
+
+# ── 3. TIC (TESS Input Catalog) — accepted (cmap-Kompilat, EIGENER Compiler-Atom) ──
+kandidat https://archive.stsci.edu/tess
+disposition accepted
+note header.csv (1932 B) traegt die Spaltennamen der headerlosen Baender: [ra]/[dec]/[plx]/[pmRA]/[pmDEC]/[Tmag] (+ Bmag/Vmag/Jmag/Hmag/Kmag/GAIAmag/Teff/logg/rad/mass/lum/d). tic_column_description.txt bestaetigt die Typen. Der Weg ist das cmap-Kompilat — ABER: tap_compiler ist ADQL/FORMAT=json (TAP), kein CSV-Kompilat; headerlose CSV + separates header.csv ist ein EIGENER Compiler-Atom (MAST-TIC, Muster tycho2_compiler — fixe Spalten, nicht TAP; TODO haengt dran). Nach Kompilation kein Parser-Gap: ra/dec/plx/Tmag sind indexiert. Tmag (mag) ist als Einheit unconverted (pending) — flux_from_mag waere der manifestierende em-W/m2-Weg.
+url https://github.com/omegaflow/sources/releases/download/archive.stsci.edu/tic_v82.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+plx plx
+field Tmag tic_tmag gaussian-inverse-square em mag 604800 0.0 0.0
+
+# ── 4. SERVIR-SoilMoisture — decline derived-product ──
+kandidat https://gis1.servirglobal.net/Global/SoilMoisture
+disposition decline
+note MapServer-Mosaic (Raster/Imagery), Layer 0 /0/query ohne Zeilen-Werte (Werte in Tiles). Force-Gate: SMAP-L3-SoilMoisture ist eine Modell-Inversion aus Brightness-Temperatur (TB) — die direkte Messung des Sensors ist TB (em, L1B), nicht die invertierte Bodenfeuchte. Die Bodenfeuchte ist die Interpretation eines Retrieval-Modells (mehrere konkurrierende Retrievals geben fuer dieselbe TB verschiedene Werte) — der Gradient spricht, nicht die Messung. Litmus: ein Organismus evolviert keinen „Retrieval-Inversionssinn", er spuert das physische Feld direkt. Kein Sensor-Messwert am Punkt + Raster-Tiles → decline.
+
+# ── 5. Hurricanes-ArcGIS — decline model-forecast ──
+kandidat https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Active_Hurricanes_Sampler/FeatureServer/0/query
+disposition decline
+note Forecast-Track-Punkte (FCSTPRD/ADVISNUM, erster Rekord 2015). Eine Prognose ist kein Feld am Punkt — sie ist die Ausgabe eines Modells fuer die Zukunft, keine Messung der Gegenwart. Litmus: „could a non-human organism evolve a sensory organ for this measurement?" — kein Lebewesen evolviert einen Sinn fuer eine vorhergesagte Zugbahn; der Wirbelsturm selbst (Wind advective, Druck advective) waere messbar, aber der Forecast-Layer traegt nur die Prognose, nicht den gemessenen Sturm. decline model-forecast.
+
+# ── 6. NDBC-Konsolidierung — accepted (30 per-Station → 1 FeatureServer-Block) ──
+kandidat https://services5.arcgis.com/7weheFjxuNkGGiZi/arcgis/rest/services/National_Data_Buoy_Center_Station_Observations/FeatureServer/0/query
+disposition accepted
+note 30 per-Station-Bloecke in sources.φ (Z.193–521, realtime2/{station}.txt, je lastrow WDIR/WSPD/WVHT/DPD/PRES/WTMP). Der FeatureServer-Block traegt WDIR/WSPD/GST/WVHT/DPD/APD/MWD/PRES/PTDY/ATMP/WTMP/DEWP/VIS/TIDE + lat/lon — deckt alle 6 per-Station-Felder ab und erweitert um GST/APD/MWD/ATMP/TIDE. Urteil: konsolidieren. Plan: Z.193–521 (30 Bloecke) entfernen, der eine FeatureServer-map-Block ersetzt sie — 1 Fetch statt 30, mehr Felder, alle ~889 Stationen (alle Bojen gleich). Caveat: der FeatureServer ist die NOAA-eigene ArcGIS-Spiegelung, nicht die .txt-Primaerquelle — dieselbe Messung, anderer Kanal; die per-Station-Singletons tragen nur die 30 handgepickten Bojen, der FeatureServer das ganze Feld. Der pro_review_3-Draft bleibt der gueltige Block:
+url https://services5.arcgis.com/7weheFjxuNkGGiZi/arcgis/rest/services/National_Data_Buoy_Center_Station_Observations/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 300
+at earth
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.WDIR hydrosphere_ndbc_buoy_wind_dir gaussian-inverse-square advective deg 30.0 0.0 0.0
+field properties.WSPD hydrosphere_ndbc_buoy_wind_speed gaussian-inverse-square advective m/s 30.0 0.0 0.0
+field properties.GST hydrosphere_ndbc_buoy_gust gaussian-inverse-square advective m/s 30.0 0.0 0.0
+field properties.WVHT hydrosphere_ndbc_buoy_wave_height gaussian-inverse-square acoustic m 30.0 0.0 0.0
+field properties.DPD hydrosphere_ndbc_buoy_dominant_period gaussian-inverse-square acoustic s 30.0 0.0 0.0
+field properties.APD hydrosphere_ndbc_buoy_avg_period gaussian-inverse-square acoustic s 30.0 0.0 0.0
+field properties.MWD hydrosphere_ndbc_buoy_mean_wave_dir gaussian-inverse-square acoustic deg 30.0 0.0 0.0
+field properties.PRES hydrosphere_ndbc_buoy_pressure gaussian-inverse-square advective hPa 30.0 0.0 0.0
+field properties.PTDY hydrosphere_ndbc_buoy_pressure_tendency gaussian-inverse-square advective hPa 30.0 0.0 0.0
+field properties.ATMP hydrosphere_ndbc_buoy_air_temp erfc thermal C 30.0 0.0 0.0
+field properties.WTMP hydrosphere_ndbc_buoy_water_temp erfc thermal C 30.0 0.0 0.0
+field properties.TIDE hydrosphere_ndbc_buoy_tide inverse-square gravity m 30.0 0.0 0.0
+
+# ── 7. SuperMAG-Session-Probe — pro-review-bleibt (Zugang bestaetigt, Auth-Fluss dokumentiert) ──
+kandidat https://supermag.jhuapl.edu
+disposition pro-review-bleibt
+note Session-Probe: services/data.php?fmt=json&logon=omegaflow&start=2015-08-12T10:30:00&extent=3600&station=KAK → 200, 2.6 MB, text/plain: erst eine „OK"-Zeile, dann ein JSON-Array aus Boden-Magnetometer-Werten (pro Minute/pro Station: tval unix, ext 60, iaga-Code, N/E/Z je nez+geo in nT). Der fruehere Server-Fault (db-get nicht ausfuehrbar) ist NICHT reproduziert — die Route liefert jetzt echte Daten. Auth ist logon-only: KEIN Passwort, KEIN Cookie — logon=omegaflow als Query-Parameter reicht (SUPERMAG_PASS in .secrets.local ist leer, wird nicht gebraucht). Physik: Boden-Magnetometer em nT (Magnetorezeption — Litmus bestanden). Verbleibende Parser-Items: (1) fuehrende „OK"-Zeile vor dem JSON-Array (leading-line strip noetig); (2) Zeilen tragen iaga aber keine Position — Positions-Join ueber services/inventory.php (antwortet ohne start-Parameter mit „No start time"; Struktur unverifiziert); (3) der station=-Parameter filterte nicht (Antwort trug alle Stationen) — Parameter-Semantik unverifiziert. Kein manifestierender Block, solange Positions-Join + leading-line unverifiziert sind.

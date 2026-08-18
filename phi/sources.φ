@@ -550,6 +550,48 @@ stations_lon long
 fanout 40
 last items.value hydrosphere_river_stage_m inverse-square gravity m 900.0 0.0 0.0
 
+url https://data.oceannetworks.ca/api/scalardata?method=getByLocation&token={OCEANNETWORKS_TOKEN}&locationCode={station}&deviceCategoryCode=CTD&dateFrom=-PT1H&outputFormat=Object&sensorCategoryCodes=temperature
+ttl 1800
+at earth
+stations https://data.oceannetworks.ca/api/locations?token={OCEANNETWORKS_TOKEN}&deviceCategoryCode=CTD
+stations_path .
+stations_id locationCode
+stations_lat lat
+stations_lon lon
+fanout 8
+fanout_delay 10
+map sensorData.0.data
+epoch sampleTime
+field value oceannetworks_ctd_temperature_c erfc thermal C 1800 0.0 0.0
+
+url https://data.oceannetworks.ca/api/scalardata?method=getByLocation&token={OCEANNETWORKS_TOKEN}&locationCode={station}&deviceCategoryCode=CTD&dateFrom=-PT1H&outputFormat=Object&sensorCategoryCodes=salinity
+ttl 1800
+at earth
+stations https://data.oceannetworks.ca/api/locations?token={OCEANNETWORKS_TOKEN}&deviceCategoryCode=CTD
+stations_path .
+stations_id locationCode
+stations_lat lat
+stations_lon lon
+fanout 8
+fanout_delay 10
+map sensorData.0.data
+epoch sampleTime
+field value oceannetworks_ctd_salinity_psu erfc diffusion psu 1800 0.0 0.0
+
+url https://data.oceannetworks.ca/api/scalardata?method=getByLocation&token={OCEANNETWORKS_TOKEN}&locationCode={station}&deviceCategoryCode=CTD&dateFrom=-PT1H&outputFormat=Object&sensorCategoryCodes=conductivity
+ttl 1800
+at earth
+stations https://data.oceannetworks.ca/api/locations?token={OCEANNETWORKS_TOKEN}&deviceCategoryCode=CTD
+stations_path .
+stations_id locationCode
+stations_lat lat
+stations_lon lon
+fanout 8
+fanout_delay 10
+map sensorData.0.data
+epoch sampleTime
+field value oceannetworks_ctd_conductivity_sm gaussian-inverse-square electric S/m 1800 0.0 0.0
+
 url https://api.nasa.gov/DONKI/FLR?startDate={week_ago}&endDate={today}&classType=X&api_key={NASA_API_KEY}
 ttl 3600
 at sun
@@ -735,6 +777,17 @@ ra ra
 dec declination
 z redshift
 field discoverymag tns_transient_flux inverse-square em mag 3600 0.0 0.0
+
+url https://cdaweb.gsfc.nasa.gov/hapi/data?id=OMNI2_H0_MRG1HR&start={week_ago}T00:00:00Z&stop={now}Z&parameters=V1800,N1800,T1800,BX_GSE1800,BY_GSM1800,BZ_GSM1800,E1800,Pressure1800&format=json
+ttl 3600
+at sun
+hapi V1800=omni_solarwind_flow_speed_kms N1800=omni_solarwind_density_percc T1800=omni_solarwind_temp_k BX_GSE1800=omni_imf_bx_gse_nt BY_GSM1800=omni_imf_by_gsm_nt BZ_GSM1800=omni_imf_bz_gsm_nt E1800=omni_solarwind_electric_field_mvm Pressure1800=omni_solarwind_pressure_npa
+field omni_solarwind_flow_speed_kms omni_solarwind_flow_speed_kms patch-levy advective km/s 3600 0.0 0.0
+field omni_solarwind_density_percc omni_solarwind_density_percc gaussian-inverse-square diffusion cm-3 3600 0.0 0.0
+field omni_solarwind_temp_k omni_solarwind_temp_k exponential-decay thermal K 3600 0.0 0.0
+field omni_imf_bx_gse_nt omni_imf_bx_gse_nt inverse-square em nT 3600 0.0 0.0
+field omni_imf_by_gsm_nt omni_imf_by_gsm_nt inverse-square em nT 3600 0.0 0.0
+field omni_imf_bz_gsm_nt omni_imf_bz_gsm_nt inverse-square em nT 3600 0.0 0.0
 
 url https://api.openaq.org/v3/sensors/{station}/measurements?limit=1&datetime_from={yesterday}T00:00:00Z
 header X-API-Key {OPENAQ_API_KEY}
@@ -1579,3 +1632,13 @@ url https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00010.tpc
 format kernel_text
 body pck00010
 ttl 604800
+
+url https://skyserver.sdss.org/dr18/SkyServerWS/SearchTools/SqlSearch?cmd=SELECT+TOP+3000+ra,dec,z,cz,velDisp+FROM+SpecObj+WHERE+class%3D%27QSO%27+AND+zWarning%3D0&format=json
+ttl 604800
+at sun
+cmap 0.Rows
+ra ra
+dec dec
+z z
+field cz sdss_specobj_cz_kms inverse-square advective km/s 604800 0.0 0.0
+field velDisp sdss_specobj_veldisp_kms inverse-square advective km/s 604800 0.0 0.0
