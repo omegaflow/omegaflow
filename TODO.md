@@ -293,9 +293,11 @@ resonance(mut read_signal(s: read_ws_frame_part(stream: read_ws_frame_raw(stream
 
 ### Die fehlenden Funktionen (AUSSTEHEND — die Wiedergefundenen)
 
-- Die Parabel-Maschinerie: `adaptFieldPermeability` +
-  `computeOscSurrogate` + die Transfer-Entropie-Ringe — Ethik §9; die
-  Rückkehr-Formel tanh(vC/(g+ε)) speist sich aus der Messreihe
+- ~~Die Parabel-Maschinerie~~ — erledigt (2026-08-18): `transfer_entropy`
+  (Gaussian-KDE, Silverman-Bandbreite) + `surrogate_threshold` (10 Shuffles,
+  mean + 2σ) über den measure_ring; Quelle = Flow, Ziel = Presence-Ω;
+  `target = inTE/(inTE + threshold + ε)` ersetzt den tanh-Fallback; Wenden
+  auf deltaTE vs. Schwelle. Die Ethik-§9-Kette ist vollständig.
 - ~~Das Analog-Korn~~ — erledigt (2026-08-18): Phosphor-Korn
   (`fract(sin(dot(pos, (12.9898, 78.233)))·43758.5453)`, Faktor 0.9+0.1)
   im near-Feld (fs + near_pt_fs) — dasselbe Korn wie im Deep-Pfad,
@@ -324,13 +326,13 @@ resonance(mut read_signal(s: read_ws_frame_part(stream: read_ws_frame_raw(stream
    Gerät interpretiert. Offen: Bluetooth (Smartwatch) und HID (Force-
    Feedback) als weitere Trait-Implementierungen; Vibration hängt am
    ESP32-Prototyp.
-4. ~~atmende Membran~~ — Tier 1 erledigt (2026-08-18): fieldPermeability aus der
-   Messreihe (target = tanh(vC/(g+ε)), naturalLatencyTicks = Wenden-Rhythmus,
-   1st-Order-Relaxation); Audio-Eardrum skaliert den Gain, die Hardware-Flächen
-   (§3) konsumieren die Permeabilität. Fenster bleibt beim Operator. Offen:
-   TE-Parabel-Maschinerie (inTE/(inTE+threshold+ε), computeOscSurrogate) und
-   ε-Kulling (Tiled Culling — handover-atome.md Atom 4, eigener Port;
-   auswertung.md: Kulling trägt das Budget nicht).
+4. ~~atmende Membran~~ — Tier 1 + 2 erledigt (2026-08-18): fieldPermeability aus der
+   Messreihe — Tier 1 (target = tanh(vC/(g+ε)), Wenden-Rhythmus) + Tier 2
+   (TE-Parabel: inTE/(inTE+threshold+ε) mit Gaussian-KDE-Surrogaten).
+   Audio-Eardrum skaliert den Gain, die Hardware-Flächen (§3) konsumieren
+   die Permeabilität. Fenster bleibt beim Operator. Offen: ε-Kulling
+   (Tiled Culling — handover-atome.md Atom 4, eigener Port; auswertung.md:
+   Kulling trägt das Budget nicht).
 5. P6 — ⌘K, 2-Finger-Zeit, f-Toggle, Deep-Link-Init, Puffer-Schrumpf,
    Dithering, 3-zeiliger HUD
 
