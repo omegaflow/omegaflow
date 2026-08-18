@@ -4219,6 +4219,7 @@ mod archivar {
             .arg("-L")
             .arg("--retry")
             .arg("3")
+            .arg("--retry-all-errors")
             .arg("--retry-delay")
             .arg("2")
             .arg("-m")
@@ -4258,9 +4259,9 @@ mod archivar {
             .arg("-L")
             .arg("--retry")
             .arg("5")
+            .arg("--retry-all-errors")
             .arg("--retry-delay")
             .arg("2")
-            .arg("--http1.1")
             .arg("-m")
             .arg(max_t.to_string())
             .arg("--connect-timeout")
@@ -4293,9 +4294,9 @@ mod archivar {
             .arg("-L")
             .arg("--retry")
             .arg("1")
+            .arg("--retry-all-errors")
             .arg("--retry-delay")
             .arg("1")
-            .arg("--http1.1")
             .arg("-m")
             .arg("10")
             .arg("--connect-timeout")
@@ -4335,9 +4336,9 @@ mod archivar {
             .arg("-L")
             .arg("--retry")
             .arg("5")
+            .arg("--retry-all-errors")
             .arg("--retry-delay")
             .arg("2")
-            .arg("--http1.1")
             .arg("-m")
             .arg(max_t.to_string())
             .arg("--connect-timeout")
@@ -4366,6 +4367,52 @@ mod archivar {
                 stderr.trim()
             );
             None
+        }
+    }
+
+    fn fetch_ephemeris_batch(
+        items: Vec<(usize, SourceConfig, String)>,
+        ftx: mpsc::Sender<FetchResult>,
+        lsk: LeapSeconds,
+        now: f64,
+    ) {
+        if items.is_empty() {
+            return;
+        }
+        let ttl = items[0].1.ttl;
+        let connect_t = ((ttl as f64) / (Φ * Φ * Φ)).ceil() as u64;
+        let max_t = ((ttl as f64) / (Φ * Φ)).ceil() as u64;
+        let mut cmd = Command::new("curl");
+        cmd.arg("-s")
+            .arg("-S")
+            .arg("-f")
+            .arg("-L")
+            .arg("--retry")
+            .arg("5")
+            .arg("--retry-all-errors")
+            .arg("--retry-delay")
+            .arg("2")
+            .arg("--parallel")
+            .arg("--parallel-max")
+            .arg("8")
+            .arg("-m")
+            .arg(max_t.to_string())
+            .arg("--connect-timeout")
+            .arg(connect_t.to_string());
+        for (_, src, tmp_path) in &items {
+            cmd.arg("-o").arg(tmp_path).arg(&src.url);
+        }
+        let _ = cmd.output();
+        for (src_idx, src, tmp_path) in &items {
+            if let ExtractResult::WithEphemeris(_, eph) = extract(src, tmp_path, now, &lsk) {
+                let _ = ftx.send(FetchResult {
+                    source_idx: *src_idx,
+                    channels: Vec::new(),
+                    eph_update: src.body.clone().map(|b| (b, eph)),
+                    asteroid_hash: None,
+                    star_hash: None,
+                });
+            }
         }
     }
 
@@ -10750,19 +10797,18 @@ mod archivar {
             while let Ok((name, pt, px, py, pz, pr)) = presence_rx.try_recv() {
                 archive.presence.insert(name, (pt, px, py, pz, pr));
             }
+            let mut pending_eph: Vec<(usize, SourceConfig, String)> = Vec::new();
             for i in 0..archive.sources.len() {
                 let origin = i as u32;
                 if !origin_stale(&archive.origins, origin, archive.sources[i].ttl, now) {
                     continue;
                 }
                 if archive.sources[i].format == "ephemeris_binary" {
-                    let url = archive.sources[i].url.clone();
-                    let ftx = fetch_tx.clone();
-                    let src_clone = archive.sources[i].clone();
                     let src_idx = i;
-                    let _body_log = match &src_clone.body {
-                        Some(b) => b.as_str(),
-                        None => "",
+                    let src_clone = archive.sources[i].clone();
+                    let tmp_path = match &src_clone.body {
+                        Some(b) => format!("/tmp/omegaflow_eph_{}.bin", b),
+                        None => continue,
                     };
                     archive.origins.entry(origin).or_insert(OriginState {
                         fetched: now,
@@ -10772,37 +10818,27 @@ mod archivar {
                         resid_ema: 0.0,
                         has_prev: false,
                     });
-                    let lsk_c = lsk.clone();
-                    thread::spawn(move || {
-                        let tmp_path = match &src_clone.body {
-                            Some(b) => format!("/tmp/omegaflow_eph_{}.bin", b),
-                            None => return,
-                        };
-                        if !cache_fresh(&tmp_path, src_clone.ttl) {
-                            let bytes = match fetch_raw_bytes(&url, src_clone.ttl) {
-                                Some(b) => b,
-                                None => return,
-                            };
-                            if std::fs::write(&tmp_path, &bytes).is_err() {
-                                return;
+                    if cache_fresh(&tmp_path, src_clone.ttl) {
+                        let ftx = fetch_tx.clone();
+                        let lsk_c = lsk.clone();
+                        let now_c = now;
+                        let tmp_path_c = tmp_path.clone();
+                        thread::spawn(move || {
+                            if let ExtractResult::WithEphemeris(_, eph) =
+                                extract(&src_clone, &tmp_path_c, now_c, &lsk_c)
+                            {
+                                let _ = ftx.send(FetchResult {
+                                    source_idx: src_idx,
+                                    channels: Vec::new(),
+                                    eph_update: src_clone.body.clone().map(|b| (b, eph)),
+                                    asteroid_hash: None,
+                                    star_hash: None,
+                                });
                             }
-                        }
-                        let _body_log = match &src_clone.body {
-                            Some(b) => b.as_str(),
-                            None => "",
-                        };
-                        if let ExtractResult::WithEphemeris(_, eph) =
-                            extract(&src_clone, &tmp_path, now, &lsk_c)
-                        {
-                            let _ = ftx.send(FetchResult {
-                                source_idx: src_idx,
-                                channels: Vec::new(),
-                                eph_update: src_clone.body.clone().map(|b| (b, eph)),
-                                asteroid_hash: None,
-                                star_hash: None,
-                            });
-                        }
-                    });
+                        });
+                    } else {
+                        pending_eph.push((src_idx, src_clone, tmp_path));
+                    }
                     continue;
                 }
                 if archive.sources[i].format == "catalog_dastcom" {
@@ -11080,6 +11116,21 @@ mod archivar {
                         asteroid_hash: None,
                         star_hash: None,
                     });
+                });
+            }
+            if !pending_eph.is_empty() {
+                let anchors = [
+                    "sun", "earth", "moon", "mars", "jupiter", "saturn", "venus", "mercury",
+                ];
+                let (anchor_items, rest_items): (Vec<_>, Vec<_>) = pending_eph
+                    .into_iter()
+                    .partition(|(_, src, _)| anchors.contains(&src.body.as_deref().unwrap_or("")));
+                let ftx = fetch_tx.clone();
+                let lsk_c = lsk.clone();
+                let now_c = now;
+                thread::spawn(move || {
+                    fetch_ephemeris_batch(anchor_items, ftx.clone(), lsk_c.clone(), now_c);
+                    fetch_ephemeris_batch(rest_items, ftx, lsk_c, now_c);
                 });
             }
             {

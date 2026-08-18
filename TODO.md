@@ -325,6 +325,13 @@ resonance(mut read_signal(s: read_ws_frame_part(stream: read_ws_frame_raw(stream
 
 ## Offene Arbeit aus den geschlossenen Atomen (2026-08-16/17)
 
+- Ephemeriden-Kaltstart (2026-08-18): Frame-Anker laden jetzt als erste Phase
+  über `curl --parallel --parallel-max 8` (HTTP/2 statt `--http1.1`,
+  `--retry-all-errors`); die Membran zeigt das Sternfeld sofort, die Planeten
+  folgen. Offen: per-Anker-Extraktion (sun/earth sofort extrahieren statt nach
+  der ganzen Anker-Phase) für wörtliches „Sekunden"-Laden; der Kalt-Download
+  (~360 MB) bleibt einmalig bis zum Warm-Cache.
+
 - Operator-Urteil entschieden (2026-08-17): KEIN GPS-Oszillator. Position ist
   eine Koordinate, keine Kraft — die Force-Gate-Litmus lehnt sie ab (sensor_config
   gibt für gps/gnss None). Die Sensorwerte sind bereits am deklarierten Körper
