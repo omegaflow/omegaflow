@@ -17096,3 +17096,64 @@ mod relay {
 fn main() {
     archivar::main_flow()
 }
+    fn check_empty_data(src: &SourceConfig, raw: &str, now: f64, lsk: &LeapSeconds) {
+        if let ExtractResult::Measurements(channels) = extract(src, raw, now, lsk) {
+            if channels.is_empty() {
+                report_anomaly("Empty Data", &src.url, "extract returned no measurements");
+            }
+        }
+    }
+
+        let mut lsk: Option<LeapSeconds> = None;
+        for src in sources.iter().filter(|s| s.format == "kernel_text") {
+            if src.body.as_deref() != Some("naif0012") {
+                continue;
+            }
+            if let Some(text) = fetch_one(&src.url, None, &[], src.ttl) {
+                lsk = omegaflow::lsk::parse(&text);
+            }
+        }
+        if lsk.is_none() {
+            if let Some(text) = fetch_one(
+                "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls",
+                None,
+                &[],
+                86400,
+            ) {
+                lsk = omegaflow::lsk::parse(&text);
+            }
+        }
+        let now_tdb: Option<f64> = lsk.as_ref().and_then(|l| l.system_now_tdb());
+                if let (Some(l), Some(now)) = (&lsk, now_tdb) {
+                    check_empty_data(src, &raw, now, l);
+                }
+        static ANOMALY_TEST_GATE: std::sync::Mutex<()> = std::sync::Mutex::new(());
+
+            let _gate = ANOMALY_TEST_GATE.lock();
+        #[test]
+        fn test_empty_data_anomaly() {
+            let _gate = ANOMALY_TEST_GATE.lock();
+            ANOMALY_COLLECT.with(|c| c.set(true));
+            let sources = parse_sources(
+                "url https://example.org/e\nttl 3600\nformat json\nat earth\nmap features\nlat lat\nlon lon\nfield magnitude mag gaussian-inverse-square em mag 3600 0 0\n",
+            );
+            assert_eq!(sources.len(), 1);
+            let src = &sources[0];
+            let lsk = full_fixture_lsk();
+            let _ = take_anomalies();
+            check_empty_data(src, r#"{"features":[]}"#, 0.0, &lsk);
+            let anomalies = take_anomalies();
+            assert!(anomalies
+                .iter()
+                .any(|a| a.category == "Empty Data" && a.url == "https://example.org/e"));
+            check_empty_data(
+                src,
+                r#"{"features":[{"lat":10.0,"lon":20.0,"magnitude":5.0}]}"#,
+                0.0,
+                &lsk,
+            );
+            let anomalies = take_anomalies();
+            assert!(!anomalies.iter().any(|a| a.category == "Empty Data"));
+            ANOMALY_COLLECT.with(|c| c.set(false));
+        }
+

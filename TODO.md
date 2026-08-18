@@ -339,9 +339,8 @@ resonance(mut read_signal(s: read_ws_frame_part(stream: read_ws_frame_raw(stream
 report_anomaly/take_anomalies + anomaly_issue_body + gh-Issue am ci-mode-Ende.
 Verdrahtet: API Unreachable, Malformed Data, Physics Mismatch
 (force↔unit-Matrix `allowed_units_for_force` im Parser), Invalid Syntax
-(on/ttl/field-Arity + unbekannte Kraft im Parser). Offen: Empty Data
-(Extract im ci-mode) — wartet auf das unkommittierte AUTH-Secret-Handling
-der Parallel-Linie in ci_mode.
+(on/ttl/field-Arity + unbekannte Kraft im Parser), Empty Data
+(Extract im ci-mode via check_empty_data, lsk/now-TDB).
 ```
 **I02** refresh-protected-data: Python → Rust
 ```
