@@ -4380,12 +4380,7 @@ mod archivar {
         }
     }
 
-    fn fetch_ephemeris_batch(
-        items: Vec<(usize, SourceConfig, String)>,
-        ftx: mpsc::Sender<FetchResult>,
-        lsk: LeapSeconds,
-        now: f64,
-    ) {
+    fn download_ephemeris_batch(items: &[(usize, SourceConfig, String)]) {
         if items.is_empty() {
             return;
         }
@@ -4409,30 +4404,13 @@ mod archivar {
             .arg(max_t.to_string())
             .arg("--connect-timeout")
             .arg(connect_t.to_string());
-        for (_, src, tmp_path) in &items {
+        for (_, src, tmp_path) in items {
             cmd.arg("-o").arg(tmp_path).arg(&src.url);
         }
         let _ = cmd.output();
-        for (src_idx, src, tmp_path) in &items {
-            if let ExtractResult::WithEphemeris(_, eph) = extract(src, tmp_path, now, &lsk) {
-                let _ = ftx.send(FetchResult {
-                    source_idx: *src_idx,
-                    channels: Vec::new(),
-                    eph_update: src.body.clone().map(|b| (b, eph)),
-                    asteroid_hash: None,
-                    star_hash: None,
-                });
-            }
-        }
     }
 
-    fn fetch_ephemeris_one(
-        item: (usize, SourceConfig, String),
-        ftx: &mpsc::Sender<FetchResult>,
-        lsk: &LeapSeconds,
-        now: f64,
-    ) {
-        let (src_idx, src, tmp_path) = item;
+    fn download_ephemeris_one(src: &SourceConfig, tmp_path: &str) {
         let connect_t = ((src.ttl as f64) / (Φ * Φ * Φ)).ceil() as u64;
         let max_t = ((src.ttl as f64) / (Φ * Φ)).ceil() as u64;
         let mut cmd = Command::new("curl");
@@ -4450,18 +4428,9 @@ mod archivar {
             .arg("--connect-timeout")
             .arg(connect_t.to_string())
             .arg("-o")
-            .arg(&tmp_path)
+            .arg(tmp_path)
             .arg(&src.url);
         let _ = cmd.output();
-        if let ExtractResult::WithEphemeris(_, eph) = extract(&src, &tmp_path, now, lsk) {
-            let _ = ftx.send(FetchResult {
-                source_idx: src_idx,
-                channels: Vec::new(),
-                eph_update: src.body.clone().map(|b| (b, eph)),
-                asteroid_hash: None,
-                star_hash: None,
-            });
-        }
     }
 
     fn rfc1123_to_unix(s: &str) -> Option<u64> {
@@ -10702,6 +10671,56 @@ mod archivar {
         let cadence = 1.0;
         let mut gm_text: Option<String> = None;
         let mut pck_text: Option<String> = None;
+        {
+            let mut anchor_uses: std::collections::HashMap<String, usize> =
+                std::collections::HashMap::new();
+            for s in &archive.sources {
+                if s.format == "ephemeris_binary" || s.format == "kernel_text" {
+                    continue;
+                }
+                match &s.frame {
+                    Frame::Surface { body_name, .. } | Frame::Barycenter { body_name, .. } => {
+                        *anchor_uses.entry(body_name.clone()).or_insert(0) += 1;
+                    }
+                    Frame::Manifest => {}
+                }
+            }
+            let mut anchor_items: Vec<(usize, SourceConfig, String)> = Vec::new();
+            let mut rest_items: Vec<(usize, SourceConfig, String)> = Vec::new();
+            for (i, s) in archive.sources.iter().enumerate() {
+                if s.format != "ephemeris_binary" {
+                    continue;
+                }
+                let Some(body) = &s.body else {
+                    continue;
+                };
+                let tmp_path = format!("/tmp/omegaflow_eph_{}.bin", body);
+                if cache_fresh(&tmp_path, s.ttl) {
+                    continue;
+                }
+                if anchor_uses.contains_key(body) {
+                    anchor_items.push((i, s.clone(), tmp_path));
+                } else {
+                    rest_items.push((i, s.clone(), tmp_path));
+                }
+            }
+            anchor_items.sort_by_key(|(_, s, _)| {
+                std::cmp::Reverse(
+                    anchor_uses
+                        .get(s.body.as_deref().unwrap_or(""))
+                        .copied()
+                        .unwrap_or(0),
+                )
+            });
+            if !anchor_items.is_empty() || !rest_items.is_empty() {
+                thread::spawn(move || {
+                    for (_, s, p) in anchor_items {
+                        download_ephemeris_one(&s, &p);
+                    }
+                    download_ephemeris_batch(&rest_items);
+                });
+            }
+        }
         loop {
             if mr_shutdown.load(Ordering::SeqCst) {
                 eprintln!("the window closed — the ω-loop ends");
@@ -10863,7 +10882,6 @@ mod archivar {
             while let Ok((name, pt, px, py, pz, pr)) = presence_rx.try_recv() {
                 archive.presence.insert(name, (pt, px, py, pz, pr));
             }
-            let mut pending_eph: Vec<(usize, SourceConfig, String)> = Vec::new();
             for i in 0..archive.sources.len() {
                 let origin = i as u32;
                 if !origin_stale(&archive.origins, origin, archive.sources[i].ttl, now) {
@@ -10876,15 +10894,15 @@ mod archivar {
                         Some(b) => format!("/tmp/omegaflow_eph_{}.bin", b),
                         None => continue,
                     };
-                    archive.origins.entry(origin).or_insert(OriginState {
-                        fetched: now,
-                        prev_epoch: now,
-                        prev_abs: [0.0; 3],
-                        prev_motion: None,
-                        resid_ema: 0.0,
-                        has_prev: false,
-                    });
                     if cache_fresh(&tmp_path, src_clone.ttl) {
+                        archive.origins.entry(origin).or_insert(OriginState {
+                            fetched: now,
+                            prev_epoch: now,
+                            prev_abs: [0.0; 3],
+                            prev_motion: None,
+                            resid_ema: 0.0,
+                            has_prev: false,
+                        });
                         let ftx = fetch_tx.clone();
                         let lsk_c = lsk.clone();
                         let now_c = now;
@@ -10902,8 +10920,6 @@ mod archivar {
                                 });
                             }
                         });
-                    } else {
-                        pending_eph.push((src_idx, src_clone, tmp_path));
                     }
                     continue;
                 }
@@ -11182,45 +11198,6 @@ mod archivar {
                         asteroid_hash: None,
                         star_hash: None,
                     });
-                });
-            }
-            if !pending_eph.is_empty() {
-                let mut anchor_uses: std::collections::HashMap<String, usize> =
-                    std::collections::HashMap::new();
-                for s in &archive.sources {
-                    if s.format == "ephemeris_binary" || s.format == "kernel_text" {
-                        continue;
-                    }
-                    match &s.frame {
-                        Frame::Surface { body_name, .. } | Frame::Barycenter { body_name, .. } => {
-                            *anchor_uses.entry(body_name.clone()).or_insert(0) += 1;
-                        }
-                        Frame::Manifest => {}
-                    }
-                }
-                let (mut anchor_items, rest_items): (Vec<_>, Vec<_>) =
-                    pending_eph.into_iter().partition(|(_, src, _)| {
-                        src.body
-                            .as_deref()
-                            .map(|b| anchor_uses.contains_key(b))
-                            .unwrap_or(false)
-                    });
-                anchor_items.sort_by_key(|(_, src, _)| {
-                    std::cmp::Reverse(
-                        anchor_uses
-                            .get(src.body.as_deref().unwrap_or(""))
-                            .copied()
-                            .unwrap_or(0),
-                    )
-                });
-                let ftx = fetch_tx.clone();
-                let lsk_c = lsk.clone();
-                let now_c = now;
-                thread::spawn(move || {
-                    for item in anchor_items {
-                        fetch_ephemeris_one(item, &ftx, &lsk_c, now_c);
-                    }
-                    fetch_ephemeris_batch(rest_items, ftx, lsk_c, now_c);
                 });
             }
             {
