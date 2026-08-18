@@ -23,21 +23,28 @@ Kein NASA-Denken — nur was die Membran benötigt.
   tranmid + Periode, Ω-frei — der Schatten braucht keinen Azimut). Der
   f64-Fold im Radiator paart Deep-Sterne mit ihren Wirtsplaneten
   (Richtungs-Zellen 1e-3 rad, 2"-Match nach Eigenbewegungs-Korrektur der
-  Katalogposition, Katalog-Epoche J2016) und dimmt den Sternfluss um
-  1 − (R_p/R_s)², wenn der Planet bei presence.t die Sternscheibe deckt.
-  HUD `transit N`. Grenze registriert: der 3D-Orbit des Planetenpunkts
-  bleibt ausstehend — Ω (Azimut im Sky-Frame) ist ungemessen; der Schatten
-  ist Ω-frei, ein Punktorbit wäre geraten. Fehlt ein Element → kein
-  Schatten (0 honored).
+  Katalogposition, Katalog-Epoche J2016). Fold-Kriterium: Scheiben-
+  Überlappung offset < R_p + R_s; Dimmung = 1 − Schnittflächen-Anteil
+  (Kreis-Schnitt — Ingress/Egress-Form, flacher Boden (R_p/R_s)², totale
+  Verdeckung bei R_p ≥ R_s). HUD `transit N`. Grenzen registriert:
+  (1) der 3D-Orbit des Planetenpunkts bleibt ausstehend — Ω (Azimut im
+  Sky-Frame) ist ungemessen; der Schatten ist Ω-frei, ein Punktorbit wäre
+  geraten; (2) der Schatten manifestiert nur, wo der Stern rendert
+  (Deep-Fluss ≥ 1e-4, ~mag 10); (3) pscomppars trägt mehrere
+  Parametersätze je Planet und keinen default_flag — erster Satz je
+  Planetenname zählt (Name = Identität des Messsatzes). Fehlt ein Element
+  → kein Schatten (0 honored).
 - ~~TESS-Pulsation~~ — ERLEDIGT (2026-08-18): `tess_compiler`
   (exoplanetarchive-TAP-Ziel-Liste → MAST v0-invoke SPOC-2-min-Suche →
-  Download/file `_lc.fits`; `src/fits.rs` BINARY_TABLE-Leser — Offsets aus
-  TFORM/TBCOL, kein hartkodiertes Byte; PDCSAP_FLUX vor SAP_FLUX,
-  QUALITY≠0 + NaN verworfen) → `tess_lightcurves.bin` (TSS1, stern-indiziert,
-  sortierte [t, flux], Kadenz = Median der Lücken). `format lightcurve`
-  lädt das Asset; der Radiator emittiert pro Sense einen em-Oszillator je
-  Stern im Fenster: val = ehrlicher Nachbar-Sample, epoch = Sample-Epoche,
-  ttl = Kadenz — jenseits des Kurvenendes kein Oszillator (Lesart A, keine
+  Download/file `_lc.fits` — Redirect via S3, curl -L; `src/fits.rs`
+  BINARY_TABLE-Leser — TBCOL wo vorhanden, sonst implizite Packung
+  (SPOC schreibt keine TBCOL-Karten), kein hartkodiertes Byte;
+  PDCSAP_FLUX vor SAP_FLUX, QUALITY≠0 + NaN verworfen) →
+  `tess_lightcurves.bin` (TSS1, stern-indiziert, sortierte [t, flux],
+  Kadenz = Median der Lücken). `format lightcurve` lädt das Asset; der
+  Radiator emittiert pro Sense einen em-Oszillator je Stern im Fenster:
+  val = ehrlicher Nachbar-Sample, epoch = Sample-Epoche, ttl = Kadenz —
+  jenseits des Kurvenendes kein Oszillator (Lesart A, keine
   Extrapolation). Der Gaia-Stern lebt mit Kepler-Dimmung weiter; Theorie
   und Messung sitzen am selben Himmelsort.
 - MAST_TOKEN als CI-Secret: der Betreiber setzt `MAST_TOKEN` im Repo
@@ -69,7 +76,7 @@ z-tragenden SN Ia kommen über TNS mit Distanz.
 Offen (2026-08-17): Die Sync-Schritte für pastel/wds/mktypes/denis sind aus
 kernel_flatten.yml entfernt (sie clobberten die vollen Chunk-Assets mit
 trunkierten Sync-Ergebnissen). Der volle Chunk-Lauf lebt lokal in
-`phi/port/chunk_master.py` (fortsetzbar). Nächstes: Chunk-Kompilation als
+`phi/pipeline/chunk_master.py` (fortsetzbar). Nächstes: Chunk-Kompilation als
 CI-Schritt (die 4 Kataloge laufen im monatlichen Workflow mit), ohne Python
 — Rust-Weg: `tap_compiler --chunk-bands` mit Merge.
 
@@ -77,7 +84,7 @@ CI-Schritt (die 4 Kataloge laufen im monatlichen Workflow mit), ohne Python
 
 Offen (2026-08-18). Die Daten sind geerntet (Sternkinematik pmra/pmdec/rv +
 Farbe Teff/BPmag/RPmag/Gmag via gaiadr3-Crossmatch; Asteroiden-Größe via
-NEOWISE/AKARI in `phi/katalog/asteroid_diameters_*.φ`). Offen ist die
+NEOWISE/AKARI in `phi/pipeline/katalog/asteroid_diameters_*.φ`). Offen ist die
 Nutzung — reine Geometrie, die sonst nirgends liegt, weil alles einen
 ICRS-4D-Rahmen teilt:
 
@@ -123,17 +130,50 @@ Dazu zwei Ernte-Folgen (Befunde der grind-flash-Agenten 2026-08-18):
 - ~~Sternfarbe-RENDERING~~ — WAHR (2026-08-18): Protokoll v7 — der
   Oszillator-Record trägt 22 × f64 (176 B), der 22. f64 ist der
   vereinheitlichte Farbindex BP−RP (absent = 0 → Weiß, 0 honored).
-  Ernte: `tap_compiler` schreibt bpmag−rpmag in den 40-B-Sternbin
-  (`dr3_stars.bin`, 36 B + f32 Farbe); `tycho2_compiler` erntet B−V aus
-  hip_main und transformiert über die Gaia-DR3-Doku-Relation (5. Ordnung)
+  Ernte: `tap_compiler` schreibt bpmag−rpmag; `tycho2_compiler` erntet B−V
+  aus hip_main und transformiert über die Gaia-DR3-Doku-Relation (5. Ordnung)
   auf BP−RP. WGSL `temperature_to_rgb`: BP−RP → Teff (Pecaut & Mamajek
-  2013, EEM-Zwerg-Lokus, linear interpoliert) → RGB (Helland-Polynome);
-  malt `deep_pt_fs`/`deep_fs`/`near_pt_fs`; Flux-Rampe und Tau-Hash-Hue der
-  em-Quellen sind getilgt, Tolman-Dämpfung bleibt. Der alte 36-B-Sternbin
-  stirbt (`chunks_exact(40)`), kein Dual-Stride. Nachschlag: das
-  Sonnen-Gravitationsfeld übertönte das Sternfeld am SSB-Default — die
-  Membran dämpft die Gravitation in `source_contrib` visuell um `exp2(-20)`
-  (lokalisiertes Feld statt Vollbild), die Sternfarben leuchten wahr.
+  2013, EEM-Zwerg-Lokus) → RGB (Helland-Polynome). Die Membran dämpft die
+  Gravitation in `source_contrib` visuell um `exp2(-20)`.
+- ~~Die Subpixel-Wahrheit~~ — WAHR (2026-08-18): die Sprite-Pässe sind
+  getilgt (`deep_pt_vs/fs`, `deep_vs/fs`, `near_pt_vs/fs` — die
+  Legosteine). Das Display ist der Sensor: `fs` misst jede Quelle über
+  den `field_spatial`-Kernel additiv je Pixel. Sterne sind ein eigener
+  Stern-Buffer (12 f32 = 3×vec4: `(sx, sy, flux, d) (p̂, z) (ci, τ, 0, 0)`,
+  Pixelposition + Distanz + Richtung + z = rv/c), gnomisch projiziert
+  (CPU f64 → f32, subpixel-präzise), vom `star_cull`-Compute in
+  16×16-Kacheln gelegt (global-atomare Zähler, Overflow → Voll-Loop) und
+  im `fs` über den Winkel-Kernel `1/(θ² + θ_px²)` mit Nyquist-Weichheit
+  `θ_px = 2/(w·mag)` gemessen — ein Stern sättigt genau sein Pixel, das
+  Nachbarpixel misst den Nyquist-Rest. Der Feld-Kernel läuft jetzt
+  **transversal** (`t² = d² − sd²`) statt 3D — ferne Körper (die Sonne)
+  zeigen ihre wahre Scheibe statt des flachen 1/d²-Waschouts. Tolman
+  `(1+z)⁻⁴` sitzt im Pixel-Pfad (Parität mit dem Probe), Farbe: em →
+  Schwarzkörper `temperature_to_rgb(ci)`, nicht-em → τ-Hue; der
+  false-color Gradient ist getilgt. `presence_probe` misst das Sternfeld
+  mit (Audio/Haptik sehen den Himmel). Eigenbewegung lebt: `rv` ist im
+  Sternbin (44-B-Records, `star_position_at` rechnet `vr·p̂` in den
+  Geschwindigkeitsvektor, z = rv/c), die Positionen wandern je Frame
+  kontinuierlich über das Pixelgitter.
+- Sternbin-rv-Ernte (pending): `tap_compiler` (radial_velocity im
+  `--crossmatch-pm`-Alias rv) und `tycho2_compiler` (Crossmatch HIP →
+  `gaiadr3.hipparcos2_best_neighbour` → `radial_velocity`, `--xmatch`,
+  IN-Batches, Winkel-Gate 1,5″, km/s → m/s) schreiben 44-B-Records
+  (8+8+7×4: ra, dec, pm_ra, pm_de, plx, mag, flux, farbe, rv); die
+  Stride-Konstanten 48 sind auf 44 berichtigt; `bright_stars.json`
+  trägt `rv`. Die 48/40-Brücke ist eingerissen: `parse_star_record`
+  verlangt exakt 44 Byte und liest rv ohne Ersatzwert (kein
+  rv = 0.0-Fallback); `build_star_hash` überspringt Binaries ohne
+  44-B-Records mit Note („pending recompilation, stars stay dark").
+  **Offen**: Rekompilation von `dr3_stars.bin` + `bright_stars.json` +
+  CDN-Remanifestation (CI, kernel_flatten-catalogs) — die
+  Legacy-40-B-Bins manifestieren nicht, die Sterne bleiben dunkel,
+  bis die 44-B-Binaries gebaut sind (pending, keine Fabrikation);
+  erst danach trägt der Katalog die geerntete Radialgeschwindigkeit.
+  Bis dahin fließt rv nur aus den JSON-cmap-Quellen (denis `radvel
+  rv`). Offen: Compiler-Ersatzwerte `unwrap_or(0.0)` für rv (Zeilen
+  ohne Crossmatch-Hit) — Ernte-Wahrheit oder Fabrikation entscheidet
+  der Council.
 
 Weitere neue Quellen (grind-pro, heikler Join/Parsing): LCDB-Rotations-
 achsen (Pol, nicht nur Periode), DAMIT-Formmodelle (3D-Formen → j2/r_eq).
@@ -179,7 +219,7 @@ Positionen); `star_position_at` → (p, v); `sense_deep` rechnet live
 (tan θ) + Lambert cos θ; tap_compiler + tycho2_compiler schreiben
 pmra/pmdec statt 0.
 Offen: Aberration (v/C-Verschiebung in deep_vp) — `ausstehend`;
-dr3_stars.bin-Neukompilat (pm) über kernel_flatten-catalogs.
+dr3_stars.bin-Neukompilat (pm+rv) über kernel_flatten-catalogs.
 
 ### P4 — Ein Gesetz, fünf Medien: Audio erledigt; Ausgabe-Flächen offen
 
@@ -573,13 +613,13 @@ Source-Index, Force-Filter, 3 Phasen.
 ## Source-Port — der eine Pfad
 
 Alle Source-Arbeit läuft über `docs/SOURCE_PORT.md`. Arbeitsfläche:
-`phi/port/` (queue/, park/, stage/, ledger.φ, prompt.φ). Bestand:
-`phi/katalog/`. Register: `phi/sources.φ` + `phi/dead_sources.φ`. Der
-Sweep liest `phi/port/stage/*_converted.φ`. Stale-Specs gebannert:
+`phi/pipeline/` (queue/, park/, stage/, ledger.φ, prompt.φ). Bestand:
+`phi/pipeline/katalog/`. Register: `phi/sources.φ` + `phi/dead_sources.φ`. Der
+Sweep liest `phi/pipeline/stage/*_converted.φ`. Stale-Specs gebannert:
 PARSER_EVALUATION_MATRIX.md + EXTRACT_TYPES.md (SUPERSEDED by
 SOURCES_V2_SPEC.md).
 
-Offen (Detail in phi/port/ledger.φ):
+Offen (Detail in phi/pipeline/ledger.φ):
 - Die Linse: Folgewelle — NASA-CMR-Keywords + GBIF-Tags downloaden,
   Library feinwägen; --port ersetzt --gold
 - Probe-Stufe: nächste Welle — neue Kandidaten aus den Katalogen in
@@ -635,7 +675,7 @@ heute auf den Bestand unter /home/johannes/projects/archive/archeology/.
 
 - TerraPulse-Katalog: 103 Kandidaten — erledigt (2026-08-18): Dispositionen
   gespiegelt in dead_sources.φ/blocked_sources.φ (grind_terrapulse_a.φ +
-  b.φ in phi/port/queue/); Katalog: phi/katalog/terrapulse_catalog.φ.
+  b.φ in phi/pipeline/queue/); Katalog: phi/pipeline/katalog/terrapulse_catalog.φ.
   GLM (Ratsurteil 2026-08-17): GOES_GLM_Bolides-
   ArcGIS-GeoJSON ist die Route — Kraft `em` (NIR-Photodetektor 777,4 nm,
   Wert = detektierte optische Energie J, τ = Blitzdauer via `tau_key`),
@@ -796,13 +836,10 @@ Konversion ist bekannt oder erforschbar — pending, keine Fälschung):
   liegen in GAVO dc.g-vo.org. GAVO-Async-Queue erledigt (2026-08-18):
   /tap/async = UWS-1.1-Jobliste (gavo.aip.de + dc.g-vo.org).
 - netCDF-Welle (2026-08-18): netcdf_reader (CDF-1/2) verifiziert. Argo-Profil
-  ist netcdf-live (TEMP/PSAL/PRES), aber Per-Level-Expansion (alt=−PRES) +
-  netcdf-Konsum im Archivar = src/ (Rust-Kybernautin, wie Argovis). GLODAP =
-  CSV (kein .nc; Bottle-Rohwerte als CSV-Harvest-Kandidat). OOI/SOCAT/temis
-  .nc = netCDF-4/HDF5 bzw. 404.
-- netCDF-Integration (Archivar-Auftrag): `format netcdf` + netcdf-Konsum im
-  ω()-Loop — vollständige Spec in ledger.φ (`data-argo.ifremer.fr ... R1901843_357.nc`);
-  das Silizium baut die Rust-Kybernautin in einer frischen Session.
+  ERLEDIGT (`format netcdf` + Per-Level-Expansion alt=−PRES·decibar im
+  Archivar-ω()-Loop, Block in sources.φ; `_FillValue`+NaN → 0 honored).
+  GLODAP bleibt CSV (kein .nc; Bottle-Rohwerte als CSV-Harvest-Kandidat).
+  OOI/SOCAT/temis .nc = netCDF-4/HDF5 bzw. 404.
 - Hapi-FieldConfig: die deklarierten kernel/force/tau der HAPI-Blöcke
   erreichen den Oszillator nicht (synthetisch {0,0,0}) — Klärung in
   der P-Liste
@@ -818,7 +855,7 @@ Konversion ist bekannt oder erforschbar — pending, keine Fälschung):
   history/recovery zuordnen; arena/ (batch_01–21, ungeprüft);
   foundation/ (APIs/collection/gaps); failed_eph_rust/ (abgelöst);
   reconstruction/*.bak (nur Historie)
-- phi/research/batches/ (283) + probe_batches/ (242): alte Grammatik —
+- phi/pipeline/research/batches/ (283) + probe_batches/ (242): alte Grammatik —
   nicht ladbar (P01); die Migration lief über den --gold-Konverter
 
 ## Validation

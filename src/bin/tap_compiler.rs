@@ -524,7 +524,7 @@ fn fetch_json_rows(root: &str, adql: &str) -> Option<(Vec<String>, Vec<Vec<Strin
     Some((col_names, rows))
 }
 
-const STAR_BIN_STRIDE: usize = 40;
+const STAR_BIN_STRIDE: usize = 44;
 
 fn star_record_bytes(cells: &[String], col_idx: &[(String, usize)]) -> Option<Vec<u8>> {
     let get = |k: &str| -> Option<f64> {
@@ -551,6 +551,7 @@ fn star_record_bytes(cells: &[String], col_idx: &[(String, usize)]) -> Option<Ve
         0.0
     };
     let plx_mas = 1000.0 / dist_pc;
+    let rv = get("rv").unwrap_or(0.0) * 1000.0;
     let flux = 10f64.powf(-0.4 * mag) as f32;
     let mut out = Vec::with_capacity(STAR_BIN_STRIDE);
     out.extend_from_slice(&ra.to_le_bytes());
@@ -561,6 +562,7 @@ fn star_record_bytes(cells: &[String], col_idx: &[(String, usize)]) -> Option<Ve
     out.extend_from_slice(&(mag as f32).to_le_bytes());
     out.extend_from_slice(&flux.to_le_bytes());
     out.extend_from_slice(&(ci as f32).to_le_bytes());
+    out.extend_from_slice(&(rv as f32).to_le_bytes());
     Some(out)
 }
 
@@ -1319,6 +1321,7 @@ fn main() {
                                             let plx_mas = 1000.0 / dist_pc;
                                             let pmra = get("pmra").unwrap_or(0.0);
                                             let pmdec = get("pmdec").unwrap_or(0.0);
+                                            let rv = get("rv").unwrap_or(0.0);
                                             let flux = 10f64.powf(-0.4 * mag) as f32;
                                             let ci = get("bp_rp").unwrap_or(0.0);
                                             let mut rec = Vec::with_capacity(STAR_BIN_STRIDE);
@@ -1330,6 +1333,7 @@ fn main() {
                                             rec.extend_from_slice(&(mag as f32).to_le_bytes());
                                             rec.extend_from_slice(&flux.to_le_bytes());
                                             rec.extend_from_slice(&(ci as f32).to_le_bytes());
+                                            rec.extend_from_slice(&(rv as f32).to_le_bytes());
                                             let _ = f.write_all(&rec);
                                             added += 1;
                                         }

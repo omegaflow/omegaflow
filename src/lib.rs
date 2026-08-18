@@ -2,6 +2,7 @@ pub mod bpc;
 pub mod bsp_reader;
 pub mod cdn;
 pub mod dastcom;
+pub mod fits;
 pub mod fk;
 pub mod force;
 pub mod inflate;

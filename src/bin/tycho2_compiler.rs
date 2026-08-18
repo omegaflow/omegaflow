@@ -8,8 +8,9 @@ use omegaflow::cdn::upload_asset;
 use omegaflow::inflate::gunzip;
 use std::collections::{HashMap, HashSet};
 use std::io::Write;
+use std::process::Command;
 
-const STAR_RECORD_STRIDE: usize = 40;
+const STAR_RECORD_STRIDE: usize = 44;
 
 struct StarRow {
     hip: i32,
@@ -19,6 +20,7 @@ struct StarRow {
     pm_de: f64,
     plx_mas: f64,
     mag: f64,
+    rv: f64,
     from_suppl: bool,
 }
 
@@ -168,6 +170,7 @@ fn parse_tgas_record(line: &str) -> Option<StarRow> {
         pm_de,
         plx_mas: plx,
         mag: gmag,
+        rv: 0.0,
         from_suppl: false,
     })
 }
@@ -223,6 +226,7 @@ fn parse_tyc2_record(
         pm_de,
         plx_mas: 0.0,
         mag: vt,
+        rv: 0.0,
         from_suppl: false,
     })
 }
@@ -252,6 +256,68 @@ fn load_hip(path: &str) -> Option<HashMap<i32, (f64, f64)>> {
     Some(map)
 }
 
+fn tap_query_csv(root: &str, adql: &str) -> Option<String> {
+    let out = Command::new("curl")
+        .arg("-sSf")
+        .arg("-G")
+        .arg("--max-time")
+        .arg("120")
+        .arg("--data-urlencode")
+        .arg("REQUEST=doQuery")
+        .arg("--data-urlencode")
+        .arg("LANG=ADQL")
+        .arg("--data-urlencode")
+        .arg("FORMAT=csv")
+        .arg("--data-urlencode")
+        .arg(format!("QUERY={}", adql))
+        .arg(root)
+        .output()
+        .ok()?;
+    if out.status.success() {
+        String::from_utf8(out.stdout).ok()
+    } else {
+        eprintln!(
+            "crossmatch http {}: {}",
+            out.status,
+            String::from_utf8_lossy(&out.stderr).trim()
+        );
+        None
+    }
+}
+
+fn crossmatch_rv(hips: &[i32]) -> HashMap<i32, f64> {
+    let mut out = HashMap::new();
+    const BATCH: usize = 500;
+    for chunk in hips.chunks(BATCH) {
+        let ids = chunk
+            .iter()
+            .map(|h| format!("'{}'", h))
+            .collect::<Vec<_>>()
+            .join(",");
+        let adql = format!(
+            "SELECT t.original_ext_source_id, g.radial_velocity FROM gaiadr3.hipparcos2_best_neighbour AS t JOIN gaiadr3.gaia_source AS g ON t.source_id = g.source_id WHERE t.original_ext_source_id IN ({}) AND g.radial_velocity IS NOT NULL AND t.angular_distance < 1.5",
+            ids
+        );
+        let Some(body) = tap_query_csv("https://gea.esac.esa.int/tap-server/tap/sync", &adql)
+        else {
+            continue;
+        };
+        for line in body.lines().skip(1) {
+            let mut parts = line.split(',');
+            let (Some(hs), Some(rs)) = (parts.next(), parts.next()) else {
+                continue;
+            };
+            let (Ok(hip), Ok(rv)) = (hs.trim().parse::<i32>(), rs.trim().parse::<f64>()) else {
+                continue;
+            };
+            if rv.is_finite() {
+                out.insert(hip, rv * 1000.0);
+            }
+        }
+    }
+    out
+}
+
 fn encode(row: &StarRow, out: &mut Vec<u8>) {
     out.extend_from_slice(&row.ra_deg.to_le_bytes());
     out.extend_from_slice(&row.dec_deg.to_le_bytes());
@@ -261,6 +327,7 @@ fn encode(row: &StarRow, out: &mut Vec<u8>) {
     out.extend_from_slice(&(row.mag as f32).to_le_bytes());
     out.extend_from_slice(&(10.0f64.powf(-0.4 * row.mag) as f32).to_le_bytes());
     out.extend_from_slice(&0f32.to_le_bytes());
+    out.extend_from_slice(&(row.rv as f32).to_le_bytes());
 }
 
 fn bv_to_bp_rp(bv: f64) -> f64 {
@@ -282,6 +349,7 @@ fn main() {
     let mut out: Option<String> = None;
     let mut ci_mode = false;
     let mut probe: Option<i32> = None;
+    let mut xmatch = false;
     let mut i = 1;
     while i < args.len() {
         match args[i].as_str() {
@@ -310,6 +378,7 @@ fn main() {
                 i += 1;
             }
             "--ci-mode" => ci_mode = true,
+            "--xmatch" => xmatch = true,
             "--probe" => {
                 probe = args.get(i + 1).and_then(|s| s.parse().ok());
                 i += 1;
@@ -435,7 +504,7 @@ fn main() {
             }
         };
         let text = String::from_utf8_lossy(&data);
-        let mut rows = Vec::new();
+        let mut rows: Vec<(i32, String)> = Vec::new();
         for line in text.lines() {
             let b = line.as_bytes();
             if b.len() < 104 {
@@ -449,6 +518,9 @@ fn main() {
             if !(plx > 0.0) || !(vmag < 1.94) {
                 continue;
             }
+            let hip: i32 = field(b, 9, 14)
+                .and_then(|s| s.trim().parse().ok())
+                .unwrap_or(0);
             let pm_ra = num(b, 88, 95).unwrap_or(0.0);
             let pm_de = num(b, 97, 104).unwrap_or(0.0);
             let bp_rp = match num(b, 246, 251) {
@@ -456,16 +528,39 @@ fn main() {
                 None => 0.0,
             };
             let (ra_j, dec_j) = propagate(ra, dec, pm_ra, pm_de, 8.75);
-            rows.push(format!(
-                "{{\"ra\":{},\"dec\":{},\"mag\":{},\"dist_pc\":{},\"pmra\":{},\"pmdec\":{},\"bp_rp\":{}}}",
-                ra_j,
-                dec_j,
-                vmag,
-                1000.0 / plx,
-                pm_ra,
-                pm_de,
-                bp_rp
+            rows.push((
+                hip,
+                format!(
+                    "{{\"ra\":{},\"dec\":{},\"mag\":{},\"dist_pc\":{},\"pmra\":{},\"pmdec\":{},\"bp_rp\":{}}}",
+                    ra_j,
+                    dec_j,
+                    vmag,
+                    1000.0 / plx,
+                    pm_ra,
+                    pm_de,
+                    bp_rp
+                ),
             ));
+        }
+        let rv_map = if xmatch {
+            let hips: Vec<i32> = rows.iter().map(|(h, _)| *h).filter(|h| *h > 0).collect();
+            let m = crossmatch_rv(&hips);
+            eprintln!(
+                "crossmatch: {} of {} bright stars with rv",
+                m.len(),
+                hips.len()
+            );
+            m
+        } else {
+            HashMap::new()
+        };
+        let rows_len = rows.len();
+        let mut rows_out: Vec<String> = Vec::with_capacity(rows_len);
+        for (hip, mut r) in rows {
+            let rv = rv_map.get(&hip).copied().unwrap_or(0.0);
+            r.pop();
+            r.push_str(&format!(",\"rv\":{}}}", rv));
+            rows_out.push(r);
         }
         let out_path = match out {
             Some(p) => p,
@@ -475,7 +570,7 @@ fn main() {
             }
         };
         let mut buf = String::from("[");
-        for (k, r) in rows.iter().enumerate() {
+        for (k, r) in rows_out.iter().enumerate() {
             if k > 0 {
                 buf.push(',');
             }
@@ -490,8 +585,7 @@ fn main() {
         }
         eprintln!(
             "bright: {} records (V<1.94, plx>0) → {}",
-            rows.len(),
-            out_path
+            rows_len, out_path
         );
         return;
     }
@@ -566,6 +660,7 @@ fn main() {
             pm_de: s.pm_de,
             plx_mas: 0.0,
             mag: s.mag,
+            rv: 0.0,
             from_suppl: true,
         });
         suppl_only += 1;
@@ -609,6 +704,22 @@ fn main() {
     let mut buf = Vec::with_capacity(rows.len() * STAR_RECORD_STRIDE);
     let mut written = 0usize;
     let mut no_plx = 0usize;
+    let rv_map = if xmatch {
+        let hips: Vec<i32> = rows
+            .iter()
+            .map(|r| r.hip)
+            .filter(|h| *h > 0 && hip_map.contains_key(h))
+            .collect();
+        let m = crossmatch_rv(&hips);
+        eprintln!(
+            "crossmatch: {} of {} tycho2 stars with rv",
+            m.len(),
+            hips.len()
+        );
+        m
+    } else {
+        HashMap::new()
+    };
     for mut row in rows {
         match hip_map.get(&row.hip) {
             Some(&(plx, _)) if row.hip > 0 => {
@@ -624,6 +735,7 @@ fn main() {
                 row.mag = vmag;
             }
         }
+        row.rv = rv_map.get(&row.hip).copied().unwrap_or(0.0);
         encode(&row, &mut buf);
         written += 1;
     }

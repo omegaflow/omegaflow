@@ -16,7 +16,7 @@ Pro Katalog:
 - (a) bestehenden CI-Schritt kopieren, `--crossmatch 'I/355/paramp:RA_ICRS:DE_ICRS:Dist'` vor `--out` einfügen.
 - (b) im `phi/sources.φ`-Block `dist dist_pc` + `dist_scale 3.085677581e16` nach `dec` einfügen.
 - (c) lokal kompilieren (ohne `--ci-mode`), verifizieren, dann mit `--ci-mode` auf den CDN hochladen.
-- (d) Ledger-Eintrag in `phi/port/ledger.φ`.
+- (d) Ledger-Eintrag in `phi/pipeline/ledger.φ`.
 
 ## Kataloge
 

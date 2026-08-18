@@ -18,15 +18,15 @@ registrierten Ort.
 
 | Pfad | Was es IST |
 |------|------------|
-| `phi/port/queue/master.φ` | DIE eine Master-Datei: 13 alte Korpora dedupliziert gemergt (7.430 Blöcke). |
-| `phi/port/queue/sources_potential_*` | Join-Paar (reichste Extract-Parameter) für die Lost-Blocks. |
-| `phi/port/queue/grind_*` | Offene Block-Drafts (ArcGIS, VirES, ESA, TerraPulse, NASA/DONKI, …) mit Disposition ausstehend. |
-| `phi/port/stage/` | Konvertierungs-Ausgänge `<korpus>_converted.φ` + Sweep-Ergebnisse `staging_verified.φ` / `staging_empty.txt`. |
-| `phi/port/ledger.φ` | DAS Zustands-Register. Jeder offene Posten mit Zustand. |
-| `phi/port/index.φ` | Der Index der zu portierenden Dateien (Zustand + Blockzahl). Regenerierbar. |
-| `phi/port/master_urls.txt` | Die deduplizierte URL-Liste (ohne live/declined) + `netloc.txt` (Domänen-Counts). |
-| `phi/port/prompt.φ` | Port-Vorlage für Agenten (Korpus → Disposition). |
-| `phi/katalog/` | Katalog-Inventare (tap_index*, b2find, eogateway, VirES, ArcGIS, TerraPulse, ESA, archeology_gaps). |
+| `phi/pipeline/queue/master.φ` | DIE eine Master-Datei: 13 alte Korpora dedupliziert gemergt (7.430 Blöcke). |
+| `phi/pipeline/queue/sources_potential_*` | Join-Paar (reichste Extract-Parameter) für die Lost-Blocks. |
+| `phi/pipeline/queue/grind_*` | Offene Block-Drafts (ArcGIS, VirES, ESA, TerraPulse, NASA/DONKI, …) mit Disposition ausstehend. |
+| `phi/pipeline/stage/` | Konvertierungs-Ausgänge `<korpus>_converted.φ` + Sweep-Ergebnisse `staging_verified.φ` / `staging_empty.txt`. |
+| `phi/pipeline/ledger.φ` | DAS Zustands-Register. Jeder offene Posten mit Zustand. |
+| `phi/pipeline/index.φ` | Der Index der zu portierenden Dateien (Zustand + Blockzahl). Regenerierbar. |
+| `phi/pipeline/master_urls.txt` | Die deduplizierte URL-Liste (ohne live/declined) + `netloc.txt` (Domänen-Counts). |
+| `phi/pipeline/prompt.φ` | Port-Vorlage für Agenten (Korpus → Disposition). |
+| `phi/pipeline/katalog/` | Katalog-Inventare (tap_index*, b2find, eogateway, VirES, ArcGIS, TerraPulse, ESA, archeology_gaps). |
 | `phi/sources.φ` | Das kanonische Register (Annahme-Ziel). |
 | `phi/dead_sources.φ` | Dispositionen: `dead`/`decline`/`integrated`. |
 | `phi/blocked_sources.φ` | Dispositionen: `key-needed`/`parser-def` — blockiert, gewollt. |
@@ -75,7 +75,7 @@ Beispiel:
 
 ```
 ausstehend
-queue phi/port/queue/sources_astro_untested_30-astro.φ
+queue phi/pipeline/queue/sources_astro_untested_30-astro.φ
 note 30 Blöcke, alte Grammatik — kein URL im kanonischen Register; --gold + Sweep, dann Disposition
 ```
 
@@ -83,28 +83,28 @@ note 30 Blöcke, alte Grammatik — kein URL im kanonischen Register; --gold + S
 
 Pro Korpus:
 
-1. `cargo run -- --port phi/port/queue/<korpus>.φ phi/port/stage/<korpus>_converted.φ`
+1. `cargo run -- --port phi/pipeline/queue/<korpus>.φ phi/pipeline/stage/<korpus>_converted.φ`
    — mechanische Quellgrammatik→kanonisch-Konvertierung (Lautsignal: der
    Konverter meldet Blöcke, die nicht parse-fähig sind; `source`-Köpfe,
    `method`, `pos` und unbekannte Direktiven fallen — siehe §9).
-2. Linse: `cargo run --bin source_scanner -- phi/port/library.φ <katalog.φ>`
+2. Linse: `cargo run --bin source_scanner -- phi/pipeline/library.φ <katalog.φ>`
    — die gewichtete Tag-Library (Ratssitzungen, 2.358 Tags) wiegt die
    Kandidaten; positive Gewichte sind die Probe-Kandidaten.
 3. Probe: `cargo run -- --probe <blöcke.φ>` — fetch → parse →
    `walk_json_probe`-Auto-Draft → `extract`-Verdict. Überlebende (echte
-   Samples) nach `phi/port/probe_survivors.φ`, ehrliche Diagnosen nach
-   `phi/port/probe_void.txt`. Befunde: `phi/port/probe_comparison.txt`
+   Samples) nach `phi/pipeline/probe_survivors.φ`, ehrliche Diagnosen nach
+   `phi/pipeline/probe_void.txt`. Befunde: `phi/pipeline/probe_comparison.txt`
    (Linse 57% vs 2% Survivor-Rate, fetch_one == fetch_raw_probe für
    unmanifestierte Kandidaten).
 4. Review (Mensch): Survivor-Duplikate gegen `phi/sources.φ` prüfen;
    Force-Gate; echte Neue nach §1.0 in `phi/sources.φ`, Varianten/Modelle/
    Tote nach `phi/dead_sources.φ`; `ledger.φ` aktualisieren; den nächsten
-   Batch in `phi/port/probe_batch.φ` nachrücken.
+   Batch in `phi/pipeline/probe_batch.φ` nachrücken.
 5. `cargo check` 0/0; ein Commit, der TODO.md im selben Schritt aktualisiert.
 
 **CI-Schleife:** `.github/workflows/probe_sweep.yml` (wöchentlich + manuell)
 läuft die mechanischen Stufen — Linse über die Kataloge + `--probe` über
-`phi/port/probe_batch.φ` — und lädt `probe_survivors.φ` / `probe_void.txt` /
+`phi/pipeline/probe_batch.φ` — und lädt `probe_survivors.φ` / `probe_void.txt` /
 `weights_*.txt` als Artefakte hoch. Die Review bleibt in der Session: Artefakt
 herunterladen → Schritt 4 → Commit. Die CI probt, der Mensch prüft.
 
@@ -113,7 +113,7 @@ URL-Templates füllen → `curl`-Erreichbarkeit → Struktur prüfen (200er-HTML
 kein Daten-JSON) → Force-Gate → Klassifikation → Disposition.
 
 Die kanonischen Register werden nie gemirrort — nur `--verify phi` spiegelt
-(CI). `phi/port/` und `phi/research/` sind fetch-only (kein Mirror, Quota).
+(CI). `phi/pipeline/` und `phi/pipeline/research/` sind fetch-only (kein Mirror, Quota).
 
 ## 6. Grammatik-Kurzfassung
 
@@ -205,7 +205,7 @@ Recherche-Stand nennt (Alternativen geprüft, Fund: keine).
   Parser greift bereits auf `.secrets.local` zu — Key dort eintragen, als
   `{MARKER}` in `url`/`header` referenzieren; `resolve_secret`/`render_headers`
   lösen ihn auf. Kein Code nötig. Kommerzielle/private Keys bleiben declined.
-  Re-review-Kandidaten stehen in `phi/port/review_kandidaten.txt`.
+  Re-review-Kandidaten stehen in `phi/pipeline/review_kandidaten.txt`.
 - **Jina-Reader ist eingebaut**: URL mit `https://r.jina.ai/` präfixen — der
   Reader umgeht Netzwerk-/Git-Blocks (raw.githubusercontent, Geo-Blockierung),
   und `parse_json` überspringt den Jina-Header (`Title/URL Source/Markdown

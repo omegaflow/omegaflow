@@ -48,6 +48,9 @@ fn fold_eff(d_mag: f32, raw: f32, t: f32, ttl: f32, force_type: u32, advective_v
 @group(0) @binding(6) var<storage, read> barriers: array<vec4f>;
 @group(0) @binding(7) var<storage, read_write> tile_flat: array<u32>;
 @group(0) @binding(8) var<storage, read_write> tile_ctl: array<u32>;
+@group(0) @binding(9) var<storage, read> stars: array<vec4f>;
+@group(0) @binding(12) var<storage, read_write> star_tile_flat: array<u32>;
+@group(0) @binding(13) var<storage, read_write> star_tile_ctl: array<atomic<u32>>;
 
 fn occlusion(dhat: vec3f, d: f32, ft: u32, n: u32) -> f32 {
     if (OPACITY[ft] <= 0.0 || n == 0u) {
@@ -111,63 +114,6 @@ struct VOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f };
     out.uv = vec2f(p[i].x * 0.5 + 0.5, 0.5 - p[i].y * 0.5);
     return out;
 }
-
-@group(0) @binding(0) var<uniform> deep_vp: VP;
-@group(0) @binding(1) var<storage, read> deep_pt: array<vec4f>;
-@group(0) @binding(2) var<storage, read> deep_ex: array<vec4f>;
-
-struct DeepPtVOut { @builtin(position) pos: vec4f, @location(0) @interpolate(flat) flux: f32, @location(1) uv: vec2f, @location(2) @interpolate(flat) ci: f32 };
-
-@vertex fn deep_pt_vs(@builtin(vertex_index) i: u32) -> DeepPtVOut {
-    let count = u32(deep_vp.expose_lo.x);
-    var out: DeepPtVOut;
-    out.pos = vec4f(0.0, 0.0, 0.0, 1.0);
-    out.flux = 0.0;
-    out.uv = vec2f(0.0);
-    out.ci = 0.0;
-    if (count == 0u) { return out; }
-    let id = i / 6u;
-    if (id >= count) { return out; }
-    var quad = array<vec2f, 6>(
-        vec2f(-1.0, -1.0), vec2f(1.0, -1.0), vec2f(1.0, 1.0),
-        vec2f(-1.0, -1.0), vec2f(1.0, 1.0), vec2f(-1.0, 1.0)
-    );
-    let data = deep_pt[id * 2u];
-    let props_in = deep_pt[id * 2u + 1u];
-    let beta = vec3f(deep_vp.right.w, deep_vp.up.w, deep_vp.forward.w);
-    let dir = aberration(data.xyz / max(length(data.xyz), 1e-9), beta);
-    let df = dot(dir, deep_vp.forward.xyz);
-    if (df <= 0.0) {
-        out.flux = 0.0;
-        return out;
-    }
-    let w = deep_vp.surface.x;
-    let h = deep_vp.surface.y;
-    let mag = max(deep_vp.expose_hi.z, 1.0);
-    let sx = dot(dir, deep_vp.right.xyz) / df * mag;
-    let sy = -dot(dir, deep_vp.up.xyz) / df * mag;
-    let corner = quad[i % 6u];
-    let clip = vec2f(
-        sx + (corner.x * 2.2) / w * 2.0,
-        sy + (corner.y * 2.2) / h * 2.0,
-    );
-    out.pos = vec4f(clip, 0.0, 1.0);
-    out.uv = corner;
-    out.flux = data.w * df * occlusion(dir, 1e30, 0u, u32(deep_vp.expose_ex.w));
-    out.ci = props_in.z;
-    return out;
-}
-
-@fragment fn deep_pt_fs(in: DeepPtVOut) -> @location(0) vec4f {
-    let aflux = abs(in.flux);
-    if (aflux < 1e-30) { discard; }
-    let olog = log2(aflux) - log2(ft_ref_floor(deep_vp.ft_ref_a, deep_vp.ft_ref_b, deep_vp.ft_ref_c, 0u));
-    let fade = clamp((olog - log2(1e-30)) / (-deep_vp.expose_ex.x - log2(1e-30)), 0.0, 1.0);
-    let glow = exp(-1.8 * dot(in.uv, in.uv));
-    return vec4f(temperature_to_rgb(in.ci) * fade * glow, 1.0);
-}
-
-struct DeepVOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f, @location(1) color: vec3f };
 
 fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
     let hp = fract(h) * 6.0;
@@ -237,131 +183,6 @@ fn teff_to_rgb(teff: f32) -> vec3f {
 fn temperature_to_rgb(ci: f32) -> vec3f {
     if (ci == 0.0) { return vec3f(1.0, 1.0, 1.0); }
     return teff_to_rgb(bp_rp_to_teff(ci));
-}
-
-@vertex fn deep_vs(@builtin(vertex_index) i: u32) -> DeepVOut {
-    let count = u32(deep_vp.expose_lo.y);
-    var out: DeepVOut;
-    out.pos = vec4f(0.0, 0.0, 0.0, 1.0);
-    out.uv = vec2f(0.0);
-    out.color = vec3f(0.0);
-    if (count == 0u) { return out; }
-    let id = i / 6u;
-    if (id >= count) { return out; }
-    var quad = array<vec2f, 6>(
-        vec2f(-1.0, -1.0), vec2f(1.0, -1.0), vec2f(1.0, 1.0),
-        vec2f(-1.0, -1.0), vec2f(1.0, 1.0), vec2f(-1.0, 1.0)
-    );
-    let data = deep_ex[id * 2u];
-    let props_in = deep_ex[id * 2u + 1u];
-    let beta = vec3f(deep_vp.right.w, deep_vp.up.w, deep_vp.forward.w);
-    let dir = aberration(data.xyz, beta);
-    let w = deep_vp.surface.x;
-    let h = deep_vp.surface.y;
-    let scale = deep_vp.surface.w;
-    let sx = dot(dir, deep_vp.right.xyz) / (0.5 * w * scale);
-    let sy = -dot(dir, deep_vp.up.xyz) / (0.5 * h * scale);
-    let extent = props_in.x;
-    let w_f = max(w, h);
-    let point_size_px = clamp(extent / scale, 0.5, w_f);
-    let corner = quad[i % 6u];
-    let clip = vec2f(
-        sx + (corner.x * point_size_px) / w * 2.0,
-        sy + (corner.y * point_size_px) / h * 2.0,
-    );
-    out.pos = vec4f(clip, 0.0, 1.0);
-    out.uv = corner;
-    let occ = occlusion(dir, 1e30, 0u, u32(deep_vp.expose_ex.w));
-    let flux = data.w * occ;
-    let lum = clamp(
-        (log2(abs(flux) + 1e-30)
-            - log2(ft_ref_floor(deep_vp.ft_ref_a, deep_vp.ft_ref_b, deep_vp.ft_ref_c, 0u))
-            + deep_vp.expose_ex.x)
-            / 22.0,
-        0.0,
-        1.0,
-    );
-    out.color = temperature_to_rgb(props_in.z) * (0.15 + lum * 0.85) * occ;
-    return out;
-}
-
-@fragment fn deep_fs(in: DeepVOut) -> @location(0) vec4f {
-    let dist = length(in.uv);
-    let intensity = exp(-2.5 * dist * dist);
-    let noise = fract(sin(dot(in.pos.xy, vec2f(12.9898, 78.233))) * 43758.5453);
-    let analog_intensity = intensity * (0.9 + noise * 0.1);
-    let hdr_color = in.color * analog_intensity;
-    let mapped_color = log2(hdr_color * 4.0 + vec3f(1.0)) / 8.0;
-    return vec4f(clamp(mapped_color, vec3f(0.0), vec3f(1.0)), 1.0);
-}
-
-struct NearPtVOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f, @location(1) @interpolate(flat) val_eff: f32, @location(2) @interpolate(flat) ft: u32, @location(3) @interpolate(flat) tau: f32, @location(4) @interpolate(flat) half_px: f32, @location(5) @interpolate(flat) ci: f32 };
-
-@vertex fn near_pt_vs(@builtin(vertex_index) i: u32) -> NearPtVOut {
-    let count = u32(vp.surface.z);
-    var out: NearPtVOut;
-    out.pos = vec4f(0.0, 0.0, 0.0, 1.0);
-    out.uv = vec2f(0.0);
-    out.val_eff = 0.0;
-    out.ft = 0u;
-    out.tau = 0.0;
-    out.half_px = 0.0;
-    out.ci = 0.0;
-    if (count == 0u) { return out; }
-    let id = i / 6u;
-    if (id >= count) { return out; }
-    var quad = array<vec2f, 6>(
-        vec2f(-1.0, -1.0), vec2f(1.0, -1.0), vec2f(1.0, 1.0),
-        vec2f(-1.0, -1.0), vec2f(1.0, 1.0), vec2f(-1.0, 1.0)
-    );
-    let pre = field[id * 3u];
-    let tm = field[id * 3u + 1u];
-    let fm = field[id * 3u + 2u];
-    let mt = props[id * 3u];
-    let mg = props[id * 3u + 2u];
-    let w = vp.surface.x;
-    let h = vp.surface.y;
-    let scale = vp.surface.w;
-    let half_px = clamp(mt.x / scale, 0.5, 16.0);
-    let sx = dot(pre.xyz, vp.right.xyz) / (0.5 * w * scale);
-    let sy = -dot(pre.xyz, vp.up.xyz) / (0.5 * h * scale);
-    let corner = quad[i % 6u];
-    out.pos = vec4f(
-        sx + (corner.x * half_px) / w * 2.0,
-        sy + (corner.y * half_px) / h * 2.0,
-        0.0,
-        1.0,
-    );
-    out.uv = corner;
-    let d0 = length(pre.xyz);
-    let dhat0 = pre.xyz / max(d0, 1e-9);
-    var v_pt = fold_eff(d0, pre.w, tm.x, tm.y, u32(tm.z), fm.x);
-    if (u32(tm.z) == 0u && mt.w > 0.0) {
-        let z1 = 1.0 + mt.w;
-        v_pt = v_pt / (z1 * z1 * z1 * z1);
-    }
-    out.val_eff = v_pt * occlusion(dhat0, d0, u32(tm.z), u32(vp.expose_ex.w));
-    out.ft = u32(tm.z);
-    out.tau = mt.y;
-    out.half_px = half_px;
-    out.ci = mg.z;
-    return out;
-}
-
-@fragment fn near_pt_fs(in: NearPtVOut) -> @location(0) vec4f {
-    let aflux = abs(in.val_eff);
-    if (aflux < 1e-30) { discard; }
-    let r2 = dot(in.uv, in.uv) * in.half_px * in.half_px;
-    let a = exp(-r2 * 0.5);
-    if (a < 1.0 / 256.0) { discard; }
-    let olog = log2(aflux + 1e-30) - log2(ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, in.ft));
-    let lum = clamp(olog / 8.0 + 0.5, 0.0, 1.0);
-    let hue = fract(log2(max(in.tau, 1.0)) / 16.0);
-    let body_rgb = hsl_to_rgb(hue, 1.0, lum);
-    let rgb = select(body_rgb, temperature_to_rgb(in.ci) * lum, in.ft == 0u);
-    let noise = fract(sin(dot(in.pos.xy, vec2f(12.9898, 78.233))) * 43758.5453);
-    let grain = 0.9 + noise * 0.1;
-    return vec4f(rgb * a * grain, a);
 }
 
 fn erfc(x: f32) -> f32 {
@@ -464,6 +285,9 @@ fn osc_field(j: u32, rel: vec3f, pre: vec4f) -> vec2f {
     let delta = pre.xyz - rel;
     let d2 = dot(delta, delta);
     let d_mag = sqrt(d2);
+    let sd = dot(pre.xyz, vp.forward.xyz);
+    let t2 = max(d2 - sd * sd, 0.0);
+    let t_mag = sqrt(t2);
     let ft = u32(tm.z);
     let kid = u32(mt.z);
     let v = select(PROPAGATION_SPEED[ft], fm.x, ft == 7u && fm.x > 0.0);
@@ -472,7 +296,7 @@ fn osc_field(j: u32, rel: vec3f, pre: vec4f) -> vec2f {
         let z1 = 1.0 + mt.w;
         val_eff = val_eff / (z1 * z1 * z1 * z1);
     }
-    var sk = field_spatial(d2, d_mag, mt.x, kid, vp.surface.w, f32(tm.w));
+    var sk = field_spatial(t2, t_mag, mt.x, kid, vp.surface.w, f32(tm.w));
     if ((kid == 0u || kid == 6u) && ft == 1u) {
         let dhat = delta / max(d_mag, 1e-9);
         let cos_t = clamp(dot(dhat, mp.xyz), -1.0, 1.0);
@@ -556,6 +380,27 @@ fn presence_probe() {
         if (f < 9u) { omegas[f] += c.x; }
         flow = flow + osc_flow(j, pre);
     }
+    let star_count = u32(vp.expose_lo.x);
+    let mag = max(vp.expose_hi.z, 1.0);
+    let theta_px = 2.0 / (max(vp.surface.x, 1.0) * mag);
+    let s2 = theta_px * theta_px;
+    for (var s = 0u; s < star_count; s = s + 1u) {
+        let a = stars[s * 3u];
+        let b = stars[s * 3u + 1u];
+        let c = stars[s * 3u + 2u];
+        let dtheta2 = (a.x * a.x + a.y * a.y) / (mag * mag);
+        let k = 1.0 / (dtheta2 + s2);
+        let temporal = abs(vp.presence.w - vp.expose_ex.y);
+        var val = a.z;
+        let retarded = max(temporal - a.w / C_VACUUM, 0.0);
+        val = val * exp(-retarded / max(c.y, 1e-9));
+        if (b.w > 0.0) {
+            let z1 = 1.0 + b.w;
+            val = val / (z1 * z1 * z1 * z1);
+        }
+        let occ = occlusion(b.xyz, a.w, 0u, u32(vp.expose_ex.w));
+        omegas[0] += val * k * occ;
+    }
     for (var i = 0u; i < 9u; i = i + 1u) { probe_out[i] = omegas[i]; }
     probe_out[9] = flow.x;
     probe_out[10] = flow.y;
@@ -584,6 +429,8 @@ fn source_bound(j: u32, x0: f32, x1: f32, y0: f32, y1: f32) -> f32 {
     let cy = clamp(sy, y0, y1);
     let d2min = (cx - sx) * (cx - sx) + (cy - sy) * (cy - sy) + sd * sd;
     let dmin = sqrt(d2min);
+    let t2min = max(d2min - sd * sd, 0.0);
+    let tmin = sqrt(t2min);
     let ft = u32(tm.z);
     let kid = u32(mt.z);
     let v = select(PROPAGATION_SPEED[ft], fm.x, ft == 7u && fm.x > 0.0);
@@ -598,9 +445,9 @@ fn source_bound(j: u32, x0: f32, x1: f32, y0: f32, y1: f32) -> f32 {
     var bound = 0.0;
     if (p.w > 0.5) {
         let e2 = max(max(mt.x * mt.x, vp.surface.w * vp.surface.w), 1e-30);
-        bound = abs(val) / (d2min + e2);
+        bound = abs(val) / (t2min + e2);
     } else {
-        var sk = field_spatial(d2min, dmin, mt.x, kid, vp.surface.w, f32(tm.w));
+        var sk = field_spatial(t2min, tmin, mt.x, kid, vp.surface.w, f32(tm.w));
         if ((kid == 0u || kid == 6u) && ft == 1u) {
             let rd = mg.y / max(dmin, 1.0);
             if (rd < 1.0) {
@@ -666,22 +513,30 @@ fn tile_cull(@builtin(workgroup_id) wid: vec3u, @builtin(local_invocation_id) li
     }
 }
 
-fn source_contrib(j: u32, pixel_rel: vec3f) -> vec2f {
+fn source_contrib(j: u32, pixel_rel: vec3f) -> vec4f {
     let pre = prep[j];
     let p = param[j];
-    let delta = pre.xyz - pixel_rel;
-    let d2 = dot(delta, delta);
-    let ft = u32(p.x);
-    if (p.w > 0.5) {
-        let e2 = max(max(p.y * p.y, vp.surface.w * vp.surface.w), 1e-30);
-        return vec2f(pre.w / (d2 + e2), f32(ft));
-    }
     let tm = field[j * 3u + 1u];
     let fm = field[j * 3u + 2u];
     let mt = props[j * 3u];
     let mp = props[j * 3u + 1u];
     let mg = props[j * 3u + 2u];
+    let delta = pre.xyz - pixel_rel;
+    let sd = dot(pre.xyz, vp.forward.xyz);
+    let d2 = dot(delta, delta);
     let d_mag = sqrt(d2);
+    let t2 = max(d2 - sd * sd, 0.0);
+    let t_mag = sqrt(t2);
+    let ft = u32(p.x);
+    if (p.w > 0.5) {
+        let e2 = max(max(p.y * p.y, vp.surface.w * vp.surface.w), 1e-30);
+        var val = pre.w;
+        if (ft == 0u && mt.w > 0.0) {
+            let z1 = 1.0 + mt.w;
+            val = val / (z1 * z1 * z1 * z1);
+        }
+        return vec4f(val / (t2 + e2), f32(ft), mg.z, mt.y);
+    }
     let kid = u32(mt.z);
     let v = select(PROPAGATION_SPEED[ft], fm.x, ft == 7u && fm.x > 0.0);
     let temporal = abs(vp.presence.w - tm.x);
@@ -690,7 +545,11 @@ fn source_contrib(j: u32, pixel_rel: vec3f) -> vec2f {
     if (corr > tm.y * 1e-4) {
         val = pre.w * exp(corr / max(tm.y, 1e-9));
     }
-    var sk = field_spatial(d2, d_mag, mt.x, kid, vp.surface.w, f32(tm.w));
+    if (ft == 0u && mt.w > 0.0) {
+        let z1 = 1.0 + mt.w;
+        val = val / (z1 * z1 * z1 * z1);
+    }
+    var sk = field_spatial(t2, t_mag, mt.x, kid, vp.surface.w, f32(tm.w));
     if ((kid == 0u || kid == 6u) && ft == 1u) {
         let dhat = delta / max(d_mag, 1e-9);
         let cos_t = clamp(dot(dhat, mp.xyz), -1.0, 1.0);
@@ -705,12 +564,75 @@ fn source_contrib(j: u32, pixel_rel: vec3f) -> vec2f {
     if (ft == 1u) {
         contrib *= exp2(-20.0);
     }
-    return vec2f(contrib, f32(ft));
+    return vec4f(contrib, f32(ft), mg.z, mt.y);
+}
+
+fn star_contrib(s: u32, px_ndc: f32, py_ndc: f32) -> vec4f {
+    let a = stars[s * 3u];
+    let b = stars[s * 3u + 1u];
+    let c = stars[s * 3u + 2u];
+    let mag = max(vp.expose_hi.z, 1.0);
+    let dx = px_ndc - a.x;
+    let dy = py_ndc - a.y;
+    let dtheta2 = (dx * dx + dy * dy) / (mag * mag);
+    let theta_px = 2.0 / (max(vp.surface.x, 1.0) * mag);
+    let s2 = theta_px * theta_px;
+    let k = 1.0 / (dtheta2 + s2);
+    let temporal = abs(vp.presence.w - vp.expose_ex.y);
+    var val = a.z;
+    let retarded = max(temporal - a.w / C_VACUUM, 0.0);
+    val = val * exp(-retarded / max(c.y, 1e-9));
+    if (b.w > 0.0) {
+        let z1 = 1.0 + b.w;
+        val = val / (z1 * z1 * z1 * z1);
+    }
+    let occ = occlusion(b.xyz, a.w, 0u, u32(vp.expose_ex.w));
+    return vec4f(val * k * occ, 0.0, c.x, c.y);
+}
+
+const STAR_TILE_SLOTS: u32 = 512u;
+
+fn star_assign(s: u32, tx: i32, ty: i32, nx: i32, ny: i32) {
+    if (tx < 0 || ty < 0 || tx >= nx || ty >= ny) {
+        return;
+    }
+    let tile = u32(ty) * u32(nx) + u32(tx);
+    let slot = atomicAdd(&star_tile_ctl[1u + tile], 1u);
+    if (slot < STAR_TILE_SLOTS) {
+        star_tile_flat[tile * STAR_TILE_SLOTS + slot] = s;
+    } else {
+        atomicOr(&star_tile_ctl[0u], 1u);
+    }
+}
+
+@compute @workgroup_size(64)
+fn star_cull(@builtin(global_invocation_id) gid: vec3u) {
+    let s = gid.x;
+    let count = u32(vp.expose_lo.x);
+    if (s >= count) {
+        return;
+    }
+    let a = stars[s * 3u];
+    let w = vp.surface.x;
+    let h = vp.surface.y;
+    let px = clamp((a.x + 1.0) * 0.5 * w, -2.0, w + 2.0);
+    let py = clamp((1.0 - a.y) * 0.5 * h, -2.0, h + 2.0);
+    let tx0 = i32(floor((px - 1.0) / f32(TILE_PX)));
+    let tx1 = i32(floor((px + 1.0) / f32(TILE_PX)));
+    let ty0 = i32(floor((py - 1.0) / f32(TILE_PX)));
+    let ty1 = i32(floor((py + 1.0) / f32(TILE_PX)));
+    let nx = i32(ceil(w / f32(TILE_PX)));
+    let ny = i32(ceil(h / f32(TILE_PX)));
+    star_assign(s, tx0, ty0, nx, ny);
+    if (tx1 != tx0) { star_assign(s, tx1, ty0, nx, ny); }
+    if (ty1 != ty0) { star_assign(s, tx0, ty1, nx, ny); }
+    if (tx1 != tx0 && ty1 != ty0) { star_assign(s, tx1, ty1, nx, ny); }
 }
 
 @fragment fn fs(in: VOut) -> @location(0) vec4f {
     let count = u32(vp.surface.z);
-    if (count == 0u) { discard; }
+    let star_count = u32(vp.expose_lo.x);
+    if (count == 0u && star_count == 0u) { discard; }
     let w = vp.surface.x;
     let h = vp.surface.y;
     let scale = vp.surface.w;
@@ -718,12 +640,18 @@ fn source_contrib(j: u32, pixel_rel: vec3f) -> vec2f {
         + (0.5 - in.uv.y) * h * scale * vp.up.xyz;
     var omega = array<f32, 9>();
     for (var i = 0u; i < 9u; i = i + 1u) { omega[i] = 0.0; }
+    var rgb = vec3f(0.0);
 
     if (tile_ctl[1] != 0u) {
         for (var j = 0u; j < count; j = j + 1u) {
             let c = source_contrib(j, pixel_rel);
             let f = u32(c.y);
-            if (f < 9u) { omega[f] += c.x; }
+            if (f < 9u) {
+                omega[f] += c.x;
+                let lum = abs(c.x) / ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, f);
+                if (f == 0u) { rgb += temperature_to_rgb(c.z) * lum; }
+                else { rgb += hsl_to_rgb(fract(log2(max(c.w, 1.0)) / 16.0), 1.0, 0.5) * lum; }
+            }
         }
     } else {
         let num_tiles_x = u32(ceil(w / f32(TILE_PX)));
@@ -733,7 +661,34 @@ fn source_contrib(j: u32, pixel_rel: vec3f) -> vec2f {
         for (var k = 0u; k < tcount; k = k + 1u) {
             let c = source_contrib(tile_flat[tbase + k], pixel_rel);
             let f = u32(c.y);
-            if (f < 9u) { omega[f] += c.x; }
+            if (f < 9u) {
+                omega[f] += c.x;
+                let lum = abs(c.x) / ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, f);
+                if (f == 0u) { rgb += temperature_to_rgb(c.z) * lum; }
+                else { rgb += hsl_to_rgb(fract(log2(max(c.w, 1.0)) / 16.0), 1.0, 0.5) * lum; }
+            }
+        }
+    }
+
+    let px_ndc = in.uv.x * 2.0 - 1.0;
+    let py_ndc = 1.0 - in.uv.y * 2.0;
+    if (atomicLoad(&star_tile_ctl[0u]) != 0u) {
+        for (var s = 0u; s < star_count; s = s + 1u) {
+            let c = star_contrib(s, px_ndc, py_ndc);
+            let lum = abs(c.x) / ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, 0u);
+            omega[0] += c.x;
+            rgb += temperature_to_rgb(c.z) * lum;
+        }
+    } else {
+        let num_tiles_x = u32(ceil(w / f32(TILE_PX)));
+        let tile = (u32(in.pos.y) / TILE_PX) * num_tiles_x + (u32(in.pos.x) / TILE_PX);
+        let tcount = atomicLoad(&star_tile_ctl[1u + tile]);
+        let tbase = tile * STAR_TILE_SLOTS;
+        for (var k = 0u; k < tcount; k = k + 1u) {
+            let c = star_contrib(star_tile_flat[tbase + k], px_ndc, py_ndc);
+            let lum = abs(c.x) / ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, 0u);
+            omega[0] += c.x;
+            rgb += temperature_to_rgb(c.z) * lum;
         }
     }
 
@@ -750,26 +705,11 @@ fn source_contrib(j: u32, pixel_rel: vec3f) -> vec2f {
     if (omega_total < 1e-30) { discard; }
 
     let olog = log2(omega_total);
-    let t2 = clamp((olog + vp.expose_ex.x) / 22.0, 0.0, 1.0);
-
-    let a = vec3f(0.0, 0.02, 0.1);
-    let b = vec3f(0.0, 0.3, 0.8);
-    let c = vec3f(0.2, 0.8, 1.0);
-    let d = vec3f(1.0, 0.7, 0.1);
-    let e = vec3f(1.0, 1.0, 1.0);
-    let color = mix(
-        mix(
-            mix(mix(a, b, smoothstep(0.0, 0.25, t2)), c, smoothstep(0.25, 0.5, t2)),
-            d,
-            smoothstep(0.5, 0.75, t2),
-        ),
-        e,
-        smoothstep(0.75, 1.0, t2),
-    );
+    let lum = clamp((olog + vp.expose_ex.x) / 22.0, 0.0, 1.0);
     let fade = clamp((olog - log2(1e-30)) / (-vp.expose_ex.x - log2(1e-30)), 0.0, 1.0);
     let noise = fract(sin(dot(in.pos.xy, vec2f(12.9898, 78.233))) * 43758.5453);
     let grain = 0.9 + noise * 0.1;
-    return vec4f(color * fade * grain, 1.0);
+    return vec4f(rgb * lum * fade * grain, 1.0);
 }
 
 @group(0) @binding(10) var hud_tex: texture_2d<f32>;
@@ -1044,6 +984,7 @@ struct StarRec {
     mag: f64,
     tau: f64,
     color_index: f64,
+    rv_m_s: f64,
 }
 struct StarHash {
     records: Vec<StarRec>,
@@ -1235,6 +1176,7 @@ enum Extract {
     },
     TransitMap {
         arr_path: String,
+        name_key: String,
         ra_key: String,
         dec_key: String,
         dist_key: String,
@@ -1504,7 +1446,8 @@ mod archivar {
         accel_at_epoch, hill_radius_m, parse_record, speed_at_epoch, state_at, RECORD_STRIDE,
     };
     use omegaflow::force::{default_kernel_for, force_id_of, kernel_id_for_force};
-    use omegaflow::inflate::unzip;
+    use omegaflow::inflate::{gunzip, unzip};
+    use omegaflow::netcdf::NetcdfFile;
     use omegaflow::pck::PckBody;
     use std::io::{IsTerminal, Write};
     use std::process::Command;
@@ -2355,10 +2298,18 @@ mod archivar {
         }
     }
 
-    const STAR_RECORD_STRIDE: usize = 40;
+    const STAR_RECORD_BYTES: usize = 44;
+
+    fn star_stride(bytes: &[u8]) -> Option<usize> {
+        if bytes.len() > 0 && bytes.len() % STAR_RECORD_BYTES == 0 {
+            Some(STAR_RECORD_BYTES)
+        } else {
+            None
+        }
+    }
 
     fn parse_star_record(b: &[u8]) -> Option<StarRec> {
-        if b.len() < STAR_RECORD_STRIDE {
+        if b.len() != STAR_RECORD_BYTES {
             return None;
         }
         let ra = f64::from_le_bytes(b[0..8].try_into().ok()?);
@@ -2369,7 +2320,13 @@ mod archivar {
         let mag = f32::from_le_bytes(b[28..32].try_into().ok()?) as f64;
         let flux = f32::from_le_bytes(b[32..36].try_into().ok()?) as f64;
         let color = f32::from_le_bytes(b[36..40].try_into().ok()?) as f64;
-        if !ra.is_finite() || !dec.is_finite() || !(plx > 0.0) || !mag.is_finite() {
+        let rv = f32::from_le_bytes(b[40..44].try_into().ok()?) as f64;
+        if !ra.is_finite()
+            || !dec.is_finite()
+            || !(plx > 0.0)
+            || !mag.is_finite()
+            || !rv.is_finite()
+        {
             return None;
         }
         Some(StarRec {
@@ -2382,6 +2339,7 @@ mod archivar {
             mag,
             tau: 0.0,
             color_index: if color.is_finite() { color } else { 0.0 },
+            rv_m_s: rv,
         })
     }
 
@@ -2399,10 +2357,11 @@ mod archivar {
         let mu_d = rec.pm_de_masyr * MAS_YR_TO_RAD_S;
         let a_hat = [-sa, ca, 0.0];
         let d_hat = [-sd * ca, -sd * sa, cd];
+        let vr = rec.rv_m_s;
         let vel = [
-            d * (mu_a * a_hat[0] + mu_d * d_hat[0]),
-            d * (mu_a * a_hat[1] + mu_d * d_hat[1]),
-            d * (mu_a * a_hat[2] + mu_d * d_hat[2]),
+            d * (mu_a * a_hat[0] + mu_d * d_hat[0]) + vr * p_hat[0],
+            d * (mu_a * a_hat[1] + mu_d * d_hat[1]) + vr * p_hat[1],
+            d * (mu_a * a_hat[2] + mu_d * d_hat[2]) + vr * p_hat[2],
         ];
         (p, vel)
     }
@@ -2413,7 +2372,31 @@ mod archivar {
         #[cfg(feature = "browser_relay")] cadence: f64,
     ) -> StarHash {
         let mut records: Vec<StarRec> = Vec::new();
-        for chunk in bytes.chunks_exact(STAR_RECORD_STRIDE) {
+        let Some(stride) = star_stride(bytes) else {
+            eprintln!(
+                "star bin {} bytes: no {}-byte records — pending recompilation, stars stay dark",
+                bytes.len(),
+                STAR_RECORD_BYTES
+            );
+            return StarHash {
+                records,
+                #[cfg(feature = "browser_relay")]
+                cell_size: 0.0,
+                #[cfg(feature = "browser_relay")]
+                vmax: 0.0,
+                #[cfg(feature = "browser_relay")]
+                build_epoch,
+                #[cfg(feature = "browser_relay")]
+                cell_lo: (i64::MAX, i64::MAX, i64::MAX),
+                #[cfg(feature = "browser_relay")]
+                cell_hi: (i64::MIN, i64::MIN, i64::MIN),
+                #[cfg(feature = "browser_relay")]
+                cells: HashMap::new(),
+                #[cfg(feature = "browser_relay")]
+                p0: Vec::new(),
+            };
+        };
+        for chunk in bytes.chunks_exact(stride) {
             let Some(mut rec) = parse_star_record(chunk) else {
                 continue;
             };
@@ -2912,7 +2895,11 @@ mod archivar {
         buf: &Buffer,
         center: [f64; 3],
         t2: f64,
-        out: &mut Vec<[f64; 7]>,
+        right: [f64; 3],
+        up: [f64; 3],
+        forward: [f64; 3],
+        mag: f64,
+        out: &mut Vec<[f64; 10]>,
         factors: &HashMap<usize, f64>,
     ) {
         let Some(sh) = &buf.stars else {
@@ -2928,18 +2915,28 @@ mod archivar {
             if d <= 0.0 {
                 continue;
             }
+            let dir = [rel[0] / d, rel[1] / d, rel[2] / d];
+            let df = dir[0] * forward[0] + dir[1] * forward[1] + dir[2] * forward[2];
+            if df <= 0.0 {
+                continue;
+            }
+            let sx = (dir[0] * right[0] + dir[1] * right[1] + dir[2] * right[2]) / df * mag;
+            let sy = -(dir[0] * up[0] + dir[1] * up[1] + dir[2] * up[2]) / df * mag;
             let flux = match factors.get(&si) {
                 Some(f) => rec.flux * f,
                 None => rec.flux,
             };
             out.push([
-                rel[0] / d,
-                rel[1] / d,
-                rel[2] / d,
+                dir[0],
+                dir[1],
+                dir[2],
                 flux,
-                rec.tau,
-                0.0,
+                d,
+                sx,
+                sy,
+                rec.rv_m_s / C_LIGHT,
                 rec.color_index,
+                rec.tau,
             ]);
         }
     }
@@ -5808,6 +5805,7 @@ mod archivar {
                 "transitmap" if parts.len() >= 2 => {
                     cur_extracts.push(Extract::TransitMap {
                         arr_path: parts[1].to_string(),
+                        name_key: String::new(),
                         ra_key: String::new(),
                         dec_key: String::new(),
                         dist_key: String::new(),
@@ -6077,6 +6075,7 @@ mod archivar {
                         Some(&"mm") => 0.001,
                         Some(&"-m") => -1.0,
                         Some(&"-km") => -1000.0,
+                        Some(&"decibar") => 1.0,
                         Some(_) => continue,
                     };
                     if let Some(Extract::Map {
@@ -6085,6 +6084,14 @@ mod archivar {
                     {
                         *alt_key = parts[1].to_string();
                         *alt_scale = scale;
+                    } else if let Some(Extract::ProfileMap {
+                        pressure_var,
+                        pressure_scale,
+                        ..
+                    }) = cur_extracts.last_mut()
+                    {
+                        *pressure_var = parts[1].to_string();
+                        *pressure_scale = scale;
                     }
                 }
                 "epoch" if parts.len() >= 2 => match cur_extracts.last_mut() {
@@ -6306,6 +6313,11 @@ mod archivar {
                         {
                             *dist_scale = v;
                         }
+                    }
+                }
+                "tname" if parts.len() >= 2 => {
+                    if let Some(Extract::TransitMap { name_key, .. }) = cur_extracts.last_mut() {
+                        *name_key = parts[1].to_string();
                     }
                 }
                 "tra" if parts.len() >= 2 => {
@@ -8679,6 +8691,122 @@ mod archivar {
         ExtractResult::Measurements(channels)
     }
 
+    fn build_netcdf_channels(
+        src: &SourceConfig,
+        bytes: &[u8],
+        lsk: &LeapSeconds,
+    ) -> Vec<(Channel, FieldConfig)> {
+        let bytes = if bytes.starts_with(&[0x1f, 0x8b]) {
+            match gunzip(bytes) {
+                Some(b) => b,
+                None => return Vec::new(),
+            }
+        } else {
+            bytes.to_vec()
+        };
+        let nc = match NetcdfFile::parse(&bytes) {
+            Ok(f) => f,
+            Err(note) => {
+                eprintln!("netcdf {}: {:?}", src.url, note);
+                return Vec::new();
+            }
+        };
+        let mut channels = Vec::new();
+        for ext in &src.extracts {
+            let Extract::ProfileMap {
+                lat_key,
+                lon_key,
+                epoch_key,
+                pressure_var,
+                pressure_scale,
+                fields,
+                ..
+            } = ext
+            else {
+                continue;
+            };
+            let Some(lat_v) = nc.values_f64(&bytes, lat_key) else {
+                continue;
+            };
+            let Some(lon_v) = nc.values_f64(&bytes, lon_key) else {
+                continue;
+            };
+            let Some(juld_v) = nc.values_f64(&bytes, epoch_key) else {
+                continue;
+            };
+            let Some(pres_v) = nc.values_f32(&bytes, pressure_var) else {
+                continue;
+            };
+            let n_prof = lat_v.len().min(lon_v.len()).min(juld_v.len());
+            let n_levels = match nc.var(pressure_var).and_then(|v| nc.var_shape(v).ok()) {
+                Some(shape) => match shape.get(1) {
+                    Some(&n) => n as usize,
+                    None => continue,
+                },
+                None => continue,
+            };
+            if n_levels == 0 || pres_v.len() < n_prof * n_levels {
+                continue;
+            }
+            let pres_fill = nc
+                .var(pressure_var)
+                .and_then(|v| v.attrs.iter().find(|a| a.name == "_FillValue"))
+                .and_then(|a| nc.attr_num(a));
+            for p in 0..n_prof {
+                let lat = lat_v[p];
+                let lon = lon_v[p];
+                let juld = juld_v[p];
+                if lat.is_nan() || lon.is_nan() || juld.is_nan() {
+                    continue;
+                }
+                let unix = (juld - 7305.0) * 86400.0;
+                let Some(epoch) = lsk.unix_to_tdb(unix) else {
+                    continue;
+                };
+                for fc in fields {
+                    let Some(vals) = nc.values_f32(&bytes, &fc.key) else {
+                        continue;
+                    };
+                    if vals.len() < n_prof * n_levels {
+                        continue;
+                    }
+                    let fill = nc
+                        .var(&fc.key)
+                        .and_then(|v| v.attrs.iter().find(|a| a.name == "_FillValue"))
+                        .and_then(|a| nc.attr_num(a));
+                    for k in 0..n_levels {
+                        let pres = pres_v[p * n_levels + k];
+                        let val = vals[p * n_levels + k];
+                        if val.is_nan()
+                            || pres.is_nan()
+                            || fill.map_or(false, |f| (val as f64) == f)
+                            || pres_fill.map_or(false, |f| (pres as f64) == f)
+                        {
+                            continue;
+                        }
+                        let position = Position::Surface {
+                            body_name: frame_body_name(&src.frame),
+                            lat,
+                            lon,
+                            alt: -(pres as f64) * pressure_scale,
+                        };
+                        channels.push((
+                            Channel {
+                                z: 0.0,
+                                epoch,
+                                position,
+                                name: fc.name.clone(),
+                                value: val as f64,
+                            },
+                            fc.clone(),
+                        ));
+                    }
+                }
+            }
+        }
+        channels
+    }
+
     pub fn anchor(
         channel: &Channel,
         sensor: &FieldConfig,
@@ -9205,11 +9333,11 @@ mod archivar {
         let declined = declined.load(std::sync::atomic::Ordering::Relaxed);
         let out = out_lock.into_inner().unwrap();
         let dead = dead_lock.into_inner().unwrap();
-        std::fs::create_dir_all("phi/port").ok();
-        std::fs::write("phi/port/probe_survivors.φ", &out).ok();
-        std::fs::write("phi/port/probe_void.txt", &dead).ok();
+        std::fs::create_dir_all("phi/pipeline").ok();
+        std::fs::write("phi/pipeline/probe_survivors.φ", &out).ok();
+        std::fs::write("phi/pipeline/probe_void.txt", &dead).ok();
         eprintln!(
-        "probe: wrote phi/port/probe_survivors.φ ({} verified) and phi/port/probe_void.txt ({} declined)",
+        "probe: wrote phi/pipeline/probe_survivors.φ ({} verified) and phi/pipeline/probe_void.txt ({} declined)",
         accepted, declined
     );
         0
@@ -10635,11 +10763,15 @@ mod archivar {
             }
         });
         let drafted = drafted.load(std::sync::atomic::Ordering::Relaxed);
-        std::fs::create_dir_all("phi/port").ok();
-        std::fs::write("phi/port/probe_drafts.φ", out_lock.into_inner().unwrap()).ok();
+        std::fs::create_dir_all("phi/pipeline").ok();
+        std::fs::write(
+            "phi/pipeline/probe_drafts.φ",
+            out_lock.into_inner().unwrap(),
+        )
+        .ok();
         let learned = learned_lock.into_inner().unwrap();
         eprintln!(
-        "--draft: {} Kandidaten, {} Blöcke gedraftet, {} Frames gelernt → phi/port/probe_drafts.φ + phi/port/frame_learned.φ",
+        "--draft: {} Kandidaten, {} Blöcke gedraftet, {} Frames gelernt → phi/pipeline/probe_drafts.φ + phi/pipeline/frame_learned.φ",
         total,
         drafted,
         learned.len()
@@ -10751,7 +10883,7 @@ mod archivar {
                 }
             }
         }
-        if let Ok(content) = std::fs::read_to_string("phi/port/frame_learned.φ") {
+        if let Ok(content) = std::fs::read_to_string("phi/pipeline/frame_learned.φ") {
             for line in content.lines() {
                 let t = line.trim();
                 if t.is_empty() || t.starts_with('#') {
@@ -10772,7 +10904,7 @@ mod archivar {
 
     fn learn_frames(new: &HashMap<String, String>) {
         let mut map: HashMap<String, String> = HashMap::new();
-        if let Ok(content) = std::fs::read_to_string("phi/port/frame_learned.φ") {
+        if let Ok(content) = std::fs::read_to_string("phi/pipeline/frame_learned.φ") {
             for line in content.lines() {
                 let t = line.trim();
                 if t.is_empty() || t.starts_with('#') {
@@ -10795,8 +10927,8 @@ mod archivar {
         for (nl, frame) in keys {
             out.push_str(&format!("{} | {}\n", nl, frame));
         }
-        std::fs::create_dir_all("phi/port").ok();
-        std::fs::write("phi/port/frame_learned.φ", out).ok();
+        std::fs::create_dir_all("phi/pipeline").ok();
+        std::fs::write("phi/pipeline/frame_learned.φ", out).ok();
     }
 
     fn draft_context_mode(path: &str) -> i32 {
@@ -10808,12 +10940,12 @@ mod archivar {
             }
         };
         let mut context_map: HashMap<String, String> = HashMap::new();
-        for dir in ["phi/katalog", "phi/port"] {
+        for dir in ["phi/pipeline/katalog", "phi/pipeline"] {
             if let Ok(rd) = std::fs::read_dir(dir) {
                 for e in rd.flatten() {
                     let name = e.file_name().to_string_lossy().to_string();
-                    let relevant = (dir == "phi/katalog" && name.ends_with(".φ"))
-                        || (dir == "phi/port"
+                    let relevant = (dir == "phi/pipeline/katalog" && name.ends_with(".φ"))
+                        || (dir == "phi/pipeline"
                             && name.starts_with("weights_")
                             && name.ends_with(".txt"));
                     if !relevant {
@@ -10848,7 +10980,7 @@ mod archivar {
         for (nl, f) in reg_keys {
             reg.push_str(&format!("{} | {}\n", nl, f));
         }
-        std::fs::write("phi/port/frame_registry.φ", reg).ok();
+        std::fs::write("phi/pipeline/frame_registry.φ", reg).ok();
         let mut out = String::new();
         let mut celestial = 0usize;
         let mut terrestrial = 0usize;
@@ -10900,10 +11032,10 @@ mod archivar {
             out.push_str(&lines.join("\n"));
             out.push_str("\n\n");
         }
-        std::fs::create_dir_all("phi/port").ok();
-        std::fs::write("phi/port/probe_drafts_enriched.φ", out).ok();
+        std::fs::create_dir_all("phi/pipeline").ok();
+        std::fs::write("phi/pipeline/probe_drafts_enriched.φ", out).ok();
         eprintln!(
-            "--draft-context: {} ausstehend → {} celestial, {} terrestrial, {} bleiben ausstehend → phi/port/probe_drafts_enriched.φ",
+            "--draft-context: {} ausstehend → {} celestial, {} terrestrial, {} bleiben ausstehend → phi/pipeline/probe_drafts_enriched.φ",
             celestial + terrestrial + pending,
             celestial,
             terrestrial,
@@ -10965,8 +11097,8 @@ mod archivar {
         for (w, f, tag) in &delta {
             d.push_str(&format!("{} {} {}\n", w, f, tag));
         }
-        std::fs::write("phi/port/library_gate_delta.φ", d).ok();
-        let library = std::fs::read_to_string("phi/port/library.φ").unwrap_or_default();
+        std::fs::write("phi/pipeline/library_gate_delta.φ", d).ok();
+        let library = std::fs::read_to_string("phi/pipeline/library.φ").unwrap_or_default();
         let delta_lines: Vec<String> = delta
             .iter()
             .map(|(w, f, tag)| format!("{} {} {}", w, f, tag))
@@ -10991,7 +11123,7 @@ mod archivar {
                 out.push('\n');
             }
         }
-        std::fs::write("phi/port/library.φ", out).ok();
+        std::fs::write("phi/pipeline/library.φ", out).ok();
         eprintln!(
             "--learn-gate: {} netloc-Gewichte ({} positiv, {} negativ) → library.φ + library_gate_delta.φ",
             delta.len(),
@@ -11080,10 +11212,14 @@ mod archivar {
         });
         let live = live.load(std::sync::atomic::Ordering::Relaxed);
         let void = void.load(std::sync::atomic::Ordering::Relaxed);
-        std::fs::create_dir_all("phi/port").ok();
-        std::fs::write("phi/port/probe_live.txt", live_lock.into_inner().unwrap()).ok();
+        std::fs::create_dir_all("phi/pipeline").ok();
         std::fs::write(
-            "phi/port/probe_url_void.txt",
+            "phi/pipeline/probe_live.txt",
+            live_lock.into_inner().unwrap(),
+        )
+        .ok();
+        std::fs::write(
+            "phi/pipeline/probe_url_void.txt",
             void_lock.into_inner().unwrap(),
         )
         .ok();
@@ -11124,10 +11260,10 @@ mod archivar {
             });
             let out = jina_out.into_inner().unwrap();
             jina_report = out.lines().count();
-            std::fs::write("phi/port/probe_jina.txt", out).ok();
+            std::fs::write("phi/pipeline/probe_jina.txt", out).ok();
         }
         eprintln!(
-        "--urls: {} geprüft, {} live, {} void, {} jina-json → phi/port/probe_live.txt + probe_url_void.txt + probe_jina.txt",
+        "--urls: {} geprüft, {} live, {} void, {} jina-json → phi/pipeline/probe_live.txt + probe_url_void.txt + probe_jina.txt",
         total, live, void, jina_report
     );
         0
@@ -11781,6 +11917,52 @@ mod archivar {
                             asteroid_hash: Some(Arc::new(hash)),
                             star_hash: None,
                             occluders: Some(Arc::new(occluders)),
+                            planets: None,
+                            curves: None,
+                        });
+                    });
+                    continue;
+                }
+                if archive.sources[i].format == "netcdf" {
+                    let url = archive.sources[i].url.clone();
+                    let ftx = fetch_tx.clone();
+                    let src_clone = archive.sources[i].clone();
+                    let src_idx = i;
+                    let src_ttl = src_clone.ttl;
+                    let lsk_c = lsk.clone();
+                    archive.origins.entry(origin).or_insert(OriginState {
+                        fetched: now,
+                        prev_epoch: now,
+                        prev_abs: [0.0; 3],
+                        prev_motion: None,
+                        resid_ema: 0.0,
+                        has_prev: false,
+                    });
+                    thread::spawn(move || {
+                        let name = url.rsplit('/').next().unwrap_or("netcdf").to_string();
+                        let tmp_path = format!("/tmp/omegaflow_netcdf_{}", name);
+                        if !cache_fresh(&tmp_path, src_ttl) {
+                            let bytes = match fetch_raw_bytes(&url, src_ttl) {
+                                Some(b) => b,
+                                None => return,
+                            };
+                            if std::fs::write(&tmp_path, &bytes).is_err() {
+                                return;
+                            }
+                        }
+                        let bytes = match std::fs::read(&tmp_path) {
+                            Ok(b) => b,
+                            Err(_) => return,
+                        };
+                        let channels = build_netcdf_channels(&src_clone, &bytes, &lsk_c);
+                        eprintln!("\r\x1b[Knetcdf {}: {} oscillators", name, channels.len());
+                        let _ = ftx.send(FetchResult {
+                            source_idx: src_idx,
+                            channels,
+                            eph_update: None,
+                            asteroid_hash: None,
+                            star_hash: None,
+                            occluders: None,
                             planets: None,
                             curves: None,
                         });
@@ -13166,6 +13348,7 @@ field temp temp_c\n";
             bin.extend_from_slice(&0f32.to_le_bytes());
             bin.extend_from_slice(&1f32.to_le_bytes());
             bin.extend_from_slice(&1.2f32.to_le_bytes());
+            bin.extend_from_slice(&30000f32.to_le_bytes());
             #[cfg(feature = "browser_relay")]
             let hash = build_star_hash(&bin, 0.0, 1.0);
             #[cfg(not(feature = "browser_relay"))]
@@ -13173,11 +13356,19 @@ field temp temp_c\n";
             assert_eq!(hash.records.len(), 1);
             assert!(hash.records[0].tau > 0.0);
             assert!((hash.records[0].color_index - 1.2).abs() < 1e-4);
+            assert!((hash.records[0].rv_m_s - 30000.0).abs() < 1e-4);
             let (p, _) = star_position_at(&hash.records[0], 0.0);
             let d = 10.0 * PARSEC_M;
             assert!((p[0] - d).abs() / d < 1e-9);
             let short = [0u8; 36];
             assert!(parse_star_record(&short).is_none());
+            let legacy = [0u8; 40];
+            assert!(parse_star_record(&legacy).is_none());
+            #[cfg(feature = "browser_relay")]
+            let legacy_hash = build_star_hash(&bin[..40], 0.0, 1.0);
+            #[cfg(not(feature = "browser_relay"))]
+            let legacy_hash = build_star_hash(&bin[..40]);
+            assert_eq!(legacy_hash.records.len(), 0);
         }
 
         #[cfg(feature = "browser_relay")]
@@ -13192,6 +13383,7 @@ field temp temp_c\n";
             bin.extend_from_slice(&0f32.to_le_bytes());
             bin.extend_from_slice(&1f32.to_le_bytes());
             bin.extend_from_slice(&0f32.to_le_bytes());
+            bin.extend_from_slice(&12000f32.to_le_bytes());
             let hash = build_star_hash(&bin, 0.0, 1.0);
             assert_eq!(hash.p0.len(), 1);
             let d = 10.0 * PARSEC_M;
@@ -13338,7 +13530,7 @@ field temp temp_c\n";
 
         #[test]
         fn temp_port_convert_check() {
-            let content = std::fs::read_to_string("phi/port/queue/master.φ").unwrap();
+            let content = std::fs::read_to_string("phi/pipeline/queue/master.φ").unwrap();
             let mut blocks = 0usize;
             let mut parsed = 0usize;
             let mut with_extracts = 0usize;
@@ -13391,6 +13583,166 @@ field temp temp_c\n";
             assert_eq!(fields.len(), 2);
             assert_eq!(fields[0].key, "temperature");
             assert_eq!(fields[1].key, "salinity");
+        }
+
+        #[test]
+        fn test_netcdf_grammar_alt_decibar() {
+            let block = "url https://data-argo.ifremer.fr/dac/aoml/1901843/profiles/R1901843_357.nc\nttl 604800\non earth 0 0 0\nformat netcdf\nprofile .\nlat LATITUDE\nlon LONGITUDE\nepoch JULD\nalt PRES decibar\nfield TEMP argo_dac_temp_c erfc thermal C 604800 0.0 0.0\nfield PSAL argo_dac_salinity_psu erfc diffusion psu 604800 0.0 0.0\n";
+            let srcs = super::parse_sources(block);
+            assert_eq!(srcs.len(), 1);
+            assert_eq!(srcs[0].format, "netcdf");
+            let prof = srcs[0].extracts.iter().find_map(|e| match e {
+                super::Extract::ProfileMap {
+                    pressure_var,
+                    pressure_scale,
+                    fields,
+                    lat_key,
+                    lon_key,
+                    epoch_key,
+                    ..
+                } => Some((
+                    pressure_var.clone(),
+                    *pressure_scale,
+                    fields,
+                    lat_key.clone(),
+                    lon_key.clone(),
+                    epoch_key.clone(),
+                )),
+                _ => None,
+            });
+            let (pv, ps, fields, lk, ok, ek) = prof.expect("ProfileMap extract fehlt");
+            assert_eq!(pv, "PRES");
+            assert_eq!(ps, 1.0);
+            assert_eq!(lk, "LATITUDE");
+            assert_eq!(ok, "LONGITUDE");
+            assert_eq!(ek, "JULD");
+            assert_eq!(fields.len(), 2);
+            assert_eq!(fields[0].key, "TEMP");
+            assert_eq!(fields[1].key, "PSAL");
+        }
+
+        #[test]
+        fn test_build_netcdf_channels() {
+            let block = "url https://data-argo.ifremer.fr/dac/aoml/1901843/profiles/R1901843_357.nc\nttl 604800\non earth 0 0 0\nformat netcdf\nprofile .\nlat LATITUDE\nlon LONGITUDE\nepoch JULD\nalt PRES decibar\nfield TEMP argo_dac_temp_c erfc thermal C 604800 0.0 0.0\nfield PSAL argo_dac_salinity_psu erfc diffusion psu 604800 0.0 0.0\n";
+            let srcs = super::parse_sources(block);
+            let u32b = |x: u32| x.to_be_bytes().to_vec();
+            let f64b = |x: f64| x.to_bits().to_be_bytes().to_vec();
+            let f32b = |x: f32| x.to_bits().to_be_bytes().to_vec();
+            let name = |s: &str| {
+                let mut b = u32b(s.len() as u32);
+                b.extend_from_slice(s.as_bytes());
+                while b.len() % 4 != 0 {
+                    b.push(0);
+                }
+                b
+            };
+            let mut b = Vec::new();
+            b.extend([0x43, 0x44, 0x46, 0x01]);
+            b.extend(u32b(0));
+            b.extend(u32b(0x0A));
+            b.extend(u32b(2));
+            b.extend(name("N_PROF"));
+            b.extend(u32b(1));
+            b.extend(name("N_LEVELS"));
+            b.extend(u32b(3));
+            b.extend(u32b(0));
+            b.extend(u32b(0));
+            b.extend(u32b(0x0B));
+            b.extend(u32b(6));
+            let mut var = |b: &mut Vec<u8>,
+                           nm: &str,
+                           rank: u32,
+                           dims: &[u32],
+                           fill: Option<f32>,
+                           t: u32,
+                           vsize: u32|
+             -> usize {
+                b.extend(name(nm));
+                b.extend(u32b(rank));
+                for &d in dims {
+                    b.extend(u32b(d));
+                }
+                match fill {
+                    Some(fv) => {
+                        b.extend(u32b(0x0C));
+                        b.extend(u32b(1));
+                        b.extend(name("_FillValue"));
+                        b.extend(u32b(5));
+                        b.extend(u32b(1));
+                        b.extend(f32b(fv));
+                    }
+                    None => {
+                        b.extend(u32b(0));
+                        b.extend(u32b(0));
+                    }
+                }
+                b.extend(u32b(t));
+                b.extend(u32b(vsize));
+                let slot = b.len();
+                b.extend(u32b(0));
+                slot
+            };
+            let slots = vec![
+                var(&mut b, "LATITUDE", 1, &[0], None, 6, 8),
+                var(&mut b, "LONGITUDE", 1, &[0], None, 6, 8),
+                var(&mut b, "JULD", 1, &[0], None, 6, 8),
+                var(&mut b, "PRES", 2, &[0, 1], Some(99999.0), 5, 4),
+                var(&mut b, "TEMP", 2, &[0, 1], Some(99999.0), 5, 4),
+                var(&mut b, "PSAL", 2, &[0, 1], Some(99999.0), 5, 4),
+            ];
+            let data_start = b.len() as u64;
+            let begins = [
+                data_start,
+                data_start + 8,
+                data_start + 16,
+                data_start + 24,
+                data_start + 36,
+                data_start + 48,
+            ];
+            for (slot, beg) in slots.iter().zip(begins.iter()) {
+                b[*slot..*slot + 4].copy_from_slice(&(*beg as u32).to_be_bytes());
+            }
+            b.extend(f64b(-15.77751));
+            b.extend(f64b(57.37286));
+            b.extend(f64b(27965.773125022904));
+            for p in [1.08f32, 2.0, 99999.0] {
+                b.extend(f32b(p));
+            }
+            for t in [25.862f32, f32::NAN, 10.0] {
+                b.extend(f32b(t));
+            }
+            for s in [35.0314f32, 35.0, 34.9] {
+                b.extend(f32b(s));
+            }
+            let lsk = full_fixture_lsk();
+            let expected_epoch = lsk
+                .unix_to_tdb((27965.773125022904f64 - 7305.0) * 86400.0)
+                .unwrap();
+            let channels = super::build_netcdf_channels(&srcs[0], &b, &lsk);
+            assert_eq!(channels.len(), 3);
+            assert_eq!(channels[0].0.name, "argo_dac_temp_c");
+            assert_eq!(channels[1].0.name, "argo_dac_salinity_psu");
+            assert_eq!(channels[2].0.name, "argo_dac_salinity_psu");
+            assert!((channels[0].0.value - 25.862).abs() < 1e-3);
+            assert!((channels[1].0.value - 35.0314).abs() < 1e-3);
+            assert!((channels[2].0.value - 35.0).abs() < 1e-6);
+            assert!((channels[0].0.epoch - expected_epoch).abs() < 1e-6);
+            assert!((channels[1].0.epoch - expected_epoch).abs() < 1e-6);
+            assert!((channels[2].0.epoch - expected_epoch).abs() < 1e-6);
+            let alts: Vec<f64> = channels
+                .iter()
+                .map(|(c, _)| match &c.position {
+                    super::Position::Surface { alt, lat, lon, .. } => {
+                        assert!((*lat + 15.77751).abs() < 1e-4);
+                        assert!((*lon - 57.37286).abs() < 1e-4);
+                        *alt
+                    }
+                    _ => panic!("Position ist nicht Surface"),
+                })
+                .collect();
+            assert!((alts[0] + 1.08).abs() < 1e-2);
+            assert!((alts[1] + 1.08).abs() < 1e-2);
+            assert!((alts[2] + 2.0).abs() < 1e-2);
         }
 
         #[test]
@@ -13550,7 +13902,8 @@ field temp temp_c\n";
                 .collect();
             let mut seen: std::collections::HashSet<String> = std::collections::HashSet::new();
             let mut ok_text = String::from("# staging: backlog blocks verified with samples\n");
-            if let Ok(existing) = std::fs::read_to_string("phi/port/stage/staging_verified.φ") {
+            if let Ok(existing) = std::fs::read_to_string("phi/pipeline/stage/staging_verified.φ")
+            {
                 for l in existing.lines() {
                     let t = l.trim_start();
                     if t.starts_with("url ") {
@@ -13560,7 +13913,7 @@ field temp temp_c\n";
                 ok_text = existing;
             }
             let mut void_text = String::new();
-            if let Ok(existing) = std::fs::read_to_string("phi/port/stage/staging_empty.txt") {
+            if let Ok(existing) = std::fs::read_to_string("phi/pipeline/stage/staging_empty.txt") {
                 for l in existing.lines() {
                     if let Some(u) = l.strip_prefix("void ") {
                         if let Some(end) = u.find(' ') {
@@ -13576,7 +13929,7 @@ field temp temp_c\n";
             let mut limit = 300usize;
             let mut ok = 0usize;
             let mut empty = 0usize;
-            for e in std::fs::read_dir("phi/port/stage").unwrap().flatten() {
+            for e in std::fs::read_dir("phi/pipeline/stage").unwrap().flatten() {
                 let fname = e.file_name().to_string_lossy().to_string();
                 if !fname.ends_with("_converted.φ") {
                     continue;
@@ -13646,8 +13999,8 @@ field temp temp_c\n";
                 }
             }
             eprintln!("=== BACKLOG VERIFY: {} ok, {} empty ===", ok, empty);
-            let ok_path = "phi/port/stage/staging_verified.φ";
-            let void_path = "phi/port/stage/staging_empty.txt";
+            let ok_path = "phi/pipeline/stage/staging_verified.φ";
+            let void_path = "phi/pipeline/stage/staging_empty.txt";
             std::fs::write(ok_path, &ok_text).unwrap();
             std::fs::write(void_path, &void_text).unwrap();
             eprintln!("staged: {} and {}", ok_path, void_path);
@@ -15792,42 +16145,26 @@ mod mathematikerin {
         }
     }
 
-    pub fn pack_deep_pt(stars: &[[f64; 7]]) -> Vec<f32> {
-        let mut out = Vec::with_capacity(stars.len() * 8);
+    pub fn pack_stars(stars: &[[f64; 10]]) -> Vec<f32> {
+        let mut out = Vec::with_capacity(stars.len() * 12);
         for s in stars {
+            out.push(s[5] as f32);
+            out.push(s[6] as f32);
+            out.push(s[3] as f32);
+            out.push(s[4] as f32);
             out.push(s[0] as f32);
             out.push(s[1] as f32);
             out.push(s[2] as f32);
-            out.push(s[3] as f32);
-            out.push(s[5] as f32);
-            out.push(s[4] as f32);
-            out.push(s[6] as f32);
+            out.push(s[7] as f32);
+            out.push(s[8] as f32);
+            out.push(s[9] as f32);
+            out.push(0.0);
             out.push(0.0);
         }
         out
     }
 
-    pub fn pack_deep_ex(stars: &[[f64; 7]]) -> Vec<f32> {
-        let mut out = Vec::with_capacity(stars.len() * 8);
-        for s in stars {
-            out.push(s[0] as f32);
-            out.push(s[1] as f32);
-            out.push(s[2] as f32);
-            out.push(s[3] as f32);
-            out.push(s[5] as f32);
-            out.push(s[4] as f32);
-            out.push(s[6] as f32);
-            out.push(0.0);
-        }
-        out
-    }
-
-    pub fn force_ref_medians(
-        field: &[f32],
-        meta: &[f32],
-        deep_pt: &[f32],
-        deep_ex: &[f32],
-    ) -> [Option<f32>; 9] {
+    pub fn force_ref_medians(field: &[f32], meta: &[f32], stars: &[f32]) -> [Option<f32>; 9] {
         let mut hist: [[u32; 256]; 9] = [[0; 256]; 9];
         let mut sum: [[f32; 256]; 9] = [[0.0; 256]; 9];
         let mut n: [u32; 9] = [0; 9];
@@ -15849,19 +16186,8 @@ mod mathematikerin {
             sum[ft as usize][b] += l;
             n[ft as usize] += 1;
         }
-        for f in deep_pt.chunks_exact(8) {
-            let v = f[3];
-            if !v.is_finite() || v == 0.0 {
-                continue;
-            }
-            let l = v.abs().log2();
-            let b = log2_bin_of(l);
-            hist[0][b] += 1;
-            sum[0][b] += l;
-            n[0] += 1;
-        }
-        for f in deep_ex.chunks_exact(8) {
-            let v = f[3];
+        for f in stars.chunks_exact(12) {
+            let v = f[2];
             if !v.is_finite() || v == 0.0 {
                 continue;
             }
@@ -15928,6 +16254,7 @@ mod mathematikerin {
                 period_key,
                 rp_key,
                 rs_key,
+                name_key,
             } => Some((
                 arr_path.clone(),
                 ra_key.clone(),
@@ -15942,6 +16269,7 @@ mod mathematikerin {
                 period_key.clone(),
                 rp_key.clone(),
                 rs_key.clone(),
+                name_key.clone(),
             )),
             _ => None,
         }) {
@@ -15954,7 +16282,19 @@ mod mathematikerin {
         let Some(JsonVal::Arr(arr)) = jpath_val(&j, &keys.0) else {
             return PlanetSet { records };
         };
+        let mut seen: std::collections::HashSet<String> = std::collections::HashSet::new();
         for v in arr {
+            if !keys.13.is_empty() {
+                let Some(name_str) = jpath_val(v, &keys.13).and_then(|n| match n {
+                    JsonVal::Str(s) => Some(s.clone()),
+                    _ => None,
+                }) else {
+                    continue;
+                };
+                if !seen.insert(name_str) {
+                    continue;
+                }
+            }
             let Some(ra_deg) = jnum(v, &keys.1) else {
                 continue;
             };
@@ -16051,6 +16391,22 @@ mod mathematikerin {
         (x * x + y * y * cos_i * cos_i).sqrt()
     }
 
+    fn disc_intersection_fraction(d: f64, rp: f64, rs: f64) -> f64 {
+        if d >= rp + rs {
+            return 0.0;
+        }
+        if d <= (rs - rp).abs() {
+            return if rp <= rs { (rp * rp) / (rs * rs) } else { 1.0 };
+        }
+        let r2 = rp * rp;
+        let s2 = rs * rs;
+        let d2 = d * d;
+        let a1 = r2 * ((d2 + r2 - s2) / (2.0 * d * rp)).clamp(-1.0, 1.0).acos();
+        let a2 = s2 * ((d2 + s2 - r2) / (2.0 * d * rs)).clamp(-1.0, 1.0).acos();
+        let half = ((-d + rp + rs) * (d + rp - rs) * (d - rp + rs) * (d + rp + rs)).sqrt() * 0.5;
+        (a1 + a2 - half) / (std::f64::consts::PI * s2)
+    }
+
     fn transit_factors(
         pset: &PlanetSet,
         index: &mut Option<TransitIndex>,
@@ -16133,11 +16489,10 @@ mod mathematikerin {
                             continue;
                         }
                         let offset = sky_offset_m(prec, t);
-                        if offset >= prec.rp_m {
+                        if offset >= prec.rp_m + prec.rs_m {
                             continue;
                         }
-                        let ratio = prec.rp_m / prec.rs_m;
-                        let depth = 1.0 - ratio * ratio;
+                        let depth = 1.0 - disc_intersection_fraction(offset, prec.rp_m, prec.rs_m);
                         out.entry(si as usize)
                             .and_modify(|f| *f *= depth)
                             .or_insert(depth);
@@ -16337,7 +16692,7 @@ mod mathematikerin {
     fn occulting_barriers(
         occluders: &[AsteroidRec],
         index: &mut Option<OccIndex>,
-        deep: &[[f64; 7]],
+        deep: &[[f64; 10]],
         center: [f64; 3],
         t: f64,
         barriers: &mut Vec<f32>,
@@ -16455,6 +16810,18 @@ mod mathematikerin {
         _thread: Option<thread::JoinHandle<()>>,
     }
 
+    struct SenseReq {
+        field: Arc<Buffer>,
+        center: [f64; 3],
+        t: f64,
+        pad: f64,
+        cache_interval: f64,
+        right: [f64; 3],
+        up: [f64; 3],
+        forward: [f64; 3],
+        mag: f64,
+    }
+
     impl MathematikerinRadiator {
         pub fn new(
             presence_tx: mpsc::Sender<(String, f64, f64, f64, f64, f64)>,
@@ -16466,17 +16833,9 @@ mod mathematikerin {
             surface_tx: mpsc::Sender<SurfaceFrame>,
         ) -> Self {
             let (tx, rx) = mpsc::sync_channel::<Arc<Buffer>>(2);
-            let (req_tx, req_rx) =
-                mpsc::sync_channel::<(Arc<Buffer>, [f64; 3], f64, f64, f64, f64)>(1);
-            let (res_tx, res_rx) = mpsc::sync_channel::<(
-                PackedWindow,
-                Vec<f32>,
-                Vec<f32>,
-                Vec<f32>,
-                f64,
-                OccReport,
-                u64,
-            )>(2);
+            let (req_tx, req_rx) = mpsc::sync_channel::<SenseReq>(1);
+            let (res_tx, res_rx) =
+                mpsc::sync_channel::<(PackedWindow, Vec<f32>, Vec<f32>, f64, OccReport, u64)>(2);
             let shutdown = Arc::new(AtomicBool::new(false));
             let shutdown_clone = shutdown.clone();
             thread::spawn(move || {
@@ -16491,7 +16850,18 @@ mod mathematikerin {
                     while let Ok(newer) = req_rx.try_recv() {
                         req = newer;
                     }
-                    let (field, center, t, pad, cache_interval, grid_step) = req;
+                    let SenseReq {
+                        field,
+                        center,
+                        t,
+                        pad,
+                        cache_interval,
+                        right,
+                        up,
+                        forward,
+                        mag,
+                        ..
+                    } = req;
                     let mut records: Vec<Record> = Vec::new();
                     let eph = field.eph.clone();
                     sense_membrane(&field, center, t, pad, cache_interval, &mut records, &eph);
@@ -16504,19 +16874,19 @@ mod mathematikerin {
                         transit_factors_map =
                             transit_factors(pset, &mut transit_index, sh, center, t);
                     }
-                    let mut deep: Vec<[f64; 7]> = Vec::new();
-                    sense_deep(&field, center, t, &mut deep, &transit_factors_map);
-                    let mut pt_src: Vec<[f64; 7]> = Vec::new();
-                    let mut ex_src: Vec<[f64; 7]> = Vec::new();
-                    for s in &deep {
-                        if s[5] / grid_step < 1.0 {
-                            pt_src.push(*s);
-                        } else {
-                            ex_src.push(*s);
-                        }
-                    }
-                    let packed_deep_pt = pack_deep_pt(&pt_src);
-                    let packed_deep_ex = pack_deep_ex(&ex_src);
+                    let mut deep: Vec<[f64; 10]> = Vec::new();
+                    sense_deep(
+                        &field,
+                        center,
+                        t,
+                        right,
+                        up,
+                        forward,
+                        mag,
+                        &mut deep,
+                        &transit_factors_map,
+                    );
+                    let packed_stars = pack_stars(&deep);
                     let mut barriers: Vec<f32> = Vec::with_capacity(eph.len() * 8);
                     for (name, e) in eph.iter() {
                         let Some(props) = &e.props else {
@@ -16553,8 +16923,7 @@ mod mathematikerin {
                     let mut key = Vec::with_capacity(
                         packed.field.len() * 4
                             + packed.meta.len() * 4
-                            + packed_deep_pt.len() * 4
-                            + packed_deep_ex.len() * 4
+                            + packed_stars.len() * 4
                             + barriers.len() * 4,
                     );
                     for x in &packed.field {
@@ -16563,10 +16932,7 @@ mod mathematikerin {
                     for x in &packed.meta {
                         key.extend_from_slice(&x.to_le_bytes());
                     }
-                    for x in &packed_deep_pt {
-                        key.extend_from_slice(&x.to_le_bytes());
-                    }
-                    for x in &packed_deep_ex {
+                    for x in &packed_stars {
                         key.extend_from_slice(&x.to_le_bytes());
                     }
                     for x in &barriers {
@@ -16578,15 +16944,7 @@ mod mathematikerin {
                     last_bytes = key;
                     generation = generation.wrapping_add(1);
                     if res_tx
-                        .send((
-                            packed,
-                            packed_deep_pt,
-                            packed_deep_ex,
-                            barriers,
-                            t,
-                            occ,
-                            generation,
-                        ))
+                        .send((packed, packed_stars, barriers, t, occ, generation))
                         .is_err()
                     {
                         break;
@@ -16744,16 +17102,8 @@ mod mathematikerin {
 
     struct NativeApp {
         rx: mpsc::Receiver<Arc<Buffer>>,
-        req_tx: mpsc::SyncSender<(Arc<Buffer>, [f64; 3], f64, f64, f64, f64)>,
-        res_rx: mpsc::Receiver<(
-            PackedWindow,
-            Vec<f32>,
-            Vec<f32>,
-            Vec<f32>,
-            f64,
-            OccReport,
-            u64,
-        )>,
+        req_tx: mpsc::SyncSender<SenseReq>,
+        res_rx: mpsc::Receiver<(PackedWindow, Vec<f32>, Vec<f32>, f64, OccReport, u64)>,
         presence_tx: mpsc::Sender<(String, f64, f64, f64, f64, f64)>,
         body_names: Arc<Vec<String>>,
         time: Arc<Mutex<Option<LeapSeconds>>>,
@@ -16770,6 +17120,7 @@ mod mathematikerin {
         render_pipe: Option<wgpu::RenderPipeline>,
         probe_pipe: Option<wgpu::ComputePipeline>,
         cull_pipe: Option<wgpu::ComputePipeline>,
+        star_cull_pipe: Option<wgpu::ComputePipeline>,
         probe_layout: Option<wgpu::BindGroupLayout>,
         render_layout: Option<wgpu::BindGroupLayout>,
         render_binds: [Option<wgpu::BindGroup>; 2],
@@ -16783,6 +17134,8 @@ mod mathematikerin {
         param_buf: Option<wgpu::Buffer>,
         tile_flat_buf: Option<wgpu::Buffer>,
         tile_ctl_buf: Option<wgpu::Buffer>,
+        star_tile_flat_buf: Option<wgpu::Buffer>,
+        star_tile_ctl_buf: Option<wgpu::Buffer>,
         field_cap: u32,
         tile_cap: u32,
         cull_n: u32,
@@ -16797,20 +17150,11 @@ mod mathematikerin {
         packed_count: u32,
         last_response_epoch: f64,
 
-        packed_deep_pt: Vec<f32>,
-        packed_deep_ex: Vec<f32>,
-        deep_pt_count: u32,
-        deep_ex_count: u32,
-        deep_dirty: bool,
-        deep_pt_vbuf: Option<wgpu::Buffer>,
-        deep_ex_vbuf: Option<wgpu::Buffer>,
-        deep_pt_cap: u32,
-        deep_ex_cap: u32,
-        deep_pt_pipe: Option<wgpu::RenderPipeline>,
-        deep_ex_pipe: Option<wgpu::RenderPipeline>,
-        near_pt_pipe: Option<wgpu::RenderPipeline>,
-        deep_bind: Option<wgpu::BindGroup>,
-        deep_layout: Option<wgpu::BindGroupLayout>,
+        packed_stars: Vec<f32>,
+        star_count: u32,
+        star_dirty: bool,
+        star_vbuf: Option<wgpu::Buffer>,
+        star_cap: u32,
         packed_barriers: Vec<f32>,
         barriers_buf: Option<wgpu::Buffer>,
         occ_report: OccReport,
@@ -16875,16 +17219,8 @@ mod mathematikerin {
     impl NativeApp {
         fn new(
             rx: mpsc::Receiver<Arc<Buffer>>,
-            req_tx: mpsc::SyncSender<(Arc<Buffer>, [f64; 3], f64, f64, f64, f64)>,
-            res_rx: mpsc::Receiver<(
-                PackedWindow,
-                Vec<f32>,
-                Vec<f32>,
-                Vec<f32>,
-                f64,
-                OccReport,
-                u64,
-            )>,
+            req_tx: mpsc::SyncSender<SenseReq>,
+            res_rx: mpsc::Receiver<(PackedWindow, Vec<f32>, Vec<f32>, f64, OccReport, u64)>,
             presence_tx: mpsc::Sender<(String, f64, f64, f64, f64, f64)>,
             sensor_tx: mpsc::Sender<Vec<(String, f64, f64)>>,
             body_names: Arc<Vec<String>>,
@@ -16913,6 +17249,7 @@ mod mathematikerin {
                 render_pipe: None,
                 probe_pipe: None,
                 cull_pipe: None,
+                star_cull_pipe: None,
                 probe_layout: None,
                 render_layout: None,
                 render_binds: [None, None],
@@ -16926,6 +17263,8 @@ mod mathematikerin {
                 param_buf: None,
                 tile_flat_buf: None,
                 tile_ctl_buf: None,
+                star_tile_flat_buf: None,
+                star_tile_ctl_buf: None,
                 field_cap: 0,
                 tile_cap: 0,
                 cull_n: 23,
@@ -16938,20 +17277,11 @@ mod mathematikerin {
                 packed_meta: Vec::new(),
                 packed_count: 0,
                 last_response_epoch: 0.0,
-                packed_deep_pt: Vec::new(),
-                packed_deep_ex: Vec::new(),
-                deep_pt_count: 0,
-                deep_ex_count: 0,
-                deep_dirty: false,
-                deep_pt_vbuf: None,
-                deep_ex_vbuf: None,
-                deep_pt_cap: 0,
-                deep_ex_cap: 0,
-                deep_pt_pipe: None,
-                deep_ex_pipe: None,
-                near_pt_pipe: None,
-                deep_bind: None,
-                deep_layout: None,
+                packed_stars: Vec::new(),
+                star_count: 0,
+                star_dirty: false,
+                star_vbuf: None,
+                star_cap: 0,
                 packed_barriers: Vec::new(),
                 barriers_buf: None,
                 occ_report: OccReport::default(),
@@ -17190,9 +17520,19 @@ mod mathematikerin {
             let hy = self.size.1 as f64 * self.scale_factor * self.grid_step * 0.5;
             let pad = 2.0 * (hx * hx + hy * hy).sqrt();
             let cache_interval = (self.grid_step / 30000.0).clamp(Φ, Φ * 10.0);
-            let _ = self
-                .req_tx
-                .try_send((field, center, t, pad, cache_interval, self.grid_step));
+            let (right, up, forward) = self.frame();
+            let mag = (GRID_DEEP_GRID / self.grid_step).max(1.0);
+            let _ = self.req_tx.try_send(SenseReq {
+                field,
+                center,
+                t,
+                pad,
+                cache_interval,
+                right,
+                up,
+                forward,
+                mag,
+            });
         }
 
         fn consider_resend(&mut self) {
@@ -17348,8 +17688,8 @@ mod mathematikerin {
                 ff[1] as f32,
                 ff[2] as f32,
                 (self.v[2] / C) as f32,
-                self.deep_pt_count as f32,
-                self.deep_ex_count as f32,
+                self.star_count as f32,
+                0.0,
                 0.0,
                 0.0,
                 0.0,
@@ -17380,12 +17720,7 @@ mod mathematikerin {
         }
 
         fn relax_force_refs(&mut self) {
-            let meds = force_ref_medians(
-                &self.packed_field,
-                &self.packed_meta,
-                &self.packed_deep_pt,
-                &self.packed_deep_ex,
-            );
+            let meds = force_ref_medians(&self.packed_field, &self.packed_meta, &self.packed_stars);
             for (ft, m) in meds.iter().enumerate() {
                 let Some(median) = m else {
                     continue;
@@ -17446,6 +17781,18 @@ mod mathematikerin {
                 usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
                 mapped_at_creation: false,
             }));
+            self.star_tile_flat_buf = Some(device.create_buffer(&wgpu::BufferDescriptor {
+                label: None,
+                size: num_tiles as u64 * 512 * 4,
+                usage: wgpu::BufferUsages::STORAGE,
+                mapped_at_creation: false,
+            }));
+            self.star_tile_ctl_buf = Some(device.create_buffer(&wgpu::BufferDescriptor {
+                label: None,
+                size: (1 + num_tiles as u64) * 4,
+                usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+                mapped_at_creation: false,
+            }));
             self.rebuild_binds();
         }
 
@@ -17478,6 +17825,15 @@ mod mathematikerin {
                 return;
             };
             let Some(tile_ctl_buf) = self.tile_ctl_buf.clone() else {
+                return;
+            };
+            let Some(star_vbuf) = self.star_vbuf.clone() else {
+                return;
+            };
+            let Some(star_tile_flat_buf) = self.star_tile_flat_buf.clone() else {
+                return;
+            };
+            let Some(star_tile_ctl_buf) = self.star_tile_ctl_buf.clone() else {
                 return;
             };
             for sel in 0..2 {
@@ -17528,6 +17884,18 @@ mod mathematikerin {
                                 binding: 8,
                                 resource: tile_ctl_buf.as_entire_binding(),
                             },
+                            wgpu::BindGroupEntry {
+                                binding: 9,
+                                resource: star_vbuf.as_entire_binding(),
+                            },
+                            wgpu::BindGroupEntry {
+                                binding: 12,
+                                resource: star_tile_flat_buf.as_entire_binding(),
+                            },
+                            wgpu::BindGroupEntry {
+                                binding: 13,
+                                resource: star_tile_ctl_buf.as_entire_binding(),
+                            },
                         ],
                     }));
                 self.render_binds[sel] =
@@ -17566,6 +17934,18 @@ mod mathematikerin {
                             wgpu::BindGroupEntry {
                                 binding: 8,
                                 resource: tile_ctl_buf.as_entire_binding(),
+                            },
+                            wgpu::BindGroupEntry {
+                                binding: 9,
+                                resource: star_vbuf.as_entire_binding(),
+                            },
+                            wgpu::BindGroupEntry {
+                                binding: 12,
+                                resource: star_tile_flat_buf.as_entire_binding(),
+                            },
+                            wgpu::BindGroupEntry {
+                                binding: 13,
+                                resource: star_tile_ctl_buf.as_entire_binding(),
                             },
                         ],
                     }));
@@ -17627,93 +18007,30 @@ mod mathematikerin {
             self.rebuild_binds();
         }
 
-        fn ensure_deep_capacity(&mut self) {
+        fn ensure_star_capacity(&mut self) {
             let Some(device) = self.device.clone() else {
                 return;
             };
-            let n_pt = self.deep_pt_count;
-            let n_ex = self.deep_ex_count;
-            if self.deep_pt_cap >= n_pt && self.deep_ex_cap >= n_ex {
+            let n = self.star_count;
+            if self.star_vbuf.is_some() && self.star_cap >= n {
                 return;
             }
-            if self.deep_pt_cap < n_pt {
-                let mut c = if self.deep_pt_cap > 0 {
-                    self.deep_pt_cap
-                } else {
-                    1024
-                };
-                while c < n_pt {
-                    c <<= 1;
-                }
-                self.deep_pt_cap = c;
-                self.deep_pt_vbuf = Some(device.create_buffer(&wgpu::BufferDescriptor {
-                    label: None,
-                    size: c as u64 * 32,
-                    usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
-                    mapped_at_creation: false,
-                }));
+            let mut c = if self.star_cap > 0 {
+                self.star_cap
+            } else {
+                1024
+            };
+            while c < n {
+                c <<= 1;
             }
-            if self.deep_ex_cap < n_ex || self.deep_ex_vbuf.is_none() {
-                let mut c = if self.deep_ex_cap > 0 {
-                    self.deep_ex_cap
-                } else {
-                    1024
-                };
-                while c < n_ex {
-                    c <<= 1;
-                }
-                self.deep_ex_cap = c;
-                self.deep_ex_vbuf = Some(device.create_buffer(&wgpu::BufferDescriptor {
-                    label: None,
-                    size: c as u64 * 32,
-                    usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
-                    mapped_at_creation: false,
-                }));
-            }
-            self.rebuild_deep_bind();
-        }
-
-        fn rebuild_deep_bind(&mut self) {
-            let Some(device) = self.device.clone() else {
-                return;
-            };
-            let Some(deep_layout) = self.deep_layout.clone() else {
-                return;
-            };
-            let Some(vp_buf) = self.vp_buf.clone() else {
-                return;
-            };
-            let Some(deep_pt_vbuf) = self.deep_pt_vbuf.clone() else {
-                return;
-            };
-            let Some(deep_ex_vbuf) = self.deep_ex_vbuf.clone() else {
-                return;
-            };
-            let Some(barriers_buf) = self.barriers_buf.clone() else {
-                return;
-            };
-            self.deep_bind = Some(device.create_bind_group(&wgpu::BindGroupDescriptor {
+            self.star_cap = c;
+            self.star_vbuf = Some(device.create_buffer(&wgpu::BufferDescriptor {
                 label: None,
-                layout: &deep_layout,
-                entries: &[
-                    wgpu::BindGroupEntry {
-                        binding: 0,
-                        resource: vp_buf.as_entire_binding(),
-                    },
-                    wgpu::BindGroupEntry {
-                        binding: 1,
-                        resource: deep_pt_vbuf.as_entire_binding(),
-                    },
-                    wgpu::BindGroupEntry {
-                        binding: 2,
-                        resource: deep_ex_vbuf.as_entire_binding(),
-                    },
-                    wgpu::BindGroupEntry {
-                        binding: 6,
-                        resource: barriers_buf.as_entire_binding(),
-                    },
-                ],
+                size: c as u64 * 48,
+                usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+                mapped_at_creation: false,
             }));
+            self.rebuild_binds();
         }
 
         fn render(&mut self) {
@@ -17738,15 +18055,12 @@ mod mathematikerin {
                 self.buf_sel = sel;
                 self.uploaded_gen = self.packed_gen;
             }
-            if self.deep_dirty {
-                self.ensure_deep_capacity();
-                if let Some(sb) = &self.deep_pt_vbuf {
-                    queue.write_buffer(sb, 0, &le_bytes_f32(&self.packed_deep_pt));
+            self.ensure_star_capacity();
+            if self.star_dirty {
+                if let Some(sb) = &self.star_vbuf {
+                    queue.write_buffer(sb, 0, &le_bytes_f32(&self.packed_stars));
                 }
-                if let Some(sb) = &self.deep_ex_vbuf {
-                    queue.write_buffer(sb, 0, &le_bytes_f32(&self.packed_deep_ex));
-                }
-                self.deep_dirty = false;
+                self.star_dirty = false;
             }
             if let Some(bb) = &self.barriers_buf {
                 queue.write_buffer(bb, 0, &le_bytes_f32(&self.packed_barriers));
@@ -17755,6 +18069,10 @@ mod mathematikerin {
                 let mut cc_bytes = [0u8; 8];
                 cc_bytes[0..4].copy_from_slice(&self.cull_n.to_le_bytes());
                 queue.write_buffer(cc, 0, &cc_bytes);
+            }
+            if let Some(sc) = &self.star_tile_ctl_buf {
+                let zero = vec![0u8; (1 + self.tile_cap as usize) * 4];
+                queue.write_buffer(sc, 0, &zero);
             }
             let vp = self.vp_data();
             let mut bytes = [0u8; 176];
@@ -17820,6 +18138,13 @@ mod mathematikerin {
                     let (w, h) = self.backing;
                     pass.dispatch_workgroups((w + 15) / 16, (h + 15) / 16, 1);
                 }
+                if let (Some(pipe), Some(bind)) =
+                    (self.star_cull_pipe.as_ref(), self.probe_binds[sel].as_ref())
+                {
+                    pass.set_pipeline(pipe);
+                    pass.set_bind_group(0, bind, &[]);
+                    pass.dispatch_workgroups((self.star_count + 63) / 64, 1, 1);
+                }
             }
             {
                 let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
@@ -17844,34 +18169,6 @@ mod mathematikerin {
                         pass.set_pipeline(pipe);
                         pass.set_bind_group(0, bind, &[]);
                         pass.draw(0..6, 0..1);
-                    }
-                }
-                if self.point_blend != 0 {
-                    if let (Some(pipe), Some(bind)) = (
-                        self.near_pt_pipe.as_ref(),
-                        self.render_binds[self.buf_sel].as_ref(),
-                    ) {
-                        pass.set_pipeline(pipe);
-                        pass.set_bind_group(0, bind, &[]);
-                        pass.draw(0..self.packed_count * 6, 0..1);
-                    }
-                }
-                if let (Some(pipe), Some(bind)) =
-                    (self.deep_pt_pipe.as_ref(), self.deep_bind.as_ref())
-                {
-                    if self.deep_pt_count > 0 {
-                        pass.set_pipeline(pipe);
-                        pass.set_bind_group(0, bind, &[]);
-                        pass.draw(0..self.deep_pt_count * 6, 0..1);
-                    }
-                }
-                if let (Some(pipe), Some(bind)) =
-                    (self.deep_ex_pipe.as_ref(), self.deep_bind.as_ref())
-                {
-                    if self.deep_ex_count > 0 {
-                        pass.set_pipeline(pipe);
-                        pass.set_bind_group(0, bind, &[]);
-                        pass.draw(0..self.deep_ex_count * 6, 0..1);
                     }
                 }
                 if let (Some(pipe), Some(bind)) = (self.hud_pipe.as_ref(), self.hud_bind.as_ref()) {
@@ -18020,6 +18317,21 @@ mod mathematikerin {
                         e.binding = 8;
                         e
                     },
+                    {
+                        let mut e = storage_entry(true, wgpu::ShaderStages::COMPUTE);
+                        e.binding = 9;
+                        e
+                    },
+                    {
+                        let mut e = storage_entry(false, wgpu::ShaderStages::COMPUTE);
+                        e.binding = 12;
+                        e
+                    },
+                    {
+                        let mut e = storage_entry(false, wgpu::ShaderStages::COMPUTE);
+                        e.binding = 13;
+                        e
+                    },
                 ],
             });
             let render_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
@@ -18068,6 +18380,21 @@ mod mathematikerin {
                     {
                         let mut e = storage_entry(false, wgpu::ShaderStages::FRAGMENT);
                         e.binding = 8;
+                        e
+                    },
+                    {
+                        let mut e = storage_entry(true, wgpu::ShaderStages::VERTEX_FRAGMENT);
+                        e.binding = 9;
+                        e
+                    },
+                    {
+                        let mut e = storage_entry(false, wgpu::ShaderStages::FRAGMENT);
+                        e.binding = 12;
+                        e
+                    },
+                    {
+                        let mut e = storage_entry(false, wgpu::ShaderStages::FRAGMENT);
+                        e.binding = 13;
                         e
                     },
                 ],
@@ -18139,172 +18466,12 @@ mod mathematikerin {
                 compilation_options: Default::default(),
                 cache: None,
             });
-            let deep_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+            let star_cull_pipe = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
                 label: None,
-                entries: &[
-                    wgpu::BindGroupLayoutEntry {
-                        binding: 0,
-                        visibility: wgpu::ShaderStages::VERTEX_FRAGMENT,
-                        ty: wgpu::BindingType::Buffer {
-                            ty: wgpu::BufferBindingType::Uniform,
-                            has_dynamic_offset: false,
-                            min_binding_size: None,
-                        },
-                        count: None,
-                    },
-                    wgpu::BindGroupLayoutEntry {
-                        binding: 1,
-                        visibility: wgpu::ShaderStages::VERTEX,
-                        ty: wgpu::BindingType::Buffer {
-                            ty: wgpu::BufferBindingType::Storage { read_only: true },
-                            has_dynamic_offset: false,
-                            min_binding_size: None,
-                        },
-                        count: None,
-                    },
-                    wgpu::BindGroupLayoutEntry {
-                        binding: 2,
-                        visibility: wgpu::ShaderStages::VERTEX,
-                        ty: wgpu::BindingType::Buffer {
-                            ty: wgpu::BufferBindingType::Storage { read_only: true },
-                            has_dynamic_offset: false,
-                            min_binding_size: None,
-                        },
-                        count: None,
-                    },
-                    wgpu::BindGroupLayoutEntry {
-                        binding: 6,
-                        visibility: wgpu::ShaderStages::VERTEX,
-                        ty: wgpu::BindingType::Buffer {
-                            ty: wgpu::BufferBindingType::Storage { read_only: true },
-                            has_dynamic_offset: false,
-                            min_binding_size: None,
-                        },
-                        count: None,
-                    },
-                ],
-            });
-            let deep_ex_pipe_layout =
-                device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
-                    label: None,
-                    bind_group_layouts: &[&deep_layout],
-                    push_constant_ranges: &[],
-                });
-            let deep_ex_pipe = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
-                label: None,
-                layout: Some(&deep_ex_pipe_layout),
-                vertex: wgpu::VertexState {
-                    module: &module,
-                    entry_point: Some("deep_vs"),
-                    compilation_options: Default::default(),
-                    buffers: &[],
-                },
-                fragment: Some(wgpu::FragmentState {
-                    module: &module,
-                    entry_point: Some("deep_fs"),
-                    compilation_options: Default::default(),
-                    targets: &[Some(wgpu::ColorTargetState {
-                        format,
-                        blend: Some(wgpu::BlendState {
-                            color: wgpu::BlendComponent {
-                                src_factor: wgpu::BlendFactor::One,
-                                dst_factor: wgpu::BlendFactor::One,
-                                operation: wgpu::BlendOperation::Add,
-                            },
-                            alpha: wgpu::BlendComponent {
-                                src_factor: wgpu::BlendFactor::One,
-                                dst_factor: wgpu::BlendFactor::One,
-                                operation: wgpu::BlendOperation::Add,
-                            },
-                        }),
-                        write_mask: wgpu::ColorWrites::ALL,
-                    })],
-                }),
-                primitive: wgpu::PrimitiveState {
-                    topology: wgpu::PrimitiveTopology::TriangleList,
-                    ..Default::default()
-                },
-                depth_stencil: None,
-                multisample: wgpu::MultisampleState::default(),
-                multiview: None,
-                cache: None,
-            });
-            let deep_pt_pipe = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
-                label: None,
-                layout: Some(&deep_ex_pipe_layout),
-                vertex: wgpu::VertexState {
-                    module: &module,
-                    entry_point: Some("deep_pt_vs"),
-                    compilation_options: Default::default(),
-                    buffers: &[],
-                },
-                fragment: Some(wgpu::FragmentState {
-                    module: &module,
-                    entry_point: Some("deep_pt_fs"),
-                    compilation_options: Default::default(),
-                    targets: &[Some(wgpu::ColorTargetState {
-                        format,
-                        blend: Some(wgpu::BlendState {
-                            color: wgpu::BlendComponent {
-                                src_factor: wgpu::BlendFactor::One,
-                                dst_factor: wgpu::BlendFactor::One,
-                                operation: wgpu::BlendOperation::Add,
-                            },
-                            alpha: wgpu::BlendComponent {
-                                src_factor: wgpu::BlendFactor::One,
-                                dst_factor: wgpu::BlendFactor::One,
-                                operation: wgpu::BlendOperation::Add,
-                            },
-                        }),
-                        write_mask: wgpu::ColorWrites::ALL,
-                    })],
-                }),
-                primitive: wgpu::PrimitiveState {
-                    topology: wgpu::PrimitiveTopology::TriangleList,
-                    ..Default::default()
-                },
-                depth_stencil: None,
-                multisample: wgpu::MultisampleState::default(),
-                multiview: None,
-                cache: None,
-            });
-            let near_pt_pipe = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
-                label: None,
-                layout: Some(&render_pipe_layout),
-                vertex: wgpu::VertexState {
-                    module: &module,
-                    entry_point: Some("near_pt_vs"),
-                    compilation_options: Default::default(),
-                    buffers: &[],
-                },
-                fragment: Some(wgpu::FragmentState {
-                    module: &module,
-                    entry_point: Some("near_pt_fs"),
-                    compilation_options: Default::default(),
-                    targets: &[Some(wgpu::ColorTargetState {
-                        format,
-                        blend: Some(wgpu::BlendState {
-                            color: wgpu::BlendComponent {
-                                src_factor: wgpu::BlendFactor::One,
-                                dst_factor: wgpu::BlendFactor::One,
-                                operation: wgpu::BlendOperation::Add,
-                            },
-                            alpha: wgpu::BlendComponent {
-                                src_factor: wgpu::BlendFactor::One,
-                                dst_factor: wgpu::BlendFactor::One,
-                                operation: wgpu::BlendOperation::Add,
-                            },
-                        }),
-                        write_mask: wgpu::ColorWrites::ALL,
-                    })],
-                }),
-                primitive: wgpu::PrimitiveState {
-                    topology: wgpu::PrimitiveTopology::TriangleList,
-                    ..Default::default()
-                },
-                depth_stencil: None,
-                multisample: wgpu::MultisampleState::default(),
-                multiview: None,
+                layout: Some(&probe_pipe_layout),
+                module: &module,
+                entry_point: Some("star_cull"),
+                compilation_options: Default::default(),
                 cache: None,
             });
             let hud_sampler = device.create_sampler(&wgpu::SamplerDescriptor {
@@ -18413,7 +18580,6 @@ mod mathematikerin {
                 usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
                 mapped_at_creation: false,
             });
-            self.deep_layout = Some(deep_layout);
             self.window = Some(window);
             self.surface = Some(surface);
             self.config = Some(config);
@@ -18422,11 +18588,9 @@ mod mathematikerin {
             self.render_pipe = Some(render_pipe);
             self.probe_pipe = Some(probe_pipe);
             self.cull_pipe = Some(cull_pipe);
+            self.star_cull_pipe = Some(star_cull_pipe);
             self.probe_layout = Some(probe_layout);
             self.render_layout = Some(render_layout);
-            self.deep_pt_pipe = Some(deep_pt_pipe);
-            self.deep_ex_pipe = Some(deep_ex_pipe);
-            self.near_pt_pipe = Some(near_pt_pipe);
             self.vp_buf = Some(vp_buf);
             self.probe_buf = Some(probe_buf);
             self.probe_read = Some(probe_read);
@@ -18653,17 +18817,15 @@ mod mathematikerin {
                 self.latest_field = Some(field);
                 self.sense();
             }
-            while let Ok((packed, pt, ex, barriers, t, occ, generation)) = self.res_rx.try_recv() {
+            while let Ok((packed, stars, barriers, t, occ, generation)) = self.res_rx.try_recv() {
                 self.packed_count = packed.count;
                 self.packed_field = packed.field;
                 self.packed_meta = packed.meta;
                 self.packed_gen = generation;
                 self.last_response_epoch = t;
-                self.packed_deep_pt = pt;
-                self.deep_pt_count = (self.packed_deep_pt.len() / 8) as u32;
-                self.packed_deep_ex = ex;
-                self.deep_ex_count = (self.packed_deep_ex.len() / 8) as u32;
-                self.deep_dirty = true;
+                self.packed_stars = stars;
+                self.star_count = (self.packed_stars.len() / 12) as u32;
+                self.star_dirty = true;
                 self.packed_barriers = barriers;
                 self.occ_report = occ;
                 self.relax_force_refs();
@@ -18827,7 +18989,7 @@ mod mathematikerin {
                 y,
                 z,
                 self.packed_count,
-                self.deep_pt_count + self.deep_ex_count,
+                self.star_count,
                 self.occ_report.events.len(),
                 self.occ_report.transits,
                 self.cull_n,
@@ -19104,16 +19266,8 @@ mod mathematikerin {
         rx: mpsc::Receiver<Arc<Buffer>>,
         presence_tx: mpsc::Sender<(String, f64, f64, f64, f64, f64)>,
         sensor_tx: mpsc::Sender<Vec<(String, f64, f64)>>,
-        req_tx: mpsc::SyncSender<(Arc<Buffer>, [f64; 3], f64, f64, f64, f64)>,
-        res_rx: mpsc::Receiver<(
-            PackedWindow,
-            Vec<f32>,
-            Vec<f32>,
-            Vec<f32>,
-            f64,
-            OccReport,
-            u64,
-        )>,
+        req_tx: mpsc::SyncSender<SenseReq>,
+        res_rx: mpsc::Receiver<(PackedWindow, Vec<f32>, Vec<f32>, f64, OccReport, u64)>,
         body_names: Arc<Vec<String>>,
         time: Arc<Mutex<Option<LeapSeconds>>>,
         shutdown: Arc<AtomicBool>,
@@ -19222,34 +19376,36 @@ mod mathematikerin {
         }
 
         #[test]
-        fn pack_deep_directions() {
-            let deep: [[f64; 7]; 2] = [
-                [6001.0, 7002.0, 8003.0, 42.5, 2.72e10, 0.0, 1.4],
-                [-999.0, 4002.0, 1003.0, -7.25, 86400.0, 0.0, 2.6],
+        fn pack_stars_layout() {
+            let stars: [[f64; 10]; 2] = [
+                [
+                    0.1, 0.2, 0.3, 42.5, 2.72e10, 6001.0, 7002.0, 0.004, 1.4, 86400.0,
+                ],
+                [
+                    0.4, 0.5, 0.6, -7.25, 1.0e3, -999.0, 4002.0, -0.002, 2.6, 3.0,
+                ],
             ];
-            let pt = pack_deep_pt(&deep);
-            assert_eq!(pt.len(), 16);
-            assert_eq!(pt[0], 6001.0);
-            assert_eq!(pt[1], 7002.0);
-            assert_eq!(pt[2], 8003.0);
-            assert_eq!(pt[3], 42.5);
-            assert_eq!(pt[4], 0.0);
-            assert_eq!(pt[5], 2.72e10);
-            assert_eq!(pt[6], 1.4);
-            assert_eq!(pt[7], 0.0);
-            assert_eq!(pt[8], -999.0);
-            assert_eq!(pt[9], 4002.0);
-            assert_eq!(pt[10], 1003.0);
-            assert_eq!(pt[11], -7.25);
-            assert_eq!(pt[13], 86400.0);
-            assert_eq!(pt[14], 2.6);
-            let ex = pack_deep_ex(&deep);
-            assert_eq!(ex.len(), 16);
-            assert_eq!(ex[4], 0.0);
-            assert_eq!(ex[5], 2.72e10);
-            assert_eq!(ex[6], 1.4);
-            assert_eq!(ex[13], 86400.0);
-            assert_eq!(ex[14], 2.6);
+            let packed = pack_stars(&stars);
+            assert_eq!(packed.len(), 24);
+            assert_eq!(packed[0], 6001.0);
+            assert_eq!(packed[1], 7002.0);
+            assert_eq!(packed[2], 42.5);
+            assert_eq!(packed[3], 2.72e10);
+            assert_eq!(packed[4], 0.1);
+            assert_eq!(packed[5], 0.2);
+            assert_eq!(packed[6], 0.3);
+            assert_eq!(packed[7], 0.004);
+            assert_eq!(packed[8], 1.4);
+            assert_eq!(packed[9], 86400.0);
+            assert_eq!(packed[10], 0.0);
+            assert_eq!(packed[11], 0.0);
+            assert_eq!(packed[12], -999.0);
+            assert_eq!(packed[13], 4002.0);
+            assert_eq!(packed[14], -7.25);
+            assert_eq!(packed[15], 1.0e3);
+            assert_eq!(packed[16], 0.4);
+            assert_eq!(packed[20], 2.6);
+            assert_eq!(packed[21], 3.0);
         }
 
         #[test]
@@ -19264,8 +19420,7 @@ mod mathematikerin {
             let meds = force_ref_medians(
                 &field,
                 &[0.0; 48],
-                &[0.0, 0.0, 0.0, 4.0, 0.0, 0.0, 0.0, 0.0],
-                &[0.0, 0.0, 0.0, 4.0, 0.0, 0.0, 0.0, 0.0],
+                &[0.0, 0.0, 4.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
             );
             assert_eq!(meds[0].unwrap(), 4.0);
             assert_eq!(meds[1], None);
@@ -19316,8 +19471,7 @@ mod mathematikerin {
             };
             app.packed_field = vec![0.0; 12];
             app.packed_meta = vec![0.0; 12];
-            app.packed_deep_pt = Vec::new();
-            app.packed_deep_ex = Vec::new();
+            app.packed_stars = Vec::new();
             for _ in 0..64 {
                 app.relax_force_refs();
             }
@@ -19335,7 +19489,7 @@ mod mathematikerin {
             meta[0] = 2.0f32.powi(20);
             field[15] = 2.0f32.powi(45);
             field[18] = 1.0;
-            let meds = force_ref_medians(&field, &meta, &[], &[]);
+            let meds = force_ref_medians(&field, &meta, &[]);
             assert_eq!(meds[1].unwrap(), 2.0f32.powi(45));
         }
 
@@ -19360,8 +19514,7 @@ mod mathematikerin {
             app.packed_field = vec![0.0; 12];
             app.packed_field[3] = 8.0;
             app.packed_meta = vec![0.0; 12];
-            app.packed_deep_pt = Vec::new();
-            app.packed_deep_ex = Vec::new();
+            app.packed_stars = Vec::new();
             app.relax_force_refs();
             assert_eq!(app.force_ref[0], 8.0);
         }

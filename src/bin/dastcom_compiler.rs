@@ -7,9 +7,9 @@ use std::io::{Read, Seek, SeekFrom};
 const ASTEROID_RECORD_BYTES: u64 = 835;
 const J2000_JD: f64 = 2451545.0;
 
-const GM_CATALOG_DEFAULT: &str = "phi/katalog/asteroid_gm_inpop25c.φ";
+const GM_CATALOG_DEFAULT: &str = "phi/pipeline/katalog/asteroid_gm_inpop25c.φ";
 const DIAMETER_CATALOGS_DEFAULT: &str =
-    "phi/katalog/asteroid_diameters_neowise.φ,phi/katalog/asteroid_diameters_akari.φ";
+    "phi/pipeline/katalog/asteroid_diameters_neowise.φ,phi/pipeline/katalog/asteroid_diameters_akari.φ";
 
 fn read_gm_catalog(path: &str) -> HashMap<u32, f64> {
     let mut map = HashMap::new();

@@ -99,7 +99,7 @@ host gwosc.org klassifiziert parser-def — grind: grind_terrapulse_a.φ
 host imag-data.bgs.ac.uk klassifiziert parser-def capabilities — BGS-GIN (INTERMAGNET-Magnetfeld, em echt): nur Capabilities/Observatoriumsliste — Observation-Endpoint träg… Recheck b4 2026-08-18: geomag.bgs.ac.uk SAA-Route 404, Portal lebt; HAPI-Route (imag-data.bgs.ac.uk/hapi) ist live in sources.φ.
 host impc.dlr.de klassifiziert dead timeout — Operation timed out after 12000 milliseconds with 7464101 out of 8987150 bytes received
 host ioda.caida.org klassifiziert dead timeout — Connection timed out after 12002 milliseconds
-host irsa.ipac.caltech.edu klassifiziert decline redundant — ZTF über Lasair/ALeRCE abgedeckt (Verdikt 2026-08-17). Gator/TAP-Route inventarisiert (phi/katalog/tap_index_irsa.φ, provider irsa TAP/sync, 995 Tabellen). Recheck 2026-08-17: kein Token — öffentliche Daten offen auf AWS S3 Open Data, proprietäres ZTF via IPAC-SSO (email+passwort).
+host irsa.ipac.caltech.edu klassifiziert decline redundant — ZTF über Lasair/ALeRCE abgedeckt (Verdikt 2026-08-17). Gator/TAP-Route inventarisiert (phi/pipeline/katalog/tap_index_irsa.φ, provider irsa TAP/sync, 995 Tabellen). Recheck 2026-08-17: kein Token — öffentliche Daten offen auf AWS S3 Open Data, proprietäres ZTF via IPAC-SSO (email+passwort).
 host kp.gfz-potsdam.de klassifiziert dead 5xx — HTTP 500 — Server antwortet nicht brauchbar.
 host kp.gfz.de klassifiziert dead 5xx — HTTP 500 — Server antwortet nicht brauchbar.
 host lasair-ztf.lsst.ac.uk klassifiziert integrated — live in sources.φ (2026-08-18): /api/query/ SQL-SELECT (token in URL), gmag-Fluss, em, 24h-Fenster über {jd_start}.

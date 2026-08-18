@@ -28,7 +28,7 @@ note /GIN_V1/observation und /GIN_V1/observation/catalog → 404. Recherche: die
 kandidat https://irsa.ipac.caltech.edu/cgi-bin/Gator/nph-scan
 accepted
 url https://irsa.ipac.caltech.edu/cgi-bin/Gator/nph-scan
-note nph-scan → 200 HTML "Gator Catalog List" (Browser-Formular, kein Daten-Endpoint). Die CSV-Syntax ist jetzt geschlossen: nph-query?catalog=allwise_p3as_psd&spatial=box&objstr=RA,Dec&size=arcsec&outfmt=1&selcols=ra,dec,w1mpro → 200 text/plain, fixlen-Tabelle mit Datenzeilen (w1mpro mag; RowsRetrieved=2) — objstr statt des frueher falschen ra/dec. redundant — kein neuer Block (TAP-Route inventarisiert, phi/katalog/tap_index_irsa.φ, provider irsa TAP/sync, 995 Tabellen). Gator-CSV lebt, deckt aber keinen neuen Kanal.
+note nph-scan → 200 HTML "Gator Catalog List" (Browser-Formular, kein Daten-Endpoint). Die CSV-Syntax ist jetzt geschlossen: nph-query?catalog=allwise_p3as_psd&spatial=box&objstr=RA,Dec&size=arcsec&outfmt=1&selcols=ra,dec,w1mpro → 200 text/plain, fixlen-Tabelle mit Datenzeilen (w1mpro mag; RowsRetrieved=2) — objstr statt des frueher falschen ra/dec. redundant — kein neuer Block (TAP-Route inventarisiert, phi/pipeline/katalog/tap_index_irsa.φ, provider irsa TAP/sync, 995 Tabellen). Gator-CSV lebt, deckt aber keinen neuen Kanal.
 
 kandidat https://www.supermag.org
 gap

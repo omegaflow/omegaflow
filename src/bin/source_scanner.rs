@@ -29,7 +29,7 @@ fn main() {
         .to_string();
     let out_path = match args.get(3) {
         Some(p) => p.clone(),
-        None => format!("phi/port/weights_{}.txt", base),
+        None => format!("phi/pipeline/weights_{}.txt", base),
     };
     let mut out = String::new();
     for line in content.lines() {

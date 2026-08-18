@@ -16,7 +16,7 @@
 #   Neue Block-Region in phi/sources.φ: Zeilen 193–210, je eine Blank-Zeile zu den
 #   Nachbar-Blöcken (USGS-NWIS davor, NHC-Stürme danach). Datei 1644 → 1333 Zeilen.
 #   Kein fremder Block in der Region (alle 30 url-Zeilen trugen ndbc.noaa.gov).
-#   phi/port/stage/* unberührt — dort liegen die verbliebenen realtime2-Referenzen.
+#   phi/pipeline/stage/* unberührt — dort liegen die verbliebenen realtime2-Referenzen.
 #
 # Schritt 3 — SuperMAG inventory.php (Probe, curl-only):
 #   Route existiert und ist PHP-basiert (XML-Antwort angelegt, SimpleXMLElement-Parse auf

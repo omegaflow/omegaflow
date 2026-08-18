@@ -19,4 +19,4 @@ noaa        ungezählt            ~900 URLs (ndbc/ncdc/...)   offen (viele Porta
 #   gbif        api.gbif.org/v1/dataset/search?limit=0 -> count
 #   esa-eog     earth.esa.int/eogateway/api/search/full_text -> allPagesCount
 #   vires       vires.services/hapi/catalog -> 174
-#   vizier      phi/katalog/tap_index.φ -> 64148 catalog-Zeilen
+#   vizier      phi/pipeline/katalog/tap_index.φ -> 64148 catalog-Zeilen

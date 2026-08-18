@@ -1,6 +1,6 @@
 # Compiler-Eingangsformate — Sichtung (2026-08-18)
 # Agent: grind-flash. Nur curl/Beobachtung, keine Register-Edits, keine src/-Edits, kein cargo.
-# Auftrag: phi/port/ledger.φ trägt zwei ausstehende Compiler-Atome: mpcobs-katalog, tic-kompilat.
+# Auftrag: phi/pipeline/ledger.φ trägt zwei ausstehende Compiler-Atome: mpcobs-katalog, tic-kompilat.
 # Diese Datei dokumentiert die Rohdaten-Formate für die künftigen Compiler — als Dokumentation, KEIN Code.
 # Datenquellen wurden live gesichtet (200-Antworten), Spalten aus den Rohzeilen verifiziert.
 

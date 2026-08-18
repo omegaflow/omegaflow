@@ -7,7 +7,7 @@ kein Compiler, ein Katalog ist kein Werkzeug.
 ## Harvester — erntet Metadaten → Katalog-Inventar
 
 Ein Harvester liest die Metadaten-Schnittstelle eines Katalogs (OAI-PMH,
-Solr, Dataverse, REST) und schreibt eine Inventar-Datei nach `phi/katalog/`:
+Solr, Dataverse, REST) und schreibt eine Inventar-Datei nach `phi/pipeline/katalog/`:
 `<identifikator> | <titel>`. Er erntet NICHTS Messwert-artiges — nur den
 Bestand (DOI/ID + Titel). Die Messwerte liegen tiefer; die holt der Compiler.
 
@@ -32,7 +32,7 @@ Oszillator-tragende Daten, kein Inventar.
 
 ## Katalog — das Ergebnis, nicht das Werkzeug
 
-Ein Katalog ist die Inventar-Datei in `phi/katalog/*.φ` — der geerntete
+Ein Katalog ist die Inventar-Datei in `phi/pipeline/katalog/*.φ` — der geerntete
 Bestand. Er ist die QUEUE: aus jedem Eintrag wird (a) ein Compiler-Aufruf
 (statische Messwerte → Flat-json + Block) oder (b) ein Probe-Kandidat
 (Live-API → Verdict).
@@ -40,18 +40,18 @@ Bestand. Er ist die QUEUE: aus jedem Eintrag wird (a) ein Compiler-Aufruf
 ## Die drei Rollen im Trichter
 
 ```
-Harvester  →  Katalog (phi/katalog/)  →  Compiler (Flat-json + Block)  →  sources.φ
+Harvester  →  Katalog (phi/pipeline/katalog/)  →  Compiler (Flat-json + Block)  →  sources.φ
                                       →  Probe     (Live-Verdict)       →  sources.φ / dead_sources.φ / blocked_sources.φ
 ```
 
 ## Benennungsregel
 
-- `*_harvester` erntet Metadaten → `phi/katalog/*.φ` (Inventar).
+- `*_harvester` erntet Metadaten → `phi/pipeline/katalog/*.φ` (Inventar).
 - `*_compiler` kompiliert Messwerte → Flat-json (CDN) + `sources.φ`-Block.
 - `source_scanner` wiegt Kandidaten (die Linse).
 - `--probe` verifiziert Live-APIs (der Richter).
 - `*_compiler` der Ephemeriden/Kernel (ephemeris/tycho2/dastcom/dcom5/
   sexagesimal) bleiben — sie kompilieren statische Himmelsmechanik-Daten.
 
-Die Compiler-Flat-jsons (`phi/port/*.json`) sind transiente CDN-Zwischenstufen
+Die Compiler-Flat-jsons (`phi/pipeline/*.json`) sind transiente CDN-Zwischenstufen
 und gitignored — der Block referenziert das CDN-Asset, nicht die lokale Datei.

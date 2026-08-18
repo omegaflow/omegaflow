@@ -1,6 +1,6 @@
 # vizier_bulk_c.φ — VizieR-Bulks Teil 2, Agentin C (2026-08-18)
 # Mechanischer Rest: die 13 offenen `source vizier_*`-Blöcke in master.φ-Zeilenreihenfolge nach den ersten 13 (Agentin A).
-# Integrierter Bestand bestimmt aus phi/sources.φ + phi/dead_sources.φ + phi/port/master_urls.txt (vizier_*.json = genutzt).
+# Integrierter Bestand bestimmt aus phi/sources.φ + phi/dead_sources.φ + phi/pipeline/master_urls.txt (vizier_*.json = genutzt).
 # Methode: je Block EINE TAPVizieR-Query (TOP 3, FORMAT=json). Befund = Katalogpfad, Spalten, Einheiten, Response-Struktur.
 # Einheiten-Gate: nur Register-Einheiten (thermal k|c|w/m2|w|j|mw; em nT|Jy|mag|W/m2|km/s; advective m/s|km/h|km/s|knot|kt;
 # diffusion ppm|ppb|mg/m3|ug/m3|mg/kg|psu|ntu|%|pct|hpa|uatm|du|cm-3; electric v/m|v|a|s/m|ua/m2|mv/m;

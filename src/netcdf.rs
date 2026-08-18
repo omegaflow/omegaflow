@@ -534,6 +534,20 @@ impl NetcdfFile {
         let s = String::from_utf8_lossy(&attr.raw).into_owned();
         Some(s.trim_end_matches('\0').to_string())
     }
+
+    pub fn attr_num(&self, attr: &NetcdfAttr) -> Option<f64> {
+        let r = &attr.raw;
+        match attr.nc_type {
+            NetcdfType::Byte => r.first().map(|&b| b as i8 as f64),
+            NetcdfType::Char => None,
+            NetcdfType::Short => Some(i16::from_be_bytes([*r.get(0)?, *r.get(1)?]) as f64),
+            NetcdfType::Int => {
+                Some(i32::from_be_bytes([*r.get(0)?, *r.get(1)?, *r.get(2)?, *r.get(3)?]) as f64)
+            }
+            NetcdfType::Float => Some(f32::from_bits(be_u32(&r.get(0..4)?)) as f64),
+            NetcdfType::Double => Some(f64::from_bits(be_u64(&r.get(0..8)?))),
+        }
+    }
 }
 
 fn dim_list(cur: &mut Kur) -> Result<Vec<NetcdfDim>, NetcdfNote> {
@@ -742,6 +756,7 @@ mod tests {
         let a = &f.vars[0].attrs[0];
         assert_eq!(a.name, "_FillValue");
         assert_eq!(a.raw, f64b(9.9692099683868690e36));
+        assert_eq!(f.attr_num(a), Some(9.9692099683868690e36));
         assert_eq!(f.values_f64(&b, "v").unwrap(), vec![5.0]);
     }
 

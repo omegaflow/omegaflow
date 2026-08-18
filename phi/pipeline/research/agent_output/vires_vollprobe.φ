@@ -1,9 +1,9 @@
 # nachlauf vires vollprobe (2026-08-17)
-# verlorenes Session-Artefakt phi/research/agent_output/vires_vollprobe.φ rekonstruiert
-# aus phi/port/queue/grind_vires_full.φ (174 dataset-Dispositionen, Vollprobe in Blöcken).
+# verlorenes Session-Artefakt phi/pipeline/research/agent_output/vires_vollprobe.φ rekonstruiert
+# aus phi/pipeline/queue/grind_vires_full.φ (174 dataset-Dispositionen, Vollprobe in Blöcken).
 
 bestand 63 accepted source-blöcke
-note cargo run -- --probe phi/port/queue/grind_vires_full.φ: 63/63 Blöcke geladen, 0 überlebende, 63 declined — Diagnosen nennen was die Antwort trug: 55 data-present (JSON hat Inhalt, HAPI-Antwort ist positional data.N.M, die Auto-Draft-Schlüssel fehlen), 2 non-JSON (HTML/text: SW_OPER_MAGC_HR_1B, SW_EXPT_EFIA_TCT16), 6 fetch-void (SW_FAST_MAGA_HR_1B, SW_FAST_MAGB_HR_1B, SW_FAST_MAGC_HR_1B, SW_OPER_MAGA_HR_1B, SW_OPER_MAGB_HR_1B, SW_EXPT_EFIB_TCT16). Netloc: vires.services (63/63). Kräfte (über 102 Feld-Zeilen): electric 32, em 26, diffusion 20, thermal 17, advective 6, gravity 1. Kernel: inverse-square 59, gaussian-inverse-square 26, exponential-decay 17. Das HAPI-Payload ist vorhanden (echte Werte, z.B. F ~21-50 k nT, density ~1.3e-12 kg/m3) — die Auto-Draft-Linse matcht die positional-HAPI-Spalten nicht auf deklarierte Keys; die Blöcke tragen ihre hapi-/field-Mappings selbst (Probe-ok-Fenster in den Block-Kommentaren der Ursprungs-Session). TTL 86400, at earth für alle Blöcke.
+note cargo run -- --probe phi/pipeline/queue/grind_vires_full.φ: 63/63 Blöcke geladen, 0 überlebende, 63 declined — Diagnosen nennen was die Antwort trug: 55 data-present (JSON hat Inhalt, HAPI-Antwort ist positional data.N.M, die Auto-Draft-Schlüssel fehlen), 2 non-JSON (HTML/text: SW_OPER_MAGC_HR_1B, SW_EXPT_EFIA_TCT16), 6 fetch-void (SW_FAST_MAGA_HR_1B, SW_FAST_MAGB_HR_1B, SW_FAST_MAGC_HR_1B, SW_OPER_MAGA_HR_1B, SW_OPER_MAGB_HR_1B, SW_EXPT_EFIB_TCT16). Netloc: vires.services (63/63). Kräfte (über 102 Feld-Zeilen): electric 32, em 26, diffusion 20, thermal 17, advective 6, gravity 1. Kernel: inverse-square 59, gaussian-inverse-square 26, exponential-decay 17. Das HAPI-Payload ist vorhanden (echte Werte, z.B. F ~21-50 k nT, density ~1.3e-12 kg/m3) — die Auto-Draft-Linse matcht die positional-HAPI-Spalten nicht auf deklarierte Keys; die Blöcke tragen ihre hapi-/field-Mappings selbst (Probe-ok-Fenster in den Block-Kommentaren der Ursprungs-Session). TTL 86400, at earth für alle Blöcke.
 draft GF1_MAG_ACAL_CORR_ML em nT
 draft GF1_OPER_FGM_ACAL_CORR em nT
 draft GF2_MAG_ACAL_CORR_ML em nT

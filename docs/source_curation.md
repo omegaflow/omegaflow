@@ -1,8 +1,8 @@
 # Source Curation — abgelöst
 
 Der eine Pfad für alle Source-Arbeit ist `docs/SOURCE_PORT.md` (Protokoll,
-Zustandsmaschine, Referenz-Karte, Pfadkarte). Arbeitsfläche: `phi/port/`
-(queue, park, stage, ledger.φ). Bestand: `phi/research/`. Register:
+Zustandsmaschine, Referenz-Karte, Pfadkarte). Arbeitsfläche: `phi/pipeline/`
+(queue, park, stage, ledger.φ). Bestand: `phi/pipeline/research/`. Register:
 `phi/sources.φ` + `phi/dead_sources.φ`. Die pre-cdn-Historie liegt unter
 `/home/johannes/projects/archive/`.
 

@@ -137,7 +137,7 @@ shader: for each pixel, omega += GM / dist²
 
 - Einzige Gravitationskonstante: `GAUSS_K = 0.01720209895` (`main.rs:46`) — kodiert nur das Sonnen-GM implizit (Kepler 3)
 - Alte Python-Pipeline (`scripts/ARCHIVED/generate_ephemerides.py:124`) lud `pck00010.tpc` — aber nur für Rotation, nicht GM
-- Kernel-URLs liegen in `phi/research/batches/` (naif.jpl.nasa.gov)
+- Kernel-URLs liegen in `phi/pipeline/research/batches/` (naif.jpl.nasa.gov)
 
 ---
 

@@ -3,7 +3,7 @@ import json, subprocess, os, time
 
 os.chdir("/home/johannes/projects/omegaflow")
 R = "https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync"
-CHUNK_DIR = "phi/port"
+CHUNK_DIR = "phi/pipeline"
 CAP = 2_000_000
 
 def fetch_band(cmd, out, lo):

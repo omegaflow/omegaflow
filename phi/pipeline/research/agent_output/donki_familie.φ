@@ -1,6 +1,6 @@
 # nachlauf donki familie (2026-08-17)
-# verlorenes Session-Artefakt phi/research/agent_output/donki_familie.φ rekonstruiert
-# aus phi/port/queue/grind_nasa_donki.φ (10/10 Endpoints disponiert, Ergebnis-Datei ABSENT).
+# verlorenes Session-Artefakt phi/pipeline/research/agent_output/donki_familie.φ rekonstruiert
+# aus phi/pipeline/queue/grind_nasa_donki.φ (10/10 Endpoints disponiert, Ergebnis-Datei ABSENT).
 # Fenster 2026-07-01 .. 2026-08-15, api_key={NASA_API_KEY}. FLR lebt bereits in sources.φ Z.502 — nicht wiederholt.
 
 kandidat https://api.nasa.gov/DONKI/CME?startDate={week_ago}&endDate={today}&api_key={NASA_API_KEY}

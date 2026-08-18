@@ -42,7 +42,7 @@ wds 136.548, gcvs 60.644 (voll, chunked), vsx 48.912, pastel 37.064.
 Asteroiden: DASTCOM trägt GM für Ceres/Pallas/Vesta/Hygiea/Psyche/Kalliope/
 Ida/Mathilde/Eros; **4 Lücken** (45 Eugenia, 87 Sylvia, 90 Antiope, 216
 Kleopatra — GM aus Perturbation/Doppel/Radar publiziert, DASTCOM=0).
-Durchmesser+Albedo liegen in `phi/katalog/asteroid_diameters_*.φ`.
+Durchmesser+Albedo liegen in `phi/pipeline/katalog/asteroid_diameters_*.φ`.
 
 ## Offene Arbeit (das TODO ist das Register)
 
@@ -66,7 +66,7 @@ Durchmesser+Albedo liegen in `phi/katalog/asteroid_diameters_*.φ`.
   Zeitlimit, ~20–40 k). Für >50 k chunken: `--where 't."RAJ2000" >= X AND
   t."RAJ2000" < Y'` — **mit `t.`-Qualifier** (gaiadr3 hat eigenes RAJ2000,
   unqualifiziert → TAP-400 „ambiguous column").
-- `phi/port/chunk_master.py` ist fortsetzbar (fertige Chunks werden resümiert,
+- `phi/pipeline/chunk_master.py` ist fortsetzbar (fertige Chunks werden resümiert,
   void-Bänder 3× retried, Merge erst wenn alle Bänder Daten haben).
 - **Chunk-Datei-Namen**: `{name}_c{lo}.json` — Vorsicht mit Glob
   `gcvs_c*.json` (kollidiert mit dem Asset `gcvs_cat.json`!).
@@ -74,7 +74,7 @@ Durchmesser+Albedo liegen in `phi/katalog/asteroid_diameters_*.φ`.
   (Bailer-Jones) — EIN Join statt paramp (nur Dist) + gaiadr3 (pm).
 - Monitoring langer Hintergrund-Jobs: ein `general`-Agent mit selbsttragendem
   Prompt (Upload + Ledger + Commit bei jedem `TOTAL`, Neustart bei Tod).
-- Commit nur `phi/port/ledger.φ` + `TODO.md`; die parallele Arbeit anderer
+- Commit nur `phi/pipeline/ledger.φ` + `TODO.md`; die parallele Arbeit anderer
   Sessions bleibt unberührt (git ist aktuell sauber).
 
 ## Verifikation

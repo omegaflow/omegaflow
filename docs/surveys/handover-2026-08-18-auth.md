@@ -97,7 +97,7 @@ getrennt als ehrliche Felder.
 
 ### 5. Recheck b4 (grind-flash delegiert)
 
-Mechanischer Source-Recheck, Befunde in `phi/port/stage/recheck_b4.φ` und in
+Mechanischer Source-Recheck, Befunde in `phi/pipeline/stage/recheck_b4.φ` und in
 `blocked_sources.φ` / `interesting_domains.φ` gespiegelt. dead: argovis-
 Route, sensor.community, geomag.bgs.ac.uk-SAA, ncei-normals, OGLE-Pfad.
 parser-gap: gong (FITS), ASAS, aavso-vsx. environment.data.gov.uk bestätigt
@@ -117,7 +117,7 @@ bewusst NICHT angefasst hat:
 - **Stern-/Asteroiden-Physik** (Okkultationen, Hill, Abplattung, Massen-
   Lücken, NEOWISE-Join, Sternfarbe-Rendering) — TODO Z.38, Handover C.
   Die Daten sind geerntet (gaiadr3-Crossmatch pmra/pmdec/rv + Teff/BPmag/
-  RPmag; NEOWISE/AKARI-Durchmesser in `phi/katalog/asteroid_diameters_*.φ`).
+  RPmag; NEOWISE/AKARI-Durchmesser in `phi/pipeline/katalog/asteroid_diameters_*.φ`).
 - **MAST-TIC-Katalog** — eigener Compiler-Atom, Token unkonsumiert.
 - **ArcGIS-Bolides detected_energy** — gelöst (J, GLM-L2-LCFA-Radiant-Energie).
 

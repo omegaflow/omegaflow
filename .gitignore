@@ -12,10 +12,11 @@ omegaflow.wasm
 *.pdb
 phi/health.json
 phi/kernels/
+kernels/
 *.py
 !scripts/verify_sources.py
 !scripts/generate_ephemerides.py
-!phi/port/chunk_master.py
+!phi/pipeline/chunk_master.py
 /reference/
 scripts/__pycache__/
 .secrets.local
@@ -26,15 +27,15 @@ server.log
 archeology/
 
 # Probe-Ergebnisse (transiente CI-Artefakte)
-phi/port/probe_live.txt
-phi/port/probe_url_void.txt
-phi/port/probe_all_void.txt
-phi/port/probe_all_survivors.φ
-phi/port/probe_survivors.φ
-phi/port/probe_void.txt
-phi/port/probe_drafts.φ
-phi/port/probe_drafts_enriched.φ
+phi/pipeline/probe_live.txt
+phi/pipeline/probe_url_void.txt
+phi/pipeline/probe_all_void.txt
+phi/pipeline/probe_all_survivors.φ
+phi/pipeline/probe_survivors.φ
+phi/pipeline/probe_void.txt
+phi/pipeline/probe_drafts.φ
+phi/pipeline/probe_drafts_enriched.φ
 
 # Compiler-Flat-jsons (gehen zum CDN, nicht ins Repo)
-phi/port/*.json
-phi/port/probe_jina.txt
+phi/pipeline/*.json
+phi/pipeline/probe_jina.txt

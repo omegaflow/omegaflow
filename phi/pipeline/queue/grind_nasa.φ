@@ -175,4 +175,4 @@ note Bereits live (sources.φ Z.477, seismic-surface). Keine Änderung.
 # ── 22. MSL-Wetter — integrated (grind_host.φ, skip) ──
 integrated grind-host
 url https://mars.nasa.gov/rss/api/?feed=weather&category=msl&feedtype=json
-note Bereits gedraftet in phi/research/agent_output/grind_host.φ (accepted, thermal/acoustic). Nicht dupliziert.
+note Bereits gedraftet in phi/pipeline/research/agent_output/grind_host.φ (accepted, thermal/acoustic). Nicht dupliziert.

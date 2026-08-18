@@ -162,4 +162,3 @@ DELTET/DELTA_AT        = ( 10,   @1972-JAN-1,\n 37,   @2017-JAN-1 )\n";
         assert!(parse("DELTA_AT = ( 37, @2017-JAN-1 )\n").is_none());
     }
 }
-

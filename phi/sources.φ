@@ -1049,6 +1049,18 @@ pressure pressure
 field temperature argo_temperature_c erfc thermal C 86400 0.0 0.0
 field salinity argo_salinity_psu erfc diffusion psu 86400 0.0 0.0
 
+url https://data-argo.ifremer.fr/dac/aoml/1901843/profiles/R1901843_357.nc
+ttl 604800
+on earth 0 0 0
+format netcdf
+profile .
+lat LATITUDE
+lon LONGITUDE
+epoch JULD
+alt PRES decibar
+field TEMP argo_dac_temp_c erfc thermal C 604800 0.0 0.0
+field PSAL argo_dac_salinity_psu erfc diffusion psu 604800 0.0 0.0
+
 url https://services1.arcgis.com/qr14biwnHA6Vis6l/arcgis/rest/services/Salinity/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
 ttl 86400
 at earth
@@ -1184,7 +1196,8 @@ url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/exop
 format transit
 ttl 604800
 at sun
-transitmap data
+transitmap .
+tname name
 tra ra
 tdec dec
 tdist dist
