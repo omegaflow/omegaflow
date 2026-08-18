@@ -4416,6 +4416,44 @@ mod archivar {
         }
     }
 
+    fn fetch_ephemeris_one(
+        item: (usize, SourceConfig, String),
+        ftx: &mpsc::Sender<FetchResult>,
+        lsk: &LeapSeconds,
+        now: f64,
+    ) {
+        let (src_idx, src, tmp_path) = item;
+        let connect_t = ((src.ttl as f64) / (Φ * Φ * Φ)).ceil() as u64;
+        let max_t = ((src.ttl as f64) / (Φ * Φ)).ceil() as u64;
+        let mut cmd = Command::new("curl");
+        cmd.arg("-s")
+            .arg("-S")
+            .arg("-f")
+            .arg("-L")
+            .arg("--retry")
+            .arg("5")
+            .arg("--retry-all-errors")
+            .arg("--retry-delay")
+            .arg("2")
+            .arg("-m")
+            .arg(max_t.to_string())
+            .arg("--connect-timeout")
+            .arg(connect_t.to_string())
+            .arg("-o")
+            .arg(&tmp_path)
+            .arg(&src.url);
+        let _ = cmd.output();
+        if let ExtractResult::WithEphemeris(_, eph) = extract(&src, &tmp_path, now, lsk) {
+            let _ = ftx.send(FetchResult {
+                source_idx: src_idx,
+                channels: Vec::new(),
+                eph_update: src.body.clone().map(|b| (b, eph)),
+                asteroid_hash: None,
+                star_hash: None,
+            });
+        }
+    }
+
     fn rfc1123_to_unix(s: &str) -> Option<u64> {
         let parts: Vec<&str> = s.split_whitespace().collect();
         if parts.len() < 6 {
@@ -11119,31 +11157,41 @@ mod archivar {
                 });
             }
             if !pending_eph.is_empty() {
-                let mut anchor_bodies: std::collections::HashSet<String> =
-                    std::collections::HashSet::new();
+                let mut anchor_uses: std::collections::HashMap<String, usize> =
+                    std::collections::HashMap::new();
                 for s in &archive.sources {
                     if s.format == "ephemeris_binary" || s.format == "kernel_text" {
                         continue;
                     }
                     match &s.frame {
                         Frame::Surface { body_name, .. } | Frame::Barycenter { body_name, .. } => {
-                            anchor_bodies.insert(body_name.clone());
+                            *anchor_uses.entry(body_name.clone()).or_insert(0) += 1;
                         }
                         Frame::Manifest => {}
                     }
                 }
-                let (anchor_items, rest_items): (Vec<_>, Vec<_>) =
+                let (mut anchor_items, rest_items): (Vec<_>, Vec<_>) =
                     pending_eph.into_iter().partition(|(_, src, _)| {
                         src.body
                             .as_deref()
-                            .map(|b| anchor_bodies.contains(b))
+                            .map(|b| anchor_uses.contains_key(b))
                             .unwrap_or(false)
                     });
+                anchor_items.sort_by_key(|(_, src, _)| {
+                    std::cmp::Reverse(
+                        anchor_uses
+                            .get(src.body.as_deref().unwrap_or(""))
+                            .copied()
+                            .unwrap_or(0),
+                    )
+                });
                 let ftx = fetch_tx.clone();
                 let lsk_c = lsk.clone();
                 let now_c = now;
                 thread::spawn(move || {
-                    fetch_ephemeris_batch(anchor_items, ftx.clone(), lsk_c.clone(), now_c);
+                    for item in anchor_items {
+                        fetch_ephemeris_one(item, &ftx, &lsk_c, now_c);
+                    }
                     fetch_ephemeris_batch(rest_items, ftx, lsk_c, now_c);
                 });
             }
