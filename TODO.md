@@ -563,9 +563,10 @@ heute auf den Bestand unter /home/johannes/projects/archive/archeology/.
 
 ## Curation & Quellen
 
-- TerraPulse-Katalog: 103 Kandidaten klassifiziert
-  (phi/research/agent_output/terrapulse_catalog.φ) — Block-Erstellung +
-  Verifikation offen. GLM (Ratsurteil 2026-08-17): GOES_GLM_Bolides-
+- TerraPulse-Katalog: 103 Kandidaten — erledigt (2026-08-18): Dispositionen
+  gespiegelt in dead_sources.φ/blocked_sources.φ (grind_terrapulse_a.φ +
+  b.φ in phi/port/queue/); Katalog: phi/katalog/terrapulse_catalog.φ.
+  GLM (Ratsurteil 2026-08-17): GOES_GLM_Bolides-
   ArcGIS-GeoJSON ist die Route — Kraft `em` (NIR-Photodetektor 777,4 nm,
   Wert = detektierte optische Energie J, τ = Blitzdauer via `tau_key`),
   NICHT electric; netCDF entfällt für GLM. Erledigt 2026-08-18: beide Routen

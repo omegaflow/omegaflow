@@ -1,6 +1,6 @@
 # ── TerraPulse-Katalog (Crawl 2026-08-15, 25 Seiten, 469 Quellen) ──
 # candidate: physikalisch relevante Endpoints (heuristische Vorprüfung;
-# Block-Erstellung + Verifikation via test_backlog_batches_verify offen)
+# Dispositionen gespiegelt in dead_sources.φ/blocked_sources.φ — grind_terrapulse_a.φ + b.φ)
 candidate https://www.amsmeteors.org/members/api/open_api
 # title: American Meteor Society Fireballs
 candidate https://ssd-api.jpl.nasa.gov/fireball.api
