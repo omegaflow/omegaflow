@@ -251,12 +251,11 @@ resonance(mut read_signal(s: read_ws_frame_part(stream: read_ws_frame_raw(stream
 ### Die Reparatur-Kette (Reihenfolge des Vollzugs)
 
 1. ~~Die Messreihe~~ — erledigt (2026-08-18): Gradient (Flow) im Probe
-   (analytisches ∇K, `field_spatial_grad`, probe_out 9→12), measure_ring
-   (256 Generationen, u64-gen-Zähler), Fenster-Reduktion
-   (Budget-EMA → ssaa, einseitig), 4-Token-HUD (FORCE_NAME + FORCE_SI_UNIT).
-   Offen registriert: ∇ des J2/J4-Oblatheits-Terms (mp.w·rd²·p2 +
-   mg.x·rd⁴·p4) und ∂val_eff/∂d (Retardations-Korrektur) — beides
-   `pending`, nicht approximiert.
+   (analytisches ∇K für alle 7 Kernel + J2/J4-Oblatheit + ∂val_eff/∂d-
+   Retardation, `field_spatial_grad`/`val_eff_grad`/`osc_flow`, probe_out
+   9→12), measure_ring (256 Generationen, u64-gen-Zähler), Fenster-Reduktion
+   (Budget-EMA als HUD-Messung — der Operator entscheidet, kein Auto-Zoom),
+   4-Token-HUD (FORCE_NAME + FORCE_SI_UNIT).
 2. P2-Relay-Rest — SurfaceFlow für spd/hdg + refused-else (browser)
 3. P4-Rest — Ausgabe-Flächen (Serial-TX, Vibration, USB/BT/HID) über
    lum = tanh(|Ω|·mx²); die Exposure atmet wieder mit dem Echo (Ethik §9)

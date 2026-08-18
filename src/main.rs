@@ -324,6 +324,18 @@ fn val_eff_at(pre: vec4f, tm: vec4f, ft: u32, v: f32, d_mag: f32) -> f32 {
     return val;
 }
 
+fn val_eff_grad(pre: vec4f, tm: vec4f, v: f32, d_mag: f32) -> f32 {
+    if (v <= 0.0 || d_mag <= 0.0) {
+        return 0.0;
+    }
+    let temporal = abs(vp.presence.w - tm.x);
+    let corr = d_mag / v;
+    if (corr >= temporal || corr <= tm.y * 1e-4) {
+        return 0.0;
+    }
+    return pre.w * exp(corr / max(tm.y, 1e-9)) / max(tm.y, 1e-9) / v;
+}
+
 fn osc_field(j: u32, rel: vec3f, pre: vec4f) -> vec2f {
     let tm = field[j * 3u + 1u];
     let fm = field[j * 3u + 2u];
@@ -349,6 +361,43 @@ fn osc_field(j: u32, rel: vec3f, pre: vec4f) -> vec2f {
         }
     }
     return vec2f(val_eff * sk, f32(ft));
+}
+
+fn osc_flow(j: u32, pre: vec4f) -> vec3f {
+    let tm = field[j * 3u + 1u];
+    let fm = field[j * 3u + 2u];
+    let mt = props[j * 3u];
+    let mp = props[j * 3u + 1u];
+    let mg = props[j * 3u + 2u];
+    let delta = pre.xyz;
+    let d2 = dot(delta, delta);
+    let d_mag = sqrt(d2);
+    let ft = u32(tm.z);
+    let kid = u32(mt.z);
+    let v = select(PROPAGATION_SPEED[ft], fm.x, ft == 7u && fm.x > 0.0);
+    let val_eff = val_eff_at(pre, tm, ft, v, d_mag);
+    let vp_grad = val_eff_grad(pre, tm, v, d_mag);
+    let k = field_spatial(d2, d_mag, mt.x, kid, vp.surface.w, f32(tm.w));
+    let kp = field_spatial_grad(d2, d_mag, mt.x, kid, vp.surface.w, f32(tm.w));
+    let dhat = delta / max(d_mag, 1e-9);
+
+    var g = -dhat * (vp_grad * k + val_eff * kp);
+    if ((kid == 0u || kid == 6u) && ft == 1u) {
+        let cos_t = clamp(dot(dhat, mp.xyz), -1.0, 1.0);
+        let rd = mg.y / max(d_mag, 1.0);
+        if (rd < 1.0) {
+            let p2 = (3.0 * cos_t * cos_t - 1.0) * 0.5;
+            let p4 = (35.0 * cos_t * cos_t * cos_t * cos_t - 30.0 * cos_t * cos_t + 3.0) * 0.125;
+            let p2p = 3.0 * cos_t;
+            let p4p = (35.0 * cos_t * cos_t * cos_t - 15.0 * cos_t) * 0.5;
+            let g_corr = 1.0 - mp.w * rd * rd * p2 - mg.x * rd * rd * rd * rd * p4;
+            let g_d = (2.0 * mp.w * rd * rd * p2 + 4.0 * mg.x * rd * rd * rd * rd * p4) / max(d_mag, 1e-9);
+            let g_c = -mp.w * rd * rd * p2p - mg.x * rd * rd * rd * rd * p4p;
+            g = g - dhat * ((vp_grad * k + val_eff * kp) * (g_corr - 1.0) + val_eff * k * g_d);
+            g = g - (val_eff * k * g_c) * (mp.xyz - cos_t * dhat) / max(d_mag, 1e-9);
+        }
+    }
+    return g;
 }
 
 @compute @workgroup_size(1)
@@ -379,14 +428,7 @@ fn presence_probe() {
         let c = osc_field(j, vec3f(0.0), pre);
         let f = u32(c.y);
         if (f < 9u) { omegas[f] += c.x; }
-        let delta = pre.xyz;
-        let d2 = dot(delta, delta);
-        let d_mag = sqrt(d2);
-        let v = select(PROPAGATION_SPEED[ft], fm.x, ft == 7u && fm.x > 0.0);
-        let val_eff = val_eff_at(pre, tm, ft, v, d_mag);
-        let kprime = field_spatial_grad(d2, d_mag, mt.x, kid, vp.surface.w, f32(tm.w));
-        let dhat = delta / max(d_mag, 1e-9);
-        flow = flow - dhat * (val_eff * kprime);
+        flow = flow + osc_flow(j, pre);
     }
     for (var i = 0u; i < 9u; i = i + 1u) { probe_out[i] = omegas[i]; }
     probe_out[9] = flow.x;
@@ -14323,7 +14365,6 @@ mod mathematikerin {
     const GRID_DEEP_GRID: f64 = 70368744177664.0;
     const JUMP_GRID: f64 = 268435456.0;
     const SSAA_MAX: f32 = 8.0;
-    const DISPLAY_PERIOD_MS: f64 = 16.6;
     const BUDGET_RELAX: f64 = 0.1;
     const FORCE_NAME: [&str; 9] = [
         "em",
@@ -16206,9 +16247,6 @@ mod mathematikerin {
                 } else {
                     self.frame_ms_ema * (1.0 - BUDGET_RELAX) + avg_ms * BUDGET_RELAX
                 };
-                if self.frame_ms_ema > DISPLAY_PERIOD_MS && self.ssaa > 1.0 {
-                    self.ssaa = (self.ssaa / Φ as f32).max(1.0);
-                }
                 let rec = if self.consent.load(Ordering::SeqCst) {
                     "on"
                 } else {
@@ -16225,7 +16263,7 @@ mod mathematikerin {
                     ));
                 }
                 eprintln!(
-                "φ window: t {:.2} | rec {} | gen {} | flow {:+.2} {:+.2} {:+.2} | {} | mx {:.2e} | fps {:.0} | ssaa {:.2} | grid 2^{} | x {:.3e} y {:.3e} z {:.3e} | {} near | {} deep | b {}x{} | maxms {:.0} | off {:.2} | blend {}",
+                "φ window: t {:.2} | rec {} | gen {} | flow {:+.2} {:+.2} {:+.2} | {} | mx {:.2e} | fps {:.0} | ssaa {:.2} | grid 2^{} | x {:.3e} y {:.3e} z {:.3e} | {} near | {} deep | b {}x{} | maxms {:.0} | ema {:.1} | off {:.2} | blend {}",
                 self.t_presence,
                 rec,
                 self.ring_gen,
@@ -16245,6 +16283,7 @@ mod mathematikerin {
                 self.backing.0,
                 self.backing.1,
                 ms_max,
+                self.frame_ms_ema,
                 self.expose_offset,
                 self.point_blend,
             );
