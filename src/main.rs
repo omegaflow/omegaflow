@@ -4594,7 +4594,7 @@ mod archivar {
                 }
             }
             let line = format!(
-            "omegaflow v{} | φ v6 | body: {} sources, {} oscillators | api: {} sources, {} oscillators | sensor: {} oscillators",
+            "omegaflow v{} | φ v7 | body: {} sources, {} oscillators | api: {} sources, {} oscillators | sensor: {} oscillators",
             env!("CARGO_PKG_VERSION"),
             body_src.len(),
             body_osc,
@@ -17217,12 +17217,12 @@ mod mathematikerin {
                         e
                     },
                     {
-                        let mut e = storage_entry(false, wgpu::ShaderStages::VERTEX_FRAGMENT);
+                        let mut e = storage_entry(false, wgpu::ShaderStages::FRAGMENT);
                         e.binding = 7;
                         e
                     },
                     {
-                        let mut e = storage_entry(false, wgpu::ShaderStages::VERTEX_FRAGMENT);
+                        let mut e = storage_entry(false, wgpu::ShaderStages::FRAGMENT);
                         e.binding = 8;
                         e
                     },
