@@ -202,7 +202,8 @@ fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
     );
     out.pos = vec4f(clip, 0.0, 1.0);
     out.uv = corner;
-    let flux = data.w * occlusion(data.xyz, 1e30, 0u, u32(deep_vp.expose_ex.w));
+    let occ = occlusion(data.xyz, 1e30, 0u, u32(deep_vp.expose_ex.w));
+    let flux = data.w * occ;
     let lum = clamp(
         (log2(abs(flux) + 1e-30)
             - log2(ft_ref_floor(deep_vp.ft_ref_a, deep_vp.ft_ref_b, deep_vp.ft_ref_c, 0u))
@@ -212,7 +213,7 @@ fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
         1.0,
     );
     let hue = fract(log2(max(tau, 1.0)) / 16.0 + props_in.z);
-    out.color = hsl_to_rgb(hue, 0.35, 0.15 + lum * 0.85);
+    out.color = hsl_to_rgb(hue, 0.35, 0.15 + lum * 0.85) * occ;
     return out;
 }
 
