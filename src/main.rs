@@ -4695,6 +4695,7 @@ mod archivar {
         occluders: Option<Arc<OccluderSet>>,
         planets: Option<Arc<PlanetSet>>,
         curves: Option<Arc<CurveSet>>,
+        pending_channels: Vec<(Channel, FieldConfig, u32)>,
     }
 
     fn days_to_ymd(total_days: u64) -> (u32, u32, u32) {
@@ -8595,6 +8596,7 @@ mod archivar {
                         if let JsonVal::Obj(root) = j {
                             if let Some(JsonVal::Arr(data)) = root.get("data") {
                                 let mut col: HashMap<String, usize> = HashMap::new();
+                                let mut fill_of: HashMap<String, f64> = HashMap::new();
                                 let mut has_params = false;
                                 if let Some(JsonVal::Arr(params)) = root.get("parameters") {
                                     for (i, p) in params.iter().enumerate() {
@@ -8602,6 +8604,10 @@ mod archivar {
                                             if let Some(JsonVal::Str(nn)) = po.get("name") {
                                                 col.insert(nn.clone(), i);
                                                 has_params = true;
+                                                if let Some(fv) = po.get("fill").and_then(scalar_of)
+                                                {
+                                                    fill_of.insert(nn.clone(), fv);
+                                                }
                                             }
                                         }
                                     }
@@ -8622,10 +8628,35 @@ mod archivar {
                                 if let Some(last_row) = data.last() {
                                     if let JsonVal::Arr(row) = last_row {
                                         for (param, name) in pairs {
-                                            if let Some(&idx) = col.get(param) {
-                                                if let Some(val) = row.get(idx).and_then(scalar_of)
+                                            let (base, comp) = match param.rfind('.') {
+                                                Some(dot)
+                                                    if param[dot + 1..]
+                                                        .chars()
+                                                        .all(|c| c.is_ascii_digit()) =>
                                                 {
-                                                    extracted.insert(name.clone(), val);
+                                                    (
+                                                        &param[..dot],
+                                                        param[dot + 1..].parse::<usize>().ok(),
+                                                    )
+                                                }
+                                                _ => (param.as_str(), None),
+                                            };
+                                            if let Some(&idx) = col.get(base) {
+                                                let v = match comp {
+                                                    Some(i) => row.get(idx).and_then(|cell| {
+                                                        if let JsonVal::Arr(a) = cell {
+                                                            a.get(i).and_then(scalar_of)
+                                                        } else {
+                                                            None
+                                                        }
+                                                    }),
+                                                    None => row.get(idx).and_then(scalar_of),
+                                                };
+                                                if let Some(val) = v {
+                                                    if fill_of.get(base).map_or(true, |&f| val != f)
+                                                    {
+                                                        extracted.insert(name.clone(), val);
+                                                    }
                                                 }
                                             }
                                         }
@@ -8807,6 +8838,66 @@ mod archivar {
                     }
                 }
             }
+        }
+        channels
+    }
+
+    fn build_finals_channels(
+        src: &SourceConfig,
+        text: &str,
+        lsk: &LeapSeconds,
+    ) -> Vec<(Channel, FieldConfig)> {
+        let mut channels = Vec::new();
+        let mut fields: Vec<&FieldConfig> = Vec::new();
+        for ext in &src.extracts {
+            if let Extract::Field(fc) = ext {
+                fields.push(fc);
+            }
+        }
+        if fields.is_empty() {
+            return channels;
+        }
+        for line in text.lines().rev() {
+            if line.len() < 58 {
+                continue;
+            }
+            let col = |a: usize, b: usize| -> Option<f64> {
+                line.get(a..b).unwrap_or("").trim().parse::<f64>().ok()
+            };
+            let (Some(mjd), Some(pmx), Some(pmy), Some(ut1)) =
+                (col(7, 15), col(18, 27), col(38, 47), col(60, 70))
+            else {
+                continue;
+            };
+            let unix = (mjd - 40587.0) * 86400.0;
+            let Some(epoch) = lsk.unix_to_tdb(unix) else {
+                continue;
+            };
+            let position = Position::Surface {
+                body_name: frame_body_name(&src.frame),
+                lat: 0.0,
+                lon: 0.0,
+                alt: 0.0,
+            };
+            for fc in &fields {
+                let value = match fc.key.as_str() {
+                    "ut1_utc" => ut1,
+                    "pmx" => pmx,
+                    "pmy" => pmy,
+                    _ => continue,
+                };
+                channels.push((
+                    Channel {
+                        z: 0.0,
+                        epoch,
+                        position: position.clone(),
+                        name: fc.name.clone(),
+                        value,
+                    },
+                    (*fc).clone(),
+                ));
+            }
+            break;
         }
         channels
     }
@@ -11548,6 +11639,7 @@ mod archivar {
             occluders: None,
             planets: None,
             curves: None,
+            pending_channels: Vec::new(),
         };
         let body_names: Arc<Vec<String>> = {
             let mut names: Vec<String> = archive
@@ -11719,6 +11811,32 @@ mod archivar {
                 }
             };
             let mut fetched_oscillators: Vec<Oscillator> = Vec::new();
+            {
+                let mut still_pending: Vec<(Channel, FieldConfig, u32)> = Vec::new();
+                for (channel, sensor, idx) in archive.pending_channels.drain(..) {
+                    let src = &archive.sources[idx as usize];
+                    match anchor(
+                        &channel,
+                        &sensor,
+                        src.ttl as f64,
+                        Some(idx),
+                        Some(&src.frame),
+                        None,
+                        &archive.body_ephemerides,
+                    ) {
+                        Some(osc) => fetched_oscillators.push(osc),
+                        None => still_pending.push((channel, sensor, idx)),
+                    }
+                }
+                if !still_pending.is_empty() {
+                    eprintln!(
+                        "{} channels waiting for body ephemerides — anchored on arrival",
+                        still_pending.len()
+                    );
+                }
+                archive.pending_channels = still_pending;
+            }
+            let mut dropped_channels: Vec<(Channel, FieldConfig, u32)> = Vec::new();
             while let Ok(res) = fetch_rx.try_recv() {
                 archive
                     .origins
@@ -11770,9 +11888,36 @@ mod archivar {
                         &archive.body_ephemerides,
                     ) {
                         fetched_oscillators.push(osc);
+                    } else {
+                        let eph_missing = match &channel.position {
+                            Position::Surface { body_name, .. }
+                            | Position::SurfaceFlow { body_name, .. } => archive
+                                .body_ephemerides
+                                .get(body_name.as_str())
+                                .and_then(|e| e.props.as_ref())
+                                .is_none(),
+                            Position::Source => match &src.frame {
+                                Frame::Surface { body_name, .. }
+                                | Frame::Barycenter { body_name, .. } => archive
+                                    .body_ephemerides
+                                    .get(body_name.as_str())
+                                    .and_then(|e| e.props.as_ref())
+                                    .is_none(),
+                                Frame::Manifest => false,
+                            },
+                            Position::StateVector { .. } => false,
+                        };
+                        if eph_missing {
+                            dropped_channels.push((
+                                channel.clone(),
+                                sensor.clone(),
+                                res.source_idx as u32,
+                            ));
+                        }
                     }
                 }
             }
+            archive.pending_channels.extend(dropped_channels);
             while let Ok(oscs) = osc_rx.try_recv() {
                 fetched_oscillators.extend(oscs);
             }
@@ -11838,40 +11983,55 @@ mod archivar {
                 if archive.sources[i].format == "ephemeris_binary" {
                     let src_idx = i;
                     let src_clone = archive.sources[i].clone();
+                    let url = archive.sources[i].url.clone();
                     let tmp_path = match &src_clone.body {
                         Some(b) => format!("/tmp/omegaflow_eph_{}.bin", b),
                         None => continue,
                     };
-                    if cache_fresh(&tmp_path, src_clone.ttl) {
-                        archive.origins.entry(origin).or_insert(OriginState {
-                            fetched: now,
-                            prev_epoch: now,
-                            prev_abs: [0.0; 3],
-                            prev_motion: None,
-                            resid_ema: 0.0,
-                            has_prev: false,
-                        });
-                        let ftx = fetch_tx.clone();
-                        let lsk_c = lsk.clone();
-                        let now_c = now;
-                        let tmp_path_c = tmp_path.clone();
-                        thread::spawn(move || {
-                            if let ExtractResult::WithEphemeris(_, eph) =
-                                extract(&src_clone, &tmp_path_c, now_c, &lsk_c)
-                            {
-                                let _ = ftx.send(FetchResult {
-                                    source_idx: src_idx,
-                                    channels: Vec::new(),
-                                    eph_update: src_clone.body.clone().map(|b| (b, eph)),
-                                    asteroid_hash: None,
-                                    star_hash: None,
-                                    occluders: None,
-                                    planets: None,
-                                    curves: None,
-                                });
+                    archive.origins.entry(origin).or_insert(OriginState {
+                        fetched: now,
+                        prev_epoch: now,
+                        prev_abs: [0.0; 3],
+                        prev_motion: None,
+                        resid_ema: 0.0,
+                        has_prev: false,
+                    });
+                    let ftx = fetch_tx.clone();
+                    let lsk_c = lsk.clone();
+                    let now_c = now;
+                    let tmp_path_c = tmp_path.clone();
+                    let src_ttl = src_clone.ttl;
+                    thread::spawn(move || {
+                        if !cache_fresh(&tmp_path_c, src_ttl) {
+                            let bytes = match fetch_raw_bytes(&url, src_ttl) {
+                                Some(b) => b,
+                                None => {
+                                    eprintln!(
+                                        "ephemeris {}: fetch returned void — the body stays absent",
+                                        url
+                                    );
+                                    return;
+                                }
+                            };
+                            if std::fs::write(&tmp_path_c, &bytes).is_err() {
+                                return;
                             }
-                        });
-                    }
+                        }
+                        if let ExtractResult::WithEphemeris(_, eph) =
+                            extract(&src_clone, &tmp_path_c, now_c, &lsk_c)
+                        {
+                            let _ = ftx.send(FetchResult {
+                                source_idx: src_idx,
+                                channels: Vec::new(),
+                                eph_update: src_clone.body.clone().map(|b| (b, eph)),
+                                asteroid_hash: None,
+                                star_hash: None,
+                                occluders: None,
+                                planets: None,
+                                curves: None,
+                            });
+                        }
+                    });
                     continue;
                 }
                 if archive.sources[i].format == "catalog_dastcom" {
