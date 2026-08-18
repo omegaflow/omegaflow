@@ -16560,6 +16560,14 @@ mod mathematikerin {
             if w == 0 || h == 0 {
                 return;
             }
+            if self.barriers_buf.is_none() {
+                self.barriers_buf = Some(device.create_buffer(&wgpu::BufferDescriptor {
+                    label: None,
+                    size: 256 * 32,
+                    usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+                    mapped_at_creation: false,
+                }));
+            }
             let num_tiles = ((w + 15) / 16) as u32 * ((h + 15) / 16) as u32;
             if self.tile_cap >= num_tiles {
                 return;
@@ -16753,13 +16761,6 @@ mod mathematikerin {
                 usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
                 mapped_at_creation: false,
             });
-            let barriers_buf = device.create_buffer(&wgpu::BufferDescriptor {
-                label: None,
-                size: 256 * 32,
-                usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
-                mapped_at_creation: false,
-            });
-            self.barriers_buf = Some(barriers_buf);
             self.prep_buf = Some(prep_buf);
             self.param_buf = Some(param_buf);
             self.rebuild_binds();
