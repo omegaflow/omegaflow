@@ -1,0 +1,14 @@
+# grind-flash recheck b4 (2026-08-18) — mechanischer Source-Recheck, 10 Endpoints aus dem Recheck-Register (TODO.md)
+# Nur Befunde (HTTP-Status, Content-Type, Struktur) — kein Force-Gate-Endurteil, kein Commit, keine Änderung an sources.φ / dead_sources.φ / ledger.φ / TODO.md.
+# Status: lebendig | dead | parser-gap | auth | void
+
+recheck argovis-api.colorado.edu dead 404 application/json {"message":"not found"} — API-Host lebt (spricht JSON), Route /catalog/ absent; laut blocked_sources-Eintrag trägt die Query-Form (startDate/endDate) die Daten
+recheck data.sensor.community dead 404 text/html (Apache) — Route /airrohr/v1/sensor/ absent; Host-Root 403 Forbidden, archive.sensor.community Root 200 HTML-Verzeichnisbaum (PM2.5 per Gebiets-ID laut blocked_sources)
+recheck environment.data.gov.uk lebendig 200 application/json, 4.7 MB — Stations-Register mit items[].lat (4894 lat-Keys), kein Messwert; value liegt auf der readings-Route (verifiziert recheck_b1)
+recheck geomag.bgs.ac.uk dead 404 text/html — BGS-Portal lebt, Route /data_service/data/magnetic_indices/saa/ absent; Observation-Endpoint trägt laut blocked_sources die Zeitreihen
+recheck www.ncei.noaa.gov dead 404 text/html — NOAA-Seite lebt, Route /access/land-based-station-data/land-based-in-situ/climate-normals/ absent (Drupal-404-Seite, 30 KB)
+recheck gong.nso.edu parser-gap 200 text/html, 193 B — meta-refresh auf gong2.nso.edu/archive/patch.pl?menutype=s; FITS-Dateibaum (Dopplergramm/Magnetogramm), kein JSON-Kanal (recheck_b4 bestätigt)
+recheck www.astrouw.edu.pl dead 404 text/html — OGLE-Pfad /~jskowron/OGLE/ absent
+recheck www.astrouw.edu.pl parser-gap 200 text/html — ASAS-Portal (ACVS/AASC-Kataloge, Photometrie-Downloads), formularbasiert, kein JSON-Kanal
+recheck services.swpc.noaa.gov dead 404 text/html — Route /products/ace-magnetometer.json absent; lebende Route ace/mag/ace_mag_1h.json (200 JSON, 665 Records, verifiziert recheck_b3)
+recheck www.aavso.org parser-gap 200 text/html — VSX-Suchformular (view=search.top), kein JSON; Datenroute vsx.aavso.org/index.php?view=api.votable (blocked_sources-Eintrag)

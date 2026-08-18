@@ -312,7 +312,7 @@ note implementiert 2026-08-17: --gold-Konverter mappt method POST + body (auch n
 
 verifiziert
 parser-gap GLMNetCDF
-note Ratsurteil 2026-08-17: GLM = em (NIR-Photodetektor 777,4 nm, Wert = optische Energie J, τ = Blitzdauer), ArcGIS-GOES_GLM_Bolides-Route — kein netCDF-Reader nötig; netCDF-3 std-only gehört zum Struktur-Reader-Atom, netCDF-4/HDF5 pending
+note Ratsurteil 2026-08-17: GLM = em (NIR-Photodetektor 777,4 nm, Wert = optische Energie J, τ = Blitzdauer), ArcGIS-GOES_GLM_Bolides-Route — kein netCDF-Reader nötig; netCDF-3 std-only gehört zum Struktur-Reader-Atom, netCDF-4/HDF5 pending. Live-Verifikation 2026-08-18: (a) ArcGIS GOES_GLM_Bolides lebt als Endpoint, aber neuester Eintrag 2024-04-18 → totes Archiv, kein Live-Feld; detected_energy 4.38e-15 in unklarer Einheit. (b) CNEOS fireball.api (ssd-api.jpl.nasa.gov) lebt keyless (neuester 2026-08-01), energy = J·10¹⁰, impact-e = kt — aber lat/lat-dir (N/S) und lon/lon-dir (E/W) sind Betrag+Richtungsstring getrennt → parser-gap (Vorzeichen nicht aus zwei Feldern kombinierbar).
 
 ausstehend
 kandidat https://wwwi3.ymparisto.fi/i3/RealTime/data/WST1403901.txt
@@ -380,7 +380,7 @@ note gaia_dist pastel (B/pastel/pastel): 37064 Zeilen voll (Chunk-Merge, 8 RA-B�
 
 verifiziert
 bestand phi/katalog/vizier_gold_catalogs.φ
-note gaia_dist wds (B/wds/wds): 136548 Zeilen voll (Chunk-Merge, 8 RA-Bänder), 76482 mit Gaia-Distanz — live auf CDN. Sync-Workflow-Schritt entfernt (Clobber-Gefahr) — Eigenbewegung+RV: 111820 pmra, 83429 rv (gaiadr3)
+note gaia_dist wds (B/wds/wds): 136548 Zeilen voll (Chunk-Merge, 8 RA-Bänder), 76482 mit Gaia-Distanz — live auf CDN. Sync-Workflow-Schritt entfernt (Clobber-Gefahr) — Eigenbewegung+RV: 111820 pmra, 83429 rv (gaiadr3) — Farbe: 76482 gaia_teff, 116048 bpmag, 117277 gmag (gaiadr3)
 
 verifiziert
 bestand phi/katalog/vizier_gold_catalogs.φ
@@ -388,7 +388,7 @@ note gaia_dist vsx (B/vsx/vsx): 49568 Zeilen, 37413 mit Gaia-Distanz — live au
 
 verifiziert
 bestand phi/katalog/vizier_gold_catalogs.φ
-note gaia_dist mktypes (B/mk/mktypes): 686886 Zeilen voll (Chunk-Merge, 80 RA-Bänder à 4,5°), 347856 mit Gaia-Distanz — live auf CDN. Sync-Workflow-Schritt entfernt (Clobber-Gefahr) — Eigenbewegung+RV: 625556 pmra, 369006 rv (gaiadr3)
+note gaia_dist mktypes (B/mk/mktypes): 686886 Zeilen voll (Chunk-Merge, 80 RA-Bänder à 4,5°), 347856 mit Gaia-Distanz — live auf CDN. Sync-Workflow-Schritt entfernt (Clobber-Gefahr) — Eigenbewegung+RV: 625556 pmra, 369006 rv (gaiadr3) — Farbe: 347856 gaia_teff, 632755 bpmag, 637980 gmag (gaiadr3)
 
 verifiziert
 bestand phi/katalog/vizier_gold_catalogs.φ

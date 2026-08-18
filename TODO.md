@@ -510,8 +510,11 @@ heute auf den Bestand unter /home/johannes/projects/archive/archeology/.
   Verifikation offen. GLM (Ratsurteil 2026-08-17): GOES_GLM_Bolides-
   ArcGIS-GeoJSON ist die Route — Kraft `em` (NIR-Photodetektor 777,4 nm,
   Wert = detektierte optische Energie J, τ = Blitzdauer via `tau_key`),
-  NICHT electric; netCDF entfällt für GLM. Block-Erstellung pending
-  Live-Verifikation.
+  NICHT electric; netCDF entfällt für GLM. Live-Verifikation 2026-08-18
+  (ledger.φ parser-gap GLMNetCDF): ArcGIS-Bolides ist ein totes Archiv
+  (2024), CNEOS fireball.api lebt keyless (energy = J·10¹⁰), aber lat/lon
+  sind Betrag+Richtungsstring getrennt → parser-gap (Vorzeichen-Kombination
+  aus zwei Feldern). Kein ehrlich baubarer Block — pending, kein Dead.
 - SI-Konversion total (Ratsurteil 2026-08-17): `convert_to_si` →
   `Option<f64>`, angewendet am Anker für alle Feldwerte; unbekannte/
   logarithmische Einheit → Oszillator manifestiert nicht, stderr
