@@ -1233,6 +1233,7 @@ name = "omegaflow"
 version = "1.0.0"
 dependencies = [
  "gilrs",
+ "naga",
  "pollster",
  "serialport",
  "wgpu",
