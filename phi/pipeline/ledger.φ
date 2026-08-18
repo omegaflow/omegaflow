@@ -505,9 +505,9 @@ geparkt
 kandidat https://maia.usno.navy.mil/ser7/finals.all
 note eop_finals_probe (2026-08-18): Route lebt (täglich, token-frei, MJD ab 1973, 20005 Zeilen; letzte belegte Zeile MJD 61638, danach Leer-Platzhalter). bulletina-ex-001.csv ist 404 — der dead-Eintrag bleibt wahr. `format finals`-Atom ausstehend: Zeichenposition-Spalten statt Whitespace, letzte belegte Zeile statt lastline, MJD→TDB (Versatz 40587 d), Mehr-Felder/Zeile. Feld-Linien bereit: ut1_utc s, pmx/pmy arcsec — force em (VLBI/GNSS), tau 86400, at earth.
 
-geparkt
+verifiziert
 kandidat https://api.alerce.online/alerts/v1/objects/{oid}/detections
-note alerce_probe (2026-08-18): detections-Route lebt (magpsf/magap, em mag, at sun, anonym, kein Token). Der Bulk-Block braucht den celestial-oid-Fanout (parser-gap) — ohne ihn trägt der Block ein Einzel-Objekt. Objektliste trägt keine Magnituden (nur Position + Zeit); magstats fehlt die Position in der Zeile. Draft im alerce_probe.φ.
+note alerce_probe (2026-08-18) + Parser-Atom (2026-08-19): detections-Route lebt (magpsf/magap, em mag, at sun, anonym). Der celestial-oid-Fanout ist gebaut — `format alerce` + `alerce <detail-url>`-Directive + build_alerce_channels (Objektliste → je oid detections → himmelsfeste StateVector-Positionen, MJD→TDB-Epoche, fanout 200 / delay 2s) + Test grün. Block integriert in sources.φ (ttl 3600, at sun, 2 em-mag-Felder).
 
 verifiziert
 bestand phi/pipeline/research/agent_output/luckystar_forcegate.φ

@@ -688,8 +688,10 @@ Offen (Detail in phi/pipeline/ledger.φ):
     AUSSTEHEND — CDDIS verlangt jetzt Earthdata-OAuth (key-needed),
     GFZ/BKG/IGN-Routen 404/000 (19.8.2026). Kein Block im Register,
     bis eine Route anonym lebt oder der Earthdata-Account existiert.
-  - ALeRCE: geparkt — detections-Route lebt, der Bulk-Block braucht den
-    celestial-oid-Fanout (parser-gap).
+  - ALeRCE: integriert — der celestial-oid-Fanout ist gebaut
+    (`format alerce` + `alerce`-Directive + build_alerce_channels:
+    Objektliste → je oid detections → himmelsfeste Positionen,
+    MJD→TDB-Epoche, fanout 200). ERLEDIGT.
   - LuckyStar: decline (Vorhersagen sind Modell, keine Messung; die
     Ergebnisse-Server liefern nur abgeleitete Fits) — der rohe
     em-Lichtkurven-Kanal der Fresnel-Sphäre bleibt ausstehend.

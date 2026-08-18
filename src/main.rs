@@ -1194,6 +1194,7 @@ enum Extract {
         rs_key: String,
     },
     Hapi(Vec<(String, String)>),
+    Alerce(String),
     XmlCount(String, String),
 }
 #[derive(Clone)]
@@ -3863,6 +3864,11 @@ mod archivar {
                                 key_found = true;
                             }
                         }
+                        Extract::Alerce(_) => {
+                            if json_has_content(&j) {
+                                key_found = true;
+                            }
+                        }
                     }
                 }
                 if arr_has_rows {
@@ -5835,6 +5841,9 @@ mod archivar {
                         }
                     }
                     cur_extracts.push(Extract::Hapi(params));
+                }
+                "alerce" if parts.len() >= 2 => {
+                    cur_extracts.push(Extract::Alerce(parts[1].to_string()));
                 }
                 "xmlcount" if parts.len() >= 3 => {
                     cur_extracts.push(Extract::XmlCount(
@@ -8667,6 +8676,7 @@ mod archivar {
                     }
                 }
                 Extract::TransitMap { .. } => {}
+                Extract::Alerce(_) => {}
             }
         }
         if !extracted.is_empty() {
@@ -9029,6 +9039,140 @@ mod archivar {
                     },
                     fc.clone(),
                 ));
+            }
+        }
+        channels
+    }
+
+    fn alerce_objects(json: &JsonVal) -> Vec<(String, f64, f64)> {
+        let mut out = Vec::new();
+        let JsonVal::Obj(root) = json else {
+            return out;
+        };
+        let Some(JsonVal::Arr(items)) = root.get("items") else {
+            return out;
+        };
+        for it in items {
+            let JsonVal::Obj(o) = it else { continue };
+            let (Some(JsonVal::Str(oid)), Some(ra), Some(dec)) = (
+                o.get("oid"),
+                o.get("meanra").and_then(scalar_of),
+                o.get("meandec").and_then(scalar_of),
+            ) else {
+                continue;
+            };
+            if ra.is_finite() && dec.is_finite() {
+                out.push((oid.clone(), ra, dec));
+            }
+        }
+        out
+    }
+
+    fn alerce_detection_rows(json: &JsonVal) -> Vec<(f64, f64, f64, f64, f64)> {
+        let mut out = Vec::new();
+        let JsonVal::Arr(rows) = json else {
+            return out;
+        };
+        for r in rows {
+            let JsonVal::Obj(o) = r else { continue };
+            let (Some(ra), Some(dec), Some(mjd), Some(magpsf), Some(magap)) = (
+                o.get("ra").and_then(scalar_of),
+                o.get("dec").and_then(scalar_of),
+                o.get("mjd").and_then(scalar_of),
+                o.get("magpsf").and_then(scalar_of),
+                o.get("magap").and_then(scalar_of),
+            ) else {
+                continue;
+            };
+            if ra.is_finite() && dec.is_finite() && mjd.is_finite() {
+                out.push((ra, dec, mjd, magpsf, magap));
+            }
+        }
+        out
+    }
+
+    fn build_alerce_channels(
+        src: &SourceConfig,
+        lsk: &LeapSeconds,
+        cap: usize,
+        delay: u64,
+    ) -> Vec<(Channel, FieldConfig)> {
+        let mut channels = Vec::new();
+        let Some(Extract::Alerce(detail)) = src
+            .extracts
+            .iter()
+            .find(|e| matches!(e, Extract::Alerce(_)))
+        else {
+            return channels;
+        };
+        let mut magpsf_fc: Option<&FieldConfig> = None;
+        let mut magap_fc: Option<&FieldConfig> = None;
+        for ext in &src.extracts {
+            if let Extract::Field(fc) = ext {
+                match fc.key.as_str() {
+                    "magpsf" => magpsf_fc = Some(fc),
+                    "magap" => magap_fc = Some(fc),
+                    _ => {}
+                }
+            }
+        }
+        let (Some(fc_p), Some(fc_a)) = (magpsf_fc, magap_fc) else {
+            return channels;
+        };
+        let Some(list_bytes) = fetch_raw_bytes(&src.url, src.ttl) else {
+            return channels;
+        };
+        let Some(list_json) = parse_json(&String::from_utf8_lossy(&list_bytes)) else {
+            return channels;
+        };
+        let objects = alerce_objects(&list_json);
+        for (wi, (oid, _, _)) in objects.iter().take(cap).enumerate() {
+            if wi > 0 && delay > 0 {
+                thread::sleep(std::time::Duration::from_secs(delay));
+            }
+            let url = detail.replace("{oid}", oid);
+            let Some(det_bytes) = fetch_raw_bytes(&url, src.ttl) else {
+                continue;
+            };
+            let Some(det_json) = parse_json(&String::from_utf8_lossy(&det_bytes)) else {
+                continue;
+            };
+            for (ra, dec, mjd, magpsf, magap) in alerce_detection_rows(&det_json) {
+                let (sd, cd) = dec.to_radians().sin_cos();
+                let (sr, cr) = ra.to_radians().sin_cos();
+                let p = [cd * cr, cd * sr, sd];
+                let Some(epoch) = lsk.unix_to_tdb((mjd - 40587.0) * 86400.0) else {
+                    continue;
+                };
+                let position = Position::StateVector {
+                    p,
+                    v: [0.0; 3],
+                    track: false,
+                };
+                if magpsf.is_finite() {
+                    channels.push((
+                        Channel {
+                            z: 0.0,
+                            epoch,
+                            position: position.clone(),
+                            name: fc_p.name.clone(),
+                            value: magpsf,
+                        },
+                        fc_p.clone(),
+                    ));
+                }
+                if magap.is_finite() {
+                    channels.push((
+                        Channel {
+                            z: 0.0,
+                            epoch,
+                            position,
+                            name: fc_a.name.clone(),
+                            value: magap,
+                        },
+                        fc_a.clone(),
+                    ));
+                }
             }
         }
         channels
@@ -12293,6 +12437,36 @@ mod archivar {
                         } else {
                             build_finals_channels(&src_clone, &text, &lsk_c)
                         };
+                        let _ = ftx.send(FetchResult {
+                            source_idx: src_idx,
+                            channels,
+                            eph_update: None,
+                            asteroid_hash: None,
+                            star_hash: None,
+                            occluders: None,
+                            planets: None,
+                            curves: None,
+                        });
+                    });
+                    continue;
+                }
+                if archive.sources[i].format == "alerce" {
+                    let ftx = fetch_tx.clone();
+                    let src_clone = archive.sources[i].clone();
+                    let src_idx = i;
+                    let lsk_c = lsk.clone();
+                    let cap = src_clone.fanout_cap.max(1) as usize;
+                    let delay = src_clone.fanout_delay;
+                    archive.origins.entry(origin).or_insert(OriginState {
+                        fetched: now,
+                        prev_epoch: now,
+                        prev_abs: [0.0; 3],
+                        prev_motion: None,
+                        resid_ema: 0.0,
+                        has_prev: false,
+                    });
+                    thread::spawn(move || {
+                        let channels = build_alerce_channels(&src_clone, &lsk_c, cap, delay);
                         let _ = ftx.send(FetchResult {
                             source_idx: src_idx,
                             channels,
@@ -16223,6 +16397,20 @@ field temp temp_c\n";
             assert!(secret_resolves_void("{ABSENT_KEY}", &env));
             assert!(secret_resolves_void("{EMPTY_KEY}", &env));
             assert!(!secret_resolves_void("{SET_KEY}", &env));
+        }
+
+        #[test]
+        fn test_alerce_object_and_detection_parse() {
+            let list = r#"{"total":null,"items":[{"oid":"ZTF17aaaaaal","meanra":210.5,"meandec":-12.25,"firstmjd":58000.0},{"oid":"ZTF18bbbbbbb","meanra":null,"meandec":null}]}"#;
+            let objs = alerce_objects(&parse_json(list).unwrap());
+            assert_eq!(objs.len(), 1);
+            assert_eq!(objs[0].0, "ZTF17aaaaaal");
+            assert!((objs[0].1 - 210.5).abs() < 1e-12);
+            assert!((objs[0].2 + 12.25).abs() < 1e-12);
+            let det = r#"[{"ra":210.5,"dec":-12.25,"mjd":60123.4,"magpsf":18.1,"magap":18.4},{"ra":"absent","dec":0.0,"mjd":60123.4,"magpsf":19.0,"magap":19.0}]"#;
+            let rows = alerce_detection_rows(&parse_json(det).unwrap());
+            assert_eq!(rows.len(), 1);
+            assert_eq!(rows[0], (210.5, -12.25, 60123.4, 18.1, 18.4));
         }
 
         fn field_fixture(name: &str, tau: f64) -> FieldConfig {

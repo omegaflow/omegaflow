@@ -304,6 +304,16 @@ map sensorData.0.data
 epoch sampleTime
 field value oceannetworks_ctd_pressure_decibar gaussian-inverse-square advective decibar 1800 0.0 0.0
 
+url https://api.alerce.online/alerts/v1/objects/?page=1&page_size=1000&order_by=firstmjd&order_mode=DESC
+format alerce
+ttl 3600
+at sun
+alerce https://api.alerce.online/alerts/v1/objects/{oid}/detections
+fanout 200
+fanout_delay 2
+field magpsf alerce_ztf_detection_magpsf gaussian-inverse-square em mag 3600 0.0 0.0
+field magap alerce_ztf_detection_magap gaussian-inverse-square em mag 3600 0.0 0.0
+
 url https://api.nasa.gov/DONKI/FLR?startDate={week_ago}&endDate={today}&classType=X&api_key={NASA_API_KEY}
 ttl 3600
 at sun
