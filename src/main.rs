@@ -281,6 +281,9 @@ fn field_spatial(d2: f32, d_mag: f32, extent: f32, kernel_id: u32, global_scale:
 }
 
 fn field_spatial_grad(d2: f32, d_mag: f32, extent: f32, kernel_id: u32, global_scale: f32, absorption: f32) -> f32 {
+    if (d_mag > 1e13) {
+        return 0.0;
+    }
     let perceptual_extent = max(extent, global_scale);
     let e2 = max(perceptual_extent * perceptual_extent, 1e-30);
     let s2 = max(global_scale * global_scale, 1e-30);
