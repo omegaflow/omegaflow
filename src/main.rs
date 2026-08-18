@@ -4623,6 +4623,7 @@ mod archivar {
             format!("{}-{:02}-{:02}T{:02}:{:02}:00", h_y, h_m, h_d, h_h, h_min)
         };
         let half = 0.5f64;
+        let jd_now = 2440587.5 + secs as f64 / 86400.0;
         let url = template
             .replace("{today}", &format!("{}-{:02}-{:02}", ty, tm, td))
             .replace("{yesterday}", &format!("{}-{:02}-{:02}", yy, ym, yd))
@@ -4630,6 +4631,9 @@ mod archivar {
             .replace("{now}", &now_iso)
             .replace("{hour_ago}", &hour_ago_iso)
             .replace("{year}", &ty.to_string())
+            .replace("{jd_now}", &format!("{:.6}", jd_now))
+            .replace("{jd_start}", &format!("{:.6}", jd_now - 1.0))
+            .replace("{jd_end}", &format!("{:.6}", jd_now))
             .replace("{lat}", &format!("{:.6}", anchor.0))
             .replace("{lon}", &format!("{:.6}", anchor.1))
             .replace("{lat_int}", &format!("{:.0}", anchor.0))
@@ -13328,6 +13332,9 @@ field temp temp_c\n";
                     ("{lat_max}", "30.0"),
                     ("{grid}", "29.5,-95.0|29.6,-95.0"),
                     ("{nearest_station}", "8518750"),
+                    ("{jd_now}", "2461270.78"),
+                    ("{jd_start}", "2461269.78"),
+                    ("{jd_end}", "2461270.78"),
                 ] {
                     url = url.replace(k, v);
                 }

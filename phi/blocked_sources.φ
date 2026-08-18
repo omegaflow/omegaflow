@@ -352,13 +352,13 @@ decline redundant
 url https://irsa.ipac.caltech.edu/ibe/
 note IRSA erreichbar (200). Recheck 2026-08-17: IRSA hat KEINEN API-Token — (a) öffentliche Daten (WISE/NEOWISE/2MASS/Spitzer/SPHEREx/Euclid/ZTF-DR24) offen auf AWS S3 Open Data (nasa-irsa-wise, ipac-irsa-ztf usw., anonymous, kein Key); (b) proprietäres ZTF via IPAC-SSO (curl --user email:passwort). Verdikt 2026-08-17 bleibt decline redundant: ZTF-Photometrie über Lasair/ALeRCE abgedeckt, übrige IRSA-Holdings (WISE/2MASS) sind Bulk-Kataloge ohne Live-Feldwert.
 
-key-needed auth
+decline redundant
 url https://lasair-ztf.lsst.ac.uk/api/cone/
-note HTTP 401 — Token/Registrierung nötig. Recheck 2026-08-17: API-Token im Lasair-Profil (LASAIR_TOKEN in .secrets.local).
+note Integriert 2026-08-18: Lasair lebt in sources.φ über /api/query/ (SQL-SELECT, token in URL). Der cone-Endpoint ist redundant (liefert nur object+separation, keine Position) — decline redundant.
 
-key-needed auth
+decline redundant
 url https://lasair-ztf.lsst.ac.uk/api/cone/?ra=180.0&dec=30.0&radius=10.0&
-note HTTP 401 — Token/Registrierung nötig. Recheck 2026-08-17: LASAIR_TOKEN vorhanden.
+note Integriert 2026-08-18: siehe /api/cone/ oben — decline redundant, live über /api/query/.
 
 key-needed blocked
 url https://lisn.igp.gob.pe/api/v1/stations?format=json&status=operational

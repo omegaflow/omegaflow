@@ -101,7 +101,7 @@ host ioda.caida.org klassifiziert dead timeout — Connection timed out after 12
 host irsa.ipac.caltech.edu klassifiziert decline redundant — ZTF über Lasair/ALeRCE abgedeckt (Verdikt 2026-08-17). Gator/TAP-Route inventarisiert (phi/katalog/tap_index_irsa.φ, provider irsa TAP/sync, 995 Tabellen). Recheck 2026-08-17: kein Token — öffentliche Daten offen auf AWS S3 Open Data, proprietäres ZTF via IPAC-SSO (email+passwort).
 host kp.gfz-potsdam.de klassifiziert dead 5xx — HTTP 500 — Server antwortet nicht brauchbar.
 host kp.gfz.de klassifiziert dead 5xx — HTTP 500 — Server antwortet nicht brauchbar.
-host lasair-ztf.lsst.ac.uk klassifiziert key-needed auth — HTTP 401 — Token/Registrierung nötig. Recheck 2026-08-17: LASAIR_TOKEN im Profil vorhanden.
+host lasair-ztf.lsst.ac.uk klassifiziert integrated — live in sources.φ (2026-08-18): /api/query/ SQL-SELECT (token in URL), gmag-Fluss, em, 24h-Fenster über {jd_start}.
 host lisa-ldc.lal.in2p3.fr klassifiziert dead timeout — Connection timed out after 12002 milliseconds
 host lisn.igp.gob.pe klassifiziert key-needed blocked — HTTP 403 — Auth-Gate oder Bot-Block.
 host lpdaacsvc.cr.usgs.gov klassifiziert key-needed auth — GEDI (LIDAR-Baumhöhe, em) hinter Earthdata-Login.
@@ -311,7 +311,7 @@ key-needed frost.met.no — integrated (live in sources.φ, Basic-Auth, Fanout 4
 key-needed gateway.api.globalfishingwatch.org — HTTP 401 — Token/Registrierung nötig. — decline redistribution (CDN)
 key-needed gracedb.ligo.org — refused: Gruppenmitgliedschaft (LVC/MOU), kein Self-Service; public superevents offen (Verdikt 2026-08-17).
 key-needed irsa.ipac.caltech.edu — Verdikt 2026-08-17: decline redundant (ZTF über Lasair/ALeRCE; TAP inventarisiert). Kein Token — S3 offen / IPAC-SSO.
-key-needed lasair-ztf.lsst.ac.uk — HTTP 401 — Token/Registrierung nötig. Recheck 2026-08-17: LASAIR_TOKEN im Profil vorhanden.
+key-needed lasair-ztf.lsst.ac.uk — integrated (live in sources.φ via /api/query/, token in URL; Verdikt 2026-08-18).
 key-needed lpdaacsvc.cr.usgs.gov — GEDI (LIDAR-Baumhöhe, em) hinter Earthdata-Login.
 key-needed marinecadastre.gov — Verdikt 2026-08-17: decline no-physical-force (Schiffspositionen, kein Feldwert).
 key-needed mast.stsci.edu — MAST verlangt Token. Verdikt 2026-08-17: TESS/HST/JWST-Photometrie (em) — Kandidat, MAST_TOKEN vorhanden.
@@ -368,7 +368,7 @@ key data.oceannetworks.ca → OCEANNETWORKS_TOKEN
 key supermag.jhuapl.edu → SUPERMAG_USER=omegaflow (logon-only; API aktuell Server-Fault db-get)
 key api.openaq.org → OPENAQ_API_KEY (bereits live, fanout-p09)
 key frost.met.no → FROST_BASIC_AUTH (integriert, live in sources.φ)
-key lasair-ztf.lsst.ac.uk → LASAIR_TOKEN (Recheck 2026-08-17: Token im Profil)
+key lasair-ztf.lsst.ac.uk → LASAIR_TOKEN (integriert, live in sources.φ)
 key climate-themetoffice.hub.arcgis.com → offen (kein Key nötig)
 key mast.stsci.edu → MAST_TOKEN (Verdikt 2026-08-17 aufgehoben: TESS/HST/JWST em)
 

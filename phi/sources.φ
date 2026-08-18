@@ -638,6 +638,15 @@ stations_lon geometry.coordinates.0
 fanout 40
 first data.0.observations.value frost_wind_speed_ms gaussian-inverse-square advective m/s 3600 0.0 0.0
 
+url https://lasair-ztf.lsst.ac.uk/api/query/?selected=objectId,ramean,decmean,gmag&tables=objects&conditions=jdmax%3E{jd_start}&limit=1000&token={LASAIR_TOKEN}
+ttl 3600
+at sun
+flux_from_mag gmag
+cmap .
+ra ramean
+dec decmean
+field gmag lasair_ztf_transient_gmag gaussian-inverse-square em mag 3600 0.0 0.0
+
 url https://services.swpc.noaa.gov/json/ace/mag/ace_mag_1h.json
 ttl 3600
 at earth 0.99
