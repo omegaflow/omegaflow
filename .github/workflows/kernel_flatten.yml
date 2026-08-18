@@ -77,8 +77,8 @@ jobs:
           cargo run --release --bin dastcom_compiler -- \
             --input kernels/dast5_le.dat \
             --out dastcom_asteroids.bin \
-            --gm phi/katalog/asteroid_gm_inpop25c.φ \
-            --diameters phi/katalog/asteroid_diameters_neowise.φ,phi/katalog/asteroid_diameters_akari.φ \
+            --gm phi/pipeline/katalog/asteroid_gm_inpop25c.φ \
+            --diameters phi/pipeline/katalog/asteroid_diameters_neowise.φ,phi/pipeline/katalog/asteroid_diameters_akari.φ \
             --ci-mode
       - name: Commit body manifest
         run: |
@@ -186,13 +186,25 @@ jobs:
             --root https://exoplanetarchive.ipac.caltech.edu/TAP/sync \
             --table pscomppars \
             --cols-unquoted \
-            --columns 'name:pl_name;ra:ra;dec:dec;dist:sy_dist;masse:pl_masse;rade:pl_rade' \
+            --columns 'name:pl_name;ra:ra;dec:dec;dist:sy_dist;masse:pl_masse;rade:pl_rade;orbsmax:pl_orbsmax;orbeccen:pl_orbeccen;orbincl:pl_orbincl;orblper:pl_orblper;tranmid:pl_tranmid;orbper:pl_orbper;strad:st_rad' \
             --skip-null dist \
             --out exoplanets.json \
             --ci-mode \
             || gh issue create --repo omegaflow/omegaflow \
                  --title "flatten: exoplanets returned void" \
                  --body "exoplanets compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 --label health
+      - name: Compile TESS light curves and upload to CDN
+        continue-on-error: true
+        env:
+          MAST_TOKEN: ${{ secrets.MAST_TOKEN }}
+        run: |
+          cargo run --release --bin tess_compiler -- \
+            --out tess_lightcurves.bin \
+            --ci-mode \
+            || gh issue create --repo omegaflow/omegaflow \
+                 --title "flatten: tess_lightcurves returned void" \
+                 --body "tess_lightcurves compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
                  --label health
       - name: Compile AVO radio catalog and upload to CDN
         continue-on-error: true
@@ -427,12 +439,12 @@ jobs:
           curl -sSfL --retry 3 --max-time 1200 -o kernels/hip_main.dat \
             https://cdsarc.cds.unistra.fr/ftp/I/239/hip_main.dat
           cargo run --release --bin tycho2_compiler -- \
-            --source bright --input kernels/hip_main.dat --out kernels/bright_stars.json
+            --source bright --input kernels/hip_main.dat --out kernels/bright_stars.json --xmatch
           cargo run --release --bin tap_compiler -- \
             --root https://gaia.ari.uni-heidelberg.de/tap/sync \
             --table gaiadr3.gaia_source_lite \
             --join gaiaedr3_complements.distances source_id \
-            --columns 'ra:t.ra;dec:t.dec;pmra:t.pmra;pmdec:t.pmdec;mag:t.phot_g_mean_mag;dist_pc:j.r_med_geo;bpmag:t.phot_bp_mean_mag;rpmag:t.phot_rp_mean_mag' \
+            --columns 'ra:t.ra;dec:t.dec;pmra:t.pmra;pmdec:t.pmdec;mag:t.phot_g_mean_mag;dist_pc:j.r_med_geo;bpmag:t.phot_bp_mean_mag;rpmag:t.phot_rp_mean_mag;rv:t.radial_velocity' \
             --mag-bands 1.94 11.5 0.1 \
             --epoch 2016 --limit 90000 --star-bin \
             --union-bright kernels/bright_stars.json \
