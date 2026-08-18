@@ -1,0 +1,31 @@
+# netcdf grind-flash A — NetCDF-Proben Teil 1 (2026-08-18, Agentin A der Mutter-Hyphe)
+# Binary: target/debug/netcdf_reader (Stand 2026-08-18 15:40, CDF-1/CDF-2 std-only; CDF-5 und netCDF-4/HDF5 werden gemeldet, nicht gelesen)
+# Probe: --url-Strukturscan je URL; --var-Extrakt der ersten Werte für die wichtigste Messwert-Variable. HEAD-Status zur 404-Abgrenzung. Beobachtende Sprache.
+
+candidate ftp://ftp.ifremer.fr/ifremer/argo/dac/aoml/1901843/profiles/R1901843_357.nc
+note Format CDF-1 (numrecs 3). Argo-Profil (Float 1901843). Dimensionen N_PROF=3, N_LEVELS=1009, N_PARAM=3, N_CALIB=1. Globale Attribute: title, institution, source, history, references, id, user_manual_version, Conventions, featureType. Messwert-Variablen float (N_PROF,N_LEVELS): TEMP, PSAL, PRES — mit QC-/ADJUSTED-Reihen (PRES_QC, TEMP_ADJUSTED, PSAL_ADJUSTED_ERROR, *_QC) und Positions-/Zeit-Referenzen (JULD, LATITUDE, LONGITUDE, double). FTP lesbar via curl.
+note Probe-Werte: TEMP 25.862 25.862 25.861 25.860 25.860 (Grad C); PSAL 35.0314 35.0314 35.0312 35.0310 35.0314 (psu); PRES 1.08 1.96 3.00 4.04 5.00 (decibar)
+vars TEMP C thermal
+vars PSAL psu diffusion
+vars PRES decibar gravity
+disposition netcdf-live
+
+candidate https://www.socat.info/socat_files/v2024/SOCAT_tracks_gridded_monthly.nc
+note Datei endet bei Byte 0 — Antwort leer, kein netCDF-Payload. Varianten ebenso leer: v2025, v2023, v2022 (alle SOCAT_tracks_gridded_monthly.nc).
+disposition decline 404-leer
+
+candidate https://www.temis.nl/airpollution/o3col/data/gome2_metopb/netcdf/o3_20260808.nc
+note HTTP/2 404 (HEAD, Apache) — o3_20260808.nc absent auf temis.nl; netcdf_reader: curl-Fetch ohne Antwort (404-HTML statt netCDF).
+disposition decline 404
+
+candidate https://www.temis.nl/airpollution/no2col/data/tropomi/netcdf/no2_20260808.nc
+note HTTP/2 404 (HEAD, Apache) — no2_20260808.nc absent auf temis.nl.
+disposition decline 404
+
+candidate https://www.ncei.noaa.gov/data/oceans/ncei/ocads/data/0162565/GLODAPv2.2022_Merged_Master_File.nc
+note HTTP/1.1 404 Not Found (HEAD, Apache) — Pfad absent; der vermutete 404 bestätigt sich.
+disposition decline 404
+
+candidate https://dods.wh.gov/opendap/jg/acoustic/aggregated/acoustic.nc
+note curl-Fetch ohne Antwort; HEAD ebenfalls leer (kein Status, kein Body) — Host dods.wh.gov antwortet nicht. Format unbestimmbar.
+disposition pending

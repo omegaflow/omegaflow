@@ -2,9 +2,9 @@ dead absent
 url ftp://ftp.bom.gov.au/anon/gen/fwo/IDx60901.json
 note curl: curl: (78) The file does not exist
 
-decline netcdf-ftp
-url ftp://ftp.ifremer.fr/ifremer/argo/dac/aoml/1901843/profiles/R1901843_357.nc
-note Argo-Profil als NetCDF via FTP (226 IM) — Archivar konsumiert nur HTTP(S)/JSON.
+decline netcdf-pending
+url https://data-argo.ifremer.fr/dac/aoml/1901843/profiles/R1901843_357.nc
+note netcdf_reader verifiziert (2026-08-18): CDF-1, TEMP (C thermal) / PSAL (psu diffusion) / PRES (decibar gravity) + LATITUDE/LONGITUDE/JULD. Aber Per-Profil-Datei mit Vertikalprofil (N_LEVELS=1009) — kein Skalar; Live-Manifestation braucht Per-Level-Expansion (alt=−PRES) + netcdf-Konsum im Archivar = src/ pending (wie Argovis). Der Reader ist der offene Kanal.
 
 decline no-physical-force
 url http://127.0.0.1:8080/schumann.json

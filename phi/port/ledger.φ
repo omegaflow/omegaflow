@@ -481,5 +481,9 @@ bestand phi/port/stage/vizier_bulk_a.φ
 note VizieR/IRSA/GAVO-Grindwelle (2026-08-18, Mutter-Hyphe 3 Agentinnen, staging vizier_bulk_a/irsa_gavo_b/vizier_bulk_c): 13 Blöcke integriert (atnf-pulsar mJy, carmenes Ks-mag, cornish mJy, irasfsc/akari_fis/msxc6 Jy, rave.main teff+Jmag, ohmaser Jy, stellarhosts teff, gcvs mag, hecate HRV+W1/W2, first_radio mJy); ~20 decline. mJy/M_sun/km/s sind unit-ERLAUBT (em/gravity/advective) — die fälschlichen off-register-Ablehnungen korrigiert. Offene re-probes: allwise (timeout), bzcat5 (LogFlux), atlasgal (ICRS-Spalten), green_snr (Spalten), harris VII/202/catalog, galactic_black_hole 163/207/table1.
 
 verifiziert
+bestand phi/port/stage/netcdf_a.φ
+note netCDF-Welle (2026-08-18): netcdf_reader (CDF-1/2) läuft. Einziger netcdf-live-Kandidat = Argo-Profil (data-argo.ifremer.fr, TEMP/PSAL/PRES, CDF-1) — aber Per-Profil/Vertikalprofil → Per-Level-Expansion (alt=−PRES) + netcdf-Konsum = src/ pending (Rust-Kybernautin, wie Argovis). GLODAP: kein .nc (offizieller Kanal = CSV mit G2temperature/G2salinity/G2pressure/G2tco2/G2talk/G2oxygen — Bottle-Rohwerte, CSV-Harvest-Kandidat, nicht netcdf); GLODAP-.nc-Klimatologien = derived + too-large. SOCAT/temis .nc = 404/leer. OOI-.nc = netCDF-4/HDF5 (nicht CDF-1/2) — ERDDAP-tabledap bleibt der lebende Kanal.
+
+verifiziert
 bestand phi/research/agent_output/recheck_b1.φ
 note sensor.community-Urteil (2026-08-18): die b1-Box-Route lebt — filter/box=...&type=SDS011 liefert 200 JSON (P1/P2 je Messung); integriert in sources.φ (ttl 300, on earth, PM1/PM2.5 diffusion μg/m3). Caveat bleibt: indoor-Sensoren (location.indoor=1) im Fenster nicht herausfilterbar. Die api.sensor.community-403- und /airrohr/v1/-Root-404-Einträge bleiben (anderer Host/Route).

@@ -1,0 +1,39 @@
+# netcdf grind-flash B — NetCDF-Proben Teil 2 (2026-08-18, Agentin B der Mutter-Hyphe)
+# Binary: target/debug/netcdf_reader (Stand 2026-08-18 15:40, CDF-1/CDF-2 std-only; CDF-5 und netCDF-4/HDF5 werden gemeldet, nicht gelesen)
+# Probe: --url-Strukturscan je URL; --var-Extrakt der ersten Werte. HEAD-Status zur 404-Abgrenzung. Beobachtende Sprache.
+# Ozeanische Messwert-Quellen: GLODAP (temperature/salinity/pressure/Kohlenstoff), Argo-HTTP, OOI raw. Nur diese Staging-Datei — kein Register, kein src/, kein cargo.
+
+# --- Ziel 1: GLODAP ---
+
+candidate https://www.ncei.noaa.gov/data/oceans/ncei/ocads/data/0283442/GLODAPv2.2023_Merged_Master_File.nc
+note HTTP/1.1 404 (HEAD, Apache) — das OADS-Verzeichnis 0283442 (GLODAPv2.2023) trägt die Merged-Master-Datei NUR als CSV (304M) und MAT, kein .nc. Gleiches Bild in den Vorgänger-Accessions 0162565 (v2.0: csv.zip/mat), 0237935 (v2.2021: csv/mat), 0257247 (v2.2022: csv/mat). Die lebende GLODAP-Merged-.nc-URL existiert nicht — der offizielle Vertriebskanal ist CSV + MATLAB. Kein .nc-Kandidat liefert 200.
+note CSV-Header (Range-Request, erste Zeile) trägt die Roh-Messwert-Spalten: G2temperature, G2salinity, G2pressure, G2tco2 (DIC), G2talk (Alkalinität), G2oxygen, G2nitrate, G2nitrite, G2silicate, G2phosphate — plus G2latitude/G2longitude/G2pressure. Messwert = Bottle-Sample am Punkt (accepted-Material), aber als CSV, nicht NetCDF.
+disposition decline kein-netcdf (nur CSV/MAT; CSV ist der lebende Kanal, aber kein netcdf_reader-Ziel)
+
+candidate https://www.ncei.noaa.gov/data/oceans/ncei/ocads/data/0162565/mapped/GLODAPv2_Mapped_Climatology.tar.gz
+note HTTP 200, Content-Length 313087325 (>200MB → too-large). Enthält 4 .nc: GLODAPv2.tco2.nc, GLODAPv2.pHts25p0.nc, GLODAPv2.pHtsinsitu.nc, GLODAPv2.OmegaCinsitu.nc. Dies sind Mapped Climatologies — gerasterte/gemappte Klimatologien (1°×1°-Mittel, abgeleitet), keine Bottle-Rohwerte am Punkt.
+disposition decline derived (grasterte Klimatologie) + too-large (>200MB)
+
+# --- Ziel 2: Argo HTTP ---
+
+candidate https://data-argo.ifremer.fr/dac/aoml/1901843/profiles/R1901843_357.nc
+note Format CDF-1 (numrecs 3). HTTP/2 200, Content-Length 150612. Argo-Profil (Float 1901843, Cycle 357) über HTTP statt FTP — identischer Inhalt wie ftp://ftp.ifremer.fr-Variante. Dimensionen N_PROF=3, N_LEVELS=1009, N_PARAM=3. Messwert-Variablen float (N_PROF,N_LEVELS): PRES, TEMP, PSAL — mit QC-/ADJUSTED-/ERROR-Reihen (PRES_QC, TEMP_ADJUSTED, TEMP_ADJUSTED_QC, PSAL_ADJUSTED_ERROR, …) und Positions-/Zeit-Referenzen (LATITUDE, LONGITUDE, JULD — double, N_PROF).
+note Probe-Werte: TEMP 25.862 25.862 25.861 25.860 25.860; PSAL 35.0314 35.0314 35.0312 35.0310 35.0314; PRES 1.08 1.96 3.00 4.04 5.00; LATITUDE −15.77751, LONGITUDE 57.37286; JULD 27965.773125022904 (Tage seit 1950-01-01).
+vars TEMP C thermal
+vars PSAL psu diffusion
+vars PRES decibar gravity
+disposition netcdf-live
+
+# --- Ziel 3: OOI raw ---
+
+candidate https://rawdata.oceanobservatories.org/files/GA01SUMO/R00003/instruments/dcl16/CTDBP_sn16-50062/SBE16plus_01650062_2018_01_16.hex
+note HTTP 200 — rawdata.oceanobservatories.org/files/ ist der keyless HTTP-Rohdaten-Baum, aber er trägt Instrument-Nativformate: .hex (Sea-Bird SBE16plus), .XML, .log, .txt — KEIN .nc. Die rohe OOI-.nc-Datei liegt nicht im rawdata-Baum.
+disposition decline kein-netcdf (rawdata-Baum = .hex/.XML/.log/.txt, nicht .nc)
+
+candidate https://opendap.oceanobservatories.org/thredds/fileServer/ooi/wruef@uw.edu/20251104T002538284Z-CE04OSPS-PC01B-4C-PHSENH109-streamed-phsen_h_format0/deployment0001_CE04OSPS-PC01B-4C-PHSENH109-streamed-phsen_h_format0_20250806T143207.990316-20251103T231715.770057.nc
+note HTTP 200, Content-Type application/x-netcdf, 884541 B. thredds-fileServer liefert die rohe .nc keyless — netcdf_reader meldet: Magie 89 48 44 46 = \x89HDF, also netCDF-4/HDF5, nicht CDF-1/2. Das ist der ehrliche Befund, nicht „error": die OOI-.nc-Rohdateien sind netCDF-4/HDF5 und werden vom CDF-1/2-Reader nicht gelesen.
+disposition decline netCDF-4/HDF5 (nicht CDF-1/2; ERDDAP-tabledap-Route bleibt der lebende Kanal)
+
+candidate https://erddap.dataexplorer.oceanobservatories.org/erddap/files/ooi-ga01sumo-sbd12-04-pco2aa000/station_104010_flat.nc
+note HTTP 200, Content-Type application/x-netcdf, 1558601 B. Das ERDDAP-flat-.nc der PCO2-Station (GA01SUMO-SBD12-04-PCO2AA000, die Quellen von hydrosphere_pco2_ooi_uatm + sst). netcdf_reader meldet: Magie 89 48 44 46 = \x89HDF, also netCDF-4/HDF5 — nicht CDF-1/2. Der lebende Kanal ist die tabledap-CSV-Route in sources.φ (hydrosphere_pco2_ooi_uatm, hydrosphere_sst_ooi_c).
+disposition decline netCDF-4/HDF5 (nicht CDF-1/2; tabledap-CSV in sources.φ bleibt der lebende Kanal)

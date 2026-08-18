@@ -747,9 +747,14 @@ Konversion ist bekannt oder erforschbar — pending, keine Fälschung):
   first_radio + IRSA irasfsc/akari/msxc6 + GAVO rave/ohmaser +
   ExoArchive stellarhosts), ~20 decline/re-probe (allwise timeout,
   bzcat5 LogFlux, atlasgal ICRS-Spalten, harris VII/202/catalog,
-  galactic_black_hole 163/207/table1). GCNS/MWSC = Kompilat (src/),
+  galactic_black_hole 163/207/table1).   GCNS/MWSC = Kompilat (src/),
   liegen in GAVO dc.g-vo.org. GAVO-Async-Queue erledigt (2026-08-18):
   /tap/async = UWS-1.1-Jobliste (gavo.aip.de + dc.g-vo.org).
+- netCDF-Welle (2026-08-18): netcdf_reader (CDF-1/2) verifiziert. Argo-Profil
+  ist netcdf-live (TEMP/PSAL/PRES), aber Per-Level-Expansion (alt=−PRES) +
+  netcdf-Konsum im Archivar = src/ (Rust-Kybernautin, wie Argovis). GLODAP =
+  CSV (kein .nc; Bottle-Rohwerte als CSV-Harvest-Kandidat). OOI/SOCAT/temis
+  .nc = netCDF-4/HDF5 bzw. 404.
 - Hapi-FieldConfig: die deklarierten kernel/force/tau der HAPI-Blöcke
   erreichen den Oszillator nicht (synthetisch {0,0,0}) — Klärung in
   der P-Liste
