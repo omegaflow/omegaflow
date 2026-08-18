@@ -3362,6 +3362,10 @@ dead login-wall
 url https://www.amsmeteors.org/members/ams/check_data.php?y={year}&m={month}&type=json
 note Login-Mauer (HTML, nicht JSON) — Route verlangt AMS-Login, kein öffentlicher JSON-Kanal (Spot-Check 2026-08-18). AMS-Meldungen sind menschliche Sichtbeobachtungen (indirekter Count, kein SI-Energiewert) — Force-Gate ohnehin unterschritten; die sensorbasierten Feuerkugel-Daten (CNEOS fireball.api + GOES GLM Bolides) tragen die em-Messung bereits in sources.φ.
 
+dead feed-ended
+url https://vires.services/hapi/data?id=SW_EXPT_EFIA_TCT02&start={hour_ago}&stop={now}&parameters=Ehx,Ehy,Ehz&format=json
+note Swarm TII E-Feld (TCT02/16, EFIA/EFIB/EFIC) — keyless HAPI lebt, aber (1) experimentelles Produkt, stopDate 2025-12-04 (kein Live-Feed), (2) E-Feld ist ABGELEITET (E=-V×B aus Ionendrift + B-Feld), nicht direkt gemessen — die direkte Messung ist die Ionendrift (Vixh/Viy/Viz, m/s). Force-Gate: E-Feld abgeleitet + Feed beendet → kein lebender Oszillator. Die live-Swarm-elektrischen Felder (Langmuir-Probe, FAC, MAG) stehen bereits in sources.φ.
+
 dead transport
 url https://www.arpansa.gov.au/sites/default/files/legacy/pubs/uvindex/realtime/uvrt.xml
 note curl: curl: (92) HTTP/2 stream 1 was not closed cleanly: INTERNAL_ERROR (err 2)
@@ -4036,3 +4040,27 @@ note pro_review_b5 2026-08-18: SMAP-L3-SoilMoisture ist Modell-Inversion aus Bri
 decline model-forecast
 url https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Active_Hurricanes_Sampler/FeatureServer/0/query
 note pro_review_b5 2026-08-18: Forecast-Track-Punkte (FCSTPRD/ADVISNUM) — Prognose, kein Feld am Punkt. Den gemessenen Sturm (Wind/Druck) trägt der Layer nicht.
+
+decline kein-feld
+url https://services.arcgis.com/As5CFN3ThbQpy8Ph/arcgis/rest/services/Earthquake_Epicenters/FeatureServer/0
+note arcgis_b5 2026-08-18: DEPTH_KM durchgehend -9.99 (Sentinel, keine Messung), MAGNITUDE dimensionslos — kein manifestierendes Feld.
+
+decline kein-feld
+url https://services.arcgis.com/7CRlmWNEbeCqEJ6a/arcgis/rest/services/seismicity_catalogsNSHM2023/FeatureServer/0
+note arcgis_b5 2026-08-18: depth_km durchgehend 0, mw/mwe dimensionslos — position-only Katalog.
+
+decline duplicate
+url https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/Latest_Station_Observations/FeatureServer/0
+note arcgis_b5 2026-08-18: NDBC-Stationsspiegel, derselbe Messwert wie der lebende National_Data_Buoy_Center_Station_Observations-Block.
+
+decline static
+url https://services2.arcgis.com/XSv3KNGfmrd1txPN/arcgis/rest/services/Current_Weather_and_Wind_Station_Data/FeatureServer/0
+note arcgis_b5 2026-08-18: eingefrorene 2021-Momentaufnahme, Sensoren 0-gepolstert.
+
+decline static
+url https://services4.arcgis.com/MMybESiUA82igqDG/arcgis/rest/services/Temperature_is_at_most_51_13/FeatureServer/0
+note arcgis_b5 2026-08-18: Punktproben-Survey (5 Features), gefilterte Sicht.
+
+decline duplicate
+url https://services1.arcgis.com/ze0XBzU1FXj94DJq/arcgis/rest/services/Depth/FeatureServer/0
+note arcgis_b5 2026-08-18: Schwester-Layer des lebenden Temperature-Blocks derselben Instanz.

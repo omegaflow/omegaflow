@@ -1,0 +1,102 @@
+# arcgis b5 batch1 (2026-08-18) — thermal/seismic/diffusion Welle, erste 12 block-reife Kandidaten
+# Agent: grind-pro. curl-only. Beobachtende Sprache — Diagnosen nennen was IST, kein Wert erfunden (A = A).
+# Regeln: kein cargo, keine Register-Edits, keine src/-Edits. Route: /query?where=1%3D1&outFields=*&outSR=4326&f=geojson.
+# Dispositionen: accepted (vollständiger sources.φ-Draft-Block) / decline <grund> (static|duplicate|feed-void|kein-feld).
+# Verifizierte Kandidaten: 12.
+
+candidate https://services8.arcgis.com/SXiEEy1skwB5SrYh/arcgis/rest/services/ROMPLUS_Earthquake_Catalogue_v2/FeatureServer/0
+note 39259 Features. GeoJSON lebt, features tragen depth 140/100/99.9 km (Hypozentrum). lat/lon-Pfad geometry.coordinates.1/0 (Attribute Latitude/Longitude liegen zusätzlich flach). Feld Depth (km, seismic-body) ist der physische Messwert — Ml/Mw sind dimensionslos (abgelehnt nach §3.1). Ml ist großteils 0, Depth ist sauber befüllt. Probe: {"Depth":140,"Latitude":45.3,"Longitude":26.6,"Mw":6}.
+disposition accepted
+url https://services8.arcgis.com/SXiEEy1skwB5SrYh/arcgis/rest/services/ROMPLUS_Earthquake_Catalogue_v2/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 86400
+at earth
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.Depth romplus_hypocentral_depth_km gaussian-inverse-square seismic-body km 86400 0.0 0.0
+
+candidate https://services.arcgis.com/As5CFN3ThbQpy8Ph/arcgis/rest/services/Earthquake_Epicenters/FeatureServer/0
+note 10886 Features. GeoJSON lebt. DEPTH_KM ist durchgehend -9.99 (Sentinel für unbekannte Tiefe, keine echte Messung), MAGNITUDE dimensionslos (nach §3.1 abgelehnt) — kein manifestierendes physisches Feld überlebt. Probe: {"DEPTH_KM":-9.99,"MAGNITUDE":4.6,"LAT_DD":65,"LONG_DD":-135.7}.
+disposition decline kein-feld
+
+candidate https://services.arcgis.com/7CRlmWNEbeCqEJ6a/arcgis/rest/services/seismicity_catalogsNSHM2023/FeatureServer/0
+note 275835 Features. GeoJSON lebt. depth_km durchgehend 0 (Tiefe unbekannt), mw/mwe dimensionslos (Momentmagnitude, nach §3.1 abgelehnt) — position-only Katalog. Probe: {"depth_km":0,"mw":5.2,"lat":42.1,"long":-115.2}.
+disposition decline kein-feld
+
+candidate https://services1.arcgis.com/O7h3OCRVxKceyg19/arcgis/rest/services/Buoy_Data/FeatureServer/0
+note 33496 Features. GeoJSON lebt. NDBC-Beobachtungsarchiv (Wind/Welle/Temperatur). lat/lon-Pfad properties.Latitude/properties.Longitude. ATMP (air temp C), WTMP (water temp C) sauber numerisch befüllt (Probe 1.5/2.1). ATMP/WTMP → thermal C (erfc). WDIR/WSPD/GST/WVHT/PRES zusätzlich vorhanden (advective/acoustic), hier nur die thermal-Felder gezogen.
+disposition accepted
+url https://services1.arcgis.com/O7h3OCRVxKceyg19/arcgis/rest/services/Buoy_Data/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 86400
+at earth
+map features
+lat properties.Latitude
+lon properties.Longitude
+field properties.ATMP ndbc_archive_air_temp_c erfc thermal C 86400 0.0 0.0
+field properties.WTMP ndbc_archive_water_temp_c erfc thermal C 86400 0.0 0.0
+
+candidate https://services9.arcgis.com/NpUZ2jEsnfm9HSQT/arcgis/rest/services/Buoy_46092/FeatureServer/0
+note 281 Features. GeoJSON lebt. Einzel-Bojen-Archiv (Buoy 46092, Monterey Bay). lat/lon-Pfad properties.Lat/properties.Long. ATMP 11.5 C, WTMP 12.5 C, PRES 1026.8 hPa, WSPD 2.6 m/s — numerisch befüllt. thermal C (erfc) + PRES advective hPa.
+disposition accepted
+url https://services9.arcgis.com/NpUZ2jEsnfm9HSQT/arcgis/rest/services/Buoy_46092/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 86400
+at earth
+map features
+lat properties.Lat
+lon properties.Long
+field properties.ATMP buoy_46092_air_temp_c erfc thermal C 86400 0.0 0.0
+field properties.WTMP buoy_46092_water_temp_c erfc thermal C 86400 0.0 0.0
+field properties.PRES buoy_46092_pressure_hpa gaussian-inverse-square advective hPa 86400 0.0 0.0
+
+candidate https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/Latest_Station_Observations/FeatureServer/0
+note 799 Features. GeoJSON lebt (ATMP 20 C real). NDBC-Stationsbeobachtung, inhaltlich identisch zum bereits lebenden Block National_Data_Buoy_Center_Station_Observations (services5.arcgis.com/7weheFjxuNkGGiZi) — derselbe physische Messwert (NDBC-Bojen), anderer Verleger. Dünn befüllt (WTMP/WDIR null in Probe). Kein neuer Kanal.
+disposition decline duplicate
+
+candidate https://services2.arcgis.com/XSv3KNGfmrd1txPN/arcgis/rest/services/Current_Weather_and_Wind_Station_Data/FeatureServer/0
+note 776 Features. GeoJSON lebt, aber eingefrorene Momentaufnahme (OBS_DATETI 1618272000000 = 2021-04-13). Sensoren unvollständig 0-gepolstert (WATER_TEMP durchgehend 0, AIR_TEMP teils 0, teils 40.3). Die 0en sind nicht die physische Wahrheit (leere Sensoren), sondern Leerstellen. Kein lebender Kanal.
+disposition decline static
+
+candidate https://services4.arcgis.com/MMybESiUA82igqDG/arcgis/rest/services/Temperature_is_at_most_51_13/FeatureServer/0
+note 5 Features. GeoJSON lebt. Einmalige Punktproben-Survey (Fließgewässer), eine gefilterte Sicht ("Temperature is at most 51") auf den Basisdatensatz. Real: Dissolved_Oxygen_mg_l_ 12, Conductivity 49.9, Turbidity_NTU_ 1.5, pH 6.1, Temperature_degrees_F_ 51.13 — aber statisch (feste Stichproben, kein lebendes Feld) und zersplittert in viele Filter-Sichten. Kein block-tauglicher Kanal.
+disposition decline static
+
+candidate https://services1.arcgis.com/ze0XBzU1FXj94DJq/arcgis/rest/services/Depth/FeatureServer/0
+note 394 Features. GeoJSON lebt (salinity 3.34 PSU, temperatur 3.27 C, depth -4 m). Schwester-Layer des bereits lebenden Temperature-Blocks derselben Instanz (services1.arcgis.com/ze0XBzU1FXj94DJq/.../Temperature/FeatureServer/0 → avg_tempt thermal + salinity diffusion). Derselbe Survey, andere Aggregations-Spalten (Diff_Sal/avg_depth). Kein neuer Kanal.
+disposition decline duplicate
+
+candidate https://services2.arcgis.com/7KRXAKALbBGlCW77/arcgis/rest/services/Local_Air_Quality_CHPL_211297/FeatureServer/0
+note 287 Features. GeoJSON lebt. lat/lon-Pfad properties.Latitude/properties.Longitude. PM1/PM2.5/PM10 numerisch befüllt (PurpleAir-ähnlich, Probe PM2_5 23.212 μg/m3, PM10 23.795, PM1 15.61). Relative_Humidity 64 %, Temperature__Fahrenheit_ 84.5 F. Feld-Name Particulate_Matter___PM2_5_atm_. Einheit μg/m3 (PurpleAir-Konvention, API trägt keine explizite Unit).
+disposition accepted
+url https://services2.arcgis.com/7KRXAKALbBGlCW77/arcgis/rest/services/Local_Air_Quality_CHPL_211297/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 3600
+at earth
+map features
+lat properties.Latitude
+lon properties.Longitude
+field properties.Particulate_Matter___PM2_5_atm_ chpl_pm25_ugm3 gaussian-inverse-square diffusion μg/m3 3600 0.0 0.0
+field properties.Temperature__Fahrenheit_ chpl_air_temp_f erfc thermal F 3600 0.0 0.0
+
+candidate https://sheffieldcitycouncil.cloud.esriuk.com/server/rest/services/AGOL/INSPIRE/FeatureServer/1
+note 458 Features. GeoJSON lebt. lat/lon-Pfad properties.lat/properties.long. NO2-Diffusionsröhren, Jahresmittel μg/m3 pro Standort: no2_2003..no2_2024 befüllt (Probe no2_2024 17.6, no2_2023 19), no2_2025..null. Diffusionsmessung (passiver Sammler). Feld no2_2024 = jüngstes Nicht-null-Jahr. Einheit μg/m3 (UK-Konvention).
+disposition accepted
+url https://sheffieldcitycouncil.cloud.esriuk.com/server/rest/services/AGOL/INSPIRE/FeatureServer/1/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 604800
+at earth
+map features
+lat properties.lat
+lon properties.long
+field properties.no2_2024 sheffield_no2_annual_mean_ugm3 erfc diffusion μg/m3 604800 0.0 0.0
+
+candidate https://services2.arcgis.com/FtJyXM7nBotS8g5t/arcgis/rest/services/CREST_Buoy_2_Miami_River_030620___082420/FeatureServer/0
+note 15455 Features. GeoJSON lebt. Hochfrequente Wasserqualitäts-Boje. lat/lon-Pfad properties.Latitude__degrees_/properties.Longitude__degrees_. Chlorophyll_ug_L 10.86 μg/L, ODO_Concplus_mg_L 7.25 mg/L, Sal_psu 22.63 PSU, Turbidity_NTU 195.9 NTU — numerisch befüllt (Einheiten im Feldnamen). Temp_C wird als String geliefert ("25.946") und bleibt nach §3.7 ungezogen. pH/spCond vorhanden (pH dimensionslos, nicht in Registry).
+disposition accepted
+url https://services2.arcgis.com/FtJyXM7nBotS8g5t/arcgis/rest/services/CREST_Buoy_2_Miami_River_030620___082420/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 3600
+at earth
+map features
+lat properties.Latitude__degrees_
+lon properties.Longitude__degrees_
+field properties.Chlorophyll_ug_L crest_buoy2_chlorophyll_ugl erfc diffusion μg/L 3600 0.0 0.0
+field properties.ODO_Concplus_mg_L crest_buoy2_dissolved_oxygen_mgl erfc diffusion mg/L 3600 0.0 0.0
+field properties.Sal_psu crest_buoy2_salinity_psu erfc diffusion PSU 3600 0.0 0.0
+field properties.Turbidity_NTU crest_buoy2_turbidity_ntu erfc diffusion NTU 3600 0.0 0.0

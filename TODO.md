@@ -343,10 +343,17 @@ resonance(mut read_signal(s: read_ws_frame_part(stream: read_ws_frame_raw(stream
 4. ~~atmende Membran~~ — Tier 1 + 2 erledigt (2026-08-18): fieldPermeability aus der
    Messreihe — Tier 1 (target = tanh(vC/(g+ε)), Wenden-Rhythmus) + Tier 2
    (TE-Parabel: inTE/(inTE+threshold+ε) mit Gaussian-KDE-Surrogaten).
-   Audio-Eardrum skaliert den Gain, die Hardware-Flächen (§3) konsumieren
-   die Permeabilität. Fenster bleibt beim Operator. Offen: ε-Kulling
-   (Tiled Culling — handover-atome.md Atom 4, eigener Port; auswertung.md:
-   Kulling trägt das Budget nicht).
+    Audio-Eardrum skaliert den Gain, die Hardware-Flächen (§3) konsumieren
+    die Permeabilität. Fenster bleibt beim Operator. ~~ε-Kulling~~ — ERLEDIGT
+    (2026-08-18): `tile_cull`-Compute-Pass (16×16-Kachel, 64 Threads,
+    Shared-Memory-Max-Reduktion + Shared-Atomics für die Slots — keine
+    globalen Atomics), Quellen-Bound als obere Schranke (nächster Kachelpunkt
+    + Gravitations-Limb-Überschätzung), ε = 2⁻ⁿ (n ∈ [8,23]) mit Budget-Regler
+    (Frame-EMA gegen 16,6/8,3 ms, 1-Hz-Kadenz), Stille-Gate + u64-Generations-
+    zähler im Worker, Doppelpuffer A/B mit Bind-Group-Swap. Überlauf-Flag
+    `cull_ctl[1]` → ehrlicher Voll-Loop-Fallback. Grenze: WGSL offline via
+    naga validiert (`membrane_wgsl_validates_offline`); der Live-Beweis auf
+    HD 520 steht aus (keine GPU in dieser Session).
 5. P6 — ⌘K, 2-Finger-Zeit, f-Toggle, Deep-Link-Geschwindigkeit (vx,vy,vz),
    Puffer-Schrumpf, Dithering, 3-zeiliger HUD
 
@@ -413,7 +420,14 @@ resonance(mut read_signal(s: read_ws_frame_part(stream: read_ws_frame_raw(stream
   die Okklusion prüft die aberrierte Richtung.
 - Galaxien-Zoom-Verifikation beim Operator ausstehend (deep-Zahl im HUD;
   bei grid 2^39 noch 0 — Proxima bei 4,2 ly ≈ 2^45,5)
-- In-Fenster-HUD (Bitmap-Overlay); stderr-HUD trägt vorerst
+- ~~In-Fenster-HUD (Bitmap-Overlay)~~ — WAHR (2026-08-18): 4-zeiliges
+  5×7-Bitmap-Overlay im Membran-Fenster (Zeile 1 Presence t/x/y/z, Zeile 2
+  die 9 Kraft-Summen, Zeile 3 `okkl N` + Ereignisse, Zeile 4 TE/Schwelle/
+  perm/flow/gen — TE erst ab Ring ≥ 32, 0 honored). Raster läuft 1 Hz auf der
+  CPU (glcdfont public-domain, `hud_raster`), Upload per `write_texture`
+  (Stride 256-byte-ausgerichtet), ein eigener `hud_pipe` (Bindings 10/11)
+  zeichnet additiv über das Feld. Der 168-Byte-Oszillator-Vertrag und die
+  VP-Uniform bleiben unberührt; das stderr-HUD bleibt das vollständige Register.
 - Gamepad-Atom (serielle Ingress-Vokabel deckt ESP32; HID-Gamepad offen)
 - CI: Compiler-Builds zahlen den wgpu-Compile mit (harte Dependency)
 - K06 EOP: Erdrotation (Polbewegung, UT1−UTC) für präzise Erd-Stationen;
@@ -520,9 +534,10 @@ Offen (Detail in phi/port/ledger.φ):
   exotic/candidate-staging) — Port durch die Prozedur; astro-Korpus:
   28 Blöcke → manueller Port
 - Bestand: 38 offene VizieR-Bulks, IRSA/GAVO/ARI/ExoArchive-Inventare,
-  GCNS/MWSC, 8 VirES-Drafts, 32 ArcGIS-Drafts, 103 TerraPulse-Kandidaten,
-  77 Archeology-Gaps, ESA-Kandidaten, FRB-Union, Arena/Foundation/
-  Research-Schatz im Archiv
+  GCNS/MWSC, VirES-Drafts (erledigt 2026-08-18), 32 ArcGIS-Drafts,
+  103 TerraPulse-Kandidaten (erledigt), 77 Archeology-Gaps,
+  ESA-Kandidaten (Aeolus key-needed, SMOS parser-def), FRB-Union,
+  Arena/Foundation/Research-Schatz im Archiv
 - Nachlauf: VirES-Vollprobe (64 Drafts, Datei ABSENT) + DONKI-Familie
   (CME-Draft, Datei ABSENT)
 - Park: Pegelonline, USGS-Geomag, GWOSC/GraceDB (Skymap), DSN, CENC,
@@ -587,6 +602,10 @@ heute auf den Bestand unter /home/johannes/projects/archive/archeology/.
 
 22 Blöcke verloren Feldwerte durch die SI-Konversion. Alle sind jetzt
 verdrahtet — nichts bleibt dunkel.
+
+Pending Unit-Arme (ArcGIS b5, 2026-08-18): F (Fahrenheit, CHPL-Lufttemperatur),
+μg/L (Chlorophyll, CREST-Boje), mg/L (Sauerstoff, CREST-Boje) — die Felder
+existieren in den Quellen, manifestieren erst mit dem convert_to_si-Arm.
 
 ERLEDIGT (flux_from_mag, Primärband): cb(mag1), cometels(H), corot(mag),
 dcom5(H; M1 dark), denis(jmag; kmag dark), gcvs(mag), lmxb(mag1),

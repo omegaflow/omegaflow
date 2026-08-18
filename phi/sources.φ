@@ -503,6 +503,23 @@ field omni_imf_bz_gsm_nt omni_imf_bz_gsm_nt inverse-square em nT 3600 0.0 0.0
 field omni_solarwind_electric_field_mvm omni_solarwind_electric_field_mvm gaussian-inverse-square electric mV/m 3600 0.0 0.0
 field omni_solarwind_pressure_npa omni_solarwind_pressure_npa patch-levy advective nPa 3600 0.0 0.0
 
+url https://services2.arcgis.com/7KRXAKALbBGlCW77/arcgis/rest/services/Local_Air_Quality_CHPL_211297/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 3600
+at earth
+map features
+lat properties.Latitude
+lon properties.Longitude
+field properties.Particulate_Matter___PM2_5_atm_ chpl_pm25_ugm3 gaussian-inverse-square diffusion ug/m3 3600 0.0 0.0
+
+url https://services2.arcgis.com/FtJyXM7nBotS8g5t/arcgis/rest/services/CREST_Buoy_2_Miami_River_030620___082420/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 3600
+at earth
+map features
+lat properties.Latitude__degrees_
+lon properties.Longitude__degrees_
+field properties.Sal_psu crest_buoy2_salinity_psu erfc diffusion psu 3600 0.0 0.0
+field properties.Turbidity_NTU crest_buoy2_turbidity_ntu erfc diffusion ntu 3600 0.0 0.0
+
 url https://api.openaq.org/v3/sensors/{station}/measurements?limit=1&datetime_from={yesterday}T00:00:00Z
 header X-API-Key {OPENAQ_API_KEY}
 ttl 21600
@@ -977,6 +994,25 @@ at earth
 hapi F=swarm_magnetic_field_intensity_nt
 field swarm_magnetic_field_intensity_nt swarm_magnetic_field_intensity_nt inverse-square em nT 86400 0.0 0.0
 
+url https://services1.arcgis.com/O7h3OCRVxKceyg19/arcgis/rest/services/Buoy_Data/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 86400
+at earth
+map features
+lat properties.Latitude
+lon properties.Longitude
+field properties.ATMP ndbc_archive_air_temp_c erfc thermal C 86400 0.0 0.0
+field properties.WTMP ndbc_archive_water_temp_c erfc thermal C 86400 0.0 0.0
+
+url https://services9.arcgis.com/NpUZ2jEsnfm9HSQT/arcgis/rest/services/Buoy_46092/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 86400
+at earth
+map features
+lat properties.Lat
+lon properties.Long
+field properties.ATMP buoy_46092_air_temp_c erfc thermal C 86400 0.0 0.0
+field properties.WTMP buoy_46092_water_temp_c erfc thermal C 86400 0.0 0.0
+field properties.PRES buoy_46092_pressure_hpa gaussian-inverse-square advective hPa 86400 0.0 0.0
+
 url https://egg.astro.cornell.edu/alfalfa/data/a40files/a40.datafile1.csv
 ttl 604800
 format csv
@@ -1367,3 +1403,11 @@ z z
 field psfMag_r sdss_photoobj_psfmag_r gaussian-inverse-square em mag 604800 0.0 0.0
 field psfMag_g sdss_photoobj_psfmag_g gaussian-inverse-square em mag 604800 0.0 0.0
 field psfMag_i sdss_photoobj_psfmag_i gaussian-inverse-square em mag 604800 0.0 0.0
+
+url https://sheffieldcitycouncil.cloud.esriuk.com/server/rest/services/AGOL/INSPIRE/FeatureServer/1/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 604800
+at earth
+map features
+lat properties.lat
+lon properties.long
+field properties.no2_2024 sheffield_no2_annual_mean_ugm3 erfc diffusion ug/m3 604800 0.0 0.0

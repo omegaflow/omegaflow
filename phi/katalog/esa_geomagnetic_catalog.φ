@@ -8,20 +8,22 @@
 integrated https://vires.services/hapi/data?id=SW_FAST_EFIA_LP_1B
 # title: Swarm EFI Langmuir-Probe — Vs (V, electric), N_ion (diffusion), T_elec (thermal)
 
-candidate https://vires.services/hapi/data?id=SW_FAST_FACATMS_2F
-# title: Swarm Field-Aligned Currents A — electric (Ströme), NRT
+integrated https://vires.services/hapi/data?id=SW_FAST_FACATMS_2F
+# title: Swarm Field-Aligned Currents A — electric (Ströme), NRT — in sources.φ
 
-candidate https://vires.services/hapi/data?id=SW_EXPT_EFIA_TCT02
-# title: Swarm EFI TCT (Thermal Ion Imager, 2 Hz) — E-Feld-Stärke selbst (electric)
+decline https://vires.services/hapi/data?id=SW_EXPT_EFIA_TCT02
+# title: Swarm EFI TCT (Thermal Ion Imager) — 2026-08-18: E-Feld ist ABGELEITET
+# (E=-V×B aus Ionendrift + B), nicht direkt gemessen; experimentelles Produkt,
+# stopDate 2025-12-04 (Feed beendet). Direkte Messung = Ionendrift (m/s), historisch.
 
-candidate https://vires.services/hapi/data?id=SW_OPER_MAGA_LR_1B
-# title: Swarm A Magnetfeld 1 Hz — em (B-Feld-Vektor, operational)
+decline https://vires.services/hapi/data?id=SW_OPER_MAGA_LR_1B
+# title: Swarm A Magnetfeld operational — redundant zu SW_FAST_MAGA_LR_1B (in sources.φ)
 
-candidate https://vires.services/hapi/data?id=SW_FAST_AOBAFAC_2F
-# title: Swarm FAC Auroral Oval Boundary — electric
+decline https://vires.services/hapi/data?id=SW_FAST_AOBAFAC_2F
+# title: Swarm FAC Auroral Oval Boundary — Grenz-Flag, kein Feldwert am Punkt
 
-candidate https://vires.services/hapi/data?id=SW_FAST_IBIATMS_2F
-# title: Swarm Ionospheric Bubble Index — electric/em
+decline https://vires.services/hapi/data?id=SW_FAST_IBIATMS_2F
+# title: Swarm Ionospheric Bubble Index — Index (0-1), keine SI-Messung
 
 # ── INTERMAGNET / Observatorien ──
 integrated https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NGK/best-avail/PT1M/xyzf
@@ -85,6 +87,8 @@ decline https://en.wikipedia.org/wiki/K-index
 # title: Kp-Referenz (Wikipedia)
 
 # ── Offene Schritte ──
-# 1. Aeolus/SMOS mit ESA_USER/ESA_PASS aus .secrets.local proben (Token-Flow je Service)
-# 2. FAC/TCT-Blöcke (VirES, keyless) als nächste electric-Quellen
-# 3. INTERMAGNET-Fanout (stations via /hapi/catalog) als globales em-Feld
+# 1. Aeolus (key-needed): aeolus.services EOX-SPA ohne /hapi — HAPI-Pfad per
+#    ESA_USER/ESA_PASS-Token-Flow finden.
+# 2. SMOS (parser-def): OADS-Webportal, kein JSON-REST — Parser-Spec pending.
+# 3. INTERMAGNET-Fanout (stations via /hapi/catalog) als globales em-Feld.
+#    (TCT/AOBAFAC/IBIATMS/OPER_MAGA erledigt 2026-08-18 — decline, siehe oben.)

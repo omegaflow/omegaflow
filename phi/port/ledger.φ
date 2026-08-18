@@ -453,5 +453,17 @@ kandidat https://dc.actris.nilu.no/data
 note recheck_b5: Katalog-JSON lebt (324754 Reihen mit lat/lon, ohne numerische Werte); die Werte liegen in NetCDF hinter thredds.nilu.no (OPeNDAP) — NetCDF-Reader ist der offene Kanal.
 
 verifiziert
+bestand phi/katalog/esa_geomagnetic_catalog.φ
+note ESA/Geomagnetik-Ernte (2026-08-18): Swarm keyless-HAPI — TCT-E-Feld (Ehx/Ehy/Ehz) ist ABGELEITET (E=-V×B) und der experimentelle Feed endete 2025-12-04 → decline (dead feed-ended); AOBAFAC (Grenz-Flag) + IBIATMS (Index) decline; OPER_MAGA redundant zu FAST_MAGA. Aeolus key-needed (EOX-SPA ohne /hapi), SMOS parser-def (OADS-Portal, kein JSON-REST) — beide pending. Die live-Swarm-Felder (LP_1B, FACATMS_2F, MAGA_LR_1B) stehen in sources.φ.
+
+verifiziert
+bestand phi/research/agent_output/arcgis_b5_batch1.φ
+note ArcGIS-Welle Batch 1 (2026-08-18, thermal/seismic/diffusion): 12 verifiziert — 5 Blöcke integriert in sources.φ (Buoy_Data + Buoy_46092 thermal C, CHPL PM2.5 μg/m3, Sheffield NO2 μg/m3, CREST-Boje Salinität+Trübung); 6 decline (2 kein-feld, 2 static, 2 duplicate). Pending Unit-Arme: F, μg/L, mg/L. ROMPLUS (39259 Erdbeben) pro-review pending — siehe separater Eintrag.
+
+ausstehend
+kandidat https://services8.arcgis.com/SXiEEy1skwB5SrYh/arcgis/rest/services/ROMPLUS_Earthquake_Catalogue_v2/FeatureServer/0
+note arcgis_b5 2026-08-18: 39259 Erdbeben, Route lebt (GeoJSON). Depth (Hypozentrum-Tiefe km) ist ein invertiertes, abgeleitetes Koordinaten-Attribut — kein Feldwert am Punkt (Force-Gate wie AstDyS-model-fit); Ml großteils 0, Mw-Füllrate unverifiziert. Kein Block integriert — pro-review pending: Mw (→Energie, seismic-surface wie JMA) mit verifizierter Füllrate manifestieren, oder decline.
+
+verifiziert
 bestand phi/research/agent_output/recheck_b1.φ
 note sensor.community-Urteil (2026-08-18): die b1-Box-Route lebt — filter/box=...&type=SDS011 liefert 200 JSON (P1/P2 je Messung); integriert in sources.φ (ttl 300, on earth, PM1/PM2.5 diffusion μg/m3). Caveat bleibt: indoor-Sensoren (location.indoor=1) im Fenster nicht herausfilterbar. Die api.sensor.community-403- und /airrohr/v1/-Root-404-Einträge bleiben (anderer Host/Route).
