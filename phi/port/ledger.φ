@@ -477,5 +477,9 @@ bestand phi/research/agent_output/arcgis_b5_batch3.φ
 note ArcGIS-Welle Restbatch (2026-08-18): 11 verifiziert — 2 Blöcke integriert (WQP-Wassertemperatur + USGS-Stream-Temperatur, beide thermal C); 9 decline (2 abgeleitet-tiefe, 2 unit-arm, 3 static, 1 duplicate, 1 kein-feld). WELLE KOMPLETT: 35 Kandidaten über 3 Batches — 10 Blöcke integriert, 25 decline/deferiert, 5 Erdbeben-Tiefen-Kataloge pro-review pending.
 
 verifiziert
+bestand phi/port/stage/vizier_bulk_a.φ
+note VizieR/IRSA/GAVO-Grindwelle (2026-08-18, Mutter-Hyphe 3 Agentinnen, staging vizier_bulk_a/irsa_gavo_b/vizier_bulk_c): 13 Blöcke integriert (atnf-pulsar mJy, carmenes Ks-mag, cornish mJy, irasfsc/akari_fis/msxc6 Jy, rave.main teff+Jmag, ohmaser Jy, stellarhosts teff, gcvs mag, hecate HRV+W1/W2, first_radio mJy); ~20 decline. mJy/M_sun/km/s sind unit-ERLAUBT (em/gravity/advective) — die fälschlichen off-register-Ablehnungen korrigiert. Offene re-probes: allwise (timeout), bzcat5 (LogFlux), atlasgal (ICRS-Spalten), green_snr (Spalten), harris VII/202/catalog, galactic_black_hole 163/207/table1.
+
+verifiziert
 bestand phi/research/agent_output/recheck_b1.φ
 note sensor.community-Urteil (2026-08-18): die b1-Box-Route lebt — filter/box=...&type=SDS011 liefert 200 JSON (P1/P2 je Messung); integriert in sources.φ (ttl 300, on earth, PM1/PM2.5 diffusion μg/m3). Caveat bleibt: indoor-Sensoren (location.indoor=1) im Fenster nicht herausfilterbar. Die api.sensor.community-403- und /airrohr/v1/-Root-404-Einträge bleiben (anderer Host/Route).

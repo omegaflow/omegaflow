@@ -1,0 +1,152 @@
+# vizier_bulk_a.φ — VizieR-Bulks Teil 1 (grind-pro-Agentin A)
+# Datum: 2026-08-18
+# Regeln: A=A (kein Wert erfunden), Force-Gate (Roh-Messwert am Punkt), Einheiten nur aus dem
+#         Register, 0 honored (absent = pending, nicht Null). Celestial → cmap + ra/dec + plx/dist/z,
+#         at sun. Beobachtende Sprache, Deutsch.
+# Probe: eine TOP-3-Einzelquery je Block gegen TAPVizieR sync (FORMAT=json). Fehlerantworten kommen
+#         als VOTable zurück; erfolgreiche Daten als JSON. Keine Ketten/Schleifen.
+# Quoten: 13 Blöcke genommen (Zeilen-Reihenfolge master.φ ab 20213); 25 TAPVizieR-Queries gesamt.
+# GENOMMEN — Teil 2 (andere Agentin) darf diese NICHT nehmen:
+#   vizier_allwise_bright
+#   vizier_apogee_dr17_stellar_params
+#   vizier_asteroid_families_nesvorny
+#   vizier_atlasgal_csc
+#   vizier_atnf_all_pulsars_distance
+#   vizier_atnf_millisecond_pulsars
+#   vizier_atnf_pulsar_catalog
+#   vizier_bzcat5_blazars
+#   vizier_carmenes_survey
+#   vizier_cornish_5ghz_catalog
+#   vizier_cosmograil_lcs
+#   vizier_epta_dr2_pulsars
+#   vizier_galactic_black_hole_catalog
+
+# dataset vizier_allwise_bright
+candidate II/328/allwise
+note Tabelle lebt (large_tables). Probe TOP 3 mit var_flg → ADQL-Fehler: nur var_flg unbekannt;
+      AllWISE, RAJ2000, DEJ2000, W1mag, W2mag, W3mag, W4mag, ex lösen auf. Nachfolge-Probe ohne
+      var_flg timeout (Großtabelle) und Rate-Limit → Live-Einheit (mag) + Probe-Werte nicht erfasst.
+      Draft-Spalte var_flg existiert nicht.
+decline probe-timeout
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+AllWISE,RAJ2000,DEJ2000,W1mag,W2mag,W3mag,W4mag,var_flg,ex+FROM+%22II/328/allwise%22+WHERE+W1mag<9+AND+RAJ2000+IS+NOT+NULL+ORDER+BY+W1mag+ASC
+note pending re-probe: W1mag–W4mag (em mag, vermutet) ohne var_flg gegen die live erfasste
+      Einheit verifizieren; ex/var_flg sind Flags (dropped).
+
+# dataset vizier_apogee_dr17_stellar_params
+candidate III/286/allstars
+note Probe TOP 3 → "table III/286/allstars is not found"; alle 9 Spalten (APOGEE_ID, RA, DEC, Teff,
+      logg, M_H, alpha_M, VHELIO_AVG, DIST_BPG) unaufgelöst. Der Tabellenpfad im Block existiert
+      in TAPVizieR nicht.
+decline table-not-found
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+APOGEE_ID,RA,DEC,Teff,logg,M_H,alpha_M,VHELIO_AVG,DIST_BPG+FROM+"III/286/allstars"+WHERE+RA+IS+NOT+NULL+AND+ASPCAPFLAG%3D0+AND+SNR>100+ORDER+BY+SNR+DESC
+
+# dataset vizier_asteroid_families_nesvorny
+candidate J/Icarus/239/46/table3
+note Probe TOP 3 → "table J/Icarus/239/46/table3 is not found". Zusätzlich: Familien-Registry ohne
+      ra/dec (Family, n Mitglieder, a/e/sini, H) — Count/Metadaten, kein Positions-Messwert.
+decline table-not-found
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+Family,n,e,sini,a,H+FROM+"J/Icarus/239/46/table3"+WHERE+n+IS+NOT+NULL+ORDER+BY+n+DESC
+
+# dataset vizier_atlasgal_csc
+candidate J/A+A/568/A41/atl-csc
+note Tabelle lebt. Probe: AGAL, GLON, GLAT, Fint, e_Fint, Fp, Reff lösen auf (Fint = integrierter
+      Fluss Jy, em) — aber ICRS-Positionsspalten unbestätigt: _RA_icrs, _RA, _DE alle "Unknown
+      column". Ohne ra/dec kein cmap (nur galaktische GLON/GLAT lösen auf).
+decline position-column-unverified
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+AGAL,_RA_icrs,_DE_icrs,GLON,GLAT,Fint,e_Fint,Fp,Reff+FROM+"J/A+A/568/A41/atl-csc"+WHERE+_RA_icrs+IS+NOT+NULL+ORDER+BY+Fint+DESC
+note pending: ICRS-Spaltenname der ATLASGAL-Tabelle verifizieren (tap_schema.columns), dann Fint (Jy, em).
+
+# dataset vizier_atnf_all_pulsars_distance
+candidate VII/304/catalog
+note Probe TOP 3 → "table VII/304/catalog is not found". Tabellenpfad fabricated (ATNF-Pulsare liegen
+      in B/psr/psr, nicht VII/304).
+decline table-not-found
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+JNAME,RAJ,DECJ,P0,DM,DIST,ASSOC,Type+FROM+"VII/304/catalog"+WHERE+DIST+IS+NOT+NULL+AND+RAJ+IS+NOT+NULL+ORDER+BY+DIST+ASC
+
+# dataset vizier_atnf_millisecond_pulsars
+candidate VII/304/catalog
+note Probe TOP 3 → "table VII/304/catalog is not found". Gleicher fabricated Pfad wie
+      atnf_all_pulsars_distance.
+decline table-not-found
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+JNAME,RAJ,DECJ,P0,DM,DIST,ASSOC,Binary,Type+FROM+"VII/304/catalog"+WHERE+P0<0.03+AND+RAJ+IS+NOT+NULL+ORDER+BY+P0+ASC
+
+# dataset vizier_atnf_pulsar_catalog
+candidate J/ApJS/208/17/psrcat
+note Probe TOP 3: Name, RAJ2000 (deg), DEJ2000 (deg), Dist (kpc, pos.distance), S1400 (mJy,
+      phot.flux.density;em.radio.750-1500MHz) live verifiziert. Probe-Werte: J0007+7303 RA 1.7565
+      DE 73.0523 Dist 1.4 S1400 null. Block-Spalten P0/F0/DM existieren nicht (unaufgelöst).
+      Dist war im Block fälschlich als Feld geführt — ist Positionsdistanz.
+accepted
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+Name,RAJ2000,DEJ2000,Dist,S1400+FROM+"J/ApJS/208/17/psrcat"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+S1400+DESC
+ttl 86400
+at sun
+cmap .
+ra RAJ2000
+dec DEJ2000
+dist Dist
+dist_scale 3.085677581e19
+field S1400 atnf_pulsar_flux_1400mhz_mjy inverse-square em mJy 86400 0.0 0.0
+
+# dataset vizier_bzcat5_blazars
+candidate VII/274/bzcat5
+note Probe TOP 3: Name, RAJ2000, DEJ2000, z (src.redshift) live verifiziert. Probe-Werte:
+      5BZQ J1556+3517 RA 239.1407 DE 35.2992 z 6.802; J0906+6930 z 5.47; J1026+2542 z 5.285.
+      LogFlux/Type unbekannt (Fluss-Spaltenname unbestätigt). Nur z → positions-only (§3.9).
+decline flux-column-unverified
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+4000+Name,RAJ2000,DEJ2000,z,LogFlux,Type+FROM+%22VII/274/bzcat5%22+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+LogFlux+DESC
+note pending: Fluss-Spalte (LogFlux) + Type-Spalte gegen tap_schema.columns verifizieren; z allein
+      trägt keinen Messwert.
+
+# dataset vizier_carmenes_survey
+candidate J/A+A/609/A117/table1
+note Probe TOP 3: _RA (deg), _DE (deg), Karmn, GJ, SpType, Dist (pc), Ksmag (mag) live verifiziert.
+      Probe-Werte: J00183+440 RA 4.59536 DE 44.02296 Dist 3.562 pc Ksmag 4.018 mag;
+      J22532-142 Dist 4.672 Ksmag 5.01; J15194-077 Dist 6.304 Ksmag 5.837.
+      SpType (String), Karmn/GJ (IDs) dropped. Ksmag = Ks-Vega-Magnitude (em mag).
+accepted
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+_RA,_DE,Karmn,GJ,SpType,Dist,Ksmag+FROM+"J/A+A/609/A117/table1"+WHERE+_RA+IS+NOT+NULL+ORDER+BY+Dist+ASC
+ttl 86400
+at sun
+cmap .
+ra _RA
+dec _DE
+dist Dist
+dist_scale 3.085677581e16
+field Ksmag carmenes_ks_mag inverse-square em mag 86400 0.0 0.0
+
+# dataset vizier_cornish_5ghz_catalog
+candidate J/ApJS/205/1/catalog
+note Probe TOP 3 (*): Name, GLON/GLAT (deg), RAJ2000 (deg), DEJ2000 (deg), Speak (mJy, Peak der
+      Gauß-Anpassung mJy/beam), Sint (mJy, integrierte 5GHz-Flussdichte), ASc (arcsec, Angular-Scale)
+      live verifiziert. ASc ist reserviertes ADQL-Wort + Fit-Größe (kein Roh-Messwert) + Block-Label
+      "spectral_index" war falsch → dropped. mT Quelltyp (String) → dropped. Distanz absent
+      (distanzlos → Himmelssphäre, 1 kpc).
+accepted
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+2000+Name,RAJ2000,DEJ2000,Speak,Sint+FROM+"J/ApJS/205/1/catalog"+WHERE+RAJ2000+IS+NOT+NULL+AND+Speak>1+ORDER+BY+Speak+DESC
+ttl 86400
+at sun
+cmap .
+ra RAJ2000
+dec DEJ2000
+field Speak cornish_peak_flux_5ghz_mjy inverse-square em mJy 86400 0.0 0.0
+field Sint cornish_integrated_flux_5ghz_mjy inverse-square em mJy 86400 0.0 0.0
+
+# dataset vizier_cosmograil_lcs
+candidate J/A+A/640/A105/stars
+note Probe TOP 3: RAJ2000 (deg), DEJ2000 (deg), Name, SName (beide meta.id) live verifiziert.
+      Probe-Werte: HE 0047-1756 RA 12.6159 DE -17.6692; HE 0230-2130; HE 0435-1223.
+      Kein physikalischer Messwert (nur Position + IDs) → §3.9 positions-only.
+decline position-only
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+200+RAJ2000,DEJ2000,Name,SName+FROM+"J/A+A/640/A105/stars"+WHERE+RAJ2000+IS+NOT+NULL
+
+# dataset vizier_epta_dr2_pulsars
+candidate J/A+A/678/A48/table1
+note Probe TOP 3 → "table J/A+A/678/A48/table1 is not found". Tabellenpfad existiert in TAPVizieR nicht.
+decline table-not-found
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+50+JNAME,RAJ,DECJ,P0,DM,Dist,Tspan+FROM+"J/A+A/678/A48/table1"+WHERE+RAJ+IS+NOT+NULL+ORDER+BY+Tspan+DESC
+
+# dataset vizier_galactic_black_hole_catalog
+candidate J/ApJS/163/2/table1
+note Probe TOP 3 → "table J/ApJS/163/2/table1 is not found". Tabellenpfad existiert in TAPVizieR nicht.
+decline table-not-found
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+100+Name,RAJ2000,DEJ2000,Porb,Fx,MX,Mdist+FROM+"J/ApJS/163/2/table1"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+MX+DESC

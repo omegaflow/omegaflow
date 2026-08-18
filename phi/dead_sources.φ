@@ -4120,3 +4120,95 @@ note arcgis_b5 2026-08-18: Hypozentrum-Tiefe = abgeleitetes Koordinaten-Attribut
 decline static
 url https://services9.arcgis.com/ISxsdAFVQu7s0bli/arcgis/rest/services/Turbidity/FeatureServer/0
 note arcgis_b5 2026-08-18: Einzelwert je Punkt ohne Zeitbezug.
+
+decline table-not-found
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+APOGEE_ID,RA,DEC,Teff,logg,M_H,alpha_M,VHELIO_AVG,DIST_BPG+FROM+"III/286/allstars"
+note vizier_bulk_a 2026-08-18: Tabelle III/286/allstars nicht vorhanden.
+
+decline table-not-found
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+2000+Family,n,e,sini,a,H+FROM+"J/Icarus/239/46/table3"
+note vizier_bulk_a 2026-08-18: Tabelle tot + Familien-Registry ohne ra/dec (Count/Metadaten).
+
+decline table-not-found
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+JNAME,RAJ,DECJ,P0,DM,DIST,ASSOC+FROM+"VII/304/catalog"
+note vizier_bulk_a 2026-08-18: VII/304/catalog nicht vorhanden (ATNF-Pulsare liegen in B/psr/psr); gilt für atnf_all_pulsars_distance + atnf_millisecond_pulsars.
+
+decline table-not-found
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+50+JNAME,RAJ,DECJ,P0,DM,Dist,Tspan+FROM+"J/A+A/678/A48/table1"
+note vizier_bulk_a 2026-08-18: Tabelle J/A+A/678/A48/table1 nicht vorhanden.
+
+decline table-not-found
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+100+Name,RAJ2000,DEJ2000,Porb,Fx,MX,Mdist+FROM+"J/ApJS/163/2/table1"
+note vizier_bulk_a 2026-08-18: Tabelle J/ApJS/163/2/table1 tot; tap_index führt J/ApJS/163/207/table1 (Corral-Santana-XRB) als Pfad-Kandidat. MX (M_sun) ist unit-ERLAUBT (gravity) — re-probe mit korrigiertem Pfad.
+
+decline probe-timeout
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+2000+AllWISE,RAJ2000,DEJ2000,W1mag,W2mag,W3mag,W4mag+FROM+"II/328/allwise"
+note vizier_bulk_a 2026-08-18: Großtabelle, Probe timeout/Rate-Limit; W1-W4mag (em mag) vermutet — re-probe ohne var_flg.
+
+decline position-column-unverified
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+2000+AGAL,GLON,GLAT,Fint,e_Fint,Fp,Reff+FROM+"J/A+A/568/A41/atl-csc"
+note vizier_bulk_a 2026-08-18: Fint (Jy em) lebt, aber ICRS-ra/dec-Spalten unbestätigt — ohne ra/dec kein cmap.
+
+decline flux-column-unverified
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+4000+Name,RAJ2000,DEJ2000,z,LogFlux,Type+FROM+"VII/274/bzcat5"
+note vizier_bulk_a 2026-08-18: z verifiziert (6.802/5.47/5.285), LogFlux-Spalte unbestätigt — z allein trägt keinen Messwert.
+
+decline position-only
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+200+RAJ2000,DEJ2000,Name,SName+FROM+"J/A+A/640/A105/stars"
+note vizier_bulk_a 2026-08-18: nur Position + IDs, kein Messwert.
+
+decline derived-crossmatch
+url https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3+*+FROM+splices
+note irsa_gavo_b 2026-08-18: SPLICES ist Cross-Match-Kompilation (2MASS/WISE/IRAC/Gaia), kein SPHEREx-Eigenfluss — Kompilat = src/.
+
+parser-def fits
+url https://irsa.ipac.caltech.edu/TAP/sync
+note irsa_gavo_b 2026-08-18: SPHEREx-Quick-Release — TAP-Schema spherex trägt nur splices + ObsCore-Views (Bild-Metadaten, datalink→FITS); die Spektralphotometrie ist FITS-only, kein keyless JSON/CSV mit Fluss+ra/dec. Parser-pending (FITS).
+
+decline redundant
+url https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3+ra,dec,w1mpro,w2mpro,pmra,pmdec+FROM+catwise_2020
+note irsa_gavo_b 2026-08-18: Eigenbewegungs-Katalog, W1/W2 redundant zu AllWISE (CDN).
+
+decline derived-model
+url https://dc.g-vo.org/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3+*+FROM+hiicounter.data
+note irsa_gavo_b 2026-08-18: Linien-Diagnostik/Abundanzen (Modell-Fit), kein Roh-Messwert.
+
+decline kompilat
+url https://gaia.ari.uni-heidelberg.de/tap/sync
+note irsa_gavo_b 2026-08-18: GCNS + MWSC liegen nicht im ARI-Archiv, sondern in GAVO dc.g-vo.org (gcns.main/mwsc.main, TAP 200); beide Kompilat (Gaia-Derivat) = src/.
+
+decline position-only
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3+*+FROM+emissionspec
+note irsa_gavo_b 2026-08-18: kein ra/dec, nur dimensionslose Eklipsen-Tiefe.
+
+decline unit-arm
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,zabs,NHI+FROM+"J/ApJ/800/7/dla"
+note vizier_bulk_c 2026-08-18: NHI in log(cm-2) — Säulendichte nicht im Register (diffusion hat cm-3); zabs nutzbar, aber ohne Mess-Spalte kein Block.
+
+decline path
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+500+JNAME,RAJ,DECJ,P0,DM,Dist+FROM+"J/A+A/678/A48/table1"
+note vizier_bulk_c 2026-08-18: Tabelle tot (TAP 400), kein tap_index-Eintrag.
+
+decline duplicate
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,Fpeak,Fint+FROM+"VIII/92/first14"
+note vizier_bulk_c 2026-08-18: first_radio_catalog ist derselbe Katalog VIII/92/first14 (Schwelle Fpeak>5) — lebt als first_radio-Block in sources.φ.
+
+decline path
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+2000+GLON,GLAT,RAJ2000,DEJ2000,VLSR,Sint,Peak+FROM+"J/ApJS/208/14/catalog"
+note vizier_bulk_c 2026-08-18: Tabelle tot (tap_index führt nur bgpsv2_1).
+
+decline path
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+2000+Name,RAJ2000,DEJ2000,Fintwide,alpha+FROM+"J/MNRAS/464/1146/gleam"
+note vizier_bulk_c 2026-08-18: Tabelle tot + kein tap_index-Eintrag (mJy wäre unit-erlaubt, aber der Pfad ist tot; CDN-Asset vizier_gleam.json existiert).
+
+decline columns
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+100+SNR,Type,GLON,GLAT,S1GHz+FROM+"VII/278/snrs"
+note vizier_bulk_c 2026-08-18: Tabelle VII/278/snrs lebt, aber GLON/GLAT/S1GHz unbekannt — Positions-/Fluss-Spaltennamen aus ReadMe ziehen.
+
+decline path
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+100+ID,RAJ2000,DEJ2000,Rsun,FeH,VHB,sigv,MVt,RV+FROM+"VII/202/table1"
+note vizier_bulk_c 2026-08-18: VII/202/table1 tot; VII/202/catalog ist der Pfad-Kandidat (Harris). M_sun/km/s unit-erlaubt (gravity/advective) — re-probe mit korrigiertem Pfad.
+
+decline path
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+100+GLON,GLAT,NHI,VLSR,FWHM+FROM+"J/A+A/594/A116/hi4pi"
+note vizier_bulk_c 2026-08-18: Tabelle hi4pi tot; tap_index führt allsky_gal/nhi_gal als Kandidaten. NHI log(cm-2) off-register; CDN-Asset vizier_hi4pi.json existiert.

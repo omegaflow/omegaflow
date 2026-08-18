@@ -742,9 +742,14 @@ Konversion ist bekannt oder erforschbar — pending, keine Fälschung):
   sensor.community integriert. SDSS-photoObj integriert (photoObj.z =
   modelMag_z). MPCOBS + TIC: Eingangsformate gesichtet
   (compiler_inputs.φ) — Compiler-Bau = src/.
-- TAP-Katalog-Pipeline: weitere VizieR-Bulks aus phi/tap_index.φ (39
-  genutzte Tabellen, BZCAT5 erledigt), Gaia-Archiv (GCNS/MWSC);
-  GAVO-Async-Queue-Beobachtung offen
+- TAP-Katalog-Pipeline: VizieR-Bulks aus phi/tap_index.φ — Grindwelle
+  2026-08-18: 13 Blöcke integriert (atnf/carmenes/cornish/gcvs/hecate/
+  first_radio + IRSA irasfsc/akari/msxc6 + GAVO rave/ohmaser +
+  ExoArchive stellarhosts), ~20 decline/re-probe (allwise timeout,
+  bzcat5 LogFlux, atlasgal ICRS-Spalten, harris VII/202/catalog,
+  galactic_black_hole 163/207/table1). GCNS/MWSC = Kompilat (src/),
+  liegen in GAVO dc.g-vo.org. GAVO-Async-Queue erledigt (2026-08-18):
+  /tap/async = UWS-1.1-Jobliste (gavo.aip.de + dc.g-vo.org).
 - Hapi-FieldConfig: die deklarierten kernel/force/tau der HAPI-Blöcke
   erreichen den Oszillator nicht (synthetisch {0,0,0}) — Klärung in
   der P-Liste

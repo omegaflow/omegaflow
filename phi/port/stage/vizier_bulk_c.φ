@@ -1,0 +1,60 @@
+# vizier_bulk_c.φ — VizieR-Bulks Teil 2, Agentin C (2026-08-18)
+# Mechanischer Rest: die 13 offenen `source vizier_*`-Blöcke in master.φ-Zeilenreihenfolge nach den ersten 13 (Agentin A).
+# Integrierter Bestand bestimmt aus phi/sources.φ + phi/dead_sources.φ + phi/port/master_urls.txt (vizier_*.json = genutzt).
+# Methode: je Block EINE TAPVizieR-Query (TOP 3, FORMAT=json). Befund = Katalogpfad, Spalten, Einheiten, Response-Struktur.
+# Einheiten-Gate: nur Register-Einheiten (thermal k|c|w/m2|w|j|mw; em nT|Jy|mag|W/m2|km/s; advective m/s|km/h|km/s|knot|kt;
+# diffusion ppm|ppb|mg/m3|ug/m3|mg/kg|psu|ntu|%|pct|hpa|uatm|du|cm-3; electric v/m|v|a|s/m|ua/m2|mv/m;
+# gravity m|m/s2|ms2|gal|km/s2; acoustic m|mm|km|m/s2|gal|pa|hz|mw) → draft; andere Einheit → pending Unit-Arm, kein draft.
+# Katalogpfad tot (TAP 400, Tabelle nicht vorhanden / Spalte unbekannt) → decline path/columns, Befund notiert.
+
+candidate vizier_dla_sdss        # master.φ:20463, TAP J/ApJ/800/7/dla
+note TAP 200, echtes JSON. Spalten: _RA/_DE (deg, von SIMBAD), zabs (Absorptions-Rotverschiebung, src.redshift, dimensionslos), NHI (Log der Wasserstoff-Säulendichte, Einheit log(cm-2), ucd phys.columnDensity), QSO, SimbadName. Celestial (ra/dec + z_key zabs möglich). Messwert NHI in cm-2 — nicht im Bulk-Register (diffusion listet cm-3, nicht cm-2) → pending Unit-Arm. Ohne registerfähige Mess-Spalte kein draft.
+disposition decline unit-arm
+
+candidate vizier_epta_dr2_pulsars # master.φ:20474, TAP J/A+A/678/A48/table1
+note TAP 400 (VOTable-Response): Tabelle J/A+A/678/A48/table1 nicht vorhanden; Spalten JNAME/RAJ/DECJ/P0/DM/Dist/Tspan unaufgelöst. tap_index.φ führt keinen J/A+A/678/A48-Eintrag. Katalogpfad des Blocks ist tot; P0 (s) und DM (pc/cm3) lägen zudem außerhalb des Bulk-Registers (dist_key Dist wäre nutzbar).
+disposition decline path
+
+candidate vizier_first_radio      # master.φ:20488, TAP VIII/92/first14
+note TAP 200, echtes JSON. Spalten: RAJ2000/DEJ2000 (deg), Fpeak/Fint (mJy, phot.flux.density em.radio), Maj/Min (arcsec). Celestial, ra/dec vorhanden. Messwert Fpeak/Fint in mJy — nicht im Bulk-Register (em: nT|Jy|mag|W/m2|km/s); mJy ist in SOURCES_V2_SPEC §2 als em-Einheit dokumentiert, das Bulk-Register wartet auf den Unit-Arm. Katalog in master_urls unter altem Namen vizier_first.json / astro_vizier_main_first_radio.json bereits zirkulierend.
+disposition decline unit-arm
+
+candidate vizier_first_radio_catalog # master.φ:20501, TAP VIII/92/first14
+note TAP 200, echtes JSON. Spalten: RAJ2000/DEJ2000 (deg), Fpeak/Fint (mJy), Maj (arcsec). Derselbe Katalog wie first_radio (VIII/92/first14), Schwelle Fpeak>5 statt >10. Messwert in mJy — nicht im Bulk-Register → pending Unit-Arm.
+disposition decline unit-arm
+
+candidate vizier_galactic_black_hole_catalog # master.φ:20566, TAP J/ApJS/163/2/table1
+note TAP 400 (VOTable-Response): Tabelle J/ApJS/163/2/table1 nicht vorhanden; Spalten Name/RAJ2000/DEJ2000/Porb/Fx/MX/Mdist unaufgelöst. tap_index.φ führt J/ApJS/163/207/table1 als Pfad-Kandidat (XRB-Katalog, Corral-Santana). Einheiten Porb (h), Fx (Crab), MX (Sonnenmasse) lägen außerhalb des Bulk-Registers; Mdist als dist_key wäre nutzbar.
+disposition decline path
+
+candidate vizier_galah_dr4_stellar_parameters # master.φ:20580, TAP J/MNRAS/528/5/catalog
+note TAP 400 (VOTable-Response): Tabelle J/MNRAS/528/5/catalog nicht vorhanden; Spalten star_id/RAJ2000/DEJ2000/Teff/logg/fe_h/alpha_fe/Vrad/age_bstep unaufgelöst. tap_index.φ führt J/MNRAS/528/5703/stars und J/MNRAS/528/542/table1 als Galah-Pfad-Kandidaten. Messspalten: Teff (K = thermal 'k', nicht em), logg (cm/s2), fe_h/alpha_fe (dimensionslos), Vrad (km/s, em-registerfähig) — Einheiten-/Force-Frage pro-review, sobald der Pfad korrigiert ist.
+disposition decline path
+
+candidate vizier_galfa_hi_compact_sources # master.φ:20596, TAP J/ApJS/208/14/catalog
+note TAP 400 (VOTable-Response): Tabelle J/ApJS/208/14/catalog nicht vorhanden; Spalten GLON/GLAT/RAJ2000/DEJ2000/VLSR/Sint/Peak unaufgelöst. tap_index.φ führt unter J/ApJS/208/14 nur bgpsv2_1 (BGPS V2, andere Durchmusterung). Katalogpfad des Blocks ist tot.
+disposition decline path
+
+candidate vizier_gcvs_variable_stars # master.φ:20608, TAP B/gcvs/gcvs_cat
+note TAP 200, echtes JSON. Spalten: RAJ2000/DEJ2000 (deg), VarType (Variabilitäts-Klasse), magMax/Min1 (mag, phot.mag), Period (d), SpType, pmRA/pmDE (arcsec/yr), VarName. Celestial. Messwert magMax/Min1 in mag — Register-Einheit (em: mag) ✓. Period in d nicht im Register (kein draft für diese Spalte). Draft: at sun, cmap, ra/dec RAJ2000/DEJ2000, field magMax max_magnitude gaussian-inverse-square em mag τ 86400, field Min1 min_magnitude em mag; pmra/pmde-Keys vorhanden; τ-Gate: τ = 86400 (Block-TTL).
+disposition accepted
+
+candidate vizier_gleam_extragalactic_catalog # master.φ:20624, TAP J/MNRAS/464/1146/gleam
+note TAP 400 (VOTable-Response): Tabelle J/MNRAS/464/1146/gleam nicht vorhanden; Spalten Name/RAJ2000/DEJ2000/Fintwide/alpha/e_alpha/Fpwide unaufgelöst. tap_index.φ führt kein 464/1146. Katalogpfad des Blocks ist tot. Messwerte Fintwide/Fpwide in mJy — außerhalb des Bulk-Registers (em). Katalog in master_urls unter altem Namen vizier_gleam.json bereits zirkulierend.
+disposition decline path
+
+candidate vizier_green_snr_catalog # master.φ:20638, TAP VII/278/snrs
+note TAP 400 (VOTable-Response): Tabelle VII/278/snrs vorhanden, Spalten SNR und Type aufgelöst; GLON/GLAT/Dmaj/Dmin/S1GHz/alpha unbekannt (Unknown column). Positions-Schlüssel des Blocks (GLON/GLAT) existieren nicht — die tatsächlichen Spalten sind aus dem ReadMe zu ziehen. Messwert S1GHz in Jy wäre Register-fähig (em: Jy), sobald der Spaltenname korrigiert ist.
+disposition decline columns
+
+candidate vizier_harris_globular_clusters # master.φ:20653, TAP VII/202/table1
+note TAP 400 (VOTable-Response): Tabelle VII/202/table1 nicht vorhanden; Spalten ID/RAJ2000/DEJ2000/Rsun/FeH/VHB/sigv/MVt/RV unaufgelöst. tap_index.φ führt VII/202/catalog als Pfad-Kandidat (Harris 1996, 2010-Ausgabe). Force gravity (Block-Declaration); sigv/RV in km/s (gravity-Register: m|m/s2|ms2|gal|km/s2 — km/s nicht enthalten), FeH dimensionslos, MVt/VHB in mag — Einheiten-/Force-Frage pro-review, sobald der Pfad korrigiert ist.
+disposition decline path
+
+candidate vizier_hecate_galaxies # master.φ:20669, TAP J/MNRAS/506/1896/hecate
+note TAP 200, echtes JSON. Spalten: RAJ2000/DEJ2000 (deg), HRV (km/s, spect.dopplerVeloc), D (Mpc, pos.distance), W1mag/W2mag (mag, phot.mag em.IR). Celestial. HRV in km/s — Register-Einheit (em: km/s) ✓; W1mag/W2mag in mag ✓; D als dist_key (dist_scale 3.085677581e22, Mpc→m). Draft: at sun, cmap, ra/dec RAJ2000/DEJ2000, dist D (Mpc), field HRV velocity_kms gaussian-inverse-square em km/s τ 86400, field W1mag w1_3_4um_mag em mag, field W2mag w2_4_6um_mag em mag.
+disposition accepted
+
+candidate vizier_hi4pi_allsky_survey # master.φ:20680, TAP J/A+A/594/A116/hi4pi
+note TAP 400 (VOTable-Response): Tabelle J/A+A/594/A116/hi4pi nicht vorhanden; Spalten GLON/GLAT/NHI/VLSR/FWHM unaufgelöst. tap_index.φ führt J/A+A/594/A116/allsky_gal, allsky_eq, nhi_gal, nhi_eq als Pfad-Kandidaten. Messwert NHI in log(cm-2) — außerhalb des Bulk-Registers (diffusion listet cm-3, nicht cm-2); VLSR/FWHM in km/s wären Register-fähig. Katalog in master_urls unter altem Namen vizier_hi4pi.json bereits zirkulierend.
+disposition decline path

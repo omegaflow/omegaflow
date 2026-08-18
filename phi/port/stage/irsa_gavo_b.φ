@@ -1,0 +1,126 @@
+# grind irsa/gavo/ari/exoarchive b (2026-08-18) — Mutter-Hyphe, Agentin B
+# Probe-Kandidaten: SPHEREx (zeitkritisch TODO 686), IRSA-TAP, GAVO-TAP, ARI (GCNS/MWSC), ExoArchive.
+# Nur TOP-3-Einzel-Queries, keine Ketten. Dispositionen: accepted | decline | parser-def.
+# Keine Register-Edits, kein src/, kein cargo — nur diese Staging-Datei.
+
+# --- Prioritaet 1: SPHEREx (zeitkritisch, TODO 686) ---
+
+candidate https://irsa.ipac.caltech.edu/TAP/sync
+note SPHEREx-Quick-Release via IRSA. TAP-Schema "spherex" traegt: splices (Cross-Match-Tabelle) + obscore/observation/plane/artifact/provenance_input (ObsCore-Views). spherex.obscore liefert nur Bild-Metadaten (s_ra/s_dec, access_url -> datalink -> FITS), kein Quellen-Fluss. spherex.plane liefert Bildebenen-Metadaten (poly/pt), keine Quellkatalog-Spalten. Die eigentliche SPHEREx-Spektralphotometrie ist FITS-only (Quick-Release auf /data/SPHEREx/, Gator-FITS). Es gibt keinen keyless JSON/CSV-Endpoint mit SPHEREx-Fluss + ra/dec. KEINE Fabrication.
+parser-def fits
+
+candidate https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3+*+FROM+splices
+note SPLICES (Schema spherex) ist die einzige keyless CSV-Quelle mit ra/dec + Photometrie — aber es ist eine Cross-Match-Kompilation (2MASS j/h/k, WISE w1-w4, IRAC mag3_6..8_0, Gaia gaiadr3_g + plx), kein SPHEREx-Eigenfluss. Kompilat = src/, kein Feld-Block.
+decline Kompilat-Cross-Match (Photometrie aus 2MASS/WISE/IRAC/Gaia, nicht SPHEREx-Fluss)
+
+# --- Prioritaet 2: IRSA-TAP (Mining, 995 Tabellen) ---
+
+candidate https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+ra,dec,fnu_12,fnu_25,fnu_60,fnu_100+FROM+irasfsc+WHERE+fnu_60+IS+NOT+NULL
+note IRAS Faint Source Catalog. ra/dec + fnu_12/25/60/100 in Jy (Roh-Flussdichte). em-Messwert, kein Modell. Distanz absent (kein plx/dist/z) -> parser-neutral Celestial-Sphere (0 honored). irasfsc ist NICHT iraspsc (das ist bereits CDN-Asset astro_irsa_main_iras_psc_infrared.json).
+disposition accepted
+url https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+ra,dec,fnu_12,fnu_25,fnu_60,fnu_100+FROM+irasfsc+WHERE+fnu_60+IS+NOT+NULL
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+field fnu_12 iras_fsc_flux_12um_jy inverse-square em Jy 604800 0.0 0.0
+field fnu_25 iras_fsc_flux_25um_jy inverse-square em Jy 604800 0.0 0.0
+field fnu_60 iras_fsc_flux_60um_jy inverse-square em Jy 604800 0.0 0.0
+field fnu_100 iras_fsc_flux_100um_jy inverse-square em Jy 604800 0.0 0.0
+
+candidate https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+objname,ra,dec,flux65,flux90,flux140,flux160+FROM+akari_fis+WHERE+flux90+IS+NOT+NULL
+note AKARI Far-Infrared Surveyor Bright Source Catalog. ra/dec + flux65/90/140/160 in Jy (Roh-Flussdichte). em-Messwert. Distanz absent -> Celestial-Sphere. Nicht im CDN.
+disposition accepted
+url https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+objname,ra,dec,flux65,flux90,flux140,flux160+FROM+akari_fis+WHERE+flux90+IS+NOT+NULL
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+field flux65 akari_fis_flux_65um_jy inverse-square em Jy 604800 0.0 0.0
+field flux90 akari_fis_flux_90um_jy inverse-square em Jy 604800 0.0 0.0
+field flux140 akari_fis_flux_140um_jy inverse-square em Jy 604800 0.0 0.0
+field flux160 akari_fis_flux_160um_jy inverse-square em Jy 604800 0.0 0.0
+
+candidate https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+name,ra,dec,b1,b2,a,c,d,e+FROM+msxc6+WHERE+a+IS+NOT+NULL
+note MSX 6C Infrared Point Source Catalog. ra/dec + Band-Flussdichten b1/b2/a/c/d/e in Jy (Roh-Fluss). em-Messwert. Distanz absent -> Celestial-Sphere. Viele -99/-999-Sentinels = absent (0 honored, kein Fabricat). Nicht im CDN.
+disposition accepted
+url https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+name,ra,dec,b1,b2,a,c,d,e+FROM+msxc6+WHERE+a+IS+NOT+NULL
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+field a msxc6_flux_band_a_jy inverse-square em Jy 604800 0.0 0.0
+field c msxc6_flux_band_c_jy inverse-square em Jy 604800 0.0 0.0
+field d msxc6_flux_band_d_jy inverse-square em Jy 604800 0.0 0.0
+field e msxc6_flux_band_e_jy inverse-square em Jy 604800 0.0 0.0
+
+candidate https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3+ra,dec,w1mpro,w2mpro,pmra,pmdec+FROM+catwise_2020
+note CatWISE2020 ist ein Eigenbewegungs-Katalog (pmra/pmdec) mit nur 2-Band-W1/W2-Photometrie (W3/W4 existieren nicht -> UsageFault bei w3mpro). Photometrie redundant zu AllWISE (CDN astro_irsa_main_allwise_psd). Messwert ist Bewegung/Position, kein neuer Fluss -> position-focused.
+decline Eigenbewegungs-Katalog, Photometrie redundant zu AllWISE (W1/W2)
+
+# --- Prioritaet 3: GAVO-TAP (271 Tabellen) ---
+
+candidate https://dc.g-vo.org/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+raj2000,dej2000,rv,teff_k,Jmag,parallax+FROM+rave.main+WHERE+parallax+IS+NOT+NULL
+note RAVE DR5 (Sternspektroskopie-Survey, dc.g-vo.org). ra/dec + rv (Radialgeschwindigkeit km/s, Doppler = em) + teff_k (K, thermal) + Jmag (em mag) + parallax (mas -> Distanz). Roh-Messwert-Katalog. rv = radvel-Key (Bewegung), teff/Jmag = Feldwerte. Nicht im Register. (RAVE DR4 liegt bei gavo.aip.de als ravedr4.rave_dr4.)
+disposition accepted
+url https://dc.g-vo.org/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+raj2000,dej2000,rv,teff_k,Jmag,parallax+FROM+rave.main+WHERE+parallax+IS+NOT+NULL
+ttl 604800
+at sun
+cmap .
+ra raj2000
+dec dej2000
+plx parallax
+radvel rv
+flux_from_mag Jmag
+field teff_k rave_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
+field Jmag rave_jmag gaussian-inverse-square em mag 604800 0.0 0.0
+
+candidate https://dc.g-vo.org/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+raj2000,dej2000,flux_dens_blue,flux_dens_red+FROM+ohmaser.masers+WHERE+flux_dens_red+IS+NOT+NULL
+note OH-Maser-Katalog (dc.g-vo.org). ra/dec + flux_dens_blue/red in Jy (Roh-Radioflussdichte). em-Messwert. Distanz absent -> Celestial-Sphere (galaktische Maser, Richtung real). Nicht im Register.
+disposition accepted
+url https://dc.g-vo.org/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+raj2000,dej2000,flux_dens_blue,flux_dens_red+FROM+ohmaser.masers+WHERE+flux_dens_red+IS+NOT+NULL
+ttl 604800
+at sun
+cmap .
+ra raj2000
+dec dej2000
+field flux_dens_red ohmaser_flux_red_jy inverse-square em Jy 604800 0.0 0.0
+field flux_dens_blue ohmaser_flux_blue_jy inverse-square em Jy 604800 0.0 0.0
+
+candidate https://dc.g-vo.org/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3+*+FROM+hiicounter.data
+note HII-Region-Abundanz-Katalog: logR2/R3/N2/S2 (Linien-Verhaeltnisse), o_h/n_h (Sauerstoff-/Stickstoff-Abundanz, 12+log), t3 (Elektronentemperatur). Abgeleitete Linien-Diagnostik aus Modell-Fit -> kein Roh-Messwert. Decline.
+decline abgeleitete Linien-Diagnostik/Modell (Abundanzen, keine Roh-Fluss-Messung)
+
+# --- Prioritaet 4: ARI (GCNS + MWSC) ---
+
+candidate https://gaia.ari.uni-heidelberg.de/tap/sync
+note GCNS + MWSC liegen NICHT im ARI-Gaia-Archiv (gaia.ari.uni-heidelberg.de) — Query "gcns.main" antwortet "Unknown table". Sie liegen in GAVO dc.g-vo.org (tap_index_gavo.φ: gcns.main, mwsc.main). TAP-Zugriff verifiziert: gcns.main -> ra/dec/parallax/phot_g_mean_mag (200, CSV); mwsc.main -> recno/name/raj2000/dej2000/rcore/rcluster/dist/logt/fe_h (200, CSV). Beide Kompilat (Gaia-Derivat <=100pc bzw. Haufen-Katalog) = src/, kein Feld-Block.
+decline Kompilat (GCNS/MWSC = src/, verifiziert via dc.g-vo.org nicht ARI)
+
+# --- Prioritaet 5: ExoArchive (46 Tabellen, pscomppars erledigt) ---
+
+candidate https://exoplanetarchive.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+ra,dec,sy_dist,st_teff+FROM+stellarhosts+WHERE+ra+IS+NOT+NULL+AND+st_teff+IS+NOT+NULL
+note stellarhosts (Stern-Wirts-Parameter). ra/dec + sy_dist (pc) + st_teff (K, Effektivtemperatur). st_teff ist thermal-Messwert (Praezidenz: pastel/corot/polarbase akzeptieren teff als thermal K). st_rad/st_mass in R_sun/M_sun -> nicht im Register, ausgelassen. pscomppars (erledigt) nicht doppelt.
+disposition accepted
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3000+ra,dec,sy_dist,st_teff+FROM+stellarhosts+WHERE+ra+IS+NOT+NULL+AND+st_teff+IS+NOT+NULL
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+dist sy_dist
+dist_scale 3.085677581e16
+field st_teff exo_stellarhost_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
+
+candidate https://exoplanetarchive.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+3+*+FROM+emissionspec
+note emissionspec: nur plntname + centralwavelng + especlipdep (dimensionslose Eklipsen-Tiefe). Kein ra/dec in der Tabelle -> position-only (kein cmap moeglich). Decline.
+decline position-only (kein ra/dec, nur Planetenname + dimensionslose Eklipsen-Tiefe)
+
+# --- Side-Befund: GAVO-Async-Queue (TODO 747 "offen") ---
+
+# gavo.aip.de/tap/async: 200, UWS-1.1-Jobliste (uws:jobs, Phasen PENDING/COMPLETED/ERROR) — Job-Submission statt Sync wird unterstuetzt.
+# dc.g-vo.org/tap/async: 200, ebenso UWS-1.1-Jobliste. Beide GAVO-Instanzen exponieren /tap/async (UWS); Sync bleibt keyless fuer TOP-N-Queries.
+# TODO 747 kann geschlossen werden: GAVO-Async-Queue ist verfuegbar (beobachtet, kein Code).

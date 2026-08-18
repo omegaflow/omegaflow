@@ -1452,3 +1452,125 @@ map features
 lat properties.lat
 lon properties.long
 field properties.no2_2024 sheffield_no2_annual_mean_ugm3 erfc diffusion ug/m3 604800 0.0 0.0
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+2000+Name,RAJ2000,DEJ2000,Dist,S1400+FROM+"J/ApJS/208/17/psrcat"+WHERE+RAJ2000+IS+NOT+NULL+ORDER+BY+S1400+DESC
+ttl 86400
+at sun
+cmap .
+ra RAJ2000
+dec DEJ2000
+dist Dist
+dist_scale 3.085677581e19
+field S1400 atnf_pulsar_flux_1400mhz_mjy inverse-square em mJy 86400 0.0 0.0
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+500+_RA,_DE,Karmn,GJ,SpType,Dist,Ksmag+FROM+"J/A+A/609/A117/table1"+WHERE+_RA+IS+NOT+NULL+ORDER+BY+Dist+ASC
+ttl 86400
+at sun
+cmap .
+ra _RA
+dec _DE
+dist Dist
+dist_scale 3.085677581e16
+field Ksmag carmenes_ks_mag inverse-square em mag 86400 0.0 0.0
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+2000+Name,RAJ2000,DEJ2000,Speak,Sint+FROM+"J/ApJS/205/1/catalog"+WHERE+RAJ2000+IS+NOT+NULL+AND+Speak>1+ORDER+BY+Speak+DESC
+ttl 86400
+at sun
+cmap .
+ra RAJ2000
+dec DEJ2000
+field Speak cornish_peak_flux_5ghz_mjy inverse-square em mJy 86400 0.0 0.0
+field Sint cornish_integrated_flux_5ghz_mjy inverse-square em mJy 86400 0.0 0.0
+
+url https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+ra,dec,fnu_12,fnu_25,fnu_60,fnu_100+FROM+irasfsc+WHERE+fnu_60+IS+NOT+NULL
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+field fnu_12 iras_fsc_flux_12um_jy inverse-square em Jy 604800 0.0 0.0
+field fnu_25 iras_fsc_flux_25um_jy inverse-square em Jy 604800 0.0 0.0
+field fnu_60 iras_fsc_flux_60um_jy inverse-square em Jy 604800 0.0 0.0
+field fnu_100 iras_fsc_flux_100um_jy inverse-square em Jy 604800 0.0 0.0
+
+url https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+objname,ra,dec,flux65,flux90,flux140,flux160+FROM+akari_fis+WHERE+flux90+IS+NOT+NULL
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+field flux65 akari_fis_flux_65um_jy inverse-square em Jy 604800 0.0 0.0
+field flux90 akari_fis_flux_90um_jy inverse-square em Jy 604800 0.0 0.0
+field flux140 akari_fis_flux_140um_jy inverse-square em Jy 604800 0.0 0.0
+field flux160 akari_fis_flux_160um_jy inverse-square em Jy 604800 0.0 0.0
+
+url https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+name,ra,dec,b1,b2,a,c,d,e+FROM+msxc6+WHERE+a+IS+NOT+NULL
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+field a msxc6_flux_band_a_jy inverse-square em Jy 604800 0.0 0.0
+field c msxc6_flux_band_c_jy inverse-square em Jy 604800 0.0 0.0
+field d msxc6_flux_band_d_jy inverse-square em Jy 604800 0.0 0.0
+field e msxc6_flux_band_e_jy inverse-square em Jy 604800 0.0 0.0
+
+url https://dc.g-vo.org/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+raj2000,dej2000,rv,teff_k,Jmag,parallax+FROM+rave.main+WHERE+parallax+IS+NOT+NULL
+ttl 604800
+at sun
+cmap .
+ra raj2000
+dec dej2000
+plx parallax
+radvel rv
+field teff_k rave_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
+field Jmag rave_jmag gaussian-inverse-square em mag 604800 0.0 0.0
+
+url https://dc.g-vo.org/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+raj2000,dej2000,flux_dens_blue,flux_dens_red+FROM+ohmaser.masers+WHERE+flux_dens_red+IS+NOT+NULL
+ttl 604800
+at sun
+cmap .
+ra raj2000
+dec dej2000
+field flux_dens_red ohmaser_flux_red_jy inverse-square em Jy 604800 0.0 0.0
+field flux_dens_blue ohmaser_flux_blue_jy inverse-square em Jy 604800 0.0 0.0
+
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+ra,dec,sy_dist,st_teff+FROM+stellarhosts+WHERE+ra+IS+NOT+NULL+AND+st_teff+IS+NOT+NULL
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+dist sy_dist
+dist_scale 3.085677581e16
+field st_teff exo_stellarhost_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,VarType,magMax,Min1+FROM+"B/gcvs/gcvs_cat"+WHERE+RAJ2000+IS+NOT+NULL
+ttl 86400
+at sun
+cmap .
+ra RAJ2000
+dec DEJ2000
+field magMax gcvs_max_magnitude gaussian-inverse-square em mag 86400 0.0 0.0
+field Min1 gcvs_min1_magnitude gaussian-inverse-square em mag 86400 0.0 0.0
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,HRV,D,W1mag,W2mag+FROM+"J/MNRAS/506/1896/hecate"+WHERE+RAJ2000+IS+NOT+NULL
+ttl 86400
+at sun
+cmap .
+ra RAJ2000
+dec DEJ2000
+dist D
+dist_scale 3.085677581e22
+field HRV hecate_radial_velocity_kms gaussian-inverse-square advective km/s 86400 0.0 0.0
+field W1mag hecate_w1_3_4um_mag gaussian-inverse-square em mag 86400 0.0 0.0
+field W2mag hecate_w2_4_6um_mag gaussian-inverse-square em mag 86400 0.0 0.0
+
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+2000+RAJ2000,DEJ2000,Fpeak,Fint+FROM+"VIII/92/first14"+WHERE+RAJ2000+IS+NOT+NULL
+ttl 86400
+at sun
+cmap .
+ra RAJ2000
+dec DEJ2000
+field Fpeak first_radio_peak_flux_mjy inverse-square em mJy 86400 0.0 0.0
+field Fint first_radio_integrated_flux_mjy inverse-square em mJy 86400 0.0 0.0
