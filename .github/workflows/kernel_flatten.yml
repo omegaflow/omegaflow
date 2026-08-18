@@ -77,6 +77,8 @@ jobs:
           cargo run --release --bin dastcom_compiler -- \
             --input kernels/dast5_le.dat \
             --out dastcom_asteroids.bin \
+            --gm phi/katalog/asteroid_gm_inpop25c.φ \
+            --diameters phi/katalog/asteroid_diameters_neowise.φ,phi/katalog/asteroid_diameters_akari.φ \
             --ci-mode
       - name: Commit body manifest
         run: |

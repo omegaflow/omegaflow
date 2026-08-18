@@ -1,12 +1,82 @@
 use omegaflow::cdn::upload_asset;
 use omegaflow::dastcom::{encode_record, parse_db_record, state_at, RECORD_STRIDE};
+use std::collections::HashMap;
 use std::fs::File;
 use std::io::{Read, Seek, SeekFrom};
 
 const ASTEROID_RECORD_BYTES: u64 = 835;
 const J2000_JD: f64 = 2451545.0;
 
-fn compile_catalog(input: &str, out_path: &str) -> usize {
+const GM_CATALOG_DEFAULT: &str = "phi/katalog/asteroid_gm_inpop25c.φ";
+const DIAMETER_CATALOGS_DEFAULT: &str =
+    "phi/katalog/asteroid_diameters_neowise.φ,phi/katalog/asteroid_diameters_akari.φ";
+
+fn read_gm_catalog(path: &str) -> HashMap<u32, f64> {
+    let mut map = HashMap::new();
+    let text = match std::fs::read_to_string(path) {
+        Ok(t) => t,
+        Err(_) => {
+            eprintln!("gm catalog {} absent", path);
+            return map;
+        }
+    };
+    for line in text.lines() {
+        let line = line.trim();
+        if line.is_empty() || line.starts_with('#') {
+            continue;
+        }
+        let mut cells = line.split('|');
+        let number = cells
+            .next()
+            .and_then(|c| c.trim().parse().ok())
+            .unwrap_or(0u32);
+        let gm_m3s2 = cells
+            .next()
+            .and_then(|c| c.trim().parse().ok())
+            .unwrap_or(0.0f64);
+        if number == 0 || !(gm_m3s2 > 0.0) {
+            continue;
+        }
+        map.insert(number, gm_m3s2 / 1.0e9);
+    }
+    map
+}
+
+fn read_diameter_catalog(path: &str, map: &mut HashMap<u32, f32>) {
+    let text = match std::fs::read_to_string(path) {
+        Ok(t) => t,
+        Err(_) => {
+            eprintln!("diameter catalog {} absent", path);
+            return;
+        }
+    };
+    for line in text.lines() {
+        let line = line.trim();
+        if line.is_empty() || line.starts_with('#') {
+            continue;
+        }
+        let mut cells = line.split('|');
+        let number = cells
+            .next()
+            .and_then(|c| c.trim().parse().ok())
+            .unwrap_or(0u32);
+        let diam_km = cells
+            .next()
+            .and_then(|c| c.trim().parse().ok())
+            .unwrap_or(0.0f32);
+        if number == 0 || !(diam_km > 0.0) {
+            continue;
+        }
+        map.entry(number).or_insert(diam_km);
+    }
+}
+
+fn compile_catalog(
+    input: &str,
+    out_path: &str,
+    gm: &HashMap<u32, f64>,
+    diam: &HashMap<u32, f32>,
+) -> usize {
     let mut file = File::open(input).expect("open dast5_le.dat");
     let mut header = [0u8; 835];
     file.read_exact(&mut header).expect("header record");
@@ -21,12 +91,14 @@ fn compile_catalog(input: &str, out_path: &str) -> usize {
     let mut record_buf = [0u8; 835];
     let mut written = 0usize;
     let mut skipped = 0usize;
+    let mut gm_filled = 0usize;
+    let mut radius_filled = 0usize;
     loop {
         match file.read_exact(&mut record_buf) {
             Ok(()) => {}
             Err(_) => break,
         }
-        let rec = match parse_db_record(&record_buf) {
+        let mut rec = match parse_db_record(&record_buf) {
             Some(r) => r,
             None => {
                 skipped += 1;
@@ -37,16 +109,30 @@ fn compile_catalog(input: &str, out_path: &str) -> usize {
             skipped += 1;
             continue;
         }
+        if rec.gm_km3_s2 <= 0.0 {
+            if let Some(&g) = gm.get(&rec.number) {
+                rec.gm_km3_s2 = g as f32;
+                gm_filled += 1;
+            }
+        }
+        if rec.radius_km <= 0.0 {
+            if let Some(&d) = diam.get(&rec.number) {
+                rec.radius_km = d * 0.5;
+                radius_filled += 1;
+            }
+        }
         encode_record(&rec, &mut buf);
         written += 1;
     }
     std::fs::write(out_path, &buf).expect("write catalog");
     eprintln!(
-        "dastcom: {} records, {} skipped, {} B → {}",
+        "dastcom: {} records, {} skipped, {} B → {} (gm {} diam {})",
         written,
         skipped,
         buf.len(),
-        out_path
+        out_path,
+        gm_filled,
+        radius_filled
     );
     written
 }
@@ -97,13 +183,15 @@ fn probe_record(file: &mut File, number: u32, t_jd: f64) {
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     if args.len() < 3 {
-        eprintln!("usage: dastcom_compiler --input <dast5_le.dat> --out <dastcom_asteroids.bin> [--ci-mode] [--probe <no> <jd>]");
+        eprintln!("usage: dastcom_compiler --input <dast5_le.dat> --out <dastcom_asteroids.bin> [--gm <φ>] [--diameters <φ,φ>] [--ci-mode] [--probe <no> <jd>]");
         std::process::exit(1);
     }
     let mut input: Option<String> = None;
     let mut out: Option<String> = None;
     let mut ci_mode = false;
     let mut probe: Option<(u32, f64)> = None;
+    let mut gm_path: Option<String> = None;
+    let mut diameter_paths: Option<String> = None;
     let mut i = 1;
     while i < args.len() {
         match args[i].as_str() {
@@ -113,6 +201,14 @@ fn main() {
             }
             "--out" => {
                 out = args.get(i + 1).cloned();
+                i += 1;
+            }
+            "--gm" => {
+                gm_path = args.get(i + 1).cloned();
+                i += 1;
+            }
+            "--diameters" => {
+                diameter_paths = args.get(i + 1).cloned();
                 i += 1;
             }
             "--ci-mode" => ci_mode = true,
@@ -148,9 +244,59 @@ fn main() {
             std::process::exit(1);
         }
     };
-    compile_catalog(&input, &out_path);
+    let gm = read_gm_catalog(gm_path.as_deref().unwrap_or(GM_CATALOG_DEFAULT));
+    let mut diam: HashMap<u32, f32> = HashMap::new();
+    let diam_list = diameter_paths
+        .as_deref()
+        .unwrap_or(DIAMETER_CATALOGS_DEFAULT);
+    for path in diam_list.split(',') {
+        read_diameter_catalog(path.trim(), &mut diam);
+    }
+    eprintln!("dastcom join: {} gm, {} diameters", gm.len(), diam.len());
+    compile_catalog(&input, &out_path, &gm, &diam);
     if ci_mode && !upload_asset(&out_path) {
         eprintln!("upload: {} did not reach the CDN", out_path);
         std::process::exit(1);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::io::Write;
+
+    fn write_tmp(name: &str, content: &str) -> std::path::PathBuf {
+        let path = std::env::temp_dir().join(name);
+        let mut file = std::fs::File::create(&path).unwrap();
+        file.write_all(content.as_bytes()).unwrap();
+        path
+    }
+
+    #[test]
+    fn gm_catalog_parses_to_km3s2() {
+        let path = write_tmp(
+            "omegaflow_test_gm.φ",
+            "# header\n45 | 4.239e8 | 6.73e7\n87 | 1.219e9 | 1.57e8\n",
+        );
+        let map = read_gm_catalog(path.to_str().unwrap());
+        assert!((map[&45] - 0.4239).abs() < 1e-6);
+        assert!((map[&87] - 1.219).abs() < 1e-6);
+        let _ = std::fs::remove_file(&path);
+    }
+
+    #[test]
+    fn diameter_catalog_first_source_wins() {
+        let p1 = write_tmp("omegaflow_test_d1.φ", "# n\n2 | 544 | 0.1417\n");
+        let p2 = write_tmp(
+            "omegaflow_test_d2.φ",
+            "# n\n2 | 512 | 0.15\n3 | 100 | 0.2\n",
+        );
+        let mut map = HashMap::new();
+        read_diameter_catalog(p1.to_str().unwrap(), &mut map);
+        read_diameter_catalog(p2.to_str().unwrap(), &mut map);
+        assert_eq!(map[&2], 544.0);
+        assert_eq!(map[&3], 100.0);
+        let _ = std::fs::remove_file(&p1);
+        let _ = std::fs::remove_file(&p2);
     }
 }
