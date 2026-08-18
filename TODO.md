@@ -367,12 +367,17 @@ resonance(mut read_signal(s: read_ws_frame_part(stream: read_ws_frame_raw(stream
   ableiten
 - Sternenhintergrund (integrierter Glow der 1/d²-Schwänze, Milchstraße):
   einmalige tiefaufgelöste Integration, glattes Feld
-- Massen-Okklusion (deep hinter near): das Licht eines Sterns hinter der
-  Sonnen-/Planetenscheibe erreicht die Presence nicht — heute liegt das
-  Deepfield additiv über dem Nearfield. Kraftabhängig: em ist Sichtlinie
-  (verdeckt), Seismik geht durch, Gravitation wird nie verdeckt. Die
-  Lichtkrümmung (Aberration) ist in den Messdaten; die Undurchlässigkeit
-  fehlt. Eigener Atom im Mathematikerin/WGSL-Pfad.
+- ~~Massen-Okklusion~~ — erledigt (2026-08-18): Ray-Sphäre-Test
+  (h < R ∧ 0 < t < d) über alle Kräfte; Opazität als Kraft-Eigenschaft
+  (`force_opaque`: em/acoustic/thermal/electric opak, gravity/seismic-body/
+  seismic-surface/diffusion/advective transparent — Ratsurteil); Barrieren =
+  Ephemeriden-Körper relativ zur Presence; Wächter: Presence im Körper ⇒
+  dieser verdeckt nicht (SSB liegt in der Sonne). Nearfield im Probe in
+  prep gefaltet, Deepfield im Vertex (flux→0). Ausstehend: kontinuierliche
+  Opazität (Partial-Transmission), Gravitations-Lensing am Rand,
+  atmosphärische Dämmerung, kleine Skala (Terrain/Bauten — der Mechanismus
+  ist skalenfrei, die Daten fehlen), Oszillator-Eigenradius als
+  Rekord-Slot.
 - Relativistische Aberration (dopp, Q01) des alten Renderers ist mit der
   Membran-Rewrite gegangen — für den Deep-Pfad als eigener Atom prüfen
 - Galaxien-Zoom-Verifikation beim Operator ausstehend (deep-Zahl im HUD;

@@ -37,6 +37,21 @@ pub fn kernel_id_for_force(force: u8) -> Option<u8> {
     }
 }
 
+pub fn force_opaque(id: u8) -> Option<bool> {
+    match id {
+        0 => Some(true),
+        1 => Some(false),
+        2 => Some(true),
+        3 => Some(false),
+        4 => Some(false),
+        5 => Some(true),
+        6 => Some(false),
+        7 => Some(false),
+        8 => Some(true),
+        _ => None,
+    }
+}
+
 pub fn default_kernel_for(force: &str) -> Option<(&'static str, &'static str)> {
     match force {
         "em" => Some(("inverse-square", "em")),
@@ -186,6 +201,20 @@ mod tests {
         assert_eq!(kernel_id_for_force(0), Some(0));
         assert_eq!(kernel_id_for_force(5), Some(3));
         assert_eq!(kernel_id_for_force(9), None);
+    }
+
+    #[test]
+    fn test_force_opacity() {
+        assert_eq!(force_opaque(0), Some(true));
+        assert_eq!(force_opaque(1), Some(false));
+        assert_eq!(force_opaque(2), Some(true));
+        assert_eq!(force_opaque(3), Some(false));
+        assert_eq!(force_opaque(4), Some(false));
+        assert_eq!(force_opaque(5), Some(true));
+        assert_eq!(force_opaque(6), Some(false));
+        assert_eq!(force_opaque(7), Some(false));
+        assert_eq!(force_opaque(8), Some(true));
+        assert_eq!(force_opaque(9), None);
     }
 
     #[test]

@@ -20,6 +20,17 @@ const PROPAGATION_SPEED: array<f32, 9> = array<f32, 9>(
     1.0,
     C_VACUUM,
 );
+const OPACITY: array<f32, 9> = array<f32, 9>(
+    1.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    1.0,
+);
 fn fold_eff(d_mag: f32, raw: f32, t: f32, ttl: f32, force_type: u32, advective_v: f32) -> f32 {
     let v_const = PROPAGATION_SPEED[force_type];
     let v = select(v_const, advective_v, force_type == 7u && advective_v > 0.0);
@@ -34,6 +45,29 @@ fn fold_eff(d_mag: f32, raw: f32, t: f32, ttl: f32, force_type: u32, advective_v
 @group(0) @binding(3) var<storage, read_write> probe_out: array<f32>;
 @group(0) @binding(4) var<storage, read_write> prep: array<vec4f>;
 @group(0) @binding(5) var<storage, read_write> param: array<vec4f>;
+@group(0) @binding(6) var<storage, read> barriers: array<vec4f>;
+
+fn occlusion(dhat: vec3f, d: f32, ft: u32, n: u32) -> f32 {
+    if (OPACITY[ft] <= 0.0 || n == 0u) {
+        return 1.0;
+    }
+    for (var b = 0u; b < n; b = b + 1u) {
+        let cb = barriers[b];
+        let t = dot(cb.xyz, dhat);
+        if (t <= 0.0 || t >= d) {
+            continue;
+        }
+        let perp = cb.xyz - dhat * t;
+        if (dot(perp, perp) < cb.w * cb.w) {
+            let c2 = dot(cb.xyz, cb.xyz);
+            if (c2 < cb.w * cb.w) {
+                continue;
+            }
+            return 0.0;
+        }
+    }
+    return 1.0;
+}
 
 fn ft_ref(ra: vec4f, rb: vec4f, rc: vec4f, ft: u32) -> f32 {
     if (ft == 0u) { return ra.x; }
@@ -102,7 +136,7 @@ struct DeepPtVOut { @builtin(position) pos: vec4f, @location(0) @interpolate(fla
     );
     out.pos = vec4f(clip, 0.0, 1.0);
     out.uv = corner;
-    out.flux = data.w * df;
+    out.flux = data.w * df * occlusion(dir, 1e30, 0u, u32(deep_vp.expose_ex.w));
     return out;
 }
 
@@ -168,7 +202,7 @@ fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
     );
     out.pos = vec4f(clip, 0.0, 1.0);
     out.uv = corner;
-    let flux = data.w;
+    let flux = data.w * occlusion(data.xyz, 1e30, 0u, u32(deep_vp.expose_ex.w));
     let lum = clamp(
         (log2(abs(flux) + 1e-30)
             - log2(ft_ref_floor(deep_vp.ft_ref_a, deep_vp.ft_ref_b, deep_vp.ft_ref_c, 0u))
@@ -228,7 +262,10 @@ struct NearPtVOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f, @loca
         1.0,
     );
     out.uv = corner;
-    out.val_eff = fold_eff(length(pre.xyz), pre.w, tm.x, tm.y, u32(tm.z), fm.x);
+    let d0 = length(pre.xyz);
+    let dhat0 = pre.xyz / max(d0, 1e-9);
+    out.val_eff = fold_eff(d0, pre.w, tm.x, tm.y, u32(tm.z), fm.x)
+        * occlusion(dhat0, d0, u32(tm.z), u32(vp.expose_ex.w));
     out.ft = u32(tm.z);
     out.tau = mt.y;
     out.half_px = half_px;
@@ -419,10 +456,13 @@ fn presence_probe() {
         let v_rel = fm.yzw - v_obs;
         let propagated = m.xyz + v_rel * dt;
         let temporal = abs(vp.presence.w - tm.x);
-        let pre = vec4f(propagated, m.w * exp(-temporal / max(tm.y, 1e-9)));
-        prep[j] = pre;
         let ft = u32(tm.z);
         let kid = u32(mt.z);
+        let d_prop = length(propagated);
+        let dhat_prop = propagated / max(d_prop, 1e-9);
+        let occl = occlusion(dhat_prop, d_prop, ft, u32(vp.expose_ex.w));
+        let pre = vec4f(propagated, m.w * exp(-temporal / max(tm.y, 1e-9)) * occl);
+        prep[j] = pre;
         var fast = 0.0;
         if ((kid == 0u || kid == 6u) && (ft != 1u) && (temporal < tm.y * 1e-4)) {
             fast = 1.0;
@@ -14827,7 +14867,8 @@ mod mathematikerin {
             let (tx, rx) = mpsc::sync_channel::<Arc<Buffer>>(2);
             let (req_tx, req_rx) =
                 mpsc::sync_channel::<(Arc<Buffer>, [f64; 3], f64, f64, f64, f64)>(1);
-            let (res_tx, res_rx) = mpsc::sync_channel::<(PackedWindow, Vec<f32>, Vec<f32>, f64)>(2);
+            let (res_tx, res_rx) =
+                mpsc::sync_channel::<(PackedWindow, Vec<f32>, Vec<f32>, Vec<f32>, f64)>(2);
             let shutdown = Arc::new(AtomicBool::new(false));
             let shutdown_clone = shutdown.clone();
             thread::spawn(move || loop {
@@ -14855,8 +14896,24 @@ mod mathematikerin {
                 }
                 let packed_deep_pt = pack_deep_pt(&pt_src);
                 let packed_deep_ex = pack_deep_ex(&ex_src);
+                let mut barriers: Vec<f32> = Vec::with_capacity(eph.len() * 4);
+                for (name, e) in eph.iter() {
+                    let Some(props) = &e.props else {
+                        continue;
+                    };
+                    if props.radius_m <= 0.0 {
+                        continue;
+                    }
+                    let Some(pos) = body_barycenter_position(name, t, &eph) else {
+                        continue;
+                    };
+                    barriers.push((pos[0] - center[0]) as f32);
+                    barriers.push((pos[1] - center[1]) as f32);
+                    barriers.push((pos[2] - center[2]) as f32);
+                    barriers.push(props.radius_m as f32);
+                }
                 if res_tx
-                    .send((packed, packed_deep_pt, packed_deep_ex, t))
+                    .send((packed, packed_deep_pt, packed_deep_ex, barriers, t))
                     .is_err()
                 {
                     break;
@@ -15013,7 +15070,7 @@ mod mathematikerin {
     struct NativeApp {
         rx: mpsc::Receiver<Arc<Buffer>>,
         req_tx: mpsc::SyncSender<(Arc<Buffer>, [f64; 3], f64, f64, f64, f64)>,
-        res_rx: mpsc::Receiver<(PackedWindow, Vec<f32>, Vec<f32>, f64)>,
+        res_rx: mpsc::Receiver<(PackedWindow, Vec<f32>, Vec<f32>, Vec<f32>, f64)>,
         presence_tx: mpsc::Sender<(String, f64, f64, f64, f64, f64)>,
         body_names: Arc<Vec<String>>,
         time: Arc<Mutex<Option<LeapSeconds>>>,
@@ -15063,6 +15120,8 @@ mod mathematikerin {
         near_pt_pipe: Option<wgpu::RenderPipeline>,
         deep_bind: Option<wgpu::BindGroup>,
         deep_layout: Option<wgpu::BindGroupLayout>,
+        packed_barriers: Vec<f32>,
+        barriers_buf: Option<wgpu::Buffer>,
 
         p: [f64; 3],
         v: [f64; 3],
@@ -15113,7 +15172,7 @@ mod mathematikerin {
         fn new(
             rx: mpsc::Receiver<Arc<Buffer>>,
             req_tx: mpsc::SyncSender<(Arc<Buffer>, [f64; 3], f64, f64, f64, f64)>,
-            res_rx: mpsc::Receiver<(PackedWindow, Vec<f32>, Vec<f32>, f64)>,
+            res_rx: mpsc::Receiver<(PackedWindow, Vec<f32>, Vec<f32>, Vec<f32>, f64)>,
             presence_tx: mpsc::Sender<(String, f64, f64, f64, f64, f64)>,
             sensor_tx: mpsc::Sender<Vec<(String, f64, f64)>>,
             body_names: Arc<Vec<String>>,
@@ -15172,6 +15231,8 @@ mod mathematikerin {
                 near_pt_pipe: None,
                 deep_bind: None,
                 deep_layout: None,
+                packed_barriers: Vec::new(),
+                barriers_buf: None,
                 p: [0.0, 0.0, 0.0],
                 v: [0.0, 0.0, 0.0],
                 t0: 0.0,
@@ -15423,7 +15484,7 @@ mod mathematikerin {
                 self.expose_offset,
                 self.last_response_epoch as f32,
                 self.point_blend as f32,
-                0.0,
+                (self.packed_barriers.len() / 4) as f32,
                 x as f32,
                 y as f32,
                 z as f32,
@@ -15534,9 +15595,16 @@ mod mathematikerin {
             let param_buf = device.create_buffer(&wgpu::BufferDescriptor {
                 label: None,
                 size: c as u64 * 16,
-                usage: wgpu::BufferUsages::STORAGE,
+                usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
                 mapped_at_creation: false,
             });
+            let barriers_buf = device.create_buffer(&wgpu::BufferDescriptor {
+                label: None,
+                size: 256 * 16,
+                usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+                mapped_at_creation: false,
+            });
+            self.barriers_buf = Some(barriers_buf.clone());
             let probe_bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
                 label: None,
                 layout: &probe_layout,
@@ -15565,6 +15633,10 @@ mod mathematikerin {
                         binding: 5,
                         resource: param_buf.as_entire_binding(),
                     },
+                    wgpu::BindGroupEntry {
+                        binding: 6,
+                        resource: barriers_buf.as_entire_binding(),
+                    },
                 ],
             });
             let render_bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
@@ -15590,6 +15662,10 @@ mod mathematikerin {
                     wgpu::BindGroupEntry {
                         binding: 5,
                         resource: param_buf.as_entire_binding(),
+                    },
+                    wgpu::BindGroupEntry {
+                        binding: 6,
+                        resource: barriers_buf.as_entire_binding(),
                     },
                 ],
             });
@@ -15663,6 +15739,9 @@ mod mathematikerin {
             let Some(deep_ex_vbuf) = self.deep_ex_vbuf.clone() else {
                 return;
             };
+            let Some(barriers_buf) = self.barriers_buf.clone() else {
+                return;
+            };
             self.deep_bind = Some(device.create_bind_group(&wgpu::BindGroupDescriptor {
                 label: None,
                 layout: &deep_layout,
@@ -15678,6 +15757,10 @@ mod mathematikerin {
                     wgpu::BindGroupEntry {
                         binding: 2,
                         resource: deep_ex_vbuf.as_entire_binding(),
+                    },
+                    wgpu::BindGroupEntry {
+                        binding: 6,
+                        resource: barriers_buf.as_entire_binding(),
                     },
                 ],
             }));
@@ -15711,6 +15794,9 @@ mod mathematikerin {
                     queue.write_buffer(sb, 0, &le_bytes_f32(&self.packed_deep_ex));
                 }
                 self.deep_dirty = false;
+            }
+            if let Some(bb) = &self.barriers_buf {
+                queue.write_buffer(bb, 0, &le_bytes_f32(&self.packed_barriers));
             }
             let vp = self.vp_data();
             let mut bytes = [0u8; 176];
@@ -15920,6 +16006,11 @@ mod mathematikerin {
                         e.binding = 5;
                         e
                     },
+                    {
+                        let mut e = storage_entry(true, wgpu::ShaderStages::COMPUTE);
+                        e.binding = 6;
+                        e
+                    },
                 ],
             });
             let render_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
@@ -15953,6 +16044,11 @@ mod mathematikerin {
                     {
                         let mut e = storage_entry(false, wgpu::ShaderStages::FRAGMENT);
                         e.binding = 5;
+                        e
+                    },
+                    {
+                        let mut e = storage_entry(true, wgpu::ShaderStages::VERTEX_FRAGMENT);
+                        e.binding = 6;
                         e
                     },
                 ],
@@ -16041,6 +16137,16 @@ mod mathematikerin {
                     },
                     wgpu::BindGroupLayoutEntry {
                         binding: 2,
+                        visibility: wgpu::ShaderStages::VERTEX,
+                        ty: wgpu::BindingType::Buffer {
+                            ty: wgpu::BufferBindingType::Storage { read_only: true },
+                            has_dynamic_offset: false,
+                            min_binding_size: None,
+                        },
+                        count: None,
+                    },
+                    wgpu::BindGroupLayoutEntry {
+                        binding: 6,
                         visibility: wgpu::ShaderStages::VERTEX,
                         ty: wgpu::BindingType::Buffer {
                             ty: wgpu::BufferBindingType::Storage { read_only: true },
@@ -16429,7 +16535,7 @@ mod mathematikerin {
                 self.latest_field = Some(field);
                 self.sense();
             }
-            while let Ok((packed, pt, ex, t)) = self.res_rx.try_recv() {
+            while let Ok((packed, pt, ex, barriers, t)) = self.res_rx.try_recv() {
                 self.packed_count = packed.count;
                 self.packed_field = packed.field;
                 self.packed_meta = packed.meta;
@@ -16440,6 +16546,7 @@ mod mathematikerin {
                 self.packed_deep_ex = ex;
                 self.deep_ex_count = (self.packed_deep_ex.len() / 8) as u32;
                 self.deep_dirty = true;
+                self.packed_barriers = barriers;
                 self.relax_force_refs();
             }
             self.consider_resend();
@@ -16807,7 +16914,7 @@ mod mathematikerin {
         presence_tx: mpsc::Sender<(String, f64, f64, f64, f64, f64)>,
         sensor_tx: mpsc::Sender<Vec<(String, f64, f64)>>,
         req_tx: mpsc::SyncSender<(Arc<Buffer>, [f64; 3], f64, f64, f64, f64)>,
-        res_rx: mpsc::Receiver<(PackedWindow, Vec<f32>, Vec<f32>, f64)>,
+        res_rx: mpsc::Receiver<(PackedWindow, Vec<f32>, Vec<f32>, Vec<f32>, f64)>,
         body_names: Arc<Vec<String>>,
         time: Arc<Mutex<Option<LeapSeconds>>>,
         shutdown: Arc<AtomicBool>,
