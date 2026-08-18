@@ -701,7 +701,11 @@ fn source_contrib(j: u32, pixel_rel: vec3f) -> vec2f {
             sk *= 1.0 - mp.w * rd2 * p2 - mg.x * rd2 * rd2 * p4;
         }
     }
-    return vec2f(val * sk, f32(ft));
+    var contrib = val * sk;
+    if (ft == 1u) {
+        contrib *= exp2(-20.0);
+    }
+    return vec2f(contrib, f32(ft));
 }
 
 @fragment fn fs(in: VOut) -> @location(0) vec4f {
