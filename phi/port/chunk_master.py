@@ -67,6 +67,9 @@ def chunk_catalog(name, table, columns, skip_null, ra_col, bands):
             os.remove(p)
 
 if __name__ == "__main__":
+    chunk_catalog("pastel", "B/pastel/pastel",
+                  "ra:RAdeg;dec:DEdeg;teff:Teff;logg:logg;mag:Vmag", "teff", "RAdeg",
+                  [(lo, lo+45) for lo in range(0, 360, 45)])
     chunk_catalog("wds", "B/wds/wds",
                   "ra:RAJ2000;dec:DEJ2000;mag1:mag1;mag2:mag2;sep:sep1", "mag1", "RAJ2000",
                   [(lo, lo+45) for lo in range(0, 360, 45)])

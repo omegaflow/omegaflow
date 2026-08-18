@@ -376,7 +376,7 @@ note gaia_dist denis (B/denis/denis): 525260 Zeilen voll (Chunk-Merge, 16 RA-Bä
 
 verifiziert
 bestand phi/katalog/vizier_gold_catalogs.φ
-note gaia_dist pastel (B/pastel/pastel): 37064 Zeilen voll (Chunk-Merge, 8 RA-Bänder), 20883 mit Gaia-Distanz — live auf CDN — Eigenbewegung+RV: 27112 pmra, 20875 rv (gaiadr3)
+note gaia_dist pastel (B/pastel/pastel): 37064 Zeilen voll (Chunk-Merge, 8 RA-Bänder), 20883 mit Gaia-Distanz — live auf CDN — Eigenbewegung+RV: 27112 pmra, 20875 rv (gaiadr3) — Farbe: 20883 gaia_teff, 27686 bpmag (gaiadr3)
 
 verifiziert
 bestand phi/katalog/vizier_gold_catalogs.φ
