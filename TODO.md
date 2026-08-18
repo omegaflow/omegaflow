@@ -800,6 +800,9 @@ Konversion ist bekannt oder erforschbar — pending, keine Fälschung):
   netcdf-Konsum im Archivar = src/ (Rust-Kybernautin, wie Argovis). GLODAP =
   CSV (kein .nc; Bottle-Rohwerte als CSV-Harvest-Kandidat). OOI/SOCAT/temis
   .nc = netCDF-4/HDF5 bzw. 404.
+- netCDF-Integration (Archivar-Auftrag): `format netcdf` + netcdf-Konsum im
+  ω()-Loop — vollständige Spec in ledger.φ (`data-argo.ifremer.fr ... R1901843_357.nc`);
+  das Silizium baut die Rust-Kybernautin in einer frischen Session.
 - Hapi-FieldConfig: die deklarierten kernel/force/tau der HAPI-Blöcke
   erreichen den Oszillator nicht (synthetisch {0,0,0}) — Klärung in
   der P-Liste
