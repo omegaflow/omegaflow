@@ -373,8 +373,9 @@ resonance(mut read_signal(s: read_ws_frame_part(stream: read_ws_frame_raw(stream
   seismic-surface/diffusion/advective transparent — Ratsurteil); Barrieren =
   Ephemeriden-Körper relativ zur Presence; Wächter: Presence im Körper ⇒
   dieser verdeckt nicht (SSB liegt in der Sonne). Nearfield im Probe in
-  prep gefaltet, Deepfield im Vertex (flux→0). Ausstehend: kontinuierliche
-  Opazität (Partial-Transmission), Gravitations-Lensing am Rand,
+  prep gefaltet, Deepfield im Vertex (flux→0). Gravitations-Lensing am
+  Limb (R_eff = R − 4GM·|C|/(c²R), GM je Barriere) eingearbeitet.
+  Ausstehend: kontinuierliche Opazität (Partial-Transmission),
   atmosphärische Dämmerung, kleine Skala (Terrain/Bauten — der Mechanismus
   ist skalenfrei, die Daten fehlen), Oszillator-Eigenradius als
   Rekord-Slot.

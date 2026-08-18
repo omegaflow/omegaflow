@@ -52,17 +52,22 @@ fn occlusion(dhat: vec3f, d: f32, ft: u32, n: u32) -> f32 {
         return 1.0;
     }
     for (var b = 0u; b < n; b = b + 1u) {
-        let cb = barriers[b];
+        let cb = barriers[b * 2u];
+        let gm = barriers[b * 2u + 1u].x;
         let t = dot(cb.xyz, dhat);
         if (t <= 0.0 || t >= d) {
             continue;
         }
         let perp = cb.xyz - dhat * t;
-        if (dot(perp, perp) < cb.w * cb.w) {
-            let c2 = dot(cb.xyz, cb.xyz);
-            if (c2 < cb.w * cb.w) {
-                continue;
-            }
+        let c2 = dot(cb.xyz, cb.xyz);
+        if (c2 < cb.w * cb.w) {
+            continue;
+        }
+        let r_eff = max(
+            cb.w - 4.0 * gm * sqrt(c2) / (C_VACUUM * C_VACUUM * max(cb.w, 1e-9)),
+            0.0,
+        );
+        if (dot(perp, perp) < r_eff * r_eff) {
             return 0.0;
         }
     }
@@ -14897,7 +14902,7 @@ mod mathematikerin {
                 }
                 let packed_deep_pt = pack_deep_pt(&pt_src);
                 let packed_deep_ex = pack_deep_ex(&ex_src);
-                let mut barriers: Vec<f32> = Vec::with_capacity(eph.len() * 4);
+                let mut barriers: Vec<f32> = Vec::with_capacity(eph.len() * 8);
                 for (name, e) in eph.iter() {
                     let Some(props) = &e.props else {
                         continue;
@@ -14912,6 +14917,10 @@ mod mathematikerin {
                     barriers.push((pos[1] - center[1]) as f32);
                     barriers.push((pos[2] - center[2]) as f32);
                     barriers.push(props.radius_m as f32);
+                    barriers.push(props.gm.unwrap_or(0.0) as f32);
+                    barriers.push(0.0);
+                    barriers.push(0.0);
+                    barriers.push(0.0);
                 }
                 if res_tx
                     .send((packed, packed_deep_pt, packed_deep_ex, barriers, t))
@@ -15485,7 +15494,7 @@ mod mathematikerin {
                 self.expose_offset,
                 self.last_response_epoch as f32,
                 self.point_blend as f32,
-                (self.packed_barriers.len() / 4) as f32,
+                (self.packed_barriers.len() / 8) as f32,
                 x as f32,
                 y as f32,
                 z as f32,
@@ -15601,7 +15610,7 @@ mod mathematikerin {
             });
             let barriers_buf = device.create_buffer(&wgpu::BufferDescriptor {
                 label: None,
-                size: 256 * 16,
+                size: 256 * 32,
                 usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
                 mapped_at_creation: false,
             });
