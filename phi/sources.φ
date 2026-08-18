@@ -490,7 +490,7 @@ dec declination
 z redshift
 field discoverymag tns_transient_flux inverse-square em mag 3600 0.0 0.0
 
-url https://cdaweb.gsfc.nasa.gov/hapi/data?id=OMNI2_H0_MRG1HR&start={week_ago}T00:00:00Z&stop={now}Z&parameters=V1800,N1800,T1800,BX_GSE1800,BY_GSM1800,BZ_GSM1800,E1800,Pressure1800&format=json
+url https://cdaweb.gsfc.nasa.gov/hapi/data?id=OMNI2_H0_MRG1HR&time.min={week_ago}T00:00:00Z&time.max={now}Z&parameters=V1800,N1800,T1800,BX_GSE1800,BY_GSM1800,BZ_GSM1800,E1800,Pressure1800&format=json
 ttl 3600
 at sun
 hapi V1800=omni_solarwind_flow_speed_kms N1800=omni_solarwind_density_percc T1800=omni_solarwind_temp_k BX_GSE1800=omni_imf_bx_gse_nt BY_GSM1800=omni_imf_by_gsm_nt BZ_GSM1800=omni_imf_bz_gsm_nt E1800=omni_solarwind_electric_field_mvm Pressure1800=omni_solarwind_pressure_npa
@@ -502,6 +502,25 @@ field omni_imf_by_gsm_nt omni_imf_by_gsm_nt inverse-square em nT 3600 0.0 0.0
 field omni_imf_bz_gsm_nt omni_imf_bz_gsm_nt inverse-square em nT 3600 0.0 0.0
 field omni_solarwind_electric_field_mvm omni_solarwind_electric_field_mvm gaussian-inverse-square electric mV/m 3600 0.0 0.0
 field omni_solarwind_pressure_npa omni_solarwind_pressure_npa patch-levy advective nPa 3600 0.0 0.0
+
+url https://cdaweb.gsfc.nasa.gov/hapi/data?id=PSP_COHO1HR_MERGED_MAG_PLASMA&time.min={week_ago}T00:00:00Z&time.max={now}Z&parameters=BR,BT,BN,B,ProtonSpeed,protonDensity,protonTemp&format=json
+ttl 3600
+at parker_solar_probe
+hapi BR=psp_imf_br_rtn_nt BT=psp_imf_bt_rtn_nt BN=psp_imf_bn_rtn_nt B=psp_imf_bmag_nt ProtonSpeed=psp_solarwind_flow_speed_kms protonDensity=psp_solarwind_density_percc protonTemp=psp_solarwind_temp_k
+field psp_imf_bmag_nt psp_imf_bmag_nt inverse-square em nT 3600 0.0 0.0
+field psp_imf_br_rtn_nt psp_imf_br_rtn_nt inverse-square em nT 3600 0.0 0.0
+field psp_imf_bt_rtn_nt psp_imf_bt_rtn_nt inverse-square em nT 3600 0.0 0.0
+field psp_imf_bn_rtn_nt psp_imf_bn_rtn_nt inverse-square em nT 3600 0.0 0.0
+field psp_solarwind_flow_speed_kms psp_solarwind_flow_speed_kms patch-levy advective km/s 3600 0.0 0.0
+field psp_solarwind_density_percc psp_solarwind_density_percc gaussian-inverse-square diffusion cm-3 3600 0.0 0.0
+field psp_solarwind_temp_k psp_solarwind_temp_k exponential-decay thermal K 3600 0.0 0.0
+
+url https://cdaweb.gsfc.nasa.gov/hapi/data?id=PSP_SWP_SPC_L3I&time.min={week_ago}T00:00:00Z&time.max={now}Z&parameters=np_moment_gd,wp_moment_gd&format=json
+ttl 3600
+at parker_solar_probe
+hapi np_moment_gd=psp_proton_density_percc wp_moment_gd=psp_proton_thermal_speed_kms
+field psp_proton_density_percc psp_proton_density_percc gaussian-inverse-square diffusion cm-3 3600 0.0 0.0
+field psp_proton_thermal_speed_kms psp_proton_thermal_speed_kms exponential-decay thermal km/s 3600 0.0 0.0
 
 url https://services2.arcgis.com/7KRXAKALbBGlCW77/arcgis/rest/services/Local_Air_Quality_CHPL_211297/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
 ttl 3600

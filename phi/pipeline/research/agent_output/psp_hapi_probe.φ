@@ -1,0 +1,41 @@
+# PSP-HAPI-Probe (2026-08-18) — Parker Solar Probe in-situ via CDAWeb HAPI
+# Agent: grind-pro. Mechanisch, curl-only. Beobachtende Sprache — Diagnosen nennen was IST.
+# Regeln: kein tapvizier.cds.unistra.fr (Quota), kein cargo build/check/run, keine Register-Edits.
+# Dispositionen: lebendig | dead | parser-gap | auth | void. Draft-Blöcke inline nach SOURCES_V2_SPEC (9-Token field).
+# HAPI-Server-Fakt: start/stop → 1400 "extraneous request parameter(s)"; die lebende Form ist time.min/time.max.
+#   Der registrierte OMNI2-Block (sources.φ Z.493) trägt start/stop und liefert heute 1400 — der Server will time.min/time.max.
+#   Parameter müssen in Katalog-Reihenfolge (info endpoint) stehen, sonst 1411 "Parameter out of order".
+# Position: der Frame at parker_solar_probe EXISTIERT. sources.φ Z.837-840 + frame_registry.φ Z.81 tragen
+#   ephemeris_parker_solar_probe.bin → at parker_solar_probe; horizons_compiler.rs Z.445 generiert das bin ("-96", dynamic 1.0mo/5d).
+#   Die Messung lebt am Raumfahrzeug; at parker_solar_probe ankert sie am baryzentrischen Frame der Sonde (gleicher Mechanismus wie at sun bei OMNI2).
+#   Kein body parker_solar_probe-Keyword — at <body> ist der Frame. Nichts erfunden.
+
+kandidat https://cdaweb.gsfc.nasa.gov/hapi/info?id=PSP_COHO1HR_MERGED_MAG_PLASMA
+note Der OMNI2-analogste PSP-Datensatz: 1h-Merged (COHO) aus FIELDS-MAG + SWEAP-SPC, 16 Parameter, ALLE skalar. Coverage 2018-01-01 → 2025-12-31 (keine 2026-Daten). Stündliche Kadenz (24 Zeilen/Tag). Parameter (Katalog-Reihenfolge): radialDistance AU, heliographicLatitude/Longitude deg, BR/BT/BN nT, B (|B|) nT, VR/VT/VN km/s, ProtonSpeed km/s, flow_theta/flow_lon deg, protonDensity N/cm3, protonTemp deg K. protonTemp liegt als echte K-Temperatur vor; |B| als skalarer Parameter — beides fehlt in SWP_SPC_L3I und FLD_L2_MAG_RTN. Sample (2025-09-01T00:00, real): radialDistance 0.5 AU, BR 39.8, BT 32.95, BN 1.54, B 51.7 nT, ProtonSpeed 741.5 km/s, protonDensity 19.3, protonTemp 48878 K. Lücken tragen fill -1e31 (Merged = MAG+Plasma gleichzeitig vorhanden). Der Hapi-Extract liest die fill-Metadaten nicht: scalar_of liefert -1e31 als Zahl, retain filtert nur is_finite — fill würde als Messwert ingestiert (parser-gap, gilt für alle drei Blöcke).
+disposition lebendig
+url https://cdaweb.gsfc.nasa.gov/hapi/data?id=PSP_COHO1HR_MERGED_MAG_PLASMA&time.min={week_ago}T00:00:00Z&time.max={now}Z&parameters=BR,BT,BN,B,ProtonSpeed,protonDensity,protonTemp&format=json
+ttl 3600
+at parker_solar_probe
+hapi BR=psp_imf_br_rtn_nt BT=psp_imf_bt_rtn_nt BN=psp_imf_bn_rtn_nt B=psp_imf_bmag_nt ProtonSpeed=psp_solarwind_flow_speed_kms protonDensity=psp_solarwind_density_percc protonTemp=psp_solarwind_temp_k
+field psp_imf_bmag_nt psp_imf_bmag_nt inverse-square em nT 3600 0.0 0.0
+field psp_imf_br_rtn_nt psp_imf_br_rtn_nt inverse-square em nT 3600 0.0 0.0
+field psp_imf_bt_rtn_nt psp_imf_bt_rtn_nt inverse-square em nT 3600 0.0 0.0
+field psp_imf_bn_rtn_nt psp_imf_bn_rtn_nt inverse-square em nT 3600 0.0 0.0
+field psp_solarwind_flow_speed_kms psp_solarwind_flow_speed_kms patch-levy advective km/s 3600 0.0 0.0
+field psp_solarwind_density_percc psp_solarwind_density_percc gaussian-inverse-square diffusion cm-3 3600 0.0 0.0
+field psp_solarwind_temp_k psp_solarwind_temp_k exponential-decay thermal K 3600 0.0 0.0
+
+kandidat https://cdaweb.gsfc.nasa.gov/hapi/info?id=PSP_SWP_SPC_L3I
+note SWEAP Solar Probe Cup L3I: >130 Parameter (SPC-Momente + Maxwell-Fits, je _gd "Only Good Quality" und All-Q Duplikat, plus sc_pos_HCI km, sc_vel_HCI km/s, carr_lat/carr_lon). Coverage 2018-10-30 → 2025-11-30 (keine 2026-Daten). Skalare Messgrößen: np_moment_gd (Protonendichte, cm-3), wp_moment_gd (Proton radial most-probable thermal speed, km/s). KEINE Temperatur in K — der thermische Parameter ist eine Geschwindigkeit (km/s); Temperatur K wäre Ableitung (T = m_p w²/2k), wird nicht erfunden (0 honored). SPC misst nur nahe Perihel (< ~0.25 AU), außerhalb fill -1e31. Native Kadenz ~28 s (nicht stündlich). Sample (2025-11-01, real, All-Q): np_moment 0.87/2.07/7.41 cm-3, wp_moment 6.74/19.3/23.6 km/s; 16/774 Zeilen real in 6h (SPC außerhalb des Betriebsfensters). Für die K-Temperatur ist COHO1HR protonTemp der ehrliche Weg.
+disposition lebendig
+url https://cdaweb.gsfc.nasa.gov/hapi/data?id=PSP_SWP_SPC_L3I&time.min={week_ago}T00:00:00Z&time.max={now}Z&parameters=np_moment_gd,wp_moment_gd&format=json
+ttl 3600
+at parker_solar_probe
+hapi np_moment_gd=psp_proton_density_percc wp_moment_gd=psp_proton_thermal_speed_kms
+field psp_proton_density_percc psp_proton_density_percc gaussian-inverse-square diffusion cm-3 3600 0.0 0.0
+field psp_proton_thermal_speed_kms psp_proton_thermal_speed_kms exponential-decay thermal km/s 3600 0.0 0.0
+
+kandidat https://cdaweb.gsfc.nasa.gov/hapi/info?id=PSP_FLD_L2_MAG_RTN
+note FIELDS L2 MAG RTN: ein einziger Parameter psp_fld_l2_mag_RTN, size [3] (BR/BT/BN RTN), double, fill NaN. Coverage 2018-10-02 → 2025-10-31 (keine 2026-Daten). Kadenz "full cadence" ~0.109 s (~9 Hz, 791013 Zeilen/Tag). Der Hapi-Extract extrahiert nur skalare Parameter (scalar_of → None für Arrays) — ein [3]-Vektor liefert kein Feld. PSP_FLD_L2_MAG_RTN_1MIN (1-Min-Kadenz, gleicher [3]-Vektor) ebenso parser-gap. Der skalare B-Weg (BR/BT/BN/B als Einzelparameter) liegt im COHO1HR-Block; die RTN-B-Komponenten auf Feld-Ebene brauchen einen Komponenten-Index im Hapi-Extract (pending).
+disposition parser-gap
+note Komponenten-Index (hapi <param>.<i>=<key>) fehlt im Hapi-Extract — erst dann sind BR/BT/BN aus dem [3]-Vektor extrahierbar; bis dahin deckt COHO1HR die skalaren nT-Komponenten ab.

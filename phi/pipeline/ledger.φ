@@ -492,3 +492,19 @@ note vollzogen (2026-08-18, Rust-Kybernautin): `build_netcdf_channels` im Archiv
 verifiziert
 bestand phi/pipeline/research/agent_output/recheck_b1.φ
 note sensor.community-Urteil (2026-08-18): die b1-Box-Route lebt — filter/box=...&type=SDS011 liefert 200 JSON (P1/P2 je Messung); integriert in sources.φ (ttl 300, on earth, PM1/PM2.5 diffusion μg/m3). Caveat bleibt: indoor-Sensoren (location.indoor=1) im Fenster nicht herausfilterbar. Die api.sensor.community-403- und /airrohr/v1/-Root-404-Einträge bleiben (anderer Host/Route).
+
+verifiziert
+bestand phi/pipeline/research/agent_output/psp_hapi_probe.φ
+note PSP-HAPI-Probe (2026-08-18): 2 Blöcke integriert in sources.φ — PSP_COHO1HR_MERGED_MAG_PLASMA (7 Felder: B/BR/BT/BN nT, ProtonSpeed, Dichte, echte K-Temperatur; Coverage 2018-01-01→2025-12-31, stündlich) + PSP_SWP_SPC_L3I (2 Felder: Dichte + thermische Geschwindigkeit — keine K-Temperatur erfunden, 0 honored; SPC misst nur <0,25 AU). at parker_solar_probe (Frame existiert, ephemeris_parker_solar_probe.bin). Register-Befund: OMNI2-Block auf time.min/time.max korrigiert (start/stop → 1400 gegen den Live-Server); Hapi-fill -1e31 wird als Messwert ingestiert (scalar_of liest fill nicht) — parser-gap offen für alle HAPI-Blöcke.
+
+geparkt
+kandidat https://cdaweb.gsfc.nasa.gov/hapi/data?id=PSP_FLD_L2_MAG_RTN
+note psp_hapi_probe (2026-08-18): [3]-Vektor-Parameter psp_fld_l2_mag_RTN (~0,109 s Kadenz, Coverage bis 2025-10-31) — der Hapi-Extract liest nur Skalare; Komponenten-Index (hapi <param>.<i>=<key>) ausstehend. Bis dahin deckt COHO1HR die skalaren nT-Komponenten.
+
+geparkt
+kandidat https://maia.usno.navy.mil/ser7/finals.all
+note eop_finals_probe (2026-08-18): Route lebt (täglich, token-frei, MJD ab 1973, 20005 Zeilen; letzte belegte Zeile MJD 61638, danach Leer-Platzhalter). bulletina-ex-001.csv ist 404 — der dead-Eintrag bleibt wahr. `format finals`-Atom ausstehend: Zeichenposition-Spalten statt Whitespace, letzte belegte Zeile statt lastline, MJD→TDB (Versatz 40587 d), Mehr-Felder/Zeile. Feld-Linien bereit: ut1_utc s, pmx/pmy arcsec — force em (VLBI/GNSS), tau 86400, at earth.
+
+geparkt
+kandidat https://api.alerce.online/alerts/v1/objects/{oid}/detections
+note alerce_probe (2026-08-18): detections-Route lebt (magpsf/magap, em mag, at sun, anonym, kein Token). Der Bulk-Block braucht den celestial-oid-Fanout (parser-gap) — ohne ihn trägt der Block ein Einzel-Objekt. Objektliste trägt keine Magnituden (nur Position + Zeit); magstats fehlt die Position in der Zeile. Draft im alerce_probe.φ.

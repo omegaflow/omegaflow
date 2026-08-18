@@ -171,10 +171,13 @@ Dazu zwei Ernte-Folgen (Befunde der grind-flash-Agenten 2026-08-18):
   bis die 44-B-Binaries gebaut sind (pending, keine Fabrikation);
   erst danach trägt der Katalog die geerntete Radialgeschwindigkeit.
   Bis dahin fließt rv nur aus den JSON-cmap-Quellen (denis `radvel
-  rv`). Vollzogen (2026-08-18, Säuberung): kein rv-Ersatzwert — die
-  Compiler (tycho2 bright/bin, tap_compiler star-bin + union-bright)
-  überspringen Zeilen ohne rv (0 honored, Zähler im eprintln); erst
-  die rv-Ernte deckt sie.
+  rv`). Vollzogen (2026-08-18, Säuberung): keine Ersatzwerte — die
+  Compiler überspringen Zeilen ohne rv/pm/mag (tycho2 bright/bin/tgas,
+  tap_compiler star-bin + union-bright, tic pm, cometels H=null,
+  0 honored); auch der DASTCOM-Hash schließt Records ohne berechenbare
+  Beschleunigung aus (Enclosure-Dilation fabriziert kein amax=0);
+  mpcobs/tic/tess behalten ihre dokumentierten 0.0=absent-Formatcodes.
+  Erst die rv-Ernte deckt die rv-losen Zeilen.
 
 Weitere neue Quellen (grind-pro, heikler Join/Parsing): LCDB-Rotations-
 achsen (Pol, nicht nur Periode), DAMIT-Formmodelle (3D-Formen → j2/r_eq).
@@ -667,6 +670,29 @@ Offen (Detail in phi/pipeline/ledger.φ):
 - Kraft-Abdeckung: acoustic/electric/thermal/advective/diffusion-Kuration
   offen — electric: GIC-Netze + Live-E-Feldstärke (kein Feed); GLM ist em
   (Ratsurteil), WWLLN radio-em vs. Entladung-electric bleibt Force-Gate-Frage
+
+- Die drei Ports der Nadeln (2026-08-18) — geprobt und disponiert durch drei
+  getrennte grind-pro-Aufträge, Outputs in `phi/pipeline/research/agent_output/`
+  (eop_finals_probe.φ, psp_hapi_probe.φ, alerce_probe.φ):
+  - PSP-Science: 2 Blöcke integriert in sources.φ
+    (PSP_COHO1HR_MERGED_MAG_PLASMA 7 Felder, PSP_SWP_SPC_L3I 2 Felder;
+    `at parker_solar_probe`; Coverage bis 2025-12-31). Geparkt:
+    FLD_L2_MAG_RTN ([3]-Vektor — Komponenten-Index im Hapi-Extract
+    ausstehend).
+  - ALeRCE: geparkt — detections-Route lebt, der Bulk-Block braucht den
+    celestial-oid-Fanout (parser-gap).
+  - EOP/IERS: geparkt — finals.all lebt, `format finals`-Atom ausstehend
+    (Zeichenposition-Spalten, letzte belegte Zeile, MJD→TDB,
+    Mehr-Felder/Zeile). Feld-Linien liegen im Probe-File bereit.
+  - Register-Reparatur vollzogen: OMNI2-Block auf time.min/time.max
+    korrigiert (start/stop lieferte 1400 gegen den Live-Server).
+    OFFEN: der Hapi-Extract ingestiert fill -1e31 als Messwert
+    (parser-gap, gilt für alle HAPI-Blöcke).
+  WARTEND: IONEX-GIM (`format ionex` pending), SuperMAG
+  (Server-Fault db-get — Proben wiederholen), Gaia DR4 (2.12.2026 —
+  Recompiler der 44-Byte-Records), LuckyStar (Force-Gate: Vorhersage
+  ist Modell, keine Messung), ONC-Hydrophone (scalardata-Familie,
+  Kanal-Probe nach den drei Ports).
 
 Doku-Drift (behoben 2026-08-17): Alle `archeology/`-Referenzen zeigen
 heute auf den Bestand unter /home/johannes/projects/archive/archeology/.
