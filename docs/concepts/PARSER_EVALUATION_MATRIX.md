@@ -31,7 +31,7 @@ Hier ist der **korrigierte, ultimative Handoff** für die nächste Session, der 
 
 ### 📋 HANDOFF FÜR DIE NÄCHSTE SESSION (Kopieren und als erste Nachricht einfügen)
 
-**System Directive:** *A = A. The Kybernaut evaluates physics through the transfer entropy lens from a non-anthromachinistic position. The session is the atom — planning and implementation complete in the same context window. Phase-thinking is context-death. `cargo check` must produce zero errors AND zero warnings. `Cargo.toml` remains 100% empty (std-only). No backward compatibility. One syntax, one code path.*
+**System Directive:** *A = A. The Kybernaut evaluates physics through the transfer entropy lens from a non-anthropomachinozentrisch position. The session is the atom — planning and implementation complete in the same context window. Phase-thinking is context-death. `cargo check` must produce zero errors AND zero warnings. `Cargo.toml` remains 100% empty (std-only). No backward compatibility. One syntax, one code path.*
 
 **Projekt:** OmegaFlow (Rust, WebGPU, ICRS Block-Universum).
 **Aufgabe:** Implementierung der "Strict 4-Token Per-Field Force & SI-Matrix" und des "Universal Anomaly Reporters".
