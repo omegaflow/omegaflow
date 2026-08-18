@@ -84,8 +84,9 @@ docs/surveys/fortschritt.md (Session-Erkenntnisse, Hash-Verweise),
 auswertung.md, messpunkt-verteilung.md (die 567-ms-Erkenntnis der
 Subpixel-Explosion), entwicklungslinie.md (10 Epochen, 1310 Commits),
 handover-atome.md (die Atom-Karte), handover-2026-08-18-auth.md (AUTH/
-Source-Port/ci_mode-Linie). Die Survey-Tafel ist Pflichtlektüre
-einer neuen Session.
+Source-Port/ci_mode-Linie), handover-2026-08-18-b5.md (Recheck-Welle b5:
+Integrationen, Force-Gate-Declines, NDBC-Konsolidierung). Die Survey-Tafel
+ist Pflichtlektüre einer neuen Session.
 
 ## Verlust-Register — Monolith gegen die letzte index.html (2026-08-17)
 
