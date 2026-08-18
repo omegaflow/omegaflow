@@ -517,12 +517,10 @@ heute auf den Bestand unter /home/johannes/projects/archive/archeology/.
   Verifikation offen. GLM (Ratsurteil 2026-08-17): GOES_GLM_Bolides-
   ArcGIS-GeoJSON ist die Route — Kraft `em` (NIR-Photodetektor 777,4 nm,
   Wert = detektierte optische Energie J, τ = Blitzdauer via `tau_key`),
-  NICHT electric; netCDF entfällt für GLM. Verifikation 2026-08-18
-  (ledger.φ parser-gap GLMNetCDF): beide Endpoints antworten 200 mit echten
-  Messungen an ihren Koordinaten. Offen sind zwei verschiedene Lücken:
-  ArcGIS-Bolides — detected_energy-Einheit ungeklärt (4.38e-15, nicht als
-  Joule lesbar); CNEOS fireball.api — energy = J·10¹⁰, aber lat/lon als
-  Betrag+Richtungsstring getrennt (parser-gap Vorzeichen). Pending, kein Dead.
+  NICHT electric; netCDF entfällt für GLM. Erledigt 2026-08-18: CNEOS
+  fireball.api live in sources.φ (keyless, `lat_sign`/`lon_sign`-Direktiven,
+  energy = e10j, impact-e = kt_tnt). ArcGIS-Bolides bleibt pending
+  (detected_energy-Einheit ungeklärt).
 - SI-Konversion total (Ratsurteil 2026-08-17): `convert_to_si` →
   `Option<f64>`, angewendet am Anker für alle Feldwerte; unbekannte/
   logarithmische Einheit → Oszillator manifestiert nicht, stderr

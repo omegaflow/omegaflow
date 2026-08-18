@@ -647,6 +647,19 @@ ra ramean
 dec decmean
 field gmag lasair_ztf_transient_gmag gaussian-inverse-square em mag 3600 0.0 0.0
 
+url https://ssd-api.jpl.nasa.gov/fireball.api?limit=200&sort=-date
+ttl 3600
+at earth
+map data
+lat 3
+lat_sign 4
+lon 5
+lon_sign 6
+alt 7 km
+epoch 0
+field 1 geosphere_fireball_radiated_energy_e10j inverse-square em e10j 3600 0.0 0.0
+field 2 geosphere_fireball_impact_energy_kt inverse-square em kt_tnt 3600 0.0 0.0
+
 url https://services.swpc.noaa.gov/json/ace/mag/ace_mag_1h.json
 ttl 3600
 at earth 0.99

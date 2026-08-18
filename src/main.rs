@@ -777,6 +777,7 @@ enum Extract {
         trk_key: String,
         vr_key: String,
         fields: Vec<FieldConfig>,
+        lat_sign: Option<String>,
         lon_sign: Option<String>,
         tau_key: String,
         mag_type_key: String,
@@ -901,6 +902,8 @@ fn convert_to_si(value: f64, unit: &str) -> Option<f64> {
         "crab" => Some(value * 2.4e-14),
         "logg" => Some(10.0f64.powf(value) * 0.01),
         "cpm" => Some(value * 1.0e-6 / (334.0 * 3600.0)),
+        "e10j" => Some(value * 1.0e10),
+        "kt_tnt" => Some(value * 4.184e12),
         _ => None,
     }
 }
@@ -991,7 +994,7 @@ fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
     match force {
         0 => &[
             "w", "w/m2", "t", "nt", "ev", "jy", "mjy", "jy_km/s", "hz", "m", "km", "mag", "pc/cm3",
-            "erg/cm2", "crab", "cpm",
+            "erg/cm2", "crab", "cpm", "e10j", "kt_tnt",
         ],
         1 => &[
             "m/s2", "gal", "mgal", "kg", "m_sun", "m_earth", "au", "pc", "t", "nt", "m", "r_earth",
@@ -2617,7 +2620,13 @@ mod archivar {
 
     fn parse_iso_tdb(s: &str, lsk: &LeapSeconds) -> Option<f64> {
         let s = s.trim();
-        let (date, time) = s.split_once('T')?;
+        let (date, time) = if let Some((d, t)) = s.split_once('T') {
+            (d, t)
+        } else if let Some((d, t)) = s.split_once(' ') {
+            (d, t)
+        } else {
+            return None;
+        };
         let mut dp = date.split('-');
         let y: i64 = dp.next()?.parse().ok()?;
         let m: u32 = dp.next()?.parse().ok()?;
@@ -3197,6 +3206,7 @@ mod archivar {
                 trk_key: trk_key.into(),
                 vr_key: vr_key.into(),
                 fields,
+                lat_sign: None,
                 lon_sign: None,
                 tau_key: String::new(),
                 mag_type_key: String::new(),
@@ -4991,6 +5001,7 @@ mod archivar {
                         trk_key: String::new(),
                         vr_key: String::new(),
                         fields: Vec::new(),
+                        lat_sign: None,
                         lon_sign: None,
                         tau_key: String::new(),
                         mag_type_key: String::new(),
@@ -5517,6 +5528,16 @@ mod archivar {
                 "lon" if parts.len() >= 2 => {
                     if let Some(Extract::Map { lon_key, .. }) = cur_extracts.last_mut() {
                         *lon_key = parts[1].to_string();
+                    }
+                }
+                "lat_sign" if parts.len() >= 2 => {
+                    if let Some(Extract::Map { lat_sign, .. }) = cur_extracts.last_mut() {
+                        *lat_sign = Some(parts[1].to_string());
+                    }
+                }
+                "lon_sign" if parts.len() >= 2 => {
+                    if let Some(Extract::Map { lon_sign, .. }) = cur_extracts.last_mut() {
+                        *lon_sign = Some(parts[1].to_string());
                     }
                 }
                 "alt" if parts.len() >= 2 => {
@@ -6877,6 +6898,7 @@ mod archivar {
                     trk_key,
                     vr_key,
                     fields,
+                    lat_sign,
                     lon_sign,
                     tau_key,
                     mag_type_key,
@@ -6900,15 +6922,21 @@ mod archivar {
                                     jpath(v, alt_key).map(|a| a * alt_scale)
                                 };
                                 if let (Some(la), Some(lo), Some(al)) = (lat, lon, alt) {
+                                    let mut lat_val = la;
+                                    if let Some(sign_key) = lat_sign {
+                                        if let Some(vv) = jpath_val(v, sign_key) {
+                                            if let JsonVal::Str(s) = vv {
+                                                if s.contains('S') || s.contains('s') {
+                                                    lat_val = -la;
+                                                }
+                                            }
+                                        }
+                                    }
                                     let mut lon_val = lo;
                                     if let Some(sign_key) = lon_sign {
                                         if let Some(vv) = jpath_val(v, sign_key) {
                                             if let JsonVal::Str(s) = vv {
-                                                if s.contains('W')
-                                                    || s.contains('w')
-                                                    || s.contains('S')
-                                                    || s.contains('s')
-                                                {
+                                                if s.contains('W') || s.contains('w') {
                                                     lon_val = -lo;
                                                 }
                                             }
@@ -6932,7 +6960,7 @@ mod archivar {
                                     let position = if let (Some(sp), Some(tr)) = (speed, track) {
                                         Position::SurfaceFlow {
                                             body_name: frame_body_name(&src.frame),
-                                            lat: la,
+                                            lat: lat_val,
                                             lon: lon_val,
                                             alt: al,
                                             speed: sp,
@@ -6942,7 +6970,7 @@ mod archivar {
                                     } else {
                                         Position::Surface {
                                             body_name: frame_body_name(&src.frame),
-                                            lat: la,
+                                            lat: lat_val,
                                             lon: lon_val,
                                             alt: al,
                                         }
@@ -12724,6 +12752,7 @@ field temp temp_c\n";
                         unit: String::new(),
                         fold: None,
                     }],
+                    lat_sign: None,
                     lon_sign: None,
                     tau_key: String::new(),
                     mag_type_key: String::new(),
@@ -13547,6 +13576,7 @@ field temp temp_c\n";
                         unit: String::new(),
                         fold: None,
                     }],
+                    lat_sign: None,
                     lon_sign: None,
                     tau_key: String::new(),
                     mag_type_key: String::new(),
@@ -13622,6 +13652,7 @@ field temp temp_c\n";
                         unit: String::new(),
                         fold: None,
                     }],
+                    lat_sign: None,
                     lon_sign: None,
                     tau_key: String::new(),
                     mag_type_key: String::new(),
@@ -13709,6 +13740,7 @@ field temp temp_c\n";
                         unit: String::new(),
                         fold: None,
                     }],
+                    lat_sign: None,
                     lon_sign: None,
                     tau_key: "row_tau".into(),
                     mag_type_key: String::new(),
@@ -13892,6 +13924,7 @@ field temp temp_c\n";
                             fold: Some((2, "sh".into())),
                         },
                     ],
+                    lat_sign: None,
                     lon_sign: None,
                     tau_key: String::new(),
                     mag_type_key: String::new(),
@@ -14241,6 +14274,96 @@ field temp temp_c\n";
         }
 
         #[test]
+        fn test_map_lat_sign_lon_sign() {
+            let src = SourceConfig {
+                ttl: 3600,
+                url: "https://example.com/fireball".into(),
+                frame: super::Frame::Surface {
+                    body_name: "earth".into(),
+                    lat: 0.0,
+                    lon: 0.0,
+                    alt: 0.0,
+                },
+                format: "json".into(),
+                extracts: vec![Extract::Map {
+                    arr_path: "data".into(),
+                    lat_key: "3".into(),
+                    lon_key: "5".into(),
+                    alt_key: "7".into(),
+                    epoch_key: "0".into(),
+                    val_key: String::new(),
+                    alt_scale: 1000.0,
+                    vel_key: String::new(),
+                    vel_scale: 1.0,
+                    trk_key: String::new(),
+                    vr_key: String::new(),
+                    fields: vec![FieldConfig {
+                        key: "1".into(),
+                        name: "fireball_energy_e10j".into(),
+                        kernel: 0,
+                        force: 0,
+                        tau: 3600.0,
+                        absorption: 0.0,
+                        advection: 0.0,
+                        unit: "e10j".into(),
+                        fold: None,
+                    }],
+                    lat_sign: Some("4".into()),
+                    lon_sign: Some("6".into()),
+                    tau_key: String::new(),
+                    mag_type_key: String::new(),
+                }],
+                headers: vec![],
+                post_body: None,
+                target: None,
+                catalog: None,
+                max_freq: None,
+                min_freq: None,
+                body: None,
+                stations_url: None,
+                stations_path: String::new(),
+                stations_lat: String::new(),
+                stations_lon: String::new(),
+                stations_id: String::new(),
+                flux_from_mag: None,
+                abs_mag_from: None,
+                catalog_epoch: None,
+                repeat_ra_bins: 0,
+                fanout_cap: 0,
+                stations_flatten: String::new(),
+                stations_filter: None,
+                fanout_delay: 0,
+            };
+            let body = r#"{"data":[["2026-08-01 17:43:48","2.9","0.1","19.5","S","176.2","E","45.0",null],["2026-07-21 01:14:45","3.2","0.11","9.4","N","57.4","W","31.5",null]]}"#;
+            let fixture_lsk = super::LeapSeconds {
+                delta_t_a: 32.184,
+                deltas: vec![(37.0, 1483228800.0)],
+            };
+            match super::extract(&src, body, 8.0e8, &fixture_lsk) {
+                super::ExtractResult::Measurements(v) => {
+                    assert_eq!(v.len(), 2);
+                    match (&v[0].0.position, &v[1].0.position) {
+                        (
+                            super::Position::Surface {
+                                lat: la0, lon: lo0, ..
+                            },
+                            super::Position::Surface {
+                                lat: la1, lon: lo1, ..
+                            },
+                        ) => {
+                            assert!((la0 - (-19.5)).abs() < 1e-9, "lat S: {}", la0);
+                            assert!((lo0 - 176.2).abs() < 1e-9, "lon E: {}", lo0);
+                            assert!((la1 - 9.4).abs() < 1e-9, "lat N: {}", la1);
+                            assert!((lo1 - (-57.4)).abs() < 1e-9, "lon W: {}", lo1);
+                        }
+                        _ => panic!("position variant unexpected"),
+                    }
+                }
+                _ => panic!("extract variant unexpected"),
+            }
+        }
+
+        #[test]
         fn test_mag_type_gating() {
             assert!(is_moment_magnitude("mww"));
             assert!(is_moment_magnitude("Mw"));
@@ -14285,6 +14408,7 @@ field temp temp_c\n";
                         unit: "Mw".into(),
                         fold: None,
                     }],
+                    lat_sign: None,
                     lon_sign: None,
                     tau_key: String::new(),
                     mag_type_key: "magType".into(),
