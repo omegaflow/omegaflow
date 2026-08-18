@@ -414,11 +414,11 @@ note NEOWISE/AKARI-Join: Durchmesser+Albedo (129.771) geerntet (neowise + astero
 
 verifiziert
 bestand phi/research/agent_output/recheck_b5_flash.φ
-note OceanNetworks /api/scalardata lebt (token in URL, outputFormat=Object, sensorData.0.data mit sampleTime/value/qaqcFlag; 597 CTD-Stationen) — 3 Kanäle integriert in sources.φ (temperature C thermal, salinity psu diffusion, conductivity S/m electric). Druck-Kanal (decibar) pending: Unit-Arm fehlt in convert_to_si. Strömung (ADCP) trägt die Route nicht (0 honored).
+note OceanNetworks /api/scalardata lebt (token in URL, outputFormat=Object, sensorData.0.data mit sampleTime/value/qaqcFlag; 597 CTD-Stationen) — 4 Kanäle integriert in sources.φ (temperature C thermal, salinity psu diffusion, conductivity S/m electric, pressure decibar advective). Strömung (ADCP) trägt die Route nicht (0 honored).
 
 verifiziert
 bestand phi/research/agent_output/recheck_b4.φ
-note OMNIWeb integriert (CDAWeb-HAPI OMNI2_H0_MRG1HR, at sun): 6 Felder — V1800 km/s advective, N1800 cm-3 diffusion, T1800 K thermal, BX/BY/BZ nT em. E1800 (mV/m) + Pressure1800 (nPa) pending: Unit-Arme fehlen.
+note OMNIWeb integriert (CDAWeb-HAPI OMNI2_H0_MRG1HR, at sun): 8 Felder — V1800 km/s advective, N1800 cm-3 diffusion, T1800 K thermal, BX/BY/BZ nT em, E1800 mV/m electric, Pressure1800 nPa advective.
 
 verifiziert
 bestand phi/research/agent_output/recheck_b5_flash.φ

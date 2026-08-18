@@ -290,6 +290,20 @@ map sensorData.0.data
 epoch sampleTime
 field value oceannetworks_ctd_conductivity_sm gaussian-inverse-square electric S/m 1800 0.0 0.0
 
+url https://data.oceannetworks.ca/api/scalardata?method=getByLocation&token={OCEANNETWORKS_TOKEN}&locationCode={station}&deviceCategoryCode=CTD&dateFrom=-PT1H&outputFormat=Object&sensorCategoryCodes=pressure
+ttl 1800
+at earth
+stations https://data.oceannetworks.ca/api/locations?token={OCEANNETWORKS_TOKEN}&deviceCategoryCode=CTD
+stations_path .
+stations_id locationCode
+stations_lat lat
+stations_lon lon
+fanout 8
+fanout_delay 10
+map sensorData.0.data
+epoch sampleTime
+field value oceannetworks_ctd_pressure_decibar gaussian-inverse-square advective decibar 1800 0.0 0.0
+
 url https://api.nasa.gov/DONKI/FLR?startDate={week_ago}&endDate={today}&classType=X&api_key={NASA_API_KEY}
 ttl 3600
 at sun
@@ -486,6 +500,8 @@ field omni_solarwind_temp_k omni_solarwind_temp_k exponential-decay thermal K 36
 field omni_imf_bx_gse_nt omni_imf_bx_gse_nt inverse-square em nT 3600 0.0 0.0
 field omni_imf_by_gsm_nt omni_imf_by_gsm_nt inverse-square em nT 3600 0.0 0.0
 field omni_imf_bz_gsm_nt omni_imf_bz_gsm_nt inverse-square em nT 3600 0.0 0.0
+field omni_solarwind_electric_field_mvm omni_solarwind_electric_field_mvm gaussian-inverse-square electric mV/m 3600 0.0 0.0
+field omni_solarwind_pressure_npa omni_solarwind_pressure_npa patch-levy advective nPa 3600 0.0 0.0
 
 url https://api.openaq.org/v3/sensors/{station}/measurements?limit=1&datetime_from={yesterday}T00:00:00Z
 header X-API-Key {OPENAQ_API_KEY}

@@ -566,11 +566,6 @@ heute auf den Bestand unter /home/johannes/projects/archive/archeology/.
 22 Blöcke verloren Feldwerte durch die SI-Konversion. Alle sind jetzt
 verdrahtet — nichts bleibt dunkel.
 
-Pending Unit-Arme (b5 2026-08-18): decibar (OceanNetworks-Druck),
-mV/m (OMNI E1800), nPa (OMNI Pressure1800) — die Kanäle existieren und
-sind verifiziert, die Felder manifestieren erst mit dem
-convert_to_si-Arm.
-
 ERLEDIGT (flux_from_mag, Primärband): cb(mag1), cometels(H), corot(mag),
 dcom5(H; M1 dark), denis(jmag; kmag dark), gcvs(mag), lmxb(mag1),
 mktypes(mag), pastel(mag), polarbase(mag), sb9(mag1; mag2 dark), sncat(mag),

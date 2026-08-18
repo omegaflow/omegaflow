@@ -920,6 +920,8 @@ fn convert_to_si(value: f64, unit: &str) -> Option<f64> {
         "mm" | "ms" => Some(value * 1e-3),
         "d" => Some(value * 86400.0),
         "hpa" | "mb" => Some(value * 100.0),
+        "decibar" => Some(value * 1e4),
+        "npa" => Some(value * 1e-9),
         "nt" => Some(value * 1e-9),
         "gal" => Some(value * 1e-2),
         "mgal" => Some(value * 1e-5),
@@ -945,6 +947,7 @@ fn convert_to_si(value: f64, unit: &str) -> Option<f64> {
         "mg/m3" | "mg/m³" | "mg/kg" => Some(value * 1e-6),
         "ug/m3" | "ug/m³" | "µg/m3" | "µg/m³" => Some(value * 1e-9),
         "ua/m2" | "ua/m²" | "µa/m2" | "µa/m²" => Some(value * 1e-6),
+        "mv/m" => Some(value * 1e-3),
         "uatm" => Some(value * 0.101325),
         "erg/cm2" => Some(value * 1e-3),
         "m3/s" | "m³/s" => Some(value),
@@ -1062,9 +1065,10 @@ fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
             "cm-3",
         ],
         7 => &[
-            "m/s", "km/h", "km/s", "knot", "kt", "m3/s", "cfs", "pa", "hpa", "mb", "m",
+            "m/s", "km/h", "km/s", "knot", "kt", "m3/s", "cfs", "pa", "hpa", "mb", "m", "decibar",
+            "npa",
         ],
-        8 => &["v/m", "v", "a", "s/m", "ua/m2"],
+        8 => &["v/m", "v", "a", "s/m", "ua/m2", "mv/m"],
         _ => &[],
     }
 }
@@ -11962,6 +11966,9 @@ field temp temp_c\n";
             close(convert_to_si(4.4, "logg"), 251.188643150958);
             close(convert_to_si(7.2, "Mw"), 10.0f64.powf(1.5 * 7.2 + 9.1));
             close(convert_to_si(334.0, "cpm"), 1e-6 / 3600.0);
+            close(convert_to_si(1.0, "decibar"), 1e4);
+            close(convert_to_si(1.0, "mV/m"), 1e-3);
+            close(convert_to_si(1.0, "nPa"), 1e-9);
             assert!(convert_to_si(9.0, "weird").is_none());
             assert!(convert_to_si(7.2, "M").is_none());
             assert!(convert_to_si(5.0, "mag").is_none());
@@ -14783,6 +14790,89 @@ mod mathematikerin {
         }
     }
 
+    fn gaussian(u: f64, h: f64) -> f64 {
+        (-(u * u) / (2.0 * h * h)).exp() / (h * (2.0 * std::f64::consts::PI).sqrt())
+    }
+
+    fn silverman(v: &[f32]) -> f64 {
+        let n = v.len() as f64;
+        let mean = v.iter().map(|&x| x as f64).sum::<f64>() / n;
+        let var = v
+            .iter()
+            .map(|&x| {
+                let d = x as f64 - mean;
+                d * d
+            })
+            .sum::<f64>()
+            / n;
+        (1.06 * var.sqrt().max(1e-30) * n.powf(-0.2)).max(1e-30)
+    }
+
+    pub fn transfer_entropy(x: &[f32], y: &[f32]) -> f64 {
+        let n = x.len();
+        if n < 8 {
+            return 0.0;
+        }
+        let hx = silverman(x);
+        let hy = silverman(y);
+        let m = n - 1;
+        let mut te = 0.0;
+        for t in 0..m {
+            let xt = x[t] as f64;
+            let xt1 = x[t + 1] as f64;
+            let yt = y[t] as f64;
+            let mut k3 = 0.0;
+            for s in 0..m {
+                k3 += gaussian(xt1 - x[s + 1] as f64, hx)
+                    * gaussian(xt - x[s] as f64, hx)
+                    * gaussian(yt - y[s] as f64, hy);
+            }
+            let p3 = k3 / m as f64;
+            let mut k1 = 0.0;
+            for s in 0..n {
+                k1 += gaussian(xt - x[s] as f64, hx);
+            }
+            let p1 = k1 / n as f64;
+            let mut k2xy = 0.0;
+            for s in 0..n {
+                k2xy += gaussian(xt - x[s] as f64, hx) * gaussian(yt - y[s] as f64, hy);
+            }
+            let p2xy = k2xy / n as f64;
+            let mut k2x = 0.0;
+            for s in 0..m {
+                k2x += gaussian(xt1 - x[s + 1] as f64, hx) * gaussian(xt - x[s] as f64, hx);
+            }
+            let p2x = k2x / m as f64;
+            te += ((p3 * p1) / (p2xy * p2x).max(1e-300)).ln();
+        }
+        te / m as f64
+    }
+
+    fn shuffle_series(v: &[f32], rng: &mut u64) -> Vec<f32> {
+        let mut out = v.to_vec();
+        for i in (1..out.len()).rev() {
+            *rng = rng
+                .wrapping_mul(6364136223846793005)
+                .wrapping_add(1442695040888963407);
+            let j = ((*rng >> 33) as usize) % (i + 1);
+            out.swap(i, j);
+        }
+        out
+    }
+
+    pub fn surrogate_threshold(x: &[f32], y: &[f32], seed: u64) -> f64 {
+        let mut vals: Vec<f64> = Vec::with_capacity(10);
+        let mut rng = seed.wrapping_add(0x9e3779b97f4a7c15);
+        for _ in 0..10 {
+            let ys = shuffle_series(y, &mut rng);
+            vals.push(transfer_entropy(x, &ys));
+        }
+        let n = vals.len() as f64;
+        let mean = vals.iter().sum::<f64>() / n;
+        let var = vals.iter().map(|&v| (v - mean) * (v - mean)).sum::<f64>() / n;
+        mean + 2.0 * var.sqrt()
+    }
+
     pub fn pack_window(records: &[Record], presence: [f64; 3]) -> PackedWindow {
         let n = records.len();
         let mut field = vec![0.0f32; n * 12];
@@ -15220,6 +15310,8 @@ mod mathematikerin {
         field_permeability: f32,
         prev_omega_sum: f32,
         prev_delta: f32,
+        prev_in_te: f64,
+        direction: i32,
         ticks_since_turn: u64,
         natural_latency_ticks: u64,
         t_thrust: f64,
@@ -15332,6 +15424,8 @@ mod mathematikerin {
                 field_permeability: 0.0,
                 prev_omega_sum: 0.0,
                 prev_delta: 0.0,
+                prev_in_te: 0.0,
+                direction: 1,
                 ticks_since_turn: 0,
                 natural_latency_ticks: 1,
                 t_thrust: 0.0,
@@ -16676,21 +16770,55 @@ mod mathematikerin {
                     }
                     probe_read.unmap();
                 }
-                let omega_sum: f32 = self.probe_omega.iter().sum();
-                let delta = omega_sum - self.prev_omega_sum;
-                if self.prev_delta != 0.0 && delta * self.prev_delta < 0.0 {
-                    self.natural_latency_ticks = self.ticks_since_turn.max(1);
-                    self.ticks_since_turn = 0;
+                if self.ring_filled >= 32 {
+                    let m = self.ring_filled;
+                    let mut xs = vec![0f32; m];
+                    let mut ys = vec![0f32; m];
+                    for i in 0..m {
+                        let idx = (self.ring_head + 256 - m + i) % 256;
+                        let v = self.probe_ring[idx];
+                        xs[i] = v[0] + v[1] + v[2] + v[3] + v[4] + v[5] + v[6] + v[7] + v[8];
+                        ys[i] = (v[9] * v[9] + v[10] * v[10] + v[11] * v[11]).sqrt();
+                    }
+                    let in_te = transfer_entropy(&xs, &ys);
+                    let threshold = surrogate_threshold(&xs, &ys, self.ring_gen);
+                    let delta_te = in_te - self.prev_in_te;
+                    self.prev_in_te = in_te;
+                    self.ticks_since_turn += 1;
+                    if self.direction > 0 && delta_te < -threshold {
+                        self.natural_latency_ticks = self.ticks_since_turn.max(1);
+                        self.ticks_since_turn = 0;
+                        self.direction = -1;
+                    }
+                    if self.direction < 0
+                        && (delta_te > threshold || self.field_permeability <= PERM_GROUND)
+                    {
+                        self.natural_latency_ticks = self.ticks_since_turn.max(1);
+                        self.ticks_since_turn = 0;
+                        self.direction = 1;
+                    }
+                    let target =
+                        (in_te.max(0.0) / (in_te.max(0.0) + threshold + PERM_GROUND as f64)) as f32;
+                    let alpha = 1.0 - (-1.0 / self.natural_latency_ticks.max(1) as f32).exp();
+                    self.field_permeability += (target - self.field_permeability) * alpha;
+                    self.field_permeability = self.field_permeability.clamp(PERM_GROUND, 1.0);
+                } else {
+                    let omega_sum: f32 = self.probe_omega.iter().sum();
+                    let delta = omega_sum - self.prev_omega_sum;
+                    if self.prev_delta != 0.0 && delta * self.prev_delta < 0.0 {
+                        self.natural_latency_ticks = self.ticks_since_turn.max(1);
+                        self.ticks_since_turn = 0;
+                    }
+                    self.ticks_since_turn += 1;
+                    self.prev_delta = delta;
+                    self.prev_omega_sum = omega_sum;
+                    let g = omega_sum.abs();
+                    let v_c = delta.abs();
+                    let target = (v_c / (g + PERM_GROUND)).tanh();
+                    let alpha = 1.0 - (-1.0 / self.natural_latency_ticks.max(1) as f32).exp();
+                    self.field_permeability += (target - self.field_permeability) * alpha;
+                    self.field_permeability = self.field_permeability.clamp(PERM_GROUND, 1.0);
                 }
-                self.ticks_since_turn += 1;
-                self.prev_delta = delta;
-                self.prev_omega_sum = omega_sum;
-                let g = omega_sum.abs();
-                let v_c = delta.abs();
-                let target = (v_c / (g + PERM_GROUND)).tanh();
-                let alpha = 1.0 - (-1.0 / self.natural_latency_ticks.max(1) as f32).exp();
-                self.field_permeability += (target - self.field_permeability) * alpha;
-                self.field_permeability = self.field_permeability.clamp(PERM_GROUND, 1.0);
                 let mx = self.window_median_extent();
                 let _ = self.audio_tx.send(AudioFrame {
                     omega: self.probe_omega,
@@ -17250,6 +17378,59 @@ mod mathematikerin {
             };
             app.packed_meta = vec![0.0; 12];
             assert_eq!(app.window_median_extent(), 1.0);
+        }
+
+        #[test]
+        fn transfer_entropy_causal_positive() {
+            let n = 200;
+            let mut x = vec![0f32; n];
+            let mut y = vec![0f32; n];
+            for t in 0..n {
+                y[t] = (t as f32 * 0.7).sin();
+            }
+            for t in 0..n - 1 {
+                x[t + 1] = 0.5 * x[t] + 0.6 * y[t];
+            }
+            let te = transfer_entropy(&x, &y);
+            assert!(te > 0.05, "causal TE should be positive, got {}", te);
+        }
+
+        #[test]
+        fn transfer_entropy_independent_near_zero() {
+            let n = 200;
+            let mut x = vec![0f32; n];
+            let mut y = vec![0f32; n];
+            for t in 0..n {
+                y[t] = (t as f32 * 0.7).sin();
+                x[t] = ((t as u64).wrapping_mul(2654435761) >> 24) as f32 / 255.0;
+            }
+            let te = transfer_entropy(&x, &y);
+            assert!(
+                te.abs() < 0.05,
+                "independent TE should be near zero, got {}",
+                te
+            );
+        }
+
+        #[test]
+        fn surrogate_threshold_below_causal_te() {
+            let n = 200;
+            let mut x = vec![0f32; n];
+            let mut y = vec![0f32; n];
+            for t in 0..n {
+                y[t] = (t as f32 * 0.7).sin();
+            }
+            for t in 0..n - 1 {
+                x[t + 1] = 0.5 * x[t] + 0.6 * y[t];
+            }
+            let te = transfer_entropy(&x, &y);
+            let thr = surrogate_threshold(&x, &y, 42);
+            assert!(
+                thr < te,
+                "surrogate threshold {} should be below causal TE {}",
+                thr,
+                te
+            );
         }
     }
 }
