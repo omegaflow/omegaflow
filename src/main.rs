@@ -288,7 +288,9 @@ struct NearPtVOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f, @loca
     let lum = clamp(olog / 8.0 + 0.5, 0.0, 1.0);
     let hue = fract(log2(max(in.tau, 1.0)) / 16.0);
     let rgb = hsl_to_rgb(hue, 1.0, lum);
-    return vec4f(rgb * a, a);
+    let noise = fract(sin(dot(in.pos.xy, vec2f(12.9898, 78.233))) * 43758.5453);
+    let grain = 0.9 + noise * 0.1;
+    return vec4f(rgb * a * grain, a);
 }
 
 fn erfc(x: f32) -> f32 {
@@ -592,8 +594,9 @@ fn presence_probe() {
         smoothstep(0.75, 1.0, t2),
     );
     let fade = clamp((olog - log2(1e-30)) / (-vp.expose_ex.x - log2(1e-30)), 0.0, 1.0);
-
-    return vec4f(color * fade, 1.0);
+    let noise = fract(sin(dot(in.pos.xy, vec2f(12.9898, 78.233))) * 43758.5453);
+    let grain = 0.9 + noise * 0.1;
+    return vec4f(color * fade * grain, 1.0);
 }
 "#;
 

@@ -295,7 +295,10 @@ resonance(mut read_signal(s: read_ws_frame_part(stream: read_ws_frame_raw(stream
 - Die Parabel-Maschinerie: `adaptFieldPermeability` +
   `computeOscSurrogate` + die Transfer-Entropie-Ringe — Ethik §9; die
   Rückkehr-Formel tanh(vC/(g+ε)) speist sich aus der Messreihe
-- Das Analog-Korn (Dithering gegen Banding, TAU-FORCE-RENDERING)
+- ~~Das Analog-Korn~~ — erledigt (2026-08-18): Phosphor-Korn
+  (`fract(sin(dot(pos, (12.9898, 78.233)))·43758.5453)`, Faktor 0.9+0.1)
+  im near-Feld (fs + near_pt_fs) — dasselbe Korn wie im Deep-Pfad,
+  Banding getilgt.
 - Die ⌘K-Command-Palette (M07)
 - 2-Finger-waagerecht = Zeit-Schub (P6; die Geste des Touchpad-Docs)
 - Zustimmungs-Gate + Sensor-Identität (P2/P5; Ratsurteil 2026-08-17:
