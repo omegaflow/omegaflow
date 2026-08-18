@@ -2089,8 +2089,10 @@ mod archivar {
                 Some(s) => s,
                 None => continue,
             };
+            let Some(accel) = accel_at_epoch(&rec) else {
+                continue;
+            };
             let speed = (vel[0] * vel[0] + vel[1] * vel[1] + vel[2] * vel[2]).sqrt();
-            let accel = accel_at_epoch(&rec).unwrap_or(0.0);
             let epoch_secs = (rec.epoch_jd - J2000_EPOCH) * 86400.0;
             vmax = vmax.max(speed);
             amax = amax.max(accel);
@@ -2220,8 +2222,9 @@ mod archivar {
                 let epoch_secs = (rec.epoch_jd - J2000_EPOCH) * 86400.0;
                 let age = (t2 - epoch_secs).abs();
                 let future_age = age + delta_t_cache;
-                let speed = speed_at_epoch(rec).unwrap_or(0.0);
-                let accel = accel_at_epoch(rec).unwrap_or(0.0);
+                let (Some(speed), Some(accel)) = (speed_at_epoch(rec), accel_at_epoch(rec)) else {
+                    continue;
+                };
                 let reach = kernel_reach(0)
                     + speed * future_age
                     + 0.5 * accel * future_age * future_age
@@ -6932,13 +6935,11 @@ mod archivar {
             out.push_str("at sun\n");
         } else if named_keys && map_line.is_some() {
             out.push_str("on earth 0 0\n");
-        } else if lat.is_some() && lon.is_some() {
-            out.push_str(&format!(
-                "on earth {} {} {}\n",
-                lat.unwrap_or(0.0),
-                lon.unwrap_or(0.0),
-                alt.unwrap_or(0.0)
-            ));
+        } else if let (Some(lat), Some(lon)) = (lat, lon) {
+            match alt {
+                Some(a) => out.push_str(&format!("on earth {} {} {}\n", lat, lon, a)),
+                None => out.push_str(&format!("on earth {} {}\n", lat, lon)),
+            }
         }
         if let Some(m) = &map_line {
             if celestial {
