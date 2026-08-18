@@ -145,11 +145,16 @@ Das Urteil ist im Register vollzogen: die 19 Hosts stehen in
 |---|---|---|---|---|
 | archive.opensearch.ceda.ac.uk | `CEDA_USER`/`CEDA_PASS` | Login (OpenID) | OGL/CC (UK) | https://archive.ceda.ac.uk/ (Token-API: services.ceda.ac.uk/api/token/create/) |
 | data.icos-cp.eu | `ICOS_USER`/`ICOS_PASS` | Login | CC-BY 4.0 | https://data.icos-cp.eu/ (cpauth.icos-cp.eu — Account vorhanden) |
-| frost.met.no | `FROST_CLIENT_ID` | Client-ID | NLOD/CC | https://frost.met.no/ (Client registrieren) |
 | gracedb.ligo.org | ~~`GRACEDB_TOKEN`~~ | ~~Auth~~ | offen (Alerts) | ~~https://gracedb.ligo.org/~~ — refused: Private-Events verlangt LVC/MOU-Gruppenmitgliedschaft, kein Self-Service; public superevents offen in sources.φ. |
 | lasair-ztf.lsst.ac.uk | `LASAIR_TOKEN` | Token | offen | https://lasair-ztf.lsst.ac.uk/profile/ (API-Token angezeigt) |
 | mast.stsci.edu | `MAST_TOKEN` | Token | Public Domain | https://mast.stsci.edu/ (TESS/HST/JWST-Photometrie, em — Token vorhanden) |
 | toar-data.fz-juelich.de | `TOAR_USER`/`TOAR_PASS` | Login | offen | https://toar-data.fz-juelich.de/ (API v2 vorhanden — Registrierung pending 2026-08-17) |
+
+**§E.1 — integriert (live in sources.φ, Stand 2026-08-17):**
+
+| Host | Secret | sources.φ | Was IS |
+|---|---|---|---|
+| frost.met.no | `FROST_BASIC_AUTH` | Z.617–640 | air_temperature (thermal, C) + wind_speed (advective, m/s), Stations-Fanout 40, Basic-Auth-Header. |
 
 **Geklärt — offen ohne Key (aus key-needed entfernt, Stand 2026-08-17):**
 

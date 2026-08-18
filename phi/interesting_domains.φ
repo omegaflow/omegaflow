@@ -85,7 +85,7 @@ host erddap.marine.ie klassifiziert dead timeout — Operation timed out after 1
 host exoplanetarchive.ipac.caltech.edu klassifiziert parser-def docs — Exoplanet-Archiv-TAP (em celestial, echt) — Docs-Seite; TAP-Endpoint direkt prüfen.
 host fenixservices.fao.org klassifiziert dead 5xx — HTTP 521 — Server antwortet nicht brauchbar.
 host fermi.gsfc.nasa.gov klassifiziert parser-def cgi — CGI-Formular.
-host frost.met.no klassifiziert key-needed auth — HTTP 401 — Token/Registrierung nötig. Recheck 2026-08-17: Client-Credentials erstellt (FROST_CLIENT_ID/SECRET).
+host frost.met.no klassifiziert integrated — live in sources.φ (2026-08-17): air_temperature (thermal) + wind_speed (advective), Fanout 40, Basic-Auth {FROST_BASIC_AUTH}.
 host gateway.api.globalfishingwatch.org klassifiziert key-needed auth — HTTP 401 — Token/Registrierung nötig. — decline redistribution (CDN)
 host gcn.nasa.gov klassifiziert parser-def kafka-spa — GCN: HTML/SPA + Kafka-Stream (GCN/Kafka), kein GET-JSON — Archivar hat nur curl/GET/POST.
 host geodesy.unr.edu klassifiziert dead timeout — Connection timed out after 12001 milliseconds
@@ -307,7 +307,7 @@ key-needed data.nsidc.earthdatacloud.nasa.gov — ICESat-2 ATL03 (LIDAR, em echt
 key-needed dev.meteostat.net — Meteostat-Dev-Docs — API verlangt Key. — decline redistribution (CDN)
 key-needed docs.sentinel-hub.com — Sentinel-Hub verlangt Key/Subscription. — decline redistribution (CDN)
 key-needed ebird.org — eBird-API verlangt Key (Login-Redirect).
-key-needed frost.met.no — HTTP 401 — Token/Registrierung nötig. Recheck 2026-08-17: FROST_CLIENT_ID/SECRET erstellt.
+key-needed frost.met.no — integrated (live in sources.φ, Basic-Auth, Fanout 40; Verdikt 2026-08-17).
 key-needed gateway.api.globalfishingwatch.org — HTTP 401 — Token/Registrierung nötig. — decline redistribution (CDN)
 key-needed gracedb.ligo.org — refused: Gruppenmitgliedschaft (LVC/MOU), kein Self-Service; public superevents offen (Verdikt 2026-08-17).
 key-needed irsa.ipac.caltech.edu — Verdikt 2026-08-17: decline redundant (ZTF über Lasair/ALeRCE; TAP inventarisiert). Kein Token — S3 offen / IPAC-SSO.
@@ -367,7 +367,7 @@ key api.adsabs.harvard.edu → NASA_ADS_TOKEN
 key data.oceannetworks.ca → OCEANNETWORKS_TOKEN
 key supermag.jhuapl.edu → SUPERMAG_USER=omegaflow (logon-only; API aktuell Server-Fault db-get)
 key api.openaq.org → OPENAQ_API_KEY (bereits live, fanout-p09)
-key frost.met.no → FROST_CLIENT_ID (Secret vorhanden, nur für nicht-öffentliche Daten)
+key frost.met.no → FROST_BASIC_AUTH (integriert, live in sources.φ)
 key lasair-ztf.lsst.ac.uk → LASAIR_TOKEN (Recheck 2026-08-17: Token im Profil)
 key climate-themetoffice.hub.arcgis.com → offen (kein Key nötig)
 key mast.stsci.edu → MAST_TOKEN (Verdikt 2026-08-17 aufgehoben: TESS/HST/JWST em)

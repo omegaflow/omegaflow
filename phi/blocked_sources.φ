@@ -304,10 +304,6 @@ key-needed auth
 url https://firms.modaps.eosdis.nasa.gov/api/
 note FIRMS-Aktivfeuer (VIIRS/MODIS, thermal echt) — MAP_KEY nötig.
 
-key-needed auth
-url https://frost.met.no/observations/v0.jsonld?sources=SN18700&elements=air_temperature&referencetime=
-note HTTP 401 — Token/Registrierung nötig. Recheck 2026-08-17: Client-Credentials erstellt (FROST_CLIENT_ID/FROST_CLIENT_SECRET in .secrets.local) — normaler Abruf braucht nur die Client-ID; Secret nur für nicht-öffentliche Daten.
-
 decline redistribution
 url https://gateway.api.globalfishingwatch.org/v3/
 note HTTP 401 — Token/Registrierung nötig. Verdikt 2026-08-17: ToS — Redistribution eingeschränkt — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E).

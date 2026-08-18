@@ -9,6 +9,13 @@ permissions:
 env:
   GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
   RUSTFLAGS: -D warnings
+  PURPLEAIR_KEY: ${{ secrets.PURPLEAIR_KEY }}
+  FROST_BASIC_AUTH: ${{ secrets.FROST_BASIC_AUTH }}
+  TNS_UA: ${{ secrets.TNS_UA }}
+  OPENAQ_API_KEY: ${{ secrets.OPENAQ_API_KEY }}
+  NOAA_CDO_TOKEN: ${{ secrets.NOAA_CDO_TOKEN }}
+  NASA_API_KEY: ${{ secrets.NASA_API_KEY }}
+  FIRMS_MAP_KEY: ${{ secrets.FIRMS_MAP_KEY }}
 jobs:
   verify:
     runs-on: ubuntu-latest
