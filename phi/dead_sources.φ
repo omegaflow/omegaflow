@@ -4064,3 +4064,23 @@ note arcgis_b5 2026-08-18: Punktproben-Survey (5 Features), gefilterte Sicht.
 decline duplicate
 url https://services1.arcgis.com/ze0XBzU1FXj94DJq/arcgis/rest/services/Depth/FeatureServer/0
 note arcgis_b5 2026-08-18: Schwester-Layer des lebenden Temperature-Blocks derselben Instanz.
+
+decline duplicate
+url https://services8.arcgis.com/wmWcFlllU5A4fpIS/arcgis/rest/services/Instrumental_Seismicity_(2000-present)/FeatureServer/0
+note arcgis_b5 2026-08-18: USGS-Instrumental-Teilsatz, überlappend mit Worldwide_Earthquake_Data.
+
+decline kein-latlon
+url https://services8.arcgis.com/pyZO1twqdVI0YIld/arcgis/rest/services/Earthsense_Sensor_Hourly_Aggregation_Datafeed/FeatureServer/25
+note arcgis_b5 2026-08-18: Luftqualitäts-Messwerte real (no2/o3/pm/amb_temp), aber Position nur easting/northing (OSGB), kein lat/lon — nicht räumlich auffindbar.
+
+decline static
+url https://services7.arcgis.com/yHbO69mL1QTGCPQG/arcgis/rest/services/CS_ctd_do_chl_2018_0to30m/FeatureServer/0
+note arcgis_b5 2026-08-18: CTD-Survey 2018 (Einzel-Kampagne), eingefroren.
+
+decline static
+url https://services1.arcgis.com/AhXvNWFdL7hH4TjJ/arcgis/rest/services/Salinity/FeatureServer/8
+note arcgis_b5 2026-08-18: Feldsurvey, 36 Stichproben — statisch.
+
+decline duplicate
+url https://services1.arcgis.com/qTQ6qYkHpxlu0G82/arcgis/rest/services/DC_Water_Quality_Site_6500_16/FeatureServer/0
+note arcgis_b5 2026-08-18: Schwester-Layer von DC_Water_Quality_Site_6500 (gleiche SiteID/Koordinaten).

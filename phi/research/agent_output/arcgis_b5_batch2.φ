@@ -1,0 +1,105 @@
+# arcgis b5 batch2 (2026-08-18) — thermal/seismic/diffusion Welle, nächste 12 block-reife Kandidaten
+# Agent: grind-pro. curl-only. Beobachtende Sprache — Diagnosen nennen was IST, kein Wert erfunden (A = A).
+# Regeln: kein cargo, keine Register-Edits, keine src/-Edits. Route: /query?where=1%3D1&outFields=*&outSR=4326&f=geojson.
+# Dispositionen: accepted (vollständiger sources.φ-Draft-Block) / decline <grund> (static|duplicate|feed-void|kein-feld|kein-latlon).
+# Einheiten nur aus dem Register (lowercase): thermal k|c|w/m2|w|j|mw; diffusion ppm|ppb|mg/m3|ug/m3|mg/kg|psu|ntu|%|pct|hpa|uatm|du|cm-3;
+# seismic-body m|mm|km|m/s2|gal|pa|hz|mw. Felder mit anderer Einheit → pending Unit-Arm, nicht in den Draft.
+# Verifizierte Kandidaten: 12.
+
+candidate https://services1.arcgis.com/qr14biwnHA6Vis6l/arcgis/rest/services/Salinity/FeatureServer/0
+note 7121251 Features. GeoJSON lebt. WQP-Salinitätsarchiv (Water Quality Portal, USGS). measurevalue_psu numerisch befüllt (Probe 15.3 PSU), measureunitcode belegt die Einheit; Feldname-Suffix _psu → psu. lat/lon flach in properties.latitude/longitude (und zusätzlich geometry). Salinität = diffusion psu (erfc). depthheight_m (Proben-Tiefe) liegt außerhalb der Unit-Liste → pending Unit-Arm, nicht gezogen.
+disposition accepted
+url https://services1.arcgis.com/qr14biwnHA6Vis6l/arcgis/rest/services/Salinity/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 86400
+at earth
+map features
+lat properties.latitude
+lon properties.longitude
+field properties.measurevalue_psu wqp_salinity_psu erfc diffusion psu 86400 0.0 0.0
+
+candidate https://services1.arcgis.com/7iJyYTjCtKsZS1LR/arcgis/rest/services/DMF_Avg_DO_PublicView/FeatureServer/0
+note 2581 Features. GeoJSON lebt. DMF-Sauerstoff-Logger-Netz (Position nur in geometry.coordinates, kein lat/lon-Attribut). Avg_Temp_C numerisch befüllt (Probe 9.6 C) → thermal c (erfc). Avg_DO (mg/L) und Avg_Temp_F (F) außerhalb der Unit-Liste → pending Unit-Arm. Avg_Ct = Zähler (Count), nicht gezogen. DisplayDate reicht bis 2026-01.
+disposition accepted
+url https://services1.arcgis.com/7iJyYTjCtKsZS1LR/arcgis/rest/services/DMF_Avg_DO_PublicView/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 3600
+at earth
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.Avg_Temp_C dmf_avg_temp_c erfc thermal c 3600 0.0 0.0
+
+candidate https://services1.arcgis.com/qTQ6qYkHpxlu0G82/arcgis/rest/services/DC_Water_Quality_Site_6500/FeatureServer/0
+note 156 Features. GeoJSON lebt. DC-Wasserqualitäts-Monitoring (SiteID 1646500). Temperature 26.6 C → thermal c; Turbidity 5.8 NTU → diffusion ntu. DO/Nitrate (mg/L), Conductivity (µS/cm) und pH (dimensionslos) außerhalb der Unit-Liste → pending Unit-Arm. lat/lon flach in dec_lat_va/dec_long_va.
+disposition accepted
+url https://services1.arcgis.com/qTQ6qYkHpxlu0G82/arcgis/rest/services/DC_Water_Quality_Site_6500/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 3600
+at earth
+map features
+lat properties.dec_lat_va
+lon properties.dec_long_va
+field properties.Temperature dc_wq_temperature_c erfc thermal c 3600 0.0 0.0
+field properties.Turbidity dc_wq_turbidity_ntu erfc diffusion ntu 3600 0.0 0.0
+
+candidate https://services4.arcgis.com/NyRoDRTC1MqEzjL3/arcgis/rest/services/Worldwide_Earthquake_Data/FeatureServer/0
+note 20000 Features (ArcGIS-Cap). GeoJSON lebt. USGS-Weltkatalog. depth numerisch befüllt (Probe 35 km, Hypozentrum) → seismic-body km. mag dimensionslos (nach §3.1 nicht gezogen). lat/lon flach in properties.latitude/longitude.
+disposition accepted
+url https://services4.arcgis.com/NyRoDRTC1MqEzjL3/arcgis/rest/services/Worldwide_Earthquake_Data/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 86400
+at earth
+map features
+lat properties.latitude
+lon properties.longitude
+field properties.depth usgs_worldwide_hypocentral_depth_km gaussian-inverse-square seismic-body km 86400 0.0 0.0
+
+candidate https://services.arcgis.com/sWN6tuO4aaMSCOhe/arcgis/rest/services/Earthquake_List/FeatureServer/0
+note 17374 Features. GeoJSON lebt. Weltweiter Erdbebenkatalog (1970-). DEPTH numerisch befüllt (Probe 7 km) → seismic-body km. MAGNITUDE dimensionslos (nicht gezogen). lat/lon flach in properties.LATITUDE/LONGITUDE.
+disposition accepted
+url https://services.arcgis.com/sWN6tuO4aaMSCOhe/arcgis/rest/services/Earthquake_List/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 86400
+at earth
+map features
+lat properties.LATITUDE
+lon properties.LONGITUDE
+field properties.DEPTH earthquake_list_hypocentral_depth_km gaussian-inverse-square seismic-body km 86400 0.0 0.0
+
+candidate https://services.arcgis.com/v01gqwM5QqNysAAi/arcgis/rest/services/Cascadia_seismicity/FeatureServer/2
+note 3872 Features. GeoJSON lebt. Cascadia-Seismizität (M4-Katalog). Depth numerisch befüllt (Probe 18.3 km) → seismic-body km. Mag dimensionslos (nicht gezogen). lat/lon flach in properties.Latitude/Longitude.
+disposition accepted
+url https://services.arcgis.com/v01gqwM5QqNysAAi/arcgis/rest/services/Cascadia_seismicity/FeatureServer/2/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 86400
+at earth
+map features
+lat properties.Latitude
+lon properties.Longitude
+field properties.Depth cascadia_m4_hypocentral_depth_km gaussian-inverse-square seismic-body km 86400 0.0 0.0
+
+candidate https://services.arcgis.com/v01gqwM5QqNysAAi/arcgis/rest/services/Cascadia_seismicity/FeatureServer/3
+note 269 Features. GeoJSON lebt. Cascadia-Seismizität (Plattengrenzen-Katalog). Depth numerisch befüllt (Probe 35.9 km) → seismic-body km. Mag dimensionslos (nicht gezogen). lat/lon flach in properties.Latitude/Longitude.
+disposition accepted
+url https://services.arcgis.com/v01gqwM5QqNysAAi/arcgis/rest/services/Cascadia_seismicity/FeatureServer/3/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 86400
+at earth
+map features
+lat properties.Latitude
+lon properties.Longitude
+field properties.Depth cascadia_pb_hypocentral_depth_km gaussian-inverse-square seismic-body km 86400 0.0 0.0
+
+candidate https://services8.arcgis.com/wmWcFlllU5A4fpIS/arcgis/rest/services/Instrumental_Seismicity_(2000-present)/FeatureServer/0
+note 467 Features. GeoJSON lebt, depth numerisch (Probe 10 km). Aber inhaltlich ein USGS-Instrumental-Teilsatz, überlappend mit Worldwide_Earthquake_Data (gleicher Kanal, kleiner Umfang). Kein neuer Kanal.
+disposition decline duplicate
+
+candidate https://services8.arcgis.com/pyZO1twqdVI0YIld/arcgis/rest/services/Earthsense_Sensor_Hourly_Aggregation_Datafeed/FeatureServer/25
+note 1256491 Features, GeoJSON lebt (no2 9.83, o3 43.84, pm1/pm2.5/pm10, amb_temp_c 12.34 numerisch — Luftqualitäts-Messwerte). Aber Position nur als easting/northing (OSGB, projiziert), kein lat/lon-Attribut, keine geometry. LAT/LON fehlt → nicht räumlich auffindbar.
+disposition decline kein-latlon
+
+candidate https://services7.arcgis.com/yHbO69mL1QTGCPQG/arcgis/rest/services/CS_ctd_do_chl_2018_0to30m/FeatureServer/0
+note 3448 Features. GeoJSON lebt (temp_0to30m 11.1 C, salinity_0to30m 28.1 PSU, chlorophyll, pressure). Messwerte real und sauber, aber eingefrorener CTD-Survey 2018 (Feldname trägt 2018, Einzel-Kampagne) — kein lebender Kanal.
+disposition decline static
+
+candidate https://services1.arcgis.com/AhXvNWFdL7hH4TjJ/arcgis/rest/services/Salinity/FeatureServer/8
+note 36 Features. GeoJSON lebt (deg_C 25.8 C, FNU, SAL_ppt, DO_mg_perL, Specific_Conductance). Einmaliger Feldsurvey, 36 Stichproben — statisch. Zudem liegen die meisten Felder außerhalb der Unit-Liste (SAL_ppt, DO_mg_perL, FNU, µS/cm → pending). deg_C (thermal c) als einziger sauberer Wert, aber statische Stichprobe.
+disposition decline static
+
+candidate https://services1.arcgis.com/qTQ6qYkHpxlu0G82/arcgis/rest/services/DC_Water_Quality_Site_6500_16/FeatureServer/0
+note 180 Features. GeoJSON lebt (Temperature 9.4 C, Turbidity 4.3 NTU). Gleicher Standort und SiteID 1646500 wie DC_Water_Quality_Site_6500 (identische Koordinaten) — Schwester-Layer derselben Messstelle, anderer Zeitabschnitt. Kein neuer Kanal.
+disposition decline duplicate

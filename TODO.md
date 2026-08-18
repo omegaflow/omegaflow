@@ -534,10 +534,10 @@ Offen (Detail in phi/port/ledger.φ):
   exotic/candidate-staging) — Port durch die Prozedur; astro-Korpus:
   28 Blöcke → manueller Port
 - Bestand: 38 offene VizieR-Bulks, IRSA/GAVO/ARI/ExoArchive-Inventare,
-  GCNS/MWSC, VirES-Drafts (erledigt 2026-08-18), 32 ArcGIS-Drafts,
-  103 TerraPulse-Kandidaten (erledigt), 77 Archeology-Gaps,
-  ESA-Kandidaten (Aeolus key-needed, SMOS parser-def), FRB-Union,
-  Arena/Foundation/Research-Schatz im Archiv
+  GCNS/MWSC, VirES-Drafts (erledigt 2026-08-18), ArcGIS-Drafts
+  (24 in b5 verarbeitet, ~8 offen), 103 TerraPulse-Kandidaten (erledigt),
+  77 Archeology-Gaps, ESA-Kandidaten (Aeolus key-needed, SMOS parser-def),
+  FRB-Union, Arena/Foundation/Research-Schatz im Archiv
 - Nachlauf: VirES-Vollprobe (64 Drafts, Datei ABSENT) + DONKI-Familie
   (CME-Draft, Datei ABSENT)
 - Park: Pegelonline, USGS-Geomag, GWOSC/GraceDB (Skymap), DSN, CENC,
@@ -604,8 +604,9 @@ heute auf den Bestand unter /home/johannes/projects/archive/archeology/.
 verdrahtet — nichts bleibt dunkel.
 
 Pending Unit-Arme (ArcGIS b5, 2026-08-18): F (Fahrenheit, CHPL-Lufttemperatur),
-μg/L (Chlorophyll, CREST-Boje), mg/L (Sauerstoff, CREST-Boje) — die Felder
-existieren in den Quellen, manifestieren erst mit dem convert_to_si-Arm.
+μg/L (Chlorophyll, CREST-Boje), mg/L (Sauerstoff, CREST-Boje), µS/cm
+(Leitfähigkeit, DC/DMF) — die Felder existieren in den Quellen,
+manifestieren erst mit dem convert_to_si-Arm.
 
 ERLEDIGT (flux_from_mag, Primärband): cb(mag1), cometels(H), corot(mag),
 dcom5(H; M1 dark), denis(jmag; kmag dark), gcvs(mag), lmxb(mag1),

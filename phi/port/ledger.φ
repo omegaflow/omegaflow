@@ -464,6 +464,14 @@ ausstehend
 kandidat https://services8.arcgis.com/SXiEEy1skwB5SrYh/arcgis/rest/services/ROMPLUS_Earthquake_Catalogue_v2/FeatureServer/0
 note arcgis_b5 2026-08-18: 39259 Erdbeben, Route lebt (GeoJSON). Depth (Hypozentrum-Tiefe km) ist ein invertiertes, abgeleitetes Koordinaten-Attribut — kein Feldwert am Punkt (Force-Gate wie AstDyS-model-fit); Ml großteils 0, Mw-Füllrate unverifiziert. Kein Block integriert — pro-review pending: Mw (→Energie, seismic-surface wie JMA) mit verifizierter Füllrate manifestieren, oder decline.
 
+ausstehend
+kandidat https://services4.arcgis.com/NyRoDRTC1MqEzjL3/arcgis/rest/services/Worldwide_Earthquake_Data/FeatureServer/0
+note arcgis_b5 2026-08-18: Erdbeben-Hypozentrum-Tiefe als Feld — gleiche Force-Gate-Frage wie ROMPLUS (Tiefe invertiert/abgeleitet, kein Feldwert am Punkt). Vier Kataloge tragen nur depth + dimensionslose magnitude: Worldwide_Earthquake_Data (20000), Earthquake_List (17374), Cascadia_seismicity M4 (3872) + Plattengrenze (269). Kein Block — pro-review pending: Mw-Füllrate prüfen, oder decline.
+
+verifiziert
+bestand phi/research/agent_output/arcgis_b5_batch2.φ
+note ArcGIS-Welle Batch 2 (2026-08-18): 12 verifiziert — 3 Blöcke integriert (WQP-Salinität psu, DMF-Temp C, DC-WQ Temp+Turbidität); 4 Erdbeben-Tiefen-Kataloge deferiert (Hypozentrum-Tiefe = abgeleitet); 5 decline (2 duplicate, 1 kein-latlon, 2 static). Pending Unit-Arm: µS/cm.
+
 verifiziert
 bestand phi/research/agent_output/recheck_b1.φ
 note sensor.community-Urteil (2026-08-18): die b1-Box-Route lebt — filter/box=...&type=SDS011 liefert 200 JSON (P1/P2 je Messung); integriert in sources.φ (ttl 300, on earth, PM1/PM2.5 diffusion μg/m3). Caveat bleibt: indoor-Sensoren (location.indoor=1) im Fenster nicht herausfilterbar. Die api.sensor.community-403- und /airrohr/v1/-Root-404-Einträge bleiben (anderer Host/Route).

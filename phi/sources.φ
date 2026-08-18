@@ -520,6 +520,23 @@ lon properties.Longitude__degrees_
 field properties.Sal_psu crest_buoy2_salinity_psu erfc diffusion psu 3600 0.0 0.0
 field properties.Turbidity_NTU crest_buoy2_turbidity_ntu erfc diffusion ntu 3600 0.0 0.0
 
+url https://services1.arcgis.com/7iJyYTjCtKsZS1LR/arcgis/rest/services/DMF_Avg_DO_PublicView/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 3600
+at earth
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.Avg_Temp_C dmf_avg_temp_c erfc thermal C 3600 0.0 0.0
+
+url https://services1.arcgis.com/qTQ6qYkHpxlu0G82/arcgis/rest/services/DC_Water_Quality_Site_6500/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 3600
+at earth
+map features
+lat properties.dec_lat_va
+lon properties.dec_long_va
+field properties.Temperature dc_wq_temperature_c erfc thermal C 3600 0.0 0.0
+field properties.Turbidity dc_wq_turbidity_ntu erfc diffusion ntu 3600 0.0 0.0
+
 url https://api.openaq.org/v3/sensors/{station}/measurements?limit=1&datetime_from={yesterday}T00:00:00Z
 header X-API-Key {OPENAQ_API_KEY}
 ttl 21600
@@ -1012,6 +1029,14 @@ lon properties.Long
 field properties.ATMP buoy_46092_air_temp_c erfc thermal C 86400 0.0 0.0
 field properties.WTMP buoy_46092_water_temp_c erfc thermal C 86400 0.0 0.0
 field properties.PRES buoy_46092_pressure_hpa gaussian-inverse-square advective hPa 86400 0.0 0.0
+
+url https://services1.arcgis.com/qr14biwnHA6Vis6l/arcgis/rest/services/Salinity/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+ttl 86400
+at earth
+map features
+lat properties.latitude
+lon properties.longitude
+field properties.measurevalue_psu wqp_salinity_psu erfc diffusion psu 86400 0.0 0.0
 
 url https://egg.astro.cornell.edu/alfalfa/data/a40files/a40.datafile1.csv
 ttl 604800
