@@ -6,15 +6,6 @@ wird entfernt (Git trägt es). Kein Eintrag meldet Erledigtes als offen, kein of
 Punkt fehlt. Widerspricht ein Dokument dieser Datei, gilt diese Datei — solche
 Drift-Stellen sind unter „Doku-Drift" registriert.
 
-## Sternkinematik — Eigenbewegung + Radialgeschwindigkeit
-
-Offen (2026-08-17, Nacht-Lauf): Crossmatch auf I/355/gaiadr3 liefert jetzt
-pmRA/pmDE/Plx/RV (--crossmatch-pm). 13 cmap-Blöcke tragen pmra/pmdec/radvel
-(3D-Raumgeschwindigkeit). Recompile läuft: kleine/mittlere Kataloge (cbdata/
-merlin/psr/sb9/corot/polarbase/vsx/gcvs) via recompile_small.sh, große
-(pastel/wds/mktypes/denis) via phi/port/chunk_master.py (fortsetzbar). Nach
-Abschluss: Ledger-Eintrag + TODO schließen.
-
 ## Archivar — Membran-scoped Cache statt Blockuniversum
 
 Offen (2026-08-17): Der Archivar lädt flache Katalog-Assets komplett in den
@@ -344,14 +335,20 @@ Verdrahtet: API Unreachable, Malformed Data, Physics Mismatch
 ```
 **I02** refresh-protected-data: Python → Rust
 ```
-Der API-Mirror-Workflow läuft weiter in Python — Rust-Umsetzung mit
-Auth-Header-Support. Vorlage: /home/johannes/projects/archive/archeology/ci/*.yml
-+ secrets.template.
+Erledigt 2026-08-17: ci_mode (--verify phi) spiegelt alle Quellen selbst —
+`render_headers` statt leerer Header (Header-Auth lebt), skip-statt-fail
+(fehlendes Secret = pending, nicht dead), drei Klassen: plain (mirror),
+template (Probe am deklarierten Anker in Tag `{netloc}-template`), fanout
+(Stationsliste spiegeln, Daten-URL an der ersten Station proben). `fetch_one`
+braucht keine Änderung — der `-template`-Tag ist strukturell unerreichbar.
+healthcheck.yml injiziert alle Auth-Secrets als env.
 ```
 **I03** Auth-APIs
 ```
-Auth-Header-Support steht (PurpleAir lebt mit X-API-Key). Verbleibend:
-Basic-Auth (base64 user:pass) für GBIF (GBIF selbst ist decline).
+Auth-Header-Support steht (PurpleAir/Frost/NOAA-CDO/OpenAQ/TNS über
+`header`-Direktive + resolve_secret). Basic-Auth: Frost läuft (base64
+clientId: als FROST_BASIC_AUTH). Secret-Disposition in .secrets.local +
+AUTH_APIS.md §E abgeschlossen; nur TOAR-Registrierung offen (pending).
 ```
 
 ## Membran & Wahrnehmung (M01–M07)

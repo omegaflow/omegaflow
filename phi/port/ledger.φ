@@ -372,15 +372,15 @@ note gaia_dist gcvs_cat (B/gcvs/gcvs_cat): 49092 Zeilen, 25478 mit Gaia-Distanz 
 
 verifiziert
 bestand phi/katalog/vizier_gold_catalogs.φ
-note gaia_dist denis (B/denis/denis): 525260 Zeilen voll (Chunk-Merge, 16 RA-Bänder à 22,5°), 384371 mit Gaia-Distanz — live auf CDN. Sync-Workflow-Schritt entfernt (Clobber-Gefahr)
+note gaia_dist denis (B/denis/denis): 525260 Zeilen voll (Chunk-Merge, 16 RA-Bänder à 22,5°), 384371 mit Gaia-Distanz — live auf CDN. Sync-Workflow-Schritt entfernt (Clobber-Gefahr) — Eigenbewegung+RV: 437915 pmra, 50758 rv (gaiadr3)
 
 verifiziert
 bestand phi/katalog/vizier_gold_catalogs.φ
-note gaia_dist pastel (B/pastel/pastel): 37064 Zeilen voll (Chunk-Merge, 8 RA-Bänder), 20883 mit Gaia-Distanz — live auf CDN
+note gaia_dist pastel (B/pastel/pastel): 37064 Zeilen voll (Chunk-Merge, 8 RA-Bänder), 20883 mit Gaia-Distanz — live auf CDN — Eigenbewegung+RV: 27112 pmra, 20875 rv (gaiadr3)
 
 verifiziert
 bestand phi/katalog/vizier_gold_catalogs.φ
-note gaia_dist wds (B/wds/wds): 136548 Zeilen voll (Chunk-Merge, 8 RA-Bänder), 76482 mit Gaia-Distanz — live auf CDN. Sync-Workflow-Schritt entfernt (Clobber-Gefahr)
+note gaia_dist wds (B/wds/wds): 136548 Zeilen voll (Chunk-Merge, 8 RA-Bänder), 76482 mit Gaia-Distanz — live auf CDN. Sync-Workflow-Schritt entfernt (Clobber-Gefahr) — Eigenbewegung+RV: 111820 pmra, 83429 rv (gaiadr3)
 
 verifiziert
 bestand phi/katalog/vizier_gold_catalogs.φ
@@ -388,7 +388,7 @@ note gaia_dist vsx (B/vsx/vsx): 49568 Zeilen, 37413 mit Gaia-Distanz — live au
 
 verifiziert
 bestand phi/katalog/vizier_gold_catalogs.φ
-note gaia_dist mktypes (B/mk/mktypes): 686886 Zeilen voll (Chunk-Merge, 80 RA-Bänder à 4,5°), 347856 mit Gaia-Distanz — live auf CDN. Sync-Workflow-Schritt entfernt (Clobber-Gefahr)
+note gaia_dist mktypes (B/mk/mktypes): 686886 Zeilen voll (Chunk-Merge, 80 RA-Bänder à 4,5°), 347856 mit Gaia-Distanz — live auf CDN. Sync-Workflow-Schritt entfernt (Clobber-Gefahr) — Eigenbewegung+RV: 625556 pmra, 369006 rv (gaiadr3)
 
 verifiziert
 bestand phi/katalog/vizier_gold_catalogs.φ
@@ -397,3 +397,7 @@ note gaia_dist polarbase (B/polarbase/polarbase): 299 eindeutige Positionen (Pol
 geparkt
 kandidat B/gcvs/evs_cat
 note evs_cat trägt B1950-Koordinaten (Epoche, nicht J2000) — Crossmatch gegen I/355/paramp würde fehlmatchen; Katalog ausgelassen (Gap der Crossmatch-Welle)
+
+verifiziert
+bestand phi/katalog/vizier_gold_catalogs.φ
+note Sternkinematik 2026-08-17: Crossmatch auf I/355/gaiadr3 liefert pmra/pmdec/rv (radvel) für alle 12 Sternkataloge — 3D-Raumgeschwindigkeit live auf CDN.
