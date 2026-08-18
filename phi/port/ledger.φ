@@ -432,14 +432,18 @@ ausstehend
 bestand tic-kompilat
 note pro_review_b5: TIC v8.2 (archive.stsci.edu/tess) — header-lose Positions-CSV + header.csv; eigener Compiler-Atom (Muster tycho2_compiler), MAST-TIC in TODO; nach Kompilation kein Parser-Gap (ra/dec/plx/Tmag indexiert).
 
-ausstehend
+verifiziert
 bestand ndbc-konsolidierung
-note pro_review_b5: Urteil gefällt — 30 per-Station-Blöcke (sources.φ, realtime2/{station}.txt) → 1 FeatureServer-map-Block (services5.arcgis.com National_Data_Buoy_Center_Station_Observations, alle Felder + GST/APD/MWD/ATMP/TIDE). Vollzug ausstehend (Block-Ersetzung); FeatureServer-Zeilenzahl unter resultRecordCount=2000 unverifiziert (exceededTransferLimit=true gemeldet).
+note pro_review_b5: Urteil gefällt und vollzogen (2026-08-18) — 30 per-Station-Blöcke (realtime2/{station}.txt) ersetzt durch 1 FeatureServer-map-Block (services5.arcgis.com National_Data_Buoy_Center_Station_Observations, 12 Felder + GST/APD/MWD/ATMP/TIDE). Verifikation: 912 Features ohne Kappung (resultRecordCount=2000 > count; exceededTransferLimit greift nicht).
 
 parser-gap
 kandidat https://supermag.jhuapl.edu/services/data.php
-note pro_review_b5: Daten-Route lebt (logon-only, kein Passwort — data.php?fmt=json&logon=omegaflow, echtes nT-JSON je Minute/Station; der frühere Server-Fault war nicht reproduzierbar). Offen: führende „OK"-Zeile (leading-line strip), Positions-Join über inventory.php (unverifiziert), station=-Filter-Semantik unverifiziert.
+note pro_review_b5: Daten-Route lebt (logon-only, kein Passwort — data.php?fmt=json&logon=omegaflow, echtes nT-JSON je Minute/Station; der frühere Server-Fault war nicht reproduzierbar). Offen: führende „OK"-Zeile (leading-line strip), Positions-Join über inventory.php (server-seitiger db-get-Fehler schlägt bei inventory weiterhin fehl — keine Station→Position-Zuordnung abrufbar), station=-Filter-Semantik unverifiziert.
 
 parser-gap
 kandidat https://dc.actris.nilu.no/data
 note recheck_b5: Katalog-JSON lebt (324754 Reihen mit lat/lon, ohne numerische Werte); die Werte liegen in NetCDF hinter thredds.nilu.no (OPeNDAP) — NetCDF-Reader ist der offene Kanal.
+
+verifiziert
+bestand phi/research/agent_output/recheck_b1.φ
+note sensor.community-Urteil (2026-08-18): die b1-Box-Route lebt — filter/box=...&type=SDS011 liefert 200 JSON (P1/P2 je Messung); integriert in sources.φ (ttl 300, on earth, PM1/PM2.5 diffusion μg/m3). Caveat bleibt: indoor-Sensoren (location.indoor=1) im Fenster nicht herausfilterbar. Die api.sensor.community-403- und /airrohr/v1/-Root-404-Einträge bleiben (anderer Host/Route).

@@ -262,7 +262,7 @@ note Ocean Networks Canada (Ozeansensoren, echt) — OpenAPI-Frontend, Messwert-
 
 parser-def empty-param
 url https://data.sensor.community/airrohr/v1/filter/area=
-note area= leer → 2 B. Recheck b4 2026-08-18: data.sensor.community/airrohr/v1/sensor/ 404 HTML, Host-Root 403; archive.sensor.community Root 200 (Verzeichnisbaum, PM2.5 per Gebiets-ID) — parser-def bleibt.
+note area= leer → 2 B. Recheck b4 2026-08-18: data.sensor.community/airrohr/v1/sensor/ 404 HTML, Host-Root 403; archive.sensor.community Root 200 (Verzeichnisbaum, PM2.5 per Gebiets-ID). Recheck b5 2026-08-18: die Box-Route filter/box=...&type=SDS011 lebt und ist in sources.φ integriert — dieser area=-Eintrag bleibt parser-def (leerer Parameter).
 
 parser-def votable
 url https://dc.zah.uni-heidelberg.de/tap/

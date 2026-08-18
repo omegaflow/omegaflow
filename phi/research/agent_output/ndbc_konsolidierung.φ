@@ -1,0 +1,29 @@
+# NDBC-Konsolidierung — Urteils-Vollzug
+# Agent: grind-flash
+# Datum: 2026-08-18
+#
+# Schritt 1 — Verifikation der FeatureServer-Antwort (A = A, kein stiller Stationsverlust):
+#   Feature-Zahl: 912
+#   exceededTransferLimit: abwesend im FeatureCollection-Kopf (ArcGIS weglassen, wenn die
+#     Kappung nicht greift; resultRecordCount=2000 > 912 Stationen)
+#   returnCountOnly: {"count":912} — identisch mit der Feature-Zahl der geojson-Antwort
+#   Urteil: vollständiger Layer, keine Kappung, Ergebnis >= 900 → Surgery freigegeben
+#
+# Schritt 2 — Surgery in phi/sources.φ:
+#   ausgeführt: ja
+#   30 per-Station-Blöcke (41001 … 51004, Zeilen 193–521 der alten Fassung) entfernt,
+#   ersetzt durch EINEN FeatureServer-map-Block (18 Zeilen: url/ttl/at/map/lat/lon + 12 field).
+#   Neue Block-Region in phi/sources.φ: Zeilen 193–210, je eine Blank-Zeile zu den
+#   Nachbar-Blöcken (USGS-NWIS davor, NHC-Stürme danach). Datei 1644 → 1333 Zeilen.
+#   Kein fremder Block in der Region (alle 30 url-Zeilen trugen ndbc.noaa.gov).
+#   phi/port/stage/* unberührt — dort liegen die verbliebenen realtime2-Referenzen.
+#
+# Schritt 3 — SuperMAG inventory.php (Probe, curl-only):
+#   Route existiert und ist PHP-basiert (XML-Antwort angelegt, SimpleXMLElement-Parse auf
+#   der Server-Seite). Parameter: start + end (oder extent) nötig — "ERROR: No start time",
+#   dann "ERROR: No end time or extent". station/stations als Filter akzeptiert.
+#   Struktur-Befund: die serverseitige Logon-Prüfung "db-get -check logon -query logon=omegaflow"
+#   schlägt im PHP-Kontext fehl (shell_exec: Unable to execute .../rst/bin/db-get), die Route
+#   liefert damit keine Daten-Body. Eine Station→Position-Zuordnung (iaga-Code, lat/lon) ist
+#   über inventory.php so nicht beziehbar — die Route ist serverseitig nicht funktional,
+#   unabhängig vom Client.

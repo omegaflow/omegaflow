@@ -527,11 +527,11 @@ Offen (Detail in phi/port/ledger.φ):
   SERVIR-SoilMoisture (decline derived-product), Hurricanes-ArcGIS
   (decline model-forecast), MPC-Unterrouten (Scaffold), TESS-Target-CSV.
   INTEGRIERT in sources.φ: OceanNetworks-CTD (3 Kanäle), OMNIWeb-HAPI
-  (6 Felder), SDSS SkyServerWS (cz/velDisp). OFFEN: Argovis-Port
-  (b1-Route verifiziert, flaches data-Array), sensor.community
-  (b1-Draft vs. b4-Blockiert — Urteil offen), SuperMAG (leading-line +
-  Positions-Join), SDSS-photoObj (psfMag-z unklar), NDBC-Konsolidierung
-  (Vollzug), MPCOBS + TIC (eigene Compiler-Atome).
+  (6 Felder), SDSS SkyServerWS (cz/velDisp), sensor.community (PM1/PM2.5),
+  NDBC (1 FeatureServer-Block, 912 Stationen). OFFEN: Argovis-Port
+  (b1-Route verifiziert, flaches data-Array), SuperMAG (leading-line +
+  Positions-Join), SDSS-photoObj (psfMag-z unklar), MPCOBS + TIC
+  (eigene Compiler-Atome).
 - Kraft-Abdeckung: acoustic/electric/thermal/advective/diffusion-Kuration
   offen — electric: GIC-Netze + Live-E-Feldstärke (kein Feed); GLM ist em
   (Ratsurteil), WWLLN radio-em vs. Entladung-electric bleibt Force-Gate-Frage
@@ -687,14 +687,13 @@ Konversion ist bekannt oder erforschbar — pending, keine Fälschung):
   USGS-Geomag (Komponenten-Timeseries)
 - Rechecks offen (Stand b5 2026-08-18): Argovis-Port (b1: lebende
   Query argovis-api.colorado.edu verifiziert, data-Feld = katenierte
-  Messreihe — Split-Schema fehlt), sensor.community (b1-Draft
-  filter/box verifiziert vs. b4-Spiegelung api.sensor.community 403 —
-  Integrations-Urteil offen), SuperMAG (leading-line strip +
-  inventory-Positions-Join + station-Filter-Semantik), SDSS-photoObj
-  (psfMag-Spalten, z unklar). NDBC-Konsolidierung: Urteil gefällt
-  (1 FeatureServer-map-Block ersetzt 30 per-Station-Blöcke) — Vollzug
-  ausstehend, Transfer-Limit unverifiziert. MPCOBS + TIC: eigene
-  Compiler-Atome (packed-MPC-Records; header-lose CSV + header.csv).
+  Messreihe — Split-Schema fehlt), SuperMAG (leading-line strip +
+  inventory-Positions-Join — server-seitiger db-get-Fehler — +
+  station-Filter-Semantik), SDSS-photoObj (psfMag-Spalten, z unklar).
+  NDBC-Konsolidierung vollzogen (912 Stationen verifiziert).
+  sensor.community integriert (Box-Route filter/box&type=SDS011,
+  indoor-Caveat bleibt). MPCOBS + TIC: eigene Compiler-Atome
+  (packed-MPC-Records; header-lose CSV + header.csv).
 - TAP-Katalog-Pipeline: weitere VizieR-Bulks aus phi/tap_index.φ (39
   genutzte Tabellen, BZCAT5 erledigt), Gaia-Archiv (GCNS/MWSC);
   GAVO-Async-Queue-Beobachtung offen
