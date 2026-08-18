@@ -10701,6 +10701,18 @@ mod archivar {
         #[cfg(feature = "browser_relay")]
         let presence_relay_tx = presence_tx.clone();
         let (audio_tx, audio_rx) = mpsc::channel::<crate::mathematikerin::AudioFrame>();
+        let (surface_tx, surface_rx) = mpsc::channel::<crate::mathematikerin::SurfaceFrame>();
+        let mut surfaces: Vec<Box<dyn crate::mathematikerin::SurfaceRadiator>> = Vec::new();
+        if let Ok(port) = std::env::var("OMEGAFLOW_SERIAL_OUT") {
+            surfaces.push(Box::new(crate::mathematikerin::SerialSurface::new(&port)));
+        }
+        thread::spawn(move || {
+            while let Ok(frame) = surface_rx.recv() {
+                for s in surfaces.iter_mut() {
+                    s.surface(&frame);
+                }
+            }
+        });
         let mr = crate::mathematikerin::MathematikerinRadiator::new(
             presence_tx,
             sensor_tx.clone(),
@@ -10708,6 +10720,7 @@ mod archivar {
             time.clone(),
             consent.clone(),
             audio_tx,
+            surface_tx,
         );
         let mr_shutdown = mr.shutdown_flag();
         radiators.push(Box::new(mr));
@@ -14719,6 +14732,54 @@ mod mathematikerin {
         pub permeability: f32,
     }
 
+    #[derive(Clone, Copy)]
+    pub struct SurfaceFrame {
+        pub lum: [f32; 9],
+    }
+
+    pub trait SurfaceRadiator: Send + 'static {
+        fn surface(&mut self, frame: &SurfaceFrame);
+    }
+
+    pub struct SerialSurface {
+        port: Option<Box<dyn serialport::SerialPort>>,
+    }
+
+    impl SerialSurface {
+        pub fn new(path: &str) -> Self {
+            let port = serialport::new(path, 115_200)
+                .timeout(std::time::Duration::from_millis(50))
+                .open()
+                .ok();
+            if port.is_none() {
+                eprintln!(
+                    "serial surface: {} unreachable — the surface stays silent",
+                    path
+                );
+            }
+            Self { port }
+        }
+    }
+
+    impl SurfaceRadiator for SerialSurface {
+        fn surface(&mut self, frame: &SurfaceFrame) {
+            let Some(port) = self.port.as_mut() else {
+                return;
+            };
+            let mut line = String::new();
+            for (i, v) in frame.lum.iter().enumerate() {
+                if i > 0 {
+                    line.push(' ');
+                }
+                line.push_str(&format!("{:.4}", v));
+            }
+            line.push('\n');
+            if std::io::Write::write_all(port, line.as_bytes()).is_err() {
+                self.port = None;
+            }
+        }
+    }
+
     pub fn pack_window(records: &[Record], presence: [f64; 3]) -> PackedWindow {
         let n = records.len();
         let mut field = vec![0.0f32; n * 12];
@@ -14869,6 +14930,7 @@ mod mathematikerin {
             time: Arc<Mutex<Option<LeapSeconds>>>,
             consent: Arc<AtomicBool>,
             audio_tx: mpsc::Sender<AudioFrame>,
+            surface_tx: mpsc::Sender<SurfaceFrame>,
         ) -> Self {
             let (tx, rx) = mpsc::sync_channel::<Arc<Buffer>>(2);
             let (req_tx, req_rx) =
@@ -14941,6 +15003,7 @@ mod mathematikerin {
                     shutdown_clone,
                     consent,
                     audio_tx,
+                    surface_tx,
                 );
             });
             Self {
@@ -15087,6 +15150,7 @@ mod mathematikerin {
         shutdown: Arc<AtomicBool>,
         consent: Arc<AtomicBool>,
         audio_tx: mpsc::Sender<AudioFrame>,
+        surface_tx: mpsc::Sender<SurfaceFrame>,
 
         window: Option<Arc<Window>>,
         surface: Option<wgpu::Surface<'static>>,
@@ -15190,6 +15254,7 @@ mod mathematikerin {
             shutdown: Arc<AtomicBool>,
             consent: Arc<AtomicBool>,
             audio_tx: mpsc::Sender<AudioFrame>,
+            surface_tx: mpsc::Sender<SurfaceFrame>,
         ) -> Self {
             Self {
                 rx,
@@ -15201,6 +15266,7 @@ mod mathematikerin {
                 shutdown,
                 consent,
                 audio_tx,
+                surface_tx,
                 window: None,
                 surface: None,
                 config: None,
@@ -16628,6 +16694,11 @@ mod mathematikerin {
                     mx,
                     permeability: self.field_permeability,
                 });
+                let mut lum = [0f32; 9];
+                for k in 0..9 {
+                    lum[k] = (self.probe_omega[k].abs() * mx * mx).tanh() * self.field_permeability;
+                }
+                let _ = self.surface_tx.send(SurfaceFrame { lum });
                 let [x, y, z] = self.pos();
                 let fps = self.frame_count as f64;
                 self.frame_count = 0;
@@ -16930,6 +17001,7 @@ mod mathematikerin {
         shutdown: Arc<AtomicBool>,
         consent: Arc<AtomicBool>,
         audio_tx: mpsc::Sender<AudioFrame>,
+        surface_tx: mpsc::Sender<SurfaceFrame>,
     ) {
         let mut builder = EventLoopBuilder::<()>::default();
         EventLoopBuilderExtX11::with_any_thread(&mut builder, true);
@@ -16963,6 +17035,7 @@ mod mathematikerin {
             shutdown,
             consent,
             audio_tx,
+            surface_tx,
         );
         if let Some([x, y, z, t]) = presence_init {
             app.p = [x, y, z];
@@ -17076,6 +17149,7 @@ mod mathematikerin {
                     Arc::new(AtomicBool::new(false)),
                     Arc::new(AtomicBool::new(false)),
                     mpsc::channel().0,
+                    mpsc::channel().0,
                 )
             };
             app.packed_field = vec![0.0; 12];
@@ -17118,6 +17192,7 @@ mod mathematikerin {
                     Arc::new(AtomicBool::new(false)),
                     Arc::new(AtomicBool::new(false)),
                     mpsc::channel().0,
+                    mpsc::channel().0,
                 )
             };
             app.packed_field = vec![0.0; 12];
@@ -17143,6 +17218,7 @@ mod mathematikerin {
                     Arc::new(AtomicBool::new(false)),
                     Arc::new(AtomicBool::new(false)),
                     mpsc::channel().0,
+                    mpsc::channel().0,
                 )
             };
             app.packed_meta = vec![0.0; 36];
@@ -17165,6 +17241,7 @@ mod mathematikerin {
                     Arc::new(Mutex::new(None)),
                     Arc::new(AtomicBool::new(false)),
                     Arc::new(AtomicBool::new(false)),
+                    mpsc::channel().0,
                     mpsc::channel().0,
                 )
             };

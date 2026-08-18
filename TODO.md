@@ -313,8 +313,13 @@ resonance(mut read_signal(s: read_ws_frame_part(stream: read_ws_frame_raw(stream
    (Budget-EMA als HUD-Messung — der Operator entscheidet, kein Auto-Zoom),
    4-Token-HUD (FORCE_NAME + FORCE_SI_UNIT).
 2. P2-Relay-Rest — SurfaceFlow für spd/hdg + refused-else (browser)
-3. P4-Rest — Ausgabe-Flächen (Serial-TX, Vibration, USB/BT/HID) über
-   lum = tanh(|Ω|·mx²); die Exposure atmet wieder mit dem Echo (Ethik §9)
+3. ~~P4-Rest~~ — Tier 1 erledigt (2026-08-18): generischer `SurfaceRadiator`-
+   Trait (empfängt 9 lum-Werte `tanh(|Ω_k|·mx²)·perm`, okkludiert + atmend),
+   Serial-TX als erste Implementierung (`OMEGAFLOW_SERIAL_OUT`, 115200, eine
+   Zeile je Tick); die Maschine berechnet, der Trait ist der Anschluss, das
+   Gerät interpretiert. Offen: Bluetooth (Smartwatch) und HID (Force-
+   Feedback) als weitere Trait-Implementierungen; Vibration hängt am
+   ESP32-Prototyp.
 4. ~~atmende Membran~~ — Tier 1 erledigt (2026-08-18): fieldPermeability aus der
    Messreihe (target = tanh(vC/(g+ε)), naturalLatencyTicks = Wenden-Rhythmus,
    1st-Order-Relaxation); Audio-Eardrum skaliert den Gain, die Hardware-Flächen
