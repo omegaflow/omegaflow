@@ -11119,12 +11119,26 @@ mod archivar {
                 });
             }
             if !pending_eph.is_empty() {
-                let anchors = [
-                    "sun", "earth", "moon", "mars", "jupiter", "saturn", "venus", "mercury",
-                ];
-                let (anchor_items, rest_items): (Vec<_>, Vec<_>) = pending_eph
-                    .into_iter()
-                    .partition(|(_, src, _)| anchors.contains(&src.body.as_deref().unwrap_or("")));
+                let mut anchor_bodies: std::collections::HashSet<String> =
+                    std::collections::HashSet::new();
+                for s in &archive.sources {
+                    if s.format == "ephemeris_binary" || s.format == "kernel_text" {
+                        continue;
+                    }
+                    match &s.frame {
+                        Frame::Surface { body_name, .. } | Frame::Barycenter { body_name, .. } => {
+                            anchor_bodies.insert(body_name.clone());
+                        }
+                        Frame::Manifest => {}
+                    }
+                }
+                let (anchor_items, rest_items): (Vec<_>, Vec<_>) =
+                    pending_eph.into_iter().partition(|(_, src, _)| {
+                        src.body
+                            .as_deref()
+                            .map(|b| anchor_bodies.contains(b))
+                            .unwrap_or(false)
+                    });
                 let ftx = fetch_tx.clone();
                 let lsk_c = lsk.clone();
                 let now_c = now;
