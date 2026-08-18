@@ -62,9 +62,10 @@ Dazu zwei Ernte-Folgen (Befunde der grind-flash-Agenten 2026-08-18):
 - Massen-Lücken: 45 Eugenia, 87 Sylvia, 90 Antiope, 216 Kleopatra haben
   publizierte GM (Perturbation/Doppel/Radar), DASTCOM trägt 0 — harvesten
   (VizieR-Massen-Tabelle fehlt im Index; Quelle recherchieren).
+  Ledger registriert (2026-08-18).
 - NEOWISE/AKARI-Join: Durchmesser+Albedo (129.771) als Feld (Größe) in die
   Asteroiden-Blöcke statt nur H-Schätzung — grind-pro-Join-Urteil (per
-  Asteroiden-Bezeichnung).
+  Asteroiden-Bezeichnung). Ledger registriert (2026-08-18).
 
 Sternfarbe-RENDERING (Operator-Wunsch „ich mag die Farben"): Die Farbe ist
 geerntet (Teff/BPmag/RPmag in den JSONs), aber die WGSL muss sie noch malen
