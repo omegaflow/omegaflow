@@ -301,8 +301,13 @@ resonance(mut read_signal(s: read_ws_frame_part(stream: read_ws_frame_raw(stream
 2. P2-Relay-Rest — SurfaceFlow für spd/hdg + refused-else (browser)
 3. P4-Rest — Ausgabe-Flächen (Serial-TX, Vibration, USB/BT/HID) über
    lum = tanh(|Ω|·mx²); die Exposure atmet wieder mit dem Echo (Ethik §9)
-4. ε-Kulling / atmende Membran — der Hebel wartet auf die Messreihe,
-   die das Budget erst ehrlich zeigt
+4. ~~atmende Membran~~ — Tier 1 erledigt (2026-08-18): fieldPermeability aus der
+   Messreihe (target = tanh(vC/(g+ε)), naturalLatencyTicks = Wenden-Rhythmus,
+   1st-Order-Relaxation); Audio-Eardrum skaliert den Gain, die Hardware-Flächen
+   (§3) konsumieren die Permeabilität. Fenster bleibt beim Operator. Offen:
+   TE-Parabel-Maschinerie (inTE/(inTE+threshold+ε), computeOscSurrogate) und
+   ε-Kulling (Tiled Culling — handover-atome.md Atom 4, eigener Port;
+   auswertung.md: Kulling trägt das Budget nicht).
 5. P6 — ⌘K, 2-Finger-Zeit, f-Toggle, Deep-Link-Init, Puffer-Schrumpf,
    Dithering, 3-zeiliger HUD
 

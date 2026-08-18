@@ -4027,6 +4027,7 @@ mod archivar {
                 let mut frame = crate::mathematikerin::AudioFrame {
                     omega: [0.0; 9],
                     mx: 1.0,
+                    permeability: 0.0,
                 };
                 let mut phase: [f32; 9] = [0.0; 9];
                 let two_pi = 2.0 * std::f32::consts::PI;
@@ -4049,7 +4050,9 @@ mod archivar {
                         let mut s = 0.0f32;
                         for i in 0..9 {
                             let freq = 2f32.powi(3 + i as i32);
-                            let gain = (frame.omega[i].abs() * frame.mx * frame.mx).tanh() / 9.0;
+                            let gain = (frame.omega[i].abs() * frame.mx * frame.mx).tanh()
+                                * frame.permeability
+                                / 9.0;
                             phase[i] += two_pi * freq / AUDIO_SAMPLE_RATE as f32;
                             s += gain * phase[i].sin();
                         }
@@ -14366,6 +14369,7 @@ mod mathematikerin {
     const JUMP_GRID: f64 = 268435456.0;
     const SSAA_MAX: f32 = 8.0;
     const BUDGET_RELAX: f64 = 0.1;
+    const PERM_GROUND: f32 = f32::EPSILON;
     const FORCE_NAME: [&str; 9] = [
         "em",
         "gravity",
@@ -14422,6 +14426,7 @@ mod mathematikerin {
     pub struct AudioFrame {
         pub omega: [f32; 9],
         pub mx: f32,
+        pub permeability: f32,
     }
 
     pub fn pack_window(records: &[Record], presence: [f64; 3]) -> PackedWindow {
@@ -14832,6 +14837,11 @@ mod mathematikerin {
         ring_filled: usize,
         ring_gen: u64,
         frame_ms_ema: f64,
+        field_permeability: f32,
+        prev_omega_sum: f32,
+        prev_delta: f32,
+        ticks_since_turn: u64,
+        natural_latency_ticks: u64,
         t_thrust: f64,
         t_thrust_target: f64,
         t_frozen: bool,
@@ -14935,6 +14945,11 @@ mod mathematikerin {
                 ring_filled: 0,
                 ring_gen: 0,
                 frame_ms_ema: 0.0,
+                field_permeability: 0.0,
+                prev_omega_sum: 0.0,
+                prev_delta: 0.0,
+                ticks_since_turn: 0,
+                natural_latency_ticks: 1,
                 t_thrust: 0.0,
                 t_thrust_target: 0.0,
                 t_frozen: false,
@@ -16231,10 +16246,26 @@ mod mathematikerin {
                     }
                     probe_read.unmap();
                 }
+                let omega_sum: f32 = self.probe_omega.iter().sum();
+                let delta = omega_sum - self.prev_omega_sum;
+                if self.prev_delta != 0.0 && delta * self.prev_delta < 0.0 {
+                    self.natural_latency_ticks = self.ticks_since_turn.max(1);
+                    self.ticks_since_turn = 0;
+                }
+                self.ticks_since_turn += 1;
+                self.prev_delta = delta;
+                self.prev_omega_sum = omega_sum;
+                let g = omega_sum.abs();
+                let v_c = delta.abs();
+                let target = (v_c / (g + PERM_GROUND)).tanh();
+                let alpha = 1.0 - (-1.0 / self.natural_latency_ticks.max(1) as f32).exp();
+                self.field_permeability += (target - self.field_permeability) * alpha;
+                self.field_permeability = self.field_permeability.clamp(PERM_GROUND, 1.0);
                 let mx = self.window_median_extent();
                 let _ = self.audio_tx.send(AudioFrame {
                     omega: self.probe_omega,
                     mx,
+                    permeability: self.field_permeability,
                 });
                 let [x, y, z] = self.pos();
                 let fps = self.frame_count as f64;
@@ -16263,7 +16294,7 @@ mod mathematikerin {
                     ));
                 }
                 eprintln!(
-                "φ window: t {:.2} | rec {} | gen {} | flow {:+.2} {:+.2} {:+.2} | {} | mx {:.2e} | fps {:.0} | ssaa {:.2} | grid 2^{} | x {:.3e} y {:.3e} z {:.3e} | {} near | {} deep | b {}x{} | maxms {:.0} | ema {:.1} | off {:.2} | blend {}",
+                "φ window: t {:.2} | rec {} | gen {} | flow {:+.2} {:+.2} {:+.2} | {} | mx {:.2e} | fps {:.0} | ssaa {:.2} | grid 2^{} | x {:.3e} y {:.3e} z {:.3e} | {} near | {} deep | b {}x{} | maxms {:.0} | ema {:.1} | perm {:.2} | off {:.2} | blend {}",
                 self.t_presence,
                 rec,
                 self.ring_gen,
@@ -16284,6 +16315,7 @@ mod mathematikerin {
                 self.backing.1,
                 ms_max,
                 self.frame_ms_ema,
+                self.field_permeability,
                 self.expose_offset,
                 self.point_blend,
             );
