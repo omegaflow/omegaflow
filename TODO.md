@@ -23,6 +23,48 @@ trunkierten Sync-Ergebnissen). Der volle Chunk-Lauf lebt lokal in
 CI-Schritt (die 4 Kataloge laufen im monatlichen Workflow mit), ohne Python
 — Rust-Weg: `tap_compiler --chunk-bands` mit Merge.
 
+## Stern-/Asteroiden-Physik — abgeleitete Geometrie + Ernte-Folgen (Handover C)
+
+Offen (2026-08-18). Die Daten sind geerntet (Sternkinematik pmra/pmdec/rv +
+Farbe Teff/BPmag/RPmag/Gmag via gaiadr3-Crossmatch; Asteroiden-Größe via
+NEOWISE/AKARI in `phi/katalog/asteroid_diameters_*.φ`). Offen ist die
+Nutzung — reine Geometrie, die sonst nirgends liegt, weil alles einen
+ICRS-4D-Rahmen teilt:
+
+- Stellare Okkultationen (Flaggschiff): |Winkelabstand(Asteroid, Stern)| <
+  Asteroidenradius — Asteroidenbahn (DASTCOM) × Sternposition (gaia) ×
+  Presence (Erde) × Zeit, live über alle Paare. Kein Katalog speichert das.
+- Hill-Sphäre je Asteroid: r = a·(1−e)·(m/3M☉)^⅓ (Bahn + GM).
+- Hydrostatische Abplattung aus Rotation: Rotationsperiode (LCDB) + Radius
+  (NEOWISE) + Dichte (Masse) → Oblatheit im Gleichgewicht (drei Kataloge
+  übereinander, niemand macht das systematisch).
+- Co-moving Gruppen / Sternströme: Position + 3D-Geschwindigkeit → Mitglied-
+  schaft als Geometrie des Geschwindigkeitsfelds.
+- Sternbegegnungen: welche Sterne nähern sich der Sonne (Gl-710-Problem),
+  für JEDEN Stern live.
+- Paarweise 3D-Sternabstände (N², auf Anfrage).
+- Oberflächengravitation + Fluchtgeschwindigkeit der Asteroiden mit GM:
+  g = GM/r², v_esc = √(2GM/r).
+
+Dazu zwei Ernte-Folgen (Befunde der grind-flash-Agenten 2026-08-18):
+- Massen-Lücken: 45 Eugenia, 87 Sylvia, 90 Antiope, 216 Kleopatra haben
+  publizierte GM (Perturbation/Doppel/Radar), DASTCOM trägt 0 — harvesten
+  (VizieR-Massen-Tabelle fehlt im Index; Quelle recherchieren).
+- NEOWISE/AKARI-Join: Durchmesser+Albedo (129.771) als Feld (Größe) in die
+  Asteroiden-Blöcke statt nur H-Schätzung — grind-pro-Join-Urteil (per
+  Asteroiden-Bezeichnung).
+
+Sternfarbe-RENDERING (Operator-Wunsch „ich mag die Farben"): Die Farbe ist
+geerntet (Teff/BPmag/RPmag in den JSONs), aber die WGSL muss sie noch malen
+— BP−RP/Teff → RGB statt reiner Luminanz. Kleinster Schritt, schließt den
+Bogen.
+
+Weitere neue Quellen (grind-pro, heikler Join/Parsing): LCDB-Rotations-
+achsen (Pol, nicht nur Periode), DAMIT-Formmodelle (3D-Formen → j2/r_eq).
+
+Empfohlene Reihenfolge: Sternfarbe-Rendering → Okkultationen → Hill/
+Abplattung → Massen-Lücken → LCDB/DAMIT.
+
 ## Surveys — die Messungen der Sessions
 
 docs/surveys/fortschritt.md (Session-Erkenntnisse, Hash-Verweise),
