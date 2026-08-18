@@ -14,6 +14,18 @@ um die Presence (dilatierter Suchradius). Richtung: räumlich gebinnte
 Assets (HEALPix), der Archivar holt nur die Bins, die die Hülle überlappen.
 Kein NASA-Denken — nur was die Membran benötigt.
 
+## Archivar — lokaler Crossmatch zweier Quellen (pending)
+
+Offen (2026-08-18). Anwendungsfall: Lasair (ZTF-Transienten, live, em) trägt
+kein z in `objects` → die Objekte liegen auf der Himmelssphäre (0 honored).
+Die TNS-Tabelle (`tns_public_objects.csv.zip`, `z redshift`) kennt für die
+SN Ia die echte Rotverschiebung. Die wahrste Lösung: der Archivar matched die
+Lasair-Objekte beim Laden lokal gegen die bereits geladene TNS-z-Tabelle —
+kein Datenverlust, keine Lüge, nur Anreicherung dort, wo eine Übereinstimmung
+vorliegt. Das ist ein eigenes Code-Feature (Join zweier Quellen im Spatial
+Hash), kein Quellen-Block. Status quo: Lasair pulsiert auf der Sphäre, die
+z-tragenden SN Ia kommen über TNS mit Distanz.
+
 ## CI — Chunk-Kompilation der großen Kataloge
 
 Offen (2026-08-17): Die Sync-Schritte für pastel/wds/mktypes/denis sind aus
