@@ -74,6 +74,13 @@ fn occlusion(dhat: vec3f, d: f32, ft: u32, n: u32) -> f32 {
     return 1.0;
 }
 
+fn aberration(u: vec3f, beta: vec3f) -> vec3f {
+    let b2 = dot(beta, beta);
+    let gamma = 1.0 / sqrt(max(1.0 - b2, 1e-12));
+    let ud = dot(u, beta);
+    return (u / gamma + beta + (gamma / (gamma + 1.0)) * ud * beta) / (1.0 + ud);
+}
+
 fn ft_ref(ra: vec4f, rb: vec4f, rc: vec4f, ft: u32) -> f32 {
     if (ft == 0u) { return ra.x; }
     if (ft == 1u) { return ra.y; }
@@ -123,7 +130,8 @@ struct DeepPtVOut { @builtin(position) pos: vec4f, @location(0) @interpolate(fla
         vec2f(-1.0, -1.0), vec2f(1.0, 1.0), vec2f(-1.0, 1.0)
     );
     let data = deep_pt[id];
-    let dir = data.xyz / max(length(data.xyz), 1e-9);
+    let beta = vec3f(deep_vp.right.w, deep_vp.up.w, deep_vp.forward.w);
+    let dir = aberration(data.xyz / max(length(data.xyz), 1e-9), beta);
     let df = dot(dir, deep_vp.forward.xyz);
     if (df <= 0.0) {
         out.flux = 0.0;
@@ -191,11 +199,13 @@ fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
     );
     let data = deep_ex[id * 2u];
     let props_in = deep_ex[id * 2u + 1u];
+    let beta = vec3f(deep_vp.right.w, deep_vp.up.w, deep_vp.forward.w);
+    let dir = aberration(data.xyz, beta);
     let w = deep_vp.surface.x;
     let h = deep_vp.surface.y;
     let scale = deep_vp.surface.w;
-    let sx = dot(data.xyz, deep_vp.right.xyz) / (0.5 * w * scale);
-    let sy = -dot(data.xyz, deep_vp.up.xyz) / (0.5 * h * scale);
+    let sx = dot(dir, deep_vp.right.xyz) / (0.5 * w * scale);
+    let sy = -dot(dir, deep_vp.up.xyz) / (0.5 * h * scale);
     let extent = props_in.x;
     let tau = props_in.y;
     let w_f = max(w, h);
@@ -207,7 +217,7 @@ fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
     );
     out.pos = vec4f(clip, 0.0, 1.0);
     out.uv = corner;
-    let occ = occlusion(data.xyz, 1e30, 0u, u32(deep_vp.expose_ex.w));
+    let occ = occlusion(dir, 1e30, 0u, u32(deep_vp.expose_ex.w));
     let flux = data.w * occ;
     let lum = clamp(
         (log2(abs(flux) + 1e-30)
@@ -270,8 +280,12 @@ struct NearPtVOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f, @loca
     out.uv = corner;
     let d0 = length(pre.xyz);
     let dhat0 = pre.xyz / max(d0, 1e-9);
-    out.val_eff = fold_eff(d0, pre.w, tm.x, tm.y, u32(tm.z), fm.x)
-        * occlusion(dhat0, d0, u32(tm.z), u32(vp.expose_ex.w));
+    var v_pt = fold_eff(d0, pre.w, tm.x, tm.y, u32(tm.z), fm.x);
+    if (u32(tm.z) == 0u && mt.w > 0.0) {
+        let z1 = 1.0 + mt.w;
+        v_pt = v_pt / (z1 * z1 * z1 * z1);
+    }
+    out.val_eff = v_pt * occlusion(dhat0, d0, u32(tm.z), u32(vp.expose_ex.w));
     out.ft = u32(tm.z);
     out.tau = mt.y;
     out.half_px = half_px;
@@ -396,7 +410,11 @@ fn osc_field(j: u32, rel: vec3f, pre: vec4f) -> vec2f {
     let ft = u32(tm.z);
     let kid = u32(mt.z);
     let v = select(PROPAGATION_SPEED[ft], fm.x, ft == 7u && fm.x > 0.0);
-    let val_eff = val_eff_at(pre, tm, ft, v, d_mag);
+    var val_eff = val_eff_at(pre, tm, ft, v, d_mag);
+    if (ft == 0u && mt.w > 0.0) {
+        let z1 = 1.0 + mt.w;
+        val_eff = val_eff / (z1 * z1 * z1 * z1);
+    }
     var sk = field_spatial(d2, d_mag, mt.x, kid, vp.surface.w, f32(tm.w));
     if ((kid == 0u || kid == 6u) && ft == 1u) {
         let dhat = delta / max(d_mag, 1e-9);
@@ -696,6 +714,7 @@ struct Oscillator {
     motion: Motion,
     val: f64,
     name: String,
+    z: f64,
 }
 
 struct SpatialHash {
@@ -796,6 +815,7 @@ struct Channel {
     value: f64,
     position: Position,
     epoch: f64,
+    z: f64,
 }
 #[derive(Clone)]
 enum Extract {
@@ -2273,7 +2293,11 @@ mod archivar {
                 v[0],
                 v[1],
                 v[2],
-                pole[0],
+                if osc.force_type == 0.0 {
+                    osc.z
+                } else {
+                    pole[0]
+                },
                 pole[1],
                 pole[2],
                 j2,
@@ -2376,7 +2400,11 @@ mod archivar {
                     v[0],
                     v[1],
                     v[2],
-                    pole[0],
+                    if osc.force_type == 0.0 {
+                        osc.z
+                    } else {
+                        pole[0]
+                    },
                     pole[1],
                     pole[2],
                     j2,
@@ -7107,6 +7135,7 @@ mod archivar {
                                         }
                                         channels.push((
                                             Channel {
+                                                z: 0.0,
                                                 epoch,
                                                 position: position.clone(),
                                                 name: fc.name.clone(),
@@ -7196,6 +7225,7 @@ mod archivar {
                                         }
                                         channels.push((
                                             Channel {
+                                                z: 0.0,
                                                 epoch: row_epoch,
                                                 position: position.clone(),
                                                 name: fc.name.clone(),
@@ -7297,6 +7327,7 @@ mod archivar {
                                     for (lon, lat) in vertices.iter() {
                                         channels.push((
                                             Channel {
+                                                z: 0.0,
                                                 epoch,
                                                 position: Position::Surface {
                                                     body_name: frame_body_name(&src.frame),
@@ -7376,6 +7407,7 @@ mod archivar {
                                         let p = [cd * ca * radius, cd * sa * radius, sd * radius];
                                         channels.push((
                                             Channel {
+                                                z: 0.0,
                                                 epoch: row_epoch,
                                                 position: Position::StateVector {
                                                     p,
@@ -7493,6 +7525,7 @@ mod archivar {
                                 }
                                 channels.push((
                                     Channel {
+                                        z: 0.0,
                                         epoch: now,
                                         position: position.clone(),
                                         name: fc.name.clone(),
@@ -7591,6 +7624,7 @@ mod archivar {
                                     }
                                     channels.push((
                                         Channel {
+                                            z: 0.0,
                                             epoch: now,
                                             position: Position::StateVector {
                                                 p,
@@ -7676,6 +7710,14 @@ mod archivar {
                                     }
                                 } else {
                                     CELESTIAL_SPHERE_RADIUS_M
+                                };
+                                let zval = if !z_key.is_empty() {
+                                    match jpath(v, z_key) {
+                                        Some(z) if z > 0.0 => z,
+                                        _ => 0.0,
+                                    }
+                                } else {
+                                    0.0
                                 };
                                 let ra = ra_deg.to_radians();
                                 let dec = dec_deg.to_radians();
@@ -7765,6 +7807,7 @@ mod archivar {
                                     }
                                     channels.push((
                                         Channel {
+                                            z: zval,
                                             epoch: sample_epoch,
                                             position: Position::StateVector {
                                                 p,
@@ -7836,6 +7879,7 @@ mod archivar {
                                                 if mag >= *min_mag {
                                                     channels.push((
                                                         Channel {
+                                                            z: 0.0,
                                                             epoch: now,
                                                             position: Position::Surface {
                                                                 body_name: frame_body_name(
@@ -7862,6 +7906,7 @@ mod archivar {
                                                     ));
                                                     channels.push((
                                                         Channel {
+                                                            z: 0.0,
                                                             epoch: now,
                                                             position: Position::Surface {
                                                                 body_name: frame_body_name(
@@ -7984,6 +8029,7 @@ mod archivar {
                     }
                     channels.push((
                         Channel {
+                            z: 0.0,
                             epoch: now,
                             position: Position::Source,
                             name: fc.name.clone(),
@@ -8146,6 +8192,7 @@ mod archivar {
                 }
             },
             name: channel.name.clone(),
+            z: channel.z,
         })
     }
 
@@ -8153,6 +8200,7 @@ mod archivar {
         let mut out = Vec::new();
         out.push((
             Channel {
+                z: 0.0,
                 name: format!("{}.radius", name),
                 value: props.radius_m,
                 position: Position::Source,
@@ -8173,6 +8221,7 @@ mod archivar {
         if let Some(gm) = props.gm {
             out.push((
                 Channel {
+                    z: 0.0,
                     name: format!("{}.mass", name),
                     value: gm,
                     position: Position::Source,
@@ -10969,6 +11018,7 @@ mod archivar {
                         fold: None,
                     };
                     let channel = Channel {
+                        z: 0.0,
                         epoch: now,
                         position: Position::Surface {
                             body_name: declared_body.body_name.clone(),
@@ -11684,6 +11734,8 @@ mod archivar {
                     assert_eq!(channels.len(), 2);
                     assert_eq!(channels[0].1.name, "tns_transient_flux");
                     assert_eq!(channels[1].1.name, "tns_transient_flux");
+                    assert!((channels[0].0.z - 0.027).abs() < 1e-9);
+                    assert_eq!(channels[1].0.z, 0.0);
                 }
                 ExtractResult::WithEphemeris(_, _) => panic!("unexpected ephemeris"),
             }
@@ -13364,6 +13416,7 @@ field temp temp_c\n";
                 fanout_delay: 0,
             };
             let channel = super::Channel {
+                z: 0.0,
                 epoch: 0.0,
                 position: super::Position::Surface {
                     body_name: "mars".into(),
@@ -14938,7 +14991,7 @@ mod mathematikerin {
             meta[f] = r.7 as f32;
             meta[f + 1] = r.6 as f32;
             meta[f + 2] = r.8 as f32;
-            meta[f + 3] = 0.0;
+            meta[f + 3] = if r.9 == 0.0 { r.15 as f32 } else { 0.0 };
             meta[f + 4] = r.15 as f32;
             meta[f + 5] = r.16 as f32;
             meta[f + 6] = r.17 as f32;
@@ -17711,6 +17764,33 @@ mod mathematikerin {
                 te
             );
         }
+
+        #[test]
+        fn aberration_shifts_toward_apex_and_stays_unit() {
+            fn aberr(u: [f64; 3], beta: [f64; 3]) -> [f64; 3] {
+                let b2 = beta[0] * beta[0] + beta[1] * beta[1] + beta[2] * beta[2];
+                let gamma = 1.0 / (1.0 - b2).sqrt();
+                let ud = u[0] * beta[0] + u[1] * beta[1] + u[2] * beta[2];
+                let inv = 1.0 / (1.0 + ud);
+                let k = gamma / (gamma + 1.0) * ud;
+                [
+                    (u[0] / gamma + beta[0] + k * beta[0]) * inv,
+                    (u[1] / gamma + beta[1] + k * beta[1]) * inv,
+                    (u[2] / gamma + beta[2] + k * beta[2]) * inv,
+                ]
+            }
+            let beta = [0.5, 0.0, 0.0];
+            let ahead = aberr([1.0, 0.0, 0.0], beta);
+            assert!((ahead[0] - 1.0).abs() < 1e-9);
+            assert!(ahead[1].abs() < 1e-9 && ahead[2].abs() < 1e-9);
+            let side = aberr([0.0, 1.0, 0.0], beta);
+            assert!(side[0] > 0.0, "transverse star shifts toward the apex");
+            let n = (side[0] * side[0] + side[1] * side[1] + side[2] * side[2]).sqrt();
+            assert!((n - 1.0).abs() < 1e-9);
+            let rest = aberr([0.3, 0.4, 0.916515139], [0.0, 0.0, 0.0]);
+            assert!((rest[0] - 0.3).abs() < 1e-9);
+            assert!((rest[1] - 0.4).abs() < 1e-9);
+        }
     }
 }
 #[cfg(feature = "browser_relay")]
@@ -18275,6 +18355,7 @@ mod relay {
                                 if value.is_finite() {
                                     channels.push((
                                         Channel {
+                                            z: 0.0,
                                             epoch: now,
                                             position: pos.clone(),
                                             name: fc.name.clone(),
@@ -18327,6 +18408,7 @@ mod relay {
                             if value.is_finite() {
                                 channels.push((
                                     Channel {
+                                        z: 0.0,
                                         epoch: now,
                                         position: pos.clone(),
                                         name: fc.name.clone(),

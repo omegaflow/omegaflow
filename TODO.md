@@ -69,14 +69,18 @@ ICRS-4D-Rahmen teilt:
   g = GM/r², v_esc = √(2GM/r).
 
 Dazu zwei Ernte-Folgen (Befunde der grind-flash-Agenten 2026-08-18):
-- Massen-Lücken: 45 Eugenia, 87 Sylvia, 90 Antiope, 216 Kleopatra haben
-  publizierte GM, DASTCOM trägt 0 — Quelle gefunden (INPOP25c
-  J/A+A/705/A189/tablea1 + Goffin J/A+A/565/A56), GM geerntet in
-  phi/katalog/asteroid_gm_inpop25c.φ. Integration offen: GM als
-  BodyProperty im DASTCOM-Kompiler (Kompilat-Join, wie NEOWISE-Join).
-- NEOWISE/AKARI-Join: Durchmesser+Albedo (129.771) als Feld (Größe) in die
-  Asteroiden-Blöcke statt nur H-Schätzung — grind-pro-Join-Urteil (per
-  Asteroiden-Bezeichnung). Ledger registriert (2026-08-18).
+- ~~Massen-Lücken~~ — ERLEDIGT (2026-08-18): GM-Join im DASTCOM-Kompiler
+  (`dastcom_compiler --gm`, füllt gm_km3_s2 wo DASTCOM 0 trägt, INPOP25c
+  m³/s² → km³/s²). 45/87/90/216 tragen jetzt echte GM; die Okkluder-
+  Limb-Dämpfung und die Hill-Sphäre greifen für alle vier.
+- ~~NEOWISE/AKARI-Join~~ — ERLEDIGT (2026-08-18): Durchmesser-Join im
+  DASTCOM-Kompiler (`dastcom_compiler --diameters`, NEOWISE primär, AKARI
+  füllt Lücken; radius_km = diam/2 wo DASTCOM 0 trägt). ~130k Asteroiden
+  okkludieren jetzt mit echtem IR-Durchmesser statt 0. Regel: füllen wo
+  absent, vorhandene DASTCOM-Radien bleiben (0 honored — kein Ersetzen
+  einer Messung durch eine andere). Offen bleibt die Frage H-Schätzung vs.
+  NEOWISE für die Körper, wo DASTCOM einen abgeleiteten (nicht gemessenen)
+  Radius trägt — registriert, nicht entschieden.
 
 Sternfarbe-RENDERING (Operator-Wunsch „ich mag die Farben"): Die Farbe ist
 geerntet (Teff/BPmag/RPmag in den JSONs), aber die WGSL muss sie noch malen
@@ -86,8 +90,7 @@ Bogen.
 Weitere neue Quellen (grind-pro, heikler Join/Parsing): LCDB-Rotations-
 achsen (Pol, nicht nur Periode), DAMIT-Formmodelle (3D-Formen → j2/r_eq).
 
-Empfohlene Reihenfolge: Sternfarbe-Rendering → Hill/Abplattung → Massen-
-Integration (INPOP25c-GM in den DASTCOM-Kompiler) → NEOWISE-Join → LCDB/DAMIT.
+Empfohlene Reihenfolge: Sternfarbe-Rendering → Hill/Abplattung → LCDB/DAMIT.
 
 ## Surveys — die Messungen der Sessions
 
@@ -381,9 +384,12 @@ resonance(mut read_signal(s: read_ws_frame_part(stream: read_ws_frame_raw(stream
 - clamp(0,1) richtet negative Messwerte gleich (alter Fleck, Sensory)
 - test_parse_stations_xml: Fixture-Assertion „AAE" vs BGS-lowercase
   „aae" — vorbestehend auf main, unberührt
-- Deep-Oszillatoren (Quasare, Schwarze Löcher, ALFALFA, TeVCat, TNS) in
-  den Pfad führen: z reist als Eigenschaft (Props-vec4, Slot frei) —
-  die Extraktion verrechnet z heute zur Distanz und verwirft es
+- ~~Deep-Oszillatoren~~ — erledigt (2026-08-18): z reist als Eigenschaft —
+  die Extraktion behält z neben der Distanz, der Rekord trägt es im
+  `pole_x`-Slot (r.15, für em immer leer), `pack_window` bildet `meta[3]`
+  (der freie Props-Slot, em-gated), die WGSL wendet die Tolman-Dämpfung
+  `(1+z)⁻⁴` auf die em-Flüsse an. Die Quasare leuchten in ihrer wahren
+  Tiefe.
 - Farbe der Sterne: der Katalog trägt ra/dec/pm/plx/flux — keine
   Farbspalte; falls eine im Binärkatalog existiert, Temperatur→Hue
   ableiten
@@ -401,8 +407,10 @@ resonance(mut read_signal(s: read_ws_frame_part(stream: read_ws_frame_raw(stream
   atmosphärische Dämmerung, kleine Skala (Terrain/Bauten — der Mechanismus
   ist skalenfrei, die Daten fehlen), Oszillator-Eigenradius als
   Rekord-Slot.
-- Relativistische Aberration (dopp, Q01) des alten Renderers ist mit der
-  Membran-Rewrite gegangen — für den Deep-Pfad als eigener Atom prüfen
+- ~~Relativistische Aberration~~ — erledigt (2026-08-18): `aberration(u, β)`
+  im Deep-Pfad (deep_pt_vs/deep_vs) — `u' = (u/γ + β + γ/(γ+1)·(u·β)·β)/(1+u·β)`
+  mit β = v/c aus der VP; der Strahl biegt sich um den Geschwindigkeitsvektor,
+  die Okklusion prüft die aberrierte Richtung.
 - Galaxien-Zoom-Verifikation beim Operator ausstehend (deep-Zahl im HUD;
   bei grid 2^39 noch 0 — Proxima bei 4,2 ly ≈ 2^45,5)
 - In-Fenster-HUD (Bitmap-Overlay); stderr-HUD trägt vorerst

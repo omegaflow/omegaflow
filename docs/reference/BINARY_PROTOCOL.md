@@ -34,7 +34,7 @@ Header total: 19 bytes.
 | 12 | vx | oscillator velocity X (m/s) |
 | 13 | vy | oscillator velocity Y (m/s) |
 | 14 | vz | oscillator velocity Z (m/s) |
-| 15 | pole_x | body pole axis X (ICRS unit vector, 0 = absent) |
+| 15 | pole_x | body pole axis X (ICRS unit vector, 0 = absent); for em sources (force_type 0) carries the redshift z — packed into `meta[3]` (`props[j*3].w`) and applied as Tolman dimming (1+z)⁻⁴ |
 | 16 | pole_y | body pole axis Y |
 | 17 | pole_z | body pole axis Z |
 | 18 | j2 | zonal harmonic J2 (0 = absent) |
