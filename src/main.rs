@@ -4510,6 +4510,108 @@ mod archivar {
         result
     }
 
+    fn secret_resolves_void(template: &str, env: &HashMap<String, String>) -> bool {
+        let mut rest = template;
+        while let Some(start) = rest.find('{') {
+            rest = &rest[start + 1..];
+            let Some(end) = rest.find('}') else {
+                return false;
+            };
+            let key = &rest[..end];
+            let upper = key.to_uppercase();
+            match env.get(key).or_else(|| env.get(&upper)) {
+                Some(v) if !v.is_empty() => {}
+                _ => return true,
+            }
+            rest = &rest[end + 1..];
+        }
+        false
+    }
+
+    fn url_has_template(url: &str) -> bool {
+        let mut rest = url;
+        while let Some(start) = rest.find('{') {
+            rest = &rest[start + 1..];
+            let Some(end) = rest.find('}') else {
+                return false;
+            };
+            if rest[..end].chars().any(|c| c.is_ascii_lowercase()) {
+                return true;
+            }
+            rest = &rest[end + 1..];
+        }
+        false
+    }
+
+    fn url_is_fanout(url: &str) -> bool {
+        url.contains("{station}") || url.contains("{nearest_station}")
+    }
+
+    fn frame_anchor(frame: &Frame) -> (f64, f64) {
+        match frame {
+            Frame::Surface { lat, lon, .. } => (*lat, *lon),
+            _ => (0.0, 0.0),
+        }
+    }
+
+    fn ci_probe_render(
+        template: &str,
+        anchor: (f64, f64),
+        env: &HashMap<String, String>,
+    ) -> Option<String> {
+        let secs = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .map(|d| d.as_secs())
+            .ok()?;
+        let days = secs / 86400;
+        let (ty, tm, td) = days_to_ymd(days);
+        let (yy, ym, yd) = days_to_ymd(days - 1);
+        let (wy, wm, wd) = days_to_ymd(days - 7);
+        let hour = (secs % 86400) / 3600;
+        let minute = (secs % 3600) / 60;
+        let now_iso = format!("{}-{:02}-{:02}T{:02}:{:02}:00", ty, tm, td, hour, minute);
+        let hour_ago_iso = {
+            let dt = secs.saturating_sub(3600);
+            let (h_y, h_m, h_d) = days_to_ymd(dt / 86400);
+            let h_h = (dt % 86400) / 3600;
+            let h_min = (dt % 3600) / 60;
+            format!("{}-{:02}-{:02}T{:02}:{:02}:00", h_y, h_m, h_d, h_h, h_min)
+        };
+        let half = 0.5f64;
+        let url = template
+            .replace("{today}", &format!("{}-{:02}-{:02}", ty, tm, td))
+            .replace("{yesterday}", &format!("{}-{:02}-{:02}", yy, ym, yd))
+            .replace("{week_ago}", &format!("{}-{:02}-{:02}", wy, wm, wd))
+            .replace("{now}", &now_iso)
+            .replace("{hour_ago}", &hour_ago_iso)
+            .replace("{year}", &ty.to_string())
+            .replace("{lat}", &format!("{:.6}", anchor.0))
+            .replace("{lon}", &format!("{:.6}", anchor.1))
+            .replace("{lat_int}", &format!("{:.0}", anchor.0))
+            .replace("{lon_int}", &format!("{:.0}", anchor.1))
+            .replace("{lat_min}", &format!("{:.6}", anchor.0 - half))
+            .replace("{lat_max}", &format!("{:.6}", anchor.0 + half))
+            .replace("{lon_min}", &format!("{:.6}", anchor.1 - half))
+            .replace("{lon_max}", &format!("{:.6}", anchor.1 + half));
+        Some(resolve_secret(&url, env))
+    }
+
+    fn ci_upload(netloc_tag: &str, tmp_path: &str) -> bool {
+        if std::env::var("GH_TOKEN").is_err() {
+            return false;
+        }
+        let status = Command::new("gh")
+            .arg("release")
+            .arg("upload")
+            .arg(netloc_tag)
+            .arg(tmp_path)
+            .arg("--clobber")
+            .arg("--repo")
+            .arg("omegaflow/sources")
+            .output();
+        matches!(status, Ok(o) if o.status.success())
+    }
+
     fn render_headers(
         headers: &[(String, String)],
         env: &HashMap<String, String>,
@@ -5208,8 +5310,16 @@ mod archivar {
                     };
                     let f = match force_id_of(parts[4]) {
                         Some(f) => f,
-                        None => continue,
+                        None => {
+                            report_anomaly(
+                                "Invalid Syntax",
+                                &cur_url,
+                                &format!("unknown force \"{}\": {}", parts[4], line),
+                            );
+                            continue;
+                        }
                     };
+                    report_physics_mismatch(f, parts[5], parts[1], &cur_url);
                     let tau: f64 = match parts[6].parse() {
                         Ok(v) if v > 0.0 => v,
                         _ => continue,
@@ -5398,16 +5508,8 @@ mod archivar {
                     };
                     let f = match force_id_of(parts[4]) {
                         Some(f) => f,
-                        None => {
-                            report_anomaly(
-                                "Invalid Syntax",
-                                &cur_url,
-                                &format!("unknown force \"{}\": {}", parts[4], line),
-                            );
-                            continue;
-                        }
+                        None => continue,
                     };
-                    report_physics_mismatch(f, parts[5], parts[1], &cur_url);
                     let tau: f64 = match parts[6].parse() {
                         Ok(v) if v > 0.0 => v,
                         _ => continue,
@@ -9036,7 +9138,16 @@ mod archivar {
         sources
     }
 
+    fn check_empty_data(src: &SourceConfig, raw: &str, now: f64, lsk: &LeapSeconds) {
+        if let ExtractResult::Measurements(channels) = extract(src, raw, now, lsk) {
+            if channels.is_empty() {
+                report_anomaly("Empty Data", &src.url, "extract returned no measurements");
+            }
+        }
+    }
+
     fn ci_mode(dir: &str) -> i32 {
+        let env = load_env();
         let sources = if dir == "phi" {
             match std::fs::read_to_string("phi/sources.φ") {
                 Ok(content) => load_sources_from(&content),
@@ -9049,12 +9160,32 @@ mod archivar {
             load_all_sources(dir)
         };
         let mirror_enabled = dir == "phi";
+        let mut lsk: Option<LeapSeconds> = None;
+        for src in sources.iter().filter(|s| s.format == "kernel_text") {
+            if src.body.as_deref() != Some("naif0012") {
+                continue;
+            }
+            if let Some(text) = fetch_one(&src.url, None, &[], src.ttl) {
+                lsk = omegaflow::lsk::parse(&text);
+            }
+        }
+        if lsk.is_none() {
+            if let Some(text) = fetch_one(
+                "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls",
+                None,
+                &[],
+                86400,
+            ) {
+                lsk = omegaflow::lsk::parse(&text);
+            }
+        }
+        let now_tdb: Option<f64> = lsk.as_ref().and_then(|l| l.system_now_tdb());
         let total = sources.len();
         let mut reachable = 0usize;
         let mut dead = 0usize;
+        let mut pending = 0usize;
         let mut mirrored = 0u32;
         let mut fresh = 0u32;
-        let mut template_skipped = 0u32;
         for src in &sources {
             if src.url.starts_with("https://github.com/omegaflow/sources")
                 || src.format == "ephemeris_binary"
@@ -9064,8 +9195,57 @@ mod archivar {
             {
                 continue;
             }
+            let headers = render_headers(&src.headers, &env);
+            if headers.iter().any(|(_, v)| secret_resolves_void(v, &env)) {
+                eprintln!("ci-mode: {} header secret void — pending", src.url);
+                pending += 1;
+                continue;
+            }
+            if url_is_fanout(&src.url) {
+                mirror_stations(src, &headers, &mut mirrored, &mut reachable, &mut dead);
+                probe_fanout(
+                    src,
+                    &headers,
+                    &env,
+                    &mut reachable,
+                    &mut dead,
+                    &mut mirrored,
+                    &mut pending,
+                );
+                continue;
+            }
+            if url_has_template(&src.url) {
+                probe_template(
+                    src,
+                    &headers,
+                    &env,
+                    &mut reachable,
+                    &mut dead,
+                    &mut mirrored,
+                );
+                continue;
+            }
+            if secret_resolves_void(&src.url, &env) {
+                eprintln!("ci-mode: {} secret void — pending", src.url);
+                pending += 1;
+                continue;
+            }
             if src.url.contains('{') {
-                template_skipped += 1;
+                let resolved = resolve_secret(&src.url, &env);
+                match fetch_raw(&resolved, None, &headers, src.ttl) {
+                    Some(r) if parse_json(&r).is_some() => {
+                        reachable += 1;
+                        eprintln!("ci-mode: {} JSON ok (live-only, secret in URL)", src.url);
+                    }
+                    Some(_) => {
+                        eprintln!("ci-mode: {} JSON parse void", src.url);
+                        dead += 1;
+                    }
+                    None => {
+                        eprintln!("ci-mode: fetch returned void for {}", src.url);
+                        dead += 1;
+                    }
+                }
                 continue;
             }
             let netloc = extract_netloc(&src.url);
@@ -9086,7 +9266,7 @@ mod archivar {
                     continue;
                 }
             }
-            let raw = match fetch_raw(&src.url, None, &[], src.ttl) {
+            let raw = match fetch_raw(&src.url, None, &headers, src.ttl) {
                 Some(r) => r,
                 None => {
                     eprintln!("ci-mode: fetch returned void for {}", src.url);
@@ -9097,6 +9277,9 @@ mod archivar {
             };
             if parse_json(&raw).is_some() {
                 reachable += 1;
+                if let (Some(l), Some(now)) = (&lsk, now_tdb) {
+                    check_empty_data(src, &raw, now, l);
+                }
                 eprintln!("ci-mode: {} JSON ok", src.url);
                 if let Some(cp) = &cache_path {
                     if let Some(parent) = std::path::Path::new(cp).parent() {
@@ -9111,23 +9294,8 @@ mod archivar {
                             .cloned()
                             .unwrap_or_else(|| source_name_from_url(&src.url));
                         let tmp_path = format!("/tmp/archivar_cache/{}/{}.json", netloc, name);
-                        if std::fs::write(&tmp_path, &raw).is_ok() {
-                            if let Ok(_gh) = std::env::var("GH_TOKEN") {
-                                let status = Command::new("gh")
-                                    .arg("release")
-                                    .arg("upload")
-                                    .arg(netloc)
-                                    .arg(&tmp_path)
-                                    .arg("--clobber")
-                                    .arg("--repo")
-                                    .arg("omegaflow/sources")
-                                    .output();
-                                if let Ok(o) = status {
-                                    if o.status.success() {
-                                        mirrored += 1;
-                                    }
-                                }
-                            }
+                        if std::fs::write(&tmp_path, &raw).is_ok() && ci_upload(netloc, &tmp_path) {
+                            mirrored += 1;
                         }
                     }
                 }
@@ -9138,8 +9306,8 @@ mod archivar {
             }
         }
         eprintln!(
-        "ci-mode: {}/{} reachable, {} dead, {} mirrored to CDN, {} fresh (local TTL), {} template-skipped, mirror={}",
-        reachable, total, dead, mirrored, fresh, template_skipped, mirror_enabled
+        "ci-mode: {}/{} reachable, {} dead, {} pending (secret void), {} mirrored to CDN, {} fresh (local TTL), mirror={}",
+        reachable, total, dead, pending, mirrored, fresh, mirror_enabled
     );
         let anomalies = take_anomalies();
         if !anomalies.is_empty() && std::env::var("GH_TOKEN").is_ok() {
@@ -9179,6 +9347,175 @@ mod archivar {
             0
         } else {
             1
+        }
+    }
+
+    fn mirror_stations(
+        src: &SourceConfig,
+        headers: &[(String, String)],
+        mirrored: &mut u32,
+        reachable: &mut usize,
+        dead: &mut usize,
+    ) {
+        let Some(stations_url) = &src.stations_url else {
+            return;
+        };
+        if url_has_template(stations_url) {
+            return;
+        }
+        let Some(netloc) = extract_netloc(stations_url) else {
+            return;
+        };
+        let name = source_name_from_url(stations_url);
+        let cache_path = format!("/tmp/archivar_cache/{}/{}.json", netloc, name);
+        if cache_fresh(&cache_path, src.ttl) {
+            return;
+        }
+        match fetch_raw(stations_url, None, headers, src.ttl) {
+            Some(raw) => {
+                if parse_json(&raw).is_some() {
+                    *reachable += 1;
+                    eprintln!("ci-mode: stations {} JSON ok", stations_url);
+                    if let Some(parent) = std::path::Path::new(&cache_path).parent() {
+                        let _ = std::fs::create_dir_all(parent);
+                    }
+                    if std::fs::write(&cache_path, &raw).is_ok() && ci_upload(netloc, &cache_path) {
+                        *mirrored += 1;
+                    }
+                } else {
+                    eprintln!("ci-mode: stations {} JSON parse void", stations_url);
+                    *dead += 1;
+                }
+            }
+            None => {
+                eprintln!("ci-mode: stations fetch void {}", stations_url);
+                *dead += 1;
+            }
+        }
+    }
+
+    fn probe_fanout(
+        src: &SourceConfig,
+        headers: &[(String, String)],
+        env: &HashMap<String, String>,
+        reachable: &mut usize,
+        dead: &mut usize,
+        mirrored: &mut u32,
+        pending: &mut usize,
+    ) {
+        let Some(stations_url) = &src.stations_url else {
+            *pending += 1;
+            return;
+        };
+        let stations_url = if url_has_template(stations_url) {
+            match ci_probe_render(stations_url, frame_anchor(&src.frame), env) {
+                Some(u) => u,
+                None => {
+                    *pending += 1;
+                    return;
+                }
+            }
+        } else {
+            resolve_secret(stations_url, env)
+        };
+        let raw = match fetch_raw(&stations_url, None, headers, 86400) {
+            Some(r) => r,
+            None => {
+                eprintln!("ci-mode: fanout stations void {}", stations_url);
+                *dead += 1;
+                return;
+            }
+        };
+        let stations = match parse_json(&raw) {
+            Some(j) => parse_station_entries(&j, src),
+            None => parse_stations_xml(&raw),
+        };
+        let Some(first) = stations.first() else {
+            eprintln!("ci-mode: fanout no stations {}", stations_url);
+            *dead += 1;
+            return;
+        };
+        let probe_url = resolve_secret(&src.url.replace("{station}", &first.id), env)
+            .replace("{nearest_station}", &first.id);
+        let Some(netloc) = extract_netloc(&src.url) else {
+            return;
+        };
+        let tag = format!("{}-template", netloc);
+        let name = source_name_from_url(&src.url);
+        let cache_path = format!("/tmp/archivar_cache/{}/{}.json", tag, name);
+        if cache_fresh(&cache_path, src.ttl) {
+            *reachable += 1;
+            return;
+        }
+        match fetch_raw(&probe_url, None, headers, src.ttl) {
+            Some(body) => {
+                if parse_json(&body).is_some() {
+                    *reachable += 1;
+                    eprintln!("ci-mode: fanout probe {} JSON ok", probe_url);
+                    if let Some(parent) = std::path::Path::new(&cache_path).parent() {
+                        let _ = std::fs::create_dir_all(parent);
+                    }
+                    if std::fs::write(&cache_path, &body).is_ok() && ci_upload(&tag, &cache_path) {
+                        *mirrored += 1;
+                    }
+                } else {
+                    eprintln!("ci-mode: fanout probe {} JSON parse void", probe_url);
+                    *dead += 1;
+                }
+            }
+            None => {
+                eprintln!("ci-mode: fanout probe void {}", probe_url);
+                *dead += 1;
+            }
+        }
+    }
+
+    fn probe_template(
+        src: &SourceConfig,
+        headers: &[(String, String)],
+        env: &HashMap<String, String>,
+        reachable: &mut usize,
+        dead: &mut usize,
+        mirrored: &mut u32,
+    ) {
+        let anchor = frame_anchor(&src.frame);
+        let probe_url = match ci_probe_render(&src.url, anchor, env) {
+            Some(u) => u,
+            None => return,
+        };
+        if secret_resolves_void(&probe_url, env) {
+            return;
+        }
+        let Some(netloc) = extract_netloc(&src.url) else {
+            return;
+        };
+        let tag = format!("{}-template", netloc);
+        let name = source_name_from_url(&src.url);
+        let cache_path = format!("/tmp/archivar_cache/{}/{}.json", tag, name);
+        if cache_fresh(&cache_path, src.ttl) {
+            *reachable += 1;
+            return;
+        }
+        match fetch_raw(&probe_url, None, headers, src.ttl) {
+            Some(body) => {
+                if parse_json(&body).is_some() {
+                    *reachable += 1;
+                    eprintln!("ci-mode: template probe {} JSON ok", probe_url);
+                    if let Some(parent) = std::path::Path::new(&cache_path).parent() {
+                        let _ = std::fs::create_dir_all(parent);
+                    }
+                    if std::fs::write(&cache_path, &body).is_ok() && ci_upload(&tag, &cache_path) {
+                        *mirrored += 1;
+                    }
+                } else {
+                    eprintln!("ci-mode: template probe {} JSON parse void", probe_url);
+                    *dead += 1;
+                }
+            }
+            None => {
+                eprintln!("ci-mode: template probe void {}", probe_url);
+                *dead += 1;
+            }
         }
     }
 
@@ -10808,6 +11145,8 @@ mod archivar {
         use super::*;
         use std::collections::HashMap;
 
+        static ANOMALY_TEST_GATE: std::sync::Mutex<()> = std::sync::Mutex::new(());
+
         fn full_fixture_lsk() -> super::LeapSeconds {
             super::LeapSeconds {
                 delta_t_a: 32.184,
@@ -11387,6 +11726,7 @@ field temp temp_c\n";
 
         #[test]
         fn test_anomaly_reporter() {
+            let _gate = ANOMALY_TEST_GATE.lock();
             ANOMALY_COLLECT.with(|c| c.set(true));
             report_anomaly(
                 "API Unreachable",
@@ -11453,6 +11793,33 @@ field temp temp_c\n";
             assert_eq!(normalize_unit("m/s²"), "m/s2");
             assert_eq!(normalize_unit("K"), "k");
             assert_eq!(normalize_unit("Pa"), "pa");
+        }
+
+        #[test]
+        fn test_empty_data_anomaly() {
+            let _gate = ANOMALY_TEST_GATE.lock();
+            ANOMALY_COLLECT.with(|c| c.set(true));
+            let sources = parse_sources(
+                "url https://example.org/e\nttl 3600\nformat json\nat earth\nmap features\nlat lat\nlon lon\nfield magnitude mag gaussian-inverse-square em mag 3600 0 0\n",
+            );
+            assert_eq!(sources.len(), 1);
+            let src = &sources[0];
+            let lsk = full_fixture_lsk();
+            let _ = take_anomalies();
+            check_empty_data(src, r#"{"features":[]}"#, 0.0, &lsk);
+            let anomalies = take_anomalies();
+            assert!(anomalies
+                .iter()
+                .any(|a| a.category == "Empty Data" && a.url == "https://example.org/e"));
+            check_empty_data(
+                src,
+                r#"{"features":[{"lat":10.0,"lon":20.0,"magnitude":5.0}]}"#,
+                0.0,
+                &lsk,
+            );
+            let anomalies = take_anomalies();
+            assert!(!anomalies.iter().any(|a| a.category == "Empty Data"));
+            ANOMALY_COLLECT.with(|c| c.set(false));
         }
 
         #[test]
@@ -13873,6 +14240,65 @@ field temp temp_c\n";
             let (frame, _) = draft_frame_guess("https://api.example.com/weather/current", "", &reg);
             assert_eq!(frame, "on earth\n");
         }
+
+        #[test]
+        fn test_ci_classification_plain_secret_template_fanout() {
+            assert!(!url_has_template("https://example.com/a/b.json"));
+            assert!(!url_has_template(
+                "https://firms.modaps.eosdis.nasa.gov/api/area/csv/{FIRMS_MAP_KEY}/MODIS_NRT/world/1"
+            ));
+            assert!(url_has_template("https://example.com/{lat}/{lon}"));
+            assert!(url_has_template(
+                "https://earthquake.usgs.gov/fdsnws/event/1/query?starttime={hour_ago}&latitude={lat}"
+            ));
+            assert!(url_is_fanout(
+                "https://example.com/stations/{station}/readings"
+            ));
+            assert!(url_is_fanout(
+                "https://example.com/?station={nearest_station}"
+            ));
+            assert!(!url_is_fanout("https://example.com/{lat}/{lon}"));
+        }
+
+        #[test]
+        fn test_ci_probe_render_resolves_templates_and_secrets() {
+            let mut env = HashMap::new();
+            env.insert("FIRMS_MAP_KEY".to_string(), "ABC123".to_string());
+            let url = ci_probe_render(
+                "https://example.com/?lat={lat}&lon={lon}&key={FIRMS_MAP_KEY}",
+                (52.5, 13.4),
+                &env,
+            )
+            .unwrap();
+            assert!(url.contains("lat=52.500000"), "got {}", url);
+            assert!(url.contains("lon=13.400000"), "got {}", url);
+            assert!(url.contains("key=ABC123"), "got {}", url);
+            assert!(!url.contains('{'), "unresolved marker in {}", url);
+        }
+
+        #[test]
+        fn test_ci_probe_render_bbox_and_temporal() {
+            let env = HashMap::new();
+            let url = ci_probe_render(
+                "https://example.com/?bBox={lon_min},{lat_min},{lon_max},{lat_max}&start={week_ago}&end={today}",
+                (0.0, 0.0),
+                &env,
+            )
+            .unwrap();
+            assert!(!url.contains('{'), "unresolved marker in {}", url);
+            assert!(url.contains("start=20"), "missing week_ago in {}", url);
+            assert!(url.contains("end=20"), "missing today in {}", url);
+        }
+
+        #[test]
+        fn test_secret_resolves_void_distinguishes_absent_and_empty() {
+            let mut env = HashMap::new();
+            env.insert("SET_KEY".to_string(), "v".to_string());
+            env.insert("EMPTY_KEY".to_string(), String::new());
+            assert!(secret_resolves_void("{ABSENT_KEY}", &env));
+            assert!(secret_resolves_void("{EMPTY_KEY}", &env));
+            assert!(!secret_resolves_void("{SET_KEY}", &env));
+        }
     }
 }
 mod mathematikerin {
@@ -15732,7 +16158,7 @@ mod mathematikerin {
                 ) {
                     let mut enc =
                         device.create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
-                    enc.copy_buffer_to_buffer(&probe_buf, 0, &probe_read, 0, 36);
+                    enc.copy_buffer_to_buffer(&probe_buf, 0, &probe_read, 0, 48);
                     queue.submit(std::iter::once(enc.finish()));
                     let mapped = Arc::new(AtomicBool::new(false));
                     let m2 = mapped.clone();
@@ -16081,6 +16507,19 @@ mod mathematikerin {
             Err(_) => return,
         };
         event_loop.set_control_flow(ControlFlow::Poll);
+        let presence_init: Option<[f64; 4]> = std::env::args().skip(1).find_map(|a| {
+            let rest = a.strip_prefix("#x,")?;
+            let parts: Vec<&str> = rest.split(',').collect();
+            if parts.len() < 4 {
+                return None;
+            }
+            Some([
+                parts[0].parse().ok()?,
+                parts[1].parse().ok()?,
+                parts[2].parse().ok()?,
+                parts[3].parse().ok()?,
+            ])
+        });
         let mut app = NativeApp::new(
             rx,
             req_tx,
@@ -16093,6 +16532,12 @@ mod mathematikerin {
             consent,
             audio_tx,
         );
+        if let Some([x, y, z, t]) = presence_init {
+            app.p = [x, y, z];
+            app.v = [0.0, 0.0, 0.0];
+            app.t0 = t;
+            app.t_presence = t;
+        }
         let _ = event_loop.run_app(&mut app);
     }
 
@@ -17192,64 +17637,3 @@ mod relay {
 fn main() {
     archivar::main_flow()
 }
-    fn check_empty_data(src: &SourceConfig, raw: &str, now: f64, lsk: &LeapSeconds) {
-        if let ExtractResult::Measurements(channels) = extract(src, raw, now, lsk) {
-            if channels.is_empty() {
-                report_anomaly("Empty Data", &src.url, "extract returned no measurements");
-            }
-        }
-    }
-
-        let mut lsk: Option<LeapSeconds> = None;
-        for src in sources.iter().filter(|s| s.format == "kernel_text") {
-            if src.body.as_deref() != Some("naif0012") {
-                continue;
-            }
-            if let Some(text) = fetch_one(&src.url, None, &[], src.ttl) {
-                lsk = omegaflow::lsk::parse(&text);
-            }
-        }
-        if lsk.is_none() {
-            if let Some(text) = fetch_one(
-                "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls",
-                None,
-                &[],
-                86400,
-            ) {
-                lsk = omegaflow::lsk::parse(&text);
-            }
-        }
-        let now_tdb: Option<f64> = lsk.as_ref().and_then(|l| l.system_now_tdb());
-                if let (Some(l), Some(now)) = (&lsk, now_tdb) {
-                    check_empty_data(src, &raw, now, l);
-                }
-        static ANOMALY_TEST_GATE: std::sync::Mutex<()> = std::sync::Mutex::new(());
-
-            let _gate = ANOMALY_TEST_GATE.lock();
-        #[test]
-        fn test_empty_data_anomaly() {
-            let _gate = ANOMALY_TEST_GATE.lock();
-            ANOMALY_COLLECT.with(|c| c.set(true));
-            let sources = parse_sources(
-                "url https://example.org/e\nttl 3600\nformat json\nat earth\nmap features\nlat lat\nlon lon\nfield magnitude mag gaussian-inverse-square em mag 3600 0 0\n",
-            );
-            assert_eq!(sources.len(), 1);
-            let src = &sources[0];
-            let lsk = full_fixture_lsk();
-            let _ = take_anomalies();
-            check_empty_data(src, r#"{"features":[]}"#, 0.0, &lsk);
-            let anomalies = take_anomalies();
-            assert!(anomalies
-                .iter()
-                .any(|a| a.category == "Empty Data" && a.url == "https://example.org/e"));
-            check_empty_data(
-                src,
-                r#"{"features":[{"lat":10.0,"lon":20.0,"magnitude":5.0}]}"#,
-                0.0,
-                &lsk,
-            );
-            let anomalies = take_anomalies();
-            assert!(!anomalies.iter().any(|a| a.category == "Empty Data"));
-            ANOMALY_COLLECT.with(|c| c.set(false));
-        }
-
