@@ -858,7 +858,14 @@ struct Anomaly {
 
 static ANOMALIES: std::sync::Mutex<Vec<Anomaly>> = std::sync::Mutex::new(Vec::new());
 
+thread_local! {
+    static ANOMALY_COLLECT: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
+}
+
 fn report_anomaly(category: &'static str, url: &str, details: &str) {
+    if !ANOMALY_COLLECT.with(|c| c.get()) {
+        return;
+    }
     if let Ok(mut v) = ANOMALIES.lock() {
         v.push(Anomaly {
             category,
@@ -883,18 +890,48 @@ fn anomaly_issue_body(anomalies: &[Anomaly]) -> String {
     body
 }
 
+fn normalize_unit(unit: &str) -> String {
+    unit.trim()
+        .to_lowercase()
+        .replace('\u{b2}', "2")
+        .replace('\u{b3}', "3")
+        .replace('\u{b5}', "u")
+        .replace('\u{3bc}', "u")
+}
+
 fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
     match force {
-        0 => &["w", "w/m2", "t", "nt", "ev", "jy", "hz", "m", "km"],
-        1 => &["m/s2", "gal", "mgal", "kg", "au", "pc", "t", "nt"],
-        2 => &["pa", "m", "mm", "hz"],
-        3 => &["m", "mm", "m/s2", "gal", "pa", "hz"],
-        4 => &["m", "mm", "cm", "pa", "m/s"],
-        5 => &["k", "c", "w/m2", "w", "j"],
-        6 => &["ppm", "ppb", "mg/m3", "psu", "ntu", "hpa"],
-        7 => &["m/s", "km/h", "knot", "m3/s", "pa", "m"],
-        8 => &["v/m", "v", "a", "s/m"],
+        0 => &[
+            "w", "w/m2", "t", "nt", "ev", "jy", "mjy", "jy_km/s", "hz", "m", "km", "mag", "pc/cm3",
+            "erg/cm2", "crab", "cpm",
+        ],
+        1 => &[
+            "m/s2", "gal", "mgal", "kg", "m_sun", "m_earth", "au", "pc", "t", "nt", "m", "r_earth",
+            "logg",
+        ],
+        2 => &["pa", "hpa", "m", "mm", "hz"],
+        3 => &["m", "mm", "km", "m/s2", "gal", "pa", "hz", "mw"],
+        4 => &["m", "mm", "cm", "km", "pa", "m/s", "mw"],
+        5 => &["k", "c", "w/m2", "w", "j", "mw"],
+        6 => &[
+            "ppm", "ppb", "mg/m3", "ug/m3", "mg/kg", "psu", "ntu", "%", "pct", "hpa", "uatm", "du",
+            "cm-3",
+        ],
+        7 => &[
+            "m/s", "km/h", "km/s", "knot", "kt", "m3/s", "cfs", "pa", "hpa", "mb", "m",
+        ],
+        8 => &["v/m", "v", "a", "s/m", "ua/m2"],
         _ => &[],
+    }
+}
+
+fn report_physics_mismatch(force: u8, unit: &str, key: &str, url: &str) {
+    if !allowed_units_for_force(force).contains(&normalize_unit(unit).as_str()) {
+        report_anomaly(
+            "Physics Mismatch",
+            url,
+            &format!("field {}: unit \"{}\" not in force registry", key, unit),
+        );
     }
 }
 
@@ -4589,6 +4626,12 @@ mod archivar {
                 "ttl" if parts.len() >= 2 => {
                     if let Ok(v) = parts[1].parse::<u64>() {
                         cur_ttl = v;
+                    } else {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!("ttl non-numeric: {}", line),
+                        );
                     }
                 }
                 "at" if parts.len() >= 2 => {
@@ -4604,16 +4647,37 @@ mod archivar {
                     cur_body = Some(body.clone());
                     let lat: f64 = match parts[2].parse() {
                         Ok(v) => v,
-                        Err(_) => continue,
+                        Err(_) => {
+                            report_anomaly(
+                                "Invalid Syntax",
+                                &cur_url,
+                                &format!("on lat non-numeric: {}", line),
+                            );
+                            continue;
+                        }
                     };
                     let lon: f64 = match parts[3].parse() {
                         Ok(v) => v,
-                        Err(_) => continue,
+                        Err(_) => {
+                            report_anomaly(
+                                "Invalid Syntax",
+                                &cur_url,
+                                &format!("on lon non-numeric: {}", line),
+                            );
+                            continue;
+                        }
                     };
                     let alt: f64 = match parts.get(4) {
                         Some(s) => match s.parse() {
                             Ok(v) => v,
-                            Err(_) => continue,
+                            Err(_) => {
+                                report_anomaly(
+                                    "Invalid Syntax",
+                                    &cur_url,
+                                    &format!("on alt non-numeric: {}", line),
+                                );
+                                continue;
+                            }
                         },
                         None => 0.0,
                     };
@@ -4623,6 +4687,13 @@ mod archivar {
                         lon,
                         alt,
                     });
+                }
+                "on" => {
+                    report_anomaly(
+                        "Invalid Syntax",
+                        &cur_url,
+                        &format!("on needs <body> <lat> <lon> [alt]: {}", line),
+                    );
                 }
                 "map" if parts.len() >= 2 => {
                     cur_extracts.push(Extract::Map {
@@ -4969,8 +5040,16 @@ mod archivar {
                 "field" if parts.len() == 6 => {
                     let f = match force_id_of(parts[2]) {
                         Some(f) => f,
-                        None => continue,
+                        None => {
+                            report_anomaly(
+                                "Invalid Syntax",
+                                &cur_url,
+                                &format!("unknown force \"{}\": {}", parts[2], line),
+                            );
+                            continue;
+                        }
                     };
+                    report_physics_mismatch(f, parts[3], parts[1], &cur_url);
                     let tau: f64 = match parts[4].parse() {
                         Ok(v) if v > 0.0 => v,
                         _ => continue,
@@ -5016,8 +5095,16 @@ mod archivar {
                 "field" if parts.len() == 5 => {
                     let f = match force_id_of(parts[2]) {
                         Some(f) => f,
-                        None => continue,
+                        None => {
+                            report_anomaly(
+                                "Invalid Syntax",
+                                &cur_url,
+                                &format!("unknown force \"{}\": {}", parts[2], line),
+                            );
+                            continue;
+                        }
                     };
+                    report_physics_mismatch(f, parts[3], parts[1], &cur_url);
                     let tau: f64 = match parts[4].parse() {
                         Ok(v) if v > 0.0 => v,
                         _ => continue,
@@ -5124,6 +5211,13 @@ mod archivar {
                     } else {
                         cur_extracts.push(Extract::Field(fc.clone()));
                     }
+                }
+                "field" => {
+                    report_anomaly(
+                        "Invalid Syntax",
+                        &cur_url,
+                        &format!("field arity {}: {}", parts.len(), line),
+                    );
                 }
                 "lat" if parts.len() >= 2 => {
                     if let Some(Extract::Map { lat_key, .. }) = cur_extracts.last_mut() {
@@ -5258,8 +5352,16 @@ mod archivar {
                     };
                     let f = match force_id_of(parts[4]) {
                         Some(f) => f,
-                        None => continue,
+                        None => {
+                            report_anomaly(
+                                "Invalid Syntax",
+                                &cur_url,
+                                &format!("unknown force \"{}\": {}", parts[4], line),
+                            );
+                            continue;
+                        }
                     };
+                    report_physics_mismatch(f, parts[5], parts[1], &cur_url);
                     let tau: f64 = match parts[6].parse() {
                         Ok(v) if v > 0.0 => v,
                         _ => continue,
@@ -9846,6 +9948,7 @@ mod archivar {
                         std::process::exit(1);
                     }
                 };
+                ANOMALY_COLLECT.with(|c| c.set(true));
                 std::process::exit(ci_mode(dir));
             }
             if args.len() > 1 && args[1] == "--port" {
@@ -11238,24 +11341,41 @@ field temp temp_c\n";
 
         #[test]
         fn test_anomaly_reporter() {
+            ANOMALY_COLLECT.with(|c| c.set(true));
             report_anomaly(
                 "API Unreachable",
                 "https://example.org/x",
                 "fetch returned void",
             );
             report_anomaly("Malformed Data", "https://example.org/y", "JSON parse void");
+            let _ = parse_sources(
+                "url https://example.org/em\nttl 60\nformat json\nfield mag mag inverse-square em K 60 0 0\n",
+            );
+            let _ = parse_sources(
+                "url https://example.org/syn\nttl 60\nformat json\non earth\nfield p p inverse-square electroweak K 60 0 0\n",
+            );
             let anomalies = take_anomalies();
-            assert_eq!(anomalies.len(), 2);
+            assert_eq!(anomalies.len(), 5);
             assert_eq!(anomalies[0].category, "API Unreachable");
             assert_eq!(anomalies[0].url, "https://example.org/x");
             assert_eq!(anomalies[1].category, "Malformed Data");
+            assert_eq!(anomalies[2].category, "Physics Mismatch");
+            assert_eq!(anomalies[3].category, "Invalid Syntax");
+            assert_eq!(anomalies[4].category, "Invalid Syntax");
             let body = anomaly_issue_body(&anomalies);
             assert!(body.starts_with("| Category | URL | Details |\n|---|---|---|\n"));
             assert!(
                 body.contains("| API Unreachable | https://example.org/x | fetch returned void |")
             );
             assert!(body.contains("| Malformed Data | https://example.org/y | JSON parse void |"));
+            assert!(body.contains(
+                "| Physics Mismatch | https://example.org/em | field mag: unit \"K\" not in force registry |"
+            ));
+            assert!(body.contains(
+                "| Invalid Syntax | https://example.org/syn | on needs <body> <lat> <lon> [alt]: on earth |"
+            ));
             assert!(take_anomalies().is_empty());
+            ANOMALY_COLLECT.with(|c| c.set(false));
         }
 
         #[test]
@@ -11264,6 +11384,29 @@ field temp temp_c\n";
             assert!(allowed_units_for_force(5).contains(&"k"));
             assert!(allowed_units_for_force(7).contains(&"m/s"));
             assert!(allowed_units_for_force(9).is_empty());
+            assert!(allowed_units_for_force(0).contains(&"mag"));
+            assert!(allowed_units_for_force(0).contains(&"jy_km/s"));
+            assert!(allowed_units_for_force(1).contains(&"logg"));
+            assert!(allowed_units_for_force(1).contains(&"m_sun"));
+            assert!(allowed_units_for_force(3).contains(&"mw"));
+            assert!(allowed_units_for_force(5).contains(&"mw"));
+            assert!(allowed_units_for_force(6).contains(&"du"));
+            assert!(allowed_units_for_force(6).contains(&"ug/m3"));
+            assert!(allowed_units_for_force(7).contains(&"cfs"));
+            assert!(allowed_units_for_force(8).contains(&"ua/m2"));
+            assert!(!allowed_units_for_force(0).contains(&"k"));
+            assert!(!allowed_units_for_force(2).contains(&"c"));
+            assert!(!allowed_units_for_force(6).contains(&"kt"));
+        }
+
+        #[test]
+        fn test_normalize_unit() {
+            assert_eq!(normalize_unit("nT"), "nt");
+            assert_eq!(normalize_unit(" M_sun "), "m_sun");
+            assert_eq!(normalize_unit("µg/m3"), "ug/m3");
+            assert_eq!(normalize_unit("m/s²"), "m/s2");
+            assert_eq!(normalize_unit("K"), "k");
+            assert_eq!(normalize_unit("Pa"), "pa");
         }
 
         #[test]

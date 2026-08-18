@@ -336,12 +336,12 @@ resonance(mut read_signal(s: read_ws_frame_part(stream: read_ws_frame_raw(stream
 
 **I01** Universal Anomaly Reporter
 ```
-Kern erledigt 2026-08-17: report_anomaly/take_anomalies + anomaly_issue_body +
-gh-Issue-Emission am ci-mode-Ende (Titel [Automated CI Report], Label
-anomaly-report, ein kombiniertes Issue). Verdrahtet: API Unreachable
-(fetch void), Malformed Data (JSON parse void). Offen: Physics Mismatch
-(force↔unit-Matrix in den Parser), Empty Data (Extraction im ci-mode),
-Invalid Syntax (Parser-Hook).
+report_anomaly/take_anomalies + anomaly_issue_body + gh-Issue am ci-mode-Ende.
+Verdrahtet: API Unreachable, Malformed Data, Physics Mismatch
+(force↔unit-Matrix `allowed_units_for_force` im Parser), Invalid Syntax
+(on/ttl/field-Arity + unbekannte Kraft im Parser). Offen: Empty Data
+(Extract im ci-mode) — wartet auf das unkommittierte AUTH-Secret-Handling
+der Parallel-Linie in ci_mode.
 ```
 **I02** refresh-protected-data: Python → Rust
 ```
