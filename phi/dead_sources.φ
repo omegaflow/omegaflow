@@ -3358,6 +3358,10 @@ dead 404
 url https://www.amsmeteors.org/members/api/open_api
 note grind: grind_terrapulse_b.φ
 
+dead login-wall
+url https://www.amsmeteors.org/members/ams/check_data.php?y={year}&m={month}&type=json
+note Login-Mauer (HTML, nicht JSON) — Route verlangt AMS-Login, kein öffentlicher JSON-Kanal (Spot-Check 2026-08-18). AMS-Meldungen sind menschliche Sichtbeobachtungen (indirekter Count, kein SI-Energiewert) — Force-Gate ohnehin unterschritten; die sensorbasierten Feuerkugel-Daten (CNEOS fireball.api + GOES GLM Bolides) tragen die em-Messung bereits in sources.φ.
+
 dead transport
 url https://www.arpansa.gov.au/sites/default/files/legacy/pubs/uvindex/realtime/uvrt.xml
 note curl: curl: (92) HTTP/2 stream 1 was not closed cleanly: INTERNAL_ERROR (err 2)

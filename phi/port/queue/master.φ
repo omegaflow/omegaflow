@@ -5534,19 +5534,6 @@ field event_id event_id
 field significance significance
 field alert_type alert_type
 
-source ams_fireball_events_recent
-ttl 3600
-force gravity
-url https://www.amsmeteors.org/members/ams/check_data.php?y={year}&m={month}&type=json
-map .
-lat_key lat
-lon_key lng
-field event_date date
-field event_time time
-field location city
-field region region
-field comments observer_comments
-
 source arcgis_pager_cat_earthquake_impacts
 ttl 3600
 force seismic-body
