@@ -15095,7 +15095,7 @@ mod mathematikerin {
     const Φ: f64 = 1.618033988749895;
     const C: f64 = 299792458.0;
     const GRID_INIT: f64 = 2147483648.0;
-    const GRID_DEEP_GRID: f64 = 70368744177664.0;
+    const GRID_DEEP_GRID: f64 = 2147483648.0;
     const JUMP_GRID: f64 = 268435456.0;
     const SSAA_MAX: f32 = 8.0;
     const BUDGET_RELAX: f64 = 0.1;
