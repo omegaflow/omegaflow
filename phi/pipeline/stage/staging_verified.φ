@@ -3339,3 +3339,1280 @@ field country country_code gaussian-inverse-square diffusion 1 8640 0.0 0.0
 field year observation_year gaussian-inverse-square diffusion 1 8640 0.0 0.0
 
 
+# from master_converted.φ
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2015-01-01&endtime=2015-12-31&minmagnitude=5&limit=200
+ttl 86400
+on earth 0 0 0
+geojson mag 0.0 0 geosphere_earthquake_mag 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2016-01-01&endtime=2016-12-31&minmagnitude=5&limit=200
+ttl 86400
+on earth 0 0 0
+geojson mag 0.0 0 geosphere_earthquake_mag 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2017-01-01&endtime=2017-12-31&minmagnitude=5&limit=200
+ttl 86400
+on earth 0 0 0
+geojson mag 0.0 0 geosphere_earthquake_mag 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2018-01-01&endtime=2018-12-31&minmagnitude=5&limit=200
+ttl 86400
+on earth 0 0 0
+geojson mag 0.0 0 geosphere_earthquake_mag 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2019-01-01&endtime=2019-12-31&minmagnitude=5&limit=200
+ttl 86400
+on earth 0 0 0
+geojson mag 0.0 0 geosphere_earthquake_mag 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2020-01-01&endtime=2020-12-31&minmagnitude=5&limit=200
+ttl 86400
+on earth 0 0 0
+geojson mag 0.0 0 geosphere_earthquake_mag 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2021-01-01&endtime=2021-12-31&minmagnitude=5&limit=200
+ttl 86400
+on earth 0 0 0
+geojson mag 0.0 0 geosphere_earthquake_mag 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2022-01-01&endtime=2022-12-31&minmagnitude=5&limit=200
+ttl 86400
+on earth 0 0 0
+geojson mag 0.0 0 geosphere_earthquake_mag 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2023-01-01&endtime=2023-12-31&minmagnitude=5&limit=200
+ttl 86400
+on earth 0 0 0
+geojson mag 0.0 0 geosphere_earthquake_mag 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2024-01-01&endtime=2024-12-31&minmagnitude=5&limit=200
+ttl 86400
+on earth 0 0 0
+geojson mag 0.0 0 geosphere_earthquake_mag 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={year}-01-01&endtime={today}&minmagnitude=5&limit=200
+ttl 86400
+on earth 0 0 0
+geojson mag 0.0 0 geosphere_earthquake_mag 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2020-01-01&endtime=2024-12-31&minmagnitude=6&limit=200
+ttl 86400
+on earth 0 0 0
+geojson mag 0.0 0 geosphere_earthquake_mag 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2015-01-01&endtime=2024-12-31&minmagnitude=4.5&limit=300
+ttl 86400
+on earth 0 0 0
+geojson mag 0.0 0 geosphere_earthquake_mag 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://volcanoes.usgs.gov/hans-public/api/volcano/getUSVolcanoes
+ttl 86400
+on earth 0 0
+map .
+lat latitude
+lon longitude
+field elevation_meters geosphere_volcano_elevation_m erfc seismic-surface 1 8640 0.0 0.0
+field vnum geosphere_volcano_vnum erfc seismic-surface 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.github.com/search/repositories?q=stars:>0&per_page=1
+ttl 86400
+on earth 37.774 -122.419 0
+field total_count biosphere_github_repos_total inverse-square em 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.github.com/search/users?q=type:user&per_page=1
+ttl 86400
+on earth 37.774 -122.419 0
+field total_count biosphere_github_users_total inverse-square em 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://webservices.volcano.si.edu/geoserver/GVP-VOTW/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=GVP-VOTW:Smithsonian_VOTW_Holocene_Eruptions&outputFormat=csv&count=1000
+ttl 86400
+format text
+on earth 0 0
+rows .
+lat Latitude
+lon Longitude
+field Eruption_Number eruption_id erfc seismic-surface 1 8640 0.0 0.0
+field Volcano_Number volcano_id erfc seismic-surface 1 8640 0.0 0.0
+field Volcano_Name volcano_name erfc seismic-surface 1 8640 0.0 0.0
+field Eruption_Year eruption_year erfc seismic-surface 1 8640 0.0 0.0
+field Eruption_Month eruption_month erfc seismic-surface 1 8640 0.0 0.0
+field Eruption_Day eruption_day erfc seismic-surface 1 8640 0.0 0.0
+field VEI vei_index erfc seismic-surface 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://webservices.volcano.si.edu/geoserver/GVP-VOTW/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=GVP-VOTW:Smithsonian_VOTW_Holocene_Volcanoes&outputFormat=csv&count=1000
+ttl 86400
+format text
+on earth 0 0
+rows .
+lat Latitude
+lon Longitude
+field Volcano_Number volcano_id erfc seismic-surface 1 8640 0.0 0.0
+field Volcano_Name volcano_name erfc seismic-surface 1 8640 0.0 0.0
+field Primary_Volcano_Type volcano_type erfc seismic-surface 1 8640 0.0 0.0
+field Last_Eruption_Year last_eruption_year erfc seismic-surface 1 8640 0.0 0.0
+field Country country erfc seismic-surface 1 8640 0.0 0.0
+field Region region erfc seismic-surface 1 8640 0.0 0.0
+field Elevation elevation_m erfc seismic-surface 1 8640 0.0 0.0
+field Tectonic_Setting tectonic_setting erfc seismic-surface 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://webservices.volcano.si.edu/geoserver/GVP-VOTW/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=GVP-VOTW:Smithsonian_VOTW_Pleistocene_Volcanoes&outputFormat=application/json&count=1000
+ttl 86400
+on earth 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.Volcano_Number volcano_id erfc seismic-surface 1 8640 0.0 0.0
+field properties.Volcano_Name volcano_name erfc seismic-surface 1 8640 0.0 0.0
+field properties.Country country erfc seismic-surface 1 8640 0.0 0.0
+field properties.Region region erfc seismic-surface 1 8640 0.0 0.0
+field properties.Elevation elevation_m erfc seismic-surface 1 8640 0.0 0.0
+field properties.Geologic_Epoch geologic_epoch erfc seismic-surface 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://data.pmel.noaa.gov/pmel/erddap/tabledap/all_pmel_co2_moorings.csv?station_id,longitude,latitude,time,pCO2_sw,pH_sw&orderByMax(%22station_id%2Ctime%22)
+ttl 86400
+format csv
+on earth 47.6062 -122.3321 0
+lastrow pCO2_sw hydrosphere_pco2_pmel_uatm inverse-square em 1 8640 0.0 0.0
+lastrow pH_sw hydrosphere_ph_pmel inverse-square em 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://datacenter.iers.org/data/9/finals2000A.all
+ttl 86400
+format text
+on earth 0 0 0
+rows .
+field 0 mjd inverse-square gravity 1 8640 0.0 0.0
+field 1 x_pole inverse-square gravity 1 8640 0.0 0.0
+field 2 y_pole inverse-square gravity 1 8640 0.0 0.0
+field 3 ut1_utc inverse-square gravity 1 8640 0.0 0.0
+field 4 lod inverse-square gravity 1 8640 0.0 0.0
+field 5 dpsi inverse-square gravity 1 8640 0.0 0.0
+field 6 deps inverse-square gravity 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://ds.iris.edu/spud/momenttensor?evlo=&evla=&evdp=&startTime={today}T00:00:00&endTime={today}T23:59:59&catalog=GCMT&format=json&nodata=404
+ttl 86400
+format text
+on earth 0 0
+rows .
+lat evla
+lon evlo
+field evdp depth_km gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field mag magnitude gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field tensor_name moment_tensor_name gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://g6goyz4w56.execute-api.us-west-2.amazonaws.com/prod/collections/lunar_orbiter_laser_altimeter/items?limit=1
+ttl 86400
+on earth 0 0 0
+field features.0.properties.pc:statistics.2.average lidar_lola_moon_z_mean_m inverse-square em 1 8640 0.0 0.0
+field features.0.properties.pc:statistics.2.minimum lidar_lola_moon_z_min_m inverse-square em 1 8640 0.0 0.0
+field features.0.properties.pc:statistics.2.maximum lidar_lola_moon_z_max_m inverse-square em 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://oderest.rsl.wustl.edu/live2/?query=PRODUCT&target=Mars&IHID=MGS&IID=MOLA&PT=MEGDR&output=XML
+ttl 86400
+on earth 0 0 0
+regex <Count>([0-9]+)</Count> lidar_mola_mars_megdr_product_count inverse-square em 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://oderest.rsl.wustl.edu/live2/?query=PRODUCT&target=Mars&IHID=MGS&IID=MOLA&PT=PEDR&output=XML
+ttl 86400
+on earth 0 0 0
+regex <Count>([0-9]+)</Count> lidar_mola_mars_pedr_product_count inverse-square em 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-06-11/meteorites.csv
+ttl 86400
+format text
+on earth 0 0
+rows .
+lat lat
+lon long
+field name meteorite_name inverse-square gravity 1 8640 0.0 0.0
+field id meteorite_id inverse-square gravity 1 8640 0.0 0.0
+field fall fall_type inverse-square gravity 1 8640 0.0 0.0
+field year fall_year inverse-square gravity 1 8640 0.0 0.0
+field recclass meteorite_class inverse-square gravity 1 8640 0.0 0.0
+field mass mass_grams inverse-square gravity 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://www.minorplanetcenter.net/iau/lists/ObsCodes.html
+ttl 86400
+format text
+on earth 0 0
+rows .
+lat lat
+lon lon
+field 0 obs_code inverse-square gravity 1 8640 0.0 0.0
+field 1 longitude_deg inverse-square gravity 1 8640 0.0 0.0
+field 2 rho_cos_phi inverse-square gravity 1 8640 0.0 0.0
+field 3 rho_sin_phi inverse-square gravity 1 8640 0.0 0.0
+field 4 observatory_name inverse-square gravity 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://data.giss.nasa.gov/gistemp/tabledata_v4/GLB.Ts+dSST.csv
+ttl 86400
+format text
+on earth 0 0 0
+rows .
+field 0 year exponential-decay thermal 1 8640 0.0 0.0
+field 13 j_d_annual_anomaly_c exponential-decay thermal 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://www.cpc.ncep.noaa.gov/products/precip/CWlink/pna/norm.nao.monthly.b5001.current.ascii
+ttl 86400
+format text
+on earth 0 0 0
+rows .
+field 0 year exponential-decay thermal 1 8640 0.0 0.0
+field 1 month exponential-decay thermal 1 8640 0.0 0.0
+field 2 nao_index exponential-decay thermal 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://www.ncei.noaa.gov/pub/data/cmb/ersst/v5/index/ersst.v5.pdo.dat
+ttl 86400
+format text
+on earth 0 0 0
+rows .
+field 0 year exponential-decay thermal 1 8640 0.0 0.0
+field 1 month exponential-decay thermal 1 8640 0.0 0.0
+field 2 pdo_index exponential-decay thermal 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://www.cpc.ncep.noaa.gov/data/indices/soi
+ttl 86400
+format text
+on earth 0 0 0
+rows .
+field 0 year exponential-decay thermal 1 8640 0.0 0.0
+field 1 month exponential-decay thermal 1 8640 0.0 0.0
+field 2 soi_index exponential-decay thermal 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://www.ngdc.noaa.gov/hazel/hazard-service/api/v1/volcanoes?maxRows=2000&startRow=1
+ttl 86400
+on earth 0 0
+map items
+lat latitude
+lon longitude
+field name volcano_name gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field elevation elevation_m gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field deathsTotal deaths_total gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field year last_eruption_year gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://physics.nist.gov/cuu/Constants/Table/allascii.txt
+ttl 86400
+format text
+on earth 0 0 0
+rows .
+field 0 quantity_name inverse-square em 1 8640 0.0 0.0
+field 1 symbol inverse-square em 1 8640 0.0 0.0
+field 2 value inverse-square em 1 8640 0.0 0.0
+field 3 uncertainty inverse-square em 1 8640 0.0 0.0
+field 4 unit inverse-square em 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://www.cpc.ncep.noaa.gov/data/indices/sstoi.indices
+ttl 86400
+format text
+on earth 0 -170 0
+rows .
+field 0 year exponential-decay thermal 1 8640 0.0 0.0
+field 1 month exponential-decay thermal 1 8640 0.0 0.0
+field 3 nino12_sst_c exponential-decay thermal 1 8640 0.0 0.0
+field 4 nino12_sst_anom_c exponential-decay thermal 1 8640 0.0 0.0
+field 7 nino34_sst_c exponential-decay thermal 1 8640 0.0 0.0
+field 8 nino34_sst_anom_c exponential-decay thermal 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://psl.noaa.gov/data/correlation/pdo.data
+ttl 86400
+format text
+on earth 40 -170 0
+rows .
+field 0 year exponential-decay thermal 1 8640 0.0 0.0
+field 1 month exponential-decay thermal 1 8640 0.0 0.0
+field 2 pdo_index exponential-decay thermal 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_gr_gl.txt
+ttl 86400
+format text
+on earth 0 0 0
+rows .
+field 0 year gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field 1 co2_growth_rate_ppm_yr gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field 2 growth_rate_uncertainty gaussian-inverse-square diffusion 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://www.ncei.noaa.gov/data/international-best-track-archive-for-climate-stewardship-ibtracs/v04r00/access/csv/ibtracs.last3years.list.v04r00.csv
+ttl 86400
+format text
+on earth 0 0
+rows .
+lat LAT
+lon LON
+field NAME storm_name gaussian-inverse-square acoustic 1 8640 0.0 0.0
+field SID storm_id gaussian-inverse-square acoustic 1 8640 0.0 0.0
+field SEASON season_year gaussian-inverse-square acoustic 1 8640 0.0 0.0
+field ISO_TIME timestamp_utc gaussian-inverse-square acoustic 1 8640 0.0 0.0
+field WMO_WIND max_wind_kt gaussian-inverse-square acoustic 1 8640 0.0 0.0
+field WMO_PRES min_pressure_hpa gaussian-inverse-square acoustic 1 8640 0.0 0.0
+field BASIN basin_code gaussian-inverse-square acoustic 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://www.ncei.noaa.gov/data/oceans/woa/DATA_ANALYSIS/3M_HEAT_CONTENT/DATA/basin/yearly/h22-w0-700m.dat
+ttl 86400
+format text
+on earth 0 0 0
+rows .
+field 0 year exponential-decay thermal 1 8640 0.0 0.0
+field 1 ohc_world_zj exponential-decay thermal 1 8640 0.0 0.0
+field 2 ohc_nh_zj exponential-decay thermal 1 8640 0.0 0.0
+field 3 ohc_sh_zj exponential-decay thermal 1 8640 0.0 0.0
+field 4 ohc_tropics_zj exponential-decay thermal 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://www.ngdc.noaa.gov/hazel/hazard-service/api/v1/earthquakes?maxRows=2000&startRow=1&orderBy=year&ascending=false
+ttl 86400
+on earth 0 0
+map items
+lat latitude
+lon longitude
+field year event_year gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field eqMagnitude richter_magnitude gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field eqMagUnk magnitude_unknown gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field damageAmountOrder damage_ordinal gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field deaths deaths_total gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field damageMillionsDollars damage_mmusd gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field country country gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.obis.org/v3/occurrence?taxonid=1567&size=500&fields=decimalLatitude,decimalLongitude,scientificName,class,family,date_year&startdate=2020-01-01
+ttl 86400
+on earth 0 0
+map results
+lat decimalLatitude
+lon decimalLongitude
+field scientificName species_name gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field family taxon_family gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field date_year obs_year gaussian-inverse-square diffusion 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.obis.org/v3/occurrence?iucnRedListCategory=CR,EN,VU&size=500&fields=decimalLatitude,decimalLongitude,scientificName,class,family,iucnRedListCategory,date_year
+ttl 86400
+on earth 0 0
+map results
+lat decimalLatitude
+lon decimalLongitude
+field scientificName species_name gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field class taxon_class gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field family taxon_family gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field iucnRedListCategory iucn_category gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field date_year obs_year gaussian-inverse-square diffusion 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.fda.gov/drug/event.json?limit=1
+ttl 86400
+on earth 38.995 -77.101 0
+field meta.results.total biosphere_fda_adverse_events_total inverse-square em 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.fda.gov/device/510k.json?limit=1
+ttl 86400
+on earth 38.995 -77.101 0
+field meta.results.total biosphere_fda_devices_total inverse-square em 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.fda.gov/drug/drugsfda.json?limit=1
+ttl 86400
+on earth 38.995 -77.101 0
+field meta.results.total biosphere_fda_drugs_total inverse-square em 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.fda.gov/drug/enforcement.json?limit=1
+ttl 86400
+on earth 38.995 -77.101 0
+field meta.results.total biosphere_fda_recalls_total inverse-square em 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://world.openfoodfacts.org/cgi/search.pl?search_terms=&page_size=1&json=1
+ttl 86400
+on earth 48.8566 2.3522 0
+field count biosphere_food_product_count_openfoodfacts inverse-square em 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://hpiers.obspm.fr/iers/eop/eopc04/eopc04.1962-now
+ttl 86400
+format csv
+header User-Agent "omegaflow"
+on earth 40.034 -75.63 0
+last line geosphere_earth_orientation_raw inverse-square em 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND=399&OBJ_DATA=YES
+ttl 86400
+on earth 0 0 0
+regex \(kg\).\W*([0-9.]+) orbital_earth_mass_x10_24_kg inverse-square em 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://ssd-api.jpl.nasa.gov/fireball.api?limit=1
+ttl 86400
+on earth 34.201 -118.171 0
+field count cosmic_fireball_count inverse-square em 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://ssd-api.jpl.nasa.gov/sentry.api
+ttl 86400
+on earth 34.201 -118.171 0
+field count nasa_sentry_risk_object_count inverse-square em 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=find+tc&fields=titles,citation_count
+ttl 86400
+on earth 46.233 6.056 0
+field hits.total subatomic_papers_total inverse-square em 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.crossref.org/works?rows=0
+ttl 86400
+on earth 42.53 -71.048 0
+field message.total-results biosphere_crossref_doi_count inverse-square em 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.crossref.org/works?query=JWST+high+redshift+galaxy+candidate&rows=0
+ttl 86400
+on earth 39.328 -76.62 0
+field message.total-results cosmic_jwst_high_z_discovery_papers inverse-square em 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=ITER+plasma+fusion&fields=titles,citation_count
+ttl 86400
+on earth 43.709 5.777 0
+field hits.hits.0.metadata.citation_count physics_fusion_research_citations inverse-square em 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.openalex.org/works?per-page=1
+ttl 86400
+on earth 42.373 -71.11 0
+field meta.count biosphere_openalex_work_count inverse-square em 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://rapid.ac.uk/rapidmoc/rapid_data/datadl.php?data=moc_vertical
+ttl 86400
+format text
+on earth 26.5 -75 0
+rows .
+field 0 decimal_year gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field 1 moc_upper_sv gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field 2 moc_lower_sv gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field 3 florida_current_sv gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field 4 ekman_sv gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field 5 umo_sv gaussian-inverse-square diffusion 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://www.sidc.be/SILSO/DATA/SN_d_tot_V2.0.txt
+ttl 86400
+format text
+on earth 0 0 0
+rows .
+field 0 year inverse-square em 1 8640 0.0 0.0
+field 1 month inverse-square em 1 8640 0.0 0.0
+field 2 day inverse-square em 1 8640 0.0 0.0
+field 3 sunspot_number inverse-square em 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://www.sidc.be/SILSO/DATA/SN_ms_tot_V2.0.txt
+ttl 86400
+format text
+on earth 50.85 4.35 0
+rows .
+field 0 year inverse-square em 1 8640 0.0 0.0
+field 1 month inverse-square em 1 8640 0.0 0.0
+field 2 decimal_date inverse-square em 1 8640 0.0 0.0
+field 3 monthly_mean_ssn inverse-square em 1 8640 0.0 0.0
+field 4 monthly_mean_std inverse-square em 1 8640 0.0 0.0
+field 5 num_observations inverse-square em 1 8640 0.0 0.0
+field 6 smoothed_ssn inverse-square em 1 8640 0.0 0.0
+field 7 smoothed_std inverse-square em 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.stackexchange.com/2.3/questions?order=desc&sort=activity&site=stackoverflow&filter=total
+ttl 86400
+on earth 37.774 -122.419 0
+field total biosphere_stackoverflow_questions_total inverse-square em 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.stackexchange.com/2.3/tags?pagesize=1&order=desc&sort=popular&site=stackoverflow
+ttl 86400
+on earth 40.712 -74.006 0
+path items.0.count technosphere_stackoverflow_questions_total inverse-square em 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=6.0&orderby=time&limit=20
+ttl 86400
+on earth 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.mag magnitude inverse-square em 1 8640 0.0 0.0
+field properties.place location_description inverse-square em 1 8640 0.0 0.0
+field properties.time event_time inverse-square em 1 8640 0.0 0.0
+field properties.tsunami tsunami_flag inverse-square em 1 8640 0.0 0.0
+field properties.alert alert_level inverse-square em 1 8640 0.0 0.0
+field properties.sig significance inverse-square em 1 8640 0.0 0.0
+field properties.cdi instrumental_intensity inverse-square em 1 8640 0.0 0.0
+field properties.mmi maximum_intensity inverse-square em 1 8640 0.0 0.0
+field properties.felt felt_reports inverse-square em 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://www.wikidata.org/w/api.php?action=query&meta=siteinfo&siprop=statistics&format=json
+ttl 86400
+on earth 37.774 -122.419 0
+field query.statistics.articles biosphere_wikidata_entities_total inverse-square em 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://en.wikipedia.org/w/api.php?action=query&meta=siteinfo&siprop=statistics&format=json
+ttl 86400
+on earth 37.774 -122.419 0
+field query.statistics.articles biosphere_wikipedia_articles_total inverse-square em 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://archive-api.open-meteo.com/v1/archive?latitude=-3.47&longitude=-62.22&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth -3.47 -62.22 0
+path daily.temperature_2m_max.0 atmosphere_biome_amazon_temp_max_jan_2000_c inverse-square em 1 60480 0.0 0.0
+path daily.temperature_2m_min.0 atmosphere_biome_amazon_temp_min_jan_2000_c inverse-square em 1 60480 0.0 0.0
+path daily.precipitation_sum.0 atmosphere_biome_amazon_precip_jan_2000_mm inverse-square em 1 60480 0.0 0.0
+path daily.temperature_2m_max.9131 atmosphere_biome_amazon_temp_max_dec_2024_c inverse-square em 1 60480 0.0 0.0
+path daily.temperature_2m_min.9131 atmosphere_biome_amazon_temp_min_dec_2024_c inverse-square em 1 60480 0.0 0.0
+path daily.precipitation_sum.9131 atmosphere_biome_amazon_precip_dec_2024_mm inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://archive-api.open-meteo.com/v1/archive?latitude=-80.0&longitude=100.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth -80 100 0
+path daily.temperature_2m_max.0 atmosphere_biome_antarctic_temp_max_jan_2000_c inverse-square em 1 60480 0.0 0.0
+path daily.temperature_2m_min.0 atmosphere_biome_antarctic_temp_min_jan_2000_c inverse-square em 1 60480 0.0 0.0
+path daily.temperature_2m_max.9131 atmosphere_biome_antarctic_temp_max_dec_2024_c inverse-square em 1 60480 0.0 0.0
+path daily.temperature_2m_min.9131 atmosphere_biome_antarctic_temp_min_dec_2024_c inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://archive-api.open-meteo.com/v1/archive?latitude=-24.0&longitude=-69.5&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth -24 -69.5 0
+path daily.temperature_2m_max.0 atmosphere_biome_atacama_temp_max_jan_2000_c inverse-square em 1 60480 0.0 0.0
+path daily.temperature_2m_min.0 atmosphere_biome_atacama_temp_min_jan_2000_c inverse-square em 1 60480 0.0 0.0
+path daily.temperature_2m_max.9131 atmosphere_biome_atacama_temp_max_dec_2024_c inverse-square em 1 60480 0.0 0.0
+path daily.temperature_2m_min.9131 atmosphere_biome_atacama_temp_min_dec_2024_c inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://archive-api.open-meteo.com/v1/archive?latitude=0.5&longitude=114.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth 0.5 114 0
+path daily.temperature_2m_max.0 atmosphere_biome_borneo_temp_max_jan_2000_c inverse-square em 1 60480 0.0 0.0
+path daily.temperature_2m_min.0 atmosphere_biome_borneo_temp_min_jan_2000_c inverse-square em 1 60480 0.0 0.0
+path daily.temperature_2m_max.9131 atmosphere_biome_borneo_temp_max_dec_2024_c inverse-square em 1 60480 0.0 0.0
+path daily.temperature_2m_min.9131 atmosphere_biome_borneo_temp_min_dec_2024_c inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://archive-api.open-meteo.com/v1/archive?latitude=-19.5&longitude=23.5&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth -19.5 23.5 0
+path daily.temperature_2m_max.0 atmosphere_biome_okavango_temp_max_jan_2000_c inverse-square em 1 60480 0.0 0.0
+path daily.temperature_2m_min.0 atmosphere_biome_okavango_temp_min_jan_2000_c inverse-square em 1 60480 0.0 0.0
+path daily.temperature_2m_max.9131 atmosphere_biome_okavango_temp_max_dec_2024_c inverse-square em 1 60480 0.0 0.0
+path daily.temperature_2m_min.9131 atmosphere_biome_okavango_temp_min_dec_2024_c inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://archive-api.open-meteo.com/v1/archive?latitude=-50.0&longitude=-72.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth -50 -72 0
+path daily.temperature_2m_max.0 atmosphere_biome_patagonia_temp_max_jan_2000_c inverse-square em 1 60480 0.0 0.0
+path daily.temperature_2m_min.0 atmosphere_biome_patagonia_temp_min_jan_2000_c inverse-square em 1 60480 0.0 0.0
+path daily.temperature_2m_max.9131 atmosphere_biome_patagonia_temp_max_dec_2024_c inverse-square em 1 60480 0.0 0.0
+path daily.temperature_2m_min.9131 atmosphere_biome_patagonia_temp_min_dec_2024_c inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://archive-api.open-meteo.com/v1/archive?latitude=23.0&longitude=5.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth 23 5 0
+path daily.temperature_2m_max.0 atmosphere_biome_sahara_temp_max_jan_2000_c inverse-square em 1 60480 0.0 0.0
+path daily.temperature_2m_min.0 atmosphere_biome_sahara_temp_min_jan_2000_c inverse-square em 1 60480 0.0 0.0
+path daily.temperature_2m_max.9131 atmosphere_biome_sahara_temp_max_dec_2024_c inverse-square em 1 60480 0.0 0.0
+path daily.temperature_2m_min.9131 atmosphere_biome_sahara_temp_min_dec_2024_c inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://archive-api.open-meteo.com/v1/archive?latitude=62.0&longitude=105.0&start_date=2000-01-01&end_date=2024-12-31&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto
+ttl 604800
+on earth 62 105 0
+path daily.temperature_2m_max.0 atmosphere_biome_siberia_temp_max_jan_2000_c inverse-square em 1 60480 0.0 0.0
+path daily.temperature_2m_min.0 atmosphere_biome_siberia_temp_min_jan_2000_c inverse-square em 1 60480 0.0 0.0
+path daily.temperature_2m_max.9131 atmosphere_biome_siberia_temp_max_dec_2024_c inverse-square em 1 60480 0.0 0.0
+path daily.temperature_2m_min.9131 atmosphere_biome_siberia_temp_min_dec_2024_c inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://raw.githubusercontent.com/FreeCodeCamp/ProjectReferenceData/master/meteorite-strike-data.json
+ttl 604800
+on earth 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.mass geosphere_meteorite_mass_g inverse-square em 1 60480 0.0 0.0
+field properties.name geosphere_meteorite_name inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_populated_places_simple.geojson
+ttl 604800
+on earth 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.pop_max geosphere_population_max inverse-square em 1 60480 0.0 0.0
+field properties.scalerank geosphere_place_rank inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_50m_glaciated_areas.geojson
+ttl 604800
+on earth 0 0
+map features
+lat geometry.coordinates.0.0.1
+lon geometry.coordinates.0.0.0
+field properties.name geosphere_ne_glacier_name inverse-square em 1 60480 0.0 0.0
+field properties.scalerank geosphere_ne_glacier_rank inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_50m_lakes.geojson
+ttl 604800
+on earth 0 0
+map features
+lat geometry.coordinates.0.0.1
+lon geometry.coordinates.0.0.0
+field properties.name geosphere_ne_lake_name inverse-square em 1 60480 0.0 0.0
+field properties.scalerank geosphere_ne_lake_rank inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://gist.githubusercontent.com/rsicarelli/ba4b383a7b56c2f4292597e8c0965cc7/raw/a421c3ba23938f6963b120c6372ac74ca3186052/real.planet.world-heritage.json
+ttl 604800
+on earth 0 0
+map .
+lat lat
+lon lng
+field year geosphere_heritage_year inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://data.humdata.org/dataset/a60ac839-920d-435a-bf7d-25855602699d/resource/7234d067-2d74-449a-9c61-22ae6d98d928/download/volcano.json
+ttl 604800
+on earth 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.V_Name geosphere_volcano_name inverse-square em 1 60480 0.0 0.0
+field properties.Country geosphere_volcano_country inverse-square em 1 60480 0.0 0.0
+field properties.PEI geosphere_volcano_pei inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://gist.githubusercontent.com/vasturiano/3c27138769a04d1780562ce04afbedf2/raw/83dde896972fad0f1f823191ea90e3d451d3977a/world_volcanoes.json
+ttl 604800
+on earth 0 0
+map .
+lat lat
+lon lon
+field elevation geosphere_volcano_elevation_m inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=Higgs+production+cross+section&fields=titles,citation_count
+ttl 604800
+on earth 46.233 6.056 0
+field hits.total subatomic_higgs_xsec_papers inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=muon+g-2+anomalous+magnetic+moment&fields=titles,citation_count
+ttl 604800
+on earth 41.833 -87.627 0
+field hits.total subatomic_muon_g2_papers inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=neutrino+oscillation&fields=titles,citation_count
+ttl 604800
+on earth 42.454 13.576 0
+field hits.total subatomic_neutrino_oscillation_papers inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.crossref.org/works?query=biological+age+clock+epigenetic&rows=0
+ttl 604800
+on earth 51.5 -0.126 0
+field message.total-results biosphere_longevity_research_total inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.crossref.org/works?query=synthetic+genome+writing+minimal+cell&rows=0
+ttl 604800
+on earth 42.373 -71.11 0
+field message.total-results biosphere_synthetic_genome_research_total inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=loophole-free+Bell+test&fields=titles,citation_count
+ttl 604800
+on earth 52.086 5.171 0
+field hits.hits.0.metadata.citation_count physics_bell_test_loophole_free_citations inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=proton+decay+Super-Kamiokande&fields=arxiv_eprints,citation_count
+ttl 604800
+on earth 36.428 137.31 0
+field hits.hits.0.metadata.citation_count cosmic_proton_decay_citations inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=quantum+entanglement+satellite+distance+record&fields=titles,citation_count
+ttl 604800
+on earth 39.904 116.407 0
+field hits.hits.0.metadata.citation_count quantum_entanglement_distance_record_citations inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=time+crystal&fields=titles,citation_count
+ttl 604800
+on earth 42.36 -71.093 0
+field hits.hits.0.metadata.citation_count physics_time_crystal_research_citations inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=helioseismology&fields=titles
+ttl 604800
+on earth 37.774 -122.419 0
+field hits.total solar_helioseismology_papers inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://pdgapi.lbl.gov/summaries/S091M
+ttl 604800
+on earth 37.877 -122.247 0
+field pdg_values.0.value subatomic_b_c_plus_mass_mev inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://pdgapi.lbl.gov/summaries/S041M
+ttl 604800
+on earth 37.877 -122.247 0
+field pdg_values.0.value subatomic_b_plus_mass_mev inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://pdgapi.lbl.gov/summaries/S042M
+ttl 604800
+on earth 37.877 -122.247 0
+field pdg_values.0.value subatomic_b_zero_mass_mev inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://pdgapi.lbl.gov/summaries/Q005M
+ttl 604800
+on earth 37.877 -122.247 0
+field pdg_values.0.value subatomic_bottom_quark_mass_gev inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://pdgapi.lbl.gov/summaries/S008M
+ttl 604800
+on earth 37.877 -122.247 0
+field pdg_values.0.value subatomic_charged_pion_mass_mev inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://pdgapi.lbl.gov/summaries/Q004M
+ttl 604800
+on earth 37.877 -122.247 0
+field pdg_values.0.value subatomic_charm_quark_mass_gev inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://pdgapi.lbl.gov/summaries/S074M
+ttl 604800
+on earth 37.877 -122.247 0
+field pdg_values.0.value subatomic_d_s_star_mass_mev inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://pdgapi.lbl.gov/summaries/Q001M
+ttl 604800
+on earth 37.877 -122.247 0
+field pdg_values.0.value subatomic_down_quark_mass_mev inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://pdgapi.lbl.gov/summaries/S003M
+ttl 604800
+on earth 37.877 -122.247 0
+field pdg_values.0.value subatomic_electron_mass_mev inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://pdgapi.lbl.gov/summaries/S014M
+ttl 604800
+on earth 37.877 -122.247 0
+field pdg_values.0.value subatomic_eta_mass_mev inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://pdgapi.lbl.gov/summaries/S010M
+ttl 604800
+on earth 37.877 -122.247 0
+field pdg_values.0.value subatomic_kaon_plus_mass_mev inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://pdgapi.lbl.gov/summaries/S011M
+ttl 604800
+on earth 37.877 -122.247 0
+field pdg_values.0.value subatomic_kaon_zero_mass_mev inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://pdgapi.lbl.gov/summaries/S040M
+ttl 604800
+on earth 37.877 -122.247 0
+field pdg_values.0.value subatomic_lambda_b_mass_mev inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://pdgapi.lbl.gov/summaries/S018M
+ttl 604800
+on earth 37.877 -122.247 0
+field pdg_values.0.value subatomic_lambda_mass_mev inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://pdgapi.lbl.gov/summaries/S004M
+ttl 604800
+on earth 37.877 -122.247 0
+field pdg_values.0.value subatomic_muon_mass_mev inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://pdgapi.lbl.gov/summaries/S017M
+ttl 604800
+on earth 37.877 -122.247 0
+field pdg_values.0.value subatomic_neutron_mass_mev inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://pdgapi.lbl.gov/summaries/S063M
+ttl 604800
+on earth 37.877 -122.247 0
+field pdg_values.0.value subatomic_omega_b_minus_mass_mev inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://pdgapi.lbl.gov/summaries/S053M
+ttl 604800
+on earth 37.877 -122.247 0
+field pdg_values.0.value subatomic_omega_c_2770_mass_mev inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://pdgapi.lbl.gov/summaries/S047M
+ttl 604800
+on earth 37.877 -122.247 0
+field pdg_values.0.value subatomic_omega_c_zero_mass_mev inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://pdgapi.lbl.gov/summaries/S009M
+ttl 604800
+on earth 37.877 -122.247 0
+field pdg_values.0.value subatomic_pion_mass_mev inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://pdgapi.lbl.gov/summaries/S016M
+ttl 604800
+on earth 37.877 -122.247 0
+field pdg_values.0.value subatomic_proton_mass_mev inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://pdgapi.lbl.gov/summaries/S020M
+ttl 604800
+on earth 37.877 -122.247 0
+field pdg_values.0.value subatomic_sigma_minus_mass_mev inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://pdgapi.lbl.gov/summaries/S019M
+ttl 604800
+on earth 37.877 -122.247 0
+field pdg_values.0.value subatomic_sigma_plus_mass_mev inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://pdgapi.lbl.gov/summaries/S021M
+ttl 604800
+on earth 37.877 -122.247 0
+field pdg_values.0.value subatomic_sigma_zero_mass_mev inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://pdgapi.lbl.gov/summaries/Q003M
+ttl 604800
+on earth 37.877 -122.247 0
+field pdg_values.0.value subatomic_strange_quark_mass_mev inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://pdgapi.lbl.gov/summaries/S035M
+ttl 604800
+on earth 37.877 -122.247 0
+field pdg_values.0.value subatomic_tau_mass_mev inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://pdgapi.lbl.gov/summaries/Q007TP
+ttl 604800
+on earth 37.877 -122.247 0
+field pdg_values.0.value subatomic_top_quark_mass_gev inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://pdgapi.lbl.gov/summaries/Q002M
+ttl 604800
+on earth 37.877 -122.247 0
+field pdg_values.0.value subatomic_up_quark_mass_mev inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://pdgapi.lbl.gov/summaries/S043M
+ttl 604800
+on earth 37.877 -122.247 0
+field pdg_values.0.value subatomic_w_boson_mass_gev inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://pdgapi.lbl.gov/summaries/S045M
+ttl 604800
+on earth 37.877 -122.247 0
+field pdg_values.0.value subatomic_xi_c_plus_mass_mev inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://pdgapi.lbl.gov/summaries/S058M
+ttl 604800
+on earth 37.877 -122.247 0
+field pdg_values.0.value subatomic_xi_c_prime_plus_mass_mev inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://pdgapi.lbl.gov/summaries/S059M
+ttl 604800
+on earth 37.877 -122.247 0
+field pdg_values.0.value subatomic_xi_c_prime_zero_mass_mev inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://pdgapi.lbl.gov/summaries/S048M
+ttl 604800
+on earth 37.877 -122.247 0
+field pdg_values.0.value subatomic_xi_c_zero_mass_mev inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://pdgapi.lbl.gov/summaries/S065M
+ttl 604800
+on earth 37.877 -122.247 0
+field pdg_values.0.value subatomic_xi_cc_plus_mass_mev inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://pdgapi.lbl.gov/summaries/S068M
+ttl 604800
+on earth 37.877 -122.247 0
+field pdg_values.0.value subatomic_xi_cc_plusplus_mass_mev inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://pdgapi.lbl.gov/summaries/S022M
+ttl 604800
+on earth 37.877 -122.247 0
+field pdg_values.0.value subatomic_xi_minus_mass_mev inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://pdgapi.lbl.gov/summaries/S023M
+ttl 604800
+on earth 37.877 -122.247 0
+field pdg_values.0.value subatomic_xi_zero_mass_mev inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://pdgapi.lbl.gov/summaries/S044M
+ttl 604800
+on earth 37.877 -122.247 0
+field pdg_values.0.value subatomic_z_boson_mass_gev inverse-square em 1 60480 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/WLD/indicator/SP.DYN.CBRT.IN?format=json&date=2023&per_page=1&mrv=1
+ttl 2592000
+on earth 38.899 -77.043 0
+field 1.0.value biosphere_birth_rate_per_1000 inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/WLD/indicator/SP.DYN.CDRT.IN?format=json&date=2023&per_page=1&mrv=1
+ttl 2592000
+on earth 38.899 -77.043 0
+field 1.0.value biosphere_death_rate_per_1000 inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/AFG/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 33.83 67.71 0
+field 1.0.value biosphere_gdp_growth_afghanistan_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/ALB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 41.33 19.82 0
+field 1.0.value biosphere_gdp_growth_albania_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/DZA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 36.75 3.06 0
+field 1.0.value biosphere_gdp_growth_algeria_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/ASM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -14.28 -170.7 0
+field 1.0.value biosphere_gdp_growth_american_samoa_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/AND/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 42.51 1.52 0
+field 1.0.value biosphere_gdp_growth_andorra_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/AGO/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -8.84 13.23 0
+field 1.0.value biosphere_gdp_growth_angola_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/ATG/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 17.12 -61.85 0
+field 1.0.value biosphere_gdp_growth_antigua_and_barbuda_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/ARG/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -34.6 -58.38 0
+field 1.0.value biosphere_gdp_growth_argentina_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/ARM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 40.18 44.51 0
+field 1.0.value biosphere_gdp_growth_armenia_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/ABW/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 12.52 -70.03 0
+field 1.0.value biosphere_gdp_growth_aruba_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/AUS/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -35.28 149.13 0
+field 1.0.value biosphere_gdp_growth_australia_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/AUT/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 48.21 16.37 0
+field 1.0.value biosphere_gdp_growth_austria_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/AZE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 40.4 49.87 0
+field 1.0.value biosphere_gdp_growth_azerbaijan_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/BHS/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 25.06 -77.35 0
+field 1.0.value biosphere_gdp_growth_bahamas_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/BHR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 26.23 50.59 0
+field 1.0.value biosphere_gdp_growth_bahrain_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/BGD/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 23.81 90.41 0
+field 1.0.value biosphere_gdp_growth_bangladesh_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/BRB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 13.1 -59.62 0
+field 1.0.value biosphere_gdp_growth_barbados_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/BLR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 53.9 27.57 0
+field 1.0.value biosphere_gdp_growth_belarus_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/BEL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 50.85 4.35 0
+field 1.0.value biosphere_gdp_growth_belgium_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/BLZ/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 17.25 -88.77 0
+field 1.0.value biosphere_gdp_growth_belize_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/BEN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 6.5 2.6 0
+field 1.0.value biosphere_gdp_growth_benin_pct inverse-square em 1 259200 0.0 0.0
+
+

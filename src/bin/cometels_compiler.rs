@@ -349,14 +349,16 @@ fn main() {
                     .or_else(|| get_str(obj, "Provisional_packed_desig"))
                     .unwrap_or_default();
                 if n.contains(name) {
-                    let e = get_num(obj, "e").unwrap_or(0.0);
-                    let q = get_num(obj, "Perihelion_dist").unwrap_or(0.0);
+                    let e = get_num(obj, "e");
+                    let q = get_num(obj, "Perihelion_dist");
                     match evaluate(obj) {
                         Some(r) => eprintln!(
-                            "probe {}: e={} q={} au → ra={:.6} dec={:.6} dist={:.6} au H={:?}",
+                            "probe {}: e={:?} q={:?} au → ra={:.6} dec={:.6} dist={:.6} au H={:?}",
                             n, e, q, r.ra_deg, r.dec_deg, r.dist_au, r.h
                         ),
-                        None => eprintln!("probe {}: e={} outside Kepler domain (0 honored)", n, e),
+                        None => {
+                            eprintln!("probe {}: e={:?} outside Kepler domain (0 honored)", n, e)
+                        }
                     }
                     return;
                 }

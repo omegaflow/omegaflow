@@ -45,8 +45,8 @@ fn record_bytes(line: &str) -> Option<Vec<u8>> {
     if !ra.is_finite() || !dec.is_finite() || ra < 0.0 || ra >= 360.0 || dec.abs() > 90.0 {
         return None;
     }
-    let pm_ra = cell_f32(&cells, COL_PMRA);
-    let pm_de = cell_f32(&cells, COL_PMDEC);
+    let pm_ra = cell_f64(&cells, COL_PMRA)? as f32;
+    let pm_de = cell_f64(&cells, COL_PMDEC)? as f32;
     let plx = cell_f32(&cells, COL_PLX);
     let tmag = cell_f32(&cells, COL_TMAG);
     let d = cell_f32(&cells, COL_DIST);
@@ -192,6 +192,8 @@ mod tests {
             (COL_ID, "42"),
             (COL_RA, "10.0"),
             (COL_DEC, "0.0"),
+            (COL_PMRA, "0"),
+            (COL_PMDEC, "0"),
             (COL_PLX, "0"),
             (COL_TMAG, "0"),
         ]);
@@ -208,6 +210,8 @@ mod tests {
             (COL_ID, "42"),
             (COL_RA, "10.0"),
             (COL_DEC, "0.0"),
+            (COL_PMRA, "0"),
+            (COL_PMDEC, "0"),
             (COL_PLX, "500.0"),
         ]);
         let rec = record_bytes(&line).unwrap();

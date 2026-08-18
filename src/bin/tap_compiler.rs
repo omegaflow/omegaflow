@@ -538,8 +538,12 @@ fn star_record_bytes(cells: &[String], col_idx: &[(String, usize)]) -> Option<Ve
     let dec = get("dec")?;
     let dist_pc = get("dist_pc")?;
     let mag = get("mag")?;
-    let pmra = get("pmra").unwrap_or(0.0);
-    let pmdec = get("pmdec").unwrap_or(0.0);
+    let Some(pmra) = get("pmra") else {
+        return None;
+    };
+    let Some(pmdec) = get("pmdec") else {
+        return None;
+    };
     if !(dist_pc > 0.0) || !ra.is_finite() || !dec.is_finite() || !mag.is_finite() {
         return None;
     }
@@ -1388,17 +1392,19 @@ fn main() {
                                         Some(mag),
                                         Some(dist_pc),
                                         Some(rv),
+                                        Some(pmra),
+                                        Some(pmdec),
                                     ) = (
                                         get("ra"),
                                         get("dec"),
                                         get("mag"),
                                         get("dist_pc"),
                                         get("rv"),
+                                        get("pmra"),
+                                        get("pmdec"),
                                     ) {
                                         if dist_pc > 0.0 && ra.is_finite() && dec.is_finite() {
                                             let plx_mas = 1000.0 / dist_pc;
-                                            let pmra = get("pmra").unwrap_or(0.0);
-                                            let pmdec = get("pmdec").unwrap_or(0.0);
                                             let flux = 10f64.powf(-0.4 * mag) as f32;
                                             let ci = get("bp_rp").unwrap_or(0.0);
                                             let mut rec = Vec::with_capacity(STAR_BIN_STRIDE);

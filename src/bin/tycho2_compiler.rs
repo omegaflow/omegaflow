@@ -48,8 +48,12 @@ fn load_tyc1(path: &str, map: &mut HashMap<(i32, i32, i32), SupplRow>) -> usize 
         let (Some(ra), Some(dec)) = (num(b, 52, 63), num(b, 65, 76)) else {
             continue;
         };
-        let pm_ra = num(b, 88, 95).unwrap_or(0.0);
-        let pm_de = num(b, 97, 104).unwrap_or(0.0);
+        let Some(pm_ra) = num(b, 88, 95) else {
+            continue;
+        };
+        let Some(pm_de) = num(b, 97, 104) else {
+            continue;
+        };
         let Some(vt) = num(b, 231, 236) else {
             continue;
         };
@@ -112,8 +116,12 @@ fn load_suppl(path: &str, map: &mut HashMap<(i32, i32, i32), SupplRow>) -> usize
         let (Some(ra), Some(dec)) = (num(b, 16, 27), num(b, 29, 40)) else {
             continue;
         };
-        let pm_ra = num(b, 42, 48).unwrap_or(0.0);
-        let pm_de = num(b, 50, 56).unwrap_or(0.0);
+        let Some(pm_ra) = num(b, 42, 48) else {
+            continue;
+        };
+        let Some(pm_de) = num(b, 50, 56) else {
+            continue;
+        };
         let Some(mag) = num(b, 97, 102) else {
             continue;
         };
@@ -158,9 +166,9 @@ fn parse_tgas_record(line: &str) -> Option<StarRow> {
     let hip: i32 = f[0].trim().parse().ok().unwrap_or(0);
     let ra = f[6].trim().parse::<f64>().ok()?;
     let dec = f[8].trim().parse::<f64>().ok()?;
-    let plx = f[10].trim().parse::<f64>().ok().unwrap_or(0.0);
-    let pm_ra = f[12].trim().parse::<f64>().ok().unwrap_or(0.0);
-    let pm_de = f[14].trim().parse::<f64>().ok().unwrap_or(0.0);
+    let plx = f[10].trim().parse::<f64>().ok()?;
+    let pm_ra = f[12].trim().parse::<f64>().ok()?;
+    let pm_de = f[14].trim().parse::<f64>().ok()?;
     let gmag = f[53].trim().parse::<f64>().ok()?;
     let (ra_j, dec_j) = propagate(ra, dec, pm_ra, pm_de, -15.0);
     if !ra_j.is_finite() || !dec_j.is_finite() || !gmag.is_finite() {
@@ -217,8 +225,8 @@ fn parse_tyc2_record(
     let vt = num(b, 124, 129)?;
     let ra = ra?;
     let dec = dec?;
-    let pm_ra = pm_ra.unwrap_or(0.0);
-    let pm_de = pm_de.unwrap_or(0.0);
+    let pm_ra = pm_ra?;
+    let pm_de = pm_de?;
     if !ra.is_finite() || !dec.is_finite() || !vt.is_finite() {
         return None;
     }
@@ -519,16 +527,24 @@ fn main() {
             let (Some(ra), Some(dec)) = (num(b, 52, 63), num(b, 65, 76)) else {
                 continue;
             };
-            let plx = num(b, 80, 86).unwrap_or(0.0);
-            let vmag = num(b, 42, 46).unwrap_or(99.0);
+            let Some(plx) = num(b, 80, 86) else {
+                continue;
+            };
+            let Some(vmag) = num(b, 42, 46) else {
+                continue;
+            };
             if !(plx > 0.0) || !(vmag < 1.94) {
                 continue;
             }
             let hip: i32 = field(b, 9, 14)
                 .and_then(|s| s.trim().parse().ok())
                 .unwrap_or(0);
-            let pm_ra = num(b, 88, 95).unwrap_or(0.0);
-            let pm_de = num(b, 97, 104).unwrap_or(0.0);
+            let Some(pm_ra) = num(b, 88, 95) else {
+                continue;
+            };
+            let Some(pm_de) = num(b, 97, 104) else {
+                continue;
+            };
             let bp_rp = match num(b, 246, 251) {
                 Some(bv) => bv_to_bp_rp(bv),
                 None => 0.0,
