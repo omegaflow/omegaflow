@@ -60,9 +60,10 @@ ICRS-4D-Rahmen teilt:
 
 Dazu zwei Ernte-Folgen (Befunde der grind-flash-Agenten 2026-08-18):
 - Massen-Lücken: 45 Eugenia, 87 Sylvia, 90 Antiope, 216 Kleopatra haben
-  publizierte GM (Perturbation/Doppel/Radar), DASTCOM trägt 0 — harvesten
-  (VizieR-Massen-Tabelle fehlt im Index; Quelle recherchieren).
-  Ledger registriert (2026-08-18).
+  publizierte GM, DASTCOM trägt 0 — Quelle gefunden (INPOP25c
+  J/A+A/705/A189/tablea1 + Goffin J/A+A/565/A56), GM geerntet in
+  phi/katalog/asteroid_gm_inpop25c.φ. Integration offen: GM als
+  BodyProperty im DASTCOM-Kompiler (Kompilat-Join, wie NEOWISE-Join).
 - NEOWISE/AKARI-Join: Durchmesser+Albedo (129.771) als Feld (Größe) in die
   Asteroiden-Blöcke statt nur H-Schätzung — grind-pro-Join-Urteil (per
   Asteroiden-Bezeichnung). Ledger registriert (2026-08-18).
@@ -529,11 +530,11 @@ Offen (Detail in phi/port/ledger.φ):
   VizieR-Mirror), AFAD-tadas (SPA bestätigt), AstDyS (decline model-fit),
   SERVIR-SoilMoisture (decline derived-product), Hurricanes-ArcGIS
   (decline model-forecast), MPC-Unterrouten (Scaffold), TESS-Target-CSV.
-  INTEGRIERT in sources.φ: OceanNetworks-CTD (3 Kanäle), OMNIWeb-HAPI
-  (6 Felder), SDSS SkyServerWS (cz/velDisp), sensor.community (PM1/PM2.5),
-  NDBC (1 FeatureServer-Block, 912 Stationen). OFFEN: Argovis-Port
-  (b1-Route verifiziert, flaches data-Array), SuperMAG (leading-line +
-  Positions-Join), SDSS-photoObj (psfMag-z unklar), MPCOBS + TIC
+  INTEGRIERT in sources.φ: OceanNetworks-CTD (4 Kanäle), OMNIWeb-HAPI
+  (8 Felder), SDSS SkyServerWS (cz/velDisp + photoObj-psfMag),
+  sensor.community (PM1/PM2.5), NDBC (1 FeatureServer-Block, 912
+  Stationen). OFFEN: Argovis-Port (b1-Route verifiziert, flaches
+  data-Array), SuperMAG (leading-line + Positions-Join), MPCOBS + TIC
   (eigene Compiler-Atome).
 - Kraft-Abdeckung: acoustic/electric/thermal/advective/diffusion-Kuration
   offen — electric: GIC-Netze + Live-E-Feldstärke (kein Feed); GLM ist em
@@ -687,10 +688,10 @@ Konversion ist bekannt oder erforschbar — pending, keine Fälschung):
   Query argovis-api.colorado.edu verifiziert, data-Feld = katenierte
   Messreihe — Split-Schema fehlt), SuperMAG (leading-line strip +
   inventory-Positions-Join — server-seitiger db-get-Fehler — +
-  station-Filter-Semantik), SDSS-photoObj (psfMag-Spalten, z unklar).
-  NDBC-Konsolidierung vollzogen (912 Stationen verifiziert).
-  sensor.community integriert (Box-Route filter/box&type=SDS011,
-  indoor-Caveat bleibt). MPCOBS + TIC: eigene Compiler-Atome
+  station-Filter-Semantik). NDBC-Konsolidierung vollzogen (912 Stationen
+  verifiziert). sensor.community integriert (Box-Route filter/box&type=SDS011,
+  indoor-Caveat bleibt). SDSS-photoObj integriert (photoObj.z = modelMag_z,
+  spec-z nur über specObj-Join). MPCOBS + TIC: eigene Compiler-Atome
   (packed-MPC-Records; header-lose CSV + header.csv).
 - TAP-Katalog-Pipeline: weitere VizieR-Bulks aus phi/tap_index.φ (39
   genutzte Tabellen, BZCAT5 erledigt), Gaia-Archiv (GCNS/MWSC);

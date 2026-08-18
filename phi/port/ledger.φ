@@ -405,8 +405,8 @@ note Sternkinematik 2026-08-17: Crossmatch auf I/355/gaiadr3 liefert pmra/pmdec/
 note Sternfarbe 2026-08-18: gaiadr3-Crossmatch liefert Teff/BPmag/RPmag/Gmag für alle 12 Sternkataloge — Farbe+Temperatur+Photometrie live auf CDN (Rendering folgt).
 
 ausstehend
-bestand asteroiden-gm-befund
-note DASTCOM trägt GM=0 für 45 Eugenia, 87 Sylvia, 90 Antiope, 216 Kleopatra — publizierte GM existieren (Perturbation/Doppel/Radar); VizieR-Massen-Tabelle fehlt im Index — Quelle recherchieren; Ziel: GM als Feld (gravity) in die Asteroiden-Blöcke (TODO Z.62–64)
+bestand phi/katalog/asteroid_gm_inpop25c.φ
+note Quelle gefunden (2026-08-18): INPOP25c postfit Massen J/A+A/705/A189/tablea1 (MPC, massINPOP25c kg, sigma) trägt alle vier — GM = M·G geerntet in phi/katalog/asteroid_gm_inpop25c.φ (45→4.239e8, 87→1.219e9, 90→7.034e7, 216→3.153e8 m³/s²). Zweitquelle Goffin J/A+A/565/A56 (Typ „s"=Satellit belegt Begleiter-Ursprung; Antiope-Lücke). Force-Gate: gravity (Bahndynamik, kein Bulk-Dichte-Modell). Integration offen: GM als BodyProperty im DASTCOM-Kompiler (Kompilat-Join, wie NEOWISE-Durchmesser-Join).
 
 ausstehend
 bestand phi/katalog/asteroid_diameters_neowise.φ
@@ -422,7 +422,7 @@ note OMNIWeb integriert (CDAWeb-HAPI OMNI2_H0_MRG1HR, at sun): 8 Felder — V180
 
 verifiziert
 bestand phi/research/agent_output/recheck_b5_flash.φ
-note SDSS SkyServerWS SqlSearch integriert (dr18, 200 JSON 0.Rows, cmap z→Distanz, cz/velDisp advective km/s). psfMag-Spalten liegen in photoObj, deren z unklar — getrennte Verifikation offen. Die registrierte SearchTools/sql-Route bleibt parser-def html.
+note SDSS SkyServerWS SqlSearch integriert (dr18, 200 JSON 0.Rows, cmap z→Distanz, cz/velDisp advective km/s). PhotoObj-Sibling integriert (2026-08-18): psfMag_r/g/i über specObj-Join; photoObj.z = modelMag_z (z-Band-Magnitude, keine Rotverschiebung, keine photoZ-Spalte) — die spektroskopische z trägt nur der Join. Die registrierte SearchTools/sql-Route bleibt parser-def html.
 
 ausstehend
 bestand mpcobs-katalog

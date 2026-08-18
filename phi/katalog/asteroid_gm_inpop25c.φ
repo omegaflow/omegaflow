@@ -1,0 +1,12 @@
+# Asteroiden-GM — INPOP25c postfit Massen (Mariani+2025, A&A 705 A189, Tabelle a1)
+# Quelle: tapvizier.cds.unistra.fr TAPVizieR J/A+A/705/A189/tablea1
+# Spalten der Quelle: MPC (Asteroidennummer), massINPOP25c (kg), sigmaINPOP25c (kg)
+# GM = massINPOP25c · 6.674e-11 m³/s² (G = 6.674e-11). Force-Gate: gravity
+# (Bahndynamik realer Begleiter/Perturbationen, kein Bulk-Dichte-Modell).
+# Zweitquelle (Begleiter-Beleg): Goffin 2014, A&A 565 A56, table5/table6 (trägt
+# 45/87/216, Typ "s"=Satellit; Antiope fehlt dort).
+# Format: <mpc> | <gm_m3s2> | <sigma_m3s2>
+45 | 4.239e8 | 6.73e7
+87 | 1.219e9 | 1.57e8
+90 | 7.034e7 | 3.39e7
+216 | 3.153e8 | 5.19e7

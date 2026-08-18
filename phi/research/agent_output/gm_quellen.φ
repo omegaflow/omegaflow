@@ -1,0 +1,43 @@
+# GM-Quellen-Recherche — vier Asteroiden mit publiziertem GM (2026-08-18)
+# Agent: grind-pro. VizieR-TAP-Recherche (tapvizier.cds.unistra.fr, ADQL, FORMAT=json), curl-only, quota-bewusst.
+# Auftrag: TODO Z.62-64 — DASTCOM trägt GM=0 für 45 Eugenia, 87 Sylvia, 90 Antiope, 216 Kleopatra;
+# publizierte GM existieren (Begleiter-Bahnbestimmung/Radar-Doppler); Quelle recherchieren (ledger "asteroiden-gm-befund").
+# Regeln: keine Register-Edits; beobachtende Sprache; A=A — kein Wert erfunden, unverifiziert bleibt unverifiziert.
+# Force-Gate-Litmus: GM aus Bahnbestimmung eines realen Begleiters = Messung (gravity, accept-würdig);
+# Masse aus Bulk-Dichte-Schätzung = abgeleitet (vorsichtiger). Beide Kandidaten unten sind Bahndynamik, nicht Bulk-Dichte.
+
+# — Zusammenfassung —
+# Beste Einzelquelle: TAPVizieR J/A+A/705/A189/tablea1 (INPOP25c postfit Asteroidenmassen, Mariani+2025,
+# A&A 705, A189). Trägt ALLE VIER (45/87/90/216) mit Masse in kg + Sigma. GM = M · G (G=6.674e-11 m³/s²).
+# Zweitquelle: TAPVizieR J/A+A/565/A56/table5+table6 (Goffin 2014, "Astrometric asteroid masses",
+# A&A 565, A56). Trägt 45/87/216 (KEIN 90 Antiope), Masse in 1e-10 solMass, Typ-codiert
+# (s=Satellit/Begleiter-Bahn, a=astrometrische Perturbation, p=Ephemeriden-Perturbation).
+# Beide passen das Force-Gate (gravity): Massen aus Bahndynamik realer Begleiter bzw. Perturbationen.
+# Die Tabellen tragen KEINE Position (MPC-Nummer = Join-Key) → Kompilat (Join auf DASTCOM), kein celestial cmap.
+# Integration = GM als BodyProperty im DASTCOM-Kompiler — gleicher Pfad wie der NEOWISE-Durchmesser-Join (TODO Z.66).
+
+# — Status pro Asteroid (GM gefunden / fehlt) —
+# 45 Eugenia   : gefunden — INPOP25c M=6.352e18 kg ± 1.009e18 → GM=4.239e8 m³/s² (0.424 km³/s²); Goffin table6 Typ "s" (Satellit Petit-Prince, Merline+1999/Marchis+2008)
+# 87 Sylvia    : gefunden — INPOP25c M=1.826e19 kg ± 2.348e18 → GM=1.219e9 m³/s² (1.219 km³/s²); Goffin table6 Typ "s" (Romulus/Remus, Marchis+2005)
+# 90 Antiope   : gefunden — INPOP25c M=1.054e18 kg ± 5.077e17 → GM=7.034e7 m³/s² (0.0703 km³/s²); Goffin trägt Antiope NICHT (einzige Lücke dort)
+# 216 Kleopatra: gefunden — INPOP25c M=4.724e18 kg ± 7.783e17 → GM=3.153e8 m³/s² (0.315 km³/s²); Goffin table6 Typ "a"/"p" (kein "s")
+
+kandidat https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync
+table J/A+A/705/A189/tablea1
+note INPOP25c postfit Asteroidenmassen (Mariani V., Fienga A., Murray Z., Gastineau M., Laskar J., A&A 705, A189). Spalten: MPC (Asteroidennummer, meta.id), massINPOP25c (kg, phys.mass), sigmaINPOP25c (kg, stat.error), sigmratio, meanWass (kg, Wasserstein-Barycenter), sigmaWass (kg), Ranking. Probe (ADQL): SELECT MPC, massINPOP25c, sigmaINPOP25c FROM "J/A+A/705/A189/tablea1" WHERE MPC IN (45,87,90,216) → vier Zeilen, alle vier gesucht. massINPOP25c ist ein Bahndynamik-Fit (Ephemeriden-Lösung), die für diese Vier dominant von den Begleiter-Bahnen gestützt wird — eine Messung (gravity), kein Bulk-Dichte-Modell. Die Werte sind Massen (kg); GM = M · 6.674e-11 m³/s². meanWass (Wasserstein-Barycenter über konkurrierende Bestimmungen) ist die robustere Alternativ-Schätzung; für Antiope meanWass=1.204e18 kg (massINPOP25c=1.054e18 kg) — die Spanne ist die publizierte Unsicherheit, kein Fehler des Katalogs.
+disposition accepted
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+MPC,massINPOP25c,sigmaINPOP25c+FROM+"J/A+A/705/A189/tablea1"+WHERE+MPC+IN+(45,87,90,216)
+ttl 604800
+at sun
+note Kompilat-Kandidat via CDN: die Tabelle trägt keine Position (kein ra/dec/plx), nur MPC-Nummer + Masse. Der Join-Key ist die Asteroidennummer. Ein rows/cmap-Block ohne Positions-Schlüssel kann im Block-Universum nicht als Oscillator manifestieren (§3.9) — der GM-Wert ist eine BodyProperty des Asteroiden (DASTCOM-Kompiler), kein eigenständiger Oscillator. Ernteform (bestand-Datei nach NEOWISE-Muster): <mpc> | <gm_m3s2> | <sigma_m3s2> mit GM = massINPOP25c · 6.674e-11. Konkrete Werte: 45 → 4.239e8 | 6.73e7 ; 87 → 1.219e9 | 1.57e8 ; 90 → 7.034e7 | 3.39e7 ; 216 → 3.153e8 | 5.19e7.
+
+kandidat https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync
+table J/A+A/565/A56/table5 (Haupttabelle) + J/A+A/565/A56/table6 (Übersicht der Einzelbestimmungen) + J/A+A/565/A56/refs
+note Goffin 2014 (A&A 565, A56) "Astrometric asteroid masses: a simultaneous determination". table5-Spalten: Seq, Name, Nd, M (1e-10 solMass, phys.mass), e_M, Signi, Dm0, Dm2, Diam (km), Cl, Dens (g/cm³). table6-Spalten: Seq, Name, M, e_M, Type ([aps]), Ref. Type "s" = Satellit/Begleiter-Bahn (refs: Marchis+2005 Nature 436, 822 für Sylvia; Merline+1999 Nature 401, 565 + Marchis+2008 Icarus 196, 97 für Eugenia) — die direkte Begleiter-Messung (gravity). Type "a" = astrometrische Perturbation, "p" = Ephemeriden-Perturbation (INPOP10e). Trägt 45 Eugenia (M=0.032±0.002), 87 Sylvia (M=0.108±0.01), 216 Kleopatra (M=0.026±0.004) — in 1e-10 solMass, GM = M · 1.3271244e10 m³/s². 90 Antiope fehlt (Goffin bestimmt astrometrische Massen; das Antiope-Doppelsystem ist dort nicht enthalten). Die "s"-Zeilen bestätigen den Begleiter-Ursprung des GM für Eugenia und Sylvia direkt.
+disposition bestand
+note Komplementär zu INPOP25c: deckt nur drei der vier (Antiope-Lücke), trägt aber die Typ-Codierung, die den Begleiter-Ursprung (Satellit) explizit belegt. Als GM-Quelle für die vier Asteroiden ist INPOP25c/tablea1 die vollständige Einzelquelle; Goffin bleibt die Zweitquelle für die Begleiter-Belege.
+
+# — Urteil —
+# Vier von vier GM gefunden. Beste Tabellen-ID: J/A+A/705/A189/tablea1 (INPOP25c), Spalten MPC + massINPOP25c + sigmaINPOP25c (kg),
+# ADQL/JSON fetchbar über tapvizier.cds.unistra.fr. Force-Gate: gravity (Bahndynamik, nicht Bulk-Dichte) → accept-würdig.
+# Integration: Kompilat-Join auf DASTCOM (GM als BodyProperty), gleicher Pfad wie NEOWISE-Durchmesser-Join — offen, hier nicht editiert.

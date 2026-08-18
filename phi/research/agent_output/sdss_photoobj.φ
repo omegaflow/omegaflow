@@ -1,0 +1,22 @@
+# sdss photoObj psfMag + z-Semantik (2026-08-18) — Nachlauf zu recheck_b5_flash.φ
+# Agent: grind-flash. Mechanisch, curl-only. Beobachtende Sprache — Diagnosen nennen was IST.
+# Regeln: kein tapvizier.cds.unistra.fr (Quota), kein cargo build/check/run, keine Register-Edits.
+# Verifizierte Route: https://skyserver.sdss.org/dr18/SkyServerWS/SearchTools/SqlSearch (200 JSON, Struktur [{"TableName":"Table1","Rows":[...]},{"TableName":"SqlQuery",...}] — map 0.Rows).
+
+kandidat https://skyserver.sdss.org (photoObj)
+note Befund 1 — photoObj-PSfMag-Spalten: probe1 `cmd=SELECT TOP 3 ra,dec,z,psfMag_r,psfMag_g,psfMag_i FROM photoObj WHERE psfMag_r BETWEEN 15 AND 17&format=json` → 200 application/json; Rows tragen ra (z.B. 44.2664161499323), dec, z=14.45089, psfMag_r=15.55367, psfMag_g=16.84931, psfMag_i=14.87737. psfMag_r/g/i sind echte PSF-Messwerte (AB-Magnituden, em — ein Auge evolviert genau fuer dieses Licht). ABER: photoObj.z=14.45 ist KEINE Rotverschiebung (physikalisch unmoglich).
+note Befund 2 — photoObj.z-Semantik geklaert: photoObj.z ist die z-Band-Model-Magnitude (modelMag_z), KEINE Rotverschiebung, KEIN Foto-z. Beweis probe2 `SELECT TOP 3 ra,dec,z,psfMag_z,modelMag_z,petroMag_z,specObjID FROM photoObj WHERE psfMag_r BETWEEN 15 AND 17` → 200; je Zeile exakt z==modelMag_z (14.46059=14.46059, 16.08106=16.08106, 16.70206=16.70206), specObjID=0 (kein Spektrum angebunden). Probe3 `SELECT TOP 3 ra,dec,z FROM photoObj WHERE z > 0.1 AND z < 1` → 200 mit leerer Rows-Liste — z als Rotverschiebungs-Filter liefert 0 Zeilen, weil z eine Magnitude ist. Probe4 `SELECT TOP 3 ra,dec,photoZ FROM photoObj` → 500 {"ErrorType":"InternalServerError","ErrorMessage":"Invalid column name 'photoZ'."} — die Spalte photoZ existiert nicht. Ein photoObj-Block, der z als cmap-z (Hubble-flow Distanz) verwendete, wuerde Magnituden als Rotverschiebung verdichten — FABRIKATION. 0 honored: die photoObj-z-Spalte wird nicht als Rotverschiebung gelesen.
+note Befund 3 — Spektroskopie-Join lebt: probe5 `SELECT TOP 3 p.ra,p.dec,p.psfMag_r,s.z FROM photoObj p JOIN specObj s ON p.objID=s.bestObjID WHERE p.psfMag_r BETWEEN 15 AND 17` → 200; Rows tragen ra/dec/psfMag_r und s.z als spektroskopische Rotverschiebung (z=-9.765775E-05, -5.2202E-05, 0.0001671379 — nahe 0, helle Galaxien/Sterne). Probe6 (die Draft-Query) `SELECT TOP 3 p.ra,p.dec,p.psfMag_r,p.psfMag_g,p.psfMag_i,s.z FROM photoObj p JOIN specObj s ON p.objID=s.bestObjID WHERE s.class='QSO' AND s.zWarning=0` → 200; Rows tragen ra/dec/psfMag_r/g/i und s.z=0.06551804, 0.06250638, 0.06498668 (plausible QSO-Rotverschiebungen). Der Join an p.objID=s.bestObjID traegt die spektroskopische Rotverschiebung an der photoObj-Position — ehrlicher cmap-z-Pfad.
+note Fazit: psfMag-Spalten tragen echte Messwerte, die z-Semantik ist belegt (photoObj.z=Mag, spec-z nur ueber den Join), ein ehrlicher Block ist moeglich — cmap mit ra/dec von photoObj und z aus dem specObj-Join, psfMag_r/g/i als em mag-Felder. Der bestehende SpecObj-Block (sources.phi Z.1350) bleibt unberuehrt; dieser photoObj-Sibling ergaenzt ihn um die Photometrie.
+disposition lebendig
+url https://skyserver.sdss.org/dr18/SkyServerWS/SearchTools/SqlSearch?cmd=SELECT+TOP+3000+p.ra,p.dec,p.psfMag_r,p.psfMag_g,p.psfMag_i,s.z+FROM+photoObj+p+JOIN+specObj+s+ON+p.objID%3Ds.bestObjID+WHERE+s.class%3D%27QSO%27+AND+s.zWarning%3D0&format=json
+ttl 604800
+at sun
+cmap 0.Rows
+ra ra
+dec dec
+z z
+field psfMag_r sdss_photoobj_psfmag_r gaussian-inverse-square em mag 604800 0.0 0.0
+field psfMag_g sdss_photoobj_psfmag_g gaussian-inverse-square em mag 604800 0.0 0.0
+field psfMag_i sdss_photoobj_psfmag_i gaussian-inverse-square em mag 604800 0.0 0.0
+note Draft-Block (SOURCES_V2_SPEC §1): cmap 0.Rows, z=Hubble-flow-Distanz aus s.z (denselbe z-Pfad wie der bestehende SpecObj-Block), psfMag-Felder gaussian-inverse-square em mag — Muster wie lasair_ztf_transient_gmag/tns_transient_flux. Kein Foto-z-Feld erfinden: die photometrische Rotverschiebung traegt photoObj nicht.

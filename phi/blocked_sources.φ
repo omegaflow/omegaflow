@@ -462,7 +462,7 @@ note Recheck 2026-08-17: SIOS-User-Account ist NICHT nötig für Data-Portal-Zug
 
 parser-def html
 url https://skyserver.sdss.org/dr18/SearchTools/sql?cmd=SELECT+TOP+3000+ra,dec,z,psfMag_r,psfMag_g+FROM+SpecObj+WHERE+class%3D%27QSO%27+AND+z+BETWEEN+0.1+AND+3.0+AND+zWarning%3D0&format=json
-note Diese Route liefert HTML (Formularseite). Die JSON-Route lebt beim SkyServerWS-Sibling (dr18/SkyServerWS/SearchTools/SqlSearch, 200 JSON 0.Rows) — integriert in sources.φ (recheck_b5 2026-08-18). psfMag-Spalten liegen in photoObj, deren z unklar — getrennte Verifikation offen.
+note Diese Route liefert HTML (Formularseite). Die JSON-Route lebt beim SkyServerWS-Sibling (dr18/SkyServerWS/SearchTools/SqlSearch, 200 JSON 0.Rows) — integriert in sources.φ (recheck_b5 2026-08-18). psfMag-Spalten liegen in photoObj; photoObj.z ist modelMag_z (z-Band-Magnitude, KEINE Rotverschiebung, keine photoZ-Spalte) — die spektroskopische z trägt nur der specObj-Join (integriert, sdss_photoobj 2026-08-18).
 
 parser-def
 url https://ssd-api.jpl.nasa.gov/fireball.api

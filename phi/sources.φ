@@ -1356,3 +1356,14 @@ dec dec
 z z
 field cz sdss_specobj_cz_kms inverse-square advective km/s 604800 0.0 0.0
 field velDisp sdss_specobj_veldisp_kms inverse-square advective km/s 604800 0.0 0.0
+
+url https://skyserver.sdss.org/dr18/SkyServerWS/SearchTools/SqlSearch?cmd=SELECT+TOP+3000+p.ra,p.dec,p.psfMag_r,p.psfMag_g,p.psfMag_i,s.z+FROM+photoObj+p+JOIN+specObj+s+ON+p.objID%3Ds.bestObjID+WHERE+s.class%3D%27QSO%27+AND+s.zWarning%3D0&format=json
+ttl 604800
+at sun
+cmap 0.Rows
+ra ra
+dec dec
+z z
+field psfMag_r sdss_photoobj_psfmag_r gaussian-inverse-square em mag 604800 0.0 0.0
+field psfMag_g sdss_photoobj_psfmag_g gaussian-inverse-square em mag 604800 0.0 0.0
+field psfMag_i sdss_photoobj_psfmag_i gaussian-inverse-square em mag 604800 0.0 0.0
