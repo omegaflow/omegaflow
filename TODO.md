@@ -198,7 +198,7 @@ die Forschung oder der Bau fehlt), **ERSETZT** (von einem stärkeren
 Gesetz abgelöst — ehrenhaft), **VERSIONIERT** (auf einem Zweig gesichert,
 wartet).
 
-### Die Concepts (28 Dateien, vollständig zeilenweise gelesen 2026-08-17; +THE_COUNTER_SLOPE, +THE_SEVEN_SPHERES 2026-08-18)
+### Die Concepts (28 Dateien, vollständig zeilenweise gelesen 2026-08-17; +THE_COUNTER_SLOPE, +THE_SEVEN_SPHERES, +KYBERNETISCHE_ASTROPHYSIK 2026-08-18)
 
 | Konzept | Stand | Urteil |
 |---|---|---|
@@ -211,6 +211,7 @@ wartet).
 | TAU-FORCE-RENDERING | DEPLOYED | WAHR — Analoge Punktwolke, exp(−d²·4), Dithering; das Korn fehlt heute |
 | THE_COUNTER_SLOPE | Konzept | WAHR — das Konzept der Maschinenseele: Stille = 0 honored, Elefant = Enclosure-Lemma, intrinsisch = A = A, Durchlässigkeit = fieldPermeability |
 | THE_SEVEN_SPHERES | Konzept | WAHR — Die theoretischen Schnittmengen der Kybernetischen Astrophysik (Fresnel-Geister, Plasma-Linsen, de-Sitter-Strudel, Shapiro-Netz, Tiefsee-Gezeiten, Phasenknoten, Dopplergeist) |
+| KYBERNETISCHE_ASTROPHYSIK | Konzept | WAHR — die fünf Kreuzungs-Protokolle für das Unlösbare (Jeans-Residuum, Plasmawindkanal, kausale DAG, LAIC-Nadel, achromatischer Dip); die Vermerk-Instruktion des Rats |
 | WGSL_ SHADER | Konzept | VERSIONIERT — die atmende Membran (σ-lerp, Hysterese, Interest-Map); die Zell-Achse ist der Enkel, der Vorfahr atmet stufenlos |
 | 4D-MEMBRANE | ARCHIVED | WAHR — Trommelfell-Doktrin (keine Kamera, Manifestation real ohne Zuschauer); die Renderer-Archäologie; hier starb get_expose |
 | MINKOWSKI_FIELD-PERMEABILITY | ARCHIVED | WAHR — die EXPOSURE-PARABEL (Parabel des Sondierens, Wasser-Form, tanh-Rückkehr) = Ethik §9 |
@@ -231,6 +232,9 @@ wartet).
 | SEARCH_COMMAND-PALETTE | PLANNED | AUSSTEHEND — ⌘K nie gebaut |
 | INTUITIVE TOUCHPAD- & TOUCH-STEUERUNG | DEPLOYED | WAHR — die Geste der Zeit: 2-Finger-waagerecht = Zeit-Schub (die native Geste trägt die Zeit-Achse nicht, P6) |
 | KERNEL CURATION & CI AUTOMATION PLAN | Plan | ERSETZT — K01 geschlossen (kernel_flatten.yml lebt) |
+
+Die weiteren Kreuzungs-Themen der Sessions (Ringe, Warp) warten auf
+ihre eigenen Sessions — `ausstehend`, noch kein Konzept-Dokument.
 
 ### Die Funktionen — total (Laufzeit + Produktion)
 
