@@ -1016,7 +1016,16 @@ fn main() {
             };
             if let Some(pm) = &crossmatch_pm {
                 let parts: Vec<&str> = pm.split(':').collect();
-                for (alias, idx) in [("pmra", 0usize), ("pmdec", 1), ("plx", 2), ("rv", 3)] {
+                for (alias, idx) in [
+                    ("pmra", 0usize),
+                    ("pmdec", 1),
+                    ("plx", 2),
+                    ("rv", 3),
+                    ("gaia_teff", 4),
+                    ("bpmag", 5),
+                    ("rpmag", 6),
+                    ("gmag", 7),
+                ] {
                     if let Some(pc) = parts.get(idx).filter(|c| !c.is_empty()) {
                         cs.push_str(&format!(", j.{} AS \"{}\"", xq(pc), alias));
                         mapping.push((alias.to_string(), alias.to_string()));

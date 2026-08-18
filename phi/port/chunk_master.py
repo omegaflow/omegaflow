@@ -46,7 +46,7 @@ def chunk_catalog(name, table, columns, skip_null, ra_col, bands):
         cmd = ["./target/debug/tap_compiler", "--root", R, "--table", table,
                "--columns", columns, "--skip-null", skip_null,
                "--crossmatch", "I/355/gaiadr3:RA_ICRS:DE_ICRS:Dist",
-               "--crossmatch-pm", "pmRA:pmDE:Plx:RV",
+               "--crossmatch-pm", "pmRA:pmDE:Plx:RV:Teff:BPmag:RPmag:Gmag",
                "--where", w, "--out", out]
         rows = fetch_band(cmd, out, lo)
         print(f"{name} RA {lo}-{hi}: {len(rows)} rows, dist={sum(1 for x in rows if x.get('dist_pc') is not None)}", flush=True)
