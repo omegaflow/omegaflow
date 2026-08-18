@@ -50,7 +50,9 @@ fn load_tyc1(path: &str, map: &mut HashMap<(i32, i32, i32), SupplRow>) -> usize 
         };
         let pm_ra = num(b, 88, 95).unwrap_or(0.0);
         let pm_de = num(b, 97, 104).unwrap_or(0.0);
-        let vt = num(b, 231, 236).unwrap_or(0.0);
+        let Some(vt) = num(b, 231, 236) else {
+            continue;
+        };
         let hip: i32 = field(b, 211, 216)
             .and_then(|s| s.trim().parse().ok())
             .unwrap_or(0);
@@ -112,7 +114,9 @@ fn load_suppl(path: &str, map: &mut HashMap<(i32, i32, i32), SupplRow>) -> usize
         };
         let pm_ra = num(b, 42, 48).unwrap_or(0.0);
         let pm_de = num(b, 50, 56).unwrap_or(0.0);
-        let mag = num(b, 97, 102).unwrap_or(0.0);
+        let Some(mag) = num(b, 97, 102) else {
+            continue;
+        };
         let hip: i32 = field(b, 116, 121)
             .and_then(|s| s.trim().parse().ok())
             .unwrap_or(0);
@@ -250,7 +254,9 @@ fn load_hip(path: &str) -> Option<HashMap<i32, (f64, f64)>> {
         if plx <= 0.0 {
             continue;
         }
-        let vmag = num(b, 42, 46).unwrap_or(0.0);
+        let Some(vmag) = num(b, 42, 46) else {
+            continue;
+        };
         map.insert(hip, (plx, vmag));
     }
     Some(map)
@@ -556,8 +562,12 @@ fn main() {
         };
         let rows_len = rows.len();
         let mut rows_out: Vec<String> = Vec::with_capacity(rows_len);
+        let mut no_rv = 0usize;
         for (hip, mut r) in rows {
-            let rv = rv_map.get(&hip).copied().unwrap_or(0.0);
+            let Some(rv) = rv_map.get(&hip).copied() else {
+                no_rv += 1;
+                continue;
+            };
             r.pop();
             r.push_str(&format!(",\"rv\":{}}}", rv));
             rows_out.push(r);
@@ -584,8 +594,8 @@ fn main() {
             std::process::exit(1);
         }
         eprintln!(
-            "bright: {} records (V<1.94, plx>0) → {}",
-            rows_len, out_path
+            "bright: {} records (V<1.94, plx>0), {} without rv (0 honored) → {}",
+            rows_len, no_rv, out_path
         );
         return;
     }
@@ -704,6 +714,7 @@ fn main() {
     let mut buf = Vec::with_capacity(rows.len() * STAR_RECORD_STRIDE);
     let mut written = 0usize;
     let mut no_plx = 0usize;
+    let mut no_rv = 0usize;
     let rv_map = if xmatch {
         let hips: Vec<i32> = rows
             .iter()
@@ -735,7 +746,11 @@ fn main() {
                 row.mag = vmag;
             }
         }
-        row.rv = rv_map.get(&row.hip).copied().unwrap_or(0.0);
+        let Some(rv) = rv_map.get(&row.hip).copied() else {
+            no_rv += 1;
+            continue;
+        };
+        row.rv = rv;
         encode(&row, &mut buf);
         written += 1;
     }
@@ -746,9 +761,10 @@ fn main() {
         std::process::exit(1);
     }
     eprintln!(
-        "tycho2: {} records written (plx>0), {} without plx (0 honored), {} B → {}",
+        "tycho2: {} records written (plx>0), {} without plx, {} without rv (0 honored), {} B → {}",
         written,
         no_plx,
+        no_rv,
         buf.len(),
         out_path
     );

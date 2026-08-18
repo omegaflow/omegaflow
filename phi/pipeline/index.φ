@@ -1,18 +1,19 @@
 # index über phi/ — alle Dateien, klassifiziert
 # Stand 2026-08-15 — Blockzahlen aus dem Dateisystem gezählt, regenerierbar.
+# Pfade 2026-08-18 auf phi/pipeline/ berichtigt (phi/port → phi/pipeline).
 # Zustand: ausstehend | verifiziert | erledigt | redundant | artefakt
 # Eine Zeile = eine Datei oder ein Korpus. Pfade relativ zu phi/.
 #
 # ZUSAMMENFASSUNG (dedupliziert, ohne live + declined):
-#   port/master_urls.txt        10153 URLs, 502 Netlocs — die eine Master-Queue
-#   port/netloc.txt             Netloc-Counts (github.com-CDN, tapvizier, ndbc …)
-#   port/netloc_per_datei.txt   welche Datei welchen Inhalt trägt (Top-5 je Datei)
-#   port/review_kandidaten.txt  197 Re-Review-Kandidaten aus dead_sources.φ
-#   port/provider_mengen.txt    echte Provider-Mengen vs. unser Crawl (nie "fertig" vortäuschen)
+#   pipeline/master_urls.txt        10153 URLs, 502 Netlocs — die eine Master-Queue
+#   pipeline/netloc.txt             Netloc-Counts (github.com-CDN, tapvizier, ndbc …)
+#   pipeline/netloc_per_datei.txt   welche Datei welchen Inhalt trägt (Top-5 je Datei)
+#   pipeline/review_kandidaten.txt  197 Re-Review-Kandidaten aus dead_sources.φ
+#   pipeline/provider_mengen.txt    echte Provider-Mengen vs. unser Crawl (nie "fertig" vortäuschen)
 #   katalog/provider_links.φ    JEDER Provider mit Original-Link (nichts versteckt)
 #   katalog/b2find_tags.φ       b2find-Tag-Vokabular (9.954 Tags mit Counts)
-#   port/library.φ              746 gewichtete Tags — die Linse des source_scanner
-#   port/weights_*.txt          Gewichtstabellen (source_scanner-Ausgänge)
+#   pipeline/library.φ              746 gewichtete Tags — die Linse des source_scanner
+#   pipeline/weights_*.txt          Gewichtstabellen (source_scanner-Ausgänge)
 #   katalog/tap_index*.φ        64148+995+271+203+46 Katalog-IDs → tap_compiler-Route
 # Archiv (pre-cdn-Historie + erledigte Korpora):
 #   /home/johannes/projects/archive/archeology/          (pre-cdn)
@@ -74,9 +75,9 @@ ausstehend 0 katalog/provider_links.φ
 erledigt 284 archive/phi-research/batches/
 erledigt 242 archive/phi-research/probe_batches/
 erledigt 88 archive/phi-research/agent_output/
-artefakt 2 port/stage/staging_verified.φ
-artefakt 1 port/stage/staging_empty.txt
-artefakt 1 port/stage/earth_stac_converted.φ
+artefakt 2 pipeline/stage/staging_verified.φ
+artefakt 1 pipeline/stage/staging_void_ledger.txt
+artefakt 1 pipeline/stage/earth_stac_converted.φ
 
 # ------------------------------------------------------------------
 # REGISTER + INFRA (nicht zu portieren)
@@ -84,17 +85,17 @@ artefakt 1 port/stage/earth_stac_converted.φ
 register sources.φ
 register dead_sources.φ
 register sources_index.φ
-infra port/ledger.φ
-infra port/prompt.φ
-infra port/index.φ
-infra port/master_urls.txt
-infra port/netloc.txt
-infra port/netloc_per_datei.txt
-infra port/review_kandidaten.txt
-infra port/provider_mengen.txt
-infra port/library.φ
-infra port/weights_b2find_catalogs_index.txt
-infra port/weights_grind_eogateway_index.txt
-infra port/weights_archeology_gaps_index.txt
+infra pipeline/ledger.φ
+infra pipeline/prompt.φ
+infra pipeline/index.φ
+infra pipeline/master_urls.txt
+infra pipeline/netloc.txt
+infra pipeline/netloc_per_datei.txt
+infra pipeline/review_kandidaten.txt
+infra pipeline/provider_mengen.txt
+infra pipeline/library.φ
+infra pipeline/weights_b2find_catalogs_index.txt
+infra pipeline/weights_grind_eogateway_index.txt
+infra pipeline/weights_archeology_gaps_index.txt
 infra katalog/b2find_tags.φ
 infra bin source_scanner

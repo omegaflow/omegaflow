@@ -7,7 +7,7 @@
 # PROZEDUR:
 #   1. cargo run -- --gold phi/pipeline/queue/<korpus>.φ phi/pipeline/stage/<korpus>_converted.φ
 #   2. cargo test -- test_backlog_batches_verify -- --nocapture
-#      (Sweep liest phi/pipeline/stage/*_converted.φ, schreibt staging_verified.φ / staging_empty.txt)
+#      (Sweep liest phi/pipeline/stage/*_converted.φ, schreibt staging_verified.φ / staging_void_ledger.txt)
 #   3. Disposition: verified-Blöcke nach SOURCES_V2_SPEC §1.0 in phi/sources.φ;
 #      void/decline in phi/dead_sources.φ; ledger.φ-Eintrag aktualisieren/entfernen.
 #   4. cargo check 0/0; ein Commit, TODO.md im selben Schritt.

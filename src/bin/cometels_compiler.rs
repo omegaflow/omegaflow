@@ -191,7 +191,7 @@ struct CometRow {
     ra_deg: f64,
     dec_deg: f64,
     dist_au: f64,
-    h: f64,
+    h: Option<f64>,
 }
 
 fn days_from_civil(year: i64, month: i64, day: i64) -> Option<i64> {
@@ -253,7 +253,7 @@ fn evaluate(obj: &HashMap<String, Json>) -> Option<CometRow> {
         ra_deg,
         dec_deg,
         dist_au: r / AU_M,
-        h: get_num(obj, "H").unwrap_or(0.0),
+        h: get_num(obj, "H"),
     })
 }
 
@@ -353,7 +353,7 @@ fn main() {
                     let q = get_num(obj, "Perihelion_dist").unwrap_or(0.0);
                     match evaluate(obj) {
                         Some(r) => eprintln!(
-                            "probe {}: e={} q={} au → ra={:.6} dec={:.6} dist={:.6} au H={}",
+                            "probe {}: e={} q={} au → ra={:.6} dec={:.6} dist={:.6} au H={:?}",
                             n, e, q, r.ra_deg, r.dec_deg, r.dist_au, r.h
                         ),
                         None => eprintln!("probe {}: e={} outside Kepler domain (0 honored)", n, e),
@@ -395,7 +395,10 @@ fn main() {
             r.ra_deg,
             r.dec_deg,
             r.dist_au,
-            r.h
+            match r.h {
+                Some(h) => h.to_string(),
+                None => "null".to_string(),
+            }
         ));
     }
     buf.push_str("]\n");

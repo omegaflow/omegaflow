@@ -1,0 +1,564 @@
+void https://earthquake.alaska.edu/fdsnws/event/1/query?format=geojson&minmagnitude=2.0&limit=200&orderby=time&starttime={today}T00:00:00 fetch returned empty
+void https://api.blitzortung.org/compressed/current_positions?lat={lat}&lon={lon}&range=500 fetch returned empty
+void https://api.irail.be/liveboard/?station=Brussels&format=json data-present (keys exist but no rows extracted)
+void https://api.irishrail.ie/realtime/realtime.asmx/getStationDataByCodeXML?StationCode=BROC data-present (non-JSON body: HTML/XML/text)
+void https://transport.opendata.ch/v1/stationboard?station=Bern&limit=10 data-present (keys exist but no rows extracted)
+void https://transport.opendata.ch/v1/stationboard?station=Zurich&limit=10 data-present (keys exist but no rows extracted)
+void https://www.wienerlinien.at/ogd_realtime/monitor?stopId=1234 data-present (keys exist but no rows extracted)
+void https://data.blitzortung.org/contributors/0/stations/0/signals/0/{year}/{month}/{day}/{hour}/{minute}.json data-present (non-JSON body: HTML/XML/text)
+void https://api.geonet.org.nz/tsunami/dart fetch returned empty
+void https://api.geonet.org.nz/quake?limit=200 fetch returned empty
+void https://api.geonet.org.nz/quake?format=geojson&minmag=3&limit=100 fetch returned empty
+void https://data.raspberryshake.org/api/v2/shake?limit=500 fetch returned empty
+void https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_day.geojson empty-response (JSON parsed but all containers empty)
+void https://erddap.incois.gov.in/erddap/tabledap/INCOIS_TSUNAMI_BPR.csv?latitude,longitude,time,water_pressure,sea_floor_depth&time>={today}T00:00:00Z&orderBy(%22time%22) fetch returned empty
+void http://irsc.ut.ac.ir/fdsnws/event/1/query?format=geojson&minmagnitude=2.0&limit=500&orderby=time&starttime={today}T00:00:00 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=MCMD&start={yesterday}&end={today}&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=NEWK&start={yesterday}&end={today}&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=OULU&start={yesterday}&end={today}&format=json&bins=3600 fetch returned empty
+void https://www.nmdb.eu/nest/draw_graph.php?wget=1&stations[]=OULU&tabchoice=1h&output=ascii&startdate_1={today}T00:00:00&enddate_1={today}T23:59:59 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=ROME&start={yesterday}&end={today}&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=SOPO&start={yesterday}&end={today}&format=json&bins=3600 fetch returned empty
+void https://www.nmdb.eu/nest/draw_graph.php?wget=1&stations[]=SOPO&tabchoice=1h&output=ascii&startdate_1={today}T00:00:00&enddate_1={today}T23:59:59 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=THUL&start={yesterday}&end={today}&format=json&bins=3600 fetch returned empty
+void https://services.swpc.noaa.gov/json/goes/primary/electron-1-day.json fetch returned empty
+void https://services.swpc.noaa.gov/json/goes/primary/xrays-3-day.json data-present (container array has rows but extract yielded nothing)
+void https://services.swpc.noaa.gov/products/alerts.json data-present (container array has rows but extract yielded nothing)
+void https://services.swpc.noaa.gov/products/solar-wind/mag-7-day.json fetch returned empty
+void https://services.swpc.noaa.gov/products/solar-wind/plasma-7-day.json fetch returned empty
+void https://services.swpc.noaa.gov/json/goes/primary/xrays-7-day.json data-present (container array has rows but extract yielded nothing)
+void http://www.nmdb.eu/nmdb/qtipart.php?station=ALMT&start={yesterday}&end={today}&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=AUST&start={yesterday}&end={today}&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=BOUL&start={yesterday}&end={today}&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=CTWN&start={yesterday}&end={today}&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=DOMC&start={yesterday}&end={today}&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=ERMN&start={yesterday}&end={today}&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=FSMT&start={yesterday}&end={today}&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=GOOS&start={yesterday}&end={today}&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=HALF&start={yesterday}&end={today}&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=INVK&start={yesterday}&end={today}&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=KERG&start={yesterday}&end={today}&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=KIEL&start={yesterday}&end={today}&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=MOSC&start={yesterday}&end={today}&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=NAIN&start={yesterday}&end={today}&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=NRLK&start={yesterday}&end={today}&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=PWNK&start={yesterday}&end={today}&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=REYK&start={yesterday}&end={today}&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=SANA&start={yesterday}&end={today}&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=TBLS&start={yesterday}&end={today}&format=json&bins=3600 fetch returned empty
+void http://www.nmdb.eu/nmdb/qtipart.php?station=ULNB&start={yesterday}&end={today}&format=json&bins=3600 fetch returned empty
+void https://service.scedc.caltech.edu/fdsnws/event/1/query?format=geojson&minmagnitude=1.5&limit=500&orderby=time&starttime={today}T00:00:00 fetch returned empty
+void https://scweb.cwa.gov.tw/api/v1/earthquake/latest?limit=200 fetch returned empty
+void https://seismo.ethz.ch/fdsnws/event/1/query?format=geojson&minmagnitude=1.0&limit=200&orderby=time&starttime={today}T00:00:00 fetch returned empty
+void https://earthquake.tmd.go.th/earthquake_json.php?limit=200 empty-response (JSON parsed but all containers empty)
+void https://services.swpc.noaa.gov/products/geospace/glm_lightning_density.json fetch returned empty
+void https://earthquakes.bgs.ac.uk/fdsnws/event/1/query?format=geojson&minmagnitude=1.0&limit=200&orderby=time&starttime={today}T00:00:00 fetch returned empty
+void https://api.energy-charts.info/ren_share data-present (JSON has content but declared keys absent)
+void http://www.bom.gov.au/fwo/marine_warnings.json fetch returned empty
+void https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/AC_H0_MFI/variables/BGSEc,Magnitude/data/{today}T00:00:00.000Z/{today}T23:59:59.000Z?format=csv fetch returned empty
+void https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/GOES16_L2_MAG/variables/Hp,He,Hn,B_Total/data/{today}T00:00:00.000Z/{today}T23:59:59.000Z?format=csv fetch returned empty
+void https://www.emsc-csem.org/service/rss/rss.php?typ=felt&limit=100 fetch returned empty
+void https://www.epa.gov/sites/default/files/radnet/radnet_current_data.json fetch returned empty
+void https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month} data-present (JSON has content but declared keys absent)
+void https://gcn.nasa.gov/api/v0.1/circulars?subject=GRB+optical&limit=100&format=json fetch returned empty
+void https://gcn.nasa.gov/api/v0.1/circulars?subject=IceCube&limit=100&format=json fetch returned empty
+void https://api.geonet.org.nz/tsunami/observation fetch returned empty
+void https://api.geonet.org.nz/volcano/alert/level fetch returned empty
+void https://api.weather.gov/alerts/active data-present (container array has rows but extract yielded nothing)
+void https://api.weather.gov/alerts/active?event=Tsunami%20Warning empty-response (JSON parsed but all containers empty)
+void https://waterservices.usgs.gov/nwis/iv/?format=json&sites=50049000&parameterCd=00060&siteStatus=all fetch returned empty
+void https://services.swpc.noaa.gov/json/goes/primary/differential-protons-3-day.json data-present (container array has rows but extract yielded nothing)
+void https://gracedb.ligo.org/api/superevents/?format=json&category=Production&ordering=-created&public=True&per_page=200 data-present (container array has rows but extract yielded nothing)
+void https://www.ndbc.noaa.gov/data/realtime2/42003.txt fetch returned empty
+void https://www.ndbc.noaa.gov/data/realtime2/42019.txt fetch returned empty
+void https://www.ndbc.noaa.gov/data/realtime2/42020.txt fetch returned empty
+void https://www.ndbc.noaa.gov/data/realtime2/42040.txt fetch returned empty
+void https://www.ndbc.noaa.gov/data/realtime2/44004.txt fetch returned empty
+void https://www.ndbc.noaa.gov/data/realtime2/51003.txt fetch returned empty
+void https://www.ndbc.noaa.gov/data/realtime2/51005.txt fetch returned empty
+void https://www.pegelonline.wsv.de/webservices/rest-api/v2/stations.json?includeCurrentMeasurement=true data-present (container array has rows but extract yielded nothing)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9753216&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow empty-response (JSON parsed but all containers empty)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=9757811&product=water_level&datum=STND&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow empty-response (JSON parsed but all containers empty)
+void https://environment.data.gov.uk/flood-monitoring/id/stations?_limit=500 data-present (container array has rows but extract yielded nothing)
+void https://incois.gov.in/portal/wave/rssnews.jsp fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id=NGK/best-avail/PT1M/xyzf&start={today}T00:00:00Z&stop={now}Z&format=json fetch returned empty
+void https://ssd-api.jpl.nasa.gov/cad.api?dist-max=0.1&date-min=-7&date-max={today}&body=Earth&fullname=true&sort=dist&limit=50 empty-response (JSON parsed but all containers empty)
+void https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND='-125544'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4,20' empty-response (JSON parsed but all containers empty)
+void https://tadas.afad.gov.tr/api/event/list?limit=200 empty-response (JSON parsed but all containers empty)
+void https://wdc.kugi.kyoto-u.ac.jp/ae_realtime/{year}{month}/ae{year}{month}{day}.for.request fetch returned empty
+void https://wdc.kugi.kyoto-u.ac.jp/dst_realtime/{year}{month}/dst{year}{month}{day}.for.request fetch returned empty
+void https://lasp.colorado.edu/lisird/latis/dap/eve_esp_l3.csv?time>={today} fetch returned empty
+void https://services.swpc.noaa.gov/products/solar-wind/mag-1-day.json fetch returned empty
+void https://services.swpc.noaa.gov/json/magnetometers/magnetometers.json fetch returned empty
+void https://services.swpc.noaa.gov/products/solar-wind/plasma-1-day.json fetch returned empty
+void https://www.nmdb.eu/nest/draw_graph.php?wget=1&stations[]=OULU&stations[]=JUNG&stations[]=THUL&stations[]=NEWK&tabchoice=1h&output=ascii&startdate_1={today}T00:00:00&enddate_1={today}T23:59:59 fetch returned empty
+void https://api.weather.gov/stations?state=CA,TX,NY&limit=500&cursor=&format=json fetch returned empty
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=air_temperature&application=batch16&begin_date={year}{month}{day}&end_date={year}{month}{day}&station=8518750&units=metric&time_zone=gmt&format=json data-present (container array has rows but extract yielded nothing)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=water_level&application=batch15&begin_date={year}{month}{day}&end_date={year}{month}{day}&station=8518750&datum=MLLW&units=metric&time_zone=gmt&format=json data-present (container array has rows but extract yielded nothing)
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=water_temperature&application=batch16&begin_date={year}{month}{day}&end_date={year}{month}{day}&station=8518750&units=metric&time_zone=gmt&format=json data-present (container array has rows but extract yielded nothing)
+void https://services.swpc.noaa.gov/json/goes/primary/differential-euv-flux.json fetch returned empty
+void https://services.swpc.noaa.gov/json/ovation_aurora_latest.json data-present (container array has rows but extract yielded nothing)
+void https://services.swpc.noaa.gov/json/geomag/dst_index.json fetch returned empty
+void https://services.swpc.noaa.gov/json/goes/primary/differential-electrons-1-day.json data-present (container array has rows but extract yielded nothing)
+void https://services.swpc.noaa.gov/json/goes/primary/integral-protons-7-day.json data-present (container array has rows but extract yielded nothing)
+void https://services.swpc.noaa.gov/json/solar_filaments.json fetch returned empty
+void https://services.swpc.noaa.gov/json/solar-geophysical-activity-summary.json fetch returned empty
+void https://api.obis.org/v3/occurrence?startdate={yesterday}&enddate={today}&size=200&fields=decimalLatitude,decimalLongitude,scientificName,eventDate empty-response (JSON parsed but all containers empty)
+void https://aisstream.io/api/v1/stream/vessels?latitude={lat}&longitude={lon}&radius=100 fetch returned empty
+void https://gcn.nasa.gov/api/v1/events?query=instrument:Fermi/GBM&order-by=-created fetch returned empty
+void https://gcn.nasa.gov/api/v1/events?query=instrument:Swift/BAT&order-by=-created fetch returned empty
+void https://www.nmdb.eu/nest/data/OULU/realtime.txt fetch returned empty
+void https://renass.unistra.fr/fdsnws/event/1/query?format=geojson&minmagnitude=1.0&limit=500&orderby=time&starttime={today}T00:00:00 fetch returned empty
+void https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=5.5&limit=100&orderby=time&producttype=aftershock-forecast empty-response (JSON parsed but all containers empty)
+void https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=4.0&limit=100&orderby=time&producttype=pager empty-response (JSON parsed but all containers empty)
+void https://volcanoes.usgs.gov/hans-public/api/volcano/current empty-response (JSON parsed but all containers empty)
+void https://waterservices.usgs.gov/nwis/iv/?format=json&parameterCd=00400,00095,00300,63680&siteStatus=active&bbox=-125,24,-66,50&siteType=ST fetch returned empty
+void http://afis.meraka.org.za/afis/data/json/ fetch returned empty
+void https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?site=GSFC&year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD15=1&AVG=10 data-present (non-JSON body: HTML/XML/text)
+void https://api.weather.bom.gov.au/v1/observations/{lat},{lon} fetch returned empty
+void https://api.weather.bom.gov.au/v1/warnings/{lat},{lon} fetch returned empty
+void https://weather.cma.cn/api/now/54511 fetch returned empty
+void https://weather.cma.cn/api/map/alarm fetch returned empty
+void https://firms.modaps.eosdis.nasa.gov/api/area/json/{nasa_key}/MODIS_NRT/1/world fetch returned empty
+void https://firms.modaps.eosdis.nasa.gov/api/area/json/{nasa_key}/VIIRS_NOAA20_NRT/1/world fetch returned empty
+void https://api.open-meteo.com/v1/forecast?latitude=0&longitude=0&current=wind_speed_10m,wind_direction_10m&hourly=windspeed_250hPa data-present (keys exist but no rows extracted)
+void https://mrms.ncep.noaa.gov/data/2D/PrecipRate/latest.json fetch returned empty
+void https://api.openaq.org/v2/latest?coordinates={lat},{lon}&radius=100000&limit=100 fetch returned empty
+void https://api.weather.gov/alerts/active/region/SA fetch returned empty
+void https://api.weather.gov/points/{lat},{lon} data-present (keys exist but no rows extracted)
+void https://api.sensor.community/v1/data/measurement?lat={lat}&lon={lon}&distance=5000&limit=100 fetch returned empty
+void https://api.sensor.community/v1/data/measurement?lat={lat}&lon={lon}&distance=5000&limit=50&sensor_type=17 fetch returned empty
+void https://aviationweather.gov/api/data/airsigmet?format=json data-present (container array has rows but extract yielded nothing)
+void https://api.weather.gov/alerts/active?limit=500 fetch returned empty
+void https://api.gbif.org/v1/occurrence/search?limit=20&hasCoordinate=true&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max} data-present (container array has rows but extract yielded nothing)
+void https://api.inaturalist.org/v1/observations?lat={lat}&lng={lon}&radius=10&per_page=20&order=desc&order_by=observed_on data-present (container array has rows but extract yielded nothing)
+void https://api.opensensemap.org/boxes?limit=1000 fetch returned empty
+void https://api.geonet.org.nz/volcano/alert?format=json fetch returned empty
+void https://bmkg-restapi.vercel.app/v1/earthquake/recent fetch returned empty
+void https://www.ceic.ac.cn/speedsearch?time=1&type=2&page=1 data-present (non-JSON body: HTML/XML/text)
+void https://seismic-api.science.unimelb.edu.au/today-quakes empty-response (JSON parsed but all containers empty)
+void https://api.geonet.org.nz/quakes?limit=100 fetch returned empty
+void https://api.open-meteo.com/v1/forecast?latitude=0&longitude=0&hourly=evapotranspiration&timezone=auto data-present (keys exist but no rows extracted)
+void https://gml.noaa.gov/aftp/data/radiation/solrad/realtime/abq/abq{year2}{yday}.dat fetch returned empty
+void https://tsunami.incois.gov.in/itews/DSSProducts/OPR/past90days.json fetch returned empty
+void https://api.sensor.community/v1/data/measurements?area=50,10,55,15&limit=200 fetch returned empty
+void https://api.sensor.community/v1/data/measurements?sensor_type=MICS6814&limit=200&order=desc fetch returned empty
+void https://api.sensor.community/v1/data/measurements?sensor_type=SEN5X&limit=200&order=desc fetch returned empty
+void https://api.sensor.community/v1/data/measurements?sensor_type=SGP30&limit=200&order=desc fetch returned empty
+void https://api.sensor.community/v1/data/measurements?sensor_type=SPS30&limit=200&order=desc fetch returned empty
+void https://blockchain.info/q/getblockcount data-present (non-JSON body: HTML/XML/text)
+void https://volcanoes.usgs.gov/hans-public/api/volcano/list empty-response (JSON parsed but all containers empty)
+void https://giro.uml.edu/didbase/json/scaled.php?station=RL052&year={year}&month={month}&day={day}&hour={hour} fetch returned empty
+void https://spaceweather.sansa.org.za/ionosonde/latest fetch returned empty
+void https://waterservices.usgs.gov/nwis/iv/?format=json&sites=08371000&parameterCd=00060,00065 data-present (JSON has content but declared keys absent)
+void https://services.swpc.noaa.gov/json/tec/tec_global.json fetch returned empty
+void https://services.swpc.noaa.gov/products/glotec/geojson_2d_urt.json data-present (JSON has content but declared keys absent)
+void https://services.swpc.noaa.gov/json/tec/tec_global_hp.json fetch returned empty
+void https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&AOD15=1&AVG=10&if_no_html=1&lat1=-10.0&lon1=60.0&lat2=55.0&lon2=150.0 fetch returned empty
+void https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&AOD15=1&AVG=10&if_no_html=1&lat1=35.0&lon1=-10.0&lat2=70.0&lon2=40.0 fetch returned empty
+void https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&AOD15=1&AVG=10&if_no_html=1&lat1=15.0&lon1=-170.0&lat2=80.0&lon2=-40.0 fetch returned empty
+void https://seismic-api.science.unimelb.edu.au/three-day-quakes empty-response (JSON parsed but all containers empty)
+void https://api.inaturalist.org/v1/observations?quality_grade=needs_id&per_page=200&order_by=created_at&order=desc&geo=true&geojson=true data-present (non-JSON body: HTML/XML/text)
+void https://www.nhc.noaa.gov/CurrentStorms.json?basin=epac data-present (container array has rows but extract yielded nothing)
+void https://aviationweather.gov/api/data/sigmet?format=json data-present (container array has rows but extract yielded nothing)
+void https://www.ogimet.com/cgi-bin/getsynop?block=20&begin={today}000000&end={today}235959&zoom=1&state=30 fetch returned empty
+void https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD15=1&AVG=10&if_no_html=1 fetch returned empty
+void https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD15=1&AVG=10&if_no_html=1&lat1=-35.0&lon1=-20.0&lat2=38.0&lon2=55.0 fetch returned empty
+void https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&AOD15=1&AVG=10&if_no_html=1&lat1=-35.0&lon1=-20.0&lat2=38.0&lon2=55.0 fetch returned empty
+void https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD15=1&AVG=10&if_no_html=1&lat1=-55.0&lon1=-130.0&lat2=60.0&lon2=-30.0 fetch returned empty
+void https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&AOD15=1&AVG=10&if_no_html=1 fetch returned empty
+void https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&INV15=1&AVG=10&if_no_html=1&lat1=-90&lon1=-180&lat2=90&lon2=180 data-present (non-JSON body: HTML/XML/text)
+void https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&INV15=1&AVG=10&if_no_html=1 data-present (non-JSON body: HTML/XML/text)
+void https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&TOT15=1&AVG=10&if_no_html=1 fetch returned empty
+void https://www.amsmeteors.org/members/ams/check_data.php?y={year}&m={month}&type=json empty-response (JSON parsed but all containers empty)
+void https://services3.arcgis.com/GVgbJbqm8hXASVYi/arcgis/rest/services/PAGER_CAT/FeatureServer/0/query?where=1%3D1&outFields=mag,place,time,alert,fatalities&f=json&resultRecordCount=500 data-present (JSON has content but declared keys absent)
+void https://argovis-api.colorado.edu/argo/bgcArgoCores?startDate={today}T00:00:00Z&endDate={today}T23:59:59Z&polygon=%5B-180%2C-60%2C-180%2C90%2C180%2C90%2C180%2C-60%2C-180%2C-60%5D fetch returned empty
+void https://argovis-api.colorado.edu/bgcargoplus?startDate=2026-07-26T00:00:00Z&endDate=2026-07-27T00:00:00Z&box=%5B%5B-180,-90%5D,%5B180,90%5D%5D fetch returned empty
+void https://argovis-api.colorado.edu/argo?startDate=2026-07-26T00:00:00Z&endDate=2026-07-27T00:00:00Z&box=%5B%5B-180,-90%5D,%5B180,90%5D%5D data-present (container array has rows but extract yielded nothing)
+void https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_info_v3?site=all&if_no_site=1 fetch returned empty
+void https://api.open-meteo.com/v1/air-quality?latitude={lat}&longitude={lon}&current=european_aqi,european_aqi_pm2_5,european_aqi_pm10,european_aqi_nitrogen_dioxide,european_aqi_ozone,european_aqi_sulphur_dioxide fetch returned empty
+void https://bmkg-restapi.vercel.app/v1/weather/3273 fetch returned empty
+void https://api.weather.bom.gov.au/v1/forecast/{lat},{lon} fetch returned empty
+void https://weather.cma.cn/api/weather/54511 fetch returned empty
+void https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_weekly_mlo.txt data-present (non-JSON body: HTML/XML/text)
+void https://giro.uml.edu/didbase/json/scaled.php?format=json fetch returned empty
+void https://giro.uml.edu/didbase/stationlist.php?format=json fetch returned empty
+void https://www.hamqsl.com/solarxml.php data-present (non-JSON body: HTML/XML/text)
+void https://api.superdarn.ca/v1/convection/map/latest fetch returned empty
+void https://api.superdarn.ca/v1/radars/status fetch returned empty
+void https://eonet.gsfc.nasa.gov/api/v3/events?status=open&category=volcanoes data-present (container array has rows but extract yielded nothing)
+void https://eonet.gsfc.nasa.gov/api/v3/events?status=open&category=wildfires fetch returned empty
+void https://gwis.jrc.ec.europa.eu/api/fire fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["amenity"="charging_station"](around:5000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["amenity"="restaurant"](around:1000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["shop"](around:5000,{lat},{lon});out%20100; fetch returned empty
+void https://power.larc.nasa.gov/api/temporal/monthly/point?parameters=ALLSKY_SFC_UV_INDEX&community=AG&longitude=0&latitude=0&start={year}&end={year}&format=JSON fetch returned empty
+void https://eonet.gsfc.nasa.gov/api/v3/events?category=wildfires fetch returned empty
+void https://kauai.ccmc.gsfc.nasa.gov/ISWA/iSWAGateway?action=getdata&id=iri_tec&format=json fetch returned empty
+void https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/ERG_HFA_L2_SPECTRA_60S/variables/spec_mW_E,spec_mW_B,freq/data/{today}T00:00:00.000Z/{today}T06:00:00.000Z?format=csv fetch returned empty
+void https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/MMS1_FGM_SRVY_L2/variables/mms1_fgm_b_gsm_srvy_l2/data/{today}T00:00:00.000Z/{today}T06:00:00.000Z?format=csv fetch returned empty
+void https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/RBSPA_REL04_ECT-MAGEIS-L3/variables/FESA,L,MLAT,MLON/data/{today}T00:00:00.000Z/{tomorrow}T00:00:00.000Z?format=csv fetch returned empty
+void https://cddis.nasa.gov/archive/gnss/products/ionex/{year}/{day}/COD0OPSFIN_{year}{day}0000_01D_01H_GIM.INX data-present (non-JSON body: HTML/XML/text)
+void https://celestrak.org/SOCRATES/query.php?TIMEFRAME=24&MAX_PROB=0.001&LIMIT=200&FORMAT=json fetch returned empty
+void https://ssd-api.jpl.nasa.gov/fireball.api?limit=100 data-present (container array has rows but extract yielded nothing)
+void https://geoserver.efas.eu/geoserver/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=efas:FloodEvents&outputFormat=application%2Fjson&count=500 fetch returned empty
+void https://floodobservatory.colorado.edu/FloodArchive/active_floods.geojson fetch returned empty
+void https://api.eia.gov/v2/electricity/rto/region-sub-ba/data/?frequency=hourly&data[0]=value&api_key={eia_key} fetch returned empty
+void https://web-api.tp.entsoe.eu/api?documentType=A44&in_Domain=DE_LU&period.start={today}0000&period.end={today}2300&securityToken={entsoe_key} fetch returned empty
+void https://api.eurobis.org/v2/occurrence/search?limit=200&hascoordinates=true&scientificname=&year={year} fetch returned empty
+void https://stereo-ssc.nascom.nasa.gov/beacon/tables.shtml fetch returned empty
+void https://fireball.fripon.org/ajax/liste_multiple.ajax.php data-present (JSON has content but declared keys absent)
+void https://api.gbif.org/v1/occurrence/search?classKey=131&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json data-present (container array has rows but extract yielded nothing)
+void https://api.gbif.org/v1/occurrence/search?classKey=734&hasCoordinate=true&limit=300&basisOfRecord=MACHINE_OBSERVATION&year={year}&format=json data-present (container array has rows but extract yielded nothing)
+void https://api.gbif.org/v1/occurrence/search?orderKey=734&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION,MACHINE_OBSERVATION fetch returned empty
+void https://api.gbif.org/v1/occurrence/search?orderKey=809&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&format=json data-present (container array has rows but extract yielded nothing)
+void https://api.gbif.org/v1/occurrence/search?classKey=186&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json data-present (container array has rows but extract yielded nothing)
+void https://api.gbif.org/v1/occurrence/search?orderKey=180130&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json empty-response (JSON parsed but all containers empty)
+void https://api.gbif.org/v1/occurrence/search?orderKey=719&hasCoordinate=true&limit=300&basisOfRecord=HUMAN_OBSERVATION&year={year}&month={month}&format=json empty-response (JSON parsed but all containers empty)
+void https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&occurrenceStatus=PRESENT&basisOfRecord=HUMAN_OBSERVATION&year={year}&format=json data-present (container array has rows but extract yielded nothing)
+void https://api.gbif.org/v1/occurrence/search?hasCoordinate=true&limit=300&iucnRedListCategory=CR&basisOfRecord=HUMAN_OBSERVATION&year={year}&format=json data-present (container array has rows but extract yielded nothing)
+void https://geofon.gfz.de/fdsnws/event/1/query?format=geojson&minmag=3&limit=100&region=AFRICA fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="atm"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="bank"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["highway"="bus_stop"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["historic"="castle"](around:500000,{lat},{lon});out%20100; fetch returned empty
+void https://ies-ows.jrc.ec.europa.eu/effis?service=WFS&request=GetFeature&typeName=ms:modis.hs&outputFormat=application/json&maxFeatures=1 data-present (non-JSON body: HTML/XML/text)
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="charging_station"](around:100000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="fire_station"](around:100000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="fuel"](around:100000,{lat},{lon});out%20100; fetch returned empty
+void https://seismic-api.science.unimelb.edu.au/month-quakes empty-response (JSON parsed but all containers empty)
+void https://gdacs.org/xml/rss.xml data-present (non-JSON body: HTML/XML/text)
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="hospital"](around:200000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="library"](around:100000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["man_made"="lighthouse"](around:500000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["man_made"="mast"](around:200000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["historic"="memorial"](around:100000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["natural"="peak"](around:200000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["tourism"="museum"](around:100000,{lat},{lon});out%20100; fetch returned empty
+void https://eonet.gsfc.nasa.gov/api/v3/events fetch returned empty
+void https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/Active_Fires/FeatureServer/0/query?where=1%3D1&outFields=*&geometry={lon_min},{lat_min},{lon_max},{lat_max}&geometryType=esriGeometryEnvelope&f=json data-present (JSON has content but declared keys absent)
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["man_made"="observatory"](around:500000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["aeroway"="aerodrome"](around:500000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["tourism"="alpine_hut"](around:500000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["historic"="archaeological_site"](around:200000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["tourism"="artwork"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="bakery"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="bar"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["historic"="battlefield"](around:500000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["man_made"="beacon"](around:200000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="bench"](around:5000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="bicycle_rental"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="books"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["craft"="brewery"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];way["way"="bridge"](around:yes,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="butcher"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="cafe"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["tourism"="camp_site"](around:200000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="car_sharing"](around:100000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["natural"="cave_entrance"](around:500000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="cinema"](around:100000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="clinic"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["man_made"="tower"](around:100000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="clothes"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="college"](around:100000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="community_centre"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="compressed_air"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["highway"="construction"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="convenience"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="courthouse"](around:200000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["highway"="crossing"](around:5000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["emergency"="defibrillator"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="dentist"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["leisure"="dog_park"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="electronics"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="embassy"](around:500000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];way["way"="landuse"](around:farmland,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="fast_food"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="ferry_terminal"](around:200000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["leisure"="fitness_centre"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="florist"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];way["way"="landuse"](around:forest,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["historic"="fort"](around:500000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="fountain"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["tourism"="gallery"](around:100000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["leisure"="garden"](around:100000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="grave_yard"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="greengrocer"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="grocery"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["tourism"="guest_house"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="hairdresser"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="hardware"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["tourism"="hostel"](around:100000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["tourism"="hotel"](around:100000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="hunting_stand"](around:200000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="ice_cream"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["tourism"="information"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="jewelry"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="kindergarten"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="kiosk"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="laundry"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="mall"](around:100000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["historic"="manor"](around:500000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["leisure"="marina"](around:200000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["historic"="milestone"](around:200000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="monastery"](around:500000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["historic"="monument"](around:200000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="motorcycle_parking"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="music_venue"](around:100000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["leisure"="nature_reserve"](around:500000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="optician"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["geological"="palaeontological_site"](around:500000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="parking"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["leisure"="park"](around:100000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="pet"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="pharmacy"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="chemist"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["tourism"="picnic_site"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="place_of_worship"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["leisure"="playground"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="post_box"](around:10000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="post_office"](around:100000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["power"="tower"](around:200000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="prison"](around:500000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="public_bookcase"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="pub"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["railway"="station"](around:200000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="recycling"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["historic"="ruins"](around:200000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="school"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="shelter"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["leisure"="sports_centre"](around:100000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["leisure"="pitch"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="sports"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["natural"="spring"](around:200000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["leisure"="stadium"](around:200000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["historic"="statue"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["highway"="street_lamp"](around:10000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["railway"="subway_entrance"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="supermarket"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["man_made"="surveillance"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["leisure"="swimming_pool"](around:100000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["telecom"="antenna"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="telephone"](around:10000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["man_made"="telescope"](around:500000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="theatre"](around:100000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="toilets"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="townhall"](around:200000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["highway"="traffic_signals"](around:10000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["railway"="tram_stop"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="travel_agency"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["natural"="tree"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="university"](around:200000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="veterinary"](around:100000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["tourism"="viewpoint"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];way["landuse"="vineyard"](around:200000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="waste_basket"](around:10000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="drinking_water"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["man_made"="water_well"](around:200000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["man_made"="watermill"](around:200000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];way["way"="waterway"](around:river,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["historic"="wayside_shrine"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["man_made"="windmill"](around:500000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["shop"="wine"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["internet_access"="wlan"](around:10000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="police"](around:200000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="restaurant"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["highway"="speed_camera"](around:50000,{lat},{lon});out%20100; fetch returned empty
+void https://volcanoes.usgs.gov/vsc/api/volcanoApi/geojson data-present (container array has rows but extract yielded nothing)
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["natural"="volcano"](around:500000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["amenity"="weather_station"](around:200000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:15];node["power"="generator"]["generator:source"="wind"](around:200000,{lat},{lon});out%20100; fetch returned empty
+void https://kp.gfz-potsdam.de/app/files/gfz-hpo-Kp_def-{year}.txt fetch returned empty
+void https://giro.uml.edu/SAOExplorer/index.php?action=getStations&format=json fetch returned empty
+void https://gracedb.ligo.org/api/superevents/?format=json&category=Production&label=GW&ordering=-created&per_page=10 data-present (container array has rows but extract yielded nothing)
+void https://gracedb.ligo.org/api/superevents/?format=json&category=Production&public=True&ordering=-created&per_page=100 data-present (container array has rows but extract yielded nothing)
+void https://volcano.si.edu/api/v1/activity?format=json&weeks=4&status=eruption fetch returned empty
+void https://gwis.jrc.ec.europa.eu/api/fire/current?format=json&limit=500 fetch returned empty
+void https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+200+date,band,peak_flux,duration,type+FROM+sgraflares+WHERE+date+IS+NOT+NULL+ORDER+BY+date+DESC data-present (non-JSON body: HTML/XML/text)
+void https://www.globalfloods.eu/glofas-forecasting/?format=json data-present (non-JSON body: HTML/XML/text)
+void https://erddap.marine.ie/erddap/tabledap/smartbay_obs_acoustic.csv?time,spl_full fetch returned empty
+void https://iagos.aeris-data.fr/api/json/products?domain=IAGOS-CORE&variables=O3,CO&start={today}T00:00:00&stop={today}T23:59:59&limit=500 fetch returned empty
+void https://meta.icos-cp.eu/sparql?format=json&query=SELECT+?s+?name+?lat+?lon+?alt+?country+?stType+WHERE{?s+a+<http://meta.icos-cp.eu/ontologies/cpmeta/ES>+;+<http://www.w3.org/2000/01/rdf-schema#label>+?name+;+<http://meta.icos-cp.eu/ontologies/cpmeta/hasLatitude>+?lat+;+<http://meta.icos-cp.eu/ontologies/cpmeta/hasLongitude>+?lon+;+<http://meta.icos-cp.eu/ontologies/cpmeta/hasCountry>+?country+}+LIMIT+200 fetch returned empty
+void https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.csv?latitude,longitude,TEMP,PSAL,DOXY,PRES,time&DOXY%3E=0&time%3E=now-7days&orderBy(%22time%22)&limit=3000 fetch returned empty
+void https://api.inaturalist.org/v1/observations?quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true&swlat=-20&swlng=-80&nelat=5&nelng=-45 fetch returned empty
+void https://api.inaturalist.org/v1/observations?iconic_taxa=Amphibia&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true fetch returned empty
+void https://api.inaturalist.org/v1/observations?quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true&swlat=35&swlng=-10&nelat=70&nelng=40 fetch returned empty
+void https://api.inaturalist.org/v1/observations?iconic_taxa=Fungi&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true fetch returned empty
+void https://api.inaturalist.org/v1/observations?iconic_taxa=Insecta&invasive=true&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true fetch returned empty
+void https://api.inaturalist.org/v1/observations?iconic_taxa=Mammalia&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true fetch returned empty
+void https://api.inaturalist.org/v1/observations?iconic_taxa=Actinopterygii&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true fetch returned empty
+void https://api.inaturalist.org/v1/observations?iconic_taxa=Reptilia&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true fetch returned empty
+void https://api.inaturalist.org/v1/observations?threatened=true&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&geojson=true fetch returned empty
+void https://erddap.incois.gov.in/erddap/tabledap/INCOIS_ARGO_PROFILES.csv?latitude,longitude,time,pres,temp,psal,platform_number&time>={today}T00:00:00Z&latitude>=-30&latitude<=30&longitude>=40&longitude<=120&orderBy(%22time%22)&distinct() fetch returned empty
+void https://erddap.incois.gov.in/erddap/griddap/INCOIS_GHRSST_MUR_SST.csv?analysed_sst%5Blast%5D%5B(-30.0):(30.0):5%5D%5B(40.0):(120.0):5%5D fetch returned empty
+void https://erddap.incois.gov.in/erddap/griddap/INCOIS_NIO_WAVE_MODEL.csv?SWH%5Blast%5D%5B(0.0):(25.0):2%5D%5B(50.0):(80.0):2%5D,MWP%5Blast%5D%5B(0.0):(25.0):2%5D%5B(50.0):(80.0):2%5D,MWD%5Blast%5D%5B(0.0):(25.0):2%5D%5B(50.0):(80.0):2%5D fetch returned empty
+void https://erddap.incois.gov.in/erddap/griddap/INCOIS_NIO_WAVE_MODEL.csv?SWH%5Blast%5D%5B(0.0):(25.0):2%5D%5B(80.0):(100.0):2%5D,MWP%5Blast%5D%5B(0.0):(25.0):2%5D%5B(80.0):(100.0):2%5D,PWP%5Blast%5D%5B(0.0):(25.0):2%5D%5B(80.0):(100.0):2%5D fetch returned empty
+void https://incois.gov.in/portal/osf/json/osf_alert.jsp fetch returned empty
+void https://services.swpc.noaa.gov/json/tec/tec_global_1h.json fetch returned empty
+void https://bhuvan-app1.nrsc.gov.in/disaster/disaster.php?id=flood&format=json data-present (non-JSON body: HTML/XML/text)
+void https://ssd-api.jpl.nasa.gov/fireball.api?date-min=2010-01-01&req-loc=true&limit=1000&sort=-energy data-present (container array has rows but extract yielded nothing)
+void https://lasp.colorado.edu/lisird/latis/dap/fism_flare_hr.csv?time>={today} fetch returned empty
+void https://lasp.colorado.edu/lisird/latis/dap/noaa_radio_flux.csv?time>={today} empty-response (empty body)
+void https://lasp.colorado.edu/lisird/latis/dap/sdo_eve_ssi_1nm_l3.csv?time>=2026-01-01&time<={today} fetch returned empty
+void https://www.mirovaweb.it/api/v1/anomalies?limit=200 fetch returned empty
+void https://modvolc.ov.ingv.it/modvolc/feed.json fetch returned empty
+void https://www.minorplanetcenter.net/cgi-bin/checkmp.cgi?ty=c&head=N&TextArea=&radius=180&ra=&decl=&oc=500&e=J2000&resoc=&s=t&m=h&adir=N&oed=&e=J2000&dFormat=YYYY+MM+DD&css=modern&mot=check&dmot=p&si=t&uto=0&int=2&fmt=csv data-present (non-JSON body: HTML/XML/text)
+void https://coastwatch.noaa.gov/erddap/griddap/jplMURSST41.csv?analysed_sst%5B-1%5D%5B(0.0):(60.0):4%5D%5B(-180.0):(180.0):4%5D fetch returned empty
+void https://power.larc.nasa.gov/api/temporal/monthly/point?parameters=ALLSKY_SFC_SW_DWN&community=RE&longitude={lon}&latitude={lat}&start=2025&end=2025&format=JSON data-present (JSON has content but declared keys absent)
+void https://records-ws.nbnatlas.org/occurrences/search?q=group:Chiroptera&fq=dataProviderName:%22Bat+Conservation+Trust%22&fl=decimalLatitude,decimalLongitude,vernacularName,scientificName,year,month&pageSize=300&sort=year&order=desc data-present (JSON has content but declared keys absent)
+void https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-hourly&stations=USW00013739,USW00094728,USW00012918&startDate=2026-07-01&endDate=2026-07-27&format=json empty-response (JSON parsed but all containers empty)
+void https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-hourly&stations=USW00013739&startDate=2026-01-01&endDate=2026-07-27&format=json empty-response (JSON parsed but all containers empty)
+void https://www.ndbc.noaa.gov/data/realtime2/21413.dart fetch returned empty
+void https://www.ndbc.noaa.gov/data/realtime2/46401.dart fetch returned empty
+void https://ssd-api.jpl.nasa.gov/fireball.api?limit=100&date-min=2020-01-01 data-present (container array has rows but extract yielded nothing)
+void https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=APTY&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0 fetch returned empty
+void https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=HRMS&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0 fetch returned empty
+void https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=JUNG&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0 fetch returned empty
+void https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=KERG&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0 fetch returned empty
+void https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=MCMD&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0 fetch returned empty
+void https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=MXCO&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0 fetch returned empty
+void https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=OULU&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0 fetch returned empty
+void https://www.nmdb.eu/nest/draw_graph.php?formchk=1&stations[]=THUL&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=1&last_label=days_label&tresolution=60&yunits=0 fetch returned empty
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?date={today}&station=9414290&product=predictions&datum=MLLW&time_zone=GMT&units=metric&format=json fetch returned empty
+void https://coralreefwatch.noaa.gov/satellite/vs/data/vs_alldata_cur.json fetch returned empty
+void https://www.ncei.noaa.gov/access/services/data/v1?dataset=daily-summaries&dataTypes=TMAX,TMIN,PRCP,SNOW,AWND&stations=GM000003026,GM000010501,UK000003668&startDate={today}&endDate={today}&format=json empty-response (JSON parsed but all containers empty)
+void https://coastwatch.noaa.gov/erddap/griddap/ncdcOisst21Agg.csv?sst%5B-1%5D%5B0%5D%5B(0.0):(60.0):4%5D%5B(-180.0):(180.0):4%5D fetch returned empty
+void https://so2.gsfc.nasa.gov/measures/measures_so2.html fetch returned empty
+void https://services.swpc.noaa.gov/products/solar-regions.json fetch returned empty
+void https://gong2.nso.edu/oQR/zqs/?ref=zqs&series=zqs&date={year}.{month}.{day}&format=json data-present (non-JSON body: HTML/XML/text)
+void https://api.obis.org/v3/occurrence?startdate={yesterday}&enddate={today}&size=1000&fields=decimalLatitude,decimalLongitude,scientificName,class,order,family,genus,species,date_year,country empty-response (JSON parsed but all containers empty)
+void https://api.ifremer.fr/argoweb/float/list?days=30&format=json fetch returned empty
+void https://api.open-meteo.com/v1/forecast?latitude=80.0&longitude=0.0&hourly=temperature_2m,snowfall,snow_depth,frozen_precipitation_percent,wind_speed_10m&models=icon_seamless&forecast_days=3&format=json fetch returned empty
+void https://openlittermap.com/api/getdata?lat=0.0&lon=0.0&radius=50&format=json&limit=500 data-present (non-JSON body: HTML/XML/text)
+void https://openlittermap.com/api/getdata?lat={lat}&lon={lon}&radius=50&format=json&limit=500 data-present (non-JSON body: HTML/XML/text)
+void https://api.reliefweb.int/v1/disasters?appname=opencode&limit=200&filter[field]=status&filter[value]=ongoing&sort[]=date:desc fetch returned empty
+void https://www.temis.nl/uvradiation/nrt/uvdose.php?date={year}{month}{day}&type=overpass&format=json fetch returned empty
+void https://www.temis.nl/uvradiation/nrt/uvindex.php?date={year}{month}{day}&type=overpass&format=json data-present (container array has rows but extract yielded nothing)
+void https://terrabrasilis.dpi.inpe.br/app/api/v1/layer/amazon/latest/deforestation-alerts/all?format=geojson&limit=1000 empty-response (JSON parsed but all containers empty)
+void https://waterservices.usgs.gov/nwis/gwlevels/?format=json&modifiedSince=P1D&siteStatus=active&siteType=GW&parameterCd=72019&countyCd=&stateCd=&bbox=-125,24,-66,50&resultRetrievalMode=grouped data-present (non-JSON body: HTML/XML/text)
+void https://volcanoes.usgs.gov/hans-public/api/volcano/weekly empty-response (JSON parsed but all containers empty)
+void https://api.waqi.info/map/bounds/?latlng=17,72,54,136&token=demo empty-response (JSON parsed but all containers empty)
+void https://api.waqi.info/map/bounds/?latlng=-10,100,55,145&token=demo empty-response (JSON parsed but all containers empty)
+void https://vsx.aavso.org/index.php?view=api.votable&format=json&ra=0&dec=0&radius=5 data-present (non-JSON body: HTML/XML/text)
+void https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?year={year}&month={month}&day={day}&year2={year}&month2={month}&day2={day}&AOD20=1&AVG=20&if_no_html=1 data-present (non-JSON body: HTML/XML/text)
+void https://services3.arcgis.com/GVgbJbqm8hXASVYi/arcgis/rest/services/PAGER_CAT/FeatureServer/0/query?where=1%3D1&geometry={lon_min}%2C{lat_min}%2C{lon_max}%2C{lat_max}&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=YEAR,MAG,DEPTH,DEATHS,INJURIES,LATITUDE,LONGITUDE,COUNTRY&f=json&resultRecordCount=500 data-present (JSON has content but declared keys absent)
+void https://argovis-api.colorado.edu/heatContent?startDate={yesterday}T00:00:00Z&endDate={today}T00:00:00Z fetch returned empty
+void http://export.arxiv.org/api/query?search_query=cat:astro-ph.*&max_results=0 fetch returned empty
+void http://export.arxiv.org/api/query?search_query=cat:cs.*&max_results=0 fetch returned empty
+void http://export.arxiv.org/api/query?search_query=cat:hep-*&max_results=0 fetch returned empty
+void http://export.arxiv.org/api/query?search_query=cat:math.*&max_results=0 fetch returned empty
+void http://export.arxiv.org/api/query?search_query=cat:physics.*&max_results=0 fetch returned empty
+void http://export.arxiv.org/api/query?search_query=cat:q-bio.*&max_results=0 fetch returned empty
+void http://export.arxiv.org/api/query?search_query=cat:q-fin.*&max_results=0 fetch returned empty
+void http://export.arxiv.org/api/query?search_query=cat:stat.*&max_results=0 fetch returned empty
+void https://newton.spacedys.com/astdys2/index.php?pc=3.0&type=all&format=json&limit=500 data-present (non-JSON body: HTML/XML/text)
+void https://www.cpc.ncep.noaa.gov/data/indices/oni.ascii.txt data-present (non-JSON body: HTML/XML/text)
+void https://services.swpc.noaa.gov/json/spi/global_spi.json fetch returned empty
+void https://api.sensor.community/v1/data/measurement?limit=10000 fetch returned empty
+void http://export.arxiv.org/api/query?search_query=*:*&max_results=1 fetch returned empty
+void https://data.cdc.gov/resource/jr58-6ysp.json?$limit=1 data-present (JSON has content but declared keys absent)
+void https://opendata.ecdc.europa.eu/monkeypox/casedistribution/json/data.json data-present (keys exist but no rows extracted)
+void https://epoch.ai/data/notable_ai_models.csv data-present (non-JSON body: HTML/XML/text)
+void https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_manr?geo=EU27_2020&unit=RCH_A&coicop=CP00&format=JSON data-present (JSON has content but declared keys absent)
+void https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/nama_10_gdp?geo=EU27_2020&unit=CLV_I10&na_item=B1GQ&format=JSON data-present (JSON has content but declared keys absent)
+void https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/demo_pjan?geo=EU27_2020&sex=T&age=TOTAL&format=JSON data-present (JSON has content but declared keys absent)
+void https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/une_rt_q?geo=EU27_2020&unit=PC_ACT&s_adj=SA&age=TOTAL&format=JSON data-present (JSON has content but declared keys absent)
+void https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&hasGeospatialIssue=false&taxonKey=47115 empty-response (JSON parsed but all containers empty)
+void https://api.gbif.org/v1/occurrence/search?taxonKey=1&limit=500&hasCoordinate=true data-present (container array has rows but extract yielded nothing)
+void https://api.gbif.org/v1/occurrence/search?taxonKey=212&limit=200&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max} data-present (container array has rows but extract yielded nothing)
+void https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=722&hasGeospatialIssue=false empty-response (JSON parsed but all containers empty)
+void https://api.gbif.org/v1/occurrence/search?limit=300&hasCoordinate=true&taxonKey=47115&hasGeospatialIssue=false empty-response (JSON parsed but all containers empty)
+void https://api.gbif.org/v1/occurrence/search?taxonKey=212&limit=500&hasCoordinate=true data-present (container array has rows but extract yielded nothing)
+void https://api.gbif.org/v1/occurrence/search?taxonKey=6&limit=200&decimalLatitude={lat_min},{lat_max}&decimalLongitude={lon_min},{lon_max} data-present (container array has rows but extract yielded nothing)
+void https://api.gbif.org/v1/occurrence/search?limit=100&hasCoordinate=true&taxonKey=358&hasGeospatialIssue=false empty-response (JSON parsed but all containers empty)
+void https://www.peeringdb.com/api/ix?limit=1 data-present (keys exist but no rows extracted)
+void https://api.obis.org/v3/occurrence?limit=500&hascoordinates=true&taxonid=38 empty-response (JSON parsed but all containers empty)
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["amenity"="atm"](around:1000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["amenity"="bench"](around:500,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];way["bridge"="yes"](around:5000,{lat},{lon});out%20center; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];way["building"](around:1000,{lat},{lon});out%20center; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["highway"="bus_stop"](around:1000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node(around:1000,{lat},{lon})["highway"="construction"];out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["highway"="crossing"](around:500,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["amenity"="drinking_water"](around:1000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];way["landuse"="forest"](around:10000,{lat},{lon});out%20center; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["amenity"="fuel"](around:5000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["amenity"="hospital"](around:10000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["tourism"="hotel"](around:5000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];(node["amenity"~"hospital|fire_station|school"](around:50000,{lat},{lon});node["railway"="station"](around:50000,{lat},{lon}););out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:60];node["telecom"="antenna"](around:10000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];way["leisure"="park"](around:5000,{lat},{lon});out%20center; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["amenity"="pharmacy"](around:2000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];way["power"="line"](around:5000,{lat},{lon});out%20center; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["power"="tower"](around:5000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["amenity"="school"](around:10000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];way["highway"](around:500,{lat},{lon});out%20center; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["shop"="supermarket"](around:2000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["man_made"="surveillance"](around:2000,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["natural"="tree"](around:500,{lat},{lon});out%20100; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];way["waterway"](around:5000,{lat},{lon});out%20center; fetch returned empty
+void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["internet_access"="wlan"](around:5000,{lat},{lon});out%20100; fetch returned empty
+void https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_parks_and_protected_lands_area.geojson data-present (JSON has content but declared keys absent)
+void https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_parks_and_protected_lands_point.geojson data-present (JSON has content but declared keys absent)
+void https://restcountries.com/v3.1/all?fields=name,population,latlng data-present (JSON has content but declared keys absent)
+void https://api.semanticscholar.org/graph/v1/paper/search?query=*&limit=1 fetch returned empty
+void https://www.submarinecablemap.com/api/v3/cable/cable-geo.json data-present (keys exist but no rows extracted)
+void https://api.unhcr.org/population/v1/population/?limit=1 data-present (keys exist but no rows extracted)
+void https://www.star.nesdis.noaa.gov/smcd/emb/vci/VH/get_TS_admin.php?country=USA&province=0&year=2023&type=VHI data-present (non-JSON body: HTML/XML/text)
+void https://ghoapi.azureedge.net/api/CHOLERA_0000000001 data-present (keys exist but no rows extracted)
+void https://ghoapi.azureedge.net/api/MDG_0000000020 data-present (non-JSON body: HTML/XML/text)
+void https://xmart-api-public.who.int/FLUMART/VIW_FNT fetch returned empty
+void https://ghoapi.azureedge.net/api/Indicator/SP_DYN_LE00_IN fetch returned empty
+void https://www.bodc.ac.uk/data/published_data_library/catalogue/?jsonrequest=1&keywords=oxygen+salinity&limit=200 data-present (non-JSON body: HTML/XML/text)
+void http://v4.boldsystems.org/index.php/API_Public/specimen?taxon=Animalia&geo=&format=json&limit=500 data-present (non-JSON body: HTML/XML/text)
+void http://v4.boldsystems.org/index.php/API_Public/specimen?taxon=Echinodermata&geo=&format=json&limit=300 data-present (non-JSON body: HTML/XML/text)
+void http://v4.boldsystems.org/index.php/API_Public/specimen?taxon=Plantae&geo=&format=json&limit=500 data-present (non-JSON body: HTML/XML/text)
+void https://api.boldsystems.org/v4/public/data/geo?format=json&limit=250 fetch returned empty
+void https://climate.copernicus.eu/api/v1/temperature/global-monthly?format=json fetch returned empty
+void https://cddis.nasa.gov/archive/vlbi/ivsproducts/eops/ivseops.snx data-present (non-JSON body: HTML/XML/text)
+void https://www.chime-frb.ca/catalog data-present (non-JSON body: HTML/XML/text)
+void https://nrt.cmems-du.eu/erddap/griddap/cmems_mod_glo_phy_anfc_0.083deg_PT1H-m.csv?uo%5Blast%5D%5B0%5D%5B(-60.0):(60.0):4%5D%5B(-180.0):(180.0):4%5D,vo%5Blast%5D%5B0%5D%5B(-60.0):(60.0):4%5D%5B(-180.0):(180.0):4%5D data-present (non-JSON body: HTML/XML/text)
+void https://nrt.cmems-du.eu/erddap/griddap/cmems_obs-sl_glo_phy_my_multi-oi_P1D.csv?sla%5Blast%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D data-present (non-JSON body: HTML/XML/text)
+void https://nrt.cmems-du.eu/erddap/griddap/cmems_mod_glo_bgc_anfc_0.25deg_P1D-m.csv?o2%5Blast%5D%5B0%5D%5B(-60.0):(60.0):4%5D%5B(-180.0):(180.0):4%5D data-present (non-JSON body: HTML/XML/text)
+void https://nrt.cmems-du.eu/erddap/griddap/dataset-duacs-nrt-global-merged-allsat-phy-l4.csv?sla%5Blast%5D%5B(-60.0):(75.0):4%5D%5B(-180.0):(180.0):4%5D,adt%5Blast%5D%5B(-60.0):(75.0):4%5D%5B(-180.0):(180.0):4%5D data-present (non-JSON body: HTML/XML/text)
+void https://nrt.cmems-du.eu/erddap/griddap/cmems_obs-sl_glo_phy-sst_l4_multi-oi_P1D.csv?sst%5Blast%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D data-present (non-JSON body: HTML/XML/text)
+void https://nrt.cmems-du.eu/erddap/griddap/cmems_mod_glo_phy_anfc_0.083deg_PT1H-m.csv?thetao%5Blast%5D%5B0%5D%5B(-60.0):(60.0):4%5D%5B(-180.0):(180.0):4%5D data-present (non-JSON body: HTML/XML/text)
+void https://nrt.cmems-du.eu/erddap/griddap/cmems_mod_glo_wav_anfc_0.083deg_PT3H-m.csv?vhm0%5Blast%5D%5B(-60.0):(60.0):4%5D%5B(-180.0):(180.0):4%5D data-present (non-JSON body: HTML/XML/text)
+void https://coastwatch.pfeg.noaa.gov/erddap/griddap/jplOscarv2.csv?u%5Blast%5D%5B0%5D%5B(-60.0):(60.0):4%5D%5B(-180.0):(180.0):4%5D,v%5Blast%5D%5B0%5D%5B(-60.0):(60.0):4%5D%5B(-180.0):(180.0):4%5D fetch returned empty
+void https://nrt.cmems-du.eu/erddap/griddap/cmems_obs_oc_glo_bgc-plankton_nrt_l3_chl_P1D-m.csv?chl%5Blast%5D%5B(-80.0):(80.0):4%5D%5B(-180.0):(180.0):4%5D data-present (non-JSON body: HTML/XML/text)
+void https://nrt.cmems-du.eu/erddap/griddap/cmems_obs-sl_glo_phy_my_multi-oi_P1D.csv?adt%5Blast%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D data-present (non-JSON body: HTML/XML/text)
+void https://nrt.cmems-du.eu/erddap/griddap/cmems_obs-sl_glo_phy-sst_l4_multi-oi_P1D.csv?sst_anom%5Blast%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D data-present (non-JSON body: HTML/XML/text)
+void https://comet.nerc.ac.uk/lics-portal/api/volcanoes/?format=json&limit=200 fetch returned empty
+void https://crates.io/api/v1/crates?per_page=1 fetch returned empty
+void https://www.glims.org/mapservice/wfs?service=WFS&version=1.1.0&request=GetFeature&typeName=glims_glaciers&maxFeatures=1&outputFormat=application/json fetch returned empty
+void https://nsidc.org/data/seaice_index/data/daily/S_seaice_extent_daily.csv fetch returned empty
+void https://noaadata.apps.nsidc.org/NOAA/G02135/south/daily/data/S_seaice_extent_daily_v4.0.csv data-present (non-JSON body: HTML/XML/text)
+void https://nsidc.org/data/seaice_index/data/daily/N_seaice_extent_daily.csv fetch returned empty
+void https://noaadata.apps.nsidc.org/NOAA/G02135/north/daily/data/N_seaice_extent_daily_v4.0.csv data-present (non-JSON body: HTML/XML/text)
+void https://floodobservatory.colorado.edu/Archives/MasterListrev.csv fetch returned empty
+void https://dasch.rc.fas.harvard.edu/lightcurve.php?objid=GJ+551&type=json&limit=500 fetch returned empty
+void https://data.desi.lbl.gov/public/papers/ data-present (non-JSON body: HTML/XML/text)
+void https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_coastline.geojson data-present (container array has rows but extract yielded nothing)
+void https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_boundary_lines_land.geojson data-present (container array has rows but extract yielded nothing)
+void https://earthref.org/MagIC/api/v1/site/search?format=json&per_page=500&result_type=site&age_type=calendar&site_type_include=s fetch returned empty
+void https://web-services.unavco.org/metadata/sites/v1?format=json fetch returned empty
+void https://www.ebi.ac.uk/metagenomics/api/v1/studies?format=json&page_size=100&ordering=-last_update&biome_name=root:Environmental:Aquatic:Marine data-present (container array has rows but extract yielded nothing)
+void https://www.ebi.ac.uk/metagenomics/api/v1/studies?format=json&page_size=100&ordering=-last_update data-present (container array has rows but extract yielded nothing)
+void https://api.ember-climate.org/v2/electricity-generation/yearly?country=DE&date_from=2000-01-01&date_to={year}-12-31 fetch returned empty
+void https://api.ember-climate.org/v1/electricity-generation?aggregate_by=country&date_from={year}-01-01&date_to={year}-12-31&format=json fetch returned empty
+void https://ows.emodnet-bathymetry.eu/geoserver/wcs?SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&FORMAT=application/x-netcdf&COVERAGEID=emodnet__mean&SUBSET=Long(-10,10)&SUBSET=Lat(35,60) fetch returned empty
+void https://eogdata.mines.edu/nighttime_light/monthly/v10/catalog.json empty-response (JSON parsed but all containers empty)
+void https://nrt.cmems-du.eu/erddap/griddap/cmems_obs-sl_glo_phy_mynrt_l4_P1D-m.csv?sla%5Blast%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D data-present (non-JSON body: HTML/XML/text)
+void https://esa-sst-cci-browser.ceda.ac.uk/api/v1/sst/global-monthly?format=json&dataset=ESACCI-SST-L4-CDR-SST-ANALYSIS fetch returned empty
+void https://science-pds.cryosat.esa.int/oads/access/collection/CryoSat_Northern_Hemisphere_Sea_Ice_Thickness/latest/?format=json fetch returned empty
+void https://vires.services/hapi/data?dataset=SW_OPER_MAGA_LR_1B&parameters=Latitude,Longitude&start={today}T00:00:00Z&stop={tomorrow}T00:00:00Z data-present (non-JSON body: HTML/XML/text)
+void https://services.terrascope.be/catalogue/products?collection=urn:eop:VITO:ESA_WorldCover_10m_2021_V2&bbox=-180,-60,180,60&format=json&limit=100 fetch returned empty
+void https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+COUNT(*)+FROM+ps&format=json data-present (keys exist but no rows extracted)
+void https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/CME/?startDate=2024-01-01&endDate=2024-12-31 fetch returned empty
+void https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/FLR/?startDate=2024-01-01&endDate=2024-12-31 data-present (non-JSON body: HTML/XML/text)
+void https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/GST/?startDate=2024-01-01&endDate=2024-12-31 data-present (JSON has content but declared keys absent)
+void https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/HSS/?startDate=2024-01-01&endDate=2024-12-31 data-present (JSON has content but declared keys absent)
+void https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/IPS/?startDate=2024-01-01&endDate=2024-12-31 data-present (JSON has content but declared keys absent)
+void https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/MPC/?startDate=2024-01-01&endDate=2024-12-31 data-present (JSON has content but declared keys absent)
+void https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/SEP/?startDate=2024-01-01&endDate=2024-12-31 data-present (JSON has content but declared keys absent)
+void https://www.fao.org/aquastat/en/databases/agromat/api/v1/water?year={year}&format=json fetch returned empty

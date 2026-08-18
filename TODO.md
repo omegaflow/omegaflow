@@ -171,9 +171,10 @@ Dazu zwei Ernte-Folgen (Befunde der grind-flash-Agenten 2026-08-18):
   bis die 44-B-Binaries gebaut sind (pending, keine Fabrikation);
   erst danach trägt der Katalog die geerntete Radialgeschwindigkeit.
   Bis dahin fließt rv nur aus den JSON-cmap-Quellen (denis `radvel
-  rv`). Offen: Compiler-Ersatzwerte `unwrap_or(0.0)` für rv (Zeilen
-  ohne Crossmatch-Hit) — Ernte-Wahrheit oder Fabrikation entscheidet
-  der Council.
+  rv`). Vollzogen (2026-08-18, Säuberung): kein rv-Ersatzwert — die
+  Compiler (tycho2 bright/bin, tap_compiler star-bin + union-bright)
+  überspringen Zeilen ohne rv (0 honored, Zähler im eprintln); erst
+  die rv-Ernte deckt sie.
 
 Weitere neue Quellen (grind-pro, heikler Join/Parsing): LCDB-Rotations-
 achsen (Pol, nicht nur Periode), DAMIT-Formmodelle (3D-Formen → j2/r_eq).
@@ -199,16 +200,16 @@ verloren); von 173+ Funktionen aus allen vier Pre-Dateien sind alle wieder da
 existierte schon pre-Titan; das native Audio wurde post-Titan mit abweichendem
 Gesetz erfunden. Die Endpunkt-Menge ist vollständig übernommen.
 
-### P2 — Presence ↔ Station getrennt; Relay-Rest offen
+### P2 — Presence ↔ Station getrennt; refused-else im Relay offen
 
 Nativ erledigt: benannte Presence-Karte („native" / „browser"), native
 Station-Identität via Deep-Link (#body=<body>,<lat>,<lon>,<alt>),
 Geräte-Samples ankern über Surface (deklarierte Station), `refused`
 ohne Station und ohne Zustimmung; `/station` meldet die Maschine
 (OscillatorSource::StationDeclared).
-Relay-Rest: SurfaceFlow für spd/hdg (sensor_config hat keinen
-spd/hdg-Zweig für die Browser-Station) + refused-else ohne
-body-Deklaration.
+Relay-Rest: SurfaceFlow für spd/hdg lebt in `frame_motion`
+(main.rs, `(Some(s), Some(h)) → surface_motion`) — der offene Rest ist
+nur noch refused-else ohne body-Deklaration.
 
 ### P3 — Deep lebt (erledigt); Aberration + Katalog-Neulauf offen
 
@@ -325,10 +326,9 @@ horizons_compiler, oai_harvester, pangaea_compiler, rest_harvester,
 sexagesimal_compiler, solr_harvester, source_scanner, sparql_harvester,
 tap_compiler, tycho2_compiler, xml_harvester, zip_range_extract) sind
 **WAHR**, außer die Liste der Abweichungen unten nennt sie. WGSL-Eintritte:
-`vs` (Membran) WAHR, `fs` WAHR, `presence_probe` WAHR — AUSSTEHEND:
-Gradient/Flow + multi-frame, `deep_pt_vs`/`deep_vs` UNWAHR
-(orthografische Scheibe — P3), `deep_pt_fs`/`deep_fs` WAHR (Fußabdruck),
-`near_pt_vs`/`near_pt_fs` WAHR (Wesen + Geflecht, Atom 1).
+`vs` (Membran) WAHR, `fs` WAHR, `presence_probe` WAHR; die Sprite-Pässe
+(`deep_pt_vs`/`deep_pt_fs`, `deep_vs`/`deep_fs`, `near_pt_vs`/`near_pt_fs`)
+sind getilgt (Subpixel-Wahrheit 2026-08-18).
 Laufzeit-Inventar (grep-getrieben, 267 Namen):
 
 ```
@@ -365,12 +365,12 @@ test_rotation_matrix_roundtrip() test_matrix_vs_wgccre_agreement() test_rotation
 test_anchor_body_agnostic() test_parse_ephemeris_binary_v2() test_parse_ephemeris_binary_rejects_non_v2_props() test_live_sources_extract() 
 test_diagnose_no_samples() test_map_single_object_alt_scale_epoch_default() test_force_id_electric() test_route_key_strips_query_and_www() 
 test_route_key_normalizes_template() test_route_prefix_keys_most_specific_first() test_frame_registry_distinguishes_routes_on_one_host() 
-test_frame_registry_prefix_fallback() pack_window(records: pack_deep_pt(stars: pack_deep_ex(stars: force_ref_medians(field: log2_bin_of(l: new( 
+test_frame_registry_prefix_fallback() pack_window(records: force_ref_medians(field: log2_bin_of(l: new( 
 accept(&mut drop(&mut q_mul(a: q_norm(q: q_rotate(q: q_axis_angle(axis: le_bytes_f32(v: storage_entry( record_sample(&mut flush(&mut new( pos(&self) 
 frame(&self) fold(&mut sense(&mut consider_resend(&mut key_action(&mut jump(&mut reconfigure(&mut vp_data(&self) relax_force_refs(&mut 
 ensure_capacity(&mut ensure_deep_capacity(&mut rebuild_deep_bind(&mut render(&mut init_gpu(&mut resumed(&mut about_to_wait(&mut window_event( 
-run_window( golden_pack_slots_against_wgsl_access() pack_deep_directions() force_ref_medians_routes_forces_and_honors_zero() 
-force_ref_medians_relaxes_absent_channels_to_zero() new( accept(&mut drop(&mut base64_encode(data: emit(s: emit_void(s: handle_ingress(stream: 
+run_window( golden_pack_slots_against_wgsl_access() force_ref_medians_routes_forces_and_honors_zero() 
+force_ref_medians_holds_reference_on_absence() new( accept(&mut drop(&mut base64_encode(data: emit(s: emit_void(s: handle_ingress(stream: 
 resonance(mut read_signal(s: read_ws_frame_part(stream: read_ws_frame_raw(stream: sha1(data: write_ws_binary(stream: main() 
 ```
 

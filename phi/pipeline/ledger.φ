@@ -1,53 +1,53 @@
 ausstehend
-queue phi/pipeline/queue/sources_astro_untested_30-astro.φ
+bestand /home/johannes/projects/archive/archeology/sources/sources_astro_untested_30-astro.φ
 note 30 Blöcke, alte Grammatik (source-Köpfe, verify false, lat_key ra/lon_key dec) — Port-Befund 2026-08-15: gemini → decline file-inventory (dead_sources.φ), mast → dead 404 (dead_sources.φ); Rest (28): framelos/ohne Container — votable-TAP-Blöcke → tap_compiler-Route, jpl_sbdb → kepler_map (P04), oac → Einzelobjekt, splatalogue → positionslos, gaia_dr3 → Index-Positionen (cmap-Index-Keys)
 
 verifiziert
-queue phi/pipeline/queue/sources_earth_untested_stac-sentinel.φ
+bestand /home/johannes/projects/archive/archeology/sources/sources_earth_untested_stac-sentinel.φ
 note Port-Befund 2026-08-15: sentinel2_l2a (element84) portiert + mit Samples verifiziert (proj:centroid-Keys, 6 Kanäle eo:cloud_cover 28,4/10,2/19,5); landsatlook-Blöcke: leer unter Fixture-Datum (dokumentierter Pass), Content-Type-json-Fix in fetch_raw_probe + fetch_raw_bytes_post, Template-Substitution im Sweep für post_body
 
 ausstehend
-queue phi/pipeline/queue/sources_exotic_untested_neutrino-ligo.φ
+bestand /home/johannes/projects/archive/archeology/sources/sources_exotic_untested_neutrino-ligo.φ
 note 16 Blöcke ohne force → Force-Gate; --gold + Sweep, dann Disposition
 
 ausstehend
-queue phi/pipeline/queue/sources_new_untested_14k_new-unchecked.φ
+bestand /home/johannes/projects/archive/archeology/sources/sources_new_untested_14k_new-unchecked.φ
 note 873 Blöcke, alte Grammatik — kein URL im kanonischen Register; der Kern der offenen Queue
 
 ausstehend
-queue phi/pipeline/queue/sources_new_untested_13k_230-domains.φ
+bestand /home/johannes/projects/archive/archeology/sources/sources_new_untested_13k_230-domains.φ
 note Untested-Variante, 230 Domains — kein URL im kanonischen Register
 
 ausstehend
-queue phi/pipeline/queue/sources_new_untested_15k_230-domains.φ
+bestand /home/johannes/projects/archive/archeology/sources/sources_new_untested_15k_230-domains.φ
 note Untested-Variante, 230 Domains — kein URL im kanonischen Register
 
 ausstehend
-queue phi/pipeline/queue/sources_new_untested_183l.φ
+bestand /home/johannes/projects/archive/archeology/sources/sources_new_untested_183l.φ
 note Untested-Variante — kein URL im kanonischen Register
 
 ausstehend
-queue phi/pipeline/queue/sources_new_untested_2k.φ
+bestand /home/johannes/projects/archive/archeology/sources/sources_new_untested_2k.φ
 note Untested-Variante — kein URL im kanonischen Register
 
 ausstehend
-queue phi/pipeline/queue/sources_new_untested_7k.φ
+bestand /home/johannes/projects/archive/archeology/sources/sources_new_untested_7k.φ
 note Untested-Variante — kein URL im kanonischen Register
 
 ausstehend
-queue phi/pipeline/queue/sources_new_untested_candidate-staging.φ
+bestand /home/johannes/projects/archive/archeology/sources/sources_new_untested_candidate-staging.φ
 note Untested-Variante, candidate-staging — kein URL im kanonischen Register
 
 ausstehend
-queue phi/pipeline/queue/sources_gold_pre-cdn_27k_359-domains.φ
+bestand /home/johannes/projects/archive/archeology/sources/sources_gold_pre-cdn_27k_359-domains.φ
 note 2572 Blöcke, reichste Gold-Parameter — 1191 parse-fähig nach --gold (temp_gold_convert_check); Sweep terminiert ZERO neue Live-Quellen, offene URL-Teile verbleiben
 
 ausstehend
-queue phi/pipeline/queue/sources_recovery_pre-cdn_25k_211-domains.φ
+bestand /home/johannes/projects/archive/archeology/sources/sources_recovery_pre-cdn_25k_211-domains.φ
 note 1924 Blöcke, reichste Recovery-Parameter — Migration nach Protokoll
 
 ausstehend
-queue phi/pipeline/queue/sources_recovery_cdn-merged_60k_lost-blocks.φ
+bestand /home/johannes/projects/archive/archeology/sources/sources_recovery_cdn-merged_60k_lost-blocks.φ
 note 5701 Lost-URLs ohne Extract-Parameter — Join aus sources_potential_pre-cdn_9k_richest + _params
 
 ausstehend
@@ -91,23 +91,23 @@ kandidat http://skyserver.sdss.org/dr14/SkyserverWS/SQLSearch/SQL
 note em cmap — 0.Rows beim Probe; Validierung der SQL-Syntax ausstehend
 
 ausstehend
-bestand phi/tap_index.φ
+bestand phi/pipeline/katalog/tap_index.φ
 note TAPVizieR-Inventar 64.148 Tabellen — 39 genutzt, BZCAT5 erledigt; 38 Tabellen-Bulks offen (tap_compiler-Muster)
 
 ausstehend
-bestand phi/tap_index_irsa.φ
+bestand phi/pipeline/katalog/tap_index_irsa.φ
 note 995 IRSA-Tabellen — Bulk-Kandidaten offen
 
 ausstehend
-bestand phi/tap_index_gavo.φ
+bestand phi/pipeline/katalog/tap_index_gavo.φ
 note 271 GAVO-Tabellen (~130 Schemata) — gedr3dist.main erledigt (K04b); Bulk-Kandidaten offen
 
 ausstehend
-bestand phi/tap_index_ari.φ
+bestand phi/pipeline/katalog/tap_index_ari.φ
 note 203 ARI-Heidelberg-Tabellen — Gaia-Archiv TAP + GCNS (331.312 Sterne ≤100pc, dist-Parameter) + MWSC (3.006 Haufen); Kompilat-Kandidaten offen
 
 ausstehend
-bestand phi/tap_index_exoarchive.φ
+bestand phi/pipeline/katalog/tap_index_exoarchive.φ
 note 46 Exoplanet-Archiv-Tabellen — pscomppars erledigt; weitere Bulks offen
 
 ausstehend
@@ -167,7 +167,7 @@ bestand phi/pipeline/katalog/cmr_catalog.φ
 note NASA-CMR komplett (54.944 Earthdata-Collections) via rest_harvester (jpath feed.entry). Welle 2026-08-16: gelenst (phi/pipeline/weights_cmr.txt, 54.953 ranked) — die Linse rankt korrekt (pCO2→diffusion +132, Wind→advective +116), ABER der Bestand ist archival: Collections (NOAA_NCEI-Accessions, SCAR/SCIOPS, DAACs) tragen nur Landing-Page-Links (niwa.co.nz, envidat.ch), keine Live-JSON-API; Datenzugriff ist OPeNDAP/NetCDF + Earthdata-Login → NetCDF-Reader-Gap (GLMNetCDF) + Earthdata-Auth nötig. „In die Queue gießen" erbringt Void — CMR ist keine Live-Probe-Quelle. Der Live-Wert liegt bei den Provider-Katalogen (b2find/PANGAEA/LTER), nicht bei CMR
 
 verifiziert
-bestand phi/pipeline/batches/
+bestand /home/johannes/projects/archive/phi-research/batches/
 note CI-Probe-Sweep 2026-08-15 (Run 31898215331, 11m10s): 4.485 Blöcke geladen, 120 Survivors, 4.365 Voids — Review abgeschlossen: 2 Einbauten (GeoNet-NZ-Quake, PIREP), 68 Dispositionen in dead_sources.φ (53 variant, 22+19 model-forecast, 2 catalog, 2 no-physical, 1 counts), 2 park (coral, waqi)
 
 ausstehend
@@ -207,15 +207,15 @@ nachlauf kandidat Mauna-Loa-CO2 + Fireball-API
 note 4 TerraPulse-Drafts stehen; fold-Direktive lebt (mean|diff|sum, absent Halbspalte → kein Oszillator) — Mauna-Loa mean/diff entschieden; Fireball-Operator unverifiziert (Live-Verifikation offen)
 
 ausstehend
-bestand phi/pipeline/research/batches/
+bestand /home/johannes/projects/archive/phi-research/batches/
 note 283 Dateien alte Grammatik (gold/main_pre-cdn/live_cdn-merged/canonical-format) — ausgeschöpft, nicht ladbar (P01), read-only Historie
 
 ausstehend
-bestand phi/pipeline/research/probe_batches/
+bestand /home/johannes/projects/archive/phi-research/probe_batches/
 note 242 Dateien — probe-artefakte der Korpus-Läufe, read-only (healthcheck --probe liest hier)
 
 verifiziert
-bestand phi/pipeline/research/agent_output/batch_*_accepted.φ
+bestand /home/johannes/projects/archive/phi-research/agent_output/batch_*_accepted.φ
 note 32 Dateien, 629 Blöcke, 389 unique — alle klassifiziert, ~48 integriert, Rest redundante Varianten (ausgeschöpft)
 
 geparkt

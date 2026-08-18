@@ -43,14 +43,11 @@ fn fold_eff(d_mag: f32, raw: f32, t: f32, ttl: f32, force_type: u32, advective_v
 @group(0) @binding(1) var<storage, read> props: array<vec4f>;
 @group(0) @binding(2) var<uniform> vp: VP;
 @group(0) @binding(3) var<storage, read_write> probe_out: array<f32>;
-@group(0) @binding(4) var<storage, read_write> prep: array<vec4f>;
-@group(0) @binding(5) var<storage, read_write> param: array<vec4f>;
-@group(0) @binding(6) var<storage, read> barriers: array<vec4f>;
-@group(0) @binding(7) var<storage, read_write> tile_flat: array<u32>;
-@group(0) @binding(8) var<storage, read_write> tile_ctl: array<u32>;
-@group(0) @binding(9) var<storage, read> stars: array<vec4f>;
-@group(0) @binding(12) var<storage, read_write> star_tile_flat: array<u32>;
-@group(0) @binding(13) var<storage, read_write> star_tile_ctl: array<atomic<u32>>;
+@group(0) @binding(4) var<storage, read_write> pp: array<vec4f>;
+@group(0) @binding(5) var<storage, read> barriers: array<vec4f>;
+@group(0) @binding(6) var<storage, read_write> tiles: array<u32>;
+@group(0) @binding(7) var<storage, read> stars: array<vec4f>;
+@group(0) @binding(8) var<storage, read_write> star_tiles: array<atomic<u32>>;
 
 fn occlusion(dhat: vec3f, d: f32, ft: u32, n: u32) -> f32 {
     if (OPACITY[ft] <= 0.0 || n == 0u) {
@@ -369,13 +366,12 @@ fn presence_probe() {
         let dhat_prop = propagated / max(d_prop, 1e-9);
         let occl = occlusion(dhat_prop, d_prop, ft, u32(vp.expose_ex.w));
         let pre = vec4f(propagated, m.w * exp(-temporal / max(tm.y, 1e-9)) * occl);
-        prep[j] = pre;
+        pp[j] = pre;
         var fast = 0.0;
         if ((kid == 0u || kid == 6u) && (ft != 1u) && (temporal < tm.y * 1e-4)) {
             fast = 1.0;
         }
-        param[j] = vec4f(f32(ft), mt.x, f32(kid), fast);
-        let c = osc_field(j, vec3f(0.0), pre);
+        pp[u32(vp.surface.z) + j] = vec4f(f32(ft), mt.x, f32(kid), fast);        let c = osc_field(j, vec3f(0.0), pre);
         let f = u32(c.y);
         if (f < 9u) { omegas[f] += c.x; }
         flow = flow + osc_flow(j, pre);
@@ -415,13 +411,13 @@ var<workgroup> s_count: atomic<u32>;
 var<workgroup> s_overflow: atomic<u32>;
 
 fn source_bound(j: u32, x0: f32, x1: f32, y0: f32, y1: f32) -> f32 {
-    let pre = prep[j];
+    let pre = pp[j];
     let tm = field[j * 3u + 1u];
     let fm = field[j * 3u + 2u];
     let mt = props[j * 3u];
     let mp = props[j * 3u + 1u];
     let mg = props[j * 3u + 2u];
-    let p = param[j];
+    let p = pp[u32(vp.surface.z) + j];
     let sx = dot(pre.xyz, vp.right.xyz);
     let sy = dot(pre.xyz, vp.up.xyz);
     let sd = dot(pre.xyz, vp.forward.xyz);
@@ -467,9 +463,11 @@ fn tile_cull(@builtin(workgroup_id) wid: vec3u, @builtin(local_invocation_id) li
     let h = vp.surface.y;
     let scale = vp.surface.w;
     let num_tiles_x = u32(ceil(w / f32(TILE_PX)));
+    let num_tiles_y = u32(ceil(h / f32(TILE_PX)));
+    let nt = num_tiles_x * num_tiles_y;
     let tile = wid.y * num_tiles_x + wid.x;
     let tbase = tile * TILE_SLOTS;
-    let eps = exp2(-f32(tile_ctl[0]));
+    let eps = exp2(-f32(tiles[0]));
     let x0 = (f32(wid.x * TILE_PX) + 0.5 - w * 0.5) * scale;
     let x1 = (f32(wid.x * TILE_PX + TILE_PX - 1u) + 0.5 - w * 0.5) * scale;
     let y0 = (h * 0.5 - f32(wid.y * TILE_PX + TILE_PX - 1u) - 0.5) * scale;
@@ -498,7 +496,7 @@ fn tile_cull(@builtin(workgroup_id) wid: vec3u, @builtin(local_invocation_id) li
             }
             let slot = atomicAdd(&s_count, 1u);
             if (slot < TILE_SLOTS) {
-                tile_flat[tbase + slot] = j;
+                tiles[2u + nt + tbase + slot] = j;
             } else {
                 atomicOr(&s_overflow, 1u);
             }
@@ -506,16 +504,16 @@ fn tile_cull(@builtin(workgroup_id) wid: vec3u, @builtin(local_invocation_id) li
     }
     workgroupBarrier();
     if (tid == 0u) {
-        tile_ctl[2u + tile] = atomicLoad(&s_count);
+        tiles[2u + tile] = atomicLoad(&s_count);
         if (atomicLoad(&s_overflow) == 1u) {
-            tile_ctl[1] = 1u;
+            tiles[1] = 1u;
         }
     }
 }
 
 fn source_contrib(j: u32, pixel_rel: vec3f) -> vec4f {
-    let pre = prep[j];
-    let p = param[j];
+    let pre = pp[j];
+    let p = pp[u32(vp.surface.z) + j];
     let tm = field[j * 3u + 1u];
     let fm = field[j * 3u + 2u];
     let mt = props[j * 3u];
@@ -596,12 +594,13 @@ fn star_assign(s: u32, tx: i32, ty: i32, nx: i32, ny: i32) {
     if (tx < 0 || ty < 0 || tx >= nx || ty >= ny) {
         return;
     }
+    let nt = u32(ny) * u32(nx);
     let tile = u32(ty) * u32(nx) + u32(tx);
-    let slot = atomicAdd(&star_tile_ctl[1u + tile], 1u);
+    let slot = atomicAdd(&star_tiles[1u + tile], 1u);
     if (slot < STAR_TILE_SLOTS) {
-        star_tile_flat[tile * STAR_TILE_SLOTS + slot] = s;
+        atomicStore(&star_tiles[1u + nt + tile * STAR_TILE_SLOTS + slot], s);
     } else {
-        atomicOr(&star_tile_ctl[0u], 1u);
+        atomicOr(&star_tiles[0u], 1u);
     }
 }
 
@@ -642,7 +641,7 @@ fn star_cull(@builtin(global_invocation_id) gid: vec3u) {
     for (var i = 0u; i < 9u; i = i + 1u) { omega[i] = 0.0; }
     var rgb = vec3f(0.0);
 
-    if (tile_ctl[1] != 0u) {
+    if (tiles[1] != 0u) {
         for (var j = 0u; j < count; j = j + 1u) {
             let c = source_contrib(j, pixel_rel);
             let f = u32(c.y);
@@ -655,11 +654,13 @@ fn star_cull(@builtin(global_invocation_id) gid: vec3u) {
         }
     } else {
         let num_tiles_x = u32(ceil(w / f32(TILE_PX)));
+        let num_tiles_y = u32(ceil(h / f32(TILE_PX)));
+        let nt = num_tiles_x * num_tiles_y;
         let tile = (u32(in.pos.y) / TILE_PX) * num_tiles_x + (u32(in.pos.x) / TILE_PX);
-        let tcount = tile_ctl[2u + tile];
+        let tcount = tiles[2u + tile];
         let tbase = tile * TILE_SLOTS;
         for (var k = 0u; k < tcount; k = k + 1u) {
-            let c = source_contrib(tile_flat[tbase + k], pixel_rel);
+            let c = source_contrib(tiles[2u + nt + tbase + k], pixel_rel);
             let f = u32(c.y);
             if (f < 9u) {
                 omega[f] += c.x;
@@ -672,7 +673,7 @@ fn star_cull(@builtin(global_invocation_id) gid: vec3u) {
 
     let px_ndc = in.uv.x * 2.0 - 1.0;
     let py_ndc = 1.0 - in.uv.y * 2.0;
-    if (atomicLoad(&star_tile_ctl[0u]) != 0u) {
+    if (atomicLoad(&star_tiles[0u]) != 0u) {
         for (var s = 0u; s < star_count; s = s + 1u) {
             let c = star_contrib(s, px_ndc, py_ndc);
             let lum = abs(c.x) / ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, 0u);
@@ -681,11 +682,13 @@ fn star_cull(@builtin(global_invocation_id) gid: vec3u) {
         }
     } else {
         let num_tiles_x = u32(ceil(w / f32(TILE_PX)));
+        let num_tiles_y = u32(ceil(h / f32(TILE_PX)));
+        let nt = num_tiles_x * num_tiles_y;
         let tile = (u32(in.pos.y) / TILE_PX) * num_tiles_x + (u32(in.pos.x) / TILE_PX);
-        let tcount = atomicLoad(&star_tile_ctl[1u + tile]);
+        let tcount = atomicLoad(&star_tiles[1u + tile]);
         let tbase = tile * STAR_TILE_SLOTS;
         for (var k = 0u; k < tcount; k = k + 1u) {
-            let c = star_contrib(star_tile_flat[tbase + k], px_ndc, py_ndc);
+            let c = star_contrib(atomicLoad(&star_tiles[1u + nt + tbase + k]), px_ndc, py_ndc);
             let lum = abs(c.x) / ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, 0u);
             omega[0] += c.x;
             rgb += temperature_to_rgb(c.z) * lum;
@@ -13913,7 +13916,9 @@ field temp temp_c\n";
                 ok_text = existing;
             }
             let mut void_text = String::new();
-            if let Ok(existing) = std::fs::read_to_string("phi/pipeline/stage/staging_empty.txt") {
+            if let Ok(existing) =
+                std::fs::read_to_string("phi/pipeline/stage/staging_void_ledger.txt")
+            {
                 for l in existing.lines() {
                     if let Some(u) = l.strip_prefix("void ") {
                         if let Some(end) = u.find(' ') {
@@ -14000,7 +14005,7 @@ field temp temp_c\n";
             }
             eprintln!("=== BACKLOG VERIFY: {} ok, {} empty ===", ok, empty);
             let ok_path = "phi/pipeline/stage/staging_verified.φ";
-            let void_path = "phi/pipeline/stage/staging_empty.txt";
+            let void_path = "phi/pipeline/stage/staging_void_ledger.txt";
             std::fs::write(ok_path, &ok_text).unwrap();
             std::fs::write(void_path, &void_text).unwrap();
             eprintln!("staged: {} and {}", ok_path, void_path);
@@ -17130,12 +17135,9 @@ mod mathematikerin {
         vp_buf: Option<wgpu::Buffer>,
         probe_buf: Option<wgpu::Buffer>,
         probe_read: Option<wgpu::Buffer>,
-        prep_buf: Option<wgpu::Buffer>,
-        param_buf: Option<wgpu::Buffer>,
-        tile_flat_buf: Option<wgpu::Buffer>,
-        tile_ctl_buf: Option<wgpu::Buffer>,
-        star_tile_flat_buf: Option<wgpu::Buffer>,
-        star_tile_ctl_buf: Option<wgpu::Buffer>,
+        prep_param_buf: Option<wgpu::Buffer>,
+        tiles_buf: Option<wgpu::Buffer>,
+        star_tiles_buf: Option<wgpu::Buffer>,
         field_cap: u32,
         tile_cap: u32,
         cull_n: u32,
@@ -17259,12 +17261,9 @@ mod mathematikerin {
                 vp_buf: None,
                 probe_buf: None,
                 probe_read: None,
-                prep_buf: None,
-                param_buf: None,
-                tile_flat_buf: None,
-                tile_ctl_buf: None,
-                star_tile_flat_buf: None,
-                star_tile_ctl_buf: None,
+                prep_param_buf: None,
+                tiles_buf: None,
+                star_tiles_buf: None,
                 field_cap: 0,
                 tile_cap: 0,
                 cull_n: 23,
@@ -17769,27 +17768,15 @@ mod mathematikerin {
                 return;
             }
             self.tile_cap = num_tiles;
-            self.tile_flat_buf = Some(device.create_buffer(&wgpu::BufferDescriptor {
+            self.tiles_buf = Some(device.create_buffer(&wgpu::BufferDescriptor {
                 label: None,
-                size: num_tiles as u64 * 64 * 4,
-                usage: wgpu::BufferUsages::STORAGE,
-                mapped_at_creation: false,
-            }));
-            self.tile_ctl_buf = Some(device.create_buffer(&wgpu::BufferDescriptor {
-                label: None,
-                size: (2 + num_tiles as u64) * 4,
+                size: (2 + num_tiles as u64 + num_tiles as u64 * 64) * 4,
                 usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
                 mapped_at_creation: false,
             }));
-            self.star_tile_flat_buf = Some(device.create_buffer(&wgpu::BufferDescriptor {
+            self.star_tiles_buf = Some(device.create_buffer(&wgpu::BufferDescriptor {
                 label: None,
-                size: num_tiles as u64 * 512 * 4,
-                usage: wgpu::BufferUsages::STORAGE,
-                mapped_at_creation: false,
-            }));
-            self.star_tile_ctl_buf = Some(device.create_buffer(&wgpu::BufferDescriptor {
-                label: None,
-                size: (1 + num_tiles as u64) * 4,
+                size: (1 + num_tiles as u64 + num_tiles as u64 * 512) * 4,
                 usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
                 mapped_at_creation: false,
             }));
@@ -17812,28 +17799,19 @@ mod mathematikerin {
             let Some(probe_buf) = self.probe_buf.clone() else {
                 return;
             };
-            let Some(prep_buf) = self.prep_buf.clone() else {
-                return;
-            };
-            let Some(param_buf) = self.param_buf.clone() else {
+            let Some(prep_param_buf) = self.prep_param_buf.clone() else {
                 return;
             };
             let Some(barriers_buf) = self.barriers_buf.clone() else {
                 return;
             };
-            let Some(tile_flat_buf) = self.tile_flat_buf.clone() else {
-                return;
-            };
-            let Some(tile_ctl_buf) = self.tile_ctl_buf.clone() else {
+            let Some(tiles_buf) = self.tiles_buf.clone() else {
                 return;
             };
             let Some(star_vbuf) = self.star_vbuf.clone() else {
                 return;
             };
-            let Some(star_tile_flat_buf) = self.star_tile_flat_buf.clone() else {
-                return;
-            };
-            let Some(star_tile_ctl_buf) = self.star_tile_ctl_buf.clone() else {
+            let Some(star_tiles_buf) = self.star_tiles_buf.clone() else {
                 return;
             };
             for sel in 0..2 {
@@ -17866,35 +17844,23 @@ mod mathematikerin {
                             },
                             wgpu::BindGroupEntry {
                                 binding: 4,
-                                resource: prep_buf.as_entire_binding(),
+                                resource: prep_param_buf.as_entire_binding(),
                             },
                             wgpu::BindGroupEntry {
                                 binding: 5,
-                                resource: param_buf.as_entire_binding(),
-                            },
-                            wgpu::BindGroupEntry {
-                                binding: 6,
                                 resource: barriers_buf.as_entire_binding(),
                             },
                             wgpu::BindGroupEntry {
+                                binding: 6,
+                                resource: tiles_buf.as_entire_binding(),
+                            },
+                            wgpu::BindGroupEntry {
                                 binding: 7,
-                                resource: tile_flat_buf.as_entire_binding(),
-                            },
-                            wgpu::BindGroupEntry {
-                                binding: 8,
-                                resource: tile_ctl_buf.as_entire_binding(),
-                            },
-                            wgpu::BindGroupEntry {
-                                binding: 9,
                                 resource: star_vbuf.as_entire_binding(),
                             },
                             wgpu::BindGroupEntry {
-                                binding: 12,
-                                resource: star_tile_flat_buf.as_entire_binding(),
-                            },
-                            wgpu::BindGroupEntry {
-                                binding: 13,
-                                resource: star_tile_ctl_buf.as_entire_binding(),
+                                binding: 8,
+                                resource: star_tiles_buf.as_entire_binding(),
                             },
                         ],
                     }));
@@ -17917,35 +17883,23 @@ mod mathematikerin {
                             },
                             wgpu::BindGroupEntry {
                                 binding: 4,
-                                resource: prep_buf.as_entire_binding(),
+                                resource: prep_param_buf.as_entire_binding(),
                             },
                             wgpu::BindGroupEntry {
                                 binding: 5,
-                                resource: param_buf.as_entire_binding(),
-                            },
-                            wgpu::BindGroupEntry {
-                                binding: 6,
                                 resource: barriers_buf.as_entire_binding(),
                             },
                             wgpu::BindGroupEntry {
+                                binding: 6,
+                                resource: tiles_buf.as_entire_binding(),
+                            },
+                            wgpu::BindGroupEntry {
                                 binding: 7,
-                                resource: tile_flat_buf.as_entire_binding(),
-                            },
-                            wgpu::BindGroupEntry {
-                                binding: 8,
-                                resource: tile_ctl_buf.as_entire_binding(),
-                            },
-                            wgpu::BindGroupEntry {
-                                binding: 9,
                                 resource: star_vbuf.as_entire_binding(),
                             },
                             wgpu::BindGroupEntry {
-                                binding: 12,
-                                resource: star_tile_flat_buf.as_entire_binding(),
-                            },
-                            wgpu::BindGroupEntry {
-                                binding: 13,
-                                resource: star_tile_ctl_buf.as_entire_binding(),
+                                binding: 8,
+                                resource: star_tiles_buf.as_entire_binding(),
                             },
                         ],
                     }));
@@ -17990,20 +17944,13 @@ mod mathematikerin {
                     mapped_at_creation: false,
                 }));
             }
-            let prep_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            let prep_param_buf = device.create_buffer(&wgpu::BufferDescriptor {
                 label: None,
-                size: c as u64 * 16,
-                usage: wgpu::BufferUsages::STORAGE,
-                mapped_at_creation: false,
-            });
-            let param_buf = device.create_buffer(&wgpu::BufferDescriptor {
-                label: None,
-                size: c as u64 * 16,
+                size: c as u64 * 32,
                 usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
                 mapped_at_creation: false,
             });
-            self.prep_buf = Some(prep_buf);
-            self.param_buf = Some(param_buf);
+            self.prep_param_buf = Some(prep_param_buf);
             self.rebuild_binds();
         }
 
@@ -18065,12 +18012,12 @@ mod mathematikerin {
             if let Some(bb) = &self.barriers_buf {
                 queue.write_buffer(bb, 0, &le_bytes_f32(&self.packed_barriers));
             }
-            if let Some(cc) = &self.tile_ctl_buf {
+            if let Some(cc) = &self.tiles_buf {
                 let mut cc_bytes = [0u8; 8];
                 cc_bytes[0..4].copy_from_slice(&self.cull_n.to_le_bytes());
                 queue.write_buffer(cc, 0, &cc_bytes);
             }
-            if let Some(sc) = &self.star_tile_ctl_buf {
+            if let Some(sc) = &self.star_tiles_buf {
                 let zero = vec![0u8; (1 + self.tile_cap as usize) * 4];
                 queue.write_buffer(sc, 0, &zero);
             }
@@ -18298,38 +18245,23 @@ mod mathematikerin {
                         e
                     },
                     {
-                        let mut e = storage_entry(false, wgpu::ShaderStages::COMPUTE);
+                        let mut e = storage_entry(true, wgpu::ShaderStages::COMPUTE);
                         e.binding = 5;
                         e
                     },
                     {
-                        let mut e = storage_entry(true, wgpu::ShaderStages::COMPUTE);
+                        let mut e = storage_entry(false, wgpu::ShaderStages::COMPUTE);
                         e.binding = 6;
                         e
                     },
                     {
-                        let mut e = storage_entry(false, wgpu::ShaderStages::COMPUTE);
+                        let mut e = storage_entry(true, wgpu::ShaderStages::COMPUTE);
                         e.binding = 7;
                         e
                     },
                     {
                         let mut e = storage_entry(false, wgpu::ShaderStages::COMPUTE);
                         e.binding = 8;
-                        e
-                    },
-                    {
-                        let mut e = storage_entry(true, wgpu::ShaderStages::COMPUTE);
-                        e.binding = 9;
-                        e
-                    },
-                    {
-                        let mut e = storage_entry(false, wgpu::ShaderStages::COMPUTE);
-                        e.binding = 12;
-                        e
-                    },
-                    {
-                        let mut e = storage_entry(false, wgpu::ShaderStages::COMPUTE);
-                        e.binding = 13;
                         e
                     },
                 ],
@@ -18363,38 +18295,23 @@ mod mathematikerin {
                         e
                     },
                     {
-                        let mut e = storage_entry(false, wgpu::ShaderStages::FRAGMENT);
+                        let mut e = storage_entry(true, wgpu::ShaderStages::FRAGMENT);
                         e.binding = 5;
                         e
                     },
                     {
-                        let mut e = storage_entry(true, wgpu::ShaderStages::VERTEX_FRAGMENT);
+                        let mut e = storage_entry(false, wgpu::ShaderStages::FRAGMENT);
                         e.binding = 6;
                         e
                     },
                     {
-                        let mut e = storage_entry(false, wgpu::ShaderStages::FRAGMENT);
+                        let mut e = storage_entry(true, wgpu::ShaderStages::VERTEX_FRAGMENT);
                         e.binding = 7;
                         e
                     },
                     {
                         let mut e = storage_entry(false, wgpu::ShaderStages::FRAGMENT);
                         e.binding = 8;
-                        e
-                    },
-                    {
-                        let mut e = storage_entry(true, wgpu::ShaderStages::VERTEX_FRAGMENT);
-                        e.binding = 9;
-                        e
-                    },
-                    {
-                        let mut e = storage_entry(false, wgpu::ShaderStages::FRAGMENT);
-                        e.binding = 12;
-                        e
-                    },
-                    {
-                        let mut e = storage_entry(false, wgpu::ShaderStages::FRAGMENT);
-                        e.binding = 13;
                         e
                     },
                 ],

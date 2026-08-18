@@ -21,7 +21,7 @@ registrierten Ort.
 | `phi/pipeline/queue/master.φ` | DIE eine Master-Datei: 13 alte Korpora dedupliziert gemergt (7.430 Blöcke). |
 | `phi/pipeline/queue/sources_potential_*` | Join-Paar (reichste Extract-Parameter) für die Lost-Blocks. |
 | `phi/pipeline/queue/grind_*` | Offene Block-Drafts (ArcGIS, VirES, ESA, TerraPulse, NASA/DONKI, …) mit Disposition ausstehend. |
-| `phi/pipeline/stage/` | Konvertierungs-Ausgänge `<korpus>_converted.φ` + Sweep-Ergebnisse `staging_verified.φ` / `staging_empty.txt`. |
+| `phi/pipeline/stage/` | Konvertierungs-Ausgänge `<korpus>_converted.φ` + Sweep-Ergebnisse `staging_verified.φ` / `staging_void_ledger.txt`. |
 | `phi/pipeline/ledger.φ` | DAS Zustands-Register. Jeder offene Posten mit Zustand. |
 | `phi/pipeline/index.φ` | Der Index der zu portierenden Dateien (Zustand + Blockzahl). Regenerierbar. |
 | `phi/pipeline/master_urls.txt` | Die deduplizierte URL-Liste (ohne live/declined) + `netloc.txt` (Domänen-Counts). |
