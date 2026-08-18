@@ -551,7 +551,10 @@ fn star_record_bytes(cells: &[String], col_idx: &[(String, usize)]) -> Option<Ve
         0.0
     };
     let plx_mas = 1000.0 / dist_pc;
-    let rv = get("rv").unwrap_or(0.0) * 1000.0;
+    let Some(rv_km_s) = get("rv") else {
+        return None;
+    };
+    let rv = rv_km_s * 1000.0;
     let flux = 10f64.powf(-0.4 * mag) as f32;
     let mut out = Vec::with_capacity(STAR_BIN_STRIDE);
     out.extend_from_slice(&ra.to_le_bytes());
@@ -1144,7 +1147,7 @@ fn main() {
             .iter()
             .find(|(k, _)| k == "mag")
             .map(|(_, c)| c.clone());
-        let ranges: Vec<(f64, f64)> = match mag_bands {
+        let mut ranges: Vec<(f64, f64)> = match mag_bands {
             Some((lo, hi, step)) => {
                 let mut queue = vec![(lo, hi)];
                 let mut out = Vec::new();
@@ -1172,27 +1175,58 @@ fn main() {
                                     .and_then(cell_num),
                                 _ => None,
                             }
-                        })
-                        .unwrap_or(0.0) as usize;
-                    if n <= limit {
-                        out.push((a, b));
-                    } else {
-                        let mid = (a + b) / 2.0;
-                        queue.push((mid, b));
-                        queue.push((a, mid));
+                        });
+                    match n {
+                        Some(v) if v.is_finite() && (v as usize) <= limit => out.push((a, b)),
+                        _ => {
+                            let mid = (a + b) / 2.0;
+                            queue.push((mid, b));
+                            queue.push((a, mid));
+                        }
                     }
                 }
                 out
             }
             None => vec![(f64::NEG_INFINITY, f64::INFINITY)],
         };
+        ranges.sort_by(|x, y| x.0.partial_cmp(&y.0).unwrap_or(std::cmp::Ordering::Equal));
         let mut n_bands = 0usize;
+        let mut resumed = 0usize;
+        let mut void_bands = 0usize;
         let mut total = 0usize;
         let mut col_idx_band: Option<Vec<(String, usize)>> = None;
         let out_path_band = out.clone().unwrap_or_default();
         let mut out_file: Option<std::fs::File> = None;
         let mut first_row = true;
-        for (a, b) in ranges {
+        for &(a, b) in &ranges {
+            let part_path = format!("{}.part{:.4}", out_path_band, a);
+            if star_bin && !out_path_band.is_empty() {
+                let part = std::fs::read(&part_path).unwrap_or_default();
+                if !part.is_empty() && part.len() % STAR_BIN_STRIDE == 0 {
+                    if out_file.is_none() {
+                        match std::fs::File::create(&out_path_band) {
+                            Ok(f) => out_file = Some(f),
+                            Err(_) => {
+                                eprintln!("write {} returned void", out_path_band);
+                                std::process::exit(1);
+                            }
+                        }
+                    }
+                    if let Some(f) = out_file.as_mut() {
+                        let _ = f.write_all(&part);
+                        total += part.len() / STAR_BIN_STRIDE;
+                        resumed += 1;
+                        eprintln!(
+                            "band [{:.4}, {:.4}) resumed: +{} records (total {})",
+                            a,
+                            b,
+                            part.len() / STAR_BIN_STRIDE,
+                            total
+                        );
+                        continue;
+                    }
+                }
+            }
             let w = mag_col
                 .as_ref()
                 .filter(|_| b.is_finite())
@@ -1203,7 +1237,27 @@ fn main() {
             if let Some(o) = &order_by {
                 q.push_str(&format!(" ORDER BY \"{}\"", o));
             }
-            match fetch_json_rows(&root, &q) {
+            let mut fetched: Option<(Vec<String>, Vec<Vec<String>>)> = None;
+            for attempt in 0..3 {
+                match fetch_json_rows(&root, &q) {
+                    Some(pair) => {
+                        fetched = Some(pair);
+                        break;
+                    }
+                    None => {
+                        eprintln!(
+                            "band [{:.4}, {:.4}) attempt {} returned void",
+                            a,
+                            b,
+                            attempt + 1
+                        );
+                        if attempt < 2 {
+                            std::thread::sleep(std::time::Duration::from_secs(60));
+                        }
+                    }
+                }
+            }
+            match fetched {
                 Some((names, rows)) => {
                     if col_names.is_empty() {
                         col_names = names;
@@ -1255,20 +1309,28 @@ fn main() {
                         continue;
                     };
                     if star_bin {
+                        let mut part_bytes: Vec<u8> = Vec::new();
                         for cells in &rows {
                             if let Some(rec) = star_record_bytes(cells, ci) {
-                                let _ = f.write_all(&rec);
-                                total += 1;
+                                part_bytes.extend_from_slice(&rec);
                             }
                         }
+                        let _ = f.write_all(&part_bytes);
+                        total += part_bytes.len() / STAR_BIN_STRIDE;
                         n_bands += 1;
                         eprintln!(
-                            "band [{:.2}, {:.2}): +{} records (total {})",
+                            "band [{:.4}, {:.4}): +{} records (total {})",
                             a,
                             b,
-                            rows.len(),
+                            part_bytes.len() / STAR_BIN_STRIDE,
                             total
                         );
+                        if !out_path_band.is_empty() {
+                            let tmp = format!("{}.tmp", part_path);
+                            if std::fs::write(&tmp, &part_bytes).is_ok() {
+                                let _ = std::fs::rename(&tmp, &part_path);
+                            }
+                        }
                         continue;
                     }
                     if !first_row {
@@ -1293,7 +1355,13 @@ fn main() {
                         total
                     );
                 }
-                None => eprintln!("band [{}, {}) returned void", a, b),
+                None => {
+                    void_bands += 1;
+                    eprintln!(
+                        "band [{:.4}, {:.4}) returned void after 3 attempts — parts kept, the field stays incomplete",
+                        a, b
+                    );
+                }
             }
         }
         if let Some(mut f) = out_file.take() {
@@ -1314,14 +1382,23 @@ fn main() {
                                             _ => None,
                                         }
                                     };
-                                    if let (Some(ra), Some(dec), Some(mag), Some(dist_pc)) =
-                                        (get("ra"), get("dec"), get("mag"), get("dist_pc"))
-                                    {
+                                    if let (
+                                        Some(ra),
+                                        Some(dec),
+                                        Some(mag),
+                                        Some(dist_pc),
+                                        Some(rv),
+                                    ) = (
+                                        get("ra"),
+                                        get("dec"),
+                                        get("mag"),
+                                        get("dist_pc"),
+                                        get("rv"),
+                                    ) {
                                         if dist_pc > 0.0 && ra.is_finite() && dec.is_finite() {
                                             let plx_mas = 1000.0 / dist_pc;
                                             let pmra = get("pmra").unwrap_or(0.0);
                                             let pmdec = get("pmdec").unwrap_or(0.0);
-                                            let rv = get("rv").unwrap_or(0.0);
                                             let flux = 10f64.powf(-0.4 * mag) as f32;
                                             let ci = get("bp_rp").unwrap_or(0.0);
                                             let mut rec = Vec::with_capacity(STAR_BIN_STRIDE);
@@ -1347,7 +1424,21 @@ fn main() {
                 }
             }
         }
-        eprintln!("bands: {}, rows: {} → {}", n_bands, total, out_path_band);
+        eprintln!(
+            "bands: {} ({} resumed, {} void), rows: {} → {}",
+            n_bands, resumed, void_bands, total, out_path_band
+        );
+        if void_bands > 0 {
+            eprintln!(
+                "{} bands returned void — upload refused, parts kept for resume",
+                void_bands
+            );
+            std::process::exit(1);
+        }
+        for &(a, _) in &ranges {
+            let part_path = format!("{}.part{:.4}", out_path_band, a);
+            let _ = std::fs::remove_file(&part_path);
+        }
         if ci_mode && !out_path_band.is_empty() {
             let _ = upload_asset(&out_path_band);
         }
