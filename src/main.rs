@@ -280,6 +280,40 @@ fn field_spatial(d2: f32, d_mag: f32, extent: f32, kernel_id: u32, global_scale:
     }
 }
 
+fn field_spatial_grad(d2: f32, d_mag: f32, extent: f32, kernel_id: u32, global_scale: f32, absorption: f32) -> f32 {
+    let perceptual_extent = max(extent, global_scale);
+    let e2 = max(perceptual_extent * perceptual_extent, 1e-30);
+    let s2 = max(global_scale * global_scale, 1e-30);
+    let d = max(d_mag, 1e-9);
+
+    if (kernel_id == 0u || kernel_id == 6u) {
+        let denom = d2 + e2;
+        return -2.0 * d / (denom * denom);
+    } else if (kernel_id == 3u) {
+        let scale = max(perceptual_extent * sqrt(2.0), global_scale);
+        return -2.0 / sqrt(3.141592653589793) * exp(-d2 / (scale * scale)) / scale;
+    } else if (kernel_id == 2u) {
+        let e = max(e2, s2);
+        let denom = d + sqrt(s2);
+        return -exp(-d2 / (2.0 * e)) * (d / e * denom + 1.0) / (denom * denom);
+    } else if (kernel_id == 4u) {
+        let scale = max(perceptual_extent, global_scale);
+        return -exp(-d / scale) / scale;
+    } else if (kernel_id == 5u) {
+        let alpha = clamp(absorption, 0.0, 1.0);
+        let beta = 1.6;
+        let e = max(e2, s2);
+        let core_grad = -d / e * exp(-d2 / (2.0 * e));
+        let denom = max(d2 + s2, s2);
+        let tail_grad = -beta * d * pow(e, beta * 0.5) / pow(denom, beta * 0.5 + 1.0);
+        return (1.0 - alpha) * core_grad + alpha * tail_grad;
+    } else {
+        let e = max(e2, s2);
+        let denom = max(d2 + s2, s2);
+        return -exp(-d2 / (2.0 * e)) * (d / e * denom + 2.0 * d) / (denom * denom);
+    }
+}
+
 fn val_eff_at(pre: vec4f, tm: vec4f, ft: u32, v: f32, d_mag: f32) -> f32 {
     let temporal = abs(vp.presence.w - tm.x);
     var val = pre.w;
@@ -322,6 +356,7 @@ fn presence_probe() {
     let count = u32(vp.surface.z);
     var omegas = array<f32, 9>();
     for (var i = 0u; i < 9u; i = i + 1u) { omegas[i] = 0.0; }
+    var flow = vec3f(0.0);
     let dt = vp.presence.w - vp.expose_ex.y;
     let v_obs = vec3f(vp.right.w, vp.up.w, vp.forward.w) * C_VACUUM;
     for (var j = 0u; j < count; j = j + 1u) {
@@ -344,8 +379,19 @@ fn presence_probe() {
         let c = osc_field(j, vec3f(0.0), pre);
         let f = u32(c.y);
         if (f < 9u) { omegas[f] += c.x; }
+        let delta = pre.xyz;
+        let d2 = dot(delta, delta);
+        let d_mag = sqrt(d2);
+        let v = select(PROPAGATION_SPEED[ft], fm.x, ft == 7u && fm.x > 0.0);
+        let val_eff = val_eff_at(pre, tm, ft, v, d_mag);
+        let kprime = field_spatial_grad(d2, d_mag, mt.x, kid, vp.surface.w, f32(tm.w));
+        let dhat = delta / max(d_mag, 1e-9);
+        flow = flow - dhat * (val_eff * kprime);
     }
     for (var i = 0u; i < 9u; i = i + 1u) { probe_out[i] = omegas[i]; }
+    probe_out[9] = flow.x;
+    probe_out[10] = flow.y;
+    probe_out[11] = flow.z;
 }
 
 @fragment fn fs(in: VOut) -> @location(0) vec4f {
@@ -13851,6 +13897,20 @@ mod mathematikerin {
     const GRID_DEEP_GRID: f64 = 70368744177664.0;
     const JUMP_GRID: f64 = 268435456.0;
     const SSAA_MAX: f32 = 8.0;
+    const DISPLAY_PERIOD_MS: f64 = 16.6;
+    const BUDGET_RELAX: f64 = 0.1;
+    const FORCE_NAME: [&str; 9] = [
+        "em",
+        "gravity",
+        "acoustic",
+        "seismic-body",
+        "seismic-surface",
+        "thermal",
+        "diffusion",
+        "advective",
+        "electric",
+    ];
+    const FORCE_SI_UNIT: [&str; 9] = ["W/m2", "m/s2", "Pa", "m", "m", "K", "kg/m3", "m/s", "V/m"];
     const FIELD_BACKING_SCALE: f64 = 1.0;
     const EMA_FACTOR: f64 = 0.05;
     const EXPOSE_OFFSET_BASE: f32 = 4.0;
@@ -14299,6 +14359,12 @@ mod mathematikerin {
         point_blend: u32,
         force_ref: [f32; 9],
         probe_omega: [f32; 9],
+        probe_flow: [f32; 3],
+        probe_ring: [[f32; 12]; 256],
+        ring_head: usize,
+        ring_filled: usize,
+        ring_gen: u64,
+        frame_ms_ema: f64,
         t_thrust: f64,
         t_thrust_target: f64,
         t_frozen: bool,
@@ -14396,6 +14462,12 @@ mod mathematikerin {
                 point_blend: 1,
                 force_ref: [0.0; 9],
                 probe_omega: [0.0; 9],
+                probe_flow: [0.0; 3],
+                probe_ring: [[0.0; 12]; 256],
+                ring_head: 0,
+                ring_filled: 0,
+                ring_gen: 0,
+                frame_ms_ema: 0.0,
                 t_thrust: 0.0,
                 t_thrust_target: 0.0,
                 t_frozen: false,
@@ -15384,13 +15456,13 @@ mod mathematikerin {
             });
             let probe_buf = device.create_buffer(&wgpu::BufferDescriptor {
                 label: None,
-                size: 36,
+                size: 48,
                 usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC,
                 mapped_at_creation: false,
             });
             let probe_read = device.create_buffer(&wgpu::BufferDescriptor {
                 label: None,
-                size: 36,
+                size: 48,
                 usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
                 mapped_at_creation: false,
             });
@@ -15674,12 +15746,21 @@ mod mathematikerin {
                     }
                     if mapped.load(Ordering::SeqCst) {
                         let data = slice.get_mapped_range();
-                        for k in 0..9 {
+                        let mut v = [0f32; 12];
+                        for k in 0..12 {
                             let mut b = [0u8; 4];
                             b.copy_from_slice(&data[k * 4..k * 4 + 4]);
-                            self.probe_omega[k] = f32::from_le_bytes(b);
+                            v[k] = f32::from_le_bytes(b);
                         }
                         drop(data);
+                        self.probe_omega.copy_from_slice(&v[0..9]);
+                        self.probe_flow.copy_from_slice(&v[9..12]);
+                        self.probe_ring[self.ring_head] = v;
+                        self.ring_head = (self.ring_head + 1) % 256;
+                        if self.ring_filled < 256 {
+                            self.ring_filled += 1;
+                        }
+                        self.ring_gen += 1;
                     }
                     probe_read.unmap();
                 }
@@ -15693,24 +15774,39 @@ mod mathematikerin {
                 self.frame_count = 0;
                 let ms_max = self.frame_ms_max;
                 self.frame_ms_max = 0.0;
+                let avg_ms = 1000.0 / fps.max(1.0);
+                self.frame_ms_ema = if self.frame_ms_ema == 0.0 {
+                    avg_ms
+                } else {
+                    self.frame_ms_ema * (1.0 - BUDGET_RELAX) + avg_ms * BUDGET_RELAX
+                };
+                if self.frame_ms_ema > DISPLAY_PERIOD_MS && self.ssaa > 1.0 {
+                    self.ssaa = (self.ssaa / Φ as f32).max(1.0);
+                }
                 let rec = if self.consent.load(Ordering::SeqCst) {
                     "on"
                 } else {
                     "silent"
                 };
+                let mut force_tokens = String::new();
+                for k in 0..9 {
+                    if k > 0 {
+                        force_tokens.push(' ');
+                    }
+                    force_tokens.push_str(&format!(
+                        "{}[{}]:{:+.2}",
+                        FORCE_NAME[k], FORCE_SI_UNIT[k], self.probe_omega[k]
+                    ));
+                }
                 eprintln!(
-                "φ window: t {:.2} | rec {} | Ω {:+.2} {:+.2} {:+.2} {:+.2} {:+.2} {:+.2} {:+.2} {:+.2} {:+.2} | mx {:.2e} | fps {:.0} | ssaa {:.2} | grid 2^{} | x {:.3e} y {:.3e} z {:.3e} | {} near | {} deep | b {}x{} | maxms {:.0} | off {:.2} | blend {}",
+                "φ window: t {:.2} | rec {} | gen {} | flow {:+.2} {:+.2} {:+.2} | {} | mx {:.2e} | fps {:.0} | ssaa {:.2} | grid 2^{} | x {:.3e} y {:.3e} z {:.3e} | {} near | {} deep | b {}x{} | maxms {:.0} | off {:.2} | blend {}",
                 self.t_presence,
                 rec,
-                self.probe_omega[0],
-                self.probe_omega[1],
-                self.probe_omega[2],
-                self.probe_omega[3],
-                self.probe_omega[4],
-                self.probe_omega[5],
-                self.probe_omega[6],
-                self.probe_omega[7],
-                self.probe_omega[8],
+                self.ring_gen,
+                self.probe_flow[0],
+                self.probe_flow[1],
+                self.probe_flow[2],
+                force_tokens,
                 mx,
                 fps,
                 self.ssaa,

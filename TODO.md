@@ -239,10 +239,7 @@ resonance(mut read_signal(s: read_ws_frame_part(stream: read_ws_frame_raw(stream
 - Die Parabel-Maschinerie: `adaptFieldPermeability` +
   `computeOscSurrogate` + die Transfer-Entropie-Ringe — Ethik §9; die
   Rückkehr-Formel tanh(vC/(g+ε)) speist sich aus der Messreihe
-- Der Gradient im Probe (gx, gy, gz) — der FLOW, das Richtungsgefühl
-  der Membran (Nebra: `universe → (omega, flow)`)
 - Das Analog-Korn (Dithering gegen Banding, TAU-FORCE-RENDERING)
-- Der 4-Token-HUD („wind_speed [advective, m/s]" — der Teleskop-Sucher)
 - Die ⌘K-Command-Palette (M07)
 - 2-Finger-waagerecht = Zeit-Schub (P6; die Geste des Touchpad-Docs)
 - Zustimmungs-Gate + Sensor-Identität (P2/P5; Ratsurteil 2026-08-17:
@@ -253,8 +250,13 @@ resonance(mut read_signal(s: read_ws_frame_part(stream: read_ws_frame_raw(stream
 
 ### Die Reparatur-Kette (Reihenfolge des Vollzugs)
 
-1. Die Messreihe — Gradient (Flow) im Probe, measure_ring (256
-   Generationen, gen-Zähler), Fenster-Reduktion, 4-Token-HUD
+1. ~~Die Messreihe~~ — erledigt (2026-08-18): Gradient (Flow) im Probe
+   (analytisches ∇K, `field_spatial_grad`, probe_out 9→12), measure_ring
+   (256 Generationen, u64-gen-Zähler), Fenster-Reduktion
+   (Budget-EMA → ssaa, einseitig), 4-Token-HUD (FORCE_NAME + FORCE_SI_UNIT).
+   Offen registriert: ∇ des J2/J4-Oblatheits-Terms (mp.w·rd²·p2 +
+   mg.x·rd⁴·p4) und ∂val_eff/∂d (Retardations-Korrektur) — beides
+   `pending`, nicht approximiert.
 2. P2-Relay-Rest — SurfaceFlow für spd/hdg + refused-else (browser)
 3. P4-Rest — Ausgabe-Flächen (Serial-TX, Vibration, USB/BT/HID) über
    lum = tanh(|Ω|·mx²); die Exposure atmet wieder mit dem Echo (Ethik §9)
