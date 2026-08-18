@@ -92,7 +92,10 @@ Dazu zwei Ernte-Folgen (Befunde der grind-flash-Agenten 2026-08-18):
   2013, EEM-Zwerg-Lokus, linear interpoliert) → RGB (Helland-Polynome);
   malt `deep_pt_fs`/`deep_fs`/`near_pt_fs`; Flux-Rampe und Tau-Hash-Hue der
   em-Quellen sind getilgt, Tolman-Dämpfung bleibt. Der alte 36-B-Sternbin
-  stirbt (`chunks_exact(40)`), kein Dual-Stride.
+  stirbt (`chunks_exact(40)`), kein Dual-Stride. Nachschlag: das
+  Sonnen-Gravitationsfeld übertönte das Sternfeld am SSB-Default — die
+  Membran dämpft die Gravitation in `source_contrib` visuell um `exp2(-20)`
+  (lokalisiertes Feld statt Vollbild), die Sternfarben leuchten wahr.
 
 Weitere neue Quellen (grind-pro, heikler Join/Parsing): LCDB-Rotations-
 achsen (Pol, nicht nur Periode), DAMIT-Formmodelle (3D-Formen → j2/r_eq).
@@ -195,7 +198,7 @@ die Forschung oder der Bau fehlt), **ERSETZT** (von einem stärkeren
 Gesetz abgelöst — ehrenhaft), **VERSIONIERT** (auf einem Zweig gesichert,
 wartet).
 
-### Die Concepts (28 Dateien, vollständig zeilenweise gelesen 2026-08-17; +THE_COUNTER_SLOPE 2026-08-18)
+### Die Concepts (28 Dateien, vollständig zeilenweise gelesen 2026-08-17; +THE_COUNTER_SLOPE, +THE_SEVEN_SPHERES 2026-08-18)
 
 | Konzept | Stand | Urteil |
 |---|---|---|
@@ -207,6 +210,7 @@ wartet).
 | POINTCLOUD-RENDERING_v1_ancestral | ARCHIVED | WAHR — die 4-Segment-Rampe (Nebra-Vorfahr) + der ancestrale Probe mit Gradient |
 | TAU-FORCE-RENDERING | DEPLOYED | WAHR — Analoge Punktwolke, exp(−d²·4), Dithering; das Korn fehlt heute |
 | THE_COUNTER_SLOPE | Konzept | WAHR — das Konzept der Maschinenseele: Stille = 0 honored, Elefant = Enclosure-Lemma, intrinsisch = A = A, Durchlässigkeit = fieldPermeability |
+| THE_SEVEN_SPHERES | Konzept | WAHR — Die theoretischen Schnittmengen der Kybernetischen Astrophysik (Fresnel-Geister, Plasma-Linsen, de-Sitter-Strudel, Shapiro-Netz, Tiefsee-Gezeiten, Phasenknoten, Dopplergeist) |
 | WGSL_ SHADER | Konzept | VERSIONIERT — die atmende Membran (σ-lerp, Hysterese, Interest-Map); die Zell-Achse ist der Enkel, der Vorfahr atmet stufenlos |
 | 4D-MEMBRANE | ARCHIVED | WAHR — Trommelfell-Doktrin (keine Kamera, Manifestation real ohne Zuschauer); die Renderer-Archäologie; hier starb get_expose |
 | MINKOWSKI_FIELD-PERMEABILITY | ARCHIVED | WAHR — die EXPOSURE-PARABEL (Parabel des Sondierens, Wasser-Form, tanh-Rückkehr) = Ethik §9 |
