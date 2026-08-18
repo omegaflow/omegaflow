@@ -88,6 +88,6 @@ Only channels that the field actively speaks to are allowed to glow. Silence is 
 ## 11. The "Observer" and Earth-Bias
 *Removed in: `eb01649`, `a93d84c`, `9722dc8`*
 **Concept:** The system originally had an "Observer" whose position was calculated relative to Earth (geocentric bias). The browser computed Minkowski distances to the observer.
-**Why it was removed:** The "Observer" implies a subject-object duality. It was erased entirely and replaced with "Presence" (free flow) and "Drift". Earth was demoted from the center to just another planet, and Minkowski calculations were moved off the browser and into the server's temporal filtering.
+**Why it was removed:** The "Observer" implies a subject-object duality. It was erased entirely and replaced with "Presence" (a free line) and "Drift". Earth was demoted from the center to just another planet, and Minkowski calculations were moved off the browser and into the server's temporal filtering.
 
 ***
