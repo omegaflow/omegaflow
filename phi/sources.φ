@@ -522,6 +522,14 @@ hapi np_moment_gd=psp_proton_density_percc wp_moment_gd=psp_proton_thermal_speed
 field psp_proton_density_percc psp_proton_density_percc gaussian-inverse-square diffusion cm-3 3600 0.0 0.0
 field psp_proton_thermal_speed_kms psp_proton_thermal_speed_kms exponential-decay thermal km/s 3600 0.0 0.0
 
+url https://cdaweb.gsfc.nasa.gov/hapi/data?id=PSP_FLD_L2_MAG_RTN&time.min={week_ago}T00:00:00Z&time.max={now}Z&parameters=psp_fld_l2_mag_RTN&format=json
+ttl 3600
+at parker_solar_probe
+hapi psp_fld_l2_mag_RTN.0=psp_fld_br_rtn_nt psp_fld_l2_mag_RTN.1=psp_fld_bt_rtn_nt psp_fld_l2_mag_RTN.2=psp_fld_bn_rtn_nt
+field psp_fld_br_rtn_nt psp_fld_br_rtn_nt inverse-square em nT 3600 0.0 0.0
+field psp_fld_bt_rtn_nt psp_fld_bt_rtn_nt inverse-square em nT 3600 0.0 0.0
+field psp_fld_bn_rtn_nt psp_fld_bn_rtn_nt inverse-square em nT 3600 0.0 0.0
+
 url https://services2.arcgis.com/7KRXAKALbBGlCW77/arcgis/rest/services/Local_Air_Quality_CHPL_211297/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
 ttl 3600
 at earth
@@ -1000,6 +1008,14 @@ fanout 40
 fanout_delay 15
 hapi f=magnetosphere_total_field_nt
 field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
+
+url https://maia.usno.navy.mil/ser7/finals.all
+format finals
+ttl 86400
+at earth
+field ut1_utc eop_iers_ut1_utc_s inverse-square em s 86400 0.0 0.0
+field pmx eop_iers_polar_motion_x_arcsec inverse-square em arcsec 86400 0.0 0.0
+field pmy eop_iers_polar_motion_y_arcsec inverse-square em arcsec 86400 0.0 0.0
 
 url https://mars.nasa.gov/rss/api/?feed=weather&category=mars2020&feedtype=json
 ttl 86400

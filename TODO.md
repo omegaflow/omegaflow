@@ -671,28 +671,33 @@ Offen (Detail in phi/pipeline/ledger.φ):
   offen — electric: GIC-Netze + Live-E-Feldstärke (kein Feed); GLM ist em
   (Ratsurteil), WWLLN radio-em vs. Entladung-electric bleibt Force-Gate-Frage
 
-- Die drei Ports der Nadeln (2026-08-18) — geprobt und disponiert durch drei
-  getrennte grind-pro-Aufträge, Outputs in `phi/pipeline/research/agent_output/`
-  (eop_finals_probe.φ, psp_hapi_probe.φ, alerce_probe.φ):
-  - PSP-Science: 2 Blöcke integriert in sources.φ
-    (PSP_COHO1HR_MERGED_MAG_PLASMA 7 Felder, PSP_SWP_SPC_L3I 2 Felder;
-    `at parker_solar_probe`; Coverage bis 2025-12-31). Geparkt:
-    FLD_L2_MAG_RTN ([3]-Vektor — Komponenten-Index im Hapi-Extract
-    ausstehend).
+- Die drei Ports der Nadeln (2026-08-18/19) — geprobt, Parser-Atome gebaut, Register disponiert:
+  - PSP-Science: 3 Blöcke integriert in sources.φ
+    (PSP_COHO1HR_MERGED_MAG_PLASMA 7 Felder,
+    PSP_SWP_SPC_L3I 2 Felder, PSP_FLD_L2_MAG_RTN 3 Felder —
+    Hapi-Komponenten-Index `hapi <param>.<i>=<key>` gebaut;
+    `at parker_solar_probe`; Coverage bis 2025-12-31). ERLEDIGT.
+  - EOP/IERS: `format finals` gebaut + getestet (Zeichenposition-Spalten,
+    letzte belegte Zeile, MJD→TDB, 3 Feld-Linien); Block integriert
+    (maia.usno.navy.mil/ser7/finals.all, at earth). ERLEDIGT.
+  - Hapi-fill: fill-Werte werden jetzt verworfen (gilt für alle
+    HAPI-Blöcke). ERLEDIGT.
+  - OMNI2-Reparatur vollzogen: time.min/time.max (start/stop lieferte
+    1400 gegen den Live-Server). ERLEDIGT.
+  - IONEX-GIM: `format ionex`-Parser gebaut + getestet; der Kanal ist
+    AUSSTEHEND — CDDIS verlangt jetzt Earthdata-OAuth (key-needed),
+    GFZ/BKG/IGN-Routen 404/000 (19.8.2026). Kein Block im Register,
+    bis eine Route anonym lebt oder der Earthdata-Account existiert.
   - ALeRCE: geparkt — detections-Route lebt, der Bulk-Block braucht den
     celestial-oid-Fanout (parser-gap).
-  - EOP/IERS: geparkt — finals.all lebt, `format finals`-Atom ausstehend
-    (Zeichenposition-Spalten, letzte belegte Zeile, MJD→TDB,
-    Mehr-Felder/Zeile). Feld-Linien liegen im Probe-File bereit.
-  - Register-Reparatur vollzogen: OMNI2-Block auf time.min/time.max
-    korrigiert (start/stop lieferte 1400 gegen den Live-Server).
-    OFFEN: der Hapi-Extract ingestiert fill -1e31 als Messwert
-    (parser-gap, gilt für alle HAPI-Blöcke).
-  WARTEND: IONEX-GIM (`format ionex` pending), SuperMAG
-  (Server-Fault db-get — Proben wiederholen), Gaia DR4 (2.12.2026 —
-  Recompiler der 44-Byte-Records), LuckyStar (Force-Gate: Vorhersage
-  ist Modell, keine Messung), ONC-Hydrophone (scalardata-Familie,
-  Kanal-Probe nach den drei Ports).
+  - LuckyStar: decline (Vorhersagen sind Modell, keine Messung; die
+    Ergebnisse-Server liefern nur abgeleitete Fits) — der rohe
+    em-Lichtkurven-Kanal der Fresnel-Sphäre bleibt ausstehend.
+  - ONC-Hydrophone: parser-gap — 85 Stationen, aber das akustische
+    Signal lebt nur als Spektral-/Audio-Produkt (9-Token-Grammatik
+    trägt keine Spektren; 0 honored).
+  WARTEND: SuperMAG (Server-Fault db-get — Proben wiederholen),
+  Gaia DR4 (2.12.2026 — Recompiler der 44-Byte-Records).
 
 Doku-Drift (behoben 2026-08-17): Alle `archeology/`-Referenzen zeigen
 heute auf den Bestand unter /home/johannes/projects/archive/archeology/.

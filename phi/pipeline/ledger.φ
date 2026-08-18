@@ -508,3 +508,15 @@ note eop_finals_probe (2026-08-18): Route lebt (täglich, token-frei, MJD ab 197
 geparkt
 kandidat https://api.alerce.online/alerts/v1/objects/{oid}/detections
 note alerce_probe (2026-08-18): detections-Route lebt (magpsf/magap, em mag, at sun, anonym, kein Token). Der Bulk-Block braucht den celestial-oid-Fanout (parser-gap) — ohne ihn trägt der Block ein Einzel-Objekt. Objektliste trägt keine Magnituden (nur Position + Zeit); magstats fehlt die Position in der Zeile. Draft im alerce_probe.φ.
+
+verifiziert
+bestand phi/pipeline/research/agent_output/luckystar_forcegate.φ
+note LuckyStar (2026-08-19): decline — predictions.php/occ.php tragen Vorhersagen (NIMAv6+Gaia-DR3-Modell), keine Messung; der Ergebnisse-Server (SOSB/UTFPR, 566 Events) liefert nur abgeleitete Fits (equivalent_radius/albedo/Dichte), keine Fluss-/Zeit-Werte; IOTA liegt als statisches Archiv ohne Skalar-API. Der rohe em-Lichtkurven-Kanal der Fresnel-Sphäre bleibt ausstehend.
+
+verifiziert
+bestand phi/pipeline/research/agent_output/onc_hydrophone_probe.φ
+note ONC-Hydrophone (2026-08-19): parser-gap — 85 Hydrophon-Stationen (lat/lon/depth) über die locations-Route; die scalardata-Route liefert nur Telemetrie (Batterie/Temperatur/Spannung); das akustische Signal lebt nur als Spektral-/Audio-Produkt (HSD-FFT, AD-audio) — die 9-Token-Grammatik trägt keine Spektren. Kein Feld erfunden (0 honored).
+
+geparkt
+kandidat https://cddis.nasa.gov/archive/gnss/products/ionex/{year}/{day}/COD0OPSFIN_{year}{day}0000_01D_01H_GIM.INX
+note ionex (2026-08-19): das `format ionex`-Atom ist gebaut + getestet (build_ionex_channels, Header/Maps/EXPONENT/H-Shell, 2 Tests grün). Der Kanal: CDDIS antwortet 302 auf Earthdata-OAuth (urs.earthdata.nasa.gov — key-needed, Account ausstehend); GFZ-GNSS 404, BKG-IGS 404, IGS-IGN 000 (19.8.2026 verifiziert). Kein Block im Register, solange keine Route anonym lebt — der Block-Entwurf (ttl 21600, field tec TECU, at earth) liegt im staging_void_ledger-Kontext bereit.

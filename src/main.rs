@@ -8902,6 +8902,138 @@ mod archivar {
         channels
     }
 
+    fn build_ionex_channels(
+        src: &SourceConfig,
+        text: &str,
+        now: f64,
+        lsk: &LeapSeconds,
+    ) -> Vec<(Channel, FieldConfig)> {
+        let mut channels = Vec::new();
+        let mut tec_field: Option<&FieldConfig> = None;
+        for ext in &src.extracts {
+            if let Extract::Field(fc) = ext {
+                if fc.key == "tec" {
+                    tec_field = Some(fc);
+                }
+            }
+        }
+        let Some(fc) = tec_field else {
+            return channels;
+        };
+        let mut exponent: Option<f64> = None;
+        for line in text.lines() {
+            if line.ends_with("EXPONENT") {
+                exponent = line
+                    .split_whitespace()
+                    .next()
+                    .and_then(|t| t.parse::<f64>().ok());
+                break;
+            }
+            if line.contains("START OF TEC MAP") {
+                break;
+            }
+        }
+        let Some(exp) = exponent else {
+            return channels;
+        };
+        let mut lines = text.lines().peekable();
+        let mut best: Option<(f64, f64, Vec<(f64, f64, f64)>)> = None;
+        while let Some(l) = lines.next() {
+            if !l.trim_end().ends_with("START OF TEC MAP") {
+                continue;
+            }
+            let Some(ep_line) = lines.next() else { break };
+            let t: Vec<f64> = ep_line
+                .split_whitespace()
+                .filter_map(|t| t.parse::<f64>().ok())
+                .collect();
+            if t.len() < 6 {
+                continue;
+            }
+            let (y, mo, d) = (t[0] as i64, t[1] as u32, t[2] as u32);
+            let Some(days) = ymd_to_days(y, mo, d) else {
+                continue;
+            };
+            let unix = days as f64 * 86400.0 + t[3] * 3600.0 + t[4] * 60.0 + t[5];
+            let Some(epoch) = lsk.unix_to_tdb(unix) else {
+                continue;
+            };
+            if epoch > now {
+                continue;
+            }
+            let Some(hdr) = lines.next() else { break };
+            let getp = |a: usize, b: usize| -> Option<f64> {
+                hdr.get(a..b).unwrap_or("").trim().parse::<f64>().ok()
+            };
+            let (Some(lon1), Some(lon2), Some(dlon), Some(h)) =
+                (getp(8, 14), getp(14, 20), getp(20, 26), getp(26, 32))
+            else {
+                continue;
+            };
+            if dlon == 0.0 {
+                continue;
+            }
+            let nlon = ((lon2 - lon1) / dlon).round() as i64 + 1;
+            let mut pts: Vec<(f64, f64, f64)> = Vec::new();
+            loop {
+                let Some(cur) = lines.next() else { break };
+                if cur.trim_end().ends_with("END OF TEC MAP") {
+                    break;
+                }
+                let Some(lat) = cur.get(2..8).and_then(|s| s.trim().parse::<f64>().ok()) else {
+                    break;
+                };
+                let mut remaining = nlon as usize;
+                let mut row: Option<&str> = Some(cur);
+                loop {
+                    let Some(r) = row else { break };
+                    let take = remaining.min(16);
+                    for k in 0..take {
+                        let idx = nlon as usize - remaining + k;
+                        if let Some(v) = r
+                            .get(32 + 5 * k..32 + 5 * (k + 1))
+                            .and_then(|s| s.trim().parse::<f64>().ok())
+                        {
+                            let tec = v * 10f64.powf(exp);
+                            if tec >= 0.0 {
+                                pts.push((lat, lon1 + idx as f64 * dlon, tec));
+                            }
+                        }
+                    }
+                    remaining -= take;
+                    if remaining == 0 {
+                        break;
+                    }
+                    row = lines.next();
+                }
+            }
+            if best.as_ref().map_or(true, |(be, _, _)| epoch > *be) {
+                best = Some((epoch, h * 1000.0, pts));
+            }
+        }
+        if let Some((epoch, alt, pts)) = best {
+            let body = frame_body_name(&src.frame);
+            for (lat, lon, tec) in pts {
+                channels.push((
+                    Channel {
+                        z: 0.0,
+                        epoch,
+                        position: Position::Surface {
+                            body_name: body.clone(),
+                            lat,
+                            lon,
+                            alt,
+                        },
+                        name: fc.name.clone(),
+                        value: tec,
+                    },
+                    fc.clone(),
+                ));
+            }
+        }
+        channels
+    }
+
     pub fn anchor(
         channel: &Channel,
         sensor: &FieldConfig,
@@ -12133,6 +12265,47 @@ mod archivar {
                     });
                     continue;
                 }
+                if archive.sources[i].format == "finals" || archive.sources[i].format == "ionex" {
+                    let url = archive.sources[i].url.clone();
+                    let ftx = fetch_tx.clone();
+                    let src_clone = archive.sources[i].clone();
+                    let src_idx = i;
+                    let src_ttl = src_clone.ttl;
+                    let lsk_c = lsk.clone();
+                    let now_c = now;
+                    let is_ionex = archive.sources[i].format == "ionex";
+                    archive.origins.entry(origin).or_insert(OriginState {
+                        fetched: now,
+                        prev_epoch: now,
+                        prev_abs: [0.0; 3],
+                        prev_motion: None,
+                        resid_ema: 0.0,
+                        has_prev: false,
+                    });
+                    thread::spawn(move || {
+                        let bytes = match fetch_raw_bytes(&url, src_ttl) {
+                            Some(b) => b,
+                            None => return,
+                        };
+                        let text = String::from_utf8_lossy(&bytes).into_owned();
+                        let channels = if is_ionex {
+                            build_ionex_channels(&src_clone, &text, now_c, &lsk_c)
+                        } else {
+                            build_finals_channels(&src_clone, &text, &lsk_c)
+                        };
+                        let _ = ftx.send(FetchResult {
+                            source_idx: src_idx,
+                            channels,
+                            eph_update: None,
+                            asteroid_hash: None,
+                            star_hash: None,
+                            occluders: None,
+                            planets: None,
+                            curves: None,
+                        });
+                    });
+                    continue;
+                }
                 if archive.sources[i].format == "catalog_tycho" {
                     let url = archive.sources[i].url.clone();
                     let ftx = fetch_tx.clone();
@@ -13813,13 +13986,13 @@ field temp temp_c\n";
             b.extend(u32b(0));
             b.extend(u32b(0x0B));
             b.extend(u32b(6));
-            let mut var = |b: &mut Vec<u8>,
-                           nm: &str,
-                           rank: u32,
-                           dims: &[u32],
-                           fill: Option<f32>,
-                           t: u32,
-                           vsize: u32|
+            let var = |b: &mut Vec<u8>,
+                       nm: &str,
+                       rank: u32,
+                       dims: &[u32],
+                       fill: Option<f32>,
+                       t: u32,
+                       vsize: u32|
              -> usize {
                 b.extend(name(nm));
                 b.extend(u32b(rank));
@@ -16050,6 +16223,198 @@ field temp temp_c\n";
             assert!(secret_resolves_void("{ABSENT_KEY}", &env));
             assert!(secret_resolves_void("{EMPTY_KEY}", &env));
             assert!(!secret_resolves_void("{SET_KEY}", &env));
+        }
+
+        fn field_fixture(name: &str, tau: f64) -> FieldConfig {
+            FieldConfig {
+                key: name.into(),
+                name: name.into(),
+                kernel: 0,
+                force: 0,
+                tau,
+                absorption: 0.0,
+                advection: 0.0,
+                unit: String::new(),
+                fold: None,
+            }
+        }
+
+        fn source_fixture(format: &str, extracts: Vec<Extract>) -> SourceConfig {
+            SourceConfig {
+                ttl: 3600,
+                url: "https://example.com/x".into(),
+                frame: Frame::Barycenter {
+                    body_name: "sun".into(),
+                    scale: 1.0,
+                },
+                format: format.into(),
+                extracts,
+                headers: vec![],
+                post_body: None,
+                target: None,
+                catalog: None,
+                max_freq: None,
+                min_freq: None,
+                body: None,
+                stations_url: None,
+                stations_path: String::new(),
+                stations_lat: String::new(),
+                stations_lon: String::new(),
+                stations_id: String::new(),
+                flux_from_mag: None,
+                abs_mag_from: None,
+                catalog_epoch: None,
+                repeat_ra_bins: 0,
+                fanout_cap: 0,
+                stations_flatten: String::new(),
+                stations_filter: None,
+                fanout_delay: 0,
+            }
+        }
+
+        fn fixture_lsk() -> LeapSeconds {
+            LeapSeconds {
+                delta_t_a: 32.184,
+                deltas: vec![(37.0, 1483228800.0)],
+            }
+        }
+
+        #[test]
+        fn test_hapi_fill_skipped_and_component_index() {
+            let json = r#"{
+                "parameters": [
+                    {"name": "Time"},
+                    {"name": "VEC", "fill": "-1.0e31"},
+                    {"name": "SCAL", "fill": "-1.0e31"}
+                ],
+                "data": [
+                    ["2026-08-18T00:00:00Z", [-1.0e31, -1.0e31, -1.0e31], 9.0],
+                    ["2026-08-18T01:00:00Z", [1.1, 2.2, 3.3], 7.5]
+                ]
+            }"#;
+            let src = source_fixture(
+                "json",
+                vec![
+                    Extract::Field(field_fixture("x", 3600.0)),
+                    Extract::Field(field_fixture("y", 3600.0)),
+                    Extract::Field(field_fixture("z", 3600.0)),
+                    Extract::Field(field_fixture("s", 3600.0)),
+                    Extract::Hapi(vec![
+                        ("VEC.0".into(), "x".into()),
+                        ("VEC.1".into(), "y".into()),
+                        ("VEC.2".into(), "z".into()),
+                        ("SCAL".into(), "s".into()),
+                    ]),
+                ],
+            );
+            match extract(&src, json, 8.0e8, &fixture_lsk()) {
+                ExtractResult::Measurements(channels) => {
+                    assert_eq!(channels.len(), 4);
+                    let vals: Vec<(&str, f64)> = channels
+                        .iter()
+                        .map(|(c, fc)| (fc.name.as_str(), c.value))
+                        .collect();
+                    assert!(vals.contains(&("x", 1.1)));
+                    assert!(vals.contains(&("y", 2.2)));
+                    assert!(vals.contains(&("z", 3.3)));
+                    assert!(vals.contains(&("s", 7.5)));
+                }
+                _ => panic!("expected measurements"),
+            }
+            let fill_only = r#"{
+                "parameters": [{"name": "Time"}, {"name": "SCAL", "fill": "-1.0e31"}],
+                "data": [["2026-08-18T01:00:00Z", -1.0e31]]
+            }"#;
+            let src_fill = source_fixture(
+                "json",
+                vec![
+                    Extract::Field(field_fixture("s", 3600.0)),
+                    Extract::Hapi(vec![("SCAL".into(), "s".into())]),
+                ],
+            );
+            match extract(&src_fill, fill_only, 8.0e8, &fixture_lsk()) {
+                ExtractResult::Measurements(channels) => {
+                    assert!(channels.is_empty(), "fill must not be ingested");
+                }
+                _ => panic!("expected measurements"),
+            }
+        }
+
+        #[test]
+        fn test_finals_channels_last_occupied_line() {
+            let line = format!(
+                "{:>2}{:>2}{:>2} {:8.2} {:1} {:9.6}{:10.6} {:9.6}{:10.6} {:1} {:10.7}",
+                25, 8, 21, 61638.00, "P", 0.269050, 0.000012, 0.372959, 0.000014, "P", -0.0683654
+            );
+            let text = format!("{}\n{:>2}{:>2}{:>2} {:8.2}\n", line, 25, 8, 22, 61639.00);
+            let src = source_fixture(
+                "finals",
+                vec![
+                    Extract::Field(field_fixture("ut1_utc", 86400.0)),
+                    Extract::Field(field_fixture("pmx", 86400.0)),
+                    Extract::Field(field_fixture("pmy", 86400.0)),
+                ],
+            );
+            let lsk = fixture_lsk();
+            let channels = build_finals_channels(&src, &text, &lsk);
+            assert_eq!(channels.len(), 3);
+            let expect_epoch = lsk.unix_to_tdb((61638.0 - 40587.0) * 86400.0).unwrap();
+            for (c, fc) in &channels {
+                assert_eq!(c.epoch, expect_epoch);
+                match fc.name.as_str() {
+                    "ut1_utc" => assert_eq!(c.value, -0.0683654),
+                    "pmx" => assert_eq!(c.value, 0.269050),
+                    "pmy" => assert_eq!(c.value, 0.372959),
+                    other => panic!("unexpected field {}", other),
+                }
+            }
+        }
+
+        #[test]
+        fn test_ionex_channels_two_lat_five_lon() {
+            let mut text = String::new();
+            text.push_str("     1            CODEX                       IONEX VERSION / TYPE\n");
+            text.push_str(
+                "    -1                                                              EXPONENT\n",
+            );
+            text.push_str("     4 START OF TEC MAP\n");
+            text.push_str("  2026     8    18    12     0     0                        EPOCH OF CURRENT MAP\n");
+            text.push_str("    87.5-180.0 180.0  90.0 450.0                            LAT/LON1/LON2/DLON/H\n");
+            let mut line = String::from("    87.5-180.0 180.0  90.0 450.0");
+            for w in 101..=105 {
+                line.push_str(&format!("{:>5}", w));
+            }
+            text.push_str(&line);
+            text.push('\n');
+            let mut line2 = String::from("    72.5-180.0 180.0  90.0 450.0");
+            for w in 201..=205 {
+                line2.push_str(&format!("{:>5}", w));
+            }
+            text.push_str(&line2);
+            text.push('\n');
+            text.push_str("     8 END OF TEC MAP\n");
+            let src = source_fixture("ionex", vec![Extract::Field(field_fixture("tec", 7200.0))]);
+            let lsk = fixture_lsk();
+            let now = 1786968000.0 + 69.184 + 3600.0;
+            let channels = build_ionex_channels(&src, &text, now, &lsk);
+            assert_eq!(channels.len(), 10);
+            let mut seen_lat = [false; 2];
+            for (c, _) in &channels {
+                if let Position::Surface { lat, lon, alt, .. } = &c.position {
+                    assert!(*alt > 400_000.0, "ionex H must set the shell altitude");
+                    assert!((lon + 180.0) % 90.0 == 0.0, "lon grid mismatch");
+                    if *lat == 87.5 {
+                        seen_lat[0] = true;
+                        assert!(c.value >= 10.1 && c.value <= 10.5);
+                    } else if *lat == 72.5 {
+                        seen_lat[1] = true;
+                        assert!(c.value >= 20.1 && c.value <= 20.5);
+                    } else {
+                        panic!("unexpected lat {}", lat);
+                    }
+                }
+            }
+            assert!(seen_lat[0] && seen_lat[1], "both lat rows present");
         }
     }
 }

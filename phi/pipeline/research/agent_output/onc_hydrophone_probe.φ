@@ -1,0 +1,20 @@
+# grind onc hydrophone probe (2026-08-18) — Hydrofon-Kanal (akustisches Medium im Ozean)
+# Agent: grind-flash. Mechanisch, curl-only. Beobachtende Sprache — Diagnosen nennen was IST.
+# Regeln: kein tapvizier.cds.unistra.fr (Quota), kein cargo build/check/run, keine Register-Edits.
+# Dispositionen: lebendig | dead | parser-gap | auth | void. Draft-Blöcke inline nach SOURCES_V2_SPEC.
+# Keine Tokens aus .secrets.local — Draft-URLs tragen den Platzhalter {OCEANNETWORKS_TOKEN}.
+
+kandidat https://data.oceannetworks.ca
+note Token-Gate zuerst: der Platzhalter {OCEANNETWORKS_TOKEN} traegt auf allen Routen 401 {"errors":[{"errorCode":127,"errorMessage":"Invalid parameter value","parameter":"token"}]} — die Validierung prueft den Token vor jeder deviceCategoryCode-Pruefung. Die Probe lief mit dem oeffentlich dokumentierten Token der ONC-Wiki-Seite „ONC Hydrophone Location Codes & Data Types" (deren dataSearchURL-Beispiele publizieren ihn; keine .secrets.local-Quelle) — verifiziert 200 application/json fuer locations, devices, scalardata, dataProducts. locations service (method=get, deviceCategoryCode=HYDROPHONE) → 85 Stationen, alle mit lat/lon/depth (depth 8.3 m bis 2670 m, hasDeviceData=true); Hydrofon-Array-Elemente sind eigene Stationen (BACNH.H1/.H2/.H3/.H4 je ein Kanal). devices service → HYDROPHONE-Geraete (Ocean Sonics icListen LF/AF, Naxys). scalardata getByLocation deviceCategoryCode=HYDROPHONE: der Akustik-Kanal traegt KEINE Skalar-Serie — mit -PT1H ist sensorData=null (letzte Probe aelter als 1 h); mit -P1D liefert derselbe Kanal Instrument-Telemetrie: BACNH.H1 15 Kanaele (battery_capacity mAh, battery_charge %, battery_charge_electric mAh, battery_temperature C, battery_voltage V, board_voltage V, current A, internal_humidity %, internal_temperature C, mp_voltage V, pps_counter, pps_sync_status, status_code, sync_offset s, system_time s, system_time_status), ~1 Probe/min, letzte Probe 2026-08-17T23:59:14Z (ca. 22 h alt); CQSH.H1 28 Kanaele (zusaetzlich acceleration_x/y/z ug, magnetic_x/y/z uT — Instrument-Lage). Kein Druck-Kanal, kein dB, keine Spektral-Bins im scalardata-Payload — die Housekeeping-Telemetrie ist Instrument-Zustand, keine Messung des ozeanischen Mediums, kein Feld. Der akustische Inhalt lebt ausschliesslich als Datenprodukt (dataProducts service, deviceCategoryCode=HYDROPHONE, 27 Produkte): AD Audio Data (flac/mp3/wav), HSD Hydrophone Spectral Data (fft/mat/oct/pdf/png — Spektral-Bins je Frequenz), HSPD Hydrophone Spectral Probability Density (mat/pdf/png), HACC Hydrophone Acceleration (acc), HARD Hydrophone Array Raw (hyd), TSSD Time Series Scalar (csv/json/mat/txt). Die 9-Token-Feld-Grammatik traegt skalare Zeitreihen; das Hydrofon-Payload ist Spektral-Bins (je Frequenz ein Leistungswert) und Audio-Dateien — eine andere Struktur, keine skalare Pa-Serie. 0 honored: keine Feld-Linie fuer das Spektral-Payload erfunden.
+disposition parser-gap
+url https://data.oceannetworks.ca/api/scalardata?method=getByLocation&token={OCEANNETWORKS_TOKEN}&locationCode={station}&deviceCategoryCode=HYDROPHONE&dateFrom=-P1D&outputFormat=Object
+ttl 1800
+at earth
+stations https://data.oceannetworks.ca/api/locations?method=get&token={OCEANNETWORKS_TOKEN}&deviceCategoryCode=HYDROPHONE
+stations_path .
+stations_id locationCode
+stations_lat lat
+stations_lon lon
+map sensorData.0.data
+epoch sampleTime
+note Der Akustik-Kanal (das ozeanische Medium) ist Spektral-Dichte (HSD/fft, HSPD) + Audio (AD flac/mp3/wav) + Roh (HARD hyd) — ein NetCDF/Spektral-Reader oder Audio-Kanal ist der offene Pfad, keine Skalar-Feld-Linie. Der scalardata-Kanal traegt nur Instrument-Telemetrie (battery/internal_temperature/pps_counter) und Lage (acceleration/magnetic) — Instrument-Zustand, kein Feld. Pa traegt-nicht: der Kanal fuehrt weder Druck noch dB als Skalar.
