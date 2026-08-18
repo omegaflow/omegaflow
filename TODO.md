@@ -365,6 +365,12 @@ resonance(mut read_signal(s: read_ws_frame_part(stream: read_ws_frame_raw(stream
   ableiten
 - Sternenhintergrund (integrierter Glow der 1/d²-Schwänze, Milchstraße):
   einmalige tiefaufgelöste Integration, glattes Feld
+- Massen-Okklusion (deep hinter near): das Licht eines Sterns hinter der
+  Sonnen-/Planetenscheibe erreicht die Presence nicht — heute liegt das
+  Deepfield additiv über dem Nearfield. Kraftabhängig: em ist Sichtlinie
+  (verdeckt), Seismik geht durch, Gravitation wird nie verdeckt. Die
+  Lichtkrümmung (Aberration) ist in den Messdaten; die Undurchlässigkeit
+  fehlt. Eigener Atom im Mathematikerin/WGSL-Pfad.
 - Relativistische Aberration (dopp, Q01) des alten Renderers ist mit der
   Membran-Rewrite gegangen — für den Deep-Pfad als eigener Atom prüfen
 - Galaxien-Zoom-Verifikation beim Operator ausstehend (deep-Zahl im HUD;
