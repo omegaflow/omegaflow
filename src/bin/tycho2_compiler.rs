@@ -9,7 +9,7 @@ use omegaflow::inflate::gunzip;
 use std::collections::{HashMap, HashSet};
 use std::io::Write;
 
-const STAR_RECORD_STRIDE: usize = 36;
+const STAR_RECORD_STRIDE: usize = 40;
 
 struct StarRow {
     hip: i32,
@@ -260,6 +260,16 @@ fn encode(row: &StarRow, out: &mut Vec<u8>) {
     out.extend_from_slice(&(row.plx_mas as f32).to_le_bytes());
     out.extend_from_slice(&(row.mag as f32).to_le_bytes());
     out.extend_from_slice(&(10.0f64.powf(-0.4 * row.mag) as f32).to_le_bytes());
+    out.extend_from_slice(&0f32.to_le_bytes());
+}
+
+fn bv_to_bp_rp(bv: f64) -> f64 {
+    if !bv.is_finite() {
+        return 0.0;
+    }
+    let x = bv.clamp(-0.5, 3.5);
+    0.06483 + 1.575 * x - 0.7815 * x.powi(2) + 0.5707 * x.powi(3) - 0.176 * x.powi(4)
+        + 0.01916 * x.powi(5)
 }
 
 fn main() {
@@ -441,15 +451,20 @@ fn main() {
             }
             let pm_ra = num(b, 88, 95).unwrap_or(0.0);
             let pm_de = num(b, 97, 104).unwrap_or(0.0);
+            let bp_rp = match num(b, 246, 251) {
+                Some(bv) => bv_to_bp_rp(bv),
+                None => 0.0,
+            };
             let (ra_j, dec_j) = propagate(ra, dec, pm_ra, pm_de, 8.75);
             rows.push(format!(
-                "{{\"ra\":{},\"dec\":{},\"mag\":{},\"dist_pc\":{},\"pmra\":{},\"pmdec\":{}}}",
+                "{{\"ra\":{},\"dec\":{},\"mag\":{},\"dist_pc\":{},\"pmra\":{},\"pmdec\":{},\"bp_rp\":{}}}",
                 ra_j,
                 dec_j,
                 vmag,
                 1000.0 / plx,
                 pm_ra,
-                pm_de
+                pm_de,
+                bp_rp
             ));
         }
         let out_path = match out {

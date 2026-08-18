@@ -149,7 +149,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
             ws.addEventListener('message', (e) => {
                 if (typeof e.data !== 'string') {
                     const buf = new Uint8Array(e.data);
-                    if (buf.length < 19 || buf[0] !== 0xCF || buf[1] !== 0x86 || buf[2] !== 6) return;
+                    if (buf.length < 19 || buf[0] !== 0xCF || buf[1] !== 0x86 || buf[2] !== 7) return;
                     const dv = new DataView(buf.buffer, buf.byteOffset, buf.byteLength);
                     const id = dv.getUint32(11, true);
                     const pending = transport.pending.get(id);

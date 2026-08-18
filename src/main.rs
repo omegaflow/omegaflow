@@ -47,8 +47,7 @@ fn fold_eff(d_mag: f32, raw: f32, t: f32, ttl: f32, force_type: u32, advective_v
 @group(0) @binding(5) var<storage, read_write> param: array<vec4f>;
 @group(0) @binding(6) var<storage, read> barriers: array<vec4f>;
 @group(0) @binding(7) var<storage, read_write> tile_flat: array<u32>;
-@group(0) @binding(8) var<storage, read_write> tile_count: array<u32>;
-@group(0) @binding(9) var<storage, read_write> cull_ctl: array<u32>;
+@group(0) @binding(8) var<storage, read_write> tile_ctl: array<u32>;
 
 fn occlusion(dhat: vec3f, d: f32, ft: u32, n: u32) -> f32 {
     if (OPACITY[ft] <= 0.0 || n == 0u) {
@@ -117,7 +116,7 @@ struct VOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f };
 @group(0) @binding(1) var<storage, read> deep_pt: array<vec4f>;
 @group(0) @binding(2) var<storage, read> deep_ex: array<vec4f>;
 
-struct DeepPtVOut { @builtin(position) pos: vec4f, @location(0) @interpolate(flat) flux: f32, @location(1) uv: vec2f };
+struct DeepPtVOut { @builtin(position) pos: vec4f, @location(0) @interpolate(flat) flux: f32, @location(1) uv: vec2f, @location(2) @interpolate(flat) ci: f32 };
 
 @vertex fn deep_pt_vs(@builtin(vertex_index) i: u32) -> DeepPtVOut {
     let count = u32(deep_vp.expose_lo.x);
@@ -125,6 +124,7 @@ struct DeepPtVOut { @builtin(position) pos: vec4f, @location(0) @interpolate(fla
     out.pos = vec4f(0.0, 0.0, 0.0, 1.0);
     out.flux = 0.0;
     out.uv = vec2f(0.0);
+    out.ci = 0.0;
     if (count == 0u) { return out; }
     let id = i / 6u;
     if (id >= count) { return out; }
@@ -132,7 +132,8 @@ struct DeepPtVOut { @builtin(position) pos: vec4f, @location(0) @interpolate(fla
         vec2f(-1.0, -1.0), vec2f(1.0, -1.0), vec2f(1.0, 1.0),
         vec2f(-1.0, -1.0), vec2f(1.0, 1.0), vec2f(-1.0, 1.0)
     );
-    let data = deep_pt[id];
+    let data = deep_pt[id * 2u];
+    let props_in = deep_pt[id * 2u + 1u];
     let beta = vec3f(deep_vp.right.w, deep_vp.up.w, deep_vp.forward.w);
     let dir = aberration(data.xyz / max(length(data.xyz), 1e-9), beta);
     let df = dot(dir, deep_vp.forward.xyz);
@@ -153,6 +154,7 @@ struct DeepPtVOut { @builtin(position) pos: vec4f, @location(0) @interpolate(fla
     out.pos = vec4f(clip, 0.0, 1.0);
     out.uv = corner;
     out.flux = data.w * df * occlusion(dir, 1e30, 0u, u32(deep_vp.expose_ex.w));
+    out.ci = props_in.z;
     return out;
 }
 
@@ -160,14 +162,9 @@ struct DeepPtVOut { @builtin(position) pos: vec4f, @location(0) @interpolate(fla
     let aflux = abs(in.flux);
     if (aflux < 1e-30) { discard; }
     let olog = log2(aflux) - log2(ft_ref_floor(deep_vp.ft_ref_a, deep_vp.ft_ref_b, deep_vp.ft_ref_c, 0u));
-    let t2 = clamp((olog + deep_vp.expose_ex.x) / 22.0, 0.0, 1.0);
     let fade = clamp((olog - log2(1e-30)) / (-deep_vp.expose_ex.x - log2(1e-30)), 0.0, 1.0);
-    let c = mix(vec3f(0.0, 0.02, 0.1), vec3f(0.0, 0.3, 0.8), clamp(t2 * 4.0, 0.0, 1.0));
-    let c2 = mix(c, vec3f(0.2, 0.8, 1.0), clamp((t2 - 0.25) * 4.0, 0.0, 1.0));
-    let c3 = mix(c2, vec3f(1.0, 0.7, 0.1), clamp((t2 - 0.5) * 4.0, 0.0, 1.0));
-    let c4 = mix(c3, vec3f(1.0, 1.0, 1.0), clamp((t2 - 0.75) * 4.0, 0.0, 1.0));
     let glow = exp(-1.8 * dot(in.uv, in.uv));
-    return vec4f(c4 * fade * glow, 1.0);
+    return vec4f(temperature_to_rgb(in.ci) * fade * glow, 1.0);
 }
 
 struct DeepVOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f, @location(1) color: vec3f };
@@ -185,6 +182,79 @@ fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
     else if (hp < 5.0) { rgb01 = vec3f(x, 0.0, c); }
     else { rgb01 = vec3f(c, 0.0, x); }
     return rgb01 + vec3f(m);
+}
+
+fn bp_rp_to_teff(ci: f32) -> f32 {
+    const locus: array<vec2f, 31> = array<vec2f, 31>(
+        vec2f(-0.120, 10700.0),
+        vec2f(-0.037, 9700.0),
+        vec2f(0.005, 9300.0),
+        vec2f(0.068, 8800.0),
+        vec2f(0.110, 8600.0),
+        vec2f(0.194, 8100.0),
+        vec2f(0.320, 7590.0),
+        vec2f(0.377, 7220.0),
+        vec2f(0.490, 6820.0),
+        vec2f(0.587, 6550.0),
+        vec2f(0.694, 6180.0),
+        vec2f(0.784, 5930.0),
+        vec2f(0.823, 5770.0),
+        vec2f(0.850, 5660.0),
+        vec2f(0.900, 5480.0),
+        vec2f(0.983, 5270.0),
+        vec2f(1.100, 5100.0),
+        vec2f(1.340, 4600.0),
+        vec2f(1.530, 4300.0),
+        vec2f(1.730, 3990.0),
+        vec2f(1.840, 3850.0),
+        vec2f(2.090, 3660.0),
+        vec2f(2.230, 3560.0),
+        vec2f(2.500, 3430.0),
+        vec2f(2.940, 3210.0),
+        vec2f(3.350, 3060.0),
+        vec2f(3.710, 2930.0),
+        vec2f(4.160, 2810.0),
+        vec2f(4.650, 2680.0),
+        vec2f(4.860, 2570.0),
+        vec2f(5.100, 2420.0),
+    );
+    if (ci <= locus[0].x) { return locus[0].y; }
+    for (var i = 1u; i < 31u; i = i + 1u) {
+        let b = locus[i];
+        if (ci <= b.x) {
+            let a = locus[i - 1u];
+            let t = (ci - a.x) / max(b.x - a.x, 1e-6);
+            return mix(a.y, b.y, t);
+        }
+    }
+    return locus[30].y;
+}
+
+fn teff_to_rgb(teff: f32) -> vec3f {
+    let t = clamp(teff, 1000.0, 40000.0) / 100.0;
+    var r = 255.0;
+    var g = 255.0;
+    var b = 255.0;
+    if (t <= 66.0) {
+        r = 255.0;
+        g = 99.4708025861 * log(t) - 161.1195681661;
+    } else {
+        r = 329.698727446 * pow(t - 60.0, -0.1332047592);
+        g = 288.1221695283 * pow(t - 60.0, -0.0755148492);
+    }
+    if (t >= 66.0) {
+        b = 255.0;
+    } else if (t <= 19.0) {
+        b = 0.0;
+    } else {
+        b = 138.5177312231 * log(t - 10.0) - 305.0447927307;
+    }
+    return vec3f(clamp(r, 0.0, 255.0), clamp(g, 0.0, 255.0), clamp(b, 0.0, 255.0)) / 255.0;
+}
+
+fn temperature_to_rgb(ci: f32) -> vec3f {
+    if (ci == 0.0) { return vec3f(1.0, 1.0, 1.0); }
+    return teff_to_rgb(bp_rp_to_teff(ci));
 }
 
 @vertex fn deep_vs(@builtin(vertex_index) i: u32) -> DeepVOut {
@@ -210,7 +280,6 @@ fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
     let sx = dot(dir, deep_vp.right.xyz) / (0.5 * w * scale);
     let sy = -dot(dir, deep_vp.up.xyz) / (0.5 * h * scale);
     let extent = props_in.x;
-    let tau = props_in.y;
     let w_f = max(w, h);
     let point_size_px = clamp(extent / scale, 0.5, w_f);
     let corner = quad[i % 6u];
@@ -230,8 +299,7 @@ fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
         0.0,
         1.0,
     );
-    let hue = fract(log2(max(tau, 1.0)) / 16.0 + props_in.z);
-    out.color = hsl_to_rgb(hue, 0.35, 0.15 + lum * 0.85) * occ;
+    out.color = temperature_to_rgb(props_in.z) * (0.15 + lum * 0.85) * occ;
     return out;
 }
 
@@ -245,7 +313,7 @@ fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
     return vec4f(clamp(mapped_color, vec3f(0.0), vec3f(1.0)), 1.0);
 }
 
-struct NearPtVOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f, @location(1) @interpolate(flat) val_eff: f32, @location(2) @interpolate(flat) ft: u32, @location(3) @interpolate(flat) tau: f32, @location(4) @interpolate(flat) half_px: f32 };
+struct NearPtVOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f, @location(1) @interpolate(flat) val_eff: f32, @location(2) @interpolate(flat) ft: u32, @location(3) @interpolate(flat) tau: f32, @location(4) @interpolate(flat) half_px: f32, @location(5) @interpolate(flat) ci: f32 };
 
 @vertex fn near_pt_vs(@builtin(vertex_index) i: u32) -> NearPtVOut {
     let count = u32(vp.surface.z);
@@ -256,6 +324,7 @@ struct NearPtVOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f, @loca
     out.ft = 0u;
     out.tau = 0.0;
     out.half_px = 0.0;
+    out.ci = 0.0;
     if (count == 0u) { return out; }
     let id = i / 6u;
     if (id >= count) { return out; }
@@ -267,6 +336,7 @@ struct NearPtVOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f, @loca
     let tm = field[id * 3u + 1u];
     let fm = field[id * 3u + 2u];
     let mt = props[id * 3u];
+    let mg = props[id * 3u + 2u];
     let w = vp.surface.x;
     let h = vp.surface.y;
     let scale = vp.surface.w;
@@ -292,6 +362,7 @@ struct NearPtVOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f, @loca
     out.ft = u32(tm.z);
     out.tau = mt.y;
     out.half_px = half_px;
+    out.ci = mg.z;
     return out;
 }
 
@@ -304,7 +375,8 @@ struct NearPtVOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f, @loca
     let olog = log2(aflux + 1e-30) - log2(ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, in.ft));
     let lum = clamp(olog / 8.0 + 0.5, 0.0, 1.0);
     let hue = fract(log2(max(in.tau, 1.0)) / 16.0);
-    let rgb = hsl_to_rgb(hue, 1.0, lum);
+    let body_rgb = hsl_to_rgb(hue, 1.0, lum);
+    let rgb = select(body_rgb, temperature_to_rgb(in.ci) * lum, in.ft == 0u);
     let noise = fract(sin(dot(in.pos.xy, vec2f(12.9898, 78.233))) * 43758.5453);
     let grain = 0.9 + noise * 0.1;
     return vec4f(rgb * a * grain, a);
@@ -568,7 +640,7 @@ fn tile_cull(@builtin(workgroup_id) wid: vec3u, @builtin(local_invocation_id) li
     let num_tiles_x = u32(ceil(w / f32(TILE_PX)));
     let tile = wid.y * num_tiles_x + wid.x;
     let tbase = tile * TILE_SLOTS;
-    let eps = exp2(-f32(cull_ctl[0]));
+    let eps = exp2(-f32(tile_ctl[0]));
     let x0 = (f32(wid.x * TILE_PX) + 0.5 - w * 0.5) * scale;
     let x1 = (f32(wid.x * TILE_PX + TILE_PX - 1u) + 0.5 - w * 0.5) * scale;
     let y0 = (h * 0.5 - f32(wid.y * TILE_PX + TILE_PX - 1u) - 0.5) * scale;
@@ -605,9 +677,9 @@ fn tile_cull(@builtin(workgroup_id) wid: vec3u, @builtin(local_invocation_id) li
     }
     workgroupBarrier();
     if (tid == 0u) {
-        tile_count[tile] = atomicLoad(&s_count);
+        tile_ctl[2u + tile] = atomicLoad(&s_count);
         if (atomicLoad(&s_overflow) == 1u) {
-            cull_ctl[1] = 1u;
+            tile_ctl[1] = 1u;
         }
     }
 }
@@ -661,7 +733,7 @@ fn source_contrib(j: u32, pixel_rel: vec3f) -> vec2f {
     var omega = array<f32, 9>();
     for (var i = 0u; i < 9u; i = i + 1u) { omega[i] = 0.0; }
 
-    if (cull_ctl[1] != 0u) {
+    if (tile_ctl[1] != 0u) {
         for (var j = 0u; j < count; j = j + 1u) {
             let c = source_contrib(j, pixel_rel);
             let f = u32(c.y);
@@ -670,7 +742,7 @@ fn source_contrib(j: u32, pixel_rel: vec3f) -> vec2f {
     } else {
         let num_tiles_x = u32(ceil(w / f32(TILE_PX)));
         let tile = (u32(in.pos.y) / TILE_PX) * num_tiles_x + (u32(in.pos.x) / TILE_PX);
-        let tcount = tile_count[tile];
+        let tcount = tile_ctl[2u + tile];
         let tbase = tile * TILE_SLOTS;
         for (var k = 0u; k < tcount; k = k + 1u) {
             let c = source_contrib(tile_flat[tbase + k], pixel_rel);
@@ -983,6 +1055,7 @@ struct StarRec {
     flux: f64,
     mag: f64,
     tau: f64,
+    color_index: f64,
 }
 struct StarHash {
     records: Vec<StarRec>,
@@ -1835,6 +1908,7 @@ mod archivar {
         f64,
         f64,
         f64,
+        f64,
     );
 
     fn cell_of(p: [f64; 3], s: f64) -> CellKey {
@@ -2207,6 +2281,7 @@ mod archivar {
                     0.0,
                     0.0,
                     0.0,
+                    0.0,
                 ));
                 if rec.radius_km > 0.0 {
                     records.push((
@@ -2231,13 +2306,14 @@ mod archivar {
                         0.0,
                         0.0,
                         0.0,
+                        0.0,
                     ));
                 }
             }
         }
     }
 
-    const STAR_RECORD_STRIDE: usize = 36;
+    const STAR_RECORD_STRIDE: usize = 40;
 
     fn parse_star_record(b: &[u8]) -> Option<StarRec> {
         if b.len() < STAR_RECORD_STRIDE {
@@ -2250,6 +2326,7 @@ mod archivar {
         let plx = f32::from_le_bytes(b[24..28].try_into().ok()?) as f64;
         let mag = f32::from_le_bytes(b[28..32].try_into().ok()?) as f64;
         let flux = f32::from_le_bytes(b[32..36].try_into().ok()?) as f64;
+        let color = f32::from_le_bytes(b[36..40].try_into().ok()?) as f64;
         if !ra.is_finite() || !dec.is_finite() || !(plx > 0.0) || !mag.is_finite() {
             return None;
         }
@@ -2262,6 +2339,7 @@ mod archivar {
             flux,
             mag,
             tau: 0.0,
+            color_index: if color.is_finite() { color } else { 0.0 },
         })
     }
 
@@ -2445,8 +2523,28 @@ mod archivar {
                     continue;
                 }
                 records.push((
-                    p[0], p[1], p[2], rec.flux, t2, rec.tau, rec.tau, 0.0, 0.0, 0.0, 0.0, 0.0,
-                    v[0], v[1], v[2], 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                    p[0],
+                    p[1],
+                    p[2],
+                    rec.flux,
+                    t2,
+                    rec.tau,
+                    rec.tau,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    v[0],
+                    v[1],
+                    v[2],
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    rec.color_index,
                 ));
             }
         }
@@ -2460,6 +2558,7 @@ mod archivar {
         pad: f64,
         delta_t_cache: f64,
         records: &mut Vec<(
+            f64,
             f64,
             f64,
             f64,
@@ -2529,6 +2628,7 @@ mod archivar {
                 j2,
                 j4,
                 r_eq,
+                0.0,
             ));
         }
         if hash.cells.is_empty() {
@@ -2636,6 +2736,7 @@ mod archivar {
                     j2,
                     j4,
                     r_eq,
+                    0.0,
                 ));
             }
         };
@@ -2666,6 +2767,7 @@ mod archivar {
         pad: f64,
         delta_t_cache: f64,
         records: &mut Vec<(
+            f64,
             f64,
             f64,
             f64,
@@ -2764,7 +2866,7 @@ mod archivar {
         }
     }
 
-    pub fn sense_deep(buf: &Buffer, center: [f64; 3], t2: f64, out: &mut Vec<[f64; 6]>) {
+    pub fn sense_deep(buf: &Buffer, center: [f64; 3], t2: f64, out: &mut Vec<[f64; 7]>) {
         let Some(sh) = &buf.stars else {
             return;
         };
@@ -2778,7 +2880,15 @@ mod archivar {
             if d <= 0.0 {
                 continue;
             }
-            out.push([rel[0] / d, rel[1] / d, rel[2] / d, rec.flux, rec.tau, 0.0]);
+            out.push([
+                rel[0] / d,
+                rel[1] / d,
+                rel[2] / d,
+                rec.flux,
+                rec.tau,
+                0.0,
+                rec.color_index,
+            ]);
         }
     }
 
@@ -12641,17 +12751,18 @@ field temp temp_c\n";
             bin.extend_from_slice(&100f32.to_le_bytes());
             bin.extend_from_slice(&0f32.to_le_bytes());
             bin.extend_from_slice(&1f32.to_le_bytes());
+            bin.extend_from_slice(&1.2f32.to_le_bytes());
             #[cfg(feature = "browser_relay")]
             let hash = build_star_hash(&bin, 0.0, 1.0);
             #[cfg(not(feature = "browser_relay"))]
             let hash = build_star_hash(&bin);
             assert_eq!(hash.records.len(), 1);
             assert!(hash.records[0].tau > 0.0);
+            assert!((hash.records[0].color_index - 1.2).abs() < 1e-4);
             let (p, _) = star_position_at(&hash.records[0], 0.0);
             let d = 10.0 * PARSEC_M;
             assert!((p[0] - d).abs() / d < 1e-9);
-            let mut short = [0u8; 4];
-            short.copy_from_slice(&0f32.to_le_bytes());
+            let short = [0u8; 36];
             assert!(parse_star_record(&short).is_none());
         }
 
@@ -12666,6 +12777,7 @@ field temp temp_c\n";
             bin.extend_from_slice(&100f32.to_le_bytes());
             bin.extend_from_slice(&0f32.to_le_bytes());
             bin.extend_from_slice(&1f32.to_le_bytes());
+            bin.extend_from_slice(&0f32.to_le_bytes());
             let hash = build_star_hash(&bin, 0.0, 1.0);
             assert_eq!(hash.p0.len(), 1);
             let d = 10.0 * PARSEC_M;
@@ -15050,6 +15162,7 @@ mod mathematikerin {
         f64,
         f64,
         f64,
+        f64,
     );
 
     pub struct PackedWindow {
@@ -15224,7 +15337,7 @@ mod mathematikerin {
             meta[f + 7] = r.18 as f32;
             meta[f + 8] = r.19 as f32;
             meta[f + 9] = r.20 as f32;
-            meta[f + 10] = 0.0;
+            meta[f + 10] = r.21 as f32;
             meta[f + 11] = 0.0;
         }
         PackedWindow {
@@ -15234,18 +15347,7 @@ mod mathematikerin {
         }
     }
 
-    pub fn pack_deep_pt(stars: &[[f64; 6]]) -> Vec<f32> {
-        let mut out = Vec::with_capacity(stars.len() * 4);
-        for s in stars {
-            out.push(s[0] as f32);
-            out.push(s[1] as f32);
-            out.push(s[2] as f32);
-            out.push(s[3] as f32);
-        }
-        out
-    }
-
-    pub fn pack_deep_ex(stars: &[[f64; 6]]) -> Vec<f32> {
+    pub fn pack_deep_pt(stars: &[[f64; 7]]) -> Vec<f32> {
         let mut out = Vec::with_capacity(stars.len() * 8);
         for s in stars {
             out.push(s[0] as f32);
@@ -15254,7 +15356,22 @@ mod mathematikerin {
             out.push(s[3] as f32);
             out.push(s[5] as f32);
             out.push(s[4] as f32);
+            out.push(s[6] as f32);
             out.push(0.0);
+        }
+        out
+    }
+
+    pub fn pack_deep_ex(stars: &[[f64; 7]]) -> Vec<f32> {
+        let mut out = Vec::with_capacity(stars.len() * 8);
+        for s in stars {
+            out.push(s[0] as f32);
+            out.push(s[1] as f32);
+            out.push(s[2] as f32);
+            out.push(s[3] as f32);
+            out.push(s[5] as f32);
+            out.push(s[4] as f32);
+            out.push(s[6] as f32);
             out.push(0.0);
         }
         out
@@ -15287,7 +15404,7 @@ mod mathematikerin {
             sum[ft as usize][b] += l;
             n[ft as usize] += 1;
         }
-        for f in deep_pt.chunks_exact(4) {
+        for f in deep_pt.chunks_exact(8) {
             let v = f[3];
             if !v.is_finite() || v == 0.0 {
                 continue;
@@ -15392,7 +15509,7 @@ mod mathematikerin {
     fn occulting_barriers(
         occluders: &[AsteroidRec],
         index: &mut Option<OccIndex>,
-        deep: &[[f64; 6]],
+        deep: &[[f64; 7]],
         center: [f64; 3],
         t: f64,
         barriers: &mut Vec<f32>,
@@ -15549,10 +15666,10 @@ mod mathematikerin {
                     let eph = field.eph.clone();
                     sense_membrane(&field, center, t, pad, cache_interval, &mut records, &eph);
                     let packed = pack_window(&records, center);
-                    let mut deep: Vec<[f64; 6]> = Vec::new();
+                    let mut deep: Vec<[f64; 7]> = Vec::new();
                     sense_deep(&field, center, t, &mut deep);
-                    let mut pt_src: Vec<[f64; 6]> = Vec::new();
-                    let mut ex_src: Vec<[f64; 6]> = Vec::new();
+                    let mut pt_src: Vec<[f64; 7]> = Vec::new();
+                    let mut ex_src: Vec<[f64; 7]> = Vec::new();
                     for s in &deep {
                         if s[5] / grid_step < 1.0 {
                             pt_src.push(*s);
@@ -15826,8 +15943,7 @@ mod mathematikerin {
         prep_buf: Option<wgpu::Buffer>,
         param_buf: Option<wgpu::Buffer>,
         tile_flat_buf: Option<wgpu::Buffer>,
-        tile_count_buf: Option<wgpu::Buffer>,
-        cull_ctl_buf: Option<wgpu::Buffer>,
+        tile_ctl_buf: Option<wgpu::Buffer>,
         field_cap: u32,
         tile_cap: u32,
         cull_n: u32,
@@ -15970,8 +16086,7 @@ mod mathematikerin {
                 prep_buf: None,
                 param_buf: None,
                 tile_flat_buf: None,
-                tile_count_buf: None,
-                cull_ctl_buf: None,
+                tile_ctl_buf: None,
                 field_cap: 0,
                 tile_cap: 0,
                 cull_n: 23,
@@ -16474,15 +16589,9 @@ mod mathematikerin {
                 usage: wgpu::BufferUsages::STORAGE,
                 mapped_at_creation: false,
             }));
-            self.tile_count_buf = Some(device.create_buffer(&wgpu::BufferDescriptor {
+            self.tile_ctl_buf = Some(device.create_buffer(&wgpu::BufferDescriptor {
                 label: None,
-                size: num_tiles as u64 * 4,
-                usage: wgpu::BufferUsages::STORAGE,
-                mapped_at_creation: false,
-            }));
-            self.cull_ctl_buf = Some(device.create_buffer(&wgpu::BufferDescriptor {
-                label: None,
-                size: 8,
+                size: (2 + num_tiles as u64) * 4,
                 usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
                 mapped_at_creation: false,
             }));
@@ -16517,10 +16626,7 @@ mod mathematikerin {
             let Some(tile_flat_buf) = self.tile_flat_buf.clone() else {
                 return;
             };
-            let Some(tile_count_buf) = self.tile_count_buf.clone() else {
-                return;
-            };
-            let Some(cull_ctl_buf) = self.cull_ctl_buf.clone() else {
+            let Some(tile_ctl_buf) = self.tile_ctl_buf.clone() else {
                 return;
             };
             for sel in 0..2 {
@@ -16569,11 +16675,7 @@ mod mathematikerin {
                             },
                             wgpu::BindGroupEntry {
                                 binding: 8,
-                                resource: tile_count_buf.as_entire_binding(),
-                            },
-                            wgpu::BindGroupEntry {
-                                binding: 9,
-                                resource: cull_ctl_buf.as_entire_binding(),
+                                resource: tile_ctl_buf.as_entire_binding(),
                             },
                         ],
                     }));
@@ -16612,11 +16714,7 @@ mod mathematikerin {
                             },
                             wgpu::BindGroupEntry {
                                 binding: 8,
-                                resource: tile_count_buf.as_entire_binding(),
-                            },
-                            wgpu::BindGroupEntry {
-                                binding: 9,
-                                resource: cull_ctl_buf.as_entire_binding(),
+                                resource: tile_ctl_buf.as_entire_binding(),
                             },
                         ],
                     }));
@@ -16809,7 +16907,7 @@ mod mathematikerin {
             if let Some(bb) = &self.barriers_buf {
                 queue.write_buffer(bb, 0, &le_bytes_f32(&self.packed_barriers));
             }
-            if let Some(cc) = &self.cull_ctl_buf {
+            if let Some(cc) = &self.tile_ctl_buf {
                 let mut cc_bytes = [0u8; 8];
                 cc_bytes[0..4].copy_from_slice(&self.cull_n.to_le_bytes());
                 queue.write_buffer(cc, 0, &cc_bytes);
@@ -17078,11 +17176,6 @@ mod mathematikerin {
                         e.binding = 8;
                         e
                     },
-                    {
-                        let mut e = storage_entry(false, wgpu::ShaderStages::COMPUTE);
-                        e.binding = 9;
-                        e
-                    },
                 ],
             });
             let render_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
@@ -17131,11 +17224,6 @@ mod mathematikerin {
                     {
                         let mut e = storage_entry(false, wgpu::ShaderStages::VERTEX_FRAGMENT);
                         e.binding = 8;
-                        e
-                    },
-                    {
-                        let mut e = storage_entry(false, wgpu::ShaderStages::VERTEX_FRAGMENT);
-                        e.binding = 9;
                         e
                     },
                 ],
@@ -17728,7 +17816,7 @@ mod mathematikerin {
                 self.packed_gen = generation;
                 self.last_response_epoch = t;
                 self.packed_deep_pt = pt;
-                self.deep_pt_count = (self.packed_deep_pt.len() / 4) as u32;
+                self.deep_pt_count = (self.packed_deep_pt.len() / 8) as u32;
                 self.packed_deep_ex = ex;
                 self.deep_ex_count = (self.packed_deep_ex.len() / 8) as u32;
                 self.deep_dirty = true;
@@ -18256,7 +18344,7 @@ mod mathematikerin {
             let r: Record = (
                 7001.0, 7002.0, 7003.0, 7004.0, 7005.0, 7006.0, 7007.0, 7008.0, 7009.0, 7010.0,
                 7011.0, 7012.0, 7013.0, 7014.0, 7015.0, 7016.0, 7017.0, 7018.0, 7019.0, 7020.0,
-                7021.0,
+                7021.0, 7022.0,
             );
             let packed = pack_window(&[r], presence);
             assert_eq!(packed.count, 1);
@@ -18284,31 +18372,39 @@ mod mathematikerin {
             assert_eq!(m[7], 7019.0);
             assert_eq!(m[8], 7020.0);
             assert_eq!(m[9], 7021.0);
-            assert_eq!(m[10], 0.0);
+            assert_eq!(m[10], 7022.0);
             assert_eq!(m[11], 0.0);
         }
 
         #[test]
         fn pack_deep_directions() {
-            let deep: [[f64; 6]; 2] = [
-                [6001.0, 7002.0, 8003.0, 42.5, 2.72e10, 0.0],
-                [-999.0, 4002.0, 1003.0, -7.25, 86400.0, 0.0],
+            let deep: [[f64; 7]; 2] = [
+                [6001.0, 7002.0, 8003.0, 42.5, 2.72e10, 0.0, 1.4],
+                [-999.0, 4002.0, 1003.0, -7.25, 86400.0, 0.0, 2.6],
             ];
             let pt = pack_deep_pt(&deep);
-            assert_eq!(pt.len(), 8);
+            assert_eq!(pt.len(), 16);
             assert_eq!(pt[0], 6001.0);
             assert_eq!(pt[1], 7002.0);
             assert_eq!(pt[2], 8003.0);
             assert_eq!(pt[3], 42.5);
-            assert_eq!(pt[4], -999.0);
-            assert_eq!(pt[5], 4002.0);
-            assert_eq!(pt[6], 1003.0);
-            assert_eq!(pt[7], -7.25);
+            assert_eq!(pt[4], 0.0);
+            assert_eq!(pt[5], 2.72e10);
+            assert_eq!(pt[6], 1.4);
+            assert_eq!(pt[7], 0.0);
+            assert_eq!(pt[8], -999.0);
+            assert_eq!(pt[9], 4002.0);
+            assert_eq!(pt[10], 1003.0);
+            assert_eq!(pt[11], -7.25);
+            assert_eq!(pt[13], 86400.0);
+            assert_eq!(pt[14], 2.6);
             let ex = pack_deep_ex(&deep);
             assert_eq!(ex.len(), 16);
             assert_eq!(ex[4], 0.0);
             assert_eq!(ex[5], 2.72e10);
+            assert_eq!(ex[6], 1.4);
             assert_eq!(ex[13], 86400.0);
+            assert_eq!(ex[14], 2.6);
         }
 
         #[test]
@@ -18323,7 +18419,7 @@ mod mathematikerin {
             let meds = force_ref_medians(
                 &field,
                 &[0.0; 48],
-                &[0.0, 0.0, 0.0, 4.0],
+                &[0.0, 0.0, 0.0, 4.0, 0.0, 0.0, 0.0, 0.0],
                 &[0.0, 0.0, 0.0, 4.0, 0.0, 0.0, 0.0, 0.0],
             );
             assert_eq!(meds[0].unwrap(), 4.0);
@@ -19218,6 +19314,7 @@ mod relay {
                     f64,
                     f64,
                     f64,
+                    f64,
                 )> = Vec::new();
                 let response_epoch;
                 if !queries.is_empty() {
@@ -19244,9 +19341,9 @@ mod relay {
                     response_epoch = now;
                 }
 
-                let mut out = Vec::with_capacity(19 + records.len() * 168);
+                let mut out = Vec::with_capacity(19 + records.len() * 176);
                 out.extend_from_slice(&[0xCF, 0x86]);
-                out.push(6u8);
+                out.push(7u8);
                 out.extend_from_slice(&response_epoch.to_le_bytes());
                 out.extend_from_slice(&id.to_le_bytes());
                 out.extend_from_slice(&(records.len() as u32).to_le_bytes());
@@ -19272,6 +19369,7 @@ mod relay {
                     j2,
                     j4,
                     r_eq,
+                    color_index,
                 ) in &records
                 {
                     out.extend_from_slice(&x.to_le_bytes());
@@ -19295,6 +19393,7 @@ mod relay {
                     out.extend_from_slice(&j2.to_le_bytes());
                     out.extend_from_slice(&j4.to_le_bytes());
                     out.extend_from_slice(&r_eq.to_le_bytes());
+                    out.extend_from_slice(&color_index.to_le_bytes());
                 }
                 write_ws_binary(&mut stream, &out);
             }
