@@ -99,8 +99,10 @@ Stand: 1485 Commits, 341 getrackte Dateien, Branch main.
 ## Offene Urteile (der Operator entscheidet)
 
 1. FOUNDATION.txt — vollzogen 2026-08-19: entfernt (Git trägt die Historie).
-2. docs/AUFTRAG-crossmatch.md: Vollzug prüfen, dann tilgen.
-3. docs/plans/ (5 alte Pläne): Archiv oder Löschung; AUTH_APIS.md bleibt.
+2. docs/AUFTRAG-crossmatch.md — vollzogen 2026-08-19: die Crossmatch-Welle
+   war längst geschlossen (git), Datei ins Archiv (docs_erledigt_2026-08-19).
+3. docs/plans/ (5 alte Pläne) — vollzogen 2026-08-19: K03/K05×2/dual_mode/
+   agnostic_membrane ins Archiv; AUTH_APIS.md bleibt live.
 4. interesting_domains.φ: weiterpflegen oder als abgeleiteten Stand
    einfrieren und Verweis auf die zwei Mutter-Register setzen.
 5. Branches: 7 lokale Branches auf Rollen prüfen, wgpu-mono-hud und
