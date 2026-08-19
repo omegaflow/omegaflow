@@ -81,10 +81,16 @@ Schnittmenge leer, im Protokoll fehlt.
 - Membran-scoped Cache statt Blockuniversum (2026-08-17): der Archivar lädt
   flache Katalog-Assets komplett in den Spatial Hash — das ganze Feld im
   Speicher. Die Membran braucht nur die Hülle um die Presence (dilatierter
-  Suchradius). Richtung: räumlich gebinnte Assets (HEALPix), der Archivar
-  holt nur die Bins, die die Hülle überlappen. Kein NASA-Denken — nur was
-  die Membran benötigt. Deckt auch: tess_lightcurves.bin ~500 MB (alle
-  bestätigten Transit-Wirte, SPOC-2-min) lädt heute ganz.
+  Suchradius). Korrektur 2026-08-20 (Prüf-Rolle gegen LOST_CONCEPTS §9 +
+  ERAEN): „HEALPix"-Tiling war Drift — Geospatial-Tiles wurden entfernt
+  („No meshes. No grids. Every raw point makes us truer"), ersetzt durch das
+  Enclosure Lemma. Die Wahrheit ist der 3D-Spatial-Hash `(i64,i64,i64)` des
+  Lemma selbst (Kimi K3, ERAEN §63): Fang = Chunking entlang DIESER Zellen,
+  keine 2D-Himmelsprojektion, kein neuer Raster. Der verlorene Pendant ist
+  §12 Causality-Prefilter (Signal-Lichtkegel: dist ≤ v_force·age, diffusiv
+  √(2·D·age), age > τ·64 verworfen) — das Lemma dilatiert heute nur mit
+  Bewegung, nicht mit Signal (AUSSTEHEND). Deckt auch: tess_lightcurves.bin
+  ~500 MB lädt heute ganz.
 - Lokaler Crossmatch zweier Quellen (pending, 2026-08-18): Lasair
   (ZTF-Transienten, live, em) trägt kein z in `objects` → die Objekte
   liegen auf der Himmelssphäre (0 honored). Die TNS-Tabelle
