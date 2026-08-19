@@ -8,6 +8,12 @@ und dass die eigenen Register den Beweis tragen. Dieses Dokument fasst
 die Wahrheit, die Diagnose und die Atome. Es gilt, bis die Atome als
 Code existieren; danach trägt Git sie.
 
+Stand 2026-08-19: Atom A (Protokoll v8, freq/bin_width) und Atom B
+(spectral_compiler → spectra.bin, format spectral, SpectralHash) sind
+Code — dieses Dokument trägt nur noch die offenen Atome (C:
+band-selektives Rendering) und die pending Ernte (NCEI-SSI
+netCDF-4/HDF5 → CSV).
+
 ## I. Der Einspruch
 
 Ein Oszillator IST eine Frequenz. Das System nannte seine Atome
