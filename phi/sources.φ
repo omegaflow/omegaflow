@@ -1151,6 +1151,15 @@ dec dec
 z z
 field flux bzcat5_radio_flux_mjy gaussian-inverse-square em mJy 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/chandra_csc.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+z z
+field flux chandra_csc_flux_ergcm2 gaussian-inverse-square em erg/cm2 604800 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/cbdata.json
 ttl 604800
 at sun

@@ -422,6 +422,21 @@ jobs:
                  --title "flatten: merlin returned void" \
                  --body "merlin compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
                  --label health
+      - name: Compile Chandra CSC 2.1 X-ray catalog and upload to CDN
+        continue-on-error: true
+        run: |
+          cargo run --release --bin tap_compiler -- \
+            --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
+            --table "IX/70/csc21mas" \
+            --columns 'name:2CXO;ra:RAICRS;dec:DEICRS;z:z;flux:Fluxb' \
+            --skip-null flux \
+            --async 600 --limit 500000 \
+            --out chandra_csc.json \
+            --ci-mode \
+            || gh issue create --repo omegaflow/omegaflow \
+                 --title "flatten: chandra_csc returned void" \
+                 --body "chandra_csc compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 --label health
       - name: Compile PANGAEA sediment core 758961 and upload to CDN
         continue-on-error: true
         run: |
