@@ -1,4 +1,4 @@
-# phi/interesting_domains.φ — lebensfähige Kandidaten (nicht declined)
+# phi/pipeline/interesting_domains.φ — lebensfähige Kandidaten (nicht declined)
 # Aus phi/blocked_sources.φ (alle key-needed/parser-def) + phi/dead_sources.φ (nur Recheck-Potenzial).
 # Stand 2026-08-17. declined / integrated / grind-routed / junk / Host-Tote ausgeschlossen.
 # Eingefroren 2026-08-19: abgeleiteter Stand, kein Code-Leser — die Mutter-Register sind

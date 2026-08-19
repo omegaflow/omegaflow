@@ -51,5 +51,5 @@ Arbeitsfläche des Source-Ports (Register/Agent, kein Code-Leser): ledger.φ
 (Zustands-Register), index.φ, prompt.φ (Port-Vorlage), queue/grind_*.φ (Drafts),
 park/ (geparkt), stage/*_converted.φ (Konvertierungs-Ausgänge).
 
-Eingefroren: `interesting_domains.φ` — abgeleiteter Kandidaten-Pool (Stand
+Eingefroren: `pipeline/interesting_domains.φ` — abgeleiteter Kandidaten-Pool (Stand
 2026-08-17) aus blocked_sources.φ + dead_sources.φ; kein Code-Leser.

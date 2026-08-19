@@ -139,7 +139,7 @@ deren Lizenz/ToS Redistribution erlauben (Public Domain, CC0, CC-BY, OGL/NLOD).
 Kommerzielle/proprietäre APIs und solche mit Redistributionsverbot sind entfernt.
 Das Urteil ist im Register vollzogen: die 19 Hosts stehen in
 `phi/blocked_sources.φ` als `decline redistribution` / `decline no-physical-force`
-(mit Verdikt-Note, Stand 2026-08-17) und in `phi/interesting_domains.φ` §5.
+(mit Verdikt-Note, Stand 2026-08-17) und in `phi/pipeline/interesting_domains.φ` §5.
 
 | Host | Secret (Stub) | Auth | Lizenz | Registrierung |
 |---|---|---|---|---|

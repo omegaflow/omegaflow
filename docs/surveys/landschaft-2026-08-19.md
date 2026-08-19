@@ -103,8 +103,8 @@ Stand: 1485 Commits, 341 getrackte Dateien, Branch main.
    war längst geschlossen (git), Datei ins Archiv (docs_erledigt_2026-08-19).
 3. docs/plans/ (5 alte Pläne) — vollzogen 2026-08-19: K03/K05×2/dual_mode/
    agnostic_membrane ins Archiv; AUTH_APIS.md bleibt live.
-4. interesting_domains.φ: weiterpflegen oder als abgeleiteten Stand
-   einfrieren und Verweis auf die zwei Mutter-Register setzen.
+4. interesting_domains.φ — vollzogen 2026-08-19: eingefroren, nach
+   phi/pipeline/ verschoben (kein Code-Leser).
 5. Branches: 7 lokale Branches auf Rollen prüfen, wgpu-mono-hud und
    main-browser vermutlich schließen.
 6. Große Blobs: die weights_*.txt sind lebende Probe-Daten (source_scanner
