@@ -8,6 +8,60 @@ Drift-Stellen sind unter „Doku-Drift" registriert.
 (Prüf-Rolle 2026-08-19: die ganze Datei wurde gegen den Code gelesen — Erledigtes
 ist entfernt, die offenen Reste aus den geschlossenen Atomen sind hierher gezogen.)
 
+## Nadel Ⅲ — Coronal Heating (TE-Messprotokoll)
+
+Plan: `docs/surveys/handover-nadel3-plan.md` (selbsttragend, 2026-08-19).
+Atom 1 (Extraktion) ERLEDIGT (2026-08-19): Archivar-Kern nach lib
+(`omegaflow::archivar` — Grammatik, Fetch, Extrakt-Maschine, SI, Typen,
+Konstanten, Ephemeriden-Auswertung + `impl Motion` — die Kette wanderte mit,
+weil der impl die Auswertung braucht; benannte Abweichung vom
+Handover-Wortlaut „Ephemeriden-Auswertung bleibt"), `extract_series`
+(Reihen-Ernte), TE nach lib (`omegaflow::te` + `transfer_entropy_lag`,
+lag 0 = kanonisch; mathematikerin ruft die lib), sfu-Konversion
+(1e-22 W m⁻² Hz⁻¹) + HAPI-Parameter-Ordnung (Info-Ordnung) — beide
+Bestandsfehler behoben. `test_live_sources_extract` bleibt im bin (nutzt
+fetch_one/load_env/diagnose — der ganze Pipeline-Pfad; benannte Abweichung).
+Der main.rs-Schnitt ist strikt Streichung + Importzeilen (Zeilen-Mengen-Differenz
+gegen HEAD verifiziert). `#![allow(mixed_script_confusables)]` jetzt auch in
+lib.rs (spiegelt main.rs Zeile 1 — die griechischen Identitäten wanderten mit).
+Atom 2 (Probe `nobel_probe_corona`): Instrument gebaut, erster Testlauf
+gefahren, Kalibrierungslücke identifiziert — **Ansatz demonstriert,
+Urteil vorläufig.** Die Pipeline liefert eine durchlaufende
+TE-Kausalitätsanalyse über vier Matrizen (Bz→EUV, EUV↔X-Ray,
+Radio→GOES, Dichte→GOES als Nullkontrolle). Der erste Lauf zeigt
+Muster, die mit einem Alfvén-getriebenen Heizkanal kompatibel wären
+(Bz→304 und 304→284 signifikant; EUV→X-Ray überwiegt bei ausgewiesenen
+Surrogat-σ) — aber die Nullkontrolle (Dichte-RTSW → GOES) ist
+ebenfalls signifikant: die Signifikanzmethodik selbst steht unter
+Verdacht. Das Muster ist ein Kandidat, kein Befund. Offen vor jeder
+physikalischen Aussage:
+- Surrogatverfahren: die naiven Fisher-Yates-Shuffles brechen die
+  Autokorrelation nicht — phasenrandomisierte Surrogate oder
+  Block-Bootstrap in `src/te.rs` bauen und gegen die Nullkontrolle
+  testen, bis sie hält oder der Bruch erklärt ist (z. B. echter,
+  uninteressanter Kopplungspfad Dichte→GOES);
+- Fenster-Kongruenz: alle Matrizen auf demselben Zeitfenster (die
+  Sekunden-Kontrolle lief auf dem ~2-d-Fenster; die OMNI↔GOES-
+  Schnittmenge bleibt leer — stopDate 06.08.);
+- Mehrfachvergleichskorrektur über die vier Matrizen und alle
+  Kanalpaare (bei ungeschützter Schwelle ist mindestens ein
+  falsch-positiver Treffer fast garantiert — die Nullkontrolle könnte
+  genau das sein);
+- Lag-Wahl: lag 0 ist Default, kein Sweep — die Robustheit des
+  Optimums ist ungeprüft;
+- KDE-Bandbreite: Silverman-Heuristik, Sensitivität der
+  Signifikanzurteile gegen h ungeprüft.
+Kurations-Befunde des Laufs: NGDC-NetCDF (GOES-30d) trägt 404 →
+fehlt-Registratur, kein Block; `1/cm3`-Alias in convert_to_si + em-Liste
+ergänzt (Dichte-RTSW erntet seitdem); die HAPI-Reihen laufen über die
+Identitäts-LSK (Unix rein, Unix raus); Radio ↔ GOES trägt keine Aussage
+(n = 15, n-Schwelle 30); Laufzeit gemessen ≈ 80–90 min — vor dem
+nächsten Lauf (mit korrigierter Methodik) die O(n²) × Surrogate-Kosten
+gegenrechnen.
+GOES-30d-Archiv-Block bleibt pending (kein lebender Kandidat);
+bis dahin trennt der OMNI-Ingest-Verzug (stopDate 06.08.) OMNI↔GOES —
+Schnittmenge leer, im Protokoll fehlt.
+
 ## Archivar — Architektur
 
 - Membran-scoped Cache statt Blockuniversum (2026-08-17): der Archivar lädt

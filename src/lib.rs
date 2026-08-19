@@ -1,3 +1,5 @@
+#![allow(mixed_script_confusables)]
+pub mod archivar;
 pub mod bpc;
 pub mod bsp_reader;
 pub mod cdn;
@@ -15,3 +17,4 @@ pub mod netcdf;
 pub mod pck;
 pub mod sexagesimal;
 pub mod spectral;
+pub mod te;

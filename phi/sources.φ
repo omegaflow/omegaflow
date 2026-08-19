@@ -500,7 +500,7 @@ dec declination
 z redshift
 field discoverymag tns_transient_flux inverse-square em mag 3600 0.0 0.0
 
-url https://cdaweb.gsfc.nasa.gov/hapi/data?id=OMNI2_H0_MRG1HR&time.min={week_ago}T00:00:00Z&time.max={now}Z&parameters=V1800,N1800,T1800,BX_GSE1800,BY_GSM1800,BZ_GSM1800,E1800,Pressure1800&format=json
+url https://cdaweb.gsfc.nasa.gov/hapi/data?id=OMNI2_H0_MRG1HR&time.min={week_ago}T00:00:00Z&time.max={now}Z&parameters=BX_GSE1800,BY_GSM1800,BZ_GSM1800,T1800,N1800,V1800,Pressure1800,E1800&format=json
 ttl 3600
 at sun
 hapi V1800=omni_solarwind_flow_speed_kms N1800=omni_solarwind_density_percc T1800=omni_solarwind_temp_k BX_GSE1800=omni_imf_bx_gse_nt BY_GSM1800=omni_imf_by_gsm_nt BZ_GSM1800=omni_imf_bz_gsm_nt E1800=omni_solarwind_electric_field_mvm Pressure1800=omni_solarwind_pressure_npa
