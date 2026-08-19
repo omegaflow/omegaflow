@@ -28,6 +28,19 @@ Bindings derived from the physics of the system. Council, 2026-08-17 (truth-find
 - Where the data exist and remain unsearched, unfetched, unbuilt, or unverified, the zero is not a truth: it is `pending`, `open`, `unimplemented`, `unverified`, `refused` — a registration duty, not a badge.
 - The absence speaks louder than a fabricated point. 0 honored began as drift away from the training data: away from fabrication, defaults, and the fear of zero and NaN — never as an excuse for the search that never happened.
 
+### The 0-Kanon
+
+Three reasons for "no value" are fundamentally different and never collapse:
+
+- **null-echt** — the measurement IS zero (0 °C, v = 0): the value flows as 0.0.
+- **fehlt** — the source does not carry the value: Option/None/skip, never a fabricated 0.0.
+- **pending** — the value exists, the harvest is missing: a register duty (TODO/ledger), never a data value.
+
+Every value answers four gates:
+(a) Is it a value? (b) Is it a plausible value? (c) Are format and unit correct (SI)? (d) Is a value mandatory? — fehlt + mandatory → record skipped.
+
+IEEE rules: plausibility is a positive test — `v.is_finite() && v > 0.0` → Some, else None. NaN slips through negative tests; Inf is not NaN; after every division/exp/sqrt the result is checked. NaN is never a data marker (Option instead); a 0-sentinel for absent is allowed only where 0 is physically impossible (parallax, distance). No `unwrap_or(0.0)` for physical values. The fixed-stride wire (22 × f64) carries 0.0 as pad — the truth lives at the write/read sites: what is absent is never written as 0.0 where 0 is a real value (color_index, pole_x/z, j2).
+
 ### All beings equal
 
 - Every body, every source, every star is a peer.

@@ -679,6 +679,73 @@ Befund.
 5. GPU-Workarounds: ANV-Unroll-Entscheidung, exp2(-20), point_blend-
    Fossil, Probe-Sternpfad an star_cull koppeln (B/C).
 
+## Titan-Archäologie — die 0-Kanon-Linie (2026-08-19, konsolidiert)
+
+Die Rats-Urteile binden; die Atom-Kette ist die Ausführungs-Linie
+(eine Hand in main.rs, ein Atom pro Session, kontextabhängig verteilt,
+strikt sequenziell — keine Parallel-Schreiber). Die Phasen 2/4 der
+Parallel-Session sind in S1/S2 aufgegangen (gestrichen). Fundorte mit
+Zeile = Stand 2026-08-19.
+
+### Rats-Urteile (bindend, Council 2026-08-19)
+
+1. Ephemeris-Format v3: Präsenz-Maske (u16, ein Bit pro Größe,
+   8-Byte-aligned) nach den 12 f64 der stype-1-Sektion; Versions-Byte
+   0x01→0x02; `neutral()` (pck.rs 76-81) und `measured()` (main.rs
+   1545-1551) entfallen; Loader liest v2 und v3 (CI-Reihenfolge: erst
+   pushen, dann CDN-Rekompilat). Der absent-Slot bleibt Pad — gelesen
+   wird das Bit, nie das Pad als Messung.
+2. `exp2(-20)` entfällt (WGSL source_contrib, main.rs ~563): `ft_ref`
+   trägt die Skala je Kraft — Auge und Ohr messen dasselbe Feld. Ein
+   künftiger Gravitations-Regler ist Operator-Blick NACH der
+   Normalisierung (HUD + Regler), nie ein Multiplikator im Mess-Pfad.
+
+### Die Atom-Kette (sequenziell; jedes Atom: cargo check 0/0 + Testlauf + Commit + TODO-Häkchen)
+
+| # | Atom | Inhalt |
+|---|---|---|
+| 1 | S0 — Finite-Welle | `finite_positive`-Helfer (analog `measured()`); alle `is_nan()`-Daten-Gates → `is_finite()` (main.rs 7674, 7787, 7879, 7980, 8055, 8179, 8278, 8458, 8715, 8804, 8825-8828, 9262, 9293, 9301); negative Plausibilitäts-Gates positiv (kepler/ephemeris `r <= 0.0`); Ergebnis-Checks an Divisionsstellen (tycho2 544, tap 547); JS-Defaults (constants.js 20/36/80, index.html 680, 256-260) |
+| 2 | S1 — Haupt-Adern | Celestial-Shell → Titan-Skip + Tests auf Wahrheit + ledger.φ:151 korrigieren; pm/rv/zval-Fold 8374-8408 → Option; TGAS-rv-Gate (tycho2 185, 480-486) + TODO 174-176 berichtigen; bp_rp-Kette (tap 550-553, 1406 — union-bright zerstört kein `null` mehr; emit_rows pm 606/610); WGSL-Kernel-Zweige 1/6 (main.rs WGSL + index.html shader 314-336); Pangaea lat/lon (57-58); GeojsonEvents mag/ed-Gates (8502-8539); EOP-Finals (8886-8890) + Alerce (9143-9151) + dcom5 H/M1 → null (187-193) |
+| 3 | S2 — Form/Sensor/TTL | flattening/rb_scale → Option (1594-1597, 1780, 1771-1773, 1859-1862); alt ×4 (11845, 5468, 7558, 7279) → Option/refuse; Sensor-τ zurück ans Gate (`effective_tau = bs.ttl` raus: 12211, 20826, 20879, 11679); port_field_synth refuse ohne τ (6818-6826) + 5/6-token-Waisen (5896-5960, 6253); probe_ttl 86400 weglassen (11091) + Draft 4-Token → 9-Token (10344); props.gm → Option (17624); Nutation zwei Fälle trennen (1530); fk.rs center/class → Option/refuse (120-130); netCDF-Fill-Maske lat/lon/juld (8804); tic NaN/negativ-plx + tmag-Bereich; tess-Zwei-Enden-Vertrag; horizons GM (161-164) |
+| 4 | P1 — Lade-Pfad | F-A Punkt 1: Bootstrap einziger priorisierter Lader + Wächter; In-Loop-Fallback raus; origins-Stempel nach Erfolg + last_attempt (10 Sites 12267-12735); curl-Status sichtbar (4935); drei curl-Ketten → ein Builder |
+| 5 | S3 — Stille Fehlschläge + Konsens | upload_asset-Prüfungen (tycho2 501/788, tap 1446/1551, tess 580 inline in S1/S2; cometels 421 + pangaea 243 disjunkt); WS-Writes sichtbar (21159-21178, 21027, 20417-20422, 20344/20381); Consent-Bypass Browser (20862/20921 → Consent-Gate); exp2(-20) raus (Rats-Urteil 2); bp_rp_to_teff 31-Punkte (134-155); point_blend-Fossil (18320, 18825, 19633, 18010, Uniform 26) |
+| 6 | P3 — Dedup | ci_upload → cdn::upload_asset (5237); CDN-Base zentral (5036/5045/10599/10935/15288); 7 JSON-Parser → lib; Chebyshev → lib (ephemeris 85-160, horizons 8-100); Julian-Datum → lib (lsk 124, mpcobs 43, cometels 197-216, ephemeris 638, main 12899/5215/3156-3169/8807/8882, bpc 120, tess 389); Rotations-Matrix 2× |
+| 7 | P5 — GPU | Probe-Sternpfad konsumiert star_cull-Kacheln statt O(N)-Eigenschleife (WGSL 383-403) |
+| 8 | S4 — Ephemeris v3 | Rats-Urteil 1: Präsenz-Maske + Versions-Byte; neutral/measured entfallen; Loader liest v2+v3; Wire-Doku in AGENTS.md |
+
+### 0-Kanon-Ergänzungen zu A-F (Fundorte aus den 7 Audits, nicht in A-F)
+
+- WGSL-Kernel-Zweige: kernel_id 1 (gaussian-inverse-square) hat keinen
+  Zweig, kernel_id 6 (inverse-linear) rendert inverse-square — 118
+  Felder in sources.φ betroffen (S1).
+- GeojsonEvents: mag/ed-Seeds 0.0 — Feature ohne Magnitude emittiert
+  0.0-Mw → ~1.26e9 J erfundene Energie (live, sources.φ:48 min_mag 0.0) (S1).
+- EOP-Finals lat/lon/alt = 0,0,0 (globales Skalar an Erde gepinnt);
+  Alerce-Transienten auf 1-m-Sphäre (S1).
+- dcom5 H/M1 roh geschrieben vs. cometels `"H":null` — dieselbe Größe,
+  zwei Doktrinen (S1).
+- Pangaea lat/lon 0,0 → Golf von Guinea als Messwert (S1).
+- tycho2-Bin: color-Slot hart 0f32 (343); tgas rv=0.0 (185) — TODO
+  174-176 behauptet „Vollzogen", der Code lügt das Register an (S1).
+- Sensor-τ-Bypass: `effective_tau = bs.ttl` (12211/20826/20879) — die
+  τ-Gate (9190) greift nie für Sensoren (S2).
+- fk.rs center=0 = SSB (realer NAIF-Körper) bei unlesbarem CENTER (S2).
+- pck::neutral ↔ measured(): 0.0-Sentinel kollidiert mit pole_ra=0° /
+  j2=0 — gelöst durch die v3-Maske (S4).
+- WGSL ft_ref_floor max(…, 1e-30): Kraft ohne Fenster-Daten explodiert
+  statt zu schweigen; fold_eff max(ttl, 1e-9): τ=0 manifestiert doch
+  (S0/S3 mitnehmen).
+- nutation unwrap_or((0,0,0)): „kein Modell" und „Lücke" gleichgenullt (S2).
+- kernel_id_for_force(0).unwrap_or(0) (17306): schlafende 0-Fabrikation (S0/S3).
+
+### Sauber befunden (nicht erneut auditieren, nicht anfassen)
+
+τ-Gate (9190), Force-Gate (5268), SI-Gate (9321), parse_star_record
+plx>0-Gate, DASTCOM accel/speed-Gates (2093/2226), cometels H=null,
+Harvester-Skip-Muster, netcdf _FillValue für Werte (8825-8828),
+22×f64-Serialisierung v7, GPU-Buffer-Merge 8 Bindings, chunk-bands,
+44-Byte-Gate, pending_channels-Queue — Bestand der Parallel-Session.
+
 ## Parser & Spec (P02–P09)
 
 ## Infrastruktur (I01–I03)
