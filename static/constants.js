@@ -17,7 +17,7 @@ export function getRto() {
 export async function syncFrame(inputs, queries, presence) {
     inputs = inputs || [];
     queries = queries || [];
-    const emptyResp = { field: new Float32Array(0), meta: new Float32Array(0), count: 0, response_epoch: 0 };
+    const emptyResp = { field: new Float32Array(0), meta: new Float32Array(0), count: 0, response_epoch: null };
     if (inputs.length === 0 && queries.length === 0) return emptyResp;
 
     let inputBytes = 0;
@@ -33,7 +33,7 @@ export async function syncFrame(inputs, queries, presence) {
         const nameBytes = new TextEncoder().encode(inp.name);
         dv.setUint8(off, nameBytes.length); off += 1;
         new Uint8Array(buf, off, nameBytes.length).set(nameBytes); off += nameBytes.length;
-        dv.setFloat64(off, inp.tau || 0, true); off += 8;
+        dv.setFloat64(off, inp.tau > 0 ? inp.tau : 0, true); off += 8;
     }
     dv.setUint32(off, queries.length, true); off += 4;
     for (const q of queries) {
@@ -77,7 +77,7 @@ export async function syncFrame(inputs, queries, presence) {
     const meta = new Float32Array(oscCount * 12);
 
     for (let i = 0; i < oscCount; i++) {
-        if (o + 176 > bytes.length) break;
+        if (o + 176 > bytes.length) throw new Error('protocol mismatch: truncated frame');
         const x = dvRes.getFloat64(o, true); o += 8;
         const y = dvRes.getFloat64(o, true); o += 8;
         const z = dvRes.getFloat64(o, true); o += 8;

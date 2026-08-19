@@ -259,7 +259,7 @@ fn load_hip(path: &str) -> Option<HashMap<i32, (f64, f64)>> {
             continue;
         };
         let plx = num(b, 80, 86).unwrap_or(0.0);
-        if plx <= 0.0 {
+        if !plx.is_finite() || plx <= 0.0 {
             continue;
         }
         let Some(vmag) = num(b, 42, 46) else {

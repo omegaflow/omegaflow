@@ -4,7 +4,7 @@ const OBLIQUITY_DEG: f64 = 23.4392911;
 const TAU: f64 = 2.0 * std::f64::consts::PI;
 
 pub fn solve_kepler_ecc(mean_anomaly_rad: f64, e: f64) -> f64 {
-    if e <= 0.0 {
+    if !e.is_finite() || e <= 0.0 {
         return mean_anomaly_rad;
     }
     let m = mean_anomaly_rad.rem_euclid(TAU);

@@ -187,7 +187,7 @@ pub fn state_at(rec: &AsteroidRec, t_jd: f64) -> Option<([f64; 3], [f64; 3])> {
 pub fn speed_at_epoch(rec: &AsteroidRec) -> Option<f64> {
     let ecc = solve_kepler_ecc(rec.ma_deg.to_radians(), rec.e);
     let r_m = rec.a_au * AU_M * (1.0 - rec.e * ecc.cos());
-    if r_m <= 0.0 {
+    if !r_m.is_finite() || r_m <= 0.0 {
         return None;
     }
     Some((GM_SUN_M3_S2 * (2.0 / r_m - 1.0 / (rec.a_au * AU_M))).sqrt())
@@ -195,7 +195,7 @@ pub fn speed_at_epoch(rec: &AsteroidRec) -> Option<f64> {
 
 pub fn accel_at_epoch(rec: &AsteroidRec) -> Option<f64> {
     let peri = rec.a_au * AU_M * (1.0 - rec.e);
-    if peri <= 0.0 {
+    if !peri.is_finite() || peri <= 0.0 {
         return None;
     }
     Some(GM_SUN_M3_S2 / (peri * peri))

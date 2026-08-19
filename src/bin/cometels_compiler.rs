@@ -241,7 +241,7 @@ fn evaluate(obj: &HashMap<String, Json>) -> Option<CometRow> {
     let ma_deg = ((n * (epoch_jd - tp_jd) * 86400.0).rem_euclid(TAU)).to_degrees();
     let (p, _) = elements_to_icrs_state(a, e, incl, node, peri, ma_deg, epoch_jd, epoch_jd)?;
     let r = (p[0] * p[0] + p[1] * p[1] + p[2] * p[2]).sqrt();
-    if r <= 0.0 {
+    if !r.is_finite() || r <= 0.0 {
         return None;
     }
     let ra_deg = p[1].atan2(p[0]).to_degrees().rem_euclid(360.0);

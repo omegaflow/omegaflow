@@ -35,7 +35,7 @@ fn evaluate(rec: &omegaflow::dastcom::CometRec) -> Option<CometRow> {
     }
     let (p, _) = comet_state_at(rec, rec.epoch_jd)?;
     let r = (p[0] * p[0] + p[1] * p[1] + p[2] * p[2]).sqrt();
-    if r <= 0.0 {
+    if !r.is_finite() || r <= 0.0 {
         return None;
     }
     let ra_deg = p[1].atan2(p[0]).to_degrees().rem_euclid(360.0);

@@ -6535,3 +6535,346 @@ field totalDamage total_damage_million_usd gaussian-inverse-square seismic-body 
 field totalInjuries injuries gaussian-inverse-square seismic-body 1 8640 0.0 0.0
 
 
+# from master_converted.φ
+url https://psl.noaa.gov/data/correlation/ao.data
+ttl 86400
+format text
+on earth 90 0 0
+rows .
+field 0 year gaussian-inverse-square acoustic 1 8640 0.0 0.0
+field 1 jan gaussian-inverse-square acoustic 1 8640 0.0 0.0
+field 2 feb gaussian-inverse-square acoustic 1 8640 0.0 0.0
+field 3 mar gaussian-inverse-square acoustic 1 8640 0.0 0.0
+field 4 apr gaussian-inverse-square acoustic 1 8640 0.0 0.0
+field 5 may gaussian-inverse-square acoustic 1 8640 0.0 0.0
+field 6 jun gaussian-inverse-square acoustic 1 8640 0.0 0.0
+field 7 jul gaussian-inverse-square acoustic 1 8640 0.0 0.0
+field 8 aug gaussian-inverse-square acoustic 1 8640 0.0 0.0
+field 9 sep gaussian-inverse-square acoustic 1 8640 0.0 0.0
+field 10 oct gaussian-inverse-square acoustic 1 8640 0.0 0.0
+field 11 nov gaussian-inverse-square acoustic 1 8640 0.0 0.0
+field 12 dec gaussian-inverse-square acoustic 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://psl.noaa.gov/data/correlation/nao.data
+ttl 86400
+format text
+on earth 65 -20 0
+rows .
+field 0 year gaussian-inverse-square acoustic 1 8640 0.0 0.0
+field 1 jan gaussian-inverse-square acoustic 1 8640 0.0 0.0
+field 2 feb gaussian-inverse-square acoustic 1 8640 0.0 0.0
+field 3 mar gaussian-inverse-square acoustic 1 8640 0.0 0.0
+field 4 apr gaussian-inverse-square acoustic 1 8640 0.0 0.0
+field 5 may gaussian-inverse-square acoustic 1 8640 0.0 0.0
+field 6 jun gaussian-inverse-square acoustic 1 8640 0.0 0.0
+field 7 jul gaussian-inverse-square acoustic 1 8640 0.0 0.0
+field 8 aug gaussian-inverse-square acoustic 1 8640 0.0 0.0
+field 9 sep gaussian-inverse-square acoustic 1 8640 0.0 0.0
+field 10 oct gaussian-inverse-square acoustic 1 8640 0.0 0.0
+field 11 nov gaussian-inverse-square acoustic 1 8640 0.0 0.0
+field 12 dec gaussian-inverse-square acoustic 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://omniweb.gsfc.nasa.gov/cgi/nx1.cgi?activity=retrieve&res=hour&spacecraft=omni2&start_date={year}{month}{day}&end_date={year}{month}{day}&vars=13,14,15,16,17,18,19,20,21,22,23&format=csv
+ttl 300
+format text
+on earth 0 0 0
+rows .
+field 0 year inverse-square em 1 30 0.0 0.0
+field 1 doy inverse-square em 1 30 0.0 0.0
+field 2 hour inverse-square em 1 30 0.0 0.0
+field 3 bx_nT inverse-square em 1 30 0.0 0.0
+field 4 by_nT inverse-square em 1 30 0.0 0.0
+field 5 bz_nT inverse-square em 1 30 0.0 0.0
+field 6 sw_speed_km_s inverse-square em 1 30 0.0 0.0
+field 7 sw_density_cm3 inverse-square em 1 30 0.0 0.0
+field 8 sw_temp_K inverse-square em 1 30 0.0 0.0
+field 9 ae_nT inverse-square em 1 30 0.0 0.0
+field 10 kp_index inverse-square em 1 30 0.0 0.0
+
+
+# from master_converted.φ
+url https://ds.iris.edu/spud/momenttensor?evlo=&evla=&evdp=&startTime={today}T00:00:00&endTime={today}T23:59:59&catalog=GCMT&format=text&nodata=404
+ttl 86400
+format text
+on earth 0 0
+rows .
+lat evla
+lon evlo
+field evdp depth_km gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field mag magnitude gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field tensor_name moment_tensor_name gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='99942'&OBJ_DATA='YES'&MAKE_EPHEM='YES'&EPHEM_TYPE='ELEMENTS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+d'&REF_PLANE='ECLIPTIC'
+ttl 86400
+format text
+on earth 0 0 0
+rows .
+field 1 epoch_jd inverse-square gravity 1 8640 0.0 0.0
+field 2 eccentricity inverse-square gravity 1 8640 0.0 0.0
+field 3 perihelion_dist_au inverse-square gravity 1 8640 0.0 0.0
+field 4 inclination_deg inverse-square gravity 1 8640 0.0 0.0
+field 5 long_asc_node_deg inverse-square gravity 1 8640 0.0 0.0
+field 6 arg_perihelion_deg inverse-square gravity 1 8640 0.0 0.0
+field 7 time_perihelion_jd inverse-square gravity 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='DES%3DC%2F2023+A3'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&VEC_TABLE='2'&REF_PLANE='ECLIPTIC'
+ttl 3600
+format text
+on earth 0 0 0
+rows .
+field 2 x_au inverse-square gravity 1 360 0.0 0.0
+field 3 y_au inverse-square gravity 1 360 0.0 0.0
+field 4 z_au inverse-square gravity 1 360 0.0 0.0
+field 5 vx_au_d inverse-square gravity 1 360 0.0 0.0
+field 6 vy_au_d inverse-square gravity 1 360 0.0 0.0
+field 7 vz_au_d inverse-square gravity 1 360 0.0 0.0
+
+
+# from master_converted.φ
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='DES%3DC%2F2023+A3'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='500@0'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4'
+ttl 86400
+format text
+on earth 0 0 0
+rows .
+field 0 epoch_jd inverse-square gravity 1 8640 0.0 0.0
+field 1 x_au inverse-square gravity 1 8640 0.0 0.0
+field 2 y_au inverse-square gravity 1 8640 0.0 0.0
+field 3 z_au inverse-square gravity 1 8640 0.0 0.0
+field 4 vx_au_day inverse-square gravity 1 8640 0.0 0.0
+field 5 vy_au_day inverse-square gravity 1 8640 0.0 0.0
+field 6 vz_au_day inverse-square gravity 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-125544'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='10+m'&QUANTITIES='1,9,20,23,24,29'
+ttl 600
+format text
+on earth 0 0 0
+rows .
+field 0 datetime_calendar inverse-square gravity 1 60 0.0 0.0
+field 2 ra_hr inverse-square gravity 1 60 0.0 0.0
+field 3 ra_min inverse-square gravity 1 60 0.0 0.0
+field 4 ra_sec inverse-square gravity 1 60 0.0 0.0
+field 5 dec_deg inverse-square gravity 1 60 0.0 0.0
+field 6 dec_min inverse-square gravity 1 60 0.0 0.0
+field 7 dec_sec inverse-square gravity 1 60 0.0 0.0
+field 12 range_au inverse-square gravity 1 60 0.0 0.0
+field 13 range_rate_km_s inverse-square gravity 1 60 0.0 0.0
+
+
+# from master_converted.φ
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-125544'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4,20'
+ttl 300
+format text
+on earth 0 0 0
+rows .
+field 0 epoch_jd inverse-square gravity 1 30 0.0 0.0
+field 1 ra_deg inverse-square gravity 1 30 0.0 0.0
+field 2 dec_deg inverse-square gravity 1 30 0.0 0.0
+field 3 distance_au inverse-square gravity 1 30 0.0 0.0
+field 4 solar_distance_au inverse-square gravity 1 30 0.0 0.0
+
+
+# from master_converted.φ
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='599'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&QUANTITIES='1,9,20,23,24,29'
+ttl 3600
+format text
+on earth 0 0 0
+rows .
+field 0 datetime_calendar inverse-square gravity 1 360 0.0 0.0
+field 2 ra_hr inverse-square gravity 1 360 0.0 0.0
+field 3 ra_min inverse-square gravity 1 360 0.0 0.0
+field 4 ra_sec inverse-square gravity 1 360 0.0 0.0
+field 5 dec_deg inverse-square gravity 1 360 0.0 0.0
+field 6 dec_min inverse-square gravity 1 360 0.0 0.0
+field 7 dec_sec inverse-square gravity 1 360 0.0 0.0
+field 12 range_au inverse-square gravity 1 360 0.0 0.0
+field 13 range_rate_km_s inverse-square gravity 1 360 0.0 0.0
+
+
+# from master_converted.φ
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='599'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4,20'
+ttl 86400
+format text
+on earth 0 0 0
+rows .
+field 0 epoch_jd inverse-square gravity 1 8640 0.0 0.0
+field 1 ra_deg inverse-square gravity 1 8640 0.0 0.0
+field 2 dec_deg inverse-square gravity 1 8640 0.0 0.0
+field 3 distance_au inverse-square gravity 1 8640 0.0 0.0
+field 4 solar_distance_au inverse-square gravity 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='499'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&QUANTITIES='1,9,20,23,24,29'
+ttl 3600
+format text
+on earth 0 0 0
+rows .
+field 0 datetime_calendar inverse-square gravity 1 360 0.0 0.0
+field 2 ra_hr inverse-square gravity 1 360 0.0 0.0
+field 3 ra_min inverse-square gravity 1 360 0.0 0.0
+field 4 ra_sec inverse-square gravity 1 360 0.0 0.0
+field 5 dec_deg inverse-square gravity 1 360 0.0 0.0
+field 6 dec_min inverse-square gravity 1 360 0.0 0.0
+field 7 dec_sec inverse-square gravity 1 360 0.0 0.0
+field 8 dra_cosd_arcsec_hr inverse-square gravity 1 360 0.0 0.0
+field 9 ddec_dt_arcsec_hr inverse-square gravity 1 360 0.0 0.0
+field 12 range_au inverse-square gravity 1 360 0.0 0.0
+field 13 range_rate_km_s inverse-square gravity 1 360 0.0 0.0
+
+
+# from master_converted.φ
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='499'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4,20'
+ttl 86400
+format text
+on earth 0 0 0
+rows .
+field 0 epoch_jd inverse-square gravity 1 8640 0.0 0.0
+field 1 ra_deg inverse-square gravity 1 8640 0.0 0.0
+field 2 dec_deg inverse-square gravity 1 8640 0.0 0.0
+field 3 distance_au inverse-square gravity 1 8640 0.0 0.0
+field 4 solar_distance_au inverse-square gravity 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-96'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&VEC_TABLE='2'&REF_PLANE='ECLIPTIC'
+ttl 600
+format text
+on earth 0 0 0
+rows .
+field 2 x_au inverse-square gravity 1 60 0.0 0.0
+field 3 y_au inverse-square gravity 1 60 0.0 0.0
+field 4 z_au inverse-square gravity 1 60 0.0 0.0
+field 5 vx_au_d inverse-square gravity 1 60 0.0 0.0
+field 6 vy_au_d inverse-square gravity 1 60 0.0 0.0
+field 7 vz_au_d inverse-square gravity 1 60 0.0 0.0
+
+
+# from master_converted.φ
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='699'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&QUANTITIES='1,9,20,23,24,29'
+ttl 3600
+format text
+on earth 0 0 0
+rows .
+field 0 datetime_calendar inverse-square gravity 1 360 0.0 0.0
+field 2 ra_hr inverse-square gravity 1 360 0.0 0.0
+field 3 ra_min inverse-square gravity 1 360 0.0 0.0
+field 4 ra_sec inverse-square gravity 1 360 0.0 0.0
+field 5 dec_deg inverse-square gravity 1 360 0.0 0.0
+field 6 dec_min inverse-square gravity 1 360 0.0 0.0
+field 7 dec_sec inverse-square gravity 1 360 0.0 0.0
+field 12 range_au inverse-square gravity 1 360 0.0 0.0
+field 13 range_rate_km_s inverse-square gravity 1 360 0.0 0.0
+
+
+# from master_converted.φ
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='699'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4,20'
+ttl 86400
+format text
+on earth 0 0 0
+rows .
+field 0 epoch_jd inverse-square gravity 1 8640 0.0 0.0
+field 1 ra_deg inverse-square gravity 1 8640 0.0 0.0
+field 2 dec_deg inverse-square gravity 1 8640 0.0 0.0
+field 3 distance_au inverse-square gravity 1 8640 0.0 0.0
+field 4 solar_distance_au inverse-square gravity 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-31'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='6+h'&VEC_TABLE='2'&REF_PLANE='ECLIPTIC'
+ttl 3600
+format text
+on earth 0 0 0
+rows .
+field 2 x_au inverse-square gravity 1 360 0.0 0.0
+field 3 y_au inverse-square gravity 1 360 0.0 0.0
+field 4 z_au inverse-square gravity 1 360 0.0 0.0
+field 5 vx_au_d inverse-square gravity 1 360 0.0 0.0
+field 6 vy_au_d inverse-square gravity 1 360 0.0 0.0
+field 7 vz_au_d inverse-square gravity 1 360 0.0 0.0
+
+
+# from master_converted.φ
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-31'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='500@0'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4'
+ttl 86400
+format text
+on earth 0 0 0
+rows .
+field 0 epoch_jd inverse-square gravity 1 8640 0.0 0.0
+field 1 x_au inverse-square gravity 1 8640 0.0 0.0
+field 2 y_au inverse-square gravity 1 8640 0.0 0.0
+field 3 z_au inverse-square gravity 1 8640 0.0 0.0
+field 4 vx_au_day inverse-square gravity 1 8640 0.0 0.0
+field 5 vy_au_day inverse-square gravity 1 8640 0.0 0.0
+field 6 vz_au_day inverse-square gravity 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-32'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='6+h'&VEC_TABLE='2'&REF_PLANE='ECLIPTIC'
+ttl 3600
+format text
+on earth 0 0 0
+rows .
+field 2 x_au inverse-square gravity 1 360 0.0 0.0
+field 3 y_au inverse-square gravity 1 360 0.0 0.0
+field 4 z_au inverse-square gravity 1 360 0.0 0.0
+field 5 vx_au_d inverse-square gravity 1 360 0.0 0.0
+field 6 vy_au_d inverse-square gravity 1 360 0.0 0.0
+field 7 vz_au_d inverse-square gravity 1 360 0.0 0.0
+
+
+# from master_converted.φ
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-32'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='500@0'&START_TIME='{year}-{month}-{day}'&STOP_TIME='{year}-{month}-{day}'&STEP_SIZE='1%20d'&QUANTITIES='1,2,3,4'
+ttl 86400
+format text
+on earth 0 0 0
+rows .
+field 0 epoch_jd inverse-square gravity 1 8640 0.0 0.0
+field 1 x_au inverse-square gravity 1 8640 0.0 0.0
+field 2 y_au inverse-square gravity 1 8640 0.0 0.0
+field 3 z_au inverse-square gravity 1 8640 0.0 0.0
+field 4 vx_au_day inverse-square gravity 1 8640 0.0 0.0
+field 5 vy_au_day inverse-square gravity 1 8640 0.0 0.0
+field 6 vz_au_day inverse-square gravity 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://www.orfeus-eu.org/fdsnws/station/1/query?level=station&format=text&starttime=2020-01-01&endtime=9999-01-01
+ttl 86400
+format text
+on earth 0 0
+rows .
+lat Latitude
+lon Longitude
+field Network network_code gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field Station station_code gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field Elevation elevation_m gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://earth-search.aws.element84.com/v1/search
+ttl 86400
+post_body {"collections":["sentinel-2-l2a"],"bbox":[{lon_min},{lat_min},{lon_max},{lat_max}],"datetime":"{today}T00:00:00Z/{today}T23:59:59Z","limit":50}
+on earth 0 0
+map features
+lat properties.proj:centroid.lat
+lon properties.proj:centroid.lon
+field id scene_id inverse-square em 1 8640 0.0 0.0
+field collection collection inverse-square em 1 8640 0.0 0.0
+field properties.datetime observation_time inverse-square em 1 8640 0.0 0.0
+field properties.eo:cloud_cover cloud_cover_pct inverse-square em 1 8640 0.0 0.0
+field properties.view:sun_azimuth sun_azimuth_deg inverse-square em 1 8640 0.0 0.0
+field properties.view:sun_elevation sun_elevation_deg inverse-square em 1 8640 0.0 0.0
+field properties.s2:processing_level processing_level inverse-square em 1 8640 0.0 0.0
+field properties.s2:product_type product_type inverse-square em 1 8640 0.0 0.0
+
+

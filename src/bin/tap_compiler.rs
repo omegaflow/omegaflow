@@ -544,7 +544,12 @@ fn star_record_bytes(cells: &[String], col_idx: &[(String, usize)]) -> Option<Ve
     let Some(pmdec) = get("pmdec") else {
         return None;
     };
-    if !(dist_pc > 0.0) || !ra.is_finite() || !dec.is_finite() || !mag.is_finite() {
+    if !dist_pc.is_finite()
+        || !(dist_pc > 0.0)
+        || !ra.is_finite()
+        || !dec.is_finite()
+        || !mag.is_finite()
+    {
         return None;
     }
     let ci = match (get("bpmag"), get("rpmag")) {

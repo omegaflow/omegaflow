@@ -1550,6 +1550,14 @@ mod archivar {
         }
     }
 
+    fn finite_positive(v: f64) -> Option<f64> {
+        if v.is_finite() && v > 0.0 {
+            Some(v)
+        } else {
+            None
+        }
+    }
+
     fn parse_ephemeris_binary(data: &[u8]) -> Option<BodyEphemeris> {
         if data.len() < 24 || data[0] != 0xCF || data[1] != 0x86 || data[2] != 0x01 {
             return None;
@@ -2919,9 +2927,9 @@ mod archivar {
             let (p, _) = star_position_at(rec, t2);
             let rel = [p[0] - center[0], p[1] - center[1], p[2] - center[2]];
             let d = (rel[0] * rel[0] + rel[1] * rel[1] + rel[2] * rel[2]).sqrt();
-            if d <= 0.0 {
+            let Some(d) = finite_positive(d) else {
                 continue;
-            }
+            };
             let dir = [rel[0] / d, rel[1] / d, rel[2] / d];
             let df = dir[0] * forward[0] + dir[1] * forward[1] + dir[2] * forward[2];
             if df <= 0.0 {
@@ -7671,7 +7679,7 @@ mod archivar {
                                             Some(vv) => vv,
                                             None => continue,
                                         };
-                                        if val.is_nan() {
+                                        if !val.is_finite() {
                                             continue;
                                         }
                                         let mut eff_fc = (*fc).clone();
@@ -7784,7 +7792,7 @@ mod archivar {
                                             Some(JsonVal::Num(x)) => *x,
                                             _ => continue,
                                         };
-                                        if val.is_nan() {
+                                        if !val.is_finite() {
                                             continue;
                                         }
                                         let position = Position::Surface {
@@ -7876,7 +7884,7 @@ mod archivar {
                                             Some(vv) => vv,
                                             None => continue,
                                         };
-                                        if val.is_nan() {
+                                        if !val.is_finite() {
                                             continue;
                                         }
                                         let mut eff_fc = (*fc).clone();
@@ -7977,7 +7985,7 @@ mod archivar {
                                         Some(vv) => vv,
                                         None => continue,
                                     };
-                                    if val.is_nan() {
+                                    if !val.is_finite() {
                                         continue;
                                     }
                                     let mut eff_fc = (*fc).clone();
@@ -8052,7 +8060,7 @@ mod archivar {
                                         Some(vv) => vv,
                                         None => continue,
                                     };
-                                    if val.is_nan() {
+                                    if !val.is_finite() {
                                         continue;
                                     }
                                     let mut eff_fc = (*fc).clone();
@@ -8176,7 +8184,7 @@ mod archivar {
                                     Some(v) => v,
                                     None => continue,
                                 };
-                                if val.is_nan() {
+                                if !val.is_finite() {
                                     continue;
                                 }
                                 let mut eff_fc = (*fc).clone();
@@ -8275,7 +8283,7 @@ mod archivar {
                                         Some(vv) => vv,
                                         None => continue,
                                     };
-                                    if val.is_nan() {
+                                    if !val.is_finite() {
                                         continue;
                                     }
                                     let mut eff_fc = (*fc).clone();
@@ -8455,7 +8463,7 @@ mod archivar {
                                         Some(vv) => vv,
                                         None => continue,
                                     };
-                                    if val.is_nan() {
+                                    if !val.is_finite() {
                                         continue;
                                     }
                                     let mut eff_fc = (*fc).clone();
@@ -8712,7 +8720,7 @@ mod archivar {
                         Some(v) => v,
                         None => continue,
                     };
-                    if val.is_nan() {
+                    if !val.is_finite() {
                         continue;
                     }
                     let mut eff_fc = fc.clone();
@@ -8801,7 +8809,7 @@ mod archivar {
                 let lat = lat_v[p];
                 let lon = lon_v[p];
                 let juld = juld_v[p];
-                if lat.is_nan() || lon.is_nan() || juld.is_nan() {
+                if !lat.is_finite() || !lon.is_finite() || !juld.is_finite() {
                     continue;
                 }
                 let unix = (juld - 7305.0) * 86400.0;
@@ -8822,8 +8830,8 @@ mod archivar {
                     for k in 0..n_levels {
                         let pres = pres_v[p * n_levels + k];
                         let val = vals[p * n_levels + k];
-                        if val.is_nan()
-                            || pres.is_nan()
+                        if !val.is_finite()
+                            || !pres.is_finite()
                             || fill.map_or(false, |f| (val as f64) == f)
                             || pres_fill.map_or(false, |f| (pres as f64) == f)
                         {
@@ -9259,7 +9267,11 @@ mod archivar {
             Some(p) => p,
             None => return None,
         };
-        if abs[0].is_nan() || abs[1].is_nan() || abs[2].is_nan() || channel.epoch.is_nan() {
+        if !abs[0].is_finite()
+            || !abs[1].is_finite()
+            || !abs[2].is_finite()
+            || !channel.epoch.is_finite()
+        {
             return None;
         }
         let mut resid_ema = 0.0;
@@ -9290,7 +9302,12 @@ mod archivar {
             Some(b) => b,
             None => return None,
         };
-        if p0f[0].is_nan() || p0f[1].is_nan() || p0f[2].is_nan() || vmax.is_nan() || amax.is_nan() {
+        if !p0f[0].is_finite()
+            || !p0f[1].is_finite()
+            || !p0f[2].is_finite()
+            || !vmax.is_finite()
+            || !amax.is_finite()
+        {
             return None;
         }
         let body_props = motion
@@ -9298,7 +9315,7 @@ mod archivar {
             .and_then(|name| eph.get(name))
             .and_then(|e| e.props.as_ref());
         let extent = kernel_extent(sensor.force, sensor.kernel, body_props, sensor.tau);
-        if extent.is_nan() {
+        if !extent.is_finite() {
             return None;
         }
         Some(Oscillator {
@@ -17023,7 +17040,7 @@ mod mathematikerin {
             let Some(dist_pc) = jnum(v, &keys.3) else {
                 continue;
             };
-            if dist_pc <= 0.0 {
+            if !dist_pc.is_finite() || dist_pc <= 0.0 {
                 continue;
             }
             let Some(a_au) = jnum(v, &keys.5) else {
@@ -17303,7 +17320,9 @@ mod mathematikerin {
         pad: f64,
         records: &mut Vec<OscRecord>,
     ) {
-        let kernel = kernel_id_for_force(0).unwrap_or(0);
+        let Some(kernel) = kernel_id_for_force(0) else {
+            return;
+        };
         for star in &cset.stars {
             if star.plx_mas <= 0.0 || star.samples.len() < 2 {
                 continue;
