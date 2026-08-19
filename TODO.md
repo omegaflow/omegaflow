@@ -704,7 +704,7 @@ Zeile = Stand 2026-08-19.
 
 | # | Atom | Inhalt |
 |---|---|---|
-| 1 | S0 — Finite-Welle | `finite_positive`-Helfer (analog `measured()`); alle `is_nan()`-Daten-Gates → `is_finite()` (main.rs 7674, 7787, 7879, 7980, 8055, 8179, 8278, 8458, 8715, 8804, 8825-8828, 9262, 9293, 9301); negative Plausibilitäts-Gates positiv (kepler/ephemeris `r <= 0.0`); Ergebnis-Checks an Divisionsstellen (tycho2 544, tap 547); JS-Defaults (constants.js 20/36/80, index.html 680, 256-260) |
+| 1 | ~~S0 — Finite-Welle~~ | ERLEDIGT (2026-08-19, 69e7bd3): `finite_positive`-Helfer neben `measured()`; alle 15 `is_nan()`-Daten-Gates → `!is_finite()` (Extract-Kette, ProfileMap, Flatten, CmrPolygon, netcdf-Profil, anchor-Bounds 9262/9293/9301); positive Gates gehärtet (kepler `e`, dastcom `r_m`/`peri`, dcom5/cometels `r`, tap `dist_pc`-Inf-Leck, tycho2 `plx`); `finite_positive` erstgenutzt in sense_deep (Divisionsschutz `rel/d`); kernel_id_for_force `unwrap_or(0)` → `else return` (17306); JS: `response_epoch: null` + count-Gate in index.html, `tau > 0`-Wire-Gate, truncated-frame `throw`, battery `isFinite`-Gate — 84 Tests grün |
 | 2 | S1 — Haupt-Adern | Celestial-Shell → Titan-Skip + Tests auf Wahrheit + ledger.φ:151 korrigieren; pm/rv/zval-Fold 8374-8408 → Option; TGAS-rv-Gate (tycho2 185, 480-486) + TODO 174-176 berichtigen; bp_rp-Kette (tap 550-553, 1406 — union-bright zerstört kein `null` mehr; emit_rows pm 606/610); WGSL-Kernel-Zweige 1/6 (main.rs WGSL + index.html shader 314-336); Pangaea lat/lon (57-58); GeojsonEvents mag/ed-Gates (8502-8539); EOP-Finals (8886-8890) + Alerce (9143-9151) + dcom5 H/M1 → null (187-193) |
 | 3 | S2 — Form/Sensor/TTL | flattening/rb_scale → Option (1594-1597, 1780, 1771-1773, 1859-1862); alt ×4 (11845, 5468, 7558, 7279) → Option/refuse; Sensor-τ zurück ans Gate (`effective_tau = bs.ttl` raus: 12211, 20826, 20879, 11679); port_field_synth refuse ohne τ (6818-6826) + 5/6-token-Waisen (5896-5960, 6253); probe_ttl 86400 weglassen (11091) + Draft 4-Token → 9-Token (10344); props.gm → Option (17624); Nutation zwei Fälle trennen (1530); fk.rs center/class → Option/refuse (120-130); netCDF-Fill-Maske lat/lon/juld (8804); tic NaN/negativ-plx + tmag-Bereich; tess-Zwei-Enden-Vertrag; horizons GM (161-164) |
 | 4 | P1 — Lade-Pfad | F-A Punkt 1: Bootstrap einziger priorisierter Lader + Wächter; In-Loop-Fallback raus; origins-Stempel nach Erfolg + last_attempt (10 Sites 12267-12735); curl-Status sichtbar (4935); drei curl-Ketten → ein Builder |
@@ -734,9 +734,10 @@ Zeile = Stand 2026-08-19.
   j2=0 — gelöst durch die v3-Maske (S4).
 - WGSL ft_ref_floor max(…, 1e-30): Kraft ohne Fenster-Daten explodiert
   statt zu schweigen; fold_eff max(ttl, 1e-9): τ=0 manifestiert doch
-  (S0/S3 mitnehmen).
+  (S3 — mit exp2(-20) zusammen).
 - nutation unwrap_or((0,0,0)): „kein Modell" und „Lücke" gleichgenullt (S2).
-- kernel_id_for_force(0).unwrap_or(0) (17306): schlafende 0-Fabrikation (S0/S3).
+- ~~kernel_id_for_force(0).unwrap_or(0)~~ — erledigt (S0, 69e7bd3):
+  `else return`, kein Kurven-Oszillator ohne em-Kernel.
 
 ### Sauber befunden (nicht erneut auditieren, nicht anfassen)
 
