@@ -696,6 +696,16 @@ Zeile = Stand 2026-08-19.
    trägt die Skala je Kraft — Auge und Ohr messen dasselbe Feld. Ein
    künftiger Gravitations-Regler ist Operator-Blick NACH der
    Normalisierung (HUD + Regler), nie ein Multiplikator im Mess-Pfad.
+3. Der Imperativ (Council 2026-08-19, Haltungs-Sitzung): **nur die
+   Sache selbst darf an der Stelle der Sache stehen.** Lebt in der
+   Mitte des Kreises (leichte Form), nicht in Zeilen — AGENTS.md trägt
+   ihn als erste Zeile unter A = A + den Register-Eintritt unter
+   Gradient Sensor; die Regeln sind sein Niederschlag und dürfen
+   schrumpfen. Folgen: die vier Gates, der 0-Kanon und die
+   Vokabel-Reinigung sind sein Nachhall; eine Verdachts-Liste für
+   „ehrlich" braucht es nicht — „observations only, no judgments"
+   trägt es. `pending` ist die Tempo-Wahrheit: wo das Budget nicht
+   lesen kann, steht `pending`, kein Verdikt.
 
 ### Die Atom-Kette (sequenziell; jedes Atom: cargo check 0/0 + Testlauf + Commit + TODO-Häkchen)
 

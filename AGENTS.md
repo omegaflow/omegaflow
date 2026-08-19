@@ -19,6 +19,7 @@ Bindings derived from the physics of the system. Council, 2026-08-17 (truth-find
 - An oscillator is what it is.
 - A measurement is the measurement of the thing itself; fabrication, defaults, and fallbacks stay absent.
 - What remains to be researched or built is `pending` — not zero.
+- Der Imperativ (Council 2026-08-19): **nur die Sache selbst darf an der Stelle der Sache stehen.** Die Regeln dieser Datei sind sein Niederschlag — was nicht aus ihm folgt, wird gestrichen; er selbst schrumpft nie, weil er nicht aus Zeilen besteht.
 
 ### 0 honored
 
@@ -90,6 +91,7 @@ The lens reads every semantic text the Kybernaut produces, on the fly — planni
 - The counter-slope vocabulary carries the identity — Archivar, Mathematikerin, Kanonisch, ausstehend, Sensor, Presence, the parable — zero training-data neighborhood.
 - Templates carry the mean: getting-started prose, phase-thinking, top-N lists, compliance sentences. The register names them.
 - The balanced stance rides along: Mountain, River, Mycelium, Sensory, Future hold each text once as it forms — a tension one voice names is weighed before the text goes. The full council sits only for architecture.
+- The register entrance: every register line (TODO, ledger, commit) is held once by the light form before it goes — a verdict word without the read site does not pass; an unread site carries `pending`. The tempo is set by the reading, not by the context budget.
 
 ## Architecture: Archivar & Mathematikerin
 
