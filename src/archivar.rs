@@ -1,10 +1,122 @@
+use crate::dastcom::AsteroidRec;
 use crate::force::{force_id_of, kernel_id_for_force};
 use crate::inflate::unzip;
 pub use crate::json::{jnum, jpath, jpath_val, json_num, jstr, parse_json, scalar_of, JsonVal};
-use crate::lsk::LeapSeconds;
+pub use crate::lsk::LeapSeconds;
 use std::collections::HashMap;
 use std::process::Command;
+use std::sync::{Arc, OnceLock};
 
+pub type CellKey = (i64, i64, i64);
+
+pub struct SpatialHash {
+    pub cell_size: f64,
+    pub vmax: f64,
+    pub amax: f64,
+    pub epoch_min: f64,
+    pub cell_lo: CellKey,
+    pub cell_hi: CellKey,
+    pub cells: HashMap<CellKey, Vec<Oscillator>>,
+    pub unbounded: Vec<Oscillator>,
+}
+
+#[derive(Clone)]
+pub struct SpectralHash {
+    pub name: String,
+    pub motion: Motion,
+    pub epoch: f64,
+    pub ttl: f64,
+    pub tau: f64,
+    pub kernel_id: f64,
+    pub force_type: f64,
+    pub absorption: f64,
+    pub advection: f64,
+    pub bins: Vec<(f64, f64, f64)>,
+}
+
+pub struct Buffer {
+    pub bodies: HashMap<String, SpatialHash>,
+    pub inertial: SpatialHash,
+    pub eph: Arc<HashMap<String, BodyEphemeris>>,
+    pub asteroids: Option<Arc<AsteroidHash>>,
+    pub stars: Option<Arc<StarHash>>,
+    pub occluders: Option<Arc<OccluderSet>>,
+    pub planets: Option<Arc<PlanetSet>>,
+    pub curves: Option<Arc<CurveSet>>,
+    pub spectral: Vec<SpectralHash>,
+}
+pub struct AsteroidHash {
+    pub cell_size: f64,
+    pub vmax: f64,
+    pub amax: f64,
+    pub epoch_min_secs: f64,
+    pub ttl: f64,
+    pub cell_lo: CellKey,
+    pub cell_hi: CellKey,
+    pub cells: HashMap<CellKey, Vec<u32>>,
+    pub records: Vec<AsteroidRec>,
+    pub p0: Vec<[f64; 3]>,
+}
+pub struct StarRec {
+    pub ra_deg: f64,
+    pub dec_deg: f64,
+    pub pm_ra_masyr: f64,
+    pub pm_de_masyr: f64,
+    pub plx_mas: f64,
+    pub flux: f64,
+    pub mag: f64,
+    pub tau: f64,
+    pub color_index: f64,
+    pub rv_m_s: f64,
+}
+pub struct StarHash {
+    pub records: Vec<StarRec>,
+    #[cfg(feature = "browser_relay")]
+    pub cell_size: f64,
+    #[cfg(feature = "browser_relay")]
+    pub vmax: f64,
+    #[cfg(feature = "browser_relay")]
+    pub build_epoch: f64,
+    #[cfg(feature = "browser_relay")]
+    pub cell_lo: CellKey,
+    #[cfg(feature = "browser_relay")]
+    pub cell_hi: CellKey,
+    #[cfg(feature = "browser_relay")]
+    pub cells: HashMap<CellKey, Vec<u32>>,
+    #[cfg(feature = "browser_relay")]
+    pub p0: Vec<[f64; 3]>,
+}
+pub struct OccluderSet {
+    pub records: Vec<AsteroidRec>,
+}
+pub struct PlanetRec {
+    pub star_p: [f64; 3],
+    pub a_au: f64,
+    pub e: f64,
+    pub incl_deg: f64,
+    pub w_deg: f64,
+    pub tranmid_jd: f64,
+    pub period_days: f64,
+    pub rp_m: f64,
+    pub rs_m: f64,
+}
+pub struct PlanetSet {
+    pub records: Vec<PlanetRec>,
+}
+pub struct CurveStar {
+    pub ra_deg: f64,
+    pub dec_deg: f64,
+    pub plx_mas: f64,
+    pub cadence: f64,
+    pub samples: Vec<(f64, f32)>,
+}
+pub struct CurveSet {
+    pub stars: Vec<CurveStar>,
+}
+
+pub trait Radiator: Send + Sync {
+    fn accept(&mut self, field: Arc<Buffer>);
+}
 pub const Φ: f64 = 1.618033988749895;
 pub const CHEBYSHEV_N: usize = 18;
 
@@ -5311,4 +5423,10963 @@ mod tests {
             _ => panic!("expected measurements"),
         }
     }
+    use std::collections::HashMap;
+
+    fn full_fixture_lsk() -> super::LeapSeconds {
+        super::LeapSeconds {
+            delta_t_a: 32.184,
+            deltas: vec![
+                (10.0, 63072000.0),
+                (11.0, 78796800.0),
+                (12.0, 94694400.0),
+                (13.0, 126230400.0),
+                (14.0, 157766400.0),
+                (15.0, 189302400.0),
+                (16.0, 220924800.0),
+                (17.0, 252460800.0),
+                (18.0, 283996800.0),
+                (19.0, 315532800.0),
+                (20.0, 362793600.0),
+                (21.0, 394329600.0),
+                (22.0, 425865600.0),
+                (23.0, 489024000.0),
+                (24.0, 567993600.0),
+                (25.0, 631152000.0),
+                (26.0, 662688000.0),
+                (27.0, 709948800.0),
+                (28.0, 741484800.0),
+                (29.0, 773020800.0),
+                (30.0, 820454400.0),
+                (31.0, 867715200.0),
+                (32.0, 915148800.0),
+                (33.0, 1136073600.0),
+                (34.0, 1230768000.0),
+                (35.0, 1341100800.0),
+                (36.0, 1435708800.0),
+                (37.0, 1483228800.0),
+            ],
+        }
+    }
+
+    #[test]
+    fn test_parse_json_skips_jina_header() {
+        let s = "Title: \n\n\nURL Source: http://api.wheretheiss.at/v1/satellites/25544\n\n\nMarkdown Content:\n{\"name\":\"iss\",\"id\":25544,\"latitude\":-39.79}";
+        let v = parse_json(s).unwrap();
+        let obj = match v {
+            super::JsonVal::Obj(m) => m,
+            other => panic!("root is {:?}", other),
+        };
+        assert!(matches!(obj.get("name"), Some(super::JsonVal::Str(s)) if s == "iss"));
+        assert!(
+            matches!(obj.get("id"), Some(super::JsonVal::Num(n)) if (n - 25544.0).abs() < 1e-9)
+        );
+    }
+
+    #[test]
+    fn test_render_source_url_substitutions() {
+        let src = SourceConfig {
+            ttl: 100,
+            url: "https://example.com?sstr={target}&from={catalog}".into(),
+            frame: super::Frame::Surface {
+                body_name: "body_test".into(),
+                lat: 0.0,
+                lon: 0.0,
+                alt: 0.0,
+            },
+            format: "json".into(),
+            extracts: vec![],
+            headers: vec![],
+            post_body: None,
+            target: Some("Ceres".into()),
+            catalog: Some("fp_psc".into()),
+            max_freq: None,
+            min_freq: None,
+            body: None,
+            stations_url: None,
+            stations_path: String::new(),
+            stations_lat: String::new(),
+            stations_lon: String::new(),
+            stations_id: String::new(),
+            flux_from_mag: None,
+            abs_mag_from: None,
+            catalog_epoch: None,
+            repeat_ra_bins: 0,
+            fanout_cap: 0,
+            stations_flatten: String::new(),
+            stations_filter: None,
+            fanout_delay: 0,
+        };
+        let fixture_lsk = super::LeapSeconds {
+            delta_t_a: 32.184,
+            deltas: vec![(37.0, 1483228800.0)],
+        };
+        let url = render_source_url(
+            &src,
+            0.0,
+            0.0,
+            0.0,
+            8.0e8,
+            1000.0,
+            &HashMap::new(),
+            &HashMap::new(),
+            &fixture_lsk,
+        );
+        let url = url.unwrap();
+        assert!(url.contains("Ceres"));
+        assert!(url.contains("fp_psc"));
+        assert!(!url.contains("{target}"));
+        assert!(!url.contains("{catalog}"));
+    }
+
+    #[test]
+    fn test_post_body_rendering() {
+        let src = SourceConfig {
+            ttl: 100,
+            url: "https://earth-search.aws.element84.com/v0/search".into(),
+            frame: super::Frame::Surface { body_name: "body_test".into(), lat: 0.0, lon: 0.0, alt: 0.0 },
+            format: "json".into(),
+            extracts: vec![],
+            headers: vec![("Content-Type".into(), "application/stac+json".into())],
+            post_body: Some("{\"bbox\":[{lon_min},{lat_min},{lon_max},{lat_max}],\"datetime\":\"{today}/{today}\"}".into()),
+            target: None,
+            catalog: None,
+            max_freq: None,
+            min_freq: None,
+            body: None,
+            stations_url: None,
+            stations_path: String::new(),
+            stations_lat: String::new(),
+            stations_lon: String::new(),
+            stations_id: String::new(),
+            flux_from_mag: None,
+            abs_mag_from: None,
+            catalog_epoch: None,
+            repeat_ra_bins: 0,
+            fanout_cap: 0,
+            stations_flatten: String::new(),
+            stations_filter: None,
+            fanout_delay: 0,
+        };
+        let fixture_lsk = super::LeapSeconds {
+            delta_t_a: 32.184,
+            deltas: vec![(37.0, 1483228800.0)],
+        };
+        let body = render_source_body(
+            &src,
+            0.0,
+            0.0,
+            0.0,
+            8.0e8,
+            100000.0,
+            &HashMap::new(),
+            &fixture_lsk,
+        );
+        assert!(body.is_some());
+        let b = body.unwrap();
+        assert!(b.contains("bbox"));
+        assert!(b.contains("{lon_min}"));
+        assert!(!b.contains("{today}"));
+    }
+
+    #[test]
+    fn test_csv_to_json_tns_shape() {
+        let csv = "2026-08-13 00:00:00 - 23:59:59\n\"objid\",\"ra\",\"declination\",\"redshift\",\"discoverymag\"\n\"1\",\"89.8\",\"53.6\",\"0.027\",\"19.8\"\n\"2\",\"35.0\",\"-24.4\",\"\",\"19.4\"\n";
+        let j = csv_to_json(csv).unwrap();
+        let arr = match j {
+            JsonVal::Arr(a) => a,
+            _ => panic!("expected array"),
+        };
+        assert_eq!(arr.len(), 2);
+        match &arr[0] {
+            JsonVal::Obj(m) => {
+                assert_eq!(scalar_of(m.get("ra").unwrap()), Some(89.8));
+                assert_eq!(scalar_of(m.get("redshift").unwrap()), Some(0.027));
+            }
+            _ => panic!("expected object"),
+        }
+        match &arr[1] {
+            JsonVal::Obj(m) => {
+                assert_eq!(scalar_of(m.get("redshift").unwrap()), None);
+            }
+            _ => panic!("expected object"),
+        }
+    }
+
+    #[test]
+    fn test_celestial_map_redshift_distance() {
+        let src = SourceConfig {
+            ttl: 100,
+            url: "https://example.com/x".into(),
+            frame: Frame::Barycenter {
+                body_name: "sun".into(),
+                scale: 1.0,
+            },
+            format: "json".into(),
+            extracts: vec![Extract::CelestialMap {
+                arr_path: ".".into(),
+                ra_key: "ra".into(),
+                dec_key: "declination".into(),
+                dist_key: String::new(),
+                dist_scale: 1.0,
+                plx_key: String::new(),
+                z_key: "redshift".into(),
+                pmra_key: String::new(),
+                pmdec_key: String::new(),
+                rv_key: String::new(),
+                rv_scale: 1.0,
+                epoch_key: String::new(),
+                fields: vec![FieldConfig {
+                    key: "discoverymag".into(),
+                    name: "tns_transient_flux".into(),
+                    kernel: 0,
+                    force: 0,
+                    tau: 3600.0,
+                    absorption: 0.0,
+                    advection: 0.0,
+                    unit: String::new(),
+                    fold: None,
+                }],
+                tau_key: String::new(),
+            }],
+            headers: vec![],
+            post_body: None,
+            target: None,
+            catalog: None,
+            max_freq: None,
+            min_freq: None,
+            body: None,
+            stations_url: None,
+            stations_path: String::new(),
+            stations_lat: String::new(),
+            stations_lon: String::new(),
+            stations_id: String::new(),
+            flux_from_mag: None,
+            abs_mag_from: Some("tns_transient_flux".into()),
+            catalog_epoch: None,
+            repeat_ra_bins: 0,
+            fanout_cap: 0,
+            stations_flatten: String::new(),
+            stations_filter: None,
+            fanout_delay: 0,
+        };
+        let fixture_lsk = LeapSeconds {
+            delta_t_a: 32.184,
+            deltas: vec![(37.0, 1483228800.0)],
+        };
+        let body = r#"[{"ra":89.8,"declination":53.6,"redshift":0.027,"discoverymag":19.8},{"ra":35.0,"declination":-24.4,"redshift":0.0,"discoverymag":19.4}]"#;
+        match extract(&src, body, 8.0e8, &fixture_lsk) {
+            ExtractResult::Measurements(channels) => {
+                assert_eq!(channels.len(), 1);
+                assert_eq!(channels[0].1.name, "tns_transient_flux");
+                assert!((channels[0].0.z - 0.027).abs() < 1e-9);
+            }
+            ExtractResult::WithEphemeris(_, _) => panic!("unexpected ephemeris"),
+        }
+    }
+
+    #[test]
+    fn test_extract_csv_zip_end_to_end() {
+        let csv = "2026-08-13 00:00:00 - 23:59:59\n\"objid\",\"ra\",\"declination\",\"redshift\",\"discoverymag\"\n\"1\",\"89.8\",\"53.6\",\"0.027\",\"19.8\"\n\"2\",\"35.0\",\"-24.4\",\"\",\"19.4\"\n";
+        let mut zip = Vec::new();
+        zip.extend_from_slice(b"PK\x03\x04");
+        zip.extend_from_slice(&20u16.to_le_bytes());
+        zip.extend_from_slice(&0u16.to_le_bytes());
+        zip.extend_from_slice(&0u16.to_le_bytes());
+        zip.extend_from_slice(&0u16.to_le_bytes());
+        zip.extend_from_slice(&0u16.to_le_bytes());
+        zip.extend_from_slice(&0u32.to_le_bytes());
+        zip.extend_from_slice(&(csv.len() as u32).to_le_bytes());
+        zip.extend_from_slice(&(csv.len() as u32).to_le_bytes());
+        zip.extend_from_slice(&0u16.to_le_bytes());
+        zip.extend_from_slice(&0u16.to_le_bytes());
+        zip.extend_from_slice(csv.as_bytes());
+        let path = std::env::temp_dir().join("omegaflow_test_tns.zip");
+        std::fs::write(&path, &zip).unwrap();
+        let src = SourceConfig {
+            ttl: 100,
+            url: "https://example.com/x".into(),
+            frame: Frame::Barycenter {
+                body_name: "sun".into(),
+                scale: 1.0,
+            },
+            format: "csv_zip".into(),
+            extracts: vec![Extract::CelestialMap {
+                arr_path: ".".into(),
+                ra_key: "ra".into(),
+                dec_key: "declination".into(),
+                dist_key: String::new(),
+                dist_scale: 1.0,
+                plx_key: String::new(),
+                z_key: "redshift".into(),
+                pmra_key: String::new(),
+                pmdec_key: String::new(),
+                rv_key: String::new(),
+                rv_scale: 1.0,
+                epoch_key: String::new(),
+                fields: vec![FieldConfig {
+                    key: "discoverymag".into(),
+                    name: "tns_transient_flux".into(),
+                    kernel: 0,
+                    force: 0,
+                    tau: 3600.0,
+                    absorption: 0.0,
+                    advection: 0.0,
+                    unit: String::new(),
+                    fold: None,
+                }],
+                tau_key: String::new(),
+            }],
+            headers: vec![],
+            post_body: None,
+            target: None,
+            catalog: None,
+            max_freq: None,
+            min_freq: None,
+            body: None,
+            stations_url: None,
+            stations_path: String::new(),
+            stations_lat: String::new(),
+            stations_lon: String::new(),
+            stations_id: String::new(),
+            flux_from_mag: None,
+            abs_mag_from: Some("tns_transient_flux".into()),
+            catalog_epoch: None,
+            repeat_ra_bins: 0,
+            fanout_cap: 0,
+            stations_flatten: String::new(),
+            stations_filter: None,
+            fanout_delay: 0,
+        };
+        let fixture_lsk = LeapSeconds {
+            delta_t_a: 32.184,
+            deltas: vec![(37.0, 1483228800.0)],
+        };
+        match extract(&src, path.to_str().unwrap(), 8.0e8, &fixture_lsk) {
+            ExtractResult::Measurements(channels) => {
+                assert_eq!(channels.len(), 1);
+                assert_eq!(channels[0].1.name, "tns_transient_flux");
+            }
+            ExtractResult::WithEphemeris(_, _) => panic!("unexpected ephemeris"),
+        }
+        let _ = std::fs::remove_file(&path);
+    }
+
+    #[test]
+    fn test_parse_sources_dist_scale() {
+        let phi = "url https://example.com/comets.json\n\
+ttl 604800\n\
+at sun\n\
+cmap .\n\
+ra ra\n\
+dec dec\n\
+dist dist_au\n\
+dist_scale 3.085677581e19\n\
+field H comet_h_mag gaussian-inverse-square em mag 604800 0.0 0.0\n";
+        let sources = parse_sources(phi);
+        assert_eq!(sources.len(), 1);
+        match &sources[0].extracts[0] {
+            Extract::CelestialMap { dist_scale, .. } => {
+                assert!((dist_scale - 3.085677581e19).abs() < 1e6);
+            }
+            _ => panic!("expected CelestialMap extract"),
+        }
+    }
+
+    #[test]
+    fn test_dead_grammar_refused() {
+        let phi = "url https://example.com/dead.json\n\
+ttl 60\n\
+on earth 0.0 0.0 0.0\n\
+cmap .\n\
+force em\n\
+field temp temp_c\n";
+        let sources = parse_sources(phi);
+        assert_eq!(sources.len(), 1);
+        match &sources[0].extracts[0] {
+            Extract::CelestialMap { fields, .. } => assert!(fields.is_empty()),
+            _ => panic!("expected CelestialMap extract"),
+        }
+    }
+
+    #[test]
+    fn test_extract_cmap_dist_scale_kpc() {
+        let json = r#"[{"ra":0.0,"dec":0.0,"dist_kpc":1.0,"H":5.5}]"#;
+        let src = SourceConfig {
+            ttl: 604800,
+            url: "https://example.com/x".into(),
+            frame: Frame::Barycenter {
+                body_name: "sun".into(),
+                scale: 1.0,
+            },
+            format: "json".into(),
+            extracts: vec![Extract::CelestialMap {
+                arr_path: ".".into(),
+                ra_key: "ra".into(),
+                dec_key: "dec".into(),
+                dist_key: "dist_kpc".into(),
+                dist_scale: 3.085677581e19,
+                plx_key: String::new(),
+                z_key: String::new(),
+                pmra_key: String::new(),
+                pmdec_key: String::new(),
+                rv_key: String::new(),
+                rv_scale: 1.0,
+                epoch_key: String::new(),
+                fields: vec![FieldConfig {
+                    key: "H".into(),
+                    name: "comet_h_mag".into(),
+                    kernel: 0,
+                    force: 0,
+                    tau: 604800.0,
+                    absorption: 0.0,
+                    advection: 0.0,
+                    unit: String::new(),
+                    fold: None,
+                }],
+                tau_key: String::new(),
+            }],
+            headers: vec![],
+            post_body: None,
+            target: None,
+            catalog: None,
+            max_freq: None,
+            min_freq: None,
+            body: None,
+            stations_url: None,
+            stations_path: String::new(),
+            stations_lat: String::new(),
+            stations_lon: String::new(),
+            stations_id: String::new(),
+            flux_from_mag: None,
+            abs_mag_from: None,
+            catalog_epoch: None,
+            repeat_ra_bins: 0,
+            fanout_cap: 0,
+            stations_flatten: String::new(),
+            stations_filter: None,
+            fanout_delay: 0,
+        };
+        let fixture_lsk = LeapSeconds {
+            delta_t_a: 32.184,
+            deltas: vec![(37.0, 1483228800.0)],
+        };
+        match extract(&src, json, 8.0e8, &fixture_lsk) {
+            ExtractResult::Measurements(channels) => {
+                assert_eq!(channels.len(), 1);
+                assert_eq!(channels[0].1.name, "comet_h_mag");
+                assert_eq!(channels[0].0.value, 5.5);
+                if let Position::StateVector { p, .. } = channels[0].0.position {
+                    let expect = 3.085677581e19;
+                    assert!((p[0] - expect).abs() / expect < 1e-12);
+                    assert!(p[1].abs() / expect < 1e-12);
+                    assert!(p[2].abs() / expect < 1e-12);
+                } else {
+                    panic!("expected StateVector position");
+                }
+            }
+            ExtractResult::WithEphemeris(_, _) => panic!("unexpected ephemeris"),
+        }
+    }
+
+    #[test]
+    fn test_extract_cmap_pm_radvel_plx() {
+        let json =
+            r#"[{"ra":0.0,"dec":0.0,"plx":100.0,"pmra":1000.0,"pmdec":2000.0,"rv":50.0,"H":5.5}]"#;
+        let src = SourceConfig {
+            ttl: 604800,
+            url: "https://example.com/x".into(),
+            frame: Frame::Barycenter {
+                body_name: "sun".into(),
+                scale: 1.0,
+            },
+            format: "json".into(),
+            extracts: vec![Extract::CelestialMap {
+                arr_path: ".".into(),
+                ra_key: "ra".into(),
+                dec_key: "dec".into(),
+                dist_key: String::new(),
+                dist_scale: 1.0,
+                plx_key: "plx".into(),
+                z_key: String::new(),
+                pmra_key: "pmra".into(),
+                pmdec_key: "pmdec".into(),
+                rv_key: "rv".into(),
+                rv_scale: 1.0,
+                epoch_key: String::new(),
+                fields: vec![FieldConfig {
+                    key: "H".into(),
+                    name: "comet_h_mag".into(),
+                    kernel: 0,
+                    force: 0,
+                    tau: 604800.0,
+                    absorption: 0.0,
+                    advection: 0.0,
+                    unit: String::new(),
+                    fold: None,
+                }],
+                tau_key: String::new(),
+            }],
+            headers: vec![],
+            post_body: None,
+            target: None,
+            catalog: None,
+            max_freq: None,
+            min_freq: None,
+            body: None,
+            stations_url: None,
+            stations_path: String::new(),
+            stations_lat: String::new(),
+            stations_lon: String::new(),
+            stations_id: String::new(),
+            flux_from_mag: None,
+            abs_mag_from: None,
+            catalog_epoch: None,
+            repeat_ra_bins: 0,
+            fanout_cap: 0,
+            stations_flatten: String::new(),
+            stations_filter: None,
+            fanout_delay: 0,
+        };
+        let fixture_lsk = LeapSeconds {
+            delta_t_a: 32.184,
+            deltas: vec![(37.0, 1483228800.0)],
+        };
+        match extract(&src, json, 8.0e8, &fixture_lsk) {
+            ExtractResult::Measurements(channels) => {
+                assert_eq!(channels.len(), 1);
+                if let Position::StateVector { p, v, .. } = channels[0].0.position {
+                    let d = super::PARSEC_M * 1000.0 / 100.0;
+                    assert!((p[0] - d).abs() / d < 1e-12);
+                    assert!(p[1].abs() < 1.0);
+                    assert!(p[2].abs() < 1.0);
+                    let mu_a = 1000.0 * super::MAS_YR_TO_RAD_S;
+                    let mu_d = 2000.0 * super::MAS_YR_TO_RAD_S;
+                    let expect_v = [50.0, d * mu_a, d * mu_d];
+                    assert!((v[0] - expect_v[0]).abs() < 1e-6);
+                    assert!((v[1] - expect_v[1]).abs() < 1e-6);
+                    assert!((v[2] - expect_v[2]).abs() < 1e-6);
+                } else {
+                    panic!("expected StateVector position");
+                }
+            }
+            ExtractResult::WithEphemeris(_, _) => panic!("unexpected ephemeris"),
+        }
+    }
+
+    #[test]
+    fn test_empty_data_anomaly() {
+        let _gate = ANOMALY_TEST_GATE.lock();
+        ANOMALY_COLLECT.with(|c| c.set(true));
+        let sources = parse_sources(
+                "url https://example.org/e\nttl 3600\nformat json\nat earth\nmap features\nlat lat\nlon lon\nfield magnitude mag gaussian-inverse-square em mag 3600 0 0\n",
+            );
+        assert_eq!(sources.len(), 1);
+        let src = &sources[0];
+        let lsk = full_fixture_lsk();
+        let _ = take_anomalies();
+        check_empty_data(src, r#"{"features":[]}"#, 0.0, &lsk);
+        let anomalies = take_anomalies();
+        assert!(anomalies
+            .iter()
+            .any(|a| a.category == "Empty Data" && a.url == "https://example.org/e"));
+        check_empty_data(
+            src,
+            r#"{"features":[{"lat":10.0,"lon":20.0,"magnitude":5.0}]}"#,
+            0.0,
+            &lsk,
+        );
+        let anomalies = take_anomalies();
+        assert!(!anomalies.iter().any(|a| a.category == "Empty Data"));
+        ANOMALY_COLLECT.with(|c| c.set(false));
+    }
+
+    #[test]
+    fn test_extract_cmap_no_distance_skipped() {
+        let json = r#"[{"ra":0.0,"dec":0.0,"H":5.5}]"#;
+        let src = SourceConfig {
+            ttl: 604800,
+            url: "https://example.com/x".into(),
+            frame: Frame::Barycenter {
+                body_name: "sun".into(),
+                scale: 1.0,
+            },
+            format: "json".into(),
+            extracts: vec![Extract::CelestialMap {
+                arr_path: ".".into(),
+                ra_key: "ra".into(),
+                dec_key: "dec".into(),
+                dist_key: String::new(),
+                dist_scale: 1.0,
+                plx_key: String::new(),
+                z_key: String::new(),
+                pmra_key: String::new(),
+                pmdec_key: String::new(),
+                rv_key: String::new(),
+                rv_scale: 1.0,
+                epoch_key: String::new(),
+                fields: vec![FieldConfig {
+                    key: "H".into(),
+                    name: "comet_h_mag".into(),
+                    kernel: 0,
+                    force: 0,
+                    tau: 604800.0,
+                    absorption: 0.0,
+                    advection: 0.0,
+                    unit: String::new(),
+                    fold: None,
+                }],
+                tau_key: String::new(),
+            }],
+            headers: vec![],
+            post_body: None,
+            target: None,
+            catalog: None,
+            max_freq: None,
+            min_freq: None,
+            body: None,
+            stations_url: None,
+            stations_path: String::new(),
+            stations_lat: String::new(),
+            stations_lon: String::new(),
+            stations_id: String::new(),
+            flux_from_mag: None,
+            abs_mag_from: None,
+            catalog_epoch: None,
+            repeat_ra_bins: 0,
+            fanout_cap: 0,
+            stations_flatten: String::new(),
+            stations_filter: None,
+            fanout_delay: 0,
+        };
+        let fixture_lsk = LeapSeconds {
+            delta_t_a: 32.184,
+            deltas: vec![(37.0, 1483228800.0)],
+        };
+        match extract(&src, json, 8.0e8, &fixture_lsk) {
+            ExtractResult::Measurements(channels) => {
+                assert_eq!(channels.len(), 0);
+            }
+            ExtractResult::WithEphemeris(_, _) => panic!("unexpected ephemeris"),
+        }
+    }
+
+    #[test]
+    fn test_extract_cmap_null_dist_skipped() {
+        let json = r#"[{"ra":0.0,"dec":0.0,"dist_pc":null,"H":5.5}]"#;
+        let src = SourceConfig {
+            ttl: 604800,
+            url: "https://example.com/x".into(),
+            frame: Frame::Barycenter {
+                body_name: "sun".into(),
+                scale: 1.0,
+            },
+            format: "json".into(),
+            extracts: vec![Extract::CelestialMap {
+                arr_path: ".".into(),
+                ra_key: "ra".into(),
+                dec_key: "dec".into(),
+                dist_key: "dist_pc".into(),
+                dist_scale: 3.085677581e16,
+                plx_key: String::new(),
+                z_key: String::new(),
+                pmra_key: String::new(),
+                pmdec_key: String::new(),
+                rv_key: String::new(),
+                rv_scale: 1.0,
+                epoch_key: String::new(),
+                fields: vec![FieldConfig {
+                    key: "H".into(),
+                    name: "comet_h_mag".into(),
+                    kernel: 0,
+                    force: 0,
+                    tau: 604800.0,
+                    absorption: 0.0,
+                    advection: 0.0,
+                    unit: String::new(),
+                    fold: None,
+                }],
+                tau_key: String::new(),
+            }],
+            headers: vec![],
+            post_body: None,
+            target: None,
+            catalog: None,
+            max_freq: None,
+            min_freq: None,
+            body: None,
+            stations_url: None,
+            stations_path: String::new(),
+            stations_lat: String::new(),
+            stations_lon: String::new(),
+            stations_id: String::new(),
+            flux_from_mag: None,
+            abs_mag_from: None,
+            catalog_epoch: None,
+            repeat_ra_bins: 0,
+            fanout_cap: 0,
+            stations_flatten: String::new(),
+            stations_filter: None,
+            fanout_delay: 0,
+        };
+        let fixture_lsk = LeapSeconds {
+            delta_t_a: 32.184,
+            deltas: vec![(37.0, 1483228800.0)],
+        };
+        match extract(&src, json, 8.0e8, &fixture_lsk) {
+            ExtractResult::Measurements(channels) => {
+                assert_eq!(channels.len(), 0);
+            }
+            ExtractResult::WithEphemeris(_, _) => panic!("unexpected ephemeris"),
+        }
+    }
+
+    #[test]
+    fn test_extract_cmap_csv_dist_scale_mpc() {
+        let csv = "AGCNr,Name,RAdeg_HI,Decdeg_HI,RAdeg_OC,DECdeg_OC,Vhelio,W50,errW50,HIflux,errflux,SNR,RMS,Dist,logMsun,HIcode,OCcode,NoteFlag\n\
+331061,456-013,0.01042,15.87222,0.00875,15.88167,6007,260,45,1.13,0.09,6.5,2.40,85.2,9.29,1,I,\"\"\n\
+331405,\"\",0.01375,26.01639,0.01458,26.01389,10409,315,8,2.62,0.09,16.1,2.05,143.8,10.11,1,I,\"\"\n";
+        let src = SourceConfig {
+            ttl: 604800,
+            url: "https://example.com/x".into(),
+            frame: Frame::Barycenter {
+                body_name: "sun".into(),
+                scale: 1.0,
+            },
+            format: "csv".into(),
+            extracts: vec![Extract::CelestialMap {
+                arr_path: ".".into(),
+                ra_key: "RAdeg_HI".into(),
+                dec_key: "Decdeg_HI".into(),
+                dist_key: "Dist".into(),
+                dist_scale: 3.085677581e22,
+                plx_key: String::new(),
+                z_key: String::new(),
+                pmra_key: String::new(),
+                pmdec_key: String::new(),
+                rv_key: String::new(),
+                rv_scale: 1.0,
+                epoch_key: String::new(),
+                fields: vec![FieldConfig {
+                    key: "HIflux".into(),
+                    name: "alfalfa_hi_flux".into(),
+                    kernel: 0,
+                    force: 0,
+                    tau: 604800.0,
+                    absorption: 0.0,
+                    advection: 0.0,
+                    unit: String::new(),
+                    fold: None,
+                }],
+                tau_key: String::new(),
+            }],
+            headers: vec![],
+            post_body: None,
+            target: None,
+            catalog: None,
+            max_freq: None,
+            min_freq: None,
+            body: None,
+            stations_url: None,
+            stations_path: String::new(),
+            stations_lat: String::new(),
+            stations_lon: String::new(),
+            stations_id: String::new(),
+            flux_from_mag: None,
+            abs_mag_from: None,
+            catalog_epoch: None,
+            repeat_ra_bins: 0,
+            fanout_cap: 0,
+            stations_flatten: String::new(),
+            stations_filter: None,
+            fanout_delay: 0,
+        };
+        let fixture_lsk = LeapSeconds {
+            delta_t_a: 32.184,
+            deltas: vec![(37.0, 1483228800.0)],
+        };
+        match extract(&src, csv, 8.0e8, &fixture_lsk) {
+            ExtractResult::Measurements(channels) => {
+                assert_eq!(channels.len(), 2);
+                assert_eq!(channels[0].1.name, "alfalfa_hi_flux");
+                assert_eq!(channels[0].0.value, 1.13);
+                assert_eq!(channels[1].0.value, 2.62);
+                if let Position::StateVector { p, .. } = channels[0].0.position {
+                    let expect = 85.2 * 3.085677581e22;
+                    let r = (p[0] * p[0] + p[1] * p[1] + p[2] * p[2]).sqrt();
+                    assert!((r - expect).abs() / expect < 1e-12);
+                } else {
+                    panic!("expected StateVector position");
+                }
+            }
+            ExtractResult::WithEphemeris(_, _) => panic!("unexpected ephemeris"),
+        }
+    }
+
+    #[test]
+    fn test_star_records_build_tau() {
+        let mut bin = Vec::new();
+        bin.extend_from_slice(&0f64.to_le_bytes());
+        bin.extend_from_slice(&0f64.to_le_bytes());
+        bin.extend_from_slice(&0f32.to_le_bytes());
+        bin.extend_from_slice(&0f32.to_le_bytes());
+        bin.extend_from_slice(&100f32.to_le_bytes());
+        bin.extend_from_slice(&0f32.to_le_bytes());
+        bin.extend_from_slice(&1f32.to_le_bytes());
+        bin.extend_from_slice(&1.2f32.to_le_bytes());
+        bin.extend_from_slice(&30000f32.to_le_bytes());
+        #[cfg(feature = "browser_relay")]
+        let hash = build_star_hash(&bin, 0.0, 1.0);
+        #[cfg(not(feature = "browser_relay"))]
+        let hash = build_star_hash(&bin);
+        assert_eq!(hash.records.len(), 1);
+        assert!(hash.records[0].tau > 0.0);
+        assert!((hash.records[0].color_index - 1.2).abs() < 1e-4);
+        assert!((hash.records[0].rv_m_s - 30000.0).abs() < 1e-4);
+        let (p, _) = star_position_at(&hash.records[0], 0.0);
+        let d = 10.0 * PARSEC_M;
+        assert!((p[0] - d).abs() / d < 1e-9);
+        let short = [0u8; 36];
+        assert!(parse_star_record(&short).is_none());
+        let legacy = [0u8; 40];
+        assert!(parse_star_record(&legacy).is_none());
+        #[cfg(feature = "browser_relay")]
+        let legacy_hash = build_star_hash(&bin[..40], 0.0, 1.0);
+        #[cfg(not(feature = "browser_relay"))]
+        let legacy_hash = build_star_hash(&bin[..40]);
+        assert_eq!(legacy_hash.records.len(), 0);
+    }
+
+    #[cfg(feature = "browser_relay")]
+    #[test]
+    fn test_star_hash_build_and_query() {
+        let mut bin = Vec::new();
+        bin.extend_from_slice(&0f64.to_le_bytes());
+        bin.extend_from_slice(&0f64.to_le_bytes());
+        bin.extend_from_slice(&0f32.to_le_bytes());
+        bin.extend_from_slice(&0f32.to_le_bytes());
+        bin.extend_from_slice(&100f32.to_le_bytes());
+        bin.extend_from_slice(&0f32.to_le_bytes());
+        bin.extend_from_slice(&1f32.to_le_bytes());
+        bin.extend_from_slice(&0f32.to_le_bytes());
+        bin.extend_from_slice(&12000f32.to_le_bytes());
+        let hash = build_star_hash(&bin, 0.0, 1.0);
+        assert_eq!(hash.p0.len(), 1);
+        let d = 10.0 * PARSEC_M;
+        assert!((hash.p0[0][0] - d).abs() / d < 1e-9);
+        let mut records: Vec<OscRecord> = Vec::new();
+        query_star_hash(&hash, [0.0, 0.0, 0.0], 0.0, d * 2.0, 0.0, &mut records);
+        assert_eq!(records.len(), 1);
+        assert!((records[0].0 - d).abs() / d < 1e-9);
+        assert_eq!(records[0].3, 1.0);
+    }
+
+    #[test]
+    fn test_source_name_flat_and_collision_overrides() {
+        let q1 = source_name_from_url("https://h/api?station=1");
+        let q2 = source_name_from_url("https://h/api?station=2");
+        assert_ne!(q1, q2);
+        let again = source_name_from_url("https://h/api?station=1");
+        assert_eq!(q1, again);
+        let buoy1 = source_name_from_url("https://www.ndbc.noaa.gov/data/realtime/41009.txt");
+        let buoy2 = source_name_from_url("https://www.ndbc.noaa.gov/data/realtime/41010.txt");
+        assert_ne!(buoy1, buoy2);
+        let slash = source_name_from_url("https://h/api/a/b");
+        let dash = source_name_from_url("https://h/api/a-b");
+        assert_eq!(slash, dash);
+        let map = cdn_manifest_for(
+            ["https://h/api/a/b", "https://h/api/a-b"]
+                .into_iter()
+                .map(|s| s.to_string()),
+        );
+        assert_eq!(
+            map.get("https://h/api/a-b").unwrap(),
+            &format!("{}-2", slash)
+        );
+        assert!(!map.contains_key("https://h/api/a/b"));
+    }
+
+    #[test]
+    fn test_render_headers_secret_substitution() {
+        let mut env = HashMap::new();
+        env.insert("PURPLEAIR_KEY".to_string(), "secret123".to_string());
+        let headers = vec![
+            ("X-API-Key".to_string(), "{PURPLEAIR_KEY}".to_string()),
+            ("User-Agent".to_string(), "plain".to_string()),
+        ];
+        let rendered = render_headers(&headers, &env);
+        assert_eq!(rendered[0].1, "secret123");
+        assert_eq!(rendered[1].1, "plain");
+    }
+
+    #[test]
+    fn test_parse_station_entries() {
+        let j = parse_json(
+            r#"{"results":[{"id":"GHCND:AA1","latitude":17.1,"longitude":-61.8,"elevation":10.0},{"id":"GHCND:BB2","latitude":40.9,"longitude":-74.0},{"id":7,"latitude":52.5,"longitude":13.4}]}"#,
+        )
+        .unwrap();
+        let src = SourceConfig {
+            ttl: 300,
+            url: "https://example.com/x".into(),
+            frame: Frame::Surface {
+                body_name: "earth".into(),
+                lat: 0.0,
+                lon: 0.0,
+                alt: 0.0,
+            },
+            format: "json".into(),
+            extracts: vec![],
+            headers: vec![],
+            post_body: None,
+            target: None,
+            catalog: None,
+            max_freq: None,
+            min_freq: None,
+            body: None,
+            stations_url: None,
+            stations_path: "results".into(),
+            stations_lat: "latitude".into(),
+            stations_lon: "longitude".into(),
+            stations_id: "id".into(),
+            flux_from_mag: None,
+            abs_mag_from: None,
+            catalog_epoch: None,
+            repeat_ra_bins: 0,
+            fanout_cap: 0,
+            stations_flatten: String::new(),
+            stations_filter: None,
+            fanout_delay: 0,
+        };
+        let stations = parse_station_entries(&j, &src);
+        assert_eq!(stations.len(), 3);
+        assert_eq!(stations[0].id, "GHCND:AA1");
+        assert_eq!(stations[0].lat, 17.1);
+        assert_eq!(stations[0].lon, -61.8);
+        assert_eq!(stations[2].id, "7");
+        assert_eq!(stations[2].lat, 52.5);
+    }
+
+    #[test]
+    fn test_parse_station_entries_flatten_filter() {
+        let j = parse_json(
+            r#"{"results":[{"coordinates":{"latitude":40.8,"longitude":-73.9},"sensors":[{"id":671,"parameter":{"name":"o3"}},{"id":673,"parameter":{"name":"pm25"}}]},{"coordinates":{"latitude":40.9,"longitude":-74.0},"sensors":[{"id":1097,"parameter":{"name":"pm25"}}]}]}"#,
+        )
+        .unwrap();
+        let src = SourceConfig {
+            ttl: 300,
+            url: "https://example.com/x".into(),
+            frame: Frame::Surface {
+                body_name: "earth".into(),
+                lat: 0.0,
+                lon: 0.0,
+                alt: 0.0,
+            },
+            format: "json".into(),
+            extracts: vec![],
+            headers: vec![],
+            post_body: None,
+            target: None,
+            catalog: None,
+            max_freq: None,
+            min_freq: None,
+            body: None,
+            stations_url: None,
+            stations_path: "results".into(),
+            stations_lat: "coordinates.latitude".into(),
+            stations_lon: "coordinates.longitude".into(),
+            stations_id: "id".into(),
+            flux_from_mag: None,
+            abs_mag_from: None,
+            catalog_epoch: None,
+            repeat_ra_bins: 0,
+            fanout_cap: 0,
+            stations_flatten: "sensors".into(),
+            stations_filter: Some(("parameter.name".into(), "pm25".into())),
+            fanout_delay: 0,
+        };
+        let stations = parse_station_entries(&j, &src);
+        assert_eq!(stations.len(), 2);
+        assert_eq!(stations[0].id, "673");
+        assert_eq!(stations[0].lat, 40.8);
+        assert_eq!(stations[0].lon, -73.9);
+        assert_eq!(stations[1].id, "1097");
+        assert_eq!(stations[1].lat, 40.9);
+        assert_eq!(stations[1].lon, -74.0);
+    }
+
+    #[test]
+    fn temp_port_convert_check() {
+        let content = std::fs::read_to_string("phi/pipeline/queue/master.φ").unwrap();
+        let mut blocks = 0usize;
+        let mut parsed = 0usize;
+        let mut with_extracts = 0usize;
+        let mut block = String::new();
+        for line in content.lines() {
+            let t = line.trim_start();
+            if (t.starts_with("url ") || t.starts_with("source ")) && !block.is_empty() {
+                blocks += 1;
+                let conv = super::port_block(&block);
+                let srcs = super::parse_sources(&conv);
+                if !srcs.is_empty() {
+                    parsed += 1;
+                    with_extracts += srcs.iter().filter(|s| !s.extracts.is_empty()).count();
+                }
+                block = String::new();
+            }
+            block.push_str(line);
+            block.push('\n');
+        }
+        eprintln!(
+            "port convert: {} blocks, {} parsed, {} with extracts",
+            blocks, parsed, with_extracts
+        );
+    }
+
+    #[test]
+    fn test_profile_map_parse() {
+        let block = "url https://argovis-api.colorado.edu/argo?data=temperature,salinity,pressure\nttl 86400\non earth 0 0 0\nprofile .\nlat geolocation.coordinates.1\nlon geolocation.coordinates.0\nepoch timestamp\npressure pressure\nfield temperature argo_temperature_c erfc thermal C 86400 0.0 0.0\nfield salinity argo_salinity_psu erfc diffusion psu 86400 0.0 0.0\n";
+        let srcs = super::parse_sources(block);
+        assert_eq!(srcs.len(), 1);
+        let prof = srcs[0].extracts.iter().find_map(|e| match e {
+            super::Extract::ProfileMap {
+                pressure_var,
+                fields,
+                lat_key,
+                lon_key,
+                ..
+            } => Some((
+                pressure_var.clone(),
+                fields,
+                lat_key.clone(),
+                lon_key.clone(),
+            )),
+            _ => None,
+        });
+        let (pv, fields, lk, ok) = prof.expect("ProfileMap extract fehlt");
+        assert_eq!(pv, "pressure");
+        assert_eq!(lk, "geolocation.coordinates.1");
+        assert_eq!(ok, "geolocation.coordinates.0");
+        assert_eq!(fields.len(), 2);
+        assert_eq!(fields[0].key, "temperature");
+        assert_eq!(fields[1].key, "salinity");
+    }
+
+    #[test]
+    fn test_netcdf_grammar_alt_decibar() {
+        let block = "url https://data-argo.ifremer.fr/dac/aoml/1901843/profiles/R1901843_357.nc\nttl 604800\non earth 0 0 0\nformat netcdf\nprofile .\nlat LATITUDE\nlon LONGITUDE\nepoch JULD\nalt PRES decibar\nfield TEMP argo_dac_temp_c erfc thermal C 604800 0.0 0.0\nfield PSAL argo_dac_salinity_psu erfc diffusion psu 604800 0.0 0.0\n";
+        let srcs = super::parse_sources(block);
+        assert_eq!(srcs.len(), 1);
+        assert_eq!(srcs[0].format, "netcdf");
+        let prof = srcs[0].extracts.iter().find_map(|e| match e {
+            super::Extract::ProfileMap {
+                pressure_var,
+                pressure_scale,
+                fields,
+                lat_key,
+                lon_key,
+                epoch_key,
+                ..
+            } => Some((
+                pressure_var.clone(),
+                *pressure_scale,
+                fields,
+                lat_key.clone(),
+                lon_key.clone(),
+                epoch_key.clone(),
+            )),
+            _ => None,
+        });
+        let (pv, ps, fields, lk, ok, ek) = prof.expect("ProfileMap extract fehlt");
+        assert_eq!(pv, "PRES");
+        assert_eq!(ps, 1.0);
+        assert_eq!(lk, "LATITUDE");
+        assert_eq!(ok, "LONGITUDE");
+        assert_eq!(ek, "JULD");
+        assert_eq!(fields.len(), 2);
+        assert_eq!(fields[0].key, "TEMP");
+        assert_eq!(fields[1].key, "PSAL");
+    }
+
+    #[test]
+    fn test_build_netcdf_channels() {
+        let block = "url https://data-argo.ifremer.fr/dac/aoml/1901843/profiles/R1901843_357.nc\nttl 604800\non earth 0 0 0\nformat netcdf\nprofile .\nlat LATITUDE\nlon LONGITUDE\nepoch JULD\nalt PRES decibar\nfield TEMP argo_dac_temp_c erfc thermal C 604800 0.0 0.0\nfield PSAL argo_dac_salinity_psu erfc diffusion psu 604800 0.0 0.0\n";
+        let srcs = super::parse_sources(block);
+        let u32b = |x: u32| x.to_be_bytes().to_vec();
+        let f64b = |x: f64| x.to_bits().to_be_bytes().to_vec();
+        let f32b = |x: f32| x.to_bits().to_be_bytes().to_vec();
+        let name = |s: &str| {
+            let mut b = u32b(s.len() as u32);
+            b.extend_from_slice(s.as_bytes());
+            while b.len() % 4 != 0 {
+                b.push(0);
+            }
+            b
+        };
+        let mut b = Vec::new();
+        b.extend([0x43, 0x44, 0x46, 0x01]);
+        b.extend(u32b(0));
+        b.extend(u32b(0x0A));
+        b.extend(u32b(2));
+        b.extend(name("N_PROF"));
+        b.extend(u32b(1));
+        b.extend(name("N_LEVELS"));
+        b.extend(u32b(3));
+        b.extend(u32b(0));
+        b.extend(u32b(0));
+        b.extend(u32b(0x0B));
+        b.extend(u32b(6));
+        let var = |b: &mut Vec<u8>,
+                   nm: &str,
+                   rank: u32,
+                   dims: &[u32],
+                   fill: Option<f32>,
+                   t: u32,
+                   vsize: u32|
+         -> usize {
+            b.extend(name(nm));
+            b.extend(u32b(rank));
+            for &d in dims {
+                b.extend(u32b(d));
+            }
+            match fill {
+                Some(fv) => {
+                    b.extend(u32b(0x0C));
+                    b.extend(u32b(1));
+                    b.extend(name("_FillValue"));
+                    b.extend(u32b(5));
+                    b.extend(u32b(1));
+                    b.extend(f32b(fv));
+                }
+                None => {
+                    b.extend(u32b(0));
+                    b.extend(u32b(0));
+                }
+            }
+            b.extend(u32b(t));
+            b.extend(u32b(vsize));
+            let slot = b.len();
+            b.extend(u32b(0));
+            slot
+        };
+        let slots = vec![
+            var(&mut b, "LATITUDE", 1, &[0], None, 6, 8),
+            var(&mut b, "LONGITUDE", 1, &[0], None, 6, 8),
+            var(&mut b, "JULD", 1, &[0], None, 6, 8),
+            var(&mut b, "PRES", 2, &[0, 1], Some(99999.0), 5, 4),
+            var(&mut b, "TEMP", 2, &[0, 1], Some(99999.0), 5, 4),
+            var(&mut b, "PSAL", 2, &[0, 1], Some(99999.0), 5, 4),
+        ];
+        let data_start = b.len() as u64;
+        let begins = [
+            data_start,
+            data_start + 8,
+            data_start + 16,
+            data_start + 24,
+            data_start + 36,
+            data_start + 48,
+        ];
+        for (slot, beg) in slots.iter().zip(begins.iter()) {
+            b[*slot..*slot + 4].copy_from_slice(&(*beg as u32).to_be_bytes());
+        }
+        b.extend(f64b(-15.77751));
+        b.extend(f64b(57.37286));
+        b.extend(f64b(27965.773125022904));
+        for p in [1.08f32, 2.0, 99999.0] {
+            b.extend(f32b(p));
+        }
+        for t in [25.862f32, f32::NAN, 10.0] {
+            b.extend(f32b(t));
+        }
+        for s in [35.0314f32, 35.0, 34.9] {
+            b.extend(f32b(s));
+        }
+        let lsk = full_fixture_lsk();
+        let expected_epoch = lsk
+            .unix_to_tdb((27965.773125022904f64 - 7305.0) * 86400.0)
+            .unwrap();
+        let channels = super::build_netcdf_channels(&srcs[0], &b, &lsk);
+        assert_eq!(channels.len(), 3);
+        assert_eq!(channels[0].0.name, "argo_dac_temp_c");
+        assert_eq!(channels[1].0.name, "argo_dac_salinity_psu");
+        assert_eq!(channels[2].0.name, "argo_dac_salinity_psu");
+        assert!((channels[0].0.value - 25.862).abs() < 1e-3);
+        assert!((channels[1].0.value - 35.0314).abs() < 1e-3);
+        assert!((channels[2].0.value - 35.0).abs() < 1e-6);
+        assert!((channels[0].0.epoch - expected_epoch).abs() < 1e-6);
+        assert!((channels[1].0.epoch - expected_epoch).abs() < 1e-6);
+        assert!((channels[2].0.epoch - expected_epoch).abs() < 1e-6);
+        let alts: Vec<f64> = channels
+            .iter()
+            .map(|(c, _)| match &c.position {
+                super::Position::Surface { alt, lat, lon, .. } => {
+                    assert!((*lat + 15.77751).abs() < 1e-4);
+                    assert!((*lon - 57.37286).abs() < 1e-4);
+                    *alt
+                }
+                _ => panic!("Position ist nicht Surface"),
+            })
+            .collect();
+        assert!((alts[0] + 1.08).abs() < 1e-2);
+        assert!((alts[1] + 1.08).abs() < 1e-2);
+        assert!((alts[2] + 2.0).abs() < 1e-2);
+    }
+
+    #[test]
+    fn test_port_convert_celestial_and_post() {
+        let celestial = "source oac\nttl 86400\nforce em\nurl https://api.example.org/{target}/\nverify false\ntarget SN2014J\nmap .\nlat_key ra\nlon_key dec\nfield name name\n";
+        let conv = super::port_block(celestial);
+        assert!(conv.contains("ttl 86400\n"));
+        assert!(conv.contains("at sun\n"));
+        assert!(conv.contains("url https://api.example.org/{target}/\n"));
+        let srcs = super::parse_sources(&conv);
+        for s in &srcs {
+            for e in &s.extracts {
+                match e {
+                    super::Extract::CelestialMap { fields, .. }
+                    | super::Extract::Map { fields, .. } => assert!(fields.is_empty()),
+                    _ => {}
+                }
+            }
+        }
+        let post = "source stac\nttl 86400\nforce em\nurl https://example.org/search\nmethod post\nbody {\"collections\":[\"x\"],\"bbox\":[{lon_min},{lat_min},{lon_max},{lat_max}]}\nmap features\nlat_key properties.centroid.lat\nlon_key properties.centroid.lon\nfield id scene\n";
+        let conv = super::port_block(post);
+        assert!(conv.contains(
+                "post_body {\"collections\":[\"x\"],\"bbox\":[{lon_min},{lat_min},{lon_max},{lat_max}]}\n"
+            ));
+        let srcs = super::parse_sources(&conv);
+        assert!(
+            srcs.is_empty()
+                || srcs.iter().all(|s| s.extracts.iter().all(|e| match e {
+                    super::Extract::Map { fields, .. } => fields.is_empty(),
+                    _ => true,
+                }))
+        );
+        let array_post = "source arr\nttl 86400\nforce em\nurl https://example.org/search\nmethod POST\nbody [1,2,3]\nmap features\nlat_key properties.centroid.lat\nlon_key properties.centroid.lon\nfield id scene\n";
+        let conv = super::port_block(array_post);
+        assert!(conv.contains("post_body [1,2,3]\n"));
+        let srcs = super::parse_sources(&conv);
+        assert!(
+            srcs.is_empty()
+                || srcs.iter().all(|s| s.extracts.iter().all(|e| match e {
+                    super::Extract::Map { fields, .. } => fields.is_empty(),
+                    _ => true,
+                }))
+        );
+        let form_post = "source form\nttl 86400\nforce em\nurl https://example.org/search\nmethod POST\nbody collection=landsat&limit=10\nmap features\nlat_key lat\nlon_key lon\nfield id scene\n";
+        let conv = super::port_block(form_post);
+        assert!(conv.contains("post_body collection=landsat&limit=10\n"));
+        let srcs = super::parse_sources(&conv);
+        assert!(
+            srcs.is_empty()
+                || srcs.iter().all(|s| s.extracts.iter().all(|e| match e {
+                    super::Extract::Map { fields, .. } => fields.is_empty(),
+                    _ => true,
+                }))
+        );
+        let no_method = "source kt\nttl 86400\nforce em\nurl https://example.org/x\nformat kernel_text\nbody 399\n";
+        let conv = super::port_block(no_method);
+        assert!(conv.contains("body 399\n"));
+        let srcs = super::parse_sources(&conv);
+        assert!(
+            srcs.is_empty()
+                || srcs.iter().all(|s| s.extracts.iter().all(|e| match e {
+                    super::Extract::Map { fields, .. } => fields.is_empty(),
+                    _ => true,
+                }))
+        );
+    }
+    #[test]
+    fn test_walk_celestial_cmap() {
+        let j =
+            super::parse_json("{\"results\":[{\"ra\":1.5,\"dec\":-2.5,\"mag\":12.3}]}").unwrap();
+        let mut fields = String::new();
+        let mut coords = String::new();
+        let mut map_path: Option<String> = None;
+        let mut budget = 48usize;
+        super::walk_json_probe(&j, "", &mut fields, &mut coords, &mut map_path, &mut budget);
+        assert!(coords.contains("ra "));
+        assert!(coords.contains("dec "));
+        assert_eq!(map_path.as_deref(), Some("results"));
+        assert!(fields.contains("field"));
+        let (frame, _) = super::derive_frame(&j, &coords);
+        assert!(frame.starts_with("at sun"));
+    }
+
+    #[test]
+    fn test_tap_to_json_rows() {
+        let j = super::parse_json(
+                "{\"metadata\":[{\"name\":\"RAJ2000\"},{\"name\":\"DEJ2000\"},{\"name\":\"Ksmag\"}],\"data\":[[1.5,-2.5,12.3],[3.0,4.0,10.1]]}",
+            )
+            .unwrap();
+        let flat = super::tap_to_json(&j).unwrap();
+        let mut fields = String::new();
+        let mut coords = String::new();
+        let mut map_path: Option<String> = None;
+        let mut budget = 48usize;
+        super::walk_json_probe(
+            &flat,
+            "",
+            &mut fields,
+            &mut coords,
+            &mut map_path,
+            &mut budget,
+        );
+        assert!(coords.contains("ra RAJ2000"));
+        assert!(coords.contains("dec DEJ2000"));
+        assert_eq!(map_path.as_deref(), Some("."));
+        let (frame, _) = super::derive_frame(&flat, &coords);
+        assert!(frame.starts_with("at sun"));
+    }
+
+    #[test]
+    fn test_parse_stations_xml() {
+        let xml = "<?xml version=\"1.0\" ?><GINServices>\n <ObservatoryList>\n  <Observatory>\n   <Code>AAE</Code>\n   <Name>Addis Ababa</Name>\n   <Latitude>9.035</Latitude>   <Longitude>38.770</Longitude>   <Elevation>2441</Elevation>\n  </Observatory>\n  <Observatory>\n   <Code>YKC</Code>\n   <Latitude>62.48</Latitude>   <Longitude>-114.48</Longitude>   <Elevation>181</Elevation>\n  </Observatory>\n </ObservatoryList>\n</GINServices>";
+        let st = parse_stations_xml(xml);
+        assert_eq!(st.len(), 2);
+        assert_eq!(st[0].id, "aae");
+        assert_eq!(st[0].lat, 9.035);
+        assert_eq!(st[0].lon, 38.770);
+        assert_eq!(st[1].id, "ykc");
+        assert_eq!(st[1].lat, 62.48);
+    }
+
+    #[test]
+    fn test_backlog_batches_verify() {
+        fn substitute_test_templates(url: &str) -> String {
+            let mut u = url.to_string();
+            for (k, v) in [
+                ("{today}", "2026-08-07"),
+                ("{yesterday}", "2026-08-06"),
+                ("{tomorrow}", "2026-08-08"),
+                ("{now}", "2026-08-07T12:00:00Z"),
+                ("{year}", "2026"),
+                ("{month}", "08"),
+                ("{day}", "07"),
+                ("{lat}", "29.5"),
+                ("{lon}", "-95.0"),
+                ("{ra}", "0.0"),
+                ("{dec}", "0.0"),
+                ("{target}", "Ceres"),
+                ("{week_ago}", "2026-07-31"),
+                ("{hour_ago}", "2026-08-07T11:00:00Z"),
+                ("{body}", "ISS"),
+                ("{lon_min}", "-95.0"),
+                ("{lon_max}", "-94.0"),
+                ("{lat_min}", "29.0"),
+                ("{lat_max}", "30.0"),
+                ("{grid}", "29.5,-95.0|29.6,-95.0"),
+                ("{nearest_station}", "8518750"),
+            ] {
+                u = u.replace(k, v);
+            }
+            u
+        }
+        let live: std::collections::HashSet<String> = super::load_sources()
+            .iter()
+            .map(|s| s.url.clone())
+            .collect();
+        let mut seen: std::collections::HashSet<String> = std::collections::HashSet::new();
+        let mut ok_text = String::from("# staging: backlog blocks verified with samples\n");
+        if let Ok(existing) = std::fs::read_to_string("phi/pipeline/stage/staging_verified.φ") {
+            for l in existing.lines() {
+                let t = l.trim_start();
+                if t.starts_with("url ") {
+                    seen.insert(t[4..].trim().to_string());
+                }
+            }
+            ok_text = existing;
+        }
+        let mut void_text = String::new();
+        if let Ok(existing) = std::fs::read_to_string("phi/pipeline/stage/staging_void_ledger.txt")
+        {
+            for l in existing.lines() {
+                if let Some(u) = l.strip_prefix("void ") {
+                    if let Some(end) = u.find(' ') {
+                        seen.insert(u[..end].to_string());
+                    }
+                }
+            }
+            void_text = existing;
+        }
+        let fixture_lsk = full_fixture_lsk();
+        let now = fixture_lsk.system_now_tdb().unwrap();
+        let env = super::load_env();
+        let mut limit = 300usize;
+        let mut ok = 0usize;
+        let mut empty = 0usize;
+        for e in std::fs::read_dir("phi/pipeline/stage").unwrap().flatten() {
+            let fname = e.file_name().to_string_lossy().to_string();
+            if !fname.ends_with("_converted.φ") {
+                continue;
+            }
+            let content = std::fs::read_to_string(e.path()).unwrap();
+            let mut block = String::new();
+            for line in content.lines().chain(std::iter::once("url __eof__")) {
+                let t = line.trim_start();
+                if t.starts_with("url ") && !block.is_empty() {
+                    if limit == 0 {
+                        break;
+                    }
+                    let srcs = super::parse_sources(&block);
+                    for s in &srcs {
+                        if s.fanout_cap > 0 || s.format == "csv_zip" || s.format == "kernel_text" {
+                            break;
+                        }
+                        let mut url = substitute_test_templates(&s.url);
+                        url = super::resolve_secret(&url, &env);
+                        url = url.replace(' ', "%20");
+                        if live.contains(&s.url) || !seen.insert(s.url.clone()) {
+                            break;
+                        }
+                        limit -= 1;
+                        let headers = super::render_headers(&s.headers, &env);
+                        let post_body = match &s.post_body {
+                            Some(pb) => Some(substitute_test_templates(pb)),
+                            None => None,
+                        };
+                        let post = post_body.as_deref();
+                        let body = match super::fetch_raw_probe(&url, post, &headers) {
+                            Some(b) => b,
+                            None => {
+                                empty += 1;
+                                void_text.push_str(&format!(
+                                    "void {} {}\n",
+                                    s.url, "fetch returned empty"
+                                ));
+                                break;
+                            }
+                        };
+                        let n_samples = match super::extract(s, &body, now, &fixture_lsk) {
+                            super::ExtractResult::Measurements(v) => v.len(),
+                            super::ExtractResult::WithEphemeris(v, _) => v.len(),
+                        };
+                        if n_samples == 0 {
+                            empty += 1;
+                            void_text.push_str(&format!(
+                                "void {} {}\n",
+                                s.url,
+                                super::diagnose_no_samples(s, &body)
+                            ));
+                        } else {
+                            ok += 1;
+                            ok_text.push_str(&format!("# from {}\n", fname));
+                            ok_text.push_str(&block);
+                            ok_text.push('\n');
+                        }
+                    }
+                    block = String::new();
+                }
+                block.push_str(line);
+                block.push('\n');
+            }
+        }
+        eprintln!("=== BACKLOG VERIFY: {} ok, {} empty ===", ok, empty);
+        let ok_path = "phi/pipeline/stage/staging_verified.φ";
+        let void_path = "phi/pipeline/stage/staging_void_ledger.txt";
+        std::fs::write(ok_path, &ok_text).unwrap();
+        std::fs::write(void_path, &void_text).unwrap();
+        eprintln!("staged: {} and {}", ok_path, void_path);
+    }
+
+    #[test]
+    fn test_erddap_argo_map_extract() {
+        let src = SourceConfig {
+            ttl: 43200,
+            url: "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.json".into(),
+            frame: super::Frame::Surface {
+                body_name: "body_test".into(),
+                lat: 0.0,
+                lon: 0.0,
+                alt: 0.0,
+            },
+            format: "json".into(),
+            extracts: vec![super::Extract::Map {
+                arr_path: "table.rows".into(),
+                lat_key: "2".into(),
+                lon_key: "1".into(),
+                alt_key: "3".into(),
+                epoch_key: "0".into(),
+                val_key: String::new(),
+                alt_scale: -1.0,
+                vel_key: String::new(),
+                vel_scale: 1.0,
+                trk_key: String::new(),
+                vr_key: String::new(),
+                fields: vec![FieldConfig {
+                    key: "4".into(),
+                    name: "argo_temp_c".into(),
+                    kernel: 0,
+                    force: 0,
+                    tau: 0.0,
+                    absorption: 0.0,
+                    advection: 0.0,
+                    unit: String::new(),
+                    fold: None,
+                }],
+                lat_sign: None,
+                lon_sign: None,
+                epoch_scale: 1.0,
+                tau_key: String::new(),
+                mag_type_key: String::new(),
+            }],
+            headers: vec![],
+            post_body: None,
+            target: None,
+            catalog: None,
+            max_freq: None,
+            min_freq: None,
+            body: None,
+            stations_url: None,
+            stations_path: String::new(),
+            stations_lat: String::new(),
+            stations_lon: String::new(),
+            stations_id: String::new(),
+            flux_from_mag: None,
+            abs_mag_from: None,
+            catalog_epoch: None,
+            repeat_ra_bins: 0,
+            fanout_cap: 0,
+            stations_flatten: String::new(),
+            stations_filter: None,
+            fanout_delay: 0,
+        };
+        let body = r#"{"table":{"columnNames":["time","longitude","latitude","pres","temp"],"columnTypes":["String","double","double","float","float"],"rows":[["2026-07-30T21:40:30Z",-14.408395,34.49025,3.1,23.478],["2026-07-30T22:00:00Z",-12.5,35.0,1000.0,4.681]]}}"#;
+        let fixture_lsk = super::LeapSeconds {
+            delta_t_a: 32.184,
+            deltas: vec![(37.0, 1483228800.0)],
+        };
+        let test_epoch = super::parse_iso_tdb("2026-07-30T21:40:30Z", &fixture_lsk).unwrap();
+        let now = test_epoch + 86400.0;
+        eprintln!("now={} test_epoch={}", now, test_epoch);
+        let result = super::extract(&src, body, now, &fixture_lsk);
+        let channels = match result {
+            super::ExtractResult::Measurements(v) => v,
+            _ => {
+                panic!("ExtractResult is WithEphemeris, 0 Channels");
+            }
+        };
+        assert_eq!(channels.len(), 2);
+        let (p0, _f0) = &channels[0];
+        assert!(p0.epoch < now);
+        let test_epoch = super::parse_iso_tdb("2026-07-30T21:40:30Z", &fixture_lsk).unwrap();
+        assert!((p0.epoch - test_epoch).abs() < 1e-6);
+        match p0.position {
+            super::Position::Surface {
+                lat,
+                lon,
+                alt,
+                body_name: _,
+            } => {
+                assert!((lat - 34.49025).abs() < 1e-6);
+                assert!((lon - -14.408395).abs() < 1e-6);
+                assert!((alt - -3.1).abs() < 1e-6);
+            }
+            _ => panic!("position is {:?}", p0.position),
+        }
+        assert_eq!(p0.name, "argo_temp_c");
+        assert!((p0.value - 23.478).abs() < 1e-6);
+        let (p1, _) = &channels[1];
+        match p1.position {
+            super::Position::Surface { alt, .. } => {
+                assert!((alt - -1000.0).abs() < 1e-6);
+            }
+            _ => panic!("position is {:?}", p1.position),
+        }
+    }
+
+    #[test]
+    fn test_ymd_days_roundtrip() {
+        for (y, m, d) in [
+            (1970, 1, 1),
+            (2000, 2, 29),
+            (2026, 7, 31),
+            (2026, 12, 31),
+            (2026, 1, 1),
+        ] {
+            let days = super::ymd_to_days(y, m, d).unwrap();
+            let (y2, m2, d2) = super::days_to_ymd(days);
+            assert_eq!(
+                (y2 as i64, m2, d2),
+                (y, m, d),
+                "roundtrip {} {}-{}-{}",
+                days,
+                y,
+                m,
+                d
+            );
+        }
+        assert_eq!(super::ymd_to_days(1970, 1, 1).unwrap(), 0);
+        assert!(super::ymd_to_days(1900, 1, 1).is_none());
+        assert_eq!(super::ymd_to_days(1970, 1, 1).unwrap(), 0);
+    }
+
+    #[test]
+    fn test_kernel_id_of() {
+        assert_eq!(super::kernel_id_of("inverse-square"), Some(0));
+        assert_eq!(super::kernel_id_of("gaussian-inverse-square"), Some(1));
+        assert_eq!(super::kernel_id_of("gaussian-inverse"), Some(2));
+        assert_eq!(super::kernel_id_of("erfc"), Some(3));
+        assert_eq!(super::kernel_id_of("exponential-decay"), Some(4));
+        assert_eq!(super::kernel_id_of("patch-levy"), Some(5));
+        assert_eq!(super::kernel_id_of("inverse-linear"), Some(6));
+        assert_eq!(super::kernel_id_of("nonexistent"), None);
+    }
+
+    #[test]
+    fn test_universal_auto_detect_celestial() {
+        let body = r#"{"data":[{"ra":83.63,"dec":22.01,"plx":3.14,"val":14.2,"t":2457389.5}]}"#;
+        let j = super::parse_json(body).unwrap();
+        let extracts = super::universal_auto_detect(&j);
+        assert_eq!(extracts.len(), 1);
+        match &extracts[0] {
+            super::Extract::CelestialMap {
+                ra_key,
+                dec_key,
+                plx_key,
+                pmra_key,
+                pmdec_key,
+                arr_path,
+                fields,
+                ..
+            } => {
+                assert_eq!(ra_key, "ra");
+                assert_eq!(dec_key, "dec");
+                assert_eq!(plx_key, "plx");
+                assert_eq!(pmra_key, "");
+                assert_eq!(pmdec_key, "");
+                assert_eq!(arr_path, "data");
+                assert!(!fields.is_empty());
+            }
+            _ => panic!("auto_detect returned Map/Rows/Field, CelestialMap absent"),
+        }
+    }
+
+    #[test]
+    fn test_universal_auto_detect_terrestrial() {
+        let body = r#"{"data":[{"lat":52.5,"lon":13.4,"val":28.5,"alt":50.0}]}"#;
+        let j = super::parse_json(body).unwrap();
+        let extracts = super::universal_auto_detect(&j);
+        assert_eq!(extracts.len(), 1);
+        match &extracts[0] {
+            super::Extract::Map {
+                lat_key,
+                lon_key,
+                alt_key,
+                arr_path,
+                ..
+            } => {
+                assert_eq!(lat_key, "lat");
+                assert_eq!(lon_key, "lon");
+                assert_eq!(alt_key, "alt");
+                assert_eq!(arr_path, "data");
+            }
+            _ => panic!("auto_detect returned CelestialMap/Rows/Field, Map absent"),
+        }
+    }
+
+    #[test]
+    fn test_wgccre_roundtrip() {
+        use std::collections::HashMap;
+        let tdb = 3.0 * 86400.0;
+        let mut cx: [f64; super::CHEBYSHEV_N] = [0.0; super::CHEBYSHEV_N];
+        cx[0] = 1.5e9;
+        let props = super::BodyProperties {
+            α0_deg: 317.68143,
+            dα0_dt_deg_per_century: -0.1061,
+            δ0_deg: 52.88650,
+            dδ0_dt_deg_per_century: -0.0609,
+            w0_deg: 176.630,
+            dw_dt_deg_per_day: 350.89198226,
+            radius_m: 3389500.0,
+            flattening: Some(0.00589),
+            gaussian_inverse_square: 0.0,
+            gaussian_inverse: 0.0,
+            erfc: 0.0,
+            patch_levy: 0.0,
+            exponential_decay: 0.0,
+            gm: None,
+            j2: None,
+            j4: None,
+            radii_b: None,
+            radii_c: None,
+            nut_ra: None,
+            nut_dec: None,
+            nutation: None,
+        };
+        let granule = super::ChebyshevGranule {
+            t0_jd: super::J2000_EPOCH,
+            dt_jd: 32.0,
+            cx,
+            cy: [0.0; super::CHEBYSHEV_N],
+            cz: [0.0; super::CHEBYSHEV_N],
+        };
+        let eph = super::BodyEphemeris {
+            granules: vec![granule],
+            rotation_matrices: vec![],
+            props: Some(props),
+        };
+        let mut map = HashMap::new();
+        map.insert("mars".to_string(), eph);
+        let cases = [
+            (35.0, -15.0, 0.0),
+            (0.0, 90.0, 0.0),
+            (89.9, 45.0, 0.0),
+            (-60.0, 170.0, 5000.0),
+        ];
+        for (lat, lon, alt) in cases {
+            let p = super::body_fixed_to_icrs("mars", lat, lon, alt, tdb, &map).unwrap();
+            let (lat2, lon2) =
+                super::icrs_to_body_surface(p[0], p[1], p[2], tdb, "mars", &map).unwrap();
+            assert!((lat2 - lat).abs() < 1e-6, "lat {} vs {}", lat2, lat);
+            assert!((lon2 - lon).abs() < 1e-6, "lon {} vs {}", lon2, lon);
+        }
+    }
+
+    #[test]
+    fn test_rotation_matrix_roundtrip() {
+        use std::collections::HashMap;
+        let tdb = 3.0 * 86400.0;
+        let jd = super::J2000_EPOCH + 3.0;
+        let tc = (jd - super::J2000_EPOCH) / 36525.0;
+        let a = (317.68143f64 - 0.1061 * tc).to_radians();
+        let d = (52.88650f64 - 0.0609 * tc).to_radians();
+        let w = (176.630f64 + 350.89198226 * (jd - super::J2000_EPOCH)
+            - (317.68143f64 - 0.1061 * tc))
+            .to_radians();
+        let (sa, ca) = a.sin_cos();
+        let (sd, cd) = d.sin_cos();
+        let (sw, cw) = w.sin_cos();
+        let m: [f64; 9] = [
+            cd * ca * cw + sa * sw,
+            cd * ca * sw - sa * cw,
+            -sd * ca,
+            cd * sa * cw - ca * sw,
+            cd * sa * sw + ca * cw,
+            -sd * sa,
+            sd * cw,
+            sd * sw,
+            cd,
+        ];
+        let mut cx: [f64; super::CHEBYSHEV_N] = [0.0; super::CHEBYSHEV_N];
+        cx[0] = 1.5e9;
+        let props = super::BodyProperties {
+            α0_deg: 317.68143,
+            dα0_dt_deg_per_century: -0.1061,
+            δ0_deg: 52.88650,
+            dδ0_dt_deg_per_century: -0.0609,
+            w0_deg: 176.630,
+            dw_dt_deg_per_day: 350.89198226,
+            radius_m: 3389500.0,
+            flattening: Some(0.00589),
+            gaussian_inverse_square: 0.0,
+            gaussian_inverse: 0.0,
+            erfc: 0.0,
+            patch_levy: 0.0,
+            exponential_decay: 0.0,
+            gm: None,
+            j2: None,
+            j4: None,
+            radii_b: None,
+            radii_c: None,
+            nut_ra: None,
+            nut_dec: None,
+            nutation: None,
+        };
+        let granule = super::ChebyshevGranule {
+            t0_jd: super::J2000_EPOCH,
+            dt_jd: 32.0,
+            cx,
+            cy: [0.0; super::CHEBYSHEV_N],
+            cz: [0.0; super::CHEBYSHEV_N],
+        };
+        let eph = super::BodyEphemeris {
+            granules: vec![granule],
+            rotation_matrices: vec![(jd, m)],
+            props: Some(props),
+        };
+        let mut map = HashMap::new();
+        map.insert("mars".to_string(), eph);
+        let cases = [
+            (35.0, -15.0, 0.0),
+            (0.0, 90.0, 0.0),
+            (89.9, 45.0, 0.0),
+            (-60.0, 170.0, 5000.0),
+        ];
+        for (lat, lon, alt) in cases {
+            let p = super::body_fixed_to_icrs("mars", lat, lon, alt, tdb, &map).unwrap();
+            let (lat2, lon2) =
+                super::icrs_to_body_surface(p[0], p[1], p[2], tdb, "mars", &map).unwrap();
+            assert!((lat2 - lat).abs() < 1e-6, "lat {} vs {}", lat2, lat);
+            assert!((lon2 - lon).abs() < 1e-6, "lon {} vs {}", lon2, lon);
+        }
+    }
+
+    #[test]
+    fn test_matrix_vs_wgccre_agreement() {
+        use std::collections::HashMap;
+        let tdb = 3.0 * 86400.0;
+        let jd = super::J2000_EPOCH + 3.0;
+        let tc = (jd - super::J2000_EPOCH) / 36525.0;
+        let a = (317.68143f64 - 0.1061 * tc).to_radians();
+        let d = (52.88650f64 - 0.0609 * tc).to_radians();
+        let w = (176.630f64 + 350.89198226 * (jd - super::J2000_EPOCH)
+            - (317.68143f64 - 0.1061 * tc))
+            .to_radians();
+        let (sa, ca) = a.sin_cos();
+        let (sd, cd) = d.sin_cos();
+        let (sw, cw) = w.sin_cos();
+        let m: [f64; 9] = [
+            cd * ca * cw + sa * sw,
+            cd * ca * sw - sa * cw,
+            -sd * ca,
+            cd * sa * cw - ca * sw,
+            cd * sa * sw + ca * cw,
+            -sd * sa,
+            sd * cw,
+            sd * sw,
+            cd,
+        ];
+        let mut cx: [f64; super::CHEBYSHEV_N] = [0.0; super::CHEBYSHEV_N];
+        cx[0] = 1.5e9;
+        let props = super::BodyProperties {
+            α0_deg: 317.68143,
+            dα0_dt_deg_per_century: -0.1061,
+            δ0_deg: 52.88650,
+            dδ0_dt_deg_per_century: -0.0609,
+            w0_deg: 176.630,
+            dw_dt_deg_per_day: 350.89198226,
+            radius_m: 3389500.0,
+            flattening: Some(0.00589),
+            gaussian_inverse_square: 0.0,
+            gaussian_inverse: 0.0,
+            erfc: 0.0,
+            patch_levy: 0.0,
+            exponential_decay: 0.0,
+            gm: None,
+            j2: None,
+            j4: None,
+            radii_b: None,
+            radii_c: None,
+            nut_ra: None,
+            nut_dec: None,
+            nutation: None,
+        };
+        let granule = super::ChebyshevGranule {
+            t0_jd: super::J2000_EPOCH,
+            dt_jd: 32.0,
+            cx,
+            cy: [0.0; super::CHEBYSHEV_N],
+            cz: [0.0; super::CHEBYSHEV_N],
+        };
+        let eph_matrix = super::BodyEphemeris {
+            granules: vec![granule.clone()],
+            rotation_matrices: vec![(jd, m)],
+            props: Some(props.clone()),
+        };
+        let eph_test = super::BodyEphemeris {
+            granules: vec![granule],
+            rotation_matrices: vec![],
+            props: Some(props),
+        };
+        let mut map_matrix = HashMap::new();
+        map_matrix.insert("mars".to_string(), eph_matrix);
+        let mut map_props = HashMap::new();
+        map_props.insert("mars".to_string(), eph_test);
+        let cases = [(35.0, -15.0, 0.0), (0.0, 90.0, 0.0), (-60.0, 170.0, 5000.0)];
+        for (lat, lon, alt) in cases {
+            let pm = super::body_fixed_to_icrs("mars", lat, lon, alt, tdb, &map_matrix).unwrap();
+            let pf = super::body_fixed_to_icrs("mars", lat, lon, alt, tdb, &map_props).unwrap();
+            let d2 = (pm[0] - pf[0]).powi(2) + (pm[1] - pf[1]).powi(2) + (pm[2] - pf[2]).powi(2);
+            assert!(
+                d2 < 1.0,
+                "matrix vs wgccre disagree at ({}, {}): d2={}",
+                lat,
+                lon,
+                d2
+            );
+        }
+    }
+
+    #[test]
+    fn test_rotation_matrix_empty_props() {
+        use std::collections::HashMap;
+        let tdb = 3.0 * 86400.0;
+        let mut cx: [f64; super::CHEBYSHEV_N] = [0.0; super::CHEBYSHEV_N];
+        cx[0] = 1.5e9;
+        let props = super::BodyProperties {
+            α0_deg: 317.68143,
+            dα0_dt_deg_per_century: -0.1061,
+            δ0_deg: 52.88650,
+            dδ0_dt_deg_per_century: -0.0609,
+            w0_deg: 176.630,
+            dw_dt_deg_per_day: 350.89198226,
+            radius_m: 3389500.0,
+            flattening: Some(0.00589),
+            gaussian_inverse_square: 0.0,
+            gaussian_inverse: 0.0,
+            erfc: 0.0,
+            patch_levy: 0.0,
+            exponential_decay: 0.0,
+            gm: None,
+            j2: None,
+            j4: None,
+            radii_b: None,
+            radii_c: None,
+            nut_ra: None,
+            nut_dec: None,
+            nutation: None,
+        };
+        let granule = super::ChebyshevGranule {
+            t0_jd: super::J2000_EPOCH,
+            dt_jd: 32.0,
+            cx,
+            cy: [0.0; super::CHEBYSHEV_N],
+            cz: [0.0; super::CHEBYSHEV_N],
+        };
+        let eph = super::BodyEphemeris {
+            granules: vec![granule],
+            rotation_matrices: vec![],
+            props: Some(props),
+        };
+        let mut map = HashMap::new();
+        map.insert("mars".to_string(), eph);
+        let p = super::body_fixed_to_icrs("mars", 35.0, -15.0, 0.0, tdb, &map).unwrap();
+        assert!(p[0] > 1.0e9);
+    }
+
+    #[test]
+    fn test_restored_extract_variants() {
+        let j = super::parse_json(
+            r#"{"data":[{"a":1,"nested":{"b":9}},{"a":2},{"a":3}],"x":[10,20,30]}"#,
+        )
+        .unwrap();
+        assert_eq!(super::jfirst(&j, "data.a"), Some(1.0));
+        assert_eq!(super::jlast(&j, "data.a"), Some(3.0));
+        assert_eq!(super::jdeep_find_num(&j, "b"), Some(9.0));
+        assert_eq!(super::jcount(&j, "data"), Some(3.0));
+        assert_eq!(super::jpath(&j, "x.-1"), Some(30.0));
+        let j2 = super::parse_json(r#"[["t","a"],["x",1],["y",2]]"#).unwrap();
+        assert_eq!(super::j2d_last_row(&j2, "a"), Some(2.0));
+        let csv = "# time temp\n1 10\n2 20\n";
+        assert_eq!(super::text_last_col(csv, "temp"), Some(20.0));
+        assert_eq!(
+            super::extract_regex_val(r#"{"totalItems":5,"x":1}"#, r#"("totalItems":...,)"#),
+            Some(5.0)
+        );
+        assert_eq!(
+            super::extract_regex_val("<Count>5</Count>", "<Count>([0-9]+)</Count>"),
+            Some(5.0)
+        );
+        assert_eq!(
+            super::jcount(&super::parse_json(r"[1,2,3]").unwrap(), "."),
+            Some(3.0)
+        );
+    }
+
+    #[test]
+    fn test_anchor_body_agnostic() {
+        use std::collections::HashMap;
+        let frame = super::Frame::Surface {
+            body_name: "mars".into(),
+            lat: 0.0,
+            lon: 0.0,
+            alt: 0.0,
+        };
+        let src = super::SourceConfig {
+            ttl: 3600,
+            url: "https://example.com".into(),
+            frame,
+            format: "json".into(),
+            extracts: vec![Extract::Field(FieldConfig {
+                key: "v".into(),
+                name: "v".into(),
+                kernel: 1,
+                force: 0,
+                tau: 0.0,
+                absorption: 0.0,
+                advection: 0.0,
+                unit: String::new(),
+                fold: None,
+            })],
+            headers: vec![],
+            post_body: None,
+            target: None,
+            catalog: None,
+            max_freq: None,
+            min_freq: None,
+            body: Some("mars".into()),
+            stations_url: None,
+            stations_path: "stations".into(),
+            stations_lat: "lat".into(),
+            stations_lon: "lon".into(),
+            stations_id: "id".into(),
+            flux_from_mag: None,
+            abs_mag_from: None,
+            catalog_epoch: None,
+            repeat_ra_bins: 0,
+            fanout_cap: 0,
+            stations_flatten: String::new(),
+            stations_filter: None,
+            fanout_delay: 0,
+        };
+        let channel = super::Channel {
+            z: 0.0,
+            freq: 0.0,
+            bin_width: 0.0,
+            epoch: 0.0,
+            position: super::Position::Surface {
+                body_name: "mars".into(),
+                lat: 14.0,
+                lon: 90.0,
+                alt: 0.0,
+            },
+            name: "v".into(),
+            value: 1.0,
+        };
+        let sensor = super::FieldConfig {
+            key: "v".into(),
+            name: "v".into(),
+            kernel: 1,
+            force: 0,
+            tau: 60.0,
+            absorption: 0.0,
+            advection: 0.0,
+            unit: String::new(),
+            fold: None,
+        };
+        let mut cx: [f64; super::CHEBYSHEV_N] = [0.0; super::CHEBYSHEV_N];
+        cx[0] = 1.5e9;
+        let props = super::BodyProperties {
+            α0_deg: 317.68143,
+            dα0_dt_deg_per_century: -0.1061,
+            δ0_deg: 52.88650,
+            dδ0_dt_deg_per_century: -0.0609,
+            w0_deg: 176.630,
+            dw_dt_deg_per_day: 350.89198226,
+            radius_m: 3389500.0,
+            flattening: Some(0.00589),
+            gaussian_inverse_square: 0.0,
+            gaussian_inverse: 0.0,
+            erfc: 0.0,
+            patch_levy: 0.0,
+            exponential_decay: 0.0,
+            gm: None,
+            j2: None,
+            j4: None,
+            radii_b: None,
+            radii_c: None,
+            nut_ra: None,
+            nut_dec: None,
+            nutation: None,
+        };
+        let granule = super::ChebyshevGranule {
+            t0_jd: super::J2000_EPOCH,
+            dt_jd: 32.0,
+            cx,
+            cy: [0.0; super::CHEBYSHEV_N],
+            cz: [0.0; super::CHEBYSHEV_N],
+        };
+        let mars_eph = super::BodyEphemeris {
+            granules: vec![granule],
+            rotation_matrices: vec![],
+            props: Some(props),
+        };
+        let mut eph = HashMap::new();
+        eph.insert("mars".to_string(), mars_eph);
+        let mut origin_state = super::OriginState {
+            fetched: 0.0,
+            prev_epoch: 0.0,
+            prev_abs: [0.0, 0.0, 0.0],
+            prev_motion: None,
+            resid_ema: 0.0,
+            has_prev: false,
+        };
+        let sample = super::anchor(
+            &channel,
+            &sensor,
+            3600.0,
+            Some(0),
+            Some(&src.frame),
+            Some(&mut origin_state),
+            &eph,
+        );
+        assert!(sample.is_some(), "sample is None");
+        let sample = sample.unwrap();
+        if let super::Motion::Surface { body_name, .. } = &sample.motion {
+            assert_eq!(
+                body_name,
+                "mars",
+                "body name: {}",
+                sample
+                    .motion
+                    .anchor_body()
+                    .unwrap_or_else(|| "absent".into())
+            );
+        } else {
+            panic!("motion is Barycenter or Linear, Surface absent");
+        }
+    }
+
+    #[test]
+    fn test_parse_ephemeris_binary_v2() {
+        let mut buf = Vec::new();
+        buf.extend_from_slice(&[0xCF, 0x86, 0x01, 0x00]);
+        buf.extend_from_slice(&4u32.to_le_bytes());
+        buf.extend_from_slice(&0u32.to_le_bytes());
+        buf.extend_from_slice(&1u32.to_le_bytes());
+        buf.extend_from_slice(&17u32.to_le_bytes());
+        buf.extend_from_slice(&0u32.to_le_bytes());
+        for _ in 0..56 {
+            buf.extend_from_slice(&0.0_f64.to_le_bytes());
+        }
+        buf.extend_from_slice(&1u32.to_le_bytes());
+        buf.extend_from_slice(&12u32.to_le_bytes());
+        buf.extend_from_slice(&17u32.to_le_bytes());
+        buf.extend_from_slice(&0u32.to_le_bytes());
+        let params: [f64; 12] = [
+            270.0,
+            0.003,
+            66.54,
+            0.013,
+            38.31,
+            14460.0,
+            6378136.6,
+            6378136.6,
+            6356751.9,
+            1.08262668e-3,
+            -1.6196e-6,
+            3.9860043543609598e14,
+        ];
+        for p in params {
+            buf.extend_from_slice(&p.to_le_bytes());
+        }
+        buf.extend_from_slice(&2u32.to_le_bytes());
+        buf.extend_from_slice(&0u32.to_le_bytes());
+        buf.extend_from_slice(&17u32.to_le_bytes());
+        buf.extend_from_slice(&0u32.to_le_bytes());
+        for _ in 0..5 {
+            buf.extend_from_slice(&0.0_f64.to_le_bytes());
+        }
+        buf.extend_from_slice(&4u32.to_le_bytes());
+        buf.extend_from_slice(&1u32.to_le_bytes());
+        buf.extend_from_slice(&1u32.to_le_bytes());
+        buf.extend_from_slice(&0u32.to_le_bytes());
+        buf.extend_from_slice(&2451545.0_f64.to_le_bytes());
+        buf.extend_from_slice(&16.0_f64.to_le_bytes());
+        for c in [1.0_f64, 0.5, 2.0, 0.25, 0.5, 0.125] {
+            buf.extend_from_slice(&c.to_le_bytes());
+        }
+        let eph = super::parse_ephemeris_binary(&buf).unwrap();
+        let props = eph.props.unwrap();
+        assert_eq!(props.gm, Some(3.9860043543609598e14));
+        assert_eq!(props.j2, Some(1.08262668e-3));
+        assert_eq!(props.j4, Some(-1.6196e-6));
+        assert_eq!(props.radii_b, Some(6378136.6));
+        assert_eq!(props.radii_c, Some(6356751.9));
+        assert!((props.flattening.unwrap() - (6378136.6 - 6356751.9) / 6378136.6).abs() < 1e-15);
+        assert_eq!(eph.granules.len(), 1);
+        let deltas = super::nutation_deltas_at(&props, 2451545.0).unwrap();
+        assert!((deltas.0 - 1.0).abs() < 1e-12);
+        assert!((deltas.1 - 2.0).abs() < 1e-12);
+        assert!((deltas.2 - 0.5).abs() < 1e-12);
+    }
+
+    #[test]
+    fn test_parse_ephemeris_binary_v3_mask() {
+        let mut buf = Vec::new();
+        buf.extend_from_slice(&[0xCF, 0x86, 0x02, 0x00]);
+        buf.extend_from_slice(&3u32.to_le_bytes());
+        buf.extend_from_slice(&0u32.to_le_bytes());
+        buf.extend_from_slice(&1u32.to_le_bytes());
+        buf.extend_from_slice(&17u32.to_le_bytes());
+        buf.extend_from_slice(&0u32.to_le_bytes());
+        for _ in 0..56 {
+            buf.extend_from_slice(&0.0_f64.to_le_bytes());
+        }
+        buf.extend_from_slice(&1u32.to_le_bytes());
+        buf.extend_from_slice(&12u32.to_le_bytes());
+        buf.extend_from_slice(&17u32.to_le_bytes());
+        buf.extend_from_slice(&0u32.to_le_bytes());
+        let mut params: [f64; 12] = [
+            270.0,
+            0.003,
+            66.54,
+            0.013,
+            38.31,
+            14460.0,
+            6378136.6,
+            6378136.6,
+            6356751.9,
+            1.08262668e-3,
+            -1.6196e-6,
+            3.9860043543609598e14,
+        ];
+        let mask: u16 = 0xFFFF ^ (1 << 9);
+        params[9] = 0.0;
+        for p in params {
+            buf.extend_from_slice(&p.to_le_bytes());
+        }
+        buf.extend_from_slice(&mask.to_le_bytes());
+        buf.extend_from_slice(&[0u8; 6]);
+        buf.extend_from_slice(&2u32.to_le_bytes());
+        buf.extend_from_slice(&0u32.to_le_bytes());
+        buf.extend_from_slice(&17u32.to_le_bytes());
+        buf.extend_from_slice(&0u32.to_le_bytes());
+        for _ in 0..5 {
+            buf.extend_from_slice(&0.0_f64.to_le_bytes());
+        }
+        let eph = super::parse_ephemeris_binary(&buf).unwrap();
+        let props = eph.props.unwrap();
+        assert_eq!(props.gm, Some(3.9860043543609598e14));
+        assert_eq!(props.j2, None);
+        assert_eq!(props.j4, Some(-1.6196e-6));
+        assert_eq!(props.radii_c, Some(6356751.9));
+        assert!((props.flattening.unwrap() - (6378136.6 - 6356751.9) / 6378136.6).abs() < 1e-15);
+        assert_eq!(eph.granules.len(), 1);
+    }
+
+    #[test]
+    fn test_parse_ephemeris_binary_rejects_non_v2_props() {
+        let mut buf = Vec::new();
+        buf.extend_from_slice(&[0xCF, 0x86, 0x01, 0x00]);
+        buf.extend_from_slice(&3u32.to_le_bytes());
+        buf.extend_from_slice(&0u32.to_le_bytes());
+        buf.extend_from_slice(&1u32.to_le_bytes());
+        buf.extend_from_slice(&17u32.to_le_bytes());
+        buf.extend_from_slice(&0u32.to_le_bytes());
+        for _ in 0..56 {
+            buf.extend_from_slice(&0.0_f64.to_le_bytes());
+        }
+        buf.extend_from_slice(&1u32.to_le_bytes());
+        buf.extend_from_slice(&0u32.to_le_bytes());
+        buf.extend_from_slice(&17u32.to_le_bytes());
+        buf.extend_from_slice(&0u32.to_le_bytes());
+        for _ in 0..8 {
+            buf.extend_from_slice(&0.0_f64.to_le_bytes());
+        }
+        assert!(super::parse_ephemeris_binary(&buf).is_none());
+    }
+
+    #[test]
+    fn test_live_sources_extract() {
+        let srcs = super::load_sources();
+        eprintln!("load_sources returned {} sources", srcs.len());
+        let fixture_lsk = full_fixture_lsk();
+        let now = fixture_lsk.system_now_tdb().unwrap();
+        let mut ok = 0usize;
+        let mut empty: Vec<(String, String)> = Vec::new();
+        let mut limit = 600usize;
+        let env = super::load_env();
+        for s in srcs.iter() {
+            let mut url = s.url.clone();
+            for (k, v) in [
+                ("{today}", "2026-08-07"),
+                ("{yesterday}", "2026-08-06"),
+                ("{tomorrow}", "2026-08-08"),
+                ("{now}", "2026-08-07T12:00:00Z"),
+                ("{year}", "2026"),
+                ("{month}", "08"),
+                ("{day}", "07"),
+                ("{lat}", "29.5"),
+                ("{lon}", "-95.0"),
+                ("{ra}", "0.0"),
+                ("{dec}", "0.0"),
+                ("{target}", "Ceres"),
+                ("{week_ago}", "2026-07-31"),
+                ("{hour_ago}", "2026-08-07T11:00:00Z"),
+                ("{body}", "ISS"),
+                ("{lon_min}", "-95.0"),
+                ("{lon_max}", "-94.0"),
+                ("{lat_min}", "29.0"),
+                ("{lat_max}", "30.0"),
+                ("{grid}", "29.5,-95.0|29.6,-95.0"),
+                ("{nearest_station}", "8518750"),
+                ("{jd_now}", "2461270.78"),
+                ("{jd_start}", "2461269.78"),
+                ("{jd_end}", "2461270.78"),
+            ] {
+                url = url.replace(k, v);
+            }
+            url = super::resolve_secret(&url, &env);
+            if url.starts_with("https://github.com/omegaflow/sources") {
+                continue;
+            }
+            if s.fanout_cap > 0 {
+                eprintln!("skip fanout (needs fanout_fetch): {}", s.url);
+                continue;
+            }
+            if s.format == "csv_zip" {
+                eprintln!("skip csv_zip (byte path): {}", s.url);
+                continue;
+            }
+            if s.format == "kernel_text" {
+                eprintln!(
+                    "skip kernel_text (data file, not a field source): {}",
+                    s.url
+                );
+                continue;
+            }
+            if limit == 0 {
+                break;
+            }
+            limit -= 1;
+            let headers = super::render_headers(&s.headers, &env);
+            let body = match super::fetch_one(&url, None, &headers, s.ttl) {
+                Some(b) => b,
+                None => {
+                    empty.push((s.url.clone(), "fetch returned empty".into()));
+                    continue;
+                }
+            };
+            match super::extract(s, &body, now, &fixture_lsk) {
+                super::ExtractResult::Measurements(v) => {
+                    if v.is_empty() {
+                        let diag = super::diagnose_no_samples(s, &body);
+                        empty.push((s.url.clone(), format!("no samples ({})", diag)));
+                    } else {
+                        ok += 1;
+                    }
+                }
+                super::ExtractResult::WithEphemeris(v, _) => {
+                    if v.is_empty() {
+                        let diag = super::diagnose_no_samples(s, &body);
+                        empty.push((s.url.clone(), format!("no samples ({})", diag)));
+                    } else {
+                        ok += 1;
+                    }
+                }
+            }
+        }
+        eprintln!(
+            "\n=== LIVE SOURCE EXTRACTION: {} ok, {} empty (of {} tested) ===",
+            ok,
+            empty.len(),
+            ok + empty.len()
+        );
+        for (u, why) in empty.iter() {
+            eprintln!("  void {}  {}", u, why);
+        }
+    }
+
+    #[test]
+    fn test_diagnose_no_samples() {
+        let base = super::SourceConfig {
+            ttl: 60,
+            url: "https://example.com/q".into(),
+            frame: super::Frame::Surface {
+                body_name: "earth".into(),
+                lat: 0.0,
+                lon: 0.0,
+                alt: 0.0,
+            },
+            format: "json".into(),
+            extracts: vec![super::Extract::Map {
+                arr_path: "features".into(),
+                lat_key: "geometry.coordinates.1".into(),
+                lon_key: "geometry.coordinates.0".into(),
+                alt_key: String::new(),
+                epoch_key: String::new(),
+                val_key: String::new(),
+                alt_scale: 1.0,
+                vel_key: String::new(),
+                vel_scale: 1.0,
+                trk_key: String::new(),
+                vr_key: String::new(),
+                fields: vec![FieldConfig {
+                    key: "properties.mag".into(),
+                    name: "mag".into(),
+                    kernel: 0,
+                    force: 0,
+                    tau: 0.0,
+                    absorption: 0.0,
+                    advection: 0.0,
+                    unit: String::new(),
+                    fold: None,
+                }],
+                lat_sign: None,
+                lon_sign: None,
+                epoch_scale: 1.0,
+                tau_key: String::new(),
+                mag_type_key: String::new(),
+            }],
+            headers: vec![],
+            post_body: None,
+            target: None,
+            catalog: None,
+            max_freq: None,
+            min_freq: None,
+            body: None,
+            stations_url: None,
+            stations_path: String::new(),
+            stations_lat: String::new(),
+            stations_lon: String::new(),
+            stations_id: String::new(),
+            flux_from_mag: None,
+            abs_mag_from: None,
+            catalog_epoch: None,
+            repeat_ra_bins: 0,
+            fanout_cap: 0,
+            stations_flatten: String::new(),
+            stations_filter: None,
+            fanout_delay: 0,
+        };
+        let empty_geojson =
+            r#"{"type":"FeatureCollection","metadata":{"api":"2.7","count":0},"features":[]}"#;
+        let d_empty = super::diagnose_no_samples(&base, empty_geojson);
+        eprintln!("empty geojson -> {}", d_empty);
+        assert!(d_empty.contains("empty-response"), "got: {}", d_empty);
+
+        let filled_geojson = r#"{"type":"FeatureCollection","features":[{"geometry":{"coordinates":[-104.0,39.5,10.0]},"properties":{"mag":3.2}}]}"#;
+        let d_filled = super::diagnose_no_samples(&base, filled_geojson);
+        eprintln!("filled geojson -> {}", d_filled);
+        assert!(d_filled.contains("data-present"), "got: {}", d_filled);
+
+        let html = "<html>GraceDB down</html>";
+        let d_html = super::diagnose_no_samples(&base, html);
+        eprintln!("html -> {}", d_html);
+        assert!(d_html.contains("non-JSON"), "got: {}", d_html);
+    }
+
+    #[test]
+    fn test_map_single_object_alt_scale_epoch_default() {
+        let src = super::SourceConfig {
+            ttl: 10,
+            url: "https://api.wheretheiss.at/v1/satellites/25544".into(),
+            frame: super::Frame::Barycenter {
+                body_name: "earth".into(),
+                scale: 1.0,
+            },
+            format: "json".into(),
+            extracts: vec![super::Extract::Map {
+                arr_path: ".".into(),
+                lat_key: "latitude".into(),
+                lon_key: "longitude".into(),
+                alt_key: "altitude".into(),
+                epoch_key: String::new(),
+                val_key: String::new(),
+                alt_scale: 1000.0,
+                vel_key: String::new(),
+                vel_scale: 1.0,
+                trk_key: String::new(),
+                vr_key: String::new(),
+                fields: vec![FieldConfig {
+                    key: "velocity".into(),
+                    name: "velocity".into(),
+                    kernel: 0,
+                    force: 0,
+                    tau: 1.0,
+                    absorption: 0.0,
+                    advection: 0.0,
+                    unit: String::new(),
+                    fold: None,
+                }],
+                lat_sign: None,
+                lon_sign: None,
+                epoch_scale: 1.0,
+                tau_key: String::new(),
+                mag_type_key: String::new(),
+            }],
+            headers: vec![],
+            post_body: None,
+            target: None,
+            catalog: None,
+            max_freq: None,
+            min_freq: None,
+            body: None,
+            stations_url: None,
+            stations_path: String::new(),
+            stations_lat: String::new(),
+            stations_lon: String::new(),
+            stations_id: String::new(),
+            flux_from_mag: None,
+            abs_mag_from: None,
+            catalog_epoch: None,
+            repeat_ra_bins: 0,
+            fanout_cap: 0,
+            stations_flatten: String::new(),
+            stations_filter: None,
+            fanout_delay: 0,
+        };
+        let body = r#"{"latitude":-47.75,"longitude":78.87,"altitude":438.28,"velocity":27528.0}"#;
+        let now = 8.4e8;
+        let fixture_lsk = super::LeapSeconds {
+            delta_t_a: 32.184,
+            deltas: vec![(37.0, 1483228800.0)],
+        };
+        match super::extract(&src, body, now, &fixture_lsk) {
+            super::ExtractResult::Measurements(v) => {
+                assert_eq!(v.len(), 1);
+                let (ch, fc) = &v[0];
+                assert_eq!(ch.epoch, now);
+                assert_eq!(ch.value, 27528.0);
+                assert_eq!(fc.tau, 1.0);
+                match &ch.position {
+                    super::Position::Surface { lat, lon, alt, .. } => {
+                        assert!((lat - -47.75).abs() < 1e-9);
+                        assert!((lon - 78.87).abs() < 1e-9);
+                        assert!((alt - 438280.0).abs() < 1e-6);
+                    }
+                    other => panic!("position variant: {:?} unexpected", other),
+                }
+            }
+            _ => panic!("extract variant unexpected"),
+        }
+    }
+
+    #[test]
+    fn test_map_vel_unit_and_tau_key_override() {
+        let src = super::SourceConfig {
+            ttl: 10,
+            url: "https://example.org/flow".into(),
+            frame: super::Frame::Surface {
+                body_name: "earth".into(),
+                lat: 0.0,
+                lon: 0.0,
+                alt: 0.0,
+            },
+            format: "json".into(),
+            extracts: vec![super::Extract::Map {
+                arr_path: "data".into(),
+                lat_key: "lat".into(),
+                lon_key: "lon".into(),
+                alt_key: "alt".into(),
+                epoch_key: String::new(),
+                val_key: String::new(),
+                alt_scale: 1.0,
+                vel_key: "spd".into(),
+                vel_scale: 1.0 / 3.6,
+                trk_key: "hdg".into(),
+                vr_key: "vr".into(),
+                fields: vec![FieldConfig {
+                    key: "v".into(),
+                    name: "flow_value".into(),
+                    kernel: 0,
+                    force: 0,
+                    tau: 7.0,
+                    absorption: 0.0,
+                    advection: 0.0,
+                    unit: String::new(),
+                    fold: None,
+                }],
+                lat_sign: None,
+                lon_sign: None,
+                epoch_scale: 1.0,
+                tau_key: "row_tau".into(),
+                mag_type_key: String::new(),
+            }],
+            headers: vec![],
+            post_body: None,
+            target: None,
+            catalog: None,
+            max_freq: None,
+            min_freq: None,
+            body: None,
+            stations_url: None,
+            stations_path: String::new(),
+            stations_lat: String::new(),
+            stations_lon: String::new(),
+            stations_id: String::new(),
+            flux_from_mag: None,
+            abs_mag_from: None,
+            catalog_epoch: None,
+            repeat_ra_bins: 0,
+            fanout_cap: 0,
+            stations_flatten: String::new(),
+            stations_filter: None,
+            fanout_delay: 0,
+        };
+        let body = r#"{"data":[
+                {"lat":10.0,"lon":20.0,"alt":0.0,"spd":72.0,"hdg":90.0,"vr":3.6,"row_tau":60.0,"v":5.0},
+                {"lat":11.0,"lon":21.0,"alt":0.0,"spd":36.0,"hdg":0.0,"vr":1.8,"row_tau":0.0,"v":5.0},
+                {"lat":12.0,"lon":22.0,"alt":0.0,"spd":18.0,"hdg":270.0,"vr":1.0,"v":5.0}
+            ]}"#;
+        let now = 8.4e8;
+        let fixture_lsk = super::LeapSeconds {
+            delta_t_a: 32.184,
+            deltas: vec![(37.0, 1483228800.0)],
+        };
+        match super::extract(&src, body, now, &fixture_lsk) {
+            super::ExtractResult::Measurements(v) => {
+                assert_eq!(v.len(), 2);
+                let (ch0, fc0) = &v[0];
+                match &ch0.position {
+                    super::Position::SurfaceFlow {
+                        speed,
+                        track,
+                        vrate,
+                        ..
+                    } => {
+                        assert!((speed - 20.0).abs() < 1e-9);
+                        assert!((track - 90.0).abs() < 1e-9);
+                        assert!((vrate.unwrap() - 1.0).abs() < 1e-9);
+                    }
+                    other => panic!("expected SurfaceFlow, got {:?}", other),
+                }
+                assert!((fc0.tau - 60.0).abs() < 1e-9);
+                let (ch1, fc1) = &v[1];
+                match &ch1.position {
+                    super::Position::SurfaceFlow { speed, vrate, .. } => {
+                        assert!((speed - 5.0).abs() < 1e-9);
+                        assert!((vrate.unwrap() - 1.0 / 3.6).abs() < 1e-9);
+                    }
+                    other => panic!("expected SurfaceFlow, got {:?}", other),
+                }
+                assert!((fc1.tau - 7.0).abs() < 1e-9);
+            }
+            _ => panic!("extract variant unexpected"),
+        }
+    }
+
+    #[test]
+    fn test_parse_spectral_block() {
+        let block = "url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/spectra.bin\nformat spectral\non earth 19.82 -155.47 0\nttl 86400\nfield irradiance spectral_irradiance_W_m2_Hz inverse-square em W/m2/Hz 2628000 0.0 0.0\n";
+        let srcs = super::parse_sources(block);
+        assert_eq!(srcs.len(), 1);
+        assert_eq!(srcs[0].format, "spectral");
+        match &srcs[0].frame {
+            super::Frame::Surface {
+                body_name,
+                lat,
+                lon,
+                alt,
+            } => {
+                assert_eq!(body_name, "earth");
+                assert!((*lat - 19.82).abs() < 1e-12);
+                assert!((*lon + 155.47).abs() < 1e-12);
+                assert_eq!(*alt, 0.0);
+            }
+            other => {
+                let _ = other;
+                panic!("expected Surface frame")
+            }
+        }
+        match &srcs[0].extracts[0] {
+            super::Extract::Field(fc) => {
+                assert_eq!(fc.name, "spectral_irradiance_W_m2_Hz");
+                assert_eq!(fc.unit, "W/m2/Hz");
+                assert!((fc.tau - 2628000.0).abs() < 1e-9);
+                assert_eq!(fc.force as u32, 0);
+                assert_eq!(fc.kernel as u32, 0);
+            }
+            other => {
+                let _ = other;
+                panic!("expected Field extract")
+            }
+        }
+    }
+
+    #[test]
+    fn test_parse_vel_unit_and_tau_key_directives() {
+        let block = "url https://example.org/flow\nttl 3600\nformat json\non earth 0 0 0\nmap data\nlat lat\nlon lon\nvel spd km/h\ntau_key row_tau\nfield v flow_value inverse-square thermal W 10 0.0 0.0\n";
+        let srcs = super::parse_sources(block);
+        assert_eq!(srcs.len(), 1);
+        match &srcs[0].extracts[0] {
+            super::Extract::Map {
+                vel_key,
+                vel_scale,
+                tau_key,
+                fields,
+                ..
+            } => {
+                assert_eq!(vel_key, "spd");
+                assert!((*vel_scale - 1.0 / 3.6).abs() < 1e-12);
+                assert_eq!(tau_key, "row_tau");
+                assert_eq!(fields.len(), 1);
+                assert_eq!(fields[0].unit, "W");
+            }
+            other => {
+                let _ = other;
+                panic!("expected Map extract")
+            }
+        }
+        let cmap_block =
+                "url https://example.org/c\nttl 3600\nformat json\nat sun\ncmap data\nra ra\ndec dec\ntau_key tkey\n";
+        let csrcs = super::parse_sources(cmap_block);
+        assert_eq!(csrcs.len(), 1);
+        match &csrcs[0].extracts[0] {
+            super::Extract::CelestialMap { tau_key, .. } => assert_eq!(tau_key, "tkey"),
+            other => {
+                let _ = other;
+                panic!("expected CelestialMap extract")
+            }
+        }
+        let rows_block = "url https://example.org/r\nttl 3600\nformat text\non earth 1 2 0\nrows\nlast_line true\ntau_key rtau\nlastrow T val thermal K 10 0 0\n";
+        let rsrcs = super::parse_sources(rows_block);
+        assert_eq!(rsrcs.len(), 1);
+        match &rsrcs[0].extracts[0] {
+            super::Extract::Rows { tau_key, .. } => assert_eq!(tau_key, "rtau"),
+            other => {
+                let _ = other;
+                panic!("expected Rows extract")
+            }
+        }
+    }
+
+    #[test]
+    fn test_fold_directive_parse_and_extract() {
+        let block = "url https://example.org/f\nttl 3600\nformat json\non earth 0 0 0\nmap data\nlat lat\nlon lon\nfold mean nh sh diffusion ppm 100\nfold diff nh sh diffusion ppm 100\n";
+        let srcs = super::parse_sources(block);
+        assert_eq!(srcs.len(), 1);
+        let fields = match &srcs[0].extracts[0] {
+            super::Extract::Map { fields, .. } => fields,
+            other => {
+                let _ = other;
+                panic!("expected Map extract")
+            }
+        };
+        assert_eq!(fields.len(), 2);
+        assert_eq!(fields[0].name, "fold_mean_nh_sh");
+        assert!(matches!(&fields[0].fold, Some((1, b)) if b == "sh"));
+        assert!(matches!(&fields[1].fold, Some((2, b)) if b == "sh"));
+        assert!((fields[0].tau - 100.0).abs() < 1e-12);
+        assert_eq!(fields[0].unit, "ppm");
+        let refused =
+            "url https://example.org/f\nttl 3600\nformat json\nat sun\nfold mean a b em mag 100\n";
+        let rsrcs = super::parse_sources(refused);
+        assert_eq!(rsrcs.len(), 1);
+        assert!(rsrcs[0].extracts.is_empty());
+
+        let src = super::SourceConfig {
+            ttl: 10,
+            url: "https://example.org/f".into(),
+            frame: super::Frame::Surface {
+                body_name: "earth".into(),
+                lat: 0.0,
+                lon: 0.0,
+                alt: 0.0,
+            },
+            format: "json".into(),
+            extracts: vec![super::Extract::Map {
+                arr_path: "data".into(),
+                lat_key: "lat".into(),
+                lon_key: "lon".into(),
+                alt_key: "alt".into(),
+                epoch_key: String::new(),
+                val_key: String::new(),
+                alt_scale: 1.0,
+                vel_key: String::new(),
+                vel_scale: 1.0,
+                trk_key: String::new(),
+                vr_key: String::new(),
+                fields: vec![
+                    FieldConfig {
+                        key: "nh".into(),
+                        name: "fold_mean_nh_sh".into(),
+                        kernel: 0,
+                        force: 6,
+                        tau: 100.0,
+                        absorption: 0.0,
+                        advection: 0.0,
+                        unit: "ppm".into(),
+                        fold: Some((1, "sh".into())),
+                    },
+                    FieldConfig {
+                        key: "nh".into(),
+                        name: "fold_diff_nh_sh".into(),
+                        kernel: 0,
+                        force: 6,
+                        tau: 100.0,
+                        absorption: 0.0,
+                        advection: 0.0,
+                        unit: "ppm".into(),
+                        fold: Some((2, "sh".into())),
+                    },
+                ],
+                lat_sign: None,
+                lon_sign: None,
+                epoch_scale: 1.0,
+                tau_key: String::new(),
+                mag_type_key: String::new(),
+            }],
+            headers: vec![],
+            post_body: None,
+            target: None,
+            catalog: None,
+            max_freq: None,
+            min_freq: None,
+            body: None,
+            stations_url: None,
+            stations_path: String::new(),
+            stations_lat: String::new(),
+            stations_lon: String::new(),
+            stations_id: String::new(),
+            flux_from_mag: None,
+            abs_mag_from: None,
+            catalog_epoch: None,
+            repeat_ra_bins: 0,
+            fanout_cap: 0,
+            stations_flatten: String::new(),
+            stations_filter: None,
+            fanout_delay: 0,
+        };
+        let body = r#"{"data":[
+                {"lat":1.0,"lon":2.0,"alt":0.0,"nh":420.0,"sh":410.0},
+                {"lat":3.0,"lon":4.0,"alt":0.0,"nh":420.0}
+            ]}"#;
+        let now = 8.4e8;
+        let fixture_lsk = super::LeapSeconds {
+            delta_t_a: 32.184,
+            deltas: vec![(37.0, 1483228800.0)],
+        };
+        match super::extract(&src, body, now, &fixture_lsk) {
+            super::ExtractResult::Measurements(v) => {
+                assert_eq!(v.len(), 2);
+                assert!((v[0].0.value - 415.0).abs() < 1e-9);
+                assert!((v[1].0.value - 10.0).abs() < 1e-9);
+            }
+            _ => panic!("extract variant unexpected"),
+        }
+    }
+
+    #[test]
+    fn test_keplermap_elements_to_icrs() {
+        let block = "url https://example.org/k\nttl 3600\nformat json\nat sun\nkeplermap data a e i\nom om\nw w\nma ma\nepoch epoch\nqr q\ntp tp\nfield H abs_mag inverse-square em mag 100 0 0\n";
+        let srcs = super::parse_sources(block);
+        assert_eq!(srcs.len(), 1);
+        match &srcs[0].extracts[0] {
+            super::Extract::KeplerMap {
+                a_key,
+                e_key,
+                i_key,
+                om_key,
+                w_key,
+                ma_key,
+                epoch_key,
+                q_key,
+                tp_key,
+                fields,
+                ..
+            } => {
+                assert_eq!(a_key, "a");
+                assert_eq!(e_key, "e");
+                assert_eq!(i_key, "i");
+                assert_eq!(om_key, "om");
+                assert_eq!(w_key, "w");
+                assert_eq!(ma_key, "ma");
+                assert_eq!(epoch_key, "epoch");
+                assert_eq!(q_key, "q");
+                assert_eq!(tp_key, "tp");
+                assert_eq!(fields.len(), 1);
+            }
+            other => {
+                let _ = other;
+                panic!("expected KeplerMap extract")
+            }
+        }
+        let mk_src = |a_key: &str, ma_key: &str, q_key: &str, tp_key: &str| super::SourceConfig {
+            ttl: 10,
+            url: "https://example.org/k".into(),
+            frame: super::Frame::Barycenter {
+                body_name: "sun".into(),
+                scale: 1.0,
+            },
+            format: "json".into(),
+            extracts: vec![super::Extract::KeplerMap {
+                arr_path: "data".into(),
+                a_key: a_key.into(),
+                e_key: "e".into(),
+                i_key: "i".into(),
+                om_key: "om".into(),
+                w_key: "w".into(),
+                ma_key: ma_key.into(),
+                epoch_key: "epoch".into(),
+                q_key: q_key.into(),
+                tp_key: tp_key.into(),
+                fields: vec![FieldConfig {
+                    key: "H".into(),
+                    name: "abs_mag".into(),
+                    kernel: 0,
+                    force: 0,
+                    tau: 100.0,
+                    absorption: 0.0,
+                    advection: 0.0,
+                    unit: String::new(),
+                    fold: None,
+                }],
+            }],
+            headers: vec![],
+            post_body: None,
+            target: None,
+            catalog: None,
+            max_freq: None,
+            min_freq: None,
+            body: None,
+            stations_url: None,
+            stations_path: String::new(),
+            stations_lat: String::new(),
+            stations_lon: String::new(),
+            stations_id: String::new(),
+            flux_from_mag: None,
+            abs_mag_from: None,
+            catalog_epoch: None,
+            repeat_ra_bins: 0,
+            fanout_cap: 0,
+            stations_flatten: String::new(),
+            stations_filter: None,
+            fanout_delay: 0,
+        };
+        let au = 1.495978707e11;
+        let expect_v = (1.32712440018e20_f64 / au).sqrt();
+        let now = 8.4e8;
+        let fixture_lsk = super::LeapSeconds {
+            delta_t_a: 32.184,
+            deltas: vec![(37.0, 1483228800.0)],
+        };
+        let body_ma = r#"{"data":[{"a":1.0,"e":0.0,"i":0.0,"om":0.0,"w":0.0,"ma":0.0,"epoch":2451545.0,"H":12.0}]}"#;
+        let src_ma = mk_src("a", "ma", "", "");
+        match super::extract(&src_ma, body_ma, now, &fixture_lsk) {
+            super::ExtractResult::Measurements(v) => {
+                assert_eq!(v.len(), 1);
+                match &v[0].0.position {
+                    super::Position::StateVector { p, v: vel, .. } => {
+                        let r = (p[0] * p[0] + p[1] * p[1] + p[2] * p[2]).sqrt();
+                        let sp = (vel[0] * vel[0] + vel[1] * vel[1] + vel[2] * vel[2]).sqrt();
+                        assert!((r - au).abs() < au * 1e-6);
+                        assert!((sp - expect_v).abs() < 1.0);
+                    }
+                    other => {
+                        let _ = other;
+                        panic!("expected StateVector position")
+                    }
+                }
+                assert!((v[0].0.value - 12.0).abs() < 1e-9);
+            }
+            _ => panic!("extract variant unexpected"),
+        }
+        let body_tp = r#"{"data":[{"q":1.0,"e":0.0,"i":0.0,"om":0.0,"w":0.0,"tp":2451545.0,"epoch":2451545.0,"H":12.0}]}"#;
+        let src_tp = mk_src("", "", "q", "tp");
+        match super::extract(&src_tp, body_tp, now, &fixture_lsk) {
+            super::ExtractResult::Measurements(v) => {
+                assert_eq!(v.len(), 1);
+                match &v[0].0.position {
+                    super::Position::StateVector { p, .. } => {
+                        let r = (p[0] * p[0] + p[1] * p[1] + p[2] * p[2]).sqrt();
+                        assert!((r - au).abs() < au * 1e-6);
+                    }
+                    other => {
+                        let _ = other;
+                        panic!("expected StateVector position")
+                    }
+                }
+            }
+            _ => panic!("extract variant unexpected"),
+        }
+    }
+
+    #[test]
+    fn test_field_in_nested_port_and_flatten_generic() {
+        let legacy = "source geosphere\nttl 86400\nforce seismic-body\nurl https://example.org/g\nmap data\nlat_key lat\nlon_key lon\nfield_in geometry.coordinates.2 quake_depth\nfield_in properties.mag quake_mag\n";
+        let conv = super::port_block(legacy);
+        let srcs = super::parse_sources(&conv);
+        assert_eq!(srcs.len(), 0);
+
+        let src = super::SourceConfig {
+            ttl: 10,
+            url: "https://example.org/f".into(),
+            frame: super::Frame::Surface {
+                body_name: "earth".into(),
+                lat: 0.0,
+                lon: 0.0,
+                alt: 0.0,
+            },
+            format: "json".into(),
+            extracts: vec![super::Extract::Flatten {
+                arr_path: "rows".into(),
+                geom_path: "pts".into(),
+                epoch_key: "t".into(),
+                fields: vec![FieldConfig {
+                    key: "v".into(),
+                    name: "v".into(),
+                    kernel: 0,
+                    force: 0,
+                    tau: 10.0,
+                    absorption: 0.0,
+                    advection: 0.0,
+                    unit: String::new(),
+                    fold: None,
+                }],
+            }],
+            headers: vec![],
+            post_body: None,
+            target: None,
+            catalog: None,
+            max_freq: None,
+            min_freq: None,
+            body: None,
+            stations_url: None,
+            stations_path: String::new(),
+            stations_lat: String::new(),
+            stations_lon: String::new(),
+            stations_id: String::new(),
+            flux_from_mag: None,
+            abs_mag_from: None,
+            catalog_epoch: None,
+            repeat_ra_bins: 0,
+            fanout_cap: 0,
+            stations_flatten: String::new(),
+            stations_filter: None,
+            fanout_delay: 0,
+        };
+        let body = r#"{"rows":[
+                {"t":1000000.0,"pts":[[[10.0,20.0,5.0],[11.0,21.0,6.0]],[[12.0,22.0,7.0]]],"v":3.5},
+                {"t":2000000.0,"pts":[30.0,40.0,8.0],"v":2.5}
+            ]}"#;
+        let now = 8.4e8;
+        let fixture_lsk = super::LeapSeconds {
+            delta_t_a: 32.184,
+            deltas: vec![(37.0, 1483228800.0)],
+        };
+        match super::extract(&src, body, now, &fixture_lsk) {
+            super::ExtractResult::Measurements(v) => {
+                assert_eq!(v.len(), 4);
+                for (ch, _) in &v {
+                    match &ch.position {
+                        super::Position::Surface { lat, lon, .. } => {
+                            assert!(*lat >= 20.0 && *lat <= 40.0);
+                            assert!(*lon >= 10.0 && *lon <= 30.0);
+                        }
+                        other => {
+                            let _ = other;
+                            panic!("expected Surface position")
+                        }
+                    }
+                }
+            }
+            _ => panic!("extract variant unexpected"),
+        }
+    }
+
+    #[test]
+    fn test_flux_from_mag_manifests() {
+        let src = super::SourceConfig {
+            ttl: 10,
+            url: "https://example.org/cat".into(),
+            frame: super::Frame::Barycenter {
+                body_name: "sun".into(),
+                scale: 1.0,
+            },
+            format: "json".into(),
+            extracts: vec![super::Extract::CelestialMap {
+                arr_path: ".".into(),
+                ra_key: "ra".into(),
+                dec_key: "dec".into(),
+                dist_key: String::new(),
+                dist_scale: 1.0,
+                plx_key: "plx".into(),
+                z_key: String::new(),
+                pmra_key: String::new(),
+                pmdec_key: String::new(),
+                rv_key: String::new(),
+                rv_scale: 1.0,
+                epoch_key: String::new(),
+                fields: vec![FieldConfig {
+                    key: "mag".into(),
+                    name: "cat_vmag".into(),
+                    kernel: 0,
+                    force: 0,
+                    tau: 100.0,
+                    absorption: 0.0,
+                    advection: 0.0,
+                    unit: "mag".into(),
+                    fold: None,
+                }],
+                tau_key: String::new(),
+            }],
+            headers: vec![],
+            post_body: None,
+            target: None,
+            catalog: None,
+            max_freq: None,
+            min_freq: None,
+            body: None,
+            stations_url: None,
+            stations_path: String::new(),
+            stations_lat: String::new(),
+            stations_lon: String::new(),
+            stations_id: String::new(),
+            flux_from_mag: Some("mag".into()),
+            abs_mag_from: None,
+            catalog_epoch: None,
+            repeat_ra_bins: 0,
+            fanout_cap: 0,
+            stations_flatten: String::new(),
+            stations_filter: None,
+            fanout_delay: 0,
+        };
+        let body = r#"[{"ra":89.8,"dec":53.6,"mag":12.0,"plx":10.0}]"#;
+        let now = 8.0e8;
+        let fixture_lsk = super::LeapSeconds {
+            delta_t_a: 32.184,
+            deltas: vec![(37.0, 1483228800.0)],
+        };
+        match super::extract(&src, body, now, &fixture_lsk) {
+            super::ExtractResult::Measurements(v) => {
+                assert_eq!(v.len(), 1);
+                let expect = 10.0f64.powf(-0.4 * 12.0);
+                assert!((v[0].0.value - expect).abs() < 1e-12);
+                assert_eq!(v[0].1.unit, "");
+            }
+            _ => panic!("extract variant unexpected"),
+        }
+    }
+
+    #[test]
+    fn test_map_lat_sign_lon_sign() {
+        let src = SourceConfig {
+            ttl: 3600,
+            url: "https://example.com/fireball".into(),
+            frame: super::Frame::Surface {
+                body_name: "earth".into(),
+                lat: 0.0,
+                lon: 0.0,
+                alt: 0.0,
+            },
+            format: "json".into(),
+            extracts: vec![Extract::Map {
+                arr_path: "data".into(),
+                lat_key: "3".into(),
+                lon_key: "5".into(),
+                alt_key: "7".into(),
+                epoch_key: "0".into(),
+                val_key: String::new(),
+                alt_scale: 1000.0,
+                vel_key: String::new(),
+                vel_scale: 1.0,
+                trk_key: String::new(),
+                vr_key: String::new(),
+                fields: vec![FieldConfig {
+                    key: "1".into(),
+                    name: "fireball_energy_e10j".into(),
+                    kernel: 0,
+                    force: 0,
+                    tau: 3600.0,
+                    absorption: 0.0,
+                    advection: 0.0,
+                    unit: "e10j".into(),
+                    fold: None,
+                }],
+                lat_sign: Some("4".into()),
+                lon_sign: Some("6".into()),
+                epoch_scale: 1.0,
+                tau_key: String::new(),
+                mag_type_key: String::new(),
+            }],
+            headers: vec![],
+            post_body: None,
+            target: None,
+            catalog: None,
+            max_freq: None,
+            min_freq: None,
+            body: None,
+            stations_url: None,
+            stations_path: String::new(),
+            stations_lat: String::new(),
+            stations_lon: String::new(),
+            stations_id: String::new(),
+            flux_from_mag: None,
+            abs_mag_from: None,
+            catalog_epoch: None,
+            repeat_ra_bins: 0,
+            fanout_cap: 0,
+            stations_flatten: String::new(),
+            stations_filter: None,
+            fanout_delay: 0,
+        };
+        let body = r#"{"data":[["2026-08-01 17:43:48","2.9","0.1","19.5","S","176.2","E","45.0",null],["2026-07-21 01:14:45","3.2","0.11","9.4","N","57.4","W","31.5",null]]}"#;
+        let fixture_lsk = super::LeapSeconds {
+            delta_t_a: 32.184,
+            deltas: vec![(37.0, 1483228800.0)],
+        };
+        match super::extract(&src, body, 8.0e8, &fixture_lsk) {
+            super::ExtractResult::Measurements(v) => {
+                assert_eq!(v.len(), 2);
+                match (&v[0].0.position, &v[1].0.position) {
+                    (
+                        super::Position::Surface {
+                            lat: la0, lon: lo0, ..
+                        },
+                        super::Position::Surface {
+                            lat: la1, lon: lo1, ..
+                        },
+                    ) => {
+                        assert!((la0 - (-19.5)).abs() < 1e-9, "lat S: {}", la0);
+                        assert!((lo0 - 176.2).abs() < 1e-9, "lon E: {}", lo0);
+                        assert!((la1 - 9.4).abs() < 1e-9, "lat N: {}", la1);
+                        assert!((lo1 - (-57.4)).abs() < 1e-9, "lon W: {}", lo1);
+                    }
+                    _ => panic!("position variant unexpected"),
+                }
+            }
+            _ => panic!("extract variant unexpected"),
+        }
+    }
+
+    #[test]
+    fn test_mag_type_gating() {
+        assert!(is_moment_magnitude("mww"));
+        assert!(is_moment_magnitude("Mw"));
+        assert!(is_moment_magnitude("MWP"));
+        assert!(is_moment_magnitude("mwpd"));
+        assert!(!is_moment_magnitude("ml"));
+        assert!(!is_moment_magnitude("md"));
+        assert!(!is_moment_magnitude("mb"));
+        assert!(!is_moment_magnitude("m"));
+        assert!(!is_moment_magnitude("Mj"));
+
+        let src = super::SourceConfig {
+            ttl: 60,
+            url: "https://example.org/quake".into(),
+            frame: super::Frame::Surface {
+                body_name: "earth".into(),
+                lat: 0.0,
+                lon: 0.0,
+                alt: 0.0,
+            },
+            format: "json".into(),
+            extracts: vec![super::Extract::Map {
+                arr_path: "data".into(),
+                lat_key: "lat".into(),
+                lon_key: "lon".into(),
+                alt_key: "alt".into(),
+                epoch_key: String::new(),
+                val_key: String::new(),
+                alt_scale: 1.0,
+                vel_key: String::new(),
+                vel_scale: 1.0,
+                trk_key: String::new(),
+                vr_key: String::new(),
+                fields: vec![FieldConfig {
+                    key: "mag".into(),
+                    name: "quake_moment".into(),
+                    kernel: 0,
+                    force: 3,
+                    tau: 6.0,
+                    absorption: 0.0,
+                    advection: 0.0,
+                    unit: "Mw".into(),
+                    fold: None,
+                }],
+                lat_sign: None,
+                lon_sign: None,
+                epoch_scale: 1.0,
+                tau_key: String::new(),
+                mag_type_key: "magType".into(),
+            }],
+            headers: vec![],
+            post_body: None,
+            target: None,
+            catalog: None,
+            max_freq: None,
+            min_freq: None,
+            body: None,
+            stations_url: None,
+            stations_path: String::new(),
+            stations_lat: String::new(),
+            stations_lon: String::new(),
+            stations_id: String::new(),
+            flux_from_mag: None,
+            abs_mag_from: None,
+            catalog_epoch: None,
+            repeat_ra_bins: 0,
+            fanout_cap: 0,
+            stations_flatten: String::new(),
+            stations_filter: None,
+            fanout_delay: 0,
+        };
+        let body = r#"{"data":[
+                {"lat":1.0,"lon":2.0,"alt":0.0,"magType":"mww","mag":5.5},
+                {"lat":3.0,"lon":4.0,"alt":0.0,"magType":"ml","mag":3.0},
+                {"lat":5.0,"lon":6.0,"alt":0.0,"magType":"Mw","mag":6.0}
+            ]}"#;
+        let now = 8.4e8;
+        let fixture_lsk = super::LeapSeconds {
+            delta_t_a: 32.184,
+            deltas: vec![(37.0, 1483228800.0)],
+        };
+        match super::extract(&src, body, now, &fixture_lsk) {
+            super::ExtractResult::Measurements(v) => {
+                assert_eq!(v.len(), 2);
+                assert!((v[0].0.value - 5.5).abs() < 1e-12);
+                assert!((v[1].0.value - 6.0).abs() < 1e-12);
+            }
+            _ => panic!("extract variant unexpected"),
+        }
+    }
+
+    #[test]
+    fn test_force_id_electric() {
+        assert_eq!(crate::force::force_id_of("electric"), Some(8));
+        assert_eq!(crate::force::force_id_of("biotic"), None);
+        assert_eq!(crate::force::kernel_id_for_force(8), Some(1));
+    }
+
+    #[test]
+    fn test_route_key_strips_query_and_www() {
+        assert_eq!(
+            route_key("https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&limit=2"),
+            Some("earthquake.usgs.gov/fdsnws/event/1/query".to_string())
+        );
+        assert_eq!(
+            route_key("https://www.example.com/"),
+            Some("example.com".to_string())
+        );
+    }
+
+    #[test]
+    fn test_route_key_normalizes_template() {
+        assert_eq!(
+            route_key("https://api.example.com/{lat}/{lon}"),
+            Some("api.example.com/*/*".to_string())
+        );
+    }
+
+    #[test]
+    fn test_route_prefix_keys_most_specific_first() {
+        let keys =
+            route_prefix_keys("https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson");
+        assert_eq!(
+            keys,
+            vec![
+                "earthquake.usgs.gov/fdsnws/event/1/query".to_string(),
+                "earthquake.usgs.gov/fdsnws/event/1".to_string(),
+                "earthquake.usgs.gov/fdsnws/event".to_string(),
+                "earthquake.usgs.gov/fdsnws".to_string(),
+                "earthquake.usgs.gov".to_string(),
+            ]
+        );
+    }
+
+    #[test]
+    fn test_frame_registry_distinguishes_routes_on_one_host() {
+        let mut reg: HashMap<String, String> = HashMap::new();
+        reg.insert(
+            "api.example.com/weather".to_string(),
+            "on earth".to_string(),
+        );
+        reg.insert(
+            "api.example.com/asteroids".to_string(),
+            "at sun".to_string(),
+        );
+        let (weather, _) =
+            draft_frame_guess("https://api.example.com/weather?city=berlin", "", &reg);
+        let (asteroids, _) = draft_frame_guess("https://api.example.com/asteroids/433", "", &reg);
+        assert_eq!(weather, "on earth\n");
+        assert_eq!(asteroids, "at sun\n");
+    }
+
+    #[test]
+    fn test_frame_registry_prefix_match() {
+        let mut reg: HashMap<String, String> = HashMap::new();
+        reg.insert(
+            "api.example.com/weather".to_string(),
+            "on earth".to_string(),
+        );
+        let (frame, _) = draft_frame_guess("https://api.example.com/weather/current", "", &reg);
+        assert_eq!(frame, "on earth\n");
+    }
+
+    #[test]
+    fn test_ci_classification_plain_secret_template_fanout() {
+        assert!(!url_has_template("https://example.com/a/b.json"));
+        assert!(!url_has_template(
+            "https://firms.modaps.eosdis.nasa.gov/api/area/csv/{FIRMS_MAP_KEY}/MODIS_NRT/world/1"
+        ));
+        assert!(url_has_template("https://example.com/{lat}/{lon}"));
+        assert!(url_has_template(
+            "https://earthquake.usgs.gov/fdsnws/event/1/query?starttime={hour_ago}&latitude={lat}"
+        ));
+        assert!(url_is_fanout(
+            "https://example.com/stations/{station}/readings"
+        ));
+        assert!(url_is_fanout(
+            "https://example.com/?station={nearest_station}"
+        ));
+        assert!(!url_is_fanout("https://example.com/{lat}/{lon}"));
+    }
+
+    #[test]
+    fn test_ci_probe_render_resolves_templates_and_secrets() {
+        let mut env = HashMap::new();
+        env.insert("FIRMS_MAP_KEY".to_string(), "ABC123".to_string());
+        let url = ci_probe_render(
+            "https://example.com/?lat={lat}&lon={lon}&key={FIRMS_MAP_KEY}",
+            (52.5, 13.4),
+            &env,
+        )
+        .unwrap();
+        assert!(url.contains("lat=52.500000"), "got {}", url);
+        assert!(url.contains("lon=13.400000"), "got {}", url);
+        assert!(url.contains("key=ABC123"), "got {}", url);
+        assert!(!url.contains('{'), "unresolved marker in {}", url);
+    }
+
+    #[test]
+    fn test_ci_probe_render_bbox_and_temporal() {
+        let env = HashMap::new();
+        let url = ci_probe_render(
+                "https://example.com/?bBox={lon_min},{lat_min},{lon_max},{lat_max}&start={week_ago}&end={today}",
+                (0.0, 0.0),
+                &env,
+            )
+            .unwrap();
+        assert!(!url.contains('{'), "unresolved marker in {}", url);
+        assert!(url.contains("start=20"), "missing week_ago in {}", url);
+        assert!(url.contains("end=20"), "missing today in {}", url);
+    }
+
+    #[test]
+    fn test_secret_resolves_void_distinguishes_absent_and_empty() {
+        let mut env = HashMap::new();
+        env.insert("SET_KEY".to_string(), "v".to_string());
+        env.insert("EMPTY_KEY".to_string(), String::new());
+        assert!(secret_resolves_void("{ABSENT_KEY}", &env));
+        assert!(secret_resolves_void("{EMPTY_KEY}", &env));
+        assert!(!secret_resolves_void("{SET_KEY}", &env));
+    }
+
+    #[test]
+    fn test_alerce_object_and_detection_parse() {
+        let list = r#"{"total":null,"items":[{"oid":"ZTF17aaaaaal","meanra":210.5,"meandec":-12.25,"firstmjd":58000.0},{"oid":"ZTF18bbbbbbb","meanra":null,"meandec":null}]}"#;
+        let objs = alerce_objects(&parse_json(list).unwrap());
+        assert_eq!(objs.len(), 1);
+        assert_eq!(objs[0].0, "ZTF17aaaaaal");
+        assert!((objs[0].1 - 210.5).abs() < 1e-12);
+        assert!((objs[0].2 + 12.25).abs() < 1e-12);
+        let det = r#"[{"ra":210.5,"dec":-12.25,"mjd":60123.4,"magpsf":18.1,"magap":18.4},{"ra":"absent","dec":0.0,"mjd":60123.4,"magpsf":19.0,"magap":19.0}]"#;
+        let rows = alerce_detection_rows(&parse_json(det).unwrap());
+        assert_eq!(rows.len(), 1);
+        assert_eq!(rows[0], (210.5, -12.25, 60123.4, 18.1, 18.4));
+    }
+
+    #[test]
+    fn test_finals_channels_last_occupied_line() {
+        let line = format!(
+            "{:>2}{:>2}{:>2} {:8.2} {:1} {:9.6}{:10.6} {:9.6}{:10.6} {:1} {:10.7}",
+            25, 8, 21, 61638.00, "P", 0.269050, 0.000012, 0.372959, 0.000014, "P", -0.0683654
+        );
+        let text = format!("{}\n{:>2}{:>2}{:>2} {:8.2}\n", line, 25, 8, 22, 61639.00);
+        let src = source_fixture(
+            "finals",
+            vec![
+                Extract::Field(field_fixture("ut1_utc", 86400.0)),
+                Extract::Field(field_fixture("pmx", 86400.0)),
+                Extract::Field(field_fixture("pmy", 86400.0)),
+            ],
+        );
+        let lsk = fixture_lsk();
+        let channels = build_finals_channels(&src, &text, &lsk);
+        assert_eq!(channels.len(), 3);
+        let expect_epoch = lsk.unix_to_tdb((61638.0 - 40587.0) * 86400.0).unwrap();
+        for (c, fc) in &channels {
+            assert_eq!(c.epoch, expect_epoch);
+            match fc.name.as_str() {
+                "ut1_utc" => assert_eq!(c.value, -0.0683654),
+                "pmx" => assert_eq!(c.value, 0.269050),
+                "pmy" => assert_eq!(c.value, 0.372959),
+                other => panic!("unexpected field {}", other),
+            }
+        }
+    }
+
+    #[test]
+    fn test_ionex_channels_two_lat_five_lon() {
+        let mut text = String::new();
+        text.push_str("     1            CODEX                       IONEX VERSION / TYPE\n");
+        text.push_str(
+            "    -1                                                              EXPONENT\n",
+        );
+        text.push_str("     4 START OF TEC MAP\n");
+        text.push_str(
+            "  2026     8    18    12     0     0                        EPOCH OF CURRENT MAP\n",
+        );
+        text.push_str(
+            "    87.5-180.0 180.0  90.0 450.0                            LAT/LON1/LON2/DLON/H\n",
+        );
+        let mut line = String::from("    87.5-180.0 180.0  90.0 450.0");
+        for w in 101..=105 {
+            line.push_str(&format!("{:>5}", w));
+        }
+        text.push_str(&line);
+        text.push('\n');
+        let mut line2 = String::from("    72.5-180.0 180.0  90.0 450.0");
+        for w in 201..=205 {
+            line2.push_str(&format!("{:>5}", w));
+        }
+        text.push_str(&line2);
+        text.push('\n');
+        text.push_str("     8 END OF TEC MAP\n");
+        let src = source_fixture("ionex", vec![Extract::Field(field_fixture("tec", 7200.0))]);
+        let lsk = fixture_lsk();
+        let now = 1786968000.0 + 69.184 + 3600.0;
+        let channels = build_ionex_channels(&src, &text, now, &lsk);
+        assert_eq!(channels.len(), 10);
+        let mut seen_lat = [false; 2];
+        for (c, _) in &channels {
+            if let Position::Surface { lat, lon, alt, .. } = &c.position {
+                assert!(*alt > 400_000.0, "ionex H must set the shell altitude");
+                assert!((lon + 180.0) % 90.0 == 0.0, "lon grid mismatch");
+                if *lat == 87.5 {
+                    seen_lat[0] = true;
+                    assert!(c.value >= 10.1 && c.value <= 10.5);
+                } else if *lat == 72.5 {
+                    seen_lat[1] = true;
+                    assert!(c.value >= 20.1 && c.value <= 20.5);
+                } else {
+                    panic!("unexpected lat {}", lat);
+                }
+            }
+        }
+        assert!(seen_lat[0] && seen_lat[1], "both lat rows present");
+    }
+}
+use crate::dastcom::{
+    accel_at_epoch, hill_radius_m, parse_record, speed_at_epoch, state_at, RECORD_STRIDE,
+};
+use crate::force::default_kernel_for;
+use crate::inflate::gunzip;
+use crate::netcdf::NetcdfFile;
+use crate::pck::PckBody;
+use std::io::{IsTerminal, Write};
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::{mpsc, Mutex};
+use std::thread;
+use std::time::{SystemTime, UNIX_EPOCH};
+const NAIF_LSK_TTL_SECS: u64 = 86400;
+const STAR_FLUX_FLOOR: f64 = 1e-4;
+
+pub fn resolve_asset(rel: &str) -> std::path::PathBuf {
+    let cwd_candidate = std::path::PathBuf::from(rel);
+    if cwd_candidate.exists() {
+        return cwd_candidate;
+    }
+    if let Ok(exe) = std::env::current_exe() {
+        if let Some(dir) = exe.parent() {
+            let exe_candidate = dir.join(rel);
+            if exe_candidate.exists() {
+                return exe_candidate;
+            }
+        }
+    }
+    if !rel.starts_with('.') {
+        eprintln!("asset {} absent (CWD {:?})", rel, std::env::current_dir());
+    }
+    cwd_candidate
+}
+
+const SURFACE_MOTION_DT: f64 = 0.01;
+const MAX_OSCILLATORS: usize = 1 << 21;
+
+fn finite_positive(v: f64) -> Option<f64> {
+    if v.is_finite() && v > 0.0 {
+        Some(v)
+    } else {
+        None
+    }
+}
+
+type Origin = u32;
+
+fn cell_of(p: [f64; 3], s: f64) -> CellKey {
+    (
+        (p[0] / s).floor() as i64,
+        (p[1] / s).floor() as i64,
+        (p[2] / s).floor() as i64,
+    )
+}
+
+fn relative_frame_position(
+    motion: &Motion,
+    t: f64,
+    epoch: f64,
+    eph: &HashMap<String, BodyEphemeris>,
+) -> Option<[f64; 3]> {
+    let p = motion.at(t, epoch, eph)?;
+    match motion.anchor_body() {
+        Some(body) => {
+            let b = body_barycenter_position(body, t, eph)?;
+            Some([p[0] - b[0], p[1] - b[1], p[2] - b[2]])
+        }
+        None => Some(p),
+    }
+}
+
+pub fn law_bounds(
+    motion: &Motion,
+    epoch: f64,
+    resid_ema: f64,
+    eph: &HashMap<String, BodyEphemeris>,
+) -> Option<(f64, f64, [f64; 3])> {
+    let p0 = relative_frame_position(motion, epoch, epoch, eph)?;
+    let p1 = relative_frame_position(motion, epoch + 1.0, epoch, eph)?;
+    let p2 = relative_frame_position(motion, epoch + 2.0, epoch, eph)?;
+    let v = ((p1[0] - p0[0]).powi(2) + (p1[1] - p0[1]).powi(2) + (p1[2] - p0[2]).powi(2)).sqrt();
+    let a = ((p2[0] - 2.0 * p1[0] + p0[0]).powi(2)
+        + (p2[1] - 2.0 * p1[1] + p0[1]).powi(2)
+        + (p2[2] - 2.0 * p1[2] + p0[2]).powi(2))
+    .sqrt();
+    Some((Φ * (v + resid_ema), Φ * a, p0))
+}
+
+fn build_spatial_hash(samples: Vec<Oscillator>, cadence: f64) -> SpatialHash {
+    let mut bounded = Vec::new();
+    let mut unbounded = Vec::new();
+    for s in samples {
+        if s.extent.is_finite() {
+            bounded.push(s);
+        } else {
+            unbounded.push(s);
+        }
+    }
+    let mut vmax = 0.0f64;
+    let mut amax = 0.0f64;
+    let mut epoch_min = f64::MAX;
+    for s in &bounded {
+        vmax = vmax.max(s.vmax);
+        amax = amax.max(s.amax);
+        epoch_min = epoch_min.min(s.epoch);
+    }
+    let rho_cad = vmax * cadence + 0.5 * amax * cadence * cadence;
+    let shift = (2.0 * rho_cad).log2().ceil().clamp(0.0, 63.0) as i32;
+    let motion_cell = 2f64.powi(shift);
+    let mut span = 1.0f64;
+    for k in 0..3 {
+        let mut lo = f64::INFINITY;
+        let mut hi = f64::NEG_INFINITY;
+        for s in &bounded {
+            lo = lo.min(s.p0f[k]);
+            hi = hi.max(s.p0f[k]);
+        }
+        span = span.max(hi - lo);
+    }
+    let cell_size = motion_cell.max(span / 1024.0);
+    let mut cells: HashMap<CellKey, Vec<Oscillator>> = HashMap::new();
+    let mut cell_lo = (i64::MAX, i64::MAX, i64::MAX);
+    let mut cell_hi = (i64::MIN, i64::MIN, i64::MIN);
+    for s in bounded {
+        let c = cell_of(s.p0f, cell_size);
+        cell_lo.0 = cell_lo.0.min(c.0);
+        cell_lo.1 = cell_lo.1.min(c.1);
+        cell_lo.2 = cell_lo.2.min(c.2);
+        cell_hi.0 = cell_hi.0.max(c.0);
+        cell_hi.1 = cell_hi.1.max(c.1);
+        cell_hi.2 = cell_hi.2.max(c.2);
+        cells.entry(c).or_default().push(s);
+    }
+    SpatialHash {
+        cell_size,
+        vmax,
+        amax,
+        epoch_min: if epoch_min == f64::MAX {
+            0.0
+        } else {
+            epoch_min
+        },
+        cell_lo,
+        cell_hi,
+        cells,
+        unbounded,
+    }
+}
+
+pub fn build_buffer(
+    samples: Vec<Oscillator>,
+    cadence: f64,
+    eph: Arc<HashMap<String, BodyEphemeris>>,
+    asteroids: Option<Arc<AsteroidHash>>,
+    stars: Option<Arc<StarHash>>,
+    occluders: Option<Arc<OccluderSet>>,
+    planets: Option<Arc<PlanetSet>>,
+    curves: Option<Arc<CurveSet>>,
+    spectral: Vec<SpectralHash>,
+) -> Buffer {
+    let mut body_samps: HashMap<String, Vec<Oscillator>> = HashMap::new();
+    let mut inertial_samps = Vec::new();
+    for s in samples {
+        if let Some(body) = s.motion.anchor_body() {
+            body_samps.entry(body.to_string()).or_default().push(s);
+        } else {
+            inertial_samps.push(s);
+        }
+    }
+    let mut bodies = HashMap::new();
+    for (name, oscs) in body_samps {
+        bodies.insert(name, build_spatial_hash(oscs, cadence));
+    }
+    Buffer {
+        bodies,
+        inertial: build_spatial_hash(inertial_samps, cadence),
+        eph,
+        asteroids,
+        stars,
+        occluders,
+        planets,
+        curves,
+        spectral,
+    }
+}
+
+fn build_asteroid_hash(bytes: &[u8], cadence: f64, ttl: u64) -> AsteroidHash {
+    let mut records: Vec<AsteroidRec> = Vec::new();
+    let mut p0: Vec<[f64; 3]> = Vec::new();
+    let mut vmax = 0.0f64;
+    let mut amax = 0.0f64;
+    let mut epoch_min = f64::MAX;
+    for chunk in bytes.chunks_exact(RECORD_STRIDE) {
+        let rec = match parse_record(chunk) {
+            Some(r) => r,
+            None => continue,
+        };
+        if rec.number == 0 || rec.a_au <= 0.0 || rec.e >= 1.0 {
+            continue;
+        }
+        if hill_radius_m(&rec).is_none() {
+            continue;
+        }
+        let (pos, vel) = match state_at(&rec, rec.epoch_jd) {
+            Some(s) => s,
+            None => continue,
+        };
+        let Some(accel) = accel_at_epoch(&rec) else {
+            continue;
+        };
+        let speed = (vel[0] * vel[0] + vel[1] * vel[1] + vel[2] * vel[2]).sqrt();
+        let epoch_secs = (rec.epoch_jd - J2000_EPOCH) * 86400.0;
+        vmax = vmax.max(speed);
+        amax = amax.max(accel);
+        epoch_min = epoch_min.min(epoch_secs);
+        records.push(rec);
+        p0.push(pos);
+    }
+    vmax *= Φ;
+    amax *= Φ;
+    let rho_cad = vmax * cadence + 0.5 * amax * cadence * cadence;
+    let shift = (2.0 * rho_cad).log2().ceil().clamp(0.0, 63.0) as i32;
+    let cell_size = 2f64.powi(shift);
+    let mut cells: HashMap<CellKey, Vec<u32>> = HashMap::new();
+    let mut cell_lo = (i64::MAX, i64::MAX, i64::MAX);
+    let mut cell_hi = (i64::MIN, i64::MIN, i64::MIN);
+    for (i, pos) in p0.iter().enumerate() {
+        let c = cell_of(*pos, cell_size);
+        cell_lo.0 = cell_lo.0.min(c.0);
+        cell_lo.1 = cell_lo.1.min(c.1);
+        cell_lo.2 = cell_lo.2.min(c.2);
+        cell_hi.0 = cell_hi.0.max(c.0);
+        cell_hi.1 = cell_hi.1.max(c.1);
+        cell_hi.2 = cell_hi.2.max(c.2);
+        cells.entry(c).or_default().push(i as u32);
+    }
+    AsteroidHash {
+        cell_size,
+        vmax,
+        amax,
+        epoch_min_secs: if epoch_min == f64::MAX {
+            0.0
+        } else {
+            epoch_min
+        },
+        ttl: ttl as f64,
+        cell_lo,
+        cell_hi,
+        cells,
+        records,
+        p0,
+    }
+}
+
+fn build_occluder_set(bytes: &[u8]) -> OccluderSet {
+    let mut records: Vec<AsteroidRec> = Vec::new();
+    for chunk in bytes.chunks_exact(RECORD_STRIDE) {
+        let rec = match parse_record(chunk) {
+            Some(r) => r,
+            None => continue,
+        };
+        if rec.number == 0 || rec.a_au <= 0.0 || rec.e >= 1.0 {
+            continue;
+        }
+        if !(rec.radius_km > 0.0) {
+            continue;
+        }
+        records.push(rec);
+    }
+    OccluderSet { records }
+}
+
+fn query_asteroid_hash(
+    hash: &AsteroidHash,
+    center: [f64; 3],
+    t2: f64,
+    pad: f64,
+    delta_t_cache: f64,
+    records: &mut Vec<OscRecord>,
+) {
+    if hash.cells.is_empty() {
+        return;
+    }
+    let dt = (t2 - hash.epoch_min_secs).abs() + delta_t_cache;
+    let rho = hash.vmax * dt + 0.5 * hash.amax * dt * dt + pad;
+    let s = hash.cell_size;
+    let qlo = cell_of([center[0] - rho, center[1] - rho, center[2] - rho], s);
+    let qhi = cell_of([center[0] + rho, center[1] + rho, center[2] + rho], s);
+    let lo = (
+        qlo.0.max(hash.cell_lo.0),
+        qlo.1.max(hash.cell_lo.1),
+        qlo.2.max(hash.cell_lo.2),
+    );
+    let hi = (
+        qhi.0.min(hash.cell_hi.0),
+        qhi.1.min(hash.cell_hi.1),
+        qhi.2.min(hash.cell_hi.2),
+    );
+    if lo.0 > hi.0 || lo.1 > hi.1 || lo.2 > hi.2 {
+        return;
+    }
+    let span = (hi.0.saturating_sub(lo.0).saturating_add(1) as u64)
+        .saturating_mul(hi.1.saturating_sub(lo.1).saturating_add(1) as u64)
+        .saturating_mul(hi.2.saturating_sub(lo.2).saturating_add(1) as u64);
+    let visit: Vec<&Vec<u32>> = if span > hash.cells.len() as u64 * 4 {
+        hash.cells
+            .iter()
+            .filter(|(ck, _)| {
+                ck.0 >= lo.0
+                    && ck.0 <= hi.0
+                    && ck.1 >= lo.1
+                    && ck.1 <= hi.1
+                    && ck.2 >= lo.2
+                    && ck.2 <= hi.2
+            })
+            .map(|(_, v)| v)
+            .collect()
+    } else {
+        let mut out = Vec::new();
+        for cx in lo.0..=hi.0 {
+            for cy in lo.1..=hi.1 {
+                for cz in lo.2..=hi.2 {
+                    if let Some(indices) = hash.cells.get(&(cx, cy, cz)) {
+                        out.push(indices);
+                    }
+                }
+            }
+        }
+        out
+    };
+    let t_jd = t2 / 86400.0 + J2000_EPOCH;
+    for indices in visit {
+        for &i in indices {
+            let rec = &hash.records[i as usize];
+            if hill_radius_m(rec).is_none() {
+                continue;
+            }
+            let epoch_secs = (rec.epoch_jd - J2000_EPOCH) * 86400.0;
+            let age = (t2 - epoch_secs).abs();
+            let future_age = age + delta_t_cache;
+            let (Some(speed), Some(accel)) = (speed_at_epoch(rec), accel_at_epoch(rec)) else {
+                continue;
+            };
+            let reach =
+                kernel_reach(0) + speed * future_age + 0.5 * accel * future_age * future_age + pad;
+            let p0 = hash.p0[i as usize];
+            let dx = p0[0] - center[0];
+            let dy = p0[1] - center[1];
+            let dz = p0[2] - center[2];
+            let dist2_p0 = dx * dx + dy * dy + dz * dz;
+            if dist2_p0 > reach * reach {
+                continue;
+            }
+            let (p, v) = match state_at(rec, t_jd) {
+                Some(s) => s,
+                None => continue,
+            };
+            let ddx = p[0] - center[0];
+            let ddy = p[1] - center[1];
+            let ddz = p[2] - center[2];
+            let exact = pad;
+            let dist2 = ddx * ddx + ddy * ddy + ddz * ddz;
+            if dist2 > exact * exact {
+                continue;
+            }
+            let gm = rec.gm_km3_s2 as f64 * 1.0e9;
+            records.push((
+                p[0],
+                p[1],
+                p[2],
+                gm,
+                epoch_secs,
+                hash.ttl,
+                f64::INFINITY,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                v[0],
+                v[1],
+                v[2],
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+            ));
+            if rec.radius_km > 0.0 {
+                records.push((
+                    p[0],
+                    p[1],
+                    p[2],
+                    rec.radius_km as f64 * 1000.0,
+                    epoch_secs,
+                    hash.ttl,
+                    f64::INFINITY,
+                    0.0,
+                    0.0,
+                    1.0,
+                    0.0,
+                    0.0,
+                    v[0],
+                    v[1],
+                    v[2],
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                ));
+            }
+        }
+    }
+}
+
+const STAR_RECORD_BYTES: usize = 44;
+
+fn star_stride(bytes: &[u8]) -> Option<usize> {
+    if bytes.len() > 0 && bytes.len() % STAR_RECORD_BYTES == 0 {
+        Some(STAR_RECORD_BYTES)
+    } else {
+        None
+    }
+}
+
+fn parse_star_record(b: &[u8]) -> Option<StarRec> {
+    if b.len() != STAR_RECORD_BYTES {
+        return None;
+    }
+    let ra = f64::from_le_bytes(b[0..8].try_into().ok()?);
+    let dec = f64::from_le_bytes(b[8..16].try_into().ok()?);
+    let pm_ra = f32::from_le_bytes(b[16..20].try_into().ok()?) as f64;
+    let pm_de = f32::from_le_bytes(b[20..24].try_into().ok()?) as f64;
+    let plx = f32::from_le_bytes(b[24..28].try_into().ok()?) as f64;
+    let mag = f32::from_le_bytes(b[28..32].try_into().ok()?) as f64;
+    let flux = f32::from_le_bytes(b[32..36].try_into().ok()?) as f64;
+    let color = f32::from_le_bytes(b[36..40].try_into().ok()?) as f64;
+    let rv = f32::from_le_bytes(b[40..44].try_into().ok()?) as f64;
+    if !ra.is_finite() || !dec.is_finite() || !(plx > 0.0) || !mag.is_finite() || !rv.is_finite() {
+        return None;
+    }
+    Some(StarRec {
+        ra_deg: ra,
+        dec_deg: dec,
+        pm_ra_masyr: pm_ra,
+        pm_de_masyr: pm_de,
+        plx_mas: plx,
+        flux,
+        mag,
+        tau: 0.0,
+        color_index: if color.is_finite() { color } else { 0.0 },
+        rv_m_s: rv,
+    })
+}
+
+pub fn star_position_at(rec: &StarRec, t2: f64) -> ([f64; 3], [f64; 3]) {
+    let dt_yr = t2 / (86400.0 * 365.25);
+    let dec_rad = rec.dec_deg.to_radians();
+    let ra = rec.ra_deg + rec.pm_ra_masyr / (3.6e6 * dec_rad.cos().max(1e-6)) * dt_yr;
+    let dec = rec.dec_deg + rec.pm_de_masyr / 3.6e6 * dt_yr;
+    let (sa, ca) = ra.to_radians().sin_cos();
+    let (sd, cd) = dec.to_radians().sin_cos();
+    let p_hat = [cd * ca, cd * sa, sd];
+    let d = (1000.0 / rec.plx_mas) * PARSEC_M;
+    let p = [p_hat[0] * d, p_hat[1] * d, p_hat[2] * d];
+    let mu_a = rec.pm_ra_masyr * MAS_YR_TO_RAD_S;
+    let mu_d = rec.pm_de_masyr * MAS_YR_TO_RAD_S;
+    let a_hat = [-sa, ca, 0.0];
+    let d_hat = [-sd * ca, -sd * sa, cd];
+    let vr = rec.rv_m_s;
+    let vel = [
+        d * (mu_a * a_hat[0] + mu_d * d_hat[0]) + vr * p_hat[0],
+        d * (mu_a * a_hat[1] + mu_d * d_hat[1]) + vr * p_hat[1],
+        d * (mu_a * a_hat[2] + mu_d * d_hat[2]) + vr * p_hat[2],
+    ];
+    (p, vel)
+}
+
+fn build_star_hash(
+    bytes: &[u8],
+    #[cfg(feature = "browser_relay")] build_epoch: f64,
+    #[cfg(feature = "browser_relay")] cadence: f64,
+) -> StarHash {
+    let mut records: Vec<StarRec> = Vec::new();
+    let Some(stride) = star_stride(bytes) else {
+        eprintln!(
+            "star bin {} bytes: no {}-byte records — pending recompilation, stars stay dark",
+            bytes.len(),
+            STAR_RECORD_BYTES
+        );
+        return StarHash {
+            records,
+            #[cfg(feature = "browser_relay")]
+            cell_size: 0.0,
+            #[cfg(feature = "browser_relay")]
+            vmax: 0.0,
+            #[cfg(feature = "browser_relay")]
+            build_epoch,
+            #[cfg(feature = "browser_relay")]
+            cell_lo: (i64::MAX, i64::MAX, i64::MAX),
+            #[cfg(feature = "browser_relay")]
+            cell_hi: (i64::MIN, i64::MIN, i64::MIN),
+            #[cfg(feature = "browser_relay")]
+            cells: HashMap::new(),
+            #[cfg(feature = "browser_relay")]
+            p0: Vec::new(),
+        };
+    };
+    for chunk in bytes.chunks_exact(stride) {
+        let Some(mut rec) = parse_star_record(chunk) else {
+            continue;
+        };
+        let m_abs = rec.mag + 5.0 * (rec.plx_mas / 100.0).log10();
+        let lum = 10f64.powf(-0.4 * (m_abs - 4.83));
+        rec.tau = 1e10 * 365.25 * 86400.0 * lum.powf(-5.0 / 7.0);
+        records.push(rec);
+    }
+    #[cfg(feature = "browser_relay")]
+    let (cell_size, vmax, build_epoch, cell_lo, cell_hi, cells, p0) = {
+        let mut p0: Vec<[f64; 3]> = Vec::new();
+        let mut vmax = 0.0f64;
+        for rec in &records {
+            let (p, v) = star_position_at(rec, build_epoch);
+            let speed = (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]).sqrt();
+            vmax = vmax.max(speed);
+            p0.push(p);
+        }
+        vmax *= Φ;
+        let rho_cad = vmax * cadence;
+        let shift = (2.0 * rho_cad).log2().ceil().clamp(0.0, 63.0) as i32;
+        let motion_cell = 2f64.powi(shift);
+        let mut span = 1.0f64;
+        for k in 0..3 {
+            let mut lo = f64::INFINITY;
+            let mut hi = f64::NEG_INFINITY;
+            for pos in &p0 {
+                lo = lo.min(pos[k]);
+                hi = hi.max(pos[k]);
+            }
+            span = span.max(hi - lo);
+        }
+        let cell_size = motion_cell.max(span / 1024.0);
+        let mut cells: HashMap<CellKey, Vec<u32>> = HashMap::new();
+        let mut cell_lo = (i64::MAX, i64::MAX, i64::MAX);
+        let mut cell_hi = (i64::MIN, i64::MIN, i64::MIN);
+        for (i, pos) in p0.iter().enumerate() {
+            let c = cell_of(*pos, cell_size);
+            cell_lo.0 = cell_lo.0.min(c.0);
+            cell_lo.1 = cell_lo.1.min(c.1);
+            cell_lo.2 = cell_lo.2.min(c.2);
+            cell_hi.0 = cell_hi.0.max(c.0);
+            cell_hi.1 = cell_hi.1.max(c.1);
+            cell_hi.2 = cell_hi.2.max(c.2);
+            cells.entry(c).or_default().push(i as u32);
+        }
+        (cell_size, vmax, build_epoch, cell_lo, cell_hi, cells, p0)
+    };
+    StarHash {
+        records,
+        #[cfg(feature = "browser_relay")]
+        cell_size,
+        #[cfg(feature = "browser_relay")]
+        vmax,
+        #[cfg(feature = "browser_relay")]
+        build_epoch,
+        #[cfg(feature = "browser_relay")]
+        cell_lo,
+        #[cfg(feature = "browser_relay")]
+        cell_hi,
+        #[cfg(feature = "browser_relay")]
+        cells,
+        #[cfg(feature = "browser_relay")]
+        p0,
+    }
+}
+
+#[cfg(feature = "browser_relay")]
+fn query_star_hash(
+    hash: &StarHash,
+    center: [f64; 3],
+    t2: f64,
+    pad: f64,
+    delta_t_cache: f64,
+    records: &mut Vec<OscRecord>,
+) {
+    if hash.cells.is_empty() {
+        return;
+    }
+    let dt = (t2 - hash.build_epoch).abs() + delta_t_cache;
+    let rho = hash.vmax * dt + pad;
+    let s = hash.cell_size;
+    let qlo = cell_of([center[0] - rho, center[1] - rho, center[2] - rho], s);
+    let qhi = cell_of([center[0] + rho, center[1] + rho, center[2] + rho], s);
+    let lo = (
+        qlo.0.max(hash.cell_lo.0),
+        qlo.1.max(hash.cell_lo.1),
+        qlo.2.max(hash.cell_lo.2),
+    );
+    let hi = (
+        qhi.0.min(hash.cell_hi.0),
+        qhi.1.min(hash.cell_hi.1),
+        qhi.2.min(hash.cell_hi.2),
+    );
+    if lo.0 > hi.0 || lo.1 > hi.1 || lo.2 > hi.2 {
+        return;
+    }
+    let span = (hi.0.saturating_sub(lo.0).saturating_add(1) as u64)
+        .saturating_mul(hi.1.saturating_sub(lo.1).saturating_add(1) as u64)
+        .saturating_mul(hi.2.saturating_sub(lo.2).saturating_add(1) as u64);
+    let visit: Vec<&Vec<u32>> = if span > hash.cells.len() as u64 * 4 {
+        hash.cells
+            .iter()
+            .filter(|(ck, _)| {
+                ck.0 >= lo.0
+                    && ck.0 <= hi.0
+                    && ck.1 >= lo.1
+                    && ck.1 <= hi.1
+                    && ck.2 >= lo.2
+                    && ck.2 <= hi.2
+            })
+            .map(|(_, v)| v)
+            .collect()
+    } else {
+        let mut out = Vec::new();
+        for cx in lo.0..=hi.0 {
+            for cy in lo.1..=hi.1 {
+                for cz in lo.2..=hi.2 {
+                    if let Some(indices) = hash.cells.get(&(cx, cy, cz)) {
+                        out.push(indices);
+                    }
+                }
+            }
+        }
+        out
+    };
+    for indices in visit {
+        for &i in indices {
+            let rec = &hash.records[i as usize];
+            let d = (1000.0 / rec.plx_mas) * PARSEC_M;
+            let mu_a = rec.pm_ra_masyr * MAS_YR_TO_RAD_S;
+            let mu_d = rec.pm_de_masyr * MAS_YR_TO_RAD_S;
+            let v_lin = d * mu_a.hypot(mu_d);
+            let reach = v_lin * dt + pad;
+            let p0 = hash.p0[i as usize];
+            let dx = p0[0] - center[0];
+            let dy = p0[1] - center[1];
+            let dz = p0[2] - center[2];
+            let dist2_p0 = dx * dx + dy * dy + dz * dz;
+            if dist2_p0 > reach * reach {
+                continue;
+            }
+            let (p, v) = star_position_at(rec, t2);
+            let ddx = p[0] - center[0];
+            let ddy = p[1] - center[1];
+            let ddz = p[2] - center[2];
+            let dist2 = ddx * ddx + ddy * ddy + ddz * ddz;
+            if dist2 > pad * pad {
+                continue;
+            }
+            records.push((
+                p[0],
+                p[1],
+                p[2],
+                rec.flux,
+                t2,
+                rec.tau,
+                rec.tau,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                v[0],
+                v[1],
+                v[2],
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                rec.color_index,
+                0.0,
+                0.0,
+            ));
+        }
+    }
+}
+
+pub fn query_hash(
+    hash: &SpatialHash,
+    anchor: [f64; 3],
+    center: [f64; 3],
+    t2: f64,
+    pad: f64,
+    delta_t_cache: f64,
+    records: &mut Vec<OscRecord>,
+    eph: &HashMap<String, BodyEphemeris>,
+) {
+    for osc in &hash.unbounded {
+        let p = match osc.motion.at(t2, osc.epoch, eph) {
+            Some(p) => p,
+            None => continue,
+        };
+        let v = if let Motion::Linear { v, .. } = &osc.motion {
+            [v[0], v[1], v[2]]
+        } else {
+            let p_dt = match osc.motion.at(t2 + 1e-3, osc.epoch, eph) {
+                Some(pd) => pd,
+                None => continue,
+            };
+            [
+                (p_dt[0] - p[0]) / 1e-3,
+                (p_dt[1] - p[1]) / 1e-3,
+                (p_dt[2] - p[2]) / 1e-3,
+            ]
+        };
+        let (pole, j2, j4, r_eq) = gravity_manifest(osc, t2, eph);
+        records.push((
+            p[0],
+            p[1],
+            p[2],
+            osc.val,
+            osc.epoch,
+            osc.ttl,
+            osc.tau,
+            osc.extent,
+            osc.kernel_id,
+            osc.force_type,
+            osc.absorption,
+            osc.advection,
+            v[0],
+            v[1],
+            v[2],
+            if osc.force_type == 0.0 {
+                osc.z
+            } else {
+                pole[0]
+            },
+            pole[1],
+            pole[2],
+            match j2 {
+                Some(v) => v,
+                None => 0.0,
+            },
+            match j4 {
+                Some(v) => v,
+                None => 0.0,
+            },
+            r_eq,
+            0.0,
+            osc.freq,
+            osc.bin_width,
+        ));
+    }
+    if hash.cells.is_empty() {
+        return;
+    }
+    let qf = [
+        center[0] - anchor[0],
+        center[1] - anchor[1],
+        center[2] - anchor[2],
+    ];
+    let dt = (t2 - hash.epoch_min).abs() + delta_t_cache;
+    let rho = hash.vmax * dt + 0.5 * hash.amax * dt * dt + pad;
+    let s = hash.cell_size;
+    let qlo = cell_of([qf[0] - rho, qf[1] - rho, qf[2] - rho], s);
+    let qhi = cell_of([qf[0] + rho, qf[1] + rho, qf[2] + rho], s);
+    let lo = (
+        qlo.0.max(hash.cell_lo.0),
+        qlo.1.max(hash.cell_lo.1),
+        qlo.2.max(hash.cell_lo.2),
+    );
+    let hi = (
+        qhi.0.min(hash.cell_hi.0),
+        qhi.1.min(hash.cell_hi.1),
+        qhi.2.min(hash.cell_hi.2),
+    );
+    if lo.0 > hi.0 || lo.1 > hi.1 || lo.2 > hi.2 {
+        return;
+    }
+    let span = (hi.0.saturating_sub(lo.0).saturating_add(1) as u64)
+        .saturating_mul(hi.1.saturating_sub(lo.1).saturating_add(1) as u64)
+        .saturating_mul(hi.2.saturating_sub(lo.2).saturating_add(1) as u64);
+    let in_box = |ck: &CellKey| {
+        ck.0 >= lo.0 && ck.0 <= hi.0 && ck.1 >= lo.1 && ck.1 <= hi.1 && ck.2 >= lo.2 && ck.2 <= hi.2
+    };
+    let mut emit = |samples: &Vec<Oscillator>| {
+        for osc in samples {
+            let age = (t2 - osc.epoch).abs();
+            let causal_reach = kernel_reach(osc.kernel_id as u8);
+            let future_age = age + delta_t_cache;
+            let reach = osc.extent.max(causal_reach)
+                + osc.vmax * future_age
+                + 0.5 * osc.amax * future_age * future_age
+                + pad;
+            let dx = osc.p0f[0] - qf[0];
+            let dy = osc.p0f[1] - qf[1];
+            let dz = osc.p0f[2] - qf[2];
+            let dist2_p0f = dx * dx + dy * dy + dz * dz;
+            if dist2_p0f > reach * reach {
+                continue;
+            }
+            let p = match osc.motion.at(t2, osc.epoch, eph) {
+                Some(p) => p,
+                None => continue,
+            };
+            let ddx = p[0] - center[0];
+            let ddy = p[1] - center[1];
+            let ddz = p[2] - center[2];
+            let exact = osc.extent + pad;
+            let dist2 = ddx * ddx + ddy * ddy + ddz * ddz;
+            if dist2 > exact * exact {
+                continue;
+            }
+            let v = if let Motion::Linear { v, .. } = &osc.motion {
+                [v[0], v[1], v[2]]
+            } else {
+                let p_dt = match osc.motion.at(t2 + 1e-3, osc.epoch, eph) {
+                    Some(pd) => pd,
+                    None => continue,
+                };
+                [
+                    (p_dt[0] - p[0]) / 1e-3,
+                    (p_dt[1] - p[1]) / 1e-3,
+                    (p_dt[2] - p[2]) / 1e-3,
+                ]
+            };
+            let (pole, j2, j4, r_eq) = gravity_manifest(osc, t2, eph);
+            records.push((
+                p[0],
+                p[1],
+                p[2],
+                osc.val,
+                osc.epoch,
+                osc.ttl,
+                osc.tau,
+                osc.extent,
+                osc.kernel_id,
+                osc.force_type,
+                osc.absorption,
+                osc.advection,
+                v[0],
+                v[1],
+                v[2],
+                if osc.force_type == 0.0 {
+                    osc.z
+                } else {
+                    pole[0]
+                },
+                pole[1],
+                pole[2],
+                match j2 {
+                    Some(v) => v,
+                    None => 0.0,
+                },
+                match j4 {
+                    Some(v) => v,
+                    None => 0.0,
+                },
+                r_eq,
+                0.0,
+                osc.freq,
+                osc.bin_width,
+            ));
+        }
+    };
+    if span > hash.cells.len() as u64 * 4 {
+        for (ck, v) in &hash.cells {
+            if in_box(ck) {
+                emit(v);
+            }
+        }
+    } else {
+        for cx in lo.0..=hi.0 {
+            for cy in lo.1..=hi.1 {
+                for cz in lo.2..=hi.2 {
+                    if let Some(v) = hash.cells.get(&(cx, cy, cz)) {
+                        emit(v);
+                    }
+                }
+            }
+        }
+    }
+}
+
+#[cfg(feature = "browser_relay")]
+pub fn sense_buffer(
+    buf: &Buffer,
+    center: [f64; 3],
+    t2: f64,
+    pad: f64,
+    delta_t_cache: f64,
+    records: &mut Vec<OscRecord>,
+    eph: &HashMap<String, BodyEphemeris>,
+) {
+    for (body_name, hash_cell) in &buf.bodies {
+        let anchor = match body_barycenter_position(body_name, t2, eph) {
+            Some(a) => a,
+            None => continue,
+        };
+        query_hash(
+            hash_cell,
+            anchor,
+            center,
+            t2,
+            pad,
+            delta_t_cache,
+            records,
+            eph,
+        );
+    }
+    query_hash(
+        &buf.inertial,
+        [0.0, 0.0, 0.0],
+        center,
+        t2,
+        pad,
+        delta_t_cache,
+        records,
+        eph,
+    );
+    if let Some(ash) = &buf.asteroids {
+        query_asteroid_hash(ash, center, t2, pad, delta_t_cache, records);
+    }
+    if let Some(sh) = &buf.stars {
+        query_star_hash(sh, center, t2, pad, delta_t_cache, records);
+    }
+    for sh in &buf.spectral {
+        let Some(p) = sh.motion.at(t2, sh.epoch, eph) else {
+            continue;
+        };
+        let Some(p2) = sh.motion.at(t2 + 1e-3, sh.epoch, eph) else {
+            continue;
+        };
+        let ddx = p[0] - center[0];
+        let ddy = p[1] - center[1];
+        let ddz = p[2] - center[2];
+        if ddx * ddx + ddy * ddy + ddz * ddz > pad * pad {
+            continue;
+        }
+        let vx = (p2[0] - p[0]) / 1e-3;
+        let vy = (p2[1] - p[1]) / 1e-3;
+        let vz = (p2[2] - p[2]) / 1e-3;
+        for &(freq, bin_width, val) in &sh.bins {
+            records.push((
+                p[0],
+                p[1],
+                p[2],
+                val,
+                sh.epoch,
+                sh.ttl,
+                sh.tau,
+                0.0,
+                sh.kernel_id,
+                sh.force_type,
+                sh.absorption,
+                sh.advection,
+                vx,
+                vy,
+                vz,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                freq,
+                bin_width,
+            ));
+        }
+    }
+}
+
+pub fn sense_membrane(
+    buf: &Buffer,
+    center: [f64; 3],
+    t2: f64,
+    pad: f64,
+    delta_t_cache: f64,
+    records: &mut Vec<OscRecord>,
+    eph: &HashMap<String, BodyEphemeris>,
+) {
+    for (body_name, hash_cell) in &buf.bodies {
+        let anchor = match body_barycenter_position(body_name, t2, eph) {
+            Some(a) => a,
+            None => continue,
+        };
+        query_hash(
+            hash_cell,
+            anchor,
+            center,
+            t2,
+            pad,
+            delta_t_cache,
+            records,
+            eph,
+        );
+    }
+    query_hash(
+        &buf.inertial,
+        [0.0, 0.0, 0.0],
+        center,
+        t2,
+        pad,
+        delta_t_cache,
+        records,
+        eph,
+    );
+    if let Some(ash) = &buf.asteroids {
+        query_asteroid_hash(ash, center, t2, pad, delta_t_cache, records);
+    }
+    for sh in &buf.spectral {
+        let Some(p) = sh.motion.at(t2, sh.epoch, eph) else {
+            continue;
+        };
+        let Some(p2) = sh.motion.at(t2 + 1e-3, sh.epoch, eph) else {
+            continue;
+        };
+        let ddx = p[0] - center[0];
+        let ddy = p[1] - center[1];
+        let ddz = p[2] - center[2];
+        if ddx * ddx + ddy * ddy + ddz * ddz > pad * pad {
+            continue;
+        }
+        let vx = (p2[0] - p[0]) / 1e-3;
+        let vy = (p2[1] - p[1]) / 1e-3;
+        let vz = (p2[2] - p[2]) / 1e-3;
+        for &(freq, bin_width, val) in &sh.bins {
+            records.push((
+                p[0],
+                p[1],
+                p[2],
+                val,
+                sh.epoch,
+                sh.ttl,
+                sh.tau,
+                0.0,
+                sh.kernel_id,
+                sh.force_type,
+                sh.absorption,
+                sh.advection,
+                vx,
+                vy,
+                vz,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                freq,
+                bin_width,
+            ));
+        }
+    }
+}
+
+pub fn sense_deep(
+    buf: &Buffer,
+    center: [f64; 3],
+    t2: f64,
+    right: [f64; 3],
+    up: [f64; 3],
+    forward: [f64; 3],
+    mag: f64,
+    out: &mut Vec<[f64; 10]>,
+    factors: &HashMap<usize, f64>,
+) {
+    let Some(sh) = &buf.stars else {
+        return;
+    };
+    for (si, rec) in sh.records.iter().enumerate() {
+        if rec.flux < STAR_FLUX_FLOOR {
+            continue;
+        }
+        let (p, _) = star_position_at(rec, t2);
+        let rel = [p[0] - center[0], p[1] - center[1], p[2] - center[2]];
+        let d = (rel[0] * rel[0] + rel[1] * rel[1] + rel[2] * rel[2]).sqrt();
+        let Some(d) = finite_positive(d) else {
+            continue;
+        };
+        let dir = [rel[0] / d, rel[1] / d, rel[2] / d];
+        let df = dir[0] * forward[0] + dir[1] * forward[1] + dir[2] * forward[2];
+        if df <= 0.0 {
+            continue;
+        }
+        let sx = (dir[0] * right[0] + dir[1] * right[1] + dir[2] * right[2]) / df * mag;
+        let sy = -(dir[0] * up[0] + dir[1] * up[1] + dir[2] * up[2]) / df * mag;
+        let flux = match factors.get(&si) {
+            Some(f) => rec.flux * f,
+            None => rec.flux,
+        };
+        out.push([
+            dir[0],
+            dir[1],
+            dir[2],
+            flux,
+            d,
+            sx,
+            sy,
+            rec.rv_m_s / C_LIGHT,
+            rec.color_index,
+            rec.tau,
+        ]);
+    }
+}
+
+pub fn surface_motion(
+    body_name: &str,
+    lat: f64,
+    lon: f64,
+    alt: f64,
+    speed: f64,
+    track: f64,
+    vrate: f64,
+    t: f64,
+    eph: &HashMap<String, BodyEphemeris>,
+) -> Option<Motion> {
+    let p0 = body_fixed_to_icrs(body_name, lat, lon, alt, t, eph)?;
+    let p1 = body_fixed_to_icrs(body_name, lat, lon, alt, t + 1.0, eph)?;
+    let v_frame = [p1[0] - p0[0], p1[1] - p0[1], p1[2] - p0[2]];
+    let latr = lat.to_radians();
+    let lonr = lon.to_radians();
+    let trk = track.to_radians();
+    let v_e = speed * trk.sin();
+    let v_n = speed * trk.cos();
+    let v_ecef = [
+        -v_e * lonr.sin() - v_n * latr.sin() * lonr.cos() + vrate * latr.cos() * lonr.cos(),
+        v_e * lonr.cos() - v_n * latr.sin() * lonr.sin() + vrate * latr.cos() * lonr.sin(),
+        v_n * latr.cos() + vrate * latr.sin(),
+    ];
+    let r = eph
+        .get(body_name)
+        .and_then(|e| e.props.as_ref())
+        .map(|p| p.radius_m)?;
+    let cl = latr.cos();
+    let dt = SURFACE_MOTION_DT;
+    let pp = body_fixed_to_icrs(
+        body_name,
+        lat + v_ecef[1] * dt / r,
+        lon + v_ecef[0] * dt / (r * cl),
+        alt + v_ecef[2] * dt,
+        t,
+        eph,
+    )?;
+    let v_rot = [
+        (pp[0] - p0[0]) / dt,
+        (pp[1] - p0[1]) / dt,
+        (pp[2] - p0[2]) / dt,
+    ];
+    Some(Motion::Linear {
+        p: p0,
+        v: [
+            v_frame[0] + v_rot[0],
+            v_frame[1] + v_rot[1],
+            v_frame[2] + v_rot[2],
+        ],
+    })
+}
+
+#[cfg(feature = "browser_relay")]
+pub fn body_id_to_name(bodies: &[String], id: u32) -> Option<String> {
+    if id == 0 {
+        return None;
+    }
+    bodies.get((id - 1) as usize).cloned()
+}
+
+pub fn frame_motion(
+    frame: &Frame,
+    spd: Option<f64>,
+    hdg: Option<f64>,
+    t: f64,
+    eph: &HashMap<String, BodyEphemeris>,
+) -> Option<Motion> {
+    match frame {
+        Frame::Surface {
+            body_name,
+            lat,
+            lon,
+            alt,
+            ..
+        } => match (spd, hdg) {
+            (Some(s), Some(h)) if s > 0.0 => {
+                surface_motion(body_name, *lat, *lon, *alt, s, h, 0.0, t, eph)
+            }
+            _ => {
+                if eph.get(body_name).and_then(|e| e.props.as_ref()).is_some() {
+                    Some(Motion::Surface {
+                        body_name: body_name.clone(),
+                        lat: *lat,
+                        lon: *lon,
+                        alt: *alt,
+                    })
+                } else {
+                    None
+                }
+            }
+        },
+        Frame::Barycenter {
+            body_name, scale, ..
+        } => {
+            if eph.get(body_name).is_some() {
+                Some(Motion::Barycenter {
+                    body_name: body_name.clone(),
+                    scale: *scale,
+                })
+            } else {
+                None
+            }
+        }
+        Frame::Manifest => None,
+    }
+}
+
+pub fn leap_seconds(time: &Arc<Mutex<Option<LeapSeconds>>>) -> Option<LeapSeconds> {
+    match time.lock() {
+        Ok(guard) => guard.clone(),
+        Err(_) => None,
+    }
+}
+
+pub fn system_now(time: &Arc<Mutex<Option<LeapSeconds>>>) -> Option<f64> {
+    match leap_seconds(time) {
+        Some(lsk) => lsk.system_now_tdb(),
+        None => None,
+    }
+}
+
+pub fn body_pole_at(props: &BodyProperties, tdb: f64) -> [f64; 3] {
+    let jd = tdb / 86400.0 + J2000_EPOCH;
+    let (ra, dec, _) = orientation_angles_at(props, jd);
+    let (sd, cd) = dec.to_radians().sin_cos();
+    let (sr, cr) = ra.to_radians().sin_cos();
+    [cd * cr, cd * sr, sd]
+}
+
+pub fn gravity_manifest(
+    osc: &Oscillator,
+    t: f64,
+    eph: &HashMap<String, BodyEphemeris>,
+) -> ([f64; 3], Option<f64>, Option<f64>, f64) {
+    let name = match osc.motion.anchor_body() {
+        Some(n) => n,
+        None => return ([0.0; 3], None, None, 0.0),
+    };
+    let props = match eph.get(name).and_then(|e| e.props.as_ref()) {
+        Some(p) => p,
+        None => return ([0.0; 3], None, None, 0.0),
+    };
+    let pole = body_pole_at(props, t);
+    (pole, props.j2, props.j4, props.radius_m)
+}
+
+#[derive(Clone)]
+pub struct OriginState {
+    fetched: f64,
+    prev_epoch: f64,
+    prev_abs: [f64; 3],
+    prev_motion: Option<Motion>,
+    resid_ema: f64,
+    has_prev: bool,
+}
+
+fn origin_stale(
+    origins: &HashMap<Origin, OriginState>,
+    origin: Origin,
+    ttl: u64,
+    now: f64,
+) -> bool {
+    match origins.get(&origin) {
+        Some(o) => now - o.fetched >= ttl as f64 / Φ,
+        None => true,
+    }
+}
+
+fn presence_gate(
+    presences: &[(f64, f64, f64, f64, f64)],
+    pos: (f64, f64, f64),
+    extent: f64,
+) -> bool {
+    presences.iter().any(|&(_, x, y, z, range)| {
+        let reach = extent * Φ + range;
+        let dx = x - pos.0;
+        let dy = y - pos.1;
+        let dz = z - pos.2;
+        dx * dx + dy * dy + dz * dz <= reach * reach
+    })
+}
+
+fn json_has_content(v: &JsonVal) -> bool {
+    match v {
+        JsonVal::Arr(arr) => !arr.is_empty() || arr.iter().any(json_has_content),
+        JsonVal::Obj(map) => map.values().any(json_has_content),
+        JsonVal::Null | JsonVal::Bool(_) | JsonVal::Str(_) | JsonVal::Num(_) => false,
+    }
+}
+
+fn diagnose_no_samples(src: &SourceConfig, body: &str) -> String {
+    let parsed = parse_json(body);
+    match parsed {
+        None => {
+            let trimmed = body.trim();
+            if trimmed.is_empty() {
+                "empty-response (empty body)".to_string()
+            } else {
+                "data-present (non-JSON body: HTML/XML/text)".to_string()
+            }
+        }
+        Some(j) => {
+            let mut arr_has_rows = false;
+            let mut key_found = false;
+            for ext in &src.extracts {
+                match ext {
+                    Extract::Map {
+                        arr_path,
+                        lat_key,
+                        lon_key,
+                        fields,
+                        ..
+                    } => {
+                        if let Some(JsonVal::Arr(arr)) = jpath_val(&j, arr_path) {
+                            if !arr.is_empty() {
+                                arr_has_rows = true;
+                            }
+                        }
+                        for fk in [lat_key.as_str(), lon_key.as_str()] {
+                            if jpath_val(&j, fk).is_some() {
+                                key_found = true;
+                            }
+                        }
+                        for fc in fields {
+                            if jpath_val(&j, &fc.key).is_some() {
+                                key_found = true;
+                            }
+                        }
+                    }
+                    Extract::CelestialMap {
+                        arr_path, fields, ..
+                    }
+                    | Extract::Flatten {
+                        arr_path, fields, ..
+                    }
+                    | Extract::CmrPolygon {
+                        arr_path, fields, ..
+                    }
+                    | Extract::CelestialPolygon {
+                        arr_path, fields, ..
+                    }
+                    | Extract::KeplerMap {
+                        arr_path, fields, ..
+                    }
+                    | Extract::ProfileMap {
+                        arr_path, fields, ..
+                    } => {
+                        if let Some(JsonVal::Arr(arr)) = jpath_val(&j, arr_path) {
+                            if !arr.is_empty() {
+                                arr_has_rows = true;
+                            }
+                        }
+                        for fc in fields {
+                            if jpath_val(&j, &fc.key).is_some() {
+                                key_found = true;
+                            }
+                        }
+                    }
+                    Extract::Rows { .. } | Extract::GeojsonEvents { .. } | Extract::Hapi(_) => {
+                        if json_has_content(&j) {
+                            arr_has_rows = true;
+                        }
+                    }
+                    Extract::TransitMap { arr_path, .. } => {
+                        if let Some(JsonVal::Arr(arr)) = jpath_val(&j, arr_path) {
+                            if !arr.is_empty() {
+                                arr_has_rows = true;
+                            }
+                        }
+                    }
+                    Extract::Field(FieldConfig { key, .. })
+                    | Extract::First(FieldConfig { key, .. })
+                    | Extract::Last(FieldConfig { key, .. })
+                    | Extract::Count(FieldConfig { key, .. })
+                    | Extract::Path(FieldConfig { key, .. })
+                    | Extract::Deep(FieldConfig { key, .. })
+                    | Extract::LastRow(FieldConfig { key, .. })
+                    | Extract::ObjLast(FieldConfig { key, .. })
+                    | Extract::Regex(FieldConfig { key, .. }) => {
+                        if jpath_val(&j, key).is_some()
+                            || jpath_val(
+                                &j,
+                                if let Some((p, _)) = key.rsplit_once('.') {
+                                    p
+                                } else {
+                                    key
+                                },
+                            )
+                            .is_some()
+                        {
+                            key_found = true;
+                        }
+                    }
+                    Extract::LastObj(_, _, _, _)
+                    | Extract::LastLine(_)
+                    | Extract::XmlCount(_, _) => {
+                        if json_has_content(&j) {
+                            key_found = true;
+                        }
+                    }
+                    Extract::Alerce(_) => {
+                        if json_has_content(&j) {
+                            key_found = true;
+                        }
+                    }
+                }
+            }
+            if arr_has_rows {
+                "data-present (container array has rows but extract yielded nothing)".to_string()
+            } else if key_found {
+                "data-present (keys exist but no rows extracted)".to_string()
+            } else if json_has_content(&j) {
+                "data-present (JSON has content but declared keys absent)".to_string()
+            } else {
+                "empty-response (JSON parsed but all containers empty)".to_string()
+            }
+        }
+    }
+}
+
+pub fn kernel_extent(
+    force_type: u8,
+    kernel_id: u8,
+    body_props: Option<&BodyProperties>,
+    tau: f64,
+) -> f64 {
+    if tau == 0.0 {
+        return 0.0;
+    }
+    let p = match body_props {
+        Some(p) => p,
+        None => return 0.0,
+    };
+    if force_type == 1 {
+        return p.radius_m;
+    }
+    let reach_time = tau;
+    if kernel_id == 1 {
+        return p.gaussian_inverse_square * reach_time;
+    }
+    if kernel_id == 2 {
+        return p.gaussian_inverse * reach_time;
+    }
+    if kernel_id == 3 {
+        return (2.0 * p.erfc * reach_time).sqrt();
+    }
+    if kernel_id == 4 {
+        return p.exponential_decay;
+    }
+    if kernel_id == 5 {
+        return p.patch_levy * reach_time;
+    }
+    0.0
+}
+
+fn kernel_reach(kernel_id: u8) -> f64 {
+    if kernel_id == 0 || kernel_id == 6 {
+        f64::INFINITY
+    } else {
+        0.0
+    }
+}
+
+pub fn sensor_config(name: &str) -> Option<BrowserSensor> {
+    let kl = name.to_lowercase();
+    let (force, kernel, ttl) = if kl.contains("temperature")
+        || kl.contains("temp")
+        || kl == "thermistor"
+    {
+        (5, 3, 60.0)
+    } else if kl.contains("pressure") || kl.contains("baro") || kl == "pres" {
+        (6, 3, 60.0)
+    } else if kl.contains("humidity") || kl.contains("humid") || kl == "rh" || kl == "moisture" {
+        (5, 3, 300.0)
+    } else if kl.contains("wind") && kl.contains("speed") || kl == "windspeed" || kl == "anemometer"
+    {
+        (6, 3, 10.0)
+    } else if (kl.contains("wind") && kl.contains("dir"))
+        || kl == "winddirection"
+        || kl == "winddir"
+        || kl == "vane"
+    {
+        (6, 3, 10.0)
+    } else if kl.contains("mic")
+        || kl.contains("audio")
+        || kl.contains("sound")
+        || kl.contains("noise")
+        || kl == "spl"
+    {
+        (2, 1, 0.01)
+    } else if kl.contains("light")
+        || kl.contains("lux")
+        || kl.contains("lumin")
+        || kl.contains("irradiance")
+    {
+        (0, 0, 10.0)
+    } else if kl.contains("battery")
+        && (kl.contains("level") || kl.contains("pct") || kl.contains("soc"))
+    {
+        (5, 3, 60.0)
+    } else if kl.contains("battery") && (kl.contains("volt") || kl == "voltage") {
+        (8, 5, 60.0)
+    } else if kl.contains("battery") && kl.contains("current") {
+        (8, 5, 10.0)
+    } else if kl.contains("co2")
+        || kl.contains("voc")
+        || kl.contains("pm2")
+        || kl.contains("pm10")
+        || kl.contains("gas")
+    {
+        (5, 3, 300.0)
+    } else if kl.contains("magnet") || kl.contains("compass") || kl.contains("b_field") {
+        (0, 0, 10.0)
+    } else if kl.contains("accelerometer") || kl.contains("acc") || kl.contains("vibration") {
+        (3, 1, 1.0)
+    } else if kl.contains("gyro") {
+        (3, 1, 1.0)
+    } else if kl.contains("gravity") {
+        (1, 0, 10.0)
+    } else if kl.contains("camera") || kl.contains("video") {
+        (0, 0, 1.0 / 30.0)
+    } else if kl.contains("battery") && kl.contains("charging") {
+        (8, 5, 60.0)
+    } else if kl.contains("gps") || kl.contains("gnss") {
+        return None;
+    } else if kl.starts_with("event.") {
+        (0, 0, 10.0)
+    } else {
+        return None;
+    };
+    Some(BrowserSensor {
+        key: name.into(),
+        force,
+        kernel,
+        ttl,
+    })
+}
+
+struct StationEntry {
+    id: String,
+    lat: f64,
+    lon: f64,
+}
+
+struct FetchResult {
+    source_idx: usize,
+    channels: Vec<(Channel, FieldConfig)>,
+    eph_update: Option<(String, BodyEphemeris)>,
+    asteroid_hash: Option<Arc<AsteroidHash>>,
+    star_hash: Option<Arc<StarHash>>,
+    occluders: Option<Arc<OccluderSet>>,
+    planets: Option<Arc<PlanetSet>>,
+    curves: Option<Arc<CurveSet>>,
+    spectral: Option<SpectralHash>,
+}
+
+const AUDIO_SAMPLE_RATE: u32 = 44100;
+const AUDIO_BUFFER_SAMPLES: usize = 1024;
+
+struct AudioRadiator {
+    shutdown: Arc<AtomicBool>,
+    _thread: Option<thread::JoinHandle<()>>,
+}
+
+impl AudioRadiator {
+    fn new(rx: mpsc::Receiver<crate::mathematikerin::AudioFrame>) -> Self {
+        let shutdown = Arc::new(AtomicBool::new(false));
+        let shutdown_clone = shutdown.clone();
+        let emit = !std::io::stdout().is_terminal();
+        let handle = thread::spawn(move || {
+            let mut frame = crate::mathematikerin::AudioFrame {
+                omega: [0.0; 9],
+                mx: 1.0,
+                permeability: 0.0,
+            };
+            let mut phase: [f32; 9] = [0.0; 9];
+            let two_pi = 2.0 * std::f32::consts::PI;
+            loop {
+                match rx.try_recv() {
+                    Ok(f) => {
+                        frame = f;
+                        while let Ok(newer) = rx.try_recv() {
+                            frame = newer;
+                        }
+                    }
+                    Err(mpsc::TryRecvError::Disconnected) => break,
+                    Err(mpsc::TryRecvError::Empty) => {}
+                }
+                if shutdown_clone.load(Ordering::SeqCst) {
+                    break;
+                }
+                let mut samples = Vec::with_capacity(AUDIO_BUFFER_SAMPLES);
+                for _ in 0..AUDIO_BUFFER_SAMPLES {
+                    let mut s = 0.0f32;
+                    for i in 0..9 {
+                        let freq = 2f32.powi(3 + i as i32);
+                        let gain = (frame.omega[i].abs() * frame.mx * frame.mx).tanh()
+                            * frame.permeability
+                            / 9.0;
+                        phase[i] += two_pi * freq / AUDIO_SAMPLE_RATE as f32;
+                        s += gain * phase[i].sin();
+                    }
+                    samples.push(s);
+                }
+                if emit {
+                    let mut bytes = Vec::with_capacity(samples.len() * 4);
+                    for s in &samples {
+                        bytes.extend_from_slice(&s.to_le_bytes());
+                    }
+                    let mut out = std::io::stdout();
+                    if out.write_all(&bytes).is_err() || out.flush().is_err() {
+                        break;
+                    }
+                }
+                thread::sleep(std::time::Duration::from_millis(
+                    (AUDIO_BUFFER_SAMPLES as u64 * 1000 / AUDIO_SAMPLE_RATE as u64).max(1),
+                ));
+            }
+        });
+        Self {
+            shutdown,
+            _thread: Some(handle),
+        }
+    }
+}
+
+impl Drop for AudioRadiator {
+    fn drop(&mut self) {
+        self.shutdown.store(true, Ordering::SeqCst);
+    }
+}
+
+struct StderrRadiator {
+    last_line: String,
+    interactive: bool,
+}
+
+impl Radiator for StderrRadiator {
+    fn accept(&mut self, field: Arc<Buffer>) {
+        let mut body_osc = 0usize;
+        let mut api_osc = 0usize;
+        let mut sensor_osc = 0usize;
+        let mut body_src: std::collections::HashSet<String> = std::collections::HashSet::new();
+        let mut api_src: std::collections::HashSet<u32> = std::collections::HashSet::new();
+        for (_body_name, hash) in &field.bodies {
+            for cell in hash.cells.values().chain(std::iter::once(&hash.unbounded)) {
+                for osc in cell {
+                    match osc.source {
+                        OscillatorSource::Sensor => sensor_osc += 1,
+                        OscillatorSource::Source(idx) => {
+                            api_osc += 1;
+                            api_src.insert(idx);
+                        }
+                        OscillatorSource::Body => {
+                            body_osc += 1;
+                            body_src.insert(osc.name.split('.').next().unwrap_or("").to_string());
+                        }
+                    }
+                }
+            }
+        }
+        for cell in field
+            .inertial
+            .cells
+            .values()
+            .chain(std::iter::once(&field.inertial.unbounded))
+        {
+            for osc in cell {
+                match osc.source {
+                    OscillatorSource::Sensor => sensor_osc += 1,
+                    OscillatorSource::Source(idx) => {
+                        api_osc += 1;
+                        api_src.insert(idx);
+                    }
+                    OscillatorSource::Body => {
+                        body_osc += 1;
+                        body_src.insert(osc.name.split('.').next().unwrap_or("").to_string());
+                    }
+                }
+            }
+        }
+        let line = format!(
+            "omegaflow v{} | φ v7 | body: {} sources, {} oscillators | api: {} sources, {} oscillators | sensor: {} oscillators",
+            env!("CARGO_PKG_VERSION"),
+            body_src.len(),
+            body_osc,
+            api_src.len(),
+            api_osc,
+            sensor_osc,
+        );
+        let prev_len = self.last_line.chars().count();
+        if self.interactive {
+            let pad = " ".repeat(prev_len.saturating_sub(line.chars().count()));
+            eprint!("\r{}{}", line, pad);
+        } else if line != self.last_line {
+            eprintln!("{}", line);
+        }
+        self.last_line = line;
+    }
+}
+
+struct Archive {
+    sources: Vec<SourceConfig>,
+    body_ephemerides: Arc<HashMap<String, BodyEphemeris>>,
+    field: Arc<Buffer>,
+    presence: HashMap<String, (f64, f64, f64, f64, f64)>,
+    declared_body: Option<DeclaredBody>,
+    origins: HashMap<Origin, OriginState>,
+    pck_bodies: HashMap<i32, PckBody>,
+    time: Arc<Mutex<Option<LeapSeconds>>>,
+    asteroids: Option<Arc<AsteroidHash>>,
+    stars: Option<Arc<StarHash>>,
+    occluders: Option<Arc<OccluderSet>>,
+    planets: Option<Arc<PlanetSet>>,
+    curves: Option<Arc<CurveSet>>,
+    spectral: Vec<SpectralHash>,
+    pending_channels: Vec<(Channel, FieldConfig, u32)>,
+}
+
+fn days_to_ymd(total_days: u64) -> (u32, u32, u32) {
+    let mut d = total_days as u32;
+    let mut y = 1970u32;
+    loop {
+        let yd = if is_leap(y) { 366 } else { 365 };
+        if d < yd {
+            break;
+        }
+        d -= yd;
+        y += 1;
+    }
+    let months: [u32; 12] = if is_leap(y) {
+        [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+    } else {
+        [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+    };
+    let mut m = 0u32;
+    while d >= months[m as usize] {
+        d -= months[m as usize];
+        m += 1;
+    }
+    (y, m + 1, d + 1)
+}
+
+fn spawn_ephemeris_bootstrap(
+    sources: &[SourceConfig],
+    guard: &std::sync::Arc<std::sync::atomic::AtomicBool>,
+) {
+    if guard.swap(true, std::sync::atomic::Ordering::SeqCst) {
+        return;
+    }
+    let mut anchor_uses: std::collections::HashMap<String, usize> =
+        std::collections::HashMap::new();
+    for s in sources {
+        if s.format == "ephemeris_binary" || s.format == "kernel_text" {
+            continue;
+        }
+        match &s.frame {
+            Frame::Surface { body_name, .. } | Frame::Barycenter { body_name, .. } => {
+                *anchor_uses.entry(body_name.clone()).or_insert(0) += 1;
+            }
+            Frame::Manifest => {}
+        }
+    }
+    let mut anchor_items: Vec<(usize, SourceConfig, String)> = Vec::new();
+    let mut rest_items: Vec<(usize, SourceConfig, String)> = Vec::new();
+    for (i, s) in sources.iter().enumerate() {
+        if s.format != "ephemeris_binary" {
+            continue;
+        }
+        let Some(body) = &s.body else {
+            continue;
+        };
+        let tmp_path = format!("/tmp/omegaflow_eph_{}.bin", body);
+        if cache_fresh(&tmp_path, s.ttl) {
+            continue;
+        }
+        if anchor_uses.contains_key(body) {
+            anchor_items.push((i, s.clone(), tmp_path));
+        } else {
+            rest_items.push((i, s.clone(), tmp_path));
+        }
+    }
+    anchor_items.sort_by_key(|(_, s, _)| {
+        std::cmp::Reverse(
+            anchor_uses
+                .get(s.body.as_deref().unwrap_or(""))
+                .copied()
+                .unwrap_or(0),
+        )
+    });
+    if !anchor_items.is_empty() || !rest_items.is_empty() {
+        let guard = guard.clone();
+        thread::spawn(move || {
+            for (_, s, p) in anchor_items {
+                download_ephemeris_one(&s, &p);
+            }
+            download_ephemeris_batch(&rest_items);
+            guard.store(false, std::sync::atomic::Ordering::SeqCst);
+        });
+    } else {
+        guard.store(false, std::sync::atomic::Ordering::SeqCst);
+    }
+}
+
+fn download_ephemeris_batch(items: &[(usize, SourceConfig, String)]) {
+    if items.is_empty() {
+        return;
+    }
+    let ttl = items[0].1.ttl;
+    let mut cmd = curl_base(ttl, 8);
+    for (_, src, tmp_path) in items {
+        cmd.arg("-o").arg(tmp_path).arg(&src.url);
+    }
+    let output = match cmd.output() {
+        Ok(o) => o,
+        Err(_) => {
+            eprintln!("ephemeris batch ({} files): curl void", items.len());
+            return;
+        }
+    };
+    if !output.status.success() {
+        eprintln!(
+            "ephemeris batch ({} files): curl returned {}: {}",
+            items.len(),
+            output.status,
+            String::from_utf8_lossy(&output.stderr).trim()
+        );
+    }
+}
+
+fn download_ephemeris_one(src: &SourceConfig, tmp_path: &str) {
+    let mut cmd = curl_base(src.ttl, 0);
+    cmd.arg("-o").arg(tmp_path).arg(&src.url);
+    let output = match cmd.output() {
+        Ok(o) => o,
+        Err(_) => {
+            eprintln!("ephemeris {}: curl void", src.url);
+            return;
+        }
+    };
+    if !output.status.success() {
+        eprintln!(
+            "ephemeris {}: curl returned {}: {}",
+            src.url,
+            output.status,
+            String::from_utf8_lossy(&output.stderr).trim()
+        );
+    }
+}
+
+fn rfc1123_to_unix(s: &str) -> Option<u64> {
+    let parts: Vec<&str> = s.split_whitespace().collect();
+    if parts.len() < 6 {
+        return None;
+    }
+    let day: u32 = parts[1].parse().ok()?;
+    let month = match parts[2] {
+        "Jan" => 1,
+        "Feb" => 2,
+        "Mar" => 3,
+        "Apr" => 4,
+        "May" => 5,
+        "Jun" => 6,
+        "Jul" => 7,
+        "Aug" => 8,
+        "Sep" => 9,
+        "Oct" => 10,
+        "Nov" => 11,
+        "Dec" => 12,
+        _ => return None,
+    };
+    let year: i64 = parts[3].parse().ok()?;
+    let mut hms = parts[4].split(':');
+    let hh: u64 = hms.next()?.parse().ok()?;
+    let mm: u64 = hms.next()?.parse().ok()?;
+    let ss: u64 = hms.next()?.parse().ok()?;
+    let days = ymd_to_days(year, month, day)?;
+    Some(days * 86400 + hh * 3600 + mm * 60 + ss)
+}
+
+fn cdn_fresh(cdn_url: &str, ttl: u64) -> bool {
+    let connect_t = ((ttl as f64) / (Φ * Φ * Φ)).ceil() as u64;
+    let mut cmd = Command::new("curl");
+    cmd.arg("-s")
+        .arg("-I")
+        .arg("-L")
+        .arg("-m")
+        .arg(connect_t.to_string())
+        .arg(cdn_url);
+    let output = match cmd.output() {
+        Ok(o) => o,
+        Err(_) => return false,
+    };
+    if !output.status.success() {
+        return false;
+    }
+    let head = String::from_utf8_lossy(&output.stdout).to_string();
+    let lm = match extract_header(&head, "last-modified") {
+        Some(v) => v,
+        None => return false,
+    };
+    let asset_ts = match rfc1123_to_unix(&lm) {
+        Some(t) => t,
+        None => return false,
+    };
+    let now = match SystemTime::now().duration_since(UNIX_EPOCH) {
+        Ok(d) => d.as_secs(),
+        Err(_) => return false,
+    };
+    now.saturating_sub(asset_ts) < ttl
+}
+
+fn fetch_one(
+    url: &str,
+    body: Option<&str>,
+    headers: &[(String, String)],
+    ttl: u64,
+) -> Option<String> {
+    let manifest = cdn_manifest_map();
+    let asset_name = |u: &str| -> String {
+        manifest
+            .get(u)
+            .cloned()
+            .unwrap_or_else(|| source_name_from_url(u))
+    };
+    if !url.starts_with("https://github.com/omegaflow/sources") {
+        if let Some(netloc) = extract_netloc(url) {
+            let name = asset_name(url);
+            if !name.is_empty() {
+                let cache_path = format!("/tmp/archivar_cache/{}/{}.json", netloc, name);
+                if cache_fresh(&cache_path, ttl) {
+                    if let Some(cached) = std::fs::read_to_string(&cache_path).ok() {
+                        return Some(cached);
+                    }
+                }
+                let cdn_url = format!("{}/{}/{}.json", crate::cdn::CDN_BASE, netloc, name);
+                if cdn_fresh(&cdn_url, ttl) {
+                    if let Some(cdn_body) = fetch_raw(&cdn_url, None, &[], ttl) {
+                        if let Some(parent) = std::path::Path::new(&cache_path).parent() {
+                            let _ = std::fs::create_dir_all(parent);
+                        }
+                        if std::fs::write(&cache_path, cdn_body.as_bytes()).is_err() {
+                            eprintln!("cache {}: write void — refetch next cycle", cache_path);
+                        }
+                        return Some(cdn_body);
+                    }
+                }
+            }
+        }
+    }
+    let live = fetch_raw(url, body, headers, ttl);
+    if let Some(ref r) = live {
+        if let Some(netloc) = extract_netloc(url) {
+            let name = asset_name(url);
+            if !name.is_empty() {
+                let cache_path = format!("/tmp/archivar_cache/{}/{}.json", netloc, name);
+                if let Some(parent) = std::path::Path::new(&cache_path).parent() {
+                    let _ = std::fs::create_dir_all(parent);
+                }
+                if std::fs::write(&cache_path, r.as_bytes()).is_err() {
+                    eprintln!("cache {}: write void — refetch next cycle", cache_path);
+                }
+            }
+        }
+    }
+    live
+}
+
+fn cache_fresh(path: &str, ttl: u64) -> bool {
+    let meta = match std::fs::metadata(path) {
+        Ok(m) => m,
+        Err(_) => return false,
+    };
+    let modified = match meta.modified() {
+        Ok(m) => m,
+        Err(_) => return false,
+    };
+    match std::time::SystemTime::now().duration_since(modified) {
+        Ok(age) => age.as_secs() < ttl,
+        Err(_) => false,
+    }
+}
+
+fn is_leap(y: u32) -> bool {
+    (y % 4 == 0 && y % 100 != 0) || y % 400 == 0
+}
+
+fn load_env() -> HashMap<String, String> {
+    let mut env: HashMap<String, String> = std::env::vars().collect();
+    for name in &[".env", ".secrets.local"] {
+        if let Ok(content) = std::fs::read_to_string(resolve_asset(name)) {
+            for line in content.lines() {
+                let line = line.trim();
+                if line.is_empty() || line.starts_with('#') {
+                    continue;
+                }
+                if let Some(eq) = line.find('=') {
+                    let key = line[..eq].trim().to_string();
+                    let val = line[eq + 1..].trim().to_string();
+                    if !env.contains_key(&key) {
+                        env.insert(key, val);
+                    }
+                }
+            }
+        }
+    }
+    env
+}
+
+fn resolve_secret(url: &str, env: &HashMap<String, String>) -> String {
+    let mut result = String::with_capacity(url.len());
+    let mut rest = url;
+    while let Some(start) = rest.find('{') {
+        result.push_str(&rest[..start]);
+        rest = &rest[start + 1..];
+        if let Some(end) = rest.find('}') {
+            let key = &rest[..end];
+            let upper = key.to_uppercase();
+            match env.get(key).or_else(|| env.get(&upper)) {
+                Some(val) => result.push_str(val),
+                None => eprintln!("env marker {{{}}} absent — substituting void", key),
+            }
+            rest = &rest[end + 1..];
+        } else {
+            result.push('{');
+        }
+    }
+    result.push_str(rest);
+    result
+}
+
+fn secret_resolves_void(template: &str, env: &HashMap<String, String>) -> bool {
+    let mut rest = template;
+    while let Some(start) = rest.find('{') {
+        rest = &rest[start + 1..];
+        let Some(end) = rest.find('}') else {
+            return false;
+        };
+        let key = &rest[..end];
+        let upper = key.to_uppercase();
+        match env.get(key).or_else(|| env.get(&upper)) {
+            Some(v) if !v.is_empty() => {}
+            _ => return true,
+        }
+        rest = &rest[end + 1..];
+    }
+    false
+}
+
+fn url_has_template(url: &str) -> bool {
+    let mut rest = url;
+    while let Some(start) = rest.find('{') {
+        rest = &rest[start + 1..];
+        let Some(end) = rest.find('}') else {
+            return false;
+        };
+        if rest[..end].chars().any(|c| c.is_ascii_lowercase()) {
+            return true;
+        }
+        rest = &rest[end + 1..];
+    }
+    false
+}
+
+fn url_is_fanout(url: &str) -> bool {
+    url.contains("{station}") || url.contains("{nearest_station}")
+}
+
+fn frame_anchor(frame: &Frame) -> (f64, f64) {
+    match frame {
+        Frame::Surface { lat, lon, .. } => (*lat, *lon),
+        _ => (0.0, 0.0),
+    }
+}
+
+fn ci_probe_render(
+    template: &str,
+    anchor: (f64, f64),
+    env: &HashMap<String, String>,
+) -> Option<String> {
+    let secs = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .map(|d| d.as_secs())
+        .ok()?;
+    let days = secs / 86400;
+    let (ty, tm, td) = days_to_ymd(days);
+    let (yy, ym, yd) = days_to_ymd(days - 1);
+    let (wy, wm, wd) = days_to_ymd(days - 7);
+    let hour = (secs % 86400) / 3600;
+    let minute = (secs % 3600) / 60;
+    let now_iso = format!("{}-{:02}-{:02}T{:02}:{:02}:00", ty, tm, td, hour, minute);
+    let hour_ago_iso = {
+        let dt = secs.saturating_sub(3600);
+        let (h_y, h_m, h_d) = days_to_ymd(dt / 86400);
+        let h_h = (dt % 86400) / 3600;
+        let h_min = (dt % 3600) / 60;
+        format!("{}-{:02}-{:02}T{:02}:{:02}:00", h_y, h_m, h_d, h_h, h_min)
+    };
+    let half = 0.5f64;
+    let jd_now = 2440587.5 + secs as f64 / 86400.0;
+    let url = template
+        .replace("{today}", &format!("{}-{:02}-{:02}", ty, tm, td))
+        .replace("{yesterday}", &format!("{}-{:02}-{:02}", yy, ym, yd))
+        .replace("{week_ago}", &format!("{}-{:02}-{:02}", wy, wm, wd))
+        .replace("{now}", &now_iso)
+        .replace("{hour_ago}", &hour_ago_iso)
+        .replace("{year}", &ty.to_string())
+        .replace("{jd_now}", &format!("{:.6}", jd_now))
+        .replace("{jd_start}", &format!("{:.6}", jd_now - 1.0))
+        .replace("{jd_end}", &format!("{:.6}", jd_now))
+        .replace("{lat}", &format!("{:.6}", anchor.0))
+        .replace("{lon}", &format!("{:.6}", anchor.1))
+        .replace("{lat_int}", &format!("{:.0}", anchor.0))
+        .replace("{lon_int}", &format!("{:.0}", anchor.1))
+        .replace("{lat_min}", &format!("{:.6}", anchor.0 - half))
+        .replace("{lat_max}", &format!("{:.6}", anchor.0 + half))
+        .replace("{lon_min}", &format!("{:.6}", anchor.1 - half))
+        .replace("{lon_max}", &format!("{:.6}", anchor.1 + half));
+    Some(resolve_secret(&url, env))
+}
+
+fn render_headers(
+    headers: &[(String, String)],
+    env: &HashMap<String, String>,
+) -> Vec<(String, String)> {
+    headers
+        .iter()
+        .map(|(k, v)| (k.clone(), resolve_secret(v, env)))
+        .collect()
+}
+
+fn render_url(
+    template: &str,
+    x: f64,
+    y: f64,
+    z: f64,
+    tdb_secs: f64,
+    extent: f64,
+    body_name: &str,
+    eph: &HashMap<String, BodyEphemeris>,
+    lsk: &LeapSeconds,
+) -> Option<String> {
+    let unix = match lsk.tdb_to_unix(tdb_secs) {
+        Some(u) => u,
+        None => return None,
+    };
+    let secs = unix as u64;
+    let days = secs / 86400;
+    let (ty, tm, td) = days_to_ymd(days);
+    let yday = {
+        let cum = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
+        let leap = (ty % 4 == 0 && ty % 100 != 0) || ty % 400 == 0;
+        let base = if tm > 0 { cum[(tm - 1) as usize] } else { 0 };
+        base + td + if leap && tm > 2 { 1 } else { 0 }
+    };
+    let year2 = ty % 100;
+    let today = format!("{}-{:02}-{:02}", ty, tm, td);
+    let (yy, ym, yd) = days_to_ymd(days - 1);
+    let yesterday = format!("{}-{:02}-{:02}", yy, ym, yd);
+    let (tmy, tmm, tmd) = days_to_ymd(days + 1);
+    let tomorrow = format!("{}-{:02}-{:02}", tmy, tmm, tmd);
+    let today_yyyymmdd = format!("{}_{:02}_{:02}", ty, tm, td);
+    let today_nodashes = format!("{}{:02}{:02}", ty, tm, td);
+    let yesterday_nodashes = format!("{}{:02}{:02}", yy, ym, yd);
+    let tomorrow_nodashes = format!("{}{:02}{:02}", tmy, tmm, tmd);
+    let hour_ago = {
+        let dt = secs.saturating_sub(3600);
+        let (h_y, h_m, h_d) = days_to_ymd(dt / 86400);
+        let h_h = (dt % 86400) / 3600;
+        let h_min = (dt % 3600) / 60;
+        format!("{}-{:02}-{:02}T{:02}:{:02}:00", h_y, h_m, h_d, h_h, h_min)
+    };
+    let now_iso = {
+        let n_h = (secs % 86400) / 3600;
+        let n_min = (secs % 3600) / 60;
+        format!("{}-{:02}-{:02}T{:02}:{:02}:00", ty, tm, td, n_h, n_min)
+    };
+    let now_minus_1 = {
+        let dt = secs.saturating_sub(60);
+        let (n1_y, n1_m, n1_d) = days_to_ymd(dt / 86400);
+        let n1_h = (dt % 86400) / 3600;
+        let n1_min = (dt % 3600) / 60;
+        format!(
+            "{}-{:02}-{:02}T{:02}:{:02}:00",
+            n1_y, n1_m, n1_d, n1_h, n1_min
+        )
+    };
+    let now_minus_2 = {
+        let dt = secs.saturating_sub(120);
+        let (n2_y, n2_m, n2_d) = days_to_ymd(dt / 86400);
+        let n2_h = (dt % 86400) / 3600;
+        let n2_min = (dt % 3600) / 60;
+        format!(
+            "{}-{:02}-{:02}T{:02}:{:02}:00",
+            n2_y, n2_m, n2_d, n2_h, n2_min
+        )
+    };
+    let week_ago = {
+        let dt = secs.saturating_sub(604800);
+        let (w_y, w_m, w_d) = days_to_ymd(dt / 86400);
+        format!("{}-{:02}-{:02}", w_y, w_m, w_d)
+    };
+    let week_ago_nodashes = {
+        let dt = secs.saturating_sub(604800);
+        let (w_y, w_m, w_d) = days_to_ymd(dt / 86400);
+        format!("{}{:02}{:02}", w_y, w_m, w_d)
+    };
+    let q_hour = (secs % 86400) / 3600;
+    let q_minute = (secs % 3600) / 60;
+    let unix_now = secs.to_string();
+    let unix_now_plus_3600 = (secs + 3600).to_string();
+    let jd_now = format!("{:.6}", tdb_to_jd(tdb_secs));
+    let jd_start = format!("{:.6}", tdb_to_jd(tdb_secs - 86400.0));
+
+    let mut url = template
+        .replace("{x}", &format!("{}", x))
+        .replace("{y}", &format!("{}", y))
+        .replace("{z}", &format!("{}", z))
+        .replace("{jd_now}", &jd_now)
+        .replace("{jd_start}", &jd_start)
+        .replace("{jd_end}", &jd_now)
+        .replace("{today}", &today)
+        .replace("{yesterday}", &yesterday)
+        .replace("{tomorrow}", &tomorrow)
+        .replace("{today_yyyymmdd}", &today_yyyymmdd)
+        .replace("{today_ymd}", &today_yyyymmdd)
+        .replace("{today_nodashes}", &today_nodashes)
+        .replace("{yesterday_nodashes}", &yesterday_nodashes)
+        .replace("{tomorrow_nodashes}", &tomorrow_nodashes)
+        .replace("{t_start}", &yesterday)
+        .replace("{t_end}", &today)
+        .replace("{now}", &now_iso)
+        .replace("{now_minus_1}", &now_minus_1)
+        .replace("{now_minus_2}", &now_minus_2)
+        .replace("{week_ago}", &week_ago)
+        .replace("{week_ago_nodashes}", &week_ago_nodashes)
+        .replace(
+            "{today_plus_365}",
+            &format!("{}-{:02}-{:02}", ty + 1, tm, td),
+        )
+        .replace("{hour_ago}", &hour_ago)
+        .replace("{year}", &ty.to_string())
+        .replace("{year2}", &format!("{:02}", year2))
+        .replace("{month}", &tm.to_string())
+        .replace("{day}", &td.to_string())
+        .replace("{yday}", &format!("{:03}", yday))
+        .replace("{hour}", &format!("{:02}", q_hour))
+        .replace("{minute}", &format!("{:02}", q_minute))
+        .replace("{unix_now}", &unix_now)
+        .replace("{unix_now_plus_3600}", &unix_now_plus_3600);
+
+    if let Some((lat, lon)) = icrs_to_body_surface(x, y, z, tdb_secs, body_name, eph) {
+        let radius_m = match eph.get(body_name).and_then(|e| e.props.as_ref()) {
+            Some(p) => p.radius_m,
+            None => 0.0,
+        };
+        let lat_str = format!("{:.6}", lat);
+        let lon_str = format!("{:.6}", lon);
+        url = url
+            .replace("{lat}", &lat_str)
+            .replace("{lon}", &lon_str)
+            .replace("{lat_int}", &format!("{:.0}", lat))
+            .replace("{lon_int}", &format!("{:.0}", lon));
+        if radius_m > 0.0 {
+            let m_per_deg =
+                std::f64::consts::PI * radius_m / 180.0 * lat.to_radians().cos().max(0.0);
+            if m_per_deg > 0.0 {
+                let half_deg = extent / m_per_deg;
+                let res = 6usize;
+                url = url
+                    .replace("{lat_min}", &format!("{:.*}", res, lat - half_deg))
+                    .replace("{lat_max}", &format!("{:.*}", res, lat + half_deg))
+                    .replace("{lon_min}", &format!("{:.*}", res, lon - half_deg))
+                    .replace("{lon_max}", &format!("{:.*}", res, lon + half_deg));
+                let step = half_deg * 0.5;
+                let mut grid = Vec::with_capacity(16);
+                let mut gla = Vec::with_capacity(4);
+                let mut glo = Vec::with_capacity(4);
+                for i in 0..4 {
+                    for j in 0..4 {
+                        grid.push(format!(
+                            "{:.*},{:.*}",
+                            res,
+                            lat + (i as f64 - 1.5) * step,
+                            res,
+                            lon + (j as f64 - 1.5) * step
+                        ));
+                    }
+                    gla.push(format!("{:.*}", res, lat + (i as f64 - 1.5) * step));
+                    glo.push(format!("{:.*}", res, lon + (i as f64 - 1.5) * step));
+                }
+                url = url
+                    .replace("{grid}", &grid.join("|"))
+                    .replace("{grid_lat}", &gla.join(","))
+                    .replace("{grid_lon}", &glo.join(","));
+            }
+        }
+    }
+
+    Some(url)
+}
+
+fn render_source_url(
+    src: &SourceConfig,
+    x: f64,
+    y: f64,
+    z: f64,
+    tdb: f64,
+    r: f64,
+    eph: &HashMap<String, BodyEphemeris>,
+    env: &HashMap<String, String>,
+    lsk: &LeapSeconds,
+) -> Option<String> {
+    let mut url = match render_url(
+        &src.url,
+        x,
+        y,
+        z,
+        tdb,
+        r,
+        &frame_body_name(&src.frame),
+        eph,
+        lsk,
+    ) {
+        Some(u) => u,
+        None => return None,
+    };
+    if let Some(ref t) = src.target {
+        url = url.replace("{target}", t);
+    }
+    if let Some(ref c) = src.catalog {
+        url = url.replace("{catalog}", c);
+    }
+    if let Some(f) = src.max_freq {
+        url = url.replace("{max_freq}", &f.to_string());
+    }
+    if let Some(f) = src.min_freq {
+        url = url.replace("{min_freq}", &f.to_string());
+    }
+    if src.repeat_ra_bins > 0 {
+        let ra_deg = f64::atan2(y, x).to_degrees();
+        let ra_norm = ((ra_deg % 360.0) + 360.0) % 360.0;
+        let bin = ((ra_norm / 360.0) * (src.repeat_ra_bins as f64)) as u32;
+        let bin_str = format!("{:02}", bin);
+        url = url
+            .replace("{repeat_bin}", &bin_str)
+            .replace("{bin}", &bin_str);
+    }
+    if url.contains("{nearest_station}") {
+        if let Some(ref st_url) = src.stations_url {
+            let stations = if let Some(body) = fetch_one(st_url, None, &[], 86400) {
+                if let Some(j) = parse_json(&body) {
+                    let arr = jpath_val(&j, &src.stations_path).and_then(|v| {
+                        if let JsonVal::Arr(a) = v {
+                            Some(a)
+                        } else {
+                            None
+                        }
+                    });
+                    if let Some(arr) = arr {
+                        let entries: Vec<StationEntry> = arr
+                            .iter()
+                            .filter_map(|s| {
+                                let id = match jpath_val(s, &src.stations_id)? {
+                                    JsonVal::Str(st) => st.clone(),
+                                    JsonVal::Num(n) => n.to_string(),
+                                    _ => return None,
+                                };
+                                let lat = scalar_of(jpath_val(s, &src.stations_lat)?)?;
+                                let lon = scalar_of(jpath_val(s, &src.stations_lon)?)?;
+                                Some(StationEntry { id, lat, lon })
+                            })
+                            .collect();
+                        Arc::new(entries)
+                    } else {
+                        Arc::new(Vec::new())
+                    }
+                } else {
+                    Arc::new(Vec::new())
+                }
+            } else {
+                Arc::new(Vec::new())
+            };
+            if !stations.is_empty() {
+                let (lat, lon) =
+                    match icrs_to_body_surface(x, y, z, tdb, &frame_body_name(&src.frame), eph) {
+                        Some(ll) => ll,
+                        None => return Some(url),
+                    };
+                let mut best = 0usize;
+                let mut best_d = f64::MAX;
+                for (i, st) in stations.iter().enumerate() {
+                    let d2 = (st.lat - lat).powi(2) + (st.lon - lon).powi(2);
+                    if d2 < best_d {
+                        best_d = d2;
+                        best = i;
+                    }
+                }
+                url = url.replace("{nearest_station}", &stations[best].id);
+            }
+        }
+    }
+    Some(resolve_secret(&url, env))
+}
+
+fn render_source_body(
+    src: &SourceConfig,
+    x: f64,
+    y: f64,
+    z: f64,
+    tdb: f64,
+    r: f64,
+    eph: &HashMap<String, BodyEphemeris>,
+    lsk: &LeapSeconds,
+) -> Option<String> {
+    let tmpl = src.post_body.as_ref()?;
+    let mut body = match render_url(
+        tmpl,
+        x,
+        y,
+        z,
+        tdb,
+        r,
+        &frame_body_name(&src.frame),
+        eph,
+        lsk,
+    ) {
+        Some(b) => b,
+        None => return None,
+    };
+    if let Some(ref t) = src.target {
+        body = body.replace("{target}", t);
+    }
+    if let Some(ref c) = src.catalog {
+        body = body.replace("{catalog}", c);
+    }
+    if let Some(f) = src.max_freq {
+        body = body.replace("{max_freq}", &f.to_string());
+    }
+    if let Some(f) = src.min_freq {
+        body = body.replace("{min_freq}", &f.to_string());
+    }
+    Some(body)
+}
+fn angular_distance_deg(lat1: f64, lon1: f64, lat2: f64, lon2: f64) -> f64 {
+    let r1 = lat1.to_radians();
+    let r2 = lat2.to_radians();
+    let dlon = (lon2 - lon1).to_radians();
+    let a = ((r2 - r1) * 0.5).sin().powi(2) + r1.cos() * r2.cos() * (dlon * 0.5).sin().powi(2);
+    (2.0 * a.sqrt().asin()).to_degrees()
+}
+
+fn port_field_synth(
+    directive: &str,
+    force: &str,
+    key: &str,
+    name: &str,
+    tau: Option<f64>,
+) -> Option<String> {
+    let (kernel, f) = default_kernel_for(force)?;
+    let tau = tau.filter(|t| t.is_finite() && *t > 0.0)?;
+    Some(format!(
+        "{} {} {} {} {} 1 {} 0.0 0.0\n",
+        directive, key, name, kernel, f, tau
+    ))
+}
+
+fn port_block(block: &str) -> String {
+    let mut head: Vec<String> = Vec::new();
+    let mut force = String::new();
+    let mut ttl: u64 = 0;
+    let mut frame_line: Option<String> = None;
+    let mut lat: Option<f64> = None;
+    let mut lon: Option<f64> = None;
+    let mut alt: Option<f64> = None;
+    let mut map_line: Option<String> = None;
+    let mut lat_key: Option<String> = None;
+    let mut lon_key: Option<String> = None;
+    let mut alt_key: Option<String> = None;
+    let mut epoch_key: Option<String> = None;
+    let mut post_body: Option<String> = None;
+    let mut method_post = false;
+    let mut body_target: Option<String> = None;
+    let mut raw_extracts: Vec<String> = Vec::new();
+    for line in block.lines() {
+        let t = line.trim();
+        if t.is_empty() || t.starts_with('#') {
+            continue;
+        }
+        let parts: Vec<&str> = t.split_whitespace().collect();
+        if parts.is_empty() {
+            continue;
+        }
+        match parts[0] {
+            "url" | "format" | "header" | "target" | "catalog" | "flux_from_mag"
+            | "abs_mag_from" | "catalog_epoch" | "max_freq" | "min_freq" => {
+                head.push(t.to_string());
+            }
+            "ttl" => {
+                head.push(t.to_string());
+                if let Ok(v) = parts[1].parse::<u64>() {
+                    ttl = v;
+                }
+            }
+            "on" | "at" => frame_line = Some(t.to_string()),
+            "lat" if parts.len() >= 2 => {
+                if let Ok(v) = parts[1].parse::<f64>() {
+                    lat = Some(v);
+                }
+            }
+            "lon" if parts.len() >= 2 => {
+                if let Ok(v) = parts[1].parse::<f64>() {
+                    lon = Some(v);
+                }
+            }
+            "alt" if parts.len() >= 2 => {
+                if let Ok(v) = parts[1].parse::<f64>() {
+                    alt = Some(v);
+                }
+            }
+            "force" if parts.len() >= 2 => force = parts[1].to_string(),
+            "method" if parts.len() >= 2 => {
+                method_post = parts[1].eq_ignore_ascii_case("post");
+            }
+            "body" if parts.len() >= 2 => {
+                if parts[1].starts_with('{') || method_post {
+                    post_body = Some(parts[1].to_string());
+                } else {
+                    body_target = Some(parts[1].to_string());
+                }
+            }
+            "map" | "cmap" | "rows" => {
+                let arg = parts.get(1).copied().unwrap_or(".");
+                map_line = Some(format!("{} {}", parts[0], arg));
+            }
+            "lat_key" if parts.len() >= 2 => lat_key = Some(parts[1].to_string()),
+            "lon_key" if parts.len() >= 2 => lon_key = Some(parts[1].to_string()),
+            "alt_key" if parts.len() >= 2 => alt_key = Some(parts[1].to_string()),
+            "epoch_key" if parts.len() >= 2 => epoch_key = Some(parts[1].to_string()),
+            "field" | "field_in" | "first" | "last" | "count" | "path" | "deep" | "last_row"
+            | "last_line" | "last_obj" | "geojson" | "regex" => {
+                raw_extracts.push(t.to_string());
+            }
+            _ => {}
+        }
+    }
+
+    let celestial = matches!(
+        (lat_key.as_deref(), lon_key.as_deref()),
+        (Some(k1), Some(k2))
+            if (k1.eq_ignore_ascii_case("ra") || k1.eq_ignore_ascii_case("s_ra"))
+                && (k2.eq_ignore_ascii_case("dec") || k2.eq_ignore_ascii_case("s_dec"))
+    );
+    let named_keys = lat_key
+        .as_deref()
+        .is_some_and(|k| k.parse::<f64>().is_err())
+        && lon_key
+            .as_deref()
+            .is_some_and(|k| k.parse::<f64>().is_err());
+
+    let mut out = String::new();
+    for h in head.iter().filter(|h| h.starts_with("url ")) {
+        out.push_str(h);
+        out.push('\n');
+    }
+    if ttl > 0 {
+        out.push_str(&format!("ttl {}\n", ttl));
+    }
+    for h in head.iter().filter(|h| !h.starts_with("url ")) {
+        out.push_str(h);
+        out.push('\n');
+    }
+    if let Some(b) = &post_body {
+        out.push_str("post_body ");
+        out.push_str(b);
+        out.push('\n');
+    }
+    if let Some(b) = &body_target {
+        out.push_str("body ");
+        out.push_str(b);
+        out.push('\n');
+    }
+    if let Some(f) = &frame_line {
+        out.push_str(f);
+        out.push('\n');
+    } else if celestial && map_line.is_some() {
+        out.push_str("at sun\n");
+    } else if named_keys && map_line.is_some() {
+        out.push_str("on earth 0 0\n");
+    } else if let (Some(lat), Some(lon)) = (lat, lon) {
+        match alt {
+            Some(a) => out.push_str(&format!("on earth {} {} {}\n", lat, lon, a)),
+            None => out.push_str(&format!("on earth {} {}\n", lat, lon)),
+        }
+    }
+    if let Some(m) = &map_line {
+        if celestial {
+            let arg = m.splitn(2, ' ').nth(1).unwrap_or(".");
+            out.push_str("cmap ");
+            out.push_str(arg);
+            out.push('\n');
+        } else {
+            out.push_str(m);
+            out.push('\n');
+        }
+    }
+    if celestial {
+        if let Some(k) = &lat_key {
+            out.push_str("ra ");
+            out.push_str(k);
+            out.push('\n');
+        }
+        if let Some(k) = &lon_key {
+            out.push_str("dec ");
+            out.push_str(k);
+            out.push('\n');
+        }
+    } else {
+        if let Some(k) = &lat_key {
+            out.push_str("lat ");
+            out.push_str(k);
+            out.push('\n');
+        }
+        if let Some(k) = &lon_key {
+            out.push_str("lon ");
+            out.push_str(k);
+            out.push('\n');
+        }
+        if let Some(k) = &alt_key {
+            out.push_str("alt ");
+            out.push_str(k);
+            out.push('\n');
+        }
+        if let Some(k) = &epoch_key {
+            out.push_str("epoch ");
+            out.push_str(k);
+            out.push('\n');
+        }
+    }
+    for r in &raw_extracts {
+        let parts: Vec<&str> = r.split_whitespace().collect();
+        if parts.is_empty() {
+            continue;
+        }
+        let s = match parts[0] {
+            "field" | "field_in" if parts.len() >= 3 => {
+                port_field_synth("field", &force, parts[1], parts[2], None)
+            }
+            "first" | "last" | "count" | "path" | "deep" if parts.len() >= 3 => {
+                port_field_synth(parts[0], &force, parts[1], parts[2], None)
+            }
+            "last_row" if parts.len() >= 3 => {
+                port_field_synth("lastrow", &force, parts[1], parts[2], None)
+            }
+            "last_line" if parts.len() >= 2 => Some(format!("lastline {}", parts[1])),
+            "last_obj" if parts.len() >= 5 => {
+                let name = parts[parts.len() - 1];
+                let key = parts[parts.len() - 2];
+                let parent = parts[1];
+                let m = parts[2..parts.len() - 2].join(" ");
+                Some(format!("lastobj {} {} {} {}", parent, m, key, name))
+            }
+            "geojson" if parts.len() >= 5 => None,
+            "regex" if parts.len() >= 3 => {
+                let name = parts[parts.len() - 1];
+                let pat = parts[1..parts.len() - 1].join(" ");
+                port_field_synth("regex", &force, &pat, name, None)
+            }
+            _ => None,
+        };
+        if let Some(s) = s {
+            out.push_str(s.trim_end());
+            out.push('\n');
+        }
+    }
+    out
+}
+
+fn flush_port_block(block: &str, converted: &mut String, total: &mut usize, parsed: &mut usize) {
+    *total += 1;
+    let conv = port_block(block);
+    if !parse_sources(&conv).is_empty() {
+        *parsed += 1;
+        converted.push_str(&conv);
+        converted.push('\n');
+    }
+}
+
+fn port_mode(input: &str, output: &str) -> i32 {
+    let content = match std::fs::read_to_string(input) {
+        Ok(c) => c,
+        Err(_) => {
+            eprintln!("--port: input unreadable: {}", input);
+            return 1;
+        }
+    };
+    let mut converted =
+        String::from("# port conversion (source grammar → canonical grammar, mechanical)\n");
+    let mut block = String::new();
+    let mut total = 0usize;
+    let mut parsed = 0usize;
+    let mut in_source = false;
+    for line in content.lines() {
+        let t = line.trim_start();
+        if t.starts_with("source ") {
+            if !block.is_empty() {
+                flush_port_block(&block, &mut converted, &mut total, &mut parsed);
+                block = String::new();
+            }
+            in_source = true;
+            block.push_str(line);
+            block.push('\n');
+            continue;
+        }
+        if t.starts_with("url ") && !in_source {
+            if !block.is_empty() {
+                flush_port_block(&block, &mut converted, &mut total, &mut parsed);
+                block = String::new();
+            }
+            block.push_str(line);
+            block.push('\n');
+            continue;
+        }
+        block.push_str(line);
+        block.push('\n');
+    }
+    if !block.is_empty() {
+        flush_port_block(&block, &mut converted, &mut total, &mut parsed);
+    }
+    if std::fs::write(output, &converted).is_err() {
+        eprintln!("--port: output unwritable: {}", output);
+        return 1;
+    }
+    eprintln!(
+        "--port: {} blocks converted, {} parse in the current parser → {}",
+        total, parsed, output
+    );
+    0
+}
+
+fn parse_station_entries(j: &JsonVal, src: &SourceConfig) -> Vec<StationEntry> {
+    let arr = match jpath_val(j, &src.stations_path) {
+        Some(JsonVal::Arr(a)) => a.iter().collect::<Vec<_>>(),
+        _ => return Vec::new(),
+    };
+    let mut stations: Vec<StationEntry> = Vec::new();
+    let mut push_entry = |id_ref: &JsonVal, lat: f64, lon: f64| {
+        let id = match id_ref {
+            JsonVal::Str(s) => s.clone(),
+            JsonVal::Num(n) => n.to_string(),
+            _ => return,
+        };
+        stations.push(StationEntry { id, lat, lon });
+    };
+    let filter_ok = |v: &JsonVal| -> bool {
+        match &src.stations_filter {
+            Some((k, want)) => match jpath_val(v, k) {
+                Some(JsonVal::Str(s)) => s == want,
+                _ => false,
+            },
+            None => true,
+        }
+    };
+    for v in arr {
+        let lat = match jpath(v, &src.stations_lat) {
+            Some(l) => l,
+            None => continue,
+        };
+        let lon = match jpath(v, &src.stations_lon) {
+            Some(l) => l,
+            None => continue,
+        };
+        if src.stations_flatten.is_empty() {
+            if filter_ok(v) {
+                match jpath_val(v, &src.stations_id) {
+                    Some(id_ref) => push_entry(id_ref, lat, lon),
+                    None => {}
+                }
+            }
+        } else if let Some(JsonVal::Arr(elems)) = jpath_val(v, &src.stations_flatten) {
+            for e in elems {
+                if !filter_ok(e) {
+                    continue;
+                }
+                match jpath_val(e, &src.stations_id) {
+                    Some(id_ref) => push_entry(id_ref, lat, lon),
+                    None => push_entry(v, lat, lon),
+                }
+            }
+        }
+    }
+    stations
+}
+
+fn parse_stations_xml(body: &str) -> Vec<StationEntry> {
+    let mut out = Vec::new();
+    for obs in body.split("<Observatory>").skip(1) {
+        let tag = |name: &str| -> Option<&str> {
+            let open = format!("<{}>", name);
+            let start = obs.find(&open)? + open.len();
+            let end = obs[start..].find(&format!("</{}>", name))? + start;
+            Some(&obs[start..end])
+        };
+        let code = match tag("Code") {
+            Some(c) => c.trim().to_lowercase(),
+            None => continue,
+        };
+        let lat = match tag("Latitude").and_then(|s| s.trim().parse::<f64>().ok()) {
+            Some(v) => v,
+            None => continue,
+        };
+        let lon = match tag("Longitude").and_then(|s| s.trim().parse::<f64>().ok()) {
+            Some(v) => v,
+            None => continue,
+        };
+        out.push(StationEntry { id: code, lat, lon });
+    }
+    out
+}
+
+fn fanout_fetch(
+    src: &SourceConfig,
+    stations_url_tmpl: &str,
+    x: f64,
+    y: f64,
+    z: f64,
+    presence: Option<(f64, f64, f64)>,
+    now: f64,
+    r: f64,
+    eph: &HashMap<String, BodyEphemeris>,
+    env: &HashMap<String, String>,
+    lsk: &LeapSeconds,
+) -> Vec<(Channel, FieldConfig)> {
+    let mut channels = Vec::new();
+    let body_name = frame_body_name(&src.frame);
+    let (ux, uy, uz) = presence.unwrap_or((x, y, z));
+    let stations_url = match render_url(stations_url_tmpl, ux, uy, uz, now, r, &body_name, eph, lsk)
+    {
+        Some(u) => resolve_secret(&u, env),
+        None => return channels,
+    };
+    let headers = render_headers(&src.headers, env);
+    let raw = match fetch_raw(&stations_url, None, &headers, src.ttl) {
+        Some(v) => v,
+        None => return channels,
+    };
+    let mut stations = match parse_json(&raw) {
+        Some(j) => parse_station_entries(&j, src),
+        None => parse_stations_xml(&raw),
+    };
+    let sort_center = match presence {
+        Some((px, py, pz)) => icrs_to_body_surface(px, py, pz, now, &body_name, eph),
+        None => None,
+    }
+    .or_else(|| {
+        if let Frame::Surface { lat, lon, .. } = src.frame {
+            Some((lat, lon))
+        } else {
+            None
+        }
+    });
+    if let Some((clat, clon)) = sort_center {
+        stations.sort_by(|a, b| {
+            angular_distance_deg(a.lat, a.lon, clat, clon)
+                .partial_cmp(&angular_distance_deg(b.lat, b.lon, clat, clon))
+                .unwrap_or(std::cmp::Ordering::Equal)
+        });
+    }
+    let cap = src.fanout_cap as usize;
+    let base_url = match render_url(&src.url, ux, uy, uz, now, r, &body_name, eph, lsk) {
+        Some(u) => u,
+        None => return channels,
+    };
+    let body = render_source_body(src, ux, uy, uz, now, r, eph, lsk);
+    let window = 3usize;
+    let chunks: Vec<&StationEntry> = stations.iter().take(cap).collect();
+    for (wi, chunk) in chunks.chunks(window).enumerate() {
+        if wi > 0 && src.fanout_delay > 0 {
+            thread::sleep(std::time::Duration::from_secs(src.fanout_delay));
+        }
+        thread::scope(|s| {
+            let handles: Vec<_> = chunk
+                .iter()
+                .map(|st| {
+                    let base_url = base_url.clone();
+                    let body = body.clone();
+                    let headers = headers.clone();
+                    let body_name = body_name.clone();
+                    let st = *st;
+                    s.spawn(move || -> Vec<(Channel, FieldConfig)> {
+                        let url = resolve_secret(&base_url.replace("{station}", &st.id), env);
+                        let post = body.as_deref().map(|b| b.replace("{station}", &st.id));
+                        let raw = match fetch_raw(&url, post.as_deref(), &headers, src.ttl) {
+                            Some(v) => v,
+                            None => {
+                                eprintln!("station {}: fetch void — retry in ttl/Φ", st.id);
+                                return Vec::new();
+                            }
+                        };
+                        let mut out = Vec::new();
+                        if let ExtractResult::Measurements(mut cs) = extract(src, &raw, now, lsk) {
+                            if cs.is_empty() {
+                                eprintln!("station {}: extract returned no measurements", st.id);
+                            }
+                            for (mut ch, fc) in cs.drain(..) {
+                                ch.position = Position::Surface {
+                                    body_name: body_name.clone(),
+                                    lat: st.lat,
+                                    lon: st.lon,
+                                    alt: 0.0,
+                                };
+                                out.push((ch, fc));
+                            }
+                        }
+                        out
+                    })
+                })
+                .collect();
+            for h in handles {
+                if let Ok(v) = h.join() {
+                    channels.extend(v);
+                }
+            }
+        });
+    }
+    channels
+}
+
+fn build_netcdf_channels(
+    src: &SourceConfig,
+    bytes: &[u8],
+    lsk: &LeapSeconds,
+) -> Vec<(Channel, FieldConfig)> {
+    let bytes = if bytes.starts_with(&[0x1f, 0x8b]) {
+        match gunzip(bytes) {
+            Some(b) => b,
+            None => return Vec::new(),
+        }
+    } else {
+        bytes.to_vec()
+    };
+    let nc = match NetcdfFile::parse(&bytes) {
+        Ok(f) => f,
+        Err(note) => {
+            eprintln!("netcdf {}: {:?}", src.url, note);
+            return Vec::new();
+        }
+    };
+    let mut channels = Vec::new();
+    for ext in &src.extracts {
+        let Extract::ProfileMap {
+            lat_key,
+            lon_key,
+            epoch_key,
+            pressure_var,
+            pressure_scale,
+            fields,
+            ..
+        } = ext
+        else {
+            continue;
+        };
+        let Some(lat_v) = nc.values_f64(&bytes, lat_key) else {
+            continue;
+        };
+        let Some(lon_v) = nc.values_f64(&bytes, lon_key) else {
+            continue;
+        };
+        let Some(juld_v) = nc.values_f64(&bytes, epoch_key) else {
+            continue;
+        };
+        let Some(pres_v) = nc.values_f32(&bytes, pressure_var) else {
+            continue;
+        };
+        let n_prof = lat_v.len().min(lon_v.len()).min(juld_v.len());
+        let n_levels = match nc.var(pressure_var).and_then(|v| nc.var_shape(v).ok()) {
+            Some(shape) => match shape.get(1) {
+                Some(&n) => n as usize,
+                None => continue,
+            },
+            None => continue,
+        };
+        if n_levels == 0 || pres_v.len() < n_prof * n_levels {
+            continue;
+        }
+        let pres_fill = nc
+            .var(pressure_var)
+            .and_then(|v| v.attrs.iter().find(|a| a.name == "_FillValue"))
+            .and_then(|a| nc.attr_num(a));
+        let lat_fill = nc
+            .var(lat_key)
+            .and_then(|v| v.attrs.iter().find(|a| a.name == "_FillValue"))
+            .and_then(|a| nc.attr_num(a));
+        let lon_fill = nc
+            .var(lon_key)
+            .and_then(|v| v.attrs.iter().find(|a| a.name == "_FillValue"))
+            .and_then(|a| nc.attr_num(a));
+        let juld_fill = nc
+            .var(epoch_key)
+            .and_then(|v| v.attrs.iter().find(|a| a.name == "_FillValue"))
+            .and_then(|a| nc.attr_num(a));
+        for p in 0..n_prof {
+            let lat = lat_v[p];
+            let lon = lon_v[p];
+            let juld = juld_v[p];
+            if !lat.is_finite()
+                || !lon.is_finite()
+                || !juld.is_finite()
+                || lat_fill.map_or(false, |f| lat == f)
+                || lon_fill.map_or(false, |f| lon == f)
+                || juld_fill.map_or(false, |f| juld == f)
+            {
+                continue;
+            }
+            let unix = (juld - 7305.0) * 86400.0;
+            let Some(epoch) = lsk.unix_to_tdb(unix) else {
+                continue;
+            };
+            for fc in fields {
+                let Some(vals) = nc.values_f32(&bytes, &fc.key) else {
+                    continue;
+                };
+                if vals.len() < n_prof * n_levels {
+                    continue;
+                }
+                let fill = nc
+                    .var(&fc.key)
+                    .and_then(|v| v.attrs.iter().find(|a| a.name == "_FillValue"))
+                    .and_then(|a| nc.attr_num(a));
+                for k in 0..n_levels {
+                    let pres = pres_v[p * n_levels + k];
+                    let val = vals[p * n_levels + k];
+                    if !val.is_finite()
+                        || !pres.is_finite()
+                        || fill.map_or(false, |f| (val as f64) == f)
+                        || pres_fill.map_or(false, |f| (pres as f64) == f)
+                    {
+                        continue;
+                    }
+                    let position = Position::Surface {
+                        body_name: frame_body_name(&src.frame),
+                        lat,
+                        lon,
+                        alt: -(pres as f64) * pressure_scale,
+                    };
+                    channels.push((
+                        Channel {
+                            z: 0.0,
+                            freq: 0.0,
+                            bin_width: 0.0,
+                            epoch,
+                            position,
+                            name: fc.name.clone(),
+                            value: val as f64,
+                        },
+                        fc.clone(),
+                    ));
+                }
+            }
+        }
+    }
+    channels
+}
+
+fn build_finals_channels(
+    src: &SourceConfig,
+    text: &str,
+    lsk: &LeapSeconds,
+) -> Vec<(Channel, FieldConfig)> {
+    let mut channels = Vec::new();
+    let mut fields: Vec<&FieldConfig> = Vec::new();
+    for ext in &src.extracts {
+        if let Extract::Field(fc) = ext {
+            fields.push(fc);
+        }
+    }
+    if fields.is_empty() {
+        return channels;
+    }
+    for line in text.lines().rev() {
+        if line.len() < 58 {
+            continue;
+        }
+        let col = |a: usize, b: usize| -> Option<f64> {
+            line.get(a..b).unwrap_or("").trim().parse::<f64>().ok()
+        };
+        let (Some(mjd), Some(pmx), Some(pmy), Some(ut1)) =
+            (col(7, 15), col(18, 27), col(38, 47), col(60, 70))
+        else {
+            continue;
+        };
+        let unix = (mjd - 40587.0) * 86400.0;
+        let Some(epoch) = lsk.unix_to_tdb(unix) else {
+            continue;
+        };
+        let position = Position::Source;
+        for fc in &fields {
+            let value = match fc.key.as_str() {
+                "ut1_utc" => ut1,
+                "pmx" => pmx,
+                "pmy" => pmy,
+                _ => continue,
+            };
+            channels.push((
+                Channel {
+                    z: 0.0,
+                    freq: 0.0,
+                    bin_width: 0.0,
+                    epoch,
+                    position: position.clone(),
+                    name: fc.name.clone(),
+                    value,
+                },
+                (*fc).clone(),
+            ));
+        }
+        break;
+    }
+    channels
+}
+
+fn build_ionex_channels(
+    src: &SourceConfig,
+    text: &str,
+    now: f64,
+    lsk: &LeapSeconds,
+) -> Vec<(Channel, FieldConfig)> {
+    let mut channels = Vec::new();
+    let mut tec_field: Option<&FieldConfig> = None;
+    for ext in &src.extracts {
+        if let Extract::Field(fc) = ext {
+            if fc.key == "tec" {
+                tec_field = Some(fc);
+            }
+        }
+    }
+    let Some(fc) = tec_field else {
+        return channels;
+    };
+    let mut exponent: Option<f64> = None;
+    for line in text.lines() {
+        if line.ends_with("EXPONENT") {
+            exponent = line
+                .split_whitespace()
+                .next()
+                .and_then(|t| t.parse::<f64>().ok());
+            break;
+        }
+        if line.contains("START OF TEC MAP") {
+            break;
+        }
+    }
+    let Some(exp) = exponent else {
+        return channels;
+    };
+    let mut lines = text.lines().peekable();
+    let mut best: Option<(f64, f64, Vec<(f64, f64, f64)>)> = None;
+    while let Some(l) = lines.next() {
+        if !l.trim_end().ends_with("START OF TEC MAP") {
+            continue;
+        }
+        let Some(ep_line) = lines.next() else { break };
+        let t: Vec<f64> = ep_line
+            .split_whitespace()
+            .filter_map(|t| t.parse::<f64>().ok())
+            .collect();
+        if t.len() < 6 {
+            continue;
+        }
+        let (y, mo, d) = (t[0] as i64, t[1] as u32, t[2] as u32);
+        let Some(days) = ymd_to_days(y, mo, d) else {
+            continue;
+        };
+        let unix = days as f64 * 86400.0 + t[3] * 3600.0 + t[4] * 60.0 + t[5];
+        let Some(epoch) = lsk.unix_to_tdb(unix) else {
+            continue;
+        };
+        if epoch > now {
+            continue;
+        }
+        let Some(hdr) = lines.next() else { break };
+        let getp = |a: usize, b: usize| -> Option<f64> {
+            hdr.get(a..b).unwrap_or("").trim().parse::<f64>().ok()
+        };
+        let (Some(lon1), Some(lon2), Some(dlon), Some(h)) =
+            (getp(8, 14), getp(14, 20), getp(20, 26), getp(26, 32))
+        else {
+            continue;
+        };
+        if dlon == 0.0 {
+            continue;
+        }
+        let nlon = ((lon2 - lon1) / dlon).round() as i64 + 1;
+        let mut pts: Vec<(f64, f64, f64)> = Vec::new();
+        loop {
+            let Some(cur) = lines.next() else { break };
+            if cur.trim_end().ends_with("END OF TEC MAP") {
+                break;
+            }
+            let Some(lat) = cur.get(2..8).and_then(|s| s.trim().parse::<f64>().ok()) else {
+                break;
+            };
+            let mut remaining = nlon as usize;
+            let mut row: Option<&str> = Some(cur);
+            loop {
+                let Some(r) = row else { break };
+                let take = remaining.min(16);
+                for k in 0..take {
+                    let idx = nlon as usize - remaining + k;
+                    if let Some(v) = r
+                        .get(32 + 5 * k..32 + 5 * (k + 1))
+                        .and_then(|s| s.trim().parse::<f64>().ok())
+                    {
+                        let tec = v * 10f64.powf(exp);
+                        if tec >= 0.0 {
+                            pts.push((lat, lon1 + idx as f64 * dlon, tec));
+                        }
+                    }
+                }
+                remaining -= take;
+                if remaining == 0 {
+                    break;
+                }
+                row = lines.next();
+            }
+        }
+        if best.as_ref().map_or(true, |(be, _, _)| epoch > *be) {
+            best = Some((epoch, h * 1000.0, pts));
+        }
+    }
+    if let Some((epoch, alt, pts)) = best {
+        let body = frame_body_name(&src.frame);
+        for (lat, lon, tec) in pts {
+            channels.push((
+                Channel {
+                    z: 0.0,
+                    freq: 0.0,
+                    bin_width: 0.0,
+                    epoch,
+                    position: Position::Surface {
+                        body_name: body.clone(),
+                        lat,
+                        lon,
+                        alt,
+                    },
+                    name: fc.name.clone(),
+                    value: tec,
+                },
+                fc.clone(),
+            ));
+        }
+    }
+    channels
+}
+
+fn alerce_objects(json: &JsonVal) -> Vec<(String, f64, f64)> {
+    let mut out = Vec::new();
+    let JsonVal::Obj(root) = json else {
+        return out;
+    };
+    let Some(JsonVal::Arr(items)) = root.get("items") else {
+        return out;
+    };
+    for it in items {
+        let JsonVal::Obj(o) = it else { continue };
+        let (Some(JsonVal::Str(oid)), Some(ra), Some(dec)) = (
+            o.get("oid"),
+            o.get("meanra").and_then(scalar_of),
+            o.get("meandec").and_then(scalar_of),
+        ) else {
+            continue;
+        };
+        if ra.is_finite() && dec.is_finite() {
+            out.push((oid.clone(), ra, dec));
+        }
+    }
+    out
+}
+
+fn alerce_detection_rows(json: &JsonVal) -> Vec<(f64, f64, f64, f64, f64)> {
+    let mut out = Vec::new();
+    let JsonVal::Arr(rows) = json else {
+        return out;
+    };
+    for r in rows {
+        let JsonVal::Obj(o) = r else { continue };
+        let (Some(ra), Some(dec), Some(mjd), Some(magpsf), Some(magap)) = (
+            o.get("ra").and_then(scalar_of),
+            o.get("dec").and_then(scalar_of),
+            o.get("mjd").and_then(scalar_of),
+            o.get("magpsf").and_then(scalar_of),
+            o.get("magap").and_then(scalar_of),
+        ) else {
+            continue;
+        };
+        if ra.is_finite() && dec.is_finite() && mjd.is_finite() {
+            out.push((ra, dec, mjd, magpsf, magap));
+        }
+    }
+    out
+}
+
+fn build_alerce_channels(
+    src: &SourceConfig,
+    cap: usize,
+    delay: u64,
+) -> Vec<(Channel, FieldConfig)> {
+    let channels = Vec::new();
+    let Some(Extract::Alerce(detail)) = src
+        .extracts
+        .iter()
+        .find(|e| matches!(e, Extract::Alerce(_)))
+    else {
+        return channels;
+    };
+    let Some(list_bytes) = fetch_raw_bytes(&src.url, src.ttl) else {
+        return channels;
+    };
+    let Some(list_json) = parse_json(&String::from_utf8_lossy(&list_bytes)) else {
+        return channels;
+    };
+    let objects = alerce_objects(&list_json);
+    for (wi, (oid, _, _)) in objects.iter().take(cap).enumerate() {
+        if wi > 0 && delay > 0 {
+            thread::sleep(std::time::Duration::from_secs(delay));
+        }
+        let url = detail.replace("{oid}", oid);
+        let Some(det_bytes) = fetch_raw_bytes(&url, src.ttl) else {
+            continue;
+        };
+        let Some(det_json) = parse_json(&String::from_utf8_lossy(&det_bytes)) else {
+            continue;
+        };
+        let detections = alerce_detection_rows(&det_json);
+        if !detections.is_empty() {
+            eprintln!(
+                    "alerce {}: {} detections without distance — dark until a distance channel exists (pending)",
+                    oid,
+                    detections.len()
+                );
+        }
+    }
+    channels
+}
+
+pub fn anchor(
+    channel: &Channel,
+    sensor: &FieldConfig,
+    source_ttl: f64,
+    source_idx: Option<u32>,
+    frame: Option<&Frame>,
+    mut origin_state: Option<&mut OriginState>,
+    eph: &HashMap<String, BodyEphemeris>,
+) -> Option<Oscillator> {
+    if sensor.tau <= 0.0 {
+        return None;
+    }
+    let motion = match &channel.position {
+        Position::StateVector { p, v, .. } => Motion::Linear { p: *p, v: *v },
+        Position::Surface {
+            body_name,
+            lat,
+            lon,
+            alt,
+        } => {
+            if eph
+                .get(body_name.as_str())
+                .and_then(|e| e.props.as_ref())
+                .is_none()
+            {
+                return None;
+            }
+            Motion::Surface {
+                body_name: body_name.clone(),
+                lat: *lat,
+                lon: *lon,
+                alt: *alt,
+            }
+        }
+        Position::SurfaceFlow {
+            body_name,
+            lat,
+            lon,
+            alt,
+            speed,
+            track,
+            vrate,
+        } => {
+            if eph
+                .get(body_name.as_str())
+                .and_then(|e| e.props.as_ref())
+                .is_none()
+            {
+                return None;
+            }
+            let v = match vrate {
+                Some(v) => *v,
+                None => return None,
+            };
+            match surface_motion(
+                body_name,
+                *lat,
+                *lon,
+                *alt,
+                *speed,
+                *track,
+                v,
+                channel.epoch,
+                eph,
+            ) {
+                Some(m) => m,
+                None => return None,
+            }
+        }
+        Position::Source => match frame {
+            Some(f) => match frame_motion(f, None, None, channel.epoch, eph) {
+                Some(m) => m,
+                None => return None,
+            },
+            None => return None,
+        },
+    };
+    let abs = match motion.at(channel.epoch, channel.epoch, eph) {
+        Some(p) => p,
+        None => return None,
+    };
+    if !abs[0].is_finite()
+        || !abs[1].is_finite()
+        || !abs[2].is_finite()
+        || !channel.epoch.is_finite()
+    {
+        return None;
+    }
+    let mut resid_ema = 0.0;
+    if let Some(ref mut st) = origin_state {
+        if st.has_prev {
+            let dt_raw = (channel.epoch - st.prev_epoch).abs();
+            if dt_raw > 0.0 && source_ttl > 0.0 {
+                let dt = dt_raw;
+                if let Some(pm) = &st.prev_motion {
+                    if let Some(pred) = pm.at(channel.epoch, st.prev_epoch, eph) {
+                        let resid = ((pred[0] - abs[0]).powi(2)
+                            + (pred[1] - abs[1]).powi(2)
+                            + (pred[2] - abs[2]).powi(2))
+                        .sqrt();
+                        let alpha = 1.0 - (-dt / source_ttl).exp();
+                        st.resid_ema += (resid / dt - st.resid_ema) * alpha;
+                    }
+                }
+            }
+        }
+        resid_ema = st.resid_ema;
+        st.prev_epoch = channel.epoch;
+        st.prev_abs = abs;
+        st.prev_motion = Some(motion.clone());
+        st.has_prev = true;
+    }
+    let (vmax, amax, p0f) = match law_bounds(&motion, channel.epoch, resid_ema, eph) {
+        Some(b) => b,
+        None => return None,
+    };
+    if !p0f[0].is_finite()
+        || !p0f[1].is_finite()
+        || !p0f[2].is_finite()
+        || !vmax.is_finite()
+        || !amax.is_finite()
+    {
+        return None;
+    }
+    let body_props = motion
+        .anchor_body()
+        .and_then(|name| eph.get(name))
+        .and_then(|e| e.props.as_ref());
+    let extent = kernel_extent(sensor.force, sensor.kernel, body_props, sensor.tau);
+    if !extent.is_finite() {
+        return None;
+    }
+    Some(Oscillator {
+        source: match source_idx {
+            Some(idx) => OscillatorSource::Source(idx),
+            None => OscillatorSource::Sensor,
+        },
+        epoch: channel.epoch,
+        ttl: source_ttl,
+        extent,
+        tau: sensor.tau,
+        kernel_id: sensor.kernel as f64,
+        force_type: sensor.force as f64,
+        absorption: sensor.absorption,
+        advection: sensor.advection,
+        vmax,
+        amax,
+        p0f,
+        motion: motion.clone(),
+        val: match convert_to_si(channel.value, &sensor.unit) {
+            Some(v) => v,
+            None => {
+                register_unconverted_unit(&sensor.unit, &channel.name);
+                return None;
+            }
+        },
+        name: channel.name.clone(),
+        z: channel.z,
+        freq: channel.freq,
+        bin_width: channel.bin_width,
+    })
+}
+
+fn body_channels(name: &str, props: &BodyProperties, now: f64) -> Vec<(Channel, FieldConfig)> {
+    let mut out = Vec::new();
+    out.push((
+        Channel {
+            z: 0.0,
+            freq: 0.0,
+            bin_width: 0.0,
+            name: format!("{}.radius", name),
+            value: props.radius_m,
+            position: Position::Source,
+            epoch: now,
+        },
+        FieldConfig {
+            key: format!("{}.radius", name),
+            name: format!("{}.radius", name),
+            kernel: 0,
+            force: 1,
+            tau: f64::INFINITY,
+            absorption: 0.0,
+            advection: 0.0,
+            unit: String::new(),
+            fold: None,
+        },
+    ));
+    if let Some(gm) = props.gm {
+        out.push((
+            Channel {
+                z: 0.0,
+                freq: 0.0,
+                bin_width: 0.0,
+                name: format!("{}.mass", name),
+                value: gm,
+                position: Position::Source,
+                epoch: now,
+            },
+            FieldConfig {
+                key: format!("{}.mass", name),
+                name: format!("{}.mass", name),
+                kernel: 0,
+                force: 1,
+                tau: f64::INFINITY,
+                absorption: 0.0,
+                advection: 0.0,
+                unit: String::new(),
+                fold: None,
+            },
+        ));
+    }
+    out
+}
+
+fn extract_netloc(url: &str) -> Option<&str> {
+    let after = url
+        .strip_prefix("https://")
+        .or_else(|| url.strip_prefix("http://"))?;
+    let netloc = after.split('/').next()?;
+    Some(if let Some(s) = netloc.strip_prefix("www.") {
+        s
+    } else {
+        netloc
+    })
+}
+
+fn route_segments(url: &str) -> Option<(String, Vec<String>)> {
+    let after = url
+        .strip_prefix("https://")
+        .or_else(|| url.strip_prefix("http://"))?;
+    let (netloc, rest) = match after.split_once('/') {
+        Some((n, r)) => (n, r),
+        None => (after, ""),
+    };
+    let host = netloc.strip_prefix("www.").unwrap_or(netloc);
+    let path = rest.split(|c| c == '?' || c == '#').next().unwrap_or("");
+    let mut segs: Vec<String> = Vec::new();
+    for s in path.split('/') {
+        if s.is_empty() {
+            continue;
+        }
+        let seg = if s.starts_with('{') && s.ends_with('}') {
+            "*".to_string()
+        } else {
+            s.to_string()
+        };
+        segs.push(seg);
+    }
+    Some((host.to_string(), segs))
+}
+
+fn route_key(url: &str) -> Option<String> {
+    let (host, segs) = route_segments(url)?;
+    if segs.is_empty() {
+        Some(host)
+    } else {
+        Some(format!("{}/{}", host, segs.join("/")))
+    }
+}
+
+fn route_prefix_keys(url: &str) -> Vec<String> {
+    let Some((host, segs)) = route_segments(url) else {
+        return Vec::new();
+    };
+    let mut keys = vec![host.clone()];
+    let mut acc = host;
+    for s in segs {
+        acc.push('/');
+        acc.push_str(&s);
+        keys.push(acc.clone());
+    }
+    keys.reverse();
+    keys
+}
+
+fn source_name_from_url(url: &str) -> String {
+    let s1 = match url.strip_prefix("https://") {
+        Some(s) => s,
+        None => url,
+    };
+    let s2 = match s1.strip_prefix("http://") {
+        Some(s) => s,
+        None => s1,
+    };
+    let without_scheme = match s2.strip_prefix("www.") {
+        Some(s) => s,
+        None => s2,
+    };
+    let after_domain: Vec<&str> = without_scheme.splitn(2, '/').collect();
+    if after_domain.len() < 2 {
+        return "index.json".to_string();
+    }
+    let path_and_query = after_domain[1];
+    let cleaned = path_and_query
+        .chars()
+        .map(|c| match c {
+            c if c.is_ascii_alphanumeric()
+                || c == '-'
+                || c == '.'
+                || c == '_'
+                || c == '{'
+                || c == '}' =>
+            {
+                c
+            }
+            '/' | '?' | '&' | '=' => '-',
+            _ => '_',
+        })
+        .collect::<String>();
+    if cleaned.is_empty() {
+        "index".to_string()
+    } else {
+        cleaned.trim_matches('-').to_string()
+    }
+}
+
+fn probe_one(
+    src: &SourceConfig,
+    now: f64,
+    lsk_ref: &LeapSeconds,
+    void_eph: &HashMap<String, BodyEphemeris>,
+    env: &HashMap<String, String>,
+    fetchone: bool,
+    precise: bool,
+    lat: f64,
+    lon: f64,
+) -> (bool, String) {
+    let url = match render_url(&src.url, 0.0, 0.0, 0.0, now, 0.0, "", void_eph, lsk_ref) {
+        Some(u) => u,
+        None => return (false, "# declined: time absent\n".to_string()),
+    }
+    .replace("{lat}", &format!("{:.6}", lat))
+    .replace("{lon}", &format!("{:.6}", lon));
+    let url = resolve_secret(&url, env);
+    let url = url.replace("ZZ", "Z").replace("  ", " ");
+    let headers = render_headers(&src.headers, env);
+    let raw = if fetchone {
+        fetch_one(&url, None, &headers, src.ttl)
+    } else {
+        fetch_raw_probe(&url, None, &headers)
+    };
+    let parsed = raw.as_ref().and_then(|r| parse_json(r));
+    let auto_ttl = raw.as_ref().and_then(|r| probe_ttl(r));
+    let mut block = String::new();
+    block.push_str(&format!("url {}\n", src.url));
+    let ttl = match auto_ttl {
+        Some(t) => t,
+        None => src.ttl,
+    };
+    block.push_str(&format!("ttl {}\n", ttl));
+    match &src.frame {
+        Frame::Surface {
+            body_name,
+            lat,
+            lon,
+            alt,
+        } => {
+            block.push_str(&format!("on {} {:?} {:?} {:?}\n", body_name, lat, lon, alt));
+        }
+        Frame::Barycenter { body_name, scale } if *scale == 1.0 => {
+            block.push_str(&format!("at {}\n", body_name));
+        }
+        Frame::Barycenter { body_name, scale } => {
+            block.push_str(&format!("at {} {}\n", body_name, scale));
+        }
+        Frame::Manifest => {}
+    }
+    if let Some(p) = parsed {
+        let mut fields = String::new();
+        let mut coords = String::new();
+        let mut map_path: Option<String> = None;
+        let mut budget = 48usize;
+        walk_json_probe(&p, "", &mut fields, &mut coords, &mut map_path, &mut budget);
+        if map_path.is_none() && !coords.is_empty() {
+            map_path = Some(".".to_string());
+        }
+        let precision_lines = measure_precision(&p);
+        if !precision_lines.is_empty() {
+            block.push_str(&precision_lines);
+        }
+        if let Some(ref mp) = map_path {
+            if !coords.is_empty() {
+                let container = if coords.contains("ra ") || coords.contains("dec ") {
+                    "cmap"
+                } else {
+                    "map"
+                };
+                block.push_str(&format!("{} {}\n", container, mp));
+            }
+        }
+        if !coords.is_empty() {
+            block.push_str(&coords);
+        }
+        if !fields.is_empty() {
+            block.push_str(&fields);
+        }
+    } else if let Some(ref r) = raw {
+        if let Some(csv) = probe_csv(r) {
+            block.push_str("format free text\n");
+            block.push_str(&csv);
+        }
+    } else {
+        block.push_str("# fetch returned void\n");
+    }
+    if precise && raw.is_some() {
+        block.push_str(&bruteforce_precision(&url, &src.url, ttl));
+    }
+    let verdict = match (&raw, parse_sources(&block).first()) {
+        (Some(r), Some(candidate)) => match extract(candidate, r, now, lsk_ref) {
+            ExtractResult::Measurements(v) | ExtractResult::WithEphemeris(v, _) => {
+                if v.is_empty() {
+                    Err(diagnose_no_samples(candidate, r))
+                } else {
+                    Ok(v.len())
+                }
+            }
+        },
+        (Some(_), None) => Err("block refused at parse (frame/ttl/field gate)".into()),
+        (None, _) => Err("fetch returned void".into()),
+    };
+    match verdict {
+        Ok(n) => {
+            let mut b = format!("# verified {} samples\n", n);
+            b.push_str(&block);
+            b.push('\n');
+            (true, b)
+        }
+        Err(why) => {
+            let mut b = format!("# declined: {}\n", why);
+            b.push_str(&block);
+            b.push('\n');
+            (false, b)
+        }
+    }
+}
+
+fn probe_mode(
+    path: &str,
+    precise: bool,
+    lat: f64,
+    lon: f64,
+    env: &HashMap<String, String>,
+    fetchone: bool,
+) -> i32 {
+    let content = match std::fs::read_to_string(path) {
+        Ok(c) => c,
+        Err(e) => {
+            eprintln!("probe: read {}: {}", path, e);
+            return 1;
+        }
+    };
+    let sources = load_sources_from(&content);
+    eprintln!(
+        "probe: {} source blocks loaded from {}",
+        sources.len(),
+        path
+    );
+    let mut lsk: Option<LeapSeconds> = None;
+    for src in sources.iter().filter(|s| s.format == "kernel_text") {
+        if src.body.as_deref() != Some("naif0012") {
+            continue;
+        }
+        if let Some(text) = fetch_one(&src.url, None, &[], src.ttl) {
+            lsk = crate::lsk::parse(&text);
+        }
+    }
+    if lsk.is_none() {
+        if let Some(text) = fetch_one(
+            "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls",
+            None,
+            &[],
+            NAIF_LSK_TTL_SECS,
+        ) {
+            lsk = crate::lsk::parse(&text);
+        }
+    }
+    let time_pair: Option<(f64, LeapSeconds)> = match lsk {
+        Some(l) => match l.system_now_tdb() {
+            Some(t) => Some((t, l)),
+            None => None,
+        },
+        None => None,
+    };
+    let void_eph: HashMap<String, BodyEphemeris> = HashMap::new();
+    let accepted = std::sync::atomic::AtomicUsize::new(0);
+    let declined = std::sync::atomic::AtomicUsize::new(0);
+    let out_lock = std::sync::Mutex::new(String::new());
+    let dead_lock = std::sync::Mutex::new(String::new());
+    let next = std::sync::atomic::AtomicUsize::new(0);
+    let non_kernel: Vec<&SourceConfig> = sources
+        .iter()
+        .filter(|s| s.format != "kernel_text")
+        .collect();
+    match &time_pair {
+        Some((now, lsk_ref)) => {
+            let now = *now;
+            let workers = 8.min(non_kernel.len().max(1));
+            std::thread::scope(|scope| {
+                for _ in 0..workers {
+                    scope.spawn(|| loop {
+                        let i = next.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                        if i >= non_kernel.len() {
+                            break;
+                        }
+                        let (ok, text) = probe_one(
+                            non_kernel[i],
+                            now,
+                            lsk_ref,
+                            &void_eph,
+                            env,
+                            fetchone,
+                            precise,
+                            lat,
+                            lon,
+                        );
+                        if ok {
+                            accepted.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                            out_lock.lock().unwrap().push_str(&text);
+                        } else {
+                            declined.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                            dead_lock.lock().unwrap().push_str(&text);
+                        }
+                        std::thread::sleep(std::time::Duration::from_millis(300));
+                    });
+                }
+            });
+        }
+        None => {
+            for _ in &non_kernel {
+                declined.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                dead_lock
+                    .lock()
+                    .unwrap()
+                    .push_str("# declined: time absent\n");
+            }
+        }
+    }
+    let accepted = accepted.load(std::sync::atomic::Ordering::Relaxed);
+    let declined = declined.load(std::sync::atomic::Ordering::Relaxed);
+    let out = out_lock.into_inner().unwrap();
+    let dead = dead_lock.into_inner().unwrap();
+    std::fs::create_dir_all("phi/pipeline").ok();
+    if std::fs::write("phi/pipeline/probe_survivors.φ", &out).is_err() {
+        eprintln!("write phi/pipeline/probe_survivors.φ: the register does not remember");
+    }
+    if std::fs::write("phi/pipeline/probe_void.txt", &dead).is_err() {
+        eprintln!("write phi/pipeline/probe_void.txt: the register does not remember");
+    }
+    eprintln!(
+        "probe: wrote phi/pipeline/probe_survivors.φ ({} verified) and phi/pipeline/probe_void.txt ({} declined)",
+        accepted, declined
+    );
+    0
+}
+
+fn extract_all_template_values(
+    substituted_url: &str,
+    template_url: &str,
+) -> HashMap<String, String> {
+    let mut values = HashMap::new();
+    let bytes = template_url.as_bytes();
+    let mut markers: Vec<(usize, usize, &str)> = Vec::new();
+    let mut i = 0;
+    while i < bytes.len() {
+        if bytes[i] == b'{' {
+            let start = i;
+            while i < bytes.len() && bytes[i] != b'}' {
+                i += 1;
+            }
+            if i < bytes.len() {
+                i += 1;
+                if let Ok(marker) = std::str::from_utf8(&bytes[start..i]) {
+                    markers.push((start, i, marker));
+                }
+            }
+        } else {
+            i += 1;
+        }
+    }
+    let mut parts: Vec<&str> = Vec::new();
+    let mut prev_end = 0;
+    for &(start, end, _) in &markers {
+        parts.push(&template_url[prev_end..start]);
+        prev_end = end;
+    }
+    parts.push(&template_url[prev_end..]);
+    let sub = substituted_url;
+    let mut pos = 0;
+    for idx in 0..markers.len() {
+        let part = parts[idx];
+        if !part.is_empty() {
+            match sub[pos..].find(part) {
+                Some(offset) => pos += offset + part.len(),
+                None => break,
+            }
+        }
+        let marker = markers[idx].2;
+        let next_part = parts[idx + 1];
+        let val_end = if next_part.is_empty() {
+            let next_const = parts[idx + 2..].iter().find(|p| !p.is_empty());
+            match next_const {
+                Some(nc) => match sub[pos..].find(nc) {
+                    Some(p) => pos + p,
+                    None => sub.len(),
+                },
+                None => sub.len(),
+            }
+        } else {
+            match sub[pos..].find(next_part) {
+                Some(p) => pos + p,
+                None => sub.len(),
+            }
+        };
+        let val_str = &sub[pos..val_end];
+        values.insert(marker.to_string(), val_str.to_string());
+        pos = val_end;
+    }
+    values
+}
+
+fn bruteforce_precision(substituted_url: &str, template_url: &str, ttl: u64) -> String {
+    let spatial: &[&str] = &["{lat}", "{lon}", "{x}", "{y}", "{z}"];
+    let has_spatial = spatial.iter().any(|v| template_url.contains(v));
+    if !has_spatial {
+        return String::new();
+    }
+    let all_values = extract_all_template_values(substituted_url, template_url);
+    let baseline = fetch_raw(substituted_url, None, &[], ttl);
+    let mut effective_dp: usize = 0;
+    for dp in 0..=15 {
+        let mut test_url = template_url.to_string();
+        for (marker, value_str) in &all_values {
+            let replacement: String = if spatial.contains(&marker.as_str()) {
+                match marker.as_str() {
+                    "{lat}" => format!("{:.lat_dp$}", 35.0, lat_dp = dp),
+                    "{lon}" => format!("{:.lon_dp$}", 139.0, lon_dp = dp),
+                    "{x}" => format!("{:.x_dp$}", 1.495978707e11, x_dp = dp),
+                    "{y}" => format!("{:.y_dp$}", 0.0, y_dp = dp),
+                    "{z}" => format!("{:.z_dp$}", 0.0, z_dp = dp),
+                    _ => format!("{:.prec$}", 0.0, prec = dp),
+                }
+            } else {
+                value_str.clone()
+            };
+            test_url = test_url.replace(marker, &replacement);
+        }
+        let body = fetch_raw(&test_url, None, &[], ttl);
+        if let (Some(b), Some(base)) = (&body, &baseline) {
+            if b != base {
+                effective_dp = dp;
+            }
+        }
+    }
+    format!("# template_precision {}dp\n", effective_dp)
+}
+
+fn probe_ttl(body: &str) -> Option<u64> {
+    let val = parse_json(body)?;
+    match val {
+        JsonVal::Arr(ref arr) if arr.len() >= 2 => {
+            let t0 = find_timestamp(&arr[0]);
+            let t1 = find_timestamp(&arr[1]);
+            match (t0, t1) {
+                (Some(a), Some(b)) if (a - b).abs() >= 1.0 => Some((a - b).abs() as u64),
+                _ => None,
+            }
+        }
+        JsonVal::Obj(ref map) => {
+            for (k, v) in map {
+                if is_time_key(k) {
+                    if json_num(v).is_some() {
+                        return Some(60);
+                    }
+                }
+            }
+            None
+        }
+        _ => None,
+    }
+}
+
+fn find_timestamp(val: &JsonVal) -> Option<f64> {
+    if let JsonVal::Obj(map) = val {
+        for (k, v) in map {
+            if is_time_key(k) {
+                if let Some(n) = json_num(v) {
+                    return Some(n);
+                }
+            }
+        }
+    }
+    None
+}
+
+fn is_coord_key(key: &str) -> bool {
+    let kl = key.to_lowercase();
+    kl == "latitude"
+        || kl == "lat"
+        || kl == "longitude"
+        || kl == "lon"
+        || kl == "lng"
+        || kl == "altitude"
+        || kl == "alt"
+        || kl == "depth"
+        || kl == "solar_lat"
+        || kl == "solar_lon"
+        || kl == "ra"
+        || kl == "dec"
+        || kl.contains("raj2000")
+        || kl.contains("dej2000")
+}
+
+fn draft_field_line(key: &str, force: &str, unit: &str, tau: f64) -> Option<String> {
+    let fid = force_id_of(force)?;
+    let kid = kernel_id_for_force(fid)?;
+    Some(format!(
+        "field {} {} {} {} {} {} 0.0 0.0\n",
+        key, key, kid, force, unit, tau
+    ))
+}
+
+fn probe_csv(raw: &str) -> Option<String> {
+    let first_header = raw.lines().find_map(|line| {
+        let trimmed = line.trim();
+        if trimmed.starts_with('#') {
+            let stripped = (if let Some(s) = trimmed.strip_prefix('#') {
+                s
+            } else {
+                trimmed
+            })
+            .trim();
+            if !stripped.is_empty() {
+                return Some(stripped);
+            }
+        }
+        None
+    })?;
+    let cols: Vec<&str> = first_header.split_whitespace().collect();
+    if cols.len() <= 5 {
+        return None;
+    }
+    let mut out = String::new();
+    for col in &cols[5..] {
+        let lower = col.to_lowercase();
+        if lower == "yy" || lower == "mm" || lower == "dd" || lower == "hh" || lower == "min" {
+            continue;
+        }
+        if is_unit_name(&lower) {
+            continue;
+        }
+        if is_drop_key(&lower) {
+            continue;
+        }
+        out.push_str(&format!("# {}\n", col));
+        let (force, unit, tau) = probe_classify(col);
+        if force != "DROP" {
+            if let Some(line) = draft_field_line(col, &force, &unit, tau) {
+                out.push_str(&line);
+            }
+        }
+    }
+    if out.is_empty() {
+        None
+    } else {
+        Some(out)
+    }
+}
+
+fn probe_classify(key: &str) -> (&str, &str, f64) {
+    let kl = key.to_lowercase();
+    if kl.contains("temp") || kl.contains("atmp") || kl.contains("wtmp") || kl.contains("dewp") {
+        ("thermal", "C", 3600.0)
+    } else if kl.contains("pres") || kl.contains("baro") {
+        ("advective", "hPa", 60.0)
+    } else if kl.contains("spd")
+        || kl.contains("gust")
+        || (kl.contains("wind") && !kl.contains("dir"))
+    {
+        ("advective", "m/s", 60.0)
+    } else if kl.contains("dir") || kl.contains("heading") {
+        ("advective", "deg", 60.0)
+    } else if kl.contains("wave") || kl.contains("wvht") || kl.contains("swell") {
+        ("acoustic", "m", 10.0)
+    } else if kl.contains("depth") {
+        ("seismic-body", "km", 10.0)
+    } else if kl.contains("flux") {
+        ("em", "W/m2", 3600.0)
+    } else if kl == "bx"
+        || kl == "by"
+        || kl == "bz"
+        || kl == "bt"
+        || kl == "dst"
+        || kl.contains("mag_")
+        || kl.contains("_b_")
+    {
+        ("em", "nT", 60.0)
+    } else if kl.contains("hum") || kl.contains("rh") || kl == "rel_hum" {
+        ("diffusion", "%", 86400.0)
+    } else if kl.contains("rain") || kl.contains("prcp") {
+        ("acoustic", "mm", 60.0)
+    } else if kl.contains("vis") {
+        ("em", "km", 60.0)
+    } else if kl.contains("co2")
+        || kl.contains("ch4")
+        || kl.contains("o3")
+        || kl.contains("no2")
+        || kl.contains("so2")
+    {
+        ("diffusion", "ppm", 86400.0)
+    } else if kl.contains("vel") || kl.contains("vlct") {
+        ("advective", "km/s", 60.0)
+    } else if kl.contains("freq") || kl.ends_with("_hz") {
+        ("em", "Hz", 60.0)
+    } else if kl.contains("dens") {
+        ("diffusion", "p/cm3", 3600.0)
+    } else if kl.contains("conc") || kl.contains("salinity") {
+        ("diffusion", "PSU", 86400.0)
+    } else if kl == "db" || kl.ends_with("_db") {
+        ("acoustic", "dB", 60.0)
+    } else if kl.contains("discharge") {
+        ("advective", "m3/s", 60.0)
+    } else if kl == "v" || kl == "s" {
+        ("gravity", "m", 3600.0)
+    } else if kl.contains("footprint") {
+        ("em", "km", 60.0)
+    } else if kl.contains("volt") || kl.contains("efield") || kl.contains("potential") {
+        ("electric", "V", 60.0)
+    } else if kl.contains("current") && !kl.contains("ocean") {
+        ("electric", "A", 60.0)
+    } else if kl.contains("conduct") {
+        ("electric", "S/m", 3600.0)
+    } else if kl.contains("sample") || kl.contains("sort") || kl.contains("order") {
+        ("DROP", "", 0.0)
+    } else if kl == "mag" || kl.contains("magnitude") {
+        ("seismic-body", "M", 3600.0)
+    } else if kl.contains("bbox") {
+        ("DROP", "", 0.0)
+    } else {
+        ("UNCERTAIN", "", 0.0)
+    }
+}
+
+fn walk_json_probe(
+    val: &JsonVal,
+    prefix: &str,
+    out: &mut String,
+    coords: &mut String,
+    map_path: &mut Option<String>,
+    budget: &mut usize,
+) {
+    match val {
+        JsonVal::Obj(map) => {
+            for (k, v) in map {
+                let path = if prefix.is_empty() {
+                    k.clone()
+                } else {
+                    format!("{}.{}", prefix, k)
+                };
+                if is_coord_key(k) {
+                    let unit = coord_unit(k);
+                    let directive = coord_directive(k);
+                    let exact = matches!(
+                        k.to_lowercase().as_str(),
+                        "lat"
+                            | "latitude"
+                            | "lon"
+                            | "lng"
+                            | "longitude"
+                            | "alt"
+                            | "altitude"
+                            | "depth"
+                    );
+                    let line = format!("{} {} {}\n", directive, path, unit);
+                    let marker = format!("{} ", directive);
+                    let existing: Option<String> = coords
+                        .lines()
+                        .find(|l| l.starts_with(&marker))
+                        .map(|l| l.to_string());
+                    match existing {
+                        None => coords.push_str(&line),
+                        Some(old) => {
+                            let old_key = old.split_whitespace().nth(1);
+                            let old_exact = old_key.map_or(false, |ok_key| {
+                                let tail = match ok_key.rfind('.') {
+                                    Some(p) => &ok_key[p + 1..],
+                                    None => ok_key,
+                                };
+                                matches!(
+                                    tail.to_lowercase().as_str(),
+                                    "lat"
+                                        | "latitude"
+                                        | "lon"
+                                        | "lng"
+                                        | "longitude"
+                                        | "alt"
+                                        | "altitude"
+                                        | "depth"
+                                )
+                            });
+                            if exact && !old_exact {
+                                *coords = coords.replace(&format!("{}\n", old), &line);
+                            }
+                        }
+                    }
+                    if k == "depth" {
+                        let (force, unit, tau) = probe_classify("depth");
+                        if force != "DROP" {
+                            if let Some(line) = draft_field_line(&path, &force, &unit, tau) {
+                                out.push_str(&line);
+                            }
+                        }
+                    }
+                } else {
+                    walk_json_probe(v, &path, out, coords, map_path, budget);
+                }
+            }
+        }
+        JsonVal::Arr(arr) => {
+            if arr.is_empty() {
+                return;
+            }
+            if prefix.ends_with(".coordinates") || prefix == "coordinates" {
+                let lon_path = if prefix.is_empty() {
+                    "coordinates.0".to_string()
+                } else {
+                    format!("{}.0", prefix)
+                };
+                let lat_path = if prefix.is_empty() {
+                    "coordinates.1".to_string()
+                } else {
+                    format!("{}.1", prefix)
+                };
+                let alt_path = if prefix.is_empty() {
+                    "coordinates.2".to_string()
+                } else {
+                    format!("{}.2", prefix)
+                };
+                let lon_line = format!("lon {} deg\n", lon_path);
+                if !coords.contains(&lon_line) {
+                    coords.push_str(&lon_line);
+                }
+                let lat_line = format!("lat {} deg\n", lat_path);
+                if !coords.contains(&lat_line) {
+                    coords.push_str(&lat_line);
+                }
+                let alt_line = format!("alt {} km\n", alt_path);
+                if !coords.contains(&alt_line) {
+                    coords.push_str(&alt_line);
+                }
+                return;
+            }
+            let first = &arr[0];
+            if matches!(first, JsonVal::Obj(_)) {
+                if map_path.is_none() {
+                    *map_path = Some(if prefix.is_empty() {
+                        ".".to_string()
+                    } else {
+                        prefix.to_string()
+                    });
+                    walk_json_probe(first, "", out, coords, map_path, budget);
+                } else {
+                    walk_json_probe(first, prefix, out, coords, map_path, budget);
+                }
+            } else {
+                for (i, v) in arr.iter().enumerate() {
+                    walk_json_probe(
+                        v,
+                        &format!("{}.{}", prefix, i),
+                        out,
+                        coords,
+                        map_path,
+                        budget,
+                    );
+                }
+            }
+        }
+        JsonVal::Num(n) => {
+            let key = match prefix.rfind('.') {
+                Some(pos) => &prefix[pos + 1..],
+                None => prefix,
+            };
+            if is_drop_key(key) || is_coord_key(key) {
+                return;
+            }
+            if *budget == 0 {
+                return;
+            }
+            *budget -= 1;
+            out.push_str(&format!("# {} = {:?}\n", prefix, n));
+            let (force, unit, tau) = probe_classify(key);
+            if force == "UNCERTAIN" {
+                out.push_str(&format!(
+                    "# uncertain field {} — force/unit undetermined, review\n",
+                    prefix
+                ));
+            } else if force != "DROP" {
+                let unit_lc = unit.to_lowercase();
+                let in_registry = force_id_of(&force)
+                    .map(|fid| allowed_units_for_force(fid).contains(&unit_lc.as_str()))
+                    .unwrap_or(false);
+                if !in_registry {
+                    out.push_str(&format!("# unit {} not in force registry — review\n", unit));
+                }
+                if let Some(line) = draft_field_line(prefix, &force, &unit, tau) {
+                    out.push_str(&line);
+                }
+            }
+        }
+        JsonVal::Str(s) => {
+            if let Ok(n) = s.parse::<f64>() {
+                let key = match prefix.rfind('.') {
+                    Some(pos) => &prefix[pos + 1..],
+                    None => prefix,
+                };
+                if is_drop_key(key) || is_coord_key(key) {
+                    return;
+                }
+                if *budget == 0 {
+                    return;
+                }
+                *budget -= 1;
+                out.push_str(&format!("# {} = {:?} (str)\n", prefix, n));
+                let (force, unit, tau) = probe_classify(key);
+                if force == "UNCERTAIN" {
+                    out.push_str(&format!(
+                        "# uncertain field {} — force/unit undetermined, review\n",
+                        prefix
+                    ));
+                } else if force != "DROP" {
+                    let unit_lc = unit.to_lowercase();
+                    let in_registry = force_id_of(&force)
+                        .map(|fid| allowed_units_for_force(fid).contains(&unit_lc.as_str()))
+                        .unwrap_or(false);
+                    if !in_registry {
+                        out.push_str(&format!("# unit {} not in force registry — review\n", unit));
+                    }
+                    if let Some(line) = draft_field_line(prefix, &force, &unit, tau) {
+                        out.push_str(&line);
+                    }
+                }
+            }
+        }
+        _ => {}
+    }
+}
+
+fn coord_unit(key: &str) -> &'static str {
+    let kl = key.to_lowercase();
+    if kl == "altitude" || kl == "alt" || kl.contains("depth") {
+        "km"
+    } else {
+        "deg"
+    }
+}
+
+fn coord_directive(key: &str) -> &'static str {
+    let kl = key.to_lowercase();
+    if kl == "altitude" || kl == "alt" || kl.contains("depth") {
+        "alt"
+    } else if kl == "ra" || kl.contains("raj2000") {
+        "ra"
+    } else if kl == "dec" || kl.contains("dej2000") {
+        "dec"
+    } else if kl.contains("lon") || kl == "lng" {
+        "lon"
+    } else {
+        "lat"
+    }
+}
+
+fn coord_precision(a: f64, b: f64) -> usize {
+    let diff = (a - b).abs();
+    if diff == 0.0 {
+        return 15;
+    }
+    let mut p = 0;
+    let mut d = diff;
+    while d < 1.0 && p < 15 {
+        d *= 10.0;
+        p += 1;
+    }
+    p
+}
+
+fn measure_precision(val: &JsonVal) -> String {
+    match val {
+        JsonVal::Arr(arr) if arr.len() >= 2 => {
+            let a = &arr[0];
+            let b = &arr[1];
+            let mut out = String::new();
+            find_coord_precisions(a, b, "", &mut out);
+            if !out.is_empty() {
+                format!("# precision {}\n", out.trim())
+            } else {
+                String::new()
+            }
+        }
+        JsonVal::Obj(map) => {
+            if let Some(features) = map.get("features") {
+                if let JsonVal::Arr(features_arr) = features {
+                    if features_arr.len() >= 2 {
+                        let a = &features_arr[0];
+                        let b = &features_arr[1];
+                        let mut out = String::new();
+                        find_coord_precisions(a, b, "", &mut out);
+                        if !out.is_empty() {
+                            format!("# precision {}\n", out.trim())
+                        } else {
+                            String::new()
+                        }
+                    } else {
+                        String::new()
+                    }
+                } else {
+                    String::new()
+                }
+            } else {
+                String::new()
+            }
+        }
+        _ => String::new(),
+    }
+}
+
+fn find_coord_precisions(a: &JsonVal, b: &JsonVal, prefix: &str, out: &mut String) {
+    match (a, b) {
+        (JsonVal::Obj(ma), JsonVal::Obj(mb)) => {
+            for (k, va) in ma {
+                if let Some(vb) = mb.get(k) {
+                    let path = if prefix.is_empty() {
+                        k.clone()
+                    } else {
+                        format!("{}.{}", prefix, k)
+                    };
+                    find_coord_precisions(va, vb, &path, out);
+                }
+            }
+        }
+        (JsonVal::Arr(aa), JsonVal::Arr(ab)) => {
+            if aa.len() >= 2 && ab.len() >= 2 && prefix.ends_with("coordinates") {
+                for i in 0..3.min(aa.len()).min(ab.len()) {
+                    if let (JsonVal::Num(na), JsonVal::Num(nb)) = (&aa[i], &ab[i]) {
+                        let p = coord_precision(*na, *nb);
+                        let label = ["lon", "lat", "alt"][i.min(2)];
+                        out.push_str(&format!("{}={}dp ", label, p));
+                    }
+                }
+            }
+        }
+        (JsonVal::Num(na), JsonVal::Num(nb)) => {
+            let p = coord_precision(*na, *nb);
+            if p < 15 {
+                let key = match prefix.rfind('.') {
+                    Some(pos) => &prefix[pos + 1..],
+                    None => prefix,
+                };
+                if is_drop_key(key) || is_coord_key(key) {
+                    return;
+                }
+                out.push_str(&format!("{}={}dp ", prefix, p));
+            }
+        }
+        (JsonVal::Str(sa), JsonVal::Str(sb)) => {
+            if let (Ok(na), Ok(nb)) = (sa.parse::<f64>(), sb.parse::<f64>()) {
+                let p = coord_precision(na, nb);
+                if p < 15 {
+                    let key = match prefix.rfind('.') {
+                        Some(pos) => &prefix[pos + 1..],
+                        None => prefix,
+                    };
+                    if is_drop_key(key) || is_coord_key(key) {
+                        return;
+                    }
+                    out.push_str(&format!("{}={}dp ", prefix, p));
+                }
+            }
+        }
+        _ => {}
+    }
+}
+fn load_sources_from(content: &str) -> Vec<SourceConfig> {
+    parse_sources(content)
+}
+
+fn load_all_sources(dir: &str) -> Vec<SourceConfig> {
+    let mut sources = Vec::new();
+    let dir_path = std::path::Path::new(dir);
+    if let Ok(entries) = std::fs::read_dir(dir_path) {
+        for e in entries.flatten() {
+            let p = e.path();
+            if p.is_dir() {
+                let is_fetch_only = p.file_name().is_some_and(|n| {
+                    let n = n.to_string_lossy();
+                    n == "research" || n == "port"
+                });
+                if is_fetch_only {
+                    continue;
+                }
+                let path_str = p.to_string_lossy().to_string();
+                sources.extend(load_all_sources(&path_str));
+            } else if p.extension().is_some_and(|x| x == "φ") {
+                if let Ok(content) = std::fs::read_to_string(&p) {
+                    sources.extend(load_sources_from(&content));
+                }
+            }
+        }
+    }
+    sources
+}
+
+fn check_empty_data(src: &SourceConfig, raw: &str, now: f64, lsk: &LeapSeconds) {
+    if let ExtractResult::Measurements(channels) = extract(src, raw, now, lsk) {
+        if channels.is_empty() {
+            report_anomaly("Empty Data", &src.url, "extract returned no measurements");
+        }
+    }
+}
+
+fn ci_mode(dir: &str) -> i32 {
+    let env = load_env();
+    let sources = if dir == "phi" {
+        match std::fs::read_to_string("phi/sources.φ") {
+            Ok(content) => load_sources_from(&content),
+            Err(e) => {
+                eprintln!("ci-mode: read phi/sources.φ: {}", e);
+                return 1;
+            }
+        }
+    } else {
+        load_all_sources(dir)
+    };
+    let mirror_enabled = dir == "phi";
+    let mut lsk: Option<LeapSeconds> = None;
+    for src in sources.iter().filter(|s| s.format == "kernel_text") {
+        if src.body.as_deref() != Some("naif0012") {
+            continue;
+        }
+        if let Some(text) = fetch_one(&src.url, None, &[], src.ttl) {
+            lsk = crate::lsk::parse(&text);
+        }
+    }
+    if lsk.is_none() {
+        if let Some(text) = fetch_one(
+            "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls",
+            None,
+            &[],
+            NAIF_LSK_TTL_SECS,
+        ) {
+            lsk = crate::lsk::parse(&text);
+        }
+    }
+    let now_tdb: Option<f64> = lsk.as_ref().and_then(|l| l.system_now_tdb());
+    let total = sources.len();
+    let mut reachable = 0usize;
+    let mut dead = 0usize;
+    let mut pending = 0usize;
+    let mut mirrored = 0u32;
+    let mut fresh = 0u32;
+    for src in &sources {
+        if src.url.starts_with("https://github.com/omegaflow/sources")
+            || src.format == "ephemeris_binary"
+            || src.format == "catalog_dastcom"
+            || src.format == "csv_zip"
+            || src.format == "kernel_text"
+        {
+            continue;
+        }
+        let headers = render_headers(&src.headers, &env);
+        if headers.iter().any(|(_, v)| secret_resolves_void(v, &env)) {
+            eprintln!("ci-mode: {} header secret void — pending", src.url);
+            pending += 1;
+            continue;
+        }
+        if url_is_fanout(&src.url) {
+            mirror_stations(src, &headers, &mut mirrored, &mut reachable, &mut dead);
+            probe_fanout(
+                src,
+                &headers,
+                &env,
+                &mut reachable,
+                &mut dead,
+                &mut mirrored,
+                &mut pending,
+            );
+            continue;
+        }
+        if url_has_template(&src.url) {
+            probe_template(
+                src,
+                &headers,
+                &env,
+                &mut reachable,
+                &mut dead,
+                &mut mirrored,
+            );
+            continue;
+        }
+        if secret_resolves_void(&src.url, &env) {
+            eprintln!("ci-mode: {} secret void — pending", src.url);
+            pending += 1;
+            continue;
+        }
+        if src.url.contains('{') {
+            let resolved = resolve_secret(&src.url, &env);
+            match fetch_raw(&resolved, None, &headers, src.ttl) {
+                Some(r) if parse_json(&r).is_some() => {
+                    reachable += 1;
+                    eprintln!("ci-mode: {} JSON ok (live-only, secret in URL)", src.url);
+                }
+                Some(_) => {
+                    eprintln!("ci-mode: {} JSON parse void", src.url);
+                    dead += 1;
+                }
+                None => {
+                    eprintln!("ci-mode: fetch returned void for {}", src.url);
+                    dead += 1;
+                }
+            }
+            continue;
+        }
+        let netloc = extract_netloc(&src.url);
+        let manifest = cdn_manifest_map();
+        let name = manifest
+            .get(&src.url)
+            .cloned()
+            .unwrap_or_else(|| source_name_from_url(&src.url));
+        let cache_path = match (&netloc, &name) {
+            (Some(nl), nm) if !nm.is_empty() => {
+                Some(format!("/tmp/archivar_cache/{}/{}.json", nl, nm))
+            }
+            _ => None,
+        };
+        if let Some(cp) = &cache_path {
+            if cache_fresh(cp, src.ttl) {
+                fresh += 1;
+                continue;
+            }
+        }
+        let raw = match fetch_raw(&src.url, None, &headers, src.ttl) {
+            Some(r) => r,
+            None => {
+                eprintln!("ci-mode: fetch returned void for {}", src.url);
+                report_anomaly("API Unreachable", &src.url, "fetch returned void");
+                dead += 1;
+                continue;
+            }
+        };
+        if parse_json(&raw).is_some() {
+            reachable += 1;
+            if let (Some(l), Some(now)) = (&lsk, now_tdb) {
+                check_empty_data(src, &raw, now, l);
+            }
+            eprintln!("ci-mode: {} JSON ok", src.url);
+            if let Some(cp) = &cache_path {
+                if let Some(parent) = std::path::Path::new(cp).parent() {
+                    let _ = std::fs::create_dir_all(parent);
+                }
+                let _ = std::fs::write(cp, &raw);
+            }
+            if mirror_enabled {
+                if let Some(netloc) = extract_netloc(&src.url) {
+                    let name = manifest
+                        .get(&src.url)
+                        .cloned()
+                        .unwrap_or_else(|| source_name_from_url(&src.url));
+                    let tmp_path = format!("/tmp/archivar_cache/{}/{}.json", netloc, name);
+                    if std::fs::write(&tmp_path, &raw).is_ok()
+                        && crate::cdn::upload_release(netloc, &tmp_path)
+                    {
+                        mirrored += 1;
+                    }
+                }
+            }
+        } else {
+            eprintln!("ci-mode: {} JSON parse void", src.url);
+            report_anomaly("Malformed Data", &src.url, "JSON parse void");
+            dead += 1;
+        }
+    }
+    eprintln!(
+        "ci-mode: {}/{} reachable, {} dead, {} pending (secret void), {} mirrored to CDN, {} fresh (local TTL), mirror={}",
+        reachable, total, dead, pending, mirrored, fresh, mirror_enabled
+    );
+    let anomalies = take_anomalies();
+    if !anomalies.is_empty() {
+        if std::env::var("GH_TOKEN").is_ok() {
+            let date = match SystemTime::now().duration_since(UNIX_EPOCH) {
+                Ok(d) => {
+                    let (y, m, d) = days_to_ymd(d.as_secs() / 86400);
+                    format!("{}-{:02}-{:02}", y, m, d)
+                }
+                Err(_) => "clock-unavailable".to_string(),
+            };
+            let title = format!("[Automated CI Report] Omegaflow Anomalies ({})", date);
+            let body = anomaly_issue_body(&anomalies);
+            match Command::new("gh")
+                .arg("issue")
+                .arg("create")
+                .arg("--repo")
+                .arg("omegaflow/omegaflow")
+                .arg("--title")
+                .arg(&title)
+                .arg("--label")
+                .arg("anomaly-report")
+                .arg("--body")
+                .arg(&body)
+                .output()
+            {
+                Ok(o) if o.status.success() => {
+                    eprintln!(
+                        "ci-mode: anomaly issue created ({} anomalies)",
+                        anomalies.len()
+                    )
+                }
+                Ok(o) => eprintln!("ci-mode: gh issue create exited {:?}", o.status.code()),
+                Err(e) => eprintln!("ci-mode: gh issue create: {}", e),
+            }
+        } else {
+            eprintln!(
+                    "ci-mode: {} anomalies, GH_TOKEN absent — the report goes to the console (no issue register)",
+                    anomalies.len()
+                );
+            for a in &anomalies {
+                eprintln!("anomaly: {} | {} | {}", a.category, a.url, a.details);
+            }
+        }
+    }
+    if dead == 0 {
+        0
+    } else {
+        1
+    }
+}
+
+fn mirror_stations(
+    src: &SourceConfig,
+    headers: &[(String, String)],
+    mirrored: &mut u32,
+    reachable: &mut usize,
+    dead: &mut usize,
+) {
+    let Some(stations_url) = &src.stations_url else {
+        return;
+    };
+    if url_has_template(stations_url) {
+        return;
+    }
+    let Some(netloc) = extract_netloc(stations_url) else {
+        return;
+    };
+    let name = source_name_from_url(stations_url);
+    let cache_path = format!("/tmp/archivar_cache/{}/{}.json", netloc, name);
+    if cache_fresh(&cache_path, src.ttl) {
+        return;
+    }
+    match fetch_raw(stations_url, None, headers, src.ttl) {
+        Some(raw) => {
+            if parse_json(&raw).is_some() {
+                *reachable += 1;
+                eprintln!("ci-mode: stations {} JSON ok", stations_url);
+                if let Some(parent) = std::path::Path::new(&cache_path).parent() {
+                    let _ = std::fs::create_dir_all(parent);
+                }
+                if std::fs::write(&cache_path, &raw).is_ok()
+                    && crate::cdn::upload_release(netloc, &cache_path)
+                {
+                    *mirrored += 1;
+                }
+            } else {
+                eprintln!("ci-mode: stations {} JSON parse void", stations_url);
+                *dead += 1;
+            }
+        }
+        None => {
+            eprintln!("ci-mode: stations fetch void {}", stations_url);
+            *dead += 1;
+        }
+    }
+}
+
+fn probe_fanout(
+    src: &SourceConfig,
+    headers: &[(String, String)],
+    env: &HashMap<String, String>,
+    reachable: &mut usize,
+    dead: &mut usize,
+    mirrored: &mut u32,
+    pending: &mut usize,
+) {
+    let Some(stations_url) = &src.stations_url else {
+        *pending += 1;
+        return;
+    };
+    let stations_url = if url_has_template(stations_url) {
+        match ci_probe_render(stations_url, frame_anchor(&src.frame), env) {
+            Some(u) => u,
+            None => {
+                *pending += 1;
+                return;
+            }
+        }
+    } else {
+        resolve_secret(stations_url, env)
+    };
+    let raw = match fetch_raw(&stations_url, None, headers, 86400) {
+        Some(r) => r,
+        None => {
+            eprintln!("ci-mode: fanout stations void {}", stations_url);
+            *dead += 1;
+            return;
+        }
+    };
+    let stations = match parse_json(&raw) {
+        Some(j) => parse_station_entries(&j, src),
+        None => parse_stations_xml(&raw),
+    };
+    let Some(first) = stations.first() else {
+        eprintln!("ci-mode: fanout no stations {}", stations_url);
+        *dead += 1;
+        return;
+    };
+    let probe_url = resolve_secret(&src.url.replace("{station}", &first.id), env)
+        .replace("{nearest_station}", &first.id);
+    let Some(netloc) = extract_netloc(&src.url) else {
+        return;
+    };
+    let tag = format!("{}-template", netloc);
+    let name = source_name_from_url(&src.url);
+    let cache_path = format!("/tmp/archivar_cache/{}/{}.json", tag, name);
+    if cache_fresh(&cache_path, src.ttl) {
+        *reachable += 1;
+        return;
+    }
+    match fetch_raw(&probe_url, None, headers, src.ttl) {
+        Some(body) => {
+            if parse_json(&body).is_some() {
+                *reachable += 1;
+                eprintln!("ci-mode: fanout probe {} JSON ok", probe_url);
+                if let Some(parent) = std::path::Path::new(&cache_path).parent() {
+                    let _ = std::fs::create_dir_all(parent);
+                }
+                if std::fs::write(&cache_path, &body).is_ok()
+                    && crate::cdn::upload_release(&tag, &cache_path)
+                {
+                    *mirrored += 1;
+                }
+            } else {
+                eprintln!("ci-mode: fanout probe {} JSON parse void", probe_url);
+                *dead += 1;
+            }
+        }
+        None => {
+            eprintln!("ci-mode: fanout probe void {}", probe_url);
+            *dead += 1;
+        }
+    }
+}
+
+fn probe_template(
+    src: &SourceConfig,
+    headers: &[(String, String)],
+    env: &HashMap<String, String>,
+    reachable: &mut usize,
+    dead: &mut usize,
+    mirrored: &mut u32,
+) {
+    let anchor = frame_anchor(&src.frame);
+    let probe_url = match ci_probe_render(&src.url, anchor, env) {
+        Some(u) => u,
+        None => return,
+    };
+    if secret_resolves_void(&probe_url, env) {
+        return;
+    }
+    let Some(netloc) = extract_netloc(&src.url) else {
+        return;
+    };
+    let tag = format!("{}-template", netloc);
+    let name = source_name_from_url(&src.url);
+    let cache_path = format!("/tmp/archivar_cache/{}/{}.json", tag, name);
+    if cache_fresh(&cache_path, src.ttl) {
+        *reachable += 1;
+        return;
+    }
+    match fetch_raw(&probe_url, None, headers, src.ttl) {
+        Some(body) => {
+            if parse_json(&body).is_some() {
+                *reachable += 1;
+                eprintln!("ci-mode: template probe {} JSON ok", probe_url);
+                if let Some(parent) = std::path::Path::new(&cache_path).parent() {
+                    let _ = std::fs::create_dir_all(parent);
+                }
+                if std::fs::write(&cache_path, &body).is_ok()
+                    && crate::cdn::upload_release(&tag, &cache_path)
+                {
+                    *mirrored += 1;
+                }
+            } else {
+                eprintln!("ci-mode: template probe {} JSON parse void", probe_url);
+                *dead += 1;
+            }
+        }
+        None => {
+            eprintln!("ci-mode: template probe void {}", probe_url);
+            *dead += 1;
+        }
+    }
+}
+
+fn cdn_manifest_for(urls: impl Iterator<Item = String>) -> HashMap<String, String> {
+    let mut map = HashMap::new();
+    let mut seen: HashMap<String, u32> = HashMap::new();
+    for url in urls {
+        if url.starts_with("https://github.com/omegaflow/sources") {
+            continue;
+        }
+        let name = source_name_from_url(&url);
+        let k = match seen.get_mut(&name) {
+            Some(n) => {
+                *n += 1;
+                *n
+            }
+            None => {
+                seen.insert(name, 1);
+                continue;
+            }
+        };
+        map.insert(url, format!("{}-{}", name, k));
+    }
+    map
+}
+
+fn cdn_manifest_map() -> &'static HashMap<String, String> {
+    static MANIFEST: OnceLock<HashMap<String, String>> = OnceLock::new();
+    MANIFEST.get_or_init(|| {
+        if let Ok(content) = std::fs::read_to_string("phi/sources.φ") {
+            let sources = load_sources_from(&content);
+            cdn_manifest_for(sources.iter().map(|s| s.url.clone()))
+        } else {
+            HashMap::new()
+        }
+    })
+}
+
+fn json_has_key_ci(val: &JsonVal, target: &str) -> bool {
+    match val {
+        JsonVal::Obj(map) => {
+            map.keys().any(|k| k.eq_ignore_ascii_case(target))
+                || map.values().any(|v| json_has_key_ci(v, target))
+        }
+        JsonVal::Arr(arr) => arr.iter().any(|v| json_has_key_ci(v, target)),
+        _ => false,
+    }
+}
+
+fn derive_frame(parsed: &JsonVal, coords: &str) -> (String, String) {
+    if coords.contains("lat ") || coords.contains("lon ") {
+        (
+            "on earth 0 0\n".to_string(),
+            "geographic coords".to_string(),
+        )
+    } else if coords.contains("ra ") || coords.contains("dec ") {
+        ("at sun\n".to_string(), "celestial coords".to_string())
+    } else if json_has_key_ci(parsed, "ra") && json_has_key_ci(parsed, "dec") {
+        ("at sun\n".to_string(), "celestial ra/dec".to_string())
+    } else {
+        ("".to_string(), "frame ausstehend".to_string())
+    }
+}
+
+fn draft_url_mode(path: &str, env: &HashMap<String, String>, fetchone: bool) -> i32 {
+    let content = match std::fs::read_to_string(path) {
+        Ok(c) => c,
+        Err(e) => {
+            eprintln!("--draft: read {}: {}", path, e);
+            return 1;
+        }
+    };
+    let urls: Vec<String> = content
+        .lines()
+        .map(|l| {
+            let t = l.trim();
+            let u = if t.starts_with("live ") || t.starts_with("candidate ") {
+                t.split_whitespace()
+                    .find(|w| w.starts_with("http"))
+                    .unwrap_or("")
+            } else {
+                t
+            };
+            u.to_string()
+        })
+        .filter(|u| u.starts_with("http"))
+        .collect();
+    let total = urls.len();
+    let out_lock = std::sync::Mutex::new(String::new());
+    let learned_lock = std::sync::Mutex::new(HashMap::<String, String>::new());
+    let drafted = std::sync::atomic::AtomicUsize::new(0);
+    let next = std::sync::atomic::AtomicUsize::new(0);
+    let workers = 8.min(total.max(1));
+    std::thread::scope(|scope| {
+        for _ in 0..workers {
+            scope.spawn(|| loop {
+                let i = next.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                if i >= total {
+                    break;
+                }
+                let url = resolve_secret(&urls[i], env);
+                let raw = if fetchone {
+                    fetch_one(&url, None, &[], 3600)
+                } else {
+                    fetch_raw_probe(&url, None, &[])
+                };
+                if let Some(body) = raw {
+                    if let Some(parsed) = parse_json(&body) {
+                        let tap_flat = tap_to_json(&parsed);
+                        let effective = tap_flat.as_ref().unwrap_or(&parsed);
+                        let mut fields = String::new();
+                        let mut coords = String::new();
+                        let mut map_path: Option<String> = None;
+                        let mut budget = 48usize;
+                        walk_json_probe(
+                            effective,
+                            "",
+                            &mut fields,
+                            &mut coords,
+                            &mut map_path,
+                            &mut budget,
+                        );
+                        let ttl = probe_ttl(&body);
+                        let (frame, reason) = derive_frame(effective, &coords);
+                        if !frame.is_empty() {
+                            if let Some(rk) = route_key(&urls[i]) {
+                                learned_lock
+                                    .lock()
+                                    .unwrap()
+                                    .entry(rk)
+                                    .or_insert_with(|| frame.trim_end().to_string());
+                            }
+                        }
+                        let mut block = format!("url {}\n", urls[i]);
+                        if let Some(t) = ttl {
+                            block.push_str(&format!("ttl {}\n", t));
+                        }
+                        if tap_flat.is_some() {
+                            block.push_str("format tap\n");
+                        }
+                        block.push_str(&frame);
+                        if let Some(ref mp) = map_path {
+                            if !coords.is_empty() {
+                                let container = if coords.contains("ra ") || coords.contains("dec ")
+                                {
+                                    "cmap"
+                                } else {
+                                    "map"
+                                };
+                                block.push_str(&format!("{} {}\n", container, mp));
+                            }
+                        }
+                        if !coords.is_empty() {
+                            block.push_str(&coords);
+                        }
+                        if !fields.is_empty() {
+                            block.push_str(&fields);
+                        }
+                        let mut out = format!("# frame: {}\n", reason);
+                        out.push_str(&block);
+                        out.push('\n');
+                        out_lock.lock().unwrap().push_str(&out);
+                        drafted.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                    }
+                }
+                std::thread::sleep(std::time::Duration::from_millis(300));
+            });
+        }
+    });
+    let drafted = drafted.load(std::sync::atomic::Ordering::Relaxed);
+    std::fs::create_dir_all("phi/pipeline").ok();
+    std::fs::write(
+        "phi/pipeline/probe_drafts.φ",
+        out_lock.into_inner().unwrap(),
+    )
+    .ok();
+    let learned = learned_lock.into_inner().unwrap();
+    eprintln!(
+        "--draft: {} Kandidaten, {} Blöcke gedraftet, {} Frames gelernt → phi/pipeline/probe_drafts.φ + phi/pipeline/frame_learned.φ",
+        total,
+        drafted,
+        learned.len()
+    );
+    learn_frames(&learned);
+    0
+}
+
+const CELESTIAL_NETLOCS: &[&str] = &[
+    "tapvizier.cds.unistra.fr",
+    "vizier.cds.unistra.fr",
+    "cds.unistra.fr",
+    "irsa.ipac.caltech.edu",
+    "dc.g-vo.org",
+    "gaia.ari.uni-heidelberg.de",
+    "exoplanetarchive.ipac.caltech.edu",
+    "heasarc.gsfc.nasa.gov",
+    "simbad.u-strasbg.fr",
+    "gea.esac.esa.int",
+    "wis-tns.org",
+    "ssd.jpl.nasa.gov",
+    "ssd-api.jpl.nasa.gov",
+    "naif.jpl.nasa.gov",
+    "archive.stsci.edu",
+    "mast.stsci.edu",
+    "archive.gemini.edu",
+    "archive.nrao.edu",
+    "skyserver.sdss.org",
+    "atnf.csiro.au",
+    "noirlab.edu",
+    "eso.org",
+    "astrocats.space",
+];
+
+fn draft_frame_guess(
+    url: &str,
+    context: &str,
+    registry: &HashMap<String, String>,
+) -> (String, String) {
+    let netloc = extract_netloc(url).unwrap_or_default();
+    for key in route_prefix_keys(url) {
+        if let Some(f) = registry.get(&key) {
+            return (format!("{}\n", f), format!("route-registry: {}", f));
+        }
+    }
+    for n in CELESTIAL_NETLOCS {
+        if netloc == *n || netloc.ends_with(n) {
+            return ("at sun\n".to_string(), "celestial netloc".to_string());
+        }
+    }
+    let lower = context.to_lowercase();
+    for w in [
+        "station",
+        "buoy",
+        "quake",
+        "earthquake",
+        "weather",
+        "wind",
+        "temperature",
+        "water",
+        "tide",
+        "sea ",
+        "ocean",
+        "snow",
+        "rain",
+        "seismic",
+        "metar",
+        "airport",
+        "pegel",
+        "air quality",
+        "hurricane",
+    ] {
+        if lower.contains(w) {
+            return (
+                "on earth 0 0\n".to_string(),
+                format!("terrestrial vocab: {}", w.trim()),
+            );
+        }
+    }
+    ("".to_string(), "frame ausstehend".to_string())
+}
+
+fn build_frame_registry() -> HashMap<String, String> {
+    let mut map: HashMap<String, String> = HashMap::new();
+    for path in [
+        "phi/sources.φ",
+        "phi/dead_sources.φ",
+        "phi/blocked_sources.φ",
+    ] {
+        let Ok(content) = std::fs::read_to_string(path) else {
+            continue;
+        };
+        let mut cur_url: Option<String> = None;
+        for line in content.lines() {
+            let t = line.trim();
+            if let Some(rest) = t.strip_prefix("url ") {
+                cur_url = Some(rest.trim().to_string());
+            } else if let Some(url) = &cur_url {
+                if t.starts_with("on ") {
+                    if let Some(rk) = route_key(url) {
+                        map.entry(rk).or_insert_with(|| "on earth".to_string());
+                    }
+                } else if let Some(rest) = t.strip_prefix("at ") {
+                    let body = rest.split_whitespace().next().unwrap_or("sun");
+                    if let Some(rk) = route_key(url) {
+                        map.entry(rk).or_insert_with(|| format!("at {}", body));
+                    }
+                }
+            }
+        }
+    }
+    if let Ok(content) = std::fs::read_to_string("phi/pipeline/frame_learned.φ") {
+        for line in content.lines() {
+            let t = line.trim();
+            if t.is_empty() || t.starts_with('#') {
+                continue;
+            }
+            if let Some((nl, frame)) = t.split_once('|') {
+                let nl = nl.trim();
+                let frame = frame.trim();
+                if !nl.is_empty() && !frame.is_empty() {
+                    map.entry(nl.to_string())
+                        .or_insert_with(|| frame.to_string());
+                }
+            }
+        }
+    }
+    map
+}
+
+fn learn_frames(new: &HashMap<String, String>) {
+    let mut map: HashMap<String, String> = HashMap::new();
+    if let Ok(content) = std::fs::read_to_string("phi/pipeline/frame_learned.φ") {
+        for line in content.lines() {
+            let t = line.trim();
+            if t.is_empty() || t.starts_with('#') {
+                continue;
+            }
+            if let Some((nl, frame)) = t.split_once('|') {
+                map.insert(nl.trim().to_string(), frame.trim().to_string());
+            }
+        }
+    }
+    for (nl, frame) in new {
+        map.entry(nl.to_string())
+            .or_insert_with(|| frame.to_string());
+    }
+    let mut out = String::from(
+            "# frame-learned — Route (host/Pfad, Query gestrippt) → frame, selbstlernend aus Probe-Antworten (--draft)\n",
+        );
+    let mut keys: Vec<(&String, &String)> = map.iter().collect();
+    keys.sort();
+    for (nl, frame) in keys {
+        out.push_str(&format!("{} | {}\n", nl, frame));
+    }
+    std::fs::create_dir_all("phi/pipeline").ok();
+    if std::fs::write("phi/pipeline/frame_learned.φ", out).is_err() {
+        eprintln!("write phi/pipeline/frame_learned.φ: the register does not remember");
+    }
+}
+
+fn draft_context_mode(path: &str) -> i32 {
+    let drafts = match std::fs::read_to_string(path) {
+        Ok(c) => c,
+        Err(e) => {
+            eprintln!("--draft-context: read {}: {}", path, e);
+            return 1;
+        }
+    };
+    let mut context_map: HashMap<String, String> = HashMap::new();
+    for dir in ["phi/pipeline/katalog", "phi/pipeline"] {
+        if let Ok(rd) = std::fs::read_dir(dir) {
+            for e in rd.flatten() {
+                let name = e.file_name().to_string_lossy().to_string();
+                let relevant = (dir == "phi/pipeline/katalog" && name.ends_with(".φ"))
+                    || (dir == "phi/pipeline"
+                        && name.starts_with("weights_")
+                        && name.ends_with(".txt"));
+                if !relevant {
+                    continue;
+                }
+                if let Ok(c) = std::fs::read_to_string(e.path()) {
+                    for l in c.lines() {
+                        let t = l.trim();
+                        if let Some(pos) = t.find("http") {
+                            let u = t[pos..]
+                                .split_whitespace()
+                                .next()
+                                .unwrap_or("")
+                                .trim_end_matches(|ch| ch == ',' || ch == '|' || ch == ';');
+                            if u.starts_with("http") {
+                                context_map
+                                    .entry(u.to_string())
+                                    .or_insert_with(|| t.to_string());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    let registry = build_frame_registry();
+    let mut reg = String::from(
+            "# frame-registry — Route (host/Pfad, Query gestrippt) → frame, selbstlernend aus sources.φ + dead_sources.φ + blocked_sources.φ + frame_learned.φ\n",
+        );
+    let mut reg_keys: Vec<(&String, &String)> = registry.iter().collect();
+    reg_keys.sort();
+    for (nl, f) in reg_keys {
+        reg.push_str(&format!("{} | {}\n", nl, f));
+    }
+    if std::fs::write("phi/pipeline/frame_registry.φ", reg).is_err() {
+        eprintln!("write phi/pipeline/frame_registry.φ: the register does not remember");
+    }
+    let mut out = String::new();
+    let mut celestial = 0usize;
+    let mut terrestrial = 0usize;
+    let mut pending = 0usize;
+    for block in drafts.split("\n\n") {
+        let b = block.trim();
+        if b.is_empty() {
+            continue;
+        }
+        let mut url = "";
+        let mut is_pending = false;
+        for l in b.lines() {
+            if l.starts_with("url ") {
+                url = l.trim_start_matches("url ").trim();
+            }
+            if l == "# frame: frame ausstehend" {
+                is_pending = true;
+            }
+        }
+        if !is_pending || url.is_empty() {
+            out.push_str(b);
+            out.push_str("\n\n");
+            continue;
+        }
+        let context = context_map.get(url).cloned().unwrap_or_default();
+        let (frame, reason) = draft_frame_guess(url, &context, &registry);
+        if frame.is_empty() {
+            pending += 1;
+            out.push_str(b);
+            out.push_str("\n\n");
+            continue;
+        }
+        let mut lines: Vec<String> = Vec::new();
+        for l in b.lines() {
+            if l == "# frame: frame ausstehend" {
+                lines.push(format!("# frame: {}", reason));
+                continue;
+            }
+            lines.push(l.to_string());
+            if l.starts_with("ttl ") {
+                lines.push(frame.trim_end().to_string());
+            }
+        }
+        if frame.starts_with("at sun") {
+            celestial += 1;
+        } else {
+            terrestrial += 1;
+        }
+        out.push_str(&lines.join("\n"));
+        out.push_str("\n\n");
+    }
+    std::fs::create_dir_all("phi/pipeline").ok();
+    if std::fs::write("phi/pipeline/probe_drafts_enriched.φ", out).is_err() {
+        eprintln!("write phi/pipeline/probe_drafts_enriched.φ: the register does not remember");
+    }
+    eprintln!(
+            "--draft-context: {} ausstehend → {} celestial, {} terrestrial, {} bleiben ausstehend → phi/pipeline/probe_drafts_enriched.φ",
+            celestial + terrestrial + pending,
+            celestial,
+            terrestrial,
+            pending
+        );
+    0
+}
+
+fn gate_learn_mode() -> i32 {
+    let mut delta: Vec<(i32, String, String)> = Vec::new();
+    let mut seen: std::collections::HashSet<String> = std::collections::HashSet::new();
+    if let Ok(content) = std::fs::read_to_string("phi/sources.φ") {
+        for line in content.lines() {
+            let t = line.trim();
+            if let Some(rest) = t.strip_prefix("url ") {
+                if let Some(nl) = extract_netloc(rest.trim()) {
+                    if seen.insert(format!("+{}", nl)) {
+                        delta.push((4, "-".to_string(), nl.to_string()));
+                    }
+                }
+            }
+        }
+    }
+    if let Ok(content) = std::fs::read_to_string("phi/dead_sources.φ") {
+        for line in content.lines() {
+            let t = line.trim();
+            if let Some(rest) = t.strip_prefix("url ") {
+                if let Some(nl) = extract_netloc(rest.trim()) {
+                    if seen.insert(format!("-{}", nl)) {
+                        delta.push((-4, "-".to_string(), nl.to_string()));
+                    }
+                }
+            }
+        }
+    }
+    if let Ok(content) = std::fs::read_to_string("phi/blocked_sources.φ") {
+        for line in content.lines() {
+            let t = line.trim();
+            if let Some(rest) = t.strip_prefix("url ") {
+                if let Some(nl) = extract_netloc(rest.trim()) {
+                    if seen.insert(format!("b{}", nl)) {
+                        delta.push((-2, "b".to_string(), nl.to_string()));
+                    }
+                }
+            }
+        }
+    }
+    let (mut pos, mut neg) = (0usize, 0usize);
+    for (w, _, _) in &delta {
+        if *w > 0 {
+            pos += 1;
+        } else {
+            neg += 1;
+        }
+    }
+    let mut d = String::from(
+            "# gate-delta — netloc-Gewichte, selbstlernend aus sources.φ (+) + dead_sources.φ (−) + blocked_sources.φ (b)\n",
+        );
+    for (w, f, tag) in &delta {
+        d.push_str(&format!("{} {} {}\n", w, f, tag));
+    }
+    if std::fs::write("phi/pipeline/library_gate_delta.φ", d).is_err() {
+        eprintln!("write phi/pipeline/library_gate_delta.φ: the register does not remember");
+    }
+    let library = std::fs::read_to_string("phi/pipeline/library.φ").unwrap_or_default();
+    let delta_lines: Vec<String> = delta
+        .iter()
+        .map(|(w, f, tag)| format!("{} {} {}", w, f, tag))
+        .collect();
+    let mut seen2: std::collections::HashSet<String> = std::collections::HashSet::new();
+    let mut out = String::new();
+    for line in library
+        .lines()
+        .chain(delta_lines.iter().map(|s| s.as_str()))
+    {
+        if line.starts_with('#') {
+            out.push_str(line);
+            out.push('\n');
+            continue;
+        }
+        let parts: Vec<&str> = line.splitn(3, char::is_whitespace).collect();
+        if parts.len() < 3 {
+            continue;
+        }
+        if seen2.insert(parts[2].to_string()) {
+            out.push_str(line);
+            out.push('\n');
+        }
+    }
+    if std::fs::write("phi/pipeline/library.φ", out).is_err() {
+        eprintln!("write phi/pipeline/library.φ: the register does not remember");
+    }
+    eprintln!(
+            "--learn-gate: {} netloc-Gewichte ({} positiv, {} negativ) → library.φ + library_gate_delta.φ",
+            delta.len(),
+            pos,
+            neg
+        );
+    0
+}
+
+fn url_probe_mode(path: &str, env: &HashMap<String, String>, fetchone: bool, jina: bool) -> i32 {
+    let content = match std::fs::read_to_string(path) {
+        Ok(c) => c,
+        Err(e) => {
+            eprintln!("--urls: read {}: {}", path, e);
+            return 1;
+        }
+    };
+    let urls: Vec<String> = content
+        .lines()
+        .map(|l| {
+            let t = l.trim();
+            let u = if t.starts_with("candidate ") {
+                t.trim_start_matches("candidate ")
+            } else {
+                t
+            };
+            u.split_whitespace().next().unwrap_or("").to_string()
+        })
+        .filter(|u| u.starts_with("http"))
+        .collect();
+    let total = urls.len();
+    let live = std::sync::atomic::AtomicUsize::new(0);
+    let void = std::sync::atomic::AtomicUsize::new(0);
+    let live_lock = std::sync::Mutex::new(String::new());
+    let void_lock = std::sync::Mutex::new(String::new());
+    let jina_lock = std::sync::Mutex::new(Vec::<String>::new());
+    let next = std::sync::atomic::AtomicUsize::new(0);
+    let workers = 8.min(total.max(1));
+    std::thread::scope(|scope| {
+        for _ in 0..workers {
+            scope.spawn(|| loop {
+                let i = next.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                if i >= total {
+                    break;
+                }
+                let url = resolve_secret(&urls[i], env);
+                let raw = if fetchone {
+                    fetch_one(&url, None, &[], 3600)
+                } else {
+                    fetch_raw_probe(&url, None, &[])
+                };
+                match raw {
+                    Some(body) => {
+                        let kind = if parse_json(&body).is_some() {
+                            "json"
+                        } else if body.trim_start().starts_with('<') {
+                            "html"
+                        } else {
+                            "text"
+                        };
+                        live.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                        live_lock
+                            .lock()
+                            .unwrap()
+                            .push_str(&format!("live {} | {}\n", kind, urls[i]));
+                        if jina && kind != "json" {
+                            jina_lock.lock().unwrap().push(urls[i].clone());
+                        }
+                    }
+                    None => {
+                        void.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                        void_lock
+                            .lock()
+                            .unwrap()
+                            .push_str(&format!("void {}\n", urls[i]));
+                    }
+                }
+                std::thread::sleep(std::time::Duration::from_millis(300));
+            });
+        }
+    });
+    let live = live.load(std::sync::atomic::Ordering::Relaxed);
+    let void = void.load(std::sync::atomic::Ordering::Relaxed);
+    std::fs::create_dir_all("phi/pipeline").ok();
+    std::fs::write(
+        "phi/pipeline/probe_live.txt",
+        live_lock.into_inner().unwrap(),
+    )
+    .ok();
+    std::fs::write(
+        "phi/pipeline/probe_url_void.txt",
+        void_lock.into_inner().unwrap(),
+    )
+    .ok();
+    let mut jina_report = 0usize;
+    if jina {
+        let candidates = jina_lock.into_inner().unwrap();
+        let jina_out = std::sync::Mutex::new(String::new());
+        let jn = std::sync::atomic::AtomicUsize::new(0);
+        let n_cand = candidates.len();
+        let jina_key = env.get("JINA_API_KEY").cloned().unwrap_or_default();
+        let jina_headers: Vec<(String, String)> = if jina_key.is_empty() {
+            Vec::new()
+        } else {
+            vec![("Authorization".to_string(), format!("Bearer {}", jina_key))]
+        };
+        let j_workers = 4.min(n_cand.max(1));
+        let j_pacing = if jina_key.is_empty() { 4000u64 } else { 500u64 };
+        std::thread::scope(|scope| {
+            for _ in 0..j_workers {
+                scope.spawn(|| loop {
+                    let i = jn.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                    if i >= n_cand {
+                        break;
+                    }
+                    let wrapped = format!("https://r.jina.ai/{}", candidates[i]);
+                    let body = fetch_raw_probe(&wrapped, None, &jina_headers);
+                    if let Some(b) = body {
+                        if parse_json(&b).is_some() {
+                            jina_out
+                                .lock()
+                                .unwrap()
+                                .push_str(&format!("jina-json | {}\n", candidates[i]));
+                        }
+                    }
+                    std::thread::sleep(std::time::Duration::from_millis(j_pacing));
+                });
+            }
+        });
+        let out = jina_out.into_inner().unwrap();
+        jina_report = out.lines().count();
+        std::fs::write("phi/pipeline/probe_jina.txt", out).ok();
+    }
+    eprintln!(
+        "--urls: {} geprüft, {} live, {} void, {} jina-json → phi/pipeline/probe_live.txt + probe_url_void.txt + probe_jina.txt",
+        total, live, void, jina_report
+    );
+    0
+}
+
+fn serial_ports() -> Vec<String> {
+    let mut out = Vec::new();
+    let Ok(entries) = std::fs::read_dir("/dev") else {
+        return out;
+    };
+    for entry in entries.flatten() {
+        let name = entry.file_name().to_string_lossy().to_string();
+        if name.starts_with("ttyACM") || name.starts_with("ttyUSB") {
+            out.push(format!("/dev/{}", name));
+        }
+    }
+    out
+}
+
+fn serial_ingress(tx: mpsc::Sender<Vec<(String, f64, f64)>>) {
+    loop {
+        for name in serial_ports() {
+            let mut port = match serialport::new(&name, 115_200)
+                .timeout(std::time::Duration::from_millis(50))
+                .open()
+            {
+                Ok(p) => p,
+                Err(_) => continue,
+            };
+            let mut line = String::new();
+            let mut buf = [0u8; 256];
+            let mut batch: Vec<(String, f64, f64)> = Vec::new();
+            loop {
+                let n = match port.read(&mut buf) {
+                    Ok(n) if n > 0 => n,
+                    _ => break,
+                };
+                for b in &buf[..n] {
+                    if *b == b'\n' {
+                        if let Some((k, v)) = line.split_once('=') {
+                            if let Ok(val) = v.trim().parse::<f64>() {
+                                batch.push((k.trim().to_string(), val, 0.0));
+                            }
+                        }
+                        line.clear();
+                        if batch.len() >= 64 {
+                            let _ = tx.send(batch);
+                            batch = Vec::new();
+                        }
+                    } else {
+                        line.push(*b as char);
+                    }
+                    if line.len() > 256 {
+                        line.clear();
+                    }
+                }
+            }
+            if !batch.is_empty() {
+                let _ = tx.send(batch);
+            }
+        }
+        thread::sleep(std::time::Duration::from_secs(5));
+    }
+}
+
+fn battery_ingress(tx: mpsc::Sender<Vec<(String, f64, f64)>>) {
+    loop {
+        let mut batch: Vec<(String, f64, f64)> = Vec::new();
+        if let Ok(entries) = std::fs::read_dir("/sys/class/power_supply") {
+            for entry in entries.flatten() {
+                let path = entry.path();
+                let read_num = |name: &str| -> Option<f64> {
+                    std::fs::read_to_string(path.join(name))
+                        .ok()
+                        .and_then(|s| s.trim().parse::<f64>().ok())
+                };
+                let capacity = read_num("capacity");
+                let voltage = read_num("voltage_now").map(|v| v / 1e6);
+                let current = read_num("current_now").map(|a| a / 1e6);
+                let status = std::fs::read_to_string(path.join("status")).unwrap_or_default();
+                if let Some(c) = capacity {
+                    batch.push(("battery.level".to_string(), c, 60.0));
+                }
+                if let Some(v) = voltage {
+                    batch.push(("battery.voltage".to_string(), v, 60.0));
+                }
+                if let Some(a) = current {
+                    batch.push(("battery.current".to_string(), a, 10.0));
+                }
+                if status.trim() == "Charging" {
+                    batch.push(("battery.charging".to_string(), 1.0, 60.0));
+                }
+            }
+        }
+        if !batch.is_empty() {
+            let _ = tx.send(batch);
+        }
+        thread::sleep(std::time::Duration::from_secs(5));
+    }
+}
+
+pub fn main_flow() {
+    let env = Arc::new(load_env());
+    {
+        let args: Vec<String> = std::env::args().collect();
+        if args.len() > 1 && args[1] == "--verify" {
+            let dir = match args.get(2) {
+                Some(s) => s.as_str(),
+                None => {
+                    eprintln!("--verify: directory argument absent");
+                    std::process::exit(1);
+                }
+            };
+            ANOMALY_COLLECT.with(|c| c.set(true));
+            std::process::exit(ci_mode(dir));
+        }
+        if args.len() > 1 && args[1] == "--port" {
+            let input = match args.get(2) {
+                Some(s) => s.as_str(),
+                None => {
+                    eprintln!("--port: input file argument absent");
+                    std::process::exit(1);
+                }
+            };
+            let output = match args.get(3) {
+                Some(s) => s.as_str(),
+                None => {
+                    eprintln!("--port: output file argument absent");
+                    std::process::exit(1);
+                }
+            };
+            std::process::exit(port_mode(input, output));
+        }
+        if args.len() > 1 && args[1] == "--learn-gate" {
+            std::process::exit(gate_learn_mode());
+        }
+        if args.len() > 1 && args[1] == "--draft-context" {
+            let path = match args.get(2) {
+                Some(s) => s.as_str(),
+                None => {
+                    eprintln!("--draft-context: file argument absent");
+                    std::process::exit(1);
+                }
+            };
+            std::process::exit(draft_context_mode(path));
+        }
+        if args.len() > 1 && args[1] == "--draft" {
+            let path = match args.get(2) {
+                Some(s) => s.as_str(),
+                None => {
+                    eprintln!("--draft: file argument absent");
+                    std::process::exit(1);
+                }
+            };
+            let fetchone = args.iter().any(|a| a == "--fetchone");
+            std::process::exit(draft_url_mode(path, &env, fetchone));
+        }
+        if args.len() > 1 && args[1] == "--urls" {
+            let path = match args.get(2) {
+                Some(s) => s.as_str(),
+                None => {
+                    eprintln!("--urls: file argument absent");
+                    std::process::exit(1);
+                }
+            };
+            let fetchone = args.iter().any(|a| a == "--fetchone");
+            let jina = args.iter().any(|a| a == "--jina");
+            std::process::exit(url_probe_mode(path, &env, fetchone, jina));
+        }
+        if args.len() > 1 && args[1] == "--probe" {
+            let path = match args.get(2) {
+                Some(s) => s.as_str(),
+                None => {
+                    eprintln!("--probe: file argument absent");
+                    std::process::exit(1);
+                }
+            };
+            let precise = args.iter().any(|a| a == "--precise");
+            let fetchone = args.iter().any(|a| a == "--fetchone");
+            let mut lat = 0.0;
+            let mut lon = 0.0;
+            let mut i = 2;
+            while i < args.len() {
+                if args[i] == "--lat" {
+                    if let Some(v) = args.get(i + 1).and_then(|s| s.parse::<f64>().ok()) {
+                        lat = v;
+                        i += 1;
+                    }
+                } else if args[i] == "--lon" {
+                    if let Some(v) = args.get(i + 1).and_then(|s| s.parse::<f64>().ok()) {
+                        lon = v;
+                        i += 1;
+                    }
+                }
+                i += 1;
+            }
+            std::process::exit(probe_mode(path, precise, lat, lon, &env, fetchone));
+        }
+    }
+    let declared_body: Option<DeclaredBody> = std::env::args().skip(1).find_map(|a| {
+        let rest = a.strip_prefix("#body=")?;
+        let parts: Vec<&str> = rest.split(',').collect();
+        if parts.len() < 3 {
+            return None;
+        }
+        let lat: f64 = parts[1].parse().ok()?;
+        let lon: f64 = parts[2].parse().ok()?;
+        let alt: Option<f64> = parts.get(3).and_then(|s| s.parse().ok());
+        Some(DeclaredBody {
+            body_name: parts[0].to_string(),
+            lat,
+            lon,
+            alt,
+        })
+    });
+    if declared_body.is_none() {
+        eprintln!(
+                "native body undeclared — station samples refused (declare via #body=<body>,<lat>,<lon>,<alt>)"
+            );
+    }
+    let loaded = load_sources();
+    let (sensor_tx, sensor_rx) = mpsc::channel::<Vec<(String, f64, f64)>>();
+    let consent = Arc::new(AtomicBool::new(false));
+    eprintln!("record consent: press Y (record) or N (silent) in the membrane window");
+    let serial_tx = sensor_tx.clone();
+    thread::spawn(move || serial_ingress(serial_tx));
+    let battery_tx = sensor_tx.clone();
+    thread::spawn(move || battery_ingress(battery_tx));
+    #[cfg(feature = "browser_relay")]
+    let port: u16 = match std::env::var("PORT").ok().and_then(|s| s.parse().ok()) {
+        Some(p) => p,
+        None => crate::relay::PORT_CONST,
+    };
+    let (fetch_tx, fetch_rx) = mpsc::channel::<FetchResult>();
+    #[cfg(feature = "browser_relay")]
+    let (osc_tx, osc_rx) = mpsc::channel::<Vec<Oscillator>>();
+    #[cfg(not(feature = "browser_relay"))]
+    let osc_rx = mpsc::channel::<Vec<Oscillator>>().1;
+    let (presence_tx, presence_rx) = mpsc::channel::<(String, f64, f64, f64, f64, f64)>();
+    let body_ephemerides = Arc::new(HashMap::new());
+    #[cfg(feature = "browser_relay")]
+    let index_html = match std::fs::read(resolve_asset("static/index.html")) {
+        Ok(v) => v,
+        Err(_) => {
+            eprintln!("static/index.html absent — serving 0 bytes");
+            Vec::new()
+        }
+    };
+    #[cfg(feature = "browser_relay")]
+    let constants_js = match std::fs::read(resolve_asset("static/constants.js")) {
+        Ok(v) => v,
+        Err(_) => {
+            eprintln!("static/constants.js absent — browser protocol empty");
+            Vec::new()
+        }
+    };
+    let time: Arc<Mutex<Option<LeapSeconds>>> = Arc::new(Mutex::new(None));
+    let mut archive = Archive {
+        sources: loaded,
+        body_ephemerides: body_ephemerides.clone(),
+        field: Arc::new(build_buffer(
+            Vec::new(),
+            1.0,
+            body_ephemerides.clone(),
+            None,
+            None,
+            None,
+            None,
+            None,
+            Vec::new(),
+        )),
+        presence: HashMap::new(),
+        declared_body,
+        origins: HashMap::new(),
+        pck_bodies: HashMap::new(),
+        time: time.clone(),
+        asteroids: None,
+        stars: None,
+        occluders: None,
+        planets: None,
+        curves: None,
+        spectral: Vec::new(),
+        pending_channels: Vec::new(),
+    };
+    let body_names: Arc<Vec<String>> = {
+        let mut names: Vec<String> = archive
+            .sources
+            .iter()
+            .filter(|s| s.format != "kernel_text")
+            .filter_map(|s| s.body.clone())
+            .collect();
+        names.sort();
+        names.dedup();
+        Arc::new(names)
+    };
+    let mut radiators: Vec<Box<dyn Radiator>> = Vec::new();
+    #[cfg(feature = "browser_relay")]
+    let presence_relay_tx = presence_tx.clone();
+    let (audio_tx, audio_rx) = mpsc::channel::<crate::mathematikerin::AudioFrame>();
+    let (surface_tx, surface_rx) = mpsc::channel::<crate::mathematikerin::SurfaceFrame>();
+    let mut surfaces: Vec<Box<dyn crate::mathematikerin::SurfaceRadiator>> = Vec::new();
+    if let Ok(port) = std::env::var("OMEGAFLOW_SERIAL_OUT") {
+        surfaces.push(Box::new(crate::mathematikerin::SerialSurface::new(&port)));
+    }
+    thread::spawn(move || {
+        while let Ok(frame) = surface_rx.recv() {
+            for s in surfaces.iter_mut() {
+                s.surface(&frame);
+            }
+        }
+    });
+    let mr = crate::mathematikerin::MathematikerinRadiator::new(
+        presence_tx,
+        sensor_tx.clone(),
+        body_names.clone(),
+        time.clone(),
+        consent.clone(),
+        audio_tx,
+        surface_tx,
+    );
+    let mr_shutdown = mr.shutdown_flag();
+    radiators.push(Box::new(mr));
+    #[cfg(feature = "browser_relay")]
+    {
+        let sr = crate::relay::TcpRadiator::new(
+            port,
+            body_names.clone(),
+            archive.field.clone(),
+            index_html.clone(),
+            constants_js.clone(),
+            osc_tx.clone(),
+            presence_relay_tx,
+            time.clone(),
+            consent.clone(),
+        );
+        radiators.push(Box::new(sr));
+    }
+    let _audio = AudioRadiator::new(audio_rx);
+    radiators.push(Box::new(StderrRadiator {
+        last_line: String::new(),
+        interactive: std::io::stderr().is_terminal(),
+    }));
+    let cadence = 1.0;
+    let mut gm_text: Option<String> = None;
+    let mut pck_text: Option<String> = None;
+    let bootstrap_running: std::sync::Arc<std::sync::atomic::AtomicBool> =
+        std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false));
+    spawn_ephemeris_bootstrap(&archive.sources, &bootstrap_running);
+    let mut last_bootstrap: f64 = 0.0;
+    let mut tick: u64 = 0;
+    loop {
+        tick += 1;
+        if mr_shutdown.load(Ordering::SeqCst) {
+            eprintln!("the window closed — the ω-loop ends");
+            break;
+        }
+        for i in 0..archive.sources.len() {
+            if archive.sources[i].format != "kernel_text" {
+                continue;
+            }
+            let Some(kernel_body) = archive.sources[i].body.clone() else {
+                continue;
+            };
+            let url = archive.sources[i].url.clone();
+            let ttl = archive.sources[i].ttl;
+            let cache_path = format!("/tmp/omegaflow_kernel_{}.txt", kernel_body);
+            if !cache_fresh(&cache_path, ttl) {
+                let Some(text) = fetch_one(&url, None, &[], ttl) else {
+                    continue;
+                };
+                if std::fs::write(&cache_path, text.as_bytes()).is_err() {
+                    continue;
+                }
+            }
+            let Ok(text) = std::fs::read_to_string(&cache_path) else {
+                continue;
+            };
+            match kernel_body.as_str() {
+                "gm_de440" => gm_text = Some(text),
+                "pck00010" | "geophysical" => {
+                    pck_text = Some(match pck_text {
+                        Some(prev) => prev + "\n" + &text,
+                        None => text,
+                    });
+                }
+                "naif0012" => {
+                    if let Some(l) = crate::lsk::parse(&text) {
+                        if let Ok(mut guard) = archive.time.lock() {
+                            *guard = Some(l);
+                        }
+                    }
+                }
+                _ => {}
+            }
+            archive.pck_bodies = crate::pck::parse(gm_text.as_deref(), pck_text.as_deref());
+        }
+        let lsk = match leap_seconds(&archive.time) {
+            Some(l) => l,
+            None => {
+                thread::sleep(std::time::Duration::from_secs_f64(cadence));
+                continue;
+            }
+        };
+        let now = match lsk.system_now_tdb() {
+            Some(t) => t,
+            None => {
+                thread::sleep(std::time::Duration::from_secs_f64(cadence));
+                continue;
+            }
+        };
+        if tick & 63 == 0 {
+            let mut missing_ttl: Option<f64> = None;
+            for s in &archive.sources {
+                if s.format != "ephemeris_binary" {
+                    continue;
+                }
+                let Some(body) = &s.body else {
+                    continue;
+                };
+                let tmp_path = format!("/tmp/omegaflow_eph_{}.bin", body);
+                if cache_fresh(&tmp_path, s.ttl)
+                    || archive
+                        .body_ephemerides
+                        .get(body)
+                        .and_then(|e| e.props.as_ref())
+                        .is_some()
+                {
+                    continue;
+                }
+                missing_ttl = Some(s.ttl as f64);
+                break;
+            }
+            if let Some(ttl) = missing_ttl {
+                if now - last_bootstrap >= ttl / (Φ * Φ) {
+                    last_bootstrap = now;
+                    spawn_ephemeris_bootstrap(&archive.sources, &bootstrap_running);
+                }
+            }
+        }
+        let mut fetched_oscillators: Vec<Oscillator> = Vec::new();
+        {
+            let mut still_pending: Vec<(Channel, FieldConfig, u32)> = Vec::new();
+            for (channel, sensor, idx) in archive.pending_channels.drain(..) {
+                let src = &archive.sources[idx as usize];
+                match anchor(
+                    &channel,
+                    &sensor,
+                    src.ttl as f64,
+                    Some(idx),
+                    Some(&src.frame),
+                    None,
+                    &archive.body_ephemerides,
+                ) {
+                    Some(osc) => fetched_oscillators.push(osc),
+                    None => still_pending.push((channel, sensor, idx)),
+                }
+            }
+            if !still_pending.is_empty() {
+                eprintln!(
+                    "{} channels waiting for body ephemerides — anchored on arrival",
+                    still_pending.len()
+                );
+            }
+            archive.pending_channels = still_pending;
+        }
+        let mut dropped_channels: Vec<(Channel, FieldConfig, u32)> = Vec::new();
+        while let Ok(res) = fetch_rx.try_recv() {
+            archive
+                .origins
+                .entry(res.source_idx as u32)
+                .or_insert(OriginState {
+                    fetched: now,
+                    prev_epoch: now,
+                    prev_abs: [0.0, 0.0, 0.0],
+                    prev_motion: None,
+                    resid_ema: 0.0,
+                    has_prev: false,
+                })
+                .fetched = now;
+            if let Some((name, eph)) = res.eph_update {
+                let mut eph_map = (*archive.body_ephemerides).clone();
+                eph_map.insert(name, eph);
+                archive.body_ephemerides = Arc::new(eph_map);
+            }
+            if let Some(hash) = res.asteroid_hash {
+                archive.asteroids = Some(hash);
+            }
+            if let Some(hash) = res.star_hash {
+                archive.stars = Some(hash);
+            }
+            if let Some(occluders) = res.occluders {
+                archive.occluders = Some(occluders);
+            }
+            if let Some(planets) = res.planets {
+                archive.planets = Some(planets);
+            }
+            if let Some(curves) = res.curves {
+                archive.curves = Some(curves);
+            }
+            if let Some(hash) = res.spectral {
+                archive.spectral.retain(|h| h.name != hash.name);
+                archive.spectral.push(hash);
+            }
+            let src = &archive.sources[res.source_idx];
+            for (channel, sensor) in &res.channels {
+                let track_origin = matches!(channel.position, Position::Source)
+                    || matches!(channel.position, Position::StateVector { track: true, .. });
+                if let Some(osc) = anchor(
+                    channel,
+                    sensor,
+                    src.ttl as f64,
+                    Some(res.source_idx as u32),
+                    Some(&src.frame),
+                    if track_origin {
+                        archive.origins.get_mut(&(res.source_idx as u32))
+                    } else {
+                        None
+                    },
+                    &archive.body_ephemerides,
+                ) {
+                    fetched_oscillators.push(osc);
+                } else {
+                    let eph_missing = match &channel.position {
+                        Position::Surface { body_name, .. }
+                        | Position::SurfaceFlow { body_name, .. } => archive
+                            .body_ephemerides
+                            .get(body_name.as_str())
+                            .and_then(|e| e.props.as_ref())
+                            .is_none(),
+                        Position::Source => match &src.frame {
+                            Frame::Surface { body_name, .. }
+                            | Frame::Barycenter { body_name, .. } => archive
+                                .body_ephemerides
+                                .get(body_name.as_str())
+                                .and_then(|e| e.props.as_ref())
+                                .is_none(),
+                            Frame::Manifest => false,
+                        },
+                        Position::StateVector { .. } => false,
+                    };
+                    if eph_missing {
+                        dropped_channels.push((
+                            channel.clone(),
+                            sensor.clone(),
+                            res.source_idx as u32,
+                        ));
+                    }
+                }
+            }
+        }
+        archive.pending_channels.extend(dropped_channels);
+        while let Ok(oscs) = osc_rx.try_recv() {
+            fetched_oscillators.extend(oscs);
+        }
+        while let Ok(samples) = sensor_rx.try_recv() {
+            if !consent.load(Ordering::SeqCst) {
+                continue;
+            }
+            let Some(declared_body) = archive.declared_body.clone() else {
+                continue;
+            };
+            for (name, value, tau) in samples {
+                let Some(bs) = sensor_config(&name) else {
+                    continue;
+                };
+                let effective_tau = if tau > 0.0 {
+                    tau
+                } else {
+                    continue;
+                };
+                if !value.is_finite() {
+                    continue;
+                }
+                let fc = FieldConfig {
+                    key: bs.key.clone(),
+                    name: bs.key.clone(),
+                    kernel: bs.kernel,
+                    force: bs.force,
+                    tau: effective_tau,
+                    absorption: 0.0,
+                    advection: 0.0,
+                    unit: String::new(),
+                    fold: None,
+                };
+                let channel = Channel {
+                    z: 0.0,
+                    freq: 0.0,
+                    bin_width: 0.0,
+                    epoch: now,
+                    position: Position::Surface {
+                        body_name: declared_body.body_name.clone(),
+                        lat: declared_body.lat,
+                        lon: declared_body.lon,
+                        alt: match declared_body.alt {
+                            Some(a) => a,
+                            None => {
+                                eprintln!(
+                                        "sensor alt undeclared — samples refused (declare #body=<body>,<lat>,<lon>,<alt>)"
+                                    );
+                                continue;
+                            }
+                        },
+                    },
+                    name: fc.name.clone(),
+                    value,
+                };
+                if let Some(osc) = anchor(
+                    &channel,
+                    &fc,
+                    bs.ttl,
+                    None,
+                    None,
+                    None,
+                    &archive.body_ephemerides,
+                ) {
+                    fetched_oscillators.push(osc);
+                }
+            }
+        }
+        while let Ok((name, pt, px, py, pz, pr)) = presence_rx.try_recv() {
+            archive.presence.insert(name, (pt, px, py, pz, pr));
+        }
+        for i in 0..archive.sources.len() {
+            let origin = i as u32;
+            if !origin_stale(&archive.origins, origin, archive.sources[i].ttl, now) {
+                continue;
+            }
+            if archive.sources[i].format == "ephemeris_binary" {
+                let src_idx = i;
+                let src_clone = archive.sources[i].clone();
+                let tmp_path = match &src_clone.body {
+                    Some(b) => format!("/tmp/omegaflow_eph_{}.bin", b),
+                    None => continue,
+                };
+                if cache_fresh(&tmp_path, src_clone.ttl) {
+                    let ftx = fetch_tx.clone();
+                    let lsk_c = lsk.clone();
+                    let now_c = now;
+                    let tmp_path_c = tmp_path.clone();
+                    thread::spawn(move || {
+                        if let ExtractResult::WithEphemeris(_, eph) =
+                            extract(&src_clone, &tmp_path_c, now_c, &lsk_c)
+                        {
+                            let _ = ftx.send(FetchResult {
+                                source_idx: src_idx,
+                                channels: Vec::new(),
+                                eph_update: src_clone.body.clone().map(|b| (b, eph)),
+                                asteroid_hash: None,
+                                star_hash: None,
+                                occluders: None,
+                                planets: None,
+                                curves: None,
+                                spectral: None,
+                            });
+                        } else {
+                            eprintln!(
+                                    "ephemeris {}: extract void — the body stays absent, retry in ttl/Φ",
+                                    src_clone.body.as_deref().unwrap_or("?")
+                                );
+                            let _ = ftx.send(FetchResult {
+                                source_idx: src_idx,
+                                channels: Vec::new(),
+                                eph_update: None,
+                                asteroid_hash: None,
+                                star_hash: None,
+                                occluders: None,
+                                planets: None,
+                                curves: None,
+                                spectral: None,
+                            });
+                        }
+                    });
+                }
+                continue;
+            }
+            if archive.sources[i].format == "catalog_dastcom" {
+                let url = archive.sources[i].url.clone();
+                let ftx = fetch_tx.clone();
+                let src_clone = archive.sources[i].clone();
+                let src_idx = i;
+                let src_ttl = src_clone.ttl;
+                let cadence_c = cadence;
+                thread::spawn(move || {
+                    let name = url.rsplit('/').next().unwrap_or("catalog").to_string();
+                    let tmp_path = format!("/tmp/omegaflow_catalog_{}", name);
+                    let mut fetched = true;
+                    if !cache_fresh(&tmp_path, src_ttl) {
+                        fetched = match fetch_raw_bytes(&url, src_ttl) {
+                            Some(bytes) => std::fs::write(&tmp_path, &bytes).is_ok(),
+                            None => false,
+                        };
+                    }
+                    if !fetched {
+                        eprintln!(
+                            "catalog {}: fetch void — the catalog stays absent, retry in ttl/Φ",
+                            url
+                        );
+                        let _ = ftx.send(FetchResult {
+                            source_idx: src_idx,
+                            channels: Vec::new(),
+                            eph_update: None,
+                            asteroid_hash: None,
+                            star_hash: None,
+                            occluders: None,
+                            planets: None,
+                            curves: None,
+                            spectral: None,
+                        });
+                        return;
+                    }
+                    let bytes = match std::fs::read(&tmp_path) {
+                        Ok(b) => b,
+                        Err(_) => return,
+                    };
+                    let hash = build_asteroid_hash(&bytes, cadence_c, src_ttl);
+                    let occluders = build_occluder_set(&bytes);
+                    eprintln!(
+                        "\r\x1b[Kcatalog_dastcom: {} records, cell_size {:.3e} m, vmax {:.1} m/s, okkluder {}",
+                        hash.records.len(),
+                        hash.cell_size,
+                        hash.vmax,
+                        occluders.records.len()
+                    );
+                    let _ = ftx.send(FetchResult {
+                        source_idx: src_idx,
+                        channels: Vec::new(),
+                        eph_update: None,
+                        asteroid_hash: Some(Arc::new(hash)),
+                        star_hash: None,
+                        occluders: Some(Arc::new(occluders)),
+                        planets: None,
+                        curves: None,
+                        spectral: None,
+                    });
+                });
+                continue;
+            }
+            if archive.sources[i].format == "netcdf" {
+                let url = archive.sources[i].url.clone();
+                let ftx = fetch_tx.clone();
+                let src_clone = archive.sources[i].clone();
+                let src_idx = i;
+                let src_ttl = src_clone.ttl;
+                let lsk_c = lsk.clone();
+                thread::spawn(move || {
+                    let name = url.rsplit('/').next().unwrap_or("netcdf").to_string();
+                    let tmp_path = format!("/tmp/omegaflow_netcdf_{}", name);
+                    if !cache_fresh(&tmp_path, src_ttl) {
+                        let bytes = match fetch_raw_bytes(&url, src_ttl) {
+                            Some(b) => b,
+                            None => {
+                                eprintln!("netcdf {}: fetch void — retry in ttl/Φ", url);
+                                let _ = ftx.send(FetchResult {
+                                    source_idx: src_idx,
+                                    channels: Vec::new(),
+                                    eph_update: None,
+                                    asteroid_hash: None,
+                                    star_hash: None,
+                                    occluders: None,
+                                    planets: None,
+                                    curves: None,
+                                    spectral: None,
+                                });
+                                return;
+                            }
+                        };
+                        if std::fs::write(&tmp_path, &bytes).is_err() {
+                            eprintln!("netcdf {}: write void — retry in ttl/Φ", url);
+                            let _ = ftx.send(FetchResult {
+                                source_idx: src_idx,
+                                channels: Vec::new(),
+                                eph_update: None,
+                                asteroid_hash: None,
+                                star_hash: None,
+                                occluders: None,
+                                planets: None,
+                                curves: None,
+                                spectral: None,
+                            });
+                            return;
+                        }
+                    }
+                    let bytes = match std::fs::read(&tmp_path) {
+                        Ok(b) => b,
+                        Err(_) => {
+                            eprintln!("netcdf {}: read void — retry in ttl/Φ", url);
+                            let _ = ftx.send(FetchResult {
+                                source_idx: src_idx,
+                                channels: Vec::new(),
+                                eph_update: None,
+                                asteroid_hash: None,
+                                star_hash: None,
+                                occluders: None,
+                                planets: None,
+                                curves: None,
+                                spectral: None,
+                            });
+                            return;
+                        }
+                    };
+                    let channels = build_netcdf_channels(&src_clone, &bytes, &lsk_c);
+                    eprintln!("\r\x1b[Knetcdf {}: {} oscillators", name, channels.len());
+                    let _ = ftx.send(FetchResult {
+                        source_idx: src_idx,
+                        channels,
+                        eph_update: None,
+                        asteroid_hash: None,
+                        star_hash: None,
+                        occluders: None,
+                        planets: None,
+                        curves: None,
+                        spectral: None,
+                    });
+                });
+                continue;
+            }
+            if archive.sources[i].format == "finals" || archive.sources[i].format == "ionex" {
+                let url = archive.sources[i].url.clone();
+                let ftx = fetch_tx.clone();
+                let src_clone = archive.sources[i].clone();
+                let src_idx = i;
+                let src_ttl = src_clone.ttl;
+                let lsk_c = lsk.clone();
+                let now_c = now;
+                let is_ionex = archive.sources[i].format == "ionex";
+                thread::spawn(move || {
+                    let bytes = match fetch_raw_bytes(&url, src_ttl) {
+                        Some(b) => b,
+                        None => {
+                            eprintln!("finals {}: fetch void — retry in ttl/Φ", url);
+                            let _ = ftx.send(FetchResult {
+                                source_idx: src_idx,
+                                channels: Vec::new(),
+                                eph_update: None,
+                                asteroid_hash: None,
+                                star_hash: None,
+                                occluders: None,
+                                planets: None,
+                                curves: None,
+                                spectral: None,
+                            });
+                            return;
+                        }
+                    };
+                    let text = String::from_utf8_lossy(&bytes).into_owned();
+                    let channels = if is_ionex {
+                        build_ionex_channels(&src_clone, &text, now_c, &lsk_c)
+                    } else {
+                        build_finals_channels(&src_clone, &text, &lsk_c)
+                    };
+                    let _ = ftx.send(FetchResult {
+                        source_idx: src_idx,
+                        channels,
+                        eph_update: None,
+                        asteroid_hash: None,
+                        star_hash: None,
+                        occluders: None,
+                        planets: None,
+                        curves: None,
+                        spectral: None,
+                    });
+                });
+                continue;
+            }
+            if archive.sources[i].format == "alerce" {
+                let ftx = fetch_tx.clone();
+                let src_clone = archive.sources[i].clone();
+                let src_idx = i;
+                let cap = src_clone.fanout_cap.max(1) as usize;
+                let delay = src_clone.fanout_delay;
+                thread::spawn(move || {
+                    let channels = build_alerce_channels(&src_clone, cap, delay);
+                    let _ = ftx.send(FetchResult {
+                        source_idx: src_idx,
+                        channels,
+                        eph_update: None,
+                        asteroid_hash: None,
+                        star_hash: None,
+                        occluders: None,
+                        planets: None,
+                        curves: None,
+                        spectral: None,
+                    });
+                });
+                continue;
+            }
+            if archive.sources[i].format == "catalog_tycho" {
+                let url = archive.sources[i].url.clone();
+                let ftx = fetch_tx.clone();
+                let src_clone = archive.sources[i].clone();
+                let src_idx = i;
+                let src_ttl = src_clone.ttl;
+                #[cfg(feature = "browser_relay")]
+                let build_epoch = now;
+                #[cfg(feature = "browser_relay")]
+                let cadence_c = cadence;
+                thread::spawn(move || {
+                    let name = url.rsplit('/').next().unwrap_or("stars").to_string();
+                    let tmp_path = format!("/tmp/omegaflow_catalog_{}", name);
+                    if !cache_fresh(&tmp_path, src_ttl) {
+                        let bytes = match fetch_raw_bytes(&url, src_ttl) {
+                            Some(b) => b,
+                            None => {
+                                eprintln!("catalog_tycho {}: fetch void — retry in ttl/Φ", url);
+                                let _ = ftx.send(FetchResult {
+                                    source_idx: src_idx,
+                                    channels: Vec::new(),
+                                    eph_update: None,
+                                    asteroid_hash: None,
+                                    star_hash: None,
+                                    occluders: None,
+                                    planets: None,
+                                    curves: None,
+                                    spectral: None,
+                                });
+                                return;
+                            }
+                        };
+                        if std::fs::write(&tmp_path, &bytes).is_err() {
+                            eprintln!("catalog_tycho {}: write void — retry in ttl/Φ", url);
+                            let _ = ftx.send(FetchResult {
+                                source_idx: src_idx,
+                                channels: Vec::new(),
+                                eph_update: None,
+                                asteroid_hash: None,
+                                star_hash: None,
+                                occluders: None,
+                                planets: None,
+                                curves: None,
+                                spectral: None,
+                            });
+                            return;
+                        }
+                    }
+                    let bytes = match std::fs::read(&tmp_path) {
+                        Ok(b) => b,
+                        Err(_) => {
+                            eprintln!("catalog_tycho {}: read void — retry in ttl/Φ", url);
+                            let _ = ftx.send(FetchResult {
+                                source_idx: src_idx,
+                                channels: Vec::new(),
+                                eph_update: None,
+                                asteroid_hash: None,
+                                star_hash: None,
+                                occluders: None,
+                                planets: None,
+                                curves: None,
+                                spectral: None,
+                            });
+                            return;
+                        }
+                    };
+                    #[cfg(feature = "browser_relay")]
+                    let hash = build_star_hash(&bytes, build_epoch, cadence_c);
+                    #[cfg(not(feature = "browser_relay"))]
+                    let hash = build_star_hash(&bytes);
+                    eprintln!("\r\x1b[Kcatalog_tycho: {} stars", hash.records.len());
+                    let _ = ftx.send(FetchResult {
+                        source_idx: src_idx,
+                        channels: Vec::new(),
+                        eph_update: None,
+                        asteroid_hash: None,
+                        star_hash: Some(Arc::new(hash)),
+                        occluders: None,
+                        planets: None,
+                        curves: None,
+                        spectral: None,
+                    });
+                });
+                continue;
+            }
+            if archive.sources[i].format == "spectral" {
+                let src = archive.sources[i].clone();
+                let ftx = fetch_tx.clone();
+                let src_idx = i;
+                let src_ttl = src.ttl;
+                thread::spawn(move || {
+                    let empty = || FetchResult {
+                        source_idx: src_idx,
+                        channels: Vec::new(),
+                        eph_update: None,
+                        asteroid_hash: None,
+                        star_hash: None,
+                        occluders: None,
+                        planets: None,
+                        curves: None,
+                        spectral: None,
+                    };
+                    let url = src.url.clone();
+                    let name = url.rsplit('/').next().unwrap_or("spectra").to_string();
+                    let tmp_path = format!("/tmp/omegaflow_spectral_{}", name);
+                    if !cache_fresh(&tmp_path, src_ttl) {
+                        let bytes = match fetch_raw_bytes(&url, src_ttl) {
+                            Some(b) => b,
+                            None => {
+                                eprintln!("spectral {}: fetch void — retry in ttl/Φ", url);
+                                let _ = ftx.send(empty());
+                                return;
+                            }
+                        };
+                        if std::fs::write(&tmp_path, &bytes).is_err() {
+                            eprintln!("spectral {}: write void — retry in ttl/Φ", url);
+                            let _ = ftx.send(empty());
+                            return;
+                        }
+                    }
+                    let bytes = match std::fs::read(&tmp_path) {
+                        Ok(b) => b,
+                        Err(_) => {
+                            eprintln!("spectral {}: read void — retry in ttl/Φ", url);
+                            let _ = ftx.send(empty());
+                            return;
+                        }
+                    };
+                    let (epoch, bins) = match crate::spectral::parse_spectral_bin(&bytes) {
+                        Some(x) => x,
+                        None => {
+                            eprintln!(
+                                "spectral {}: bin reads void — {} B carry no spectra.bin contract",
+                                url,
+                                bytes.len()
+                            );
+                            let _ = ftx.send(empty());
+                            return;
+                        }
+                    };
+                    let motion = match &src.frame {
+                        Frame::Surface {
+                            body_name,
+                            lat,
+                            lon,
+                            alt,
+                        } => Motion::Surface {
+                            body_name: body_name.clone(),
+                            lat: *lat,
+                            lon: *lon,
+                            alt: *alt,
+                        },
+                        Frame::Barycenter { body_name, scale } => Motion::Barycenter {
+                            body_name: body_name.clone(),
+                            scale: *scale,
+                        },
+                        Frame::Manifest => {
+                            eprintln!(
+                                "spectral {}: frameless — the block declares no position",
+                                url
+                            );
+                            let _ = ftx.send(empty());
+                            return;
+                        }
+                    };
+                    let field = match src.extracts.first() {
+                        Some(Extract::Field(fc)) => fc.clone(),
+                        _ => {
+                            eprintln!(
+                                "spectral {}: field undeclared — the block carries no field line",
+                                url
+                            );
+                            let _ = ftx.send(empty());
+                            return;
+                        }
+                    };
+                    let hash = SpectralHash {
+                        name: field.name.clone(),
+                        motion,
+                        epoch,
+                        ttl: src_ttl as f64,
+                        tau: field.tau,
+                        kernel_id: field.kernel as f64,
+                        force_type: field.force as f64,
+                        absorption: field.absorption,
+                        advection: field.advection,
+                        bins,
+                    };
+                    eprintln!(
+                        "\r\x1b[Kspectral {}: {} bins, epoch_tdb {}",
+                        field.name,
+                        hash.bins.len(),
+                        hash.epoch
+                    );
+                    let _ = ftx.send(FetchResult {
+                        source_idx: src_idx,
+                        channels: Vec::new(),
+                        eph_update: None,
+                        asteroid_hash: None,
+                        star_hash: None,
+                        occluders: None,
+                        planets: None,
+                        curves: None,
+                        spectral: Some(hash),
+                    });
+                });
+                continue;
+            }
+            if archive.sources[i].format == "transit" {
+                let url = archive.sources[i].url.clone();
+                let ftx = fetch_tx.clone();
+                let src_clone = archive.sources[i].clone();
+                let src_idx = i;
+                let src_ttl = src_clone.ttl;
+                thread::spawn(move || {
+                    let name = url.rsplit('/').next().unwrap_or("planets").to_string();
+                    let tmp_path = format!("/tmp/omegaflow_catalog_{}", name);
+                    if !cache_fresh(&tmp_path, src_ttl) {
+                        let bytes = match fetch_raw_bytes(&url, src_ttl) {
+                            Some(b) => b,
+                            None => {
+                                eprintln!("transit {}: fetch void — retry in ttl/Φ", url);
+                                let _ = ftx.send(FetchResult {
+                                    source_idx: src_idx,
+                                    channels: Vec::new(),
+                                    eph_update: None,
+                                    asteroid_hash: None,
+                                    star_hash: None,
+                                    occluders: None,
+                                    planets: None,
+                                    curves: None,
+                                    spectral: None,
+                                });
+                                return;
+                            }
+                        };
+                        if std::fs::write(&tmp_path, &bytes).is_err() {
+                            eprintln!("transit {}: write void — retry in ttl/Φ", url);
+                            let _ = ftx.send(FetchResult {
+                                source_idx: src_idx,
+                                channels: Vec::new(),
+                                eph_update: None,
+                                asteroid_hash: None,
+                                star_hash: None,
+                                occluders: None,
+                                planets: None,
+                                curves: None,
+                                spectral: None,
+                            });
+                            return;
+                        }
+                    }
+                    let body = match std::fs::read_to_string(&tmp_path) {
+                        Ok(b) => b,
+                        Err(_) => {
+                            eprintln!("transit {}: read void — retry in ttl/Φ", url);
+                            let _ = ftx.send(FetchResult {
+                                source_idx: src_idx,
+                                channels: Vec::new(),
+                                eph_update: None,
+                                asteroid_hash: None,
+                                star_hash: None,
+                                occluders: None,
+                                planets: None,
+                                curves: None,
+                                spectral: None,
+                            });
+                            return;
+                        }
+                    };
+                    let planets = build_planet_set(&src_clone, &body);
+                    eprintln!("\r\x1b[Ktransit: {} planeten", planets.records.len());
+                    let _ = ftx.send(FetchResult {
+                        source_idx: src_idx,
+                        channels: Vec::new(),
+                        eph_update: None,
+                        asteroid_hash: None,
+                        star_hash: None,
+                        occluders: None,
+                        planets: Some(Arc::new(planets)),
+                        curves: None,
+                        spectral: None,
+                    });
+                });
+                continue;
+            }
+            if archive.sources[i].format == "lightcurve" {
+                let url = archive.sources[i].url.clone();
+                let ftx = fetch_tx.clone();
+                let src_idx = i;
+                let src_ttl = archive.sources[i].ttl;
+                thread::spawn(move || {
+                    let name = url.rsplit('/').next().unwrap_or("curves").to_string();
+                    let tmp_path = format!("/tmp/omegaflow_catalog_{}", name);
+                    if !cache_fresh(&tmp_path, src_ttl) {
+                        let bytes = match fetch_raw_bytes(&url, src_ttl) {
+                            Some(b) => b,
+                            None => {
+                                eprintln!("lightcurve {}: fetch void — retry in ttl/Φ", url);
+                                let _ = ftx.send(FetchResult {
+                                    source_idx: src_idx,
+                                    channels: Vec::new(),
+                                    eph_update: None,
+                                    asteroid_hash: None,
+                                    star_hash: None,
+                                    occluders: None,
+                                    planets: None,
+                                    curves: None,
+                                    spectral: None,
+                                });
+                                return;
+                            }
+                        };
+                        if std::fs::write(&tmp_path, &bytes).is_err() {
+                            eprintln!("lightcurve {}: write void — retry in ttl/Φ", url);
+                            let _ = ftx.send(FetchResult {
+                                source_idx: src_idx,
+                                channels: Vec::new(),
+                                eph_update: None,
+                                asteroid_hash: None,
+                                star_hash: None,
+                                occluders: None,
+                                planets: None,
+                                curves: None,
+                                spectral: None,
+                            });
+                            return;
+                        }
+                    }
+                    let bytes = match std::fs::read(&tmp_path) {
+                        Ok(b) => b,
+                        Err(_) => {
+                            eprintln!("lightcurve {}: read void — retry in ttl/Φ", url);
+                            let _ = ftx.send(FetchResult {
+                                source_idx: src_idx,
+                                channels: Vec::new(),
+                                eph_update: None,
+                                asteroid_hash: None,
+                                star_hash: None,
+                                occluders: None,
+                                planets: None,
+                                curves: None,
+                                spectral: None,
+                            });
+                            return;
+                        }
+                    };
+                    let curves = build_curve_set(&bytes);
+                    eprintln!("\r\x1b[Klightcurve: {} sterne", curves.stars.len());
+                    let _ = ftx.send(FetchResult {
+                        source_idx: src_idx,
+                        channels: Vec::new(),
+                        eph_update: None,
+                        asteroid_hash: None,
+                        star_hash: None,
+                        occluders: None,
+                        planets: None,
+                        curves: Some(Arc::new(curves)),
+                        spectral: None,
+                    });
+                });
+                continue;
+            }
+            if archive.sources[i].format == "csv_zip" {
+                let ftx = fetch_tx.clone();
+                let src_clone = archive.sources[i].clone();
+                let src_idx = i;
+                let eph_arc = archive.body_ephemerides.clone();
+                let e = env.clone();
+                let lsk_c = lsk.clone();
+                thread::spawn(move || {
+                    let url = match render_source_url(
+                        &src_clone, 0.0, 0.0, 0.0, now, 0.0, &eph_arc, &e, &lsk_c,
+                    ) {
+                        Some(u) => u,
+                        None => {
+                            eprintln!("csv_zip {}: url render void — retry in ttl/Φ", src_idx);
+                            let _ = ftx.send(FetchResult {
+                                source_idx: src_idx,
+                                channels: Vec::new(),
+                                eph_update: None,
+                                asteroid_hash: None,
+                                star_hash: None,
+                                occluders: None,
+                                planets: None,
+                                curves: None,
+                                spectral: None,
+                            });
+                            return;
+                        }
+                    };
+                    let tmp_path = format!("/tmp/omegaflow_csv_{}.zip", src_idx);
+                    if !cache_fresh(&tmp_path, src_clone.ttl) {
+                        let headers = render_headers(&src_clone.headers, &e);
+                        let bytes = match fetch_raw_bytes_post(&url, None, &headers, src_clone.ttl)
+                        {
+                            Some(b) => b,
+                            None => {
+                                eprintln!("csv_zip {}: fetch void — retry in ttl/Φ", src_idx);
+                                let _ = ftx.send(FetchResult {
+                                    source_idx: src_idx,
+                                    channels: Vec::new(),
+                                    eph_update: None,
+                                    asteroid_hash: None,
+                                    star_hash: None,
+                                    occluders: None,
+                                    planets: None,
+                                    curves: None,
+                                    spectral: None,
+                                });
+                                return;
+                            }
+                        };
+                        if std::fs::write(&tmp_path, &bytes).is_err() {
+                            eprintln!("csv_zip {}: write void — retry in ttl/Φ", src_idx);
+                            let _ = ftx.send(FetchResult {
+                                source_idx: src_idx,
+                                channels: Vec::new(),
+                                eph_update: None,
+                                asteroid_hash: None,
+                                star_hash: None,
+                                occluders: None,
+                                planets: None,
+                                curves: None,
+                                spectral: None,
+                            });
+                            return;
+                        }
+                    }
+                    if let ExtractResult::Measurements(channels) =
+                        extract(&src_clone, &tmp_path, now, &lsk_c)
+                    {
+                        let _ = ftx.send(FetchResult {
+                            source_idx: src_idx,
+                            channels,
+                            eph_update: None,
+                            asteroid_hash: None,
+                            star_hash: None,
+                            occluders: None,
+                            planets: None,
+                            curves: None,
+                            spectral: None,
+                        });
+                    } else {
+                        eprintln!("csv_zip {}: extract void — retry in ttl/Φ", src_idx);
+                        let _ = ftx.send(FetchResult {
+                            source_idx: src_idx,
+                            channels: Vec::new(),
+                            eph_update: None,
+                            asteroid_hash: None,
+                            star_hash: None,
+                            occluders: None,
+                            planets: None,
+                            curves: None,
+                            spectral: None,
+                        });
+                    }
+                });
+                continue;
+            }
+            let body_name = match &archive.sources[i].frame {
+                Frame::Surface { body_name, .. } | Frame::Barycenter { body_name, .. } => {
+                    body_name.as_str()
+                }
+                Frame::Manifest => continue,
+            };
+            let body_props = archive
+                .body_ephemerides
+                .get(body_name)
+                .and_then(|e| e.props.as_ref());
+            let mut r = 0.0_f64;
+            for ext in &archive.sources[i].extracts {
+                for fc in extract_fields(ext) {
+                    r = f64::max(r, kernel_extent(fc.force, fc.kernel, body_props, fc.tau));
+                }
+            }
+            if r == 0.0 {
+                continue;
+            }
+            let pos = match &archive.sources[i].frame {
+                Frame::Surface {
+                    lat,
+                    lon,
+                    alt,
+                    body_name,
+                } => {
+                    if let Some(p) = body_fixed_to_icrs(
+                        body_name,
+                        *lat,
+                        *lon,
+                        *alt,
+                        now,
+                        &archive.body_ephemerides,
+                    ) {
+                        (p[0], p[1], p[2])
+                    } else {
+                        continue;
+                    }
+                }
+                Frame::Barycenter { body_name, scale } => {
+                    if let Some(bp) =
+                        body_barycenter_position(body_name, now, &archive.body_ephemerides)
+                    {
+                        (bp[0] * scale, bp[1] * scale, bp[2] * scale)
+                    } else {
+                        continue;
+                    }
+                }
+                Frame::Manifest => continue,
+            };
+            let presences: Vec<(f64, f64, f64, f64, f64)> =
+                archive.presence.values().cloned().collect();
+            if !presence_gate(&presences, pos, r) {
+                continue;
+            }
+            let ftx = fetch_tx.clone();
+            let src_clone = archive.sources[i].clone();
+            let eph_arc = archive.body_ephemerides.clone();
+            let e = env.clone();
+            let src_idx = i;
+            let lsk_c = lsk.clone();
+            let presence_center = presences.first().map(|p| (p.1, p.2, p.3));
+            thread::spawn(move || {
+                if src_clone.fanout_cap > 0 {
+                    if let Some(ref su) = src_clone.stations_url {
+                        let channels = fanout_fetch(
+                            &src_clone,
+                            su,
+                            pos.0,
+                            pos.1,
+                            pos.2,
+                            presence_center,
+                            now,
+                            r,
+                            &eph_arc,
+                            &e,
+                            &lsk_c,
+                        );
+                        let _ = ftx.send(FetchResult {
+                            source_idx: src_idx,
+                            channels,
+                            eph_update: None,
+                            asteroid_hash: None,
+                            star_hash: None,
+                            occluders: None,
+                            planets: None,
+                            curves: None,
+                            spectral: None,
+                        });
+                    } else {
+                        eprintln!("fanout {}: stations_url absent — retry in ttl/Φ", src_idx);
+                        let _ = ftx.send(FetchResult {
+                            source_idx: src_idx,
+                            channels: Vec::new(),
+                            eph_update: None,
+                            asteroid_hash: None,
+                            star_hash: None,
+                            occluders: None,
+                            planets: None,
+                            curves: None,
+                            spectral: None,
+                        });
+                    }
+                    return;
+                }
+                let url = match render_source_url(
+                    &src_clone, pos.0, pos.1, pos.2, now, r, &eph_arc, &e, &lsk_c,
+                ) {
+                    Some(u) => u,
+                    None => {
+                        eprintln!("source {}: url render void — retry in ttl/Φ", src_idx);
+                        let _ = ftx.send(FetchResult {
+                            source_idx: src_idx,
+                            channels: Vec::new(),
+                            eph_update: None,
+                            asteroid_hash: None,
+                            star_hash: None,
+                            occluders: None,
+                            planets: None,
+                            curves: None,
+                            spectral: None,
+                        });
+                        return;
+                    }
+                };
+                let body =
+                    render_source_body(&src_clone, pos.0, pos.1, pos.2, now, r, &eph_arc, &lsk_c);
+                let headers = render_headers(&src_clone.headers, &e);
+                let raw = fetch_one(&url, body.as_deref(), &headers, src_clone.ttl);
+                let channels = match raw {
+                    Some(ref r) => match extract(&src_clone, r, now, &lsk_c) {
+                        ExtractResult::Measurements(v) => {
+                            if v.is_empty() {
+                                eprintln!("source {}: extract returned no measurements", src_idx);
+                            }
+                            v
+                        }
+                        ExtractResult::WithEphemeris(v, eph) => {
+                            let _ = ftx.send(FetchResult {
+                                source_idx: src_idx,
+                                channels: Vec::new(),
+                                eph_update: src_clone.body.clone().map(|b| (b, eph)),
+                                asteroid_hash: None,
+                                star_hash: None,
+                                occluders: None,
+                                planets: None,
+                                curves: None,
+                                spectral: None,
+                            });
+                            v
+                        }
+                    },
+                    None => {
+                        eprintln!("source {}: fetch void — retry in ttl/Φ", src_idx);
+                        Vec::new()
+                    }
+                };
+                let _ = ftx.send(FetchResult {
+                    source_idx: src_idx,
+                    channels,
+                    eph_update: None,
+                    asteroid_hash: None,
+                    star_hash: None,
+                    occluders: None,
+                    planets: None,
+                    curves: None,
+                    spectral: None,
+                });
+            });
+        }
+        {
+            let old = archive.field.clone();
+            let mut hashes: Vec<&SpatialHash> = old.bodies.values().collect();
+            hashes.push(&old.inertial);
+            let retained_estimate: usize = hashes
+                .iter()
+                .map(|h| h.cells.values().map(|v| v.len()).sum::<usize>() + h.unbounded.len())
+                .sum();
+            let mut all: Vec<Oscillator> = Vec::with_capacity(
+                fetched_oscillators.len() + retained_estimate + archive.body_ephemerides.len() * 2,
+            );
+            all.append(&mut fetched_oscillators);
+            for hash in hashes {
+                for v in hash.cells.values().chain(std::iter::once(&hash.unbounded)) {
+                    for s in v {
+                        if matches!(s.source, OscillatorSource::Body) {
+                            continue;
+                        }
+                        if (now - s.epoch).abs() <= s.ttl * 64.0 {
+                            all.push(s.clone());
+                        }
+                    }
+                }
+            }
+            for (name, eph) in archive.body_ephemerides.iter() {
+                if let Some(props) = &eph.props {
+                    if props.radius_m > 0.0 {
+                        let Some(body_ttl) = archive
+                            .sources
+                            .iter()
+                            .find(|s| s.body.as_deref() == Some(name.as_str()))
+                            .map(|s| s.ttl as f64)
+                        else {
+                            continue;
+                        };
+                        let frame = Frame::Barycenter {
+                            body_name: name.clone(),
+                            scale: 1.0,
+                        };
+                        for (channel, sensor) in body_channels(name, props, now) {
+                            if let Some(mut osc) = anchor(
+                                &channel,
+                                &sensor,
+                                body_ttl,
+                                Some(archive.sources.len() as u32),
+                                Some(&frame),
+                                None,
+                                &archive.body_ephemerides,
+                            ) {
+                                osc.source = OscillatorSource::Body;
+                                all.push(osc);
+                            }
+                        }
+                    }
+                }
+            }
+            if all.len() > MAX_OSCILLATORS {
+                let dropped = all.len() - MAX_OSCILLATORS;
+                all.sort_by(|a, b| b.epoch.total_cmp(&a.epoch));
+                all.truncate(MAX_OSCILLATORS);
+                eprintln!(
+                    "oscillator cap {} reached — {} dropped (newest kept)",
+                    MAX_OSCILLATORS, dropped
+                );
+            }
+            archive.field = Arc::new(build_buffer(
+                all,
+                cadence,
+                archive.body_ephemerides.clone(),
+                archive.asteroids.clone(),
+                archive.stars.clone(),
+                archive.occluders.clone(),
+                archive.planets.clone(),
+                archive.curves.clone(),
+                archive.spectral.clone(),
+            ));
+        }
+        let f = archive.field.clone();
+        for r in &mut radiators {
+            r.accept(f.clone());
+        }
+        let elapsed = match lsk.system_now_tdb() {
+            Some(t) => t - now,
+            None => cadence,
+        };
+        if elapsed < cadence {
+            thread::sleep(std::time::Duration::from_secs_f64(cadence - elapsed));
+        }
+    }
+}
+
+const R_EARTH_M: f64 = 6.371e6;
+const R_SUN_M: f64 = 6.957e8;
+
+pub fn build_planet_set(src: &SourceConfig, body: &str) -> PlanetSet {
+    let mut records = Vec::new();
+    let keys = match src.extracts.iter().find_map(|e| match e {
+        Extract::TransitMap {
+            arr_path,
+            ra_key,
+            dec_key,
+            dist_key,
+            dist_scale,
+            a_key,
+            e_key,
+            i_key,
+            w_key,
+            tranmid_key,
+            period_key,
+            rp_key,
+            rs_key,
+            name_key,
+        } => Some((
+            arr_path.clone(),
+            ra_key.clone(),
+            dec_key.clone(),
+            dist_key.clone(),
+            *dist_scale,
+            a_key.clone(),
+            e_key.clone(),
+            i_key.clone(),
+            w_key.clone(),
+            tranmid_key.clone(),
+            period_key.clone(),
+            rp_key.clone(),
+            rs_key.clone(),
+            name_key.clone(),
+        )),
+        _ => None,
+    }) {
+        Some(k) => k,
+        None => return PlanetSet { records },
+    };
+    let Some(j) = parse_json(body) else {
+        return PlanetSet { records };
+    };
+    let Some(JsonVal::Arr(arr)) = jpath_val(&j, &keys.0) else {
+        return PlanetSet { records };
+    };
+    let mut seen: std::collections::HashSet<String> = std::collections::HashSet::new();
+    for v in arr {
+        if !keys.13.is_empty() {
+            let Some(name_str) = jpath_val(v, &keys.13).and_then(|n| match n {
+                JsonVal::Str(s) => Some(s.clone()),
+                _ => None,
+            }) else {
+                continue;
+            };
+            if !seen.insert(name_str) {
+                continue;
+            }
+        }
+        let Some(ra_deg) = jnum(v, &keys.1) else {
+            continue;
+        };
+        let Some(dec_deg) = jnum(v, &keys.2) else {
+            continue;
+        };
+        let Some(dist_pc) = jnum(v, &keys.3) else {
+            continue;
+        };
+        if !dist_pc.is_finite() || dist_pc <= 0.0 {
+            continue;
+        }
+        let Some(a_au) = jnum(v, &keys.5) else {
+            continue;
+        };
+        let Some(e) = jnum(v, &keys.6) else {
+            continue;
+        };
+        let Some(incl_deg) = jnum(v, &keys.7) else {
+            continue;
+        };
+        let w_deg = match jnum(v, &keys.8) {
+            Some(w) => w,
+            None if e <= 0.0 => 0.0,
+            None => continue,
+        };
+        let Some(tranmid_jd) = jnum(v, &keys.9) else {
+            continue;
+        };
+        let Some(period_days) = jnum(v, &keys.10) else {
+            continue;
+        };
+        let Some(rp_re) = jnum(v, &keys.11) else {
+            continue;
+        };
+        let Some(rs_rsun) = jnum(v, &keys.12) else {
+            continue;
+        };
+        if !(a_au > 0.0 && e >= 0.0 && e < 1.0 && period_days > 0.0) {
+            continue;
+        }
+        if !(rp_re > 0.0 && rs_rsun > 0.0) {
+            continue;
+        }
+        let ra = ra_deg.to_radians();
+        let dec = dec_deg.to_radians();
+        let (sa, ca) = ra.sin_cos();
+        let (sd, cd) = dec.sin_cos();
+        let d_m = dist_pc * keys.4;
+        let p_hat = [cd * ca, cd * sa, sd];
+        records.push(PlanetRec {
+            star_p: [p_hat[0] * d_m, p_hat[1] * d_m, p_hat[2] * d_m],
+            a_au,
+            e,
+            incl_deg,
+            w_deg,
+            tranmid_jd,
+            period_days,
+            rp_m: rp_re * R_EARTH_M,
+            rs_m: rs_rsun * R_SUN_M,
+        });
+    }
+    PlanetSet { records }
+}
+fn take_u32(bytes: &[u8], off: &mut usize) -> Option<u32> {
+    let raw: [u8; 4] = bytes.get(*off..*off + 4)?.try_into().ok()?;
+    *off += 4;
+    Some(u32::from_le_bytes(raw))
+}
+
+fn take_f64(bytes: &[u8], off: &mut usize) -> Option<f64> {
+    let raw: [u8; 8] = bytes.get(*off..*off + 8)?.try_into().ok()?;
+    *off += 8;
+    Some(f64::from_le_bytes(raw))
+}
+
+fn take_f32(bytes: &[u8], off: &mut usize) -> Option<f32> {
+    let raw: [u8; 4] = bytes.get(*off..*off + 4)?.try_into().ok()?;
+    *off += 4;
+    Some(f32::from_le_bytes(raw))
+}
+
+pub fn build_curve_set(bytes: &[u8]) -> CurveSet {
+    let mut stars = Vec::new();
+    if bytes.len() < 8 || &bytes[0..4] != b"TSS1" {
+        return CurveSet { stars };
+    }
+    let mut off = 4usize;
+    let Some(n_stars) = take_u32(bytes, &mut off) else {
+        return CurveSet { stars };
+    };
+    for _ in 0..n_stars {
+        let Some(ra_deg) = take_f64(bytes, &mut off) else {
+            return CurveSet { stars };
+        };
+        let Some(dec_deg) = take_f64(bytes, &mut off) else {
+            return CurveSet { stars };
+        };
+        let Some(plx_mas) = take_f64(bytes, &mut off) else {
+            return CurveSet { stars };
+        };
+        let Some(n_samples) = take_u32(bytes, &mut off) else {
+            return CurveSet { stars };
+        };
+        let mut samples = Vec::with_capacity(n_samples as usize);
+        for _ in 0..n_samples {
+            let Some(t) = take_f64(bytes, &mut off) else {
+                return CurveSet { stars };
+            };
+            let Some(f) = take_f32(bytes, &mut off) else {
+                return CurveSet { stars };
+            };
+            samples.push((t, f));
+        }
+        if samples.len() < 2 {
+            continue;
+        }
+        let mut gaps: Vec<f64> = samples
+            .windows(2)
+            .map(|w| w[1].0 - w[0].0)
+            .filter(|g| *g > 0.0)
+            .collect();
+        if gaps.is_empty() {
+            continue;
+        }
+        gaps.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
+        let cadence = gaps[gaps.len() / 2];
+        stars.push(CurveStar {
+            ra_deg,
+            dec_deg,
+            plx_mas,
+            cadence,
+            samples,
+        });
+    }
+    CurveSet { stars }
 }

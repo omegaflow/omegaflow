@@ -54,6 +54,30 @@ Schnittmenge leer, im Protokoll fehlt.
 
 ## Archivar — Architektur
 
+- Dreiteilung — WAHR (2026-08-20, Ratsurteil 5×WAHR, Schnitt ausgeführt):
+  main.rs (16 344 Zeilen) aufgelöst. Ein Archivar (omegaflow::archivar, ~16,4k:
+  Feld-Structs + Radiator-Trait, ω-Loop, spatial cache, CI-Modes, sense_*,
+  Radiatoren, Tests, Parser build_curve_set/build_planet_set + take_*),
+  eine Mathematikerin (omegaflow::mathematikerin: FIELD_WGSL + HUD + Fenster +
+  Emitter), relay (Kind, cfg browser_relay), main = Einzeiler. Der Doppelname
+  (omegaflow::archivar × mod archivar) ist gestorben; das verbotene Wort
+  „membrane" fiel zweimal (MEMBRANE_WGSL → FIELD_WGSL,
+  membrane_wgsl_validates_offline → field_wgsl_validates_offline). Gates grün:
+  cargo check 0/0 (default + browser_relay + gamepad), cargo test 159/159 lib
+  + alle Bins, die drei Datenvertrag-Tests unter neuem Namen, Live-Boot
+  (Intel HD 520 Adapter). main.rs-Diff = 16 343 Streichungen + 2-Zeilen-Trunk
+  (im Vorschlag benannt). Cargo.toml unberührt. Bestand: sense_membrane heißt
+  weiter sense_membrane (Funktionsname, außerhalb der Rename-Reichweite) und
+  ein eprintln trägt „membrane window" — benannt, nicht verschluckt.
+- wgpu/winit in der lib — bewusst getragen (2026-08-20, Operator-Entscheidung):
+  omegaflow::archivar bleibt std-only (Modul-Ebene); die Crate trägt wgpu/winit.
+  Jeder Bin-Kaltbuild zahlt den GPU-Baum einmal (inkrementell danach), kein
+  Runtime-Preis. Die std-only-Grenze ist eine Etage gesunken — registriert.
+- feature-gate `gpu` — eigenes Atom, pending: `pub mod mathematikerin` als
+  #[cfg(feature="gpu")] + Co-Gate der main_flow-Verdrahtung (crate::
+  mathematikerin::-Stellen AudioFrame/SurfaceFrame/MathematikerinRadiator)
+  + Feature-Propagation zum Default-Bin — kein Ein-Zeilen-cfg, ein Faden
+  durch die ω-Loop.
 - Membran-scoped Cache statt Blockuniversum (2026-08-17): der Archivar lädt
   flache Katalog-Assets komplett in den Spatial Hash — das ganze Feld im
   Speicher. Die Membran braucht nur die Hülle um die Presence (dilatierter
@@ -95,7 +119,7 @@ Schnittmenge leer, im Protokoll fehlt.
   vor/zurück; das native implementiert heute Pan+Zoom+Roll ohne
   Zeit-Achse.
 - Deep-Link-Geschwindigkeit: `#x,<x>,<y>,<z>,<t>` existiert
-  (main.rs presence_init, [f64; 4]) — die Geschwindigkeit `[,vx,vy,vz]`
+  (src/mathematikerin.rs:3859, [f64; 4]) — die Geschwindigkeit `[,vx,vy,vz]`
   fehlt.
 - Audio-Ausgabe nativ = rohe Samples nach stdout (Pipeline-Ausgang;
   im Log erscheint Datenmüll) — bewusst oder ein eigener Ausgang.
@@ -187,8 +211,8 @@ die Nutzung — reine Geometrie, die sonst nirgends liegt, weil alles einen
 ICRS-4D-Rahmen teilt:
 
 - Hill-Sphäre je Asteroid: r = a·(1−e)·(m/3M☉)^⅓ — Formel repariert;
-  `hill_radius_m` ist heute nur Gate (is_none im Hash, main.rs
-  2163/2297), der Wert fließt nirgends — Manifestation (Hill-Radius als
+  `hill_radius_m` ist heute nur Gate (is_none im Hash,
+  src/archivar.rs:9134/9268), der Wert fließt nirgends — Manifestation (Hill-Radius als
   räumliche Reichweite) bleibt offen.
 - Hydrostatische Abplattung aus Rotation: Rotationsperiode (LCDB) +
   Radius (NEOWISE) + Dichte (Masse) → Oblatheit im Gleichgewicht (drei
@@ -240,7 +264,8 @@ ICRS-4D-Rahmen teilt:
 ## Browser-Relay
 
 - refused-else ohne body-Deklaration (Relay-Rest): SurfaceFlow für
-  spd/hdg lebt (index.html 236-249, frame_motion in main.rs) — der
+  spd/hdg lebt (index.html 236-249, frame_motion in
+  src/archivar.rs:10114) — der
   offene Rest ist nur noch refused-else ohne body-Deklaration.
 - Der eingefrorene index.html/fieldShader-Snapshot trägt die tote
   Rotation noch (GRID_TO_ANGLE = 2^62, index.html 42/1245) — B1,
@@ -249,7 +274,7 @@ ICRS-4D-Rahmen teilt:
   4D-MEMBRANE.md (`flow <force_name> <force_id> <|Ω|> 1 <tick_ms> <t>
   <x> <y> <z>`) vs. docs/omegaflow_sense_hardware.yaml (`flow <channel>
   <mode> <value> <unit> <duration_ms> <t> <x> <y> <z>`). SerialSurface
-  schreibt heute rohe lum-Werte (main.rs 16790).
+  schreibt heute rohe lum-Werte (src/mathematikerin.rs:984).
 
 ## Membran & Wahrnehmung
 

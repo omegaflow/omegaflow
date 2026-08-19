@@ -13,8 +13,11 @@ pub mod json;
 pub mod kepler;
 pub mod lsk;
 pub mod mat;
+pub mod mathematikerin;
 pub mod netcdf;
 pub mod pck;
+#[cfg(feature = "browser_relay")]
+pub mod relay;
 pub mod sexagesimal;
 pub mod spectral;
 pub mod te;
