@@ -98,7 +98,7 @@ Stand: 1485 Commits, 341 getrackte Dateien, Branch main.
 
 ## Offene Urteile (der Operator entscheidet)
 
-1. FOUNDATION.txt: bestatten (löschen) oder ins Archiv verschieben.
+1. FOUNDATION.txt — vollzogen 2026-08-19: entfernt (Git trägt die Historie).
 2. docs/AUFTRAG-crossmatch.md: Vollzug prüfen, dann tilgen.
 3. docs/plans/ (5 alte Pläne): Archiv oder Löschung; AUTH_APIS.md bleibt.
 4. interesting_domains.φ: weiterpflegen oder als abgeleiteten Stand
@@ -107,5 +107,5 @@ Stand: 1485 Commits, 341 getrackte Dateien, Branch main.
    main-browser vermutlich schließen.
 6. Große Blobs: weights_*/urls-Kandidaten aus dem Track ziehen oder
    LFS; 12_intro_to_kernels.pdf als Referenz akzeptieren.
-7. .continue/: Zweit-Harness des Operators — Rolle benennen oder
-   entfernen.
+7. .continue/ — vollzogen 2026-08-19: nach /home/johannes/projects/archive/
+   verschoben (continue_2026-08-19) + gitignored.

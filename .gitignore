@@ -18,6 +18,7 @@ kernels/
 /reference/
 scripts/__pycache__/
 .secrets.local
+.continue/
 server.log
 /target
 /tmp/
