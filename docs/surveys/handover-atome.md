@@ -84,7 +84,7 @@ Marker), die Membran das **Geflecht**.
 
 **Warum:** Die Per-Pixel-Membran kostet ~130 ms (116 Quellen × 2 Mio Pixel) —
 der Grund für alle Leistungsprobleme. Die Zell-Achse vergröbert die
-Messpunkte ehrlich gegen die Display-Quantisierung (auswertung.md §1–2).
+Messpunkte gemessen gegen die Display-Quantisierung (auswertung.md §1–2).
 
 **Design (aus der Survey):**
 - **Struktur-Zellen** (1×1 px) um jede Quelle im Struktur-Radius
@@ -93,7 +93,7 @@ Messpunkte ehrlich gegen die Display-Quantisierung (auswertung.md §1–2).
   Zelle ausgewertet.
 - Die **Archivarin** kennt jede Quelle und kann sagen, WO gemessen werden
   muss — sie liefert den Zell-Plan; die Mathematikerin wertet pro Zelle aus.
-- **Keine Interpolation** (stückweise-konstante Zellen = ehrliche Messung).
+- **Keine Interpolation** (stückweise-konstante Zellen = Messung).
 - **Budget**: zwei Zahlen (Frame-Zeit + Messpunktzahl) → Zellweite,
   exponentielle Relaxation.
 - Ziel: Membran von ~130 ms auf ein Budget, das danach **VR-Stereo erlaubt**
@@ -127,7 +127,7 @@ Branch — portieren:
 - **Kull-Pass** (Compute, Kacheln 16×16 = 2⁴): Shared-Memory-Max-Reduktion,
   **KEINE globalen/Fragment-Atomics** (harter Live-Befund: Fragment-Atomics
   verloren das Device auf ANV/HD 520), Kachel-Listen als plain u32
-  (`tile_flat`/`tile_count`, 64 Slots), Überlauf → ehrlicher Voll-Loop.
+  (`tile_flat`/`tile_count`, 64 Slots), Überlauf → Voll-Loop.
 - **Kriterium** `bound < ε·M`, ε = 2⁻ⁿ, **n = 23 Grund** (f32-Wahrheit),
   Relaxation bis n = 8 unter Budgetdruck (Display-Wahrheit — ausgesprochene
   Messpolitik).

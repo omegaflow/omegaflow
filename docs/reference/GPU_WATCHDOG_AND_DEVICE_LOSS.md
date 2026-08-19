@@ -58,5 +58,5 @@ tötet aktiv, Firefox läuft einfach länger.
 - **Chrome:** `--gpu-watchdog-timeout-seconds=<n>` (per Finch konfigurierbar;
   z.B. 60 s hebt die Frist über die Frame-Dauer). Der Verifikations-Start sollte
   den Flag tragen.
-- Der ehrliche Zustand bleibt: Der Tick ist die Kapazitätsmessung des
+- Der Zustand bleibt: Der Tick ist die Kapazitätsmessung des
   Siliziums — der Watchdog-Flag verschiebt nur die Frist, nicht die Physik.

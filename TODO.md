@@ -43,7 +43,7 @@ Kein NASA-Denken — nur was die Membran benötigt.
   `tess_lightcurves.bin` (TSS1, stern-indiziert, sortierte [t, flux],
   Kadenz = Median der Lücken). `format lightcurve` lädt das Asset; der
   Radiator emittiert pro Sense einen em-Oszillator je Stern im Fenster:
-  val = ehrlicher Nachbar-Sample, epoch = Sample-Epoche, ttl = Kadenz —
+  val = Nachbar-Sample, epoch = Sample-Epoche, ttl = Kadenz —
   jenseits des Kurvenendes kein Oszillator (Lesart A, keine
   Extrapolation). Der Gaia-Stern lebt mit Kepler-Dimmung weiter; Theorie
   und Messung sitzen am selben Himmelsort.
@@ -192,7 +192,9 @@ auswertung.md, messpunkt-verteilung.md (die 567-ms-Erkenntnis der
 Subpixel-Explosion), entwicklungslinie.md (10 Epochen, 1310 Commits),
 handover-atome.md (die Atom-Karte), handover-2026-08-18-auth.md (AUTH/
 Source-Port/ci_mode-Linie), handover-2026-08-18-b5.md (Recheck-Welle b5:
-Integrationen, Force-Gate-Declines, NDBC-Konsolidierung). Die Survey-Tafel
+Integrationen, Force-Gate-Declines, NDBC-Konsolidierung),
+handover-2026-08-19-audit.md (die Schwester-Meldungen nach den 8
+Atomen — S5/S6-Karte). Die Survey-Tafel
 ist Pflichtlektüre einer neuen Session.
 
 ## Verlust-Register — Monolith gegen die letzte index.html (2026-08-17)
@@ -449,7 +451,7 @@ resonance(mut read_signal(s: read_ws_frame_part(stream: read_ws_frame_raw(stream
     + Gravitations-Limb-Überschätzung), ε = 2⁻ⁿ (n ∈ [8,23]) mit Budget-Regler
     (Frame-EMA gegen 16,6/8,3 ms, 1-Hz-Kadenz), Stille-Gate + u64-Generations-
     zähler im Worker, Doppelpuffer A/B mit Bind-Group-Swap. Überlauf-Flag
-    `cull_ctl[1]` → ehrlicher Voll-Loop-Fallback. Grenze: WGSL offline via
+    `cull_ctl[1]` → Voll-Loop-Fallback. Grenze: WGSL offline via
     naga validiert (`membrane_wgsl_validates_offline`); der Live-Beweis auf
     HD 520 steht aus (keine GPU in dieser Session).
 5. P6 — ⌘K, 2-Finger-Zeit, f-Toggle, Deep-Link-Geschwindigkeit (vx,vy,vz),
@@ -560,10 +562,11 @@ Befund.
   deren Body nicht in `body_ephemerides` ist.
 - ~~`eae562c`-Regress: der Titan-Zeit-In-Loop-Fetch wurde ersatzlos
   gelöscht~~ — ERLEDIGT (P1): der Wächter schließt die Wunde dauerhaft.
-- `origins`-Stempel vor Fetcherfolg (Titan-Erbe, unverändert): ein
+- `origins`-Stempel vor Fetcherfolg (Titan-Erbe): ein
   fehlgeschlagener Fetch verliert die Quelle für ttl/Φ — Stempel erst
-  nach Erfolg setzen (oder Fehlschlag sichtbar zurückmelden). (S3 der
-  0-Kanon-Session.)
+  nach Erfolg setzen (oder Fehlschlag sichtbar zurückmelden).
+  BERICHTIGT (2026-08-19, Audit): die Klammer wies ihn S3 zu — S3
+  berührte ihn nicht; S5 Welle 2 trägt ihn (main.rs:12067/12105).
 - ~~eph-Batch-curl-Status wird verworfen~~ — ERLEDIGT (P1):
   `download_ephemeris_one`/`_batch` melden Status + URL + stderr.
 
@@ -702,10 +705,53 @@ Zeile = Stand 2026-08-19.
 | 2 | ~~S1 — Haupt-Adern~~ | ERLEDIGT (2026-08-19): Celestial-Shell getilgt — distanzlose cmap-Zeilen fallen (Titan-Skip, Konstante gelöscht, 4 Tests auf Wahrheit umgeschrieben, ledger.φ:151 berichtigt); pm/rv/zval-Fold → Option (absent trägt keinen Term, kein 0.0-Betrag); TGAS-rv-Gate (tycho2 tgas-Zweig: Crossmatch + Skip ohne rv, eprintln zählt) + TODO 174-176 berichtigt; tap emit_rows-pm: Propagation nur mit beiden pm; Pangaea lat/lon → Option/null (Golf von Guinea tot); GeojsonEvents mag → Option (0.0-Mw-Saat tot); EOP-Finals Position = Source (Frame-Anker statt 0,0,0); Alerce 1-m-Sphäre getilgt — Detections bleiben dunkel (Note + pending-Distanz-Kanal); dcom5 H/M1 → Option/null (DASTCOM-Sentinels 90/900); WGSL-Kernel-Zweige 1 (gaussian-inverse-square) + 6 (inverse-linear) in main.rs (field_spatial + field_spatial_grad) und index.html — 85 Tests grün |
 | 3 | ~~S2 — Form/Sensor/TTL~~ | ERLEDIGT (2026-08-19): flattening → Option (absent → keine geodätische Fläche, `?`-Kette in body_fixed/icrs_to_body_surface; rb_scale bleibt 1.0 im Rotationsfall — die Standard-Ellipse); `on`-Frame ohne alt → refuse (2 Bestands-Blöcke betroffen, siehe Pending); #body-alt → Option + Refuse-Notiz; Sensor-τ zurück ans Gate (`effective_tau = bs.ttl` an 3 Stellen entfernt — ohne τ fällt der Kanal); port_field_synth refuse ohne τ (τ-Fabrikation ttl/10 tot) + ttl-Zeile im Port-Konvertat geschrieben + 5/6-token-Waisen im ProfileMap-Kontext refused + Draft 4-Token → 9-Token (`draft_field_line`) + depth-τ-Hartkodierung (3600) ersetzt; probe_ttl 86400 weggelassen (Draft ohne ttl-Zeile); props.gm-Barrier expliziter Match (0.0 = Wire-Pad bis v3); Nutation zwei Fälle (kein Modell still 0, Lücke mit Note); fk.rs center/class/class_id → Option (unlesbar → None, 0 ist keine SSB-Fabrikation mehr); netCDF-Fill-Maske lat/lon/juld; tic plx NaN/negativ → absent-Code + tmag positiv-Gate; tess-Zwei-Enden-Vertrag gehärtet (Leser finite+<=0); horizons GM expliziter v2-Wire-Pad — 85 Tests grün |
 | 4 | ~~P1 — Lade-Pfad~~ | ERLEDIGT (2026-08-19): der Bootstrap ist als `spawn_ephemeris_bootstrap` der EINZIGE eph-Lader (Priorisierung nach `anchor_uses` unverändert, Guard gegen Doppellauf); der In-Loop-Fetch-Fallback (86d5853) ist zurückgebaut auf die Titan-Form (cache_fresh → extrahieren, origin nur im Erfolgsfall, kein 15-h-Lockout); ein Wächter (2⁶-Ticks) startet den Bootstrap neu, wenn eph-Dateien fehlen, deren Body nicht in `body_ephemerides` ist, Backoff ttl/Φ²; drei curl-Flag-Ketten → ein `curl_base`-Builder (Φ-abgeleitete Timeouts, retry 5, parallel-max 8); curl-Status von `download_ephemeris_one`/`_batch` sichtbar (URL + Status + stderr) — 85 Tests grün |
-| 5 | ~~S3 — Stille Fehlschläge + Konsens~~ | ERLEDIGT (2026-08-19): alle 7 upload_asset-Stellen prüfen den Bool (tycho2/tap/tess/cometels/pangaea, exit(1) mit Pfad); write_ws_binary → io::Result, Ingress endet ehrlich beim severed Browser, HTTP emit/emit_void melden den Abbruch; Feldkanal mit Rückdruck (send statt try_send, geschlossener Kanal benannt); Consent-Gate im Browser-Relay (WsConfig trägt consent, beide osc_tx-Sendungen gated); exp2(-20) entfernt (Rats-Urteil 2 — ft_ref trägt die Skala); bp_rp_to_teff 31-Punkte-Locus restauriert (b1e4fe4^-Form, 11 Breakpoints zurück); point_blend-Fossil getilgt (field_dark: bool, P = Feld an/aus, Uniform-Slot ist 0.0-Pad, HUD sagt „field"); ft_ref_floor 1e-30-Floor getilgt (lum_ratio: Referenz ohne Fenster-Daten → Schweigen statt Explosion, main.rs + index.html); fold_eff ttl<=0 → 0.0 (τ=0 manifestiert nicht mehr); tic-Test-Fixture trägt plausibles tmag — 85 Tests grün |
+| 5 | ~~S3 — Stille Fehlschläge + Konsens~~ | ERLEDIGT (2026-08-19): alle 7 upload_asset-Stellen prüfen den Bool (tycho2/tap/tess/cometels/pangaea, exit(1) mit Pfad); write_ws_binary → io::Result, Ingress endet beim severed Browser, HTTP emit/emit_void melden den Abbruch; Feldkanal mit Rückdruck (send statt try_send, geschlossener Kanal benannt); Consent-Gate im Browser-Relay (WsConfig trägt consent, beide osc_tx-Sendungen gated); exp2(-20) entfernt (Rats-Urteil 2 — ft_ref trägt die Skala); bp_rp_to_teff 31-Punkte-Locus restauriert (b1e4fe4^-Form, 11 Breakpoints zurück); point_blend-Fossil getilgt (field_dark: bool, P = Feld an/aus, Uniform-Slot ist 0.0-Pad, HUD sagt „field"); ft_ref_floor 1e-30-Floor getilgt (lum_ratio: Referenz ohne Fenster-Daten → Schweigen statt Explosion, main.rs + index.html); fold_eff ttl<=0 → 0.0 (τ=0 manifestiert nicht mehr); tic-Test-Fixture trägt plausibles tmag — 85 Tests grün |
 | 6 | ~~P3 — Dedup~~ | ERLEDIGT (2026-08-19, cc8a8cc): 7 JSON-Parser → ein lib-Parser (`src/json.rs` kanonisch aus main.rs; sechs Bins migriert, main.rs-Definitionen gelöscht, `pub use` re-exportiert; zwei pro-Agenten mit zeilengenauen Reports, Architektin las die Diffs nach); Fit-Pipeline → `src/fit.rs` (beide Compiler konsumieren); Julian-Datum auf `omegaflow::lsk::days_from_civil` vereinheitlicht (mpcobs/ephemeris_compiler/cometels; die verbliebene 2440587.5 in main.rs ist die Unix-Epochen-Konstante, keine Kopie); `ci_upload` getilgt — `cdn::upload_release(tag, path)` trägt den Manifestator-Kanal, `upload_asset(path)` den Asset-Release, EINE gh-Implementierung; CDN-Base zentral — 85 Tests grün |
-| 7 | ~~P5 — GPU~~ | ERLEDIGT (2026-08-19, e599e89 + Fix 8f24118): `presence_probe` konsumiert die Mittel-Kachel des `star_cull`-Ergebnisses statt der eigenen O(N)-Stern-Schleife (identische Mathematik über `star_contrib(s, 0, 0)` — der Presence-Punkt projiziert auf die NDC-Mitte); Overflow-Full-Scan bleibt als ehrlicher Fallback; Dispatch-Reihenfolge cull → star_cull → probe (Kacheln desselben Frames). Der Offline-WGSL-Validierungstest fing den `star_count`-Bindungsverlust — der Fix-Commit stellt die Wahrheit her. 85 Tests grün |
+| 7 | ~~P5 — GPU~~ | ERLEDIGT (2026-08-19, e599e89 + Fix 8f24118): `presence_probe` konsumiert die Mittel-Kachel des `star_cull`-Ergebnisses statt der eigenen O(N)-Stern-Schleife (identische Mathematik über `star_contrib(s, 0, 0)` — der Presence-Punkt projiziert auf die NDC-Mitte); Overflow-Full-Scan bleibt als Fallback; Dispatch-Reihenfolge cull → star_cull → probe (Kacheln desselben Frames). Der Offline-WGSL-Validierungstest fing den `star_count`-Bindungsverlust — der Fix-Commit stellt die Wahrheit her. 85 Tests grün |
 | 8 | ~~S4 — Ephemeris v3~~ | ERLEDIGT (2026-08-19): beide Compiler (ephemeris/horizons) schreiben 0x02 + u16-Präsenz-Maske nach den 12 f64 (Bit je Slot, absent = 0.0-Pad, 8-B-aligned); `neutral()` getilgt (pck.rs), `measured()` getilgt (der v2-Arm trägt die Sentinel-Semantik als Closure); Loader liest v2 UND v3 (Version data[2], v3-Maske gated die Option-Slots gm/j2/j4/radii_b/radii_c — das Bit ist die Autorität, ein gemessener 0.0 bleibt Some); Test test_parse_ephemeris_binary_v3_mask (j2-Bit gelöscht → None); Wire-Doku in AGENTS.md — 86 Tests grün |
+| 9 | S5 — Audit-Nachlese I | Welle 1 vollzogen (2026-08-19, H1-Vokabel-Reinigung: „ehrlich"/„honest" aus TODO/docs/concepts/SOURCE_PORT/aktuellen surveys ersetzt oder gestrichen — die Sache trägt; Transkripte und phi-Noten bleiben Aufzeichnungen, die H1-Meldung trägt das Wort als Verdacht). OFFEN: Welle 2 = A1 (anchor-TTL 86400, main.rs:12637), A2 (LSK-TTL 86400, 9417), E1 (origins-Stempel nach Erfolg), C1 („device samples" → „station samples", 11657), D3 (transfer_entropy n<8 → Option/Gate statt 0), F2 (Radiator-Rückdruck 17514/17633); Welle 3 = D1 (mpcobs mag-Sentinel-Verdict), D2 (color_index-Verdict), D4 (Draft-Synthese-Notenprüfung) — cargo check 0/0 + volle Suite + Commit + Häkchen |
+| 10 | S6 — Audit-Nachlese II | OFFEN (2026-08-19, Audit-Meldung): A3 (fk.rs UNITS-Default verifizieren, 272), A4 (Silverman-1e-30-Degeneration benennen, 16572), A5 (Aberration β≥c refuses, 84), D5 (v3-Maske vs. Falten: None→0.0 benennen, 3186/17439/6393), E2 (read_cache_if_fresh-Dedup, 4868), E3 (matmul-Dedup, ephemeris_compiler 193 vs fk 294), F1 (Register-Writes benennen, ~15 Stellen), F3-F5 (Noten-Register-Bindung, Extract-Live-Notiz, GH_TOKEN-Anomalien), A6 (probe_classify-τ-Herkunft), A7 (unerreichbarer unwrap_or(0), ephemeris_compiler 629) — cargo check 0/0 + volle Suite + Commit + Häkchen |
+
+### Schwester-Meldungen — Audit nach den 8 Atomen (2026-08-19)
+
+Der volle Befund mit jeder Meldung liegt in
+docs/surveys/handover-2026-08-19-audit.md (Pflichtlektüre). Kompakt:
+
+- H1 — Verdachts-Vokabel „ehrlich"/„honest": UNWAHR als Vokabel
+  (Urteil über die Wahrhaftigkeit, kein Messwort; 0-honored-Derivat).
+  Fundorte: TODO (46, 452, die S3-Zeile, die P5-Zeile, die
+  Magnitudentyp-Zeile), docs/concepts (8), docs/surveys
+  (~11), SOURCE_PORT (95), phi-Noten (6). Sauber: AGENTS, alle .rs,
+  index.html. Reinigung = S5 Welle 1; Transkripte und phi-Noten
+  bleiben Aufzeichnungen. Ersatz: die Sache selbst (pending, fehlt,
+  0 honored, benannt) oder Streichung — kein neues Tugendwort.
+- A1 anchor-TTL 86400 (main.rs:12637) — B-Fund, S2 übersprang ihn → S5.
+- A2 LSK-TTL 86400 (main.rs:9417) — neu, nicht im Register gewesen → S5.
+- A3 fk.rs UNITS-Default „ARCSECONDS" (272) — unverified → S6.
+- A4 Silverman-1e-30 (16572) — Fabrikation bei Varianz 0 → S6.
+- A5 Aberration max(1−β², 1e-12) (84) — β≥c nicht refused → S6.
+- A6 probe_classify-τ ohne Herleitung (9926/9937/9945) → S6.
+- A7 unerreichbarer unwrap_or(0) (ephemeris_compiler 629) → S6.
+- B1 GRID_TO_ANGLE (index.html 42/1245) — bleibt registriert (P6).
+- C1 „device samples refused" (11657) — Identitätswort → S5.
+- C2 Register-Berichtigung (tgas-rv-Hälfte, oben vollzogen).
+- C3 tycho2 color-Slot hart 0f32 (343) — offen, Urteil steht aus.
+- D1 mpcobs mag-Sentinel 0.0 (mpcobs 74) — 0 ist physikalisch → S5 Verdict.
+- D2 color_index-0.0=Weiß-Sentinel (Protokoll v7) — v8-Frage → S5 Verdict.
+- D3 transfer_entropy n<8 → 0.0 (16578) — fehlt ≠ null-echt → S5.
+- D4 Draft-Synthese force/kernel/tau 0 (3385-3474) — Notenprüfung → S5.
+- D5 v3-Maske vs. None→0.0-Falten (3186/17439/6393) — Benennung → S6.
+- E1 origins-Stempel vor Erfolg (12067/12105) — A-Punkt, S3-Klammer
+  berichtigt → S5.
+- E2 read_cache_if_fresh-Duplikat (4868) → S6.
+- E3 matmul-Duplikat (ephemeris_compiler 193 vs fk 294) → S6.
+- E4 283+242 Alt-Blöcke ohne τ, CDN-v3 — pendings (S2/S4 registriert).
+- F1 ~15 Register-/Cache-Writes ohne Benennung → S6.
+- F2 Radiator-try_send/send-Schweigen (17514/17633) → S5.
+- F3-F5 eprintln-only Noten, Extract-Live-Notiz, GH_TOKEN-Anomalien → S6.
+- G — Gegenprüfung: ft_ref_floor-Floor tot, write_ws_binary→io::Result,
+  31-Punkte-Locus, exp2(-20) weg, tgas-rv-Skip, WGSL-Zweige 1/6,
+  count-Gate/response_epoch, P3-Lib — bestätigt, kein erneutes Audit.
 
 ### 0-Kanon-Ergänzungen zu A-F (Fundorte aus den 7 Audits, nicht in A-F)
 
@@ -729,8 +775,12 @@ Zeile = Stand 2026-08-19.
   (≥90/≥900 = absent) → null-Emit.
 - ~~Pangaea lat/lon 0,0 → Golf von Guinea als Messwert~~ — ERLEDIGT
   (S1): Option/null, absent → Zeile fällt beim Konsumenten.
-- tycho2-Bin: color-Slot hart 0f32 (343); tgas rv=0.0 (185) — TODO
-  174-176 behauptet „Vollzogen", der Code lügt das Register an (S1).
+- tycho2-Bin: color-Slot hart 0f32 (343) — C3 offen: die B−V-Ernte
+  (bv_to_bp_rp, 568-580) speist nur bright_stars.json; das Bin trägt
+  nie Farbe. BERICHTIGT (2026-08-19, Audit): die tgas-rv-Hälfte dieses
+  Eintrags ist überholt — der rv-Skip lebt seit S1
+  (tycho2_compiler.rs:497-501); der Vorwurf „der Code lügt das
+  Register an" gilt nur noch für den color-Slot.
 - ~~Sensor-τ-Bypass: `effective_tau = bs.ttl` (12211/20826/20879) — die
   τ-Gate (9190) greift nie für Sensoren~~ — ERLEDIGT (S2): ohne τ fällt
   der Kanal, die τ-Gate ist die einzige Autorität.
@@ -1026,8 +1076,8 @@ Magnitudentyp pro Event (erledigt 2026-08-17, verifiziert per Live-Abruf):
   fälscht kein Moment (manifestiert nicht).
 - Verdrahtet: USGS-Summary + INGV (`properties.magType`), USGS-fdsnws
   (`magType`). Die Mehrheit kleiner Events (ml/md/mb) manifestiert daher
-  keinen Momentwert — ehrlich, weil eine Lokal-/Raumwellen-/Dauer-Magnitude
-  kein lineares SI ist; Position + Tiefe bleiben.
+  keinen Momentwert — 0 honored: eine Lokal-/Raumwellen-/Dauer-Magnitude
+  ist kein lineares SI, kein Moment erfunden; Position + Tiefe bleiben.
 - Ohne Typ-Feld: GeoNet (netMag gemischt), JMA/P2PQuake (Mj ≈ Mw in 4,5–7,5),
   EEW (als Mw behandelt) — Block deklariert `Mw` als Moment-Proxy (die
   Standard-Schätzung). Sekundärbänder (kmag/M1/mag2/min) bleiben dark, weil

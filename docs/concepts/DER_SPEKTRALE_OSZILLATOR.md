@@ -71,7 +71,7 @@ ihre Basis.**
 
 Ein Pflicht-Frequenzfeld für jeden Oszillator wäre Fabrikation:
 gravity, thermal und diffusion besitzen keine Frequenz. Deshalb gilt:
-`freq = 0.0` ist der ehrliche Zustand „Punktquelle" — 0 honored, wie
+`freq = 0.0` ist der Zustand „Punktquelle" — 0 honored, wie
 j2/j4 = 0 bei Nicht-Planeten heute. Abwesende Frequenz ist eine
 vollständig realisierte Eigenschaft, kein Default.
 
@@ -132,7 +132,7 @@ konfigurierbar: der Operator wählt die Bänder der Gaze. Die Stillekarte
 wird band-selektiv, die Lichtkegel-Differenz dispersiv, der
 chromatische Dip der Nadel Ⅴ wird eine SED-Messung.
 
-### Atom D — Die Phase (ehrlich terminiert)
+### Atom D — Die Phase
 
 Beats und Interferenz — zwei Sterne mit leicht verschiedener
 Rotverschiebung, deren Spektren im selben Pixel schlagen — brauchen die

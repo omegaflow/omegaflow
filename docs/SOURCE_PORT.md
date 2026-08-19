@@ -92,7 +92,7 @@ Pro Korpus:
    Kandidaten; positive Gewichte sind die Probe-Kandidaten.
 3. Probe: `cargo run -- --probe <blöcke.φ>` — fetch → parse →
    `walk_json_probe`-Auto-Draft → `extract`-Verdict. Überlebende (echte
-   Samples) nach `phi/pipeline/probe_survivors.φ`, ehrliche Diagnosen nach
+   Samples) nach `phi/pipeline/probe_survivors.φ`, Diagnosen nach
    `phi/pipeline/probe_void.txt`. Befunde: `phi/pipeline/probe_comparison.txt`
    (Linse 57% vs 2% Survivor-Rate, fetch_one == fetch_raw_probe für
    unmanifestierte Kandidaten).

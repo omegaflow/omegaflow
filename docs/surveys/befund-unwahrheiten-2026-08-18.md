@@ -11,13 +11,13 @@ Lesen der Register). Nichts wurde getilgt — die Räumung entscheidet der Opera
 
 - **Keine exakte URL steht in beiden Registern** (dead ∩ live = ∅).
 - Der vermutete netCDF-Tombstone existiert so nicht: `dead_sources.φ:6` ist die
-  `ftp.bom.gov.au`-Route (curl 78, ehrlich tot). Die live netCDF-Quelle
+  `ftp.bom.gov.au`-Route (curl 78, tot). Die live netCDF-Quelle
   `data-argo.ifremer.fr` (`sources.φ:1052-1062`, `format netcdf`) hat **keinen**
   Tombstone. Die emodnet- (`dead_sources.φ:2149-2151`) und temis-
   (`dead_sources.φ:3906`) netCDF-Einträge sind echte 404s anderer Routen.
 - openaq-Tombstone (`dead_sources.φ:533-535`, „integrated fanout-p09") und die
   wheretheiss-Tombstones (`:29-31`, `:621-627`, „superseded-by-ephemeris")
-  benennen die Live-Quelle selbst — ehrliche Dispositions-Notizen.
+  benennen die Live-Quelle selbst — Dispositions-Notizen.
 - 40 gemeinsame Hosts zwischen den Registern: alle Einträge sind durch
   „decline variant"-Notizen oder Routen-Unterschiede erklärt (z. B. BOM:
   dead = ftp-Mirror + IDD60901-Darwin, live = IDN60901 `sources.φ:134`).
@@ -95,7 +95,7 @@ gegen den Browser-Relay-Ingress nötig.
 
 | Stelle | Befund |
 |---|---|
-| `tycho2_compiler.rs:560,738`; `tap_compiler.rs:554,1324` | `rv = unwrap_or(0.0)` — rv 0 m/s ist nicht „unbekannt". Von TODO:173-176 als Council-Frage registriert — ehrlich registriert, aber die 0.0 ist eine Fabrikation. |
+| `tycho2_compiler.rs:560,738`; `tap_compiler.rs:554,1324` | `rv = unwrap_or(0.0)` — rv 0 m/s ist nicht „unbekannt". Von TODO:173-176 als Council-Frage registriert, aber die 0.0 ist eine Fabrikation. |
 | `cometels_compiler.rs:256` | `H = unwrap_or(0.0)` — H=0 ist astronomisch unmöglich hell. |
 | `mpcobs_compiler.rs:33,82` | `parse().unwrap_or(0)` — mag=0 wäre ein echter Sternwert. |
 | `main.rs:1592` | `flattening = 0.0` wenn `radii_c` fehlt — sphärische Annahme statt Absenz (nur Rotationsmatrizen, Grauzone). |

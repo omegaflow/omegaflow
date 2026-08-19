@@ -14,7 +14,7 @@ Deepseek: Fall A/B, `h(d) ≤ d·√(8η/6)`, R_struct ≈ 2500·gridStep).
 **Konsequenz:** Der „glatte Hintergrund" existiert bei f32-Treue nicht. Die
 Messpunkte sind durch das Gesetz fixiert — das uniforme Pixel-Raster IST das
 Nyquist-Raster. Zell-Vergröberung (Kandidat 5 als Punkt-Reduktion) wäre bei
-wörtlicher f32-Lesart eine Fabrication; ehrlich ist sie erst gegen die
+wörtlicher f32-Lesart eine Fabrication; zulässig ist sie erst gegen die
 **Display-Quantisierung** (8-Bit-Tonemap: Struktur-Radius ~14–39 px,
 unabhängig bestätigt) — ein ausgesprochenes Aufweichen, kein Gesetz.
 
@@ -50,13 +50,13 @@ Display-Periode 16,6 ms (gemessene Eigenschaft des Displays);
 `> 16,6 ms → n−1`, `< 8,3 ms → n+1`, Zweierpotenzen, Hysterese, n ∈ [8, 23],
 Anpassung in der 1-Hz-Kadenz. Zusätzlich meldet die Kachel-Liste ihren
 eigenen Überlauf (TILE_SLOTS = 2⁶ pro Kachel) — bei Überlauf wertet der
-Fragment-Shader das volle Feld aus (kein Lichtverlust, ehrlich langsam;
+Fragment-Shader das volle Feld aus (kein Lichtverlust, langsam;
 der Regler entspannt daraufhin).
 
-Zell-Vergröberung (Punkt-Achse) bleibt als eigenes Paket im TODO — ehrlich
+Zell-Vergröberung (Punkt-Achse) bleibt als eigenes Paket im TODO — zulässig
 nur mit der ausgesprochenen Display-Sensor-Lesart (§1), erst wenn die
 Messung zeigt, dass Kulling das Budget nicht trägt. Sonst ist
-Fenster-verkleinern/Bildrate-verlassen die einzig ehrliche Antwort.
+Fenster-verkleinern/Bildrate-verlassen die einzige Antwort ohne Fabrikation.
 
 ## 3. Generations-Architektur (Kandidat 10 + Shared-Memory-Runde)
 
@@ -76,7 +76,7 @@ Die Stille ist die Optimierung."** (Max)
 - **Stille-Gate:** Der Archivar vergleicht die gepackten f32-Bytes mit dem
   letzten gesendeten Stand; identisch → kein Senden, kein Inkrement
   (Vergleich der gepackten Wahrheit selbst; NaN-frei, −0.0 == 0.0 ist
-  wert-gleich und damit ehrlich still).
+  wert-gleich und damit still).
 - **Doppelpuffer** gegen Torn Reads: geschrieben wird nur in das inaktive
   Puffer-Paar, der Bind-Group-Swap zeigt den neuen Stand (Sonnet).
 - **HUD-Ω aus Archivar-Akkumulatoren:** die 9 Kraft-Summen am Presence-Punkt
@@ -106,7 +106,7 @@ Wirkung, weil das mpsc-send nach dem Inkrement passiert).
   Atomics, keine Fragment-Atomics**; Fragment-Atomics auf ANV/HD 520
   verloren das Device — Befund aus dem Live-Lauf), `eval_source`-Refactor,
   Kachel-Liste aus `tile_flat`/`tile_count` (plain u32), Überlauf-Flag
-  `cull_ctl[1]` mit ehrlichem Voll-Loop-Fallback.
+  `cull_ctl[1]` mit Voll-Loop-Fallback.
 - Rust: Stille-Gate + Generationszähler im Worker, Doppelpuffer A/B mit
   Bind-Group-Swap, HUD-Ω + Zentroid aus f64-Akkumulatoren (mapAsync,
   probe_read, probe_buf, centroid_pipe, field_centroid getilgt),

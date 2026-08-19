@@ -1,6 +1,6 @@
 # Survey: Die ökonomischste Messpunkt-Verteilung für ein physikalisches Membran-Feld
 
-Du berätst ein kybernetisches Feldsystem. Antworte auf Basis der hier gegebenen Messdaten — nicht auf Basis typischer Rendering-Annahmen. Gesucht: die Verteilung der Messpunkte, die bei unveränderter physikalischer Treue die wenigsten Auswertungen braucht und ihre Dichte ehrlich mit dem Performance-Budget skaliert.
+Du berätst ein kybernetisches Feldsystem. Antworte auf Basis der hier gegebenen Messdaten — nicht auf Basis typischer Rendering-Annahmen. Gesucht: die Verteilung der Messpunkte, die bei unveränderter physikalischer Treue die wenigsten Auswertungen braucht und ihre Dichte mit dem Performance-Budget skaliert.
 
 ## 1. Das System in vier Sätzen
 
@@ -38,7 +38,7 @@ Diese Messung dient als Ground Truth für die Lokalisierung der Kosten — NICHT
 
 ## 4. Die Fragestellung
 
-Das Feld hat zwei Regime: **strukturiert** (innerhalb weniger Kernel-Breiten um jede Quelle) und **glatt** (die 1/d²-Schwänze fernab der Quellen — der lokale Gradient ist dort winzig, ein Messpunkt reicht für viele Pixel). Heute misst das Raster beide Regime gleich dicht — 9 Mio Punkte, davon der überwiegende Teil im glatten Hintergrund. **Welche Messpunkt-Verteilung minimiert die Punktzahl bei gleicher physikalischer Treue, und wie skaliert ihre Dichte ehrlich mit dem Frame-Budget?**
+Das Feld hat zwei Regime: **strukturiert** (innerhalb weniger Kernel-Breiten um jede Quelle) und **glatt** (die 1/d²-Schwänze fernab der Quellen — der lokale Gradient ist dort winzig, ein Messpunkt reicht für viele Pixel). Heute misst das Raster beide Regime gleich dicht — 9 Mio Punkte, davon der überwiegende Teil im glatten Hintergrund. **Welche Messpunkt-Verteilung minimiert die Punktzahl bei gleicher physikalischer Treue, und wie skaliert ihre Dichte mit dem Frame-Budget?**
 
 ## 5. Die Kandidaten (bitte je ein Verdikt mit Begründung)
 
@@ -57,7 +57,7 @@ Du bist eingeladen, eine Verteilung vorzuschlagen, die keiner der Kandidaten 1�
 ## 6. Offene Detailfragen
 
 - **Anzeige**: stückweise-konstante Voronoi-Zellen der Messpunkte (konsistent mit der Keine-Interpolation-Philosophie) oder bilineare Mischung (weicher, aber die verworfene Interpolation)?
-- **Struktur-Radius** um eine Quelle: wann genau fordert die Kernel-Krümmung Nyquist-Dichte — welches ehrliche Kriterium (aus extent, gridStep, f32-Auflösung)?
+- **Struktur-Radius** um eine Quelle: wann genau fordert die Kernel-Krümmung Nyquist-Dichte — welches Kriterium (aus extent, gridStep, f32-Auflösung)?
 - **Budget-Skalierung**: welches Kontrollgesetz verdoppelt/halbiert die Hintergrund-Dichte nach der gemessenen Frame-Zeit (Zweierpotenzen, Ziel = Display-Refresh)?
 - Sollte die **Fovea** das Archivar-Wissen ergänzen (Fallback, wenn der Sampler selbst zu teuer wird)?
 - Welcher Kandidat ist auf **heutigem Silizium im Allgemeinen** implementierbar — und welcher setzt Fähigkeiten voraus, die nirgendwo existieren (echte Subpixel-Addressierung, AI-Beschleuniger)? Die Antwort darf nicht auf ein Gerät zugeschnitten sein.

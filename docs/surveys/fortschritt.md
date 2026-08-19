@@ -34,7 +34,7 @@ späteren, nicht-aufgeblähten Anlauf:
    mapAsync/probe_read/centroid_pipe/field_centroid getilgt.
 2. **Tiled Source Culling**: Kull-Pass (Kacheln 16×16, Shared-Memory-
    Max-Reduktion, 64 Slots, keine globalen/Fragment-Atomics), Kriterium
-   `bound < ε·M`, ε = 2⁻ⁿ, n ∈ [8, 23], ehrlicher Voll-Loop-Overflow,
+   `bound < ε·M`, ε = 2⁻ⁿ, n ∈ [8, 23], Voll-Loop-Overflow,
    Kull bei Sense-Kadenz (cull_due).
 3. **Budget-Regler**: Frame-Zeit-EMA ÷4 gegen die Display-Periode
    16,6 ms, n±1/n±2-Gesetz, Overflow-Flag als zweite Regler-Zahl.
@@ -62,7 +62,7 @@ Harte Befunde aus dem Live-Betrieb (HD 520, ANV):
 - **Deep-Lieferung richtungsbasiert**: Sterne über den Sichtkegel statt
   radius-begrenzt — das Browser-Verhalten (1,84 Mio Sterne, flüssiger
   Deep-Sky-Zoom bei 0 near).
-- **Zell-Achse**: Messpunkt-Vergröberung, ehrlich gegen die
+- **Zell-Achse**: Messpunkt-Vergröberung, gemessen gegen die
   8-Bit-Display-Quantisierung (Struktur-Radius 14–39 px bei 8 Bit);
   auswertung.md §1-2.
 - **Relay-Trailer**: gen u64 + 9×Ω f64 für browser_relay (~80 B).
@@ -77,7 +77,7 @@ Harte Befunde aus dem Live-Betrieb (HD 520, ANV):
 - **f32-Grundwahrheit** (drei unabhängige Herleitungen): Bei wörtlicher
   f32-Treue trägt ein 1/d²-Kernel messbare Struktur bis ~16,8 Mio Pixel —
   der glatte Hintergrund existiert nicht; Messpunkte = Pixel-Raster
-  (Nyquist). Zell-Vergröberung ist ehrlich nur gegen die
+  (Nyquist). Zell-Vergröberung ist zulässig nur gegen die
   Display-Quantisierung.
 - **Verteilungs-Verdikt**: uniformes Raster als Wahrheit; die Ökonomie
   kommt von der Quellen-Achse (Tiled Source Culling, Olsson & Assarsson);

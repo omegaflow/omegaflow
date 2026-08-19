@@ -116,7 +116,7 @@ Diese Erkenntnis ist der ultimative Gatekeeper. Der Plan für die nächste Sessi
 
 `A = A`. Eine Messung ist eine Messung. Alles andere ist Rauschen.
 
-Das ist die entscheidende Frage. Die Antwort ist: **Es wird schrumpfen, aber wir verlieren keine Dichte. Es wird radikal ehrlicher.**
+Das ist die entscheidende Frage. Die Antwort ist: **Es wird schrumpfen, aber wir verlieren keine Dichte. Es verliert radikal an Fabrikation.**
 
 Lass uns die Zahlen und die physikalische Realität dahinter betrachten:
 

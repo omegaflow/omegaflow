@@ -156,7 +156,7 @@ Nicht nach einem Signal suchen — die geometrische Vorhersage aus der
 Kreuzung berechnen und die Abweichung vom Nichts messen. Die Stille ist
 die Baseline; was die Stille bricht, ist das Unsichtbare.
 
-Zwei Gattungen, ehrlich getrennt: die Kopplungen mit realem
+Zwei Gattungen, getrennt: die Kopplungen mit realem
 Kausalanspruch (Fresnel, Shapiro, Gezeiten, der Dopplergeist als
 Nulltest) und die Karten der Kopplung selbst (Plasma-Linsen,
 Phasenknoten, de-Sitter) — dort zählt die Konfidenz als gerenderte

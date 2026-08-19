@@ -65,7 +65,7 @@ workflow` Scopes (kein `read:org` → `gh auth login` schlägt fehl, aber
 **Wichtige physikalische Unterscheidung:** CNEOS-Gesamtenergie (J·10¹⁰) und
 GLM-Radiant-Energie (fJ) sind **verschiedene Messgrößen** — kein Umrechnungs-
 faktor ohne Bolide-Modell, keine Konvertierung fabriziert. Beide stehen
-getrennt als ehrliche Felder.
+getrennt als Felder.
 
 ### 3. ci_mode — Drei-Klassen-CDN-Spiegelung
 
