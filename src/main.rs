@@ -7048,12 +7048,21 @@ mod archivar {
                             let post = body.as_deref().map(|b| b.replace("{station}", &st.id));
                             let raw = match fetch_raw(&url, post.as_deref(), &headers, src.ttl) {
                                 Some(v) => v,
-                                None => return Vec::new(),
+                                None => {
+                                    eprintln!("station {}: fetch void — retry in ttl/Φ", st.id);
+                                    return Vec::new();
+                                }
                             };
                             let mut out = Vec::new();
                             if let ExtractResult::Measurements(mut cs) =
                                 extract(src, &raw, now, lsk)
                             {
+                                if cs.is_empty() {
+                                    eprintln!(
+                                        "station {}: extract returned no measurements",
+                                        st.id
+                                    );
+                                }
                                 for (mut ch, fc) in cs.drain(..) {
                                     ch.position = Position::Surface {
                                         body_name: body_name.clone(),
@@ -10529,37 +10538,47 @@ mod archivar {
         reachable, total, dead, pending, mirrored, fresh, mirror_enabled
     );
         let anomalies = take_anomalies();
-        if !anomalies.is_empty() && std::env::var("GH_TOKEN").is_ok() {
-            let date = match SystemTime::now().duration_since(UNIX_EPOCH) {
-                Ok(d) => {
-                    let (y, m, d) = days_to_ymd(d.as_secs() / 86400);
-                    format!("{}-{:02}-{:02}", y, m, d)
+        if !anomalies.is_empty() {
+            if std::env::var("GH_TOKEN").is_ok() {
+                let date = match SystemTime::now().duration_since(UNIX_EPOCH) {
+                    Ok(d) => {
+                        let (y, m, d) = days_to_ymd(d.as_secs() / 86400);
+                        format!("{}-{:02}-{:02}", y, m, d)
+                    }
+                    Err(_) => "clock-unavailable".to_string(),
+                };
+                let title = format!("[Automated CI Report] Omegaflow Anomalies ({})", date);
+                let body = anomaly_issue_body(&anomalies);
+                match Command::new("gh")
+                    .arg("issue")
+                    .arg("create")
+                    .arg("--repo")
+                    .arg("omegaflow/omegaflow")
+                    .arg("--title")
+                    .arg(&title)
+                    .arg("--label")
+                    .arg("anomaly-report")
+                    .arg("--body")
+                    .arg(&body)
+                    .output()
+                {
+                    Ok(o) if o.status.success() => {
+                        eprintln!(
+                            "ci-mode: anomaly issue created ({} anomalies)",
+                            anomalies.len()
+                        )
+                    }
+                    Ok(o) => eprintln!("ci-mode: gh issue create exited {:?}", o.status.code()),
+                    Err(e) => eprintln!("ci-mode: gh issue create: {}", e),
                 }
-                Err(_) => "clock-unavailable".to_string(),
-            };
-            let title = format!("[Automated CI Report] Omegaflow Anomalies ({})", date);
-            let body = anomaly_issue_body(&anomalies);
-            match Command::new("gh")
-                .arg("issue")
-                .arg("create")
-                .arg("--repo")
-                .arg("omegaflow/omegaflow")
-                .arg("--title")
-                .arg(&title)
-                .arg("--label")
-                .arg("anomaly-report")
-                .arg("--body")
-                .arg(&body)
-                .output()
-            {
-                Ok(o) if o.status.success() => {
-                    eprintln!(
-                        "ci-mode: anomaly issue created ({} anomalies)",
-                        anomalies.len()
-                    )
+            } else {
+                eprintln!(
+                    "ci-mode: {} anomalies, GH_TOKEN absent — the report goes to the console (no issue register)",
+                    anomalies.len()
+                );
+                for a in &anomalies {
+                    eprintln!("anomaly: {} | {} | {}", a.category, a.url, a.details);
                 }
-                Ok(o) => eprintln!("ci-mode: gh issue create exited {:?}", o.status.code()),
-                Err(e) => eprintln!("ci-mode: gh issue create: {}", e),
             }
         }
         if dead == 0 {
@@ -12782,7 +12801,15 @@ mod archivar {
                     let raw = fetch_one(&url, body.as_deref(), &headers, src_clone.ttl);
                     let channels = match raw {
                         Some(ref r) => match extract(&src_clone, r, now, &lsk_c) {
-                            ExtractResult::Measurements(v) => v,
+                            ExtractResult::Measurements(v) => {
+                                if v.is_empty() {
+                                    eprintln!(
+                                        "source {}: extract returned no measurements",
+                                        src_idx
+                                    );
+                                }
+                                v
+                            }
                             ExtractResult::WithEphemeris(v, eph) => {
                                 let _ = ftx.send(FetchResult {
                                     source_idx: src_idx,

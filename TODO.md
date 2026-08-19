@@ -716,6 +716,7 @@ Zeile = Stand 2026-08-19.
 | 10 | ~~S6 — Audit-Nachlese II~~ | ERLEDIGT (2026-08-19): A3 fk.rs UNITS-Default verifiziert — die NAIF-frames.req-Spec trägt KEINEN Default → `unwrap_or("ARCSECONDS")` war Fabrikation, TK-Frame ohne UNITS wird refused (Agenten-Verdict mit Spec-Abgleich); A4 Silverman var≤0 → None (konstante Reihe = Degeneration, kein 1e-30-Fabrikat; TE-Kette Option); A5 Aberration β²≥1 → unaberrante Rückgabe statt γ≈1e6-Rundung (WGSL-Gate); D5 gravity_manifest j2/j4 → Option (absent = kein Oblatheits-Term; die Record-Slots tragen den explizit benannten 0.0-Wire-Pad), gm-Pad war S2; E2 read_cache_if_fresh getilgt (eine Form: cache_fresh + read am Ort); E3 matmul → src/mat.rs (die zwei waren NICHT identisch — fk-Zeilen-Major vs. ephemeris-Spalten-Layout; kanonisch = fk-Form, die vier ephemeris-Aufrufe tauschen Argumente, Verhalten identisch — Agenten-Urteil dokumentiert); A7 unerreichbarer unwrap_or(0) gestrichen; F1 ~20 Register-/Cache-Writes benennen sich (main.rs 10 Register + 2 Cache; tycho2/cometels/dcom5/tap über pro-Agent, exit(1) nach lokaler Konvention); F3-F5 + A6 im Register (unten) — cargo check 0/0, 86 Tests grün (exit-code-gewahrsam) |
 | 11 | ~~S7a — „fallback" in Wahrheit~~ | ERLEDIGT (2026-08-19): der H1-Zweitfund vollstreckt — `NAIF_LSK_FALLBACK_TTL` → `NAIF_LSK_TTL_SECS` (die TTL der LSK-Quelle trägt ihren Namen, Herleitung in Atomzeile 9; 3 Stellen); Testname `test_frame_registry_prefix_fallback` → `_prefix_match` (der Präfix-Lookup ist der Lookup); TODO-Prosa 707/710 benennt die Sache (der tote Pfad ist der Pfad, der Overflow trägt den Voll-Loop). Bleibt als Fremdname: wgpu-Feld `force_fallback_adapter`. Dazu die Prüf-Korrekturen: D1-Verdict-Duplikat gestrichen, E1-Rest mit acht Fundorten als offenes Item geführt — cargo check 0/0, 85 Tests grün (exit-code-gewahrsam) |
 | 12 | ~~S7b — E1-Rest~~ | ERLEDIGT (2026-08-19): die acht Zweige tragen die Consumer-Stempel-Form — Enqueue-Stempel entfernt (netcdf, finals/ionex, alerce, catalog_tycho, transit, lightcurve, csv_zip, generischer Zweig inkl. fanout ohne stations_url); jeder Misserfolg benennt sich (fetch/write/read void, url render void, extract void) und sendet ein leeres Result — der Consumer stempelt bei Versuchsende, kein Fehlschlag sperrt die Quelle mehr ohne Note — cargo check 0/0, 85 Tests grün (exit-code-gewahrsam) |
+| 13 | ~~S7c — F3-F5-Reste~~ | ERLEDIGT (2026-08-19): Extract-Live-Lücke benannt (200-Antwort ohne Messungen trägt ihre Note im generischen Zweig + je Station im Fanout; ci_probe trug sie schon via diagnose_no_samples); GH_TOKEN-Anomalien benannt (ohne Token geht der Report an die Konsole, jede Anomalie als Zeile — nichts wird genommen und verworfen) — cargo check 0/0, 85 Tests grün (exit-code-gewahrsam) |
 
 ### Schwester-Meldungen — Audit nach den 8 Atomen (2026-08-19)
 
@@ -788,10 +789,15 @@ docs/surveys/handover-2026-08-19-audit.md (Pflichtlektüre). Kompakt:
 - F3-F5 — eprintln-only Noten, Extract-Live-Notiz, GH_TOKEN-Anomalien:
   REGISTER (S6, 2026-08-19): die pending/refused-Noten binden sich an
   diesen TODO-Abschnitt als ihr Register — jede neue Note trägt hier
-  ihre Zeile, kein Konsolen-Flüstern ohne Gedächtnis. Die
-  Extract-Live-Lücke (leerer Live-Extract ohne Note) und die
-  GH_TOKEN-Anomalien (kein Ersatz-Register) bleiben offen und sind
-  hiermit der nächsten Quellen-Session vorgelegt.
+  ihre Zeile, kein Konsolen-Flüstern ohne Gedächtnis.
+  ERLEDIGT (S7c, 2026-08-19): die Extract-Live-Lücke ist benannt —
+  eine 200-Antwort ohne Messungen trägt jetzt ihre Note im
+  generischen Zweig („extract returned no measurements") und im
+  Stationen-Fanout (fetch void + keine Messungen je Station); der
+  ci_probe-Pfad trug sie schon (diagnose_no_samples). Die
+  GH_TOKEN-Anomalien sind benannt — ohne Token geht der Report an
+  die Konsole (jede Anomalie als Zeile), nichts wird mehr
+  genommen und verworfen.
 - A6 — probe_classify-τ-Konstanten 86400/60/300/0.01/3600:
   HERKUNFT (S6, 2026-08-19): Draft-Feld-Klassifikation; die Werte sind
   die Sensor-Registry-Kadenzen (serial 60 s, battery 300 s) und die
