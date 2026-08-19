@@ -14,3 +14,4 @@ pub mod mat;
 pub mod netcdf;
 pub mod pck;
 pub mod sexagesimal;
+pub mod spectral;

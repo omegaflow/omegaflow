@@ -31609,12 +31609,17 @@ url https://www.ncei.noaa.gov/paleo-search/study/search.json?dataPublisher=NOAA&
   field investigators investigators
 
 source noaa_mauna_kea_solar_spectral_irradiance
-url https://www.ncei.noaa.gov/data/solar-spectral-irradiance/access/spectral/{year}/ssi_{year}{month}.txt
+# Fundort-Korrektur (2026-08-19, Atom B): die txt-Route .../access/spectral/ ist tot (404).
+# Der live Baum: .../access/standard-resolution/monthly/ssi_v03r00-preliminary_monthly_sYYYYMM_eYYYYMM_cYYYYMMDD.nc
+# + ssi_v03r00_monthly_*.nc (Historie) — netCDF-4/HDF5, std-only-Reader pending (eigenes Atom).
+# Der Compiler (spectral_compiler → spectra.bin, CDN ssd.jpl.nasa.gov) frisst die tabellarische Form;
+# die HDF5-Ernte ist registriert, nicht ersetzt. Stationshöhe unverifiziert (Frame-Alt 0).
+url https://www.ncei.noaa.gov/data/solar-spectral-irradiance/access/standard-resolution/monthly/ssi_v03r00-preliminary_monthly_s202604_e202606_c20260804.nc
   ttl 86400
   force em
-  url https://www.ncei.noaa.gov/data/solar-spectral-irradiance/access/spectral/{year}/ssi_{year}{month}.txt
-  format text
-  rows
+  url https://www.ncei.noaa.gov/data/solar-spectral-irradiance/access/standard-resolution/monthly/ssi_v03r00-preliminary_monthly_s202604_e202606_c20260804.nc
+  format spectral
+  on earth 19.82 -155.47 0
   lat 19.82
   lon -155.47
   field 0 wavelength_nm

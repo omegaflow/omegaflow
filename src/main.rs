@@ -979,6 +979,8 @@ struct Oscillator {
     val: f64,
     name: String,
     z: f64,
+    freq: f64,
+    bin_width: f64,
 }
 
 struct SpatialHash {
@@ -992,6 +994,20 @@ struct SpatialHash {
     unbounded: Vec<Oscillator>,
 }
 
+#[derive(Clone)]
+struct SpectralHash {
+    name: String,
+    motion: Motion,
+    epoch: f64,
+    ttl: f64,
+    tau: f64,
+    kernel_id: f64,
+    force_type: f64,
+    absorption: f64,
+    advection: f64,
+    bins: Vec<(f64, f64, f64)>,
+}
+
 struct Buffer {
     bodies: HashMap<String, SpatialHash>,
     inertial: SpatialHash,
@@ -1001,6 +1017,7 @@ struct Buffer {
     occluders: Option<Arc<OccluderSet>>,
     planets: Option<Arc<PlanetSet>>,
     curves: Option<Arc<CurveSet>>,
+    spectral: Vec<SpectralHash>,
 }
 struct AsteroidHash {
     cell_size: f64,
@@ -1108,6 +1125,8 @@ struct Channel {
     position: Position,
     epoch: f64,
     z: f64,
+    freq: f64,
+    bin_width: f64,
 }
 #[derive(Clone)]
 enum Extract {
@@ -2122,6 +2141,7 @@ mod archivar {
         occluders: Option<Arc<OccluderSet>>,
         planets: Option<Arc<PlanetSet>>,
         curves: Option<Arc<CurveSet>>,
+        spectral: Vec<SpectralHash>,
     ) -> Buffer {
         let mut body_samps: HashMap<String, Vec<Oscillator>> = HashMap::new();
         let mut inertial_samps = Vec::new();
@@ -2145,6 +2165,7 @@ mod archivar {
             occluders,
             planets,
             curves,
+            spectral,
         }
     }
 
@@ -2660,6 +2681,8 @@ mod archivar {
                     0.0,
                     0.0,
                     rec.color_index,
+                    0.0,
+                    0.0,
                 ));
             }
         }
@@ -2727,8 +2750,8 @@ mod archivar {
                 },
                 r_eq,
                 0.0,
-                0.0,
-                0.0,
+                osc.freq,
+                osc.bin_width,
             ));
         }
         if hash.cells.is_empty() {
@@ -2843,8 +2866,8 @@ mod archivar {
                     },
                     r_eq,
                     0.0,
-                    0.0,
-                    0.0,
+                    osc.freq,
+                    osc.bin_width,
                 ));
             }
         };
@@ -2874,30 +2897,7 @@ mod archivar {
         t2: f64,
         pad: f64,
         delta_t_cache: f64,
-        records: &mut Vec<(
-            f64,
-            f64,
-            f64,
-            f64,
-            f64,
-            f64,
-            f64,
-            f64,
-            f64,
-            f64,
-            f64,
-            f64,
-            f64,
-            f64,
-            f64,
-            f64,
-            f64,
-            f64,
-            f64,
-            f64,
-            f64,
-            f64,
-        )>,
+        records: &mut Vec<OscRecord>,
         eph: &HashMap<String, BodyEphemeris>,
     ) {
         for (body_name, hash_cell) in &buf.bodies {
@@ -2931,6 +2931,51 @@ mod archivar {
         }
         if let Some(sh) = &buf.stars {
             query_star_hash(sh, center, t2, pad, delta_t_cache, records);
+        }
+        for sh in &buf.spectral {
+            let Some(p) = sh.motion.at(t2, sh.epoch, eph) else {
+                continue;
+            };
+            let Some(p2) = sh.motion.at(t2 + 1e-3, sh.epoch, eph) else {
+                continue;
+            };
+            let ddx = p[0] - center[0];
+            let ddy = p[1] - center[1];
+            let ddz = p[2] - center[2];
+            if ddx * ddx + ddy * ddy + ddz * ddz > pad * pad {
+                continue;
+            }
+            let vx = (p2[0] - p[0]) / 1e-3;
+            let vy = (p2[1] - p[1]) / 1e-3;
+            let vz = (p2[2] - p[2]) / 1e-3;
+            for &(freq, bin_width, val) in &sh.bins {
+                records.push((
+                    p[0],
+                    p[1],
+                    p[2],
+                    val,
+                    sh.epoch,
+                    sh.ttl,
+                    sh.tau,
+                    0.0,
+                    sh.kernel_id,
+                    sh.force_type,
+                    sh.absorption,
+                    sh.advection,
+                    vx,
+                    vy,
+                    vz,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    freq,
+                    bin_width,
+                ));
+            }
         }
     }
 
@@ -2971,6 +3016,51 @@ mod archivar {
         );
         if let Some(ash) = &buf.asteroids {
             query_asteroid_hash(ash, center, t2, pad, delta_t_cache, records);
+        }
+        for sh in &buf.spectral {
+            let Some(p) = sh.motion.at(t2, sh.epoch, eph) else {
+                continue;
+            };
+            let Some(p2) = sh.motion.at(t2 + 1e-3, sh.epoch, eph) else {
+                continue;
+            };
+            let ddx = p[0] - center[0];
+            let ddy = p[1] - center[1];
+            let ddz = p[2] - center[2];
+            if ddx * ddx + ddy * ddy + ddz * ddz > pad * pad {
+                continue;
+            }
+            let vx = (p2[0] - p[0]) / 1e-3;
+            let vy = (p2[1] - p[1]) / 1e-3;
+            let vz = (p2[2] - p[2]) / 1e-3;
+            for &(freq, bin_width, val) in &sh.bins {
+                records.push((
+                    p[0],
+                    p[1],
+                    p[2],
+                    val,
+                    sh.epoch,
+                    sh.ttl,
+                    sh.tau,
+                    0.0,
+                    sh.kernel_id,
+                    sh.force_type,
+                    sh.absorption,
+                    sh.advection,
+                    vx,
+                    vy,
+                    vz,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    freq,
+                    bin_width,
+                ));
+            }
         }
     }
 
@@ -4250,6 +4340,7 @@ mod archivar {
         occluders: Option<Arc<OccluderSet>>,
         planets: Option<Arc<PlanetSet>>,
         curves: Option<Arc<CurveSet>>,
+        spectral: Option<SpectralHash>,
     }
 
     const AUDIO_SAMPLE_RATE: u32 = 44100;
@@ -4412,6 +4503,7 @@ mod archivar {
         occluders: Option<Arc<OccluderSet>>,
         planets: Option<Arc<PlanetSet>>,
         curves: Option<Arc<CurveSet>>,
+        spectral: Vec<SpectralHash>,
         pending_channels: Vec<(Channel, FieldConfig, u32)>,
     }
 
@@ -7463,6 +7555,8 @@ mod archivar {
                                         channels.push((
                                             Channel {
                                                 z: 0.0,
+                                                freq: 0.0,
+                                                bin_width: 0.0,
                                                 epoch,
                                                 position: position.clone(),
                                                 name: fc.name.clone(),
@@ -7575,6 +7669,8 @@ mod archivar {
                                         channels.push((
                                             Channel {
                                                 z: 0.0,
+                                                freq: 0.0,
+                                                bin_width: 0.0,
                                                 epoch,
                                                 position,
                                                 name: fc.name.clone(),
@@ -7665,6 +7761,8 @@ mod archivar {
                                         channels.push((
                                             Channel {
                                                 z: 0.0,
+                                                freq: 0.0,
+                                                bin_width: 0.0,
                                                 epoch: row_epoch,
                                                 position: position.clone(),
                                                 name: fc.name.clone(),
@@ -7767,6 +7865,8 @@ mod archivar {
                                         channels.push((
                                             Channel {
                                                 z: 0.0,
+                                                freq: 0.0,
+                                                bin_width: 0.0,
                                                 epoch,
                                                 position: Position::Surface {
                                                     body_name: frame_body_name(&src.frame),
@@ -7847,6 +7947,8 @@ mod archivar {
                                         channels.push((
                                             Channel {
                                                 z: 0.0,
+                                                freq: 0.0,
+                                                bin_width: 0.0,
                                                 epoch: row_epoch,
                                                 position: Position::StateVector {
                                                     p,
@@ -7965,6 +8067,8 @@ mod archivar {
                                 channels.push((
                                     Channel {
                                         z: 0.0,
+                                        freq: 0.0,
+                                        bin_width: 0.0,
                                         epoch: now,
                                         position: position.clone(),
                                         name: fc.name.clone(),
@@ -8064,6 +8168,8 @@ mod archivar {
                                     channels.push((
                                         Channel {
                                             z: 0.0,
+                                            freq: 0.0,
+                                            bin_width: 0.0,
                                             epoch: now,
                                             position: Position::StateVector {
                                                 p,
@@ -8274,6 +8380,8 @@ mod archivar {
                                     channels.push((
                                         Channel {
                                             z: zval.unwrap_or(0.0),
+                                            freq: 0.0,
+                                            bin_width: 0.0,
                                             epoch: sample_epoch,
                                             position: Position::StateVector {
                                                 p,
@@ -8350,6 +8458,8 @@ mod archivar {
                                                     channels.push((
                                                         Channel {
                                                             z: 0.0,
+                                                            freq: 0.0,
+                                                            bin_width: 0.0,
                                                             epoch: now,
                                                             position: Position::Surface {
                                                                 body_name: frame_body_name(
@@ -8377,6 +8487,8 @@ mod archivar {
                                                     channels.push((
                                                         Channel {
                                                             z: 0.0,
+                                                            freq: 0.0,
+                                                            bin_width: 0.0,
                                                             epoch: now,
                                                             position: Position::Surface {
                                                                 body_name: frame_body_name(
@@ -8532,6 +8644,8 @@ mod archivar {
                     channels.push((
                         Channel {
                             z: 0.0,
+                            freq: 0.0,
+                            bin_width: 0.0,
                             epoch: now,
                             position: Position::Source,
                             name: fc.name.clone(),
@@ -8666,6 +8780,8 @@ mod archivar {
                         channels.push((
                             Channel {
                                 z: 0.0,
+                                freq: 0.0,
+                                bin_width: 0.0,
                                 epoch,
                                 position,
                                 name: fc.name.clone(),
@@ -8722,6 +8838,8 @@ mod archivar {
                 channels.push((
                     Channel {
                         z: 0.0,
+                        freq: 0.0,
+                        bin_width: 0.0,
                         epoch,
                         position: position.clone(),
                         name: fc.name.clone(),
@@ -8850,6 +8968,8 @@ mod archivar {
                 channels.push((
                     Channel {
                         z: 0.0,
+                        freq: 0.0,
+                        bin_width: 0.0,
                         epoch,
                         position: Position::Surface {
                             body_name: body.clone(),
@@ -9115,6 +9235,8 @@ mod archivar {
             },
             name: channel.name.clone(),
             z: channel.z,
+            freq: channel.freq,
+            bin_width: channel.bin_width,
         })
     }
 
@@ -9123,6 +9245,8 @@ mod archivar {
         out.push((
             Channel {
                 z: 0.0,
+                freq: 0.0,
+                bin_width: 0.0,
                 name: format!("{}.radius", name),
                 value: props.radius_m,
                 position: Position::Source,
@@ -9144,6 +9268,8 @@ mod archivar {
             out.push((
                 Channel {
                     z: 0.0,
+                    freq: 0.0,
+                    bin_width: 0.0,
                     name: format!("{}.mass", name),
                     value: gm,
                     position: Position::Source,
@@ -11738,6 +11864,7 @@ mod archivar {
                 None,
                 None,
                 None,
+                Vec::new(),
             )),
             presence: HashMap::new(),
             declared_body,
@@ -11749,6 +11876,7 @@ mod archivar {
             occluders: None,
             planets: None,
             curves: None,
+            spectral: Vec::new(),
             pending_channels: Vec::new(),
         };
         let body_names: Arc<Vec<String>> = {
@@ -11966,6 +12094,10 @@ mod archivar {
                 if let Some(curves) = res.curves {
                     archive.curves = Some(curves);
                 }
+                if let Some(hash) = res.spectral {
+                    archive.spectral.retain(|h| h.name != hash.name);
+                    archive.spectral.push(hash);
+                }
                 let src = &archive.sources[res.source_idx];
                 for (channel, sensor) in &res.channels {
                     let track_origin = matches!(channel.position, Position::Source)
@@ -12049,6 +12181,8 @@ mod archivar {
                     };
                     let channel = Channel {
                         z: 0.0,
+                        freq: 0.0,
+                        bin_width: 0.0,
                         epoch: now,
                         position: Position::Surface {
                             body_name: declared_body.body_name.clone(),
@@ -12113,6 +12247,7 @@ mod archivar {
                                     occluders: None,
                                     planets: None,
                                     curves: None,
+                                    spectral: None,
                                 });
                             } else {
                                 eprintln!(
@@ -12128,6 +12263,7 @@ mod archivar {
                                     occluders: None,
                                     planets: None,
                                     curves: None,
+                                    spectral: None,
                                 });
                             }
                         });
@@ -12165,6 +12301,7 @@ mod archivar {
                                 occluders: None,
                                 planets: None,
                                 curves: None,
+                                spectral: None,
                             });
                             return;
                         }
@@ -12190,6 +12327,7 @@ mod archivar {
                             occluders: Some(Arc::new(occluders)),
                             planets: None,
                             curves: None,
+                            spectral: None,
                         });
                     });
                     continue;
@@ -12218,6 +12356,7 @@ mod archivar {
                                         occluders: None,
                                         planets: None,
                                         curves: None,
+                                        spectral: None,
                                     });
                                     return;
                                 }
@@ -12233,6 +12372,7 @@ mod archivar {
                                     occluders: None,
                                     planets: None,
                                     curves: None,
+                                    spectral: None,
                                 });
                                 return;
                             }
@@ -12250,6 +12390,7 @@ mod archivar {
                                     occluders: None,
                                     planets: None,
                                     curves: None,
+                                    spectral: None,
                                 });
                                 return;
                             }
@@ -12265,6 +12406,7 @@ mod archivar {
                             occluders: None,
                             planets: None,
                             curves: None,
+                            spectral: None,
                         });
                     });
                     continue;
@@ -12292,6 +12434,7 @@ mod archivar {
                                     occluders: None,
                                     planets: None,
                                     curves: None,
+                                    spectral: None,
                                 });
                                 return;
                             }
@@ -12311,6 +12454,7 @@ mod archivar {
                             occluders: None,
                             planets: None,
                             curves: None,
+                            spectral: None,
                         });
                     });
                     continue;
@@ -12332,6 +12476,7 @@ mod archivar {
                             occluders: None,
                             planets: None,
                             curves: None,
+                            spectral: None,
                         });
                     });
                     continue;
@@ -12363,6 +12508,7 @@ mod archivar {
                                         occluders: None,
                                         planets: None,
                                         curves: None,
+                                        spectral: None,
                                     });
                                     return;
                                 }
@@ -12378,6 +12524,7 @@ mod archivar {
                                     occluders: None,
                                     planets: None,
                                     curves: None,
+                                    spectral: None,
                                 });
                                 return;
                             }
@@ -12395,6 +12542,7 @@ mod archivar {
                                     occluders: None,
                                     planets: None,
                                     curves: None,
+                                    spectral: None,
                                 });
                                 return;
                             }
@@ -12413,6 +12561,127 @@ mod archivar {
                             occluders: None,
                             planets: None,
                             curves: None,
+                            spectral: None,
+                        });
+                    });
+                    continue;
+                }
+                if archive.sources[i].format == "spectral" {
+                    let src = archive.sources[i].clone();
+                    let ftx = fetch_tx.clone();
+                    let src_idx = i;
+                    let src_ttl = src.ttl;
+                    thread::spawn(move || {
+                        let empty = || FetchResult {
+                            source_idx: src_idx,
+                            channels: Vec::new(),
+                            eph_update: None,
+                            asteroid_hash: None,
+                            star_hash: None,
+                            occluders: None,
+                            planets: None,
+                            curves: None,
+                            spectral: None,
+                        };
+                        let url = src.url.clone();
+                        let name = url.rsplit('/').next().unwrap_or("spectra").to_string();
+                        let tmp_path = format!("/tmp/omegaflow_spectral_{}", name);
+                        if !cache_fresh(&tmp_path, src_ttl) {
+                            let bytes = match fetch_raw_bytes(&url, src_ttl) {
+                                Some(b) => b,
+                                None => {
+                                    eprintln!("spectral {}: fetch void — retry in ttl/Φ", url);
+                                    let _ = ftx.send(empty());
+                                    return;
+                                }
+                            };
+                            if std::fs::write(&tmp_path, &bytes).is_err() {
+                                eprintln!("spectral {}: write void — retry in ttl/Φ", url);
+                                let _ = ftx.send(empty());
+                                return;
+                            }
+                        }
+                        let bytes = match std::fs::read(&tmp_path) {
+                            Ok(b) => b,
+                            Err(_) => {
+                                eprintln!("spectral {}: read void — retry in ttl/Φ", url);
+                                let _ = ftx.send(empty());
+                                return;
+                            }
+                        };
+                        let (epoch, bins) = match omegaflow::spectral::parse_spectral_bin(&bytes) {
+                            Some(x) => x,
+                            None => {
+                                eprintln!(
+                                    "spectral {}: bin reads void — {} B carry no spectra.bin contract",
+                                    url,
+                                    bytes.len()
+                                );
+                                let _ = ftx.send(empty());
+                                return;
+                            }
+                        };
+                        let motion = match &src.frame {
+                            Frame::Surface {
+                                body_name,
+                                lat,
+                                lon,
+                                alt,
+                            } => Motion::Surface {
+                                body_name: body_name.clone(),
+                                lat: *lat,
+                                lon: *lon,
+                                alt: *alt,
+                            },
+                            Frame::Barycenter { body_name, scale } => Motion::Barycenter {
+                                body_name: body_name.clone(),
+                                scale: *scale,
+                            },
+                            Frame::Manifest => {
+                                eprintln!(
+                                    "spectral {}: frameless — the block declares no position",
+                                    url
+                                );
+                                let _ = ftx.send(empty());
+                                return;
+                            }
+                        };
+                        let field = match src.extracts.first() {
+                            Some(Extract::Field(fc)) => fc.clone(),
+                            _ => {
+                                eprintln!("spectral {}: field undeclared — the block carries no field line", url);
+                                let _ = ftx.send(empty());
+                                return;
+                            }
+                        };
+                        let hash = SpectralHash {
+                            name: field.name.clone(),
+                            motion,
+                            epoch,
+                            ttl: src_ttl as f64,
+                            tau: field.tau,
+                            kernel_id: field.kernel as f64,
+                            force_type: field.force as f64,
+                            absorption: field.absorption,
+                            advection: field.advection,
+                            bins,
+                        };
+                        eprintln!(
+                            "\r\x1b[Kspectral {}: {} bins, epoch_tdb {}",
+                            field.name,
+                            hash.bins.len(),
+                            hash.epoch
+                        );
+                        let _ = ftx.send(FetchResult {
+                            source_idx: src_idx,
+                            channels: Vec::new(),
+                            eph_update: None,
+                            asteroid_hash: None,
+                            star_hash: None,
+                            occluders: None,
+                            planets: None,
+                            curves: None,
+                            spectral: Some(hash),
                         });
                     });
                     continue;
@@ -12440,6 +12709,7 @@ mod archivar {
                                         occluders: None,
                                         planets: None,
                                         curves: None,
+                                        spectral: None,
                                     });
                                     return;
                                 }
@@ -12455,6 +12725,7 @@ mod archivar {
                                     occluders: None,
                                     planets: None,
                                     curves: None,
+                                    spectral: None,
                                 });
                                 return;
                             }
@@ -12472,6 +12743,7 @@ mod archivar {
                                     occluders: None,
                                     planets: None,
                                     curves: None,
+                                    spectral: None,
                                 });
                                 return;
                             }
@@ -12487,6 +12759,7 @@ mod archivar {
                             occluders: None,
                             planets: Some(Arc::new(planets)),
                             curves: None,
+                            spectral: None,
                         });
                     });
                     continue;
@@ -12513,6 +12786,7 @@ mod archivar {
                                         occluders: None,
                                         planets: None,
                                         curves: None,
+                                        spectral: None,
                                     });
                                     return;
                                 }
@@ -12528,6 +12802,7 @@ mod archivar {
                                     occluders: None,
                                     planets: None,
                                     curves: None,
+                                    spectral: None,
                                 });
                                 return;
                             }
@@ -12545,6 +12820,7 @@ mod archivar {
                                     occluders: None,
                                     planets: None,
                                     curves: None,
+                                    spectral: None,
                                 });
                                 return;
                             }
@@ -12560,6 +12836,7 @@ mod archivar {
                             occluders: None,
                             planets: None,
                             curves: Some(Arc::new(curves)),
+                            spectral: None,
                         });
                     });
                     continue;
@@ -12587,6 +12864,7 @@ mod archivar {
                                     occluders: None,
                                     planets: None,
                                     curves: None,
+                                    spectral: None,
                                 });
                                 return;
                             }
@@ -12611,6 +12889,7 @@ mod archivar {
                                             occluders: None,
                                             planets: None,
                                             curves: None,
+                                            spectral: None,
                                         });
                                         return;
                                     }
@@ -12626,6 +12905,7 @@ mod archivar {
                                     occluders: None,
                                     planets: None,
                                     curves: None,
+                                    spectral: None,
                                 });
                                 return;
                             }
@@ -12642,6 +12922,7 @@ mod archivar {
                                 occluders: None,
                                 planets: None,
                                 curves: None,
+                                spectral: None,
                             });
                         } else {
                             eprintln!("csv_zip {}: extract void — retry in ttl/Φ", src_idx);
@@ -12654,6 +12935,7 @@ mod archivar {
                                 occluders: None,
                                 planets: None,
                                 curves: None,
+                                spectral: None,
                             });
                         }
                     });
@@ -12746,6 +13028,7 @@ mod archivar {
                                 occluders: None,
                                 planets: None,
                                 curves: None,
+                                spectral: None,
                             });
                         } else {
                             eprintln!("fanout {}: stations_url absent — retry in ttl/Φ", src_idx);
@@ -12758,6 +13041,7 @@ mod archivar {
                                 occluders: None,
                                 planets: None,
                                 curves: None,
+                                spectral: None,
                             });
                         }
                         return;
@@ -12777,6 +13061,7 @@ mod archivar {
                                 occluders: None,
                                 planets: None,
                                 curves: None,
+                                spectral: None,
                             });
                             return;
                         }
@@ -12807,6 +13092,7 @@ mod archivar {
                                     occluders: None,
                                     planets: None,
                                     curves: None,
+                                    spectral: None,
                                 });
                                 v
                             }
@@ -12825,6 +13111,7 @@ mod archivar {
                         occluders: None,
                         planets: None,
                         curves: None,
+                        spectral: None,
                     });
                 });
             }
@@ -12904,6 +13191,7 @@ mod archivar {
                     archive.occluders.clone(),
                     archive.planets.clone(),
                     archive.curves.clone(),
+                    archive.spectral.clone(),
                 ));
             }
             let f = archive.field.clone();
@@ -15067,6 +15355,8 @@ field temp temp_c\n";
             };
             let channel = super::Channel {
                 z: 0.0,
+                freq: 0.0,
+                bin_width: 0.0,
                 epoch: 0.0,
                 position: super::Position::Surface {
                     body_name: "mars".into(),
@@ -15673,6 +15963,44 @@ field temp temp_c\n";
                     assert!((fc1.tau - 7.0).abs() < 1e-9);
                 }
                 _ => panic!("extract variant unexpected"),
+            }
+        }
+
+        #[test]
+        fn test_parse_spectral_block() {
+            let block = "url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/spectra.bin\nformat spectral\non earth 19.82 -155.47 0\nttl 86400\nfield irradiance spectral_irradiance_W_m2_Hz inverse-square em W/m2/Hz 2628000 0.0 0.0\n";
+            let srcs = super::parse_sources(block);
+            assert_eq!(srcs.len(), 1);
+            assert_eq!(srcs[0].format, "spectral");
+            match &srcs[0].frame {
+                super::Frame::Surface {
+                    body_name,
+                    lat,
+                    lon,
+                    alt,
+                } => {
+                    assert_eq!(body_name, "earth");
+                    assert!((*lat - 19.82).abs() < 1e-12);
+                    assert!((*lon + 155.47).abs() < 1e-12);
+                    assert_eq!(*alt, 0.0);
+                }
+                other => {
+                    let _ = other;
+                    panic!("expected Surface frame")
+                }
+            }
+            match &srcs[0].extracts[0] {
+                super::Extract::Field(fc) => {
+                    assert_eq!(fc.name, "spectral_irradiance_W_m2_Hz");
+                    assert_eq!(fc.unit, "W/m2/Hz");
+                    assert!((fc.tau - 2628000.0).abs() < 1e-9);
+                    assert_eq!(fc.force as u32, 0);
+                    assert_eq!(fc.kernel as u32, 0);
+                }
+                other => {
+                    let _ = other;
+                    panic!("expected Field extract")
+                }
             }
         }
 
@@ -20544,6 +20872,9 @@ mod relay {
                                         None,
                                         None,
                                         None,
+                                        None,
+                                        None,
+                                        Vec::new(),
                                     ))
                                 })
                             };
@@ -20629,6 +20960,9 @@ mod relay {
                                     None,
                                     None,
                                     None,
+                                    None,
+                                    None,
+                                    Vec::new(),
                                 ))
                             })
                         };
@@ -20845,6 +21179,9 @@ mod relay {
                             None,
                             None,
                             None,
+                            None,
+                            None,
+                            Vec::new(),
                         ))
                     })
                 };
@@ -20914,6 +21251,8 @@ mod relay {
                                     channels.push((
                                         Channel {
                                             z: 0.0,
+                                            freq: 0.0,
+                                            bin_width: 0.0,
                                             epoch: now,
                                             position: pos.clone(),
                                             name: fc.name.clone(),
@@ -20971,6 +21310,8 @@ mod relay {
                                 channels.push((
                                     Channel {
                                         z: 0.0,
+                                        freq: 0.0,
+                                        bin_width: 0.0,
                                         epoch: now,
                                         position: pos.clone(),
                                         name: fc.name.clone(),
@@ -21000,30 +21341,7 @@ mod relay {
                         let _ = cfg.osc_tx.send(oscillators);
                     }
                 }
-                let mut records: Vec<(
-                    f64,
-                    f64,
-                    f64,
-                    f64,
-                    f64,
-                    f64,
-                    f64,
-                    f64,
-                    f64,
-                    f64,
-                    f64,
-                    f64,
-                    f64,
-                    f64,
-                    f64,
-                    f64,
-                    f64,
-                    f64,
-                    f64,
-                    f64,
-                    f64,
-                    f64,
-                )> = Vec::new();
+                let mut records: Vec<OscRecord> = Vec::new();
                 let response_epoch;
                 if !queries.is_empty() {
                     let (t0, x0, y0, z0) = queries[0];

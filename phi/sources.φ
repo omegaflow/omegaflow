@@ -1666,3 +1666,9 @@ ra RAJ2000
 dec DEJ2000
 field Fpeak first_radio_peak_flux_mjy inverse-square em mJy 86400 0.0 0.0
 field Fint first_radio_integrated_flux_mjy inverse-square em mJy 86400 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/spectra.bin
+format spectral
+on earth 19.82 -155.47 0
+ttl 86400
+field irradiance spectral_irradiance_W_m2_Hz inverse-square em W/m2/Hz 2628000 0.0 0.0

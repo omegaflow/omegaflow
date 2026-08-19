@@ -46,6 +46,40 @@ Header total: 19 bytes.
 
 Absent properties are written as 0.0 — the neutral constant of the fixed-stride record.
 
+## Spectral Bin File — v1 (spectra.bin)
+
+Compiled spectral asset (`spectral_compiler`, Atom B). A separate format family from the
+WebSocket frame — file format, not wire format.
+
+| Offset | Size | Value |
+|--------|------|-------|
+| 0 | 2 | `0xCF 0x86` (magic) |
+| 2 | 1 | `0x01` (spectral version) |
+| 3 | 8 | `epoch_tdb` f64 LE — month middle of the measurement (TDB seconds since J2000, never fetch time) |
+| 11 | 4 | `count` u32 LE — number of spectral bins |
+| 15 | count × 24 | bin records |
+
+Header total: 15 bytes.
+
+### Spectral Bin Record (24 bytes, 3 × f64 LE)
+
+| Slot | Field | Meaning |
+|------|-------|---------|
+| 0 | freq | band center (Hz, linear) — ν = c/λ |
+| 1 | bin_width | band width (Hz, linear) — derived from the native λ-grid spacing (midpoint edges in ν; single-sided at the grid boundary) |
+| 2 | val | spectral density in SI (W/m²/Hz) — E_ν = E_λ·λ²/c |
+
+Invalid rows fall (0 honored): quality_flag ≠ 0, non-finite or non-positive values are never
+written. The record carries the measurement; uncertainty stays in the source.
+
+The runtime contract: `parse_spectral_bin` (`src/spectral.rs`) refuses malformed files — wrong
+magic/version, non-finite epoch, stride mismatch. The Archivar's `format spectral` branch
+(`SpectralHash`, ICRS point + bins) expands each bin to an oscillator record at the same point;
+freq/bin_width flow through the v8 wire record as usual. Point sources stay freq = 0.0.
+
+The harvest step (NCEI-SSI netCDF-4/HDF5) is pending — the compiler consumes the tabular form
+of the measurement; unreadable containers are named, never replaced.
+
 ## WebSocket Query Frame (browser → server)
 
 `static/constants.js` `syncFrame`:
