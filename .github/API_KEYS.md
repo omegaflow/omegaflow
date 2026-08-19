@@ -3,7 +3,7 @@
 Keys werden ausschließlich als **GitHub-Secrets** hinterlegt und **niemals** in
 Repo, Docker-Image oder Laufzeit-Environment des Servers geschrieben.
 
-Der Workflow `.github/workflows/refresh-protected-data.yml` liest die Secrets,
+Der Workflow `.github/workflows/healthcheck.yml` liest die Secrets,
 holt die geschützten Daten von den APIs und veröffentlicht sie als Release-Assets
 auf domain-basierten Releases im Repo `omegaflow/sources`.
 

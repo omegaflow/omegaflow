@@ -14,8 +14,6 @@ phi/health.json
 phi/kernels/
 kernels/
 *.py
-!scripts/verify_sources.py
-!scripts/generate_ephemerides.py
 !phi/pipeline/chunk_master.py
 /reference/
 scripts/__pycache__/

@@ -336,7 +336,7 @@ Offen (Detail in phi/pipeline/ledger.φ):
 - Vorräte (Pfade unter /home/johannes/projects/archive/archeology/):
   sources/sources_gold_pre-cdn_27k (2572 Blöcke) +
   sources_recovery_pre-cdn_25k (1924) — Migration nach Protokoll
-  (docs/source_curation.md); sources_new_untested_14k (873) +
+  (docs/SOURCE_PORT.md); sources_new_untested_14k (873) +
   sources_astro_untested (30) + sources_exotic_untested (16) +
   sources_earth_untested (3) — UNTESTED_index.txt nicht archiviert,
   per-Domain-Index rekonstruieren; sources_recovery_cdn-merged_60k
@@ -440,10 +440,11 @@ Offen (Detail in phi/pipeline/ledger.φ):
 
 ## CI Pipeline
 
-- I02: refresh-protected-data.yml (Python inline) → Rust; das Python
-  refresh.yml im sources-Repo bleibt bis I02 auf Python — Abschaltung
-  nach Verifikation der Rust-Katalog-Kompilate im
-  kernel_flatten-catalogs-Job (ein Produzent pro Asset)
+- I02-Rest: das Python refresh.yml im sources-Repo bleibt auf Python —
+  Abschaltung nach Verifikation der Rust-Katalog-Kompilate im
+  kernel_flatten-catalogs-Job (ein Produzent pro Asset). In diesem Repo
+  trägt healthcheck.yml die Rolle (cargo run -- --verify phi, 3-h-Cron,
+  Anomalie-Issues).
 - Token-Rotation: der git-Remote-Token (keine releases/actions-Rechte)
   gehört rotiert und auf credential-helper/SSH umgestellt
 - Stray-/Basename-Assets im Release ssd.jpl.nasa.gov löschen

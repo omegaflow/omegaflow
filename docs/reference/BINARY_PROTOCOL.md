@@ -1,21 +1,21 @@
-# Binary Protocol — v6
+# Binary Protocol — v8
 
-`src/main.rs` (resonance response construction), `static/constants.js` (parse), `static/index.html` (WGSL + WS onmessage).
+`src/main.rs` (resonance response construction, `pack_window`), `static/constants.js` (parse), `static/index.html` (WGSL + WS onmessage), `src/main.rs` `MEMBRANE_WGSL` (native membrane).
 
 ## WebSocket Response Frame
 
 | Offset | Size | Value |
 |--------|------|-------|
 | 0 | 2 | `0xCF 0x86` (magic) |
-| 2 | 1 | `0x06` (protocol version) |
+| 2 | 1 | `0x08` (protocol version) |
 | 3 | 8 | `response_epoch` f64 LE — TDB seconds since J2000 of the response |
 | 11 | 4 | `id` u32 LE — presence window identifier (echoed from query) |
 | 15 | 4 | `count` u32 LE — number of oscillator records |
-| 19 | count × 168 | oscillator records |
+| 19 | count × 192 | oscillator records |
 
 Header total: 19 bytes.
 
-## Oscillator Record (168 bytes, 21 × f64 LE)
+## Oscillator Record (192 bytes, 24 × f64 LE)
 
 | Slot | Field | Meaning |
 |------|-------|---------|
@@ -34,12 +34,15 @@ Header total: 19 bytes.
 | 12 | vx | oscillator velocity X (m/s) |
 | 13 | vy | oscillator velocity Y (m/s) |
 | 14 | vz | oscillator velocity Z (m/s) |
-| 15 | pole_x | body pole axis X (ICRS unit vector, 0 = absent); for em sources (force_type 0) carries the redshift z — packed into `meta[3]` (`props[j*3].w`) and applied as Tolman dimming (1+z)⁻⁴ |
+| 15 | pole_x | body pole axis X (ICRS unit vector, 0 = absent); for em sources (force_type 0) carries the redshift z — packed into `meta[3]` (`props[j*4].w`) and applied as Tolman dimming (1+z)⁻⁴ |
 | 16 | pole_y | body pole axis Y |
 | 17 | pole_z | body pole axis Z |
 | 18 | j2 | zonal harmonic J2 (0 = absent) |
 | 19 | j4 | zonal harmonic J4 (0 = absent) |
 | 20 | r_eq | equatorial radius (meters, 0 = absent) |
+| 21 | color_index | unified BP−RP color (0 = absent → white, 0 honored) |
+| 22 | freq | band center (Hz, linear). 0.0 = point source — the one-bin limit; absent frequency is a fully realized property, never fabricated |
+| 23 | bin_width | band width (Hz, linear). 0.0 = point source |
 
 Absent properties are written as 0.0 — the neutral constant of the fixed-stride record.
 
@@ -60,24 +63,29 @@ No magic/version bytes in the query frame.
 
 ## JavaScript → GPU repacking
 
-`static/constants.js` (parse of the 168-byte record):
+`static/constants.js` (parse of the 192-byte record):
 
 - `field`: Float32Array(oscCount × 12) = `[x_rel, y_rel, z_rel, val, t, ttl, force_type, absorption, advection, vx, vy, vz]`
-- `meta`: Float32Array(oscCount × 12) = `[extent, tau, kernel_id, 0, pole_x, pole_y, pole_z, j2, j4, r_eq, 0, 0]`
+- `meta`: Float32Array(oscCount × 16) = `[extent, tau, kernel_id, z|0, pole_x, pole_y, pole_z, j2, j4, r_eq, color_index, freq, bin_width, 0, 0, 0]`
 
-Version checks (both must be `6`): `constants.js` record parse (`bytes[2] !== 6 → throw`) and `index.html` WS onmessage (`buf[2] !== 6 → return`).
+`meta[3]` carries the Tolman redshift z when force_type == 0 (from slot 15), else 0.0 — identical on the Rust side (`pack_window`) and the JS side. `meta[13..15]` are stride padding.
+
+Version checks (both must be `8`): `constants.js` record parse (`bytes[2] !== 8 → throw`) and `index.html` WS onmessage (`buf[2] !== 8 → return`). No legacy read mode — both sides grow in the same commit.
 
 ## WGSL unpacking
 
-`static/index.html` fieldShader:
+`static/index.html` fieldShader and `src/main.rs` `MEMBRANE_WGSL` (identical access):
 
 ```
 field[j*3]    = vec4f(x, y, z, val)
 field[j*3+1]  = vec4f(t, ttl, force_type, absorption)
 field[j*3+2]  = vec4f(advection, vx, vy, vz)
-props[j*3]    = vec4f(extent, tau, kernel_id, 0)
-props[j*3+1]  = vec4f(pole_x, pole_y, pole_z, j2)
-props[j*3+2]  = vec4f(j4, r_eq, 0, 0)
+props[j*4]    = vec4f(extent, tau, kernel_id, z|0)
+props[j*4+1]  = vec4f(pole_x, pole_y, pole_z, j2)
+props[j*4+2]  = vec4f(j4, r_eq, color_index, freq)
+props[j*4+3]  = vec4f(bin_width, 0, 0, 0)
 ```
 
-`force_type` read as `u32(tm.z)`, `absorption` as `f32(tm.w)`, `advection` as `fm.x`, `kernel_id` as `u32(mt.z)`, pole/j2/j4/r_eq from `mp`/`mg` (zonal harmonic term in `osc_field`).
+`force_type` read as `u32(tm.z)`, `absorption` as `f32(tm.w)`, `advection` as `fm.x`, `kernel_id` as `u32(mt.z)`, `z` as `mt.w` (Tolman dimming), pole/j2/j4/r_eq from `mp`/`mg` (zonal harmonic term in `osc_field`), `freq` as `mg.w`, `bin_width` as `props[j*4+3].x`. The freq/bin_width slots are carried by the record and the pack since v8; band-selective rendering consumes them in the spectral oscillator atoms (see `docs/concepts/DER_SPEKTRALE_OSZILLATOR.md`).
+
+Slot identity is verified by `golden_pack_slots_against_wgsl_access` (mathematikerin tests) — the pack layout test against the WGSL access pattern. The WGSL sources validate offline via naga (`membrane_wgsl_validates_offline`).

@@ -6,7 +6,7 @@ A = A
 
 sources (APIs, ephemerides, connected sensors, CDN) ⇌ Archivar (Rust, std-only) ⇌ Mathematikerin (WebGPU WGSL) ⇌ silicon membranes
 
-Protocol v6: 168 bytes, 21 × f64 LE per oscillator; frame `0xCF 0x86 0x06 [response_epoch:f64] [id:u32] [count:u32]`.
+Protocol v7: 176 bytes, 22 × f64 LE per oscillator; frame `0xCF 0x86 0x07 [response_epoch:f64] [id:u32] [count:u32]`.
 
 Certainty: `e^(−max(0, |Δt| − d/v_force) / ttl)`
 

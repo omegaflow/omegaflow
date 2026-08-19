@@ -6,7 +6,7 @@ Code-verified reference for omegaflow internals.
 
 | File | Content | Code source |
 |------|---------|-------------|
-| `BINARY_PROTOCOL.md` | v6: 19-byte WS header (response_epoch), 168-byte/21-f64 records, query frame, JS→GPU repacking | `src/main.rs` resonance, `static/constants.js` |
+| `BINARY_PROTOCOL.md` | v7: 19-byte WS header (response_epoch), 176-byte/22-f64 records (color_index), query frame, JS→GPU repacking | `src/main.rs` resonance, `static/constants.js` |
 | `CONSTANTS.md` | Φ, C_LIGHT, J2000, PARSEC_M, HUBBLE_H0, etc. | `src/main.rs` |
 | `FORCE_SYSTEM.md` | 9 force channels, 7 kernel shapes, BodyProperties, body channels | `src/main.rs`, `static/index.html` |
 | `EXTRACT_TYPES.md` | Extract enum variants and fields | `src/main.rs` |
