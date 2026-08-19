@@ -715,6 +715,7 @@ Zeile = Stand 2026-08-19.
   Verdachtswort — die Quelle trägt ihren eigenen Namen), E1 origins-Stempel erst nach Versuchsende (eph- + dastcom-Zweig: Enqueue-Stempel entfernt, Misserfolg sendet leeres Result + Note, der Consumer stempelt; die übrigen Zweige behalten den Enqueue-Stempel — S6-Erweiterung offen), C1 „station samples refused", D3 transfer_entropy → Option<f64> (n<8 = None; surrogate_threshold → Option; HUD hinter `if let (Some, Some)` — die 0 bleibt nur die gemessene 0), F2 Radiator-Rückdruck (Disconnected-Note + Audio-Send benannt); Welle 3 = D1/D2-Verdicts im Register (Urteils-Zeilen unten), D4 Notenpflicht im 9-Token-Feld-Arm (τ absent → benannte Refuse-Note) — cargo check 0/0, 86 Tests grün (exit-code-gewahrsam) |
 | 10 | ~~S6 — Audit-Nachlese II~~ | ERLEDIGT (2026-08-19): A3 fk.rs UNITS-Default verifiziert — die NAIF-frames.req-Spec trägt KEINEN Default → `unwrap_or("ARCSECONDS")` war Fabrikation, TK-Frame ohne UNITS wird refused (Agenten-Verdict mit Spec-Abgleich); A4 Silverman var≤0 → None (konstante Reihe = Degeneration, kein 1e-30-Fabrikat; TE-Kette Option); A5 Aberration β²≥1 → unaberrante Rückgabe statt γ≈1e6-Rundung (WGSL-Gate); D5 gravity_manifest j2/j4 → Option (absent = kein Oblatheits-Term; die Record-Slots tragen den explizit benannten 0.0-Wire-Pad), gm-Pad war S2; E2 read_cache_if_fresh getilgt (eine Form: cache_fresh + read am Ort); E3 matmul → src/mat.rs (die zwei waren NICHT identisch — fk-Zeilen-Major vs. ephemeris-Spalten-Layout; kanonisch = fk-Form, die vier ephemeris-Aufrufe tauschen Argumente, Verhalten identisch — Agenten-Urteil dokumentiert); A7 unerreichbarer unwrap_or(0) gestrichen; F1 ~20 Register-/Cache-Writes benennen sich (main.rs 10 Register + 2 Cache; tycho2/cometels/dcom5/tap über pro-Agent, exit(1) nach lokaler Konvention); F3-F5 + A6 im Register (unten) — cargo check 0/0, 86 Tests grün (exit-code-gewahrsam) |
 | 11 | ~~S7a — „fallback" in Wahrheit~~ | ERLEDIGT (2026-08-19): der H1-Zweitfund vollstreckt — `NAIF_LSK_FALLBACK_TTL` → `NAIF_LSK_TTL_SECS` (die TTL der LSK-Quelle trägt ihren Namen, Herleitung in Atomzeile 9; 3 Stellen); Testname `test_frame_registry_prefix_fallback` → `_prefix_match` (der Präfix-Lookup ist der Lookup); TODO-Prosa 707/710 benennt die Sache (der tote Pfad ist der Pfad, der Overflow trägt den Voll-Loop). Bleibt als Fremdname: wgpu-Feld `force_fallback_adapter`. Dazu die Prüf-Korrekturen: D1-Verdict-Duplikat gestrichen, E1-Rest mit acht Fundorten als offenes Item geführt — cargo check 0/0, 85 Tests grün (exit-code-gewahrsam) |
+| 12 | ~~S7b — E1-Rest~~ | ERLEDIGT (2026-08-19): die acht Zweige tragen die Consumer-Stempel-Form — Enqueue-Stempel entfernt (netcdf, finals/ionex, alerce, catalog_tycho, transit, lightcurve, csv_zip, generischer Zweig inkl. fanout ohne stations_url); jeder Misserfolg benennt sich (fetch/write/read void, url render void, extract void) und sendet ein leeres Result — der Consumer stempelt bei Versuchsende, kein Fehlschlag sperrt die Quelle mehr ohne Note — cargo check 0/0, 85 Tests grün (exit-code-gewahrsam) |
 
 ### Schwester-Meldungen — Audit nach den 8 Atomen (2026-08-19)
 
@@ -772,11 +773,13 @@ docs/surveys/handover-2026-08-19-audit.md (Pflichtlektüre). Kompakt:
   berichtigt → S5. TEILVOLLZUG (S5, 2026-08-19): eph- + dastcom-Zweig
   stempeln erst nach Versuchsende (Enqueue-Stempel entfernt,
   Misserfolg sendet leeres Result + Note, der Consumer stempelt).
-  REST OFFEN (Prüfung 2026-08-19): acht Zweige tragen den
-  Enqueue-Stempel weiter — main.rs:12198/12246/12284/12317/12365/
-  12409/12454/12559. Die „S6-Erweiterung" aus Atomzeile 9 ist hiermit
-  als offenes Item geführt — gleiche Form wie die zwei vollzogenen
-  Zweige, ein eigener Schnitt je Stelle.
+  ERLEDIGT (S7b, 2026-08-19): die acht verbliebenen Zweige tragen
+  dieselbe Form — netcdf, finals/ionex, alerce, catalog_tycho,
+  transit, lightcurve, csv_zip und der generische Zweig (inkl.
+  fanout ohne stations_url); jeder Misserfolg benennt sich
+  (fetch/write/read void, url render void, extract void) und sendet
+  ein leeres Result — der Consumer stempelt bei Versuchsende, kein
+  Fehlschlag sperrt die Quelle mehr ohne Note.
 - E2 read_cache_if_fresh-Duplikat (4868) → S6.
 - E3 matmul-Duplikat (ephemeris_compiler 193 vs fk 294) → S6.
 - E4 283+242 Alt-Blöcke ohne τ, CDN-v3 — pendings (S2/S4 registriert).

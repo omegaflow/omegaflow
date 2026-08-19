@@ -12195,29 +12195,58 @@ mod archivar {
                     let src_idx = i;
                     let src_ttl = src_clone.ttl;
                     let lsk_c = lsk.clone();
-                    archive.origins.entry(origin).or_insert(OriginState {
-                        fetched: now,
-                        prev_epoch: now,
-                        prev_abs: [0.0; 3],
-                        prev_motion: None,
-                        resid_ema: 0.0,
-                        has_prev: false,
-                    });
                     thread::spawn(move || {
                         let name = url.rsplit('/').next().unwrap_or("netcdf").to_string();
                         let tmp_path = format!("/tmp/omegaflow_netcdf_{}", name);
                         if !cache_fresh(&tmp_path, src_ttl) {
                             let bytes = match fetch_raw_bytes(&url, src_ttl) {
                                 Some(b) => b,
-                                None => return,
+                                None => {
+                                    eprintln!("netcdf {}: fetch void — retry in ttl/Φ", url);
+                                    let _ = ftx.send(FetchResult {
+                                        source_idx: src_idx,
+                                        channels: Vec::new(),
+                                        eph_update: None,
+                                        asteroid_hash: None,
+                                        star_hash: None,
+                                        occluders: None,
+                                        planets: None,
+                                        curves: None,
+                                    });
+                                    return;
+                                }
                             };
                             if std::fs::write(&tmp_path, &bytes).is_err() {
+                                eprintln!("netcdf {}: write void — retry in ttl/Φ", url);
+                                let _ = ftx.send(FetchResult {
+                                    source_idx: src_idx,
+                                    channels: Vec::new(),
+                                    eph_update: None,
+                                    asteroid_hash: None,
+                                    star_hash: None,
+                                    occluders: None,
+                                    planets: None,
+                                    curves: None,
+                                });
                                 return;
                             }
                         }
                         let bytes = match std::fs::read(&tmp_path) {
                             Ok(b) => b,
-                            Err(_) => return,
+                            Err(_) => {
+                                eprintln!("netcdf {}: read void — retry in ttl/Φ", url);
+                                let _ = ftx.send(FetchResult {
+                                    source_idx: src_idx,
+                                    channels: Vec::new(),
+                                    eph_update: None,
+                                    asteroid_hash: None,
+                                    star_hash: None,
+                                    occluders: None,
+                                    planets: None,
+                                    curves: None,
+                                });
+                                return;
+                            }
                         };
                         let channels = build_netcdf_channels(&src_clone, &bytes, &lsk_c);
                         eprintln!("\r\x1b[Knetcdf {}: {} oscillators", name, channels.len());
@@ -12243,18 +12272,23 @@ mod archivar {
                     let lsk_c = lsk.clone();
                     let now_c = now;
                     let is_ionex = archive.sources[i].format == "ionex";
-                    archive.origins.entry(origin).or_insert(OriginState {
-                        fetched: now,
-                        prev_epoch: now,
-                        prev_abs: [0.0; 3],
-                        prev_motion: None,
-                        resid_ema: 0.0,
-                        has_prev: false,
-                    });
                     thread::spawn(move || {
                         let bytes = match fetch_raw_bytes(&url, src_ttl) {
                             Some(b) => b,
-                            None => return,
+                            None => {
+                                eprintln!("finals {}: fetch void — retry in ttl/Φ", url);
+                                let _ = ftx.send(FetchResult {
+                                    source_idx: src_idx,
+                                    channels: Vec::new(),
+                                    eph_update: None,
+                                    asteroid_hash: None,
+                                    star_hash: None,
+                                    occluders: None,
+                                    planets: None,
+                                    curves: None,
+                                });
+                                return;
+                            }
                         };
                         let text = String::from_utf8_lossy(&bytes).into_owned();
                         let channels = if is_ionex {
@@ -12281,14 +12315,6 @@ mod archivar {
                     let src_idx = i;
                     let cap = src_clone.fanout_cap.max(1) as usize;
                     let delay = src_clone.fanout_delay;
-                    archive.origins.entry(origin).or_insert(OriginState {
-                        fetched: now,
-                        prev_epoch: now,
-                        prev_abs: [0.0; 3],
-                        prev_motion: None,
-                        resid_ema: 0.0,
-                        has_prev: false,
-                    });
                     thread::spawn(move || {
                         let channels = build_alerce_channels(&src_clone, cap, delay);
                         let _ = ftx.send(FetchResult {
@@ -12314,29 +12340,58 @@ mod archivar {
                     let build_epoch = now;
                     #[cfg(feature = "browser_relay")]
                     let cadence_c = cadence;
-                    archive.origins.entry(origin).or_insert(OriginState {
-                        fetched: now,
-                        prev_epoch: now,
-                        prev_abs: [0.0, 0.0, 0.0],
-                        prev_motion: None,
-                        resid_ema: 0.0,
-                        has_prev: false,
-                    });
                     thread::spawn(move || {
                         let name = url.rsplit('/').next().unwrap_or("stars").to_string();
                         let tmp_path = format!("/tmp/omegaflow_catalog_{}", name);
                         if !cache_fresh(&tmp_path, src_ttl) {
                             let bytes = match fetch_raw_bytes(&url, src_ttl) {
                                 Some(b) => b,
-                                None => return,
+                                None => {
+                                    eprintln!("catalog_tycho {}: fetch void — retry in ttl/Φ", url);
+                                    let _ = ftx.send(FetchResult {
+                                        source_idx: src_idx,
+                                        channels: Vec::new(),
+                                        eph_update: None,
+                                        asteroid_hash: None,
+                                        star_hash: None,
+                                        occluders: None,
+                                        planets: None,
+                                        curves: None,
+                                    });
+                                    return;
+                                }
                             };
                             if std::fs::write(&tmp_path, &bytes).is_err() {
+                                eprintln!("catalog_tycho {}: write void — retry in ttl/Φ", url);
+                                let _ = ftx.send(FetchResult {
+                                    source_idx: src_idx,
+                                    channels: Vec::new(),
+                                    eph_update: None,
+                                    asteroid_hash: None,
+                                    star_hash: None,
+                                    occluders: None,
+                                    planets: None,
+                                    curves: None,
+                                });
                                 return;
                             }
                         }
                         let bytes = match std::fs::read(&tmp_path) {
                             Ok(b) => b,
-                            Err(_) => return,
+                            Err(_) => {
+                                eprintln!("catalog_tycho {}: read void — retry in ttl/Φ", url);
+                                let _ = ftx.send(FetchResult {
+                                    source_idx: src_idx,
+                                    channels: Vec::new(),
+                                    eph_update: None,
+                                    asteroid_hash: None,
+                                    star_hash: None,
+                                    occluders: None,
+                                    planets: None,
+                                    curves: None,
+                                });
+                                return;
+                            }
                         };
                         #[cfg(feature = "browser_relay")]
                         let hash = build_star_hash(&bytes, build_epoch, cadence_c);
@@ -12362,29 +12417,58 @@ mod archivar {
                     let src_clone = archive.sources[i].clone();
                     let src_idx = i;
                     let src_ttl = src_clone.ttl;
-                    archive.origins.entry(origin).or_insert(OriginState {
-                        fetched: now,
-                        prev_epoch: now,
-                        prev_abs: [0.0, 0.0, 0.0],
-                        prev_motion: None,
-                        resid_ema: 0.0,
-                        has_prev: false,
-                    });
                     thread::spawn(move || {
                         let name = url.rsplit('/').next().unwrap_or("planets").to_string();
                         let tmp_path = format!("/tmp/omegaflow_catalog_{}", name);
                         if !cache_fresh(&tmp_path, src_ttl) {
                             let bytes = match fetch_raw_bytes(&url, src_ttl) {
                                 Some(b) => b,
-                                None => return,
+                                None => {
+                                    eprintln!("transit {}: fetch void — retry in ttl/Φ", url);
+                                    let _ = ftx.send(FetchResult {
+                                        source_idx: src_idx,
+                                        channels: Vec::new(),
+                                        eph_update: None,
+                                        asteroid_hash: None,
+                                        star_hash: None,
+                                        occluders: None,
+                                        planets: None,
+                                        curves: None,
+                                    });
+                                    return;
+                                }
                             };
                             if std::fs::write(&tmp_path, &bytes).is_err() {
+                                eprintln!("transit {}: write void — retry in ttl/Φ", url);
+                                let _ = ftx.send(FetchResult {
+                                    source_idx: src_idx,
+                                    channels: Vec::new(),
+                                    eph_update: None,
+                                    asteroid_hash: None,
+                                    star_hash: None,
+                                    occluders: None,
+                                    planets: None,
+                                    curves: None,
+                                });
                                 return;
                             }
                         }
                         let body = match std::fs::read_to_string(&tmp_path) {
                             Ok(b) => b,
-                            Err(_) => return,
+                            Err(_) => {
+                                eprintln!("transit {}: read void — retry in ttl/Φ", url);
+                                let _ = ftx.send(FetchResult {
+                                    source_idx: src_idx,
+                                    channels: Vec::new(),
+                                    eph_update: None,
+                                    asteroid_hash: None,
+                                    star_hash: None,
+                                    occluders: None,
+                                    planets: None,
+                                    curves: None,
+                                });
+                                return;
+                            }
                         };
                         let planets = build_planet_set(&src_clone, &body);
                         eprintln!("\r\x1b[Ktransit: {} planeten", planets.records.len());
@@ -12406,29 +12490,58 @@ mod archivar {
                     let ftx = fetch_tx.clone();
                     let src_idx = i;
                     let src_ttl = archive.sources[i].ttl;
-                    archive.origins.entry(origin).or_insert(OriginState {
-                        fetched: now,
-                        prev_epoch: now,
-                        prev_abs: [0.0, 0.0, 0.0],
-                        prev_motion: None,
-                        resid_ema: 0.0,
-                        has_prev: false,
-                    });
                     thread::spawn(move || {
                         let name = url.rsplit('/').next().unwrap_or("curves").to_string();
                         let tmp_path = format!("/tmp/omegaflow_catalog_{}", name);
                         if !cache_fresh(&tmp_path, src_ttl) {
                             let bytes = match fetch_raw_bytes(&url, src_ttl) {
                                 Some(b) => b,
-                                None => return,
+                                None => {
+                                    eprintln!("lightcurve {}: fetch void — retry in ttl/Φ", url);
+                                    let _ = ftx.send(FetchResult {
+                                        source_idx: src_idx,
+                                        channels: Vec::new(),
+                                        eph_update: None,
+                                        asteroid_hash: None,
+                                        star_hash: None,
+                                        occluders: None,
+                                        planets: None,
+                                        curves: None,
+                                    });
+                                    return;
+                                }
                             };
                             if std::fs::write(&tmp_path, &bytes).is_err() {
+                                eprintln!("lightcurve {}: write void — retry in ttl/Φ", url);
+                                let _ = ftx.send(FetchResult {
+                                    source_idx: src_idx,
+                                    channels: Vec::new(),
+                                    eph_update: None,
+                                    asteroid_hash: None,
+                                    star_hash: None,
+                                    occluders: None,
+                                    planets: None,
+                                    curves: None,
+                                });
                                 return;
                             }
                         }
                         let bytes = match std::fs::read(&tmp_path) {
                             Ok(b) => b,
-                            Err(_) => return,
+                            Err(_) => {
+                                eprintln!("lightcurve {}: read void — retry in ttl/Φ", url);
+                                let _ = ftx.send(FetchResult {
+                                    source_idx: src_idx,
+                                    channels: Vec::new(),
+                                    eph_update: None,
+                                    asteroid_hash: None,
+                                    star_hash: None,
+                                    occluders: None,
+                                    planets: None,
+                                    curves: None,
+                                });
+                                return;
+                            }
                         };
                         let curves = build_curve_set(&bytes);
                         eprintln!("\r\x1b[Klightcurve: {} sterne", curves.stars.len());
@@ -12451,21 +12564,26 @@ mod archivar {
                     let src_idx = i;
                     let eph_arc = archive.body_ephemerides.clone();
                     let e = env.clone();
-                    archive.origins.entry(origin).or_insert(OriginState {
-                        fetched: now,
-                        prev_epoch: now,
-                        prev_abs: [0.0; 3],
-                        prev_motion: None,
-                        resid_ema: 0.0,
-                        has_prev: false,
-                    });
                     let lsk_c = lsk.clone();
                     thread::spawn(move || {
                         let url = match render_source_url(
                             &src_clone, 0.0, 0.0, 0.0, now, 0.0, &eph_arc, &e, &lsk_c,
                         ) {
                             Some(u) => u,
-                            None => return,
+                            None => {
+                                eprintln!("csv_zip {}: url render void — retry in ttl/Φ", src_idx);
+                                let _ = ftx.send(FetchResult {
+                                    source_idx: src_idx,
+                                    channels: Vec::new(),
+                                    eph_update: None,
+                                    asteroid_hash: None,
+                                    star_hash: None,
+                                    occluders: None,
+                                    planets: None,
+                                    curves: None,
+                                });
+                                return;
+                            }
                         };
                         let tmp_path = format!("/tmp/omegaflow_csv_{}.zip", src_idx);
                         if !cache_fresh(&tmp_path, src_clone.ttl) {
@@ -12473,9 +12591,36 @@ mod archivar {
                             let bytes =
                                 match fetch_raw_bytes_post(&url, None, &headers, src_clone.ttl) {
                                     Some(b) => b,
-                                    None => return,
+                                    None => {
+                                        eprintln!(
+                                            "csv_zip {}: fetch void — retry in ttl/Φ",
+                                            src_idx
+                                        );
+                                        let _ = ftx.send(FetchResult {
+                                            source_idx: src_idx,
+                                            channels: Vec::new(),
+                                            eph_update: None,
+                                            asteroid_hash: None,
+                                            star_hash: None,
+                                            occluders: None,
+                                            planets: None,
+                                            curves: None,
+                                        });
+                                        return;
+                                    }
                                 };
                             if std::fs::write(&tmp_path, &bytes).is_err() {
+                                eprintln!("csv_zip {}: write void — retry in ttl/Φ", src_idx);
+                                let _ = ftx.send(FetchResult {
+                                    source_idx: src_idx,
+                                    channels: Vec::new(),
+                                    eph_update: None,
+                                    asteroid_hash: None,
+                                    star_hash: None,
+                                    occluders: None,
+                                    planets: None,
+                                    curves: None,
+                                });
                                 return;
                             }
                         }
@@ -12485,6 +12630,18 @@ mod archivar {
                             let _ = ftx.send(FetchResult {
                                 source_idx: src_idx,
                                 channels,
+                                eph_update: None,
+                                asteroid_hash: None,
+                                star_hash: None,
+                                occluders: None,
+                                planets: None,
+                                curves: None,
+                            });
+                        } else {
+                            eprintln!("csv_zip {}: extract void — retry in ttl/Φ", src_idx);
+                            let _ = ftx.send(FetchResult {
+                                source_idx: src_idx,
+                                channels: Vec::new(),
                                 eph_update: None,
                                 asteroid_hash: None,
                                 star_hash: None,
@@ -12556,14 +12713,6 @@ mod archivar {
                 let eph_arc = archive.body_ephemerides.clone();
                 let e = env.clone();
                 let src_idx = i;
-                archive.origins.entry(origin).or_insert(OriginState {
-                    fetched: now,
-                    prev_epoch: now,
-                    prev_abs: [0.0; 3],
-                    prev_motion: None,
-                    resid_ema: 0.0,
-                    has_prev: false,
-                });
                 let lsk_c = lsk.clone();
                 let presence_center = presences.first().map(|p| (p.1, p.2, p.3));
                 thread::spawn(move || {
@@ -12592,6 +12741,18 @@ mod archivar {
                                 planets: None,
                                 curves: None,
                             });
+                        } else {
+                            eprintln!("fanout {}: stations_url absent — retry in ttl/Φ", src_idx);
+                            let _ = ftx.send(FetchResult {
+                                source_idx: src_idx,
+                                channels: Vec::new(),
+                                eph_update: None,
+                                asteroid_hash: None,
+                                star_hash: None,
+                                occluders: None,
+                                planets: None,
+                                curves: None,
+                            });
                         }
                         return;
                     }
@@ -12599,7 +12760,20 @@ mod archivar {
                         &src_clone, pos.0, pos.1, pos.2, now, r, &eph_arc, &e, &lsk_c,
                     ) {
                         Some(u) => u,
-                        None => return,
+                        None => {
+                            eprintln!("source {}: url render void — retry in ttl/Φ", src_idx);
+                            let _ = ftx.send(FetchResult {
+                                source_idx: src_idx,
+                                channels: Vec::new(),
+                                eph_update: None,
+                                asteroid_hash: None,
+                                star_hash: None,
+                                occluders: None,
+                                planets: None,
+                                curves: None,
+                            });
+                            return;
+                        }
                     };
                     let body = render_source_body(
                         &src_clone, pos.0, pos.1, pos.2, now, r, &eph_arc, &lsk_c,
@@ -12623,7 +12797,10 @@ mod archivar {
                                 v
                             }
                         },
-                        None => Vec::new(),
+                        None => {
+                            eprintln!("source {}: fetch void — retry in ttl/Φ", src_idx);
+                            Vec::new()
+                        }
                     };
                     let _ = ftx.send(FetchResult {
                         source_idx: src_idx,
