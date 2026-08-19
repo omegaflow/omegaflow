@@ -25,39 +25,29 @@ Der main.rs-Schnitt ist strikt Streichung + Importzeilen (Zeilen-Mengen-Differen
 gegen HEAD verifiziert). `#![allow(mixed_script_confusables)]` jetzt auch in
 lib.rs (spiegelt main.rs Zeile 1 — die griechischen Identitäten wanderten mit).
 Atom 2 (Probe `nobel_probe_corona`): Instrument gebaut, erster Testlauf
-gefahren, Kalibrierungslücke identifiziert — **Ansatz demonstriert,
-Urteil vorläufig.** Die Pipeline liefert eine durchlaufende
-TE-Kausalitätsanalyse über vier Matrizen (Bz→EUV, EUV↔X-Ray,
-Radio→GOES, Dichte→GOES als Nullkontrolle). Der erste Lauf zeigt
-Muster, die mit einem Alfvén-getriebenen Heizkanal kompatibel wären
-(Bz→304 und 304→284 signifikant; EUV→X-Ray überwiegt bei ausgewiesenen
-Surrogat-σ) — aber die Nullkontrolle (Dichte-RTSW → GOES) ist
-ebenfalls signifikant: die Signifikanzmethodik selbst steht unter
-Verdacht. Das Muster ist ein Kandidat, kein Befund. Offen vor jeder
-physikalischen Aussage:
-- Surrogatverfahren: die naiven Fisher-Yates-Shuffles brechen die
-  Autokorrelation nicht — phasenrandomisierte Surrogate oder
-  Block-Bootstrap in `src/te.rs` bauen und gegen die Nullkontrolle
-  testen, bis sie hält oder der Bruch erklärt ist (z. B. echter,
-  uninteressanter Kopplungspfad Dichte→GOES);
-- Fenster-Kongruenz: alle Matrizen auf demselben Zeitfenster (die
-  Sekunden-Kontrolle lief auf dem ~2-d-Fenster; die OMNI↔GOES-
-  Schnittmenge bleibt leer — stopDate 06.08.);
-- Mehrfachvergleichskorrektur über die vier Matrizen und alle
-  Kanalpaare (bei ungeschützter Schwelle ist mindestens ein
-  falsch-positiver Treffer fast garantiert — die Nullkontrolle könnte
-  genau das sein);
-- Lag-Wahl: lag 0 ist Default, kein Sweep — die Robustheit des
-  Optimums ist ungeprüft;
-- KDE-Bandbreite: Silverman-Heuristik, Sensitivität der
-  Signifikanzurteile gegen h ungeprüft.
-Kurations-Befunde des Laufs: NGDC-NetCDF (GOES-30d) trägt 404 →
-fehlt-Registratur, kein Block; `1/cm3`-Alias in convert_to_si + em-Liste
-ergänzt (Dichte-RTSW erntet seitdem); die HAPI-Reihen laufen über die
-Identitäts-LSK (Unix rein, Unix raus); Radio ↔ GOES trägt keine Aussage
-(n = 15, n-Schwelle 30); Laufzeit gemessen ≈ 80–90 min — vor dem
-nächsten Lauf (mit korrigierter Methodik) die O(n²) × Surrogate-Kosten
-gegenrechnen.
+gefahren, **Kontrolltest repariert** (2026-08-19, zweiter Lauf). Die
+Nullkontrolle bricht nicht mehr: alle vier Dichte-Paare halten unter der
+phasenrandomisierten Schwelle (Spektrum erhaltend, std-only FFT in
+`src/te.rs` + `surrogate_stats_phase`/`surrogate_stats_block`
+Block-Bootstrap) und brachen unter der naiven Shuffle-Schwelle — die
+naiven Surrogate waren das Artefakt. Der Befund des ersten Laufs kippt
+mit der korrigierten Schwelle: **Bz → 304 und 304 → 284 sind still —
+der Alfvén-Kanal trägt keinen Pfeil; der DAG schrumpft auf
+EUV-304 → X-Ray (+ Bz → X-Ray, beide lag 0/1).** 0 honored: Stille ist
+die Antwort. Offen vor jeder physikalischen Aussage:
+- Mehrfachvergleichskorrektur über die Matrizen und Kanalpaare (2
+  Pfeile bei 20 getesteten Paaren ohne Korrektur — der erwartete
+  Falsch-positiv-Bereich ist nicht verlassen);
+- Lag-Wahl: lag 0 ist Default, kein Sweep — Robustheit ungeprüft;
+- KDE-Bandbreite: Silverman-Heuristik, Sensitivität der Urteile gegen h
+  ungeprüft;
+- Fenster-Kongruenz: Sekunden-Kontrolle lief auf dem ~2-d-Fenster;
+  OMNI↔GOES-Schnittmenge bleibt leer (stopDate 06.08.).
+Kurations-Befunde: NGDC-NetCDF (GOES-30d) trägt 404 → fehlt-
+Registratur, kein Block; `1/cm3`-Alias ergänzt; HAPI-Reihen über die
+Identitäts-LSK; Radio ↔ GOES trägt keine Aussage (n = 15, n-Schwelle
+30); Laufzeit gemessen ≈ 80–90 min — vor dem nächsten Lauf die
+O(n²) × Surrogate-Kosten gegenrechnen.
 GOES-30d-Archiv-Block bleibt pending (kein lebender Kandidat);
 bis dahin trennt der OMNI-Ingest-Verzug (stopDate 06.08.) OMNI↔GOES —
 Schnittmenge leer, im Protokoll fehlt.

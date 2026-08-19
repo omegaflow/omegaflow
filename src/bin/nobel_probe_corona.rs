@@ -2,7 +2,7 @@ use omegaflow::archivar::{
     convert_to_si, extract_series, fetch_raw, is_time_key, load_sources, parse_json, scalar_of,
     ymd_to_days, Extract, JsonVal, SourceConfig,
 };
-use omegaflow::te::{surrogate_stats, surrogate_threshold_lag, transfer_entropy_lag};
+use omegaflow::te::{surrogate_stats, surrogate_stats_phase, transfer_entropy_lag};
 use std::collections::HashMap;
 use std::time::{SystemTime, UNIX_EPOCH};
 
@@ -300,7 +300,7 @@ fn te_row(label_a: &str, label_b: &str, xs: &[f32], ys: &[f32], lags: &[usize]) 
     for &lag in lags {
         let seed = SURROGATE_SEED ^ (lag as u64).wrapping_mul(0x517C_C1B7_2722_0A95);
         let te = transfer_entropy_lag(xs, ys, lag);
-        let thr = surrogate_threshold_lag(xs, ys, lag, seed);
+        let thr = surrogate_stats_phase(xs, ys, lag, seed).map(|(_, _, t)| t);
         match (te, thr) {
             (Some(t), Some(h)) => {
                 let arrow = if t > h { "Pfeil" } else { "still" };
@@ -356,6 +356,7 @@ struct Pfeil {
     schwelle: f64,
     mean: f64,
     sd: f64,
+    naive_schwelle: f64,
 }
 
 fn main() {
@@ -369,7 +370,7 @@ fn main() {
     );
     println!("KDE-Bandbreite: Silverman h = 1.06·σ·n^(−0.2) je Reihe; lag 0 → kanonischer 1-Schritt-Schätzer.");
     println!(
-        "Surrogate: 10 Fisher-Yates-Shuffles (LCG), Schwelle = mean + 2σ. Pfeil ⇔ TE > Schwelle."
+        "Schwelle: phasenrandomisierte Surrogate (Spektrum der Treiberreihe erhaltend, std-only FFT, 10 Realisierungen), mean + 2σ; die naive Shuffle-Schwelle bleibt nur in der Nullkontrolle zum Vergleich gedruckt. Pfeil ⇔ TE > Schwelle."
     );
     println!("Zeitbasis: Unix-Sekunden relativ — TE ist verschiebungsinvariant; die TDB-Konstante kürzt sich.");
 
@@ -517,7 +518,7 @@ fn main() {
     );
     println!("LSK-Datei fehlt lokal — die Reihen laufen in Unix-Sekunden; die HAPI-Zeiten gehen durch die Identitäts-LSK (delta_t_a = J2000-Offset, 0-s-Pad): Unix rein, Unix raus — kein Leap-Offset, TE ist verschiebungsinvariant.");
     println!("Sekunden-Matrix: lag 0 (kanonisch) und lag 1 fallen zusammen — auf dem 1-min-Gitter ist der 1-Schritt-Schätzer der 60-s-Lag.");
-    println!("Surrogat-Methodik: naive Fisher-Yates-Shuffles brechen die Autokorrelation nicht — die gebrochene Nullkontrolle (Dichte → GOES) ist der Beleg; phasenrandomisierte Surrogate / Block-Bootstrap stehen aus.");
+    println!("Surrogat-Methodik: die Schwelle ist phasenrandomisiert (Autokorrelation erhaltend); die naive Shuffle-Schwelle bricht die Kontrolle nachweislich — beide stehen in der Nullkontrolle nebeneinander. Block-Bootstrap liegt als surrogate_stats_block in der lib bereit (unbenutzt).");
     println!("Kleine n tragen keine Aussage: unter n = 30 wird kein Pfeil gemessen — Unterbestimmtheit, keine Stille.");
 
     let matrix_fenster = |channels: &[(&str, &[(f64, f64)])]| -> Option<(f64, f64, f64)> {
@@ -663,7 +664,8 @@ fn main() {
                         }
                         let (xs, ys) = pair_cells(&binned[j], &binned[i]);
                         let te = transfer_entropy_lag(&xs, &ys, 0);
-                        let stats = surrogate_stats(&xs, &ys, 0, SURROGATE_SEED);
+                        let stats = surrogate_stats_phase(&xs, &ys, 0, SURROGATE_SEED);
+                        let naive = surrogate_stats(&xs, &ys, 0, SURROGATE_SEED);
                         if let (Some(t), Some((mean, sd, thr))) = (te, stats) {
                             pfeile.push(Pfeil {
                                 von: sekunden_channels[i].0.into(),
@@ -673,6 +675,7 @@ fn main() {
                                 schwelle: thr,
                                 mean,
                                 sd,
+                                naive_schwelle: naive.map(|(_, _, t)| t).unwrap_or(f64::NAN),
                             });
                         }
                     }
@@ -684,7 +687,8 @@ fn main() {
     {
         let (xs, ys) = join_nearest(&radio, &bz_omni, 1800.0);
         let te = transfer_entropy_lag(&xs, &ys, 0);
-        let stats = surrogate_stats(&xs, &ys, 0, SURROGATE_SEED);
+        let stats = surrogate_stats_phase(&xs, &ys, 0, SURROGATE_SEED);
+        let naive = surrogate_stats(&xs, &ys, 0, SURROGATE_SEED);
         if let (Some(t), Some((mean, sd, thr))) = (te, stats) {
             pfeile.push(Pfeil {
                 von: "Bz-OMNI".into(),
@@ -694,10 +698,12 @@ fn main() {
                 schwelle: thr,
                 mean,
                 sd,
+                naive_schwelle: naive.map(|(_, _, t)| t).unwrap_or(f64::NAN),
             });
         }
         let te = transfer_entropy_lag(&ys, &xs, 0);
-        let stats = surrogate_stats(&ys, &xs, 0, SURROGATE_SEED);
+        let stats = surrogate_stats_phase(&ys, &xs, 0, SURROGATE_SEED);
+        let naive = surrogate_stats(&ys, &xs, 0, SURROGATE_SEED);
         if let (Some(t), Some((mean, sd, thr))) = (te, stats) {
             pfeile.push(Pfeil {
                 von: "Radio-2695".into(),
@@ -707,15 +713,16 @@ fn main() {
                 schwelle: thr,
                 mean,
                 sd,
+                naive_schwelle: naive.map(|(_, _, t)| t).unwrap_or(f64::NAN),
             });
         }
     }
 
     println!();
-    println!("=== Pfeile (signifikant ⇔ TE > Schwelle = mean + 2σ der Surrogate) ===");
+    println!("=== Pfeile (signifikant ⇔ TE > Schwelle = mean + 2σ der phasenrandomisierten Surrogate) ===");
     for p in &pfeile {
         println!(
-            "{:>14} → {:<14} | n {:>5} | TE {:.4e} | Schwelle {:.4e} | Surrogat (mean {:.3e}, σ {:.3e}) | {}",
+            "{:>14} → {:<14} | n {:>5} | TE {:.4e} | Schwelle {:.4e} | Surrogat (mean {:.3e}, σ {:.3e}) | Schwelle-naiv {:.4e} | {}",
             p.von,
             p.nach,
             p.n,
@@ -723,6 +730,7 @@ fn main() {
             p.schwelle,
             p.mean,
             p.sd,
+            p.naive_schwelle,
             if p.te > p.schwelle { "Pfeil" } else { "still" }
         );
     }
@@ -783,6 +791,19 @@ fn main() {
     println!(
         "Nullkontrolle-Fenster: Dichte-RTSW ↔ GOES lief auf dem Sekunden-Fenster (gemeinsames Fenster aller Sekunden-Kanäle, ~2 d) — nicht auf OMNI (Schnittmenge leer, stopDate 06.08.)."
     );
+    println!("=== Nullkontrolle: naive vs. phasenrandomisierte Schwelle ===");
+    for p in pfeile.iter().filter(|p| p.von.starts_with("Dichte-RTSW")) {
+        let naiv = if p.te > p.naive_schwelle {
+            "bricht"
+        } else {
+            "hält"
+        };
+        let phase = if p.te > p.schwelle { "bricht" } else { "hält" };
+        println!(
+            "{:>14} → {:<14} | n {:>5} | TE {:.4e} | Schwelle-naiv {:.4e} ({}) | Schwelle-phase {:.4e} ({})",
+            p.von, p.nach, p.n, p.te, p.naive_schwelle, naiv, p.schwelle, phase
+        );
+    }
     if bz_304 && s304_284 {
         if dens_violation {
             println!("TE(Bz → EUV-304) und TE(EUV-304 → EUV-284) signifikant → magnetischer Energiefluss durch die Übergangsregion in die heiße Korona (der Alfvén-Kanal) — VORLÄUFIG: die Surrogat-Schwelle steht unter dem Vorbehalt der gebrochenen Nullkontrolle.");
@@ -833,9 +854,9 @@ fn main() {
         println!("Radio → GOES still — die Chromosphären-Kopplung trägt keinen Pfeil.");
     }
     if dens_violation {
-        println!("Dichte-Paare über der Schwelle → NULLKONTROLLE BRICHT — das Urteil ist VORLÄUFIG: die naiven Fisher-Yates-Surrogate brechen die Autokorrelation nicht; gemeinsamer Trend oder Tagesgang könnten TE(Bz→304) und TE(304→284) mitdichten. Klärung pending: phasenrandomisierte Surrogate / Block-Bootstrap.");
+        println!("Dichte-Paare über der phasenrandomisierten Schwelle → NULLKONTROLLE BRICHT AUCH SPEKTRUMERHALTEND — der Bruch übersteht die korrigierte Surrogatmethode; nächster Verdächtiger: Mehrfachvergleich (20 Paare × 3 lags × 4 Matrizen ohne Korrektur) oder ein echter, uninteressanter Kopplungspfad. Das Urteil bleibt VORLÄUFIG.");
     } else {
-        println!("Nullkontrolle hält: Dichte-Paare unter der Schwelle.");
+        println!("Nullkontrolle hält unter der phasenrandomisierten Schwelle — der naive Shuffle war das Artefakt; die Signifikanzmaschinerie trägt mit spektrumerhaltenden Surrogaten.");
     }
     println!("Stille Zeilen sind Befunde. Exit 0.");
 }
