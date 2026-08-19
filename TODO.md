@@ -364,7 +364,14 @@ SOURCES_V2_SPEC.md).
 Offen (Detail in phi/pipeline/ledger.φ):
 
 - Die Linse: Folgewelle — NASA-CMR-Keywords + GBIF-Tags downloaden,
-  Library feinwägen; --port ersetzt --gold
+  Library feinwägen; --port ersetzt --gold. 9. Fassung 2026-08-20
+  geschliffen (NOAA-NODD-Befund: sea-ice/cors/gnss=em, crowdsourced
+  bathymetry=acoustic, Stationsklima ghcn/gsod/isd=thermal — die Linse
+  zieht die Buckets jetzt selbst, GDP-Drifter +52)
+- S3-Harvester: xml_harvester löst den ListBucketResult-Namespace nicht
+  (0 records, getestet 2026-08-20) — die NOAA-NODD-S3-Buckets
+  (sea-ice/GDP-Drifter/cors/bathymetry) sind geparkt (ledger.φ
+  parser-gap); braucht Namespace-Handling oder einen s3_harvester
 - Probe-Stufe: nächste Welle — neue Kandidaten aus den Katalogen in
   batches/ nachrücken
 - Queue: 10 Untested-Korpora (14k/13k/15k/7k/2k/183l/astro/earth/

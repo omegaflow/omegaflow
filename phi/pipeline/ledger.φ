@@ -536,3 +536,111 @@ note NRAO-Archiv jetzt Angular-SPA. archive-service-REST-Pfade 404. Alter TAP ar
 geparkt
 kandidat https://svom.ac.cn/
 note HTML 711 B, Zertifikat abgelaufen. GCN-Notices der wahre Datenweg, aber v0.1-API tot (siehe Eintrag 1).
+
+geparkt
+kandidat https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+1000+*+FROM+spherex.obscore
+note verify_astro_probe (2026-08-19): IRSA liefert VOTable-JSON (VOTABLE-Tabelle; s_ra/s_dec nur als FIELD-Metadaten, nicht als Row-Keys) + Antwort 3,18 MB (Probe-curl -m 10 → exit 28). Parser-gap: VOTable-JSON-Atom ausstehend.
+
+geparkt
+kandidat https://eas.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+1000+object_id,right_ascension,declination+FROM+catalogue.mer_catalogue
+note verify_astro_probe (2026-08-19): Antwortform {metadata:[{name:…}], data:[[id,ra,dec],…]} — Rows als Skalar-Arrays, Spaltennamen nur im metadata-Block. Parser-gap: Spaltennamen-aus-metadata-Zuordnung; Index-Keys unverifiziert.
+
+geparkt
+kandidat https://archive.eso.org/tap_obs/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+*+FROM+ivoa.ObsCore
+note verify_astro_probe (2026-08-19): Endpoint liefert echte CSV (200, text/csv, s_ra/s_dec-Spalten per curl verifiziert). Probe-probe_csv klassifiziert nur #-präfixierte Free-Text-Spalten; Standard-CSV (Header-Zeile) → void. Parser-gap: CSV-Header-Klassifikation der Probe.
+
+geparkt
+kandidat https://catalogs.mast.stsci.edu/api/v0.1/panstarrs/dr1/mean.json?ra={ra}&dec={dec}&radius={radius}
+note verify_astro_probe (2026-08-19): Endpoint lebt (200 JSON {info, data:[{objName,raMean,decMean,…}]}); Probe-Env kennt {ra}/{dec}/{radius}-Marker nicht → fetch void. Probe-Limitierung, keine Endpoint-Void. Nachweis erst im Register-Lauf.
+
+ausstehend
+parser-gap VOTableJSON
+note verify_astro_probe (2026-08-19): IRSA-TAP liefert VOTable-serialisiertes JSON (s_ra/s_dec nur als FIELD-Metadaten, nicht als Row-Keys). Ein VOTable-JSON-Reader-Atom steht aus — kein VOTable-XML-Kollaps, das JSON ist eine eigene Serialisierung (spherex.obscore geparkt).
+
+ausstehend
+parser-gap SpaltenAusMetadata
+note verify_astro_probe (2026-08-19): Euclid/EAS-TAP antwortet {metadata:[{name:…}], data:[[…]]} — Rows als Skalar-Arrays, Spaltennamen nur im metadata-Block. Die Spaltennamen-aus-metadata-Zuordnung für cmap (oder indexierte ra/dec-Keys) steht aus (mer_catalogue geparkt).
+
+geparkt
+kandidat https://www.jma.go.jp/bosai/amedas/data/map/{YYYYMMDDhhmmss}.json
+note JMA AMeDAS (Japan) — 1286 Stationen live: temp/humidity/pressure/wind/precip/visibility/snow/sun; Stations-Tabelle amedastable.json (lat/lon deg+min). STATUS live, curl 200. Welle 2026-08-19.
+
+geparkt
+kandidat https://api.weather.gc.ca/collections/swob-realtime/items?limit=100
+note ECCC MSC GeoMet OGC API (Kanada) — citypageweather (844) + swob-realtime (13,6 M Items: air_temp/rel_hum/wind/stn_pres/pcpn/dewpoint). STATUS live, curl 200, GeoJSON. Welle 2026-08-19.
+
+geparkt
+kandidat https://www.imis.bfs.de/ogc/opendata/ows?service=WFS&version=1.1.0&request=GetFeature&typeName=opendata:odlinfo_odl_1h_latest&outputFormat=application/json
+note BfS-ODL/IMIS (DE) — Gamma-Ortsdosisleistung µSv/h, ~1800 Sonden, GeoJSON WFS. STATUS live, curl 200; offene Schnittstelle neu 2023/24. Welle 2026-08-19.
+
+geparkt
+kandidat https://data.pmel.noaa.gov/pmel/erddap/tabledap/pmelTaoDySst.json?time,T_25,station&time%3E=2026-07-01T00%3A00%3A00Z
+note GTMBA TAO/TRITON/PIRATA/RAMA via PMEL-ERDDAP — Wassertemperatur/Salz/Wind/Druck/Strömung an Moorings, delayed-mode täglich/stündlich. STATUS live, curl 200, JSON. Welle 2026-08-19.
+
+geparkt
+kandidat https://erddap.emodnet-physics.eu/erddap/tabledap/EP_PLATFORMS_METADATA_V2.json?PLATFORMCODE,call_name,latitude,longitude,lastdateobservation&platformtypedescription=%22Mooring%22
+note EMODnet Physics — 1759 Mooring-Plattformen, Katalog mit letzter Beobachtung; Parameter je Netz-Betreiber in per-Netz-Datasets. STATUS live, curl 200. Welle 2026-08-19.
+
+geparkt
+kandidat https://erddap.emso.eu/erddap/info/index.json
+note EMSO ERIC — 160 Datasets, verkabelte EU-Observatorien (OBSEA, E2M3A Adria, Azoren, Ionisches Meer), CSV/JSON/netCDF. STATUS live, curl 200. Welle 2026-08-19.
+
+geparkt
+kandidat https://gliders.ioos.us/erddap/info/index.json
+note IOOS National Glider DAC — Seaglider/Slocum/Spray: T/S/Leitfähigkeit/Druck/O2 auf Tauchprofilen. STATUS live, curl 200. Welle 2026-08-19.
+
+geparkt
+kandidat https://erddap.marine.ie/erddap/info/index.json
+note SmartBay Observatory (Marine Institute IE, Galway Bay) — CTD + ADCP + Met-Boje, 2026-Daten belegt. STATUS live, curl 200. Welle 2026-08-19.
+
+geparkt
+kandidat https://waterservices.usgs.gov/nwis/iv/?format=json&parameterCd=72019&countyCd=51013&siteStatus=active
+note USGS Groundwater Level Network — Brunnen-Wasserstand 72019 (neu ggü. Oberflächenwasser 00060). STATUS live, curl 200, JSON/WaterML2. Welle 2026-08-19.
+
+geparkt
+kandidat https://wcc.sc.egov.usda.gov/awdbRestApi/services/v1/stations?active=true&returnUsed=true
+note NRCS AWDB SNOTEL+SCAN — Schneehöhe SNWD, Schneewasseräquivalent WTEQ, Bodenfeuchte SMS; data-Endpoint 200 mit stationTriplets= (Parameter geklärt). STATUS live. Welle 2026-08-19.
+
+geparkt
+kandidat https://www.ncei.noaa.gov/data/integrated-global-radiosonde-archive/access/data-y2d/{station}-data-beg{year}.txt.zip
+note IGRA (NOAA NCEI) — Radiosonden T/P/RH/Wind-Profile, täglich fortgeschrieben. STATUS live, curl 200, Text. Welle 2026-08-19.
+
+geparkt
+kandidat https://weather.uwyo.edu/wsgi/sounding?datetime={YYYY-MM-DD HH:00:00}&id={wmo_id}&src=UNKNOWN&type=TEXT:CSV
+note Wyoming Upper-Air — Sondenprofile inkl. lon/lat je Messpunkt. STATUS live, curl 200, CSV; alter /cgi-bin/-Pfad ist 404 (neuer Endpoint /wsgi/sounding). Welle 2026-08-19.
+
+geparkt
+kandidat https://mesonet.agron.iastate.edu/json/raob.py?station={station}&ts={YYYYMMDDhhmm}
+note Iowa State Mesonet RAOB — T/P/Höhe/Taupunkt/Wind je Level. STATUS live, curl 200, JSON. Welle 2026-08-19.
+
+geparkt
+kandidat https://api.v2.sondehub.org/sonde/{serial}
+note SondeHub (UKMADS) — Citizen-Radiosonden RS41-Telemetrie (temp/alt/lat/lon je Frame). STATUS live, curl 200, JSON; RH/P meist nicht im Amateur-Frame. Welle 2026-08-19.
+
+geparkt
+kandidat https://aviationweather.gov/api/data/pirep?id=KJFK&distance=300&format=json&age=6
+note NOAA AWC Aircraft Reports — PIREP/AIREP/AMDAR: T, Wind, Turbulenz, Vereisung am Flugzeugpunkt; minütlicher Cache-Feed aircraftreports.cache.csv.gz (lat/lon/alt/temp_c/wind). STATUS live, curl 200, JSON/CSV(gz). Welle 2026-08-19.
+
+geparkt
+kandidat https://data.cosmic.ucar.edu/gnss-ro/cosmic2/
+note COSMIC-2 FORMOSAT-7 (UCAR) — GNSS-Radio-Okkultations-Profile (T/P/RH in der Höhe), Near-Real-Time, offene Route ohne Login. STATUS live, curl 200, netCDF. Welle 2026-08-19.
+
+geparkt
+kandidat https://api.vedur.is/quakes/events
+note IMO Skjalftalísa (Island) — Erdbebensignale (Epizentrum/Magnitude/Tiefe), SIL-Netzverdichtung Grindavik/Svartsengi seit 11/2023. STATUS live, curl 200, GeoJSON. Welle 2026-08-19.
+
+geparkt
+kandidat https://api.geonet.org.nz/quake?MMI=0
+note GeoNet (NZ) — Erdbebensignale (Ort/Zeit/Magnitude/Tiefe/MMI). STATUS live, curl 200, GeoJSON. Welle 2026-08-19.
+
+geparkt
+kandidat https://api.meteo.lt/v1/stations/vilniaus-ams/observations/latest
+note Meteo LT (Litauen) — 52 Stationen: T/RH/Druck/Wind/Böen/Niederschlag/Schneehöhe (neu aufgenommen); CC BY-SA 4.0, 180 Req/min. STATUS live, curl 200. Welle 2026-08-19.
+
+geparkt
+kandidat noaa_nodd_inventory.φ
+note NOAA-NODD-Crawl 2026-08-20 (registry.opendata.aws/collab/noaa, 101 Datasets geerntet → phi/pipeline/katalog/noaa_nodd_inventory.φ). Linse 9. Fassung zieht: sea-ice-concentration +20 em, hourly-gdp-drifter +52 thermal, cors +12 em, dcdb-bathymetry +12 acoustic, keo-papa +4 — geparkt auf parser-gap (S3-ListBucketResult).
+
+parser-gap
+kandidat s3-listbucketresult-namespace
+note xml_harvester parst die S3-Listung (ListBucketResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/") nicht — 0 records (getestet 2026-08-20 auf noaa-oar-hourly-gdp-pds). Braucht Namespace-Handling im xml_harvester oder einen s3-Harvester; bis dahin sind die NOAA-S3-Buckets (Raster/Datei) geparkt, nicht per Hand disponiert.

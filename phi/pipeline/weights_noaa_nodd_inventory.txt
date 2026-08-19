@@ -1,0 +1,102 @@
+# 3006 Tags in der Library
+0 | - | https://noaa-oar-arl-hysplit-pds.s3.amazonaws.com/ | NOAA HYSPLIT-compatible meteorological data archives | NOAA | s3://noaa-oar-arl-hysplit-pds
+0 | - | https://noaa-ocs-nationalbathymetry-pds.s3.amazonaws.com/ | NOAA National Bathymetric Source Data | NOAA | s3://noaa-ocs-nationalbathymetry-pds
+-8 | diffusion | https://noaa-cdr-aerosol-optical-thickness-pds.s3.amazonaws.com/ | NOAA Atmospheric Climate Data Records | NOAA | s3://noaa-cdr-aerosol-optical-thickness-pds
+0 | - | https://noaa-cdr-gridsat-b1-pds.s3.amazonaws.com/ | NOAA Fundamental Climate Data Records (FCDR) | NOAA | s3://noaa-cdr-gridsat-b1-pds
+20 | em | https://noaa-cdr-sea-ice-concentration-pds.s3.amazonaws.com/ | NOAA Oceanic Climate Data Records | NOAA | s3://noaa-cdr-sea-ice-concentration-pds
+0 | - | https://noaa-cdr-leaf-area-index-fapar-pds.s3.amazonaws.com/ | NOAA Terrestrial Climate Data Records | NOAA | s3://noaa-cdr-leaf-area-index-fapar-pds
+-8 | - | https://noaa-cfs-pds.s3.amazonaws.com/ | NOAA Climate Forecast System (CFS) | NOAA | s3://noaa-cfs-pds
+0 | - | https://noaa-normals-pds.s3.amazonaws.com/ | NOAA U.S. Climate Normals | NOAA | s3://noaa-normals-pds
+0 | - | https://noaa-nos-coastal-lidar-pds.s3.amazonaws.com/ | NOAA Coastal Lidar Data | NOAA | s3://noaa-nos-coastal-lidar-pds
+0 | - | https://noaa-cris-hist-pds.s3.amazonaws.com/ | NOAA Climate Resilience Information System CONUS Thresholds | NOAA | s3://noaa-cris-hist-pds
+12 | acoustic | https://noaa-dcdb-bathymetry-pds.s3.amazonaws.com/ | Crowdsourced Bathymetry | NOAA | s3://noaa-dcdb-bathymetry-pds
+-12 | em | https://noaa-eri-pds.s3.amazonaws.com/ | NOAA Emergency Response Imagery | NOAA | s3://noaa-eri-pds
+-8 | - | https://noaa-gefs-retrospective.s3.amazonaws.com/ | NOAA Global Ensemble Forecast System (GEFS) Re-forecast | NOAA | s3://noaa-gefs-retrospective
+-8 | - | https://noaa-gefs-pds.s3.amazonaws.com/ | NOAA Global Ensemble Forecast System (GEFS) | NOAA | s3://noaa-gefs-pds
+0 | gravity | https://noaa-gestofs-pds.s3.amazonaws.com/ | NOAA Global Surge and Tide Operational Forecast System 2-D (STOFS-2D-Global) | NOAA | s3://noaa-gestofs-pds
+-8 | - | https://noaa-gfs-bdp-pds.s3.amazonaws.com/ | NOAA Global Forecast System (GFS) | NOAA | s3://noaa-gfs-bdp-pds
+-8 | thermal | https://noaa-ghcn-pds.s3.amazonaws.com/ | NOAA Global Historical Climatology Network Daily (GHCN-D) | NOAA | s3://noaa-ghcn-pds
+0 | - | https://noaa-enterprise-rainrate-pds.s3.amazonaws.com/ | NOAA Global Hydro Estimator (GHE) / Enterprise Rain Rate | NOAA | s3://noaa-enterprise-rainrate-pds
+0 | - | https://noaa-gk2a-pds.s3.amazonaws.com/ | Korea Meteorological Administration (KMA) GK-2A Satellite Data | NOAA | s3://noaa-gk2a-pds
+-12 | em | https://noaa-gmgsi-pds.s3.amazonaws.com/ | NOAA Global Mosaic of Geostationary Satellite Imagery (GMGSI) | NOAA | s3://noaa-gmgsi-pds
+-12 | em | https://noaa-goes16.s3.amazonaws.com/ | NOAA Geostationary Operational Environmental Satellites (GOES) 16, 17, 18 & 19 | NOAA | s3://noaa-goes16
+-12 | thermal | https://noaa-gsod-pds.s3.amazonaws.com/ | NOAA Global Surface Summary of Day | NOAA | s3://noaa-gsod-pds
+0 | - | https://noaa-himawari8.s3.amazonaws.com/ | JMA Himawari-8/9 | NOAA | s3://noaa-himawari8
+0 | - | https://noaa-nos-historicalcharts-pds.s3.amazonaws.com/ | NOAA Historical Maps and Charts | NOAA | s3://noaa-nos-historicalcharts-pds
+-4 | - | https://hrrrzarr.s3.amazonaws.com/ | NOAA High-Resolution Rapid Refresh (HRRR) Model | NOAA | s3://hrrrzarr
+-8 | thermal | https://noaa-global-hourly-pds.s3.amazonaws.com/ | NOAA Integrated Surface Database (ISD) | NOAA | s3://noaa-global-hourly-pds
+-12 | em | https://noaa-jpss.s3.amazonaws.com/ | NOAA Joint Polar Satellite System (JPSS) | NOAA | s3://noaa-jpss
+-8 | - | https://noaa-j-scope-pds.s3.amazonaws.com/ | NOAA JISAO’s Seasonal Coastal Ocean Prediction of the Ecosystem (J-SCOPE) | NOAA | s3://noaa-j-scope-pds
+0 | - | https://noaa-mrms-pds.s3.amazonaws.com/ | NOAA Multi-Radar/Multi-Sensor System (MRMS) | NOAA | s3://noaa-mrms-pds
+-8 | - | https://noaa-nam-pds.s3.amazonaws.com/ | NOAA North American Mesoscale Forecast System (NAM) | NOAA | s3://noaa-nam-pds
+0 | - | https://noaa-nbm-para-pds.s3.amazonaws.com/ | NOAA National Blend of Models (NBM) Parallel | NOAA | s3://noaa-nbm-para-pds
+0 | - | https://noaa-nbm-grib2-pds.s3.amazonaws.com/ | NOAA National Blend of Models (NBM) | NOAA | s3://noaa-nbm-grib2-pds
+0 | - | https://noaa-nclimgrid-daily-pds.s3.amazonaws.com/ | NOAA U.S. Climate Gridded Dataset (NClimGrid) | NOAA | s3://noaa-nclimgrid-daily-pds
+12 | em | https://noaa-cors-pds.s3.amazonaws.com/ | NOAA Continuously Operating Reference Stations (CORS) Network (NCN) | NOAA | s3://noaa-cors-pds
+-8 | - | https://noaa-ndfd-pds.s3.amazonaws.com/ | NOAA National Digital Forecast Database (NDFD) | NOAA | s3://noaa-ndfd-pds
+-12 | em | https://noaa-nesdis-swfo-ccor-1-pds.s3.amazonaws.com/ | NOAA Space Weather Follow-On Mission Geostationary Operational Environmental Satellite (GOES) 19 | NOAA | s3://noaa-nesdis-swfo-ccor-1-pds
+0 | - | https://unidata-nexrad-level2.s3.amazonaws.com/ | NEXRAD on AWS | NOAA | s3://unidata-nexrad-level2
+-4 | - | https://noaa-nmme-pds.s3.amazonaws.com/ | NOAA North American Multi-Model Ensemble (NMME) | NOAA | s3://noaa-nmme-pds
+0 | - | https://noaa-nodd-kerchunk-pds.s3.amazonaws.com/ | NOAA Cloud Optimized Zarr Reference Files (Kerchunk) | NOAA | s3://noaa-nodd-kerchunk-pds
+-8 | - | https://noaa-nos-cora-pds.s3.amazonaws.com/ | NOAA's Coastal Ocean Reanalysis (CORA) Dataset: 1979-2022 | NOAA | s3://noaa-nos-cora-pds
+-8 | - | https://noaa-nos-eccofs-pds.s3.amazonaws.com/ | East Coast Community Ocean Forecast System (ECCOFS) | NOAA | s3://noaa-nos-eccofs-pds
+4 | - | https://noaa-nos-scuba-icesat2-pds.s3.amazonaws.com/ | NOAA / NGA Satellite Computed Bathymetry Assessment-SCuBA | NOAA | s3://noaa-nos-scuba-icesat2-pds
+0 | gravity | https://noaa-nos-stofs3d.s3.amazonaws.com/ | NOAA 3-D Surge and Tide Operational Forecast System for Atlantic Basin (STOFS-3D-Atlantic) and Pacific Basin (STOFS-3D-Pacific) | NOAA | s3://noaa-nos-stofs3d
+-12 | - | https://noaa-nwm-pds.s3.amazonaws.com/ | NOAA National Water Model Short-Range Forecast | NOAA | s3://noaa-nwm-pds
+0 | - | https://noaa-nws-aorc-v1-1-1km.s3.amazonaws.com/ | NOAA Analysis of Record for Calibration (AORC) Dataset | NOAA | s3://noaa-nws-aorc-v1-1-1km
+-8 | - | https://noaa-nws-fourcastnetgfs-pds.s3.amazonaws.com/ | (EXPERIMENTAL) NOAA FourCastNet Global Forecast System (FourCastNetGFS) (EXPERIMENTAL) | NOAA | s3://noaa-nws-fourcastnetgfs-pds
+0 | - | https://noaa-nws-graphcastgfs-pds.s3.amazonaws.com/ | NOAA EAGLE (Experimental AI Global and Limited-Area Ensemble) Global Deterministic and Ensemble Forecasts | NOAA | s3://noaa-nws-graphcastgfs-pds
+-8 | - | https://noaa-nws-hafs-pds.s3.amazonaws.com/ | NOAA Hurricane Analysis and Forecast System (HAFS) | NOAA | s3://noaa-nws-hafs-pds
+-12 | - | https://noaa-nws-naqfc-pds.s3.amazonaws.com/ | NOAA National Air Quality Forecast Capability (NAQFC) Regional Model Guidance | NOAA | s3://noaa-nws-naqfc-pds
+-12 | - | https://noaa-nws-wam-ipe-pds.s3.amazonaws.com/ | NOAA Whole Atmosphere Model-Ionosphere Plasmasphere Electrodynamics (WAM-IPE) Forecast System (WFS) | NOAA | s3://noaa-nws-wam-ipe-pds
+-8 | - | https://noaa-oar-arl-nacc-pds.s3.amazonaws.com/ | NOAA Global Forecast System (GFS) netCDF Formatted Data | NOAA | s3://noaa-oar-arl-nacc-pds
+52 | thermal | https://noaa-oar-hourly-gdp-pds.s3.amazonaws.com/ | NOAA - hourly position, current, and sea surface temperature from drifters | NOAA | s3://noaa-oar-hourly-gdp-pds
+-8 | - | https://noaa-oar-myrorss-pds.s3.amazonaws.com/ | NOAA Multi-Year Reanalysis of Remotely Sensed Storms (MYRORSS) | NOAA | s3://noaa-oar-myrorss-pds
+4 | - | https://noaa-oar-keo-papa-pds.s3.amazonaws.com/ | NOAA/PMEL Ocean Climate Stations Moorings | NOAA | s3://noaa-oar-keo-papa-pds
+0 | - | https://noaa-ocs-hydrodata-pds.s3.amazonaws.com/ | NOAA Office of Coast Survey - Hydrographic Survey Data | NOAA | s3://noaa-ocs-hydrodata-pds
+-8 | - | https://noaa-nos-ofs-pds.s3.amazonaws.com/ | NOAA Operational Forecast System (OFS) | NOAA | s3://noaa-nos-ofs-pds
+0 | - | https://noaa-rap-pds.s3.amazonaws.com/ | NOAA Rapid Refresh (RAP) | NOAA | s3://noaa-rap-pds
+-8 | - | https://noaa-reanalyses-pds.s3.amazonaws.com/ | NOAA NASA Joint Archive (NNJA) of Observations for Earth System Reanalysis | NOAA | s3://noaa-reanalyses-pds
+-8 | - | https://noaa-rrfs-pds.s3.amazonaws.com/ | NOAA Rapid Refresh Forecast System (RRFS) [Prototype] | NOAA | s3://noaa-rrfs-pds
+0 | - | https://noaa-rtma-pds.s3.amazonaws.com/ | NOAA Real-Time Mesoscale Analysis (RTMA) / Unrestricted Mesoscale Analysis (URMA) | NOAA | s3://noaa-rtma-pds
+-8 | - | https://noaa-nws-rtofs-pds.s3.amazonaws.com/ | NOAA Global Real-Time Ocean Forecast System (Global RTOFS) | NOAA | s3://noaa-nws-rtofs-pds
+0 | - | https://noaa-s102-pds.s3.amazonaws.com/ | NOAA S-102 Bathymetric Surface Data | NOAA | s3://noaa-s102-pds
+0 | advective | https://noaa-s111-pds.s3.amazonaws.com/ | NOAA S-111 Surface Water Currents Data | NOAA | s3://noaa-s111-pds
+-8 | - | https://noaa-swpc-pds.s3.amazonaws.com/ | NOAA Space Weather Forecast and Observation Data | NOAA | s3://noaa-swpc-pds
+-4 | - | https://noaa-swdi-pds.s3.amazonaws.com/ | NOAA Severe Weather Data Inventory (SWDI) | NOAA | s3://noaa-swdi-pds
+-12 | - | https://noaa-ufs-coastal-pds.s3.amazonaws.com/ | NOAA Unified Forecast System (UFS) Coastal Model | NOAA | s3://noaa-ufs-coastal-pds
+0 | - | https://noaa-ufs-gdas-pds.s3.amazonaws.com/ | NOAA Global Data Assimilation (DA) Test Data | NOAA | s3://noaa-ufs-gdas-pds
+-8 | - | https://-noaa-ufs-gefsv13replay-pds.s3.amazonaws.com/ | NOAA Unified Forecast System (UFS) Global Ensemble Forecast System (GEFS) Version 13 Replay | NOAA | s3://-noaa-ufs-gefsv13replay-pds
+-8 | - | https://noaa-ufs-htf-pds.s3.amazonaws.com/ | NOAA Unified Forecast System (UFS) Hierarchical Testing Framework (HTF) | NOAA | s3://noaa-ufs-htf-pds
+-8 | - | https://noaa-ufs-land-da-pds.s3.amazonaws.com/ | NOAA Unified Forecast System (UFS) Land Data Assimilation (DA) System | NOAA | s3://noaa-ufs-land-da-pds
+-16 | - | https://noaa-ufs-rnrmarine-pds.s3.amazonaws.com/ | NOAA Unified Forecast System (UFS) Marine Reanalysis: 1979-2019 | NOAA | s3://noaa-ufs-rnrmarine-pds
+-12 | - | https://noaa-ufs-regtests-pds.s3.amazonaws.com/ | NOAA Unified Forecast System Weather Model (UFS-WM) Regression Tests | NOAA | s3://noaa-ufs-regtests-pds
+-8 | - | https://noaa-ufs-prototypes-pds.s3.amazonaws.com/ | NOAA Unified Forecast System Subseasonal to Seasonal Prototypes | NOAA | s3://noaa-ufs-prototypes-pds
+-8 | - | https://noaa-ufs-srw-pds.s3.amazonaws.com/ | NOAA Unified Forecast System Short-Range Weather (UFS SRW) Application | NOAA | s3://noaa-ufs-srw-pds
+-4 | - | https://noaa-nws-uwpd-cmip5-pds.s3.amazonaws.com/ | Coupled Model Intercomparison Project Phase 5 (CMIP5) University of Wisconsin-Madison Probabilistic Downscaling Dataset | NOAA | s3://noaa-nws-uwpd-cmip5-pds
+0 | - | https://noaa-nws-gefswaves-reforecast-pds.s3.amazonaws.com/ | NOAA Wave Ensemble Reforecast | NOAA | s3://noaa-nws-gefswaves-reforecast-pds
+0 | - | https://noaa-wod-pds.s3.amazonaws.com/ | NOAA World Ocean Database (WOD) | NOAA | s3://noaa-wod-pds
+0 | - | https://noaa-wsa-enlil-pds.s3.amazonaws.com/ | NOAA Wang Sheeley Arge (WSA) Enlil | NOAA | s3://noaa-wsa-enlil-pds
+20 | em | https://noaa-cdr-sea-ice-concentration-pds.s3.amazonaws.com/ | NOAA Oceanic CDR | NOAA | s3://noaa-cdr-sea-ice-concentration-pds
+0 | - | https://noaa-cdr-sea-surface-temp-optimum-interpolation-pds.s3.amazonaws.com/ | NOAA Oceanic CDR | NOAA | s3://noaa-cdr-sea-surface-temp-optimum-interpolation-pds
+0 | - | https://noaa-cdr-sea-surface-temp-whoi-pds.s3.amazonaws.com/ | NOAA Oceanic CDR | NOAA | s3://noaa-cdr-sea-surface-temp-whoi-pds
+-8 | em | https://aws.amazon.com/de/blogs/publicsector/accessing-noaas-goes-r-series-satellite-weather-imagery-data-on-aws/ | NOAA GOES-R Series satellite imagery (AWS blog) | NOAA | s3://noaa-goes16
+0 | - | provider noaa-arl-ready https://www.ready.noaa.gov/archives.php | ungezählt
+0 | - | https://nomads.ncep.noaa.gov/pub/data/nccf/com/hysplit/prod/ | NOMADS HYSPLIT production data | NOAA | https://nomads.ncep.noaa.gov/pub/data/nccf/com/hysplit/prod/
+0 | - | https://rda.ucar.edu/datasets/ds609.2/ | NCEP GDAS/FNL archives (RDA ds609.2) | NOAA | https://rda.ucar.edu/datasets/ds609.2/
+-8 | - | https://www.cpc.ncep.noaa.gov/products/wesley/reanalysis.html | NCEP/CPC global reanalysis archives | NOAA | https://www.cpc.ncep.noaa.gov/products/wesley/reanalysis.html
+-4 | - | https://mesonet.agron.iastate.edu/archive/ | IEM NEXRAD/ASOS Archive | Iowa State University | https://mesonet.agron.iastate.edu/archive/
+-4 | - | https://nomads.ncep.noaa.gov/ | NOMADS model data server | NOAA | https://nomads.ncep.noaa.gov/
+0 | - | https://rda.ucar.edu/ | Research Data Archive (RDA) | UCAR | https://rda.ucar.edu/
+0 | - | https://thredds.ucar.edu/thredds/catalog.html | UCAR THREDDS Data Server | UCAR | https://thredds.ucar.edu/thredds/catalog.html
+0 | - | https://weather.uwyo.edu/upperair/sounding.html | Wyoming Upper Air Soundings | University of Wyoming | https://weather.uwyo.edu/upperair/sounding.html
+0 | - | https://www.avl.class.noaa.gov/saa/products/welcome | CLASS satellite data archive | NOAA | https://www.avl.class.noaa.gov/saa/products/welcome
+0 | - | https://www.cpc.ncep.noaa.gov/products/monitoring_and_data/ | CPC Monitoring & Data | NOAA | https://www.cpc.ncep.noaa.gov/products/monitoring_and_data/
+-8 | - | https://www.ecmwf.int/en/forecasts/datasets/reanalysis-datasets/era5 | ECMWF ERA5 Reanalysis | ECMWF | https://www.ecmwf.int/en/forecasts/datasets/reanalysis-datasets/era5
+0 | - | https://www.eol.ucar.edu/all-field-projects-and-deployments | EOL field project data | UCAR | https://www.eol.ucar.edu/all-field-projects-and-deployments
+0 | - | https://www.ncei.noaa.gov/products | NCEI Products | NOAA | https://www.ncei.noaa.gov/products
+0 | - | https://www.nssl.noaa.gov/projects/mrms/ | NSSL MRMS | NOAA | https://www.nssl.noaa.gov/projects/mrms/
+0 | - | https://www.spc.noaa.gov/climo/online/ | SPC Online Climatology | NOAA | https://www.spc.noaa.gov/climo/online/
+0 | - | https://www.unidata.ucar.edu/data/ | Unidata Data | UCAR | https://www.unidata.ucar.edu/data/
+0 | - | https://www.wpc.ncep.noaa.gov/dailywxmap/pdffiles.html | WPC Daily Weather Map Archive | NOAA | https://www.wpc.ncep.noaa.gov/dailywxmap/pdffiles.html
+0 | - | https://pcmdi.llnl.gov/CMIP6/ | CMIP6 archive | LLNL | https://pcmdi.llnl.gov/CMIP6/

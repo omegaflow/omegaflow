@@ -1,4 +1,4 @@
-# library — gewichtete Tags (Ratssitzung 2026-08-16, achte Fassung)
+# library — gewichtete Tags (Ratssitzung 2026-08-16, achte Fassung; neunte Fassung 2026-08-20: NOAA-NODD-Befund — sea ice=CORRECT em (war diffusion), cors/gnss=em, crowdsourced bathymetry=acoustic, Stationsklima ghcn/gsod/isd=thermal)
 # Schichten: b2find + Klassenwörter + CMR + GBIF + GCMD + SWPC/Gaia/CDAWeb/SIMBAD/ArcGIS + Harvester-Kataloge (BCO-DMO/ICOS/SEANOE/IGETS/Dryad/INRAE/LTER/CMR)
 # format: <gewicht> <force|-> <tag...>
 -8 - Arts and Humanities
@@ -2997,3 +2997,13 @@
 -4 - wwlln.net
 -4 - bom.gov.au
 -4 - opengis.net
+8 em Concentration or arrangement of sea ice
+8 em 389 SEA ICE CONCENTRATION
+8 em 62 Sea Ice Concentration
+8 em sea ice concentration
+8 em gnss
+8 em cors
+8 acoustic crowdsourced bathymetry
+8 thermal climatology network
+8 thermal surface summary of day
+8 thermal integrated surface database

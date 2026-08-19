@@ -4208,3 +4208,329 @@ note vizier_bulk_c 2026-08-18: VII/202/table1 tot; VII/202/catalog ist der Pfad-
 decline path
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+100+GLON,GLAT,NHI,VLSR,FWHM+FROM+"J/A+A/594/A116/hi4pi"
 note vizier_bulk_c 2026-08-18: Tabelle hi4pi tot; tap_index führt allsky_gal/nhi_gal als Kandidaten. NHI log(cm-2) off-register; CDN-Asset vizier_hi4pi.json existiert.
+
+dead dns
+url https://data.saildrone.com/api/robots
+note Saildrone-Flotte — data.saildrone.com DNS-tot, kein CDX-Snapshot; Missionsdaten nur historisch via PMEL-ERDDAP. Welle 2026-08-19.
+
+dead dns
+url https://api.satnogs.org/api/observations/?satellite__norad_cat_id=25544
+note SatNOGS-API — api-Subdomain DNS-tot, Jina 422; satnogs.org selbst lebt. Welle 2026-08-19.
+
+dead dns
+url https://www.treetalker.xyz/
+note TreeTalker-Netze (Nature 4.0) — Domain tot, Jina 422, kein CDX; Netzausbau-API nicht verifizierbar. Welle 2026-08-19.
+
+dead 404
+url https://osdr.nasa.gov/bio/api
+note NASA OSDR ISS-Dosimetrie — 301 nach science.nasa.gov/biological-physical, /bio/api 404; Endpoint abgelöst. Welle 2026-08-19.
+
+decline model-forecast
+url https://api.windbornesystems.com
+note WindBorne — API liefert primär WM6-Modellforecast, keine reine Messung. Welle 2026-08-19.
+
+decline catalog
+url https://ggis.un-igrac.org/api
+note IGRAC GGIS — Geonode-Datenkatalog (573 Datasets), keine Zeitreihen, kein Live-Sensor; Recheck dead_sources:1487 beantwortet. Welle 2026-08-19.
+
+decline archive-only
+url https://www.aoml.noaa.gov/hrd/data_sub/hurr.html
+note NOAA AOML Hurricane-Hunter-Daten — statisches Jahresarchiv (2000-2021+), kein Live-Feed. Welle 2026-08-19.
+
+dead 404-route
+url https://www.astrouw.edu.pl/~jskowron/OGLE/
+note Recheck b4 2026-08-18: 404 HTML — OGLE-Pfad absent. Katalog via VizieR (tap_index) vorhanden. Verschoben aus blocked_sources.φ 2026-08-19.
+
+dead 404-route
+url https://geomag.bgs.ac.uk/data_service/data/magnetic_indices/saa/
+note Recheck b4 2026-08-18: 404 HTML — SAA-Route absent; Portal lebt. HAPI-Route (imag-data.bgs.ac.uk/hapi) ist live in sources.φ. Verschoben aus blocked_sources.φ 2026-08-19.
+
+dead 404-route
+url https://www.ncei.noaa.gov/access/land-based-station-data/land-based-in-situ/climate-normals/
+note Recheck b4 2026-08-18: 404 HTML (Drupal) — Route absent. NOAA-Seite lebt; climate-at-a-glance/services-Routen sind in sources.φ/masternote registriert. Verschoben aus blocked_sources.φ 2026-08-19.
+
+# decline-Urteile, verschoben aus blocked_sources.φ (Entmischung 2026-08-19): Quelle lebt, trägt aber keine Messung am Punkt — kein Entblocken möglich. blocked_sources.φ trägt nur noch Zugangs-Sperren.
+
+decline no-physical-force
+url http://api.worldbank.org/v2/country/.../indicator/
+note Wirtschaftsindikatoren, kein physischer Messwert — decline no-physical-force (403 real, aber Quelle trägt keine Messung).
+
+decline no-physical-force
+url http://api.worldbank.org/v2/country/.../indicator/...`
+note Wirtschaftsindikatoren, kein physischer Messwert — decline no-physical-force (403 real, aber Quelle trägt keine Messung).
+
+decline presence-catalog
+url http://apiv3.iucnredlist.org/api/v3/docs
+note Arten-Katalog (Rote Liste), keine Messung am Punkt — decline presence-catalog.
+
+decline presence-catalog
+url http://apiv3.iucnredlist.org/api/v3/getspeciesbylocation/
+note Arten-Katalog (Rote Liste), keine Messung am Punkt — decline presence-catalog.
+
+decline model-forecast
+url https://ads.atmosphere.copernicus.eu/api/retrieve/v1/
+note CAMS-Atmosphären-Zusammensetzung = Modell-Analyseprodukte, kein Live-Messwert — decline model-forecast.
+
+decline no-physical-force
+url https://antares.noirlab.edu/api/v1/
+note Recheck 2026-08-17: Portal-Login (antares.noirlab.edu) ist NICHT der API-Zugang — API-Credentials werden nur per Anfrage beim ANTARES-Team vergeben (antares-client-Doku „Obtaining Credentials"). GAVO-Mirror dc.g-vo.org/tap (antares.data, 5 921 Zeilen) trägt id/raj2000/dej2000/n_hits/ang_error/epoch_mjd — zugänglich ohne Key, aber nur Counts + Position → Decline per §3.2/§3.9 (Alerts ohne Feldwert). Verdikt 2026-08-17: kein natürlicher Feldwert (nur Counts/Position) — CDN-Redistribution irrelevant, decline no-physical-force.
+
+decline no-physical-force
+url https://antares.noirlab.edu/api/v1/locus/?format=json&created__gte=
+note ANTARES verlangt Token (siehe Eintrag oben). Verdikt 2026-08-17: decline no-physical-force.
+
+decline redistribution
+url https://api.electricitymap.org/v3/carbon-intensity/latest
+note HTTP 401 — Token/Registrierung nötig. Verdikt 2026-08-17: kommerziell (Daten proprietär) — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E).
+
+decline no-physical-force
+url https://api.europeana.eu/record/v2/search.json?query=*&qf=place
+note HTTP 401 — Token/Registrierung nötig. Verdikt 2026-08-17: Kultur-Metadaten — kein Messwert, kein Live-Signal (AUTH_APIS.md §E).
+
+decline redistribution
+url https://api.maptiler.com/maps/basic-v2-dark/style.json
+note HTTP 403 — Auth-Gate oder Bot-Block. Verdikt 2026-08-17: kommerzielle Tiles — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E).
+
+decline no-physical-force
+url https://api.networkrail.co.uk/v1/gtfs-rt/feeds
+note Recheck 2026-08-17: kein separater API-Key — Zugang ist das Portal-Login datafeeds.networkrail.co.uk (User/Pass); STOMP auf datafeeds.networkrail.co.uk:61618 + Static Feeds via authentifiziertem HTTP GET. Verdikt 2026-08-17: Zugpositionen sind hergestellte Objekte, kein natürlicher Feldwert — kein Sensor-Organ einer nicht-menschlichen Spezies evolviert diese Messung; decline no-physical-force.
+
+decline redistribution
+url https://api.protectedplanet.net/v3/protected_areas?with_geometry=true&latitude=
+note HTTP 401 — Token/Registrierung nötig. Verdikt 2026-08-17: WDPA — Redistribution eingeschränkt — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E).
+
+decline redistribution
+url https://api.resourcewatch.org/v1/geostore?lat=
+note HTTP 403 — Auth-Gate oder Bot-Block. Verdikt 2026-08-17: WRI — ToS/Redistribution unklar — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E).
+
+decline no-physical-force
+url https://api.semanticscholar.org/graph/v1/paper/search?query=*&limit=1
+note HTTP 429 — Rate-Limit; Schlüssel/Registrierung nötig. Verdikt 2026-08-17: Bibliographie — kein Messwert, kein Live-Signal (AUTH_APIS.md §E).
+
+decline no-physical-force
+url https://api.si.edu/openaccess/api/v1.0/content/search?q=
+note Sammlungs-Metadaten, kein Messwert — decline no-physical-force (403 real, aber Quelle trägt keine Messung).
+
+decline redistribution
+url https://api.sncf.com/v1/coverage/sncf/stop_areas/
+note HTTP 401 — Token/Registrierung nötig. Verdikt 2026-08-17: kommerziell (ToS) — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E).
+
+decline redistribution
+url https://api.z.ai/api/coding/paas/v4
+note HTTP 401 — Token/Registrierung nötig. Verdikt 2026-08-17: kommerziell (AI-Modell, kein Messwert) — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E).
+
+decline redistribution
+url https://api.z.ai/api/coding/paas/v4`
+note HTTP 401 — Token/Registrierung nötig. Verdikt 2026-08-17: kommerziell (AI-Modell, kein Messwert) — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E).
+
+decline redistribution
+url https://bgp.tools/table.json
+note HTTP 403 — Auth-Gate oder Bot-Block. Verdikt 2026-08-17: kommerziell, Redistribution eingeschränkt — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E).
+
+decline model-forecast
+url https://climateknowledgeportal.worldbank.org/api/
+note Klima-Projektions-/Indikator-Portal (GCM-Modelle), kein Live-Messwert — decline model-forecast.
+
+decline model-forecast
+url https://climateknowledgeportal.worldbank.org/api/data/get-download-data/
+note Klima-Projektions-/Indikator-Portal (GCM-Modelle), kein Live-Messwert — decline model-forecast.
+
+decline no-physical-force
+url https://crates.io/api/v1/crates?per_page=1
+note HTTP 403 — Auth-Gate oder Bot-Block. Verdikt 2026-08-17: Paket-Registry — kein Messwert, kein Live-Signal (AUTH_APIS.md §E).
+
+decline derived-product
+url https://data-api.globalforestwatch.org/dataset/umd_tree_cover_loss/latest/query?format=json&sql=SELECT+latitude,longitude,year,area__ha,relative_humidity_weight+FROM+umd_tree_cover_loss+WHERE+year
+note Waldverlust-Analysen aus Satellitenbildern (Flächen, ha) — abgeleitetes Produkt, kein Live-Messwert — decline derived-product.
+
+decline redistribution
+url https://data.blitzortung.org/Data/Protected/strikes.json
+note HTTP 401 — Token/Registrierung nötig. Verdikt 2026-08-17: Community-Lizenz, nicht-kommerziell, Redistribution eingeschränkt — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E).
+
+decline redistribution
+url https://data.lsst.cloud/api/tap
+note HTTP 401 — Token/Registrierung nötig. Verdikt 2026-08-17: LSST — proprietäre Frist — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E).
+
+decline redistribution
+url https://dev.meteostat.net/api/stations/nearby.html
+note Meteostat-Dev-Docs — API verlangt Key. Verdikt 2026-08-17: kommerziell (paid) — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E).
+
+decline redistribution
+url https://docs.sentinel-hub.com/api/latest/
+note Sentinel-Hub verlangt Key/Subscription. Verdikt 2026-08-17: kommerziell (Subscription) — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E).
+
+decline presence-catalog
+url https://ebird.org/api/key
+note Vogelbeobachtungs-Register (Presence), keine Messung am Punkt — decline presence-catalog.
+
+decline presence-catalog
+url https://ebird.org/api/keygen
+note Vogelbeobachtungs-Register (Presence), keine Messung am Punkt — decline presence-catalog.
+
+decline redistribution
+url https://gateway.api.globalfishingwatch.org/v3/
+note HTTP 401 — Token/Registrierung nötig. Verdikt 2026-08-17: ToS — Redistribution eingeschränkt — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E).
+
+decline redundant
+url https://irsa.ipac.caltech.edu/ibe/
+note IRSA erreichbar (200). Recheck 2026-08-17: IRSA hat KEINEN API-Token — (a) öffentliche Daten (WISE/NEOWISE/2MASS/Spitzer/SPHEREx/Euclid/ZTF-DR24) offen auf AWS S3 Open Data (nasa-irsa-wise, ipac-irsa-ztf usw., anonymous, kein Key); (b) proprietäres ZTF via IPAC-SSO (curl --user email:passwort). Verdikt 2026-08-17 bleibt decline redundant: ZTF-Photometrie über Lasair/ALeRCE abgedeckt, übrige IRSA-Holdings (WISE/2MASS) sind Bulk-Kataloge ohne Live-Feldwert.
+
+decline redundant
+url https://lasair-ztf.lsst.ac.uk/api/cone/
+note Integriert 2026-08-18: Lasair lebt in sources.φ über /api/query/ (SQL-SELECT, token in URL). Der cone-Endpoint ist redundant (liefert nur object+separation, keine Position) — decline redundant.
+
+decline redundant
+url https://lasair-ztf.lsst.ac.uk/api/cone/?ra=180.0&dec=30.0&radius=10.0&
+note Integriert 2026-08-18: siehe /api/cone/ oben — decline redundant, live über /api/query/.
+
+decline no-physical-force
+url https://marinecadastre.gov/ais/api/v1/locations?bbox=
+note Recheck 2026-08-17: kein Live-API — AIS-Daten als Bulk-Downloads (CSV.zst/GDB) auf Azure-Blob, Public Domain; AccessAIS-Bestellservice derzeit pausiert (MARINECADASTRE_KEY entfernt, .secrets.local). Verdikt 2026-08-17: Schiffspositionen sind hergestellte Objekte, kein natürlicher Feldwert; decline no-physical-force.
+
+decline redistribution
+url https://meteostat.net/api/stations/search?country=RU&limit=200&key=
+note Meteostat verlangt API-Key (key=). Verdikt 2026-08-17: kommerziell (paid) — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E).
+
+decline no-physical-force
+url https://my-api.plantnet.org/v2/identify/all?api-key=
+note Pflanzen-Identifikation per Bild (Klassifikator), kein Sensor — decline no-physical-force (401 real, aber Quelle trägt keine Messung).
+
+decline no-physical-force
+url https://my-api.plantnet.org/v2/identify/all?api-key=REDACTED
+note Pflanzen-Identifikation per Bild (Klassifikator), kein Sensor — decline no-physical-force (401 real, aber Quelle trägt keine Messung).
+
+decline model-forecast
+url https://my.cmems-du.eu/erddap/griddap/cmems_mod_glo_phy_my_0.083deg_P1D-m.csv?uo%5Blast%5D%5B0%5D%5B
+note Modellprodukt (Assimilations-Analyse, Note sagt selbst „zudem Modellprodukt") — decline model-forecast.
+
+decline model-forecast
+url https://nrt.cmems-du.eu/erddap/
+note CMEMS-Modellprodukte (Assimilations-Analysen) — decline model-forecast.
+
+decline model-forecast
+url https://nrt.cmems-du.eu/erddap/griddap/cmems_mod_glo_bgc_anfc_0.25deg_P1D-m.csv?o2%5Blast%5D%5B0%5D%5B
+note CMEMS-Modellprodukt (Assimilations-Analyse) — decline model-forecast.
+
+decline no-physical-force
+url https://overpass-api.de/api/
+note OSM-Objektabfrage (hergestellte Objekte), kein Messwert — decline no-physical-force (403 real, aber Quelle trägt keine Messung).
+
+decline no-physical-force
+url https://overpass.kumi.systems/api/
+note OSM-Objektabfrage (hergestellte Objekte), kein Messwert — decline no-physical-force (403 real, aber Quelle trägt keine Messung).
+
+decline no-physical-force
+url https://query1.finance.yahoo.com/v8/finance/chart/%5ETNX
+note Finanzkurse, kein physischer Messwert — decline no-physical-force (429 real, aber Quelle trägt keine Messung).
+
+decline no-physical-force
+url https://quickstats.nass.usda.gov/api/api_GET/?key=
+note HTTP 401 — Token/Registrierung nötig. Verdikt 2026-08-17: Agrarstatistik, kein physischer Messwert — decline no-physical-force.
+
+decline no-physical-force
+url https://quickstats.nass.usda.gov/api/api_GET/?key=REDACTED&commodity_desc=CORN&statisticcat_desc=PRODUCTION&format=JSON
+note HTTP 401 — Token/Registrierung nötig. Verdikt 2026-08-17: Agrarstatistik, kein physischer Messwert — decline no-physical-force.
+
+decline no-physical-force
+url https://whale.fm/api/v1/sounds/recent
+note HTTP 403 — Auth-Gate oder Bot-Block. Verdikt 2026-08-17: Zooniverse-Klassifikationen (whale.fm ist ein Zooniverse-Projekt) sind keine Messung — decline no-physical-force.
+
+decline redistribution
+url https://www.dxpredictor.com/api/v1/ionosonde/fof2
+note HTTP 403 — Auth-Gate oder Bot-Block. Verdikt 2026-08-17: kommerziell — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E).
+
+decline no-physical-force
+url https://www.peeringdb.com/api/ix
+note HTTP 429 — Rate-Limit; Schlüssel/Registrierung nötig. Verdikt 2026-08-17: Netz-Infrastruktur — kein Messwert, kein Live-Signal (AUTH_APIS.md §E).
+
+decline redistribution
+url https://www.reddit.com/dev/api/
+note HTTP 403 — Auth-Gate oder Bot-Block. Verdikt 2026-08-17: kommerziell (ToS: keine Redistribution) — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E).
+
+decline catalog
+url https://volcano.si.edu/api/v1/activity?format=json&weeks=4&status=eruption
+note Eruptions-Bulletins (Ereignis-Katalog), kein Messwert am Punkt — decline catalog (403 real, aber Quelle trägt keine Messung).
+
+decline position-only
+url https://www.movebank.org/movebank/service/direct-read?entity_type=event&study_id=1099562&format=json
+note Tier-Telemetrie-Positionen (Position-only, §3.9) — kein Feldwert — decline position-only (401 real).
+
+decline no-physical-force
+url https://www.ngdc.noaa.gov/gazetteer/rest/feature?typeCode=Ridge&format=json&maxResults=2000
+note Namensverzeichnis (Gazetteer), kein Messwert — decline no-physical-force (403 real, aber Quelle trägt keine Messung).
+
+decline derived-orbit-fit
+url https://celestrak.org/NORAD/elements/gp.php?CATNR=25544&FORMAT=JSON
+note CelesTrak TLE ISS/Tiangong — TLE-Bahnelemente = Bahnvorhersage (Orbit-Fit), keine Messung; konsistent mit DONKI/TLE (Z.389), SatNOGS-TLE (Z.1005), ivanstanojevic-TLE (Z.3170). Ephemeriden-Kanal: Horizons (sources.φ Z.854). Verschoben aus blocked_sources.φ 2026-08-19.
+
+decline redistribution
+url https://api.sofarocean.com/api/devices
+note Sofar Spotter („largest privately-owned ocean sensor network") — Spotter-Konto-Token; Daten sind Eigentum der Netzbetreiber (kommerziell) — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E). Verschoben aus blocked_sources.φ 2026-08-19 (Mirror unzulässig).
+
+decline redistribution
+url https://www.ctbto.org
+note CTBTO/IMS hydroacoustic (H11/H01) — Zugang kontrolliert (VDEC/Registrierung), kein anonymer Zugang; IMS-Daten nicht frei redistribuierbar (staatliche Kontrolle) — CDN-Redistribution ausgeschlossen. Verschoben aus blocked_sources.φ 2026-08-19 (Mirror unzulässig).
+
+decline redistribution
+url https://api.airplanes.live/v2/point/{lat}/{lon}/{radius}
+note Airplanes.live ADS-B — Cloudflare-Kontakt-Registrierung seit 2026 (vor 2024 anonym offen); kommerzieller Feed (ToS: keine Redistribution) — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E). Verschoben aus blocked_sources.φ 2026-08-19 (Mirror unzulässig).
+
+decline redistribution
+url https://pro.weatherxm.com/docs
+note WeatherXM (DePIN, 9500+ Stationen, Expansion) — Free-Tier-API-Key; Daten-Endpunkte ohne Key 404. Kommerziell — CDN-Redistribution ausgeschlossen (AUTH_APIS.md §E). Verschoben aus blocked_sources.φ 2026-08-19 (Mirror unzulässig).
+
+decline superseded-by-cencoos
+url https://www3.mbari.org/lobo/getLOBOdata.pl?&sta=M0&from=now-7d&to=now&format=json
+note MBARI LOBO-Datenroute ohne öffentlichen Zugang (403 lokal/corsproxy/Jina/Browser, 2026-08-19); die Küstenmessungen (LOBO, M1-Mooring, OA1/2, Wave Glider, ISUS) fließen in CeNCOOS (data.cencoos.org, ERDDAP, 200) — der IOOS-Regionalverbund ist der Port-Kanal (→ queue grind_cencoos.φ). Die Tiefsee-/AUV-/ROV-Daten liegen in STOQS (stoqs.mbari.org, REST-API je Kampagne, 200 lokal + via r.jina.ai 2026-08-19 — der frühere 000 war ein Timeout des langsamen Servers, kein Block) → queue grind_stoqs.φ. Verschoben aus blocked_sources.φ 2026-08-19.
+
+decline superseded-by-openaq
+url https://api.airqo.net/api/v2/devices/measurements/latest
+note AirQo (Kampala/Nairobi/Accra/Lagos, PM-Messung) lag auf OpenAQ — atmosphere_openaq_latest bereits in master.φ integriert (api.openaq.org/v2/latest?coordinates=, Z.4019); AirQo ist OpenAQ-Partner. Aktivierungsregistrierung war überflüssig. REAKTIVIERT 2026-08-20: AIRQO_KEY in .secrets.local (E6B3NPX6MBHMN6MU), live 200 application/json auf /api/v2/devices/measurements/grids/{grid_id}?token= (58 Messungen/Grid, 2026-08-20) → queue grind_jsonkanal.φ (19. Kandidat); AirQo-direkt ist die Originalquelle (Grid-Auflösung + Zeitreihen), OpenAQ-Latest bleibt der Aggregator-Kanal.
+
+decline no-measurement
+url https://services1.arcgis.com/x5wCko8UnSi4h0CB/arcgis/rest/services/gNnAj/FeatureServer/0/query?where=1=1&outFields=*&f=json
+note GSN Seismic Stations (ArcGIS FeatureServer, Layer 0) — 200 application/json (2026-08-19), aber nur Standort-Metadaten der Seismometer (Objekt-ID/Name/Position), keine Bebendaten — keine Messung am Punkt. Verschoben aus blocked_sources.φ 2026-08-19.
+
+decline superseded-by-woudc
+url https://toar-data.fz-juelich.de/api/v2/data/map/
+note TOAR (troposphärisches Ozon, Jülich) ist die Forschungs-Aggregation derselben WMO-Stationsdaten, die WOUDC bereits liefert — atmosphere_woudc_total_ozone in master.φ integriert (api.woudc.org/collections/totalozone, Z.10813). Registrierung nicht nötig. Verschoben aus blocked_sources.φ 2026-08-19.
+
+decline superseded-by-box-route
+url https://data.sensor.community/airrohr/v1/filter/area=
+note Die area=-Route liefert nur bei leerem Parameter 2 B; die lebende Box-Route filter/box=...&type=SDS011 ist in sources.φ integriert — die PM-Messung ist damit erfasst, der Eintrag war historisch. Verschoben aus blocked_sources.φ 2026-08-19.
+
+decline superseded-by-skyServerWS
+url https://skyserver.sdss.org/dr18/SearchTools/sql?cmd=SELECT+TOP+3000+ra,dec,z,psfMag_r,psfMag_g+FROM+SpecObj+WHERE+class%3D%27QSO%27+AND+z+BETWEEN+0.1+AND+3.0+AND+zWarning%3D0&format=json
+note Diese Route liefert HTML (Formularseite); die JSON-Route lebt beim SkyServerWS-Sibling (dr18/SkyServerWS/SearchTools/SqlSearch) und ist in sources.φ integriert (sdss_photoobj 2026-08-18). psfMag-Spalten liegen in photoObj; photoObj.z ist modelMag_z (z-Band-Magnitude, KEINE Rotverschiebung) — die spektroskopische z trägt nur der specObj-Join. Verschoben aus blocked_sources.φ 2026-08-19.
+
+decline superseded-by-integrated
+url https://exoplanetarchive.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=JSON&QUERY=SELECT+hostname,pl_name,pl_masse,ra,dec+FROM+ps+WHERE+pl_name%3D%27KOI-4777.01%27
+note Exoplanet-TAP live 200 application/json (2026-08-19), aber die Exoplaneten-Messung ist in sources.φ integriert (stellarhosts Z.1630, exoplanets.json Z.1229/1240, tess_lightcurves.bin Z.1259) — der Port wäre Duplikat. Verschoben aus queue grind_jsonkanal.φ 2026-08-19.
+
+decline superseded-by-integrated
+url https://argovis.colorado.edu/selection/api/profiles
+note Argovis-Profil-Route live (200 lokal, 2026-08-19), aber Argo ist in sources.φ integriert (argovis-api.colorado.edu Z.1086, data-argo.ifremer.fr DAC Z.1097) — der Port wäre Duplikat. Verschoben aus queue grind_jsonkanal.φ 2026-08-19.
+
+decline superseded-by-integrated
+url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=water_level&station=9414290&date=latest&time_zone=gmt&units=metric&format=json&datum=MSL
+note NOAA-datagetter live 200 application/json (2026-08-19), aber die Wasserstand-Messung ist in sources.φ integriert (datagetter mit station-Stationsliste Z.331/334, hydrosphere_tide_water_level_m) — der Port wäre Duplikat. Verschoben aus queue grind_jsonkanal.φ 2026-08-19.
+
+decline superseded-by-integrated
+url http://erddap.emodnet-physics.eu/erddap/rss/ArgoFloats.rss
+note EMODnet-Argo + IFREMER-ERDDAP-Argo (allDatasets.json live 200, 2026-08-19) — die Argo-Messung ist über argovis-api + data-argo.ifremer.fr DAC in sources.φ integriert — der Port wäre Duplikat. Verschoben aus queue grind_jsonkanal.φ 2026-08-19.
+
+decline superseded-by-pris
+url https://api3.geo.admin.ch/rest/services/api/MapServer/ch.bfe.kernkraftwerke/1?f=json
+note GeoAdmin-Kernkraftwerke liefert f=json 200 application/json (2026-08-19), aber IAEA-PRIS (pris.iaea.org/api, in dead_sources.φ) ist die Primärquelle für Reaktorbetriebsdaten; Kapazitätsfaktor ist eine Betriebskennzahl, keine physikalische Messung am Punkt. Verschoben aus queue grind_jsonkanal.φ 2026-08-19.
+
+decline no-measurement
+url https://data-gis.unep-wcmc.org/server/rest/services/Hosted/?f=json
+note UNEP-WCMC f=json liefert 200 application/json (2026-08-19), aber die Hosted-Services (u.a. „A_Modelled_Global_Distribution_of_the_Kelp_Biome") sind modellierte Verbreitungs-/Kartenprodukte, keine Sensor-Messung am Punkt. Verschoben aus queue grind_jsonkanal.φ 2026-08-19.
+
+decline superseded-by-api.woudc.org
+url https://woudc.org/api/
+note Die WOUDC-Messung (Ozon/UV) ist über api.woudc.org in sources.φ integriert (atmosphere_woudc_total_ozone, master.φ Z.10813) — diese HTML-Landing war nur der alte Einstieg. Verschoben aus blocked_sources.φ 2026-08-19.
+
+decline superseded-by-hapi
+url https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetCapabilities&Format=json
+note BGS-GIN (INTERMAGNET): die Messung ist über die HAPI-Route (imag-data.bgs.ac.uk/hapi) in sources.φ integriert — der Capabilities-Endpoint war nur die Observatoriumsliste. Verschoben aus blocked_sources.φ 2026-08-19.

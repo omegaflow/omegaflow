@@ -1,0 +1,109 @@
+# grind jsonkanal (2026-08-19)
+# Live-bestätigte JSON-Routen — Port-Kandidaten mit 200 application/json verifiziert,
+# Struktur-Proben offen. Aus blocked_sources.φ entfernt (JSON-Route lebt = kein parser-def mehr).
+# Entfernt 2026-08-19 (redundant/keine Messung): Exoplanet-TAP — stellarhosts+exoplanets.json+tess
+# in sources.φ integriert (Z.1630/1229/1259); Argovis — argovis-api + data-argo.ifremer.fr DAC
+# integriert (Z.1086/1097); NOAA-datagetter — hydrosphere_tide_water_level_m integriert (Z.331);
+# IFREMER-ERDDAP + EMODnet-Argo — Argo über die integrierten Routen abgedeckt; GeoAdmin-Kernkraftwerke —
+# IAEA-PRIS ist Primärquelle (pris.iaea.org in dead_sources.φ), Kapazitätsfaktor keine Messung;
+# UNEP-Kelp — modelliertes Verbreitungsmodell, keine Sensor-Messung → decline no-measurement.
+
+note probe-open
+url https://coastwatch.noaa.gov/erddap/tabledap/allDatasets.json
+note Coastwatch-ERDDAP (Ozean, NOAA) — Standard-ERDDAP (Central Hub coastwatch.noaa.gov + West Coast coastwatch.pfeg.noaa.gov); allDatasets.json plain 200 application/json (2026-08-20 — Constraints/orderBy werfen 400, plain-Liste ist der Weg); tabledap bestätigt: cwwcNDBCMet.json 200 application/json mit universeller table-Struktur (columnNames/columnTypes/columnUnits/rows, 2026-08-20 — NDBC-Bojen atmp = Lufttemperatur-Messung); griddap (Satellitenraster, z.B. jplMURSST41) erfordert exakte Achsen-Syntax (slice-Versuch 404, 2026-08-20) — griddap ist ein eigener Raster-Parser-Typ, beim Port entscheiden; .dds/.das für Metadaten; Fach-Datensatz beim Port aus der Liste wählen.
+
+note probe-open
+url http://erddap.emodnet-physics.eu/erddap/rss/ARICE_all_cruise_db.rss
+note EMODnet-Physics-ERDDAP (ARICE-Arktis-Cruise, Schiffsmessungen — kein anderer Kanal im System) — ARICE selbst ist ein EU-Förderprojekt (2016–2019, Schiffszeit-Koordination) ohne eigenen API-Zugang (2026-08-20); die Cruise-Daten sind bei EMODnet-Physics gehostet: allDatasets.json 200 application/json, RSS (ARICE_all_cruise_db.rss) 200 — der Kanal ist die gleiche ERDDAP-Maschine wie ONC/Coastwatch (tabledap table-Struktur); PANGAEA (www.pangaea.de) als Polar-Daten-Archiv-Alternative notiert — kein einfacher JSON-Endpunkt (2026-08-20): Web Services sind OAI-PMH (XML — Parser-Hürde) + DOI-basierter Data-Warehouse-Dienst; pangaeapy ist ein Python-Paket (kein std-only-Weg); /advanced/webservices 404 — EMODnet-ERDDAP bleibt der Kanal.
+
+note probe-open
+url https://irsa.ipac.caltech.edu/cgi-bin/Gator/nph-query?catalog=allwise_p3as_psd&spatial=box&ra=0.0&dec=0.0&size=14400&outfmt=1&selcols=designation,ra,dec,w1mpro,w2mpro,w3mpro,w4mpro,ph_qual
+note IRSA-Gator (AllWISE, em celestial) — 200 lokal (2026-08-19), korrekte spatial-Syntax verwenden (Usage-Error bei aktueller Form); einziger JSON-Weg zu AllWISE (VizieR-TAP liefert VOTable, tapvizier-Eintrag in dead_sources.φ); Struktur probe.
+
+note probe-open
+url https://data.gtn-p.org/api/list-sites?country=Canada&borehole_data=true
+note GTN-P (Permafrost-Bodentemperatur, thermal, echt) — neue FastAPI, 200 application/json (2026-08-19, echte Site-Liste); gtnp.arcticportal.org-Route ist 404 (ersetzt); Struktur bestätigt: pt/{site_id} 200 JSON (site-Metadaten mit has_data/datasets_count), list-sites?country=&borehole_data=true&metadata=true 200 JSON mit location{latitude_avg,longitude_avg} (2026-08-20); Daten-Route /api/data/?alt_data={id}&combined=false → 200 application/zip mit Temperatur-CSV (alt_dataset_{id}_alt_grid-transect.csv, 2026-08-20) — ZIP-Entpacken + csv_to_json im Port.
+
+note probe-open
+url https://deprem.afad.gov.tr/apiv2/event/filter?format=json&start=2026-08-18&end=2026-08-19
+note AFAD Türkei (seismisch) — v2-API, 200 application/json (2026-08-19, echte Ereignis-Liste); format=json als Query-Parameter nötig (Accept reicht nicht, tadas-Route liefert HTML); Struktur bestätigt (2026-08-20): eventid= 200 JSON mit rms/eventID/location/latitude/longitude/depth/type/magnitude/country/province/district/neighborhood; Parameter start/end/limit/offset/orderby/eventid/minlat/maxlat/minlon/maxlon/lat/lon/minrad/maxrad.
+
+note probe-open
+url https://api.saveecobot.com/output.json
+note SaveEcoBot (Citizen-Sensor, em echt) — output.json = SaveEcoSensor-Netz (PM2.5/PM10-Luftqualität, 200 application/json 2026-08-19, SAVEDNIPRO_001/Dnipro); Radiation-API (saveecobot.com/api/v1) ist Key-pflichtig (neues Formular forms.gle/r43qfvgmbrsqFkJD7, SAVEecobot_KEY als Reserve); Struktur probe (Koordinaten + Messwerte im Record?).
+
+note probe-open
+url https://simbad.cds.unistra.fr/cone/?RA={ra}&DEC={dec}&SR={sr}&RESPONSEFORMAT=json&MAXREC={n}
+note SIMBAD-Cone (em celestial, identifizierte Objekte) — 200 application/json (2026-08-19); ersetzt den sim-tap-VOTable-Weg; sim-basic?output.format=JSON widerlegt (200 HTML, 2026-08-20) — Cone bleibt der JSON-Weg; Struktur probe.
+
+note probe-open
+url https://gcn.nasa.gov/circulars/{id}.json
+note GCN-Circulars (GRB/Transient-Meldungen, em celestial) — Einzel-Circular als GET-JSON: 200 application/json (2026-08-19, circularId 44806/eventId GRB 260601B/body); Schema v4.1.0 (gcn.nasa.gov/docs/schema/); keine offizielle „höchste ID"-API (NASA-Community bestätigt, 2026-08-20); Archiv-HTML liefert die IDs (live bis #45403, 2026-08-20) — neueste ID beim Port aus der Archiv-Seite; Bulk-Tarfile (gcn.gsfc.nasa.gov, eingefroren bis ~2023) für historische Vollständigkeit; Kafka bleibt der offizielle Live-Weg.
+
+note probe-open
+url https://earth.gov/ghgcenter/api/stac/
+note US GHG Center STAC-API (CH4/CO2, em) — 200 application/json (2026-08-20, Catalog stac-fastapi); ghg.center DNS-tot ersetzt; Collections live (2026-08-20): blueflux-ghgflux-daygrid-v1, casagfed-carbonflux-monthgrid-v3, ct-ch4-monthgrid-v2023/-v2025, eccodarwin-co2flux-monthgrid-v5, emit-ch4plume-v1/-v2 (= EMIT-Instrumentenmessung, ISS-Spektrometer), epa-ch4emission-yeargrid-v2express; Modell vs. Messung pro Collection über das description-Feld (ct-ch4/odiac/sedac = Inversions-/Inventar-Modelle → filtern; emit-ch4plume/gedi = Instrumentenmessung); Port wählt nur Messungs-Collections; Beta-Status offiziell.
+
+note probe-open
+url https://simbad.cds.unistra.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query={query}
+note SIMBAD-TAP (em celestial) — 200 application/json (2026-08-20) auf der cds.unistra.fr-Domain; die alte u-strasbg.fr-Domain war der Grund für VOTable; Cone-Weg (simbad.cds.unistra.fr/cone RESPONSEFORMAT=json) bleibt als Zweitweg; Struktur probe.
+
+note probe-open
+url https://dc.zah.uni-heidelberg.de/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY={query}
+note GAVO-TAP (em celestial) — 200 application/json (2026-08-20, TAP_SCHEMA-Test); DaCHS unterstützt FORMAT=json; UDF gavo_simbadpoint('Name') löst SIMBAD-Namen serverseitig auf (Bonus für Namens-Queries); CIRCLE-Radius in Grad; Struktur bestätigt (2026-08-20).
+
+note probe-open
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+*+FROM+%22B/psr/psr%22
+note ATNF-PSRCAT via VizieR-Mirror (Pulsar-Katalog, em celestial) — 200 application/json (2026-08-20) mit FORMAT=json (groß, Parameter groß geschrieben — REQUEST/LANG/FORMAT/QUERY, 2026-08-20 bestätigt); native ATNF-TAP-URL ist 301 auf News-Seite; dead_sources-Eintrag tapvizier (VOTable-Befund) war parameterabhängig; Tabellen-Metadaten: /TAPVizieR/tables/{table}; Struktur bestätigt.
+
+note probe-open
+url https://data.darts.isas.jaxa.jp/pub/xrism/metadata/xrism_resolve_data.csv
+note XRISM-Beobachtungsmetadaten (em) — generischer HEASARC-Weg (xrismmastr-Tabelle, kein XRISM-eigener Dienst): Xamin-QueryServlet 200 text/plain (2026-08-20, gepipete Spalten obsid|name|ra|dec|time|exposure|status|public_date, ra/dec sexagesimal HH MM SS / DD MM SS, public_date zeigt Proprietätsstatus — 2099-12-31 = noch nicht öffentlich; TSV/Text-Parser + Sexagesimal-Umrechnung im Port); CSV-Download (xrism_resolve_data.csv) bleibt, 200 text/csv (observation_id/object_name/center_ra/center_dec — Koordinaten-Index ohne Messgröße → Katalog-Oszillatoren, τ-Gate); HEASARC-TAP (xamin/vo/tap/sync) liefert VOTable trotz FORMAT=csv (widerlegt, 2026-08-20); ObsID-Daten: FTP heasarc.gsfc.nasa.gov/FTP/xrism/data/obs/9/{ziffer}/{obsid}/.
+
+note probe-open
+url https://data.minorplanetcenter.net/api/get-obs
+note MPC astrometrische Beobachtungen (em celestial, echt) — 200 application/json (2026-08-20, ADES_DF-Felder Obstype/astcat/band) via GET mit JSON-Body {"desigs":["{desig}"],"output_format":["ADES_DF","OBS_DF","OBS80","XML"]} + Content-Type: application/json (POST/405-Falle: GET mit Body nötig); eine Designation pro Request; MPCOBS-Bulk (txt.gz) bleibt der Vollladungs-Weg; Struktur probe.
+
+note probe-open
+url https://dap.oceannetworks.ca/erddap/tabledap/{dataset}.json
+note Ocean Networks Canada via ERDDAP (Ozeansensoren, echt) — anonyme JSON-Abfrage bestätigt (allDatasets.json 200 application/json, 2026-08-20); Datenabruf bestätigt: scalar_1218061.json 200 application/json anonym (timeseries_id/time/turbidity/latitude/longitude/depth — Messwerte + Koordinaten, 2026-08-20); Constraints/orderBy werfen 400 (plain-Abruf ist der Weg); Token-Weg (data.oceannetworks.ca/api/scalardata) bleibt als Alternative.
+
+note probe-open
+url https://casda.csiro.au/casda_vo_tools/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY={query}
+note CASDA/VAST (Radio, em celestial) — 200 text/csv mit FORMAT=csv (2026-08-20, obs_id ASKAP-85557); FORMAT=json liefert VOTable, FORMAT=csv ist der Kanal; csv_to_json existiert; Struktur bestätigt: obscore-Spalten mit access_url (Download-Weg, 2026-08-20).
+
+note probe-open
+url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY={query}
+note VSX-Katalog via VizieR-Mirror B/vsx/vsx (Veränderliche, em celestisch) — 200 application/json (2026-08-20) mit nativen VSX-Spalten OID/Type/Period/Epoch/Sp/V/max/min/Name — der AAVSO-Katalog-JSON-Weg, ohne AAVSO-Server und ohne Key; AAVSO-api.object-Cone (ra/dec/radius) liefert leer (widerlegt); Struktur probe.
+
+note probe-open
+url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&start={start}&limit={limit}
+note EMSC seismicportal.eu FDSNWS-event (seismisch global, echt) — 200 application/json (2026-08-20) mit FeatureCollection: geometry Point [lon,lat,depth] + properties (Magnitude/Zeit/Region) — AFAD deckt Türkei ab, EMSC global; format=geojson wird abgelehnt (400 unknown format — die json-Schreibweise ist der Kanal, 2026-08-20); FDSNWS-Standard-Parameter: start/end/lat/lon/maxradius/minmag.
+
+note probe-open
+url https://api.airqo.net/api/v2/devices/measurements/grids/{grid_id}?token={AIRQO_KEY}&limit={limit}
+note AirQo (Kampala/Nairobi/Accra/Lagos, PM-Messung, echt) — live 200 application/json (2026-08-20, Grid 64b7ac8fd7249f0029feca80: 58 Messungen, meta{total/page/pages/startTime/endTime}, measurements{device/device_id/site_id/time/...}); token als QUERY-Parameter (Header falsch — neue Doku platform.airqo.net/docs/api, alte api-docs.md deprecated); Grid-IDs über /api/v2/devices/measurements/grids/ (Liste); cohorts/{id} als Alternative; AIRQO_KEY in .secrets.local; Reaktivierung aus dead_sources (war superseded-by-openaq — AirQo-direkt ist die Originalquelle mit Zeitreihen).
+
+note probe-open
+url https://product.gosat-gw.nies.go.jp/product_search/api/cui-search/?level=2&mode=1&product=GWT3W_L1B&format=3&version=1&area=1&start={start}&end={end}
+note GOSAT-GW TANSO-3 (GHG-Säulen, em) — Account LIVE (johannes.tyroller@proton.me, GOSAT_GW_MAIL/PASS in .secrets.local): cui-search 200 — L1B csv 200 text/csv mit Granule-Metadaten (filename/obs_start_time/obs_end_time/version/filesize/product_quality, echte Treffer 2026-07-25, 2026-08-20); Cookie-Auth (mail/password-Cookies); L2_GHG/L2_NO2 = 0 Treffer (L2-Bestand leer bis 07/2027 — GHG-Säulen-Messung dann nachziehen); HDF5-Radiance-Download via cui-download/ (Datei-Parser-Hürde — die Such-Metadaten sind der Katalog-Kanal); format 1=text/2=json/3=csv, area 2=point (lat/lon)/3=rectangle (nlat/wlon/slat/elon), path/obsreqid.
+
+note probe-open
+url https://noaa-gk2a-pds.s3.amazonaws.com/?list-type=2&prefix={prefix}
+note GK2A via NOAA-NODD (AMI Wetterbild + KSEM Weltraumwetter, em) — öffentlicher S3-Bucket noaa-gk2a-pds, keyless (200 application/xml ListBucketResult, 2026-08-20); NOAA Open Data Dissemination (registry.opendata.aws/noaa-gk2a-pds) — keine Registrierung, kein Key; AMI: Vollscheibe alle 10 min / Korea alle 2 min, 4 visuelle + 12 IR-Kanäle; KSEM: Partikeldetektor/Magnetometer/Charging-Monitor (Punktmessungen an der Satellitenposition — der Kanal fürs Radiatorium); Raster-Kanäle = Raster-Parser-Frage beim Port; Key-Listing über S3-Prefix.
+
+note probe-open
+url https://nosc.go.kr/opendap/hyrax/GOCI-II/
+note GOCI-2 (GK2B Ozeanfarbe, em) via KHOA/KOSC-OPeNDAP — öffentlicher Hyrax-Server, keyless (200 text/html „OPeNDAP Hyrax: Contents of /GOCI-II/", 2026-08-20); URL-Schema nach Datum: /opendap/hyrax/GOCI-II/{Jahr}/{Monat}/{Tag}/FD_L2/{Slot}/{Zeitstempel}/{Datei}.nc; Variablen: Kd_380..Kd_865 (12 Bänder) + navigation_data/longitude+latitude; .dds/.das für Struktur, .ascii für Text-Datenabruf (Text-Parser-Weg), .nc = NetCDF-Datei (Datei-Parser-Hürde); Alternative Pfadvariante /opendap/GOCI-II_OCR/; Kontakt kosc@kiost.ac.kr; KHOA-NOSC.
+
+note probe-open
+url https://noaa-ghcn-pds.s3.amazonaws.com/?list-type=2&prefix={prefix}
+note GHCN-Daily via NOAA-NODD (Stationsklima T/Präz, echt) — öffentlicher S3-Bucket noaa-ghcn-pds, keyless (200 application/xml ListBucketResult, 2026-08-20); Global Historical Climatology Network: tägliche Stationsmessungen (TMAX/TMIN/PRCP/SNOW) mit Stationen weltweit — Punktmessungen, der klassische Stations-Kanal; Stationen-Liste (ghcnd-stations.txt) + Datenpfad by_station/... beim Port; registry.opendata.aws/noaa-ghcn/.
+
+note probe-open
+url https://noaa-gsod-pds.s3.amazonaws.com/?list-type=2&prefix={prefix}
+note GSOD via NOAA-NODD (Tages-Wetter, echt) — öffentlicher S3-Bucket noaa-gsod-pds, keyless (200 application/xml, 2026-08-20); Global Summary of the Day: Tageswerte der Weltstationen (T/RH/Wind/Druck/Präz) — Punktmessungen; Datenpfad {Jahr}/{Stations-ID} + isd-history.csv beim Port; registry.opendata.aws/noaa-gsod/.
+
+note probe-open
+url https://noaa-goes18.s3.amazonaws.com/?list-type=2&prefix={prefix}
+note GOES-R-Serie via NOAA-NODD (Wetterbilder + Weltraumwetter, em) — öffentliche Buckets noaa-goes16/17/18/19, keyless (200 application/xml, 2026-08-20); Bilddaten (ABI) = Raster-Kanäle (Raster-Parser-Frage beim Port); WELTRAUMWETTER-Punktmessung: SEISS (Partikel), MAG (Magnetfeld), EXIS (Röntgenstrahlung) auf jedem GOES — Magnetometer/Partikelsensoren wie KSEM, geostationär; registry.opendata.aws/noaa-goes/; Himawari-8/9 (noaa-himawari8/9, 200 keyless) analog — Raster-Kanal, bei Bedarf beim Port.
