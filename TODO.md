@@ -543,6 +543,142 @@ resonance(mut read_signal(s: read_ws_frame_part(stream: read_ws_frame_raw(stream
 
 ## Zentrismus / Hack / Fabrikation / Daten zweiter Klasse / Bias
 
+## Titan-Archäologie (2026-08-19) — Befund gegen f2023eb, 218 Commits, 11 Agenten
+
+Die vollständige Vermessung des Monolithen gegen den Titan-Stand
+(`f2023eb`, 2026-08-16) und den Verlauf bis HEAD. Jeder Punkt nennt den
+Fundort; Sanierungs-Reihenfolge am Ende. Kein Top-N — der vollständige
+Befund.
+
+### A — Lade-Pfad (Parallel-Lader, der Vertrauensbruch)
+
+- Dual-Lader auf derselben Datei: Bootstrap-Thread (main.rs ~11977-12029,
+  priorisiert nach `anchor_uses`, sequentiell Anker zuerst, dann Batch
+  parallel-max 8) UND In-Loop-Fetch (~12259-12311, unpriorisiert, je
+  Quelle ein Thread — `86d5853` auf `eae562c` geschichtet). Beide
+  schreiben `/tmp/omegaflow_eph_{body}.bin`; erster Tick nach Kaltstart =
+  ~76 parallele Loop-Fetches, die die Anker-Priorisierung unterlaufen
+  und denselben Download doppelt führen. Sanierung: Bootstrap wird der
+  einzige Lader; der In-Loop-Zweig kehrt zu `cache_fresh → extrahieren,
+  sonst nichts` zurück (Titan-Form); ein Wächter startet den Bootstrap
+  neu, wenn Dateien fehlen, deren Body nicht in `body_ephemerides` ist,
+  der letzte Versuch älter als ttl/Φ² und kein Lauf aktiv ist (AtomicBool).
+- `eae562c`-Regress: der Titan-Zeit-In-Loop-Fetch wurde ersatzlos
+  gelöscht (stiller `continue` bei stale Cache) — die Ursache der leeren
+  Membran nach `/tmp`-Reset. Der Wächter schließt die Wunde dauerhaft.
+- `origins`-Stempel vor Fetcherfolg (Titan-Erbe, unverändert): ein
+  fehlgeschlagener Fetch verliert die Quelle für ttl/Φ — Stempel erst
+  nach Erfolg setzen (oder Fehlschlag sichtbar zurückmelden).
+- eph-Batch-curl-Status wird verworfen (`cmd.output()`, ~4935) —
+  Fehlschläge bleiben unsichtbar; Status prüfen + URL melden
+  (`download_ephemeris_one`/`download_ephemeris_batch`).
+
+### B — Fabrikationen (Fundort je Fälschung)
+
+- Celestial-Shell 1 kpc (main.rs 1467, 8333-8372; `9ff75b9`): Titans
+  0-honored-Skip (Zeile ohne Distanz fällt) wurde durch die fabrizierte
+  1-kpc-Kugel ersetzt; Tests kodifizieren die Lüge heute
+  (`test_extract_cmap_no_distance_reference_sphere`,
+  `test_extract_cmap_null_dist_reference_sphere`,
+  `test_extract_cmap_dist_scale_kpc`). Gravierendster Einzelfund —
+  zurück zu Titans Skip, Tests auf Wahrheit.
+- pm/rv=0.0-Fold (8388-8408, Titan-Erbe): absent pm/rv wird als 0 in den
+  Geschwindigkeitsvektor gefaltet; die Compiler-Säuberung (4b879c6)
+  erreichte die Extract-Seite nie — absent = pending (kein Vektor-Term
+  statt 0-Term).
+- `port_field_synth` (--gold-Pfad): fabriziert `tau = ttl/10` + Unit
+  „1" für jedes migrierte Feld — τ-Gate-Bypass im Migrationsweg.
+- Hardcodierte TTLs: `probe_ttl().unwrap_or(86400)` (~11091),
+  `anchor(..., 86400.0, ...)` für body_channels (~12853) — Wert gehört
+  aus der Quelle/Register, nicht als Default.
+- Sensor-alt=0.0 bei fehlender Deklaration (~11845); flattening
+  `_ => 0.0` (~1594, pre-Titan ce6b5a0); tess plx=0 geschrieben und erst
+  später gefiltert (tess_compiler 306-308, main 17308 — fragil, zwei
+  Enden); mpcobs mag `unwrap_or(0.0)` (mpcobs_compiler 82); fits.rs
+  PCOUNT/TFIELDS→0 (107-114).
+- ANV-Device-Lost-Unroll (`b1e4fe4`): 31-Punkt-Tabelle → 20 unrolled
+  ifs, 11 Breakpoints verloren — Präzisions-Regress für einen
+  Mesa-Treiber, lebt heute. Entscheidung: Tabelle zurück (Feature-Check)
+  oder Beibehalten dokumentieren.
+- `exp2(-20)` Gravitations-Dämpfung (WGSL `source_contrib`, `80faab0`):
+  magische Konstante statt physikalischer Skala, damit das Sternfeld
+  nahe der Sonne überlebt — physikalisch ersetzen (Radien-Referenz der
+  gravity-Kraft statt Dämpfung) oder als visuelles Urteil registrieren.
+
+### C — Parallel-Pfade (Deduplizierung)
+
+- `ci_upload` (main.rs 5237, seit 53a6894) vs `cdn::upload_asset`
+  (cdn.rs, seit 5cf710d): Duplikat; ci_upload ohne die stderr-Diagnostik
+  des Originals — ein Aufrufer.
+- CDN-Base 5× hartkodiert (5036/5045/10599/10935/15288) statt
+  `cdn::CDN_BASE` — identisch heute, Drift-Risiko.
+- Drei curl-Flag-Ketten: `fetch_raw_bytes` / `download_ephemeris_one` /
+  `download_ephemeris_batch` — ein gemeinsamer Builder.
+- `read_cache_if_fresh` = `cache_fresh` + read — triviale Doppelung.
+- 7 JSON-Parser (main.rs JsonVal 3223, tap_compiler 145, rest_harvester
+  145, erddap_harvester 145 — byte-identisch —, cometels 165, tess 142,
+  sparql 147) — ein Parser in der lib.
+- Chebyshev-Fit doppelt (ephemeris_compiler 85-160, horizons_compiler
+  8-100; solve_normal_equations/back_substitute byte-identisch) — in die
+  lib; Julian-Datum 6× (lsk.rs 124, mpcobs 43, cometels 197-216,
+  ephemeris_compiler 638, main 12899 + inline 2440587.5 5215/3169);
+  Rotations-Matrix 2× (fk.rs 278-294, ephemeris_compiler 235-253).
+- `field`-Grammatik 5/6/9-token: Körper gedriftet — ProfileMap nur im
+  9-token-Arm (89ac4af); ein 5/6-token-Feld im Profil-Block wird zur
+  Waise (kein Per-Level-Ausbau). Arme vereinheitlichen.
+- Sterne dreifach evaluiert: `presence_probe`-O(N)-Schleife (WGSL
+  383-403, Audio-Probe) + `star_cull`-Kacheln + zwei Overflow-Full-Scan-
+  Fallbacks (`tiles[1]`, `star_tiles[0]`) — der Probe-Sternpfad sollte
+  das Kachel-Ergebnis konsumieren statt eigenständig zu summieren.
+- `point_blend` (P-Taste, VP + key_action) steuert eine längst getilgte
+  Punkt-Ebene — Fossil tilgen oder dem Operator-Zweck neu weihen.
+- Star-Messung doppelt (cmap-geschlossene Form vs. Stern-Bins) —
+  Titan-Erbe, zwei Messungen desselben Himmels; als solche akzeptiert,
+  aber registriert.
+
+### D — Stille Fehlschläge (Maskierung)
+
+- 5 Compiler ignorieren `upload_asset`-Ergebnis (tycho2 501/788,
+  cometels 421, pangaea 243, tess 580, tap 1449/1554) — 7 prüfen den
+  Bool; vereinheitlichen auf Prüfung.
+- WS-Frame-Writes ignoriert (main.rs 21164/21170/21176) — ein
+  fehlgeschlagener Frame korrumpiert den Protokollstrom still.
+- Cache-/Register-Writes `.ok()` (~15 Stellen) — Fehlschlag sichtbar
+  machen, wo der Cache das Gedächtnis ist.
+- pending/refused-Noten erreichen kein Register (eprintln-only:
+  10609/10638 secret-void, 1283/6189 unconverted units, 2384
+  recompilation, 5136 env-marker, 6226 fold-op) — an
+  phi/pipeline/ledger.φ oder TODO-Spiegel binden.
+- Extract-Live-Silence (7334-7339, 7373/7376): leerer/fehlgeschlagener
+  Extract → leere Messreihe ohne Note; nur ci-mode prüft
+  check_empty_data — Live-Pfad braucht mindestens die Note.
+- Anomalien fallen ohne GH_TOKEN aus (10722) — kein Ersatz-Register.
+
+### E — Entlastung (verifiziert sauber, kein pending)
+
+- Motion/Anchor/Ephemeris-Kern byte-identisch zu Titan (Gesetze,
+  Enclosure-Lemma, WGCCRE, Chebyshev, surface_motion, law_bounds).
+- v6→v7 atomar (6f4b3ed): kein gemischter Rest in Rust/JS/WGSL;
+  constants.js ohne toten Protokollcode.
+- `fetch_one`-Kaskade lokal→CDN→API existierte bei Titan vollständig —
+  die Kanal-Logik war nie ersetzt.
+- 44-Byte-Gate + rv-Refusals sauber vollzogen; keine toten
+  Rust-Funktionen; kein `#[allow]`.
+
+### F — Sanierungs-Reihenfolge (jeder Punkt ein eigener Commit)
+
+1. Lade-Pfad-Eindeutigkeit: Bootstrap als einziger priorisierter Lader +
+   Wächter; In-Loop-Fallback raus; origins-Stempel nach Erfolg;
+   curl-Status sichtbar (A).
+2. Celestial-Shell tilgen — Titans 0-honored-Skip, Tests auf Wahrheit (B).
+3. Deduplizierung: ci_upload→cdn::upload_asset, CDN-Base zentral,
+   curl-Builder, JSON-Parser + Chebyshev in die lib, field-Arme
+   vereinheitlichen (C).
+4. Fabrikations-Welle: pm/rv-Fold pending statt 0.0, port_field_synth-tau,
+   hardcodierte TTLs, flattening (B).
+5. GPU-Workarounds: ANV-Unroll-Entscheidung, exp2(-20), point_blend-
+   Fossil, Probe-Sternpfad an star_cull koppeln (B/C).
+
 ## Parser & Spec (P02–P09)
 
 ## Infrastruktur (I01–I03)
