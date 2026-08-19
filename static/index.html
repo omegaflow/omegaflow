@@ -318,8 +318,10 @@ fn field_spatial(d2: f32, d_mag: f32, extent: f32, kernel_id: u32, global_scale:
     let e2 = max(perceptual_extent * perceptual_extent, 1e-30);
     let s2 = max(global_scale * global_scale, 1e-30);
 
-    if (kernel_id == 0u || kernel_id == 6u) {
+    if (kernel_id == 0u) {
         return 1.0 / (d2 + e2);
+    } else if (kernel_id == 1u) {
+        return exp(-d2 / (2.0 * e2)) / (d2 + e2);
     } else if (kernel_id == 3u) {
         return erfc(d_mag / max(perceptual_extent * sqrt(2.0), global_scale));
     } else if (kernel_id == 2u) {
@@ -332,6 +334,8 @@ fn field_spatial(d2: f32, d_mag: f32, extent: f32, kernel_id: u32, global_scale:
         let core = exp(-d2 / (2.0 * max(e2, s2)));
         let tail = pow(max(e2, s2), beta * 0.5) / pow(max(d2 + s2, s2), beta * 0.5);
         return (1.0 - alpha) * core + alpha * tail;
+    } else if (kernel_id == 6u) {
+        return 1.0 / (d_mag + perceptual_extent);
     } else {
         return exp(-d2 / (2.0 * max(e2, s2))) / max(d2 + s2, s2);
     }

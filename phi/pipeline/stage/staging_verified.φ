@@ -6878,3 +6878,18 @@ field properties.s2:processing_level processing_level inverse-square em 1 8640 0
 field properties.s2:product_type product_type inverse-square em 1 8640 0.0 0.0
 
 
+# from master_converted.φ
+url https://atlas.ripe.net/api/v2/probes/?status=1&page_size=500&format=json
+ttl 86400
+on earth 0 0
+map results
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field id probe_id inverse-square em 1 8640 0.0 0.0
+field description description inverse-square em 1 8640 0.0 0.0
+field country_code country inverse-square em 1 8640 0.0 0.0
+field asn_v4 asn inverse-square em 1 8640 0.0 0.0
+field firmware_version fw_version inverse-square em 1 8640 0.0 0.0
+field type probe_type inverse-square em 1 8640 0.0 0.0
+
+

@@ -475,13 +475,31 @@ fn main() {
                 std::process::exit(1);
             }
         };
+        let rv_map = if xmatch {
+            let hips: Vec<i32> = rows.iter().map(|r| r.hip).filter(|h| *h > 0).collect();
+            let m = crossmatch_rv(&hips);
+            eprintln!(
+                "crossmatch: {} of {} tgas stars with rv",
+                m.len(),
+                hips.len()
+            );
+            m
+        } else {
+            HashMap::new()
+        };
         let mut buf = Vec::with_capacity(rows.len() * STAR_RECORD_STRIDE);
         let mut written = 0usize;
-        for row in &rows {
-            if row.plx_mas <= 0.0 {
+        let mut no_rv = 0usize;
+        for mut row in rows {
+            if !row.plx_mas.is_finite() || row.plx_mas <= 0.0 {
                 continue;
             }
-            encode(row, &mut buf);
+            let Some(rv) = rv_map.get(&row.hip).copied() else {
+                no_rv += 1;
+                continue;
+            };
+            row.rv = rv;
+            encode(&row, &mut buf);
             written += 1;
         }
         if let Ok(mut f) = std::fs::File::create(&out_path) {
@@ -491,8 +509,9 @@ fn main() {
             std::process::exit(1);
         }
         eprintln!(
-            "tgas: {} records written (plx>0), {} skipped, {} B → {}",
+            "tgas: {} records written (plx>0, rv present), {} without rv, {} skipped, {} B → {}",
             written,
+            no_rv,
             skipped,
             buf.len(),
             out_path

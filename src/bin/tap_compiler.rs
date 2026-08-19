@@ -605,16 +605,14 @@ fn emit_rows(
         if let (Some(epoch), Some(ra), Some(dec), Some(i_pmra), Some(i_pmdec)) =
             (epoch_prop, ra_v, dec_v, i_pmra, i_pmdec)
         {
-            let pmra = cells
-                .get(i_pmra)
-                .and_then(|s| s.parse::<f64>().ok())
-                .unwrap_or(0.0);
-            let pmdec = cells
-                .get(i_pmdec)
-                .and_then(|s| s.parse::<f64>().ok())
-                .unwrap_or(0.0);
-            ra_v = Some(ra + pmra / (3.6e6 * dec.to_radians().cos().max(1e-6)) * (2000.0 - epoch));
-            dec_v = Some(dec + pmdec / 3.6e6 * (2000.0 - epoch));
+            if let (Some(pmra), Some(pmdec)) = (
+                cells.get(i_pmra).and_then(|s| s.parse::<f64>().ok()),
+                cells.get(i_pmdec).and_then(|s| s.parse::<f64>().ok()),
+            ) {
+                ra_v =
+                    Some(ra + pmra / (3.6e6 * dec.to_radians().cos().max(1e-6)) * (2000.0 - epoch));
+                dec_v = Some(dec + pmdec / 3.6e6 * (2000.0 - epoch));
+            }
         }
         let mut obj = String::from("{");
         let mut pos = 0;

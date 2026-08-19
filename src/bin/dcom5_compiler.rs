@@ -13,8 +13,8 @@ struct CometRow {
     ra_deg: f64,
     dec_deg: f64,
     dist_au: f64,
-    h: f32,
-    m1: f32,
+    h: Option<f32>,
+    m1: Option<f32>,
 }
 
 fn trim(bytes: &[u8]) -> String {
@@ -45,8 +45,8 @@ fn evaluate(rec: &omegaflow::dastcom::CometRec) -> Option<CometRow> {
         ra_deg,
         dec_deg,
         dist_au: r / AU_M,
-        h: rec.h,
-        m1: rec.m1,
+        h: (rec.h.is_finite() && rec.h < 90.0).then_some(rec.h),
+        m1: (rec.m1.is_finite() && rec.m1 < 900.0).then_some(rec.m1),
     })
 }
 
@@ -189,8 +189,14 @@ fn main() {
             r.ra_deg,
             r.dec_deg,
             r.dist_au,
-            r.h,
-            r.m1
+            match r.h {
+                Some(v) => v.to_string(),
+                None => "null".to_string(),
+            },
+            match r.m1 {
+                Some(v) => v.to_string(),
+                None => "null".to_string(),
+            }
         ));
     }
     buf.push_str("]\n");

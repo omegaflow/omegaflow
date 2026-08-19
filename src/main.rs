@@ -195,8 +195,10 @@ fn field_spatial(d2: f32, d_mag: f32, extent: f32, kernel_id: u32, global_scale:
     let e2 = max(perceptual_extent * perceptual_extent, 1e-30);
     let s2 = max(global_scale * global_scale, 1e-30);
 
-    if (kernel_id == 0u || kernel_id == 6u) {
+    if (kernel_id == 0u) {
         return 1.0 / (d2 + e2);
+    } else if (kernel_id == 1u) {
+        return exp(-d2 / (2.0 * e2)) / (d2 + e2);
     } else if (kernel_id == 3u) {
         return erfc(d_mag / max(perceptual_extent * sqrt(2.0), global_scale));
     } else if (kernel_id == 2u) {
@@ -209,6 +211,8 @@ fn field_spatial(d2: f32, d_mag: f32, extent: f32, kernel_id: u32, global_scale:
         let core = exp(-d2 / (2.0 * max(e2, s2)));
         let tail = pow(max(e2, s2), beta * 0.5) / pow(max(d2 + s2, s2), beta * 0.5);
         return (1.0 - alpha) * core + alpha * tail;
+    } else if (kernel_id == 6u) {
+        return 1.0 / (d_mag + perceptual_extent);
     } else {
         return exp(-d2 / (2.0 * max(e2, s2))) / max(d2 + s2, s2);
     }
@@ -223,9 +227,12 @@ fn field_spatial_grad(d2: f32, d_mag: f32, extent: f32, kernel_id: u32, global_s
     let s2 = max(global_scale * global_scale, 1e-30);
     let d = max(d_mag, 1e-9);
 
-    if (kernel_id == 0u || kernel_id == 6u) {
+    if (kernel_id == 0u) {
         let denom = d2 + e2;
         return -2.0 * d / (denom * denom);
+    } else if (kernel_id == 1u) {
+        let denom = d2 + e2;
+        return -exp(-d2 / (2.0 * e2)) * d * (denom / e2 + 2.0) / (denom * denom);
     } else if (kernel_id == 3u) {
         let scale = max(perceptual_extent * sqrt(2.0), global_scale);
         return -2.0 / sqrt(3.141592653589793) * exp(-d2 / (scale * scale)) / scale;
@@ -244,6 +251,9 @@ fn field_spatial_grad(d2: f32, d_mag: f32, extent: f32, kernel_id: u32, global_s
         let denom = max(d2 + s2, s2);
         let tail_grad = -beta * d * pow(e, beta * 0.5) / pow(denom, beta * 0.5 + 1.0);
         return (1.0 - alpha) * core_grad + alpha * tail_grad;
+    } else if (kernel_id == 6u) {
+        let denom = d_mag + perceptual_extent;
+        return -1.0 / (denom * denom);
     } else {
         let e = max(e2, s2);
         let denom = max(d2 + s2, s2);
@@ -1464,7 +1474,6 @@ mod archivar {
     const C_LIGHT: f64 = 299792458.0;
     const HUBBLE_H0: f64 = 70000.0 / (PARSEC_M * 1.0e6);
     const MAS_YR_TO_RAD_S: f64 = 4.84813681109536e-9 / 31557600.0;
-    const CELESTIAL_SPHERE_RADIUS_M: f64 = 1.0e3 * PARSEC_M;
     const STAR_FLUX_FLOOR: f64 = 1e-4;
 
     pub fn resolve_asset(rel: &str) -> std::path::PathBuf {
@@ -8340,52 +8349,73 @@ mod archivar {
                                 };
                                 let d = if !plx_key.is_empty() {
                                     match jpath(v, plx_key) {
-                                        Some(plx) if plx > 0.0 => PARSEC_M * 1000.0 / plx,
+                                        Some(plx) if plx.is_finite() && plx > 0.0 => {
+                                            PARSEC_M * 1000.0 / plx
+                                        }
                                         _ => {
                                             if !z_key.is_empty() {
                                                 match jpath(v, z_key) {
-                                                    Some(z) if z > 0.0 => z * C_LIGHT / HUBBLE_H0,
-                                                    _ => CELESTIAL_SPHERE_RADIUS_M,
+                                                    Some(z) if z.is_finite() && z > 0.0 => {
+                                                        z * C_LIGHT / HUBBLE_H0
+                                                    }
+                                                    _ => {
+                                                        if !dist_key.is_empty() {
+                                                            match jpath(v, dist_key) {
+                                                                Some(dd)
+                                                                    if dd.is_finite()
+                                                                        && dd > 0.0 =>
+                                                                {
+                                                                    dd * dist_scale
+                                                                }
+                                                                _ => continue,
+                                                            }
+                                                        } else {
+                                                            continue;
+                                                        }
+                                                    }
                                                 }
                                             } else if !dist_key.is_empty() {
                                                 match jpath(v, dist_key) {
-                                                    Some(dd) if dd > 0.0 => dd * dist_scale,
-                                                    _ => CELESTIAL_SPHERE_RADIUS_M,
+                                                    Some(dd) if dd.is_finite() && dd > 0.0 => {
+                                                        dd * dist_scale
+                                                    }
+                                                    _ => continue,
                                                 }
                                             } else {
-                                                CELESTIAL_SPHERE_RADIUS_M
+                                                continue;
                                             }
                                         }
                                     }
                                 } else if !dist_key.is_empty() {
                                     match jpath(v, dist_key) {
-                                        Some(dd) if dd > 0.0 => dd * dist_scale,
+                                        Some(dd) if dd.is_finite() && dd > 0.0 => dd * dist_scale,
                                         _ => {
                                             if !z_key.is_empty() {
                                                 match jpath(v, z_key) {
-                                                    Some(z) if z > 0.0 => z * C_LIGHT / HUBBLE_H0,
-                                                    _ => CELESTIAL_SPHERE_RADIUS_M,
+                                                    Some(z) if z.is_finite() && z > 0.0 => {
+                                                        z * C_LIGHT / HUBBLE_H0
+                                                    }
+                                                    _ => continue,
                                                 }
                                             } else {
-                                                CELESTIAL_SPHERE_RADIUS_M
+                                                continue;
                                             }
                                         }
                                     }
                                 } else if !z_key.is_empty() {
                                     match jpath(v, z_key) {
-                                        Some(z) if z > 0.0 => z * C_LIGHT / HUBBLE_H0,
-                                        _ => CELESTIAL_SPHERE_RADIUS_M,
+                                        Some(z) if z.is_finite() && z > 0.0 => {
+                                            z * C_LIGHT / HUBBLE_H0
+                                        }
+                                        _ => continue,
                                     }
                                 } else {
-                                    CELESTIAL_SPHERE_RADIUS_M
+                                    continue;
                                 };
                                 let zval = if !z_key.is_empty() {
-                                    match jpath(v, z_key) {
-                                        Some(z) if z > 0.0 => z,
-                                        _ => 0.0,
-                                    }
+                                    jpath(v, z_key).filter(|z| z.is_finite() && *z > 0.0)
                                 } else {
-                                    0.0
+                                    None
                                 };
                                 let ra = ra_deg.to_radians();
                                 let dec = dec_deg.to_radians();
@@ -8394,32 +8424,38 @@ mod archivar {
                                 let p_hat = [cd * ca, cd * sa, sd];
                                 let p = [p_hat[0] * d, p_hat[1] * d, p_hat[2] * d];
                                 let mu_a = if pmra_key.is_empty() {
-                                    0.0
-                                } else if let Some(v) = jpath(v, pmra_key) {
-                                    v * MAS_YR_TO_RAD_S
+                                    None
                                 } else {
-                                    0.0
+                                    jpath(v, pmra_key)
+                                        .filter(|x| x.is_finite())
+                                        .map(|v| v * MAS_YR_TO_RAD_S)
                                 };
                                 let mu_d = if pmdec_key.is_empty() {
-                                    0.0
-                                } else if let Some(v) = jpath(v, pmdec_key) {
-                                    v * MAS_YR_TO_RAD_S
+                                    None
                                 } else {
-                                    0.0
+                                    jpath(v, pmdec_key)
+                                        .filter(|x| x.is_finite())
+                                        .map(|v| v * MAS_YR_TO_RAD_S)
                                 };
                                 let vr = if rv_key.is_empty() {
-                                    0.0
-                                } else if let Some(v) = jpath(v, rv_key) {
-                                    v * rv_scale
+                                    None
                                 } else {
-                                    0.0
+                                    jpath(v, rv_key)
+                                        .filter(|x| x.is_finite())
+                                        .map(|v| v * rv_scale)
                                 };
                                 let a_hat = [-sa, ca, 0.0];
                                 let d_hat = [-sd * ca, -sd * sa, cd];
                                 let vel = [
-                                    d * (mu_a * a_hat[0] + mu_d * d_hat[0]) + vr * p_hat[0],
-                                    d * (mu_a * a_hat[1] + mu_d * d_hat[1]) + vr * p_hat[1],
-                                    d * (mu_a * a_hat[2] + mu_d * d_hat[2]) + vr * p_hat[2],
+                                    d * (mu_a.map_or(0.0, |m| m * a_hat[0])
+                                        + mu_d.map_or(0.0, |m| m * d_hat[0]))
+                                        + vr.map_or(0.0, |v| v * p_hat[0]),
+                                    d * (mu_a.map_or(0.0, |m| m * a_hat[1])
+                                        + mu_d.map_or(0.0, |m| m * d_hat[1]))
+                                        + vr.map_or(0.0, |v| v * p_hat[1]),
+                                    d * (mu_a.map_or(0.0, |m| m * a_hat[2])
+                                        + mu_d.map_or(0.0, |m| m * d_hat[2]))
+                                        + vr.map_or(0.0, |v| v * p_hat[2]),
                                 ];
                                 let sample_epoch = if !epoch_key.is_empty() {
                                     if let Some(v) = jpath(v, epoch_key) {
@@ -8475,7 +8511,7 @@ mod archivar {
                                     }
                                     channels.push((
                                         Channel {
-                                            z: zval,
+                                            z: zval.unwrap_or(0.0),
                                             epoch: sample_epoch,
                                             position: Position::StateVector {
                                                 p,
@@ -8510,7 +8546,7 @@ mod archivar {
                                             let mut elo = 0.0;
                                             let mut ela = 0.0;
                                             let mut ed = 0.0;
-                                            let mut mag = 0.0;
+                                            let mut mag: Option<f64> = None;
                                             let mut valid = false;
                                             if let Some(JsonVal::Obj(geom)) = f.get("geometry") {
                                                 if let Some(JsonVal::Arr(c)) =
@@ -8533,7 +8569,9 @@ mod archivar {
                                             if valid {
                                                 if let Some(props) = f.get("properties") {
                                                     if let Some(m) = jnum(props, mag_key) {
-                                                        mag = m;
+                                                        if m.is_finite() {
+                                                            mag = Some(m);
+                                                        }
                                                     }
                                                     if !mag_type_key.is_empty() {
                                                         if let Some(t) = jstr(props, &mag_type_key)
@@ -8544,6 +8582,8 @@ mod archivar {
                                                         }
                                                     }
                                                 }
+                                            }
+                                            if let Some(mag) = mag {
                                                 if mag >= *min_mag {
                                                     channels.push((
                                                         Channel {
@@ -8891,12 +8931,7 @@ mod archivar {
             let Some(epoch) = lsk.unix_to_tdb(unix) else {
                 continue;
             };
-            let position = Position::Surface {
-                body_name: frame_body_name(&src.frame),
-                lat: 0.0,
-                lon: 0.0,
-                alt: 0.0,
-            };
+            let position = Position::Source;
             for fc in &fields {
                 let value = match fc.key.as_str() {
                     "ut1_utc" => ut1,
@@ -9101,30 +9136,15 @@ mod archivar {
 
     fn build_alerce_channels(
         src: &SourceConfig,
-        lsk: &LeapSeconds,
         cap: usize,
         delay: u64,
     ) -> Vec<(Channel, FieldConfig)> {
-        let mut channels = Vec::new();
+        let channels = Vec::new();
         let Some(Extract::Alerce(detail)) = src
             .extracts
             .iter()
             .find(|e| matches!(e, Extract::Alerce(_)))
         else {
-            return channels;
-        };
-        let mut magpsf_fc: Option<&FieldConfig> = None;
-        let mut magap_fc: Option<&FieldConfig> = None;
-        for ext in &src.extracts {
-            if let Extract::Field(fc) = ext {
-                match fc.key.as_str() {
-                    "magpsf" => magpsf_fc = Some(fc),
-                    "magap" => magap_fc = Some(fc),
-                    _ => {}
-                }
-            }
-        }
-        let (Some(fc_p), Some(fc_a)) = (magpsf_fc, magap_fc) else {
             return channels;
         };
         let Some(list_bytes) = fetch_raw_bytes(&src.url, src.ttl) else {
@@ -9145,42 +9165,13 @@ mod archivar {
             let Some(det_json) = parse_json(&String::from_utf8_lossy(&det_bytes)) else {
                 continue;
             };
-            for (ra, dec, mjd, magpsf, magap) in alerce_detection_rows(&det_json) {
-                let (sd, cd) = dec.to_radians().sin_cos();
-                let (sr, cr) = ra.to_radians().sin_cos();
-                let p = [cd * cr, cd * sr, sd];
-                let Some(epoch) = lsk.unix_to_tdb((mjd - 40587.0) * 86400.0) else {
-                    continue;
-                };
-                let position = Position::StateVector {
-                    p,
-                    v: [0.0; 3],
-                    track: false,
-                };
-                if magpsf.is_finite() {
-                    channels.push((
-                        Channel {
-                            z: 0.0,
-                            epoch,
-                            position: position.clone(),
-                            name: fc_p.name.clone(),
-                            value: magpsf,
-                        },
-                        fc_p.clone(),
-                    ));
-                }
-                if magap.is_finite() {
-                    channels.push((
-                        Channel {
-                            z: 0.0,
-                            epoch,
-                            position,
-                            name: fc_a.name.clone(),
-                            value: magap,
-                        },
-                        fc_a.clone(),
-                    ));
-                }
+            let detections = alerce_detection_rows(&det_json);
+            if !detections.is_empty() {
+                eprintln!(
+                    "alerce {}: {} detections without distance — dark until a distance channel exists (pending)",
+                    oid,
+                    detections.len()
+                );
             }
         }
         channels
@@ -12471,7 +12462,6 @@ mod archivar {
                     let ftx = fetch_tx.clone();
                     let src_clone = archive.sources[i].clone();
                     let src_idx = i;
-                    let lsk_c = lsk.clone();
                     let cap = src_clone.fanout_cap.max(1) as usize;
                     let delay = src_clone.fanout_delay;
                     archive.origins.entry(origin).or_insert(OriginState {
@@ -12483,7 +12473,7 @@ mod archivar {
                         has_prev: false,
                     });
                     thread::spawn(move || {
-                        let channels = build_alerce_channels(&src_clone, &lsk_c, cap, delay);
+                        let channels = build_alerce_channels(&src_clone, cap, delay);
                         let _ = ftx.send(FetchResult {
                             source_idx: src_idx,
                             channels,
@@ -13191,11 +13181,9 @@ mod archivar {
             let body = r#"[{"ra":89.8,"declination":53.6,"redshift":0.027,"discoverymag":19.8},{"ra":35.0,"declination":-24.4,"redshift":0.0,"discoverymag":19.4}]"#;
             match extract(&src, body, 8.0e8, &fixture_lsk) {
                 ExtractResult::Measurements(channels) => {
-                    assert_eq!(channels.len(), 2);
+                    assert_eq!(channels.len(), 1);
                     assert_eq!(channels[0].1.name, "tns_transient_flux");
-                    assert_eq!(channels[1].1.name, "tns_transient_flux");
                     assert!((channels[0].0.z - 0.027).abs() < 1e-9);
-                    assert_eq!(channels[1].0.z, 0.0);
                 }
                 ExtractResult::WithEphemeris(_, _) => panic!("unexpected ephemeris"),
             }
@@ -13280,9 +13268,8 @@ mod archivar {
             };
             match extract(&src, path.to_str().unwrap(), 8.0e8, &fixture_lsk) {
                 ExtractResult::Measurements(channels) => {
-                    assert_eq!(channels.len(), 2);
+                    assert_eq!(channels.len(), 1);
                     assert_eq!(channels[0].1.name, "tns_transient_flux");
-                    assert_eq!(channels[1].1.name, "tns_transient_flux");
                 }
                 ExtractResult::WithEphemeris(_, _) => panic!("unexpected ephemeris"),
             }
@@ -13628,7 +13615,7 @@ field temp temp_c\n";
         }
 
         #[test]
-        fn test_extract_cmap_no_distance_reference_sphere() {
+        fn test_extract_cmap_no_distance_skipped() {
             let json = r#"[{"ra":0.0,"dec":0.0,"H":5.5}]"#;
             let src = SourceConfig {
                 ttl: 604800,
@@ -13691,22 +13678,14 @@ field temp temp_c\n";
             };
             match extract(&src, json, 8.0e8, &fixture_lsk) {
                 ExtractResult::Measurements(channels) => {
-                    assert_eq!(channels.len(), 1);
-                    if let Position::StateVector { p, .. } = channels[0].0.position {
-                        let expect = CELESTIAL_SPHERE_RADIUS_M;
-                        assert!((p[0] - expect).abs() / expect < 1e-12);
-                        assert!(p[1].abs() / expect < 1e-12);
-                        assert!(p[2].abs() / expect < 1e-12);
-                    } else {
-                        panic!("expected StateVector position");
-                    }
+                    assert_eq!(channels.len(), 0);
                 }
                 ExtractResult::WithEphemeris(_, _) => panic!("unexpected ephemeris"),
             }
         }
 
         #[test]
-        fn test_extract_cmap_null_dist_reference_sphere() {
+        fn test_extract_cmap_null_dist_skipped() {
             let json = r#"[{"ra":0.0,"dec":0.0,"dist_pc":null,"H":5.5}]"#;
             let src = SourceConfig {
                 ttl: 604800,
@@ -13769,15 +13748,7 @@ field temp temp_c\n";
             };
             match extract(&src, json, 8.0e8, &fixture_lsk) {
                 ExtractResult::Measurements(channels) => {
-                    assert_eq!(channels.len(), 1);
-                    if let Position::StateVector { p, .. } = channels[0].0.position {
-                        let expect = CELESTIAL_SPHERE_RADIUS_M;
-                        assert!((p[0] - expect).abs() / expect < 1e-12);
-                        assert!(p[1].abs() / expect < 1e-12);
-                        assert!(p[2].abs() / expect < 1e-12);
-                    } else {
-                        panic!("expected StateVector position");
-                    }
+                    assert_eq!(channels.len(), 0);
                 }
                 ExtractResult::WithEphemeris(_, _) => panic!("unexpected ephemeris"),
             }
@@ -16040,7 +16011,7 @@ field temp temp_c\n";
                     dec_key: "dec".into(),
                     dist_key: String::new(),
                     dist_scale: 1.0,
-                    plx_key: String::new(),
+                    plx_key: "plx".into(),
                     z_key: String::new(),
                     pmra_key: String::new(),
                     pmdec_key: String::new(),
@@ -16081,7 +16052,7 @@ field temp temp_c\n";
                 stations_filter: None,
                 fanout_delay: 0,
             };
-            let body = r#"[{"ra":89.8,"dec":53.6,"mag":12.0}]"#;
+            let body = r#"[{"ra":89.8,"dec":53.6,"mag":12.0,"plx":10.0}]"#;
             let now = 8.0e8;
             let fixture_lsk = super::LeapSeconds {
                 delta_t_a: 32.184,

@@ -47,15 +47,15 @@ fn collection_members(id: &str) -> Vec<String> {
 }
 
 struct Tab {
-    lat: f64,
-    lon: f64,
+    lat: Option<f64>,
+    lon: Option<f64>,
     cols: Vec<String>,
     rows: Vec<Vec<String>>,
 }
 
 fn parse_tab(body: &str) -> Option<Tab> {
-    let mut lat = 0.0;
-    let mut lon = 0.0;
+    let mut lat: Option<f64> = None;
+    let mut lon: Option<f64> = None;
     for line in body.lines() {
         if let Some(pos) = line.find("LATITUDE:") {
             let rest = &line[pos..];
@@ -66,7 +66,7 @@ fn parse_tab(body: &str) -> Option<Tab> {
                 .next()
                 .and_then(|s| s.parse::<f64>().ok())
             {
-                lat = v;
+                lat = Some(v);
             }
             if let Some(lp) = rest.find("LONGITUDE:") {
                 if let Some(v) = rest[lp..]
@@ -76,7 +76,7 @@ fn parse_tab(body: &str) -> Option<Tab> {
                     .next()
                     .and_then(|s| s.parse::<f64>().ok())
                 {
-                    lon = v;
+                    lon = Some(v);
                 }
             }
         }
@@ -150,7 +150,15 @@ fn emit_json(tab: &Tab, total: &mut usize) -> String {
         if ri > 0 {
             out.push(',');
         }
-        out.push_str(&format!("\"lat\":{}, \"lon\":{}", tab.lat, tab.lon));
+        let lat_s = match tab.lat {
+            Some(v) => v.to_string(),
+            None => "null".to_string(),
+        };
+        let lon_s = match tab.lon {
+            Some(v) => v.to_string(),
+            None => "null".to_string(),
+        };
+        out.push_str(&format!("\"lat\":{}, \"lon\":{}", lat_s, lon_s));
         for (ci, col) in tab.cols.iter().enumerate() {
             let val = row.get(ci).map(|s| s.as_str()).unwrap_or("");
             out.push_str(&format!(", \"{}\": {}", clean_key(col), jval(val)));
@@ -197,7 +205,7 @@ fn main() {
         if !body.trim_start().starts_with('<') {
             if let Some(tab) = parse_tab(&body) {
                 meta = format!(
-                    "{}: lat {} lon {} cols {} rows {}",
+                    "{}: lat {:?} lon {:?} cols {} rows {}",
                     id,
                     tab.lat,
                     tab.lon,
@@ -221,7 +229,7 @@ fn main() {
                     buf = emit_json(&tab, &mut total);
                     if meta.is_empty() {
                         meta = format!(
-                            "{}: lat {} lon {} cols {} rows {}",
+                            "{}: lat {:?} lon {:?} cols {} rows {}",
                             m,
                             tab.lat,
                             tab.lon,

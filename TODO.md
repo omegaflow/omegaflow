@@ -171,9 +171,10 @@ Dazu zwei Ernte-Folgen (Befunde der grind-flash-Agenten 2026-08-18):
   bis die 44-B-Binaries gebaut sind (pending, keine Fabrikation);
   erst danach trägt der Katalog die geerntete Radialgeschwindigkeit.
   Bis dahin fließt rv nur aus den JSON-cmap-Quellen (denis `radvel
-  rv`). Vollzogen (2026-08-18, Säuberung): keine Ersatzwerte — die
-  Compiler überspringen Zeilen ohne rv/pm/mag (tycho2 bright/bin/tgas,
-  tap_compiler star-bin + union-bright, tic pm, cometels H=null,
+  rv`). Vollzogen (2026-08-18, Säuberung; TGAS-Gate S1 2026-08-19):
+  keine Ersatzwerte — die Compiler überspringen Zeilen ohne rv/pm/mag
+  (tycho2 bright/bin/tgas — das TGAS-Gate kam mit S1 dazu, tap_compiler
+  star-bin + union-bright, tic pm, cometels H=null,
   0 honored); auch der DASTCOM-Hash schließt Records ohne berechenbare
   Beschleunigung aus (Enclosure-Dilation fabriziert kein amax=0);
   mpcobs/tic/tess behalten ihre dokumentierten 0.0=absent-Formatcodes.
@@ -705,7 +706,7 @@ Zeile = Stand 2026-08-19.
 | # | Atom | Inhalt |
 |---|---|---|
 | 1 | ~~S0 — Finite-Welle~~ | ERLEDIGT (2026-08-19, 69e7bd3): `finite_positive`-Helfer neben `measured()`; alle 15 `is_nan()`-Daten-Gates → `!is_finite()` (Extract-Kette, ProfileMap, Flatten, CmrPolygon, netcdf-Profil, anchor-Bounds 9262/9293/9301); positive Gates gehärtet (kepler `e`, dastcom `r_m`/`peri`, dcom5/cometels `r`, tap `dist_pc`-Inf-Leck, tycho2 `plx`); `finite_positive` erstgenutzt in sense_deep (Divisionsschutz `rel/d`); kernel_id_for_force `unwrap_or(0)` → `else return` (17306); JS: `response_epoch: null` + count-Gate in index.html, `tau > 0`-Wire-Gate, truncated-frame `throw`, battery `isFinite`-Gate — 84 Tests grün |
-| 2 | S1 — Haupt-Adern | Celestial-Shell → Titan-Skip + Tests auf Wahrheit + ledger.φ:151 korrigieren; pm/rv/zval-Fold 8374-8408 → Option; TGAS-rv-Gate (tycho2 185, 480-486) + TODO 174-176 berichtigen; bp_rp-Kette (tap 550-553, 1406 — union-bright zerstört kein `null` mehr; emit_rows pm 606/610); WGSL-Kernel-Zweige 1/6 (main.rs WGSL + index.html shader 314-336); Pangaea lat/lon (57-58); GeojsonEvents mag/ed-Gates (8502-8539); EOP-Finals (8886-8890) + Alerce (9143-9151) + dcom5 H/M1 → null (187-193) |
+| 2 | ~~S1 — Haupt-Adern~~ | ERLEDIGT (2026-08-19): Celestial-Shell getilgt — distanzlose cmap-Zeilen fallen (Titan-Skip, Konstante gelöscht, 4 Tests auf Wahrheit umgeschrieben, ledger.φ:151 berichtigt); pm/rv/zval-Fold → Option (absent trägt keinen Term, kein 0.0-Betrag); TGAS-rv-Gate (tycho2 tgas-Zweig: Crossmatch + Skip ohne rv, eprintln zählt) + TODO 174-176 berichtigt; tap emit_rows-pm: Propagation nur mit beiden pm; Pangaea lat/lon → Option/null (Golf von Guinea tot); GeojsonEvents mag → Option (0.0-Mw-Saat tot); EOP-Finals Position = Source (Frame-Anker statt 0,0,0); Alerce 1-m-Sphäre getilgt — Detections bleiben dunkel (Note + pending-Distanz-Kanal); dcom5 H/M1 → Option/null (DASTCOM-Sentinels 90/900); WGSL-Kernel-Zweige 1 (gaussian-inverse-square) + 6 (inverse-linear) in main.rs (field_spatial + field_spatial_grad) und index.html — 85 Tests grün |
 | 3 | S2 — Form/Sensor/TTL | flattening/rb_scale → Option (1594-1597, 1780, 1771-1773, 1859-1862); alt ×4 (11845, 5468, 7558, 7279) → Option/refuse; Sensor-τ zurück ans Gate (`effective_tau = bs.ttl` raus: 12211, 20826, 20879, 11679); port_field_synth refuse ohne τ (6818-6826) + 5/6-token-Waisen (5896-5960, 6253); probe_ttl 86400 weglassen (11091) + Draft 4-Token → 9-Token (10344); props.gm → Option (17624); Nutation zwei Fälle trennen (1530); fk.rs center/class → Option/refuse (120-130); netCDF-Fill-Maske lat/lon/juld (8804); tic NaN/negativ-plx + tmag-Bereich; tess-Zwei-Enden-Vertrag; horizons GM (161-164) |
 | 4 | P1 — Lade-Pfad | F-A Punkt 1: Bootstrap einziger priorisierter Lader + Wächter; In-Loop-Fallback raus; origins-Stempel nach Erfolg + last_attempt (10 Sites 12267-12735); curl-Status sichtbar (4935); drei curl-Ketten → ein Builder |
 | 5 | S3 — Stille Fehlschläge + Konsens | upload_asset-Prüfungen (tycho2 501/788, tap 1446/1551, tess 580 inline in S1/S2; cometels 421 + pangaea 243 disjunkt); WS-Writes sichtbar (21159-21178, 21027, 20417-20422, 20344/20381); Consent-Bypass Browser (20862/20921 → Consent-Gate); exp2(-20) raus (Rats-Urteil 2); bp_rp_to_teff 31-Punkte (134-155); point_blend-Fossil (18320, 18825, 19633, 18010, Uniform 26) |
@@ -715,16 +716,26 @@ Zeile = Stand 2026-08-19.
 
 ### 0-Kanon-Ergänzungen zu A-F (Fundorte aus den 7 Audits, nicht in A-F)
 
-- WGSL-Kernel-Zweige: kernel_id 1 (gaussian-inverse-square) hat keinen
+- ~~WGSL-Kernel-Zweige: kernel_id 1 (gaussian-inverse-square) hat keinen
   Zweig, kernel_id 6 (inverse-linear) rendert inverse-square — 118
-  Felder in sources.φ betroffen (S1).
-- GeojsonEvents: mag/ed-Seeds 0.0 — Feature ohne Magnitude emittiert
-  0.0-Mw → ~1.26e9 J erfundene Energie (live, sources.φ:48 min_mag 0.0) (S1).
-- EOP-Finals lat/lon/alt = 0,0,0 (globales Skalar an Erde gepinnt);
-  Alerce-Transienten auf 1-m-Sphäre (S1).
-- dcom5 H/M1 roh geschrieben vs. cometels `"H":null` — dieselbe Größe,
-  zwei Doktrinen (S1).
-- Pangaea lat/lon 0,0 → Golf von Guinea als Messwert (S1).
+  Felder in sources.φ betroffen~~ — ERLEDIGT (S1, 2026-08-19):
+  field_spatial + field_spatial_grad in main.rs und die Browser-Kopie
+  in index.html tragen beide Zweige.
+- ~~GeojsonEvents: mag/ed-Seeds 0.0 — Feature ohne Magnitude emittiert
+  0.0-Mw → ~1.26e9 J erfundene Energie~~ — ERLEDIGT (S1): mag ist
+  Option, absent → Feature fällt.
+- ~~EOP-Finals lat/lon/alt = 0,0,0 (globales Skalar an Erde gepinnt)~~ —
+  ERLEDIGT (S1): Position::Source am Frame-Anker (at earth =
+  Erd-Barycenter) statt Golf von Guinea.
+- ~~Alerce-Transienten auf 1-m-Sphäre~~ — ERLEDIGT (S1): Detections ohne
+  Distanz bleiben dunkel (Note im Log). PENDING: ALeRCE braucht einen
+  Distanz-Kanal (Host-Galaxien-Crossmatch/photoz) — bis dahin
+  manifestiert die Quelle nicht (0 honored statt Sphären-Lüge).
+- ~~dcom5 H/M1 roh geschrieben vs. cometels `"H":null` — dieselbe Größe,
+  zwei Doktrinen~~ — ERLEDIGT (S1): H/M1 Option mit DASTCOM-Sentinels
+  (≥90/≥900 = absent) → null-Emit.
+- ~~Pangaea lat/lon 0,0 → Golf von Guinea als Messwert~~ — ERLEDIGT
+  (S1): Option/null, absent → Zeile fällt beim Konsumenten.
 - tycho2-Bin: color-Slot hart 0f32 (343); tgas rv=0.0 (185) — TODO
   174-176 behauptet „Vollzogen", der Code lügt das Register an (S1).
 - Sensor-τ-Bypass: `effective_tau = bs.ttl` (12211/20826/20879) — die
