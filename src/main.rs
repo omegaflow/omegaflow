@@ -414,26 +414,24 @@ fn presence_probe() {
         if (f < 9u) { omegas[f] += c.x; }
         flow = flow + osc_flow(j, pre);
     }
-    let star_count = u32(vp.expose_lo.x);
-    let mag = max(vp.expose_hi.z, 1.0);
-    let theta_px = 2.0 / (max(vp.surface.x, 1.0) * mag);
-    let s2 = theta_px * theta_px;
-    for (var s = 0u; s < star_count; s = s + 1u) {
-        let a = stars[s * 3u];
-        let b = stars[s * 3u + 1u];
-        let c = stars[s * 3u + 2u];
-        let dtheta2 = (a.x * a.x + a.y * a.y) / (mag * mag);
-        let k = 1.0 / (dtheta2 + s2);
-        let temporal = abs(vp.presence.w - vp.expose_ex.y);
-        var val = a.z;
-        let retarded = max(temporal - a.w / C_VACUUM, 0.0);
-        val = val * exp(-retarded / max(c.y, 1e-9));
-        if (b.w > 0.0) {
-            let z1 = 1.0 + b.w;
-            val = val / (z1 * z1 * z1 * z1);
+    if (atomicLoad(&star_tiles[0u]) != 0u) {
+        for (var s = 0u; s < star_count; s = s + 1u) {
+            let c = star_contrib(s, 0.0, 0.0);
+            omegas[0] += c.x;
         }
-        let occ = occlusion(b.xyz, a.w, 0u, u32(vp.expose_ex.w));
-        omegas[0] += val * k * occ;
+    } else {
+        let nx = u32(ceil(vp.surface.x / f32(TILE_PX)));
+        let ny = u32(ceil(vp.surface.y / f32(TILE_PX)));
+        let nt = nx * ny;
+        let cx = u32(vp.surface.x * 0.5) / TILE_PX;
+        let cy = u32(vp.surface.y * 0.5) / TILE_PX;
+        let tile = cy * nx + cx;
+        let tcount = atomicLoad(&star_tiles[1u + tile]);
+        let tbase = tile * STAR_TILE_SLOTS;
+        for (var k = 0u; k < tcount; k = k + 1u) {
+            let c = star_contrib(atomicLoad(&star_tiles[1u + nt + tbase + k]), 0.0, 0.0);
+            omegas[0] += c.x;
+        }
     }
     for (var i = 0u; i < 9u; i = i + 1u) { probe_out[i] = omegas[i]; }
     probe_out[9] = flow.x;
@@ -18528,13 +18526,6 @@ mod mathematikerin {
                 let mut pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor::default());
                 let sel = self.buf_sel;
                 if let (Some(pipe), Some(bind)) =
-                    (self.probe_pipe.as_ref(), self.probe_binds[sel].as_ref())
-                {
-                    pass.set_pipeline(pipe);
-                    pass.set_bind_group(0, bind, &[]);
-                    pass.dispatch_workgroups(1, 1, 1);
-                }
-                if let (Some(pipe), Some(bind)) =
                     (self.cull_pipe.as_ref(), self.probe_binds[sel].as_ref())
                 {
                     pass.set_pipeline(pipe);
@@ -18548,6 +18539,13 @@ mod mathematikerin {
                     pass.set_pipeline(pipe);
                     pass.set_bind_group(0, bind, &[]);
                     pass.dispatch_workgroups((self.star_count + 63) / 64, 1, 1);
+                }
+                if let (Some(pipe), Some(bind)) =
+                    (self.probe_pipe.as_ref(), self.probe_binds[sel].as_ref())
+                {
+                    pass.set_pipeline(pipe);
+                    pass.set_bind_group(0, bind, &[]);
+                    pass.dispatch_workgroups(1, 1, 1);
                 }
             }
             {
