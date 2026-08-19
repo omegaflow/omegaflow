@@ -574,6 +574,17 @@ Offen (Detail in phi/pipeline/ledger.φ):
 
 - Temporal Topology (TDA, Takens, Transfer Entropy, Surrogates) —
   VERSIONIERT, LOST_CONCEPTS.md
+- Kausalitäts-Vorfilter (Lichtkegel): `Distanz <= v_force·age`, diffusiv
+  `Distanz² <= 2·D·age`, verklungen `age > τ·64` — laut MASTER.md
+  „Live", fehlt im aktuellen Rust-Code (der Enclosure dilatiert nur mit
+  vmax·Δt — reine Bewegung, kein Signal-Lichtkegel). Wiederbeleben in
+  `src/archivar.rs` (force_constants_by_id + Early-Exit vor motion.at());
+  Quelle: CAUSALITY_PREFILTER.md, LOST_CONCEPTS §12 — AUSSTEHEND
+- Kraft-Separation (7 omegas statt „one law, five media") —
+  VERSIONIERT, LOST_CONCEPTS §13
+- Verzögerungsspektrum / Lichtkegel-Differenz / Stillekarte /
+  Synthetischer Flug — VERSIONIERT, DER_PARADIGMENWECHSEL.md,
+  LOST_CONCEPTS §14–17
 - Field Permeability (tanh(vC/g)-Variante ohne TE) — VERSIONIERT,
   MINKOWSKI_FIELD-PERMEABILITY.md
 - Minkowski 4D Weighting (spacelike→0; kosmisches Skalenproblem: Sonne
