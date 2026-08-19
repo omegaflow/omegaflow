@@ -4,7 +4,7 @@ use omegaflow::cdn::{body_url, upload_asset};
 use omegaflow::fit::solve_normal_equations;
 use omegaflow::fk::FkFile;
 use omegaflow::lsk::days_from_civil;
-use omegaflow::pck::{neutral, PckBody};
+use omegaflow::pck::PckBody;
 use std::collections::{BTreeMap, HashMap, HashSet, VecDeque};
 use std::io::Write;
 use std::process::Command;
@@ -17,7 +17,7 @@ const NUT_DEGREE: usize = 11;
 const GRANULE_DAYS: f64 = 32.0;
 const N_SAMPLES: usize = 25;
 const J2000_EPOCH: f64 = 2451545.0;
-const MAGIC_HEADER: [u8; 4] = [0xCF, 0x86, 0x01, 0x00];
+const MAGIC_HEADER: [u8; 4] = [0xCF, 0x86, 0x02, 0x00];
 const NAIF_ID_TABLE: &str = include_str!("../../docs/reference/naif_body_ids.tsv");
 
 struct BodyId {
@@ -430,23 +430,32 @@ fn write_binary(
         buf.extend_from_slice(&12u32.to_le_bytes());
         buf.extend_from_slice(&17u32.to_le_bytes());
         buf.extend_from_slice(&0u32.to_le_bytes());
-        let params: [f64; 12] = [
-            neutral(wgccre.pole_ra_deg),
-            neutral(wgccre.pole_ra_rate_deg_per_century),
-            neutral(wgccre.pole_dec_deg),
-            neutral(wgccre.pole_dec_rate_deg_per_century),
-            neutral(wgccre.pm_deg),
-            neutral(wgccre.pm_rate_deg_per_day),
-            neutral(wgccre.radii_m.map(|r| r[0])),
-            neutral(wgccre.radii_m.map(|r| r[1])),
-            neutral(wgccre.radii_m.map(|r| r[2])),
-            neutral(wgccre.j2),
-            neutral(wgccre.j4),
-            neutral(wgccre.gm_m3_s2),
+        let slots: [Option<f64>; 12] = [
+            wgccre.pole_ra_deg,
+            wgccre.pole_ra_rate_deg_per_century,
+            wgccre.pole_dec_deg,
+            wgccre.pole_dec_rate_deg_per_century,
+            wgccre.pm_deg,
+            wgccre.pm_rate_deg_per_day,
+            wgccre.radii_m.map(|r| r[0]),
+            wgccre.radii_m.map(|r| r[1]),
+            wgccre.radii_m.map(|r| r[2]),
+            wgccre.j2,
+            wgccre.j4,
+            wgccre.gm_m3_s2,
         ];
-        for &p in &params {
-            buf.extend_from_slice(&p.to_le_bytes());
+        let mut mask: u16 = 0;
+        for (i, v) in slots.iter().enumerate() {
+            match v {
+                Some(x) => {
+                    buf.extend_from_slice(&x.to_le_bytes());
+                    mask |= 1 << i;
+                }
+                None => buf.extend_from_slice(&0.0_f64.to_le_bytes()),
+            }
         }
+        buf.extend_from_slice(&mask.to_le_bytes());
+        buf.extend_from_slice(&[0u8; 6]);
     }
     {
         let section_stype: u32 = 2;

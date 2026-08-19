@@ -4,7 +4,7 @@ use std::process::Command;
 const CHEBYSHEV_DEGREE: usize = 17;
 const GRANULE_DAYS: f64 = 32.0;
 const N_SAMPLES: usize = 25;
-const MAGIC_HEADER: [u8; 4] = [0xCF, 0x86, 0x01, 0x00];
+const MAGIC_HEADER: [u8; 4] = [0xCF, 0x86, 0x02, 0x00];
 
 fn chebyshev_nodes(n: usize) -> Vec<f64> {
     let mut nodes = Vec::with_capacity(n);
@@ -103,26 +103,21 @@ fn write_binary(
         buf.extend_from_slice(&12u32.to_le_bytes());
         buf.extend_from_slice(&17u32.to_le_bytes());
         buf.extend_from_slice(&0u32.to_le_bytes());
-        let params: [f64; 12] = [
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            match gm_m3_s2 {
-                Some(g) => g,
-                None => 0.0,
-            },
+        let slots: [Option<f64>; 12] = [
+            None, None, None, None, None, None, None, None, None, None, None, gm_m3_s2,
         ];
-        for &p in &params {
-            buf.extend_from_slice(&p.to_le_bytes());
+        let mut mask: u16 = 0;
+        for (i, v) in slots.iter().enumerate() {
+            match v {
+                Some(x) => {
+                    buf.extend_from_slice(&x.to_le_bytes());
+                    mask |= 1 << i;
+                }
+                None => buf.extend_from_slice(&0.0_f64.to_le_bytes()),
+            }
         }
+        buf.extend_from_slice(&mask.to_le_bytes());
+        buf.extend_from_slice(&[0u8; 6]);
     }
     {
         let section_stype: u32 = 2;

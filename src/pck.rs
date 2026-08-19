@@ -73,13 +73,6 @@ fn nut_sum(terms: &[[f64; 3]], t: f64) -> f64 {
         .sum()
 }
 
-pub fn neutral(v: Option<f64>) -> f64 {
-    match v {
-        Some(x) => x,
-        None => 0.0,
-    }
-}
-
 pub fn parse(gm_text: Option<&str>, body_text: Option<&str>) -> HashMap<i32, PckBody> {
     let mut bodies: HashMap<i32, PckBody> = HashMap::new();
     if let Some(text) = body_text {

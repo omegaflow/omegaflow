@@ -1589,14 +1589,6 @@ mod archivar {
         (ra, dec, pm)
     }
 
-    fn measured(v: f64) -> Option<f64> {
-        if v != 0.0 {
-            Some(v)
-        } else {
-            None
-        }
-    }
-
     fn finite_positive(v: f64) -> Option<f64> {
         if v.is_finite() && v > 0.0 {
             Some(v)
@@ -1606,9 +1598,14 @@ mod archivar {
     }
 
     fn parse_ephemeris_binary(data: &[u8]) -> Option<BodyEphemeris> {
-        if data.len() < 24 || data[0] != 0xCF || data[1] != 0x86 || data[2] != 0x01 {
+        if data.len() < 24
+            || data[0] != 0xCF
+            || data[1] != 0x86
+            || (data[2] != 0x01 && data[2] != 0x02)
+        {
             return None;
         }
+        let version = data[2];
         let section_count = u32::from_le_bytes(data[4..8].try_into().ok()?) as usize;
         let mut pos = 8usize;
         let mut granules = Vec::new();
@@ -1635,9 +1632,30 @@ mod archivar {
                 if gcount != 12 {
                     return None;
                 }
+                let mask: u16 = if version == 0x02 {
+                    if pos + 96 + 2 > data.len() {
+                        return None;
+                    }
+                    u16::from_le_bytes(data[pos + 96..pos + 98].try_into().ok()?)
+                } else {
+                    0xFFFF
+                };
+                let slot = |v: f64, bit: usize| -> Option<f64> {
+                    if version == 0x02 {
+                        if mask & (1u16 << (bit as u16)) != 0 {
+                            Some(v)
+                        } else {
+                            None
+                        }
+                    } else if v != 0.0 {
+                        Some(v)
+                    } else {
+                        None
+                    }
+                };
                 let radius_m = f(6);
-                let radii_b = measured(f(7));
-                let radii_c = measured(f(8));
+                let radii_b = slot(f(7), 7);
+                let radii_c = slot(f(8), 8);
                 props = Some(BodyProperties {
                     α0_deg: f(0),
                     dα0_dt_deg_per_century: f(1),
@@ -1655,16 +1673,16 @@ mod archivar {
                     erfc: 0.0,
                     exponential_decay: 0.0,
                     patch_levy: 0.0,
-                    gm: measured(f(11)),
-                    j2: measured(f(9)),
-                    j4: measured(f(10)),
+                    gm: slot(f(11), 11),
+                    j2: slot(f(9), 9),
+                    j4: slot(f(10), 10),
                     radii_b,
                     radii_c,
                     nut_ra: None,
                     nut_dec: None,
                     nutation: None,
                 });
-                pos += 96;
+                pos += if version == 0x02 { 104 } else { 96 };
                 continue;
             }
             if stype == 2 {
@@ -14968,6 +14986,62 @@ field temp temp_c\n";
             assert!((deltas.0 - 1.0).abs() < 1e-12);
             assert!((deltas.1 - 2.0).abs() < 1e-12);
             assert!((deltas.2 - 0.5).abs() < 1e-12);
+        }
+
+        #[test]
+        fn test_parse_ephemeris_binary_v3_mask() {
+            let mut buf = Vec::new();
+            buf.extend_from_slice(&[0xCF, 0x86, 0x02, 0x00]);
+            buf.extend_from_slice(&3u32.to_le_bytes());
+            buf.extend_from_slice(&0u32.to_le_bytes());
+            buf.extend_from_slice(&1u32.to_le_bytes());
+            buf.extend_from_slice(&17u32.to_le_bytes());
+            buf.extend_from_slice(&0u32.to_le_bytes());
+            for _ in 0..56 {
+                buf.extend_from_slice(&0.0_f64.to_le_bytes());
+            }
+            buf.extend_from_slice(&1u32.to_le_bytes());
+            buf.extend_from_slice(&12u32.to_le_bytes());
+            buf.extend_from_slice(&17u32.to_le_bytes());
+            buf.extend_from_slice(&0u32.to_le_bytes());
+            let mut params: [f64; 12] = [
+                270.0,
+                0.003,
+                66.54,
+                0.013,
+                38.31,
+                14460.0,
+                6378136.6,
+                6378136.6,
+                6356751.9,
+                1.08262668e-3,
+                -1.6196e-6,
+                3.9860043543609598e14,
+            ];
+            let mask: u16 = 0xFFFF ^ (1 << 9);
+            params[9] = 0.0;
+            for p in params {
+                buf.extend_from_slice(&p.to_le_bytes());
+            }
+            buf.extend_from_slice(&mask.to_le_bytes());
+            buf.extend_from_slice(&[0u8; 6]);
+            buf.extend_from_slice(&2u32.to_le_bytes());
+            buf.extend_from_slice(&0u32.to_le_bytes());
+            buf.extend_from_slice(&17u32.to_le_bytes());
+            buf.extend_from_slice(&0u32.to_le_bytes());
+            for _ in 0..5 {
+                buf.extend_from_slice(&0.0_f64.to_le_bytes());
+            }
+            let eph = super::parse_ephemeris_binary(&buf).unwrap();
+            let props = eph.props.unwrap();
+            assert_eq!(props.gm, Some(3.9860043543609598e14));
+            assert_eq!(props.j2, None);
+            assert_eq!(props.j4, Some(-1.6196e-6));
+            assert_eq!(props.radii_c, Some(6356751.9));
+            assert!(
+                (props.flattening.unwrap() - (6378136.6 - 6356751.9) / 6378136.6).abs() < 1e-15
+            );
+            assert_eq!(eph.granules.len(), 1);
         }
 
         #[test]

@@ -705,7 +705,7 @@ Zeile = Stand 2026-08-19.
 | 5 | ~~S3 — Stille Fehlschläge + Konsens~~ | ERLEDIGT (2026-08-19): alle 7 upload_asset-Stellen prüfen den Bool (tycho2/tap/tess/cometels/pangaea, exit(1) mit Pfad); write_ws_binary → io::Result, Ingress endet ehrlich beim severed Browser, HTTP emit/emit_void melden den Abbruch; Feldkanal mit Rückdruck (send statt try_send, geschlossener Kanal benannt); Consent-Gate im Browser-Relay (WsConfig trägt consent, beide osc_tx-Sendungen gated); exp2(-20) entfernt (Rats-Urteil 2 — ft_ref trägt die Skala); bp_rp_to_teff 31-Punkte-Locus restauriert (b1e4fe4^-Form, 11 Breakpoints zurück); point_blend-Fossil getilgt (field_dark: bool, P = Feld an/aus, Uniform-Slot ist 0.0-Pad, HUD sagt „field"); ft_ref_floor 1e-30-Floor getilgt (lum_ratio: Referenz ohne Fenster-Daten → Schweigen statt Explosion, main.rs + index.html); fold_eff ttl<=0 → 0.0 (τ=0 manifestiert nicht mehr); tic-Test-Fixture trägt plausibles tmag — 85 Tests grün |
 | 6 | ~~P3 — Dedup~~ | ERLEDIGT (2026-08-19, cc8a8cc): 7 JSON-Parser → ein lib-Parser (`src/json.rs` kanonisch aus main.rs; sechs Bins migriert, main.rs-Definitionen gelöscht, `pub use` re-exportiert; zwei pro-Agenten mit zeilengenauen Reports, Architektin las die Diffs nach); Fit-Pipeline → `src/fit.rs` (beide Compiler konsumieren); Julian-Datum auf `omegaflow::lsk::days_from_civil` vereinheitlicht (mpcobs/ephemeris_compiler/cometels; die verbliebene 2440587.5 in main.rs ist die Unix-Epochen-Konstante, keine Kopie); `ci_upload` getilgt — `cdn::upload_release(tag, path)` trägt den Manifestator-Kanal, `upload_asset(path)` den Asset-Release, EINE gh-Implementierung; CDN-Base zentral — 85 Tests grün |
 | 7 | ~~P5 — GPU~~ | ERLEDIGT (2026-08-19, e599e89 + Fix 8f24118): `presence_probe` konsumiert die Mittel-Kachel des `star_cull`-Ergebnisses statt der eigenen O(N)-Stern-Schleife (identische Mathematik über `star_contrib(s, 0, 0)` — der Presence-Punkt projiziert auf die NDC-Mitte); Overflow-Full-Scan bleibt als ehrlicher Fallback; Dispatch-Reihenfolge cull → star_cull → probe (Kacheln desselben Frames). Der Offline-WGSL-Validierungstest fing den `star_count`-Bindungsverlust — der Fix-Commit stellt die Wahrheit her. 85 Tests grün |
-| 8 | S4 — Ephemeris v3 | Rats-Urteil 1: Präsenz-Maske + Versions-Byte; neutral/measured entfallen; Loader liest v2+v3; Wire-Doku in AGENTS.md |
+| 8 | ~~S4 — Ephemeris v3~~ | ERLEDIGT (2026-08-19): beide Compiler (ephemeris/horizons) schreiben 0x02 + u16-Präsenz-Maske nach den 12 f64 (Bit je Slot, absent = 0.0-Pad, 8-B-aligned); `neutral()` getilgt (pck.rs), `measured()` getilgt (der v2-Arm trägt die Sentinel-Semantik als Closure); Loader liest v2 UND v3 (Version data[2], v3-Maske gated die Option-Slots gm/j2/j4/radii_b/radii_c — das Bit ist die Autorität, ein gemessener 0.0 bleibt Some); Test test_parse_ephemeris_binary_v3_mask (j2-Bit gelöscht → None); Wire-Doku in AGENTS.md — 86 Tests grün |
 
 ### 0-Kanon-Ergänzungen zu A-F (Fundorte aus den 7 Audits, nicht in A-F)
 
@@ -746,6 +746,12 @@ Zeile = Stand 2026-08-19.
   ERLEDIGT (S2): kein Modell → still 0 (wahr); Granule-Lücke → Note.
 - ~~kernel_id_for_force(0).unwrap_or(0)~~ — erledigt (S0, 69e7bd3):
   `else return`, kein Kurven-Oszillator ohne em-Kernel.
+
+### Neue Pending aus S4 (2026-08-19)
+
+- CDN-Rekompilat: die ephemeris_{body}.bin-Assets sind noch v2 — der nächste
+  kernel_flatten-Lauf schreibt v3. Bis dahin liest der v2-Arm (CI-Reihenfolge
+  eingehalten: Code zuerst, Rekompilat folgt).
 
 ### Neue Pending aus S2 (2026-08-19)
 
