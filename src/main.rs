@@ -1504,7 +1504,7 @@ mod archivar {
     const C_LIGHT: f64 = 299792458.0;
     const HUBBLE_H0: f64 = 70000.0 / (PARSEC_M * 1.0e6);
     const MAS_YR_TO_RAD_S: f64 = 4.84813681109536e-9 / 31557600.0;
-    const NAIF_LSK_FALLBACK_TTL: u64 = 86400;
+    const NAIF_LSK_TTL_SECS: u64 = 86400;
     const STAR_FLUX_FLOOR: f64 = 1e-4;
 
     pub fn resolve_asset(rel: &str) -> std::path::PathBuf {
@@ -9426,7 +9426,7 @@ mod archivar {
                 "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls",
                 None,
                 &[],
-                NAIF_LSK_FALLBACK_TTL,
+                NAIF_LSK_TTL_SECS,
             ) {
                 lsk = omegaflow::lsk::parse(&text);
             }
@@ -10391,7 +10391,7 @@ mod archivar {
                 "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls",
                 None,
                 &[],
-                NAIF_LSK_FALLBACK_TTL,
+                NAIF_LSK_TTL_SECS,
             ) {
                 lsk = omegaflow::lsk::parse(&text);
             }
@@ -16189,7 +16189,7 @@ field temp temp_c\n";
         }
 
         #[test]
-        fn test_frame_registry_prefix_fallback() {
+        fn test_frame_registry_prefix_match() {
             let mut reg: HashMap<String, String> = HashMap::new();
             reg.insert(
                 "api.example.com/weather".to_string(),
