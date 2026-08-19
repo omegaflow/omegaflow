@@ -452,6 +452,21 @@ jobs:
                  --title "flatten: nvss returned void" \
                  --body "nvss compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
                  --label health
+      - name: Compile FIRST 1.4 GHz radio catalog and upload to CDN
+        continue-on-error: true
+        run: |
+          cargo run --release --bin tap_compiler -- \
+            --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
+            --table "VIII/92/first14" \
+            --columns 'name:FIRST;ra:RAJ2000;dec:DEJ2000;fpeak:Fpeak;fint:Fint' \
+            --skip-null fint \
+            --async 600 --limit 1100000 \
+            --out first14.json \
+            --ci-mode \
+            || gh issue create --repo omegaflow/omegaflow \
+                 --title "flatten: first14 returned void" \
+                 --body "first14 compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 --label health
       - name: Compile PANGAEA sediment core 758961 and upload to CDN
         continue-on-error: true
         run: |

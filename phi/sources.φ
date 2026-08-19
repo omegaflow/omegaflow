@@ -1168,6 +1168,15 @@ ra ra
 dec dec
 field flux nvss_1_4ghz_flux_mjy gaussian-inverse-square em mJy 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/first14.json
+ttl 604800
+at sun
+cmap .
+ra ra
+dec dec
+field fpeak first14_full_peak_flux_mjy inverse-square em mJy 604800 0.0 0.0
+field fint first14_full_int_flux_mjy inverse-square em mJy 604800 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/cbdata.json
 ttl 604800
 at sun
