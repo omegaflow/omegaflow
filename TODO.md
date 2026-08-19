@@ -553,26 +553,19 @@ Befund.
 
 ### A — Lade-Pfad (Parallel-Lader, der Vertrauensbruch)
 
-- Dual-Lader auf derselben Datei: Bootstrap-Thread (main.rs ~11977-12029,
-  priorisiert nach `anchor_uses`, sequentiell Anker zuerst, dann Batch
-  parallel-max 8) UND In-Loop-Fetch (~12259-12311, unpriorisiert, je
-  Quelle ein Thread — `86d5853` auf `eae562c` geschichtet). Beide
-  schreiben `/tmp/omegaflow_eph_{body}.bin`; erster Tick nach Kaltstart =
-  ~76 parallele Loop-Fetches, die die Anker-Priorisierung unterlaufen
-  und denselben Download doppelt führen. Sanierung: Bootstrap wird der
-  einzige Lader; der In-Loop-Zweig kehrt zu `cache_fresh → extrahieren,
-  sonst nichts` zurück (Titan-Form); ein Wächter startet den Bootstrap
-  neu, wenn Dateien fehlen, deren Body nicht in `body_ephemerides` ist,
-  der letzte Versuch älter als ttl/Φ² und kein Lauf aktiv ist (AtomicBool).
-- `eae562c`-Regress: der Titan-Zeit-In-Loop-Fetch wurde ersatzlos
-  gelöscht (stiller `continue` bei stale Cache) — die Ursache der leeren
-  Membran nach `/tmp`-Reset. Der Wächter schließt die Wunde dauerhaft.
+- ~~Dual-Lader auf derselben Datei~~ — ERLEDIGT (P1, 2026-08-19):
+  `spawn_ephemeris_bootstrap` ist der einzige Lader (priorisiert,
+  Guard); der In-Loop-Fetch (86d5853) ist zurückgebaut; ein Wächter
+  (2⁶-Ticks, Backoff ttl/Φ²) startet den Lader neu, wenn Dateien fehlen,
+  deren Body nicht in `body_ephemerides` ist.
+- ~~`eae562c`-Regress: der Titan-Zeit-In-Loop-Fetch wurde ersatzlos
+  gelöscht~~ — ERLEDIGT (P1): der Wächter schließt die Wunde dauerhaft.
 - `origins`-Stempel vor Fetcherfolg (Titan-Erbe, unverändert): ein
   fehlgeschlagener Fetch verliert die Quelle für ttl/Φ — Stempel erst
-  nach Erfolg setzen (oder Fehlschlag sichtbar zurückmelden).
-- eph-Batch-curl-Status wird verworfen (`cmd.output()`, ~4935) —
-  Fehlschläge bleiben unsichtbar; Status prüfen + URL melden
-  (`download_ephemeris_one`/`download_ephemeris_batch`).
+  nach Erfolg setzen (oder Fehlschlag sichtbar zurückmelden). (S3 der
+  0-Kanon-Session.)
+- ~~eph-Batch-curl-Status wird verworfen~~ — ERLEDIGT (P1):
+  `download_ephemeris_one`/`_batch` melden Status + URL + stderr.
 
 ### B — Fabrikationen (Fundort je Fälschung)
 
@@ -708,7 +701,7 @@ Zeile = Stand 2026-08-19.
 | 1 | ~~S0 — Finite-Welle~~ | ERLEDIGT (2026-08-19, 69e7bd3): `finite_positive`-Helfer neben `measured()`; alle 15 `is_nan()`-Daten-Gates → `!is_finite()` (Extract-Kette, ProfileMap, Flatten, CmrPolygon, netcdf-Profil, anchor-Bounds 9262/9293/9301); positive Gates gehärtet (kepler `e`, dastcom `r_m`/`peri`, dcom5/cometels `r`, tap `dist_pc`-Inf-Leck, tycho2 `plx`); `finite_positive` erstgenutzt in sense_deep (Divisionsschutz `rel/d`); kernel_id_for_force `unwrap_or(0)` → `else return` (17306); JS: `response_epoch: null` + count-Gate in index.html, `tau > 0`-Wire-Gate, truncated-frame `throw`, battery `isFinite`-Gate — 84 Tests grün |
 | 2 | ~~S1 — Haupt-Adern~~ | ERLEDIGT (2026-08-19): Celestial-Shell getilgt — distanzlose cmap-Zeilen fallen (Titan-Skip, Konstante gelöscht, 4 Tests auf Wahrheit umgeschrieben, ledger.φ:151 berichtigt); pm/rv/zval-Fold → Option (absent trägt keinen Term, kein 0.0-Betrag); TGAS-rv-Gate (tycho2 tgas-Zweig: Crossmatch + Skip ohne rv, eprintln zählt) + TODO 174-176 berichtigt; tap emit_rows-pm: Propagation nur mit beiden pm; Pangaea lat/lon → Option/null (Golf von Guinea tot); GeojsonEvents mag → Option (0.0-Mw-Saat tot); EOP-Finals Position = Source (Frame-Anker statt 0,0,0); Alerce 1-m-Sphäre getilgt — Detections bleiben dunkel (Note + pending-Distanz-Kanal); dcom5 H/M1 → Option/null (DASTCOM-Sentinels 90/900); WGSL-Kernel-Zweige 1 (gaussian-inverse-square) + 6 (inverse-linear) in main.rs (field_spatial + field_spatial_grad) und index.html — 85 Tests grün |
 | 3 | ~~S2 — Form/Sensor/TTL~~ | ERLEDIGT (2026-08-19): flattening → Option (absent → keine geodätische Fläche, `?`-Kette in body_fixed/icrs_to_body_surface; rb_scale bleibt 1.0 im Rotationsfall — die Standard-Ellipse); `on`-Frame ohne alt → refuse (2 Bestands-Blöcke betroffen, siehe Pending); #body-alt → Option + Refuse-Notiz; Sensor-τ zurück ans Gate (`effective_tau = bs.ttl` an 3 Stellen entfernt — ohne τ fällt der Kanal); port_field_synth refuse ohne τ (τ-Fabrikation ttl/10 tot) + ttl-Zeile im Port-Konvertat geschrieben + 5/6-token-Waisen im ProfileMap-Kontext refused + Draft 4-Token → 9-Token (`draft_field_line`) + depth-τ-Hartkodierung (3600) ersetzt; probe_ttl 86400 weggelassen (Draft ohne ttl-Zeile); props.gm-Barrier expliziter Match (0.0 = Wire-Pad bis v3); Nutation zwei Fälle (kein Modell still 0, Lücke mit Note); fk.rs center/class/class_id → Option (unlesbar → None, 0 ist keine SSB-Fabrikation mehr); netCDF-Fill-Maske lat/lon/juld; tic plx NaN/negativ → absent-Code + tmag positiv-Gate; tess-Zwei-Enden-Vertrag gehärtet (Leser finite+<=0); horizons GM expliziter v2-Wire-Pad — 85 Tests grün |
-| 4 | P1 — Lade-Pfad | F-A Punkt 1: Bootstrap einziger priorisierter Lader + Wächter; In-Loop-Fallback raus; origins-Stempel nach Erfolg + last_attempt (10 Sites 12267-12735); curl-Status sichtbar (4935); drei curl-Ketten → ein Builder |
+| 4 | ~~P1 — Lade-Pfad~~ | ERLEDIGT (2026-08-19): der Bootstrap ist als `spawn_ephemeris_bootstrap` der EINZIGE eph-Lader (Priorisierung nach `anchor_uses` unverändert, Guard gegen Doppellauf); der In-Loop-Fetch-Fallback (86d5853) ist zurückgebaut auf die Titan-Form (cache_fresh → extrahieren, origin nur im Erfolgsfall, kein 15-h-Lockout); ein Wächter (2⁶-Ticks) startet den Bootstrap neu, wenn eph-Dateien fehlen, deren Body nicht in `body_ephemerides` ist, Backoff ttl/Φ²; drei curl-Flag-Ketten → ein `curl_base`-Builder (Φ-abgeleitete Timeouts, retry 5, parallel-max 8); curl-Status von `download_ephemeris_one`/`_batch` sichtbar (URL + Status + stderr) — 85 Tests grün |
 | 5 | S3 — Stille Fehlschläge + Konsens | upload_asset-Prüfungen (tycho2 501/788, tap 1446/1551, tess 580 inline in S1/S2; cometels 421 + pangaea 243 disjunkt); WS-Writes sichtbar (21159-21178, 21027, 20417-20422, 20344/20381); Consent-Bypass Browser (20862/20921 → Consent-Gate); exp2(-20) raus (Rats-Urteil 2); bp_rp_to_teff 31-Punkte (134-155); point_blend-Fossil (18320, 18825, 19633, 18010, Uniform 26) |
 | 6 | P3 — Dedup | ci_upload → cdn::upload_asset (5237); CDN-Base zentral (5036/5045/10599/10935/15288); 7 JSON-Parser → lib; Chebyshev → lib (ephemeris 85-160, horizons 8-100); Julian-Datum → lib (lsk 124, mpcobs 43, cometels 197-216, ephemeris 638, main 12899/5215/3156-3169/8807/8882, bpc 120, tess 389); Rotations-Matrix 2× |
 | 7 | P5 — GPU | Probe-Sternpfad konsumiert star_cull-Kacheln statt O(N)-Eigenschleife (WGSL 383-403) |
