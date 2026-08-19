@@ -90,12 +90,38 @@ ist entfernt, die offenen Reste aus den geschlossenen Atomen sind hierher gezoge
   Slots sind meta[11]=freq + meta[12]=bin_width; der JS-Parse setzt
   jetzt das z wie das Rust-Pack (Schichten identisch); Golden-Test
   m[11]/m[12], naga-Validierung, BINARY_PROTOCOL.md v6→v8, AGENTS.md,
-  prompt.φ v8.
+  prompt.φ v8. Korrektur der Prüf-Rolle (2026-08-19, verifiziert):
+  die Verifikation war default-only — `cargo check --features
+  browser_relay` bricht mit 9 Fehlern (siehe Atom B, Befund 1);
+  Schritt 0 von Atom B repariert das.
 - Atom B (Spectral-Compiler): offen, eigene Session — NCEI-SSI zuerst
   (λ→ν, beweist die Kette), ONC-HSD-FFT (Route verifiziert:
   dataProductDelivery-Kette, 512 Bins × 250 Hz, implizite Achse),
   Gaia-XP (gdr3spec.spectra-Bulk), LISA-PSD + CMB-Power (Freq-/l-Achse
   statt Skalar-Reduktion), GONG + miniSEED (Waveforms, std-only-FFT).
+  Handover der Lese-Arbeit (2026-08-19, Urteile des Operators):
+  Architektur = Compiler + Spektral-Hash — Binär `spectral_compiler`
+  (Muster: ephemeris_compiler, `--ci-mode` → `cdn::upload_asset`,
+  Tag ssd.jpl.nasa.gov) + Zweig `format spectral` im Fetch-Loop
+  (Muster: catalog_tycho, main.rs:12339); Kontrakt-Vorschlag: Record
+  24 B [freq, bin_width, val] f64 LE + Header `0xCF 0x86 0x01
+  [epoch_tdb] [count]`, Epoch = Monatsmitte der Messung (nicht
+  Fetchzeit). τ = 2.628e6 s — das Monatsmittel IST die Messung der
+  ssi_YYYYMM.txt; ttl 86400, force em, Frame `on earth 19.82
+  -155.47` (Station). Konversion ν = c/λ, E_ν = E_λ·λ²/c, bin_width
+  aus dem nativen λ-Gitter, quality_flag-Filter (ungültige Zeilen
+  fallen — 0 honored). CI = nur Register-Zeile, sources-Repo
+  unberührt. Fundorte: Queue-Draft master.φ:31611 (URL + Spalten),
+  DER_SPEKTRALE_OSZILLATOR.md:107. Befund 1 (verifiziert):
+  `cargo check` default grün, `--features browser_relay` bricht mit
+  9 Fehlern — Relay-Write-Loop destrukturiert 24 aus 22-Tupel
+  (main.rs:21058), build_buffer ohne planets/curves (main.rs:20841),
+  Stern-Push 22 Werte in OscRecord(24) (main.rs:2640), sense_buffer
+  23 f64 (main.rs:2877) — Schritt 0: OscRecord überall,
+  Stern-Push + freq/bin_width = 0.0 (Punktquelle). Befund 2: die
+  Füll-Schicht fehlt — Oscillator (main.rs:965) ohne freq/bin_width,
+  query_hash (main.rs:2813) verdrahtet die Slots als 0.0,
+  ~19 Konstruktionsstellen auf 0.0 zu setzen.
 - Atom C (band-selektives Rendering): offen — Shader akkumuliert pro
   Band; Stillekarte band-selektiv, Lichtkegel-Differenz dispersiv,
   chromatischer Dip als SED-Messung.
@@ -346,6 +372,23 @@ Offen (Detail in phi/pipeline/ledger.φ):
   mean = Endpoint lebt, Probe-Env kennt {ra}/{dec}/{radius} nicht
   (Nachweis im Register-Lauf offen). Befunde:
   phi/pipeline/research/agent_output/verify_astro{,_b}_2026-08-19.φ.
+- Sensor-Kategorien-Welle (2026-08-19): 10 Agenten (Satelliten,
+  Flugzeuge, Drohnen, Raumstationen, Radiosonden, Bojen, Wetterstationen,
+  Labore, Unterwasser, Sonstiges) + Jina/Wayback-Nachprüfung (Taxonomie
+  tot/declined/blocked/live/angekündigt; Agenten-Rezept in SOURCE_PORT
+  §13). ERGEBNIS: 18 live-Kandidaten geparkt (ledger.φ — Port
+  ausstehend: AMeDAS, ECCC GeoMet, BfS-ODL, GTMBA, EMODnet, EMSO,
+  IOOS-Glider, SmartBay, USGS-Grundwasser, NRCS-AWDB, IGRA, Wyoming,
+  Iowa-RAOB, SondeHub, AWC-PIREP, COSMIC-2, IMO, GeoNet, meteo.lt);
+  14 blocked (blocked_sources.φ — key-needed; 3 ip-blocked lokal
+  nachprüfen: Meteomatics, CelesTrak, MeteoSwiss-Pollen); 5 dead/declined
+  (dead_sources.φ: Saildrone, SatNOGS-API, TreeTalker, OSDR, WindBorne,
+  IGRAC, AOML); 13 angekündigt (MTG-I2 27.08.2026, MetOp-SG B1,
+  Sentinel-3C, C-130J, NASA-777, Axiom, Orbital Reef, Starlab, SOFF,
+  ITER, SPARC, DUNE, EMSO-SMART-Cable). Befunde:
+  phi/pipeline/research/agent_output/{satellites,aircraft,drones,
+  space_stations,radiosondes,buoys,weather_stations,laboratories,
+  underwater,misc}_2026-08-19.φ + classify_2026-08-19.φ.
 - Parser & Spec: VOTableJSON (ausstehend, ledger.φ) — IRSA-TAP liefert
   VOTable-serialisiertes JSON (s_ra/s_dec nur als FIELD-Metadaten);
   SpaltenAusMetadata (ausstehend, ledger.φ) — Euclid/EAS-TAP antwortet
