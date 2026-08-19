@@ -20,9 +20,9 @@ pub struct TkFrame {
 pub struct FkFrame {
     pub id: i32,
     pub name: String,
-    pub class: i32,
-    pub class_id: i32,
-    pub center: i32,
+    pub class: Option<i32>,
+    pub class_id: Option<i32>,
+    pub center: Option<i32>,
     pub tk: Option<TkFrame>,
 }
 
@@ -117,17 +117,17 @@ impl FkFile {
                         }
                         "CLASS" => {
                             if let Some(f) = slot {
-                                f.class = value.parse().unwrap_or(0);
+                                f.class = value.parse().ok();
                             }
                         }
                         "CLASS_ID" => {
                             if let Some(f) = slot {
-                                f.class_id = value.parse().unwrap_or(0);
+                                f.class_id = value.parse().ok();
                             }
                         }
                         "CENTER" => {
                             if let Some(f) = slot {
-                                f.center = value.parse().unwrap_or(0);
+                                f.center = value.parse().ok();
                             }
                         }
                         _ => {}
@@ -142,9 +142,9 @@ impl FkFile {
                         frames.push(FkFrame {
                             id,
                             name: frame_name.to_string(),
-                            class: 0,
-                            class_id: 0,
-                            center: 0,
+                            class: None,
+                            class_id: None,
+                            center: None,
                             tk: None,
                         });
                     }
@@ -228,7 +228,7 @@ impl FkFile {
 
     pub fn tkframe_child_of(&self, relative_name: &str) -> Option<&FkFrame> {
         self.frames.iter().find(|f| {
-            f.class == 4
+            f.class == Some(4)
                 && f.tk.as_ref().and_then(|t| t.relative.as_deref()) == Some(relative_name)
                 && f.tk.as_ref().and_then(|t| t.spec.as_deref()) == Some("ANGLES")
         })
@@ -257,9 +257,9 @@ impl FkFile {
         let tk = frame.tk.as_ref()?;
         let relative_name = tk.relative.as_ref()?;
         let rel = self.frame_by_name(relative_name)?;
-        if rel.class != 2 {
+        if rel.class != Some(2) {
             eprintln!(
-                "fk: frame {} ({}) relative {} is class {} — chain not resolved",
+                "fk: frame {} ({}) relative {} is class {:?} — chain not resolved",
                 frame.id, frame.name, relative_name, rel.class
             );
             return None;
@@ -340,8 +340,8 @@ TKFRAME_31009_UNITS           = 'ARCSECONDS'\n";
         assert_eq!(fk.frames.len(), 3);
         let pa = fk.frame(31008).unwrap();
         assert_eq!(pa.name, "MOON_PA_DE440");
-        assert_eq!(pa.class, 2);
-        assert_eq!(pa.center, 301);
+        assert_eq!(pa.class, Some(2));
+        assert_eq!(pa.center, Some(301));
         let me = fk.frame(31009).unwrap();
         let tk = me.tk.as_ref().unwrap();
         assert_eq!(tk.spec.as_deref(), Some("ANGLES"));

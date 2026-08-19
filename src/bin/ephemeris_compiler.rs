@@ -286,7 +286,7 @@ fn full_orientation(
     for pa_frame in fk
         .frames
         .iter()
-        .filter(|f| f.class == 2 && f.center == body_id)
+        .filter(|f| f.class == Some(2) && f.center == Some(body_id))
     {
         for bpc in bpc_files {
             let Some((phi, theta, psi)) = bpc.orient(pa_frame.id, 1, et) else {
@@ -1536,7 +1536,7 @@ fn main() {
         }
         for f in &fk.frames {
             eprintln!(
-                "fk frame {} {} class {} center {} tk={}",
+                "fk frame {} {} class {:?} center {:?} tk={}",
                 f.id,
                 f.name,
                 f.class,
@@ -1554,7 +1554,7 @@ fn main() {
                     continue;
                 }
             };
-            for frame in fk.frames.iter().filter(|f| f.class == 2) {
+            for frame in fk.frames.iter().filter(|f| f.class == Some(2)) {
                 let et = (jd - J2000_EPOCH) * 86400.0;
                 let Some((phi, theta, psi)) = b.orient(frame.id, 1, et) else {
                     continue;

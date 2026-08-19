@@ -47,8 +47,16 @@ fn record_bytes(line: &str) -> Option<Vec<u8>> {
     }
     let pm_ra = cell_f64(&cells, COL_PMRA)? as f32;
     let pm_de = cell_f64(&cells, COL_PMDEC)? as f32;
-    let plx = cell_f32(&cells, COL_PLX);
+    let plx_raw = cell_f32(&cells, COL_PLX);
+    let plx = if plx_raw.is_finite() && plx_raw > 0.0 {
+        plx_raw
+    } else {
+        0.0
+    };
     let tmag = cell_f64(&cells, COL_TMAG)? as f32;
+    if !tmag.is_finite() || tmag <= 0.0 {
+        return None;
+    }
     let d = cell_f32(&cells, COL_DIST);
     let dist_pc = if d > 0.0 {
         d

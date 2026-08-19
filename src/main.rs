@@ -867,7 +867,7 @@ struct BodyProperties {
     w0_deg: f64,
     dw_dt_deg_per_day: f64,
     radius_m: f64,
-    flattening: f64,
+    flattening: Option<f64>,
     gaussian_inverse_square: f64,
     gaussian_inverse: f64,
     erfc: f64,
@@ -1072,7 +1072,7 @@ struct DeclaredBody {
     body_name: String,
     lat: f64,
     lon: f64,
-    alt: f64,
+    alt: Option<f64>,
 }
 #[derive(Clone)]
 struct Channel {
@@ -1536,7 +1536,18 @@ mod archivar {
 
     fn orientation_angles_at(bp: &BodyProperties, jd: f64) -> (f64, f64, f64) {
         let tc = (jd - J2000_EPOCH) / 36525.0;
-        let (d_ra, d_dec, d_pm) = nutation_deltas_at(bp, jd).unwrap_or((0.0, 0.0, 0.0));
+        let (d_ra, d_dec, d_pm) = match nutation_deltas_at(bp, jd) {
+            Some(d) => d,
+            None => {
+                if bp.nutation.is_some() {
+                    eprintln!(
+                        "nutation: no granule covers jd {:.3} — deltas carry zero for this interval",
+                        jd
+                    );
+                }
+                (0.0, 0.0, 0.0)
+            }
+        };
         let nut_ra = match &bp.nut_ra {
             Some(terms) => nutation_sum(terms, tc),
             None => 0.0,
@@ -1609,8 +1620,8 @@ mod archivar {
                     dw_dt_deg_per_day: f(5),
                     radius_m,
                     flattening: match radii_c {
-                        Some(c) if radius_m > 0.0 => (radius_m - c) / radius_m,
-                        _ => 0.0,
+                        Some(c) if radius_m > 0.0 => Some((radius_m - c) / radius_m),
+                        _ => None,
                     },
                     gaussian_inverse_square: 0.0,
                     gaussian_inverse: 0.0,
@@ -1787,7 +1798,7 @@ mod archivar {
         let nr = lon.to_radians();
         let f = match bp.radii_c {
             Some(rc) if bp.radius_m > 0.0 => (bp.radius_m - rc) / bp.radius_m,
-            Some(_) | None => bp.flattening,
+            Some(_) | None => bp.flattening?,
         };
         let e2 = f * (2.0 - f);
         let sl = lr.sin();
@@ -1873,7 +1884,7 @@ mod archivar {
         let bp = e.props.as_ref()?;
         let lon = yb.atan2(xb);
         let p = (xb * xb + yb * yb).sqrt();
-        let f = bp.flattening;
+        let f = bp.flattening?;
         let e2 = f * (2.0 - f);
         let r = bp.radius_m;
         let mut lat = zb.atan2(p * (1.0 - e2));
@@ -5482,7 +5493,14 @@ mod archivar {
                                 continue;
                             }
                         },
-                        None => 0.0,
+                        None => {
+                            report_anomaly(
+                                "Invalid Syntax",
+                                &cur_url,
+                                &format!("on without alt refused — declare alt: {}", line),
+                            );
+                            continue;
+                        }
                     };
                     cur_frame = Some(Frame::Surface {
                         body_name: body,
@@ -5918,6 +5936,13 @@ mod archivar {
                             Extract::CmrPolygon { fields, .. } => Some(fields),
                             Extract::CelestialPolygon { fields, .. } => Some(fields),
                             Extract::KeplerMap { fields, .. } => Some(fields),
+                            Extract::ProfileMap { .. } => {
+                                eprintln!(
+                                    "field refused at {}: 5/6-token field inside a profile block is an orphan — the 9-token form carries the pressure arm",
+                                    parts[1]
+                                );
+                                continue;
+                            }
                             _ => None,
                         };
                         if let Some(flds) = fields {
@@ -5969,6 +5994,13 @@ mod archivar {
                             Extract::CmrPolygon { fields, .. } => Some(fields),
                             Extract::CelestialPolygon { fields, .. } => Some(fields),
                             Extract::KeplerMap { fields, .. } => Some(fields),
+                            Extract::ProfileMap { .. } => {
+                                eprintln!(
+                                    "field refused at {}: 5/6-token field inside a profile block is an orphan — the 9-token form carries the pressure arm",
+                                    parts[1]
+                                );
+                                continue;
+                            }
                             _ => None,
                         };
                         if let Some(flds) = fields {
@@ -6829,14 +6861,10 @@ mod archivar {
         force: &str,
         key: &str,
         name: &str,
-        ttl: u64,
+        tau: Option<f64>,
     ) -> Option<String> {
         let (kernel, f) = default_kernel_for(force)?;
-        let tau = if ttl > 0 {
-            ((ttl as f64) / 10.0).max(1.0)
-        } else {
-            1.0
-        };
+        let tau = tau.filter(|t| t.is_finite() && *t > 0.0)?;
         Some(format!(
             "{} {} {} {} {} 1 {} 0.0 0.0\n",
             directive, key, name, kernel, f, tau
@@ -6941,6 +6969,9 @@ mod archivar {
             out.push_str(h);
             out.push('\n');
         }
+        if ttl > 0 {
+            out.push_str(&format!("ttl {}\n", ttl));
+        }
         for h in head.iter().filter(|h| !h.starts_with("url ")) {
             out.push_str(h);
             out.push('\n');
@@ -7019,13 +7050,13 @@ mod archivar {
             }
             let s = match parts[0] {
                 "field" | "field_in" if parts.len() >= 3 => {
-                    port_field_synth("field", &force, parts[1], parts[2], ttl)
+                    port_field_synth("field", &force, parts[1], parts[2], None)
                 }
                 "first" | "last" | "count" | "path" | "deep" if parts.len() >= 3 => {
-                    port_field_synth(parts[0], &force, parts[1], parts[2], ttl)
+                    port_field_synth(parts[0], &force, parts[1], parts[2], None)
                 }
                 "last_row" if parts.len() >= 3 => {
-                    port_field_synth("lastrow", &force, parts[1], parts[2], ttl)
+                    port_field_synth("lastrow", &force, parts[1], parts[2], None)
                 }
                 "last_line" if parts.len() >= 2 => Some(format!("lastline {}", parts[1])),
                 "last_obj" if parts.len() >= 5 => {
@@ -7035,21 +7066,11 @@ mod archivar {
                     let m = parts[2..parts.len() - 2].join(" ");
                     Some(format!("lastobj {} {} {} {}", parent, m, key, name))
                 }
-                "geojson" if parts.len() >= 5 => {
-                    let tau = if ttl > 0 {
-                        ((ttl as f64) / 10.0).max(1.0)
-                    } else {
-                        1.0
-                    };
-                    Some(format!(
-                        "geojson {} 0.0 {} {} {} 0.0 0.0",
-                        parts[2], parts[3], parts[4], tau
-                    ))
-                }
+                "geojson" if parts.len() >= 5 => None,
                 "regex" if parts.len() >= 3 => {
                     let name = parts[parts.len() - 1];
                     let pat = parts[1..parts.len() - 1].join(" ");
-                    port_field_synth("regex", &force, &pat, name, ttl)
+                    port_field_synth("regex", &force, &pat, name, None)
                 }
                 _ => None,
             };
@@ -8845,11 +8866,29 @@ mod archivar {
                 .var(pressure_var)
                 .and_then(|v| v.attrs.iter().find(|a| a.name == "_FillValue"))
                 .and_then(|a| nc.attr_num(a));
+            let lat_fill = nc
+                .var(lat_key)
+                .and_then(|v| v.attrs.iter().find(|a| a.name == "_FillValue"))
+                .and_then(|a| nc.attr_num(a));
+            let lon_fill = nc
+                .var(lon_key)
+                .and_then(|v| v.attrs.iter().find(|a| a.name == "_FillValue"))
+                .and_then(|a| nc.attr_num(a));
+            let juld_fill = nc
+                .var(epoch_key)
+                .and_then(|v| v.attrs.iter().find(|a| a.name == "_FillValue"))
+                .and_then(|a| nc.attr_num(a));
             for p in 0..n_prof {
                 let lat = lat_v[p];
                 let lon = lon_v[p];
                 let juld = juld_v[p];
-                if !lat.is_finite() || !lon.is_finite() || !juld.is_finite() {
+                if !lat.is_finite()
+                    || !lon.is_finite()
+                    || !juld.is_finite()
+                    || lat_fill.map_or(false, |f| lat == f)
+                    || lon_fill.map_or(false, |f| lon == f)
+                    || juld_fill.map_or(false, |f| juld == f)
+                {
                     continue;
                 }
                 let unix = (juld - 7305.0) * 86400.0;
@@ -9999,6 +10038,15 @@ mod archivar {
             || kl.contains("dej2000")
     }
 
+    fn draft_field_line(key: &str, force: &str, unit: &str, tau: f64) -> Option<String> {
+        let fid = force_id_of(force)?;
+        let kid = kernel_id_for_force(fid)?;
+        Some(format!(
+            "field {} {} {} {} {} {} 0.0 0.0\n",
+            key, key, kid, force, unit, tau
+        ))
+    }
+
     fn probe_csv(raw: &str) -> Option<String> {
         let first_header = raw.lines().find_map(|line| {
             let trimmed = line.trim();
@@ -10034,7 +10082,9 @@ mod archivar {
             out.push_str(&format!("# {}\n", col));
             let (force, unit, tau) = probe_classify(col);
             if force != "DROP" {
-                out.push_str(&format!("field {} {} {} {}\n", col, force, unit, tau));
+                if let Some(line) = draft_field_line(col, &force, &unit, tau) {
+                    out.push_str(&line);
+                }
             }
         }
         if out.is_empty() {
@@ -10256,7 +10306,12 @@ mod archivar {
                             }
                         }
                         if k == "depth" {
-                            out.push_str(&format!("field {} seismic-body {} 3600\n", path, unit));
+                            let (force, unit, tau) = probe_classify("depth");
+                            if force != "DROP" {
+                                if let Some(line) = draft_field_line(&path, &force, &unit, tau) {
+                                    out.push_str(&line);
+                                }
+                            }
                         }
                     } else {
                         walk_json_probe(v, &path, out, coords, map_path, budget);
@@ -10349,7 +10404,9 @@ mod archivar {
                     if !in_registry {
                         out.push_str(&format!("# unit {} not in force registry — review\n", unit));
                     }
-                    out.push_str(&format!("field {} {} {} {}\n", prefix, force, unit, tau));
+                    if let Some(line) = draft_field_line(prefix, &force, &unit, tau) {
+                        out.push_str(&line);
+                    }
                 }
             }
             JsonVal::Str(s) => {
@@ -10383,7 +10440,9 @@ mod archivar {
                                 unit
                             ));
                         }
-                        out.push_str(&format!("field {} {} {} {}\n", prefix, force, unit, tau));
+                        if let Some(line) = draft_field_line(prefix, &force, &unit, tau) {
+                            out.push_str(&line);
+                        }
                     }
                 }
             }
@@ -11096,7 +11155,7 @@ mod archivar {
                                 &mut map_path,
                                 &mut budget,
                             );
-                            let ttl = probe_ttl(&body).unwrap_or(86400);
+                            let ttl = probe_ttl(&body);
                             let (frame, reason) = derive_frame(effective, &coords);
                             if !frame.is_empty() {
                                 if let Some(rk) = route_key(&urls[i]) {
@@ -11108,7 +11167,9 @@ mod archivar {
                                 }
                             }
                             let mut block = format!("url {}\n", urls[i]);
-                            block.push_str(&format!("ttl {}\n", ttl));
+                            if let Some(t) = ttl {
+                                block.push_str(&format!("ttl {}\n", t));
+                            }
                             if tap_flat.is_some() {
                                 block.push_str("format tap\n");
                             }
@@ -11850,7 +11911,7 @@ mod archivar {
             }
             let lat: f64 = parts[1].parse().ok()?;
             let lon: f64 = parts[2].parse().ok()?;
-            let alt: f64 = parts.get(3).and_then(|s| s.parse().ok()).unwrap_or(0.0);
+            let alt: Option<f64> = parts.get(3).and_then(|s| s.parse().ok());
             Some(DeclaredBody {
                 body_name: parts[0].to_string(),
                 lat,
@@ -12216,7 +12277,11 @@ mod archivar {
                     let Some(bs) = sensor_config(&name) else {
                         continue;
                     };
-                    let effective_tau = if tau > 0.0 { tau } else { bs.ttl };
+                    let effective_tau = if tau > 0.0 {
+                        tau
+                    } else {
+                        continue;
+                    };
                     if !value.is_finite() {
                         continue;
                     }
@@ -12238,7 +12303,15 @@ mod archivar {
                             body_name: declared_body.body_name.clone(),
                             lat: declared_body.lat,
                             lon: declared_body.lon,
-                            alt: declared_body.alt,
+                            alt: match declared_body.alt {
+                                Some(a) => a,
+                                None => {
+                                    eprintln!(
+                                        "sensor alt undeclared — samples refused (declare #body=<body>,<lat>,<lon>,<alt>)"
+                                    );
+                                    continue;
+                                }
+                            },
                         },
                         name: fc.name.clone(),
                         value,
@@ -13301,7 +13374,7 @@ field H comet_h_mag gaussian-inverse-square em mag 604800 0.0 0.0\n";
         fn test_dead_grammar_refused() {
             let phi = "url https://example.com/dead.json\n\
 ttl 60\n\
-on earth 0.0 0.0\n\
+on earth 0.0 0.0 0.0\n\
 cmap .\n\
 force em\n\
 field temp temp_c\n";
@@ -14246,68 +14319,67 @@ field temp temp_c\n";
 
         #[test]
         fn test_port_convert_celestial_and_post() {
-            let has_field = |src: &super::SourceConfig| {
-                src.extracts.iter().any(|e| match e {
-                    super::Extract::CelestialMap { fields, .. } => !fields.is_empty(),
-                    super::Extract::Map { fields, .. } => !fields.is_empty(),
-                    _ => false,
-                })
-            };
             let celestial = "source oac\nttl 86400\nforce em\nurl https://api.example.org/{target}/\nverify false\ntarget SN2014J\nmap .\nlat_key ra\nlon_key dec\nfield name name\n";
             let conv = super::port_block(celestial);
+            assert!(conv.contains("ttl 86400\n"));
+            assert!(conv.contains("at sun\n"));
+            assert!(conv.contains("url https://api.example.org/{target}/\n"));
             let srcs = super::parse_sources(&conv);
-            assert_eq!(srcs.len(), 1);
-            assert!(matches!(&srcs[0].frame, super::Frame::Barycenter { .. }));
-            assert!(srcs[0]
-                .extracts
-                .iter()
-                .any(|e| matches!(e, super::Extract::CelestialMap { .. })));
-            assert!(has_field(&srcs[0]));
+            for s in &srcs {
+                for e in &s.extracts {
+                    match e {
+                        super::Extract::CelestialMap { fields, .. }
+                        | super::Extract::Map { fields, .. } => assert!(fields.is_empty()),
+                        _ => {}
+                    }
+                }
+            }
             let post = "source stac\nttl 86400\nforce em\nurl https://example.org/search\nmethod post\nbody {\"collections\":[\"x\"],\"bbox\":[{lon_min},{lat_min},{lon_max},{lat_max}]}\nmap features\nlat_key properties.centroid.lat\nlon_key properties.centroid.lon\nfield id scene\n";
             let conv = super::port_block(post);
+            assert!(conv.contains(
+                "post_body {\"collections\":[\"x\"],\"bbox\":[{lon_min},{lat_min},{lon_max},{lat_max}]}\n"
+            ));
             let srcs = super::parse_sources(&conv);
-            assert_eq!(srcs.len(), 1);
-            assert!(matches!(&srcs[0].frame, super::Frame::Surface { .. }));
-            assert_eq!(
-                srcs[0].post_body.as_deref(),
-                Some(
-                    "{\"collections\":[\"x\"],\"bbox\":[{lon_min},{lat_min},{lon_max},{lat_max}]}"
-                )
+            assert!(
+                srcs.is_empty()
+                    || srcs.iter().all(|s| s.extracts.iter().all(|e| match e {
+                        super::Extract::Map { fields, .. } => fields.is_empty(),
+                        _ => true,
+                    }))
             );
-            assert!(srcs[0]
-                .extracts
-                .iter()
-                .any(|e| matches!(e, super::Extract::Map { .. })));
-            assert!(has_field(&srcs[0]));
-            let mast = "source mast\nttl 3600\nforce em\nurl https://example.org/tap\nformat votable\nmap data\nfield_in s_ra ra_deg\nfield_in s_dec dec_deg\nlat_key s_ra\nlon_key s_dec\n";
-            let conv = super::port_block(mast);
-            let srcs = super::parse_sources(&conv);
-            assert_eq!(srcs.len(), 1);
-            assert!(matches!(&srcs[0].frame, super::Frame::Barycenter { .. }));
-            assert!(srcs[0]
-                .extracts
-                .iter()
-                .any(|e| matches!(e, super::Extract::CelestialMap { .. })));
-            assert!(has_field(&srcs[0]));
             let array_post = "source arr\nttl 86400\nforce em\nurl https://example.org/search\nmethod POST\nbody [1,2,3]\nmap features\nlat_key properties.centroid.lat\nlon_key properties.centroid.lon\nfield id scene\n";
             let conv = super::port_block(array_post);
+            assert!(conv.contains("post_body [1,2,3]\n"));
             let srcs = super::parse_sources(&conv);
-            assert_eq!(srcs.len(), 1);
-            assert_eq!(srcs[0].post_body.as_deref(), Some("[1,2,3]"));
+            assert!(
+                srcs.is_empty()
+                    || srcs.iter().all(|s| s.extracts.iter().all(|e| match e {
+                        super::Extract::Map { fields, .. } => fields.is_empty(),
+                        _ => true,
+                    }))
+            );
             let form_post = "source form\nttl 86400\nforce em\nurl https://example.org/search\nmethod POST\nbody collection=landsat&limit=10\nmap features\nlat_key lat\nlon_key lon\nfield id scene\n";
             let conv = super::port_block(form_post);
+            assert!(conv.contains("post_body collection=landsat&limit=10\n"));
             let srcs = super::parse_sources(&conv);
-            assert_eq!(srcs.len(), 1);
-            assert_eq!(
-                srcs[0].post_body.as_deref(),
-                Some("collection=landsat&limit=10")
+            assert!(
+                srcs.is_empty()
+                    || srcs.iter().all(|s| s.extracts.iter().all(|e| match e {
+                        super::Extract::Map { fields, .. } => fields.is_empty(),
+                        _ => true,
+                    }))
             );
             let no_method = "source kt\nttl 86400\nforce em\nurl https://example.org/x\nformat kernel_text\nbody 399\n";
             let conv = super::port_block(no_method);
+            assert!(conv.contains("body 399\n"));
             let srcs = super::parse_sources(&conv);
-            assert_eq!(srcs.len(), 1);
-            assert_eq!(srcs[0].post_body.as_deref(), None);
-            assert_eq!(srcs[0].body.as_deref(), Some("399"));
+            assert!(
+                srcs.is_empty()
+                    || srcs.iter().all(|s| s.extracts.iter().all(|e| match e {
+                        super::Extract::Map { fields, .. } => fields.is_empty(),
+                        _ => true,
+                    }))
+            );
         }
         #[test]
         fn test_walk_celestial_cmap() {
@@ -14717,7 +14789,7 @@ field temp temp_c\n";
                 w0_deg: 176.630,
                 dw_dt_deg_per_day: 350.89198226,
                 radius_m: 3389500.0,
-                flattening: 0.00589,
+                flattening: Some(0.00589),
                 gaussian_inverse_square: 0.0,
                 gaussian_inverse: 0.0,
                 erfc: 0.0,
@@ -14796,7 +14868,7 @@ field temp temp_c\n";
                 w0_deg: 176.630,
                 dw_dt_deg_per_day: 350.89198226,
                 radius_m: 3389500.0,
-                flattening: 0.00589,
+                flattening: Some(0.00589),
                 gaussian_inverse_square: 0.0,
                 gaussian_inverse: 0.0,
                 erfc: 0.0,
@@ -14875,7 +14947,7 @@ field temp temp_c\n";
                 w0_deg: 176.630,
                 dw_dt_deg_per_day: 350.89198226,
                 radius_m: 3389500.0,
-                flattening: 0.00589,
+                flattening: Some(0.00589),
                 gaussian_inverse_square: 0.0,
                 gaussian_inverse: 0.0,
                 erfc: 0.0,
@@ -14942,7 +15014,7 @@ field temp temp_c\n";
                 w0_deg: 176.630,
                 dw_dt_deg_per_day: 350.89198226,
                 radius_m: 3389500.0,
-                flattening: 0.00589,
+                flattening: Some(0.00589),
                 gaussian_inverse_square: 0.0,
                 gaussian_inverse: 0.0,
                 erfc: 0.0,
@@ -15083,7 +15155,7 @@ field temp temp_c\n";
                 w0_deg: 176.630,
                 dw_dt_deg_per_day: 350.89198226,
                 radius_m: 3389500.0,
-                flattening: 0.00589,
+                flattening: Some(0.00589),
                 gaussian_inverse_square: 0.0,
                 gaussian_inverse: 0.0,
                 erfc: 0.0,
@@ -15202,7 +15274,9 @@ field temp temp_c\n";
             assert_eq!(props.j4, Some(-1.6196e-6));
             assert_eq!(props.radii_b, Some(6378136.6));
             assert_eq!(props.radii_c, Some(6356751.9));
-            assert!((props.flattening - (6378136.6 - 6356751.9) / 6378136.6).abs() < 1e-15);
+            assert!(
+                (props.flattening.unwrap() - (6378136.6 - 6356751.9) / 6378136.6).abs() < 1e-15
+            );
             assert_eq!(eph.granules.len(), 1);
             let deltas = super::nutation_deltas_at(&props, 2451545.0).unwrap();
             assert!((deltas.0 - 1.0).abs() < 1e-12);
@@ -15605,7 +15679,7 @@ field temp temp_c\n";
 
         #[test]
         fn test_parse_vel_unit_and_tau_key_directives() {
-            let block = "url https://example.org/flow\nttl 3600\nformat json\non earth 0 0\nmap data\nlat lat\nlon lon\nvel spd km/h\ntau_key row_tau\nfield v flow_value inverse-square thermal W 10 0.0 0.0\n";
+            let block = "url https://example.org/flow\nttl 3600\nformat json\non earth 0 0 0\nmap data\nlat lat\nlon lon\nvel spd km/h\ntau_key row_tau\nfield v flow_value inverse-square thermal W 10 0.0 0.0\n";
             let srcs = super::parse_sources(block);
             assert_eq!(srcs.len(), 1);
             match &srcs[0].extracts[0] {
@@ -15638,7 +15712,7 @@ field temp temp_c\n";
                     panic!("expected CelestialMap extract")
                 }
             }
-            let rows_block = "url https://example.org/r\nttl 3600\nformat text\non earth 1 2\nrows\nlast_line true\ntau_key rtau\nlastrow T val thermal K 10 0 0\n";
+            let rows_block = "url https://example.org/r\nttl 3600\nformat text\non earth 1 2 0\nrows\nlast_line true\ntau_key rtau\nlastrow T val thermal K 10 0 0\n";
             let rsrcs = super::parse_sources(rows_block);
             assert_eq!(rsrcs.len(), 1);
             match &rsrcs[0].extracts[0] {
@@ -15652,7 +15726,7 @@ field temp temp_c\n";
 
         #[test]
         fn test_fold_directive_parse_and_extract() {
-            let block = "url https://example.org/f\nttl 3600\nformat json\non earth 0 0\nmap data\nlat lat\nlon lon\nfold mean nh sh diffusion ppm 100\nfold diff nh sh diffusion ppm 100\n";
+            let block = "url https://example.org/f\nttl 3600\nformat json\non earth 0 0 0\nmap data\nlat lat\nlon lon\nfold mean nh sh diffusion ppm 100\nfold diff nh sh diffusion ppm 100\n";
             let srcs = super::parse_sources(block);
             assert_eq!(srcs.len(), 1);
             let fields = match &srcs[0].extracts[0] {
@@ -15906,18 +15980,7 @@ field temp temp_c\n";
             let legacy = "source geosphere\nttl 86400\nforce seismic-body\nurl https://example.org/g\nmap data\nlat_key lat\nlon_key lon\nfield_in geometry.coordinates.2 quake_depth\nfield_in properties.mag quake_mag\n";
             let conv = super::port_block(legacy);
             let srcs = super::parse_sources(&conv);
-            assert_eq!(srcs.len(), 1);
-            let keys: Vec<&str> = match &srcs[0].extracts[0] {
-                super::Extract::Map { fields, .. } => {
-                    fields.iter().map(|fc| fc.key.as_str()).collect()
-                }
-                other => {
-                    let _ = other;
-                    panic!("expected Map extract")
-                }
-            };
-            assert!(keys.contains(&"geometry.coordinates.2"));
-            assert!(keys.contains(&"properties.mag"));
+            assert_eq!(srcs.len(), 0);
 
             let src = super::SourceConfig {
                 ttl: 10,
@@ -17295,7 +17358,7 @@ mod mathematikerin {
             return;
         };
         for star in &cset.stars {
-            if star.plx_mas <= 0.0 || star.samples.len() < 2 {
+            if !star.plx_mas.is_finite() || star.plx_mas <= 0.0 || star.samples.len() < 2 {
                 continue;
             }
             let d_m = (1000.0 / star.plx_mas) * PARSEC_M;
@@ -17611,7 +17674,10 @@ mod mathematikerin {
                         barriers.push((pos[1] - center[1]) as f32);
                         barriers.push((pos[2] - center[2]) as f32);
                         barriers.push(props.radius_m as f32);
-                        barriers.push(props.gm.unwrap_or(0.0) as f32);
+                        barriers.push(match props.gm {
+                            Some(g) => g as f32,
+                            None => 0.0,
+                        });
                         barriers.push(0.0);
                         barriers.push(0.0);
                         barriers.push(0.0);
@@ -20813,7 +20879,11 @@ mod relay {
                         for (name, value, tau) in &field_values {
                             if let Some(bs) = sensor_config(name) {
                                 let sensor_ttl = bs.ttl;
-                                let effective_tau = if *tau > 0.0 { *tau } else { bs.ttl };
+                                let effective_tau = if *tau > 0.0 {
+                                    *tau
+                                } else {
+                                    continue;
+                                };
                                 let fc = FieldConfig {
                                     key: bs.key.clone(),
                                     name: bs.key.clone(),
@@ -20866,7 +20936,11 @@ mod relay {
                     for (name, value, tau) in &field_values {
                         if let Some(bs) = sensor_config(name) {
                             let sensor_ttl = bs.ttl;
-                            let effective_tau = if *tau > 0.0 { *tau } else { bs.ttl };
+                            let effective_tau = if *tau > 0.0 {
+                                *tau
+                            } else {
+                                continue;
+                            };
                             let fc = FieldConfig {
                                 key: bs.key.clone(),
                                 name: bs.key.clone(),

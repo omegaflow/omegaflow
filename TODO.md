@@ -707,7 +707,7 @@ Zeile = Stand 2026-08-19.
 |---|---|---|
 | 1 | ~~S0 — Finite-Welle~~ | ERLEDIGT (2026-08-19, 69e7bd3): `finite_positive`-Helfer neben `measured()`; alle 15 `is_nan()`-Daten-Gates → `!is_finite()` (Extract-Kette, ProfileMap, Flatten, CmrPolygon, netcdf-Profil, anchor-Bounds 9262/9293/9301); positive Gates gehärtet (kepler `e`, dastcom `r_m`/`peri`, dcom5/cometels `r`, tap `dist_pc`-Inf-Leck, tycho2 `plx`); `finite_positive` erstgenutzt in sense_deep (Divisionsschutz `rel/d`); kernel_id_for_force `unwrap_or(0)` → `else return` (17306); JS: `response_epoch: null` + count-Gate in index.html, `tau > 0`-Wire-Gate, truncated-frame `throw`, battery `isFinite`-Gate — 84 Tests grün |
 | 2 | ~~S1 — Haupt-Adern~~ | ERLEDIGT (2026-08-19): Celestial-Shell getilgt — distanzlose cmap-Zeilen fallen (Titan-Skip, Konstante gelöscht, 4 Tests auf Wahrheit umgeschrieben, ledger.φ:151 berichtigt); pm/rv/zval-Fold → Option (absent trägt keinen Term, kein 0.0-Betrag); TGAS-rv-Gate (tycho2 tgas-Zweig: Crossmatch + Skip ohne rv, eprintln zählt) + TODO 174-176 berichtigt; tap emit_rows-pm: Propagation nur mit beiden pm; Pangaea lat/lon → Option/null (Golf von Guinea tot); GeojsonEvents mag → Option (0.0-Mw-Saat tot); EOP-Finals Position = Source (Frame-Anker statt 0,0,0); Alerce 1-m-Sphäre getilgt — Detections bleiben dunkel (Note + pending-Distanz-Kanal); dcom5 H/M1 → Option/null (DASTCOM-Sentinels 90/900); WGSL-Kernel-Zweige 1 (gaussian-inverse-square) + 6 (inverse-linear) in main.rs (field_spatial + field_spatial_grad) und index.html — 85 Tests grün |
-| 3 | S2 — Form/Sensor/TTL | flattening/rb_scale → Option (1594-1597, 1780, 1771-1773, 1859-1862); alt ×4 (11845, 5468, 7558, 7279) → Option/refuse; Sensor-τ zurück ans Gate (`effective_tau = bs.ttl` raus: 12211, 20826, 20879, 11679); port_field_synth refuse ohne τ (6818-6826) + 5/6-token-Waisen (5896-5960, 6253); probe_ttl 86400 weglassen (11091) + Draft 4-Token → 9-Token (10344); props.gm → Option (17624); Nutation zwei Fälle trennen (1530); fk.rs center/class → Option/refuse (120-130); netCDF-Fill-Maske lat/lon/juld (8804); tic NaN/negativ-plx + tmag-Bereich; tess-Zwei-Enden-Vertrag; horizons GM (161-164) |
+| 3 | ~~S2 — Form/Sensor/TTL~~ | ERLEDIGT (2026-08-19): flattening → Option (absent → keine geodätische Fläche, `?`-Kette in body_fixed/icrs_to_body_surface; rb_scale bleibt 1.0 im Rotationsfall — die Standard-Ellipse); `on`-Frame ohne alt → refuse (2 Bestands-Blöcke betroffen, siehe Pending); #body-alt → Option + Refuse-Notiz; Sensor-τ zurück ans Gate (`effective_tau = bs.ttl` an 3 Stellen entfernt — ohne τ fällt der Kanal); port_field_synth refuse ohne τ (τ-Fabrikation ttl/10 tot) + ttl-Zeile im Port-Konvertat geschrieben + 5/6-token-Waisen im ProfileMap-Kontext refused + Draft 4-Token → 9-Token (`draft_field_line`) + depth-τ-Hartkodierung (3600) ersetzt; probe_ttl 86400 weggelassen (Draft ohne ttl-Zeile); props.gm-Barrier expliziter Match (0.0 = Wire-Pad bis v3); Nutation zwei Fälle (kein Modell still 0, Lücke mit Note); fk.rs center/class/class_id → Option (unlesbar → None, 0 ist keine SSB-Fabrikation mehr); netCDF-Fill-Maske lat/lon/juld; tic plx NaN/negativ → absent-Code + tmag positiv-Gate; tess-Zwei-Enden-Vertrag gehärtet (Leser finite+<=0); horizons GM expliziter v2-Wire-Pad — 85 Tests grün |
 | 4 | P1 — Lade-Pfad | F-A Punkt 1: Bootstrap einziger priorisierter Lader + Wächter; In-Loop-Fallback raus; origins-Stempel nach Erfolg + last_attempt (10 Sites 12267-12735); curl-Status sichtbar (4935); drei curl-Ketten → ein Builder |
 | 5 | S3 — Stille Fehlschläge + Konsens | upload_asset-Prüfungen (tycho2 501/788, tap 1446/1551, tess 580 inline in S1/S2; cometels 421 + pangaea 243 disjunkt); WS-Writes sichtbar (21159-21178, 21027, 20417-20422, 20344/20381); Consent-Bypass Browser (20862/20921 → Consent-Gate); exp2(-20) raus (Rats-Urteil 2); bp_rp_to_teff 31-Punkte (134-155); point_blend-Fossil (18320, 18825, 19633, 18010, Uniform 26) |
 | 6 | P3 — Dedup | ci_upload → cdn::upload_asset (5237); CDN-Base zentral (5036/5045/10599/10935/15288); 7 JSON-Parser → lib; Chebyshev → lib (ephemeris 85-160, horizons 8-100); Julian-Datum → lib (lsk 124, mpcobs 43, cometels 197-216, ephemeris 638, main 12899/5215/3156-3169/8807/8882, bpc 120, tess 389); Rotations-Matrix 2× |
@@ -738,19 +738,37 @@ Zeile = Stand 2026-08-19.
   (S1): Option/null, absent → Zeile fällt beim Konsumenten.
 - tycho2-Bin: color-Slot hart 0f32 (343); tgas rv=0.0 (185) — TODO
   174-176 behauptet „Vollzogen", der Code lügt das Register an (S1).
-- Sensor-τ-Bypass: `effective_tau = bs.ttl` (12211/20826/20879) — die
-  τ-Gate (9190) greift nie für Sensoren (S2).
-- fk.rs center=0 = SSB (realer NAIF-Körper) bei unlesbarem CENTER (S2).
+- ~~Sensor-τ-Bypass: `effective_tau = bs.ttl` (12211/20826/20879) — die
+  τ-Gate (9190) greift nie für Sensoren~~ — ERLEDIGT (S2): ohne τ fällt
+  der Kanal, die τ-Gate ist die einzige Autorität.
+- ~~fk.rs center=0 = SSB (realer NAIF-Körper) bei unlesbarem CENTER~~ —
+  ERLEDIGT (S2): center/class/class_id sind Option; unlesbar → None,
+  kein SSB-Fabrikat mehr.
 - pck::neutral ↔ measured(): 0.0-Sentinel kollidiert mit pole_ra=0° /
   j2=0 — gelöst durch die v3-Maske (S4).
 - WGSL ft_ref_floor max(…, 1e-30): Kraft ohne Fenster-Daten explodiert
   statt zu schweigen; fold_eff max(ttl, 1e-9): τ=0 manifestiert doch
   (S3 — mit exp2(-20) zusammen).
-- nutation unwrap_or((0,0,0)): „kein Modell" und „Lücke" gleichgenullt (S2).
+- ~~nutation unwrap_or((0,0,0)): „kein Modell" und „Lücke" gleichgenullt~~ —
+  ERLEDIGT (S2): kein Modell → still 0 (wahr); Granule-Lücke → Note.
 - ~~kernel_id_for_force(0).unwrap_or(0)~~ — erledigt (S0, 69e7bd3):
   `else return`, kein Kurven-Oszillator ohne em-Kernel.
 
-### Sauber befunden (nicht erneut auditieren, nicht anfassen)
+### Neue Pending aus S2 (2026-08-19)
+
+- Port-Migration ohne τ: die pre-cdn-Grammatik trägt kein τ-Token —
+  `port_field_synth` verweigert Felder ohne kuratiertes τ, felderlose
+  Konvertate werden nicht übernommen (flush_port_block). Die 283+242
+  Alt-Blöcke bleiben unkonvertiert-pending, bis τ je Feld kuratiert ist
+  (Register: phi/pipeline/queue/).
+- Zwei Bestands-Blöcke in phi/sources.φ deklarieren `on earth 52.5 13.4`
+  ohne alt — seit S2 refused; alt deklarieren oder die Blöcke bleiben
+  dunkel.
+- Fanout-Stationen ohne Höhe (stations_lat/lon ohne stations_alt-
+  Direktive): alt-Slot 0.0 = fehlende Messung bis die v3-Maske (S4) das
+  Bit trägt; eine `stations_alt`-Direktive steht aus.
+- gm-Barrier-Slot: absent → 0.0-Pad im f32-Record (kein Lensing-Term)
+  bis die v3-Präsenz-Maske (S4) es als Bit trägt.
 
 τ-Gate (9190), Force-Gate (5268), SI-Gate (9321), parse_star_record
 plx>0-Gate, DASTCOM accel/speed-Gates (2093/2226), cometels H=null,
