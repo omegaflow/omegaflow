@@ -437,6 +437,21 @@ jobs:
                  --title "flatten: chandra_csc returned void" \
                  --body "chandra_csc compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
                  --label health
+      - name: Compile NVSS 1.4 GHz radio catalog and upload to CDN
+        continue-on-error: true
+        run: |
+          cargo run --release --bin tap_compiler -- \
+            --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
+            --table "VIII/65/nvss" \
+            --columns 'name:NVSS;ra:RAJ2000;dec:DEJ2000;flux:S1_4' \
+            --skip-null flux \
+            --async 600 --limit 2000000 \
+            --out nvss.json \
+            --ci-mode \
+            || gh issue create --repo omegaflow/omegaflow \
+                 --title "flatten: nvss returned void" \
+                 --body "nvss compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 --label health
       - name: Compile PANGAEA sediment core 758961 and upload to CDN
         continue-on-error: true
         run: |

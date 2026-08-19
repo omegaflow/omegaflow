@@ -352,6 +352,15 @@ Der Sweep liest `phi/pipeline/stage/*_converted.φ`. Stale-Specs gebannert:
 PARSER_EVALUATION_MATRIX.md + EXTRACT_TYPES.md (SUPERSEDED by
 SOURCES_V2_SPEC.md).
 
+- Kompilat-Pfad in die Zustandsmaschine holen: der Weg tap_index →
+  kernel_flatten.yml → tap_compiler → CDN → sources.φ läuft außerhalb der
+  Zustandsmaschine (SOURCE_PORT §4) — kein ledger-Eintrag, kein
+  Pfadkarten-Eintrag. Deshalb zerfleddert ein großer Katalog in Queue/
+  Metadaten/Weights/Stage, ohne je aufgelöst zu werden. Vereinheitlichung:
+  eine Kompilat-Stufe (`entdeckt → kompiliert → disponiert`) in ledger.φ +
+  Pfadkarte; `disponiert` räumt die Discovery-Reste. Berührt SOURCE_PORT.md
+  + ledger.φ + ggf. main.rs (--fish-Flag).
+
 Offen (Detail in phi/pipeline/ledger.φ):
 
 - Die Linse: Folgewelle — NASA-CMR-Keywords + GBIF-Tags downloaden,
