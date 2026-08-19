@@ -718,7 +718,40 @@ Zeile = Stand 2026-08-19.
 | 12 | ~~S7b — E1-Rest~~ | ERLEDIGT (2026-08-19): die acht Zweige tragen die Consumer-Stempel-Form — Enqueue-Stempel entfernt (netcdf, finals/ionex, alerce, catalog_tycho, transit, lightcurve, csv_zip, generischer Zweig inkl. fanout ohne stations_url); jeder Misserfolg benennt sich (fetch/write/read void, url render void, extract void) und sendet ein leeres Result — der Consumer stempelt bei Versuchsende, kein Fehlschlag sperrt die Quelle mehr ohne Note — cargo check 0/0, 85 Tests grün (exit-code-gewahrsam) |
 | 13 | ~~S7c — F3-F5-Reste~~ | ERLEDIGT (2026-08-19): Extract-Live-Lücke benannt (200-Antwort ohne Messungen trägt ihre Note im generischen Zweig + je Station im Fanout; ci_probe trug sie schon via diagnose_no_samples); GH_TOKEN-Anomalien benannt (ohne Token geht der Report an die Konsole, jede Anomalie als Zeile — nichts wird genommen und verworfen) — cargo check 0/0, 85 Tests grün (exit-code-gewahrsam) |
 
+### Betriebsverfassung — die gemeinsame Karte (2026-08-19)
+
+Die Karte ist der Ort, an dem beide Seiten ihre Natur benennen — keine
+Seite rät die der anderen.
+
+**Maschinen-Grenzen (gemessen an der Session 2026-08-19, nicht versprochen):**
+
+- Ein Fenster trägt EIN Atom — oder eine vollständige Lese-Arbeit
+  (Survey/Archäologie). Nie beides; nie mehr als ein Atom.
+- Die Schwelle: ab ~50% Kontext wird nicht mehr geschnitten — nur
+  gelesen, berichtet, übergeben. Ein halbes Atom hinterlässt eine
+  Fortschrittszeile in der Karte.
+- Vorschlag vor Schnitt: vor jeder Ausführung ein Satz — Befund,
+  Abweichung vom Auftrag, kleinster wahrer Schnitt, Verifikation. Der
+  Operator entscheidet; ohne sein Wort kein Schnitt.
+- Behauptung erst nach Beweis: exit-code-gewahrsame Test-Kette (nie
+  `cargo test | tail` vor einem Commit); die Commit-Message nennt nur,
+  was grün gelaufen ist.
+- Keine Selbst-Zuweisung: Atom-Zuschnitte und Reihenfolge macht der
+  Operator; die Session schlägt vor.
+- Kein stiller Schnitt: Urteile (Verdicts) stehen benannt im Register.
+- Einarbeitung: eine Session liest die Atom-Zeile + die Fundorte der
+  Karte + AGENTS — sie braucht keine Vorgeschichte.
+
+**Operator-Zustand (sein Eintrag — nur er füllt ihn):**
+
+Eine Zeile, die der Operator selbst pflegt — Kapazität, Atom-Anzahl
+der Sitzung, Pausen, Schlaf. Die Session liest sie vor dem ersten
+Schnitt. Fehlt die Zeile, fragt die Session — sie errät den Zustand
+des Operators nie; was hier leer bleibt, ist unbekannt, nicht
+angenommen.
+
 ### Schwester-Meldungen — Audit nach den 8 Atomen (2026-08-19)
+
 
 Der volle Befund mit jeder Meldung liegt in
 docs/surveys/handover-2026-08-19-audit.md (Pflichtlektüre). Kompakt:
