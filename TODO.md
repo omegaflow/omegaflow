@@ -709,7 +709,7 @@ Zeile = Stand 2026-08-19.
 | 6 | ~~P3 — Dedup~~ | ERLEDIGT (2026-08-19, cc8a8cc): 7 JSON-Parser → ein lib-Parser (`src/json.rs` kanonisch aus main.rs; sechs Bins migriert, main.rs-Definitionen gelöscht, `pub use` re-exportiert; zwei pro-Agenten mit zeilengenauen Reports, Architektin las die Diffs nach); Fit-Pipeline → `src/fit.rs` (beide Compiler konsumieren); Julian-Datum auf `omegaflow::lsk::days_from_civil` vereinheitlicht (mpcobs/ephemeris_compiler/cometels; die verbliebene 2440587.5 in main.rs ist die Unix-Epochen-Konstante, keine Kopie); `ci_upload` getilgt — `cdn::upload_release(tag, path)` trägt den Manifestator-Kanal, `upload_asset(path)` den Asset-Release, EINE gh-Implementierung; CDN-Base zentral — 85 Tests grün |
 | 7 | ~~P5 — GPU~~ | ERLEDIGT (2026-08-19, e599e89 + Fix 8f24118): `presence_probe` konsumiert die Mittel-Kachel des `star_cull`-Ergebnisses statt der eigenen O(N)-Stern-Schleife (identische Mathematik über `star_contrib(s, 0, 0)` — der Presence-Punkt projiziert auf die NDC-Mitte); Overflow-Full-Scan bleibt als Fallback; Dispatch-Reihenfolge cull → star_cull → probe (Kacheln desselben Frames). Der Offline-WGSL-Validierungstest fing den `star_count`-Bindungsverlust — der Fix-Commit stellt die Wahrheit her. 85 Tests grün |
 | 8 | ~~S4 — Ephemeris v3~~ | ERLEDIGT (2026-08-19): beide Compiler (ephemeris/horizons) schreiben 0x02 + u16-Präsenz-Maske nach den 12 f64 (Bit je Slot, absent = 0.0-Pad, 8-B-aligned); `neutral()` getilgt (pck.rs), `measured()` getilgt (der v2-Arm trägt die Sentinel-Semantik als Closure); Loader liest v2 UND v3 (Version data[2], v3-Maske gated die Option-Slots gm/j2/j4/radii_b/radii_c — das Bit ist die Autorität, ein gemessener 0.0 bleibt Some); Test test_parse_ephemeris_binary_v3_mask (j2-Bit gelöscht → None); Wire-Doku in AGENTS.md — 86 Tests grün |
-| 9 | S5 — Audit-Nachlese I | Welle 1 vollzogen (2026-08-19, H1-Vokabel-Reinigung: „ehrlich"/„honest" aus TODO/docs/concepts/SOURCE_PORT/aktuellen surveys ersetzt oder gestrichen — die Sache trägt; Transkripte und phi-Noten bleiben Aufzeichnungen, die H1-Meldung trägt das Wort als Verdacht). OFFEN: Welle 2 = A1 (anchor-TTL 86400, main.rs:12637), A2 (LSK-TTL 86400, 9417), E1 (origins-Stempel nach Erfolg), C1 („device samples" → „station samples", 11657), D3 (transfer_entropy n<8 → Option/Gate statt 0), F2 (Radiator-Rückdruck 17514/17633); Welle 3 = D1 (mpcobs mag-Sentinel-Verdict), D2 (color_index-Verdict), D4 (Draft-Synthese-Notenprüfung) — cargo check 0/0 + volle Suite + Commit + Häkchen |
+| 9 | ~~S5 — Audit-Nachlese I~~ | ERLEDIGT (2026-08-19): Welle 1 vollzogen (H1-Vokabel-Reinigung, bba408c — die Sache trägt; das Wort bleibt nur als Verdacht im Register); Welle 2 = A1 anchor-TTL aus dem Quellen-Register (Körper ohne eph-Quelle manifestiert nicht), A2 `NAIF_LSK_FALLBACK_TTL` benannte Konstante (86400 s = tägliche Leap-Second-Prüfung, konservativ zur Bulletin-C-Kadenz — beide Fallback-Stellen), E1 origins-Stempel erst nach Versuchsende (eph- + dastcom-Zweig: Enqueue-Stempel entfernt, Misserfolg sendet leeres Result + Note, der Consumer stempelt; die übrigen Zweige behalten den Enqueue-Stempel — S6-Erweiterung offen), C1 „station samples refused", D3 transfer_entropy → Option<f64> (n<8 = None; surrogate_threshold → Option; HUD hinter `if let (Some, Some)` — die 0 bleibt nur die gemessene 0), F2 Radiator-Rückdruck (Disconnected-Note + Audio-Send benannt); Welle 3 = D1/D2-Verdicts im Register (Urteils-Zeilen unten), D4 Notenpflicht im 9-Token-Feld-Arm (τ absent → benannte Refuse-Note) — cargo check 0/0, 86 Tests grün (exit-code-gewahrsam) |
 | 10 | S6 — Audit-Nachlese II | OFFEN (2026-08-19, Audit-Meldung): A3 (fk.rs UNITS-Default verifizieren, 272), A4 (Silverman-1e-30-Degeneration benennen, 16572), A5 (Aberration β≥c refuses, 84), D5 (v3-Maske vs. Falten: None→0.0 benennen, 3186/17439/6393), E2 (read_cache_if_fresh-Dedup, 4868), E3 (matmul-Dedup, ephemeris_compiler 193 vs fk 294), F1 (Register-Writes benennen, ~15 Stellen), F3-F5 (Noten-Register-Bindung, Extract-Live-Notiz, GH_TOKEN-Anomalien), A6 (probe_classify-τ-Herkunft), A7 (unerreichbarer unwrap_or(0), ephemeris_compiler 629) — cargo check 0/0 + volle Suite + Commit + Häkchen |
 
 ### Schwester-Meldungen — Audit nach den 8 Atomen (2026-08-19)
@@ -737,7 +737,24 @@ docs/surveys/handover-2026-08-19-audit.md (Pflichtlektüre). Kompakt:
 - C2 Register-Berichtigung (tgas-rv-Hälfte, oben vollzogen).
 - C3 tycho2 color-Slot hart 0f32 (343) — offen, Urteil steht aus.
 - D1 mpcobs mag-Sentinel 0.0 (mpcobs 74) — 0 ist physikalisch → S5 Verdict.
+  VERDICT (S5, 2026-08-19): das mpcobs-Bin hat keinen Konsumenten im
+  Archivar (Integration pending) — der 0.0-Slot bleibt Wire-Pad bis die
+  Konsum-Kette existiert; die Autorität liegt dann beim Konsumenten:
+  `mag > 0.0`-Gate (blank → kein Messwert), die Vega-Kollision (mag=0
+  ist ein physikalischer Wert) ist hiermit benannt. Ein Masken-Bit im
+  mpcobs-Format wäre der v3-Muster-Weg.
+  VERDICT (S5, 2026-08-19): das mpcobs-Bin hat keinen Konsumenten im
+  Archivar (Integration pending) — der 0.0-Slot bleibt Wire-Pad bis die
+  Konsum-Kette existiert; die Autorität liegt dann beim Konsumenten:
+  `mag > 0.0`-Gate (blank → kein Messwert), die Vega-Kollision (mag=0
+  ist ein physikalischer Wert) ist hiermit benannt. Ein Masken-Bit im
+  mpcobs-Format wäre der v3-Muster-Weg.
 - D2 color_index-0.0=Weiß-Sentinel (Protokoll v7) — v8-Frage → S5 Verdict.
+  VERDICT (S5, 2026-08-19): der 22.-f64-Slot bleibt bis v8 das
+  0.0=absent-Wire-Pad (Weiß); BP−RP=0 (A0V) kollidiert — die Kollision
+  ist benannt, die v8-Präsenz-Maske (Rats-Urteil-1-Muster) wird den
+  Farb-Slot als Bit tragen. Kein stiller Kompromiss: die Absenz bleibt
+  Weiß, die echte A0V-Farbe bleibt bis v8 unsichtbar.
 - D3 transfer_entropy n<8 → 0.0 (16578) — fehlt ≠ null-echt → S5.
 - D4 Draft-Synthese force/kernel/tau 0 (3385-3474) — Notenprüfung → S5.
 - D5 v3-Maske vs. None→0.0-Falten (3186/17439/6393) — Benennung → S6.

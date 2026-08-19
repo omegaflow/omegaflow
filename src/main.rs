@@ -1501,6 +1501,7 @@ mod archivar {
     const C_LIGHT: f64 = 299792458.0;
     const HUBBLE_H0: f64 = 70000.0 / (PARSEC_M * 1.0e6);
     const MAS_YR_TO_RAD_S: f64 = 4.84813681109536e-9 / 31557600.0;
+    const NAIF_LSK_FALLBACK_TTL: u64 = 86400;
     const STAR_FLUX_FLOOR: f64 = 1e-4;
 
     pub fn resolve_asset(rel: &str) -> std::path::PathBuf {
@@ -5776,7 +5777,13 @@ mod archivar {
                     report_physics_mismatch(f, parts[5], parts[1], &cur_url);
                     let tau: f64 = match parts[6].parse() {
                         Ok(v) if v > 0.0 => v,
-                        _ => continue,
+                        _ => {
+                            eprintln!(
+                                "field refused at {}: tau absent or not positive (τ-Gate)",
+                                parts[1]
+                            );
+                            continue;
+                        }
                     };
                     let absorption: f64 = match parts[7].parse() {
                         Ok(v) => v,
@@ -9414,7 +9421,7 @@ mod archivar {
                 "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls",
                 None,
                 &[],
-                86400,
+                NAIF_LSK_FALLBACK_TTL,
             ) {
                 lsk = omegaflow::lsk::parse(&text);
             }
@@ -10375,7 +10382,7 @@ mod archivar {
                 "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls",
                 None,
                 &[],
-                86400,
+                NAIF_LSK_FALLBACK_TTL,
             ) {
                 lsk = omegaflow::lsk::parse(&text);
             }
@@ -11654,7 +11661,7 @@ mod archivar {
         });
         if declared_body.is_none() {
             eprintln!(
-                "native body undeclared — device samples refused (declare via #body=<body>,<lat>,<lon>,<alt>)"
+                "native body undeclared — station samples refused (declare via #body=<body>,<lat>,<lon>,<alt>)"
             );
         }
         let loaded = load_sources();
@@ -12064,14 +12071,6 @@ mod archivar {
                         None => continue,
                     };
                     if cache_fresh(&tmp_path, src_clone.ttl) {
-                        archive.origins.entry(origin).or_insert(OriginState {
-                            fetched: now,
-                            prev_epoch: now,
-                            prev_abs: [0.0; 3],
-                            prev_motion: None,
-                            resid_ema: 0.0,
-                            has_prev: false,
-                        });
                         let ftx = fetch_tx.clone();
                         let lsk_c = lsk.clone();
                         let now_c = now;
@@ -12090,6 +12089,21 @@ mod archivar {
                                     planets: None,
                                     curves: None,
                                 });
+                            } else {
+                                eprintln!(
+                                    "ephemeris {}: extract void — the body stays absent, retry in ttl/Φ",
+                                    src_clone.body.as_deref().unwrap_or("?")
+                                );
+                                let _ = ftx.send(FetchResult {
+                                    source_idx: src_idx,
+                                    channels: Vec::new(),
+                                    eph_update: None,
+                                    asteroid_hash: None,
+                                    star_hash: None,
+                                    occluders: None,
+                                    planets: None,
+                                    curves: None,
+                                });
                             }
                         });
                     }
@@ -12102,25 +12116,32 @@ mod archivar {
                     let src_idx = i;
                     let src_ttl = src_clone.ttl;
                     let cadence_c = cadence;
-                    archive.origins.entry(origin).or_insert(OriginState {
-                        fetched: now,
-                        prev_epoch: now,
-                        prev_abs: [0.0; 3],
-                        prev_motion: None,
-                        resid_ema: 0.0,
-                        has_prev: false,
-                    });
                     thread::spawn(move || {
                         let name = url.rsplit('/').next().unwrap_or("catalog").to_string();
                         let tmp_path = format!("/tmp/omegaflow_catalog_{}", name);
+                        let mut fetched = true;
                         if !cache_fresh(&tmp_path, src_ttl) {
-                            let bytes = match fetch_raw_bytes(&url, src_ttl) {
-                                Some(b) => b,
-                                None => return,
+                            fetched = match fetch_raw_bytes(&url, src_ttl) {
+                                Some(bytes) => std::fs::write(&tmp_path, &bytes).is_ok(),
+                                None => false,
                             };
-                            if std::fs::write(&tmp_path, &bytes).is_err() {
-                                return;
-                            }
+                        }
+                        if !fetched {
+                            eprintln!(
+                                "catalog {}: fetch void — the catalog stays absent, retry in ttl/Φ",
+                                url
+                            );
+                            let _ = ftx.send(FetchResult {
+                                source_idx: src_idx,
+                                channels: Vec::new(),
+                                eph_update: None,
+                                asteroid_hash: None,
+                                star_hash: None,
+                                occluders: None,
+                                planets: None,
+                                curves: None,
+                            });
+                            return;
                         }
                         let bytes = match std::fs::read(&tmp_path) {
                             Ok(b) => b,
@@ -12626,6 +12647,14 @@ mod archivar {
                 for (name, eph) in archive.body_ephemerides.iter() {
                     if let Some(props) = &eph.props {
                         if props.radius_m > 0.0 {
+                            let Some(body_ttl) = archive
+                                .sources
+                                .iter()
+                                .find(|s| s.body.as_deref() == Some(name.as_str()))
+                                .map(|s| s.ttl as f64)
+                            else {
+                                continue;
+                            };
                             let frame = Frame::Barycenter {
                                 body_name: name.clone(),
                                 scale: 1.0,
@@ -12634,7 +12663,7 @@ mod archivar {
                                 if let Some(mut osc) = anchor(
                                     &channel,
                                     &sensor,
-                                    86400.0,
+                                    body_ttl,
                                     Some(archive.sources.len() as u32),
                                     Some(&frame),
                                     None,
@@ -16572,10 +16601,10 @@ mod mathematikerin {
         (1.06 * var.sqrt().max(1e-30) * n.powf(-0.2)).max(1e-30)
     }
 
-    pub fn transfer_entropy(x: &[f32], y: &[f32]) -> f64 {
+    pub fn transfer_entropy(x: &[f32], y: &[f32]) -> Option<f64> {
         let n = x.len();
         if n < 8 {
-            return 0.0;
+            return None;
         }
         let hx = silverman(x);
         let hy = silverman(y);
@@ -16609,7 +16638,7 @@ mod mathematikerin {
             let p2x = k2x / m as f64;
             te += ((p3 * p1) / (p2xy * p2x).max(1e-300)).ln();
         }
-        te / m as f64
+        Some(te / m as f64)
     }
 
     fn shuffle_series(v: &[f32], rng: &mut u64) -> Vec<f32> {
@@ -16624,17 +16653,22 @@ mod mathematikerin {
         out
     }
 
-    pub fn surrogate_threshold(x: &[f32], y: &[f32], seed: u64) -> f64 {
+    pub fn surrogate_threshold(x: &[f32], y: &[f32], seed: u64) -> Option<f64> {
         let mut vals: Vec<f64> = Vec::with_capacity(10);
         let mut rng = seed.wrapping_add(0x9e3779b97f4a7c15);
         for _ in 0..10 {
             let ys = shuffle_series(y, &mut rng);
-            vals.push(transfer_entropy(x, &ys));
+            if let Some(te) = transfer_entropy(x, &ys) {
+                vals.push(te);
+            }
+        }
+        if vals.len() < 2 {
+            return None;
         }
         let n = vals.len() as f64;
         let mean = vals.iter().sum::<f64>() / n;
         let var = vals.iter().map(|&v| (v - mean) * (v - mean)).sum::<f64>() / n;
-        mean + 2.0 * var.sqrt()
+        Some(mean + 2.0 * var.sqrt())
     }
 
     pub fn pack_window(records: &[Record], presence: [f64; 3]) -> PackedWindow {
@@ -17511,7 +17545,9 @@ mod mathematikerin {
 
     impl Radiator for MathematikerinRadiator {
         fn accept(&mut self, field: Arc<Buffer>) {
-            let _ = self.tx.try_send(field);
+            if let Err(mpsc::TrySendError::Disconnected(_)) = self.tx.try_send(field) {
+                eprintln!("mathematikerin channel closed — field buffer dropped");
+            }
         }
     }
 
@@ -17630,7 +17666,9 @@ mod mathematikerin {
                 }
             }
             if !list.is_empty() {
-                let _ = self.tx.send(list);
+                if self.tx.send(list).is_err() {
+                    eprintln!("audio channel closed — samples dropped");
+                }
             }
         }
     }
@@ -19338,27 +19376,30 @@ mod mathematikerin {
                     }
                     let in_te = transfer_entropy(&xs, &ys);
                     let threshold = surrogate_threshold(&xs, &ys, self.ring_gen);
-                    te_opt = Some((in_te, threshold));
-                    let delta_te = in_te - self.prev_in_te;
-                    self.prev_in_te = in_te;
-                    self.ticks_since_turn += 1;
-                    if self.direction > 0 && delta_te < -threshold {
-                        self.natural_latency_ticks = self.ticks_since_turn.max(1);
-                        self.ticks_since_turn = 0;
-                        self.direction = -1;
+                    if let (Some(in_te), Some(threshold)) = (in_te, threshold) {
+                        te_opt = Some((in_te, threshold));
+                        let delta_te = in_te - self.prev_in_te;
+                        self.prev_in_te = in_te;
+                        self.ticks_since_turn += 1;
+                        if self.direction > 0 && delta_te < -threshold {
+                            self.natural_latency_ticks = self.ticks_since_turn.max(1);
+                            self.ticks_since_turn = 0;
+                            self.direction = -1;
+                        }
+                        if self.direction < 0
+                            && (delta_te > threshold || self.field_permeability <= PERM_GROUND)
+                        {
+                            self.natural_latency_ticks = self.ticks_since_turn.max(1);
+                            self.ticks_since_turn = 0;
+                            self.direction = 1;
+                        }
+                        let target = (in_te.max(0.0)
+                            / (in_te.max(0.0) + threshold + PERM_GROUND as f64))
+                            as f32;
+                        let alpha = 1.0 - (-1.0 / self.natural_latency_ticks.max(1) as f32).exp();
+                        self.field_permeability += (target - self.field_permeability) * alpha;
+                        self.field_permeability = self.field_permeability.clamp(PERM_GROUND, 1.0);
                     }
-                    if self.direction < 0
-                        && (delta_te > threshold || self.field_permeability <= PERM_GROUND)
-                    {
-                        self.natural_latency_ticks = self.ticks_since_turn.max(1);
-                        self.ticks_since_turn = 0;
-                        self.direction = 1;
-                    }
-                    let target =
-                        (in_te.max(0.0) / (in_te.max(0.0) + threshold + PERM_GROUND as f64)) as f32;
-                    let alpha = 1.0 - (-1.0 / self.natural_latency_ticks.max(1) as f32).exp();
-                    self.field_permeability += (target - self.field_permeability) * alpha;
-                    self.field_permeability = self.field_permeability.clamp(PERM_GROUND, 1.0);
                 } else {
                     let omega_sum: f32 = self.probe_omega.iter().sum();
                     let delta = omega_sum - self.prev_omega_sum;
@@ -20022,7 +20063,7 @@ mod mathematikerin {
             for t in 0..n - 1 {
                 x[t + 1] = 0.5 * x[t] + 0.6 * y[t];
             }
-            let te = transfer_entropy(&x, &y);
+            let te = transfer_entropy(&x, &y).unwrap();
             assert!(te > 0.05, "causal TE should be positive, got {}", te);
         }
 
@@ -20035,7 +20076,7 @@ mod mathematikerin {
                 y[t] = (t as f32 * 0.7).sin();
                 x[t] = ((t as u64).wrapping_mul(2654435761) >> 24) as f32 / 255.0;
             }
-            let te = transfer_entropy(&x, &y);
+            let te = transfer_entropy(&x, &y).unwrap();
             assert!(
                 te.abs() < 0.05,
                 "independent TE should be near zero, got {}",
@@ -20054,8 +20095,8 @@ mod mathematikerin {
             for t in 0..n - 1 {
                 x[t + 1] = 0.5 * x[t] + 0.6 * y[t];
             }
-            let te = transfer_entropy(&x, &y);
-            let thr = surrogate_threshold(&x, &y, 42);
+            let te = transfer_entropy(&x, &y).unwrap();
+            let thr = surrogate_threshold(&x, &y, 42).unwrap();
             assert!(
                 thr < te,
                 "surrogate threshold {} should be below causal TE {}",

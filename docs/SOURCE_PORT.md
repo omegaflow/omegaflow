@@ -226,6 +226,20 @@ Recherche-Stand nennt (Alternativen geprüft, Fund: keine).
   (tau = ttl/10). **Fällt**: `source`, `method`, `body` (POST), `pos`,
   unbekannte Direktiven — solche Blöcke sind `park/`-Kandidaten mit
   Gap-Verweis (post_body-Migration ist offene Arbeit).
+- **Session 2026-08-19 — Teleskop-Endpoints (Jina + Wayback verifiziert,
+  volle Log §13):** `nhsa.esac.esa.int` tot → Herschel-Archiv lebt unter
+  `archives.esac.esa.int/hsa` (HAIO: `/hsa/aio`); `svom.nscs.ac.cn` tot →
+  Datenzugang `svom.ac.cn` (NSSDC), GRB-Notices via GCN
+  `gcn.nasa.gov/missions/svom` + FSC `fsc.svom.org/alerts`;
+  `www.lhaaso.ac.cn` tot → Site `english.ihep.cas.cn/lhaaso`, Daten-Seite
+  `/lhaaso/pdl` (öffentlicher Bulk-Download unverifiziert → pending);
+  CHIME-FRB-API retired → CANFAR-DOIs; NRAO `archive.nrao.edu`-TAP
+  retired → REST `data.nrao.edu/archive-service/restapi_*`. Erreichbar
+  (kein dead): MAGIC-Portal `magic.mpp.mpg.de/public/public-data/`
+  (FITS + Low-level-Open-Data — „kein öffentliches Portal“ war falsch),
+  HAWC `data.hawc-observatory.org` (Datasets), uGMRT
+  `naps.ncra.tifr.res.in` (NAPS, CAPTCHA), AGILE `agile.ssdc.asi.it`
+  (MMIA, AGILE-LV3, Kataloge 2AGL/MCAL-GRB/TGF).
 
 ## 10. Secrets
 
@@ -245,3 +259,148 @@ UPPERCASE-Env-Vars aufgelöst; absent → void + stderr.
   Prozedur — kein halber Port.
 - 0 honored: eine void-Diagnose ist eine vollständige Disposition, kein
   Fehler. Absent ist erst nach Recherche absent (`ausstehend` bis dahin).
+
+## 12. Teleskop-Inventar (Session 2026-08-19)
+
+Recherche-Auftrag: alle aktiven terrestrischen + extraterrestrischen
+Teleskope mit ihren APIs. Status-Legende: ✓ aktiv in `sources.φ` · ▣
+Kandidat in `phi/pipeline/queue/master.φ` · ⛔ in `blocked_sources.φ` ·
+● offen/unkuratiert · `pending` = Detail unverifiziert — der nächste
+Schritt ist Probe/Klassifikation am vorliegenden Befund, keine neue
+Adress-Recherche (0 honored). Force-Gate-Schnellurteil: alle
+elektromagnetischen Teleskope messen `em`; GW-Detektoren `gravity`;
+CR/ν-Detektoren (Auger, TA, IceCube, KM3NeT, Super-K/JUNO) — Teilchen-
+Kanal: Registry-Frage, `pending` (die 9er-Force-Registry kennt kein
+Teilchen-Medium; hier nicht entschieden).
+
+### 12.1 Weltraum — Röntgen/Gamma
+
+| Mission | Endpoint | Status |
+|---------|----------|--------|
+| Chandra | Chaser/Browse (`cxc.cfa.harvard.edu`) | ● |
+| XMM-Newton | XSA-TAP (`nxsa.esac.esa.int`) | ● |
+| NuSTAR | HEASARC-Browse | ● |
+| Swift | ✓ Swift-GRB aktiv; weiteres via HEASARC | ✓/● |
+| NICER | HEASARC | ● |
+| MAXI | `maxi.riken.jp` / DARTS | ● |
+| IXPE | HEASARC | ● |
+| XRISM | DARTS | ⛔ |
+| Einstein Probe | ESA-AMA-TAP + GCN | ● Lücke |
+| SVOM | `svom.ac.cn` + GCN (§13) | ● |
+| Fermi | FSSC-LAT | ⛔ |
+| INTEGRAL | ISDC | ● |
+| AGILE | `agile.ssdc.asi.it` (§13) | ● |
+| AstroSat | ISSDC AstroBrowse | ● |
+| HXMT/Insight | `hsuc.ihep.ac.cn` / DARTS | ● |
+| eROSITA | `erosita.mpe.mpg.de`, DR2 (31.07.2026) | ● Lücke |
+
+### 12.2 Weltraum — Optik/IR/Astrometrie
+
+| Mission | Endpoint | Status |
+|---------|----------|--------|
+| Gaia | ESA-TAP + ARI; `dr3_stars.bin` | ✓ |
+| JWST | MAST-CAOM-TAP (7 `mast_jwst_*` im Queue, §14) | ▣ |
+| HST | MAST-CAOM-TAP | ● |
+| TESS | MAST | ✓ |
+| Euclid | Cosmos-TAP | ● Lücke |
+| SPHEREx | IRSA-TAP | ● Lücke |
+| CHEOPS | ESA-AMA-TAP | ● Lücke |
+| Planck/Herschel-Legacy | PLA/IRSA; HSA-Umzug §13 | ● |
+| Roman | Start 30.08.2026 — noch kein Bestand | ● |
+| PLATO | Start 2027 — kein Bestand | ● |
+
+### 12.3 Weltraum — Sonne/Heliosphäre
+
+SOHO (VSO) ● · SDO (VSO/JSOC) ● · Parker ✓ (SPDF-HAPI aktiv) ·
+Solar Orbiter ✓ Ephemeride aktiv, SOAR ● · STEREO (VSO) ● · Hinode
+(VSO/DARTS) ● · IRIS (LMSAL/VSO) ● · Aditya-L1 (ISSDC) ● · GOLD ● ·
+GOES/SWPC ✓ aktiv.
+
+### 12.4 Boden — Optik/IR
+
+Rubin/LSST ⛔ (TAP `data.lsst.cloud`, OAuth) · DESI ● · ESO
+VLT/VISTA/VST ● (`archive.eso.org/tap_obs` + `tap_cat` — Lücke) · Subaru
+SMOKA ● · Keck KOA-TAP ● (Lücke) · Gemini ▣ (`archive.gemini.edu`,
+master.φ 40567) · NOIRLab AstroArchive ● · Pan-STARRS ● (Katalog-API —
+Lücke) · ZTF ✓ (ALeRCE/Lasair aktiv; IRSA ●) · ASAS-SN ● (Skynet) ·
+ATLAS ● (Forced-Photometrie `fallingstar.com` — Lücke) · SDSS ✓,
+SDSS-V ● · LAMOST DR11 ● (Lücke) · 2MASS/WISE ⛔ (Gator/allwise).
+
+### 12.5 Radio
+
+ALMA ⛔ (TAP) · NRAO VLA/GBT/VLBA: alter TAP tot, neuer REST
+`data.nrao.edu/archive-service/restapi_*` ● · MeerKAT/SARAO ●
+(`archive.sarao.ac.za/tap/` — Lücke) · CASDA ⛔ (ATCA/ASKAP/Parkes) ·
+LOFAR ● (LTA) · FAST ● · CHIME: FRB-API tot → CANFAR-DOIs ● · HERA ● ·
+MWA ● (ASVO) · uGMRT ● (NAPS, §13) · EVN/JIVE ● · e-MERLIN ● · MOJAVE ✓.
+
+### 12.6 Hochenergie/CR/ν/GW + Sonne (Boden)
+
+H.E.S.S. ● (Endpoint offen — nicht im Befund) · MAGIC ● (Portal §13) ·
+VERITAS ● (Endpoint offen — nicht im Befund) · HAWC ● (Datasets §13) ·
+LHAASO ● (Site §13; Bulk-Download unverifiziert — Klassifikation am
+Befund) · CTAO ● · Pierre Auger ● (`opendata.auger.org`) · Telescope
+Array ● · IceCube ● (Daten-Releases) · KM3NeT ● · Super-K/JUNO ● ·
+LIGO/Virgo/KAGRA ✓ (GraceDB aktiv) · GONG ⛔ · DKIST ●
+(`api.dkistdc.nso.edu`, Umzug von `api.nso.edu`).
+
+### 12.7 Größte Lücken (Befund)
+
+SPHEREx IRSA-TAP (offen), eROSITA DR2, ESA-AMA-TAP (Einstein Probe +
+CHEOPS), Euclid-TAP, ESO-TAP, ALMA-TAP, MeerKAT-TAP, Rubin-TAP,
+Pan-STARRS-Katalog-API, ATLAS-Forced-Photometrie, Keck-TAP, LAMOST DR11.
+Stale Register-Einträge: NRAO-TAP (retired), CHIME-FRB-API (retired).
+
+## 13. Jina-Verifikation (Session 2026-08-19)
+
+Auftrag: nicht erreichbare Adressen mit Jina (Key in `.secrets.local`)
+oder Web-Archive-Recherche prüfen. Methode: in der Session war kein
+Bash-Tool verfügbar → anonyme `https://r.jina.ai/<url>`-Route via Fetch
+(der Bearer-Header konnte nicht mitgeschickt werden; das eingebaute
+`--probe`-Rezept mit Key steht in §9). 422 = Domain auch bei Jina
+unauflösbar. Wayback-Fallbacks: `web.archive.org/web/2026/<url>` (404 =
+kein Snapshot → Websearch löste die Domänen-Frage). Key:
+`.secrets.local:46` (`JINA_API_KEY`); Muster: `src/main.rs:11405-11421`.
+
+| Adresse | Befund | Korrektur/Neufund |
+|---------|--------|-------------------|
+| `magic.mpp.mpg.de` | erreichbar | Portal existiert: `/public/public-data/` (FITS, Low-level-Open-Data/VO) — „kein öffentliches Portal“ war falsch |
+| `data.hawc-observatory.org` | erreichbar | „Datasets“-Seite; öffentliche Datensätze + Arbeitsgruppen-Kontakt |
+| `naps.ncra.tifr.res.in` | erreichbar | NAPS (NCRA Archive and Proposal System), JS-App, CAPTCHA |
+| `agile.ssdc.asi.it` | erreichbar | SSDC-Datenzentrum live: MMIA-Archiv, AGILE-LV3, 2AGL/MCAL-GRB/TGF |
+| `mast.stsci.edu/docs` | erreichbar | reines JS-SPA — für den Reader inhaltsleer; MAST-API-Doku liegt anderswo |
+| `nhsa.esac.esa.int` | tot (422) | HSA lebt unter `archives.esac.esa.int/hsa` (HAIO: `/hsa/aio`) — JS-App |
+| `www.lhaaso.ac.cn` | tot (422, Wayback 404) | offizielle Site `english.ihep.cas.cn/lhaaso`; Daten-/Code-Seite `/lhaaso/pdl` |
+| `svom.nscs.ac.cn` | tot (422, Wayback 404) | Datenzugang laut NSSDC: `svom.ac.cn`; GRB-Notices via GCN `gcn.nasa.gov/missions/svom` (FSC: `fsc.svom.org/alerts`) |
+
+## 14. JWST-MCT-Recherche (Session 2026-08-19)
+
+Anlass: STScI-Artikel — Aufruf für JWST-Multi-Cycle-Treasury (MCT)
+White Papers (>300 h, Frist 4.11.2026, jedes Thema). Auftrag: was misst
+das JWST, das es als APIs gibt, die das Register noch nicht hat.
+
+- Instrumente: NIRCam (Imaging 0,6–5 µm), NIRSpec (Multi-Objekt-Spektroskopie, MSAs), MIRI (5–28 µm), NIRISS (WFSS/SOSS), FGS.
+- API-Landschaft: MAST CAOM-TAP (EDP-API, JWST-Metadata-API, HLSP, z.MAST), NExScI-TAP (`ps`/`pscomppars`, Atmospheric Spectroscopy Table AST, NExoList, Transit-Service), ESA JWST TAP, VizieR-TAP.
+- Lücken: AST >1500 Spektren (hunderte JWST) = größte; JWST-Deep-Field-Photometrie/Redshifts (JADES DR5, COSMOS2025 `J/A+A/704/A339`); NExoList; EDP-Telemetrie; Metadaten geplanter Beobachtungen.
+- Priorisierung: P0 AST-Spektren; P1 Deep-Field-Photometrie/Redshifts; P2 EDP/Metadaten; P3 NExoList.
+- Disposition: „Nur Recherche, nichts umsetzen“ — keine Register-Schreibarbeit; die 7 `mast_jwst_*`-CAOM-Blöcke im Queue (master.φ ab 9059) sind älterer Bestand. Port-Entscheid P0 ausstehend.
+
+## 15. Offene Posten aus der Session (hier registriert — kein Datei-Artefakt entstand)
+
+Die Adressen sind recherchiert (Bestand §12–§13). Was aussteht, ist
+Port-Arbeit an den vorliegenden Befunden — Block-Drafts, `--probe`,
+Disposition — keine erneute Adress-Recherche.
+
+1. SPHEREx IRSA-TAP — Block-Draft bauen (Adresse liegt vor).
+2. eROSITA DR2 (31.07.2026) — Block-Draft bauen.
+3. ESA-AMA-TAP (Einstein Probe, CHEOPS) — Block-Draft bauen.
+4. Euclid-TAP — Block-Draft bauen.
+5. ESO-TAP (`tap_obs`/`tap_cat`) — Block-Draft bauen.
+6. ALMA-TAP, MeerKAT-TAP, Rubin-TAP, Keck-TAP, Pan-STARRS, ATLAS-Forced, LAMOST DR11 — Block-Drafts bauen.
+7. NRAO: Register-Eintrag umschreiben auf REST `data.nrao.edu/archive-service/restapi_*` (Adresse recherchiert).
+8. CHIME: Register-Eintrag umschreiben auf CANFAR-DOIs (Adresse recherchiert).
+9. SVOM: Block-Draft aus `svom.ac.cn` + GCN-Notices (live GRB-Alerts, analog Swift-GRB).
+10. LHAASO: `english.ihep.cas.cn/lhaaso/pdl` ist der Befund — offen ist nur die Klassifikation: öffentlicher Bulk-Download → Messung, Paper-only → Decline (§8). Kein neuer Recherche-Schritt.
+11. MAGIC/HAWC: `--probe` auf die Portal-URLs (§13) — mechanisch, kein Recherche-Schritt.
+12. Herschel: HSA-Umzug in Katalog/Register nachziehen (Adresse `archives.esac.esa.int/hsa` liegt vor).
+13. JWST P0–P3: Port-Entscheid (§14).
