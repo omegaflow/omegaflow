@@ -1445,8 +1445,9 @@ fn main() {
             let part_path = format!("{}.part{:.4}", out_path_band, a);
             let _ = std::fs::remove_file(&part_path);
         }
-        if ci_mode && !out_path_band.is_empty() {
-            let _ = upload_asset(&out_path_band);
+        if ci_mode && !out_path_band.is_empty() && !upload_asset(&out_path_band) {
+            eprintln!("upload: {} did not reach the CDN", out_path_band);
+            std::process::exit(1);
         }
         return;
     }
@@ -1550,8 +1551,9 @@ fn main() {
         out_path,
         buf.len()
     );
-    if ci_mode {
-        let _ = upload_asset(&out_path);
+    if ci_mode && !upload_asset(&out_path) {
+        eprintln!("upload: {} did not reach the CDN", out_path);
+        std::process::exit(1);
     }
 }
 

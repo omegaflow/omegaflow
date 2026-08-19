@@ -203,7 +203,7 @@ mod tests {
             (COL_PMRA, "0"),
             (COL_PMDEC, "0"),
             (COL_PLX, "0"),
-            (COL_TMAG, "0"),
+            (COL_TMAG, "11.2"),
         ]);
         let rec = record_bytes(&line).unwrap();
         let plx = f32::from_le_bytes(rec[32..36].try_into().unwrap());

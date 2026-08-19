@@ -417,7 +417,8 @@ fn main() {
         buf.len(),
         out_path
     );
-    if ci_mode {
-        let _ = upload_asset(&out_path);
+    if ci_mode && !upload_asset(&out_path) {
+        eprintln!("upload: {} did not reach the CDN", out_path);
+        std::process::exit(1);
     }
 }

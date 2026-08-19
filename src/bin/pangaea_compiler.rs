@@ -247,8 +247,9 @@ fn main() {
     }
     if let Some(path) = out {
         let _ = fs::write(&path, buf);
-        if ci_mode {
-            let _ = upload_asset(&path);
+        if ci_mode && !upload_asset(&path) {
+            eprintln!("upload: {} did not reach the CDN", path);
+            std::process::exit(1);
         }
         eprintln!("pangaea: {} rows → {} · {}", total, path, meta);
     } else {

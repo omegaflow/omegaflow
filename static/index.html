@@ -285,7 +285,10 @@ fn fold_eff(d_mag: f32, raw: f32, t: f32, ttl: f32, force_type: u32, advective_v
     let temporal = abs(vp.presence.w - t);
     var retarded = select(temporal - d_mag / v, temporal, v == 0.0 || d_mag == 0.0);
     retarded = max(retarded, 0.0);
-    return raw * exp(-retarded / max(ttl, 1e-9));
+    if (ttl <= 0.0) {
+        return 0.0;
+    }
+    return raw * exp(-retarded / ttl);
 }
 @group(0) @binding(0) var<storage, read> field: array<vec4f>;
 @group(0) @binding(1) var<storage, read> props: array<vec4f>;

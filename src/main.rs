@@ -37,7 +37,10 @@ fn fold_eff(d_mag: f32, raw: f32, t: f32, ttl: f32, force_type: u32, advective_v
     let temporal = abs(vp.presence.w - t);
     var retarded = select(temporal - d_mag / v, temporal, v == 0.0 || d_mag == 0.0);
     retarded = max(retarded, 0.0);
-    return raw * exp(-retarded / max(ttl, 1e-9));
+    if (ttl <= 0.0) {
+        return 0.0;
+    }
+    return raw * exp(-retarded / ttl);
 }
 @group(0) @binding(0) var<storage, read> field: array<vec4f>;
 @group(0) @binding(1) var<storage, read> props: array<vec4f>;
@@ -96,7 +99,14 @@ fn ft_ref(ra: vec4f, rb: vec4f, rc: vec4f, ft: u32) -> f32 {
 }
 
 fn ft_ref_floor(ra: vec4f, rb: vec4f, rc: vec4f, ft: u32) -> f32 {
-    return max(ft_ref(ra, rb, rc, ft), 1e-30);
+    return max(ft_ref(ra, rb, rc, ft), 0.0);
+}
+
+fn lum_ratio(x: f32, r: f32) -> f32 {
+    if (r > 0.0) {
+        return x / r;
+    }
+    return 0.0;
 }
 
 struct VOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f };
@@ -127,32 +137,50 @@ fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
     return rgb01 + vec3f(m);
 }
 
-fn lerp_color(x0: f32, t0: f32, x1: f32, t1: f32, ci: f32) -> f32 {
-    return mix(t0, t1, (ci - x0) / (x1 - x0));
-}
-
 fn bp_rp_to_teff(ci: f32) -> f32 {
-    if (ci <= -0.120) { return 10700.0; }
-    if (ci <= -0.037) { return lerp_color(-0.120, 10700.0, -0.037, 9700.0, ci); }
-    if (ci <= 0.005) { return lerp_color(-0.037, 9700.0, 0.005, 9300.0, ci); }
-    if (ci <= 0.110) { return lerp_color(0.005, 9300.0, 0.110, 8600.0, ci); }
-    if (ci <= 0.194) { return lerp_color(0.110, 8600.0, 0.194, 8100.0, ci); }
-    if (ci <= 0.320) { return lerp_color(0.194, 8100.0, 0.320, 7590.0, ci); }
-    if (ci <= 0.490) { return lerp_color(0.320, 7590.0, 0.490, 6820.0, ci); }
-    if (ci <= 0.694) { return lerp_color(0.490, 6820.0, 0.694, 6180.0, ci); }
-    if (ci <= 0.850) { return lerp_color(0.694, 6180.0, 0.850, 5660.0, ci); }
-    if (ci <= 0.983) { return lerp_color(0.850, 5660.0, 0.983, 5270.0, ci); }
-    if (ci <= 1.100) { return lerp_color(0.983, 5270.0, 1.100, 5100.0, ci); }
-    if (ci <= 1.340) { return lerp_color(1.100, 5100.0, 1.340, 4600.0, ci); }
-    if (ci <= 1.530) { return lerp_color(1.340, 4600.0, 1.530, 4300.0, ci); }
-    if (ci <= 1.840) { return lerp_color(1.530, 4300.0, 1.840, 3850.0, ci); }
-    if (ci <= 2.230) { return lerp_color(1.840, 3850.0, 2.230, 3560.0, ci); }
-    if (ci <= 2.940) { return lerp_color(2.230, 3560.0, 2.940, 3210.0, ci); }
-    if (ci <= 3.350) { return lerp_color(2.940, 3210.0, 3.350, 3060.0, ci); }
-    if (ci <= 4.160) { return lerp_color(3.350, 3060.0, 4.160, 2810.0, ci); }
-    if (ci <= 4.650) { return lerp_color(4.160, 2810.0, 4.650, 2680.0, ci); }
-    if (ci <= 5.100) { return lerp_color(4.650, 2680.0, 5.100, 2420.0, ci); }
-    return 2420.0;
+    const locus: array<vec2f, 31> = array<vec2f, 31>(
+        vec2f(-0.120, 10700.0),
+        vec2f(-0.037, 9700.0),
+        vec2f(0.005, 9300.0),
+        vec2f(0.068, 8800.0),
+        vec2f(0.110, 8600.0),
+        vec2f(0.194, 8100.0),
+        vec2f(0.320, 7590.0),
+        vec2f(0.377, 7220.0),
+        vec2f(0.490, 6820.0),
+        vec2f(0.587, 6550.0),
+        vec2f(0.694, 6180.0),
+        vec2f(0.784, 5930.0),
+        vec2f(0.823, 5770.0),
+        vec2f(0.850, 5660.0),
+        vec2f(0.900, 5480.0),
+        vec2f(0.983, 5270.0),
+        vec2f(1.100, 5100.0),
+        vec2f(1.340, 4600.0),
+        vec2f(1.530, 4300.0),
+        vec2f(1.730, 3990.0),
+        vec2f(1.840, 3850.0),
+        vec2f(2.090, 3660.0),
+        vec2f(2.230, 3560.0),
+        vec2f(2.500, 3430.0),
+        vec2f(2.940, 3210.0),
+        vec2f(3.350, 3060.0),
+        vec2f(3.710, 2930.0),
+        vec2f(4.160, 2810.0),
+        vec2f(4.650, 2680.0),
+        vec2f(4.860, 2570.0),
+        vec2f(5.100, 2420.0),
+    );
+    if (ci <= locus[0].x) { return locus[0].y; }
+    for (var i = 1u; i < 31u; i = i + 1u) {
+        let b = locus[i];
+        if (ci <= b.x) {
+            let a = locus[i - 1u];
+            let t = (ci - a.x) / max(b.x - a.x, 1e-6);
+            return mix(a.y, b.y, t);
+        }
+    }
+    return locus[30].y;
 }
 
 fn teff_to_rgb(teff: f32) -> vec3f {
@@ -569,9 +597,6 @@ fn source_contrib(j: u32, pixel_rel: vec3f) -> vec4f {
         }
     }
     var contrib = val * sk;
-    if (ft == 1u) {
-        contrib *= exp2(-20.0);
-    }
     return vec4f(contrib, f32(ft), mg.z, mt.y);
 }
 
@@ -657,7 +682,7 @@ fn star_cull(@builtin(global_invocation_id) gid: vec3u) {
             let f = u32(c.y);
             if (f < 9u) {
                 omega[f] += c.x;
-                let lum = abs(c.x) / ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, f);
+                let lum = lum_ratio(abs(c.x), ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, f));
                 if (f == 0u) { rgb += temperature_to_rgb(c.z) * lum; }
                 else { rgb += hsl_to_rgb(fract(log2(max(c.w, 1.0)) / 16.0), 1.0, 0.5) * lum; }
             }
@@ -674,7 +699,7 @@ fn star_cull(@builtin(global_invocation_id) gid: vec3u) {
             let f = u32(c.y);
             if (f < 9u) {
                 omega[f] += c.x;
-                let lum = abs(c.x) / ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, f);
+                let lum = lum_ratio(abs(c.x), ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, f));
                 if (f == 0u) { rgb += temperature_to_rgb(c.z) * lum; }
                 else { rgb += hsl_to_rgb(fract(log2(max(c.w, 1.0)) / 16.0), 1.0, 0.5) * lum; }
             }
@@ -686,7 +711,7 @@ fn star_cull(@builtin(global_invocation_id) gid: vec3u) {
     if (atomicLoad(&star_tiles[0u]) != 0u) {
         for (var s = 0u; s < star_count; s = s + 1u) {
             let c = star_contrib(s, px_ndc, py_ndc);
-            let lum = abs(c.x) / ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, 0u);
+            let lum = lum_ratio(abs(c.x), ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, 0u));
             omega[0] += c.x;
             rgb += temperature_to_rgb(c.z) * lum;
         }
@@ -699,21 +724,21 @@ fn star_cull(@builtin(global_invocation_id) gid: vec3u) {
         let tbase = tile * STAR_TILE_SLOTS;
         for (var k = 0u; k < tcount; k = k + 1u) {
             let c = star_contrib(atomicLoad(&star_tiles[1u + nt + tbase + k]), px_ndc, py_ndc);
-            let lum = abs(c.x) / ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, 0u);
+            let lum = lum_ratio(abs(c.x), ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, 0u));
             omega[0] += c.x;
             rgb += temperature_to_rgb(c.z) * lum;
         }
     }
 
-    let omega_total = (abs(omega[0]) / ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, 0u)
-        + abs(omega[1]) / ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, 1u)
-        + abs(omega[2]) / ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, 2u)
-        + abs(omega[3]) / ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, 3u)
-        + abs(omega[4]) / ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, 4u)
-        + abs(omega[5]) / ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, 5u)
-        + abs(omega[6]) / ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, 6u)
-        + abs(omega[7]) / ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, 7u)
-        + abs(omega[8]) / ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, 8u))
+    let omega_total = (lum_ratio(abs(omega[0]), ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, 0u))
+        + lum_ratio(abs(omega[1]), ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, 1u))
+        + lum_ratio(abs(omega[2]), ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, 2u))
+        + lum_ratio(abs(omega[3]), ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, 3u))
+        + lum_ratio(abs(omega[4]), ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, 4u))
+        + lum_ratio(abs(omega[5]), ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, 5u))
+        + lum_ratio(abs(omega[6]), ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, 6u))
+        + lum_ratio(abs(omega[7]), ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, 7u))
+        + lum_ratio(abs(omega[8]), ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, 8u)))
         * scale * scale;
     if (omega_total < 1e-30) { discard; }
 
@@ -12099,6 +12124,7 @@ mod archivar {
                 osc_tx.clone(),
                 presence_relay_tx,
                 time.clone(),
+                consent.clone(),
             );
             radiators.push(Box::new(sr));
         }
@@ -17974,7 +18000,7 @@ mod mathematikerin {
         grid_step: f64,
         ssaa: f32,
         expose_offset: f32,
-        point_blend: u32,
+        field_dark: bool,
         force_ref: [f32; 9],
         probe_omega: [f32; 9],
         probe_flow: [f32; 3],
@@ -18097,7 +18123,7 @@ mod mathematikerin {
                 grid_step: GRID_INIT,
                 ssaa: 1.0,
                 expose_offset: EXPOSE_OFFSET_BASE,
-                point_blend: 1,
+                field_dark: false,
                 force_ref: [0.0; 9],
                 probe_omega: [0.0; 9],
                 probe_flow: [0.0; 3],
@@ -18407,7 +18433,7 @@ mod mathematikerin {
                     };
                 }
                 KeyCode::KeyP => {
-                    self.point_blend = (self.point_blend + 1) % 3;
+                    self.field_dark = !self.field_dark;
                 }
                 KeyCode::Digit1 => self.jump(0),
                 KeyCode::Digit2 => self.jump(1),
@@ -18501,7 +18527,7 @@ mod mathematikerin {
                 0.0,
                 self.expose_offset,
                 self.last_response_epoch as f32,
-                self.point_blend as f32,
+                0.0,
                 (self.packed_barriers.len() / 8) as f32,
                 x as f32,
                 y as f32,
@@ -18912,7 +18938,7 @@ mod mathematikerin {
                     occlusion_query_set: None,
                     timestamp_writes: None,
                 });
-                if self.point_blend != 2 {
+                if !self.field_dark {
                     if let (Some(pipe), Some(bind)) = (
                         self.render_pipe.as_ref(),
                         self.render_binds[self.buf_sel].as_ref(),
@@ -19694,7 +19720,7 @@ mod mathematikerin {
                 }
                 self.hud_raster(&force_tokens, te_opt);
                 eprintln!(
-                "φ window: t {:.2} | rec {} | gen {} | flow {:+.2} {:+.2} {:+.2} | {} | mx {:.2e} | fps {:.0} | ssaa {:.2} | grid 2^{} | x {:.3e} y {:.3e} z {:.3e} | {} near | {} deep | okkl {} | transit {} | cull {} | b {}x{} | maxms {:.0} | ema {:.1} | perm {:.2} | off {:.2} | blend {}",
+                "φ window: t {:.2} | rec {} | gen {} | flow {:+.2} {:+.2} {:+.2} | {} | mx {:.2e} | fps {:.0} | ssaa {:.2} | grid 2^{} | x {:.3e} y {:.3e} z {:.3e} | {} near | {} deep | okkl {} | transit {} | cull {} | b {}x{} | maxms {:.0} | ema {:.1} | perm {:.2} | off {:.2} | field {}",
                 self.t_presence,
                 rec,
                 self.ring_gen,
@@ -19720,7 +19746,7 @@ mod mathematikerin {
                 self.frame_ms_ema,
                 self.field_permeability,
                 self.expose_offset,
-                self.point_blend,
+                self.field_dark,
             );
                 {
                     let mut cur: Vec<u32> = self.occ_report.events.iter().map(|e| e.0).collect();
@@ -20384,6 +20410,7 @@ mod relay {
         osc_tx: mpsc::Sender<Vec<Oscillator>>,
         presence_tx: mpsc::Sender<(String, f64, f64, f64, f64, f64)>,
         time: Arc<Mutex<Option<LeapSeconds>>>,
+        consent: Arc<AtomicBool>,
     }
     pub struct TcpRadiator {
         shutdown: Arc<AtomicBool>,
@@ -20401,6 +20428,7 @@ mod relay {
             osc_tx: mpsc::Sender<Vec<Oscillator>>,
             presence_tx: mpsc::Sender<(String, f64, f64, f64, f64, f64)>,
             time: Arc<Mutex<Option<LeapSeconds>>>,
+            consent: Arc<AtomicBool>,
         ) -> Self {
             let (field_tx, field_rx) = mpsc::sync_channel::<Arc<Buffer>>(1);
             let listener = match TcpListener::bind(format!("127.0.0.1:{}", port)) {
@@ -20431,7 +20459,9 @@ mod relay {
                     }
                     while let Ok((stream, _)) = listener.accept() {
                         let (ftx, frx) = mpsc::sync_channel::<Arc<Buffer>>(2);
-                        let _ = ftx.try_send(latest.clone());
+                        if ftx.try_send(latest.clone()).is_err() {
+                            eprintln!("relay: a new browser connection missed the initial field (queue full)");
+                        }
                         field_txs.push(ftx);
                         let cfg = WsConfig {
                             bodies: bodies.clone(),
@@ -20441,6 +20471,7 @@ mod relay {
                             osc_tx: osc_tx.clone(),
                             presence_tx: presence_tx.clone(),
                             time: time.clone(),
+                            consent: consent.clone(),
                         };
                         thread::spawn(move || handle_ingress(stream, cfg));
                     }
@@ -20468,7 +20499,9 @@ mod relay {
 
     impl Radiator for TcpRadiator {
         fn accept(&mut self, field: Arc<Buffer>) {
-            let _ = self.field_tx.try_send(field);
+            if self.field_tx.send(field).is_err() {
+                eprintln!("relay: the field channel is closed — the browser window is gone");
+            }
         }
     }
 
@@ -20504,12 +20537,18 @@ mod relay {
         r
     }
     fn emit(s: &mut TcpStream, st: &str, ct: &str, b: &[u8]) {
-        let _=s.write_all(format!("HTTP/1.1 {}\r\nContent-Type: {}\r\nContent-Length: {}\r\nCache-Control: no-store, no-cache, must-revalidate\r\nPragma: no-cache\r\nExpires: 0\r\nConnection: keep-alive\r\n\r\n",st,ct,b.len()).as_bytes());
-        let _ = s.write_all(b);
+        if s.write_all(format!("HTTP/1.1 {}\r\nContent-Type: {}\r\nContent-Length: {}\r\nCache-Control: no-store, no-cache, must-revalidate\r\nPragma: no-cache\r\nExpires: 0\r\nConnection: keep-alive\r\n\r\n",st,ct,b.len()).as_bytes()).is_err()
+            || s.write_all(b).is_err()
+        {
+            eprintln!("http emit: the browser connection ended mid-response");
+        }
     }
     fn emit_void(s: &mut TcpStream) {
-        let _ = s
-            .write_all(b"HTTP/1.1 404 Not Found\r\nContent-Length: 0\r\nConnection: close\r\n\r\n");
+        if s.write_all(b"HTTP/1.1 404 Not Found\r\nContent-Length: 0\r\nConnection: close\r\n\r\n")
+            .is_err()
+        {
+            eprintln!("http emit: the browser connection ended mid-response");
+        }
     }
     fn handle_ingress(stream: TcpStream, cfg: WsConfig) {
         let mut s = stream;
@@ -20952,7 +20991,7 @@ mod relay {
                                 oscillators.push(osc);
                             }
                         }
-                        if !oscillators.is_empty() {
+                        if !oscillators.is_empty() && cfg.consent.load(Ordering::SeqCst) {
                             let _ = cfg.osc_tx.send(oscillators);
                         }
                     }
@@ -21122,7 +21161,13 @@ mod relay {
                     out.extend_from_slice(&r_eq.to_le_bytes());
                     out.extend_from_slice(&color_index.to_le_bytes());
                 }
-                write_ws_binary(&mut stream, &out);
+                if let Err(e) = write_ws_binary(&mut stream, &out) {
+                    eprintln!(
+                        "ws frame write returned {:?} — the browser connection ended",
+                        e.kind()
+                    );
+                    return;
+                }
             }
         }
     }
@@ -21254,25 +21299,26 @@ mod relay {
         }
         r
     }
-    fn write_ws_binary(stream: &mut TcpStream, data: &[u8]) {
+    fn write_ws_binary(stream: &mut TcpStream, data: &[u8]) -> std::io::Result<()> {
         let mut h = [0u8; 10];
         h[0] = 0x82;
         if data.len() <= 125 {
             h[1] = data.len() as u8;
-            let _ = stream.write_all(&h[..2]);
+            stream.write_all(&h[..2])?;
         } else if data.len() <= 65535 {
             h[1] = 126;
             let e = (data.len() as u16).to_be_bytes();
             h[2] = e[0];
             h[3] = e[1];
-            let _ = stream.write_all(&h[..4]);
+            stream.write_all(&h[..4])?;
         } else {
             h[1] = 127;
             let e = (data.len() as u64).to_be_bytes();
             h[2..10].copy_from_slice(&e);
-            let _ = stream.write_all(&h);
+            stream.write_all(&h)?;
         }
-        let _ = stream.write_all(data);
+        stream.write_all(data)?;
+        Ok(())
     }
 }
 fn main() {
