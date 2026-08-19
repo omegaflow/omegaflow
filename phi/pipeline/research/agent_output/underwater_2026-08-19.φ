@@ -1,0 +1,20 @@
+# Unterwasser-Messstationen — Befund 2026-08-19
+# Recherche-Auftrag: verkabelte Observatorien (EU), hydroakustische Netze, Tiefsee-Lander, Glider-Flotten, neue cabled networks 2024-2026.
+# Bestand geprüft (grep): ONC, OOI, Argo, NDBC-Oberflächenbojen im Bestand — ausgeschlossen. EMSO, DONET, MEDUSA, CTBTO/H11/H01, Glider: nicht im Bestand.
+# curl -s -o /dev/null -w "%{http_code} %{size_download}" -m 10; Datenabfragen mit echten Werten belegt. Kraft-Gate-Entscheidungen trifft der Auftraggeber.
+
+kandidat
+url https://erddap.emso.eu/erddap/info/index.json
+note EMSO ERIC — zentraler ERDDAP (EuroGOOS-Festplattform-Verbund) | Wassertemperatur, Salzgehalt, Druck, Sauerstoff, Strömung an verkabelten EU-Observatorien (OBSEA Mittelmeer, E2M3A Adria, EMSO-Azoren, West-Ionisches Meer, Ligure) — Messung am Punkt in der Wassersäule bzw. am Meeresboden | existierend, 160 Datensätze, Live tabledap (z.B. OBSEA bis 2025-12, E2M3A_2025 NRT) | 200 357263 (Index); 200 5789 auf OBSEA_seabed_station_TS_L1c (TEMP 16.0053 °C, PSAL 37.8176, 2025-12-20) | CSV/JSON/NetCDF via ERDDAP | ohne Auth
+
+kandidat
+url https://gliders.ioos.us/erddap/info/index.json
+note IOOS National Glider DAC (US + Partner) | Temperatur, Salzgehalt, Leitfähigkeit, Druck, Sauerstoff auf Tauchprofilen von Seaglider/Slocum/Spray-Unterwasserglidern — Messung entlang der Gliderbahn im Wasser | existierend, Live- und delayed-Missionen seit 2005, laufende Einsätze laufend veröffentlicht | 200 2402386 (Index nach Redirect von data.ioos.us/gliders); 200 2990702 auf dfo-bb046 (temperature 9.842 °C, salinity 28.197, 2020-11) | CSV/JSON/NetCDF via ERDDAP | ohne Auth
+
+kandidat
+url https://erddap.marine.ie/erddap/info/index.json
+note SmartBay Observatory — Marine Institute Irland (EMSO-SmartBay, Atlantik-Testsite, Galway Bay) | Wassertemperatur, Salzgehalt, Druck, Sauerstoff, Strömung (ADCP) am verkabelten Observatorium, dazu Met-Boje | existierend, Live-Daten 2026 belegt | 200 153771 (Index); 200 1401419 auf smartbay_obs_ctd_sbe16 (temperature 11.18 °C, salinity 34.84, pressure 25.27 dbar, 2026-01) | CSV/JSON/NetCDF via ERDDAP | ohne Auth
+
+kandidat
+url https://emso.eu/2026/08/07/6092/
+note EMSO-SMART-Cable-Prototyp West-Ionisches Meer (INGV/GURALP/ELETTRA) | Wassertemperatur, Wasserdruck, Seebodenbeschleunigung/Seismik entlang des Seekabels (3 Sensor-Knoten, ~21 km, ~2100 m Tiefe) — neue verkabelte Messinfrastruktur 2023-2026; Nachfolgeprojekte IOEMA und MISTS in Entwicklung | angekündigt, Prototyp seit 2023 in Betrieb, öffentlicher Datenzugang nicht belegt | „angekündigt" | Web-Beleg emso.eu 2026-08-07 (DAS-Experiment 28 km Faser ~2000 m, 5 Erdbeben geortet) | Format/Datenzugang offen (pending)

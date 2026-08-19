@@ -1,0 +1,57 @@
+# Raumstationen & bemannte Orbitalplattformen 2026-08-19 — Recherche Messdatenquellen: existierend (Live-API) und angekündigt
+# Agent: Recherche. curl -m 10 verifiziert. Keine Force-Gate-Entscheidung — nur Klassifikation der Messung.
+# Domäne: ISS, Tiangong (CSS), Axiom, Orbital Reef, Starlab, Lunar Gateway. Messung IST physikalisch
+# (Strahlung, Magnetfeld, CO2, Temperatur, Position) — keine Tracker-Anzeigen ohne Daten-API.
+# Bereits gedeckt: ISS-Position via ephemeris_iss.bin (sources.φ); wheretheiss.at + open-notify
+# (TLE-abgeleitete Position) liegen in dead_sources.φ — nicht neu vorgeschlagen.
+# Befund-Kern: Es gibt KEINE öffentliche Live-API für die Stationsumgebung selbst (O2/CO2/Kabinentemperatur)
+# für ISS oder Tiangong. Verifizierte Messdaten-APIs liefern: ISS-Payload-X-Rays (MAXI) und Orbital-
+# Elemente (CelesTrak). SatNOGS (RF-Beobachtungen der ISS) war von dieser Maschine nicht erreichbar.
+# Angekündigte Stationen (Axiom, Orbital Reef, Starlab) haben keine Endpoints. Lunar Gateway ist 2026
+# eingestellt — kein Kandidat mehr.
+
+kandidat
+url https://maxi.riken.jp/mxondem/
+note ISS-Payload MAXI (JAXA/RIKEN, ISS seit 2009) | Messung IST: Röntgen-Photonenfluss (Zähldichten) als Sky Monitor — Strahlungsmessung im ISS-Segment, aber astrophysikalische Quellen (kein Stations-Dosimeter, kein Raumwetter) | existierend, in Betrieb | curl: HTTP 200 (mxondem-On-Demand-Service, HTTP→HTTPS-Redirect) | FITS/CSV-Downloads (On-Demand-Lightkurven, kein JSON-Live-API) | ohne Auth
+
+kandidat
+url https://celestrak.org/NORAD/elements/gp.php?CATNR=25544&FORMAT=JSON
+note CelesTrak gp.php — Orbital-Elemente (TLE) für ISS (25544) und Tiangong/CSS (48274) und alle Stationen | Messung IST: Position/Telemetrie der Station selbst (aus Radar-/Tracking-Messung abgeleitete Bahnelemente, 0 honored: Bahndaten) | existierend, öffentlich | curl: 000 (rc=28 Timeout — von dieser Maschine nicht erreichbar, Kandidat unverifiziert; Dienst selbst etabliert) | JSON (auch TLE/XML/KML) | ohne Auth
+
+kandidat
+url https://api.satnogs.org/api/observations/?satellite__norad_cat_id=25544
+note SatNOGS Global Network — Bodenstations-Beobachtungen der ISS (ARISS 145.8 MHz Amateurfunk-Telemetrie) | Messung IST: empfangene RF-Leistung/Telemetrie-Frames der Station von Erdbodenstationen (em), Stations-Telemetrie als Beobachtung | existierend, öffentlich | curl: 000 (rc=6 DNS nicht auflösbar — von dieser Maschine nicht erreichbar, Kandidat unverifiziert) | JSON | ohne Auth
+
+kandidat
+url https://www.axiomspace.com
+note Axiom Station (Axiom Space, NASA-CLD) | Messung wird: (Station in Bau — keine Messung vor Start) | angekündigt, PPTM NET 2027 (dockt ISS), Hab-1 NET 2028, dann frei fliegend (Stand 2026-08) | „angekündigt — kein Endpoint" | — | —
+
+kandidat
+url https://www.blueorigin.com/orbital-reef
+note Orbital Reef (Blue Origin + Sierra Space) | Messung wird: (Station in Entwicklung — keine Messung vor Start) | angekündigt, operativ ursprünglich 2027 angepeilt (Stand 2022), weiter in Entwicklung (Stand 2026-08) | „angekündigt — kein Endpoint" | — | —
+
+kandidat
+url https://www.starlab-space.com
+note Starlab (Starlab Space — Voyager Technologies + Airbus) | Messung wird: (Station in Entwicklung — keine Messung vor Start) | angekündigt, Start NET 2029 (vor ISS-Dekommisionierung 2030) | „angekündigt — kein Endpoint" | — | —
+
+# Weggelassen — kein Kandidat, Befund registriert:
+# - Lunar Gateway: 2026 EINGESTELLT (NASA verlagert Fokus auf Mondoberflächenbasis; Elemente werden umgewidmet,
+#   Wikipedia-Stand 2026-07). Nicht mehr „angekündigt" — keine Orbitalplattform in Planung.
+# - ISS-RapidScat (13.4-GHz-Scatterometer, Meereswind): Mission beendet 2016-08, nur Archiv (PODAAC) — kein Live-API.
+# - Tiangong/CSS (CMSA): existierend seit 2021, aber KEIN öffentlicher Messdaten-API-Endpoint gefunden
+#   (kein öffentliches Telemetrie-/Umweltdaten-API; Positionsdaten nur via TLE wie CelesTrak).
+# - NASA OSDR (osdr.nasa.gov/bio/api, ISS-Experiment-/Strahlendosimetrie-Daten): /bio/ → 301 →
+#   science.nasa.gov/biological-physical/data/ (200), /bio/api/studies → 404. Endpoint abgelöst/umgezogen —
+#   Daten existieren (DOSIS, Rad-R u.a.), API-Registration pending.
+# - open-notify.org/iss-now.json + wheretheiss.at (TLE-Position, beide 200): bereits gedeckt durch
+#   ephemeris_iss.bin (dead_sources.φ) — nicht neu vorgeschlagen.
+
+# ABSCHLUSS
+# 1. MAXI (maxi.riken.jp/mxondem) — ISS-Payload, Röntgen-Zähldichten, erreichbar (200), Download-On-Demand.
+# 2. CelesTrak gp.php — ISS+Tiangong-Orbitaldaten, JSON ohne Auth, hier curl-Timeouts (000) — unverifiziert.
+# 3. SatNOGS API — RF-Beobachtungen der ISS-Telemetrie, JSON, hier DNS-Timeout (000) — unverifiziert.
+# 4. Axiom Station (NET 2027/2028), Orbital Reef (2027-Ziel), Starlab (NET 2029) — angekündigt, kein Endpoint.
+# 5. Lunar Gateway eingestellt 2026; ISS-RapidScat beendet 2016; Tiangong ohne öffentliche Messdaten-API;
+#    OSDR-Dosimetrie-API abgelöst (404/301) — kein Kandidat, pending registriert.
+# Keine O2/CO2/Kabinentemperatur/Strahlendosimeter-API der Station selbst gefunden — nur Payloads/Orbit.
+# Datei: /home/johannes/projects/omegaflow/phi/pipeline/research/agent_output/space_stations_2026-08-19.φ

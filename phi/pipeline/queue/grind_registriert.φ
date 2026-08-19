@@ -1,0 +1,15 @@
+# grind registriert (2026-08-19)
+# Port-Kandidaten mit Credentials in .secrets.local — Registrierung abgeschlossen,
+# Struktur-Proben offen. Aus blocked_sources.φ entfernt (Key da = nicht mehr blocked).
+
+note probe-open
+url https://archive.opensearch.ceda.ac.uk/opensearch/description.xml
+note CEDA (NERC-Open-Data, Mirror zulässig) — Bearer-Token in .secrets.local (CEDA_TOKEN, Keycloak-Session, Ablauf 2026-08-23 — Verlängerung per Login). Daten-API hinter Login; Struktur probe.
+
+note probe-open
+url https://data.eumetsat.int
+note EUMETSAT Data Store (MTG-S1 IRS, MetOp-SG A1 IASI-NG, MTG-I1 FCI) — Consumer-Credentials in .secrets.local (EUMETSAT_KEY/EUMETSAT_SECRET); 1h-API-Token selbst ziehen: curl -k -d grant_type=client_credentials -H "Authorization: Basic base64(key:secret)" https://api.eumetsat.int/token. Daten hinter OAuth; Struktur probe.
+
+note probe-open
+url https://donneespubliques.meteofrance.fr
+note Météo-France — Tokens in .secrets.local: METEOFRANCE_TOKEN (Observation data vv2) + METEOFRANCE_RADAR_TOKEN (Radar data vv1), je 1 Jahr gültig bis 2027-08-19; Bearer-Header je API-Call. Radiosonden (id_produit=129) via Observation data; Radarreflektivität via Radar data; Struktur probe.

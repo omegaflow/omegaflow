@@ -1,0 +1,24 @@
+# laboratories 2026-08-19 — Recherche Labor-Netze mit öffentlichen Live-Messdaten (Fusion, Teilchen, Kosmische Strahlung, Strahlen, Biologisch)
+# Agent: Recherche. curl-verifiziert (curl -m 10). Keine Force-Gate-Entscheidung — nur Klassifikation der Messung.
+# Bestandsprüfung per grep: NMDB/neutron in dead_sources.φ (Endpoints tot, grind_terrapulse_a), CERN-Open-Data in dead_sources.φ (decline catalog),
+# LIGO/Virgo/KAGRA, Super-K/JUNO laut Auftrag im Bestand — weggelassen.
+# Verworfen: NMDB (gesamte Domain www.nmdb.eu unerreichbar, 000 — weiter tot), EURDEP/REMAP (Captcha + EU-Login),
+# EPA RadNet (nur Qlik-Dashboard, keine curl-bare Daten-API), Aragats/SEVAN (Server = Default-Seite, keine Inhalte),
+# CREDO (kein Daten-Endpoint, /data/ 403), EAN/polleninformation.eu (kein Messdaten-API auffindbar, pollenwarndienst.at ohne API),
+# DIII-D (401), WEST/CEA (404), IPP-Archiv (000), IAEA PRIS (SPA ohne offene API), CERN CRMS (000), LHC-Vistar (nur Visualisierung).
+
+kandidat
+url https://www.imis.bfs.de/ogc/opendata/ows?service=WFS&version=1.1.0&request=GetFeature&typeName=opendata:odlinfo_odl_1h_latest&outputFormat=application/json
+note BfS-ODL/IMIS (Bundesamt für Strahlenschutz, Deutschland — Deutschlands EURDEP-Beitrag) | Messung IST: Gamma-Ortsdosisleistung in µSv/h (Brutto, getrennt kosmisch/terrestrisch), 1h-Mittel aus ~1800 festen Messsonden | existierend, Stand 2026-08-19 — Netz in Betrieb, Stundendaten bis heute (2026-08-19T11:00Z, z. B. Frasdorf DEZ1447: 0,12 µSv/h) | curl: HTTP 200, GeoJSON-FeatureCollection mit Punktgeometrie je Station (Kennzahl, Name, Höhe, start/end_measure, value, nuclide); Dokumentierte Datenschnittstelle odlinfo.bfs.de (WFS-Service opendata, Layer odlinfo_odl_1h_latest / odlinfo_timeseries_odl_1h) | GeoJSON (OGC WFS 1.1.0, outputFormat=application/json) | keine Auth
+
+kandidat
+url https://www.iter.org/project/tokamak-assembly
+note ITER (Cadarache, Frankreich) | Messung IST (zukünftig): Plasmatemperatur, Neutronenleistung, Fusionsleistung im Tokamak — heute existiert kein Messwert, nur der Baufortschritt der Maschine | angekündigt, Stand 2026-08: Tokamak-Assembly läuft, First Plasma laut ITER-Baseline 2024 für 2035 angekündigt, D-T-Betrieb später | curl: iter.org/project/tokamak-assembly HTTP 200 (2,1 MB Assembly-Seite); iter.org/facts-figures 200 (500 MW Fusionsleistung, 830 m³ Plasmavolumen) | — | keine Auth
+
+kandidat
+url https://cfs.energy/
+note SPARC, Commonwealth Fusion Systems (Devens, MA, USA) | Messung IST (zukünftig): Tokamak-Plasma mit Hochfeld-HTS-Spulen — keine öffentlichen Messwerte vor First Plasma | angekündigt, Stand 2026-08: Tokamak-Bau läuft, HTS-Magnete gefertigt, erster Plasma-Betrieb angekündigt (Zielzeit wiederholt verschoben) | curl: cfs.energy HTTP 200 (Bau/Tokamak-Konfiguration) | — | keine Auth
+
+kandidat
+url https://www.dunescience.org/
+note DUNE, Deep Underground Neutrino Experiment (Fermilab/SURF, USA) | Messung IST (zukünftig): Neutrino-Wechselwirkungen in Flüssig-Argon-Detektoren (Far Detectors unter SURF) — keine Daten vor Inbetriebnahme | angekündigt, Stand 2026-08: Far-Detektoren im Bau, erster Neutrinostrahl von Fermilab angekündigt (~2028/2029) | curl: dunescience.org HTTP 200 | — | keine Auth

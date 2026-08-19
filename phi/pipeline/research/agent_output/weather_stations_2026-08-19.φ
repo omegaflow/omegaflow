@@ -1,0 +1,12 @@
+kandidat
+url https://www.jma.go.jp/bosai/amedas/data/map/{YYYYMMDDhhmmss}.json
+note JMA AMeDAS (Japan) | Stationsmessung IST live an 1286 Stationen: temp, humidity, pressure, wind, precipitation, visibility, snow, sun | existierend, Live | curl HTTP 200, 1286 Stationen, station_table: https://www.jma.go.jp/bosai/amedas/const/amedastable.json (lat/lon als [deg, min], alt, elems-Bitmaske) | JSON | ohne Auth
+kandidat
+url https://api.weather.gc.ca/collections/citypageweather-realtime/items?limit=844
+note ECCC MSC GeoMet OGC API (Kanada) | Stationsmessung IST live an 844 Citypages (relativeHumidity, wind speed/direction/bearing/gust, pressure) und swob-realtime (air_temp, rel_hum, wind, stn_pres, pcpn, dewpoint, wetbulb, 13.6M Items) | existierend, Live | curl HTTP 200, citypage numberMatched=844, swob numberMatched=13643773 | GeoJSON (OGC API - Features) | ohne Auth
+kandidat
+url https://api.imd.gov.in/api/v1/aws_data?id={station}
+note IMD Open Data (Indien) | AWS/ARG Stationsmessung (aws_data, aws_data_mapping, stationnowcast, current_wx) | existierend | curl HTTP 401 ohne Schluessel ("API key missing"), Registrierung auf api.imd.gov.in noetig | JSON | Auth (Registrierung)
+kandidat
+url https://apihub.kma.go.kr/api/typ01/url/kma_sfctm2.php?tm={YYYYMMDDhhmm}&stn={stn}&type=json
+note KMA Open Data (Korea) | ASOS synoptische Stationsmessung kma_sfctm2 (T, RH, wind, pressure, precip) | existierend | curl HTTP 401 ("유효한 인증키가 아닙니다"), API-Schluessel via data.kma.go.kr noetig | JSON | Auth (Schluessel)

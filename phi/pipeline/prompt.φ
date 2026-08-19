@@ -1,5 +1,5 @@
 # Source-Port Agent — Standard-Vorlage
-# Für die Überführung eines Korpus aus phi/pipeline/queue/ nach v6.
+# Für die Überführung eines Korpus aus phi/pipeline/queue/ nach v8.
 #
 # AUFGABE: Ein Korpus pro Session, komplett durch die Prozedur
 # (docs/SOURCE_PORT.md §5). Kein halber Port.

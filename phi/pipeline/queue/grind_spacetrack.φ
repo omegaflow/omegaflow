@@ -1,0 +1,21 @@
+# grind spacetrack (2026-08-19)
+# Space-Track.org — Satelliten-Katalog + TLE-Ephemeriden (US Space Force).
+# Credentials vorhanden: SPACETRACK_USER / SPACETRACK_PASS (.secrets.local) — bislang
+# keine Space-Track-Quelle in sources.φ / queue. Dispositionen: note / decline.
+# Schlüssel referenziert als {SPACETRACK_USER} / {SPACETRACK_PASS} (Werte in .secrets.local).
+
+# ── 1. Katalog-Route — Objektliste (registry, kein Feldwert) ──
+decline registry
+url https://www.space-track.org/api/v1/satellite/catalog
+note HTTP 401 ohne Login — war blocked auth in blocked_sources.φ, entfernt 2026-08-19
+# (Credentials vorhanden). Katalog trägt NORAD_CAT_ID/OBJECT_NAME/COUNTRY/LAUNCH_DATE —
+# Registry, kein Messwert; Grundlage für Ephemeriden-Abfragen (NORAD-ID je Objekt).
+
+# ── 2. GP-Ephemeriden (TLE) — decline derived-orbit-fit ──
+decline derived-orbit-fit
+url https://www.space-track.org/basicspacedata/query/class/gp/NORAD_CAT_ID/orderby/EPOCH%20desc/limit/1/format/json
+note TLE-Bahnelemente (INCLINATION, RA_OF_ASC_NODE, MEAN_MOTION, ECCENTRICITY, EPOCH) =
+# Bahnvorhersage (Orbit-Fit), keine Messung. Konsistenz-Kette: DONKI/TLE (dead_sources Z.389),
+# SatNOGS-TLE (Z.1005, „Ephemeriden kommen aus Horizons"), ivanstanojevic-TLE (Z.3170),
+# CelesTrak-TLE (Z.2026-08-19, verschoben aus blocked_sources.φ). Ephemeriden-Kanal des
+# Systems: Horizons (sources.φ Z.854) + DASTCOM-Katalog (sources.φ Z.624).

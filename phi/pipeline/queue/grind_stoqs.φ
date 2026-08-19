@@ -1,0 +1,16 @@
+# grind stoqs (2026-08-19)
+# STOQS (MBARI, stoqs.mbari.org) — ozeanografische Datenbank (PostGIS),
+# REST-API je Kampagne: https://stoqs.mbari.org/<kampagne>/api/<endpunkt>.<format>?<param>
+# Kampagnen-Beispiele: stoqs_june2011, stoqs_september2012 (query/-Seiten 200).
+# Endpunkte = relationale Tabellen: measuredparameter (Messwerte inkl. Zeitstempel +
+# Tiefe), parameter (CF-Standardnamen + Einheiten), activity (Missionen/Transekte),
+# platform (AUV/Glider/Schiff). Formate .json/.geojson/.csv/.tsv/.parquet direkt am
+# Endpunkt. Django-Filter: collect, activity__name__contains, time__gte.
+# AUV-/ROV-/Glider-Tiefseemessungen (T/S/Chlorophyll/Sauerstoff) — physikalische
+# Messung am Punkt, Mirror zulässig (MBARI-Forschung). Der frühere 000-Befund
+# (2026-08-19) war ein Timeout des langsamen Servers — Kampagnen- und API-Routen
+# liefern 200 lokal und via r.jina.ai.
+
+note probe-open
+url https://stoqs.mbari.org/stoqs_june2011/api/platform.json?limit=5
+note API lebt (200, 2026-08-19). Struktur probe: measuredparameter.json (Zeitstempel+Tiefe+Wert) und parameter.json (CF-Namen+Einheiten) je Kampagne; activity__name__contains-Filter für gezielte Tauchgänge.

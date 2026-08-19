@@ -1,0 +1,20 @@
+# terrestrial atmo 2026-08-19 — Recherche terrestrische Atmosphäre/Hydrologie, neue Netze (ab ~2024) oder in Expansion
+# Agent: Recherche. curl-verifiziert. Keine Force-Gate-Entscheidung — nur Klassifikation der Messung.
+# Suchen (DuckDuckGo/Bing/Mojeek) wurden von Captchas blockiert; Kandidaten gezielt per curl geprobt.
+# Verworfen: api.met.ie (nur Map-/Radar-Tiles, abgeleitete Produkte), meteosearch.meteo.gr (Login),
+# AVAMET (Daten hinter Login), apicemaden.cemaden.gov.br (unerreichbar), BMKG (403),
+# api.meteo.gr (403), TAHMO (500/403), SmartCitizen (Timeout), CPCB (Timeout), T-Hydro (Timeout),
+# flood.network (GitHub Pages leer), samenmeten.rivm.nl (404), NCM Saudi (Timeout),
+# IMGW/Estonia/FMI/IPMA (200, offene API — aber Netz bestand vor 2024, keine Expansion).
+
+kandidat
+url https://api.meteo.lt/v1/stations/vilniaus-ams/observations/latest
+note Meteo LT API (Lietuvos hidrometeorologijos tarnyba, Litauen) | Messung IST: Stationspunkt-Messung an 52 automatischen Wetterstationen — Lufttemperatur, relative Feuchte, Luftdruck auf Meeresniveau, Windrichtung/-stärke/-böen, Niederschlag, Bewölkung und Schneehöhe (snowDepth) | Netz etabliert (vor 2024), aber in aktiver Expansion: Schneedeckenhöhen-Messungen wurden jüngst neu aufgenommen (Ankündigungsbanner der API), Modernisierung läuft | curl: HTTP 200, JSON mit frischen Beobachtungen (2026-08-18 12:00 UTC, vilniaus-ams); /v1/stations 200 (5683 B, 52 Stationen) | JSON | keine Auth (CC BY-SA 4.0, 180 Req/min/IP) — Stationsalter selbst entscheidet der Auftraggeber
+
+kandidat
+url https://pro.weatherxm.com/docs
+note WeatherXM | Messung IST: sieben Messwerte pro Station und Minute — Temperatur, Feuchte, Luftdruck, Solarstrahlung, Windgeschwindigkeit/-richtung, Niederschlag — an individuellen Bodenstationen (kein Grid) | Neu entstanden: DePIN-Citizen-Science-Netz, Mainnet 2023/24; 9500+ Stationen, aktive globale Expansion (gezielte Rollouts in unterversorgte Regionen) | curl: pro.weatherxm.com/docs HTTP 200 (672 kB, REST-API-Doku); Daten-Endpunkte api.weatherxm.com/api/v1/... ohne Key 404 | REST JSON (Rohdaten, Historie, Hyperlocal-Forecast) | Auth: kostenloser API-Key über WeatherXM Pro (Free-Tier)
+
+kandidat
+url https://api.airqo.net/api/v2/devices/measurements/latest
+note AirQo (Makerere University, Uganda) | Messung IST: Luftqualität an bodennahen stationären Messpunkten in afrikanischen Städten — PM2.5/PM10, NO2, SO2, O3, Temperatur/Feuchte (Messpunkte, kein Interpolationsgrid) | Im Aufbau: Citizen-Science-Netz ab 2019 (Kampala), massive Expansion 2023-2026 nach Nairobi, Accra, Lagos, Kinshasa, Dakar — mehrere Hundert Sensoren, wachsend | curl: HTTP 401 ohne Token (1369 B, „token missing"-Gate) | JSON | Auth: kostenloser API-Token (Registrierung) — ohne Token nicht verifizierbar

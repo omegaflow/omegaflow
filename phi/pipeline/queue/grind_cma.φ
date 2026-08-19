@@ -1,0 +1,12 @@
+# grind cma (2026-08-19)
+# China Meteorological Administration — entblockt aus blocked_sources.φ (Kaskaden-Lauf 2026-08-19).
+# Dispositionen: note / accepted / decline / parser-def. Noch keine Feldwerte gedraftet — JSON-Struktur probe.
+# Kaskade: lokal 200 bestätigt (2026-08-19); blocked ip-blocked (Datacenter-403) war Bot-/Geo-Block.
+
+note probe-open
+url https://weather.cma.cn/api/now/54511
+note Lokal 200 (2026-08-19, Kaskade §13) — blocked ip-blocked widerlegt. Wetterstation 54511 (Beijing): T/RH/Wind/Druck/Niederschlag. JSON-Struktur probe — Feldwerte + Stations-Position aus dem JSON ziehen, dann Block in sources.φ.
+
+note probe-open
+url https://weather.cma.cn/api/map/alarm
+note Lokal 200 (2026-08-19) — Alarm-Karte. JSON-Struktur probe — Lage/Feldwert klären.

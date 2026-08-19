@@ -1,0 +1,28 @@
+# Recherche-Befund: Wetterballons / Radiosonden-Netze (2026-08-19)
+# Domäne: IGRA/IGRA2, Wyoming, Iowa State, SondeHub (Citizen), SOFF (angekündigt).
+# Alle Kandidaten vorab per grep gegen sources.φ/dead_sources.φ geprüft — kein Treffer.
+# Verifiziert per curl -m 10..15 (Code = letzte Antwort); Position = Station bzw. Trajektorie.
+
+kandidat
+url https://www.ncei.noaa.gov/data/integrated-global-radiosonde-archive/access/data-y2d/{station}-data-beg{year}.txt.zip
+note IGRA (Integrated Global Radiosonde Archive, NOAA NCEI) | T, P, RH, Wind in der Höhe, gemessen von der aufsteigenden Sonde; Kopfzeile trägt Stations-Breite/Länge | existierend, täglich fortgeschrieben (Probe bis 2026-08-17) | curl 200, Probe ARM00087155 und AEM00041217, Text enthält 2026er-Messungen | Text (Spaltenformat) | keine Auth
+
+kandidat
+url https://weather.uwyo.edu/wsgi/sounding?datetime={YYYY-MM-DD HH:00:00}&id={wmo_id}&src=UNKNOWN&type=TEXT:CSV
+note University of Wyoming Upper-Air | T, P, RH, Taupunkt, Mischungsverhältnis, Wind dir/speed in der Höhe plus lon/lat je Messpunkt — reine Sondenmessung, keine Modelle | existierend, live (00/12 UTC-Flüge) | curl 200, Probe id=72672 (Cheyenne) CSV-Zeilen 2026-08-18 23:16 UTC | CSV | keine Auth (alter /cgi-bin/sounding-Pfad ist 404 — Endpoint ist heute /wsgi/sounding)
+
+kandidat
+url https://mesonet.agron.iastate.edu/json/raob.py?station={station}&ts={YYYYMMDDHHmm}
+note Iowa State Mesonet RAOB-Archiv | T (tmpc), P (pres), Höhe, Taupunkt, Wind dir/speed je Level — die Messung des Profils; JSON-Objekt profiles[] | existierend, laufend eingespielte Globalsonden | curl 200, Probe station=OUN ts=2026081900 → 1 Profil | JSON | keine Auth
+
+kandidat
+url https://api.v2.sondehub.org/sonde/{serial}
+note SondeHub (UKMADS, Amateur/Citizen-Radiosonden-Netz) | stratosphärische Citizen-Ballons: RS41-Telemetrie (Vaisala) mit temp, alt, lat, lon je Frame — die Flugmessung der Sonde selbst, dezentral per Funkamateuren dekodiert | existierend, Echtzeit-Netz, S3-Historie | curl 200 (redirect auf .json.gz, mit --compressed), Probe W1710613 RS41-Flug mit ~10.000 temp-Messpunkten | JSON | keine Auth; RH/P meist nicht im Amateur-Telemetrie-Frame (nur temp) — Hinweis für das Gate
+
+kandidat
+url https://un-soff.org/
+note SOFF — Systematic Observations Financing Facility (WMO/UNDP/UNEP) | baut neue Radiosonden-/Oberluft-Stationen in LDCs/SIDS (GBON-Lücken, Anreiz ~400 Mio USD, Grants + ergebnisbasierte Finanzierung) — Messung IST dort erst nach Inbetriebnahme; heute nur Ankündigung/Aufbau | angekündigt/im Aufbau 2024-2026, Web-Beleg: WMO „Closing data gaps improves global forecasts" 2025-06-30 + ECMWF-Impact-Experimente 2025-06-16 | „angekündigt" — noch kein öffentlicher Daten-Feed | — | —
+
+# Verworfen (keine halben Funde):
+# - Météo-France Radiosondes (donneespubliques.meteofrance.fr, id_produit=129): Txt-Pfad weg (donnee_indisponible), Download nur hinter Konto (connexion) — kein offener Live-Feed.
+# - NOAA NCEI /data/igra2/-Altpfad 404 — das Produkt heißt heute „integrated-global-radiosonde-archive".

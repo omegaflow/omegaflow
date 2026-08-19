@@ -1,0 +1,34 @@
+# Drohnen/UAS-basierte Messdaten — Recherche 2026-08-19
+# Agent: recherche. Web-Fetch + curl-Verifikation. Kein Eintrag unter phi/sources.φ oder phi/dead_sources.φ
+# (grep auf meteodrones/ptera/skye/drones/uas/uav: keine Wort-Treffer) — alle Kandidaten neu.
+# Befundlage: öffentliche Live-APIs aus Drohnen-Messnetzen sind selten. Drei Kandidaten mit
+# live erreichbarem Endpunkt oder Doku; zwei davon tragen Vorbehalte (nicht-UAS bzw. Modell).
+# Force-Gate entscheidet der Auftraggeber — hier nur Beobachtung, was die Messung IST.
+
+# — Zusammenfassung —
+# 1. Meteomatics Meteodrones (CH): das einzige gefundene Netz, bei dem Drohnen vertikale
+#    Wetterprofile (Temperatur, Wind, Feuchte, Druck) messen und die Daten über eine API
+#    zugänglich sind. Endpunkt api.meteomatics.com aus diesem Netz nicht erreichbar (Timeout),
+#    Produktseite + API-Doku verifiziert. Auth erforderlich.
+# 2. OpenSky Network: weltweites ADS-B-Empfängernetz mit öffentlicher Live-API (curl 200,
+#    echte Daten). Misst Position/Geschwindigkeit/Barohöhe von Luftfahrzeugen inkl. UAS —
+#    keine Atmosphärenfeldgröße (Temperatur/Wind/Konzentration fehlt).
+# 3. Windborne Systems: unbemannte Langzeit-Wetterballons (keine UAS/Drohnen), API-Docs
+#    erreichbar (curl 200); API liefert primär WM6-Modellforecast, nicht reine Messung.
+# Programme ohne öffentlichen Live-Datenendpunkt: NOAA UAS Program (uas.noaa.gov unerreichbar),
+# NASA UAS (Seite 404). PTERA, Skye: keine belastbare Quelle für ein Messnetz mit Live-API gefunden.
+
+kandidat
+url https://api.meteomatics.com
+note Meteomatics Meteodrones (CH, St. Gallen) | vertikale Wetterprofile (Temperatur, Wind, Feuchte, Druck) aus Meteodrones-Flotten + aggregierte Wetterdaten | existierend, Stand 2026-08-19 | curl api.meteomatics.com: HTTP 000 (Timeout aus diesem Netz); Produktseite meteomatics.com/en/meteodrones-weather-drones/ und Doku /en/api/getting-started/ beide HTTP 200 | JSON/CSV/XML/HTML u.a. | Auth: ja (Benutzer/Passwort oder Token, Free-Tier mit Registrierung)
+
+kandidat
+url https://opensky-network.org/api/states/all
+note OpenSky Network | weltweites ADS-B-Empfängernetz, misst Position/Geschwindigkeit/Barohöhe von Luftfahrzeugen inkl. UAS — KEINE Atmosphärenfeldgröße, nur Luftraum-Messung | existierend, live, Stand 2026-08-19 | curl: HTTP 200, echte Live-States | JSON | Auth: nein (anonym, ratenlimitiert ~400 Calls/Tag)
+
+kandidat
+url https://api.windbornesystems.com
+note WindBorne Systems | Konstellation unbemannter Langzeit-Wetterballons, Atmosphärenprofile — Ballons, keine UAS/Drohnen; API liefert primär WM6-Modellforecast | existierend, Stand 2026-08-19 | curl: HTTP 200 (API-Docs-Seite), Datenendpunkt hinter Auth | JSON | Auth: ja (API-Key)
+
+note NOAA UAS Program (uas.noaa.gov, curl 000) und NASA UAS (Seite 404): Atmosphärenmess-Programme, kein öffentlicher Live-Datenendpunkt gefunden — kein Kandidat.
+note PTERA, Skye: nicht verifizierbar — keine belastbare Quelle für ein Messnetz mit öffentlicher Live-API gefunden; keine URL vorgeschlagen (nichts erfunden).

@@ -1,0 +1,53 @@
+# Sonstige terrestrische Messnetze — Recherche 2026-08-19
+# Auftrag: existierende Netze mit öffentlicher Live-API UND angekündigte in den leicht
+# vergessenen Domänen (Infraschall, Kosmische Strahlung, Pollen, Vulkan-Gas, Grundwasser,
+# Schnee, Wildtier-Telemetrie, Bodenfeuchte, Wald/Baum).
+# Methode: curl -m 10 gegen die Live-Endpoints; webfetch als Zweitweg. Bestand geprüft
+# (grep sources.φ / dead_sources.φ). Keine Register-Edits. Kein Force-Gate.
+# Egress-Notiz: diese Umgebung läuft aus einem Rechenzentrum; mehrere Behörden-Hosts
+# blocken Datacenter-IPs (Connect-Timeout/403). Die curl-Ergebnisse sind Messungen dieser
+# Umgebung — ein 000/403 hier kann lokal 200 sein. Erreichbarkeit lokal nachprüfen.
+
+# — Bestand-Check (vorab, grep) —
+# SO2 (Island, ArcGIS SO2datanew, sources.φ:453)  -> Vulkan-Gas abgedeckt; keine neuen Kandidaten.
+# USGS-Oberflächenwasser (nwis/iv, parameterCd=00060, sources.φ:194) -> im Bestand;
+#   Grundwasser (parameterCd=72019) ist EIN ANDERES Messnetz (Brunnen vs. Pegel) — neu.
+# SNOTEL/globsnow (dead_sources.φ) -> globsnow 404 (weg); SNOTEL selbst war NICHT abgelehnt.
+# IGRAC GGIS (dead_sources.φ:1487) -> "Recheck" — unten verifiziert.
+# Pollen, Kosmische Strahlung, Infraschall, Baum-Sensoren -> nicht im Register.
+
+# — Zusammenfassung —
+# Stark (curl 200, kein Auth, Messung am Punkt): USGS-Grundwasser (72019). NRCS-AWDB-Stations
+# (200), Daten-Endpoint aus dieser Umgebung 400 (Parameter-Detail offen) — lokal nachprüfen.
+# Existierend, von hier nicht erreichbar: NMDB-Neutronenmonitore (Connect-Timeout),
+# MeteoSwiss-OGD-Pollen (403, AWS-IP-Sperre), beide vermutlich lokal 200. Angekündigt:
+# TreeTalker-Netzausbau 2024-2026, öffentliche API von hier nicht verifizierbar.
+# Infraschall (CTBTO/IMS, ISLA): Zugriff kontrolliert (Registrierung/VDEC), keine anonyme
+# öffentliche API -> kein Kandidat. Movebank: Token nötig (Registrierung) -> kein Kandidat.
+# ISMN-Bodenfeuchte: neue Portal (ismn.earth, BfG) mit Login; legacy API 404 -> kein Kandidat.
+# TERENO: data.tereno.net von hier unerreichbar -> kein Kandidat.
+
+kandidat
+url https://waterservices.usgs.gov/nwis/iv/?format=json&parameterCd=72019&countyCd=51013&siteStatus=active
+note USGS Groundwater Level Network | Wasserstand unter Flurdaten (72019, in-situ Brunnensensor) | existierend, Live | curl 200 (JSON, time series mit "value") | JSON (WaterML2, format=csv möglich) | kein Auth
+
+kandidat
+url https://wcc.sc.egov.usda.gov/awdbRestApi/services/v1/stations?active=true&returnUsed=true
+note NRCS AWDB — SNOTEL + SCAN (USDA) | Schneehöhe (SNWD), Schneewasseräquivalent (WTEQ), Bodenfeuchte (SMS); stations-Endpoint trägt lat/lon + Messnetz-Code ("SNOW"=SNOTEL) | existierend, Live | curl 200 (stations); /services/v1/data gab aus dieser Umgebung 400 bei allen Parameter-Kombinationen (Detail lokal prüfen) | JSON (data auch csv) | kein Auth
+
+kandidat
+url https://www.nmdb.eu/nest/data.php?stations=JUNG&year=2026&month=8&day=19&last=24
+note NMDB — Neutronenmonitor-Netz (Europa+global) | Zählrohr-Zählrate der sekundären kosmischen Strahlung am Punkt | existierend | curl 000 (DNS löst auf 134.245.64.55, Connect-Timeout — Server down oder Datacenter-Sperre; lokal nachprüfen) | Text/CSV | kein Auth
+
+kandidat
+url https://data.geo.admin.ch/ch.meteoschweiz.ogd-pollen/daily/CH2026_d.csv
+note MeteoSwiss OGD-Pollen | Pollenkonzentration Körner/m³ (Zählung am Messpunkt) | existierend | curl 403 (AWS AccessDenied, Datacenter-IP gesperrt; lokal nachprüfen) | CSV | kein Auth
+
+kandidat
+url https://www.treetalker.xyz/
+note TreeTalker-Netze (Nature 4.0 / EU Green Deal) | Baum-Sensoren: Sapflow, Stammschwankung, Mikroklima — Messung am Baum | angekündigt (Netzausbau 2024-2026 publiziert), öffentliche Live-API von hier nicht verifizierbar | transport error (Server von hier unerreichbar) | unklar | unklar
+
+# — Recheck aus dead_sources.φ:1487 (IGRAC GGIS) —
+# ggis.un-igrac.org/api/ -> curl 200 (Geonode 4.4.3, 573 Datensätze). Es ist ein Datenkatalog,
+# Zeitreihen liegen hinter /api/datasets/ — kein Live-Sensor-Endpoint. Befund: Katalog-API lebt
+# (damit ist das dead_sources-Recheck beantwortet), aber kein Kandidat für Live-Oszillatoren.

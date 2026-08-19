@@ -1,0 +1,19 @@
+# terrestrische Messnetze, neu/im Aufbau, mit Live-HTTP-API — Befund 2026-08-19
+# Recherche-Auftrag: Geodäsie & Geophysik. curl -s -o /dev/null -w "%{http_code} %{size_download}" -m 10
+# Kraft-Gate-Entscheidungen trifft der Auftraggeber; hier steht nur, welche Messung es IST.
+
+kandidat
+url https://api.vedur.is/quakes/events
+note IMO Skjalftalísa/Quakes-API | Erdbebensignale: Epizentrum, Zeit, Magnitude, Tiefe (Herde der seismischen Beschleunigung am Punkt), SIL-Bebennetz | SIL seit 1976; im Aufbau: massive Verdichtung um Svartsengi/Grindavik seit Nov 2023, Eruptionen bis 2026 laufend | 200 160953 | GeoJSON FeatureCollection (CSV via Parameter, 422 bei output=text/csv) | ohne Auth (CC BY 4.0)
+
+kandidat
+url https://api.geonet.org.nz/quake?MMI=0
+note GeoNet (GNS Science) | Erdbebensignale: Ort, Zeit, Magnitude, Tiefe, MMI (Punktmessung der Erschütterung) | Netz etabliert seit 2000ern, kontinuierliche Verdichtung/Modernisierung mit neuen Stationen, auch 2024-2026 | 200 26939 | JSON (GeoJSON FeatureCollection) | ohne Auth
+
+kandidat
+url https://www.imis.bfs.de/ogc/opendata/ows?service=WFS&version=1.1.0&request=GetFeature&typeName=opendata:odlinfo_odl_1h_latest&outputFormat=application/json
+note BfS ODL-Messnetz (IMIS) | Gamma-Ortsdosisleistung in µSv/h, 1h-Mittel, ~1800 Stationen mit Geiger-Müller-Sonden — Strahlendosis am Punkt | Netz seit 1986/1994 etabliert; die offene OGC-WFS-Schnittstelle ist neu (2023/24) | 200 891397 | GeoJSON (WFS GetFeature) | ohne Auth
+
+kandidat
+url https://www.saveecobot.com/static/api
+note SaveEcoBot / SaveDnipro | Gamma-Strahlendosis aus Citizen-Geiger-Sensoren — Strahlendosis am Punkt | Citizen-Science-Netz seit ~2020, kriegsbedingte Expansion ab 2022, weiter im Wachstum; dediziertes Strahlungs-API als Neuheit | 200 root (105997 B), 401 ohne Token auf /api/v1 und /api/v2 | JSON | Auth: API-Key per Antrag; stations-/stadtweise keyless JSON-URLs auf den Stationsseiten

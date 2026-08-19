@@ -1,0 +1,21 @@
+# Bojen-Messnetze 2026-08-19 — existierende Netze mit öffentlicher API + angekündigte Netze
+# Agent: Recherche. curl-verifiziert. Keine Force-Gate-Entscheidung — nur Klassifikation der Messung.
+# Suchmaschinen (DuckDuckGo/Bing/Mojeek) blockieren Bots; Kandidaten gezielt per curl + Web-Fetch geprobt.
+# Geprüft und NICHT neu registriert (bereits im Register): NDBC (sources.φ, National_Data_Buoy_Center), DART (dead_sources.φ).
+# Angekündigte 2024-2026-Netze ohne verifizierbaren Web-Beleg — der Aufbau läuft praktisch ausschließlich über Sofar Spotter (siehe unten).
+
+kandidat
+url https://data.pmel.noaa.gov/pmel/erddap/tabledap/pmelTaoDySst.json?time,T_25,station&time%3E=2026-07-01T00%3A00%3A00Z
+note Global Tropical Moored Buoy Array (GTMBA, NOAA-PMEL): TAO/TRITON (Pazifik), PIRATA (Atlantik), RAMA (Indik) | Messung IST: Wassertemperatur (T_25/TEMP), Salzgehalt (S_41), Wind (pmelTaoDyW), Luftdruck (BP_915), Strömung (pmelTaoDyCur) — echte Mooring-Messungen, keine Modelle | existierend; delayed-mode: tägliche pmelTaoDy*-Datasets bis 2026-07-03 (150 Stationen), stündliche OceanSITES pirata_hourly_temp / rama_hourly_temp bis 2026-02-27; Realtime läuft über NDBC (im Register) | curl: HTTP 200, JSON (tägliche + stündliche Abfrage verifiziert) | JSON (ERDDAP tabledap) | ohne Auth
+
+kandidat
+url https://erddap.emodnet-physics.eu/erddap/tabledap/EP_PLATFORMS_METADATA_V2.json?PLATFORMCODE,call_name,latitude,longitude,lastdateobservation&platformtypedescription=%22Mooring%22&lastdateobservation%3E=2026-08-01T00%3A00%3A00Z
+note EMODnet Physics (EU, EuroGOOS-Bojen-/Mooring-Aggregator) | Messung IST: Plattform-Katalog mit Position + letzter Beobachtung pro Boje (1759 Mooring-Plattformen, letzte Messung 2026-08-19, heute); Parameter Wellenhöhe/Wassertemperatur/Salzgehalt je Netz-Betreiber in den per-Netz-Datasets desselben ERDDAP | existierend; Live-Katalog verifiziert, die Messungs-Datasets liegen bei den nationalen DACs (Wellen-Datasets im Katalog teils historisch, z.B. MELOA-Missionen) | curl: HTTP 200, JSON (Live-Katalog; 1759 Plattformen) | JSON (ERDDAP tabledap) | ohne Auth
+
+kandidat
+url https://api.sofarocean.com/api/devices
+note Sofar Ocean Spotter-Netz (privat betriebenes, kommerziell wachsendes Bojennetz — „largest privately-owned ocean sensor network", Web-Beleg www.sofarocean.com; neues Netz im Aufbau seit ~2019, Skalierung läuft) | Messung IST: Wellenspektrum (Hm0, Tp, Dp), Wassertemperatur, Wind, Luftdruck — Spotter-Bojen-Telemetrie, keine Modelle (die Wave-Spectra-Forecast-API ist Modell und ausgenommen) | existierend; API live erreichbar | curl: HTTP 401 „No token provided" (= Endpoint lebt, Zugang token-gated) | JSON | Auth: API-Token über Spotter-Konto erforderlich
+
+kandidat
+url https://data.saildrone.com/api/robots
+note Saildrone-Flotte (autonome Segel-USV, Wind-/Wellen-/SST-/Luftdruck-Missionen für NOAA u.a.) | Messung IST: Wellenhöhe/-periode, Wind, Wassertemperatur, Luftdruck an Bord | existierend als Flotte, aber kein öffentlicher Live-Endpoint verifiziert: data.saildrone.com/api unerreichbar (curl 000), Missionsdaten nur historisch via PMEL-ERDDAP (z.B. sd1041_hurricane_2024) | curl: 000 (keine Verbindung/DNS) | Format nicht erreichbar | Auth: kein öffentlicher Zugang

@@ -1,0 +1,25 @@
+# aircraft 2026-08-19 — Recherche FLUGZEUG-basierte Messdaten (Verkehrsflugzeug-Met, ADS-B, Hurrikan-Aufklärung, NASA-Airborne)
+# Agent: Recherche. curl-verifiziert. Keine Force-Gate-Entscheidung — nur Klassifikation der Messung.
+# Registriert & weggelassen (grep sources/dead_sources): OpenSky-Network, api.adsb.lol (Accept-Kandidat),
+# IAGOS/MOZAIC (dead, Endpoint-Wechsel nach services.iagos-data.fr ist bereits in interesting_domains.φ notiert).
+# Suchen (DuckDuckGo/Bing) wurden von Captchas blockiert; Kandidaten gezielt per curl geprobt.
+
+kandidat
+url https://aviationweather.gov/api/data/pirep?id=KJFK&distance=300&format=json&age=6
+note NOAA Aviation Weather Center — Aircraft Reports (PIREP/AIREP/AMDAR) | Messung IST: punktuelle Flugzeugmessungen an der Flugzeugposition — Lufttemperatur (°C), Windrichtung/-geschwindigkeit, Turbulenz (Intensität, Basis/Top), Vereisung, Wolkenuntergrenze, Sicht, Flughöhe — automatisch erzeugte Reports von Verkehrsflugzeugen (AMDAR-abgeleitete AIREPs) plus Piloten-PIREPs | existierend, live; Empfehlung der Betreiber: vollständige Datensätze über den Cache-Feed /data/cache/aircraftreports.cache.csv.gz (gzip-CSV, minütlich, alle aktuellen AIREP/PIREP weltweit) | curl: API ?id=KJFK&distance=300&format=json&age=6 → HTTP 200, JSON-Array frischer Reports (2026-08-19 11:50 UTC, KDDL/UAL169 bei FL330); Cache-CSV → HTTP 200 (105 kB gz, letzte Änderung laufend, Spalten lat/lon/alt/flt_lvl/temp_c/wind_dir_degrees/wind_speed_kt/turbulence/icing) | JSON bzw. CSV(gz); XML/GeoJSON/Text ebenfalls | keine Auth
+
+kandidat
+url https://api.airplanes.live/v2/point/{lat}/{lon}/{radius}
+note Airplanes.live | Messung IST: ADS-B-Empfang — Position, Höhe, Geschwindigkeit, Kurs, Squawk jeder angetroffenen Maschine (Empfängernetz, gerätegebunden, kein Modell) | existierend, Stand 2026: öffentlicher Punkt-API-Zugang jetzt registrierungspflichtig — Cloudflare-Gate verlangt E-Mail mit Projektbeschreibung | curl: /v2/point/50/10/250 → HTTP 403 JSON („Please contact us at contact@airplanes.live …"), Wurzel-Stream aircraft.json.gz → 404; vor 2024 war der Endpoint anonym offen | JSON (OpenSky/SensorHub-kompatibel, „live"-Flag) | Auth: Registrierung per Kontakt erforderlich (kein freier Endpoint mehr); adsb.lol bleibt der offene ADSB-Kandidat im Register
+
+kandidat
+url https://www.aoml.noaa.gov/hrd/data_sub/hurr.html
+note NOAA AOML Hurricane Research Division — Hurricane-Hunter-Flugdaten | Messung IST: Fluglevel-Messungen der NOAA-P-3/G-IV und USAF-WC-130 in tropischen Wirbelstürmen — Temperatur, Druck, Wind, SFMR-Bodenwind, Feuchte, Dropsonden (Profil) | existierend, aber statisches Jahresarchiv (2000-2021+, Liste pro Sturm), kein Live-API; NCEI/GHRC-ERDDAP-Instanzen von hier aus nicht erreichbar (Timeout) | curl: HTTP 200 HTML (Jahres-/Sturmlisten; Feldprogramm-Daten 2021+ unter aoml.noaa.gov/2021-hurricane-field-program-data/, ebenfalls statisch) | HTML/NetCDF-Archive | keine Auth
+
+kandidat
+url https://www.noaa.gov/news-release/noaa-awards-contract-for-next-generation-hurricane-hunter-aircraft
+note NOAA Hurricane Hunters — C-130J-Nachfolgeflotte | Messung IST: (angekündigt) Fluglevel-/Dropsonden-Messungen wie oben auf zwei modernen Lockheed C-130J, ersetzen die WP-3D Orions; größere Nutzlast, modernisierte Instrumentierung | angekündigt, Stand: Auftrag Sept 2024, Einsatz ab ~2030 — kein Endpoint | curl: Release HTTP 200 („NOAA awards contract for next-generation hurricane hunter aircraft"); Wikipedia NOAA Hurricane Hunters bestätigt (Dienst 2030) | k. A. | keine Auth
+
+kandidat
+url https://en.wikipedia.org/wiki/Douglas_DC-8
+note NASA Airborne Science — Boeing 777-200ER als DC-8-Nachfolger | Messung IST: (angekündigt) NASA-Forschungspassagiermaschine mit Fluglevel-In-situ-Instrumenten (Trachemente), ersetzt die 2024 ausgemusterte DC-8; ER-2 fliegt weiter als Höhenplattform | angekündigt, Stand: DC-8 im April 2024 außer Dienst, 777-200ER als „more capable and fuel-efficient" Nachfolger benannt (Beleg: Wikipedia Douglas DC-8: „NASA is to replace the DC-8 with a more capable and fuel-efficient Boeing 777-200ER", Ref. NASA Armstrong) — kein Endpoint | k. A. | keine Auth

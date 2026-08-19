@@ -1,0 +1,21 @@
+# grind kaskade (2026-08-19)
+# ip-blocked-Ergebnisse der Kaskaden-Läufe (SOURCE_PORT §13): 4 Routen über
+# r.jina.ai (anonym) bzw. corsproxy.io erreichbar — Entblock-Kandidaten.
+# Kanal-Befunde 2026-08-19: r.jina.ai 200 für alle 4; corsproxy.io 200 nur Meteomatics.
+# Struktur-Proben offen — keine Feldwerte erfunden (0 honored).
+
+note probe-open
+url https://lisn.igp.gob.pe/api/v1/stations?format=json&status=operational
+note LISN (Low-latitude Ionospheric Sensor Network, TEC — em, echt): lokal 403, r.jina.ai 200 (2026-08-19, Kaskade). Stationsliste mit lat/lon + TEC-Werte; JSON-Struktur probe, dann Block in sources.φ mit r.jina.ai-Präfix (parse_json-Skip eingebaut, SOURCE_PORT Z.209-214).
+
+note probe-open
+url https://www.epa.gov/sites/default/files/2020-02/radnet_data.csv
+note EPA-RadNet (Gamma-Dosisleistung, em — echt): lokal 403, r.jina.ai 200 (2026-08-19). CSV (RadNet air / drinking water); Position je Station — Struktur probe; r.jina.ai-Präfix, CSV-Format durch Reader prüfen.
+
+note probe-open
+url https://data.geo.admin.ch/ch.meteoschweiz.ogd-pollen/daily/CH2026_d.csv
+note MeteoSwiss OGD-Pollen (Körner/m³, diffusion): lokal 403 (AWS AccessDenied), r.jina.ai 200 (2026-08-19). CSV je Station/Tag; Struktur probe; r.jina.ai-Präfix.
+
+note probe-open-auth
+url https://api.meteomatics.com
+note Meteomatics Meteodrones: lokal 000 Timeout, r.jina.ai 200 UND corsproxy.io 200 (2026-08-19). Daten-Endpoints hinter User/Pass (kein Key in .secrets.local — Auth offen); Root 200 via Kaskade. Erst Auth klären, dann Struktur probe.

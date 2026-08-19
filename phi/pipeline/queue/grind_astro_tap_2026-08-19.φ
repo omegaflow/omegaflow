@@ -8,9 +8,9 @@ dec s_dec
 url https://eas.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+1000+object_id,right_ascension,declination+FROM+catalogue.mer_catalogue
 ttl 604800
 at sun
-cmap .
-ra right_ascension
-dec declination
+cmap data
+ra 1
+dec 2
 
 url https://archive.eso.org/tap_obs/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+*+FROM+ivoa.ObsCore
 ttl 604800

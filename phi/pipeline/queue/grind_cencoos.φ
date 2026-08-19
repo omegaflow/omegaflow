@@ -1,0 +1,10 @@
+# grind cencoos (2026-08-19)
+# CeNCOOS (Central & Northern California Ocean Observing System) — IOOS-
+# Regionalverbund, ERDDAP-basiert (data.cencoos.org, 200). Aggregiert die
+# MBARI-Küstenmessungen (LOBO, M1-Mooring, OA1/2, Wave Glider, ISUS) —
+# ersetzt die blockierte www3.mbari.org-Route (dead_sources.φ decline
+# superseded-by-cencoos). Mirror zulässig (IOOS-Open-Data).
+
+note probe-open
+url https://data.cencoos.org/erddap/
+note ERDDAP-Instanz — .json/.csv-Endpoints je Datensatz; Struktur probe (M1-Mooring + LOBO-Datensätze identifizieren), dann Block in sources.φ.

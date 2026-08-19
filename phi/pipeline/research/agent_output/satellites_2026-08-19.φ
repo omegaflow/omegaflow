@@ -1,0 +1,41 @@
+# satellites 2026-08-19 — Recherche Satelliten-Messdatenquellen: existierend (Live-API) und angekündigt (2026-2030)
+# Agent: Recherche. curl-verifiziert. Keine Force-Gate-Entscheidung — nur Klassifikation der Messung.
+# Domäne: Erdbebachtung, Wetter, Atmosphäre/Ozean, GNSS. NICHT Sternwarte/Astrophysik.
+# Weggelassen (bereits registriert): dataspace.copernicus.eu (dead/decline-Katalog), api.daac.asf.alaska.edu
+# (decline satellite-scene-catalog), view.eumetsat.int (decline imagery-tiles), gibs.earthdata.nasa.gov
+# (decline imagery-tiles), eorc.jaxa.jp ALOS (decline derived), JMA-Himawari-Tile-Routen (alle 404).
+# Hinweis: NASA-Satellitendaten (PACE, EarthCARE, PREFIRE, TROPICS, SWOT) liegen hinter Earthdata-Login
+# (Key-needed) und wurden nicht als neue Endpoint-Kandidaten geprüft; Missionen sind live.
+
+kandidat
+url https://data.eumetsat.int
+note EUMETSAT Data Store — MTG-S1 (Meteosat-13, Start 2025-07-01: IRS-Infrarotsounder + Sentinel-4 UVN), MetOp-SG A1 (Start 2025-08-13: IASI-NG, METimage, Sentinel-5), MTG-I1 FCI (operational seit 12/2024) | Messung IST: Wärmestrahlung als vertikale Temperatur-/Feuchteprofile (IR-Sounding), UVN-Gas-Säulen (O3, NO2, SO2, HCHO, Aerosole), multispektrale sichtbare/IR-Strahlung des FCI-Imagers | existierend, Live-Distribution; frisch gestartete Flaggschiff-Missionen 2025 | curl: data.eumetsat.int HTTP 200 (SPA-Shell); Daten-API und Download hinter OAuth (EUMETSAT-Account, kostenlos) | JSON (API) / netCDF | Auth: Registrierung (kostenlos)
+
+kandidat
+url https://data.cosmic.ucar.edu/gnss-ro/cosmic2/
+note COSMIC-2 (FORMOSAT-7, UCAR) — GNSS-Radio-Okkultations-Konstellation (6 Satelliten) | Messung IST: atmosphärische Temperatur-, Druck- und Feuchteprofile aus GPS-Signallaufzeit/Biegungswinkel (Radio-Okkultation), Near-Real-Time | existierend, offene Datenroute | curl: HTTP 200, offenes Verzeichnis (spaceWeather u.a.), offiziell „no need for a login"; alternativ CDAAC-REST-Host (api.cosmic.ucar.edu) verlangt Login — Datenroute offen | netCDF | keine Auth
+
+kandidat
+url https://gportal.jaxa.jp
+note GOSAT-GW (JAXA, Start 2025-06-28, H-IIA) — TANSO-3 (CO2/CH4-Säulen), AMSR3 (passive Mikrowellen: Meerestemperatur, Niederschlag, Schnee/Meereis, Bodenfeuchte), SGLI-2 | Messung IST: Treibhausgas-Absorption und passive Mikrowellenstrahlung der Oberfläche | existierend, Datenverteilung über JAXA G-Portal (ab 2025) | curl: gportal.jaxa.jp HTTP 200 (Portal); Datendownload über FTP/Portal mit Account | netCDF/HDF5 | Auth: Registrierung (kostenlos)
+
+kandidat
+url https://www.eumetsat.int/meteosat-third-generation
+note MTG-I2 (Meteosat-14) — FCI-Imager (16 Kanäle, 10-min-Vollscheibe) + Lightning-Imager LI | Messung wird: multispektrale Strahlung, Blitzstrahlung | angekündigt, Start 2026-08-27 (Ariane 62, Arianespace, Wikipedia 2026-08) | „angekündigt — kein Endpoint" | — | —
+
+kandidat
+url https://www.eumetsat.int/metop-second-generation
+note MetOp-SG B1 (EUMETSAT, polar) — MicroWave Sounder (MWS, Temperatur/Feuchte-Sounding), Scatterometer (SCA, Ozeanwind), GNSS-RO, MWI | Messung wird: Mikrowellenstrahlung (Temperatur-/Feuchteprofile), Radar-Rückstreuung für Wind | angekündigt, Start 2026 (EUMETSAT, Wikipedia 2026-08) | „angekündigt — kein Endpoint" | — | —
+
+kandidat
+url https://www.esa.int/Applications/Observing_the_Earth/Copernicus/Sentinel-3
+note Sentinel-3C (Copernicus/ESA, Vega-C) — OLCI (optisch, Ozeanfarbe/Chlorophyll), SLSTR (IR-Thermometrie, SST), SRAL (Radar-Altimetrie, Meereshöhe) | Messung wird: Ozeanfarbe, Meeresoberflächentemperatur, Meereshöhe — Fortführung der aktiven Sentinel-3-Konstellation | angekündigt, Start ~2026 (Vega-C, Wikipedia/NextSpaceflight 2026-08; ursprünglich Ende 2025, verschoben) | „angekündigt — kein Endpoint" | — | —
+
+# ABSCHLUSS
+# 1. EUMETSAT Data Store (data.eumetsat.int) — MTG-S1/MetOp-SG A1/MTG-I1, neu gestartet 2025, IR-Sounding + UVN-Gas + FCI-Imaging.
+# 2. COSMIC-2 (data.cosmic.ucar.edu) — GNSS-Radio-Okkultations-Konstellation, offene Route ohne Login, atmosphärische Profile.
+# 3. GOSAT-GW (gportal.jaxa.jp) — 2025 gestartet, GHG-Säulen + AMSR3-Mikrowellen, Daten hinter JAXA-Registrierung.
+# 4. MTG-I2 / Meteosat-14 (eumetsat.int) — angekündigt, Start 2026-08-27.
+# 5. MetOp-SG B1 (eumetsat.int) — angekündigt, Start 2026.
+# 6. Sentinel-3C (esa.int) — angekündigt, Start ~2026 (verschoben von 2025).
+# Datei: /home/johannes/projects/omegaflow/phi/pipeline/research/agent_output/satellites_2026-08-19.φ

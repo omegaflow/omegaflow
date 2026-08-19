@@ -1,0 +1,472 @@
+# Klassifikation der unverifizierten Kandidaten — Nachprüf-Welle 2026-08-19
+# Methode: Stufe 1 = direktes curl (Code); Stufe 2 = Jina r.jina.ai (422 = DNS auch dort tot,
+#   402 = Jina-Guthaben aufgebraucht, unergiebig); Stufe 3 = Wayback (CDX/available).
+# Hinweis: Diese Umgebung läuft aus einem Rechenzentrum — 000/403 können Datacenter-Sperren sein.
+#   Wo das plausibel ist, steht „lokal vermutlich 200 — lokal nachprüfen".
+# Angekündigt-Seiten wurden per Spot-Check-curl (200/301) bestätigt.
+
+# ── radiosondes_2026-08-19.φ ─────────────────────────────────────────────
+
+kandidat
+url https://www.ncei.noaa.gov/data/integrated-global-radiosonde-archive/access/data-y2d/{station}-data-beg{year}.txt.zip
+note IGRA (NOAA NCEI) | STATUS: live | Stufe 1: curl 200, Probe ARM00087155/AEM00041217 mit 2026er-Messungen | offener Endpoint, keine Auth | Empfehlung: ausstehend
+
+kandidat
+url https://weather.uwyo.edu/wsgi/sounding?datetime={YYYY-MM-DD HH:00:00}&id={wmo_id}&src=UNKNOWN&type=TEXT:CSV
+note University of Wyoming Upper-Air | STATUS: live | Stufe 1: curl 200, id=72672 CSV 2026-08-18 | offen, keine Auth | Empfehlung: ausstehend
+
+kandidat
+url https://mesonet.agron.iastate.edu/json/raob.py?station={station}&ts={YYYYMMDDHHmm}
+note Iowa State Mesonet RAOB-Archiv | STATUS: live | Stufe 1: curl 200, station=OUN ts=2026081900 | offen, keine Auth | Empfehlung: ausstehend
+
+kandidat
+url https://api.v2.sondehub.org/sonde/{serial}
+note SondeHub (UKMADS Citizen-Radiosonden) | STATUS: live | Stufe 1: curl 200 (redirect .json.gz), W1710613 ~10.000 temp-Messpunkte | offen; RH/P meist nicht im Amateurframe | Empfehlung: ausstehend
+
+kandidat
+url https://un-soff.org/
+note SOFF (WMO/UNDP/UNEP) | STATUS: angekündigt | Stufe 1: curl 200 (Programmseite) | kein öffentlicher Daten-Feed, Inbetriebnahme 2024-2026 laufend | Empfehlung: geparkt
+
+kandidat
+url https://donneespubliques.meteofrance.fr/
+note Météo-France Radiosondes (verworfen im Befund) | STATUS: blocked | Stufe 1: nicht nachgeprüft — Befund: Txt-Pfad weg (donnee_indisponible), Download nur hinter Konto (connexion) | Login-Sperre, kein offener Live-Feed | Empfehlung: decline
+
+# ── underwater_2026-08-19.φ ──────────────────────────────────────────────
+
+kandidat
+url https://erddap.emso.eu/erddap/info/index.json
+note EMSO ERIC | STATUS: live | Stufe 1: curl 200 (Index 357263 B, OBSEA tabledap TEMP/PSAL) | offen, keine Auth | Empfehlung: ausstehend
+
+kandidat
+url https://gliders.ioos.us/erddap/info/index.json
+note IOOS National Glider DAC | STATUS: live | Stufe 1: curl 200 (Index + dfo-bb046 temperature/salinity) | offen, keine Auth | Empfehlung: ausstehend
+
+kandidat
+url https://erddap.marine.ie/erddap/info/index.json
+note SmartBay Observatory (Marine Institute Irland) | STATUS: live | Stufe 1: curl 200 (Index + smartbay_obs_ctd_sbe16 2026-01) | offen, keine Auth | Empfehlung: ausstehend
+
+kandidat
+url https://emso.eu/2026/08/07/6092/
+note EMSO-SMART-Cable West-Ionisches Meer (INGV/GURALP/ELETTRA) | STATUS: angekündigt | Stufe 1: curl 200 (Web-Beleg DAS-Experiment) | Prototyp seit 2023 in Betrieb, öffentlicher Datenzugang nicht belegt | Empfehlung: geparkt
+
+# ── aircraft_2026-08-19.φ ────────────────────────────────────────────────
+
+kandidat
+url https://aviationweather.gov/api/data/pirep?id=KJFK&distance=300&format=json&age=6
+note NOAA AWC Aircraft Reports (PIREP/AIREP/AMDAR) | STATUS: live | Stufe 1: curl 200 (JSON frischer Reports; Cache-CSV gz 200) | offen, keine Auth | Empfehlung: ausstehend
+
+kandidat
+url https://api.airplanes.live/v2/point/{lat}/{lon}/{radius}
+note Airplanes.live | STATUS: blocked | Stufe 1: curl 403 („Please contact us…"); Stufe 2: Jina 402 (Guthaben, unergiebig) | Cloudflare-Gate, Zugang nur per Registrierung/Kontakt; vor 2024 anonym offen; adsb.lol bleibt der offene Kandidat | Empfehlung: geparkt
+
+kandidat
+url https://www.aoml.noaa.gov/hrd/data_sub/hurr.html
+note NOAA AOML HRD Hurricane-Hunter-Flugdaten | STATUS: live | Stufe 1: curl 200 (statisches Jahresarchiv) | kein Live-API, aber Endpoint offen | Empfehlung: ausstehend
+
+kandidat
+url https://www.noaa.gov/news-release/noaa-awards-contract-for-next-generation-hurricane-hunter-aircraft
+note NOAA Hurricane Hunters C-130J-Nachfolgeflotte | STATUS: angekündigt | Stufe 1: curl 200 (Release; Auftrag 2024, Einsatz ab ~2030) | kein Endpoint | Empfehlung: geparkt
+
+kandidat
+url https://en.wikipedia.org/wiki/Douglas_DC-8
+note NASA Airborne Science — Boeing 777-200ER als DC-8-Nachfolger | STATUS: angekündigt | Stufe 1: curl 200 (Beleg: DC-8 2024 außer Dienst, 777-200ER benannt) | kein Endpoint | Empfehlung: geparkt
+
+# ── terrestrial_atmo_2026-08-19.φ ────────────────────────────────────────
+
+kandidat
+url https://api.meteo.lt/v1/stations/vilniaus-ams/observations/latest
+note Meteo LT (Litauen) | STATUS: live | Stufe 1: curl 200 (52 Stationen, frisch 2026-08-18) | offen, keine Auth | Empfehlung: ausstehend
+
+kandidat
+url https://pro.weatherxm.com/docs
+note WeatherXM | STATUS: blocked | Stufe 1: curl 200 (Doku); Daten-API api.weatherxm.com ohne Key 404 | Endpoint lebt, Daten hinter kostenlosem API-Key (WeatherXM Pro) | Empfehlung: geparkt
+
+kandidat
+url https://api.airqo.net/api/v2/devices/measurements/latest
+note AirQo (Makerere University, Uganda) | STATUS: blocked | Stufe 1: curl 401 („token missing") | Token-Gate, kostenlose Registrierung | Empfehlung: geparkt
+
+kandidat
+url https://api.met.ie/opendata/latest_data/
+note api.met.ie (verworfen im Befund) | STATUS: declined | Stufe 1: nicht nachgeprüft — Befund: nur Map-/Radar-Tiles, abgeleitete Produkte | was die Quelle IST: abgeleitetes Produkt | Empfehlung: decline
+
+kandidat
+url https://meteosearch.meteo.gr/
+note meteosearch.meteo.gr (verworfen) | STATUS: blocked | Stufe 1: nicht nachgeprüft — Befund: Login | Registrierung/Login | Empfehlung: decline
+
+kandidat
+url https://www.avamet.org/
+note AVAMET (verworfen) | STATUS: blocked | Stufe 1: nicht nachgeprüft — Befund: Daten hinter Login | Login-Sperre | Empfehlung: decline
+
+kandidat
+url https://apicemaden.cemaden.gov.br/
+note Cemaden (verworfen) | STATUS: tot | Stufe 1: nicht nachgeprüft — Befund: unerreichbar | Endpoint antwortet nicht | Empfehlung: decline
+
+kandidat
+url https://api.bmkg.go.id/
+note BMKG (verworfen) | STATUS: blocked | Stufe 1: nicht nachgeprüft — Befund: 403 | Datacenter-/IP-Sperre, lokal nachprüfen | Empfehlung: geparkt
+
+kandidat
+url https://api.meteo.gr/
+note api.meteo.gr (verworfen) | STATUS: blocked | Stufe 1: nicht nachgeprüft — Befund: 403 | Sperre, lokal nachprüfen | Empfehlung: geparkt
+
+kandidat
+url https://tahmo.org/
+note TAHMO (verworfen) | STATUS: blocked | Stufe 1: nicht nachgeprüft — Befund: 500/403 | Zugangsgate | Empfehlung: geparkt
+
+kandidat
+url https://smartcitizen.me/api/
+note SmartCitizen (verworfen) | STATUS: blocked | Stufe 1: nicht nachgeprüft — Befund: Timeout | Datacenter-Timeout, lokal vermutlich 200 — lokal nachprüfen | Empfehlung: geparkt
+
+kandidat
+url https://api.cpcb.nic.in/
+note CPCB Indien (verworfen) | STATUS: blocked | Stufe 1: nicht nachgeprüft — Befund: Timeout | Datacenter-Timeout, lokal vermutlich 200 — lokal nachprüfen | Empfehlung: geparkt
+
+kandidat
+url https://t-hydro.com/
+note T-Hydro (verworfen) | STATUS: blocked | Stufe 1: nicht nachgeprüft — Befund: Timeout | Datacenter-Timeout, lokal vermutlich 200 — lokal nachprüfen | Empfehlung: geparkt
+
+kandidat
+url https://flood.network/
+note flood.network (verworfen) | STATUS: tot | Stufe 1: nicht nachgeprüft — Befund: GitHub Pages leer | kein Inhalt/kein Endpoint | Empfehlung: decline
+
+kandidat
+url https://samenmeten.rivm.nl/
+note samenmeten.rivm.nl (verworfen) | STATUS: tot | Stufe 1: nicht nachgeprüft — Befund: 404 | Endpoint existiert nicht | Empfehlung: decline
+
+kandidat
+url https://ncm.gov.sa/
+note NCM Saudi (verworfen) | STATUS: blocked | Stufe 1: nicht nachgeprüft — Befund: Timeout | Datacenter-Timeout, lokal vermutlich 200 — lokal nachprüfen | Empfehlung: geparkt
+
+# ── buoys_2026-08-19.φ ───────────────────────────────────────────────────
+
+kandidat
+url https://data.pmel.noaa.gov/pmel/erddap/tabledap/pmelTaoDySst.json?time,T_25,station&time%3E=2026-07-01T00%3A00%3A00Z
+note GTMBA (PMEL TAO/TRITON/PIRATA/RAMA) | STATUS: live | Stufe 1: curl 200 (tägliche + stündliche JSON verifiziert) | offen, keine Auth | Empfehlung: ausstehend
+
+kandidat
+url https://erddap.emodnet-physics.eu/erddap/tabledap/EP_PLATFORMS_METADATA_V2.json?PLATFORMCODE,call_name,latitude,longitude,lastdateobservation&platformtypedescription=%22Mooring%22&lastdateobservation%3E=2026-08-01T00%3A00%3A00Z
+note EMODnet Physics | STATUS: live | Stufe 1: curl 200 (Live-Katalog, 1759 Mooring-Plattformen) | offen, keine Auth | Empfehlung: ausstehend
+
+kandidat
+url https://api.sofarocean.com/api/devices
+note Sofar Ocean Spotter-Netz | STATUS: blocked | Stufe 1: curl 401 („No token provided") | Endpoint lebt, token-gated (Spotter-Konto) | Empfehlung: geparkt
+
+kandidat
+url https://data.saildrone.com/api/robots
+note Saildrone-Flotte | STATUS: tot | Stufe 1: curl 000; DNS: data.saildrone.com DNS-TOT, saildrone.com lebt (198.202.211.1); Stufe 2: Jina 402; Stufe 3: kein CDX-Beleg für data.saildrone.com | kein öffentlicher Live-Endpoint; Missionsdaten historisch via PMEL-ERDDAP | Empfehlung: decline
+
+# ── verify_astro_2026-08-19.φ ────────────────────────────────────────────
+
+kandidat
+url https://archives.esac.esa.int/tap-server/tap/tables?FORMAT=json
+note ESA Archives TAP (archives.esac.esa.int) | STATUS: tot | Stufe 1: curl 404; Dienst lebt unter eas.esac.esa.int/tap-server/tap/tables (curl 200 json) | Endpoint umgezogen — alt existiert nicht mehr | Empfehlung: decline (Altpfad), Nachfolger ausstehend
+
+kandidat
+url https://archive.eso.org/tap_obs/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+1+*+FROM+ivoa.ObsCore
+note ESO TAP (/tap_obs/tap/…) | STATUS: tot | Stufe 1: curl 404; korrekte Form /tap_obs/sync (curl 200 csv) | falscher/abgelöster Pfad, Dienst lebt | Empfehlung: decline (Pfad), ausstehend (/tap_obs/sync)
+
+kandidat
+url https://archive.eso.org/tap_cat/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+1+*+FROM+ivoa.ObsCore
+note ESO TAP (/tap_cat/…) | STATUS: tot | Stufe 1: curl 501 („Unknown TAP resource: tap") | Katalog-TAP-Ressource existiert nicht | Empfehlung: decline
+
+kandidat
+url https://data.lsst.cloud/api/tap/tables?FORMAT=json
+note LSST (data.lsst.cloud) | STATUS: blocked | Stufe 1: curl 401 (nginx Authorization Required) | Auth-Gate (RSP-Login) | Empfehlung: geparkt
+
+kandidat
+url https://catalogs.mast.stsci.edu/api/v0.1/panstarrs/detections?ra=45.0&dec=45.0&radius=0.05&nDetections=true
+note MAST Pan-STARRS detections-Pfad | STATUS: tot | Stufe 1: curl 404 (detail „Not Found"); korrekte Form /api/v0.1/panstarrs/dr1/{table}, docs 200 | falscher Pfad, Dienst lebt | Empfehlung: decline (Pfad), ausstehend (dr1-Form)
+
+kandidat
+url https://dr11.lamost.org/
+note LAMOST DR11 (Subdomain) | STATUS: tot | Stufe 1: curl 000; Stufe 2: Jina 422 (DNS auch dort tot); Stufe 3: kein CDX-Beleg | DNS der Subdomain tot; Dienst lebt unter www.lamost.org/dr11 (curl 200) | Empfehlung: decline (Subdomain), ausstehend (www.lamost.org/dr11)
+
+kandidat
+url https://data.nrao.edu/archive-service/
+note NRAO archive-service REST-Pfade | STATUS: tot | Stufe 1: curl 404 (auch /restapi/, /restapi/1.0/) | REST-API existiert nicht; Archiv lebt als Portal /portal/ (200 SPA) | Empfehlung: decline (REST), geparkt (Portal)
+
+kandidat
+url https://gcn.nasa.gov/api/circulars/search?subject=SVOM&limit=5
+note GCN Circulars API-Suche | STATUS: tot | Stufe 1: curl 404 (SPA-Catch-all); /circulars 200 SPA, kein JSON-Backend unter den 3 Kandidaten | Backend-Pfad existiert nicht | Empfehlung: decline
+
+kandidat
+url https://archive.sarao.ac.za/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1+*+FROM+ivoa.ObsCore
+note MeerKAT-Archiv (archive.sarao.ac.za) TAP | STATUS: tot | Stufe 1: 200 Portal-Catch-all ohne TAP-Ergebnis (2. Probe 200 Catch-all); Befund: Folgeprobe curl:7 Connection refused, Host flackert/firewallt | kein echter TAP-Dienst hinter dem Portal | Empfehlung: decline
+
+kandidat
+url https://magic.mpp.mpg.de/public/public-data/
+note MAGIC (magic.mpp.mpg.de) | STATUS: live | Stufe 1: 200 via -k (TLS-Kette unvollständig, curl:60) | Endpoint offen, Zertifikat-Kette lokal unvollständig | Empfehlung: ausstehend
+
+kandidat
+url https://data.hawc-observatory.org/datasets/
+note HAWC | STATUS: live | Stufe 1: 200 via -k (TLS-Kette unvollständig) | Endpoint offen | Empfehlung: ausstehend
+
+kandidat
+url https://svom.ac.cn/
+note SVOM | STATUS: live | Stufe 1: 200 via -k (Zertifikat abgelaufen) | Endpoint offen, Zertifikat abgelaufen | Empfehlung: ausstehend
+
+kandidat
+url https://fallingstar-data.com/forcedphot/
+note ATLAS Forced Photometry | STATUS: live | Stufe 1: curl 200 (Formularseite) | Endpoint offen | Empfehlung: ausstehend
+
+kandidat
+url https://erosita.mpe.mpg.de/dr2/
+note eROSITA DE DR2 | STATUS: live | Stufe 1: curl 200 | Endpoint offen | Empfehlung: ausstehend
+
+kandidat
+url https://www.chime-frb.ca/catalog
+note CHIME/FRB | STATUS: live | Stufe 1: curl 200 (Portal im Umbau) | Endpoint offen | Empfehlung: ausstehend
+
+kandidat
+url https://english.ihep.cas.cn/lhaaso/pdl/
+note LHAASO | STATUS: live | Stufe 1: curl 200 | Endpoint offen | Empfehlung: ausstehend
+
+kandidat
+url https://irsa.ipac.caltech.edu/TAP/tables?FORMAT=json
+note IRSA TAP (Caltech) | STATUS: live | Stufe 1: curl 200 (vosi:tableset, SPHEREx-Schemas) | Endpoint offen | Empfehlung: ausstehend
+
+kandidat
+url https://eas.esac.esa.int/tap-server/tap/tables?FORMAT=json
+note ESA EAS TAP | STATUS: live | Stufe 1: curl 200 (json, Katalog-Array, Euclid/Q1) | Endpoint offen | Empfehlung: ausstehend
+
+kandidat
+url https://almascience.org/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+TOP+1+s_ra,s_dec,obs_id,dataproduct_type+FROM+ivoa.obscore
+note ALMA TAP | STATUS: live | Stufe 1: curl 302→almascience.eso.org, 200 VOTable (json nicht unterstützt) | Endpoint offen (VOTable) | Empfehlung: ausstehend
+
+kandidat
+url https://data.nrao.edu/portal/
+note NRAO Archive-Portal | STATUS: live | Stufe 1: curl 200 (Angular SPA) | Endpoint offen | Empfehlung: geparkt (SPA ohne API-Route)
+
+kandidat
+url https://www.lamost.org/dr11/
+note LAMOST DR11 (Hauptdomain) | STATUS: live | Stufe 1: curl 200 | Endpoint offen | Empfehlung: ausstehend
+
+kandidat
+url https://catalogs.mast.stsci.edu/docs/panstarrs.html
+note MAST Pan-STARRS Docs | STATUS: live | Stufe 1: curl 200 (dr1-API-Form dokumentiert) | Endpoint offen | Empfehlung: ausstehend
+
+kandidat
+url https://gcn.nasa.gov/circulars?query=SVOM
+note GCN Circulars-Portal | STATUS: live | Stufe 1: curl 200 (Remix-SPA) | Portal offen, kein JSON-Backend | Empfehlung: geparkt
+
+# ── laboratories_2026-08-19.φ ────────────────────────────────────────────
+
+kandidat
+url https://www.imis.bfs.de/ogc/opendata/ows?service=WFS&version=1.1.0&request=GetFeature&typeName=opendata:odlinfo_odl_1h_latest&outputFormat=application/json
+note BfS-ODL/IMIS (auch terrestrial_geo-Befund) | STATUS: live | Stufe 1: curl 200 (GeoJSON, ~1800 Stationen, Stundendaten bis 2026-08-19) | offen, keine Auth | Empfehlung: ausstehend
+
+kandidat
+url https://www.iter.org/project/tokamak-assembly
+note ITER | STATUS: angekündigt | Stufe 1: curl 200 (First Plasma ~2035) | kein Messwert vor Inbetriebnahme | Empfehlung: geparkt
+
+kandidat
+url https://cfs.energy/
+note SPARC (Commonwealth Fusion Systems) | STATUS: angekündigt | Stufe 1: curl 200 | kein Messwert vor First Plasma | Empfehlung: geparkt
+
+kandidat
+url https://www.dunescience.org/
+note DUNE | STATUS: angekündigt | Stufe 1: curl 200 | kein Messwert vor Inbetriebnahme (~2028/2029) | Empfehlung: geparkt
+
+kandidat
+url https://remap.jrc.ec.europa.eu/
+note EURDEP/REMAP (verworfen) | STATUS: blocked | Stufe 1: nicht nachgeprüft — Befund: Captcha + EU-Login | Zugangsgate | Empfehlung: decline
+
+kandidat
+url https://www.epa.gov/radnet
+note EPA RadNet (verworfen) | STATUS: declined | Stufe 1: nicht nachgeprüft — Befund: nur Qlik-Dashboard, keine curl-bare Daten-API | was die Quelle IST: Dashboard ohne offene API | Empfehlung: decline
+
+kandidat
+url https://aragats.am/
+note Aragats/SEVAN (verworfen) | STATUS: declined | Stufe 1: nicht nachgeprüft — Befund: Server = Default-Seite, keine Inhalte | kein Datenendpoint | Empfehlung: decline
+
+kandidat
+url https://credo.science/
+note CREDO (verworfen) | STATUS: blocked | Stufe 1: nicht nachgeprüft — Befund: /data/ 403 | Zugangsgate | Empfehlung: decline
+
+kandidat
+url https://www.eanpollen.eu/
+note EAN Pollen (verworfen) | STATUS: declined | Stufe 1: nicht nachgeprüft — Befund: kein Messdaten-API auffindbar | was die Quelle IST: kein offener Datenendpoint | Empfehlung: decline
+
+kandidat
+url https://diii-d.gat.com/
+note DIII-D (verworfen) | STATUS: blocked | Stufe 1: nicht nachgeprüft — Befund: 401 | Auth-Gate | Empfehlung: geparkt
+
+kandidat
+url https://www.ipp.mpg.de/
+note IPP-Archiv (verworfen) | STATUS: tot | Stufe 1: nicht nachgeprüft — Befund: 000 | Endpoint antwortet nicht, lokal nachprüfen | Empfehlung: geparkt
+
+kandidat
+url https://pris.iaea.org/
+note IAEA PRIS (verworfen) | STATUS: declined | Stufe 1: nicht nachgeprüft — Befund: SPA ohne offene API | was die Quelle IST: Portal ohne Daten-API | Empfehlung: decline
+
+kandidat
+url https://cms.cern/CRMS
+note CERN CRMS (verworfen) | STATUS: tot | Stufe 1: nicht nachgeprüft — Befund: 000 | Endpoint antwortet nicht, lokal nachprüfen | Empfehlung: geparkt
+
+# ── weather_stations_2026-08-19.φ ────────────────────────────────────────
+
+kandidat
+url https://www.jma.go.jp/bosai/amedas/data/map/{YYYYMMDDhhmmss}.json
+note JMA AMeDAS (Japan) | STATUS: live | Stufe 1: curl 200 (1286 Stationen; station_table mit lat/lon) | offen, keine Auth | Empfehlung: ausstehend
+
+kandidat
+url https://api.weather.gc.ca/collections/citypageweather-realtime/items?limit=844
+note ECCC MSC GeoMet (Kanada) | STATUS: live | Stufe 1: curl 200 (citypage 844, swob 13.6M Items) | offen, keine Auth | Empfehlung: ausstehend
+
+kandidat
+url https://api.imd.gov.in/api/v1/aws_data?id={station}
+note IMD Open Data (Indien) | STATUS: blocked | Stufe 1: curl 401 („API key missing") | Auth-Gate (Registrierung api.imd.gov.in) | Empfehlung: geparkt
+
+kandidat
+url https://apihub.kma.go.kr/api/typ01/url/kma_sfctm2.php?tm={YYYYMMDDhhmm}&stn={stn}&type=json
+note KMA Open Data (Korea) | STATUS: blocked | Stufe 1: curl 401 („유효한 인증키가 아닙니다") | Auth-Gate (Schlüssel via data.kma.go.kr) | Empfehlung: geparkt
+
+# ── drones_2026-08-19.φ ──────────────────────────────────────────────────
+
+kandidat
+url https://api.meteomatics.com
+note Meteomatics Meteodrones | STATUS: blocked | Stufe 1: curl 000 (Connect-Timeout), DNS lebt (37.208.109.220); Produktseite + Doku curl 200; Stufe 2: Jina 402 | Datacenter-Timeout + Auth (Benutzer/Token); lokal vermutlich 200 — lokal nachprüfen | Empfehlung: geparkt
+
+kandidat
+url https://opensky-network.org/api/states/all
+note OpenSky Network | STATUS: live | Stufe 1: curl 200 (Live-States) | offen, ratenlimitiert ~400/Tag | Empfehlung: ausstehend
+
+kandidat
+url https://api.windbornesystems.com
+note WindBorne Systems | STATUS: declined | Stufe 1: curl 200 (API-Docs), Datenendpunkt hinter Auth | was die Quelle IST: API liefert primär WM6-Modellforecast, keine reine Messung | Empfehlung: decline
+
+kandidat
+url https://uas.noaa.gov
+note NOAA UAS Program (kein Kandidat im Befund) | STATUS: blocked | Stufe 1: curl 000; DNS lebt (140.90.71.164); Stufe 3: Wayback-API 200, kein CDX-200-Beleg 2024-2026 | Datacenter-Timeout auf NOAA-Host; lokal vermutlich 200 — lokal nachprüfen; kein öffentlicher Datenendpoint | Empfehlung: geparkt
+
+kandidat
+url https://www.nasa.gov/aeroresearch/
+note NASA UAS (kein Kandidat im Befund) | STATUS: tot | Stufe 1: nicht nachgeprüft — Befund: Seite 404 | Endpoint existiert nicht (lokal nachprüfen) | Empfehlung: geparkt
+
+kandidat
+url —
+note PTERA, Skye (keine belastbare Quelle; nichts erfunden) | STATUS: tot | Stufe 1: keine URL vorgeschlagen | kein verifizierbares Messnetz mit öffentlicher Live-API | Empfehlung: geparkt
+
+# ── space_stations_2026-08-19.φ ──────────────────────────────────────────
+
+kandidat
+url https://maxi.riken.jp/mxondem/
+note MAXI (ISS-Payload, JAXA/RIKEN) | STATUS: live | Stufe 1: www.maxi.riken.jp DNS-TOT + Jina 422; kanonisch maxi.riken.jp/mxondem 308→200 (Redirect /mxondem) | Dienst lebt unter nicht-www-Host | Empfehlung: ausstehend (URL-Korrektur)
+
+kandidat
+url https://celestrak.org/NORAD/elements/gp.php?CATNR=25544&FORMAT=JSON
+note CelesTrak gp.php (ISS/Tiangong-TLE) | STATUS: blocked | Stufe 1: curl 000 (Connect-Timeout, auch -4); DNS lebt; Stufe 3: CDX 200-Snapshot 2024-01-05 | CelesTrak sperrt Datacenter-IPs; lokal vermutlich 200 — lokal nachprüfen | Empfehlung: geparkt
+
+kandidat
+url https://api.satnogs.org/api/observations/?satellite__norad_cat_id=25544
+note SatNOGS API | STATUS: tot | Stufe 1: curl 000; Stufe 2: Jina 422 (api.satnogs.org DNS auch dort tot); Hauptdomain satnogs.org lebt (200 via -4) | API-Subdomain DNS tot — Endpoint existiert nicht mehr | Empfehlung: decline (API), geparkt (satnogs.org)
+
+kandidat
+url https://www.axiomspace.com
+note Axiom Station | STATUS: angekündigt | Stufe 1: curl 200 (PPTM NET 2027, Hab-1 NET 2028) | kein Endpoint | Empfehlung: geparkt
+
+kandidat
+url https://www.blueorigin.com/orbital-reef
+note Orbital Reef (Blue Origin + Sierra Space) | STATUS: angekündigt | Stufe 1: curl 403/429 (Cloudflare aus Datacenter); Web-Beleg im Befund | lokal vermutlich 200 — lokal nachprüfen; in Entwicklung | Empfehlung: geparkt
+
+kandidat
+url https://www.starlab-space.com
+note Starlab (Voyager + Airbus) | STATUS: angekündigt | Stufe 1: curl 301 (Redirect zu Ziel, Beleg im Befund) | kein Endpoint; Start NET 2029 | Empfehlung: geparkt
+
+kandidat
+url —
+note Lunar Gateway (eingestellt 2026) | STATUS: tot | Stufe 1: keine URL; Befund: NASA verlagert Fokus auf Mondoberflächenbasis, Elemente umgewidmet | keine Orbitalplattform mehr in Planung | Empfehlung: decline
+
+kandidat
+url https://podaac.jpl.nasa.gov/
+note ISS-RapidScat (beendet 2016-08) | STATUS: tot | Stufe 1: keine URL; Befund: nur Archiv (PODAAC) | Mission beendet, kein Live-API | Empfehlung: decline
+
+kandidat
+url —
+note Tiangong/CSS (CMSA) | STATUS: declined | Stufe 1: keine URL; Befund: kein öffentlicher Messdaten-API-Endpoint gefunden | was die Quelle IST: kein öffentliches Telemetrie-/Umweltdaten-API | Empfehlung: decline
+
+kandidat
+url https://osdr.nasa.gov/bio/api
+note NASA OSDR Dosimetrie-API | STATUS: tot | Stufe 1: /bio/ 301→science.nasa.gov/biological-physical/data (200); /bio/api/studies 404 | Endpoint abgelöst/umgezogen; Daten existieren (DOSIS, Rad-R), API-Registration pending | Empfehlung: geparkt
+
+# ── satellites_2026-08-19.φ ──────────────────────────────────────────────
+
+kandidat
+url https://data.eumetsat.int
+note EUMETSAT Data Store (MTG-S1, MetOp-SG A1, MTG-I1 FCI) | STATUS: blocked | Stufe 1: curl 200 (SPA-Shell); Daten-API/Download hinter OAuth | Auth-Gate (kostenlose Registrierung) | Empfehlung: geparkt
+
+kandidat
+url https://data.cosmic.ucar.edu/gnss-ro/cosmic2/
+note COSMIC-2 (FORMOSAT-7, UCAR) | STATUS: live | Stufe 1: curl 200 (offenes Verzeichnis, „no need for a login") | offen, keine Auth | Empfehlung: ausstehend
+
+kandidat
+url https://gportal.jaxa.jp
+note GOSAT-GW (JAXA) | STATUS: blocked | Stufe 1: curl 200 (Portal); Download über FTP/Portal mit Account | Auth-Gate (kostenlose Registrierung) | Empfehlung: geparkt
+
+kandidat
+url https://www.eumetsat.int/meteosat-third-generation
+note MTG-I2 / Meteosat-14 | STATUS: angekündigt | Stufe 1: curl 200 (Start 2026-08-27) | kein Endpoint | Empfehlung: geparkt
+
+kandidat
+url https://www.eumetsat.int/metop-second-generation
+note MetOp-SG B1 | STATUS: angekündigt | Stufe 1: curl 301 (Redirect; Start 2026) | kein Endpoint | Empfehlung: geparkt
+
+kandidat
+url https://www.esa.int/Applications/Observing_the_Earth/Copernicus/Sentinel-3
+note Sentinel-3C (ESA/Copernicus) | STATUS: angekündigt | Stufe 1: curl 200 (Start ~2026, Vega-C) | kein Endpoint | Empfehlung: geparkt
+
+# ── terrestrial_geo_2026-08-19.φ ─────────────────────────────────────────
+
+kandidat
+url https://api.vedur.is/quakes/events
+note IMO Skjalftalísa (Island) | STATUS: live | Stufe 1: curl 200 (GeoJSON FeatureCollection) | offen, keine Auth | Empfehlung: ausstehend
+
+kandidat
+url https://api.geonet.org.nz/quake?MMI=0
+note GeoNet (Neuseeland) | STATUS: live | Stufe 1: curl 200 (GeoJSON) | offen, keine Auth | Empfehlung: ausstehend
+
+kandidat
+url https://www.saveecobot.com/static/api
+note SaveEcoBot / SaveDnipro | STATUS: blocked | Stufe 1: root 200 (105997 B); /api/v1 und /api/v2 401 ohne Token | Auth-Gate (API-Key per Antrag); keyless Stations-JSON-URLs existieren | Empfehlung: geparkt
+
+# ── misc_2026-08-19.φ ────────────────────────────────────────────────────
+
+kandidat
+url https://waterservices.usgs.gov/nwis/iv/?format=json&parameterCd=72019&countyCd=51013&siteStatus=active
+note USGS Groundwater Level Network | STATUS: live | Stufe 1: curl 200 (JSON time series) | offen, keine Auth | Empfehlung: ausstehend
+
+kandidat
+url https://wcc.sc.egov.usda.gov/awdbRestApi/services/v1/data?stationTriplets=3105:CO:SNTL&elements=WTEQ&duration=DAILY&getData=all
+note NRCS AWDB (SNOTEL + SCAN) | STATUS: live | Stufe 1: stations 200; data-Endpoint mit falschem Parameter `stations=` → 400, mit `stationTriplets=` → 200 (Parameter-Detail geklärt) | offen, keine Auth | Empfehlung: ausstehend
+
+kandidat
+url https://www.nmdb.eu/nest/data.php?stations=JUNG&year=2026&month=8&day=19&last=24
+note NMDB Neutronenmonitor-Netz | STATUS: tot | Stufe 1: curl 000 (Connect-Timeout, auch -4 und http); DNS lebt (134.245.64.55); Stufe 2: Jina 402; Stufe 3: kein CDX-200-Beleg 2024-2026 | Server antwortet nicht mehr; deckt sich mit dead_sources.φ (grind_terrapulse_a); lokal nachprüfen | Empfehlung: decline
+
+kandidat
+url https://data.geo.admin.ch/ch.meteoschweiz.ogd-pollen/daily/CH2026_d.csv
+note MeteoSwiss OGD-Pollen | STATUS: blocked | Stufe 1: curl 403 (AWS AccessDenied) | Datacenter-IP-Sperre; lokal vermutlich 200 — lokal nachprüfen | Empfehlung: geparkt
+
+kandidat
+url https://www.treetalker.xyz/
+note TreeTalker-Netze (Nature 4.0) | STATUS: tot | Stufe 1: curl 000; Stufe 2: Jina 422 (DNS auch dort tot); Stufe 3: kein CDX-Beleg | DNS tot — Endpoint existiert nicht (mehr) | Empfehlung: decline
+
+kandidat
+url https://ggis.un-igrac.org/api/
+note IGRAC GGIS (Recheck dead_sources.φ:1487) | STATUS: declined | Stufe 1: curl 200 (Geonode 4.4.3, 573 Datensätze) | was die Quelle IST: reiner Datenkatalog, Zeitreihen nur hinter /api/datasets/, kein Live-Sensor-Endpoint | Empfehlung: decline (Katalog lebt → Recheck beantwortet)
+
+kandidat
+url https://www.ctbto.org/verification-regime/
+note CTBTO/IMS Infraschall (kein Kandidat im Befund) | STATUS: blocked | Stufe 1: nicht nachgeprüft — Befund: Zugriff kontrolliert (Registrierung/VDEC) | kontrollierter Zugang, keine anonyme öffentliche API | Empfehlung: decline
+
+kandidat
+url https://www.movebank.org/
+note Movebank Wildtier-Telemetrie (kein Kandidat im Befund) | STATUS: blocked | Stufe 1: nicht nachgeprüft — Befund: Token nötig | Auth-Gate (Registrierung) | Empfehlung: geparkt
+
+kandidat
+url https://ismn.earth/
+note ISMN Bodenfeuchte (kein Kandidat im Befund) | STATUS: blocked | Stufe 1: nicht nachgeprüft — Befund: neues Portal mit Login, legacy API 404 | Auth-Gate; Alt-Endpoint tot | Empfehlung: decline
+
+kandidat
+url https://www.tereno.net/
+note TERENO (kein Kandidat im Befund) | STATUS: blocked | Stufe 1: nicht nachgeprüft — Befund: data.tereno.net von hier unerreichbar | Datacenter-Timeout, lokal vermutlich 200 — lokal nachprüfen | Empfehlung: geparkt
