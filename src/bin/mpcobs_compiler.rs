@@ -7,7 +7,7 @@ use omegaflow::sexagesimal::{sexagesimal_dec_to_deg, sexagesimal_ra_to_deg};
 //   0      8     epoch_jd: f64   observation date (UTC) as Julian Date
 //   8      8     ra_deg: f64     ICRS J2000 right ascension, degrees
 //   16     8     dec_deg: f64    ICRS J2000 declination, degrees
-//   24     4     mag: f32        magnitude (0.0 = absent)
+//   24     4     mag: f32        magnitude (valid only when band != 0; the 0.0 is masked, not a value)
 //   28     4     number: u32     MPC number (0 = unnumbered)
 //   32     1     band: u8        ASCII magnitude band (0 = absent)
 //   33     3     obs_code: u8×3  observatory code (0x20 = absent)

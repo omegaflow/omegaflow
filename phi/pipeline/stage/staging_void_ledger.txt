@@ -1013,3 +1013,363 @@ void https://overpass.openstreetmap.fr/api/interpreter?data=[date:"2021-01-01T00
 void https://overpass.openstreetmap.fr/api/interpreter?data=[date:"2021-01-01T00:00:00Z"][out:json][timeout:25];way["highway"](around:500,{lat},{lon});out%20100; fetch returned empty
 void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["historic"="memorial"](around:5000,{lat},{lon});out%20100; fetch returned empty
 void https://api.worldbank.org/v2/country/WLD/indicator/EN.GHG.CO2.MT.CE.AR5?format=json data-present (keys exist but no rows extracted)
+void https://api.worldbank.org/v2/country/VGB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/GIB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/PRK/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://api.worldbank.org/v2/country/WLD/indicator/SP.POP.MEDN?format=json&date=2023&per_page=1&mrv=1 data-present (JSON has content but declared keys absent)
+void https://esgf.ceda.ac.uk/esg-search/search/?query=CCI&limit=1 data-present (non-JSON body: HTML/XML/text)
+void https://stac.eoapi.dev/collections data-present (keys exist but no rows extracted)
+void https://macrostrat.org/api/v2/units?format=json data-present (keys exist but no rows extracted)
+void https://api.opentopodata.org/v1/eudem25m?locations={grid} data-present (container array has rows but extract yielded nothing)
+void https://planetarycomputer.microsoft.com/api/stac/v1/collections data-present (keys exist but no rows extracted)
+void https://actris.nilu.no/api/measurements/?format=json&instrument_type=HALO_DOPPLER_LIDAR&start_date={today}&limit=200 data-present (non-JSON body: HTML/XML/text)
+void https://actris.nilu.no/api/stations?format=json&limit=200&status=active data-present (non-JSON body: HTML/XML/text)
+void https://lasp.colorado.edu/lisird/latis/dap/aim_sofie_temperature.csv?time>={today} fetch returned empty
+void https://alerce.online/api/v1/objects/?format=json&oid=&ndet__gte=5&lastmjd__gte={today}&order=lastmjd&limit=300 fetch returned empty
+void https://antares.noirlab.edu/api/v1/locus/?format=json&created__gte={today}T00:00:00Z&limit=500&ordering=-created data-present (non-JSON body: HTML/XML/text)
+void https://erddap.aodn.org.au/erddap/tabledap/imos_argo_sst.csv?latitude,longitude,TEMP,PSAL,PRES,TIME&TIME%3E=now-7days&orderBy(%22TIME%22) fetch returned empty
+void https://gdp.aoml.noaa.gov/erddap/tabledap/gdp_hourly.csv?id,longitude,latitude,time,sst,ve,vn&time>={today}T00:00:00Z&time>={today}T06:00:00Z&orderBy(%22time%22)&distinct() fetch returned empty
+void https://gdp.aoml.noaa.gov/erddap/tabledap/gdp_metadata.csv?id,wmo_number,deploy_lon,deploy_lat,end_lon,end_lat,deploy_date,end_date,typecode,drogue_lost_date&deploy_date>={year}-01-01&orderBy(%22deploy_date%22) fetch returned empty
+void https://gdp.aoml.noaa.gov/erddap/tabledap/gdp_v2.00.csv?id,longitude,latitude,time,sst,ve,vn,drogue_status&time>={today}T00:00:00Z&time<={tomorrow}T00:00:00Z&orderBy(%22time%22) fetch returned empty
+void https://gdp.aoml.noaa.gov/erddap/tabledap/gdp_rt.csv?id,longitude,latitude,time,sst,vn,ve,drogue&time>={today}T00:00:00Z&orderBy(%22time%22)&distinct() fetch returned empty
+void https://services3.arcgis.com/GVgbJbqm8hXASVYi/arcgis/rest/services/PAGER_CAT/FeatureServer/0/query?where=1%3D1&geometry={lon_min}%2C{lat_min}%2C{lon_max}%2C{lat_max}&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=*&f=json&resultRecordCount=500 data-present (JSON has content but declared keys absent)
+void https://argovis.colorado.edu/argo/argoCores?startDate={today}T00:00:00Z&endDate={today}T23:59:59Z&polygon=[-180,-60,-180,60,180,60,180,-60,-180,-60]&format=json fetch returned empty
+void https://argovis.colorado.edu/argo/bgcArgoCores?startDate={today}T00:00:00Z&endDate={today}T23:59:59Z&bgcParams=doxy,nitrate&polygon=[-180,-60,-180,60,180,60,180,-60,-180,-60]&format=json fetch returned empty
+void https://argovis.colorado.edu/argo/bgcArgoCores?startDate={today}T00:00:00Z&endDate={today}T23:59:59Z&bgcParams=bbp700,chla,doxy&polygon=[-180,-70,-180,70,180,70,180,-70,-180,-70]&format=json fetch returned empty
+void https://argovis.colorado.edu/argo/bgcArgoCores?startDate={today}T00:00:00Z&endDate={today}T23:59:59Z&polygon=[-180,-60,-180,60,180,60,180,-60,-180,-60]&bgcParams=doxy,nitrate,ph_in_situ_total,chla&format=json fetch returned empty
+void https://argovis.colorado.edu/argo/bgcArgoCores?startDate={today}T00:00:00Z&endDate={today}T23:59:59Z&bgcParams=ph_in_situ_total,nitrate,doxy,bbp700&polygon=[-180,-60,-180,60,180,60,180,-60,-180,-60]&format=json fetch returned empty
+void https://argovis.colorado.edu/argo/argoCores?startDate={today}T00:00:00Z&endDate={today}T23:59:59Z&polygon=[-180,-70,-180,70,180,70,180,-70,-180,-70]&format=json fetch returned empty
+void https://argovis.colorado.edu/argo/argoCores?startDate={today}T00:00:00Z&endDate={today}T23:59:59Z&presRange=2000,6000&polygon=[-180,-70,-180,70,180,70,180,-70,-180,-70]&format=json fetch returned empty
+void https://www.arpansa.gov.au/sites/default/files/legacy/pubs/uvindex/realtime/uvrt.xml fetch returned empty
+void https://nrt.cmems-du.eu/erddap/tabledap/dataset-ssalto-duacs-nrt-global-merged-allsat-phy-l4.csv?sla%5Blast%5D%5B(-60.0):(60.0):2%5D%5B(-180.0):(180.0):2%5D,ugos%5Blast%5D%5B(-60.0):(60.0):2%5D%5B(-180.0):(180.0):2%5D,vgos%5Blast%5D%5B(-60.0):(60.0):2%5D%5B(-180.0):(180.0):2%5D data-present (non-JSON body: HTML/XML/text)
+void https://api.bas.ac.uk/uk-pdc-catalogue/v1/items?format=json&category=environmental_monitoring&limit=200&region=antarctica fetch returned empty
+void https://odlinfo.bfs.de/daten/odl-status-de.json fetch returned empty
+void https://wdc.bgs.ac.uk/api/v1/data?observatories=ESK&elements=X,Y,Z,F&sampling_period=minute&format=json&start_date={today}T00:00:00&end_date={today}T23:59:59 fetch returned empty
+void https://wdc.bgs.ac.uk/api/v1/data?observatories=ESK,NGK,CLF,ABK,HER,KAK,GUA,HON,TUC&elements=F,H,D,Z&sampling_period=year&format=json&start_date=2000-01-01&end_date={today} fetch returned empty
+void https://www.ngdc.noaa.gov/geomag/calculators/magcalc.shtml?model=IGRF&lat={lat}&lon={lon}&startYear={year}&resultFormat=json data-present (non-JSON body: HTML/XML/text)
+void https://www.bodc.ac.uk/geotraces/data/inventories/download/?format=json&section=GA01&parameter=Fe,Mn,Zn data-present (non-JSON body: HTML/XML/text)
+void http://v4.boldsystems.org/index.php/API_Public/specimen?taxon=Lepidoptera&geo=&format=json&limit=500 data-present (non-JSON body: HTML/XML/text)
+void https://portal.boldsystems.org/api/summary/geo?format=json&limit=250 fetch returned empty
+void http://www.bom.gov.au/climate/mjo/graphics/rmm.74toRealtime.txt fetch returned empty
+void http://reg.bom.gov.au/fwo/IDN60901.json fetch returned empty
+void http://reg.bom.gov.au/fwo/IDD60901.json fetch returned empty
+void http://reg.bom.gov.au/fwo/IDQ60901.json fetch returned empty
+void http://reg.bom.gov.au/fwo/IDS60901.json fetch returned empty
+void http://reg.bom.gov.au/fwo/IDT60901.json fetch returned empty
+void http://reg.bom.gov.au/fwo/IDV60901.json fetch returned empty
+void http://reg.bom.gov.au/fwo/IDW60901.json fetch returned empty
+void https://atmosphere.copernicus.eu/sites/default/files/custom-uploads/CAMS-Monitoring-Products/fire/cams_gfas_nrt_daily_summary.json fetch returned empty
+void https://atmosphere.copernicus.eu/sites/default/files/custom-uploads/CAMS-Monitoring-Products/methane/cams_ch4_nrt_global_summary.json fetch returned empty
+void https://atmosphere.copernicus.eu/sites/default/files/custom-uploads/CAMS-Monitoring-Products/aod/cams_aod_nrt_global_daily_summary.json fetch returned empty
+void https://atmosphere.copernicus.eu/sites/default/files/custom-uploads/CAMS-Monitoring-Products/ozone/cams_o3_nrt_global_daily_summary.json fetch returned empty
+void https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/AC_H2_EPM/variables/P1,P2,P3,P4,DE1,DE4/data/{today}T00:00:00.000Z/{today}T23:59:59.000Z?format=csv fetch returned empty
+void https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/AC_H6_SWI/variables/vHe2,vOsolar,He4toprotons,FetoO/data/{today}T00:00:00.000Z/{today}T23:59:59.000Z?format=csv fetch returned empty
+void https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/ERG_MGF_L2_8SEC/variables/magt_sm,Lm/data/{today}T00:00:00.000Z/{today}T06:00:00.000Z?format=csv fetch returned empty
+void https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/IMAGE_RPI_AVG/variables/electron_density,L_value/data/2000-06-01T00:00:00.000Z/2005-12-18T00:00:00.000Z?format=csv&count=10000 fetch returned empty
+void https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/OMNI_HRO2_DAILY/variables/BX_GSE,BY_GSE,BZ_GSE,flow_speed,proton_density,F10_INDEX,KP,DST/data/1963-01-01T00:00:00.000Z/{today}T00:00:00.000Z?format=csv&count=60000 fetch returned empty
+void https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/OMNI2_H0_MRG1HR/variables/BX_GSE,BY_GSE,BZ_GSE,flow_speed,proton_density,T,Pressure,AE,Kp,DST1800/data/{today}T00:00:00.000Z/{today}T23:59:59.000Z?format=csv fetch returned empty
+void https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/RBSP-A_L3-Density_EFW-Burst/variables/density,Lm_eq,MLT_eq/data/{today}T00:00:00.000Z/{today}T06:00:00.000Z?format=csv fetch returned empty
+void https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/RBSP-A_WFR-SPECTRAL-MATRIX_EMFISIS-L3/variables/BuBu,BvBv,BwBw,EuEu,EvEv/data/{today}T00:00:00.000Z/{today}T06:00:00.000Z?format=csv fetch returned empty
+void https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/RBSP-B_MAGNETOMETER_EMFISIS-L3/variables/Mag/data/{today}T00:00:00.000Z/{today}T06:00:00.000Z?format=csv fetch returned empty
+void https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/SOLO_L2_MAG-RTN-NORMAL-1-MINUTE/variables/B_RTN/data/{today}T00:00:00.000Z/{today}T06:00:00.000Z?format=csv fetch returned empty
+void https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/SOLO_L2_SWA-PAS-GRND-MOM/variables/N,T,V_RTN/data/{today}T00:00:00.000Z/{today}T06:00:00.000Z?format=csv fetch returned empty
+void https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/STA_L1_PLA/variables/proton_bulk_speed,proton_number_density,proton_temperature/data/{today}T00:00:00.000Z/{today}T06:00:00.000Z?format=csv fetch returned empty
+void https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/VG1_48S_MAG/variables/F1_avg,B1_avg/data/{today}T00:00:00.000Z/{today}T23:59:59.000Z?format=csv fetch returned empty
+void https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/WI_H1_SWE/variables/Proton_Np_nonlin,Proton_VX_nonlin,Proton_VY_nonlin,Proton_VZ_nonlin,Proton_Tp_nonlin/data/{today}T00:00:00.000Z/{today}T06:00:00.000Z?format=csv fetch returned empty
+void https://cdaweb.gsfc.nasa.gov/WS/cdasr/1/dataviews/sp_phys/datasets/WI_L2-60S_WAV/variables/E_VOLTAGE_RAD2,FREQUENCY_RAD2/data/{today}T00:00:00.000Z/{today}T06:00:00.000Z?format=csv fetch returned empty
+void https://cddis.nasa.gov/archive/gnss/products/{year}{day}/igs{year}{day}.sp3.Z data-present (non-JSON body: HTML/XML/text)
+void https://celestrak.org/SOCRATES/query.php?FRAGMENTATION=Y&FORMAT=json&LIMIT=500 fetch returned empty
+void https://celestrak.org/SOCRATES/query.php?CATNR=&TIMEFRAME=24&MAX_PROB=0.001&LIMIT=200&FORMAT=json fetch returned empty
+void https://chain.physics.unb.ca/api/v1/stations?format=json&active=true fetch returned empty
+void https://climada.ethz.ch/api/v1/hazard/?limit=500&format=json fetch returned empty
+void https://my.cmems-du.eu/erddap/griddap/cmems_mod_glo_phy_my_0.083deg_P1D-m.csv?uo%5Blast%5D%5B0%5D%5B(-60.0):(65.0):4%5D%5B(-80.0):(20.0):4%5D,vo%5Blast%5D%5B0%5D%5B(-60.0):(65.0):4%5D%5B(-80.0):(20.0):4%5D data-present (non-JSON body: HTML/XML/text)
+void https://nrt.cmems-du.eu/erddap/griddap/dataset-duacs-rep-global-merged-allsat-phy-l4.csv?sla%5Blast%5D%5B(-70.0):(70.0):3%5D%5B(-180.0):(180.0):3%5D,ugos%5Blast%5D%5B(-70.0):(70.0):3%5D%5B(-180.0):(180.0):3%5D,vgos%5Blast%5D%5B(-70.0):(70.0):3%5D%5B(-180.0):(180.0):3%5D data-present (non-JSON body: HTML/XML/text)
+void https://nrt.cmems-du.eu/erddap/griddap/dataset-duacs-nrt-global-merged-allsat-phy-l4.csv?sla%5Blast%5D%5B(-65.0):(65.0):3%5D%5B(-180.0):(180.0):3%5D,ugosa%5Blast%5D%5B(-65.0):(65.0):3%5D%5B(-180.0):(180.0):3%5D,vgosa%5Blast%5D%5B(-65.0):(65.0):3%5D%5B(-180.0):(180.0):3%5D data-present (non-JSON body: HTML/XML/text)
+void https://nrt.cmems-du.eu/erddap/griddap/cmems_mod_glo_bgc_anfc_0.25deg_P1D-m.csv?o2%5Blast%5D%5B0%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D,no3%5Blast%5D%5B0%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D data-present (non-JSON body: HTML/XML/text)
+void https://nrt.cmems-du.eu/erddap/griddap/cmems_obs-sst_glo_phy_nrt_l4_P1D-m.csv?analysed_sst%5Blast%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D,analysis_error%5Blast%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D data-present (non-JSON body: HTML/XML/text)
+void https://nrt.cmems-du.eu/erddap/griddap/cmems_mod_glo_phy-thetao_anfc_0.083deg_P1M-m.csv?thetao%5Blast%5D%5B0%5D%5B(-70.0):(70.0):4%5D%5B(-180.0):(180.0):4%5D data-present (non-JSON body: HTML/XML/text)
+void https://nrt.cmems-du.eu/erddap/griddap/cmems_mod_glo_wav_anfc_0.083deg_PT3H-i.csv?VHM0%5Blast%5D%5B(-20.0):(25.0)%5D%5B(50.0):(100.0)%5D,VMDR%5Blast%5D%5B(-20.0):(25.0)%5D%5B(50.0):(100.0)%5D,VTM10%5Blast%5D%5B(-20.0):(25.0)%5D%5B(50.0):(100.0)%5D data-present (non-JSON body: HTML/XML/text)
+void https://nrt.cmems-du.eu/erddap/griddap/dataset-oc-glo-bio-multi-l4-chl_4km_daily-rt.csv?CHL%5Blast%5D%5B(-70.0):(70.0):4%5D%5B(-180.0):(180.0):4%5D data-present (non-JSON body: HTML/XML/text)
+void https://nrt.cmems-du.eu/erddap/griddap/dataset-oc-arc-bio-multi-l4-chl_1km_daily-rt.csv?CHL%5Blast%5D%5B(60.0):(90.0):3%5D%5B(-180.0):(180.0):3%5D data-present (non-JSON body: HTML/XML/text)
+void https://nrt.cmems-du.eu/erddap/griddap/cmems_obs-sl_glo_phy-ssh_nrt_allsat-l4-duacs-0.25deg_P1D.csv?adt%5Blast%5D%5B(-80.0):(80.0):5%5D%5B(-180.0):(180.0):5%5D data-present (non-JSON body: HTML/XML/text)
+void https://nrt.cmems-du.eu/erddap/griddap/SST_GLO_SST_L4_NRT_OBSERVATIONS_010_001.csv?analysed_sst%5Blast%5D%5B(-60.0):(65.0):3%5D%5B(-180.0):(180.0):3%5D,sea_ice_fraction%5Blast%5D%5B(-60.0):(65.0):3%5D%5B(-180.0):(180.0):3%5D data-present (non-JSON body: HTML/XML/text)
+void https://ssd-api.jpl.nasa.gov/fireball.api?limit=200&date-min={year}-01-01&sort=date&order=desc fetch returned empty
+void https://comet.nerc.ac.uk/lics-portal/api/events/?format=json&limit=200&type=eruption&status=active fetch returned empty
+void https://land.copernicus.eu/api/v2/datasets?dataset=SWI10&format=json&date={year}-{month}-{day} fetch returned empty
+void https://land.copernicus.eu/global/products/swi/api/v1/latest?bbox={lon_min},{lat_min},{lon_max},{lat_max}&format=json empty-response (JSON parsed but all containers empty)
+void https://emergency.copernicus.eu/mapping/rest/map/grading?page=0&limit=100&format=json fetch returned empty
+void https://emergency.copernicus.eu/mapping/rest/map/list?page=0&limit=200&format=json&status=COMPLETED,ONGOING fetch returned empty
+void https://www.cpom.ucl.ac.uk/csopr/icesheets2/antarctica_mass_change.txt fetch returned empty
+void https://www.cpom.ucl.ac.uk/csopr/icesheets2/greenland_mass_change.txt fetch returned empty
+void https://globalplasticwatch.org/api/v1/detections?bbox={lon_min},{lat_min},{lon_max},{lat_max}&startDate={year}-01-01&endDate={today}&format=json&limit=500 data-present (non-JSON body: HTML/XML/text)
+void https://darts.isas.jaxa.jp/astro/xrism/api/v1/observations?format=json&release=DR1&status=public&limit=500 data-present (non-JSON body: HTML/XML/text)
+void https://darts.isas.jaxa.jp/astro/xrism/api/v1/xtend_sources?format=json&release=DR1&snr_min=5&limit=500 data-present (non-JSON body: HTML/XML/text)
+void http://dasch.rc.fas.harvard.edu/lightcurve.php?objid=GJ+551&type=json&limit=500 fetch returned empty
+void https://data.earlinet.org/api/services/products?type=backscatter&wavelength=532&level=2&format=json&startDate={today}&limit=500 fetch returned empty
+void https://data.earlinet.org/api/services/stationsearch?format=json&limit=100 fetch returned empty
+void https://ebas-data.nilu.no/api/v1/station/?format=json&parameter=NOx&limit=300&status=active fetch returned empty
+void https://www.ebi.ac.uk/metagenomics/api/v1/studies?format=json&page_size=100&ordering=-last_update&biome_name=root:Environmental:Soil empty-response (JSON parsed but all containers empty)
+void https://www.e-callisto.org/api/v1/events?format=json&start={today}&type=II,III,IV&limit=200 fetch returned empty
+void https://www.e-callisto.org/api/v1/stations?format=json&active=true&limit=200 fetch returned empty
+void https://gisco-services.ec.europa.eu/api/?dataset=EDGAR_GHG&format=json&filter[year]={year}&filter[gas]=CO2&limit=500 fetch returned empty
+void https://aqportal.discomap.eea.europa.eu/api/observations?pollutant=NO2&startDate={today}&endDate={today}&format=json&limit=500 data-present (non-JSON body: HTML/XML/text)
+void https://thredds.met.no/thredds/dodsC/data/EMEP/2024/Base_fullrun.nc.ascii?no2[0][0:5:50][0:5:100] fetch returned empty
+void https://www.emodnet-humanactivities.eu/search-results.php?dataname=Seafloor+Litter&format=json&limit=200&bbox={lon_min},{lat_min},{lon_max},{lat_max} data-present (JSON has content but declared keys absent)
+void https://www.seismicportal.eu/fdsnws/event/1/query?format=geojson&minmagnitude=2.0&limit=500&orderby=time fetch returned empty
+void https://www.ebi.ac.uk/ena/portal/api/search?result=sample&query=instrument_platform=ILLUMINA+AND+library_strategy=AMPLICON+AND+biome=soil&fields=sample_accession,lat,lon,country,collection_date,scientific_name,isolation_source&format=json&limit=500 fetch returned empty
+void https://www.esa.int/api/earthobservation/biomass-cci/v1/data?year={year}&bbox={lon_min},{lat_min},{lon_max},{lat_max}&format=json&limit=500 fetch returned empty
+void https://maps.elie.ucl.ac.be/CCI/viewer/download.php?type=products&year={year}&format=json data-present (non-JSON body: HTML/XML/text)
+void https://science-pds.cryosat.esa.int/oads/access/collection/CryoSat_Ice_Sheet_SLA_Antarctic_Monthly/latest/?format=json fetch returned empty
+void https://lpa.esac.esa.int/api/v1/data?format=json&product=differential_force&start_date={year}-01-01&end_date={year}-12-31&limit=500 fetch returned empty
+void https://sepem.eu/api/events/?format=json&limit=200 fetch returned empty
+void https://vires.services/hapi/data?dataset=SW_OPER_MAGA_LR_1B&parameters=Latitude,Longitude,Radius,F,B_NEC&start={today}T00:00:00.000Z&stop={today}T01:00:00.000Z&format=csv data-present (non-JSON body: HTML/XML/text)
+void https://esgf-node.llnl.gov/esg-search/search?project=CMIP6&experiment_id=historical&variable=npp,gpp,nbp&frequency=mon&replica=false&latest=true&limit=100&format=application%2Fsolr%2Bjson data-present (container array has rows but extract yielded nothing)
+void https://services.arcgis.com/nGt4QxSblgDfeJn9/arcgis/rest/services/GlobalFireRiskIndex/FeatureServer/0/query?where=1%3D1&geometry={lon_min}%2C{lat_min}%2C{lon_max}%2C{lat_max}&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=*&f=json&resultRecordCount=500 data-present (JSON has content but declared keys absent)
+void https://hsaf.meteoam.it/Products/Detail?prod=H10&format=json&date={today} fetch returned empty
+void https://remon.jrc.ec.europa.eu/Home/Pages/DataExchange/REM-json.aspx?LonMin=20&LonMax=45&LatMin=44&LatMax=56&DateStart={today}&DateEnd={today}&nuts=0&format=json fetch returned empty
+void https://remon.jrc.ec.europa.eu/Home/Pages/DataExchange/REM-json.aspx?LonMin=-10&LonMax=30&LatMin=35&LatMax=72&DateStart={today}&DateEnd={today}&nuts=0&format=json fetch returned empty
+void https://www.eurobats.org/api/v1/monitoring/sites?format=json&active=true&limit=500 fetch returned empty
+void https://api.obis.org/v3/occurrence?geometry=POLYGON((-30+35,-30+72,42+72,42+35,-30+35))&size=500&fields=decimalLatitude,decimalLongitude,scientificName,class,family,date_year&startdate={today} empty-response (JSON parsed but all containers empty)
+void https://fenixservices.fao.org/faostat/api/v1/en/data/AQ?format=json&area_cs=5100&element=4175,4176,4177&year={year}&limit=500 fetch returned empty
+void https://fenixservices.fao.org/faostat/api/v1/en/data/RL?area_cs=5100,5101&element=5110&item=6600,6610,6650&year={year}&format=json&limit=500 fetch returned empty
+void https://ameriflux.lbl.gov/api/public/v2/sites?format=json&climate_zone=arctic,subarctic&data_product=FLUXNET2015&active=true fetch returned empty
+void https://www.globsnow.info/swe/tif/{year}/{year}{month}{day}_northern_SWE.tif.json fetch returned empty
+void https://thredds.silam.fmi.fi/thredds/catalog.html data-present (non-JSON body: HTML/XML/text)
+void https://www.fripon.org/api/events?format=json&limit=100&year={year}&month={month} fetch returned empty
+void https://saber.gats-inc.com/saw3.php?date={today}&type=daily&format=json&version=2.0&vars=o3_96,o3_127 fetch returned empty
+void https://saber.gats-inc.com/saw3.php?date={today}&type=daily&format=json&version=2.0 fetch returned empty
+void https://gcn.nasa.gov/api/v0.1/circulars?subject=Einstein+Probe+FXT&limit=100&format=json fetch returned empty
+void https://gcn.nasa.gov/api/v0.1/circulars?subject=Einstein+Probe&limit=200&format=json fetch returned empty
+void https://api.openquake.org/v1/hazard/pga/?model=GEM_GLOBAL_v2023.1&poe=0.02&investigation_time=50&bbox={lon_min},{lat_min},{lon_max},{lat_max}&format=json&limit=500 fetch returned empty
+void https://api.openquake.org/v1/hazard/pga/?model=GEM_GLOBAL_v2023.1&poe=0.1&investigation_time=50&bbox={lon_min},{lat_min},{lon_max},{lat_max}&format=json&limit=500 fetch returned empty
+void https://api.openquake.org/v1/risk/loss/?model=GEM_GLOBAL_v2023.1&return_period=475&bbox={lon_min},{lat_min},{lon_max},{lat_max}&format=json&limit=500 fetch returned empty
+void https://api.geonet.org.nz/gnss/1.0.2/site fetch returned empty
+void https://api.geonet.org.nz/strong-motion/site fetch returned empty
+void http://geoscope.ipgp.fr/fdsnws/station/1/query?level=station&format=text&network=G fetch returned empty
+void https://www.globalfiredata.org/api/v5/burned_area?start={year}-{month}-01&end={year}-{month}-{day}&bbox={lon_min},{lat_min},{lon_max},{lat_max}&format=json&limit=500 fetch returned empty
+void http://gravis.gfz-potsdam.de/api/v1/timeseries/?product=GRACE_LOD&format=json fetch returned empty
+void https://kp.gfz-potsdam.de/app/json/?start={today}T00:00:00Z&end={tomorrow}T00:00:00Z&index=Kp,ap,Cp&status=def,nowcast&format=JSON fetch returned empty
+void https://geofon.gfz-potsdam.de/fdsnws/event/1/query?format=geojson&minmagnitude=1.0&limit=500&orderby=time&starttime={today}T00:00:00 fetch returned empty
+void https://kp.gfz-potsdam.de/app/json/?start={today}T00:00:00Z&end={tomorrow}T00:00:00Z&index=Kp,Ap,Cp,C9&status=def,nowcast&format=JSON fetch returned empty
+void https://kp.gfz-potsdam.de/app/json/?start=1932-01-01T00:00:00Z&end={today}T00:00:00Z&index=Kp,Ap&status=def&format=JSON fetch returned empty
+void https://www.glims.org/api/v1/glaciers?bbox={lon_min},{lat_min},{lon_max},{lat_max}&format=json&limit=500 fetch returned empty
+void https://www.icos-cp.eu/science-and-impact/global-carbon-budget/2024/data-products/json-summary fetch returned empty
+void https://www.icos-cp.eu/science-and-impact/global-carbon-budget/2023/data-products/json-summary fetch returned empty
+void https://data-api.globalforestwatch.org/dataset/umd_tree_cover_loss/latest/query?format=json&sql=SELECT+latitude,longitude,year,area__ha,relative_humidity_weight+FROM+umd_tree_cover_loss+WHERE+year>{year}&geostore_id=&limit=500 fetch returned empty
+void https://cems.ecmwf.int/api/v1/glofas/reanalysis?lat={lat}&lon={lon}&start=1979-01-01&end={today}&format=json fetch returned empty
+void https://cems.ecmwf.int/api/v1/glofas/stations?format=json&active=true&limit=1000 fetch returned empty
+void https://cems.ecmwf.int/api/v1/glofas/forecast?lat={lat}&lon={lon}&format=json&ensemble=true fetch returned empty
+void https://www.goa-on.org/api/v1/stations?format=json&active=true&limit=500 empty-response (JSON parsed but all containers empty)
+void https://gracedb.ligo.org/api/superevents/?format=json&category=Production&public=True&classification__BNS__gte=0.3&ordering=-created&per_page=50 data-present (container array has rows but extract yielded nothing)
+void https://sedac.ciesin.columbia.edu/arcgis/rest/services/grand/GRAND_Dams/MapServer/0/query?where=1%3D1&geometry={lon_min}%2C{lat_min}%2C{lon_max}%2C{lat_max}&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=*&f=json&resultRecordCount=500 fetch returned empty
+void https://grdc.bafg.de/GRDC/EN/04_spcldtfmts/41_ArcGIS/GRDC_Stations.zip.json fetch returned empty
+void https://gtnp.arcticportal.org/api/v1/data?network=CALM&format=json&year={year}&limit=500 data-present (non-JSON body: HTML/XML/text)
+void https://gtnp.arcticportal.org/api/v1/data?network=TSP&format=json&year={year}&depth=10&limit=500 data-present (non-JSON body: HTML/XML/text)
+void https://gtnp.arcticportal.org/api/v1/stations?network=TSP&format=json&limit=500 data-present (non-JSON body: HTML/XML/text)
+void https://data.humdata.org/api/3/action/datastore_search?resource_id=13ac0b40-5e3e-4a01-8b3b-85fe6a0b47e7&limit=2000 fetch returned empty
+void https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+latitude,longitude,altitude,o3_density,no2_density,month,year+FROM+gomosl3m+WHERE+latitude+IS+NOT+NULL+ORDER+BY+o3_density+DESC data-present (non-JSON body: HTML/XML/text)
+void https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+500+latitude,longitude,date,altitude,ext525,ext1020,o3+FROM+sage2l2+WHERE+latitude+IS+NOT+NULL+AND+date>%271984-01-01%27+ORDER+BY+date+DESC fetch returned empty
+void https://heasarc.gsfc.nasa.gov/xamin/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+200+time_s,flux_cgs,flux_err_lo,flux_err_hi,gamma,n_h+FROM+swiftgw170817+WHERE+time_s+IS+NOT+NULL+ORDER+BY+time_s+ASC data-present (non-JSON body: HTML/XML/text)
+void https://hsaf.meteoam.it/Products/Detail?prod=H25&format=json&date={today} fetch returned empty
+void https://www.hydrosheds.org/api/v1/rivers?bbox={lon_min},{lat_min},{lon_max},{lat_max}&format=json&limit=500&order=8 fetch returned empty
+void https://www.hydrosheds.org/api/v1/basins?bbox={lon_min},{lat_min},{lon_max},{lat_max}&level=7&format=json&limit=500 fetch returned empty
+void https://nucleus.iaea.org/ILIS/api/v1/events?format=json&limit=100&status=current&category=nuclear fetch returned empty
+void https://nucleus.iaea.org/wiser/api/stations?network=GNIP&format=json&limit=500 fetch returned empty
+void https://icecube.wisc.edu/data-releases/2023/07/icecube-hese-12-year-data-release/hese_12yr_events.csv fetch returned empty
+void http://icgem.gfz-potsdam.de/calcgrid?model=EGM2020&lat={lat}&lon={lon}&height=0&functional=height_over_ell&format=json data-present (non-JSON body: HTML/XML/text)
+void http://icgem.gfz-potsdam.de/calcgrid?model=EIGEN-6C4&lat={lat}&lon={lon}&height=0&functional=gravity_cl&format=json data-present (non-JSON body: HTML/XML/text)
+void http://icgem.gfz-potsdam.de/calcgrid?model=GO_CONS_GCF_2_TIM_R6&lat={lat}&lon={lon}&height=250000&functional=gravity_ge&format=json data-present (non-JSON body: HTML/XML/text)
+void https://meta.icos-cp.eu/objects/latest?spec=http://meta.icos-cp.eu/resources/cpmeta/atcCo2NrtDataObject&format=json&limit=100 fetch returned empty
+void https://meta.icos-cp.eu/objects/latest?spec=http://meta.icos-cp.eu/resources/cpmeta/icosEtcCh4NrtDataObject&format=json&limit=200 fetch returned empty
+void https://meta.icos-cp.eu/objects/latest?spec=http://meta.icos-cp.eu/resources/cpmeta/etcFrench&format=json&limit=200 fetch returned empty
+void https://datacenter.iers.org/data/latestVersion/A_dailyrapid_finals.txt fetch returned empty
+void https://datacenter.iers.org/data/csv/eopc04.csv fetch returned empty
+void https://ggis.un-igrac.org/api/v1/well/?format=json&limit=2000 fetch returned empty
+void https://imbie.org/data/antarctica_mass_balance.csv fetch returned empty
+void https://imbie.org/data/greenland_mass_balance.csv fetch returned empty
+void https://rsmcnewdelhi.imd.gov.in/uploads/cyclone/cyclone_track.geojson fetch returned empty
+void https://api.inaturalist.org/v1/observations?quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&swlat=-20&swlng=-80&nelat=5&nelng=-45 fetch returned empty
+void https://api.inaturalist.org/v1/observations?taxon_name=Amphibia&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true data-present (container array has rows but extract yielded nothing)
+void https://api.inaturalist.org/v1/observations?quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&swlat=35&swlng=-10&nelat=70&nelng=40 data-present (container array has rows but extract yielded nothing)
+void https://api.inaturalist.org/v1/observations?taxon_name=Fungi&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true fetch returned empty
+void https://api.inaturalist.org/v1/observations?iconic_taxa=Insecta&invasive=true&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true fetch returned empty
+void https://api.inaturalist.org/v1/observations?taxon_name=Mammalia&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true empty-response (JSON parsed but all containers empty)
+void https://api.inaturalist.org/v1/observations?iconic_taxa=Actinopterygii&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true&place_id=10 data-present (container array has rows but extract yielded nothing)
+void https://api.inaturalist.org/v1/observations?quality_grade=needs_id&per_page=200&order_by=created_at&order=desc&geo=true&d1={today} fetch returned empty
+void https://api.inaturalist.org/v1/observations?taxon_name=Reptilia&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true empty-response (JSON parsed but all containers empty)
+void https://api.inaturalist.org/v1/observations?threatened=true&quality_grade=research&per_page=200&order_by=observed_on&order=desc&geo=true data-present (non-JSON body: HTML/XML/text)
+void https://erddap.incois.gov.in/erddap/tabledap/ArgoIndianOcean.csv?latitude,longitude,TEMP,PSAL,PRES,time&time%3E=now-30days&orderBy(%22time%22)&limit=5000 fetch returned empty
+void https://erddap.incois.gov.in/erddap/griddap/INSAT3D_SST.csv?SST%5Blast%5D%5B(5):(25)%5D%5B(65):(90)%5D fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetObservatoryList&format=json fetch returned empty
+void https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetData&observatoryIagaCode=NGK&dataStartDate={today}T00:00:00&dataDuration=P1D&elements=X,Y,Z,F&publicationState=adjusted&format=json fetch returned empty
+void https://www.invasivesnet.org/api/v1/occurrences?format=json&limit=500&environment=marine&year_from={year} fetch returned empty
+void https://web.iodp.tamu.edu/janusweb/general/dsdp.cgi?leg=&site=&hole=&format=json fetch returned empty
+void https://web.iodp.tamu.edu/janusWeb/api/janus/site fetch returned empty
+void https://iono4d.iri-ap.ru/api/v1/stations?region=europe&format=json&limit=200 fetch returned empty
+void https://www.seis-insight.eu/api/v1/events?format=json&limit=500&catalog=MQS&status=confirmed fetch returned empty
+void https://service.iris.edu/fdsnws/event/1/query?format=geojson&catalog=MQS&limit=1319&orderby=time&minmagnitude=0 fetch returned empty
+void https://service.iris.edu/fdsnws/station/1/query?level=station&format=text&minlatitude=-90&maxlatitude=90&minlongitude=-180&maxlongitude=180&startbefore={today}&includerestricted=false&channel=BH*&minlatitude=-60&sensortype=broadband fetch returned empty
+void https://ds.iris.edu/spud/sks?startTime={year}-01-01&endTime={today}&format=text&nodata=404 fetch returned empty
+void https://www.irsn.fr/api/teleray/v1/stations?format=json&limit=500 fetch returned empty
+void http://www.isc.ac.uk/cgi-bin/web-db-run?request=BULLETIN&out_format=CSV&searchshape=RECT&bot_lat=-90&top_lat=90&left_lon=-180&right_lon=180&start_year={year}&start_mon={month}&start_day={day}&start_time=00%3A00%3A00&end_year={year}&end_mon={month}&end_day={day}&end_time=23%3A59%3A59&min_mag=4.5&req_mag_type=mb&req_mag_agcy=ISC&include_phases=N&include_headers=N data-present (non-JSON body: HTML/XML/text)
+void https://rest.isric.org/soilgrids/v2.0/properties/query?lon=10.0&lat=48.0&property=soc,nitrogen&depth=0-5cm&value=mean fetch returned empty
+void https://itrf.ign.fr/docs/solutions/itrf2020/Discontinuities/ITRF2020-soln-gnss.snx fetch returned empty
+void https://apiv3.iucnredlist.org/api/v3/summary?token=9bb4facb6d23f48efbf424bb05c0c1ef1cf6f468e320a879ac580cd11bece09d fetch returned empty
+void https://cddis.nasa.gov/archive/vlbi/ivsdata/aux/master{year}.txt data-present (non-JSON body: HTML/XML/text)
+void https://www.eorc.jaxa.jp/ALOS/en/palsar_fnf/api/v1/coverage?bbox={lon_min},{lat_min},{lon_max},{lat_max}&year={year}&format=json&limit=500 data-present (non-JSON body: HTML/XML/text)
+void https://www.eorc.jaxa.jp/ALOS/en/gmw/api/v1/coverage?bbox={lon_min},{lat_min},{lon_max},{lat_max}&year={year}&format=json&limit=500 data-present (non-JSON body: HTML/XML/text)
+void https://washdata.org/api/countries?format=json&service=drinking-water&year={year} fetch returned empty
+void https://spec.jpl.nasa.gov/ftp/pub/catalog/c018003.cat fetch returned empty
+void https://ssd-api.jpl.nasa.gov/sbdb.api?sstr=65803&full_prec=1&format=json&phys-par=Y fetch returned empty
+void https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name,a,e,i,om,w,ma,epoch,H,class,diameter&sb-cdata=%7B%22AND%22%3A%5B%22a%7CGT%7C30%22%2C%22e%7CLT%7C1%22%5D%7D&sb-kind=a&limit=500&sb-class=TNO,SDO,CEN&full_prec=Y fetch returned empty
+void https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name,a,e,i,om,w,ma,epoch,H,class&sb-cdata=%7B%22AND%22%3A%5B%22a%7CGT%7C30%22%2C%22a%7CLT%7C200%22%2C%22e%7CLT%7C0.9%22%5D%7D&sb-kind=a&limit=1000&sb-class=KBO,SDO,RES&full_prec=Y&format=json fetch returned empty
+void https://ssd-api.jpl.nasa.gov/cad.api?date-min={today}&date-max=2030-01-01&dist-max=0.05&h-max=25&fullname=1&format=json fetch returned empty
+void https://gisco-services.ec.europa.eu/api/?dataset=EDGAR_GHG&format=json&filter[year]={year}&filter[gas]=CH4&limit=500 fetch returned empty
+void https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/DRAXIS/FOREST/GFC/api/v1/data?year={year}&bbox={lon_min},{lat_min},{lon_max},{lat_max}&format=json&limit=500 fetch returned empty
+void https://kmtnet.kasi.re.kr/ulens/event/{year}/list.json fetch returned empty
+void https://lambda.gsfc.nasa.gov/data/act/actpol_dr6/act_dr6_tsz_compton_y_statistics.txt fetch returned empty
+void https://lambda.gsfc.nasa.gov/data/concept/CMB-HD/cmb_hd_forecast_noise.txt fetch returned empty
+void https://lambda.gsfc.nasa.gov/data/suborbital/SPT/spt3g_2019-2020/spt3g_bandpowers_2019-2020.txt fetch returned empty
+void https://lambda.gsfc.nasa.gov/data/map/dr5/dfp/wmap_9yr_imap_r9_v5.txt fetch returned empty
+void https://lasair-ztf.lsst.ac.uk/api/v1/objects/?format=json&limit=300&objectId=&classStar=0&rb=0.3&dt_start={today}T00:00:00 fetch returned empty
+void https://lasp.colorado.edu/lisird/latis/dap/aim_cips_pmc_nh_occurrence.csv?time>={today} fetch returned empty
+void https://lasp.colorado.edu/lisird/latis/dap/noaa_aa_index.csv?time>=1868-01-01 fetch returned empty
+void https://lasp.colorado.edu/lisird/latis/dap/eve_lines_l3.csv?time>={today} fetch returned empty
+void https://lisa-ldc.lal.in2p3.fr/api/v1/sources?dataset=LDC2_sangria&type=GB&limit=2000&format=json fetch returned empty
+void https://lisn.igp.gob.pe/api/v1/stations?format=json&status=operational fetch returned empty
+void https://earthref.org/MagIC/api/v1/contribution/search?format=json&n_max_specimens=0&n_max_samples=0&n_max_sites=100&n_max_locations=20&page=1&per_page=100&contribution_type=Paleomagnetism fetch returned empty
+void https://api.mbari.org/m3/platforms?format=json&platform_name=MARS fetch returned empty
+void https://api.mbari.org/m3/ctd?format=json&platform=MARS&limit=200&start={today}T00:00:00Z fetch returned empty
+void https://meteostat.net/api/stations/search?country=RU&limit=200&key= fetch returned empty
+void https://www.movebank.org/movebank/service/direct-read?entity_type=study&format=json&i_have_download_access=true&license_terms_accepted=true fetch returned empty
+void https://www.movebank.org/movebank/service/direct-read?entity_type=event&study_id=1099562&format=json&sensor_type_id=653&limit=1000 fetch returned empty
+void https://erosita.mpe.mpg.de/api/v1/sources?format=json&det_like_min=15&limit=500&sort=flux&order=desc fetch returned empty
+void https://erosita.mpe.mpg.de/api/v1/populations?format=json&survey=eRASS4&type=AGN&flux_min=1e-14&limit=500 fetch returned empty
+void https://api.adsabs.harvard.edu/v1/search/query?q=arxiv_class:astro-ph.HE+AND+pubdate:{year}-{month}&fl=bibcode,title,author,ra,dec,object,abstract,pubdate&rows=200&sort=date+desc&format=json fetch returned empty
+void https://opendap.earthdata.nasa.gov/providers/GES_DISC/collections/CAL_LID_L3_APro_AllSky-Standard-V4-21/granules?temporal[]={year}-{month}-01T00:00:00Z,{year}-{month}-28T23:59:59Z&format=json&limit=50 fetch returned empty
+void https://firms.modaps.eosdis.nasa.gov/api/country/csv/{nasa_key}/VIIRS_SNPP_NRT/{today} fetch returned empty
+void https://firms.modaps.eosdis.nasa.gov/api/area/csv/DEMO_KEY/VIIRS_SNPP_NRT/World/1/{today} fetch returned empty
+void https://firms.modaps.eosdis.nasa.gov/api/area/csv/{nasa_key}/VIIRS_NOAA20_NRT/{lat_min},{lon_min},{lat_max},{lon_max}/1/{today} fetch returned empty
+void https://firms.modaps.eosdis.nasa.gov/api/area/csv/{nasa_key}/VIIRS_SNPP_NRT/{lat_min},{lon_min},{lat_max},{lon_max}/1/{today} fetch returned empty
+void https://lpdaacsvc.cr.usgs.gov/appeears/api/point/sample?product=GEDI02_A.002&layer=rh100&lat={lat}&lon={lon}&format=json empty-response (JSON parsed but all containers empty)
+void https://opendap.nccs.nasa.gov/dods/GEOS-5/fp/0.25_deg/assim/inst3_3d_asm_Np.latest.info data-present (non-JSON body: HTML/XML/text)
+void https://coastwatch.noaa.gov/erddap/griddap/jplMURSST41.csv?analysed_sst%5Blast%5D%5B(-60.0):(75.0):3%5D%5B(-180.0):(180.0):3%5D,analysis_error%5Blast%5D%5B(-60.0):(75.0):3%5D%5B(-180.0):(180.0):3%5D fetch returned empty
+void https://firms.modaps.eosdis.nasa.gov/api/area/csv/{nasa_key}/MODIS_NRT/{lat_min},{lon_min},{lat_max},{lon_max}/1/{today} fetch returned empty
+void https://opendap.nccs.nasa.gov/dods/GEOS-5/fp/0.25_deg/assim/tavg1_2d_aer_Nx.latest.info data-present (non-JSON body: HTML/XML/text)
+void https://data.nasa.gov/resource/gh4g-9sfh.json?$limit=50000&$order=mass+DESC&$where=reclat+IS+NOT+NULL fetch returned empty
+void https://data.nasa.gov/resource/gh4g-9sfh.json?$limit=5000&$where=fall=%27Fell%27+AND+reclat+IS+NOT+NULL&$order=year+DESC fetch returned empty
+void https://data.nasa.gov/resource/gh4g-9sfh.json?$limit=5000&$where=recclass+LIKE+%27Iron%25%27+AND+reclat+IS+NOT+NULL&$order=mass+DESC fetch returned empty
+void https://acdisc.gesdisc.eosdis.nasa.gov/opendap/Aura_MLS_Level3/ML3DZO3.005/{year}/MLS-Aura_L3DM-O3_{year}d{day}.nc4.ascii?O3[0][0:5:35][0:3:44],Latitude[0:3:44],Longitude[0:5:35],Pressure fetch returned empty
+void https://acdisc.gesdisc.eosdis.nasa.gov/opendap/Aura_MLS_Level3/ML3DZT.005/{year}/MLS-Aura_L3DM-Temperature_{year}d{day}.nc4.ascii?Temperature[0][0:5:35][0:3:44],Latitude[0:3:44],Longitude[0:5:35],Pressure fetch returned empty
+void https://coastwatch.noaa.gov/erddap/griddap/erdMH1chla1day.csv?chlorophyll%5Blast%5D%5B(-70.0):(70.0):4%5D%5B(-180.0):(180.0):4%5D fetch returned empty
+void https://acdisc.gesdisc.eosdis.nasa.gov/opendap/MOPITT/MOP03JM.009/{year}/{year}01.he5.nc4.ascii?RetrievedCOTotalColumn[0:2:90][0:2:180],Latitude[0:2:90],Longitude[0:2:180] fetch returned empty
+void https://acdisc.gesdisc.eosdis.nasa.gov/opendap/OCO2/OCO2_L3CO2_MONTH_V10.4r/{year}/{year}_{month}_OCO2_L3CO2_MONTH_V10r.nc4.ascii?XCO2[0][0:3:89][0:3:359],latitude[0:3:89],longitude[0:3:359] fetch returned empty
+void https://acdisc.gesdisc.eosdis.nasa.gov/opendap/OCO3/OCO3_L2_Lite_FP.10r/{year}/{year}{month}{day}_OCO3_L2_Lite_FP.nc4.ascii?xco2[0:100],latitude[0:100],longitude[0:100],xco2_quality_flag[0:100],time[0:100] fetch returned empty
+void https://acdisc.gesdisc.eosdis.nasa.gov/opendap/Aura_OMI_Level3/OMTO3e.003/{year}/{year}m{month}{day}.he5.nc4.ascii?ColumnAmountO3[0][0:4:719][0:4:1439],Latitude[0:4:719],Longitude[0:4:1439] fetch returned empty
+void https://acdisc.gesdisc.eosdis.nasa.gov/opendap/Aura_OMI_Level3/OMTO3e.003/{year}/{year}m{month}{day}.he5.nc4.ascii?ColumnAmountO3Trop[0][0:4:719][0:4:1439],Latitude[0:4:719],Longitude[0:4:1439] fetch returned empty
+void https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M,PRECTOTCORR,ALLSKY_SFC_SW_DWN,ALLSKY_SFC_LW_DWN,RH2M,WS10M&community=AG&longitude={lon}&latitude={lat}&start={year}{month}01&end={year}{month}{day}&format=JSON data-present (JSON has content but declared keys absent)
+void https://opendap.earthdata.nasa.gov/providers/GES_DISC/collections/SAGE3_ISS_L2_SOLAR_V5.2/granules?format=json&temporal[]={today}T00:00:00Z,{today}T23:59:59Z fetch returned empty
+void https://seabass.gsfc.nasa.gov/search/?fields=lat,lon,date,experiment,Chl_a,Chl_b,Chl_c&data_type=bottle&format=json&limit=500 data-present (non-JSON body: HTML/XML/text)
+void https://seabass.gsfc.nasa.gov/search/?fields=lat,lon,date,experiment,investigators,data_type&data_type=HPLC&format=json&limit=500 data-present (non-JSON body: HTML/XML/text)
+void https://skyview.gsfc.nasa.gov/current/cgi/runquery.pl?Survey=SFD+Dust+Map&position={lat},{lon}&Size=1.0&Pixels=10&Return=JSON fetch returned empty
+void https://skyview.gsfc.nasa.gov/current/cgi/runquery.pl?Survey=VTSS+H-Alpha&position={lat},{lon}&Size=2.0&Pixels=20&Return=JSON fetch returned empty
+void https://acdisc.gesdisc.eosdis.nasa.gov/opendap/TOMS_EP_Level3/TOMS_EP_L3_Daily.001/{year}/{year}m{month}{day}.he5.nc4.ascii?TotalColumnOzone[0][0:3:179][0:3:287],Latitude[0:3:179],Longitude[0:3:287] fetch returned empty
+void https://api.neotomadb.org/v2.0/data/datasets?datasettype=diatom&limit=1000&offset=0 fetch returned empty
+void https://api.neotomadb.org/v2.0/data/datasets?datasettype=ostracode&limit=1000&offset=0 data-present (JSON has content but declared keys absent)
+void https://api.neotomadb.org/v2.0/data/datasets?datasettype=plant+macrofossils&limit=1000&offset=0 empty-response (JSON parsed but all containers empty)
+void https://www.ngdc.noaa.gov/hazel/hazard-service/api/v1/volcanicEruptions?maxRows=2000&startRow=1&orderBy=year&ascending=false fetch returned empty
+void http://geodesy.unr.edu/api/velocity?network=IGS&format=json&limit=500 fetch returned empty
+void https://www.nhc.noaa.gov/storm_graphics/api/AL012025_CONE.json fetch returned empty
+void https://www.fnet.bosai.go.jp/fdsnws/station/1/query?level=station&format=text&network=F-net fetch returned empty
+void https://aviationweather.gov/api/data/gtg?format=json&level=FL300&time=0 fetch returned empty
+void https://aviationweather.gov/api/data/pirep?format=json&age=2&type=turb&loc={lat},{lon}&distance=500 fetch returned empty
+void https://aviationweather.gov/api/data/isigmet?format=json data-present (container array has rows but extract yielded nothing)
+void https://coastwatch.noaa.gov/erddap/griddap/erdCALIPSOAer532monthly.csv?ext532%5Blast%5D%5B0%5D%5B(-60.0):(75.0):3%5D%5B(-180.0):(180.0):3%5D fetch returned empty
+void https://gml.noaa.gov/ccgg/carbontracker/CT2023/api/flux?start={year}-01-01&end={year}-12-31&region=globe&format=json&components=land,ocean,fossil fetch returned empty
+void https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-land-surface-soil-moisture&dataTypes=surface_soil_moisture&startDate={today}&endDate={today}&stations=GLOBAL&format=json&limit=1000 fetch returned empty
+void https://www.ncei.noaa.gov/access/services/data/v1?dataset=land-surface-temperature&dataTypes=LST_MEAN,LST_MAX,LST_MIN&startDate={today}&endDate={today}&bbox={lon_min},{lat_min},{lon_max},{lat_max}&format=json&limit=500 fetch returned empty
+void https://coastwatch.noaa.gov/erddap/griddap/cmip6_NPP_monthly.csv?npp%5Blast%5D%5B(-60.0):(75.0):4%5D%5B(-180.0):(180.0):4%5D fetch returned empty
+void https://coastwatch.noaa.gov/erddap/griddap/ncdcOisst21Agg.csv?sst%5Blast%5D%5B0%5D%5B(-60.0):(75.0):3%5D%5B(-180.0):(180.0):3%5D,err%5Blast%5D%5B0%5D%5B(-60.0):(75.0):3%5D%5B(-180.0):(180.0):3%5D fetch returned empty
+void https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=water_temperature&begin_date={year}{month}{day}&end_date={year}{month}{day}&station=8447435&datum=MLLW&units=metric&time_zone=gmt&format=json data-present (keys exist but no rows extracted)
+void https://www.cpc.ncep.noaa.gov/products/precip/CWlink/MJO/mjo_indices.txt fetch returned empty
+void https://www.cpc.ncep.noaa.gov/products/GODAS/godas.shtml fetch returned empty
+void https://www.cpc.ncep.noaa.gov/data/indices/qbo.u50.index.ascii fetch returned empty
+void https://coastwatch.noaa.gov/erddap/griddap/noaacrwbaa7dDaily.csv?bleaching_alert_area%5Blast%5D%5B-30:10:30%5D%5B-180:10:180%5D fetch returned empty
+void https://coastwatch.noaa.gov/erddap/griddap/noaacrwdhwdaily.csv?degree_heating_week%5Blast%5D%5B-30:10:30%5D%5B-180:10:180%5D fetch returned empty
+void https://coastwatch.noaa.gov/erddap/griddap/noaacrwsstdaily.csv?sea_surface_temperature_anomaly%5Blast%5D%5B-30:10:30%5D%5B-180:10:180%5D fetch returned empty
+void https://gml.noaa.gov/aftp/data/ozwv/Dobson/dobsonNetworkData.json fetch returned empty
+void https://www.ncei.noaa.gov/access/services/data/v1?dataset=daily-summaries&dataTypes=TMAX,TMIN,PRCP,SNOW,AWND,WDF5,WSF5&stations=GM000003026,GM000010501,UK000003668,US1NYNW0001&startDate={today}&endDate={today}&format=json empty-response (JSON parsed but all containers empty)
+void https://coastwatch.noaa.gov/erddap/griddap/noaagoesglm5mfd.csv?flash_count%5Blast%5D%5B(-60.0):(60.0)%5D%5B(-180.0):(180.0)%5D&.draw=surface&.vars=longitude%7Clatitude%7Cflash_count fetch returned empty
+void https://gml.noaa.gov/webdata/atmospheric_electricity/electric_field_summary.json fetch returned empty
+void https://gml.noaa.gov/webdata/ozwv/UVB/Brewer/brewer_station_summary.json fetch returned empty
+void https://gml.noaa.gov/webdata/ccgg/flask/co/co_network_summary.json fetch returned empty
+void https://gml.noaa.gov/webdata/ccgg/trends/radiocarbon/14co2_mm_gl.txt fetch returned empty
+void https://gml.noaa.gov/webdata/atmospheric_composition/radon/radon_network_summary.json fetch returned empty
+void https://gml.noaa.gov/webdata/ozwv/UVB/TotalOzone/daily_summary.json fetch returned empty
+void https://gml.noaa.gov/webdata/ccgg/flask/hydrocarbons/hc_network_summary.json fetch returned empty
+void https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-3-day.json data-present (container array has rows but extract yielded nothing)
+void https://coastwatch.noaa.gov/erddap/griddap/gpmIMERGHHF.csv?precipitation%5Blast%5D%5B(-60.0):(60.0):3%5D%5B(-180.0):(180.0):3%5D fetch returned empty
+void https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&dataTypes=TEMP,MAX,MIN,PRCP,WDSP,SLP,VISIB,GUST&startDate={today}&endDate={today}&bbox=-90,-180,90,180&limit=500&format=json fetch returned empty
+void https://habsos.noaa.gov/data/habsos_all.json fetch returned empty
+void https://satepsanone.nesdis.noaa.gov/HMS/web/HMS_Fire_{today}.json fetch returned empty
+void https://www.ncei.noaa.gov/data/international-best-track-archive-for-climate-stewardship-ibtracs/v04r00/access/csv/ibtracs.{year}.list.v04r00.csv fetch returned empty
+void https://lgdc.uml.edu/common/DIDBGetValues?ursiCode=AT138&charName=foF2&DMUF=3000&fromDate={today}&toDate={today}&subdiv=hour&desc=false fetch returned empty
+void https://lgdc.uml.edu/common/DIDBGetValues?ursiCode=LS166&charName=foF2&DMUF=3000&fromDate={today}&toDate={today}&subdiv=hour&desc=false fetch returned empty
+void https://lgdc.uml.edu/common/DIDBGetValues?ursiCode=DB049&charName=foF2&DMUF=3000&fromDate={today}&toDate={today}&subdiv=hour&desc=false fetch returned empty
+void https://lgdc.uml.edu/common/DIDBGetValues?ursiCode=JR055&charName=foF2&DMUF=3000&fromDate={today}&toDate={today}&subdiv=hour&desc=false fetch returned empty
+void https://lgdc.uml.edu/common/DIDBGetValues?ursiCode=TO536&charName=foF2&DMUF=3000&fromDate={today}&toDate={today}&subdiv=hour&desc=false fetch returned empty
+void https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&dataTypes=TEMP,DEWP,WDSP,PRCP,SLP&countries=UZ,TX,KG,TI&startDate={today}&endDate={today}&includeAttributes=false&format=json fetch returned empty
+void https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&dataTypes=TEMP,DEWP,WDSP,PRCP&countries=CG,TZ,KE,UG&startDate={today}&endDate={today}&includeAttributes=false&format=json fetch returned empty
+void https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&dataTypes=TEMP,DEWP,WDSP,PRCP,SLP&countries=ET&startDate={today}&endDate={today}&includeAttributes=false&format=json fetch returned empty
+void https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&dataTypes=TEMP,DEWP,WDSP,PRCP,SLP&countries=KZ&startDate={today}&endDate={today}&includeAttributes=false&format=json fetch returned empty
+void https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&dataTypes=TEMP,DEWP,WDSP,PRCP,SLP&countries=MZ&startDate={today}&endDate={today}&includeAttributes=false&format=json fetch returned empty
+void https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&dataTypes=TEMP,DEWP,SLP,WDSP,PRCP&countries=RS&startDate={today}&endDate={today}&includeAttributes=false&format=json fetch returned empty
+void https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-day&dataTypes=TEMP,DEWP,WDSP,PRCP&countries=NI,GH,SG,IV&startDate={today}&endDate={today}&includeAttributes=false&format=json fetch returned empty
+void https://www.ncei.noaa.gov/paleo-search/study/search.json?dataPublisher=NOAA&dataTypeId=14&keyword=tree+ring&format=json&limit=300 data-present (non-JSON body: HTML/XML/text)
+void https://www.ncei.noaa.gov/data/solar-spectral-irradiance/access/spectral/{year}/ssi_{year}{month}.txt fetch returned empty
+void https://coastwatch.noaa.gov/erddap/griddap/erdMH1aod550daily.csv?AOD550%5Blast%5D%5B(-60.0):(75.0):4%5D%5B(-180.0):(180.0):4%5D fetch returned empty
+void https://coastwatch.noaa.gov/erddap/griddap/erdMA1LAI8day.csv?Lai%5Blast%5D%5B(-60.0):(75.0):4%5D%5B(-180.0):(180.0):4%5D fetch returned empty
+void https://coastwatch.noaa.gov/erddap/griddap/erdMT1BurnedArea.csv?burnedArea%5Blast%5D%5B(-60.0):(75.0):4%5D%5B(-180.0):(180.0):4%5D fetch returned empty
+void https://coastwatch.noaa.gov/erddap/griddap/erdMT1LAI8day.csv?Lai%5Blast%5D%5B(-60.0):(75.0):4%5D%5B(-180.0):(180.0):4%5D,Fpar%5Blast%5D%5B(-60.0):(75.0):4%5D%5B(-180.0):(180.0):4%5D fetch returned empty
+void https://coastwatch.noaa.gov/erddap/griddap/erdMH1pp1day.csv?productivity%5Blast%5D%5B(-70.0):(70.0):3%5D%5B(-180.0):(180.0):3%5D fetch returned empty
+void https://www.ncei.noaa.gov/access/monitoring/climate-at-a-glance/global/time-series/globe/prcp/land/12/{month}/{year}/{year}.json fetch returned empty
+void https://www.ncei.noaa.gov/access/monitoring/climate-at-a-glance/global/time-series/globe/tavg/land/12/{month}/{year}/{year}.json fetch returned empty
+void https://www.ncei.noaa.gov/data/oceans/woa/DATA_ANALYSIS/3M_HEAT_CONTENT/DATA/basin/3month/h22-w0-7p.dat fetch returned empty
+void https://www.ncei.noaa.gov/data/sea-surface-temperature-optimum-interpolation/v2.1/access/avhrr/{year}/{year}{month}01_NCOIv21_L4_GHRSST_SHN_IP.nc fetch returned empty
+void https://www.ncei.noaa.gov/access/services/data/v1?dataset=normals-monthly&dataTypes=MLY-TMAX-NORMAL,MLY-TMIN-NORMAL,MLY-PRCP-NORMAL&stations=GM000010501,UK000003005,US1NYNW0001&startDate=2010-01-01&endDate=2010-12-31&format=json empty-response (JSON parsed but all containers empty)
+void https://www.ncei.noaa.gov/data/lightning-global/access/gld360/{year}/{year}{month}{day}_GLD360_statistics.json fetch returned empty
+void https://www.ngdc.noaa.gov/geomag/ghf/data/geoHeatFlow.json?lat_min={lat_min}&lat_max={lat_max}&lon_min={lon_min}&lon_max={lon_max}&format=json&limit=500 fetch returned empty
+void https://www.ncei.noaa.gov/access/monitoring/climate-at-a-glance/global/time-series/globe/sst/1/{month}/{year}/{year}.json fetch returned empty
+void https://www.star.nesdis.noaa.gov/sod/lsa/SeaLevelRise/slr/slr_sla_gbl_free_txj1j2j3j3a_90.csv fetch returned empty
+void https://www.ncei.noaa.gov/access/services/data/v1?dataset=global-summary-of-the-month&dataTypes=TMAX,TMIN,PRCP,TAVG,SNOW,SNWD&stations=GM000003026,GM000003946,UKM00003772,USW00094728&startDate={year}-01-01&endDate={year}-{month}-{day}&format=json fetch returned empty
+void https://www.nhc.noaa.gov/data/ri/ri_atl.dat fetch returned empty
+void https://www.ncei.noaa.gov/access/services/data/v1?dataset=icoads-daily&dataTypes=SST,WSPD,AT,SLP&startDate={today}&endDate={today}&bbox={lon_min},{lat_min},{lon_max},{lat_max}&limit=500&format=json fetch returned empty
+void https://www.ngdc.noaa.gov/hazard-service/api/v1/land-subsidence?maxResults=500&format=json&bbox={lon_min},{lat_min},{lon_max},{lat_max} fetch returned empty
+void https://www.ncei.noaa.gov/access/marine-debris/observations?format=json&bbox={lon_min},{lat_min},{lon_max},{lat_max}&startDate={year}-01-01&limit=500 fetch returned empty
+void https://www.ncei.noaa.gov/api/geophysics/cruise/?format=json&data_type=multibeam&limit=200&sort_by=start_date&order=desc fetch returned empty
+void https://www.ngdc.noaa.gov/hazel/hazard-service/api/v1/events?maxResults=100&sort=date&format=json&startYear={year}&startMonth={month}&startDay={day} fetch returned empty
+void https://www.ncei.noaa.gov/data/oceans/co2/surface/netcdf/OceanFlux_v2024.nc.json fetch returned empty
+void https://www.ncei.noaa.gov/api/passive-acoustic-data?format=json&limit=200&bbox={lon_min},{lat_min},{lon_max},{lat_max}&startDate={year}-01-01&endDate={today} fetch returned empty
+void https://noaadata.apps.nsidc.org/NOAA/G02135/seaice_analysis/Sea_Ice_Index_Monthly_Data_with_Statistics_G02135_v3.0.csv fetch returned empty
+void https://www.ngdc.noaa.gov/hazel/hazard-service/api/v1/tsunamis?minYear=1900&maxResults=1000&format=json fetch returned empty
+void https://www.ncei.noaa.gov/access/services/data/v1?dataset=vessel-traffic-density&dataTypes=DENSITY&startDate={year}-{month}-01&endDate={year}-{month}-{day}&bbox={lon_min},{lat_min},{lon_max},{lat_max}&format=json&limit=500 fetch returned empty
+void https://www.ncei.noaa.gov/access/services/data/v1?dataset=gld-daily&dataTypes=SOILM_0-10cm,SOILM_10-40cm,SOILM_40-100cm,SOILM_100-200cm&startDate={today}&endDate={today}&bbox={lon_min},{lat_min},{lon_max},{lat_max}&format=json&limit=500 fetch returned empty
+void https://www.ngdc.noaa.gov/hazel/hazard-service/api/v1/volcanoes?maxResults=1000&format=json data-present (container array has rows but extract yielded nothing)
+void https://www.ncei.noaa.gov/access/services/data/v1?dataset=daily-summaries&dataTypes=SNOW,SNWD&startDate={year}-11-01&endDate={today}&bbox=25,-125,50,-65&limit=500&format=json fetch returned empty
+void https://www.ncei.noaa.gov/access/world-ocean-database-select/dbsearch.html?DirectAccess=yes&type=json&survey=WOCE&lat1={lat_min}&lat2={lat_max}&lon1={lon_min}&lon2={lon_max}&variable=T,S,O2,NO3,PO4,SiO3&startDate=1990-01-01&endDate=2002-12-31&limit=300 data-present (non-JSON body: HTML/XML/text)
+void https://gml.noaa.gov/ccgg/obspack/data.php?id=obspack_ch4_1_GLOBALVIEWplus_v4.0_2021-10-14&format=json data-present (non-JSON body: HTML/XML/text)
+void https://www.ncei.noaa.gov/paleo-search/study/search.json?dataPublisher=NOAA&dataTypeId=2&keyword=Atlantic+coral&format=json&limit=100 data-present (JSON has content but declared keys absent)
+void https://www.ncei.noaa.gov/paleo-search/study/search.json?dataPublisher=NOAA&dataTypeId=2&keyword=ENSO+coral+Indo-Pacific&format=json&limit=100 data-present (JSON has content but declared keys absent)
+void https://www.ncei.noaa.gov/paleo-search/study/search.json?dataPublisher=NOAA&keyword=ENSO+reconstruction+millennium&dataTypeId=31&format=json&limit=100 fetch returned empty
+void https://www.ncei.noaa.gov/paleo-search/study/search.json?dataPublisher=NOAA&dataTypeId=31&keyword=Eocene+Oligocene+transition+benthic&format=json&limit=100 fetch returned empty
+void https://www.ncei.noaa.gov/paleo-search/study/search.json?dataPublisher=NOAA&dataTypeId=31&keyword=EPICA+Dome+C&format=json fetch returned empty
+void https://www.ncei.noaa.gov/paleo-search/study/search.json?dataPublisher=NOAA&keyword=LR04+benthic&dataTypeId=31&format=json fetch returned empty
+void https://www.ncei.noaa.gov/paleo-search/study/search.json?dataPublisher=NOAA&dataTypeId=31&keyword=organic+carbon+export+production&format=json&limit=100 fetch returned empty
+void https://www.ncei.noaa.gov/paleo-search/study/search.json?dataPublisher=NOAA&keyword=PAGES+2k&format=json&limit=300 data-present (JSON has content but declared keys absent)
+void https://www.ncei.noaa.gov/paleo-search/study/search.json?dataPublisher=NOAA&dataTypeId=3&keyword=pollen&format=json&limit=200 data-present (JSON has content but declared keys absent)
+void https://www.ncei.noaa.gov/paleo-search/study/search.json?dataPublisher=NOAA&dataTypeId=7&keyword=speleothem+stalagmite&format=json&limit=200 data-present (JSON has content but declared keys absent)
+void https://www.ncei.noaa.gov/paleo-search/study/search.json?dataPublisher=NOAA&dataTypeId=31&keyword=Vostok+ice+core&format=json fetch returned empty
+void https://www.ncei.noaa.gov/paleo-search/study/search.json?dataPublisher=NOAA&dataTypeId=31&keyword=WAIS+Divide&format=json fetch returned empty
+void https://www.pmel.noaa.gov/vents/api/v1/vents?format=json&limit=500&activity=active fetch returned empty
+void https://www.pmel.noaa.gov/vents/acoustics/seismicity/seismicity.json fetch returned empty
+void https://psl.noaa.gov/thredds/ncss/Datasets/ncep.reanalysis.dailyavgs/surface/slp.{year}.nc?var=slp&north=90&west=-180&east=180&south=-90&disableLLSubset=on&disableProjSubset=on&horizStride=4&time_start={year}-{month}-{day}T00%3A00%3A00Z&time_end={year}-{month}-{day}T23%3A59%3A59Z&timeStride=1&accept=csv fetch returned empty

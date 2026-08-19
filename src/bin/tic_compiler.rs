@@ -9,7 +9,7 @@ use omegaflow::inflate::gunzip;
 //   24     4     pm_ra_masyr: f32  proper motion RA, mas/yr
 //   28     4     pm_de_masyr: f32  proper motion Dec, mas/yr
 //   32     4     plx_mas: f32      parallax, mas (0.0 = absent, 0 honored)
-//   36     4     tmag: f32         TESS magnitude (0.0 = absent)
+//   36     4     tmag: f32         TESS magnitude (required — row skipped if absent)
 //   40     4     dist_pc: f32      distance, pc (0.0 = absent)
 const TIC_RECORD_STRIDE: usize = 44;
 
@@ -48,7 +48,7 @@ fn record_bytes(line: &str) -> Option<Vec<u8>> {
     let pm_ra = cell_f64(&cells, COL_PMRA)? as f32;
     let pm_de = cell_f64(&cells, COL_PMDEC)? as f32;
     let plx = cell_f32(&cells, COL_PLX);
-    let tmag = cell_f32(&cells, COL_TMAG);
+    let tmag = cell_f64(&cells, COL_TMAG)? as f32;
     let d = cell_f32(&cells, COL_DIST);
     let dist_pc = if d > 0.0 {
         d
@@ -213,6 +213,7 @@ mod tests {
             (COL_PMRA, "0"),
             (COL_PMDEC, "0"),
             (COL_PLX, "500.0"),
+            (COL_TMAG, "10.0"),
         ]);
         let rec = record_bytes(&line).unwrap();
         let dist = f32::from_le_bytes(rec[40..44].try_into().unwrap());

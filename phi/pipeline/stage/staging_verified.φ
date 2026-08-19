@@ -4616,3 +4616,1922 @@ on earth 6.5 2.6 0
 field 1.0.value biosphere_gdp_growth_benin_pct inverse-square em 1 259200 0.0 0.0
 
 
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/BMU/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 32.29 -64.78 0
+field 1.0.value biosphere_gdp_growth_bermuda_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/BTN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 27.47 89.64 0
+field 1.0.value biosphere_gdp_growth_bhutan_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/BOL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -16.5 -68.15 0
+field 1.0.value biosphere_gdp_growth_bolivia_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/BIH/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 43.85 18.41 0
+field 1.0.value biosphere_gdp_growth_bosnia_and_herzegovina_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/BWA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -24.63 25.9 0
+field 1.0.value biosphere_gdp_growth_botswana_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/BRA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -15.8 -47.88 0
+field 1.0.value biosphere_gdp_growth_brazil_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/BRN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 4.94 114.94 0
+field 1.0.value biosphere_gdp_growth_brunei_darussalam_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/BGR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 42.7 23.32 0
+field 1.0.value biosphere_gdp_growth_bulgaria_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/BFA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 12.37 -1.52 0
+field 1.0.value biosphere_gdp_growth_burkina_faso_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/BDI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -3.36 29.92 0
+field 1.0.value biosphere_gdp_growth_burundi_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/CPV/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 14.93 -23.51 0
+field 1.0.value biosphere_gdp_growth_cabo_verde_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/KHM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 11.56 104.93 0
+field 1.0.value biosphere_gdp_growth_cambodia_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/CMR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 3.87 11.52 0
+field 1.0.value biosphere_gdp_growth_cameroon_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/CAN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 45.42 -75.7 0
+field 1.0.value biosphere_gdp_growth_canada_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/CYM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 19.29 -81.37 0
+field 1.0.value biosphere_gdp_growth_cayman_islands_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/CAF/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 4.39 18.56 0
+field 1.0.value biosphere_gdp_growth_central_african_republic_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/TCD/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 15.45 18.73 0
+field 1.0.value biosphere_gdp_growth_chad_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/CHI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 49.19 -2.11 0
+field 1.0.value biosphere_gdp_growth_channel_islands_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/CHL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -33.45 -70.67 0
+field 1.0.value biosphere_gdp_growth_chile_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/CHN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 39.91 116.4 0
+field 1.0.value biosphere_gdp_growth_china_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/COL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 4.71 -74.07 0
+field 1.0.value biosphere_gdp_growth_colombia_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/COM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -11.72 43.25 0
+field 1.0.value biosphere_gdp_growth_comoros_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/COD/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -4.32 15.3 0
+field 1.0.value biosphere_gdp_growth_congo_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/COG/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -4.26 15.28 0
+field 1.0.value biosphere_gdp_growth_congo_republic_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/CRI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 9.93 -84.08 0
+field 1.0.value biosphere_gdp_growth_costa_rica_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/CIV/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 5.35 -4.01 0
+field 1.0.value biosphere_gdp_growth_cote_d_ivoire_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/HRV/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 45.81 15.98 0
+field 1.0.value biosphere_gdp_growth_croatia_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/CUB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 23.13 -82.38 0
+field 1.0.value biosphere_gdp_growth_cuba_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/CUW/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 12.11 -68.93 0
+field 1.0.value biosphere_gdp_growth_curacao_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/CYP/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 35.17 33.36 0
+field 1.0.value biosphere_gdp_growth_cyprus_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/CZE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 50.08 14.44 0
+field 1.0.value biosphere_gdp_growth_czechia_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/DNK/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 55.68 12.57 0
+field 1.0.value biosphere_gdp_growth_denmark_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/DEU/indicator/NY.GDP.MKTP.KD.ZG?format=json
+ttl 2592000
+on earth 52.52 13.405 0
+field 1.0.value biosphere_gdp_growth_pct_DEU inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/DJI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 11.58 43.15 0
+field 1.0.value biosphere_gdp_growth_djibouti_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/DMA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 15.3 -61.39 0
+field 1.0.value biosphere_gdp_growth_dominica_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/DOM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 18.49 -69.93 0
+field 1.0.value biosphere_gdp_growth_dominican_republic_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/ECU/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -0.23 -78.52 0
+field 1.0.value biosphere_gdp_growth_ecuador_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/EGY/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 30.04 31.24 0
+field 1.0.value biosphere_gdp_growth_egypt_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/SLV/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 13.69 -89.19 0
+field 1.0.value biosphere_gdp_growth_el_salvador_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/GNQ/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 3.75 8.77 0
+field 1.0.value biosphere_gdp_growth_equatorial_guinea_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/ERI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 15.33 38.93 0
+field 1.0.value biosphere_gdp_growth_eritrea_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/EST/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 59.44 24.75 0
+field 1.0.value biosphere_gdp_growth_estonia_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/SWZ/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -26.32 31.17 0
+field 1.0.value biosphere_gdp_growth_eswatini_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/ETH/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 9.03 38.74 0
+field 1.0.value biosphere_gdp_growth_ethiopia_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/FRO/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 62.01 -6.77 0
+field 1.0.value biosphere_gdp_growth_faroe_islands_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/FJI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -18.14 178.44 0
+field 1.0.value biosphere_gdp_growth_fiji_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/FIN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 60.17 24.94 0
+field 1.0.value biosphere_gdp_growth_finland_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/FRA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 48.86 2.35 0
+field 1.0.value biosphere_gdp_growth_france_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/PYF/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -17.55 -149.6 0
+field 1.0.value biosphere_gdp_growth_french_polynesia_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/GAB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 0.39 9.45 0
+field 1.0.value biosphere_gdp_growth_gabon_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/GMB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 13.45 -16.63 0
+field 1.0.value biosphere_gdp_growth_gambia_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/GEO/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 41.72 44.79 0
+field 1.0.value biosphere_gdp_growth_georgia_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/DEU/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 52.52 13.4 0
+field 1.0.value biosphere_gdp_growth_germany_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/GHA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 5.56 -0.2 0
+field 1.0.value biosphere_gdp_growth_ghana_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/GRC/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 37.98 23.73 0
+field 1.0.value biosphere_gdp_growth_greece_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/GRL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 64.15 -21.94 0
+field 1.0.value biosphere_gdp_growth_greenland_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/GRD/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 12.05 -61.75 0
+field 1.0.value biosphere_gdp_growth_grenada_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/GUM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 13.44 144.79 0
+field 1.0.value biosphere_gdp_growth_guam_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/GTM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 14.63 -90.51 0
+field 1.0.value biosphere_gdp_growth_guatemala_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/GIN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 9.51 -13.71 0
+field 1.0.value biosphere_gdp_growth_guinea_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/GNB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 11.86 -15.6 0
+field 1.0.value biosphere_gdp_growth_guinea_bissau_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/GUY/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 6.8 -58.16 0
+field 1.0.value biosphere_gdp_growth_guyana_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/HTI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 18.59 -72.31 0
+field 1.0.value biosphere_gdp_growth_haiti_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/HND/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 14.07 -87.21 0
+field 1.0.value biosphere_gdp_growth_honduras_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/HKG/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 22.32 114.17 0
+field 1.0.value biosphere_gdp_growth_hong_kong_sar_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/HUN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 47.5 19.04 0
+field 1.0.value biosphere_gdp_growth_hungary_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/ISL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 64.15 -21.94 0
+field 1.0.value biosphere_gdp_growth_iceland_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/IND/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 28.61 77.21 0
+field 1.0.value biosphere_gdp_growth_india_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/IDN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -6.21 106.85 0
+field 1.0.value biosphere_gdp_growth_indonesia_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/IRN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 35.69 51.39 0
+field 1.0.value biosphere_gdp_growth_iran_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/IRQ/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 33.31 44.36 0
+field 1.0.value biosphere_gdp_growth_iraq_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/IRL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 53.35 -6.26 0
+field 1.0.value biosphere_gdp_growth_ireland_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/ISR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 31.78 35.22 0
+field 1.0.value biosphere_gdp_growth_israel_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/ITA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 41.9 12.5 0
+field 1.0.value biosphere_gdp_growth_italy_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/JAM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 18.01 -76.79 0
+field 1.0.value biosphere_gdp_growth_jamaica_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/JPN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 35.69 139.69 0
+field 1.0.value biosphere_gdp_growth_japan_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/JOR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 31.95 35.91 0
+field 1.0.value biosphere_gdp_growth_jordan_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/KAZ/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 51.16 71.43 0
+field 1.0.value biosphere_gdp_growth_kazakhstan_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/KEN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -1.29 36.82 0
+field 1.0.value biosphere_gdp_growth_kenya_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/KIR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 1.33 172.97 0
+field 1.0.value biosphere_gdp_growth_kiribati_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/KOR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 37.57 126.98 0
+field 1.0.value biosphere_gdp_growth_korea_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/XKX/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 42.66 21.16 0
+field 1.0.value biosphere_gdp_growth_kosovo_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/KWT/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 29.38 47.98 0
+field 1.0.value biosphere_gdp_growth_kuwait_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/KGZ/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 42.87 74.59 0
+field 1.0.value biosphere_gdp_growth_kyrgyz_republic_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/LAO/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 17.97 102.63 0
+field 1.0.value biosphere_gdp_growth_lao_pdr_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/LVA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 56.95 24.11 0
+field 1.0.value biosphere_gdp_growth_latvia_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/LBN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 33.89 35.5 0
+field 1.0.value biosphere_gdp_growth_lebanon_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/LSO/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -29.31 27.49 0
+field 1.0.value biosphere_gdp_growth_lesotho_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/LBR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 6.3 -10.8 0
+field 1.0.value biosphere_gdp_growth_liberia_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/LBY/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 32.89 13.19 0
+field 1.0.value biosphere_gdp_growth_libya_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/LIE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 47.14 9.52 0
+field 1.0.value biosphere_gdp_growth_liechtenstein_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/LTU/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 54.69 25.28 0
+field 1.0.value biosphere_gdp_growth_lithuania_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/LUX/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 49.61 6.13 0
+field 1.0.value biosphere_gdp_growth_luxembourg_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/MAC/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 22.2 113.55 0
+field 1.0.value biosphere_gdp_growth_macao_sar_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/MDG/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -18.88 47.52 0
+field 1.0.value biosphere_gdp_growth_madagascar_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/MWI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -13.96 33.79 0
+field 1.0.value biosphere_gdp_growth_malawi_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/MYS/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 3.14 101.69 0
+field 1.0.value biosphere_gdp_growth_malaysia_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/MDV/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 4.18 73.51 0
+field 1.0.value biosphere_gdp_growth_maldives_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/MLI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 12.65 -8 0
+field 1.0.value biosphere_gdp_growth_mali_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/MLT/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 35.9 14.46 0
+field 1.0.value biosphere_gdp_growth_malta_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/MHL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 7.09 171.21 0
+field 1.0.value biosphere_gdp_growth_marshall_islands_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/MRT/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 18.09 -15.98 0
+field 1.0.value biosphere_gdp_growth_mauritania_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/MUS/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -20.35 57.55 0
+field 1.0.value biosphere_gdp_growth_mauritius_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/MEX/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 19.43 -99.13 0
+field 1.0.value biosphere_gdp_growth_mexico_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/FSM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 7.42 151.99 0
+field 1.0.value biosphere_gdp_growth_micronesia_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/MDA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 47.01 28.86 0
+field 1.0.value biosphere_gdp_growth_moldova_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/MCO/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 43.74 7.42 0
+field 1.0.value biosphere_gdp_growth_monaco_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/MNG/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 47.92 106.92 0
+field 1.0.value biosphere_gdp_growth_mongolia_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/MNE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 42.44 19.26 0
+field 1.0.value biosphere_gdp_growth_montenegro_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/MAR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 34.02 -6.83 0
+field 1.0.value biosphere_gdp_growth_morocco_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/MOZ/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -25.97 32.57 0
+field 1.0.value biosphere_gdp_growth_mozambique_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/MMR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 19.76 96.1 0
+field 1.0.value biosphere_gdp_growth_myanmar_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/NAM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -22.56 17.08 0
+field 1.0.value biosphere_gdp_growth_namibia_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/NRU/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -0.55 166.93 0
+field 1.0.value biosphere_gdp_growth_nauru_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/NPL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 27.71 85.32 0
+field 1.0.value biosphere_gdp_growth_nepal_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/NLD/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 52.37 4.9 0
+field 1.0.value biosphere_gdp_growth_netherlands_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/NCL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -22.27 166.46 0
+field 1.0.value biosphere_gdp_growth_new_caledonia_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/NZL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -41.29 174.78 0
+field 1.0.value biosphere_gdp_growth_new_zealand_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/NIC/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 12.15 -86.23 0
+field 1.0.value biosphere_gdp_growth_nicaragua_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/NER/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 13.51 2.11 0
+field 1.0.value biosphere_gdp_growth_niger_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/NGA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 9.06 7.49 0
+field 1.0.value biosphere_gdp_growth_nigeria_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/MKD/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 41.99 21.43 0
+field 1.0.value biosphere_gdp_growth_north_macedonia_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/MNP/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 15.21 145.72 0
+field 1.0.value biosphere_gdp_growth_northern_mariana_islands_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/NOR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 59.91 10.75 0
+field 1.0.value biosphere_gdp_growth_norway_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/OMN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 23.59 58.41 0
+field 1.0.value biosphere_gdp_growth_oman_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/PAK/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 33.68 73.05 0
+field 1.0.value biosphere_gdp_growth_pakistan_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/PLW/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 7.5 134.62 0
+field 1.0.value biosphere_gdp_growth_palau_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/PAN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 8.98 -79.52 0
+field 1.0.value biosphere_gdp_growth_panama_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/PNG/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -9.44 147.18 0
+field 1.0.value biosphere_gdp_growth_papua_new_guinea_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/PRY/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -25.26 -57.59 0
+field 1.0.value biosphere_gdp_growth_paraguay_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/PER/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -12.05 -77.04 0
+field 1.0.value biosphere_gdp_growth_peru_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/PHL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 14.6 120.98 0
+field 1.0.value biosphere_gdp_growth_philippines_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/POL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 52.23 21.01 0
+field 1.0.value biosphere_gdp_growth_poland_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/PRT/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 38.72 -9.13 0
+field 1.0.value biosphere_gdp_growth_portugal_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/PRI/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 18.47 -66.11 0
+field 1.0.value biosphere_gdp_growth_puerto_rico_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/QAT/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 25.29 51.53 0
+field 1.0.value biosphere_gdp_growth_qatar_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/ROU/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 44.43 26.1 0
+field 1.0.value biosphere_gdp_growth_romania_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/RUS/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 55.76 37.62 0
+field 1.0.value biosphere_gdp_growth_russian_federation_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/RWA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -1.95 30.06 0
+field 1.0.value biosphere_gdp_growth_rwanda_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/WSM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -13.85 -171.75 0
+field 1.0.value biosphere_gdp_growth_samoa_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/SMR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 43.94 12.45 0
+field 1.0.value biosphere_gdp_growth_san_marino_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/STP/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 0.33 6.73 0
+field 1.0.value biosphere_gdp_growth_sao_tome_and_principe_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/SAU/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 24.71 46.68 0
+field 1.0.value biosphere_gdp_growth_saudi_arabia_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/SEN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 14.72 -17.45 0
+field 1.0.value biosphere_gdp_growth_senegal_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/SRB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 44.79 20.45 0
+field 1.0.value biosphere_gdp_growth_serbia_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/SYC/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -4.68 55.47 0
+field 1.0.value biosphere_gdp_growth_seychelles_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/SLE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 8.46 -13.23 0
+field 1.0.value biosphere_gdp_growth_sierra_leone_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/SGP/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 1.35 103.82 0
+field 1.0.value biosphere_gdp_growth_singapore_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/SXM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 18.03 -63.05 0
+field 1.0.value biosphere_gdp_growth_sint_maarten_dutch_part_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/SVK/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 48.15 17.11 0
+field 1.0.value biosphere_gdp_growth_slovak_republic_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/SVN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 46.06 14.51 0
+field 1.0.value biosphere_gdp_growth_slovenia_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/SLB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -9.43 159.95 0
+field 1.0.value biosphere_gdp_growth_solomon_islands_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/SOM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 2.05 45.32 0
+field 1.0.value biosphere_gdp_growth_somalia_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/ZAF/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -25.75 28.22 0
+field 1.0.value biosphere_gdp_growth_south_africa_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/SSD/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 4.85 31.58 0
+field 1.0.value biosphere_gdp_growth_south_sudan_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/ESP/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 40.42 -3.7 0
+field 1.0.value biosphere_gdp_growth_spain_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/LKA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 6.93 79.86 0
+field 1.0.value biosphere_gdp_growth_sri_lanka_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/KNA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 17.3 -62.73 0
+field 1.0.value biosphere_gdp_growth_st_kitts_and_nevis_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/LCA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 13.91 -60.98 0
+field 1.0.value biosphere_gdp_growth_st_lucia_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/MAF/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 18.07 -63.08 0
+field 1.0.value biosphere_gdp_growth_st_martin_french_part_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/VCT/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 13.16 -61.22 0
+field 1.0.value biosphere_gdp_growth_st_vincent_and_the_grenadines_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/SDN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 15.5 32.56 0
+field 1.0.value biosphere_gdp_growth_sudan_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/SUR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 5.85 -55.2 0
+field 1.0.value biosphere_gdp_growth_suriname_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/SWE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 59.33 18.07 0
+field 1.0.value biosphere_gdp_growth_sweden_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/CHE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 47.37 8.54 0
+field 1.0.value biosphere_gdp_growth_switzerland_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/SYR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 33.51 36.29 0
+field 1.0.value biosphere_gdp_growth_syrian_arab_republic_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/TJK/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 38.56 68.77 0
+field 1.0.value biosphere_gdp_growth_tajikistan_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/TZA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -6.16 35.75 0
+field 1.0.value biosphere_gdp_growth_tanzania_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/THA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 13.76 100.5 0
+field 1.0.value biosphere_gdp_growth_thailand_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/TLS/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -8.55 125.58 0
+field 1.0.value biosphere_gdp_growth_timor_leste_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/TGO/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 6.17 1.33 0
+field 1.0.value biosphere_gdp_growth_togo_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/TON/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -21.17 -175.2 0
+field 1.0.value biosphere_gdp_growth_tonga_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/TTO/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 10.69 -61.52 0
+field 1.0.value biosphere_gdp_growth_trinidad_and_tobago_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/TUN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 36.81 10.18 0
+field 1.0.value biosphere_gdp_growth_tunisia_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/TUR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 39.93 32.85 0
+field 1.0.value biosphere_gdp_growth_turkiye_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/TKM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 37.95 58.38 0
+field 1.0.value biosphere_gdp_growth_turkmenistan_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/TCA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 21.46 -71.14 0
+field 1.0.value biosphere_gdp_growth_turks_and_caicos_islands_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/TUV/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -8.52 179.19 0
+field 1.0.value biosphere_gdp_growth_tuvalu_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/UGA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 0.34 32.58 0
+field 1.0.value biosphere_gdp_growth_uganda_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/UKR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 50.45 30.52 0
+field 1.0.value biosphere_gdp_growth_ukraine_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/ARE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 24.45 54.38 0
+field 1.0.value biosphere_gdp_growth_united_arab_emirates_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/GBR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 51.51 -0.13 0
+field 1.0.value biosphere_gdp_growth_united_kingdom_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/USA/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 38.9 -77.03 0
+field 1.0.value biosphere_gdp_growth_united_states_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/URY/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -34.9 -56.16 0
+field 1.0.value biosphere_gdp_growth_uruguay_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/UZB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 41.29 69.24 0
+field 1.0.value biosphere_gdp_growth_uzbekistan_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/VUT/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -17.73 168.32 0
+field 1.0.value biosphere_gdp_growth_vanuatu_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/VEN/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 10.48 -66.9 0
+field 1.0.value biosphere_gdp_growth_venezuela_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/VNM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 21.02 105.83 0
+field 1.0.value biosphere_gdp_growth_vietnam_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/VIR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 18.34 -64.93 0
+field 1.0.value biosphere_gdp_growth_virgin_islands_u_s_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/PSE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 31.95 35.23 0
+field 1.0.value biosphere_gdp_growth_west_bank_and_gaza_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/YEM/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth 15.36 44.19 0
+field 1.0.value biosphere_gdp_growth_yemen_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/ZMB/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -15.38 28.32 0
+field 1.0.value biosphere_gdp_growth_zambia_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/ZWE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1&mrv=1
+ttl 2592000
+on earth -17.82 31.03 0
+field 1.0.value biosphere_gdp_growth_zimbabwe_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/WLD/indicator/SP.DYN.LE00.IN?format=json&date=2023&per_page=1&mrv=1
+ttl 2592000
+on earth 38.899 -77.043 0
+field 1.0.value biosphere_life_expectancy_years inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/WLD/indicator/SP.POP.TOTL?format=json
+ttl 2592000
+on earth 38.899 -77.043 0
+field 1.0.value biosphere_worldbank_population_total inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/WLD/indicator/EN.POP.DNST?format=json&per_page=1&date=2023
+ttl 2592000
+on earth 38.8991 -77.043 0
+field 1.0.value biosphere_global_population_density_sqkm inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.worldbank.org/v2/country/WLD/indicator/SP.URB.TOTL.IN.ZS?format=json&date=2023&per_page=1&mrv=1
+ttl 2592000
+on earth 38.899 -77.043 0
+field 1.0.value biosphere_urban_population_pct inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=dark+matter+direct+detection+limit+XENONnT+LZ&fields=titles,citation_count
+ttl 2592000
+on earth 42.454 13.576 0
+field hits.hits.0.metadata.citation_count quantum_dark_matter_limit_citations inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://macrostrat.org/api/v2/defs/timescales?timescale_id=11&format=json
+ttl 2592000
+on earth 43.073 -89.401 0
+path success.data.0.n_intervals geosphere_ics_timescale_units inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.open-elevation.com/api/v1/lookup?locations={grid}
+ttl 2592000
+on earth 0 0
+map results
+lat latitude
+lon longitude
+alt elevation
+field elevation geosphere_elevation_openelev_m inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.opentopodata.org/v1/gebco2020?locations={grid}
+ttl 2592000
+on earth 0 0
+map results
+lat location.lat
+lon location.lng
+alt elevation
+field elevation hydrosphere_bathymetry_gebco_m inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.opentopodata.org/v1/mapzen?locations={grid}
+ttl 2592000
+on earth 0 0
+map results
+lat location.lat
+lon location.lng
+alt elevation
+field elevation geosphere_terrain_mapzen_m inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.opentopodata.org/v1/srtm30m?locations={grid}
+ttl 2592000
+on earth 0 0
+map results
+lat location.lat
+lon location.lng
+alt elevation
+field elevation geosphere_elevation_srtm30_m inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=neutrinoless+double+beta+decay+limit&fields=titles,citation_count
+ttl 2592000
+on earth 42.454 13.576 0
+field hits.hits.0.metadata.citation_count quantum_double_beta_limit_citations inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/epica_domec/dc_ch4_hol_fl02-noaa.txt
+ttl 2592000
+format text
+on earth -75.1 123.35 0
+rows .
+field 0 depth_m gaussian-inverse-square diffusion 1 259200 0.0 0.0
+field 1 age_yr_bp gaussian-inverse-square diffusion 1 259200 0.0 0.0
+field 2 ch4_ppbv gaussian-inverse-square diffusion 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/vostok/deutnat.txt
+ttl 2592000
+format text
+on earth -78.464 106.837 0
+rows .
+field 0 depth_m gaussian-inverse-square diffusion 1 259200 0.0 0.0
+field 1 age_yr_bp gaussian-inverse-square diffusion 1 259200 0.0 0.0
+field 2 deuterium_delta gaussian-inverse-square diffusion 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/antarctica2015co2wais-noaa.txt
+ttl 2592000
+format text
+on earth -79.467 -112.085 0
+rows .
+field 0 depth_m gaussian-inverse-square diffusion 1 259200 0.0 0.0
+field 1 age_yr_bp gaussian-inverse-square diffusion 1 259200 0.0 0.0
+field 2 co2_ppmv gaussian-inverse-square diffusion 1 259200 0.0 0.0
+field 3 co2_sigma_ppmv gaussian-inverse-square diffusion 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/domefuji/df-co2-dry-260ka-2007.txt
+ttl 2592000
+format csv
+on earth -77.319 39.703 0
+rows .
+field 0 paleoclimate_domefuji_age_bp inverse-square em 1 259200 0.0 0.0
+field 1 paleoclimate_domefuji_co2_ppm inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/epica_domec/edc-co2-2008.txt
+ttl 2592000
+format text
+on earth -75.1 123.35 0
+rows .
+field 3 paleoclimate_epica_age_bp inverse-square em 1 259200 0.0 0.0
+field 4 paleoclimate_epica_co2_ppm inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://www.ncei.noaa.gov/pub/data/paleo/icecore/antarctica/vostok/co2nat.txt
+ttl 2592000
+format text
+on earth -78.464 106.833 0
+rows .
+field 0 paleoclimate_vostok_depth_m inverse-square em 1 259200 0.0 0.0
+field 1 paleoclimate_vostok_age_bp inverse-square em 1 259200 0.0 0.0
+field 2 paleoclimate_vostok_co2_ppm inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://opendata.cern.ch/api/records/?size=1&page=1
+ttl 2592000
+on earth 46.233 6.055 0
+field hits.total physics_cern_opendata_total inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.crossref.org/works?query=ultraweak+biophoton+emission&rows=0
+ttl 2592000
+on earth 50.775 6.084 0
+field message.total-results biosphere_biophoton_research_total inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=CMB+cold+spot+anomaly&fields=titles,citation_count
+ttl 2592000
+on earth 5.23 -52.769 0
+field hits.hits.0.metadata.citation_count cosmic_cmb_anomaly_research_citations inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=vacuum+metastability+Higgs&fields=titles,citation_count
+ttl 2592000
+on earth 46.233 6.055 0
+field hits.hits.0.metadata.citation_count physics_vacuum_metastability_citations inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=XENONnT+dark+matter&fields=titles,citation_count
+ttl 2592000
+on earth 42.454 13.576 0
+field hits.hits.0.metadata.citation_count physics_dark_matter_limit_citations inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://inspirehep.net/api/literature?sort=mostrecent&size=1&q=Lorentz+invariance+violation+quantum+gravity&fields=titles,citation_count
+ttl 2592000
+on earth 42.454 13.576 0
+field hits.hits.0.metadata.citation_count quantum_lorentz_bounds_citations inverse-square em 1 259200 0.0 0.0
+
+
+# from master_converted.φ
+url https://cdms.astro.uni-koeln.de/cgi-bin/cdmsinfo?file=e028503.cat&version=current
+ttl 86400
+format text
+on earth 0 0 0
+rows .
+field 0 frequency_MHz inverse-square em 1 8640 0.0 0.0
+field 1 freq_uncertainty_MHz inverse-square em 1 8640 0.0 0.0
+field 2 log10_intensity_nm2MHz inverse-square em 1 8640 0.0 0.0
+field 3 degrees_freedom inverse-square em 1 8640 0.0 0.0
+field 4 lower_energy_cm1 inverse-square em 1 8640 0.0 0.0
+field 5 upper_state_degeneracy inverse-square em 1 8640 0.0 0.0
+field 6 molecule_tag inverse-square em 1 8640 0.0 0.0
+field 7 qn_format inverse-square em 1 8640 0.0 0.0
+field 8 upper_quantum_number inverse-square em 1 8640 0.0 0.0
+field 9 lower_quantum_number inverse-square em 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://cdms.astro.uni-koeln.de/cgi-bin/cdmsinfo?file=e044502.cat&version=current
+ttl 86400
+format text
+on earth 0 0 0
+rows .
+field 0 frequency_MHz inverse-square em 1 8640 0.0 0.0
+field 1 freq_error_MHz inverse-square em 1 8640 0.0 0.0
+field 2 log10_intensity inverse-square em 1 8640 0.0 0.0
+field 3 lower_energy_cm1 inverse-square em 1 8640 0.0 0.0
+field 4 upper_degeneracy inverse-square em 1 8640 0.0 0.0
+field 5 molecule_tag inverse-square em 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://nrt.cmems-du.eu/erddap/tabledap/cmems_obs_mob_glo_phy-cur_nrt_0.1deg-SSH-eddy-track_PT1H.csv?latitude,longitude,time,radius_e,amplitude,speed_radius,eddy_type&time>={today}T00:00:00Z&orderBy(%22time%22)&distinct()
+ttl 86400
+format text
+on earth 0 0
+rows .
+lat latitude
+lon longitude
+field time detection_time gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field radius_e eddy_effective_radius_km gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field amplitude ssh_amplitude_m gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field speed_radius rotation_speed_m_s gaussian-inverse-square diffusion 1 8640 0.0 0.0
+field eddy_type cyclonic_anticyclonic gaussian-inverse-square diffusion 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://nrt.cmems-du.eu/erddap/griddap/cmems_mod_glo_phy_anfc_0.083deg_PT1H-m.csv?thetao%5Blast%5D%5B0%5D%5B(-60.0):(60.0):4%5D%5B(-180.0):(180.0):4%5D,so%5Blast%5D%5B0%5D%5B(-60.0):(60.0):4%5D%5B(-180.0):(180.0):4%5D
+ttl 86400
+format text
+on earth 0 0
+rows .
+lat latitude
+lon longitude
+field thetao ocean_potential_temp_c exponential-decay thermal 1 8640 0.0 0.0
+field so ocean_salinity_psu exponential-decay thermal 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://www.globalcmt.org/cgi-bin/globalcmt-cgi-bin/CMT5/form?itype=ymd&yr={year}&mo={month}&dy=01&otype=ymd&oyr={year}&omo={month}&ody={day}&jyr=1976&jday=1&ojyr=2025&ojday=366&nday=1&lmw=5&umw=10&lms=0&ums=10&lmb=0&umb=10&llat=-90&ulat=90&llon=-180&ulon=180&lhd=0&uhd=1000&lts=-9999&uts=9999&lpe1=0&upe1=90&lpe2=0&upe2=90&list=6
+ttl 3600
+format text
+on earth 0 0
+rows .
+lat lat
+lon lon
+field event_name event_name gaussian-inverse-square seismic-body 1 360 0.0 0.0
+field date event_date gaussian-inverse-square seismic-body 1 360 0.0 0.0
+field time event_time gaussian-inverse-square seismic-body 1 360 0.0 0.0
+field lat centroid_lat gaussian-inverse-square seismic-body 1 360 0.0 0.0
+field lon centroid_lon gaussian-inverse-square seismic-body 1 360 0.0 0.0
+field depth centroid_depth_km gaussian-inverse-square seismic-body 1 360 0.0 0.0
+field mw moment_magnitude gaussian-inverse-square seismic-body 1 360 0.0 0.0
+field strike1 strike_1_deg gaussian-inverse-square seismic-body 1 360 0.0 0.0
+field dip1 dip_1_deg gaussian-inverse-square seismic-body 1 360 0.0 0.0
+field rake1 rake_1_deg gaussian-inverse-square seismic-body 1 360 0.0 0.0
+
+
+# from master_converted.φ
+url https://datacenter.iers.org/data/csv/finals2000A.data.csv
+ttl 86400
+format text
+on earth 0 0 0
+rows .
+field 0 mjd_date erfc seismic-surface 1 8640 0.0 0.0
+field 1 x_pole_arcsec erfc seismic-surface 1 8640 0.0 0.0
+field 2 y_pole_arcsec erfc seismic-surface 1 8640 0.0 0.0
+field 3 ut1_utc_s erfc seismic-surface 1 8640 0.0 0.0
+field 4 lod_ms erfc seismic-surface 1 8640 0.0 0.0
+field 5 dx_pole_arcsec erfc seismic-surface 1 8640 0.0 0.0
+field 6 dy_pole_arcsec erfc seismic-surface 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://webservices.ingv.it/fdsnws/event/1/query?format=geojson&minmagnitude=1.5&limit=500&orderby=time&starttime={today}T00:00:00
+ttl 60
+on earth 0 0
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.mag magnitude gaussian-inverse-square seismic-body 1 6 0.0 0.0
+field properties.place locality gaussian-inverse-square seismic-body 1 6 0.0 0.0
+field properties.time event_time gaussian-inverse-square seismic-body 1 6 0.0 0.0
+field properties.depth depth_km gaussian-inverse-square seismic-body 1 6 0.0 0.0
+
+
+# from master_converted.φ
+url https://service.iris.edu/fdsnws/station/1/query?network=IC,AU&level=station&format=text&nodata=404
+ttl 86400
+format text
+on earth 0 0
+rows .
+lat Latitude
+lon Longitude
+field Network network_code gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field Station station_code gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field Elevation elevation_m gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field SiteDescription location_name gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field StartTime deployment_start gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://service.iris.edu/fdsnws/station/1/query?network=II&level=station&format=text&nodata=404
+ttl 86400
+format text
+on earth 0 0
+rows .
+lat Latitude
+lon Longitude
+field Network network_code gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field Station station_code gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field Location location_code gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field Elevation elevation_m gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field SiteDescription site_name gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field StartTime start_date gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://service.iris.edu/fdsnws/station/1/query?network=IU&level=station&format=text&nodata=404
+ttl 86400
+format text
+on earth 0 0
+rows .
+lat Latitude
+lon Longitude
+field Network network_code gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field Station station_code gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field Elevation elevation_m gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field SiteDescription site_description gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field StartTime start_date gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://service.iris.edu/fdsnws/station/1/query?network=YT&level=station&format=text&nodata=404
+ttl 86400
+format text
+on earth 0 0
+rows .
+lat Latitude
+lon Longitude
+field Network network_code gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field Station station_code gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field Elevation elevation_m gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field SiteDescription site_name gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field StartTime operation_start gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://ds.iris.edu/spud/momenttensor?evlo=&evla=&evdp=&startTime={today}T00:00:00&endTime={tomorrow}T00:00:00&catalog=GCMT&format=text&nodata=404
+ttl 3600
+format text
+on earth 0 0
+rows .
+lat evla
+lon evlo
+field evid event_id gaussian-inverse-square seismic-body 1 360 0.0 0.0
+field evla centroid_lat gaussian-inverse-square seismic-body 1 360 0.0 0.0
+field evlo centroid_lon gaussian-inverse-square seismic-body 1 360 0.0 0.0
+field evdp centroid_depth_km gaussian-inverse-square seismic-body 1 360 0.0 0.0
+field mag moment_magnitude gaussian-inverse-square seismic-body 1 360 0.0 0.0
+field type mechanism_type gaussian-inverse-square seismic-body 1 360 0.0 0.0
+field strike strike_deg gaussian-inverse-square seismic-body 1 360 0.0 0.0
+field dip dip_deg gaussian-inverse-square seismic-body 1 360 0.0 0.0
+field rake rake_deg gaussian-inverse-square seismic-body 1 360 0.0 0.0
+
+
+# from master_converted.φ
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='99942'&OBJ_DATA='YES'&MAKE_EPHEM='YES'&EPHEM_TYPE='ELEMENTS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+d'&REF_PLANE='ECLIPTIC'&CAL_FORMAT='BOTH'
+ttl 86400
+format text
+on earth 0 0 0
+rows .
+field 1 epoch_jd inverse-square gravity 1 8640 0.0 0.0
+field 2 eccentricity inverse-square gravity 1 8640 0.0 0.0
+field 3 perihelion_dist_au inverse-square gravity 1 8640 0.0 0.0
+field 4 inclination_deg inverse-square gravity 1 8640 0.0 0.0
+field 5 long_asc_node_deg inverse-square gravity 1 8640 0.0 0.0
+field 6 arg_perihelion_deg inverse-square gravity 1 8640 0.0 0.0
+field 7 time_perihelion_jd inverse-square gravity 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='DES%3DC%2F2023+A3'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&VEC_TABLE='2'&REF_PLANE='ECLIPTIC'&CAL_FORMAT='BOTH'
+ttl 3600
+format text
+on earth 0 0 0
+rows .
+field 2 x_au inverse-square gravity 1 360 0.0 0.0
+field 3 y_au inverse-square gravity 1 360 0.0 0.0
+field 4 z_au inverse-square gravity 1 360 0.0 0.0
+field 5 vx_au_d inverse-square gravity 1 360 0.0 0.0
+field 6 vy_au_d inverse-square gravity 1 360 0.0 0.0
+field 7 vz_au_d inverse-square gravity 1 360 0.0 0.0
+
+
+# from master_converted.φ
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='DES%3D65803%3BDimorphos'&OBJ_DATA='YES'&MAKE_EPHEM='YES'&EPHEM_TYPE='ELEMENTS'&CENTER='@0'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+d'&REF_PLANE='ECLIPTIC'
+ttl 3600
+format text
+on earth 0 0 0
+rows .
+field 0 epoch_date inverse-square gravity 1 360 0.0 0.0
+field 1 eccentricity inverse-square gravity 1 360 0.0 0.0
+field 2 perihelion_dist_au inverse-square gravity 1 360 0.0 0.0
+field 3 inclination_deg inverse-square gravity 1 360 0.0 0.0
+field 4 long_asc_node_deg inverse-square gravity 1 360 0.0 0.0
+field 5 arg_perihelion_deg inverse-square gravity 1 360 0.0 0.0
+field 6 time_perihelion_jd inverse-square gravity 1 360 0.0 0.0
+
+
+# from master_converted.φ
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='-125544'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='10+m'&QUANTITIES='1,20,23,24'&CAL_FORMAT='BOTH'
+ttl 600
+format text
+on earth 0 0 0
+rows .
+field 0 datetime_calendar inverse-square gravity 1 60 0.0 0.0
+field 2 ra_hms inverse-square gravity 1 60 0.0 0.0
+field 3 dec_dms inverse-square gravity 1 60 0.0 0.0
+field 8 range_km inverse-square gravity 1 60 0.0 0.0
+field 9 range_rate_km_s inverse-square gravity 1 60 0.0 0.0
+
+
+# from master_converted.φ
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='599'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&QUANTITIES='1,9,20,23,24,29'&CAL_FORMAT='BOTH'
+ttl 3600
+format text
+on earth 0 0 0
+rows .
+field 0 datetime_calendar inverse-square gravity 1 360 0.0 0.0
+field 2 ra_hms inverse-square gravity 1 360 0.0 0.0
+field 3 dec_dms inverse-square gravity 1 360 0.0 0.0
+field 8 range_au inverse-square gravity 1 360 0.0 0.0
+field 9 range_rate_km_s inverse-square gravity 1 360 0.0 0.0
+field 12 vmag inverse-square gravity 1 360 0.0 0.0
+
+
+# from master_converted.φ
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='499'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&QUANTITIES='1,9,20,23,24,29'&CAL_FORMAT='BOTH'&SKIP_DAYLT='NO'
+ttl 3600
+format text
+on earth 0 0 0
+rows .
+field 0 datetime_calendar inverse-square gravity 1 360 0.0 0.0
+field 2 ra_hms inverse-square gravity 1 360 0.0 0.0
+field 3 dec_dms inverse-square gravity 1 360 0.0 0.0
+field 8 range_au inverse-square gravity 1 360 0.0 0.0
+field 9 range_rate_km_s inverse-square gravity 1 360 0.0 0.0
+field 12 vmag inverse-square gravity 1 360 0.0 0.0
+
+
+# from master_converted.φ
+url https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='699'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='{today}'&STOP_TIME='{tomorrow}'&STEP_SIZE='1+h'&QUANTITIES='1,9,20,23,24,29'&CAL_FORMAT='BOTH'
+ttl 3600
+format text
+on earth 0 0 0
+rows .
+field 0 datetime_calendar inverse-square gravity 1 360 0.0 0.0
+field 2 ra_hms inverse-square gravity 1 360 0.0 0.0
+field 3 dec_dms inverse-square gravity 1 360 0.0 0.0
+field 8 range_au inverse-square gravity 1 360 0.0 0.0
+field 9 range_rate_km_s inverse-square gravity 1 360 0.0 0.0
+field 12 vmag inverse-square gravity 1 360 0.0 0.0
+
+
+# from master_converted.φ
+url https://lasp.colorado.edu/lisird/latis/dap/sdo_eve_ssi_1nm_l3.csv?time>={today}
+ttl 3600
+format text
+on earth 0 0 0
+rows .
+field time observation_date inverse-square em 1 360 0.0 0.0
+field wavelength wavelength_nm inverse-square em 1 360 0.0 0.0
+field ssi spectral_irradiance_W_m2_nm inverse-square em 1 360 0.0 0.0
+field uncertainty ssi_uncertainty_W_m2_nm inverse-square em 1 360 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json?type=tidepredictions&units=metric&tz=gmt
+ttl 86400
+on earth 0 0
+map stations
+lat lat
+lon lng
+field id station_id gaussian-inverse-square acoustic 1 8640 0.0 0.0
+field name station_name gaussian-inverse-square acoustic 1 8640 0.0 0.0
+field state state_code gaussian-inverse-square acoustic 1 8640 0.0 0.0
+field tideType tide_type gaussian-inverse-square acoustic 1 8640 0.0 0.0
+field timezone timezone_code gaussian-inverse-square acoustic 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json?type=tidepredictions&units=metric
+ttl 3600
+on earth 0 0
+map stations
+lat lat
+lon lng
+field id station_id gaussian-inverse-square acoustic 1 360 0.0 0.0
+field name station_name gaussian-inverse-square acoustic 1 360 0.0 0.0
+field state state gaussian-inverse-square acoustic 1 360 0.0 0.0
+field timezone timezone gaussian-inverse-square acoustic 1 360 0.0 0.0
+field tideType tide_type gaussian-inverse-square acoustic 1 360 0.0 0.0
+field details.self station_url gaussian-inverse-square acoustic 1 360 0.0 0.0
+
+
+# from master_converted.φ
+url https://psl.noaa.gov/data/correlation/amon.us.data
+ttl 86400
+format text
+on earth 40 -40 0
+rows .
+field 0 year exponential-decay thermal 1 8640 0.0 0.0
+field 1 jan exponential-decay thermal 1 8640 0.0 0.0
+field 2 feb exponential-decay thermal 1 8640 0.0 0.0
+field 3 mar exponential-decay thermal 1 8640 0.0 0.0
+field 4 apr exponential-decay thermal 1 8640 0.0 0.0
+field 5 may exponential-decay thermal 1 8640 0.0 0.0
+field 6 jun exponential-decay thermal 1 8640 0.0 0.0
+field 7 jul exponential-decay thermal 1 8640 0.0 0.0
+field 8 aug exponential-decay thermal 1 8640 0.0 0.0
+field 9 sep exponential-decay thermal 1 8640 0.0 0.0
+field 10 oct exponential-decay thermal 1 8640 0.0 0.0
+field 11 nov exponential-decay thermal 1 8640 0.0 0.0
+field 12 dec exponential-decay thermal 1 8640 0.0 0.0
+
+
+# from master_converted.φ
+url https://www.ngdc.noaa.gov/hazel/hazard-service/api/v1/earthquakes?startYear=1900&endYear={year}&minMagnitude=7.0&maxResults=2000&format=json
+ttl 86400
+on earth 0 0
+map items
+lat latitude
+lon longitude
+field eqId earthquake_id gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field year event_year gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field mo event_month gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field dy event_day gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field hour event_hour gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field eqMagnitude magnitude gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field depth depth_km gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field deaths fatalities gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field totalDeaths total_deaths gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field totalDamage total_damage_million_usd gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+field totalInjuries injuries gaussian-inverse-square seismic-body 1 8640 0.0 0.0
+
+

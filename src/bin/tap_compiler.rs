@@ -547,12 +547,9 @@ fn star_record_bytes(cells: &[String], col_idx: &[(String, usize)]) -> Option<Ve
     if !(dist_pc > 0.0) || !ra.is_finite() || !dec.is_finite() || !mag.is_finite() {
         return None;
     }
-    let bpmag = get("bpmag").unwrap_or(f64::NAN);
-    let rpmag = get("rpmag").unwrap_or(f64::NAN);
-    let ci = if bpmag.is_finite() && rpmag.is_finite() {
-        bpmag - rpmag
-    } else {
-        0.0
+    let ci = match (get("bpmag"), get("rpmag")) {
+        (Some(b), Some(r)) if b.is_finite() && r.is_finite() => b - r,
+        _ => 0.0,
     };
     let plx_mas = 1000.0 / dist_pc;
     let Some(rv_km_s) = get("rv") else {

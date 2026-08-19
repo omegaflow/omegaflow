@@ -545,10 +545,7 @@ fn main() {
             let Some(pm_de) = num(b, 97, 104) else {
                 continue;
             };
-            let bp_rp = match num(b, 246, 251) {
-                Some(bv) => bv_to_bp_rp(bv),
-                None => 0.0,
-            };
+            let bp_rp = num(b, 246, 251).map(bv_to_bp_rp);
             let (ra_j, dec_j) = propagate(ra, dec, pm_ra, pm_de, 8.75);
             rows.push((
                 hip,
@@ -560,7 +557,10 @@ fn main() {
                     1000.0 / plx,
                     pm_ra,
                     pm_de,
-                    bp_rp
+                    match bp_rp {
+                        Some(v) => v.to_string(),
+                        None => "null".to_string(),
+                    }
                 ),
             ));
         }
