@@ -649,8 +649,14 @@ Offen (Detail in phi/pipeline/ledger.φ):
   (2) REST-Pull zuerst: GCN circulars/notices, IceCube, GraceDB, MPC tragen
   REST → rest_harvester deckt sie, kein neuer Decoder. (3) Nur ZTF
   (Kafka+Avro, IRSA-Auth declined) und FDSN dataselect (miniSEED-Zeitreihe)
-  brauchen echte Decoder — beide AUSSTEHEND hinter dem Gate; miniSEED-Frage:
-  wie zerfällt eine Waveform in Oszillatoren? (4) Hand-Client vs. Crate:
+  brauchen echte Decoder — beide AUSSTEHEND hinter dem Gate; miniSEED-Frage
+  beantwortet durch Rats-Befund (2026-08-19): eine Waveform zerfällt in
+  Samples (TESS-Muster, [t, flux]-Reihe) ODER in Bins (Spektral-Atom) —
+  das Instrument deklariert seine Basis; keine Zerlegung wird erfunden.
+  Der Oszillator trägt Teilchen- und Wellen-Darstellung; ein universelles
+  freq-Record-Feld ist UNWAHR (gravity/thermal/diffusion besitzen keine
+  Frequenz; color_index/tau/z tragen sie bereits reduziert).
+  (4) Hand-Client vs. Crate:
   AUSSTEHEND — fällig erst, wenn ein Kafka-only-Feed das Gate passiert;
   dann Hand-Client (std::net::TcpStream), wenn Session-Atom bleibt, sonst
   Crate als harte Dependency (wgpu-Analogie).
@@ -695,14 +701,43 @@ Offen (Detail in phi/pipeline/ledger.φ):
   - LuckyStar: decline (Vorhersagen sind Modell, keine Messung; die
     Ergebnisse-Server liefern nur abgeleitete Fits) — der rohe
     em-Lichtkurven-Kanal der Fresnel-Sphäre bleibt ausstehend.
-  - ONC-Hydrophone: parser-gap — 85 Stationen, aber das akustische
-    Signal lebt nur als Spektral-/Audio-Produkt (9-Token-Grammatik
-    trägt keine Spektren; 0 honored).
+  - ONC-Hydrophone: die Route lebt (dataProductDelivery-Kette, 85
+    Stationen, HSD-FFT: 512 Bins × 250 Hz, dB re 1 µPa²) — der Kanal
+    ist Atom B des spektralen Oszillators (siehe eigener Abschnitt);
+    keine Skalar-Feld-Linie erfunden (0 honored).
   WARTEND: SuperMAG (Server-Fault db-get — Proben wiederholen),
   Gaia DR4 (2.12.2026 — Recompiler der 44-Byte-Records).
 
 Doku-Drift (behoben 2026-08-17): Alle `archeology/`-Referenzen zeigen
 heute auf den Bestand unter /home/johannes/projects/archive/archeology/.
+
+## Der spektrale Oszillator — die Frequenzachse des Blocks
+
+Plan: `docs/concepts/DER_SPEKTRALE_OSZILLATOR.md` (2026-08-19, Operator-
+Einspruch gegen den ersten Rats-Befund — angenommen). Der Oszillator IST
+eine Frequenz; die Welle ist die andere Hälfte. Die Atome, in Reihenfolge:
+
+- Atom A — Protokoll v8: Record 22→24×f64 (`freq`, `bin_width`;
+  0.0 = Punktquelle, 0 honored — kein Pflicht-Feld mit Fabrikation);
+  Frame `0xCF 0x86 0x08`; drei Schichten gemeinsam (Rust-Write-Loop,
+  constants.js-DataView — die zwei Padding-Nullen der meta-Reihe sind
+  die Heimat, WGSL-props-Unpack); Hand-Verifikation der Kette, v7-Bestand
+  bleibt lesbar (freq=0 rendert wie zuvor).
+- Atom B — Spectral-Compiler: NCEI-SSI zuerst (λ→ν, liegt im Bestand,
+  beweist die Kette), dann ONC-HSD-FFT (Route verifiziert: dataProduct-
+  Delivery-Kette, deviceCode-Form, 512 Bins × 250 Hz, implizite Achse),
+  dann Gaia-XP (gdr3spec.spectra-Bulk, CDN-Compiler wie dr3_stars.bin),
+  LISA-PSD + CMB-Power (Freq-/l-Achse statt Skalar-Reduktion), GONG +
+  miniSEED (Waveforms, std-only-FFT/Goertzel).
+- Atom C — band-selektives Rendering: Shader akkumuliert pro Band
+  (RGB ist bereits ein Drei-Band-Renderer); Stillekarte band-selektiv,
+  Lichtkegel-Differenz dispersiv, chromatischer Dip der Nadel Ⅴ als
+  SED-Messung.
+- Atom D — die Phase (terminiert nach C): Beats/Interferenz brauchen
+  die komplexe FFT; PSD-Bins tragen sie nicht (0 honored).
+- Regeln: kein Namens-Trick (Frequenz lebt als Token, nie im String),
+  kein Skalar-Schallpegel aus Spektren errechnet, jedes Atom ein
+  vollständiges Session-Artefakt.
 
 ## Curation & Quellen
 
