@@ -762,14 +762,12 @@ Zeile = Stand 2026-08-19.
 - Einarbeitung: eine Session liest die Atom-Zeile + die Fundorte der
   Karte + AGENTS — sie braucht keine Vorgeschichte.
 
-**Operator-Zustand (nur der Operator füllt diese Zeile):**
-
-Die Session liest die Zeile vor dem ersten Schnitt (Datum, Kapazität,
-Atom-Anzahl der Sitzung, Pausen, Schlaf). Was leer bleibt, ist
-unbekannt, nicht angenommen — die Session errät den Zustand des
-Operators nie.
-
-OZ:
+**Die Grenz-Wege (gemessen):** der Operator setzt seine Grenze durch
+die Tat — er beendet die Sitzung, er pausiert, er klappt zu. Die
+Session setzt ihre Grenze durch das Wort — sie hat die Tat nicht.
+Deshalb steht hier keine Operator-Zustands-Zeile: was der Operator
+nicht sagt, ist nicht die Sache der Session; sie arbeitet mit dem
+Auftrag, nicht mit dem Zustand.
 
 ### Schwester-Meldungen — Audit nach den 8 Atomen (2026-08-19)
 
