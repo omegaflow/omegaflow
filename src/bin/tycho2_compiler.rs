@@ -21,6 +21,7 @@ struct StarRow {
     plx_mas: f64,
     mag: f64,
     rv: f64,
+    bp_rp: Option<f64>,
     from_suppl: bool,
 }
 
@@ -183,6 +184,7 @@ fn parse_tgas_record(line: &str) -> Option<StarRow> {
         plx_mas: plx,
         mag: gmag,
         rv: 0.0,
+        bp_rp: None,
         from_suppl: false,
     })
 }
@@ -239,11 +241,12 @@ fn parse_tyc2_record(
         plx_mas: 0.0,
         mag: vt,
         rv: 0.0,
+        bp_rp: None,
         from_suppl: false,
     })
 }
 
-fn load_hip(path: &str) -> Option<HashMap<i32, (f64, f64)>> {
+fn load_hip(path: &str) -> Option<HashMap<i32, (f64, f64, Option<f64>)>> {
     let data = std::fs::read(path).ok()?;
     let text = String::from_utf8_lossy(&data);
     let mut map = HashMap::new();
@@ -265,7 +268,8 @@ fn load_hip(path: &str) -> Option<HashMap<i32, (f64, f64)>> {
         let Some(vmag) = num(b, 42, 46) else {
             continue;
         };
-        map.insert(hip, (plx, vmag));
+        let bv = num(b, 246, 251).filter(|v| v.is_finite());
+        map.insert(hip, (plx, vmag, bv));
     }
     Some(map)
 }
@@ -340,7 +344,7 @@ fn encode(row: &StarRow, out: &mut Vec<u8>) {
     out.extend_from_slice(&(row.plx_mas as f32).to_le_bytes());
     out.extend_from_slice(&(row.mag as f32).to_le_bytes());
     out.extend_from_slice(&(10.0f64.powf(-0.4 * row.mag) as f32).to_le_bytes());
-    out.extend_from_slice(&0f32.to_le_bytes());
+    out.extend_from_slice(&(row.bp_rp.map(|v| v as f32).unwrap_or(0.0).to_le_bytes()));
     out.extend_from_slice(&(row.rv as f32).to_le_bytes());
 }
 
@@ -434,8 +438,11 @@ fn main() {
         };
         let mut recovered = 0usize;
         for row in rows.iter_mut() {
+            if let Some(&(_, _, bv)) = hip_map.get(&row.hip) {
+                row.bp_rp = bv.map(bv_to_bp_rp);
+            }
             if row.plx_mas <= 0.0 && row.hip > 0 {
-                if let Some(&(plx, _)) = hip_map.get(&row.hip) {
+                if let Some(&(plx, _, _)) = hip_map.get(&row.hip) {
                     row.plx_mas = plx;
                     recovered += 1;
                 }
@@ -719,6 +726,7 @@ fn main() {
             plx_mas: 0.0,
             mag: s.mag,
             rv: 0.0,
+            bp_rp: None,
             from_suppl: true,
         });
         suppl_only += 1;
@@ -734,7 +742,10 @@ fn main() {
             if row.hip != p {
                 continue;
             }
-            let (plx, vmag) = hip_map.get(&row.hip).copied().unwrap_or((0.0, row.mag));
+            let (plx, vmag, _) = hip_map
+                .get(&row.hip)
+                .copied()
+                .unwrap_or((0.0, row.mag, None));
             eprintln!(
                 "probe HIP {}: ra={:.8} dec={:.8} pmRA={} pmDE={} mas/yr plx={} mas mag={} (hip V={}) dist={:.1} pc",
                 row.hip,
@@ -763,6 +774,7 @@ fn main() {
     let mut written = 0usize;
     let mut no_plx = 0usize;
     let mut no_rv = 0usize;
+    let mut with_bp_rp = 0usize;
     let rv_map = if xmatch {
         let hips: Vec<i32> = rows
             .iter()
@@ -781,7 +793,7 @@ fn main() {
     };
     for mut row in rows {
         match hip_map.get(&row.hip) {
-            Some(&(plx, _)) if row.hip > 0 => {
+            Some(&(plx, _, _)) if row.hip > 0 => {
                 row.plx_mas = plx;
             }
             _ => {
@@ -790,9 +802,13 @@ fn main() {
             }
         }
         if row.from_suppl {
-            if let Some(&(_, vmag)) = hip_map.get(&row.hip) {
+            if let Some(&(_, vmag, _)) = hip_map.get(&row.hip) {
                 row.mag = vmag;
             }
+        }
+        if let Some(bv) = hip_map.get(&row.hip).and_then(|e| e.2) {
+            row.bp_rp = Some(bv_to_bp_rp(bv));
+            with_bp_rp += 1;
         }
         let Some(rv) = rv_map.get(&row.hip).copied() else {
             no_rv += 1;
@@ -815,10 +831,11 @@ fn main() {
         }
     }
     eprintln!(
-        "tycho2: {} records written (plx>0), {} without plx, {} without rv (0 honored), {} B → {}",
+        "tycho2: {} records written (plx>0), {} without plx, {} without rv (0 honored), {} with bp_rp, {} B → {}",
         written,
         no_plx,
         no_rv,
+        with_bp_rp,
         buf.len(),
         out_path
     );

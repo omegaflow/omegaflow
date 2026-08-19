@@ -717,6 +717,7 @@ Zeile = Stand 2026-08-19.
 | 11 | ~~S7a — „fallback" in Wahrheit~~ | ERLEDIGT (2026-08-19): der H1-Zweitfund vollstreckt — `NAIF_LSK_FALLBACK_TTL` → `NAIF_LSK_TTL_SECS` (die TTL der LSK-Quelle trägt ihren Namen, Herleitung in Atomzeile 9; 3 Stellen); Testname `test_frame_registry_prefix_fallback` → `_prefix_match` (der Präfix-Lookup ist der Lookup); TODO-Prosa 707/710 benennt die Sache (der tote Pfad ist der Pfad, der Overflow trägt den Voll-Loop). Bleibt als Fremdname: wgpu-Feld `force_fallback_adapter`. Dazu die Prüf-Korrekturen: D1-Verdict-Duplikat gestrichen, E1-Rest mit acht Fundorten als offenes Item geführt — cargo check 0/0, 85 Tests grün (exit-code-gewahrsam) |
 | 12 | ~~S7b — E1-Rest~~ | ERLEDIGT (2026-08-19): die acht Zweige tragen die Consumer-Stempel-Form — Enqueue-Stempel entfernt (netcdf, finals/ionex, alerce, catalog_tycho, transit, lightcurve, csv_zip, generischer Zweig inkl. fanout ohne stations_url); jeder Misserfolg benennt sich (fetch/write/read void, url render void, extract void) und sendet ein leeres Result — der Consumer stempelt bei Versuchsende, kein Fehlschlag sperrt die Quelle mehr ohne Note — cargo check 0/0, 85 Tests grün (exit-code-gewahrsam) |
 | 13 | ~~S7c — F3-F5-Reste~~ | ERLEDIGT (2026-08-19): Extract-Live-Lücke benannt (200-Antwort ohne Messungen trägt ihre Note im generischen Zweig + je Station im Fanout; ci_probe trug sie schon via diagnose_no_samples); GH_TOKEN-Anomalien benannt (ohne Token geht der Report an die Konsole, jede Anomalie als Zeile — nichts wird genommen und verworfen) — cargo check 0/0, 85 Tests grün (exit-code-gewahrsam) |
+| 14 | ~~S7d — tycho2-Farbslot~~ | ERLEDIGT (2026-08-19): die B−V-Ernte trägt das Bin — load_hip führt (plx, Vmag, B−V) mit finite-Gate; tgas- und tyc2-Zweig joinen die Farbe über die HIP-ID (B−V → BP−RP via Polynomial, StarRow.bp_rp: Option); encode() schreibt den Farbslot aus bp_rp — 0.0 bleibt nur das benannte absent-Pad (kein B−V in hip_main → Weiß, 0 honored); der Leser trug den Slot schon als color_index; das CDN-Rekompilat trägt die Farbe mit dem nächsten kernel_flatten-Lauf — cargo check 0/0, 85 Tests grün (exit-code-gewahrsam) |
 
 ### Betriebsverfassung — die gemeinsame Karte (2026-08-19)
 
@@ -787,6 +788,16 @@ docs/surveys/handover-2026-08-19-audit.md (Pflichtlektüre). Kompakt:
 - C1 „device samples refused" (11657) — Identitätswort → S5.
 - C2 Register-Berichtigung (tgas-rv-Hälfte, oben vollzogen).
 - C3 tycho2 color-Slot hart 0f32 (343) — offen, Urteil steht aus.
+  ERLEDIGT (S7d, 2026-08-19): die B−V-Ernte trägt das Bin —
+  `load_hip` führt jetzt (plx, Vmag, B−V) mit finite-Gate; der
+  tgas-Zweig und der tyc2-Zweig joinen die Farbe über die HIP-ID
+  (B−V → BP−RP via Polynomial, StarRow.bp_rp: Option); encode()
+  schreibt den Farbslot aus bp_rp — 0.0 bleibt nur noch das
+  benannte absent-Pad (kein B−V in hip_main → Weiß, 0 honored).
+  Der Leser (parse_star_record) trug den Farbslot schon als
+  color_index. Die AGENTS-Aussage über die B−V-Ernte ist jetzt
+  wahr; das CDN-Rekompilat trägt die Farbe mit dem nächsten
+  kernel_flatten-Lauf.
 - D1 mpcobs mag-Sentinel 0.0 (mpcobs 74) — 0 ist physikalisch → S5 Verdict.
   VERDICT (S5, 2026-08-19): das mpcobs-Bin hat keinen Konsumenten im
   Archivar (Integration pending) — der 0.0-Slot bleibt Wire-Pad bis die
@@ -864,9 +875,12 @@ docs/surveys/handover-2026-08-19-audit.md (Pflichtlektüre). Kompakt:
   (≥90/≥900 = absent) → null-Emit.
 - ~~Pangaea lat/lon 0,0 → Golf von Guinea als Messwert~~ — ERLEDIGT
   (S1): Option/null, absent → Zeile fällt beim Konsumenten.
-- tycho2-Bin: color-Slot hart 0f32 (343) — C3 offen: die B−V-Ernte
+- ~~tycho2-Bin: color-Slot hart 0f32 (343) — C3 offen: die B−V-Ernte
   (bv_to_bp_rp, 568-580) speist nur bright_stars.json; das Bin trägt
-  nie Farbe. BERICHTIGT (2026-08-19, Audit): die tgas-rv-Hälfte dieses
+  nie Farbe~~ — ERLEDIGT (S7d, 2026-08-19): die Ernte trägt das Bin
+  (HIP-Join B−V → BP−RP in tgas- und tyc2-Zweig; encode() schreibt
+  den Farbslot aus bp_rp, 0.0 bleibt nur das benannte absent-Pad).
+  BERICHTIGT (2026-08-19, Audit): die tgas-rv-Hälfte dieses
   Eintrags ist überholt — der rv-Skip lebt seit S1
   (tycho2_compiler.rs:497-501); der Vorwurf „der Code lügt das
   Register an" gilt nur noch für den color-Slot.
