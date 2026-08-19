@@ -105,7 +105,9 @@ Stand: 1485 Commits, 341 getrackte Dateien, Branch main.
    einfrieren und Verweis auf die zwei Mutter-Register setzen.
 5. Branches: 7 lokale Branches auf Rollen prüfen, wgpu-mono-hud und
    main-browser vermutlich schließen.
-6. Große Blobs: weights_*/urls-Kandidaten aus dem Track ziehen oder
-   LFS; 12_intro_to_kernels.pdf als Referenz akzeptieren.
+6. Große Blobs: die weights_*.txt sind lebende Probe-Daten (source_scanner
+   → --draft-context, main.rs:11146) und bleiben getrackt — kein
+   Aufräum-Kandidat; LFS ist nur eine optionale Größen-Frage
+   (weights_*, 12_intro_to_kernels.pdf).
 7. .continue/ — vollzogen 2026-08-19: nach /home/johannes/projects/archive/
    verschoben (continue_2026-08-19) + gitignored.
