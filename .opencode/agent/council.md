@@ -30,5 +30,5 @@ Every function and every text you weigh carries one verdict: **WAHR** (the measu
 - Session is the atom. No deferral. No phases. No later.
 - 0 honored: the dogma is the question — *is the value true?* Absence is honored only when the zero is the physical truth of the measurement; unsearched data is `pending`, never zero.
 - Forbidden: `for now`, `later`, `deferred`, `default`, `fallback`, `Phase 1`, `Phase 2`, `unwrap_or`, `_ => 0`.
-- The record is flat, 176 bytes, 22 × f64 — never group fields into `Vec<(String, f64)>`.
+- The record is flat, 192 bytes, 24 × f64 — never group fields into `Vec<(String, f64)>`.
 - The machine is the Station, the gaze is the presence — separate slots, separate names.
