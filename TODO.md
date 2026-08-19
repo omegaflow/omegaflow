@@ -496,7 +496,9 @@ Offen (Detail in phi/pipeline/ledger.φ):
   fischplan-kataloge-2026-08-20.md (2MASS II/246/out 470 M · GLADE+
   VII/291/gladep 22 M · NVSS VIII/65/nvss · FIRST VIII/92/first14 ·
   Fermi IX/72/4fgldr4 · Chandra IX/70/csc21mas · RAVE III/279/rave_dr5;
-  APOGEE/NED eigene TAP-Roots). Alles >50 k hängt am CI-Chunk-Schritt.
+  APOGEE/NED eigene TAP-Roots). Die Groß-Mechanismen (--mag-bands/--async/
+  --where) existieren bereits in tap_compiler — offen nur: erg/cm²/s-Unit-
+  Arm (Fermi/Chandra) + SDSS/NED-Roots.
 - Katalog-Lücken Welle II (Recherche 2026-08-17): Diffusion/
   Chemorezeption unbesetzt — TCCON (verifiziert, tccondata.org,
   Registrierung); pending Verifikation: AGAGE, NDACC, WDCGG, GLODAP,
@@ -571,10 +573,10 @@ Offen (Detail in phi/pipeline/ledger.φ):
 - CI-Chunk-Kompilation der großen Kataloge: pastel/wds/mktypes/denis —
   der volle Chunk-Lauf lebt lokal in phi/pipeline/chunk_master.py
   (fortsetzbar); nächstes: Chunk-Kompilation als CI-Schritt (die 4
-  Kataloge im monatlichen Workflow, ohne Python) — Rust-Weg:
-  `tap_compiler --chunk-bands` mit Merge. Dieser Schritt ist der
-  Flaschenhals des Fischplans — ohne ihn bleiben NVSS/FIRST/GLADE+/
-  Chandra/RAVE/2MASS/NED (>50 k) ungefischt.
+  Kataloge im monatlichen Workflow, ohne Python) — der Rust-Weg lebt
+  bereits (`tap_compiler --mag-bands`/`--async`/`--where`, teils in CI
+  wie dr3_stars.bin); offen ist nur die Verdrahtung der vier
+  pastel/wds/mktypes/denis in den Workflow.
 - CDN-Asset-Naming: `{name}.json` — Konvention ist der Resolver (Regel)
 
 ## VERSIONIERT / AUSSTEHEND
