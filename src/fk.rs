@@ -6,6 +6,8 @@
 use std::collections::HashMap;
 use std::path::Path;
 
+use crate::mat::matmul;
+
 #[derive(Clone, Debug)]
 pub struct TkFrame {
     pub spec: Option<String>,
@@ -269,7 +271,7 @@ impl FkFile {
         }
         let angles = tk.angles?;
         let axes = tk.axes?;
-        let units = tk.units.as_deref().unwrap_or("ARCSECONDS");
+        let units = tk.units.as_deref()?;
         let scale: f64 = if units.eq_ignore_ascii_case("ARCSECONDS") {
             std::f64::consts::PI / (180.0 * 3600.0)
         } else {
@@ -289,16 +291,6 @@ impl FkFile {
         let rot = matmul(&matmul(&m3, &m2), &m1);
         Some((rot, format!("ANGLES via {}", relative_name)))
     }
-}
-
-fn matmul(a: &[f64; 9], b: &[f64; 9]) -> [f64; 9] {
-    let mut o = [0.0f64; 9];
-    for r in 0..3 {
-        for c in 0..3 {
-            o[r * 3 + c] = a[r * 3] * b[c] + a[r * 3 + 1] * b[3 + c] + a[r * 3 + 2] * b[6 + c];
-        }
-    }
-    o
 }
 
 #[cfg(test)]

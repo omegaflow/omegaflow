@@ -710,7 +710,7 @@ Zeile = Stand 2026-08-19.
 | 7 | ~~P5 — GPU~~ | ERLEDIGT (2026-08-19, e599e89 + Fix 8f24118): `presence_probe` konsumiert die Mittel-Kachel des `star_cull`-Ergebnisses statt der eigenen O(N)-Stern-Schleife (identische Mathematik über `star_contrib(s, 0, 0)` — der Presence-Punkt projiziert auf die NDC-Mitte); Overflow-Full-Scan bleibt als Fallback; Dispatch-Reihenfolge cull → star_cull → probe (Kacheln desselben Frames). Der Offline-WGSL-Validierungstest fing den `star_count`-Bindungsverlust — der Fix-Commit stellt die Wahrheit her. 85 Tests grün |
 | 8 | ~~S4 — Ephemeris v3~~ | ERLEDIGT (2026-08-19): beide Compiler (ephemeris/horizons) schreiben 0x02 + u16-Präsenz-Maske nach den 12 f64 (Bit je Slot, absent = 0.0-Pad, 8-B-aligned); `neutral()` getilgt (pck.rs), `measured()` getilgt (der v2-Arm trägt die Sentinel-Semantik als Closure); Loader liest v2 UND v3 (Version data[2], v3-Maske gated die Option-Slots gm/j2/j4/radii_b/radii_c — das Bit ist die Autorität, ein gemessener 0.0 bleibt Some); Test test_parse_ephemeris_binary_v3_mask (j2-Bit gelöscht → None); Wire-Doku in AGENTS.md — 86 Tests grün |
 | 9 | ~~S5 — Audit-Nachlese I~~ | ERLEDIGT (2026-08-19): Welle 1 vollzogen (H1-Vokabel-Reinigung, bba408c — die Sache trägt; das Wort bleibt nur als Verdacht im Register); Welle 2 = A1 anchor-TTL aus dem Quellen-Register (Körper ohne eph-Quelle manifestiert nicht), A2 `NAIF_LSK_FALLBACK_TTL` benannte Konstante (86400 s = tägliche Leap-Second-Prüfung, konservativ zur Bulletin-C-Kadenz — beide Fallback-Stellen), E1 origins-Stempel erst nach Versuchsende (eph- + dastcom-Zweig: Enqueue-Stempel entfernt, Misserfolg sendet leeres Result + Note, der Consumer stempelt; die übrigen Zweige behalten den Enqueue-Stempel — S6-Erweiterung offen), C1 „station samples refused", D3 transfer_entropy → Option<f64> (n<8 = None; surrogate_threshold → Option; HUD hinter `if let (Some, Some)` — die 0 bleibt nur die gemessene 0), F2 Radiator-Rückdruck (Disconnected-Note + Audio-Send benannt); Welle 3 = D1/D2-Verdicts im Register (Urteils-Zeilen unten), D4 Notenpflicht im 9-Token-Feld-Arm (τ absent → benannte Refuse-Note) — cargo check 0/0, 86 Tests grün (exit-code-gewahrsam) |
-| 10 | S6 — Audit-Nachlese II | OFFEN (2026-08-19, Audit-Meldung): A3 (fk.rs UNITS-Default verifizieren, 272), A4 (Silverman-1e-30-Degeneration benennen, 16572), A5 (Aberration β≥c refuses, 84), D5 (v3-Maske vs. Falten: None→0.0 benennen, 3186/17439/6393), E2 (read_cache_if_fresh-Dedup, 4868), E3 (matmul-Dedup, ephemeris_compiler 193 vs fk 294), F1 (Register-Writes benennen, ~15 Stellen), F3-F5 (Noten-Register-Bindung, Extract-Live-Notiz, GH_TOKEN-Anomalien), A6 (probe_classify-τ-Herkunft), A7 (unerreichbarer unwrap_or(0), ephemeris_compiler 629) — cargo check 0/0 + volle Suite + Commit + Häkchen |
+| 10 | ~~S6 — Audit-Nachlese II~~ | ERLEDIGT (2026-08-19): A3 fk.rs UNITS-Default verifiziert — die NAIF-frames.req-Spec trägt KEINEN Default → `unwrap_or("ARCSECONDS")` war Fabrikation, TK-Frame ohne UNITS wird refused (Agenten-Verdict mit Spec-Abgleich); A4 Silverman var≤0 → None (konstante Reihe = Degeneration, kein 1e-30-Fabrikat; TE-Kette Option); A5 Aberration β²≥1 → unaberrante Rückgabe statt γ≈1e6-Rundung (WGSL-Gate); D5 gravity_manifest j2/j4 → Option (absent = kein Oblatheits-Term; die Record-Slots tragen den explizit benannten 0.0-Wire-Pad), gm-Pad war S2; E2 read_cache_if_fresh getilgt (eine Form: cache_fresh + read am Ort); E3 matmul → src/mat.rs (die zwei waren NICHT identisch — fk-Zeilen-Major vs. ephemeris-Spalten-Layout; kanonisch = fk-Form, die vier ephemeris-Aufrufe tauschen Argumente, Verhalten identisch — Agenten-Urteil dokumentiert); A7 unerreichbarer unwrap_or(0) gestrichen; F1 ~20 Register-/Cache-Writes benennen sich (main.rs 10 Register + 2 Cache; tycho2/cometels/dcom5/tap über pro-Agent, exit(1) nach lokaler Konvention); F3-F5 + A6 im Register (unten) — cargo check 0/0, 86 Tests grün (exit-code-gewahrsam) |
 
 ### Schwester-Meldungen — Audit nach den 8 Atomen (2026-08-19)
 
@@ -765,7 +765,20 @@ docs/surveys/handover-2026-08-19-audit.md (Pflichtlektüre). Kompakt:
 - E4 283+242 Alt-Blöcke ohne τ, CDN-v3 — pendings (S2/S4 registriert).
 - F1 ~15 Register-/Cache-Writes ohne Benennung → S6.
 - F2 Radiator-try_send/send-Schweigen (17514/17633) → S5.
-- F3-F5 eprintln-only Noten, Extract-Live-Notiz, GH_TOKEN-Anomalien → S6.
+- F3-F5 — eprintln-only Noten, Extract-Live-Notiz, GH_TOKEN-Anomalien:
+  REGISTER (S6, 2026-08-19): die pending/refused-Noten binden sich an
+  diesen TODO-Abschnitt als ihr Register — jede neue Note trägt hier
+  ihre Zeile, kein Konsolen-Flüstern ohne Gedächtnis. Die
+  Extract-Live-Lücke (leerer Live-Extract ohne Note) und die
+  GH_TOKEN-Anomalien (kein Ersatz-Register) bleiben offen und sind
+  hiermit der nächsten Quellen-Session vorgelegt.
+- A6 — probe_classify-τ-Konstanten 86400/60/300/0.01/3600:
+  HERKUNFT (S6, 2026-08-19): Draft-Feld-Klassifikation; die Werte sind
+  die Sensor-Registry-Kadenzen (serial 60 s, battery 300 s) und die
+  Quellen-TTL-Familie (86400) — sie sind KEINE Messungen der Quelle,
+  sondern die Draft-Hypothese; die τ-Gate beim Einbau entscheidet.
+  Benannt, nicht hergeleitet aus der Quelle — als Draft-Konvention
+  registriert.
 - G — Gegenprüfung: ft_ref_floor-Floor tot, write_ws_binary→io::Result,
   31-Punkte-Locus, exp2(-20) weg, tgas-rv-Skip, WGSL-Zweige 1/6,
   count-Gate/response_epoch, P3-Lib — bestätigt, kein erneutes Audit.

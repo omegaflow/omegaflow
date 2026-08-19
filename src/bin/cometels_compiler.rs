@@ -233,11 +233,17 @@ fn main() {
         ));
     }
     buf.push_str("]\n");
-    if let Ok(mut f) = std::fs::File::create(&out_path) {
-        let _ = f.write_all(buf.as_bytes());
-    } else {
-        eprintln!("write {} returned void", out_path);
-        std::process::exit(1);
+    match std::fs::File::create(&out_path) {
+        Ok(mut f) => {
+            if let Err(err) = f.write_all(buf.as_bytes()) {
+                eprintln!("write {}: {}", out_path, err);
+                std::process::exit(1);
+            }
+        }
+        Err(_) => {
+            eprintln!("write {} returned void", out_path);
+            std::process::exit(1);
+        }
     }
     eprintln!(
         "cometels: {} records written, {} skipped (e>=1 or void fields), {} B → {}",

@@ -81,7 +81,10 @@ fn occlusion(dhat: vec3f, d: f32, ft: u32, n: u32) -> f32 {
 
 fn aberration(u: vec3f, beta: vec3f) -> vec3f {
     let b2 = dot(beta, beta);
-    let gamma = 1.0 / sqrt(max(1.0 - b2, 1e-12));
+    if (b2 >= 1.0) {
+        return u;
+    }
+    let gamma = 1.0 / sqrt(1.0 - b2);
     let ud = dot(u, beta);
     return (u / gamma + beta + (gamma / (gamma + 1.0)) * ud * beta) / (1.0 + ud);
 }
@@ -2731,8 +2734,14 @@ mod archivar {
                 },
                 pole[1],
                 pole[2],
-                j2,
-                j4,
+                match j2 {
+                    Some(v) => v,
+                    None => 0.0,
+                },
+                match j4 {
+                    Some(v) => v,
+                    None => 0.0,
+                },
                 r_eq,
                 0.0,
             ));
@@ -2839,8 +2848,14 @@ mod archivar {
                     },
                     pole[1],
                     pole[2],
-                    j2,
-                    j4,
+                    match j2 {
+                        Some(v) => v,
+                        None => 0.0,
+                    },
+                    match j4 {
+                        Some(v) => v,
+                        None => 0.0,
+                    },
                     r_eq,
                     0.0,
                 ));
@@ -3172,25 +3187,17 @@ mod archivar {
         osc: &Oscillator,
         t: f64,
         eph: &HashMap<String, BodyEphemeris>,
-    ) -> ([f64; 3], f64, f64, f64) {
+    ) -> ([f64; 3], Option<f64>, Option<f64>, f64) {
         let name = match osc.motion.anchor_body() {
             Some(n) => n,
-            None => return ([0.0; 3], 0.0, 0.0, 0.0),
+            None => return ([0.0; 3], None, None, 0.0),
         };
         let props = match eph.get(name).and_then(|e| e.props.as_ref()) {
             Some(p) => p,
-            None => return ([0.0; 3], 0.0, 0.0, 0.0),
+            None => return ([0.0; 3], None, None, 0.0),
         };
         let pole = body_pole_at(props, t);
-        let j2 = match props.j2 {
-            Some(v) => v,
-            None => 0.0,
-        };
-        let j4 = match props.j4 {
-            Some(v) => v,
-            None => 0.0,
-        };
-        (pole, j2, j4, props.radius_m)
+        (pole, props.j2, props.j4, props.radius_m)
     }
 
     fn parse_iso_tdb(s: &str, lsk: &LeapSeconds) -> Option<f64> {
@@ -4819,8 +4826,10 @@ mod archivar {
                 let name = asset_name(url);
                 if !name.is_empty() {
                     let cache_path = format!("/tmp/archivar_cache/{}/{}.json", netloc, name);
-                    if let Some(cached) = read_cache_if_fresh(&cache_path, ttl) {
-                        return Some(cached);
+                    if cache_fresh(&cache_path, ttl) {
+                        if let Some(cached) = std::fs::read_to_string(&cache_path).ok() {
+                            return Some(cached);
+                        }
                     }
                     let cdn_url = format!("{}/{}/{}.json", omegaflow::cdn::CDN_BASE, netloc, name);
                     if cdn_fresh(&cdn_url, ttl) {
@@ -4828,7 +4837,9 @@ mod archivar {
                             if let Some(parent) = std::path::Path::new(&cache_path).parent() {
                                 let _ = std::fs::create_dir_all(parent);
                             }
-                            let _ = std::fs::write(&cache_path, cdn_body.as_bytes());
+                            if std::fs::write(&cache_path, cdn_body.as_bytes()).is_err() {
+                                eprintln!("cache {}: write void — refetch next cycle", cache_path);
+                            }
                             return Some(cdn_body);
                         }
                     }
@@ -4844,7 +4855,9 @@ mod archivar {
                     if let Some(parent) = std::path::Path::new(&cache_path).parent() {
                         let _ = std::fs::create_dir_all(parent);
                     }
-                    let _ = std::fs::write(&cache_path, r.as_bytes());
+                    if std::fs::write(&cache_path, r.as_bytes()).is_err() {
+                        eprintln!("cache {}: write void — refetch next cycle", cache_path);
+                    }
                 }
             }
         }
@@ -4863,14 +4876,6 @@ mod archivar {
         match std::time::SystemTime::now().duration_since(modified) {
             Ok(age) => age.as_secs() < ttl,
             Err(_) => false,
-        }
-    }
-
-    fn read_cache_if_fresh(path: &str, ttl: u64) -> Option<String> {
-        if cache_fresh(path, ttl) {
-            std::fs::read_to_string(path).ok()
-        } else {
-            None
         }
     }
 
@@ -9492,8 +9497,12 @@ mod archivar {
         let out = out_lock.into_inner().unwrap();
         let dead = dead_lock.into_inner().unwrap();
         std::fs::create_dir_all("phi/pipeline").ok();
-        std::fs::write("phi/pipeline/probe_survivors.φ", &out).ok();
-        std::fs::write("phi/pipeline/probe_void.txt", &dead).ok();
+        if std::fs::write("phi/pipeline/probe_survivors.φ", &out).is_err() {
+            eprintln!("write phi/pipeline/probe_survivors.φ: the register does not remember");
+        }
+        if std::fs::write("phi/pipeline/probe_void.txt", &dead).is_err() {
+            eprintln!("write phi/pipeline/probe_void.txt: the register does not remember");
+        }
         eprintln!(
         "probe: wrote phi/pipeline/probe_survivors.φ ({} verified) and phi/pipeline/probe_void.txt ({} declined)",
         accepted, declined
@@ -11108,7 +11117,9 @@ mod archivar {
             out.push_str(&format!("{} | {}\n", nl, frame));
         }
         std::fs::create_dir_all("phi/pipeline").ok();
-        std::fs::write("phi/pipeline/frame_learned.φ", out).ok();
+        if std::fs::write("phi/pipeline/frame_learned.φ", out).is_err() {
+            eprintln!("write phi/pipeline/frame_learned.φ: the register does not remember");
+        }
     }
 
     fn draft_context_mode(path: &str) -> i32 {
@@ -11160,7 +11171,9 @@ mod archivar {
         for (nl, f) in reg_keys {
             reg.push_str(&format!("{} | {}\n", nl, f));
         }
-        std::fs::write("phi/pipeline/frame_registry.φ", reg).ok();
+        if std::fs::write("phi/pipeline/frame_registry.φ", reg).is_err() {
+            eprintln!("write phi/pipeline/frame_registry.φ: the register does not remember");
+        }
         let mut out = String::new();
         let mut celestial = 0usize;
         let mut terrestrial = 0usize;
@@ -11213,7 +11226,9 @@ mod archivar {
             out.push_str("\n\n");
         }
         std::fs::create_dir_all("phi/pipeline").ok();
-        std::fs::write("phi/pipeline/probe_drafts_enriched.φ", out).ok();
+        if std::fs::write("phi/pipeline/probe_drafts_enriched.φ", out).is_err() {
+            eprintln!("write phi/pipeline/probe_drafts_enriched.φ: the register does not remember");
+        }
         eprintln!(
             "--draft-context: {} ausstehend → {} celestial, {} terrestrial, {} bleiben ausstehend → phi/pipeline/probe_drafts_enriched.φ",
             celestial + terrestrial + pending,
@@ -11277,7 +11292,9 @@ mod archivar {
         for (w, f, tag) in &delta {
             d.push_str(&format!("{} {} {}\n", w, f, tag));
         }
-        std::fs::write("phi/pipeline/library_gate_delta.φ", d).ok();
+        if std::fs::write("phi/pipeline/library_gate_delta.φ", d).is_err() {
+            eprintln!("write phi/pipeline/library_gate_delta.φ: the register does not remember");
+        }
         let library = std::fs::read_to_string("phi/pipeline/library.φ").unwrap_or_default();
         let delta_lines: Vec<String> = delta
             .iter()
@@ -11303,7 +11320,9 @@ mod archivar {
                 out.push('\n');
             }
         }
-        std::fs::write("phi/pipeline/library.φ", out).ok();
+        if std::fs::write("phi/pipeline/library.φ", out).is_err() {
+            eprintln!("write phi/pipeline/library.φ: the register does not remember");
+        }
         eprintln!(
             "--learn-gate: {} netloc-Gewichte ({} positiv, {} negativ) → library.φ + library_gate_delta.φ",
             delta.len(),
@@ -16587,7 +16606,7 @@ mod mathematikerin {
         (-(u * u) / (2.0 * h * h)).exp() / (h * (2.0 * std::f64::consts::PI).sqrt())
     }
 
-    fn silverman(v: &[f32]) -> f64 {
+    fn silverman(v: &[f32]) -> Option<f64> {
         let n = v.len() as f64;
         let mean = v.iter().map(|&x| x as f64).sum::<f64>() / n;
         let var = v
@@ -16598,7 +16617,10 @@ mod mathematikerin {
             })
             .sum::<f64>()
             / n;
-        (1.06 * var.sqrt().max(1e-30) * n.powf(-0.2)).max(1e-30)
+        if var <= 0.0 {
+            return None;
+        }
+        Some(1.06 * var.sqrt() * n.powf(-0.2))
     }
 
     pub fn transfer_entropy(x: &[f32], y: &[f32]) -> Option<f64> {
@@ -16606,8 +16628,8 @@ mod mathematikerin {
         if n < 8 {
             return None;
         }
-        let hx = silverman(x);
-        let hy = silverman(y);
+        let hx = silverman(x)?;
+        let hy = silverman(y)?;
         let m = n - 1;
         let mut te = 0.0;
         for t in 0..m {

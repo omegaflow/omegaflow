@@ -799,8 +799,17 @@ fn main() {
         for (name, schema, typ) in &triples {
             buf.push_str(&format!("catalog {} {} {}\n", name, schema, typ));
         }
-        if let Ok(mut f) = std::fs::File::create(&out_path) {
-            let _ = f.write_all(buf.as_bytes());
+        match std::fs::File::create(&out_path) {
+            Ok(mut f) => {
+                if let Err(err) = f.write_all(buf.as_bytes()) {
+                    eprintln!("write {}: {}", out_path, err);
+                    std::process::exit(1);
+                }
+            }
+            Err(_) => {
+                eprintln!("write {} returned void", out_path);
+                std::process::exit(1);
+            }
         }
         eprintln!("tap index: {} tables → {}", triples.len(), out_path);
         return;
@@ -1077,7 +1086,10 @@ fn main() {
                         }
                     }
                     if let Some(f) = out_file.as_mut() {
-                        let _ = f.write_all(&part);
+                        if let Err(err) = f.write_all(&part) {
+                            eprintln!("write {}: {}", out_path_band, err);
+                            std::process::exit(1);
+                        }
                         total += part.len() / STAR_BIN_STRIDE;
                         resumed += 1;
                         eprintln!(
@@ -1179,7 +1191,10 @@ fn main() {
                                 part_bytes.extend_from_slice(&rec);
                             }
                         }
-                        let _ = f.write_all(&part_bytes);
+                        if let Err(err) = f.write_all(&part_bytes) {
+                            eprintln!("write {}: {}", out_path_band, err);
+                            std::process::exit(1);
+                        }
                         total += part_bytes.len() / STAR_BIN_STRIDE;
                         n_bands += 1;
                         eprintln!(
@@ -1191,22 +1206,36 @@ fn main() {
                         );
                         if !out_path_band.is_empty() {
                             let tmp = format!("{}.tmp", part_path);
-                            if std::fs::write(&tmp, &part_bytes).is_ok() {
-                                let _ = std::fs::rename(&tmp, &part_path);
+                            match std::fs::write(&tmp, &part_bytes) {
+                                Ok(_) => {
+                                    if let Err(err) = std::fs::rename(&tmp, &part_path) {
+                                        eprintln!("write {}: {}", part_path, err);
+                                    }
+                                }
+                                Err(err) => eprintln!("write {}: {}", tmp, err),
                             }
                         }
                         continue;
                     }
                     if !first_row {
-                        let _ = f.write_all(b"[");
+                        if let Err(err) = f.write_all(b"[") {
+                            eprintln!("write {}: {}", out_path_band, err);
+                            std::process::exit(1);
+                        }
                         first_row = false;
                     }
                     let emitted = emit_rows(ci, epoch_prop, &rows, skip_null.as_deref());
                     for r in &emitted {
                         if !first_row {
-                            let _ = f.write_all(b",");
+                            if let Err(err) = f.write_all(b",") {
+                                eprintln!("write {}: {}", out_path_band, err);
+                                std::process::exit(1);
+                            }
                         }
-                        let _ = f.write_all(r.as_bytes());
+                        if let Err(err) = f.write_all(r.as_bytes()) {
+                            eprintln!("write {}: {}", out_path_band, err);
+                            std::process::exit(1);
+                        }
                         first_row = false;
                     }
                     total += emitted.len();
@@ -1230,7 +1259,10 @@ fn main() {
         }
         if let Some(mut f) = out_file.take() {
             if !star_bin {
-                let _ = f.write_all(b"]\n");
+                if let Err(err) = f.write_all(b"]\n") {
+                    eprintln!("write {}: {}", out_path_band, err);
+                    std::process::exit(1);
+                }
             }
             if star_bin {
                 if let Some(up) = &union_bright {
@@ -1277,7 +1309,10 @@ fn main() {
                                             rec.extend_from_slice(&flux.to_le_bytes());
                                             rec.extend_from_slice(&(ci as f32).to_le_bytes());
                                             rec.extend_from_slice(&(rv as f32).to_le_bytes());
-                                            let _ = f.write_all(&rec);
+                                            if let Err(err) = f.write_all(&rec) {
+                                                eprintln!("write {}: {}", out_path_band, err);
+                                                std::process::exit(1);
+                                            }
                                             added += 1;
                                         }
                                     }
@@ -1399,11 +1434,17 @@ fn main() {
         buf.push_str(r);
     }
     buf.push_str("]\n");
-    if let Ok(mut f) = std::fs::File::create(&out_path) {
-        let _ = f.write_all(buf.as_bytes());
-    } else {
-        eprintln!("write {} returned void", out_path);
-        std::process::exit(1);
+    match std::fs::File::create(&out_path) {
+        Ok(mut f) => {
+            if let Err(err) = f.write_all(buf.as_bytes()) {
+                eprintln!("write {}: {}", out_path, err);
+                std::process::exit(1);
+            }
+        }
+        Err(_) => {
+            eprintln!("write {} returned void", out_path);
+            std::process::exit(1);
+        }
     }
     eprintln!(
         "tap: {} rows → {} ({} B)",

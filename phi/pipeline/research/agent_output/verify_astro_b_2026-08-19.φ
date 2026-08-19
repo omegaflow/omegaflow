@@ -1,0 +1,47 @@
+live json https://eas.esac.esa.int/tap-server/tap/tables?FORMAT=json
+note lokale Kopie 681478 B, jq-parsed valide; Katalog-Tabellen mit Himmelskoordinaten:
+note - catalogue.mer_catalogue: object_id, right_ascension, declination, right_ascension_psf_fitting, declination_psf_fitting (Euclid MER Final Catalog)
+note - catalogue.mer_cutouts: object_id, right_ascension, declination, corner_0_ra, corner_0_dec
+note - q1.frame_catalog: ra, dec (Q1-Frame-Katalog)
+404 https://archives.esac.esa.int/tap-server/
+note 404 text/html; iso-8859-1
+404 https://archives.esac.esa.int/tap/
+note 404 text/html; iso-8859-1
+404 https://archives.esac.esa.int/tap-server/tap
+note 404 text/html; iso-8859-1
+live html https://archives.esac.esa.int/
+note 200 text/html; charset=UTF-8 Portal — keine TAP-Basis unter tap-server/, tap/, tap-server/tap
+live csv https://archive.eso.org/tap_obs/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1+*+FROM+ivoa.ObsCore
+note 200 text/csv; korrekte Form: /tap_obs/sync (ohne /tap/)
+404 https://archive.eso.org/tap_obs/tap/tables
+note 404 application/json; spring keys timestamp,status,error,message,path
+404 https://archive.eso.org/tap_obs/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+1+*+FROM+ivoa.ObsCore&FORMAT=csv
+note 404 application/json; Pfad /tap_obs/tap/sync existiert nicht
+live html https://archive.sarao.ac.za/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1+*+FROM+ivoa.ObsCore
+note 200 text/html; charset=utf-8 (Portal-Catch-all, kein TAP-Ergebnis); Folgeprobe curl:7 Connection refused — Host flackert/firewallt
+live html https://archive.sarao.ac.za/tap/tables
+note 200 text/html; charset=utf-8 (Portal-Catch-all, kein TAP)
+404 https://catalogs.mast.stsci.edu/api/v0.1/panstarrs/
+note 404 application/json; key detail "Not Found" (Basis-Pfad ohne Tabellenpfad liefert nichts)
+live html https://catalogs.mast.stsci.edu/panstarrs/
+note 200 text/html
+live html https://catalogs.mast.stsci.edu/docs/
+note 200 text/html; verlinkt docs/panstarrs.html
+live html https://catalogs.mast.stsci.edu/docs/panstarrs.html
+note 200 text/html; API-Form: https://catalogs.mast.stsci.edu/api/v0.1/panstarrs/dr1/{table}.{csv|json|votable}?ra=...&dec=... (Beispiele: dr1/mean.csv?ra=210.802429, dr1/stack.json)
+dns https://dr11.lamost.org/
+note curl:6 Could not resolve host: dr11.lamost.org
+dns http://dr11.lamost.org/
+note curl:6 Could not resolve host: dr11.lamost.org
+live html https://www.lamost.org/dr11/
+note 200 text/html; charset=utf-8; title "Home | LAMOST DR11 v2.0"
+live html http://www.lamost.org/dr11/
+note 200 text/html; charset=utf-8
+live js-app https://gcn.nasa.gov/circulars?query=SVOM
+note 200 text/html; Remix-SPA; trotz 'Accept: application/json' kein JSON (kein Backend unter dieser URL)
+404 https://gcn.nasa.gov/api/circulars/search?subject=SVOM&limit=5
+note 404 text/html; SPA-Catch-all
+404 https://gcn.nasa.gov/circulars.rss
+note 404 text/html; SPA-Catch-all; kein JSON/RSS-Backend unter den 3 Kandidaten
+live votable https://irsa.ipac.caltech.edu/TAP/tables?FORMAT=json
+note 200 text/xml; vosi:tableset (FORMAT=json ignoriert); SPHEREx-Schema vorhanden: spherex.artifact, spherex.obscore, spherex.observation, spherex.plane, spherex.provenance_input

@@ -4,6 +4,7 @@ use omegaflow::cdn::{body_url, upload_asset};
 use omegaflow::fit::solve_normal_equations;
 use omegaflow::fk::FkFile;
 use omegaflow::lsk::days_from_civil;
+use omegaflow::mat::matmul;
 use omegaflow::pck::PckBody;
 use std::collections::{BTreeMap, HashMap, HashSet, VecDeque};
 use std::io::Write;
@@ -190,16 +191,6 @@ fn rotation_matrix_from_angles(ra_deg: f64, dec_deg: f64, pm_deg: f64) -> [f64; 
     ]
 }
 
-fn matmul(a: &[f64; 9], b: &[f64; 9]) -> [f64; 9] {
-    let mut o = [0.0f64; 9];
-    for j in 0..3 {
-        for i in 0..3 {
-            o[3 * j + i] = a[i] * b[3 * j] + a[3 + i] * b[3 * j + 1] + a[6 + i] * b[3 * j + 2];
-        }
-    }
-    o
-}
-
 fn libration_matrix(phi_deg: f64, theta_rad: f64, psi_rad: f64) -> [f64; 9] {
     let (sp, cp) = phi_deg.to_radians().sin_cos();
     let (st, ct) = theta_rad.sin_cos();
@@ -207,7 +198,7 @@ fn libration_matrix(phi_deg: f64, theta_rad: f64, psi_rad: f64) -> [f64; 9] {
     let r3p = [cp, sp, 0.0, -sp, cp, 0.0, 0.0, 0.0, 1.0];
     let r1t = [1.0, 0.0, 0.0, 0.0, ct, st, 0.0, -st, ct];
     let r3s = [cs, ss, 0.0, -ss, cs, 0.0, 0.0, 0.0, 1.0];
-    matmul(&matmul(&r3p, &r1t), &r3s)
+    matmul(&r3s, &matmul(&r1t, &r3p))
 }
 
 fn iau_angles_from_matrix(m: [f64; 9]) -> (f64, f64, f64) {
@@ -253,7 +244,7 @@ fn full_orientation(
             let m_pa = libration_matrix(phi, theta, psi);
             let m_me = match fk.tkframe_child_of(&pa_frame.name) {
                 Some(child) => match fk.tkframe_rotation(child.id) {
-                    Some((rot, _)) => matmul(&m_pa, &rot),
+                    Some((rot, _)) => matmul(&rot, &m_pa),
                     None => m_pa,
                 },
                 None => m_pa,
@@ -623,10 +614,10 @@ fn text_of(html: &str) -> String {
 
 fn extract_meta(after: &str) -> (u64, u64) {
     let cap = 400usize.min(after.len());
-    let end = (0..=cap)
-        .rev()
-        .find(|&i| after.is_char_boundary(i))
-        .unwrap_or(0);
+    let mut end = cap;
+    while !after.is_char_boundary(end) {
+        end -= 1;
+    }
     let text = text_of(&after[..end]);
     let b = text.as_bytes();
     let mut mtime = 0u64;
@@ -1528,7 +1519,7 @@ fn main() {
                 let Some((rot, via)) = fk.tkframe_rotation(child.id) else {
                     continue;
                 };
-                let m_me = matmul(&libration_matrix(phi, theta, psi), &rot);
+                let m_me = matmul(&rot, &libration_matrix(phi, theta, psi));
                 let (ra2, dec2, w2) = iau_angles_from_matrix(m_me);
                 eprintln!(
                     "probe {} ({}) via {}: me=({:.6}, {:.6}, {:.6})",
@@ -1536,7 +1527,7 @@ fn main() {
                 );
                 let et2 = (jd + 10.0 - J2000_EPOCH) * 86400.0;
                 if let Some((phi2, theta2, psi2)) = b.orient(frame.id, 1, et2) {
-                    let m_me2 = matmul(&libration_matrix(phi2, theta2, psi2), &rot);
+                    let m_me2 = matmul(&rot, &libration_matrix(phi2, theta2, psi2));
                     let (_, _, w3) = iau_angles_from_matrix(m_me2);
                     let mut drift = w3 - w2;
                     while drift > 180.0 {

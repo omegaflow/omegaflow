@@ -1,0 +1,34 @@
+url https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+1000+*+FROM+spherex.obscore
+ttl 604800
+at sun
+cmap .
+ra s_ra
+dec s_dec
+
+url https://eas.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+1000+object_id,right_ascension,declination+FROM+catalogue.mer_catalogue
+ttl 604800
+at sun
+cmap .
+ra right_ascension
+dec declination
+
+url https://archive.eso.org/tap_obs/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+1000+*+FROM+ivoa.ObsCore
+ttl 604800
+format csv
+at sun
+cmap .
+ra s_ra
+dec s_dec
+field abmaglim eso_obscore_abmaglim_mag inverse-square em mag 604800 0.0 0.0
+
+url https://catalogs.mast.stsci.edu/api/v0.1/panstarrs/dr1/mean.json?ra={ra}&dec={dec}&radius={radius}
+ttl 604800
+at sun
+cmap .
+ra raMean
+dec decMean
+field gMeanPSFMag panstarrs_dr1_g_mean_psf_mag inverse-square em mag 604800 0.0 0.0
+field rMeanPSFMag panstarrs_dr1_r_mean_psf_mag inverse-square em mag 604800 0.0 0.0
+field iMeanPSFMag panstarrs_dr1_i_mean_psf_mag inverse-square em mag 604800 0.0 0.0
+field zMeanPSFMag panstarrs_dr1_z_mean_psf_mag inverse-square em mag 604800 0.0 0.0
+field yMeanPSFMag panstarrs_dr1_y_mean_psf_mag inverse-square em mag 604800 0.0 0.0

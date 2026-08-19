@@ -10,6 +10,7 @@ pub mod inflate;
 pub mod json;
 pub mod kepler;
 pub mod lsk;
+pub mod mat;
 pub mod netcdf;
 pub mod pck;
 pub mod sexagesimal;

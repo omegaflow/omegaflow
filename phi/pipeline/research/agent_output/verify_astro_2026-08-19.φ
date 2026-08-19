@@ -1,0 +1,50 @@
+live votable https://irsa.ipac.caltech.edu/TAP/tables?FORMAT=json
+note 200 text/xml; vosi:tableset; erste schemas 2mass, Planck, TAP_SCHEMA, akari
+404 https://archives.esac.esa.int/tap-server/tap/tables?FORMAT=json
+note 404 text/html; iso-8859-1; apache "404 Not Found"
+live json https://eas.esac.esa.int/tap-server/tap/tables?FORMAT=json
+note 200 application/json; UTF-8; top-level array of catalogues {name, description, title, ispublic, tables}
+404 https://archive.eso.org/tap_obs/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+1+*+FROM+ivoa.ObsCore
+note 404 application/json; spring keys timestamp,status,error,message,path; path /tap_obs/tap/sync
+500 https://archive.eso.org/tap_cat/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+1+*+FROM+ivoa.ObsCore
+note 501 application/xml; VOTable QUERY_STATUS=ERROR "Unknown TAP resource: tap"
+live html https://archive.sarao.ac.za/tap/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+1+*+FROM+ivoa.ObsCore
+note 200 text/html; title "MeerKAT Archive" (portal page, kein TAP-Ergebnis)
+auth-required https://data.lsst.cloud/api/tap/tables?FORMAT=json
+note 401 text/html; nginx Authorization Required
+404 https://catalogs.mast.stsci.edu/api/v0.1/panstarrs/detections?ra=45.0&dec=45.0&radius=0.05&nDetections=true
+note 404 application/json; key detail "Not Found"
+live html https://fallingstar-data.com/forcedphot/
+note 200 text/html; title "ATLAS Forced Photometry" (bootstrap-Formularseite, kein SPA)
+dns http://dr11.lamost.org/
+note curl:6 Could not resolve host: dr11.lamost.org
+live html https://erosita.mpe.mpg.de/dr2/
+note 200 text/html; ISO-8859-1; title "eROSITA-DE:DataRelease2"
+live html https://www.chime-frb.ca/catalog
+note 200 text/html; title "CHIME/FRB — Public data" (Portal im Umbau)
+live html https://english.ihep.cas.cn/lhaaso/pdl/
+note 200 text/html; title "Public data"; js location.replace → ./202110/t20211026_286779.html
+live html https://magic.mpp.mpg.de/public/public-data/
+note curl:60 (TLS chain unvollständig); via -k 200 text/html 14332 B
+live html https://data.hawc-observatory.org/datasets/
+note curl:60 (TLS chain unvollständig); via -k 200 text/html 3249 B
+live html https://svom.ac.cn/
+note curl:60 (Zertifikat abgelaufen); via -k 200 text/html 711 B
+live js-app https://data.nrao.edu/
+note 302→/portal/; 200 text/html; Angular SPA "NRAO Archive Interface"
+404 https://data.nrao.edu/archive-service/
+note 404 text/html; "The resource could not be found", path /
+live votable https://almascience.org/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+1+ra,dec,source_name,project_code+FROM+ivoa.obscore+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',45.0,45.0,0.1))=1
+note 302→almascience.eso.org/tap/sync; FORMAT=json → 400 "unknown format: json"; FORMAT=votable → 200 QUERY_STATUS=OK (s_ra,s_dec,obs_id,dataproduct_type)
+a) alma in master_urls.txt:
+- https://almascience.org/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+200+ra,dec,source_name,project_code+FROM+ivoa.obscore+WHERE+CONTAINS(POINT('ICRS',ra,dec),CIRCLE('ICRS',{ra},{dec},{radius}))=1
+- 2 weitere Zeilen (https://epqs.nationalmap.gov/...) treffen 'alma' nur als Substring in "nationalmap" — kein ALMA
+live votable https://almascience.org/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+1+s_ra,s_dec,obs_id,dataproduct_type+FROM+ivoa.obscore
+note 302→almascience.eso.org; 400 application/x-votable+xml "unknown format: json" (TAP lebt, liefert nur VOTable)
+b) koa in master_urls.txt:
+note leer — grep -i 'koa' liefert keine Zeile (0 honored: kein Befund, keine KOA-URL)
+c) data.nrao.edu REST-Pfade:
+- https://data.nrao.edu/portal/ — 302→/portal/ → 200 Angular SPA "NRAO Archive Interface" (das eigentliche Archiv-Interface)
+- https://data.nrao.edu/archive-service/ — 404 "The resource could not be found" (path /)
+- https://data.nrao.edu/archive-service/restapi/ — 404 (Fehlerseite echot path /restapi/)
+- https://data.nrao.edu/archive-service/restapi/1.0/ — 404 (Fehlerseite echot path /restapi/1.0/)

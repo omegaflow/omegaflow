@@ -502,11 +502,17 @@ fn main() {
             encode(&row, &mut buf);
             written += 1;
         }
-        if let Ok(mut f) = std::fs::File::create(&out_path) {
-            let _ = f.write_all(&buf);
-        } else {
-            eprintln!("write {} returned void", out_path);
-            std::process::exit(1);
+        match std::fs::File::create(&out_path) {
+            Ok(mut f) => {
+                if let Err(err) = f.write_all(&buf) {
+                    eprintln!("write {}: {}", out_path, err);
+                    std::process::exit(1);
+                }
+            }
+            Err(_) => {
+                eprintln!("write {} returned void", out_path);
+                std::process::exit(1);
+            }
         }
         eprintln!(
             "tgas: {} records written (plx>0, rv present), {} without rv, {} skipped, {} B → {}",
@@ -623,11 +629,17 @@ fn main() {
             buf.push_str(r);
         }
         buf.push_str("]\n");
-        if let Ok(mut f) = std::fs::File::create(&out_path) {
-            let _ = f.write_all(buf.as_bytes());
-        } else {
-            eprintln!("write {} returned void", out_path);
-            std::process::exit(1);
+        match std::fs::File::create(&out_path) {
+            Ok(mut f) => {
+                if let Err(err) = f.write_all(buf.as_bytes()) {
+                    eprintln!("write {}: {}", out_path, err);
+                    std::process::exit(1);
+                }
+            }
+            Err(_) => {
+                eprintln!("write {} returned void", out_path);
+                std::process::exit(1);
+            }
         }
         eprintln!(
             "bright: {} records (V<1.94, plx>0), {} without rv (0 honored) → {}",
@@ -790,11 +802,17 @@ fn main() {
         encode(&row, &mut buf);
         written += 1;
     }
-    if let Ok(mut f) = std::fs::File::create(&out_path) {
-        let _ = f.write_all(&buf);
-    } else {
-        eprintln!("write {} returned void", out_path);
-        std::process::exit(1);
+    match std::fs::File::create(&out_path) {
+        Ok(mut f) => {
+            if let Err(err) = f.write_all(&buf) {
+                eprintln!("write {}: {}", out_path, err);
+                std::process::exit(1);
+            }
+        }
+        Err(_) => {
+            eprintln!("write {} returned void", out_path);
+            std::process::exit(1);
+        }
     }
     eprintln!(
         "tycho2: {} records written (plx>0), {} without plx, {} without rv (0 honored), {} B → {}",

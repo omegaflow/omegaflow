@@ -520,3 +520,19 @@ note ONC-Hydrophone (2026-08-19): parser-gap — 85 Hydrophon-Stationen (lat/lon
 geparkt
 kandidat https://cddis.nasa.gov/archive/gnss/products/ionex/{year}/{day}/COD0OPSFIN_{year}{day}0000_01D_01H_GIM.INX
 note ionex (2026-08-19): das `format ionex`-Atom ist gebaut + getestet (build_ionex_channels, Header/Maps/EXPONENT/H-Shell, 2 Tests grün). Der Kanal: CDDIS antwortet 302 auf Earthdata-OAuth (urs.earthdata.nasa.gov — key-needed, Account ausstehend); GFZ-GNSS 404, BKG-IGS 404, IGS-IGN 000 (19.8.2026 verifiziert). Kein Block im Register, solange keine Route anonym lebt — der Block-Entwurf (ttl 21600, field tec TECU, at earth) liegt im staging_void_ledger-Kontext bereit.
+
+geparkt
+queue gcn_einstein_probe_bloecke_master_phi_27360
+note Endpoint api/v0.1/circulars tot (404 SPA). GCN-Circulars jetzt nur SPA-Suche + /circulars/{id}.json (body Freitext, keine ra/dec). Kein Listen-Feed gefunden. SVOM-Block-Draft nicht möglich.
+
+geparkt
+queue chime_frb_catalog_total
+note Portal lebt (Umbau), Count-Extract leer. Kataloge via CANFAR-DOIs: CISTI.CANFAR/21.0007, 23.0004, 10.11570/23.0029, 25.0066 (Archiv-Records, keine API).
+
+geparkt
+kandidat https://data.nrao.edu/portal/
+note NRAO-Archiv jetzt Angular-SPA. archive-service-REST-Pfade 404. Alter TAP archive.nrao.edu bleibt parser-def votable.
+
+geparkt
+kandidat https://svom.ac.cn/
+note HTML 711 B, Zertifikat abgelaufen. GCN-Notices der wahre Datenweg, aber v0.1-API tot (siehe Eintrag 1).
