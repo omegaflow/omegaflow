@@ -1,7 +1,7 @@
 # Die sieben Sphären — die theoretischen Schnittmengen der kybernetischen Astrophysik
 
 Selbsttragend. Das Konzept sammelt die besten Kreuzungs-Ideen der
-„Sphären des Unsichtbaren"-Session (docs/surveys/*Sphären*). Keine der
+„Sphären des Unsichtbaren"-Session (docs/surveys/*Sphaeren*). Keine der
 sieben ist eine Hypothese im klassischen Sinn — jede ist eine
 **Messvorschrift**: eine geometrische Anweisung, die nur existiert, weil
 alle Domänen im selben ICRS×TDB-Block ausgewertet werden. Kein einzelner

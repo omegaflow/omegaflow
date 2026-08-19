@@ -249,7 +249,7 @@ Zeilen.
 
 | Konzept | Stand | Urteil |
 |---|---|---|
-| WGSL_ SHADER | Konzept | VERSIONIERT — die atmende Membran (σ-lerp, Hysterese, Interest-Map); die Zell-Achse ist der Enkel, der Vorfahr atmet stufenlos |
+| WGSL_SHADER | Konzept | VERSIONIERT — die atmende Membran (σ-lerp, Hysterese, Interest-Map); die Zell-Achse ist der Enkel, der Vorfahr atmet stufenlos |
 | 4D-MEMBRANE | ARCHIVED | WAHR — Trommelfell-Doktrin (keine Kamera, Manifestation real ohne Zuschauer); hier starb get_expose; M01 referenziert sie |
 | MINKOWSKI_FIELD-PERMEABILITY | ARCHIVED | WAHR — die EXPOSURE-PARABEL (Parabel des Sondierens, Wasser-Form, tanh-Rückkehr) = Ethik §9; VERSIONIERT unten |
 | LOST_CONCEPTS | ARCHIVED | WAHR — das Verlust-Register des ersten Zeitalters (Minkowski, Topologie/TE, Permeabilität, Aperturen, Nostr, Überbau, ANISE, Tiles, WebGL2, Observer) — „await their return" |
@@ -262,7 +262,7 @@ Zeilen.
 | SI_UNITS | SUPERSEDED | ERSETZT — SI-Konversion total (Option<f64> am Anker, unconverted = unmanifested + registriert); mag/Mw/dex/Crab/counts pending Kuration |
 | IAU-2000_EOP | PARTIALLY DEPLOYED | WAHR — 72-B-Orientierungsmatrizen (Binary v2 trägt sie); die Erdrotation ist K06 (Archivar-Abschnitt) |
 | SEARCH_COMMAND-PALETTE | PLANNED | AUSSTEHEND — ⌘K nie gebaut (M07) |
-| KERNEL CURATION & CI AUTOMATION PLAN | Plan | ERSETZT — K01 geschlossen (kernel_flatten.yml lebt) |
+| KERNEL-CURATION-CI-AUTOMATION-PLAN | Plan | ERSETZT — K01 geschlossen (kernel_flatten.yml lebt) |
 
 ### Die Abweichungen (offen)
 
@@ -506,7 +506,7 @@ Offen (Detail in phi/pipeline/ledger.φ):
 - Yahoo Finance → forceless, DROP
 - Hexagon-Grid, Quadtree-AMR, temporale Akkumulation, Blue-Noise-Rieseln,
   Nahfeld-Splitting → Interpolations-/Zeit-Lügen (Council-Urteil,
-  WGSL_ SHADER.md)
+  WGSL_SHADER.md)
 - GPS-Oszillator (Operator-Urteil 2026-08-17): Position ist eine
   Koordinate, keine Kraft — die Force-Gate-Litmus lehnt ab
   (sensor_config gibt für gps/gnss None). Die Sensorwerte sind bereits
