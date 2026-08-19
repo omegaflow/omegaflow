@@ -5,172 +5,9 @@
 
 use omegaflow::cdn::upload_asset;
 use omegaflow::fits::{FitsHeader, FitsTable};
-use std::collections::HashMap;
+use omegaflow::json::{jnum, jpath_val, jstr, parse_json, JsonVal};
 use std::io::Write;
 use std::process::Command;
-
-#[derive(Debug)]
-enum Json {
-    Null,
-    Num(f64),
-    Str(String),
-    Arr(Vec<Json>),
-    Obj(HashMap<String, Json>),
-}
-
-struct Jp<'a> {
-    b: &'a [u8],
-    i: usize,
-}
-
-impl<'a> Jp<'a> {
-    fn ws(&mut self) {
-        while self.i < self.b.len() && (self.b[self.i] as char).is_ascii_whitespace() {
-            self.i += 1;
-        }
-    }
-    fn val(&mut self) -> Option<Json> {
-        self.ws();
-        match self.b.get(self.i).copied() {
-            Some(b'n') => {
-                if self.b[self.i..].starts_with(b"null") {
-                    self.i += 4;
-                    Some(Json::Null)
-                } else {
-                    None
-                }
-            }
-            Some(b'"') => self.string().map(Json::Str),
-            Some(b'[') => {
-                self.i += 1;
-                let mut v = Vec::new();
-                self.ws();
-                if self.b.get(self.i) == Some(&b']') {
-                    self.i += 1;
-                    return Some(Json::Arr(v));
-                }
-                loop {
-                    v.push(self.val()?);
-                    self.ws();
-                    match self.b.get(self.i) {
-                        Some(b',') => self.i += 1,
-                        Some(b']') => {
-                            self.i += 1;
-                            return Some(Json::Arr(v));
-                        }
-                        _ => return None,
-                    }
-                }
-            }
-            Some(b'{') => {
-                self.i += 1;
-                let mut m = HashMap::new();
-                self.ws();
-                if self.b.get(self.i) == Some(&b'}') {
-                    self.i += 1;
-                    return Some(Json::Obj(m));
-                }
-                loop {
-                    self.ws();
-                    let k = self.string()?;
-                    self.ws();
-                    if self.b.get(self.i) != Some(&b':') {
-                        return None;
-                    }
-                    self.i += 1;
-                    let v = self.val()?;
-                    m.insert(k, v);
-                    self.ws();
-                    match self.b.get(self.i) {
-                        Some(b',') => self.i += 1,
-                        Some(b'}') => {
-                            self.i += 1;
-                            return Some(Json::Obj(m));
-                        }
-                        _ => return None,
-                    }
-                }
-            }
-            Some(_) => {
-                let rest = &self.b[self.i..];
-                let end = rest
-                    .iter()
-                    .position(|&c| c == b',' || c == b']' || c == b'}' || c.is_ascii_whitespace())
-                    .unwrap_or(rest.len());
-                let s = std::str::from_utf8(&rest[..end]).ok()?;
-                if end == 0 {
-                    return None;
-                }
-                self.i += end;
-                s.trim().parse::<f64>().ok().map(Json::Num)
-            }
-            None => None,
-        }
-    }
-    fn string(&mut self) -> Option<String> {
-        if self.b.get(self.i) != Some(&b'"') {
-            return None;
-        }
-        self.i += 1;
-        let mut s = String::new();
-        loop {
-            let c = self.b.get(self.i).copied()?;
-            self.i += 1;
-            match c {
-                b'"' => return Some(s),
-                b'\\' => {
-                    let e = self.b.get(self.i).copied()?;
-                    self.i += 1;
-                    match e {
-                        b'n' => s.push('\n'),
-                        b't' => s.push('\t'),
-                        b'r' => s.push('\r'),
-                        b'u' => {
-                            let h = std::str::from_utf8(&self.b[self.i..self.i + 4]).ok()?;
-                            self.i += 4;
-                            s.push(char::from_u32(u32::from_str_radix(h, 16).ok()?)?);
-                        }
-                        _ => s.push(e as char),
-                    }
-                }
-                _ => s.push(c as char),
-            }
-        }
-    }
-}
-
-fn parse_json(s: &str) -> Option<Json> {
-    Jp {
-        b: s.as_bytes(),
-        i: 0,
-    }
-    .val()
-}
-
-fn jpath<'a>(j: &'a Json, path: &str) -> Option<&'a Json> {
-    let mut cur = j;
-    for key in path.split('.') {
-        match cur {
-            Json::Obj(m) => cur = m.get(key)?,
-            _ => return None,
-        }
-    }
-    Some(cur)
-}
-
-fn jnum(j: &Json, path: &str) -> Option<f64> {
-    match jpath(j, path) {
-        Some(Json::Num(n)) => Some(*n),
-        _ => None,
-    }
-}
-
-fn jstr(j: &Json, path: &str) -> Option<String> {
-    match jpath(j, path) {
-        Some(Json::Str(s)) => Some(s.clone()),
-        _ => None,
-    }
-}
 
 fn mast_token() -> Option<String> {
     if let Ok(t) = std::env::var("MAST_TOKEN") {
@@ -286,7 +123,7 @@ fn tap_targets(token: &str, limit: usize) -> Vec<Target> {
     };
     let mut seen = std::collections::HashSet::new();
     let mut targets = Vec::new();
-    if let Some(Json::Arr(rows)) = jpath(&root, "data") {
+    if let Some(JsonVal::Arr(rows)) = jpath_val(&root, "data") {
         for row in rows {
             if targets.len() >= limit {
                 break;
@@ -335,7 +172,7 @@ fn mast_lc_obs_ids(target: &Target, token: &str) -> Vec<String> {
         return Vec::new();
     };
     let mut ids = Vec::new();
-    if let Some(Json::Arr(rows)) = jpath(&root, "data") {
+    if let Some(JsonVal::Arr(rows)) = jpath_val(&root, "data") {
         for row in rows {
             let Some(obs_id) = jstr(row, "obs_id") else {
                 continue;

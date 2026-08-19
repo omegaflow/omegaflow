@@ -5,6 +5,10 @@ pub const CDN_REPO: &str = "omegaflow/sources";
 pub const CDN_BASE: &str = "https://github.com/omegaflow/sources/releases/download";
 
 pub fn upload_asset(path: &str) -> bool {
+    upload_release(CDN_RELEASE, path)
+}
+
+pub fn upload_release(tag: &str, path: &str) -> bool {
     if std::env::var("GH_TOKEN").is_err() {
         eprintln!("upload {}: GH_TOKEN absent", path);
         return false;
@@ -12,7 +16,7 @@ pub fn upload_asset(path: &str) -> bool {
     let out = Command::new("gh")
         .arg("release")
         .arg("upload")
-        .arg(CDN_RELEASE)
+        .arg(tag)
         .arg(path)
         .arg("--clobber")
         .arg("--repo")

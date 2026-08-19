@@ -1,5 +1,6 @@
 use omegaflow::cdn::upload_asset;
 use omegaflow::inflate::gunzip;
+use omegaflow::lsk::days_from_civil;
 use omegaflow::sexagesimal::{sexagesimal_dec_to_deg, sexagesimal_ra_to_deg};
 
 // MPCOBS binary record (little-endian), fixed stride — one astrometric observation:
@@ -40,19 +41,10 @@ fn decode_packed_number(field: &str) -> u32 {
     hi * 10000 + lo
 }
 
-fn ymd_to_jd(year: i64, month: i64, day_frac: f64) -> f64 {
-    let (yy, mm) = if month <= 2 {
-        (year - 1, month + 12)
-    } else {
-        (year, month)
-    };
-    let a = yy.div_euclid(100);
-    let b = 2 - a + a / 4;
-    b as f64
-        + (365.25 * yy as f64).floor()
-        + (30.6001 * (mm + 1) as f64).floor()
-        + day_frac
-        + 1720994.5
+fn ymd_to_jd(year: i64, month: i64, day_frac: f64) -> Option<f64> {
+    let day = day_frac.floor();
+    let days = days_from_civil(year, month, day as i64)?;
+    Some(days as f64 + (day_frac - day) + 2440587.5)
 }
 
 fn parse_date(field: &str) -> Option<f64> {
@@ -66,7 +58,7 @@ fn parse_date(field: &str) -> Option<f64> {
     if !(1..=12).contains(&month) || !(1.0..32.0).contains(&day) {
         return None;
     }
-    Some(ymd_to_jd(year, month, day))
+    ymd_to_jd(year, month, day)
 }
 
 fn record_bytes(line: &str) -> Option<Vec<u8>> {

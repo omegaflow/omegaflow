@@ -1486,6 +1486,9 @@ mod archivar {
     };
     use omegaflow::force::{default_kernel_for, force_id_of, kernel_id_for_force};
     use omegaflow::inflate::{gunzip, unzip};
+    pub use omegaflow::json::{
+        jnum, jpath, jpath_val, json_num, jstr, parse_json, scalar_of, JsonVal,
+    };
     use omegaflow::netcdf::NetcdfFile;
     use omegaflow::pck::PckBody;
     use std::io::{IsTerminal, Write};
@@ -3263,27 +3266,6 @@ mod archivar {
         })
     }
 
-    #[derive(Clone, Debug)]
-    pub enum JsonVal {
-        Null,
-        Bool(bool),
-        Num(f64),
-        Str(String),
-        Arr(Vec<JsonVal>),
-        Obj(HashMap<String, JsonVal>),
-    }
-
-    pub fn parse_json(s: &str) -> Option<JsonVal> {
-        let bytes = s.as_bytes();
-        let start = (0..bytes.len()).find(|&i| bytes[i] == b'{' || bytes[i] == b'[')?;
-        let mut p = JsonParser {
-            chars: bytes,
-            pos: start,
-        };
-        p.skip_ws();
-        p.parse_value()
-    }
-
     fn split_csv_line(line: &str) -> Vec<String> {
         let mut fields = Vec::new();
         let mut cur = String::new();
@@ -3338,281 +3320,6 @@ mod archivar {
             rows.push(JsonVal::Obj(obj));
         }
         Some(JsonVal::Arr(rows))
-    }
-
-    struct JsonParser<'a> {
-        chars: &'a [u8],
-        pos: usize,
-    }
-
-    impl<'a> JsonParser<'a> {
-        fn skip_ws(&mut self) {
-            while self.pos < self.chars.len() && (self.chars[self.pos] as char).is_whitespace() {
-                self.pos += 1;
-            }
-        }
-        fn parse_value(&mut self) -> Option<JsonVal> {
-            self.skip_ws();
-            if self.pos >= self.chars.len() {
-                return None;
-            }
-            match self.chars[self.pos] {
-                b'{' => self.parse_obj(),
-                b'[' => self.parse_arr(),
-                b'"' => self.parse_str().map(JsonVal::Str),
-                b't' => {
-                    if self.chars[self.pos..].starts_with(b"true") {
-                        self.pos += 4;
-                        Some(JsonVal::Bool(true))
-                    } else {
-                        None
-                    }
-                }
-                b'f' => {
-                    if self.chars[self.pos..].starts_with(b"false") {
-                        self.pos += 5;
-                        Some(JsonVal::Bool(false))
-                    } else {
-                        None
-                    }
-                }
-                b'n' => {
-                    if self.chars[self.pos..].starts_with(b"null") {
-                        self.pos += 4;
-                        Some(JsonVal::Null)
-                    } else if self.chars[self.pos..].starts_with(b"nan") {
-                        self.pos += 3;
-                        Some(JsonVal::Num(f64::NAN))
-                    } else {
-                        None
-                    }
-                }
-                b'N' => {
-                    if self.chars[self.pos..].starts_with(b"NaN") {
-                        self.pos += 3;
-                        Some(JsonVal::Num(f64::NAN))
-                    } else {
-                        None
-                    }
-                }
-                b'I' => {
-                    if self.chars[self.pos..].starts_with(b"Infinity") {
-                        self.pos += 8;
-                        Some(JsonVal::Num(f64::INFINITY))
-                    } else {
-                        None
-                    }
-                }
-                b'i' => {
-                    if self.chars[self.pos..].starts_with(b"inf") {
-                        self.pos += 3;
-                        Some(JsonVal::Num(f64::INFINITY))
-                    } else {
-                        None
-                    }
-                }
-                b'-' if self.chars[self.pos..].starts_with(b"-Infinity") => {
-                    self.pos += 9;
-                    Some(JsonVal::Num(f64::NEG_INFINITY))
-                }
-                b'-' if self.chars[self.pos..].starts_with(b"-inf") => {
-                    self.pos += 4;
-                    Some(JsonVal::Num(f64::NEG_INFINITY))
-                }
-                _ => self.parse_num(),
-            }
-        }
-        fn parse_obj(&mut self) -> Option<JsonVal> {
-            self.pos += 1;
-            self.skip_ws();
-            let mut map = HashMap::new();
-            if self.pos < self.chars.len() && self.chars[self.pos] == b'}' {
-                self.pos += 1;
-                return Some(JsonVal::Obj(map));
-            }
-            loop {
-                self.skip_ws();
-                let key = self.parse_str()?;
-                self.skip_ws();
-                if self.pos >= self.chars.len() || self.chars[self.pos] != b':' {
-                    return None;
-                }
-                self.pos += 1;
-                let val = self.parse_value()?;
-                map.insert(key, val);
-                self.skip_ws();
-                if self.pos >= self.chars.len() {
-                    return None;
-                }
-                match self.chars[self.pos] {
-                    b',' => {
-                        self.pos += 1;
-                    }
-                    b'}' => {
-                        self.pos += 1;
-                        break;
-                    }
-                    _ => return None,
-                }
-            }
-            Some(JsonVal::Obj(map))
-        }
-        fn parse_arr(&mut self) -> Option<JsonVal> {
-            self.pos += 1;
-            self.skip_ws();
-            let mut arr = Vec::new();
-            if self.pos < self.chars.len() && self.chars[self.pos] == b']' {
-                self.pos += 1;
-                return Some(JsonVal::Arr(arr));
-            }
-            loop {
-                let val = self.parse_value()?;
-                arr.push(val);
-                self.skip_ws();
-                if self.pos >= self.chars.len() {
-                    return None;
-                }
-                match self.chars[self.pos] {
-                    b',' => {
-                        self.pos += 1;
-                    }
-                    b']' => {
-                        self.pos += 1;
-                        break;
-                    }
-                    _ => return None,
-                }
-            }
-            Some(JsonVal::Arr(arr))
-        }
-        fn parse_str(&mut self) -> Option<String> {
-            if self.pos >= self.chars.len() || self.chars[self.pos] != b'"' {
-                return None;
-            }
-            self.pos += 1;
-            let mut s = String::new();
-            while self.pos < self.chars.len() {
-                let c = self.chars[self.pos];
-                if c == b'\\' && self.pos + 1 < self.chars.len() {
-                    self.pos += 1;
-                    match self.chars[self.pos] {
-                        b'"' => {
-                            s.push('"');
-                            self.pos += 1;
-                        }
-                        b'\\' => {
-                            s.push('\\');
-                            self.pos += 1;
-                        }
-                        b'/' => {
-                            s.push('/');
-                            self.pos += 1;
-                        }
-                        b'n' => {
-                            s.push('\n');
-                            self.pos += 1;
-                        }
-                        b't' => {
-                            s.push('\t');
-                            self.pos += 1;
-                        }
-                        b'r' => {
-                            s.push('\r');
-                            self.pos += 1;
-                        }
-                        b'u' => {
-                            self.pos += 1;
-                            if self.pos + 4 <= self.chars.len() {
-                                if let Ok(hex) =
-                                    std::str::from_utf8(&self.chars[self.pos..self.pos + 4])
-                                {
-                                    if let Ok(cp) = u32::from_str_radix(hex, 16) {
-                                        self.pos += 4;
-                                        if (0xD800..=0xDBFF).contains(&cp)
-                                            && self.pos + 6 <= self.chars.len()
-                                            && self.chars[self.pos] == b'\\'
-                                            && self.chars[self.pos + 1] == b'u'
-                                        {
-                                            if let Ok(hex_lo) = std::str::from_utf8(
-                                                &self.chars[self.pos + 2..self.pos + 6],
-                                            ) {
-                                                if let Ok(lo) = u32::from_str_radix(hex_lo, 16) {
-                                                    if (0xDC00..=0xDFFF).contains(&lo) {
-                                                        self.pos += 6;
-                                                        let combined = 0x10000
-                                                            + ((cp - 0xD800) << 10)
-                                                            + (lo - 0xDC00);
-                                                        if let Some(ch) = char::from_u32(combined) {
-                                                            s.push(ch);
-                                                        }
-                                                        continue;
-                                                    }
-                                                }
-                                            }
-                                        } else if let Some(ch) = char::from_u32(cp) {
-                                            s.push(ch);
-                                        }
-                                    } else {
-                                        self.pos += 4;
-                                    }
-                                } else {
-                                    self.pos += 4;
-                                }
-                            }
-                        }
-                        _ => {
-                            self.pos += 1;
-                        }
-                    }
-                } else if c == b'"' {
-                    self.pos += 1;
-                    return Some(s);
-                } else {
-                    let run_start = self.pos;
-                    while self.pos < self.chars.len()
-                        && self.chars[self.pos] != b'"'
-                        && self.chars[self.pos] != b'\\'
-                    {
-                        self.pos += 1;
-                    }
-                    match std::str::from_utf8(&self.chars[run_start..self.pos]) {
-                        Ok(t) => s.push_str(t),
-                        Err(_) => {
-                            s.push_str(&String::from_utf8_lossy(&self.chars[run_start..self.pos]))
-                        }
-                    }
-                }
-            }
-            None
-        }
-        fn parse_num(&mut self) -> Option<JsonVal> {
-            let start = self.pos;
-            while self.pos < self.chars.len() {
-                let c = self.chars[self.pos];
-                if c.is_ascii_digit()
-                    || c == b'-'
-                    || c == b'+'
-                    || c == b'.'
-                    || c == b'e'
-                    || c == b'E'
-                {
-                    self.pos += 1;
-                } else {
-                    break;
-                }
-            }
-            let s = std::str::from_utf8(&self.chars[start..self.pos]).ok()?;
-            s.parse::<f64>().ok().map(JsonVal::Num)
-        }
-    }
-
-    fn scalar_of(v: &JsonVal) -> Option<f64> {
-        match v {
-            JsonVal::Num(n) => Some(*n),
-            JsonVal::Str(s) => s.parse().ok(),
-            JsonVal::Bool(b) => Some(if *b { 1.0 } else { 0.0 }),
-            _ => None,
-        }
     }
 
     fn universal_auto_detect(j: &JsonVal) -> Vec<Extract> {
@@ -3771,34 +3478,6 @@ mod archivar {
         }
     }
 
-    pub fn jpath_val<'a>(json: &'a JsonVal, path: &str) -> Option<&'a JsonVal> {
-        if path.is_empty() || path == "." {
-            return Some(json);
-        }
-        let mut current = json;
-        for part in path.split('.') {
-            if let JsonVal::Obj(map) = current {
-                current = map.get(part)?;
-            } else if let JsonVal::Arr(arr) = current {
-                let raw_idx: i64 = part.parse().ok()?;
-                let len = arr.len() as i64;
-                let idx = if raw_idx < 0 {
-                    let actual = len + raw_idx;
-                    if actual < 0 {
-                        return None;
-                    }
-                    actual as usize
-                } else {
-                    raw_idx as usize
-                };
-                current = arr.get(idx)?;
-            } else {
-                return None;
-            }
-        }
-        Some(current)
-    }
-
     fn json_has_content(v: &JsonVal) -> bool {
         match v {
             JsonVal::Arr(arr) => !arr.is_empty() || arr.iter().any(json_has_content),
@@ -3936,39 +3615,6 @@ mod archivar {
                 }
             }
         }
-    }
-
-    pub fn jnum(json: &JsonVal, key: &str) -> Option<f64> {
-        if key.contains('.') {
-            return jpath_val(json, key).and_then(scalar_of);
-        }
-        match json {
-            JsonVal::Obj(map) => map.get(key).and_then(scalar_of),
-            _ => None,
-        }
-    }
-
-    fn jstr(json: &JsonVal, key: &str) -> Option<String> {
-        if key.contains('.') {
-            return jpath_val(json, key).and_then(|v| match v {
-                JsonVal::Str(s) => Some(s.clone()),
-                _ => None,
-            });
-        }
-        match json {
-            JsonVal::Obj(map) => match map.get(key) {
-                Some(JsonVal::Str(s)) => Some(s.clone()),
-                _ => None,
-            },
-            _ => None,
-        }
-    }
-
-    fn jpath(json: &JsonVal, path: &str) -> Option<f64> {
-        if path == "." || path.is_empty() {
-            return scalar_of(json);
-        }
-        jpath_val(json, path).and_then(scalar_of)
     }
 
     fn jcount(json: &JsonVal, path: &str) -> Option<f64> {
@@ -5158,10 +4804,7 @@ mod archivar {
                     if let Some(cached) = read_cache_if_fresh(&cache_path, ttl) {
                         return Some(cached);
                     }
-                    let cdn_url = format!(
-                        "https://github.com/omegaflow/sources/releases/download/{}/{}.json",
-                        netloc, name
-                    );
+                    let cdn_url = format!("{}/{}/{}.json", omegaflow::cdn::CDN_BASE, netloc, name);
                     if cdn_fresh(&cdn_url, ttl) {
                         if let Some(cdn_body) = fetch_raw(&cdn_url, None, &[], ttl) {
                             if let Some(parent) = std::path::Path::new(&cache_path).parent() {
@@ -5349,22 +4992,6 @@ mod archivar {
             .replace("{lon_min}", &format!("{:.6}", anchor.1 - half))
             .replace("{lon_max}", &format!("{:.6}", anchor.1 + half));
         Some(resolve_secret(&url, env))
-    }
-
-    fn ci_upload(netloc_tag: &str, tmp_path: &str) -> bool {
-        if std::env::var("GH_TOKEN").is_err() {
-            return false;
-        }
-        let status = Command::new("gh")
-            .arg("release")
-            .arg("upload")
-            .arg(netloc_tag)
-            .arg(tmp_path)
-            .arg("--clobber")
-            .arg("--repo")
-            .arg("omegaflow/sources")
-            .output();
-        matches!(status, Ok(o) if o.status.success())
     }
 
     fn render_headers(
@@ -9989,14 +9616,6 @@ mod archivar {
         None
     }
 
-    fn json_num(val: &JsonVal) -> Option<f64> {
-        match val {
-            JsonVal::Num(n) => Some(*n),
-            JsonVal::Str(s) => s.parse().ok(),
-            _ => None,
-        }
-    }
-
     fn is_time_key(k: &str) -> bool {
         let kl = k.to_lowercase();
         kl == "time"
@@ -10859,7 +10478,9 @@ mod archivar {
                             .cloned()
                             .unwrap_or_else(|| source_name_from_url(&src.url));
                         let tmp_path = format!("/tmp/archivar_cache/{}/{}.json", netloc, name);
-                        if std::fs::write(&tmp_path, &raw).is_ok() && ci_upload(netloc, &tmp_path) {
+                        if std::fs::write(&tmp_path, &raw).is_ok()
+                            && omegaflow::cdn::upload_release(netloc, &tmp_path)
+                        {
                             mirrored += 1;
                         }
                     }
@@ -10944,7 +10565,9 @@ mod archivar {
                     if let Some(parent) = std::path::Path::new(&cache_path).parent() {
                         let _ = std::fs::create_dir_all(parent);
                     }
-                    if std::fs::write(&cache_path, &raw).is_ok() && ci_upload(netloc, &cache_path) {
+                    if std::fs::write(&cache_path, &raw).is_ok()
+                        && omegaflow::cdn::upload_release(netloc, &cache_path)
+                    {
                         *mirrored += 1;
                     }
                 } else {
@@ -11020,7 +10643,9 @@ mod archivar {
                     if let Some(parent) = std::path::Path::new(&cache_path).parent() {
                         let _ = std::fs::create_dir_all(parent);
                     }
-                    if std::fs::write(&cache_path, &body).is_ok() && ci_upload(&tag, &cache_path) {
+                    if std::fs::write(&cache_path, &body).is_ok()
+                        && omegaflow::cdn::upload_release(&tag, &cache_path)
+                    {
                         *mirrored += 1;
                     }
                 } else {
@@ -11069,7 +10694,9 @@ mod archivar {
                     if let Some(parent) = std::path::Path::new(&cache_path).parent() {
                         let _ = std::fs::create_dir_all(parent);
                     }
-                    if std::fs::write(&cache_path, &body).is_ok() && ci_upload(&tag, &cache_path) {
+                    if std::fs::write(&cache_path, &body).is_ok()
+                        && omegaflow::cdn::upload_release(&tag, &cache_path)
+                    {
                         *mirrored += 1;
                     }
                 } else {

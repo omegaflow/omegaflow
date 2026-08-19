@@ -1,7 +1,9 @@
 use omegaflow::bpc::BpcFile;
 use omegaflow::bsp_reader::spk::SpkFile;
 use omegaflow::cdn::{body_url, upload_asset};
+use omegaflow::fit::solve_normal_equations;
 use omegaflow::fk::FkFile;
+use omegaflow::lsk::days_from_civil;
 use omegaflow::pck::{neutral, PckBody};
 use std::collections::{BTreeMap, HashMap, HashSet, VecDeque};
 use std::io::Write;
@@ -139,50 +141,6 @@ fn chebyshev_fit(
         None => return None,
     };
     Some((cx, cy, cz))
-}
-
-fn solve_normal_equations(
-    ata: &[Vec<f64>],
-    atx: &[f64],
-    aty: &[f64],
-    atz: &[f64],
-) -> Option<(Vec<f64>, Vec<f64>, Vec<f64>)> {
-    let n = ata.len();
-    let mut a = ata.to_vec();
-    for i in 0..n {
-        let mut pivot = i;
-        for j in i + 1..n {
-            if a[j][i].abs() > a[pivot][i].abs() {
-                pivot = j;
-            }
-        }
-        if a[pivot][i].abs() < 1e-15 {
-            return None;
-        }
-        a.swap(i, pivot);
-        for j in i + 1..n {
-            let factor = a[j][i] / a[i][i];
-            for k in i..n {
-                a[j][k] -= factor * a[i][k];
-            }
-        }
-    }
-    let x = back_substitute(&a, atx);
-    let y = back_substitute(&a, aty);
-    let z = back_substitute(&a, atz);
-    Some((x, y, z))
-}
-
-fn back_substitute(a: &[Vec<f64>], b: &[f64]) -> Vec<f64> {
-    let n = a.len();
-    let mut x = b.to_vec();
-    for i in (0..n).rev() {
-        for j in i + 1..n {
-            x[i] -= a[i][j] * x[j];
-        }
-        x[i] /= a[i][i];
-    }
-    x
 }
 
 fn state_ssb_multi(kernels: &[SpkFile], target: i32, et: f64) -> Option<[f64; 6]> {
@@ -635,16 +593,6 @@ fn fetch_text(url: &str) -> Option<String> {
     }
 }
 
-fn days_from_civil(y: i64, m: i64, d: i64) -> i64 {
-    let y = if m <= 2 { y - 1 } else { y };
-    let era = if y >= 0 { y } else { y - 399 } / 400;
-    let yoe = y - era * 400;
-    let mp = if m > 2 { m - 3 } else { m + 9 };
-    let doy = (153 * mp + 2) / 5 + d - 1;
-    let doe = yoe * 365 + yoe / 4 - yoe / 100 + doy;
-    era * 146097 + doe - 719468
-}
-
 fn text_of(html: &str) -> String {
     let mut out = String::new();
     let mut in_tag = false;
@@ -685,7 +633,9 @@ fn extract_meta(after: &str) -> (u64, u64) {
                 let y: i64 = text[i..i + 4].parse().unwrap();
                 let mo: i64 = text[i + 5..i + 7].parse().unwrap();
                 let d: i64 = text[i + 8..i + 10].parse().unwrap();
-                mtime = days_from_civil(y, mo, d) as u64 * 86400;
+                if let Some(days) = days_from_civil(y, mo, d) {
+                    mtime = days as u64 * 86400;
+                }
                 if i + 16 <= b.len() {
                     if let (Ok(h), Ok(mn)) = (
                         text[i + 11..i + 13].parse::<u64>(),

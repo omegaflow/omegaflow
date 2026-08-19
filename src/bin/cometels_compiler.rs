@@ -4,184 +4,26 @@
 
 use omegaflow::cdn::upload_asset;
 use omegaflow::inflate::gunzip;
+use omegaflow::json::{parse_json, JsonVal};
 use omegaflow::kepler::{elements_to_icrs_state, AU_M, GM_SUN_M3_S2};
+use omegaflow::lsk::days_from_civil;
 use std::collections::HashMap;
 use std::io::Write;
 
 const TAU: f64 = 2.0 * std::f64::consts::PI;
 
-#[derive(Debug)]
-enum Json {
-    Null,
-    Num(f64),
-    Str(String),
-    Arr(Vec<Json>),
-    Obj(HashMap<String, Json>),
-}
-
-struct Jp<'a> {
-    b: &'a [u8],
-    i: usize,
-}
-
-impl<'a> Jp<'a> {
-    fn ws(&mut self) {
-        while self.i < self.b.len() && (self.b[self.i] as char).is_ascii_whitespace() {
-            self.i += 1;
-        }
-    }
-    fn val(&mut self) -> Option<Json> {
-        self.ws();
-        match self.b.get(self.i).copied() {
-            Some(b'n') => {
-                if self.b[self.i..].starts_with(b"null") {
-                    self.i += 4;
-                    Some(Json::Null)
-                } else {
-                    None
-                }
-            }
-            Some(b't') => {
-                if self.b[self.i..].starts_with(b"true") {
-                    self.i += 4;
-                    Some(Json::Num(1.0))
-                } else {
-                    None
-                }
-            }
-            Some(b'f') => {
-                if self.b[self.i..].starts_with(b"false") {
-                    self.i += 5;
-                    Some(Json::Num(0.0))
-                } else {
-                    None
-                }
-            }
-            Some(b'"') => self.string().map(Json::Str),
-            Some(b'[') => {
-                self.i += 1;
-                let mut v = Vec::new();
-                self.ws();
-                if self.b.get(self.i) == Some(&b']') {
-                    self.i += 1;
-                    return Some(Json::Arr(v));
-                }
-                loop {
-                    v.push(self.val()?);
-                    self.ws();
-                    match self.b.get(self.i) {
-                        Some(b',') => {
-                            self.i += 1;
-                        }
-                        Some(b']') => {
-                            self.i += 1;
-                            return Some(Json::Arr(v));
-                        }
-                        _ => return None,
-                    }
-                }
-            }
-            Some(b'{') => {
-                self.i += 1;
-                let mut m = HashMap::new();
-                self.ws();
-                if self.b.get(self.i) == Some(&b'}') {
-                    self.i += 1;
-                    return Some(Json::Obj(m));
-                }
-                loop {
-                    self.ws();
-                    let k = self.string()?;
-                    self.ws();
-                    if self.b.get(self.i) != Some(&b':') {
-                        return None;
-                    }
-                    self.i += 1;
-                    let v = self.val()?;
-                    m.insert(k, v);
-                    self.ws();
-                    match self.b.get(self.i) {
-                        Some(b',') => {
-                            self.i += 1;
-                        }
-                        Some(b'}') => {
-                            self.i += 1;
-                            return Some(Json::Obj(m));
-                        }
-                        _ => return None,
-                    }
-                }
-            }
-            Some(_) => {
-                let rest = &self.b[self.i..];
-                let end = rest
-                    .iter()
-                    .position(|&c| c == b',' || c == b']' || c == b'}' || c.is_ascii_whitespace())
-                    .unwrap_or(rest.len());
-                let s = std::str::from_utf8(&rest[..end]).ok()?;
-                if end == 0 {
-                    return None;
-                }
-                self.i += end;
-                s.trim().parse::<f64>().ok().map(Json::Num)
-            }
-            None => None,
-        }
-    }
-    fn string(&mut self) -> Option<String> {
-        if self.b.get(self.i) != Some(&b'"') {
-            return None;
-        }
-        self.i += 1;
-        let mut s = String::new();
-        loop {
-            let c = self.b.get(self.i).copied()?;
-            self.i += 1;
-            match c {
-                b'"' => return Some(s),
-                b'\\' => {
-                    let e = self.b.get(self.i).copied()?;
-                    self.i += 1;
-                    match e {
-                        b'n' => s.push('\n'),
-                        b't' => s.push('\t'),
-                        b'r' => s.push('\r'),
-                        b'"' => s.push('"'),
-                        b'\\' => s.push('\\'),
-                        b'u' => {
-                            let h = std::str::from_utf8(&self.b[self.i..self.i + 4]).ok()?;
-                            self.i += 4;
-                            s.push(char::from_u32(u32::from_str_radix(h, 16).ok()?)?);
-                        }
-                        _ => return None,
-                    }
-                }
-                _ => s.push(c as char),
-            }
-        }
-    }
-}
-
-fn parse_json(s: &str) -> Option<Json> {
-    let mut p = Jp {
-        b: s.as_bytes(),
-        i: 0,
-    };
-    p.val()
-}
-
-fn get_num(o: &HashMap<String, Json>, key: &str) -> Option<f64> {
+fn get_num(o: &HashMap<String, JsonVal>, key: &str) -> Option<f64> {
     match o.get(key) {
-        Some(Json::Num(v)) => Some(*v),
-        Some(Json::Str(t)) => t.trim().parse().ok(),
+        Some(JsonVal::Num(v)) => Some(*v),
+        Some(JsonVal::Str(t)) => t.trim().parse().ok(),
         _ => None,
     }
 }
 
-fn get_str(o: &HashMap<String, Json>, key: &str) -> Option<String> {
+fn get_str(o: &HashMap<String, JsonVal>, key: &str) -> Option<String> {
     match o.get(key) {
-        Some(Json::Str(t)) => Some(t.clone()),
-        Some(Json::Num(v)) => Some(format!("{}", v)),
+        Some(JsonVal::Str(t)) => Some(t.clone()),
+        Some(JsonVal::Num(v)) => Some(format!("{}", v)),
         _ => None,
     }
 }
@@ -194,19 +36,6 @@ struct CometRow {
     h: Option<f64>,
 }
 
-fn days_from_civil(year: i64, month: i64, day: i64) -> Option<i64> {
-    if !(1..=12).contains(&month) || !(1..=31).contains(&day) {
-        return None;
-    }
-    let y = if month <= 2 { year - 1 } else { year };
-    let era = if y >= 0 { y } else { y - 399 } / 400;
-    let yoe = y - era * 400;
-    let mp = if month > 2 { month - 3 } else { month + 9 };
-    let doy = (153 * mp + 2) / 5 + day - 1;
-    let doe = yoe * 365 + yoe / 4 - yoe / 100 + doy;
-    Some(era * 146097 + doe - 719468)
-}
-
 fn jd_from(y: f64, m: f64, d_frac: f64) -> Option<f64> {
     let (ym, mm) = (y as i64, m as i64);
     if mm < 1 || mm > 12 || d_frac < 1.0 {
@@ -216,7 +45,7 @@ fn jd_from(y: f64, m: f64, d_frac: f64) -> Option<f64> {
     Some(days + (d_frac - 1.0) + 2440587.5)
 }
 
-fn evaluate(obj: &HashMap<String, Json>) -> Option<CometRow> {
+fn evaluate(obj: &HashMap<String, JsonVal>) -> Option<CometRow> {
     let e = get_num(obj, "e")?;
     let q = get_num(obj, "Perihelion_dist")?;
     let incl = get_num(obj, "i")?;
@@ -332,19 +161,19 @@ fn main() {
         }
     };
     let arr = match json {
-        Json::Arr(a) => a,
+        JsonVal::Arr(a) => a,
         _ => {
             eprintln!("root is not an array");
             std::process::exit(1);
         }
     };
-    if let Some(Json::Obj(first)) = arr.first() {
+    if let Some(JsonVal::Obj(first)) = arr.first() {
         let keys: Vec<&str> = first.keys().map(|k| k.as_str()).collect();
         eprintln!("cometels: {} records, first keys: {:?}", arr.len(), keys);
     }
     if let Some(name) = &probe {
         for v in &arr {
-            if let Json::Obj(obj) = v {
+            if let JsonVal::Obj(obj) = v {
                 let n = get_str(obj, "Designation_and_name")
                     .or_else(|| get_str(obj, "Provisional_packed_desig"))
                     .unwrap_or_default();
@@ -377,7 +206,7 @@ fn main() {
     let mut rows: Vec<CometRow> = Vec::new();
     let mut skipped = 0usize;
     for v in &arr {
-        if let Json::Obj(obj) = v {
+        if let JsonVal::Obj(obj) = v {
             match evaluate(obj) {
                 Some(r) => rows.push(r),
                 None => skipped += 1,

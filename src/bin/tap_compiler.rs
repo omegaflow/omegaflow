@@ -4,151 +4,9 @@
 // upload via --ci-mode (tag ssd.jpl.nasa.gov).
 
 use omegaflow::cdn::upload_asset;
+use omegaflow::json::{parse_json, JsonVal};
 use std::io::Write;
 use std::process::Command;
-
-#[derive(Debug)]
-enum Json {
-    Null,
-    Num(f64),
-    Str(String),
-    Arr(Vec<Json>),
-    Obj(std::collections::HashMap<String, Json>),
-}
-
-struct Jp<'a> {
-    b: &'a [u8],
-    i: usize,
-}
-
-impl<'a> Jp<'a> {
-    fn ws(&mut self) {
-        while self.i < self.b.len() && (self.b[self.i] as char).is_ascii_whitespace() {
-            self.i += 1;
-        }
-    }
-    fn val(&mut self) -> Option<Json> {
-        self.ws();
-        match self.b.get(self.i).copied() {
-            Some(b'n') => {
-                if self.b[self.i..].starts_with(b"null") {
-                    self.i += 4;
-                    Some(Json::Null)
-                } else {
-                    None
-                }
-            }
-            Some(b'"') => self.string().map(Json::Str),
-            Some(b'[') => {
-                self.i += 1;
-                let mut v = Vec::new();
-                self.ws();
-                if self.b.get(self.i) == Some(&b']') {
-                    self.i += 1;
-                    return Some(Json::Arr(v));
-                }
-                loop {
-                    v.push(self.val()?);
-                    self.ws();
-                    match self.b.get(self.i) {
-                        Some(b',') => self.i += 1,
-                        Some(b']') => {
-                            self.i += 1;
-                            return Some(Json::Arr(v));
-                        }
-                        _ => return None,
-                    }
-                }
-            }
-            Some(b'{') => {
-                self.i += 1;
-                let mut m = std::collections::HashMap::new();
-                self.ws();
-                if self.b.get(self.i) == Some(&b'}') {
-                    self.i += 1;
-                    return Some(Json::Obj(m));
-                }
-                loop {
-                    self.ws();
-                    let k = self.string()?;
-                    self.ws();
-                    if self.b.get(self.i) != Some(&b':') {
-                        return None;
-                    }
-                    self.i += 1;
-                    let v = self.val()?;
-                    m.insert(k, v);
-                    self.ws();
-                    match self.b.get(self.i) {
-                        Some(b',') => self.i += 1,
-                        Some(b'}') => {
-                            self.i += 1;
-                            return Some(Json::Obj(m));
-                        }
-                        _ => return None,
-                    }
-                }
-            }
-            Some(_) => {
-                let rest = &self.b[self.i..];
-                let end = rest
-                    .iter()
-                    .position(|&c| c == b',' || c == b']' || c == b'}' || c.is_ascii_whitespace())
-                    .unwrap_or(rest.len());
-                let s = std::str::from_utf8(&rest[..end]).ok()?;
-                if end == 0 {
-                    return None;
-                }
-                self.i += end;
-                s.trim().parse::<f64>().ok().map(Json::Num)
-            }
-            None => None,
-        }
-    }
-    fn string(&mut self) -> Option<String> {
-        if self.b.get(self.i) != Some(&b'"') {
-            return None;
-        }
-        self.i += 1;
-        let mut s = String::new();
-        loop {
-            let c = self.b.get(self.i).copied()?;
-            self.i += 1;
-            match c {
-                b'"' => return Some(s),
-                b'\\' => {
-                    let e = self.b.get(self.i).copied()?;
-                    self.i += 1;
-                    match e {
-                        b'n' => s.push('\n'),
-                        b't' => s.push('\t'),
-                        b'r' => s.push('\r'),
-                        b'b' => s.push('\u{8}'),
-                        b'f' => s.push('\u{c}'),
-                        b'"' => s.push('"'),
-                        b'/' => s.push('/'),
-                        b'\\' => s.push('\\'),
-                        b'u' => {
-                            let h = std::str::from_utf8(&self.b[self.i..self.i + 4]).ok()?;
-                            self.i += 4;
-                            s.push(char::from_u32(u32::from_str_radix(h, 16).ok()?)?);
-                        }
-                        _ => return None,
-                    }
-                }
-                _ => s.push(c as char),
-            }
-        }
-    }
-}
-
-fn parse_json(s: &str) -> Option<Json> {
-    let mut p = Jp {
-        b: s.as_bytes(),
-        i: 0,
-    };
-    p.val()
-}
 
 fn tap_query(root: &str, adql: &str) -> Option<String> {
     let out = Command::new("curl")
@@ -461,10 +319,10 @@ fn votable_rows(body: &str) -> Option<(Vec<String>, Vec<Vec<String>>)> {
     Some((fields, rows))
 }
 
-fn cell_num(c: &Json) -> Option<f64> {
+fn cell_num(c: &JsonVal) -> Option<f64> {
     match c {
-        Json::Num(v) => Some(*v),
-        Json::Str(s) => s.parse().ok(),
+        JsonVal::Num(v) => Some(*v),
+        JsonVal::Str(s) => s.parse().ok(),
         _ => None,
     }
 }
@@ -473,13 +331,13 @@ fn fetch_json_rows(root: &str, adql: &str) -> Option<(Vec<String>, Vec<Vec<Strin
     let body = tap_query(root, adql)?;
     let parsed = parse_json(&body)?;
     let (meta_opt, data) = match &parsed {
-        Json::Obj(m) => (
+        JsonVal::Obj(m) => (
             m.get("metadata")
                 .or_else(|| m.get("columns"))
                 .and_then(as_arr),
             m.get("data").and_then(as_arr),
         ),
-        Json::Arr(a) => (None, Some(a)),
+        JsonVal::Arr(a) => (None, Some(a)),
         _ => return None,
     };
     let mut col_names = Vec::new();
@@ -491,7 +349,7 @@ fn fetch_json_rows(root: &str, adql: &str) -> Option<(Vec<String>, Vec<Vec<Strin
                 }
             }
         }
-    } else if let Some(Json::Obj(o)) = data.as_ref().and_then(|d| d.first()) {
+    } else if let Some(JsonVal::Obj(o)) = data.as_ref().and_then(|d| d.first()) {
         for k in o.keys() {
             col_names.push(k.clone());
         }
@@ -503,16 +361,16 @@ fn fetch_json_rows(root: &str, adql: &str) -> Option<(Vec<String>, Vec<Vec<Strin
         if let Some(r) = as_arr(row) {
             for c in r {
                 cells.push(match c {
-                    Json::Str(s) => s.clone(),
-                    Json::Num(v) => format!("{}", v),
+                    JsonVal::Str(s) => s.clone(),
+                    JsonVal::Num(v) => format!("{}", v),
                     _ => String::new(),
                 });
             }
         } else if let Some(o) = as_obj(row) {
             for nm in &col_names {
                 cells.push(match o.get(nm) {
-                    Some(Json::Str(s)) => s.clone(),
-                    Some(Json::Num(v)) => format!("{}", v),
+                    Some(JsonVal::Str(s)) => s.clone(),
+                    Some(JsonVal::Num(v)) => format!("{}", v),
                     _ => String::new(),
                 });
             }
@@ -659,24 +517,24 @@ fn json_string(s: &str) -> String {
     o
 }
 
-fn get_str(o: &std::collections::HashMap<String, Json>, k: &str) -> Option<String> {
+fn get_str(o: &std::collections::HashMap<String, JsonVal>, k: &str) -> Option<String> {
     match o.get(k) {
-        Some(Json::Str(s)) => Some(s.clone()),
-        Some(Json::Num(v)) => Some(format!("{}", v)),
+        Some(JsonVal::Str(s)) => Some(s.clone()),
+        Some(JsonVal::Num(v)) => Some(format!("{}", v)),
         _ => None,
     }
 }
 
-fn as_arr(j: &Json) -> Option<&Vec<Json>> {
+fn as_arr(j: &JsonVal) -> Option<&Vec<JsonVal>> {
     match j {
-        Json::Arr(a) => Some(a),
+        JsonVal::Arr(a) => Some(a),
         _ => None,
     }
 }
 
-fn as_obj(j: &Json) -> Option<&std::collections::HashMap<String, Json>> {
+fn as_obj(j: &JsonVal) -> Option<&std::collections::HashMap<String, JsonVal>> {
     match j {
-        Json::Obj(m) => Some(m),
+        JsonVal::Obj(m) => Some(m),
         _ => None,
     }
 }
@@ -908,8 +766,8 @@ fn main() {
                 }
             };
             let cols = match &parsed {
-                Json::Obj(m) => m.get("data").and_then(as_arr),
-                Json::Arr(a) => Some(a),
+                JsonVal::Obj(m) => m.get("data").and_then(as_arr),
+                JsonVal::Arr(a) => Some(a),
                 _ => None,
             };
             let Some(cols) = cols else {
@@ -1168,12 +1026,14 @@ fn main() {
                     let n = tap_query(&root, &count_adql)
                         .and_then(|body| parse_json(&body))
                         .and_then(|j| {
-                            let Json::Obj(m) = j else { return None };
+                            let JsonVal::Obj(m) = j else { return None };
                             let data = m.get("data")?;
-                            let Json::Arr(rows) = data else { return None };
+                            let JsonVal::Arr(rows) = data else {
+                                return None;
+                            };
                             match rows.first()? {
-                                Json::Arr(a) => a.first().and_then(cell_num),
-                                Json::Obj(o) => o
+                                JsonVal::Arr(a) => a.first().and_then(cell_num),
+                                JsonVal::Obj(o) => o
                                     .get("COUNT_ALL")
                                     .or_else(|| o.get("COUNT"))
                                     .and_then(cell_num),
@@ -1375,14 +1235,14 @@ fn main() {
             if star_bin {
                 if let Some(up) = &union_bright {
                     if let Ok(text) = std::fs::read_to_string(up) {
-                        if let Some(Json::Arr(rows)) = parse_json(&text) {
+                        if let Some(JsonVal::Arr(rows)) = parse_json(&text) {
                             let mut added = 0usize;
                             for r in &rows {
                                 if let Some(o) = as_obj(r) {
                                     let get = |k: &str| -> Option<f64> {
                                         match o.get(k) {
-                                            Some(Json::Num(v)) => Some(*v),
-                                            Some(Json::Str(s)) => s.parse().ok(),
+                                            Some(JsonVal::Num(v)) => Some(*v),
+                                            Some(JsonVal::Str(s)) => s.parse().ok(),
                                             _ => None,
                                         }
                                     };
@@ -1557,10 +1417,10 @@ fn main() {
     }
 }
 
-fn row_str(j: &Json) -> String {
+fn row_str(j: &JsonVal) -> String {
     match j {
-        Json::Str(s) => s.trim_matches('"').to_string(),
-        Json::Num(v) => format!("{}", v),
+        JsonVal::Str(s) => s.trim_matches('"').to_string(),
+        JsonVal::Num(v) => format!("{}", v),
         _ => String::new(),
     }
 }

@@ -121,7 +121,7 @@ fn month_of(name: &str) -> Option<i64> {
     }
 }
 
-fn days_from_civil(year: i64, month: i64, day: i64) -> Option<i64> {
+pub fn days_from_civil(year: i64, month: i64, day: i64) -> Option<i64> {
     if !(1..=12).contains(&month) || !(1..=31).contains(&day) {
         return None;
     }
