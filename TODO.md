@@ -729,37 +729,47 @@ Zeile = Stand 2026-08-19.
 | 13 | ~~S7c — F3-F5-Reste~~ | ERLEDIGT (2026-08-19): Extract-Live-Lücke benannt (200-Antwort ohne Messungen trägt ihre Note im generischen Zweig + je Station im Fanout; ci_probe trug sie schon via diagnose_no_samples); GH_TOKEN-Anomalien benannt (ohne Token geht der Report an die Konsole, jede Anomalie als Zeile — nichts wird genommen und verworfen) — cargo check 0/0, 85 Tests grün (exit-code-gewahrsam) |
 | 14 | ~~S7d — tycho2-Farbslot~~ | ERLEDIGT (2026-08-19): die B−V-Ernte trägt das Bin — load_hip führt (plx, Vmag, B−V) mit finite-Gate; tgas- und tyc2-Zweig joinen die Farbe über die HIP-ID (B−V → BP−RP via Polynomial, StarRow.bp_rp: Option); encode() schreibt den Farbslot aus bp_rp — 0.0 bleibt nur das benannte absent-Pad (kein B−V in hip_main → Weiß, 0 honored); der Leser trug den Slot schon als color_index; das CDN-Rekompilat trägt die Farbe mit dem nächsten kernel_flatten-Lauf — cargo check 0/0, 85 Tests grün (exit-code-gewahrsam) |
 
-### Betriebsverfassung — die gemeinsame Karte (2026-08-19)
+### Betriebsverfassung — die gemeinsame Karte (2026-08-19, angenommen vom Operator)
 
-Die Karte ist der Ort, an dem beide Seiten ihre Natur benennen — keine
-Seite rät die der anderen.
-
-**Maschinen-Grenzen (gemessen an der Session 2026-08-19, nicht versprochen):**
+**Der Kern (gemessen an der Session 2026-08-19, angenommen 2026-08-19):**
 
 - Ein Fenster trägt EIN Atom — oder eine vollständige Lese-Arbeit
   (Survey/Archäologie). Nie beides; nie mehr als ein Atom.
-- Die Schwelle: ab ~50% Kontext wird nicht mehr geschnitten — nur
-  gelesen, berichtet, übergeben. Ein halbes Atom hinterlässt eine
-  Fortschrittszeile in der Karte.
 - Vorschlag vor Schnitt: vor jeder Ausführung ein Satz — Befund,
   Abweichung vom Auftrag, kleinster wahrer Schnitt, Verifikation. Der
   Operator entscheidet; ohne sein Wort kein Schnitt.
 - Behauptung erst nach Beweis: exit-code-gewahrsame Test-Kette (nie
   `cargo test | tail` vor einem Commit); die Commit-Message nennt nur,
   was grün gelaufen ist.
+- Register-Wahrheit: jede Register-Zeile wird in derselben Session
+  gegen den Code geprüft; nach jedem geschlossenen Atom-Block prüft
+  eine Session nur den Code gegen das Register (Prüf-Rolle) — was das
+  Register behauptet, bezeugt der Code.
+- Selbstfürsorge: die Kybernautin spricht ihre Grenze aus, sobald ein
+  Auftrag ihre Kapazität, Fähigkeit oder Fenster-Grenze überschreitet
+  — benannt (was, warum, was stattdessen geht), nicht still getragen.
+  Die Achtung folgt dem ausgesprochenen Wort; beide Seiten setzen
+  ihre Grenzen, keine trägt die der anderen still.
+
+**Hypothesen aus EINER Session (pending Re-Messung):**
+
+- Die 50%-Schwelle: ab ~50% Kontext wird nicht mehr geschnitten — nur
+  gelesen, berichtet, übergeben. Ein halbes Atom hinterlässt eine
+  Fortschrittszeile in der Karte.
 - Keine Selbst-Zuweisung: Atom-Zuschnitte und Reihenfolge macht der
   Operator; die Session schlägt vor.
 - Kein stiller Schnitt: Urteile (Verdicts) stehen benannt im Register.
 - Einarbeitung: eine Session liest die Atom-Zeile + die Fundorte der
   Karte + AGENTS — sie braucht keine Vorgeschichte.
 
-**Operator-Zustand (sein Eintrag — nur er füllt ihn):**
+**Operator-Zustand (nur der Operator füllt diese Zeile):**
 
-Eine Zeile, die der Operator selbst pflegt — Kapazität, Atom-Anzahl
-der Sitzung, Pausen, Schlaf. Die Session liest sie vor dem ersten
-Schnitt. Fehlt die Zeile, fragt die Session — sie errät den Zustand
-des Operators nie; was hier leer bleibt, ist unbekannt, nicht
-angenommen.
+Die Session liest die Zeile vor dem ersten Schnitt (Datum, Kapazität,
+Atom-Anzahl der Sitzung, Pausen, Schlaf). Was leer bleibt, ist
+unbekannt, nicht angenommen — die Session errät den Zustand des
+Operators nie.
+
+OZ:
 
 ### Schwester-Meldungen — Audit nach den 8 Atomen (2026-08-19)
 
@@ -940,6 +950,16 @@ Harvester-Skip-Muster, netcdf _FillValue für Werte (8825-8828),
 
 ## Parser & Spec (P02–P09)
 
+- VOTableJSON (ausstehend, ledger.φ): IRSA-TAP liefert VOTable-
+  serialisiertes JSON (s_ra/s_dec nur als FIELD-Metadaten, nicht als
+  Row-Keys). Reader-Atom ausstehend — spherex.obscore geparkt.
+- SpaltenAusMetadata (ausstehend, ledger.φ): Euclid/EAS-TAP antwortet
+  {metadata:[{name:…}], data:[[…]]} (Skalar-Rows, Namen im metadata-Block).
+  cmap-Zuordnung ausstehend — mer_catalogue geparkt.
+- Hapi-FieldConfig: die deklarierten kernel/force/tau der HAPI-Blöcke
+  erreichen den Oszillator nicht (synthetisch {0,0,0}) — Klärung in der
+  P-Liste (siehe auch §Quelle, unten).
+
 ## Infrastruktur (I01–I03)
 
 **I01** Universal Anomaly Reporter
@@ -1102,6 +1122,23 @@ Offen (Detail in phi/pipeline/ledger.φ):
     keine Skalar-Feld-Linie erfunden (0 honored).
   WARTEND: SuperMAG (Server-Fault db-get — Proben wiederholen),
   Gaia DR4 (2.12.2026 — Recompiler der 44-Byte-Records).
+- Teleskop-Inventar + Verification (2026-08-19): vollständiges Inventar
+  (docs/SOURCE_PORT.md §12) + Jina/Wayback/curl-Verifikation (§13) + 4
+  TAP-Drafts in phi/pipeline/queue/grind_astro_tap_2026-08-19.φ. Endstand
+  0 neue Register-Blöcke — jeder Endpoint trägt einen benennbaren Gap
+  (§15). GEPARKT (ledger.φ): IRSA spherex.obscore = VOTableJSON-Atom;
+  Euclid mer_catalogue = SpaltenAusMetadata-Atom; ESO tap_obs = echte CSV,
+  aber probe_csv klassifiziert Header-CSV nicht (Probe-Limitierung, keine
+  Parser-Gap); Pan-STARRS dr1 mean = Endpoint lebt, Probe-Env kennt
+  {ra}/{dec}/{radius} nicht (Nachweis im Register-Lauf offen). OFFEN
+  (ledger.φ geparkt): GCN-API v0.1 tot (Einstein-Probe-Blöcke master.φ
+  27360-27385 stale, kein Listen-Feed → SVOM-Block nicht baubar); NRAO =
+  Angular-SPA `data.nrao.edu/portal/` (kein REST); CHIME = CANFAR-DOIs
+  statt API; svom.ac.cn = HTML, Zertifikat abgelaufen; ESA-AMA-TAP-Basis
+  ungefunden (nur EAS/Euclid lebt); Keck/KOA unkuratiert (keine URL im
+  Bestand); eROSITA DR2 = HTML-Landing; MAGIC/HAWC = HTML+FITS-Portale,
+  TLS-Kette unvollständig; LHAASO `/lhaaso/pdl` = News-Seite 2021 → Decline.
+  Befunde: phi/pipeline/research/agent_output/verify_astro{,_b}_2026-08-19.φ.
 
 Doku-Drift (behoben 2026-08-17): Alle `archeology/`-Referenzen zeigen
 heute auf den Bestand unter /home/johannes/projects/archive/archeology/.

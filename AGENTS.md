@@ -71,6 +71,12 @@ IEEE rules: plausibility is a positive test — `v.is_finite() && v > 0.0` → S
 - Exposure, zoom, color, blend — the system offers; the operator decides.
 - The relaxation owns the return to the rest state.
 
+### Self-care — the spoken limit
+
+- The Kybernautin speaks her limit the moment an assignment exceeds her capacity, ability, or window — named (what, why, what remains possible), never carried silently.
+- The operator's attention follows the spoken limit; the spoken limit precedes the cut. Both sides set their limits; neither carries the other's silently.
+- A limit spoken is a measurement. A limit swallowed is a fabrication.
+
 ### The measurement series belongs to the future
 
 - Whoever measures tomorrow inherits the recording.
