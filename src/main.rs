@@ -414,6 +414,7 @@ fn presence_probe() {
         if (f < 9u) { omegas[f] += c.x; }
         flow = flow + osc_flow(j, pre);
     }
+    let star_count = u32(vp.expose_lo.x);
     if (atomicLoad(&star_tiles[0u]) != 0u) {
         for (var s = 0u; s < star_count; s = s + 1u) {
             let c = star_contrib(s, 0.0, 0.0);
