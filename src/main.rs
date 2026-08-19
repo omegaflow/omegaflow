@@ -317,9 +317,9 @@ fn val_eff_grad(pre: vec4f, tm: vec4f, v: f32, d_mag: f32) -> f32 {
 fn osc_field(j: u32, rel: vec3f, pre: vec4f) -> vec2f {
     let tm = field[j * 3u + 1u];
     let fm = field[j * 3u + 2u];
-    let mt = props[j * 3u];
-    let mp = props[j * 3u + 1u];
-    let mg = props[j * 3u + 2u];
+    let mt = props[j * 4u];
+    let mp = props[j * 4u + 1u];
+    let mg = props[j * 4u + 2u];
     let delta = pre.xyz - rel;
     let d2 = dot(delta, delta);
     let d_mag = sqrt(d2);
@@ -351,9 +351,9 @@ fn osc_field(j: u32, rel: vec3f, pre: vec4f) -> vec2f {
 fn osc_flow(j: u32, pre: vec4f) -> vec3f {
     let tm = field[j * 3u + 1u];
     let fm = field[j * 3u + 2u];
-    let mt = props[j * 3u];
-    let mp = props[j * 3u + 1u];
-    let mg = props[j * 3u + 2u];
+    let mt = props[j * 4u];
+    let mp = props[j * 4u + 1u];
+    let mg = props[j * 4u + 2u];
     let delta = pre.xyz;
     let d2 = dot(delta, delta);
     let d_mag = sqrt(d2);
@@ -397,7 +397,7 @@ fn presence_probe() {
         let m = field[j * 3u];
         let tm = field[j * 3u + 1u];
         let fm = field[j * 3u + 2u];
-        let mt = props[j * 3u];
+        let mt = props[j * 4u];
         let v_rel = fm.yzw - v_obs;
         let propagated = m.xyz + v_rel * dt;
         let temporal = abs(vp.presence.w - tm.x);
@@ -454,9 +454,9 @@ fn source_bound(j: u32, x0: f32, x1: f32, y0: f32, y1: f32) -> f32 {
     let pre = pp[j];
     let tm = field[j * 3u + 1u];
     let fm = field[j * 3u + 2u];
-    let mt = props[j * 3u];
-    let mp = props[j * 3u + 1u];
-    let mg = props[j * 3u + 2u];
+    let mt = props[j * 4u];
+    let mp = props[j * 4u + 1u];
+    let mg = props[j * 4u + 2u];
     let p = pp[u32(vp.surface.z) + j];
     let sx = dot(pre.xyz, vp.right.xyz);
     let sy = dot(pre.xyz, vp.up.xyz);
@@ -556,9 +556,9 @@ fn source_contrib(j: u32, pixel_rel: vec3f) -> vec4f {
     let p = pp[u32(vp.surface.z) + j];
     let tm = field[j * 3u + 1u];
     let fm = field[j * 3u + 2u];
-    let mt = props[j * 3u];
-    let mp = props[j * 3u + 1u];
-    let mg = props[j * 3u + 2u];
+    let mt = props[j * 4u];
+    let mp = props[j * 4u + 1u];
+    let mg = props[j * 4u + 2u];
     let delta = pre.xyz - pixel_rel;
     let sd = dot(pre.xyz, vp.forward.xyz);
     let d2 = dot(delta, delta);
@@ -1971,6 +1971,8 @@ mod archivar {
         f64,
         f64,
         f64,
+        f64,
+        f64,
     );
 
     fn cell_of(p: [f64; 3], s: f64) -> CellKey {
@@ -2351,6 +2353,8 @@ mod archivar {
                     0.0,
                     0.0,
                     0.0,
+                    0.0,
+                    0.0,
                 ));
                 if rec.radius_km > 0.0 {
                     records.push((
@@ -2369,6 +2373,8 @@ mod archivar {
                         v[0],
                         v[1],
                         v[2],
+                        0.0,
+                        0.0,
                         0.0,
                         0.0,
                         0.0,
@@ -2666,30 +2672,7 @@ mod archivar {
         t2: f64,
         pad: f64,
         delta_t_cache: f64,
-        records: &mut Vec<(
-            f64,
-            f64,
-            f64,
-            f64,
-            f64,
-            f64,
-            f64,
-            f64,
-            f64,
-            f64,
-            f64,
-            f64,
-            f64,
-            f64,
-            f64,
-            f64,
-            f64,
-            f64,
-            f64,
-            f64,
-            f64,
-            f64,
-        )>,
+        records: &mut Vec<OscRecord>,
         eph: &HashMap<String, BodyEphemeris>,
     ) {
         for osc in &hash.unbounded {
@@ -2743,6 +2726,8 @@ mod archivar {
                     None => 0.0,
                 },
                 r_eq,
+                0.0,
+                0.0,
                 0.0,
             ));
         }
@@ -2857,6 +2842,8 @@ mod archivar {
                         None => 0.0,
                     },
                     r_eq,
+                    0.0,
+                    0.0,
                     0.0,
                 ));
             }
@@ -16720,30 +16707,7 @@ mod mathematikerin {
         "sun", "mercury", "venus", "earth", "mars", "jupiter", "saturn", "uranus", "neptune",
     ];
 
-    pub type Record = (
-        f64,
-        f64,
-        f64,
-        f64,
-        f64,
-        f64,
-        f64,
-        f64,
-        f64,
-        f64,
-        f64,
-        f64,
-        f64,
-        f64,
-        f64,
-        f64,
-        f64,
-        f64,
-        f64,
-        f64,
-        f64,
-        f64,
-    );
+    pub type Record = OscRecord;
 
     pub struct PackedWindow {
         pub field: Vec<f32>,
@@ -16900,9 +16864,10 @@ mod mathematikerin {
     pub fn pack_window(records: &[Record], presence: [f64; 3]) -> PackedWindow {
         let n = records.len();
         let mut field = vec![0.0f32; n * 12];
-        let mut meta = vec![0.0f32; n * 12];
+        let mut meta = vec![0.0f32; n * 16];
         for (j, r) in records.iter().enumerate() {
             let f = j * 12;
+            let m = j * 16;
             field[f] = (r.0 - presence[0]) as f32;
             field[f + 1] = (r.1 - presence[1]) as f32;
             field[f + 2] = (r.2 - presence[2]) as f32;
@@ -16915,18 +16880,22 @@ mod mathematikerin {
             field[f + 9] = r.12 as f32;
             field[f + 10] = r.13 as f32;
             field[f + 11] = r.14 as f32;
-            meta[f] = r.7 as f32;
-            meta[f + 1] = r.6 as f32;
-            meta[f + 2] = r.8 as f32;
-            meta[f + 3] = if r.9 == 0.0 { r.15 as f32 } else { 0.0 };
-            meta[f + 4] = r.15 as f32;
-            meta[f + 5] = r.16 as f32;
-            meta[f + 6] = r.17 as f32;
-            meta[f + 7] = r.18 as f32;
-            meta[f + 8] = r.19 as f32;
-            meta[f + 9] = r.20 as f32;
-            meta[f + 10] = r.21 as f32;
-            meta[f + 11] = 0.0;
+            meta[m] = r.7 as f32;
+            meta[m + 1] = r.6 as f32;
+            meta[m + 2] = r.8 as f32;
+            meta[m + 3] = if r.9 == 0.0 { r.15 as f32 } else { 0.0 };
+            meta[m + 4] = r.15 as f32;
+            meta[m + 5] = r.16 as f32;
+            meta[m + 6] = r.17 as f32;
+            meta[m + 7] = r.18 as f32;
+            meta[m + 8] = r.19 as f32;
+            meta[m + 9] = r.20 as f32;
+            meta[m + 10] = r.21 as f32;
+            meta[m + 11] = r.22 as f32;
+            meta[m + 12] = r.23 as f32;
+            meta[m + 13] = 0.0;
+            meta[m + 14] = 0.0;
+            meta[m + 15] = 0.0;
         }
         PackedWindow {
             field,
@@ -16967,7 +16936,7 @@ mod mathematikerin {
             if !v.is_finite() || v == 0.0 {
                 continue;
             }
-            if v.abs() == meta[j * 12] {
+            if v.abs() == meta[j * 16] {
                 continue;
             }
             let l = v.abs().log2();
@@ -17413,6 +17382,8 @@ mod mathematikerin {
                 star.cadence,
                 0.0,
                 kernel as f64,
+                0.0,
+                0.0,
                 0.0,
                 0.0,
                 0.0,
@@ -18527,8 +18498,8 @@ mod mathematikerin {
         }
 
         fn window_median_extent(&self) -> f32 {
-            let mut exts = Vec::with_capacity(self.packed_meta.len() / 12);
-            for m in self.packed_meta.chunks_exact(12) {
+            let mut exts = Vec::with_capacity(self.packed_meta.len() / 16);
+            for m in self.packed_meta.chunks_exact(16) {
                 let e = m[0];
                 if e > 0.0 && e.is_finite() {
                     exts.push(e);
@@ -18733,7 +18704,7 @@ mod mathematikerin {
                 }));
                 self.meta_bufs[sel] = Some(device.create_buffer(&wgpu::BufferDescriptor {
                     label: None,
-                    size: c as u64 * 48,
+                    size: c as u64 * 64,
                     usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
                     mapped_at_creation: false,
                 }));
@@ -20057,7 +20028,7 @@ mod mathematikerin {
             let r: Record = (
                 7001.0, 7002.0, 7003.0, 7004.0, 7005.0, 7006.0, 7007.0, 7008.0, 7009.0, 7010.0,
                 7011.0, 7012.0, 7013.0, 7014.0, 7015.0, 7016.0, 7017.0, 7018.0, 7019.0, 7020.0,
-                7021.0, 7022.0,
+                7021.0, 7022.0, 7023.0, 7024.0,
             );
             let packed = pack_window(&[r], presence);
             assert_eq!(packed.count, 1);
@@ -20086,7 +20057,11 @@ mod mathematikerin {
             assert_eq!(m[8], 7020.0);
             assert_eq!(m[9], 7021.0);
             assert_eq!(m[10], 7022.0);
-            assert_eq!(m[11], 0.0);
+            assert_eq!(m[11], 7023.0);
+            assert_eq!(m[12], 7024.0);
+            assert_eq!(m[13], 0.0);
+            assert_eq!(m[14], 0.0);
+            assert_eq!(m[15], 0.0);
         }
 
         #[test]
@@ -20197,7 +20172,7 @@ mod mathematikerin {
         #[test]
         fn force_ref_medians_skips_length_annotations() {
             let mut field = vec![0.0f32; 24];
-            let mut meta = vec![0.0f32; 24];
+            let mut meta = vec![0.0f32; 32];
             field[3] = 2.0f32.powi(20);
             field[6] = 1.0;
             meta[0] = 2.0f32.powi(20);
@@ -20250,10 +20225,10 @@ mod mathematikerin {
                     mpsc::channel().0,
                 )
             };
-            app.packed_meta = vec![0.0; 36];
+            app.packed_meta = vec![0.0; 48];
             app.packed_meta[0] = 30.0;
-            app.packed_meta[12] = 10.0;
-            app.packed_meta[24] = 20.0;
+            app.packed_meta[16] = 10.0;
+            app.packed_meta[32] = 20.0;
             assert_eq!(app.window_median_extent(), 20.0);
         }
 
@@ -20274,7 +20249,7 @@ mod mathematikerin {
                     mpsc::channel().0,
                 )
             };
-            app.packed_meta = vec![0.0; 12];
+            app.packed_meta = vec![0.0; 16];
             assert_eq!(app.window_median_extent(), 1.0);
         }
 
@@ -21074,9 +21049,9 @@ mod relay {
                     response_epoch = now;
                 }
 
-                let mut out = Vec::with_capacity(19 + records.len() * 176);
+                let mut out = Vec::with_capacity(19 + records.len() * 192);
                 out.extend_from_slice(&[0xCF, 0x86]);
-                out.push(7u8);
+                out.push(8u8);
                 out.extend_from_slice(&response_epoch.to_le_bytes());
                 out.extend_from_slice(&id.to_le_bytes());
                 out.extend_from_slice(&(records.len() as u32).to_le_bytes());
@@ -21103,6 +21078,8 @@ mod relay {
                     j4,
                     r_eq,
                     color_index,
+                    freq,
+                    bin_width,
                 ) in &records
                 {
                     out.extend_from_slice(&x.to_le_bytes());
@@ -21127,6 +21104,8 @@ mod relay {
                     out.extend_from_slice(&j4.to_le_bytes());
                     out.extend_from_slice(&r_eq.to_le_bytes());
                     out.extend_from_slice(&color_index.to_le_bytes());
+                    out.extend_from_slice(&freq.to_le_bytes());
+                    out.extend_from_slice(&bin_width.to_le_bytes());
                 }
                 if let Err(e) = write_ws_binary(&mut stream, &out) {
                     eprintln!(

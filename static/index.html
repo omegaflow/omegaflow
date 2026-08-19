@@ -149,7 +149,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0908; c
             ws.addEventListener('message', (e) => {
                 if (typeof e.data !== 'string') {
                     const buf = new Uint8Array(e.data);
-                    if (buf.length < 19 || buf[0] !== 0xCF || buf[1] !== 0x86 || buf[2] !== 7) return;
+                    if (buf.length < 19 || buf[0] !== 0xCF || buf[1] !== 0x86 || buf[2] !== 8) return;
                     const dv = new DataView(buf.buffer, buf.byteOffset, buf.byteLength);
                     const id = dv.getUint32(11, true);
                     const pending = transport.pending.get(id);
@@ -348,9 +348,9 @@ fn osc_field(j: u32, rel: vec3f, dt: f32) -> vec2f {
     let m = field[j * 3u];
     let tm = field[j * 3u + 1u];
     let fm = field[j * 3u + 2u];
-    let mt = props[j * 3u];
-    let mp = props[j * 3u + 1u];
-    let mg = props[j * 3u + 2u];
+    let mt = props[j * 4u];
+    let mp = props[j * 4u + 1u];
+    let mg = props[j * 4u + 2u];
     let v_obs = vec3f(vp.right.w, vp.up.w, vp.forward.w) * C_VACUUM;
     let v_rel = fm.yzw - v_obs;
     let propagated = m.xyz + v_rel * dt;
@@ -525,7 +525,7 @@ fn presence_probe() {
             if (metaBuf) metaBuf.destroy();
             try {
                 fieldBuf = gpu.createBuffer({ size: fieldCap * 48, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST });
-                metaBuf = gpu.createBuffer({ size: fieldCap * 48, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST });
+                metaBuf = gpu.createBuffer({ size: fieldCap * 64, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST });
                 if (!fieldBuf || !metaBuf) { reportState('gpu', 'ensureFieldCapacity: fieldBuf/metaBuf null'); return; }
                 fieldBind = gpu.createBindGroup({ layout: fieldLayout, entries: [
                     { binding: 0, resource: { buffer: fieldBuf } },
@@ -585,7 +585,7 @@ fn presence_probe() {
                 const rawm = rawWindowResponse.meta;
                 try {
                     gpu.queue.writeBuffer(fieldBuf, 0, raw.subarray(0, n * 12));
-                    gpu.queue.writeBuffer(metaBuf, 0, rawm.subarray(0, n * 12));
+                    gpu.queue.writeBuffer(metaBuf, 0, rawm.subarray(0, n * 16));
                     uploadCount++;
                 } catch { uploadErrors++; }
             }
@@ -641,7 +641,7 @@ fn presence_probe() {
                 const meta = rawWindowResponse.meta;
                 const n = rawWindowResponse.count;
                 const exts = [];
-                for (let i = 0; i < n; i++) { const e = meta[i * 12]; if (e > 0) exts.push(e); }
+                for (let i = 0; i < n; i++) { const e = meta[i * 16]; if (e > 0) exts.push(e); }
                 mxVal = exts.length === 0 ? 1 : exts.sort((a, b) => a - b)[exts.length >> 1];
             }
             return mxVal;

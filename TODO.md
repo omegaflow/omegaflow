@@ -81,6 +81,30 @@ ist entfernt, die offenen Reste aus den geschlossenen Atomen sind hierher gezoge
   Oszillator-Eigenradius als Rekord-Slot.
 - Atom 1 deckt den Weg für Ringe/Warp — noch kein Konzept-Dokument.
 
+## Der spektrale Oszillator — die Frequenzachse (Konzept: DER_SPEKTRALE_OSZILLATOR.md)
+
+- Atom A (Protokoll v8): ERLEDIGT (2026-08-19) — Record 24×f64
+  (`freq`, `bin_width`, 0.0 = Punktquelle); Frame `0xCF 0x86 0x08`;
+  meta-Stride 12→16 f32, props-Stride 3→4 in beiden WGSL; Befund der
+  Umsetzung: meta[3] war NICHT frei (Tolman-z bei em) — die neuen
+  Slots sind meta[11]=freq + meta[12]=bin_width; der JS-Parse setzt
+  jetzt das z wie das Rust-Pack (Schichten identisch); Golden-Test
+  m[11]/m[12], naga-Validierung, BINARY_PROTOCOL.md v6→v8, AGENTS.md,
+  prompt.φ v8.
+- Atom B (Spectral-Compiler): offen, eigene Session — NCEI-SSI zuerst
+  (λ→ν, beweist die Kette), ONC-HSD-FFT (Route verifiziert:
+  dataProductDelivery-Kette, 512 Bins × 250 Hz, implizite Achse),
+  Gaia-XP (gdr3spec.spectra-Bulk), LISA-PSD + CMB-Power (Freq-/l-Achse
+  statt Skalar-Reduktion), GONG + miniSEED (Waveforms, std-only-FFT).
+- Atom C (band-selektives Rendering): offen — Shader akkumuliert pro
+  Band; Stillekarte band-selektiv, Lichtkegel-Differenz dispersiv,
+  chromatischer Dip als SED-Messung.
+- Atom D (Phase): terminiert nach C — Beats/Interferenz brauchen die
+  komplexe FFT; PSD-Bins tragen sie nicht (0 honored).
+- Regeln: kein Namens-Trick (Frequenz lebt als Token, nie im String),
+  kein Skalar-Schallpegel aus Spektren errechnet, jedes Atom ein
+  vollständiges Session-Artefakt.
+
 ## Stern-/Asteroiden-Physik — abgeleitete Geometrie + Ernte-Folgen
 
 Die Daten sind geerntet (Sternkinematik pmra/pmdec/rv + Farbe
@@ -290,10 +314,10 @@ Offen (Detail in phi/pipeline/ledger.φ):
   dataselect (miniSEED-Zeitreihe) brauchen echte Decoder — beide
   AUSSTEHEND hinter dem Gate; miniSEED-Frage: eine Waveform zerfällt
   in Samples (TESS-Muster, [t, flux]-Reihe) ODER in Bins
-  (Spektral-Atom) — das Instrument deklariert seine Basis; ein
-  universelles freq-Record-Feld ist UNWAHR (gravity/thermal/diffusion
-  besitzen keine Frequenz; color_index/tau/z tragen sie bereits
-  reduziert); (4) Hand-Client vs. Crate: AUSSTEHEND — fällig erst, wenn
+  (Spektral-Atom) — das Instrument deklariert seine Basis. Seit
+  Protokoll v8 (2026-08-19) trägt der Record `freq`/`bin_width` —
+  0.0 = Punktquelle, die ehrliche Abwesenheit (kein Pflicht-Feld mit
+  Fabrikation); (4) Hand-Client vs. Crate: AUSSTEHEND — fällig erst, wenn
   ein Kafka-only-Feed das Gate passiert.
 - Offen (src/ — Rust-Kybernautin): SuperMAG (leading-line „OK"-Strip
   lebt; Positions-Join + station-Filter bleiben server-blockiert —

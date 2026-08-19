@@ -66,7 +66,7 @@ export async function syncFrame(inputs, queries, presence) {
     const bytes = new Uint8Array(buffer);
     const dvRes = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
     if (bytes.length < 19 || bytes[0] !== 0xCF || bytes[1] !== 0x86) return emptyResp;
-    if (bytes[2] !== 7) throw new Error('protocol mismatch');
+    if (bytes[2] !== 8) throw new Error('protocol mismatch');
 
     let o = 3;
     const response_epoch = dvRes.getFloat64(o, true); o += 8;
@@ -74,10 +74,10 @@ export async function syncFrame(inputs, queries, presence) {
     const oscCount = dvRes.getUint32(o, true); o += 4;
 
     const field = new Float32Array(oscCount * 12);
-    const meta = new Float32Array(oscCount * 12);
+    const meta = new Float32Array(oscCount * 16);
 
     for (let i = 0; i < oscCount; i++) {
-        if (o + 176 > bytes.length) throw new Error('protocol mismatch: truncated frame');
+        if (o + 192 > bytes.length) throw new Error('protocol mismatch: truncated frame');
         const x = dvRes.getFloat64(o, true); o += 8;
         const y = dvRes.getFloat64(o, true); o += 8;
         const z = dvRes.getFloat64(o, true); o += 8;
@@ -100,6 +100,8 @@ export async function syncFrame(inputs, queries, presence) {
         const j4 = dvRes.getFloat64(o, true); o += 8;
         const r_eq = dvRes.getFloat64(o, true); o += 8;
         const color_index = dvRes.getFloat64(o, true); o += 8;
+        const freq = dvRes.getFloat64(o, true); o += 8;
+        const bin_width = dvRes.getFloat64(o, true); o += 8;
 
         const fOff = i * 12;
         if (presence) {
@@ -121,11 +123,11 @@ export async function syncFrame(inputs, queries, presence) {
         field[fOff + 10] = vy;
         field[fOff + 11] = vz;
 
-        const mOff = i * 12;
+        const mOff = i * 16;
         meta[mOff] = extent;
         meta[mOff + 1] = tau;
         meta[mOff + 2] = kernel_id;
-        meta[mOff + 3] = 0;
+        meta[mOff + 3] = force_type === 0 ? pole_x : 0;
         meta[mOff + 4] = pole_x;
         meta[mOff + 5] = pole_y;
         meta[mOff + 6] = pole_z;
@@ -133,7 +135,11 @@ export async function syncFrame(inputs, queries, presence) {
         meta[mOff + 8] = j4;
         meta[mOff + 9] = r_eq;
         meta[mOff + 10] = color_index;
-        meta[mOff + 11] = 0;
+        meta[mOff + 11] = freq;
+        meta[mOff + 12] = bin_width;
+        meta[mOff + 13] = 0;
+        meta[mOff + 14] = 0;
+        meta[mOff + 15] = 0;
     }
     return { field, meta, count: oscCount, response_epoch };
 }
