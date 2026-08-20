@@ -48,6 +48,7 @@ ausstehend 0 queue/grind_b2find.φ
 ausstehend 0 queue/grind_domain_coverage.φ
 ausstehend 0 queue/grind_esa.φ
 ausstehend 0 queue/grind_arcgis_deep.φ
+ausstehend 136 queue/grind_dataverse.φ
 
 # ------------------------------------------------------------------
 # RECHERCHE-BESTAND — Katalog-Inventare (Quellen für neue Blöcke)
@@ -64,6 +65,9 @@ ausstehend 0 katalog/tap_index_mast.φ
 ausstehend 0 katalog/tap_index_chandra.φ
 ausstehend 0 katalog/erddap_bcodmo_catalog.φ
 ausstehend 0 katalog/erddap_noaa_pmel_catalog.φ
+ausstehend 0 katalog/dataverse_harvard.φ
+ausstehend 0 katalog/dataverse_borealis.φ
+ausstehend 0 katalog/oai_arxiv.φ
 ausstehend 0 katalog/b2find_catalogs_index.φ
 ausstehend 0 katalog/b2find_intermagnet_catalog.φ
 ausstehend 0 katalog/grind_eogateway_index.φ

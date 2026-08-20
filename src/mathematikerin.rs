@@ -338,7 +338,8 @@ fn source_contrib(j: u32, pixel_rel: vec3f) -> vec4f {
         let f = u32(c.y);
         if (f < 9u) {
             omega[f] += c.x;
-            let lum = lum_ratio(abs(c.x), ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, f));
+            let lum = lum_ratio(abs(c.x), ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, f))
+                * scale * scale;
             if (f == 0u) { rgb += color_lut_rgb(c.z) * lum; }
             else { rgb += hsl_to_rgb(fract(log2(max(c.w, 1.0)) / 16.0), 1.0, 0.5) * lum; }
         }

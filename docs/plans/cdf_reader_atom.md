@@ -1,5 +1,13 @@
 # Session-Plan: cdf_reader-Atom — die CDF-Ernte (LIRA + Berkeley + Wind/wav_h1)
 
+DURCHGEFÜHRT 2026-08-20 (Ergebnisse in solar_akteure_probe.φ + ledger.φ +
+TODO.md): Parser src/cdf.rs (CDF-3.9, Encoding 1+6, gzip-CVVR),
+bia_efield_compiler, LIRA-Ernte 2022-11-25→2025-12-31 (200544 Records,
+gemergt 347692, CDN-Upload). Session-Frage 1: gzip-Block-Kompression,
+EDC_SRF f32[3], TT2000. Frage 2: Berkeley-VSC nicht auf dem live-Baum,
+bleibt pending. Frage 3: AMDA ≠ LIRA (~50 %, Reprocessing), CDAWeb == LIRA.
+Wind/WAVES verschoben (eigenes Atom, Parser steht).
+
 Registriert 2026-08-20. Träger dreier Payloads: das LIRA-BIA-E-Feld
 2023–2025 (die solare electric-Lücke), PSP-VSC (Berkeley) und
 Wind/WAVES wi_h1_wav (E_VOLTAGE_RAD2, 1994–2021).

@@ -42,7 +42,17 @@ die Antwort. Offen vor jeder physikalischen Aussage:
 - KDE-Bandbreite: Silverman-Heuristik, Sensitivität der Urteile gegen h
   ungeprüft;
 - Fenster-Kongruenz: Sekunden-Kontrolle lief auf dem ~2-d-Fenster;
-  OMNI↔GOES-Schnittmenge bleibt leer (stopDate 06.08.).
+  OMNI↔GOES-Schnittmenge bleibt leer (stopDate 06.08.);
+- nobel_probe_corona v2 (Multi-Force-TE): der Probe läuft auf der
+  skalaren Pairwise-TE (`transfer_entropy_lag`) — die bedingte
+  Multi-Force-TE (alle Kräfte im Phasenraum, DAG über alle Paare
+  und Verzögerungen) ist pending;
+- Desktop-Fork (GTX 970): der Lauf mit 30-Jahres-Daten braucht die
+  GPU (1664 CUDA-Cores) — die O(n²) × Surrogate-Kosten gegenrechnen
+  (~80–90 min gemessen);
+- 90-Tage-Archive für den Lauf (Bz/GOES/GONG): GONG steht (31
+  Jahre); Bz/GOES hängen am GOES-30d-Archiv-Block (pending, unten)
+  und am OMNI-Ingest-Verzug.
 Kurations-Befunde: NGDC-NetCDF (GOES-30d) trägt 404 → fehlt-
 Registratur, kein Block; `1/cm3`-Alias ergänzt; HAPI-Reihen über die
 Identitäts-LSK; Radio ↔ GOES trägt keine Aussage (n = 15, n-Schwelle
@@ -51,46 +61,25 @@ O(n²) × Surrogate-Kosten gegenrechnen.
 GOES-30d-Archiv-Block bleibt pending (kein lebender Kandidat);
 bis dahin trennt der OMNI-Ingest-Verzug (stopDate 06.08.) OMNI↔GOES —
 Schnittmenge leer, im Protokoll fehlt.
-Solar-Kuration (2026-08-20, Nadel Ⅲ): die vier SWPC-Kanäle stehen im
-Block — xrays-1-day → xrays-7-day (at sun, `last flux`); rtsw_mag/
-rtsw_wind at earth → at sun (der Signalkegel trägt die Laufzeit);
-Wind-Kräfte korrigiert: proton_speed → advective patch-levy (advection
-400000.0 m/s = charakteristische Sonnenwind-Geschwindigkeit — vorher
-em, inverse-square), proton_density → diffusion gaussian-inverse-square
-(1/cm3 jetzt in der diffusion-Unit-Registry), proton_temperature →
-thermal exponential-decay K (vorher em — Umklassifikation, benannt).
-Solar-Akteure (2026-08-20, eine Session): der electric-Kanal ist
-freigemacht und trägt jetzt die Messung. E1800 (OMNI) entfernt —
-E = −V×B ist ein Konfounder (derived, dead_sources.φ). Solar Orbiter
-RPW: AMDA-HAPI solo-rpw-efield10s verifiziert (Ey/Ez echt, ex=fill,
-Coverage 2020-06-15→2022-12-01) und als rpw_efield.bin geerntet
-(rpw_compiler, 147148 Records, 10-min-Mediane — Statistik der
-10-s-Reihe, benannt; absent Komponente trägt keinen Record) — Block
-`format rpw_efield` at solar_orbiter (Position = Ephemeride am
-Sample-Epoch, Retention 64 h: die 2-Jahres-Epoche ist navigierbar,
-nicht simultan). Der akustische Kanal trägt GONG: gong_compiler
-erntet die vmt-Moden (mrvmtYYMMDDdNNN.fits, dNNN = L, 31 Jahre
-199505→laufend, vmt-Lag ~3,5 Monate) — FITS-Image-HDU im NOAO-IRAF-
-Kernel (big-endian f32, GHIST-Historie vor der END-Karte, Slot
-m = 0..L + Gültigkeitsmaske, Achse 3 = Real/Imaginär) ist in
-fits.rs gebaut; 496 Moden (L 0..30, rms über das 36-d-Fenster,
-Fenstermitte als epoch) → gong_modes.bin, Block `format gong_modes`
-at sun (acoustic m/s). Ω_g: Sonnenkern-Rotation 1277 ± 10 nHz als
-gravity-BodyProperty — solar_omega_g.φ, stype-7-Sektion im
-ephemeris_compiler, body_channels trägt sun.omega_g (freq/bin_width
-= Ω_g/σ, tau = 1/Ω_g); der g-Moden-Oszillator selbst bleibt pending
-(0 honored — einzeln nie gemessen). Der Live-Block steht:
-CDAWeb-HAPI SOLO_L2_RPW-TDS-SURV-STAT (SN_RMS_E V/m, 16-s-Kadenz,
-Coverage bis 2026-03-25) — der Publikations-Lag (~5 Monate) lässt
-das {hour_ago}-Fenster heute leer (0 honored), sobald die NASA
-erweitert, fließt der Kanal. Pending: GONG L 31..200 (CI --lmax
-200) + mparam-Eigenfrequenzen für freq/bin_width, GOLF (Medoc 000),
-cdf_reader (Berkeley-VSC-Feld), die 2022-2026-RPW-Lücke als
-Kompilat, PSP-DFB = em-Spektralkanal (Force-Gate-Urteil, kein
-electric-Katalysator). CI: kernel_flatten sun job (gong monthly,
-rpw einmalig mit Asset-Guard, bodies job trägt --omega-g). Befunde
-selbsttragend: phi/pipeline/research/agent_output/
-solar_akteure_probe.φ.
+Solar-Akteure — pending (2026-08-20): der g-Moden-Oszillator
+selbst (0 honored — einzeln nie gemessen); der CDAWeb-Live-Block
+(SOLO_L2_RPW-TDS-SURV-STAT, SN_RMS_E V/m, 16-s-Kadenz) — der
+Publikations-Lag (~5 Monate, stopDate 2026-03-25) lässt das
+{hour_ago}-Fenster heute leer (0 honored), sobald die NASA
+erweitert, fließt der Kanal. Pending: Berkeley-VSC-Feld
+(Baum-Forschung: kein VSC-Produkt auf research.ssl.berkeley.edu/
+data/psp/data/sci/fields/l2|l3, kein HAPI-Dataset mehr —
+PSP_FLD_L2_VSC 1406; AEB@0/@1 = HK), Wind/WAVES wav_h1
+E_VOLTAGE_RAD2 (1994–2021, Tages-CDFs — der Parser steht, die
+Ernte ist ein eigenes Atom), GONG L 31..200 (CI --lmax 200) +
+mparam-Eigenfrequenzen für freq/bin_width, GOLF (Medoc 000),
+PSP-DFB = em-Spektralkanal (Force-Gate-Urteil, kein
+electric-Katalysator), TRACERS-SPK (das SOC publiziert noch keine
+SPICE-Kernels — solar_akteure_probe.φ), Huffman/Adaptive-CDF
+(parser-gap in src/cdf.rs). CI: kernel_flatten sun job (gong
+monthly, rpw einmalig mit Asset-Guard, bodies job trägt
+--omega-g). Befunde selbsttragend: phi/pipeline/research/
+agent_output/solar_akteure_probe.φ.
 ZeilenFilter implementiert (2026-08-20): `where <key> <value>` an
 first/last — die Extract-Varianten tragen Option<(String,String)>,
 row_matches (String exakt, Nummer numerisch), jfirst_where/jlast_where;
@@ -102,17 +91,12 @@ ist ausgeschlossen, kein W/m2-Label auf dem Index), xrays trägt
 der nobel probe erntet X-Ray/EUV über extract_series aus dem Block
 (harvest_block) — der hardcodierte Filter ist tot. Live-Befund:
 n = 10078 (X-Ray) / 10024 (EUV-304/284), Kadenz 60 s.
-Luminositäts-Atom (2026-08-20): wm2_1au (×AU², Kernel-Konvention 1/d² —
-kein 4π) für xray + euv-304/284 — die Erde liest jetzt den Messwert
-zurück; GOES-Partikel: count → pfu (integral) / pfu/mev (differential);
-„1" (Kp/a_running/FAR) konvertiert als Identity; der LastUnit-Gap ist
-geschlossen (Unit-Einfang in den sieben 9-Token-Formen — der Anker
-konvertierte schon immer, die Lücke war der Einfang). Benannte Grenzen:
-die Luminositäts-Ankerung modelliert Isotropie (die Röntgenemission ist
-richtungsabhängig — abgeleitet, nicht gemessen); die Energie-Bänder der
-Partikel-Dateien sind positionsabhängig (where-Filter pending);
-mag-Felder (alerce u.a.) konvertieren nicht (logarithmische Achse —
-pre-existing skip am Anker, pending).
+Luminositäts-Atom — benannte Grenzen (pending): die Ankerung
+modelliert Isotropie (die Röntgenemission ist richtungsabhängig —
+abgeleitet, nicht gemessen); die Energie-Bänder der Partikel-Dateien
+sind positionsabhängig (where-Filter pending); mag-Felder (alerce
+u.a.) konvertieren nicht (logarithmische Achse — pre-existing skip
+am Anker, pending).
 Zeitbasis-Atom (2026-08-20): `src/kernels/naif0012.tls` ist die
 Geburtsurkunde der Zeit — eingebettet (include_str!), der Zeit-Arc wird
 bei Konstruktion mit der Tabelle gefüllt, der Boot hängt nie am Netz;
@@ -159,40 +143,67 @@ Silverman-Exponent (−1/(d+4)) als Dichte-konsistente Form (der
 Unterschied wird von der Surrogat-Schwelle absorbiert); das PE-Delay der
 Pipeline läuft auf 1 (der historische Shader-Rhythmus, benannt — die
 Standalone-Funktion trägt delay offen).
+Atom 11 (GPU-TE-Rückkehr, pending — kritischer Architekturschnitt):
+`topological_te_phase` läuft auf der CPU (src/mathematikerin.rs →
+omegaflow::te) und erstickt den Ring bei wachsender O(n²)-Last; die
+Portierung in einen WGSL-Compute-Shader (te_compute) trägt die
+Blaupause des historischen Cuts 75b2b7e (teShader/surrShader — TE +
+Surrogate voll auf der GPU, kein CPU-KDE). Die GPU rechnet das Feld
+und die kausale DAG gleichzeitig; das Atom schließt die
+O(n²)-Zeile oben.
 
 Fetch-Ketten-Atom (2026-08-20, Handover handover-fetchkette.md): die vier
-Regressionen sind geschlossen. Gate-Reparatur: der Fetch-Dispatch rechnet
-die physische Reichweite `dispatch_reach` = signal_reach(force, advection,
-ttl·64) — das eine Ausbreitungsgesetz der Query-Gates, körper-unabhängig,
-kein Ephemeriden-Rennen; der `r == 0`-Skip ist tot (der Anker im
+Regressionen sind geschlossen — und drei echte Pipeline-Bugs lagen darunter.
+Gate-Reparatur: der Fetch-Dispatch rechnet die physische Reichweite
+`dispatch_reach` = signal_reach(force, advection, ttl·64) — das eine
+Ausbreitungsgesetz der Query-Gates, körper-unabhängig, kein
+Ephemeriden-Rennen; der `r == 0`-Skip ist tot (der Anker im
 Presence-Fenster trägt die Fenster-Reichweite selbst); eine Quelle ohne
-Ausbreitungsgesetz wird benannt verweigert („carries no field lines" /
-„no field carries a propagation law"). `extract_fields` liest ProfileMap
-(der Argo-Block war blind im Gate). Compiler-Reparatur:
-`omegaflow::media` trägt die MEDIA-Tabelle der Python-Ära (23 Körper,
-5 Slots vs/vp/vsseis/ath/dd; die 6. Spalte vad starb schon 93b6f8e —
-Advektion ist per-Feld); beide Compiler schreiben die echten Werte,
-körperlose Sonden tragen die Pad [0.0; 5]. Boot-Reihenfolge: Anker-Körper
-laden zuerst — `anchor_uses` (Oszillator-Zahl je Frame-Körper, kein
-Hardcode) teilt jetzt Download-Bootstrap UND Load-Gate; Sonden/Monde
-warten, bis alle Anker-Körper im Archiv stehen. Presence ab Tick 1: der
-Boot-Send lebt in main_flow (Ruhezustand SSB, Reichweite =
-Pixelmaßstab), der fabrizierte ∞-Anker bleibt tot; `OMEGAFLOW_HEADLESS=1`
-fährt den Archivar ohne Membran (kein Fenster, kein GPU). CDN-Gate:
-`cdn_fresh` prüft gegen `ttl.max(CI_REFRESH_S=300)` — die CI-Kadenz
-als Boden, sonst ist die Beschleunigungsschicht für ttl-60-Quellen tot.
-Gates: cargo check 0/0 (vier Kombis), cargo test 211/211 lib + Bins;
-Live-Boot headless: body > 0, api > 0 (Argo 4022 Samples — der
-a20e84a-Stand lebt wieder). Offen (registriert): die Solar-Fetches
-(services.swpc.noaa.gov) sind live langsam (xrays-7-day: 4,6 MB in
-> 30 s, Lauf 360 s: fetch void) und ihr CDN-Asset ist veraltet
-(last-modified 2026-08-10 — der Manifestator hat sie noch nicht
-erneuert) — solange fließen sie nicht ins Feld; Fetch-Überlappung
-(der Dispatch feuert alle ttl/Φ neu, während der laufende Fetch
-30–180 s braucht — kein In-Flight-Guard) ist pending; ESC-Schließen
-des Membran-Fensters ist als Bug gemeldet (Handler mathematikerin.rs
-~2684 und Fokus ~1892 stehen — ohne Display nicht reproduzierbar,
-Repro vom Operator ausstehend).
+Ausbreitungsgesetz wird benannt verweigert. `extract_fields` liest
+ProfileMap. Compiler-Reparatur: `omegaflow::media` trägt die MEDIA-Tabelle
+der Python-Ära (23 Körper, 5 Slots vs/vp/vsseis/ath/dd; die 6. Spalte vad
+starb schon 93b6f8e — Advektion ist per-Feld); beide Compiler schreiben
+die echten Werte, körperlose Sonden tragen die Pad [0.0; 5].
+Boot-Reihenfolge: `anchor_uses` (Oszillator-Zahl je Frame-Körper, kein
+Hardcode) teilt Download-Bootstrap UND Load-Gate; Sonden/Monde warten, bis
+alle Anker-Körper im Archiv stehen — Vertragstest:
+test_anchor_bodies_have_ephemeris_sources. Presence ab Tick 1: der
+Boot-Send lebt in main_flow (Ruhezustand SSB, Reichweite = Pixelmaßstab),
+der fabrizierte ∞-Anker bleibt tot; `OMEGAFLOW_HEADLESS=1` fährt den
+Archivar ohne Membran (kein Fenster, kein GPU). Die drei gefundenen
+Pipeline-Bugs: (1) `body_barycenter_position` + Rotationssuche waren
+lineare Scans über 36020 Granulate — mit 147k wartenden Kanälen im
+Pending-Drain hing der ω-Loop Minuten pro Tick (das schwarze Feld);
+jetzt binäre Suche per partition_point (die Granulat-Abstände sind
+unregelmäßig 32/26/… — ein naiver O(1)-Index war falsch, der Test
+test_barycenter_lookup_finds_irregular_granule trägt das). (2) Der
+netcdf-Zweig holte die URL ungerendert ({week_ago}-Platzhalter gingen roh
+an curl — Argo 400) — render_source_url läuft jetzt auch dort. (3) curl
+ohne `-g` (Globoff): die gerenderten `box=[[…]]`-URLs starben mit exit 3 —
+-g jetzt in allen curl-Basen. CDN-Gate: `cdn_fresh` prüft gegen
+`ttl.max(CI_REFRESH_S=300)` — die CI-Kadenz als Boden, sonst ist die
+Beschleunigungsschicht für ttl-60-Quellen tot. Fenster-Fokus:
+`.with_active(true)` + focus_window-Nachforderung über die ersten 60
+Frames (WMs ignorieren Anfragen vor dem Mapping) + ESC über logische UND
+physische Taste. Gates: cargo check 0/0 (vier Kombis), cargo test 213/213
+lib + Bins; Live-Boot headless: body 5 / 1,7M Samples, api 72 Quellen /
+106.707 Samples — die Kette fließt wieder. Offen (registriert): die
+Solar-CDN-Assets sind veraltet (Manifestator hat sie noch nicht erneuert)
+und SWPC live ist langsam — bis zum Asset-Refresh fließen sie gedrosselt;
+Fetch-Überlappung (Dispatch feuert alle ttl/Φ neu, während der laufende
+Fetch läuft — kein In-Flight-Guard) ist pending; der ESC-Bug braucht den
+Repro vom Operator, falls er nach der Fokus-Reparatur bleibt. Schwarzes
+Fenster trotz vollem Feld (Operator-Befund, 2026-08-20): die Kette
+lieferte 23 042 recs ans Fenster, aber der Fragment-Shader rechnete die
+Pixel-Luminanz ohne die scale²-Kompensation — der Meterraum-Kernel
+(1/(d²+scale²), scale = grid 2³¹) drückte jede Sample-Helligkeit auf
+~1/scale² gegen die Rohwert-Referenz → rgb ≈ 0, schwarz, während der
+Probe (Rohsummen) Kraftwerte zeigte und omega_total die Kompensation
+bereits trug (×scale² am Ende). Reparatur: die rgb-Luminanz trägt die
+gleiche scale²-Kompensation (FIELD_WGSL, eine Zeile) — die Feld-Splats
+leuchten wieder gegen ihre Referenz. Die Refs der Luminanz (Median der
+Rohwerte) bleiben unangetastet. Gates: cargo check 0/0 (vier Kombis),
+cargo test 219/219 inkl. naga-Validierung.
 
 ## Archivar — Architektur
 
@@ -754,11 +765,16 @@ Offen (Detail in phi/pipeline/ledger.φ):
   (SOLO_L2_RPW-TDS-SURV-STAT, SN_RMS_E V/m — der Katalogschlüssel
   war /hapi/catalog, nicht /hapi/capabilities); der Publikations-Lag
   (~5 Monate, stopDate 2026-03-25) lässt das {hour_ago}-Fenster
-  heute leer (0 honored) — die 2022-2026-Lücke als Kompilat bleibt
-  registriert; GONG L 31..200 + mparam (Eigenfrequenz/Linienbreite
-  → freq/bin_width); GOLF-Zeitreihen (Medoc curl 000); cdf_reader
-  (Berkeley mV/m-VSC-Feld); der CDN-Upload der beiden Bins läuft
-  über den kernel_flatten sun job
+  heute leer (0 honored). Die 2022-2026-Lücke ist GESCHLOSSEN
+  (cdf_reader-Atom: LIRA-Ernte 2022-11-25→2025-12-31, 200544
+  Records, 347692 total, CDN hochgeladen — der Befund „AMDA ≠ LIRA
+  ~50 %, CDAWeb == LIRA" ist registriert, Naht 2022-11-24T23:55 |
+  11-25T00:05 benannt). Pending: Berkeley-VSC (Baum-Forschung: kein
+  VSC-Produkt auf dem live-Baum, HAPI-Dataset 1406), Wind/WAVES
+  wav_h1 E_VOLTAGE_RAD2 (Parser steht — Ernte als eigenes Atom),
+  GONG L 31..200 + mparam (Eigenfrequenz/Linienbreite →
+  freq/bin_width); GOLF-Zeitreihen (Medoc curl 000); der
+  kernel_flatten sun job trägt gong/rpw-CI
 - Die Linse: Folgewelle — NASA-CMR-Keywords + GBIF-Tags downloaden,
   Library feinwägen; --port ersetzt --gold. 9. Fassung 2026-08-20
   geschliffen (NOAA-NODD-Befund: sea-ice/cors/gnss=em, crowdsourced
@@ -780,13 +796,20 @@ Offen (Detail in phi/pipeline/ledger.φ):
 - Harvest-Runde 2026-08-20: TAP-Indizes ESO (59) + CADC (21) + MAST (15) +
   Chandra (11) und ERDDAP BCO-DMO + NOAA/PMEL (je 1.000) geerntet —
   Tür-Kataloge, SI-Extraktion pro Tabelle/Dataset folgt (ledger.φ erledigt +
-  index.φ index). Ausstehend als CI-Posten: Dataverse-Vollharvest
-  (Harvard/Borealis/UNC, rate-limit-sensitiv — gehört in probe_sweep, nicht
-  lokal) + OAI arXiv/Dryad. Dead: SDSS-TAP (alle Routen 404, 2026-08-20 —
-  CasJobs bleibt). Parser-gap: MGDS (marine-geo.org liefert data_set-XML als
-  Attribute, xml_harvester liest Kind-Elemente). Recherche: EPN-TAP-Endpoint
-  (VESPA). Harvester-Fixes: tap_compiler --index folgt Redirects (curl -L,
-  Chandra 303), dataverse_harvester root+Slash (war 000).
+  index.φ index). Dataverse lokal geerntet: Harvard 88.741 + Borealis 24.063
+  (Linse: 455/176 positive — Ozeanchemie, Thermal, CO₂, AOD = Probe-Kandidaten
+  der nächsten Welle); UNC 401 auth-needed (blocked key-needed). OAI arXiv:
+  1.300 Records, dann Abbruch am skip-Timeout (oai_harvester ohne
+  Timeout-Flag — fixe Länge nötig oder --set-Partitionierung). Dead: SDSS-TAP
+  (alle Routen 404, 2026-08-20 — CasJobs bleibt). Parser-gap: MGDS
+  (marine-geo.org liefert data_set-XML als Attribute, xml_harvester liest
+  Kind-Elemente). Recherche: EPN-TAP-Endpoint (VESPA). Harvester-Fixes:
+  tap_compiler --index folgt Redirects (curl -L, Chandra 303),
+  dataverse_harvester root+Slash (war 000). Linse-Fix: source_scanner als
+  Release-Binary laufen (Debug ~6× langsamer, 88k Records in 1,5 min statt
+  timeout). Probe-Batch gebaut: queue/grind_dataverse.φ (136 Blöcke, Harvard
+  90 + Borealis 46, Gewicht ≥ 16, Dataverse-API je DOI live verifiziert) —
+  nächste Probe-Welle.
 - Grind-Einbau offen: 32 ArcGIS-Drafts (thermal/seismic/diffusion/em/
   advective/gravity); ARI GCNS (331.312 Sterne ≤100pc) + MWSC (3.006
   Haufen) als Kompilat-Kandidaten; 8 VirES-Drafts (CHAMP/GRACE/GOCE/

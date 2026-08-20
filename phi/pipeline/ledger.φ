@@ -324,7 +324,11 @@ note GONG-vmt verifiziert + geerntet (2026-08-20): gong_compiler kompiliert mrvm
 
 verifiziert
 kraft-kanal electric
-note E1800 (OMNI) entfernt (2026-08-20, derived: E=−V×B, Konfounder — dead_sources.φ decline derived). Der Kanal trägt jetzt Solar-Orbiter-RPW: (a) AMDA-HAPI solo-rpw-efield10s verifiziert (Ey/Ez echt, ex=fill, Coverage 2020-06-15→2022-12-01) und als rpw_efield.bin geerntet (147148 Records, 10-min-Mediane, at solar_orbiter) — das BIA-Produkt endet produktseitig überall 2022-12-01 (CDAWeb SOLO_L3_RPW-BIA-EFIELD + -10-SECONDS tragen dieselbe Coverage, direkte /hapi/info-Zweitprüfung 2026-08-20; der einzige gepflegte BIA-Zweig ist DENSITY-10-SECONDS bis 2025-04-24, cm^-3 diffusion-Kandidat); (b) der Live-Block SOLO_L2_RPW-TDS-SURV-STAT (CDAWeb-HAPI, SN_RMS_E V/m, 16-s-Kadenz, Coverage bis 2026-03-25 — ~5 Monate Publikations-Lag, benannt; das {hour_ago}-Fenster liefert 1201-leer, bis die NASA erweitert); (c) Nachfolgemessung GEFUNDEN (Katalog-Sweep 2026-08-20): TS1/TS2_L2_EFI_EAC (V/m [2], Bonnell/SSL, 2025-08/09 → 2026-04-30, laufend gepflegt) — Block pending Ephemeriden (SPK prüfen, frame at ts1/ts2, eigenes Atom). Altbestand: THEMIS-EFI bis 2025-01-05, MMS-EDI bis 2023, Cluster-EFW-L3 bis 2018, PSP-VSC nur Berkeley-CDF. GIC-Netze nicht öffentlich; GLM ist em (optisch); WWLLN-VLF bleibt Force-Gate-Frage; PSP-DFB-Spektren = em, nicht electric (Force-Gate-Urteil)
+note E1800 (OMNI) entfernt (2026-08-20, derived: E=−V×B, Konfounder — dead_sources.φ decline derived). Der Kanal trägt jetzt Solar-Orbiter-RPW: (a) AMDA-HAPI solo-rpw-efield10s verifiziert (Ey/Ez echt, ex=fill, Coverage 2020-06-15→2022-12-01) und als rpw_efield.bin geerntet (147148 Records, 10-min-Mediane, at solar_orbiter) — das BIA-Produkt endet produktseitig überall 2022-12-01 (CDAWeb SOLO_L3_RPW-BIA-EFIELD + -10-SECONDS tragen dieselbe Coverage, direkte /hapi/info-Zweitprüfung 2026-08-20; der einzige gepflegte BIA-Zweig ist DENSITY-10-SECONDS bis 2025-04-24, cm^-3 diffusion-Kandidat); (b) der Live-Block SOLO_L2_RPW-TDS-SURV-STAT (CDAWeb-HAPI, SN_RMS_E V/m, 16-s-Kadenz, Coverage bis 2026-03-25 — ~5 Monate Publikations-Lag, benannt; das {hour_ago}-Fenster liefert 1201-leer, bis die NASA erweitert); (c) Nachfolgemessung GEFUNDEN (Katalog-Sweep 2026-08-20): TS1/TS2_L2_EFI_EAC (V/m [2], Bonnell/SSL, 2025-08/09 → 2026-04-30, laufend gepflegt) — Block pending Ephemeriden (SPK prüfen, frame at ts1/ts2, eigenes Atom); (d) cdf_reader-Atom GESCHLOSSEN (2026-08-20): src/cdf.rs parst NASA-CDF-3 (CDR/GDR/VDR/VXR/VVR/CVVR, gzip via inflate, Encoding 1+6, EPOCH/EPOCH16/TT2000 — Huffman/Adaptive bleiben parser-gap), bia_efield_compiler erntet die LIRA-Tages-CDFs (bia-efield-10-seconds, EDC_SRF f32[3], ex=fill, db.csv-Index höchste Version) → 2022-11-25→2025-12-31 (1120 Tage, 200544 Records, 0 void, 0 Tage mit echtem ex) → gemergt mit dem AMDA-Kompilat: 347692 Records, CDN-Upload asset rpw_efield.bin. Die 2022-2026-Lücke ist geschlossen; Befund der Kongruenzfrage: AMDA-Werte ≠ LIRA-Werte (~50 %, Reprocessing — CDAWeb deckt sich mit LIRA, direkter HAPI-Abgleich 2022-11-24: ey 4,9974/4,9974, ez 5,46205/5,46203), Naht 2022-11-24T23:55 | 2022-11-25T00:05 ohne Duplikate. Altbestand: THEMIS-EFI bis 2025-01-05, MMS-EDI bis 2023, Cluster-EFW-L3 bis 2018. PSP-VSC: Baum-Forschung (2026-08-20, Jina-Kaskade) — research.ssl.berkeley.edu/data/psp/data/sci/fields/l2|l3 trägt KEIN VSC-Produkt (nur dfb_*/rfs_*/tds_wf/mag_*/aeb/sc_pse/dust/sqtn), CDAWeb-HAPI-Katalog trägt kein PSP_*VSC* (AEB@0/@1 = HK-Temperaturen) — die Berkeley-CDF-Behauptung bleibt unverifiziert, Registrierpflicht bleibt (pending). GIC-Netze nicht öffentlich; GLM ist em (optisch); WWLLN-VLF bleibt Force-Gate-Frage; PSP-DFB-Spektren = em, nicht electric (Force-Gate-Urteil)
+
+ausstehend
+kraft-kanal electric wind-waves
+note E_VOLTAGE_RAD2 (kalibrierte Antennen-Spannung, V) lebt in wi_h1_wav — Tages-CDFs unter spdf.gsfc.nasa.gov/pub/data/wind/waves/wav_h1/ (1994–2021); WI_L2_WAV_RAD1/RAD2 tragen nur PSD. Der cdf_reader steht (src/cdf.rs) — die Ernte ist ein eigenes Atom (magic-Klasse wie RPW1, Frame at wind — Ephemeride prüfen, ephemeris_compiler-Systemliste)
 
 ausstehend
 kraft-kanal thermal
@@ -734,12 +738,16 @@ bestand phi/pipeline/katalog/erddap_noaa_pmel_catalog.φ
 note NOAA/PMEL ERDDAP (upwell.pfeg.noaa.gov) — 1.000 Datasets, erddap_harvester-Ernte 2026-08-20. Tür für Ozean-/Fischerei-Messungen (SI).
 
 ausstehend
-kandidat ci-harvest-dataverse-harvard-borealis-unc
-note Dataverse-Instanzen (Harvard 302.711, Borealis, UNC) — api/search-Vollharvest rate-limit-sensitiv (300 Seiten × Latenz) → gehört in probe_sweep-CI, nicht lokal. dataverse_harvester-Slash-Fix 2026-08-20 (root+api ohne / war 000). Lokale Stichprobe: 0 — leerer Lauf gelöscht. Korrektur 2026-08-20: Harvest läuft doch lokal (Session + Agenten, wie b2find/PANGAEA/tap_index), CI erntet nie. --per-page 1000 (~303 Seiten je Instanz).
+kandidat dataverse-harvard-borealis
+note Dataverse-Instanzen Harvard (88.741 Datasets) + Borealis (24.063) geerntet 2026-08-20 lokal (--per-page 1000). UNC: api/search 401 "Only authenticated users" — Key nötig (blocked key-needed). dataverse_harvester-Slash-Fix 2026-08-20.
+
+ausstehend
+queue phi/pipeline/queue/grind_dataverse.φ
+note Probe-Batch der positiv gewichteten Dataverse-Kandidaten (Linse 2026-08-20): Harvard 90 + Borealis 46, Gewicht ≥ 16. Probe-Befund 2026-08-20: alle 136 declined — die Dataverse-API-Metadatenroute (/api/datasets/:persistentId) trägt keine Messwerte, nur Verwaltungsmetadaten (filesize, versionNumber, uploadsAvailable). Die Messung steckt in den Dataset-Files (data.latestVersion.files[].dataFile). Korrektur nötig: Block-URLs auf die Download-URLs der SI-tragenden Dateien setzen — Folge-Curation pro Dataset.
 
 ausstehend
 kandidat oai-harvest-arxiv
-note OAI arXiv (https://oaipmh.arxiv.org/oai — export.arxiv.org 301→oaipmh, 2026-08-20 geprüft) — oai_harvester --root-Vollharvest, langlaufend → lokale Session, nicht CI.
+note OAI arXiv (https://oaipmh.arxiv.org/oai) — 1.300 Records geerntet 2026-08-20, dann Abbruch: resumptionToken (skip=1300) hängt bei curl -m 120 (arXiv-Set-Walk rate-limit). oai_harvester ohne Timeout-Flag — fixe Länge nötig oder --set-Partitionierung. Datei phi/pipeline/katalog/oai_arxiv.φ = Stichprobe, pending.
 
 ausstehend
 kandidat oai-dryad-endpoint

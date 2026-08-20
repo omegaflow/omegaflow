@@ -1,0 +1,1301 @@
+# 3006 tags in the library
+0 | - | oai:arXiv.org:adap-org/9710003 | TRANSIMS traffic flow characteristics
+0 | - | oai:arXiv.org:adap-org/9711001 | A condition for the genotype-phenotype mapping: Causality
+0 | - | oai:arXiv.org:adap-org/9712001 | Experiences with iterated traffic microsimulations in Dallas
+0 | - | oai:arXiv.org:adap-org/9712004 | Sentient Networks
+-8 | - | oai:arXiv.org:adap-org/9712005 | Effects of neutral selection on the evolution of molecular species
+0 | - | oai:arXiv.org:adap-org/9712006 | Adaptive Competition, Market Efficiency, Phase Transitions and Spin-Glasses
+0 | - | oai:arXiv.org:adap-org/9801001 | Geometric statistical inference
+0 | - | oai:arXiv.org:adap-org/9801003 | Modelling coevolution in multispecies communities
+0 | - | oai:arXiv.org:adap-org/9801004 | Invariant closure for the Fokker-Planck equation
+0 | - | oai:arXiv.org:adap-org/9802002 | Emergence of Rules in Cell Society: Differentiation, Hierarchy, and Stability
+0 | - | oai:arXiv.org:adap-org/9803001 | Large-scale evolution and extinction in a hierarchically structured environment
+-8 | - | oai:arXiv.org:adap-org/9804002 | Critical Exponent of Species-Size Distribution in Evolution
+0 | - | oai:arXiv.org:adap-org/9804003 | Collective Behaviour and Diversity in Economic Communities: Some Insights from an Evolutionary Game
+0 | - | oai:arXiv.org:adap-org/9804004 | Dynamics of Individual Specialization and Global Diversification in Communities
+0 | - | oai:arXiv.org:adap-org/9806001 | Neural network design for J function approximation in dynamic programming
+0 | - | oai:arXiv.org:adap-org/9806002 | On the 1/f fluctuations in the nonlinear systems affected by noise
+0 | - | oai:arXiv.org:adap-org/9806003 | How fast do structures emerge in hypercycle-systems?
+0 | - | oai:arXiv.org:adap-org/9807001 | Nondecay probability of a metastable state: almost exact analytical description in wide range of noise intensity
+0 | diffusion | oai:arXiv.org:adap-org/9807003 | Development and Evolution of Neural Networks in an Artificial Chemistry
+0 | - | oai:arXiv.org:adap-org/9807005 | A dynamical theory of speciation on holey adaptive landscapes
+0 | - | oai:arXiv.org:adap-org/9807006 | Rapid parapatric speciation on holey adaptive landscapes
+0 | - | oai:arXiv.org:adap-org/9808001 | Life as Complex Systems --- Viewpoint from Intra-Inter Dynamics
+0 | - | oai:arXiv.org:adap-org/9808003 | Cooperative mechanism of self-regulation in hierarchical living systems
+0 | - | oai:arXiv.org:adap-org/9809002 | Dynamics of clade diversification on the morphological hypercube
+0 | - | oai:arXiv.org:adap-org/9809004 | Decline in extinction rates and scale invariance in the fossil record
+0 | - | oai:arXiv.org:adap-org/9810002 | Nonlinear theory of autooscillations of quasiplanar interface during directional solidification
+-24 | - | oai:arXiv.org:adap-org/9810003 | Optimizing Epochal Evolutionary Search: Population-Size Independent Theory
+-24 | - | oai:arXiv.org:adap-org/9810004 | Optimizing Epochal Evolutionary Search: Population-Size Dependent Theory
+0 | - | oai:arXiv.org:adap-org/9811003 | Extinction, diversity and survivorship of taxa in the fossil record
+0 | - | oai:arXiv.org:adap-org/9811005 | The Structure of Adaptive Competition in Minority Games
+0 | - | oai:arXiv.org:adap-org/9812001 | Power spectra of extinction in the fossil record
+0 | - | oai:arXiv.org:adap-org/9812002 | Reproductive Tradeoffs In Uncertain Environments: Explaining The Evolution Of Cultural Elaboration
+-16 | - | oai:arXiv.org:adap-org/9901001 | The Evolutionary Biology of Ourselves: Unit Requirements and Organizational Change in United States History
+-20 | - | oai:arXiv.org:adap-org/9901005 | A Mathematical Model with Modified Logistic Approach for Singly-Peaked Population Processes
+0 | - | oai:arXiv.org:adap-org/9903001 | The Evolutionary Unfolding of Complexity
+-4 | - | oai:arXiv.org:adap-org/9903002 | The Origin of the RNA World: a Kinetic Model
+0 | - | oai:arXiv.org:adap-org/9903003 | Evolution of genetic organization in digital organisms
+0 | - | oai:arXiv.org:adap-org/9903005 | Replication Error and Time Evolution of a Self-Replicating System
+0 | - | oai:arXiv.org:adap-org/9903007 | Characterizing self-organization and coevolution by ergodic invariants
+0 | - | oai:arXiv.org:adap-org/9904003 | Three sided complex adaptative systems
+0 | - | oai:arXiv.org:adap-org/9905001 | Extremal Coupled Map Lattices
+-4 | - | oai:arXiv.org:adap-org/9905002 | Model of self-replicating cell capable of self-maintenance
+0 | - | oai:arXiv.org:adap-org/9905004 | Number-conserving cellular automaton rules
+0 | - | oai:arXiv.org:adap-org/9905005 | A microsimulation of traders activity in the stock market: the role of heterogeneity, agents&#39; interactions and trade frictions
+-4 | - | oai:arXiv.org:adap-org/9905006 | Globally coupled bistable elements as a model of group decision making
+0 | - | oai:arXiv.org:adap-org/9906002 | Minimum Energy Information Fusion in Sensor Networks
+0 | - | oai:arXiv.org:adap-org/9907002 | Metastable Evolutionary Dynamics: Crossing Fitness Barriers or Escaping via Neutral Paths?
+-4 | - | oai:arXiv.org:adap-org/9907004 | A dynamical model of non regulated markets
+0 | - | oai:arXiv.org:adap-org/9907005 | Functional Dynamics II : Syntactic Structure
+0 | - | oai:arXiv.org:adap-org/9907007 | Resource Sharing and Coevolution in Evolving Cellular Automata
+-8 | advective | oai:arXiv.org:adap-org/9907009 | Cumulant Dynamics of a Population under Multiplicative Selection, Mutation and Drift
+-4 | - | oai:arXiv.org:adap-org/9907010 | Scaling in a Multispecies Network Model Ecosystem
+0 | - | oai:arXiv.org:adap-org/9907011 | Phase Transition in Random Networks with Multiple States
+0 | - | oai:arXiv.org:adap-org/9909003 | Analysis of the optimality principles responsible for vascular network architectonics
+0 | - | oai:arXiv.org:adap-org/9909004 | Measuring Mutual Information in Random Boolean Networks
+0 | - | oai:arXiv.org:adap-org/9909007 | Self-Organized Criticality: Self-Organized Complexity? The Disorder and ``Simple Complexity&#39;&#39; of Power Law Distributions
+-4 | - | oai:arXiv.org:adap-org/9910002 | A Simple Model of the Evolution of Simple Models of Evolution
+0 | - | oai:arXiv.org:adap-org/9910003 | Simple models of evolution and extinction
+-12 | thermal | oai:arXiv.org:adap-org/9911001 | Mathematical description of the heat transfer in living tissue (Part I)
+-12 | thermal | oai:arXiv.org:adap-org/9911002 | Mathematical description of the heat transfer in living tissue (Part II)
+0 | - | oai:arXiv.org:adap-org/9911003 | Amplifying Phenomenal Information: Toward a Fundamental Theory of Consciousness
+0 | - | oai:arXiv.org:adap-org/9911006 | Modelling Migration and Economic Agglomeration with Active Brownian Particles
+-16 | - | oai:arXiv.org:adap-org/9912004 | Fitness versus Longevity in Age-Structured Population Dynamics
+0 | - | oai:arXiv.org:alg-geom/9710001 | Convex polytopes and linear algebra
+0 | - | oai:arXiv.org:alg-geom/9710002 | The Gross-Kohnen-Zagier theorem in higher dimensions
+0 | - | oai:arXiv.org:alg-geom/9710003 | A sparse effective Nullstellensatz
+0 | - | oai:arXiv.org:alg-geom/9710004 | Algorithmic Computation of Local Cohomology Modules and the Cohomological Dimension of Algebraic Varieties
+0 | - | oai:arXiv.org:alg-geom/9710005 | Ladders on Fano varieties
+0 | - | oai:arXiv.org:alg-geom/9710006 | Special Lagrangian Fibrations I: Topology
+0 | - | oai:arXiv.org:alg-geom/9710007 | Inequalities for semistable families of arithmetic varieties
+0 | - | oai:arXiv.org:alg-geom/9710008 | On the index of a vector field at an isolated singularity
+0 | - | oai:arXiv.org:alg-geom/9710009 | On The Projective Normality of Smooth Surfaces of degree nine
+0 | - | oai:arXiv.org:alg-geom/9710010 | Isolated rational curves on K3-fibered Calabi-Yau threefolds
+0 | - | oai:arXiv.org:alg-geom/9710012 | Invariant stable bundles over modular curves X(p)
+0 | - | oai:arXiv.org:alg-geom/9710013 | Quasi-algebraic geometry of curves I. Riemann-Roch theorem and Jacobian
+0 | - | oai:arXiv.org:alg-geom/9710014 | The product formula for Gromov-Witten invariants
+0 | - | oai:arXiv.org:alg-geom/9710015 | Moduli of Trigonal Curves
+0 | - | oai:arXiv.org:alg-geom/9710016 | Generalized Reed-Muller codes and curves with many points
+0 | - | oai:arXiv.org:alg-geom/9710017 | Un théorème de Rao pour les familles de courbes gauches
+0 | - | oai:arXiv.org:alg-geom/9710018 | Generation of $k$-jets on Toric Varieties
+0 | - | oai:arXiv.org:alg-geom/9710019 | On a conjecture of Lange
+0 | - | oai:arXiv.org:alg-geom/9710020 | Birational Calabi--Yau n-folds have equal Betti numbers
+0 | - | oai:arXiv.org:alg-geom/9710021 | Cohomology of complete intersections in toric varieties
+0 | - | oai:arXiv.org:alg-geom/9710023 | Real deformations and complex topology of plane curve singularities
+0 | - | oai:arXiv.org:alg-geom/9710024 | The Geometry of the Space of Holomorphic Maps from a Riemann Surface into Complex Projective Space
+0 | - | oai:arXiv.org:alg-geom/9710025 | Minimal even sets of nodes
+0 | - | oai:arXiv.org:alg-geom/9710026 | Hyperkaehler structures on total spaces of holomorphic cotangent bundles
+0 | - | oai:arXiv.org:alg-geom/9710027 | Injective resolutions of BG and derived moduli spaces of local systems
+0 | - | oai:arXiv.org:alg-geom/9710028 | On the infinitesimal rigidity of homogeneous varieties
+0 | - | oai:arXiv.org:alg-geom/9710029 | Irreducibility of the moduli space of vector bundles on surfaces and Brill-Noether theory on singular curves
+0 | - | oai:arXiv.org:alg-geom/9710030 | The universal rank-(n-1) bundle on G(1,n) restricted to subvarieties
+0 | - | oai:arXiv.org:alg-geom/9710031 | Involutions on Moduli Spaces and Refinements of the Verlinde Formula
+0 | - | oai:arXiv.org:alg-geom/9710033 | On the k-normality of some projective manifolds
+0 | - | oai:arXiv.org:alg-geom/9710034 | On the variety of rational space curves
+0 | - | oai:arXiv.org:alg-geom/9711001 | On higher order embeddings of Fano threefolds by the anticanonical linear system
+0 | - | oai:arXiv.org:alg-geom/9711002 | Resonant Hypergeometric Systems and Mirror Symmetry
+0 | - | oai:arXiv.org:alg-geom/9711003 | Pure Hodge structure on the $L_2$-cohomology of varieties with isolated singularities
+0 | - | oai:arXiv.org:alg-geom/9711006 | Beyond the Manin obstruction
+0 | - | oai:arXiv.org:alg-geom/9711007 | Construction de familles minimales de courbes gauches
+0 | - | oai:arXiv.org:alg-geom/9711008 | Stringy Hodge numbers of varieties with Gorenstein canonical singularities
+-8 | electric | oai:arXiv.org:alg-geom/9711010 | Constructing curves over finite fields with many points by solving linear equations
+0 | - | oai:arXiv.org:alg-geom/9711011 | Hypergeometric functions on reductive groups
+0 | - | oai:arXiv.org:alg-geom/9711013 | First quantum correction for the moduli space of stable bundles over a Riemann surface
+0 | - | oai:arXiv.org:alg-geom/9711014 | Topological Triviality of $μ$-constant Deformations of Type f(x) + tg(x)
+0 | - | oai:arXiv.org:alg-geom/9711015 | Weak approximation, Brauer and R-equivalence in algebraic groups over arithmetical fields
+0 | - | oai:arXiv.org:alg-geom/9711017 | On the theta divisor of SU(2,1)
+0 | - | oai:arXiv.org:alg-geom/9711018 | Chern Classes of Bundles over Rational Surfaces
+0 | - | oai:arXiv.org:alg-geom/9711019 | Stringy Hodge numbers and Virasoro algebra
+0 | - | oai:arXiv.org:alg-geom/9711020 | Semistable reduction in characteristic 0 for families of surfaces and three-folds
+0 | - | oai:arXiv.org:alg-geom/9711021 | A geometric approach to the fundamental lemma for unitary groups
+0 | - | oai:arXiv.org:alg-geom/9711023 | Cellular Resolutions of Monomial Modules
+0 | - | oai:arXiv.org:alg-geom/9711024 | Complements on surfaces
+0 | - | oai:arXiv.org:alg-geom/9711025 | Cycles on Siegel 3-folds and derivatives of Eisenstein series
+0 | - | oai:arXiv.org:alg-geom/9711026 | Symmetric matrices and quantum codes
+0 | - | oai:arXiv.org:alg-geom/9711027 | Mathematical Instantons In Characteristic Two
+0 | - | oai:arXiv.org:alg-geom/9711028 | On moduli spaces of 4- or 5-instanton bundles
+0 | - | oai:arXiv.org:alg-geom/9711029 | Classification of Exceptional Complements: Elliptic Curve Case
+0 | - | oai:arXiv.org:alg-geom/9711030 | Quantum cohomology of the moduli space of stable bundles over a Riemann surface
+0 | - | oai:arXiv.org:alg-geom/9711031 | The enumerative geometry of K3 surfaces and modular forms
+0 | - | oai:arXiv.org:alg-geom/9711032 | On the classification of hyperbolic root systems of the rank three. Part I
+0 | - | oai:arXiv.org:alg-geom/9711033 | Uniform Zariski&#39;s Theorem On Fundamental Groups
+0 | - | oai:arXiv.org:alg-geom/9711034 | Minimal discrepancies of hypersurface singularities
+0 | - | oai:arXiv.org:alg-geom/9711035 | On the Euler Characteristic of Generalized Kummer Varieties
+0 | - | oai:arXiv.org:alg-geom/9712001 | Coupled Contact Systems and Rigidity of Maximal Dimensional Variations of Hodge Structure
+0 | - | oai:arXiv.org:alg-geom/9712002 | Tamagawa numbers of polarized algebraic varieties
+0 | - | oai:arXiv.org:alg-geom/9712003 | Real Algebraic Surfaces
+0 | - | oai:arXiv.org:alg-geom/9712004 | Real Algebraic Threefolds I: Terminal Singularities
+-4 | - | oai:arXiv.org:alg-geom/9712005 | Real Algebraic Threefolds II: Minimal Model Program
+0 | - | oai:arXiv.org:alg-geom/9712006 | Homological infiniteness of Torelli groups
+0 | - | oai:arXiv.org:alg-geom/9712007 | Toric varieties and minimal complexes
+0 | - | oai:arXiv.org:alg-geom/9712008 | Quantum Hyperplane Section Theorem For Homogeneous Spaces
+0 | - | oai:arXiv.org:alg-geom/9712009 | The Character of the Infinite Wedge Representation
+0 | - | oai:arXiv.org:alg-geom/9712010 | Structures du cube et fibres d&#39;intersection
+0 | - | oai:arXiv.org:alg-geom/9712014 | Subadjunction of log canonical divisors II
+0 | - | oai:arXiv.org:alg-geom/9712015 | The universal regular quotient of the Chow group of 0-cycles on a singular projective variety
+0 | - | oai:arXiv.org:alg-geom/9712018 | Deformations of canonical singularities
+0 | - | oai:arXiv.org:alg-geom/9712019 | On the cone of curves of an abelian variety
+0 | - | oai:arXiv.org:alg-geom/9712020 | Secondary Kodaira-Spencer classes and nonabelian Dolbeault cohomology
+0 | - | oai:arXiv.org:alg-geom/9712021 | Analogue of Weil representation for abelian schemes
+0 | - | oai:arXiv.org:alg-geom/9712022 | Poisson structures and birational morphisms associated with bundles on elliptic curves
+0 | - | oai:arXiv.org:alg-geom/9712023 | A canonical lift of Chern-Mather classes
+0 | - | oai:arXiv.org:alg-geom/9712025 | Heisenberg-invariant Kummer surfaces
+0 | - | oai:arXiv.org:alg-geom/9712026 | Degenerations of (1,3) abelian surfaces and Kummer surfaces
+0 | - | oai:arXiv.org:alg-geom/9712027 | The arithmetic-geometric mean and isogenies for curves of higher genus
+0 | - | oai:arXiv.org:alg-geom/9712028 | Zero-pole interpolation for matrix meromorphic functions on a compact Riemann surface, and a matrix Fay trisecant identity
+0 | - | oai:arXiv.org:alg-geom/9712030 | The L^2 dbar method, weak Lefschetz theorems, and the topology of Kahler manifolds
+0 | - | oai:arXiv.org:alg-geom/9712032 | A morphism of intersection homology induced by an algebraic map
+0 | - | oai:arXiv.org:alg-geom/9712034 | Toric Degenerations of Fano Varieties and Constructing Mirror Manifolds
+0 | - | oai:arXiv.org:alg-geom/9712035 | Comparison of the algebraic and the symplectic Gromov-Witten invariants
+0 | - | oai:arXiv.org:astro-ph/0001004 | Theory of the Interaction of Planetary Nebulae with the Interstellar Medium
+0 | - | oai:arXiv.org:astro-ph/0001010 | Feedback Processes in the Early Universe
+0 | - | oai:arXiv.org:astro-ph/0001012 | Observed Properties of Mass Loss in Symbiotic Binaries
+0 | - | oai:arXiv.org:astro-ph/0001014 | Spin-Orbit Couplings in X-ray Binaries
+0 | - | oai:arXiv.org:astro-ph/0001015 | New Direct Observational Evidence for Kicks in SNe
+0 | - | oai:arXiv.org:astro-ph/0001017 | H2 emission from CRL 618
+0 | - | oai:arXiv.org:astro-ph/0001018 | Do AGB Stars Differ Chemically from RGB Stars in Globular Clusters?
+0 | - | oai:arXiv.org:astro-ph/0001020 | HST/WFPC2 observations of the core of KjPn 8
+0 | - | oai:arXiv.org:astro-ph/0001023 | Studies of Low-Mass Star Formation with ALMA
+0 | - | oai:arXiv.org:astro-ph/0001028 | The variability analysis of PKS 2155-304
+-8 | em | oai:arXiv.org:astro-ph/0001030 | A Hard Medium Survey with ASCA. III.: a Type 2 AGN revealed from X-ray Spectroscopy
+0 | - | oai:arXiv.org:astro-ph/0001031 | Multiple Outflows in AFGL 2688
+0 | - | oai:arXiv.org:astro-ph/0001032 | Limits on the Spatial Extent of AGN Measured with the Fine Guidance Sensors of the HST
+0 | - | oai:arXiv.org:astro-ph/0001036 | On Luminosity and morphology segregation in the Southern Sky Redshift Survey 2
+0 | - | oai:arXiv.org:astro-ph/0001037 | The BeppoSAX High Energy Large Area Survey (HELLAS): a progress Report
+0 | - | oai:arXiv.org:astro-ph/0001038 | Morphological evolution of X-ray clusters using hydrodynamical simulations
+0 | - | oai:arXiv.org:astro-ph/0001042 | Eccentric Stellar Discs with Strong Density Cusps and Separable Potentials
+-8 | em | oai:arXiv.org:astro-ph/0001045 | The Second Peak: The Dark-Energy Density and the Cosmic Microwave Background
+0 | - | oai:arXiv.org:astro-ph/0001047 | Evidence for TeV gamma-ray emission from the shell type SNR RXJ1713.7-3946
+0 | - | oai:arXiv.org:astro-ph/0001048 | The 24-Hour Night Shift: Astronomy from Microlensing Monitoring Networks
+-8 | em | oai:arXiv.org:astro-ph/0001052 | Near infrared imaging spectroscopy of NGC1275
+0 | - | oai:arXiv.org:astro-ph/0001053 | On the FIR emission from intracluster dust
+0 | - | oai:arXiv.org:astro-ph/0001058 | Electron densities, temperatures and ionization rates in two interstellar clouds in front of beta Canis Majoris, as revealed by UV absorption lines observed with IMAPS
+0 | - | oai:arXiv.org:astro-ph/0001059 | Quantum Astronomy. Part II
+0 | - | oai:arXiv.org:astro-ph/0001060 | On the Interpretation of the Optical Spectra of L-type Dwarfs
+0 | - | oai:arXiv.org:astro-ph/0001061 | Observational Tests for the Cosmological Principle and World Models
+0 | - | oai:arXiv.org:astro-ph/0001063 | The nature of RXJ0052.1-7319
+0 | - | oai:arXiv.org:astro-ph/0001064 | Photometric modal discrimination in Delta Scuti and Gamma Doradus stars
+0 | - | oai:arXiv.org:astro-ph/0001068 | On the peculiar red clump morphology in the open clusters NGC 752 and NGC 7789
+-12 | em | oai:arXiv.org:astro-ph/0001069 | 2-D Radiation Transfer Model of Non-Spherically Symmetric Dust Shell in P roto-Planetary Nebulae
+-8 | diffusion | oai:arXiv.org:astro-ph/0001070 | Cold gas, the HI 21cm line and evolving galactic potentials
+0 | - | oai:arXiv.org:astro-ph/0001073 | Distribution functions for evolved stars in the inner galactic Plane
+0 | - | oai:arXiv.org:astro-ph/0001078 | Radiative Processes and Geometry of Spectral States of Black-Hole Binaries
+0 | - | oai:arXiv.org:astro-ph/0001079 | Can DNA bases be produced during molecular cloud collapse?
+-4 | - | oai:arXiv.org:astro-ph/0001081 | A limit-cycle model for the binary supersoft X-ray source RX J0513.9-6951
+0 | - | oai:arXiv.org:astro-ph/0001093 | Chemo - Photometric evolution of star forming disk galaxy
+0 | - | oai:arXiv.org:astro-ph/0001097 | HST NICMOS Observation of Proto-Planetary Nebulae
+0 | - | oai:arXiv.org:astro-ph/0001098 | The X-ray/submillimetre link
+0 | - | oai:arXiv.org:astro-ph/0001102 | RR Lyrae Variables in the Globular Cluster M5
+-16 | - | oai:arXiv.org:astro-ph/0001104 | Young and Intermediate Stellar population in Seyfert 2 galaxies
+0 | - | oai:arXiv.org:astro-ph/0001106 | Cosmology with SZ and X-ray cluster surveys
+0 | - | oai:arXiv.org:astro-ph/0001107 | The variability of the Seyfert galaxy NGC 2992: the case for a revived AGN
+0 | - | oai:arXiv.org:astro-ph/0001108 | Micro &amp; strong lensing with the Square Kilometer Array: The mass--function of compact objects in high--redshift galaxies
+0 | - | oai:arXiv.org:astro-ph/0001110 | BeppoSAX observations of the nearby low-mass X-ray binary and fast transient SAX J1819.3-2525
+0 | - | oai:arXiv.org:astro-ph/0001111 | Evidence for TeV Emission from GRB 970417a
+0 | - | oai:arXiv.org:astro-ph/0001112 | A Sociological Study of the Optically Emitting Isolated Neutron Stars
+0 | - | oai:arXiv.org:astro-ph/0001115 | The Circumstellar Matter Around OH44.8-2.3
+0 | - | oai:arXiv.org:astro-ph/0001119 | The Most Distant X-ray Clusters and the Evolution of their Space Density
+0 | - | oai:arXiv.org:astro-ph/0001125 | Star Formation: Lessons from Taurus
+0 | - | oai:arXiv.org:astro-ph/0001127 | EUV and X-ray observation of Abell 2199: a three-phase intracluster medium with a massive warm component
+-16 | - | oai:arXiv.org:astro-ph/0001128 | The multi-phase nature of three intracluster media
+0 | - | oai:arXiv.org:astro-ph/0001131 | A Search for X-ray emission from Saturn, Uranus and Neptune
+0 | - | oai:arXiv.org:astro-ph/0001133 | Giant protostellar outflows revealed by infrared imaging
+0 | - | oai:arXiv.org:astro-ph/0001139 | Analysis and interpretation of the X-ray properties of black hole candidates
+0 | - | oai:arXiv.org:astro-ph/0001155 | ISO SWS-LWS observations of the prototypical reflection nebula NGC 7023
+0 | - | oai:arXiv.org:astro-ph/0001159 | Probing the width of the MACHO mass function
+0 | - | oai:arXiv.org:astro-ph/0001161 | Hubble Space Telescope Imaging of the Young Planetary Nebula GL 618
+0 | - | oai:arXiv.org:astro-ph/0001168 | Clues to the origin of parsec to kilo-parsec jet misalignments in EGRET sources
+0 | - | oai:arXiv.org:astro-ph/0001170 | Synthesis of 19F in Wolf-Rayet stars
+-8 | em | oai:arXiv.org:astro-ph/0001171 | 2 micron Spectroscopy within 0.3 arcseconds of SgrA*
+0 | - | oai:arXiv.org:astro-ph/0001176 | X-rays and Cosmology
+-8 | diffusion | oai:arXiv.org:astro-ph/0001180 | Simulating Supernovae Remnants in Gas Clouds
+-8 | em | oai:arXiv.org:astro-ph/0001183 | Evidence for a substellar secondary in the magnetic cataclysmic binary EF Eridani
+0 | - | oai:arXiv.org:astro-ph/0001184 | Testing for substructure in optical and X-ray clusters
+-8 | diffusion | oai:arXiv.org:astro-ph/0001186 | On the gamma-ray fluxes expected from Cassiopeia A
+0 | - | oai:arXiv.org:astro-ph/0001187 | On energy-dependent propagation effects and acceleration sites of relativistic electrons in Cassiopeia A
+0 | - | oai:arXiv.org:astro-ph/0001188 | N-body simulations of interactions and mergings in small galaxy groups
+0 | - | oai:arXiv.org:astro-ph/0001191 | Clustering in the X-ray Universe
+0 | - | oai:arXiv.org:astro-ph/0001195 | Physical morphology and triggers of starburst galaxies
+0 | - | oai:arXiv.org:astro-ph/0001196 | Current Development of the Photo-Ionization Code Cloudy
+0 | - | oai:arXiv.org:astro-ph/0001198 | Young Massive Star Clusters in Spiral Galaxies. III. Correlations between cluster populations and host galaxy properties
+0 | - | oai:arXiv.org:astro-ph/0001202 | Stellar-Dynamics of Young Star Clusters
+-8 | em | oai:arXiv.org:astro-ph/0001204 | A large high-energy gamma-ray flare from the blazar 3C 273
+16 | em | oai:arXiv.org:astro-ph/0001205 | Regular magnetic fields in the dwarf irregular galaxy NGC 4449
+0 | - | oai:arXiv.org:astro-ph/0001211 | The 1996 outburst of GRO J1655-40: disc irradiation and enhanced mass transfer
+0 | - | oai:arXiv.org:astro-ph/0001213 | Superconducting cosmic strings as gamma ray burst engines
+-8 | em | oai:arXiv.org:astro-ph/0001214 | ISO Spectroscopy of Young Intermediate-Mass Stars in the BD+40 4124 Group
+8 | em | oai:arXiv.org:astro-ph/0001215 | H_3^(2+) molecular ion in a strong magnetic field: a triangular configuration
+0 | - | oai:arXiv.org:astro-ph/0001225 | Spectra of High Redshift Galaxies using a Cluster as a Gravitational Telescope
+-8 | advective | oai:arXiv.org:astro-ph/0001226 | Wind properties of Wolf-Rayet stars at low metallicity: Sk41 (SMC)
+0 | - | oai:arXiv.org:astro-ph/0001229 | Ages, Distances, and the Initial Mass Functions of Stellar Clusters
+0 | - | oai:arXiv.org:astro-ph/0001230 | 7Li in Metal-Poor Stars: The Spread of the Li Plateau
+-8 | em | oai:arXiv.org:astro-ph/0001231 | A search for precursors of Ultracompact HII Regions in a sample of luminous IRAS sources. III: Circumstellar Dust Properties
+0 | - | oai:arXiv.org:astro-ph/0001232 | Morphology vs. physical properties: some comments and questions
+0 | - | oai:arXiv.org:astro-ph/0001234 | Symbiotic Miras can do it
+0 | - | oai:arXiv.org:astro-ph/0001235 | Abundances in Very Metal-Poor Stars
+0 | - | oai:arXiv.org:astro-ph/0001236 | The Galaxy Distribution: Homogeneous, Fractal, or Neither
+8 | em | oai:arXiv.org:astro-ph/0001238 | CCD photometry in the region of NGC 6994: the remains of an old open cluster
+0 | - | oai:arXiv.org:astro-ph/0001242 | Models of the Time Variability of BHC: Light Curves, PSD, Lags
+0 | - | oai:arXiv.org:astro-ph/0001250 | Extragalactic H2 and its variable relation to CO
+0 | - | oai:arXiv.org:astro-ph/0001259 | Could merged star-clusters build up a small galaxy?
+0 | - | oai:arXiv.org:astro-ph/0001261 | Search for Relic Neutrinos and Supernova Bursts
+0 | em | oai:arXiv.org:astro-ph/0001262 | Electron Firehose instability and acceleration of electrons in solar flares
+0 | - | oai:arXiv.org:astro-ph/0001263 | Warm Absorbers in Active Galactic Nuclei
+0 | - | oai:arXiv.org:astro-ph/0001264 | The giant X-ray outbursts from nearby, non-active galaxies: tidal disruption flares ?
+0 | - | oai:arXiv.org:astro-ph/0001265 | Dynamics of the X-ray clusters Abell 222, Abell 223 and Abell 520
+0 | - | oai:arXiv.org:astro-ph/0001266 | The red giant branches of Galactic globular clusters in the [(V-I)o,Mv] plane: metallicity indices and morphology
+0 | - | oai:arXiv.org:astro-ph/0001267 | Sunyaev-Zel&#39;dovich Surveys: Analytic treatment of cluster detection
+-8 | - | oai:arXiv.org:astro-ph/0001268 | High Resolution Simulation of Galaxy Formation with Feedback
+0 | - | oai:arXiv.org:astro-ph/0001280 | Analytical Study of Thermonuclear Reaction Probability Integrals
+-12 | em | oai:arXiv.org:astro-ph/0001282 | Analysis of The Hipparcos Measurements of HD10697 - A Mass Determination of a Brown-Dwarf Secondary
+-8 | - | oai:arXiv.org:astro-ph/0001291 | CADIS deep star counts: Galactic structure and the stellar luminosity function
+0 | - | oai:arXiv.org:astro-ph/0001296 | H2 emission as a diagnostic of physical processes in starforming galaxies
+-8 | em | oai:arXiv.org:astro-ph/0001300 | The Unique Potential of SKA Radio Observations of Gamma-Ray Bursts
+0 | - | oai:arXiv.org:astro-ph/0001302 | A continuous low star formation rate in IZw 18 ?
+-8 | diffusion | oai:arXiv.org:astro-ph/0001304 | Implications of Abundance Gradients in Intracluster Gas
+0 | - | oai:arXiv.org:astro-ph/0001305 | Glimpses of a strange star
+0 | - | oai:arXiv.org:astro-ph/0001312 | WWhat Heavy Elements in Clusters of Galaxies Tell About Clusters and Galaxies
+0 | - | oai:arXiv.org:astro-ph/0001319 | Closing the gap: an X-ray selected sample of clusters of galaxies behind the Galactic plane
+0 | - | oai:arXiv.org:astro-ph/0001320 | MACS: The evolution and properties of massive clusters of galaxies
+0 | - | oai:arXiv.org:astro-ph/0001325 | Gravitational Lensing of High Redshift Sources
+0 | - | oai:arXiv.org:astro-ph/0001332 | Where are the type 2 AGNs?
+-8 | em | oai:arXiv.org:astro-ph/0001336 | ISO Spectroscopy of H2 in Star Forming Regions
+0 | - | oai:arXiv.org:astro-ph/0001351 | Delta Scuti Stars in Stellar Systems: a Review
+8 | em | oai:arXiv.org:astro-ph/0001352 | Evolution of the Magnetic Field in Accreting Neutron Stars
+0 | - | oai:arXiv.org:astro-ph/0001355 | Pulse shape and spectrum of PSR J0218+4232 observed with BeppoSAX
+0 | em | oai:arXiv.org:astro-ph/0001357 | BVRcIc photometry of GRB 980703 and GRB 990123 host galaxies
+0 | - | oai:arXiv.org:astro-ph/0001359 | Gravitational microlensing source limb-darkening and limb-polarization,~I: angle-averaged amplification functions
+0 | - | oai:arXiv.org:astro-ph/0001360 | X-ray Surveys of the obscured Universe
+-8 | em | oai:arXiv.org:astro-ph/0001368 | Nanoarcsecond single-dish imaging of the Vela pulsar
+0 | - | oai:arXiv.org:astro-ph/0001371 | A direct view of the AGN powering IRAS12393+3520
+0 | - | oai:arXiv.org:astro-ph/0001375 | The X-ray properties of luminous infrared galaxies and their contribution to the X-ray background
+0 | - | oai:arXiv.org:astro-ph/0001376 | Evolution of the cluster X-ray luminosity function from the WARPS survey
+0 | em | oai:arXiv.org:astro-ph/0001377 | Diffusive Shock Acceleration of Electrons and Radio Emission from Large Diameter Shell-Type Supernova Remnants
+0 | - | oai:arXiv.org:astro-ph/0001378 | Ongoing Large Surveys for Metal-Poor Stars in the Galactic Halo
+0 | - | oai:arXiv.org:astro-ph/0001382 | Chemical enrichment and star formation in the Milky Way disk; I. Sample description and chromospheric age-metallicity relation
+-16 | - | oai:arXiv.org:astro-ph/0001383 | Chemical enrichment and star formation in the Milky Way disk; II. Star formation history
+0 | - | oai:arXiv.org:astro-ph/0001386 | Atomic diffusion in metal poor stars. The influence on the Main Sequence fitting distance scale, subdwarfs ages and the value of Delta Y/DeltaZ
+0 | - | oai:arXiv.org:astro-ph/0001391 | On the Origin of Quasi-Periodic Oscillations and Broad-band Noise in Accreting Neutron Stars and Black Holes
+0 | - | oai:arXiv.org:astro-ph/0001403 | Properties of disk galaxies in a hierarchical formation scenario
+-16 | - | oai:arXiv.org:astro-ph/0001406 | The deuterium abundance in QSO absorption systems: a mesoturbulent approach
+0 | - | oai:arXiv.org:astro-ph/0001407 | Broad-band BeppoSAX observation of the low-mass X-ray binary X1822-371
+0 | - | oai:arXiv.org:astro-ph/0001409 | Evolution of D and 3He in the Galaxy
+0 | - | oai:arXiv.org:astro-ph/0001411 | Search for Astronomical Sites in Developing Countries and their Preventive Protection
+0 | - | oai:arXiv.org:astro-ph/0001412 | The enigmatic Soft X-ray AGN RX J0134.2--4258
+0 | - | oai:arXiv.org:astro-ph/0001417 | OGLE Cepheids have Lower Amplitudes in SMC than in LMC
+16 | em | oai:arXiv.org:astro-ph/0001418 | The Magnetic Fields of the Universe and Their Origin
+0 | - | oai:arXiv.org:astro-ph/0001419 | Constraints on Photometric Calibration from Observations of High-Redshift Type Ia Supernovae
+0 | - | oai:arXiv.org:astro-ph/0001427 | Note on the Origin of the Highest Energy Cosmic Rays
+0 | - | oai:arXiv.org:astro-ph/0001433 | Theoretical Implications of Diffuse Non-Thermal Emission from Clusters of Galaxies
+0 | - | oai:arXiv.org:astro-ph/0001434 | Broad-band colour evolution of star clusters
+0 | - | oai:arXiv.org:astro-ph/0001452 | Dusty Tori of Seyfert Nuclei
+0 | - | oai:arXiv.org:astro-ph/0001453 | On continued gravitational collapse
+-8 | em | oai:arXiv.org:astro-ph/0001454 | Near-Infrared-Spectroscopy with Extremely Large Telescopes: Integral-Field- versus Multi-Object-Instruments
+-8 | em | oai:arXiv.org:astro-ph/0001455 | Low Frequency Insights Into Supernova Remnants
+0 | - | oai:arXiv.org:astro-ph/0001460 | Transient X--Ray Sources Observed with the Rxte All-Sky Monitor after 3.5 Years
+0 | - | oai:arXiv.org:astro-ph/0001462 | Competitive Accretion in Clusters and the IMF
+0 | - | oai:arXiv.org:astro-ph/0001466 | LiBeB Evolution: Three Models
+0 | em | oai:arXiv.org:astro-ph/0001473 | Radio-optical identification of very-steep spectrum radio sources from the UTR-2 catalogue
+0 | - | oai:arXiv.org:astro-ph/0001474 | LiBeB Production and Associated Astrophysical Sites
+-8 | advective | oai:arXiv.org:astro-ph/0001475 | Investigations of the Local Supercluster Velocity Field III. Tracing the backside infall with distance moduli from the direct Tully-Fisher relation
+0 | - | oai:arXiv.org:astro-ph/0001477 | The Elliptical Galaxy formerly known as the Local Group: Merging the Globular Cluster Systems
+-8 | advective | oai:arXiv.org:astro-ph/0001479 | On the absence of winds in ADAFs
+0 | - | oai:arXiv.org:astro-ph/0001483 | The role of Star Formation in the evolution of spiral galaxies
+0 | - | oai:arXiv.org:astro-ph/0001486 | Search for Binary Protostars
+0 | - | oai:arXiv.org:astro-ph/0001488 | Infrared Properties of High Redshift and X-ray Selected AGN Samples
+0 | - | oai:arXiv.org:astro-ph/0001491 | Better Astrometric Deblending of Gravitional Microlensing Events by Using the Difference Image Analysis Method
+-8 | - | oai:arXiv.org:astro-ph/0001496 | Modeling Galaxy Lenses
+-12 | electric | oai:arXiv.org:astro-ph/0001503 | A GPS-based method to model the plasma effects in VLBI observations
+0 | - | oai:arXiv.org:astro-ph/0001505 | ROSAC: Studying the clustering properties of X-ray selected AGNs
+0 | - | oai:arXiv.org:astro-ph/0001507 | ISO observational campaign of the BL Lac object PKS 2155-304
+0 | - | oai:arXiv.org:astro-ph/0001513 | Strong and weak lensing analysis of cluster Abell 2219 based on optical and near infrared data
+-4 | - | oai:arXiv.org:astro-ph/0001515 | Toy model of obscurational variability in active galactic nuclei
+-12 | em | oai:arXiv.org:astro-ph/0001518 | Molecules as Tracers of PN Structure
+0 | - | oai:arXiv.org:astro-ph/0001519 | Early spectroscopic observations of Nova (V1494) Aquilae 1999 No.2
+0 | - | oai:arXiv.org:astro-ph/0001520 | The Fornax Spectroscopic Survey I. Survey Strategy and Preliminary Results on the Redshift Distribution of a Complete Sample of Stars and Galaxies
+0 | - | oai:arXiv.org:astro-ph/0001523 | WSRT 1.4 GHz Observations of the Hubble Deep Field
+0 | - | oai:arXiv.org:astro-ph/0001529 | The Properties of Young Clusters in M82
+0 | - | oai:arXiv.org:astro-ph/0001530 | X-ray/optical observations of XTE J0421+560/CI Cam in quiescence
+0 | - | oai:arXiv.org:astro-ph/0001531 | Super star clusters as probes of massive star evolution and the IMF at extreme metallicities
+0 | - | oai:arXiv.org:astro-ph/0001533 | A time-delay determination from VLA light curves of the CLASS gravitational lens B1600+434
+0 | - | oai:arXiv.org:astro-ph/0001535 | The Evolution of He4 and LiBeB
+-8 | em | oai:arXiv.org:astro-ph/0001538 | Quasar Candidate Multicolor Selection Technique: a different approach
+0 | - | oai:arXiv.org:astro-ph/0001542 | Structure and Evolution of Circumstellar Disks Around Young Stars: New Views from ISO
+0 | - | oai:arXiv.org:astro-ph/0001545 | The Distance to the Large Magellanic Cloud
+-8 | - | oai:arXiv.org:astro-ph/0002002 | Point source models for the gravitational lens B1608+656: Indeterminacy in the prediction of the Hubble constant
+-12 | em | oai:arXiv.org:astro-ph/0002005 | A Comparison of Ultraviolet, Optical, and X-Ray Imagery of Selected Fields in the Cygnus Loop
+0 | - | oai:arXiv.org:astro-ph/0002007 | The Cosmological Quark-Hadron Transition and Massive Compact Halo Objects
+-8 | em | oai:arXiv.org:astro-ph/0002009 | The giant radio galaxy 8C0821+695 and its environment
+0 | - | oai:arXiv.org:astro-ph/0002013 | Clustering of mass and galaxies
+0 | - | oai:arXiv.org:astro-ph/0002014 | SGRs and AXPs - Magnetars or Young Quark Stars ?
+-8 | - | oai:arXiv.org:astro-ph/0002016 | Understanding NLR in Seyfert Galaxies: numerical simulation of jet-cloud interaction
+0 | - | oai:arXiv.org:astro-ph/0002018 | The HST view of the FR I / FR II dichotomy
+0 | - | oai:arXiv.org:astro-ph/0002019 | Magnetized Atmospheres around Accreting Neutron Stars
+-8 | em | oai:arXiv.org:astro-ph/0002024 | ISO-LWS spectroscopy of Centaurus A: extended star formation
+0 | - | oai:arXiv.org:astro-ph/0002026 | Mass-loss induced instabilities in fast rotating stars
+0 | - | oai:arXiv.org:astro-ph/0002027 | Overmerging in N-body simulations
+0 | - | oai:arXiv.org:astro-ph/0002028 | ChaMP and the High Redshift Quasars in X-rays
+0 | - | oai:arXiv.org:astro-ph/0002029 | High-resolution simulations and visualization of protoplanetary disks
+0 | - | oai:arXiv.org:astro-ph/0002030 | Cosmic defects and cosmology
+0 | - | oai:arXiv.org:astro-ph/0002031 | The Role of H2 Molecules in Cosmological Structure Formation
+-8 | em | oai:arXiv.org:astro-ph/0002048 | Gyro-Magnetic Relations and Masses of Stars
+0 | - | oai:arXiv.org:astro-ph/0002056 | The Light Elements Be and B as Stellar Chronometers in the Early Galaxy
+0 | - | oai:arXiv.org:astro-ph/0002057 | The Warp of the Galaxy and the Orientation of the LMC Orbit
+0 | - | oai:arXiv.org:astro-ph/0002059 | Kinematics of Molecular Hydrogen Emission from Planetary and Pre-planetary Nebulae
+0 | - | oai:arXiv.org:astro-ph/0002060 | From Historical Perspectives to Some Modern Possibilities
+0 | - | oai:arXiv.org:astro-ph/0002061 | LASCO and EIT Observations of Coronal Mass Ejections
+0 | - | oai:arXiv.org:astro-ph/0002066 | HST Images of Stephan&#39;s Quintet: Star Cluster Candidates in a Compact Group Environment
+0 | - | oai:arXiv.org:astro-ph/0002070 | Extragalactic Globular Cluster Systems: A new Perspective on Galaxy Formation and Evolution
+0 | - | oai:arXiv.org:astro-ph/0002071 | Alternative Solutions to Big Bang Nucleosynthesis
+0 | - | oai:arXiv.org:astro-ph/0002072 | VLBI difference astrometry at 43GHz
+0 | - | oai:arXiv.org:astro-ph/0002075 | On energy spectra of UHE cosmic rays accelerated in supergalactic accretion flows
+0 | - | oai:arXiv.org:astro-ph/0002076 | Determination of the EAS Attenuation Length from Data of the ANI Experiment
+0 | - | oai:arXiv.org:astro-ph/0002077 | The Dependence of the Age Parameter from EAS Size and Zenith Angle of Incidence
+-16 | - | oai:arXiv.org:astro-ph/0002087 | The Formation History of Globular Clusters
+0 | - | oai:arXiv.org:astro-ph/0002088 | Constraints on Cluster Formation from Old Globular CLuster Systems
+0 | em | oai:arXiv.org:astro-ph/0002090 | Measuring the Size of the Vela Pulsar&#39;s Radio Emission Region
+0 | - | oai:arXiv.org:astro-ph/0002095 | The CDS information hub
+0 | - | oai:arXiv.org:astro-ph/0002096 | The Broad Line Region in Active Galactic Nuclei
+-8 | em | oai:arXiv.org:astro-ph/0002097 | A phase-reference study of the quasar pair 1038+528A,B
+0 | diffusion | oai:arXiv.org:astro-ph/0002098 | Chemistry in the Envelopes around Massive Young Stars
+0 | gravity | oai:arXiv.org:astro-ph/0002099 | Geodetic Precession and the Binary Pulsar B1913+16
+0 | - | oai:arXiv.org:astro-ph/0002100 | Reionization of the Universe and the Photoevaporation of Cosmological Minihalos
+0 | em | oai:arXiv.org:astro-ph/0002101 | Red Companions to the z=2.15 Radio Loud Quasar 1550-269
+0 | - | oai:arXiv.org:astro-ph/0002109 | The ALADIN Interactive Sky Atlas
+0 | - | oai:arXiv.org:astro-ph/0002112 | Approximations of the self-similar solution for blastwave in a medium with power-law density variation
+-8 | em | oai:arXiv.org:astro-ph/0002115 | Radio Emission Properties of Millisecond Pulsars
+0 | - | oai:arXiv.org:astro-ph/0002117 | The Effelsberg Search for Pulsars in the Galactic Centre
+8 | em | oai:arXiv.org:astro-ph/0002118 | Near Infrared Photometry of Galactic Globular Clusters M56 and M15. Extending the Red Giant Branch vs. Metallicity Calibration Towards Metal Poor Systems
+-16 | - | oai:arXiv.org:astro-ph/0002120 | The Magellanic Clouds and the Primordial Helium Abundance
+0 | - | oai:arXiv.org:astro-ph/0002124 | Fractal structures and the large scale distribution of galaxies
+0 | - | oai:arXiv.org:astro-ph/0002126 | Quintessence at Galactic Level?
+0 | - | oai:arXiv.org:astro-ph/0002128 | Eccentric Orbits of close Companions to Asymptotic Giant Branch Stars
+-20 | - | oai:arXiv.org:astro-ph/0002136 | Cosmic Star Formation History Required from Infrared Galaxy Number Count : Future Prospect for Infrared Imaging Surveyor (IRIS)
+0 | - | oai:arXiv.org:astro-ph/0002139 | A Nearby Supernovae Search: Eros2
+0 | - | oai:arXiv.org:astro-ph/0002141 | Detection of deuterium Balmer lines in the Orion Nebula
+0 | - | oai:arXiv.org:astro-ph/0002142 | The Formation of Galaxies, the Formation of Old Globular Clusters and the Link with High-Redshift Objects
+0 | - | oai:arXiv.org:astro-ph/0002144 | Formation of the optical spectra of the coolest M- and L-dwarfs and lithium abundances in their atmospheres
+-8 | diffusion | oai:arXiv.org:astro-ph/0002145 | On radial gas flows, the Galactic Bar and chemical evolution in the Galactic Disc
+0 | - | oai:arXiv.org:astro-ph/0002152 | Dynamical effects of a cosmological constant
+0 | - | oai:arXiv.org:astro-ph/0002157 | Structure of the Sagittarius dwarf galaxy at low Galactic latitudes
+-8 | em | oai:arXiv.org:astro-ph/0002158 | Ultra-High-Energy Cosmic Ray Acceleration by Magnetic Reconnection in Newborn Pulsars
+0 | - | oai:arXiv.org:astro-ph/0002161 | Patterns of Super Star Cluster Formation in `Clumpy&#39; Starburst Galaxies
+0 | - | oai:arXiv.org:astro-ph/0002163 | Adiabatic CDM Models and the Competition
+0 | - | oai:arXiv.org:astro-ph/0002165 | Beaming and Jets in GRBs
+0 | - | oai:arXiv.org:astro-ph/0002169 | The hard X-ray properties of the Seyfert nucleus in NGC 1365
+-8 | gravity | oai:arXiv.org:astro-ph/0002171 | Astrophysical Effects Related to Gravity-Induced Electric Polarization of Matter
+0 | - | oai:arXiv.org:astro-ph/0002188 | Inflationary Models and Connections to Particle Physics
+0 | em | oai:arXiv.org:astro-ph/0002194 | Resonant inverse Compton scattering by secondary pulsar plasma
+0 | - | oai:arXiv.org:astro-ph/0002197 | First VLT spectra of white dwarfs in a globular cluster
+0 | - | oai:arXiv.org:astro-ph/0002198 | Improving the Resolution of X-Ray Telescopes with Occulting Satellites
+0 | - | oai:arXiv.org:astro-ph/0002200 | A local infrared perspective to deeper ISO surveys
+0 | - | oai:arXiv.org:astro-ph/0002202 | Recent Advances in Binary Star Formation Using SPH
+-4 | - | oai:arXiv.org:astro-ph/0002208 | The superbubble model for Li, Be and B production and Galactic evolution
+0 | em | oai:arXiv.org:astro-ph/0002210 | A vestige low metallicity gas shell surrounding the radio galaxy 0943-242 at z=2.92
+0 | electric | oai:arXiv.org:astro-ph/0002211 | Energy implications of temperature fluctuations in photoionized plasma
+0 | - | oai:arXiv.org:astro-ph/0002213 | The Formation of the Hubble Sequence of Disk Galaxies: The Effects of Early Viscous Evolution
+0 | em | oai:arXiv.org:astro-ph/0002221 | Long-term photometry of the Wolf-Rayet stars WR 137, WR 140, WR 148, and WR 153
+0 | - | oai:arXiv.org:astro-ph/0002225 | Extended X-ray emission from FRIIs and RL quasars
+-8 | diffusion | oai:arXiv.org:astro-ph/0002226 | The Morphology, Color, and Gas Content of Low Surface Brightness Galaxies
+-12 | em | oai:arXiv.org:astro-ph/0002235 | Problems encountered in the Hipparcos variable stars analysis
+0 | - | oai:arXiv.org:astro-ph/0002236 | The Schweizer-Middleditch star revisited
+0 | - | oai:arXiv.org:astro-ph/0002244 | The Elusive Active Nucleus of NGC 4945
+0 | em | oai:arXiv.org:astro-ph/0002246 | IZ Photometry of L dwarfs and the implications for brown dwarf surevys
+-16 | - | oai:arXiv.org:astro-ph/0002247 | Constraining reionization using the thermal history of the baryons
+0 | - | oai:arXiv.org:astro-ph/0002250 | Modelling galaxy clustering at high redshift
+0 | - | oai:arXiv.org:astro-ph/0002253 | Not enough stellar Mass Machos in the Galactic Halo
+-8 | gravity | oai:arXiv.org:astro-ph/0002254 | Decay of proton into Planck neutrino in the theory of gravity
+-8 | diffusion | oai:arXiv.org:astro-ph/0002259 | The elusive structure of the diffuse molecular gas: shocks or vortices in compressible turbulence?
+0 | - | oai:arXiv.org:astro-ph/0002267 | On PSR1913+16
+0 | - | oai:arXiv.org:astro-ph/0002269 | On the universality of the spectrum of cosmic rays accelerated at highly relativistic shocks
+-8 | thermal | oai:arXiv.org:astro-ph/0002270 | Systematic effects in the interpretations of Cluster X-ray Temperature functions
+0 | - | oai:arXiv.org:astro-ph/0002272 | Detection of X-ray pulsations from the Be/X-ray transient A 0535+26 during a disc loss phase of the primary
+0 | - | oai:arXiv.org:astro-ph/0002275 | Mining for Metals in the Lyman Alpha Forest
+4 | em | oai:arXiv.org:astro-ph/0002276 | New gamma Doradus Stars from the Hipparcos Mission and Geneva Photometry
+-8 | em | oai:arXiv.org:astro-ph/0002278 | Low Frequency Radio Pulses from Gamma-Ray Bursts?
+0 | - | oai:arXiv.org:astro-ph/0002280 | Use of DPOSS data to study globular cluster halos: an application to M 92
+0 | - | oai:arXiv.org:astro-ph/0002282 | Silicate emission in Orion
+-8 | em | oai:arXiv.org:astro-ph/0002284 | The extragalactic background and its fluctuations in the far-infrared wavelengths
+-8 | advective | oai:arXiv.org:astro-ph/0002285 | High Velocity Star Formation in the LMC
+0 | - | oai:arXiv.org:astro-ph/0002287 | Secondary caustics in close multiple lenses
+0 | - | oai:arXiv.org:astro-ph/0002289 | HST/NICMOS Imaging of the Planetary Nebula Hubble 12
+0 | - | oai:arXiv.org:astro-ph/0002290 | Evolution and surface abundances of red giants experiencing deep mixing
+0 | - | oai:arXiv.org:astro-ph/0002291 | The shock waves in decaying supersonic turbulence
+16 | em | oai:arXiv.org:astro-ph/0002293 | On the Role of Dust Particles in Decoupling of Plasma from Magnetic Field in Laboratory and Space
+0 | - | oai:arXiv.org:astro-ph/0002296 | Primordial Nucleosynthesis For The New Millennium
+-8 | - | oai:arXiv.org:astro-ph/0002298 | X-ray variability and prediction of TeV emission in the HBL 1ES1101-232
+0 | - | oai:arXiv.org:astro-ph/0002301 | Sachs-Wolfe effect in space-times with torsion
+0 | - | oai:arXiv.org:astro-ph/0002302 | Spirals and the size of the disk in EX Dra
+0 | em | oai:arXiv.org:astro-ph/0002304 | The frequency content of Delta Sct stars as determined by photometry
+0 | - | oai:arXiv.org:astro-ph/0002309 | Formation and evolution of disk galaxies within cold dark matter halos
+-8 | seismic-body | oai:arXiv.org:astro-ph/0002311 | On the origin of the color Tully-Fisher and color-magnitude relations of disk galaxies
+0 | - | oai:arXiv.org:astro-ph/0002316 | Performance Results of the AMS-01 Aerogel Threshold Cherenkov
+0 | - | oai:arXiv.org:astro-ph/0002320 | CHVCs: Galactic Building Blocks at z = 0
+-12 | em | oai:arXiv.org:astro-ph/0002325 | Multi-colour PL-relations of Cepheids in the Hipparcos catalogue and the distance to the LMC
+0 | - | oai:arXiv.org:astro-ph/0002334 | Distance-Redshift in Inhomogeneous FLRW
+0 | - | oai:arXiv.org:astro-ph/0002340 | The Toronto Red-Sequence Cluster Survey: First Results
+0 | - | oai:arXiv.org:astro-ph/0002345 | X-ray absorption lines in the Seyfert 1 galaxy NGC 5548 discovered with Chandra-LETGS
+-8 | em | oai:arXiv.org:astro-ph/0002347 | Electron acceleration due to high frequency instabilities at supernova remnant shocks
+0 | - | oai:arXiv.org:astro-ph/0002349 | Mode identification from line-profile variations
+0 | - | oai:arXiv.org:astro-ph/0002351 | Transport Phenomena and Light Element Abundances in the Sun and Solar Type Stars
+0 | - | oai:arXiv.org:astro-ph/0002353 | Lithium abundances in main-sequence F stars and sub-giants
+0 | - | oai:arXiv.org:astro-ph/0002354 | X-ray flares on zero-age- and pre-main sequence stars in Taurus-Auriga-Perseus
+0 | - | oai:arXiv.org:astro-ph/0002356 | The Iron Project
+-8 | em | oai:arXiv.org:astro-ph/0002357 | K-Band Spectroscopy of an Obscured Massive Stellar Cluster in the Antennae Galaxies (NGC 4038/4039) with NIRSPEC
+0 | - | oai:arXiv.org:astro-ph/0002358 | Photometric Properties of Low Redshift Galaxy Clusters
+-8 | electric | oai:arXiv.org:astro-ph/0002361 | Effect of Beam-Plasma Instabilities on Accretion Disk Flares
+-8 | diffusion | oai:arXiv.org:astro-ph/0002371 | Chemical and dynamical evolution in gas-rich dwarf galaxies
+0 | - | oai:arXiv.org:astro-ph/0002372 | The Luminosity Function of MS2255.7+2039 at z=0.288
+0 | - | oai:arXiv.org:astro-ph/0002373 | Properties of Proto--Planetary Nebulae
+0 | - | oai:arXiv.org:astro-ph/0002375 | Asymmetric, arc minute scale structures around NGC 1275
+0 | - | oai:arXiv.org:astro-ph/0002379 | HV Ursae Majoris, a new contact binary with early-type components
+0 | - | oai:arXiv.org:astro-ph/0002380 | The Dependence of Tidally-Induced Star Formation on Cluster Density
+0 | - | oai:arXiv.org:astro-ph/0002381 | Fossils of turbulence and non-turbulence in the primordial universe: the fluid mechanics of dark matter
+0 | - | oai:arXiv.org:astro-ph/0002383 | Predictions on the number of variable stars for the GAIA space mission and for surveys as the ground-based International Liquid Mirror Telescope
+0 | - | oai:arXiv.org:astro-ph/0002388 | Star Formation and Chemical Evolution of Lyman-Break Galaxies
+-4 | - | oai:arXiv.org:astro-ph/0002391 | A New Dark Matter Model for Galaxies
+0 | - | oai:arXiv.org:astro-ph/0002392 | The role of outflows and star formation efficiency in the evolution of early-type cluster galaxies
+-8 | em | oai:arXiv.org:astro-ph/0002393 | A study of young radio-loud AGN using space-VLBI
+0 | - | oai:arXiv.org:astro-ph/0002400 | Cosmic Equation of State, Quintessence and Decaying Dark Matter
+0 | - | oai:arXiv.org:astro-ph/0002403 | ISO far-infrared observations of rich galaxy clusters II. Sersic 159-03
+8 | - | oai:arXiv.org:astro-ph/0002406 | Polaris: astrometric orbit, position, and proper motion
+0 | - | oai:arXiv.org:astro-ph/0002408 | Non-LTE Effects in Berylium Abundances
+0 | em | oai:arXiv.org:astro-ph/0002411 | Kinetic theory of cosmic ray and gamma-ray production in supernova remnants expanding into wind bubbles
+0 | - | oai:arXiv.org:astro-ph/0002414 | Superluminal Caustic is Just a Common Misconception: A Comment on astro-ph/0001199 by Zheng Zheng and Andrew Gould
+0 | - | oai:arXiv.org:astro-ph/0002415 | Comptonization, reflection and noise in black hole binaries
+-24 | - | oai:arXiv.org:astro-ph/0002417 | Research and Education in Basic Space Science: The Approach Pursued in the UN/ESA Workshops
+0 | - | oai:arXiv.org:astro-ph/0002418 | The Optical Gravitational Lensing Experiment. Catalog of Microlensing Events in the Galactic Bulge
+-4 | - | oai:arXiv.org:astro-ph/0002427 | Dust lanes, thick absorbers, and the unification model for Seyfert galaxies
+0 | - | oai:arXiv.org:astro-ph/0002428 | The Impact of Rotation on Cluster Dynamics
+0 | - | oai:arXiv.org:astro-ph/0002433 | Rapid fading of optical afterglows as evidence for beaming in gamma-ray bursts
+0 | - | oai:arXiv.org:astro-ph/0002435 | The robust detection of stars on CCD images
+-8 | em | oai:arXiv.org:astro-ph/0002440 | ISO spectroscopy of circumstellar dust in the Herbig Ae systems AB Aur and HD 163296
+0 | - | oai:arXiv.org:astro-ph/0002447 | Optically dim counterparts of hard X-ray selected AGNs
+-8 | diffusion | oai:arXiv.org:astro-ph/0002449 | What Damped Ly-alpha Systems Tell Us About the Radial Distribution of Cold Gas at High Redshift
+0 | - | oai:arXiv.org:astro-ph/0002452 | Optical Counterparts to Damped Lyman Alpha Systems
+0 | - | oai:arXiv.org:astro-ph/0002454 | Damped Ly-alpha Systems in Semi-Analytic Models: Sensitivity to dynamics, disk properties, and cosmology
+0 | - | oai:arXiv.org:astro-ph/0002455 | AGB evolution with overshoot: hot bottom burning and dredge up
+0 | - | oai:arXiv.org:astro-ph/0002456 | ISO-SWS Observations of OMC-1: H_2 and Fine Structure Lines
+0 | - | oai:arXiv.org:astro-ph/0002460 | The hard X-ray emission of luminous infrared galaxies
+0 | - | oai:arXiv.org:astro-ph/0002463 | Some Aspects of Inverse Compton Emission from 3K Background Photons
+-8 | em | oai:arXiv.org:astro-ph/0002464 | A Comparison of the Extra Nuclear X-ray and Radio Features in M87
+0 | - | oai:arXiv.org:astro-ph/0002465 | Delta Scuti stars in stellar systems: on the variability of HD 220392 and HD 220391
+0 | - | oai:arXiv.org:astro-ph/0002466 | Pulsation in two Herbig Ae stars: HD 35929 and V351 Ori
+0 | - | oai:arXiv.org:astro-ph/0002468 | The Fraction of High Redshift Galaxies in Deep Infrared Selected Field Galaxy Samples
+0 | - | oai:arXiv.org:astro-ph/0002473 | The dynamical evolution of the dust shell of IRC+10216
+-8 | em | oai:arXiv.org:astro-ph/0002474 | A deep search for the optical counterpart to the anomalous X-ray pulsar 1E 2259+58.6
+0 | - | oai:arXiv.org:astro-ph/0002475 | Prospects of Variable Star Research by Future Space Missions
+0 | - | oai:arXiv.org:astro-ph/0002476 | Some statistical properties of spiral galaxies
+0 | - | oai:arXiv.org:astro-ph/0002478 | Non-equilibrium H2 ortho-to-para ratio in two molecular clouds of the Galactic Center
+0 | - | oai:arXiv.org:astro-ph/0002480 | Delta Scuti Stars in Stellar Systems: the interest of HD 220392 and HD 220391
+-8 | diffusion | oai:arXiv.org:astro-ph/0002485 | Search for molecular gas in HVCs through HCO+ absorption
+-8 | advective | oai:arXiv.org:astro-ph/0002486 | Modification of AGB wind in a binary system
+-8 | em | oai:arXiv.org:astro-ph/0002487 | Post-Glitch RXTE-PCA Observations of the Vela Pulsar
+0 | - | oai:arXiv.org:astro-ph/0002488 | Fundamental parameters of Galactic luminous OB stars V. The effect of microturbulence
+0 | - | oai:arXiv.org:astro-ph/0002489 | Present and Near-Future Reflected Light Searches for Close-In Planets
+0 | - | oai:arXiv.org:astro-ph/0002496 | Gravitational potential and energy of homogeneous rectangular parallelepiped
+-8 | em | oai:arXiv.org:astro-ph/0002501 | Radio Supernovae and GRB 980425
+-8 | em | oai:arXiv.org:astro-ph/0002503 | The evolution of helium white dwarfs: III. On the ages of millisecond pulsar systems
+0 | em | oai:arXiv.org:astro-ph/0002514 | The Future of Radio Astronomy: Options for Dealing with Human Generated Interference
+-8 | em | oai:arXiv.org:astro-ph/0002515 | Radio Frequency Interference
+0 | - | oai:arXiv.org:astro-ph/0002519 | Optical and X-ray analysis of the cluster of galaxies Abell 496
+0 | - | oai:arXiv.org:astro-ph/0002520 | CMB Anisotropies: A Decadal Survey
+0 | - | oai:arXiv.org:astro-ph/0002522 | Determination of cosmological parameters from large scale structure observations
+0 | - | oai:arXiv.org:astro-ph/0002528 | The Final Fate of Coalescing Compact Binaries: From Black Hole to Planet Formation
+0 | - | oai:arXiv.org:astro-ph/0002531 | Models of Wave Supported Clumps in Giant Molecular Clouds
+-8 | - | oai:arXiv.org:astro-ph/0003005 | Effects of galaxy mergers on the faint IRAS source counts and the background
+0 | - | oai:arXiv.org:astro-ph/0003007 | Analysis of Balmer Profiles of early type stars
+0 | - | oai:arXiv.org:astro-ph/0003010 | Lithium and rotation on the subgiant branch II. Theoretical analysis of observations
+0 | - | oai:arXiv.org:astro-ph/0003022 | Evolution of lithium in solar-type stars: clues from intermediate age clusters
+0 | - | oai:arXiv.org:astro-ph/0003023 | ROSAT HRI monitoring of X-ray variability in the NLS1 galaxy PKS 0558-504
+8 | em | oai:arXiv.org:astro-ph/0003024 | Magnetic field strength from peaked synchrotron spectra
+0 | - | oai:arXiv.org:astro-ph/0003026 | Bimodal production of Be and B in the early Galaxy
+0 | - | oai:arXiv.org:astro-ph/0003027 | Primordial black holes and gravitational memory
+0 | - | oai:arXiv.org:astro-ph/0003029 | A correction to the pp reaction
+0 | - | oai:arXiv.org:astro-ph/0003034 | Non-Linear Effects on the Angular Correlation Function
+0 | - | oai:arXiv.org:astro-ph/0003040 | How flat is the Universe?
+0 | - | oai:arXiv.org:astro-ph/0003041 | Pixel and Micro-lensing with NGST
+0 | em | oai:arXiv.org:astro-ph/0003042 | Low Frequency Radio Emission of Pulsar PSR J1907+0919 Associated with the Magnetar SGR 1900+14
+0 | - | oai:arXiv.org:astro-ph/0003043 | Jets from compact objects
+0 | - | oai:arXiv.org:astro-ph/0003044 | Theory of solar luminosity variations
+0 | - | oai:arXiv.org:astro-ph/0003049 | A limit for the mass transfer rate in soft X-ray transients
+-8 | - | oai:arXiv.org:astro-ph/0003051 | Bit-String Physics Prediction of eta, The Dark Matter/Baryon Ratio and Omega_M
+0 | - | oai:arXiv.org:astro-ph/0003062 | Primordial black holes, phase transitions, and the fate of the universe
+0 | - | oai:arXiv.org:astro-ph/0003063 | A correlation between the SiO and the Fe 6.4 keV line emission from the Galactic center
+0 | - | oai:arXiv.org:astro-ph/0003064 | One relation for self-gravitating bodies
+0 | - | oai:arXiv.org:astro-ph/0003065 | On the origin of the universe
+0 | - | oai:arXiv.org:astro-ph/0003069 | A few things we do not know about the sun and F stars and G stars
+0 | em | oai:arXiv.org:astro-ph/0003073 | A New Strategy for the Routine Detection &amp; Imaging of Faint Radio Sources with VLBI
+-8 | - | oai:arXiv.org:astro-ph/0003074 | 2D Numerical Simulation of Stellar Convection
+-8 | thermal | oai:arXiv.org:astro-ph/0003075 | Effects of Photospheric Temperature Inhomogeneities on Lithium Abundance Determinations (2D)
+0 | - | oai:arXiv.org:astro-ph/0003077 | The Properties of Hypernovae: SNe Ic 1998bw, 1997ef, and SN IIn 1997cy
+-8 | - | oai:arXiv.org:astro-ph/0003078 | Monte Carlo inversion of hydrogen and metal lines from QSO absorption spectra
+0 | - | oai:arXiv.org:astro-ph/0003082 | First order Fermi acceleration at multiple oblique shocks
+0 | - | oai:arXiv.org:astro-ph/0003091 | A ROSAT HRI study of the open cluster NGC 3532
+-4 | em | oai:arXiv.org:astro-ph/0003093 | Electron energy losses near pulsar polar caps: a Monte Carlo approach
+0 | - | oai:arXiv.org:astro-ph/0003100 | Iterative Maps with Hierarchical Clustering for the Observed Scales of Astrophysical and Cosmological Structures
+0 | - | oai:arXiv.org:astro-ph/0003102 | The Galactic Exoplanet Survey Telescope: A Proposed Space-Based Microlensing Survey for Terrestrial Extra-Solar Planets
+0 | - | oai:arXiv.org:astro-ph/0003105 | Quintessence-like Dark Matter in Spiral Galaxies
+0 | - | oai:arXiv.org:astro-ph/0003108 | Accretion and Emission Processes in AGN: the UV-X Connection
+-8 | advective | oai:arXiv.org:astro-ph/0003110 | The head-tail structure of high-velocity clouds - A survey of the northern sky
+0 | - | oai:arXiv.org:astro-ph/0003118 | Determination of Masses and Radii of the Massive Eclipsing Binary System HV 2543 in the Large Magellanic Cloud
+0 | - | oai:arXiv.org:astro-ph/0003119 | VSOP Observations of a Sub-Parsec Accretion Disk
+0 | - | oai:arXiv.org:astro-ph/0003125 | Speckle Imaging: a boon for astronomical observations
+0 | - | oai:arXiv.org:astro-ph/0003131 | Is the [CO] index an age indicator for star forming galaxies?
+0 | - | oai:arXiv.org:astro-ph/0003137 | The CFH Optical PDCS survey (COP) I: The Data
+-4 | - | oai:arXiv.org:astro-ph/0003139 | A model for the alternating phase lags associated with QPOs in X-ray binaries
+0 | - | oai:arXiv.org:astro-ph/0003143 | Radiatively inefficient accretion disks
+0 | - | oai:arXiv.org:astro-ph/0003147 | Turbulence and diffusion: fossil turbulence
+0 | - | oai:arXiv.org:astro-ph/0003148 | Fundamental properties of the open cluster NGC 2355
+0 | - | oai:arXiv.org:astro-ph/0003150 | Where Do We Stand?
+0 | - | oai:arXiv.org:astro-ph/0003151 | Observations of Eddington-limited type-I X-ray bursts from 4U 1812-12
+0 | em | oai:arXiv.org:astro-ph/0003156 | Photometry of Nova V 1493 Aql
+0 | - | oai:arXiv.org:astro-ph/0003160 | Large Scale Structure in the weakly non-linear regime
+0 | - | oai:arXiv.org:astro-ph/0003161 | Star Clusters and the Duration of Starbursts
+0 | - | oai:arXiv.org:astro-ph/0003165 | The vertical extent and kinematics of the HI in NGC 2403
+0 | - | oai:arXiv.org:astro-ph/0003166 | Influence of new reaction rates on 18F production in novae
+-8 | diffusion | oai:arXiv.org:astro-ph/0003167 | The Sombrero Galaxy III. Ionised gas and dust in the central 200 pc: a nuclear bar?
+-16 | - | oai:arXiv.org:astro-ph/0003168 | X-ray emitting-absorbing media in Seyfert 1 galaxies
+0 | - | oai:arXiv.org:astro-ph/0003169 | Hydrodynamical Models of Accretion Disks in SU UMa Systems
+0 | - | oai:arXiv.org:astro-ph/0003173 | High resolution near-infrared polarimetry of Eta Carinae and the Homunculus Nebula
+-8 | diffusion | oai:arXiv.org:astro-ph/0003175 | First Detection of Molecular Gas in the Shells of CenA
+0 | - | oai:arXiv.org:astro-ph/0003180 | The first radius-expansion X-ray burst from GX 3+1
+-12 | thermal | oai:arXiv.org:astro-ph/0003194 | Disk heating and stellar migration in galaxies
+0 | - | oai:arXiv.org:astro-ph/0003195 | Accretion by Galaxies
+8 | em | oai:arXiv.org:astro-ph/0003197 | Does the unification of BL Lac and FR I radio galaxies require jet velocity structures?
+0 | - | oai:arXiv.org:astro-ph/0003201 | Pre-Supernova Evolution of Massive Stars
+0 | - | oai:arXiv.org:astro-ph/0003206 | 2dF QSO Redshift Survey
+-8 | - | oai:arXiv.org:astro-ph/0003215 | Persistent fluctuations and scaling properties in galaxy number counts
+-16 | - | oai:arXiv.org:astro-ph/0003220 | A code for optically thick and hot photoionized media
+0 | - | oai:arXiv.org:astro-ph/0003221 | The reality of old moving groups - the case of HR 1614
+0 | - | oai:arXiv.org:astro-ph/0003223 | The Tip of the Red Giant Branch and Distance of the Magellanic Clouds: results from the DENIS survey
+0 | - | oai:arXiv.org:astro-ph/0003224 | The evolution of the stellar populations in low surface brightness galaxies
+0 | - | oai:arXiv.org:astro-ph/0003225 | The Mid-Infrared Spectra of Interacting Galaxies: From ISO to SIRTF
+0 | - | oai:arXiv.org:astro-ph/0003226 | IRS: the Infrared Spectrograph on SIRTF
+-8 | em | oai:arXiv.org:astro-ph/0003227 | Cosmic Microwave Background at low frequencies
+-8 | em | oai:arXiv.org:astro-ph/0003230 | Non-existence of radiation damping of gravitational motions
+0 | - | oai:arXiv.org:astro-ph/0003232 | Cosmic Velocities 2000: A Review
+0 | - | oai:arXiv.org:astro-ph/0003233 | Gravitational potential energy of simple bodies: the homogeneous bispherical concavo-convex lens
+-16 | - | oai:arXiv.org:astro-ph/0003234 | Blue compact galaxies and the primordial 4Helium abundance
+0 | - | oai:arXiv.org:astro-ph/0003239 | Gravitational potential energy of simple bodies: the method of negative density
+0 | - | oai:arXiv.org:astro-ph/0003247 | UV Light Curves of Thermonuclear Supernovae
+0 | - | oai:arXiv.org:astro-ph/0003249 | The MONS Star Trackers
+0 | - | oai:arXiv.org:astro-ph/0003250 | Prospects for observing pulsating red giants with the MONS Star Trackers
+0 | - | oai:arXiv.org:astro-ph/0003254 | Sunyaev-Zel&#39;dovich constraints from black hole-seeded proto-galaxies
+0 | - | oai:arXiv.org:astro-ph/0003256 | Non-Gaussian signature induced by the SZ effect of galaxy clusters
+0 | - | oai:arXiv.org:astro-ph/0003257 | Temporal behaviour of emissions from Gamma-ray bursts and optical/near-IR afterglows of GRB 991208 and GRB 991216
+-8 | em | oai:arXiv.org:astro-ph/0003260 | Structure in the local Galactic ISM on scales down to 1 pc, from multi-band radio polarization observations
+-16 | - | oai:arXiv.org:astro-ph/0003271 | Adenine Abundance in a Collapsing Molecular Cloud
+0 | - | oai:arXiv.org:astro-ph/0003275 | Old models for Cygnus X-1 and AGN
+0 | - | oai:arXiv.org:astro-ph/0003279 | The Interstellar Medium of Young Stellar Clusters from the Mid-Infrared Point of View
+0 | - | oai:arXiv.org:astro-ph/0003280 | Dust properties of external galaxies; NGC 891 revisited
+-16 | - | oai:arXiv.org:astro-ph/0003281 | The Kinematics of the Planetary Nebula Population in M94
+0 | - | oai:arXiv.org:astro-ph/0003288 | Searching for AGN signatures in Mid-IR Spectra: The case of NGC1068
+-8 | em | oai:arXiv.org:astro-ph/0003298 | 2.5-11 micron spectroscopy and imaging of AGNs: implication for unification schemes
+0 | - | oai:arXiv.org:astro-ph/0003300 | VLBI Astrometry of the Stellar Image of U Herculis, Amplified by the 1667 OH Maser
+0 | - | oai:arXiv.org:astro-ph/0003301 | Physical conditions in broad and associated narrow absorption-line systems toward APM 08279+5255
+0 | - | oai:arXiv.org:astro-ph/0003302 | Semi-Analytic Models for Dark Matter Halos
+-8 | em | oai:arXiv.org:astro-ph/0003321 | Detectability of Gravitational Radiation from Prompt and Delayed Star Collapse to a Black Hole
+0 | - | oai:arXiv.org:astro-ph/0003325 | HS0907+1902: a new 4.2hr eclipsing dwarf nova
+0 | - | oai:arXiv.org:astro-ph/0003327 | Photometric and kinematic studies of open star clusters. II. NGC 1960 (M 36) and NGC 2194
+-8 | diffusion | oai:arXiv.org:astro-ph/0003328 | The dynamical evolution of the fragmented, bipolar dust shell around the carbon star IRC +10216: Rapid changes of a PPN-like structure?
+0 | - | oai:arXiv.org:astro-ph/0003335 | The best unbiased estimator for the CMB angular bispectrum
+0 | diffusion | oai:arXiv.org:astro-ph/0003336 | Galactic Evolution of Beryllium and Oxygen
+0 | - | oai:arXiv.org:astro-ph/0003338 | Large-Scale Cosmic Shear Measurements
+0 | - | oai:arXiv.org:astro-ph/0003339 | Correlated mixtures of adiabatic and isocurvature cosmological perturbations
+-8 | - | oai:arXiv.org:astro-ph/0003340 | Clustering statistics on a light-cone in the cosmological redshift space
+0 | - | oai:arXiv.org:astro-ph/0003347 | Perspective of long baseline interferometry
+0 | - | oai:arXiv.org:astro-ph/0003348 | The observation of Delta Sct and Gamma Dor stars by using MONS satellite
+0 | - | oai:arXiv.org:astro-ph/0003349 | A far IR study of the CfA Seyfert sample. I. The data
+-8 | gravity | oai:arXiv.org:astro-ph/0003352 | Turbulent mixing, viscosity, diffusion and gravity in the formation of cosmological structures: the fluid mechanics of dark matter
+0 | - | oai:arXiv.org:astro-ph/0003363 | Cosmological Strucure Formation with Topological Defects
+0 | - | oai:arXiv.org:astro-ph/0003367 | Chandra, GLAST, and the Galactic Center
+0 | - | oai:arXiv.org:astro-ph/0003369 | Additional Information from Astrometric Gravitational Microlensing Observations
+16 | em | oai:arXiv.org:astro-ph/0003370 | On the Physics of Primordial Magnetic Fields
+0 | - | oai:arXiv.org:astro-ph/0003371 | On the formation and evolution of the globular cluster Omega Centauri
+0 | - | oai:arXiv.org:astro-ph/0003372 | NGC 6994: an open cluster which is not an open cluster
+0 | - | oai:arXiv.org:astro-ph/0003373 | Mode detection from line-profile variations in Delta Scuti stars
+0 | - | oai:arXiv.org:astro-ph/0003376 | Cross-correlating CMB polarization with local large scale structures
+-4 | - | oai:arXiv.org:astro-ph/0003377 | Driven-disk model for binaries with precessing donor star. Three-dimensional simulations
+0 | - | oai:arXiv.org:astro-ph/0003379 | Detection of polarized mm and submm emission from SgrA*
+0 | - | oai:arXiv.org:astro-ph/0003380 | Photometric Redshifts based on standard SED fitting procedures
+0 | - | oai:arXiv.org:astro-ph/0003381 | An outline of radiatively-driven cosmology
+0 | - | oai:arXiv.org:astro-ph/0003383 | The late afterglow and host galaxy of GRB 990712
+0 | - | oai:arXiv.org:astro-ph/0003384 | Cut-off radii of galactic disks: A statistical study on the truncation of galactic disks
+0 | - | oai:arXiv.org:astro-ph/0003390 | Mass Segregation in Star Clusters
+0 | - | oai:arXiv.org:astro-ph/0003391 | A search for Jovian-mass planets around CM Draconis using eclipse minima timing
+-8 | em | oai:arXiv.org:astro-ph/0003393 | A Characteristic Scale on the Cosmic Microwave Sky
+-8 | em | oai:arXiv.org:astro-ph/0003405 | BeppoSAX observation of the transient X-ray pulsar GS 1843+00
+0 | - | oai:arXiv.org:astro-ph/0003409 | Photoionization and Recombination
+0 | - | oai:arXiv.org:astro-ph/0003414 | Cosmological Surveys at Submillimetre Wavelengths
+0 | - | oai:arXiv.org:astro-ph/0003416 | The Evolution of Galaxies on Cosmological Timescales
+0 | - | oai:arXiv.org:astro-ph/0003417 | Young Star Clusters: Metallicities, Ages, and Masses
+-8 | em | oai:arXiv.org:astro-ph/0003418 | Radiation Spectra of Advection Dominated Accretion Flows around Kerr Black Holes
+0 | - | oai:arXiv.org:astro-ph/0003422 | A microlensing search for cold molecular clouds in Virgo
+-8 | em | oai:arXiv.org:astro-ph/0003427 | HST spectroscopy of the double QSO HS 1216+5032 AB
+-4 | - | oai:arXiv.org:astro-ph/0003430 | Rotation, mass loss and pulsations of the star: an analytical model
+0 | - | oai:arXiv.org:astro-ph/0003432 | Estimation of steady-state basic parameters of stars
+0 | - | oai:arXiv.org:astro-ph/0003434 | Direct Detection of Nonbaryonic Dark Matter
+0 | - | oai:arXiv.org:astro-ph/0003435 | GENIUS: the first real-time detector for solar pp-neutrinos?
+0 | - | oai:arXiv.org:astro-ph/0003440 | Proper motion and membership determination in the young open cluster NGC1662
+0 | - | oai:arXiv.org:astro-ph/0003444 | New Developments in Cosmology
+8 | em | oai:arXiv.org:astro-ph/0003449 | Limits on magnetic field strength of the extended nebula of PSR B1706-44 from optical, X-ray and TeV observations
+0 | - | oai:arXiv.org:astro-ph/0003450 | Asymptotic Giant Branch Stars in Interacting Galaxy Globular Clusters
+0 | - | oai:arXiv.org:astro-ph/0003451 | Stochastic Fluctuations in the Spectrophotometric Properties of Star Clusters
+-8 | electric | oai:arXiv.org:astro-ph/0003454 | The longest thermonuclear X-ray burst ever observed? (A BeppoSAX Wide Field Camera observation of 4U 1735-44)
+0 | - | oai:arXiv.org:astro-ph/0003456 | An efficient algorithm for two-dimensional radiative transfer in axisymmetric circumstellar envelopes and disks
+-8 | em | oai:arXiv.org:astro-ph/0003457 | Mid-infrared ISO spectroscopy of NGC 4945
+0 | - | oai:arXiv.org:astro-ph/0003458 | Inflation models, spectral index and observational constraints
+0 | - | oai:arXiv.org:astro-ph/0003459 | Exploring the Ultrahigh Energy Neutrino Universe
+-8 | em | oai:arXiv.org:astro-ph/0003460 | Coupling of the X-ray and radio emission in the black hole candidate a nd compact jet source GX 339-4
+0 | - | oai:arXiv.org:astro-ph/0003468 | The Intrinsic Shape Distribution of a Sample of Elliptical Galaxies
+0 | - | oai:arXiv.org:astro-ph/0003480 | Hotspot Emission from a Freely Precessing Neutron Star
+0 | - | oai:arXiv.org:astro-ph/0004002 | Simulated Submillimetre Galaxy Surveys
+0 | - | oai:arXiv.org:astro-ph/0004004 | Galaxy Distributions and Tsallis Statistical Mechanics
+0 | em | oai:arXiv.org:astro-ph/0004005 | 3C radio sources as they&#39;ve never been seen before
+-16 | - | oai:arXiv.org:astro-ph/0004009 | Age and metallicity for six LMC clusters and their surrounding field population
+0 | - | oai:arXiv.org:astro-ph/0004014 | BeppoSAX observations of AM Herculis in intermediate and high states
+0 | - | oai:arXiv.org:astro-ph/0004018 | Temporal Evolution of X-ray Lags in Cygnus X-1
+0 | - | oai:arXiv.org:astro-ph/0004020 | VLT observations of GRS 1915+105
+0 | - | oai:arXiv.org:astro-ph/0004021 | On the Blandford - Znajek mechanism of the energy loss of a rotating black hole
+0 | - | oai:arXiv.org:astro-ph/0004022 | Gamma-Ray Bursts as a Cosmic Window for Galaxy Evolution
+-16 | - | oai:arXiv.org:astro-ph/0004025 | Abundance of Terrestrial Planets by Microlensing
+0 | - | oai:arXiv.org:astro-ph/0004027 | Galaxy Evolution at 0 &lt; z &lt; 2 from the NICMOS HDF-North
+0 | - | oai:arXiv.org:astro-ph/0004030 | The Evolution of 3He, 4He and D in the Galaxy
+0 | - | oai:arXiv.org:astro-ph/0004036 | Multiple and variable X-ray sources in the globular clusters omega Cen, NGC6397, NGC6752, and Liller 1
+0 | - | oai:arXiv.org:astro-ph/0004042 | Theory of Microlensing
+0 | - | oai:arXiv.org:astro-ph/0004043 | Disks and Planets in Binary Systems
+0 | - | oai:arXiv.org:astro-ph/0004045 | The orbital evolution of planets in disks
+0 | - | oai:arXiv.org:astro-ph/0004050 | Discovery of Narrow X-ray Absorption Lines from NGC 3783 with the Chandra HETGS
+0 | - | oai:arXiv.org:astro-ph/0004058 | Failed Oort Clouds and Planetary Migration
+0 | - | oai:arXiv.org:astro-ph/0004062 | Ferromagnetism of quark liquid and magnetars
+0 | - | oai:arXiv.org:astro-ph/0004072 | Star Formation and Galaxy Environment
+0 | - | oai:arXiv.org:astro-ph/0004076 | A Note on Hydrodynamic Viscosity and Selfgravitation in Accretion Disks
+0 | - | oai:arXiv.org:astro-ph/0004081 | The gamma Velorum binary system. II. WR stellar parameters and the photon loss mechanism
+0 | - | oai:arXiv.org:astro-ph/0004082 | Network and Internetwork: a compared Multiwavelength Analysis
+8 | em | oai:arXiv.org:astro-ph/0004083 | Radio supernovae, supernova remnants and HII regions in NGC 2146 observed with MERLIN and the VLA
+0 | - | oai:arXiv.org:astro-ph/0004088 | A kinematic and morphological investigation of the asymmetric nebula around the LBV candidate WRA 751
+-4 | - | oai:arXiv.org:astro-ph/0004090 | The &#34;Swiss cheese&#34; cosmological model has no extrinsic curvature discontinuity: A comment on the paper by G.A. Baker, Jr. (astro-ph/0003152)
+0 | - | oai:arXiv.org:astro-ph/0004100 | ISO-SWS observations of pure rotational water absorption lines toward Orion-IRc2
+0 | - | oai:arXiv.org:astro-ph/0004103 | High resolution Ks polarization mapping of OH 231.8+4.2 (OH 0739-14) with SOFI
+-8 | em | oai:arXiv.org:astro-ph/0004104 | X-ray observation of radio supernova SN1979C by ASCA
+0 | electric | oai:arXiv.org:astro-ph/0004109 | Early galaxy evolution from deep wide field star counts. I. The spheroid density law and mass function
+0 | em | oai:arXiv.org:astro-ph/0004112 | Microlensing of multiply-imaged compact radio sources: Evidence for compact halo objects in the disk galaxy of B1600+434
+0 | - | oai:arXiv.org:astro-ph/0004119 | Studies of Binary Star Cluster Candidates in the Bar of the LMC. I: SL 353 &amp; SL 349
+0 | - | oai:arXiv.org:astro-ph/0004121 | Centrifugal buoyancy as a mechanism for neutron star glitches
+-8 | em | oai:arXiv.org:astro-ph/0004122 | Pulsar optical observation with the Very Large Telescope
+0 | - | oai:arXiv.org:astro-ph/0004124 | Physical properties of the pulsating hydrogen-deficient star LSS 3184 (BX Cir)
+0 | - | oai:arXiv.org:astro-ph/0004129 | The Inner Boundary Condition for a Thin Disk Accreting Into a Black Hole
+-16 | - | oai:arXiv.org:astro-ph/0004133 | Old White Dwarfs as a Microlensing Population
+0 | - | oai:arXiv.org:astro-ph/0004136 | HI 21cm-line observations with the GMRT towards interstellar clouds previously seen in optical absorption
+0 | - | oai:arXiv.org:astro-ph/0004139 | Detection of the VLBI-scale Counter Jet in NGC 6251
+0 | - | oai:arXiv.org:astro-ph/0004141 | BeppoSAX observations of Mrk 509 and MCG+8-11-11
+-12 | em | oai:arXiv.org:astro-ph/0004142 | A Finding List for Delta_mu Binaries derived from a Comparison of HIPPARCOS Proper Motions with Long-term Averaged Data
+0 | - | oai:arXiv.org:astro-ph/0004143 | Neutrino-antineutrino transition under CP-transformation and solar neutrino puzzle
+-16 | - | oai:arXiv.org:astro-ph/0004157 | Abundances of light elements in metal-poor stars. IV. [Fe/O] and [Fe/Mg] and the history of star formation in the solar neighborhood
+-8 | thermal | oai:arXiv.org:astro-ph/0004158 | Vertical structure of the accreting two-temperature corona and the transition to an ADAF
+-8 | diffusion | oai:arXiv.org:astro-ph/0004162 | The Hamburg/ESO survey for bright QSOs. III. A large flux-limited sample of QSOs
+0 | - | oai:arXiv.org:astro-ph/0004172 | Multifrequency studies of Gamma-Ray bursts: towards the understanding of the mystery
+0 | - | oai:arXiv.org:astro-ph/0004173 | The Multiply Scattering Effect on the Energy Measurement of UHE Cosmic Rays using Atmospheric Fluorescence Technique
+0 | - | oai:arXiv.org:astro-ph/0004176 | Redshifts For 220 BATSE Gamma-Ray Bursts Determined by Variability and the Cosmological Consequences
+0 | - | oai:arXiv.org:astro-ph/0004178 | Multiparameter estimation with the Pseudo-C_l method
+0 | - | oai:arXiv.org:astro-ph/0004180 | BeppoSAX observation of Cen X-4 in quiescence
+0 | - | oai:arXiv.org:astro-ph/0004181 | On the Poynting-Robertson Effect and Analytical Solutions
+0 | - | oai:arXiv.org:astro-ph/0004182 | Cold dust in the starburst galaxy M82
+0 | - | oai:arXiv.org:astro-ph/0004185 | Cooling neutron stars with localized protons
+0 | - | oai:arXiv.org:astro-ph/0004186 | Unusually rapid variability of the GRB000301C optical afterglow
+-8 | seismic-body | oai:arXiv.org:astro-ph/0004198 | Limits on the optical magnitude of PSR 1821-24 in M28
+0 | - | oai:arXiv.org:astro-ph/0004200 | Source Reconstruction as an Inverse Problem
+0 | - | oai:arXiv.org:astro-ph/0004201 | The Parameter Space Occupied by Galaxies: The Optical Window
+0 | - | oai:arXiv.org:astro-ph/0004203 | Large scale star formation in galaxies. I. The spirals NGC 7217, NGC 1058 and UGC 12732
+0 | - | oai:arXiv.org:astro-ph/0004208 | Studies of binary star cluster candidates in the bar of the LMC. II
+0 | - | oai:arXiv.org:astro-ph/0004209 | Large-scale CMB anisotropies: wrinkles in the Galaxy rather than in time
+-12 | thermal | oai:arXiv.org:astro-ph/0004210 | The saturation of disk heating in the solar neighborhood and evidence for a merger 9 Gyrs ago
+0 | - | oai:arXiv.org:astro-ph/0004211 | The Compton Microscope: Using the Energy Dependence of QPO Amplitudes to Probe Their Origin in Accretion Disks
+0 | - | oai:arXiv.org:astro-ph/0004213 | The First VLT FORS1 spectra of Lyman-break candidates in the HDF-S and AXAF Deep Field
+0 | - | oai:arXiv.org:astro-ph/0004215 | Characterizing the Low-Frequency QPO behavior of the X-ray Nova XTE J1550-564
+0 | electric | oai:arXiv.org:astro-ph/0004224 | Wide-field J- and K-band galaxy counts in the ELAIS fields
+0 | - | oai:arXiv.org:astro-ph/0004226 | Determining the reality of X-ray filaments
+0 | - | oai:arXiv.org:astro-ph/0004228 | EROs in the EIS Fields. I: The AXAF (Chandra) Deep Field
+0 | - | oai:arXiv.org:astro-ph/0004230 | Exploration of the BaSeL stellar library for 9 F-type stars COROT potential targets
+0 | - | oai:arXiv.org:astro-ph/0004236 | Discovery of High-Frequency QPOs in Black Hole Candidate XTE J1859+226
+0 | - | oai:arXiv.org:astro-ph/0004237 | Microlensing and the Physics of Stellar Atmospheres
+0 | - | oai:arXiv.org:astro-ph/0004241 | Constraining Galaxy Mass Profiles with Strong Gravitational Lensing
+0 | - | oai:arXiv.org:astro-ph/0004245 | Discovery and Photometric Observation of the Optical Counterpart in a Possible Galactic Halo X-ray Transient, XTE J1118+480
+0 | - | oai:arXiv.org:astro-ph/0004248 | IC3328: a &#34;dwarf elliptical galaxy&#34; with spiral structure
+0 | - | oai:arXiv.org:astro-ph/0004250 | Microlensing extended stellar sources
+-8 | diffusion | oai:arXiv.org:astro-ph/0004251 | The lithium isotope ratio in the metal-poor halo star G271-162 from VLT/UVES observations
+0 | - | oai:arXiv.org:astro-ph/0004256 | III Zw 2, the first superluminal jet in a Seyfert galaxy
+0 | - | oai:arXiv.org:astro-ph/0004257 | On the pair-electromagnetic pulse from an electromagnetic Black Hole surrounded by a Baryonic Remnant
+0 | - | oai:arXiv.org:astro-ph/0004259 | Identification and astrometry of variables in M3
+0 | - | oai:arXiv.org:astro-ph/0004265 | The distance to the nearest star-forming clouds: MBM12 and MBM20
+0 | - | oai:arXiv.org:astro-ph/0004269 | Microlensing Constraints on the Frequency of Jupiter Mass Planets
+0 | - | oai:arXiv.org:astro-ph/0004270 | Hidden Galaxies in the Fornax Cluster
+0 | - | oai:arXiv.org:astro-ph/0004272 | An Extended View of the Fornax Cluster
+0 | - | oai:arXiv.org:astro-ph/0004275 | Turmoil on the accretion disk of GRO J1655-40
+0 | - | oai:arXiv.org:astro-ph/0004276 | Stringent constraints on single-star evolution theory from masses and radii of well-detached binaries in star clusters
+-4 | - | oai:arXiv.org:astro-ph/0004278 | On the mass of moderately rotating strange stars in the MIT bag model and LMXBs
+0 | - | oai:arXiv.org:astro-ph/0004279 | The response of a dwarf nova disc to real mass transfer variations
+0 | - | oai:arXiv.org:astro-ph/0004281 | Oscillations and convective motion in stars with URCA shells
+0 | - | oai:arXiv.org:astro-ph/0004283 | CMB Cosmological Parameter Estimation: Methods and Current Results
+-8 | em | oai:arXiv.org:astro-ph/0004285 | A radio-microlensing caustic crossing in B1600+434?
+0 | em | oai:arXiv.org:astro-ph/0004294 | Radio recombination lines from starburst galaxies : high and low density ionized gas
+-8 | em | oai:arXiv.org:astro-ph/0004295 | Vertical motions in the disk of NGC 5668 as seen with optical Fabry-Perot spectroscopy
+-8 | em | oai:arXiv.org:astro-ph/0004306 | Resolving the radio nebula around beta Lyrae
+-8 | em | oai:arXiv.org:astro-ph/0004307 | Search for radio recombination lines towards the gravitational lens PKS 1830-211
+0 | - | oai:arXiv.org:astro-ph/0004311 | The Instability Strip of M3
+0 | - | oai:arXiv.org:astro-ph/0004312 | Circumbinary disks around T Tauri stars: HST/NICMOS near-infrared images and polarimetric maps
+0 | - | oai:arXiv.org:astro-ph/0004315 | Evidence for Newly Synthesized Lithium in Interstellar Space
+0 | - | oai:arXiv.org:astro-ph/0004317 | The Properties of Matter in White Dwarfs and Neutron Stars
+0 | - | oai:arXiv.org:astro-ph/0004322 | Looking for non-Gaussianity in the COBE-DMR data with spherical wavelets
+-4 | - | oai:arXiv.org:astro-ph/0004343 | Variability Model for the Microquasar GRS 1915+105
+0 | - | oai:arXiv.org:astro-ph/0004348 | Stellar Populations and Galaxy Morphology at High Redshift
+0 | - | oai:arXiv.org:astro-ph/0004355 | Constraints on the Cosmic Infra-Red Background based on BeppoSAX and CAT spectra of Mkn 501
+0 | - | oai:arXiv.org:astro-ph/0004362 | Microlensing and Galactic Structure
+-8 | em | oai:arXiv.org:astro-ph/0004368 | Discovery of a very luminous megamaser during a radio flare in the Seyfert 2 galaxy Mrk 348
+0 | - | oai:arXiv.org:astro-ph/0004377 | The Circumstellar Environment of the TTS SU Aurigae
+0 | - | oai:arXiv.org:astro-ph/0004379 | A Search for Sub-TeV Gammas in Coincidence with Gamma Ray Bursts
+0 | - | oai:arXiv.org:astro-ph/0004394 | Status Report of Project GRAND: An Extensive Air Shower Array of Proportional Wire Chambers
+-8 | - | oai:arXiv.org:astro-ph/0004396 | Asymmetries of Secondary Cosmic Muons with High Statistics and Low Systematics
+-8 | - | oai:arXiv.org:astro-ph/0004398 | Secondary Cosmic Muon Angular Distributions with High Statistics
+0 | - | oai:arXiv.org:astro-ph/0004399 | A new component of the Galaxy as the origin of the LMC microlensing events
+0 | - | oai:arXiv.org:astro-ph/0004405 | Tidal dwarf candidates in a sample of interacting galaxies
+-8 | gravity | oai:arXiv.org:astro-ph/0004406 | Cataclysmic variables as sources of gravitational waves
+0 | - | oai:arXiv.org:astro-ph/0004413 | Reionization of the Universe by Starlight and the Photoevaporation of Cosmological Minihalos
+0 | - | oai:arXiv.org:astro-ph/0004414 | EUVE Observations of OY Carinae in Superoutburst
+-8 | em | oai:arXiv.org:astro-ph/0005006 | Evidence consistent with the cosmological interpretation of quasar redshifts
+0 | - | oai:arXiv.org:astro-ph/0005007 | Formulas for direct determination of real speed in Galactic superluminal sources
+0 | - | oai:arXiv.org:astro-ph/0005009 | The STARE Project: A Transit Search for Hot Jupiters
+0 | - | oai:arXiv.org:astro-ph/0005011 | FUSE Observations of the Low-Redshift Lyman-beta Forest
+-8 | advective | oai:arXiv.org:astro-ph/0005012 | FUSE Observations of O VI in High Velocity Clouds
+0 | - | oai:arXiv.org:astro-ph/0005014 | FUSE Observations of Diffuse Interstellar Molecular Hydrogen
+-8 | diffusion | oai:arXiv.org:astro-ph/0005030 | Infrared Observations of Hot Gas and Cold Ice toward the Low Mass Protostar Elias 29
+0 | - | oai:arXiv.org:astro-ph/0005034 | Comparison between Observed and Theoretical Red Giant Branch Luminosity Functions of Galactic Globular Clusters
+0 | em | oai:arXiv.org:astro-ph/0005035 | ISO observations of a sample of Compact Steep Spectrum and GHz Peaked Spectrum Radio Galaxies
+0 | - | oai:arXiv.org:astro-ph/0005037 | Extreme Type IIp Supernovae as Yardsticks for Cosmology
+0 | - | oai:arXiv.org:astro-ph/0005040 | Resolved Stellar Populations of Super-Metal-Rich Star Clusters in the Bulge of M31
+-8 | diffusion | oai:arXiv.org:astro-ph/0005042 | Carbon and Oxygen Galactic Abundance Gradients: A Comparative Study of Stellar Yields
+-8 | em | oai:arXiv.org:astro-ph/0005043 | Gravitation Wave Emission from Radio Pulsars Revisited
+0 | - | oai:arXiv.org:astro-ph/0005045 | FUSE Observations of O VI Absorption in the Galactic Halo
+0 | - | oai:arXiv.org:astro-ph/0005048 | Timescales of disk evolution and planet formation
+0 | - | oai:arXiv.org:astro-ph/0005052 | Hubble Space Telescope Imaging of Bipolar Nuclear Shells in the Disturbed Virgo Cluster Galaxy NGC 4438
+0 | - | oai:arXiv.org:astro-ph/0005055 | Production of Lithium in the Galactic Disk
+0 | - | oai:arXiv.org:astro-ph/0005057 | The morphology of the Magellanic Clouds revealed by stars of different age: results from the DENIS survey
+0 | - | oai:arXiv.org:astro-ph/0005058 | Search for clusters at high redshift - I. Candidate Lya emitters near 1138-262 at z=2.2
+0 | - | oai:arXiv.org:astro-ph/0005060 | ISO Observations of Pre-Main Sequence and Vega-type Stars
+0 | - | oai:arXiv.org:astro-ph/0005061 | A bright X-ray transient towards NGC 5128 (Centaurus A)
+0 | - | oai:arXiv.org:astro-ph/0005064 | What hides at the center of the Sun ?
+0 | - | oai:arXiv.org:astro-ph/0005069 | The Global Cosmological Parameters
+0 | - | oai:arXiv.org:astro-ph/0005073 | X-rays from Quiescent Low-Mass X-ray Binary Transients
+0 | - | oai:arXiv.org:astro-ph/0005079 | Dynamical processes, element mixing and chemodynamical cycles in dwarf galaxies
+0 | - | oai:arXiv.org:astro-ph/0005082 | An X-ray burst with strong photospheric radius expansion observed from the source 4U1724-307 in Terzan 2
+0 | em | oai:arXiv.org:astro-ph/0005088 | Redshifts of 10 quasar candidates in the field of the rich absorption line quasar QSO 0122-380
+0 | - | oai:arXiv.org:astro-ph/0005089 | Composition of UHE Cosmic Ray Primaries
+0 | - | oai:arXiv.org:astro-ph/0005094 | Redshift Distortions and Clustering in the PSCz Survey
+-12 | em | oai:arXiv.org:astro-ph/0005100 | Electromagnetic Radiation and Motion of Dust Particle - A Simple Model
+0 | - | oai:arXiv.org:astro-ph/0005103 | Monte Carlo Predictions of Far-Infrared Emission from Spiral Galaxies
+-8 | gravity | oai:arXiv.org:astro-ph/0005104 | Newtonian Limit of Induced Gravity
+0 | - | oai:arXiv.org:astro-ph/0005106 | The Intergalactic Medium
+0 | - | oai:arXiv.org:astro-ph/0005108 | Foreground and background dust in star cluster directions
+0 | - | oai:arXiv.org:astro-ph/0005109 | Introducing ZEUS-MP: A 3D, Parallel, Multiphysics Code for Astrophysical Fluid Dynamics
+0 | - | oai:arXiv.org:astro-ph/0005115 | Cosmic strings in the age of Boomerang
+0 | - | oai:arXiv.org:astro-ph/0005116 | The neutrino star in the bulk Universe
+0 | - | oai:arXiv.org:astro-ph/0005117 | Semiclassical planetology : some results
+0 | - | oai:arXiv.org:astro-ph/0005156 | X-ray reprocessing in Narrow-Line Seyfert 1 Galaxies: Ton S180 and Ark 564
+0 | - | oai:arXiv.org:astro-ph/0005157 | BLR velocities in optically and X-ray selected AGN samples
+0 | - | oai:arXiv.org:astro-ph/0005162 | X-ray Fluctuations from the Slim Disk
+0 | - | oai:arXiv.org:astro-ph/0005163 | Optical Monitoring of NLS1s at the Wise Observatory
+0 | - | oai:arXiv.org:astro-ph/0005164 | Unravelling Active Galactic Nuclei
+0 | - | oai:arXiv.org:astro-ph/0005165 | Discovery of a narrow line Seyfert 1 galaxy
+0 | - | oai:arXiv.org:astro-ph/0005166 | 1E 0117.2-2837 and the NLR of Narrow-Line Seyfert 1 galaxies
+0 | - | oai:arXiv.org:astro-ph/0005167 | New NLS1 galaxies detected among RASS galaxies
+0 | - | oai:arXiv.org:astro-ph/0005168 | The response of the X-ray luminosity to the interaction strength in Seyfert 1 &amp; 2 galaxies
+0 | - | oai:arXiv.org:astro-ph/0005169 | Modelling of the X-ray broad absorption features in Narrow-Line Seyfert 1s
+0 | - | oai:arXiv.org:astro-ph/0005170 | The enigmatic soft X-ray NLS1 RX J0134.2-4258
+0 | - | oai:arXiv.org:astro-ph/0005172 | Properties of Warm absorbers in Narrow-Line Seyfert 1 galaxies
+16 | em | oai:arXiv.org:astro-ph/0005173 | The Magnetic Field Sign Reversal and Evolution of Rossby and Alfven Waves Induced by Velocity Shear Oscillations on the Sun
+-8 | em | oai:arXiv.org:astro-ph/0005175 | Studies of the high luminosity quasar, PDS 456
+-8 | em | oai:arXiv.org:astro-ph/0005178 | LWS spectroscopy of the luminous Blue Compact Galaxy Haro 11
+-16 | - | oai:arXiv.org:astro-ph/0005179 | Abundance evolution of intermediate mass elements (C to Zn) in the Milky Way halo and disk
+0 | - | oai:arXiv.org:astro-ph/0005180 | Possible Detection of Gamma Ray Air Showers in Coincidence with BATSE Gamma Ray Bursts
+0 | - | oai:arXiv.org:astro-ph/0005183 | Simulated Cluster Archive: A Computational Catalog of X-Ray Clusters in a Lambda-CDM Universe
+0 | - | oai:arXiv.org:astro-ph/0005184 | HST revisits the proper motion of PSR B0656+14
+0 | - | oai:arXiv.org:astro-ph/0005189 | Observational Constraints on the Theory of the IMF
+0 | - | oai:arXiv.org:astro-ph/0005190 | Polarization in Sagittarius A*
+0 | - | oai:arXiv.org:astro-ph/0005191 | Three Dimensional Radiative Transfer
+-8 | advective | oai:arXiv.org:astro-ph/0005193 | Gamma-ray bursts from internal shocks in a relativistic wind: an hydrodynamical study
+0 | em | oai:arXiv.org:astro-ph/0005196 | ISOPHOT observations of 3CR quasars and radio galaxies
+0 | - | oai:arXiv.org:astro-ph/0005198 | Normal Galaxies in the Infrared
+0 | - | oai:arXiv.org:astro-ph/0005201 | First correlation between compact object and circumstellar disk in the Be/X-ray binaries
+0 | - | oai:arXiv.org:astro-ph/0005202 | Was the Whirlpool (M51) a Spiral Galaxy before the Encounter with the Companion NGC 5195?
+0 | - | oai:arXiv.org:astro-ph/0005205 | Redshift estimation from low-resolution prism SEDs with an NGST MOS
+16 | em | oai:arXiv.org:astro-ph/0005216 | Magnetic fields around black holes
+0 | - | oai:arXiv.org:astro-ph/0005218 | Extremely High Energy and Violation of Lorentz Invariance
+0 | - | oai:arXiv.org:astro-ph/0005221 | New type astrophysical solution to the solar neutrino problems and its predicitons to the SNO
+0 | - | oai:arXiv.org:astro-ph/0005226 | Doubling the number of Be/X-ray binaries in the SMC
+0 | - | oai:arXiv.org:astro-ph/0005231 | IR-TF Relation In The Zone Of Avoidance With 2MASS
+-8 | em | oai:arXiv.org:astro-ph/0005235 | E&amp;F White conference on Radio Frequency Interference Mitigation Strategies
+0 | - | oai:arXiv.org:astro-ph/0005241 | Evidence for a two-armed spiral in the Milky Way
+0 | - | oai:arXiv.org:astro-ph/0005245 | On the origin of the difference between the runaway velocities of the OB-supergiant X-ray Binaries and the Be/X-ray Binaries
+0 | - | oai:arXiv.org:astro-ph/0005251 | Our Second Look at the Immature Universe: The Infrared View
+0 | - | oai:arXiv.org:astro-ph/0005265 | The Cosmological Constant Problems (Talk given at Dark Matter 2000, February, 2000)
+0 | - | oai:arXiv.org:astro-ph/0005266 | ORFEUS II echelle spectra : H_2 measurements in the Magellanic Clouds
+0 | - | oai:arXiv.org:astro-ph/0005268 | First results of UVES at VLT: abundancesin the Sgr dSph
+0 | - | oai:arXiv.org:astro-ph/0005270 | BeppoSAX discovery of a new Seyfert 2 galaxy: 1SAXJ2234.8-2541
+0 | - | oai:arXiv.org:astro-ph/0005276 | Pulsational instability domain of Delta Scuti variables
+0 | - | oai:arXiv.org:astro-ph/0005277 | Astronomers and the Science Citation Index, 1981--1997
+0 | - | oai:arXiv.org:astro-ph/0005279 | The European Large Area ISO Survey: Latest Result
+0 | - | oai:arXiv.org:astro-ph/0005280 | The Nature of the Lithium Rich Giants. Mixing episodes on the RGB and early-AGB
+-16 | - | oai:arXiv.org:astro-ph/0005283 | New Detremination Method of Primordial Li Abundance
+-16 | - | oai:arXiv.org:astro-ph/0005296 | The Star Formation History of the Local Group
+0 | em | oai:arXiv.org:astro-ph/0005297 | Cosmic Microwave Background Temperature at 1280 MHz
+0 | em | oai:arXiv.org:astro-ph/0005300 | The radiation driven winds of rotating B[e] supergiants
+16 | em | oai:arXiv.org:astro-ph/0005301 | General relativistic treatment of the thermal, magnetic and rotational evolution of neutron stars with crustal magnetic fields
+0 | - | oai:arXiv.org:astro-ph/0005307 | Disk mass accretion rate and infrared flares in GRS 1915+105
+0 | - | oai:arXiv.org:astro-ph/0005308 | Kinematics of young stars (I): Local irregularities
+0 | - | oai:arXiv.org:astro-ph/0005312 | Evolution in the Clustering of Galaxies for z &lt; 1.0
+-16 | - | oai:arXiv.org:astro-ph/0005314 | A Short History of the Missing Mass and Dark Energy Paradigms
+0 | - | oai:arXiv.org:astro-ph/0005319 | The effects of numerical resolution on hydrodynamical surface convection simulations and spectral line formation
+0 | - | oai:arXiv.org:astro-ph/0005320 | Line formation in solar granulation: I. Fe line shapes, shifts and asymmetries
+-16 | - | oai:arXiv.org:astro-ph/0005321 | Line formation in solar granulation: II. The photospheric Fe abundance
+-8 | advective | oai:arXiv.org:astro-ph/0005323 | Velocity and Mass Functions of Galactic Halos: Evolution and Environmental Dependence
+0 | - | oai:arXiv.org:astro-ph/0005328 | The influence of inverse Compton scattering on GRB afterglows: one possible way to flatten and steepen the light curves
+0 | - | oai:arXiv.org:astro-ph/0005332 | A project of a new detector for direct Dark Matter search: MACHe3
+-8 | diffusion | oai:arXiv.org:astro-ph/0005335 | X-ray observations of the starburst galaxy NGC 253:II. Extended emission from hot gas in the nuclear area, disk, and halo
+-8 | em | oai:arXiv.org:astro-ph/0005338 | The likely detection of pulsed high-energy gamma-ray emission from millisecond pulsar PSR J0218+4232
+0 | - | oai:arXiv.org:astro-ph/0005341 | Thermonuclear Explosions of Chandrasekhar-Mass White Dwarfs
+0 | - | oai:arXiv.org:astro-ph/0005344 | Type Ia Supernovae and their implications for cosmology
+0 | - | oai:arXiv.org:astro-ph/0005345 | The detection of spiral arm modulation in the stellar disk of an optically flocculent and an optically grand design galaxy
+0 | - | oai:arXiv.org:astro-ph/0005347 | Orbital Motion of Resonant Clumps in Dusty Circumstellar Disks as a Signature of an Embedded Planet
+0 | - | oai:arXiv.org:astro-ph/0005348 | X-ray emission from Lindroos binary systems
+0 | - | oai:arXiv.org:astro-ph/0005353 | Models for the interpretation of CaT and the blue Spectral Indices in Elliptical Nuclei
+-8 | - | oai:arXiv.org:astro-ph/0005354 | Deep far infrared ISOPHOT survey in &#34;Selected Area 57&#34;, I. Observations and source counts
+0 | - | oai:arXiv.org:astro-ph/0005356 | Episodic lithium production by extra-mixing in red giants
+-8 | diffusion | oai:arXiv.org:astro-ph/0005360 | The 12C/13C-ratio in cool carbon stars
+0 | - | oai:arXiv.org:astro-ph/0005364 | Transient Low-Mass X-Ray Binaries in Quiescence
+0 | - | oai:arXiv.org:astro-ph/0005367 | Chromospheric Activity in Metal-Poor Dwarfs
+-8 | em | oai:arXiv.org:astro-ph/0005369 | A BeppoSAX and ROSAT view of the RCW86 supernova remnant
+0 | - | oai:arXiv.org:astro-ph/0005371 | Constraints on source and lens parameters from microlensing variability in QSO 0957+561 A,B
+0 | - | oai:arXiv.org:astro-ph/0005372 | Modelling Radioactivities and other Observables from OB Associations
+0 | - | oai:arXiv.org:astro-ph/0005373 | Structure of the MgII and damped Lyman-alpha systems along the line of sight to APM 08279+5255
+8 | em | oai:arXiv.org:astro-ph/0005374 | Ambipolar Filamentation of Turbulent Magnetic Fields : A numerical simulation
+0 | - | oai:arXiv.org:astro-ph/0005377 | Spatial resolution bias in the mid-infrared Starburst/AGN classification
+16 | em | oai:arXiv.org:astro-ph/0005380 | Generation of Cosmic Magnetic Fields at Recombination
+0 | - | oai:arXiv.org:astro-ph/0005381 | The Dark Matter Telescope
+0 | - | oai:arXiv.org:astro-ph/0005391 | X-rays and regions of star formation: a combined ROSAT-HRI/near-to-mid IR study of the rho Oph dark cloud
+0 | - | oai:arXiv.org:astro-ph/0005393 | Dust versus Supernova Cosmology
+-8 | diffusion | oai:arXiv.org:astro-ph/0005401 | Dense gas in the dust lane of Centaurus A
+0 | - | oai:arXiv.org:astro-ph/0005403 | Multi-Read Out Data Simulator
+0 | - | oai:arXiv.org:astro-ph/0005404 | Removal of the calcium underabundance in cool metal rich Galactic disk dwarfs
+0 | - | oai:arXiv.org:astro-ph/0005406 | Quintessence and CMB
+0 | advective | oai:arXiv.org:astro-ph/0005408 | FUSE Spectroscopy of High Velocity Cloud Complex C
+8 | em | oai:arXiv.org:astro-ph/0005413 | The Evolution of Magnetic Field and Spin Period of Accreting Neutron Stars
+0 | - | oai:arXiv.org:astro-ph/0005415 | Can EGRET&#39;s Gamma Ray Sources &gt; 100 MeV Be Seen with Single Secondary Cosmic Muons from Gammas &gt; 30 GeV?
+0 | - | oai:arXiv.org:astro-ph/0005416 | Confirmation of a moving component in the H-alpha emission line of LSI+61303
+0 | - | oai:arXiv.org:astro-ph/0005420 | Galactic Observations at 31, 42 and 144~GHz with the Mobile Anisotropy Telescope
+0 | - | oai:arXiv.org:astro-ph/0005425 | The role of NCO reaction chain on the He ignition in degenerate stellar structures
+0 | - | oai:arXiv.org:astro-ph/0005426 | Spectroscopic confirmation of a white dwarf companion to the B star 16 Dra
+0 | - | oai:arXiv.org:astro-ph/0005427 | Stellar Populations in the Nucleus of NGC 6764
+0 | - | oai:arXiv.org:astro-ph/0005436 | The (anti)correlation of the sub-mm and X-ray background sources
+0 | - | oai:arXiv.org:astro-ph/0005445 | Acceleration of CR at Large Scale Shocks and Their Cosmological Role for Structure Formation in the Universe
+-8 | em | oai:arXiv.org:astro-ph/0005446 | Neutrino Degeneracy and Decoupling: New Limits from Primordial Nucleosynthesis and the Cosmic Microwave Background
+0 | - | oai:arXiv.org:astro-ph/0005447 | Multi-wavelength Observations of Galaxies in the Southern Zone of Avoidance
+0 | - | oai:arXiv.org:astro-ph/0005449 | High Energy Physics and Quintessence
+0 | - | oai:arXiv.org:astro-ph/0005453 | Discovery of 1RXS J171824.2-402934 as an X-ray burster
+0 | - | oai:arXiv.org:astro-ph/0005456 | 28SiO, 29SiO and 30SiO excitation: effects of infrared line overlaps
+16 | em | oai:arXiv.org:astro-ph/0005457 | Formation of binary millisecond pulsars with relatively high surface dipole magnetic fields
+0 | - | oai:arXiv.org:astro-ph/0005458 | Inertial Instability of Accretion Disks with Relativistic Electrons
+-12 | em | oai:arXiv.org:astro-ph/0005460 | Periodic modulation of the optical counterpart of the X-ray pulsator 1WGA J1958.2+3232. A new intermediate polar
+0 | - | oai:arXiv.org:astro-ph/0005466 | Galactic Bulge Microlensing Events with Clump Giants as Sources
+0 | - | oai:arXiv.org:astro-ph/0005472 | Rapid Optical Followup Observations of SGR Events with ROTSE-I
+0 | - | oai:arXiv.org:astro-ph/0005474 | Electrodynamic Structure of Outer Gap Accelerators: Invisibility of Pulsed Tev Fluxes
+0 | - | oai:arXiv.org:astro-ph/0005475 | Limits on Neutrino Masses from Large-Scale Structure
+-4 | - | oai:arXiv.org:astro-ph/0005476 | Is the Lambda CDM Model Consistent with Observations of Large-Scale Structure?
+0 | - | oai:arXiv.org:astro-ph/0005478 | Implications of a possible 23 day periodicity for binary black hole models in Mkn~501
+-8 | em | oai:arXiv.org:astro-ph/0005479 | On the nonthermal X-ray emission in blazar jets
+0 | - | oai:arXiv.org:astro-ph/0005480 | Irradiation and mass transfer in low-mass compact binaries
+-8 | diffusion | oai:arXiv.org:astro-ph/0005482 | Probing the gas content of the dwarf galaxy NGC 3109 with background X-ray sources
+-8 | diffusion | oai:arXiv.org:astro-ph/0005499 | Dense gas in nearby galaxies XIII. CO submillimeter line emission from the starburst galaxy M82
+0 | - | oai:arXiv.org:astro-ph/0005500 | Photometric study of fields of nearby pulsars with the 6m telescope
+0 | - | oai:arXiv.org:astro-ph/0005502 | Numerical Simulations in Cosmology I: Methods
+-8 | advective | oai:arXiv.org:astro-ph/0005503 | Numerical Simulations in Cosmology II: Spatial and Velocity Biases
+0 | - | oai:arXiv.org:astro-ph/0005504 | Numerical Simulations in Cosmology III: Dark Matter Halos
+0 | - | oai:arXiv.org:astro-ph/0005505 | Recent Observations of X-Ray Emission from Galactic Binary Neutron Stars
+0 | - | oai:arXiv.org:astro-ph/0005509 | Meteor Stream Membership Criteria
+0 | em | oai:arXiv.org:astro-ph/0005510 | Far infrared extragalactic background radiation: I. Source counts with ISOPHOT
+0 | - | oai:arXiv.org:astro-ph/0005512 | Dynamic Work Distribution for PM Algorithm
+-8 | diffusion | oai:arXiv.org:astro-ph/0005513 | The synthesis of the light Mo and Ru isotopes: how now, no need for an exotic solution ?
+-8 | em | oai:arXiv.org:astro-ph/0005517 | Exploring the high frequency emission of radio loud X-ray binaries
+-8 | gravity | oai:arXiv.org:astro-ph/0005519 | The evolution Equation of Cosmological density perturbation in Einstein-Cartan gravity
+0 | - | oai:arXiv.org:astro-ph/0005521 | What are MACHOs? Interpreting LMC microlensing
+0 | - | oai:arXiv.org:astro-ph/0005525 | L483: A Protostar In Transition From Class 0 to Class I
+-8 | em | oai:arXiv.org:astro-ph/0005526 | A large age for the pulsar B1757-24 from an upper limit on its proper motion
+0 | - | oai:arXiv.org:astro-ph/0005528 | Geometric Conditions on the Type of Matter Determining the Flat Behavior of the Rotational Curves in Galaxies
+0 | - | oai:arXiv.org:astro-ph/0005535 | On the Formation of Massive Stars by Accretion
+0 | - | oai:arXiv.org:astro-ph/0005536 | Spectroscopic confirmation of clusters from the ESO imaging survey
+0 | - | oai:arXiv.org:astro-ph/0005540 | Searches for Quasars at z &gt; 5
+0 | - | oai:arXiv.org:astro-ph/0005541 | The flatness of the Universe is robust
+0 | - | oai:arXiv.org:astro-ph/0005546 | Cosmic Intelligence and Black Holes
+0 | - | oai:arXiv.org:astro-ph/0005551 | Towards global-phase-delay VLBI astrometry: observations of QSO 1150+812 and BL 1803+784
+-16 | - | oai:arXiv.org:astro-ph/0005554 | Implications of the cosmic infrared background for light production and the star formation history in the Universe
+0 | - | oai:arXiv.org:astro-ph/0005563 | Cirrus spectra of low surface brightness regions
+-8 | - | oai:arXiv.org:astro-ph/0005564 | ISOPHOT CIRB project: FIR source counts at 90, 150 and 180 um
+0 | - | oai:arXiv.org:astro-ph/0005565 | Unusual quiescent X-ray activity from XTE J0421+560 (CI Cam)
+0 | - | oai:arXiv.org:astro-ph/0005567 | BeppoSAX broad-band observations of low-redshift quasars: Spectral curvature and iron K_alpha lines
+0 | - | oai:arXiv.org:astro-ph/0005568 | Hot and Cold Dark Matter Search with GENIUS
+0 | - | oai:arXiv.org:astro-ph/0005581 | Detection of Strong Clustering of Extremely Red Objects: Implications for the Density of z &gt; 1 Ellipticals
+16 | em | oai:arXiv.org:astro-ph/0005587 | The Sun&#39;s acoustic asphericity and magnetic fields in the solar convection zone
+0 | - | oai:arXiv.org:astro-ph/0005592 | The jet of 3C 273 observed with ROSAT HRI
+0 | - | oai:arXiv.org:astro-ph/0005595 | Getting the Red Out: A Stellar Approach to Determining Spatial Variations of Interstellar Dust
+-12 | em | oai:arXiv.org:astro-ph/0005600 | Hipparcos, IUE, and the Stellar Content of the Solar Neighbourhood
+-8 | em | oai:arXiv.org:astro-ph/0005601 | Proton and Electron Acceleration through Magnetic Turbulence in Relativistic Outflows
+-8 | em | oai:arXiv.org:astro-ph/0005603 | Ionization physics evidence for magnetic flare origin of X-rays in AGN
+0 | - | oai:arXiv.org:astro-ph/0005604 | The Behind The Plane Survey - source selection, identifications and completeness
+0 | - | oai:arXiv.org:astro-ph/0005605 | A New Narrow-Line Seyfert 1 galaxy : RXJ1236.9+2656
+0 | - | oai:arXiv.org:astro-ph/0005606 | Interpolation of Discretely-Sampled Density Fields
+0 | - | oai:arXiv.org:astro-ph/0005609 | The afterglow of the short/intermediate-duration gamma-ray burst GRB 000301C: A jet at z=2.04
+0 | - | oai:arXiv.org:astro-ph/0006001 | Chemical composition of evolved stars in the open cluster M 67
+0 | - | oai:arXiv.org:astro-ph/0006005 | The IRAS view of the Local Universe
+0 | em | oai:arXiv.org:astro-ph/0006011 | Magnetic collimation of the solar and stellar winds
+0 | - | oai:arXiv.org:astro-ph/0006012 | The Dark and Luminous Matter coupling in the formation of spheroids: a SPH investigation
+-8 | em | oai:arXiv.org:astro-ph/0006013 | Comment on ``Violation of the Greisen-Zatsepin-Kuzmin Cutoff: A Tempest in a (Magnetic) Teapot? Why Cosmic Ray Energies above $10^{20}$ eV May Not Require New Physics&#39;&#39;
+-8 | em | oai:arXiv.org:astro-ph/0006030 | Implications of the X-Ray Properties of Pulsar Nebulae
+0 | - | oai:arXiv.org:astro-ph/0006036 | Equilibrium configurations of relativistic White Dwarfs
+0 | - | oai:arXiv.org:astro-ph/0006040 | Reconstructing PSCz with a Generalised PIZA
+8 | em | oai:arXiv.org:astro-ph/0006050 | Magnetic field measurements in white dwarfs. Magnetic field, rotation and spectrum of 40 Eri B
+0 | - | oai:arXiv.org:astro-ph/0006052 | Iterative map-making for scanning experiments
+0 | - | oai:arXiv.org:astro-ph/0006057 | The Disturbed ISM of the Local Group Dwarf Galaxy NGC 6822
+0 | - | oai:arXiv.org:astro-ph/0006059 | Tunable Imaging Filters in Astronomy
+0 | - | oai:arXiv.org:astro-ph/0006060 | The stars near the centre of supergiant shell LMC4: Further constraints on triggering scenarios
+-8 | em | oai:arXiv.org:astro-ph/0006063 | Quasar environments at 0.5 &lt; z &lt; 0.8
+0 | em | oai:arXiv.org:astro-ph/0006064 | Fine phase resolved spectroscopy of the X-ray emission of the Crab pulsar (PSR B0531+21) observed with BeppoSAX
+0 | - | oai:arXiv.org:astro-ph/0006068 | Is there ERE in bright nebulae?
+0 | - | oai:arXiv.org:astro-ph/0006078 | Constraints on Cluster Properties Using X-ray and Optical Data
+0 | - | oai:arXiv.org:astro-ph/0006079 | Impact of Few-Body Reactions on Explosive Nucleosynthesis: The Big-Bang and Supernovae
+0 | - | oai:arXiv.org:astro-ph/0006093 | Equations of motion for the mass centers in a scalar theory of gravitation
+-8 | em | oai:arXiv.org:astro-ph/0006094 | Three high-redshift millimeter sources and their radio and near-infrared identifications
+0 | - | oai:arXiv.org:astro-ph/0006095 | High-energy $γ$-ray emission from GRBs
+0 | - | oai:arXiv.org:astro-ph/0006096 | Constraints on the Space Density of Extragalactic HVCs
+0 | - | oai:arXiv.org:astro-ph/0006099 | Superbubbles and the Galactic evolution of Li, Be and B
+0 | - | oai:arXiv.org:astro-ph/0006100 | Tidal Tails Around 20 Galactic Globular Cluster: Observational Evidence for Gravitational Disk/Bulge Shocking
+0 | - | oai:arXiv.org:astro-ph/0006101 | Collimated outflows of rapidly rotating young stellar objects
+0 | - | oai:arXiv.org:astro-ph/0006104 | The radial distribution of OB star formation in the Galaxy
+0 | - | oai:arXiv.org:astro-ph/0006106 | RX J0911+05: A Massive Cluster Lens at z=0.769
+0 | - | oai:arXiv.org:astro-ph/0006111 | Theoretical and Experimental Topics on Ultra High Energy Cosmic Rays
+0 | - | oai:arXiv.org:astro-ph/0006113 | The response of an accretion disc to an inclined dipole with application to AA Tau
+0 | - | oai:arXiv.org:astro-ph/0006117 | FUSE Observations of the Active Cool Star AB Doradus
+0 | - | oai:arXiv.org:astro-ph/0006120 | A Search of the Zone of Avoidance in Scorpius
+0 | - | oai:arXiv.org:astro-ph/0006121 | An Overview of Optical Galaxy Searches and their Completeness
+0 | - | oai:arXiv.org:astro-ph/0006122 | The HI mass function in Ursa Major
+0 | - | oai:arXiv.org:astro-ph/0006126 | Large-Scale Structures behind the Southern Milky Way in the Great Attractor Region
+0 | - | oai:arXiv.org:astro-ph/0006129 | VLBA observations of SiO masers: Arguments in favor of radiative pumping mechanisms
+0 | - | oai:arXiv.org:astro-ph/0006130 | Detection limits in space-based transit observations
+0 | - | oai:arXiv.org:astro-ph/0006136 | Reconstructing the ZOA from Galaxy Peculiar Velocities
+0 | - | oai:arXiv.org:astro-ph/0006138 | ISO observations of the Wolf-Rayet galaxy NGC 7714 and its companion object NGC 7715
+-8 | - | oai:arXiv.org:astro-ph/0006141 | Air shower simulation using {\sc geant4} and commodity parallel computing
+-8 | em | oai:arXiv.org:astro-ph/0006145 | High-Redshift, Radio-Loud Quasars
+-8 | em | oai:arXiv.org:astro-ph/0006152 | Extended Extragalactic Radio Emission
+0 | - | oai:arXiv.org:astro-ph/0006158 | Survey of rotation curves for northern spiral edge-on galaxies
+0 | - | oai:arXiv.org:astro-ph/0006159 | Simulations of Foreground Effects for CMB Polarization
+0 | - | oai:arXiv.org:astro-ph/0006162 | Neutrinos in physics, astrophysics, and cosmology
+-8 | em | oai:arXiv.org:astro-ph/0006168 | Exploring the gravitationally lensed system HE 1104-1805: Near-IR Spectroscopy
+0 | - | oai:arXiv.org:astro-ph/0006171 | The Type Ia Supernova Width-Luminosity Relation
+0 | - | oai:arXiv.org:astro-ph/0006177 | The evolution of type 1 AGN at 15um from the ELAIS
+0 | - | oai:arXiv.org:astro-ph/0006179 | A spectroscopic study of field BHB star candidates
+-8 | gravity | oai:arXiv.org:astro-ph/0006180 | Toward a Symmetrization of Gravity I. Classical Formulation: Results and Predictions; Dark Matter With a Difference
+0 | - | oai:arXiv.org:astro-ph/0006182 | Hot HB stars in globular clusters - Physical parameters and consequences for theory. V. Radiative levitation versus helium mixing
+0 | - | oai:arXiv.org:astro-ph/0006184 | The Equilibrium Structure of Cosmological Halos: Dwarf Galaxies to X-ray Clusters
+0 | - | oai:arXiv.org:astro-ph/0006188 | HCN in the inner envelope of {chi} Cygni
+0 | - | oai:arXiv.org:astro-ph/0006189 | ORFEUS II Echelle spectra: Molecular hydrogen at high velocities toward HD 93521
+0 | - | oai:arXiv.org:astro-ph/0006197 | Study of the depletion effect in the cluster MS1008-1224
+0 | - | oai:arXiv.org:astro-ph/0006199 | Galaxies behind the Milky Way and the Great Attractor
+0 | - | oai:arXiv.org:astro-ph/0006203 | The Effect of Gasdynamics on the Structure of Dark Matter Halos
+0 | - | oai:arXiv.org:astro-ph/0006205 | Monte Carlo Simulations of Globular Cluster Dynamics
+0 | em | oai:arXiv.org:astro-ph/0006207 | The Multiband Photometry of the GRB Host Galaxies
+0 | - | oai:arXiv.org:astro-ph/0006210 | The Observation of Lunar Impacts
+0 | em | oai:arXiv.org:astro-ph/0006211 | Detection of the thermal radio continuum emission from the G9.62+0.19-F Hot Core
+0 | - | oai:arXiv.org:astro-ph/0006212 | Kelvin-Helmholtz instability in three dimensional radiative jets
+0 | - | oai:arXiv.org:astro-ph/0006213 | Detection of a spectroscopic transit by the planet orbiting the star HD209458
+0 | - | oai:arXiv.org:astro-ph/0006216 | Reconstructing the evolution of double helium white dwarfs: envelope loss without spiral-in
+0 | - | oai:arXiv.org:astro-ph/0006226 | Can Rotational Properties of General Relativistic Compact Objects Be Predicted from Static Ones?
+0 | - | oai:arXiv.org:astro-ph/0006229 | Classical Cepheid pulsation models. VI. The Hertzsprung progression
+0 | - | oai:arXiv.org:astro-ph/0006232 | New identification of the near infrared Source in the &#34;born-again&#34; planetary nebula A58 (=V605 Aql)
+0 | - | oai:arXiv.org:astro-ph/0006233 | Sub-mm and X-ray background: two unrelated phenomena?
+0 | - | oai:arXiv.org:astro-ph/0006235 | Photospheric Metals in the FUSE Spectrum of the Subdwarf B Star PG0749+658
+-8 | advective | oai:arXiv.org:astro-ph/0006240 | 3-D MHD Numerical Simulations of Cloud-Wind Interactions
+0 | - | oai:arXiv.org:astro-ph/0006244 | Timing the Kilohertz Quasi-Periodic Oscillations in Low-mass X-ray Binaries
+0 | - | oai:arXiv.org:astro-ph/0006246 | Limits on the cosmic-ray ionization rate toward massive young stars
+8 | em | oai:arXiv.org:astro-ph/0006247 | Near-infrared photometry of isolated spirals with and without an AGN. II: Photometric properties of the host galaxies
+0 | - | oai:arXiv.org:astro-ph/0006249 | BeppoSAX Observations of the Soft Gamma-Ray Repeater SGR 1806-20
+-8 | diffusion | oai:arXiv.org:astro-ph/0006253 | Gas, Stars and Baryons in Low Surface Brightness Galaxies
+0 | - | oai:arXiv.org:astro-ph/0006254 | Preliminary results and perspectives in the Archeops experiment
+-4 | electric | oai:arXiv.org:astro-ph/0006256 | Approximate expressions for polar gap electric field of pulsars
+0 | - | oai:arXiv.org:astro-ph/0006257 | Blank Field X-Ray Sources
+0 | - | oai:arXiv.org:astro-ph/0006258 | SISSA Searching for blazars: the BLEIS project
+0 | - | oai:arXiv.org:astro-ph/0006266 | Three-dimensional structure of an alpha accretion disk
+-8 | advective | oai:arXiv.org:astro-ph/0006267 | On Batchelor passive advection by a finite-time correlated random velocity field
+-8 | - | oai:arXiv.org:astro-ph/0006269 | Statistics of smoothed cosmic fields in perturbation theory I: Formulation and useful formulas in second-order perturbation theory
+0 | - | oai:arXiv.org:astro-ph/0006270 | Construction of the one-point PDF of the local aperture mass in weak lensing maps
+0 | - | oai:arXiv.org:astro-ph/0006272 | The Effect of Diffusion on Pulsations of Stars on the Upper Main Sequence. delta Scuti and Metallic A Stars
+0 | - | oai:arXiv.org:astro-ph/0006274 | On the Seyfert 2 warm and cool infrared dichotomy
+0 | - | oai:arXiv.org:astro-ph/0006277 | Non-equilibrium Ionization and FIP Effect Diagnostics
+0 | - | oai:arXiv.org:astro-ph/0006279 | Sinks of Light Elements in Stars - Part II
+0 | - | oai:arXiv.org:astro-ph/0006280 | Sinks of Light Elements in Stars - Part III
+0 | - | oai:arXiv.org:astro-ph/0006281 | Anisotropic Galaxy-Galaxy Lensing
+0 | - | oai:arXiv.org:astro-ph/0006283 | The central part of the young open cluster NGC 6383
+-8 | em | oai:arXiv.org:astro-ph/0006286 | Theoretical Calculations of Atomic Data for Spectroscopy
+0 | - | oai:arXiv.org:astro-ph/0006288 | Implications of Binary Properties for Theories of Star Formation
+0 | - | oai:arXiv.org:astro-ph/0006297 | Line Formation in the Atmosphere of Brown Dwarf Gliese 229B: $CH_4$ at 2.3 micron
+-8 | - | oai:arXiv.org:astro-ph/0006298 | Extragalactic 2-10 keV source counts from a fluctuation analysis of deep BeppoSAX MECS images
+-8 | diffusion | oai:arXiv.org:astro-ph/0006301 | Extraplanar diffuse ionized gas in a small sample of nearby edge-on galaxies
+12 | - | oai:arXiv.org:astro-ph/0006302 | Is there ERE in diffuse galactic light at high latitude?
+-8 | em | oai:arXiv.org:astro-ph/0006307 | BeppoSAX spectroscopy of the NGC7078 (M15) globular cluster X-ray source X2127+119
+0 | - | oai:arXiv.org:astro-ph/0006308 | Constraints on the physical properties of the damped Ly-alpha system of Q0000-2619 at z = 3.054
+0 | - | oai:arXiv.org:astro-ph/0006309 | Explosions During Galaxy Formation
+0 | - | oai:arXiv.org:astro-ph/0006313 | Pre-main sequence binaries with aligned disks ?
+-8 | em | oai:arXiv.org:astro-ph/0006315 | The Far-Infrared emission of Radio Loud and Radio Quiet Quasars
+0 | - | oai:arXiv.org:astro-ph/0006322 | The Dynamical Interstellar Medium: Insights from Numerical Models
+0 | - | oai:arXiv.org:astro-ph/0006323 | The structure and kinematics of AGN with ionization cones
+8 | em | oai:arXiv.org:astro-ph/0006324 | Solar flare radio pulsations as a signature of dynamic magnetic reconnection
+-8 | electric | oai:arXiv.org:astro-ph/0006326 | Nuclear Reaction Rates in a Plasma: The Effect of Highly Damped Modes
+0 | - | oai:arXiv.org:astro-ph/0006329 | Outflow from YSO and Angular Momentum Transfer
+0 | - | oai:arXiv.org:astro-ph/0006330 | Disk-galaxy density distribution from orbital speeds using Newton&#39;s law, version 1.1
+0 | - | oai:arXiv.org:astro-ph/0006333 | The BeppoSAX 2-10 keV Survey
+0 | - | oai:arXiv.org:astro-ph/0006335 | The transient X-ray source SAX J2239.3+6116 and its optical counterpart
+-16 | - | oai:arXiv.org:astro-ph/0006338 | The iron abundance in hot central stars of planetary nebulae derived from IUE spectra
+0 | - | oai:arXiv.org:astro-ph/0006341 | ORFEUS II echelle spectra: On the influence of iron-group line blanketing in the Far-UV spectral range of hot subdwarfs
+0 | - | oai:arXiv.org:astro-ph/0006344 | Self-Interacting Dark Matter
+-8 | diffusion | oai:arXiv.org:astro-ph/0006350 | Nucleosynthesis in Massive Stars - Including All Stable Isotopes
+0 | em | oai:arXiv.org:astro-ph/0006356 | HI absorption in radio galaxies
+16 | em | oai:arXiv.org:astro-ph/0006358 | On the transport of magnetic fields by solar-like stratified convection
+0 | - | oai:arXiv.org:astro-ph/0006360 | Sunyaev-Zel&#39;dovich Effect Review
+0 | - | oai:arXiv.org:astro-ph/0006361 | X-rays from the barred galaxy NGC 4303
+0 | - | oai:arXiv.org:astro-ph/0006364 | The Nature of High-Redshift Galaxies
+0 | - | oai:arXiv.org:astro-ph/0006365 | Mid infrared emission of nearby Herbig Ae/Be stars
+0 | - | oai:arXiv.org:astro-ph/0006367 | The Reionization of the Universe and the Photoevaporation of Cosmological Minihalos
+0 | - | oai:arXiv.org:astro-ph/0006372 | Internal shocks in the jets of blazars
+-8 | diffusion | oai:arXiv.org:astro-ph/0006374 | Extensive molecular gas in the tidal arms near NGC3077 - Birth of a dwarf galaxy?
+0 | - | oai:arXiv.org:astro-ph/0006379 | Observational Properties of Diffuse Halos in Clusters
+0 | em | oai:arXiv.org:astro-ph/0006380 | Radio Halos and Relics in Clusters of Galaxies and Detection Statistics
+-8 | electric | oai:arXiv.org:astro-ph/0006382 | Spectroscopic confirmation of a cluster of galaxies at z=1 in the field of the gravitational lens MG2016+112
+0 | - | oai:arXiv.org:astro-ph/0006386 | A unified formalism for the core mass-luminosity relations of shell-burning stars
+0 | - | oai:arXiv.org:astro-ph/0006390 | A Self-Consistent Test of Comptonisation Models Using Bepposax Observations of Seyfert Galaxies
+0 | - | oai:arXiv.org:astro-ph/0006391 | Pair Creation at Shocks: Application to Agns
+0 | - | oai:arXiv.org:astro-ph/0006393 | Dark Matter and Cold Fractal Clouds
+0 | - | oai:arXiv.org:astro-ph/0006400 | The evolution of disk galaxies
+-8 | em | oai:arXiv.org:astro-ph/0006401 | Bayesian Methods for Cosmological Parameter Estimation from Cosmic Microwave Background Measurements
+0 | - | oai:arXiv.org:astro-ph/0006402 | AstroMD. A multi-dimensional data analysis tool for astrophysical simulations
+-8 | diffusion | oai:arXiv.org:astro-ph/0006403 | Gas flow in barred galaxies
+-16 | - | oai:arXiv.org:astro-ph/0006408 | The dusty SF history of distant galaxies and modelling tools
+0 | - | oai:arXiv.org:astro-ph/0006409 | New star clusters projected close to the Galactic Centre
+-16 | - | oai:arXiv.org:astro-ph/0006410 | Some aspects of the chemical evolution of 4He in the Galaxy: the He/H abundance gradient and the Delta Y/Delta Z enrichment ratio
+0 | - | oai:arXiv.org:astro-ph/0006413 | Physical Conditions and Spatial Structure in the Molecular Interstellar Medium of M33
+0 | - | oai:arXiv.org:astro-ph/0006414 | Constraints on Type Ia Supernovae from Near Infrared Spectra
+0 | - | oai:arXiv.org:astro-ph/0006417 | Dynamics of the Galaxy&#39;s Satellites
+-8 | gravity | oai:arXiv.org:astro-ph/0006423 | Reflections on Gravity
+0 | - | oai:arXiv.org:astro-ph/0006424 | Type Ia supernova rate at $z \sim 0.1$
+0 | - | oai:arXiv.org:astro-ph/0006425 | Star formation in expanding shells
+0 | - | oai:arXiv.org:astro-ph/0006426 | On Physical Interpretation of the Poynting-Robertson Effect
+0 | - | oai:arXiv.org:astro-ph/0006428 | Is the Galactic center populated with young star clusters?
+0 | - | oai:arXiv.org:astro-ph/0006431 | EISily looking for distant clusters of galaxies - - a new algorithm and its application to the EIS-wide data
+0 | - | oai:arXiv.org:astro-ph/0006435 | Distribution of dust from Kuiper belt objects
+0 | - | oai:arXiv.org:astro-ph/0006438 | Monte Carlo Simulations of Star Clusters
+0 | - | oai:arXiv.org:astro-ph/0006439 | Probing the galactic center by gravitational lensing
+0 | - | oai:arXiv.org:astro-ph/0006441 | Confidence levels of evolutionary synthesis models
+-8 | - | oai:arXiv.org:astro-ph/0006442 | Chemical abundances in seven red giants of NGC 2360 and NGC 2447
+-8 | - | oai:arXiv.org:astro-ph/0006444 | ISO deep far-infrared survey in the &#34;Lockman Hole&#34; II. Power spectrum analysis: evidence of a strong evolution in number counts
+0 | - | oai:arXiv.org:astro-ph/0006445 | Double Inflation in Supergravity and the Boomerang Observations
+0 | - | oai:arXiv.org:astro-ph/0006446 | Out of Equilibrium Fields in Self-consistent Inflationary Dynamics. Density Fluctuations
+0 | - | oai:arXiv.org:astro-ph/0006447 | Orbital Dynamics of Triaxial Black-Hole Nuclei
+0 | - | oai:arXiv.org:astro-ph/0007003 | Searches for astronomical neutrino sources and WIMPs with Super-Kamiokande
+0 | - | oai:arXiv.org:astro-ph/0007006 | A Dwarf Galaxy Survey in the Local Volume
+0 | diffusion | oai:arXiv.org:astro-ph/0007007 | Oxygen Abundance Determination in Very Metal-Deficient Giants: Permitted O I Lines Versus Forbidden [O I] Lines
+0 | em | oai:arXiv.org:astro-ph/0007016 | Integral field spectroscopy of the radio galaxy 3C 171
+-4 | - | oai:arXiv.org:astro-ph/0007019 | An Open Singularity-Free Cosmological Model with Inflation
+0 | - | oai:arXiv.org:astro-ph/0007020 | Looking for High Energy Peaked Blazars
+0 | - | oai:arXiv.org:astro-ph/0007028 | Internal Motions in Globular Clusters
+0 | - | oai:arXiv.org:astro-ph/0007029 | The anomalous Galactic globular cluster NGC 2808
+0 | - | oai:arXiv.org:astro-ph/0007033 | Mining The Local Universe for Data: the QSO Luminosity Function with the Asiago-ESO/RASS QSO Survey
+0 | - | oai:arXiv.org:astro-ph/0007034 | On the Energy Equation and Efficiency Parameter of the Common Envelope Evolution
+0 | - | oai:arXiv.org:astro-ph/0007038 | The evolution of the color gradients of early-type cluster galaxies
+0 | - | oai:arXiv.org:astro-ph/0007039 | The tetra-lobed planetary nebula NGC 1501
+0 | - | oai:arXiv.org:astro-ph/0007044 | Suppression of giant planet formation in stellar clusters
+0 | - | oai:arXiv.org:astro-ph/0007046 | Riemannian collineations in General Relativity and in Einstein-Cartan cosmology
+0 | - | oai:arXiv.org:astro-ph/0007047 | The Cosmological Angular Momentum Problem of Low-Mass Disk Galaxies
+0 | - | oai:arXiv.org:astro-ph/0007048 | Application of Data Compression Methods to the Redshift-space distortions of the PSCz galaxy catalogue
+0 | - | oai:arXiv.org:astro-ph/0007060 | COBE- and Cluster-Normalized CDM Simulations
+0 | - | oai:arXiv.org:astro-ph/0007065 | Galaxy Mergers: A Search for Chemical Signatures
+-8 | em | oai:arXiv.org:astro-ph/0007068 | The GHz-Peaked Spectrum radio galaxy 2021+614: Detection of slow motion in a compact symmetric object
+0 | - | oai:arXiv.org:astro-ph/0007071 | Low and High Frequency Quasi-Periodic Oscillations in 4U1915-05
+0 | - | oai:arXiv.org:astro-ph/0007072 | Galaxy Formation and Chemical Evolution in Hierarchical Hydrodynamical Simulations
+0 | - | oai:arXiv.org:astro-ph/0007073 | A study of the dipping low mass X-ray binary Xþ1624-490 from the broadband BeppoSAX observation
+-8 | electric | oai:arXiv.org:astro-ph/0007079 | Constraints over Cosmological Constant and Quintessence Fields in an Accelerating Universe
+0 | - | oai:arXiv.org:astro-ph/0007080 | To Probe a Black Hole
+-16 | - | oai:arXiv.org:astro-ph/0007081 | On the Determination of the He Abundance in Extragalactic H II Regions
+-8 | - | oai:arXiv.org:astro-ph/0007084 | Direct Simulation of Dense Stellar Systems with GRAPE-6
+0 | - | oai:arXiv.org:astro-ph/0007085 | MID-IR Surveys - The Next Generations
+-8 | advective | oai:arXiv.org:astro-ph/0007091 | Evaporation: The change from accretion via a thin disk to a coronal flow
+0 | - | oai:arXiv.org:astro-ph/0007094 | Non-LTE effects in neutron star atmospheres
+0 | - | oai:arXiv.org:astro-ph/0007095 | HNCO in massive galactic dense cores
+0 | em | oai:arXiv.org:astro-ph/0007097 | Coherent radio emission from the magnetic chemically peculiar star CU Virginis
+0 | - | oai:arXiv.org:astro-ph/0007099 | Near-IR Imaging of LSB Galaxies: the High and Low HI Content Cases
+0 | - | oai:arXiv.org:astro-ph/0007100 | A Cyclic Universe without Missing Mass: Implications of R-&gt;alpha&#39;/R
+0 | - | oai:arXiv.org:astro-ph/0007104 | The Influence of Interactions and Minor Mergers on the Structure of Galactic Disks: II. Results and Interpretations
+0 | - | oai:arXiv.org:astro-ph/0007107 | Two BeppoSAX observations of BL Lac
+0 | - | oai:arXiv.org:astro-ph/0007116 | Rotation, Statistical Dynamics and Kinematics of Globular Clusters
+0 | - | oai:arXiv.org:astro-ph/0007117 | Photometric Redshifts and Gravitational Telescopes
+-8 | diffusion | oai:arXiv.org:astro-ph/0007119 | N-body simulations of self-gravitating gas in stationary fragmented state
+0 | - | oai:arXiv.org:astro-ph/0007120 | Shallow cores in the dark matter halos: self-interaction in action?
+0 | - | oai:arXiv.org:astro-ph/0007121 | Disk Galaxies as Cosmological Benchmarks: Cold Dark Matter versus Modified Newtonian Dynamics
+0 | - | oai:arXiv.org:astro-ph/0007122 | Comment on &#34;On physical interpretation of the Poynting-Robertson effect&#34;
+0 | - | oai:arXiv.org:astro-ph/0007124 | Proper Motions of Pre-Main Sequence Stars in Southern Star-Forming Regions
+-8 | em | oai:arXiv.org:astro-ph/0007127 | Optical spectroscopy of galaxies in the direction of the Virgo cluster
+0 | - | oai:arXiv.org:astro-ph/0007130 | The Cometary Blue Compact Dwarf Galaxies Mkn 59 and Mkn 71: Clues to Dwarf Galaxy Evolution?
+0 | - | oai:arXiv.org:astro-ph/0007131 | A combined HST/CFH12k/XMM survey of X-ray luminous clusters of galaxies at z~0.2
+0 | - | oai:arXiv.org:astro-ph/0007132 | The Newton Wonder in Mechanics
+0 | - | oai:arXiv.org:astro-ph/0007134 | Wandering Among Newton Wonders
+0 | - | oai:arXiv.org:astro-ph/0007136 | An optical time-delay estimate for the double gravitational lens system B1600+434
+0 | - | oai:arXiv.org:astro-ph/0007137 | MACHOs and the clouds of uncertainty
+0 | - | oai:arXiv.org:astro-ph/0007139 | The evolution of AGB stars with convective overshoot
+0 | gravity | oai:arXiv.org:astro-ph/0007142 | Can gravitational waves be detected in quasar microlensing?
+0 | - | oai:arXiv.org:astro-ph/0007153 | Constraining (Ω_m,Ω_λ) from strong lensing
+0 | - | oai:arXiv.org:astro-ph/0007154 | Spectroscopic follow up of arclets in AC114 with the VLT
+0 | - | oai:arXiv.org:astro-ph/0007156 | The Outflow-Disc Interaction in Young Stellar Objects
+0 | - | oai:arXiv.org:astro-ph/0007157 | Pre-Main Sequence models for low-mass stars and brown dwarfs
+0 | - | oai:arXiv.org:astro-ph/0007160 | Measurements of Tidal Tail Populations Designed to Optimize Their Use as Potential Probes
+0 | - | oai:arXiv.org:astro-ph/0007161 | Spectral Variability of QSOs in the Optical Band
+0 | - | oai:arXiv.org:astro-ph/0007162 | Shedding light on the dark side of galaxy formation: submillimetre surveys through lensing clusters
+-16 | - | oai:arXiv.org:astro-ph/0007164 | Abundance gradients and their evolution in the Milky Way disk
+0 | - | oai:arXiv.org:astro-ph/0007165 | Hot Dark Matter in Cosmology
+0 | - | oai:arXiv.org:astro-ph/0007168 | The Baryon Content of Groups and Clusters of Galaxies
+0 | - | oai:arXiv.org:astro-ph/0007179 | Physical Processes at Cosmic Dawn
+0 | - | oai:arXiv.org:astro-ph/0007180 | Can we really rule out the existence of antistars?
+-12 | em | oai:arXiv.org:astro-ph/0007181 | Statistical properties of visual binaries as tracers of the formation of young stellar clusters
+0 | - | oai:arXiv.org:astro-ph/0007185 | Advection-Dominated Accretion Onto Weakly-Magnetized White Dwarfs
+0 | - | oai:arXiv.org:astro-ph/0007192 | Feedback from Protostellar Outflows in Star and Star Cluster Formation
+0 | - | oai:arXiv.org:astro-ph/0007195 | Observations of Spectral and Time Variabilities from MCG-2-58-22
+0 | - | oai:arXiv.org:astro-ph/0007196 | A gravitational lens survey with Planck Surveyor
+0 | - | oai:arXiv.org:astro-ph/0007204 | Placing limits on the spin-torsion fluctuation from the stability of Friedmann solution and COBE data
+0 | - | oai:arXiv.org:astro-ph/0007207 | Testing the AGN models for the X-ray background
+0 | - | oai:arXiv.org:astro-ph/0007208 | Multiwavelength observations of clusters of galaxies and the role of cluster mergers
+0 | - | oai:arXiv.org:astro-ph/0007209 | Opening the ultra high energy cosmic ray window from the top
+0 | - | oai:arXiv.org:astro-ph/0007213 | Inter-Scale Correlations as Measures of CMB Gaussianity
+0 | - | oai:arXiv.org:astro-ph/0007215 | Effect of the Environment on the Fundamental Plane of Elliptical Galaxies
+0 | - | oai:arXiv.org:astro-ph/0007218 | The First Acoustics Peak CMBR and Cosmic Total Density
+-8 | em | oai:arXiv.org:astro-ph/0007231 | Interstellar Seeing. I. Superresolution Techniques Using Radio Scintillation
+-8 | em | oai:arXiv.org:astro-ph/0007233 | Interstellar Seeing. II. The Case of the Vela Pulsar: Source Unresolved
+-16 | - | oai:arXiv.org:astro-ph/0007239 | The star formation history of resolved galaxies: Composite H-R diagram
+-16 | - | oai:arXiv.org:astro-ph/0007241 | On the Abundance Gradient of the Galactic Disk
+0 | - | oai:arXiv.org:astro-ph/0007247 | Cosmic Inflation
+-4 | - | oai:arXiv.org:astro-ph/0007249 | Conference Summary: Mapping the Hidden Universe
+0 | - | oai:arXiv.org:astro-ph/0007252 | The Fundamental Plane of field early-type galaxies at intermediate redshift
+0 | - | oai:arXiv.org:astro-ph/0007253 | Dirac equation in Kerr geometry and its solution
+0 | - | oai:arXiv.org:astro-ph/0007254 | Advective Accretion Flows: Ten Years Later
+0 | - | oai:arXiv.org:astro-ph/0007258 | Dynamical masses, time-scales, and evolution of star clusters
+0 | em | oai:arXiv.org:astro-ph/0007261 | The environments and ages of extragalactic radio sources inferred from multi-frequency radio maps
+0 | - | oai:arXiv.org:astro-ph/0007265 | Uncertainties on Clusters of Galaxies Distances
+-16 | - | oai:arXiv.org:astro-ph/0007270 | Mapping the star formation history of Mrk86: II. Stellar populations and global interpretation
+0 | - | oai:arXiv.org:astro-ph/0007271 | The distance modulus of the Small Magellanic Cloud based on double-mode Cepheids
+0 | - | oai:arXiv.org:astro-ph/0007273 | LiBeB, O and Fe Evolution: Refractory Element and Cosmic Ray Transport Delays
+-8 | em | oai:arXiv.org:astro-ph/0007274 | Comptonization in the accretion column of the X-ray pulsar GX~1+4
+0 | - | oai:arXiv.org:astro-ph/0007282 | The First Hours of a Core Collapse Supernova
+-8 | - | oai:arXiv.org:astro-ph/0007283 | Interpreting the optical data of the Hubble Deep Field South: colors, morphological number counts and photometric redshifts
+0 | em | oai:arXiv.org:astro-ph/0007286 | CLASS B0827+525: `Dark lens&#39; or binary radio-loud quasar?
+-8 | em | oai:arXiv.org:astro-ph/0007292 | On the Relation Between Radio and Non-Radio Elliptical Galaxies
+0 | - | oai:arXiv.org:astro-ph/0007298 | The Low-Mass Stars in Starburst Clusters
+0 | - | oai:arXiv.org:astro-ph/0007300 | Science with SIRTF - Some Examples
+0 | - | oai:arXiv.org:astro-ph/0007301 | Spectrum and proper motion of a brown dwarf companion of the T Tauri star CoD-33 7795
+0 | - | oai:arXiv.org:astro-ph/0007305 | Direct imaging search for planetary companions next to young nearby stars
+0 | - | oai:arXiv.org:astro-ph/0007307 | Massive Star Forming Regions: from diagnostic tools to derived properties
+0 | - | oai:arXiv.org:astro-ph/0007311 | Prospects for the Lensing of Supernovae
+0 | - | oai:arXiv.org:astro-ph/0007313 | Frequency decomposition of astrometric signature of planetary systems
+0 | - | oai:arXiv.org:astro-ph/0007317 | Recent results by the MOA group on gravitational microlensing
+0 | - | oai:arXiv.org:astro-ph/0007319 | The ISO-LWS map of the Serpens cloud core: I. The SEDs of the IR/SMM sources
+-8 | advective | oai:arXiv.org:astro-ph/0007320 | The jet and circumburst stellar wind of GRB 980519
+0 | - | oai:arXiv.org:astro-ph/0007322 | Galaxies in the infrared
+-8 | diffusion | oai:arXiv.org:astro-ph/0007323 | The filament of ionized gas in the outskirt of M87
+0 | - | oai:arXiv.org:astro-ph/0007326 | Relation between $γ$-rays and emission lines for the $γ$-ray loud blazars
+0 | - | oai:arXiv.org:astro-ph/0007328 | Parameter Estimation in Astronomy with Poisson-Distributed Data. II. The Modified Chi-Square-Gamma Statistic
+0 | - | oai:arXiv.org:astro-ph/0007330 | Substellar Companions to Nearby Stars from NICMOS Surveys
+0 | - | oai:arXiv.org:astro-ph/0007331 | NICMOS Imaging of Candidate Extra-Solar Planetary Systems
+0 | - | oai:arXiv.org:astro-ph/0007332 | Fragmentation and Star Formation in Turbulent Cores
+0 | - | oai:arXiv.org:astro-ph/0007336 | Mass Loss from Globular Clusters
+-8 | electric | oai:arXiv.org:astro-ph/0007337 | The plasma-solid transition:two simple examples
+-8 | diffusion | oai:arXiv.org:astro-ph/0007339 | Dissipative Collapse of a Spherical Cluster of Gas Clouds
+0 | - | oai:arXiv.org:astro-ph/0007340 | Cosmological Density Perturbations in two fluid models on spin dominated inflation and the stability of Friedmann metric
+0 | - | oai:arXiv.org:astro-ph/0007350 | X-ray emission from young stars in the Tucanae association
+-8 | - | oai:arXiv.org:astro-ph/0007362 | Public Release of N-body simulation and related data by the Virgo consortium
+0 | - | oai:arXiv.org:astro-ph/0007363 | Order and Chaos in the Local Disc Stellar Kinematics
+0 | - | oai:arXiv.org:astro-ph/0007367 | Optimizing the angular resolution of the HEGRA telescope system to study the emission region of VHE gamma rays in the Crab Nebula
+0 | - | oai:arXiv.org:astro-ph/0007374 | The emission nebula associated with V1974 Cyg: a unique object?
+-8 | em | oai:arXiv.org:astro-ph/0007376 | X-ray emission from the galactic center region Supernova Remnant G0.9+0.1
+0 | - | oai:arXiv.org:astro-ph/0007377 | The BeppoSAX view of the Galactic Center region
+0 | - | oai:arXiv.org:astro-ph/0007378 | HST observations of FR I radiogalaxies: what do they tell us about the BL Lac - FR I unification scheme?
+-8 | diffusion | oai:arXiv.org:astro-ph/0007382 | Detection of mid-infrared Aromatic Hydrocarbon Emission Features from the Small Magellanic Cloud
+0 | - | oai:arXiv.org:astro-ph/0007388 | Evolutionary tracks and isochrones for alpha-enhanced stars
+0 | - | oai:arXiv.org:astro-ph/0007390 | Formation of the Neutron Donor C13 in AGB Stars by Overshoot and Rotation
+0 | - | oai:arXiv.org:astro-ph/0007399 | Are passive protostellar disks stable to self-shadowing?
+0 | - | oai:arXiv.org:astro-ph/0007400 | Monsters at the Heart of Galaxy Formation
+0 | - | oai:arXiv.org:astro-ph/0007401 | Supermassive Black Holes in Disk Galaxies
+-8 | - | oai:arXiv.org:astro-ph/0007404 | Computational AstroStatistics: Fast Algorithms and Efficient Statistics for Density Estimation in Large Astronomical Datasets
+0 | - | oai:arXiv.org:astro-ph/0007405 | X-ray spectral components in the hard state of GRS 1915+105: origin of the 0.5 - 10 Hz QPO
+0 | - | oai:arXiv.org:astro-ph/0007407 | Extreme intranight variability in the BL Lacertae object AO 0235+164
+0 | - | oai:arXiv.org:astro-ph/0007409 | The Onset of Cluster Formation around Intermediate Mass Stars
+0 | em | oai:arXiv.org:astro-ph/0007411 | 1.65 micron (H-band) surface photometry of galaxies. V: Profile decomposition of 1157 galaxies
+-8 | em | oai:arXiv.org:astro-ph/0007414 | Compact star clusters of the LMC HII region N11C
+-8 | electric | oai:arXiv.org:astro-ph/0007415 | Wide-Field Thermal Imaging of the Orion Nebula at High Spatial Resolution
+0 | - | oai:arXiv.org:astro-ph/0007416 | A test of arm induced star formation in spiral galaxies from near-IR and Hαimaging
+0 | - | oai:arXiv.org:astro-ph/0007425 | The W4 chimney/superbubble
+0 | - | oai:arXiv.org:astro-ph/0007428 | Inferences from the dark sky: Olbers&#39; paradox revisited
+0 | - | oai:arXiv.org:astro-ph/0007430 | The ASCA Hard Serendipitous Survey
+0 | - | oai:arXiv.org:astro-ph/0007431 | The ASCA HSS: Looking for Type 2 AGN
+0 | - | oai:arXiv.org:astro-ph/0007438 | A Possible Intrinsic Fluence-Duration Power-Law Relation in Gamma-ray Bursts
+0 | - | oai:arXiv.org:astro-ph/0007439 | Young Stellar Groups, Runaway Stars, and Pulsars
+0 | - | oai:arXiv.org:astro-ph/0007442 | Cygnus OB2 - a young globular cluster in the Milky Way
+0 | - | oai:arXiv.org:astro-ph/0007443 | Sources of CMB Spots in Closed Hyperbolic Universes
+0 | - | oai:arXiv.org:astro-ph/0007444 | Death of Stellar Baryonic Dark Matter Candidates
+0 | - | oai:arXiv.org:astro-ph/0007448 | MBM12: A Younger Version of the TW Hydrae Association?
+0 | - | oai:arXiv.org:astro-ph/0007450 | Large scale dynamos with ambipolar diffusion nonlinearity
+0 | - | oai:arXiv.org:astro-ph/0007451 | X-Ray Bursts and Proton Captures Close to the Dripline
+0 | - | oai:arXiv.org:astro-ph/0007463 | Cosmological density perturbation on spin dominated universes and COBE data
+0 | em | oai:arXiv.org:astro-ph/0007467 | Radio - Optical Correlations in High-z Radio Galaxies and Quasars
+0 | - | oai:arXiv.org:astro-ph/0007471 | Distance to the Large Magellanic Cloud: the RR Lyrae stars
+-16 | - | oai:arXiv.org:astro-ph/0007472 | UVES observations of QSO 0000-2620: Molecular hydrogen abundance in the damped Ly-alpha system at z_abs = 3.3901
+0 | - | oai:arXiv.org:astro-ph/0008005 | Phase Diagram for Spinning and Accreting Neutron Stars
+-12 | em | oai:arXiv.org:astro-ph/0008010 | Abundance profiles of CH3OH and H2CO toward massive young stars as evolutionary tracers
+0 | - | oai:arXiv.org:astro-ph/0008013 | Triggered Star Formation in the Scorpius-Centaurus OB Association (Sco OB2)
+0 | - | oai:arXiv.org:astro-ph/0008014 | Multiplicity of massive stars
+0 | - | oai:arXiv.org:astro-ph/0008018 | Calculations at Series Limits in One-Electron Systems
+0 | - | oai:arXiv.org:astro-ph/0008020 | Further daemon detection experiments
+0 | - | oai:arXiv.org:astro-ph/0008027 | The Effect of Dust on Photometric Redshift Measurement; A Self-consistent Technique
+0 | - | oai:arXiv.org:astro-ph/0008028 | Baryonic Dark Matter in Galaxies
+0 | - | oai:arXiv.org:astro-ph/0008033 | Fun for Two
+0 | - | oai:arXiv.org:astro-ph/0008034 | Near-infrared and Br_gamma observations of post-AGB stars
+0 | - | oai:arXiv.org:astro-ph/0008040 | The First Six Days of The Universe
+0 | - | oai:arXiv.org:astro-ph/0008046 | Polytropes: Implications for Molecular Clouds and Dark Matter
+0 | - | oai:arXiv.org:astro-ph/0008047 | Scaling and fluctuations in galaxy distribution: two tests to probe large scale structures
+0 | - | oai:arXiv.org:astro-ph/0008056 | Stellar Mass-to-Light Ratios and the Tully-Fisher relation
+0 | - | oai:arXiv.org:astro-ph/0008060 | First results of UVES at VLT: revisiting RR Tel
+-8 | em | oai:arXiv.org:astro-ph/0008067 | Cosmological Studies from Radio Source Samples
+0 | - | oai:arXiv.org:astro-ph/0008068 | A spectroscopic survey for strong galaxy-galaxy lenses
+0 | - | oai:arXiv.org:astro-ph/0008073 | The Spallagenic Production Rates of Lithium, Beryllium and Boron
+0 | - | oai:arXiv.org:astro-ph/0008074 | Galaxy Collisions and Star Formation
+0 | - | oai:arXiv.org:astro-ph/0008077 | Study of Hadronic Decays of the Z Boson at LEP
+0 | - | oai:arXiv.org:astro-ph/0008080 | Antlia: an outskirt Local Group Galaxy
+0 | - | oai:arXiv.org:astro-ph/0008086 | Halo streams as relicts from the formation of the Milky Way
+0 | - | oai:arXiv.org:astro-ph/0008087 | Comparison Between Extrasolar Planets and Low-Mass Secondaries
+-8 | diffusion | oai:arXiv.org:astro-ph/0008088 | Molecular gas and star formation in BIMA SONG bars
+0 | - | oai:arXiv.org:astro-ph/0008089 | On the Observational Characteristics of Inhomogeneous Cosmologies: Undermining the Cosmological Principle
+0 | em | oai:arXiv.org:astro-ph/0008090 | On the peculiar X-ray properties of the bright nearby radio-quiet quasar PDS456
+-4 | - | oai:arXiv.org:astro-ph/0008091 | An X-ray Binary Model for the Galactic Center Source IRS 13E
+0 | - | oai:arXiv.org:astro-ph/0008094 | Observation of Optical Flashes of the Night Star Sky on the Atmospheric Cherenkov Installation Tunka-13
+0 | - | oai:arXiv.org:astro-ph/0008105 | Black hole to bulge mass correlation in Active Galactic Nuclei: A test for the simple unified formation scheme
+0 | - | oai:arXiv.org:astro-ph/0008106 | On physical foundations and observational effects of cosmic rotation
+0 | - | oai:arXiv.org:astro-ph/0008109 | Ca II activity and rotation in F-K evolved stars
+-8 | diffusion | oai:arXiv.org:astro-ph/0008114 | Molecular Gas Concentrations Outside the Merging Disks
+0 | - | oai:arXiv.org:astro-ph/0008119 | The Nuclear Star Cluster of the Milky Way: Star Formation, Dynamics and Central Black Hole
+0 | - | oai:arXiv.org:astro-ph/0008125 | The distribution of shock waves in driven supersonic turbulence
+0 | - | oai:arXiv.org:astro-ph/0008128 | High resolution images at 11 and 20 microns of the Active Galactic Nucleus in NGC 1068
+0 | - | oai:arXiv.org:astro-ph/0008132 | Correcting Parameters of Events Based on the Entropy of Microlensing Ensemble
+0 | - | oai:arXiv.org:astro-ph/0008136 | Cosmic Strings Lens Phenomenology Revisited

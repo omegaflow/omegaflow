@@ -638,7 +638,12 @@ pub fn body_barycenter_position(
 ) -> Option<[f64; 3]> {
     let e = eph.get(name)?;
     let jd = tdb / 86400.0 + J2000_EPOCH;
-    for g in &e.granules {
+    let idx = e.granules.partition_point(|g| g.t0_jd < jd);
+    for i in [idx.saturating_sub(1), idx] {
+        if i >= e.granules.len() {
+            continue;
+        }
+        let g = &e.granules[i];
         let tau = (jd - g.t0_jd) / g.dt_jd;
         if tau >= -1.0 && tau <= 1.0 {
             return Some([
@@ -680,12 +685,23 @@ pub fn body_fixed_to_icrs(
     let zb = (n * (1.0 - e2) + alt) * sl;
     if !e.rotation_matrices.is_empty() {
         let jd = tdb / 86400.0 + J2000_EPOCH;
-        let rot_m = e
-            .rotation_matrices
-            .iter()
-            .filter(|(t, _)| t.is_finite())
-            .min_by(|a, b| (jd - a.0).abs().total_cmp(&(jd - b.0).abs()))
-            .map(|(_, m)| m)?;
+        let idx = e.rotation_matrices.partition_point(|(t, _)| *t < jd);
+        let mut best: Option<&[f64; 9]> = None;
+        let mut best_d = f64::INFINITY;
+        let lo = idx.saturating_sub(2);
+        let hi = (idx + 2).min(e.rotation_matrices.len().saturating_sub(1));
+        for i in lo..=hi {
+            let (t, m) = &e.rotation_matrices[i];
+            if !t.is_finite() {
+                continue;
+            }
+            let d = (jd - t).abs();
+            if d < best_d {
+                best_d = d;
+                best = Some(m);
+            }
+        }
+        let rot_m = best?;
         let xi = rot_m[0] * xb + rot_m[1] * yb + rot_m[2] * zb;
         let yi = rot_m[3] * xb + rot_m[4] * yb + rot_m[5] * zb;
         let zi = rot_m[6] * xb + rot_m[7] * yb + rot_m[8] * zb;
@@ -8469,6 +8485,133 @@ field temp temp_c\n";
     }
 
     #[test]
+    fn test_query_admits_surface_sample_within_window() {
+        let now = 840511523.88;
+        let jd_now = super::J2000_EPOCH + now / 86400.0;
+        let props = super::BodyProperties {
+            α0_deg: 270.0,
+            dα0_dt_deg_per_century: 0.003,
+            δ0_deg: 66.54,
+            dδ0_dt_deg_per_century: 0.013,
+            w0_deg: 190.147,
+            dw_dt_deg_per_day: 360.9856235,
+            radius_m: 6378136.6,
+            flattening: Some((6378136.6 - 6356751.9) / 6378136.6),
+            gaussian_inverse_square: 340.2,
+            gaussian_inverse: 5950.0,
+            erfc: 3630.0,
+            exponential_decay: 2.18e-5,
+            patch_levy: 2.00e-5,
+            gm: Some(3.986004418e14),
+            j2: Some(1.08262668e-3),
+            j4: Some(-1.619e-6),
+            radii_b: Some(6378136.6),
+            radii_c: Some(6356751.9),
+            nut_ra: None,
+            nut_dec: None,
+            nutation: None,
+            omega_g: None,
+        };
+        let mut eph = super::BodyEphemeris {
+            granules: Vec::new(),
+            rotation_matrices: Vec::new(),
+            props: Some(props),
+        };
+        for i in -1..=1 {
+            let t0 = jd_now + i as f64 * 16.0;
+            let mut cx = [0.0_f64; super::CHEBYSHEV_N];
+            cx[0] = 1.5e11;
+            eph.granules.push(super::ChebyshevGranule {
+                t0_jd: t0,
+                dt_jd: 16.0,
+                cx,
+                cy: [0.0; super::CHEBYSHEV_N],
+                cz: [0.0; super::CHEBYSHEV_N],
+            });
+        }
+        let mut eph_map = std::collections::HashMap::new();
+        eph_map.insert("earth".to_string(), eph);
+        let pos = super::body_barycenter_position("earth", now, &eph_map).expect("earth pos");
+        let channel = Channel {
+            z: 0.0,
+            freq: 0.0,
+            bin_width: 0.0,
+            name: "argo_dac_temp_c".into(),
+            value: 25.0,
+            position: Position::Surface {
+                body_name: "earth".into(),
+                lat: 0.0,
+                lon: 0.0,
+                alt: 0.0,
+            },
+            epoch: now - 2.15e6,
+        };
+        let sensor = FieldConfig {
+            key: "TEMP".into(),
+            name: "argo_dac_temp_c".into(),
+            kernel: 3,
+            force: 5,
+            tau: 604800.0,
+            absorption: 0.0,
+            advection: 0.0,
+            unit: "C".into(),
+            fold: None,
+        };
+        let frame = Frame::Surface {
+            body_name: "earth".into(),
+            lat: 0.0,
+            lon: 0.0,
+            alt: 0.0,
+        };
+        let sample = super::anchor(
+            &channel,
+            &sensor,
+            604800.0,
+            Some(157),
+            Some(&frame),
+            None,
+            &eph_map,
+        )
+        .expect("argo sample anchors");
+        let hash = super::build_spatial_hash(vec![sample.clone()], 1.0);
+        let mut recs = Vec::new();
+        super::query_hash(
+            &hash,
+            pos,
+            now,
+            8.0e6,
+            0.0,
+            &[1.0e-300_f64; 9],
+            1.0,
+            [0.0, 0.0, 0.0],
+            &mut recs,
+            &eph_map,
+        );
+        assert!(
+            !recs.is_empty(),
+            "the surface sample within the window pad must reach the membrane, got {} records",
+            recs.len()
+        );
+        let mut recs_ssb = Vec::new();
+        super::query_hash(
+            &hash,
+            [0.0, 0.0, 0.0],
+            now,
+            2.0e12,
+            0.0,
+            &[1.0e-300_f64; 9],
+            1.0,
+            [0.0, 0.0, 0.0],
+            &mut recs_ssb,
+            &eph_map,
+        );
+        assert!(
+            !recs_ssb.is_empty(),
+            "the earth surface sample within the boot window must reach the SSB presence"
+        );
+    }
+
+    #[test]
     fn test_parse_ephemeris_binary_rejects_non_v2_props() {
         let mut buf = Vec::new();
         buf.extend_from_slice(&[0xCF, 0x86, 0x01, 0x00]);
@@ -15285,7 +15428,6 @@ pub fn main_flow() {
     let bootstrap_running: std::sync::Arc<std::sync::atomic::AtomicBool> =
         std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false));
     spawn_ephemeris_bootstrap(&archive.sources, &bootstrap_running);
-    let anchor_bodies = anchor_uses(&archive.sources);
     let mut last_bootstrap: f64 = 0.0;
     let mut tick: u64 = 0;
     loop {
@@ -15439,15 +15581,6 @@ pub fn main_flow() {
                 archive.spectral.push(hash);
             }
             let src = &archive.sources[res.source_idx];
-            if !res.channels.is_empty() {
-                eprintln!(
-                    "probe: source {} -> {} channels, first epoch {:.3} pos {:?}",
-                    res.source_idx,
-                    res.channels.len(),
-                    res.channels[0].0.epoch,
-                    res.channels[0].0.position
-                );
-            }
             for (channel, sensor) in &res.channels {
                 let track_origin = matches!(channel.position, Position::Source)
                     || matches!(channel.position, Position::StateVector { track: true, .. });
@@ -15566,13 +15699,6 @@ pub fn main_flow() {
         while let Ok((name, pt, px, py, pz, pr)) = presence_rx.try_recv() {
             archive.presence.insert(name, (pt, px, py, pz, pr));
         }
-        let anchors_complete = anchor_bodies.keys().all(|b| {
-            archive
-                .body_ephemerides
-                .get(b)
-                .and_then(|e| e.props.as_ref())
-                .is_some()
-        });
         for i in 0..archive.sources.len() {
             let origin = i as u32;
             if !origin_stale(&archive.origins, origin, archive.sources[i].ttl, now) {
@@ -15588,13 +15714,6 @@ pub fn main_flow() {
                     Some(b) => format!("/tmp/omegaflow_eph_{}.bin", b),
                     None => continue,
                 };
-                let body_is_anchor = src_clone
-                    .body
-                    .as_deref()
-                    .map_or(false, |b| anchor_bodies.contains_key(b));
-                if !body_is_anchor && !anchors_complete {
-                    continue;
-                }
                 if cache_fresh(&tmp_path, src_clone.ttl) {
                     let ftx = fetch_tx.clone();
                     let lsk_c = lsk.clone();

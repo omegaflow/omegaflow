@@ -2,6 +2,7 @@
 pub mod archivar;
 pub mod bpc;
 pub mod bsp_reader;
+pub mod cdf;
 pub mod cdn;
 pub mod dastcom;
 pub mod fit;

@@ -188,3 +188,77 @@ Gates: cargo check 0/0 (alle Features), cargo test 211/211 lib
 (fits-Image-HDU + GHIST-Historie, rpw/gong-Roundtrip,
 stype-7-Ω_g-Parse), Smoke-Lauf: OMNI-Block parst mit 7 Feldern,
 rpw/gong-Blöcke 404en honest, keine Refusals der neuen Formate.
+
+cdf_reader-Atom (2026-08-20, docs/plans/cdf_reader_atom.md — GESCHLOSSEN):
+
+Session-Frage 1 (Kompression + EDC_SRF-Layout, am ersten echten File
+notiert): solo_L3_rpw-bia-efield-10-seconds_*.cdf = CDF 3.9.0,
+Encoding 1 (host/network, big-endian) ab 2023 — die 2020–2022-Files
+tragen Encoding 6 (IBMPC, little-endian; nur die Variable-DATEN,
+die Record-Struktur bleibt big-endian). 9 zVariables: Epoch
+(CDF_TIME_TT2000, unkomprimierter VVR-Block), EDC_SRF + EDCSTD_SRF
+(CDF_FLOAT f32 × dims [3], gzip-CVVR-Blöcke — Block-Kompression,
+kein per-Record-RLE), QUALITY_FLAG/-BITMASK/L2_QUALITY_BITMASK,
+LABELs, DELTA_PLUS_MINUS. Record-Var-Stream: 8641 Records/Tag,
+Record-Nummern 0-basiert, erste Daten 00:04:05 (die ersten 24
+Samples fehlen — Produkt-Eigenschaft, keine Lücke). ex = fill
+überall (auch 2022), ey/ez echt — deckungsgleich mit dem
+AMDA-Komponentenbild. Das 2022-11-File trägt nur V04 (ältere
+Versionen liegen nicht mehr im Baum; db.csv zählt für 2020–2022
+V01–V06, ab 2023 nur V01). db.csv: 1972 indexierbare Tage des
+10-seconds-Produkts; 2023: 356 Tage, 2024: 366, 2025: 361.
+
+src/cdf.rs (std-only): CDR/GDR/VDR3/VXR-Verkettung/VVR/CVVR,
+gzip über inflate::gunzip, Daten-Typen 1–52 inkl. EPOCH/EPOCH16/
+TT2000 (Anker: EPOCH s − 62.167.219.200 = unix s; TT2000 ns/1e9 +
+946.727.935,816 = unix s), sparse-records + Huffman/Adaptive =
+parser-gap (benannt verweigert, 0 honored). Tests: 19, gegen die
+echten LIRA-Files (BE + LE) + Epoch-Anker.
+
+Session-Frage 3 (Kongruenz AMDA-Kompilat ↔ LIRA-2020–2022):
+NICHT deckungsgleich. 2022-11-24, gleiche 10-min-Buckets (276
+gemeinsame (t, comp)-Keys), 256 davon weichen > 1e-4 ab (~50 %:
+ey 4,29 vs 6,44, ez −4,51 vs −11,57 mV/m) — das AMDA-Produkt ist
+ein älteres Processing. Gegenprobe CDAWeb (SOLO_L3_RPW-BIA-
+EFIELD-10-SECONDS, HAPI): der LIRA-00:15-Bucket ey 4,997394/ez
+5,462028 deckt sich exakt mit den CDAWeb-Medianen 4,9974/5,46205 —
+der Parser ist end-to-end verifiziert (Epoch-Alignment + EDC_SRF
++ Median + Bucket + TDB). Das AMDA-Kompilat endet
+2022-11-24T23:55Z; LIRA setzt 2022-11-25T00:05Z ein — die Naht
+ist ein Processing-Wechsel, keine Mess-Lücke mehr, 0 Duplikate
+beim Merge.
+
+Ernte (bia_efield_compiler): --window-start 2022-11-25
+--window-end 2025-12-31, db.csv-Index (höchste Version pro Tag),
+1120 Tage, 0 void, 0 Tage mit echtem ex, 0 Records ohne Epoch →
+200544 Records (10-min-Mediane, ey/ez) + 147148 AMDA = 347692
+Records in rpw_efield.bin (6,95 MB), Roundtrip ✓, CDN-Upload via
+gh (asset rpw_efield.bin im Release ssd.jpl.nasa.gov). Kopf-loser
+Smoke (Operator-Limit: kein Membrane-Fenster — der CDN-Fetch und
+der Roundtrip tragen die Verifikation): CDN-Bytes == lokale Bytes
+(cmp), RPW1-Vertrag 347692 Records, comps 173846/173846, Spanne
+2020-06-25 → 2025-12-31.
+
+Session-Frage 2 (Berkeley-VSC-Route): NICHT gefunden.
+research.ssl.berkeley.edu ist lokal DNS-tot (Datacenter-Sperre),
+via Jina-Reader 200. Baum-Walk:
+/data/psp/data/sci/fields/l2/ = aeb, dfb_ac_*|dc_*|wf_*, f2_100bps,
+mag_*, rfs_*, sc_pse, tds_wf (Jahresverzeichnisse bis 2026-07-31);
+l3/ = dust, merged_scam_wf, rfs_*, sqtn_rfs_* — KEIN vsc-Produkt.
+CDAWeb-HAPI-Katalog: kein PSP_*VSC*-Dataset (PSP_FLD_L2_VSC →
+1406; PSP_FLD_L2_AEB@0/@1 = AEB-Housekeeping, Temperaturen/
+Bias — kein Feld). SPDF spiegelt dieselbe l2/l3-Menge. Die
+„kalibriertes mV/m-VSC-Feld nur bei Berkeley"-Behauptung der
+Recherche-Agentin ist gegen den live-Baum NICHT verifizierbar —
+die Registrierpflicht bleibt (pending, Befund hier). Wind/WAVES
+wav_h1 (E_VOLTAGE_RAD2, dritter Payload): verschoben — der Parser
+steht, die Ernte ist ein eigenes Atom (ledger.φ kraft-kanal
+electric wind-waves).
+
+Register: TODO.md (cdf_reader-Pending geschlossen, Lücke
+geschlossen), ledger.φ (kraft-kanal electric erweitert + wind-waves-
+Eintrag), dieser Befund. Gates: cargo check 0/0, cargo test
+(218 lib-Tests grün; der Gate-Test der parallelen Fetch-Ketten-Session
+lief auf deren Zwischenstufe rot und steht inzwischen grün), der
+Smoke lief kopf-los (Operator-
+Limit: kein Fenster).

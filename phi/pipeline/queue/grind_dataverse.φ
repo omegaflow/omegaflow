@@ -1,0 +1,819 @@
+# grind dataverse (2026-08-20)
+# Positiv gewichtete Dataverse-Kandidaten (Linse, library.φ) — Harvard 90 + Borealis 46
+# Route: Dataverse-API je DOI. Probe → Survivors → Force-Gate → sources.φ
+#
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/Y4D8PA
+ttl 604800
+at sun
+note probe-open dataverse: Data and replication code for 'Global and Regional Discrepancies between Early 20th Century Coastal Air and Sea-Surface Temperature Detected by a Coupled Energy-Balance Analysis'
+# force thermal — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/RJLBOQ
+ttl 604800
+at sun
+note probe-open dataverse: Correcting Observational Biases in Sea-Surface Temperature Observations Removes Anomalous Warmth during World War II
+# force thermal — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/OJJGYN
+ttl 604800
+at sun
+note probe-open dataverse: Sea surface temperature and carbon isotopic composition of crenarchaeol and total organic carbon during the Paleocene-Eocene Thermal Maximum
+# force thermal — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/JERMCE
+ttl 604800
+at sun
+note probe-open dataverse: Replication Data for: Strong dependence of U.S. summertime air quality on the decadal variability of Atlantic sea surface temperatures
+# force thermal — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/EUBD61
+ttl 604800
+at sun
+note probe-open dataverse: Air Temperature by Epidemiological Week from Weather Monitoring Stations in Bogota, Colombia, 2000-2022
+# force thermal — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/CC0ZWA
+ttl 604800
+at sun
+note probe-open dataverse: Air Temperature from Weather Stations in Barranquilla, Colombia, 2000-2022
+# force thermal — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/GCLHLV
+ttl 604800
+at sun
+note probe-open dataverse: Replication Data for: Mesospheric Q2DW interactions with four migrating tides at 53$^\\circ$N latitude: zonal wavenumber identification through dual-station approaches
+# force gravity — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/DIJGNW
+ttl 604800
+at sun
+note probe-open dataverse: Replication Data for The variations of gravity wave activities during the formation of the large horizontal wind shears in the static state lower thermosphere
+# force gravity — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/ZLROCX
+ttl 604800
+at sun
+note probe-open dataverse: On Spatio-temporal Dependence of Bird’s Migration Path Direction on the change of the Earth’s Magnetic field, Sun and the Moon Positions (American Region Study)
+# force em — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/ZFSWHM
+ttl 604800
+at sun
+note probe-open dataverse: Relationship between needle depth for lumbar transforaminal epidural injection and patients’ height and weight using magnetic resonance imaging
+# force em — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/XZRPWV
+ttl 604800
+at sun
+note probe-open dataverse: Characterization of magnetic field lines in connection with the transport of field lines in Beltrami magnetic fields
+# force em — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/X1YCZ6
+ttl 604800
+at sun
+note probe-open dataverse: Transport of High-energy Charged Particles through Spatially Intermittent Turbulent Magnetic Fields
+# force em — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/QYLEJF
+ttl 604800
+at sun
+note probe-open dataverse: Replication Data for: Active magnetic levitation and 3-D position measurement for a ball viscometer
+# force em — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/ONKLLL
+ttl 604800
+at sun
+note probe-open dataverse: Radiocarbon dates, magnetic susceptibility and subfossil remains of Lophopodella capensis (Sollas, 1908) data from a sediment core collected from Enapuiyapui wetland, Eastern Mau Forest, Kenya
+# force em — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/N45ZMR
+ttl 604800
+at sun
+note probe-open dataverse: Modeling hydrodynamics, magnetic fields and synthetic radiographs for\r\nhigh-energy-density plasma flows in shock-shear targets
+# force em — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/MNJ9AV
+ttl 604800
+at sun
+note probe-open dataverse: Alberti, T., and Cliver, E.W. 2025, “Microwave Spectra for Groups of Confined and Eruptive Solar Flares”
+# force em — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/MLZKPS
+ttl 604800
+at sun
+note probe-open dataverse: Two typical collective behaviors of the heavy ions 2 expanding in cold plasma with ambient magnetic field
+# force em — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/MATQQF
+ttl 604800
+at sun
+note probe-open dataverse: Smaller & Sooner – Exploiting high magnetic fields from new superconductors for a more attractive fusion energy development path
+# force em — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/KM45SY
+ttl 604800
+at sun
+note probe-open dataverse: Collisionless Shocks Driven by Supersonic Plasma Flows with Self-Generated Magnetic Fields
+# force em — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/KDJFTD
+ttl 604800
+at sun
+note probe-open dataverse: Radiation Pressure on Plasma Turbulence by Radio Frequency Waves
+# force em — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/KBJVHN
+ttl 604800
+at sun
+note probe-open dataverse: Executive Agreements Database, Background Statement Concerning the Agreement Between The United States and Italy for The Transfer Of Ownership of the Long-Range Radio Aid To Navigation Transmitting Stations and Monitoring Stations Act Lampedusa, Sellia Marina and Crotone, Italy, with Annex. Signed At Rome November 17, 1994. Entered Into Force February 4, 1997.
+# force em — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/JMXD0E
+ttl 604800
+at sun
+note probe-open dataverse: Characterizing the Effect of Static Magnetic Fields on C. elegans Using Microfluidics
+# force em — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/IWLMON
+ttl 604800
+at sun
+note probe-open dataverse: Impact of extremely low-frequency electromagnetic field magnetic stimulation on motor cortex oxygenation using functional near-infrared spectroscopy recordings
+# force em — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/IIEVYK
+ttl 604800
+at sun
+note probe-open dataverse: Full-coverage daily 1-km MAIAC Aerosol Optical Depth (AOD) data, 2003-2019
+# force em — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/FBSJLL
+ttl 604800
+at sun
+note probe-open dataverse: Replication Data for: Weak magnetic fields in the outer solar nebula recorded in CR chondrites
+# force em — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/EHZVIS
+ttl 604800
+at sun
+note probe-open dataverse: Radiation Pressure of Radio Frequency Waves on Turbulence in Edge Plasmas
+# force em — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/EGOOCL
+ttl 604800
+at sun
+note probe-open dataverse: Lunar polar maps derived from Diviner temperatures organized by subsolar and ecliptic longitude
+# force em — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/DELG1V
+ttl 604800
+at sun
+note probe-open dataverse: Inferring Morphology and Strength of Magnetic Fields From Proton Radiographs
+# force em — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/BO75TX
+ttl 604800
+at sun
+note probe-open dataverse: Interaction of radio frequency waves with cylindrical density filaments -- scattering and radiation pressure
+# force em — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/6CBRML
+ttl 604800
+at sun
+note probe-open dataverse: Scattering of radio frequency waves by cylindrical filaments with general orientation relative to the magnetic field
+# force em — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/5YJBVX
+ttl 604800
+at sun
+note probe-open dataverse: Differential rotation in Jupiter's interior revealed by simultaneous inversion for the magnetic field and zonal flux velocity
+# force em — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/5E9EPW
+ttl 604800
+at sun
+note probe-open dataverse: High Galactic Latitude Dust Emission and Extinction Model from HI, HII, and H2
+# force em — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/2ARZ0G
+ttl 604800
+at sun
+note probe-open dataverse: Measurements of runaway electron synchrotron spectra at high magnetic fields in Alcator C-Mod
+# force em — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/VL4LAQ
+ttl 604800
+at sun
+note probe-open dataverse: Thermal conductivity of hydrogen at high pressure and high temperature: implications to giant planets
+# force electric — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/ZZGXHC
+ttl 604800
+at sun
+note probe-open dataverse: Synthetic Engineering Dataset: Simulated Measurements of Temperature, Pressure, Flow Rate, Voltage, RPM, and Humidity
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/XYLVM1
+ttl 604800
+at sun
+note probe-open dataverse: Kinematic viscosity (in cm2/s) for a 90-K methene-ethane-nitrogen liquid as a function of methane–alkane fraction and depth.
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/XWOGJF
+ttl 604800
+at sun
+note probe-open dataverse: Replication Data for Depth-dependent mineral soil CO2 production processes: sensitivity to harvesting-induced changes in soil climate
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/XNVFXO
+ttl 604800
+at sun
+note probe-open dataverse: Dynamic viscosity (in pa*s) for a 90-K methene-ethane-nitrogen liquid as a function of methane–alkane fraction and depth.
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/XGHB2A
+ttl 604800
+at sun
+note probe-open dataverse: Colle Gnifetti Ice Core - d18O and Ca (Oxygen isotopes, Calcium - temperature proxies) record - Climate Change Institute - University of Maine - University of Heidelberg
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/XEGIAW
+ttl 604800
+at sun
+note probe-open dataverse: Replication Data for: Plotting of the absolute humidity and relative humidity of air depending on temperature
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/WZJBHU
+ttl 604800
+at sun
+note probe-open dataverse: Dataset for Potential Enhancement in Atmospheric Nanoparticles Growth by Amine-Assisted Nitrate Condensation at Room Temperature
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/VBCKWO
+ttl 604800
+at sun
+note probe-open dataverse: Replication Data for: Role of renal venous oxygen pressure for renal function monitoring after related living-donor kidney transplantation cohort study
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/UYBVU6
+ttl 604800
+at sun
+note probe-open dataverse: Nitrate Chemistry in the Northeast US Part II: Oxygen Isotopes Reveal Differences in Particulate and Gas Phase Formation
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/SPGDNB
+ttl 604800
+at sun
+note probe-open dataverse: Ethane mole fraction for a 92-K methene-ethane-nitrogen liquid as a function of methane–alkane fraction and depth.
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/SCPGSW
+ttl 604800
+at sun
+note probe-open dataverse: Temperature and relative humidity at Roff in 2017
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/RGAVNW
+ttl 604800
+at sun
+note probe-open dataverse: Surface tension (in N/m) for a 94-K methene-ethane-nitrogen liquid as a function of methane–alkane fraction and depth.
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/QUZGBV
+ttl 604800
+at sun
+note probe-open dataverse: Kinematic viscosity (in cm2/s) for a 94-K methene-ethane-nitrogen liquid as a function of methane–alkane fraction and depth.
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/QSHDVR
+ttl 604800
+at sun
+note probe-open dataverse: Replication Data for: Tracing the fate of seabird-derived-nitrogen in a coral reef using nitrate and coral skeleton nitrogen isotopes
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/PV5ST6
+ttl 604800
+at sun
+note probe-open dataverse: Carbon Dioxide Fluxes of a Young Deciduous Afforestation Under the Influence of Seasonal Precipitation Patterns and Frequent Typhoon Occurrence
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/PUBEQI
+ttl 604800
+at sun
+note probe-open dataverse: Surface tension (in N/m) for a 90-K methene-ethane-nitrogen liquid as a function of methane–alkane fraction and depth.
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/PSPPQL
+ttl 604800
+at sun
+note probe-open dataverse: 15N fractionation of nitrate formation constrained by dual oxygen isotopes provides insight into its source identification in urban haze
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/PJ1EVC
+ttl 604800
+at sun
+note probe-open dataverse: Supplementary Data for:Constraining 2010-2020 Amazonian carbon flux estimates with satellite solar-induced fluorescence (SIF)
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/NYPY4J
+ttl 604800
+at sun
+note probe-open dataverse: Nitrogen mole fraction for a 94-K methene-ethane-nitrogen liquid as a function of methane–alkane fraction and depth.
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/N1SK9Y
+ttl 604800
+at sun
+note probe-open dataverse: Methane mole fraction for a 92-K methene-ethane-nitrogen liquid as a function of methane–alkane fraction and depth.
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/N1RU9X
+ttl 604800
+at sun
+note probe-open dataverse: Performance of a polymer electrolyte fuel cell considering the variation of the relative humidity of reactants gases (dataset)
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/KU01NZ
+ttl 604800
+at sun
+note probe-open dataverse: Nitrogen mole fraction for a 90-K methene-ethane-nitrogen liquid as a function of methane–alkane fraction and depth.
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/KEHI73
+ttl 604800
+at sun
+note probe-open dataverse: Methane mole fraction for a 90-K methene-ethane-nitrogen liquid as a function of methane–alkane fraction and depth.
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/JTBX6G
+ttl 604800
+at sun
+note probe-open dataverse: Replication Data for: Calculations and graphs regarding Active Cooling in terms of absolute and relative humidity, temperature and Specific Yield
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/JICQYF
+ttl 604800
+at sun
+note probe-open dataverse: Replication Data for: Organic carbon and Ca-carbonate detections in Soils of the Northern Plains, Mars: Evaluation of unpublished data interpretations from the Mars Phoenix Scout’s, Thermal Evolved Gas Analyzer (TEGA).
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/GV0HIJ
+ttl 604800
+at sun
+note probe-open dataverse: Replication data for: Calculations and graphs regarding maximum specific water yield in terms of relative humidity and temperature for different water-from-air technologies
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/FQN2EJ
+ttl 604800
+at sun
+note probe-open dataverse: Dynamic viscosity (in pa*s) for a 94-K methene-ethane-nitrogen liquid as a function of methane–alkane fraction and depth.
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/FHLO8S
+ttl 604800
+at sun
+note probe-open dataverse: Nitrogen mole fraction for a 92-K methene-ethane-nitrogen liquid as a function of methane–alkane fraction and depth.
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/DREN5E
+ttl 604800
+at sun
+note probe-open dataverse: Density (in kg/m3) for a 92-K methene-ethane-nitrogen liquid as a function of methane–alkane fraction and depth.
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/CLCZBP
+ttl 604800
+at sun
+note probe-open dataverse: Density (in kg/m3) for a 94-K methene-ethane-nitrogen liquid as a function of methane–alkane fraction and depth.
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/CBVHNR
+ttl 604800
+at sun
+note probe-open dataverse: Surface tension (in N/m) for a 92-K methene-ethane-nitrogen liquid as a function of methane–alkane fraction and depth.
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/BLQRRZ
+ttl 604800
+at sun
+note probe-open dataverse: Methane mole fraction for a 94-K methene-ethane-nitrogen liquid as a function of methane–alkane fraction and depth.
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/BLJRSF
+ttl 604800
+at sun
+note probe-open dataverse: Ethane mole fraction for a 94-K methene-ethane-nitrogen liquid as a function of methane–alkane fraction and depth.
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/B8D3WG
+ttl 604800
+at sun
+note probe-open dataverse: Ethane mole fraction for a 90-K methene-ethane-nitrogen liquid as a function of methane–alkane fraction and depth.
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/7O9BFB
+ttl 604800
+at sun
+note probe-open dataverse: Linking Digital Economy and Low-Carbon Economy: An In-depth Analysis of Correlation, Multicollinearity, and Mediating Effects across Income Groups
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/4T9EFO
+ttl 604800
+at sun
+note probe-open dataverse: Kinematic viscosity (in cm2/s) for a 92-K methene-ethane-nitrogen liquid as a function of methane–alkane fraction and depth.
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/4RTWKS
+ttl 604800
+at sun
+note probe-open dataverse: Density (in kg/m3) for a 90-K methene-ethane-nitrogen liquid as a function of methane–alkane fraction and depth.
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/4E9U5J
+ttl 604800
+at sun
+note probe-open dataverse: X-ray absorption spectroscopy data for publication: Trends in Carbon, Oxygen, and Nitrogen Core in the X-ray Absorption Spectroscopy of Carbon Nanomaterials: A Guide for the Perplexed
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/3WGQUU
+ttl 604800
+at sun
+note probe-open dataverse: Dynamic viscosity (in pa*s) for a 92-K methene-ethane-nitrogen liquid as a function of methane–alkane fraction and depth.
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/1ZGXJH
+ttl 604800
+at sun
+note probe-open dataverse: Low Thermal Conductivity of Carbon Dioxide at High Pressure: Implications for Icy Planetary Interiors
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/1ANAKP
+ttl 604800
+at sun
+note probe-open dataverse: The Impact of Electricity Market Reform on Carbon Dioxide Emissions across the U.S. States
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/YZWODB
+ttl 604800
+at sun
+note probe-open dataverse: Atlas of global sea level pressure (1871AD~1980AD)
+# force advective — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/VAG7LT
+ttl 604800
+at sun
+note probe-open dataverse: Replication Data for: Robust Future Projections of Global Spatial Distribution of Major Tropical Cyclones and Sea Level Pressure Gradients
+# force advective — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/V5R9WV
+ttl 604800
+at sun
+note probe-open dataverse: Model data for: Prediction of Northern Hemisphere regional sea ice extent and snow depth using stratospheric ozone information
+# force advective — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/U0PNCG
+ttl 604800
+at sun
+note probe-open dataverse: Replication Data for: Ageostrophic Currents of Eddies Contribute Significantly to Meridional Heat Flux in the Antarctic Circumpolar Current
+# force advective — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/TSBJ0V
+ttl 604800
+at sun
+note probe-open dataverse: Open Access Data for Sensitivity of Non-Typhoidal Salmonella Serovars to Elevated Hydrostatic Pressure
+# force advective — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/RCBY6B
+ttl 604800
+at sun
+note probe-open dataverse: Ultrahigh-pressure structural evolution of amorphous-Al2O3: insights from acoustic velocity measurements
+# force advective — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/R6EX3W
+ttl 604800
+at sun
+note probe-open dataverse: Weekly Precipitation from Weather Monitoring Stations for Barranquilla, Colombia, 2000-2022
+# force advective — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/R3RQVI
+ttl 604800
+at sun
+note probe-open dataverse: Digital Elevation and Snow Depth Models for Atigun Pass, AK
+# force advective — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/QBM6W1
+ttl 604800
+at sun
+note probe-open dataverse: Temperature and wind speed data druing the seismic observation
+# force advective — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/OOTZCC
+ttl 604800
+at sun
+note probe-open dataverse: Supplemental material - Hemodynamic profiling of patients with a Fontan circulation using pulmonary pressure/flow relations during dobutamine stress and pulmonary vasodilation testing
+# force advective — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/LQNCBW
+ttl 604800
+at sun
+note probe-open dataverse: Effects of wind, ambient temperature, and sun position on damselfly flight activity and perch orientation
+# force advective — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/FBHQ2R
+ttl 604800
+at sun
+note probe-open dataverse: Estimation of the economic impact of temperature changes induced by a shutdown of the thermohaline circulation: an application of FUND
+# force advective — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/CLIQUH
+ttl 604800
+at sun
+note probe-open dataverse: Replication Data for: “Information transparency, location, and stakeholder pressure on the socially responsible partner selection” published by RAC-Revista de Administração Contemporânea
+# force advective — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/BMBZLI
+ttl 604800
+at sun
+note probe-open dataverse: Precipitation from Weather Monitoring Stations by Epidemiological Week for Bogota, Colombia, 2000-2022
+# force advective — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://dataverse.harvard.edu/api/datasets/:persistentId?persistentId=doi:10.7910/DVN/BATG5H
+ttl 604800
+at sun
+note probe-open dataverse: Replication Data for: CESM (version 1.2.2.1) Simulated 2-m Air Temperature and Precipitation (Sun and Wang 2019)
+# force advective — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://borealisdata.ca/api/datasets/:persistentId?persistentId=doi:10.5683/SP3/ZJ03SX
+ttl 604800
+at sun
+note probe-open dataverse: Soil Temperature (5 cm) Records from Agricultural Weather Stations in Canada Aligned with Sentinel-1 Overpasses (October to June, 2016-2023)
+# force thermal — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://borealisdata.ca/api/datasets/:persistentId?persistentId=doi:10.5683/SP3/MRPMTM
+ttl 604800
+at sun
+note probe-open dataverse: Replication Data for: Simple hybrid sea ice nudging method for improving control over partitioning of sea ice concentration and thickness
+# force em — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://borealisdata.ca/api/datasets/:persistentId?persistentId=doi:10.5683/SP3/GKP7IN
+ttl 604800
+at sun
+note probe-open dataverse: Dust Devil Optical Depth Data
+# force em — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://borealisdata.ca/api/datasets/:persistentId?persistentId=doi:10.5683/SP2/O9XJPF
+ttl 604800
+at sun
+note probe-open dataverse: Data for: Synthetic Radio Frequency Identification tracer stones with weighted inner ball for burial depth estimation
+# force em — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://borealisdata.ca/api/datasets/:persistentId?persistentId=doi:10.5683/SP3/PEV45A
+ttl 604800
+at sun
+note probe-open dataverse: Cheticamp River temperature and electrical conductivity data
+# force electric — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://borealisdata.ca/api/datasets/:persistentId?persistentId=doi:10.5683/SP3/O9MUZJ
+ttl 604800
+at sun
+note probe-open dataverse: Replication Data for: D Lim, W Pei, JW Lee, KE Musselman, K Masani. Feasibility of a Depth Camera-Based Center of Mass Feedback System for Closed-Loop Functional Electrical Stimulation Therapy and Visual Feedback Balance Training
+# force electric — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://borealisdata.ca/api/datasets/:persistentId?persistentId=doi:10.5683/SP2/TKFE3G
+ttl 604800
+at sun
+note probe-open dataverse: Physicochemical properties of peat samples collected for the microcosm experiment. DOC – dissolved organic carbon (mg g-1), EC – electrical conductivity (µS cm-1), WT – water table (cm); short chain fatty acid ions and inorganic ions (µg g-1 of dry peat). MP – potential rates of methane production; MO – potential rates of methane oxidation. Depth zones: A (0-10 cm below the WT), B (0-10 cm above the WT), C (10-20 cm below the WT).
+# force electric — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://borealisdata.ca/api/datasets/:persistentId?persistentId=doi:10.5683/SP2/FIUSHE
+ttl 604800
+at sun
+note probe-open dataverse: Physicochemical properties of 63 peat samples with methanogenic and methanotrophic sequence count above the rarefaction threshold. DOC – dissolved organic carbon (mg g-1), EC – electrical conductivity (µS cm-1), WT – water table (cm), WTFZ - water table fluctuation zone; short chain fatty acid ions and inorganic ions (µg g-1 of dry peat).
+# force electric — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://borealisdata.ca/api/datasets/:persistentId?persistentId=doi:10.5683/SP4/ZBTVQX
+ttl 604800
+at sun
+note probe-open dataverse: Long-term tree ring oxygen and carbon isotope dataset from Tern Lake thermal area, Yellowstone National Park, Wyoming, USA
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://borealisdata.ca/api/datasets/:persistentId?persistentId=doi:10.5683/SP3/WMQFDC
+ttl 604800
+at sun
+note probe-open dataverse: Total Column Mixing Ratios of Carbon Dioxide, Methane and Carbon Monoxide from Toronto (UTSG)
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://borealisdata.ca/api/datasets/:persistentId?persistentId=doi:10.5683/SP3/TIRAXJ
+ttl 604800
+at sun
+note probe-open dataverse: Peat depth and carbon storage of the Hudson Bay Lowlands, Canada
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://borealisdata.ca/api/datasets/:persistentId?persistentId=doi:10.5683/SP3/SAEMC8
+ttl 604800
+at sun
+note probe-open dataverse: Stable isotopes unravel the feeding mode-trophic position relationship in trematode parasites
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://borealisdata.ca/api/datasets/:persistentId?persistentId=doi:10.5683/SP3/RWVMRY
+ttl 604800
+at sun
+note probe-open dataverse: Replication Data for: Effect of soil sample handling and storage on inorganic nitrogen determination: Implications for the presidedress nitrate test
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://borealisdata.ca/api/datasets/:persistentId?persistentId=doi:10.5683/SP3/Q96PYZ
+ttl 604800
+at sun
+note probe-open dataverse: The organic carbon flux to Arctic margin sediments: redox tracers stable isotopes and biomarkers as proxies for change
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://borealisdata.ca/api/datasets/:persistentId?persistentId=doi:10.5683/SP3/PAUJMM
+ttl 604800
+at sun
+note probe-open dataverse: Stable carbon and oxygen isotope data from Ediacaran shallow water carbonate platform
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://borealisdata.ca/api/datasets/:persistentId?persistentId=doi:10.5683/SP3/MFNU2X
+ttl 604800
+at sun
+note probe-open dataverse: Air Temperature and Humidity Sensor Data on McGill University’s Campus
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://borealisdata.ca/api/datasets/:persistentId?persistentId=doi:10.5683/SP3/GS1O7J
+ttl 604800
+at sun
+note probe-open dataverse: Replication Data for: Quantification of fish littoral carbon use and trophic position using stable isotopes: an empirical comparison of equations using freshwater lakes
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://borealisdata.ca/api/datasets/:persistentId?persistentId=doi:10.5683/SP3/FR8INU
+ttl 604800
+at sun
+note probe-open dataverse: Triple Oxygen Isotope Variations in Soil Water, Precipitation, and Stem Phytolith in a Temperate Climate
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://borealisdata.ca/api/datasets/:persistentId?persistentId=doi:10.5683/SP3/EN34AD
+ttl 604800
+at sun
+note probe-open dataverse: Ecosystem scale carbon dioxide and methane emissions from extracted peatlands in Alberta and Quebec, Canada
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://borealisdata.ca/api/datasets/:persistentId?persistentId=doi:10.5683/SP3/D8KCYZ
+ttl 604800
+at sun
+note probe-open dataverse: Soil organic carbon stock and uncertainties, 30cm and 1m depth, at 250m spatial resolution in Canada, version 3.0
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://borealisdata.ca/api/datasets/:persistentId?persistentId=doi:10.5683/SP3/AZIZSH
+ttl 604800
+at sun
+note probe-open dataverse: Data from: Environmental and taxonomic controls of carbon and oxygen stable isotope composition in Sphagnum across broad climatic and geographic ranges
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://borealisdata.ca/api/datasets/:persistentId?persistentId=doi:10.5683/SP3/ABASOQ
+ttl 604800
+at sun
+note probe-open dataverse: Production rates and radiocarbon signatures of greenhouse gases from incubations of thermokarst lake sediments in Kuujjuarapik
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://borealisdata.ca/api/datasets/:persistentId?persistentId=doi:10.5683/SP3/9CUMII
+ttl 604800
+at sun
+note probe-open dataverse: Total Column Mixing Ratios of Carbon Dioxide, Methane and Carbon Monoxide from Toronto (td)
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://borealisdata.ca/api/datasets/:persistentId?persistentId=doi:10.5683/SP3/80TERS
+ttl 604800
+at sun
+note probe-open dataverse: Total Column Mixing Ratios of Carbon Dioxide, Methane and Carbon Monoxide from Toronto (UTSC)
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://borealisdata.ca/api/datasets/:persistentId?persistentId=doi:10.5683/SP3/7MMA66
+ttl 604800
+at sun
+note probe-open dataverse: Riparian cottonwood trees and adjacent river sediments have different microbial communities and produce methane with contrasting carbon isotope compositions
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://borealisdata.ca/api/datasets/:persistentId?persistentId=doi:10.5683/SP3/5CVWGV
+ttl 604800
+at sun
+note probe-open dataverse: Multi-Year Methane and Carbon Dioxide Concentrations from Mobile Surveys in Alberta, Canada (2021–2024): A Greenhouse Gas Emission Dataset
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://borealisdata.ca/api/datasets/:persistentId?persistentId=doi:10.5683/SP3/1WHR3P
+ttl 604800
+at sun
+note probe-open dataverse: Diurnal Statistics for Temperature, Relative Humidity, Wind Speed, PM10, and PM2.5 Concentrations at ’A’ą̈y Chù’ Valley in Kluane National Park, Yukon, Canada for June 2021
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://borealisdata.ca/api/datasets/:persistentId?persistentId=doi:10.5683/SP2/Y4NRG6
+ttl 604800
+at sun
+note probe-open dataverse: Data for: Gas Transfer Velocities Evaluated Using Carbon Dioxide as a Tracer Show High Streamflow to Be a Major Driver of Total CO2 Evasion Flux for a Headwater Stream
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://borealisdata.ca/api/datasets/:persistentId?persistentId=doi:10.5683/SP2/VHN1UQ
+ttl 604800
+at sun
+note probe-open dataverse: Database from an analysis of pressure measurements of the blast waves from the explosions of 0.3 g charges of stoichiometric, rich and lean propane/oxygen mixtures
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://borealisdata.ca/api/datasets/:persistentId?persistentId=doi:10.5683/SP2/V38NLF
+ttl 604800
+at sun
+note probe-open dataverse: Soil nitrogen dynamics and carbon dioxide exchange in a High Arctic wetland
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://borealisdata.ca/api/datasets/:persistentId?persistentId=doi:10.5683/SP2/RNCAWQ
+ttl 604800
+at sun
+note probe-open dataverse: Total Column Mixing Ratios of Carbon Dioxide, Methane and Carbon Monoxide from Toronto (ta)
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://borealisdata.ca/api/datasets/:persistentId?persistentId=doi:10.5683/SP2/7UOOVR
+ttl 604800
+at sun
+note probe-open dataverse: Ten years (2006-2016) of oceanographic temperature, salinity, pressure, density and dissolved oxygen data from the Saanich Inlet cabled observatory
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://borealisdata.ca/api/datasets/:persistentId?persistentId=doi:10.5683/SP2/5AMBHV
+ttl 604800
+at sun
+note probe-open dataverse: Six years (2009-2015) of oceanographic temperature, salinity, pressure, density and dissolved oxygen observations from a Vancouver Island shelf cabled observatory.
+# force diffusion — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://borealisdata.ca/api/datasets/:persistentId?persistentId=doi:10.7939/DVN/KUIZ7G
+ttl 604800
+at sun
+note probe-open dataverse: Replication Data for: Opportunistic evaluation of modelled sea ice drift using passively drifting telemetry collars in Hudson Bay, Canada
+# force advective — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://borealisdata.ca/api/datasets/:persistentId?persistentId=doi:10.5683/SP/BZDSFA
+ttl 604800
+at sun
+note probe-open dataverse: Aggregated and Fitted Pressure Data From the Rover Environmental Monitoring Station on the Mars Science Laboratory
+# force advective — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://borealisdata.ca/api/datasets/:persistentId?persistentId=doi:10.5683/SP3/VP1UMC
+ttl 604800
+at sun
+note probe-open dataverse: Ice thickness, snow depth and lake properties for sampled lakes in and around the Trail Valley Creek watershed, NT
+# force advective — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://borealisdata.ca/api/datasets/:persistentId?persistentId=doi:10.5683/SP3/LZ8AZU
+ttl 604800
+at sun
+note probe-open dataverse: Lake Snow depth observations derived from Ground Penetrating Radar for four lakes near Yellowknife, Northwest Territories
+# force advective — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://borealisdata.ca/api/datasets/:persistentId?persistentId=doi:10.5683/SP3/EFD5WW
+ttl 604800
+at sun
+note probe-open dataverse: MVSMMP Map 10 Depth to a shear-wave velocity of 1.5 km/s (Z1.5)
+# force advective — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://borealisdata.ca/api/datasets/:persistentId?persistentId=doi:10.5683/SP3/DLIJ3R
+ttl 604800
+at sun
+note probe-open dataverse: Water Level and Chemistry characteristic data from Boreal Plain Lakes at URSA, Western Canada
+# force advective — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://borealisdata.ca/api/datasets/:persistentId?persistentId=doi:10.5683/SP3/CEWAG6
+ttl 604800
+at sun
+note probe-open dataverse: Hourly precipitation phase and 2-m surface air temperature output from the Sixth-Generation Canadian Regional Climate Model (CRCM6-GEM5)
+# force advective — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://borealisdata.ca/api/datasets/:persistentId?persistentId=doi:10.5683/SP3/AKPAEN
+ttl 604800
+at sun
+note probe-open dataverse: Replication Data for: Characterizing water level responses to barometric pressure fluctuations from seconds to days
+# force advective — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://borealisdata.ca/api/datasets/:persistentId?persistentId=doi:10.5683/SP3/3BYWXS
+ttl 604800
+at sun
+note probe-open dataverse: MVSMMP Map 11 Depth to a shear-wave velocity of 2.2 km/s (Z2.2)
+# force advective — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://borealisdata.ca/api/datasets/:persistentId?persistentId=doi:10.5683/SP2/RUSEHA
+ttl 604800
+at sun
+note probe-open dataverse: Snow depth, density, and snow water equivalent observations at Trail Valley Creek Research Station, Northwest Territories, 2015-2019
+# force advective — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://borealisdata.ca/api/datasets/:persistentId?persistentId=doi:10.5683/SP2/PWSKKG
+ttl 604800
+at sun
+note probe-open dataverse: Structure-from-Motion Snow Depth Products and In Situ Observations for Late-Winter Tundra Mapping Project, Trail Valley Creek Research Station, Spring 2018
+# force advective — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://borealisdata.ca/api/datasets/:persistentId?persistentId=doi:10.5683/SP2/MZRUUH
+ttl 604800
+at sun
+note probe-open dataverse: Replication Data for: Determining water level responses to barometric pressure fluctuations from seconds to days
+# force advective — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
+
+url https://borealisdata.ca/api/datasets/:persistentId?persistentId=doi:10.5683/SP2/9ZGR5U
+ttl 604800
+at sun
+note probe-open dataverse: Frost table depth with associated snow and landscape variables at Trail Valley Creek, NT, 2015.
+# force advective — Felder aus dem Titel; Datei-/Metadaten-Schema via API prüfen
