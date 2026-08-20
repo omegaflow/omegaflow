@@ -48,6 +48,17 @@ trägt nur Probe-Spannungen (VDC/EDC/EAC, V — das rohe
 Antennen-Signal, nicht das kalibrierte mV/m-Feld); die
 BP-Produkte sind Spektral-Power — em, kein electric-Katalysator
 (DFB-Präzedenz).
+Befund 3 (Zweitprüfung der BIA-StopDates, direkte /hapi/info):
+SOLO_L3_RPW-BIA-EFIELD (EDC_SRF [3] mV/m) → 2022-12-01;
+SOLO_L3_RPW-BIA-EFIELD-10-SECONDS (EDC_SRF + EDCSTD_SRF) →
+2022-12-01; SOLO_L3_RPW-BIA-SCPOT-10-SECONDS (SCPOT V) →
+2023-01-01; SOLO_L3_RPW-BIA-DENSITY-10-SECONDS (DENSITY cm^-3) →
+2025-04-24. Das E-Feld-Vektorprodukt endet also in BEIDEN
+Auflösungen 2022-12-01 — „laufende Aktualität" der Dataset-Seite
+sind Regenerierungs-Zeitstempel, keine neuen Daten. Der einzige
+gepflegte BIA-Zweig ist die DICHTE (cm^-3, diffusion-Kandidat bis
+2025-04-24 — registriert, kein Block gebaut, Session-Scope). Der
+elektrische Live-Weg über 2022 hinaus bleibt TDS-SURV-STAT.
 Der Live-Block (B1b) lebt in sources.φ: format hapi, at
 solar_orbiter, ttl 3600, SN_RMS_E → solo_rpw_e_rms_vm (electric
 V/m, gaussian-inverse-square, tau 3600), Fenster
