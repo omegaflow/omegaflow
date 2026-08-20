@@ -54,11 +54,15 @@ kein Upload, „als wäre er vollständig". 0 honored.
      Kataloge) — 22 M Galaxien passen nicht ins Sample-Budget. Der
      z-Gate-Entwurf (`skip-null z`, zcmb) bleibt registriert und gilt für
      das Folge-Atom.
-- **RAVE** (`III/279/rave_dr5`, 500 k): `--async 600` + `--crossmatch
-  I/355/gaiadr3` + `--crossmatch-pm pmRA:pmDE:Plx::Teff:BPmag:RPmag:Gmag`.
-  RAVEs eigener rv = `HRV` (live verifiziert — nicht `RV`); die
-  Gaia-Distanz (j.Dist) trägt dist_pc, die spektrophotometrische
-  Dist/plx des Katalogs bleibt ungeerntet (abgeleitet, 0 honored).
+- **RAVE** (`III/279/rave_dr5`): 24 RA-Slices à 15° (`--where` +
+  `--crossmatch I/355/gaiadr3` + `--crossmatch-pm pmRA:pmDE:Plx::Teff:
+  BPmag:RPmag:Gmag`), rv-Gate `HRV` (live verifiziert — nicht `RV`).
+  Der `--async`+JOIN-Weg wurde gemessen verworfen: der UWS-Job hing
+  PENDING (2 CI-Läufe >600 s, lokal >3600 s) und UWS-Jobs sind
+  IP-gebunden (toter Runner = verwaister Job). Die Gaia-Distanz
+  (j.Dist) trägt dist_pc; die spektrophotometrische Dist/plx des
+  Katalogs bleibt ungeerntet (abgeleitet, 0 honored). Ergebnis:
+  472845 Zeilen.
 - **pastel/wds/mktypes/denis**: CI-Replikat von chunk_master.py in Bash —
   RA-Slices mit `--where "t.\"<racol>\" >= lo AND < hi"`, 3 Versuche je
   Slice, `--limit 90000`, `jq -s 'add'`-Merge, `gh release upload
@@ -116,7 +120,8 @@ kein Upload, „als wäre er vollständig". 0 honored.
   lokaler Dry-run (2+ Bänder mag-bands auf gladep, jq-Validierung —
   verifiziert den Bugfix; das Kompilat selbst wird nicht hochgeladen) +
   cargo check 0/0.
-- **Commit 2** (nach verifiziertem workflow_dispatch UND der
-  Budget-Messung): sources.φ-Blöcke (rave_dr5.json — Sortierung ttl→url,
-  604800, `at sun`) + ledger.φ-Einträge mit den gemessenen Zeilenzahlen.
-  Bis dahin bleibt das Asset ohne Block (0 honored).
+- **Commit 2** (erledigt 2026-08-20): sources.φ-Block (rave_dr5.json) +
+  ledger-Einträge (denis 955434 — 50k-Kappen-Fund; rave 472845 mit
+  Feldzählungen) + YAML (RAVE auf RA-Slices, health-Label-Anlage im
+  Prepare-Schritt). Verbleibend: ein voller grüner Lauf + die
+  MAX_SAMPLES-Budget-Messung.

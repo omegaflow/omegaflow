@@ -1442,6 +1442,21 @@ field p0 pulsar_period_s gaussian-inverse-square em s 604800 0.0 0.0
 field dm pulsar_dm_pccm3 inverse-square em pc/cm3 604800 0.0 0.0
 field s1400 pulsar_flux_1400mhz_mjy inverse-square em mJy 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/rave_dr5.json
+ttl 604800
+at sun
+cmap .
+flux_from_mag gmag
+ra ra
+dec dec
+dist dist_pc
+pmra pmra
+pmdec pmdec
+radvel rv
+dist_scale 3.085677581e16
+field teff rave_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
+field gmag rave_gmag gaussian-inverse-square em mag 604800 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/sb9.json
 ttl 604800
 at sun

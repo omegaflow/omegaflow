@@ -80,8 +80,9 @@ Workflow.
 
 1. ERLEDIGT: NVSS + FIRST + Chandra über `--async` (Workflow-Schritte +
    sources.φ-Blöcke leben).
-2. WIRED (chunk_catalogs): RAVE DR5 über `--async` + Gaia-Crossmatch
-   (HRV-Gate = River).
+2. FERTIG: RAVE DR5 über 24 RA-Slices à 15° + Gaia-Crossmatch
+   (HRV-Gate = River) — 472845 Zeilen auf dem CDN, Block in sources.φ.
+   Der --async+JOIN-Weg hing PENDING (gemessen verworfen).
 3. PENDING: GLADE+ (RA-Slice/async + Quadranten-Assets + Sample-Budget-
    Atom) + Fermi 4FGL (erg/cm²/s-Unit-Arm).
 4. PENDING: 2MASS (Bulk-Kompilator-Atom) + NED (async-Counts → Chunks)

@@ -948,12 +948,19 @@ Offen (Detail in phi/pipeline/ledger.φ):
   Smithsonian GVP, Natural Earth.
   Exakte Tabellen-IDs + Spalten + Mechanismus: docs/surveys/
   fischplan-kataloge-2026-08-20.md + chunk-plan-2026-08-20.md.
-  RAVE (III/279/rave_dr5, --async + Gaia-Crossmatch, HRV-Gate) ist im
-  chunk_catalogs-Job verdrahtet — Asset ausstehend bis zum ersten Lauf
-  (kein sources.φ-Block vorher, 0 honored). GLADE+ ist pending: Spalten
-  live verifiziert, aber drei gemessene Blocker — Schrittboden-Kappung
-  des --mag-bands-Banders, 2-GB-Release-Limit, MAX_SAMPLES 4.19 M
-  (chunk-plan).
+  RAVE (III/279/rave_dr5): 472845 Zeilen kompiliert (24 RA-Slices à
+  15°, rv-Gate HRV), Asset + sources.φ-Block leben — der --async+JOIN-
+  Weg hing auf VizieR PENDING (gemessen: >600 s in 2 CI-Läufen,
+  >3600 s lokal). GLADE+ ist pending: Spalten live verifiziert, aber
+  drei gemessene Blocker — Schrittboden-Kappung des --mag-bands-
+  Banders, 2-GB-Release-Limit, MAX_SAMPLES 4.19 M (chunk-plan).
+- VizieR-async-Befund: --async + gaiadr3-JOIN hängt PENDING — UWS-Jobs
+  sind IP-gebunden: stirbt der Runner, verwaist der Job. RA-Slices
+  sind der Weg für Crossmatch-Kompilate.
+- health-Label-Befund: das Label fehlte auf omegaflow/omegaflow —
+  alle `gh issue create --label health` waren stumm (kein einziges
+  flatten-Issue im Register). Der Prepare-Schritt legt das Label jetzt
+  an (kernel_flatten.yml).
 - Sample-Budget des Feldes (kritisch, eigenes Atom): die Summe aller
   Katalog-Blöcke (Sterne 1.19 M + Asteroiden 1.56 M + NVSS 1.8 M +
   FIRST 1.1 M + Chandra 0.4 M + vier Chunks 1.4 M + …) liegt über
@@ -1052,15 +1059,16 @@ Offen (Detail in phi/pipeline/ledger.φ):
 - Stray-/Basename-Assets im Release ssd.jpl.nasa.gov löschen
 - CI: Compiler-Builds zahlen den wgpu-Compile mit (harte Dependency)
 - CI-Chunk-Kompilation der großen Kataloge: der chunk_catalogs-Job
-  (kernel_flatten.yml) verdrahtet pastel/wds/mktypes/denis als
+  (kernel_flatten.yml) verdrahtet RAVE/pastel/wds/mktypes/denis als
   Bash-RA-Slices (CI-Replikat von phi/pipeline/chunk_master.py, ohne
-  Python) + RAVE (--async, HRV-Gate). GLADE+ bleibt draußen (drei
-  gemessene Blocker, s. Katalog-Lücken). Offen: der erste
-  workflow_dispatch-Lauf (Assets verifizieren), dann — nach der
-  Budget-Messung — sources.φ-Blöcke + ledger-Einträge (Commit 2 des
-  chunk-plans, docs/surveys/chunk-plan-2026-08-20.md). Der
-  JSON-mag-bands-Bracket-Bug (tap_compiler.rs) ist behoben — der Fix
-  trägt Git.
+  Python). Zwei Dispatch-Läufe wurden extern abgebrochen; die
+  Kompilate wurden lokal nachgeholt — alle fünf Assets liegen valide
+  auf dem CDN, sources.φ- und ledger-Einträge leben (Commit 2,
+  docs/surveys/chunk-plan-2026-08-20.md). Offen: ein voller grüner
+  Lauf (Verifikation des Slice-Schritts) + die MAX_SAMPLES-
+  Budget-Messung. GLADE+ bleibt draußen (drei gemessene Blocker,
+  s. Katalog-Lücken). Der JSON-mag-bands-Bracket-Bug und das
+  WHERE-Quoting (tap_compiler.rs) sind behoben — die Fixe tragen Git.
 - CDN-Asset-Naming: `{name}.json` — Konvention ist der Resolver (Regel)
 
 ## VERSIONIERT / AUSSTEHEND

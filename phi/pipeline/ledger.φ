@@ -376,7 +376,7 @@ note gaia_dist gcvs_cat (B/gcvs/gcvs_cat): 60644 Zeilen voll (Chunk-Merge), 3162
 
 verifiziert
 bestand phi/pipeline/katalog/vizier_gold_catalogs.φ
-note gaia_dist denis (B/denis/denis): 525260 Zeilen voll (Chunk-Merge, 16 RA-Bänder à 22,5°), 384371 mit Gaia-Distanz — live auf CDN. Sync-Workflow-Schritt entfernt (Clobber-Gefahr) — Eigenbewegung+RV: 437915 pmra, 50758 rv (gaiadr3) — Farbe: 366671 gaia_teff, 449641 bpmag, 455882 gmag (gaiadr3)
+note gaia_dist denis (B/denis/denis): 955434 Zeilen voll (Chunk-Merge, 16 RA-Bänder à 22,5°, --limit 90000) — live auf CDN. Vorgängerstand 525260 kappte dichte Bänder still am 50k-TOP-Limit (chunk_master.py); der CI-Schritt chunk_catalogs (kernel_flatten.yml) trägt --limit 90000.
 
 verifiziert
 bestand phi/pipeline/katalog/vizier_gold_catalogs.φ
@@ -393,6 +393,10 @@ note gaia_dist vsx (B/vsx/vsx): 49568 Zeilen, 37413 mit Gaia-Distanz — live au
 verifiziert
 bestand phi/pipeline/katalog/vizier_gold_catalogs.φ
 note gaia_dist mktypes (B/mk/mktypes): 686886 Zeilen voll (Chunk-Merge, 80 RA-Bänder à 4,5°), 347856 mit Gaia-Distanz — live auf CDN. Sync-Workflow-Schritt entfernt (Clobber-Gefahr) — Eigenbewegung+RV: 625556 pmra, 369006 rv (gaiadr3) — Farbe: 347856 gaia_teff, 632755 bpmag, 637980 gmag (gaiadr3)
+
+verifiziert
+bestand phi/pipeline/katalog/vizier_gold_catalogs.φ
+note gaia_dist rave_dr5 (III/279/rave_dr5): 472845 Zeilen voll (Chunk-Merge, 24 RA-Bänder à 15°, rv-Gate HRV — jede Zeile trägt HRV) — live auf CDN. Der --async+JOIN-Weg hing auf VizieR PENDING (gemessen: >600 s in 2 CI-Läufen, >3600 s lokal) — RA-Slices sind der Weg. Eigenbewegung+RV: 453917 pmra, 472845 rv (RAVE HRV) — Farbe geerntet: 456466 bpmag, 447900 gaia_teff (Manifestation pending, TODO) — Gaia-Distanz: 272178
 
 verifiziert
 bestand phi/pipeline/katalog/vizier_gold_catalogs.φ
