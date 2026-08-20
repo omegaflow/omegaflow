@@ -153,6 +153,17 @@ PSA-TAP-Verdikt (2026-08-20, direkte Probe): psa.esac.esa.int
 http 000 (Host tot), psa.esa.int/tap/sync 404 — TAP existiert auf
 keinem Host, das PSA ist reiner SPA-Browser. Die Recency-Frage
 beantwortet LIRA, nicht das PSA.
+SOAR-Verdikt (2026-08-20): Solar-Orbiter-Daten liegen im SOAR,
+nicht im PSA — soar.esac.esa.int/soar-sl-tap/tap/sync lebt (200).
+Tap-Schema trägt aber nur fünf RPW-Tabellen
+(time_series.v_solo_ll02_rpwtnr/sbm1/sbm2 — Radio, L2); KEINE
+bia/efield-Tabelle → das offizielle ESA-Archiv trägt das L3-
+E-Feld nicht. LIRA bleibt der einzige Host für bia-efield
+2023-2025. heliocloud api.heliocloud.org/datasets ist eine
+HTML-SPA (keine JSON-Route an der Adresse). Referenzen für das
+cdf_reader-Atom: cdf.gsfc.nasa.gov (CDF-Spezifikation) + die
+RPW-DPDD (ROC-PRO-DAT-NTT-00075, RPW-Data-Product-Description-
+Document — rpw-datacenter.obspm.fr).
 
 CDN — gh nicht eingeloggt, kein GH_TOKEN in .secrets.local → die Bins
 liegen lokal (dieser Session: /tmp/opencode), der Upload läuft über
