@@ -120,6 +120,20 @@ GOLF (C3) — www.medoc-ias.u-psud.fr und golfwww.medoc-ias.u-psud.fr
 → curl 000 (keine Verbindung). Quelle nicht verifiziert — GONG trägt
 den akustischen Kanal allein; GOLF pending.
 
+Nachfolgemessung (Katalog-Sweep 2026-08-20, /hapi/catalog + /hapi/info):
+die LIVE-Kalibrierte-E-Feld-Reihe auf CDAWeb sind TS1/TS2 —
+TS1_L2_EFI_EAC@0 („AC Electric Field in TSCS", [2] V/m, Kontakt
+J. W. Bonnell @ SSL) start 2025-09-26 → 2026-04-30; TS2_L2_EFI_EAC@0
+start 2025-08-04 → 2026-04-30 (Datenstand, laufend gepflegt; das
+Fenster am 2026-04-30 war 1201-leer — Tail-Lücke, nicht toter Kanal).
+Altbestand gemessen: THA-THE_L2_EFI (mV/m [3]) bis 2025-01-05;
+MMS_EDI_SRVY (vdrift km/s, kein E-Vektor) bis 2023-08; Cluster
+EFW_L3_E3D bis 2018; PSP_FLD_L2_VSC auf CDAWeb-HAPI 1406 (nur
+Berkeley-CDF — cdf_reader pending). Ein Block für TS1/TS2 braucht
+Ephemeriden (SPK-Index prüfen) + frame at ts1/ts2 — registriert,
+kein Block gebaut (eigenes Atom). Die solare Live-Reihe bleibt
+TDS-SURV-STAT.
+
 CDN — gh nicht eingeloggt, kein GH_TOKEN in .secrets.local → die Bins
 liegen lokal (dieser Session: /tmp/opencode), der Upload läuft über
 kernel_flatten.yml (neuer sun job: gong_compiler monthly --lmax 200,
