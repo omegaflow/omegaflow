@@ -1024,7 +1024,7 @@ fn main() {
                     }
                     let w = mag_col
                         .as_ref()
-                        .map(|mc| format!(" WHERE {} >= {} AND {} < {}", mc, a, mc, b))
+                        .map(|mc| format!(" WHERE {} >= {} AND {} < {}", xq(mc), a, xq(mc), b))
                         .unwrap_or_default();
                     let count_adql = format!("SELECT COUNT(*) FROM {} {}", from_clause, w);
                     let n = tap_query(&root, &count_adql)
@@ -1101,7 +1101,7 @@ fn main() {
             let w = mag_col
                 .as_ref()
                 .filter(|_| b.is_finite())
-                .map(|mc| format!(" WHERE {} >= {} AND {} < {}", mc, a, mc, b))
+                .map(|mc| format!(" WHERE {} >= {} AND {} < {}", xq(mc), a, xq(mc), b))
                 .unwrap_or_default();
             let mut q = format!("SELECT TOP {} {} FROM {}", limit, cols_sel, from_clause);
             q.push_str(&w);
@@ -1212,12 +1212,11 @@ fn main() {
                         }
                         continue;
                     }
-                    if !first_row {
+                    if first_row {
                         if let Err(err) = f.write_all(b"[") {
                             eprintln!("write {}: {}", out_path_band, err);
                             std::process::exit(1);
                         }
-                        first_row = false;
                     }
                     let emitted = emit_rows(ci, epoch_prop, &rows, skip_null.as_deref());
                     for r in &emitted {

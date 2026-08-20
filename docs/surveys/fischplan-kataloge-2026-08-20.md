@@ -48,17 +48,41 @@ Workflow.
 | NED | — (`ned.ipac.caltech.edu` TAP) | — | — | z | Galaxien | 100 M | eigener Root + `--where` |
 | 2MASS | `II/246/out` | RAJ2000/DEJ2000 | Jmag/Hmag/Kmag | — | Sterne | 470 M | Bulk + `--mag-bands` |
 
-## Blocker (je Katalog, nicht global)
+## Blocker (je Katalog, nicht global) — Stand 2026-08-20
 
-- **Fermi/Chandra**: Energiefluss `erg/cm²/s` = pending Unit-Arm
-  (convert_to_si) — erst der Arm, dann der Block.
-- **APOGEE/NED**: fremde TAP-Roots (SDSS CAS / ned.ipac.caltech.edu).
-- NVSS/FIRST/GLADE+/RAVE/2MASS: keine neuen Mechanismen nötig, nur die zwei
-  Schichten schreiben.
+- **Fermi**: Energiefluss `erg/cm²/s` = pending Unit-Arm (convert_to_si) —
+  erst der Arm, dann der Block. Drift benannt: der chandra_csc-Block
+  (sources.φ) trägt `erg/cm2`, CSC-Fluxb ist physikalisch erg/cm²/s —
+  Block-Label prüfen.
+- **APOGEE**: SDSS-CAS-Root pending.
+- **NED**: Root ist KEIN Blocker mehr — `https://ned.ipac.caltech.edu/tap/sync`
+  antwortet auf den Standard-Sync-Stil, Tabelle `NEDTAP.objdir`
+  (ra, dec, z, prefname, type_key, n_spectra) live verifiziert
+  (2026-08-20). Blocker ist die Größe: sync-COUNT läuft in den 60-s-Timeout
+  (Server: „use async mode") — async-Slice-Counts messen, dann
+  RA-Slice-Chunk-Schritt (eigenes Atom).
+- **2MASS**: sync-COUNT auf II/246/out überschreitet das 60-s-Fenster
+  (gemessen 2026-08-20) — der adaptive `--mag-bands`-Bander ist für 470 M
+  nicht CI-tragfähig. Bulk-Route (cdsarc-ftp II/246) braucht einen
+  Kompilator (eigenes Atom); ein erklärter heller Schnitt bleibt
+  Kurationsfrage.
+- RAVE: wired im chunk_catalogs-Job (kernel_flatten.yml), Spalten live
+  verifiziert (RAJ2000/DEJ2000/HRV/TeffK). Asset ausstehend bis zum
+  ersten Lauf.
+- **GLADE+**: Spalten live verifiziert (RAJ2000/DEJ2000/Bmag/zhelio/zcmb/
+  dL[Mpc]), aber pending — drei gemessene Blocker: (1) der
+  `--mag-bands`-Bander kappt am Schrittboden still mit TOP limit
+  (~180 k Zeilen je 0.25-mag-Band, Peak >1 M); (2) Ein-Asset ≈ 2.4 GB >
+  2-GB-Release-Limit; (3) 22 M > MAX_SAMPLES 4.19 M — der Feld-Rebuild
+  wirft die ältesten Samples. Detail: docs/surveys/chunk-plan-2026-08-20.md.
 
-## Reihenfolge
+## Reihenfolge — Stand 2026-08-20
 
-1. NVSS + FIRST über `--async` (Radio mJy, Kraft/Einheit bewiesen).
-2. GLADE+ + 2MASS über `--mag-bands`.
-3. Fermi 4FGL inline (7 k) + der `erg/cm²/s`-Unit-Arm; dann Chandra.
-4. APOGEE (SDSS-Root) + NED (eigener Root).
+1. ERLEDIGT: NVSS + FIRST + Chandra über `--async` (Workflow-Schritte +
+   sources.φ-Blöcke leben).
+2. WIRED (chunk_catalogs): RAVE DR5 über `--async` + Gaia-Crossmatch
+   (HRV-Gate = River).
+3. PENDING: GLADE+ (RA-Slice/async + Quadranten-Assets + Sample-Budget-
+   Atom) + Fermi 4FGL (erg/cm²/s-Unit-Arm).
+4. PENDING: 2MASS (Bulk-Kompilator-Atom) + NED (async-Counts → Chunks)
+   + APOGEE (SDSS-Root).

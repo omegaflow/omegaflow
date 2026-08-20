@@ -532,3 +532,142 @@ jobs:
             --title "flatten: catalogs returned void" \
             --body "Catalogs job returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
             --label health
+
+  chunk_catalogs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Prepare kernels dir
+        run: mkdir -p kernels
+      - name: Compile RAVE DR5 (async + Gaia crossmatch, rv-gate) and upload to CDN
+        continue-on-error: true
+        run: |
+          cargo run --release --bin tap_compiler -- \
+            --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
+            --table "III/279/rave_dr5" \
+            --columns 'ra:RAJ2000;dec:DEJ2000;teff:TeffK;rv:HRV' \
+            --skip-null rv \
+            --crossmatch 'I/355/gaiadr3:RA_ICRS:DE_ICRS:Dist' \
+            --crossmatch-pm 'pmRA:pmDE:Plx::Teff:BPmag:RPmag:Gmag' \
+            --async 600 \
+            --limit 600000 \
+            --out rave_dr5.json \
+            --ci-mode \
+            || gh issue create --repo omegaflow/omegaflow \
+                 --title "flatten: rave_dr5 returned void" \
+                 --body "rave_dr5 compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 --label health
+      - name: Chunk-compile pastel (8 RA-slices) and upload to CDN
+        continue-on-error: true
+        run: |
+          for lo in $(seq 0 45 315); do
+            hi=$(awk "BEGIN{print $lo+45}")
+            out="kernels/pastel_c${lo}.json"
+            [ -s "$out" ] && continue
+            for attempt in 1 2 3; do
+              cargo run --release --bin tap_compiler -- \
+                --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
+                --table "B/pastel/pastel" \
+                --columns 'ra:RAdeg;dec:DEdeg;teff:Teff;logg:logg;mag:Vmag' \
+                --skip-null teff \
+                --crossmatch 'I/355/gaiadr3:RA_ICRS:DE_ICRS:Dist' \
+                --crossmatch-pm 'pmRA:pmDE:Plx:RV:Teff:BPmag:RPmag:Gmag' \
+                --limit 90000 \
+                --where "t.\"RAdeg\" >= ${lo} AND t.\"RAdeg\" < ${hi}" \
+                --out "$out" && break
+              sleep 60
+            done
+            [ -s "$out" ] || { echo "slice ${lo} returned void"; exit 1; }
+          done
+          jq -s 'add' kernels/pastel_c*.json > kernels/pastel.json
+          gh release upload ssd.jpl.nasa.gov kernels/pastel.json --clobber --repo omegaflow/sources \
+            || gh issue create --repo omegaflow/omegaflow \
+                 --title "flatten: pastel returned void" \
+                 --body "pastel chunk compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 --label health
+      - name: Chunk-compile wds (8 RA-slices) and upload to CDN
+        continue-on-error: true
+        run: |
+          for lo in $(seq 0 45 315); do
+            hi=$(awk "BEGIN{print $lo+45}")
+            out="kernels/wds_c${lo}.json"
+            [ -s "$out" ] && continue
+            for attempt in 1 2 3; do
+              cargo run --release --bin tap_compiler -- \
+                --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
+                --table "B/wds/wds" \
+                --columns 'ra:RAJ2000;dec:DEJ2000;mag1:mag1;mag2:mag2;sep:sep1' \
+                --skip-null mag1 \
+                --crossmatch 'I/355/gaiadr3:RA_ICRS:DE_ICRS:Dist' \
+                --crossmatch-pm 'pmRA:pmDE:Plx:RV:Teff:BPmag:RPmag:Gmag' \
+                --limit 90000 \
+                --where "t.\"RAJ2000\" >= ${lo} AND t.\"RAJ2000\" < ${hi}" \
+                --out "$out" && break
+              sleep 60
+            done
+            [ -s "$out" ] || { echo "slice ${lo} returned void"; exit 1; }
+          done
+          jq -s 'add' kernels/wds_c*.json > kernels/wds.json
+          gh release upload ssd.jpl.nasa.gov kernels/wds.json --clobber --repo omegaflow/sources \
+            || gh issue create --repo omegaflow/omegaflow \
+                 --title "flatten: wds returned void" \
+                 --body "wds chunk compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 --label health
+      - name: Chunk-compile mktypes (80 RA-slices) and upload to CDN
+        continue-on-error: true
+        run: |
+          for lo in $(seq 0 4.5 355.5); do
+            hi=$(awk "BEGIN{print $lo+4.5}")
+            out="kernels/mktypes_c${lo}.json"
+            [ -s "$out" ] && continue
+            for attempt in 1 2 3; do
+              cargo run --release --bin tap_compiler -- \
+                --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
+                --table "B/mk/mktypes" \
+                --columns 'ra:RAJ2000;dec:DEJ2000;mag:Mag' \
+                --skip-null mag \
+                --crossmatch 'I/355/gaiadr3:RA_ICRS:DE_ICRS:Dist' \
+                --crossmatch-pm 'pmRA:pmDE:Plx:RV:Teff:BPmag:RPmag:Gmag' \
+                --limit 90000 \
+                --where "t.\"RAJ2000\" >= ${lo} AND t.\"RAJ2000\" < ${hi}" \
+                --out "$out" && break
+              sleep 60
+            done
+            [ -s "$out" ] || { echo "slice ${lo} returned void"; exit 1; }
+          done
+          jq -s 'add' kernels/mktypes_c*.json > kernels/mktypes.json
+          gh release upload ssd.jpl.nasa.gov kernels/mktypes.json --clobber --repo omegaflow/sources \
+            || gh issue create --repo omegaflow/omegaflow \
+                 --title "flatten: mktypes returned void" \
+                 --body "mktypes chunk compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 --label health
+      - name: Chunk-compile denis (16 RA-slices) and upload to CDN
+        continue-on-error: true
+        run: |
+          for lo in $(seq 0 22.5 337.5); do
+            hi=$(awk "BEGIN{print $lo+22.5}")
+            out="kernels/denis_c${lo}.json"
+            [ -s "$out" ] && continue
+            for attempt in 1 2 3; do
+              cargo run --release --bin tap_compiler -- \
+                --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
+                --table "B/denis/denis" \
+                --columns 'ra:RAJ2000;dec:DEJ2000;imag:Imag;jmag:Jmag;kmag:Kmag' \
+                --skip-null jmag \
+                --crossmatch 'I/355/gaiadr3:RA_ICRS:DE_ICRS:Dist' \
+                --crossmatch-pm 'pmRA:pmDE:Plx:RV:Teff:BPmag:RPmag:Gmag' \
+                --limit 90000 \
+                --where "t.\"RAJ2000\" >= ${lo} AND t.\"RAJ2000\" < ${hi}" \
+                --out "$out" && break
+              sleep 60
+            done
+            [ -s "$out" ] || { echo "slice ${lo} returned void"; exit 1; }
+          done
+          jq -s 'add' kernels/denis_c*.json > kernels/denis.json
+          gh release upload ssd.jpl.nasa.gov kernels/denis.json --clobber --repo omegaflow/sources \
+            || gh issue create --repo omegaflow/omegaflow \
+                 --title "flatten: denis returned void" \
+                 --body "denis chunk compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 --label health

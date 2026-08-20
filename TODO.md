@@ -703,21 +703,49 @@ Offen (Detail in phi/pipeline/ledger.φ):
   Parquet/Arrow, netCDF-4/HDF5, OPeNDAP, CDF, GRIB-2, GeoParquet,
   OGC-SensorThings
 - Katalog-Lücken (genuin, verifiziert gegen alle drei Register):
-  Photometrie/Spektroskopie — 2MASS PSC, RAVE DR6, APOGEE/GALAH;
-  Extragalaktisch — NED, HyperLEDA/PGC, GLADE+; Radio-Kontinuum
-  (Achse leer) — NVSS, FIRST, TGSS ADR, SUMSS, RACS, LoTSS, VLASS;
-  High-Energy — Fermi 4FGL-DR4, Chandra CSC 2.1, AMS-02;
-  Sonnensystem — PDS (Instrumentendaten), MPC-Live
+  Photometrie/Spektroskopie — 2MASS PSC (pending, s.u.), RAVE DR6,
+  APOGEE/GALAH; Extragalaktisch — NED (Root verifiziert, Chunks pending),
+  HyperLEDA/PGC; Radio-Kontinuum (Achse leer) — TGSS ADR, SUMSS, RACS,
+  LoTSS, VLASS (NVSS/FIRST erledigt — Workflow + Blöcke);
+  High-Energy — Fermi 4FGL-DR4 (Unit-Arm pending), AMS-02 (Chandra
+  CSC 2.1 erledigt); Sonnensystem — PDS (Instrumentendaten), MPC-Live
   (mpcorb_extended.json.gz); TAP-Indexe — MAST, CADC, ESASky, NOIRLab
   Data Lab, NED; Terrestrisch — EarthScope-FDSN, EPOS, SeaDataNet,
   Smithsonian GVP, Natural Earth.
   Exakte Tabellen-IDs + Spalten + Mechanismus: docs/surveys/
-  fischplan-kataloge-2026-08-20.md (2MASS II/246/out 470 M · GLADE+
-  VII/291/gladep 22 M · NVSS VIII/65/nvss · FIRST VIII/92/first14 ·
-  Fermi IX/72/4fgldr4 · Chandra IX/70/csc21mas · RAVE III/279/rave_dr5;
-  APOGEE/NED eigene TAP-Roots). Die Groß-Mechanismen (--mag-bands/--async/
-  --where) existieren bereits in tap_compiler — offen nur: erg/cm²/s-Unit-
-  Arm (Fermi/Chandra) + SDSS/NED-Roots.
+  fischplan-kataloge-2026-08-20.md + chunk-plan-2026-08-20.md.
+  RAVE (III/279/rave_dr5, --async + Gaia-Crossmatch, HRV-Gate) ist im
+  chunk_catalogs-Job verdrahtet — Asset ausstehend bis zum ersten Lauf
+  (kein sources.φ-Block vorher, 0 honored). GLADE+ ist pending: Spalten
+  live verifiziert, aber drei gemessene Blocker — Schrittboden-Kappung
+  des --mag-bands-Banders, 2-GB-Release-Limit, MAX_SAMPLES 4.19 M
+  (chunk-plan).
+- Sample-Budget des Feldes (kritisch, eigenes Atom): die Summe aller
+  Katalog-Blöcke (Sterne 1.19 M + Asteroiden 1.56 M + NVSS 1.8 M +
+  FIRST 1.1 M + Chandra 0.4 M + vier Chunks 1.4 M + …) liegt über
+  MAX_SAMPLES (1<<22, src/archivar.rs:9038) — der Rebuild hält die
+  jüngsten Samples und wirft die ältesten (epoch 0.0 = Sterne +
+  Kataloge, archivar.rs:15543). Welcher Anteil der epoch-0.0-Samples
+  überlebt, ist ungemessen — die Messung ist die Vorbedingung für jeden
+  weiteren Katalog-Block (Commit 2 des chunk-plans).
+- Pfeiler-Registratur Nadel V (Farbe, kritisch): die JSON-Kataloge
+  (denis/wds/pastel/mktypes/rave) ernten bpmag/rpmag, aber color_index
+  manifestiert nur der star-bin-Pfad (dr3_stars.bin, bright_stars) —
+  cmap-Farb-Schlüssel oder Compiler-bp_rp-Alias als eigenes Atom.
+  2MASS J−K hängt am Bulk-Kompilator-Atom (s.u.).
+- Pfeiler-Registratur Nadel V (Frequenzachse, kritisch): NVSS/FIRST
+  tragen 1.4 GHz nicht in freq/bin_width (kein Compiler-Flag) — pending.
+- Nadel-I-Befund NED: Root https://ned.ipac.caltech.edu/tap/sync +
+  NEDTAP.objdir (ra, dec, z, prefname, type_key, n_spectra) live
+  verifiziert (2026-08-20); sync-COUNT läuft in den 60-s-Timeout
+  (Server: async) — async-Slice-Counts messen, dann RA-Slice-Chunk-
+  Schritt (eigenes Atom).
+- 2MASS-Befund: sync-COUNT auf II/246/out > 60 s (gemessen 2026-08-20) —
+  der --mag-bands-Bander ist für 470 M nicht CI-tragfähig; Bulk-Route
+  (cdsarc-ftp) braucht einen Kompilator (eigenes Atom), ein erklärter
+  heller Schnitt bleibt Kurationsfrage.
+- Chandra-Drift benannt: der Block trägt erg/cm2, CSC-Fluxb ist
+  physikalisch erg/cm²/s — gehört zum Unit-Arm, Block-Label prüfen.
 - Katalog-Lücken Welle II (Recherche 2026-08-17): Diffusion/
   Chemorezeption unbesetzt — TCCON (verifiziert, tccondata.org,
   Registrierung); pending Verifikation: AGAGE, NDACC, WDCGG, GLODAP,
@@ -789,13 +817,16 @@ Offen (Detail in phi/pipeline/ledger.φ):
   gehört rotiert und auf credential-helper/SSH umgestellt
 - Stray-/Basename-Assets im Release ssd.jpl.nasa.gov löschen
 - CI: Compiler-Builds zahlen den wgpu-Compile mit (harte Dependency)
-- CI-Chunk-Kompilation der großen Kataloge: pastel/wds/mktypes/denis —
-  der volle Chunk-Lauf lebt lokal in phi/pipeline/chunk_master.py
-  (fortsetzbar); nächstes: Chunk-Kompilation als CI-Schritt (die 4
-  Kataloge im monatlichen Workflow, ohne Python) — der Rust-Weg lebt
-  bereits (`tap_compiler --mag-bands`/`--async`/`--where`, teils in CI
-  wie dr3_stars.bin); offen ist nur die Verdrahtung der vier
-  pastel/wds/mktypes/denis in den Workflow.
+- CI-Chunk-Kompilation der großen Kataloge: der chunk_catalogs-Job
+  (kernel_flatten.yml) verdrahtet pastel/wds/mktypes/denis als
+  Bash-RA-Slices (CI-Replikat von phi/pipeline/chunk_master.py, ohne
+  Python) + RAVE (--async, HRV-Gate). GLADE+ bleibt draußen (drei
+  gemessene Blocker, s. Katalog-Lücken). Offen: der erste
+  workflow_dispatch-Lauf (Assets verifizieren), dann — nach der
+  Budget-Messung — sources.φ-Blöcke + ledger-Einträge (Commit 2 des
+  chunk-plans, docs/surveys/chunk-plan-2026-08-20.md). Der
+  JSON-mag-bands-Bracket-Bug (tap_compiler.rs) ist behoben — der Fix
+  trägt Git.
 - CDN-Asset-Naming: `{name}.json` — Konvention ist der Resolver (Regel)
 
 ## VERSIONIERT / AUSSTEHEND
