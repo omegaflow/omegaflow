@@ -1,4 +1,4 @@
-use crate::kepler::{elements_to_icrs_state, solve_kepler_ecc, AU_M, GM_SUN_M3_S2};
+use crate::kepler::{elements_to_icrs_state, AU_M, GM_SUN_M3_S2};
 
 pub const RECORD_STRIDE: usize = 92;
 
@@ -182,23 +182,6 @@ pub fn state_at(rec: &AsteroidRec, t_jd: f64) -> Option<([f64; 3], [f64; 3])> {
         rec.epoch_jd,
         t_jd,
     )
-}
-
-pub fn speed_at_epoch(rec: &AsteroidRec) -> Option<f64> {
-    let ecc = solve_kepler_ecc(rec.ma_deg.to_radians(), rec.e);
-    let r_m = rec.a_au * AU_M * (1.0 - rec.e * ecc.cos());
-    if !r_m.is_finite() || r_m <= 0.0 {
-        return None;
-    }
-    Some((GM_SUN_M3_S2 * (2.0 / r_m - 1.0 / (rec.a_au * AU_M))).sqrt())
-}
-
-pub fn accel_at_epoch(rec: &AsteroidRec) -> Option<f64> {
-    let peri = rec.a_au * AU_M * (1.0 - rec.e);
-    if !peri.is_finite() || peri <= 0.0 {
-        return None;
-    }
-    Some(GM_SUN_M3_S2 / (peri * peri))
 }
 
 pub fn hill_radius_m(rec: &AsteroidRec) -> Option<f64> {
