@@ -494,6 +494,7 @@ const HUD_GLYPH: [[u8; 5]; 95] = [
 ];
 use crate::force::kernel_id_for_force;
 use std::collections::{HashMap, HashSet};
+use std::io::IsTerminal;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{mpsc, Arc, Mutex};
 use std::thread;
@@ -544,26 +545,45 @@ pub struct PackedWindow {
 }
 
 #[derive(Clone, Copy)]
-pub struct AudioFrame {
+pub struct PresenceFrame {
     pub omega: [f32; 9],
-    pub mx: f32,
-    pub permeability: f32,
 }
 
-#[derive(Clone, Copy)]
-pub struct SurfaceFrame {
-    pub lum: [f32; 9],
+pub trait KineticRadiator: Send + 'static {
+    fn vibrate(&mut self, frame: &PresenceFrame);
 }
 
-pub trait SurfaceRadiator: Send + 'static {
-    fn surface(&mut self, frame: &SurfaceFrame);
+pub struct AcousticOscillator {
+    _thread: Option<thread::JoinHandle<()>>,
 }
 
-pub struct SerialSurface {
+impl AcousticOscillator {
+    pub fn new(rx: mpsc::Receiver<PresenceFrame>) -> Self {
+        let emit = !std::io::stdout().is_terminal();
+        let handle = thread::spawn(move || {
+            let mut out = std::io::stdout();
+            while let Ok(frame) = rx.recv() {
+                if emit {
+                    let intensity: f32 = frame.omega.iter().sum();
+                    if std::io::Write::write_all(&mut out, &intensity.to_le_bytes()).is_err()
+                        || std::io::Write::flush(&mut out).is_err()
+                    {
+                        break;
+                    }
+                }
+            }
+        });
+        Self {
+            _thread: Some(handle),
+        }
+    }
+}
+
+pub struct SeismicOscillator {
     port: Option<Box<dyn serialport::SerialPort>>,
 }
 
-impl SerialSurface {
+impl SeismicOscillator {
     pub fn new(path: &str) -> Self {
         let port = serialport::new(path, 115_200)
             .timeout(std::time::Duration::from_millis(50))
@@ -571,7 +591,7 @@ impl SerialSurface {
             .ok();
         if port.is_none() {
             eprintln!(
-                "serial surface: {} unreachable — the surface stays silent",
+                "seismic oscillator: {} unreachable — the oscillator stays silent",
                 path
             );
         }
@@ -579,20 +599,13 @@ impl SerialSurface {
     }
 }
 
-impl SurfaceRadiator for SerialSurface {
-    fn surface(&mut self, frame: &SurfaceFrame) {
+impl KineticRadiator for SeismicOscillator {
+    fn vibrate(&mut self, frame: &PresenceFrame) {
         let Some(port) = self.port.as_mut() else {
             return;
         };
-        let mut line = String::new();
-        for (i, v) in frame.lum.iter().enumerate() {
-            if i > 0 {
-                line.push(' ');
-            }
-            line.push_str(&format!("{:.4}", v));
-        }
-        line.push('\n');
-        if std::io::Write::write_all(port, line.as_bytes()).is_err() {
+        let intensity: f32 = frame.omega.iter().sum();
+        if std::io::Write::write_all(port, &intensity.to_le_bytes()).is_err() {
             self.port = None;
         }
     }
@@ -751,7 +764,7 @@ fn emit_curves(
     }
 }
 
-pub struct MathematikerinRadiator {
+pub struct EMOscillator {
     tx: mpsc::SyncSender<Arc<Buffer>>,
     shutdown: Arc<AtomicBool>,
     _thread: Option<thread::JoinHandle<()>>,
@@ -769,15 +782,15 @@ struct SenseReq {
     softening: f64,
 }
 
-impl MathematikerinRadiator {
+impl EMOscillator {
     pub fn new(
         presence_tx: mpsc::Sender<(String, f64, f64, f64, f64, f64)>,
         sensor_tx: mpsc::Sender<Vec<(String, f64, f64)>>,
         body_names: Arc<Vec<String>>,
         time: Arc<Mutex<Option<LeapSeconds>>>,
         consent: Arc<AtomicBool>,
-        audio_tx: mpsc::Sender<AudioFrame>,
-        surface_tx: mpsc::Sender<SurfaceFrame>,
+        acoustic_tx: mpsc::Sender<PresenceFrame>,
+        seismic_tx: mpsc::Sender<PresenceFrame>,
     ) -> Self {
         let (tx, rx) = mpsc::sync_channel::<Arc<Buffer>>(2);
         let (req_tx, req_rx) = mpsc::sync_channel::<SenseReq>(1);
@@ -860,8 +873,8 @@ impl MathematikerinRadiator {
                 time,
                 shutdown_clone,
                 consent,
-                audio_tx,
-                surface_tx,
+                acoustic_tx,
+                seismic_tx,
             );
         });
         Self {
@@ -872,21 +885,21 @@ impl MathematikerinRadiator {
     }
 }
 
-impl Radiator for MathematikerinRadiator {
+impl Radiator for EMOscillator {
     fn accept(&mut self, field: Arc<Buffer>) {
         if let Err(mpsc::TrySendError::Disconnected(_)) = self.tx.try_send(field) {
-            eprintln!("mathematikerin channel closed — field buffer dropped");
+            eprintln!("em oscillator channel closed — field buffer dropped");
         }
     }
 }
 
-impl MathematikerinRadiator {
+impl EMOscillator {
     pub fn shutdown_flag(&self) -> Arc<AtomicBool> {
         self.shutdown.clone()
     }
 }
 
-impl Drop for MathematikerinRadiator {
+impl Drop for EMOscillator {
     fn drop(&mut self) {
         self.shutdown.store(true, Ordering::SeqCst);
     }
@@ -993,7 +1006,7 @@ impl NativeSensors {
         }
         if !list.is_empty() {
             if self.tx.send(list).is_err() {
-                eprintln!("audio channel closed — samples dropped");
+                eprintln!("sensor channel closed — samples dropped");
             }
         }
     }
@@ -1008,8 +1021,8 @@ struct NativeApp {
     time: Arc<Mutex<Option<LeapSeconds>>>,
     shutdown: Arc<AtomicBool>,
     consent: Arc<AtomicBool>,
-    audio_tx: mpsc::Sender<AudioFrame>,
-    surface_tx: mpsc::Sender<SurfaceFrame>,
+    acoustic_tx: mpsc::Sender<PresenceFrame>,
+    seismic_tx: mpsc::Sender<PresenceFrame>,
 
     window: Option<Arc<Window>>,
     surface: Option<wgpu::Surface<'static>>,
@@ -1109,8 +1122,8 @@ impl NativeApp {
         time: Arc<Mutex<Option<LeapSeconds>>>,
         shutdown: Arc<AtomicBool>,
         consent: Arc<AtomicBool>,
-        audio_tx: mpsc::Sender<AudioFrame>,
-        surface_tx: mpsc::Sender<SurfaceFrame>,
+        acoustic_tx: mpsc::Sender<PresenceFrame>,
+        seismic_tx: mpsc::Sender<PresenceFrame>,
     ) -> Self {
         Self {
             rx,
@@ -1121,8 +1134,8 @@ impl NativeApp {
             time,
             shutdown,
             consent,
-            audio_tx,
-            surface_tx,
+            acoustic_tx,
+            seismic_tx,
             window: None,
             surface: None,
             config: None,
@@ -1569,21 +1582,6 @@ impl NativeApp {
             }
             self.force_ref[ft] += (median - self.force_ref[ft]) * REF_RELAX;
         }
-    }
-
-    fn window_median_extent(&self) -> f32 {
-        let mut exts = Vec::with_capacity(self.packed_meta.len() / 16);
-        for m in self.packed_meta.chunks_exact(16) {
-            let e = m[0];
-            if e > 0.0 && e.is_finite() {
-                exts.push(e);
-            }
-        }
-        if exts.is_empty() {
-            return 1.0;
-        }
-        exts.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
-        exts[exts.len() / 2]
     }
 
     fn rebuild_binds(&mut self) {
@@ -2554,17 +2552,11 @@ impl ApplicationHandler for NativeApp {
                 self.field_permeability += (target - self.field_permeability) * alpha;
                 self.field_permeability = self.field_permeability.clamp(PERM_GROUND, 1.0);
             }
-            let mx = self.window_median_extent();
-            let _ = self.audio_tx.send(AudioFrame {
+            let frame = PresenceFrame {
                 omega: self.probe_omega,
-                mx,
-                permeability: self.field_permeability,
-            });
-            let mut lum = [0f32; 9];
-            for k in 0..9 {
-                lum[k] = (self.probe_omega[k].abs() * mx * mx).tanh() * self.field_permeability;
-            }
-            let _ = self.surface_tx.send(SurfaceFrame { lum });
+            };
+            let _ = self.acoustic_tx.send(frame);
+            let _ = self.seismic_tx.send(frame);
             let [x, y, z] = self.pos();
             let fps = self.frame_count as f64;
             self.frame_count = 0;
@@ -2593,7 +2585,7 @@ impl ApplicationHandler for NativeApp {
             }
             self.hud_raster(&force_tokens, te_opt);
             eprintln!(
-                "φ window: t {:.2} | rec {} | gen {} | flow {:+.2} {:+.2} {:+.2} | {} | mx {:.2e} | fps {:.0} | ssaa {:.2} | grid 2^{} | x {:.3e} y {:.3e} z {:.3e} | {} recs | b {}x{} | maxms {:.0} | ema {:.1} | perm {:.2} | off {:.2} | field {}",
+                "φ window: t {:.2} | rec {} | gen {} | flow {:+.2} {:+.2} {:+.2} | {} | fps {:.0} | ssaa {:.2} | grid 2^{} | x {:.3e} y {:.3e} z {:.3e} | {} recs | b {}x{} | maxms {:.0} | ema {:.1} | perm {:.2} | off {:.2} | field {}",
                 self.t_presence,
                 rec,
                 self.ring_gen,
@@ -2601,7 +2593,6 @@ impl ApplicationHandler for NativeApp {
                 self.probe_flow[1],
                 self.probe_flow[2],
                 force_tokens,
-                mx,
                 fps,
                 self.ssaa,
                 self.grid_step.log2().round() as i64,
@@ -2853,8 +2844,8 @@ fn run_window(
     time: Arc<Mutex<Option<LeapSeconds>>>,
     shutdown: Arc<AtomicBool>,
     consent: Arc<AtomicBool>,
-    audio_tx: mpsc::Sender<AudioFrame>,
-    surface_tx: mpsc::Sender<SurfaceFrame>,
+    acoustic_tx: mpsc::Sender<PresenceFrame>,
+    seismic_tx: mpsc::Sender<PresenceFrame>,
 ) {
     let mut builder = EventLoopBuilder::<()>::default();
     EventLoopBuilderExtX11::with_any_thread(&mut builder, true);
@@ -2887,8 +2878,8 @@ fn run_window(
         time,
         shutdown,
         consent,
-        audio_tx,
-        surface_tx,
+        acoustic_tx,
+        seismic_tx,
     );
     if let Some([x, y, z, t]) = presence_init {
         app.p = [x, y, z];
@@ -3042,51 +3033,6 @@ mod tests {
         app.packed_meta = vec![0.0; 12];
         app.relax_force_refs();
         assert_eq!(app.force_ref[0], 8.0);
-    }
-
-    #[test]
-    fn window_median_extent_medians_positive_extents() {
-        let mut app = NativeApp {
-            ..NativeApp::new(
-                mpsc::channel().1,
-                mpsc::sync_channel(1).0,
-                mpsc::sync_channel(2).1,
-                mpsc::channel().0,
-                mpsc::channel().0,
-                Arc::new(Vec::new()),
-                Arc::new(Mutex::new(None)),
-                Arc::new(AtomicBool::new(false)),
-                Arc::new(AtomicBool::new(false)),
-                mpsc::channel().0,
-                mpsc::channel().0,
-            )
-        };
-        app.packed_meta = vec![0.0; 48];
-        app.packed_meta[0] = 30.0;
-        app.packed_meta[16] = 10.0;
-        app.packed_meta[32] = 20.0;
-        assert_eq!(app.window_median_extent(), 20.0);
-    }
-
-    #[test]
-    fn window_median_extent_neutral_on_absence() {
-        let mut app = NativeApp {
-            ..NativeApp::new(
-                mpsc::channel().1,
-                mpsc::sync_channel(1).0,
-                mpsc::sync_channel(2).1,
-                mpsc::channel().0,
-                mpsc::channel().0,
-                Arc::new(Vec::new()),
-                Arc::new(Mutex::new(None)),
-                Arc::new(AtomicBool::new(false)),
-                Arc::new(AtomicBool::new(false)),
-                mpsc::channel().0,
-                mpsc::channel().0,
-            )
-        };
-        app.packed_meta = vec![0.0; 16];
-        assert_eq!(app.window_median_extent(), 1.0);
     }
 
     #[test]

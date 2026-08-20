@@ -9008,7 +9008,7 @@ use crate::force::default_kernel_for;
 use crate::inflate::gunzip;
 use crate::netcdf::NetcdfFile;
 use crate::pck::PckBody;
-use std::io::{IsTerminal, Write};
+use std::io::IsTerminal;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{mpsc, Mutex};
 use std::thread;
@@ -10096,82 +10096,6 @@ struct FetchResult {
     star_samples: Vec<Sample>,
     curves: Option<Arc<CurveSet>>,
     spectral: Option<SpectralHash>,
-}
-
-const AUDIO_SAMPLE_RATE: u32 = 44100;
-const AUDIO_BUFFER_SAMPLES: usize = 1024;
-
-struct AudioRadiator {
-    shutdown: Arc<AtomicBool>,
-    _thread: Option<thread::JoinHandle<()>>,
-}
-
-impl AudioRadiator {
-    fn new(rx: mpsc::Receiver<crate::mathematikerin::AudioFrame>) -> Self {
-        let shutdown = Arc::new(AtomicBool::new(false));
-        let shutdown_clone = shutdown.clone();
-        let emit = !std::io::stdout().is_terminal();
-        let handle = thread::spawn(move || {
-            let mut frame = crate::mathematikerin::AudioFrame {
-                omega: [0.0; 9],
-                mx: 1.0,
-                permeability: 0.0,
-            };
-            let mut phase: [f32; 9] = [0.0; 9];
-            let two_pi = 2.0 * std::f32::consts::PI;
-            loop {
-                match rx.try_recv() {
-                    Ok(f) => {
-                        frame = f;
-                        while let Ok(newer) = rx.try_recv() {
-                            frame = newer;
-                        }
-                    }
-                    Err(mpsc::TryRecvError::Disconnected) => break,
-                    Err(mpsc::TryRecvError::Empty) => {}
-                }
-                if shutdown_clone.load(Ordering::SeqCst) {
-                    break;
-                }
-                let mut samples = Vec::with_capacity(AUDIO_BUFFER_SAMPLES);
-                for _ in 0..AUDIO_BUFFER_SAMPLES {
-                    let mut s = 0.0f32;
-                    for i in 0..9 {
-                        let freq = 2f32.powi(3 + i as i32);
-                        let gain = (frame.omega[i].abs() * frame.mx * frame.mx).tanh()
-                            * frame.permeability
-                            / 9.0;
-                        phase[i] += two_pi * freq / AUDIO_SAMPLE_RATE as f32;
-                        s += gain * phase[i].sin();
-                    }
-                    samples.push(s);
-                }
-                if emit {
-                    let mut bytes = Vec::with_capacity(samples.len() * 4);
-                    for s in &samples {
-                        bytes.extend_from_slice(&s.to_le_bytes());
-                    }
-                    let mut out = std::io::stdout();
-                    if out.write_all(&bytes).is_err() || out.flush().is_err() {
-                        break;
-                    }
-                }
-                thread::sleep(std::time::Duration::from_millis(
-                    (AUDIO_BUFFER_SAMPLES as u64 * 1000 / AUDIO_SAMPLE_RATE as u64).max(1),
-                ));
-            }
-        });
-        Self {
-            shutdown,
-            _thread: Some(handle),
-        }
-    }
-}
-
-impl Drop for AudioRadiator {
-    fn drop(&mut self) {
-        self.shutdown.store(true, Ordering::SeqCst);
-    }
 }
 
 struct StderrRadiator {
@@ -14422,30 +14346,32 @@ pub fn main_flow() {
     let mut radiators: Vec<Box<dyn Radiator>> = Vec::new();
     #[cfg(feature = "browser_relay")]
     let presence_relay_tx = presence_tx.clone();
-    let (audio_tx, audio_rx) = mpsc::channel::<crate::mathematikerin::AudioFrame>();
-    let (surface_tx, surface_rx) = mpsc::channel::<crate::mathematikerin::SurfaceFrame>();
-    let mut surfaces: Vec<Box<dyn crate::mathematikerin::SurfaceRadiator>> = Vec::new();
+    let (acoustic_tx, acoustic_rx) = mpsc::channel::<crate::mathematikerin::PresenceFrame>();
+    let (seismic_tx, seismic_rx) = mpsc::channel::<crate::mathematikerin::PresenceFrame>();
+    let mut kinetic: Vec<Box<dyn crate::mathematikerin::KineticRadiator>> = Vec::new();
     if let Ok(port) = std::env::var("OMEGAFLOW_SERIAL_OUT") {
-        surfaces.push(Box::new(crate::mathematikerin::SerialSurface::new(&port)));
+        kinetic.push(Box::new(crate::mathematikerin::SeismicOscillator::new(
+            &port,
+        )));
     }
     thread::spawn(move || {
-        while let Ok(frame) = surface_rx.recv() {
-            for s in surfaces.iter_mut() {
-                s.surface(&frame);
+        while let Ok(frame) = seismic_rx.recv() {
+            for s in kinetic.iter_mut() {
+                s.vibrate(&frame);
             }
         }
     });
-    let mr = crate::mathematikerin::MathematikerinRadiator::new(
+    let em = crate::mathematikerin::EMOscillator::new(
         presence_tx,
         sensor_tx.clone(),
         body_names.clone(),
         time.clone(),
         consent.clone(),
-        audio_tx,
-        surface_tx,
+        acoustic_tx,
+        seismic_tx,
     );
-    let mr_shutdown = mr.shutdown_flag();
-    radiators.push(Box::new(mr));
+    let em_shutdown = em.shutdown_flag();
+    radiators.push(Box::new(em));
     #[cfg(feature = "browser_relay")]
     {
         let sr = crate::relay::TcpRadiator::new(
@@ -14461,7 +14387,7 @@ pub fn main_flow() {
         );
         radiators.push(Box::new(sr));
     }
-    let _audio = AudioRadiator::new(audio_rx);
+    let _acoustic = crate::mathematikerin::AcousticOscillator::new(acoustic_rx);
     radiators.push(Box::new(StderrRadiator {
         last_line: String::new(),
         interactive: std::io::stderr().is_terminal(),
@@ -14476,7 +14402,7 @@ pub fn main_flow() {
     let mut tick: u64 = 0;
     loop {
         tick += 1;
-        if mr_shutdown.load(Ordering::SeqCst) {
+        if em_shutdown.load(Ordering::SeqCst) {
             eprintln!("the window closed — the ω-loop ends");
             break;
         }

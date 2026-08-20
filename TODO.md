@@ -75,7 +75,7 @@ Schnittmenge leer, im Protokoll fehlt.
   Runtime-Preis. Die std-only-Grenze ist eine Etage gesunken — registriert.
 - feature-gate `gpu` — eigenes Atom, pending: `pub mod mathematikerin` als
   #[cfg(feature="gpu")] + Co-Gate der main_flow-Verdrahtung (crate::
-  mathematikerin::-Stellen AudioFrame/SurfaceFrame/MathematikerinRadiator)
+  mathematikerin::-Stellen PresenceFrame/EMOscillator/KineticRadiator)
   + Feature-Propagation zum Default-Bin — kein Ein-Zeilen-cfg, ein Faden
   durch die ω-Loop.
 - Membran-scoped Cache statt Blockuniversum (2026-08-17): der Archivar lädt
@@ -272,9 +272,48 @@ Schnittmenge leer, im Protokoll fehlt.
   Semantischer Feinschliff (Operator-Weisung): `SampleSource::Body` →
   `SampleSource::Ephemeris` (die Herkunft ist das Ephemeriden-Kompilat,
   nicht ein Körper — BodyEphemeris/BodyProperties bleiben Eigennamen der
-  Datensätze); alle erklärenden Docstrings starben — es bleiben nur
-  Physik-Herleitungen, 0-honored-Gesetze, Pending-Register und
-  Byte-Layout-Kontrakte (53 Zeilen).
+   Datensätze); alle erklärenden Docstrings starben — es bleiben nur
+   Physik-Herleitungen, 0-honored-Gesetze, Pending-Register und
+   Byte-Layout-Kontrakte (53 Zeilen).
+
+- Atom 9 (2026-08-20, nach Atom 8) — „Die synästhetischen Aktuatoren
+  (Der Geräte-Bias stirbt)": die Ausgabe-Surfaces tragen keine
+  Gerätenamen mehr — ein Aktuator ist ein Oszillator, den das Feld
+  anregt, und übersetzt das ganze 4D-Feld in seine eigene Dimension.
+  Gestorben: `AudioRadiator` (der Synthesizer: phase-Array, feste
+  Frequenzen 2^(3+i) Hz, tanh-Gain, 44.1-kHz-Pacing,
+  AUDIO_SAMPLE_RATE/AUDIO_BUFFER_SAMPLES), `SerialSurface` (der
+  Debug-Log: formatierte lum-Textzeilen), `MathematikerinRadiator`
+  (der Gerätename für das Fenster), die Frame-Typen `AudioFrame
+  { omega, mx, permeability }` + `SurfaceFrame { lum }` und
+  `window_median_extent` (kein Konsument mehr — 2 Tests zogen mit).
+  Geboren: ein `PresenceFrame { omega: [f32; 9] }` — die neun
+  Kraftwerte der Presence, wie sie der GPU-Probe aus Superposition
+  und retardierter Laufzeit rechnet — auf zwei Kanälen
+  (acoustic_tx/seismic_tx). `AcousticOscillator` (acoustic): die
+  zeitliche Σω-Folge wird roh als f32-LE-PCM an stdout geschrieben —
+  ein Frame = ein Sample, die Abtastrate ist die Kadenz des Feldes
+  selbst (~1 Hz Probe); keine künstliche Oszillation, keine feste
+  Frequenz — das Feld IST die Welle. `SeismicOscillator` (seismisch,
+  Trait `KineticRadiator::vibrate`): Σω als rohe f32-LE-Intensität
+  (4 B/Frame, fester Stride) direkt an den seriellen Port — die
+  Vibration ist die Summe der Kräfte an der Presence. `EMOscillator`
+  (em): das Fenster übersetzt das gesamte 4D-Feld (alle 9 Kräfte) in
+  eine 2D-Verteilung von em-Emissionen — em via `color_lut_rgb`
+  (BP−RP→Teff→RGB; `temperature_to_rgb` starb in Atom 8, keine
+  Auferstehung), die anderen 8 Kräfte via `hsl_to_rgb`-False-Color.
+  Konsequenz benannt: `field_permeability` (die
+  Transfer-Entropie-Maschine) verliert mit dem Synthesizer ihre
+  Strahlungs-Konsumenten — die Aktuatoren schreiben roh, kein
+  Scaling; die TE-Maschine läuft als HUD-Messung (`perm`) weiter, die
+  Strahlungs-Bindung (Permeability → Aktuator) ist pending und kehrt
+  zurück, wenn Atom 10 (Takens/MI) die Maschine neu gebaut hat — ein
+  Trommelfell wird nicht an ein Stethoskop angeschlossen, das gleich
+  zerlegt wird (Operator-Entscheidung). Der `AcousticOscillator` zog
+  von archivar.rs in die Mathematikerin — alle drei Oszillatoren
+  wohnen bei der, die das Feld rechnet. Gates: cargo check 0/0
+  (vier Feature-Kombinationen), cargo test 160/160 lib + alle Bins
+  (2 gefallen gegenüber Atom 8), naga-Validierung, Live-Boot.
 
 ## Die Sphären des Unsichtbaren
 
@@ -426,8 +465,9 @@ ICRS-4D-Rahmen teilt:
 - M01 WebSerial-flow-Protokoll: zwei Spezifikationen konsolidieren —
   4D-MEMBRANE.md (`flow <force_name> <force_id> <|Ω|> 1 <tick_ms> <t>
   <x> <y> <z>`) vs. docs/omegaflow_sense_hardware.yaml (`flow <channel>
-  <mode> <value> <unit> <duration_ms> <t> <x> <y> <z>`). SerialSurface
-  schreibt heute rohe lum-Werte (src/mathematikerin.rs:984).
+  <mode> <value> <unit> <duration_ms> <t> <x> <y> <z>`). SeismicOscillator
+  schreibt heute die rohe f32-Σω-Intensität (4 B/Frame) an den Port
+  (src/mathematikerin.rs, SeismicOscillator).
 
 ## Membran & Wahrnehmung
 

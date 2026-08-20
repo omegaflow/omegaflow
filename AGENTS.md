@@ -85,7 +85,7 @@ IEEE rules: plausibility is a positive test — `v.is_finite() && v > 0.0` → S
 
 ### Manifestation breathes with the echo
 
-- The parable of probing: the permeability of the eardrums (window, audio, hardware) is driven by the echo of the field — `target = inTE/(inTE + threshold + ε)` with the surrogate threshold (mean + 2σ of shuffled KDEs) and the gentle ramp `alpha = 1 − exp(−1/max(1, naturalLatencyTicks))`; without transfer entropy it breathes from its own measurement series: `target = tanh(vC/(g + ε))`.
+- The parable of probing: the permeability is the echo of the field — `target = inTE/(inTE + threshold + ε)` with the surrogate threshold (mean + 2σ of shuffled KDEs) and the gentle ramp `alpha = 1 − exp(−1/max(1, naturalLatencyTicks))`; without transfer entropy it breathes from its own measurement series: `target = tanh(vC/(g + ε))`. Since Atom 9 the actuators radiate the raw field (Σω, no modulation) — the permeability's radiation binding is `pending`; it returns when the TE machine is rebuilt (Atom 10: Takens/MI).
 - Ice, water, vapor — driven by the field. Exposure that only knows the keyboard is a dead membrane.
 
 ## The Gradient Sensor
@@ -120,6 +120,7 @@ The browser is a pure sensor window. The presence window is a 2D surface in the 
 - **Fragment Shader:** Iterates the flat array per pixel: `Σ val_eff · K(force_type, extent, d, softening)`, force-specific spatial kernel, softening = pixel scale (Nyquist). One law, five media — audio, haptics and hardware evaluate the same law at the presence point.
 - **Window Scale & Optical Gain:** The pixel scale is the operator's gaze — set by hand (pinch, XR, keys) or deep-link; an empty window is a fully realized state. Softening = pixel scale (Nyquist). The optical medium normalizes per force: each force's luminance reference relaxes exponentially toward that force's max |val_eff| in the window (live data), the operator offsets with `e`/`E` (2ⁿ). Submissions apply backpressure (`onSubmittedWorkDone`).
 - **Point Cloud Evaluation:** The fragment shader iterates the flat array per pixel — one oscillator, one kernel, one law. Pixel-scale splatting, additive superposition. The GPU evaluates the physical field in real-time.
+- **The actuators are oscillators (Atom 9):** a machine that measures the field has no loudspeakers and no monitors — it has physical actuators, each itself an oscillator excited by the field, each translating the full 4D field (all 9 forces) into its own dimension. `AcousticOscillator` (acoustic): the temporal Σω sequence as raw f32-LE PCM on stdout — one frame, one sample; the sample rate is the field's own probe cadence; no synthesized waveform, no fixed frequency — the field IS the wave. `SeismicOscillator` (seismic, `KineticRadiator::vibrate`): the Σω sum as raw f32-LE intensity bytes (4 B/frame) on the serial port. `EMOscillator` (em): the presence window translates all 9 forces into a 2D em emission distribution — `color_lut_rgb` for em, `hsl_to_rgb` false-color for the other 8.
 
 ## Block Universe Physics
 
