@@ -1,6 +1,6 @@
 use crate::archivar::{
     body_barycenter_position, sense_deep, sense_membrane, star_position_at, system_now, Buffer,
-    CurveSet, LeapSeconds, OscRecord, PlanetRec, PlanetSet, Radiator, StarHash, J2000_EPOCH,
+    CurveSet, LeapSeconds, PlanetRec, PlanetSet, Radiator, SampleRecord, StarHash, J2000_EPOCH,
     PARSEC_M,
 };
 use crate::dastcom::AsteroidRec;
@@ -859,7 +859,7 @@ const JUMP_BODIES: [&str; 9] = [
     "sun", "mercury", "venus", "earth", "mars", "jupiter", "saturn", "uranus", "neptune",
 ];
 
-pub type Record = OscRecord;
+pub type Record = SampleRecord;
 
 pub struct PackedWindow {
     pub field: Vec<f32>,
@@ -1198,7 +1198,13 @@ fn transit_factors(
     out
 }
 
-fn emit_curves(cset: &CurveSet, center: [f64; 3], t: f64, pad: f64, records: &mut Vec<OscRecord>) {
+fn emit_curves(
+    cset: &CurveSet,
+    center: [f64; 3],
+    t: f64,
+    pad: f64,
+    records: &mut Vec<SampleRecord>,
+) {
     let Some(kernel) = kernel_id_for_force(0) else {
         return;
     };

@@ -71,12 +71,12 @@ export async function syncFrame(inputs, queries, presence) {
     let o = 3;
     const response_epoch = dvRes.getFloat64(o, true); o += 8;
     o += 4;
-    const oscCount = dvRes.getUint32(o, true); o += 4;
+    const sampleCount = dvRes.getUint32(o, true); o += 4;
 
-    const field = new Float32Array(oscCount * 12);
-    const meta = new Float32Array(oscCount * 16);
+    const field = new Float32Array(sampleCount * 12);
+    const meta = new Float32Array(sampleCount * 16);
 
-    for (let i = 0; i < oscCount; i++) {
+    for (let i = 0; i < sampleCount; i++) {
         if (o + 192 > bytes.length) throw new Error('protocol mismatch: truncated frame');
         const x = dvRes.getFloat64(o, true); o += 8;
         const y = dvRes.getFloat64(o, true); o += 8;
@@ -141,6 +141,6 @@ export async function syncFrame(inputs, queries, presence) {
         meta[mOff + 14] = 0;
         meta[mOff + 15] = 0;
     }
-    return { field, meta, count: oscCount, response_epoch };
+    return { field, meta, count: sampleCount, response_epoch };
 }
 

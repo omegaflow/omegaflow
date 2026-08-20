@@ -86,11 +86,14 @@ Schnittmenge leer, im Protokoll fehlt.
   („No meshes. No grids. Every raw point makes us truer"), ersetzt durch das
   Enclosure Lemma. Die Wahrheit ist der 3D-Spatial-Hash `(i64,i64,i64)` des
   Lemma selbst (Kimi K3, ERAEN §63): Fang = Chunking entlang DIESER Zellen,
-  keine 2D-Himmelsprojektion, kein neuer Raster. Der verlorene Pendant ist
-  §12 Causality-Prefilter (Signal-Lichtkegel: dist ≤ v_force·age, diffusiv
-  √(2·D·age), age > τ·64 verworfen) — das Lemma dilatiert heute nur mit
-  Bewegung, nicht mit Signal (AUSSTEHEND). Deckt auch: tess_lightcurves.bin
-  ~500 MB lädt heute ganz.
+  keine 2D-Himmelsprojektion,   kein neuer Raster. Der verlorene Pendant war
+  §12 Causality-Prefilter (Signal-Lichtkegel) — WIEDERBELEBT 2026-08-20:
+  `signal_reach` aus dem force_type (Wellen 0/1/2/3/4/8: c, 343, 6000,
+  3000, Advektion, 1.0; diffusiv 5/6: √(2·D·age), D = 0.3/0.05), Cut vor
+  `motion.at()` in query_hash + query_asteroid_hash (`age > ttl·2⁶` oder
+  Distanz am Anker > reach + extent + pad; unbekannte Kraft → refused,
+  kein Default). Das Lemma dilatiert jetzt mit Bewegung UND Signal.
+  Deckt auch: tess_lightcurves.bin ~500 MB lädt heute ganz.
 - Lokaler Crossmatch zweier Quellen (pending, 2026-08-18): Lasair
   (ZTF-Transienten, live, em) trägt kein z in `objects` → die Objekte
   liegen auf der Himmelssphäre (0 honored). Die TNS-Tabelle
@@ -181,10 +184,10 @@ Schnittmenge leer, im Protokoll fehlt.
   am selben Punkt; sources.φ-Block (spectra.bin, on earth 19.82
   -155.47 0, τ = 2.628e6 s, ttl 86400, force em); BINARY_PROTOCOL.md
   Sektion „Spectral Bin File v1“; Schritt 0 = Relay-Reparatur
-  (OscRecord überall, Stern-Push + freq/bin_width = 0.0 Punktquelle);
-  Schritt 1 = Füll-Schicht (Channel + Oscillator tragen freq/bin_width,
-  ~20 Konstruktionsstellen auf 0.0, query_hash liest osc.freq/
-  osc.bin_width).
+  (SampleRecord überall, Stern-Push + freq/bin_width = 0.0 Punktquelle);
+  Schritt 1 = Füll-Schicht (Channel + Sample tragen freq/bin_width,
+  ~20 Konstruktionsstellen auf 0.0, query_hash liest sample.freq/
+  sample.bin_width).
   Befund der Umsetzung (2026-08-19, live verifiziert): die
   txt-Route des Queue-Drafts ist tot (404) — die Monats-SSI-Messung
   existiert nur als netCDF-4/HDF5 (magic 0x89484446, deflate);
@@ -284,6 +287,25 @@ ICRS-4D-Rahmen teilt:
 
 ## Membran & Wahrnehmung
 
+- Device-Lost-Befund + Farb-LUT (2026-08-20): Mesa 25.2.8 (ANV/Vulkan,
+  apt-Upgrade 18.08., 25.0.7 → 25.2.8) verlor das Device beim Kompilieren des
+  Feld-Fragment-Shaders (create_render_pipeline → Parent device is lost;
+  der pre-cut-Binary starb identisch — der Dreiteilungs-Schnitt ist unschuldig).
+  Bisektion im Test-Modus (jede Schicht einzeln gegen den Treiber gebaut):
+  Okklusion lebt, Stern-Tiles leben, Tile-Cull lebt, omega-Akkumulation lebt,
+  hsl_to_rgb lebt — `temperature_to_rgb` im dynamischen Loop tötet (die
+  31-Stützstellen-Interpolation Pecaut-Mamajek + Helland-Polynome, inlined in
+  den Loop-Body, überfordern den gen9-Compiler). Fix: die Wahrheit wanderte in
+  den Archivar — `omegaflow::spectral::color_lut_rgba` (256 Bins, Rgba32Float,
+  Rand-Bins = exakte Locus-Klemmen, Bins dazwischen = Zentren; f64) als
+  LUT-Textur (Binding 9+12, Nearest, NonFiltering); WGSL sampelt
+  `color_lut_rgb` (weiß bei ci==0 wie zuvor); die drei WGSL-Funktionen starben
+  — eine Quelle, kein Duplikat. Cargo.toml unberührt. Gates: 161/161 Tests
+  (2 neue LUT-Tests in spectral.rs), cargo check 0/0 (alle Features),
+  Live-Lauf unter Mesa 25.2.8 ohne Panik. Benannt: Mesa 25.0.7 schluckte das
+  Konstrukt, 25.2.8 ist strenger; der OOM-Befund oben (GPU-Thread-Panik beim
+  Pipeline-Bau) deckt sich mit diesem Tod — ob identisch, trägt die nächste
+  Prüf-Rolle; ein Upstream-Bericht an Mesa/wgpu ist ein eigenes Atom.
 - M02 ESP32-Mantis-Shrimp-Firmware: docs/omegaflow_sense_hardware.yaml
   existiert (35 Sensoren/Aktuatoren). Offen: no_std-Rust-Firmware;
   Browser-Seite (actuate) + M01.
@@ -630,12 +652,6 @@ Offen (Detail in phi/pipeline/ledger.φ):
 
 - Temporal Topology (TDA, Takens, Transfer Entropy, Surrogates) —
   VERSIONIERT, LOST_CONCEPTS.md
-- Kausalitäts-Vorfilter (Lichtkegel): `Distanz <= v_force·age`, diffusiv
-  `Distanz² <= 2·D·age`, verklungen `age > τ·64` — laut MASTER.md
-  „Live", fehlt im aktuellen Rust-Code (der Enclosure dilatiert nur mit
-  vmax·Δt — reine Bewegung, kein Signal-Lichtkegel). Wiederbeleben in
-  `src/archivar.rs` (force_constants_by_id + Early-Exit vor motion.at());
-  Quelle: CAUSALITY_PREFILTER.md, LOST_CONCEPTS §12 — AUSSTEHEND
 - Kraft-Separation (7 omegas statt „one law, five media") —
   VERSIONIERT, LOST_CONCEPTS §13
 - Verzögerungsspektrum / Lichtkegel-Differenz / Stillekarte /

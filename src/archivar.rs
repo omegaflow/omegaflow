@@ -11,13 +11,13 @@ pub type CellKey = (i64, i64, i64);
 
 pub struct SpatialHash {
     pub cell_size: f64,
-    pub vmax: f64,
-    pub amax: f64,
+    pub anchor_vmax: f64,
+    pub anchor_amax: f64,
     pub epoch_min: f64,
     pub cell_lo: CellKey,
     pub cell_hi: CellKey,
-    pub cells: HashMap<CellKey, Vec<Oscillator>>,
-    pub unbounded: Vec<Oscillator>,
+    pub cells: HashMap<CellKey, Vec<Sample>>,
+    pub unbounded: Vec<Sample>,
 }
 
 #[derive(Clone)]
@@ -47,8 +47,8 @@ pub struct Buffer {
 }
 pub struct AsteroidHash {
     pub cell_size: f64,
-    pub vmax: f64,
-    pub amax: f64,
+    pub anchor_vmax: f64,
+    pub anchor_amax: f64,
     pub epoch_min_secs: f64,
     pub ttl: f64,
     pub cell_lo: CellKey,
@@ -74,7 +74,7 @@ pub struct StarHash {
     #[cfg(feature = "browser_relay")]
     pub cell_size: f64,
     #[cfg(feature = "browser_relay")]
-    pub vmax: f64,
+    pub anchor_vmax: f64,
     #[cfg(feature = "browser_relay")]
     pub build_epoch: f64,
     #[cfg(feature = "browser_relay")]
@@ -139,15 +139,15 @@ pub enum Motion {
 }
 
 #[derive(Clone)]
-pub enum OscillatorSource {
+pub enum SampleSource {
     Source(u32),
     Sensor,
     Body,
 }
 
 #[derive(Clone)]
-pub struct Oscillator {
-    pub source: OscillatorSource,
+pub struct Sample {
+    pub source: SampleSource,
     pub epoch: f64,
     pub ttl: f64,
     pub extent: f64,
@@ -156,9 +156,9 @@ pub struct Oscillator {
     pub force_type: f64,
     pub absorption: f64,
     pub advection: f64,
-    pub vmax: f64,
-    pub amax: f64,
-    pub p0f: [f64; 3],
+    pub anchor_vmax: f64,
+    pub anchor_amax: f64,
+    pub anchor_p0: [f64; 3],
     pub motion: Motion,
     pub val: f64,
     pub name: String,
@@ -421,7 +421,7 @@ pub fn register_unconverted_unit(unit: &str, name: &str) {
     let set = guard.get_or_insert_with(std::collections::HashSet::new);
     if set.insert(unit.to_string()) {
         eprintln!(
-            "unit \"{}\" unconverted — SI absent; oscillators like \"{}\" stay unmanifested (pending curation)",
+            "unit \"{}\" unconverted — SI absent; samples like \"{}\" stay unmanifested (pending curation)",
             unit, name
         );
     }
@@ -588,7 +588,7 @@ pub const HUBBLE_H0: f64 = 70000.0 / (PARSEC_M * 1.0e6);
 pub const MAS_YR_TO_RAD_S: f64 = 4.84813681109536e-9 / 31557600.0;
 const GAUSS_K: f64 = 0.01720209895;
 
-pub type OscRecord = (
+pub type SampleRecord = (
     f64,
     f64,
     f64,
@@ -6266,7 +6266,7 @@ field temp temp_c\n";
         assert_eq!(hash.p0.len(), 1);
         let d = 10.0 * PARSEC_M;
         assert!((hash.p0[0][0] - d).abs() / d < 1e-9);
-        let mut records: Vec<OscRecord> = Vec::new();
+        let mut records: Vec<SampleRecord> = Vec::new();
         query_star_hash(&hash, [0.0, 0.0, 0.0], 0.0, d * 2.0, 0.0, &mut records);
         assert_eq!(records.len(), 1);
         assert!((records[0].0 - d).abs() / d < 1e-9);
@@ -8966,7 +8966,7 @@ pub fn resolve_asset(rel: &str) -> std::path::PathBuf {
 }
 
 const SURFACE_MOTION_DT: f64 = 0.01;
-const MAX_OSCILLATORS: usize = 1 << 21;
+const MAX_SAMPLES: usize = 1 << 21;
 
 fn finite_positive(v: f64) -> Option<f64> {
     if v.is_finite() && v > 0.0 {
@@ -9019,7 +9019,7 @@ pub fn law_bounds(
     Some((Φ * (v + resid_ema), Φ * a, p0))
 }
 
-fn build_spatial_hash(samples: Vec<Oscillator>, cadence: f64) -> SpatialHash {
+fn build_spatial_hash(samples: Vec<Sample>, cadence: f64) -> SpatialHash {
     let mut bounded = Vec::new();
     let mut unbounded = Vec::new();
     for s in samples {
@@ -9029,15 +9029,15 @@ fn build_spatial_hash(samples: Vec<Oscillator>, cadence: f64) -> SpatialHash {
             unbounded.push(s);
         }
     }
-    let mut vmax = 0.0f64;
-    let mut amax = 0.0f64;
+    let mut anchor_vmax = 0.0f64;
+    let mut anchor_amax = 0.0f64;
     let mut epoch_min = f64::MAX;
     for s in &bounded {
-        vmax = vmax.max(s.vmax);
-        amax = amax.max(s.amax);
+        anchor_vmax = anchor_vmax.max(s.anchor_vmax);
+        anchor_amax = anchor_amax.max(s.anchor_amax);
         epoch_min = epoch_min.min(s.epoch);
     }
-    let rho_cad = vmax * cadence + 0.5 * amax * cadence * cadence;
+    let rho_cad = anchor_vmax * cadence + 0.5 * anchor_amax * cadence * cadence;
     let shift = (2.0 * rho_cad).log2().ceil().clamp(0.0, 63.0) as i32;
     let motion_cell = 2f64.powi(shift);
     let mut span = 1.0f64;
@@ -9045,17 +9045,17 @@ fn build_spatial_hash(samples: Vec<Oscillator>, cadence: f64) -> SpatialHash {
         let mut lo = f64::INFINITY;
         let mut hi = f64::NEG_INFINITY;
         for s in &bounded {
-            lo = lo.min(s.p0f[k]);
-            hi = hi.max(s.p0f[k]);
+            lo = lo.min(s.anchor_p0[k]);
+            hi = hi.max(s.anchor_p0[k]);
         }
         span = span.max(hi - lo);
     }
     let cell_size = motion_cell.max(span / 1024.0);
-    let mut cells: HashMap<CellKey, Vec<Oscillator>> = HashMap::new();
+    let mut cells: HashMap<CellKey, Vec<Sample>> = HashMap::new();
     let mut cell_lo = (i64::MAX, i64::MAX, i64::MAX);
     let mut cell_hi = (i64::MIN, i64::MIN, i64::MIN);
     for s in bounded {
-        let c = cell_of(s.p0f, cell_size);
+        let c = cell_of(s.anchor_p0, cell_size);
         cell_lo.0 = cell_lo.0.min(c.0);
         cell_lo.1 = cell_lo.1.min(c.1);
         cell_lo.2 = cell_lo.2.min(c.2);
@@ -9066,8 +9066,8 @@ fn build_spatial_hash(samples: Vec<Oscillator>, cadence: f64) -> SpatialHash {
     }
     SpatialHash {
         cell_size,
-        vmax,
-        amax,
+        anchor_vmax,
+        anchor_amax,
         epoch_min: if epoch_min == f64::MAX {
             0.0
         } else {
@@ -9081,7 +9081,7 @@ fn build_spatial_hash(samples: Vec<Oscillator>, cadence: f64) -> SpatialHash {
 }
 
 pub fn build_buffer(
-    samples: Vec<Oscillator>,
+    samples: Vec<Sample>,
     cadence: f64,
     eph: Arc<HashMap<String, BodyEphemeris>>,
     asteroids: Option<Arc<AsteroidHash>>,
@@ -9091,7 +9091,7 @@ pub fn build_buffer(
     curves: Option<Arc<CurveSet>>,
     spectral: Vec<SpectralHash>,
 ) -> Buffer {
-    let mut body_samps: HashMap<String, Vec<Oscillator>> = HashMap::new();
+    let mut body_samps: HashMap<String, Vec<Sample>> = HashMap::new();
     let mut inertial_samps = Vec::new();
     for s in samples {
         if let Some(body) = s.motion.anchor_body() {
@@ -9101,8 +9101,8 @@ pub fn build_buffer(
         }
     }
     let mut bodies = HashMap::new();
-    for (name, oscs) in body_samps {
-        bodies.insert(name, build_spatial_hash(oscs, cadence));
+    for (name, samples) in body_samps {
+        bodies.insert(name, build_spatial_hash(samples, cadence));
     }
     Buffer {
         bodies,
@@ -9120,8 +9120,8 @@ pub fn build_buffer(
 fn build_asteroid_hash(bytes: &[u8], cadence: f64, ttl: u64) -> AsteroidHash {
     let mut records: Vec<AsteroidRec> = Vec::new();
     let mut p0: Vec<[f64; 3]> = Vec::new();
-    let mut vmax = 0.0f64;
-    let mut amax = 0.0f64;
+    let mut anchor_vmax = 0.0f64;
+    let mut anchor_amax = 0.0f64;
     let mut epoch_min = f64::MAX;
     for chunk in bytes.chunks_exact(RECORD_STRIDE) {
         let rec = match parse_record(chunk) {
@@ -9143,15 +9143,15 @@ fn build_asteroid_hash(bytes: &[u8], cadence: f64, ttl: u64) -> AsteroidHash {
         };
         let speed = (vel[0] * vel[0] + vel[1] * vel[1] + vel[2] * vel[2]).sqrt();
         let epoch_secs = (rec.epoch_jd - J2000_EPOCH) * 86400.0;
-        vmax = vmax.max(speed);
-        amax = amax.max(accel);
+        anchor_vmax = anchor_vmax.max(speed);
+        anchor_amax = anchor_amax.max(accel);
         epoch_min = epoch_min.min(epoch_secs);
         records.push(rec);
         p0.push(pos);
     }
-    vmax *= Φ;
-    amax *= Φ;
-    let rho_cad = vmax * cadence + 0.5 * amax * cadence * cadence;
+    anchor_vmax *= Φ;
+    anchor_amax *= Φ;
+    let rho_cad = anchor_vmax * cadence + 0.5 * anchor_amax * cadence * cadence;
     let shift = (2.0 * rho_cad).log2().ceil().clamp(0.0, 63.0) as i32;
     let cell_size = 2f64.powi(shift);
     let mut cells: HashMap<CellKey, Vec<u32>> = HashMap::new();
@@ -9169,8 +9169,8 @@ fn build_asteroid_hash(bytes: &[u8], cadence: f64, ttl: u64) -> AsteroidHash {
     }
     AsteroidHash {
         cell_size,
-        vmax,
-        amax,
+        anchor_vmax,
+        anchor_amax,
         epoch_min_secs: if epoch_min == f64::MAX {
             0.0
         } else {
@@ -9209,13 +9209,13 @@ fn query_asteroid_hash(
     t2: f64,
     pad: f64,
     delta_t_cache: f64,
-    records: &mut Vec<OscRecord>,
+    records: &mut Vec<SampleRecord>,
 ) {
     if hash.cells.is_empty() {
         return;
     }
     let dt = (t2 - hash.epoch_min_secs).abs() + delta_t_cache;
-    let rho = hash.vmax * dt + 0.5 * hash.amax * dt * dt + pad;
+    let rho = hash.anchor_vmax * dt + 0.5 * hash.anchor_amax * dt * dt + pad;
     let s = hash.cell_size;
     let qlo = cell_of([center[0] - rho, center[1] - rho, center[2] - rho], s);
     let qhi = cell_of([center[0] + rho, center[1] + rho, center[2] + rho], s);
@@ -9270,12 +9270,15 @@ fn query_asteroid_hash(
             }
             let epoch_secs = (rec.epoch_jd - J2000_EPOCH) * 86400.0;
             let age = (t2 - epoch_secs).abs();
+            if age > hash.ttl * 64.0 {
+                continue;
+            }
             let future_age = age + delta_t_cache;
             let (Some(speed), Some(accel)) = (speed_at_epoch(rec), accel_at_epoch(rec)) else {
                 continue;
             };
             let reach =
-                kernel_reach(0) + speed * future_age + 0.5 * accel * future_age * future_age + pad;
+                C_LIGHT * age + speed * future_age + 0.5 * accel * future_age * future_age + pad;
             let p0 = hash.p0[i as usize];
             let dx = p0[0] - center[0];
             let dy = p0[1] - center[1];
@@ -9435,7 +9438,7 @@ fn build_star_hash(
             #[cfg(feature = "browser_relay")]
             cell_size: 0.0,
             #[cfg(feature = "browser_relay")]
-            vmax: 0.0,
+            anchor_vmax: 0.0,
             #[cfg(feature = "browser_relay")]
             build_epoch,
             #[cfg(feature = "browser_relay")]
@@ -9458,17 +9461,17 @@ fn build_star_hash(
         records.push(rec);
     }
     #[cfg(feature = "browser_relay")]
-    let (cell_size, vmax, build_epoch, cell_lo, cell_hi, cells, p0) = {
+    let (cell_size, anchor_vmax, build_epoch, cell_lo, cell_hi, cells, p0) = {
         let mut p0: Vec<[f64; 3]> = Vec::new();
-        let mut vmax = 0.0f64;
+        let mut anchor_vmax = 0.0f64;
         for rec in &records {
             let (p, v) = star_position_at(rec, build_epoch);
             let speed = (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]).sqrt();
-            vmax = vmax.max(speed);
+            anchor_vmax = anchor_vmax.max(speed);
             p0.push(p);
         }
-        vmax *= Φ;
-        let rho_cad = vmax * cadence;
+        anchor_vmax *= Φ;
+        let rho_cad = anchor_vmax * cadence;
         let shift = (2.0 * rho_cad).log2().ceil().clamp(0.0, 63.0) as i32;
         let motion_cell = 2f64.powi(shift);
         let mut span = 1.0f64;
@@ -9495,14 +9498,22 @@ fn build_star_hash(
             cell_hi.2 = cell_hi.2.max(c.2);
             cells.entry(c).or_default().push(i as u32);
         }
-        (cell_size, vmax, build_epoch, cell_lo, cell_hi, cells, p0)
+        (
+            cell_size,
+            anchor_vmax,
+            build_epoch,
+            cell_lo,
+            cell_hi,
+            cells,
+            p0,
+        )
     };
     StarHash {
         records,
         #[cfg(feature = "browser_relay")]
         cell_size,
         #[cfg(feature = "browser_relay")]
-        vmax,
+        anchor_vmax,
         #[cfg(feature = "browser_relay")]
         build_epoch,
         #[cfg(feature = "browser_relay")]
@@ -9523,13 +9534,13 @@ fn query_star_hash(
     t2: f64,
     pad: f64,
     delta_t_cache: f64,
-    records: &mut Vec<OscRecord>,
+    records: &mut Vec<SampleRecord>,
 ) {
     if hash.cells.is_empty() {
         return;
     }
     let dt = (t2 - hash.build_epoch).abs() + delta_t_cache;
-    let rho = hash.vmax * dt + pad;
+    let rho = hash.anchor_vmax * dt + pad;
     let s = hash.cell_size;
     let qlo = cell_of([center[0] - rho, center[1] - rho, center[2] - rho], s);
     let qhi = cell_of([center[0] + rho, center[1] + rho, center[2] + rho], s);
@@ -9636,18 +9647,25 @@ pub fn query_hash(
     t2: f64,
     pad: f64,
     delta_t_cache: f64,
-    records: &mut Vec<OscRecord>,
+    records: &mut Vec<SampleRecord>,
     eph: &HashMap<String, BodyEphemeris>,
 ) {
-    for osc in &hash.unbounded {
-        let p = match osc.motion.at(t2, osc.epoch, eph) {
+    for sample in &hash.unbounded {
+        let age = (t2 - sample.epoch).abs();
+        if age > sample.ttl * 64.0 {
+            continue;
+        }
+        if signal_reach(sample.force_type, sample.advection, age).is_none() {
+            continue;
+        }
+        let p = match sample.motion.at(t2, sample.epoch, eph) {
             Some(p) => p,
             None => continue,
         };
-        let v = if let Motion::Linear { v, .. } = &osc.motion {
+        let v = if let Motion::Linear { v, .. } = &sample.motion {
             [v[0], v[1], v[2]]
         } else {
-            let p_dt = match osc.motion.at(t2 + 1e-3, osc.epoch, eph) {
+            let p_dt = match sample.motion.at(t2 + 1e-3, sample.epoch, eph) {
                 Some(pd) => pd,
                 None => continue,
             };
@@ -9657,25 +9675,25 @@ pub fn query_hash(
                 (p_dt[2] - p[2]) / 1e-3,
             ]
         };
-        let (pole, j2, j4, r_eq) = gravity_manifest(osc, t2, eph);
+        let (pole, j2, j4, r_eq) = gravity_manifest(sample, t2, eph);
         records.push((
             p[0],
             p[1],
             p[2],
-            osc.val,
-            osc.epoch,
-            osc.ttl,
-            osc.tau,
-            osc.extent,
-            osc.kernel_id,
-            osc.force_type,
-            osc.absorption,
-            osc.advection,
+            sample.val,
+            sample.epoch,
+            sample.ttl,
+            sample.tau,
+            sample.extent,
+            sample.kernel_id,
+            sample.force_type,
+            sample.absorption,
+            sample.advection,
             v[0],
             v[1],
             v[2],
-            if osc.force_type == 0.0 {
-                osc.z
+            if sample.force_type == 0.0 {
+                sample.z
             } else {
                 pole[0]
             },
@@ -9691,8 +9709,8 @@ pub fn query_hash(
             },
             r_eq,
             0.0,
-            osc.freq,
-            osc.bin_width,
+            sample.freq,
+            sample.bin_width,
         ));
     }
     if hash.cells.is_empty() {
@@ -9704,7 +9722,7 @@ pub fn query_hash(
         center[2] - anchor[2],
     ];
     let dt = (t2 - hash.epoch_min).abs() + delta_t_cache;
-    let rho = hash.vmax * dt + 0.5 * hash.amax * dt * dt + pad;
+    let rho = hash.anchor_vmax * dt + 0.5 * hash.anchor_amax * dt * dt + pad;
     let s = hash.cell_size;
     let qlo = cell_of([qf[0] - rho, qf[1] - rho, qf[2] - rho], s);
     let qhi = cell_of([qf[0] + rho, qf[1] + rho, qf[2] + rho], s);
@@ -9727,38 +9745,45 @@ pub fn query_hash(
     let in_box = |ck: &CellKey| {
         ck.0 >= lo.0 && ck.0 <= hi.0 && ck.1 >= lo.1 && ck.1 <= hi.1 && ck.2 >= lo.2 && ck.2 <= hi.2
     };
-    let mut emit = |samples: &Vec<Oscillator>| {
-        for osc in samples {
-            let age = (t2 - osc.epoch).abs();
-            let causal_reach = kernel_reach(osc.kernel_id as u8);
-            let future_age = age + delta_t_cache;
-            let reach = osc.extent.max(causal_reach)
-                + osc.vmax * future_age
-                + 0.5 * osc.amax * future_age * future_age
-                + pad;
-            let dx = osc.p0f[0] - qf[0];
-            let dy = osc.p0f[1] - qf[1];
-            let dz = osc.p0f[2] - qf[2];
-            let dist2_p0f = dx * dx + dy * dy + dz * dz;
-            if dist2_p0f > reach * reach {
+    let mut emit = |samples: &Vec<Sample>| {
+        for sample in samples {
+            let age = (t2 - sample.epoch).abs();
+            if age > sample.ttl * 64.0 {
                 continue;
             }
-            let p = match osc.motion.at(t2, osc.epoch, eph) {
+            let reach_signal = match signal_reach(sample.force_type, sample.advection, age) {
+                Some(r) => r,
+                None => continue,
+            };
+            let future_age = age + delta_t_cache;
+            let reach = reach_signal
+                + sample.extent
+                + sample.anchor_vmax * future_age
+                + 0.5 * sample.anchor_amax * future_age * future_age
+                + pad;
+            let dx = sample.anchor_p0[0] - qf[0];
+            let dy = sample.anchor_p0[1] - qf[1];
+            let dz = sample.anchor_p0[2] - qf[2];
+            let dist2_anchor_p0 = dx * dx + dy * dy + dz * dz;
+            if dist2_anchor_p0 > reach * reach {
+                continue;
+            }
+            let p = match sample.motion.at(t2, sample.epoch, eph) {
                 Some(p) => p,
                 None => continue,
             };
             let ddx = p[0] - center[0];
             let ddy = p[1] - center[1];
             let ddz = p[2] - center[2];
-            let exact = osc.extent + pad;
+            let exact = sample.extent + pad;
             let dist2 = ddx * ddx + ddy * ddy + ddz * ddz;
             if dist2 > exact * exact {
                 continue;
             }
-            let v = if let Motion::Linear { v, .. } = &osc.motion {
+            let v = if let Motion::Linear { v, .. } = &sample.motion {
                 [v[0], v[1], v[2]]
             } else {
-                let p_dt = match osc.motion.at(t2 + 1e-3, osc.epoch, eph) {
+                let p_dt = match sample.motion.at(t2 + 1e-3, sample.epoch, eph) {
                     Some(pd) => pd,
                     None => continue,
                 };
@@ -9768,25 +9793,25 @@ pub fn query_hash(
                     (p_dt[2] - p[2]) / 1e-3,
                 ]
             };
-            let (pole, j2, j4, r_eq) = gravity_manifest(osc, t2, eph);
+            let (pole, j2, j4, r_eq) = gravity_manifest(sample, t2, eph);
             records.push((
                 p[0],
                 p[1],
                 p[2],
-                osc.val,
-                osc.epoch,
-                osc.ttl,
-                osc.tau,
-                osc.extent,
-                osc.kernel_id,
-                osc.force_type,
-                osc.absorption,
-                osc.advection,
+                sample.val,
+                sample.epoch,
+                sample.ttl,
+                sample.tau,
+                sample.extent,
+                sample.kernel_id,
+                sample.force_type,
+                sample.absorption,
+                sample.advection,
                 v[0],
                 v[1],
                 v[2],
-                if osc.force_type == 0.0 {
-                    osc.z
+                if sample.force_type == 0.0 {
+                    sample.z
                 } else {
                     pole[0]
                 },
@@ -9802,8 +9827,8 @@ pub fn query_hash(
                 },
                 r_eq,
                 0.0,
-                osc.freq,
-                osc.bin_width,
+                sample.freq,
+                sample.bin_width,
             ));
         }
     };
@@ -9833,7 +9858,7 @@ pub fn sense_buffer(
     t2: f64,
     pad: f64,
     delta_t_cache: f64,
-    records: &mut Vec<OscRecord>,
+    records: &mut Vec<SampleRecord>,
     eph: &HashMap<String, BodyEphemeris>,
 ) {
     for (body_name, hash_cell) in &buf.bodies {
@@ -9921,7 +9946,7 @@ pub fn sense_membrane(
     t2: f64,
     pad: f64,
     delta_t_cache: f64,
-    records: &mut Vec<OscRecord>,
+    records: &mut Vec<SampleRecord>,
     eph: &HashMap<String, BodyEphemeris>,
 ) {
     for (body_name, hash_cell) in &buf.bodies {
@@ -10181,11 +10206,11 @@ pub fn body_pole_at(props: &BodyProperties, tdb: f64) -> [f64; 3] {
 }
 
 pub fn gravity_manifest(
-    osc: &Oscillator,
+    sample: &Sample,
     t: f64,
     eph: &HashMap<String, BodyEphemeris>,
 ) -> ([f64; 3], Option<f64>, Option<f64>, f64) {
-    let name = match osc.motion.anchor_body() {
+    let name = match sample.motion.anchor_body() {
         Some(n) => n,
         None => return ([0.0; 3], None, None, 0.0),
     };
@@ -10406,11 +10431,29 @@ pub fn kernel_extent(
     0.0
 }
 
-fn kernel_reach(kernel_id: u8) -> f64 {
-    if kernel_id == 0 || kernel_id == 6 {
-        f64::INFINITY
-    } else {
-        0.0
+const AUDIO_SPEED_AIR: f64 = 343.0;
+const SEISMIC_BODY_SPEED: f64 = 6000.0;
+const SEISMIC_SURFACE_SPEED: f64 = 3000.0;
+const ADVECTIVE_BASE_SPEED: f64 = 1.0;
+const DIFFUSIVITY_THERMAL: f64 = 0.3;
+const DIFFUSIVITY_MOLECULAR: f64 = 0.05;
+
+fn signal_reach(force_type: f64, advection: f64, age: f64) -> Option<f64> {
+    match force_type as u8 {
+        0 | 1 | 8 => Some(C_LIGHT * age),
+        2 => Some(AUDIO_SPEED_AIR * age),
+        3 => Some(SEISMIC_BODY_SPEED * age),
+        4 => Some(SEISMIC_SURFACE_SPEED * age),
+        7 => {
+            if advection > 0.0 {
+                Some(advection * age)
+            } else {
+                Some(ADVECTIVE_BASE_SPEED * age)
+            }
+        }
+        5 => Some((2.0 * DIFFUSIVITY_THERMAL * age).sqrt()),
+        6 => Some((2.0 * DIFFUSIVITY_MOLECULAR * age).sqrt()),
+        _ => None,
     }
 }
 
@@ -10590,23 +10633,24 @@ struct StderrRadiator {
 
 impl Radiator for StderrRadiator {
     fn accept(&mut self, field: Arc<Buffer>) {
-        let mut body_osc = 0usize;
-        let mut api_osc = 0usize;
-        let mut sensor_osc = 0usize;
+        let mut body_samples = 0usize;
+        let mut api_samples = 0usize;
+        let mut sensor_samples = 0usize;
         let mut body_src: std::collections::HashSet<String> = std::collections::HashSet::new();
         let mut api_src: std::collections::HashSet<u32> = std::collections::HashSet::new();
         for (_body_name, hash) in &field.bodies {
             for cell in hash.cells.values().chain(std::iter::once(&hash.unbounded)) {
-                for osc in cell {
-                    match osc.source {
-                        OscillatorSource::Sensor => sensor_osc += 1,
-                        OscillatorSource::Source(idx) => {
-                            api_osc += 1;
+                for sample in cell {
+                    match sample.source {
+                        SampleSource::Sensor => sensor_samples += 1,
+                        SampleSource::Source(idx) => {
+                            api_samples += 1;
                             api_src.insert(idx);
                         }
-                        OscillatorSource::Body => {
-                            body_osc += 1;
-                            body_src.insert(osc.name.split('.').next().unwrap_or("").to_string());
+                        SampleSource::Body => {
+                            body_samples += 1;
+                            body_src
+                                .insert(sample.name.split('.').next().unwrap_or("").to_string());
                         }
                     }
                 }
@@ -10618,28 +10662,28 @@ impl Radiator for StderrRadiator {
             .values()
             .chain(std::iter::once(&field.inertial.unbounded))
         {
-            for osc in cell {
-                match osc.source {
-                    OscillatorSource::Sensor => sensor_osc += 1,
-                    OscillatorSource::Source(idx) => {
-                        api_osc += 1;
+            for sample in cell {
+                match sample.source {
+                    SampleSource::Sensor => sensor_samples += 1,
+                    SampleSource::Source(idx) => {
+                        api_samples += 1;
                         api_src.insert(idx);
                     }
-                    OscillatorSource::Body => {
-                        body_osc += 1;
-                        body_src.insert(osc.name.split('.').next().unwrap_or("").to_string());
+                    SampleSource::Body => {
+                        body_samples += 1;
+                        body_src.insert(sample.name.split('.').next().unwrap_or("").to_string());
                     }
                 }
             }
         }
         let line = format!(
-            "omegaflow v{} | φ v7 | body: {} sources, {} oscillators | api: {} sources, {} oscillators | sensor: {} oscillators",
+            "omegaflow v{} | φ v7 | body: {} sources, {} samples | api: {} sources, {} samples | sensor: {} samples",
             env!("CARGO_PKG_VERSION"),
             body_src.len(),
-            body_osc,
+            body_samples,
             api_src.len(),
-            api_osc,
-            sensor_osc,
+            api_samples,
+            sensor_samples,
         );
         let prev_len = self.last_line.chars().count();
         if self.interactive {
@@ -12304,7 +12348,7 @@ pub fn anchor(
     frame: Option<&Frame>,
     mut origin_state: Option<&mut OriginState>,
     eph: &HashMap<String, BodyEphemeris>,
-) -> Option<Oscillator> {
+) -> Option<Sample> {
     if sensor.tau <= 0.0 {
         return None;
     }
@@ -12408,15 +12452,16 @@ pub fn anchor(
         st.prev_motion = Some(motion.clone());
         st.has_prev = true;
     }
-    let (vmax, amax, p0f) = match law_bounds(&motion, channel.epoch, resid_ema, eph) {
-        Some(b) => b,
-        None => return None,
-    };
-    if !p0f[0].is_finite()
-        || !p0f[1].is_finite()
-        || !p0f[2].is_finite()
-        || !vmax.is_finite()
-        || !amax.is_finite()
+    let (anchor_vmax, anchor_amax, anchor_p0) =
+        match law_bounds(&motion, channel.epoch, resid_ema, eph) {
+            Some(b) => b,
+            None => return None,
+        };
+    if !anchor_p0[0].is_finite()
+        || !anchor_p0[1].is_finite()
+        || !anchor_p0[2].is_finite()
+        || !anchor_vmax.is_finite()
+        || !anchor_amax.is_finite()
     {
         return None;
     }
@@ -12428,10 +12473,10 @@ pub fn anchor(
     if !extent.is_finite() {
         return None;
     }
-    Some(Oscillator {
+    Some(Sample {
         source: match source_idx {
-            Some(idx) => OscillatorSource::Source(idx),
-            None => OscillatorSource::Sensor,
+            Some(idx) => SampleSource::Source(idx),
+            None => SampleSource::Sensor,
         },
         epoch: channel.epoch,
         ttl: source_ttl,
@@ -12441,9 +12486,9 @@ pub fn anchor(
         force_type: sensor.force as f64,
         absorption: sensor.absorption,
         advection: sensor.advection,
-        vmax,
-        amax,
-        p0f,
+        anchor_vmax,
+        anchor_amax,
+        anchor_p0,
         motion: motion.clone(),
         val: match convert_to_si(channel.value, &sensor.unit) {
             Some(v) => v,
@@ -14813,9 +14858,9 @@ pub fn main_flow() {
     };
     let (fetch_tx, fetch_rx) = mpsc::channel::<FetchResult>();
     #[cfg(feature = "browser_relay")]
-    let (osc_tx, osc_rx) = mpsc::channel::<Vec<Oscillator>>();
+    let (sample_tx, sample_rx) = mpsc::channel::<Vec<Sample>>();
     #[cfg(not(feature = "browser_relay"))]
-    let osc_rx = mpsc::channel::<Vec<Oscillator>>().1;
+    let sample_rx = mpsc::channel::<Vec<Sample>>().1;
     let (presence_tx, presence_rx) = mpsc::channel::<(String, f64, f64, f64, f64, f64)>();
     let body_ephemerides = Arc::new(HashMap::new());
     #[cfg(feature = "browser_relay")]
@@ -14908,7 +14953,7 @@ pub fn main_flow() {
             archive.field.clone(),
             index_html.clone(),
             constants_js.clone(),
-            osc_tx.clone(),
+            sample_tx.clone(),
             presence_relay_tx,
             time.clone(),
             consent.clone(),
@@ -15017,7 +15062,7 @@ pub fn main_flow() {
                 }
             }
         }
-        let mut fetched_oscillators: Vec<Oscillator> = Vec::new();
+        let mut fetched_samples: Vec<Sample> = Vec::new();
         {
             let mut still_pending: Vec<(Channel, FieldConfig, u32)> = Vec::new();
             for (channel, sensor, idx) in archive.pending_channels.drain(..) {
@@ -15031,7 +15076,7 @@ pub fn main_flow() {
                     None,
                     &archive.body_ephemerides,
                 ) {
-                    Some(osc) => fetched_oscillators.push(osc),
+                    Some(sample) => fetched_samples.push(sample),
                     None => still_pending.push((channel, sensor, idx)),
                 }
             }
@@ -15085,7 +15130,7 @@ pub fn main_flow() {
             for (channel, sensor) in &res.channels {
                 let track_origin = matches!(channel.position, Position::Source)
                     || matches!(channel.position, Position::StateVector { track: true, .. });
-                if let Some(osc) = anchor(
+                if let Some(sample) = anchor(
                     channel,
                     sensor,
                     src.ttl as f64,
@@ -15098,7 +15143,7 @@ pub fn main_flow() {
                     },
                     &archive.body_ephemerides,
                 ) {
-                    fetched_oscillators.push(osc);
+                    fetched_samples.push(sample);
                 } else {
                     let eph_missing = match &channel.position {
                         Position::Surface { body_name, .. }
@@ -15129,8 +15174,8 @@ pub fn main_flow() {
             }
         }
         archive.pending_channels.extend(dropped_channels);
-        while let Ok(oscs) = osc_rx.try_recv() {
-            fetched_oscillators.extend(oscs);
+        while let Ok(samples) = sample_rx.try_recv() {
+            fetched_samples.extend(samples);
         }
         while let Ok(samples) = sensor_rx.try_recv() {
             if !consent.load(Ordering::SeqCst) {
@@ -15184,7 +15229,7 @@ pub fn main_flow() {
                     name: fc.name.clone(),
                     value,
                 };
-                if let Some(osc) = anchor(
+                if let Some(sample) = anchor(
                     &channel,
                     &fc,
                     bs.ttl,
@@ -15193,7 +15238,7 @@ pub fn main_flow() {
                     None,
                     &archive.body_ephemerides,
                 ) {
-                    fetched_oscillators.push(osc);
+                    fetched_samples.push(sample);
                 }
             }
         }
@@ -15295,10 +15340,10 @@ pub fn main_flow() {
                     let hash = build_asteroid_hash(&bytes, cadence_c, src_ttl);
                     let occluders = build_occluder_set(&bytes);
                     eprintln!(
-                        "\r\x1b[Kcatalog_dastcom: {} records, cell_size {:.3e} m, vmax {:.1} m/s, okkluder {}",
+                        "\r\x1b[Kcatalog_dastcom: {} records, cell_size {:.3e} m, anchor_vmax {:.1} m/s, okkluder {}",
                         hash.records.len(),
                         hash.cell_size,
-                        hash.vmax,
+                        hash.anchor_vmax,
                         occluders.records.len()
                     );
                     let _ = ftx.send(FetchResult {
@@ -15379,7 +15424,7 @@ pub fn main_flow() {
                         }
                     };
                     let channels = build_netcdf_channels(&src_clone, &bytes, &lsk_c);
-                    eprintln!("\r\x1b[Knetcdf {}: {} oscillators", name, channels.len());
+                    eprintln!("\r\x1b[Knetcdf {}: {} samples", name, channels.len());
                     let _ = ftx.send(FetchResult {
                         source_idx: src_idx,
                         channels,
@@ -16102,14 +16147,14 @@ pub fn main_flow() {
                 .iter()
                 .map(|h| h.cells.values().map(|v| v.len()).sum::<usize>() + h.unbounded.len())
                 .sum();
-            let mut all: Vec<Oscillator> = Vec::with_capacity(
-                fetched_oscillators.len() + retained_estimate + archive.body_ephemerides.len() * 2,
+            let mut all: Vec<Sample> = Vec::with_capacity(
+                fetched_samples.len() + retained_estimate + archive.body_ephemerides.len() * 2,
             );
-            all.append(&mut fetched_oscillators);
+            all.append(&mut fetched_samples);
             for hash in hashes {
                 for v in hash.cells.values().chain(std::iter::once(&hash.unbounded)) {
                     for s in v {
-                        if matches!(s.source, OscillatorSource::Body) {
+                        if matches!(s.source, SampleSource::Body) {
                             continue;
                         }
                         if (now - s.epoch).abs() <= s.ttl * 64.0 {
@@ -16134,7 +16179,7 @@ pub fn main_flow() {
                             scale: 1.0,
                         };
                         for (channel, sensor) in body_channels(name, props, now) {
-                            if let Some(mut osc) = anchor(
+                            if let Some(mut sample) = anchor(
                                 &channel,
                                 &sensor,
                                 body_ttl,
@@ -16143,20 +16188,20 @@ pub fn main_flow() {
                                 None,
                                 &archive.body_ephemerides,
                             ) {
-                                osc.source = OscillatorSource::Body;
-                                all.push(osc);
+                                sample.source = SampleSource::Body;
+                                all.push(sample);
                             }
                         }
                     }
                 }
             }
-            if all.len() > MAX_OSCILLATORS {
-                let dropped = all.len() - MAX_OSCILLATORS;
+            if all.len() > MAX_SAMPLES {
+                let dropped = all.len() - MAX_SAMPLES;
                 all.sort_by(|a, b| b.epoch.total_cmp(&a.epoch));
-                all.truncate(MAX_OSCILLATORS);
+                all.truncate(MAX_SAMPLES);
                 eprintln!(
-                    "oscillator cap {} reached — {} dropped (newest kept)",
-                    MAX_OSCILLATORS, dropped
+                    "sample cap {} reached — {} dropped (newest kept)",
+                    MAX_SAMPLES, dropped
                 );
             }
             archive.field = Arc::new(build_buffer(

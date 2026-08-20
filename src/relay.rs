@@ -1,4 +1,4 @@
-use crate::archivar::OscRecord;
+use crate::archivar::SampleRecord;
 use crate::archivar::*;
 use std::collections::HashMap;
 use std::io::{Cursor, Read, Write};
@@ -12,7 +12,7 @@ struct WsConfig {
     index_html: Vec<u8>,
     constants_js: Vec<u8>,
     field_rx: mpsc::Receiver<Arc<Buffer>>,
-    osc_tx: mpsc::Sender<Vec<Oscillator>>,
+    sample_tx: mpsc::Sender<Vec<Sample>>,
     presence_tx: mpsc::Sender<(String, f64, f64, f64, f64, f64)>,
     time: Arc<Mutex<Option<LeapSeconds>>>,
     consent: Arc<AtomicBool>,
@@ -30,7 +30,7 @@ impl TcpRadiator {
         initial_field: Arc<Buffer>,
         index_html: Vec<u8>,
         constants_js: Vec<u8>,
-        osc_tx: mpsc::Sender<Vec<Oscillator>>,
+        sample_tx: mpsc::Sender<Vec<Sample>>,
         presence_tx: mpsc::Sender<(String, f64, f64, f64, f64, f64)>,
         time: Arc<Mutex<Option<LeapSeconds>>>,
         consent: Arc<AtomicBool>,
@@ -75,7 +75,7 @@ impl TcpRadiator {
                         index_html: index_html.clone(),
                         constants_js: constants_js.clone(),
                         field_rx: frx,
-                        osc_tx: osc_tx.clone(),
+                        sample_tx: sample_tx.clone(),
                         presence_tx: presence_tx.clone(),
                         time: time.clone(),
                         consent: consent.clone(),
@@ -216,25 +216,25 @@ fn handle_ingress(stream: TcpStream, cfg: WsConfig) {
                             })
                         };
                         let eph_map = buf.eph.clone();
-                        let mut station_sample: Option<Oscillator> = None;
+                        let mut station_sample: Option<Sample> = None;
                         for hash in buf.bodies.values().chain(std::iter::once(&buf.inertial)) {
                             for v in hash.cells.values().chain(std::iter::once(&hash.unbounded)) {
-                                for osc in v {
-                                    if matches!(osc.source, OscillatorSource::Sensor) {
+                                for sample in v {
+                                    if matches!(sample.source, SampleSource::Sensor) {
                                         let newer = match &station_sample {
-                                            Some(cur) => osc.epoch > cur.epoch,
+                                            Some(cur) => sample.epoch > cur.epoch,
                                             None => true,
                                         };
                                         if newer {
-                                            station_sample = Some(osc.clone());
+                                            station_sample = Some(sample.clone());
                                         }
                                     }
                                 }
                             }
                         }
-                        station_sample.and_then(|osc| {
-                            let p0 = osc.motion.at(now, osc.epoch, &eph_map)?;
-                            let p1 = osc.motion.at(now + 1.0, osc.epoch, &eph_map)?;
+                        station_sample.and_then(|sample| {
+                            let p0 = sample.motion.at(now, sample.epoch, &eph_map)?;
+                            let p1 = sample.motion.at(now + 1.0, sample.epoch, &eph_map)?;
                             Some((p0, [p1[0] - p0[0], p1[1] - p0[1], p1[2] - p0[2]]))
                         })
                     };
@@ -313,11 +313,11 @@ fn handle_ingress(stream: TcpStream, cfg: WsConfig) {
                         let mut src_ids: std::collections::HashSet<u32> =
                             std::collections::HashSet::new();
                         for v in hash.cells.values().chain(std::iter::once(&hash.unbounded)) {
-                            for osc in v {
+                            for sample in v {
                                 n += 1;
-                                field_names.insert(osc.name.as_str());
-                                match osc.source {
-                                    OscillatorSource::Source(id) => {
+                                field_names.insert(sample.name.as_str());
+                                match sample.source {
+                                    SampleSource::Source(id) => {
                                         src_ids.insert(id);
                                     }
                                     _ => {}
@@ -325,12 +325,12 @@ fn handle_ingress(stream: TcpStream, cfg: WsConfig) {
                             }
                         }
                         report.push_str(&format!(
-                            "{} samples={} cells={} unbounded={} vmax={:.3e} epoch_min={:.1} origins={}\n",
+                            "{} samples={} cells={} unbounded={} anchor_vmax={:.3e} epoch_min={:.1} origins={}\n",
                             fname,
                             n,
                             hash.cells.len(),
                             hash.unbounded.len(),
-                            hash.vmax,
+                            hash.anchor_vmax,
                             hash.epoch_min,
                             src_ids.len()
                         ));
@@ -415,11 +415,11 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
             if cursor.read_exact(&mut buf4).is_err() {
                 continue;
             }
-            let oscillator_count = u32::from_le_bytes(buf4) as usize;
+            let sample_count = u32::from_le_bytes(buf4) as usize;
 
-            let mut browser: Vec<(String, f64, f64)> = Vec::with_capacity(oscillator_count);
+            let mut browser: Vec<(String, f64, f64)> = Vec::with_capacity(sample_count);
             {
-                for _ in 0..oscillator_count {
+                for _ in 0..sample_count {
                     let mut val_buf = [0u8; 8];
                     if cursor.read_exact(&mut val_buf).is_err() {
                         break;
@@ -599,16 +599,16 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                             }
                         }
                     }
-                    let mut oscillators = Vec::new();
+                    let mut samples = Vec::new();
                     for (channel, sensor, sensor_ttl) in channels {
-                        if let Some(osc) =
+                        if let Some(sample) =
                             anchor(&channel, &sensor, sensor_ttl, None, None, None, &eph_map)
                         {
-                            oscillators.push(osc);
+                            samples.push(sample);
                         }
                     }
-                    if !oscillators.is_empty() && cfg.consent.load(Ordering::SeqCst) {
-                        let _ = cfg.osc_tx.send(oscillators);
+                    if !samples.is_empty() && cfg.consent.load(Ordering::SeqCst) {
+                        let _ = cfg.sample_tx.send(samples);
                     }
                 }
             } else if let Some(body_id) = st_body {
@@ -658,9 +658,9 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                         }
                     }
                 }
-                let mut oscillators = Vec::new();
+                let mut samples = Vec::new();
                 for (channel, sensor, sensor_ttl) in channels {
-                    if let Some(osc) = anchor(
+                    if let Some(sample) = anchor(
                         &channel,
                         &sensor,
                         sensor_ttl,
@@ -669,14 +669,14 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                         None,
                         &eph_map,
                     ) {
-                        oscillators.push(osc);
+                        samples.push(sample);
                     }
                 }
-                if !oscillators.is_empty() {
-                    let _ = cfg.osc_tx.send(oscillators);
+                if !samples.is_empty() {
+                    let _ = cfg.sample_tx.send(samples);
                 }
             }
-            let mut records: Vec<OscRecord> = Vec::new();
+            let mut records: Vec<SampleRecord> = Vec::new();
             let response_epoch;
             if !queries.is_empty() {
                 let (t0, x0, y0, z0) = queries[0];
