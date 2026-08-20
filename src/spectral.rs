@@ -120,6 +120,99 @@ pub fn month_middle_unix(year: u32, month: u32) -> Option<f64> {
     Some(days as f64 * 86400.0 + days_in_month(year, month) as f64 * 43200.0)
 }
 
+pub const COLOR_LUT_LEN: usize = 256;
+
+const COLOR_LOCUS: [(f64, f64); 31] = [
+    (-0.120, 10700.0),
+    (-0.037, 9700.0),
+    (0.005, 9300.0),
+    (0.068, 8800.0),
+    (0.110, 8600.0),
+    (0.194, 8100.0),
+    (0.320, 7590.0),
+    (0.377, 7220.0),
+    (0.490, 6820.0),
+    (0.587, 6550.0),
+    (0.694, 6180.0),
+    (0.784, 5930.0),
+    (0.823, 5770.0),
+    (0.850, 5660.0),
+    (0.900, 5480.0),
+    (0.983, 5270.0),
+    (1.100, 5100.0),
+    (1.340, 4600.0),
+    (1.530, 4300.0),
+    (1.730, 3990.0),
+    (1.840, 3850.0),
+    (2.090, 3660.0),
+    (2.230, 3560.0),
+    (2.500, 3430.0),
+    (2.940, 3210.0),
+    (3.350, 3060.0),
+    (3.710, 2930.0),
+    (4.160, 2810.0),
+    (4.650, 2680.0),
+    (4.860, 2570.0),
+    (5.100, 2420.0),
+];
+
+fn bp_rp_to_teff(ci: f64) -> f64 {
+    if ci <= COLOR_LOCUS[0].0 {
+        return COLOR_LOCUS[0].1;
+    }
+    for i in 1..COLOR_LOCUS.len() {
+        let b = COLOR_LOCUS[i];
+        if ci <= b.0 {
+            let a = COLOR_LOCUS[i - 1];
+            let t = (ci - a.0) / (b.0 - a.0).max(1e-6);
+            return a.1 + t * (b.1 - a.1);
+        }
+    }
+    COLOR_LOCUS[COLOR_LOCUS.len() - 1].1
+}
+
+fn teff_to_rgb(teff: f64) -> [f64; 3] {
+    let t = teff.clamp(1000.0, 40000.0) / 100.0;
+    let (r, g) = if t <= 66.0 {
+        (255.0, 99.4708025861 * t.ln() - 161.1195681661)
+    } else {
+        (
+            329.698727446 * (t - 60.0).powf(-0.1332047592),
+            288.1221695283 * (t - 60.0).powf(-0.0755148492),
+        )
+    };
+    let b = if t >= 66.0 {
+        255.0
+    } else if t <= 19.0 {
+        0.0
+    } else {
+        138.5177312231 * (t - 10.0).ln() - 305.0447927307
+    };
+    [
+        r.clamp(0.0, 255.0) / 255.0,
+        g.clamp(0.0, 255.0) / 255.0,
+        b.clamp(0.0, 255.0) / 255.0,
+    ]
+}
+
+pub fn color_lut_rgba() -> [[f32; 4]; COLOR_LUT_LEN] {
+    let lo = COLOR_LOCUS[0].0;
+    let hi = COLOR_LOCUS[COLOR_LOCUS.len() - 1].0;
+    let mut lut = [[0.0; 4]; COLOR_LUT_LEN];
+    for (i, e) in lut.iter_mut().enumerate() {
+        let ci = if i == 0 {
+            lo
+        } else if i == COLOR_LUT_LEN - 1 {
+            hi
+        } else {
+            lo + (i as f64 + 0.5) * (hi - lo) / COLOR_LUT_LEN as f64
+        };
+        let rgb = teff_to_rgb(bp_rp_to_teff(ci));
+        *e = [rgb[0] as f32, rgb[1] as f32, rgb[2] as f32, 1.0];
+    }
+    lut
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -190,5 +283,39 @@ mod tests {
         assert_eq!(unix, 1781568000.0);
         assert!(month_middle_unix(1969, 12).is_none());
         assert!(month_middle_unix(2026, 13).is_none());
+    }
+
+    #[test]
+    fn color_lut_entries_finite_in_unit_range() {
+        let lut = color_lut_rgba();
+        assert_eq!(lut.len(), COLOR_LUT_LEN);
+        for e in lut {
+            for v in e {
+                assert!(v.is_finite(), "LUT entry non-finite: {e:?}");
+            }
+            assert!(e[3] == 1.0);
+            for v in &e[..3] {
+                assert!(*v >= 0.0 && *v <= 1.0, "RGB outside unit range: {e:?}");
+            }
+        }
+    }
+
+    #[test]
+    fn color_lut_ends_match_locus_clamps() {
+        let lut = color_lut_rgba();
+        let first = teff_to_rgb(bp_rp_to_teff(COLOR_LOCUS[0].0));
+        let last = teff_to_rgb(bp_rp_to_teff(COLOR_LOCUS[COLOR_LOCUS.len() - 1].0));
+        for (i, v) in first.iter().enumerate() {
+            assert!(
+                ((lut[0][i] as f64) - v).abs() < 1e-6,
+                "first entry mismatch"
+            );
+        }
+        for (i, v) in last.iter().enumerate() {
+            assert!(
+                ((lut[255][i] as f64) - v).abs() < 1e-6,
+                "last entry mismatch"
+            );
+        }
     }
 }

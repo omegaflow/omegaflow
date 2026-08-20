@@ -50,6 +50,14 @@ fn fold_eff(d_mag: f32, raw: f32, t: f32, ttl: f32, force_type: u32, advective_v
 @group(0) @binding(6) var<storage, read_write> tiles: array<u32>;
 @group(0) @binding(7) var<storage, read> stars: array<vec4f>;
 @group(0) @binding(8) var<storage, read_write> star_tiles: array<atomic<u32>>;
+@group(0) @binding(9) var color_lut: texture_2d<f32>;
+@group(0) @binding(12) var color_lut_samp: sampler;
+
+fn color_lut_rgb(ci: f32) -> vec3f {
+    let u = clamp((ci - (-0.120)) / (5.100 - (-0.120)), 0.0, 1.0);
+    let col = textureSampleLevel(color_lut, color_lut_samp, vec2f(u, 0.5), 0.0).rgb;
+    return select(col, vec3f(1.0), ci == 0.0);
+}
 
 fn occlusion(dhat: vec3f, d: f32, ft: u32, n: u32) -> f32 {
     if (OPACITY[ft] <= 0.0 || n == 0u) {
@@ -137,79 +145,6 @@ fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
     else if (hp < 5.0) { rgb01 = vec3f(x, 0.0, c); }
     else { rgb01 = vec3f(c, 0.0, x); }
     return rgb01 + vec3f(m);
-}
-
-fn bp_rp_to_teff(ci: f32) -> f32 {
-    const locus: array<vec2f, 31> = array<vec2f, 31>(
-        vec2f(-0.120, 10700.0),
-        vec2f(-0.037, 9700.0),
-        vec2f(0.005, 9300.0),
-        vec2f(0.068, 8800.0),
-        vec2f(0.110, 8600.0),
-        vec2f(0.194, 8100.0),
-        vec2f(0.320, 7590.0),
-        vec2f(0.377, 7220.0),
-        vec2f(0.490, 6820.0),
-        vec2f(0.587, 6550.0),
-        vec2f(0.694, 6180.0),
-        vec2f(0.784, 5930.0),
-        vec2f(0.823, 5770.0),
-        vec2f(0.850, 5660.0),
-        vec2f(0.900, 5480.0),
-        vec2f(0.983, 5270.0),
-        vec2f(1.100, 5100.0),
-        vec2f(1.340, 4600.0),
-        vec2f(1.530, 4300.0),
-        vec2f(1.730, 3990.0),
-        vec2f(1.840, 3850.0),
-        vec2f(2.090, 3660.0),
-        vec2f(2.230, 3560.0),
-        vec2f(2.500, 3430.0),
-        vec2f(2.940, 3210.0),
-        vec2f(3.350, 3060.0),
-        vec2f(3.710, 2930.0),
-        vec2f(4.160, 2810.0),
-        vec2f(4.650, 2680.0),
-        vec2f(4.860, 2570.0),
-        vec2f(5.100, 2420.0),
-    );
-    if (ci <= locus[0].x) { return locus[0].y; }
-    for (var i = 1u; i < 31u; i = i + 1u) {
-        let b = locus[i];
-        if (ci <= b.x) {
-            let a = locus[i - 1u];
-            let t = (ci - a.x) / max(b.x - a.x, 1e-6);
-            return mix(a.y, b.y, t);
-        }
-    }
-    return locus[30].y;
-}
-
-fn teff_to_rgb(teff: f32) -> vec3f {
-    let t = clamp(teff, 1000.0, 40000.0) / 100.0;
-    var r = 255.0;
-    var g = 255.0;
-    var b = 255.0;
-    if (t <= 66.0) {
-        r = 255.0;
-        g = 99.4708025861 * log(t) - 161.1195681661;
-    } else {
-        r = 329.698727446 * pow(t - 60.0, -0.1332047592);
-        g = 288.1221695283 * pow(t - 60.0, -0.0755148492);
-    }
-    if (t >= 66.0) {
-        b = 255.0;
-    } else if (t <= 19.0) {
-        b = 0.0;
-    } else {
-        b = 138.5177312231 * log(t - 10.0) - 305.0447927307;
-    }
-    return vec3f(clamp(r, 0.0, 255.0), clamp(g, 0.0, 255.0), clamp(b, 0.0, 255.0)) / 255.0;
-}
-
-fn temperature_to_rgb(ci: f32) -> vec3f {
-    if (ci == 0.0) { return vec3f(1.0, 1.0, 1.0); }
-    return teff_to_rgb(bp_rp_to_teff(ci));
 }
 
 fn erfc(x: f32) -> f32 {
@@ -684,7 +619,7 @@ fn star_cull(@builtin(global_invocation_id) gid: vec3u) {
             if (f < 9u) {
                 omega[f] += c.x;
                 let lum = lum_ratio(abs(c.x), ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, f));
-                if (f == 0u) { rgb += temperature_to_rgb(c.z) * lum; }
+                if (f == 0u) { rgb += color_lut_rgb(c.z) * lum; }
                 else { rgb += hsl_to_rgb(fract(log2(max(c.w, 1.0)) / 16.0), 1.0, 0.5) * lum; }
             }
         }
@@ -701,7 +636,7 @@ fn star_cull(@builtin(global_invocation_id) gid: vec3u) {
             if (f < 9u) {
                 omega[f] += c.x;
                 let lum = lum_ratio(abs(c.x), ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, f));
-                if (f == 0u) { rgb += temperature_to_rgb(c.z) * lum; }
+                if (f == 0u) { rgb += color_lut_rgb(c.z) * lum; }
                 else { rgb += hsl_to_rgb(fract(log2(max(c.w, 1.0)) / 16.0), 1.0, 0.5) * lum; }
             }
         }
@@ -714,7 +649,7 @@ fn star_cull(@builtin(global_invocation_id) gid: vec3u) {
             let c = star_contrib(s, px_ndc, py_ndc);
             let lum = lum_ratio(abs(c.x), ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, 0u));
             omega[0] += c.x;
-            rgb += temperature_to_rgb(c.z) * lum;
+            rgb += color_lut_rgb(c.z) * lum;
         }
     } else {
         let num_tiles_x = u32(ceil(w / f32(TILE_PX)));
@@ -727,7 +662,7 @@ fn star_cull(@builtin(global_invocation_id) gid: vec3u) {
             let c = star_contrib(atomicLoad(&star_tiles[1u + nt + tbase + k]), px_ndc, py_ndc);
             let lum = lum_ratio(abs(c.x), ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, 0u));
             omega[0] += c.x;
-            rgb += temperature_to_rgb(c.z) * lum;
+            rgb += color_lut_rgb(c.z) * lum;
         }
     }
 
@@ -1820,6 +1755,8 @@ struct NativeApp {
     prep_param_buf: Option<wgpu::Buffer>,
     tiles_buf: Option<wgpu::Buffer>,
     star_tiles_buf: Option<wgpu::Buffer>,
+    color_lut_view: Option<wgpu::TextureView>,
+    color_lut_sampler: Option<wgpu::Sampler>,
     field_cap: u32,
     tile_cap: u32,
     cull_n: u32,
@@ -2019,6 +1956,8 @@ impl NativeApp {
             hud_tex: None,
             hud_view: None,
             hud_sampler: None,
+            color_lut_view: None,
+            color_lut_sampler: None,
             hud_pipe: None,
             hud_layout: None,
             hud_bind: None,
@@ -2487,6 +2426,12 @@ impl NativeApp {
         let Some(star_tiles_buf) = self.star_tiles_buf.clone() else {
             return;
         };
+        let Some(color_lut_view) = self.color_lut_view.clone() else {
+            return;
+        };
+        let Some(color_lut_sampler) = self.color_lut_sampler.clone() else {
+            return;
+        };
         for sel in 0..2 {
             let Some(field_buf) = self.field_bufs[sel].clone() else {
                 continue;
@@ -2571,6 +2516,14 @@ impl NativeApp {
                     wgpu::BindGroupEntry {
                         binding: 8,
                         resource: star_tiles_buf.as_entire_binding(),
+                    },
+                    wgpu::BindGroupEntry {
+                        binding: 9,
+                        resource: wgpu::BindingResource::TextureView(&color_lut_view),
+                    },
+                    wgpu::BindGroupEntry {
+                        binding: 12,
+                        resource: wgpu::BindingResource::Sampler(&color_lut_sampler),
                     },
                 ],
             }));
@@ -2984,6 +2937,22 @@ impl NativeApp {
                     e.binding = 8;
                     e
                 },
+                wgpu::BindGroupLayoutEntry {
+                    binding: 9,
+                    visibility: wgpu::ShaderStages::FRAGMENT,
+                    ty: wgpu::BindingType::Texture {
+                        sample_type: wgpu::TextureSampleType::Float { filterable: false },
+                        view_dimension: wgpu::TextureViewDimension::D2,
+                        multisampled: false,
+                    },
+                    count: None,
+                },
+                wgpu::BindGroupLayoutEntry {
+                    binding: 12,
+                    visibility: wgpu::ShaderStages::FRAGMENT,
+                    ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::NonFiltering),
+                    count: None,
+                },
             ],
         });
         let probe_pipe_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
@@ -2996,7 +2965,45 @@ impl NativeApp {
             bind_group_layouts: &[&render_layout],
             push_constant_ranges: &[],
         });
-        eprintln!("pipe probe");
+        let render_pipe = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+            label: None,
+            layout: Some(&render_pipe_layout),
+            vertex: wgpu::VertexState {
+                module: &module,
+                entry_point: Some("vs"),
+                compilation_options: Default::default(),
+                buffers: &[],
+            },
+            fragment: Some(wgpu::FragmentState {
+                module: &module,
+                entry_point: Some("fs"),
+                compilation_options: Default::default(),
+                targets: &[Some(wgpu::ColorTargetState {
+                    format,
+                    blend: Some(wgpu::BlendState {
+                        color: wgpu::BlendComponent {
+                            src_factor: wgpu::BlendFactor::One,
+                            dst_factor: wgpu::BlendFactor::One,
+                            operation: wgpu::BlendOperation::Add,
+                        },
+                        alpha: wgpu::BlendComponent {
+                            src_factor: wgpu::BlendFactor::One,
+                            dst_factor: wgpu::BlendFactor::One,
+                            operation: wgpu::BlendOperation::Add,
+                        },
+                    }),
+                    write_mask: wgpu::ColorWrites::ALL,
+                })],
+            }),
+            primitive: wgpu::PrimitiveState {
+                topology: wgpu::PrimitiveTopology::TriangleList,
+                ..Default::default()
+            },
+            depth_stencil: None,
+            multisample: wgpu::MultisampleState::default(),
+            multiview: None,
+            cache: None,
+        });
         let probe_pipe = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
             label: None,
             layout: Some(&probe_pipe_layout),
@@ -3005,7 +3012,6 @@ impl NativeApp {
             compilation_options: Default::default(),
             cache: None,
         });
-        eprintln!("pipe cull");
         let cull_pipe = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
             label: None,
             layout: Some(&probe_pipe_layout),
@@ -3014,7 +3020,6 @@ impl NativeApp {
             compilation_options: Default::default(),
             cache: None,
         });
-        eprintln!("pipe star_cull");
         let star_cull_pipe = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
             label: None,
             layout: Some(&probe_pipe_layout),
@@ -3033,6 +3038,53 @@ impl NativeApp {
             mipmap_filter: wgpu::FilterMode::Nearest,
             ..Default::default()
         });
+        let color_lut_tex = device.create_texture(&wgpu::TextureDescriptor {
+            label: None,
+            size: wgpu::Extent3d {
+                width: crate::spectral::COLOR_LUT_LEN as u32,
+                height: 1,
+                depth_or_array_layers: 1,
+            },
+            mip_level_count: 1,
+            sample_count: 1,
+            dimension: wgpu::TextureDimension::D2,
+            format: wgpu::TextureFormat::Rgba32Float,
+            usage: wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_DST,
+            view_formats: &[],
+        });
+        let mut lut_bytes = Vec::with_capacity(crate::spectral::COLOR_LUT_LEN * 16);
+        for e in crate::spectral::color_lut_rgba() {
+            for v in e {
+                lut_bytes.extend_from_slice(&v.to_le_bytes());
+            }
+        }
+        queue.write_texture(
+            wgpu::TexelCopyTextureInfo {
+                texture: &color_lut_tex,
+                mip_level: 0,
+                origin: wgpu::Origin3d::ZERO,
+                aspect: wgpu::TextureAspect::All,
+            },
+            &lut_bytes,
+            wgpu::TexelCopyBufferLayout {
+                offset: 0,
+                bytes_per_row: Some((crate::spectral::COLOR_LUT_LEN * 16) as u32),
+                rows_per_image: None,
+            },
+            wgpu::Extent3d {
+                width: crate::spectral::COLOR_LUT_LEN as u32,
+                height: 1,
+                depth_or_array_layers: 1,
+            },
+        );
+        self.color_lut_view =
+            Some(color_lut_tex.create_view(&wgpu::TextureViewDescriptor::default()));
+        self.color_lut_sampler = Some(device.create_sampler(&wgpu::SamplerDescriptor {
+            label: None,
+            mag_filter: wgpu::FilterMode::Nearest,
+            min_filter: wgpu::FilterMode::Nearest,
+            ..Default::default()
+        }));
         let hud_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
             label: None,
             entries: &[
@@ -3069,7 +3121,6 @@ impl NativeApp {
             bind_group_layouts: &[&hud_layout],
             push_constant_ranges: &[],
         });
-        eprintln!("pipe hud");
         let hud_pipe = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
             label: None,
             layout: Some(&hud_pipe_layout),
@@ -3082,46 +3133,6 @@ impl NativeApp {
             fragment: Some(wgpu::FragmentState {
                 module: &module,
                 entry_point: Some("hud_fs"),
-                compilation_options: Default::default(),
-                targets: &[Some(wgpu::ColorTargetState {
-                    format,
-                    blend: Some(wgpu::BlendState {
-                        color: wgpu::BlendComponent {
-                            src_factor: wgpu::BlendFactor::One,
-                            dst_factor: wgpu::BlendFactor::One,
-                            operation: wgpu::BlendOperation::Add,
-                        },
-                        alpha: wgpu::BlendComponent {
-                            src_factor: wgpu::BlendFactor::One,
-                            dst_factor: wgpu::BlendFactor::One,
-                            operation: wgpu::BlendOperation::Add,
-                        },
-                    }),
-                    write_mask: wgpu::ColorWrites::ALL,
-                })],
-            }),
-            primitive: wgpu::PrimitiveState {
-                topology: wgpu::PrimitiveTopology::TriangleList,
-                ..Default::default()
-            },
-            depth_stencil: None,
-            multisample: wgpu::MultisampleState::default(),
-            multiview: None,
-            cache: None,
-        });
-        eprintln!("pipe render");
-        let render_pipe = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
-            label: None,
-            layout: Some(&render_pipe_layout),
-            vertex: wgpu::VertexState {
-                module: &module,
-                entry_point: Some("vs"),
-                compilation_options: Default::default(),
-                buffers: &[],
-            },
-            fragment: Some(wgpu::FragmentState {
-                module: &module,
-                entry_point: Some("fs"),
                 compilation_options: Default::default(),
                 targets: &[Some(wgpu::ColorTargetState {
                     format,
