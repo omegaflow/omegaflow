@@ -1,6 +1,6 @@
 use crate::archivar::{
     body_barycenter_position, sense_deep, sense_membrane, star_position_at, system_now, Buffer,
-    CurveSet, LeapSeconds, PlanetRec, PlanetSet, Radiator, SampleRecord, StarHash, J2000_EPOCH,
+    CurveSet, LeapSeconds, PlanetRec, PlanetSet, Radiator, SampleRecord, StarRec, J2000_EPOCH,
     PARSEC_M,
 };
 use crate::dastcom::AsteroidRec;
@@ -252,8 +252,6 @@ fn osc_field(j: u32, rel: vec3f, pre: vec4f) -> vec2f {
     let tm = field[j * 3u + 1u];
     let fm = field[j * 3u + 2u];
     let mt = props[j * 4u];
-    let mp = props[j * 4u + 1u];
-    let mg = props[j * 4u + 2u];
     let delta = pre.xyz - rel;
     let d2 = dot(delta, delta);
     let d_mag = sqrt(d2);
@@ -269,16 +267,6 @@ fn osc_field(j: u32, rel: vec3f, pre: vec4f) -> vec2f {
         val_eff = val_eff / (z1 * z1 * z1 * z1);
     }
     var sk = field_spatial(t2, t_mag, mt.x, kid, vp.surface.w, f32(tm.w));
-    if ((kid == 0u || kid == 6u) && ft == 1u) {
-        let dhat = delta / max(d_mag, 1e-9);
-        let cos_t = clamp(dot(dhat, mp.xyz), -1.0, 1.0);
-        let p2 = (3.0 * cos_t * cos_t - 1.0) * 0.5;
-        let p4 = (35.0 * cos_t * cos_t * cos_t * cos_t - 30.0 * cos_t * cos_t + 3.0) * 0.125;
-        let rd = mg.y / max(d_mag, 1.0);
-        if (rd < 1.0) {
-            sk *= 1.0 - mp.w * rd * rd * p2 - mg.x * rd * rd * rd * rd * p4;
-        }
-    }
     return vec2f(val_eff * sk, f32(ft));
 }
 
@@ -286,8 +274,6 @@ fn osc_flow(j: u32, pre: vec4f) -> vec3f {
     let tm = field[j * 3u + 1u];
     let fm = field[j * 3u + 2u];
     let mt = props[j * 4u];
-    let mp = props[j * 4u + 1u];
-    let mg = props[j * 4u + 2u];
     let delta = pre.xyz;
     let d2 = dot(delta, delta);
     let d_mag = sqrt(d2);
@@ -301,21 +287,6 @@ fn osc_flow(j: u32, pre: vec4f) -> vec3f {
     let dhat = delta / max(d_mag, 1e-9);
 
     var g = -dhat * (vp_grad * k + val_eff * kp);
-    if ((kid == 0u || kid == 6u) && ft == 1u) {
-        let cos_t = clamp(dot(dhat, mp.xyz), -1.0, 1.0);
-        let rd = mg.y / max(d_mag, 1.0);
-        if (rd < 1.0) {
-            let p2 = (3.0 * cos_t * cos_t - 1.0) * 0.5;
-            let p4 = (35.0 * cos_t * cos_t * cos_t * cos_t - 30.0 * cos_t * cos_t + 3.0) * 0.125;
-            let p2p = 3.0 * cos_t;
-            let p4p = (35.0 * cos_t * cos_t * cos_t - 15.0 * cos_t) * 0.5;
-            let g_corr = 1.0 - mp.w * rd * rd * p2 - mg.x * rd * rd * rd * rd * p4;
-            let g_d = (2.0 * mp.w * rd * rd * p2 + 4.0 * mg.x * rd * rd * rd * rd * p4) / max(d_mag, 1e-9);
-            let g_c = -mp.w * rd * rd * p2p - mg.x * rd * rd * rd * rd * p4p;
-            g = g - dhat * ((vp_grad * k + val_eff * kp) * (g_corr - 1.0) + val_eff * k * g_d);
-            g = g - (val_eff * k * g_c) * (mp.xyz - cos_t * dhat) / max(d_mag, 1e-9);
-        }
-    }
     return g;
 }
 
@@ -389,8 +360,6 @@ fn source_bound(j: u32, x0: f32, x1: f32, y0: f32, y1: f32) -> f32 {
     let tm = field[j * 3u + 1u];
     let fm = field[j * 3u + 2u];
     let mt = props[j * 4u];
-    let mp = props[j * 4u + 1u];
-    let mg = props[j * 4u + 2u];
     let p = pp[u32(vp.surface.z) + j];
     let sx = dot(pre.xyz, vp.right.xyz);
     let sy = dot(pre.xyz, vp.up.xyz);
@@ -418,12 +387,6 @@ fn source_bound(j: u32, x0: f32, x1: f32, y0: f32, y1: f32) -> f32 {
         bound = abs(val) / (t2min + e2);
     } else {
         var sk = field_spatial(t2min, tmin, mt.x, kid, vp.surface.w, f32(tm.w));
-        if ((kid == 0u || kid == 6u) && ft == 1u) {
-            let rd = mg.y / max(dmin, 1.0);
-            if (rd < 1.0) {
-                sk = sk * (1.0 + abs(mp.w) * rd * rd + abs(mg.x) * rd * rd * rd * rd);
-            }
-        }
         bound = abs(val) * sk;
     }
     return bound;
@@ -491,7 +454,6 @@ fn source_contrib(j: u32, pixel_rel: vec3f) -> vec4f {
     let tm = field[j * 3u + 1u];
     let fm = field[j * 3u + 2u];
     let mt = props[j * 4u];
-    let mp = props[j * 4u + 1u];
     let mg = props[j * 4u + 2u];
     let delta = pre.xyz - pixel_rel;
     let sd = dot(pre.xyz, vp.forward.xyz);
@@ -522,16 +484,6 @@ fn source_contrib(j: u32, pixel_rel: vec3f) -> vec4f {
         val = val / (z1 * z1 * z1 * z1);
     }
     var sk = field_spatial(t2, t_mag, mt.x, kid, vp.surface.w, f32(tm.w));
-    if ((kid == 0u || kid == 6u) && ft == 1u) {
-        let dhat = delta / max(d_mag, 1e-9);
-        let cos_t = clamp(dot(dhat, mp.xyz), -1.0, 1.0);
-        let p2 = (3.0 * cos_t * cos_t - 1.0) * 0.5;
-        let p4 = (35.0 * cos_t * cos_t * cos_t * cos_t - 30.0 * cos_t * cos_t + 3.0) * 0.125;
-        let rd2 = mg.y * mg.y / max(d2, 1.0);
-        if (rd2 < 1.0) {
-            sk *= 1.0 - mp.w * rd2 * p2 - mg.x * rd2 * rd2 * p4;
-        }
-    }
     var contrib = val * sk;
     return vec4f(contrib, f32(ft), mg.z, mt.y);
 }
@@ -1105,12 +1057,12 @@ fn disc_intersection_fraction(d: f64, rp: f64, rs: f64) -> f64 {
 fn transit_factors(
     pset: &PlanetSet,
     index: &mut Option<TransitIndex>,
-    stars: &StarHash,
+    stars: &[StarRec],
     center: [f64; 3],
     t: f64,
 ) -> HashMap<usize, f64> {
     let mut out: HashMap<usize, f64> = HashMap::new();
-    if pset.records.is_empty() || stars.records.is_empty() {
+    if pset.records.is_empty() || stars.is_empty() {
         return out;
     }
     let rebuild = match index.as_ref() {
@@ -1124,7 +1076,7 @@ fn transit_factors(
     };
     if rebuild {
         let mut cells: HashMap<(i32, i32), Vec<u32>> = HashMap::new();
-        for (si, rec) in stars.records.iter().enumerate() {
+        for (si, rec) in stars.iter().enumerate() {
             let (p, _) = star_position_at(rec, t);
             let cb = [p[0] - center[0], p[1] - center[1], p[2] - center[2]];
             let d = (cb[0] * cb[0] + cb[1] * cb[1] + cb[2] * cb[2]).sqrt();
@@ -1162,7 +1114,7 @@ fn transit_factors(
                     continue;
                 };
                 for &si in ids {
-                    let rec = &stars.records[si as usize];
+                    let rec = &stars[si as usize];
                     let (p, vel) = star_position_at(rec, t);
                     let dt_cat = t - CATALOG_EPOCH_SECS;
                     let h = [
@@ -1495,8 +1447,9 @@ impl MathematikerinRadiator {
                 }
                 let packed = pack_window(&records, center);
                 let mut transit_factors_map: HashMap<usize, f64> = HashMap::new();
-                if let (Some(pset), Some(sh)) = (&field.planets, &field.stars) {
-                    transit_factors_map = transit_factors(pset, &mut transit_index, sh, center, t);
+                if let Some(pset) = &field.planets {
+                    transit_factors_map =
+                        transit_factors(pset, &mut transit_index, &field.star_records, center, t);
                 }
                 let mut deep: Vec<[f64; 10]> = Vec::new();
                 sense_deep(

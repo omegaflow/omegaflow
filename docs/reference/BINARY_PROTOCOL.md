@@ -34,12 +34,12 @@ Header total: 19 bytes.
 | 12 | vx | oscillator velocity X (m/s) |
 | 13 | vy | oscillator velocity Y (m/s) |
 | 14 | vz | oscillator velocity Z (m/s) |
-| 15 | pole_x | body pole axis X (ICRS unit vector, 0 = absent); for em sources (force_type 0) carries the redshift z — packed into `meta[3]` (`props[j*4].w`) and applied as Tolman dimming (1+z)⁻⁴ |
-| 16 | pole_y | body pole axis Y |
-| 17 | pole_z | body pole axis Z |
-| 18 | j2 | zonal harmonic J2 (0 = absent) |
-| 19 | j4 | zonal harmonic J4 (0 = absent) |
-| 20 | r_eq | equatorial radius (meters, 0 = absent) |
+| 15 | pole_x | pad (Atom 7: always 0.0 for gravity — the form belongs to the anchor, not the measurement; 0 honored); for em sources (force_type 0) carries the redshift z — packed into `meta[3]` (`props[j*4].w`) and applied as Tolman dimming (1+z)⁻⁴ |
+| 16 | pole_y | pad (always 0.0 — Atom 7) |
+| 17 | pole_z | pad (always 0.0 — Atom 7) |
+| 18 | j2 | pad (always 0.0 — Atom 7: no multipole moments on the wire) |
+| 19 | j4 | pad (always 0.0 — Atom 7) |
+| 20 | r_eq | pad (always 0.0 — Atom 7) |
 | 21 | color_index | unified BP−RP color (0 = absent → white, 0 honored) |
 | 22 | freq | band center (Hz, linear). 0.0 = point source — the one-bin limit; absent frequency is a fully realized property, never fabricated |
 | 23 | bin_width | band width (Hz, linear). 0.0 = point source |

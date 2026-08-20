@@ -40,7 +40,7 @@ Three reasons for "no value" are fundamentally different and never collapse:
 Every value answers four gates:
 (a) Is it a value? (b) Is it a plausible value? (c) Are format and unit correct (SI)? (d) Is a value mandatory? — fehlt + mandatory → record skipped.
 
-IEEE rules: plausibility is a positive test — `v.is_finite() && v > 0.0` → Some, else None. NaN slips through negative tests; Inf is not NaN; after every division/exp/sqrt the result is checked. NaN is never a data marker (Option instead); a 0-sentinel for absent is allowed only where 0 is physically impossible (parallax, distance). No `unwrap_or(0.0)` for physical values. The fixed-stride wire (24 × f64) carries 0.0 as pad — the truth lives at the write/read sites: what is absent is never written as 0.0 where 0 is a real value (color_index, pole_x/z, j2, freq, bin_width).
+IEEE rules: plausibility is a positive test — `v.is_finite() && v > 0.0` → Some, else None. NaN slips through negative tests; Inf is not NaN; after every division/exp/sqrt the result is checked. NaN is never a data marker (Option instead); a 0-sentinel for absent is allowed only where 0 is physically impossible (parallax, distance). No `unwrap_or(0.0)` for physical values. The fixed-stride wire (24 × f64) carries 0.0 as pad — the truth lives at the write/read sites: what is absent is never written as 0.0 where 0 is a real value (color_index, pole_x/z, freq, bin_width). Since Atom 7 the form slots `pole_x/y/z, j2, j4, r_eq` are pad for gravity (force_type 1) — the form belongs to the anchor, not the measurement; the field carries no oblateness.
 
 ### All beings equal
 

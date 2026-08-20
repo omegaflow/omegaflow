@@ -216,7 +216,12 @@ Schnittmenge leer, im Protokoll fehlt.
   Reichweite des Ankers, keine Form; die Okklusion (Radius-Barrieren,
   mathematikerin.rs, aus den Ephemeriden-Props) bleibt und trägt den
   Radius weiter über die Anker-Seite. Offen (späteres Atom): die
-  Okklusion stirbt zugunsten der Feld-Absorption.
+  Okklusion stirbt zugunsten der Feld-Absorption. Gates: cargo check
+  0/0 (vier Feature-Kombinationen), cargo test 165/165 lib + alle
+  Bins, naga-Validierung grün. Der Schnitt landete in zwei Commits:
+  die Rust-Hälfte (archivar.rs: query_hash, gravity_manifest,
+  body_channels) trug der vorangegangene Commit (benannt „Atom 6",
+  8f57a25) — der WGSL-/Register-Schluss folgt separat.
 
 ## Die Sphären des Unsichtbaren
 

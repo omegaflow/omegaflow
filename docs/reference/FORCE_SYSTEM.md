@@ -80,9 +80,13 @@ Takt gegen das n-body-Wahre).
 
 ## Body Channels
 
-`body_channels()` emits exactly two channels:
-- `{body}.radius` — val = radius_m, kernel 0, gravity, τ = ∞
+`body_channels()` emits exactly one channel:
 - `{body}.mass` — val = gm, kernel 0, gravity, τ = ∞ (only when gm measured)
 
-Rotation (erfc) and gi_sq channels were killed — NaN singularity at the source center
-and a val=1.0 fabrication.
+The `{body}.radius` channel died in Atom 7 — the form belongs to the anchor,
+not the measurement. A planet is only its mass (GM). Gravity renders as a pure
+field law (no multipole moments); the wire slots pole/j2/j4/r_eq carry 0.0 for
+force_type 1 (0 honored). The occlusion still reads the radius from the
+ephemeris barriers (anchor side) — a later atom replaces it with field
+absorption. Rotation (erfc) and gi_sq channels were killed — NaN singularity
+at the source center and a val=1.0 fabrication.

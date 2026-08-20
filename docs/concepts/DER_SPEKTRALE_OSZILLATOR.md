@@ -78,7 +78,8 @@ ihre Basis.**
 Ein Pflicht-Frequenzfeld für jeden Oszillator wäre Fabrikation:
 gravity, thermal und diffusion besitzen keine Frequenz. Deshalb gilt:
 `freq = 0.0` ist der Zustand „Punktquelle" — 0 honored, wie
-j2/j4 = 0 bei Nicht-Planeten heute. Abwesende Frequenz ist eine
+j2/j4 = 0 heute für alle Samples (seit Atom 7: die Form gehört zum
+Anker, kein Multipol auf dem Wire). Abwesende Frequenz ist eine
 vollständig realisierte Eigenschaft, kein Default.
 
 ## IV. Die Atome

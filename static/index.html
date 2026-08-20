@@ -349,8 +349,6 @@ fn osc_field(j: u32, rel: vec3f, dt: f32) -> vec2f {
     let tm = field[j * 3u + 1u];
     let fm = field[j * 3u + 2u];
     let mt = props[j * 4u];
-    let mp = props[j * 4u + 1u];
-    let mg = props[j * 4u + 2u];
     let v_obs = vec3f(vp.right.w, vp.up.w, vp.forward.w) * C_VACUUM;
     let v_rel = fm.yzw - v_obs;
     let propagated = m.xyz + v_rel * dt;
@@ -361,16 +359,6 @@ fn osc_field(j: u32, rel: vec3f, dt: f32) -> vec2f {
     let kid = u32(mt.z);
     let val_eff = fold_eff(d_mag, m.w, tm.x, tm.y, ft, fm.x);
     var sk = field_spatial(d2, d_mag, mt.x, kid, vp.surface.w, f32(tm.w));
-    if ((kid == 0u || kid == 6u) && ft == 1u) {
-        let dhat = delta / max(d_mag, 1e-9);
-        let cos_t = clamp(dot(dhat, mp.xyz), -1.0, 1.0);
-        let p2 = (3.0 * cos_t * cos_t - 1.0) * 0.5;
-        let p4 = (35.0 * cos_t * cos_t * cos_t * cos_t - 30.0 * cos_t * cos_t + 3.0) * 0.125;
-        let rd = mg.y / max(d_mag, 1.0);
-        if (rd < 1.0) {
-            sk *= 1.0 - mp.w * rd * rd * p2 - mg.x * rd * rd * rd * rd * p4;
-        }
-    }
     return vec2f(val_eff * sk, f32(ft));
 }
 
