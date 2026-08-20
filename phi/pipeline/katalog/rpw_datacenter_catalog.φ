@@ -1,0 +1,21 @@
+# ── RPW Data Center (Observatoire de Paris / LESIA-LIRA) — Befund 2026-08-20 ──
+
+# rpw-datacenter.obspm.fr ist das SPIP-Dokumentations-Portal (DPDD,
+# Tutorials) — decline als Feldquelle: Docs, kein Messwert-Endpoint.
+decline https://rpw-datacenter.obspm.fr/spip.php
+# title: RPW-Data-Center-Dokumentation (SPIP)
+
+# Die Daten selbst: rpw.lesia.obspm.fr redirectet auf
+# rpw-lira.obspm.fr/roc/data/pub/solo/rpw/data/L3/ (200, verifiziert).
+# lfr_efield/ trägt Jahrverzeichnisse 2020→2025 mit Tages-CDFs
+# solo_L3_rpw-bia-efield_YYYYMMDD_V01.cdf bis 2025-12-31 — das
+# kalibrierte BIA-E-Feld läuft hier über das CDAWeb-Ende
+# (2022-12-01) hinaus; lfr_density/ (bis 2025-04), lfr_scpot/,
+# lfr_vht/, mag-scm_merged/, thr_flux/, tnr_fp/ + db.csv
+# (Katalog-Index: relative_filepath,start_datetime,stop_datetime).
+# Die Ernte hängt am cdf_reader-Atom (Tages-CDFs; derselbe Baustein
+# trägt danach PSP-VSC/Berkeley). Referenzen:
+# cdf.gsfc.nasa.gov (CDF-Spezifikation) + RPW-DPDD
+# (ROC-PRO-DAT-NTT-00075, RPW-Data-Product-Description-Document).
+candidate https://rpw-lira.obspm.fr/roc/data/pub/solo/rpw/data/L3/
+# title: LIRA/RPW-L3-Baum — bia-efield bis 2025-12-31, Ernte pending cdf_reader

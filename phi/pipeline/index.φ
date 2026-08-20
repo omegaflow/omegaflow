@@ -69,12 +69,14 @@ ausstehend 0 katalog/b2find_intermagnet_catalog.φ
 ausstehend 0 katalog/grind_eogateway_index.φ
 ausstehend 0 katalog/grind_vires_catalog.φ
 ausstehend 0 katalog/grind_arcgis_index.φ
+ausstehend 0 katalog/heliocloud_catalog.φ
 ausstehend 0 katalog/terrapulse_catalog.φ
 ausstehend 0 katalog/esa_geomagnetic_catalog.φ
 ausstehend 0 katalog/archeology_gaps_index.φ
 ausstehend 0 katalog/arcgis_catalog.φ
 ausstehend 0 katalog/copernicus_catalog.φ
 ausstehend 0 katalog/provider_links.φ
+ausstehend 0 katalog/rpw_datacenter_catalog.φ
 
 # ------------------------------------------------------------------
 # ERLEDIGT — im Archiv (read-only, /home/johannes/projects/archive/phi-research/)

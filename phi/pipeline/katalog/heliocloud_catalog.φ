@@ -1,0 +1,16 @@
+# ── HelioCloud (NASA Heliophysics Data Cloud) — Befund 2026-08-20 ──
+
+# api.heliocloud.org/datasets antwortet als HTML-SPA (CloudCatalog,
+# kein JSON an der Route — verifiziert 2026-08-20). Der Katalog ist
+# ein Browser-Register, keine Maschinen-Schnittstelle. Force Gate:
+# Registry → decline als Feldquelle.
+decline https://api.heliocloud.org/datasets
+# title: HelioCloud-CloudCatalog — SPA ohne JSON-Route
+
+# Discovery-Wert: die Datasets liegen als AWS-Open-Data-S3-Buckets.
+# Offen (nicht verifiziert): die Bucket-ID bei registry.opendata.aws
+# (Schema: registry.opendata.aws/<id>, NOAA-NODD-Präzedenz) und der
+# S3-Routen-Parser (ledger.φ: xml_harvester parst den
+# ListBucketResult-Namespace nicht — s3_harvester pending). Kein
+# Block, bis die S3-Route steht.
+# hint s3      registry.opendata.aws — HelioCloud-Bucket-ID suchen (pending)
