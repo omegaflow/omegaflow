@@ -57,6 +57,7 @@ pub struct AsteroidHash {
     pub records: Vec<AsteroidRec>,
     pub p0: Vec<[f64; 3]>,
 }
+#[derive(Clone)]
 pub struct StarRec {
     pub ra_deg: f64,
     pub dec_deg: f64,
@@ -135,6 +136,12 @@ pub enum Motion {
     Linear {
         p: [f64; 3],
         v: [f64; 3],
+    },
+    Kepler {
+        rec: AsteroidRec,
+    },
+    Spherical {
+        rec: StarRec,
     },
 }
 
@@ -819,6 +826,14 @@ pub fn icrs_to_body_surface(
     Some((lat.to_degrees(), lon.to_degrees()))
 }
 
+fn finite_pos(p: [f64; 3]) -> Option<[f64; 3]> {
+    if p[0].is_finite() && p[1].is_finite() && p[2].is_finite() {
+        Some(p)
+    } else {
+        None
+    }
+}
+
 impl Motion {
     pub fn at(&self, t: f64, epoch: f64, eph: &HashMap<String, BodyEphemeris>) -> Option<[f64; 3]> {
         match self {
@@ -834,6 +849,14 @@ impl Motion {
                 let dt = t - epoch;
                 Some([p[0] + v[0] * dt, p[1] + v[1] * dt, p[2] + v[2] * dt])
             }
+            Motion::Kepler { rec } => {
+                let t_jd = t / 86400.0 + J2000_EPOCH;
+                match state_at(rec, t_jd) {
+                    Some((p, _)) => finite_pos(p),
+                    None => None,
+                }
+            }
+            Motion::Spherical { rec } => finite_pos(star_position_at(rec, t).0),
         }
     }
 
@@ -842,7 +865,7 @@ impl Motion {
             Motion::Surface { body_name, .. } | Motion::Barycenter { body_name, .. } => {
                 Some(body_name)
             }
-            Motion::Linear { .. } => None,
+            Motion::Linear { .. } | Motion::Kepler { .. } | Motion::Spherical { .. } => None,
         }
     }
 }
@@ -6271,6 +6294,89 @@ field temp temp_c\n";
         assert_eq!(records.len(), 1);
         assert!((records[0].0 - d).abs() / d < 1e-9);
         assert_eq!(records[0].3, 1.0);
+    }
+
+    fn kepler_rec_fixture() -> AsteroidRec {
+        AsteroidRec {
+            number: 1,
+            epoch_jd: J2000_EPOCH,
+            a_au: 1.0,
+            e: 0.0,
+            incl_deg: 0.0,
+            node_deg: 0.0,
+            peri_deg: 0.0,
+            ma_deg: 0.0,
+            h: 0.0,
+            g: 0.0,
+            albedo: 0.0,
+            rot_period_h: 0.0,
+            radius_km: 0.0,
+            gm_km3_s2: 0.0,
+            sptype: [0u8; 5],
+        }
+    }
+
+    #[test]
+    fn test_motion_kepler_at_anchor_body_and_law_bounds() {
+        let au_m = crate::kepler::AU_M;
+        let gm_sun = crate::kepler::GM_SUN_M3_S2;
+        let rec = kepler_rec_fixture();
+        let motion = Motion::Kepler { rec: rec.clone() };
+        assert!(motion.anchor_body().is_none());
+        let eph: HashMap<String, BodyEphemeris> = HashMap::new();
+        let p0 = motion.at(0.0, 0.0, &eph).expect("kepler position at epoch");
+        let r0 = (p0[0] * p0[0] + p0[1] * p0[1] + p0[2] * p0[2]).sqrt();
+        assert!((r0 - au_m).abs() / au_m < 1e-12);
+        let p_dt = motion
+            .at(1e-1, 0.0, &eph)
+            .expect("kepler position at epoch+dt");
+        let v_fd = [
+            (p_dt[0] - p0[0]) / 1e-1,
+            (p_dt[1] - p0[1]) / 1e-1,
+            (p_dt[2] - p0[2]) / 1e-1,
+        ];
+        let speed = (v_fd[0] * v_fd[0] + v_fd[1] * v_fd[1] + v_fd[2] * v_fd[2]).sqrt();
+        let v_circ = (gm_sun / au_m).sqrt();
+        assert!((speed - v_circ).abs() / v_circ < 1e-3);
+        let (vmax, amax, p_anchor) =
+            law_bounds(&motion, 0.0, 0.0, &eph).expect("kepler law bounds");
+        assert!((p_anchor[0] - au_m).abs() / au_m < 1e-12);
+        assert!((vmax / Φ - v_circ).abs() / v_circ < 1e-4);
+        assert!(amax > 0.0 && amax.is_finite());
+        let mut unbound = rec;
+        unbound.e = 1.5;
+        assert!(Motion::Kepler { rec: unbound }.at(0.0, 0.0, &eph).is_none());
+    }
+
+    #[test]
+    fn test_motion_spherical_at_anchor_body_and_law_bounds() {
+        let rec = StarRec {
+            ra_deg: 0.0,
+            dec_deg: 0.0,
+            pm_ra_masyr: 1000.0,
+            pm_de_masyr: 0.0,
+            plx_mas: 100.0,
+            flux: 1.0,
+            mag: 0.0,
+            tau: 0.0,
+            color_index: 0.0,
+            rv_m_s: 0.0,
+        };
+        let motion = Motion::Spherical { rec: rec.clone() };
+        assert!(motion.anchor_body().is_none());
+        let eph: HashMap<String, BodyEphemeris> = HashMap::new();
+        let t_yr = 86400.0 * 365.25;
+        let p = motion.at(t_yr, 0.0, &eph).expect("spherical position");
+        let (p_ref, v_ref) = star_position_at(&rec, t_yr);
+        let d = 10.0 * PARSEC_M;
+        for k in 0..3 {
+            assert!((p[k] - p_ref[k]).abs() < 1e-9 * d);
+        }
+        let (vmax, amax, p0) = law_bounds(&motion, 0.0, 0.0, &eph).expect("spherical law bounds");
+        assert!((p0[0] - d).abs() / d < 1e-9);
+        let speed = (v_ref[0] * v_ref[0] + v_ref[1] * v_ref[1] + v_ref[2] * v_ref[2]).sqrt();
+        assert!((vmax / Φ - speed).abs() / speed < 1e-2);
+        assert!(amax.is_finite());
     }
 
     #[test]

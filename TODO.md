@@ -135,6 +135,14 @@ Schnittmenge leer, im Protokoll fehlt.
 - Der Subpixel-Anlauf (Rgba32Float, 9 Mio Messzellen) wartet auf einen
   nicht-aufgeblähten Wiedereinstieg; die Messung lebt in
   docs/surveys/messpunkt-verteilung.md.
+- Bewegungs-Vereinheitlichung Atom 4 (2026-08-20, nach Atom 3): die
+  separate Asteroiden-/Stern-Route stirbt — AsteroidHash/StarHash +
+  query_asteroid_hash/query_star_hash + p0-Vorräte werden getötet;
+  Asteroiden und Sterne werden gewöhnliche Samples im SpatialHash mit
+  motion: Motion::Kepler { rec } / Motion::Spherical { rec } (Atom 3
+  hat die Enum-Varianten + at()/anchor_body()/law_bounds-Ableitung
+  gelegt). Fundstellen: impl Motion, build_asteroid_hash,
+  build_star_hash, query_*_hash, sense_*-Einbau in src/archivar.rs.
 
 ## Die Sphären des Unsichtbaren
 
