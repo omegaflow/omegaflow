@@ -387,12 +387,16 @@ fn write_binary(
     rotations: &[(f64, [f64; 9])],
     nutation: &[(f64, f64, Vec<f64>, Vec<f64>, Vec<f64>)],
     wgccre: &PckBody,
+    omega_g: Option<(f64, f64)>,
 ) -> bool {
     let mut n_sections: u32 = 3;
     if !rotations.is_empty() {
         n_sections += 1;
     }
     if !nutation.is_empty() {
+        n_sections += 1;
+    }
+    if omega_g.is_some() {
         n_sections += 1;
     }
     let mut buf = Vec::new();
@@ -454,7 +458,8 @@ fn write_binary(
         buf.extend_from_slice(&0u32.to_le_bytes());
         buf.extend_from_slice(&17u32.to_le_bytes());
         buf.extend_from_slice(&0u32.to_le_bytes());
-        let kernel_params: [f64; 5] = [0.0; 5];
+        let kernel_params =
+            omegaflow::media::medium_params_of(body_name).map_or([0.0; 5], |m| m.wire());
         for &p in &kernel_params {
             buf.extend_from_slice(&p.to_le_bytes());
         }
@@ -492,15 +497,28 @@ fn write_binary(
             }
         }
     }
+    if let Some((omega_g_hz, sigma_hz)) = omega_g {
+        let section_stype: u32 = 7;
+        buf.extend_from_slice(&section_stype.to_le_bytes());
+        buf.extend_from_slice(&1u32.to_le_bytes());
+        buf.extend_from_slice(&0u32.to_le_bytes());
+        buf.extend_from_slice(&0u32.to_le_bytes());
+        buf.extend_from_slice(&omega_g_hz.to_le_bytes());
+        buf.extend_from_slice(&sigma_hz.to_le_bytes());
+        buf.extend_from_slice(&0.0_f64.to_le_bytes());
+        buf.extend_from_slice(&0.0_f64.to_le_bytes());
+        buf.extend_from_slice(&0.0_f64.to_le_bytes());
+    }
     match std::fs::write(path, &buf) {
         Ok(()) => {
             eprintln!(
-                "  {}: {} granules, {} rotations, {} nutation, {} B",
+                "  {}: {} granules, {} rotations, {} nutation, {} B, omega_g {:?}",
                 body_name,
                 granules.len(),
                 rotations.len(),
                 nutation.len(),
-                buf.len()
+                buf.len(),
+                omega_g.map(|(v, _)| v)
             );
             true
         }
@@ -1155,6 +1173,7 @@ fn flatten(
     gm_text: Option<&str>,
     pck_text: Option<&str>,
     ci_mode: bool,
+    omega_g: Option<(String, f64, f64)>,
 ) -> Vec<String> {
     let mut spk_files = Vec::new();
     for kernel_path in kernels {
@@ -1213,7 +1232,13 @@ fn flatten(
         rotations.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal));
         nutation.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal));
         let path = format!("ephemeris_{}.bin", body_name);
-        if write_binary(&path, body_name, &granules, &rotations, &nutation, &wgccre) {
+        let og = match &omega_g {
+            Some((n, v, s)) if n == body_name => Some((*v, *s)),
+            _ => None,
+        };
+        if write_binary(
+            &path, body_name, &granules, &rotations, &nutation, &wgccre, og,
+        ) {
             written.push(body_name.clone());
             if ci_mode && !upload_asset(&path) {
                 upload_failed += 1;
@@ -1416,6 +1441,7 @@ fn main() {
     let mut extras: Vec<String> =
         vec!["gm_Horizons.pck".to_string(), "geophysical.ker".to_string()];
     let mut dest = "kernels".to_string();
+    let mut omega_g_path: Option<String> = None;
     let mut i = 1;
     while i < args.len() {
         match args[i].as_str() {
@@ -1472,10 +1498,41 @@ fn main() {
                 }
                 i += 1;
             }
+            "--omega-g" => {
+                omega_g_path = args.get(i + 1).cloned();
+                i += 1;
+            }
             other => kernel_paths.push(other.to_string()),
         }
         i += 1;
     }
+    let omega_g = match &omega_g_path {
+        Some(p) => match std::fs::read_to_string(p) {
+            Ok(text) => {
+                let mut parts = text.lines().next().unwrap_or("").split_whitespace();
+                let name = parts.next().unwrap_or("").to_string();
+                let nhz = parts.next().and_then(|v| v.parse::<f64>().ok());
+                let sigma_nhz = parts.next().and_then(|v| v.parse::<f64>().ok());
+                match (name.is_empty(), nhz, sigma_nhz) {
+                    (false, Some(v), Some(s)) if v > 0.0 && s > 0.0 => {
+                        Some((name, v * 1e-9, s * 1e-9))
+                    }
+                    _ => {
+                        eprintln!(
+                            "--omega-g {}: the line carries no body/value/sigma triple (nHz)",
+                            p
+                        );
+                        None
+                    }
+                }
+            }
+            Err(_) => {
+                eprintln!("--omega-g {}: read returned void", p);
+                None
+            }
+        },
+        None => None,
+    };
     if let Some(jd) = probe_jd {
         let mut fk = FkFile::parse("");
         for fk_path in &fk_paths {
@@ -1578,6 +1635,7 @@ fn main() {
             gm_text.as_deref(),
             pck.as_deref(),
             ci_mode,
+            omega_g.clone(),
         );
         if ci_mode {
             if let Some(idx) = &index_path {
@@ -1610,5 +1668,6 @@ fn main() {
         gm_text.as_deref(),
         pck_text.as_deref(),
         ci_mode,
+        omega_g,
     );
 }

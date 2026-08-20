@@ -13,13 +13,32 @@ impl FitsHeader {
         while off + 80 <= buf.len() {
             let card = &buf[off..off + 80];
             let kw = from_utf8(&card[0..8]).ok()?.trim().to_string();
-            let value = from_utf8(&card[10..30]).ok()?.trim().to_string();
             if kw == "END" {
                 end_found = true;
                 off += 80;
                 break;
             }
             if !kw.is_empty() {
+                let raw = from_utf8(&card[10..]).ok()?.trim().to_string();
+                let value = if let Some(q) = raw.strip_prefix('\'') {
+                    let mut v = String::new();
+                    let mut chars = q.chars().peekable();
+                    while let Some(c) = chars.next() {
+                        if c == '\'' {
+                            if chars.peek() == Some(&'\'') {
+                                v.push('\'');
+                                chars.next();
+                            } else {
+                                break;
+                            }
+                        } else {
+                            v.push(c);
+                        }
+                    }
+                    format!("'{}'", v)
+                } else {
+                    raw.split('/').next().unwrap_or("").trim().to_string()
+                };
                 cards.push((kw, value));
             }
             off += 80;
@@ -195,9 +214,69 @@ impl FitsTable {
     }
 }
 
+#[derive(Debug)]
+pub struct FitsImage {
+    pub bitpix: i32,
+    pub dims: [usize; 3],
+    pub data_start: usize,
+}
+
+impl FitsImage {
+    pub fn parse(buf: &[u8], hdu_start: usize) -> Option<(Self, usize)> {
+        let (header, header_end) = FitsHeader::parse(buf, hdu_start)?;
+        let bitpix = header.int("BITPIX")? as i32;
+        if bitpix != -32 && bitpix != -64 {
+            return None;
+        }
+        let naxis = header.int("NAXIS")? as usize;
+        if naxis == 0 || naxis > 3 {
+            return None;
+        }
+        let mut dims = [1usize; 3];
+        let mut data_bytes: usize = 1;
+        for i in 1..=naxis {
+            let d = header.int(&format!("NAXIS{}", i))?;
+            if d <= 0 {
+                return None;
+            }
+            dims[i - 1] = d as usize;
+            data_bytes = data_bytes.checked_mul(d as usize)?;
+        }
+        let bytes_per = if bitpix == -32 { 4 } else { 8 };
+        data_bytes = data_bytes.checked_mul(bytes_per)?;
+        let data_start = header_end;
+        if data_start + data_bytes > buf.len() {
+            return None;
+        }
+        let next = hdu_start + (data_start - hdu_start + data_bytes).div_ceil(2880) * 2880;
+        Some((
+            Self {
+                bitpix,
+                dims,
+                data_start,
+            },
+            next,
+        ))
+    }
+
+    pub fn value_f64(&self, buf: &[u8], idx: [usize; 3]) -> Option<f64> {
+        if idx[0] >= self.dims[0] || idx[1] >= self.dims[1] || idx[2] >= self.dims[2] {
+            return None;
+        }
+        let linear = (idx[2] * self.dims[1] + idx[1]) * self.dims[0] + idx[0];
+        let bytes_per = if self.bitpix == -32 { 4 } else { 8 };
+        let off = self.data_start + linear * bytes_per;
+        let raw = buf.get(off..off + bytes_per)?;
+        match self.bitpix {
+            -32 => Some(f32::from_be_bytes(raw.try_into().ok()?) as f64),
+            _ => Some(f64::from_be_bytes(raw.try_into().ok()?)),
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
-    use super::{FitsHeader, FitsTable};
+    use super::{FitsHeader, FitsImage, FitsTable};
 
     fn pad_card(kw: &str, value: &str) -> [u8; 80] {
         let mut card = [b' '; 80];
@@ -353,5 +432,64 @@ mod tests {
         let (t, _) = FitsTable::parse(&buf, 2880).unwrap();
         let flux = t.column("FLUX").unwrap();
         assert!(t.cell_f64(&buf, 3, flux).is_none());
+    }
+
+    #[test]
+    fn image_reads_f32_cube() {
+        let mut buf: Vec<u8> = Vec::new();
+        let mut header: Vec<u8> = Vec::new();
+        header.extend_from_slice(&pad_card("SIMPLE", "T"));
+        header.extend_from_slice(&pad_card("BITPIX", "-32"));
+        header.extend_from_slice(&pad_card("NAXIS", "3"));
+        header.extend_from_slice(&pad_card("NAXIS1", "4"));
+        header.extend_from_slice(&pad_card("NAXIS2", "2"));
+        header.extend_from_slice(&pad_card("NAXIS3", "2"));
+        header.extend_from_slice(&pad_card("GHISTSEQ", "0"));
+        header.extend_from_slice(&pad_card("END", ""));
+        while header.len() % 2880 != 0 {
+            header.extend_from_slice(&[b' '; 80]);
+        }
+        buf.extend_from_slice(&header);
+        let vals: Vec<f32> = (0..16).map(|i| i as f32 + 0.5).collect();
+        for v in vals {
+            buf.extend_from_slice(&v.to_be_bytes());
+        }
+        while buf.len() % 2880 != 0 {
+            buf.push(0);
+        }
+        let (img, next) = FitsImage::parse(&buf, 0).unwrap();
+        assert_eq!(img.dims, [4, 2, 2]);
+        assert_eq!(next, buf.len());
+        assert_eq!(img.value_f64(&buf, [0, 0, 0]).unwrap(), 0.5);
+        assert_eq!(img.value_f64(&buf, [3, 1, 1]).unwrap(), 15.5);
+        assert!(img.value_f64(&buf, [4, 0, 0]).is_none());
+    }
+
+    #[test]
+    fn image_reads_past_multiblock_header() {
+        let mut buf: Vec<u8> = Vec::new();
+        let mut header: Vec<u8> = Vec::new();
+        header.extend_from_slice(&pad_card("SIMPLE", "T"));
+        header.extend_from_slice(&pad_card("BITPIX", "-32"));
+        header.extend_from_slice(&pad_card("NAXIS", "2"));
+        header.extend_from_slice(&pad_card("NAXIS1", "2"));
+        header.extend_from_slice(&pad_card("NAXIS2", "1"));
+        for i in 0..40 {
+            header.extend_from_slice(&pad_card(&format!("GHIST{:03}", i), "x"));
+        }
+        header.extend_from_slice(&pad_card("END", ""));
+        while header.len() % 2880 != 0 {
+            header.extend_from_slice(&[b' '; 80]);
+        }
+        buf.extend_from_slice(&header);
+        for v in [1.0f32, 2.0f32] {
+            buf.extend_from_slice(&v.to_be_bytes());
+        }
+        while buf.len() % 2880 != 0 {
+            buf.push(0);
+        }
+        let (img, _) = FitsImage::parse(&buf, 0).unwrap();
+        assert_eq!(img.value_f64(&buf, [0, 0, 0]).unwrap(), 1.0);
+        assert_eq!(img.value_f64(&buf, [1, 0, 0]).unwrap(), 2.0);
     }
 }

@@ -300,7 +300,11 @@ pub fn convert_to_si(value: f64, unit: &str) -> Option<f64> {
     }
     match unit.trim().to_lowercase().as_str() {
         "" | "m" | "s" | "k" | "kg" | "pa" | "w" | "w/m2" | "w/m²" | "t" | "hz" | "v" | "a"
-        | "rad" | "m/s" | "m/s2" | "m/s²" | "j" | "v/m" | "s/m" | "ntu" => Some(value),
+        | "rad" | "m/s" | "m/s2" | "m/s²" | "j" | "v/m" | "s/m" | "ntu" | "1" => Some(value),
+        "wm2_1au" => Some(value * 1.495978707e11 * 1.495978707e11),
+        "1e-4w/m2" => Some(value * 1e-4),
+        "pfu" => Some(value * 1e4),
+        "pfu/mev" => Some(value * 6.241509074e16),
         "km" | "km/s" => Some(value * 1e3),
         "cm" => Some(value * 1e-2),
         "mm" | "ms" => Some(value * 1e-3),
@@ -438,11 +442,12 @@ pub fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
     match force {
         0 => &[
             "w", "w/m2", "t", "nt", "ev", "jy", "mjy", "jy_km/s", "hz", "m", "km", "mag", "pc/cm3",
-            "erg/cm2", "crab", "cpm", "e10j", "kt_tnt", "sfu", "1/cm3",
+            "erg/cm2", "crab", "cpm", "e10j", "kt_tnt", "sfu", "1/cm3", "wm2_1au", "1e-4w/m2", "1",
+            "pfu", "pfu/mev",
         ],
         1 => &[
             "m/s2", "gal", "mgal", "kg", "m_sun", "m_earth", "au", "pc", "t", "nt", "m", "r_earth",
-            "logg",
+            "logg", "1",
         ],
         2 => &["pa", "hpa", "m", "mm", "hz"],
         3 => &["m", "mm", "km", "m/s2", "gal", "pa", "hz", "mw"],
@@ -963,6 +968,7 @@ pub fn extract_fields(ext: &Extract) -> &[FieldConfig] {
         | Extract::CmrPolygon { fields, .. }
         | Extract::CelestialPolygon { fields, .. }
         | Extract::KeplerMap { fields, .. } => fields,
+        Extract::ProfileMap { fields, .. } => fields,
         Extract::Field(fc)
         | Extract::First(fc, _)
         | Extract::Last(fc, _)
@@ -1441,7 +1447,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     tau,
                     absorption,
                     advection,
-                    unit: String::new(),
+                    unit: parts[5].to_string(),
                     fold: None,
                 };
                 cur_extracts.push(Extract::First(fc, filter));
@@ -1463,7 +1469,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     tau,
                     absorption,
                     advection,
-                    unit: String::new(),
+                    unit: parts[5].to_string(),
                     fold: None,
                 };
                 cur_extracts.push(Extract::Last(fc, filter));
@@ -1498,7 +1504,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     tau,
                     absorption,
                     advection,
-                    unit: String::new(),
+                    unit: parts[5].to_string(),
                     fold: None,
                 };
                 cur_extracts.push(Extract::LastRow(fc));
@@ -1527,7 +1533,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     tau,
                     absorption,
                     advection,
-                    unit: String::new(),
+                    unit: parts[5].to_string(),
                     fold: None,
                 };
                 cur_extracts.push(Extract::ObjLast(fc));
@@ -1577,7 +1583,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     tau,
                     absorption,
                     advection,
-                    unit: String::new(),
+                    unit: parts[5].to_string(),
                     fold: None,
                 };
                 cur_extracts.push(Extract::Path(fc));
@@ -1595,7 +1601,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     tau,
                     absorption,
                     advection,
-                    unit: String::new(),
+                    unit: parts[5].to_string(),
                     fold: None,
                 };
                 cur_extracts.push(Extract::Deep(fc));
@@ -1613,7 +1619,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     tau,
                     absorption,
                     advection,
-                    unit: String::new(),
+                    unit: parts[5].to_string(),
                     fold: None,
                 };
                 cur_extracts.push(Extract::Regex(fc));
@@ -2343,6 +2349,7 @@ pub struct BodyProperties {
     pub nut_ra: Option<Vec<[f64; 3]>>,
     pub nut_dec: Option<Vec<[f64; 3]>>,
     pub nutation: Option<Vec<NutationRecord>>,
+    pub omega_g: Option<(f64, f64)>,
 }
 
 #[derive(Clone)]
@@ -2454,8 +2461,32 @@ pub fn parse_ephemeris_binary(data: &[u8]) -> Option<BodyEphemeris> {
                 nut_ra: None,
                 nut_dec: None,
                 nutation: None,
+                omega_g: None,
             });
             pos += if version == 0x02 { 104 } else { 96 };
+            continue;
+        }
+        if stype == 7 {
+            let n = degree + 1;
+            let gs = 2 + 3 * n;
+            for _ in 0..gcount {
+                if pos + gs * 8 > data.len() {
+                    return None;
+                }
+                let f = |i: usize| -> f64 {
+                    let mut buf = [0u8; 8];
+                    buf.copy_from_slice(&data[pos + i * 8..pos + i * 8 + 8]);
+                    f64::from_le_bytes(buf)
+                };
+                let value = f(0);
+                let sigma = f(1);
+                if value > 0.0 && value.is_finite() && sigma.is_finite() {
+                    if let Some(ref mut p) = props {
+                        p.omega_g = Some((value, sigma));
+                    }
+                }
+                pos += gs * 8;
+            }
             continue;
         }
         if stype == 2 {
@@ -7459,6 +7490,7 @@ field temp temp_c\n";
             nut_ra: None,
             nut_dec: None,
             nutation: None,
+            omega_g: None,
         };
         let granule = super::ChebyshevGranule {
             t0_jd: super::J2000_EPOCH,
@@ -7538,6 +7570,7 @@ field temp temp_c\n";
             nut_ra: None,
             nut_dec: None,
             nutation: None,
+            omega_g: None,
         };
         let granule = super::ChebyshevGranule {
             t0_jd: super::J2000_EPOCH,
@@ -7617,6 +7650,7 @@ field temp temp_c\n";
             nut_ra: None,
             nut_dec: None,
             nutation: None,
+            omega_g: None,
         };
         let granule = super::ChebyshevGranule {
             t0_jd: super::J2000_EPOCH,
@@ -7682,6 +7716,7 @@ field temp temp_c\n";
             nut_ra: None,
             nut_dec: None,
             nutation: None,
+            omega_g: None,
         };
         let granule = super::ChebyshevGranule {
             t0_jd: super::J2000_EPOCH,
@@ -7825,6 +7860,7 @@ field temp temp_c\n";
             nut_ra: None,
             nut_dec: None,
             nutation: None,
+            omega_g: None,
         };
         let granule = super::ChebyshevGranule {
             t0_jd: super::J2000_EPOCH,
@@ -7872,6 +7908,226 @@ field temp temp_c\n";
         } else {
             panic!("motion is Barycenter or Linear, Surface absent");
         }
+    }
+
+    #[test]
+    fn test_anchor_applies_declared_unit() {
+        use std::collections::HashMap;
+        let frame = super::Frame::Surface {
+            body_name: "mars".into(),
+            lat: 0.0,
+            lon: 0.0,
+            alt: 0.0,
+        };
+        let src = super::SourceConfig {
+            ttl: 3600,
+            url: "https://example.com".into(),
+            frame,
+            format: "json".into(),
+            extracts: vec![],
+            headers: vec![],
+            post_body: None,
+            target: None,
+            catalog: None,
+            max_freq: None,
+            min_freq: None,
+            body: None,
+            stations_url: None,
+            stations_path: String::new(),
+            stations_lat: String::new(),
+            stations_lon: String::new(),
+            stations_id: String::new(),
+            flux_from_mag: None,
+            abs_mag_from: None,
+            catalog_epoch: None,
+            repeat_ra_bins: 0,
+            fanout_cap: 0,
+            stations_flatten: String::new(),
+            stations_filter: None,
+            fanout_delay: 0,
+        };
+        let channel = super::Channel {
+            z: 0.0,
+            freq: 0.0,
+            bin_width: 0.0,
+            epoch: 0.0,
+            position: super::Position::Surface {
+                body_name: "mars".into(),
+                lat: 14.0,
+                lon: 90.0,
+                alt: 0.0,
+            },
+            name: "imf".into(),
+            value: 7.0,
+        };
+        let sensor = super::FieldConfig {
+            key: "bz".into(),
+            name: "imf".into(),
+            kernel: 1,
+            force: 0,
+            tau: 60.0,
+            absorption: 0.0,
+            advection: 0.0,
+            unit: "nT".into(),
+            fold: None,
+        };
+        let mut cx: [f64; super::CHEBYSHEV_N] = [0.0; super::CHEBYSHEV_N];
+        cx[0] = 1.5e9;
+        let props = super::BodyProperties {
+            α0_deg: 317.68143,
+            dα0_dt_deg_per_century: -0.1061,
+            δ0_deg: 52.88650,
+            dδ0_dt_deg_per_century: -0.0609,
+            w0_deg: 176.630,
+            dw_dt_deg_per_day: 350.89198226,
+            radius_m: 3389500.0,
+            flattening: Some(0.00589),
+            gaussian_inverse_square: 0.0,
+            gaussian_inverse: 0.0,
+            erfc: 0.0,
+            patch_levy: 0.0,
+            exponential_decay: 0.0,
+            gm: None,
+            j2: None,
+            j4: None,
+            radii_b: None,
+            radii_c: None,
+            nut_ra: None,
+            nut_dec: None,
+            nutation: None,
+            omega_g: None,
+        };
+        let granule = super::ChebyshevGranule {
+            t0_jd: super::J2000_EPOCH,
+            dt_jd: 32.0,
+            cx,
+            cy: [0.0; super::CHEBYSHEV_N],
+            cz: [0.0; super::CHEBYSHEV_N],
+        };
+        let mars_eph = super::BodyEphemeris {
+            granules: vec![granule],
+            rotation_matrices: vec![],
+            props: Some(props),
+        };
+        let mut eph = HashMap::new();
+        eph.insert("mars".to_string(), mars_eph);
+        let mut origin_state = super::OriginState {
+            fetched: 0.0,
+            prev_epoch: 0.0,
+            prev_abs: [0.0, 0.0, 0.0],
+            prev_motion: None,
+            resid_ema: 0.0,
+            has_prev: false,
+        };
+        let sample = super::anchor(
+            &channel,
+            &sensor,
+            3600.0,
+            Some(0),
+            Some(&src.frame),
+            Some(&mut origin_state),
+            &eph,
+        );
+        assert!(sample.is_some(), "sample is None");
+        let sample = sample.unwrap();
+        assert!(
+            (sample.val - 7e-9).abs() < 1e-20,
+            "nT must convert to Tesla at the anchor, was {}",
+            sample.val
+        );
+    }
+
+    #[test]
+    fn test_last_form_captures_unit() {
+        let content = "url https://example.com/mag.json\nttl 60\nat sun\nlast bz_gsm imf_bz inverse-square em nT 6.0 0.0 0.0 where satellite 18\n";
+        let sources = parse_sources(content);
+        assert_eq!(sources.len(), 1);
+        match &sources[0].extracts[0] {
+            Extract::Last(fc, Some((fk, fv))) => {
+                assert_eq!(fc.unit, "nT");
+                assert_eq!(fk, "satellite");
+                assert_eq!(fv, "18");
+            }
+            _ => panic!("expected filtered last extract"),
+        }
+    }
+
+    #[test]
+    fn test_convert_luminosity_and_particle_units() {
+        let au2 = 1.495978707e11 * 1.495978707e11;
+        let v = convert_to_si(1.8e-6, "wm2_1au").unwrap();
+        assert!((v - 1.8e-6 * au2).abs() < 1e-6 * 1.8e-6 * au2);
+        assert!((convert_to_si(2.0, "pfu").unwrap() - 2.0e4).abs() < 1e-9);
+        assert!((convert_to_si(1.0, "1").unwrap() - 1.0).abs() < 1e-12);
+        assert!((convert_to_si(1.5, "1e-4w/m2").unwrap() - 1.5e-4).abs() < 1e-16);
+    }
+
+    #[test]
+    fn test_embedded_lsk_parses_and_covers_now() {
+        let lsk = embedded_lsk().expect("the embedded kernel must parse");
+        let now_unix = 1.78e9;
+        assert_eq!(lsk.leap_at(now_unix), Some(37.0));
+        assert!(
+            lsk.system_now_tdb().is_some(),
+            "the time base exists without any fetch"
+        );
+    }
+
+    #[test]
+    fn test_sense_membrane_delivers_sun_sample_with_zero_floor() {
+        use std::collections::HashMap;
+        let t = 8.0e8;
+        let sample = super::Sample {
+            source: super::SampleSource::Source(0),
+            epoch: t,
+            ttl: 60.0,
+            extent: 0.0,
+            tau: 6.0,
+            kernel_id: 0.0,
+            force_type: 0.0,
+            absorption: 0.0,
+            advection: 0.0,
+            anchor_vmax: 0.0,
+            anchor_amax: 0.0,
+            anchor_p0: [0.0, 0.0, 0.0],
+            motion: super::Motion::Linear {
+                p: [0.0, 0.0, 0.0],
+                v: [0.0, 0.0, 0.0],
+            },
+            val: 4.0e16,
+            name: "sun_xray".into(),
+            z: 0.0,
+            freq: 0.0,
+            bin_width: 0.0,
+            color_index: 0.0,
+        };
+        let cache = super::build_spatial_hash(vec![sample], 1.0);
+        let eph: HashMap<String, super::BodyEphemeris> = HashMap::new();
+        let buf = super::Buffer {
+            cache,
+            eph: Arc::new(eph),
+            curves: None,
+            spectral: Vec::new(),
+        };
+        let mut records: Vec<super::SampleRecord> = Vec::new();
+        super::sense_membrane(
+            &buf,
+            [0.0, 0.0, 0.0],
+            t + 1.0,
+            3.0e12,
+            1.0,
+            &[0.0; 9],
+            2.0e9,
+            [0.0, 0.0, 1.0],
+            &mut records,
+            &HashMap::new(),
+        );
+        assert_eq!(
+            records.len(),
+            1,
+            "the sun sample must reach the window with a zero floor"
+        );
+        assert_eq!(records[0].3, 4.0e16);
     }
 
     #[test]
@@ -7990,6 +8246,205 @@ field temp temp_c\n";
         assert_eq!(props.radii_c, Some(6356751.9));
         assert!((props.flattening.unwrap() - (6378136.6 - 6356751.9) / 6378136.6).abs() < 1e-15);
         assert_eq!(eph.granules.len(), 1);
+    }
+
+    #[test]
+    fn test_parse_ephemeris_binary_stype2_medium_constants() {
+        let mut buf = Vec::new();
+        buf.extend_from_slice(&[0xCF, 0x86, 0x01, 0x00]);
+        buf.extend_from_slice(&3u32.to_le_bytes());
+        buf.extend_from_slice(&0u32.to_le_bytes());
+        buf.extend_from_slice(&1u32.to_le_bytes());
+        buf.extend_from_slice(&17u32.to_le_bytes());
+        buf.extend_from_slice(&0u32.to_le_bytes());
+        for _ in 0..56 {
+            buf.extend_from_slice(&0.0_f64.to_le_bytes());
+        }
+        buf.extend_from_slice(&1u32.to_le_bytes());
+        buf.extend_from_slice(&12u32.to_le_bytes());
+        buf.extend_from_slice(&17u32.to_le_bytes());
+        buf.extend_from_slice(&0u32.to_le_bytes());
+        for _ in 0..12 {
+            buf.extend_from_slice(&0.0_f64.to_le_bytes());
+        }
+        buf.extend_from_slice(&2u32.to_le_bytes());
+        buf.extend_from_slice(&0u32.to_le_bytes());
+        buf.extend_from_slice(&17u32.to_le_bytes());
+        buf.extend_from_slice(&0u32.to_le_bytes());
+        for &p in &crate::media::medium_params_of("earth")
+            .expect("earth row")
+            .wire()
+        {
+            buf.extend_from_slice(&p.to_le_bytes());
+        }
+        let eph = super::parse_ephemeris_binary(&buf).unwrap();
+        let props = eph.props.unwrap();
+        assert_eq!(props.gaussian_inverse_square, 340.2);
+        assert_eq!(props.gaussian_inverse, 5950.0);
+        assert_eq!(props.erfc, 3630.0);
+        assert_eq!(props.exponential_decay, 2.18e-5);
+        assert_eq!(props.patch_levy, 2.00e-5);
+    }
+
+    #[test]
+    fn test_parse_ephemeris_binary_stype7_omega_g() {
+        let mut buf = Vec::new();
+        buf.extend_from_slice(&[0xCF, 0x86, 0x02, 0x00]);
+        buf.extend_from_slice(&4u32.to_le_bytes());
+        buf.extend_from_slice(&0u32.to_le_bytes());
+        buf.extend_from_slice(&1u32.to_le_bytes());
+        buf.extend_from_slice(&17u32.to_le_bytes());
+        buf.extend_from_slice(&0u32.to_le_bytes());
+        for _ in 0..56 {
+            buf.extend_from_slice(&0.0_f64.to_le_bytes());
+        }
+        buf.extend_from_slice(&1u32.to_le_bytes());
+        buf.extend_from_slice(&12u32.to_le_bytes());
+        buf.extend_from_slice(&17u32.to_le_bytes());
+        buf.extend_from_slice(&0u32.to_le_bytes());
+        for _ in 0..12 {
+            buf.extend_from_slice(&0.0_f64.to_le_bytes());
+        }
+        buf.extend_from_slice(&(0xFFFFu16).to_le_bytes());
+        buf.extend_from_slice(&[0u8; 6]);
+        buf.extend_from_slice(&2u32.to_le_bytes());
+        buf.extend_from_slice(&0u32.to_le_bytes());
+        buf.extend_from_slice(&17u32.to_le_bytes());
+        buf.extend_from_slice(&0u32.to_le_bytes());
+        for _ in 0..5 {
+            buf.extend_from_slice(&0.0_f64.to_le_bytes());
+        }
+        buf.extend_from_slice(&7u32.to_le_bytes());
+        buf.extend_from_slice(&1u32.to_le_bytes());
+        buf.extend_from_slice(&0u32.to_le_bytes());
+        buf.extend_from_slice(&0u32.to_le_bytes());
+        buf.extend_from_slice(&1.277e-6_f64.to_le_bytes());
+        buf.extend_from_slice(&2.0e-8_f64.to_le_bytes());
+        buf.extend_from_slice(&0.0_f64.to_le_bytes());
+        buf.extend_from_slice(&0.0_f64.to_le_bytes());
+        buf.extend_from_slice(&0.0_f64.to_le_bytes());
+        let eph = super::parse_ephemeris_binary(&buf).unwrap();
+        let props = eph.props.unwrap();
+        let (omega_g, sigma) = props.omega_g.unwrap();
+        assert!((omega_g - 1.277e-6).abs() < 1e-18);
+        assert!((sigma - 2.0e-8).abs() < 1e-18);
+    }
+
+    #[test]
+    fn test_fetch_dispatch_gate_admits_em_source() {
+        let fc = FieldConfig {
+            key: "flux".into(),
+            name: "flux".into(),
+            kernel: 0,
+            force: 0,
+            tau: 60.0,
+            absorption: 0.0,
+            advection: 0.0,
+            unit: String::new(),
+            fold: None,
+        };
+        let reach = super::dispatch_reach(&[fc], 60.0).expect("em carries a propagation law");
+        assert_eq!(reach, C_LIGHT * 60.0 * 64.0);
+        let presences: Vec<(f64, f64, f64, f64, f64)> = vec![(8.0e8, 0.0, 0.0, 0.0, 1.0e12)];
+        assert!(
+            super::presence_gate(&presences, (0.0, 0.0, 0.0), reach),
+            "the em source at the presence anchor must be fetched"
+        );
+    }
+
+    #[test]
+    fn test_fetch_dispatch_gate_window_anchor_passes_with_zero_reach() {
+        let presences: Vec<(f64, f64, f64, f64, f64)> = vec![(8.0e8, 0.0, 0.0, 0.0, 100.0)];
+        assert!(
+            super::presence_gate(&presences, (50.0, 0.0, 0.0), 0.0),
+            "an anchor inside the presence window passes on the window range alone"
+        );
+        assert!(
+            !super::presence_gate(&presences, (1.0e6, 0.0, 0.0), 0.0),
+            "an anchor outside the window stays refused without a physical reach"
+        );
+    }
+
+    #[test]
+    fn test_fetch_dispatch_gate_thermal_reach_governs_geometry() {
+        let fc = FieldConfig {
+            key: "temp".into(),
+            name: "temp".into(),
+            kernel: 3,
+            force: 5,
+            tau: 60.0,
+            absorption: 0.0,
+            advection: 0.0,
+            unit: String::new(),
+            fold: None,
+        };
+        let reach = super::dispatch_reach(&[fc], 60.0).expect("thermal carries a propagation law");
+        assert_eq!(reach, (2.0 * DIFFUSIVITY_THERMAL * 60.0 * 64.0).sqrt());
+        let presences: Vec<(f64, f64, f64, f64, f64)> = vec![(8.0e8, 0.0, 0.0, 0.0, 1.0)];
+        assert!(
+            super::presence_gate(&presences, (10.0, 0.0, 0.0), reach),
+            "the thermal front over the sample lifetime reaches 10 m"
+        );
+        assert!(
+            !super::presence_gate(&presences, (1.0e6, 0.0, 0.0), reach),
+            "a thermal anchor 1000 km away is out of physical reach"
+        );
+    }
+
+    #[test]
+    fn test_fetch_dispatch_gate_forceless_field_refused() {
+        let fc = FieldConfig {
+            key: "x".into(),
+            name: "x".into(),
+            kernel: 0,
+            force: 9,
+            tau: 60.0,
+            absorption: 0.0,
+            advection: 0.0,
+            unit: String::new(),
+            fold: None,
+        };
+        assert!(
+            super::dispatch_reach(&[fc], 60.0).is_none(),
+            "a force without a propagation law is refused, never 0.0"
+        );
+    }
+
+    #[test]
+    fn test_extract_fields_reads_profile_map() {
+        let fc = field_fixture("temp", 60.0);
+        let ext = Extract::ProfileMap {
+            arr_path: ".".into(),
+            lat_key: "lat".into(),
+            lon_key: "lon".into(),
+            epoch_key: "t".into(),
+            pressure_var: "pressure".into(),
+            pressure_scale: 1.0,
+            fields: vec![fc.clone()],
+        };
+        let fields = super::extract_fields(&ext);
+        assert_eq!(fields.len(), 1);
+        assert_eq!(fields[0].key, "temp");
+        let reach = super::dispatch_reach(fields, 60.0).expect("the profile field gates");
+        assert_eq!(reach, C_LIGHT * 60.0 * 64.0);
+    }
+
+    #[test]
+    fn test_fetch_dispatch_gate_advective_uses_field_advection() {
+        let fc = FieldConfig {
+            key: "wind".into(),
+            name: "wind".into(),
+            kernel: 5,
+            force: 7,
+            tau: 60.0,
+            absorption: 0.0,
+            advection: 400000.0,
+            unit: String::new(),
+            fold: None,
+        };
+        let reach =
+            super::dispatch_reach(&[fc], 60.0).expect("advective carries a propagation law");
+        assert_eq!(reach, 400000.0 * 60.0 * 64.0);
     }
 
     #[test]
@@ -9334,6 +9789,11 @@ use std::sync::{mpsc, Mutex};
 use std::thread;
 use std::time::{SystemTime, UNIX_EPOCH};
 const NAIF_LSK_TTL_SECS: u64 = 86400;
+const NAIF_LSK_EMBEDDED: &str = include_str!("kernels/naif0012.tls");
+
+pub fn embedded_lsk() -> Option<LeapSeconds> {
+    crate::lsk::parse(NAIF_LSK_EMBEDDED)
+}
 
 pub fn resolve_asset(rel: &str) -> std::path::PathBuf {
     let cwd_candidate = std::path::PathBuf::from(rel);
@@ -10300,6 +10760,16 @@ fn signal_reach(force_type: f64, advection: f64, age: f64) -> Option<f64> {
     }
 }
 
+fn dispatch_reach(fields: &[FieldConfig], src_ttl: f64) -> Option<f64> {
+    let mut reach: Option<f64> = None;
+    for fc in fields {
+        if let Some(rr) = signal_reach(fc.force as f64, fc.advection, src_ttl * 64.0) {
+            reach = Some(reach.map_or(rr, |prev| prev.max(rr)));
+        }
+    }
+    reach
+}
+
 fn propagation_speed(force_type: f64, advection: f64) -> Option<f64> {
     match force_type as u8 {
         0 | 1 | 8 => Some(C_LIGHT),
@@ -10510,6 +10980,22 @@ fn days_to_ymd(total_days: u64) -> (u32, u32, u32) {
     (y, m + 1, d + 1)
 }
 
+fn anchor_uses(sources: &[SourceConfig]) -> std::collections::HashMap<String, usize> {
+    let mut uses = std::collections::HashMap::new();
+    for s in sources {
+        if s.format == "ephemeris_binary" || s.format == "kernel_text" {
+            continue;
+        }
+        match &s.frame {
+            Frame::Surface { body_name, .. } | Frame::Barycenter { body_name, .. } => {
+                *uses.entry(body_name.clone()).or_insert(0) += 1;
+            }
+            Frame::Manifest => {}
+        }
+    }
+    uses
+}
+
 fn spawn_ephemeris_bootstrap(
     sources: &[SourceConfig],
     guard: &std::sync::Arc<std::sync::atomic::AtomicBool>,
@@ -10517,19 +11003,7 @@ fn spawn_ephemeris_bootstrap(
     if guard.swap(true, std::sync::atomic::Ordering::SeqCst) {
         return;
     }
-    let mut anchor_uses: std::collections::HashMap<String, usize> =
-        std::collections::HashMap::new();
-    for s in sources {
-        if s.format == "ephemeris_binary" || s.format == "kernel_text" {
-            continue;
-        }
-        match &s.frame {
-            Frame::Surface { body_name, .. } | Frame::Barycenter { body_name, .. } => {
-                *anchor_uses.entry(body_name.clone()).or_insert(0) += 1;
-            }
-            Frame::Manifest => {}
-        }
-    }
+    let anchor_uses = anchor_uses(sources);
     let mut anchor_items: Vec<(usize, SourceConfig, String)> = Vec::new();
     let mut rest_items: Vec<(usize, SourceConfig, String)> = Vec::new();
     for (i, s) in sources.iter().enumerate() {
@@ -10675,6 +11149,7 @@ fn rfc1123_to_unix(s: &str) -> Option<u64> {
 }
 
 fn cdn_fresh(cdn_url: &str, ttl: u64) -> bool {
+    const CI_REFRESH_S: u64 = 300;
     let connect_t = ((ttl as f64) / (Φ * Φ * Φ)).ceil() as u64;
     let mut cmd = Command::new("curl");
     cmd.arg("-s")
@@ -10703,7 +11178,7 @@ fn cdn_fresh(cdn_url: &str, ttl: u64) -> bool {
         Ok(d) => d.as_secs(),
         Err(_) => return false,
     };
-    now.saturating_sub(asset_ts) < ttl
+    now.saturating_sub(asset_ts) < ttl.max(CI_REFRESH_S)
 }
 
 fn fetch_one(
@@ -12323,6 +12798,31 @@ fn body_channels(name: &str, props: &BodyProperties, now: f64) -> Vec<(Channel, 
                 kernel: 0,
                 force: 1,
                 tau: f64::INFINITY,
+                absorption: 0.0,
+                advection: 0.0,
+                unit: String::new(),
+                fold: None,
+            },
+        ));
+    }
+    if let Some((omega_g, sigma)) = props.omega_g {
+        let tau = if omega_g > 0.0 { 1.0 / omega_g } else { 0.0 };
+        out.push((
+            Channel {
+                z: 0.0,
+                freq: omega_g,
+                bin_width: sigma,
+                name: format!("{}.omega_g", name),
+                value: omega_g,
+                position: Position::Source,
+                epoch: now,
+            },
+            FieldConfig {
+                key: format!("{}.omega_g", name),
+                name: format!("{}.omega_g", name),
+                kernel: 0,
+                force: 1,
+                tau,
                 absorption: 0.0,
                 advection: 0.0,
                 unit: String::new(),
@@ -14657,7 +15157,7 @@ pub fn main_flow() {
             Vec::new()
         }
     };
-    let time: Arc<Mutex<Option<LeapSeconds>>> = Arc::new(Mutex::new(None));
+    let time: Arc<Mutex<Option<LeapSeconds>>> = Arc::new(Mutex::new(embedded_lsk()));
     let mut archive = Archive {
         sources: loaded,
         body_ephemerides: body_ephemerides.clone(),
@@ -14708,17 +15208,36 @@ pub fn main_flow() {
             }
         }
     });
-    let em = crate::mathematikerin::EMOscillator::new(
-        presence_tx,
-        sensor_tx.clone(),
-        body_names.clone(),
-        time.clone(),
-        consent.clone(),
-        acoustic_tx,
-        seismic_tx,
-    );
-    let em_shutdown = em.shutdown_flag();
-    radiators.push(Box::new(em));
+    let boot_pt = time
+        .lock()
+        .ok()
+        .and_then(|l| l.as_ref().and_then(|l| l.system_now_tdb()));
+    if let Some(pt) = boot_pt {
+        let _ = presence_tx.send((
+            "native".to_string(),
+            pt,
+            0.0,
+            0.0,
+            0.0,
+            1280.0_f64 * crate::mathematikerin::GRID_INIT * 2.0,
+        ));
+    }
+    let em_shutdown = if std::env::var("OMEGAFLOW_HEADLESS").is_ok() {
+        std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false))
+    } else {
+        let em = crate::mathematikerin::EMOscillator::new(
+            presence_tx,
+            sensor_tx.clone(),
+            body_names.clone(),
+            time.clone(),
+            consent.clone(),
+            acoustic_tx,
+            seismic_tx,
+        );
+        let em_shutdown = em.shutdown_flag();
+        radiators.push(Box::new(em));
+        em_shutdown
+    };
     #[cfg(feature = "browser_relay")]
     {
         let sr = crate::relay::TcpRadiator::new(
@@ -14745,6 +15264,7 @@ pub fn main_flow() {
     let bootstrap_running: std::sync::Arc<std::sync::atomic::AtomicBool> =
         std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false));
     spawn_ephemeris_bootstrap(&archive.sources, &bootstrap_running);
+    let anchor_bodies = anchor_uses(&archive.sources);
     let mut last_bootstrap: f64 = 0.0;
     let mut tick: u64 = 0;
     loop {
@@ -14796,6 +15316,9 @@ pub fn main_flow() {
         let lsk = match leap_seconds(&archive.time) {
             Some(l) => l,
             None => {
+                eprintln!(
+                    "the time base is absent — the process refuses to fabricate a dead field"
+                );
                 thread::sleep(std::time::Duration::from_secs_f64(cadence));
                 continue;
             }
@@ -15013,9 +15536,19 @@ pub fn main_flow() {
         while let Ok((name, pt, px, py, pz, pr)) = presence_rx.try_recv() {
             archive.presence.insert(name, (pt, px, py, pz, pr));
         }
+        let anchors_complete = anchor_bodies.keys().all(|b| {
+            archive
+                .body_ephemerides
+                .get(b)
+                .and_then(|e| e.props.as_ref())
+                .is_some()
+        });
         for i in 0..archive.sources.len() {
             let origin = i as u32;
             if !origin_stale(&archive.origins, origin, archive.sources[i].ttl, now) {
+                continue;
+            }
+            if archive.sources[i].format == "kernel_text" {
                 continue;
             }
             if archive.sources[i].format == "ephemeris_binary" {
@@ -15025,6 +15558,13 @@ pub fn main_flow() {
                     Some(b) => format!("/tmp/omegaflow_eph_{}.bin", b),
                     None => continue,
                 };
+                let body_is_anchor = src_clone
+                    .body
+                    .as_deref()
+                    .map_or(false, |b| anchor_bodies.contains_key(b));
+                if !body_is_anchor && !anchors_complete {
+                    continue;
+                }
                 if cache_fresh(&tmp_path, src_clone.ttl) {
                     let ftx = fetch_tx.clone();
                     let lsk_c = lsk.clone();
@@ -15506,6 +16046,208 @@ pub fn main_flow() {
                 });
                 continue;
             }
+            if archive.sources[i].format == "rpw_efield" {
+                let url = archive.sources[i].url.clone();
+                let src = archive.sources[i].clone();
+                let ftx = fetch_tx.clone();
+                let src_idx = i;
+                let src_ttl = src.ttl;
+                thread::spawn(move || {
+                    let empty = || FetchResult {
+                        source_idx: src_idx,
+                        channels: Vec::new(),
+                        eph_update: None,
+                        asteroid_samples: Vec::new(),
+                        star_samples: Vec::new(),
+                        curves: None,
+                        spectral: None,
+                    };
+                    let name = url.rsplit('/').next().unwrap_or("rpw").to_string();
+                    let tmp_path = format!("/tmp/omegaflow_rpw_{}", name);
+                    if !cache_fresh(&tmp_path, src_ttl) {
+                        let bytes = match fetch_raw_bytes(&url, src_ttl) {
+                            Some(b) => b,
+                            None => {
+                                eprintln!("rpw {}: fetch void — retry in ttl/Φ", url);
+                                let _ = ftx.send(empty());
+                                return;
+                            }
+                        };
+                        if std::fs::write(&tmp_path, &bytes).is_err() {
+                            eprintln!("rpw {}: write void — retry in ttl/Φ", url);
+                            let _ = ftx.send(empty());
+                            return;
+                        }
+                    }
+                    let bytes = match std::fs::read(&tmp_path) {
+                        Ok(b) => b,
+                        Err(_) => {
+                            eprintln!("rpw {}: read void — retry in ttl/Φ", url);
+                            let _ = ftx.send(empty());
+                            return;
+                        }
+                    };
+                    let records = match crate::rpw::parse_bin(&bytes) {
+                        Some(r) => r,
+                        None => {
+                            eprintln!(
+                                "rpw {}: bin reads void — {} B carry no rpw_efield.bin contract",
+                                url,
+                                bytes.len()
+                            );
+                            let _ = ftx.send(empty());
+                            return;
+                        }
+                    };
+                    let fields: Vec<FieldConfig> = src
+                        .extracts
+                        .iter()
+                        .filter_map(|e| match e {
+                            Extract::Field(fc) => Some(fc.clone()),
+                            _ => None,
+                        })
+                        .collect();
+                    if fields.is_empty() {
+                        eprintln!(
+                            "rpw {}: field undeclared — the block carries no field line",
+                            url
+                        );
+                        let _ = ftx.send(empty());
+                        return;
+                    }
+                    let mut channels = Vec::with_capacity(records.len());
+                    for (t, val, comp) in records {
+                        let name = match comp {
+                            crate::rpw::COMP_EY => "rpw_e_y",
+                            crate::rpw::COMP_EZ => "rpw_e_z",
+                            _ => continue,
+                        };
+                        let Some(fc) = fields.iter().find(|fc| fc.name == name) else {
+                            continue;
+                        };
+                        channels.push((
+                            Channel {
+                                z: 0.0,
+                                freq: 0.0,
+                                bin_width: 0.0,
+                                epoch: t,
+                                position: Position::Source,
+                                name: fc.name.clone(),
+                                value: val,
+                            },
+                            fc.clone(),
+                        ));
+                    }
+                    eprintln!("\r\x1b[Krpw {}: {} oscillators", url, channels.len());
+                    let _ = ftx.send(FetchResult {
+                        source_idx: src_idx,
+                        channels,
+                        eph_update: None,
+                        asteroid_samples: Vec::new(),
+                        star_samples: Vec::new(),
+                        curves: None,
+                        spectral: None,
+                    });
+                });
+                continue;
+            }
+            if archive.sources[i].format == "gong_modes" {
+                let url = archive.sources[i].url.clone();
+                let src = archive.sources[i].clone();
+                let ftx = fetch_tx.clone();
+                let src_idx = i;
+                let src_ttl = src.ttl;
+                thread::spawn(move || {
+                    let empty = || FetchResult {
+                        source_idx: src_idx,
+                        channels: Vec::new(),
+                        eph_update: None,
+                        asteroid_samples: Vec::new(),
+                        star_samples: Vec::new(),
+                        curves: None,
+                        spectral: None,
+                    };
+                    let name = url.rsplit('/').next().unwrap_or("gong").to_string();
+                    let tmp_path = format!("/tmp/omegaflow_gong_{}", name);
+                    if !cache_fresh(&tmp_path, src_ttl) {
+                        let bytes = match fetch_raw_bytes(&url, src_ttl) {
+                            Some(b) => b,
+                            None => {
+                                eprintln!("gong {}: fetch void — retry in ttl/Φ", url);
+                                let _ = ftx.send(empty());
+                                return;
+                            }
+                        };
+                        if std::fs::write(&tmp_path, &bytes).is_err() {
+                            eprintln!("gong {}: write void — retry in ttl/Φ", url);
+                            let _ = ftx.send(empty());
+                            return;
+                        }
+                    }
+                    let bytes = match std::fs::read(&tmp_path) {
+                        Ok(b) => b,
+                        Err(_) => {
+                            eprintln!("gong {}: read void — retry in ttl/Φ", url);
+                            let _ = ftx.send(empty());
+                            return;
+                        }
+                    };
+                    let modes = match crate::gong::parse_bin(&bytes) {
+                        Some(m) => m,
+                        None => {
+                            eprintln!(
+                                "gong {}: bin reads void — {} B carry no gong_modes.bin contract",
+                                url,
+                                bytes.len()
+                            );
+                            let _ = ftx.send(empty());
+                            return;
+                        }
+                    };
+                    let fields: Vec<FieldConfig> = src
+                        .extracts
+                        .iter()
+                        .filter_map(|e| match e {
+                            Extract::Field(fc) => Some(fc.clone()),
+                            _ => None,
+                        })
+                        .collect();
+                    let Some(fc) = fields.first().cloned() else {
+                        eprintln!(
+                            "gong {}: field undeclared — the block carries no field line",
+                            url
+                        );
+                        let _ = ftx.send(empty());
+                        return;
+                    };
+                    let mut channels = Vec::with_capacity(modes.len());
+                    for (_, _, t, rms) in modes {
+                        channels.push((
+                            Channel {
+                                z: 0.0,
+                                freq: 0.0,
+                                bin_width: 0.0,
+                                epoch: t,
+                                position: Position::Source,
+                                name: fc.name.clone(),
+                                value: rms,
+                            },
+                            fc.clone(),
+                        ));
+                    }
+                    eprintln!("\r\x1b[Kgong {}: {} modes", url, channels.len());
+                    let _ = ftx.send(FetchResult {
+                        source_idx: src_idx,
+                        channels,
+                        eph_update: None,
+                        asteroid_samples: Vec::new(),
+                        star_samples: Vec::new(),
+                        curves: None,
+                        spectral: None,
+                    });
+                });
+                continue;
+            }
             if archive.sources[i].format == "csv_zip" {
                 let ftx = fetch_tx.clone();
                 let src_clone = archive.sources[i].clone();
@@ -15593,25 +16335,24 @@ pub fn main_flow() {
                 });
                 continue;
             }
-            let body_name = match &archive.sources[i].frame {
-                Frame::Surface { body_name, .. } | Frame::Barycenter { body_name, .. } => {
-                    body_name.as_str()
-                }
-                Frame::Manifest => continue,
-            };
-            let body_props = archive
-                .body_ephemerides
-                .get(body_name)
-                .and_then(|e| e.props.as_ref());
-            let mut r = 0.0_f64;
+            let mut fields: Vec<FieldConfig> = Vec::new();
             for ext in &archive.sources[i].extracts {
-                for fc in extract_fields(ext) {
-                    r = f64::max(r, kernel_extent(fc.force, fc.kernel, body_props, fc.tau));
+                fields.extend_from_slice(extract_fields(ext));
+            }
+            let Some(r) = dispatch_reach(&fields, archive.sources[i].ttl as f64) else {
+                if fields.is_empty() {
+                    eprintln!(
+                        "source {}: carries no field lines — refused, retry in ttl/Φ",
+                        i
+                    );
+                } else {
+                    eprintln!(
+                        "source {}: no field carries a propagation law — refused, retry in ttl/Φ",
+                        i
+                    );
                 }
-            }
-            if r == 0.0 {
                 continue;
-            }
+            };
             let pos = match &archive.sources[i].frame {
                 Frame::Surface {
                     lat,

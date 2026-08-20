@@ -70,17 +70,17 @@ field properties.salinity ocean_salinity_psu gaussian-inverse-square diffusion P
 url https://services.swpc.noaa.gov/json/goes/primary/differential-protons-1-day.json
 ttl 60
 on earth 0.0 -75.2 35786023
-last flux radiation_proton_flux_differential inverse-square em count 6.0 0.0 0.0
+last flux radiation_proton_flux_differential inverse-square em pfu/mev 6.0 0.0 0.0
 
 url https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-1-day.json
 ttl 60
 on earth 0.0 -75.2 35786023
-last flux radiation_electron_flux_2mev inverse-square em count 6.0 0.0 0.0
+last flux radiation_electron_flux_2mev inverse-square em pfu 6.0 0.0 0.0
 
 url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
 ttl 60
 on earth 0.0 -75.2 35786023
-last flux radiation_proton_flux_integral inverse-square em count 6.0 0.0 0.0
+last flux radiation_proton_flux_integral inverse-square em pfu 6.0 0.0 0.0
 
 url https://services.swpc.noaa.gov/json/goes/primary/magnetometers-1-day.json
 ttl 60
@@ -97,7 +97,7 @@ last max_xrlong solar_flare_xray_intensity inverse-square em W/m2 6.0 0.0 0.0
 url https://services.swpc.noaa.gov/json/goes/primary/xrays-7-day.json
 ttl 60
 at sun
-last flux noaa_goes_xray_flux_w_m2 inverse-square em W/m2 6.0 0.0 0.0 where energy 0.05-0.4nm
+last flux noaa_goes_xray_flux_w_m2 inverse-square em wm2_1au 6.0 0.0 0.0 where energy 0.05-0.4nm
 
 url https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json
 ttl 60
@@ -230,8 +230,8 @@ field pressure storm_pressure_mb gaussian-inverse-square advective mb 300 0.0 0.
 url https://services.swpc.noaa.gov/json/goes/primary/euvs-7-day.json
 ttl 600
 at sun
-last value solar_euv_flux_304_wm2 inverse-square em W/m2 60.0 0.0 0.0 where line 304
-last value solar_euv_flux_284_wm2 inverse-square em W/m2 60.0 0.0 0.0 where line 284
+last value solar_euv_flux_304_wm2 inverse-square em wm2_1au 60.0 0.0 0.0 where line 304
+last value solar_euv_flux_284_wm2 inverse-square em wm2_1au 60.0 0.0 0.0 where line 284
 
 url https://www.jma.go.jp/bosai/quake/data/list.json
 ttl 600
@@ -314,6 +314,14 @@ fanout 200
 fanout_delay 2
 field magpsf alerce_ztf_detection_magpsf gaussian-inverse-square em mag 3600 0.0 0.0
 field magap alerce_ztf_detection_magap gaussian-inverse-square em mag 3600 0.0 0.0
+
+url https://api.nasa.gov/DONKI/CME?startDate={week_ago}&endDate={today}&api_key={NASA_API_KEY}
+ttl 3600
+at sun
+map .
+lat cmeAnalyses.0.latitude
+lon cmeAnalyses.0.longitude
+field cmeAnalyses.0.speed cme_plane_of_sky_speed_km_s inverse-square em km/s 3600 0.0 0.0
 
 url https://api.nasa.gov/DONKI/FLR?startDate={week_ago}&endDate={today}&classType=X&api_key={NASA_API_KEY}
 ttl 3600
@@ -501,17 +509,16 @@ dec declination
 z redshift
 field discoverymag tns_transient_flux inverse-square em mag 3600 0.0 0.0
 
-url https://cdaweb.gsfc.nasa.gov/hapi/data?id=OMNI2_H0_MRG1HR&time.min={week_ago}T00:00:00Z&time.max={now}Z&parameters=BX_GSE1800,BY_GSM1800,BZ_GSM1800,T1800,N1800,V1800,Pressure1800,E1800&format=json
+url https://cdaweb.gsfc.nasa.gov/hapi/data?id=OMNI2_H0_MRG1HR&time.min={week_ago}T00:00:00Z&time.max={now}Z&parameters=BX_GSE1800,BY_GSM1800,BZ_GSM1800,T1800,N1800,V1800,Pressure1800&format=json
 ttl 3600
 at sun
-hapi V1800=omni_solarwind_flow_speed_kms N1800=omni_solarwind_density_percc T1800=omni_solarwind_temp_k BX_GSE1800=omni_imf_bx_gse_nt BY_GSM1800=omni_imf_by_gsm_nt BZ_GSM1800=omni_imf_bz_gsm_nt E1800=omni_solarwind_electric_field_mvm Pressure1800=omni_solarwind_pressure_npa
+hapi V1800=omni_solarwind_flow_speed_kms N1800=omni_solarwind_density_percc T1800=omni_solarwind_temp_k BX_GSE1800=omni_imf_bx_gse_nt BY_GSM1800=omni_imf_by_gsm_nt BZ_GSM1800=omni_imf_bz_gsm_nt Pressure1800=omni_solarwind_pressure_npa
 field omni_solarwind_flow_speed_kms omni_solarwind_flow_speed_kms patch-levy advective km/s 3600 0.0 0.0
 field omni_solarwind_density_percc omni_solarwind_density_percc gaussian-inverse-square diffusion cm-3 3600 0.0 0.0
 field omni_solarwind_temp_k omni_solarwind_temp_k exponential-decay thermal K 3600 0.0 0.0
 field omni_imf_bx_gse_nt omni_imf_bx_gse_nt inverse-square em nT 3600 0.0 0.0
 field omni_imf_by_gsm_nt omni_imf_by_gsm_nt inverse-square em nT 3600 0.0 0.0
 field omni_imf_bz_gsm_nt omni_imf_bz_gsm_nt inverse-square em nT 3600 0.0 0.0
-field omni_solarwind_electric_field_mvm omni_solarwind_electric_field_mvm gaussian-inverse-square electric mV/m 3600 0.0 0.0
 field omni_solarwind_pressure_npa omni_solarwind_pressure_npa patch-levy advective nPa 3600 0.0 0.0
 
 url https://cdaweb.gsfc.nasa.gov/hapi/data?id=PSP_COHO1HR_MERGED_MAG_PLASMA&time.min={week_ago}T00:00:00Z&time.max={now}Z&parameters=BR,BT,BN,B,ProtonSpeed,protonDensity,protonTemp&format=json
@@ -540,6 +547,12 @@ hapi psp_fld_l2_mag_RTN.0=psp_fld_br_rtn_nt psp_fld_l2_mag_RTN.1=psp_fld_bt_rtn_
 field psp_fld_br_rtn_nt psp_fld_br_rtn_nt inverse-square em nT 3600 0.0 0.0
 field psp_fld_bt_rtn_nt psp_fld_bt_rtn_nt inverse-square em nT 3600 0.0 0.0
 field psp_fld_bn_rtn_nt psp_fld_bn_rtn_nt inverse-square em nT 3600 0.0 0.0
+
+url https://cdaweb.gsfc.nasa.gov/hapi/data?id=SOLO_L2_RPW-TDS-SURV-STAT&time.min={hour_ago}T00:00:00Z&time.max={now}Z&parameters=SN_RMS_E&format=json
+ttl 3600
+at solar_orbiter
+hapi SN_RMS_E=solo_rpw_e_rms_vm
+field solo_rpw_e_rms_vm solo_rpw_e_rms_vm gaussian-inverse-square electric V/m 3600 0.0 0.0
 
 url https://services2.arcgis.com/7KRXAKALbBGlCW77/arcgis/rest/services/Local_Air_Quality_CHPL_211297/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
 ttl 3600
@@ -582,6 +595,13 @@ map features
 lat properties.latitude
 lon properties.longitude
 field properties.value usgs_stream_temp_c erfc thermal C 3600 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/rpw_efield.bin
+format rpw_efield
+at solar_orbiter
+ttl 3600
+field rpw_e_y rpw_e_y gaussian-inverse-square electric mV/m 3600 0.0 0.0
+field rpw_e_z rpw_e_z gaussian-inverse-square electric mV/m 3600 0.0 0.0
 
 url https://api.openaq.org/v3/sensors/{station}/measurements?limit=1&datetime_from={yesterday}T00:00:00Z
 header X-API-Key {OPENAQ_API_KEY}
@@ -1303,6 +1323,12 @@ radvel rv
 dist_scale 3.085677581e16
 field mag gcvs_mag_max gaussian-inverse-square em mag 604800 0.0 0.0
 field period gcvs_period_d gaussian-inverse-square em d 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/gong_modes.bin
+format gong_modes
+at sun
+ttl 604800
+field gong_amp gong_mode_amplitude_m_s gaussian-inverse-square acoustic m/s 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/lmxbdata.json
 ttl 604800

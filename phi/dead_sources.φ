@@ -782,6 +782,10 @@ dead timeout
 url https://cdaweb.gsfc.nasa.gov/hapi/data?id=DSCOVR_H0_MAG&time.min=2026-07-01T00:00:00Z&time.max=2026-07-13T23:59:59Z&parameters=Time,B1F1&format=json
 note curl: curl: (28) Operation timed out after 12000 milliseconds with 0 bytes received
 
+decline derived
+url https://cdaweb.gsfc.nasa.gov/hapi/data?id=OMNI2_H0_MRG1HR&parameters=E1800
+note E1800 = −V×B (deterministische Funktion der advective-V- und em-B-Kanäle, Konfounder — TE≈1.0 wäre ein epistemisches Trugbild, keine eigene Messung). Aus dem OMNI-Block in sources.φ entfernt (2026-08-20); die Reihe bleibt in OMNI2 verfügbar, der electric-Kanal trägt jetzt den Solar-Orbiter-RPW-Feed (rpw_efield.bin).
+
 dead 404
 url https://cdms.astro.uni-koeln.de/vamdc/tap/rest/VAMDC-TAP/sync?REQUEST=doQuery&LANG=VSS2&FORMAT=application/x-xsams+xml&QUERY=SELECT+SPECIES+WHERE+MoleculeChemicalFormula%3D%27H2O%27
 note HTTP 404 — Endpoint weg.
