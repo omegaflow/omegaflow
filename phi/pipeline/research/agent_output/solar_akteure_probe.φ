@@ -126,13 +126,29 @@ TS1_L2_EFI_EAC@0 („AC Electric Field in TSCS", [2] V/m, Kontakt
 J. W. Bonnell @ SSL) start 2025-09-26 → 2026-04-30; TS2_L2_EFI_EAC@0
 start 2025-08-04 → 2026-04-30 (Datenstand, laufend gepflegt; das
 Fenster am 2026-04-30 war 1201-leer — Tail-Lücke, nicht toter Kanal).
+TS1/TS2 = TRACERS-1/2 (EFI = Electric Field Instrument). Achtung:
+die HAPI-IDs tragen das @0-Suffix — ohne Suffix 1406 (ein Recherche-
+LLM meldete „HAPI kennt sie nicht" und hatte das Suffix ausgelassen).
+Kein TRACERS-SPK bei NAIF (generic_kernels/spk/ + Missions-Root leer,
+verifiziert) — der at-ts1-Block bleibt pending (ephemeris_compiler
+kann nichts ernten).
 Altbestand gemessen: THA-THE_L2_EFI (mV/m [3]) bis 2025-01-05;
 MMS_EDI_SRVY (vdrift km/s, kein E-Vektor) bis 2023-08; Cluster
 EFW_L3_E3D bis 2018; PSP_FLD_L2_VSC auf CDAWeb-HAPI 1406 (nur
-Berkeley-CDF — cdf_reader pending). Ein Block für TS1/TS2 braucht
-Ephemeriden (SPK-Index prüfen) + frame at ts1/ts2 — registriert,
-kein Block gebaut (eigenes Atom). Die solare Live-Reihe bleibt
-TDS-SURV-STAT.
+Berkeley-CDF — cdf_reader pending). Die solare Live-Reihe auf
+CDAWeb bleibt TDS-SURV-STAT.
+
+DER FUND (2026-08-20, LIRA): das französische RPW-Zentrum
+(rpw.lesia.obspm.fr redirectet auf rpw-lira.obspm.fr) trägt
+/roc/data/pub/solo/rpw/data/L3/lfr_efield/ mit Jahrverzeichnissen
+2020→2025 — Tagesdateien solo_L3_rpw-bia-efield_YYYYMMDD_V01.cdf
+bis 2025-12-31 (db.csv = Katalog-Index). Das kalibrierte BIA-
+E-Feld LÄUFT also über das CDAWeb-Ende (2022-12-01) hinaus —
+2023/2024/2025 liegen beim Primärzentrum, CDAWeb hinkt. Die
+registrierte „2022-2026-Lücke" ist eine HOST-Lücke, keine Mess-
+Lücke. Die Ernte hängt am cdf_reader-Atom (Tages-CDFs) — derselbe
+Baustein trägt danach PSP-VSC (Berkeley). lfr_density läuft bei
+LIRA bis 2025-04 (CDAWeb BIA-DENSITY deckt sich).
 
 CDN — gh nicht eingeloggt, kein GH_TOKEN in .secrets.local → die Bins
 liegen lokal (dieser Session: /tmp/opencode), der Upload läuft über
