@@ -149,6 +149,10 @@ registrierte „2022-2026-Lücke" ist eine HOST-Lücke, keine Mess-
 Lücke. Die Ernte hängt am cdf_reader-Atom (Tages-CDFs) — derselbe
 Baustein trägt danach PSP-VSC (Berkeley). lfr_density läuft bei
 LIRA bis 2025-04 (CDAWeb BIA-DENSITY deckt sich).
+PSA-TAP-Verdikt (2026-08-20, direkte Probe): psa.esac.esa.int
+http 000 (Host tot), psa.esa.int/tap/sync 404 — TAP existiert auf
+keinem Host, das PSA ist reiner SPA-Browser. Die Recency-Frage
+beantwortet LIRA, nicht das PSA.
 
 CDN — gh nicht eingeloggt, kein GH_TOKEN in .secrets.local → die Bins
 liegen lokal (dieser Session: /tmp/opencode), der Upload läuft über
