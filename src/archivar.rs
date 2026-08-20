@@ -35,27 +35,13 @@ pub struct SpectralHash {
 }
 
 pub struct Buffer {
-    pub bodies: HashMap<String, SpatialHash>,
-    pub inertial: SpatialHash,
+    pub cache: SpatialHash,
     pub eph: Arc<HashMap<String, BodyEphemeris>>,
-    pub asteroids: Option<Arc<AsteroidHash>>,
-    pub stars: Option<Arc<StarHash>>,
+    pub star_records: Arc<Vec<StarRec>>,
     pub occluders: Option<Arc<OccluderSet>>,
     pub planets: Option<Arc<PlanetSet>>,
     pub curves: Option<Arc<CurveSet>>,
     pub spectral: Vec<SpectralHash>,
-}
-pub struct AsteroidHash {
-    pub cell_size: f64,
-    pub anchor_vmax: f64,
-    pub anchor_amax: f64,
-    pub epoch_min_secs: f64,
-    pub ttl: f64,
-    pub cell_lo: CellKey,
-    pub cell_hi: CellKey,
-    pub cells: HashMap<CellKey, Vec<u32>>,
-    pub records: Vec<AsteroidRec>,
-    pub p0: Vec<[f64; 3]>,
 }
 #[derive(Clone)]
 pub struct StarRec {
@@ -69,23 +55,6 @@ pub struct StarRec {
     pub tau: f64,
     pub color_index: f64,
     pub rv_m_s: f64,
-}
-pub struct StarHash {
-    pub records: Vec<StarRec>,
-    #[cfg(feature = "browser_relay")]
-    pub cell_size: f64,
-    #[cfg(feature = "browser_relay")]
-    pub anchor_vmax: f64,
-    #[cfg(feature = "browser_relay")]
-    pub build_epoch: f64,
-    #[cfg(feature = "browser_relay")]
-    pub cell_lo: CellKey,
-    #[cfg(feature = "browser_relay")]
-    pub cell_hi: CellKey,
-    #[cfg(feature = "browser_relay")]
-    pub cells: HashMap<CellKey, Vec<u32>>,
-    #[cfg(feature = "browser_relay")]
-    pub p0: Vec<[f64; 3]>,
 }
 pub struct OccluderSet {
     pub records: Vec<AsteroidRec>,
@@ -138,10 +107,10 @@ pub enum Motion {
         v: [f64; 3],
     },
     Kepler {
-        rec: AsteroidRec,
+        rec: Arc<AsteroidRec>,
     },
     Spherical {
-        rec: StarRec,
+        rec: Arc<StarRec>,
     },
 }
 
@@ -172,6 +141,7 @@ pub struct Sample {
     pub z: f64,
     pub freq: f64,
     pub bin_width: f64,
+    pub color_index: f64,
 }
 
 #[derive(Clone, Debug)]
@@ -6250,31 +6220,38 @@ field temp temp_c\n";
         bin.extend_from_slice(&1f32.to_le_bytes());
         bin.extend_from_slice(&1.2f32.to_le_bytes());
         bin.extend_from_slice(&30000f32.to_le_bytes());
-        #[cfg(feature = "browser_relay")]
-        let hash = build_star_hash(&bin, 0.0, 1.0);
-        #[cfg(not(feature = "browser_relay"))]
-        let hash = build_star_hash(&bin);
-        assert_eq!(hash.records.len(), 1);
-        assert!(hash.records[0].tau > 0.0);
-        assert!((hash.records[0].color_index - 1.2).abs() < 1e-4);
-        assert!((hash.records[0].rv_m_s - 30000.0).abs() < 1e-4);
-        let (p, _) = star_position_at(&hash.records[0], 0.0);
+        let (samples, records) = build_star_samples(&bin);
+        assert_eq!(records.len(), 1);
+        assert!(records[0].tau > 0.0);
+        assert!((records[0].color_index - 1.2).abs() < 1e-4);
+        assert!((records[0].rv_m_s - 30000.0).abs() < 1e-4);
+        assert_eq!(samples.len(), 1);
+        assert_eq!(samples[0].val, 1.0);
+        assert_eq!(samples[0].force_type, 0.0);
+        assert_eq!(samples[0].kernel_id, 0.0);
+        assert_eq!(samples[0].tau, records[0].tau);
+        assert_eq!(samples[0].ttl, records[0].tau);
+        assert_eq!(samples[0].epoch, 0.0);
+        assert!((samples[0].color_index - 1.2).abs() < 1e-4);
+        let Motion::Spherical { rec } = &samples[0].motion else {
+            panic!("spherical motion");
+        };
+        assert!((rec.plx_mas - 100.0).abs() < 1e-6);
+        let (p, _) = star_position_at(&records[0], 0.0);
         let d = 10.0 * PARSEC_M;
         assert!((p[0] - d).abs() / d < 1e-9);
+        assert!((samples[0].anchor_p0[0] - d).abs() / d < 1e-9);
         let short = [0u8; 36];
         assert!(parse_star_record(&short).is_none());
         let legacy = [0u8; 40];
         assert!(parse_star_record(&legacy).is_none());
-        #[cfg(feature = "browser_relay")]
-        let legacy_hash = build_star_hash(&bin[..40], 0.0, 1.0);
-        #[cfg(not(feature = "browser_relay"))]
-        let legacy_hash = build_star_hash(&bin[..40]);
-        assert_eq!(legacy_hash.records.len(), 0);
+        let (legacy_samples, legacy_records) = build_star_samples(&bin[..40]);
+        assert_eq!(legacy_records.len(), 0);
+        assert_eq!(legacy_samples.len(), 0);
     }
 
-    #[cfg(feature = "browser_relay")]
     #[test]
-    fn test_star_hash_build_and_query() {
+    fn test_star_samples_query() {
         let mut bin = Vec::new();
         bin.extend_from_slice(&0f64.to_le_bytes());
         bin.extend_from_slice(&0f64.to_le_bytes());
@@ -6283,17 +6260,40 @@ field temp temp_c\n";
         bin.extend_from_slice(&100f32.to_le_bytes());
         bin.extend_from_slice(&0f32.to_le_bytes());
         bin.extend_from_slice(&1f32.to_le_bytes());
-        bin.extend_from_slice(&0f32.to_le_bytes());
+        bin.extend_from_slice(&1.2f32.to_le_bytes());
         bin.extend_from_slice(&12000f32.to_le_bytes());
-        let hash = build_star_hash(&bin, 0.0, 1.0);
-        assert_eq!(hash.p0.len(), 1);
-        let d = 10.0 * PARSEC_M;
-        assert!((hash.p0[0][0] - d).abs() / d < 1e-9);
-        let mut records: Vec<SampleRecord> = Vec::new();
-        query_star_hash(&hash, [0.0, 0.0, 0.0], 0.0, d * 2.0, 0.0, &mut records);
+        let (samples, records) = build_star_samples(&bin);
         assert_eq!(records.len(), 1);
-        assert!((records[0].0 - d).abs() / d < 1e-9);
-        assert_eq!(records[0].3, 1.0);
+        assert_eq!(samples.len(), 1);
+        let d = 10.0 * PARSEC_M;
+        assert!((samples[0].anchor_p0[0] - d).abs() / d < 1e-9);
+        let eph: HashMap<String, BodyEphemeris> = HashMap::new();
+        let buf = build_buffer(
+            samples,
+            1.0,
+            Arc::new(eph.clone()),
+            Arc::new(Vec::new()),
+            None,
+            None,
+            None,
+            Vec::new(),
+        );
+        let mut out: Vec<SampleRecord> = Vec::new();
+        query_hash(
+            &buf.cache,
+            [0.0, 0.0, 0.0],
+            0.0,
+            d * 2.0,
+            0.0,
+            &mut out,
+            &eph,
+        );
+        assert_eq!(out.len(), 1);
+        assert!((out[0].0 - d).abs() / d < 1e-9);
+        assert_eq!(out[0].3, 1.0);
+        assert_eq!(out[0].8, 0.0);
+        assert_eq!(out[0].9, 0.0);
+        assert!((out[0].21 - 1.2).abs() < 1e-4);
     }
 
     fn kepler_rec_fixture() -> AsteroidRec {
@@ -6321,7 +6321,9 @@ field temp temp_c\n";
         let au_m = crate::kepler::AU_M;
         let gm_sun = crate::kepler::GM_SUN_M3_S2;
         let rec = kepler_rec_fixture();
-        let motion = Motion::Kepler { rec: rec.clone() };
+        let motion = Motion::Kepler {
+            rec: Arc::new(rec.clone()),
+        };
         assert!(motion.anchor_body().is_none());
         let eph: HashMap<String, BodyEphemeris> = HashMap::new();
         let p0 = motion.at(0.0, 0.0, &eph).expect("kepler position at epoch");
@@ -6345,7 +6347,77 @@ field temp temp_c\n";
         assert!(amax > 0.0 && amax.is_finite());
         let mut unbound = rec;
         unbound.e = 1.5;
-        assert!(Motion::Kepler { rec: unbound }.at(0.0, 0.0, &eph).is_none());
+        assert!(Motion::Kepler {
+            rec: Arc::new(unbound)
+        }
+        .at(0.0, 0.0, &eph)
+        .is_none());
+    }
+
+    #[test]
+    fn test_build_asteroid_samples_gm_radius_and_query() {
+        let mut bin: Vec<u8> = Vec::new();
+        let mut with_radius = kepler_rec_fixture();
+        with_radius.number = 1;
+        with_radius.gm_km3_s2 = 0.5;
+        with_radius.radius_km = 3.0;
+        crate::dastcom::encode_record(&with_radius, &mut bin);
+        let mut far = kepler_rec_fixture();
+        far.number = 2;
+        far.a_au = 2.0;
+        far.gm_km3_s2 = 0.25;
+        crate::dastcom::encode_record(&far, &mut bin);
+        let mut unbound = kepler_rec_fixture();
+        unbound.number = 3;
+        unbound.e = 1.5;
+        unbound.gm_km3_s2 = 0.5;
+        crate::dastcom::encode_record(&unbound, &mut bin);
+
+        let (samples, occluders) = build_asteroid_samples(&bin, 86400);
+        assert_eq!(samples.len(), 3);
+        assert_eq!(occluders.as_ref().map(|o| o.records.len()), Some(1));
+        let gm = &samples[0];
+        let radius = &samples[1];
+        let far_gm = &samples[2];
+        assert_eq!(gm.name, "dastcom.mass");
+        assert_eq!(radius.name, "dastcom.radius");
+        assert_eq!(gm.val, 5.0e8);
+        assert_eq!(radius.val, 3000.0);
+        assert_eq!(far_gm.val, 2.5e8);
+        assert_eq!(gm.kernel_id, 0.0);
+        assert_eq!(radius.kernel_id, 1.0);
+        assert_eq!(gm.force_type, 1.0);
+        assert_eq!(radius.force_type, 1.0);
+        assert!(gm.extent == 0.0 && gm.tau.is_infinite());
+        assert!(radius.extent == 0.0 && radius.tau.is_infinite());
+        let Motion::Kepler { rec: rec_gm } = &gm.motion else {
+            panic!("kepler motion");
+        };
+        let Motion::Kepler { rec: rec_radius } = &radius.motion else {
+            panic!("kepler motion");
+        };
+        assert!(Arc::ptr_eq(rec_gm, rec_radius));
+        let au_m = crate::kepler::AU_M;
+        assert!((gm.anchor_p0[0] - au_m).abs() / au_m < 1e-9);
+        let anchor_p0 = gm.anchor_p0;
+
+        let eph: HashMap<String, BodyEphemeris> = HashMap::new();
+        let buf = build_buffer(
+            samples,
+            1.0,
+            Arc::new(eph.clone()),
+            Arc::new(Vec::new()),
+            None,
+            None,
+            None,
+            Vec::new(),
+        );
+        let mut records: Vec<SampleRecord> = Vec::new();
+        query_hash(&buf.cache, anchor_p0, 0.0, 1.0, 0.0, &mut records, &eph);
+        assert_eq!(records.len(), 2);
+        assert_eq!(records[0].3, 5.0e8);
+        assert_eq!(records[1].3, 3000.0);
+        assert_eq!(records[0].9, 1.0);
     }
 
     #[test]
@@ -6362,7 +6434,9 @@ field temp temp_c\n";
             color_index: 0.0,
             rv_m_s: 0.0,
         };
-        let motion = Motion::Spherical { rec: rec.clone() };
+        let motion = Motion::Spherical {
+            rec: Arc::new(rec.clone()),
+        };
         assert!(motion.anchor_body().is_none());
         let eph: HashMap<String, BodyEphemeris> = HashMap::new();
         let t_yr = 86400.0 * 365.25;
@@ -9037,9 +9111,7 @@ field temp temp_c\n";
         assert!(seen_lat[0] && seen_lat[1], "both lat rows present");
     }
 }
-use crate::dastcom::{
-    accel_at_epoch, hill_radius_m, parse_record, speed_at_epoch, state_at, RECORD_STRIDE,
-};
+use crate::dastcom::{hill_radius_m, parse_record, state_at, RECORD_STRIDE};
 use crate::force::default_kernel_for;
 use crate::inflate::gunzip;
 use crate::netcdf::NetcdfFile;
@@ -9072,7 +9144,7 @@ pub fn resolve_asset(rel: &str) -> std::path::PathBuf {
 }
 
 const SURFACE_MOTION_DT: f64 = 0.01;
-const MAX_SAMPLES: usize = 1 << 21;
+const MAX_SAMPLES: usize = 1 << 22;
 
 fn finite_positive(v: f64) -> Option<f64> {
     if v.is_finite() && v > 0.0 {
@@ -9092,31 +9164,15 @@ fn cell_of(p: [f64; 3], s: f64) -> CellKey {
     )
 }
 
-fn relative_frame_position(
-    motion: &Motion,
-    t: f64,
-    epoch: f64,
-    eph: &HashMap<String, BodyEphemeris>,
-) -> Option<[f64; 3]> {
-    let p = motion.at(t, epoch, eph)?;
-    match motion.anchor_body() {
-        Some(body) => {
-            let b = body_barycenter_position(body, t, eph)?;
-            Some([p[0] - b[0], p[1] - b[1], p[2] - b[2]])
-        }
-        None => Some(p),
-    }
-}
-
 pub fn law_bounds(
     motion: &Motion,
     epoch: f64,
     resid_ema: f64,
     eph: &HashMap<String, BodyEphemeris>,
 ) -> Option<(f64, f64, [f64; 3])> {
-    let p0 = relative_frame_position(motion, epoch, epoch, eph)?;
-    let p1 = relative_frame_position(motion, epoch + 1.0, epoch, eph)?;
-    let p2 = relative_frame_position(motion, epoch + 2.0, epoch, eph)?;
+    let p0 = motion.at(epoch, epoch, eph)?;
+    let p1 = motion.at(epoch + 1.0, epoch, eph)?;
+    let p2 = motion.at(epoch + 2.0, epoch, eph)?;
     let v = ((p1[0] - p0[0]).powi(2) + (p1[1] - p0[1]).powi(2) + (p1[2] - p0[2]).powi(2)).sqrt();
     let a = ((p2[0] - 2.0 * p1[0] + p0[0]).powi(2)
         + (p2[1] - 2.0 * p1[1] + p0[1]).powi(2)
@@ -9190,32 +9246,16 @@ pub fn build_buffer(
     samples: Vec<Sample>,
     cadence: f64,
     eph: Arc<HashMap<String, BodyEphemeris>>,
-    asteroids: Option<Arc<AsteroidHash>>,
-    stars: Option<Arc<StarHash>>,
+    star_records: Arc<Vec<StarRec>>,
     occluders: Option<Arc<OccluderSet>>,
     planets: Option<Arc<PlanetSet>>,
     curves: Option<Arc<CurveSet>>,
     spectral: Vec<SpectralHash>,
 ) -> Buffer {
-    let mut body_samps: HashMap<String, Vec<Sample>> = HashMap::new();
-    let mut inertial_samps = Vec::new();
-    for s in samples {
-        if let Some(body) = s.motion.anchor_body() {
-            body_samps.entry(body.to_string()).or_default().push(s);
-        } else {
-            inertial_samps.push(s);
-        }
-    }
-    let mut bodies = HashMap::new();
-    for (name, samples) in body_samps {
-        bodies.insert(name, build_spatial_hash(samples, cadence));
-    }
     Buffer {
-        bodies,
-        inertial: build_spatial_hash(inertial_samps, cadence),
+        cache: build_spatial_hash(samples, cadence),
         eph,
-        asteroids,
-        stars,
+        star_records,
         occluders,
         planets,
         curves,
@@ -9223,12 +9263,9 @@ pub fn build_buffer(
     }
 }
 
-fn build_asteroid_hash(bytes: &[u8], cadence: f64, ttl: u64) -> AsteroidHash {
-    let mut records: Vec<AsteroidRec> = Vec::new();
-    let mut p0: Vec<[f64; 3]> = Vec::new();
-    let mut anchor_vmax = 0.0f64;
-    let mut anchor_amax = 0.0f64;
-    let mut epoch_min = f64::MAX;
+fn build_asteroid_samples(bytes: &[u8], ttl: u64) -> (Vec<Sample>, Option<Arc<OccluderSet>>) {
+    let eph: HashMap<String, BodyEphemeris> = HashMap::new();
+    let mut samples: Vec<Sample> = Vec::new();
     for chunk in bytes.chunks_exact(RECORD_STRIDE) {
         let rec = match parse_record(chunk) {
             Some(r) => r,
@@ -9240,55 +9277,62 @@ fn build_asteroid_hash(bytes: &[u8], cadence: f64, ttl: u64) -> AsteroidHash {
         if hill_radius_m(&rec).is_none() {
             continue;
         }
-        let (pos, vel) = match state_at(&rec, rec.epoch_jd) {
-            Some(s) => s,
-            None => continue,
+        let epoch_secs = (rec.epoch_jd - J2000_EPOCH) * 86400.0;
+        let motion = Motion::Kepler {
+            rec: Arc::new(rec.clone()),
         };
-        let Some(accel) = accel_at_epoch(&rec) else {
+        let Some((anchor_vmax, anchor_amax, anchor_p0)) =
+            law_bounds(&motion, epoch_secs, 0.0, &eph)
+        else {
             continue;
         };
-        let speed = (vel[0] * vel[0] + vel[1] * vel[1] + vel[2] * vel[2]).sqrt();
-        let epoch_secs = (rec.epoch_jd - J2000_EPOCH) * 86400.0;
-        anchor_vmax = anchor_vmax.max(speed);
-        anchor_amax = anchor_amax.max(accel);
-        epoch_min = epoch_min.min(epoch_secs);
-        records.push(rec);
-        p0.push(pos);
+        let gm = rec.gm_km3_s2 as f64 * 1.0e9;
+        samples.push(Sample {
+            source: SampleSource::Body,
+            epoch: epoch_secs,
+            ttl: ttl as f64,
+            extent: 0.0,
+            tau: f64::INFINITY,
+            kernel_id: 0.0,
+            force_type: 1.0,
+            absorption: 0.0,
+            advection: 0.0,
+            anchor_vmax,
+            anchor_amax,
+            anchor_p0,
+            motion: motion.clone(),
+            val: gm,
+            name: "dastcom.mass".to_string(),
+            z: 0.0,
+            freq: 0.0,
+            bin_width: 0.0,
+            color_index: 0.0,
+        });
+        if rec.radius_km > 0.0 {
+            samples.push(Sample {
+                source: SampleSource::Body,
+                epoch: epoch_secs,
+                ttl: ttl as f64,
+                extent: 0.0,
+                tau: f64::INFINITY,
+                kernel_id: 1.0,
+                force_type: 1.0,
+                absorption: 0.0,
+                advection: 0.0,
+                anchor_vmax,
+                anchor_amax,
+                anchor_p0,
+                motion,
+                val: rec.radius_km as f64 * 1000.0,
+                name: "dastcom.radius".to_string(),
+                z: 0.0,
+                freq: 0.0,
+                bin_width: 0.0,
+                color_index: 0.0,
+            });
+        }
     }
-    anchor_vmax *= Φ;
-    anchor_amax *= Φ;
-    let rho_cad = anchor_vmax * cadence + 0.5 * anchor_amax * cadence * cadence;
-    let shift = (2.0 * rho_cad).log2().ceil().clamp(0.0, 63.0) as i32;
-    let cell_size = 2f64.powi(shift);
-    let mut cells: HashMap<CellKey, Vec<u32>> = HashMap::new();
-    let mut cell_lo = (i64::MAX, i64::MAX, i64::MAX);
-    let mut cell_hi = (i64::MIN, i64::MIN, i64::MIN);
-    for (i, pos) in p0.iter().enumerate() {
-        let c = cell_of(*pos, cell_size);
-        cell_lo.0 = cell_lo.0.min(c.0);
-        cell_lo.1 = cell_lo.1.min(c.1);
-        cell_lo.2 = cell_lo.2.min(c.2);
-        cell_hi.0 = cell_hi.0.max(c.0);
-        cell_hi.1 = cell_hi.1.max(c.1);
-        cell_hi.2 = cell_hi.2.max(c.2);
-        cells.entry(c).or_default().push(i as u32);
-    }
-    AsteroidHash {
-        cell_size,
-        anchor_vmax,
-        anchor_amax,
-        epoch_min_secs: if epoch_min == f64::MAX {
-            0.0
-        } else {
-            epoch_min
-        },
-        ttl: ttl as f64,
-        cell_lo,
-        cell_hi,
-        cells,
-        records,
-        p0,
-    }
+    (samples, Some(Arc::new(build_occluder_set(bytes))))
 }
 
 fn build_occluder_set(bytes: &[u8]) -> OccluderSet {
@@ -9307,161 +9351,6 @@ fn build_occluder_set(bytes: &[u8]) -> OccluderSet {
         records.push(rec);
     }
     OccluderSet { records }
-}
-
-fn query_asteroid_hash(
-    hash: &AsteroidHash,
-    center: [f64; 3],
-    t2: f64,
-    pad: f64,
-    delta_t_cache: f64,
-    records: &mut Vec<SampleRecord>,
-) {
-    if hash.cells.is_empty() {
-        return;
-    }
-    let dt = (t2 - hash.epoch_min_secs).abs() + delta_t_cache;
-    let rho = hash.anchor_vmax * dt + 0.5 * hash.anchor_amax * dt * dt + pad;
-    let s = hash.cell_size;
-    let qlo = cell_of([center[0] - rho, center[1] - rho, center[2] - rho], s);
-    let qhi = cell_of([center[0] + rho, center[1] + rho, center[2] + rho], s);
-    let lo = (
-        qlo.0.max(hash.cell_lo.0),
-        qlo.1.max(hash.cell_lo.1),
-        qlo.2.max(hash.cell_lo.2),
-    );
-    let hi = (
-        qhi.0.min(hash.cell_hi.0),
-        qhi.1.min(hash.cell_hi.1),
-        qhi.2.min(hash.cell_hi.2),
-    );
-    if lo.0 > hi.0 || lo.1 > hi.1 || lo.2 > hi.2 {
-        return;
-    }
-    let span = (hi.0.saturating_sub(lo.0).saturating_add(1) as u64)
-        .saturating_mul(hi.1.saturating_sub(lo.1).saturating_add(1) as u64)
-        .saturating_mul(hi.2.saturating_sub(lo.2).saturating_add(1) as u64);
-    let visit: Vec<&Vec<u32>> = if span > hash.cells.len() as u64 * 4 {
-        hash.cells
-            .iter()
-            .filter(|(ck, _)| {
-                ck.0 >= lo.0
-                    && ck.0 <= hi.0
-                    && ck.1 >= lo.1
-                    && ck.1 <= hi.1
-                    && ck.2 >= lo.2
-                    && ck.2 <= hi.2
-            })
-            .map(|(_, v)| v)
-            .collect()
-    } else {
-        let mut out = Vec::new();
-        for cx in lo.0..=hi.0 {
-            for cy in lo.1..=hi.1 {
-                for cz in lo.2..=hi.2 {
-                    if let Some(indices) = hash.cells.get(&(cx, cy, cz)) {
-                        out.push(indices);
-                    }
-                }
-            }
-        }
-        out
-    };
-    let t_jd = t2 / 86400.0 + J2000_EPOCH;
-    for indices in visit {
-        for &i in indices {
-            let rec = &hash.records[i as usize];
-            if hill_radius_m(rec).is_none() {
-                continue;
-            }
-            let epoch_secs = (rec.epoch_jd - J2000_EPOCH) * 86400.0;
-            let age = (t2 - epoch_secs).abs();
-            if age > hash.ttl * 64.0 {
-                continue;
-            }
-            let future_age = age + delta_t_cache;
-            let (Some(speed), Some(accel)) = (speed_at_epoch(rec), accel_at_epoch(rec)) else {
-                continue;
-            };
-            let reach =
-                C_LIGHT * age + speed * future_age + 0.5 * accel * future_age * future_age + pad;
-            let p0 = hash.p0[i as usize];
-            let dx = p0[0] - center[0];
-            let dy = p0[1] - center[1];
-            let dz = p0[2] - center[2];
-            let dist2_p0 = dx * dx + dy * dy + dz * dz;
-            if dist2_p0 > reach * reach {
-                continue;
-            }
-            let (p, v) = match state_at(rec, t_jd) {
-                Some(s) => s,
-                None => continue,
-            };
-            let ddx = p[0] - center[0];
-            let ddy = p[1] - center[1];
-            let ddz = p[2] - center[2];
-            let exact = pad;
-            let dist2 = ddx * ddx + ddy * ddy + ddz * ddz;
-            if dist2 > exact * exact {
-                continue;
-            }
-            let gm = rec.gm_km3_s2 as f64 * 1.0e9;
-            records.push((
-                p[0],
-                p[1],
-                p[2],
-                gm,
-                epoch_secs,
-                hash.ttl,
-                f64::INFINITY,
-                0.0,
-                0.0,
-                1.0,
-                0.0,
-                0.0,
-                v[0],
-                v[1],
-                v[2],
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-            ));
-            if rec.radius_km > 0.0 {
-                records.push((
-                    p[0],
-                    p[1],
-                    p[2],
-                    rec.radius_km as f64 * 1000.0,
-                    epoch_secs,
-                    hash.ttl,
-                    f64::INFINITY,
-                    0.0,
-                    0.0,
-                    1.0,
-                    0.0,
-                    0.0,
-                    v[0],
-                    v[1],
-                    v[2],
-                    0.0,
-                    0.0,
-                    0.0,
-                    0.0,
-                    0.0,
-                    0.0,
-                    0.0,
-                    0.0,
-                    0.0,
-                ));
-            }
-        }
-    }
 }
 
 const STAR_RECORD_BYTES: usize = 44;
@@ -9527,35 +9416,17 @@ pub fn star_position_at(rec: &StarRec, t2: f64) -> ([f64; 3], [f64; 3]) {
     (p, vel)
 }
 
-fn build_star_hash(
-    bytes: &[u8],
-    #[cfg(feature = "browser_relay")] build_epoch: f64,
-    #[cfg(feature = "browser_relay")] cadence: f64,
-) -> StarHash {
+fn build_star_samples(bytes: &[u8]) -> (Vec<Sample>, Vec<StarRec>) {
+    let eph: HashMap<String, BodyEphemeris> = HashMap::new();
     let mut records: Vec<StarRec> = Vec::new();
+    let mut samples: Vec<Sample> = Vec::new();
     let Some(stride) = star_stride(bytes) else {
         eprintln!(
             "star bin {} bytes: no {}-byte records — pending recompilation, stars stay dark",
             bytes.len(),
             STAR_RECORD_BYTES
         );
-        return StarHash {
-            records,
-            #[cfg(feature = "browser_relay")]
-            cell_size: 0.0,
-            #[cfg(feature = "browser_relay")]
-            anchor_vmax: 0.0,
-            #[cfg(feature = "browser_relay")]
-            build_epoch,
-            #[cfg(feature = "browser_relay")]
-            cell_lo: (i64::MAX, i64::MAX, i64::MAX),
-            #[cfg(feature = "browser_relay")]
-            cell_hi: (i64::MIN, i64::MIN, i64::MIN),
-            #[cfg(feature = "browser_relay")]
-            cells: HashMap::new(),
-            #[cfg(feature = "browser_relay")]
-            p0: Vec::new(),
-        };
+        return (samples, records);
     };
     for chunk in bytes.chunks_exact(stride) {
         let Some(mut rec) = parse_star_record(chunk) else {
@@ -9564,191 +9435,42 @@ fn build_star_hash(
         let m_abs = rec.mag + 5.0 * (rec.plx_mas / 100.0).log10();
         let lum = 10f64.powf(-0.4 * (m_abs - 4.83));
         rec.tau = 1e10 * 365.25 * 86400.0 * lum.powf(-5.0 / 7.0);
+        let motion = Motion::Spherical {
+            rec: Arc::new(rec.clone()),
+        };
+        let Some((anchor_vmax, anchor_amax, anchor_p0)) = law_bounds(&motion, 0.0, 0.0, &eph)
+        else {
+            records.push(rec);
+            continue;
+        };
+        samples.push(Sample {
+            source: SampleSource::Body,
+            epoch: 0.0,
+            ttl: rec.tau,
+            extent: 0.0,
+            tau: rec.tau,
+            kernel_id: 0.0,
+            force_type: 0.0,
+            absorption: 0.0,
+            advection: 0.0,
+            anchor_vmax,
+            anchor_amax,
+            anchor_p0,
+            motion,
+            val: rec.flux,
+            name: "dr3_stars.flux".to_string(),
+            z: 0.0,
+            freq: 0.0,
+            bin_width: 0.0,
+            color_index: rec.color_index,
+        });
         records.push(rec);
     }
-    #[cfg(feature = "browser_relay")]
-    let (cell_size, anchor_vmax, build_epoch, cell_lo, cell_hi, cells, p0) = {
-        let mut p0: Vec<[f64; 3]> = Vec::new();
-        let mut anchor_vmax = 0.0f64;
-        for rec in &records {
-            let (p, v) = star_position_at(rec, build_epoch);
-            let speed = (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]).sqrt();
-            anchor_vmax = anchor_vmax.max(speed);
-            p0.push(p);
-        }
-        anchor_vmax *= Φ;
-        let rho_cad = anchor_vmax * cadence;
-        let shift = (2.0 * rho_cad).log2().ceil().clamp(0.0, 63.0) as i32;
-        let motion_cell = 2f64.powi(shift);
-        let mut span = 1.0f64;
-        for k in 0..3 {
-            let mut lo = f64::INFINITY;
-            let mut hi = f64::NEG_INFINITY;
-            for pos in &p0 {
-                lo = lo.min(pos[k]);
-                hi = hi.max(pos[k]);
-            }
-            span = span.max(hi - lo);
-        }
-        let cell_size = motion_cell.max(span / 1024.0);
-        let mut cells: HashMap<CellKey, Vec<u32>> = HashMap::new();
-        let mut cell_lo = (i64::MAX, i64::MAX, i64::MAX);
-        let mut cell_hi = (i64::MIN, i64::MIN, i64::MIN);
-        for (i, pos) in p0.iter().enumerate() {
-            let c = cell_of(*pos, cell_size);
-            cell_lo.0 = cell_lo.0.min(c.0);
-            cell_lo.1 = cell_lo.1.min(c.1);
-            cell_lo.2 = cell_lo.2.min(c.2);
-            cell_hi.0 = cell_hi.0.max(c.0);
-            cell_hi.1 = cell_hi.1.max(c.1);
-            cell_hi.2 = cell_hi.2.max(c.2);
-            cells.entry(c).or_default().push(i as u32);
-        }
-        (
-            cell_size,
-            anchor_vmax,
-            build_epoch,
-            cell_lo,
-            cell_hi,
-            cells,
-            p0,
-        )
-    };
-    StarHash {
-        records,
-        #[cfg(feature = "browser_relay")]
-        cell_size,
-        #[cfg(feature = "browser_relay")]
-        anchor_vmax,
-        #[cfg(feature = "browser_relay")]
-        build_epoch,
-        #[cfg(feature = "browser_relay")]
-        cell_lo,
-        #[cfg(feature = "browser_relay")]
-        cell_hi,
-        #[cfg(feature = "browser_relay")]
-        cells,
-        #[cfg(feature = "browser_relay")]
-        p0,
-    }
-}
-
-#[cfg(feature = "browser_relay")]
-fn query_star_hash(
-    hash: &StarHash,
-    center: [f64; 3],
-    t2: f64,
-    pad: f64,
-    delta_t_cache: f64,
-    records: &mut Vec<SampleRecord>,
-) {
-    if hash.cells.is_empty() {
-        return;
-    }
-    let dt = (t2 - hash.build_epoch).abs() + delta_t_cache;
-    let rho = hash.anchor_vmax * dt + pad;
-    let s = hash.cell_size;
-    let qlo = cell_of([center[0] - rho, center[1] - rho, center[2] - rho], s);
-    let qhi = cell_of([center[0] + rho, center[1] + rho, center[2] + rho], s);
-    let lo = (
-        qlo.0.max(hash.cell_lo.0),
-        qlo.1.max(hash.cell_lo.1),
-        qlo.2.max(hash.cell_lo.2),
-    );
-    let hi = (
-        qhi.0.min(hash.cell_hi.0),
-        qhi.1.min(hash.cell_hi.1),
-        qhi.2.min(hash.cell_hi.2),
-    );
-    if lo.0 > hi.0 || lo.1 > hi.1 || lo.2 > hi.2 {
-        return;
-    }
-    let span = (hi.0.saturating_sub(lo.0).saturating_add(1) as u64)
-        .saturating_mul(hi.1.saturating_sub(lo.1).saturating_add(1) as u64)
-        .saturating_mul(hi.2.saturating_sub(lo.2).saturating_add(1) as u64);
-    let visit: Vec<&Vec<u32>> = if span > hash.cells.len() as u64 * 4 {
-        hash.cells
-            .iter()
-            .filter(|(ck, _)| {
-                ck.0 >= lo.0
-                    && ck.0 <= hi.0
-                    && ck.1 >= lo.1
-                    && ck.1 <= hi.1
-                    && ck.2 >= lo.2
-                    && ck.2 <= hi.2
-            })
-            .map(|(_, v)| v)
-            .collect()
-    } else {
-        let mut out = Vec::new();
-        for cx in lo.0..=hi.0 {
-            for cy in lo.1..=hi.1 {
-                for cz in lo.2..=hi.2 {
-                    if let Some(indices) = hash.cells.get(&(cx, cy, cz)) {
-                        out.push(indices);
-                    }
-                }
-            }
-        }
-        out
-    };
-    for indices in visit {
-        for &i in indices {
-            let rec = &hash.records[i as usize];
-            let d = (1000.0 / rec.plx_mas) * PARSEC_M;
-            let mu_a = rec.pm_ra_masyr * MAS_YR_TO_RAD_S;
-            let mu_d = rec.pm_de_masyr * MAS_YR_TO_RAD_S;
-            let v_lin = d * mu_a.hypot(mu_d);
-            let reach = v_lin * dt + pad;
-            let p0 = hash.p0[i as usize];
-            let dx = p0[0] - center[0];
-            let dy = p0[1] - center[1];
-            let dz = p0[2] - center[2];
-            let dist2_p0 = dx * dx + dy * dy + dz * dz;
-            if dist2_p0 > reach * reach {
-                continue;
-            }
-            let (p, v) = star_position_at(rec, t2);
-            let ddx = p[0] - center[0];
-            let ddy = p[1] - center[1];
-            let ddz = p[2] - center[2];
-            let dist2 = ddx * ddx + ddy * ddy + ddz * ddz;
-            if dist2 > pad * pad {
-                continue;
-            }
-            records.push((
-                p[0],
-                p[1],
-                p[2],
-                rec.flux,
-                t2,
-                rec.tau,
-                rec.tau,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                v[0],
-                v[1],
-                v[2],
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                rec.color_index,
-                0.0,
-                0.0,
-            ));
-        }
-    }
+    (samples, records)
 }
 
 pub fn query_hash(
     hash: &SpatialHash,
-    anchor: [f64; 3],
     center: [f64; 3],
     t2: f64,
     pad: f64,
@@ -9781,7 +9503,6 @@ pub fn query_hash(
                 (p_dt[2] - p[2]) / 1e-3,
             ]
         };
-        let (pole, j2, j4, r_eq) = gravity_manifest(sample, t2, eph);
         records.push((
             p[0],
             p[1],
@@ -9801,20 +9522,14 @@ pub fn query_hash(
             if sample.force_type == 0.0 {
                 sample.z
             } else {
-                pole[0]
+                0.0
             },
-            pole[1],
-            pole[2],
-            match j2 {
-                Some(v) => v,
-                None => 0.0,
-            },
-            match j4 {
-                Some(v) => v,
-                None => 0.0,
-            },
-            r_eq,
             0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            sample.color_index,
             sample.freq,
             sample.bin_width,
         ));
@@ -9822,11 +9537,7 @@ pub fn query_hash(
     if hash.cells.is_empty() {
         return;
     }
-    let qf = [
-        center[0] - anchor[0],
-        center[1] - anchor[1],
-        center[2] - anchor[2],
-    ];
+    let qf = center;
     let dt = (t2 - hash.epoch_min).abs() + delta_t_cache;
     let rho = hash.anchor_vmax * dt + 0.5 * hash.anchor_amax * dt * dt + pad;
     let s = hash.cell_size;
@@ -9899,7 +9610,6 @@ pub fn query_hash(
                     (p_dt[2] - p[2]) / 1e-3,
                 ]
             };
-            let (pole, j2, j4, r_eq) = gravity_manifest(sample, t2, eph);
             records.push((
                 p[0],
                 p[1],
@@ -9919,20 +9629,14 @@ pub fn query_hash(
                 if sample.force_type == 0.0 {
                     sample.z
                 } else {
-                    pole[0]
+                    0.0
                 },
-                pole[1],
-                pole[2],
-                match j2 {
-                    Some(v) => v,
-                    None => 0.0,
-                },
-                match j4 {
-                    Some(v) => v,
-                    None => 0.0,
-                },
-                r_eq,
                 0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                sample.color_index,
                 sample.freq,
                 sample.bin_width,
             ));
@@ -9957,95 +9661,6 @@ pub fn query_hash(
     }
 }
 
-#[cfg(feature = "browser_relay")]
-pub fn sense_buffer(
-    buf: &Buffer,
-    center: [f64; 3],
-    t2: f64,
-    pad: f64,
-    delta_t_cache: f64,
-    records: &mut Vec<SampleRecord>,
-    eph: &HashMap<String, BodyEphemeris>,
-) {
-    for (body_name, hash_cell) in &buf.bodies {
-        let anchor = match body_barycenter_position(body_name, t2, eph) {
-            Some(a) => a,
-            None => continue,
-        };
-        query_hash(
-            hash_cell,
-            anchor,
-            center,
-            t2,
-            pad,
-            delta_t_cache,
-            records,
-            eph,
-        );
-    }
-    query_hash(
-        &buf.inertial,
-        [0.0, 0.0, 0.0],
-        center,
-        t2,
-        pad,
-        delta_t_cache,
-        records,
-        eph,
-    );
-    if let Some(ash) = &buf.asteroids {
-        query_asteroid_hash(ash, center, t2, pad, delta_t_cache, records);
-    }
-    if let Some(sh) = &buf.stars {
-        query_star_hash(sh, center, t2, pad, delta_t_cache, records);
-    }
-    for sh in &buf.spectral {
-        let Some(p) = sh.motion.at(t2, sh.epoch, eph) else {
-            continue;
-        };
-        let Some(p2) = sh.motion.at(t2 + 1e-3, sh.epoch, eph) else {
-            continue;
-        };
-        let ddx = p[0] - center[0];
-        let ddy = p[1] - center[1];
-        let ddz = p[2] - center[2];
-        if ddx * ddx + ddy * ddy + ddz * ddz > pad * pad {
-            continue;
-        }
-        let vx = (p2[0] - p[0]) / 1e-3;
-        let vy = (p2[1] - p[1]) / 1e-3;
-        let vz = (p2[2] - p[2]) / 1e-3;
-        for &(freq, bin_width, val) in &sh.bins {
-            records.push((
-                p[0],
-                p[1],
-                p[2],
-                val,
-                sh.epoch,
-                sh.ttl,
-                sh.tau,
-                0.0,
-                sh.kernel_id,
-                sh.force_type,
-                sh.absorption,
-                sh.advection,
-                vx,
-                vy,
-                vz,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                freq,
-                bin_width,
-            ));
-        }
-    }
-}
-
 pub fn sense_membrane(
     buf: &Buffer,
     center: [f64; 3],
@@ -10055,35 +9670,7 @@ pub fn sense_membrane(
     records: &mut Vec<SampleRecord>,
     eph: &HashMap<String, BodyEphemeris>,
 ) {
-    for (body_name, hash_cell) in &buf.bodies {
-        let anchor = match body_barycenter_position(body_name, t2, eph) {
-            Some(a) => a,
-            None => continue,
-        };
-        query_hash(
-            hash_cell,
-            anchor,
-            center,
-            t2,
-            pad,
-            delta_t_cache,
-            records,
-            eph,
-        );
-    }
-    query_hash(
-        &buf.inertial,
-        [0.0, 0.0, 0.0],
-        center,
-        t2,
-        pad,
-        delta_t_cache,
-        records,
-        eph,
-    );
-    if let Some(ash) = &buf.asteroids {
-        query_asteroid_hash(ash, center, t2, pad, delta_t_cache, records);
-    }
+    query_hash(&buf.cache, center, t2, pad, delta_t_cache, records, eph);
     for sh in &buf.spectral {
         let Some(p) = sh.motion.at(t2, sh.epoch, eph) else {
             continue;
@@ -10142,10 +9729,7 @@ pub fn sense_deep(
     out: &mut Vec<[f64; 10]>,
     factors: &HashMap<usize, f64>,
 ) {
-    let Some(sh) = &buf.stars else {
-        return;
-    };
-    for (si, rec) in sh.records.iter().enumerate() {
+    for (si, rec) in buf.star_records.iter().enumerate() {
         if rec.flux < STAR_FLUX_FLOOR {
             continue;
         }
@@ -10301,31 +9885,6 @@ pub fn system_now(time: &Arc<Mutex<Option<LeapSeconds>>>) -> Option<f64> {
         Some(lsk) => lsk.system_now_tdb(),
         None => None,
     }
-}
-
-pub fn body_pole_at(props: &BodyProperties, tdb: f64) -> [f64; 3] {
-    let jd = tdb / 86400.0 + J2000_EPOCH;
-    let (ra, dec, _) = orientation_angles_at(props, jd);
-    let (sd, cd) = dec.to_radians().sin_cos();
-    let (sr, cr) = ra.to_radians().sin_cos();
-    [cd * cr, cd * sr, sd]
-}
-
-pub fn gravity_manifest(
-    sample: &Sample,
-    t: f64,
-    eph: &HashMap<String, BodyEphemeris>,
-) -> ([f64; 3], Option<f64>, Option<f64>, f64) {
-    let name = match sample.motion.anchor_body() {
-        Some(n) => n,
-        None => return ([0.0; 3], None, None, 0.0),
-    };
-    let props = match eph.get(name).and_then(|e| e.props.as_ref()) {
-        Some(p) => p,
-        None => return ([0.0; 3], None, None, 0.0),
-    };
-    let pole = body_pole_at(props, t);
-    (pole, props.j2, props.j4, props.radius_m)
 }
 
 #[derive(Clone)]
@@ -10648,8 +10207,9 @@ struct FetchResult {
     source_idx: usize,
     channels: Vec<(Channel, FieldConfig)>,
     eph_update: Option<(String, BodyEphemeris)>,
-    asteroid_hash: Option<Arc<AsteroidHash>>,
-    star_hash: Option<Arc<StarHash>>,
+    asteroid_samples: Vec<Sample>,
+    star_samples: Vec<Sample>,
+    star_records: Vec<StarRec>,
     occluders: Option<Arc<OccluderSet>>,
     planets: Option<Arc<PlanetSet>>,
     curves: Option<Arc<CurveSet>>,
@@ -10744,29 +10304,11 @@ impl Radiator for StderrRadiator {
         let mut sensor_samples = 0usize;
         let mut body_src: std::collections::HashSet<String> = std::collections::HashSet::new();
         let mut api_src: std::collections::HashSet<u32> = std::collections::HashSet::new();
-        for (_body_name, hash) in &field.bodies {
-            for cell in hash.cells.values().chain(std::iter::once(&hash.unbounded)) {
-                for sample in cell {
-                    match sample.source {
-                        SampleSource::Sensor => sensor_samples += 1,
-                        SampleSource::Source(idx) => {
-                            api_samples += 1;
-                            api_src.insert(idx);
-                        }
-                        SampleSource::Body => {
-                            body_samples += 1;
-                            body_src
-                                .insert(sample.name.split('.').next().unwrap_or("").to_string());
-                        }
-                    }
-                }
-            }
-        }
         for cell in field
-            .inertial
+            .cache
             .cells
             .values()
-            .chain(std::iter::once(&field.inertial.unbounded))
+            .chain(std::iter::once(&field.cache.unbounded))
         {
             for sample in cell {
                 match sample.source {
@@ -10811,8 +10353,9 @@ struct Archive {
     origins: HashMap<Origin, OriginState>,
     pck_bodies: HashMap<i32, PckBody>,
     time: Arc<Mutex<Option<LeapSeconds>>>,
-    asteroids: Option<Arc<AsteroidHash>>,
-    stars: Option<Arc<StarHash>>,
+    asteroid_samples: Vec<Sample>,
+    star_samples: Vec<Sample>,
+    star_records: Arc<Vec<StarRec>>,
     occluders: Option<Arc<OccluderSet>>,
     planets: Option<Arc<PlanetSet>>,
     curves: Option<Arc<CurveSet>>,
@@ -12607,33 +12150,12 @@ pub fn anchor(
         z: channel.z,
         freq: channel.freq,
         bin_width: channel.bin_width,
+        color_index: 0.0,
     })
 }
 
 fn body_channels(name: &str, props: &BodyProperties, now: f64) -> Vec<(Channel, FieldConfig)> {
     let mut out = Vec::new();
-    out.push((
-        Channel {
-            z: 0.0,
-            freq: 0.0,
-            bin_width: 0.0,
-            name: format!("{}.radius", name),
-            value: props.radius_m,
-            position: Position::Source,
-            epoch: now,
-        },
-        FieldConfig {
-            key: format!("{}.radius", name),
-            name: format!("{}.radius", name),
-            kernel: 0,
-            force: 1,
-            tau: f64::INFINITY,
-            absorption: 0.0,
-            advection: 0.0,
-            unit: String::new(),
-            fold: None,
-        },
-    ));
     if let Some(gm) = props.gm {
         out.push((
             Channel {
@@ -14993,8 +14515,7 @@ pub fn main_flow() {
             Vec::new(),
             1.0,
             body_ephemerides.clone(),
-            None,
-            None,
+            Arc::new(Vec::new()),
             None,
             None,
             None,
@@ -15005,8 +14526,9 @@ pub fn main_flow() {
         origins: HashMap::new(),
         pck_bodies: HashMap::new(),
         time: time.clone(),
-        asteroids: None,
-        stars: None,
+        asteroid_samples: Vec::new(),
+        star_samples: Vec::new(),
+        star_records: Arc::new(Vec::new()),
         occluders: None,
         planets: None,
         curves: None,
@@ -15213,11 +14735,14 @@ pub fn main_flow() {
                 eph_map.insert(name, eph);
                 archive.body_ephemerides = Arc::new(eph_map);
             }
-            if let Some(hash) = res.asteroid_hash {
-                archive.asteroids = Some(hash);
+            if !res.asteroid_samples.is_empty() {
+                archive.asteroid_samples = res.asteroid_samples;
             }
-            if let Some(hash) = res.star_hash {
-                archive.stars = Some(hash);
+            if !res.star_samples.is_empty() {
+                archive.star_samples = res.star_samples;
+            }
+            if !res.star_records.is_empty() {
+                archive.star_records = Arc::new(res.star_records);
             }
             if let Some(occluders) = res.occluders {
                 archive.occluders = Some(occluders);
@@ -15376,8 +14901,9 @@ pub fn main_flow() {
                                 source_idx: src_idx,
                                 channels: Vec::new(),
                                 eph_update: src_clone.body.clone().map(|b| (b, eph)),
-                                asteroid_hash: None,
-                                star_hash: None,
+                                asteroid_samples: Vec::new(),
+                                star_samples: Vec::new(),
+                                star_records: Vec::new(),
                                 occluders: None,
                                 planets: None,
                                 curves: None,
@@ -15392,8 +14918,9 @@ pub fn main_flow() {
                                 source_idx: src_idx,
                                 channels: Vec::new(),
                                 eph_update: None,
-                                asteroid_hash: None,
-                                star_hash: None,
+                                asteroid_samples: Vec::new(),
+                                star_samples: Vec::new(),
+                                star_records: Vec::new(),
                                 occluders: None,
                                 planets: None,
                                 curves: None,
@@ -15410,7 +14937,6 @@ pub fn main_flow() {
                 let src_clone = archive.sources[i].clone();
                 let src_idx = i;
                 let src_ttl = src_clone.ttl;
-                let cadence_c = cadence;
                 thread::spawn(move || {
                     let name = url.rsplit('/').next().unwrap_or("catalog").to_string();
                     let tmp_path = format!("/tmp/omegaflow_catalog_{}", name);
@@ -15430,8 +14956,9 @@ pub fn main_flow() {
                             source_idx: src_idx,
                             channels: Vec::new(),
                             eph_update: None,
-                            asteroid_hash: None,
-                            star_hash: None,
+                            asteroid_samples: Vec::new(),
+                            star_samples: Vec::new(),
+                            star_records: Vec::new(),
                             occluders: None,
                             planets: None,
                             curves: None,
@@ -15443,22 +14970,20 @@ pub fn main_flow() {
                         Ok(b) => b,
                         Err(_) => return,
                     };
-                    let hash = build_asteroid_hash(&bytes, cadence_c, src_ttl);
-                    let occluders = build_occluder_set(&bytes);
+                    let (samples, occluders) = build_asteroid_samples(&bytes, src_ttl);
                     eprintln!(
-                        "\r\x1b[Kcatalog_dastcom: {} records, cell_size {:.3e} m, anchor_vmax {:.1} m/s, okkluder {}",
-                        hash.records.len(),
-                        hash.cell_size,
-                        hash.anchor_vmax,
-                        occluders.records.len()
+                        "\r\x1b[Kcatalog_dastcom: {} samples, okkluder {}",
+                        samples.len(),
+                        occluders.as_ref().map(|o| o.records.len()).unwrap_or(0)
                     );
                     let _ = ftx.send(FetchResult {
                         source_idx: src_idx,
                         channels: Vec::new(),
                         eph_update: None,
-                        asteroid_hash: Some(Arc::new(hash)),
-                        star_hash: None,
-                        occluders: Some(Arc::new(occluders)),
+                        asteroid_samples: samples,
+                        star_samples: Vec::new(),
+                        star_records: Vec::new(),
+                        occluders,
                         planets: None,
                         curves: None,
                         spectral: None,
@@ -15485,8 +15010,9 @@ pub fn main_flow() {
                                     source_idx: src_idx,
                                     channels: Vec::new(),
                                     eph_update: None,
-                                    asteroid_hash: None,
-                                    star_hash: None,
+                                    asteroid_samples: Vec::new(),
+                                    star_samples: Vec::new(),
+                                    star_records: Vec::new(),
                                     occluders: None,
                                     planets: None,
                                     curves: None,
@@ -15501,8 +15027,9 @@ pub fn main_flow() {
                                 source_idx: src_idx,
                                 channels: Vec::new(),
                                 eph_update: None,
-                                asteroid_hash: None,
-                                star_hash: None,
+                                asteroid_samples: Vec::new(),
+                                star_samples: Vec::new(),
+                                star_records: Vec::new(),
                                 occluders: None,
                                 planets: None,
                                 curves: None,
@@ -15519,8 +15046,9 @@ pub fn main_flow() {
                                 source_idx: src_idx,
                                 channels: Vec::new(),
                                 eph_update: None,
-                                asteroid_hash: None,
-                                star_hash: None,
+                                asteroid_samples: Vec::new(),
+                                star_samples: Vec::new(),
+                                star_records: Vec::new(),
                                 occluders: None,
                                 planets: None,
                                 curves: None,
@@ -15535,8 +15063,9 @@ pub fn main_flow() {
                         source_idx: src_idx,
                         channels,
                         eph_update: None,
-                        asteroid_hash: None,
-                        star_hash: None,
+                        asteroid_samples: Vec::new(),
+                        star_samples: Vec::new(),
+                        star_records: Vec::new(),
                         occluders: None,
                         planets: None,
                         curves: None,
@@ -15563,8 +15092,9 @@ pub fn main_flow() {
                                 source_idx: src_idx,
                                 channels: Vec::new(),
                                 eph_update: None,
-                                asteroid_hash: None,
-                                star_hash: None,
+                                asteroid_samples: Vec::new(),
+                                star_samples: Vec::new(),
+                                star_records: Vec::new(),
                                 occluders: None,
                                 planets: None,
                                 curves: None,
@@ -15583,8 +15113,9 @@ pub fn main_flow() {
                         source_idx: src_idx,
                         channels,
                         eph_update: None,
-                        asteroid_hash: None,
-                        star_hash: None,
+                        asteroid_samples: Vec::new(),
+                        star_samples: Vec::new(),
+                        star_records: Vec::new(),
                         occluders: None,
                         planets: None,
                         curves: None,
@@ -15605,8 +15136,9 @@ pub fn main_flow() {
                         source_idx: src_idx,
                         channels,
                         eph_update: None,
-                        asteroid_hash: None,
-                        star_hash: None,
+                        asteroid_samples: Vec::new(),
+                        star_samples: Vec::new(),
+                        star_records: Vec::new(),
                         occluders: None,
                         planets: None,
                         curves: None,
@@ -15621,10 +15153,6 @@ pub fn main_flow() {
                 let src_clone = archive.sources[i].clone();
                 let src_idx = i;
                 let src_ttl = src_clone.ttl;
-                #[cfg(feature = "browser_relay")]
-                let build_epoch = now;
-                #[cfg(feature = "browser_relay")]
-                let cadence_c = cadence;
                 thread::spawn(move || {
                     let name = url.rsplit('/').next().unwrap_or("stars").to_string();
                     let tmp_path = format!("/tmp/omegaflow_catalog_{}", name);
@@ -15637,8 +15165,9 @@ pub fn main_flow() {
                                     source_idx: src_idx,
                                     channels: Vec::new(),
                                     eph_update: None,
-                                    asteroid_hash: None,
-                                    star_hash: None,
+                                    asteroid_samples: Vec::new(),
+                                    star_samples: Vec::new(),
+                                    star_records: Vec::new(),
                                     occluders: None,
                                     planets: None,
                                     curves: None,
@@ -15653,8 +15182,9 @@ pub fn main_flow() {
                                 source_idx: src_idx,
                                 channels: Vec::new(),
                                 eph_update: None,
-                                asteroid_hash: None,
-                                star_hash: None,
+                                asteroid_samples: Vec::new(),
+                                star_samples: Vec::new(),
+                                star_records: Vec::new(),
                                 occluders: None,
                                 planets: None,
                                 curves: None,
@@ -15671,8 +15201,9 @@ pub fn main_flow() {
                                 source_idx: src_idx,
                                 channels: Vec::new(),
                                 eph_update: None,
-                                asteroid_hash: None,
-                                star_hash: None,
+                                asteroid_samples: Vec::new(),
+                                star_samples: Vec::new(),
+                                star_records: Vec::new(),
                                 occluders: None,
                                 planets: None,
                                 curves: None,
@@ -15681,17 +15212,15 @@ pub fn main_flow() {
                             return;
                         }
                     };
-                    #[cfg(feature = "browser_relay")]
-                    let hash = build_star_hash(&bytes, build_epoch, cadence_c);
-                    #[cfg(not(feature = "browser_relay"))]
-                    let hash = build_star_hash(&bytes);
-                    eprintln!("\r\x1b[Kcatalog_tycho: {} stars", hash.records.len());
+                    let (star_samples, star_records) = build_star_samples(&bytes);
+                    eprintln!("\r\x1b[Kcatalog_tycho: {} stars", star_records.len());
                     let _ = ftx.send(FetchResult {
                         source_idx: src_idx,
                         channels: Vec::new(),
                         eph_update: None,
-                        asteroid_hash: None,
-                        star_hash: Some(Arc::new(hash)),
+                        asteroid_samples: Vec::new(),
+                        star_samples,
+                        star_records,
                         occluders: None,
                         planets: None,
                         curves: None,
@@ -15710,8 +15239,9 @@ pub fn main_flow() {
                         source_idx: src_idx,
                         channels: Vec::new(),
                         eph_update: None,
-                        asteroid_hash: None,
-                        star_hash: None,
+                        asteroid_samples: Vec::new(),
+                        star_samples: Vec::new(),
+                        star_records: Vec::new(),
                         occluders: None,
                         planets: None,
                         curves: None,
@@ -15813,8 +15343,9 @@ pub fn main_flow() {
                         source_idx: src_idx,
                         channels: Vec::new(),
                         eph_update: None,
-                        asteroid_hash: None,
-                        star_hash: None,
+                        asteroid_samples: Vec::new(),
+                        star_samples: Vec::new(),
+                        star_records: Vec::new(),
                         occluders: None,
                         planets: None,
                         curves: None,
@@ -15841,8 +15372,9 @@ pub fn main_flow() {
                                     source_idx: src_idx,
                                     channels: Vec::new(),
                                     eph_update: None,
-                                    asteroid_hash: None,
-                                    star_hash: None,
+                                    asteroid_samples: Vec::new(),
+                                    star_samples: Vec::new(),
+                                    star_records: Vec::new(),
                                     occluders: None,
                                     planets: None,
                                     curves: None,
@@ -15857,8 +15389,9 @@ pub fn main_flow() {
                                 source_idx: src_idx,
                                 channels: Vec::new(),
                                 eph_update: None,
-                                asteroid_hash: None,
-                                star_hash: None,
+                                asteroid_samples: Vec::new(),
+                                star_samples: Vec::new(),
+                                star_records: Vec::new(),
                                 occluders: None,
                                 planets: None,
                                 curves: None,
@@ -15875,8 +15408,9 @@ pub fn main_flow() {
                                 source_idx: src_idx,
                                 channels: Vec::new(),
                                 eph_update: None,
-                                asteroid_hash: None,
-                                star_hash: None,
+                                asteroid_samples: Vec::new(),
+                                star_samples: Vec::new(),
+                                star_records: Vec::new(),
                                 occluders: None,
                                 planets: None,
                                 curves: None,
@@ -15891,8 +15425,9 @@ pub fn main_flow() {
                         source_idx: src_idx,
                         channels: Vec::new(),
                         eph_update: None,
-                        asteroid_hash: None,
-                        star_hash: None,
+                        asteroid_samples: Vec::new(),
+                        star_samples: Vec::new(),
+                        star_records: Vec::new(),
                         occluders: None,
                         planets: Some(Arc::new(planets)),
                         curves: None,
@@ -15918,8 +15453,9 @@ pub fn main_flow() {
                                     source_idx: src_idx,
                                     channels: Vec::new(),
                                     eph_update: None,
-                                    asteroid_hash: None,
-                                    star_hash: None,
+                                    asteroid_samples: Vec::new(),
+                                    star_samples: Vec::new(),
+                                    star_records: Vec::new(),
                                     occluders: None,
                                     planets: None,
                                     curves: None,
@@ -15934,8 +15470,9 @@ pub fn main_flow() {
                                 source_idx: src_idx,
                                 channels: Vec::new(),
                                 eph_update: None,
-                                asteroid_hash: None,
-                                star_hash: None,
+                                asteroid_samples: Vec::new(),
+                                star_samples: Vec::new(),
+                                star_records: Vec::new(),
                                 occluders: None,
                                 planets: None,
                                 curves: None,
@@ -15952,8 +15489,9 @@ pub fn main_flow() {
                                 source_idx: src_idx,
                                 channels: Vec::new(),
                                 eph_update: None,
-                                asteroid_hash: None,
-                                star_hash: None,
+                                asteroid_samples: Vec::new(),
+                                star_samples: Vec::new(),
+                                star_records: Vec::new(),
                                 occluders: None,
                                 planets: None,
                                 curves: None,
@@ -15968,8 +15506,9 @@ pub fn main_flow() {
                         source_idx: src_idx,
                         channels: Vec::new(),
                         eph_update: None,
-                        asteroid_hash: None,
-                        star_hash: None,
+                        asteroid_samples: Vec::new(),
+                        star_samples: Vec::new(),
+                        star_records: Vec::new(),
                         occluders: None,
                         planets: None,
                         curves: Some(Arc::new(curves)),
@@ -15996,8 +15535,9 @@ pub fn main_flow() {
                                 source_idx: src_idx,
                                 channels: Vec::new(),
                                 eph_update: None,
-                                asteroid_hash: None,
-                                star_hash: None,
+                                asteroid_samples: Vec::new(),
+                                star_samples: Vec::new(),
+                                star_records: Vec::new(),
                                 occluders: None,
                                 planets: None,
                                 curves: None,
@@ -16018,8 +15558,9 @@ pub fn main_flow() {
                                     source_idx: src_idx,
                                     channels: Vec::new(),
                                     eph_update: None,
-                                    asteroid_hash: None,
-                                    star_hash: None,
+                                    asteroid_samples: Vec::new(),
+                                    star_samples: Vec::new(),
+                                    star_records: Vec::new(),
                                     occluders: None,
                                     planets: None,
                                     curves: None,
@@ -16034,8 +15575,9 @@ pub fn main_flow() {
                                 source_idx: src_idx,
                                 channels: Vec::new(),
                                 eph_update: None,
-                                asteroid_hash: None,
-                                star_hash: None,
+                                asteroid_samples: Vec::new(),
+                                star_samples: Vec::new(),
+                                star_records: Vec::new(),
                                 occluders: None,
                                 planets: None,
                                 curves: None,
@@ -16051,8 +15593,9 @@ pub fn main_flow() {
                             source_idx: src_idx,
                             channels,
                             eph_update: None,
-                            asteroid_hash: None,
-                            star_hash: None,
+                            asteroid_samples: Vec::new(),
+                            star_samples: Vec::new(),
+                            star_records: Vec::new(),
                             occluders: None,
                             planets: None,
                             curves: None,
@@ -16064,8 +15607,9 @@ pub fn main_flow() {
                             source_idx: src_idx,
                             channels: Vec::new(),
                             eph_update: None,
-                            asteroid_hash: None,
-                            star_hash: None,
+                            asteroid_samples: Vec::new(),
+                            star_samples: Vec::new(),
+                            star_records: Vec::new(),
                             occluders: None,
                             planets: None,
                             curves: None,
@@ -16157,8 +15701,9 @@ pub fn main_flow() {
                             source_idx: src_idx,
                             channels,
                             eph_update: None,
-                            asteroid_hash: None,
-                            star_hash: None,
+                            asteroid_samples: Vec::new(),
+                            star_samples: Vec::new(),
+                            star_records: Vec::new(),
                             occluders: None,
                             planets: None,
                             curves: None,
@@ -16170,8 +15715,9 @@ pub fn main_flow() {
                             source_idx: src_idx,
                             channels: Vec::new(),
                             eph_update: None,
-                            asteroid_hash: None,
-                            star_hash: None,
+                            asteroid_samples: Vec::new(),
+                            star_samples: Vec::new(),
+                            star_records: Vec::new(),
                             occluders: None,
                             planets: None,
                             curves: None,
@@ -16190,8 +15736,9 @@ pub fn main_flow() {
                             source_idx: src_idx,
                             channels: Vec::new(),
                             eph_update: None,
-                            asteroid_hash: None,
-                            star_hash: None,
+                            asteroid_samples: Vec::new(),
+                            star_samples: Vec::new(),
+                            star_records: Vec::new(),
                             occluders: None,
                             planets: None,
                             curves: None,
@@ -16217,8 +15764,9 @@ pub fn main_flow() {
                                 source_idx: src_idx,
                                 channels: Vec::new(),
                                 eph_update: src_clone.body.clone().map(|b| (b, eph)),
-                                asteroid_hash: None,
-                                star_hash: None,
+                                asteroid_samples: Vec::new(),
+                                star_samples: Vec::new(),
+                                star_records: Vec::new(),
                                 occluders: None,
                                 planets: None,
                                 curves: None,
@@ -16236,8 +15784,9 @@ pub fn main_flow() {
                     source_idx: src_idx,
                     channels,
                     eph_update: None,
-                    asteroid_hash: None,
-                    star_hash: None,
+                    asteroid_samples: Vec::new(),
+                    star_samples: Vec::new(),
+                    star_records: Vec::new(),
                     occluders: None,
                     planets: None,
                     curves: None,
@@ -16247,25 +15796,27 @@ pub fn main_flow() {
         }
         {
             let old = archive.field.clone();
-            let mut hashes: Vec<&SpatialHash> = old.bodies.values().collect();
-            hashes.push(&old.inertial);
-            let retained_estimate: usize = hashes
-                .iter()
-                .map(|h| h.cells.values().map(|v| v.len()).sum::<usize>() + h.unbounded.len())
-                .sum();
+            let retained_estimate: usize = old.cache.cells.values().map(|v| v.len()).sum::<usize>()
+                + old.cache.unbounded.len();
             let mut all: Vec<Sample> = Vec::with_capacity(
-                fetched_samples.len() + retained_estimate + archive.body_ephemerides.len() * 2,
+                fetched_samples.len()
+                    + retained_estimate
+                    + archive.body_ephemerides.len() * 2
+                    + archive.asteroid_samples.len(),
             );
             all.append(&mut fetched_samples);
-            for hash in hashes {
-                for v in hash.cells.values().chain(std::iter::once(&hash.unbounded)) {
-                    for s in v {
-                        if matches!(s.source, SampleSource::Body) {
-                            continue;
-                        }
-                        if (now - s.epoch).abs() <= s.ttl * 64.0 {
-                            all.push(s.clone());
-                        }
+            for v in old
+                .cache
+                .cells
+                .values()
+                .chain(std::iter::once(&old.cache.unbounded))
+            {
+                for s in v {
+                    if matches!(s.source, SampleSource::Body) {
+                        continue;
+                    }
+                    if (now - s.epoch).abs() <= s.ttl * 64.0 {
+                        all.push(s.clone());
                     }
                 }
             }
@@ -16301,6 +15852,8 @@ pub fn main_flow() {
                     }
                 }
             }
+            all.extend(archive.asteroid_samples.iter().cloned());
+            all.extend(archive.star_samples.iter().cloned());
             if all.len() > MAX_SAMPLES {
                 let dropped = all.len() - MAX_SAMPLES;
                 all.sort_by(|a, b| b.epoch.total_cmp(&a.epoch));
@@ -16314,8 +15867,7 @@ pub fn main_flow() {
                 all,
                 cadence,
                 archive.body_ephemerides.clone(),
-                archive.asteroids.clone(),
-                archive.stars.clone(),
+                archive.star_records.clone(),
                 archive.occluders.clone(),
                 archive.planets.clone(),
                 archive.curves.clone(),

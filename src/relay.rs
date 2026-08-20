@@ -206,8 +206,7 @@ fn handle_ingress(stream: TcpStream, cfg: WsConfig) {
                                     Vec::new(),
                                     1.0,
                                     Arc::new(HashMap::new()),
-                                    None,
-                                    None,
+                                    Arc::new(Vec::new()),
                                     None,
                                     None,
                                     None,
@@ -217,17 +216,20 @@ fn handle_ingress(stream: TcpStream, cfg: WsConfig) {
                         };
                         let eph_map = buf.eph.clone();
                         let mut station_sample: Option<Sample> = None;
-                        for hash in buf.bodies.values().chain(std::iter::once(&buf.inertial)) {
-                            for v in hash.cells.values().chain(std::iter::once(&hash.unbounded)) {
-                                for sample in v {
-                                    if matches!(sample.source, SampleSource::Sensor) {
-                                        let newer = match &station_sample {
-                                            Some(cur) => sample.epoch > cur.epoch,
-                                            None => true,
-                                        };
-                                        if newer {
-                                            station_sample = Some(sample.clone());
-                                        }
+                        for v in buf
+                            .cache
+                            .cells
+                            .values()
+                            .chain(std::iter::once(&buf.cache.unbounded))
+                        {
+                            for sample in v {
+                                if matches!(sample.source, SampleSource::Sensor) {
+                                    let newer = match &station_sample {
+                                        Some(cur) => sample.epoch > cur.epoch,
+                                        None => true,
+                                    };
+                                    if newer {
+                                        station_sample = Some(sample.clone());
                                     }
                                 }
                             }
@@ -293,8 +295,7 @@ fn handle_ingress(stream: TcpStream, cfg: WsConfig) {
                                 Vec::new(),
                                 1.0,
                                 Arc::new(HashMap::new()),
-                                None,
-                                None,
+                                Arc::new(Vec::new()),
                                 None,
                                 None,
                                 None,
@@ -303,10 +304,7 @@ fn handle_ingress(stream: TcpStream, cfg: WsConfig) {
                         })
                     };
                     let mut report = String::new();
-                    let mut hashes: Vec<(&str, &SpatialHash)> =
-                        buf.bodies.iter().map(|(k, v)| (k.as_str(), v)).collect();
-                    hashes.push(("inertial", &buf.inertial));
-                    for (fname, hash) in hashes {
+                    for (fname, hash) in [("cache", &buf.cache)] {
                         let mut n = 0usize;
                         let mut field_names: std::collections::HashSet<&str> =
                             std::collections::HashSet::new();
@@ -512,8 +510,7 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                         Vec::new(),
                         1.0,
                         Arc::new(HashMap::new()),
-                        None,
-                        None,
+                        Arc::new(Vec::new()),
                         None,
                         None,
                         None,
@@ -688,7 +685,7 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                     }
                 }
                 let center = [x0, y0, z0];
-                sense_buffer(
+                sense_membrane(
                     &field,
                     center,
                     t0,

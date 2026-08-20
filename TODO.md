@@ -136,13 +136,87 @@ Schnittmenge leer, im Protokoll fehlt.
   nicht-aufgeblähten Wiedereinstieg; die Messung lebt in
   docs/surveys/messpunkt-verteilung.md.
 - Bewegungs-Vereinheitlichung Atom 4 (2026-08-20, nach Atom 3): die
-  separate Asteroiden-/Stern-Route stirbt — AsteroidHash/StarHash +
-  query_asteroid_hash/query_star_hash + p0-Vorräte werden getötet;
-  Asteroiden und Sterne werden gewöhnliche Samples im SpatialHash mit
-  motion: Motion::Kepler { rec } / Motion::Spherical { rec } (Atom 3
-  hat die Enum-Varianten + at()/anchor_body()/law_bounds-Ableitung
-  gelegt). Fundstellen: impl Motion, build_asteroid_hash,
-  build_star_hash, query_*_hash, sense_*-Einbau in src/archivar.rs.
+  Asteroiden-Route starb — AsteroidHash + query_asteroid_hash + p0-Vorräte
+  sind getötet; Asteroiden sind gewöhnliche Samples im inertialen
+  SpatialHash mit motion: Motion::Kepler { rec: Arc<AsteroidRec> }
+  (GM- und Radius-Sample teilen den Record via Arc; source = Body wie die
+  Planeten-Kanäle, der Wiederaufbau speist sie je Zyklus aus
+  archive.asteroid_samples — die Body-Retention-Sperre trägt sie ohne
+  Verdopplung). build_asteroid_samples(bytes, ttl) liefert
+  (Vec<Sample>, Option<Arc<OccluderSet>>) — der cadence-Parameter aus der
+  Atom-Vorgabe hatte keine Rolle in der Funktion und blieb draußen
+  (0/0-Gate); anchor_p0/vmax/amax via law_bounds (per-Sample statt
+  global). Abweichung zum alten Record: Radius-Sample trägt kernel_id 1
+  (Atom-Vorgabe; der alte query_asteroid_hash schrieb 0). sense_* findet
+  Asteroiden via query_hash(&buf.inertial). Offen (Atom 5):
+  StarHash + query_star_hash sterben — Sterne werden Samples mit
+  Motion::Spherical { rec }.
+- Bewegungs-Vereinheitlichung Atom 5 (2026-08-20, nach Atom 4): StarHash +
+  query_star_hash + die browser_relay-Zell-Vorräte (cell_size, p0-Vorrat,
+  build_epoch-Parameter) sind getötet — Sterne sind gewöhnliche Samples im
+  inertialen SpatialHash mit motion: Motion::Spherical { rec: Arc<StarRec> }
+  (Anweisung „Arc wie bei den Asteroiden"; der frühere TODO-Wortlaut trug
+  „{ rec }"). build_star_samples(bytes) liefert (Vec<Sample>, Vec<StarRec>)
+  — epoch 0.0 (J2000), ttl = tau, val = flux, force 0 (em), kernel 0,
+  extent 0, source = Body; anchor_p0/vmax/amax via law_bounds; der
+  Signalkegel-Gate trägt die Sterne ohne Eingriff (reach ≥ pad deckt jedes
+  Fenster-Stern, c·age liefert den Dilatations-Rand; der cadence-Parameter
+  der Vorgabe blieb draußen — build_star_samples braucht ihn nicht, 0/0).
+  Erweiterung: Sample trägt neu color_index (Wire-Slot 21) — der generische
+  query_hash-Pfad schrieb dort 0.0, query_star_hash trug die BP−RP-Farbe;
+  ohne das Feld wäre die Browser-Sternfarbe eine Fabrikation gewesen
+  (0 honored; API-Samples tragen 0.0 = weiß, abwesend). MAX_SAMPLES
+  1<<21 → 1<<22: gültige Stern-Records (1,19 Mio von 1,67 Mio — 476 661
+  tragen keine positive Parallaxe und bleiben wie bisher dunkel) +
+  Asteroiden (1,56 Mio Records) überschreiten die alte Kappe; ohne
+  Erhöhung kippten die ältesten Samples — genau die Sterne (epoch 0.0).
+  Buffer.star_records:
+  Arc<Vec<StarRec>> bleibt für sense_deep + transit_factors
+  (WGSL-Deep-Pipeline; stirbt mit der Subpixel-Wahrheit), der Wiederaufbau
+  speist die Stern-Samples je Zyklus aus archive.star_samples
+  (Body-Retention wie Asteroiden). Benannt: das native Fenster trägt die
+  Sterne jetzt über &buf.inertial (sense_membrane) — vorher nur der
+  Browser via query_star_hash; das Bin trägt 145 744
+  Parallaxen-Artefakte (f32-MAX/Denormals — parse-gültig, landen in
+  fernen Zellen, nie abgefragt; Bestand aus der StarHash-Ära).
+
+- Atom 6 (2026-08-20, nach Atom 5): `bodies` ist tot — das Universum ist
+  ein Hash. Buffer trägt einen einzigen universellen SpatialHash `cache`
+  in absoluten ICRS-Koordinaten. Gestorben: die HashMap<String, SpatialHash>
+  je Körper, das Feld `inertial`, die relative-Frame-Subtraktion
+  `relative_frame_position` (law_bounds rechnet p0/v/a jetzt absolut via
+  motion.at — ein Bodensensor der Erde ankert bei ~1.5e11 m vom SSB,
+  i64-Zellindizes tragen das), der anchor-Parameter von query_hash
+  (qf = center), sense_buffer (der browser_relay-Pfad ruft sense_membrane —
+  beide Körper waren zeilenidentisch), die bodies-Schleifen in
+  sense_membrane, StderrRadiator, relay /station und /field. Die
+  Anchor-Semantik der Körper (gravity_manifest via anchor_body — gestorben
+  in Atom 7, 2026-08-20) und body_barycenter_position bleiben — der
+  Eintrag des Körpers ist die Motion, nicht der Cache. Registriert
+  (keine Fabrikation, offene
+  Eigenschaft): die Zellgröße hängt am span aller Samples — die Sterne
+  (~1e19 m) heben cell_size auf ~1e16 m, das Sonnensystem teilt wenige
+  Zellen; die Broadphase läuft über den in_box-Fallback und den
+  dist2_anchor_p0-Filter (Enclosure bleibt konservativ, kein Sample geht
+  verloren; die feine Zellauflösung der alten Körper-Hashes existiert
+  nicht mehr). 0/0-Gate in allen vier Feature-Kombinationen
+  (default, browser_relay, gamepad, beide), 165 Tests grün.
+- Atom 7 (2026-08-20, nach Atom 6): `gravity_manifest` ist tot — die Form
+  gehört zum Anker, nicht zur Messung. Gestorben: die Funktion
+  gravity_manifest, body_pole_at, der `.radius`-Kanal von body_channels
+  (ein Planet ist nur noch seine Masse GM) und die Multipol-Zweige
+  (J2/J4/Abplattung) in beiden WGSL-Feldern (nativ FIELD_WGSL:
+  osc_field/osc_flow/source_bound/source_contrib; Browser fieldShader:
+  osc_field). Das Gravitationsfeld ist ein reines Feldgesetz (1/d² bzw.
+  1/d je Kernel) — das Feld trägt keine Form. Die Wire-Slots pole_x/y/z,
+  j2, j4, r_eq bleiben im 24×f64-Protokoll (Datenvertrag unverändert,
+  meta-Pack unverändert) und tragen für force_type 1 konsequent 0.0
+  (0 honored); pole_x trägt weiter das Tolman-z für em. Der
+  kernel_extent-Gravitationspfad (extent = radius_m) bleibt — die
+  Reichweite des Ankers, keine Form; die Okklusion (Radius-Barrieren,
+  mathematikerin.rs, aus den Ephemeriden-Props) bleibt und trägt den
+  Radius weiter über die Anker-Seite. Offen (späteres Atom): die
+  Okklusion stirbt zugunsten der Feld-Absorption.
 
 ## Die Sphären des Unsichtbaren
 
@@ -163,7 +237,9 @@ Schnittmenge leer, im Protokoll fehlt.
 - Okklusions-Reste (aus der Massen-Okklusion): kontinuierliche Opazität
   (Partial-Transmission), atmosphärische Dämmerung, kleine Skala
   (Terrain/Bauten — der Mechanismus ist skalenfrei, die Daten fehlen),
-  Oszillator-Eigenradius als Rekord-Slot.
+  Oszillator-Eigenradius als Rekord-Slot. Seit Atom 7 trägt die
+  Okklusion den Radius über die Ephemeriden-Barrieren (Anker-Seite) —
+  der Schnitt zur Feld-Absorption ist ein eigenes Atom (siehe Atom 7).
 - Atom 1 deckt den Weg für Ringe/Warp — noch kein Konzept-Dokument.
 
 ## Der spektrale Oszillator — die Frequenzachse (Konzept: DER_SPEKTRALE_OSZILLATOR.md)
