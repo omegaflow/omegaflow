@@ -203,7 +203,7 @@ bereits trug (×scale² am Ende). Reparatur: die rgb-Luminanz trägt die
 gleiche scale²-Kompensation (FIELD_WGSL, eine Zeile) — die Feld-Splats
 leuchten wieder gegen ihre Referenz. Die Refs der Luminanz (Median der
 Rohwerte) bleiben unangetastet. Gates: cargo check 0/0 (vier Kombis),
-cargo test 219/219 inkl. naga-Validierung.
+cargo test 218/218 inkl. naga-Validierung.
 
 ## Archivar — Architektur
 
