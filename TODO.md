@@ -51,6 +51,61 @@ O(n²) × Surrogate-Kosten gegenrechnen.
 GOES-30d-Archiv-Block bleibt pending (kein lebender Kandidat);
 bis dahin trennt der OMNI-Ingest-Verzug (stopDate 06.08.) OMNI↔GOES —
 Schnittmenge leer, im Protokoll fehlt.
+Solar-Kuration (2026-08-20, Nadel Ⅲ): die vier SWPC-Kanäle stehen im
+Block — xrays-1-day → xrays-7-day (at sun, `last flux`); rtsw_mag/
+rtsw_wind at earth → at sun (der Signalkegel trägt die Laufzeit);
+Wind-Kräfte korrigiert: proton_speed → advective patch-levy (advection
+400000.0 m/s = charakteristische Sonnenwind-Geschwindigkeit — vorher
+em, inverse-square), proton_density → diffusion gaussian-inverse-square
+(1/cm3 jetzt in der diffusion-Unit-Registry), proton_temperature →
+thermal exponential-decay K (vorher em — Umklassifikation, benannt).
+ZeilenFilter implementiert (2026-08-20): `where <key> <value>` an
+first/last — die Extract-Varianten tragen Option<(String,String)>,
+row_matches (String exakt, Nummer numerisch), jfirst_where/jlast_where;
+extract UND extract_series teilen das Prädikat; malformed where + where
+auf field werden laut refused. euvs-7-day-Block zurück mit
+solar_euv_flux_304/284_wm2 (where line 304/284 — der mgii_index-Record
+ist ausgeschlossen, kein W/m2-Label auf dem Index), xrays trägt
+`where energy 0.05-0.4nm` (Band deklariert statt positionsabhängig);
+der nobel probe erntet X-Ray/EUV über extract_series aus dem Block
+(harvest_block) — der hardcodierte Filter ist tot. Live-Befund:
+n = 10078 (X-Ray) / 10024 (EUV-304/284), Kadenz 60 s.
+Pending: freq/bin_width-Träger im Block-Grammar (die Band-Slots bleiben
+0.0 = Punktquelle, 0 honored), where-Auto-Draft im Probe, die Einheiten
+der last/first-Formen (das Unit-Token parts[5] wird verworfen —
+parser-gap LastUnit, ledger.φ), p/cm3 des Probe-Klassifikators
+(unkonvertiert, kein Block nutzt es).
+Atom 10 (2026-08-20): die TE-Maschine lebt wieder — der native
+Echo-Pfad (Permeabilitäts-Schleife) läuft auf Takens-eingebetteten
+Zuständen (`topological_te_phase`, dim 3, order 3). `find_mi_lag`:
+2×2-Midpoint-Histogramm, erstes lokales Minimum ab lag 3, rs/Φ-Schranke —
+kein Minimum → keine TE. `embed_series` bleibt vorwärts (das
+Geometrie-Instrument); die TE-Bedingung ist rückwärts gespiegelt
+(x_t, x_{t−τ}, x_{t−2τ}) — Registerzeile: der Vorwärts-Zustand trägt die
+Zukunft in der Bedingung (Leakage, falsche Stille); die Geometrie ist
+richtungsagnostisch. Silverman auf die Varianz der eingebetteten
+Vektoren skaliert (σ² = mean ‖z−z̄‖², ein isotroper Kernel je Faktor).
+Surrogat-Integrität: jedes phasenrandomisierte/Block-Bootstrap-Surrogat
+trägt seine eigene MI-Suche und eigene Einbettung (kein τ →
+übersprungen, nie 0.0; < 2 gültige → keine Aussage); die x-Seite bleibt
+fixiert. `permutation_entropy` → Option<f64> (Registerzeile: 0.0 ist
+null-echt — vollständig geordnete Reihe; null Motive ist fehlt; Ties →
+Fenster übersprungen, nie lexikografisch gebrochen; Sortieren der Motive
+= O(n log n)). PE-Gate: 2⁴-Ring der eigenen PE-Geschichte des Treibers,
+bewaffnet ab 2³, Sprung ⇔ |pe − mean| > 2·sd → Richtungs-Entscheidung und
+TE-Ziel gehalten, Atem über den Selbstmessungs-Zweig; die Baseline ist
+Live-Daten — durch ein anhaltendes Regime adaptiert sie (der Übergang
+feuert). Die naive Shuffle-Null der Schleife ist ERSETZT
+(broken-null-control.md bleibt gültig: der skalare Pfad
+`transfer_entropy_lag` ist unangetastet, der Probe behält seine
+lag-Matrizen). Der historische degenerierte Guard (2τ ≥ rs → τ = 1)
+fiel — ein fabrizierter Default; Fenster zu klein → keine TE (0
+honored). Offen (registriert): O(n²)-Kernelskalierung der eingebetteten
+TE bei wachsendem Ring (heute ≤ 256 gebunden); der multivariate
+Silverman-Exponent (−1/(d+4)) als Dichte-konsistente Form (der
+Unterschied wird von der Surrogat-Schwelle absorbiert); das PE-Delay der
+Pipeline läuft auf 1 (der historische Shader-Rhythmus, benannt — die
+Standalone-Funktion trägt delay offen).
 
 ## Archivar — Architektur
 

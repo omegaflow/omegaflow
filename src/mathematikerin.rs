@@ -1071,6 +1071,8 @@ struct NativeApp {
     ring_head: usize,
     ring_filled: usize,
     ring_gen: u64,
+    pe_ring: Vec<f64>,
+    hud_topology: Option<(usize, usize, Option<f64>, Option<f64>)>,
     frame_ms_ema: f64,
     field_permeability: f32,
     prev_omega_sum: f32,
@@ -1179,6 +1181,8 @@ impl NativeApp {
             ring_head: 0,
             ring_filled: 0,
             ring_gen: 0,
+            pe_ring: Vec::with_capacity(16),
+            hud_topology: None,
             frame_ms_ema: 0.0,
             field_permeability: 0.0,
             prev_omega_sum: 0.0,
@@ -1248,6 +1252,31 @@ impl NativeApp {
         self.t0 = self.t_presence;
     }
 
+    fn pe_gate(&mut self, pe: Option<f64>) -> bool {
+        let Some(pe) = pe else {
+            return true;
+        };
+        if self.pe_ring.len() == 16 {
+            self.pe_ring.remove(0);
+        }
+        self.pe_ring.push(pe);
+        if self.pe_ring.len() < 8 {
+            return true;
+        }
+        let n = self.pe_ring.len() as f64;
+        let mean = self.pe_ring.iter().sum::<f64>() / n;
+        let var = self
+            .pe_ring
+            .iter()
+            .map(|&p| {
+                let d = p - mean;
+                d * d
+            })
+            .sum::<f64>()
+            / n;
+        (pe - mean).abs() <= 2.0 * var.sqrt()
+    }
+
     fn hud_blit(bmp: &mut [u8], stride: usize, w: u32, x: i32, y: i32, ch: char, rgb: [u8; 3]) {
         let c = ch as u32;
         if !(32..=126).contains(&c) {
@@ -1303,6 +1332,13 @@ impl NativeApp {
             Some((in_te, thr)) => format!("TE {:.3} thr {:.3}  ", in_te, thr),
             None => String::new(),
         };
+        if let Some((tx, ty, px, py)) = self.hud_topology {
+            l3.push_str(&format!("tau {}:{} ", tx, ty));
+            match (px, py) {
+                (Some(a), Some(b)) => l3.push_str(&format!("PE {:.2}:{:.2} ", a, b)),
+                _ => l3.push_str("PE - "),
+            }
+        }
         l3.push_str(&format!(
             "perm {:.2} flow {:+.2} {:+.2} {:+.2} gen {}",
             self.field_permeability, flow[0], flow[1], flow[2], self.ring_gen
@@ -2510,31 +2546,34 @@ impl ApplicationHandler for NativeApp {
                     xs[i] = v[0] + v[1] + v[2] + v[3] + v[4] + v[5] + v[6] + v[7] + v[8];
                     ys[i] = (v[9] * v[9] + v[10] * v[10] + v[11] * v[11]).sqrt();
                 }
-                let in_te = crate::te::transfer_entropy(&xs, &ys);
-                let threshold = crate::te::surrogate_threshold(&xs, &ys, self.ring_gen);
-                if let (Some(in_te), Some(threshold)) = (in_te, threshold) {
-                    te_opt = Some((in_te, threshold));
-                    let delta_te = in_te - self.prev_in_te;
-                    self.prev_in_te = in_te;
-                    self.ticks_since_turn += 1;
-                    if self.direction > 0 && delta_te < -threshold {
-                        self.natural_latency_ticks = self.ticks_since_turn.max(1);
-                        self.ticks_since_turn = 0;
-                        self.direction = -1;
+                if let Some(v) = crate::te::topological_te_phase(&xs, &ys, 3, 3, self.ring_gen) {
+                    self.hud_topology = Some((v.tau_x, v.tau_y, v.pe_x, v.pe_y));
+                    if self.pe_gate(v.pe_y) {
+                        te_opt = Some((v.te, v.threshold));
                     }
-                    if self.direction < 0
-                        && (delta_te > threshold || self.field_permeability <= PERM_GROUND)
-                    {
-                        self.natural_latency_ticks = self.ticks_since_turn.max(1);
-                        self.ticks_since_turn = 0;
-                        self.direction = 1;
-                    }
-                    let target =
-                        (in_te.max(0.0) / (in_te.max(0.0) + threshold + PERM_GROUND as f64)) as f32;
-                    let alpha = 1.0 - (-1.0 / self.natural_latency_ticks.max(1) as f32).exp();
-                    self.field_permeability += (target - self.field_permeability) * alpha;
-                    self.field_permeability = self.field_permeability.clamp(PERM_GROUND, 1.0);
                 }
+            }
+            if let Some((in_te, threshold)) = te_opt {
+                let delta_te = in_te - self.prev_in_te;
+                self.prev_in_te = in_te;
+                self.ticks_since_turn += 1;
+                if self.direction > 0 && delta_te < -threshold {
+                    self.natural_latency_ticks = self.ticks_since_turn.max(1);
+                    self.ticks_since_turn = 0;
+                    self.direction = -1;
+                }
+                if self.direction < 0
+                    && (delta_te > threshold || self.field_permeability <= PERM_GROUND)
+                {
+                    self.natural_latency_ticks = self.ticks_since_turn.max(1);
+                    self.ticks_since_turn = 0;
+                    self.direction = 1;
+                }
+                let target =
+                    (in_te.max(0.0) / (in_te.max(0.0) + threshold + PERM_GROUND as f64)) as f32;
+                let alpha = 1.0 - (-1.0 / self.natural_latency_ticks.max(1) as f32).exp();
+                self.field_permeability += (target - self.field_permeability) * alpha;
+                self.field_permeability = self.field_permeability.clamp(PERM_GROUND, 1.0);
             } else {
                 let omega_sum: f32 = self.probe_omega.iter().sum();
                 let delta = omega_sum - self.prev_omega_sum;

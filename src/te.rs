@@ -295,6 +295,445 @@ fn fft(re: &mut [f64], im: &mut [f64], inverse: bool) {
     }
 }
 
+const Φ: f64 = 1.618033988749895;
+
+fn silverman_f64(v: &[f64]) -> Option<f64> {
+    let n = v.len() as f64;
+    if n < 2.0 {
+        return None;
+    }
+    let mean = v.iter().sum::<f64>() / n;
+    let var = v
+        .iter()
+        .map(|&x| {
+            let d = x - mean;
+            d * d
+        })
+        .sum::<f64>()
+        / n;
+    if var <= 0.0 {
+        return None;
+    }
+    Some(1.06 * var.sqrt() * n.powf(-0.2))
+}
+
+pub fn find_mi_lag(series: &[f64]) -> Option<usize> {
+    let n = series.len();
+    let max_lag = (n as f64 / Φ) as usize;
+    if max_lag < 3 || series.iter().any(|v| !v.is_finite()) {
+        return None;
+    }
+    let eps = f64::EPSILON;
+    let mut mi_prev2 = 0.0;
+    let mut mi_prev = 0.0;
+    for lag in 1..=max_lag {
+        let w = n - lag;
+        let mut mn = f64::INFINITY;
+        let mut mx = f64::NEG_INFINITY;
+        for i in 0..w {
+            let v = series[i];
+            if v < mn {
+                mn = v;
+            }
+            if v > mx {
+                mx = v;
+            }
+        }
+        let range = mx - mn;
+        if range <= 0.0 {
+            return None;
+        }
+        let mid = mn + range * 0.5;
+        let mut h00 = 0usize;
+        let mut h01 = 0usize;
+        let mut h10 = 0usize;
+        let mut h11 = 0usize;
+        for i in 0..w {
+            let b1 = series[i] > mid;
+            let b2 = series[i + lag] > mid;
+            match (b1, b2) {
+                (false, false) => h00 += 1,
+                (false, true) => h01 += 1,
+                (true, false) => h10 += 1,
+                (true, true) => h11 += 1,
+            }
+        }
+        let total = w as f64;
+        let p0 = (h00 + h01) as f64 / total;
+        let p1 = (h10 + h11) as f64 / total;
+        let q0 = (h00 + h10) as f64 / total;
+        let q1 = (h01 + h11) as f64 / total;
+        let mut mi = 0.0;
+        if h00 > 0 {
+            let p = h00 as f64 / total;
+            mi += p * (p / (p0 * q0 + eps) + eps).log2();
+        }
+        if h01 > 0 {
+            let p = h01 as f64 / total;
+            mi += p * (p / (p0 * q1 + eps) + eps).log2();
+        }
+        if h10 > 0 {
+            let p = h10 as f64 / total;
+            mi += p * (p / (p1 * q0 + eps) + eps).log2();
+        }
+        if h11 > 0 {
+            let p = h11 as f64 / total;
+            mi += p * (p / (p1 * q1 + eps) + eps).log2();
+        }
+        if lag >= 3 && mi_prev2 > mi_prev && mi_prev <= mi {
+            return Some(lag - 1);
+        }
+        mi_prev2 = mi_prev;
+        mi_prev = mi;
+    }
+    None
+}
+
+pub fn embed_series(series: &[f64], tau: usize, dim: usize) -> Vec<Vec<f64>> {
+    if tau == 0 || dim == 0 {
+        return Vec::new();
+    }
+    let span = (dim - 1).saturating_mul(tau);
+    let m = match series.len().checked_sub(span) {
+        Some(v) if v > 0 => v,
+        _ => return Vec::new(),
+    };
+    let mut out = Vec::with_capacity(m);
+    for t in 0..m {
+        let mut state = Vec::with_capacity(dim);
+        for k in 0..dim {
+            state.push(series[t + k * tau]);
+        }
+        out.push(state);
+    }
+    out
+}
+
+fn state_distance(a: &[f64], b: &[f64]) -> f64 {
+    a.iter()
+        .zip(b.iter())
+        .map(|(&u, &v)| {
+            let d = u - v;
+            d * d
+        })
+        .sum::<f64>()
+        .sqrt()
+}
+
+fn embedded_silverman(emb: &[Vec<f64>]) -> Option<f64> {
+    let n = emb.len() as f64;
+    let dim = match emb.first() {
+        Some(s) => s.len(),
+        None => return None,
+    };
+    if n < 2.0 || dim == 0 {
+        return None;
+    }
+    let mut mean = vec![0.0; dim];
+    for state in emb.iter() {
+        for (k, &v) in state.iter().enumerate() {
+            mean[k] += v;
+        }
+    }
+    for k in 0..dim {
+        mean[k] /= n;
+    }
+    let mut var = 0.0;
+    for state in emb.iter() {
+        let mut d2 = 0.0;
+        for (k, &v) in state.iter().enumerate() {
+            let d = v - mean[k];
+            d2 += d * d;
+        }
+        var += d2;
+    }
+    var /= n;
+    if var <= 0.0 {
+        return None;
+    }
+    Some(1.06 * var.sqrt() * n.powf(-0.2))
+}
+
+pub fn transfer_entropy_embedded(
+    x: &[f64],
+    emb_x: &[Vec<f64>],
+    emb_y: &[Vec<f64>],
+    tau_x: usize,
+    tau_y: usize,
+) -> Option<f64> {
+    let n = x.len();
+    if n < 8 || tau_x == 0 || tau_y == 0 || x.iter().any(|v| !v.is_finite()) {
+        return None;
+    }
+    let dim = match emb_x.first() {
+        Some(s) => s.len(),
+        None => return None,
+    };
+    if dim < 2 {
+        return None;
+    }
+    if emb_y.first().map_or(true, |s| s.len() != dim) {
+        return None;
+    }
+    if emb_x.iter().flatten().any(|v| !v.is_finite())
+        || emb_y.iter().flatten().any(|v| !v.is_finite())
+    {
+        return None;
+    }
+    let back_x = (dim - 1) * tau_x;
+    let back_y = (dim - 1) * tau_y;
+    if emb_x.len() != n - back_x || emb_y.len() != n - back_y {
+        return None;
+    }
+    let t_low = back_x.max(back_y);
+    let t_high = match n.checked_sub(tau_x + 1) {
+        Some(v) => v,
+        None => return None,
+    };
+    if t_low > t_high {
+        return None;
+    }
+    let m = t_high - t_low + 1;
+    if m < 8 {
+        return None;
+    }
+    let h_f = silverman_f64(&x[t_low + tau_x..])?;
+    let h_x = embedded_silverman(emb_x)?;
+    let h_y = embedded_silverman(emb_y)?;
+    let n_x = emb_x.len();
+    let n_xy = n - t_low;
+    let state_x = |t: usize| &emb_x[t - back_x];
+    let state_y = |t: usize| &emb_y[t - back_y];
+    let mut te = 0.0;
+    for t in t_low..=t_high {
+        let fut = x[t + tau_x];
+        let sx = state_x(t);
+        let sy = state_y(t);
+        let mut k3 = 0.0;
+        for s in t_low..=t_high {
+            k3 += gaussian(fut - x[s + tau_x], h_f)
+                * gaussian(state_distance(sx, state_x(s)), h_x)
+                * gaussian(state_distance(sy, state_y(s)), h_y);
+        }
+        let p3 = k3 / m as f64;
+        let mut k1 = 0.0;
+        for s in back_x..n {
+            k1 += gaussian(state_distance(sx, state_x(s)), h_x);
+        }
+        let p1 = k1 / n_x as f64;
+        let mut k2xy = 0.0;
+        for s in t_low..n {
+            k2xy += gaussian(state_distance(sx, state_x(s)), h_x)
+                * gaussian(state_distance(sy, state_y(s)), h_y);
+        }
+        let p2xy = k2xy / n_xy as f64;
+        let mut k2x = 0.0;
+        for s in t_low..=t_high {
+            k2x +=
+                gaussian(fut - x[s + tau_x], h_f) * gaussian(state_distance(sx, state_x(s)), h_x);
+        }
+        let p2x = k2x / m as f64;
+        te += ((p3 * p1) / (p2xy * p2x).max(1e-300)).ln();
+    }
+    Some(te / m as f64)
+}
+
+fn permutation_entropy_counts(
+    series: &[f64],
+    order: usize,
+    delay: usize,
+) -> Option<(f64, usize, usize)> {
+    if order < 2 || delay == 0 || series.iter().any(|v| !v.is_finite()) {
+        return None;
+    }
+    let span = (order - 1).saturating_mul(delay);
+    let total_windows = match series.len().checked_sub(span) {
+        Some(v) if v > 0 => v,
+        _ => return None,
+    };
+    let mut motifs: Vec<usize> = Vec::with_capacity(total_windows);
+    for i in 0..total_windows {
+        let mut tied = false;
+        for a in 0..order {
+            for b in (a + 1)..order {
+                if series[i + a * delay] == series[i + b * delay] {
+                    tied = true;
+                }
+            }
+        }
+        if tied {
+            continue;
+        }
+        let mut idx: Vec<usize> = (0..order).collect();
+        idx.sort_unstable_by(|&a, &b| {
+            series[i + a * delay]
+                .partial_cmp(&series[i + b * delay])
+                .unwrap_or(std::cmp::Ordering::Equal)
+        });
+        let mut rank = vec![0usize; order];
+        for (pos, &k) in idx.iter().enumerate() {
+            rank[k] = pos;
+        }
+        let mut key = 0usize;
+        for a in 0..order {
+            let mut l = 0usize;
+            for b in (a + 1)..order {
+                if rank[b] < rank[a] {
+                    l += 1;
+                }
+            }
+            key = key * (order - a) + l;
+        }
+        motifs.push(key);
+    }
+    if motifs.is_empty() {
+        return None;
+    }
+    motifs.sort_unstable();
+    let used = motifs.len();
+    let mut entropy = 0.0;
+    let mut run_start = 0usize;
+    while run_start < used {
+        let mut run_end = run_start + 1;
+        while run_end < used && motifs[run_end] == motifs[run_start] {
+            run_end += 1;
+        }
+        let p = (run_end - run_start) as f64 / used as f64;
+        entropy -= p * p.log2();
+        run_start = run_end;
+    }
+    let log2_factorial: f64 =
+        (2..=order).map(|k| (k as f64).ln()).sum::<f64>() / std::f64::consts::LN_2;
+    Some((entropy / log2_factorial, used, total_windows))
+}
+
+pub fn permutation_entropy(series: &[f64], order: usize, delay: usize) -> Option<f64> {
+    permutation_entropy_counts(series, order, delay).map(|(pe, _, _)| pe)
+}
+
+pub struct TopologicalVerdict {
+    pub tau_x: usize,
+    pub tau_y: usize,
+    pub te: f64,
+    pub threshold: f64,
+    pub surrogate_mean: f64,
+    pub surrogate_sd: f64,
+    pub surrogates_used: usize,
+    pub pe_x: Option<f64>,
+    pub pe_y: Option<f64>,
+    pub pe_motifs_x: usize,
+    pub pe_motifs_y: usize,
+}
+
+fn topological_te_with(
+    x: &[f32],
+    y: &[f32],
+    dim: usize,
+    order: usize,
+    seed: u64,
+    surrogate: &mut dyn FnMut(&[f32], &mut u64) -> Vec<f32>,
+) -> Option<TopologicalVerdict> {
+    let n = x.len();
+    if n < 8 || y.len() != n || dim < 2 {
+        return None;
+    }
+    let xf: Vec<f64> = x.iter().map(|&v| v as f64).collect();
+    let yf: Vec<f64> = y.iter().map(|&v| v as f64).collect();
+    if xf.iter().chain(yf.iter()).any(|v| !v.is_finite()) {
+        return None;
+    }
+    let tau_x = find_mi_lag(&xf)?;
+    let tau_y = find_mi_lag(&yf)?;
+    let emb_x = embed_series(&xf, tau_x, dim);
+    let emb_y = embed_series(&yf, tau_y, dim);
+    if emb_x.is_empty() || emb_y.is_empty() {
+        return None;
+    }
+    let te = transfer_entropy_embedded(&xf, &emb_x, &emb_y, tau_x, tau_y)?;
+    let mut vals: Vec<f64> = Vec::with_capacity(10);
+    let mut rng = seed.wrapping_add(0x9e3779b97f4a7c15);
+    for _ in 0..10 {
+        let ys = surrogate(y, &mut rng);
+        if ys.len() != n {
+            continue;
+        }
+        let ysf: Vec<f64> = ys.iter().map(|&v| v as f64).collect();
+        if ysf.iter().any(|v| !v.is_finite()) {
+            continue;
+        }
+        let tau_s = match find_mi_lag(&ysf) {
+            Some(v) => v,
+            None => continue,
+        };
+        let emb_s = embed_series(&ysf, tau_s, dim);
+        if emb_s.is_empty() {
+            continue;
+        }
+        if let Some(te_s) = transfer_entropy_embedded(&xf, &emb_x, &emb_s, tau_x, tau_s) {
+            vals.push(te_s);
+        }
+    }
+    if vals.len() < 2 {
+        return None;
+    }
+    let mean = vals.iter().sum::<f64>() / vals.len() as f64;
+    let var = vals
+        .iter()
+        .map(|&v| {
+            let d = v - mean;
+            d * d
+        })
+        .sum::<f64>()
+        / vals.len() as f64;
+    let sd = var.sqrt();
+    let (pe_x, motifs_x) = match permutation_entropy_counts(&xf, order, 1) {
+        Some((pe, used, _)) => (Some(pe), used),
+        None => (None, 0),
+    };
+    let (pe_y, motifs_y) = match permutation_entropy_counts(&yf, order, 1) {
+        Some((pe, used, _)) => (Some(pe), used),
+        None => (None, 0),
+    };
+    Some(TopologicalVerdict {
+        tau_x,
+        tau_y,
+        te,
+        threshold: mean + 2.0 * sd,
+        surrogate_mean: mean,
+        surrogate_sd: sd,
+        surrogates_used: vals.len(),
+        pe_x,
+        pe_y,
+        pe_motifs_x: motifs_x,
+        pe_motifs_y: motifs_y,
+    })
+}
+
+pub fn topological_te_phase(
+    x: &[f32],
+    y: &[f32],
+    dim: usize,
+    order: usize,
+    seed: u64,
+) -> Option<TopologicalVerdict> {
+    topological_te_with(x, y, dim, order, seed, &mut |v, rng| {
+        phase_randomized_surrogate(v, rng)
+    })
+}
+
+pub fn topological_te_block(
+    x: &[f32],
+    y: &[f32],
+    dim: usize,
+    order: usize,
+    block: usize,
+    seed: u64,
+) -> Option<TopologicalVerdict> {
+    topological_te_with(x, y, dim, order, seed, &mut move |v, rng| {
+        block_bootstrap_surrogate(v, block, rng)
+    })
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -463,5 +902,206 @@ mod tests {
         for (a, b) in re.iter().zip(orig.iter()) {
             assert!((a - b).abs() < 1e-9);
         }
+    }
+
+    #[test]
+    fn mi_lag_periodic_finds_quarter_period() {
+        let n = 512;
+        let x: Vec<f64> = (0..n).map(|t| (t as f64 * 0.3).sin()).collect();
+        let tau = find_mi_lag(&x).unwrap();
+        assert!(
+            (3..=8).contains(&tau),
+            "quarter-period tau expected, got {}",
+            tau
+        );
+    }
+
+    #[test]
+    fn mi_lag_constant_is_none() {
+        let x = vec![2.5f64; 128];
+        assert!(find_mi_lag(&x).is_none());
+    }
+
+    #[test]
+    fn mi_lag_short_series_is_none() {
+        assert!(find_mi_lag(&[1.0, 2.0, 3.0]).is_none());
+    }
+
+    #[test]
+    fn embed_series_forward_states() {
+        let x: Vec<f64> = (0..10).map(|t| t as f64).collect();
+        let emb = embed_series(&x, 2, 3);
+        assert_eq!(emb.len(), 6);
+        assert_eq!(emb[0], vec![0.0, 2.0, 4.0]);
+        assert_eq!(emb[5], vec![5.0, 7.0, 9.0]);
+        assert!(embed_series(&x, 0, 3).is_empty());
+        assert!(embed_series(&x, 2, 10).is_empty());
+    }
+
+    #[test]
+    fn embedded_te_causal_positive() {
+        let n = 400;
+        let mut xf = vec![0f64; n];
+        let mut yf = vec![0f64; n];
+        for t in 0..n {
+            yf[t] = (t as f64 * 0.5).sin();
+        }
+        for t in 0..n - 1 {
+            xf[t + 1] = 0.5 * xf[t] + 0.6 * yf[t];
+        }
+        let tau_x = find_mi_lag(&xf).unwrap();
+        let tau_y = find_mi_lag(&yf).unwrap();
+        let emb_x = embed_series(&xf, tau_x, 3);
+        let emb_y = embed_series(&yf, tau_y, 3);
+        let te = transfer_entropy_embedded(&xf, &emb_x, &emb_y, tau_x, tau_y).unwrap();
+        assert!(
+            te > 0.0,
+            "embedded causal TE should be positive, got {}",
+            te
+        );
+    }
+
+    #[test]
+    fn embedded_te_independent_near_zero() {
+        let n = 400;
+        let xf: Vec<f64> = (0..n).map(|t| (t as f64 * 0.5).sin()).collect();
+        let yf: Vec<f64> = (0..n).map(|t| (t as f64 * 0.7 + 1.0).sin()).collect();
+        let tau_x = find_mi_lag(&xf).unwrap();
+        let tau_y = find_mi_lag(&yf).unwrap();
+        let emb_x = embed_series(&xf, tau_x, 3);
+        let emb_y = embed_series(&yf, tau_y, 3);
+        let te = transfer_entropy_embedded(&xf, &emb_x, &emb_y, tau_x, tau_y).unwrap();
+        assert!(
+            te.abs() < 0.15,
+            "independent embedded TE should be near zero, got {}",
+            te
+        );
+    }
+
+    #[test]
+    fn embedded_te_window_too_small_is_none() {
+        let x: Vec<f64> = (0..16).map(|t| (t as f64 * 0.3).sin()).collect();
+        let tau = 8;
+        let emb_x = embed_series(&x, tau, 3);
+        let emb_y = embed_series(&x, tau, 3);
+        assert!(emb_x.is_empty());
+        assert!(transfer_entropy_embedded(&x, &emb_x, &emb_y, tau, tau).is_none());
+    }
+
+    #[test]
+    fn pe_ramp_is_zero() {
+        let x: Vec<f64> = (0..64).map(|t| t as f64 * 0.1).collect();
+        let pe = permutation_entropy(&x, 3, 1).unwrap();
+        assert!(pe.abs() < 1e-12, "ordered ramp PE should be 0, got {}", pe);
+    }
+
+    #[test]
+    fn pe_noise_is_high() {
+        let n = 512;
+        let mut rng = 99u64;
+        let x: Vec<f64> = (0..n)
+            .map(|_| {
+                rng = rng
+                    .wrapping_mul(6364136223846793005)
+                    .wrapping_add(1442695040888963407);
+                ((rng >> 33) as f64) / (u32::MAX as f64)
+            })
+            .collect();
+        let pe = permutation_entropy(&x, 3, 1).unwrap();
+        assert!(pe > 0.8, "PE of noise should be high, got {}", pe);
+    }
+
+    #[test]
+    fn pe_constant_is_none() {
+        let x = vec![2.0f64; 64];
+        assert!(permutation_entropy(&x, 3, 1).is_none());
+    }
+
+    #[test]
+    fn pe_ties_skip_windows() {
+        let mut x: Vec<f64> = (0..48).map(|t| t as f64).collect();
+        x[6] = 5.0;
+        x[21] = 20.0;
+        let (_, used, total) = permutation_entropy_counts(&x, 3, 1).unwrap();
+        assert!(
+            used < total,
+            "tied windows must be skipped: {} of {}",
+            used,
+            total
+        );
+    }
+
+    #[test]
+    fn pe_short_series_is_none() {
+        assert!(permutation_entropy(&[1.0, 2.0], 3, 1).is_none());
+    }
+
+    #[test]
+    fn topological_pipeline_causal_arrow() {
+        let n = 512;
+        let mut x = vec![0f32; n];
+        let mut y = vec![0f32; n];
+        for t in 0..n {
+            y[t] = (t as f32 * 0.5).sin();
+        }
+        for t in 0..n - 1 {
+            x[t + 1] = 0.5 * x[t] + 0.6 * y[t];
+        }
+        let v = topological_te_phase(&x, &y, 3, 3, 42).unwrap();
+        assert!(v.tau_x >= 1 && v.tau_y >= 1);
+        assert!(
+            (2..=10).contains(&v.surrogates_used),
+            "surrogates used {}",
+            v.surrogates_used
+        );
+        assert!(
+            v.threshold < v.te,
+            "threshold {} should be below causal TE {}",
+            v.threshold,
+            v.te
+        );
+    }
+
+    #[test]
+    fn topological_pipeline_block_variant_runs() {
+        let n = 512;
+        let mut x = vec![0f32; n];
+        let mut y = vec![0f32; n];
+        for t in 0..n {
+            y[t] = (t as f32 * 0.5).sin();
+        }
+        for t in 0..n - 1 {
+            x[t + 1] = 0.5 * x[t] + 0.6 * y[t];
+        }
+        let v = topological_te_block(&x, &y, 3, 3, 32, 42).unwrap();
+        assert!(v.surrogates_used >= 2);
+        assert!(v.threshold.is_finite());
+        assert!(v.pe_y.is_some());
+    }
+
+    #[test]
+    fn topological_pipeline_constant_driver_is_none() {
+        let x: Vec<f32> = (0..64).map(|t| (t as f32 * 0.1).sin()).collect();
+        let y = vec![3.0f32; 64];
+        assert!(topological_te_phase(&x, &y, 3, 3, 7).is_none());
+    }
+
+    #[test]
+    fn topological_pipeline_surrogate_without_mi_is_skipped() {
+        let n = 512;
+        let mut x = vec![0f32; n];
+        let mut y = vec![0f32; n];
+        for t in 0..n {
+            y[t] = (t as f32 * 0.5).sin();
+        }
+        for t in 0..n - 1 {
+            x[t + 1] = 0.5 * x[t] + 0.6 * y[t];
+        }
+        let res = topological_te_with(&x, &y, 3, 3, 42, &mut |v: &[f32],
+                                                              _rng: &mut u64|
+         -> Vec<f32> {
+            vec![1.0; v.len()]
+        });
+        assert!(res.is_none());
     }
 }
