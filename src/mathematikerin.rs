@@ -502,14 +502,14 @@ use std::thread;
 use winit::application::ApplicationHandler;
 use winit::event::{ElementState, MouseButton, MouseScrollDelta, TouchPhase, WindowEvent};
 use winit::event_loop::{ActiveEventLoop, ControlFlow, EventLoopBuilder};
-use winit::keyboard::{KeyCode, PhysicalKey};
+use winit::keyboard::{Key, KeyCode, NamedKey, PhysicalKey};
 use winit::platform::wayland::EventLoopBuilderExtWayland;
 use winit::platform::x11::EventLoopBuilderExtX11;
 use winit::window::{Fullscreen, Window, WindowAttributes, WindowId};
 
 const Φ: f64 = 1.618033988749895;
 const C: f64 = 299792458.0;
-const GRID_INIT: f64 = 2147483648.0;
+pub const GRID_INIT: f64 = 2147483648.0;
 const JUMP_GRID: f64 = 268435456.0;
 const SSAA_MAX: f32 = 8.0;
 const BUDGET_RELAX: f64 = 0.1;
@@ -1086,6 +1086,7 @@ struct NativeApp {
     t_frozen: bool,
     keys: HashSet<KeyCode>,
     shift: bool,
+    focus_req: u32,
     cursor: Option<(f64, f64)>,
     drag_button: Option<MouseButton>,
     touches: HashMap<u64, (f64, f64)>,
@@ -1196,6 +1197,7 @@ impl NativeApp {
             t_frozen: false,
             keys: HashSet::new(),
             shift: false,
+            focus_req: 0,
             cursor: None,
             drag_button: None,
             touches: HashMap::new(),
@@ -1881,6 +1883,7 @@ impl NativeApp {
         }
         let attrs = WindowAttributes::default()
             .with_title("omegaflow φ")
+            .with_active(true)
             .with_fullscreen(Some(Fullscreen::Borderless(None)));
         let window = match event_loop.create_window(attrs) {
             Ok(w) => w,
@@ -2275,6 +2278,12 @@ impl ApplicationHandler for NativeApp {
         }
         if self.window.is_none() {
             return;
+        }
+        if self.focus_req < 60 {
+            if let Some(w) = self.window.as_ref() {
+                let _ = w.focus_window();
+            }
+            self.focus_req += 1;
         }
         let now_i = std::time::Instant::now();
         let raw = match self.last_tick {
@@ -2680,12 +2689,16 @@ impl ApplicationHandler for NativeApp {
                 self.shift = m.state().shift_key();
             }
             WindowEvent::KeyboardInput { event, .. } => {
-                if let PhysicalKey::Code(code) = event.physical_key {
-                    if code == KeyCode::Escape && event.state == ElementState::Pressed {
+                if event.logical_key == Key::Named(NamedKey::Escape)
+                    || event.physical_key == PhysicalKey::Code(KeyCode::Escape)
+                {
+                    if event.state == ElementState::Pressed {
                         self.shutdown.store(true, Ordering::SeqCst);
                         event_loop.exit();
-                        return;
                     }
+                    return;
+                }
+                if let PhysicalKey::Code(code) = event.physical_key {
                     match event.state {
                         ElementState::Pressed => {
                             if !self.keys.contains(&code) {

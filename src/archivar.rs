@@ -1006,6 +1006,7 @@ pub fn fetch_raw(
         .arg("-S")
         .arg("-f")
         .arg("-L")
+        .arg("-g")
         .arg("--retry")
         .arg("3")
         .arg("--retry-all-errors")
@@ -1046,6 +1047,7 @@ pub fn curl_base(ttl: u64, parallel_max: u8) -> Command {
         .arg("-S")
         .arg("-f")
         .arg("-L")
+        .arg("-g")
         .arg("--retry")
         .arg("5")
         .arg("--retry-all-errors")
@@ -1091,6 +1093,7 @@ pub fn fetch_raw_probe(
         .arg("-S")
         .arg("-f")
         .arg("-L")
+        .arg("-g")
         .arg("--retry")
         .arg("1")
         .arg("--retry-all-errors")
@@ -8448,6 +8451,24 @@ field temp temp_c\n";
     }
 
     #[test]
+    fn test_anchor_bodies_have_ephemeris_sources() {
+        let content = std::fs::read_to_string("phi/sources.φ").unwrap();
+        let sources = super::parse_sources(&content);
+        let uses = super::anchor_uses(&sources);
+        let eph_bodies: std::collections::HashSet<String> = sources
+            .iter()
+            .filter(|s| s.format == "ephemeris_binary")
+            .filter_map(|s| s.body.clone())
+            .collect();
+        let missing: Vec<&String> = uses.keys().filter(|b| !eph_bodies.contains(*b)).collect();
+        assert!(
+            missing.is_empty(),
+            "anchor bodies without an ephemeris source would starve the load gate: {:?}",
+            missing
+        );
+    }
+
+    #[test]
     fn test_parse_ephemeris_binary_rejects_non_v2_props() {
         let mut buf = Vec::new();
         buf.extend_from_slice(&[0xCF, 0x86, 0x01, 0x00]);
@@ -15418,6 +15439,15 @@ pub fn main_flow() {
                 archive.spectral.push(hash);
             }
             let src = &archive.sources[res.source_idx];
+            if !res.channels.is_empty() {
+                eprintln!(
+                    "probe: source {} -> {} channels, first epoch {:.3} pos {:?}",
+                    res.source_idx,
+                    res.channels.len(),
+                    res.channels[0].0.epoch,
+                    res.channels[0].0.position
+                );
+            }
             for (channel, sensor) in &res.channels {
                 let track_origin = matches!(channel.position, Position::Source)
                     || matches!(channel.position, Position::StateVector { track: true, .. });
@@ -15654,9 +15684,56 @@ pub fn main_flow() {
                 continue;
             }
             if archive.sources[i].format == "netcdf" {
-                let url = archive.sources[i].url.clone();
-                let ftx = fetch_tx.clone();
                 let src_clone = archive.sources[i].clone();
+                let pos = match &src_clone.frame {
+                    Frame::Surface {
+                        lat,
+                        lon,
+                        alt,
+                        body_name,
+                    } => body_fixed_to_icrs(
+                        body_name,
+                        *lat,
+                        *lon,
+                        *alt,
+                        now,
+                        &archive.body_ephemerides,
+                    )
+                    .map(|p| (p[0], p[1], p[2])),
+                    Frame::Barycenter { body_name, scale } => {
+                        body_barycenter_position(body_name, now, &archive.body_ephemerides)
+                            .map(|p| (p[0] * scale, p[1] * scale, p[2] * scale))
+                    }
+                    Frame::Manifest => None,
+                };
+                let url = match pos {
+                    Some((x, y, z)) => render_source_url(
+                        &src_clone,
+                        x,
+                        y,
+                        z,
+                        now,
+                        0.0,
+                        &archive.body_ephemerides,
+                        &env,
+                        &lsk,
+                    ),
+                    None => render_source_url(
+                        &src_clone,
+                        0.0,
+                        0.0,
+                        0.0,
+                        now,
+                        0.0,
+                        &archive.body_ephemerides,
+                        &env,
+                        &lsk,
+                    ),
+                };
+                let Some(url) = url else {
+                    continue;
+                };
+                let ftx = fetch_tx.clone();
                 let src_idx = i;
                 let src_ttl = src_clone.ttl;
                 let lsk_c = lsk.clone();

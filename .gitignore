@@ -13,6 +13,8 @@ omegaflow.wasm
 phi/health.json
 phi/kernels/
 kernels/
+!src/kernels/
+!src/kernels/naif0012.tls
 *.py
 !phi/pipeline/chunk_master.py
 /reference/
