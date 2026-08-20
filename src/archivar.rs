@@ -11218,44 +11218,61 @@ fn download_ephemeris_batch(items: &[(usize, SourceConfig, String)]) {
         .iter()
         .map(|(_, _, p)| format!("{}.part", p))
         .collect();
-    for p in &parts {
-        let _ = std::fs::remove_file(p);
+    let mut pending: Vec<(usize, String, String)> = Vec::new();
+    for (i, (_, _, tmp_path)) in items.iter().enumerate() {
+        if let Ok(data) = std::fs::read(&parts[i]) {
+            if parse_ephemeris_binary(&data).is_some() {
+                let _ = std::fs::rename(&parts[i], tmp_path);
+                continue;
+            }
+        }
+        let _ = std::fs::remove_file(&parts[i]);
+        pending.push((i, parts[i].clone(), tmp_path.clone()));
+    }
+    if pending.is_empty() {
+        return;
     }
     let mut cmd = curl_base(ttl, 8);
-    for (i, (_, src, _)) in items.iter().enumerate() {
-        cmd.arg("-o").arg(&parts[i]).arg(&src.url);
+    for (i, part, _) in &pending {
+        cmd.arg("-o").arg(part).arg(&items[*i].1.url);
     }
     let output = match cmd.output() {
         Ok(o) => o,
         Err(_) => {
-            eprintln!("ephemeris batch ({} files): curl void", items.len());
-            for p in &parts {
-                let _ = std::fs::remove_file(p);
+            eprintln!("ephemeris batch ({} files): curl void", pending.len());
+            for (_, part, _) in &pending {
+                let _ = std::fs::remove_file(part);
             }
             return;
         }
     };
     if output.status.success() {
-        for (i, (_, _, tmp_path)) in items.iter().enumerate() {
-            if std::fs::rename(&parts[i], tmp_path).is_err() {
-                let _ = std::fs::remove_file(&parts[i]);
+        for (_, part, tmp_path) in &pending {
+            if std::fs::rename(part, tmp_path).is_err() {
+                let _ = std::fs::remove_file(part);
             }
         }
     } else {
         eprintln!(
             "ephemeris batch ({} files): curl returned {}: {}",
-            items.len(),
+            pending.len(),
             output.status,
             String::from_utf8_lossy(&output.stderr).trim()
         );
-        for p in &parts {
-            let _ = std::fs::remove_file(p);
+        for (_, part, _) in &pending {
+            let _ = std::fs::remove_file(part);
         }
     }
 }
 
 fn download_ephemeris_one(src: &SourceConfig, tmp_path: &str) {
     let part = format!("{}.part", tmp_path);
+    if let Ok(data) = std::fs::read(&part) {
+        if parse_ephemeris_binary(&data).is_some() {
+            let _ = std::fs::rename(&part, tmp_path);
+            return;
+        }
+    }
     let _ = std::fs::remove_file(&part);
     let mut cmd = curl_base(src.ttl, 0);
     cmd.arg("-o").arg(&part).arg(&src.url);
