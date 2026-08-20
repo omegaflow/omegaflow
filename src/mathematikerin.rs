@@ -338,10 +338,11 @@ fn source_contrib(j: u32, pixel_rel: vec3f) -> vec4f {
         let f = u32(c.y);
         if (f < 9u) {
             omega[f] += c.x;
-            let lum = lum_ratio(abs(c.x), ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, f))
+            let ratio = lum_ratio(abs(c.x), ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, f))
                 * scale * scale;
+            let lum = clamp((log2(1.0 + ratio) + vp.expose_ex.x) / 22.0, 0.0, 1.0);
             if (f == 0u) { rgb += color_lut_rgb(c.z) * lum; }
-            else { rgb += hsl_to_rgb(fract(log2(max(c.w, 1.0)) / 16.0), 1.0, 0.5) * lum; }
+            else { rgb += hsl_to_rgb(f32(f) / 9.0, 1.0, 0.5) * lum; }
         }
     }
 
@@ -378,10 +379,10 @@ struct HudVOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f };
     let w = vp.surface.x;
     let h = vp.surface.y;
     let corner = quad[i];
-    let px = vec2f((corner.x * 0.5 + 0.5) * w, (0.5 - corner.y * 0.5) * 24.0);
+    let px = vec2f((corner.x * 0.5 + 0.5) * w, (0.5 - corner.y * 0.5) * 32.0);
     var out: HudVOut;
     out.pos = vec4f(px.x / w * 2.0 - 1.0, 1.0 - px.y / h * 2.0, 0.0, 1.0);
-    out.uv = px / vec2f(w, 24.0);
+    out.uv = px / vec2f(w, 32.0);
     return out;
 }
 
@@ -391,9 +392,296 @@ struct HudVOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f };
     return vec4f(c.rgb, 1.0);
 }
 "#;
+const TE_WGSL: &str = r#"
+const RING_MAX: u32 = 256u;
+const SERIES_COUNT: u32 = 12u;
+const DIM: u32 = 3u;
+const ORDER: u32 = 3u;
+const F32_EPS: f32 = 1.19e-07;
+const LOG2_FACTORIAL: f32 = 2.584962500721156;
+
+@group(0) @binding(0) var<storage, read> series: array<f32>;
+@group(0) @binding(1) var<uniform> params: vec4<u32>;
+@group(0) @binding(2) var<storage, read_write> verdict: array<f32>;
+
+fn ser_at(s: u32, i: u32) -> f32 {
+    return series[s * RING_MAX + i];
+}
+
+fn find_mi_lag(s: u32, n: u32, max_lag: u32) -> i32 {
+    if (max_lag < 3u) { return -1; }
+    var mi_prev2: f32 = 0.0;
+    var mi_prev: f32 = 0.0;
+    for (var lag = 1u; lag <= max_lag; lag = lag + 1u) {
+        let w = n - lag;
+        var mn: f32 = ser_at(s, 0u);
+        var mx: f32 = mn;
+        for (var i = 0u; i < w; i = i + 1u) {
+            let v = ser_at(s, i);
+            mn = min(mn, v);
+            mx = max(mx, v);
+        }
+        let range = mx - mn;
+        if (range <= 0.0) { return -1; }
+        let mid = mn + range * 0.5;
+        var h00: u32 = 0u;
+        var h01: u32 = 0u;
+        var h10: u32 = 0u;
+        var h11: u32 = 0u;
+        for (var i = 0u; i < w; i = i + 1u) {
+            let b1 = ser_at(s, i) > mid;
+            let b2 = ser_at(s, i + lag) > mid;
+            if (!b1 && !b2) { h00 = h00 + 1u; }
+            else if (!b1 && b2) { h01 = h01 + 1u; }
+            else if (b1 && !b2) { h10 = h10 + 1u; }
+            else { h11 = h11 + 1u; }
+        }
+        let total = f32(w);
+        let p0 = (f32(h00) + f32(h01)) / total;
+        let p1 = (f32(h10) + f32(h11)) / total;
+        let q0 = (f32(h00) + f32(h10)) / total;
+        let q1 = (f32(h01) + f32(h11)) / total;
+        var mi: f32 = 0.0;
+        if (h00 > 0u) {
+            let p = f32(h00) / total;
+            mi = mi + p * log2(p / (p0 * q0 + F32_EPS) + F32_EPS);
+        }
+        if (h01 > 0u) {
+            let p = f32(h01) / total;
+            mi = mi + p * log2(p / (p0 * q1 + F32_EPS) + F32_EPS);
+        }
+        if (h10 > 0u) {
+            let p = f32(h10) / total;
+            mi = mi + p * log2(p / (p1 * q0 + F32_EPS) + F32_EPS);
+        }
+        if (h11 > 0u) {
+            let p = f32(h11) / total;
+            mi = mi + p * log2(p / (p1 * q1 + F32_EPS) + F32_EPS);
+        }
+        if (lag >= 3u && mi_prev2 > mi_prev && mi_prev <= mi) {
+            return i32(lag - 1u);
+        }
+        mi_prev2 = mi_prev;
+        mi_prev = mi;
+    }
+    return -1;
+}
+
+fn permutation_entropy(s: u32, n: u32) -> vec2f {
+    let span = ORDER - 1u;
+    if (n <= span) { return vec2f(0.0, 0.0); }
+    let total_windows = n - span;
+    var counts = array<f32, 6>(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    var used: f32 = 0.0;
+    for (var i = 0u; i < total_windows; i = i + 1u) {
+        let v0 = ser_at(s, i);
+        let v1 = ser_at(s, i + 1u);
+        let v2 = ser_at(s, i + 2u);
+        if (v0 == v1 || v0 == v2 || v1 == v2) { continue; }
+        var rank = array<u32, 3>(0u, 0u, 0u);
+        rank[0] = select(0u, 1u, v1 < v0) + select(0u, 1u, v2 < v0);
+        rank[1] = select(0u, 1u, v0 < v1) + select(0u, 1u, v2 < v1);
+        rank[2] = select(0u, 1u, v0 < v2) + select(0u, 1u, v1 < v2);
+        let l0 = select(0u, 1u, rank[1] < rank[0]) + select(0u, 1u, rank[2] < rank[0]);
+        let l1 = select(0u, 1u, rank[2] < rank[1]);
+        let key = l0 * 2u + l1;
+        counts[key] = counts[key] + 1.0;
+        used = used + 1.0;
+    }
+    if (used <= 0.0) { return vec2f(0.0, 0.0); }
+    var entropy: f32 = 0.0;
+    for (var k = 0u; k < 6u; k = k + 1u) {
+        if (counts[k] > 0.0) {
+            let p = counts[k] / used;
+            entropy = entropy - p * log2(p);
+        }
+    }
+    return vec2f(entropy / LOG2_FACTORIAL, used);
+}
+
+fn embedded_silverman(s: u32, tau: u32, n: u32) -> f32 {
+    let back = (DIM - 1u) * tau;
+    if (back >= n) { return -1.0; }
+    let n_emb = n - back;
+    var mean = array<f32, 3>(0.0, 0.0, 0.0);
+    for (var k = 0u; k < DIM; k = k + 1u) {
+        var acc: f32 = 0.0;
+        for (var u = 0u; u < n_emb; u = u + 1u) {
+            acc = acc + ser_at(s, u + k * tau);
+        }
+        mean[k] = acc / f32(n_emb);
+    }
+    var var_acc: f32 = 0.0;
+    for (var u = 0u; u < n_emb; u = u + 1u) {
+        var d2: f32 = 0.0;
+        for (var k = 0u; k < DIM; k = k + 1u) {
+            let d = ser_at(s, u + k * tau) - mean[k];
+            d2 = d2 + d * d;
+        }
+        var_acc = var_acc + d2;
+    }
+    var_acc = var_acc / f32(n_emb);
+    if (var_acc <= 0.0) { return -1.0; }
+    return 1.06 * sqrt(var_acc) * pow(f32(n_emb), -0.2);
+}
+
+fn future_silverman(t_low: u32, tau_x: u32, n: u32) -> f32 {
+    let start = t_low + tau_x;
+    if (start >= n) { return -1.0; }
+    let cnt = n - start;
+    if (cnt < 2u) { return -1.0; }
+    var acc: f32 = 0.0;
+    for (var i = start; i < n; i = i + 1u) {
+        acc = acc + ser_at(0u, i);
+    }
+    let mean = acc / f32(cnt);
+    var var_acc: f32 = 0.0;
+    for (var i = start; i < n; i = i + 1u) {
+        let d = ser_at(0u, i) - mean;
+        var_acc = var_acc + d * d;
+    }
+    var_acc = var_acc / f32(cnt);
+    if (var_acc <= 0.0) { return -1.0; }
+    return 1.06 * sqrt(var_acc) * pow(f32(cnt), -0.2);
+}
+
+fn state_d2(s: u32, t: u32, q: u32, tau: u32) -> f32 {
+    var d2: f32 = 0.0;
+    for (var k = 0u; k < DIM; k = k + 1u) {
+        let i_t = t - (DIM - 1u - k) * tau;
+        let i_q = q - (DIM - 1u - k) * tau;
+        let d = ser_at(s, i_t) - ser_at(s, i_q);
+        d2 = d2 + d * d;
+    }
+    return d2;
+}
+
+fn te_embedded(tau_x: u32, tau_y: u32, sy: u32, h_f: f32, h_x: f32, h_y: f32, n: u32) -> f32 {
+    let back_x = (DIM - 1u) * tau_x;
+    let back_y = (DIM - 1u) * tau_y;
+    let t_low = max(back_x, back_y);
+    let t_high = n - tau_x - 1u;
+    let m = t_high - t_low + 1u;
+    let n_x = n - back_x;
+    let n_xy = n - t_low;
+    let inv2_hf = 0.5 / (h_f * h_f);
+    let inv2_hx = 0.5 / (h_x * h_x);
+    let inv2_hy = 0.5 / (h_y * h_y);
+    var te: f32 = 0.0;
+    for (var t = t_low; t <= t_high; t = t + 1u) {
+        let fut = ser_at(0u, t + tau_x);
+        var k3: f32 = 0.0;
+        for (var q = t_low; q <= t_high; q = q + 1u) {
+            let df = fut - ser_at(0u, q + tau_x);
+            k3 = k3 + exp(-df * df * inv2_hf - state_d2(0u, t, q, tau_x) * inv2_hx - state_d2(sy, t, q, tau_y) * inv2_hy);
+        }
+        var k1: f32 = 0.0;
+        for (var q = back_x; q < n; q = q + 1u) {
+            k1 = k1 + exp(-state_d2(0u, t, q, tau_x) * inv2_hx);
+        }
+        var k2xy: f32 = 0.0;
+        for (var q = t_low; q < n; q = q + 1u) {
+            k2xy = k2xy + exp(-state_d2(0u, t, q, tau_x) * inv2_hx - state_d2(sy, t, q, tau_y) * inv2_hy);
+        }
+        var k2x: f32 = 0.0;
+        for (var q = t_low; q <= t_high; q = q + 1u) {
+            let df = fut - ser_at(0u, q + tau_x);
+            k2x = k2x + exp(-df * df * inv2_hf - state_d2(0u, t, q, tau_x) * inv2_hx);
+        }
+        let p3 = k3 / f32(m);
+        let p1 = k1 / f32(n_x);
+        let p2xy = k2xy / f32(n_xy);
+        let p2x = k2x / f32(m);
+        te = te + log(p3 * p1 / max(p2xy * p2x, 1e-30));
+    }
+    return te / f32(m);
+}
+
+@compute @workgroup_size(16)
+fn te_compute(@builtin(local_invocation_id) gid: vec3<u32>) {
+    let tid = gid.x;
+    let n = params.x;
+    let max_lag = params.y;
+    if (tid >= SERIES_COUNT) { return; }
+    var tau: f32 = 0.0;
+    var te: f32 = 0.0;
+    var pe: f32 = 0.0;
+    var motifs: f32 = 0.0;
+    var valid: f32 = 0.0;
+    var pe_valid: f32 = 0.0;
+    var finite_ok: bool = true;
+    for (var i = 0u; i < n; i = i + 1u) {
+        let va = ser_at(tid, i);
+        let vb = ser_at(0u, i);
+        if (!(va == va) || !(vb == vb) || abs(va) >= 3.4028235e38 || abs(vb) >= 3.4028235e38) {
+            finite_ok = false;
+        }
+    }
+    if (tid == 0u) {
+        if (finite_ok) {
+            let tx = find_mi_lag(0u, n, max_lag);
+            if (tx >= 0) {
+                tau = f32(tx);
+                valid = 1.0;
+            }
+        }
+        let pev = permutation_entropy(0u, n);
+        pe = pev.x;
+        motifs = pev.y;
+        if (pev.y > 0.0 && finite_ok) {
+            pe_valid = 1.0;
+        }
+    } else {
+        if (finite_ok && n >= 8u) {
+            let tx = find_mi_lag(0u, n, max_lag);
+            let ty = find_mi_lag(tid, n, max_lag);
+            if (tx >= 0 && ty >= 0) {
+                let u_tx = u32(tx);
+                let u_ty = u32(ty);
+                let back_x = (DIM - 1u) * u_tx;
+                let back_y = (DIM - 1u) * u_ty;
+                let t_low = max(back_x, back_y);
+                let t_high_ok = u_tx + 1u < n;
+                var t_high: u32 = 0u;
+                if (t_high_ok) {
+                    t_high = n - u_tx - 1u;
+                }
+                if (back_x < n && back_y < n && t_high_ok && t_low <= t_high) {
+                    let m = t_high - t_low + 1u;
+                    if (m >= 8u) {
+                        let h_f = future_silverman(t_low, u_tx, n);
+                        let h_x = embedded_silverman(0u, u_tx, n);
+                        let h_y = embedded_silverman(tid, u_ty, n);
+                        if (h_f > 0.0 && h_x > 0.0 && h_y > 0.0) {
+                            tau = f32(u_ty);
+                            te = te_embedded(u_tx, u_ty, tid, h_f, h_x, h_y, n);
+                            valid = 1.0;
+                        }
+                    }
+                }
+            }
+        }
+        if (tid == 1u) {
+            let pev = permutation_entropy(1u, n);
+            pe = pev.x;
+            motifs = pev.y;
+            if (pev.y > 0.0 && finite_ok) {
+                pe_valid = 1.0;
+            }
+        }
+    }
+    let o = tid * 6u;
+    verdict[o + 0u] = tau;
+    verdict[o + 1u] = te;
+    verdict[o + 2u] = pe;
+    verdict[o + 3u] = motifs;
+    verdict[o + 4u] = valid;
+    verdict[o + 5u] = pe_valid;
+}
+"#;
 const HUD_LINE_H: i32 = 8;
 const HUD_CHAR_W: i32 = 6;
-const HUD_LINES: u32 = 3;
+const HUD_LINES: u32 = 4;
 const HUD_H: u32 = HUD_LINE_H as u32 * HUD_LINES;
 
 const HUD_GLYPH: [[u8; 5]; 95] = [
@@ -1042,6 +1330,14 @@ struct NativeApp {
     probe_buf: Option<wgpu::Buffer>,
     probe_read: Option<wgpu::Buffer>,
     prep_param_buf: Option<wgpu::Buffer>,
+    te_pipe: Option<wgpu::ComputePipeline>,
+    te_bind: Option<wgpu::BindGroup>,
+    te_series_buf: Option<wgpu::Buffer>,
+    te_param_buf: Option<wgpu::Buffer>,
+    te_out_buf: Option<wgpu::Buffer>,
+    te_read_buf: Option<wgpu::Buffer>,
+    te_map: Option<Arc<AtomicBool>>,
+    te_named: String,
     color_lut_view: Option<wgpu::TextureView>,
     color_lut_sampler: Option<wgpu::Sampler>,
     field_cap: u32,
@@ -1065,6 +1361,7 @@ struct NativeApp {
     ssaa: f32,
     expose_offset: f32,
     field_dark: bool,
+    hud_dark: bool,
     force_ref: [f32; 9],
     probe_omega: [f32; 9],
     probe_flow: [f32; 3],
@@ -1088,6 +1385,8 @@ struct NativeApp {
     keys: HashSet<KeyCode>,
     shift: bool,
     focus_req: u32,
+    focused: bool,
+    keys_seen: u64,
     cursor: Option<(f64, f64)>,
     drag_button: Option<MouseButton>,
     touches: HashMap<u64, (f64, f64)>,
@@ -1157,6 +1456,14 @@ impl NativeApp {
             probe_buf: None,
             probe_read: None,
             prep_param_buf: None,
+            te_pipe: None,
+            te_bind: None,
+            te_series_buf: None,
+            te_param_buf: None,
+            te_out_buf: None,
+            te_read_buf: None,
+            te_map: None,
+            te_named: String::new(),
             field_cap: 0,
             buf_sel: 0,
             packed_gen: 0,
@@ -1176,6 +1483,7 @@ impl NativeApp {
             ssaa: 1.0,
             expose_offset: EXPOSE_OFFSET_BASE,
             field_dark: false,
+            hud_dark: false,
             force_ref: [0.0; 9],
             probe_omega: [0.0; 9],
             probe_flow: [0.0; 3],
@@ -1199,6 +1507,8 @@ impl NativeApp {
             keys: HashSet::new(),
             shift: false,
             focus_req: 0,
+            focused: false,
+            keys_seen: 0,
             cursor: None,
             drag_button: None,
             touches: HashMap::new(),
@@ -1280,6 +1590,116 @@ impl NativeApp {
         (pe - mean).abs() <= 2.0 * var.sqrt()
     }
 
+    fn te_say(&mut self, word: &str) {
+        if self.te_named != word {
+            eprintln!("te {}", word);
+            self.te_named = word.to_string();
+        }
+    }
+
+    fn te_read_verdict(read_buf: &wgpu::Buffer) -> [f32; 72] {
+        let data = read_buf.slice(..).get_mapped_range();
+        let mut verdict = [0f32; 72];
+        for k in 0..72 {
+            let mut b = [0u8; 4];
+            b.copy_from_slice(&data[k * 4..k * 4 + 4]);
+            verdict[k] = f32::from_le_bytes(b);
+        }
+        drop(data);
+        read_buf.unmap();
+        verdict
+    }
+
+    fn te_absence_word(verdict: &[f32; 72]) -> &'static str {
+        if verdict[10] != 1.0 {
+            "real series invalid"
+        } else {
+            "fewer than two surrogates"
+        }
+    }
+
+    fn te_probe(
+        &mut self,
+        xs: &[f32],
+        ys: &[f32],
+        m: usize,
+    ) -> Option<crate::te::TopologicalVerdict> {
+        let device = self.device.clone()?;
+        let mut carry: Option<crate::te::TopologicalVerdict> = None;
+        if let Some(prev) = self.te_map.take() {
+            if prev.load(Ordering::SeqCst) {
+                let read_buf = self.te_read_buf.as_ref()?;
+                let verdict = Self::te_read_verdict(read_buf);
+                carry = crate::te::topological_verdict_from_gpu(&verdict);
+            } else {
+                self.te_map = Some(prev);
+                self.te_say("readback pending");
+                return None;
+            }
+        }
+        let queue = self.queue.clone()?;
+        let pipe = self.te_pipe.as_ref()?;
+        let bind = self.te_bind.as_ref()?;
+        let series_buf = self.te_series_buf.as_ref()?;
+        let param_buf = self.te_param_buf.as_ref()?;
+        let out_buf = self.te_out_buf.as_ref()?;
+        let read_buf = self.te_read_buf.as_ref()?;
+        let mut data = vec![0f32; 12 * 256];
+        data[0..m].copy_from_slice(xs);
+        data[256..256 + m].copy_from_slice(ys);
+        let mut rng = self.ring_gen.wrapping_add(0x9e3779b97f4a7c15);
+        for s in 0..10 {
+            let surr = crate::te::phase_randomized_surrogate(ys, &mut rng);
+            let off = (2 + s) * 256;
+            data[off..off + m].copy_from_slice(&surr);
+        }
+        queue.write_buffer(series_buf, 0, &le_bytes_f32(&data));
+        let max_lag = (m as f64 / Φ) as u32;
+        let param = [m as u32, max_lag, 0, 0];
+        let mut pb = [0u8; 16];
+        for (i, x) in param.iter().enumerate() {
+            pb[i * 4..i * 4 + 4].copy_from_slice(&x.to_le_bytes());
+        }
+        queue.write_buffer(param_buf, 0, &pb);
+        let mut enc = device.create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
+        {
+            let mut pass = enc.begin_compute_pass(&wgpu::ComputePassDescriptor::default());
+            pass.set_pipeline(pipe);
+            pass.set_bind_group(0, bind, &[]);
+            pass.dispatch_workgroups(1, 1, 1);
+        }
+        enc.copy_buffer_to_buffer(out_buf, 0, read_buf, 0, 288);
+        queue.submit(std::iter::once(enc.finish()));
+        let mapped = Arc::new(AtomicBool::new(false));
+        let m2 = mapped.clone();
+        let slice = read_buf.slice(..);
+        slice.map_async(wgpu::MapMode::Read, move |r| {
+            m2.store(r.is_ok(), Ordering::SeqCst);
+        });
+        let deadline = std::time::Instant::now() + std::time::Duration::from_millis(100);
+        while !mapped.load(Ordering::SeqCst) && std::time::Instant::now() < deadline {
+            device.poll(wgpu::Maintain::Poll);
+        }
+        if !mapped.load(Ordering::SeqCst) {
+            self.te_map = Some(mapped);
+            if carry.is_some() {
+                self.te_say("verdict present");
+            } else {
+                self.te_say("readback pending");
+            }
+            return carry;
+        }
+        let verdict = Self::te_read_verdict(read_buf);
+        let v = crate::te::topological_verdict_from_gpu(&verdict);
+        let final_v = v.or(carry);
+        if final_v.is_some() {
+            self.te_say("verdict present");
+        } else {
+            self.te_say(Self::te_absence_word(&verdict));
+        }
+        final_v
+    }
+
     fn hud_blit(bmp: &mut [u8], stride: usize, w: u32, x: i32, y: i32, ch: char, rgb: [u8; 3]) {
         let c = ch as u32;
         if !(32..=126).contains(&c) {
@@ -1315,7 +1735,7 @@ impl NativeApp {
         }
     }
 
-    fn hud_raster(&mut self, force_tokens: &str, te: Option<(f64, f64)>) {
+    fn hud_raster(&mut self, force_tokens: &str, te: Option<(f64, f64)>, te_word: &str) {
         if self.hud_bitmap.is_empty() {
             return;
         }
@@ -1333,7 +1753,8 @@ impl NativeApp {
         let flow = self.probe_flow;
         let mut l3 = match te {
             Some((in_te, thr)) => format!("TE {:.3} thr {:.3}  ", in_te, thr),
-            None => String::new(),
+            None if te_word.is_empty() => String::new(),
+            None => format!("TE {}  ", te_word),
         };
         if let Some((tx, ty, px, py)) = self.hud_topology {
             l3.push_str(&format!("tau {}:{} ", tx, ty));
@@ -1349,10 +1770,30 @@ impl NativeApp {
         let x0 = 4i32;
         let line = HUD_LINE_H;
         let bmp = &mut self.hud_bitmap;
+        let scale_line = format!(
+            "1 px = {} | grid 2^{} | H hud  P feld | {} | keys {}",
+            Self::scale_label(self.grid_step),
+            self.grid_step.log2().round() as i64,
+            if self.focused { "focus" } else { "kein focus" },
+            self.keys_seen
+        );
         Self::hud_text(bmp, stride, w, x0, 1, &line1, green);
         Self::hud_text(bmp, stride, w, x0, 1 + line, force_tokens, green);
         Self::hud_text(bmp, stride, w, x0, 1 + 2 * line, &l3, green);
+        Self::hud_text(bmp, stride, w, x0, 1 + 3 * line, &scale_line, green);
         self.hud_dirty = true;
+    }
+
+    fn scale_label(m_per_px: f64) -> String {
+        if m_per_px >= 1.0e14 {
+            format!("{:.2} AU", m_per_px / 1.495978707e11)
+        } else if m_per_px >= 1.0e8 {
+            format!("{:.3} Mkm", m_per_px / 1.0e9)
+        } else if m_per_px >= 1.0e3 {
+            format!("{:.1} km", m_per_px / 1.0e3)
+        } else {
+            format!("{:.1} m", m_per_px)
+        }
     }
 
     fn ensure_hud_texture(&mut self) {
@@ -1503,6 +1944,9 @@ impl NativeApp {
             }
             KeyCode::KeyP => {
                 self.field_dark = !self.field_dark;
+            }
+            KeyCode::KeyH => {
+                self.hud_dark = !self.hud_dark;
             }
             KeyCode::Digit1 => self.jump(0),
             KeyCode::Digit2 => self.jump(1),
@@ -1864,10 +2308,12 @@ impl NativeApp {
                     pass.draw(0..6, 0..1);
                 }
             }
-            if let (Some(pipe), Some(bind)) = (self.hud_pipe.as_ref(), self.hud_bind.as_ref()) {
-                pass.set_pipeline(pipe);
-                pass.set_bind_group(0, bind, &[]);
-                pass.draw(0..6, 0..1);
+            if !self.hud_dark {
+                if let (Some(pipe), Some(bind)) = (self.hud_pipe.as_ref(), self.hud_bind.as_ref()) {
+                    pass.set_pipeline(pipe);
+                    pass.set_bind_group(0, bind, &[]);
+                    pass.draw(0..6, 0..1);
+                }
             }
         }
         queue.submit(std::iter::once(encoder.finish()));
@@ -2249,6 +2695,96 @@ impl NativeApp {
             usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
             mapped_at_creation: false,
         });
+        let te_module = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+            label: None,
+            source: wgpu::ShaderSource::Wgsl(TE_WGSL.into()),
+        });
+        let te_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+            label: None,
+            entries: &[
+                {
+                    let mut e = storage_entry(true, wgpu::ShaderStages::COMPUTE);
+                    e.binding = 0;
+                    e
+                },
+                wgpu::BindGroupLayoutEntry {
+                    binding: 1,
+                    visibility: wgpu::ShaderStages::COMPUTE,
+                    ty: wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Uniform,
+                        has_dynamic_offset: false,
+                        min_binding_size: None,
+                    },
+                    count: None,
+                },
+                {
+                    let mut e = storage_entry(false, wgpu::ShaderStages::COMPUTE);
+                    e.binding = 2;
+                    e
+                },
+            ],
+        });
+        let te_pipe_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+            label: None,
+            bind_group_layouts: &[&te_layout],
+            push_constant_ranges: &[],
+        });
+        let te_pipe = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+            label: None,
+            layout: Some(&te_pipe_layout),
+            module: &te_module,
+            entry_point: Some("te_compute"),
+            compilation_options: Default::default(),
+            cache: None,
+        });
+        let te_series_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: 12288,
+            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        let te_param_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: 16,
+            usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        let te_out_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: 288,
+            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC,
+            mapped_at_creation: false,
+        });
+        let te_read_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: 288,
+            usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        let te_bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
+            label: None,
+            layout: &te_layout,
+            entries: &[
+                wgpu::BindGroupEntry {
+                    binding: 0,
+                    resource: te_series_buf.as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 1,
+                    resource: te_param_buf.as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 2,
+                    resource: te_out_buf.as_entire_binding(),
+                },
+            ],
+        });
+        self.te_pipe = Some(te_pipe);
+        self.te_bind = Some(te_bind);
+        self.te_series_buf = Some(te_series_buf);
+        self.te_param_buf = Some(te_param_buf);
+        self.te_out_buf = Some(te_out_buf);
+        self.te_read_buf = Some(te_read_buf);
         self.window = Some(window);
         self.surface = Some(surface);
         self.config = Some(config);
@@ -2280,11 +2816,13 @@ impl ApplicationHandler for NativeApp {
         if self.window.is_none() {
             return;
         }
-        if self.focus_req < 60 {
-            if let Some(w) = self.window.as_ref() {
-                let _ = w.focus_window();
-            }
+        if !self.focused {
             self.focus_req += 1;
+            if self.focus_req % 30 == 0 {
+                if let Some(w) = self.window.as_ref() {
+                    let _ = w.focus_window();
+                }
+            }
         }
         let now_i = std::time::Instant::now();
         let raw = match self.last_tick {
@@ -2556,7 +3094,7 @@ impl ApplicationHandler for NativeApp {
                     xs[i] = v[0] + v[1] + v[2] + v[3] + v[4] + v[5] + v[6] + v[7] + v[8];
                     ys[i] = (v[9] * v[9] + v[10] * v[10] + v[11] * v[11]).sqrt();
                 }
-                if let Some(v) = crate::te::topological_te_phase(&xs, &ys, 3, 3, self.ring_gen) {
+                if let Some(v) = self.te_probe(&xs, &ys, m) {
                     self.hud_topology = Some((v.tau_x, v.tau_y, v.pe_x, v.pe_y));
                     if self.pe_gate(v.pe_y) {
                         te_opt = Some((v.te, v.threshold));
@@ -2627,12 +3165,27 @@ impl ApplicationHandler for NativeApp {
                 if k > 0 {
                     force_tokens.push(' ');
                 }
-                force_tokens.push_str(&format!(
-                    "{}[{}]:{:+.2}",
-                    FORCE_NAME[k], FORCE_SI_UNIT[k], self.probe_omega[k]
-                ));
+                let v = self.probe_omega[k];
+                if v != 0.0 && v.abs() < 0.01 {
+                    force_tokens.push_str(&format!(
+                        "{}[{}]:{:+.1e}",
+                        FORCE_NAME[k], FORCE_SI_UNIT[k], v
+                    ));
+                } else {
+                    force_tokens.push_str(&format!(
+                        "{}[{}]:{:+.2}",
+                        FORCE_NAME[k], FORCE_SI_UNIT[k], v
+                    ));
+                }
             }
-            self.hud_raster(&force_tokens, te_opt);
+            let te_word = if self.ring_filled >= 32 {
+                self.te_named.clone()
+            } else {
+                "ring below gate".to_string()
+            };
+            if !self.hud_dark {
+                self.hud_raster(&force_tokens, te_opt, &te_word);
+            }
             eprintln!(
                 "φ window: t {:.2} | rec {} | gen {} | flow {:+.2} {:+.2} {:+.2} | {} | fps {:.0} | ssaa {:.2} | grid 2^{} | x {:.3e} y {:.3e} z {:.3e} | {} recs | b {}x{} | maxms {:.0} | ema {:.1} | perm {:.2} | off {:.2} | field {}",
                 self.t_presence,
@@ -2689,6 +3242,9 @@ impl ApplicationHandler for NativeApp {
             WindowEvent::ModifiersChanged(m) => {
                 self.shift = m.state().shift_key();
             }
+            WindowEvent::Focused(f) => {
+                self.focused = f;
+            }
             WindowEvent::KeyboardInput { event, .. } => {
                 if event.logical_key == Key::Named(NamedKey::Escape)
                     || event.physical_key == PhysicalKey::Code(KeyCode::Escape)
@@ -2702,6 +3258,7 @@ impl ApplicationHandler for NativeApp {
                 if let PhysicalKey::Code(code) = event.physical_key {
                     match event.state {
                         ElementState::Pressed => {
+                            self.keys_seen += 1;
                             if !self.keys.contains(&code) {
                                 self.keys.insert(code);
                                 self.key_action(code);
@@ -2796,15 +3353,15 @@ impl ApplicationHandler for NativeApp {
                         if let Some(prev) = self.touches.insert(id, p) {
                             let dx = p.0 - prev.0;
                             let dy = p.1 - prev.1;
-                            let (fr, fu, ff) = self.frame();
-                            let gaze_px = 2.0 / self.backing.0.max(1) as f64;
+                            let (fr, fu, _ff) = self.frame();
                             if self.touches.len() == 1 {
-                                if dx != 0.0 {
-                                    self.q = q_norm(q_mul(q_axis_angle(fu, dx * gaze_px), self.q));
-                                }
-                                if dy != 0.0 {
-                                    self.q = q_norm(q_mul(q_axis_angle(fr, dy * gaze_px), self.q));
-                                }
+                                self.p[0] -=
+                                    fr[0] * dx * self.grid_step - fu[0] * dy * self.grid_step;
+                                self.p[1] -=
+                                    fr[1] * dx * self.grid_step - fu[1] * dy * self.grid_step;
+                                self.p[2] -=
+                                    fr[2] * dx * self.grid_step - fu[2] * dy * self.grid_step;
+                                self.consider_resend();
                             } else if self.touches.len() == 2 {
                                 if let Some(o) = self
                                     .touches
@@ -2828,11 +3385,6 @@ impl ApplicationHandler for NativeApp {
                                     self.p[2] -=
                                         fr[2] * mdx * self.grid_step - fu[2] * mdy * self.grid_step;
                                     self.grid_step /= d1 / d0;
-                                    let a0 = (prev.1 - o.1).atan2(prev.0 - o.0);
-                                    let a1 = (p.1 - o.1).atan2(p.0 - o.0);
-                                    if (a1 - a0).abs() > 1e-6 {
-                                        self.q = q_norm(q_mul(q_axis_angle(ff, a1 - a0), self.q));
-                                    }
                                     self.consider_resend();
                                 }
                             }
@@ -2959,6 +3511,265 @@ mod tests {
         );
         if let Err(e) = validator.validate(&module) {
             panic!("wgsl validate: {}", e.emit_to_string(FIELD_WGSL));
+        }
+    }
+
+    #[test]
+    fn te_wgsl_validates_offline() {
+        let module = match naga::front::wgsl::parse_str(TE_WGSL) {
+            Ok(m) => m,
+            Err(e) => panic!("wgsl parse: {}", e.emit_to_string(TE_WGSL)),
+        };
+        let mut validator = naga::valid::Validator::new(
+            naga::valid::ValidationFlags::all(),
+            naga::valid::Capabilities::all(),
+        );
+        if let Err(e) = validator.validate(&module) {
+            panic!("wgsl validate: {}", e.emit_to_string(TE_WGSL));
+        }
+    }
+
+    #[test]
+    fn te_gpu_crosscheck_against_cpu_reference() {
+        let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor::default());
+        let adapter =
+            match pollster::block_on(instance.request_adapter(&wgpu::RequestAdapterOptions {
+                power_preference: wgpu::PowerPreference::None,
+                compatible_surface: None,
+                force_fallback_adapter: false,
+            })) {
+                Some(a) => a,
+                None => {
+                    eprintln!("adapter request returned void — crosscheck skipped");
+                    return;
+                }
+            };
+        let info = adapter.get_info();
+        eprintln!(
+            "adapter: {} | {:?} | {:?} | {}",
+            info.name, info.backend, info.device_type, info.driver_info
+        );
+        let (device, queue) = match pollster::block_on(
+            adapter.request_device(&wgpu::DeviceDescriptor::default(), None),
+        ) {
+            Ok(dq) => dq,
+            Err(e) => {
+                eprintln!("device request returned: {}", e);
+                return;
+            }
+        };
+        let module = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+            label: None,
+            source: wgpu::ShaderSource::Wgsl(TE_WGSL.into()),
+        });
+        let te_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+            label: None,
+            entries: &[
+                {
+                    let mut e = storage_entry(true, wgpu::ShaderStages::COMPUTE);
+                    e.binding = 0;
+                    e
+                },
+                wgpu::BindGroupLayoutEntry {
+                    binding: 1,
+                    visibility: wgpu::ShaderStages::COMPUTE,
+                    ty: wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Uniform,
+                        has_dynamic_offset: false,
+                        min_binding_size: None,
+                    },
+                    count: None,
+                },
+                {
+                    let mut e = storage_entry(false, wgpu::ShaderStages::COMPUTE);
+                    e.binding = 2;
+                    e
+                },
+            ],
+        });
+        let te_pipe_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+            label: None,
+            bind_group_layouts: &[&te_layout],
+            push_constant_ranges: &[],
+        });
+        let te_pipe = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+            label: None,
+            layout: Some(&te_pipe_layout),
+            module: &module,
+            entry_point: Some("te_compute"),
+            compilation_options: Default::default(),
+            cache: None,
+        });
+        let series_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: 12288,
+            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        let param_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: 16,
+            usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        let out_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: 288,
+            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC,
+            mapped_at_creation: false,
+        });
+        let read_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: 288,
+            usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        let te_bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
+            label: None,
+            layout: &te_layout,
+            entries: &[
+                wgpu::BindGroupEntry {
+                    binding: 0,
+                    resource: series_buf.as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 1,
+                    resource: param_buf.as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 2,
+                    resource: out_buf.as_entire_binding(),
+                },
+            ],
+        });
+        let n = 200usize;
+        let mut x = vec![0f32; n];
+        let mut y = vec![0f32; n];
+        for t in 0..n {
+            y[t] = (t as f32 * 0.5).sin();
+        }
+        for t in 0..n - 1 {
+            x[t + 1] = 0.5 * x[t] + 0.6 * y[t];
+        }
+        let seed = 42u64;
+        let mut data = vec![0f32; 12 * 256];
+        data[0..n].copy_from_slice(&x);
+        data[256..256 + n].copy_from_slice(&y);
+        let mut rng = seed.wrapping_add(0x9e3779b97f4a7c15);
+        for s in 0..10 {
+            let surr = crate::te::phase_randomized_surrogate(&y, &mut rng);
+            let off = (2 + s) * 256;
+            data[off..off + n].copy_from_slice(&surr);
+        }
+        queue.write_buffer(&series_buf, 0, &le_bytes_f32(&data));
+        let max_lag = (n as f64 / Φ) as u32;
+        let param = [n as u32, max_lag, 0, 0];
+        let mut pb = [0u8; 16];
+        for (i, p) in param.iter().enumerate() {
+            pb[i * 4..i * 4 + 4].copy_from_slice(&p.to_le_bytes());
+        }
+        queue.write_buffer(&param_buf, 0, &pb);
+        let start = std::time::Instant::now();
+        let mut enc = device.create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
+        {
+            let mut pass = enc.begin_compute_pass(&wgpu::ComputePassDescriptor::default());
+            pass.set_pipeline(&te_pipe);
+            pass.set_bind_group(0, &te_bind, &[]);
+            pass.dispatch_workgroups(1, 1, 1);
+        }
+        enc.copy_buffer_to_buffer(&out_buf, 0, &read_buf, 0, 288);
+        queue.submit(std::iter::once(enc.finish()));
+        let mapped = Arc::new(AtomicBool::new(false));
+        let m2 = mapped.clone();
+        let slice = read_buf.slice(..);
+        slice.map_async(wgpu::MapMode::Read, move |r| {
+            m2.store(r.is_ok(), Ordering::SeqCst);
+        });
+        let deadline = std::time::Instant::now() + std::time::Duration::from_secs(10);
+        while !mapped.load(Ordering::SeqCst) && std::time::Instant::now() < deadline {
+            device.poll(wgpu::Maintain::Poll);
+        }
+        assert!(
+            mapped.load(Ordering::SeqCst),
+            "te gpu readback returned void"
+        );
+        let elapsed = start.elapsed();
+        let mapped_data = slice.get_mapped_range();
+        let mut verdict = [0f32; 72];
+        for k in 0..72 {
+            let mut b = [0u8; 4];
+            b.copy_from_slice(&mapped_data[k * 4..k * 4 + 4]);
+            verdict[k] = f32::from_le_bytes(b);
+        }
+        drop(mapped_data);
+        read_buf.unmap();
+        let gpu = crate::te::topological_verdict_from_gpu(&verdict);
+        let cpu = crate::te::topological_te_phase(&x, &y, 3, 3, seed);
+        eprintln!("te crosscheck elapsed {:?}", elapsed);
+        eprintln!(
+            "gpu: {:?}",
+            gpu.as_ref().map(|v| (
+                v.tau_x,
+                v.tau_y,
+                v.te,
+                v.threshold,
+                v.surrogates_used,
+                v.pe_x,
+                v.pe_y
+            ))
+        );
+        eprintln!(
+            "cpu: {:?}",
+            cpu.as_ref().map(|v| (
+                v.tau_x,
+                v.tau_y,
+                v.te,
+                v.threshold,
+                v.surrogates_used,
+                v.pe_x,
+                v.pe_y
+            ))
+        );
+        let (gpu_v, cpu_v) = match (gpu, cpu) {
+            (Some(g), Some(c)) => (g, c),
+            (None, None) => return,
+            (g, c) => {
+                panic!(
+                    "te crosscheck verdict divergence: gpu valid = {}, cpu valid = {}",
+                    g.is_some(),
+                    c.is_some()
+                );
+            }
+        };
+        assert_eq!(gpu_v.tau_x, cpu_v.tau_x, "tau_x diverges");
+        assert_eq!(gpu_v.tau_y, cpu_v.tau_y, "tau_y diverges");
+        assert!(
+            gpu_v.surrogates_used >= 2 && cpu_v.surrogates_used >= 2,
+            "surrogates_used below two: gpu {} cpu {}",
+            gpu_v.surrogates_used,
+            cpu_v.surrogates_used
+        );
+        let te_rel = ((gpu_v.te - cpu_v.te) / cpu_v.te.abs()).abs();
+        assert!(
+            te_rel < 0.1,
+            "te diverges: gpu {} cpu {} rel {}",
+            gpu_v.te,
+            cpu_v.te,
+            te_rel
+        );
+        match (gpu_v.pe_x, cpu_v.pe_x) {
+            (Some(g), Some(c)) => {
+                assert!((g - c).abs() < 1e-3, "pe_x diverges: gpu {} cpu {}", g, c)
+            }
+            (None, None) => {}
+            (g, c) => panic!("pe_x presence diverges: gpu {:?} cpu {:?}", g, c),
+        }
+        match (gpu_v.pe_y, cpu_v.pe_y) {
+            (Some(g), Some(c)) => {
+                assert!((g - c).abs() < 1e-3, "pe_y diverges: gpu {} cpu {}", g, c)
+            }
+            (None, None) => {}
+            (g, c) => panic!("pe_y presence diverges: gpu {:?} cpu {:?}", g, c),
         }
     }
 
