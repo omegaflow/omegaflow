@@ -1,0 +1,12 @@
+# 3006 tags in the library
+0 | - | TAP_SCHEMA.schemas TAP_SCHEMA table
+0 | - | TAP_SCHEMA.tables TAP_SCHEMA table
+0 | - | TAP_SCHEMA.columns TAP_SCHEMA table
+0 | - | TAP_SCHEMA.keys TAP_SCHEMA table
+0 | - | TAP_SCHEMA.key_columns TAP_SCHEMA table
+0 | - | ivoa.ObsCore ivoa table
+0 | - | cxc.proposal cxc view
+0 | - | cxc.observation cxc view
+0 | - | cxc.image cxc view
+0 | - | cxc.cone cxc view
+0 | - | ivoa.obsplan ivoa table

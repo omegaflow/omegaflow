@@ -1,0 +1,12 @@
+# tap-inventar https://cda.cfa.harvard.edu/cxctap/sync
+catalog TAP_SCHEMA.schemas TAP_SCHEMA table
+catalog TAP_SCHEMA.tables TAP_SCHEMA table
+catalog TAP_SCHEMA.columns TAP_SCHEMA table
+catalog TAP_SCHEMA.keys TAP_SCHEMA table
+catalog TAP_SCHEMA.key_columns TAP_SCHEMA table
+catalog ivoa.ObsCore ivoa table
+catalog cxc.proposal cxc view
+catalog cxc.observation cxc view
+catalog cxc.image cxc view
+catalog cxc.cone cxc view
+catalog ivoa.obsplan ivoa table

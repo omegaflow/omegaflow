@@ -674,7 +674,7 @@ fn main() {
         let mast = style == "mast";
         let fetch = |format: &str| -> Option<String> {
             let mut cmd = Command::new("curl");
-            cmd.arg("-sS").arg("-m").arg("120");
+            cmd.arg("-sSL").arg("-m").arg("120");
             if mast {
                 cmd.arg("-X")
                     .arg("POST")

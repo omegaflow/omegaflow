@@ -12,14 +12,14 @@ domain ads.atmosphere.copernicus.eu | /api/catalogue/v1/collections (STAC) | don
 domain cds.climate.copernicus.eu | /api/catalogue/v1/collections (STAC) | done | katalog/copernicus_catalogues.φ
 domain vires.services | /hapi/catalog | done | katalog/grind_vires_catalog.φ
 domain tapvizier.cds.unistra.fr | TAP tap_schema.tables (TOP 2000, kein OFFSET) | done | katalog/tapvizier_descriptions.φ + tap_index.φ
-domain taginfo.openstreetmap.org | /api/4/keys/all (Voll-Pagination 44.955) | done | katalog/osm_taginfo.φ
-domain api.worldbank.org | /v2/indicator (29.544) | done | katalog/worldbank_indicators.φ
-domain eutils.ncbi.nlm.nih.gov | /entrez/eutils/einfo.fcgi?db=all | done | katalog/ncbi_databases.φ
+domain taginfo.openstreetmap.org | /api/4/keys/all (Voll-Pagination 44.955) | done | entnommen 2026-08-20 → archive/phi-research/declined_kataloge_2026-08-20/osm_taginfo.φ (nicht SI)
+domain api.worldbank.org | /v2/indicator (29.544) | done | entnommen 2026-08-20 → archive/phi-research/declined_kataloge_2026-08-20/worldbank_indicators.φ (nicht SI)
+domain eutils.ncbi.nlm.nih.gov | /entrez/eutils/einfo.fcgi?db=all | done | entnommen 2026-08-20 → archive/phi-research/declined_kataloge_2026-08-20/ncbi_databases.φ (nicht SI)
 domain catalogue.marine.copernicus.eu | /api/records | recheck | Domain löst auch via Jina nicht auf
 domain catalogue.dataspace.copernicus.eu | /stac/collections | recheck | 503/Timeout, auch via Jina
 domain sh.dataspace.copernicus.eu | /stac/collections | recheck | 503
 domain api.inaturalist.org | /v1/taxa (1.423.081, iconic taxa 11) | done | katalog/inaturalist_vokabular.φ (Präsenz → decline)
-domain simbad.u-strasbg.fr | TAP otypes (DISTINCT 233) | done | katalog/simbad_otypes.φ
+domain simbad.u-strasbg.fr | TAP otypes (DISTINCT 233) | done | entnommen 2026-08-20 → archive/phi-research/declined_kataloge_2026-08-20/simbad_otypes.φ (nicht SI)
 domain cdaweb.gsfc.nasa.gov | istp_public/data Verzeichnis (via Jina) | done | katalog/cdaweb_missions.φ (102 Missionen)
 domain gea.esac.esa.int | Gaia-TAP tap_schema | done | katalog/gaia_swpc_vokabular.φ (7 Tabellen)
 domain services.swpc.noaa.gov | /products/ Verzeichnis inkl. Unterordner | done | katalog/gaia_swpc_vokabular.φ (78 Produkte)

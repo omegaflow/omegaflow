@@ -1,7 +1,8 @@
 # index über phi/ — alle Dateien, klassifiziert
 # Stand 2026-08-15 — Blockzahlen aus dem Dateisystem gezählt, regenerierbar.
 # Pfade 2026-08-18 auf phi/pipeline/ berichtigt (phi/port → phi/pipeline).
-# Zustand: ausstehend | verifiziert | erledigt | redundant | artefakt
+# Zustand: ausstehend | verifiziert | erledigt | redundant | artefakt | index
+# index = Tür-Katalog: geerntet, ist selbst keine Quelle, bleibt als Adapter-Route zu SI-Daten (2026-08-20).
 # Eine Zeile = eine Datei oder ein Korpus. Pfade relativ zu phi/.
 #
 # ZUSAMMENFASSUNG (dedupliziert, ohne live + declined):
@@ -57,6 +58,12 @@ ausstehend 0 katalog/tap_index_exoarchive.φ
 ausstehend 0 katalog/tap_index_gavo.φ
 ausstehend 0 katalog/tap_index_heasarc.φ
 ausstehend 0 katalog/tap_index_irsa.φ
+ausstehend 0 katalog/tap_index_eso.φ
+ausstehend 0 katalog/tap_index_cadc.φ
+ausstehend 0 katalog/tap_index_mast.φ
+ausstehend 0 katalog/tap_index_chandra.φ
+ausstehend 0 katalog/erddap_bcodmo_catalog.φ
+ausstehend 0 katalog/erddap_noaa_pmel_catalog.φ
 ausstehend 0 katalog/b2find_catalogs_index.φ
 ausstehend 0 katalog/b2find_intermagnet_catalog.φ
 ausstehend 0 katalog/grind_eogateway_index.φ
@@ -75,6 +82,12 @@ ausstehend 0 katalog/provider_links.φ
 erledigt 284 archive/phi-research/batches/
 erledigt 242 archive/phi-research/probe_batches/
 erledigt 88 archive/phi-research/agent_output/
+erledigt 5 archive/phi-research/declined_kataloge_2026-08-20/ (nicht SI: worldbank, osm_taginfo, simbad_otypes, ncbi, openaire)
+
+# ------------------------------------------------------------------
+# INDEX — Tür-Kataloge (keine Quelle, Adapter-Route zu SI-Daten)
+# ------------------------------------------------------------------
+index 6 katalog/ (re3data, zenodo, dryad, dataone, inrae, icos)
 artefakt 2 pipeline/stage/staging_verified.φ
 artefakt 1 pipeline/stage/staging_void_ledger.txt
 artefakt 1 pipeline/stage/earth_stac_converted.φ

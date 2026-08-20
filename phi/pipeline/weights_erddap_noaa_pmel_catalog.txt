@@ -1,0 +1,1001 @@
+# 3006 tags in the library
+0 | - | allDatasets | * The List of All Active Datasets in this ERDDAP *
+0 | - | noaa_aoml_3896_1b40_b974 | 3-day cumulative USF AFAI Fields (USF AFAI 3D AOML), 2016-present
+-8 | - | noaa_psl_fc64_537a_05bc | 4X daily ltm air from the NCEP Reanalysis (air.4Xday.1981-2010.ltm), 2.5°, 0001
+-8 | - | noaa_psl_faa8_a0e9_a4c8 | 4X daily ltm air from the NCEP Reanalysis (air.4Xday.ltm), 2.5°, 0001
+-8 | - | noaa_psl_94d8_c6d8_26b8 | 4X daily ltm hgt from the NCEP Reanalysis (hgt.4Xday.1981-2010.ltm), 2.5°, 0001
+-8 | - | noaa_psl_48a3_fa09_c1ba | 4X daily ltm hgt from the NCEP Reanalysis (hgt.4Xday.ltm), 2.5°, 0001
+-8 | - | noaa_psl_3e61_d289_d624 | 4X daily ltm omega from the NCEP Reanalysis (omega.4Xday.1981-2010.ltm), 2.5°, 0001
+-8 | - | noaa_psl_b907_aed9_cd87 | 4X daily ltm omega from the NCEP Reanalysis (omega.4Xday.ltm), 2.5°, 0001
+-8 | - | noaa_psl_4116_d2ba_e08f | 4X daily ltm rhum from the NCEP Reanalysis (rhum.4Xday.1981-2010.ltm), 2.5°, 0001
+-8 | - | noaa_psl_80c3_17cf_c0c2 | 4X daily ltm rhum from the NCEP Reanalysis (rhum.4Xday.ltm), 2.5°, 0001
+-8 | - | noaa_psl_ccb7_3970_14e9 | 4X daily ltm shum from the NCEP Reanalysis (shum.4Xday.1981-2010.ltm), 2.5°, 0001
+-8 | - | noaa_psl_8b17_7480_4902 | 4X daily ltm shum from the NCEP Reanalysis (shum.4Xday.ltm), 2.5°, 0001
+-8 | - | noaa_psl_ea90_ade5_b4c4 | 4X daily ltm uwnd from the NCEP Reanalysis (uwnd.4Xday.1981-2010.ltm), 2.5°, 0001
+-8 | - | noaa_psl_4654_d3f5_0c23 | 4X daily ltm vwnd from the NCEP Reanalysis (vwnd.4Xday.1981-2010.ltm), 2.5°, 0001
+-8 | - | noaa_psl_947a_5b13_e9bb | 4x daily NCEP reanalysis (hgt.sfc.gauss), 1985
+-8 | - | noaa_psl_cb19_9c3f_e964 | 4x daily NCEP reanalysis (topo.sfc.gauss), 1985
+-8 | - | noaa_psl_3738_6258_36f9 | 4x daily NMC reanalysis (1981) (air.2m.4Xday.1981-2010.ltm), 0001
+-8 | - | noaa_psl_5064_3874_bdb2 | 4x daily NMC reanalysis (1981) (air.2m.4Xday.ltm), 0001
+-8 | - | noaa_psl_ecff_7f19_9e87 | 4x daily NMC reanalysis (1981) (cfnlf.sfc.4Xday.1981-2010.ltm), 0001
+-8 | - | noaa_psl_6ddf_2e49_82b0 | 4x daily NMC reanalysis (1981) (cfnlf.sfc.4Xday.ltm), 0001
+-8 | - | noaa_psl_a043_2141_9677 | 4x daily NMC reanalysis (1981) (cfnsf.sfc.4Xday.1981-2010.ltm), 0001
+-8 | - | noaa_psl_527c_1f37_5d7b | 4x daily NMC reanalysis (1981) (cfnsf.sfc.4Xday.ltm), 0001
+-8 | - | noaa_psl_ca0f_7975_b46a | 4x daily NMC reanalysis (1981) (cprat.sfc.4Xday.1981-2010.ltm), 0001
+-8 | - | noaa_psl_6a65_aa6a_803f | 4x daily NMC reanalysis (1981) (cprat.sfc.4Xday.ltm), 0001
+-8 | - | noaa_psl_c886_11b9_294c | 4x daily NMC reanalysis (1981) (csdlf.sfc.4Xday.1981-2010.ltm), 0001
+-8 | - | noaa_psl_3270_5584_1e19 | 4x daily NMC reanalysis (1981) (csdlf.sfc.4Xday.ltm), 0001
+-8 | - | noaa_psl_7afc_7168_1413 | 4x daily NMC reanalysis (1981) (csdsf.sfc.4Xday.1981-2010.ltm), 0001
+-8 | - | noaa_psl_1fa4_e01b_772e | 4x daily NMC reanalysis (1981) (csdsf.sfc.4Xday.ltm), 0001
+-8 | - | noaa_psl_4556_cda4_74a9 | 4x daily NMC reanalysis (1981) (csusf.sfc.4Xday.1981-2010.ltm), 0001
+-8 | - | noaa_psl_68d5_f0a1_e677 | 4x daily NMC reanalysis (1981) (csusf.sfc.4Xday.ltm), 0001
+-8 | - | noaa_psl_c33b_846a_6a95 | 4x daily NMC reanalysis (1981) (dlwrf.sfc.4Xday.1981-2010.ltm), 0001
+-8 | - | noaa_psl_f433_24f5_15c1 | 4x daily NMC reanalysis (1981) (dlwrf.sfc.4Xday.ltm), 0001
+-8 | - | noaa_psl_83af_910f_d8a8 | 4x daily NMC reanalysis (1981) (dswrf.ntat.4Xday.1981-2010.ltm), 0001
+-8 | - | noaa_psl_15da_746b_02a8 | 4x daily NMC reanalysis (1981) (dswrf.ntat.4Xday.ltm), 0001
+-8 | - | noaa_psl_d697_eaf5_51f0 | 4x daily NMC reanalysis (1981) (dswrf.sfc.4Xday.1981-2010.ltm), 0001
+-8 | - | noaa_psl_df4d_1b25_fd6b | 4x daily NMC reanalysis (1981) (gflux.sfc.4Xday.1981-2010.ltm), 0001
+-8 | - | noaa_psl_b74f_dab1_d29c | 4x daily NMC reanalysis (1981) (gflux.sfc.4Xday.ltm), 0001
+-8 | - | noaa_psl_3044_276f_8945 | 4x daily NMC reanalysis (1981) (icec.sfc.4Xday.1981-2010.ltm), 0001
+-8 | - | noaa_psl_f32e_a69c_8e35 | 4x daily NMC reanalysis (1981) (icec.sfc.4Xday.ltm), 0001
+-8 | - | noaa_psl_38c7_eb2d_b192 | 4x daily NMC reanalysis (1981) (lhtfl.sfc.4Xday.1981-2010.ltm), 0001
+-8 | - | noaa_psl_f22d_d5c2_6a0d | 4x daily NMC reanalysis (1981) (lhtfl.sfc.4Xday.ltm), 0001
+-8 | - | noaa_psl_3e8b_e8ec_9852 | 4x daily NMC reanalysis (1981) (nbdsf.sfc.4Xday.1981-2010.ltm), 0001
+-8 | - | noaa_psl_2738_4a44_5153 | 4x daily NMC reanalysis (1981) (nddsf.sfc.4Xday.1981-2010.ltm), 0001
+-8 | - | noaa_psl_a605_3959_2804 | 4x daily NMC reanalysis (1981) (pevpr.sfc.4Xday.1981-2010.ltm), 0001
+-8 | - | noaa_psl_ab09_63ce_d4d3 | 4x daily NMC reanalysis (1981) (pevpr.sfc.4Xday.ltm), 0001
+-8 | - | noaa_psl_c751_8e04_45a9 | 4x daily NMC reanalysis (1981) (prate.sfc.4Xday.1981-2010.ltm), 0001
+-8 | - | noaa_psl_8e85_5c1f_e5a8 | 4x daily NMC reanalysis (1981) (prate.sfc.4Xday.ltm), 0001
+-8 | - | noaa_psl_b846_c35e_571e | 4x daily NMC reanalysis (1981) (pres.4Xday.1981-2010.ltm), 2.5°, 0001
+-8 | - | noaa_psl_bf97_a3f2_684c | 4x daily NMC reanalysis (1981) (pres.4Xday.ltm), 2.5°, 0001
+-8 | - | noaa_psl_d461_cb9f_0f61 | 4x daily NMC reanalysis (1981) (pres.sfc.4Xday.1981-2010.ltm), 0001
+-8 | - | noaa_psl_c012_37ef_c34f | 4x daily NMC reanalysis (1981) (pres.sfc.4Xday.ltm), 0001
+-8 | - | noaa_psl_0bfd_3a47_3d73 | 4x daily NMC reanalysis (1981) (runof.sfc.4Xday.1981-2010.ltm), 0001
+-8 | - | noaa_psl_24ce_0e4d_c38a | 4x daily NMC reanalysis (1981) (runof.sfc.4Xday.ltm), 0001
+-8 | - | noaa_psl_3f78_b679_642e | 4x daily NMC reanalysis (1981) (sfcr.sfc.4Xday.1981-2010.ltm), 0001
+-8 | - | noaa_psl_66a5_337d_51e2 | 4x daily NMC reanalysis (1981) (sfcr.sfc.4Xday.ltm), 0001
+-8 | - | noaa_psl_efc5_6ed1_c02d | 4x daily NMC reanalysis (1981) (shtfl.sfc.4Xday.1981-2010.ltm), 0001
+-8 | - | noaa_psl_c9dd_13dd_2781 | 4x daily NMC reanalysis (1981) (shtfl.sfc.4Xday.ltm), 0001
+-8 | - | noaa_psl_050e_c1c7_6f81 | 4x daily NMC reanalysis (1981) (shum.2m.4Xday.1981-2010.ltm), 0001
+-8 | - | noaa_psl_b18c_a216_a428 | 4x daily NMC reanalysis (1981) (shum.2m.4Xday.ltm), 0001
+-8 | - | noaa_psl_952f_86bf_5724 | 4x daily NMC reanalysis (1981) (skt.sfc.4Xday.1981-2010.ltm), 0001
+-8 | - | noaa_psl_1ed3_8605_aab9 | 4x daily NMC reanalysis (1981) (skt.sfc.4Xday.ltm), 0001
+-8 | - | noaa_psl_cf25_9e36_7151 | 4x daily NMC reanalysis (1981) (slp.4Xday.1981-2010.ltm), 2.5°, 0001
+-8 | - | noaa_psl_f00b_e35c_c178 | 4x daily NMC reanalysis (1981) (slp.4Xday.ltm), 2.5°, 0001
+-8 | - | noaa_psl_5d78_3087_5d57 | 4x daily NMC reanalysis (1981) (soilw.0-10cm.4Xday.ltm), 0001
+-8 | - | noaa_psl_a9ee_eba4_821e | 4x daily NMC reanalysis (1981) (soilw.10-200cm.4Xday.ltm), 0001
+-8 | - | noaa_psl_72ae_0866_b8a0 | 4x daily NMC reanalysis (1981) (tmax.2m.4Xday.1981-2010.ltm), 0001
+-8 | - | noaa_psl_a7fa_85d7_2a0c | 4x daily NMC reanalysis (1981) (tmax.2m.4Xday.ltm), 0001
+-8 | - | noaa_psl_cc94_7250_6575 | 4x daily NMC reanalysis (1981) (tmin.2m.4Xday.1981-2010.ltm), 0001
+-8 | - | noaa_psl_e766_eb1c_9c85 | 4x daily NMC reanalysis (1981) (tmin.2m.4Xday.ltm), 0001
+-8 | - | noaa_psl_cf75_7a1f_18b2 | 4x daily NMC reanalysis (1981) (tmp.0-10cm.4Xday.1981-2010.ltm), 0001
+-8 | - | noaa_psl_5ca5_1ec8_43e5 | 4x daily NMC reanalysis (1981) (tmp.0-10cm.4Xday.ltm), 0001
+-8 | - | noaa_psl_4a47_bb05_cacf | 4x daily NMC reanalysis (1981) (tmp.300cm.4Xday.1981-2010.ltm), 0001
+-8 | - | noaa_psl_e8f7_f797_2613 | 4x daily NMC reanalysis (1981) (uflx.sfc.4Xday.1981-2010.ltm), 0001
+-8 | - | noaa_psl_387b_5649_0d32 | 4x daily NMC reanalysis (1981) (ugwd.sfc.4Xday.1981-2010.ltm), 0001
+-8 | - | noaa_psl_c862_1a69_b786 | 4x daily NMC reanalysis (1981) (ugwd.sfc.4Xday.ltm), 0001
+-8 | - | noaa_psl_80c0_2519_2462 | 4x daily NMC reanalysis (1981) (ulwrf.sfc.4Xday.1981-2010.ltm), 0001
+-8 | - | noaa_psl_9907_ce16_2bab | 4x daily NMC reanalysis (1981) (ulwrf.sfc.4Xday.ltm), 0001
+-8 | - | noaa_psl_ef3d_e3ac_6037 | 4x daily NMC reanalysis (1981) (uswrf.sfc.4Xday.1981-2010.ltm), 0001
+-8 | - | noaa_psl_2d3b_1d14_0712 | 4x daily NMC reanalysis (1981) (uswrf.sfc.4Xday.ltm), 0001
+-8 | - | noaa_psl_afac_dfa2_b1d1 | 4x daily NMC reanalysis (1981) (uwnd.10m.4Xday.1981-2010.ltm), 0001
+-8 | - | noaa_psl_6241_62f4_ef74 | 4x daily NMC reanalysis (1981) (uwnd.10m.4Xday.ltm), 0001
+-8 | - | noaa_psl_9b09_21f5_1a4a | 4x daily NMC reanalysis (1981) (vbdsf.sfc.4Xday.1981-2010.ltm), 0001
+-8 | - | noaa_psl_bc85_dc0f_d809 | 4x daily NMC reanalysis (1981) (vbdsf.sfc.4Xday.ltm), 0001
+-8 | - | noaa_psl_4759_f5d1_1001 | 4x daily NMC reanalysis (1981) (vddsf.sfc.4Xday.1981-2010.ltm), 0001
+-8 | - | noaa_psl_3428_a8b5_8347 | 4x daily NMC reanalysis (1981) (vddsf.sfc.4Xday.ltm), 0001
+-8 | - | noaa_psl_8958_99fe_db4e | 4x daily NMC reanalysis (1981) (vflx.sfc.4Xday.1981-2010.ltm), 0001
+-8 | - | noaa_psl_cae6_c102_e083 | 4x daily NMC reanalysis (1981) (vflx.sfc.4Xday.ltm), 0001
+-8 | - | noaa_psl_2b64_2dc7_ffc8 | 4x daily NMC reanalysis (1981) (vgwd.sfc.4Xday.1981-2010.ltm), 0001
+-8 | - | noaa_psl_d13b_8328_f5ac | 4x daily NMC reanalysis (1981) (vgwd.sfc.4Xday.ltm), 0001
+-8 | - | noaa_psl_dd62_3784_e6c3 | 4x daily NMC reanalysis (1981) (vwnd.10m.4Xday.1981-2010.ltm), 0001
+-8 | - | noaa_psl_ed17_d072_bc44 | 4x daily NMC reanalysis (1981) (vwnd.10m.4Xday.ltm), 0001
+-8 | - | noaa_psl_67a9_84fd_b3a1 | 4x daily NMC reanalysis (1981) (weasd.sfc.4Xday.ltm), 0001
+-8 | - | noaa_psl_6cd5_8a75_47b1 | 4x daily NMC reanalysis (chi.mon.ltm), 0001
+-8 | - | noaa_psl_7c11_6662_f008 | 4x daily NMC reanalysis (chi.mon.ltm), 0001
+-8 | - | noaa_psl_9508_9c24_00b2 | 4x daily NMC reanalysis (csdlf.mon.ltm), 0001
+-8 | - | noaa_psl_0233_aff2_356b | 4x daily NMC reanalysis (csdlf.sfc.mon.ltm), 0001
+-8 | - | noaa_psl_0c92_9ac2_27bf | 4x daily NMC reanalysis (csusf.mon.ltm), 0001
+-8 | - | noaa_psl_3d20_7648_36bc | 4x daily NMC reanalysis (csusf.sfc.mon.ltm), 0001
+-8 | - | noaa_psl_8a28_647b_67a1 | 4x daily NMC reanalysis (div.mon.ltm), 0001
+-8 | - | noaa_psl_cd6e_120a_2f59 | 4x daily NMC reanalysis (div.mon.ltm), 0001
+-8 | - | noaa_psl_4d4b_f2c7_085e | 4x daily NMC reanalysis (gflux.mon.ltm), 0001
+-8 | - | noaa_psl_7d1f_24ee_226b | 4x daily NMC reanalysis (gflux.sfc.mon.ltm), 0001
+-8 | - | noaa_psl_7ee0_af7c_2ff4 | 4x daily NMC reanalysis (hgt.sfc), 2.5°, 1985
+-8 | - | noaa_psl_0582_70ce_307c | 4x daily NMC reanalysis (lhtfl.mon.inter.std), 0001
+-8 | - | noaa_psl_b022_db8c_7d25 | 4x daily NMC reanalysis (lhtfl.mon.ltm), 0001
+-8 | - | noaa_psl_ccce_d3db_0d47 | 4x daily NMC reanalysis (lhtfl.sfc.mon.ltm), 0001
+-8 | - | noaa_psl_4bfc_bed4_11d3 | 4x daily NMC reanalysis (lsmask.19294), 0001
+-8 | - | noaa_psl_acc6_139f_90cf | 4x daily NMC reanalysis (nlwrs.sfc.mon.ltm), 0001
+-8 | - | noaa_psl_dfce_cda0_db49 | 4x daily NMC reanalysis (nlwrs.sfc.mon.mean), 1948-present
+-8 | - | noaa_psl_0687_8a08_9c3f | 4x daily NMC reanalysis (nswrs.mon.ltm), 0001
+-8 | - | noaa_psl_c7f7_d3f6_8eab | 4x daily NMC reanalysis (nswrs.sfc.mon.ltm), 0001
+-8 | - | noaa_psl_684d_f9a6_2a5a | 4x daily NMC reanalysis (nswrs.sfc.mon.mean), 1948-present
+-8 | - | noaa_psl_17d2_6131_f2da | 4x daily NMC reanalysis (pevpr.mon.inter.std), 0001
+-8 | - | noaa_psl_0524_db1c_93c3 | 4x daily NMC reanalysis (pevpr.mon.ltm), 0001
+-8 | - | noaa_psl_1cc3_dc55_315e | 4x daily NMC reanalysis (pevpr.mon.total.std), 0001
+-8 | - | noaa_psl_7d0f_1a47_5f04 | 4x daily NMC reanalysis (pevpr.sfc.mon.ltm), 0001
+-8 | - | noaa_psl_36c9_34cb_95ba | 4x daily NMC reanalysis (prate.mon.inter.std), 0001
+-8 | - | noaa_psl_b2e0_f989_f1cb | 4x daily NMC reanalysis (prate.mon.ltm), 0001
+-8 | - | noaa_psl_1e27_e42b_01b4 | 4x daily NMC reanalysis (prate.mon.total.std), 0001
+-8 | - | noaa_psl_e20e_e440_67e5 | 4x daily NMC reanalysis (prate.sfc.mon.ltm), 0001
+-8 | - | noaa_psl_deea_1130_7cba | 4x daily NMC reanalysis (prateapr.mon.dailyanom), 0001
+-8 | - | noaa_psl_fe37_9106_af6f | 4x daily NMC reanalysis (pratejan.mon.dailyanom), 0001
+-8 | - | noaa_psl_26ca_79cb_15f3 | 4x daily NMC reanalysis (pratejul.mon.dailyanom), 0001
+-8 | - | noaa_psl_d9e2_ce57_0ba3 | 4x daily NMC reanalysis (prateoct.mon.dailyanom), 0001
+-8 | - | noaa_psl_9fe8_ee47_cfcd | 4x daily NMC reanalysis (runof.mon.inter.std), 0001
+-8 | - | noaa_psl_e419_8615_5cce | 4x daily NMC reanalysis (runof.mon.ltm), 0001
+-8 | - | noaa_psl_99c0_99d6_a523 | 4x daily NMC reanalysis (runof.mon.total.std), 0001
+-8 | - | noaa_psl_7463_ff35_2c20 | 4x daily NMC reanalysis (runof.sfc.mon.ltm), 0001
+-8 | - | noaa_psl_9378_3885_5d4d | 4x daily NMC reanalysis (shtfl.mon.inter.std), 0001
+-8 | - | noaa_psl_e161_0eef_7c4a | 4x daily NMC reanalysis (shtfl.mon.ltm), 0001
+-8 | - | noaa_psl_62a5_1231_2777 | 4x daily NMC reanalysis (shtfl.sfc.mon.ltm), 0001
+-8 | - | noaa_psl_9ae0_6c7e_7202 | 4x daily NMC reanalysis (skt.mon.inter.std), 0001
+-8 | - | noaa_psl_8b2d_fa2d_1fb5 | 4x daily NMC reanalysis (skt.mon.ltm), 0001
+-8 | - | noaa_psl_979f_800f_82d6 | 4x daily NMC reanalysis (skt.sfc.mon.ltm), 0001
+-8 | - | noaa_psl_453f_3096_046a | 4x daily NMC reanalysis (soilw.0-10cm.mon.ltm), 0001
+-8 | - | noaa_psl_9ffc_fa66_cc26 | 4x daily NMC reanalysis (soilw.10-200cm.mon.ltm), 0001
+-8 | - | noaa_psl_3f3b_bce3_7ac2 | 4x daily NMC reanalysis (soilw.mon.ltm), 0001
+-8 | - | noaa_psl_8e26_f855_279a | 4x daily NMC reanalysis (soilw200.mon.ltm), 0001
+-8 | - | noaa_psl_4e4a_f0c3_d2fd | 4x daily NMC reanalysis (topo.sfc), 2.5°, 1985
+-8 | - | noaa_psl_4373_bc93_2404 | 4x daily NMC reanalysis (uflx.mon.ltm), 0001
+-8 | - | noaa_psl_b881_eacf_54b0 | 4x daily NMC reanalysis (uflx.sfc.mon.ltm), 0001
+-8 | - | noaa_psl_3d3d_74c3_6289 | 4x daily NMC reanalysis (ugwd.mon.ltm), 0001
+-8 | - | noaa_psl_7534_23ac_1f4c | 4x daily NMC reanalysis (ugwd.sfc.mon.ltm), 0001
+-8 | - | noaa_psl_e6df_4d45_f3a9 | 4x daily NMC reanalysis (ulwrf.mon.ltm), 0001
+-8 | - | noaa_psl_6bba_aade_b79e | 4x daily NMC reanalysis (ulwrf.sfc.mon.ltm), 0001
+-8 | - | noaa_psl_0c90_357a_9918 | 4x daily NMC reanalysis (vflx.mon.ltm), 0001
+-8 | - | noaa_psl_f891_99cc_b20d | 4x daily NMC reanalysis (vflx.sfc.mon.ltm), 0001
+-8 | - | noaa_psl_15c4_b7f4_7a15 | 4x daily NMC reanalysis (vgwd.mon.ltm), 0001
+-8 | - | noaa_psl_1776_8759_bd4c | 4x daily NMC reanalysis (vgwd.sfc.mon.ltm), 0001
+-8 | - | noaa_psl_2682_80f0_261e | 4x daily NMC reanalysis (vor.mon.ltm), 0001
+-8 | - | noaa_psl_3fdb_9a26_2b7a | 4x daily NMC reanalysis (vor.mon.ltm), 0001
+-8 | - | noaa_psl_25c9_7a51_a47e | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (air.2m.mon.mean), 1851-2014
+-8 | - | noaa_psl_d7ff_407a_dde7 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (air.2m.mon.mean), 1851-2014
+-8 | - | noaa_psl_c0a9_b9d3_16b7 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (air.mon.mean), 2.0°, 1851-2014
+-8 | - | noaa_psl_82a6_37db_1834 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (air.sfc.mon.mean), 1851-2014
+-8 | - | noaa_psl_c201_c6ba_3203 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (air.sfc.mon.mean), 1851-2014
+-8 | - | noaa_psl_738f_b876_a939 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (air.sig995.mon.mean), 2.0°, 1851-2014
+-8 | - | noaa_psl_dabd_c4da_0cd0 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (air.tropo.mon.mean), 2.0°, 1851-2014
+-8 | em | noaa_psl_5734_b814_dcb8 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (albedo.mon.mean), 1851-2014
+-8 | em | noaa_psl_dd36_210b_2a56 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (albedo.mon.mean), 1851-2014
+-8 | - | noaa_psl_07aa_1e86_5a63 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (cape.mon.mean), 2.0°, 1851-2014
+-8 | - | noaa_psl_d59b_2cfc_ba6c | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (cduvb.mon.mean), 1851-1951
+-8 | - | noaa_psl_7531_179a_0f7b | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (cduvb.mon.mean), 1851-2014
+-8 | - | noaa_psl_82c1_25aa_8e22 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (cin.mon.mean), 2.0°, 1851-2014
+-8 | - | noaa_psl_9822_0cf9_9cce | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (cldwtr.eatm.mon.mean), 2.0°, 1851-2014
+-8 | - | noaa_psl_8996_90fe_0ba6 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (cnwat.mon.mean), 1851-2014
+-8 | - | noaa_psl_bd07_1763_1552 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (cnwat.mon.mean), 1851-2014
+-8 | - | noaa_psl_73ae_be82_2857 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (cprat.mon.mean), 1851-2014
+-8 | - | noaa_psl_7a37_fdc3_a830 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (cprat.mon.mean), 1851-2014
+-8 | - | noaa_psl_d38f_f948_6b26 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (cwork.eatm.mon.mean), 1851-2014
+-8 | - | noaa_psl_ee67_f518_9cf5 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (cwork.eatm.mon.mean), 1851-2014
+-8 | - | noaa_psl_4d7e_011f_657f | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (dlwrf.sfc.mon.mean), 1851-2014
+-8 | - | noaa_psl_d089_e32f_fcc6 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (dlwrf.sfc.mon.mean), 1851-2014
+-8 | - | noaa_psl_8e16_7777_fbed | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (dswrf.sfc.mon.mean), 1851-2014
+-8 | - | noaa_psl_c22c_e4de_1721 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (dswrf.sfc.mon.mean), 1851-2014
+-8 | - | noaa_psl_06d7_3c49_d727 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (duvb.mon.mean), 1851-1951
+-8 | - | noaa_psl_9266_d250_791d | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (duvb.mon.mean), 1851-2014
+-8 | - | noaa_psl_24b8_fdb5_2569 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (evbs.mon.mean), 1851-2014
+-8 | - | noaa_psl_2cad_8b0a_ce93 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (evbs.mon.mean), 1851-2014
+-8 | - | noaa_psl_9ac4_dae1_94b2 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (evcw.mon.mean), 1851-2014
+-8 | - | noaa_psl_c224_6853_ef27 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (evcw.mon.mean), 1851-2014
+-8 | - | noaa_psl_35fc_f3ee_507f | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (gflux.mon.mean), 1851-2014
+-8 | - | noaa_psl_d75f_721e_15b6 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (gflux.mon.mean), 1851-2014
+-8 | - | noaa_psl_d0cd_1baf_681d | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (hgt.mon.mean), 2.0°, 1851-2014
+-8 | - | noaa_psl_7774_197e_2c76 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (hgt.sfc), 2.0°, 1851
+-8 | - | noaa_psl_8056_13be_be67 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (hgt.tropo.mon.mean), 2.0°, 1851-2014
+-8 | - | noaa_psl_4314_fc56_7f6e | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (hpbl.mon.mean), 1851-2014
+-8 | - | noaa_psl_573f_d277_0170 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (hpbl.mon.mean), 1851-2014
+-8 | - | noaa_psl_7e82_c840_910f | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (icec.mon.mean), 1851-2014
+-8 | - | noaa_psl_1ede_3c58_4b75 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (icet.mon.mean), 1851-2014
+-8 | - | noaa_psl_53d3_019c_ac49 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (icet.mon.mean), 1851-2014
+-8 | - | noaa_psl_6cb3_9574_6ed5 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (lhtfl.mon.mean), 1851-2014
+-8 | - | noaa_psl_b660_5f77_c27f | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (lhtfl.mon.mean), 1851-2014
+-8 | - | noaa_psl_7a23_4547_c36d | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (omega.mon.mean), 2.0°, 1851-2014
+-8 | - | noaa_psl_47c2_4fc1_a9d5 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (omega.sig995.mon.mean), 2.0°, 1851-2014
+-8 | - | noaa_psl_0141_c941_3e98 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (pevpr.mon.mean), 1851-2014
+-8 | - | noaa_psl_8c21_08c9_5eb4 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (pevpr.mon.mean), 1851-2014
+-8 | - | noaa_psl_a517_c1e7_3215 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (pottmp.sig995.mon.mean), 2.0°, 1851-2014
+-8 | - | noaa_psl_a412_f4e1_4d77 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (pr wtr.eatm.mon.mean), 1851-2014
+-8 | - | noaa_psl_e713_4284_ba53 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (pr wtr.eatm.mon.mean), 2.0°, 1851-2014
+-8 | - | noaa_psl_614b_7148_80f9 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (prate.mon.mean), 1851-2014
+-8 | - | noaa_psl_7003_805e_23b1 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (prate.mon.mean), 1851-2014
+-8 | - | noaa_psl_a5b0_a514_c05f | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (pres.sfc.mon.mean), 2.0°, 1851-2014
+-8 | - | noaa_psl_e56f_d4ee_6ce9 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (pres.tropo.mon.mean), 2.0°, 1851-2014
+-8 | - | noaa_psl_0b39_8f81_b804 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (press.sfc.mon.mean), 1851-2014
+-8 | - | noaa_psl_5b94_c5ff_bfe0 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (press.sfc.mon.mean), 1851-2014
+-8 | - | noaa_psl_1fd3_34d7_3443 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (prmsl.mon.mean), 2.0°, 1851-2014
+-8 | - | noaa_psl_867b_5c66_810b | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (rhum.mon.mean), 2.0°, 1851-2014
+-8 | - | noaa_psl_7806_dc9e_1474 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (rhum.sig995.mon.mean), 2.0°, 1851-2014
+0 | advective | noaa_psl_b9d5_b407_92ef | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (runoff.mon.mean), 1851-2014
+0 | advective | noaa_psl_ba67_17ff_7038 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (runoff.mon.mean), 1851-2014
+-8 | - | noaa_psl_5c36_e9de_4c9a | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (sbsno.mon.mean), 1851-2014
+-8 | - | noaa_psl_eb26_7ac4_d7e2 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (sbsno.mon.mean), 1851-2014
+-8 | - | noaa_psl_2970_d0eb_5b73 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (sfexc.mon.mean), 1851-2014
+-8 | - | noaa_psl_8a6b_2a0b_83e9 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (sfexc.mon.mean), 1851-2014
+-8 | - | noaa_psl_4158_4081_69b7 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (shtfl.mon.mean), 1851-2014
+-8 | - | noaa_psl_cee7_572f_da18 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (shtfl.mon.mean), 1851-2014
+-8 | - | noaa_psl_b022_b9a4_8238 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (shum.2m.mon.mean), 1851-2014
+-8 | - | noaa_psl_db32_3b40_aede | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (shum.2m.mon.mean), 1851-2014
+-8 | - | noaa_psl_6e4e_db32_99f8 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (shum.mon.mean), 2.0°, 1851-2014
+-8 | - | noaa_psl_5a8f_2084_6626 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (snod.mon.mean), 1851-2014
+-8 | - | noaa_psl_6a2a_8e06_38b6 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (snod.mon.mean), 1851-2014
+-8 | - | noaa_psl_3770_0292_0aed | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (snowc.mon.mean), 1851-2014
+-8 | - | noaa_psl_5f27_f29d_5052 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (snowc.mon.mean), 1851-2014
+-8 | - | noaa_psl_8a80_ee43_ca1f | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (soilm.mon.mean), 1851-2014
+-8 | - | noaa_psl_a352_ee24_2454 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (soilm.mon.mean), 1851-2014
+-8 | - | noaa_psl_c4f7_0488_d995 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (ssrunoff.mon.mean), 1851-2014
+-8 | - | noaa_psl_e20e_497a_6827 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (ssrunoff.mon.mean), 1851-2014
+-8 | - | noaa_psl_28e6_ccef_11e4 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (tcdc.bndrylyr.mon.mean), 1851-2014
+-8 | - | noaa_psl_9c2d_b5af_9a88 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (tcdc.bndrylyr.mon.mean), 1851-2014
+-8 | - | noaa_psl_4f77_4f3f_0b82 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (tcdc.convcld.mon.mean), 1851-2014
+-8 | - | noaa_psl_8d76_eba7_a3fa | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (tcdc.convcld.mon.mean), 1851-2014
+-8 | - | noaa_psl_0f0f_5e00_da71 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (tcdc.eatm.mon.mean), 1851-2014
+-8 | - | noaa_psl_5548_0581_73b5 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (tcdc.eatm.mon.mean), 1851-2014
+-8 | - | noaa_psl_4aa6_9975_101a | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (tcdc.lowcld.mon.mean), 1851-2014
+-8 | - | noaa_psl_764a_4ad4_43d4 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (tcdc.lowcld.mon.mean), 1851-2014
+-8 | - | noaa_psl_3e31_6809_178a | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (tcdc.midcld.mon.mean), 1851-2014
+-8 | - | noaa_psl_678d_5d04_dbb2 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (tcdc.midcld.mon.mean), 1851-2014
+-8 | - | noaa_psl_1ac4_7a78_e240 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (tcdc.topcld.mon.mean), 1851-2014
+-8 | - | noaa_psl_d733_1134_bc78 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (tcdc.topcld.mon.mean), 1851-2014
+-8 | - | noaa_psl_39bd_50ce_cc57 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (tco3.eatm.mon.mean), 2.0°, 1851-2014
+-8 | - | noaa_psl_0f1c_d164_2a3d | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (tmax.2m.mon.mean), 1851-2014
+-8 | - | noaa_psl_ad34_cd10_d135 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (tmax.2m.mon.mean), 1851-2014
+-8 | - | noaa_psl_c78c_d95a_d674 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (tmin.2m.mon.mean), 1851-2014
+-8 | - | noaa_psl_e618_6822_1f67 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (tmin.2m.mon.mean), 1851-2014
+-8 | - | noaa_psl_bbdf_4fb0_bcbd | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (trans.mon.mean), 1851-2014
+-8 | - | noaa_psl_ea57_bb66_4a28 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (trans.mon.mean), 1851-2014
+-8 | - | noaa_psl_6180_7e07_de84 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (uflx.mon.mean), 1851-2014
+-8 | - | noaa_psl_a349_fa49_d426 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (uflx.mon.mean), 1851-2014
+-8 | - | noaa_psl_13bd_6622_b098 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (ugwd.mon.mean), 1851-2014
+-8 | - | noaa_psl_92e9_fe1a_e826 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (ugwd.mon.mean), 1851-2014
+-8 | - | noaa_psl_219f_c3d3_8418 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (ulwrf.ntat.mon.mean), 1851-2014
+-8 | - | noaa_psl_56c6_3c39_112c | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (ulwrf.ntat.mon.mean), 1851-2014
+-8 | - | noaa_psl_ad56_b5c0_5d7d | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (ulwrf.sfc.mon.mean), 1851-2014
+-8 | - | noaa_psl_e7e5_99d5_7d14 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (ulwrf.sfc.mon.mean), 1851-2014
+-8 | - | noaa_psl_6437_649d_5cdf | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (uswrf.ntat.mon.mean), 1851-2014
+-8 | - | noaa_psl_6f87_7615_d901 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (uswrf.ntat.mon.mean), 1851-2014
+-8 | - | noaa_psl_3086_37fe_81e6 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (uswrf.sfc.mon.mean), 1851-2014
+-8 | - | noaa_psl_d28f_f306_4474 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (uswrf.sfc.mon.mean), 1851-2014
+-8 | - | noaa_psl_28c2_dc29_d782 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (uwnd.10m.mon.mean), 1851-2014
+-8 | - | noaa_psl_a0bc_d544_296c | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (uwnd.10m.mon.mean), 1851-2014
+-8 | - | noaa_psl_2237_4b72_3ff1 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (uwnd.mon.mean), 2.0°, 1851-2014
+-8 | - | noaa_psl_a7d7_d7ca_b3dc | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (uwnd.sig995.mon.mean), 2.0°, 1851-2014
+-8 | - | noaa_psl_0e43_8518_8b63 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (uwnd.tropo.mon.mean), 2.0°, 1851-2014
+-8 | - | noaa_psl_4fd5_256f_a59e | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (vflx.mon.mean), 1851-2014
+-8 | - | noaa_psl_e5b1_51cc_0d8a | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (vflx.mon.mean), 1851-2014
+-8 | - | noaa_psl_66db_41bc_4541 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (vgwd.mon.mean), 1851-2014
+-8 | - | noaa_psl_7af3_3e4b_7680 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (vgwd.mon.mean), 1851-2014
+-8 | - | noaa_psl_7d46_f85a_129e | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (vwnd.10m.mon.mean), 1851-2014
+-8 | - | noaa_psl_9c0d_323b_1412 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (vwnd.10m.mon.mean), 1851-2014
+-8 | - | noaa_psl_6dc7_c6da_4115 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (vwnd.mon.mean), 2.0°, 1851-2014
+-8 | - | noaa_psl_7dd3_4829_e9a9 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (vwnd.sig995.mon.mean), 2.0°, 1851-2014
+-8 | - | noaa_psl_8b18_bf2e_b108 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (vwnd.tropo.mon.mean), 2.0°, 1851-2014
+-8 | - | noaa_psl_1bf6_b4cb_c804 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (weasd.mon.mean), 1851-2014
+-8 | - | noaa_psl_ce27_fb6b_e854 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (weasd.mon.mean), 1851-2014
+-8 | - | noaa_psl_c735_5cf7_666f | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (wspd.10m.mon.mean), 1851-2014
+-8 | - | noaa_psl_cd00_ee2f_2f19 | 4x Daily NOAA-CIRES 20th Century Reanalysis V2c (wspd.10m.mon.mean), 1851-2014
+-8 | - | noaa_psl_07f1_2227_17fd | 4Xdaily ltm air.sig995 from the NCEP Reanalysis (air.sig995.4Xday.1981-2010.ltm), 2.5°, 0001
+-8 | - | noaa_psl_a06c_d531_4d68 | 4Xdaily ltm air.sig995 from the NCEP Reanalysis (air.sig995.4Xday.ltm), 2.5°, 0001
+-8 | - | noaa_psl_9cb3_8961_06af | 4Xdaily ltm air.tropp from the NCEP Reanalysis (air.tropp.4Xday.ltm), 2.5°, 0001
+-8 | - | noaa_psl_a7b9_8c77_c322 | 4Xdaily ltm csulf.ntat from the NCEP Reanalysis (csulf.ntat.4Xday.1981-2010.ltm), 0001
+-8 | - | noaa_psl_57ca_20ca_ca88 | 4Xdaily ltm csulf.ntat from the NCEP Reanalysis (csulf.ntat.4Xday.ltm), 0001
+-8 | - | noaa_psl_dfd8_8ef3_0d0e | 4Xdaily ltm csusf.ntat from the NCEP Reanalysis (csusf.ntat.4Xday.1981-2010.ltm), 0001
+-8 | - | noaa_psl_230e_2cef_d351 | 4Xdaily ltm lftx from the NCEP Reanalysis (lftx.4Xday.1981-2010.ltm), 2.5°, 0001
+-8 | - | noaa_psl_5e81_2ab0_fa90 | 4Xdaily ltm lftx from the NCEP Reanalysis (lftx.4Xday.ltm), 2.5°, 0001
+-8 | - | noaa_psl_eb49_10b9_1903 | 4Xdaily ltm omega.sig995 from the NCEP Reanalysis (omega.sig995.4Xday.1981-2010.ltm), 2.5°, 0001
+-8 | - | noaa_psl_4c8c_1bb0_4f91 | 4Xdaily ltm omega.sig995 from the NCEP Reanalysis (omega.sig995.4Xday.ltm), 2.5°, 0001
+-8 | - | noaa_psl_8514_cda2_dd56 | 4Xdaily ltm pottmp.sig995 from the NCEP Reanalysis (pottmp.sig995.4Xday.1981-2010.ltm), 2.5°, 0001
+-8 | - | noaa_psl_6ad5_f061_ac8f | 4Xdaily ltm pottmp.sig995 from the NCEP Reanalysis (pottmp.sig995.4Xday.ltm), 2.5°, 0001
+-8 | - | noaa_psl_4df2_87ab_2e33 | 4Xdaily ltm pr_wtr.eatm from the NCEP Reanalysis (pr wtr.eatm.4Xday.1981-2010.ltm), 2.5°, 0001
+-8 | - | noaa_psl_463b_ca4f_aed6 | 4Xdaily ltm pr_wtr.eatm from the NCEP Reanalysis (pr wtr.eatm.4Xday.ltm), 2.5°, 0001
+-8 | - | noaa_psl_8866_0f61_efa0 | 4Xdaily ltm pres.hcb from the NCEP Reanalysis (pres.hcb.4Xday.1981-2010.ltm), 0001
+-8 | - | noaa_psl_e444_af9b_7274 | 4Xdaily ltm pres.hct from the NCEP Reanalysis (pres.hct.4Xday.1981-2010.ltm), 0001
+-8 | - | noaa_psl_1d25_7506_e3bc | 4Xdaily ltm pres.lcb from the NCEP Reanalysis (pres.lcb.4Xday.1981-2010.ltm), 0001
+-8 | - | noaa_psl_d94f_0e3b_cdb9 | 4Xdaily ltm pres.lct from the NCEP Reanalysis (pres.lct.4Xday.1981-2010.ltm), 0001
+-8 | - | noaa_psl_8f61_4ae7_157c | 4Xdaily ltm pres.mcb from the NCEP Reanalysis (pres.mcb.4Xday.1981-2010.ltm), 0001
+-8 | - | noaa_psl_01fe_be96_b059 | 4Xdaily ltm pres.mct from the NCEP Reanalysis (pres.mct.4Xday.1981-2010.ltm), 0001
+-8 | - | noaa_psl_e2df_8848_aa93 | 4Xdaily ltm pres.tropp from the NCEP Reanalysis (pres.tropp.4Xday.ltm), 2.5°, 0001
+-8 | - | noaa_psl_2aad_4f69_f0fa | 4Xdaily ltm rhum.sig995 from the NCEP Reanalysis (rhum.sig995.4Xday.1981-2010.ltm), 2.5°, 0001
+-8 | - | noaa_psl_91b5_c8ac_1377 | 4Xdaily ltm rhum.sig995 from the NCEP Reanalysis (rhum.sig995.4Xday.ltm), 2.5°, 0001
+-8 | - | noaa_psl_4ce6_3861_8e10 | 4Xdaily ltm tcdc.eatm from the NCEP Reanalysis (tcdc.eatm.4Xday.1981-2010.ltm), 0001
+-8 | - | noaa_psl_b0da_5b52_ebba | 4Xdaily ltm ulwrf.ntat from the NCEP Reanalysis (ulwrf.ntat.4Xday.1981-2010.ltm), 0001
+-8 | - | noaa_psl_1d8c_cdd0_7be1 | 4Xdaily ltm ulwrf.ntat from the NCEP Reanalysis (ulwrf.ntat.4Xday.ltm), 0001
+-8 | - | noaa_psl_864e_aeeb_98c6 | 4Xdaily ltm uswrf.ntat from the NCEP Reanalysis (uswrf.ntat.4Xday.1981-2010.ltm), 0001
+-8 | - | noaa_psl_76e2_84a1_f6bc | 4Xdaily ltm uwnd.sig995 from the NCEP Reanalysis (uwnd.sig995.4Xday.1981-2010.ltm), 2.5°, 0001
+-8 | - | noaa_psl_a06c_5d58_2273 | 4Xdaily ltm uwnd.sig995 from the NCEP Reanalysis (uwnd.sig995.4Xday.ltm), 2.5°, 0001
+-8 | - | noaa_psl_9386_01e8_a517 | 4Xdaily ltm vwnd.sig995 from the NCEP Reanalysis (vwnd.sig995.4Xday.1981-2010.ltm), 2.5°, 0001
+-8 | - | noaa_psl_7e3d_d7b1_3902 | 4Xdaily ltm vwnd.sig995 from the NCEP Reanalysis (vwnd.sig995.4Xday.ltm), 2.5°, 0001
+0 | - | noaa_aoml_ae10_d11a_85ab | 7-day cumulative USF AFAI Fields (USF AFAI 7D AOML), 2016-present
+0 | - | noaa_psl_75d6_942c_bf2c | 8x Daily NARR (quflux.1979) [time][y][x]
+0 | - | noaa_psl_9b46_106d_268a | 8x Daily NARR (quflux.1979) [time][y][x]
+0 | - | noaa_psl_066b_40f3_f4d0 | 8x Daily NARR (quflux.1979) [y][x]
+0 | - | noaa_psl_1e4f_a4cd_0a21 | 8x Daily NARR (quflux.1979) [y][x]
+0 | - | noaa_psl_bfc3_2e70_7561 | 8x Daily NARR (quflux.1980) [time][y][x]
+0 | - | noaa_psl_c55f_9682_1d58 | 8x Daily NARR (quflux.1980) [time][y][x]
+0 | - | noaa_psl_a4a3_225c_9980 | 8x Daily NARR (quflux.1980) [y][x]
+0 | - | noaa_psl_dae6_6ab9_dd13 | 8x Daily NARR (quflux.1980) [y][x]
+0 | - | noaa_psl_a2e7_6ab9_b2f3 | 8x Daily NARR (quflux.1981) [time][y][x]
+0 | - | noaa_psl_d785_703b_2784 | 8x Daily NARR (quflux.1981) [time][y][x]
+0 | - | noaa_psl_1761_647e_a312 | 8x Daily NARR (quflux.1981) [y][x]
+0 | - | noaa_psl_716c_cc4a_e12b | 8x Daily NARR (quflux.1981) [y][x]
+0 | - | noaa_psl_5a5a_0e10_2766 | 8x Daily NARR (quflux.1982) [time][y][x]
+0 | - | noaa_psl_eab1_fa94_77e4 | 8x Daily NARR (quflux.1982) [time][y][x]
+0 | - | noaa_psl_91c1_f7e5_654d | 8x Daily NARR (quflux.1982) [y][x]
+0 | - | noaa_psl_c43f_f141_4f66 | 8x Daily NARR (quflux.1982) [y][x]
+0 | - | noaa_psl_7072_e40a_a07a | 8x Daily NARR (quflux.1983) [time][y][x]
+0 | - | noaa_psl_c565_efa3_a7bb | 8x Daily NARR (quflux.1983) [time][y][x]
+0 | - | noaa_psl_c509_a5b8_f605 | 8x Daily NARR (quflux.1983) [y][x]
+0 | - | noaa_psl_eb70_ec23_09fe | 8x Daily NARR (quflux.1983) [y][x]
+0 | - | noaa_psl_7ad8_f620_a6b0 | 8x Daily NARR (quflux.1984) [time][y][x]
+0 | - | noaa_psl_aa6f_d85e_1528 | 8x Daily NARR (quflux.1984) [time][y][x]
+0 | - | noaa_psl_3640_9038_7995 | 8x Daily NARR (quflux.1984) [y][x]
+0 | - | noaa_psl_c432_8bf9_c9be | 8x Daily NARR (quflux.1984) [y][x]
+0 | - | noaa_psl_3cee_9913_9519 | 8x Daily NARR (quflux.1985) [time][y][x]
+0 | - | noaa_psl_4a07_b149_ef74 | 8x Daily NARR (quflux.1985) [time][y][x]
+0 | - | noaa_psl_044e_6945_727a | 8x Daily NARR (quflux.1985) [y][x]
+0 | - | noaa_psl_83d7_f78e_1e97 | 8x Daily NARR (quflux.1985) [y][x]
+0 | - | noaa_psl_4c71_eb97_e84e | 8x Daily NARR (quflux.1986) [time][y][x]
+0 | - | noaa_psl_6b52_bbeb_bb3a | 8x Daily NARR (quflux.1986) [time][y][x]
+0 | - | noaa_psl_4b8a_ce2c_5878 | 8x Daily NARR (quflux.1986) [y][x]
+0 | - | noaa_psl_a501_4a53_6dc1 | 8x Daily NARR (quflux.1986) [y][x]
+0 | - | noaa_psl_28ae_233c_e9f0 | 8x Daily NARR (quflux.1987) [time][y][x]
+0 | - | noaa_psl_a8ac_cfb8_c27f | 8x Daily NARR (quflux.1987) [time][y][x]
+0 | - | noaa_psl_4661_ed50_1e60 | 8x Daily NARR (quflux.1987) [y][x]
+0 | - | noaa_psl_f3ed_6c06_8fdf | 8x Daily NARR (quflux.1987) [y][x]
+0 | - | noaa_psl_68eb_d08b_2000 | 8x Daily NARR (quflux.1988) [time][y][x]
+0 | - | noaa_psl_8a2a_23aa_07a7 | 8x Daily NARR (quflux.1988) [time][y][x]
+0 | - | noaa_psl_17cc_67d5_217d | 8x Daily NARR (quflux.1988) [y][x]
+0 | - | noaa_psl_27bb_b9d2_86d3 | 8x Daily NARR (quflux.1988) [y][x]
+0 | - | noaa_psl_ccc2_e973_a178 | 8x Daily NARR (quflux.1989) [time][y][x]
+0 | - | noaa_psl_f94b_bd4e_ac1d | 8x Daily NARR (quflux.1989) [time][y][x]
+0 | - | noaa_psl_1656_a983_b9e8 | 8x Daily NARR (quflux.1989) [y][x]
+0 | - | noaa_psl_8dc7_33d4_9d03 | 8x Daily NARR (quflux.1989) [y][x]
+0 | - | noaa_psl_4994_9daa_73b7 | 8x Daily NARR (quflux.1990) [time][y][x]
+0 | - | noaa_psl_9f96_f26f_81ad | 8x Daily NARR (quflux.1990) [time][y][x]
+0 | - | noaa_psl_b0d0_1944_911a | 8x Daily NARR (quflux.1990) [y][x]
+0 | - | noaa_psl_d0bc_15e9_efaa | 8x Daily NARR (quflux.1990) [y][x]
+0 | - | noaa_psl_0418_dd9f_9f9f | 8x Daily NARR (quflux.1991) [time][y][x]
+0 | - | noaa_psl_354e_47d9_fdf1 | 8x Daily NARR (quflux.1991) [time][y][x]
+0 | - | noaa_psl_6e85_9509_cd56 | 8x Daily NARR (quflux.1991) [y][x]
+0 | - | noaa_psl_a6b6_4c58_1922 | 8x Daily NARR (quflux.1991) [y][x]
+0 | - | noaa_psl_06e9_ed6a_d1c6 | 8x Daily NARR (quflux.1992) [time][y][x]
+0 | - | noaa_psl_fdaf_e113_2162 | 8x Daily NARR (quflux.1992) [time][y][x]
+0 | - | noaa_psl_3b12_5434_f51a | 8x Daily NARR (quflux.1992) [y][x]
+0 | - | noaa_psl_ac2c_983d_dade | 8x Daily NARR (quflux.1992) [y][x]
+0 | - | noaa_psl_9d63_64fb_a8fb | 8x Daily NARR (quflux.1993) [time][y][x]
+0 | - | noaa_psl_bdd3_c564_17a1 | 8x Daily NARR (quflux.1993) [time][y][x]
+0 | - | noaa_psl_1fc3_5e5d_c573 | 8x Daily NARR (quflux.1993) [y][x]
+0 | - | noaa_psl_6af8_d843_5938 | 8x Daily NARR (quflux.1993) [y][x]
+0 | - | noaa_psl_5ecb_7b53_6c77 | 8x Daily NARR (quflux.1994) [time][y][x]
+0 | - | noaa_psl_d30f_878c_eb1b | 8x Daily NARR (quflux.1994) [time][y][x]
+0 | - | noaa_psl_8649_7461_c30e | 8x Daily NARR (quflux.1994) [y][x]
+0 | - | noaa_psl_b764_2c59_7403 | 8x Daily NARR (quflux.1994) [y][x]
+0 | - | noaa_psl_3ee6_632d_26a6 | 8x Daily NARR (quflux.1995) [time][y][x]
+0 | - | noaa_psl_7a18_680c_29ee | 8x Daily NARR (quflux.1995) [time][y][x]
+0 | - | noaa_psl_23c4_9b26_1ec9 | 8x Daily NARR (quflux.1995) [y][x]
+0 | - | noaa_psl_ac69_4f6a_4824 | 8x Daily NARR (quflux.1995) [y][x]
+0 | - | noaa_psl_5143_6235_0d0f | 8x Daily NARR (quflux.1996) [time][y][x]
+0 | - | noaa_psl_cef1_0bf3_7fed | 8x Daily NARR (quflux.1996) [time][y][x]
+0 | - | noaa_psl_5e0e_d6bd_4e64 | 8x Daily NARR (quflux.1996) [y][x]
+0 | - | noaa_psl_f980_a8af_c964 | 8x Daily NARR (quflux.1996) [y][x]
+0 | - | noaa_psl_c265_b0c4_f080 | 8x Daily NARR (quflux.1997) [time][y][x]
+0 | - | noaa_psl_d7c8_d1ff_012b | 8x Daily NARR (quflux.1997) [time][y][x]
+0 | - | noaa_psl_991e_7cd8_33dc | 8x Daily NARR (quflux.1997) [y][x]
+0 | - | noaa_psl_ce86_b8a2_7015 | 8x Daily NARR (quflux.1997) [y][x]
+0 | - | noaa_psl_3d18_36a8_cc98 | 8x Daily NARR (quflux.1998) [time][y][x]
+0 | - | noaa_psl_ee61_e4bf_337a | 8x Daily NARR (quflux.1998) [time][y][x]
+0 | - | noaa_psl_1283_09d8_ea18 | 8x Daily NARR (quflux.1998) [y][x]
+0 | - | noaa_psl_dfa0_ac5e_ae7b | 8x Daily NARR (quflux.1998) [y][x]
+0 | - | noaa_psl_1bad_ca62_40e0 | 8x Daily NARR (quflux.1999) [time][y][x]
+0 | - | noaa_psl_598c_3aae_557c | 8x Daily NARR (quflux.1999) [time][y][x]
+0 | - | noaa_psl_86a2_8d6d_6aa7 | 8x Daily NARR (quflux.1999) [y][x]
+0 | - | noaa_psl_b73f_e95c_f6bb | 8x Daily NARR (quflux.1999) [y][x]
+0 | - | noaa_psl_7523_0d3a_499f | 8x Daily NARR (quflux.2000) [time][y][x]
+0 | - | noaa_psl_b209_8d0b_506e | 8x Daily NARR (quflux.2000) [time][y][x]
+0 | - | noaa_psl_5f6e_a1e8_4ea6 | 8x Daily NARR (quflux.2000) [y][x]
+0 | - | noaa_psl_b0bd_c109_0fb7 | 8x Daily NARR (quflux.2000) [y][x]
+0 | - | noaa_psl_8796_7416_2810 | 8x Daily NARR (quflux.2001) [time][y][x]
+0 | - | noaa_psl_91dc_f579_e158 | 8x Daily NARR (quflux.2001) [time][y][x]
+0 | - | noaa_psl_503b_2036_19c4 | 8x Daily NARR (quflux.2001) [y][x]
+0 | - | noaa_psl_fc14_4280_72b7 | 8x Daily NARR (quflux.2001) [y][x]
+0 | - | noaa_psl_496a_8b9d_67ad | 8x Daily NARR (quflux.2002) [time][y][x]
+0 | - | noaa_psl_953d_5c06_f7c4 | 8x Daily NARR (quflux.2002) [time][y][x]
+0 | - | noaa_psl_10c4_210f_5e23 | 8x Daily NARR (quflux.2002) [y][x]
+0 | - | noaa_psl_ba22_9e3c_3606 | 8x Daily NARR (quflux.2002) [y][x]
+0 | - | noaa_psl_4b92_03f7_702b | 8x Daily NARR (quflux.2003) [time][y][x]
+0 | - | noaa_psl_bc64_5e79_5707 | 8x Daily NARR (quflux.2003) [time][y][x]
+0 | - | noaa_psl_1913_5252_b3c8 | 8x Daily NARR (quflux.2003) [y][x]
+0 | - | noaa_psl_34f5_c33d_57ec | 8x Daily NARR (quflux.2003) [y][x]
+0 | - | noaa_psl_725e_4670_3319 | 8x Daily NARR (quflux.2004) [time][y][x]
+0 | - | noaa_psl_a6e7_de3c_caca | 8x Daily NARR (quflux.2004) [time][y][x]
+0 | - | noaa_psl_1ff5_ce9c_ecc5 | 8x Daily NARR (quflux.2004) [y][x]
+0 | - | noaa_psl_3be0_bc12_b537 | 8x Daily NARR (quflux.2004) [y][x]
+0 | - | noaa_psl_1db2_7fcb_339d | 8x Daily NARR (quflux.2005) [time][y][x]
+0 | - | noaa_psl_b737_844e_c7cb | 8x Daily NARR (quflux.2005) [time][y][x]
+0 | - | noaa_psl_90ce_c4bc_36e7 | 8x Daily NARR (quflux.2005) [y][x]
+0 | - | noaa_psl_fcbc_8c25_6d73 | 8x Daily NARR (quflux.2005) [y][x]
+0 | - | noaa_psl_007d_ec1a_b108 | 8x Daily NARR (quflux.2006) [time][y][x]
+0 | - | noaa_psl_669d_f2bd_7fa3 | 8x Daily NARR (quflux.2006) [time][y][x]
+0 | - | noaa_psl_7683_66df_05fa | 8x Daily NARR (quflux.2006) [y][x]
+0 | - | noaa_psl_c45e_cecc_72fb | 8x Daily NARR (quflux.2006) [y][x]
+0 | - | noaa_psl_54de_2354_dc36 | 8x Daily NARR (quflux.2007) [time][y][x]
+0 | - | noaa_psl_8931_47d0_5ffe | 8x Daily NARR (quflux.2007) [time][y][x]
+0 | - | noaa_psl_7e40_efd7_c78f | 8x Daily NARR (quflux.2007) [y][x]
+0 | - | noaa_psl_e7b2_7eb1_b630 | 8x Daily NARR (quflux.2007) [y][x]
+0 | - | noaa_psl_7b11_7b48_5fdf | 8x Daily NARR (quflux.2008) [time][y][x]
+0 | - | noaa_psl_f2f5_203f_4e4b | 8x Daily NARR (quflux.2008) [time][y][x]
+0 | - | noaa_psl_3a6e_25cb_6de0 | 8x Daily NARR (quflux.2008) [y][x]
+0 | - | noaa_psl_cd73_94f6_f5b8 | 8x Daily NARR (quflux.2008) [y][x]
+0 | - | noaa_psl_2298_178d_0340 | 8x Daily NARR (quflux.2009) [time][y][x]
+0 | - | noaa_psl_cd01_0295_37e8 | 8x Daily NARR (quflux.2009) [time][y][x]
+0 | - | noaa_psl_07e4_6fff_a809 | 8x Daily NARR (quflux.2009) [y][x]
+0 | - | noaa_psl_c752_632f_cfb4 | 8x Daily NARR (quflux.2009) [y][x]
+0 | - | noaa_psl_3db2_7090_34b3 | 8x Daily NARR (quflux.2010) [time][y][x]
+0 | - | noaa_psl_45c3_b5c8_c1ae | 8x Daily NARR (quflux.2010) [time][y][x]
+0 | - | noaa_psl_082d_1b60_9468 | 8x Daily NARR (quflux.2010) [y][x]
+0 | - | noaa_psl_289c_1b3b_0617 | 8x Daily NARR (quflux.2010) [y][x]
+0 | - | noaa_psl_54b1_484d_9f8b | 8x Daily NARR (quflux.2011) [time][y][x]
+0 | - | noaa_psl_5abb_3529_302a | 8x Daily NARR (quflux.2011) [time][y][x]
+0 | - | noaa_psl_b5fa_a7c4_c461 | 8x Daily NARR (quflux.2011) [y][x]
+0 | - | noaa_psl_c38d_476f_4205 | 8x Daily NARR (quflux.2011) [y][x]
+0 | - | noaa_psl_308b_d8d8_dff4 | 8x Daily NARR (quflux.2012) [time][y][x]
+0 | - | noaa_psl_c82b_d331_c807 | 8x Daily NARR (quflux.2012) [time][y][x]
+0 | - | noaa_psl_9a46_3c48_033d | 8x Daily NARR (quflux.2012) [y][x]
+0 | - | noaa_psl_e7ca_7e56_d73a | 8x Daily NARR (quflux.2012) [y][x]
+0 | - | noaa_psl_6b96_3ea0_11bc | 8x Daily NARR (quflux.2013) [time][y][x]
+0 | - | noaa_psl_612f_93f2_04fa | 8x Daily NARR (quflux.2013) [y][x]
+0 | - | noaa_psl_67a8_eadc_122e | 8x Daily NARR (quflux.2013) [y][x]
+0 | - | noaa_psl_5e2e_1e20_2667 | 8x Daily NARR (quflux.2014) [time][y][x]
+0 | - | noaa_psl_b7f2_8a7d_ed48 | 8x Daily NARR (quflux.2014) [time][y][x]
+0 | - | noaa_psl_66ad_b745_5913 | 8x Daily NARR (quflux.2014) [y][x]
+0 | - | noaa_psl_7d76_5c3e_a4a3 | 8x Daily NARR (quflux.2014) [y][x]
+0 | - | noaa_psl_5a4e_90ba_595a | 8x Daily NARR (quflux.2015) [time][y][x]
+0 | - | noaa_psl_7509_616c_f1f6 | 8x Daily NARR (quflux.2015) [time][y][x]
+0 | - | noaa_psl_5dbe_0a68_0bad | 8x Daily NARR (quflux.2015) [y][x]
+0 | - | noaa_psl_dfbb_235c_bc47 | 8x Daily NARR (quflux.2015) [y][x]
+0 | - | noaa_psl_21a2_f1d1_124a | 8x Daily NARR (quflux.2016) [time][y][x]
+0 | - | noaa_psl_1f03_cc1f_1f44 | 8x Daily NARR (quflux.2016) [y][x]
+0 | - | noaa_psl_1b46_143b_9317 | 8x Daily NARR (quflux.2017) [time][y][x]
+0 | - | noaa_psl_3546_44c7_b471 | 8x Daily NARR (quflux.2017) [y][x]
+0 | - | noaa_psl_a28a_0428_612b | 8x Daily NARR (quflux.2018) [time][y][x]
+0 | - | noaa_psl_3c15_6b62_cd05 | 8x Daily NARR (quflux.2018) [y][x]
+0 | - | noaa_psl_c10d_8ef8_813a | 8x Daily NARR (quflux.2019) [time][y][x]
+0 | - | noaa_psl_8a6a_052d_c9cb | 8x Daily NARR (quflux.2019) [y][x]
+0 | - | noaa_psl_ad95_49f9_47ec | 8x Daily NARR (qvflux.1979) [time][y][x]
+0 | - | noaa_psl_c24d_e2dd_69c5 | 8x Daily NARR (qvflux.1979) [time][y][x]
+0 | - | noaa_psl_a40c_fa5a_2f9b | 8x Daily NARR (qvflux.1979) [y][x]
+0 | - | noaa_psl_bdd4_ed9c_716a | 8x Daily NARR (qvflux.1979) [y][x]
+0 | - | noaa_psl_b338_07f1_b975 | 8x Daily NARR (qvflux.1980) [time][y][x]
+0 | - | noaa_psl_efae_a592_2201 | 8x Daily NARR (qvflux.1980) [time][y][x]
+0 | - | noaa_psl_9288_d170_36a5 | 8x Daily NARR (qvflux.1980) [y][x]
+0 | - | noaa_psl_f921_41bb_bebe | 8x Daily NARR (qvflux.1980) [y][x]
+0 | - | noaa_psl_d80d_9e61_79cd | 8x Daily NARR (qvflux.1981) [time][y][x]
+0 | - | noaa_psl_f234_1b56_4c61 | 8x Daily NARR (qvflux.1981) [time][y][x]
+0 | - | noaa_psl_7f52_8cc5_1d90 | 8x Daily NARR (qvflux.1981) [y][x]
+0 | - | noaa_psl_975e_134a_fd00 | 8x Daily NARR (qvflux.1981) [y][x]
+0 | - | noaa_psl_0cbd_0403_fb6c | 8x Daily NARR (qvflux.1982) [time][y][x]
+0 | - | noaa_psl_846c_94f3_5e2f | 8x Daily NARR (qvflux.1982) [time][y][x]
+0 | - | noaa_psl_6540_971b_7db5 | 8x Daily NARR (qvflux.1982) [y][x]
+0 | - | noaa_psl_a2d4_b19c_e376 | 8x Daily NARR (qvflux.1982) [y][x]
+0 | - | noaa_psl_1732_5126_95dd | 8x Daily NARR (qvflux.1983) [time][y][x]
+0 | - | noaa_psl_46a6_2267_51e9 | 8x Daily NARR (qvflux.1983) [time][y][x]
+0 | - | noaa_psl_469e_c99d_3391 | 8x Daily NARR (qvflux.1983) [y][x]
+0 | - | noaa_psl_8b90_f924_d3af | 8x Daily NARR (qvflux.1983) [y][x]
+0 | - | noaa_psl_0015_f94a_fde5 | 8x Daily NARR (qvflux.1984) [time][y][x]
+0 | - | noaa_psl_2341_1c56_72ac | 8x Daily NARR (qvflux.1984) [time][y][x]
+0 | - | noaa_psl_28cd_0e36_6ee2 | 8x Daily NARR (qvflux.1984) [y][x]
+0 | - | noaa_psl_8030_e785_edc8 | 8x Daily NARR (qvflux.1984) [y][x]
+0 | - | noaa_psl_2f0f_9171_94b6 | 8x Daily NARR (qvflux.1985) [time][y][x]
+0 | - | noaa_psl_b91c_c974_6cea | 8x Daily NARR (qvflux.1985) [time][y][x]
+0 | - | noaa_psl_8201_83ec_2feb | 8x Daily NARR (qvflux.1985) [y][x]
+0 | - | noaa_psl_a242_f7f0_e3c5 | 8x Daily NARR (qvflux.1985) [y][x]
+0 | - | noaa_psl_31b1_64d6_d48d | 8x Daily NARR (qvflux.1986) [time][y][x]
+0 | - | noaa_psl_8079_9804_ed08 | 8x Daily NARR (qvflux.1986) [time][y][x]
+0 | - | noaa_psl_7948_72f7_30df | 8x Daily NARR (qvflux.1986) [y][x]
+0 | - | noaa_psl_ea6a_fdd4_fd9b | 8x Daily NARR (qvflux.1986) [y][x]
+0 | - | noaa_psl_3fe4_5357_6846 | 8x Daily NARR (qvflux.1987) [time][y][x]
+0 | - | noaa_psl_f927_99ae_1290 | 8x Daily NARR (qvflux.1987) [time][y][x]
+0 | - | noaa_psl_a8ce_aad8_3f03 | 8x Daily NARR (qvflux.1987) [y][x]
+0 | - | noaa_psl_b5b7_7ed4_1b5c | 8x Daily NARR (qvflux.1987) [y][x]
+0 | - | noaa_psl_7bc6_3142_48fe | 8x Daily NARR (qvflux.1988) [time][y][x]
+0 | - | noaa_psl_c42d_5fa0_ef5e | 8x Daily NARR (qvflux.1988) [time][y][x]
+0 | - | noaa_psl_7047_5dcd_e521 | 8x Daily NARR (qvflux.1988) [y][x]
+0 | - | noaa_psl_a7fa_1800_4134 | 8x Daily NARR (qvflux.1988) [y][x]
+0 | - | noaa_psl_1d61_6360_3b40 | 8x Daily NARR (qvflux.1989) [time][y][x]
+0 | - | noaa_psl_a26c_874f_5f3b | 8x Daily NARR (qvflux.1989) [time][y][x]
+0 | - | noaa_psl_4aae_8eb7_da9b | 8x Daily NARR (qvflux.1989) [y][x]
+0 | - | noaa_psl_a394_6601_cdcc | 8x Daily NARR (qvflux.1989) [y][x]
+0 | - | noaa_psl_5b69_038a_51f5 | 8x Daily NARR (qvflux.1990) [time][y][x]
+0 | - | noaa_psl_ab11_1355_dd03 | 8x Daily NARR (qvflux.1990) [time][y][x]
+0 | - | noaa_psl_6416_629e_c3d2 | 8x Daily NARR (qvflux.1990) [y][x]
+0 | - | noaa_psl_cad6_6126_1d3d | 8x Daily NARR (qvflux.1990) [y][x]
+0 | - | noaa_psl_2fd8_88e0_1082 | 8x Daily NARR (qvflux.1991) [time][y][x]
+0 | - | noaa_psl_84d9_066c_f7f0 | 8x Daily NARR (qvflux.1991) [time][y][x]
+0 | - | noaa_psl_1ef5_54b7_4690 | 8x Daily NARR (qvflux.1991) [y][x]
+0 | - | noaa_psl_8b62_7215_6eb7 | 8x Daily NARR (qvflux.1991) [y][x]
+0 | - | noaa_psl_9ebb_b762_936f | 8x Daily NARR (qvflux.1992) [time][y][x]
+0 | - | noaa_psl_dcb3_2091_a9e7 | 8x Daily NARR (qvflux.1992) [time][y][x]
+0 | - | noaa_psl_3fb3_a557_bd48 | 8x Daily NARR (qvflux.1992) [y][x]
+0 | - | noaa_psl_83d3_a006_53b1 | 8x Daily NARR (qvflux.1992) [y][x]
+0 | - | noaa_psl_0d13_3af3_d5fb | 8x Daily NARR (qvflux.1993) [time][y][x]
+0 | - | noaa_psl_b398_5fe9_9e1a | 8x Daily NARR (qvflux.1993) [time][y][x]
+0 | - | noaa_psl_c164_7e4d_8743 | 8x Daily NARR (qvflux.1993) [y][x]
+0 | - | noaa_psl_e17d_81c9_d626 | 8x Daily NARR (qvflux.1993) [y][x]
+0 | - | noaa_psl_6359_ffd2_fa4c | 8x Daily NARR (qvflux.1994) [time][y][x]
+0 | - | noaa_psl_f742_2d9e_c00f | 8x Daily NARR (qvflux.1994) [time][y][x]
+0 | - | noaa_psl_16c1_326d_4a68 | 8x Daily NARR (qvflux.1994) [y][x]
+0 | - | noaa_psl_a77c_ab64_5ddf | 8x Daily NARR (qvflux.1994) [y][x]
+0 | - | noaa_psl_4d30_6067_81c1 | 8x Daily NARR (qvflux.1995) [time][y][x]
+0 | - | noaa_psl_9b29_c80d_e89a | 8x Daily NARR (qvflux.1995) [time][y][x]
+0 | - | noaa_psl_3fa0_50a6_e7d3 | 8x Daily NARR (qvflux.1995) [y][x]
+0 | - | noaa_psl_c1a4_c45e_be60 | 8x Daily NARR (qvflux.1995) [y][x]
+0 | - | noaa_psl_5baa_6798_273b | 8x Daily NARR (qvflux.1996) [time][y][x]
+0 | - | noaa_psl_ec02_9448_4baa | 8x Daily NARR (qvflux.1996) [time][y][x]
+0 | - | noaa_psl_2545_026a_ea47 | 8x Daily NARR (qvflux.1996) [y][x]
+0 | - | noaa_psl_f419_ff01_c2f6 | 8x Daily NARR (qvflux.1996) [y][x]
+0 | - | noaa_psl_35fd_22cc_1fed | 8x Daily NARR (qvflux.1997) [time][y][x]
+0 | - | noaa_psl_5243_fed3_8a3e | 8x Daily NARR (qvflux.1997) [time][y][x]
+0 | - | noaa_psl_5b3e_a807_3c0d | 8x Daily NARR (qvflux.1997) [y][x]
+0 | - | noaa_psl_c787_5978_cffa | 8x Daily NARR (qvflux.1997) [y][x]
+0 | - | noaa_psl_3da6_6935_f9b6 | 8x Daily NARR (qvflux.1998) [time][y][x]
+0 | - | noaa_psl_815f_ae52_68c2 | 8x Daily NARR (qvflux.1998) [time][y][x]
+0 | - | noaa_psl_2df5_3ca6_fd83 | 8x Daily NARR (qvflux.1998) [y][x]
+0 | - | noaa_psl_e31d_21aa_4797 | 8x Daily NARR (qvflux.1998) [y][x]
+0 | - | noaa_psl_bb8c_170f_910f | 8x Daily NARR (qvflux.1999) [time][y][x]
+0 | - | noaa_psl_e5b3_be0c_4475 | 8x Daily NARR (qvflux.1999) [time][y][x]
+0 | - | noaa_psl_dcde_0f43_d28b | 8x Daily NARR (qvflux.1999) [y][x]
+0 | - | noaa_psl_eacf_e274_73ee | 8x Daily NARR (qvflux.1999) [y][x]
+0 | - | noaa_psl_6dd2_ad9a_532d | 8x Daily NARR (qvflux.2000) [time][y][x]
+0 | - | noaa_psl_766b_6996_5e89 | 8x Daily NARR (qvflux.2000) [time][y][x]
+0 | - | noaa_psl_249e_8bbf_3c0a | 8x Daily NARR (qvflux.2000) [y][x]
+0 | - | noaa_psl_5f08_5207_8c81 | 8x Daily NARR (qvflux.2000) [y][x]
+0 | - | noaa_psl_c437_28e1_d77c | 8x Daily NARR (qvflux.2001) [time][y][x]
+0 | - | noaa_psl_f946_9334_10a4 | 8x Daily NARR (qvflux.2001) [time][y][x]
+0 | - | noaa_psl_4b5e_5600_3748 | 8x Daily NARR (qvflux.2001) [y][x]
+0 | - | noaa_psl_c095_abf6_ebdd | 8x Daily NARR (qvflux.2001) [y][x]
+0 | - | noaa_psl_2095_175e_b0ab | 8x Daily NARR (qvflux.2002) [time][y][x]
+0 | - | noaa_psl_6ca1_533a_1c24 | 8x Daily NARR (qvflux.2002) [time][y][x]
+0 | - | noaa_psl_7c95_493a_8e18 | 8x Daily NARR (qvflux.2002) [y][x]
+0 | - | noaa_psl_949b_ac00_e7af | 8x Daily NARR (qvflux.2002) [y][x]
+0 | - | noaa_psl_3bf8_b35a_5fda | 8x Daily NARR (qvflux.2003) [time][y][x]
+0 | - | noaa_psl_8b3b_7b25_da51 | 8x Daily NARR (qvflux.2003) [time][y][x]
+0 | - | noaa_psl_9393_4b82_82ea | 8x Daily NARR (qvflux.2003) [y][x]
+0 | - | noaa_psl_d7e8_99bc_a9c2 | 8x Daily NARR (qvflux.2003) [y][x]
+0 | - | noaa_psl_40c9_3ecd_8817 | 8x Daily NARR (qvflux.2004) [time][y][x]
+0 | - | noaa_psl_4951_f0ad_15ca | 8x Daily NARR (qvflux.2004) [time][y][x]
+0 | - | noaa_psl_cee8_f5d4_a5e6 | 8x Daily NARR (qvflux.2004) [y][x]
+0 | - | noaa_psl_ff5c_d38e_e93d | 8x Daily NARR (qvflux.2004) [y][x]
+0 | - | noaa_psl_4def_01f8_9fed | 8x Daily NARR (qvflux.2005) [time][y][x]
+0 | - | noaa_psl_aee4_6f51_38f1 | 8x Daily NARR (qvflux.2005) [time][y][x]
+0 | - | noaa_psl_1f5e_2562_f8df | 8x Daily NARR (qvflux.2005) [y][x]
+0 | - | noaa_psl_efc1_db77_e86c | 8x Daily NARR (qvflux.2005) [y][x]
+0 | - | noaa_psl_8720_50e0_2f95 | 8x Daily NARR (qvflux.2006) [time][y][x]
+0 | - | noaa_psl_ed67_43e1_cbce | 8x Daily NARR (qvflux.2006) [time][y][x]
+0 | - | noaa_psl_114c_3e9b_c8d7 | 8x Daily NARR (qvflux.2006) [y][x]
+0 | - | noaa_psl_282a_bb35_d824 | 8x Daily NARR (qvflux.2006) [y][x]
+0 | - | noaa_psl_938c_b45e_9210 | 8x Daily NARR (qvflux.2007) [time][y][x]
+0 | - | noaa_psl_9978_1a10_d1ef | 8x Daily NARR (qvflux.2007) [time][y][x]
+0 | - | noaa_psl_6a4d_888f_e3e2 | 8x Daily NARR (qvflux.2007) [y][x]
+0 | - | noaa_psl_a605_515d_a30f | 8x Daily NARR (qvflux.2007) [y][x]
+0 | - | noaa_psl_a8be_866c_f92e | 8x Daily NARR (qvflux.2008) [time][y][x]
+0 | - | noaa_psl_e4d8_ac21_ccfb | 8x Daily NARR (qvflux.2008) [time][y][x]
+0 | - | noaa_psl_b41d_077c_f44b | 8x Daily NARR (qvflux.2008) [y][x]
+0 | - | noaa_psl_b963_f741_8cfc | 8x Daily NARR (qvflux.2008) [y][x]
+0 | - | noaa_psl_0c66_4334_c57f | 8x Daily NARR (qvflux.2009) [time][y][x]
+0 | - | noaa_psl_c21e_984e_43ab | 8x Daily NARR (qvflux.2009) [time][y][x]
+0 | - | noaa_psl_2712_ed56_0a4b | 8x Daily NARR (qvflux.2009) [y][x]
+0 | - | noaa_psl_feab_7efc_7404 | 8x Daily NARR (qvflux.2009) [y][x]
+0 | - | noaa_psl_57f2_88a8_01be | 8x Daily NARR (qvflux.2010) [time][y][x]
+0 | - | noaa_psl_fe5f_5e73_10c0 | 8x Daily NARR (qvflux.2010) [time][y][x]
+0 | - | noaa_psl_1896_58c2_bec4 | 8x Daily NARR (qvflux.2010) [y][x]
+0 | - | noaa_psl_ba51_5ff5_2877 | 8x Daily NARR (qvflux.2010) [y][x]
+0 | - | noaa_psl_4c76_214c_7f73 | 8x Daily NARR (qvflux.2011) [time][y][x]
+0 | - | noaa_psl_c5a7_b422_9934 | 8x Daily NARR (qvflux.2011) [time][y][x]
+0 | - | noaa_psl_ccad_079e_692e | 8x Daily NARR (qvflux.2011) [y][x]
+0 | - | noaa_psl_e1bb_bf8b_e5cd | 8x Daily NARR (qvflux.2011) [y][x]
+0 | - | noaa_psl_9ea4_e5b0_676f | 8x Daily NARR (qvflux.2012) [time][y][x]
+0 | - | noaa_psl_b4d3_afc6_cc7b | 8x Daily NARR (qvflux.2012) [time][y][x]
+0 | - | noaa_psl_60fd_57f1_0e62 | 8x Daily NARR (qvflux.2012) [y][x]
+0 | - | noaa_psl_8909_36b2_1348 | 8x Daily NARR (qvflux.2012) [y][x]
+0 | - | noaa_psl_6f02_38ac_22cc | 8x Daily NARR (qvflux.2013) [time][y][x]
+0 | - | noaa_psl_1a1e_83ef_a010 | 8x Daily NARR (qvflux.2013) [y][x]
+0 | - | noaa_psl_686e_90dc_a220 | 8x Daily NARR (qvflux.2013) [y][x]
+0 | - | noaa_psl_34c7_5ac4_9b0d | 8x Daily NARR (qvflux.2014) [time][y][x]
+0 | - | noaa_psl_9ca7_4884_61b0 | 8x Daily NARR (qvflux.2014) [time][y][x]
+0 | - | noaa_psl_1d8d_9c66_756f | 8x Daily NARR (qvflux.2014) [y][x]
+0 | - | noaa_psl_9dc8_1fa0_e699 | 8x Daily NARR (qvflux.2014) [y][x]
+0 | - | noaa_psl_be81_d03f_aa44 | 8x Daily NARR (qvflux.2015) [time][y][x]
+0 | - | noaa_psl_c9b2_dbdf_4406 | 8x Daily NARR (qvflux.2015) [time][y][x]
+0 | - | noaa_psl_5916_b87e_b93f | 8x Daily NARR (qvflux.2015) [y][x]
+0 | - | noaa_psl_c222_4644_930e | 8x Daily NARR (qvflux.2015) [y][x]
+0 | - | noaa_psl_35c1_58f4_1aab | 8x Daily NARR (qvflux.2016) [time][y][x]
+0 | - | noaa_psl_9273_6864_fc51 | 8x Daily NARR (qvflux.2016) [y][x]
+0 | - | noaa_psl_457c_b21a_6172 | 8x Daily NARR (qvflux.2017) [time][y][x]
+0 | - | noaa_psl_cf48_a67f_a5b8 | 8x Daily NARR (qvflux.2017) [y][x]
+0 | - | noaa_psl_e17c_5a51_16c1 | 8x Daily NARR (qvflux.2018) [time][y][x]
+0 | - | noaa_psl_2076_f189_a603 | 8x Daily NARR (qvflux.2018) [y][x]
+0 | - | noaa_psl_e731_7bd2_95ad | 8x Daily NARR (qvflux.2019) [time][y][x]
+0 | - | noaa_psl_4d99_62e5_cbe4 | 8x Daily NARR (qvflux.2019) [y][x]
+-8 | - | noaa_psl_28c5_b710_e9d9 | 8x Daily NOAA/CIRES/DOE 20th Century Reanalysis V3 (hgt.sfc), 1.0°, 1836
+-8 | - | noaa_psl_dcf0_7841_1a2d | 8x Daily NOAA/CIRES/DOE 20th Century Reanalysis V3 (hgt.sfc), 1.0°, 1981
+-8 | - | noaa_psl_77cd_9edf_ff33 | 8x Daily NOAA/CIRES/DOE 20th Century Reanalysis V3 (hgt.sfc.sflx), 1.0°, 1836
+-8 | - | noaa_psl_d92f_82d7_74d1 | 8x Daily NOAA/CIRES/DOE 20th Century Reanalysis V3 (land), 1.0°, 1836
+-8 | - | noaa_psl_9648_4425_fefe | 8x Daily NOAA/CIRES/DOE 20th Century Reanalysis V3 (land), 1.0°, 1981
+-8 | - | noaa_psl_1962_db88_9842 | 8x Daily NOAA/CIRES/DOE 20th Century Reanalysis V3 (land.sflx), 1.0°, 1836
+-8 | - | noaa_psl_28f8_fe27_43da | 8x Daily NOAA/CIRES/DOE 20th Century Reanalysis V3 (sfcslopetype), 1.0°, 1836
+-8 | - | noaa_psl_ef35_033c_0042 | 8x Daily NOAA/CIRES/DOE 20th Century Reanalysis V3 (soiltype), 1.0°, 1836
+-8 | - | noaa_psl_c599_0650_9fc3 | 8x Daily NOAA/CIRES/DOE 20th Century Reanalysis V3 (vegtype), 1.0°, 1836
+0 | - | noaa_psl_8944_4d73_18aa | acpcp.mon.ltm (Monthly NARR) [time][y][x], 0001
+0 | - | noaa_psl_6747_28c7_77c7 | acpcp.mon.ltm (Monthly NARR) [y][x]
+-4 | - | noaa_ngdc_bbd9_21a7_0755 | Adak, Alaska Coastal Digital Elevation Model (adak 1 mhw 2009), 2.7777778E-4°
+-12 | - | noaa_ngdc_91bc_1651_cd5d | Adak, Alaska Tsunami Forecast Grids for MOST Model (AdakAK A)
+-12 | - | noaa_ngdc_1ad6_1a0a_5221 | Adak, Alaska Tsunami Forecast Grids for MOST Model (AdakAK B)
+-12 | - | noaa_ngdc_4be8_724d_bc40 | Adak, Alaska Tsunami Forecast Grids for MOST Model (AdakAK C)
+0 | - | noaa_psl_90f4_b08c_4564 | air.2m.day.ltm (8x Daily NARR) [time][y][x], 0001
+0 | - | noaa_psl_9a7d_f3c4_973d | air.2m.day.ltm (8x Daily NARR) [y][x]
+0 | - | noaa_psl_b435_ea2a_39c5 | air.2m.mon.ltm (Monthly NARR) [time][y][x], 0001
+0 | - | noaa_psl_7b5b_64cc_992a | air.2m.mon.ltm (Monthly NARR) [y][x]
+0 | - | noaa_psl_2b37_6757_b79f | air.ltm (COADS1), 2.0°, 0001
+0 | - | noaa_psl_2ec7_5fd4_596c | air.ltm (COADS1), 2.0°, 0001
+0 | - | noaa_psl_38a5_f1b9_2561 | air.ltm (COADS1), 2.0°, 0001
+0 | - | noaa_psl_d737_026c_d6fc | air.ltm (COADS1), 2.0°, 0001
+0 | - | noaa_psl_f412_6342_2394 | air.ltm (COADS1), 2.0°, 0001
+0 | - | noaa_psl_f8a6_d34d_1cf9 | air.ltm (COADS1), 2.0°, 0001
+0 | thermal | noaa_psl_38ed_f316_0aa0 | air.mon.ltm.1981-2010 (JMA Air Temperature), 5.0°, 0001
+0 | - | noaa_psl_c4c0_e025_4698 | air.sfc.mon.ltm (Monthly NARR) [time][y][x], 0001
+0 | - | noaa_psl_1083_c8e4_bb4a | air.sfc.mon.ltm (Monthly NARR) [y][x]
+0 | - | ais_hi_20112012 | AIS Ship Traffic: Hawaii: 2011-2012
+0 | - | ais_john_20112012 | AIS Ship Traffic: Johnston Atoll: 2011-2012
+0 | - | ais_mari_20112012 | AIS Ship Traffic: Mariana and Wake: 2011-2012
+0 | - | ais_rose_20112012 | AIS Ship Traffic: Rose Atoll: 2011-2012
+-4 | - | noaa_ngdc_91ed_8381_f8c9 | Akhiok, Alaska 8/15 sec Coastal Digital Elevation Model (akhiok ak 815 mhhw 2019), 1.4814814E-4°
+-4 | - | noaa_ngdc_d41b_3771_4202 | Akutan, Alaska Coastal Digital Elevation Model (akutan 8 mhhw 2009), 0.0022222223°
+-4 | - | noaa_ngdc_8897_174e_4ad3 | Akutan, Alaska Coastal Digital Elevation Model (akutan 815 mhhw 2009), 1.4814814E-4°
+-4 | - | noaa_ngdc_9b0b_d577_0207 | Akutan, Alaska Coastal Digital Elevation Model (akutan 83 mhhw 2009), 7.4074074E-4°
+0 | em | noaa_psl_2131_b43e_cac3 | albedo.mon.ltm (Monthly NARR) [time][y][x], 0001
+0 | em | noaa_psl_825f_b92c_25bd | albedo.mon.ltm (Monthly NARR) [y][x]
+0 | - | noaa_ngdc_3840_5d13_4e90 | albemarle sound s010 30m
+8 | advective | aco_adcp_temp | ALOHA Cabled Observatory (ACO): Acoustic Doppler Current Profiler (ADCP): Temperature
+8 | advective | aco_adcp_vel | ALOHA Cabled Observatory (ACO): Acoustic Doppler Current Profiler (ADCP): Velocity
+0 | - | aco_acoustic | ALOHA Cabled Observatory (ACO): Hydrophone Acoustics
+0 | - | noaa_ngdc_c6c7_483a_6eaa | altamaha river s150 30m
+0 | - | noaa_aoml_b425_91de_0c7b | AMSR-2 daily products (RSS AMSR2), 0.25°, 2017-present
+0 | - | noaa_ngdc_8dae_e376_a4ca | apalachicola bay g100 30m
+0 | - | noaa_psl_5dc4_f164_2e7e | apcp.day.ltm (Daily NARR) [time][y][x], 0001
+0 | - | noaa_psl_1681_20b5_fe45 | apcp.day.ltm (Daily NARR) [y][x]
+-8 | thermal | noaa_psl_88a2_790e_5fef | Apr longterm mean diurnal cycle air temperature from the NCEP Reanalysis (airapr.mon.dailyanom), 2.5°, 0001
+-8 | - | noaa_psl_b3b3_be0f_2b72 | Apr longterm mean diurnal cycle geopotential height from the NCEP Reanalysis, 2.5°, 0001
+-12 | - | noaa_ngdc_93a6_5697_961f | Apra Harbor, Guam Tsunami Forecast Grids for MOST Model (ApraHarborGuam A), 0.01°
+-12 | - | noaa_ngdc_dd84_94a0_e881 | Apra Harbor, Guam Tsunami Forecast Grids for MOST Model (ApraHarborGuam B), 0.0033333334°
+-12 | - | noaa_ngdc_3183_dd38_6644 | Apra Harbor, Guam Tsunami Forecast Grids for MOST Model (ApraHarborGuam C), 8.3333335E-4°
+0 | - | noaa_ngdc_ca83_5cf6_f2db | aransas bay g300 30m
+-4 | - | noaa_ngdc_44d0_70b6_0433 | Arecibo, Puerto Rico Coastal Digital Elevation Model (arecibo 13 mhw 2007), 9.259259E-5°
+-12 | - | noaa_ngdc_84ab_9e5c_4572 | Arecibo, Puerto Rico Tsunami Forecast Grids for MOST Model (AreciboPR A)
+-12 | - | noaa_ngdc_9077_f221_501f | Arecibo, Puerto Rico Tsunami Forecast Grids for MOST Model (AreciboPR B)
+-12 | - | noaa_ngdc_b935_5e8a_de31 | Arecibo, Puerto Rico Tsunami Forecast Grids for MOST Model (AreciboPR C), 5.5555557E-4°
+-4 | - | noaa_ngdc_77c6_1996_56c4 | Arena Cove, California Coastal Digital Elevation Model (arena cove 13 mhw 2009), 9.259259E-5°
+-12 | - | noaa_ngdc_c457_7d37_bb1a | Arena Cove, California Tsunami Forecast Grids for MOST Model (ArenaCoveCA A)
+-12 | - | noaa_ngdc_004d_d784_a767 | Arena Cove, California Tsunami Forecast Grids for MOST Model (ArenaCoveCA B)
+-12 | - | noaa_ngdc_0b01_bc35_2b4c | Arena Cove, California Tsunami Forecast Grids for MOST Model (ArenaCoveCA C)
+-8 | advective | noaa_aoml_4758_b077_efe3 | ASCAT METOPB WINDS, 2016
+-4 | - | noaa_ngdc_c9c8_13b4_1b7e | Astoria OR 1/3 sec Coastal Digital Elevation Model vers 3 (astoria 13 mhw 2012), 9.259259E-5°
+0 | - | noaa_ngdc_2c44_e751_eccc | atchafalaya bay g220 30m
+-4 | - | noaa_ngdc_2c96_ed60_53cf | Atka, Alaska Coastal Digital Elevation Model (atka 1 mhw 2010), 2.7777778E-4°
+-12 | - | noaa_ngdc_40dc_3927_f620 | Atka, Alaska Tsunami Forecast Grids for MOST Model (AtkaAK A)
+-12 | - | noaa_ngdc_a60c_31d7_712e | Atka, Alaska Tsunami Forecast Grids for MOST Model (AtkaAK B)
+-12 | - | noaa_ngdc_0ca0_5960_4a1a | Atka, Alaska Tsunami Forecast Grids for MOST Model (AtkaAK C)
+-4 | - | noaa_ngdc_265a_354d_6f91 | Atlantic City, New Jersey Coastal Digital Elevation Model (atlantic city 13 mhw 2007), 9.259259E-5°
+-12 | - | noaa_ngdc_9497_c5ab_2346 | Atlantic City, New Jersey Tsunami Forecast Grids for MOST Model (AtlanticCityNJ A)
+-12 | - | noaa_ngdc_5f66_df26_5d92 | Atlantic City, New Jersey Tsunami Forecast Grids for MOST Model (AtlanticCityNJ B)
+-12 | - | noaa_ngdc_6857_31c4_c743 | Atlantic City, New Jersey Tsunami Forecast Grids for MOST Model (AtlanticCityNJ C)
+0 | - | testGridWav | Audio data from a local source.
+0 | - | nceiPH53sstd1day | AVHRR Pathfinder Version 5.3 L3-Collated (L3C) SST, Global, 0.0417°;, 1981-present, Daytime (1 Day Composite)
+0 | - | nceiPH53sstd1day_Lon0360 | AVHRR Pathfinder Version 5.3 L3-Collated (L3C) SST, Global, 0.0417°;, 1981-present, Daytime (1 Day Composite), Lon0360
+0 | - | nceiPH53sstn1day | AVHRR Pathfinder Version 5.3 L3-Collated (L3C) SST, Global, 0.0417°;, 1981-present, Nighttime (1 Day Composite)
+0 | - | nceiPH53sstn1day_Lon0360 | AVHRR Pathfinder Version 5.3 L3-Collated (L3C) SST, Global, 0.0417°;, 1981-present, Nighttime (1 Day Composite), Lon0360
+0 | - | noaa_ngdc_cebf_2690_92e4 | baffin bay g320 30m
+-4 | - | noaa_ngdc_8741_1d21_f6a7 | Bar Harbor (N036) Bathymetric Digital Elevation Model (bar harbor N036 2018), 9.259259E-5°
+-4 | - | noaa_ngdc_8993_08b6_6afa | Bar Harbor, Maine Coastal Digital Elevation Model (bar harbor 13 mhw 2011), 9.259259E-5°
+-4 | - | noaa_ngdc_ac5c_815e_ca53 | Bar Harbor, Maine Coastal Digital Elevation Model (bar harbor 13 navd88 2011), 9.259259E-5°
+-12 | - | noaa_ngdc_5e7e_ef8d_28c1 | Bar Harbor, ME Tsunami Forecast Grids for MOST Model (BarHarborME A)
+-12 | - | noaa_ngdc_2013_070f_e3fc | Bar Harbor, ME Tsunami Forecast Grids for MOST Model (BarHarborME B)
+-12 | - | noaa_ngdc_3de6_19d6_9e3a | Bar Harbor, ME Tsunami Forecast Grids for MOST Model (BarHarborME C)
+-4 | - | noaa_ngdc_4c3b_0353_4b5b | Barataria Bay (G200) Bathymetric Digital Elevation Model (barataria bay G200 2018), 9.259259E-5°
+0 | - | noaa_ngdc_8866_29cd_59d4 | barkley sound 1 navd88 2016 (GDAL Band Number 1), 2.7777778E-4°
+0 | - | noaa_ngdc_9338_3a73_5c47 | barnegat bay m070 30m
+0 | - | EB_MM_BC | BeachCOMBERS Effort-Based Marine Mammal and Seabird Beach Cast Survey
+-4 | - | noaa_ngdc_9cfa_244d_0065 | Bermuda 1 arc-second Coastal Digital Elevation Model (bermuda 1 msl 2013), 2.77778E-4°
+-4 | - | noaa_ngdc_8a7d_5062_cdc7 | Bermuda 3 arc-second Coastal Digital Elevation Model (bermuda 3 msl 2013), 8.33333E-4°
+-12 | - | noaa_ngdc_28c7_6c52_679a | Bermuda Tsunami Forecast Grids for MOST Model (Bermuda A)
+-12 | - | noaa_ngdc_93ec_b953_6845 | Bermuda Tsunami Forecast Grids for MOST Model (Bermuda B)
+-12 | - | noaa_ngdc_bba0_890c_823f | Bermuda Tsunami Forecast Grids for MOST Model (Bermuda C)
+0 | - | ioos_eds_728f_d65a_9c87 | Best NAM Hawaii Time Series [time], 2021-present
+0 | - | ioos_eds_de19_f681_1d45 | Best NAM Hawaii Time Series [time][altitude_above_msl][y][x], 2021-present
+12 | - | ioos_eds_cadc_c556_28e0 | Best NAM Hawaii Time Series [time][depth_below_surface][y][x], 2021-present
+12 | - | ioos_eds_26d1_3d39_07ea | Best NAM Hawaii Time Series [time][depth_below_surface_layer2][y][x], 2021-present
+0 | - | ioos_eds_d299_6967_617b | Best NAM Hawaii Time Series [time][hybrid1][y][x], 2021-present
+0 | - | ioos_eds_caea_9584_e965 | Best NAM Hawaii Time Series [time][hybrid][y][x], 2021-present
+0 | - | ioos_eds_16a4_c0bf_ec50 | Best NAM Hawaii Time Series [time][isobaric2][y][x], 2021-present
+0 | advective | ioos_eds_4d62_46dd_78bd | Best NAM Hawaii Time Series [time][pressure_difference_layer1][y][x], 2021-present
+0 | advective | ioos_eds_aca8_935c_6277 | Best NAM Hawaii Time Series [time][pressure_difference_layer3][y][x], 2021-present
+0 | advective | ioos_eds_a922_a6e1_6f3e | Best NAM Hawaii Time Series [time][pressure_difference_layer4][y][x], 2021-present
+0 | advective | ioos_eds_da16_76bb_b738 | Best NAM Hawaii Time Series [time][pressure_difference_layer5][y][x], 2021-present
+0 | - | ioos_eds_63ad_960e_4699 | Best NAM Hawaii Time Series [time][y][x], 2021-present
+0 | - | ioos_eds_59ad_efa1_4993 | Best NAM Puerto Rico Time Series [time], 2021-present
+0 | - | ioos_eds_1025_9938_0906 | Best NAM Puerto Rico Time Series [time][altitude_above_msl][y][x], 2021-present
+12 | - | ioos_eds_e16f_69a2_1e52 | Best NAM Puerto Rico Time Series [time][depth_below_surface][y][x], 2021-present
+12 | - | ioos_eds_fdc1_5caf_e3b9 | Best NAM Puerto Rico Time Series [time][depth_below_surface_layer2][y][x], 2021-present
+0 | - | ioos_eds_486c_7d54_2280 | Best NAM Puerto Rico Time Series [time][hybrid1][y][x], 2021-present
+0 | - | ioos_eds_42ef_ab21_e194 | Best NAM Puerto Rico Time Series [time][hybrid][y][x], 2021-present
+0 | - | ioos_eds_69e5_dc64_da50 | Best NAM Puerto Rico Time Series [time][isobaric2][y][x], 2021-present
+0 | advective | ioos_eds_c1b3_2089_3386 | Best NAM Puerto Rico Time Series [time][pressure_difference_layer1][y][x], 2021-present
+0 | advective | ioos_eds_0f8d_4cbc_471e | Best NAM Puerto Rico Time Series [time][pressure_difference_layer3][y][x], 2021-present
+0 | advective | ioos_eds_6d85_7b2f_1d67 | Best NAM Puerto Rico Time Series [time][pressure_difference_layer4][y][x], 2021-present
+0 | advective | ioos_eds_7876_46c0_42d9 | Best NAM Puerto Rico Time Series [time][pressure_difference_layer5][y][x], 2021-present
+0 | - | ioos_eds_2c01_1832_3012 | Best NAM Puerto Rico Time Series [time][y][x], 2021-present
+0 | - | ioos_eds_2ab0_d897_3b44 | Best NWPS PHI Time Series [time], 2021-present
+0 | - | ioos_eds_5401_ca41_76ab | Best NWPS TBW Time Series [time], 2021-present
+0 | - | noaa_psl_f3fd_c5e8_0503 | bgrun.mon.ltm (Monthly NARR) [time][y][x], 0001
+0 | - | noaa_psl_bcc1_3f5a_ed9d | bgrun.mon.ltm (Monthly NARR) [y][x]
+0 | - | FRD_Billfish_recoveries | Billfish Tagging Program,Tag Recoveries
+0 | - | FRD_Billfish_releases | Billfish Tagging Program,Tag Releases
+-4 | - | noaa_ngdc_c891_28a3_6b95 | Biloxi, Mississippi Coastal Digital Elevation Model (biloxi 13 mhw 2007), 9.259259E-5°
+0 | - | erdBEUTIdaily | Biologically Effective Upwelling Transport Index (BEUTI), Daily
+0 | - | erdBEUTImonthly | Biologically Effective Upwelling Transport Index (BEUTI), Monthly
+-4 | - | noaa_ngdc_e6ae_1b68_9a88 | Biscayne Bay (S200) Bathymetric Digital Elevation Model (biscayne bay S200 2018), 9.259259E-5°
+0 | - | noaa_psl_314f_a07f_12b9 | bmixl.hl1.mon.ltm (Monthly NARR) [time][y][x], 0001
+0 | - | noaa_psl_8773_469e_c47b | bmixl.hl1.mon.ltm (Monthly NARR) [y][x]
+0 | - | noaa_ngdc_c337_0ff6_191f | bogue sound s030 30m
+-4 | - | noaa_ngdc_c71a_e2d5_c731 | British Columbia 3 arc-second Bathymetric Digital Elevation Model (british columbia 3 msl 2013), 8.3333335E-4°
+-12 | - | noaa_ngdc_eee4_d57f_de51 | British Columbia, Canada Tsunami Forecast Grids for MOST Model
+-12 | - | noaa_ngdc_53a1_8f39_320e | British Columbia, Canada Tsunami Forecast Grids for MOST Model (BritishColumbia A)
+-12 | - | noaa_ngdc_4e62_6ad9_218e | British Columbia, Canada Tsunami Forecast Grids for MOST Model (BritishColumbia B)
+0 | - | noaa_ngdc_2f67_59ce_f2ee | broad river s110 30m
+0 | - | noaa_ngdc_eb94_1a00_1d33 | buzzards bay m010 30m
+-8 | - | charmForecast1day | C-HARM v1 1-Day Forecast, Pseudo-nitzschia, cellular domoic acid, and particular domoic acid probability, California and Southern Oregon coast, 2018-2022
+-8 | - | charmForecast1day_LonPM180 | C-HARM v1 1-Day Forecast, Pseudo-nitzschia, cellular domoic acid, and particular domoic acid probability, California and Southern Oregon coast, 2018-2022, Lon+/-180
+-8 | - | charmForecast2day | C-HARM v1 2-Day Forecast, Pseudo-nitzschia, cellular domoic acid, and particular domoic acid probability, California and Southern Oregon coast, 2018-2022
+-8 | - | charmForecast2day_LonPM180 | C-HARM v1 2-Day Forecast, Pseudo-nitzschia, cellular domoic acid, and particular domoic acid probability, California and Southern Oregon coast, 2018-2022, Lon+/-180
+0 | - | charmForecast0day | C-HARM v1 Nowcast, Pseudo-nitzschia, cellular domoic acid, and particular domoic acid probability, California and Southern Oregon coast, 2018-2022
+0 | - | charmForecast0day_LonPM180 | C-HARM v1 Nowcast, Pseudo-nitzschia, cellular domoic acid, and particular domoic acid probability, California and Southern Oregon coast, 2018-2022, Lon+/-180
+-8 | - | charmForecast3day | C-HARM v1, 3-Day Forecast, Pseudo-nitzschia, cellular domoic acid, and particular domoic acid probability, California and Southern Oregon coast, 2018-2022
+-8 | - | charmForecast3day_LonPM180 | C-HARM v1, 3-Day Forecast, Pseudo-nitzschia, cellular domoic acid, and particular domoic acid probability, California and Southern Oregon coast, 2018-2022, Lon+/-180
+-8 | - | charmForecast1dayV2 | C-HARM v2 1-Day Forecast, Pseudo-nitzschia, cellular domoic acid, and particular domoic acid probability, California and Southern Oregon coast, 2022-present
+-8 | - | charmForecast1dayV2_LonPM180 | C-HARM v2 1-Day Forecast, Pseudo-nitzschia, cellular domoic acid, and particular domoic acid probability, California and Southern Oregon coast, 2022-present, Lon+/-180
+-8 | - | charmForecast2dayV2 | C-HARM v2 2-Day Forecast, Pseudo-nitzschia, cellular domoic acid, and particular domoic acid probability, California and Southern Oregon coast, 2022-present
+-8 | - | charmForecast2dayV2_LonPM180 | C-HARM v2 2-Day Forecast, Pseudo-nitzschia, cellular domoic acid, and particular domoic acid probability, California and Southern Oregon coast, 2022-present, Lon+/-180
+-8 | - | charmForecast3dayV2 | C-HARM v2 3-Day Forecast, Pseudo-nitzschia, cellular domoic acid, and particular domoic acid probability, California and Southern Oregon coast, 2022-present
+-8 | - | charmForecast3dayV2_LonPM180 | C-HARM v2 3-Day Forecast, Pseudo-nitzschia, cellular domoic acid, and particular domoic acid probability, California and Southern Oregon coast, 2022-present, Lon+/-180
+0 | - | charmForecast0dayV2 | C-HARM v2 Nowcast, Pseudo-nitzschia, cellular domoic acid, and particular domoic acid probability, California and Southern Oregon coast, 2022-present
+0 | - | charmForecast0dayV2_LonPM180 | C-HARM v2 Nowcast, Pseudo-nitzschia, cellular domoic acid, and particular domoic acid probability, California and Southern Oregon coast, 2022-present, Lon+/-180
+0 | - | noaa_ngdc_ca66_ff97_576a | calcasieu lake g240 30m
+0 | - | CAC_FI_SBAS_obs | CalCOFI Farallon Institute Seabirds: Observations
+0 | - | CAC_FI_SBAS_tr | CalCOFI Farallon Institute Seabirds: Transect Log
+0 | - | erdCalCOFIcufes | CalCOFI NOAA Continuous Underway Fish-Egg Sampler
+0 | - | erdCalCOFIcruises | CalCOFI NOAA Cruises
+-8 | - | erdCalCOFIeggcnt | CalCOFI NOAA Fish Egg Counts
+0 | - | erdCalCOFIeggstg | CalCOFI NOAA Fish Egg Stages
+-8 | - | erdCalCOFIlrvcnt | CalCOFI NOAA Fish Larvae Counts
+0 | - | erdCalCOFIlrvsiz | CalCOFI NOAA Fish Larvae Sizes
+0 | - | erdCalCOFIlrvstg | CalCOFI NOAA Fish Larvae Stages
+0 | - | erdCalCOFItowtyp | CalCOFI NOAA Ichthyoplankton Tow Types
+0 | - | erdCalCOFItows | CalCOFI NOAA Ichthyoplankton Tows
+0 | - | erdCalCOFIinvsiz | CalCOFI NOAA Invertebrate Sizes
+0 | - | erdCalCOFIinvcnt | CalCOFI NOAA Invertebrates
+4 | - | erdCalCOFIstns | CalCOFI NOAA Stations
+0 | - | erdCalCOFIzoovol | CalCOFI NOAA Zooplankton Volume
+0 | - | siocalcofiHydroBottle | CalCOFI SIO Hydrographic Bottle Data
+0 | - | siocalcofiHydroCast | CalCOFI SIO Hydrographic Cast Data
+0 | - | fedCalLandings | California Commercial Fish Landings, 1931-1978
+0 | - | FRDPelagicAge | California Current Pelagic Fish Surveys, 1950-1989, Age Data
+0 | - | FRDPelagicAnchovy | California Current Pelagic Fish Surveys, 1950-1989, Anchovy Schools
+0 | - | FRDPelagicBathy | California Current Pelagic Fish Surveys, 1950-1989, Bathythermograph Data
+0 | - | FRDPelagicLength | California Current Pelagic Fish Surveys, 1950-1989, Length Frequencies
+0 | - | FRDPelagicNight | California Current Pelagic Fish Surveys, 1950-1989, Night Scout Data
+-8 | - | FRDPelagicSpComp | California Current Pelagic Fish Surveys, 1950-1989, Species Composition
+0 | - | FRDPelagicVisual | California Current Pelagic Fish Surveys, 1950-1989, Visual Scout Data
+0 | - | erdCAMarCatLM | California Fish Market Catch Landings, Long List, 1928-2002, Monthly
+0 | - | erdCAMarCatLY | California Fish Market Catch Landings, Long List, 1928-2002, Yearly
+0 | - | erdCAMarCatSM | California Fish Market Catch Landings, Short List, 1928-2002, Monthly
+0 | - | erdCAMarCatSY | California Fish Market Catch Landings, Short List, 1928-2002, Yearly
+0 | - | noaa_ngdc_d33e_c425_2761 | cape cod bay n180 30m
+0 | - | noaa_ngdc_b755_14a2_6747 | cape fear river s050 30m
+-4 | - | noaa_ngdc_f008_ec0a_71aa | Cape Hatteras, North Carolina Coastal Digital Elevation Model (cape hatteras 13 mhw 2006), 9.259259E-5°
+-12 | - | noaa_ngdc_c017_714b_8d24 | Cape Hatteras, North Carolina Tsunami Forecast Grids for MOST Model (CapeHatterasNC A)
+-12 | - | noaa_ngdc_f612_bce8_99cf | Cape Hatteras, North Carolina Tsunami Forecast Grids for MOST Model (CapeHatterasNC B)
+-12 | - | noaa_ngdc_e9d5_3d1f_dd4d | Cape Hatteras, North Carolina Tsunami Forecast Grids for MOST Model (CapeHatterasNC C)
+-4 | - | noaa_ngdc_40fa_a63e_7294 | Casco Bay (N100) Bathymetric Digital Elevation Model (casco bay N100 2018), 9.259259E-5°
+0 | - | mmtdNonTeleostPreySizeHP | CCE Non-Teleost Prey Size and Hard Part Size Measurements
+0 | - | mmtdPreySizeHPRegressions | CCE Prey Size and Hard Part Size Regressions
+0 | - | mmtdTeleostPreySizeHP | CCE Teleost Prey Size and Hard Part Size Measurements
+0 | - | noaa_psl_6c22_b5cf_ee5e | ccond.mon.ltm (Monthly NARR) [time][y][x], 0001
+0 | - | noaa_psl_ca81_a278_9a07 | ccond.mon.ltm (Monthly NARR) [y][x]
+0 | - | noaa_psl_1149_5549_b5f8 | CDC DERIVED NOAA OI SST V2 (sst.day.ltm), 1.0°, 0001
+0 | - | noaa_psl_a3d7_d0b5_a26b | cdcon.mon.ltm (Monthly NARR) [time][y][x], 0001
+0 | - | noaa_psl_c284_b220_91ef | cdcon.mon.ltm (Monthly NARR) [y][x]
+0 | - | noaa_psl_ab64_0fc7_3674 | cdlyr.mon.ltm (Monthly NARR) [time][y][x], 0001
+0 | - | noaa_psl_f702_7756_0bce | cdlyr.mon.ltm (Monthly NARR) [y][x]
+-4 | - | noaa_ngdc_6332_dc73_6d94 | Central California Coastal Digital Elevation Model (central california 1 mhw 2010), 2.7777778E-4°
+-4 | - | noaa_ngdc_9b6c_2c57_fce7 | Central California Coastal Digital Elevation Model (central california 1 navd88 2010), 2.7777778E-4°
+-4 | - | noaa_ngdc_bbc6_8ac2_83df | Central Florida 1/3 arc-second MHW Coastal Digital Elevation Model, 9.259259E-5°
+-4 | - | noaa_ngdc_72b7_d617_605d | Central Florida 1/3 arc-second NAVD 88 Coastal Digital Elevation Model, 9.259259E-5°
+0 | - | noaa_ngdc_8cbc_a7ac_a012 | central oregon 13 navd88 2015 (GDAL Band Number 1), 9.259259E-5°
+0 | - | noaa_ngdc_be58_7e3c_3068 | central washington 13 navd88 2015 (GDAL Band Number 1), 9.259259E-5°
+-8 | - | noaa_psl_b404_4a77_8b6d | cfnsf.sfc.mon.1981-2010.ltm (NCEP-NCAR Reanalysis 1), 0001
+0 | - | noaa_psl_72f7_6e4e_c540 | cfrzr.mon.ltm (Monthly NARR) [time][y][x], 0001
+0 | - | noaa_psl_1ec1_eb33_d636 | cfrzr.mon.ltm (Monthly NARR) [y][x]
+-8 | thermal | erdCinpKfmT | Channel Islands, Kelp Forest Monitoring, Sea Temperature, 1993-2007
+0 | - | erdCinpKfmSFNH | Channel Islands, Kelp Forest Monitoring, Size and Frequency, Natural Habitat, 1985-2007
+0 | - | erdCinpKfm1Q | Channel Islands, Kelp Forest Monitoring, Survey, 1m Quadrat, 1982-2007
+0 | - | erdCinpKfm5Q | Channel Islands, Kelp Forest Monitoring, Survey, 5m Quadrat, 1996-2007
+0 | - | erdCinpKfmBT | Channel Islands, Kelp Forest Monitoring, Survey, Band Transect, 1983-2007
+0 | - | erdCinpKfmFT | Channel Islands, Kelp Forest Monitoring, Survey, Fish Transect, 1985-2007
+0 | - | erdCinpKfmRPC | Channel Islands, Kelp Forest Monitoring, Survey, Random Point Contact, 1982-2007
+-4 | - | noaa_ngdc_bb18_05dc_3b99 | Charleston Harbor (S080) Bathymetric Digital Elevation Model (charleston harbor S080 2017), 9.259259E-5°
+-12 | - | noaa_ngdc_137c_3c93_7050 | Charlotte Amalie, Virgin Islands Tsunami Forecast Grids for MOST Model (CharlotteAmalieVI A)
+-12 | - | noaa_ngdc_da5e_fa81_aff2 | Charlotte Amalie, Virgin Islands Tsunami Forecast Grids for MOST Model (CharlotteAmalieVI B), 5.5555557E-4°
+-12 | - | noaa_ngdc_fef0_c3ff_a5bf | Charlotte Amalie, Virgin Islands Tsunami Forecast Grids for MOST Model (CharlotteAmalieVI C), 0.0033333334°
+-4 | - | noaa_ngdc_0329_f704_1aa4 | Charlotte Harbor (G050) Bathymetric Digital Elevation Model (charlotte harbor G050 2018), 9.259259E-5°
+-4 | - | noaa_ngdc_bce0_f3c1_4a40 | Chenega, Alaska Coastal Digital Elevation Model (chenega 815 mhhw 2011), 1.4814814E-4°
+-4 | - | noaa_ngdc_74e1_3afa_4a72 | Chesapeake Bay (M130) Bathymetric Digital Elevation Model (chesapeake bay M130 2017), 9.259259E-5°
+-4 | - | noaa_ngdc_6e48_3924_f9e5 | Chignik, Alaska 1 arc-second Coastal Digital Elevation Model (chignik 1 mhhw 2014), 2.7777778E-4°
+-4 | - | noaa_ngdc_8ed9_f8ea_1237 | Chignik, Alaska 1/3 arc-second Coastal Digital Elevation Model (chignik 13 mhhw 2014), 9.259259E-5°
+0 | - | noaa_ngdc_e2a8_f263_9062 | chiniak 815 mhhw 2015 (GDAL Band Number 1), 1.4814814E-4°
+0 | advective | chirps20GlobalPentadP05 | CHIRPS Version 2.0, Precipitation, Global, 0.05°;, 5-Day, 1981-present
+0 | advective | chirps20GlobalPentadP05_Lon0360 | CHIRPS Version 2.0, Precipitation, Global, 0.05°;, 5-Day, 1981-present, Lon0360
+0 | advective | chirps20GlobalAnnualP05 | CHIRPS Version 2.0, Precipitation, Global, 0.05°;, Annual, 1981-present
+0 | advective | chirps20GlobalAnnualP05_Lon0360 | CHIRPS Version 2.0, Precipitation, Global, 0.05°;, Annual, 1981-present, Lon0360
+0 | advective | chirps20GlobalDailyP05 | CHIRPS Version 2.0, Precipitation, Global, 0.05°;, Daily, 1981-present
+0 | advective | chirps20GlobalDailyP05_Lon0360 | CHIRPS Version 2.0, Precipitation, Global, 0.05°;, Daily, 1981-present, Lon0360
+0 | advective | chirps20GlobalMonthlyP05 | CHIRPS Version 2.0, Precipitation, Global, 0.05°;, Monthly, 1981-present
+0 | advective | chirps20GlobalMonthlyP05_Lon0360 | CHIRPS Version 2.0, Precipitation, Global, 0.05°;, Monthly, 1981-present, Lon0360
+-8 | diffusion | erdVHNchla1day | Chlorophyll a, North Pacific, NOAA VIIRS, 750m resolution, 2015-present (1 Day Composite)
+-8 | diffusion | erdVHNchla1day_Lon0360 | Chlorophyll a, North Pacific, NOAA VIIRS, 750m resolution, 2015-present (1 Day Composite), Lon0360
+-8 | diffusion | erdVHNchla3day | Chlorophyll a, North Pacific, NOAA VIIRS, 750m resolution, 2015-present (3 Day Composite)
+-8 | diffusion | erdVHNchla3day_Lon0360 | Chlorophyll a, North Pacific, NOAA VIIRS, 750m resolution, 2015-present (3 Day Composite), Lon0360
+-8 | diffusion | erdVHNchla8day | Chlorophyll a, North Pacific, NOAA VIIRS, 750m resolution, 2015-present (8 Day Composite)
+-8 | diffusion | erdVHNchla8day_Lon0360 | Chlorophyll a, North Pacific, NOAA VIIRS, 750m resolution, 2015-present (8 Day Composite), Lon0360
+-8 | diffusion | erdVHNchlamday | Chlorophyll a, North Pacific, NOAA VIIRS, 750m resolution, 2015-present (Monthly Composite)
+-8 | diffusion | erdVHNchlamday_Lon0360 | Chlorophyll a, North Pacific, NOAA VIIRS, 750m resolution, 2015-present (Monthly Composite), Lon0360
+-8 | diffusion | erdSHcdev8day | Chlorophyll-a Deviation, Orbview-2 SeaWiFS, 0.0125°, West US, 1998-2009 (8 Day Composite) DEPRECATED
+-8 | diffusion | erdMWchla1day | Chlorophyll-a, Aqua MODIS, NPP, 0.0125°, West US, EXPERIMENTAL, 2002-present (1 Day Composite)
+-8 | diffusion | erdMWchla1day_LonPM180 | Chlorophyll-a, Aqua MODIS, NPP, 0.0125°, West US, EXPERIMENTAL, 2002-present (1 Day Composite), Lon+/-180
+-8 | diffusion | erdMWchla14day | Chlorophyll-a, Aqua MODIS, NPP, 0.0125°, West US, EXPERIMENTAL, 2002-present (14 Day Composite)
+-8 | diffusion | erdMWchla14day_LonPM180 | Chlorophyll-a, Aqua MODIS, NPP, 0.0125°, West US, EXPERIMENTAL, 2002-present (14 Day Composite), Lon+/-180
+-8 | diffusion | erdMWchla3day | Chlorophyll-a, Aqua MODIS, NPP, 0.0125°, West US, EXPERIMENTAL, 2002-present (3 Day Composite)
+-8 | diffusion | erdMWchla3day_LonPM180 | Chlorophyll-a, Aqua MODIS, NPP, 0.0125°, West US, EXPERIMENTAL, 2002-present (3 Day Composite), Lon+/-180
+-8 | diffusion | erdMWchla8day | Chlorophyll-a, Aqua MODIS, NPP, 0.0125°, West US, EXPERIMENTAL, 2002-present (8 Day Composite)
+-8 | diffusion | erdMWchla8day_LonPM180 | Chlorophyll-a, Aqua MODIS, NPP, 0.0125°, West US, EXPERIMENTAL, 2002-present (8 Day Composite), Lon+/-180
+-8 | diffusion | erdMWchlamday | Chlorophyll-a, Aqua MODIS, NPP, 0.0125°, West US, EXPERIMENTAL, 2002-present (Monthly Composite)
+-8 | diffusion | erdMWchlamday_LonPM180 | Chlorophyll-a, Aqua MODIS, NPP, 0.0125°, West US, EXPERIMENTAL, 2002-present (Monthly Composite), Lon+/-180
+-8 | diffusion | erdMBchla1day | Chlorophyll-a, Aqua MODIS, NPP, 0.025 degrees, Pacific Ocean, 2006-present, EXPERIMENTAL (1 Day Composite)
+-8 | diffusion | erdMBchla1day_LonPM180 | Chlorophyll-a, Aqua MODIS, NPP, 0.025 degrees, Pacific Ocean, 2006-present, EXPERIMENTAL (1 Day Composite), Lon+/-180
+-8 | diffusion | erdMBchla14day | Chlorophyll-a, Aqua MODIS, NPP, 0.025 degrees, Pacific Ocean, 2006-present, EXPERIMENTAL (14 Day Composite)
+-8 | diffusion | erdMBchla14day_LonPM180 | Chlorophyll-a, Aqua MODIS, NPP, 0.025 degrees, Pacific Ocean, 2006-present, EXPERIMENTAL (14 Day Composite), Lon+/-180
+-8 | diffusion | erdMBchla3day | Chlorophyll-a, Aqua MODIS, NPP, 0.025 degrees, Pacific Ocean, 2006-present, EXPERIMENTAL (3 Day Composite)
+-8 | diffusion | erdMBchla3day_LonPM180 | Chlorophyll-a, Aqua MODIS, NPP, 0.025 degrees, Pacific Ocean, 2006-present, EXPERIMENTAL (3 Day Composite), Lon+/-180
+-8 | diffusion | erdMBchla8day | Chlorophyll-a, Aqua MODIS, NPP, 0.025 degrees, Pacific Ocean, 2006-present, EXPERIMENTAL (8 Day Composite)
+-8 | diffusion | erdMBchla8day_LonPM180 | Chlorophyll-a, Aqua MODIS, NPP, 0.025 degrees, Pacific Ocean, 2006-present, EXPERIMENTAL (8 Day Composite), Lon+/-180
+-8 | diffusion | erdMBchlamday | Chlorophyll-a, Aqua MODIS, NPP, 0.025 degrees, Pacific Ocean, 2006-present, EXPERIMENTAL (Monthly Composite)
+-8 | diffusion | erdMBchlamday_LonPM180 | Chlorophyll-a, Aqua MODIS, NPP, 0.025 degrees, Pacific Ocean, 2006-present, EXPERIMENTAL (Monthly Composite), Lon+/-180
+-8 | diffusion | erdMBchla5day | Chlorophyll-a, Aqua MODIS, NPP, 0.025 degrees, Pacific Ocean, 2013-present, EXPERIMENTAL (5 Day Composite)
+-8 | diffusion | erdMBchla5day_LonPM180 | Chlorophyll-a, Aqua MODIS, NPP, 0.025 degrees, Pacific Ocean, 2013-present, EXPERIMENTAL (5 Day Composite), Lon+/-180
+-8 | diffusion | erdMH1chla1day | Chlorophyll-a, Aqua MODIS, NPP, L3SMI, Global, 4km, Science Quality, 2003-2022 (1 Day Composite)
+-8 | diffusion | erdMH1chla1day_Lon0360 | Chlorophyll-a, Aqua MODIS, NPP, L3SMI, Global, 4km, Science Quality, 2003-2022 (1 Day Composite), Lon0360
+-8 | diffusion | erdMH1chla8day | Chlorophyll-a, Aqua MODIS, NPP, L3SMI, Global, 4km, Science Quality, 2003-2022 (8 Day Composite)
+-8 | diffusion | erdMH1chla8day_Lon0360 | Chlorophyll-a, Aqua MODIS, NPP, L3SMI, Global, 4km, Science Quality, 2003-2022 (8 Day Composite), Lon0360
+-8 | diffusion | erdMH1chlamday | Chlorophyll-a, Aqua MODIS, NPP, L3SMI, Global, 4km, Science Quality, 2003-2022 (Monthly Composite)
+-8 | diffusion | erdMH1chlamday_Lon0360 | Chlorophyll-a, Aqua MODIS, NPP, L3SMI, Global, 4km, Science Quality, 2003-2022 (Monthly Composite), Lon0360
+-8 | diffusion | erdSHchla1day | Chlorophyll-a, Orbview-2 SeaWiFS, 0.0125°, West US, 1998-2009 (1 Day Composite) DEPRECATED
+-8 | diffusion | erdSHchla3day | Chlorophyll-a, Orbview-2 SeaWiFS, 0.0125°, West US, 1998-2009 (3 Day Composite) DEPRECATED
+-8 | diffusion | erdSHchla8day | Chlorophyll-a, Orbview-2 SeaWiFS, 0.0125°, West US, 1998-2009 (8 Day Composite) DEPRECATED
+-8 | diffusion | erdSHchla14day | Chlorophyll-a, Orbview-2 SeaWiFS, 0.0125°, West US, 2006-2009 (14 Day Composite) DEPRECATED
+-8 | diffusion | erdSHchlahday | Chlorophyll-a, Orbview-2 SeaWiFS, 0.0125°, West US, 2009-2009 (Single Scan) DEPRECATED
+-8 | diffusion | erdSWchla8day | Chlorophyll-a, Orbview-2 SeaWiFS, 0.1°, Global, 1997-2010 (8 Day Composite) DEPRECATED
+-8 | diffusion | erdSWchlamday | Chlorophyll-a, Orbview-2 SeaWiFS, 0.1°, Global, 1997-2010 (Monthly Composite) DEPRECATED
+-8 | diffusion | erdSW1chla1day | Chlorophyll-a, Orbview-2 SeaWiFS, R2014.0, 0.1°, Global, 1997-2010 (1 Day Composite) DEPRECATED
+-8 | diffusion | erdSW1chla1day_Lon0360 | Chlorophyll-a, Orbview-2 SeaWiFS, R2014.0, 0.1°, Global, 1997-2010 (1 Day Composite) DEPRECATED, Lon0360
+-8 | diffusion | erdSW1chla8day | Chlorophyll-a, Orbview-2 SeaWiFS, R2014.0, 0.1°, Global, 1997-2010 (8 Day Composite) DEPRECATED
+-8 | diffusion | erdSW1chla8day_Lon0360 | Chlorophyll-a, Orbview-2 SeaWiFS, R2014.0, 0.1°, Global, 1997-2010 (8 Day Composite) DEPRECATED, Lon0360
+-8 | diffusion | erdSW1chlamday | Chlorophyll-a, Orbview-2 SeaWiFS, R2014.0, 0.1°, Global, 1997-2010 (Monthly Composite) DEPRECATED
+-8 | diffusion | erdSW1chlamday_Lon0360 | Chlorophyll-a, Orbview-2 SeaWiFS, R2014.0, 0.1°, Global, 1997-2010 (Monthly Composite) DEPRECATED, Lon0360
+-8 | diffusion | erdSW2018chla1day | Chlorophyll-a, Orbview-2 SeaWiFS, R2018.0, 0.1°, Global, 1997-2010 (1 Day Composite)
+-8 | diffusion | erdSW2018chla1day_Lon0360 | Chlorophyll-a, Orbview-2 SeaWiFS, R2018.0, 0.1°, Global, 1997-2010 (1 Day Composite), Lon0360
+-8 | diffusion | erdSW2018chla8day | Chlorophyll-a, Orbview-2 SeaWiFS, R2018.0, 0.1°, Global, 1997-2010 (8 Day Composite)
+-8 | diffusion | erdSW2018chla8day_Lon0360 | Chlorophyll-a, Orbview-2 SeaWiFS, R2018.0, 0.1°, Global, 1997-2010 (8 Day Composite), Lon0360
+-8 | diffusion | erdSW2018chlamday | Chlorophyll-a, Orbview-2 SeaWiFS, R2018.0, 0.1°, Global, 1997-2010 (Monthly Composite)
+-8 | diffusion | erdSW2018chlamday_Lon0360 | Chlorophyll-a, Orbview-2 SeaWiFS, R2018.0, 0.1°, Global, 1997-2010 (Monthly Composite), Lon0360
+-4 | - | noaa_ngdc_f525_47a7_817a | Choctawhatchee Bay (G120) Bathymetric Digital Elevation Model (choctawhatchee bay G120 2018), 9.25925E-5°
+-12 | - | noaa_ngdc_5550_44fd_a8bd | Christiansted, Virgin Islands Tsunami Forecast Grids for MOST Model (ChristianstedVI A)
+-12 | - | noaa_ngdc_1d44_0698_5ad1 | Christiansted, Virgin Islands Tsunami Forecast Grids for MOST Model (ChristianstedVI B), 0.0011111111°
+-12 | - | noaa_ngdc_8984_5903_a491 | Christiansted, Virgin Islands Tsunami Forecast Grids for MOST Model (ChristianstedVI C)
+0 | - | erdMWcdommday | Chromophoric Dissolved Organic Material, Aqua MODIS, NPP, 0.0125°, West US, 2010-2013 (Monthly Composite)
+0 | - | erdMWcdommday_LonPM180 | Chromophoric Dissolved Organic Material, Aqua MODIS, NPP, 0.0125°, West US, 2010-2013 (Monthly Composite), Lon+/-180
+0 | - | erdMWcdom14day | Chromophoric Dissolved Organic Material, Aqua MODIS, NPP, 0.0125°, West US, 2012-2015 (14 Day Composite)
+0 | - | erdMWcdom14day_LonPM180 | Chromophoric Dissolved Organic Material, Aqua MODIS, NPP, 0.0125°, West US, 2012-2015 (14 Day Composite), Lon+/-180
+0 | - | erdMWcdom3day | Chromophoric Dissolved Organic Material, Aqua MODIS, NPP, 0.0125°, West US, 2012-2015 (3 Day Composite)
+0 | - | erdMWcdom3day_LonPM180 | Chromophoric Dissolved Organic Material, Aqua MODIS, NPP, 0.0125°, West US, 2012-2015 (3 Day Composite), Lon+/-180
+0 | - | erdMWcdom8day | Chromophoric Dissolved Organic Material, Aqua MODIS, NPP, 0.0125°, West US, 2012-2015 (8 Day Composite)
+0 | - | erdMWcdom8day_LonPM180 | Chromophoric Dissolved Organic Material, Aqua MODIS, NPP, 0.0125°, West US, 2012-2015 (8 Day Composite), Lon+/-180
+0 | - | erdMWcdom1day | Chromophoric Dissolved Organic Material, Aqua MODIS, NPP, 0.0125°, West US, 2012-2016 (1 Day Composite)
+0 | - | erdMWcdom1day_LonPM180 | Chromophoric Dissolved Organic Material, Aqua MODIS, NPP, 0.0125°, West US, 2012-2016 (1 Day Composite), Lon+/-180
+0 | - | noaa_psl_8eae_e845_470b | cicep.mon.ltm (Monthly NARR) [time][y][x], 0001
+0 | - | noaa_psl_c30b_467e_37ef | cicep.mon.ltm (Monthly NARR) [y][x]
+0 | - | noaa_psl_274f_6765_35cc | cldc.ltm (COADS1), 2.0°, 0001
+0 | - | noaa_psl_5c9f_ec56_9e4c | cldc.ltm (COADS1), 2.0°, 0001
+0 | - | noaa_psl_961d_8d7c_bda0 | cldc.ltm (COADS1), 2.0°, 0001
+0 | - | noaa_psl_c54c_c07c_7c35 | cldc.ltm (COADS1), 2.0°, 0001
+0 | - | noaa_psl_d5e8_17d9_0fb0 | cldc.ltm (COADS1), 2.0°, 0001
+0 | - | noaa_psl_e15e_3038_ceeb | cldc.ltm (COADS1), 2.0°, 0001
+0 | - | erdATclddhday | Cloudmask, CLAVR-1, NOAA POES AVHRR, 0.0125 degrees, West US, 2007-2025, Daytime (Single Scan)
+0 | - | erdATclddhday_LonPM180 | Cloudmask, CLAVR-1, NOAA POES AVHRR, 0.0125 degrees, West US, 2007-2025, Daytime (Single Scan), Lon+/-180
+0 | - | erdATcldnhday | Cloudmask, CLAVR-1, NOAA POES AVHRR, 0.0125 degrees, West US, 2007-2025, Nighttime (Single Scan)
+0 | - | erdATcldnhday_LonPM180 | Cloudmask, CLAVR-1, NOAA POES AVHRR, 0.0125 degrees, West US, 2007-2025, Nighttime (Single Scan), Lon+/-180
+0 | - | noaa_psl_fc5f_d5c6_1d5d | cnwat.mon.ltm (Monthly NARR) [time][y][x], 0001
+0 | - | noaa_psl_ef55_37ac_51b8 | cnwat.mon.ltm (Monthly NARR) [y][x]
+0 | - | erdCUTIdaily | Coastal Upwelling Transport Index (CUTI), Daily
+0 | - | erdCUTImonthly | Coastal Upwelling Transport Index (CUTI), Monthly
+0 | - | noaa_psl_8a0e_62d4_916d | COBE SST Analysis (sst.mon.ltm.1981-2010), 1.0°, 0001
+0 | - | noaa_psl_0e4d_12ef_cc59 | COBE SST Analysis (sst.mon.ltm.1991-2020), 1.0°, 0001
+0 | - | noaa_psl_d1bf_49df_6a7a | COBE SST Analysis (sst.mon.mean), 1.0°, 1891-present
+-4 | - | noaa_ngdc_57e0_19af_0654 | Cold Bay, Alaska 8 arc-second Coastal Digital Elevation Model (cold bay 8 mhhw 2013), 0.0022222223°
+-4 | - | noaa_ngdc_69f7_3613_de75 | Cold Bay, Alaska 8/15 arc-second Coastal Digital Elevation Model (cold bay 815 mhhw 2013), 1.4814814E-4°
+-4 | - | noaa_ngdc_9ad8_f51b_c1f9 | Cold Bay, Alaska 8/3 arc-second Coastal Digital Elevation Model (cold bay 83 mhhw 2013), 7.4074074E-4°
+0 | - | noaa_ngdc_7677_dc7b_2e48 | columbia river p260 30m
+-4 | - | noaa_ngdc_c061_02ee_ec58 | Cordova, Alaska Coastal Digital Elevation Model (cordova 13 mhw 2010), 9.259259E-5°
+-4 | - | noaa_ngdc_60b8_1f45_7bcc | Cordova, Alaska Coastal Digital Elevation Model (cordova 3 mhw 2010), 8.3333335E-4°
+-4 | - | noaa_ngdc_cc6c_f06a_754f | Cordova, Alaska Coastal Digital Elevation Model (cordova 815 mhhw 2009), 1.4814814E-4°
+-12 | - | noaa_ngdc_879e_f6d1_e3d8 | Cordova, Alaska Tsunami Forecast Grids for MOST Model (CordovaAK A)
+-12 | - | noaa_ngdc_7dae_33ca_0202 | Cordova, Alaska Tsunami Forecast Grids for MOST Model (CordovaAK B)
+-12 | - | noaa_ngdc_981a_3b8d_e83f | Cordova, Alaska Tsunami Forecast Grids for MOST Model (CordovaAK C)
+-4 | - | noaa_ngdc_b064_3e4f_0601 | Corpus Christi Bay (G310) Bathymetric Digital Elevation Model (corpus christi bay G310 2018), 9.259259E-5°
+-4 | - | noaa_ngdc_4c16_f697_4e83 | Corpus Christi, Texas Coastal Digital Elevation Model (corpus christi 13 mhw 2007), 9.259259E-5°
+0 | - | noaa_psl_83be_57b2_f690 | CPC 1/2x1/2 land mask, 0.5°, 1980
+0 | - | noaa_psl_fefd_b393_64a5 | CPC 1/2x1/2 landpercraphy, 0.5°, 1980
+-8 | advective | noaa_psl_2dd0_f89f_b999 | CPC Merged Analysis of Precipitation (excludes NCEP Reanalysis) (precip.mon.ltm), 2.5°, 0001
+-8 | advective | noaa_psl_6e9d_d5ed_4314 | CPC Merged Analysis of Precipitation (excludes NCEP Reanalysis) (precip.mon.ltm.1991-2020), 2.5°, 0001
+-8 | advective | noaa_psl_988f_212f_e139 | CPC Merged Analysis of Precipitation (excludes NCEP Reanalysis) (precip.mon.mean), 2.5°, 1979-present
+-8 | advective | noaa_psl_379e_9959_fd5e | CPC Merged Analysis of Precipitation (includes NCEP Reanalysis) (precip.mon.ltm), 2.5°, 0001
+-8 | advective | noaa_psl_cbd8_4e2a_1a17 | CPC Merged Analysis of Precipitation (includes NCEP Reanalysis) (precip.mon.ltm.1991-2020), 2.5°, 0001
+-8 | advective | noaa_psl_c9a1_581e_1ed1 | CPC Merged Analysis of Precipitation (includes NCEP Reanalysis) (precip.mon.mean), 2.5°, 1979-present
+-8 | advective | noaa_psl_55ad_281b_e1d7 | CPC Merged Analysis of Precipitation Pentad data (excludes NCEP Reanalysis I), 2.5°, 1979-2016
+-8 | advective | noaa_psl_2183_681f_601b | CPC Merged Analysis of Precipitation Pentad data (includes NCEP Reanalysis I), 2.5°, 1979-2016
+-8 | advective | noaa_psl_9ac9_c1ce_6ec5 | CPC Merged Analysis of Precipitation Pentad RT data (excludes NCEP Reanalysis I), 2.5°, 2000-present
+0 | diffusion | noaa_psl_db75_b4ae_17c2 | CPC Soil Moisture (soilw.mon.ltm.v2), 0.5°, 0001
+0 | diffusion | noaa_psl_bec3_56fa_c395 | CPC Soil Moisture (soilw.mon.mean), 0.5°, 1948-present
+0 | diffusion | noaa_psl_fd1c_3970_e940 | CPC Soil Moisture (soilw.mon.mean.v2), 0.5°, 1948-present
+-8 | - | noaa_psl_cc32_d07e_bb08 | cprat.sfc.mon.1981-2010.ltm (NCEP-NCAR Reanalysis 1), 0001
+-16 | - | FRDCPSTrawlLHHaulCatch | CPS Trawl Life History Haul Catch Data
+-16 | - | FRDCPSTrawlLHLengthFrequency | CPS Trawl Life History Length Frequency Data
+-16 | - | FRDCPSTrawlLHSpecimen | CPS Trawl Life History Specimen Data
+-4 | - | noaa_ngdc_5045_2768_6fe6 | Craig and Klawock, Alaska 8/15 sec Coastal Digital Elevation Model, 1.4814814E-4°
+-4 | - | noaa_ngdc_e4e0_b3ed_d52e | Craig, Alaska Coastal Digital Elevation Model (craig 13 mhw 2012), 9.259259E-5°
+-12 | - | noaa_ngdc_9abf_2a28_dd9e | Craig, Alaska Tsunami Forecast Grids for MOST Model (ChignikAK A)
+-12 | - | noaa_ngdc_5617_d2d2_48f1 | Craig, Alaska Tsunami Forecast Grids for MOST Model (ChignikAK B)
+-12 | - | noaa_ngdc_c617_09ef_7c63 | Craig, Alaska Tsunami Forecast Grids for MOST Model (ChignikAK C)
+-12 | - | noaa_ngdc_f834_575a_0ca7 | Craig, Alaska Tsunami Forecast Grids for MOST Model (CraigAK A), 0.033333335°
+-12 | - | noaa_ngdc_8128_0f22_61b4 | Craig, Alaska Tsunami Forecast Grids for MOST Model (CraigAK B), 0.0033333334°
+-12 | - | noaa_ngdc_681e_d222_ecae | Craig, Alaska Tsunami Forecast Grids for MOST Model (CraigAK C), 8.3333335E-4°
+0 | - | noaa_psl_c811_cf3c_6099 | crain.mon.ltm (Monthly NARR) [time][y][x], 0001
+0 | - | noaa_psl_e065_b94e_c0ad | crain.mon.ltm (Monthly NARR) [y][x]
+0 | - | noaa_psl_0e65_1cd8_48c0 | created 05/2014 from data provided by JRA (icec.mon.ltm.1981-2010), 1.0°, 0001
+0 | - | noaa_psl_0122_7525_7de3 | created 05/2014 from data provided by JRA (icec.mon.mean), 1.0°, 1850-2019
+0 | - | noaa_psl_929e_dcc9_0055 | created 12/2013 from data provided by JRA (sst.mon.ltm.1981-2010), 1.0°, 0001
+0 | - | noaa_psl_92ba_2003_296b | created 12/2013 from data provided by JRA (sst.mon.mean), 1.0°, 1850-2019
+-4 | - | noaa_ngdc_9520_1a4c_7aa1 | Crescent City, California Coastal Digital Elevation Model (crescent city 13 mhw 2010), 9.259259E-5°
+-4 | - | noaa_ngdc_1a40_0a2a_2a36 | Crescent City, California Coastal Digital Elevation Model (crescent city 13 navd88 2010), 9.259259E-5°
+-12 | - | noaa_ngdc_cb52_ccff_d03f | Crescent City, California Tsunami Forecast Grids for MOST Model (CrescentCityCA A), 0.02°
+-12 | - | noaa_ngdc_3b59_698d_8aa3 | Crescent City, California Tsunami Forecast Grids for MOST Model (CrescentCityCA B), 0.0033333334°
+-12 | - | noaa_ngdc_0721_2e4b_cde3 | Crescent City, California Tsunami Forecast Grids for MOST Model (CrescentCityCA C), 5.5555557E-4°
+0 | - | noaa_ngdc_093f_e12c_d20d | crm socal 1as vers2 (GDAL Band Number 1), 2.7777778E-4°
+0 | - | noaa_ngdc_fe08_f00e_4c5f | crm socal 3as vers2 (GDAL Band Number 1), 8.3333335E-4°
+4 | - | AWS-CRRF | CRRF Weather Station: Palau: Koror: Ngeanges Island
+0 | thermal | noaa_psl_6d14_a100_547d | CRU Combined Surface/Marine Air Temperature Climatology 1961-1990. (air.mon.ltm), 5.0°, 0001
+0 | thermal | noaa_psl_07ee_2ba5_a129 | CRUTEM4 Air Temperature Dataset (air.mon.anom), 5.0°, 1850-present
+0 | thermal | noaa_psl_0bfe_c9a4_8228 | CRUTEM4 Air Temperature Dataset (air.mon.anom), 5.0°, 1850-present
+0 | thermal | noaa_psl_8deb_fd83_f850 | CRUTEM4 Air Temperature Dataset (air.mon.anom.biased2.5), 5.0°, 1850-present
+0 | thermal | noaa_psl_edd8_1866_a384 | CRUTEM4 Air Temperature Dataset (air.mon.anom.biased97.5), 5.0°, 1850-present
+0 | thermal | noaa_psl_f435_f55a_cc80 | CRUTEM4 Air Temperature Dataset (air.mon.anom.nobs), 5.0°, 1850-present
+0 | thermal | noaa_psl_ab9c_f0cc_1fd2 | CRUTEM4 Air Temperature Dataset (air.mon.anom.samplingerror), 5.0°, 1850-present

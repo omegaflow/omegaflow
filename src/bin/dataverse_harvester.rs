@@ -55,8 +55,10 @@ fn main() {
     for p in 0..pages {
         let start = p * per_page;
         let url = format!(
-            "{}api/search?q=*&type=dataset&start={}&per_page={}",
-            root, start, per_page
+            "{}/api/search?q=*&type=dataset&start={}&per_page={}",
+            root.trim_end_matches('/'),
+            start,
+            per_page
         );
         let Some(body) = curl(&url) else {
             break;

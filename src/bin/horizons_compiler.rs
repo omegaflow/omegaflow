@@ -125,7 +125,9 @@ fn write_binary(
         buf.extend_from_slice(&0u32.to_le_bytes());
         buf.extend_from_slice(&17u32.to_le_bytes());
         buf.extend_from_slice(&0u32.to_le_bytes());
-        for &p in &[0.0_f64; 5] {
+        let kernel_params =
+            omegaflow::media::medium_params_of(body_name).map_or([0.0; 5], |m| m.wire());
+        for &p in &kernel_params {
             buf.extend_from_slice(&p.to_le_bytes());
         }
     }

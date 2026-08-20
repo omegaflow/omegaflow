@@ -1,0 +1,16 @@
+# 3006 tags in the library
+0 | - | tap_schema.schemas tap_schema table
+0 | - | tap_schema.tables tap_schema table
+0 | - | tap_schema.columns tap_schema table
+0 | - | tap_schema.keys tap_schema table
+0 | - | tap_schema.key_columns tap_schema table
+0 | - | dbo.allpointing dbo view
+0 | - | dbo.calpointing dbo view
+0 | - | dbo.caomartifact dbo table
+0 | - | dbo.caommembers dbo table
+0 | - | dbo.caomobservation dbo table
+0 | - | dbo.caomplane dbo table
+0 | - | dbo.mastlinks dbo table
+0 | - | dbo.mastproductdescription dbo table
+0 | - | ivoa.obscore ivoa view
+0 | - | dbo.obspointing dbo view
