@@ -1263,25 +1263,6 @@ dist_scale 3.085677581e16
 field masse planet_mass gaussian-inverse-square gravity M_earth 604800 0.0 0.0
 field rade planet_radius gaussian-inverse-square gravity R_earth 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/exoplanets.json
-format transit
-ttl 604800
-at sun
-transitmap .
-tname name
-tra ra
-tdec dec
-tdist dist
-tdist_scale 3.085677581e16
-ta orbsmax
-te orbeccen
-ti orbincl
-tw orblper
-ttranmid tranmid
-tperiod orbper
-trp rade
-trs strad
-
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/tess_lightcurves.bin
 format lightcurve
 ttl 604800

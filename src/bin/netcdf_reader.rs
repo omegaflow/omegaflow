@@ -1,10 +1,4 @@
-// netcdf_reader — CLI-Hülle über omegaflow::netcdf (CDF-1 + CDF-2, std-only).
-// usage:
-//   netcdf_reader <datei.nc>                          Struktur anzeigen
-//   netcdf_reader <datei.nc> --var <name> [--start a,b,c] [--count x,y,z] [--out <pfad>]
-//   netcdf_reader <datei.nc.gz>                       gzip → entpacken → parse
-//   netcdf_reader --url <url> [--out <pfad>]          curl-Fetch → parse
-// CDF-5 bleibt pending, netCDF-4/HDF5 wird nicht gelesen.
+// CDF-5 stays pending, netCDF-4/HDF5 is not read.
 
 use omegaflow::inflate::gunzip;
 use omegaflow::netcdf::{NetcdfFile, NetcdfNote, NetcdfType};
@@ -13,8 +7,8 @@ use std::process::Command;
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     if args.is_empty() {
-        eprintln!("usage: netcdf_reader <datei.nc> [--var <name> [--start a,b,c] [--count x,y,z] [--out <pfad>]]");
-        eprintln!("       netcdf_reader --url <url> [--out <pfad>]");
+        eprintln!("usage: netcdf_reader <file.nc> [--var <name> [--start a,b,c] [--count x,y,z] [--out <path>]]");
+        eprintln!("       netcdf_reader --url <url> [--out <path>]");
         return;
     }
 
@@ -23,7 +17,7 @@ fn main() {
         match fetch(url) {
             Some(b) => b,
             None => {
-                println!("curl-Fetch ohne Antwort: {}", url);
+                println!("curl fetch without answer: {}", url);
                 return;
             }
         }
@@ -32,7 +26,7 @@ fn main() {
         match std::fs::read(path) {
             Ok(b) => b,
             Err(_) => {
-                println!("Datei öffnet sich nicht: {}", path);
+                println!("file does not open: {}", path);
                 return;
             }
         }
@@ -42,7 +36,7 @@ fn main() {
         match gunzip(&bytes) {
             Some(b) => b,
             None => {
-                println!("gzip-Stream bleibt unlesbar");
+                println!("gzip stream stays unreadable");
                 return;
             }
         }
@@ -53,7 +47,7 @@ fn main() {
     let out_path = arg_value(&args, "--out");
     if let Some(p) = &out_path {
         if let Err(_) = std::fs::write(p, &bytes) {
-            println!("Ausgabedatei schreibt sich nicht: {}", p);
+            println!("output file does not write: {}", p);
             return;
         }
     }
@@ -70,7 +64,7 @@ fn main() {
         Some(var) => {
             let start = list_arg(&args, "--start");
             let count = list_arg(&args, "--count");
-            extrahiere(&nc, &bytes, &var, &start, &count);
+            extract_var(&nc, &bytes, &var, &start, &count);
         }
         None => {
             if args[0] != "--url" {
@@ -119,7 +113,7 @@ fn struktur(f: &NetcdfFile) {
     println!("Format: {}", format_name(f));
     match f.numrecs {
         Some(n) => println!("numrecs: {}", n),
-        None => println!("numrecs: offen (STREAMING)"),
+        None => println!("numrecs: open (STREAMING)"),
     }
     println!("Dimensionen:");
     for (i, d) in f.dims.iter().enumerate() {
@@ -163,11 +157,11 @@ fn struktur(f: &NetcdfFile) {
     }
 }
 
-fn extrahiere(f: &NetcdfFile, file: &[u8], name: &str, start: &[usize], count: &[usize]) {
+fn extract_var(f: &NetcdfFile, file: &[u8], name: &str, start: &[usize], count: &[usize]) {
     let idx = match f.var_index(name) {
         Some(i) => i,
         None => {
-            println!("Variable fehlt: {}", name);
+            println!("variable missing: {}", name);
             return;
         }
     };
@@ -178,7 +172,7 @@ fn extrahiere(f: &NetcdfFile, file: &[u8], name: &str, start: &[usize], count: &
     } else if start.len() == rank {
         start.to_vec()
     } else {
-        println!("--start braucht {} Einträge, hat {}", rank, start.len());
+        println!("--start needs {} entries, has {}", rank, start.len());
         return;
     };
     let count = if count.is_empty() {
@@ -192,7 +186,7 @@ fn extrahiere(f: &NetcdfFile, file: &[u8], name: &str, start: &[usize], count: &
     } else if count.len() == rank {
         count.to_vec()
     } else {
-        println!("--count braucht {} Einträge, hat {}", rank, count.len());
+        println!("--count needs {} entries, has {}", rank, count.len());
         return;
     };
 
@@ -247,17 +241,17 @@ fn extrahiere(f: &NetcdfFile, file: &[u8], name: &str, start: &[usize], count: &
 
 fn note_text(note: &NetcdfNote) -> String {
     match note {
-        NetcdfNote::Magie { bytes } => format!(
-            "Magie ist {:02X} {:02X} {:02X} {:02X} — nicht CDF",
+        NetcdfNote::Magic { bytes } => format!(
+            "magic is {:02X} {:02X} {:02X} {:02X} — not CDF",
             bytes[0], bytes[1], bytes[2], bytes[3]
         ),
-        NetcdfNote::Cdf5 => "Format ist CDF-5 — pending, eigener Atom".to_string(),
-        NetcdfNote::EndeBeiByte { off } => format!("Datei endet bei Byte {}", off),
-        NetcdfNote::Typ { tag, off } => format!("nc_type {} bei Byte {}", tag, off),
-        NetcdfNote::Tag { tag, off } => format!("Listen-Tag 0x{:02X} bei Byte {}", tag, off),
-        NetcdfNote::DimId { id } => format!("Dimensions-Id {} verweist ins Leere", id),
-        NetcdfNote::AnzahlOffen => "Record-Anzahl offen (STREAMING)".to_string(),
-        NetcdfNote::KeineVariable { name } => format!("Variable fehlt: {}", name),
-        NetcdfNote::Slab { var } => format!("Slab liegt außerhalb der Gestalt von {}", var),
+        NetcdfNote::Cdf5 => "format is CDF-5 — pending, its own atom".to_string(),
+        NetcdfNote::EndAtByte { off } => format!("file ends at byte {}", off),
+        NetcdfNote::Type { tag, off } => format!("nc_type {} at byte {}", tag, off),
+        NetcdfNote::Tag { tag, off } => format!("list tag 0x{:02X} at byte {}", tag, off),
+        NetcdfNote::DimId { id } => format!("dimension id {} points into the void", id),
+        NetcdfNote::CountOpen => "record count open (STREAMING)".to_string(),
+        NetcdfNote::MissingVariable { name } => format!("variable missing: {}", name),
+        NetcdfNote::Slab { var } => format!("slab lies outside the shape of {}", var),
     }
 }

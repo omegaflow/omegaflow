@@ -1,14 +1,12 @@
-// netCDF-3-Reader (CDF-1 + CDF-2), std-only, Big-Endian (XDR).
-// Der Struktur-Atom für SPHEREx/DESI/GLODAP (siehe TODO.md, Struktur-Reader).
-// CDF-5 bleibt pending, netCDF-4/HDF5 ist ein eigener Atom. Kein HDF5.
+// CDF-5 stays pending, netCDF-4/HDF5 is its own atom. No HDF5.
 //
-// Format nach der Classic-Spec (Unidata, Appendix B):
-//   magic CDF\x01 (u32-Offsets) | CDF\x02 (u64-Offsets),
-//   numrecs (u32, 0xFFFFFFFF = STREAMING), dim-/gatt-/var-Listen,
-//   Namen und Attributwerte auf 4 Byte gepaddet, Offsets = Byte-Offsets,
-//   Daten row-major, Record-Variablen interleaved am Dateiende.
+// Format per the classic spec (Unidata, Appendix B):
+//   magic CDF\x01 (u32 offsets) | CDF\x02 (u64 offsets),
+//   numrecs (u32, 0xFFFFFFFF = STREAMING), dim-/gatt-/var lists,
+//   names and attribute values padded to 4 bytes, offsets = byte offsets,
+//   data row-major, record variables interleaved at the file end.
 //   nc_type: 1 BYTE, 2 CHAR, 3 SHORT, 4 INT, 5 FLOAT, 6 DOUBLE.
-//   _FillValue bleibt als Attribut sichtbar (0 honored — nie ersetzt).
+//   _FillValue stays visible as an attribute (0 honored — never replaced).
 
 const MAGIC: [u8; 3] = [b'C', b'D', b'F'];
 const STREAMING: u32 = 0xFFFF_FFFF;
@@ -100,14 +98,14 @@ pub struct NetcdfFile {
 
 #[derive(Clone, Debug)]
 pub enum NetcdfNote {
-    Magie { bytes: [u8; 4] },
+    Magic { bytes: [u8; 4] },
     Cdf5,
-    EndeBeiByte { off: usize },
-    Typ { tag: u32, off: usize },
+    EndAtByte { off: usize },
+    Type { tag: u32, off: usize },
     Tag { tag: u32, off: usize },
     DimId { id: u32 },
-    AnzahlOffen,
-    KeineVariable { name: String },
+    CountOpen,
+    MissingVariable { name: String },
     Slab { var: String },
 }
 
@@ -158,14 +156,12 @@ impl<'a> Kur<'a> {
     }
 
     fn name(&mut self) -> Result<String, NetcdfNote> {
-        let len = self
-            .u32()
-            .ok_or(NetcdfNote::EndeBeiByte { off: self.pos })? as usize;
+        let len = self.u32().ok_or(NetcdfNote::EndAtByte { off: self.pos })? as usize;
         let bytes = self
             .take(len)
-            .ok_or(NetcdfNote::EndeBeiByte { off: self.pos })?;
+            .ok_or(NetcdfNote::EndAtByte { off: self.pos })?;
         if !self.align4() {
-            return Err(NetcdfNote::EndeBeiByte { off: self.pos });
+            return Err(NetcdfNote::EndAtByte { off: self.pos });
         }
         Ok(String::from_utf8_lossy(bytes).into_owned())
     }
@@ -174,27 +170,27 @@ impl<'a> Kur<'a> {
 fn attr(cur: &mut Kur) -> Result<NetcdfAttr, NetcdfNote> {
     let name = cur.name()?;
     let off = cur.pos;
-    let tag = cur.u32().ok_or(NetcdfNote::EndeBeiByte { off })?;
-    let nc_type = NetcdfType::from_tag(tag).ok_or(NetcdfNote::Typ { tag, off })?;
-    let nelems = cur.u32().ok_or(NetcdfNote::EndeBeiByte { off: cur.pos })? as usize;
+    let tag = cur.u32().ok_or(NetcdfNote::EndAtByte { off })?;
+    let nc_type = NetcdfType::from_tag(tag).ok_or(NetcdfNote::Type { tag, off })?;
+    let nelems = cur.u32().ok_or(NetcdfNote::EndAtByte { off: cur.pos })? as usize;
     let raw_len = nc_type
         .size()
         .checked_mul(nelems)
-        .ok_or(NetcdfNote::EndeBeiByte { off: cur.pos })?;
+        .ok_or(NetcdfNote::EndAtByte { off: cur.pos })?;
     let raw = cur
         .take(raw_len)
-        .ok_or(NetcdfNote::EndeBeiByte { off: cur.pos })?
+        .ok_or(NetcdfNote::EndAtByte { off: cur.pos })?
         .to_vec();
     if !cur.align4() {
-        return Err(NetcdfNote::EndeBeiByte { off: cur.pos });
+        return Err(NetcdfNote::EndAtByte { off: cur.pos });
     }
     Ok(NetcdfAttr { name, nc_type, raw })
 }
 
 fn attr_list(cur: &mut Kur) -> Result<Vec<NetcdfAttr>, NetcdfNote> {
     let off = cur.pos;
-    let tag = cur.u32().ok_or(NetcdfNote::EndeBeiByte { off })?;
-    let nelems = cur.u32().ok_or(NetcdfNote::EndeBeiByte { off: cur.pos })? as usize;
+    let tag = cur.u32().ok_or(NetcdfNote::EndAtByte { off })?;
+    let nelems = cur.u32().ok_or(NetcdfNote::EndAtByte { off: cur.pos })? as usize;
     match tag {
         0 => Ok(Vec::new()),
         TAG_ATTRIBUTE => {
@@ -211,7 +207,7 @@ fn attr_list(cur: &mut Kur) -> Result<Vec<NetcdfAttr>, NetcdfNote> {
 impl NetcdfFile {
     pub fn parse(bytes: &[u8]) -> Result<NetcdfFile, NetcdfNote> {
         if bytes.len() < 4 {
-            return Err(NetcdfNote::EndeBeiByte { off: bytes.len() });
+            return Err(NetcdfNote::EndAtByte { off: bytes.len() });
         }
         let mut mag = [0u8; 4];
         mag.copy_from_slice(&bytes[0..4]);
@@ -220,15 +216,15 @@ impl NetcdfFile {
                 1 => NetcdfFormat::Cdf1,
                 2 => NetcdfFormat::Cdf2,
                 5 => return Err(NetcdfNote::Cdf5),
-                _ => return Err(NetcdfNote::Magie { bytes: mag }),
+                _ => return Err(NetcdfNote::Magic { bytes: mag }),
             }
         } else {
-            return Err(NetcdfNote::Magie { bytes: mag });
+            return Err(NetcdfNote::Magic { bytes: mag });
         };
 
         let mut cur = Kur::new(bytes);
         cur.take(4);
-        let numrecs_raw = cur.u32().ok_or(NetcdfNote::EndeBeiByte { off: cur.pos })?;
+        let numrecs_raw = cur.u32().ok_or(NetcdfNote::EndAtByte { off: cur.pos })?;
         let numrecs = if numrecs_raw == STREAMING {
             None
         } else {
@@ -276,7 +272,7 @@ impl NetcdfFile {
                 .ok_or(NetcdfNote::DimId { id: id as u32 })?;
             let len = d.len as u64;
             if len == 0 && i == 0 {
-                sh.push(self.numrecs.ok_or(NetcdfNote::AnzahlOffen)? as u64);
+                sh.push(self.numrecs.ok_or(NetcdfNote::CountOpen)? as u64);
             } else {
                 sh.push(len);
             }
@@ -293,7 +289,7 @@ impl NetcdfFile {
     ) -> Result<Vec<u8>, NetcdfNote> {
         let idx = self
             .var_index(name)
-            .ok_or_else(|| NetcdfNote::KeineVariable {
+            .ok_or_else(|| NetcdfNote::MissingVariable {
                 name: name.to_string(),
             })?;
         self.read_slab(file, idx, start, count)
@@ -316,7 +312,7 @@ impl NetcdfFile {
         start: &[usize],
         count: &[usize],
     ) -> Result<Vec<u8>, NetcdfNote> {
-        let v = self.vars.get(idx).ok_or(NetcdfNote::KeineVariable {
+        let v = self.vars.get(idx).ok_or(NetcdfNote::MissingVariable {
             name: idx.to_string(),
         })?;
         let rank = v.dim_ids.len();
@@ -388,7 +384,7 @@ impl NetcdfFile {
             let off = off as usize;
             let end = off + tsize as usize;
             if end > file.len() {
-                return Err(NetcdfNote::EndeBeiByte { off: file.len() });
+                return Err(NetcdfNote::EndAtByte { off: file.len() });
             }
             out.extend_from_slice(&file[off..end]);
 
@@ -552,15 +548,15 @@ impl NetcdfFile {
 
 fn dim_list(cur: &mut Kur) -> Result<Vec<NetcdfDim>, NetcdfNote> {
     let off = cur.pos;
-    let tag = cur.u32().ok_or(NetcdfNote::EndeBeiByte { off })?;
-    let nelems = cur.u32().ok_or(NetcdfNote::EndeBeiByte { off: cur.pos })? as usize;
+    let tag = cur.u32().ok_or(NetcdfNote::EndAtByte { off })?;
+    let nelems = cur.u32().ok_or(NetcdfNote::EndAtByte { off: cur.pos })? as usize;
     match tag {
         0 => Ok(Vec::new()),
         TAG_DIMENSION => {
             let mut out = Vec::with_capacity(nelems.min(1024));
             for _ in 0..nelems {
                 let name = cur.name()?;
-                let len = cur.u32().ok_or(NetcdfNote::EndeBeiByte { off: cur.pos })?;
+                let len = cur.u32().ok_or(NetcdfNote::EndAtByte { off: cur.pos })?;
                 out.push(NetcdfDim { name, len });
             }
             Ok(out)
@@ -571,32 +567,32 @@ fn dim_list(cur: &mut Kur) -> Result<Vec<NetcdfDim>, NetcdfNote> {
 
 fn var_list(cur: &mut Kur, format: NetcdfFormat) -> Result<Vec<NetcdfVar>, NetcdfNote> {
     let off = cur.pos;
-    let tag = cur.u32().ok_or(NetcdfNote::EndeBeiByte { off })?;
-    let nelems = cur.u32().ok_or(NetcdfNote::EndeBeiByte { off: cur.pos })? as usize;
+    let tag = cur.u32().ok_or(NetcdfNote::EndAtByte { off })?;
+    let nelems = cur.u32().ok_or(NetcdfNote::EndAtByte { off: cur.pos })? as usize;
     match tag {
         0 => Ok(Vec::new()),
         TAG_VARIABLE => {
             let mut out = Vec::with_capacity(nelems.min(1024));
             for _ in 0..nelems {
                 let name = cur.name()?;
-                let rank = cur.u32().ok_or(NetcdfNote::EndeBeiByte { off: cur.pos })? as usize;
+                let rank = cur.u32().ok_or(NetcdfNote::EndAtByte { off: cur.pos })? as usize;
                 let mut dim_ids = Vec::with_capacity(rank);
                 for _ in 0..rank {
-                    let id = cur.u32().ok_or(NetcdfNote::EndeBeiByte { off: cur.pos })? as usize;
+                    let id = cur.u32().ok_or(NetcdfNote::EndAtByte { off: cur.pos })? as usize;
                     dim_ids.push(id);
                 }
                 let attrs = attr_list(cur)?;
                 let off = cur.pos;
-                let type_tag = cur.u32().ok_or(NetcdfNote::EndeBeiByte { off })?;
-                let nc_type =
-                    NetcdfType::from_tag(type_tag).ok_or(NetcdfNote::Typ { tag: type_tag, off })?;
-                let vsize = cur.u32().ok_or(NetcdfNote::EndeBeiByte { off: cur.pos })?;
+                let type_tag = cur.u32().ok_or(NetcdfNote::EndAtByte { off })?;
+                let nc_type = NetcdfType::from_tag(type_tag)
+                    .ok_or(NetcdfNote::Type { tag: type_tag, off })?;
+                let vsize = cur.u32().ok_or(NetcdfNote::EndAtByte { off: cur.pos })?;
                 let begin = match format {
                     NetcdfFormat::Cdf1 => {
-                        cur.u32().ok_or(NetcdfNote::EndeBeiByte { off: cur.pos })? as u64
+                        cur.u32().ok_or(NetcdfNote::EndAtByte { off: cur.pos })? as u64
                     }
                     NetcdfFormat::Cdf2 => {
-                        cur.u64().ok_or(NetcdfNote::EndeBeiByte { off: cur.pos })?
+                        cur.u64().ok_or(NetcdfNote::EndAtByte { off: cur.pos })?
                     }
                 };
                 out.push(NetcdfVar {
@@ -878,7 +874,7 @@ mod tests {
         let b = [0x00u8, 0x01, 0x02, 0x03];
         assert!(matches!(
             NetcdfFile::parse(&b),
-            Err(NetcdfNote::Magie { .. })
+            Err(NetcdfNote::Magic { .. })
         ));
     }
 
@@ -887,7 +883,7 @@ mod tests {
         let b = [0x43u8, 0x44, 0x46, 0x01, 0x00];
         assert!(matches!(
             NetcdfFile::parse(&b),
-            Err(NetcdfNote::EndeBeiByte { .. })
+            Err(NetcdfNote::EndAtByte { .. })
         ));
     }
 
@@ -932,7 +928,7 @@ mod tests {
         b.extend(u32b(0));
         assert!(matches!(
             NetcdfFile::parse(&b),
-            Err(NetcdfNote::Typ { tag: 9, .. })
+            Err(NetcdfNote::Type { tag: 9, .. })
         ));
     }
 }

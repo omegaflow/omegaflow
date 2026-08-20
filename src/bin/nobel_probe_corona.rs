@@ -290,7 +290,7 @@ fn pair_cells(a: &[Option<f32>], b: &[Option<f32>]) -> (Vec<f32>, Vec<f32>) {
 fn te_row(label_a: &str, label_b: &str, xs: &[f32], ys: &[f32], lags: &[usize]) {
     if xs.len() < 30 {
         println!(
-            "{:>14} → {:<14} | keine Aussage möglich (n = {})",
+            "{:>14} → {:<14} | no statement possible (n = {})",
             label_a,
             label_b,
             xs.len()
@@ -303,9 +303,9 @@ fn te_row(label_a: &str, label_b: &str, xs: &[f32], ys: &[f32], lags: &[usize]) 
         let thr = surrogate_stats_phase(xs, ys, lag, seed).map(|(_, _, t)| t);
         match (te, thr) {
             (Some(t), Some(h)) => {
-                let arrow = if t > h { "Pfeil" } else { "still" };
+                let arrow = if t > h { "arrow" } else { "silent" };
                 println!(
-                    "{:>14} → {:<14} | lag {:>2} | TE {:>10.4e} | Schwelle {:>10.4e} | Überschuss {:>10.4e} | {}",
+                    "{:>14} → {:<14} | lag {:>2} | TE {:>10.4e} | threshold {:>10.4e} | excess {:>10.4e} | {}",
                     label_a,
                     label_b,
                     lag,
@@ -317,7 +317,7 @@ fn te_row(label_a: &str, label_b: &str, xs: &[f32], ys: &[f32], lags: &[usize]) 
             }
             _ => {
                 println!(
-                    "{:>14} → {:<14} | lag {:>2} | TE fehlt (n < 8) | Schwelle fehlt | Überschuss fehlt | still",
+                    "{:>14} → {:<14} | lag {:>2} | TE missing (n < 8) | threshold missing | excess missing | silent",
                     label_a, label_b, lag
                 );
             }
@@ -348,31 +348,31 @@ fn join_nearest(
     (xs, ys)
 }
 
-struct Pfeil {
-    von: String,
-    nach: String,
+struct Arrow {
+    from: String,
+    to: String,
     n: usize,
     te: f64,
-    schwelle: f64,
+    threshold: f64,
     mean: f64,
     sd: f64,
-    naive_schwelle: f64,
+    naive_threshold: f64,
 }
 
 fn main() {
     let sources = load_sources();
     let now = now_unix();
 
-    println!("=== Nobel-Probe: Das Messprotokoll der Korona-Heizung (Nadel Ⅲ) ===");
-    println!("Systemzeit: {}", now_iso());
+    println!("=== Nobel probe: the measurement protocol of corona heating (Nadel Ⅲ) ===");
+    println!("system time: {}", now_iso());
     println!(
         "TE-Lib: TE(Y→X; τ) = Σ_t ln[ p(x_{{t+τ}}, x_t, y_t) · p(x_t) / (p(x_t, y_t) · p(x_{{t+τ}}, x_t)) ] / m, m = n − τ;"
     );
-    println!("KDE-Bandbreite: Silverman h = 1.06·σ·n^(−0.2) je Reihe; lag 0 → kanonischer 1-Schritt-Schätzer.");
+    println!("KDE bandwidth: Silverman h = 1.06·σ·n^(−0.2) per series; lag 0 → canonical 1-step estimator.");
     println!(
-        "Schwelle: phasenrandomisierte Surrogate (Spektrum der Treiberreihe erhaltend, std-only FFT, 10 Realisierungen), mean + 2σ; die naive Shuffle-Schwelle bleibt nur in der Nullkontrolle zum Vergleich gedruckt. Pfeil ⇔ TE > Schwelle."
+        "Threshold: phase-randomized surrogates (preserving the spectrum of the driver series, std-only FFT, 10 realizations), mean + 2σ; the naive shuffle threshold stays printed only in the null control for comparison. Arrow ⇔ TE > threshold."
     );
-    println!("Zeitbasis: Unix-Sekunden relativ — TE ist verschiebungsinvariant; die TDB-Konstante kürzt sich.");
+    println!("Time base: Unix seconds relative — TE is shift-invariant; the TDB constant cancels.");
 
     let xray_url = format!("{BASE}/goes/primary/xrays-7-day.json");
     let euv_url = format!("{BASE}/goes/primary/euvs-7-day.json");
@@ -386,11 +386,11 @@ fn main() {
     );
 
     println!();
-    println!("=== Kanal-Tafel ===");
+    println!("=== channel board ===");
     let block_of = |name: &str| {
         find_block(&sources, name)
             .map(|s| s.url)
-            .unwrap_or_else(|| "Block fehlt im Register".into())
+            .unwrap_or_else(|| "block missing from the register".into())
     };
     println!(
         "{:<14} | Block {} | {} | Filter energy == 0.05-0.4nm | Sync t_sun = t − {:.3} s",
@@ -414,29 +414,29 @@ fn main() {
         GOES_SYNC_S
     );
     println!(
-        "{:<14} | Block {} | {} | details-Einträge frequency == 2695 | Sync t_sun = t − {:.3} s",
+        "{:<14} | Block {} | {} | details entries frequency == 2695 | Sync t_sun = t − {:.3} s",
         "Radio-2695",
         block_of("solar_radio_flux_sfu"),
         radio_url,
         GOES_SYNC_S
     );
     println!(
-        "{:<14} | Block {} | {} | Key bz_gsm | Sync t_sun = t − 1.481e11 / (v·1000), v aus rtsw_wind (Join ±1 min)",
+        "{:<14} | Block {} | {} | Key bz_gsm | Sync t_sun = t − 1.481e11 / (v·1000), v from rtsw_wind (join ±1 min)",
         "Bz-RTSW", block_of("magnetosphere_imf_bz_nt"), mag_url
     );
     println!(
-        "{:<14} | Block {} | {} | Key proton_density | Sync wie Bz-RTSW",
-        "Dichte-RTSW",
+        "{:<14} | Block {} | {} | Key proton_density | Sync like Bz-RTSW",
+        "Density-RTSW",
         block_of("solar_wind_density_cm3"),
         wind_url
     );
     println!(
-        "{:<14} | Block {} | {} | Spalte BZ_GSM1800, Fill 999.9 | Sync t_sun = t − 1.481e11 / (V1800·1000)",
+        "{:<14} | Block {} | {} | column BZ_GSM1800, fill 999.9 | Sync t_sun = t − 1.481e11 / (V1800·1000)",
         "Bz-OMNI", block_of("omni_imf_bz_gsm_nt"), omni_url
     );
     println!(
-        "{:<14} | Block {} | {} | Spalte N1800, Fill 999.9 | Sync wie Bz-OMNI",
-        "Dichte-OMNI",
+        "{:<14} | Block {} | {} | column N1800, fill 999.9 | Sync like Bz-OMNI",
+        "Density-OMNI",
         block_of("omni_solarwind_density_percc"),
         omni_url
     );
@@ -481,11 +481,11 @@ fn main() {
     let bz_omni = l1_sync_series(&bz_omni_raw, &v1800_raw, 1800.0);
     let dens_omni = l1_sync_series(&dens_omni_raw, &v1800_raw, 1800.0);
 
-    let fenster = |name: &str, s: &[(f64, f64)]| match (s.first(), s.last()) {
+    let window_report = |name: &str, s: &[(f64, f64)]| match (s.first(), s.last()) {
         (Some(&(a, _)), Some(&(b, _))) => {
             let days = (b - a) / 86400.0;
             println!(
-                "{name:<14} | n = {:<6} | Fenster {:.2} d | Kadenz {:.2} s",
+                "{name:<14} | n = {:<6} | window {:.2} d | cadence {:.2} s",
                 s.len(),
                 days,
                 if s.len() > 1 {
@@ -495,33 +495,31 @@ fn main() {
                 }
             );
         }
-        _ => println!("{name:<14} | keine Samples — der Kanal erntet Null",),
+        _ => println!("{name:<14} | no samples — the channel harvests null",),
     };
     println!();
-    fenster("X-Ray", &xray);
-    fenster("EUV-304", &euv304);
-    fenster("EUV-284", &euv284);
-    fenster("Radio-2695", &radio);
-    fenster("Bz-RTSW", &bz_rtsw);
-    fenster("Dichte-RTSW", &dens_rtsw);
-    fenster("Bz-OMNI", &bz_omni);
-    fenster("Dichte-OMNI", &dens_omni);
+    window_report("X-Ray", &xray);
+    window_report("EUV-304", &euv304);
+    window_report("EUV-284", &euv284);
+    window_report("Radio-2695", &radio);
+    window_report("Bz-RTSW", &bz_rtsw);
+    window_report("Density-RTSW", &dens_rtsw);
+    window_report("Bz-OMNI", &bz_omni);
+    window_report("Density-OMNI", &dens_omni);
 
     println!();
-    println!("=== fehlt-Register ===");
-    println!("OMNI ↔ GOES: Schnittmenge leer — der OMNI-Ingest endet am 06.08. (stopDate), die GOES-Reihen beginnen am 12.08. (7-Tage-Fenster).");
-    println!("30 d @ 1 min wird von den APIs nicht bedient: xrays-30-day.json trägt 404.");
-    println!("GOES-30d-Kandidat NGDC netCDF: 404 auf vier Stichproben (18./12./05.08., 25.07.) — kein Block eingetragen.");
-    println!("Radio-Kadenz irregulär (~4–8 Samples/Tag); der Block-Pfad (details.0.flux) trägt nur den ersten Eintrag — die Reihe erntet alle details-Einträge.");
-    println!(
-        "EUV-Linien 256/1175/1216/1335/1405 + mgii_index bleiben ungeerntet (nicht deklariert)."
-    );
-    println!("LSK-Datei fehlt lokal — die Reihen laufen in Unix-Sekunden; die HAPI-Zeiten gehen durch die Identitäts-LSK (delta_t_a = J2000-Offset, 0-s-Pad): Unix rein, Unix raus — kein Leap-Offset, TE ist verschiebungsinvariant.");
-    println!("Sekunden-Matrix: lag 0 (kanonisch) und lag 1 fallen zusammen — auf dem 1-min-Gitter ist der 1-Schritt-Schätzer der 60-s-Lag.");
-    println!("Surrogat-Methodik: die Schwelle ist phasenrandomisiert (Autokorrelation erhaltend); die naive Shuffle-Schwelle bricht die Kontrolle nachweislich — beide stehen in der Nullkontrolle nebeneinander. Block-Bootstrap liegt als surrogate_stats_block in der lib bereit (unbenutzt).");
-    println!("Kleine n tragen keine Aussage: unter n = 30 wird kein Pfeil gemessen — Unterbestimmtheit, keine Stille.");
+    println!("=== missing register ===");
+    println!("OMNI ↔ GOES: intersection empty — the OMNI ingest ends on 06.08. (stopDate), the GOES series begin on 12.08. (7-day window).");
+    println!("30 d @ 1 min is not served by the APIs: xrays-30-day.json carries 404.");
+    println!("GOES-30d candidate NGDC netCDF: 404 on four samples (18./12./05.08., 25.07.) — no block entered.");
+    println!("Radio cadence irregular (~4–8 samples/day); the block path (details.0.flux) carries only the first entry — the series harvests all details entries.");
+    println!("EUV lines 256/1175/1216/1335/1405 + mgii_index stay unharvested (not declared).");
+    println!("LSK file missing locally — the series run in Unix seconds; the HAPI times pass through the identity-LSK (delta_t_a = J2000 offset, 0-s pad): Unix in, Unix out — no leap offset, TE is shift-invariant.");
+    println!("Seconds matrix: lag 0 (canonical) and lag 1 coincide — on the 1-min grid the 1-step estimator is the 60-s lag.");
+    println!("Surrogate methodology: the threshold is phase-randomized (autocorrelation-preserving); the naive shuffle threshold demonstrably breaks the control — both stand side by side in the null control. Block bootstrap sits ready as surrogate_stats_block in the lib (unused).");
+    println!("Small n carry no statement: below n = 30 no arrow is measured — underdetermination, not silence.");
 
-    let matrix_fenster = |channels: &[(&str, &[(f64, f64)])]| -> Option<(f64, f64, f64)> {
+    let common_window = |channels: &[(&str, &[(f64, f64)])]| -> Option<(f64, f64, f64)> {
         let lo = channels
             .iter()
             .filter_map(|(_, s)| s.first().map(|&(t, _)| t))
@@ -540,30 +538,30 @@ fn main() {
         }
     };
 
-    let sekunden_channels = [
+    let seconds_channels = [
         ("X-Ray", xray.as_slice()),
         ("EUV-304", euv304.as_slice()),
         ("EUV-284", euv284.as_slice()),
         ("Bz-RTSW", bz_rtsw.as_slice()),
-        ("Dichte-RTSW", dens_rtsw.as_slice()),
+        ("Density-RTSW", dens_rtsw.as_slice()),
     ];
     println!();
-    println!("=== Matrix 1 — Sekunden (lag ∈ {{0, 1, 2}} @ 1 min, gemeinsames Fenster) ===");
-    match matrix_fenster(&sekunden_channels) {
+    println!("=== Matrix 1 — seconds (lag ∈ {{0, 1, 2}} @ 1 min, common window) ===");
+    match common_window(&seconds_channels) {
         Some((t0, dt, n)) => {
-            let binned: Vec<Vec<Option<f32>>> = sekunden_channels
+            let binned: Vec<Vec<Option<f32>>> = seconds_channels
                 .iter()
                 .map(|(_, s)| bin_mean(s, t0, dt, n as usize))
                 .collect();
-            for i in 0..sekunden_channels.len() {
-                for j in 0..sekunden_channels.len() {
+            for i in 0..seconds_channels.len() {
+                for j in 0..seconds_channels.len() {
                     if i == j {
                         continue;
                     }
                     let (xs, ys) = pair_cells(&binned[j], &binned[i]);
                     te_row(
-                        sekunden_channels[i].0,
-                        sekunden_channels[j].0,
+                        seconds_channels[i].0,
+                        seconds_channels[j].0,
                         &xs,
                         &ys,
                         &[0, 1, 2],
@@ -571,18 +569,18 @@ fn main() {
                 }
             }
         }
-        None => println!("gemeinsames Fenster leer — Matrix fehlt"),
+        None => println!("common window empty — matrix missing"),
     }
 
     println!();
-    println!("=== Matrix 2 — 7-Tage (lag ∈ {{0, 1, 2}} @ 1 min, n = 10 078) ===");
+    println!("=== Matrix 2 — 7-day (lag ∈ {{0, 1, 2}} @ 1 min, n = 10 078) ===");
     {
         let channels = [
             ("X-Ray", xray.as_slice()),
             ("EUV-304", euv304.as_slice()),
             ("EUV-284", euv284.as_slice()),
         ];
-        match matrix_fenster(&channels) {
+        match common_window(&channels) {
             Some((t0, dt, n)) => {
                 let binned: Vec<Vec<Option<f32>>> = channels
                     .iter()
@@ -598,18 +596,18 @@ fn main() {
                     }
                 }
             }
-            None => println!("gemeinsames Fenster leer — Matrix fehlt"),
+            None => println!("common window empty — matrix missing"),
         }
     }
 
     println!();
-    println!("=== Matrix 3 — Stunden (Bz-OMNI ↔ Radio auf Radio-Gitter, Toleranz 1800 s; Bz-OMNI ↔ Dichte-OMNI stündlich) ===");
+    println!("=== Matrix 3 — hours (Bz-OMNI ↔ Radio on the radio grid, tolerance 1800 s; Bz-OMNI ↔ density-OMNI hourly) ===");
     {
         let (xs, ys) = join_nearest(&radio, &bz_omni, 1800.0);
         te_row("Bz-OMNI", "Radio-2695", &xs, &ys, &[0, 1, 2, 3]);
         let (xs, ys) = join_nearest(&radio, &bz_omni, 1800.0);
         te_row("Radio-2695", "Bz-OMNI", &ys, &xs, &[0, 1, 2, 3]);
-        println!("  (Radio-Gitter-Index-lag ist irregular — benannt, nicht verschwiegen)");
+        println!("  (radio-grid index lag is irregular — named, not concealed)");
         let lo = bz_omni
             .first()
             .map(|&(t, _)| t)
@@ -627,17 +625,17 @@ fn main() {
             let bb = bin_mean(&bz_omni, t0, dt, n);
             let bd = bin_mean(&dens_omni, t0, dt, n);
             let (xs, ys) = pair_cells(&bd, &bb);
-            te_row("Bz-OMNI", "Dichte-OMNI", &xs, &ys, &[0, 1, 2, 3]);
+            te_row("Bz-OMNI", "Density-OMNI", &xs, &ys, &[0, 1, 2, 3]);
             let (xs, ys) = pair_cells(&bb, &bd);
-            te_row("Dichte-OMNI", "Bz-OMNI", &xs, &ys, &[0, 1, 2, 3]);
+            te_row("Density-OMNI", "Bz-OMNI", &xs, &ys, &[0, 1, 2, 3]);
         } else {
-            println!("Schnittmenge Bz-OMNI ↔ Dichte-OMNI leer — Matrix fehlt");
+            println!("intersection Bz-OMNI ↔ density-OMNI empty — matrix missing");
         }
     }
 
     println!();
     println!(
-        "=== Matrix 4 — Grobe Radio-Matrix (Radio-Gitter, Toleranz 1800 s, schwache Statistik) ==="
+        "=== Matrix 4 — coarse radio matrix (radio grid, tolerance 1800 s, weak statistics) ==="
     );
     for (label, dense) in [
         ("X-Ray", xray.as_slice()),
@@ -649,16 +647,16 @@ fn main() {
         te_row("Radio-2695", label, &xs, &ys, &[0]);
     }
 
-    let mut pfeile: Vec<Pfeil> = Vec::new();
+    let mut arrows: Vec<Arrow> = Vec::new();
     {
-        match matrix_fenster(&sekunden_channels) {
+        match common_window(&seconds_channels) {
             Some((t0, dt, n)) => {
-                let binned: Vec<Vec<Option<f32>>> = sekunden_channels
+                let binned: Vec<Vec<Option<f32>>> = seconds_channels
                     .iter()
                     .map(|(_, s)| bin_mean(s, t0, dt, n as usize))
                     .collect();
-                for i in 0..sekunden_channels.len() {
-                    for j in 0..sekunden_channels.len() {
+                for i in 0..seconds_channels.len() {
+                    for j in 0..seconds_channels.len() {
                         if i == j {
                             continue;
                         }
@@ -667,15 +665,15 @@ fn main() {
                         let stats = surrogate_stats_phase(&xs, &ys, 0, SURROGATE_SEED);
                         let naive = surrogate_stats(&xs, &ys, 0, SURROGATE_SEED);
                         if let (Some(t), Some((mean, sd, thr))) = (te, stats) {
-                            pfeile.push(Pfeil {
-                                von: sekunden_channels[i].0.into(),
-                                nach: sekunden_channels[j].0.into(),
+                            arrows.push(Arrow {
+                                from: seconds_channels[i].0.into(),
+                                to: seconds_channels[j].0.into(),
                                 n: xs.len(),
                                 te: t,
-                                schwelle: thr,
+                                threshold: thr,
                                 mean,
                                 sd,
-                                naive_schwelle: naive.map(|(_, _, t)| t).unwrap_or(f64::NAN),
+                                naive_threshold: naive.map(|(_, _, t)| t).unwrap_or(f64::NAN),
                             });
                         }
                     }
@@ -690,81 +688,83 @@ fn main() {
         let stats = surrogate_stats_phase(&xs, &ys, 0, SURROGATE_SEED);
         let naive = surrogate_stats(&xs, &ys, 0, SURROGATE_SEED);
         if let (Some(t), Some((mean, sd, thr))) = (te, stats) {
-            pfeile.push(Pfeil {
-                von: "Bz-OMNI".into(),
-                nach: "Radio-2695".into(),
+            arrows.push(Arrow {
+                from: "Bz-OMNI".into(),
+                to: "Radio-2695".into(),
                 n: xs.len(),
                 te: t,
-                schwelle: thr,
+                threshold: thr,
                 mean,
                 sd,
-                naive_schwelle: naive.map(|(_, _, t)| t).unwrap_or(f64::NAN),
+                naive_threshold: naive.map(|(_, _, t)| t).unwrap_or(f64::NAN),
             });
         }
         let te = transfer_entropy_lag(&ys, &xs, 0);
         let stats = surrogate_stats_phase(&ys, &xs, 0, SURROGATE_SEED);
         let naive = surrogate_stats(&ys, &xs, 0, SURROGATE_SEED);
         if let (Some(t), Some((mean, sd, thr))) = (te, stats) {
-            pfeile.push(Pfeil {
-                von: "Radio-2695".into(),
-                nach: "Bz-OMNI".into(),
+            arrows.push(Arrow {
+                from: "Radio-2695".into(),
+                to: "Bz-OMNI".into(),
                 n: xs.len(),
                 te: t,
-                schwelle: thr,
+                threshold: thr,
                 mean,
                 sd,
-                naive_schwelle: naive.map(|(_, _, t)| t).unwrap_or(f64::NAN),
+                naive_threshold: naive.map(|(_, _, t)| t).unwrap_or(f64::NAN),
             });
         }
     }
 
     println!();
-    println!("=== Pfeile (signifikant ⇔ TE > Schwelle = mean + 2σ der phasenrandomisierten Surrogate) ===");
-    for p in &pfeile {
+    println!(
+        "=== Arrows (significant ⇔ TE > threshold = mean + 2σ of phase-randomized surrogates) ==="
+    );
+    for p in &arrows {
         println!(
-            "{:>14} → {:<14} | n {:>5} | TE {:.4e} | Schwelle {:.4e} | Surrogat (mean {:.3e}, σ {:.3e}) | Schwelle-naiv {:.4e} | {}",
-            p.von,
-            p.nach,
+            "{:>14} → {:<14} | n {:>5} | TE {:.4e} | threshold {:.4e} | surrogate (mean {:.3e}, σ {:.3e}) | threshold-naive {:.4e} | {}",
+            p.from,
+            p.to,
             p.n,
             p.te,
-            p.schwelle,
+            p.threshold,
             p.mean,
             p.sd,
-            p.naive_schwelle,
-            if p.te > p.schwelle { "Pfeil" } else { "still" }
+            p.naive_threshold,
+            if p.te > p.threshold { "arrow" } else { "silent" }
         );
     }
     let sig = |a: &str, b: &str| {
-        pfeile
+        arrows
             .iter()
-            .any(|p| p.von == a && p.nach == b && p.te > p.schwelle)
+            .any(|p| p.from == a && p.to == b && p.te > p.threshold)
     };
-    let dag: Vec<String> = pfeile
+    let dag: Vec<String> = arrows
         .iter()
-        .filter(|p| p.te > p.schwelle)
-        .map(|p| format!("{}→{}", p.von, p.nach))
+        .filter(|p| p.te > p.threshold)
+        .map(|p| format!("{}→{}", p.from, p.to))
         .collect();
     println!("DAG: {:?}", dag);
 
     println!();
-    println!("=== Urteil ===");
+    println!("=== Verdict ===");
     let bz_304 = sig("Bz-RTSW", "EUV-304");
     let s304_284 = sig("EUV-304", "EUV-284");
     let euv_xr_arrow = sig("EUV-304", "X-Ray") || sig("EUV-284", "X-Ray");
     let xr_euv_arrow = sig("X-Ray", "EUV-304") || sig("X-Ray", "EUV-284");
-    let best_ue = |von: &[&str], nach: &str| {
-        pfeile
+    let best_excess = |from: &[&str], to: &str| {
+        arrows
             .iter()
-            .filter(|p| p.te > p.schwelle && von.contains(&p.von.as_str()) && p.nach == nach)
-            .max_by(|a, b| (a.te - a.schwelle).total_cmp(&(b.te - b.schwelle)))
+            .filter(|p| p.te > p.threshold && from.contains(&p.from.as_str()) && p.to == to)
+            .max_by(|a, b| (a.te - a.threshold).total_cmp(&(b.te - b.threshold)))
     };
-    let euv_xr_best = best_ue(&["EUV-304", "EUV-284"], "X-Ray");
+    let euv_xr_best = best_excess(&["EUV-304", "EUV-284"], "X-Ray");
     let xr_euv_best = match (
-        best_ue(&["X-Ray"], "EUV-304"),
-        best_ue(&["X-Ray"], "EUV-284"),
+        best_excess(&["X-Ray"], "EUV-304"),
+        best_excess(&["X-Ray"], "EUV-284"),
     ) {
         (Some(x), Some(y)) => {
-            if x.te - x.schwelle >= y.te - y.schwelle {
+            if x.te - x.threshold >= y.te - y.threshold {
                 Some(x)
             } else {
                 Some(y)
@@ -773,49 +773,53 @@ fn main() {
         (x, y) => x.or(y),
     };
     let euv_xr_ue = euv_xr_best
-        .map(|p| p.te - p.schwelle)
+        .map(|p| p.te - p.threshold)
         .unwrap_or(f64::NEG_INFINITY);
     let xr_euv_ue = xr_euv_best
-        .map(|p| p.te - p.schwelle)
+        .map(|p| p.te - p.threshold)
         .unwrap_or(f64::NEG_INFINITY);
     let radio_x_n = join_nearest(&radio, &xray, 1800.0).0.len();
     let radio_goes = radio_x_n >= 30
         && (sig("Radio-2695", "X-Ray")
             || sig("Radio-2695", "EUV-304")
             || sig("Radio-2695", "EUV-284"));
-    let dens_violation = sig("Dichte-RTSW", "X-Ray")
-        || sig("Dichte-RTSW", "EUV-304")
-        || sig("Dichte-RTSW", "EUV-284")
-        || sig("Dichte-OMNI", "Bz-OMNI")
-        || sig("Dichte-OMNI", "Radio-2695");
+    let dens_violation = sig("Density-RTSW", "X-Ray")
+        || sig("Density-RTSW", "EUV-304")
+        || sig("Density-RTSW", "EUV-284")
+        || sig("Density-OMNI", "Bz-OMNI")
+        || sig("Density-OMNI", "Radio-2695");
     println!(
-        "Nullkontrolle-Fenster: Dichte-RTSW ↔ GOES lief auf dem Sekunden-Fenster (gemeinsames Fenster aller Sekunden-Kanäle, ~2 d) — nicht auf OMNI (Schnittmenge leer, stopDate 06.08.)."
+        "Null-control window: density-RTSW ↔ GOES ran on the seconds window (common window of all seconds channels, ~2 d) — not on OMNI (intersection empty, stopDate 06.08.)."
     );
-    println!("=== Nullkontrolle: naive vs. phasenrandomisierte Schwelle ===");
-    for p in pfeile.iter().filter(|p| p.von.starts_with("Dichte-RTSW")) {
-        let naiv = if p.te > p.naive_schwelle {
-            "bricht"
+    println!("=== Null control: naive vs. phase-randomized threshold ===");
+    for p in arrows.iter().filter(|p| p.from.starts_with("Density-RTSW")) {
+        let naiv = if p.te > p.naive_threshold {
+            "breaks"
         } else {
-            "hält"
+            "holds"
         };
-        let phase = if p.te > p.schwelle { "bricht" } else { "hält" };
+        let phase = if p.te > p.threshold {
+            "breaks"
+        } else {
+            "holds"
+        };
         println!(
-            "{:>14} → {:<14} | n {:>5} | TE {:.4e} | Schwelle-naiv {:.4e} ({}) | Schwelle-phase {:.4e} ({})",
-            p.von, p.nach, p.n, p.te, p.naive_schwelle, naiv, p.schwelle, phase
+            "{:>14} → {:<14} | n {:>5} | TE {:.4e} | threshold-naive {:.4e} ({}) | threshold-phase {:.4e} ({})",
+            p.from, p.to, p.n, p.te, p.naive_threshold, naiv, p.threshold, phase
         );
     }
     if bz_304 && s304_284 {
         if dens_violation {
-            println!("TE(Bz → EUV-304) und TE(EUV-304 → EUV-284) signifikant → magnetischer Energiefluss durch die Übergangsregion in die heiße Korona (der Alfvén-Kanal) — VORLÄUFIG: die Surrogat-Schwelle steht unter dem Vorbehalt der gebrochenen Nullkontrolle.");
+            println!("TE(Bz → EUV-304) and TE(EUV-304 → EUV-284) significant → magnetic energy flow through the transition region into the hot corona (the Alfvén channel) — PROVISIONAL: the surrogate threshold stands under the caveat of the broken null control.");
         } else {
-            println!("TE(Bz → EUV-304) und TE(EUV-304 → EUV-284) signifikant → magnetischer Energiefluss durch die Übergangsregion in die heiße Korona (der Alfvén-Kanal).");
+            println!("TE(Bz → EUV-304) and TE(EUV-304 → EUV-284) significant → magnetic energy flow through the transition region into the hot corona (the Alfvén channel).");
         }
     } else if bz_304 {
-        println!("TE(Bz → EUV-304) signifikant, TE(EUV-304 → EUV-284) still → der Pfeil endet in der Übergangsregion — die Kette 304 → 284 fehlt.");
+        println!("TE(Bz → EUV-304) significant, TE(EUV-304 → EUV-284) silent → the arrow ends in the transition region — the chain 304 → 284 is missing.");
     } else if s304_284 {
-        println!("TE(EUV-304 → EUV-284) signifikant, TE(Bz → EUV-304) still → die Übergangsregion heizt die Korona, der magnetische Antrieb bleibt ungemessen.");
+        println!("TE(EUV-304 → EUV-284) significant, TE(Bz → EUV-304) silent → the transition region heats the corona, the magnetic drive stays unmeasured.");
     } else {
-        println!("Kein Pfeil auf Bz → 304 → 284 — der magnetische Kanal ist still (0 honored: Stille ist die Antwort, kein Bug).");
+        println!("No arrow on Bz → 304 → 284 — the magnetic channel is silent (0 honored: silence is the answer, not a bug).");
     }
     if euv_xr_arrow && xr_euv_arrow {
         let (ux, uy) = (euv_xr_ue, xr_euv_ue);
@@ -825,38 +829,38 @@ fn main() {
         );
         if ux > uy {
             println!(
-                "X-Ray ↔ EUV bidirektional — EUV → X-Ray trägt den größeren Überschuss ({:.2e} vs {:.2e}, Surrogat-σ {:.2e} vs {:.2e}) → Wellenheizung (Alfvén) überwiegt, Nanoflare-Anteil gegenläufig präsent.",
+                "X-Ray ↔ EUV bidirectional — EUV → X-Ray carries the larger excess ({:.2e} vs {:.2e}, surrogate σ {:.2e} vs {:.2e}) → wave heating (Alfvén) prevails, nanoflare share present in the opposite direction.",
                 ux, uy, sx, sy
             );
         } else {
             println!(
-                "X-Ray ↔ EUV bidirektional — X-Ray → EUV trägt den größeren Überschuss ({:.2e} vs {:.2e}, Surrogat-σ {:.2e} vs {:.2e}) → Nanoflares überwiegen.",
+                "X-Ray ↔ EUV bidirectional — X-Ray → EUV carries the larger excess ({:.2e} vs {:.2e}, surrogate σ {:.2e} vs {:.2e}) → nanoflares prevail.",
                 uy, ux, sy, sx
             );
         }
     } else if euv_xr_arrow {
         println!(
-            "EUV → X-Ray signifikant bei stiller Rückrichtung → Wellenheizung (Alfvén-Kohärenz)."
+            "EUV → X-Ray significant with silent reverse direction → wave heating (Alfvén coherence)."
         );
     } else if xr_euv_arrow {
-        println!("X-Ray → EUV signifikant bei stiller Rückrichtung → Nanoflares.");
+        println!("X-Ray → EUV significant with silent reverse direction → nanoflares.");
     } else {
-        println!("X-Ray ↔ EUV beidseitig still → kein kausaler Pfeil auf der Sekunden-Skala.");
+        println!("X-Ray ↔ EUV silent on both sides → no causal arrow on the seconds scale.");
     }
     if radio_x_n < 30 {
         println!(
-            "Radio ↔ GOES: keine Aussage möglich (n = {}) — Unterbestimmtheit, keine physikalische Stille.",
+            "Radio ↔ GOES: no statement possible (n = {}) — underdetermination, not physical silence.",
             radio_x_n
         );
     } else if radio_goes {
-        println!("Radio → GOES signifikant bei stiller Rückrichtung → die Chromosphäre treibt die Korona.");
+        println!("Radio → GOES significant with silent reverse direction → the chromosphere drives the corona.");
     } else {
-        println!("Radio → GOES still — die Chromosphären-Kopplung trägt keinen Pfeil.");
+        println!("Radio → GOES silent — the chromospheric coupling carries no arrow.");
     }
     if dens_violation {
-        println!("Dichte-Paare über der phasenrandomisierten Schwelle → NULLKONTROLLE BRICHT AUCH SPEKTRUMERHALTEND — der Bruch übersteht die korrigierte Surrogatmethode; nächster Verdächtiger: Mehrfachvergleich (20 Paare × 3 lags × 4 Matrizen ohne Korrektur) oder ein echter, uninteressanter Kopplungspfad. Das Urteil bleibt VORLÄUFIG.");
+        println!("Density pairs above the phase-randomized threshold → NULL CONTROL BREAKS EVEN SPECTRUM-PRESERVING — the break survives the corrected surrogate method; next suspect: multiple comparison (20 pairs × 3 lags × 4 matrices without correction) or a real, uninteresting coupling path. The verdict stays PROVISIONAL.");
     } else {
-        println!("Nullkontrolle hält unter der phasenrandomisierten Schwelle — der naive Shuffle war das Artefakt; die Signifikanzmaschinerie trägt mit spektrumerhaltenden Surrogaten.");
+        println!("Null control holds under the phase-randomized threshold — the naive shuffle was the artifact; the significance machinery carries spectrum-preserving surrogates.");
     }
-    println!("Stille Zeilen sind Befunde. Exit 0.");
+    println!("Silent lines are findings. Exit 0.");
 }

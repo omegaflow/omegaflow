@@ -1,7 +1,4 @@
-// TeVCat2 JSON array + McGill magnetar TabO1.csv → flat cmap catalog.
-// Sexagesimal RA (hours)/Decl (degrees) → decimal degrees via omegaflow::sexagesimal.
 // Rows: {"name","ra","dec"[,"dist"<kpc>][,"period"][,"flux"][,"index"]}.
-// upload via --ci-mode (tag ssd.jpl.nasa.gov).
 
 use omegaflow::cdn::upload_asset;
 use omegaflow::sexagesimal::{sexagesimal_dec_to_deg, sexagesimal_ra_to_deg};
@@ -211,15 +208,15 @@ fn tevcat(
     }
     if let Some(p) = join_z {
         let n = join_catalog(&mut rows, p, "z", 0.05);
-        eprintln!("tevcat: {} Zeilen via z-Join (<=3')", n);
+        eprintln!("tevcat: {} rows via z-join (<=3')", n);
     }
     if let Some(p) = join_dist {
         let n = join_catalog(&mut rows, p, "dist", 0.1);
-        eprintln!("tevcat: {} Zeilen via dist-Join (<=0.1 deg)", n);
+        eprintln!("tevcat: {} rows via dist-join (<=0.1 deg)", n);
     }
     if let Some((p, sep)) = join_dist2 {
         let n = join_catalog(&mut rows, p, "dist", sep);
-        eprintln!("tevcat: {} Zeilen via dist2-Join (<={} deg)", n, sep);
+        eprintln!("tevcat: {} rows via dist2-join (<={} deg)", n, sep);
     }
     if let Some(p) = probe {
         for r in &rows {

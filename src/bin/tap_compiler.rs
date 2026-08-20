@@ -1,8 +1,3 @@
-// TAP-Kompilator: Katalog-Inventare (tap_schema.tables) und Bulk-Fetches
-// (ADQL, FORMAT=json, Paging) → Flat-cmap-JSON für den cmap+dist_scale/z-Kanal.
-// Muster: ephemeris_compiler --index/--fetch-from. Erster Einsatz: TAPVizieR.
-// upload via --ci-mode (tag ssd.jpl.nasa.gov).
-
 use omegaflow::cdn::upload_asset;
 use omegaflow::json::{parse_json, JsonVal};
 use std::io::Write;
@@ -246,7 +241,7 @@ fn tap_async(root: &str, adql: &str, poll_secs: u64) -> Option<String> {
         std::thread::sleep(std::time::Duration::from_secs(10));
     }
     if phase != "COMPLETED" {
-        eprintln!("uws job phase: {} nach {} s", phase, poll_secs);
+        eprintln!("uws job phase: {} after {} s", phase, poll_secs);
         return None;
     }
     Command::new("curl")

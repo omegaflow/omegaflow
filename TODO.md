@@ -109,7 +109,6 @@ Schnittmenge leer, im Protokoll fehlt.
   per-Anker-Extraktion (sun/earth sofort extrahieren statt nach der ganzen
   Anker-Phase) für wörtliches „Sekunden"-Laden; der Kalt-Download
   (~360 MB) bleibt einmalig bis zum Warm-Cache.
-- 477 547 deep je Sense ohne Richtungsfilter — treibt Speicher und maxms.
 - OOM-Befund: ein Lauf, dessen GPU-Thread beim Pipeline-Bau panikte, lief
   als Rumpf weiter (Archivar + Audio, 3,2 GB) — der tote GPU-Thread ist
   nicht der tote Prozess.
@@ -171,11 +170,11 @@ Schnittmenge leer, im Protokoll fehlt.
   Asteroiden (1,56 Mio Records) überschreiten die alte Kappe; ohne
   Erhöhung kippten die ältesten Samples — genau die Sterne (epoch 0.0).
   Buffer.star_records:
-  Arc<Vec<StarRec>> bleibt für sense_deep + transit_factors
-  (WGSL-Deep-Pipeline; stirbt mit der Subpixel-Wahrheit), der Wiederaufbau
+  Arc<Vec<StarRec>> blieb für sense_deep + transit_factors (gestorben in
+  Atom 8, 2026-08-20), der Wiederaufbau
   speist die Stern-Samples je Zyklus aus archive.star_samples
   (Body-Retention wie Asteroiden). Benannt: das native Fenster trägt die
-  Sterne jetzt über &buf.inertial (sense_membrane) — vorher nur der
+  Sterne jetzt über &buf.cache (sense_membrane) — vorher nur der
   Browser via query_star_hash; das Bin trägt 145 744
   Parallaxen-Artefakte (f32-MAX/Denormals — parse-gültig, landen in
   fernen Zellen, nie abgefragt; Bestand aus der StarHash-Ära).
@@ -199,7 +198,9 @@ Schnittmenge leer, im Protokoll fehlt.
   Zellen; die Broadphase läuft über den in_box-Fallback und den
   dist2_anchor_p0-Filter (Enclosure bleibt konservativ, kein Sample geht
   verloren; die feine Zellauflösung der alten Körper-Hashes existiert
-  nicht mehr). 0/0-Gate in allen vier Feature-Kombinationen
+  nicht mehr). Auflösung 2026-08-20 (Atom 8): die Sterne verlassen den
+  bounded-Teil (extent ∞) — die Zellgröße schrumpft zurück auf
+  Sonnensystem-Maß. 0/0-Gate in allen vier Feature-Kombinationen
   (default, browser_relay, gamepad, beide), 165 Tests grün.
 - Atom 7 (2026-08-20, nach Atom 6): `gravity_manifest` ist tot — die Form
   gehört zum Anker, nicht zur Messung. Gestorben: die Funktion
@@ -213,15 +214,67 @@ Schnittmenge leer, im Protokoll fehlt.
   meta-Pack unverändert) und tragen für force_type 1 konsequent 0.0
   (0 honored); pole_x trägt weiter das Tolman-z für em. Der
   kernel_extent-Gravitationspfad (extent = radius_m) bleibt — die
-  Reichweite des Ankers, keine Form; die Okklusion (Radius-Barrieren,
-  mathematikerin.rs, aus den Ephemeriden-Props) bleibt und trägt den
-  Radius weiter über die Anker-Seite. Offen (späteres Atom): die
-  Okklusion stirbt zugunsten der Feld-Absorption. Gates: cargo check
+  Reichweite des Ankers, keine Form. Offen (späteres Atom): die
+  Okklusion stirbt zugunsten der Feld-Absorption. — ERLEDIGT in Atom 8
+  (2026-08-20): die Okklusion ist tot, die Feld-Absorption ist pending
+  (siehe Atom 8). Gates: cargo check
   0/0 (vier Feature-Kombinationen), cargo test 165/165 lib + alle
   Bins, naga-Validierung grün. Der Schnitt landete in zwei Commits:
   die Rust-Hälfte (archivar.rs: query_hash, gravity_manifest,
   body_channels) trug der vorangegangene Commit (benannt „Atom 6",
   8f57a25) — der WGSL-/Register-Schluss folgt separat.
+
+- Atom 8 (2026-08-20, nach Atom 7) — „Die Vereinheitlichung des
+  Sensoriums (Der Schall entscheidet, nicht das Trommelfell)": die
+  Objekt-Render-Pfade sind tot. Gestorben: die Okklusion (WGSL
+  occlusion() + barriers-Buffer, Ephemeriden-Radius-Barrieren +
+  Asteroiden-Barrieren, OccIndex/OccReport/occ_dir_cell/occ_hits_ray/
+  occulting_barriers, HUD „okkl"), die Stern-Sprites (sense_deep,
+  pack_stars, star_contrib/star_assign/star_cull, star_vbuf/star_count,
+  deep-Zahl im HUD), die 2D-Gitter (tile_cull, source_bound,
+  tiles/star_tiles-Buffer, 16×16-Kacheln, cull_n) und die
+  Transit-Scheibengeometrie (Extract::TransitMap + „transitmap" +
+  tname/tra/…-Schlüssel, build_planet_set, transit_factors,
+  disc_intersection_fraction, der sources.φ-Block „format transit").
+  Der Fragment-Shader fs iteriert linear über field/props via
+  source_contrib — eine kurze Liste; die VP-Uniform trägt kein
+  star_count/barrier_count mehr (9×vec4f = 36 f32; expose_ex.x =
+  Belichtungs-Offset, .y = Response-Epoche). Sterne sind gewöhnliche
+  Punktquellen-Samples im unbounded-Pfad des SpatialHash (extent = ∞ als
+  Reichweite-Marker; wire_extent schreibt 0.0 auf den Draht — die
+  Punktquelle hat keine Ausdehnung, dort ist 0 die Wahrheit). Die Diode
+  (query_hash, unbounded-Pfad): Stufe 1 val-Gate vor motion.at
+  (|val|·(1+z)⁻⁴ < ft_ref·2^(−expose_offset) → skip; ft_ref == 0 →
+  dunkle Diode — der Shader zeigt ohnehin lum 0), Stufe 2 Quergate nach
+  motion.at (t² = d² − (fwd·(p−center))²; val_eff/(t²+scale²) <
+  ft_ref·2^(−off)/scale² → skip; der Fold spiegelt fold_eff). Der Schall
+  trifft das Trommelfell quer — die radiale d²-Formel des Auftrags war
+  ein Physikfehler (kein Stern hätte je die Schwelle passiert) und ist
+  benannt; die gewählte Form ist die Operator-Entscheidung (Val-Domäne +
+  Quergate). Folge-Wahrheiten: nahe der Sonne passiert kein Stern (die
+  Diode, die die Sonne hört, hört keinen Stern); im tiefen Raum
+  relaxiert die Live-Referenz (ft_ref), achsennahe helle Sterne
+  erscheinen als weiche Glows beim Blick-Sweep. Der Browser-Relay trägt
+  die dunkle Diode (floor = [0;9]) — Ausgabe identisch zu vorher; das
+  Browser-Sternfeld bleibt pending (eigene Belichtungsrampe). CurveSet
+  (tess_lightcurves, emit_curves) lebt. Der Lichtkegel-Horizont
+  (signal_reach, c·age ≈ 8 kpc) begrenzt jetzt auch die Sterne —
+  registriert (vorher sense_deep ohne Lichtkegel). Pending:
+  Feld-Absorption (Transits/Okklusion als Feld-Eigenschaft — der
+  absorption-Slot lebt im Protokoll). Gates: cargo check 0/0 (vier
+  Feature-Kombinationen), cargo test 162/162 lib, naga-Validierung.
+  Sprach-Durchgang (im selben Commit, Operator-Weisung 2026-08-20): die
+  deutsche Sprache ist aus dem Code gewandert — „sterne/planeten" →
+  stars/planets, alle verbliebenen deutschen Diagnostik-Zeilen,
+  Kommentare, CLI-Dokumente (--summarize-Vorlage, Nobel-Probe-Bericht)
+  und Bezeichner (Pfeil/fenster/extrahiere/sekunden_*) sind übersetzt;
+  AGENTS-Sprachdoktrin erfüllt. Nur Eigennamen tragen Deutsch.
+  Semantischer Feinschliff (Operator-Weisung): `SampleSource::Body` →
+  `SampleSource::Ephemeris` (die Herkunft ist das Ephemeriden-Kompilat,
+  nicht ein Körper — BodyEphemeris/BodyProperties bleiben Eigennamen der
+  Datensätze); alle erklärenden Docstrings starben — es bleiben nur
+  Physik-Herleitungen, 0-honored-Gesetze, Pending-Register und
+  Byte-Layout-Kontrakte (53 Zeilen).
 
 ## Die Sphären des Unsichtbaren
 
@@ -232,19 +285,21 @@ Schnittmenge leer, im Protokoll fehlt.
   Atom 1) — offen, eigene Session.
 - Atom-1-Grenzen (registriert): der 3D-Orbit des Planetenpunkts bleibt
   ausstehend — Ω (Azimut im Sky-Frame) ist ungemessen, der Schatten ist
-  Ω-frei, ein Punktorbit wäre geraten; der Schatten manifestiert nur, wo
-  der Stern rendert (Deep-Fluss ≥ 1e-4, ~mag 10); pscomppars trägt
+  Ω-frei, ein Punktorbit wäre geraten; der Transit-Schatten ist seit
+  Atom 8 (2026-08-20) tot — die Rückkehr läuft über die
+  Feld-Absorption (pending, oben); pscomppars trägt
   mehrere Parametersätze je Planet und keinen default_flag — erster Satz
   je Planetenname zählt; fehlt ein Element → kein Schatten (0 honored).
 - LuckyStar: decline (Vorhersagen sind Modell, keine Messung; die
   Ergebnisse-Server liefern nur abgeleitete Fits) — der rohe
   em-Lichtkurven-Kanal der Fresnel-Sphäre bleibt ausstehend.
-- Okklusions-Reste (aus der Massen-Okklusion): kontinuierliche Opazität
+- Okklusions-Reste → Feld-Absorption (pending, Atom 8, 2026-08-20):
+  kontinuierliche Opazität
   (Partial-Transmission), atmosphärische Dämmerung, kleine Skala
   (Terrain/Bauten — der Mechanismus ist skalenfrei, die Daten fehlen),
-  Oszillator-Eigenradius als Rekord-Slot. Seit Atom 7 trägt die
-  Okklusion den Radius über die Ephemeriden-Barrieren (Anker-Seite) —
-  der Schnitt zur Feld-Absorption ist ein eigenes Atom (siehe Atom 7).
+  Oszillator-Eigenradius als Rekord-Slot, Transits als Feld-Dämpfung.
+  Die geometrische Okklusion (Ephemeriden-Barrieren) starb in Atom 8;
+  der absorption-Slot lebt im Protokoll — das Atom ist die Manifestation.
 - Atom 1 deckt den Weg für Ringe/Warp — noch kein Konzept-Dokument.
 
 ## Der spektrale Oszillator — die Frequenzachse (Konzept: DER_SPEKTRALE_OSZILLATOR.md)
@@ -384,7 +439,8 @@ ICRS-4D-Rahmen teilt:
   Okklusion lebt, Stern-Tiles leben, Tile-Cull lebt, omega-Akkumulation lebt,
   hsl_to_rgb lebt — `temperature_to_rgb` im dynamischen Loop tötet (die
   31-Stützstellen-Interpolation Pecaut-Mamajek + Helland-Polynome, inlined in
-  den Loop-Body, überfordern den gen9-Compiler). Fix: die Wahrheit wanderte in
+  den Loop-Body, überfordern den gen9-Compiler). (Die drei ersten
+  Bisektions-Zeugen starben in Atom 8 — der Befund selbst bleibt wahr.) Fix: die Wahrheit wanderte in
   den Archivar — `omegaflow::spectral::color_lut_rgba` (256 Bins, Rgba32Float,
   Rand-Bins = exakte Locus-Klemmen, Bins dazwischen = Zentren; f64) als
   LUT-Textur (Binding 9+12, Nearest, NonFiltering); WGSL sampelt
@@ -432,16 +488,21 @@ ICRS-4D-Rahmen teilt:
 
 - Radial-Profil eines isolierten breiten Gauß-Punkts (e^(−r²/2)) am
   Fenster — Messung + e/E/P-Gefühl gehören dem Operator.
-- Sternenhimmel relativ zur Live-Em-Referenz statt absolut (+18) — das
-  Operator-Urteil entscheidet, ob der absolute Anker zurückkehrt.
-- Galaxien-Zoom-Verifikation (deep-Zahl im HUD; bei grid 2^39 noch 0 —
-  Proxima bei 4,2 ly ≈ 2^45,5).
+- Sternenhimmel relativ zur Live-Em-Referenz (ft_ref) statt absolut —
+  seit Atom 8 (2026-08-20) ist die Diode exakt relativ zur Live-Referenz;
+  die Operator-Messung bleibt ausstehend: Wie atmet der Glow beim
+  Übergang Sonnen-Nähe → tiefer Raum, wann erscheinen die achsennahen
+  Sterne im Blick-Sweep.
+- Galaxien-Zoom-Verifikation: der alte deep-Zähler starb mit Atom 8 —
+  offen ist das Operator-Gefühl für die Glows im tiefen Raum (Proxima
+  bei 4,2 ly ≈ 2^45,5); keine tiefaufgelöste Vorab-Integration.
 - Fireball-Operator (sum vs. mean im `fold`) — Live-Verifikation offen.
 - Audio-Phasen-Invariante dokumentieren: sr = 44100, ganzzahlige
   Frequenzen, 1-s-Noten → glatter Nulldurchgang am Tick-Ende; bei
   sr-/Frequenzwechsel bricht sie.
 - Sternenhintergrund (integrierter Glow der 1/d²-Schwänze, Milchstraße):
-  einmalige tiefaufgelöste Integration, glattes Feld.
+  seit Atom 8 ist der Glow die lebende Summe der Diode — die Messung
+  gehört dem Operator (kein vorab integriertes Feld).
 
 ## Wahrheitsfindung — Urteil-Verzeichnis (nur offene Urteile)
 

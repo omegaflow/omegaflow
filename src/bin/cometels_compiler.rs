@@ -1,6 +1,4 @@
-// MPC cometels.json.gz → flat cmap catalog (ra/dec/dist_au at catalog epoch).
 // Runtime channel: cmap + dist_scale (AU → m). e >= 1 skipped (Kepler domain, 0 honored).
-// upload via --ci-mode (tag ssd.jpl.nasa.gov, asset cometels_flat.json).
 
 use omegaflow::cdn::upload_asset;
 use omegaflow::inflate::gunzip;

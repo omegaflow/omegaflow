@@ -1,9 +1,3 @@
-// Zip-Range-Extraktor: liest ein Zip über HTTP-Range (EOCD → Central Directory →
-// Member-Payload), ohne den Zip-Körper zu laden. Für grosse Zips (dastcom5.zip ~1,3 GB).
-// usage:
-//   zip_range_extract --url <zip-url> [--tail <bytes>] --list <substr>
-//   zip_range_extract --url <zip-url> [--tail <bytes>] --get <substr> --out <file>
-
 use omegaflow::inflate::inflate;
 use std::io::Write;
 use std::process::Command;

@@ -1,12 +1,9 @@
-// spectral_compiler — Spektral-Atom B: tabellarische Messung → spectra.bin.
-// usage:
-//   spectral_compiler --input <csv> --month YYYY-MM --lsk <naif0012.tls> [--out spectra.bin] [--ci-mode]
-// CSV-Kontrakt (Queue-Draft master.φ:31611): Zeilen
+// CSV contract (queue draft master.φ:31611): rows
 // `wavelength_nm,irradiance_W_m2_nm,uncertainty_W_m2_nm,quality_flag`;
-// flag != 0, nicht-endliche und nicht-positive Werte fallen (0 honored).
-// Konversion: ν = c/λ, E_ν = E_λ·λ²/c, bin_width aus dem nativen λ-Gitter.
-// Epoch = Monatsmitte der Messung (nicht Fetchzeit), TDB via LSK.
-// Die netCDF-4/HDF5-Ernte bleibt pending — HDF5 wird benannt, nicht ersetzt.
+// flag != 0, non-finite and non-positive values drop (0 honored).
+// Conversion: ν = c/λ, E_ν = E_λ·λ²/c, bin_width from the native λ grid.
+// Epoch = month middle of the measurement (not fetch time), TDB via LSK.
+// The netCDF-4/HDF5 harvest stays pending — HDF5 is named, not replaced.
 
 use omegaflow::cdn::upload_asset;
 use omegaflow::lsk::parse as parse_lsk;
@@ -72,7 +69,7 @@ fn main() {
     }
     let bins = bins_from_lambda_rows(&rows);
     eprintln!(
-        "{}: {} Zeilen, {} gültige Bins, {} malformed",
+        "{}: {} rows, {} valid bins, {} malformed",
         input,
         rows.len(),
         bins.len(),

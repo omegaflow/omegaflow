@@ -53,7 +53,7 @@ fn main() {
         out.push_str(&format!("{} | {} | {}\n", g.weight, force_name, text));
     }
     match std::fs::File::create(&out_path).and_then(|mut f| {
-        f.write_all(format!("# {} Tags in der Library\n", library.len()).as_bytes())
+        f.write_all(format!("# {} tags in the library\n", library.len()).as_bytes())
             .and(f.write_all(out.as_bytes()))
     }) {
         Ok(()) => {

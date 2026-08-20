@@ -1,8 +1,6 @@
-// Tycho-2 (VizieR I/259: tyc2.dat.00-19.gz + suppl_1/2) + Hipparcos (I/239:
-// hip_main.dat → Plx + Vmag) → Stern-Katalog-Bin (36-B-Records) für den
-// runtime catalog_tycho-Kanal. Nur Sterne mit plx > 0 manifestieren — die
-// übrigen sind absent (0 honored). Suppl-Positionen (J1991.25) werden auf
-// J2000 propagiert. Byte-Layouts: CDS ReadMe I/259 und I/239.
+// Only stars with plx > 0 manifest — the
+// rest are absent (0 honored). Suppl positions (J1991.25) are propagated to
+// J2000. Byte layouts: CDS ReadMe I/259 and I/239.
 
 use omegaflow::cdn::upload_asset;
 use omegaflow::inflate::gunzip;
@@ -449,7 +447,7 @@ fn main() {
             }
         }
         eprintln!(
-            "tgas: {} rows, {} ohne plx, davon {} via Hipparcos-Join wiederhergestellt",
+            "tgas: {} rows, {} without plx, of which {} recovered via Hipparcos join",
             rows.len(),
             rows.iter().filter(|r| r.plx_mas <= 0.0).count() + 0,
             recovered

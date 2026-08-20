@@ -1,7 +1,5 @@
-// Text-FK-Reader: FRAME_*/TKFRAME_-Blöcke aus SPICE-Textkerneln (.tf).
-// Quelle der Frame-Assoziationen (K05): ersetzt die hartcodierten
-// PA-Frame-Tabellen im Flattener. TKFRAME SPEC='ANGLES' → Rotationsmatrix
-// (SPICE-Konvention: Rotation um AXIS1 um ANGLE1, dann AXIS2, dann AXIS3).
+// TKFRAME SPEC='ANGLES' → rotation matrix
+// (SPICE convention: rotation about AXIS1 by ANGLE1, then AXIS2, then AXIS3).
 
 use std::collections::HashMap;
 use std::path::Path;

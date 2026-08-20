@@ -1,11 +1,9 @@
 use crate::archivar::{
-    body_barycenter_position, sense_deep, sense_membrane, star_position_at, system_now, Buffer,
-    CurveSet, LeapSeconds, PlanetRec, PlanetSet, Radiator, SampleRecord, StarRec, J2000_EPOCH,
-    PARSEC_M,
+    body_barycenter_position, sense_membrane, system_now, Buffer, CurveSet, LeapSeconds, Radiator,
+    SampleRecord, PARSEC_M,
 };
-use crate::dastcom::AsteroidRec;
 const FIELD_WGSL: &str = r#"
-struct VP { surface: vec4f, right: vec4f, up: vec4f, forward: vec4f, expose_lo: vec4f, expose_hi: vec4f, expose_ex: vec4f, presence: vec4f, ft_ref_a: vec4f, ft_ref_b: vec4f, ft_ref_c: vec4f };
+struct VP { surface: vec4f, right: vec4f, up: vec4f, forward: vec4f, expose_ex: vec4f, presence: vec4f, ft_ref_a: vec4f, ft_ref_b: vec4f, ft_ref_c: vec4f };
 const C_VACUUM: f32 = 299792458.0;
 const AUDIO_SPEED_AIR: f32 = 343.0;
 const PROPAGATION_SPEED: array<f32, 9> = array<f32, 9>(
@@ -18,17 +16,6 @@ const PROPAGATION_SPEED: array<f32, 9> = array<f32, 9>(
     0.05,
     1.0,
     C_VACUUM,
-);
-const OPACITY: array<f32, 9> = array<f32, 9>(
-    1.0,
-    0.0,
-    1.0,
-    0.0,
-    0.0,
-    1.0,
-    0.0,
-    0.0,
-    1.0,
 );
 fn fold_eff(d_mag: f32, raw: f32, t: f32, ttl: f32, force_type: u32, advective_v: f32) -> f32 {
     let v_const = PROPAGATION_SPEED[force_type];
@@ -46,10 +33,6 @@ fn fold_eff(d_mag: f32, raw: f32, t: f32, ttl: f32, force_type: u32, advective_v
 @group(0) @binding(2) var<uniform> vp: VP;
 @group(0) @binding(3) var<storage, read_write> probe_out: array<f32>;
 @group(0) @binding(4) var<storage, read_write> pp: array<vec4f>;
-@group(0) @binding(5) var<storage, read> barriers: array<vec4f>;
-@group(0) @binding(6) var<storage, read_write> tiles: array<u32>;
-@group(0) @binding(7) var<storage, read> stars: array<vec4f>;
-@group(0) @binding(8) var<storage, read_write> star_tiles: array<atomic<u32>>;
 @group(0) @binding(9) var color_lut: texture_2d<f32>;
 @group(0) @binding(12) var color_lut_samp: sampler;
 
@@ -57,33 +40,6 @@ fn color_lut_rgb(ci: f32) -> vec3f {
     let u = clamp((ci - (-0.120)) / (5.100 - (-0.120)), 0.0, 1.0);
     let col = textureSampleLevel(color_lut, color_lut_samp, vec2f(u, 0.5), 0.0).rgb;
     return select(col, vec3f(1.0), ci == 0.0);
-}
-
-fn occlusion(dhat: vec3f, d: f32, ft: u32, n: u32) -> f32 {
-    if (OPACITY[ft] <= 0.0 || n == 0u) {
-        return 1.0;
-    }
-    for (var b = 0u; b < n; b = b + 1u) {
-        let cb = barriers[b * 2u];
-        let gm = barriers[b * 2u + 1u].x;
-        let t = dot(cb.xyz, dhat);
-        if (t <= 0.0 || t >= d) {
-            continue;
-        }
-        let perp = cb.xyz - dhat * t;
-        let c2 = dot(cb.xyz, cb.xyz);
-        if (c2 < cb.w * cb.w) {
-            continue;
-        }
-        let r_eff = max(
-            cb.w - 4.0 * gm * sqrt(c2) / (C_VACUUM * C_VACUUM * max(cb.w, 1e-9)),
-            0.0,
-        );
-        if (dot(perp, perp) < r_eff * r_eff) {
-            return 0.0;
-        }
-    }
-    return 1.0;
 }
 
 fn aberration(u: vec3f, beta: vec3f) -> vec3f {
@@ -308,10 +264,7 @@ fn presence_probe() {
         let temporal = abs(vp.presence.w - tm.x);
         let ft = u32(tm.z);
         let kid = u32(mt.z);
-        let d_prop = length(propagated);
-        let dhat_prop = propagated / max(d_prop, 1e-9);
-        let occl = occlusion(dhat_prop, d_prop, ft, u32(vp.expose_ex.w));
-        let pre = vec4f(propagated, m.w * exp(-temporal / max(tm.y, 1e-9)) * occl);
+        let pre = vec4f(propagated, m.w * exp(-temporal / max(tm.y, 1e-9)));
         pp[j] = pre;
         var fast = 0.0;
         if ((kid == 0u || kid == 6u) && (ft != 1u) && (temporal < tm.y * 1e-4)) {
@@ -322,130 +275,10 @@ fn presence_probe() {
         if (f < 9u) { omegas[f] += c.x; }
         flow = flow + osc_flow(j, pre);
     }
-    let star_count = u32(vp.expose_lo.x);
-    if (atomicLoad(&star_tiles[0u]) != 0u) {
-        for (var s = 0u; s < star_count; s = s + 1u) {
-            let c = star_contrib(s, 0.0, 0.0);
-            omegas[0] += c.x;
-        }
-    } else {
-        let nx = u32(ceil(vp.surface.x / f32(TILE_PX)));
-        let ny = u32(ceil(vp.surface.y / f32(TILE_PX)));
-        let nt = nx * ny;
-        let cx = u32(vp.surface.x * 0.5) / TILE_PX;
-        let cy = u32(vp.surface.y * 0.5) / TILE_PX;
-        let tile = cy * nx + cx;
-        let tcount = atomicLoad(&star_tiles[1u + tile]);
-        let tbase = tile * STAR_TILE_SLOTS;
-        for (var k = 0u; k < tcount; k = k + 1u) {
-            let c = star_contrib(atomicLoad(&star_tiles[1u + nt + tbase + k]), 0.0, 0.0);
-            omegas[0] += c.x;
-        }
-    }
     for (var i = 0u; i < 9u; i = i + 1u) { probe_out[i] = omegas[i]; }
     probe_out[9] = flow.x;
     probe_out[10] = flow.y;
     probe_out[11] = flow.z;
-}
-
-const TILE_PX: u32 = 16u;
-const TILE_SLOTS: u32 = 64u;
-
-var<workgroup> s_bounds: array<f32, 64>;
-var<workgroup> s_count: atomic<u32>;
-var<workgroup> s_overflow: atomic<u32>;
-
-fn source_bound(j: u32, x0: f32, x1: f32, y0: f32, y1: f32) -> f32 {
-    let pre = pp[j];
-    let tm = field[j * 3u + 1u];
-    let fm = field[j * 3u + 2u];
-    let mt = props[j * 4u];
-    let p = pp[u32(vp.surface.z) + j];
-    let sx = dot(pre.xyz, vp.right.xyz);
-    let sy = dot(pre.xyz, vp.up.xyz);
-    let sd = dot(pre.xyz, vp.forward.xyz);
-    let cx = clamp(sx, x0, x1);
-    let cy = clamp(sy, y0, y1);
-    let d2min = (cx - sx) * (cx - sx) + (cy - sy) * (cy - sy) + sd * sd;
-    let dmin = sqrt(d2min);
-    let t2min = max(d2min - sd * sd, 0.0);
-    let tmin = sqrt(t2min);
-    let ft = u32(tm.z);
-    let kid = u32(mt.z);
-    let v = select(PROPAGATION_SPEED[ft], fm.x, ft == 7u && fm.x > 0.0);
-    let temporal = abs(vp.presence.w - tm.x);
-    var val = pre.w;
-    if (p.w <= 0.5) {
-        let corr = select(min(temporal, dmin / v), 0.0, v == 0.0 || dmin == 0.0);
-        if (corr > tm.y * 1e-4) {
-            val = pre.w * exp(corr / max(tm.y, 1e-9));
-        }
-    }
-    var bound = 0.0;
-    if (p.w > 0.5) {
-        let e2 = max(max(mt.x * mt.x, vp.surface.w * vp.surface.w), 1e-30);
-        bound = abs(val) / (t2min + e2);
-    } else {
-        var sk = field_spatial(t2min, tmin, mt.x, kid, vp.surface.w, f32(tm.w));
-        bound = abs(val) * sk;
-    }
-    return bound;
-}
-
-@compute @workgroup_size(64)
-fn tile_cull(@builtin(workgroup_id) wid: vec3u, @builtin(local_invocation_id) lid: vec3u) {
-    let tid = lid.x;
-    let count = u32(vp.surface.z);
-    let w = vp.surface.x;
-    let h = vp.surface.y;
-    let scale = vp.surface.w;
-    let num_tiles_x = u32(ceil(w / f32(TILE_PX)));
-    let num_tiles_y = u32(ceil(h / f32(TILE_PX)));
-    let nt = num_tiles_x * num_tiles_y;
-    let tile = wid.y * num_tiles_x + wid.x;
-    let tbase = tile * TILE_SLOTS;
-    let eps = exp2(-f32(tiles[0]));
-    let x0 = (f32(wid.x * TILE_PX) + 0.5 - w * 0.5) * scale;
-    let x1 = (f32(wid.x * TILE_PX + TILE_PX - 1u) + 0.5 - w * 0.5) * scale;
-    let y0 = (h * 0.5 - f32(wid.y * TILE_PX + TILE_PX - 1u) - 0.5) * scale;
-    let y1 = (h * 0.5 - f32(wid.y * TILE_PX) - 0.5) * scale;
-    var local = 0.0;
-    for (var j = tid; j < count; j = j + 64u) {
-        local = max(local, source_bound(j, x0, x1, y0, y1));
-    }
-    s_bounds[tid] = local;
-    workgroupBarrier();
-    var stride = 32u;
-    loop {
-        if (stride == 0u) { break; }
-        if (tid < stride) {
-            s_bounds[tid] = max(s_bounds[tid], s_bounds[tid + stride]);
-        }
-        workgroupBarrier();
-        stride = stride >> 1u;
-    }
-    let m = s_bounds[0];
-    if (m > 0.0) {
-        let thresh = eps * m;
-        for (var j = tid; j < count; j = j + 64u) {
-            if (source_bound(j, x0, x1, y0, y1) < thresh) {
-                continue;
-            }
-            let slot = atomicAdd(&s_count, 1u);
-            if (slot < TILE_SLOTS) {
-                tiles[2u + nt + tbase + slot] = j;
-            } else {
-                atomicOr(&s_overflow, 1u);
-            }
-        }
-    }
-    workgroupBarrier();
-    if (tid == 0u) {
-        tiles[2u + tile] = atomicLoad(&s_count);
-        if (atomicLoad(&s_overflow) == 1u) {
-            tiles[1] = 1u;
-        }
-    }
 }
 
 fn source_contrib(j: u32, pixel_rel: vec3f) -> vec4f {
@@ -488,73 +321,9 @@ fn source_contrib(j: u32, pixel_rel: vec3f) -> vec4f {
     return vec4f(contrib, f32(ft), mg.z, mt.y);
 }
 
-fn star_contrib(s: u32, px_ndc: f32, py_ndc: f32) -> vec4f {
-    let a = stars[s * 3u];
-    let b = stars[s * 3u + 1u];
-    let c = stars[s * 3u + 2u];
-    let mag = max(vp.expose_hi.z, 1.0);
-    let dx = px_ndc - a.x;
-    let dy = py_ndc - a.y;
-    let dtheta2 = (dx * dx + dy * dy) / (mag * mag);
-    let theta_px = 2.0 / (max(vp.surface.x, 1.0) * mag);
-    let s2 = theta_px * theta_px;
-    let k = 1.0 / (dtheta2 + s2);
-    let temporal = abs(vp.presence.w - vp.expose_ex.y);
-    var val = a.z;
-    let retarded = max(temporal - a.w / C_VACUUM, 0.0);
-    val = val * exp(-retarded / max(c.y, 1e-9));
-    if (b.w > 0.0) {
-        let z1 = 1.0 + b.w;
-        val = val / (z1 * z1 * z1 * z1);
-    }
-    let occ = occlusion(b.xyz, a.w, 0u, u32(vp.expose_ex.w));
-    return vec4f(val * k * occ, 0.0, c.x, c.y);
-}
-
-const STAR_TILE_SLOTS: u32 = 512u;
-
-fn star_assign(s: u32, tx: i32, ty: i32, nx: i32, ny: i32) {
-    if (tx < 0 || ty < 0 || tx >= nx || ty >= ny) {
-        return;
-    }
-    let nt = u32(ny) * u32(nx);
-    let tile = u32(ty) * u32(nx) + u32(tx);
-    let slot = atomicAdd(&star_tiles[1u + tile], 1u);
-    if (slot < STAR_TILE_SLOTS) {
-        atomicStore(&star_tiles[1u + nt + tile * STAR_TILE_SLOTS + slot], s);
-    } else {
-        atomicOr(&star_tiles[0u], 1u);
-    }
-}
-
-@compute @workgroup_size(64)
-fn star_cull(@builtin(global_invocation_id) gid: vec3u) {
-    let s = gid.x;
-    let count = u32(vp.expose_lo.x);
-    if (s >= count) {
-        return;
-    }
-    let a = stars[s * 3u];
-    let w = vp.surface.x;
-    let h = vp.surface.y;
-    let px = clamp((a.x + 1.0) * 0.5 * w, -2.0, w + 2.0);
-    let py = clamp((1.0 - a.y) * 0.5 * h, -2.0, h + 2.0);
-    let tx0 = i32(floor((px - 1.0) / f32(TILE_PX)));
-    let tx1 = i32(floor((px + 1.0) / f32(TILE_PX)));
-    let ty0 = i32(floor((py - 1.0) / f32(TILE_PX)));
-    let ty1 = i32(floor((py + 1.0) / f32(TILE_PX)));
-    let nx = i32(ceil(w / f32(TILE_PX)));
-    let ny = i32(ceil(h / f32(TILE_PX)));
-    star_assign(s, tx0, ty0, nx, ny);
-    if (tx1 != tx0) { star_assign(s, tx1, ty0, nx, ny); }
-    if (ty1 != ty0) { star_assign(s, tx0, ty1, nx, ny); }
-    if (tx1 != tx0 && ty1 != ty0) { star_assign(s, tx1, ty1, nx, ny); }
-}
-
 @fragment fn fs(in: VOut) -> @location(0) vec4f {
     let count = u32(vp.surface.z);
-    let star_count = u32(vp.expose_lo.x);
-    if (count == 0u && star_count == 0u) { discard; }
+    if (count == 0u) { discard; }
     let w = vp.surface.x;
     let h = vp.surface.y;
     let scale = vp.surface.w;
@@ -564,57 +333,14 @@ fn star_cull(@builtin(global_invocation_id) gid: vec3u) {
     for (var i = 0u; i < 9u; i = i + 1u) { omega[i] = 0.0; }
     var rgb = vec3f(0.0);
 
-    if (tiles[1] != 0u) {
-        for (var j = 0u; j < count; j = j + 1u) {
-            let c = source_contrib(j, pixel_rel);
-            let f = u32(c.y);
-            if (f < 9u) {
-                omega[f] += c.x;
-                let lum = lum_ratio(abs(c.x), ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, f));
-                if (f == 0u) { rgb += color_lut_rgb(c.z) * lum; }
-                else { rgb += hsl_to_rgb(fract(log2(max(c.w, 1.0)) / 16.0), 1.0, 0.5) * lum; }
-            }
-        }
-    } else {
-        let num_tiles_x = u32(ceil(w / f32(TILE_PX)));
-        let num_tiles_y = u32(ceil(h / f32(TILE_PX)));
-        let nt = num_tiles_x * num_tiles_y;
-        let tile = (u32(in.pos.y) / TILE_PX) * num_tiles_x + (u32(in.pos.x) / TILE_PX);
-        let tcount = tiles[2u + tile];
-        let tbase = tile * TILE_SLOTS;
-        for (var k = 0u; k < tcount; k = k + 1u) {
-            let c = source_contrib(tiles[2u + nt + tbase + k], pixel_rel);
-            let f = u32(c.y);
-            if (f < 9u) {
-                omega[f] += c.x;
-                let lum = lum_ratio(abs(c.x), ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, f));
-                if (f == 0u) { rgb += color_lut_rgb(c.z) * lum; }
-                else { rgb += hsl_to_rgb(fract(log2(max(c.w, 1.0)) / 16.0), 1.0, 0.5) * lum; }
-            }
-        }
-    }
-
-    let px_ndc = in.uv.x * 2.0 - 1.0;
-    let py_ndc = 1.0 - in.uv.y * 2.0;
-    if (atomicLoad(&star_tiles[0u]) != 0u) {
-        for (var s = 0u; s < star_count; s = s + 1u) {
-            let c = star_contrib(s, px_ndc, py_ndc);
-            let lum = lum_ratio(abs(c.x), ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, 0u));
-            omega[0] += c.x;
-            rgb += color_lut_rgb(c.z) * lum;
-        }
-    } else {
-        let num_tiles_x = u32(ceil(w / f32(TILE_PX)));
-        let num_tiles_y = u32(ceil(h / f32(TILE_PX)));
-        let nt = num_tiles_x * num_tiles_y;
-        let tile = (u32(in.pos.y) / TILE_PX) * num_tiles_x + (u32(in.pos.x) / TILE_PX);
-        let tcount = atomicLoad(&star_tiles[1u + tile]);
-        let tbase = tile * STAR_TILE_SLOTS;
-        for (var k = 0u; k < tcount; k = k + 1u) {
-            let c = star_contrib(atomicLoad(&star_tiles[1u + nt + tbase + k]), px_ndc, py_ndc);
-            let lum = lum_ratio(abs(c.x), ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, 0u));
-            omega[0] += c.x;
-            rgb += color_lut_rgb(c.z) * lum;
+    for (var j = 0u; j < count; j = j + 1u) {
+        let c = source_contrib(j, pixel_rel);
+        let f = u32(c.y);
+        if (f < 9u) {
+            omega[f] += c.x;
+            let lum = lum_ratio(abs(c.x), ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, f));
+            if (f == 0u) { rgb += color_lut_rgb(c.z) * lum; }
+            else { rgb += hsl_to_rgb(fract(log2(max(c.w, 1.0)) / 16.0), 1.0, 0.5) * lum; }
         }
     }
 
@@ -651,10 +377,10 @@ struct HudVOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f };
     let w = vp.surface.x;
     let h = vp.surface.y;
     let corner = quad[i];
-    let px = vec2f((corner.x * 0.5 + 0.5) * w, (0.5 - corner.y * 0.5) * 32.0);
+    let px = vec2f((corner.x * 0.5 + 0.5) * w, (0.5 - corner.y * 0.5) * 24.0);
     var out: HudVOut;
     out.pos = vec4f(px.x / w * 2.0 - 1.0, 1.0 - px.y / h * 2.0, 0.0, 1.0);
-    out.uv = px / vec2f(w, 32.0);
+    out.uv = px / vec2f(w, 24.0);
     return out;
 }
 
@@ -666,7 +392,7 @@ struct HudVOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f };
 "#;
 const HUD_LINE_H: i32 = 8;
 const HUD_CHAR_W: i32 = 6;
-const HUD_LINES: u32 = 4;
+const HUD_LINES: u32 = 3;
 const HUD_H: u32 = HUD_LINE_H as u32 * HUD_LINES;
 
 const HUD_GLYPH: [[u8; 5]; 95] = [
@@ -766,7 +492,6 @@ const HUD_GLYPH: [[u8; 5]; 95] = [
     [0x00, 0x41, 0x36, 0x08, 0x00],
     [0x02, 0x01, 0x02, 0x04, 0x02],
 ];
-use crate::dastcom::state_at;
 use crate::force::kernel_id_for_force;
 use std::collections::{HashMap, HashSet};
 use std::sync::atomic::{AtomicBool, Ordering};
@@ -784,7 +509,6 @@ use winit::window::{Fullscreen, Window, WindowAttributes, WindowId};
 const Φ: f64 = 1.618033988749895;
 const C: f64 = 299792458.0;
 const GRID_INIT: f64 = 2147483648.0;
-const GRID_DEEP_GRID: f64 = 2147483648.0;
 const JUMP_GRID: f64 = 268435456.0;
 const SSAA_MAX: f32 = 8.0;
 const BUDGET_RELAX: f64 = 0.1;
@@ -917,26 +641,7 @@ pub fn pack_window(records: &[Record], presence: [f64; 3]) -> PackedWindow {
     }
 }
 
-pub fn pack_stars(stars: &[[f64; 10]]) -> Vec<f32> {
-    let mut out = Vec::with_capacity(stars.len() * 12);
-    for s in stars {
-        out.push(s[5] as f32);
-        out.push(s[6] as f32);
-        out.push(s[3] as f32);
-        out.push(s[4] as f32);
-        out.push(s[0] as f32);
-        out.push(s[1] as f32);
-        out.push(s[2] as f32);
-        out.push(s[7] as f32);
-        out.push(s[8] as f32);
-        out.push(s[9] as f32);
-        out.push(0.0);
-        out.push(0.0);
-    }
-    out
-}
-
-pub fn force_ref_medians(field: &[f32], meta: &[f32], stars: &[f32]) -> [Option<f32>; 9] {
+pub fn force_ref_medians(field: &[f32], meta: &[f32]) -> [Option<f32>; 9] {
     let mut hist: [[u32; 256]; 9] = [[0; 256]; 9];
     let mut sum: [[f32; 256]; 9] = [[0.0; 256]; 9];
     let mut n: [u32; 9] = [0; 9];
@@ -957,17 +662,6 @@ pub fn force_ref_medians(field: &[f32], meta: &[f32], stars: &[f32]) -> [Option<
         hist[ft as usize][b] += 1;
         sum[ft as usize][b] += l;
         n[ft as usize] += 1;
-    }
-    for f in stars.chunks_exact(12) {
-        let v = f[2];
-        if !v.is_finite() || v == 0.0 {
-            continue;
-        }
-        let l = v.abs().log2();
-        let b = log2_bin_of(l);
-        hist[0][b] += 1;
-        sum[0][b] += l;
-        n[0] += 1;
     }
     let mut meds = [None; 9];
     for ft in 0..9 {
@@ -990,164 +684,6 @@ pub fn force_ref_medians(field: &[f32], meta: &[f32], stars: &[f32]) -> [Option<
 
 fn log2_bin_of(l: f32) -> usize {
     ((l + 126.0) as i32).clamp(0, 255) as usize
-}
-
-const OCC_CELL_RAD: f64 = 1e-3;
-const OCC_LAT_BANDS: i32 = 3142;
-const OCC_LON_BANDS: i32 = 6284;
-const OCC_REFRESH_T: f64 = 60.0;
-const OCC_REFRESH_R: f64 = 1.0e8;
-const OCC_SCAN_T: f64 = 1.0;
-const CATALOG_EPOCH_SECS: f64 = 16.0 * 31557600.0;
-const TRANSIT_MATCH_COS: f64 = 1.0 - 4.7e-11;
-
-struct TransitIndex {
-    t: f64,
-    center: [f64; 3],
-    cells: HashMap<(i32, i32), Vec<u32>>,
-}
-
-fn sky_offset_m(rec: &PlanetRec, t: f64) -> f64 {
-    let t_jd = t / 86400.0 + J2000_EPOCH;
-    let dt_days = t_jd - rec.tranmid_jd;
-    let n = std::f64::consts::TAU / rec.period_days;
-    let a_m = rec.a_au * crate::kepler::AU_M;
-    let cos_i = rec.incl_deg.to_radians().cos();
-    if rec.e <= 0.0 {
-        let phase = (n * dt_days).rem_euclid(std::f64::consts::TAU);
-        let (sin_p, cos_p) = phase.sin_cos();
-        return a_m * (sin_p * sin_p + cos_p * cos_p * cos_i * cos_i).sqrt();
-    }
-    let e = rec.e;
-    let nu_t = std::f64::consts::FRAC_PI_2 - rec.w_deg.to_radians();
-    let sq = (1.0 - e).sqrt();
-    let cq = (1.0 + e).sqrt();
-    let e_t = 2.0 * ((sq * (nu_t * 0.5).sin()).atan2(cq * (nu_t * 0.5).cos()));
-    let m_t = e_t - e * e_t.sin();
-    let m = (m_t + n * dt_days).rem_euclid(std::f64::consts::TAU);
-    let ecc = crate::kepler::solve_kepler_ecc(m, e);
-    let cos_e = ecc.cos();
-    let r_m = a_m * (1.0 - e * cos_e);
-    let denom = 1.0 - e * cos_e;
-    let sin_nu = (1.0 - e * e).sqrt() * ecc.sin() / denom;
-    let cos_nu = (cos_e - e) / denom;
-    let w = rec.w_deg.to_radians();
-    let (sw, cw) = w.sin_cos();
-    let x = r_m * (cos_nu * cw - sin_nu * sw);
-    let y = r_m * (sin_nu * cw + cos_nu * sw);
-    (x * x + y * y * cos_i * cos_i).sqrt()
-}
-
-fn disc_intersection_fraction(d: f64, rp: f64, rs: f64) -> f64 {
-    if d >= rp + rs {
-        return 0.0;
-    }
-    if d <= (rs - rp).abs() {
-        return if rp <= rs { (rp * rp) / (rs * rs) } else { 1.0 };
-    }
-    let r2 = rp * rp;
-    let s2 = rs * rs;
-    let d2 = d * d;
-    let a1 = r2 * ((d2 + r2 - s2) / (2.0 * d * rp)).clamp(-1.0, 1.0).acos();
-    let a2 = s2 * ((d2 + s2 - r2) / (2.0 * d * rs)).clamp(-1.0, 1.0).acos();
-    let half = ((-d + rp + rs) * (d + rp - rs) * (d - rp + rs) * (d + rp + rs)).sqrt() * 0.5;
-    (a1 + a2 - half) / (std::f64::consts::PI * s2)
-}
-
-fn transit_factors(
-    pset: &PlanetSet,
-    index: &mut Option<TransitIndex>,
-    stars: &[StarRec],
-    center: [f64; 3],
-    t: f64,
-) -> HashMap<usize, f64> {
-    let mut out: HashMap<usize, f64> = HashMap::new();
-    if pset.records.is_empty() || stars.is_empty() {
-        return out;
-    }
-    let rebuild = match index.as_ref() {
-        None => true,
-        Some(ix) => {
-            (t - ix.t).abs() > OCC_REFRESH_T
-                || (center[0] - ix.center[0]).abs() > OCC_REFRESH_R
-                || (center[1] - ix.center[1]).abs() > OCC_REFRESH_R
-                || (center[2] - ix.center[2]).abs() > OCC_REFRESH_R
-        }
-    };
-    if rebuild {
-        let mut cells: HashMap<(i32, i32), Vec<u32>> = HashMap::new();
-        for (si, rec) in stars.iter().enumerate() {
-            let (p, _) = star_position_at(rec, t);
-            let cb = [p[0] - center[0], p[1] - center[1], p[2] - center[2]];
-            let d = (cb[0] * cb[0] + cb[1] * cb[1] + cb[2] * cb[2]).sqrt();
-            if d <= 0.0 {
-                continue;
-            }
-            cells
-                .entry(occ_dir_cell([cb[0] / d, cb[1] / d, cb[2] / d]))
-                .or_default()
-                .push(si as u32);
-        }
-        *index = Some(TransitIndex { t, center, cells });
-    }
-    let Some(ix) = index.as_ref() else {
-        return out;
-    };
-    for prec in &pset.records {
-        let hb = [
-            prec.star_p[0] - center[0],
-            prec.star_p[1] - center[1],
-            prec.star_p[2] - center[2],
-        ];
-        let dhb = (hb[0] * hb[0] + hb[1] * hb[1] + hb[2] * hb[2]).sqrt();
-        if dhb <= 0.0 {
-            continue;
-        }
-        let host_cell = occ_dir_cell([hb[0] / dhb, hb[1] / dhb, hb[2] / dhb]);
-        for dla in -1..=1 {
-            for dlo in -1..=1 {
-                let cell = (
-                    host_cell.0 + dla,
-                    (host_cell.1 + dlo).rem_euclid(OCC_LON_BANDS),
-                );
-                let Some(ids) = ix.cells.get(&cell) else {
-                    continue;
-                };
-                for &si in ids {
-                    let rec = &stars[si as usize];
-                    let (p, vel) = star_position_at(rec, t);
-                    let dt_cat = t - CATALOG_EPOCH_SECS;
-                    let h = [
-                        prec.star_p[0] + vel[0] * dt_cat,
-                        prec.star_p[1] + vel[1] * dt_cat,
-                        prec.star_p[2] + vel[2] * dt_cat,
-                    ];
-                    let dh = (h[0] * h[0] + h[1] * h[1] + h[2] * h[2]).sqrt();
-                    if dh <= 0.0 {
-                        continue;
-                    }
-                    let cbp = [p[0] - center[0], p[1] - center[1], p[2] - center[2]];
-                    let dp = (cbp[0] * cbp[0] + cbp[1] * cbp[1] + cbp[2] * cbp[2]).sqrt();
-                    if dp <= 0.0 {
-                        continue;
-                    }
-                    let cosang = (cbp[0] * h[0] + cbp[1] * h[1] + cbp[2] * h[2]) / (dp * dh);
-                    if cosang < TRANSIT_MATCH_COS {
-                        continue;
-                    }
-                    let offset = sky_offset_m(prec, t);
-                    if offset >= prec.rp_m + prec.rs_m {
-                        continue;
-                    }
-                    let depth = 1.0 - disc_intersection_fraction(offset, prec.rp_m, prec.rs_m);
-                    out.entry(si as usize)
-                        .and_modify(|f| *f *= depth)
-                        .or_insert(depth);
-                }
-            }
-        }
-    }
-    out
 }
 
 fn emit_curves(
@@ -1215,172 +751,6 @@ fn emit_curves(
     }
 }
 
-struct OccIndex {
-    t: f64,
-    center: [f64; 3],
-    cells: HashMap<(i32, i32), Vec<u32>>,
-    scan_t: f64,
-    scan_center: [f64; 3],
-    scan_barriers: Vec<f32>,
-    scan_events: Vec<(u32, f64, f64)>,
-}
-
-#[derive(Clone, Default)]
-struct OccReport {
-    events: Vec<(u32, f64, f64)>,
-    transits: usize,
-}
-
-fn occ_dir_cell(dir: [f64; 3]) -> (i32, i32) {
-    let z = dir[2].clamp(-1.0, 1.0);
-    let dec = z.asin();
-    let ra = dir[1].atan2(dir[0]);
-    let lat = ((dec + std::f64::consts::FRAC_PI_2) / OCC_CELL_RAD) as i32;
-    let lon = ((ra + std::f64::consts::PI) / OCC_CELL_RAD) as i32;
-    (
-        lat.clamp(0, OCC_LAT_BANDS - 1),
-        lon.rem_euclid(OCC_LON_BANDS),
-    )
-}
-
-fn occ_dir_to_radec(dir: [f64; 3]) -> (f64, f64) {
-    let dec = dir[2].clamp(-1.0, 1.0).asin().to_degrees();
-    let mut ra = dir[1].atan2(dir[0]).to_degrees();
-    if ra < 0.0 {
-        ra += 360.0;
-    }
-    (ra, dec)
-}
-
-fn occ_hits_ray(cb: [f64; 3], dir: [f64; 3], r: f64, gm: f64) -> bool {
-    let c2 = cb[0] * cb[0] + cb[1] * cb[1] + cb[2] * cb[2];
-    if c2 < r * r {
-        return false;
-    }
-    let tproj = cb[0] * dir[0] + cb[1] * dir[1] + cb[2] * dir[2];
-    if tproj <= 0.0 {
-        return false;
-    }
-    let perp2 = c2 - tproj * tproj;
-    let r_eff = (r - 4.0 * gm * c2.sqrt() / (C * C * r.max(1e-9))).max(0.0);
-    perp2 < r_eff * r_eff
-}
-
-fn occulting_barriers(
-    occluders: &[AsteroidRec],
-    index: &mut Option<OccIndex>,
-    deep: &[[f64; 10]],
-    center: [f64; 3],
-    t: f64,
-    barriers: &mut Vec<f32>,
-) -> OccReport {
-    if occluders.is_empty() || deep.is_empty() {
-        return OccReport::default();
-    }
-    let rebuild = match index.as_ref() {
-        None => true,
-        Some(i) => {
-            (t - i.t).abs() > OCC_REFRESH_T
-                || (center[0] - i.center[0]).abs() > OCC_REFRESH_R
-                || (center[1] - i.center[1]).abs() > OCC_REFRESH_R
-                || (center[2] - i.center[2]).abs() > OCC_REFRESH_R
-        }
-    };
-    if rebuild {
-        let t_jd = t / 86400.0 + J2000_EPOCH;
-        let mut cells: HashMap<(i32, i32), Vec<u32>> = HashMap::new();
-        for (i, rec) in occluders.iter().enumerate() {
-            let Some((p, _)) = state_at(rec, t_jd) else {
-                continue;
-            };
-            let cb = [p[0] - center[0], p[1] - center[1], p[2] - center[2]];
-            let d = (cb[0] * cb[0] + cb[1] * cb[1] + cb[2] * cb[2]).sqrt();
-            if d <= 0.0 {
-                continue;
-            }
-            cells
-                .entry(occ_dir_cell([cb[0] / d, cb[1] / d, cb[2] / d]))
-                .or_default()
-                .push(i as u32);
-        }
-        *index = Some(OccIndex {
-            t,
-            center,
-            cells,
-            scan_t: f64::NEG_INFINITY,
-            scan_center: [f64::INFINITY; 3],
-            scan_barriers: Vec::new(),
-            scan_events: Vec::new(),
-        });
-    }
-    let idx = match index.as_mut() {
-        Some(i) => i,
-        None => return OccReport::default(),
-    };
-    let scan_stale = (t - idx.scan_t).abs() > OCC_SCAN_T
-        || (center[0] - idx.scan_center[0]).abs() > OCC_REFRESH_R
-        || (center[1] - idx.scan_center[1]).abs() > OCC_REFRESH_R
-        || (center[2] - idx.scan_center[2]).abs() > OCC_REFRESH_R;
-    if scan_stale {
-        let t_jd = t / 86400.0 + J2000_EPOCH;
-        let mut events: Vec<(u32, f64, f64)> = Vec::new();
-        let mut scan_barriers: Vec<f32> = Vec::new();
-        let mut barrier_seen: Vec<u32> = Vec::new();
-        for s in deep {
-            let dir = [s[0], s[1], s[2]];
-            let (la, lo) = occ_dir_cell(dir);
-            let mut hit_ids: Vec<u32> = Vec::new();
-            for dla in -1..=1 {
-                for dlo in -1..=1 {
-                    let cell = (la + dla, (lo + dlo).rem_euclid(OCC_LON_BANDS));
-                    if let Some(ids) = idx.cells.get(&cell) {
-                        for &oc in ids {
-                            if !hit_ids.contains(&oc) {
-                                hit_ids.push(oc);
-                            }
-                        }
-                    }
-                }
-            }
-            for oc in hit_ids {
-                let rec = &occluders[oc as usize];
-                let Some((p, _)) = state_at(rec, t_jd) else {
-                    continue;
-                };
-                let cb = [p[0] - center[0], p[1] - center[1], p[2] - center[2]];
-                let r = rec.radius_km as f64 * 1000.0;
-                let gm = rec.gm_km3_s2 as f64 * 1.0e9;
-                if occ_hits_ray(cb, dir, r, gm) {
-                    let (ra, dec) = occ_dir_to_radec(dir);
-                    events.push((rec.number, ra, dec));
-                    if !barrier_seen.contains(&oc) {
-                        barrier_seen.push(oc);
-                        scan_barriers.extend_from_slice(&[
-                            cb[0] as f32,
-                            cb[1] as f32,
-                            cb[2] as f32,
-                            r as f32,
-                            gm as f32,
-                            0.0,
-                            0.0,
-                            0.0,
-                        ]);
-                    }
-                }
-            }
-        }
-        idx.scan_t = t;
-        idx.scan_center = center;
-        idx.scan_barriers = scan_barriers;
-        idx.scan_events = events;
-    }
-    barriers.extend_from_slice(&idx.scan_barriers);
-    OccReport {
-        events: idx.scan_events.clone(),
-        transits: 0,
-    }
-}
-
 pub struct MathematikerinRadiator {
     tx: mpsc::SyncSender<Arc<Buffer>>,
     shutdown: Arc<AtomicBool>,
@@ -1393,10 +763,10 @@ struct SenseReq {
     t: f64,
     pad: f64,
     cache_interval: f64,
-    right: [f64; 3],
-    up: [f64; 3],
     forward: [f64; 3],
-    mag: f64,
+    expose_offset: f32,
+    force_ref: [f32; 9],
+    softening: f64,
 }
 
 impl MathematikerinRadiator {
@@ -1411,13 +781,10 @@ impl MathematikerinRadiator {
     ) -> Self {
         let (tx, rx) = mpsc::sync_channel::<Arc<Buffer>>(2);
         let (req_tx, req_rx) = mpsc::sync_channel::<SenseReq>(1);
-        let (res_tx, res_rx) =
-            mpsc::sync_channel::<(PackedWindow, Vec<f32>, Vec<f32>, f64, OccReport, u64)>(2);
+        let (res_tx, res_rx) = mpsc::sync_channel::<(PackedWindow, f64, u64)>(2);
         let shutdown = Arc::new(AtomicBool::new(false));
         let shutdown_clone = shutdown.clone();
         thread::spawn(move || {
-            let mut occ_index: Option<OccIndex> = None;
-            let mut transit_index: Option<TransitIndex> = None;
             let mut generation: u64 = 0;
             let mut last_bytes: Vec<u8> = Vec::new();
             loop {
@@ -1433,89 +800,43 @@ impl MathematikerinRadiator {
                     t,
                     pad,
                     cache_interval,
-                    right,
-                    up,
                     forward,
-                    mag,
+                    expose_offset,
+                    force_ref,
+                    softening,
                     ..
                 } = req;
                 let mut records: Vec<Record> = Vec::new();
                 let eph = field.eph.clone();
-                sense_membrane(&field, center, t, pad, cache_interval, &mut records, &eph);
+                let scale2 = softening * softening;
+                let mut floor = [0.0f64; 9];
+                for ft in 0..9 {
+                    let r = force_ref[ft] as f64;
+                    if r.is_finite() && r > 0.0 && scale2 > 0.0 {
+                        floor[ft] = r * (0.5f64).powi(expose_offset as i32) / scale2;
+                    }
+                }
+                sense_membrane(
+                    &field,
+                    center,
+                    t,
+                    pad,
+                    cache_interval,
+                    &floor,
+                    softening,
+                    forward,
+                    &mut records,
+                    &eph,
+                );
                 if let Some(cset) = &field.curves {
                     emit_curves(cset, center, t, pad, &mut records);
                 }
                 let packed = pack_window(&records, center);
-                let mut transit_factors_map: HashMap<usize, f64> = HashMap::new();
-                if let Some(pset) = &field.planets {
-                    transit_factors_map =
-                        transit_factors(pset, &mut transit_index, &field.star_records, center, t);
-                }
-                let mut deep: Vec<[f64; 10]> = Vec::new();
-                sense_deep(
-                    &field,
-                    center,
-                    t,
-                    right,
-                    up,
-                    forward,
-                    mag,
-                    &mut deep,
-                    &transit_factors_map,
-                );
-                let packed_stars = pack_stars(&deep);
-                let mut barriers: Vec<f32> = Vec::with_capacity(eph.len() * 8);
-                for (name, e) in eph.iter() {
-                    let Some(props) = &e.props else {
-                        continue;
-                    };
-                    if props.radius_m <= 0.0 {
-                        continue;
-                    }
-                    let Some(pos) = body_barycenter_position(name, t, &eph) else {
-                        continue;
-                    };
-                    barriers.push((pos[0] - center[0]) as f32);
-                    barriers.push((pos[1] - center[1]) as f32);
-                    barriers.push((pos[2] - center[2]) as f32);
-                    barriers.push(props.radius_m as f32);
-                    barriers.push(match props.gm {
-                        Some(g) => g as f32,
-                        None => 0.0,
-                    });
-                    barriers.push(0.0);
-                    barriers.push(0.0);
-                    barriers.push(0.0);
-                }
-                let mut occ = if let Some(oset) = &field.occluders {
-                    occulting_barriers(
-                        &oset.records,
-                        &mut occ_index,
-                        &deep,
-                        center,
-                        t,
-                        &mut barriers,
-                    )
-                } else {
-                    OccReport::default()
-                };
-                occ.transits = transit_factors_map.len();
-                let mut key = Vec::with_capacity(
-                    packed.field.len() * 4
-                        + packed.meta.len() * 4
-                        + packed_stars.len() * 4
-                        + barriers.len() * 4,
-                );
+                let mut key = Vec::with_capacity(packed.field.len() * 4 + packed.meta.len() * 4);
                 for x in &packed.field {
                     key.extend_from_slice(&x.to_le_bytes());
                 }
                 for x in &packed.meta {
-                    key.extend_from_slice(&x.to_le_bytes());
-                }
-                for x in &packed_stars {
-                    key.extend_from_slice(&x.to_le_bytes());
-                }
-                for x in &barriers {
                     key.extend_from_slice(&x.to_le_bytes());
                 }
                 if key == last_bytes {
@@ -1523,10 +844,7 @@ impl MathematikerinRadiator {
                 }
                 last_bytes = key;
                 generation = generation.wrapping_add(1);
-                if res_tx
-                    .send((packed, packed_stars, barriers, t, occ, generation))
-                    .is_err()
-                {
+                if res_tx.send((packed, t, generation)).is_err() {
                     break;
                 }
             }
@@ -1684,7 +1002,7 @@ impl NativeSensors {
 struct NativeApp {
     rx: mpsc::Receiver<Arc<Buffer>>,
     req_tx: mpsc::SyncSender<SenseReq>,
-    res_rx: mpsc::Receiver<(PackedWindow, Vec<f32>, Vec<f32>, f64, OccReport, u64)>,
+    res_rx: mpsc::Receiver<(PackedWindow, f64, u64)>,
     presence_tx: mpsc::Sender<(String, f64, f64, f64, f64, f64)>,
     body_names: Arc<Vec<String>>,
     time: Arc<Mutex<Option<LeapSeconds>>>,
@@ -1700,8 +1018,6 @@ struct NativeApp {
     queue: Option<wgpu::Queue>,
     render_pipe: Option<wgpu::RenderPipeline>,
     probe_pipe: Option<wgpu::ComputePipeline>,
-    cull_pipe: Option<wgpu::ComputePipeline>,
-    star_cull_pipe: Option<wgpu::ComputePipeline>,
     probe_layout: Option<wgpu::BindGroupLayout>,
     render_layout: Option<wgpu::BindGroupLayout>,
     render_binds: [Option<wgpu::BindGroup>; 2],
@@ -1712,13 +1028,9 @@ struct NativeApp {
     probe_buf: Option<wgpu::Buffer>,
     probe_read: Option<wgpu::Buffer>,
     prep_param_buf: Option<wgpu::Buffer>,
-    tiles_buf: Option<wgpu::Buffer>,
-    star_tiles_buf: Option<wgpu::Buffer>,
     color_lut_view: Option<wgpu::TextureView>,
     color_lut_sampler: Option<wgpu::Sampler>,
     field_cap: u32,
-    tile_cap: u32,
-    cull_n: u32,
     buf_sel: usize,
     packed_gen: u64,
     uploaded_gen: u64,
@@ -1729,16 +1041,6 @@ struct NativeApp {
     packed_meta: Vec<f32>,
     packed_count: u32,
     last_response_epoch: f64,
-
-    packed_stars: Vec<f32>,
-    star_count: u32,
-    star_dirty: bool,
-    star_vbuf: Option<wgpu::Buffer>,
-    star_cap: u32,
-    packed_barriers: Vec<f32>,
-    barriers_buf: Option<wgpu::Buffer>,
-    occ_report: OccReport,
-    occ_prev: Vec<u32>,
 
     p: [f64; 3],
     v: [f64; 3],
@@ -1800,7 +1102,7 @@ impl NativeApp {
     fn new(
         rx: mpsc::Receiver<Arc<Buffer>>,
         req_tx: mpsc::SyncSender<SenseReq>,
-        res_rx: mpsc::Receiver<(PackedWindow, Vec<f32>, Vec<f32>, f64, OccReport, u64)>,
+        res_rx: mpsc::Receiver<(PackedWindow, f64, u64)>,
         presence_tx: mpsc::Sender<(String, f64, f64, f64, f64, f64)>,
         sensor_tx: mpsc::Sender<Vec<(String, f64, f64)>>,
         body_names: Arc<Vec<String>>,
@@ -1828,8 +1130,6 @@ impl NativeApp {
             queue: None,
             render_pipe: None,
             probe_pipe: None,
-            cull_pipe: None,
-            star_cull_pipe: None,
             probe_layout: None,
             render_layout: None,
             render_binds: [None, None],
@@ -1840,11 +1140,7 @@ impl NativeApp {
             probe_buf: None,
             probe_read: None,
             prep_param_buf: None,
-            tiles_buf: None,
-            star_tiles_buf: None,
             field_cap: 0,
-            tile_cap: 0,
-            cull_n: 23,
             buf_sel: 0,
             packed_gen: 0,
             uploaded_gen: 0,
@@ -1854,15 +1150,6 @@ impl NativeApp {
             packed_meta: Vec::new(),
             packed_count: 0,
             last_response_epoch: 0.0,
-            packed_stars: Vec::new(),
-            star_count: 0,
-            star_dirty: false,
-            star_vbuf: None,
-            star_cap: 0,
-            packed_barriers: Vec::new(),
-            barriers_buf: None,
-            occ_report: OccReport::default(),
-            occ_prev: Vec::new(),
             p: [0.0, 0.0, 0.0],
             v: [0.0, 0.0, 0.0],
             t0: 0.0,
@@ -1993,26 +1280,17 @@ impl NativeApp {
             *b = 0;
         }
         let green = [120u8, 255, 140];
-        let amber = [255, 200, 90];
         let [x, y, z] = self.pos();
         let line1 = format!(
             "t {:.2}  x {:.3e}  y {:.3e}  z {:.3e}",
             self.t_presence, x, y, z
         );
-        let mut l3 = format!(
-            "okkl {} | transit {}",
-            self.occ_report.events.len(),
-            self.occ_report.transits
-        );
-        for (num, ra, dec) in &self.occ_report.events {
-            l3.push_str(&format!(" | {} ({:.1},{:.1})", num, ra, dec));
-        }
         let flow = self.probe_flow;
-        let mut l4 = match te {
+        let mut l3 = match te {
             Some((in_te, thr)) => format!("TE {:.3} thr {:.3}  ", in_te, thr),
             None => String::new(),
         };
-        l4.push_str(&format!(
+        l3.push_str(&format!(
             "perm {:.2} flow {:+.2} {:+.2} {:+.2} gen {}",
             self.field_permeability, flow[0], flow[1], flow[2], self.ring_gen
         ));
@@ -2021,8 +1299,7 @@ impl NativeApp {
         let bmp = &mut self.hud_bitmap;
         Self::hud_text(bmp, stride, w, x0, 1, &line1, green);
         Self::hud_text(bmp, stride, w, x0, 1 + line, force_tokens, green);
-        Self::hud_text(bmp, stride, w, x0, 1 + 2 * line, &l3, amber);
-        Self::hud_text(bmp, stride, w, x0, 1 + 3 * line, &l4, green);
+        Self::hud_text(bmp, stride, w, x0, 1 + 2 * line, &l3, green);
         self.hud_dirty = true;
     }
 
@@ -2091,18 +1368,17 @@ impl NativeApp {
         let hy = self.size.1 as f64 * self.scale_factor * self.grid_step * 0.5;
         let pad = 2.0 * (hx * hx + hy * hy).sqrt();
         let cache_interval = (self.grid_step / 30000.0).clamp(Φ, Φ * 10.0);
-        let (right, up, forward) = self.frame();
-        let mag = (GRID_DEEP_GRID / self.grid_step).max(1.0);
+        let (_, _, forward) = self.frame();
         let _ = self.req_tx.try_send(SenseReq {
             field,
             center,
             t,
             pad,
             cache_interval,
-            right,
-            up,
             forward,
-            mag,
+            expose_offset: self.expose_offset,
+            force_ref: self.force_ref,
+            softening: self.grid_step,
         });
     }
 
@@ -2238,7 +1514,7 @@ impl NativeApp {
         self.backing = (w.max(1), h.max(1));
     }
 
-    fn vp_data(&self) -> [f32; 44] {
+    fn vp_data(&self) -> [f32; 36] {
         let (fr, fu, ff) = self.frame();
         let [x, y, z] = self.pos();
         [
@@ -2258,18 +1534,10 @@ impl NativeApp {
             ff[1] as f32,
             ff[2] as f32,
             (self.v[2] / C) as f32,
-            self.star_count as f32,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            (GRID_DEEP_GRID / self.grid_step).max(1.0) as f32,
-            0.0,
             self.expose_offset,
             self.last_response_epoch as f32,
             0.0,
-            (self.packed_barriers.len() / 8) as f32,
+            0.0,
             x as f32,
             y as f32,
             z as f32,
@@ -2290,7 +1558,7 @@ impl NativeApp {
     }
 
     fn relax_force_refs(&mut self) {
-        let meds = force_ref_medians(&self.packed_field, &self.packed_meta, &self.packed_stars);
+        let meds = force_ref_medians(&self.packed_field, &self.packed_meta);
         for (ft, m) in meds.iter().enumerate() {
             let Some(median) = m else {
                 continue;
@@ -2318,42 +1586,6 @@ impl NativeApp {
         exts[exts.len() / 2]
     }
 
-    fn ensure_tiles(&mut self) {
-        let Some(device) = self.device.clone() else {
-            return;
-        };
-        let (w, h) = self.backing;
-        if w == 0 || h == 0 {
-            return;
-        }
-        if self.barriers_buf.is_none() {
-            self.barriers_buf = Some(device.create_buffer(&wgpu::BufferDescriptor {
-                label: None,
-                size: 256 * 32,
-                usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
-                mapped_at_creation: false,
-            }));
-        }
-        let num_tiles = ((w + 15) / 16) as u32 * ((h + 15) / 16) as u32;
-        if self.tile_cap >= num_tiles {
-            return;
-        }
-        self.tile_cap = num_tiles;
-        self.tiles_buf = Some(device.create_buffer(&wgpu::BufferDescriptor {
-            label: None,
-            size: (2 + num_tiles as u64 + num_tiles as u64 * 64) * 4,
-            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
-            mapped_at_creation: false,
-        }));
-        self.star_tiles_buf = Some(device.create_buffer(&wgpu::BufferDescriptor {
-            label: None,
-            size: (1 + num_tiles as u64 + num_tiles as u64 * 512) * 4,
-            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
-            mapped_at_creation: false,
-        }));
-        self.rebuild_binds();
-    }
-
     fn rebuild_binds(&mut self) {
         let Some(device) = self.device.clone() else {
             return;
@@ -2371,18 +1603,6 @@ impl NativeApp {
             return;
         };
         let Some(prep_param_buf) = self.prep_param_buf.clone() else {
-            return;
-        };
-        let Some(barriers_buf) = self.barriers_buf.clone() else {
-            return;
-        };
-        let Some(tiles_buf) = self.tiles_buf.clone() else {
-            return;
-        };
-        let Some(star_vbuf) = self.star_vbuf.clone() else {
-            return;
-        };
-        let Some(star_tiles_buf) = self.star_tiles_buf.clone() else {
             return;
         };
         let Some(color_lut_view) = self.color_lut_view.clone() else {
@@ -2422,22 +1642,6 @@ impl NativeApp {
                         binding: 4,
                         resource: prep_param_buf.as_entire_binding(),
                     },
-                    wgpu::BindGroupEntry {
-                        binding: 5,
-                        resource: barriers_buf.as_entire_binding(),
-                    },
-                    wgpu::BindGroupEntry {
-                        binding: 6,
-                        resource: tiles_buf.as_entire_binding(),
-                    },
-                    wgpu::BindGroupEntry {
-                        binding: 7,
-                        resource: star_vbuf.as_entire_binding(),
-                    },
-                    wgpu::BindGroupEntry {
-                        binding: 8,
-                        resource: star_tiles_buf.as_entire_binding(),
-                    },
                 ],
             }));
             self.render_binds[sel] = Some(device.create_bind_group(&wgpu::BindGroupDescriptor {
@@ -2459,22 +1663,6 @@ impl NativeApp {
                     wgpu::BindGroupEntry {
                         binding: 4,
                         resource: prep_param_buf.as_entire_binding(),
-                    },
-                    wgpu::BindGroupEntry {
-                        binding: 5,
-                        resource: barriers_buf.as_entire_binding(),
-                    },
-                    wgpu::BindGroupEntry {
-                        binding: 6,
-                        resource: tiles_buf.as_entire_binding(),
-                    },
-                    wgpu::BindGroupEntry {
-                        binding: 7,
-                        resource: star_vbuf.as_entire_binding(),
-                    },
-                    wgpu::BindGroupEntry {
-                        binding: 8,
-                        resource: star_tiles_buf.as_entire_binding(),
                     },
                     wgpu::BindGroupEntry {
                         binding: 9,
@@ -2537,32 +1725,6 @@ impl NativeApp {
         self.rebuild_binds();
     }
 
-    fn ensure_star_capacity(&mut self) {
-        let Some(device) = self.device.clone() else {
-            return;
-        };
-        let n = self.star_count;
-        if self.star_vbuf.is_some() && self.star_cap >= n {
-            return;
-        }
-        let mut c = if self.star_cap > 0 {
-            self.star_cap
-        } else {
-            1024
-        };
-        while c < n {
-            c <<= 1;
-        }
-        self.star_cap = c;
-        self.star_vbuf = Some(device.create_buffer(&wgpu::BufferDescriptor {
-            label: None,
-            size: c as u64 * 48,
-            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
-            mapped_at_creation: false,
-        }));
-        self.rebuild_binds();
-    }
-
     fn render(&mut self) {
         let t0 = std::time::Instant::now();
         self.frame_count += 1;
@@ -2572,7 +1734,6 @@ impl NativeApp {
         let Some(queue) = self.queue.clone() else {
             return;
         };
-        self.ensure_tiles();
         if self.packed_gen != self.uploaded_gen {
             self.ensure_capacity();
             let sel = self.buf_sel ^ 1;
@@ -2585,27 +1746,8 @@ impl NativeApp {
             self.buf_sel = sel;
             self.uploaded_gen = self.packed_gen;
         }
-        self.ensure_star_capacity();
-        if self.star_dirty {
-            if let Some(sb) = &self.star_vbuf {
-                queue.write_buffer(sb, 0, &le_bytes_f32(&self.packed_stars));
-            }
-            self.star_dirty = false;
-        }
-        if let Some(bb) = &self.barriers_buf {
-            queue.write_buffer(bb, 0, &le_bytes_f32(&self.packed_barriers));
-        }
-        if let Some(cc) = &self.tiles_buf {
-            let mut cc_bytes = [0u8; 8];
-            cc_bytes[0..4].copy_from_slice(&self.cull_n.to_le_bytes());
-            queue.write_buffer(cc, 0, &cc_bytes);
-        }
-        if let Some(sc) = &self.star_tiles_buf {
-            let zero = vec![0u8; (1 + self.tile_cap as usize) * 4];
-            queue.write_buffer(sc, 0, &zero);
-        }
         let vp = self.vp_data();
-        let mut bytes = [0u8; 176];
+        let mut bytes = [0u8; 144];
         for (i, x) in vp.iter().enumerate() {
             bytes[i * 4..i * 4 + 4].copy_from_slice(&x.to_le_bytes());
         }
@@ -2652,21 +1794,6 @@ impl NativeApp {
         {
             let mut pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor::default());
             let sel = self.buf_sel;
-            if let (Some(pipe), Some(bind)) =
-                (self.cull_pipe.as_ref(), self.probe_binds[sel].as_ref())
-            {
-                pass.set_pipeline(pipe);
-                pass.set_bind_group(0, bind, &[]);
-                let (w, h) = self.backing;
-                pass.dispatch_workgroups((w + 15) / 16, (h + 15) / 16, 1);
-            }
-            if let (Some(pipe), Some(bind)) =
-                (self.star_cull_pipe.as_ref(), self.probe_binds[sel].as_ref())
-            {
-                pass.set_pipeline(pipe);
-                pass.set_bind_group(0, bind, &[]);
-                pass.dispatch_workgroups((self.star_count + 63) / 64, 1, 1);
-            }
             if let (Some(pipe), Some(bind)) =
                 (self.probe_pipe.as_ref(), self.probe_binds[sel].as_ref())
             {
@@ -2826,26 +1953,6 @@ impl NativeApp {
                     e.binding = 4;
                     e
                 },
-                {
-                    let mut e = storage_entry(true, wgpu::ShaderStages::COMPUTE);
-                    e.binding = 5;
-                    e
-                },
-                {
-                    let mut e = storage_entry(false, wgpu::ShaderStages::COMPUTE);
-                    e.binding = 6;
-                    e
-                },
-                {
-                    let mut e = storage_entry(true, wgpu::ShaderStages::COMPUTE);
-                    e.binding = 7;
-                    e
-                },
-                {
-                    let mut e = storage_entry(false, wgpu::ShaderStages::COMPUTE);
-                    e.binding = 8;
-                    e
-                },
             ],
         });
         let render_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
@@ -2874,26 +1981,6 @@ impl NativeApp {
                 {
                     let mut e = storage_entry(false, wgpu::ShaderStages::FRAGMENT);
                     e.binding = 4;
-                    e
-                },
-                {
-                    let mut e = storage_entry(true, wgpu::ShaderStages::FRAGMENT);
-                    e.binding = 5;
-                    e
-                },
-                {
-                    let mut e = storage_entry(false, wgpu::ShaderStages::FRAGMENT);
-                    e.binding = 6;
-                    e
-                },
-                {
-                    let mut e = storage_entry(true, wgpu::ShaderStages::VERTEX_FRAGMENT);
-                    e.binding = 7;
-                    e
-                },
-                {
-                    let mut e = storage_entry(false, wgpu::ShaderStages::FRAGMENT);
-                    e.binding = 8;
                     e
                 },
                 wgpu::BindGroupLayoutEntry {
@@ -2968,22 +2055,6 @@ impl NativeApp {
             layout: Some(&probe_pipe_layout),
             module: &module,
             entry_point: Some("presence_probe"),
-            compilation_options: Default::default(),
-            cache: None,
-        });
-        let cull_pipe = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
-            label: None,
-            layout: Some(&probe_pipe_layout),
-            module: &module,
-            entry_point: Some("tile_cull"),
-            compilation_options: Default::default(),
-            cache: None,
-        });
-        let star_cull_pipe = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
-            label: None,
-            layout: Some(&probe_pipe_layout),
-            module: &module,
-            entry_point: Some("star_cull"),
             compilation_options: Default::default(),
             cache: None,
         });
@@ -3124,7 +2195,7 @@ impl NativeApp {
         self.hud_pipe = Some(hud_pipe);
         let vp_buf = device.create_buffer(&wgpu::BufferDescriptor {
             label: None,
-            size: 176,
+            size: 144,
             usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
             mapped_at_creation: false,
         });
@@ -3147,15 +2218,12 @@ impl NativeApp {
         self.queue = Some(queue);
         self.render_pipe = Some(render_pipe);
         self.probe_pipe = Some(probe_pipe);
-        self.cull_pipe = Some(cull_pipe);
-        self.star_cull_pipe = Some(star_cull_pipe);
         self.probe_layout = Some(probe_layout);
         self.render_layout = Some(render_layout);
         self.vp_buf = Some(vp_buf);
         self.probe_buf = Some(probe_buf);
         self.probe_read = Some(probe_read);
         self.reconfigure();
-        self.ensure_tiles();
         self.ensure_capacity();
         self.ensure_hud_texture();
     }
@@ -3377,17 +2445,12 @@ impl ApplicationHandler for NativeApp {
             self.latest_field = Some(field);
             self.sense();
         }
-        while let Ok((packed, stars, barriers, t, occ, generation)) = self.res_rx.try_recv() {
+        while let Ok((packed, t, generation)) = self.res_rx.try_recv() {
             self.packed_count = packed.count;
             self.packed_field = packed.field;
             self.packed_meta = packed.meta;
             self.packed_gen = generation;
             self.last_response_epoch = t;
-            self.packed_stars = stars;
-            self.star_count = (self.packed_stars.len() / 12) as u32;
-            self.star_dirty = true;
-            self.packed_barriers = barriers;
-            self.occ_report = occ;
             self.relax_force_refs();
         }
         self.consider_resend();
@@ -3513,11 +2576,6 @@ impl ApplicationHandler for NativeApp {
             } else {
                 self.frame_ms_ema * (1.0 - BUDGET_RELAX) + avg_ms * BUDGET_RELAX
             };
-            if self.frame_ms_ema > 16.6 {
-                self.cull_n = self.cull_n.saturating_sub(1).max(8);
-            } else if self.frame_ms_ema < 8.3 {
-                self.cull_n = (self.cull_n + 1).min(23);
-            }
             let rec = if self.consent.load(Ordering::SeqCst) {
                 "on"
             } else {
@@ -3535,7 +2593,7 @@ impl ApplicationHandler for NativeApp {
             }
             self.hud_raster(&force_tokens, te_opt);
             eprintln!(
-                "φ window: t {:.2} | rec {} | gen {} | flow {:+.2} {:+.2} {:+.2} | {} | mx {:.2e} | fps {:.0} | ssaa {:.2} | grid 2^{} | x {:.3e} y {:.3e} z {:.3e} | {} near | {} deep | okkl {} | transit {} | cull {} | b {}x{} | maxms {:.0} | ema {:.1} | perm {:.2} | off {:.2} | field {}",
+                "φ window: t {:.2} | rec {} | gen {} | flow {:+.2} {:+.2} {:+.2} | {} | mx {:.2e} | fps {:.0} | ssaa {:.2} | grid 2^{} | x {:.3e} y {:.3e} z {:.3e} | {} recs | b {}x{} | maxms {:.0} | ema {:.1} | perm {:.2} | off {:.2} | field {}",
                 self.t_presence,
                 rec,
                 self.ring_gen,
@@ -3551,10 +2609,6 @@ impl ApplicationHandler for NativeApp {
                 y,
                 z,
                 self.packed_count,
-                self.star_count,
-                self.occ_report.events.len(),
-                self.occ_report.transits,
-                self.cull_n,
                 self.backing.0,
                 self.backing.1,
                 ms_max,
@@ -3563,26 +2617,6 @@ impl ApplicationHandler for NativeApp {
                 self.expose_offset,
                 self.field_dark,
             );
-            {
-                let mut cur: Vec<u32> = self.occ_report.events.iter().map(|e| e.0).collect();
-                cur.sort_unstable();
-                cur.dedup();
-                if cur != self.occ_prev {
-                    self.occ_prev = cur;
-                    if self.occ_report.events.is_empty() {
-                        eprintln!("okkl: 0 — das Feld ist frei");
-                    } else {
-                        let mut line = String::new();
-                        for (i, &(num, ra, dec)) in self.occ_report.events.iter().enumerate() {
-                            if i > 0 {
-                                line.push_str(" | ");
-                            }
-                            line.push_str(&format!("{} vor @({:.3}°, {:.3}°)", num, ra, dec));
-                        }
-                        eprintln!("okkl: {} — {}", self.occ_report.events.len(), line);
-                    }
-                }
-            }
         }
         event_loop.set_control_flow(ControlFlow::WaitUntil(
             std::time::Instant::now() + std::time::Duration::from_millis(16),
@@ -3814,7 +2848,7 @@ fn run_window(
     presence_tx: mpsc::Sender<(String, f64, f64, f64, f64, f64)>,
     sensor_tx: mpsc::Sender<Vec<(String, f64, f64)>>,
     req_tx: mpsc::SyncSender<SenseReq>,
-    res_rx: mpsc::Receiver<(PackedWindow, Vec<f32>, Vec<f32>, f64, OccReport, u64)>,
+    res_rx: mpsc::Receiver<(PackedWindow, f64, u64)>,
     body_names: Arc<Vec<String>>,
     time: Arc<Mutex<Option<LeapSeconds>>>,
     shutdown: Arc<AtomicBool>,
@@ -3927,39 +2961,6 @@ mod tests {
     }
 
     #[test]
-    fn pack_stars_layout() {
-        let stars: [[f64; 10]; 2] = [
-            [
-                0.1, 0.2, 0.3, 42.5, 2.72e10, 6001.0, 7002.0, 0.004, 1.4, 86400.0,
-            ],
-            [
-                0.4, 0.5, 0.6, -7.25, 1.0e3, -999.0, 4002.0, -0.002, 2.6, 3.0,
-            ],
-        ];
-        let packed = pack_stars(&stars);
-        assert_eq!(packed.len(), 24);
-        assert_eq!(packed[0], 6001.0);
-        assert_eq!(packed[1], 7002.0);
-        assert_eq!(packed[2], 42.5);
-        assert_eq!(packed[3], 2.72e10);
-        assert_eq!(packed[4], 0.1);
-        assert_eq!(packed[5], 0.2);
-        assert_eq!(packed[6], 0.3);
-        assert_eq!(packed[7], 0.004);
-        assert_eq!(packed[8], 1.4);
-        assert_eq!(packed[9], 86400.0);
-        assert_eq!(packed[10], 0.0);
-        assert_eq!(packed[11], 0.0);
-        assert_eq!(packed[12], -999.0);
-        assert_eq!(packed[13], 4002.0);
-        assert_eq!(packed[14], -7.25);
-        assert_eq!(packed[15], 1.0e3);
-        assert_eq!(packed[16], 0.4);
-        assert_eq!(packed[20], 2.6);
-        assert_eq!(packed[21], 3.0);
-    }
-
-    #[test]
     fn force_ref_medians_routes_forces_and_honors_zero() {
         let mut field = vec![0.0f32; 48];
         field[3] = 4.0;
@@ -3968,38 +2969,13 @@ mod tests {
         field[30] = 2.0;
         field[39] = 0.0;
         field[42] = 8.0;
-        let meds = force_ref_medians(
-            &field,
-            &[0.0; 48],
-            &[0.0, 0.0, 4.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-        );
+        let meds = force_ref_medians(&field, &[0.0; 48]);
         assert_eq!(meds[0].unwrap(), 4.0);
         assert_eq!(meds[1], None);
         assert_eq!(meds[2].unwrap(), 2.0);
         for ft in 3..9 {
             assert_eq!(meds[ft], None);
         }
-    }
-
-    #[test]
-    fn occ_hits_ray_geometry() {
-        assert!(occ_hits_ray([10.0, 0.0, 0.0], [1.0, 0.0, 0.0], 1.0, 0.0));
-        assert!(!occ_hits_ray([10.0, 2.0, 0.0], [1.0, 0.0, 0.0], 1.0, 0.0));
-        assert!(!occ_hits_ray([-10.0, 0.0, 0.0], [1.0, 0.0, 0.0], 1.0, 0.0));
-        assert!(!occ_hits_ray([0.5, 0.0, 0.0], [1.0, 0.0, 0.0], 1.0, 0.0));
-        let limb = [10.0, 0.99, 0.0];
-        assert!(occ_hits_ray(limb, [1.0, 0.0, 0.0], 1.0, 0.0));
-        assert!(!occ_hits_ray(limb, [1.0, 0.0, 0.0], 1.0, 1.0e30));
-    }
-
-    #[test]
-    fn occ_dir_cell_maps_and_wraps() {
-        let (lat_n, _) = occ_dir_cell([0.0, 0.0, 1.0]);
-        assert_eq!(lat_n, OCC_LAT_BANDS - 1);
-        let (lat_s, _) = occ_dir_cell([0.0, 0.0, -1.0]);
-        assert_eq!(lat_s, 0);
-        let (_, lon) = occ_dir_cell([-1.0, -1e-9, 0.0]);
-        assert!(lon < OCC_LON_BANDS / 2);
     }
 
     #[test]
@@ -4022,7 +2998,6 @@ mod tests {
         };
         app.packed_field = vec![0.0; 12];
         app.packed_meta = vec![0.0; 12];
-        app.packed_stars = Vec::new();
         for _ in 0..64 {
             app.relax_force_refs();
         }
@@ -4040,7 +3015,7 @@ mod tests {
         meta[0] = 2.0f32.powi(20);
         field[15] = 2.0f32.powi(45);
         field[18] = 1.0;
-        let meds = force_ref_medians(&field, &meta, &[]);
+        let meds = force_ref_medians(&field, &meta);
         assert_eq!(meds[1].unwrap(), 2.0f32.powi(45));
     }
 
@@ -4065,7 +3040,6 @@ mod tests {
         app.packed_field = vec![0.0; 12];
         app.packed_field[3] = 8.0;
         app.packed_meta = vec![0.0; 12];
-        app.packed_stars = Vec::new();
         app.relax_force_refs();
         assert_eq!(app.force_ref[0], 8.0);
     }

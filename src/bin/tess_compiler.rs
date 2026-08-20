@@ -1,8 +1,3 @@
-// TESS-Lichtkurven-Ernte: exoplanetarchive-TAP (pscomppars, Transit-Wirte)
-// → MAST v0 invoke (SPOC 2-min timeseries) → Download/file (_lc.fits)
-// → tess_lightcurves.bin (Stern-indiziert, sortierte [t_since_j2000, flux]).
-// Muster: tap_compiler. Upload via --ci-mode (tag ssd.jpl.nasa.gov).
-
 use omegaflow::cdn::upload_asset;
 use omegaflow::fits::{FitsHeader, FitsTable};
 use omegaflow::json::{jnum, jpath_val, jstr, parse_json, JsonVal};
@@ -355,7 +350,7 @@ fn main() {
     };
     let token = mast_token().unwrap_or_default();
     if token.is_empty() {
-        eprintln!("MAST_TOKEN absent (.secrets.local oder env)");
+        eprintln!("MAST_TOKEN absent (.secrets.local or env)");
         return;
     }
     let tic_set: Option<std::collections::HashSet<String>> =
@@ -372,7 +367,7 @@ fn main() {
         let ids = mast_lc_obs_ids(target, &token);
         if ids.is_empty() {
             eprintln!(
-                "\r\x1b[K[{}] {} {}: keine SPOC 2-min-Sektoren",
+                "\r\x1b[K[{}] {} {}: no SPOC 2-min sectors",
                 n, target.tic_id, target.ra_deg
             );
             continue;

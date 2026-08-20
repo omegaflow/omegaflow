@@ -37,9 +37,6 @@ pub struct SpectralHash {
 pub struct Buffer {
     pub cache: SpatialHash,
     pub eph: Arc<HashMap<String, BodyEphemeris>>,
-    pub star_records: Arc<Vec<StarRec>>,
-    pub occluders: Option<Arc<OccluderSet>>,
-    pub planets: Option<Arc<PlanetSet>>,
     pub curves: Option<Arc<CurveSet>>,
     pub spectral: Vec<SpectralHash>,
 }
@@ -55,23 +52,6 @@ pub struct StarRec {
     pub tau: f64,
     pub color_index: f64,
     pub rv_m_s: f64,
-}
-pub struct OccluderSet {
-    pub records: Vec<AsteroidRec>,
-}
-pub struct PlanetRec {
-    pub star_p: [f64; 3],
-    pub a_au: f64,
-    pub e: f64,
-    pub incl_deg: f64,
-    pub w_deg: f64,
-    pub tranmid_jd: f64,
-    pub period_days: f64,
-    pub rp_m: f64,
-    pub rs_m: f64,
-}
-pub struct PlanetSet {
-    pub records: Vec<PlanetRec>,
 }
 pub struct CurveStar {
     pub ra_deg: f64,
@@ -118,7 +98,7 @@ pub enum Motion {
 pub enum SampleSource {
     Source(u32),
     Sensor,
-    Body,
+    Ephemeris,
 }
 
 #[derive(Clone)]
@@ -292,22 +272,6 @@ pub enum Extract {
         q_key: String,
         tp_key: String,
         fields: Vec<FieldConfig>,
-    },
-    TransitMap {
-        arr_path: String,
-        name_key: String,
-        ra_key: String,
-        dec_key: String,
-        dist_key: String,
-        dist_scale: f64,
-        a_key: String,
-        e_key: String,
-        i_key: String,
-        w_key: String,
-        tranmid_key: String,
-        period_key: String,
-        rp_key: String,
-        rs_key: String,
     },
     Hapi(Vec<(String, String)>),
     Alerce(String),
@@ -927,7 +891,6 @@ pub fn extract_fields(ext: &Extract) -> &[FieldConfig] {
         | Extract::CmrPolygon { fields, .. }
         | Extract::CelestialPolygon { fields, .. }
         | Extract::KeplerMap { fields, .. } => fields,
-        Extract::TransitMap { .. } => &[],
         Extract::Field(fc)
         | Extract::First(fc)
         | Extract::Last(fc)
@@ -1666,24 +1629,6 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     fields: Vec::new(),
                 });
             }
-            "transitmap" if parts.len() >= 2 => {
-                cur_extracts.push(Extract::TransitMap {
-                    arr_path: parts[1].to_string(),
-                    name_key: String::new(),
-                    ra_key: String::new(),
-                    dec_key: String::new(),
-                    dist_key: String::new(),
-                    dist_scale: 3.085677581e16,
-                    a_key: String::new(),
-                    e_key: String::new(),
-                    i_key: String::new(),
-                    w_key: String::new(),
-                    tranmid_key: String::new(),
-                    period_key: String::new(),
-                    rp_key: String::new(),
-                    rs_key: String::new(),
-                });
-            }
             "hapi" if parts.len() >= 2 => {
                 let mut params = Vec::new();
                 for s in &parts[1..] {
@@ -2194,73 +2139,19 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     }
                 }
             }
-            "tname" if parts.len() >= 2 => {
-                if let Some(Extract::TransitMap { name_key, .. }) = cur_extracts.last_mut() {
-                    *name_key = parts[1].to_string();
-                }
-            }
-            "tra" if parts.len() >= 2 => {
-                if let Some(Extract::TransitMap { ra_key, .. }) = cur_extracts.last_mut() {
-                    *ra_key = parts[1].to_string();
-                }
-            }
-            "tdec" if parts.len() >= 2 => {
-                if let Some(Extract::TransitMap { dec_key, .. }) = cur_extracts.last_mut() {
-                    *dec_key = parts[1].to_string();
-                }
-            }
-            "tdist" if parts.len() >= 2 => {
-                if let Some(Extract::TransitMap { dist_key, .. }) = cur_extracts.last_mut() {
-                    *dist_key = parts[1].to_string();
-                }
-            }
-            "tdist_scale" if parts.len() >= 2 => {
-                if let Ok(v) = parts[1].parse::<f64>() {
-                    if let Some(Extract::TransitMap { dist_scale, .. }) = cur_extracts.last_mut() {
-                        *dist_scale = v;
-                    }
-                }
-            }
-            "ta" if parts.len() >= 2 => {
-                if let Some(Extract::TransitMap { a_key, .. }) = cur_extracts.last_mut() {
-                    *a_key = parts[1].to_string();
-                }
-            }
-            "te" if parts.len() >= 2 => {
-                if let Some(Extract::TransitMap { e_key, .. }) = cur_extracts.last_mut() {
-                    *e_key = parts[1].to_string();
-                }
-            }
-            "ti" if parts.len() >= 2 => {
-                if let Some(Extract::TransitMap { i_key, .. }) = cur_extracts.last_mut() {
-                    *i_key = parts[1].to_string();
-                }
-            }
-            "tw" if parts.len() >= 2 => {
-                if let Some(Extract::TransitMap { w_key, .. }) = cur_extracts.last_mut() {
-                    *w_key = parts[1].to_string();
-                }
-            }
-            "ttranmid" if parts.len() >= 2 => {
-                if let Some(Extract::TransitMap { tranmid_key, .. }) = cur_extracts.last_mut() {
-                    *tranmid_key = parts[1].to_string();
-                }
-            }
-            "tperiod" if parts.len() >= 2 => {
-                if let Some(Extract::TransitMap { period_key, .. }) = cur_extracts.last_mut() {
-                    *period_key = parts[1].to_string();
-                }
-            }
-            "trp" if parts.len() >= 2 => {
-                if let Some(Extract::TransitMap { rp_key, .. }) = cur_extracts.last_mut() {
-                    *rp_key = parts[1].to_string();
-                }
-            }
-            "trs" if parts.len() >= 2 => {
-                if let Some(Extract::TransitMap { rs_key, .. }) = cur_extracts.last_mut() {
-                    *rs_key = parts[1].to_string();
-                }
-            }
+            "tname" if parts.len() >= 2 => {}
+            "tra" if parts.len() >= 2 => {}
+            "tdec" if parts.len() >= 2 => {}
+            "tdist" if parts.len() >= 2 => {}
+            "tdist_scale" if parts.len() >= 2 => {}
+            "ta" if parts.len() >= 2 => {}
+            "te" if parts.len() >= 2 => {}
+            "ti" if parts.len() >= 2 => {}
+            "tw" if parts.len() >= 2 => {}
+            "ttranmid" if parts.len() >= 2 => {}
+            "tperiod" if parts.len() >= 2 => {}
+            "trp" if parts.len() >= 2 => {}
+            "trs" if parts.len() >= 2 => {}
             "format" if parts.len() >= 2 => cur_format = parts[1..].join(" "),
             "body" if parts.len() >= 2 => {
                 cur_body = Some(parts[1].to_string());
@@ -4918,7 +4809,6 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                     }
                 }
             }
-            Extract::TransitMap { .. } => {}
             Extract::Alerce(_) => {}
         }
     }
@@ -6209,7 +6099,7 @@ field temp temp_c\n";
     }
 
     #[test]
-    fn test_star_records_build_tau() {
+    fn test_star_samples_build_tau() {
         let mut bin = Vec::new();
         bin.extend_from_slice(&0f64.to_le_bytes());
         bin.extend_from_slice(&0f64.to_le_bytes());
@@ -6220,24 +6110,23 @@ field temp temp_c\n";
         bin.extend_from_slice(&1f32.to_le_bytes());
         bin.extend_from_slice(&1.2f32.to_le_bytes());
         bin.extend_from_slice(&30000f32.to_le_bytes());
-        let (samples, records) = build_star_samples(&bin);
-        assert_eq!(records.len(), 1);
-        assert!(records[0].tau > 0.0);
-        assert!((records[0].color_index - 1.2).abs() < 1e-4);
-        assert!((records[0].rv_m_s - 30000.0).abs() < 1e-4);
+        let samples = build_star_samples(&bin);
         assert_eq!(samples.len(), 1);
+        assert!(samples[0].tau > 0.0);
         assert_eq!(samples[0].val, 1.0);
         assert_eq!(samples[0].force_type, 0.0);
         assert_eq!(samples[0].kernel_id, 0.0);
-        assert_eq!(samples[0].tau, records[0].tau);
-        assert_eq!(samples[0].ttl, records[0].tau);
+        assert_eq!(samples[0].ttl, samples[0].tau);
         assert_eq!(samples[0].epoch, 0.0);
+        assert!(samples[0].extent.is_infinite());
         assert!((samples[0].color_index - 1.2).abs() < 1e-4);
         let Motion::Spherical { rec } = &samples[0].motion else {
             panic!("spherical motion");
         };
         assert!((rec.plx_mas - 100.0).abs() < 1e-6);
-        let (p, _) = star_position_at(&records[0], 0.0);
+        assert!((rec.rv_m_s - 30000.0).abs() < 1e-4);
+        assert!((rec.color_index - 1.2).abs() < 1e-4);
+        let (p, _) = star_position_at(rec, 0.0);
         let d = 10.0 * PARSEC_M;
         assert!((p[0] - d).abs() / d < 1e-9);
         assert!((samples[0].anchor_p0[0] - d).abs() / d < 1e-9);
@@ -6245,13 +6134,11 @@ field temp temp_c\n";
         assert!(parse_star_record(&short).is_none());
         let legacy = [0u8; 40];
         assert!(parse_star_record(&legacy).is_none());
-        let (legacy_samples, legacy_records) = build_star_samples(&bin[..40]);
-        assert_eq!(legacy_records.len(), 0);
-        assert_eq!(legacy_samples.len(), 0);
+        assert_eq!(build_star_samples(&bin[..40]).len(), 0);
     }
 
     #[test]
-    fn test_star_samples_query() {
+    fn test_star_samples_diode() {
         let mut bin = Vec::new();
         bin.extend_from_slice(&0f64.to_le_bytes());
         bin.extend_from_slice(&0f64.to_le_bytes());
@@ -6262,38 +6149,42 @@ field temp temp_c\n";
         bin.extend_from_slice(&1f32.to_le_bytes());
         bin.extend_from_slice(&1.2f32.to_le_bytes());
         bin.extend_from_slice(&12000f32.to_le_bytes());
-        let (samples, records) = build_star_samples(&bin);
-        assert_eq!(records.len(), 1);
+        let samples = build_star_samples(&bin);
         assert_eq!(samples.len(), 1);
         let d = 10.0 * PARSEC_M;
         assert!((samples[0].anchor_p0[0] - d).abs() / d < 1e-9);
         let eph: HashMap<String, BodyEphemeris> = HashMap::new();
-        let buf = build_buffer(
-            samples,
-            1.0,
-            Arc::new(eph.clone()),
-            Arc::new(Vec::new()),
-            None,
-            None,
-            None,
-            Vec::new(),
-        );
-        let mut out: Vec<SampleRecord> = Vec::new();
-        query_hash(
-            &buf.cache,
-            [0.0, 0.0, 0.0],
-            0.0,
-            d * 2.0,
-            0.0,
-            &mut out,
-            &eph,
-        );
-        assert_eq!(out.len(), 1);
-        assert!((out[0].0 - d).abs() / d < 1e-9);
-        assert_eq!(out[0].3, 1.0);
-        assert_eq!(out[0].8, 0.0);
-        assert_eq!(out[0].9, 0.0);
-        assert!((out[0].21 - 1.2).abs() < 1e-4);
+        let buf = build_buffer(samples, 1.0, Arc::new(eph.clone()), None, Vec::new());
+        let query = |floor: [f64; 9], forward: [f64; 3]| {
+            let mut out: Vec<SampleRecord> = Vec::new();
+            query_hash(
+                &buf.cache,
+                [0.0, 0.0, 0.0],
+                0.0,
+                1.0,
+                0.0,
+                &floor,
+                1.0,
+                forward,
+                &mut out,
+                &eph,
+            );
+            out
+        };
+        let dark = query([0.0; 9], [1.0, 0.0, 0.0]);
+        assert_eq!(dark.len(), 0);
+        let loud = query([1e9; 9], [1.0, 0.0, 0.0]);
+        assert_eq!(loud.len(), 0);
+        let off_axis = query([0.5; 9], [0.0, 0.0, 1.0]);
+        assert_eq!(off_axis.len(), 0);
+        let on_axis = query([0.5; 9], [1.0, 0.0, 0.0]);
+        assert_eq!(on_axis.len(), 1);
+        assert!((on_axis[0].0 - d).abs() / d < 1e-9);
+        assert_eq!(on_axis[0].3, 1.0);
+        assert_eq!(on_axis[0].7, 0.0);
+        assert_eq!(on_axis[0].8, 0.0);
+        assert_eq!(on_axis[0].9, 0.0);
+        assert!((on_axis[0].21 - 1.2).abs() < 1e-4);
     }
 
     fn kepler_rec_fixture() -> AsteroidRec {
@@ -6373,9 +6264,8 @@ field temp temp_c\n";
         unbound.gm_km3_s2 = 0.5;
         crate::dastcom::encode_record(&unbound, &mut bin);
 
-        let (samples, occluders) = build_asteroid_samples(&bin, 86400);
+        let samples = build_asteroid_samples(&bin, 86400);
         assert_eq!(samples.len(), 3);
-        assert_eq!(occluders.as_ref().map(|o| o.records.len()), Some(1));
         let gm = &samples[0];
         let radius = &samples[1];
         let far_gm = &samples[2];
@@ -6402,18 +6292,20 @@ field temp temp_c\n";
         let anchor_p0 = gm.anchor_p0;
 
         let eph: HashMap<String, BodyEphemeris> = HashMap::new();
-        let buf = build_buffer(
-            samples,
-            1.0,
-            Arc::new(eph.clone()),
-            Arc::new(Vec::new()),
-            None,
-            None,
-            None,
-            Vec::new(),
-        );
+        let buf = build_buffer(samples, 1.0, Arc::new(eph.clone()), None, Vec::new());
         let mut records: Vec<SampleRecord> = Vec::new();
-        query_hash(&buf.cache, anchor_p0, 0.0, 1.0, 0.0, &mut records, &eph);
+        query_hash(
+            &buf.cache,
+            anchor_p0,
+            0.0,
+            1.0,
+            0.0,
+            &[0.0; 9],
+            1.0,
+            [1.0, 0.0, 0.0],
+            &mut records,
+            &eph,
+        );
         assert_eq!(records.len(), 2);
         assert_eq!(records[0].3, 5.0e8);
         assert_eq!(records[1].3, 3000.0);
@@ -6634,7 +6526,7 @@ field temp temp_c\n";
             )),
             _ => None,
         });
-        let (pv, fields, lk, ok) = prof.expect("ProfileMap extract fehlt");
+        let (pv, fields, lk, ok) = prof.expect("ProfileMap extract missing");
         assert_eq!(pv, "pressure");
         assert_eq!(lk, "geolocation.coordinates.1");
         assert_eq!(ok, "geolocation.coordinates.0");
@@ -6668,7 +6560,7 @@ field temp temp_c\n";
             )),
             _ => None,
         });
-        let (pv, ps, fields, lk, ok, ek) = prof.expect("ProfileMap extract fehlt");
+        let (pv, ps, fields, lk, ok, ek) = prof.expect("ProfileMap extract missing");
         assert_eq!(pv, "PRES");
         assert_eq!(ps, 1.0);
         assert_eq!(lk, "LATITUDE");
@@ -6795,7 +6687,7 @@ field temp temp_c\n";
                     assert!((*lon - 57.37286).abs() < 1e-4);
                     *alt
                 }
-                _ => panic!("Position ist nicht Surface"),
+                _ => panic!("position is not Surface"),
             })
             .collect();
         assert!((alts[0] + 1.08).abs() < 1e-2);
@@ -9122,7 +9014,6 @@ use std::sync::{mpsc, Mutex};
 use std::thread;
 use std::time::{SystemTime, UNIX_EPOCH};
 const NAIF_LSK_TTL_SECS: u64 = 86400;
-const STAR_FLUX_FLOOR: f64 = 1e-4;
 
 pub fn resolve_asset(rel: &str) -> std::path::PathBuf {
     let cwd_candidate = std::path::PathBuf::from(rel);
@@ -9145,14 +9036,6 @@ pub fn resolve_asset(rel: &str) -> std::path::PathBuf {
 
 const SURFACE_MOTION_DT: f64 = 0.01;
 const MAX_SAMPLES: usize = 1 << 22;
-
-fn finite_positive(v: f64) -> Option<f64> {
-    if v.is_finite() && v > 0.0 {
-        Some(v)
-    } else {
-        None
-    }
-}
 
 type Origin = u32;
 
@@ -9246,24 +9129,18 @@ pub fn build_buffer(
     samples: Vec<Sample>,
     cadence: f64,
     eph: Arc<HashMap<String, BodyEphemeris>>,
-    star_records: Arc<Vec<StarRec>>,
-    occluders: Option<Arc<OccluderSet>>,
-    planets: Option<Arc<PlanetSet>>,
     curves: Option<Arc<CurveSet>>,
     spectral: Vec<SpectralHash>,
 ) -> Buffer {
     Buffer {
         cache: build_spatial_hash(samples, cadence),
         eph,
-        star_records,
-        occluders,
-        planets,
         curves,
         spectral,
     }
 }
 
-fn build_asteroid_samples(bytes: &[u8], ttl: u64) -> (Vec<Sample>, Option<Arc<OccluderSet>>) {
+fn build_asteroid_samples(bytes: &[u8], ttl: u64) -> Vec<Sample> {
     let eph: HashMap<String, BodyEphemeris> = HashMap::new();
     let mut samples: Vec<Sample> = Vec::new();
     for chunk in bytes.chunks_exact(RECORD_STRIDE) {
@@ -9288,7 +9165,7 @@ fn build_asteroid_samples(bytes: &[u8], ttl: u64) -> (Vec<Sample>, Option<Arc<Oc
         };
         let gm = rec.gm_km3_s2 as f64 * 1.0e9;
         samples.push(Sample {
-            source: SampleSource::Body,
+            source: SampleSource::Ephemeris,
             epoch: epoch_secs,
             ttl: ttl as f64,
             extent: 0.0,
@@ -9310,7 +9187,7 @@ fn build_asteroid_samples(bytes: &[u8], ttl: u64) -> (Vec<Sample>, Option<Arc<Oc
         });
         if rec.radius_km > 0.0 {
             samples.push(Sample {
-                source: SampleSource::Body,
+                source: SampleSource::Ephemeris,
                 epoch: epoch_secs,
                 ttl: ttl as f64,
                 extent: 0.0,
@@ -9332,25 +9209,7 @@ fn build_asteroid_samples(bytes: &[u8], ttl: u64) -> (Vec<Sample>, Option<Arc<Oc
             });
         }
     }
-    (samples, Some(Arc::new(build_occluder_set(bytes))))
-}
-
-fn build_occluder_set(bytes: &[u8]) -> OccluderSet {
-    let mut records: Vec<AsteroidRec> = Vec::new();
-    for chunk in bytes.chunks_exact(RECORD_STRIDE) {
-        let rec = match parse_record(chunk) {
-            Some(r) => r,
-            None => continue,
-        };
-        if rec.number == 0 || rec.a_au <= 0.0 || rec.e >= 1.0 {
-            continue;
-        }
-        if !(rec.radius_km > 0.0) {
-            continue;
-        }
-        records.push(rec);
-    }
-    OccluderSet { records }
+    samples
 }
 
 const STAR_RECORD_BYTES: usize = 44;
@@ -9416,9 +9275,8 @@ pub fn star_position_at(rec: &StarRec, t2: f64) -> ([f64; 3], [f64; 3]) {
     (p, vel)
 }
 
-fn build_star_samples(bytes: &[u8]) -> (Vec<Sample>, Vec<StarRec>) {
+fn build_star_samples(bytes: &[u8]) -> Vec<Sample> {
     let eph: HashMap<String, BodyEphemeris> = HashMap::new();
-    let mut records: Vec<StarRec> = Vec::new();
     let mut samples: Vec<Sample> = Vec::new();
     let Some(stride) = star_stride(bytes) else {
         eprintln!(
@@ -9426,7 +9284,7 @@ fn build_star_samples(bytes: &[u8]) -> (Vec<Sample>, Vec<StarRec>) {
             bytes.len(),
             STAR_RECORD_BYTES
         );
-        return (samples, records);
+        return samples;
     };
     for chunk in bytes.chunks_exact(stride) {
         let Some(mut rec) = parse_star_record(chunk) else {
@@ -9440,14 +9298,13 @@ fn build_star_samples(bytes: &[u8]) -> (Vec<Sample>, Vec<StarRec>) {
         };
         let Some((anchor_vmax, anchor_amax, anchor_p0)) = law_bounds(&motion, 0.0, 0.0, &eph)
         else {
-            records.push(rec);
             continue;
         };
         samples.push(Sample {
-            source: SampleSource::Body,
+            source: SampleSource::Ephemeris,
             epoch: 0.0,
             ttl: rec.tau,
-            extent: 0.0,
+            extent: f64::INFINITY,
             tau: rec.tau,
             kernel_id: 0.0,
             force_type: 0.0,
@@ -9464,9 +9321,8 @@ fn build_star_samples(bytes: &[u8]) -> (Vec<Sample>, Vec<StarRec>) {
             bin_width: 0.0,
             color_index: rec.color_index,
         });
-        records.push(rec);
     }
-    (samples, records)
+    samples
 }
 
 pub fn query_hash(
@@ -9475,6 +9331,9 @@ pub fn query_hash(
     t2: f64,
     pad: f64,
     delta_t_cache: f64,
+    floor: &[f64; 9],
+    softening: f64,
+    forward: [f64; 3],
     records: &mut Vec<SampleRecord>,
     eph: &HashMap<String, BodyEphemeris>,
 ) {
@@ -9486,10 +9345,49 @@ pub fn query_hash(
         if signal_reach(sample.force_type, sample.advection, age).is_none() {
             continue;
         }
+        let v_prop = match propagation_speed(sample.force_type, sample.advection) {
+            Some(v) => v,
+            None => continue,
+        };
+        let ft = sample.force_type as u8;
+        let floor_ft = if ft < 9 { floor[ft as usize] } else { f64::NAN };
+        if !(floor_ft.is_finite() && floor_ft > 0.0) {
+            continue;
+        }
+        let tolman = if sample.force_type == 0.0 && sample.z > 0.0 {
+            let z1 = 1.0 + sample.z;
+            1.0 / (z1 * z1 * z1 * z1)
+        } else {
+            1.0
+        };
+        let val_max = sample.val.abs() * tolman;
+        let scale2 = softening * softening;
+        if !val_max.is_finite() || val_max < floor_ft * scale2 {
+            continue;
+        }
         let p = match sample.motion.at(t2, sample.epoch, eph) {
             Some(p) => p,
             None => continue,
         };
+        let ddx = p[0] - center[0];
+        let ddy = p[1] - center[1];
+        let ddz = p[2] - center[2];
+        let d2 = ddx * ddx + ddy * ddy + ddz * ddz;
+        let d = d2.sqrt();
+        let sd = ddx * forward[0] + ddy * forward[1] + ddz * forward[2];
+        let transverse2 = (d2 - sd * sd).max(0.0);
+        if !(sample.ttl > 0.0) {
+            continue;
+        }
+        let retarded = if v_prop > 0.0 && d > 0.0 {
+            (age - d / v_prop).max(0.0)
+        } else {
+            age
+        };
+        let val_eff = sample.val * (-retarded / sample.ttl).exp() * tolman;
+        if val_eff.abs() / (transverse2 + scale2) < floor_ft {
+            continue;
+        }
         let v = if let Motion::Linear { v, .. } = &sample.motion {
             [v[0], v[1], v[2]]
         } else {
@@ -9511,7 +9409,7 @@ pub fn query_hash(
             sample.epoch,
             sample.ttl,
             sample.tau,
-            sample.extent,
+            wire_extent(sample.extent),
             sample.kernel_id,
             sample.force_type,
             sample.absorption,
@@ -9618,7 +9516,7 @@ pub fn query_hash(
                 sample.epoch,
                 sample.ttl,
                 sample.tau,
-                sample.extent,
+                wire_extent(sample.extent),
                 sample.kernel_id,
                 sample.force_type,
                 sample.absorption,
@@ -9667,10 +9565,24 @@ pub fn sense_membrane(
     t2: f64,
     pad: f64,
     delta_t_cache: f64,
+    floor: &[f64; 9],
+    softening: f64,
+    forward: [f64; 3],
     records: &mut Vec<SampleRecord>,
     eph: &HashMap<String, BodyEphemeris>,
 ) {
-    query_hash(&buf.cache, center, t2, pad, delta_t_cache, records, eph);
+    query_hash(
+        &buf.cache,
+        center,
+        t2,
+        pad,
+        delta_t_cache,
+        floor,
+        softening,
+        forward,
+        records,
+        eph,
+    );
     for sh in &buf.spectral {
         let Some(p) = sh.motion.at(t2, sh.epoch, eph) else {
             continue;
@@ -9715,53 +9627,6 @@ pub fn sense_membrane(
                 bin_width,
             ));
         }
-    }
-}
-
-pub fn sense_deep(
-    buf: &Buffer,
-    center: [f64; 3],
-    t2: f64,
-    right: [f64; 3],
-    up: [f64; 3],
-    forward: [f64; 3],
-    mag: f64,
-    out: &mut Vec<[f64; 10]>,
-    factors: &HashMap<usize, f64>,
-) {
-    for (si, rec) in buf.star_records.iter().enumerate() {
-        if rec.flux < STAR_FLUX_FLOOR {
-            continue;
-        }
-        let (p, _) = star_position_at(rec, t2);
-        let rel = [p[0] - center[0], p[1] - center[1], p[2] - center[2]];
-        let d = (rel[0] * rel[0] + rel[1] * rel[1] + rel[2] * rel[2]).sqrt();
-        let Some(d) = finite_positive(d) else {
-            continue;
-        };
-        let dir = [rel[0] / d, rel[1] / d, rel[2] / d];
-        let df = dir[0] * forward[0] + dir[1] * forward[1] + dir[2] * forward[2];
-        if df <= 0.0 {
-            continue;
-        }
-        let sx = (dir[0] * right[0] + dir[1] * right[1] + dir[2] * right[2]) / df * mag;
-        let sy = -(dir[0] * up[0] + dir[1] * up[1] + dir[2] * up[2]) / df * mag;
-        let flux = match factors.get(&si) {
-            Some(f) => rec.flux * f,
-            None => rec.flux,
-        };
-        out.push([
-            dir[0],
-            dir[1],
-            dir[2],
-            flux,
-            d,
-            sx,
-            sy,
-            rec.rv_m_s / C_LIGHT,
-            rec.color_index,
-            rec.tau,
-        ]);
     }
 }
 
@@ -10004,13 +9869,6 @@ fn diagnose_no_samples(src: &SourceConfig, body: &str) -> String {
                             arr_has_rows = true;
                         }
                     }
-                    Extract::TransitMap { arr_path, .. } => {
-                        if let Some(JsonVal::Arr(arr)) = jpath_val(&j, arr_path) {
-                            if !arr.is_empty() {
-                                arr_has_rows = true;
-                            }
-                        }
-                    }
                     Extract::Field(FieldConfig { key, .. })
                     | Extract::First(FieldConfig { key, .. })
                     | Extract::Last(FieldConfig { key, .. })
@@ -10122,6 +9980,33 @@ fn signal_reach(force_type: f64, advection: f64, age: f64) -> Option<f64> {
     }
 }
 
+fn propagation_speed(force_type: f64, advection: f64) -> Option<f64> {
+    match force_type as u8 {
+        0 | 1 | 8 => Some(C_LIGHT),
+        2 => Some(AUDIO_SPEED_AIR),
+        3 => Some(SEISMIC_BODY_SPEED),
+        4 => Some(SEISMIC_SURFACE_SPEED),
+        5 => Some(DIFFUSIVITY_THERMAL),
+        6 => Some(DIFFUSIVITY_MOLECULAR),
+        7 => {
+            if advection > 0.0 {
+                Some(advection)
+            } else {
+                Some(ADVECTIVE_BASE_SPEED)
+            }
+        }
+        _ => None,
+    }
+}
+
+fn wire_extent(extent: f64) -> f64 {
+    if extent.is_finite() {
+        extent
+    } else {
+        0.0
+    }
+}
+
 pub fn sensor_config(name: &str) -> Option<BrowserSensor> {
     let kl = name.to_lowercase();
     let (force, kernel, ttl) = if kl.contains("temperature")
@@ -10209,9 +10094,6 @@ struct FetchResult {
     eph_update: Option<(String, BodyEphemeris)>,
     asteroid_samples: Vec<Sample>,
     star_samples: Vec<Sample>,
-    star_records: Vec<StarRec>,
-    occluders: Option<Arc<OccluderSet>>,
-    planets: Option<Arc<PlanetSet>>,
     curves: Option<Arc<CurveSet>>,
     spectral: Option<SpectralHash>,
 }
@@ -10317,7 +10199,7 @@ impl Radiator for StderrRadiator {
                         api_samples += 1;
                         api_src.insert(idx);
                     }
-                    SampleSource::Body => {
+                    SampleSource::Ephemeris => {
                         body_samples += 1;
                         body_src.insert(sample.name.split('.').next().unwrap_or("").to_string());
                     }
@@ -10355,9 +10237,6 @@ struct Archive {
     time: Arc<Mutex<Option<LeapSeconds>>>,
     asteroid_samples: Vec<Sample>,
     star_samples: Vec<Sample>,
-    star_records: Arc<Vec<StarRec>>,
-    occluders: Option<Arc<OccluderSet>>,
-    planets: Option<Arc<PlanetSet>>,
     curves: Option<Arc<CurveSet>>,
     spectral: Vec<SpectralHash>,
     pending_channels: Vec<(Channel, FieldConfig, u32)>,
@@ -13635,7 +13514,7 @@ fn derive_frame(parsed: &JsonVal, coords: &str) -> (String, String) {
     } else if json_has_key_ci(parsed, "ra") && json_has_key_ci(parsed, "dec") {
         ("at sun\n".to_string(), "celestial ra/dec".to_string())
     } else {
-        ("".to_string(), "frame ausstehend".to_string())
+        ("".to_string(), "frame pending".to_string())
     }
 }
 
@@ -13753,7 +13632,7 @@ fn draft_url_mode(path: &str, env: &HashMap<String, String>, fetchone: bool) -> 
     .ok();
     let learned = learned_lock.into_inner().unwrap();
     eprintln!(
-        "--draft: {} Kandidaten, {} Blöcke gedraftet, {} Frames gelernt → phi/pipeline/probe_drafts.φ + phi/pipeline/frame_learned.φ",
+        "--draft: {} candidates, {} blocks drafted, {} frames learned → phi/pipeline/probe_drafts.φ + phi/pipeline/frame_learned.φ",
         total,
         drafted,
         learned.len()
@@ -13833,7 +13712,7 @@ fn draft_frame_guess(
             );
         }
     }
-    ("".to_string(), "frame ausstehend".to_string())
+    ("".to_string(), "frame pending".to_string())
 }
 
 fn build_frame_registry() -> HashMap<String, String> {
@@ -13902,7 +13781,7 @@ fn learn_frames(new: &HashMap<String, String>) {
             .or_insert_with(|| frame.to_string());
     }
     let mut out = String::from(
-            "# frame-learned — Route (host/Pfad, Query gestrippt) → frame, selbstlernend aus Probe-Antworten (--draft)\n",
+            "# frame-learned — route (host/path, query stripped) → frame, self-learning from probe responses (--draft)\n",
         );
     let mut keys: Vec<(&String, &String)> = map.iter().collect();
     keys.sort();
@@ -13957,7 +13836,7 @@ fn draft_context_mode(path: &str) -> i32 {
     }
     let registry = build_frame_registry();
     let mut reg = String::from(
-            "# frame-registry — Route (host/Pfad, Query gestrippt) → frame, selbstlernend aus sources.φ + dead_sources.φ + blocked_sources.φ + frame_learned.φ\n",
+            "# frame-registry — route (host/path, query stripped) → frame, self-learning from sources.φ + dead_sources.φ + blocked_sources.φ + frame_learned.φ\n",
         );
     let mut reg_keys: Vec<(&String, &String)> = registry.iter().collect();
     reg_keys.sort();
@@ -13982,7 +13861,7 @@ fn draft_context_mode(path: &str) -> i32 {
             if l.starts_with("url ") {
                 url = l.trim_start_matches("url ").trim();
             }
-            if l == "# frame: frame ausstehend" {
+            if l == "# frame: frame pending" {
                 is_pending = true;
             }
         }
@@ -14001,7 +13880,7 @@ fn draft_context_mode(path: &str) -> i32 {
         }
         let mut lines: Vec<String> = Vec::new();
         for l in b.lines() {
-            if l == "# frame: frame ausstehend" {
+            if l == "# frame: frame pending" {
                 lines.push(format!("# frame: {}", reason));
                 continue;
             }
@@ -14023,7 +13902,7 @@ fn draft_context_mode(path: &str) -> i32 {
         eprintln!("write phi/pipeline/probe_drafts_enriched.φ: the register does not remember");
     }
     eprintln!(
-            "--draft-context: {} ausstehend → {} celestial, {} terrestrial, {} bleiben ausstehend → phi/pipeline/probe_drafts_enriched.φ",
+            "--draft-context: {} pending → {} celestial, {} terrestrial, {} stay pending → phi/pipeline/probe_drafts_enriched.φ",
             celestial + terrestrial + pending,
             celestial,
             terrestrial,
@@ -14080,7 +13959,7 @@ fn gate_learn_mode() -> i32 {
         }
     }
     let mut d = String::from(
-            "# gate-delta — netloc-Gewichte, selbstlernend aus sources.φ (+) + dead_sources.φ (−) + blocked_sources.φ (b)\n",
+            "# gate-delta — netloc weights, self-learning from sources.φ (+) + dead_sources.φ (−) + blocked_sources.φ (b)\n",
         );
     for (w, f, tag) in &delta {
         d.push_str(&format!("{} {} {}\n", w, f, tag));
@@ -14250,7 +14129,7 @@ fn url_probe_mode(path: &str, env: &HashMap<String, String>, fetchone: bool, jin
         std::fs::write("phi/pipeline/probe_jina.txt", out).ok();
     }
     eprintln!(
-        "--urls: {} geprüft, {} live, {} void, {} jina-json → phi/pipeline/probe_live.txt + probe_url_void.txt + probe_jina.txt",
+        "--urls: {} checked, {} live, {} void, {} jina-json → phi/pipeline/probe_live.txt + probe_url_void.txt + probe_jina.txt",
         total, live, void, jina_report
     );
     0
@@ -14515,9 +14394,6 @@ pub fn main_flow() {
             Vec::new(),
             1.0,
             body_ephemerides.clone(),
-            Arc::new(Vec::new()),
-            None,
-            None,
             None,
             Vec::new(),
         )),
@@ -14528,9 +14404,6 @@ pub fn main_flow() {
         time: time.clone(),
         asteroid_samples: Vec::new(),
         star_samples: Vec::new(),
-        star_records: Arc::new(Vec::new()),
-        occluders: None,
-        planets: None,
         curves: None,
         spectral: Vec::new(),
         pending_channels: Vec::new(),
@@ -14741,15 +14614,6 @@ pub fn main_flow() {
             if !res.star_samples.is_empty() {
                 archive.star_samples = res.star_samples;
             }
-            if !res.star_records.is_empty() {
-                archive.star_records = Arc::new(res.star_records);
-            }
-            if let Some(occluders) = res.occluders {
-                archive.occluders = Some(occluders);
-            }
-            if let Some(planets) = res.planets {
-                archive.planets = Some(planets);
-            }
             if let Some(curves) = res.curves {
                 archive.curves = Some(curves);
             }
@@ -14903,9 +14767,6 @@ pub fn main_flow() {
                                 eph_update: src_clone.body.clone().map(|b| (b, eph)),
                                 asteroid_samples: Vec::new(),
                                 star_samples: Vec::new(),
-                                star_records: Vec::new(),
-                                occluders: None,
-                                planets: None,
                                 curves: None,
                                 spectral: None,
                             });
@@ -14920,9 +14781,6 @@ pub fn main_flow() {
                                 eph_update: None,
                                 asteroid_samples: Vec::new(),
                                 star_samples: Vec::new(),
-                                star_records: Vec::new(),
-                                occluders: None,
-                                planets: None,
                                 curves: None,
                                 spectral: None,
                             });
@@ -14958,9 +14816,6 @@ pub fn main_flow() {
                             eph_update: None,
                             asteroid_samples: Vec::new(),
                             star_samples: Vec::new(),
-                            star_records: Vec::new(),
-                            occluders: None,
-                            planets: None,
                             curves: None,
                             spectral: None,
                         });
@@ -14970,21 +14825,14 @@ pub fn main_flow() {
                         Ok(b) => b,
                         Err(_) => return,
                     };
-                    let (samples, occluders) = build_asteroid_samples(&bytes, src_ttl);
-                    eprintln!(
-                        "\r\x1b[Kcatalog_dastcom: {} samples, okkluder {}",
-                        samples.len(),
-                        occluders.as_ref().map(|o| o.records.len()).unwrap_or(0)
-                    );
+                    let samples = build_asteroid_samples(&bytes, src_ttl);
+                    eprintln!("\r\x1b[Kcatalog_dastcom: {} samples", samples.len());
                     let _ = ftx.send(FetchResult {
                         source_idx: src_idx,
                         channels: Vec::new(),
                         eph_update: None,
                         asteroid_samples: samples,
                         star_samples: Vec::new(),
-                        star_records: Vec::new(),
-                        occluders,
-                        planets: None,
                         curves: None,
                         spectral: None,
                     });
@@ -15012,9 +14860,6 @@ pub fn main_flow() {
                                     eph_update: None,
                                     asteroid_samples: Vec::new(),
                                     star_samples: Vec::new(),
-                                    star_records: Vec::new(),
-                                    occluders: None,
-                                    planets: None,
                                     curves: None,
                                     spectral: None,
                                 });
@@ -15029,9 +14874,6 @@ pub fn main_flow() {
                                 eph_update: None,
                                 asteroid_samples: Vec::new(),
                                 star_samples: Vec::new(),
-                                star_records: Vec::new(),
-                                occluders: None,
-                                planets: None,
                                 curves: None,
                                 spectral: None,
                             });
@@ -15048,9 +14890,6 @@ pub fn main_flow() {
                                 eph_update: None,
                                 asteroid_samples: Vec::new(),
                                 star_samples: Vec::new(),
-                                star_records: Vec::new(),
-                                occluders: None,
-                                planets: None,
                                 curves: None,
                                 spectral: None,
                             });
@@ -15065,9 +14904,6 @@ pub fn main_flow() {
                         eph_update: None,
                         asteroid_samples: Vec::new(),
                         star_samples: Vec::new(),
-                        star_records: Vec::new(),
-                        occluders: None,
-                        planets: None,
                         curves: None,
                         spectral: None,
                     });
@@ -15094,9 +14930,6 @@ pub fn main_flow() {
                                 eph_update: None,
                                 asteroid_samples: Vec::new(),
                                 star_samples: Vec::new(),
-                                star_records: Vec::new(),
-                                occluders: None,
-                                planets: None,
                                 curves: None,
                                 spectral: None,
                             });
@@ -15115,9 +14948,6 @@ pub fn main_flow() {
                         eph_update: None,
                         asteroid_samples: Vec::new(),
                         star_samples: Vec::new(),
-                        star_records: Vec::new(),
-                        occluders: None,
-                        planets: None,
                         curves: None,
                         spectral: None,
                     });
@@ -15138,9 +14968,6 @@ pub fn main_flow() {
                         eph_update: None,
                         asteroid_samples: Vec::new(),
                         star_samples: Vec::new(),
-                        star_records: Vec::new(),
-                        occluders: None,
-                        planets: None,
                         curves: None,
                         spectral: None,
                     });
@@ -15167,9 +14994,6 @@ pub fn main_flow() {
                                     eph_update: None,
                                     asteroid_samples: Vec::new(),
                                     star_samples: Vec::new(),
-                                    star_records: Vec::new(),
-                                    occluders: None,
-                                    planets: None,
                                     curves: None,
                                     spectral: None,
                                 });
@@ -15184,9 +15008,6 @@ pub fn main_flow() {
                                 eph_update: None,
                                 asteroid_samples: Vec::new(),
                                 star_samples: Vec::new(),
-                                star_records: Vec::new(),
-                                occluders: None,
-                                planets: None,
                                 curves: None,
                                 spectral: None,
                             });
@@ -15203,26 +15024,20 @@ pub fn main_flow() {
                                 eph_update: None,
                                 asteroid_samples: Vec::new(),
                                 star_samples: Vec::new(),
-                                star_records: Vec::new(),
-                                occluders: None,
-                                planets: None,
                                 curves: None,
                                 spectral: None,
                             });
                             return;
                         }
                     };
-                    let (star_samples, star_records) = build_star_samples(&bytes);
-                    eprintln!("\r\x1b[Kcatalog_tycho: {} stars", star_records.len());
+                    let star_samples = build_star_samples(&bytes);
+                    eprintln!("\r\x1b[Kcatalog_tycho: {} stars", star_samples.len());
                     let _ = ftx.send(FetchResult {
                         source_idx: src_idx,
                         channels: Vec::new(),
                         eph_update: None,
                         asteroid_samples: Vec::new(),
                         star_samples,
-                        star_records,
-                        occluders: None,
-                        planets: None,
                         curves: None,
                         spectral: None,
                     });
@@ -15241,9 +15056,6 @@ pub fn main_flow() {
                         eph_update: None,
                         asteroid_samples: Vec::new(),
                         star_samples: Vec::new(),
-                        star_records: Vec::new(),
-                        occluders: None,
-                        planets: None,
                         curves: None,
                         spectral: None,
                     };
@@ -15345,93 +15157,8 @@ pub fn main_flow() {
                         eph_update: None,
                         asteroid_samples: Vec::new(),
                         star_samples: Vec::new(),
-                        star_records: Vec::new(),
-                        occluders: None,
-                        planets: None,
                         curves: None,
                         spectral: Some(hash),
-                    });
-                });
-                continue;
-            }
-            if archive.sources[i].format == "transit" {
-                let url = archive.sources[i].url.clone();
-                let ftx = fetch_tx.clone();
-                let src_clone = archive.sources[i].clone();
-                let src_idx = i;
-                let src_ttl = src_clone.ttl;
-                thread::spawn(move || {
-                    let name = url.rsplit('/').next().unwrap_or("planets").to_string();
-                    let tmp_path = format!("/tmp/omegaflow_catalog_{}", name);
-                    if !cache_fresh(&tmp_path, src_ttl) {
-                        let bytes = match fetch_raw_bytes(&url, src_ttl) {
-                            Some(b) => b,
-                            None => {
-                                eprintln!("transit {}: fetch void — retry in ttl/Φ", url);
-                                let _ = ftx.send(FetchResult {
-                                    source_idx: src_idx,
-                                    channels: Vec::new(),
-                                    eph_update: None,
-                                    asteroid_samples: Vec::new(),
-                                    star_samples: Vec::new(),
-                                    star_records: Vec::new(),
-                                    occluders: None,
-                                    planets: None,
-                                    curves: None,
-                                    spectral: None,
-                                });
-                                return;
-                            }
-                        };
-                        if std::fs::write(&tmp_path, &bytes).is_err() {
-                            eprintln!("transit {}: write void — retry in ttl/Φ", url);
-                            let _ = ftx.send(FetchResult {
-                                source_idx: src_idx,
-                                channels: Vec::new(),
-                                eph_update: None,
-                                asteroid_samples: Vec::new(),
-                                star_samples: Vec::new(),
-                                star_records: Vec::new(),
-                                occluders: None,
-                                planets: None,
-                                curves: None,
-                                spectral: None,
-                            });
-                            return;
-                        }
-                    }
-                    let body = match std::fs::read_to_string(&tmp_path) {
-                        Ok(b) => b,
-                        Err(_) => {
-                            eprintln!("transit {}: read void — retry in ttl/Φ", url);
-                            let _ = ftx.send(FetchResult {
-                                source_idx: src_idx,
-                                channels: Vec::new(),
-                                eph_update: None,
-                                asteroid_samples: Vec::new(),
-                                star_samples: Vec::new(),
-                                star_records: Vec::new(),
-                                occluders: None,
-                                planets: None,
-                                curves: None,
-                                spectral: None,
-                            });
-                            return;
-                        }
-                    };
-                    let planets = build_planet_set(&src_clone, &body);
-                    eprintln!("\r\x1b[Ktransit: {} planeten", planets.records.len());
-                    let _ = ftx.send(FetchResult {
-                        source_idx: src_idx,
-                        channels: Vec::new(),
-                        eph_update: None,
-                        asteroid_samples: Vec::new(),
-                        star_samples: Vec::new(),
-                        star_records: Vec::new(),
-                        occluders: None,
-                        planets: Some(Arc::new(planets)),
-                        curves: None,
-                        spectral: None,
                     });
                 });
                 continue;
@@ -15455,9 +15182,6 @@ pub fn main_flow() {
                                     eph_update: None,
                                     asteroid_samples: Vec::new(),
                                     star_samples: Vec::new(),
-                                    star_records: Vec::new(),
-                                    occluders: None,
-                                    planets: None,
                                     curves: None,
                                     spectral: None,
                                 });
@@ -15472,9 +15196,6 @@ pub fn main_flow() {
                                 eph_update: None,
                                 asteroid_samples: Vec::new(),
                                 star_samples: Vec::new(),
-                                star_records: Vec::new(),
-                                occluders: None,
-                                planets: None,
                                 curves: None,
                                 spectral: None,
                             });
@@ -15491,9 +15212,6 @@ pub fn main_flow() {
                                 eph_update: None,
                                 asteroid_samples: Vec::new(),
                                 star_samples: Vec::new(),
-                                star_records: Vec::new(),
-                                occluders: None,
-                                planets: None,
                                 curves: None,
                                 spectral: None,
                             });
@@ -15501,16 +15219,13 @@ pub fn main_flow() {
                         }
                     };
                     let curves = build_curve_set(&bytes);
-                    eprintln!("\r\x1b[Klightcurve: {} sterne", curves.stars.len());
+                    eprintln!("\r\x1b[Klightcurve: {} stars", curves.stars.len());
                     let _ = ftx.send(FetchResult {
                         source_idx: src_idx,
                         channels: Vec::new(),
                         eph_update: None,
                         asteroid_samples: Vec::new(),
                         star_samples: Vec::new(),
-                        star_records: Vec::new(),
-                        occluders: None,
-                        planets: None,
                         curves: Some(Arc::new(curves)),
                         spectral: None,
                     });
@@ -15537,9 +15252,6 @@ pub fn main_flow() {
                                 eph_update: None,
                                 asteroid_samples: Vec::new(),
                                 star_samples: Vec::new(),
-                                star_records: Vec::new(),
-                                occluders: None,
-                                planets: None,
                                 curves: None,
                                 spectral: None,
                             });
@@ -15560,9 +15272,6 @@ pub fn main_flow() {
                                     eph_update: None,
                                     asteroid_samples: Vec::new(),
                                     star_samples: Vec::new(),
-                                    star_records: Vec::new(),
-                                    occluders: None,
-                                    planets: None,
                                     curves: None,
                                     spectral: None,
                                 });
@@ -15577,9 +15286,6 @@ pub fn main_flow() {
                                 eph_update: None,
                                 asteroid_samples: Vec::new(),
                                 star_samples: Vec::new(),
-                                star_records: Vec::new(),
-                                occluders: None,
-                                planets: None,
                                 curves: None,
                                 spectral: None,
                             });
@@ -15595,9 +15301,6 @@ pub fn main_flow() {
                             eph_update: None,
                             asteroid_samples: Vec::new(),
                             star_samples: Vec::new(),
-                            star_records: Vec::new(),
-                            occluders: None,
-                            planets: None,
                             curves: None,
                             spectral: None,
                         });
@@ -15609,9 +15312,6 @@ pub fn main_flow() {
                             eph_update: None,
                             asteroid_samples: Vec::new(),
                             star_samples: Vec::new(),
-                            star_records: Vec::new(),
-                            occluders: None,
-                            planets: None,
                             curves: None,
                             spectral: None,
                         });
@@ -15703,9 +15403,6 @@ pub fn main_flow() {
                             eph_update: None,
                             asteroid_samples: Vec::new(),
                             star_samples: Vec::new(),
-                            star_records: Vec::new(),
-                            occluders: None,
-                            planets: None,
                             curves: None,
                             spectral: None,
                         });
@@ -15717,9 +15414,6 @@ pub fn main_flow() {
                             eph_update: None,
                             asteroid_samples: Vec::new(),
                             star_samples: Vec::new(),
-                            star_records: Vec::new(),
-                            occluders: None,
-                            planets: None,
                             curves: None,
                             spectral: None,
                         });
@@ -15738,9 +15432,6 @@ pub fn main_flow() {
                             eph_update: None,
                             asteroid_samples: Vec::new(),
                             star_samples: Vec::new(),
-                            star_records: Vec::new(),
-                            occluders: None,
-                            planets: None,
                             curves: None,
                             spectral: None,
                         });
@@ -15766,9 +15457,6 @@ pub fn main_flow() {
                                 eph_update: src_clone.body.clone().map(|b| (b, eph)),
                                 asteroid_samples: Vec::new(),
                                 star_samples: Vec::new(),
-                                star_records: Vec::new(),
-                                occluders: None,
-                                planets: None,
                                 curves: None,
                                 spectral: None,
                             });
@@ -15786,9 +15474,7 @@ pub fn main_flow() {
                     eph_update: None,
                     asteroid_samples: Vec::new(),
                     star_samples: Vec::new(),
-                    star_records: Vec::new(),
-                    occluders: None,
-                    planets: None,
+
                     curves: None,
                     spectral: None,
                 });
@@ -15812,7 +15498,7 @@ pub fn main_flow() {
                 .chain(std::iter::once(&old.cache.unbounded))
             {
                 for s in v {
-                    if matches!(s.source, SampleSource::Body) {
+                    if matches!(s.source, SampleSource::Ephemeris) {
                         continue;
                     }
                     if (now - s.epoch).abs() <= s.ttl * 64.0 {
@@ -15845,7 +15531,7 @@ pub fn main_flow() {
                                 None,
                                 &archive.body_ephemerides,
                             ) {
-                                sample.source = SampleSource::Body;
+                                sample.source = SampleSource::Ephemeris;
                                 all.push(sample);
                             }
                         }
@@ -15867,9 +15553,6 @@ pub fn main_flow() {
                 all,
                 cadence,
                 archive.body_ephemerides.clone(),
-                archive.star_records.clone(),
-                archive.occluders.clone(),
-                archive.planets.clone(),
                 archive.curves.clone(),
                 archive.spectral.clone(),
             ));
@@ -15888,131 +15571,6 @@ pub fn main_flow() {
     }
 }
 
-const R_EARTH_M: f64 = 6.371e6;
-const R_SUN_M: f64 = 6.957e8;
-
-pub fn build_planet_set(src: &SourceConfig, body: &str) -> PlanetSet {
-    let mut records = Vec::new();
-    let keys = match src.extracts.iter().find_map(|e| match e {
-        Extract::TransitMap {
-            arr_path,
-            ra_key,
-            dec_key,
-            dist_key,
-            dist_scale,
-            a_key,
-            e_key,
-            i_key,
-            w_key,
-            tranmid_key,
-            period_key,
-            rp_key,
-            rs_key,
-            name_key,
-        } => Some((
-            arr_path.clone(),
-            ra_key.clone(),
-            dec_key.clone(),
-            dist_key.clone(),
-            *dist_scale,
-            a_key.clone(),
-            e_key.clone(),
-            i_key.clone(),
-            w_key.clone(),
-            tranmid_key.clone(),
-            period_key.clone(),
-            rp_key.clone(),
-            rs_key.clone(),
-            name_key.clone(),
-        )),
-        _ => None,
-    }) {
-        Some(k) => k,
-        None => return PlanetSet { records },
-    };
-    let Some(j) = parse_json(body) else {
-        return PlanetSet { records };
-    };
-    let Some(JsonVal::Arr(arr)) = jpath_val(&j, &keys.0) else {
-        return PlanetSet { records };
-    };
-    let mut seen: std::collections::HashSet<String> = std::collections::HashSet::new();
-    for v in arr {
-        if !keys.13.is_empty() {
-            let Some(name_str) = jpath_val(v, &keys.13).and_then(|n| match n {
-                JsonVal::Str(s) => Some(s.clone()),
-                _ => None,
-            }) else {
-                continue;
-            };
-            if !seen.insert(name_str) {
-                continue;
-            }
-        }
-        let Some(ra_deg) = jnum(v, &keys.1) else {
-            continue;
-        };
-        let Some(dec_deg) = jnum(v, &keys.2) else {
-            continue;
-        };
-        let Some(dist_pc) = jnum(v, &keys.3) else {
-            continue;
-        };
-        if !dist_pc.is_finite() || dist_pc <= 0.0 {
-            continue;
-        }
-        let Some(a_au) = jnum(v, &keys.5) else {
-            continue;
-        };
-        let Some(e) = jnum(v, &keys.6) else {
-            continue;
-        };
-        let Some(incl_deg) = jnum(v, &keys.7) else {
-            continue;
-        };
-        let w_deg = match jnum(v, &keys.8) {
-            Some(w) => w,
-            None if e <= 0.0 => 0.0,
-            None => continue,
-        };
-        let Some(tranmid_jd) = jnum(v, &keys.9) else {
-            continue;
-        };
-        let Some(period_days) = jnum(v, &keys.10) else {
-            continue;
-        };
-        let Some(rp_re) = jnum(v, &keys.11) else {
-            continue;
-        };
-        let Some(rs_rsun) = jnum(v, &keys.12) else {
-            continue;
-        };
-        if !(a_au > 0.0 && e >= 0.0 && e < 1.0 && period_days > 0.0) {
-            continue;
-        }
-        if !(rp_re > 0.0 && rs_rsun > 0.0) {
-            continue;
-        }
-        let ra = ra_deg.to_radians();
-        let dec = dec_deg.to_radians();
-        let (sa, ca) = ra.sin_cos();
-        let (sd, cd) = dec.sin_cos();
-        let d_m = dist_pc * keys.4;
-        let p_hat = [cd * ca, cd * sa, sd];
-        records.push(PlanetRec {
-            star_p: [p_hat[0] * d_m, p_hat[1] * d_m, p_hat[2] * d_m],
-            a_au,
-            e,
-            incl_deg,
-            w_deg,
-            tranmid_jd,
-            period_days,
-            rp_m: rp_re * R_EARTH_M,
-            rs_m: rs_rsun * R_SUN_M,
-        });
-    }
-    PlanetSet { records }
-}
 fn take_u32(bytes: &[u8], off: &mut usize) -> Option<u32> {
     let raw: [u8; 4] = bytes.get(*off..*off + 4)?.try_into().ok()?;
     *off += 4;

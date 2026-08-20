@@ -1,11 +1,10 @@
-// omegaflow::spectral — die Frequenzachse als Binär-Kontrakt (Atom B).
-// spectra.bin: Header `0xCF 0x86 0x01 [epoch_tdb:f64] [count:u32]` LE (15 B),
-// danach count × [freq, bin_width, val] f64 LE (24 B je Bin).
-// freq = Band-Zentrum in Hz, bin_width = Bandbreite in Hz aus dem nativen
-// λ-Gitter, val = Spektraldichte in SI. Epoch = Monatsmitte der Messung.
-// Der Ernte-Schritt (NCEI-SSI netCDF-4/HDF5) ist pending — die tabellarische
-// Form der Messung (λ_nm, E_λ, Flag) ist der Input des Compilers; unlesbare
-// Container werden benannt, nie ersetzt (0 honored).
+// spectra.bin: header `0xCF 0x86 0x01 [epoch_tdb:f64] [count:u32]` LE (15 B),
+// then count × [freq, bin_width, val] f64 LE (24 B per bin).
+// freq = band center in Hz, bin_width = bandwidth in Hz from the native
+// λ grid, val = spectral density in SI. Epoch = month middle of the measurement.
+// The harvest step (NCEI-SSI netCDF-4/HDF5) is pending — the tabular
+// form of the measurement (λ_nm, E_λ, flag) is the compiler's input; unreadable
+// containers are named, never replaced (0 honored).
 
 pub const SPECTRAL_MAGIC: [u8; 2] = [0xCF, 0x86];
 pub const SPECTRAL_VERSION: u8 = 0x01;

@@ -206,9 +206,6 @@ fn handle_ingress(stream: TcpStream, cfg: WsConfig) {
                                     Vec::new(),
                                     1.0,
                                     Arc::new(HashMap::new()),
-                                    Arc::new(Vec::new()),
-                                    None,
-                                    None,
                                     None,
                                     Vec::new(),
                                 ))
@@ -295,9 +292,6 @@ fn handle_ingress(stream: TcpStream, cfg: WsConfig) {
                                 Vec::new(),
                                 1.0,
                                 Arc::new(HashMap::new()),
-                                Arc::new(Vec::new()),
-                                None,
-                                None,
                                 None,
                                 Vec::new(),
                             ))
@@ -510,9 +504,6 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                         Vec::new(),
                         1.0,
                         Arc::new(HashMap::new()),
-                        Arc::new(Vec::new()),
-                        None,
-                        None,
                         None,
                         Vec::new(),
                     ))
@@ -691,6 +682,9 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                     t0,
                     extent,
                     delta_t_cache,
+                    &[0.0; 9],
+                    0.0,
+                    [0.0, 0.0, 0.0],
                     &mut records,
                     &eph_map,
                 );

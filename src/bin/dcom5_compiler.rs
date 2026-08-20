@@ -1,7 +1,5 @@
-// DASTCOM5 comet apparition catalog (dcom5_le.dat, 976-B records) → flat cmap
 // (ra/dec/dist_au at record epoch via Kepler). e >= 1 skipped (0 honored).
 // Record layout from dastcom5/doc/README.txt byte map (verified via zip_range_extract).
-// upload via --ci-mode (tag ssd.jpl.nasa.gov, asset dcom5_comets.json).
 
 use omegaflow::cdn::upload_asset;
 use omegaflow::dastcom::{comet_state_at, parse_comet_record, COMET_RECORD_BYTES};
