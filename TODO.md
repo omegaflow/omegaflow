@@ -137,20 +137,28 @@ feuert). Die naive Shuffle-Null der Schleife ist ERSETZT
 `transfer_entropy_lag` ist unangetastet, der Probe behält seine
 lag-Matrizen). Der historische degenerierte Guard (2τ ≥ rs → τ = 1)
 fiel — ein fabrizierter Default; Fenster zu klein → keine TE (0
-honored). Offen (registriert): O(n²)-Kernelskalierung der eingebetteten
-TE bei wachsendem Ring (heute ≤ 256 gebunden); der multivariate
-Silverman-Exponent (−1/(d+4)) als Dichte-konsistente Form (der
-Unterschied wird von der Surrogat-Schwelle absorbiert); das PE-Delay der
-Pipeline läuft auf 1 (der historische Shader-Rhythmus, benannt — die
-Standalone-Funktion trägt delay offen).
-Atom 11 (GPU-TE-Rückkehr, pending — kritischer Architekturschnitt):
-`topological_te_phase` läuft auf der CPU (src/mathematikerin.rs →
-omegaflow::te) und erstickt den Ring bei wachsender O(n²)-Last; die
-Portierung in einen WGSL-Compute-Shader (te_compute) trägt die
-Blaupause des historischen Cuts 75b2b7e (teShader/surrShader — TE +
-Surrogate voll auf der GPU, kein CPU-KDE). Die GPU rechnet das Feld
-und die kausale DAG gleichzeitig; das Atom schließt die
-O(n²)-Zeile oben.
+honored). Offen (registriert): der multivariate Silverman-Exponent (−1/(d+4)) als
+Dichte-konsistente Form (der Unterschied wird von der Surrogat-Schwelle
+absorbiert); das PE-Delay der Pipeline läuft auf 1 (der historische
+Shader-Rhythmus, benannt — die Standalone-Funktion trägt delay offen).
+Atom 11 (2026-08-20): te_compute läuft — der topologische TE-Kern rechnet
+im WGSL-Compute-Shader (ein Thread je Serie: xs + ys + 10 Surrogate;
+MI-Suche, Silverman-Bandbreiten, vierfache KDE-Summen, PE). Die
+MI-Schranke max_lag = n/Φ kommt als Uniform von der CPU (die f64-Formel,
+keine f32-Division); die phasenrandomisierten Surrogate bleiben CPU-f64-FFT
+(byte-identisch zum broken-null-control-Register, Upload 12 KB je Tick);
+mean + 2σ reduziert die CPU in f64 (die historische Grenze); src/te.rs
+bleibt die kanonische CPU-Referenz samt Tests (der skalare Pfad ist
+unangetastet). Verpasst die Readback die Deadline, erntet der nächste
+Tick die ausstehende Map (eine Map im Flug, kein Doppel-Map, kein
+Livelock — der Verdikt trägt dann die Daten des vorigen Ticks) und der
+benannte Zustand wechselt nur an der Grenze (te verdict present /
+readback pending / real series invalid / fewer than two surrogates).
+Offen (registriert): das Zeilen-parallele Re-Shape (ein
+Thread je t statt serieller m²-Schleife — trägt das Ringwachstum); der
+WGSL-FFT der Surrogate (f32-Null) als benannte Alternative; der
+f32-EPS-Floor der MI-Entropie weicht vom f64-Wert ab (die
+Surrogat-Schwelle absorbiert).
 
 Fetch-Ketten-Atom (2026-08-20, Handover handover-fetchkette.md): die vier
 Regressionen sind geschlossen — und drei echte Pipeline-Bugs lagen darunter.

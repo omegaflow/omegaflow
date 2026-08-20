@@ -734,6 +734,52 @@ pub fn topological_te_block(
     })
 }
 
+pub fn topological_verdict_from_gpu(verdict: &[f32; 72]) -> Option<TopologicalVerdict> {
+    let valid_real = verdict[10] == 1.0;
+    if !valid_real {
+        return None;
+    }
+    let tau_x = verdict[0] as usize;
+    let tau_y = verdict[6] as usize;
+    let te = verdict[7] as f64;
+    let mut vals: Vec<f64> = Vec::with_capacity(10);
+    for s in 2..12 {
+        if verdict[s * 6 + 4] == 1.0 {
+            vals.push(verdict[s * 6 + 1] as f64);
+        }
+    }
+    if vals.len() < 2 {
+        return None;
+    }
+    let n = vals.len() as f64;
+    let mean = vals.iter().sum::<f64>() / n;
+    let var = vals.iter().map(|&v| (v - mean) * (v - mean)).sum::<f64>() / n;
+    let sd = var.sqrt();
+    let pe_x = if verdict[5] == 1.0 {
+        Some(verdict[2] as f64)
+    } else {
+        None
+    };
+    let pe_y = if verdict[11] == 1.0 {
+        Some(verdict[8] as f64)
+    } else {
+        None
+    };
+    Some(TopologicalVerdict {
+        tau_x,
+        tau_y,
+        te,
+        threshold: mean + 2.0 * sd,
+        surrogate_mean: mean,
+        surrogate_sd: sd,
+        surrogates_used: vals.len(),
+        pe_x,
+        pe_y,
+        pe_motifs_x: verdict[3] as usize,
+        pe_motifs_y: verdict[9] as usize,
+    })
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -1103,5 +1149,70 @@ mod tests {
             vec![1.0; v.len()]
         });
         assert!(res.is_none());
+    }
+
+    #[test]
+    fn gpu_verdict_assembles_threshold_from_valid_surrogates() {
+        let mut v = [0f32; 72];
+        v[0] = 4.0;
+        v[6] = 3.0;
+        v[7] = 0.5;
+        v[10] = 1.0;
+        v[2] = 0.62;
+        v[5] = 1.0;
+        v[8] = 0.44;
+        v[11] = 1.0;
+        v[2 * 6 + 4] = 1.0;
+        v[2 * 6 + 1] = 0.1;
+        v[3 * 6 + 4] = 1.0;
+        v[3 * 6 + 1] = 0.3;
+        v[4 * 6 + 4] = 1.0;
+        v[4 * 6 + 1] = 0.5;
+        let r = topological_verdict_from_gpu(&v).unwrap();
+        assert_eq!(r.tau_x, 4);
+        assert_eq!(r.tau_y, 3);
+        assert_eq!(r.surrogates_used, 3);
+        assert!((r.te - 0.5).abs() < 1e-12);
+        let a = 0.1f32 as f64;
+        let b = 0.3f32 as f64;
+        let c = 0.5f32 as f64;
+        let expected_mean = (a + b + c) / 3.0;
+        let expected_sd = (((a - expected_mean) * (a - expected_mean)
+            + (b - expected_mean) * (b - expected_mean)
+            + (c - expected_mean) * (c - expected_mean))
+            / 3.0)
+            .sqrt();
+        assert!((r.surrogate_mean - expected_mean).abs() < 1e-12);
+        assert!((r.surrogate_sd - expected_sd).abs() < 1e-12);
+        assert!((r.threshold - (expected_mean + 2.0 * expected_sd)).abs() < 1e-12);
+        assert_eq!(r.pe_x, Some(0.62f32 as f64));
+        assert_eq!(r.pe_y, Some(0.44f32 as f64));
+    }
+
+    #[test]
+    fn gpu_verdict_real_invalid_is_none() {
+        let v = [0f32; 72];
+        assert!(topological_verdict_from_gpu(&v).is_none());
+    }
+
+    #[test]
+    fn gpu_verdict_fewer_than_two_surrogates_is_none() {
+        let mut v = [0f32; 72];
+        v[10] = 1.0;
+        v[2 * 6 + 4] = 1.0;
+        assert!(topological_verdict_from_gpu(&v).is_none());
+    }
+
+    #[test]
+    fn gpu_verdict_pe_invalid_is_none_value() {
+        let mut v = [0f32; 72];
+        v[10] = 1.0;
+        v[2 * 6 + 4] = 1.0;
+        v[2 * 6 + 1] = 0.1;
+        v[3 * 6 + 4] = 1.0;
+        v[3 * 6 + 1] = 0.2;
+        let r = topological_verdict_from_gpu(&v).unwrap();
+        assert_eq!(r.pe_x, None);
+        assert_eq!(r.pe_y, None);
     }
 }
