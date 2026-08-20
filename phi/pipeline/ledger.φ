@@ -561,6 +561,14 @@ ausstehend
 parser-gap SpaltenAusMetadata
 note verify_astro_probe (2026-08-19): Euclid/EAS-TAP antwortet {metadata:[{name:…}], data:[[…]]} — Rows als Skalar-Arrays, Spaltennamen nur im metadata-Block. Die Spaltennamen-aus-metadata-Zuordnung für cmap (oder indexierte ra/dec-Keys) steht aus (mer_catalogue geparkt).
 
+verifiziert
+parser-gap ZeilenFilter
+note implementiert 2026-08-20: `where <key> <value>` an first/last (9-Token-Form + 3-Token-Schwanz); Extract::First/Last tragen Option<(String,String)>; row_matches (String exakt, Nummer numerisch), jfirst_where/jlast_where; extract UND extract_series teilen das Prädikat; malformed where + where auf field laut refused. euvs-7-day zurück (solar_euv_flux_304/284_wm2, where line 304/284 — der mgii_index-Record ist ausgeschlossen), xrays trägt where energy 0.05-0.4nm; nobel probe erntet via extract_series (harvest_block) — live n = 10078 (X-Ray) / 10024 (EUV), Kadenz 60 s verifiziert.
+
+ausstehend
+parser-gap LastUnit
+note Solar-Kuration (2026-08-20): first/last/lastrow/objlast/path/deep/regex verwerfen das Unit-Token (parts[5]) — extract_series erntet diese Felder mit leerer Unit (Identität), die Register-Wahrheit (nT, km/s) lebt nur im Probe. Ein Einfang-Fix braucht das Force-Gate der count-Unit (GOES-Partikel-Flüsse) und der Einheit „1" (Kp) — sonst werden diese Blöcke stumm.
+
 geparkt
 kandidat https://www.jma.go.jp/bosai/amedas/data/map/{YYYYMMDDhhmmss}.json
 note JMA AMeDAS (Japan) — 1286 Stationen live: temp/humidity/pressure/wind/precip/visibility/snow/sun; Stations-Tabelle amedastable.json (lat/lon deg+min). STATUS live, curl 200. Welle 2026-08-19.

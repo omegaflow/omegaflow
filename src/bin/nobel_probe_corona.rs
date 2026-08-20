@@ -96,8 +96,8 @@ fn find_block(sources: &[SourceConfig], field_name: &str) -> Option<SourceConfig
         .find(|s| {
             s.extracts.iter().any(|e| match e {
                 Extract::Field(fc)
-                | Extract::First(fc)
-                | Extract::Last(fc)
+                | Extract::First(fc, _)
+                | Extract::Last(fc, _)
                 | Extract::Count(fc)
                 | Extract::LastRow(fc)
                 | Extract::ObjLast(fc)
@@ -111,13 +111,7 @@ fn find_block(sources: &[SourceConfig], field_name: &str) -> Option<SourceConfig
         .cloned()
 }
 
-fn harvest_last(
-    url: &str,
-    ttl: u64,
-    key: &str,
-    unit: &str,
-    filter: Option<(&str, &str)>,
-) -> Vec<(f64, f64)> {
+fn harvest_last(url: &str, ttl: u64, key: &str, unit: &str) -> Vec<(f64, f64)> {
     let body = match fetch_raw(url, None, &[], ttl) {
         Some(b) => b,
         None => return Vec::new(),
@@ -134,12 +128,6 @@ fn harvest_last(
         let JsonVal::Obj(map) = el else {
             continue;
         };
-        if let Some((fk, fv)) = filter {
-            match map.get(fk) {
-                Some(JsonVal::Str(s)) if s == fv => {}
-                _ => continue,
-            }
-        }
         let Some(epoch) = epoch_of(&map) else {
             continue;
         };
@@ -154,6 +142,31 @@ fn harvest_last(
         }
     }
     out
+}
+
+fn harvest_block(
+    url: &str,
+    ttl: u64,
+    block_name: &str,
+    sources: &[SourceConfig],
+    lsk: &omegaflow::lsk::LeapSeconds,
+) -> Vec<(f64, f64)> {
+    let Some(src) = find_block(sources, block_name) else {
+        return Vec::new();
+    };
+    let Some(body) = fetch_raw(url, None, &src.headers, ttl) else {
+        return Vec::new();
+    };
+    let mut series_src = src.clone();
+    series_src.url = url.to_string();
+    series_src.extracts.retain(|e| {
+        matches!(
+            e,
+            Extract::First(fc, _) | Extract::Last(fc, _) | Extract::Path(fc)
+                if fc.name == block_name
+        )
+    });
+    extract_series(&series_src, &body, lsk)
 }
 
 fn harvest_radio(url: &str, ttl: u64) -> Vec<(f64, f64)> {
@@ -393,23 +406,23 @@ fn main() {
             .unwrap_or_else(|| "block missing from the register".into())
     };
     println!(
-        "{:<14} | Block {} | {} | Filter energy == 0.05-0.4nm | Sync t_sun = t − {:.3} s",
+        "{:<14} | Block {} | {} | where energy == 0.05-0.4nm (block grammar) | Sync t_sun = t − {:.3} s",
         "X-Ray",
         block_of("noaa_goes_xray_flux_w_m2"),
         xray_url,
         GOES_SYNC_S
     );
     println!(
-        "{:<14} | Block {} | {} | Filter line == 304 | Sync t_sun = t − {:.3} s",
+        "{:<14} | Block {} | {} | where line == 304 (block grammar) | Sync t_sun = t − {:.3} s",
         "EUV-304",
-        block_of("solar_euv_flux_wm2"),
+        block_of("solar_euv_flux_304_wm2"),
         euv_url,
         GOES_SYNC_S
     );
     println!(
-        "{:<14} | Block {} | {} | Filter line == 284 | Sync t_sun = t − {:.3} s",
+        "{:<14} | Block {} | {} | where line == 284 (block grammar) | Sync t_sun = t − {:.3} s",
         "EUV-284",
-        block_of("solar_euv_flux_wm2"),
+        block_of("solar_euv_flux_284_wm2"),
         euv_url,
         GOES_SYNC_S
     );
@@ -441,19 +454,17 @@ fn main() {
         omni_url
     );
 
-    let xray = harvest_last(
-        &xray_url,
-        300,
-        "flux",
-        "W/m2",
-        Some(("energy", "0.05-0.4nm")),
-    );
-    let euv304 = harvest_last(&euv_url, 300, "value", "W/m2", Some(("line", "304")));
-    let euv284 = harvest_last(&euv_url, 300, "value", "W/m2", Some(("line", "284")));
+    let lsk = omegaflow::lsk::LeapSeconds {
+        delta_t_a: 946_728_000.0,
+        deltas: vec![(0.0, 0.0)],
+    };
+    let xray = harvest_block(&xray_url, 300, "noaa_goes_xray_flux_w_m2", &sources, &lsk);
+    let euv304 = harvest_block(&euv_url, 300, "solar_euv_flux_304_wm2", &sources, &lsk);
+    let euv284 = harvest_block(&euv_url, 300, "solar_euv_flux_284_wm2", &sources, &lsk);
     let radio_raw = harvest_radio(&radio_url, 300);
-    let bz_rtsw_raw = harvest_last(&mag_url, 60, "bz_gsm", "nT", None);
-    let dens_rtsw_raw = harvest_last(&wind_url, 60, "proton_density", "1/cm3", None);
-    let wind_rtsw = harvest_last(&wind_url, 60, "proton_speed", "km/s", None);
+    let bz_rtsw_raw = harvest_last(&mag_url, 60, "bz_gsm", "nT");
+    let dens_rtsw_raw = harvest_last(&wind_url, 60, "proton_density", "1/cm3");
+    let wind_rtsw = harvest_last(&wind_url, 60, "proton_speed", "km/s");
 
     let omni_block = find_block(&sources, "omni_imf_bz_gsm_nt");
     let bz_omni_raw = omni_block

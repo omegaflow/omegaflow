@@ -2778,3 +2778,4 @@ void https://github.com/omegaflow/sources/releases/download/services.swpc.noaa.g
 void https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_1617433.json fetch returned empty
 void https://github.com/omegaflow/catalogs/releases/download/catalogs/hydrosphere_tide_8447435.json fetch returned empty
 void https://overpass.openstreetmap.fr/api/interpreter?data=[out:json][timeout:25];node["man_made"="surveillance"](around:2000,{lat},{lon});out%20count; fetch returned empty
+void https://services.swpc.noaa.gov/json/goes/primary/xrays-1-day.json data-present (container array has rows but extract yielded nothing)

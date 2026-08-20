@@ -6893,3 +6893,10 @@ field firmware_version fw_version inverse-square em 1 8640 0.0 0.0
 field type probe_type inverse-square em 1 8640 0.0 0.0
 
 
+# from master_converted.φ
+url https://services.swpc.noaa.gov/json/goes/primary/euvs-1-day.json
+ttl 600
+on earth 0 -75.2 35786023
+last value solar_euv_flux_wm2 inverse-square em 1 60 0.0 0.0
+
+

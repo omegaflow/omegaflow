@@ -171,8 +171,8 @@ pub struct Channel {
 #[derive(Clone)]
 pub enum Extract {
     Field(FieldConfig),
-    First(FieldConfig),
-    Last(FieldConfig),
+    First(FieldConfig, Option<(String, String)>),
+    Last(FieldConfig, Option<(String, String)>),
     Count(FieldConfig),
     LastRow(FieldConfig),
     LastObj(String, String, String, String),
@@ -450,7 +450,7 @@ pub fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
         5 => &["k", "c", "w/m2", "w", "j", "mw"],
         6 => &[
             "ppm", "ppb", "mg/m3", "ug/m3", "mg/kg", "psu", "ntu", "%", "pct", "hpa", "uatm", "du",
-            "cm-3",
+            "cm-3", "1/cm3",
         ],
         7 => &[
             "m/s", "km/h", "km/s", "knot", "kt", "m3/s", "cfs", "pa", "hpa", "mb", "m", "decibar",
@@ -869,6 +869,78 @@ pub fn jfirst(json: &JsonVal, key: &str) -> Option<f64> {
     }
 }
 
+fn row_matches(el: &JsonVal, fk: &str, fv: &str) -> bool {
+    let JsonVal::Obj(map) = el else {
+        return false;
+    };
+    match map.get(fk) {
+        Some(JsonVal::Str(s)) => s == fv,
+        Some(JsonVal::Num(n)) => fv.parse::<f64>().map_or(false, |f| f == *n),
+        _ => false,
+    }
+}
+
+fn row_value(el: &JsonVal, key: &str) -> Option<f64> {
+    match el {
+        JsonVal::Obj(o) => o.get(key).and_then(scalar_of),
+        other => scalar_of(other),
+    }
+}
+
+pub fn jfirst_where(json: &JsonVal, key: &str, filter: Option<&(String, String)>) -> Option<f64> {
+    let Some((fk, fv)) = filter else {
+        return jfirst(json, key);
+    };
+    if let Some((prefix, final_key)) = key.rsplit_once('.') {
+        let parent = if prefix.is_empty() {
+            json
+        } else {
+            jpath_val(json, prefix)?
+        };
+        let JsonVal::Arr(arr) = parent else {
+            return None;
+        };
+        return arr
+            .iter()
+            .find(|v| row_matches(v, fk, fv))
+            .and_then(|v| row_value(v, final_key));
+    }
+    let JsonVal::Arr(arr) = json else {
+        return None;
+    };
+    arr.iter()
+        .find(|v| row_matches(v, fk, fv))
+        .and_then(|v| row_value(v, key))
+}
+
+pub fn jlast_where(json: &JsonVal, key: &str, filter: Option<&(String, String)>) -> Option<f64> {
+    let Some((fk, fv)) = filter else {
+        return jlast(json, key);
+    };
+    if let Some((prefix, final_key)) = key.rsplit_once('.') {
+        let parent = if prefix.is_empty() {
+            json
+        } else {
+            jpath_val(json, prefix)?
+        };
+        let JsonVal::Arr(arr) = parent else {
+            return None;
+        };
+        return arr
+            .iter()
+            .rev()
+            .find(|v| row_matches(v, fk, fv))
+            .and_then(|v| row_value(v, final_key));
+    }
+    let JsonVal::Arr(arr) = json else {
+        return None;
+    };
+    arr.iter()
+        .rev()
+        .find(|v| row_matches(v, fk, fv))
+        .and_then(|v| row_value(v, key))
+}
+
 pub fn kernel_id_of(name: &str) -> Option<u8> {
     match name {
         "inverse-square" => Some(0),
@@ -892,8 +964,8 @@ pub fn extract_fields(ext: &Extract) -> &[FieldConfig] {
         | Extract::CelestialPolygon { fields, .. }
         | Extract::KeplerMap { fields, .. } => fields,
         Extract::Field(fc)
-        | Extract::First(fc)
-        | Extract::Last(fc)
+        | Extract::First(fc, _)
+        | Extract::Last(fc, _)
         | Extract::Count(fc)
         | Extract::LastRow(fc)
         | Extract::ObjLast(fc)
@@ -1357,6 +1429,10 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     Some(v) => v,
                     None => continue,
                 };
+                let filter = match parse_where(&parts) {
+                    Ok(f) => f,
+                    Err(()) => continue,
+                };
                 let fc = FieldConfig {
                     key: parts[1].to_string(),
                     name: parts[2].to_string(),
@@ -1368,13 +1444,17 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     unit: String::new(),
                     fold: None,
                 };
-                cur_extracts.push(Extract::First(fc));
+                cur_extracts.push(Extract::First(fc, filter));
             }
             "last" if parts.len() >= 9 => {
                 let (k, f, tau, absorption, advection) = match parse_field_config(&parts) {
                     Some(v) => v,
                     None => continue,
                 };
+                let filter = match parse_where(&parts) {
+                    Ok(f) => f,
+                    Err(()) => continue,
+                };
                 let fc = FieldConfig {
                     key: parts[1].to_string(),
                     name: parts[2].to_string(),
@@ -1386,7 +1466,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     unit: String::new(),
                     fold: None,
                 };
-                cur_extracts.push(Extract::Last(fc));
+                cur_extracts.push(Extract::Last(fc, filter));
             }
             "count" if parts.len() >= 2 => {
                 cur_extracts.push(Extract::Count(FieldConfig {
@@ -1786,6 +1866,13 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 );
             }
             "field" if parts.len() >= 9 => {
+                if parts.len() >= 10 && parts[9] == "where" {
+                    eprintln!(
+                        "where refused at {}: the row filter lives on first/last, not on field",
+                        parts[1]
+                    );
+                    continue;
+                }
                 let k = match kernel_id_of(parts[3]) {
                     Some(k) => k,
                     None => continue,
@@ -2297,7 +2384,7 @@ pub fn parse_ephemeris_binary(data: &[u8]) -> Option<BodyEphemeris> {
     let mut has_stype2 = false;
     for _ in 0..section_count {
         if pos + 24 > data.len() {
-            break;
+            return None;
         }
         let stype = u32::from_le_bytes(data[pos..pos + 4].try_into().ok()?);
         pos += 4;
@@ -2307,6 +2394,9 @@ pub fn parse_ephemeris_binary(data: &[u8]) -> Option<BodyEphemeris> {
         pos += 4;
         pos += 4;
         if stype == 1 {
+            if pos + 96 > data.len() {
+                return None;
+            }
             let f = |i: usize| -> f64 {
                 let mut buf = [0u8; 8];
                 buf.copy_from_slice(&data[pos + i * 8..pos + i * 8 + 8]);
@@ -2369,6 +2459,9 @@ pub fn parse_ephemeris_binary(data: &[u8]) -> Option<BodyEphemeris> {
             continue;
         }
         if stype == 2 {
+            if pos + 40 > data.len() {
+                return None;
+            }
             has_stype2 = true;
             let f = |i: usize| -> f64 {
                 let mut buf = [0u8; 8];
@@ -2393,7 +2486,7 @@ pub fn parse_ephemeris_binary(data: &[u8]) -> Option<BodyEphemeris> {
         if stype == 3 {
             for _ in 0..gcount {
                 if pos + 80 > data.len() {
-                    break;
+                    return None;
                 }
                 let f = |i: usize| -> f64 {
                     let mut buf = [0u8; 8];
@@ -2413,7 +2506,7 @@ pub fn parse_ephemeris_binary(data: &[u8]) -> Option<BodyEphemeris> {
             let mut records = Vec::new();
             for _ in 0..gcount {
                 if pos + gs * 8 > data.len() {
-                    break;
+                    return None;
                 }
                 let f = |i: usize| -> f64 {
                     let mut buf = [0u8; 8];
@@ -2445,14 +2538,18 @@ pub fn parse_ephemeris_binary(data: &[u8]) -> Option<BodyEphemeris> {
             continue;
         }
         if stype != 0 {
-            pos += gcount * (2 + 3 * (degree + 1)) * 8;
+            let skip = gcount * (2 + 3 * (degree + 1)) * 8;
+            if pos + skip > data.len() {
+                return None;
+            }
+            pos += skip;
             continue;
         }
         let n = degree + 1;
         let gs = 2 + 3 * n;
         for _ in 0..gcount {
             if pos + gs * 8 > data.len() {
-                break;
+                return None;
             }
             let f = |i: usize| -> f64 {
                 let mut buf = [0u8; 8];
@@ -3482,16 +3579,16 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                     }
                 }
             }
-            Extract::First(fc) => {
+            Extract::First(fc, filter) => {
                 if let Some(ref j) = parsed_json {
-                    if let Some(v) = jfirst(j, &fc.key) {
+                    if let Some(v) = jfirst_where(j, &fc.key, filter.as_ref()) {
                         extracted.insert(fc.name.clone(), v);
                     }
                 }
             }
-            Extract::Last(fc) => {
+            Extract::Last(fc, filter) => {
                 if let Some(ref j) = parsed_json {
-                    if let Some(v) = jlast(j, &fc.key) {
+                    if let Some(v) = jlast_where(j, &fc.key, filter.as_ref()) {
                         extracted.insert(fc.name.clone(), v);
                     }
                 } else if fc.key == "line" {
@@ -4816,8 +4913,8 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
         for (name, val) in &extracted {
             let fc = effective_extracts.iter().find_map(|ext| match ext {
                 Extract::Field(fc)
-                | Extract::First(fc)
-                | Extract::Last(fc)
+                | Extract::First(fc, _)
+                | Extract::Last(fc, _)
                 | Extract::Count(fc)
                 | Extract::LastRow(fc)
                 | Extract::ObjLast(fc)
@@ -4895,6 +4992,20 @@ fn parse_field_config(parts: &[&str]) -> Option<(u8, u8, f64, f64, f64)> {
     Some((kernel, force, tau, absorption, advection))
 }
 
+fn parse_where(parts: &[&str]) -> Result<Option<(String, String)>, ()> {
+    if parts.len() < 10 || parts[9] != "where" {
+        return Ok(None);
+    }
+    if parts.len() != 12 {
+        eprintln!(
+            "where refused at {}: the filter clause carries exactly `where <key> <value>`",
+            parts.get(1).copied().unwrap_or("?")
+        );
+        return Err(());
+    }
+    Ok(Some((parts[10].to_string(), parts[11].to_string())))
+}
+
 fn series_epoch_of(el: &JsonVal, lsk: &LeapSeconds) -> Option<f64> {
     match el {
         JsonVal::Obj(map) => {
@@ -4950,11 +5061,49 @@ pub fn extract_series(src: &SourceConfig, body: &str, lsk: &LeapSeconds) -> Vec<
     let mut out: Vec<(f64, f64)> = Vec::new();
     for ext in &src.extracts {
         match ext {
-            Extract::Last(fc) => {
+            Extract::First(fc, filter) => {
                 let JsonVal::Arr(elements) = j else {
                     continue;
                 };
                 for el in elements {
+                    if let Some((fk, fv)) = filter {
+                        if !row_matches(el, fk, fv) {
+                            continue;
+                        }
+                    }
+                    let raw = match el {
+                        JsonVal::Obj(map) => map.get(&fc.key).and_then(scalar_of),
+                        JsonVal::Arr(row) => {
+                            if let Ok(idx) = fc.key.parse::<usize>() {
+                                row.get(idx).and_then(scalar_of)
+                            } else {
+                                None
+                            }
+                        }
+                        _ => None,
+                    };
+                    let (Some(raw), Some(epoch)) = (raw, series_epoch_of(el, lsk)) else {
+                        continue;
+                    };
+                    let Some(val) = convert_to_si(raw, &fc.unit) else {
+                        register_unconverted_unit(&fc.unit, &fc.name);
+                        continue;
+                    };
+                    if val.is_finite() {
+                        out.push((epoch, val));
+                    }
+                }
+            }
+            Extract::Last(fc, filter) => {
+                let JsonVal::Arr(elements) = j else {
+                    continue;
+                };
+                for el in elements {
+                    if let Some((fk, fv)) = filter {
+                        if !row_matches(el, fk, fv) {
+                            continue;
+                        }
+                    }
                     let raw = match el {
                         JsonVal::Obj(map) => map.get(&fc.key).and_then(scalar_of),
                         JsonVal::Arr(row) => {
@@ -5135,6 +5284,140 @@ mod tests {
             delta_t_a: 32.184,
             deltas: vec![(37.0, 1483228800.0)],
         }
+    }
+
+    fn euvs_json() -> &'static str {
+        r#"[
+            {"time_tag": "2026-08-20T08:50:00Z", "line": "304", "value": 1.1e-4},
+            {"time_tag": "2026-08-20T08:50:00Z", "line": "284", "value": 2.2e-4},
+            {"time_tag": "2026-08-20T08:51:00Z", "line": "304", "value": 3.3e-4},
+            {"time_tag": "2026-08-20T08:51:00Z", "line": "284", "value": 4.4e-4},
+            {"time_tag": "2026-08-20T08:51:00Z", "line": "mgii_index", "value": 0.278}
+        ]"#
+    }
+
+    fn last_where_fixture(name: &str, key: &str, fk: &str, fv: &str) -> Extract {
+        let mut fc = field_fixture(name, 60.0);
+        fc.key = key.into();
+        Extract::Last(fc, Some((fk.into(), fv.into())))
+    }
+
+    #[test]
+    fn test_last_where_picks_matching_row() {
+        let src = source_fixture(
+            "json",
+            vec![
+                last_where_fixture("euv304", "value", "line", "304"),
+                last_where_fixture("euv284", "value", "line", "284"),
+            ],
+        );
+        match extract(&src, euvs_json(), 8.0e8, &fixture_lsk()) {
+            ExtractResult::Measurements(channels) => {
+                let vals: HashMap<&str, f64> = channels
+                    .iter()
+                    .map(|(c, fc)| (fc.name.as_str(), c.value))
+                    .collect();
+                assert_eq!(vals.get("euv304"), Some(&3.3e-4));
+                assert_eq!(vals.get("euv284"), Some(&4.4e-4));
+            }
+            _ => panic!("expected measurements"),
+        }
+    }
+
+    #[test]
+    fn test_last_where_no_match_absent() {
+        let src = source_fixture(
+            "json",
+            vec![last_where_fixture("euv999", "value", "line", "999")],
+        );
+        match extract(&src, euvs_json(), 8.0e8, &fixture_lsk()) {
+            ExtractResult::Measurements(channels) => {
+                assert!(channels.is_empty(), "no matching row → fehlt, never 0.0")
+            }
+            _ => panic!("expected measurements"),
+        }
+    }
+
+    #[test]
+    fn test_first_where_picks_first_matching_row() {
+        let mut fc = field_fixture("euv304_first", 60.0);
+        fc.key = "value".into();
+        let src = source_fixture(
+            "json",
+            vec![Extract::First(fc, Some(("line".into(), "304".into())))],
+        );
+        match extract(&src, euvs_json(), 8.0e8, &fixture_lsk()) {
+            ExtractResult::Measurements(channels) => {
+                assert_eq!(channels.len(), 1);
+                assert_eq!(channels[0].0.value, 1.1e-4);
+            }
+            _ => panic!("expected measurements"),
+        }
+    }
+
+    #[test]
+    fn test_last_where_numeric_filter_value() {
+        let json = r#"[
+            {"time_tag": "2026-08-20T08:50:00Z", "satellite": 18, "flux": 7.0},
+            {"time_tag": "2026-08-20T08:51:00Z", "satellite": 19, "flux": 9.0}
+        ]"#;
+        let src = source_fixture(
+            "json",
+            vec![last_where_fixture("g18", "flux", "satellite", "18")],
+        );
+        match extract(&src, json, 8.0e8, &fixture_lsk()) {
+            ExtractResult::Measurements(channels) => {
+                assert_eq!(channels.len(), 1);
+                assert_eq!(channels[0].0.value, 7.0);
+            }
+            _ => panic!("expected measurements"),
+        }
+    }
+
+    #[test]
+    fn test_extract_series_where_filters_rows() {
+        let src = source_fixture(
+            "json",
+            vec![last_where_fixture("euv304", "value", "line", "304")],
+        );
+        let series = extract_series(&src, euvs_json(), &fixture_lsk());
+        assert_eq!(series.len(), 2);
+        assert_eq!(series[0].1, 1.1e-4);
+        assert_eq!(series[1].1, 3.3e-4);
+    }
+
+    #[test]
+    fn test_parse_where_clause() {
+        let content = "url https://example.com/euvs.json\nttl 600\nat sun\nlast value euv304 inverse-square em W/m2 60.0 0.0 0.0 where line 304\n";
+        let sources = parse_sources(content);
+        assert_eq!(sources.len(), 1);
+        match &sources[0].extracts[0] {
+            Extract::Last(fc, Some((fk, fv))) => {
+                assert_eq!(fc.name, "euv304");
+                assert_eq!(fk, "line");
+                assert_eq!(fv, "304");
+            }
+            _ => panic!("expected filtered last extract"),
+        }
+    }
+
+    #[test]
+    fn test_parse_where_malformed_refused() {
+        let content = "url https://example.com/euvs.json\nttl 600\nat sun\nlast value euv304 inverse-square em W/m2 60.0 0.0 0.0 where line\n";
+        let sources = parse_sources(content);
+        assert_eq!(sources.len(), 1);
+        assert!(
+            sources[0].extracts.is_empty(),
+            "malformed where must refuse the line loudly"
+        );
+    }
+
+    #[test]
+    fn test_parse_where_refused_on_field() {
+        let content = "url https://example.com/euvs.json\nttl 600\nat sun\nfield value euv304 inverse-square em W/m2 60.0 0.0 0.0 where line 304\n";
+        let sources = parse_sources(content);
+        assert_eq!(sources.len(), 1);
+        assert!(sources[0].extracts.is_empty());
     }
 
     #[test]
@@ -7732,6 +8015,43 @@ field temp temp_c\n";
     }
 
     #[test]
+    fn test_parse_ephemeris_binary_rejects_truncated_granules() {
+        let mut buf = Vec::new();
+        buf.extend_from_slice(&[0xCF, 0x86, 0x01, 0x00]);
+        buf.extend_from_slice(&2u32.to_le_bytes());
+        buf.extend_from_slice(&0u32.to_le_bytes());
+        buf.extend_from_slice(&2u32.to_le_bytes());
+        buf.extend_from_slice(&17u32.to_le_bytes());
+        buf.extend_from_slice(&0u32.to_le_bytes());
+        for _ in 0..56 {
+            buf.extend_from_slice(&0.0_f64.to_le_bytes());
+        }
+        assert!(super::parse_ephemeris_binary(&buf).is_none());
+    }
+
+    #[test]
+    fn test_parse_ephemeris_binary_rejects_truncated_props() {
+        let mut buf = Vec::new();
+        buf.extend_from_slice(&[0xCF, 0x86, 0x01, 0x00]);
+        buf.extend_from_slice(&2u32.to_le_bytes());
+        buf.extend_from_slice(&0u32.to_le_bytes());
+        buf.extend_from_slice(&1u32.to_le_bytes());
+        buf.extend_from_slice(&17u32.to_le_bytes());
+        buf.extend_from_slice(&0u32.to_le_bytes());
+        for _ in 0..56 {
+            buf.extend_from_slice(&0.0_f64.to_le_bytes());
+        }
+        buf.extend_from_slice(&1u32.to_le_bytes());
+        buf.extend_from_slice(&12u32.to_le_bytes());
+        buf.extend_from_slice(&17u32.to_le_bytes());
+        buf.extend_from_slice(&0u32.to_le_bytes());
+        for _ in 0..6 {
+            buf.extend_from_slice(&0.0_f64.to_le_bytes());
+        }
+        assert!(super::parse_ephemeris_binary(&buf).is_none());
+    }
+
+    #[test]
     fn test_live_sources_extract() {
         let srcs = super::load_sources();
         eprintln!("load_sources returned {} sources", srcs.len());
@@ -9870,8 +10190,8 @@ fn diagnose_no_samples(src: &SourceConfig, body: &str) -> String {
                         }
                     }
                     Extract::Field(FieldConfig { key, .. })
-                    | Extract::First(FieldConfig { key, .. })
-                    | Extract::Last(FieldConfig { key, .. })
+                    | Extract::First(FieldConfig { key, .. }, _)
+                    | Extract::Last(FieldConfig { key, .. }, _)
                     | Extract::Count(FieldConfig { key, .. })
                     | Extract::Path(FieldConfig { key, .. })
                     | Extract::Deep(FieldConfig { key, .. })
@@ -10256,44 +10576,71 @@ fn download_ephemeris_batch(items: &[(usize, SourceConfig, String)]) {
         return;
     }
     let ttl = items[0].1.ttl;
+    let parts: Vec<String> = items
+        .iter()
+        .map(|(_, _, p)| format!("{}.part", p))
+        .collect();
+    for p in &parts {
+        let _ = std::fs::remove_file(p);
+    }
     let mut cmd = curl_base(ttl, 8);
-    for (_, src, tmp_path) in items {
-        cmd.arg("-o").arg(tmp_path).arg(&src.url);
+    for (i, (_, src, _)) in items.iter().enumerate() {
+        cmd.arg("-o").arg(&parts[i]).arg(&src.url);
     }
     let output = match cmd.output() {
         Ok(o) => o,
         Err(_) => {
             eprintln!("ephemeris batch ({} files): curl void", items.len());
+            for p in &parts {
+                let _ = std::fs::remove_file(p);
+            }
             return;
         }
     };
-    if !output.status.success() {
+    if output.status.success() {
+        for (i, (_, _, tmp_path)) in items.iter().enumerate() {
+            if std::fs::rename(&parts[i], tmp_path).is_err() {
+                let _ = std::fs::remove_file(&parts[i]);
+            }
+        }
+    } else {
         eprintln!(
             "ephemeris batch ({} files): curl returned {}: {}",
             items.len(),
             output.status,
             String::from_utf8_lossy(&output.stderr).trim()
         );
+        for p in &parts {
+            let _ = std::fs::remove_file(p);
+        }
     }
 }
 
 fn download_ephemeris_one(src: &SourceConfig, tmp_path: &str) {
+    let part = format!("{}.part", tmp_path);
+    let _ = std::fs::remove_file(&part);
     let mut cmd = curl_base(src.ttl, 0);
-    cmd.arg("-o").arg(tmp_path).arg(&src.url);
+    cmd.arg("-o").arg(&part).arg(&src.url);
     let output = match cmd.output() {
         Ok(o) => o,
         Err(_) => {
             eprintln!("ephemeris {}: curl void", src.url);
+            let _ = std::fs::remove_file(&part);
             return;
         }
     };
-    if !output.status.success() {
+    if output.status.success() {
+        if std::fs::rename(&part, tmp_path).is_err() {
+            let _ = std::fs::remove_file(&part);
+        }
+    } else {
         eprintln!(
             "ephemeris {}: curl returned {}: {}",
             src.url,
             output.status,
             String::from_utf8_lossy(&output.stderr).trim()
         );
+        let _ = std::fs::remove_file(&part);
     }
 }
 
@@ -14698,9 +15045,10 @@ pub fn main_flow() {
                             });
                         } else {
                             eprintln!(
-                                    "ephemeris {}: extract void — the body stays absent, retry in ttl/Φ",
+                                    "ephemeris {}: extract void — cache dropped, refetch next bootstrap",
                                     src_clone.body.as_deref().unwrap_or("?")
                                 );
+                            let _ = std::fs::remove_file(&tmp_path_c);
                             let _ = ftx.send(FetchResult {
                                 source_idx: src_idx,
                                 channels: Vec::new(),

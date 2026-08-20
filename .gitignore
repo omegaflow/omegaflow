@@ -20,6 +20,7 @@ scripts/__pycache__/
 .secrets.local
 .continue/
 server.log
+docs/funding_erkundung.md
 /target
 /tmp/
 /out/
