@@ -1,0 +1,123 @@
+Solar-Akteure — Befunde der Session 2026-08-20, selbsttragend
+
+E1800 (Schritt A) — OMNI CDAWeb-HAPI OMNI2_H0_MRG1HR: der Parameter
+E1800 (mV/m) ist E = −V×B, eine deterministische Funktion der V1800-
+(advective) und B- (em) Kanäle — Transfer-Entropie TE≈1.0 wäre der
+Konfounder, keine eigene Messung. Aus sources.φ entfernt
+(2026-08-20), registriert in dead_sources.φ (decline derived); die
+Reihe bleibt in OMNI2 verfügbar.
+
+AMDA RPW (B1a) — https://amda.irap.omp.eu/service/hapi: HAPI 2.0
+aktiv. info?id=solo-rpw-efield10s: solo_rpw10s_esrf double[3] mV/m,
+fill -1e31, Kadenz PT10S, Coverage 2020-06-15T00:00:10Z →
+2022-12-01T00:01:20Z (Provider SOAR). Datenabruf 2021-10-05T00:00Z:
+ex (Index 0) durchgängig fill; Ey 2,7–4,2, Ez −0,3…−1,9 mV/m — echte
+Werte. Frühere Leerfenster (2021-06, 2022-06, 2022-08/09 ~90 % fill)
+sind Instrumenten-/Missions-Auszeiten, kein toter Kanal.
+Ernte (rpw_compiler): 2020-06-15 → 2022-11-30, 10-min-Mediane
+(Bucket-Mitte), Fill-Skips, 147148 Records, rpw_efield.bin (2,9 MB,
+magic RPW1, Record [t_tdb f64, val f64, comp u32], comp 1=Ey 2=Ez —
+eine absente Komponente trägt keinen Record, 0 honored). Das Fenster
+2022-11-22→12-01 400-te (time.max über stopDate) — als Tail-Fenster
+2022-11-22→30 nachgeerntet und gemergt (--merge).
+Block in sources.φ: format rpw_efield, at solar_orbiter, ttl 3600,
+Felder rpw_e_y/rpw_e_z (electric mV/m, gaussian-inverse-square,
+tau 3600). Position = Solar-Orbiter-Ephemeride am Sample-Epoch
+(frame_motion, per Sample). Retention ttl·2⁶ = 64 h — die
+2-Jahres-Epoche ist navigierbar (der Operator stimmt die Presence auf
+die Koordinate ab), nicht simultan sichtbar. Der 10-min-Median ist
+eine Statistik der 10-s-Reihe (die RPW-Produkte selbst sind Mediane)
+— benannt, nicht verschwiegen.
+
+CDAWeb (B1b) — der Schlüssel war /hapi/catalog (nicht /hapi/capabilities —
+der antwortet mit einem Metadaten-Stub ohne Dataset-Liste). Die
+catalog-Route trägt 18 SOLO_L2_RPW-IDs + die SOLO_L3_RPW-Produkte.
+Befund 1: SOLO_L3_RPW-BIA-EFIELD-10-SECONDS (EDC_SRF [3] mV/m,
+„Median value over 10 s interval") = das AMDA-Produkt
+solo-rpw-efield10s — Coverage IDENTISCH 2020-06-15 → 2022-12-01.
+Das kalibrierte Vektor-E-Feld endet also produktseitig überall
+2022-12-01 (die BIA-Kette läuft nicht weiter) — das Kompilat
+rpw_efield.bin deckt die volle Serie, kein Live-Weg existiert.
+Befund 2: SOLO_L2_RPW-TDS-SURV-STAT — Coverage 2020-06-15 →
+2026-03-25 (~5 Monate Publikations-Lag), Parameter SN_RMS_E
+double V/m fill -1.0E31 („RMS of all proceeded snapshots"), Kadenz
+16 s (Datenfenster 2026-03-20: echte Werte 1,7e-4 V/m). Die
+INFO-Parameterliste ist keine Datenparam-Zusage — als Datenparam
+funktioniert SN_RMS_E; WA_RMS_E 1407te. SOLO_L2_RPW-LFR-SURV-CWF-E
+trägt nur Probe-Spannungen (VDC/EDC/EAC, V — das rohe
+Antennen-Signal, nicht das kalibrierte mV/m-Feld); die
+BP-Produkte sind Spektral-Power — em, kein electric-Katalysator
+(DFB-Präzedenz).
+Der Live-Block (B1b) lebt in sources.φ: format hapi, at
+solar_orbiter, ttl 3600, SN_RMS_E → solo_rpw_e_rms_vm (electric
+V/m, gaussian-inverse-square, tau 3600), Fenster
+{hour_ago}..{now}. Der Publikations-Lag ist benannt: solange die
+Serie bei 2026-03-25 endet, liefert das Fenster 1201-leer (0
+honored — keine Daten, keine Samples); sobald die NASA erweitert,
+fließt der Kanal. Die 2022-2026-Lücke zwischen AMDA-Kompilat und
+Live-Block ist registriert (Kompilat-Option pending).
+
+PSP DFB (B3) — PSP_FLD_L2_DFB_AC_SPEC_DV12HG: 54-Bin-Spektren V²/Hz,
+Coverage 2018-10-02 → 2025-10-31. Physikalisch ein em-Spektralkanal,
+nicht electric — Force-Gate-Urteil: DFB wird nicht als elektrischer
+Katalysator verbaut. Kalibriertes mV/m-VSC-Feld existiert nur bei
+Berkeley (CDF) — cdf_reader bleibt pending (eigenes Atom).
+
+GML (B4) — 404 auf beide Pfade (verifiziert); der Ledger-Eintrag
+„kein Feed existiert" bleibt wahr, wird nicht geschlossen.
+
+GONG (C1) — https://gong2.nso.edu/ftp/TSERIES/vmt/YYYYMM/
+mrvmtYYMMDD/mrvmtYYMMDDdNNN.fits, dNNN = L (0..200), 201 Dateien/Tag,
+31 Jahre 199505 → laufend (vmt-Lag: letzter Monats-Tag mrvmt260505,
+Files DATE 2026-08-19, Fenster TS_START 2026/04/18 → TS_END
+2026/05/23). FITS-Image-HDU: BITPIX −32, NAXIS 3, NAXIS1 = 51840
+(60-s-Kadenz), NAXIS2 = L+2, NAXIS3 = 2. Layout: Achse 1 = Zeit
+(schnellster Index), Achse 2 Slot m = 0..L, Slot L+1 =
+Gültigkeitsmaske (0/1), Achse 3 = (Real, Imaginär) — für m=0 ist der
+Imaginärteil null. BIG-ENDIAN f32 (NOAO-IRAF-Image-Kernel).
+Header-Aufbau: FITS-Karten + GHIST-Historie (150 × 96 B als
+80-Spalten-Karten GHIST000…, kein END) + END-Karte unmittelbar vor
+den Daten — FitsHeader::parse liest durch (Wertfenster auf card[10..]
+geweitet, TS_START-Strings > 20 B), FitsImage landet ohne
+GHISTSEQ-Skip auf den Daten.
+Ernte (gong_compiler): Tag mrvmt260505, L 0..30 (--lmax 30),
+496 Moden (Σ(L+1) = 496, exakt), val = rms über das FITS-Fenster mit
+Masken-Skips, epoch = Fenstermitte (unix → TDB via LSK),
+gong_modes.bin (magic GNG1, Record [l u32, m i32, t f64, rms f64]).
+L 31..200 pending (CI erntet --lmax 200); mparam-Eigenfrequenz/
+Linienbreite für freq/bin_width pending — absent bleibt 0.0.
+Block in sources.φ: format gong_modes, at sun, ttl 604800, Feld
+gong_mode_amplitude_m_s (acoustic m/s, gaussian-inverse-square,
+tau 604800 — die Amplituen-Modulationsskala des Fensters, mparam
+pending). NSO-Rate-Limits: 429/CANCEL bei parallelen Fetches —
+2 Worker + 300-ms-Delay + curl-Retry (2, --retry-all-errors).
+
+Ω_g (C2) — Sonnenkern-Rotation 1277 ± 10 nHz (seismische Inversion,
+Literaturwert — phi/pipeline/katalog/solar_omega_g.φ: „sun 1277
+10"). ephemeris_compiler --omega-g schreibt Sektion stype 7 in
+ephemeris_sun.bin (Payload im Granulen-Layout 2+3·(degree+1) f64,
+degree 0: value Hz, sigma Hz, 3 pad — alte Leser überspringen sie
+mit der generischen Skip-Formel). parse_ephemeris_binary liest
+stype 7 → BodyProperties.omega_g (value, sigma); body_channels trägt
+sun.omega_g (gravity, val = Hz, freq = Ω_g, bin_width = σ,
+tau = 1/Ω_g ≈ 9 d). Der g-Moden-Oszillator selbst bleibt pending
+(0 honored — einzeln nie gemessen). kernel_flatten.yml bodies job
+trägt --omega-g — der Kanal manifestiert mit dem nächsten
+CDN-Refresh der Sonne.
+
+GOLF (C3) — www.medoc-ias.u-psud.fr und golfwww.medoc-ias.u-psud.fr
+→ curl 000 (keine Verbindung). Quelle nicht verifiziert — GONG trägt
+den akustischen Kanal allein; GOLF pending.
+
+CDN — gh nicht eingeloggt, kein GH_TOKEN in .secrets.local → die Bins
+liegen lokal (dieser Session: /tmp/opencode), der Upload läuft über
+kernel_flatten.yml (neuer sun job: gong_compiler monthly --lmax 200,
+rpw_compiler einmalig mit Asset-Guard, --lsk kernels/naif0012.tls).
+Bis zum ersten CI-Lauf 404en die Blöcke honest („fetch void — retry
+in ttl/Φ") — die Befunde oben sind live verifiziert, die Bins
+roundtrip-geprüft.
+
+Gates: cargo check 0/0 (alle Features), cargo test 211/211 lib
+(fits-Image-HDU + GHIST-Historie, rpw/gong-Roundtrip,
+stype-7-Ω_g-Parse), Smoke-Lauf: OMNI-Block parst mit 7 Feldern,
+rpw/gong-Blöcke 404en honest, keine Refusals der neuen Formate.

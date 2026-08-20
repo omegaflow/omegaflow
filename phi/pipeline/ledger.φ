@@ -120,7 +120,7 @@ note VirES-HAPI-Katalog: 174 Datasets (live /hapi/catalog verifiziert) — nur 6
 
 ausstehend
 queue phi/pipeline/queue/grind_nasa_donki.φ
-note NASA-DONKI komplett disponiert: 1 accepted (CME-Block-Draft, cmeAnalyses.0.speed, map . + deep, at sun — verifizieren + in sources.φ einbauen), 8 decline (SEP/GST/IPS/HSS/…), 1 dead (SSD 404). FLR lebt bereits in sources.φ. Der CME-Draft ist der einzige offene Einbau
+note NASA-DONKI komplett disponiert: 1 accepted (CME-Block — verifiziert 2026-08-20 + eingebaut in sources.φ: map . + cmeAnalyses.0-Pfade, at sun, em km/s; live: 200, 19 Records/7 d, alle mit speed, 17 lat+lon, 2 mit lat ohne lon → diese Zeilen tragen keine Position, 0 honored; Name korrigiert zu cme_plane_of_sky_speed_km_s — der Draft trug plane_of_speed; Caveat bleibt: longitude ist plane-of-sky-Projektion, nicht heliographisch), 8 decline (SEP/GST/IPS/HSS/MPC/RBE/WSA/notifications), 1 dead (SSD 404). FLR lebt bereits in sources.φ.
 
 ausstehend
 queue phi/pipeline/queue/grind_nasa.φ
@@ -318,13 +318,13 @@ ausstehend
 kandidat https://wwwi3.ymparisto.fi/i3/RealTime/data/WST1403901.txt
 note SYKE-Finnland-See (thermal, Wassertemperatur 15-min, Konnevesi/Päijänne) — grind_lter_finland.φ. Position separat (ETRS-TM35FIN N/E in Stations-HTML) → parser-def: Position-Separation + ETRS-TM35FIN→WGS84. Schwester: Wasserstand W071.txt (gravity). JYU-Stationen (Jyväsjärvi) ohne öffentliche API (paijanne.org absent)
 
-ausstehend
+verifiziert
 kraft-kanal acoustic
-note Kuration offen: GONG/SOHO Helioseismologie als Messquelle
+note GONG-vmt verifiziert + geerntet (2026-08-20): gong_compiler kompiliert mrvmt260505 (L 0..30, 496 Moden, rms über das 36-d-FITS-Fenster mit Gültigkeitsmaske, big-endian NOAO-IRAF-Image-HDU) → gong_modes.bin, Block in sources.φ (format gong_modes, at sun, tau 604800). Pending: L 31..200 (CI erntet --lmax 200), mparam-Eigenfrequenz/Linienbreite für freq/bin_width (absent bleibt 0.0), GOLF (Medoc curl 000 — unverifiziert, GONG trägt allein)
 
-ausstehend
+verifiziert
 kraft-kanal electric
-note Kuration offen: GIC-Netze (nicht öffentlich), Live-E-Feldstärke (kein Feed existiert); GLM ist em (optisch), nicht electric (Ratsurteil 2026-08-17); WWLLN-VLF radio-em vs. Entladung-electric bleibt Force-Gate-Frage
+note E1800 (OMNI) entfernt (2026-08-20, derived: E=−V×B, Konfounder — dead_sources.φ decline derived). Der Kanal trägt jetzt Solar-Orbiter-RPW: (a) AMDA-HAPI solo-rpw-efield10s verifiziert (Ey/Ez echt, ex=fill, Coverage 2020-06-15→2022-12-01) und als rpw_efield.bin geerntet (147148 Records, 10-min-Mediane, at solar_orbiter) — das BIA-Produkt endet produktseitig überall 2022-12-01 (CDAWeb SOLO_L3_RPW-BIA-EFIELD-10-SECONDS trägt dieselbe Coverage, kein Live-Weg); (b) der Live-Block SOLO_L2_RPW-TDS-SURV-STAT (CDAWeb-HAPI, SN_RMS_E V/m, 16-s-Kadenz, Coverage bis 2026-03-25 — ~5 Monate Publikations-Lag, benannt; das {hour_ago}-Fenster liefert 1201-leer, bis die NASA erweitert). Die 2022-2026-Lücke (Kompilat-Option) bleibt registriert; GIC-Netze nicht öffentlich; GLM ist em (optisch); WWLLN-VLF bleibt Force-Gate-Frage; PSP-DFB-Spektren = em, nicht electric (Force-Gate-Urteil)
 
 ausstehend
 kraft-kanal thermal
@@ -418,7 +418,11 @@ note OceanNetworks /api/scalardata lebt (token in URL, outputFormat=Object, sens
 
 verifiziert
 bestand phi/pipeline/research/agent_output/recheck_b4.φ
-note OMNIWeb integriert (CDAWeb-HAPI OMNI2_H0_MRG1HR, at sun): 8 Felder — V1800 km/s advective, N1800 cm-3 diffusion, T1800 K thermal, BX/BY/BZ nT em, E1800 mV/m electric, Pressure1800 nPa advective.
+note OMNIWeb integriert (CDAWeb-HAPI OMNI2_H0_MRG1HR, at sun): 7 Felder — V1800 km/s advective, N1800 cm-3 diffusion, T1800 K thermal, BX/BY/BZ nT em, Pressure1800 nPa advective. E1800 entfernt (2026-08-20, derived — dead_sources.φ decline derived)
+
+verifiziert
+bestand phi/pipeline/research/agent_output/solar_akteure_probe.φ
+note Solar-Akteure (2026-08-20): E1800-Disposition, AMDA-RPW-Ernte (147148 Records, rpw_efield.bin), GONG-vmt-Ernte (496 Moden L 0..30, gong_modes.bin), Ω_g-BodyProperty (stype 7, solar_omega_g.φ), PSP-DFB-Force-Gate (em), GML-404, CDAWeb-capabilities-Stub, GOLF-000 — alle Befunde selbsttragend in der Datei; offene Punkte in den kraft-kanal-Noten
 
 verifiziert
 bestand phi/pipeline/research/agent_output/recheck_b5_flash.φ
@@ -499,7 +503,7 @@ note PSP-HAPI-Probe (2026-08-18): 2 Blöcke integriert in sources.φ — PSP_COH
 
 geparkt
 kandidat https://cdaweb.gsfc.nasa.gov/hapi/data?id=PSP_FLD_L2_MAG_RTN
-note psp_hapi_probe (2026-08-18): [3]-Vektor-Parameter psp_fld_l2_mag_RTN (~0,109 s Kadenz, Coverage bis 2025-10-31) — der Hapi-Extract liest nur Skalare; Komponenten-Index (hapi <param>.<i>=<key>) ausstehend. Bis dahin deckt COHO1HR die skalaren nT-Komponenten.
+note psp_hapi_probe (2026-08-18): [3]-Vektor-Parameter psp_fld_l2_mag_RTN (~0,109 s Kadenz, Coverage bis 2025-10-31). Der Komponenten-Index (hapi <param>.<i>=<key>) IST gebaut (2026-08-20, Test test_hapi_fill_skipped_and_component_index). Der Block bleibt geparkt: 0,109-s-Kadenz über ein Wochen-Fenster ist ungeerntete Masse (Fenster-Entscheidung offen); bis dahin deckt COHO1HR die skalaren nT-Komponenten.
 
 geparkt
 kandidat https://maia.usno.navy.mil/ser7/finals.all
@@ -565,9 +569,17 @@ verifiziert
 parser-gap ZeilenFilter
 note implementiert 2026-08-20: `where <key> <value>` an first/last (9-Token-Form + 3-Token-Schwanz); Extract::First/Last tragen Option<(String,String)>; row_matches (String exakt, Nummer numerisch), jfirst_where/jlast_where; extract UND extract_series teilen das Prädikat; malformed where + where auf field laut refused. euvs-7-day zurück (solar_euv_flux_304/284_wm2, where line 304/284 — der mgii_index-Record ist ausgeschlossen), xrays trägt where energy 0.05-0.4nm; nobel probe erntet via extract_series (harvest_block) — live n = 10078 (X-Ray) / 10024 (EUV), Kadenz 60 s verifiziert.
 
-ausstehend
+verifiziert
 parser-gap LastUnit
-note Solar-Kuration (2026-08-20): first/last/lastrow/objlast/path/deep/regex verwerfen das Unit-Token (parts[5]) — extract_series erntet diese Felder mit leerer Unit (Identität), die Register-Wahrheit (nT, km/s) lebt nur im Probe. Ein Einfang-Fix braucht das Force-Gate der count-Unit (GOES-Partikel-Flüsse) und der Einheit „1" (Kp) — sonst werden diese Blöcke stumm.
+note implementiert 2026-08-20 (Luminositäts-Atom): first/last/lastrow/objlast/path/deep/regex tragen jetzt das Unit-Token (parts[5]). Korrektur des Erstbefunds: der Anker (anchor) konvertiert seit jeher mit der Feld-Unit — die Lücke war der Einfang, nicht der Kanal; die Membran trug also nie roh, sie trug die Unit-Losigkeit der letzten Formen. Jetzt fließt das Register SI: nT→T, km/s→m/s, Mw→10^(1,5M+9,1), sfu→1e-22, neu wm2_1au (×AU²), pfu (×1e4), pfu/mev (×6.2415e16), 1e-4w/m2 (FLR X-Klasse), „1" (Kp/a_running/FAR-Identity). Benannte Grenzen: „mag"-Felder (alerce u.a.) konvertieren nicht (logarithmische Achse — pre-existing skip am Anker, pending); ppt fehlt der Tabelle (ein Feld, pre-existing); die Kanal-Bänder der Partikel-Dateien sind positionsabhängig (where-Filter pending).
+
+verifiziert
+kandidat https://services.swpc.noaa.gov/json/goes/primary/xrays-7-day.json
+note Luminositäts-Atom (2026-08-20): die gemessene Bestrahlungsstärke (W/m² bei 1 AE) wird nicht doppelt 1/r²-gebrochen — wm2_1au schreibt value·AU² (Kernel-Konvention 1/d², KEIN 4π: mit 4πAU² läse die Erde 12,57× die Messung). Der Signalkegel ist eine Kugel um die Sonne. GOES-Partikel: count → pfu (integral) bzw. pfu/mev (differential) — Force-Gate-Urteil: der Payload trägt pfu, count nannte nichts. Benannt: die Ankerung modelliert Isotropie — abgeleitet, nicht gemessen. Gates: cargo check 0/0, cargo test 189/189, nobel probe n = 10078/10024 unverändert.
+
+geparkt
+kandidat https://services.swpc.noaa.gov/json/goes/primary/euvs-7-day.json
+note Kurationsanfrage 2026-08-20 (Vierer-Block: xrays/euvs-7-day, rtsw_mag/wind_1m — on earth, `path .-1`-Keys, τ 60): alle vier URLs leben bereits in sources.φ (at sun — der Sonnen-Anker trägt die Laufzeit, nicht der Geozentrum-Frame). Verdicts: euvs `.-1.flux` — der Key flux existiert nicht (Payload: time_tag/line/value; `.-1` = mgii_index, die entfernte Fabrikation); rtsw_wind `.-1.speed` — der Key existiert nicht (proton_speed, km/s; m/s-Label wäre 1000×); xrays/mag reine Duplikate ohne Band-Filter (energy positionsabhängig). Kein Block eingebaut — ein URL = eine Messung = ein Block.
 
 geparkt
 kandidat https://www.jma.go.jp/bosai/amedas/data/map/{YYYYMMDDhhmmss}.json
@@ -652,3 +664,95 @@ note NOAA-NODD-Crawl 2026-08-20 (registry.opendata.aws/collab/noaa, 101 Datasets
 parser-gap
 kandidat s3-listbucketresult-namespace
 note xml_harvester parst die S3-Listung (ListBucketResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/") nicht — 0 records (getestet 2026-08-20 auf noaa-oar-hourly-gdp-pds). Braucht Namespace-Handling im xml_harvester oder einen s3-Harvester; bis dahin sind die NOAA-S3-Buckets (Raster/Datei) geparkt, nicht per Hand disponiert.
+
+erledigt
+bestand /home/johannes/projects/archive/phi-research/declined_kataloge_2026-08-20/worldbank_indicators.φ
+note WorldBank — ökonomisch/finanziell (Cross-border loans, aid loans), kein Force, nicht SI. Kopf deklarierte selbst decline. Entnommen 2026-08-20.
+
+erledigt
+bestand /home/johannes/projects/archive/phi-research/declined_kataloge_2026-08-20/osm_taginfo.φ
+note OSM taginfo-Keys (building, highway, addr:*) — semantische Labels, kein Messwert, nicht SI. Entnommen 2026-08-20.
+
+erledigt
+bestand /home/johannes/projects/archive/phi-research/declined_kataloge_2026-08-20/simbad_otypes.φ
+note SIMBAD-Objekt-Taxonomie — Vokabular, keine Messung (höchstens Nachschlagewerk). Nicht SI. Entnommen 2026-08-20.
+
+erledigt
+bestand /home/johannes/projects/archive/phi-research/declined_kataloge_2026-08-20/ncbi_databases.φ
+note NCBI-Genom-/Sequenzdatenbanken — Sequenzen sind kein physikalisches Feld, keine SI-Einheit. Entnommen 2026-08-20.
+
+erledigt
+bestand /home/johannes/projects/archive/phi-research/declined_kataloge_2026-08-20/openaire_catalog.φ
+note OpenAIRE-Publikationsgraph (237 Mio) — überwiegend Publikationen, keine Messung, nicht SI. Kopf deklarierte selbst decline. Entnommen 2026-08-20.
+
+index
+bestand phi/pipeline/katalog/re3data_catalog.φ
+note Repositorien-Registry (>3.000, xml_harvester komplett) — keine Quelle, Tür: Meta-Katalog für Adapter-Discovery (xml_harvester/csw/oai). SI-Extraktion pro Repositorium, nicht aus dem Katalog selbst.
+
+index
+bestand phi/pipeline/katalog/zenodo_catalog.φ
+note Zenodo (CERN, multidisziplinär, OAI-PMH) — keine Quelle, Tür: OAI-/Dataverse-Routen. SI-Extraktion pro Dataset.
+
+index
+bestand phi/pipeline/katalog/dryad_catalog.φ
+note Dryad (REST datadryad.org, ~72k Datasets) — keine Quelle, Tür: OAI-/Dataverse-Routen. SI-Extraktion pro Dataset.
+
+index
+bestand phi/pipeline/katalog/dataone_catalog.φ
+note DataONE (Solr, 3,37 Mio, Member-Nodes KNB/LTER/EDI) — keine Quelle, Tür: PASTA/ERDDAP-Routen der Member-Nodes. SI-Extraktion pro Node, nicht aus dem Aggregator.
+
+index
+bestand phi/pipeline/katalog/inrae_catalog.φ
+note INRAE (Dataverse 6.0, entrepot.recherche.data.gouv.fr) — keine Quelle, Tür: Dataverse-Route. SI-Extraktion pro Dataset.
+
+index
+bestand phi/pipeline/katalog/icos_catalog.φ
+note ICOS Carbon Portal (sparql_harvester) — keine Quelle, Tür: SPARQL-Route zu CO₂/CH₄-Molfraktionen (diffusion, SI). SI-Extraktion pro Objekt.
+
+erledigt
+bestand phi/pipeline/katalog/tap_index_eso.φ
+note ESO-TAP (archive.eso.org/tap_obs/sync) — 59 Tabellen, --index-Ernte 2026-08-20. Fortsetzung: tap_compiler-Bulks (SOURCES_PORT §9: tap_cat-Lücke).
+
+erledigt
+bestand phi/pipeline/katalog/tap_index_cadc.φ
+note CADC-TAP (ws.cadc-ccda.hia-iha.nrc-cnrc.gc.ca/argus/sync) — 21 Tabellen, --index --votable-Ernte 2026-08-20.
+
+erledigt
+bestand phi/pipeline/katalog/tap_index_mast.φ
+note MAST-VO-TAP (mast.stsci.edu/vo-tap/api/v0.1/caom/sync) — 15 Tabellen, --index-Ernte 2026-08-20.
+
+erledigt
+bestand phi/pipeline/katalog/tap_index_chandra.φ
+note Chandra-TAP (cda.cfa.harvard.edu/cxctap/sync) — 11 Tabellen, --index --votable-Ernte 2026-08-20. Braucht curl -L (303→200) — tap_compiler --index folgt Redirects jetzt (Fix 2026-08-20).
+
+erledigt
+bestand phi/pipeline/katalog/erddap_bcodmo_catalog.φ
+note BCO-DMO ERDDAP (erddap.bco-dmo.org) — 1.000 Datasets, erddap_harvester-Ernte 2026-08-20. Tür für marine Biogeochemie (SI).
+
+erledigt
+bestand phi/pipeline/katalog/erddap_noaa_pmel_catalog.φ
+note NOAA/PMEL ERDDAP (upwell.pfeg.noaa.gov) — 1.000 Datasets, erddap_harvester-Ernte 2026-08-20. Tür für Ozean-/Fischerei-Messungen (SI).
+
+ausstehend
+kandidat ci-harvest-dataverse-harvard-borealis-unc
+note Dataverse-Instanzen (Harvard 302.711, Borealis, UNC) — api/search-Vollharvest rate-limit-sensitiv (300 Seiten × Latenz) → gehört in probe_sweep-CI, nicht lokal. dataverse_harvester-Slash-Fix 2026-08-20 (root+api ohne / war 000). Lokale Stichprobe: 0 — leerer Lauf gelöscht. Korrektur 2026-08-20: Harvest läuft doch lokal (Session + Agenten, wie b2find/PANGAEA/tap_index), CI erntet nie. --per-page 1000 (~303 Seiten je Instanz).
+
+ausstehend
+kandidat oai-harvest-arxiv
+note OAI arXiv (https://oaipmh.arxiv.org/oai — export.arxiv.org 301→oaipmh, 2026-08-20 geprüft) — oai_harvester --root-Vollharvest, langlaufend → lokale Session, nicht CI.
+
+ausstehend
+kandidat oai-dryad-endpoint
+note Dryad-OAI: datadryad.org/oai, /oai/request, /server/oai, /api/v2/records alle 404 (2026-08-20 geprüft) — Dryad trägt keinen OAI-Endpoint mehr; API-v2-Route ohne OAI-Verb. Recherche: DSpace-OAI-Adresse neu ermitteln oder Dryad über REST (api/v2) als eigene Harvester-Form.
+
+geparkt
+kandidat mgds-marine-geo.org
+note MGDS (marine-geo.org/services/search/datasets) — 12.277 data_set-Records als XML-Attribute (data_type/url/uids), xml_harvester liest Child-Tags (--record/--id/--title) → Format-Gap: Attribute statt Kind-Elemente. parser-gap (xml-Attribut-Form), FileServer-Route braucht Parameter.
+
+dead 404
+url https://skyserver.sdss.org/dr18/tap/sync
+note SDSS-TAP dr16/dr17/dr18 sync alle 404 (geprüft 2026-08-20) — skyserver.tap-Routen existieren nicht mehr; CasJobs/SDSS-SQLSearch bleibt die lebende Route (ledger kandidat). dead mit Recherche-Stand: Versionen geprüft, alle 404.
+
+ausstehend
+kandidat epn-tap-vespa
+note EPN-TAP (psws-epntap.irap.omp.eu/__system__/tap/run/tap + tapvizier B/planets) — Base liefert HTML, kein sauberer TAP-Sync; VizieR-Planets-EPN läuft über TAPVizieR (in tap_index.φ). Recherche: korrekter VESPA-TAP-Sync-Endpoint offen.
