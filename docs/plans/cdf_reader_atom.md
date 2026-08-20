@@ -1,7 +1,8 @@
-# Session-Plan: cdf_reader-Atom — die CDF-Ernte (LIRA + Berkeley)
+# Session-Plan: cdf_reader-Atom — die CDF-Ernte (LIRA + Berkeley + Wind/wav_h1)
 
-Registriert 2026-08-20. Träger zweier Payloads: das LIRA-BIA-E-Feld
-2023–2025 (die solare electric-Lücke) und PSP-VSC (Berkeley).
+Registriert 2026-08-20. Träger dreier Payloads: das LIRA-BIA-E-Feld
+2023–2025 (die solare electric-Lücke), PSP-VSC (Berkeley) und
+Wind/WAVES wi_h1_wav (E_VOLTAGE_RAD2, 1994–2021).
 
 ## Einstieg (neue Session, null Vorkontext)
 
@@ -34,6 +35,18 @@ Registriert 2026-08-20. Träger zweier Payloads: das LIRA-BIA-E-Feld
   „2022-2026-Lücke" ist eine Host-Lücke, keine Mess-Lücke.
 - **PSP-VSC**: kalibriertes mV/m-Feld nur bei Berkeley (CDF),
   CDAWeb-HAPI 1406 — Route ist die erste Session-Frage.
+- **Wind/WAVES**: E_VOLTAGE_RAD2 (kalibrierte Antennen-Spannung) lebt in
+  wi_h1_wav — Tages-CDFs unter
+  `spdf.gsfc.nasa.gov/pub/data/wind/waves/wav_h1/` (1994–2021);
+  WI_L2_WAV_RAD1/RAD2 tragen nur PSD, keine Spannung. Dritter Payload
+  desselben Parsers; `at`-Frame: Wind ist in `at wind`-Ephemeriden
+  (ephemeris_compiler-Systemliste prüfen, sonst pending).
+- **TRACERS-SPK**: nicht nur „kein Eintrag bei NAIF" — das TRACERS-SOC
+  publiziert SPICE-Kernels noch gar nicht (Readme-Befund). Der
+  TS1/TS2-Block bleibt pending; die EFI-EAC-CDFs selbst sind über den
+  SPDF-Tree live (HAPI-IDs TS1/TS2_L2_EFI_EAC@0, @0-Suffix beachten).
+- PSA-TAP: lebt unter `https://psa.esa.int/psa-tap/tap/sync`
+  (verifiziert 200), trägt aber NULL SOLO-RPW-Produkte — kein Weg dort.
 - Referenzen: cdf.gsfc.nasa.gov (CDF-3-Spezifikation), RPW-DPDD
   (ROC-PRO-DAT-NTT-00075, rpw-datacenter.obspm.fr).
 
@@ -58,9 +71,14 @@ Registriert 2026-08-20. Träger zweier Payloads: das LIRA-BIA-E-Feld
    derselbe Parser erntet (eigenes Bin oder Merge, je nach Frame —
    `at parker_solar_probe`); nicht gefunden → Registrierpflicht bleibt
    (pending, kein Default).
-4. **Register**: Ledger (cdf_reader-Einträge schließen/narrowen), TODO,
-   `solar_akteure_probe.φ`. Offen bleibt: TRACERS-SPK (eigenes Atom —
-   kein SPK bei NAIF, verifiziert), TS1/TS2-Block.
+4. **Wind/WAVES (fakultativ, dritter Payload)**: wav_h1-Tages-CDFs ernten,
+   E_VOLTAGE_RAD2 (V) → 10-min-Mediane → eigenes Bin (magic-Klasse wie
+   RPW1, Frame `at wind` — Ephemeride prüfen). Alte Reihe (1994–2021),
+   aber der dritte electric-Akteur; skip wenn die Session voll ist —
+   registriert bleibt sie.
+5. **Register**: Ledger (cdf_reader-Einträge schließen/narrowen), TODO,
+   `solar_akteure_probe.φ`. Offen bleibt: TRACERS-SPK (SOC publiziert
+   noch keine Kernels — eigenes Atom, nicht diese Session).
 
 ## Gates
 

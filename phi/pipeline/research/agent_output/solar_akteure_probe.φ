@@ -149,10 +149,12 @@ registrierte „2022-2026-Lücke" ist eine HOST-Lücke, keine Mess-
 Lücke. Die Ernte hängt am cdf_reader-Atom (Tages-CDFs) — derselbe
 Baustein trägt danach PSP-VSC (Berkeley). lfr_density läuft bei
 LIRA bis 2025-04 (CDAWeb BIA-DENSITY deckt sich).
-PSA-TAP-Verdikt (2026-08-20, direkte Probe): psa.esac.esa.int
-http 000 (Host tot), psa.esa.int/tap/sync 404 — TAP existiert auf
-keinem Host, das PSA ist reiner SPA-Browser. Die Recency-Frage
-beantwortet LIRA, nicht das PSA.
+PSA-TAP-Verdikt (Zweitprüfung 2026-08-20, direkte Probe): der
+TAP-Endpoint lebt unter https://psa.esa.int/psa-tap/tap/sync
+(200, verifiziert — psa.esac.esa.int ist NXDOMAIN, /tap/sync ohne
+Präfix 404). ADQL-COUNT über epn_core WHERE instrument_name LIKE
+%RPW% → 0: das PSA trägt NULL Solar-Orbiter/RPW-Produkte. Die
+Recency-Frage beantwortet LIRA, nicht das PSA.
 SOAR-Verdikt (2026-08-20): Solar-Orbiter-Daten liegen im SOAR,
 nicht im PSA — soar.esac.esa.int/soar-sl-tap/tap/sync lebt (200).
 Tap-Schema trägt aber nur fünf RPW-Tabellen
@@ -164,6 +166,15 @@ HTML-SPA (keine JSON-Route an der Adresse). Referenzen für das
 cdf_reader-Atom: cdf.gsfc.nasa.gov (CDF-Spezifikation) + die
 RPW-DPDD (ROC-PRO-DAT-NTT-00075, RPW-Data-Product-Description-
 Document — rpw-datacenter.obspm.fr).
+Wind/WAVES-Präzisierung (Recherche-Agentin, 2026-08-20):
+E_VOLTAGE_RAD2 (kalibrierte Antennen-Spannung) lebt in wi_h1_wav
+(Tages-CDFs, spdf.gsfc.nasa.gov/pub/data/wind/waves/wav_h1/,
+1994–2021); WI_L2_WAV_RAD1/RAD2 tragen nur PSD, keine Spannung —
+die Ernte läuft über den SPDF-File-Tree und hängt am cdf_reader
+(dritter Payload). TRACERS-SPK-Präzisierung: nicht nur „kein
+Eintrag bei NAIF" — das TRACERS-SOC publiziert SPICE-Kernels noch
+gar nicht (Readme-Befund); die EFI-EAC-CDFs selbst sind über den
+SPDF-Tree voll live.
 
 CDN — gh nicht eingeloggt, kein GH_TOKEN in .secrets.local → die Bins
 liegen lokal (dieser Session: /tmp/opencode), der Upload läuft über
