@@ -91,6 +91,19 @@ ist ausgeschlossen, kein W/m2-Label auf dem Index), xrays trägt
 der nobel probe erntet X-Ray/EUV über extract_series aus dem Block
 (harvest_block) — der hardcodierte Filter ist tot. Live-Befund:
 n = 10078 (X-Ray) / 10024 (EUV-304/284), Kadenz 60 s.
+Faden-B-Einheit (2026-08-21): der xrays-Block trägt jetzt beide
+Bänder (zweites last, where energy 0.1-0.8nm — die Datei liefert
+beide, das lange Band 1–8 Å war unerntet); F10.7 (Penticton) neu
+eingetragen: f107_cm_flux.json, first flux where frequency 2800,
+sfu, τ=3600 (Prozesswissen — Stunden-Skala, nicht ttl/10); die
+RTSW-1m-Dateien sind absteigend sortiert — mag/wind von last auf
+first gestellt (last trug den ~24 h alten Record). Force-Gate je
+Kanal geführt: em für X-Ray/EUV/F10.7 (die Messung IST Strahlung),
+Bz/Bt/Plasma über ihre Feld-Signatur wie eingetragen. Live-Befund:
+test_live_sources_extract führt alle fünf Solar-Blöcke ohne void,
+nobel probe unverändert (X-Ray n=10078). Offen: der Fluss der
+Kanäle in den probe_ring der GPU (src/mathematikerin.rs:1410) —
+der kausale Pfeil F10.7 ↔ X-Ray wartet auf diese Einheit.
 Luminositäts-Atom — benannte Grenzen (pending): die Ankerung
 modelliert Isotropie (die Röntgenemission ist richtungsabhängig —
 abgeleitet, nicht gemessen); die Energie-Bänder der Partikel-Dateien

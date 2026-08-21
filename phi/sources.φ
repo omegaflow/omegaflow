@@ -98,19 +98,20 @@ url https://services.swpc.noaa.gov/json/goes/primary/xrays-7-day.json
 ttl 60
 at sun
 last flux noaa_goes_xray_flux_w_m2 inverse-square em wm2_1au 6.0 0.0 0.0 where energy 0.05-0.4nm
+last flux noaa_goes_xray_flux_long_w_m2 inverse-square em wm2_1au 6.0 0.0 0.0 where energy 0.1-0.8nm
 
 url https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json
 ttl 60
 at sun
-last bt magnetosphere_imf_bt_nt inverse-square em nT 6.0 0.0 0.0
-last bz_gsm magnetosphere_imf_bz_nt inverse-square em nT 6.0 0.0 0.0
+first bt magnetosphere_imf_bt_nt inverse-square em nT 6.0 0.0 0.0
+first bz_gsm magnetosphere_imf_bz_nt inverse-square em nT 6.0 0.0 0.0
 
 url https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json
 ttl 60
 at sun
-last proton_speed solar_wind_speed_km_s patch-levy advective km/s 6.0 0.0 400000.0
-last proton_density solar_wind_density_cm3 gaussian-inverse-square diffusion 1/cm3 6.0 0.0 0.0
-last proton_temperature solar_wind_temp_k exponential-decay thermal K 6.0 0.0 0.0
+first proton_speed solar_wind_speed_km_s patch-levy advective km/s 6.0 0.0 400000.0
+first proton_density solar_wind_density_cm3 gaussian-inverse-square diffusion 1/cm3 6.0 0.0 0.0
+first proton_temperature solar_wind_temp_k exponential-decay thermal K 6.0 0.0 0.0
 
 url https://services.swpc.noaa.gov/json/solar-radio-flux.json
 ttl 60
@@ -226,6 +227,11 @@ lat latitudeNumeric
 lon longitudeNumeric
 field intensity storm_intensity_kt gaussian-inverse-square advective knot 300 0.0 0.0
 field pressure storm_pressure_mb gaussian-inverse-square advective mb 300 0.0 0.0
+
+url https://services.swpc.noaa.gov/json/f107_cm_flux.json
+ttl 600
+at sun
+first flux solar_f107_flux_sfu inverse-square em sfu 3600.0 0.0 0.0 where frequency 2800
 
 url https://services.swpc.noaa.gov/json/goes/primary/euvs-7-day.json
 ttl 600
