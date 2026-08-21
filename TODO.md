@@ -1240,6 +1240,18 @@ Atomen — S5/S6-Karte), fischplan-kataloge-2026-08-20.md (exakte
 Tabellen-IDs + Spalten der zweiten Reihe). Die Survey-Tafel
 ist Pflichtlektüre einer neuen Session.
 
+## 4D-Wahrheit — Kinematische Dilatation (Übergabe 2026-08-21, pending)
+
+Auftrag: docs/handover/handover-2026-08-21-4d-wahrheit.md — der
+Archivar lebt auf der Weltlinie des Beobachters; fünf Atome, eine
+Session, kein for-now-but-later (Operator-Wort). Council-Beschlüsse
+(7) im Handover, vom Operator bestätigt: cdn_fresh bleibt Ernte-Uhr,
+Fenster-Range ist kein Fetch-Radius, t_thrust-Ruhe = 0.0, Backoffs in
+Beobachter-Zeit ohne maschinenzeitliche Pause, Antwort-Epoche bleibt
+Ernte, Sprung-Radius = signal_reach + max(body_radius, Φ·JUMP_GRID·2ⁿ),
+volle Relativ-Kinematik mit Schwelle Φ·Median-Fetchdauer,
+AGENTS-Klarstellung „presence rests vs. thrust" im selben Commit.
+
 ## Betriebsverfassung — die gemeinsame Karte (2026-08-19, angenommen vom Operator)
 
 **Der Kern (gemessen an der Session 2026-08-19, angenommen 2026-08-19):**
