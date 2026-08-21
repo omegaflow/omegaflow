@@ -11,7 +11,6 @@ const RECORD_VVR: u32 = 7;
 pub enum Cdf25Note {
     NotCdf25 { magic: [u8; 8] },
     Encoding(u32),
-    Release(u32),
     MultiFormat,
     EndAtByte { off: usize },
     RecordKind { off: usize, kind: u32 },
@@ -27,9 +26,6 @@ impl std::fmt::Debug for Cdf25Note {
         match self {
             Cdf25Note::NotCdf25 { magic } => write!(f, "magic {:02x?} is not CDF 2.5/2.6", magic),
             Cdf25Note::Encoding(e) => write!(f, "encoding {e} is not network (1)"),
-            Cdf25Note::Release(r) => {
-                write!(f, "release {r} is pre-2.5 — the VDR layout is a parser gap")
-            }
             Cdf25Note::MultiFormat => write!(f, "multi-format CDF — unread"),
             Cdf25Note::EndAtByte { off } => write!(f, "file ends at byte {off}"),
             Cdf25Note::RecordKind { off, kind } => {
@@ -143,9 +139,7 @@ impl Cdf25File {
             return Err(Cdf25Note::NotCdf25 { magic });
         }
         let release = be_u32(bytes, 24).ok_or(Cdf25Note::EndAtByte { off: 24 })?;
-        if release < 5 {
-            return Err(Cdf25Note::Release(release));
-        }
+        let toadd: usize = if release >= 5 { 0 } else { 128 };
         let encoding = be_u32(bytes, 28).ok_or(Cdf25Note::EndAtByte { off: 28 })?;
         if encoding != 1 {
             return Err(Cdf25Note::Encoding(encoding));
@@ -195,12 +189,16 @@ impl Cdf25File {
             let head_vxr = be_u32(rec, 16).ok_or(Cdf25Note::EndAtByte { off })?;
             let flags = be_u32(rec, 24).ok_or(Cdf25Note::EndAtByte { off })?;
             let sparse = be_u32(rec, 28).ok_or(Cdf25Note::EndAtByte { off })?;
-            let num_elements = be_u32(rec, 44).ok_or(Cdf25Note::EndAtByte { off })?;
-            let var_num = be_u32(rec, 48).ok_or(Cdf25Note::EndAtByte { off })?;
-            let name = trim_name(rec.get(60..124).ok_or(Cdf25Note::EndAtByte { off })?);
+            let num_elements = be_u32(rec, 44 + toadd).ok_or(Cdf25Note::EndAtByte { off })?;
+            let var_num = be_u32(rec, 48 + toadd).ok_or(Cdf25Note::EndAtByte { off })?;
+            let name = trim_name(
+                rec.get(60 + toadd..124 + toadd)
+                    .ok_or(Cdf25Note::EndAtByte { off })?,
+            );
             let mut dim_vary = Vec::with_capacity(num_rdim);
             for i in 0..num_rdim {
-                dim_vary.push(be_u32(rec, 124 + 4 * i).ok_or(Cdf25Note::EndAtByte { off })?);
+                dim_vary
+                    .push(be_u32(rec, 124 + toadd + 4 * i).ok_or(Cdf25Note::EndAtByte { off })?);
             }
             vars.push(Cdf25Var {
                 name,
@@ -393,6 +391,36 @@ mod tests {
         let vel = file.var("GCI_VEL").unwrap();
         let v_records = file.var_records(&bytes, vel).unwrap();
         assert_eq!(v_records.len(), 144);
+    }
+
+    #[test]
+    fn parses_wind_orbit_pre25_release4_when_present() {
+        let path = "/tmp/opencode/wi_or_pre_19970107_v01.cdf";
+        let bytes = match std::fs::read(path) {
+            Ok(b) => b,
+            Err(_) => return,
+        };
+        let file = Cdf25File::parse(&bytes).unwrap();
+        assert_eq!(file.version, (2, 4, 13));
+        assert_eq!(file.vars.len(), 21);
+        let epoch = file.var("Epoch").unwrap();
+        assert_eq!(epoch.data_type, 31);
+        assert_eq!(file.num_values(epoch), 1);
+        let e_records = file.var_records(&bytes, epoch).unwrap();
+        assert_eq!(e_records.len(), 144);
+        assert!(near(e_records[0][0], 852595200.0));
+        assert!(near(e_records[143][0], 852681000.0));
+        let pos = file.var("GCI_POS").unwrap();
+        assert_eq!(file.num_values(pos), 3);
+        let p_records = file.var_records(&bytes, pos).unwrap();
+        assert!(near(p_records[0][0], -283261.40486));
+        assert!(near(p_records[0][1], -410865.26385));
+        assert!(near(p_records[0][2], -177201.58019));
+        let vel = file.var("GCI_VEL").unwrap();
+        let v_records = file.var_records(&bytes, vel).unwrap();
+        assert!(near(v_records[0][0], 0.3429807));
+        assert!(near(v_records[0][1], -0.7684364));
+        assert!(near(v_records[0][2], -0.4303095));
     }
 
     #[test]

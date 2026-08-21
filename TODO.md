@@ -135,12 +135,14 @@ Ernten grün (wind_waves 9914 Tage/5.990.624 Records, wind_orbit
 11703 Tage/1.658.725 Records, Roundtrip ✓) — der Upload schlug fehl,
 `gh release upload` legt ein fehlendes Netloc-Release nicht an
 ("release not found"); das Release spdf.gsfc.nasa.gov ist inzwischen
-angelegt, der nächste Lauf trägt die Assets. Dabei benannt (offen):
-~90 frühe Tage (1994/1996/1997) tragen CDF release 4 (pre-2.5) —
-`release 4 is pre-2.5 — the VDR layout is a parser gap`, das
-VDR-Layout ist um +128 Byte verschoben (192-Zeichen-Name, cdflib
-toadd=128); plus 4 echte Listungs-Lücken (2023/2025). Eigener
-Folge-Atom: cdf25.rs um das Release-4-Layout erweitern.
+angelegt, der nächste Lauf trägt die Assets. Dabei benannt
+(erledigt 2026-08-21): ~90 frühe Tage (1994/1996/1997) tragen
+CDF release 4 (pre-2.5) — das VDR-Layout ist um +128 Byte
+verschoben (num_elements ab Offset 172, 192-Zeichen-Name, cdflib
+toadd=128); src/cdf25.rs trägt jetzt beide Layouts (toadd 0/128),
+Tests gegen wi_or_pre_19970107_v01.cdf (2.4.13, cdflib-Kreuzcheck
+Epoch 852595200 / GCI_POS/GCI_VEL exakt). Bleiben nur 4 echte
+Listungs-Lücken (2023/2025) — benannt, nicht parser-bedingt.
 Befunde selbsttragend: phi/pipeline/research/agent_output/
 wind_frame_2026-08-21.φ.
 GONG L 31..200 (CI --lmax 200) +
