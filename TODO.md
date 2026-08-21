@@ -500,10 +500,14 @@ Maschine misst.
   (`intermagnet_xyz_x/y/z_nt`, `hapi_fill`-Gate 99999.0, der
   HAPI-Fallback trägt Vektor-Spalten — gebaut auch für das LAIC-Blatt);
   USGS-Geomag bleibt geparkt (ledger.φ, Parser-Gap); GIC selbst
-  (electric) ohne Feed. Drei Nullkontrollen: Density→Boden still,
-  Ruhezeit still, phasenrandomisierte Schwelle
-  (broken-null-control-Muster). Die Blatt-Probe (Live-Fenster 1-min)
-  ist die nächste Einheit.
+  (electric) ohne Feed. Die Blatt-Probe (`src/bin/bz_blatt_probe.rs`)
+  lebt und hat gemessen (2026-08-21, 22-h-Live-Fenster 1-min): Bz trägt
+  den Pfeil bei lag 60 min (TE 2.01e-1 über Schwelle 1.85e-1, n 1263);
+  Speed still; Density still (Nullkontrolle I hält); Ruhezeit: Bz und
+  Density still, Speed bricht am Sweep-Rand (lag 120) — der Speed-Kanal
+  trägt keinen gereinigten Pfeil; PE-Ring < 8 Segmente (kein Urteil).
+  Offen: Mehrfachvergleichskorrektur über die Paar-Matrix, das
+  Retro-Fenster (1-h, OMNI2) als zweite Blatt-Zeile.
 - **LAIC-Pfeilrichtung** (`handover-2026-08-21-laic-pfeilrichtung.md`):
   Nadel Ⅳ verengt auf die Richtung — TE(Lithosphäre→Ionosphäre) gegen die
   Gegenrichtung im 72-h-Fenster vor M ≥ 6.0, Null-Ensemble zufälliger
