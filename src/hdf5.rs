@@ -719,40 +719,42 @@ fn parse_layout(buf: &[u8], off: usize) -> Result<Hdf5Layout, Hdf5Note> {
 }
 
 fn parse_filters(buf: &[u8], off: usize) -> Result<Vec<Hdf5Filter>, Hdf5Note> {
-    if off + 8 > buf.len() {
+    if off + 2 > buf.len() {
         return Err(Hdf5Note::EndAtByte { off });
     }
     let version = buf[off];
     let n = buf[off + 1] as usize;
-    let mut p = if version == 1 { off + 8 } else { off + 4 };
+    let mut p = if version == 1 { off + 8 } else { off + 2 };
     let mut out = Vec::with_capacity(n);
     for _ in 0..n {
-        if p + 8 > buf.len() {
+        if p + 6 > buf.len() {
             return Err(Hdf5Note::EndAtByte { off: p });
         }
         let id = le_u16(buf, p);
         p += 2;
-        let name_len = if version == 1 {
-            let nl = le_u16(buf, p) as usize;
-            p += 2;
-            nl
-        } else if id >= 256 {
+        let nl = if version == 1 || id >= 256 {
+            if p + 2 > buf.len() {
+                return Err(Hdf5Note::EndAtByte { off: p });
+            }
             let nl = le_u16(buf, p) as usize;
             p += 2;
             nl
         } else {
             0
         };
+        if p + 4 > buf.len() {
+            return Err(Hdf5Note::EndAtByte { off: p });
+        }
         let flags = le_u16(buf, p);
         p += 2;
         let nc = le_u16(buf, p) as usize;
         p += 2;
-        if name_len > 0 {
-            p += if version == 1 {
-                name_len
-            } else {
-                align8(name_len)
-            };
+        if p + nl > buf.len() {
+            return Err(Hdf5Note::EndAtByte { off: p });
+        }
+        p += nl;
+        if p + nc * 4 > buf.len() {
+            return Err(Hdf5Note::EndAtByte { off: p });
         }
         let mut cd = Vec::with_capacity(nc);
         for _ in 0..nc {
@@ -981,59 +983,146 @@ fn heap_read_id(buf: &[u8], h: &FractalHeap, id: &[u8]) -> Result<Vec<u8>, Hdf5N
 struct BtreeHeader {
     node_size: usize,
     record_size: usize,
+    depth: u16,
     root_addr: u64,
+    root_nrec: u16,
+    total_records: u64,
 }
 
 fn parse_btree_header(buf: &[u8], addr: u64) -> Result<(u8, BtreeHeader), Hdf5Note> {
     let off = addr as usize;
-    if buf.len() < off + 8 || &buf[off..off + 4] != b"BTHD" {
-        let mut found = [0u8; 4];
-        found.copy_from_slice(buf.get(off..off + 4).unwrap_or(b"    "));
+    let mut found = [0u8; 4];
+    found.copy_from_slice(buf.get(off..off + 4).unwrap_or(b"    "));
+    if buf.len() < off + 4 || &buf[off..off + 4] != b"BTHD" {
         return Err(Hdf5Note::Signatur { off, found });
     }
+    if buf.len() < off + 38 {
+        return Err(Hdf5Note::EndAtByte { off: buf.len() });
+    }
+    check_checksum(&buf[off..off + 34], &buf[off + 34..off + 38])?;
     let typ = buf[off + 5];
     Ok((
         typ,
         BtreeHeader {
             node_size: le_u32(buf, off + 6) as usize,
             record_size: le_u16(buf, off + 10) as usize,
+            depth: le_u16(buf, off + 12),
             root_addr: le_u64(buf, off + 16),
+            root_nrec: le_u16(buf, off + 24),
+            total_records: le_u64(buf, off + 26),
         },
     ))
 }
 
-fn btree_leaf_records(buf: &[u8], addr: u64, hdr: &BtreeHeader) -> Result<Vec<Vec<u8>>, Hdf5Note> {
+fn limit_enc_size(v: u64) -> usize {
+    if v <= 0xff {
+        1
+    } else if v <= 0xffff {
+        2
+    } else if v <= 0xffff_ffff {
+        4
+    } else if v <= 0xffff_ffff_ffff {
+        6
+    } else {
+        8
+    }
+}
+
+fn limited_uint(data: &[u8], off: usize, size: usize) -> Option<u64> {
+    match size {
+        1 => data.get(off).map(|&b| b as u64),
+        2 => data
+            .get(off..off + 2)
+            .and_then(|s| Some(u16::from_le_bytes(s.try_into().ok()?) as u64)),
+        4 => data
+            .get(off..off + 4)
+            .and_then(|s| Some(u32::from_le_bytes(s.try_into().ok()?) as u64)),
+        6 => {
+            let s = data.get(off..off + 6)?;
+            Some(
+                s[0] as u64
+                    | (s[1] as u64) << 8
+                    | (s[2] as u64) << 16
+                    | (s[3] as u64) << 24
+                    | (s[4] as u64) << 32
+                    | (s[5] as u64) << 40,
+            )
+        }
+        8 => data
+            .get(off..off + 8)
+            .and_then(|s| Some(u64::from_le_bytes(s.try_into().ok()?))),
+        _ => None,
+    }
+}
+
+fn btree_records(
+    buf: &[u8],
+    addr: u64,
+    hdr: &BtreeHeader,
+    depth: u16,
+    nrec: usize,
+) -> Result<Vec<Vec<u8>>, Hdf5Note> {
+    let off = addr as usize;
+    if hdr.node_size < 6 || buf.len() < off + hdr.node_size {
+        return Err(Hdf5Note::EndAtByte { off: buf.len() });
+    }
     let off = addr as usize;
     if buf.len() < off + 6 {
-        return Err(Hdf5Note::EndAtByte { off });
+        return Err(Hdf5Note::EndAtByte { off: buf.len() });
     }
     match &buf[off..off + 4] {
         b"BTLF" => {
+            let pos = 6 + nrec * hdr.record_size;
+            if pos + 4 > hdr.node_size {
+                return Err(Hdf5Note::Chunk { off });
+            }
+            if buf.len() < off + pos + 4 {
+                return Err(Hdf5Note::EndAtByte { off: buf.len() });
+            }
+            check_checksum(&buf[off..off + pos], &buf[off + pos..off + pos + 4])?;
+            let mut out = Vec::with_capacity(nrec);
             let mut p = off + 6;
-            let mut out = Vec::new();
-            while p + hdr.record_size <= buf.len() && p + hdr.record_size <= off + hdr.node_size - 4
-            {
+            for _ in 0..nrec {
                 out.push(buf[p..p + hdr.record_size].to_vec());
                 p += hdr.record_size;
             }
             Ok(out)
         }
         b"BTIN" => {
-            let mut p = off + 6;
-            let mut out = Vec::new();
-            while p + hdr.record_size + 8 <= buf.len()
-                && p + hdr.record_size + 8 <= off + hdr.node_size
-            {
-                out.push(buf[p..p + hdr.record_size].to_vec());
-                p += hdr.record_size;
-                let child = le_u64(buf, p);
-                p += 8;
-                if child != UNDEF {
-                    let mut sub = btree_leaf_records(buf, child, hdr)?;
-                    out.append(&mut sub);
-                }
+            if depth == 0 {
+                return Err(Hdf5Note::BtreeNode {
+                    found: *b"BTIN",
+                    off,
+                });
             }
-            Ok(out)
+            let total_guess = limit_enc_size(hdr.total_records);
+            let candidates: Vec<(usize, usize)> = if depth > 1 {
+                vec![
+                    (1, total_guess),
+                    (2, total_guess),
+                    (4, total_guess),
+                    (1, 2),
+                    (2, 2),
+                    (1, 4),
+                    (2, 4),
+                    (1, 1),
+                    (2, 1),
+                ]
+            } else {
+                vec![(1, 0), (2, 0), (4, 0), (6, 0), (8, 0)]
+            };
+            for (nsz, tsz) in candidates {
+                let triplet = 8 + nsz + tsz;
+                let pos = 6 + nrec * hdr.record_size + (nrec + 1) * triplet;
+                if pos + 4 > hdr.node_size || buf.len() < off + pos + 4 {
+                    continue;
+                }
+                if check_checksum(&buf[off..off + pos], &buf[off + pos..off + pos + 4]).is_err() {
+                    continue;
+                }
+                return internal_node_try(buf, off, hdr, depth, nrec, nsz, tsz);
+            }
+            Err(Hdf5Note::Checksum { off })
         }
         found => {
             let mut f = [0u8; 4];
@@ -1041,6 +1130,52 @@ fn btree_leaf_records(buf: &[u8], addr: u64, hdr: &BtreeHeader) -> Result<Vec<Ve
             Err(Hdf5Note::BtreeNode { found: f, off })
         }
     }
+}
+
+fn internal_node_try(
+    buf: &[u8],
+    off: usize,
+    hdr: &BtreeHeader,
+    depth: u16,
+    nrec: usize,
+    nsz: usize,
+    tsz: usize,
+) -> Result<Vec<Vec<u8>>, Hdf5Note> {
+    let mut p = off + 6;
+    let mut recs = Vec::with_capacity(nrec);
+    for _ in 0..nrec {
+        recs.push(buf[p..p + hdr.record_size].to_vec());
+        p += hdr.record_size;
+    }
+    let mut children: Vec<(u64, usize)> = Vec::with_capacity(nrec + 1);
+    for _ in 0..=nrec {
+        if p + 8 + nsz + tsz > buf.len() {
+            return Err(Hdf5Note::Chunk { off: p });
+        }
+        let child = le_u64(buf, p);
+        p += 8;
+        let child_nrec = match limited_uint(buf, p, nsz) {
+            Some(v) => v as usize,
+            None => return Err(Hdf5Note::Chunk { off: p }),
+        };
+        p += nsz + tsz;
+        children.push((child, child_nrec));
+    }
+    let mut out = Vec::new();
+    for i in 0..nrec {
+        let (child, child_nrec) = children[i];
+        if child != UNDEF {
+            let mut sub = btree_records(buf, child, hdr, depth - 1, child_nrec)?;
+            out.append(&mut sub);
+        }
+        out.push(recs[i].clone());
+    }
+    let (child, child_nrec) = children[nrec];
+    if child != UNDEF {
+        let mut sub = btree_records(buf, child, hdr, depth - 1, child_nrec)?;
+        out.append(&mut sub);
+    }
+    Ok(out)
 }
 
 fn link_info_of(msg: &RawMessage) -> Option<(Option<u64>, Option<u64>, Option<u64>)> {
@@ -1087,7 +1222,7 @@ fn read_links_modern(buf: &[u8], msg: &RawMessage) -> Result<Vec<Hdf5Link>, Hdf5
         return Ok(Vec::new());
     }
     let mut out = Vec::new();
-    for rec in btree_leaf_records(buf, hdr.root_addr, &hdr)? {
+    for rec in btree_records(buf, hdr.root_addr, &hdr, hdr.depth, hdr.root_nrec as usize)? {
         if rec.len() < 4 + heap.id_len {
             return Err(Hdf5Note::Chunk { off: 0 });
         }
@@ -1270,7 +1405,7 @@ fn dense_attrs(buf: &[u8], msgs: &[RawMessage]) -> Result<Vec<Hdf5Attribute>, Hd
         if hdr.root_addr == UNDEF {
             continue;
         }
-        for rec in btree_leaf_records(buf, hdr.root_addr, &hdr)? {
+        for rec in btree_records(buf, hdr.root_addr, &hdr, hdr.depth, hdr.root_nrec as usize)? {
             if rec.len() < heap.id_len {
                 return Err(Hdf5Note::Chunk { off: 0 });
             }
@@ -1532,7 +1667,7 @@ fn chunk_records(
     if hdr.root_addr == UNDEF {
         return Ok(out);
     }
-    for rec in btree_leaf_records(buf, hdr.root_addr, hdr)? {
+    for rec in btree_records(buf, hdr.root_addr, hdr, hdr.depth, hdr.root_nrec as usize)? {
         if rec.len() < 8 {
             return Err(Hdf5Note::Chunk { off: 0 });
         }
@@ -1835,6 +1970,8 @@ mod tests {
     const SSI_1874: &str =
         "phi/pipeline/katalog/ncei_ssi/ssi_v03r00_monthly_s187405_e187412_c20240831.nc";
     const FILTERS: &str = "phi/pipeline/katalog/ncei_ssi/filters.h5";
+    const GOES_XRS: &str =
+        "phi/pipeline/katalog/ncei_goes_xrs/sci_xrsf-l2-avg1m_g14_d20200101_v2-2-1.nc";
 
     fn read_fixture(name: &str, path: &str) -> Option<Vec<u8>> {
         if !Path::new(path).exists() {
@@ -1952,6 +2089,36 @@ mod tests {
         let units = file.attribute("SSI", "units").unwrap();
         assert_eq!(units.datatype.class, 3);
         assert_eq!(byte_str(&units.data), "W m-2 nm-1");
+    }
+
+    #[test]
+    fn parses_goes_xrs_science_file() {
+        if !Path::new(GOES_XRS).exists() {
+            eprintln!(
+                "skipped (fixture absent): goes-xrs — fetch from ncei.noaa.gov/data/goes-space-environment-monitor/access/science/xrs/goes14/xrsf-l2-avg1m_science/2020/01"
+            );
+            return;
+        }
+        let bytes = std::fs::read(GOES_XRS).expect("fixture read");
+        let file = Hdf5File::parse(&bytes).unwrap();
+        let root = file.root().unwrap();
+        assert_eq!(root.links.len(), 9);
+        let (_, ds, dt) = file.dataset("xrsa_flux").unwrap();
+        assert_eq!(ds.dims, vec![1440]);
+        assert_eq!(dt.class, 1);
+        assert_eq!(dt.size, 4);
+        let data = file.read_dataset("xrsa_flux").unwrap();
+        assert_eq!(data.len(), 1440 * 4);
+        let time = file.read_dataset("time").unwrap();
+        assert_eq!(time.len(), 1440 * 8);
+        let t0 = decode_f64(&time, 0, Endian::Le).unwrap();
+        assert_eq!(t0, 631108800.0);
+        let units = file.attribute("time", "units").unwrap();
+        assert_eq!(units.datatype.class, 3);
+        assert_eq!(
+            byte_str(&units.data),
+            "seconds since 2000-01-01 12:00:00 UTC"
+        );
     }
 
     #[test]

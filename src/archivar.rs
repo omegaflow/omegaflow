@@ -7,6 +7,32 @@ use std::collections::HashMap;
 use std::process::Command;
 use std::sync::{Arc, OnceLock};
 
+pub mod goes;
+
+fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
+    match format {
+        "rpw_efield" => crate::rpw::parse_bin(bytes),
+        "goes_xrs" => goes::parse_bin(bytes),
+        _ => None,
+    }
+}
+
+fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
+    match format {
+        "rpw_efield" => match comp {
+            crate::rpw::COMP_EY => Some("rpw_e_y"),
+            crate::rpw::COMP_EZ => Some("rpw_e_z"),
+            _ => None,
+        },
+        "goes_xrs" => match comp {
+            goes::COMP_XRSA => Some("goes_xrs_xrsa"),
+            goes::COMP_XRSB => Some("goes_xrs_xrsb"),
+            _ => None,
+        },
+        _ => None,
+    }
+}
+
 pub type CellKey = (i64, i64, i64);
 
 pub struct SpatialHash {
@@ -10834,11 +10860,11 @@ fn settle_fetch(st: &mut OriginState, ok: bool, now: f64) {
 }
 
 fn presence_gate(
-    presences: &[(f64, f64, f64, f64, f64)],
+    presences: &[(f64, f64, f64, f64, f64, f64, f64, f64, f64)],
     pos: (f64, f64, f64),
     extent: f64,
 ) -> bool {
-    presences.iter().any(|&(_, x, y, z, range)| {
+    presences.iter().any(|&(_, x, y, z, range, ..)| {
         let reach = extent * Φ + range;
         let dx = x - pos.0;
         let dy = y - pos.1;
@@ -11115,6 +11141,7 @@ fn live_sweep(
                 | "spectral"
                 | "lightcurve"
                 | "rpw_efield"
+                | "goes_xrs"
                 | "gong_modes"
         ) {
             continue;
@@ -11434,7 +11461,7 @@ struct Archive {
     sources: Vec<SourceConfig>,
     body_ephemerides: Arc<HashMap<String, BodyEphemeris>>,
     field: Arc<Buffer>,
-    presence: HashMap<String, (f64, f64, f64, f64, f64)>,
+    presence: HashMap<String, (f64, f64, f64, f64, f64, f64, f64, f64, f64)>,
     declared_body: Option<DeclaredBody>,
     origins: HashMap<Origin, OriginState>,
     pck_bodies: HashMap<i32, PckBody>,
@@ -16027,7 +16054,8 @@ pub fn main_flow() {
     let (sample_tx, sample_rx) = mpsc::channel::<Vec<Sample>>();
     #[cfg(not(feature = "browser_relay"))]
     let sample_rx = mpsc::channel::<Vec<Sample>>().1;
-    let (presence_tx, presence_rx) = mpsc::channel::<(String, f64, f64, f64, f64, f64)>();
+    let (presence_tx, presence_rx) =
+        mpsc::channel::<(String, f64, f64, f64, f64, f64, f64, f64, f64, f64)>();
     let body_ephemerides = Arc::new(HashMap::new());
     #[cfg(feature = "browser_relay")]
     let index_html = match std::fs::read(resolve_asset("static/index.html")) {
@@ -16115,6 +16143,10 @@ pub fn main_flow() {
             0.0,
             0.0,
             1280.0_f64 * crate::mathematikerin::GRID_INIT * 2.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
         ));
     }
     let em_shutdown = if std::env::var("OMEGAFLOW_HEADLESS").is_ok() {
@@ -16172,8 +16204,10 @@ pub fn main_flow() {
             eprintln!("the window closed — the ω-loop ends");
             break;
         }
-        while let Ok((name, pt, px, py, pz, pr)) = presence_rx.try_recv() {
-            archive.presence.insert(name, (pt, px, py, pz, pr));
+        while let Ok((name, pt, px, py, pz, pr, vx, vy, vz, tt)) = presence_rx.try_recv() {
+            archive
+                .presence
+                .insert(name, (pt, px, py, pz, pr, vx, vy, vz, tt));
         }
         let now = match archive.presence.get("native").map(|p| p.0) {
             Some(t) if t.is_finite() && t > 0.0 => t,
@@ -17035,9 +17069,13 @@ pub fn main_flow() {
                 });
                 continue;
             }
-            if archive.sources[i].format == "rpw_efield" {
+            if matches!(
+                archive.sources[i].format.as_str(),
+                "rpw_efield" | "goes_xrs"
+            ) {
                 let url = archive.sources[i].url.clone();
                 let src = archive.sources[i].clone();
+                let fmt = archive.sources[i].format.clone();
                 begin_fetch(&mut archive.origins, i as u32, now);
                 let ftx = fetch_tx.clone();
                 let src_idx = i;
@@ -17053,19 +17091,19 @@ pub fn main_flow() {
                         spectral: None,
                         fetch_ok,
                     };
-                    let name = url.rsplit('/').next().unwrap_or("rpw").to_string();
-                    let tmp_path = format!("/tmp/omegaflow_rpw_{}", name);
+                    let name = url.rsplit('/').next().unwrap_or("series").to_string();
+                    let tmp_path = format!("/tmp/omegaflow_series_{}", name);
                     if !cache_fresh(&tmp_path, src_ttl) {
                         let bytes = match fetch_raw_bytes(&url, src_ttl) {
                             Some(b) => b,
                             None => {
-                                eprintln!("rpw {}: fetch void — retry in ttl/Φ·2ⁿ", url);
+                                eprintln!("{} {}: fetch void — retry in ttl/Φ·2ⁿ", fmt, url);
                                 let _ = ftx.send(empty(false));
                                 return;
                             }
                         };
                         if std::fs::write(&tmp_path, &bytes).is_err() {
-                            eprintln!("rpw {}: write void — retry in ttl/Φ", url);
+                            eprintln!("{} {}: write void — retry in ttl/Φ", fmt, url);
                             let _ = ftx.send(empty(true));
                             return;
                         }
@@ -17073,18 +17111,20 @@ pub fn main_flow() {
                     let bytes = match std::fs::read(&tmp_path) {
                         Ok(b) => b,
                         Err(_) => {
-                            eprintln!("rpw {}: read void — retry in ttl/Φ", url);
+                            eprintln!("{} {}: read void — retry in ttl/Φ", fmt, url);
                             let _ = ftx.send(empty(true));
                             return;
                         }
                     };
-                    let records = match crate::rpw::parse_bin(&bytes) {
+                    let records = match series_parse_bin(&fmt, &bytes) {
                         Some(r) => r,
                         None => {
                             eprintln!(
-                                "rpw {}: bin reads void — {} B carry no rpw_efield.bin contract",
+                                "{} {}: bin reads void — {} B carry no {} contract",
+                                fmt,
                                 url,
-                                bytes.len()
+                                bytes.len(),
+                                fmt
                             );
                             let _ = ftx.send(empty(true));
                             return;
@@ -17100,18 +17140,16 @@ pub fn main_flow() {
                         .collect();
                     if fields.is_empty() {
                         eprintln!(
-                            "rpw {}: field undeclared — the block carries no field line",
-                            url
+                            "{} {}: field undeclared — the block carries no field line",
+                            fmt, url
                         );
                         let _ = ftx.send(empty(true));
                         return;
                     }
                     let mut channels = Vec::with_capacity(records.len());
                     for (t, val, comp) in records {
-                        let name = match comp {
-                            crate::rpw::COMP_EY => "rpw_e_y",
-                            crate::rpw::COMP_EZ => "rpw_e_z",
-                            _ => continue,
+                        let Some(name) = series_component_name(&fmt, comp) else {
+                            continue;
                         };
                         let Some(fc) = fields.iter().find(|fc| fc.name == name) else {
                             continue;
@@ -17129,7 +17167,7 @@ pub fn main_flow() {
                             fc.clone(),
                         ));
                     }
-                    eprintln!("\r\x1b[Krpw {}: {} oscillators", url, channels.len());
+                    eprintln!("\r\x1b[K{} {}: {} oscillators", fmt, url, channels.len());
                     let _ = ftx.send(FetchResult {
                         source_idx: src_idx,
                         channels,
@@ -17391,7 +17429,7 @@ pub fn main_flow() {
                 }
                 Frame::Manifest => continue,
             };
-            let presences: Vec<(f64, f64, f64, f64, f64)> =
+            let presences: Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64)> =
                 archive.presence.values().cloned().collect();
             if !presence_gate(&presences, pos, r) {
                 continue;
@@ -17404,7 +17442,7 @@ pub fn main_flow() {
             let src_idx = i;
             let lsk_c = lsk.clone();
             let rl = refusal_ledger.clone();
-            let presence_center = presences.first().map(|p| (p.1, p.2, p.3));
+            let presence_center = presences.first().map(|p| (p.2, p.3, p.4));
             thread::spawn(move || {
                 if src_clone.fanout_cap > 0 {
                     if let Some(ref su) = src_clone.stations_url {

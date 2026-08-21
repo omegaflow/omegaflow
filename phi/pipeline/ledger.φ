@@ -328,7 +328,7 @@ note E1800 (OMNI) entfernt (2026-08-20, derived: E=−V×B, Konfounder — dead_
 
 verifiziert
 kraft-kanal electric wind-waves
-note E_VOLTAGE_RAD2/RAD1/TNR = „normalized receiver average voltage" V (normierte Antennen-Spannung — Force-Gate em: die Radio-Welle ist der Messwert selbst, nicht V/m) lebt in wi_h1_wav — Tages-CDFs spdf.gsfc.nasa.gov/pub/data/wind/waves/wav_h1/ (1994–2021; CDF 3.x auch 1994 — kein 2.6, 1-min-Kadenz, 256/256/96 Bins, ~3,58 MB/Tag). Ernte-Prototyp (wind_waves_compiler) 2021-01 → 18848 Records (608 Bins/Tag, Tages-Median je Bin), Bin magic WAV1 [t_tdb, freq_hz, bin_width_hz, val_v, receiver], Roundtrip ✓. Frame at wind pending (kein SPK NAIF -485, keine Horizons-Bahn — L1-Raumsonde); volle Ernte 1994–2021 + CDN = Folge-Atom. Befund berkeley_wind_2026-08-21.φ
+note E_VOLTAGE_RAD2/RAD1/TNR = „normalized receiver average voltage" V (normierte Antennen-Spannung — Force-Gate em: die Radio-Welle ist der Messwert selbst, nicht V/m) lebt in wi_h1_wav — Tages-CDFs spdf.gsfc.nasa.gov/pub/data/wind/waves/wav_h1/ (1994–2021; CDF 3.x auch 1994 — kein 2.6, 1-min-Kadenz, 256/256/96 Bins, ~3,58 MB/Tag). Ernte-Maschine fertig (2026-08-21): wind_waves_compiler trägt --window-start/--window-end + --jobs (Muster bia_efield_compiler, Atomic-Queue + Mutex-Sammlung), Bin magic WAV1 [t_tdb, freq_hz, bin_width_hz, val_v, receiver]; Stichproben verifiziert: 2021-01-Prototyp (31 Tage, 18848 Records) + 1994-Stichprobe (1994-11-10→1994-12-31, 52 Tage, 0 void, 31616 Records = 608 Bins/Tag, Roundtrip ✓). CI: kernel_flatten sun-Job (Timeout 240→360), Asset-Guard auf Release spdf.gsfc.nasa.gov (Asset wind_waves.bin), --ci-mode 1994-11-10→2021-12-31 --jobs 8 — offen bleibt der erste kernel_flatten-Lauf (bis dahin fehlt das CDN-Asset, fehlt nicht null). Frame at wind: KEIN SPK (NAIF-PDS-Liste komplett ohne Wind, verifiziert 2026-08-21; /pub/naif/archive 404; NAIF-ID −485 ohne Kern) — der Positions-Träger existiert als CDAWeb wind/orbit pre_or (wi_or_pre_YYYYMMDD_vNN.cdf, täglich 1994–2026, GCI_POS/GCI_VEL/GSE/GSM + GCI-Sonnenvektor, CDF 2.5 — Parser-Gap gegen src/cdf.rs 3.x, eigenes Atom; spha_k0 ist Spin-Phase, keine Position; GCI≈ICRS auf Raumsonde-Maß, Frame-Bias benannt); ohne Orbit-Ernte trägt wind_waves.bin t_tdb/freq/val ohne Raumposition (0 honored, keine fabrizierte L1-Position), der sources.φ-Block (format wind_waves, force em, V, gaussian-inverse-square) folgt nach dem Orbit-Atom. Befunde wind_frame_2026-08-21.φ + berkeley_wind_2026-08-21.φ
 
 ausstehend
 kraft-kanal thermal
@@ -431,6 +431,10 @@ note OMNIWeb integriert (CDAWeb-HAPI OMNI2_H0_MRG1HR, at sun): 7 Felder — V180
 verifiziert
 bestand phi/pipeline/research/agent_output/solar_akteure_probe.φ
 note Solar-Akteure (2026-08-20): E1800-Disposition, AMDA-RPW-Ernte (147148 Records, rpw_efield.bin), GONG-vmt-Ernte (496 Moden L 0..30, gong_modes.bin), Ω_g-BodyProperty (stype 7, solar_omega_g.φ), PSP-DFB-Force-Gate (em), GML-404, CDAWeb-capabilities-Stub, GOLF-000 — alle Befunde selbsttragend in der Datei; offene Punkte in den kraft-kanal-Noten
+
+verifiziert
+bestand docs/surveys/survey-2026-08-21-sonnen-abdeckung.md
+note GOES-XRS-Serie (2026-08-21): goes_xrs_compiler erntet NCEI science xrsf-l2-avg1m (goes08–15, 1995–2020, netCDF-4/HDF5; xrsa 0,05–0,4 nm / xrsb 0,1–0,8 nm, W/m²@1AU, flag/fill-Skips) → goes_xrs.bin (GXS1, Bucket-Mediane je Band über alle Satelliten, Default hourly) → Block format goes_xrs at sun wm2_1au. hdf5.rs: BTIN-Fix (v2-B-tree internal nodes — der AINFO-Baum der GOES-Dateien verwarf zuvor die ganze Datei). CI (sources-Repo): goes_xrs_compiler --window-start 1995-01-01 --window-end 2020-12-31 --decimate-min 60 --lsk naif0012.tls --ci-mode.
 
 verifiziert
 bestand phi/pipeline/research/agent_output/recheck_b5_flash.φ

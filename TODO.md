@@ -71,9 +71,35 @@ erweitert, fließt der Kanal. Berkeley-VSC GESCHLOSSEN
 CDAWeb-HAPI PSP_FLD_L2_VSC → 1406, SPDF spiegelt — Verdikt „vom
 live-Baum verschwunden/unveröffentlicht", benannt geschlossen).
 Wind/WAVES wav_h1 E_VOLTAGE_RAD2/RAD1/TNR (normierte Antennen-
-Spannung V, Force-Gate em): Ernte-Prototyp steht (wind_waves_compiler,
-Bin magic WAV1, 2021-01 → 18848 Records, Roundtrip ✓) — volle Ernte
-1994–2021 + Frame at wind (kein SPK NAIF -485) = Folge-Atom.
+Spannung V, Force-Gate em, freq/bin_width auf der
+Spektral-Oszillator-Achse): Ernte-Maschine steht (wind_waves_compiler,
+Bin magic WAV1, --window-start/--window-end + --jobs, Muster
+bia_efield_compiler) — 1994-Stichprobe (1994-11-10 → 1994-12-31, 52
+Tage, 0 void, 31616 Records = 608 Bins/Tag, Roundtrip ✓) und
+2021-01-Prototyp (18848 Records) verifiziert; CI-Schritt im
+kernel_flatten sun-Job mit Asset-Guard (Release
+spdf.gsfc.nasa.gov, Asset wind_waves.bin, --ci-mode,
+1994-11-10 → 2021-12-31, --jobs 8). Offen: der erste
+kernel_flatten-Lauf (bis dahin trägt das CDN das Asset nicht —
+fehlt, null nicht); Atome danach: 2022+ (der Baum endet 2021),
+Wind-Orbit-Join (siehe Frame at wind).
+Frame at wind (pending): kein SPK — die NAIF-PDS-Liste ist komplett
+ohne Wind (naif.jpl.nasa.gov/pub/naif/pds/data/, verifiziert
+2026-08-21), /pub/naif/archive/ trägt 404, NAIF-ID −485 ohne Kern.
+Der Positions-Träger existiert: CDAWeb wind/orbit pre_or/def_or
+(cdaweb.gsfc.nasa.gov/pub/data/wind/orbit/), täglich 1994–2026,
+`wi_or_pre_YYYYMMDD_vNN.cdf` — CDF 2.5 (magic 00 00 FF FF,
+src/cdf.rs parst 3.x — Parser-Gap benannt), Variablen GCI_POS/
+GCI_VEL/GSE_POS/GSE_VEL/GSM_POS/GSM_VEL + GCI-Sonnenvektor
+(GCI = geocentric celestial inertial ≈ ICRS auf Raumsonde-Maß,
+Frame-Bias benannt). spha_k0 ist Spin-Phase (SPIN_PHASE/
+AVG_SPIN_RATE), keine Position — verworfen, nicht verwechselt.
+Ohne Orbit-Ernte trägt wind_waves.bin t_tdb/freq/val ohne
+Raumposition (0 honored — keine fabrizierte L1-Position); der
+sources.φ-Block (format wind_waves, force em, V,
+gaussian-inverse-square) folgt erst nach dem Orbit-Atom.
+Befunde selbsttragend: phi/pipeline/research/agent_output/
+wind_frame_2026-08-21.φ.
 GONG L 31..200 (CI --lmax 200) +
 mparam-Eigenfrequenzen für freq/bin_width, GOLF (Medoc 000),
 PSP-DFB = em-Spektralkanal (Force-Gate-Urteil, kein
@@ -166,17 +192,23 @@ der offenen Sample-Budget-Messung). Block format goes_xrs at sun
 (wm2_1au-Konvention, τ=3600); der Loader teilt den rpw-Serien-Pfad
 (series_parse_bin/series_component_name in src/archivar.rs).
 hdf5.rs-Reparatur: BTIN (v2-B-tree internal: Records ab Byte 6, danach
-nrec+1 Zeiger-Tripel, Prüfsumme am Knotenende; Feldgrößen über
-Geometrie-Kandidaten selbstvalidiert, Header- und Blatt-Prüfsummen
-verifiziert) — der AINFO-Dense-Attr-Baum der GOES-Dateien ließ zuvor
-die ganze Datei verwerfen (Test parses_goes_xrs_science_file gegen das
-Fixture phi/pipeline/katalog/ncei_goes_xrs/). Offen: Atom 4
+nrec+1 Zeiger-Tripel; Knoten serialisieren dicht, die Prüfsumme deckt
+die dichte Präfixregion — die Feldgrößen der Zeiger-Tripel wählt das
+Prüfsummen-Orakel; Header-Depth/nrec gelesen) + Filter-Message-v2
+(Built-in-Filter id<256 tragen keine Namensfelder, v2 ohne
+Reserved-Bytes) — der AINFO-Dense-Attr-Baum und die Filter der
+GOES-Dateien ließen zuvor die ganze Datei verwerfen (Tests
+parses_goes_xrs_science_file + real_filters_* gegen die Fixtures).
+Atom 5, F10.7-Teil: ERLEDIGT in der Parallel-Session (siehe oben,
+f107_penticton.bin); Mg II/SSN abgelehnt (Force-Gate: dimensionslose
+Indizes ohne Litmus, docs/concepts/sunspots.md). Offen bleibt: Atom 4
 (OMNI2-Full-Serie 1963–heute, HAPI-Window-Ernte analog rpw; ~550 k
-Stunden × 7 Felder → Auflösung gegen das Sample-Budget wählen) und
-Atom 5 (F10.7 1947–, Mg II 1978–, SSN 1818–) — Quellen vermessen in
+Stunden × 7 Felder → Auflösung gegen das Sample-Budget wählen) und der
+Lang-Fenster-Probe F10.7-Historie × GOES-XRS-Historie (nun entblockt);
+Quellen vermessen in
 docs/surveys/survey-2026-08-21-sonnen-abdeckung.md; das Handover
-handover-2026-08-21-sonnen-abdeckung.md bleibt live, bis Atom 4 und 5
-geschlossen sind.
+handover-2026-08-21-sonnen-abdeckung.md bleibt live, bis Atom 4
+geschlossen ist.
 Luminositäts-Atom — benannte Grenzen (pending): die Ankerung
 modelliert Isotropie (die Röntgenemission ist richtungsabhängig —
 abgeleitet, nicht gemessen); die Energie-Bänder der Partikel-Dateien

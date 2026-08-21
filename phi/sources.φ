@@ -604,6 +604,13 @@ ttl 3600
 field rpw_e_y rpw_e_y gaussian-inverse-square electric mV/m 3600 0.0 0.0
 field rpw_e_z rpw_e_z gaussian-inverse-square electric mV/m 3600 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/goes_xrs.bin
+format goes_xrs
+at sun
+ttl 3600
+field goes_xrs_xrsa goes_xrs_xrsa inverse-square em wm2_1au 3600 0.0 0.0
+field goes_xrs_xrsb goes_xrs_xrsb inverse-square em wm2_1au 3600 0.0 0.0
+
 url https://api.openaq.org/v3/sensors/{station}/measurements?limit=1&datetime_from={yesterday}T00:00:00Z
 header X-API-Key {OPENAQ_API_KEY}
 ttl 21600
