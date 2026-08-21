@@ -74,6 +74,13 @@ gm_Horizons.pck (km³/s², parser scales ×1e9).
 ## Flatten policy
 K01: planets + moons (SPK/PCK) + probes (Horizons compiler) + the asteroid
 longbow (`asteroids` = sb441-n16.bsp + de441.bsp for the sun's SSB state,
-256-day raster, heliocentric segment + SSB chain). The remaining small
-bodies stay on the Horizons 12-month windows; DASTCOM (K03) carries their
-mass/radius.
+256-day raster, heliocentric segment + SSB chain) + the sb441-n373 split
+(spk_split streams the 15.2-GB file in one sequential pass — summary chain
+walk, pointer monotonicity gate, per-body DAF-in-RAM with a uniform address
+shift — and compiles the TNOs with sources.φ blocks: eris 2136199,
+haumea 2136108, makemake 2136472; GM from IOM Table 1 via
+phi/pipeline/katalog/asteroid_gm_sb441.φ; roundtrip gate against the
+stream, 400 epochs, ≤ 100 m). The remaining 370 n373 bodies stay named
+pending (sources.φ blocks = SOURCE_PORT curation); the 12 bodies without
+an SPK segment carry the Horizons 12-month windows; DASTCOM (K03) carries
+their mass/radius.
