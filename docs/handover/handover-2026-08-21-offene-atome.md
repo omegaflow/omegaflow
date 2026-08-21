@@ -9,7 +9,8 @@ nicht die Ausführung; ausgeführt wird erst auf das Wort des Operators.
 Kurz: vier Posten blieben aus früheren Sessions offen und sind im Register
 (TODO.md) benannt. Dieses Dokument ist ihr Auftrag — die Reihenfolge ist Teil
 des Auftrags, weil die Atome sich bedingen: erst der stille Lauf, dann die
-Messung, dann die großen Kataloge.
+Messung, dann die großen Kataloge. Atom 2 (Fetch-Sturm) ist erledigt
+(2026-08-21) — der Blocker der Messung ist gefallen; offen sind Atom 1, 3, 4.
 
 ### 1. Sample-Budget-Messung (Vorbedingung für GLADE+)
 
@@ -27,14 +28,21 @@ Messung, dann die großen Kataloge.
   vorbefüllen (kein Download), Lauf begrenzen/drosseln (Atom 2), die cap-Zeile
   greppen.
 
-### 2. ω-Loop-Fetch-Sturm-Reparatur
+### 2. ω-Loop-Fetch-Sturm-Reparatur — ERLEDIGT (2026-08-21)
 
-- **Befund:** der Live-Source-Zyklus fischt ~200 Quellen kontinuierlich —
-  4 Retries × 23 s + ttl/Φ-Backoff — ein unbegrenzter Churn, der die Leitung
-  bei jedem Membran-Lauf sättigt (Neustart erzwungen, 2026-08-21).
-- **Reparatur:** Retry-Exponent (2ⁿ), Pause je Quelle, begrenztes
-  Fetch-Budget je Tick, Cooldown toter Quellen.
-- **Reihenfolge:** Atom 2 vor Atom 1 abschließen, damit die Messung still läuft.
+- **Reparatur (ausgeführt):** In-Flight-Guard (`begin_fetch`/`settle_fetch`
+  in `src/archivar.rs` — ein laufender Fetch blockt die Neu-Dispatch; der
+  dastcom-Read-Void sendet jetzt ein FetchResult statt sendelos zu kehren),
+  2ⁿ-Void-Backoff je Quelle (Kappe 2⁴ → max ttl/Φ·16; gezählt nur
+  Netz-Voids via `fetch_ok` im FetchResult — write/read/extract-Voids
+  zählen nicht, 0 honored), Fetch-Budget 2³ je Tick (max 8 in-flight im
+  Live-Zyklus). Die Diagnose nennt das Gesetz: fetch void → „retry in
+  ttl/Φ·2ⁿ", write/read/extract → „retry in ttl/Φ".
+- **Gates:** cargo check 0/0 (vier Feature-Kombis), 238 lib-Tests grün
+  (2 hdf5-Fehler der Parallel-Session — benannter Befund, nicht dieses
+  Atom), Hidden-Lauf 150 s stabil (29 api / 309k Samples, dastcom 1×).
+- **Register:** TODO.md (Fetch-Ketten-Atom-Zeile trägt die Reparatur).
+  ledger.φ n/a — kein Quellen-Bestand berührt.
 
 ### 3. GLADE+ / NED / 2MASS
 
@@ -74,7 +82,8 @@ Referenzen (stehend): `TODO.md` (alle vier Posten sind dort benannt),
 
 ## Gates
 
-- Atom 2 (still) → Atom 1 (Messung) → Atom 3 (GLADE+ erst nach Budget).
+- Atom 2 ist erledigt (2026-08-21) — die Kette läuft weiter: Atom 1
+  (Messung) → Atom 3 (GLADE+ erst nach Budget) → Atom 4.
 - cargo check 0/0; Register: TODO.md + ledger.φ + dieses Dokument.
 - Ein Commit je Atom; das letzte schließt die Posten und archiviert dieses
   Dokument nach `/home/johannes/projects/archive/handover/`.

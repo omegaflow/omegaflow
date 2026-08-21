@@ -68,6 +68,8 @@ pub trait Radiator: Send + Sync {
     fn accept(&mut self, field: Arc<Buffer>);
 }
 pub const Φ: f64 = 1.618033988749895;
+const FETCH_BUDGET: usize = 1 << 3;
+const FETCH_VOID_CAP: u32 = 1 << 2;
 pub const CHEBYSHEV_N: usize = 18;
 
 #[derive(Clone)]
@@ -975,7 +977,7 @@ pub fn kernel_id_of(name: &str) -> Option<u8> {
     }
 }
 
-pub fn extract_fields(ext: &Extract) -> &[FieldConfig] {
+pub fn extract_fields(ext: &Extract) -> Vec<FieldConfig> {
     match ext {
         Extract::Map { fields, .. }
         | Extract::CelestialMap { fields, .. }
@@ -983,8 +985,8 @@ pub fn extract_fields(ext: &Extract) -> &[FieldConfig] {
         | Extract::Flatten { fields, .. }
         | Extract::CmrPolygon { fields, .. }
         | Extract::CelestialPolygon { fields, .. }
-        | Extract::KeplerMap { fields, .. } => fields,
-        Extract::ProfileMap { fields, .. } => fields,
+        | Extract::KeplerMap { fields, .. }
+        | Extract::ProfileMap { fields, .. } => fields.clone(),
         Extract::Field(fc)
         | Extract::First(fc, _)
         | Extract::Last(fc, _)
@@ -993,8 +995,43 @@ pub fn extract_fields(ext: &Extract) -> &[FieldConfig] {
         | Extract::ObjLast(fc)
         | Extract::Path(fc)
         | Extract::Deep(fc)
-        | Extract::Regex(fc) => std::slice::from_ref(fc),
-        _ => &[],
+        | Extract::Regex(fc) => vec![fc.clone()],
+        Extract::GeojsonEvents {
+            outputs,
+            tau,
+            absorption,
+            advection,
+            ..
+        } => {
+            if outputs.len() < 2 {
+                return Vec::new();
+            }
+            vec![
+                FieldConfig {
+                    key: outputs[0].clone(),
+                    name: outputs[0].clone(),
+                    kernel: 0,
+                    force: 3,
+                    tau: *tau,
+                    absorption: *absorption,
+                    advection: *advection,
+                    unit: "Mw".to_string(),
+                    fold: None,
+                },
+                FieldConfig {
+                    key: outputs[1].clone(),
+                    name: outputs[1].clone(),
+                    kernel: 0,
+                    force: 3,
+                    tau: *tau,
+                    absorption: *absorption,
+                    advection: *advection,
+                    unit: String::new(),
+                    fold: None,
+                },
+            ]
+        }
+        _ => Vec::new(),
     }
 }
 
@@ -7902,6 +7939,8 @@ field temp temp_c\n";
             prev_motion: None,
             resid_ema: 0.0,
             has_prev: false,
+            failures: 0,
+            in_flight: false,
         };
         let sample = super::anchor(
             &channel,
@@ -8037,6 +8076,8 @@ field temp temp_c\n";
             prev_motion: None,
             resid_ema: 0.0,
             has_prev: false,
+            failures: 0,
+            in_flight: false,
         };
         let sample = super::anchor(
             &channel,
@@ -8444,8 +8485,69 @@ field temp temp_c\n";
         let fields = super::extract_fields(&ext);
         assert_eq!(fields.len(), 1);
         assert_eq!(fields[0].key, "temp");
-        let reach = super::dispatch_reach(fields, 60.0).expect("the profile field gates");
+        let reach = super::dispatch_reach(&fields, 60.0).expect("the profile field gates");
         assert_eq!(reach, C_LIGHT * 60.0 * 64.0);
+    }
+
+    #[test]
+    fn test_extract_fields_reads_geojson_events() {
+        let ext = Extract::GeojsonEvents {
+            mag_key: "mag".into(),
+            min_mag: 0.0,
+            outputs: vec!["seismic_magnitude_mw".into(), "seismic_depth_km".into()],
+            tau: 6.0,
+            absorption: 0.0,
+            advection: 0.0,
+            mag_type_key: String::new(),
+        };
+        let fields = super::extract_fields(&ext);
+        assert_eq!(fields.len(), 2);
+        assert_eq!(fields[0].name, "seismic_magnitude_mw");
+        assert_eq!(fields[0].force, 3);
+        assert_eq!(fields[1].name, "seismic_depth_km");
+        let reach = super::dispatch_reach(&fields, 60.0).expect("the geojson fields gate");
+        assert_eq!(reach, SEISMIC_BODY_SPEED * 60.0 * 64.0);
+        let single = Extract::GeojsonEvents {
+            mag_key: "mag".into(),
+            min_mag: 0.0,
+            outputs: vec!["seismic_magnitude_mw".into()],
+            tau: 6.0,
+            absorption: 0.0,
+            advection: 0.0,
+            mag_type_key: String::new(),
+        };
+        assert!(
+            super::extract_fields(&single).is_empty(),
+            "a geojson extract with one output emits nothing"
+        );
+    }
+
+    #[test]
+    fn test_refusal_ledger_dedup_and_reload() {
+        let path =
+            std::env::temp_dir().join(format!("omegaflow_refusal_ledger_{}.φ", std::process::id()));
+        let _ = std::fs::remove_file(&path);
+        {
+            let mut ledger = super::RefusalLedger::new(path.to_str().unwrap());
+            ledger.register("https://a.example/q", "extract-void");
+            ledger.register("https://a.example/q", "extract-void");
+            ledger.register("https://b.example/q", "fetch-void");
+        }
+        let content = std::fs::read_to_string(&path).unwrap();
+        assert_eq!(content.lines().count(), 2, "one entry per class+url");
+        assert!(content.contains("extract-void https://a.example/q"));
+        assert!(content.contains("fetch-void https://b.example/q"));
+        {
+            let mut ledger = super::RefusalLedger::new(path.to_str().unwrap());
+            ledger.register("https://a.example/q", "extract-void");
+        }
+        let reloaded = std::fs::read_to_string(&path).unwrap();
+        assert_eq!(
+            reloaded.lines().count(),
+            2,
+            "a reloaded ledger never repeats an entry"
+        );
+        let _ = std::fs::remove_file(&path);
     }
 
     #[test]
@@ -8464,6 +8566,72 @@ field temp temp_c\n";
         let reach =
             super::dispatch_reach(&[fc], 60.0).expect("advective carries a propagation law");
         assert_eq!(reach, 400000.0 * 60.0 * 64.0);
+    }
+
+    fn origin_fixture(failures: u32, in_flight: bool) -> super::OriginState {
+        super::OriginState {
+            fetched: 0.0,
+            prev_epoch: 0.0,
+            prev_abs: [0.0, 0.0, 0.0],
+            prev_motion: None,
+            resid_ema: 0.0,
+            has_prev: false,
+            failures,
+            in_flight,
+        }
+    }
+
+    #[test]
+    fn test_origin_stale_holds_while_fetch_in_flight() {
+        let mut origins = std::collections::HashMap::new();
+        origins.insert(0u32, origin_fixture(0, true));
+        assert!(
+            !super::origin_stale(&origins, 0, 60, 1.0e9),
+            "a running fetch blocks the re-dispatch, however stale the origin"
+        );
+        origins.insert(0u32, origin_fixture(0, false));
+        assert!(
+            super::origin_stale(&origins, 0, 60, 1.0e9),
+            "a settled stale origin dispatches again"
+        );
+    }
+
+    #[test]
+    fn test_fetch_void_backoff_grows_power_of_two_and_caps() {
+        for failures in 0..=super::FETCH_VOID_CAP + 2 {
+            let mut origins = std::collections::HashMap::new();
+            origins.insert(0u32, origin_fixture(failures, false));
+            let factor = 2f64.powi(failures.min(super::FETCH_VOID_CAP) as i32);
+            let backoff = 60.0 / super::Φ * factor;
+            assert!(
+                !super::origin_stale(&origins, 0, 60, backoff - 0.5),
+                "failures {}: fresh inside the backoff stays held",
+                failures
+            );
+            assert!(
+                super::origin_stale(&origins, 0, 60, backoff + 0.5),
+                "failures {}: the backoff ttl/Φ·2ⁿ expires",
+                failures
+            );
+        }
+    }
+
+    #[test]
+    fn test_settle_fetch_resets_voids_on_ok_and_caps_on_void() {
+        let mut st = origin_fixture(3, true);
+        super::settle_fetch(&mut st, true, 100.0);
+        assert_eq!(st.failures, 0, "a delivered fetch resets the void count");
+        assert!(!st.in_flight);
+        assert_eq!(st.fetched, 100.0);
+        super::settle_fetch(&mut st, false, 200.0);
+        assert_eq!(st.failures, 1, "a fetch void counts one failure");
+        st.failures = super::FETCH_VOID_CAP;
+        super::settle_fetch(&mut st, false, 300.0);
+        assert_eq!(
+            st.failures,
+            super::FETCH_VOID_CAP,
+            "the void count caps at the power-of-2 ceiling"
+        );
     }
 
     #[test]
@@ -8676,98 +8844,16 @@ field temp temp_c\n";
         eprintln!("load_sources returned {} sources", srcs.len());
         let fixture_lsk = full_fixture_lsk();
         let now = fixture_lsk.system_now_tdb().unwrap();
-        let mut ok = 0usize;
-        let mut empty: Vec<(String, String)> = Vec::new();
-        let mut limit = 600usize;
         let env = super::load_env();
-        for s in srcs.iter() {
-            let mut url = s.url.clone();
-            for (k, v) in [
-                ("{today}", "2026-08-07"),
-                ("{yesterday}", "2026-08-06"),
-                ("{tomorrow}", "2026-08-08"),
-                ("{now}", "2026-08-07T12:00:00Z"),
-                ("{year}", "2026"),
-                ("{month}", "08"),
-                ("{day}", "07"),
-                ("{lat}", "29.5"),
-                ("{lon}", "-95.0"),
-                ("{ra}", "0.0"),
-                ("{dec}", "0.0"),
-                ("{target}", "Ceres"),
-                ("{week_ago}", "2026-07-31"),
-                ("{hour_ago}", "2026-08-07T11:00:00Z"),
-                ("{body}", "ISS"),
-                ("{lon_min}", "-95.0"),
-                ("{lon_max}", "-94.0"),
-                ("{lat_min}", "29.0"),
-                ("{lat_max}", "30.0"),
-                ("{grid}", "29.5,-95.0|29.6,-95.0"),
-                ("{nearest_station}", "8518750"),
-                ("{jd_now}", "2461270.78"),
-                ("{jd_start}", "2461269.78"),
-                ("{jd_end}", "2461270.78"),
-            ] {
-                url = url.replace(k, v);
-            }
-            url = super::resolve_secret(&url, &env);
-            if url.starts_with("https://github.com/omegaflow/sources") {
-                continue;
-            }
-            if s.fanout_cap > 0 {
-                eprintln!("skip fanout (needs fanout_fetch): {}", s.url);
-                continue;
-            }
-            if s.format == "csv_zip" {
-                eprintln!("skip csv_zip (byte path): {}", s.url);
-                continue;
-            }
-            if s.format == "kernel_text" {
-                eprintln!(
-                    "skip kernel_text (data file, not a field source): {}",
-                    s.url
-                );
-                continue;
-            }
-            if limit == 0 {
-                break;
-            }
-            limit -= 1;
-            let headers = super::render_headers(&s.headers, &env);
-            let body = match super::fetch_one(&url, None, &headers, s.ttl) {
-                Some(b) => b,
-                None => {
-                    empty.push((s.url.clone(), "fetch returned empty".into()));
-                    continue;
-                }
-            };
-            match super::extract(s, &body, now, &fixture_lsk) {
-                super::ExtractResult::Measurements(v) => {
-                    if v.is_empty() {
-                        let diag = super::diagnose_no_samples(s, &body);
-                        empty.push((s.url.clone(), format!("no samples ({})", diag)));
-                    } else {
-                        ok += 1;
-                    }
-                }
-                super::ExtractResult::WithEphemeris(v, _) => {
-                    if v.is_empty() {
-                        let diag = super::diagnose_no_samples(s, &body);
-                        empty.push((s.url.clone(), format!("no samples ({})", diag)));
-                    } else {
-                        ok += 1;
-                    }
-                }
-            }
-        }
+        let (ok, findings) = super::live_sweep(&env, now, &fixture_lsk, 600);
         eprintln!(
-            "\n=== LIVE SOURCE EXTRACTION: {} ok, {} empty (of {} tested) ===",
+            "\n=== LIVE SOURCE EXTRACTION: {} ok, {} void (of {} tested) ===",
             ok,
-            empty.len(),
-            ok + empty.len()
+            findings.len(),
+            ok + findings.len()
         );
-        for (u, why) in empty.iter() {
-            eprintln!("  void {}  {}", u, why);
+        for f in findings.iter() {
+            eprintln!("  void {}  {}  {}", f.class.as_str(), f.url, f.detail);
         }
     }
 
@@ -10704,6 +10790,8 @@ pub struct OriginState {
     prev_motion: Option<Motion>,
     resid_ema: f64,
     has_prev: bool,
+    failures: u32,
+    in_flight: bool,
 }
 
 fn origin_stale(
@@ -10713,8 +10801,35 @@ fn origin_stale(
     now: f64,
 ) -> bool {
     match origins.get(&origin) {
-        Some(o) => now - o.fetched >= ttl as f64 / Φ,
+        Some(o) => {
+            let backoff = (ttl as f64 / Φ) * (2f64).powi(o.failures.min(FETCH_VOID_CAP) as i32);
+            !o.in_flight && now - o.fetched >= backoff
+        }
         None => true,
+    }
+}
+
+fn begin_fetch(origins: &mut HashMap<Origin, OriginState>, origin: Origin, now: f64) {
+    let st = origins.entry(origin).or_insert(OriginState {
+        fetched: now,
+        prev_epoch: now,
+        prev_abs: [0.0, 0.0, 0.0],
+        prev_motion: None,
+        resid_ema: 0.0,
+        has_prev: false,
+        failures: 0,
+        in_flight: false,
+    });
+    st.in_flight = true;
+}
+
+fn settle_fetch(st: &mut OriginState, ok: bool, now: f64) {
+    st.fetched = now;
+    st.in_flight = false;
+    if ok {
+        st.failures = 0;
+    } else {
+        st.failures = (st.failures + 1).min(FETCH_VOID_CAP);
     }
 }
 
@@ -10861,6 +10976,216 @@ fn diagnose_no_samples(src: &SourceConfig, body: &str) -> String {
             }
         }
     }
+}
+
+#[derive(Clone, Copy, PartialEq)]
+enum VoidClass {
+    Key,
+    Drift,
+    Quiet,
+    Kaputt,
+}
+
+impl VoidClass {
+    fn as_str(&self) -> &'static str {
+        match self {
+            VoidClass::Key => "key-void",
+            VoidClass::Drift => "drift-void",
+            VoidClass::Quiet => "ruhig-void",
+            VoidClass::Kaputt => "kaputt",
+        }
+    }
+}
+
+struct VoidFinding {
+    url: String,
+    class: VoidClass,
+    detail: String,
+}
+
+fn civil_date(unix: u64) -> (i64, u32, u32) {
+    let days = (unix / 86400) as i64;
+    let z = days + 719468;
+    let era = (if z >= 0 { z } else { z - 146096 }) / 146097;
+    let doe = (z - era * 146097) as u64;
+    let yoe = (doe - doe / 1460 + doe / 36524 - doe / 146096) / 365;
+    let y = yoe as i64 + era * 400;
+    let doy = doe - (365 * yoe + yoe / 4 - yoe / 100);
+    let mp = (5 * doy + 2) / 153;
+    let d = (doy - (153 * mp + 2) / 5 + 1) as u32;
+    let m = (if mp < 10 { mp + 3 } else { mp - 9 }) as u32;
+    (if m <= 2 { y + 1 } else { y }, m, d)
+}
+
+fn date_str(unix: u64) -> String {
+    let (y, m, d) = civil_date(unix);
+    format!("{:04}-{:02}-{:02}", y, m, d)
+}
+
+fn hour_str(unix: u64) -> String {
+    format!(
+        "{}T{:02}:{:02}:{:02}Z",
+        date_str(unix),
+        (unix / 3600) % 24,
+        (unix / 60) % 60,
+        unix % 60
+    )
+}
+
+fn live_markers() -> Vec<(String, String)> {
+    let unix = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .map(|d| d.as_secs())
+        .unwrap_or(0);
+    let (y, m, d) = civil_date(unix);
+    let jd = unix as f64 / 86400.0 + 2440587.5;
+    vec![
+        ("{today}".into(), date_str(unix)),
+        ("{yesterday}".into(), date_str(unix - 86400)),
+        ("{tomorrow}".into(), date_str(unix + 86400)),
+        ("{now}".into(), hour_str(unix)),
+        ("{year}".into(), format!("{:04}", y)),
+        ("{month}".into(), format!("{:02}", m)),
+        ("{day}".into(), format!("{:02}", d)),
+        ("{lat}".into(), "29.5".into()),
+        ("{lon}".into(), "-95.0".into()),
+        ("{ra}".into(), "0.0".into()),
+        ("{dec}".into(), "0.0".into()),
+        ("{target}".into(), "Ceres".into()),
+        ("{week_ago}".into(), date_str(unix - 7 * 86400)),
+        ("{hour_ago}".into(), hour_str(unix - 3600)),
+        ("{body}".into(), "ISS".into()),
+        ("{lon_min}".into(), "-95.0".into()),
+        ("{lon_max}".into(), "-94.0".into()),
+        ("{lat_min}".into(), "29.0".into()),
+        ("{lat_max}".into(), "30.0".into()),
+        ("{grid}".into(), "29.5,-95.0|29.6,-95.0".into()),
+        ("{nearest_station}".into(), "8518750".into()),
+        ("{jd_now}".into(), format!("{:.2}", jd)),
+        ("{jd_start}".into(), format!("{:.2}", jd - 1.0)),
+        ("{jd_end}".into(), format!("{:.2}", jd)),
+    ]
+}
+
+fn unresolved_key(template: &str, env: &HashMap<String, String>) -> Option<String> {
+    let mut rest = template;
+    while let Some(start) = rest.find('{') {
+        rest = &rest[start + 1..];
+        let Some(end) = rest.find('}') else {
+            return None;
+        };
+        let key = &rest[..end];
+        let upper = key.to_uppercase();
+        match env.get(key).or_else(|| env.get(&upper)) {
+            Some(v) if !v.is_empty() => {}
+            _ => return Some(key.to_string()),
+        }
+        rest = &rest[end + 1..];
+    }
+    None
+}
+
+fn live_sweep(
+    env: &HashMap<String, String>,
+    now: f64,
+    lsk: &LeapSeconds,
+    limit: usize,
+) -> (usize, Vec<VoidFinding>) {
+    let srcs = load_sources();
+    let markers = live_markers();
+    let mut ok = 0usize;
+    let mut findings: Vec<VoidFinding> = Vec::new();
+    let mut budget = limit;
+    for s in srcs.iter() {
+        if s.url.starts_with("https://github.com/omegaflow/sources") {
+            continue;
+        }
+        if s.fanout_cap > 0 || s.format == "csv_zip" || s.format == "kernel_text" {
+            continue;
+        }
+        if matches!(
+            s.format.as_str(),
+            "ephemeris_binary"
+                | "catalog_dastcom"
+                | "netcdf"
+                | "finals"
+                | "ionex"
+                | "alerce"
+                | "catalog_tycho"
+                | "spectral"
+                | "lightcurve"
+                | "rpw_efield"
+                | "gong_modes"
+        ) {
+            continue;
+        }
+        if budget == 0 {
+            break;
+        }
+        budget -= 1;
+        let mut url = s.url.clone();
+        for (k, v) in &markers {
+            url = url.replace(k, v);
+        }
+        if let Some(key) = unresolved_key(&url, env) {
+            findings.push(VoidFinding {
+                url: s.url.clone(),
+                class: VoidClass::Key,
+                detail: format!("marker {{{}}} absent in .secrets.local", key),
+            });
+            continue;
+        }
+        let mut header_void = None;
+        for (_, v) in &s.headers {
+            if let Some(key) = unresolved_key(v, env) {
+                header_void = Some(key);
+                break;
+            }
+        }
+        if let Some(key) = header_void {
+            findings.push(VoidFinding {
+                url: s.url.clone(),
+                class: VoidClass::Key,
+                detail: format!("header marker {{{}}} absent in .secrets.local", key),
+            });
+            continue;
+        }
+        let url = resolve_secret(&url, env);
+        let headers = render_headers(&s.headers, env);
+        let body = match fetch_one(&url, None, &headers, s.ttl) {
+            Some(b) => b,
+            None => {
+                findings.push(VoidFinding {
+                    url: s.url.clone(),
+                    class: VoidClass::Kaputt,
+                    detail: "fetch void".into(),
+                });
+                continue;
+            }
+        };
+        match extract(s, &body, now, lsk) {
+            ExtractResult::Measurements(v) | ExtractResult::WithEphemeris(v, _) => {
+                if v.is_empty() {
+                    let diag = diagnose_no_samples(s, &body);
+                    let class = if diag.contains("all containers empty")
+                        || diag.contains("no rows extracted")
+                    {
+                        VoidClass::Quiet
+                    } else {
+                        VoidClass::Drift
+                    };
+                    findings.push(VoidFinding {
+                        url: s.url.clone(),
+                        class,
+                        detail: diag,
+                    });
+                } else {
+                    ok += 1;
+                }
+            }
+        }
+    }
+    (ok, findings)
 }
 
 pub fn kernel_extent(
@@ -11050,6 +11375,7 @@ struct FetchResult {
     star_samples: Vec<Sample>,
     curves: Option<Arc<CurveSet>>,
     spectral: Option<SpectralHash>,
+    fetch_ok: bool,
 }
 
 struct StderrRadiator {
@@ -13201,6 +13527,60 @@ fn probe_one(
     }
 }
 
+fn reverify_mode(env: &HashMap<String, String>) -> i32 {
+    let Some(lsk) = embedded_lsk() else {
+        eprintln!("reverify: the time base is absent — no sweep without a clock");
+        return 1;
+    };
+    let Some(now) = lsk.system_now_tdb() else {
+        eprintln!("reverify: TDB absent — no sweep without a clock");
+        return 1;
+    };
+    let (ok, findings) = live_sweep(env, now, &lsk, 600);
+    eprintln!(
+        "\n=== REVERIFY: {} ok, {} void (of {} tested) ===",
+        ok,
+        findings.len(),
+        ok + findings.len()
+    );
+    let mut lines: Vec<String> = vec![
+        format!(
+            "# recheck-live {} — mechanischer Re-Verifikations-Sweep über phi/sources.φ (lebende Quellen)",
+            date_str(
+                SystemTime::now()
+                    .duration_since(UNIX_EPOCH)
+                    .map(|d| d.as_secs())
+                    .unwrap_or(0)
+            )
+        ),
+        "# Klassen: key-void (Key-Marker ohne .secrets.local) | drift-void (API-Drift — Kurationsauftrag) | ruhig-void (leer = Wahrheit) | kaputt (fetch void)".into(),
+    ];
+    for f in findings.iter() {
+        let line = format!("recheck {} {} — {}", f.url, f.class.as_str(), f.detail);
+        println!("{}", line);
+        lines.push(line);
+    }
+    if findings.is_empty() {
+        lines.push(format!(
+            "recheck-live {}: 0 Befunde — alle {} getesteten Quellen extrahierten Samples",
+            date_str(
+                SystemTime::now()
+                    .duration_since(UNIX_EPOCH)
+                    .map(|d| d.as_secs())
+                    .unwrap_or(0)
+            ),
+            ok
+        ));
+    }
+    match std::fs::write("phi/pipeline/stage/recheck_live.φ", lines.join("\n") + "\n") {
+        Ok(_) => 0,
+        Err(e) => {
+            eprintln!("reverify: write phi/pipeline/stage/recheck_live.φ: {}", e);
+            1
+        }
+    }
+}
+
 fn probe_mode(
     path: &str,
     precise: bool,
@@ -15148,6 +15528,54 @@ fn battery_ingress(tx: mpsc::Sender<Vec<(String, f64, f64)>>) {
     }
 }
 
+struct RefusalLedger {
+    path: std::path::PathBuf,
+    seen: std::collections::HashSet<String>,
+}
+
+impl RefusalLedger {
+    fn new(path: &str) -> RefusalLedger {
+        let mut seen = std::collections::HashSet::new();
+        if let Ok(content) = std::fs::read_to_string(path) {
+            for line in content.lines() {
+                let mut parts = line.splitn(4, ' ');
+                if parts.next() == Some("refused") {
+                    let _unix = parts.next();
+                    let class = parts.next().unwrap_or("");
+                    let url = parts.next().unwrap_or("");
+                    if !class.is_empty() && !url.is_empty() {
+                        seen.insert(format!("{}|{}", class, url));
+                    }
+                }
+            }
+        }
+        RefusalLedger {
+            path: std::path::PathBuf::from(path),
+            seen,
+        }
+    }
+
+    fn register(&mut self, url: &str, class: &str) {
+        let key = format!("{}|{}", class, url);
+        if !self.seen.insert(key) {
+            return;
+        }
+        let unix = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .map(|d| d.as_secs())
+            .unwrap_or(0);
+        let line = format!("refused {} {} {}\n", unix, class, url);
+        if let Ok(mut f) = std::fs::OpenOptions::new()
+            .create(true)
+            .append(true)
+            .open(&self.path)
+        {
+            use std::io::Write;
+            let _ = f.write_all(line.as_bytes());
+        }
+    }
+}
+
 pub fn main_flow() {
     let env = Arc::new(load_env());
     {
@@ -15245,6 +15673,9 @@ pub fn main_flow() {
             }
             std::process::exit(probe_mode(path, precise, lat, lon, &env, fetchone));
         }
+        if args.len() > 1 && args[1] == "--reverify" {
+            std::process::exit(reverify_mode(&env));
+        }
     }
     let declared_body: Option<DeclaredBody> = std::env::args().skip(1).find_map(|a| {
         let rest = a.strip_prefix("#body=")?;
@@ -15268,6 +15699,9 @@ pub fn main_flow() {
             );
     }
     let loaded = load_sources();
+    let refusal_ledger = Arc::new(Mutex::new(RefusalLedger::new(
+        "phi/pipeline/refusal_ledger.φ",
+    )));
     let (sensor_tx, sensor_rx) = mpsc::channel::<Vec<(String, f64, f64)>>();
     let consent = Arc::new(AtomicBool::new(false));
     eprintln!("record consent: press Y (record) or N (silent) in the membrane window");
@@ -15539,7 +15973,7 @@ pub fn main_flow() {
         }
         let mut dropped_channels: Vec<(Channel, FieldConfig, u32)> = Vec::new();
         while let Ok(res) = fetch_rx.try_recv() {
-            archive
+            let st = archive
                 .origins
                 .entry(res.source_idx as u32)
                 .or_insert(OriginState {
@@ -15549,8 +15983,10 @@ pub fn main_flow() {
                     prev_motion: None,
                     resid_ema: 0.0,
                     has_prev: false,
-                })
-                .fetched = now;
+                    failures: 0,
+                    in_flight: false,
+                });
+            settle_fetch(st, res.fetch_ok, now);
             if let Some((name, eph)) = res.eph_update {
                 let mut eph_map = (*archive.body_ephemerides).clone();
                 eph_map.insert(name, eph);
@@ -15696,6 +16132,9 @@ pub fn main_flow() {
             if archive.sources[i].format == "kernel_text" {
                 continue;
             }
+            if archive.origins.values().filter(|o| o.in_flight).count() >= FETCH_BUDGET {
+                break;
+            }
             if archive.sources[i].format == "ephemeris_binary" {
                 let src_idx = i;
                 let src_clone = archive.sources[i].clone();
@@ -15704,6 +16143,7 @@ pub fn main_flow() {
                     None => continue,
                 };
                 if cache_fresh(&tmp_path, src_clone.ttl) {
+                    begin_fetch(&mut archive.origins, i as u32, now);
                     let ftx = fetch_tx.clone();
                     let lsk_c = lsk.clone();
                     let now_c = now;
@@ -15720,6 +16160,7 @@ pub fn main_flow() {
                                 star_samples: Vec::new(),
                                 curves: None,
                                 spectral: None,
+                                fetch_ok: true,
                             });
                         } else {
                             eprintln!(
@@ -15735,6 +16176,7 @@ pub fn main_flow() {
                                 star_samples: Vec::new(),
                                 curves: None,
                                 spectral: None,
+                                fetch_ok: true,
                             });
                         }
                     });
@@ -15743,6 +16185,7 @@ pub fn main_flow() {
             }
             if archive.sources[i].format == "catalog_dastcom" {
                 let url = archive.sources[i].url.clone();
+                begin_fetch(&mut archive.origins, i as u32, now);
                 let ftx = fetch_tx.clone();
                 let src_clone = archive.sources[i].clone();
                 let src_idx = i;
@@ -15759,7 +16202,7 @@ pub fn main_flow() {
                     }
                     if !fetched {
                         eprintln!(
-                            "catalog {}: fetch void — the catalog stays absent, retry in ttl/Φ",
+                            "catalog {}: fetch void — the catalog stays absent, retry in ttl/Φ·2ⁿ",
                             url
                         );
                         let _ = ftx.send(FetchResult {
@@ -15770,12 +16213,26 @@ pub fn main_flow() {
                             star_samples: Vec::new(),
                             curves: None,
                             spectral: None,
+                            fetch_ok: false,
                         });
                         return;
                     }
                     let bytes = match std::fs::read(&tmp_path) {
                         Ok(b) => b,
-                        Err(_) => return,
+                        Err(_) => {
+                            eprintln!("catalog {}: read void — retry in ttl/Φ", url);
+                            let _ = ftx.send(FetchResult {
+                                source_idx: src_idx,
+                                channels: Vec::new(),
+                                eph_update: None,
+                                asteroid_samples: Vec::new(),
+                                star_samples: Vec::new(),
+                                curves: None,
+                                spectral: None,
+                                fetch_ok: true,
+                            });
+                            return;
+                        }
                     };
                     let samples = build_asteroid_samples(&bytes, src_ttl);
                     eprintln!("\r\x1b[Kcatalog_dastcom: {} samples", samples.len());
@@ -15787,6 +16244,7 @@ pub fn main_flow() {
                         star_samples: Vec::new(),
                         curves: None,
                         spectral: None,
+                        fetch_ok: true,
                     });
                 });
                 continue;
@@ -15841,6 +16299,7 @@ pub fn main_flow() {
                 let Some(url) = url else {
                     continue;
                 };
+                begin_fetch(&mut archive.origins, i as u32, now);
                 let ftx = fetch_tx.clone();
                 let src_idx = i;
                 let src_ttl = src_clone.ttl;
@@ -15852,7 +16311,7 @@ pub fn main_flow() {
                         let bytes = match fetch_raw_bytes(&url, src_ttl) {
                             Some(b) => b,
                             None => {
-                                eprintln!("netcdf {}: fetch void — retry in ttl/Φ", url);
+                                eprintln!("netcdf {}: fetch void — retry in ttl/Φ·2ⁿ", url);
                                 let _ = ftx.send(FetchResult {
                                     source_idx: src_idx,
                                     channels: Vec::new(),
@@ -15861,6 +16320,7 @@ pub fn main_flow() {
                                     star_samples: Vec::new(),
                                     curves: None,
                                     spectral: None,
+                                    fetch_ok: false,
                                 });
                                 return;
                             }
@@ -15875,6 +16335,7 @@ pub fn main_flow() {
                                 star_samples: Vec::new(),
                                 curves: None,
                                 spectral: None,
+                                fetch_ok: true,
                             });
                             return;
                         }
@@ -15891,6 +16352,7 @@ pub fn main_flow() {
                                 star_samples: Vec::new(),
                                 curves: None,
                                 spectral: None,
+                                fetch_ok: true,
                             });
                             return;
                         }
@@ -15905,12 +16367,14 @@ pub fn main_flow() {
                         star_samples: Vec::new(),
                         curves: None,
                         spectral: None,
+                        fetch_ok: true,
                     });
                 });
                 continue;
             }
             if archive.sources[i].format == "finals" || archive.sources[i].format == "ionex" {
                 let url = archive.sources[i].url.clone();
+                begin_fetch(&mut archive.origins, i as u32, now);
                 let ftx = fetch_tx.clone();
                 let src_clone = archive.sources[i].clone();
                 let src_idx = i;
@@ -15922,7 +16386,7 @@ pub fn main_flow() {
                     let bytes = match fetch_raw_bytes(&url, src_ttl) {
                         Some(b) => b,
                         None => {
-                            eprintln!("finals {}: fetch void — retry in ttl/Φ", url);
+                            eprintln!("finals {}: fetch void — retry in ttl/Φ·2ⁿ", url);
                             let _ = ftx.send(FetchResult {
                                 source_idx: src_idx,
                                 channels: Vec::new(),
@@ -15931,6 +16395,7 @@ pub fn main_flow() {
                                 star_samples: Vec::new(),
                                 curves: None,
                                 spectral: None,
+                                fetch_ok: false,
                             });
                             return;
                         }
@@ -15949,11 +16414,13 @@ pub fn main_flow() {
                         star_samples: Vec::new(),
                         curves: None,
                         spectral: None,
+                        fetch_ok: true,
                     });
                 });
                 continue;
             }
             if archive.sources[i].format == "alerce" {
+                begin_fetch(&mut archive.origins, i as u32, now);
                 let ftx = fetch_tx.clone();
                 let src_clone = archive.sources[i].clone();
                 let src_idx = i;
@@ -15969,12 +16436,14 @@ pub fn main_flow() {
                         star_samples: Vec::new(),
                         curves: None,
                         spectral: None,
+                        fetch_ok: true,
                     });
                 });
                 continue;
             }
             if archive.sources[i].format == "catalog_tycho" {
                 let url = archive.sources[i].url.clone();
+                begin_fetch(&mut archive.origins, i as u32, now);
                 let ftx = fetch_tx.clone();
                 let src_clone = archive.sources[i].clone();
                 let src_idx = i;
@@ -15986,7 +16455,7 @@ pub fn main_flow() {
                         let bytes = match fetch_raw_bytes(&url, src_ttl) {
                             Some(b) => b,
                             None => {
-                                eprintln!("catalog_tycho {}: fetch void — retry in ttl/Φ", url);
+                                eprintln!("catalog_tycho {}: fetch void — retry in ttl/Φ·2ⁿ", url);
                                 let _ = ftx.send(FetchResult {
                                     source_idx: src_idx,
                                     channels: Vec::new(),
@@ -15995,6 +16464,7 @@ pub fn main_flow() {
                                     star_samples: Vec::new(),
                                     curves: None,
                                     spectral: None,
+                                    fetch_ok: false,
                                 });
                                 return;
                             }
@@ -16009,6 +16479,7 @@ pub fn main_flow() {
                                 star_samples: Vec::new(),
                                 curves: None,
                                 spectral: None,
+                                fetch_ok: true,
                             });
                             return;
                         }
@@ -16025,6 +16496,7 @@ pub fn main_flow() {
                                 star_samples: Vec::new(),
                                 curves: None,
                                 spectral: None,
+                                fetch_ok: true,
                             });
                             return;
                         }
@@ -16039,17 +16511,19 @@ pub fn main_flow() {
                         star_samples,
                         curves: None,
                         spectral: None,
+                        fetch_ok: true,
                     });
                 });
                 continue;
             }
             if archive.sources[i].format == "spectral" {
                 let src = archive.sources[i].clone();
+                begin_fetch(&mut archive.origins, i as u32, now);
                 let ftx = fetch_tx.clone();
                 let src_idx = i;
                 let src_ttl = src.ttl;
                 thread::spawn(move || {
-                    let empty = || FetchResult {
+                    let empty = |fetch_ok: bool| FetchResult {
                         source_idx: src_idx,
                         channels: Vec::new(),
                         eph_update: None,
@@ -16057,6 +16531,7 @@ pub fn main_flow() {
                         star_samples: Vec::new(),
                         curves: None,
                         spectral: None,
+                        fetch_ok,
                     };
                     let url = src.url.clone();
                     let name = url.rsplit('/').next().unwrap_or("spectra").to_string();
@@ -16065,14 +16540,14 @@ pub fn main_flow() {
                         let bytes = match fetch_raw_bytes(&url, src_ttl) {
                             Some(b) => b,
                             None => {
-                                eprintln!("spectral {}: fetch void — retry in ttl/Φ", url);
-                                let _ = ftx.send(empty());
+                                eprintln!("spectral {}: fetch void — retry in ttl/Φ·2ⁿ", url);
+                                let _ = ftx.send(empty(false));
                                 return;
                             }
                         };
                         if std::fs::write(&tmp_path, &bytes).is_err() {
                             eprintln!("spectral {}: write void — retry in ttl/Φ", url);
-                            let _ = ftx.send(empty());
+                            let _ = ftx.send(empty(true));
                             return;
                         }
                     }
@@ -16080,7 +16555,7 @@ pub fn main_flow() {
                         Ok(b) => b,
                         Err(_) => {
                             eprintln!("spectral {}: read void — retry in ttl/Φ", url);
-                            let _ = ftx.send(empty());
+                            let _ = ftx.send(empty(true));
                             return;
                         }
                     };
@@ -16092,7 +16567,7 @@ pub fn main_flow() {
                                 url,
                                 bytes.len()
                             );
-                            let _ = ftx.send(empty());
+                            let _ = ftx.send(empty(true));
                             return;
                         }
                     };
@@ -16117,7 +16592,7 @@ pub fn main_flow() {
                                 "spectral {}: frameless — the block declares no position",
                                 url
                             );
-                            let _ = ftx.send(empty());
+                            let _ = ftx.send(empty(true));
                             return;
                         }
                     };
@@ -16128,7 +16603,7 @@ pub fn main_flow() {
                                 "spectral {}: field undeclared — the block carries no field line",
                                 url
                             );
-                            let _ = ftx.send(empty());
+                            let _ = ftx.send(empty(true));
                             return;
                         }
                     };
@@ -16158,12 +16633,14 @@ pub fn main_flow() {
                         star_samples: Vec::new(),
                         curves: None,
                         spectral: Some(hash),
+                        fetch_ok: true,
                     });
                 });
                 continue;
             }
             if archive.sources[i].format == "lightcurve" {
                 let url = archive.sources[i].url.clone();
+                begin_fetch(&mut archive.origins, i as u32, now);
                 let ftx = fetch_tx.clone();
                 let src_idx = i;
                 let src_ttl = archive.sources[i].ttl;
@@ -16174,7 +16651,7 @@ pub fn main_flow() {
                         let bytes = match fetch_raw_bytes(&url, src_ttl) {
                             Some(b) => b,
                             None => {
-                                eprintln!("lightcurve {}: fetch void — retry in ttl/Φ", url);
+                                eprintln!("lightcurve {}: fetch void — retry in ttl/Φ·2ⁿ", url);
                                 let _ = ftx.send(FetchResult {
                                     source_idx: src_idx,
                                     channels: Vec::new(),
@@ -16183,6 +16660,7 @@ pub fn main_flow() {
                                     star_samples: Vec::new(),
                                     curves: None,
                                     spectral: None,
+                                    fetch_ok: false,
                                 });
                                 return;
                             }
@@ -16197,6 +16675,7 @@ pub fn main_flow() {
                                 star_samples: Vec::new(),
                                 curves: None,
                                 spectral: None,
+                                fetch_ok: true,
                             });
                             return;
                         }
@@ -16213,6 +16692,7 @@ pub fn main_flow() {
                                 star_samples: Vec::new(),
                                 curves: None,
                                 spectral: None,
+                                fetch_ok: true,
                             });
                             return;
                         }
@@ -16227,6 +16707,7 @@ pub fn main_flow() {
                         star_samples: Vec::new(),
                         curves: Some(Arc::new(curves)),
                         spectral: None,
+                        fetch_ok: true,
                     });
                 });
                 continue;
@@ -16234,11 +16715,12 @@ pub fn main_flow() {
             if archive.sources[i].format == "rpw_efield" {
                 let url = archive.sources[i].url.clone();
                 let src = archive.sources[i].clone();
+                begin_fetch(&mut archive.origins, i as u32, now);
                 let ftx = fetch_tx.clone();
                 let src_idx = i;
                 let src_ttl = src.ttl;
                 thread::spawn(move || {
-                    let empty = || FetchResult {
+                    let empty = |fetch_ok: bool| FetchResult {
                         source_idx: src_idx,
                         channels: Vec::new(),
                         eph_update: None,
@@ -16246,6 +16728,7 @@ pub fn main_flow() {
                         star_samples: Vec::new(),
                         curves: None,
                         spectral: None,
+                        fetch_ok,
                     };
                     let name = url.rsplit('/').next().unwrap_or("rpw").to_string();
                     let tmp_path = format!("/tmp/omegaflow_rpw_{}", name);
@@ -16253,14 +16736,14 @@ pub fn main_flow() {
                         let bytes = match fetch_raw_bytes(&url, src_ttl) {
                             Some(b) => b,
                             None => {
-                                eprintln!("rpw {}: fetch void — retry in ttl/Φ", url);
-                                let _ = ftx.send(empty());
+                                eprintln!("rpw {}: fetch void — retry in ttl/Φ·2ⁿ", url);
+                                let _ = ftx.send(empty(false));
                                 return;
                             }
                         };
                         if std::fs::write(&tmp_path, &bytes).is_err() {
                             eprintln!("rpw {}: write void — retry in ttl/Φ", url);
-                            let _ = ftx.send(empty());
+                            let _ = ftx.send(empty(true));
                             return;
                         }
                     }
@@ -16268,7 +16751,7 @@ pub fn main_flow() {
                         Ok(b) => b,
                         Err(_) => {
                             eprintln!("rpw {}: read void — retry in ttl/Φ", url);
-                            let _ = ftx.send(empty());
+                            let _ = ftx.send(empty(true));
                             return;
                         }
                     };
@@ -16280,7 +16763,7 @@ pub fn main_flow() {
                                 url,
                                 bytes.len()
                             );
-                            let _ = ftx.send(empty());
+                            let _ = ftx.send(empty(true));
                             return;
                         }
                     };
@@ -16297,7 +16780,7 @@ pub fn main_flow() {
                             "rpw {}: field undeclared — the block carries no field line",
                             url
                         );
-                        let _ = ftx.send(empty());
+                        let _ = ftx.send(empty(true));
                         return;
                     }
                     let mut channels = Vec::with_capacity(records.len());
@@ -16332,6 +16815,7 @@ pub fn main_flow() {
                         star_samples: Vec::new(),
                         curves: None,
                         spectral: None,
+                        fetch_ok: true,
                     });
                 });
                 continue;
@@ -16339,11 +16823,12 @@ pub fn main_flow() {
             if archive.sources[i].format == "gong_modes" {
                 let url = archive.sources[i].url.clone();
                 let src = archive.sources[i].clone();
+                begin_fetch(&mut archive.origins, i as u32, now);
                 let ftx = fetch_tx.clone();
                 let src_idx = i;
                 let src_ttl = src.ttl;
                 thread::spawn(move || {
-                    let empty = || FetchResult {
+                    let empty = |fetch_ok: bool| FetchResult {
                         source_idx: src_idx,
                         channels: Vec::new(),
                         eph_update: None,
@@ -16351,6 +16836,7 @@ pub fn main_flow() {
                         star_samples: Vec::new(),
                         curves: None,
                         spectral: None,
+                        fetch_ok,
                     };
                     let name = url.rsplit('/').next().unwrap_or("gong").to_string();
                     let tmp_path = format!("/tmp/omegaflow_gong_{}", name);
@@ -16358,14 +16844,14 @@ pub fn main_flow() {
                         let bytes = match fetch_raw_bytes(&url, src_ttl) {
                             Some(b) => b,
                             None => {
-                                eprintln!("gong {}: fetch void — retry in ttl/Φ", url);
-                                let _ = ftx.send(empty());
+                                eprintln!("gong {}: fetch void — retry in ttl/Φ·2ⁿ", url);
+                                let _ = ftx.send(empty(false));
                                 return;
                             }
                         };
                         if std::fs::write(&tmp_path, &bytes).is_err() {
                             eprintln!("gong {}: write void — retry in ttl/Φ", url);
-                            let _ = ftx.send(empty());
+                            let _ = ftx.send(empty(true));
                             return;
                         }
                     }
@@ -16373,7 +16859,7 @@ pub fn main_flow() {
                         Ok(b) => b,
                         Err(_) => {
                             eprintln!("gong {}: read void — retry in ttl/Φ", url);
-                            let _ = ftx.send(empty());
+                            let _ = ftx.send(empty(true));
                             return;
                         }
                     };
@@ -16385,7 +16871,7 @@ pub fn main_flow() {
                                 url,
                                 bytes.len()
                             );
-                            let _ = ftx.send(empty());
+                            let _ = ftx.send(empty(true));
                             return;
                         }
                     };
@@ -16402,7 +16888,7 @@ pub fn main_flow() {
                             "gong {}: field undeclared — the block carries no field line",
                             url
                         );
-                        let _ = ftx.send(empty());
+                        let _ = ftx.send(empty(true));
                         return;
                     };
                     let mut channels = Vec::with_capacity(modes.len());
@@ -16429,11 +16915,13 @@ pub fn main_flow() {
                         star_samples: Vec::new(),
                         curves: None,
                         spectral: None,
+                        fetch_ok: true,
                     });
                 });
                 continue;
             }
             if archive.sources[i].format == "csv_zip" {
+                begin_fetch(&mut archive.origins, i as u32, now);
                 let ftx = fetch_tx.clone();
                 let src_clone = archive.sources[i].clone();
                 let src_idx = i;
@@ -16455,6 +16943,7 @@ pub fn main_flow() {
                                 star_samples: Vec::new(),
                                 curves: None,
                                 spectral: None,
+                                fetch_ok: true,
                             });
                             return;
                         }
@@ -16466,7 +16955,7 @@ pub fn main_flow() {
                         {
                             Some(b) => b,
                             None => {
-                                eprintln!("csv_zip {}: fetch void — retry in ttl/Φ", src_idx);
+                                eprintln!("csv_zip {}: fetch void — retry in ttl/Φ·2ⁿ", src_idx);
                                 let _ = ftx.send(FetchResult {
                                     source_idx: src_idx,
                                     channels: Vec::new(),
@@ -16475,6 +16964,7 @@ pub fn main_flow() {
                                     star_samples: Vec::new(),
                                     curves: None,
                                     spectral: None,
+                                    fetch_ok: false,
                                 });
                                 return;
                             }
@@ -16489,6 +16979,7 @@ pub fn main_flow() {
                                 star_samples: Vec::new(),
                                 curves: None,
                                 spectral: None,
+                                fetch_ok: true,
                             });
                             return;
                         }
@@ -16504,6 +16995,7 @@ pub fn main_flow() {
                             star_samples: Vec::new(),
                             curves: None,
                             spectral: None,
+                            fetch_ok: true,
                         });
                     } else {
                         eprintln!("csv_zip {}: extract void — retry in ttl/Φ", src_idx);
@@ -16515,6 +17007,7 @@ pub fn main_flow() {
                             star_samples: Vec::new(),
                             curves: None,
                             spectral: None,
+                            fetch_ok: true,
                         });
                     }
                 });
@@ -16522,7 +17015,7 @@ pub fn main_flow() {
             }
             let mut fields: Vec<FieldConfig> = Vec::new();
             for ext in &archive.sources[i].extracts {
-                fields.extend_from_slice(extract_fields(ext));
+                fields.extend(extract_fields(ext));
             }
             let Some(r) = dispatch_reach(&fields, archive.sources[i].ttl as f64) else {
                 if fields.is_empty() {
@@ -16530,11 +17023,17 @@ pub fn main_flow() {
                         "source {}: carries no field lines — refused, retry in ttl/Φ",
                         i
                     );
+                    if let Ok(mut ledger) = refusal_ledger.lock() {
+                        ledger.register(&archive.sources[i].url, "gate-no-field-lines");
+                    }
                 } else {
                     eprintln!(
                         "source {}: no field carries a propagation law — refused, retry in ttl/Φ",
                         i
                     );
+                    if let Ok(mut ledger) = refusal_ledger.lock() {
+                        ledger.register(&archive.sources[i].url, "gate-no-propagation");
+                    }
                 }
                 continue;
             };
@@ -16574,12 +17073,14 @@ pub fn main_flow() {
             if !presence_gate(&presences, pos, r) {
                 continue;
             }
+            begin_fetch(&mut archive.origins, i as u32, now);
             let ftx = fetch_tx.clone();
             let src_clone = archive.sources[i].clone();
             let eph_arc = archive.body_ephemerides.clone();
             let e = env.clone();
             let src_idx = i;
             let lsk_c = lsk.clone();
+            let rl = refusal_ledger.clone();
             let presence_center = presences.first().map(|p| (p.1, p.2, p.3));
             thread::spawn(move || {
                 if src_clone.fanout_cap > 0 {
@@ -16605,6 +17106,7 @@ pub fn main_flow() {
                             star_samples: Vec::new(),
                             curves: None,
                             spectral: None,
+                            fetch_ok: true,
                         });
                     } else {
                         eprintln!("fanout {}: stations_url absent — retry in ttl/Φ", src_idx);
@@ -16616,6 +17118,7 @@ pub fn main_flow() {
                             star_samples: Vec::new(),
                             curves: None,
                             spectral: None,
+                            fetch_ok: true,
                         });
                     }
                     return;
@@ -16626,6 +17129,9 @@ pub fn main_flow() {
                     Some(u) => u,
                     None => {
                         eprintln!("source {}: url render void — retry in ttl/Φ", src_idx);
+                        if let Ok(mut ledger) = rl.lock() {
+                            ledger.register(&src_clone.url, "url-render-void");
+                        }
                         let _ = ftx.send(FetchResult {
                             source_idx: src_idx,
                             channels: Vec::new(),
@@ -16634,6 +17140,7 @@ pub fn main_flow() {
                             star_samples: Vec::new(),
                             curves: None,
                             spectral: None,
+                            fetch_ok: true,
                         });
                         return;
                     }
@@ -16642,11 +17149,15 @@ pub fn main_flow() {
                     render_source_body(&src_clone, pos.0, pos.1, pos.2, now, r, &eph_arc, &lsk_c);
                 let headers = render_headers(&src_clone.headers, &e);
                 let raw = fetch_one(&url, body.as_deref(), &headers, src_clone.ttl);
+                let fetch_ok = raw.is_some();
                 let channels = match raw {
                     Some(ref r) => match extract(&src_clone, r, now, &lsk_c) {
                         ExtractResult::Measurements(v) => {
                             if v.is_empty() {
                                 eprintln!("source {}: extract returned no measurements", src_idx);
+                                if let Ok(mut ledger) = rl.lock() {
+                                    ledger.register(&src_clone.url, "extract-void");
+                                }
                             }
                             v
                         }
@@ -16659,12 +17170,16 @@ pub fn main_flow() {
                                 star_samples: Vec::new(),
                                 curves: None,
                                 spectral: None,
+                                fetch_ok: true,
                             });
                             v
                         }
                     },
                     None => {
-                        eprintln!("source {}: fetch void — retry in ttl/Φ", src_idx);
+                        eprintln!("source {}: fetch void — retry in ttl/Φ·2ⁿ", src_idx);
+                        if let Ok(mut ledger) = rl.lock() {
+                            ledger.register(&src_clone.url, "fetch-void");
+                        }
                         Vec::new()
                     }
                 };
@@ -16677,6 +17192,7 @@ pub fn main_flow() {
 
                     curves: None,
                     spectral: None,
+                    fetch_ok,
                 });
             });
         }

@@ -266,9 +266,21 @@ lib + Bins; Live-Boot headless: body 5 / 1,7M Samples, api 72 Quellen /
 106.707 Samples — die Kette fließt wieder. Offen (registriert): die
 Solar-CDN-Assets sind veraltet (Manifestator hat sie noch nicht erneuert)
 und SWPC live ist langsam — bis zum Asset-Refresh fließen sie gedrosselt;
-Fetch-Überlappung (Dispatch feuert alle ttl/Φ neu, während der laufende
-Fetch läuft — kein In-Flight-Guard) ist pending; der ESC-Bug braucht den
-Repro vom Operator, falls er nach der Fokus-Reparatur bleibt. Schwarzes
+der ESC-Bug braucht den
+Repro vom Operator, falls er nach der Fokus-Reparatur bleibt.
+Fetch-Sturm-Reparatur (offene-atome Atom 2, 2026-08-21) — ERLEDIGT: die
+Fetch-Überlappung ist geschlossen — `begin_fetch`/`settle_fetch`
+(In-Flight-Guard: ein laufender Fetch blockt die Neu-Dispatch; vorher
+feuerte jeder Tick die laufenden Fetches erneut — der dastcom-Read-Void
+kehrte sogar sendelos zurück = unbegrenzter Re-Dispatch, jetzt sendet er);
+der 2ⁿ-Void-Backoff kühlt tote Quellen exponentiell (Kappe 2⁴ → max
+ttl/Φ·16); gezählt werden nur Netz-Voids (`fetch_ok` im FetchResult) —
+write/read/extract-Voids zählen nicht (0 honored: fehlt ≠ null-echt, die
+Diagnose nennt das Gesetz: fetch void → ttl/Φ·2ⁿ, write/read/extract →
+ttl/Φ); Fetch-Budget 2³ je Tick (max 8 in-flight im Live-Zyklus, die
+Parallelität des curl-Bootstrap). Gates: cargo check 0/0 (vier Kombis),
+238 lib-Tests grün (2 hdf5-Fehler der Parallel-Session benannt),
+Hidden-Lauf 150 s stabil (29 api / 309k Samples, dastcom 1× geladen). Schwarzes
 Fenster trotz vollem Feld (Operator-Befund, 2026-08-20): die Kette
 lieferte 23 042 recs ans Fenster, aber der Fragment-Shader rechnete die
 Pixel-Luminanz ohne die scale²-Kompensation — der Meterraum-Kernel
