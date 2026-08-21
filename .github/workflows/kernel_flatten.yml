@@ -712,7 +712,7 @@ jobs:
 
   sun:
     runs-on: ubuntu-latest
-    timeout-minutes: 240
+    timeout-minutes: 360
     steps:
       - uses: actions/checkout@v4
       - uses: actions-rust-lang/setup-rust-toolchain@v1
@@ -735,3 +735,14 @@ jobs:
             cargo run --release --bin rpw_compiler -- \
               --lsk kernels/naif0012.tls --out rpw_efield.bin --ci-mode \
               --window-start 2020-06-15 --window-end 2022-12-01
+      - name: Compile Wind WAVES 1994-2021 once and upload to CDN
+        continue-on-error: true
+        run: |
+          mkdir -p kernels
+          [ -s kernels/naif0012.tls ] || curl -sSfL --retry 3 --max-time 120 -o kernels/naif0012.tls \
+            https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls
+          gh release download spdf.gsfc.nasa.gov --repo omegaflow/sources \
+            --pattern wind_waves.bin --clobber 2>/dev/null || \
+            cargo run --release --bin wind_waves_compiler -- \
+              --lsk kernels/naif0012.tls --out wind_waves.bin --ci-mode \
+              --window-start 1994-11-10 --window-end 2021-12-31 --jobs 8

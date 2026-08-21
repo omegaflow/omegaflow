@@ -1,0 +1,66 @@
+Wind-Frame-Recherche — Befunde 2026-08-21, selbsttragend (null Vorkontext)
+
+Frage: trägt irgendein Archiv einen Wind-SPK (NAIF-ID −485), oder woher
+nimmt der Archivar die Raumposition der Wind-Sonde?
+
+A. SPK — kein Fund (verifiziert, 2026-08-21)
+
+- naif.jpl.nasa.gov/pub/naif/pds/data/ — vollständige Liste abgerufen:
+  clem1, co-s_j, dawn, di-c, dif-c, ds1, grail, hay, jno, lro, mer1,
+  mer2, mess, mex v1/v2, mgs, mro, msl, near, nh, ody, ro, ros, sdu,
+  vco, vex v1/v2, vo1_vo2. KEIN WIND-Bundle. (Bestätigt den Vorgänger-
+  Befund im selben Wortlaut.)
+- naif.jpl.nasa.gov/pub/naif/archive/ → 404 (der alte Missions-Kernel-
+  Friedhof ist tot).
+- generic_kernels trägt keine Raumsonde (lsk/pck/planetäre spk) —
+  strukturell kein Wind.
+Verdikt: ein Wind-SPK existiert nicht. `at wind` bleibt ohne SPK-Fund
+pending — der sources.φ-Block wartet auf den Orbit-Ernte-Weg unten.
+
+B. Der Positions-Träger existiert: CDAWeb wind/orbit
+
+Baum: cdaweb.gsfc.nasa.gov/pub/data/wind/orbit/
+  pre_or/  wi_or_pre_YYYYMMDD_vNN.cdf  täglich, 1994–2026 (76 KB/Tag)
+  def_or/  definitive FDF-Orbit — nur Frühjahre (1994–1997 sichtbar,
+           letzte Änderung 2012-09-30; das Produkt wurde eingestellt)
+  spha_k0/ wi_k0_spha_YYYYMMDD_vNN.cdf — SPIN-PHASE, keine Position
+           (Variablen SPIN_PHASE/AVG_SPIN_RATE/STNDEV_SPIN_RATE, rad,
+           rad/s — „SPHA" = spin phase angle). Verworfen, nicht
+           verwechselt.
+  pre_at/ def_at/ — Attitude, keine Position.
+
+Stichprobe wi_or_pre_20210101_v11.cdf (2021-01-01, geladen):
+- CDF 2.5 (magic 00 00 FF FF, big-endian; „Common Data Format (Version
+  2.5 or earlier)" laut file). src/cdf.rs parst CDF 3.x — der
+  CDF-2.5-Parser ist der benannte Gap (eigenes Atom).
+- Variablen (strings-Befund): GCI_POS / GCI_VEL (geocentric celestial
+  inertial, kartesisch), GSE_POS / GSE_VEL, GSM_POS / GSM_VEL,
+  „GCI Sun Position Vector", Epoch (CDF_EPOCH), EPOCH_DATE,
+  Delta-Qualitätsfelder (ALNG_TRK_MAX_POS_DIFF u. a. — Trk-Vergleich
+  gegen die definitive FDF-Bahn).
+- GCI ≈ ICRS: J2000-Mitteläquator/-äquinoktium; die Frame-Bias-Drehung
+  (~0,02°) liegt weit unter der FDF-Orbit-Genauigkeit (km-Maßstab) —
+  Identität benannt, Ausrichtungskorrektur optional beim Kompilat.
+
+C. SSCWeb-Bahn
+
+Kandidat der Vorgänger-Session. Der file-basierte CDAS-Baum (B) trägt
+die definitive FDF-Orbit-Messung als Datei — SSCWeb (REST, gleiche
+Flugdynamik-Herkunft) ist damit überholt. Benannt, nicht weiter
+verfolgt.
+
+D. Folge-Atom (registriert, nicht in dieser Session)
+
+1. CDF-2.5-Parser (VDR/ADR-Offset-Container, unkomprimiert — die
+   ISTP-Dateien tragen keine Kompression).
+2. wind_orbit_compiler: pre_or täglich 1994–2026 → wind_orbit.bin
+   (t_tdb, GCI x/y/z, vx/vy/vz; def_or 1994–1997 als definitive
+   Früh-Epoche falls Layout-gleich).
+3. BODY_REGISTRY + ephemeris_compiler-Kanal für wind (oder Motion aus
+   dem Orbit-Bin) — danach erst der sources.φ-Block
+   (format wind_waves, force em, V, gaussian-inverse-square).
+Bis dahin trägt wind_waves.bin t_tdb/freq/val ohne Raumposition —
+0 honored, keine fabrizierte L1-Position.
+
+Proben lokal: /tmp/opencode/wi_or_pre_20210101.cdf,
+/tmp/opencode/wi_k0_spha_20210101.cdf.

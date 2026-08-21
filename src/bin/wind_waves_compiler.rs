@@ -1,12 +1,35 @@
 use omegaflow::cdf::{value_present, CdfFile};
-use omegaflow::cdn::upload_asset;
-use omegaflow::lsk::parse as parse_lsk;
+use omegaflow::cdn::upload_release;
+use omegaflow::lsk::{days_from_civil, parse as parse_lsk};
 use omegaflow::wind::{
     parse_bin, receiver_name, write_bin, RECEIVER_RAD1, RECEIVER_RAD2, RECEIVER_TNR,
 };
 use std::process::Command;
+use std::sync::atomic::{AtomicI64, AtomicUsize, Ordering};
+use std::sync::{Arc, Mutex};
 
 const BASE_URL: &str = "https://spdf.gsfc.nasa.gov/pub/data/wind/waves/wav_h1/";
+const CDN_RELEASE: &str = "spdf.gsfc.nasa.gov";
+
+fn civil_from_days(z: i64) -> (i64, i64, i64) {
+    let z = z + 719468;
+    let era = if z >= 0 { z } else { z - 146096 } / 146097;
+    let doe = z - era * 146097;
+    let yoe = (doe - doe / 1460 + doe / 36524 - doe / 146096) / 365;
+    let y = yoe + era * 400;
+    let doy = doe - (365 * yoe + yoe / 4 - yoe / 100);
+    let mp = (5 * doy + 2) / 153;
+    let d = doy - (153 * mp + 2) / 5 + 1;
+    let m = if mp < 10 { mp + 3 } else { mp - 9 };
+    let y = if m <= 2 { y + 1 } else { y };
+    (y, m, d)
+}
+
+fn parse_days(s: &str) -> Option<i64> {
+    let (y, rest) = s.split_once('-')?;
+    let (m, d) = rest.split_once('-')?;
+    days_from_civil(y.parse().ok()?, m.parse().ok()?, d.parse().ok()?)
+}
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
@@ -226,61 +249,67 @@ const RECEIVERS: [Receiver; 3] = [
 
 struct DayOutcome {
     date: String,
-    rows: usize,
-    bins: usize,
     emitted: usize,
     note: Option<String>,
 }
 
 fn harvest_day(
-    year: i64,
-    month: i64,
     day: i64,
     lsk: &omegaflow::lsk::LeapSeconds,
-    records: &mut Vec<(f64, f64, f64, f64, u32)>,
-) -> DayOutcome {
-    let date = format!("{year:04}{month:02}{day:02}");
+    records: &Mutex<Vec<(f64, f64, f64, f64, u32)>>,
+    outcomes: &Mutex<Vec<DayOutcome>>,
+) {
+    let (year, month, mday) = civil_from_days(day);
+    let date = format!("{year:04}{month:02}{mday:02}");
     let url = format!("{BASE_URL}{year}/wi_h1_wav_{date}_v01.cdf");
     let Some(bytes) = fetch(&url) else {
-        return DayOutcome {
-            date,
-            rows: 0,
-            bins: 0,
-            emitted: 0,
-            note: Some("fetch void".to_string()),
-        };
+        outcomes
+            .lock()
+            .unwrap_or_else(|e| e.into_inner())
+            .push(DayOutcome {
+                date,
+                emitted: 0,
+                note: Some("fetch void".to_string()),
+            });
+        return;
     };
     let file = match CdfFile::parse(&bytes) {
         Ok(f) => f,
         Err(note) => {
-            return DayOutcome {
-                date,
-                rows: 0,
-                bins: 0,
-                emitted: 0,
-                note: Some(format!("{note:?}")),
-            };
+            outcomes
+                .lock()
+                .unwrap_or_else(|e| e.into_inner())
+                .push(DayOutcome {
+                    date,
+                    emitted: 0,
+                    note: Some(format!("{note:?}")),
+                });
+            return;
         }
     };
     let Some(epoch) = file.var("Epoch") else {
-        return DayOutcome {
-            date,
-            rows: 0,
-            bins: 0,
-            emitted: 0,
-            note: Some("Epoch absent".to_string()),
-        };
+        outcomes
+            .lock()
+            .unwrap_or_else(|e| e.into_inner())
+            .push(DayOutcome {
+                date,
+                emitted: 0,
+                note: Some("Epoch absent".to_string()),
+            });
+        return;
     };
     let epoch_records = match file.var_records(&bytes, epoch) {
         Ok(r) => r,
         Err(note) => {
-            return DayOutcome {
-                date,
-                rows: 0,
-                bins: 0,
-                emitted: 0,
-                note: Some(format!("Epoch {note:?}")),
-            };
+            outcomes
+                .lock()
+                .unwrap_or_else(|e| e.into_inner())
+                .push(DayOutcome {
+                    date,
+                    emitted: 0,
+                    note: Some(format!("Epoch {note:?}")),
+                });
+            return;
         }
     };
     let mut t_sum = 0.0f64;
@@ -299,16 +328,18 @@ fn harvest_day(
         f64::NAN
     };
     let Some(t_tdb) = lsk.unix_to_tdb(t_noon) else {
-        return DayOutcome {
-            date,
-            rows: 0,
-            bins: 0,
-            emitted: 0,
-            note: Some("TDB void".to_string()),
-        };
+        outcomes
+            .lock()
+            .unwrap_or_else(|e| e.into_inner())
+            .push(DayOutcome {
+                date,
+                emitted: 0,
+                note: Some("TDB void".to_string()),
+            });
+        return;
     };
+    let mut day_records: Vec<(f64, f64, f64, f64, u32)> = Vec::with_capacity(608);
     let mut emitted = 0usize;
-    let mut reported_bins = 0usize;
     for r in &RECEIVERS {
         let Some(volt) = file.var(r.volt_name) else {
             continue;
@@ -317,7 +348,6 @@ fn harvest_day(
             continue;
         };
         let bins = file.num_values(volt);
-        reported_bins = reported_bins.max(bins);
         let Ok(freq_records) = file.var_records(&bytes, freq) else {
             continue;
         };
@@ -352,17 +382,22 @@ fn harvest_day(
             };
             let binw = ((hi - freq_hz) + (freq_hz - lo)) * 0.5;
             let val = median(&mut per_bin[i]);
-            records.push((t_tdb, freq_hz, binw, val, r.receiver));
+            day_records.push((t_tdb, freq_hz, binw, val, r.receiver));
             emitted += 1;
         }
     }
-    DayOutcome {
-        date,
-        rows: epoch_records.len(),
-        bins: reported_bins,
-        emitted,
-        note: None,
-    }
+    records
+        .lock()
+        .unwrap_or_else(|e| e.into_inner())
+        .append(&mut day_records);
+    outcomes
+        .lock()
+        .unwrap_or_else(|e| e.into_inner())
+        .push(DayOutcome {
+            date,
+            emitted,
+            note: None,
+        });
 }
 
 fn main() {
@@ -373,22 +408,31 @@ fn main() {
     }
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let out = arg_value(&args, "--out").unwrap_or_else(|| "wind_waves.bin".to_string());
-    let year: i64 = match arg_value(&args, "--year").and_then(|v| v.parse().ok()) {
-        Some(y) => y,
+    let jobs: usize = arg_value(&args, "--jobs")
+        .and_then(|v| v.parse().ok())
+        .unwrap_or(4);
+    let start_day = match arg_value(&args, "--window-start")
+        .as_deref()
+        .and_then(parse_days)
+    {
+        Some(d) => d,
         None => {
-            eprintln!("--year absent — the harvest window stays undeclared");
+            eprintln!("--window-start absent — the harvest window stays undeclared");
             std::process::exit(1);
         }
     };
-    let month: i64 = match arg_value(&args, "--month").and_then(|v| v.parse().ok()) {
-        Some(m) => m,
+    let end_day = match arg_value(&args, "--window-end")
+        .as_deref()
+        .and_then(parse_days)
+    {
+        Some(d) => d,
         None => {
-            eprintln!("--month absent — the harvest window stays undeclared");
+            eprintln!("--window-end absent — the harvest window stays undeclared");
             std::process::exit(1);
         }
     };
-    if !(1..=12).contains(&month) {
-        eprintln!("--month {month} is not a calendar month");
+    if start_day > end_day {
+        eprintln!("--window-start lies after --window-end — the window stays unharvested");
         std::process::exit(1);
     }
     let lsk_text = match arg_value(&args, "--lsk").and_then(|p| std::fs::read_to_string(p).ok()) {
@@ -405,37 +449,55 @@ fn main() {
             std::process::exit(1);
         }
     };
-    let days_in_month = match month {
-        2 => {
-            if (year % 4 == 0 && year % 100 != 0) || year % 400 == 0 {
-                29
-            } else {
-                28
-            }
+    let days: Vec<i64> = (start_day..=end_day).collect();
+    let total = days.len();
+    eprintln!("window: {} days", total);
+    let records: Arc<Mutex<Vec<(f64, f64, f64, f64, u32)>>> = Arc::new(Mutex::new(Vec::new()));
+    let outcomes: Arc<Mutex<Vec<DayOutcome>>> = Arc::new(Mutex::new(Vec::new()));
+    let next = Arc::new(AtomicI64::new(0));
+    let done = Arc::new(AtomicUsize::new(0));
+    let lsk_ref = &lsk;
+    std::thread::scope(|s| {
+        for _ in 0..jobs {
+            let records = Arc::clone(&records);
+            let outcomes = Arc::clone(&outcomes);
+            let next = Arc::clone(&next);
+            let done = Arc::clone(&done);
+            let days = &days;
+            s.spawn(move || loop {
+                let i = next.fetch_add(1, Ordering::SeqCst) as usize;
+                if i >= days.len() {
+                    break;
+                }
+                harvest_day(days[i], lsk_ref, &records, &outcomes);
+                let n = done.fetch_add(1, Ordering::SeqCst) + 1;
+                if n % 40 == 0 || n == total {
+                    eprintln!("{n}/{total} days harvested");
+                }
+            });
         }
-        4 | 6 | 9 | 11 => 30,
-        _ => 31,
-    };
-    let mut records: Vec<(f64, f64, f64, f64, u32)> = Vec::new();
-    let mut outcomes: Vec<DayOutcome> = Vec::new();
-    for day in 1..=days_in_month {
-        let o = harvest_day(year, month, day, &lsk, &mut records);
-        eprintln!(
-            "{} rows {} bins {} emitted {} note {}",
-            o.date,
-            o.rows,
-            o.bins,
-            o.emitted,
-            o.note.as_deref().unwrap_or("none")
-        );
-        outcomes.push(o);
+    });
+    let outcomes = Arc::try_unwrap(outcomes)
+        .ok()
+        .and_then(|m| m.into_inner().ok())
+        .unwrap_or_default();
+    let mut void = 0usize;
+    let mut emitted_total = 0usize;
+    for o in &outcomes {
+        emitted_total += o.emitted;
+        if let Some(note) = &o.note {
+            void += 1;
+            eprintln!("{} void: {}", o.date, note);
+        }
     }
-    let void = outcomes.iter().filter(|o| o.note.is_some()).count();
-    let emitted_total: usize = outcomes.iter().map(|o| o.emitted).sum();
     eprintln!(
-        "{year:04}-{month:02}: {} days, {} void, {} records emitted",
-        days_in_month, void, emitted_total
+        "{} days, {} void, {} records emitted",
+        total, void, emitted_total
     );
+    let records = Arc::try_unwrap(records)
+        .ok()
+        .and_then(|m| m.into_inner().ok())
+        .unwrap_or_default();
     let per_receiver: std::collections::HashMap<u32, usize> =
         records
             .iter()
@@ -447,9 +509,10 @@ fn main() {
         eprintln!("  {}: {} records", receiver_name(*r), n);
     }
     if records.is_empty() {
-        eprintln!("{year:04}-{month:02}: no records — the bin stays unwritten (0 honored)");
+        eprintln!("no records — the bin stays unwritten (0 honored)");
         std::process::exit(1);
     }
+    let mut records = records;
     records.sort_by(|a, b| {
         a.0.total_cmp(&b.0)
             .then(a.1.total_cmp(&b.1))
@@ -469,7 +532,7 @@ fn main() {
             std::process::exit(1);
         }
     }
-    if ci_mode && !upload_asset(&out) {
+    if ci_mode && !upload_release(CDN_RELEASE, &out) {
         std::process::exit(1);
     }
 }
