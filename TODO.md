@@ -629,11 +629,28 @@ Maschine misst.
    O(m² × Surrogate) und hängt die HD 520 ab m ≈ 1024 (Mesa-Reset,
    gemessen 2026-08-21) → jede Zelle misst die neuesten 512 Bins
    (ENSO_PROBE_MAX = 128 Tage, n ≥ 392 an allen Shifts); Zellkosten
-   ~1-2 s GPU + Readback-Rhythmus ≈ 4 s/Zelle, volle Runde ≈ 26 min,
-   37 Stationen ≈ 16 h/Zyklus; die sichtbare Membran stottert während
-   der Proben (~1 s Render-Stall je Zelle) — der Hidden-Lauf ist die
-   Messweise. Ein voller Zyklus läuft im Hintergrund; der eine Pfad
-   entscheidet über den delayed-only-Draft.
+   ~1-2 s GPU + Readback-Rhythmus ≈ 4 s/Zelle. DIE MULTI-AKTEUR-MATRIX
+   (Wort des Operators 2026-08-21: keine Vorauswahl durch Theorie —
+   die Dokumentation passt sich der Architektur an): 17 Kanäle aus
+   derselben Datei (WSPD/GST/WVHT/DPD/APD/PRES/PTDY/ATMP/WTMP/DEWP/
+   VIS/TIDE + WDIR/MWD als sin/cos-Paare — der Kreis in seinen eigenen
+   Koordinaten, der unveränderte Kernel braucht keinen zirkulären —
+   + RAIN, wenn die Station die Spalte trägt), 136 Paare × 366 Zellen
+   = 49.776 Zellen/Station ≈ 55 h/Station, 37 Stationen ≈ 85 Tage je
+   volle Matrix; fam je Paar-Runde, am Ende die Matrix-Zeile mit der
+   vollständigen Zählung (arrows/family/hbound/silent/absent) und den
+   erwarteten Falsch-Positiven (Σ p̂·M). Kalibrier-Paare der Matrix:
+   wspd-gst, dpd-apd, atmp-dewp — wo die Kopplung Definition ist, muss
+   ein Pfeil überleben (erste Zelle 2026-08-21: wspd→gst te 0.974
+   thr 0.897). Gemessen: ptdy/vis/tide = 0 aus stdmet (Tiefsee-Bojen
+   messen weder Sicht noch Tide; PTDY trägt nur realtime2), RAIN fehlt
+   an den 37 Stationen — fehlt, kein Platzhalter. Offen (registriert):
+   die Solar-Kanäle als Matrix-Akteure (geteilter solar_rx-Drain +
+   6-h-Solar-Ringe — eigener Atom, der solar_tick-Ingest ist
+   Parallel-Sessions-Terrain), die Thermokline (kein Instrument an den
+   37 Punkten — PMEL-ERDDAP hourly nur TAO, Pacific 2024 eingestellt —
+   fehlt). Die sichtbare Membran stottert während der Proben (~1 s
+   Render-Stall je Zelle) — der Hidden-Lauf ist die Messweise.
 - **Bz-Paradoxon** (`handover-2026-08-21-bz-paradoxon.md`):
   TE(RTSW-Bz→Bodenmagnetometer) gegen TE(Speed→Bodenmagnetometer), Lag
   0–120 min gegen die L1-Laufzeit. Oben lebt (sources.φ:102/108);

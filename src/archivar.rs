@@ -16554,22 +16554,139 @@ impl EnsoStation {
 
 #[derive(Clone, Copy, PartialEq, Eq, Hash)]
 pub enum EnsoSeries {
-    Wind,
-    Sst,
+    Wspd,
+    Gst,
+    Wvht,
+    Dpd,
+    Apd,
+    Pres,
+    Ptdy,
+    Atmp,
+    Wtmp,
+    Dewp,
+    Vis,
+    Tide,
+    WdirSin,
+    WdirCos,
+    MwdSin,
+    MwdCos,
+    Rain,
 }
 
 impl EnsoSeries {
+    pub const ALL: [EnsoSeries; 17] = [
+        EnsoSeries::Wspd,
+        EnsoSeries::Gst,
+        EnsoSeries::Wvht,
+        EnsoSeries::Dpd,
+        EnsoSeries::Apd,
+        EnsoSeries::Pres,
+        EnsoSeries::Ptdy,
+        EnsoSeries::Atmp,
+        EnsoSeries::Wtmp,
+        EnsoSeries::Dewp,
+        EnsoSeries::Vis,
+        EnsoSeries::Tide,
+        EnsoSeries::WdirSin,
+        EnsoSeries::WdirCos,
+        EnsoSeries::MwdSin,
+        EnsoSeries::MwdCos,
+        EnsoSeries::Rain,
+    ];
+
     pub fn idx(self) -> usize {
         match self {
-            EnsoSeries::Wind => 0,
-            EnsoSeries::Sst => 1,
+            EnsoSeries::Wspd => 0,
+            EnsoSeries::Gst => 1,
+            EnsoSeries::Wvht => 2,
+            EnsoSeries::Dpd => 3,
+            EnsoSeries::Apd => 4,
+            EnsoSeries::Pres => 5,
+            EnsoSeries::Ptdy => 6,
+            EnsoSeries::Atmp => 7,
+            EnsoSeries::Wtmp => 8,
+            EnsoSeries::Dewp => 9,
+            EnsoSeries::Vis => 10,
+            EnsoSeries::Tide => 11,
+            EnsoSeries::WdirSin => 12,
+            EnsoSeries::WdirCos => 13,
+            EnsoSeries::MwdSin => 14,
+            EnsoSeries::MwdCos => 15,
+            EnsoSeries::Rain => 16,
         }
     }
 
     pub fn name(self) -> &'static str {
         match self {
-            EnsoSeries::Wind => "wind",
-            EnsoSeries::Sst => "sst",
+            EnsoSeries::Wspd => "wspd",
+            EnsoSeries::Gst => "gst",
+            EnsoSeries::Wvht => "wvht",
+            EnsoSeries::Dpd => "dpd",
+            EnsoSeries::Apd => "apd",
+            EnsoSeries::Pres => "pres",
+            EnsoSeries::Ptdy => "ptdy",
+            EnsoSeries::Atmp => "atmp",
+            EnsoSeries::Wtmp => "wtmp",
+            EnsoSeries::Dewp => "dewp",
+            EnsoSeries::Vis => "vis",
+            EnsoSeries::Tide => "tide",
+            EnsoSeries::WdirSin => "wdir_sin",
+            EnsoSeries::WdirCos => "wdir_cos",
+            EnsoSeries::MwdSin => "mwd_sin",
+            EnsoSeries::MwdCos => "mwd_cos",
+            EnsoSeries::Rain => "rain",
+        }
+    }
+
+    pub fn column(self) -> &'static str {
+        match self {
+            EnsoSeries::Wspd => "WSPD",
+            EnsoSeries::Gst => "GST",
+            EnsoSeries::Wvht => "WVHT",
+            EnsoSeries::Dpd => "DPD",
+            EnsoSeries::Apd => "APD",
+            EnsoSeries::Pres => "PRES",
+            EnsoSeries::Ptdy => "PTDY",
+            EnsoSeries::Atmp => "ATMP",
+            EnsoSeries::Wtmp => "WTMP",
+            EnsoSeries::Dewp => "DEWP",
+            EnsoSeries::Vis => "VIS",
+            EnsoSeries::Tide => "TIDE",
+            EnsoSeries::WdirSin | EnsoSeries::WdirCos => "WDIR",
+            EnsoSeries::MwdSin | EnsoSeries::MwdCos => "MWD",
+            EnsoSeries::Rain => "RAIN",
+        }
+    }
+
+    pub fn plausible(self, v: f64) -> bool {
+        if !v.is_finite() {
+            return false;
+        }
+        match self {
+            EnsoSeries::Wspd
+            | EnsoSeries::Gst
+            | EnsoSeries::Wvht
+            | EnsoSeries::Dpd
+            | EnsoSeries::Apd
+            | EnsoSeries::Vis
+            | EnsoSeries::Rain => v > 0.0 && v < 99.0,
+            EnsoSeries::Pres => v > 0.0 && v < 9999.0,
+            EnsoSeries::Ptdy | EnsoSeries::Tide => v.abs() < 99.0,
+            EnsoSeries::Atmp | EnsoSeries::Wtmp | EnsoSeries::Dewp => v > -100.0 && v < 900.0,
+            EnsoSeries::WdirSin | EnsoSeries::WdirCos | EnsoSeries::MwdSin | EnsoSeries::MwdCos => {
+                v >= 0.0 && v <= 360.0
+            }
+        }
+    }
+
+    pub fn transform(self, raw: f64) -> Option<f64> {
+        if !self.plausible(raw) {
+            return None;
+        }
+        match self {
+            EnsoSeries::WdirSin | EnsoSeries::MwdSin => Some(raw.to_radians().sin()),
+            EnsoSeries::WdirCos | EnsoSeries::MwdCos => Some(raw.to_radians().cos()),
+            _ => Some(raw),
         }
     }
 }
@@ -16797,19 +16914,29 @@ fn solar_harvest(
     }
 }
 
-fn enso_ndbc_parse(body: &str, lsk: &LeapSeconds) -> Option<(Vec<(f64, f64)>, Vec<(f64, f64)>)> {
+fn enso_ndbc_parse(body: &str, lsk: &LeapSeconds) -> Option<Vec<(EnsoSeries, Vec<(f64, f64)>)>> {
     let header = body.lines().find(|l| l.starts_with('#'))?;
     let cols: Vec<&str> = header.split_whitespace().collect();
-    let wspd = cols.iter().position(|&c| c == "WSPD")?;
-    let wtmp = cols.iter().position(|&c| c == "WTMP")?;
-    let mut wind = Vec::new();
-    let mut sst = Vec::new();
+    let mut present: Vec<(EnsoSeries, usize)> = Vec::new();
+    for s in EnsoSeries::ALL {
+        if let Some(i) = cols.iter().position(|&c| c == s.column()) {
+            if !present.iter().any(|&(cs, _)| cs == s) {
+                present.push((s, i));
+            }
+        }
+    }
+    if present.is_empty() {
+        return None;
+    }
+    let mut series: Vec<(EnsoSeries, Vec<(f64, f64)>)> =
+        present.iter().map(|&(s, _)| (s, Vec::new())).collect();
     for line in body
         .lines()
         .filter(|l| !l.is_empty() && !l.starts_with('#'))
     {
         let p: Vec<&str> = line.split_whitespace().collect();
-        if p.len() <= wtmp.max(wspd) {
+        let needed = present.iter().map(|&(_, i)| i).max().unwrap_or(0);
+        if p.len() <= needed {
             continue;
         }
         let Ok(year) = p[0].parse::<i64>() else {
@@ -16832,21 +16959,21 @@ fn enso_ndbc_parse(body: &str, lsk: &LeapSeconds) -> Option<(Vec<(f64, f64)>, Ve
         let Some(t) = lsk.unix_to_tdb(unix) else {
             continue;
         };
-        if let Ok(w) = p[wspd].parse::<f64>() {
-            if w.is_finite() && w > 0.0 && w < 99.0 {
-                wind.push((t, w));
-            }
-        }
-        if let Ok(s) = p[wtmp].parse::<f64>() {
-            if s.is_finite() && s > 0.0 && s < 900.0 {
-                sst.push((t, s));
+        for (s, vec) in series.iter_mut() {
+            let i = present.iter().find(|&&(cs, _)| cs == *s).map(|&(_, i)| i);
+            let Some(i) = i else { continue };
+            if let Ok(v) = p[i].parse::<f64>() {
+                if let Some(tv) = s.transform(v) {
+                    vec.push((t, tv));
+                }
             }
         }
     }
-    if wind.is_empty() && sst.is_empty() {
+    series.retain(|(_, vec)| !vec.is_empty());
+    if series.is_empty() {
         None
     } else {
-        Some((wind, sst))
+        Some(series)
     }
 }
 
@@ -16939,9 +17066,10 @@ fn enso_harvest(tx: mpsc::Sender<EnsoCell>, time: Arc<Mutex<Option<LeapSeconds>>
             );
             if let Some(body) = fetch_raw(&url, None, &[], ENSO_FETCH_TTL) {
                 match enso_ndbc_parse(&body, &lsk) {
-                    Some((wind, sst)) => {
-                        enso_send_bins(&wind, station, EnsoSeries::Wind, &mut last_sent, &tx);
-                        enso_send_bins(&sst, station, EnsoSeries::Sst, &mut last_sent, &tx);
+                    Some(series) => {
+                        for (kind, values) in &series {
+                            enso_send_bins(values, station, *kind, &mut last_sent, &tx);
+                        }
                     }
                     None => {
                         if said.insert(format!("{} column absent", station.id())) {
@@ -16993,9 +17121,10 @@ fn enso_backfill(
             Err(_) => enso_cache_fetch(&url, &cache),
         };
         if let Some(body) = body {
-            if let Some((wind, sst)) = enso_ndbc_parse(&body, lsk) {
-                enso_send_bins(&wind, station, EnsoSeries::Wind, last_sent, tx);
-                enso_send_bins(&sst, station, EnsoSeries::Sst, last_sent, tx);
+            if let Some(series) = enso_ndbc_parse(&body, lsk) {
+                for (kind, values) in &series {
+                    enso_send_bins(values, station, *kind, last_sent, tx);
+                }
             }
         }
     }
@@ -17017,12 +17146,25 @@ fn enso_cache_fetch(url: &str, cache: &str) -> Option<String> {
 mod enso_parser_tests {
     use super::*;
 
+    fn series_of<'a>(
+        parsed: &'a [(EnsoSeries, Vec<(f64, f64)>)],
+        s: EnsoSeries,
+    ) -> &'a [(f64, f64)] {
+        parsed
+            .iter()
+            .find(|(k, _)| *k == s)
+            .map(|(_, v)| v.as_slice())
+            .unwrap_or(&[])
+    }
+
     const FIXTURE: &str = "#YY  MM DD hh mm WDIR WSPD GST  WVHT   DPD   APD MWD   PRES  ATMP  WTMP  DEWP  VIS PTDY  TIDE\n#yr  mo dy hr mn degT m/s  m/s     m   sec   sec degT   hPa  degC  degC  degC  nmi  hPa    ft\n2026 08 21 15 10 100  3.0  4.0    MM    MM    MM  MM 1013.5  26.0  26.7  23.1   MM   MM    MM\n2026 08 21 15 00 100   MM  4.0    MM    MM    MM  MM 1013.3  26.0  26.7  22.9   MM -0.7    MM\n2026 08 21 14 50 100  4.0  5.0   1.5     8   6.2 100 1013.2  26.1    MM  23.0   MM   MM    MM\n";
 
     #[test]
     fn enso_ndbc_parse_splits_wind_and_sst_with_mm_skips() {
         let lsk = embedded_lsk().expect("embedded lsk");
-        let (wind, sst) = enso_ndbc_parse(FIXTURE, &lsk).expect("fixture parses");
+        let parsed = enso_ndbc_parse(FIXTURE, &lsk).expect("fixture parses");
+        let wind = series_of(&parsed, EnsoSeries::Wspd);
+        let sst = series_of(&parsed, EnsoSeries::Wtmp);
         assert_eq!(wind.len(), 2);
         assert_eq!(sst.len(), 2);
         assert_eq!(wind[0].1, 3.0);
@@ -17037,7 +17179,9 @@ mod enso_parser_tests {
     fn enso_ndbc_parse_skips_stdmet_sentinel_values() {
         let lsk = embedded_lsk().expect("embedded lsk");
         let body = "#YY  MM DD hh mm WDIR WSPD GST  WVHT   DPD   APD MWD   PRES  ATMP  WTMP  DEWP  VIS  TIDE\n#yr  mo dy hr mn degT m/s  m/s     m   sec   sec degT   hPa  degC  degC  degC  nmi  hPa    ft\n2026 01 01 00 00 115  2.6  3.9 99.00 99.00 99.00 999 1019.3  25.2  25.8  21.3 99.0 99.00\n2026 01 01 00 10 112 99.0  4.0  1.81 11.43  8.43 301 1019.3  25.2 999.0  21.3 99.0 99.00\n2026 01 01 00 20 118  3.2  4.5 99.00 99.00 99.00 999 1019.3  25.2  25.9  21.4 99.0 99.00\n";
-        let (wind, sst) = enso_ndbc_parse(body, &lsk).expect("stdmet parses");
+        let parsed = enso_ndbc_parse(body, &lsk).expect("stdmet parses");
+        let wind = series_of(&parsed, EnsoSeries::Wspd);
+        let sst = series_of(&parsed, EnsoSeries::Wtmp);
         assert_eq!(wind.len(), 2);
         assert_eq!(sst.len(), 2);
         assert_eq!(wind[0].1, 2.6);
@@ -17047,10 +17191,60 @@ mod enso_parser_tests {
     }
 
     #[test]
-    fn enso_ndbc_parse_missing_wtmp_column_is_none() {
+    fn enso_ndbc_parse_carries_all_present_columns_with_gates() {
+        let lsk = embedded_lsk().expect("embedded lsk");
+        let body = "#YY  MM DD hh mm WDIR WSPD GST  WVHT   DPD   APD MWD   PRES  ATMP  WTMP  DEWP  VIS PTDY  TIDE\n2026 08 21 15 00 100  3.0  4.5   1.5   8.0   6.2 100 1013.2  26.1  25.8  23.0 10.0 -0.7  0.55\n";
+        let parsed = enso_ndbc_parse(body, &lsk).expect("matrix parses");
+        assert_eq!(series_of(&parsed, EnsoSeries::Wspd)[0].1, 3.0);
+        assert_eq!(series_of(&parsed, EnsoSeries::Gst)[0].1, 4.5);
+        assert_eq!(series_of(&parsed, EnsoSeries::Wvht)[0].1, 1.5);
+        assert_eq!(series_of(&parsed, EnsoSeries::Dpd)[0].1, 8.0);
+        assert_eq!(series_of(&parsed, EnsoSeries::Apd)[0].1, 6.2);
+        assert_eq!(series_of(&parsed, EnsoSeries::Pres)[0].1, 1013.2);
+        assert_eq!(series_of(&parsed, EnsoSeries::Ptdy)[0].1, -0.7);
+        assert_eq!(series_of(&parsed, EnsoSeries::Atmp)[0].1, 26.1);
+        assert_eq!(series_of(&parsed, EnsoSeries::Wtmp)[0].1, 25.8);
+        assert_eq!(series_of(&parsed, EnsoSeries::Dewp)[0].1, 23.0);
+        assert_eq!(series_of(&parsed, EnsoSeries::Vis)[0].1, 10.0);
+        assert_eq!(series_of(&parsed, EnsoSeries::Tide)[0].1, 0.55);
+    }
+
+    #[test]
+    fn enso_ndbc_parse_missing_column_leaves_series_absent() {
         let lsk = embedded_lsk().expect("embedded lsk");
         let body = "#YY  MM DD hh mm WDIR WSPD GST\n2026 08 21 15 10 100  3.0  4.0\n";
-        assert!(enso_ndbc_parse(body, &lsk).is_none());
+        let parsed = enso_ndbc_parse(body, &lsk).expect("wspd parses");
+        assert_eq!(series_of(&parsed, EnsoSeries::Wspd).len(), 1);
+        assert!(series_of(&parsed, EnsoSeries::Wtmp).is_empty());
+        assert!(series_of(&parsed, EnsoSeries::Pres).is_empty());
+    }
+
+    #[test]
+    fn enso_ndbc_parse_direction_columns_flow_as_sin_cos() {
+        let lsk = embedded_lsk().expect("embedded lsk");
+        let body = "#YY  MM DD hh mm WDIR WSPD GST WVHT DPD APD MWD PRES ATMP WTMP DEWP VIS TIDE\n2026 08 21 15 10   0  3.0 4.0  1.5 8.0 6.2  90 1013.2 26.1 25.8 23.0 10.0 0.5\n2026 08 21 15 00  90  3.0 4.0  1.5 8.0 6.2 999 1013.2 26.1 25.8 23.0 10.0 0.5\n";
+        let parsed = enso_ndbc_parse(body, &lsk).expect("directions parse");
+        let sin = series_of(&parsed, EnsoSeries::WdirSin);
+        let cos = series_of(&parsed, EnsoSeries::WdirCos);
+        let msin = series_of(&parsed, EnsoSeries::MwdSin);
+        assert_eq!(sin.len(), 2);
+        assert_eq!(cos.len(), 2);
+        assert_eq!(sin[0].1, 0.0);
+        assert_eq!(cos[0].1, 1.0);
+        assert!((sin[1].1 - 1.0).abs() < 1e-9);
+        assert!(cos[1].1.abs() < 1e-9);
+        assert_eq!(msin.len(), 1);
+        assert!((msin[0].1 - 1.0).abs() < 1e-9);
+    }
+
+    #[test]
+    fn enso_ndbc_parse_rain_column_when_present() {
+        let lsk = embedded_lsk().expect("embedded lsk");
+        let body = "#YY MM DD hh mm WDIR WSPD GST WVHT DPD APD MWD PRES ATMP WTMP DEWP VIS TIDE RAIN\n2026 08 21 15 10 100 3.0 4.0 1.5 8.0 6.2 100 1013.2 26.1 25.8 23.0 10.0 0.5 0.12\n2026 08 21 15 00 100 3.0 4.0 1.5 8.0 6.2 100 1013.2 26.1 25.8 23.0 10.0 0.5 99.0\n";
+        let parsed = enso_ndbc_parse(body, &lsk).expect("rain parses");
+        let rain = series_of(&parsed, EnsoSeries::Rain);
+        assert_eq!(rain.len(), 1);
+        assert_eq!(rain[0].1, 0.12);
     }
 
     #[test]

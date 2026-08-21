@@ -848,6 +848,8 @@ const SOLAR_COARSE_PAIRS: [(SolarChannel, SolarChannel); 6] = [
 ];
 
 const ENSO_STATION_COUNT: usize = EnsoStation::ALL.len();
+const ENSO_SERIES_COUNT: usize = EnsoSeries::ALL.len();
+const ENSO_PAIR_COUNT: usize = ENSO_SERIES_COUNT * (ENSO_SERIES_COUNT - 1) / 2;
 const ENSO_RING_MAX: usize = 1024;
 const ENSO_PROBE_MAX: usize = 512;
 const TE_SERIES_STRIDE: usize = 1024;
@@ -860,6 +862,19 @@ const ENSO_SHIFT_MAX_DAYS: i64 = 30;
 const ENSO_SHIFT_COUNT: usize = (ENSO_SHIFT_MAX_DAYS * 2 + 1) as usize;
 const ENSO_CELLS_PER_SCALE: usize = ENSO_SHIFT_COUNT * 2;
 const ENSO_CELLS_PER_ROUND: usize = ENSO_CELLS_PER_SCALE * ENSO_SCALES.len();
+
+fn enso_pair(pair_idx: usize) -> (EnsoSeries, EnsoSeries) {
+    let mut k = 0usize;
+    for i in 0..ENSO_SERIES_COUNT {
+        for j in (i + 1)..ENSO_SERIES_COUNT {
+            if k == pair_idx {
+                return (EnsoSeries::ALL[i], EnsoSeries::ALL[j]);
+            }
+            k += 1;
+        }
+    }
+    unreachable!()
+}
 
 fn enso_cell_desc(cell_idx: usize) -> (u8, u8, i64) {
     let scale_idx = (cell_idx / ENSO_CELLS_PER_SCALE) as u8;
@@ -922,6 +937,30 @@ impl EnsoAccum {
             surr_total: 0,
             cells1: Vec::new(),
             small: Vec::new(),
+        }
+    }
+}
+
+struct EnsoMatrixAccum {
+    pairs: usize,
+    arrows: usize,
+    family: usize,
+    h_bound: usize,
+    silent: usize,
+    absent: usize,
+    expected: f64,
+}
+
+impl EnsoMatrixAccum {
+    fn fresh() -> EnsoMatrixAccum {
+        EnsoMatrixAccum {
+            pairs: 0,
+            arrows: 0,
+            family: 0,
+            h_bound: 0,
+            silent: 0,
+            absent: 0,
+            expected: 0.0,
         }
     }
 }
@@ -1548,20 +1587,22 @@ struct NativeApp {
     solar_pending: Option<(String, usize)>,
     solar_te_named: String,
     enso_rx: mpsc::Receiver<EnsoCell>,
-    enso_rings: [[Vec<(u64, f32)>; 2]; ENSO_STATION_COUNT],
+    enso_rings: [[Vec<(u64, f32)>; ENSO_SERIES_COUNT]; ENSO_STATION_COUNT],
     enso_rotor: usize,
     enso_due: [bool; ENSO_STATION_COUNT],
     enso_max_bin: [u64; ENSO_STATION_COUNT],
     enso_last_round_bin: [u64; ENSO_STATION_COUNT],
+    enso_pair: [usize; ENSO_STATION_COUNT],
     enso_cell: [usize; ENSO_STATION_COUNT],
     enso_accum: [EnsoAccum; ENSO_STATION_COUNT],
+    enso_matrix: [EnsoMatrixAccum; ENSO_STATION_COUNT],
     enso_te_bind: Option<wgpu::BindGroup>,
     enso_te_series_buf: Option<wgpu::Buffer>,
     enso_te_param_buf: Option<wgpu::Buffer>,
     enso_te_out_buf: Option<wgpu::Buffer>,
     enso_te_read_buf: Option<wgpu::Buffer>,
     enso_te_map: Option<Arc<AtomicBool>>,
-    enso_pending: Option<(usize, usize)>,
+    enso_pending: Option<(usize, usize, usize)>,
     enso_pending_n: usize,
     enso_te_named: String,
     hud_topology: Option<(usize, usize, Option<f64>, Option<f64>)>,
@@ -1713,8 +1754,10 @@ impl NativeApp {
             enso_due: [false; ENSO_STATION_COUNT],
             enso_max_bin: [0; ENSO_STATION_COUNT],
             enso_last_round_bin: [0; ENSO_STATION_COUNT],
+            enso_pair: [0; ENSO_STATION_COUNT],
             enso_cell: [0; ENSO_STATION_COUNT],
             enso_accum: std::array::from_fn(|_| EnsoAccum::fresh()),
+            enso_matrix: std::array::from_fn(|_| EnsoMatrixAccum::fresh()),
             enso_te_bind: None,
             enso_te_series_buf: None,
             enso_te_param_buf: None,
@@ -2170,25 +2213,27 @@ impl NativeApp {
         }
     }
 
-    fn enso_cell_label(station: EnsoStation, cell_idx: usize) -> String {
+    fn enso_cell_label(station: EnsoStation, pair_idx: usize, cell_idx: usize) -> String {
         let (scale_idx, dir, shift_days) = enso_cell_desc(cell_idx);
-        let dir_name = if dir == 0 { "ws" } else { "sw" };
+        let (a, b) = enso_pair(pair_idx);
+        let (driver, target) = if dir == 0 { (a, b) } else { (b, a) };
         format!(
-            "enso te {} {} {} {}d",
+            "enso te {} {}→{} {} {}d",
             station.id(),
-            dir_name,
+            driver.name(),
+            target.name(),
             ENSO_SCALE_NAMES[scale_idx as usize],
             shift_days
         )
     }
 
-    fn enso_fold(&mut self, station_idx: usize, cell_idx: usize, n: usize) {
+    fn enso_fold(&mut self, station_idx: usize, pair_idx: usize, cell_idx: usize, n: usize) {
         let Some(read_buf) = self.enso_te_read_buf.as_ref() else {
             return;
         };
         let verdict = Self::te_read_verdict(read_buf);
         let station = EnsoStation::ALL[station_idx];
-        let label = Self::enso_cell_label(station, cell_idx);
+        let label = Self::enso_cell_label(station, pair_idx, cell_idx);
         let (scale_idx, dir, shift_days) = enso_cell_desc(cell_idx);
         let Some(v) = crate::te::topological_verdict_from_gpu(&verdict) else {
             self.enso_say(format!(
@@ -2248,30 +2293,23 @@ impl NativeApp {
             self.enso_te_map = Some(prev);
             return;
         }
-        if let Some((si, cell)) = self.enso_pending.take() {
+        if let Some((si, pair, cell)) = self.enso_pending.take() {
             let n = self.enso_pending_n;
-            self.enso_fold(si, cell, n);
+            self.enso_fold(si, pair, cell, n);
         }
     }
 
-    fn enso_probe(&mut self, station_idx: usize, cell_idx: usize) {
+    fn enso_probe(&mut self, station_idx: usize, pair_idx: usize, cell_idx: usize) {
         let station = EnsoStation::ALL[station_idx];
-        let label = Self::enso_cell_label(station, cell_idx);
+        let label = Self::enso_cell_label(station, pair_idx, cell_idx);
         let (scale_idx, dir, shift_days) = enso_cell_desc(cell_idx);
         let shift_bins = shift_days * ENSO_SHIFT_STEP_BINS;
         let h_scale = ENSO_SCALES[scale_idx as usize];
-        let (driver, target) = if dir == 0 {
-            (
-                &self.enso_rings[station_idx][EnsoSeries::Wind.idx()],
-                &self.enso_rings[station_idx][EnsoSeries::Sst.idx()],
-            )
-        } else {
-            (
-                &self.enso_rings[station_idx][EnsoSeries::Sst.idx()],
-                &self.enso_rings[station_idx][EnsoSeries::Wind.idx()],
-            )
-        };
-        let (mut ys, mut xs) = enso_shift_pair(driver, target, shift_bins);
+        let (a, b) = enso_pair(pair_idx);
+        let (driver, target) = if dir == 0 { (a, b) } else { (b, a) };
+        let driver_ring = &self.enso_rings[station_idx][driver.idx()];
+        let target_ring = &self.enso_rings[station_idx][target.idx()];
+        let (mut ys, mut xs) = enso_shift_pair(driver_ring, target_ring, shift_bins);
         if xs.len() > ENSO_PROBE_MAX {
             let drop = xs.len() - ENSO_PROBE_MAX;
             ys.drain(..drop);
@@ -2344,80 +2382,101 @@ impl NativeApp {
         }
         if !mapped.load(Ordering::SeqCst) {
             self.enso_te_map = Some(mapped);
-            self.enso_pending = Some((station_idx, cell_idx));
+            self.enso_pending = Some((station_idx, pair_idx, cell_idx));
             self.enso_pending_n = m;
             self.enso_say(format!("{} state readback pending", label));
             return;
         }
-        self.enso_fold(station_idx, cell_idx, m);
+        self.enso_fold(station_idx, pair_idx, cell_idx, m);
     }
 
-    fn enso_sheet(&mut self, station: EnsoStation) {
+    fn enso_sheet(&mut self, station: EnsoStation, pair_idx: usize) {
         let si = station.idx();
-        let acc = &self.enso_accum[si];
-        let mut best: Option<(u8, i64, usize, f64, f64, f64)> = None;
-        for c in &acc.cells1 {
-            let e = c.te - c.thr;
-            if best.map_or(true, |(_, _, _, be, _, _)| e > be) {
-                best = Some((c.dir, c.shift, c.n, e, c.te, c.thr));
+        let (a, b) = enso_pair(pair_idx);
+        let (state, sheet_parts, p_hat, m_count) = {
+            let acc = &self.enso_accum[si];
+            let mut best: Option<(u8, i64, usize, f64, f64, f64)> = None;
+            for c in &acc.cells1 {
+                let e = c.te - c.thr;
+                if best.map_or(true, |(_, _, _, be, _, _)| e > be) {
+                    best = Some((c.dir, c.shift, c.n, e, c.te, c.thr));
+                }
             }
+            let p_hat = if acc.surr_total > 0 {
+                acc.surr_over as f64 / acc.surr_total as f64
+            } else {
+                0.0
+            };
+            if let Some((dir, d_star, n_star, excess, te, thr)) = best {
+                let robust = 1 + acc
+                    .small
+                    .iter()
+                    .filter(|c| c.dir == dir && c.shift == d_star && c.te > c.thr)
+                    .count();
+                let (driver, target) = if dir == 0 { (a, b) } else { (b, a) };
+                let state = if excess <= 0.0 {
+                    "silent"
+                } else if acc.fam_any && te <= acc.fam {
+                    "family bound"
+                } else if robust < 3 {
+                    "h bound"
+                } else {
+                    "arrow"
+                };
+                let parts = format!(
+                    "enso sheet {} {}→{} lag {}d n {} te {:.3} thr {:.3} fam {:.3} p {:.3} M {} h {}/3 state {}",
+                    station.id(),
+                    driver.name(),
+                    target.name(),
+                    d_star,
+                    n_star,
+                    te,
+                    thr,
+                    acc.fam,
+                    p_hat,
+                    acc.m,
+                    robust,
+                    state
+                );
+                (state, parts, p_hat, acc.m)
+            } else {
+                let parts = format!(
+                    "enso sheet {} {}→{} state no statement",
+                    station.id(),
+                    a.name(),
+                    b.name()
+                );
+                ("no statement", parts, p_hat, acc.m)
+            }
+        };
+        self.enso_say(sheet_parts);
+        let m = &mut self.enso_matrix[si];
+        m.pairs += 1;
+        m.expected += p_hat * m_count as f64;
+        match state {
+            "arrow" => m.arrows += 1,
+            "family bound" => m.family += 1,
+            "h bound" => m.h_bound += 1,
+            "silent" => m.silent += 1,
+            _ => m.absent += 1,
         }
-        let Some((dir, d_star, n_star, excess, te, thr)) = best else {
-            self.enso_say(format!("enso sheet {} state no statement", station.id()));
-            return;
-        };
-        let other = acc
-            .cells1
-            .iter()
-            .find(|c| c.dir != dir && c.shift == d_star);
-        let other_pair = other.map(|c| (format!("{:.3}", c.te), format!("{:.3}", c.thr)));
-        let p_hat = if acc.surr_total > 0 {
-            acc.surr_over as f64 / acc.surr_total as f64
-        } else {
-            0.0
-        };
-        let robust = 1 + acc
-            .small
-            .iter()
-            .filter(|c| c.dir == dir && c.shift == d_star && c.te > c.thr)
-            .count();
-        let state = if excess <= 0.0 {
-            "silent"
-        } else if acc.fam_any && te <= acc.fam {
-            "family bound"
-        } else if robust < 3 {
-            "h bound"
-        } else if dir == 0 {
-            "arrow ws"
-        } else {
-            "arrow sw"
-        };
-        let (te_ws, thr_ws, te_sw, thr_sw) = if dir == 0 {
-            match other_pair {
-                Some((t, h)) => (format!("{:.3}", te), format!("{:.3}", thr), t, h),
-                None => (
-                    format!("{:.3}", te),
-                    format!("{:.3}", thr),
-                    "-".to_string(),
-                    "-".to_string(),
-                ),
-            }
-        } else {
-            match other_pair {
-                Some((t, h)) => (t, h, format!("{:.3}", te), format!("{:.3}", thr)),
-                None => (
-                    "-".to_string(),
-                    "-".to_string(),
-                    format!("{:.3}", te),
-                    format!("{:.3}", thr),
-                ),
-            }
-        };
+    }
+
+    fn enso_matrix(&mut self, station: EnsoStation) {
+        let m = &self.enso_matrix[station.idx()];
         self.enso_say(format!(
-            "enso sheet {} lag {}d n {} te(ws) {} thr {} te(sw) {} thr {} fam {:.3} p {:.3} M {} h {}/3 state {}",
-            station.id(), d_star, n_star, te_ws, thr_ws, te_sw, thr_sw, acc.fam, p_hat, acc.m, robust, state
+            "enso matrix {} pairs {} arrows {} family {} hbound {} silent {} absent {} expected {:.2} state measured",
+            station.id(),
+            m.pairs,
+            m.arrows,
+            m.family,
+            m.h_bound,
+            m.silent,
+            m.absent,
+            m.expected
         ));
     }
+
     fn enso_tick(&mut self) {
         let mut grew = [false; ENSO_STATION_COUNT];
         let mut first = [false; ENSO_STATION_COUNT];
@@ -2441,11 +2500,14 @@ impl NativeApp {
         }
         for si in 0..ENSO_STATION_COUNT {
             if first[si] && !self.enso_due[si] {
+                let counts: Vec<String> = EnsoSeries::ALL
+                    .iter()
+                    .map(|s| format!("{} {}", s.name(), self.enso_rings[si][s.idx()].len()))
+                    .collect();
                 self.enso_say(format!(
-                    "enso ring {} wind {} sst {}",
+                    "enso ring {} {}",
                     EnsoStation::ALL[si].id(),
-                    self.enso_rings[si][0].len(),
-                    self.enso_rings[si][1].len(),
+                    counts.join(" ")
                 ));
             }
             if grew[si] && self.enso_max_bin[si] > self.enso_last_round_bin[si] {
@@ -2464,14 +2526,21 @@ impl NativeApp {
                 if self.enso_cell[si] < ENSO_CELLS_PER_ROUND {
                     let cell = self.enso_cell[si];
                     self.enso_cell[si] += 1;
-                    self.enso_probe(si, cell);
+                    self.enso_probe(si, self.enso_pair[si], cell);
                 } else {
                     self.enso_cell[si] = 0;
-                    self.enso_last_round_bin[si] = self.enso_max_bin[si];
-                    self.enso_due[si] = false;
-                    self.enso_rotor = (si + 1) % ENSO_STATION_COUNT;
-                    self.enso_sheet(EnsoStation::ALL[si]);
+                    let pair = self.enso_pair[si];
+                    self.enso_pair[si] += 1;
+                    self.enso_sheet(EnsoStation::ALL[si], pair);
                     self.enso_accum[si] = EnsoAccum::fresh();
+                    if self.enso_pair[si] >= ENSO_PAIR_COUNT {
+                        self.enso_pair[si] = 0;
+                        self.enso_last_round_bin[si] = self.enso_max_bin[si];
+                        self.enso_due[si] = false;
+                        self.enso_rotor = (si + 1) % ENSO_STATION_COUNT;
+                        self.enso_matrix(EnsoStation::ALL[si]);
+                        self.enso_matrix[si] = EnsoMatrixAccum::fresh();
+                    }
                 }
                 break;
             }

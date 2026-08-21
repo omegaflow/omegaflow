@@ -2,7 +2,7 @@
   title: Das Blatt Papier — das axiomatische Messergebnis (BLATT_PAPIER_RESULTAT)
   class: concept
   date: 2026-08-21
-  sha256: a738a9b36edefa7b59e6b401998529ccb8665dc489ca9215a9039472fadf0804
+  sha256: 3091167fb3b6b593dc24cb453c03e6e28910d5fe08c22f61daccc61d348aaac3
   status: live
   see-also: docs/handover/handover-2026-08-21-enso-kausalpfeil.md docs/handover/handover-2026-08-21-bz-gic-kausalpfeil.md docs/handover/handover-2026-08-21-laic-pfeilrichtung.md
 -->
@@ -58,28 +58,33 @@ Bz → 304 und 304 → 284 sind still; der DAG schrumpfte auf EUV-304 → X-Ray
 | Geomagnetischer Sturm | RTSW Bz (`em`) | Erdseite: Kp/GOES-Magnetometer (`em`) | Welcher Sonnenwind-Parameter trägt den kausalen Pfeil in die Störung — und mit welchem Lag in Minuten? |
 | LAIC | Lithosphäre (`seismic-body`) | Ionosphäre (`em`/`electric`) | Fließt die Information von unten nach oben — oder treibt die Sonne beides? |
 
-### Blatt 1 — Der kausale Pfeil des ENSO
+### Blatt 1 — Die Multi-Akteur-Matrix
 
-Erste gemessene Runde (2026-08-21, Hidden-Lauf): Boje 51000
-(23.5 N, 153.8 W) — 1024 Sechs-Stunden-Bins (~8½ Monate stdmet),
-Zelle = die neuesten 512 Bins, Sweep −30 … +30 Tage in Tagesschritten,
-drei Bandbreiten (h, h/2, 2h), M = 108 gültige Zellen.
+Das Blatt ist die Matrix: 17 Kanäle aus derselben Bojen-Datei
+(14 stdmet-Spalten + WDIR/MWD als sin/cos-Paare — der Kreis in seinen
+eigenen Koordinaten, kein zirkulärer Kernel nötig — + RAIN, wenn die
+Station einen Regenmesser trägt), 136 Paare × beide Richtungen ×
+Sweep −30 … +30 Tage täglich × drei Bandbreiten (h, h/2, 2h),
+n-Gate 30, Familien-Schwelle je Paar-Runde (fam = Maximum der
+Surrogat-TEs), h-Robustheit des Gewinners, am Ende die Matrix-Zeile
+mit der vollständigen Zählung und den erwarteten Falsch-Positiven
+(Σ p̂·M über die Paar-Runden).
 
-```
-TE(Wind → SST) =  0.219   (Schwelle 0.203, n = 512)
-TE(SST → Wind) = -1.108   (Schwelle 0.520, n = 512)
-Lag = 16 d   (Gewinner-Shift des Sweeps)
-fam = 0.655  (Maximum der Surrogat-TEs über die Runde)
-p̂   = 0.018  (empirischer Anteil der Surrogat-Zellen über der eigenen Schwelle)
-h   = 1/3    (der Gewinner hält nur bei h — nicht bei h/2 und 2h)
-Verdikt: kein Befund — der Pfeil überlebt die Familien-Schwelle nicht
-(fam 0.655 > TE 0.219) und die Bandbreiten-Sensitivität nicht (1/3).
-```
+Erste Signale (Hidden-Lauf 2026-08-21): alle Ringe tragen 1024
+Sechs-Stunden-Bins (~8½ Monate stdmet); ptdy/vis/tide/rain = 0 aus
+stdmet — die Tiefsee-Bojen messen weder Sicht noch Tide, PTDY trägt
+nur die realtime2-Datei (45 Tage), RAIN fehlt an diesen Stationen
+(fehlt, kein Platzhalter). Die erste Zelle zeigt die
+Definitions-Kopplung: `wspd→gst te 0.974 thr 0.897` — der Gust ist
+das eigene Extrem des Windes. Die Matrix trägt ihre eigenen
+Kalibrier-Paare (wspd-gst, dpd-apd, atmp-dewp): wo die Kopplung
+Definition ist, muss ein Pfeil überleben; wo sie es nicht ist, ist
+Stille die ehrliche Antwort.
 
-Der negative TE(SST → Wind) ist die Messung selbst: der
-Platten-Schätzer kann bei endlichem n negativ werden (KL-Divergenz-
-Bias). Er liegt unter seiner Schwelle, treibt kein Verdikt und wird
-nicht gerundet — die Zustandsleiter behandelt ihn als nicht-Pfeil.
+Die Pair-Sheet-Zeilen und die Matrix-Zeile kommen im Hintergrund:
+136 Paare × 366 Zellen ≈ 55 h je Station, 37 Stationen ≈ 85 Tage
+je volle Matrix. Das Blatt trägt dann die gemessenen Zahlen.
+
 
 
 Stille ist die Antwort (0 honored). Das benannte Set wuchs am selben
