@@ -41,6 +41,28 @@ jobs:
           --body "Verify job failed. Last commit: ${{ github.sha }}" \
           --label health
 
+  reverify:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions-rust-lang/setup-rust-toolchain@v1
+    - run: cargo run -- --reverify | tee reverify.txt
+    - uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: reverify
+        path: |
+          reverify.txt
+          phi/pipeline/stage/recheck_live.φ
+    - if: always()
+      run: |
+        if grep -qE " (drift-void|kaputt) " reverify.txt; then
+          gh issue create --repo omegaflow/omegaflow \
+            --title "health: recheck-live trägt drift/kaputt-Befunde" \
+            --body "Der Re-Verifikations-Sweep meldet drift-void/kaputt-Befunde. Artifact: reverify (reverify.txt + recheck_live.φ)." \
+            --label health
+        fi
+
   pages-verify:
     runs-on: ubuntu-latest
     steps:
