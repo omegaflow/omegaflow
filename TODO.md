@@ -206,9 +206,10 @@ Indizes ohne Litmus, docs/concepts/sunspots.md). Offen bleibt: Atom 4
 Stunden × 7 Felder → Auflösung gegen das Sample-Budget wählen) und der
 Lang-Fenster-Probe F10.7-Historie × GOES-XRS-Historie (nun entblockt);
 Quellen vermessen in
-docs/surveys/survey-2026-08-21-sonnen-abdeckung.md; das Handover
-handover-2026-08-21-sonnen-abdeckung.md bleibt live, bis Atom 4
-geschlossen ist.
+docs/surveys/survey-2026-08-21-sonnen-abdeckung.md; der offene Rest
+trägt die Übergabe
+docs/handover/handover-2026-08-21-omni2-serie-langfenster-probe.md
+(die sonnen-abdeckung-Übergabe ist archiviert).
 Luminositäts-Atom — benannte Grenzen (pending): die Ankerung
 modelliert Isotropie (die Röntgenemission ist richtungsabhängig —
 abgeleitet, nicht gemessen); die Energie-Bänder der Partikel-Dateien
