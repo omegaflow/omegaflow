@@ -1122,6 +1122,21 @@ Offen (Detail in phi/pipeline/ledger.φ):
   CDN-Weg
 - EA-Fanout: Runtime-Fanout-Lauf offen (Test überspringt Fanout
   designbedingt)
+- Register-Datenqualität (2026-08-21, gemessen): der USGS-fdsnws-Block
+  (`geojson mag …`, sources.φ:45) ist strukturell tot — extract_fields
+  kennt GeojsonEvents nicht (archivar.rs:978), dispatch_reach sieht null
+  Feldzeilen → refused bei jedem Tick (stderr: „source N carries no
+  field lines"), obwohl extract() den Block versteht — Port-Verifikation
+  und Laufzeit-Gate sind zwei Wahrheiten. test_live_sources_extract:
+  26/91 void — Klassen: eingefrorene Fixture-Daten (2026-08-07; OMNI
+  endet 08-06, Fenster-Queries, ruhige Flare-Woche), Key-Marker-void
+  ({NASA_API_KEY} … — Schlüsselfrage, kein Befund), API-Drift (INGV,
+  PSP/SOLO-HAPI liefern HTML statt JSON, TAPVizieR-Spalten verschoben),
+  ruhige Fenster (leer = Wahrheit). Pipeline-Befund: keine
+  Re-Verifikation von sources.φ (Rechecks laufen nur über blocked/dead),
+  der Test ist nicht im CI-Gate und trägt nichts ins Register zurück,
+  Laufzeit-Refusals versickern auf stderr ohne Ledger. →
+  handover-2026-08-21-register-datenqualitaet.md
 
 ## CI Pipeline
 
