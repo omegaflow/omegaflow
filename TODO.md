@@ -20,10 +20,12 @@ Rätsel, drei Blätter; ausgeführt wird erst auf das Wort des Operators.
   INTERMAGNET-Bodenfeld — Session-Plan `docs/handover/handover-2026-
   08-21-bz-paradoxon.md`. INTERMAGNET-Komponenten-Port erledigt
   (2026-08-21); die Blatt-Probe ist die offene Einheit.
-- LAIC-Blatt (Nadel IV): 72-h-Fenster-Stapelung vor M ≥ 6.0,
-  Seismizitäts-Rate × Swarm/INTERMAGNET gegen Null-Ensemble —
-  Session-Plan `docs/handover/handover-2026-08-21-laic-kausalpfeil.md`.
-  CSES ausstehend; IONEX-GIM wartet (CDDIS-OAuth).
+- LAIC-Blatt (Nadel IV): Blatt 1 steht (2026-08-21) — Instrument B
+  (Fensterstapelung gegen Null-Ensemble): Stille in beiden Richtungen,
+  Solar-Kontrolle still, n = 176 — Befund
+  `docs/surveys/survey-2026-08-21-laic-pfeilrichtung.md`. Offen:
+  Instrument A (Ereignisrate) ungebaut, TEC-Port/CSES (Faden B), volle
+  Ära (1726 Ereignisse), FAC-Stapel unterbestimmt.
 
 ## Nadel Ⅲ — Coronal Heating (TE-Messprotokoll)
 
@@ -582,15 +584,21 @@ Maschine misst.
   Offen: Mehrfachvergleichskorrektur über die Paar-Matrix, das
   Retro-Fenster (1-h, OMNI2) als zweite Blatt-Zeile (Status-Matrix +
   P366D-Schleife benannt, s. INTERMAGNET-Fanout-Zeile).
-- **LAIC-Pfeilrichtung** (`handover-2026-08-21-laic-pfeilrichtung.md`):
-  Nadel Ⅳ verengt auf die Richtung — TE(Lithosphäre→Ionosphäre) gegen die
-  Gegenrichtung im 72-h-Fenster vor M ≥ 6.0, Null-Ensemble zufälliger
-  Fenster (USGS-Regel). Offene Design-Frage registriert: der
-  FDSN-Katalog ist ein Punktprozess — Serien-Konstruktion
-  (Seismizitätsrate ODER miniSEED-Waveform-Envelopen, Decoder AUSSTEHEND)
-  wählt und benennt die Session, keine erfundene Kontinuität. CSES
-  (electric) unkuratiert; Swarm als bestandene Alternative; IONEX-GIM
-  bleibt WARTEND (CDDIS-OAuth).
+- **LAIC-Pfeilrichtung** (Blatt 1,
+  `docs/surveys/survey-2026-08-21-laic-pfeilrichtung.md`):
+  Nadel Ⅳ verengt auf die Richtung — Instrument B gebaut
+  (`src/bin/laic_probe.rs`): TE(Lithosphäre→Ionosphäre) gegen die
+  Gegenrichtung im 72-h-Fenster vor M ≥ 6.0, Zählrate M≥2 im
+  2000-km-Radius × INTERMAGNET-F des nächsten Observatoriums, 10
+  phasenrandomisierte Surrogate je Serie, Lag-Sweep 0…72 h (m ≥ 30),
+  Solar-Kontrolle Bz→F, Null-Ensemble 40 Zufallsfenster, 250 jüngste
+  Ereignisse. Befund: Stille in beiden Richtungen, Kontrolle still
+  (n = 176) — 0 honored. Der FDSN-Katalog ist ein Punktprozess — die
+  Zähl-Serie ist die benannte Konstruktion (MiniSEED-Envelopen: Decoder
+  ausstehend). Instrument A (Ereignisrate) benannt, ungebaut →
+  Register. Offen: TEC-Port/CSES (Faden B), volle Ära (1726
+  Ereignisse), FAC-Stapel unterbestimmt (8–25/144 Zellen), Radius-/
+  Kadenz-/KDE-h-Sensitivität.
 
 ## Die Nadeln I, II, V — Blätter (Handovers 2026-08-21)
 
@@ -1362,19 +1370,19 @@ Offen (Detail in phi/pipeline/ledger.φ):
 - v8-Präsenz-Maske: der color_index-Slot bleibt bis v8 das
   0.0=absent-Wire-Pad (Weiß); BP−RP=0 (A0V) kollidiert — die v8-Maske
   (Rats-Urteil-1-Muster) trägt den Farb-Slot als Bit (D2-Verdict).
-- INTERMAGNET-Fanout (154 Observatorien live): Ausbeute-Feintuning
-  offen (best-avail-Aktualität variiert je Observatorium). Status-Matrix
-  gemessen (2026-08-21, GIN-V1-Katalog, 3074 Datensätze): je Station
-  `definitive`/`quasi-def`/`reported`/`adjusted`/`best-avail` × PT1M/PT1S
-  × native/xyzf/hdzf/diff. `best-avail` ist der Status-Stapel —
+- INTERMAGNET-Fanout (154 Observatorien live): der Fanout trägt über
+  `stations GetCapabilities` alle 154 Observatorien — `fanout 154`
+  (2026-08-21), der Auroral-Ring (|lat| ≥ 58°, 38 Observatorien) ist
+  damit eingeschlossen (das Berlin-Zentrum ordnet nur, schneidet nicht
+  mehr ab); ABK erscheint doppelt (fester Block = Probe-Anker). Kosten
+  benannt: 154 Requests je Refresh (fanout_delay 15 s → ~13 min, TTL
+  86400). Status-Matrix gemessen (GIN-V1-Katalog, 3074 Datensätze): je
+  Station `definitive`/`quasi-def`/`reported`/`adjusted`/`best-avail` ×
+  PT1M/PT1S × native/xyzf/hdzf/diff. `best-avail` ist der Status-Stapel —
   definitiv →2021-12-31, quasi-def 2012→~1 Monat zurück, reported/
   adjusted der letzte Monat; `definitive` reicht nur bis 2021,
-  `quasi-def` bis ~1 Monat zurück (P366D max je Request). Der
-  Auroral-Ring (|lat| ≥ 58°, 38 Observatorien, davon ~33 offen) wurde
-  vom Berlin-Zentrum (cap 40) systematisch ausgeschlossen — ein zweiter
-  Fanout-Block (Zentrum 66°N 20°E, cap 12) trägt den skandinavisch-
-  russischen Sektor; ABK erscheint doppelt (fester Block = Probe-Anker).
-  Die Retro-Blatt-Zeile läuft über `best-avail` mit benannten
+  `quasi-def` bis ~1 Monat zurück (P366D max je Request). Die
+  Retro-Blatt-Zeile läuft über `best-avail` mit benannten
   Status-Grenzen ODER `quasi-def` (2012→, monatsverzögert) — Jahres-
   Schleife im Retro-Atom.
 - Struktur-Reader: netCDF-3 (CDF-1 + CDF-2, std-only) in src/netcdf.rs
@@ -1727,13 +1735,14 @@ wird erst auf das Wort des Operators; bis dahin pending (0 honored).
   Pflichten geerbt: Mehrfachvergleichskorrektur, Lag-Sweep,
   KDE-Sensitivität, Kadenz-Angleich (1-min/3-h). GIC (electric) hat
   keinen keyless Feed — späterer Kanal, keine Fabrication.
-- Blatt III — LAIC (Nadel IV): die Richtung Lithosphäre →
-  Ionosphäre. Auftrag:
-  `docs/handover/handover-2026-08-21-blatt-laic-pfeilrichtung.md`.
-  USGS-FDSNWS-Katalog (Port pending — refusal_ledger-Befund
-  extract-void beachten), Swarm-VirES lebt (sources.φ:1100), CSES
-  pending Recherche, INTERMAGNET lebt (:1067). Kern: Offline-Stapelung
-  gegen das Null-Ensemble — ohne sie bleibt der Befund Befund.
+- Blatt III — LAIC (Nadel IV): Blatt 1 steht (2026-08-21) — Stille in
+  beiden Richtungen, Solar-Kontrolle still (n = 176) — Befund:
+  `docs/surveys/survey-2026-08-21-laic-pfeilrichtung.md`. Instrument B
+  (`src/bin/laic_probe.rs`): 72-h-Fensterstapelung gegen das
+  Null-Ensemble (Zählrate M≥2 im 2000-km-Radius × INTERMAGNET-F,
+  USGS-FDSN, 10 phasenrandomisierte Surrogate je Serie); Instrument A
+  (Ereignisrate) ungebaut. Offen: TEC-Port/CSES, volle Ära,
+  FAC-Stapel unterbestimmt.
 
 ## Doku-Drift
 

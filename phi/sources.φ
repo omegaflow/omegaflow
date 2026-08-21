@@ -1076,22 +1076,9 @@ field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square e
 
 url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id={station}/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
 ttl 86400
-on earth 66.0 20.0 0
-stations https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetCapabilities
-fanout 12
-fanout_delay 15
-hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
-hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
-field intermagnet_xyz_x_nt intermagnet_xyz_x_nt inverse-square em nT 86400 0.0 0.0
-field intermagnet_xyz_y_nt intermagnet_xyz_y_nt inverse-square em nT 86400 0.0 0.0
-field intermagnet_xyz_z_nt intermagnet_xyz_z_nt inverse-square em nT 86400 0.0 0.0
-field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square em nT 86400 0.0 0.0
-
-url https://imag-data.bgs.ac.uk/GIN_V1/hapi/data?id={station}/best-avail/PT1M/xyzf&start={week_ago}T00:00:00Z&stop={now}Z&format=json
-ttl 86400
 on earth 52.5 13.4 0
 stations https://imag-data.bgs.ac.uk/GIN_V1/GINServices?Request=GetCapabilities
-fanout 40
+fanout 154
 fanout_delay 15
 hapi Field_Vector.0=intermagnet_xyz_x_nt Field_Vector.1=intermagnet_xyz_y_nt Field_Vector.2=intermagnet_xyz_z_nt Field_Magnitude=magnetosphere_total_field_nt
 hapi_fill Field_Vector=99999.0 Field_Magnitude=99999.0
