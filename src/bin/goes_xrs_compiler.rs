@@ -21,7 +21,7 @@ fn arg_value(args: &[String], name: &str) -> Option<String> {
         .cloned()
 }
 
-fn fetch(url: &str) -> Option<String> {
+fn fetch(url: &str) -> Option<Vec<u8>> {
     let out = Command::new("curl")
         .arg("-sSf")
         .arg("--retry")
@@ -32,7 +32,7 @@ fn fetch(url: &str) -> Option<String> {
         .output()
         .ok()?;
     if out.status.success() {
-        String::from_utf8(out.stdout).ok()
+        Some(out.stdout)
     } else {
         eprintln!(
             "fetch http {}: {}",
@@ -117,8 +117,14 @@ fn parse_nc(
     let time_raw = file.read_dataset("time").ok()?;
     let flux_a = file.read_dataset("xrsa_flux").ok()?;
     let flux_b = file.read_dataset("xrsb_flux").ok()?;
-    let flag_a = file.read_dataset("xrsa_flag").ok()?;
-    let flag_b = file.read_dataset("xrsb_flag").ok()?;
+    let flag_a = file
+        .read_dataset("xrsa_flag")
+        .or_else(|_| file.read_dataset("xrsa_flags"))
+        .ok()?;
+    let flag_b = file
+        .read_dataset("xrsb_flag")
+        .or_else(|_| file.read_dataset("xrsb_flags"))
+        .ok()?;
     let n = time_raw.len() / 8;
     if flux_a.len() != n * 4
         || flux_b.len() != n * 4
@@ -139,7 +145,17 @@ fn parse_nc(
         if t == FILL || !t.is_finite() {
             continue;
         }
-        let t_unix = t + EPOCH_UNIX;
+        let day_1970 = (t / 86400.0).floor() as i64;
+        let day_2000 = ((t + EPOCH_UNIX) / 86400.0).floor() as i64;
+        let file_day = std::path::Path::new(path)
+            .file_name()
+            .and_then(|n| n.to_str())
+            .and_then(filename_day);
+        let t_unix = match file_day {
+            Some(fd) if (day_1970 - fd).abs() <= (day_2000 - fd).abs() => t,
+            Some(_) => t + EPOCH_UNIX,
+            None => t + EPOCH_UNIX,
+        };
         let day = (t_unix / 86400.0).floor() as i64;
         if day < start_day || day > end_day {
             continue;
@@ -183,7 +199,7 @@ fn harvest_unit(
         );
         return (0, 1);
     };
-    let files = index_files(&html);
+    let files = index_files(&String::from_utf8_lossy(&html));
     let mut rows = 0usize;
     let mut voids = 0usize;
     for name in files {
@@ -196,12 +212,12 @@ fn harvest_unit(
         let cache_path = format!("{}/{}_{}", cache_dir, sat, name);
         if std::fs::metadata(&cache_path).is_err() {
             let url = format!("{BASE}/{sat}/xrsf-l2-avg1m_science/{year}/{month:02}/{name}");
-            let Some(text) = fetch(&url) else {
+            let Some(bytes) = fetch(&url) else {
                 eprintln!("file {}: fetch void — the day stays unharvested", name);
                 voids += 1;
                 continue;
             };
-            if std::fs::write(&cache_path, text.as_bytes()).is_err() {
+            if std::fs::write(&cache_path, &bytes).is_err() {
                 eprintln!("file {}: cache write void", name);
                 voids += 1;
                 continue;
