@@ -11152,7 +11152,7 @@ fn live_sweep(
         }
         let url = resolve_secret(&url, env);
         let headers = render_headers(&s.headers, env);
-        let body = match fetch_one(&url, None, &headers, s.ttl) {
+        let body = match fetch_one(&url, None, &headers, s.ttl, Some(now)) {
             Some(b) => b,
             None => {
                 findings.push(VoidFinding {
@@ -11658,6 +11658,7 @@ fn fetch_one(
     body: Option<&str>,
     headers: &[(String, String)],
     ttl: u64,
+    now: Option<f64>,
 ) -> Option<String> {
     let manifest = cdn_manifest_map();
     let asset_name = |u: &str| -> String {
@@ -11671,7 +11672,7 @@ fn fetch_one(
             let name = asset_name(url);
             if !name.is_empty() {
                 let cache_path = format!("/tmp/archivar_cache/{}/{}.json", netloc, name);
-                if cache_fresh(&cache_path, ttl) {
+                if now.map_or(false, |n| cache_fresh_at(&cache_path, ttl, n)) {
                     if let Some(cached) = std::fs::read_to_string(&cache_path).ok() {
                         return Some(cached);
                     }
@@ -11682,8 +11683,15 @@ fn fetch_one(
                         if let Some(parent) = std::path::Path::new(&cache_path).parent() {
                             let _ = std::fs::create_dir_all(parent);
                         }
-                        if std::fs::write(&cache_path, cdn_body.as_bytes()).is_err() {
-                            eprintln!("cache {}: write void — refetch next cycle", cache_path);
+                        match std::fs::write(&cache_path, cdn_body.as_bytes()) {
+                            Ok(()) => {
+                                if let Some(n) = now {
+                                    write_epoch_stamp(&cache_path, n);
+                                }
+                            }
+                            Err(_) => {
+                                eprintln!("cache {}: write void — refetch next cycle", cache_path)
+                            }
                         }
                         return Some(cdn_body);
                     }
@@ -11700,8 +11708,15 @@ fn fetch_one(
                 if let Some(parent) = std::path::Path::new(&cache_path).parent() {
                     let _ = std::fs::create_dir_all(parent);
                 }
-                if std::fs::write(&cache_path, r.as_bytes()).is_err() {
-                    eprintln!("cache {}: write void — refetch next cycle", cache_path);
+                match std::fs::write(&cache_path, r.as_bytes()) {
+                    Ok(()) => {
+                        if let Some(n) = now {
+                            write_epoch_stamp(&cache_path, n);
+                        }
+                    }
+                    Err(_) => {
+                        eprintln!("cache {}: write void — refetch next cycle", cache_path)
+                    }
                 }
             }
         }
@@ -11722,6 +11737,34 @@ fn cache_fresh(path: &str, ttl: u64) -> bool {
         Ok(age) => age.as_secs() < ttl,
         Err(_) => false,
     }
+}
+
+fn cache_fresh_at(path: &str, ttl: u64, t_presence: f64) -> bool {
+    match read_epoch_stamp(path) {
+        Some(epoch) => (t_presence - epoch).abs() < ttl as f64,
+        None => false,
+    }
+}
+
+fn read_epoch_stamp(path: &str) -> Option<f64> {
+    let stamp_path = format!("{}.epoch", path);
+    std::fs::read_to_string(stamp_path)
+        .ok()
+        .and_then(|t| t.trim().parse::<f64>().ok())
+}
+
+fn write_epoch_stamp(path: &str, epoch: f64) {
+    let stamp_path = format!("{}.epoch", path);
+    if std::fs::write(&stamp_path, epoch.to_string()).is_err() {
+        eprintln!(
+            "cache {}: epoch stamp write void — refetch next cycle",
+            path
+        );
+    }
+}
+
+fn machine_now_tdb() -> Option<f64> {
+    embedded_lsk().and_then(|l| l.system_now_tdb())
 }
 
 fn is_leap(y: u32) -> bool {
@@ -12091,7 +12134,7 @@ fn render_source_url(
     }
     if url.contains("{nearest_station}") {
         if let Some(ref st_url) = src.stations_url {
-            let stations = if let Some(body) = fetch_one(st_url, None, &[], 86400) {
+            let stations = if let Some(body) = fetch_one(st_url, None, &[], 86400, Some(tdb)) {
                 if let Some(j) = parse_json(&body) {
                     let arr = jpath_val(&j, &src.stations_path).and_then(|v| {
                         if let JsonVal::Arr(a) = v {
@@ -13428,7 +13471,7 @@ fn probe_one(
     let url = url.replace("ZZ", "Z").replace("  ", " ");
     let headers = render_headers(&src.headers, env);
     let raw = if fetchone {
-        fetch_one(&url, None, &headers, src.ttl)
+        fetch_one(&url, None, &headers, src.ttl, Some(now))
     } else {
         fetch_raw_probe(&url, None, &headers)
     };
@@ -13607,7 +13650,7 @@ fn probe_mode(
         if src.body.as_deref() != Some("naif0012") {
             continue;
         }
-        if let Some(text) = fetch_one(&src.url, None, &[], src.ttl) {
+        if let Some(text) = fetch_one(&src.url, None, &[], src.ttl, machine_now_tdb()) {
             lsk = crate::lsk::parse(&text);
         }
     }
@@ -13617,6 +13660,7 @@ fn probe_mode(
             None,
             &[],
             NAIF_LSK_TTL_SECS,
+            machine_now_tdb(),
         ) {
             lsk = crate::lsk::parse(&text);
         }
@@ -14382,7 +14426,7 @@ fn ci_mode(dir: &str) -> i32 {
         if src.body.as_deref() != Some("naif0012") {
             continue;
         }
-        if let Some(text) = fetch_one(&src.url, None, &[], src.ttl) {
+        if let Some(text) = fetch_one(&src.url, None, &[], src.ttl, machine_now_tdb()) {
             lsk = crate::lsk::parse(&text);
         }
     }
@@ -14392,6 +14436,7 @@ fn ci_mode(dir: &str) -> i32 {
             None,
             &[],
             NAIF_LSK_TTL_SECS,
+            machine_now_tdb(),
         ) {
             lsk = crate::lsk::parse(&text);
         }
@@ -14853,7 +14898,7 @@ fn draft_url_mode(path: &str, env: &HashMap<String, String>, fetchone: bool) -> 
                 }
                 let url = resolve_secret(&urls[i], env);
                 let raw = if fetchone {
-                    fetch_one(&url, None, &[], 3600)
+                    fetch_one(&url, None, &[], 3600, machine_now_tdb())
                 } else {
                     fetch_raw_probe(&url, None, &[])
                 };
@@ -15339,7 +15384,7 @@ fn url_probe_mode(path: &str, env: &HashMap<String, String>, fetchone: bool, jin
                 }
                 let url = resolve_secret(&urls[i], env);
                 let raw = if fetchone {
-                    fetch_one(&url, None, &[], 3600)
+                    fetch_one(&url, None, &[], 3600, machine_now_tdb())
                 } else {
                     fetch_raw_probe(&url, None, &[])
                 };
@@ -16127,6 +16172,19 @@ pub fn main_flow() {
             eprintln!("the window closed — the ω-loop ends");
             break;
         }
+        while let Ok((name, pt, px, py, pz, pr)) = presence_rx.try_recv() {
+            archive.presence.insert(name, (pt, px, py, pz, pr));
+        }
+        let now = match archive.presence.get("native").map(|p| p.0) {
+            Some(t) if t.is_finite() && t > 0.0 => t,
+            _ => match system_now(&archive.time) {
+                Some(t) => t,
+                None => {
+                    thread::sleep(std::time::Duration::from_secs_f64(cadence));
+                    continue;
+                }
+            },
+        };
         for i in 0..archive.sources.len() {
             if archive.sources[i].format != "kernel_text" {
                 continue;
@@ -16138,7 +16196,7 @@ pub fn main_flow() {
             let ttl = archive.sources[i].ttl;
             let cache_path = format!("/tmp/omegaflow_kernel_{}.txt", kernel_body);
             if !cache_fresh(&cache_path, ttl) {
-                let Some(text) = fetch_one(&url, None, &[], ttl) else {
+                let Some(text) = fetch_one(&url, None, &[], ttl, Some(now)) else {
                     continue;
                 };
                 if std::fs::write(&cache_path, text.as_bytes()).is_err() {
@@ -16177,7 +16235,7 @@ pub fn main_flow() {
                 continue;
             }
         };
-        let now = match lsk.system_now_tdb() {
+        let wall_entered = match lsk.system_now_tdb() {
             Some(t) => t,
             None => {
                 thread::sleep(std::time::Duration::from_secs_f64(cadence));
@@ -16388,9 +16446,6 @@ pub fn main_flow() {
                     fetched_samples.push(sample);
                 }
             }
-        }
-        while let Ok((name, pt, px, py, pz, pr)) = presence_rx.try_recv() {
-            archive.presence.insert(name, (pt, px, py, pz, pr));
         }
         for i in 0..archive.sources.len() {
             let origin = i as u32;
@@ -17416,7 +17471,7 @@ pub fn main_flow() {
                 let body =
                     render_source_body(&src_clone, pos.0, pos.1, pos.2, now, r, &eph_arc, &lsk_c);
                 let headers = render_headers(&src_clone.headers, &e);
-                let raw = fetch_one(&url, body.as_deref(), &headers, src_clone.ttl);
+                let raw = fetch_one(&url, body.as_deref(), &headers, src_clone.ttl, Some(now));
                 let fetch_ok = raw.is_some();
                 let channels = match raw {
                     Some(ref r) => match extract(&src_clone, r, now, &lsk_c) {
@@ -17546,7 +17601,7 @@ pub fn main_flow() {
             r.accept(f.clone());
         }
         let elapsed = match lsk.system_now_tdb() {
-            Some(t) => t - now,
+            Some(t) => t - wall_entered,
             None => cadence,
         };
         if elapsed < cadence {

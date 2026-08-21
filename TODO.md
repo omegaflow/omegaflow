@@ -1268,7 +1268,16 @@ Atomen — S5/S6-Karte), fischplan-kataloge-2026-08-20.md (exakte
 Tabellen-IDs + Spalten der zweiten Reihe). Die Survey-Tafel
 ist Pflichtlektüre einer neuen Session.
 
-## 4D-Wahrheit — Kinematische Dilatation (Übergabe 2026-08-21, pending)
+## 4D-Wahrheit — Kinematische Dilatation (Übergabe 2026-08-21)
+
+Atom 1 (Kill the Now-Bias) ERLEDIGT (2026-08-21): Daten-Caches unter
+/tmp/archivar_cache/ tragen einen Epochen-Stempel (cache_fresh_at,
+|t_presence − E| < ttl), der ω-Loop rechnet in Beobachter-Zeit
+(native t_presence, Fallback Maschinen-TDB = Boot-Wahrheit), cdn_fresh
+bleibt Ernte-Uhr, Asset-Caches (Ephemeriden-Bins, Kernel-Texts) bleiben
+mtime. Offen: Atome 2–5 (4D-Vektoren im Protokoll, Ruhe-Gate +
+Relativ-Kinematik mit Φ·Median-Schwelle, temporaler Fetch,
+Sprung-Fetch).
 
 Auftrag: docs/handover/handover-2026-08-21-4d-wahrheit.md — der
 Archivar lebt auf der Weltlinie des Beobachters; fünf Atome, eine

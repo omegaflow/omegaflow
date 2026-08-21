@@ -70,7 +70,7 @@ darf sie nicht zurückbauen; ihre Tests bleiben grün.
 
 ## Die Atome (Reihenfolge ist Teil des Auftrags)
 
-### Atom 1 — Kill the Now-Bias
+### Atom 1 — Kill the Now-Bias — ERLEDIGT (2026-08-21)
 
 - **Daten-Caches** (per-Quelle tmp-Dateien, `/tmp/archivar_cache/`)
   werden **epochen-gestempelt**: ein Stempel E wird mit der Datei
