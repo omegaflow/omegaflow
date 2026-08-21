@@ -1,0 +1,80 @@
+name: Release — Binaries
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            artifact: omegaflow_linux
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            artifact: omegaflow_windows.exe
+          - os: macos-latest
+            target: x86_64-apple-darwin
+            artifact: omegaflow_macos_intel
+          - os: macos-latest
+            target: aarch64-apple-darwin
+            artifact: omegaflow_macos_arm64
+          - os: ubuntu-latest
+            target: aarch64-unknown-linux-gnu
+            artifact: omegaflow_linux_arm64
+    steps:
+    - uses: actions/checkout@v4
+    - if: matrix.target == 'aarch64-unknown-linux-gnu'
+      run: |
+        sudo apt-get update -qq
+        sudo apt-get install -y -qq gcc-aarch64-linux-gnu
+        echo "CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER=aarch64-linux-gnu-gcc" >> $GITHUB_ENV
+    - uses: actions-rust-lang/setup-rust-toolchain@v1
+      with:
+        target: ${{ matrix.target }}
+    - run: cargo build --release --target ${{ matrix.target }}
+    - shell: bash
+      run: |
+        BIN="target/${{ matrix.target }}/release/omegaflow"
+        if [ -f "$BIN" ]; then cp "$BIN" "${{ matrix.artifact }}"; fi
+        if [ -f "$BIN.exe" ]; then cp "$BIN.exe" "${{ matrix.artifact }}"; fi
+    - uses: actions/upload-artifact@v4
+      with:
+        name: ${{ matrix.artifact }}
+        path: ${{ matrix.artifact }}
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+    steps:
+    - uses: actions/download-artifact@v4
+      with:
+        pattern: '*'
+        merge-multiple: true
+        path: dist
+    - run: |
+        if [ "${{ github.event_name }}" = "push" ]; then
+          echo "TAG=${{ github.ref_name }}" >> "$GITHUB_ENV"
+        else
+          echo "TAG=v$(date -u +%Y-%m-%d)" >> "$GITHUB_ENV"
+        fi
+    - run: |
+        cd dist
+        sha256sum omegaflow_linux omegaflow_linux_arm64 omegaflow_macos_intel omegaflow_macos_arm64 omegaflow_windows.exe > SHA256SUMS.txt
+    - run: |
+        gh release create "$TAG" \
+          dist/omegaflow_linux \
+          dist/omegaflow_linux_arm64 \
+          dist/omegaflow_macos_intel \
+          dist/omegaflow_macos_arm64 \
+          dist/omegaflow_windows.exe \
+          dist/SHA256SUMS.txt \
+          --title "$TAG" \
+          --generate-notes \
+          --repo omegaflow/omegaflow

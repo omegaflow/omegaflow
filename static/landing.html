@@ -129,18 +129,19 @@ if (isMobile) {
         : 'Ω needs a Linux host. Desktop or Android/Termux.';
     Φ.classList.remove('pulse');
 } else {
-    φ.href = binary;
-    Φ.href = 'omegaflow_sources.tar.gz';
+    φ.href = 'https://github.com/omegaflow/omegaflow/releases/latest/download/' + binary;
+    Φ.href = 'https://github.com/omegaflow/omegaflow/releases/latest/download/omegaflow_sources.tar.gz';
     info.textContent = 'detecting…';
 }
 
+const base = 'https://github.com/omegaflow/omegaflow/releases/latest/download/';
 const allLinks = [
-    ['Linux (x64)', 'omegaflow_linux'],
-    ['Linux (ARM64)', 'omegaflow_linux_arm64'],
-    ['macOS (Apple Silicon)', 'omegaflow_macos_arm64'],
-    ['macOS (Intel)', 'omegaflow_macos_intel'],
-    ['Windows (x64)', 'omegaflow_windows.exe'],
-    ['Android (Termux)', 'omegaflow_termux_bootstrap.zip'],
+    ['Linux (x64)', base + 'omegaflow_linux'],
+    ['Linux (ARM64)', base + 'omegaflow_linux_arm64'],
+    ['macOS (Apple Silicon)', base + 'omegaflow_macos_arm64'],
+    ['macOS (Intel)', base + 'omegaflow_macos_intel'],
+    ['Windows (x64)', base + 'omegaflow_windows.exe'],
+    ['Android (Termux)', base + 'omegaflow_termux_bootstrap.zip'],
 ];
 platforms.innerHTML = allLinks.map(l => `<a href="${l[1]}">${l[0]}</a>`).join(' · ');
 
