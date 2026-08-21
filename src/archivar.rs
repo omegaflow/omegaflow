@@ -16822,6 +16822,41 @@ fn enso_harvest(tx: mpsc::Sender<EnsoCell>, time: Arc<Mutex<Option<LeapSeconds>>
     }
 }
 
+#[cfg(test)]
+mod enso_parser_tests {
+    use super::*;
+
+    const FIXTURE: &str = "#YY  MM DD hh mm WDIR WSPD GST  WVHT   DPD   APD MWD   PRES  ATMP  WTMP  DEWP  VIS PTDY  TIDE\n#yr  mo dy hr mn degT m/s  m/s     m   sec   sec degT   hPa  degC  degC  degC  nmi  hPa    ft\n2026 08 21 15 10 100  3.0  4.0    MM    MM    MM  MM 1013.5  26.0  26.7  23.1   MM   MM    MM\n2026 08 21 15 00 100   MM  4.0    MM    MM    MM  MM 1013.3  26.0  26.7  22.9   MM -0.7    MM\n2026 08 21 14 50 100  4.0  5.0   1.5     8   6.2 100 1013.2  26.1    MM  23.0   MM   MM    MM\n";
+
+    #[test]
+    fn enso_realtime2_parse_splits_wind_and_sst_with_mm_skips() {
+        let lsk = embedded_lsk().expect("embedded lsk");
+        let (wind, sst) = enso_realtime2_parse(FIXTURE, &lsk).expect("fixture parses");
+        assert_eq!(wind.len(), 2);
+        assert_eq!(sst.len(), 2);
+        assert_eq!(wind[0].1, 3.0);
+        assert_eq!(wind[1].1, 4.0);
+        assert_eq!(sst[0].1, 26.7);
+        assert_eq!(sst[1].1, 26.7);
+        assert_eq!(wind[0].0 - wind[1].0, 1200.0);
+        assert_eq!(sst[0].0 - sst[1].0, 600.0);
+    }
+
+    #[test]
+    fn enso_realtime2_parse_missing_wtmp_column_is_none() {
+        let lsk = embedded_lsk().expect("embedded lsk");
+        let body = "#YY  MM DD hh mm WDIR WSPD GST\n2026 08 21 15 10 100  3.0  4.0\n";
+        assert!(enso_realtime2_parse(body, &lsk).is_none());
+    }
+
+    #[test]
+    fn enso_realtime2_parse_all_missing_rows_is_none() {
+        let lsk = embedded_lsk().expect("embedded lsk");
+        let body = "#YY  MM DD hh mm WDIR WSPD GST  WVHT   DPD   APD MWD   PRES  ATMP  WTMP  DEWP  VIS PTDY  TIDE\n2026 08 21 15 10  MM   MM   MM    MM    MM    MM  MM    MM    MM    MM    MM   MM   MM    MM\n";
+        assert!(enso_realtime2_parse(body, &lsk).is_none());
+    }
+}
+
 struct RefusalLedger {
     path: std::path::PathBuf,
     seen: std::collections::HashSet<String>,

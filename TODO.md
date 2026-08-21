@@ -511,12 +511,40 @@ des Blatts: Richtung + Lag, gemessen durch die bestehende
 Takens-TE-Maschine. Der Befund ist offen — die Blätter tragen, was die
 Maschine misst.
 
-- **ENSO-Kausalpfeil** (`handover-2026-08-21-enso-kausalpfeil.md`):
-  TE(Wind→SST) gegen TE(SST→Wind) über der NINO3.4-Region, Lag-Sweep
-  0–12 Monate. Quellen pending: GTMBA/TAO-Bojen (ledger.φ geparkt),
-  OISST/CMEMS-ERDDAP (thermal), ERA5/Stationen-Wind (advective) — alle
-  über den einen Pfad, Force-Gate-Urteil je Kanal ins Register. Blatt:
-  Richtung + Lag; Null-Ort außerhalb des Wellenleiters als Nullkontrolle.
+- **ENSO-Kausalpfeil** (`handover-2026-08-21-enso-kausalpfeil.md`) —
+  ERLEDIGT (2026-08-21): die Maschine steht und hat gemessen. Fünf
+  benannte Bojen-Paare (51000/51001/41001/41002/41043 — je eine Boje,
+  zwei Serien: WSPD advective + WTMP thermal aus derselben
+  realtime2-Datei, live verifiziert 2026-08-21; 51002 führt WTMP nur
+  als MM und ist nicht benannt) fluten beim Boot ~45 Tage Historie
+  (6-h-Bins, ENSO_GRID 21600, Ring 256 = 64 d) über `enso_harvest` →
+  `EnsoCell`-Kanal → `enso_rings` in der Mathematikerin. Der
+  Sweep-Rotor fährt je Runde 366 Zellen (61 Shifts −30…+30 d täglich
+  × 2 Richtungen × 3 Bandbreiten h/h/2/2h) durch den unveränderten
+  `te_compute` — die Bandbreite als params.z-Multiplikator (additiv,
+  h=1 bleibt byte-identisch zur CPU-Referenz; der GPU-Crosscheck-Test
+  pinnt 0.5/2.0: Verdict gültig, te ändert sich). Die Sheet-Zeile
+  trägt: Gewinner-Lag, beide Richtungen beim selben Lag, fam
+  (Maximum der Surrogat-TEs der Runde = Familien-Schwelle über
+  M Zellen × 10 Surrogate — die Mehrfachvergleichskorrektur), p̂
+  (empirischer Falsch-positiv-Anteil), M, h-Robustheit (der Gewinner
+  muss an allen drei Bandbreiten über der Schwelle liegen), n-Gate
+  30. Der offene Lag-Sweep-, KDE-Bandbreiten- und
+  Mehrfachvergleichs-Punkt ist FÜR DIESES BLATT geschlossen (die
+  Nadel-III-Registratur bleibt unberührt). Kostenrechnung: 12 Reihen
+  × O(m²) ≈ 690k exp je Zelle (~1 ms GPU), 366 Zellen/Runde ≈
+  12 min Wand, fünf Stationen ≈ 60 min je volle Runde. Erste Messung
+  (Hidden-Lauf 2026-08-21): 51000 — lag 22d, te(ws) 0.335 thr 0.313,
+  te(sw) 0.377 thr 0.289, fam 0.669, p̂ 0.007, M 122, h 1/3 →
+  family bound: kein Befund, die Stille ist die Antwort (0 honored);
+  das Blatt trägt die Runde (blatt-papier-resultat.md).
+  Fehlt-Registratur: die NINO3.4-TAO-Stationen (51007…51311) tragen
+  keine realtime2-Dateien (404, gemessen 2026-08-21) — die
+  äquatoriale Region bleibt quellenlos, die Maschine misst die fünf
+  Tiefsee-Paare; 41001 trägt 105 Bins (~26 d). Offen: die
+  Folge-Runden der übrigen vier Bojen (der Rotor läuft im Hintergrund
+  weiter); eine GTMBA/OISST-Ernte für die äquatoriale Region bleibt
+  fehlt.
 - **Bz-Paradoxon** (`handover-2026-08-21-bz-paradoxon.md`):
   TE(RTSW-Bz→Bodenmagnetometer) gegen TE(Speed→Bodenmagnetometer), Lag
   0–120 min gegen die L1-Laufzeit. Oben lebt (sources.φ:102/108);
