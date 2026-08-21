@@ -286,14 +286,21 @@ ist mit beiden Einheiten verbraucht (Archivierung im selben Zug;
 Quellen vermessen in
 docs/surveys/survey-2026-08-21-sonnen-abdeckung.md).
 CI-Verdrahtung (2026-08-21, kernel_flatten.yml): die 404-Manifeste
-sind jetzt Schritte des Workflows — `sun` trägt f107_compiler +
-omni2_compiler, der neue Job `solar_xrs` trägt goes_xrs_compiler
-(1995–2020, --decimate-min 60), der neue Job `long_window_probe`
-(needs: [sun, solar_xrs]) lädt beide Assets und fährt den Probe auf
-den echten Serien; sein Log ist das Nadel-Ⅲ-Befund-Register. Bis der
-nächste kernel-flatten-Lauf manifestiert, tragen die Blöcke
-goes_xrs/omni2_serie und der Probe die benannte Verweigerung (0
-honored).
+sind Schritte des Workflows — `sun` trägt f107_compiler +
+omni2_compiler, der Job `solar_xrs` trägt goes_xrs_compiler
+(1995–2020, --decimate-min 60), der Job `long_window_probe`
+(needs: [sun, solar_xrs]) lädt beide Assets und fährt den Probe; sein
+Log ist das Nadel-Ⅲ-Befund-Register.
+404-Auflösung (2026-08-21): f107_penticton.bin und omni2_serie.bin
+lagen direkt auf dem CDN (2 der 3). Der erste solar_xrs-CI-Lauf
+erntete 0 Reihen — Ursache waren drei GOES-Compiler-Bugs, nicht
+Throttle: fetch() las .nc als UTF-8 (stiller void), der Flag-Name
+wechselt zwischen v1-0-0 („xrsa_flags“) und v2-x-x („xrsa_flag“), und
+die Epoche wechselt zwischen „seconds since 1970“ und „… since 2000“
+(fest addiertes EPOCH_UNIX schob 1995 auf 2025). Alle drei behoben
+(0e079ac), verifiziert gegen beide Fixtures; die lokale Ernte
+1995–2020 lädt goes_xrs.bin, danach fährt der Probe. Bis das Asset
+liegt, trägt der goes_xrs-Block die benannte Verweigerung (0 honored).
 Luminositäts-Atom — benannte Grenzen (pending): die Ankerung
 modelliert Isotropie (die Röntgenemission ist richtungsabhängig —
 abgeleitet, nicht gemessen); die Energie-Bänder der Partikel-Dateien
