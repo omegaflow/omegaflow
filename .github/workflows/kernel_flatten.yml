@@ -67,6 +67,15 @@ jobs:
             --ci-mode \
             --omega-g phi/pipeline/katalog/solar_omega_g.φ \
             --index phi/sources_index.φ
+      - name: Flatten asteroid longbow and upload to CDN
+        run: |
+          cargo run --release --bin ephemeris_compiler -- \
+            --fetch-from phi/sources_index.φ \
+            --systems asteroids \
+            --small-bodies \
+            --dest kernels \
+            --ci-mode \
+            --index phi/sources_index.φ
       - name: Compile Horizons bodies and upload to CDN
         run: |
           cargo run --release --bin horizons_compiler -- --ci-mode
