@@ -123,6 +123,25 @@ f107→xray n 7 no statement — das 7-Tage-GOES-Fenster trägt die
 F10.7-Frage nicht (n<30, Unterbestimmtheit, keine Fabrikation; die
 Antwort braucht das 30-Tage-Archiv = Atom 3 der Sonnen-Abdeckung,
 xrays-30-day.json trägt 404).
+F10.7-Historie (2026-08-21, Atom 5 der Sonnen-Abdeckung — der
+F10.7-Teil): `src/bin/f107_compiler.rs` erntet die 80 NCEI-Jahresdateien
+`pent_noontime-flux_1947..2026.txt` (noontime-flux, keyless; URL
+ngdc.noaa.gov/stp/space-weather/solar-data/solar-features/solar-radio/
+noontime-flux/penticton — der alte ngdc/stp/solar-data-Pfad trägt 404)
+→ `f107_penticton.bin` (Magie "F107", 28337 Records 1947-02-14 →
+2026-06-30, roundtrip-geprüft, `--ci-mode` → CDN). Zeile `YYMMDD PENT
+<flux>` (sfu → W/m²/Hz); fehlende Messungen sind Abwesenheit (Zeile ohne
+Wert) — Skip, nie 0.0; sfu <= 0 übersprungen. Epoche = Kalendertag
+(Tage seit 1970) — der LSK-Pfad lässt prä-1972-Epochen void (erste
+Schaltsekunde), die Datei trägt den Kalendertag aber für alle Jahre;
+Schaltsekunden liegen unter der Tagespräzision der Mittags-Messung.
+Die Datei trägt ~2 Monate Veröffentlichungs-Lag (letzter Record
+2026-06-30) — die Live-Quelle f107_cm_flux.json deckt die letzten 40
+Tage. Offen bleibt: der Lang-Fenster-Probe, der F10.7-Historie ×
+GOES-XRS-Historie (Atom 3) über Jahre paart — wartet auf Atom 3; Mg II
+und SSN bleiben offen (SSN ist ein Index, keine Messung — siehe
+docs/concepts/sunspots.md; Mg II ist ein dimensionsloser Index, der
+Force-Gate-Litmus fehlt noch).
 A=A-Reparatur (2026-08-21): der solar-radio-flux-Block ist aus dem
 Register entfernt — path 0.details.0.flux war eine Chimäre (je Fetch
 eine andere Station/Frequenz, Frame on earth 0 0 0 fabriziert) →
