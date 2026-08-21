@@ -1,6 +1,6 @@
 use crate::archivar::{
     body_barycenter_position, sense_membrane, system_now, Buffer, CurveSet, LeapSeconds, Radiator,
-    SampleRecord, PARSEC_M,
+    SampleRecord, SolarCell, SolarChannel, PARSEC_M, SOLAR_COARSE_GRID, SOLAR_FAST_GRID,
 };
 const FIELD_WGSL: &str = r#"
 struct VP { surface: vec4f, right: vec4f, up: vec4f, forward: vec4f, expose_ex: vec4f, presence: vec4f, ft_ref_a: vec4f, ft_ref_b: vec4f, ft_ref_c: vec4f };
@@ -810,6 +810,38 @@ const THRUST_STEP: f64 = 64.0;
 const JUMP_BODIES: [&str; 9] = [
     "sun", "mercury", "venus", "earth", "mars", "jupiter", "saturn", "uranus", "neptune",
 ];
+const SOLAR_RING_MAX: usize = 256;
+const SOLAR_N_GATE: usize = 30;
+const SOLAR_FAST_PAIRS: [(SolarChannel, SolarChannel); 20] = [
+    (SolarChannel::Xray, SolarChannel::Euv304),
+    (SolarChannel::Xray, SolarChannel::Euv284),
+    (SolarChannel::Xray, SolarChannel::BzGsm),
+    (SolarChannel::Xray, SolarChannel::Density),
+    (SolarChannel::Euv304, SolarChannel::Xray),
+    (SolarChannel::Euv304, SolarChannel::Euv284),
+    (SolarChannel::Euv304, SolarChannel::BzGsm),
+    (SolarChannel::Euv304, SolarChannel::Density),
+    (SolarChannel::Euv284, SolarChannel::Xray),
+    (SolarChannel::Euv284, SolarChannel::Euv304),
+    (SolarChannel::Euv284, SolarChannel::BzGsm),
+    (SolarChannel::Euv284, SolarChannel::Density),
+    (SolarChannel::BzGsm, SolarChannel::Xray),
+    (SolarChannel::BzGsm, SolarChannel::Euv304),
+    (SolarChannel::BzGsm, SolarChannel::Euv284),
+    (SolarChannel::BzGsm, SolarChannel::Density),
+    (SolarChannel::Density, SolarChannel::Xray),
+    (SolarChannel::Density, SolarChannel::Euv304),
+    (SolarChannel::Density, SolarChannel::Euv284),
+    (SolarChannel::Density, SolarChannel::BzGsm),
+];
+const SOLAR_COARSE_PAIRS: [(SolarChannel, SolarChannel); 6] = [
+    (SolarChannel::F107, SolarChannel::Xray),
+    (SolarChannel::F107, SolarChannel::Euv304),
+    (SolarChannel::F107, SolarChannel::Euv284),
+    (SolarChannel::Xray, SolarChannel::F107),
+    (SolarChannel::Euv304, SolarChannel::F107),
+    (SolarChannel::Euv284, SolarChannel::F107),
+];
 
 pub type Record = SampleRecord;
 
@@ -1066,6 +1098,7 @@ impl EMOscillator {
         consent: Arc<AtomicBool>,
         acoustic_tx: mpsc::Sender<PresenceFrame>,
         seismic_tx: mpsc::Sender<PresenceFrame>,
+        solar_rx: mpsc::Receiver<SolarCell>,
     ) -> Self {
         let (tx, rx) = mpsc::sync_channel::<Arc<Buffer>>(2);
         let (req_tx, req_rx) = mpsc::sync_channel::<SenseReq>(1);
@@ -1150,6 +1183,7 @@ impl EMOscillator {
                 consent,
                 acoustic_tx,
                 seismic_tx,
+                solar_rx,
             );
         });
         Self {
@@ -1412,6 +1446,22 @@ struct NativeApp {
     ring_filled: usize,
     ring_gen: u64,
     pe_ring: Vec<f64>,
+    solar_rx: mpsc::Receiver<SolarCell>,
+    solar_rings: [[Vec<(u64, f32)>; 6]; 2],
+    solar_fast_rotor: usize,
+    solar_coarse_rotor: usize,
+    solar_fast_last_bin: u64,
+    solar_coarse_last_bin: u64,
+    solar_fast_due: bool,
+    solar_coarse_due: bool,
+    solar_te_bind: Option<wgpu::BindGroup>,
+    solar_te_series_buf: Option<wgpu::Buffer>,
+    solar_te_param_buf: Option<wgpu::Buffer>,
+    solar_te_out_buf: Option<wgpu::Buffer>,
+    solar_te_read_buf: Option<wgpu::Buffer>,
+    solar_te_map: Option<Arc<AtomicBool>>,
+    solar_pending: Option<(String, usize)>,
+    solar_te_named: String,
     hud_topology: Option<(usize, usize, Option<f64>, Option<f64>)>,
     frame_ms_ema: f64,
     field_permeability: f32,
@@ -1470,6 +1520,7 @@ impl NativeApp {
         consent: Arc<AtomicBool>,
         acoustic_tx: mpsc::Sender<PresenceFrame>,
         seismic_tx: mpsc::Sender<PresenceFrame>,
+        solar_rx: mpsc::Receiver<SolarCell>,
     ) -> Self {
         let (grid0, p0, q0) = window_state_load(WINDOW_STATE_PATH);
         Self {
@@ -1483,6 +1534,7 @@ impl NativeApp {
             consent,
             acoustic_tx,
             seismic_tx,
+            solar_rx,
             silent: std::env::var("OMEGAFLOW_HIDDEN").is_ok(),
             window: None,
             surface: None,
@@ -1537,6 +1589,21 @@ impl NativeApp {
             ring_filled: 0,
             ring_gen: 0,
             pe_ring: Vec::with_capacity(16),
+            solar_rings: std::array::from_fn(|_| std::array::from_fn(|_| Vec::new())),
+            solar_fast_rotor: 0,
+            solar_coarse_rotor: 0,
+            solar_fast_last_bin: 0,
+            solar_coarse_last_bin: 0,
+            solar_fast_due: false,
+            solar_coarse_due: false,
+            solar_te_bind: None,
+            solar_te_series_buf: None,
+            solar_te_param_buf: None,
+            solar_te_out_buf: None,
+            solar_te_read_buf: None,
+            solar_te_map: None,
+            solar_pending: None,
+            solar_te_named: String::new(),
             hud_topology: None,
             frame_ms_ema: 0.0,
             field_permeability: 0.0,
@@ -1744,6 +1811,236 @@ impl NativeApp {
             self.te_say(Self::te_absence_word(&verdict));
         }
         final_v
+    }
+
+    fn solar_say(
+        &mut self,
+        label: &str,
+        n: usize,
+        verdict: Option<&crate::te::TopologicalVerdict>,
+        state: &str,
+    ) {
+        let line = match verdict {
+            Some(v) => format!(
+                "solar te {} n {} te {:.3} thr {:.3} tau {}:{} pe {}:{} state {}",
+                label,
+                n,
+                v.te,
+                v.threshold,
+                v.tau_x,
+                v.tau_y,
+                v.pe_x
+                    .map(|p| format!("{:.2}", p))
+                    .unwrap_or_else(|| "-".to_string()),
+                v.pe_y
+                    .map(|p| format!("{:.2}", p))
+                    .unwrap_or_else(|| "-".to_string()),
+                state
+            ),
+            None => format!("solar te {} n {} state {}", label, n, state),
+        };
+        if self.solar_te_named != line {
+            eprintln!("{}", line);
+            self.solar_te_named = line;
+        }
+    }
+
+    fn solar_pair(
+        &self,
+        grid: usize,
+        from: SolarChannel,
+        to: SolarChannel,
+    ) -> (Vec<f32>, Vec<f32>) {
+        let ra = &self.solar_rings[grid][from.idx()];
+        let rb = &self.solar_rings[grid][to.idx()];
+        let mut xs = Vec::new();
+        let mut ys = Vec::new();
+        let (mut i, mut j) = (0usize, 0usize);
+        while i < ra.len() && j < rb.len() {
+            match ra[i].0.cmp(&rb[j].0) {
+                std::cmp::Ordering::Less => i += 1,
+                std::cmp::Ordering::Greater => j += 1,
+                std::cmp::Ordering::Equal => {
+                    ys.push(ra[i].1);
+                    xs.push(rb[j].1);
+                    i += 1;
+                    j += 1;
+                }
+            }
+        }
+        if xs.len() > SOLAR_RING_MAX {
+            let drop = xs.len() - SOLAR_RING_MAX;
+            xs.drain(..drop);
+            ys.drain(..drop);
+        }
+        (xs, ys)
+    }
+
+    fn solar_collect(&mut self) {
+        let Some(prev) = self.solar_te_map.take() else {
+            return;
+        };
+        if !prev.load(Ordering::SeqCst) {
+            self.solar_te_map = Some(prev);
+            return;
+        }
+        let Some(read_buf) = self.solar_te_read_buf.as_ref() else {
+            return;
+        };
+        let verdict = Self::te_read_verdict(read_buf);
+        let v = crate::te::topological_verdict_from_gpu(&verdict);
+        if let Some((l, n)) = self.solar_pending.take() {
+            match v {
+                Some(vv) => {
+                    let state = if vv.te > vv.threshold {
+                        "arrow"
+                    } else {
+                        "silent"
+                    };
+                    self.solar_say(&l, n, Some(&vv), state);
+                }
+                None => self.solar_say(&l, n, None, Self::te_absence_word(&verdict)),
+            }
+        }
+    }
+
+    fn solar_te_probe(&mut self, label: &str, xs: &[f32], ys: &[f32], m: usize) {
+        let Some(device) = self.device.clone() else {
+            return;
+        };
+        let Some(queue) = self.queue.clone() else {
+            return;
+        };
+        let Some(pipe) = self.te_pipe.as_ref() else {
+            return;
+        };
+        let Some(bind) = self.solar_te_bind.as_ref() else {
+            return;
+        };
+        let Some(series_buf) = self.solar_te_series_buf.as_ref() else {
+            return;
+        };
+        let Some(param_buf) = self.solar_te_param_buf.as_ref() else {
+            return;
+        };
+        let Some(out_buf) = self.solar_te_out_buf.as_ref() else {
+            return;
+        };
+        let Some(read_buf) = self.solar_te_read_buf.as_ref() else {
+            return;
+        };
+        let mut data = vec![0f32; 12 * 256];
+        data[0..m].copy_from_slice(xs);
+        data[256..256 + m].copy_from_slice(ys);
+        let mut rng = self.ring_gen.wrapping_add(0x9e3779b97f4a7c15);
+        for s in 0..10 {
+            let surr = crate::te::phase_randomized_surrogate(ys, &mut rng);
+            let off = (2 + s) * 256;
+            data[off..off + m].copy_from_slice(&surr);
+        }
+        queue.write_buffer(series_buf, 0, &le_bytes_f32(&data));
+        let max_lag = (m as f64 / Φ) as u32;
+        let param = [m as u32, max_lag, 0, 0];
+        let mut pb = [0u8; 16];
+        for (i, x) in param.iter().enumerate() {
+            pb[i * 4..i * 4 + 4].copy_from_slice(&x.to_le_bytes());
+        }
+        queue.write_buffer(param_buf, 0, &pb);
+        let mut enc = device.create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
+        {
+            let mut pass = enc.begin_compute_pass(&wgpu::ComputePassDescriptor::default());
+            pass.set_pipeline(pipe);
+            pass.set_bind_group(0, bind, &[]);
+            pass.dispatch_workgroups(1, 1, 1);
+        }
+        enc.copy_buffer_to_buffer(out_buf, 0, read_buf, 0, 288);
+        queue.submit(std::iter::once(enc.finish()));
+        let mapped = Arc::new(AtomicBool::new(false));
+        let m2 = mapped.clone();
+        let slice = read_buf.slice(..);
+        slice.map_async(wgpu::MapMode::Read, move |r| {
+            m2.store(r.is_ok(), Ordering::SeqCst);
+        });
+        let deadline = std::time::Instant::now() + std::time::Duration::from_millis(250);
+        while !mapped.load(Ordering::SeqCst) && std::time::Instant::now() < deadline {
+            device.poll(wgpu::Maintain::Poll);
+        }
+        if !mapped.load(Ordering::SeqCst) {
+            self.solar_te_map = Some(mapped);
+            self.solar_pending = Some((label.to_string(), m));
+            self.solar_say(label, m, None, "readback pending");
+            return;
+        }
+        let verdict = Self::te_read_verdict(read_buf);
+        match crate::te::topological_verdict_from_gpu(&verdict) {
+            Some(v) => {
+                let state = if v.te > v.threshold {
+                    "arrow"
+                } else {
+                    "silent"
+                };
+                self.solar_say(label, m, Some(&v), state);
+            }
+            None => self.solar_say(label, m, None, Self::te_absence_word(&verdict)),
+        }
+    }
+
+    fn solar_dispatch(&mut self, grid: usize, from: SolarChannel, to: SolarChannel) {
+        let label = format!("{}→{}", from.name(), to.name());
+        let (xs, ys) = self.solar_pair(grid, from, to);
+        if xs.len() < SOLAR_N_GATE {
+            self.solar_say(&label, xs.len(), None, "no statement");
+            return;
+        }
+        self.solar_te_probe(&label, &xs, &ys, xs.len());
+    }
+
+    fn solar_tick(&mut self) {
+        let mut max_fast_bin = self.solar_fast_last_bin;
+        let mut max_coarse_bin = self.solar_coarse_last_bin;
+        while let Ok(cell) = self.solar_rx.try_recv() {
+            let grid = match cell.grid {
+                SOLAR_FAST_GRID => 0,
+                SOLAR_COARSE_GRID => 1,
+                _ => continue,
+            };
+            let ring = &mut self.solar_rings[grid][cell.channel.idx()];
+            match ring.binary_search_by_key(&cell.bin, |&(b, _)| b) {
+                Ok(i) => ring[i] = (cell.bin, cell.value),
+                Err(i) => ring.insert(i, (cell.bin, cell.value)),
+            }
+            while ring.len() > SOLAR_RING_MAX {
+                ring.remove(0);
+            }
+            if grid == 0 {
+                max_fast_bin = max_fast_bin.max(cell.bin);
+            } else {
+                max_coarse_bin = max_coarse_bin.max(cell.bin);
+            }
+        }
+        if max_fast_bin > self.solar_fast_last_bin {
+            self.solar_fast_last_bin = max_fast_bin;
+            self.solar_fast_due = true;
+        }
+        if max_coarse_bin > self.solar_coarse_last_bin {
+            self.solar_coarse_last_bin = max_coarse_bin;
+            self.solar_coarse_due = true;
+        }
+        if self.solar_te_map.is_some() {
+            self.solar_collect();
+        }
+        if self.solar_fast_due && self.solar_te_map.is_none() {
+            self.solar_fast_due = false;
+            let (from, to) = SOLAR_FAST_PAIRS[self.solar_fast_rotor % SOLAR_FAST_PAIRS.len()];
+            self.solar_fast_rotor += 1;
+            self.solar_dispatch(0, from, to);
+        }
+        if self.solar_coarse_due && self.solar_te_map.is_none() {
+            self.solar_coarse_due = false;
+            let (from, to) = SOLAR_COARSE_PAIRS[self.solar_coarse_rotor % SOLAR_COARSE_PAIRS.len()];
+            self.solar_coarse_rotor += 1;
+            self.solar_dispatch(1, from, to);
+        }
     }
 
     fn hud_blit(bmp: &mut [u8], stride: usize, w: u32, x: i32, y: i32, ch: char, rgb: [u8; 3]) {
@@ -2854,6 +3151,53 @@ impl NativeApp {
         self.te_param_buf = Some(te_param_buf);
         self.te_out_buf = Some(te_out_buf);
         self.te_read_buf = Some(te_read_buf);
+        let solar_te_series_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: 12288,
+            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        let solar_te_param_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: 16,
+            usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        let solar_te_out_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: 288,
+            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC,
+            mapped_at_creation: false,
+        });
+        let solar_te_read_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: 288,
+            usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        let solar_te_bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
+            label: None,
+            layout: &te_layout,
+            entries: &[
+                wgpu::BindGroupEntry {
+                    binding: 0,
+                    resource: solar_te_series_buf.as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 1,
+                    resource: solar_te_param_buf.as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 2,
+                    resource: solar_te_out_buf.as_entire_binding(),
+                },
+            ],
+        });
+        self.solar_te_bind = Some(solar_te_bind);
+        self.solar_te_series_buf = Some(solar_te_series_buf);
+        self.solar_te_param_buf = Some(solar_te_param_buf);
+        self.solar_te_out_buf = Some(solar_te_out_buf);
+        self.solar_te_read_buf = Some(solar_te_read_buf);
         self.window = Some(window);
         self.surface = Some(surface);
         self.config = Some(config);
@@ -3171,6 +3515,7 @@ impl ApplicationHandler for NativeApp {
                     }
                 }
             }
+            self.solar_tick();
             if let Some((in_te, threshold)) = te_opt {
                 let delta_te = in_te - self.prev_in_te;
                 self.prev_in_te = in_te;
@@ -3553,6 +3898,7 @@ fn run_window(
     consent: Arc<AtomicBool>,
     acoustic_tx: mpsc::Sender<PresenceFrame>,
     seismic_tx: mpsc::Sender<PresenceFrame>,
+    solar_rx: mpsc::Receiver<SolarCell>,
 ) {
     let mut builder = EventLoopBuilder::<()>::default();
     EventLoopBuilderExtX11::with_any_thread(&mut builder, true);
@@ -3587,6 +3933,7 @@ fn run_window(
         consent,
         acoustic_tx,
         seismic_tx,
+        solar_rx,
     );
     if let Some([x, y, z, t]) = presence_init {
         app.p = [x, y, z];
@@ -3996,6 +4343,7 @@ mod tests {
                 Arc::new(AtomicBool::new(false)),
                 mpsc::channel().0,
                 mpsc::channel().0,
+                mpsc::channel().1,
             )
         };
         app.packed_field = vec![0.0; 12];
@@ -4037,6 +4385,7 @@ mod tests {
                 Arc::new(AtomicBool::new(false)),
                 mpsc::channel().0,
                 mpsc::channel().0,
+                mpsc::channel().1,
             )
         };
         app.packed_field = vec![0.0; 12];

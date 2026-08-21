@@ -104,9 +104,25 @@ first gestellt (last trug den ~24 h alten Record). Force-Gate je
 Kanal geführt: em für X-Ray/EUV/F10.7 (die Messung IST Strahlung),
 Bz/Bt/Plasma über ihre Feld-Signatur wie eingetragen. Live-Befund:
 test_live_sources_extract führt alle fünf Solar-Blöcke ohne void,
-nobel probe unverändert (X-Ray n=10078). Offen: der Fluss der
-Kanäle in den probe_ring der GPU (src/mathematikerin.rs:1410) —
-der kausale Pfeil F10.7 ↔ X-Ray wartet auf diese Einheit.
+nobel probe unverändert (X-Ray n=10078). ERLEDIGT (2026-08-21): der
+Fluss der Kanäle in die GPU-TE-Maschine — Architektururteil des Rats
+(Kanal-Ring, nicht Zeilen in te_compute): Ernte-Thread im Archivar
+(solar_harvest, fünf Fetch-URLs je 60-s-Zyklus, Sonnen-Sync GOES
+t−499.005 s / RTSW t−1.481e11/v, bin auf 60-s- und 12-h-Gitter,
+solar_send_bins sendet nur neue Bins, Boot-Flut auf die letzten 256);
+die Mathematikerin hält je Kanal einen Ring (letzte ≤256 Bins,
+solar_rings), ein datengetriebener Rotor (20 schnelle Paare xray/euv304/
+euv284/bz/density je neue 60-s-Zelle, 6 F10.7-Paare je neues 12-h-Bin)
+paart die Zellen und schickt sie durch den unveränderten te_compute
+(eigener Buffer-Satz solar_te_*, dieselbe Pipeline — der Präsenz-Pfad,
+der skalare TE-Pfad und src/te.rs bleiben unberührt). Verdict als
+Maschinenzeile `solar te from→to n te thr tau pe state` (arrow/silent/
+no statement/readback pending). Live-Befund (Hidden-Lauf): xray→euv304
+n 254 te −0.072 thr 0.350 tau 9:67 silent; xray→euv284 n 255 silent;
+f107→xray n 7 no statement — das 7-Tage-GOES-Fenster trägt die
+F10.7-Frage nicht (n<30, Unterbestimmtheit, keine Fabrikation; die
+Antwort braucht das 30-Tage-Archiv = Atom 3 der Sonnen-Abdeckung,
+xrays-30-day.json trägt 404).
 A=A-Reparatur (2026-08-21): der solar-radio-flux-Block ist aus dem
 Register entfernt — path 0.details.0.flux war eine Chimäre (je Fetch
 eine andere Station/Frequenz, Frame on earth 0 0 0 fabriziert) →
