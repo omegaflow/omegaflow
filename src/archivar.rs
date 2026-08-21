@@ -8431,7 +8431,8 @@ field temp temp_c\n";
         };
         let reach = super::dispatch_reach(&[fc], 60.0).expect("em carries a propagation law");
         assert_eq!(reach, C_LIGHT * 60.0 * 64.0);
-        let presences: Vec<(f64, f64, f64, f64, f64)> = vec![(8.0e8, 0.0, 0.0, 0.0, 1.0e12)];
+        let presences: Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64)> =
+            vec![(8.0e8, 0.0, 0.0, 0.0, 1.0e12, 0.0, 0.0, 0.0, 0.0)];
         assert!(
             super::presence_gate(&presences, (0.0, 0.0, 0.0), reach),
             "the em source at the presence anchor must be fetched"
@@ -8440,7 +8441,8 @@ field temp temp_c\n";
 
     #[test]
     fn test_fetch_dispatch_gate_window_anchor_passes_with_zero_reach() {
-        let presences: Vec<(f64, f64, f64, f64, f64)> = vec![(8.0e8, 0.0, 0.0, 0.0, 100.0)];
+        let presences: Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64)> =
+            vec![(8.0e8, 0.0, 0.0, 0.0, 100.0, 0.0, 0.0, 0.0, 0.0)];
         assert!(
             super::presence_gate(&presences, (50.0, 0.0, 0.0), 0.0),
             "an anchor inside the presence window passes on the window range alone"
@@ -8466,7 +8468,8 @@ field temp temp_c\n";
         };
         let reach = super::dispatch_reach(&[fc], 60.0).expect("thermal carries a propagation law");
         assert_eq!(reach, (2.0 * DIFFUSIVITY_THERMAL * 60.0 * 64.0).sqrt());
-        let presences: Vec<(f64, f64, f64, f64, f64)> = vec![(8.0e8, 0.0, 0.0, 0.0, 1.0)];
+        let presences: Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64)> =
+            vec![(8.0e8, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0)];
         assert!(
             super::presence_gate(&presences, (10.0, 0.0, 0.0), reach),
             "the thermal front over the sample lifetime reaches 10 m"

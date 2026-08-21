@@ -70,7 +70,7 @@ IEEE rules: plausibility is a positive test — `v.is_finite() && v > 0.0` → S
 - The presence is free — a measured line among measured things.
 - Machine and presence stay separate; each carries its own slot, its own name.
 - The manifestation is real whether or not anyone watches.
-- The presence rests — it never travels, navigates, or moves. The operator tunes to the coordinate.
+- The presence rests — it never travels, navigates, or moves. The operator tunes to the coordinate. The presence never moves on its own — no self-propulsion, no navigation. The arrows set the thrust (the operator's act of tuning), `s` halts it. The worldline belongs to the operator; the presence only rests on it.
 
 ### The gaze belongs to the operator
 

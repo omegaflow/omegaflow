@@ -2,7 +2,7 @@
   title: Übergabe: 4D-Wahrheit & Kinematische Dilatation (das antizipierende Fetch-Gate)
   class: handover
   date: 2026-08-21
-  sha256: e5aa092f003d0a5d1d019ca9acff4bf7e562e6e99b308fed2ca2fed8e8c3b14c
+  sha256: 5937d87411ee7e6c042d317d0bcdc84e0ecbdaeb7c2661528cf01724fffb9104
   status: live
   see-also: docs/handover/handover-2026-08-21-offene-atome.md
 -->
@@ -89,7 +89,15 @@ darf sie nicht zurückbauen; ihre Tests bleiben grün.
   „native" mit Maschinen-Jetzt und v=0, bis die Mathematikerin spricht
   (Boot-Wahrheit = program identity, archivar.rs:15799).
 
-### Atom 2 — Protokoll trägt die 4D-Vektoren
+### Atom 2 — Protokoll trägt die 4D-Vektoren — ERLEDIGT (2026-08-21)
+
+- Kanal-Tupel wird `(name, t, x, y, z, range, vx, vy, vz, t_thrust)`.
+- Operator-Wort zur Abweichung: consider_resend sendet die volle
+  4D-Zustandsänderung — `t` im Trigger (Send je Tick, Archivar
+  sampelt den letzten Stand je ω-Zyklus). Ohne t friert der
+  ω-Loop-now bei Ruhe ein (der Ruhe-Frost von Atom 1; Hidden-Läufe
+  ernten nach dem Boot nichts mehr). Der Browser bleibt Sensor-Träger
+  mit deklarierter Ruhe (v=[0,0,0], t_thrust=0.0).
 
 - Kanal-Tupel wird `(name, t, x, y, z, range, vx, vy, vz, t_thrust)`.
 - Fundorte: Kanal-Deklaration (archivar.rs:15722), Boot-Send (15799:

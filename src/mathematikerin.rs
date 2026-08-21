@@ -1091,7 +1091,7 @@ struct SenseReq {
 
 impl EMOscillator {
     pub fn new(
-        presence_tx: mpsc::Sender<(String, f64, f64, f64, f64, f64)>,
+        presence_tx: mpsc::Sender<(String, f64, f64, f64, f64, f64, f64, f64, f64, f64)>,
         sensor_tx: mpsc::Sender<Vec<(String, f64, f64)>>,
         body_names: Arc<Vec<String>>,
         time: Arc<Mutex<Option<LeapSeconds>>>,
@@ -1380,7 +1380,7 @@ struct NativeApp {
     rx: mpsc::Receiver<Arc<Buffer>>,
     req_tx: mpsc::SyncSender<SenseReq>,
     res_rx: mpsc::Receiver<(PackedWindow, f64, u64)>,
-    presence_tx: mpsc::Sender<(String, f64, f64, f64, f64, f64)>,
+    presence_tx: mpsc::Sender<(String, f64, f64, f64, f64, f64, f64, f64, f64, f64)>,
     body_names: Arc<Vec<String>>,
     time: Arc<Mutex<Option<LeapSeconds>>>,
     shutdown: Arc<AtomicBool>,
@@ -1490,7 +1490,7 @@ struct NativeApp {
     stable_tick: f64,
     size: (u32, u32),
     scale_factor: f64,
-    last_sent: (f64, f64, f64, f64),
+    last_sent: (f64, f64, f64, f64, f64, [f64; 3], f64),
     last_saved_state: (f64, [f64; 3], [f64; 4]),
     sensors: NativeSensors,
     frame_count: u64,
@@ -1512,7 +1512,7 @@ impl NativeApp {
         rx: mpsc::Receiver<Arc<Buffer>>,
         req_tx: mpsc::SyncSender<SenseReq>,
         res_rx: mpsc::Receiver<(PackedWindow, f64, u64)>,
-        presence_tx: mpsc::Sender<(String, f64, f64, f64, f64, f64)>,
+        presence_tx: mpsc::Sender<(String, f64, f64, f64, f64, f64, f64, f64, f64, f64)>,
         sensor_tx: mpsc::Sender<Vec<(String, f64, f64)>>,
         body_names: Arc<Vec<String>>,
         time: Arc<Mutex<Option<LeapSeconds>>>,
@@ -1632,7 +1632,7 @@ impl NativeApp {
             stable_tick: 0.0,
             size: (1280, 800),
             scale_factor: 1.0,
-            last_sent: (0.0, 0.0, 0.0, 0.0),
+            last_sent: (0.0, 0.0, 0.0, 0.0, 0.0, [0.0; 3], 0.0),
             last_saved_state: (grid0, p0, q0),
             sensors: NativeSensors {
                 oscs: HashMap::new(),
@@ -2220,20 +2220,40 @@ impl NativeApp {
 
     fn consider_resend(&mut self) {
         let [x, y, z] = self.pos();
-        let (lx, ly, lz, ls) = self.last_sent;
-        let moved = (x - lx).abs() >= self.grid_step
+        let (lt, lx, ly, lz, ls, lv, ltt) = self.last_sent;
+        let moved = self.t_presence != lt
+            || (x - lx).abs() >= self.grid_step
             || (y - ly).abs() >= self.grid_step
             || (z - lz).abs() >= self.grid_step
             || self.grid_step > ls * Φ
-            || ls > self.grid_step * Φ;
+            || ls > self.grid_step * Φ
+            || self.v != lv
+            || self.t_thrust != ltt;
         if !moved {
             return;
         }
-        self.last_sent = (x, y, z, self.grid_step);
+        self.last_sent = (
+            self.t_presence,
+            x,
+            y,
+            z,
+            self.grid_step,
+            self.v,
+            self.t_thrust,
+        );
         let range = self.size.0.max(self.size.1) as f64 * self.scale_factor * self.grid_step * 2.0;
-        let _ = self
-            .presence_tx
-            .send(("native".to_string(), self.t_presence, x, y, z, range));
+        let _ = self.presence_tx.send((
+            "native".to_string(),
+            self.t_presence,
+            x,
+            y,
+            z,
+            range,
+            self.v[0],
+            self.v[1],
+            self.v[2],
+            self.t_thrust,
+        ));
         self.sense();
     }
 
@@ -3888,7 +3908,7 @@ impl ApplicationHandler for NativeApp {
 
 fn run_window(
     rx: mpsc::Receiver<Arc<Buffer>>,
-    presence_tx: mpsc::Sender<(String, f64, f64, f64, f64, f64)>,
+    presence_tx: mpsc::Sender<(String, f64, f64, f64, f64, f64, f64, f64, f64, f64)>,
     sensor_tx: mpsc::Sender<Vec<(String, f64, f64)>>,
     req_tx: mpsc::SyncSender<SenseReq>,
     res_rx: mpsc::Receiver<(PackedWindow, f64, u64)>,

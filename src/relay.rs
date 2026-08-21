@@ -13,7 +13,7 @@ struct WsConfig {
     constants_js: Vec<u8>,
     field_rx: mpsc::Receiver<Arc<Buffer>>,
     sample_tx: mpsc::Sender<Vec<Sample>>,
-    presence_tx: mpsc::Sender<(String, f64, f64, f64, f64, f64)>,
+    presence_tx: mpsc::Sender<(String, f64, f64, f64, f64, f64, f64, f64, f64, f64)>,
     time: Arc<Mutex<Option<LeapSeconds>>>,
     consent: Arc<AtomicBool>,
 }
@@ -31,7 +31,7 @@ impl TcpRadiator {
         index_html: Vec<u8>,
         constants_js: Vec<u8>,
         sample_tx: mpsc::Sender<Vec<Sample>>,
-        presence_tx: mpsc::Sender<(String, f64, f64, f64, f64, f64)>,
+        presence_tx: mpsc::Sender<(String, f64, f64, f64, f64, f64, f64, f64, f64, f64)>,
         time: Arc<Mutex<Option<LeapSeconds>>>,
         consent: Arc<AtomicBool>,
     ) -> Self {
@@ -477,6 +477,21 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                                 let pt = f64::from_le_bytes(pb8);
                                 if cursor.read_exact(&mut pb8).is_ok() {
                                     let pr = f64::from_le_bytes(pb8);
+                                    if cursor.read_exact(&mut pb8).is_ok() {
+                                        delta_t_cache = f64::from_le_bytes(pb8);
+                                    }
+                                    let mut read_opt = || {
+                                        let mut b = [0u8; 8];
+                                        if cursor.read_exact(&mut b).is_ok() {
+                                            Some(f64::from_le_bytes(b))
+                                        } else {
+                                            None
+                                        }
+                                    };
+                                    let vx = read_opt().unwrap_or(0.0);
+                                    let vy = read_opt().unwrap_or(0.0);
+                                    let vz = read_opt().unwrap_or(0.0);
+                                    let tt = read_opt().unwrap_or(0.0);
                                     let _ = cfg.presence_tx.send((
                                         "browser".to_string(),
                                         pt,
@@ -484,10 +499,11 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                                         py,
                                         pz,
                                         pr,
+                                        vx,
+                                        vy,
+                                        vz,
+                                        tt,
                                     ));
-                                    if cursor.read_exact(&mut pb8).is_ok() {
-                                        delta_t_cache = f64::from_le_bytes(pb8);
-                                    }
                                 }
                             }
                         }

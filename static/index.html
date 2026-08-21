@@ -669,7 +669,8 @@ fn presence_probe() {
             cacheInterval = Math.min(Math.max(gridStep / 30000, Φ), Φ * 10);
             const response = await syncFrame(transmitList, queries, {
                 x: xPresence, y: yPresence, z: zPresence, t: tPresence, range,
-                cache_interval: cacheInterval
+                cache_interval: cacheInterval,
+                vx: 0, vy: 0, vz: 0, t_thrust: 0
             });
             if (response && response.count) {
                 rawWindowResponse = response;

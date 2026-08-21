@@ -1383,9 +1383,17 @@ Atom 1 (Kill the Now-Bias) ERLEDIGT (2026-08-21): Daten-Caches unter
 |t_presence − E| < ttl), der ω-Loop rechnet in Beobachter-Zeit
 (native t_presence, Fallback Maschinen-TDB = Boot-Wahrheit), cdn_fresh
 bleibt Ernte-Uhr, Asset-Caches (Ephemeriden-Bins, Kernel-Texts) bleiben
-mtime. Offen: Atome 2–5 (4D-Vektoren im Protokoll, Ruhe-Gate +
-Relativ-Kinematik mit Φ·Median-Schwelle, temporaler Fetch,
-Sprung-Fetch).
+mtime. Atom 2 (4D-Vektoren im Protokoll) ERLEDIGT (2026-08-21): der
+Presence-Kanal trägt (name, t, x, y, z, range, vx, vy, vz, t_thrust)
+über alle drei Schichten (Boot-Send v=[0,0,0]/t_thrust=0.0;
+consider_resend sendet die volle 4D-Zustandsänderung — t im Trigger
+auf Operator-Wort, sonst friert der ω-Loop-now bei Ruhe ein;
+presence_gate 9-Tupel; Relay-Parser liest 4 f64 mehr nach
+delta_t_cache; JS-Wire packt vx,vy,vz,t_thrust nach cache_interval;
+Browser-Presence ruht v=[0,0,0]/t_thrust=0.0). Die
+AGENTS-Klarstellung „presence rests vs. thrust" trägt der Bau.
+Offen: Atome 3–5 (Ruhe-Gate + Relativ-Kinematik mit
+Φ·Median-Schwelle, temporaler Fetch, Sprung-Fetch).
 
 Auftrag: docs/handover/handover-2026-08-21-4d-wahrheit.md — der
 Archivar lebt auf der Weltlinie des Beobachters; fünf Atome, eine

@@ -22,7 +22,7 @@ export async function syncFrame(inputs, queries, presence) {
 
     let inputBytes = 0;
     for (const inp of inputs) inputBytes += 17 + new TextEncoder().encode(inp.name).length;
-    const buf = new ArrayBuffer(8 + inputBytes + 4 + queries.length * 32 + 48);
+    const buf = new ArrayBuffer(8 + inputBytes + 4 + queries.length * 32 + 80);
     const dv = new DataView(buf);
     const id = ++transport.seq;
     dv.setUint32(0, id, true);
@@ -48,6 +48,10 @@ export async function syncFrame(inputs, queries, presence) {
     dv.setFloat64(off, presence.t, true); off += 8;
     dv.setFloat64(off, presence.range, true); off += 8;
     dv.setFloat64(off, presence.cache_interval || 0, true); off += 8;
+    dv.setFloat64(off, presence.vx, true); off += 8;
+    dv.setFloat64(off, presence.vy, true); off += 8;
+    dv.setFloat64(off, presence.vz, true); off += 8;
+    dv.setFloat64(off, presence.t_thrust, true); off += 8;
 
     const startTime = performance.now();
     if (!transport.socket || transport.socket.readyState !== WebSocket.OPEN) return emptyResp;
