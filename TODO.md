@@ -130,6 +130,34 @@ blocked_sources.φ parser-def nested-filter (where filtert nur die
 oberste Array-Ebene, kein Filter auf details[].frequency). Die
 2695-MHz-Reihe erntet der nobel probe weiter (harvest_radio); F10.7
 trägt f107_cm_flux.json.
+
+Sonnen-Abdeckung — Atom 3 (2026-08-21): ERLEDIGT — die GOES-XRS-Serie
+schließt die 1995–2020-Schmalband-Lücke. goes_xrs_compiler erntet die
+NCEI science xrsf-l2-avg1m-Tagesdateien (goes08 1995–2003, goes10
+1998–2009, goes12 2003–2007, goes13 2013–2017, goes14 2009–2020,
+goes15 2010–2020; netCDF-4/HDF5, flach: time f64 „seconds since
+2000-01-01 12:00 UTC", xrsa_flux/xrsb_flux f32 W/m²@1AU, flag u16 —
+flag != 0, fill −9999 und < valid_min 1e-9 übersprungen, 0 honored;
+Monatsindex → Tagesdateien, Cache /tmp/omegaflow_goes_xrs_cache) →
+goes_xrs.bin (GXS1, 20-B-Records wie rpw; Bucket-Mediane je Band über
+ALLE Satelliten — die Sonne ist eine Messung, die Satelliten sind
+Instrumente; Default --decimate-min 60 → hourly, ~456k Records — die
+1-min-Vollauflösung (~25 M) überstiege MAX_SAMPLES, der Default folgt
+der offenen Sample-Budget-Messung). Block format goes_xrs at sun
+(wm2_1au-Konvention, τ=3600); der Loader teilt den rpw-Serien-Pfad
+(series_parse_bin/series_component_name in src/archivar.rs).
+hdf5.rs-Reparatur: BTIN (v2-B-tree internal: Records ab Byte 6, danach
+nrec+1 Zeiger-Tripel, Prüfsumme am Knotenende; Feldgrößen über
+Geometrie-Kandidaten selbstvalidiert, Header- und Blatt-Prüfsummen
+verifiziert) — der AINFO-Dense-Attr-Baum der GOES-Dateien ließ zuvor
+die ganze Datei verwerfen (Test parses_goes_xrs_science_file gegen das
+Fixture phi/pipeline/katalog/ncei_goes_xrs/). Offen: Atom 4
+(OMNI2-Full-Serie 1963–heute, HAPI-Window-Ernte analog rpw; ~550 k
+Stunden × 7 Felder → Auflösung gegen das Sample-Budget wählen) und
+Atom 5 (F10.7 1947–, Mg II 1978–, SSN 1818–) — Quellen vermessen in
+docs/surveys/survey-2026-08-21-sonnen-abdeckung.md; das Handover
+handover-2026-08-21-sonnen-abdeckung.md bleibt live, bis Atom 4 und 5
+geschlossen sind.
 Luminositäts-Atom — benannte Grenzen (pending): die Ankerung
 modelliert Isotropie (die Röntgenemission ist richtungsabhängig —
 abgeleitet, nicht gemessen); die Energie-Bänder der Partikel-Dateien
@@ -222,15 +250,25 @@ Asteroiden-Langbogen (2026-08-21): ceres + vesta tragen den
 sb441-n16-Langbogen (8001 v. Chr.–9000 n. Chr., JD −1200525,5–5008242,5,
 256-Tage-Raster, Grad 17, 24.253 Granulen je Körper, Roundtrip ≤ 9,4 m;
 GM aus gm_Horizons.pck; de441.bsp ist der Sonnenträger — de442.bsp trägt
-nur ~1100 Jahre, gemessen). Offen: sb441-n373 (14,13 GiB) — der
-Split-Weg (spk_split, Stream, nie full-load; Handover
-handover-2026-08-21-n373-split-langbogen.md, Schritt 0 vermessen:
-373 = 343 + 30 KBO laut IOM-Tabelle 1, Eris 2136199/Haumea 2136108/
-Makemake 2136472 bestätigt drin, Apophis/Bennu/Encke bestätigt nicht
-drin, n373s = Kurzfenster 1550–2650 n. Chr., GM aus IOM-Tabelle 1 —
-gm_Horizons trägt abweichende TNO-Nummern); die 14 weiteren n16-Körper
-ohne sources.φ-Block; die 12 Körper ohne SPK-Segment tragen die
-12-Monats-Fenster weiter (fehlt, nicht null).
+nur ~1100 Jahre, gemessen). Der sb441-n373-Split-Weg steht: spk_split
+(src/bin/spk_split.rs, Compile-Kern src/ephemeris.rs) streamt die
+15,17-GB-Datei in einem sequenziellen Pass (Summary-Chain-Walk mit
+Pointer-Monotonie-Gate, Data-until-EOF nach dem letzten Summary,
+Per-Body-DAF-in-RAM mit uniformem Adress-Shift, Kontiguitäts-/Fenster-/
+Typ-/Center-Gates), kompiliert eris/haumea/makemake (2136199/2136108/
+2136472, je 4 zusammenhängende Segmente — Summary-Records 4926453/
+6651621/9607491, gemessen per Range-Fetch-Chain-Walk: alle 373 Körper
+× 4 Segmente in der Datei) mit GM aus IOM-Tabelle 1
+(phi/pipeline/katalog/asteroid_gm_sb441.φ, 373 Zeilen, Kreuzcheck
+Ceres/Vesta) und hebt sie via --clobber auf den CDN (CI-Schritt nach dem
+Asteroiden-Schritt, vor horizons_compiler, der die drei seit demselben
+Commit nicht mehr trägt). Verifiziert: n16-Capture bit-genau gegen die
+Originaldatei (compare-input 0 m), Roundtrip auf echten n373-Bytes
+6,2–6,6 m über 400 Epochen. Offen: der erste kernel_flatten-Lauf — bis
+dahin trägt der CDN die 12-Monats-Bins der drei weiter (fehlt nicht,
+null nicht); die 14 weiteren n16-Körper ohne sources.φ-Block; die 12
+Körper ohne SPK-Segment tragen die 12-Monats-Fenster weiter (fehlt,
+nicht null).
 
 HDF5-Erntekarte (2026-08-21, Handover
 handover-2026-08-21-hdf5-fits-ernte.md): recherchiert — HDF5 gehört fast

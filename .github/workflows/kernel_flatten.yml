@@ -76,6 +76,17 @@ jobs:
             --dest kernels \
             --ci-mode \
             --index phi/sources_index.φ
+      - name: Split sb441-n373 longbow and upload TNO bins to CDN
+        run: |
+          df -h .
+          curl -sSfL --retry 3 --max-time 5400 \
+            https://ssd.jpl.nasa.gov/ftp/eph/small_bodies/asteroids_de441/sb441-n373.bsp \
+            | cargo run --release --bin spk_split -- \
+              --bodies 2136199,2136108,2136472 \
+              --gm-catalog phi/pipeline/katalog/asteroid_gm_sb441.φ \
+              --carrier kernels/de441.bsp \
+              --dest kernels \
+              --ci-mode
       - name: Compile Horizons bodies and upload to CDN
         run: |
           cargo run --release --bin horizons_compiler -- --ci-mode
@@ -101,10 +112,10 @@ jobs:
       - name: Report bodies void
         if: failure()
         run: |
-          gh issue create --repo omegaflow/omegaflow \
-            --title "flatten: bodies returned void" \
-            --body "Bodies job returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-            --label health
+          bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            "flatten: bodies returned void" \
+            "Bodies job returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            health
 
   catalogs:
     runs-on: ubuntu-latest
@@ -541,10 +552,10 @@ jobs:
       - name: Report catalogs void
         if: failure()
         run: |
-          gh issue create --repo omegaflow/omegaflow \
-            --title "flatten: catalogs returned void" \
-            --body "Catalogs job returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-            --label health
+          bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+            "flatten: catalogs returned void" \
+            "Catalogs job returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            health
 
   chunk_catalogs:
     runs-on: ubuntu-latest

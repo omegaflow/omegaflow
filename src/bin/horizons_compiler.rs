@@ -376,9 +376,6 @@ fn generate_from_horizons(
 
 fn main() {
     let bodies_stable: &[(&str, &str)] = &[
-        ("Eris;", "eris"),
-        ("Haumea;", "haumea"),
-        ("Makemake;", "makemake"),
         ("Apophis", "apophis"),
         ("Bennu", "bennu"),
         ("90000031", "encke"),
