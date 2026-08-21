@@ -668,8 +668,20 @@ Maschine misst.
    ≈ ¾ Jahr je volle Matrix. Die GTX-970-Option: wgpu/Vulkan-portabel,
    auf der Karte die Hang-Grenze neu messen und ENSO_PROBE_MAX danach
    setzen. Thermokline-Ernte: ARGO-Wert existiert, die Verdrahtung
-   steht aus. Die sichtbare Membran stottert während der Proben (~1 s
-   Render-Stall je Zelle) — der Hidden-Lauf ist die Messweise.
+   steht aus. KONSOLIDIERUNG (Wort des Operators): kein Probe-Modul
+   je Rätsel — die fünf Probe-Pfade (Solar-Maschine, ENSO-Maschine,
+   Langfenster-Probe, nobel_probe_corona, Presence-TE-Pfad) tragen
+   denselben Kern und je eigenen Rotor/Buffer/Sheet; die eine
+   Maschine = Ernte-Adapter je Quelle + Ringe je (Punkt, Kraft) +
+   Paar-Enumeration über die präsenten Kräfte + ein te_compute + eine
+   Familien-Schwelle + eine Matrix-Zeile; die Rätsel werden benannte
+   Paar-Teilmengen der einen Matrix. Die ENSO-Maschine ist der Samen
+   (Stations-Ringe, Paar-Enumeration, Familien-Schwelle,
+   Matrix-Zeile) — der empfangende Atom konsolidiert, BEVOR er die
+   Global-Akteure anschließt (Solar-Ingest-Abstimmung mit der
+   Parallel-Session). Die sichtbare Membran stottert während der
+   Proben (~1 s Render-Stall je Zelle) — der Hidden-Lauf ist die
+   Messweise.
 - **Bz-Paradoxon** (`handover-2026-08-21-bz-paradoxon.md`):
   TE(RTSW-Bz→Bodenmagnetometer) gegen TE(Speed→Bodenmagnetometer), Lag
   0–120 min gegen die L1-Laufzeit. Oben lebt (sources.φ:102/108);

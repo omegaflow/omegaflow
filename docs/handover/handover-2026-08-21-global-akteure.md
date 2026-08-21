@@ -2,7 +2,7 @@
   title: Global-Akteure — der Kausalmaschinen-Playground
   class: handover
   date: 2026-08-21
-  sha256: 32008b4739d736f19d74d04735b63668a6b878cf0a6b984ce73ee2c752e418f1
+  sha256: 2ea3b769d0340a55129d91d7a623c97d27351d6c6a5dd4609b91ae90d538cf9e
   status: live
   see-also: handover-2026-08-21-enso-kausalpfeil.md (archiviert, consumed), docs/concepts/blatt-papier-resultat.md, TODO.md
 -->
@@ -96,6 +96,32 @@ inventarisiert, geprobt-fertig, aber nicht verdrahtet. Der Atom:
    ENSO_PROBE_MAX auf 1024 (voller Ring, n bis 1024) und die Zelle
    wird schneller. Der Messwert der Grenze gehört ins Register, nie
    eine Annahme.
+
+## Die eine Maschine — kein Probe-Modul je Rätsel
+
+Wort des Operators (2026-08-21): die Architektur-Wende bedeutet auch,
+dass NICHT für jedes Rätsel ein neues aufgeblähtes Probing-Modul
+gebaut wird. Die heutige Landschaft zählt fünf Probe-Pfade, alle mit
+demselben Kern (Ernte → Ringe → Paare → `te_compute` → Schwelle →
+Verdikt-Zeile), alle mit eigenem Rotor, eigenen Buffern, eigenem
+Sheet: die Solar-Maschine (Kanal-Ring-Pfad, Bz-Blatt), die
+ENSO-Maschine (diese Session — die vollständigste Instanz:
+Stations-Ringe, Paar-Enumeration, Familien-Schwelle, Matrix-Zeile),
+die Langfenster-Probe (LAIC-Muster, offline), nobel_probe_corona
+(Nadel-III-Registratur), der Presence-TE-Pfad (Membran-Echo).
+
+Die eine Maschine: Ernte-Adapter je Quelle (realtime2, stdmet, SWPC,
+GFZ, Oulu, Mauna Loa, Ephemeriden — jede Quelle ist ein Serien-Lieferant,
+kein Modul), Ringe je (Punkt, Kraft), Paar-Enumeration über die
+PRÄSENTEN Kräfte, ein `te_compute`, eine Familien-Schwelle, eine
+Matrix-Zeile. Die Rätsel werden benannte Paar-Teilmengen der einen
+Matrix — das Bz-Rätsel sind die Magnetometer-Punkte × ihre Kräfte,
+das ENSO-Rätsel die Bojen-Punkte × ihre Kräfte, die Nadel ihr
+Protokoll. Die ENSO-Maschine dieser Session ist der Samen der einen
+Maschine — der empfangende Atom konsolidiert BEVOR er die
+Global-Akteure anschließt: Solar- und ENSO-Maschine verschmelzen zu
+einem Rotor-Ring-Sheet-Kern, die Langfenster-Probe wird ein
+Offline-Aufruf desselben Kerns.
 
 ## Die Architektur-Wende: keine Katalog-Akteure
 
