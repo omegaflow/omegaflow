@@ -38,7 +38,7 @@ Stand: 1485 Commits, 341 getrackte Dateien, Branch main.
 - `docs/plans/` K03_runtime_auftrag, K05_mond_bpc_wiedereinbau,
   K05_mond_bpc_uebergabe, dual_mode_architecture,
   agnostic_membrane_manifestation: Pläne der Vor-CDN-Ära, Themen sind
-  gebaut. Nur AUTH_APIS.md ist LIVE (TODO I03 referenziert §E).
+  gebaut. Nur ref-auth-apis.md ist LIVE (TODO I03 referenziert §E).
 - `docs/reference/EXTRACT_TYPES.md`: SUPERSEDED (gebannert) — nur
   Navigationswert.
 - `scripts/ARCHIVED/` (18 Python): deklariert archiviert; die
@@ -102,7 +102,7 @@ Stand: 1485 Commits, 341 getrackte Dateien, Branch main.
 2. docs/AUFTRAG-crossmatch.md — vollzogen 2026-08-19: die Crossmatch-Welle
    war längst geschlossen (git), Datei ins Archiv (docs_erledigt_2026-08-19).
 3. docs/plans/ (5 alte Pläne) — vollzogen 2026-08-19: K03/K05×2/dual_mode/
-   agnostic_membrane ins Archiv; AUTH_APIS.md bleibt live.
+   agnostic_membrane ins Archiv; ref-auth-apis.md bleibt live.
 4. interesting_domains.φ — vollzogen 2026-08-19: eingefroren, nach
    phi/pipeline/ verschoben (kein Code-Leser).
 5. Branches: 7 lokale Branches auf Rollen prüfen, wgpu-mono-hud und

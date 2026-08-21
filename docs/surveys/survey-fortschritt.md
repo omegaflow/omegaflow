@@ -16,9 +16,9 @@ ist verloren — Git trägt alles.
   (aae/ykc), main-Parität 349f78a.
 - `a9b25d6` — Rückroll auf fd666f5b dokumentiert (vor der
   Subpixel-Explosion eb96d1f), Survey-Dokumente versioniert.
-- `docs/surveys/messpunkt-verteilung.md` — die Survey-Evaluation
+- `survey-messpunkt-verteilung.md` — die Survey-Evaluation
   (Ground Truth = Messung, 9 Kandidaten).
-- `docs/surveys/auswertung.md` — die Tief-Auswertung: f32-Grundwahrheit,
+- `survey-auswertung.md` — die Tief-Auswertung: f32-Grundwahrheit,
   Verteilungs-Verdikte, Generations-Konsens, Rejected-Register.
 
 ## B. Liegt versioniert auf Branch `session-2026-08-16`
