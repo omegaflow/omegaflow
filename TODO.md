@@ -81,23 +81,33 @@ kernel_flatten sun-Job mit Asset-Guard (Release
 spdf.gsfc.nasa.gov, Asset wind_waves.bin, --ci-mode,
 1994-11-10 → 2021-12-31, --jobs 8). Offen: der erste
 kernel_flatten-Lauf (bis dahin trägt das CDN das Asset nicht —
-fehlt, null nicht); Atome danach: 2022+ (der Baum endet 2021),
-Wind-Orbit-Join (siehe Frame at wind).
-Frame at wind (pending): kein SPK — die NAIF-PDS-Liste ist komplett
-ohne Wind (naif.jpl.nasa.gov/pub/naif/pds/data/, verifiziert
-2026-08-21), /pub/naif/archive/ trägt 404, NAIF-ID −485 ohne Kern.
-Der Positions-Träger existiert: CDAWeb wind/orbit pre_or/def_or
-(cdaweb.gsfc.nasa.gov/pub/data/wind/orbit/), täglich 1994–2026,
-`wi_or_pre_YYYYMMDD_vNN.cdf` — CDF 2.5 (magic 00 00 FF FF,
-src/cdf.rs parst 3.x — Parser-Gap benannt), Variablen GCI_POS/
-GCI_VEL/GSE_POS/GSE_VEL/GSM_POS/GSM_VEL + GCI-Sonnenvektor
-(GCI = geocentric celestial inertial ≈ ICRS auf Raumsonde-Maß,
-Frame-Bias benannt). spha_k0 ist Spin-Phase (SPIN_PHASE/
-AVG_SPIN_RATE), keine Position — verworfen, nicht verwechselt.
-Ohne Orbit-Ernte trägt wind_waves.bin t_tdb/freq/val ohne
-Raumposition (0 honored — keine fabrizierte L1-Position); der
-sources.φ-Block (format wind_waves, force em, V,
-gaussian-inverse-square) folgt erst nach dem Orbit-Atom.
+fehlt, null nicht); danach: 2022+ (der Baum endet 2021).
+Frame at wind (erledigt 2026-08-21): kein SPK — die NAIF-PDS-Liste
+ist komplett ohne Wind, /pub/naif/archive/ trägt 404, NAIF-ID −485
+ohne Kern. Der Positions-Träger: CDAWeb wind/orbit pre_or/def_or,
+täglich 1994–2026, CDF 2.5 UND 2.6 (magic cdf26002 im 1994er-Baum;
+beide Layouts parsen identisch, GDRoffset ist autoritativ — die
+1945-Zeichen-Copyright-Ära belügt RecordSize, cdflib scheitert an
+beiden); src/cdf25.rs parst CDR/GDR/VDR/VXR/VVR (unkomprimiert,
+Encoding 1), Tests gegen Real-Dateien (2021-2.5 via
+cdflib-Kreuzcheck, 1994-2.6/def via Spec-Walk). wind_orbit_compiler
+erntet pre_or 1994-08-07 → 2026 (Jahr-Listing → neueste
+Version/Tag, def_or bevorzugt wo vorhanden — FDF-definitiv,
+Layout-gleich verifiziert) → wind_orbit.bin (magic WOB1, Records
+t_tdb + GCI x/y/z + vx/vy/vz in m, m/s; GCI≈ICRS auf
+Raumsonde-Maß, Frame-Bias ~0,02° ≪ FDF-Genauigkeit — Identität
+benannt; Kadenz 10-min nativ, >288/Tag stride-dezimiert;
+Stichproben 2021-01-01 + 1994-11-10 verifiziert, 144 Records/Tag,
+0 void). Loader: format orbit_bin → BodyEphemeris.orbit,
+body_barycenter_position interpoliert linear zwischen Nachbarn
+(2,5×Median-Stride-Gate — Lücken bleiben void, keine
+Extrapolation); sources.φ-Block format wind_waves (force em, V,
+gaussian-inverse-square, tau 86400) at wind joint die
+WAV1-Records mit dem Orbit (freq/bin_width auf der Spektralachse);
+Load-Gate-Test trägt orbit_bin. CI: kernel_flatten sun-Job
+--window-start 1994-08-07 --window-end 2026-08-21 --jobs 8,
+Asset-Guard auf wind_orbit.bin — offen bleibt der erste
+kernel_flatten-Lauf (beide Assets fehlen, fehlt nicht null).
 Befunde selbsttragend: phi/pipeline/research/agent_output/
 wind_frame_2026-08-21.φ.
 GONG L 31..200 (CI --lmax 200) +

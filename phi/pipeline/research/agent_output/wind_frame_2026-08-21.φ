@@ -49,18 +49,45 @@ die definitive FDF-Orbit-Messung als Datei — SSCWeb (REST, gleiche
 Flugdynamik-Herkunft) ist damit überholt. Benannt, nicht weiter
 verfolgt.
 
-D. Folge-Atom (registriert, nicht in dieser Session)
+D. Folge-Atom GESCHLOSSEN (2026-08-21, selbe Session-Folge)
 
-1. CDF-2.5-Parser (VDR/ADR-Offset-Container, unkomprimiert — die
-   ISTP-Dateien tragen keine Kompression).
-2. wind_orbit_compiler: pre_or täglich 1994–2026 → wind_orbit.bin
-   (t_tdb, GCI x/y/z, vx/vy/vz; def_or 1994–1997 als definitive
-   Früh-Epoche falls Layout-gleich).
-3. BODY_REGISTRY + ephemeris_compiler-Kanal für wind (oder Motion aus
-   dem Orbit-Bin) — danach erst der sources.φ-Block
-   (format wind_waves, force em, V, gaussian-inverse-square).
-Bis dahin trägt wind_waves.bin t_tdb/freq/val ohne Raumposition —
-0 honored, keine fabrizierte L1-Position.
+1. CDF-2.5/2.6-Parser steht: src/cdf25.rs — CDR/GDR/VDR/VXR/VVR,
+   unkomprimiert, Encoding 1. Befund während des Baus: die 1994er
+   pre_or/def_or-Dateien tragen magic cdf26002 (CDF 2.6), die
+   2021er magic 0000ffff (2.5) — beide Layouts sind identisch
+   (cdf26ifd.pdf §2). Zweiter Befund: GDRoffset im CDR ist
+   autoritativ — die alte 1945-Zeichen-Copyright-Ära schreibt
+   RecordSize 304, die GDR liegt aber bei 2001; cdflib (PyPI)
+   scheitert an diesen Dateien (und an cdf26002 generell).
+   Referenz-Kreuzchecks: 2021-2.5 gegen cdflib-Werte (Epoch
+   1609459200, GCI_POS 858616.9445/−1234654.0691/−491726.1634 km),
+   1994-2.6/def gegen Spec-Walk (Epoch 784425600 def / 784426038
+   pre — die definitive Datei startet um Mitternacht).
+2. wind_orbit_compiler steht: Jahr-Listing (pre_or 1994–2026 +
+   def_or 1994–1997) → neueste Version/Tag; def_or bevorzugt
+   (Layout-gleich verifiziert, FDF-definitiv). wind_orbit.bin:
+   magic WOB1, t_tdb + GCI x/y/z + vx/vy/vz (m, m/s — der
+   GCI-Frame-Bias ~0,02° liegt ≪ FDF-Genauigkeit, Identität
+   benannt). 10-min-Kadenz nativ (144 Records/Tag), >288/Tag
+   stride-dezimiert; Stichproben 2021-01-01 + 1994-11-10 je
+   0 void, Roundtrip ✓.
+3. Loader: format orbit_bin → BodyEphemeris.orbit;
+   body_barycenter_position interpoliert linear (2,5×Median-
+   Stride-Gate — Lücken void, keine Extrapolation);
+   sources.φ-Blöcke orbit_bin + wind_waves (force em, V,
+   gaussian-inverse-square, tau 86400, at wind; freq/bin_width
+   aus den WAV1-Records auf der Spektralachse); Load-Gate-Test
+   trägt orbit_bin; BODY_REGISTRY trägt wind automatisch (s.body
+   aus dem `at`-Token).
+4. CI: kernel_flatten sun-Job — wind_orbit-Schritt
+   --window-start 1994-08-07 --window-end 2026-08-21 --jobs 8,
+   Asset-Guard auf wind_orbit.bin.
+Offen: der erste kernel_flatten-Lauf (bis dahin fehlen wind_waves.bin
+UND wind_orbit.bin auf dem CDN — fehlt, nicht null).
 
 Proben lokal: /tmp/opencode/wi_or_pre_20210101.cdf,
-/tmp/opencode/wi_k0_spha_20210101.cdf.
+/tmp/opencode/wi_k0_spha_20210101.cdf,
+/tmp/opencode/wi_or_pre_19941110_v02.cdf,
+/tmp/opencode/wi_or_def_19941110_v02.cdf,
+/tmp/opencode/wind_orbit_test.bin (2021-01-01, 144 Records),
+/tmp/opencode/wind_orbit_test1994.bin (1994-11-10, 144 Records).

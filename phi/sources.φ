@@ -604,6 +604,19 @@ ttl 3600
 field rpw_e_y rpw_e_y gaussian-inverse-square electric mV/m 3600 0.0 0.0
 field rpw_e_z rpw_e_z gaussian-inverse-square electric mV/m 3600 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/wind_orbit.bin
+format orbit_bin
+at wind
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/wind_waves.bin
+format wind_waves
+at wind
+ttl 86400
+field wind_waves_rad1 wind_waves_rad1 gaussian-inverse-square em V 86400 0.0 0.0
+field wind_waves_rad2 wind_waves_rad2 gaussian-inverse-square em V 86400 0.0 0.0
+field wind_waves_tnr wind_waves_tnr gaussian-inverse-square em V 86400 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/goes_xrs.bin
 format goes_xrs
 at sun
