@@ -72,3 +72,5 @@ naif_id	name	parent_id
 904	kerberos	9
 905	styx	9
 999	pluto	10
+2000001	ceres	10
+2000004	vesta	10

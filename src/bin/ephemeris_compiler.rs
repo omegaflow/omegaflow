@@ -16,6 +16,7 @@ use std::time::Duration;
 const CHEBYSHEV_DEGREE: usize = 17;
 const NUT_DEGREE: usize = 11;
 const GRANULE_DAYS: f64 = 32.0;
+const ASTEROID_GRANULE_DAYS: f64 = 256.0;
 const N_SAMPLES: usize = 25;
 const J2000_EPOCH: f64 = 2451545.0;
 const MAGIC_HEADER: [u8; 4] = [0xCF, 0x86, 0x02, 0x00];
@@ -307,6 +308,7 @@ fn extract_granules(
     wgccre: &PckBody,
     bpc_files: &[BpcFile],
     fk: &FkFile,
+    granule_days: f64,
 ) -> (
     Vec<(f64, f64, Vec<f64>, Vec<f64>, Vec<f64>)>,
     Vec<(f64, [f64; 9])>,
@@ -334,12 +336,12 @@ fn extract_granules(
             max_et = seg.end_et;
         }
     }
-    let granule_half_sec = GRANULE_DAYS * 86400.0 / 2.0;
-    let n_granules = ((max_et - min_et) / (GRANULE_DAYS * 86400.0)).ceil() as usize;
+    let granule_half_sec = granule_days * 86400.0 / 2.0;
+    let n_granules = ((max_et - min_et) / (granule_days * 86400.0)).ceil() as usize;
     for i in 0..n_granules {
-        let mid_et = min_et + (i as f64 + 0.5) * GRANULE_DAYS * 86400.0;
+        let mid_et = min_et + (i as f64 + 0.5) * granule_days * 86400.0;
         let mid_jd = mid_et / 86400.0 + J2000_EPOCH;
-        let half_jd = GRANULE_DAYS / 2.0;
+        let half_jd = granule_days / 2.0;
         let cheb_nodes = chebyshev_nodes(N_SAMPLES);
         let mut samples_x = Vec::with_capacity(N_SAMPLES);
         let mut samples_y = Vec::with_capacity(N_SAMPLES);
@@ -938,6 +940,38 @@ fn pick_spk(candidates: &[IndexEntry]) -> Option<IndexEntry> {
 
 fn select_system(entries: &[IndexEntry], system: &str) -> Vec<IndexEntry> {
     let mut out = Vec::new();
+    if system == "asteroids" {
+        let mut asteroid_carrier = Vec::new();
+        for e in entries
+            .iter()
+            .filter(|e| e.family == "spk" && e.name == "sb441-n16.bsp")
+        {
+            asteroid_carrier.push(e.clone());
+        }
+        if asteroid_carrier.is_empty() {
+            eprintln!(
+                "asteroids: sb441-n16.bsp absent from the index — the longbow has no carrier"
+            );
+            std::process::exit(1);
+        }
+        out.extend(asteroid_carrier);
+        let mut sun_carrier = Vec::new();
+        for e in entries
+            .iter()
+            .filter(|e| e.family == "spk-planets" && e.name == "de441.bsp")
+        {
+            sun_carrier.push(e.clone());
+        }
+        if sun_carrier.is_empty() {
+            eprintln!(
+                "asteroids: de441.bsp absent from the index — the sun's SSB state has no carrier"
+            );
+            std::process::exit(1);
+        }
+        out.extend(sun_carrier);
+        out.sort_by(|a, b| numeric_of(&a.name).cmp(&numeric_of(&b.name)));
+        return out;
+    }
     if system == "planets" {
         let mut bases: BTreeMap<String, Vec<IndexEntry>> = BTreeMap::new();
         for e in entries.iter().filter(|e| e.family == "spk-planets") {
@@ -1174,6 +1208,7 @@ fn flatten(
     pck_text: Option<&str>,
     ci_mode: bool,
     omega_g: Option<(String, f64, f64)>,
+    small_bodies_only: bool,
 ) -> Vec<String> {
     let mut spk_files = Vec::new();
     for kernel_path in kernels {
@@ -1204,6 +1239,9 @@ fn flatten(
     let mut written = Vec::new();
     let mut upload_failed = 0usize;
     for (target_id, body_name, _) in &targets {
+        if small_bodies_only && *target_id < 2000000 {
+            continue;
+        }
         let wgccre = match pck_bodies.get(&pck_id_of(*target_id)) {
             Some(w) => w,
             None => {
@@ -1214,12 +1252,25 @@ fn flatten(
         let mut granules: Vec<(f64, f64, Vec<f64>, Vec<f64>, Vec<f64>)> = Vec::new();
         let mut rotations: Vec<(f64, [f64; 9])> = Vec::new();
         let mut nutation: Vec<(f64, f64, Vec<f64>, Vec<f64>, Vec<f64>)> = Vec::new();
+        let granule_days = if *target_id >= 2000000 {
+            ASTEROID_GRANULE_DAYS
+        } else {
+            GRANULE_DAYS
+        };
         for spk in &spk_files {
             let has_coverage = spk.segments().iter().any(|s| s.target == *target_id);
             if !has_coverage {
                 continue;
             }
-            let (g, r, n) = extract_granules(spk, &spk_files, *target_id, &wgccre, &bpc_files, &fk);
+            let (g, r, n) = extract_granules(
+                spk,
+                &spk_files,
+                *target_id,
+                &wgccre,
+                &bpc_files,
+                &fk,
+                granule_days,
+            );
             granules.extend(g);
             rotations.extend(r);
             nutation.extend(n);
@@ -1278,7 +1329,14 @@ fn summarize(index_path: &str, out_path: &str) {
     }
     let mut systems = String::new();
     for sys in [
-        "planets", "jupiter", "saturn", "mars", "uranus", "neptune", "pluto",
+        "planets",
+        "asteroids",
+        "jupiter",
+        "saturn",
+        "mars",
+        "uranus",
+        "neptune",
+        "pluto",
     ] {
         let sel = select_system(&entries, sys);
         let mut spk_name = "—";
@@ -1332,8 +1390,11 @@ fn summarize(index_path: &str, out_path: &str) {
          | advective | — | DSCOVR/SWPC (live) |\n\
          | electric | — | SWPC/OmniWeb/Swarm (curation) |\n\n\
          ## Flatten policy\n\
-         K01: planets + moons (SPK/PCK) + probes (Horizons compiler). Small bodies are\n\
-         registered in the index (family `spk`), the flatten pass lives on the K03 branch (DASTCOM+Kepler).\n",
+         K01: planets + moons (SPK/PCK) + probes (Horizons compiler) + the asteroid\n\
+         longbow (`asteroids` = sb441-n16.bsp + de441.bsp for the sun's SSB state,\n\
+         256-day raster, heliocentric segment + SSB chain). The remaining small\n\
+         bodies stay on the Horizons 12-month windows; DASTCOM (K03) carries their\n\
+         mass/radius.\n",
         entries.len(),
         total_bytes,
         rows,
@@ -1361,7 +1422,7 @@ fn main() {
         );
         eprintln!("       ephemeris_compiler --summarize <index.φ> <KERNEL_INDEX.md>");
         eprintln!(
-            "       ephemeris_compiler --fetch-from <index.φ> --systems a,b,... [--extras name,...] --dest <dir> [--ci-mode] [--index <index.φ>]"
+            "       ephemeris_compiler --fetch-from <index.φ> --systems a,b,... [--extras name,...] [--small-bodies] --dest <dir> [--ci-mode] [--index <index.φ>]"
         );
         eprintln!("output: ephemeris_<body>.bin in current directory");
         std::process::exit(1);
@@ -1442,10 +1503,12 @@ fn main() {
         vec!["gm_Horizons.pck".to_string(), "geophysical.ker".to_string()];
     let mut dest = "kernels".to_string();
     let mut omega_g_path: Option<String> = None;
+    let mut small_bodies_only = false;
     let mut i = 1;
     while i < args.len() {
         match args[i].as_str() {
             "--ci-mode" => ci_mode = true,
+            "--small-bodies" => small_bodies_only = true,
             "--gm" => {
                 gm_path = args.get(i + 1).cloned();
                 i += 1;
@@ -1636,6 +1699,7 @@ fn main() {
             pck.as_deref(),
             ci_mode,
             omega_g.clone(),
+            small_bodies_only,
         );
         if ci_mode {
             if let Some(idx) = &index_path {
@@ -1669,5 +1733,6 @@ fn main() {
         pck_text.as_deref(),
         ci_mode,
         omega_g,
+        small_bodies_only,
     );
 }
