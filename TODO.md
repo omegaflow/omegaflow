@@ -222,13 +222,20 @@ VIIRS/MODIS Surface Reflectance VNP09/MOD09 (em, der echte Blue-Marble-
 Kanal), LIGO GWOSC Strain (gravity, HDF5, offen). Galaxie/Universum messen
 in FITS, nicht HDF5; deren HDF5 (IllustrisTNG/EAGLE/CAMELS/FLAMINGO) ist
 Simulation → decline no-physical-force (Eintrag mit verifizierter URL in
-der Ernte-Session). Ernte hängt am HDF5-Reader (paralleles Atom).
+der Ernte-Session). Die Ernten sind unblockiert — der HDF5-Reader steht
+(0e245d6, Superblock v0-v3, Object-Header, Fractal-Heap, B-Tree,
+Filter deflate/shuffle/fletcher32/scaleoffset, im NCEI-SSI-Atom geprüft).
 
-FITS-Reader (2026-08-21, Handover handover-2026-08-21-hdf5-fits-ernte.md):
-pure Rust, std-only, Gold-Standard wie netcdf.rs/cdf.rs/hdf5.rs — der
-fehlende Schlüssel für Galaxie/Universum-Messungen (Gaia, SDSS, 2MASS,
-Pan-STARRS, DES, Planck, JWST). Header 80-Byte-Cards, HDU-Extensions,
-BINTABLE, BSCALE/BZERO, WCS. Crates nur als Format-Referenz.
+FITS-Reader-Rest (2026-08-21, aus Handover
+handover-2026-08-21-hdf5-fits-ernte.md; der Kern ist geschlossen —
+`src/fits.rs`, std-only, seit 3e3e9ee im TIC/TESS- und GONG-Compiler im
+Einsatz: 80-Byte-Cards, HDU-Chain mit 2880-Alignment, BINTABLE
+E/D/J/I/K/B mit TSCAL/TZERO, Image 8/16/32/64/−32/−64 mit BSCALE/BZERO,
+WCS linear + TAN-Gnomonic mit CD-Matrix, 14 Tests grün): offen sind die
+Spaltencodes 'A' (Zeichen), 'X' (Bit), 'P'/'Q' (Heap-Variable),
+CONTINUE/HIERARCH-Cards und Nicht-TAN-Projektionen (SIN/STG/ZEA) — kein
+konkreter Katalog-Bedarf steht an; der erste Bedarf (Gaia/SDSS/2MASS-
+Ernte) holt sie.
 
 Fetch-Ketten-Atom (2026-08-20, Handover handover-fetchkette.md): die vier
 Regressionen sind geschlossen — und drei echte Pipeline-Bugs lagen darunter.

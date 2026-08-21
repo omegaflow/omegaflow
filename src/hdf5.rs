@@ -1889,7 +1889,6 @@ mod tests {
             }
             out
         };
-        let dt = Hdf5Datatype::flat_f64();
         let filters = vec![Hdf5Filter {
             id: FILTER_SHUFFLE,
             flags: 0,
@@ -1913,7 +1912,6 @@ mod tests {
         let checksum = (c1 << 16) | c0;
         let mut chunk = body.clone();
         chunk.extend_from_slice(&checksum.to_le_bytes());
-        let dt = Hdf5Datatype::flat_f64();
         let filters = vec![Hdf5Filter {
             id: FILTER_FLETCHER32,
             flags: 0,

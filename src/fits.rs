@@ -62,6 +62,10 @@ impl FitsHeader {
         self.value(key).and_then(|v| v.parse().ok())
     }
 
+    pub fn f64(&self, key: &str) -> Option<f64> {
+        self.value(key).and_then(|v| v.parse().ok())
+    }
+
     pub fn str_unescaped(&self, key: &str) -> Option<String> {
         self.value(key).map(|v| {
             let inner = v
@@ -81,6 +85,8 @@ pub struct FitsColumn {
     pub repeat: usize,
     pub width: usize,
     pub tbcol: usize,
+    pub tscal: f64,
+    pub tzero: f64,
 }
 
 #[derive(Debug)]
@@ -145,12 +151,16 @@ impl FitsTable {
                 return None;
             }
             next_tbcol = tbcol + width;
+            let tscal = header.f64(&format!("TSCAL{}", i)).unwrap_or(1.0);
+            let tzero = header.f64(&format!("TZERO{}", i)).unwrap_or(0.0);
             columns.push(FitsColumn {
                 name,
                 code,
                 repeat,
                 width,
                 tbcol,
+                tscal,
+                tzero,
             });
         }
         if columns.is_empty() {
@@ -193,11 +203,16 @@ impl FitsTable {
         let off = self.cell_offset(row, col)?;
         let end = off + col.width;
         let raw = buf.get(off..end)?;
-        match col.code {
-            'D' => Some(f64::from_le_bytes(raw.try_into().ok()?)),
-            'E' => Some(f32::from_le_bytes(raw[..4].try_into().ok()?) as f64),
-            _ => None,
-        }
+        let v = match col.code {
+            'D' => f64::from_le_bytes(raw.try_into().ok()?),
+            'E' => f32::from_le_bytes(raw[..4].try_into().ok()?) as f64,
+            'J' => i32::from_le_bytes(raw[..4].try_into().ok()?) as f64,
+            'I' => i16::from_le_bytes(raw[..2].try_into().ok()?) as f64,
+            'K' => i64::from_le_bytes(raw.try_into().ok()?) as f64,
+            'B' => raw[0] as f64,
+            _ => return None,
+        };
+        Some(v * col.tscal + col.tzero)
     }
 
     pub fn cell_i64(&self, buf: &[u8], row: usize, col: &FitsColumn) -> Option<i64> {
@@ -215,19 +230,96 @@ impl FitsTable {
 }
 
 #[derive(Debug)]
+pub struct FitsWcs {
+    ctype1: String,
+    ctype2: String,
+    crval1: f64,
+    crval2: f64,
+    crpix1: f64,
+    crpix2: f64,
+    cd: [[f64; 2]; 2],
+}
+
+impl FitsWcs {
+    pub fn from_header(h: &FitsHeader, naxis1: usize, naxis2: usize) -> Option<Self> {
+        let ctype1 = h.str_unescaped("CTYPE1")?;
+        let ctype2 = h.str_unescaped("CTYPE2")?;
+        let crval1 = h.f64("CRVAL1")?;
+        let crval2 = h.f64("CRVAL2")?;
+        let crpix1 = h.f64("CRPIX1").unwrap_or((naxis1 + 1) as f64 / 2.0);
+        let crpix2 = h.f64("CRPIX2").unwrap_or((naxis2 + 1) as f64 / 2.0);
+        let cd = match (
+            h.f64("CD1_1"),
+            h.f64("CD1_2"),
+            h.f64("CD2_1"),
+            h.f64("CD2_2"),
+        ) {
+            (Some(a), Some(b), Some(c), Some(d)) => [[a, b], [c, d]],
+            _ => {
+                let cdelt1 = h.f64("CDELT1").unwrap_or(1.0);
+                let cdelt2 = h.f64("CDELT2").unwrap_or(1.0);
+                [[cdelt1, 0.0], [0.0, cdelt2]]
+            }
+        };
+        Some(Self {
+            ctype1,
+            ctype2,
+            crval1,
+            crval2,
+            crpix1,
+            crpix2,
+            cd,
+        })
+    }
+
+    pub fn world(&self, x: f64, y: f64) -> Option<(f64, f64)> {
+        let dx = x - self.crpix1;
+        let dy = y - self.crpix2;
+        let xi = self.cd[0][0] * dx + self.cd[0][1] * dy;
+        let eta = self.cd[1][0] * dx + self.cd[1][1] * dy;
+        if !self.ctype1.contains("TAN") && !self.ctype2.contains("TAN") {
+            return Some((self.crval1 + xi, self.crval2 + eta));
+        }
+        let xi = xi.to_radians();
+        let eta = eta.to_radians();
+        let rho2 = xi * xi + eta * eta;
+        let ra0 = self.crval1.to_radians();
+        let dec0 = self.crval2.to_radians();
+        if rho2 == 0.0 {
+            return Some((self.crval1, self.crval2));
+        }
+        let rho = rho2.sqrt();
+        let c = rho.atan();
+        let dec = (c.cos() * dec0.sin() + eta * c.sin() * dec0.cos() / rho).asin();
+        let ra =
+            ra0 + (xi * c.sin()).atan2(rho * dec0.cos() * c.cos() - eta * dec0.sin() * c.sin());
+        Some((ra.to_degrees(), dec.to_degrees()))
+    }
+}
+
+#[derive(Debug)]
 pub struct FitsImage {
     pub bitpix: i32,
     pub dims: [usize; 3],
     pub data_start: usize,
+    bscale: f64,
+    bzero: f64,
+    wcs: Option<FitsWcs>,
 }
 
 impl FitsImage {
     pub fn parse(buf: &[u8], hdu_start: usize) -> Option<(Self, usize)> {
         let (header, header_end) = FitsHeader::parse(buf, hdu_start)?;
         let bitpix = header.int("BITPIX")? as i32;
-        if bitpix != -32 && bitpix != -64 {
-            return None;
-        }
+        let bytes_per = match bitpix {
+            8 => 1,
+            16 => 2,
+            32 => 4,
+            64 => 8,
+            -32 => 4,
+            -64 => 8,
+            _ => return None,
+        };
         let naxis = header.int("NAXIS")? as usize;
         if naxis == 0 || naxis > 3 {
             return None;
@@ -242,18 +334,23 @@ impl FitsImage {
             dims[i - 1] = d as usize;
             data_bytes = data_bytes.checked_mul(d as usize)?;
         }
-        let bytes_per = if bitpix == -32 { 4 } else { 8 };
         data_bytes = data_bytes.checked_mul(bytes_per)?;
         let data_start = header_end;
         if data_start + data_bytes > buf.len() {
             return None;
         }
         let next = hdu_start + (data_start - hdu_start + data_bytes).div_ceil(2880) * 2880;
+        let bscale = header.f64("BSCALE").unwrap_or(1.0);
+        let bzero = header.f64("BZERO").unwrap_or(0.0);
+        let wcs = FitsWcs::from_header(&header, dims[0], dims[1]);
         Some((
             Self {
                 bitpix,
                 dims,
                 data_start,
+                bscale,
+                bzero,
+                wcs,
             },
             next,
         ))
@@ -264,13 +361,29 @@ impl FitsImage {
             return None;
         }
         let linear = (idx[2] * self.dims[1] + idx[1]) * self.dims[0] + idx[0];
-        let bytes_per = if self.bitpix == -32 { 4 } else { 8 };
+        let bytes_per = match self.bitpix {
+            8 => 1,
+            16 => 2,
+            32 => 4,
+            64 => 8,
+            -32 => 4,
+            _ => 8,
+        };
         let off = self.data_start + linear * bytes_per;
         let raw = buf.get(off..off + bytes_per)?;
-        match self.bitpix {
-            -32 => Some(f32::from_be_bytes(raw.try_into().ok()?) as f64),
-            _ => Some(f64::from_be_bytes(raw.try_into().ok()?)),
-        }
+        let v = match self.bitpix {
+            8 => raw[0] as f64,
+            16 => i16::from_be_bytes(raw.try_into().ok()?) as f64,
+            32 => i32::from_be_bytes(raw.try_into().ok()?) as f64,
+            64 => i64::from_be_bytes(raw.try_into().ok()?) as f64,
+            -32 => f32::from_be_bytes(raw.try_into().ok()?) as f64,
+            _ => f64::from_be_bytes(raw.try_into().ok()?),
+        };
+        Some(v * self.bscale + self.bzero)
+    }
+
+    pub fn world(&self, x: f64, y: f64) -> Option<(f64, f64)> {
+        self.wcs.as_ref().and_then(|w| w.world(x, y))
     }
 }
 
@@ -491,5 +604,205 @@ mod tests {
         let (img, _) = FitsImage::parse(&buf, 0).unwrap();
         assert_eq!(img.value_f64(&buf, [0, 0, 0]).unwrap(), 1.0);
         assert_eq!(img.value_f64(&buf, [1, 0, 0]).unwrap(), 2.0);
+    }
+
+    fn img_with(cards: &[(&str, &str)], raw: &[u8]) -> Vec<u8> {
+        let mut buf: Vec<u8> = Vec::new();
+        let mut header: Vec<u8> = Vec::new();
+        header.extend_from_slice(&pad_card("SIMPLE", "T"));
+        for (k, v) in cards {
+            header.extend_from_slice(&pad_card(k, v));
+        }
+        header.extend_from_slice(&pad_card("END", ""));
+        while header.len() % 2880 != 0 {
+            header.extend_from_slice(&[b' '; 80]);
+        }
+        buf.extend_from_slice(&header);
+        buf.extend_from_slice(raw);
+        while buf.len() % 2880 != 0 {
+            buf.push(0);
+        }
+        buf
+    }
+
+    #[test]
+    fn image_bscale_bzero_int16() {
+        let mut raw = Vec::new();
+        for v in [0i16, 2i16] {
+            raw.extend_from_slice(&v.to_be_bytes());
+        }
+        let buf = img_with(
+            &[
+                ("BITPIX", "16"),
+                ("NAXIS", "2"),
+                ("NAXIS1", "2"),
+                ("NAXIS2", "1"),
+                ("BSCALE", "0.5"),
+                ("BZERO", "100"),
+            ],
+            &raw,
+        );
+        let (img, _) = FitsImage::parse(&buf, 0).unwrap();
+        assert_eq!(img.bitpix, 16);
+        assert_eq!(img.value_f64(&buf, [0, 0, 0]).unwrap(), 100.0);
+        assert_eq!(img.value_f64(&buf, [1, 0, 0]).unwrap(), 101.0);
+    }
+
+    #[test]
+    fn image_bitpix8_unsigned() {
+        let buf = img_with(
+            &[
+                ("BITPIX", "8"),
+                ("NAXIS", "2"),
+                ("NAXIS1", "2"),
+                ("NAXIS2", "1"),
+            ],
+            &[7, 255],
+        );
+        let (img, _) = FitsImage::parse(&buf, 0).unwrap();
+        assert_eq!(img.value_f64(&buf, [0, 0, 0]).unwrap(), 7.0);
+        assert_eq!(img.value_f64(&buf, [1, 0, 0]).unwrap(), 255.0);
+    }
+
+    #[test]
+    fn wcs_tan_center_and_offsets() {
+        let buf = img_with(
+            &[
+                ("BITPIX", "-32"),
+                ("NAXIS", "2"),
+                ("NAXIS1", "100"),
+                ("NAXIS2", "100"),
+                ("CTYPE1", "'RA---TAN'"),
+                ("CTYPE2", "'DEC--TAN'"),
+                ("CRVAL1", "200.0"),
+                ("CRVAL2", "45.0"),
+                ("CRPIX1", "50.5"),
+                ("CRPIX2", "50.5"),
+                ("CDELT1", "0.001"),
+                ("CDELT2", "0.001"),
+            ],
+            &[0u8; 40000],
+        );
+        let (img, _) = FitsImage::parse(&buf, 0).unwrap();
+        let (ra, dec) = img.world(50.5, 50.5).unwrap();
+        assert!((ra - 200.0).abs() < 1e-9);
+        assert!((dec - 45.0).abs() < 1e-9);
+        let (ra, dec) = img.world(51.5, 50.5).unwrap();
+        assert!((ra - 200.001414213).abs() < 1e-6);
+        assert!((dec - 45.0).abs() < 1e-5);
+        let (ra, dec) = img.world(50.5, 51.5).unwrap();
+        assert!((ra - 200.0).abs() < 1e-9);
+        assert!((dec - 45.001).abs() < 1e-6);
+    }
+
+    #[test]
+    fn wcs_linear_axes() {
+        let buf = img_with(
+            &[
+                ("BITPIX", "-32"),
+                ("NAXIS", "2"),
+                ("NAXIS1", "8"),
+                ("NAXIS2", "8"),
+                ("CTYPE1", "'FREQ'"),
+                ("CTYPE2", "'TIME'"),
+                ("CRVAL1", "100.0"),
+                ("CRVAL2", "2000.0"),
+                ("CRPIX1", "1.0"),
+                ("CRPIX2", "1.0"),
+                ("CDELT1", "2.0"),
+                ("CDELT2", "-0.5"),
+            ],
+            &[0u8; 256],
+        );
+        let (img, _) = FitsImage::parse(&buf, 0).unwrap();
+        assert_eq!(img.world(1.0, 1.0).unwrap(), (100.0, 2000.0));
+        assert_eq!(img.world(3.0, 1.0).unwrap(), (104.0, 2000.0));
+        assert_eq!(img.world(1.0, 3.0).unwrap(), (100.0, 1999.0));
+    }
+
+    #[test]
+    fn wcs_cd_matrix_overrides_cdelt() {
+        let buf = img_with(
+            &[
+                ("BITPIX", "-32"),
+                ("NAXIS", "2"),
+                ("NAXIS1", "4"),
+                ("NAXIS2", "4"),
+                ("CTYPE1", "'RA---TAN'"),
+                ("CTYPE2", "'DEC--TAN'"),
+                ("CRVAL1", "10.0"),
+                ("CRVAL2", "0.0"),
+                ("CRPIX1", "2.0"),
+                ("CRPIX2", "2.0"),
+                ("CDELT1", "9.9"),
+                ("CDELT2", "9.9"),
+                ("CD1_1", "0.001"),
+                ("CD1_2", "0.0"),
+                ("CD2_1", "0.0"),
+                ("CD2_2", "0.001"),
+            ],
+            &[0u8; 64],
+        );
+        let (img, _) = FitsImage::parse(&buf, 0).unwrap();
+        let (ra, dec) = img.world(3.0, 2.0).unwrap();
+        assert!((ra - 10.001).abs() < 1e-6);
+        assert!(dec.abs() < 1e-6);
+    }
+
+    fn table_with(cards: &[(&str, &str)], rows: &[[u8; 4]]) -> Vec<u8> {
+        let mut buf: Vec<u8> = Vec::new();
+        let mut header: Vec<u8> = Vec::new();
+        header.extend_from_slice(&pad_card("SIMPLE", "T"));
+        header.extend_from_slice(&pad_card("BITPIX", "8"));
+        header.extend_from_slice(&pad_card("NAXIS", "0"));
+        header.extend_from_slice(&pad_card("END", ""));
+        while header.len() % 2880 != 0 {
+            header.extend_from_slice(&[b' '; 80]);
+        }
+        buf.extend_from_slice(&header);
+        let mut ext: Vec<u8> = Vec::new();
+        ext.extend_from_slice(&pad_card("XTENSION", "'BINTABLE'"));
+        ext.extend_from_slice(&pad_card("BITPIX", "8"));
+        ext.extend_from_slice(&pad_card("NAXIS", "2"));
+        ext.extend_from_slice(&pad_card("NAXIS1", "4"));
+        ext.extend_from_slice(&pad_card("NAXIS2", &rows.len().to_string()));
+        ext.extend_from_slice(&pad_card("PCOUNT", "0"));
+        ext.extend_from_slice(&pad_card("GCOUNT", "1"));
+        ext.extend_from_slice(&pad_card("TFIELDS", "1"));
+        ext.extend_from_slice(&pad_card("TTYPE1", "'FLUX'"));
+        ext.extend_from_slice(&pad_card("TFORM1", "J"));
+        ext.extend_from_slice(&pad_card("TBCOL1", "1"));
+        for (k, v) in cards {
+            ext.extend_from_slice(&pad_card(k, v));
+        }
+        ext.extend_from_slice(&pad_card("END", ""));
+        while ext.len() % 2880 != 0 {
+            ext.extend_from_slice(&[b' '; 80]);
+        }
+        buf.extend_from_slice(&ext);
+        for row in rows {
+            buf.extend_from_slice(row);
+        }
+        while buf.len() % 2880 != 0 {
+            buf.push(0);
+        }
+        buf
+    }
+
+    #[test]
+    fn table_tscal_tzero_scales_integer() {
+        let buf = table_with(&[("TSCAL1", "2.0"), ("TZERO1", "10.0")], &[[5, 0, 0, 0]]);
+        let (t, _) = FitsTable::parse(&buf, 2880).unwrap();
+        let flux = t.column("FLUX").unwrap();
+        assert_eq!(t.cell_i64(&buf, 0, flux).unwrap(), 5);
+        assert_eq!(t.cell_f64(&buf, 0, flux).unwrap(), 20.0);
+    }
+
+    #[test]
+    fn table_unscaled_defaults_are_identity() {
+        let buf = table_with(&[], &[[5, 0, 0, 0]]);
+        let (t, _) = FitsTable::parse(&buf, 2880).unwrap();
+        let flux = t.column("FLUX").unwrap();
+        assert_eq!(t.cell_f64(&buf, 0, flux).unwrap(), 5.0);
     }
 }
