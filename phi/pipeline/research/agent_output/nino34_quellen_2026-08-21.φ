@@ -1,0 +1,163 @@
+NINO3.4 — Wind+SST-Paar, lebende Quellen — Befunde 2026-08-21, selbsttragend (null Vorkontext)
+
+Frage: welche LEBENDEN Quellen tragen für die NINO3.4-Region (5S–5N, 170W–120W)
+Wind UND SST am selben Messpunkt als Zeitreihe (>= ~30 Tage Historie, Kadenz <= 1 h)?
+Ko-Lokalisierung = eine Boje, zwei Serien (Wind advective + SST thermal) mit gemeinsamer
+Kadenz — kein globales Mittel, kein Gridding als Ersatz.
+
+Methode: jede URL live mit curl gemessen (HTTP-Status, Format, Stichprobe), Stand
+2026-08-21 UTC. 0 honored: 404/DNS-tot/SSL-Abbruch = fehlt, nie ein erfundener Wert
+oder eine erratene URL. Nicht selbst gemessene Adressen sind als unverifiziert markiert.
+Urteile sind Kanal-Messungen, keine Wissenschafts-Urteile.
+
+A. Der Befund in einem Satz
+
+Ein LEBENDES Paar mit Kadenz <= 1 h existiert für NINO3.4 nicht. Das einzige
+ko-lokalisierte Wind+SST-Paar (dieselbe Boje, beide Serien) liegt auf dem
+GTMBA-Delayed-Mode-Weg als Tages-/5-Tages-Aggregat (pmelTaoDyW/Sst,
+pmelTao5dayW/Sst) — Force-Gate und Ko-Lokalisierung bestehen, Kadenz daily/5-day
+(nicht <= 1 h), verzögert (~7 Wochen). Jede Realtime-/Hourly-Schiene ist tot oder
+trägt nur EINE Serie. Der Befund ist fehlt, nicht null: der Messpunkt-Raum (24
+TAO/TRITON-Stationen im Kasten) ist vorhanden, die hourly-Ernte fehlt.
+
+B. Kandidaten (je: URL gemessen, HTTP-Befund, Format, Parameter, Kadenz,
+Historie, Force-Gate, Ko-Lokalisierung, Verdikt)
+
+B1. PMEL/GTMBA TAO-Realtime-Auslieferung — TOT (ASCII/SOS/JSON-Pfad weg)
+  https://www.pmel.noaa.gov/tao/                              -> 200 (Drupal-HTML, keine Daten)
+  https://www.pmel.noaa.gov/tao/drupal/disdel/                -> 200 (HTML-Seite "Data Display & Delivery")
+  https://www.pmel.noaa.gov/tao/data/realtime/                -> 404
+  https://tao.ndbc.noaa.gov/                                  -> 200 (JS-SPA, inhaltsleer fuer fetch)
+  https://tao.ndbc.noaa.gov/data/realtime/                    -> 404
+  https://tao.ndbc.noaa.gov/proj/                             -> 404
+  https://tao.ndbc.noaa.gov/data/                             -> 404
+  https://tao.ndbc.noaa.gov/proj/disdel/                      -> 404
+  Verdikt: keine Live-Datei pro Station (kein .txt/.cdf/.sos/.json) unter diesen
+  Pfaden. Die Landing-/disdel-Seiten tragen nur HTML. TOT als Datei-Auslieferung.
+
+B2. NDBC realtime2 / 5day2 fuer die 51xxx-TAO-Stationen — TOT (fehlt)
+  https://www.ndbc.noaa.gov/data/realtime2/51007.txt          -> 404
+  https://www.ndbc.noaa.gov/data/5day2/51007.txt              -> 404
+  https://www.ndbc.noaa.gov/data/5day2/51007.cwind            -> 404
+  https://www.ndbc.noaa.gov/station_page.php?station=51007    -> 404 "NDBC - Station not found"
+  Verdikt: die 51xxx-IDs sind im NDBC-Stationsbestand nicht vorhanden — kein
+  Realtime-Feed, keine Stationsseite. fehlt (kein erfundener Stationspfad).
+
+B3. NDBC SOS-Dienst — TOT
+  https://sdf.ndbc.noaa.gov/sos/server.php?...                -> DNS-tot (Could not resolve host)
+  https://www.ndbc.noaa.gov/sos/server.php?request=GetCapabilities&service=SOS -> 404
+  Verdikt: SOS-Schiene abgeschaltet/unaufloesbar. TOT.
+
+B4. PMEL ERDDAP (data.pmel.noaa.gov/pmel/erddap) — der lebende GTMBA/OceanSITES-DAC
+  https://data.pmel.noaa.gov/pmel/erddap/index.html           -> 200 (ERDDAP)
+  https://data.pmel.noaa.gov/pmel/erddap/search/index.json?searchFor=tao -> 200 (60 Datasets)
+  Hourly-Datasets (search "hourly"), je gemessen ueber /info/<id>/index.json:
+  - tao_flux_absolute   / tao_flux_relative:  array=PIRATA, data_mode=M,
+      time 2000-04-22 .. 2021-09-07 (abs) / 2000-04-26 .. 2021-07-20 (rel).
+      Variablen: QLAT,QSEN,QRAIN,QNET,LWNET,SWNET,TAU,TAUX,TAUY,TDIR,RAIN,EVAP,EMP.
+      KEIN SST, KEIN WSPD — nur Wind-Stress (TAU) + Windrichtung (TDIR) + Fluesse.
+      Force-Gate: TAU/Flux = abgeleitete Fluesse, nicht die rohe Windmessung.
+      Verdikt: partiell (Wind-Stress, keine Geschwindigkeit, kein SST), PIRATA-only
+      (Atlantik), 2021 eingestellt -> fuer NINO3.4-Paar ohne Relevanz; delayed-only/tot.
+  - pirata_hourly_temp (array PIRATA): TEMP(depth),time,lat,lon,profile_id; data_mode=M,
+      1998-01-27 .. 2026-02-27; date_update 2026-02-27.
+  - rama_hourly_temp   (array RAMA):   2006-11-14 .. 2026-02-27; date_update 2026-02-27.
+  - pirata_hourly_psal / rama_hourly_psal / papa_hourly_psal / papa_hourly_temp /
+    keo_hourly: gleiche Familie (hourly in-situ, TEMP/PSAL, KEIN Wind).
+  - triton_hourly_temp: 1998-03-08 .. 2024-09-21; Array-Attribut traegt "RAMA"
+      (gemessen — Metadaten-Markierung); data_mode=M. Pacific/TRITON-Teil 2024 eingestellt.
+  Verdikt: hourly = nur Temperatur (und Salz), nie Wind; der Pacific-Teil
+  (triton_hourly_temp) endet 2024-09. Kein hourly-Wind-Dataset fuer TAO/Pacific.
+  Ko-Lokalisierung: eine Serie (SST via TEMP), kein Wind -> partiell/tot.
+
+B5. CoastWatch ERDDAP (coastwatch.pfeg.noaa.gov/erddap) — GTMBA-Delayed-Mode-Familie
+  https://coastwatch.pfeg.noaa.gov/erddap/index.html          -> 200
+  https://coastwatch.pfeg.noaa.gov/erddap/search/index.json?searchFor=tao -> 200 (122 Datasets)
+  pmelTao5dayW / pmelTaoDyW:  Variablen WS_401 (Wind speed, m s-1), WD_410 (Richtung,
+      degrees_true), WU_422/WV_423 (Komponenten) + Qualitaetsflags.
+      time_coverage_start 1977-11, end 2026-06-30 (5day) / 2026-07-03 (daily).
+  pmelTao5daySst / pmelTaoDySst: Variable T_25 (SST, degree_C) + Flags.
+      time_coverage 1977-11 .. 2026-06-30 (5day) / 2026-07-03 (daily).
+  subsetVariables: array, station, wmo_platform_code, longitude, latitude, depth.
+  Longitude-Konvention: degrees_east 0..360 (170W=190, 120W=240).
+  Stichprobe gemessen (0n155w, array="TAO/TRITON"):
+      pmelTao5dayW.csv?time,latitude,longitude,WS_401,WD_410&time>=2026-05-01
+        &array="TAO/TRITON"&station="0n155w"
+        -> 2026-05-01  WS_401=3.85 m/s WD_410=270.5; 2026-05-16 WS_401=3.96 ...
+      pmelTao5daySst.csv?time,latitude,longitude,T_25&... (gleiche Filter)
+        -> 2026-05-01 T_25=28.36 C ... 2026-05-16 T_25=28.83 C
+  Kasten-Stationen (distinct() gemessen): array="TAO/TRITON", lat [-5,5], lon [190,240]
+      -> ~24 Stationen (0n170w,0n155w,0n152w,0n140w,0n125w,1s153w,2n/2s 170/155/140/125w,
+         5n/5s 170/155/140/125w). Station "0n85w" traegt leeres array-Feld (gemessen).
+  Force-Gate: Wind (WS_401/WD_410) advective — die Messung IST Advektion (patch-levy);
+      SST (T_25) thermal (exponential-decay). Beide bestanden.
+  Ko-Lokalisierung: BESTANDEN — dieselbe Station (subset "station") traegt beide Serien.
+  Verdikt: DELAYED-ONLY. Das einzige ko-lokalisierte Wind+SST-Paar; aber Kadenz
+  daily/5-day (nicht <= 1 h) und Delayed-Mode (data_mode M, ~7 Wochen Lag). Historie
+  ja (1977-present), Live nein.
+
+B6. OceanSITES / OSMC — geblockt/unerreichbar (Kanal = B4)
+  https://www.oceansites.org/                                  -> SSL handshake failure (curl 35,
+      auch mit -k; Host lehnt TLS-Handshake ab)
+  https://osmc.noaa.gov/                                       -> 403 (blocked)
+  https://erddap.oceansites.org/erddap/index.html              -> DNS-tot (Could not resolve host)
+  Verdikt: der GTMBA-OceanSITES-Datenfluss laeuft ueber den PMEL-ERDDAP (B4) — dort
+  ist die OceanSITES-Signatur (Conventions "OceanSITES Manual 1.2") gemessen. Das
+  OSMC-Portal ist von diesem Host 403; kein zusaetzlicher Kanal.
+
+B7. PIRATA (Atlantik) / RAMA (Indik) — Schwester-Arrays, Befund fuer die Frage
+  "was liefern die Arrays ueberhaupt noch":
+  - Hourly in-situ: pirata_hourly_temp/psal + rama_hourly_temp/psal LIVE-aehnlich
+      (end 2026-02-27, delayed M, Batch-Update), aber TEMP/PSAL only, KEIN Wind.
+  - Wind: nur delayed daily/5-day/pmelTao*W (B5, alle Arrays gemeinsam) oder der
+      2021 eingestellte tao_flux-Wind-Stress (B4, PIRATA).
+  Verdikt: auch die Schwester-Arrays tragen kein lebendes hourly-Wind+SST-Paar;
+  hourly = Temperatur only, Wind = delayed daily+.
+
+B8. Reanalysen/Grids (OISST, ERA5, CMEMS) — Vermerk, kein Kandidat
+  Grids sind keine Ko-Lokalisierung (keine gemeinsame Boje, interpoliert/assimiliert).
+  Force-Gate: Modell/Reanalyse -> decline als Messwert-Paar. "Grid, kein Paar".
+
+B9. Island-METARs im Kasten — keine Station / kein Paar
+  Befund: der Kasten (5S–5N, 170W–120W) traegt praktisch kein Inselnetz. Einzige
+  nennenswerte Landmasse mit Flugplatz ist Kiritimati (Christmas Island, Kiribati,
+  ~1.9N 157.4W, ICAO PLCH) am westlichen Rand; Baker/Howland/Jarvis (US Minor
+  Outlying Islands) tragen keine Stationen. METAR liefert Wind, aber kein
+  ko-lokalisiertes SST (Flugplatz, kein Ozean-Messpunkt). METAR-Zustellung selbst
+  unverifiziert (nicht gemessen). Verdikt: keine Station, kein Paar.
+
+C. Rangfolge der ko-lokalisierten Paar-Kandidaten
+
+1. (delayed-only, einziges Paar) pmelTaoDyW + pmelTaoDySst  — daily, 1977-present,
+   ~7 Wochen Lag, Force-Gate + Ko-Lokalisierung BESTANDEN, Kadenz daily (nicht <= 1 h).
+2. (delayed-only) pmelTao5dayW + pmelTao5daySst — 5-day, gleiche Bewertung, groeber.
+3. (partiell, keine Ko-Lokalisierung) pirata/rama/papa/keo/triton hourly TEMP/PSAL —
+   nur SST, kein Wind; Pacific-Teil (triton) 2024 eingestellt.
+4. (tot) tao_flux_absolute/relative — Wind-Stress ohne SST, PIRATA, 2021 eingestellt.
+5. (tot) alle Realtime/SOS/NDBC-Schienen (B1–B3).
+
+D. Queue-Draft-Zeilen (in diese Datei — KEINE neue Queue-Datei)
+  Nur Kandidat 1 besteht Force-Gate UND Ko-Lokalisierung. Als Draft-Zeilen fuer den
+  einen Pfad (Entscheidung dort; delayed + daily-Kadenz gegen die <= 1 h-Anforderung):
+
+    kandidat wind+sst-paar gtmba-delayed-daily
+    url https://coastwatch.pfeg.noaa.gov/erddap/tabledap/pmelTaoDyW.csv?array,station,longitude,latitude,time,WS_401,WD_410&array=%22TAO/TRITON%22&latitude%3E=-5&latitude%3C=5&longitude%3E=190&longitude%3C=240&time%3E=max(time)-30days
+    url https://coastwatch.pfeg.noaa.gov/erddap/tabledap/pmelTaoDySst.csv?array,station,longitude,latitude,time,T_25&array=%22TAO/TRITON%22&latitude%3E=-5&latitude%3C=5&longitude%3E=190&longitude%3C=240&time%3E=max(time)-30days
+    note zwei Bloecke, eine Boje (subset "station" identisch) — Wind advective m/s
+      (WS_401), SST thermal (T_25, C -> K beim Load). Kadenz daily, delayed-mode M,
+      ~7 Wochen Lag. ERDDAP-Constraint-/Subset-Parsing + Stations-Fanout ist Parser-Gap.
+      Der Box-Filter (latitude/longitude/time) ist dieselbe gemessene API-Form wie die
+      Stichprobe in B5; nur das Box-Fenster ist die Erweiterung. Verifiziert: array=
+      "TAO/TRITON" + station="0n155w" + time>= ... -> Daten (B5). Verifiziert NICHT der
+      exakte 30-Tage-Box-Filter (0 honored).
+
+E. Die benannte Luecke (fehlt)
+
+  Fuer die NINO3.4-Region fehlt ein LEBENDES (Kadenz <= 1 h) ko-lokalisiertes
+  Wind+SST-Paar. Was existiert: (a) delayed daily/5-day-Paar (C1/C2, Ko-Lokalisierung
+  ja, Live nein), (b) hourly SST ohne Wind (C3, Pacific eingestellt). Was fehlt: eine
+  hourly/quasi-realtime Datei pro TAO-Station, die Wind UND SST am selben Messpunkt
+  traegt. Die physikalischen Messungen selbst (24 TAO/TRITON-Moorings im Kasten)
+  existieren und sind im Delayed-Mode registriert — fehlt ist die hourly-Ernte, nicht
+  der Messpunkt. 0 honored: der 404-Fall und die eingestellten Serien sind als fehlt
+  festgeschrieben, kein Platzhalter, keine Reanalyse als Ersatz.

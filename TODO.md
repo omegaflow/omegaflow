@@ -548,10 +548,22 @@ Maschine misst.
   Fehlt-Registratur: die NINO3.4-TAO-Stationen (51007…51311) tragen
   keine realtime2-Dateien (404, gemessen 2026-08-21) — die
   äquatoriale Region bleibt quellenlos, die Maschine misst die fünf
-  Tiefsee-Paare; 41001 trägt 105 Bins (~26 d). Offen: die
-  Folge-Runden der übrigen vier Bojen (der Rotor läuft im Hintergrund
-  weiter); eine GTMBA/OISST-Ernte für die äquatoriale Region bleibt
-  fehlt.
+  Tiefsee-Paare; 41001 trägt 105 Bins (~26 d). NINO3.4-Recherche
+  (2026-08-21, grind-pro — Befund selbsttragend:
+  phi/pipeline/research/agent_output/nino34_quellen_2026-08-21.φ):
+  kein LEBENDES hourly-Paar im Kasten — alle Realtime-Schienen tot
+  (PMEL /data/realtime/ 404, tao.ndbc.noaa.gov 404, NDBC
+  realtime2/5day2 für die 51xxx 404, SOS DNS-tot/404, alles gemessen);
+  die PMEL-ERDDAP-hourly-Datasets tragen nur Temperatur, der
+  Pacific-Teil (triton_hourly_temp) endet 2024-09; das einzige
+  ko-lokalisierte Wind+SST-Paar ist delayed-only (pmelTaoDyW +
+  pmelTaoDySst, coastwatch ERDDAP, daily/5-day, 1977-present, ~7
+  Wochen Lag, Force-Gate + Ko-Lokalisierung bestanden — Queue-Draft
+  im Befund, ERDDAP-Constraint-Parsing ist Parser-Gap). Die 24
+  TAO/TRITON-Messpunkte existieren — fehlt ist die hourly-Ernte,
+  nicht der Messpunkt (0 honored). Offen: die Folge-Runden der
+  übrigen vier Bojen (der Rotor läuft im Hintergrund weiter); der
+  eine Pfad entscheidet über den delayed-only-Draft.
 - **Bz-Paradoxon** (`handover-2026-08-21-bz-paradoxon.md`):
   TE(RTSW-Bz→Bodenmagnetometer) gegen TE(Speed→Bodenmagnetometer), Lag
   0–120 min gegen die L1-Laufzeit. Oben lebt (sources.φ:102/108);
@@ -568,7 +580,8 @@ Maschine misst.
   trägt keinen gereinigten Pfeil; PE-Ring < 8 Segmente (kein Urteil).
   Das Blatt: `docs/surveys/survey-2026-08-21-bz-kausalpfeil.md`.
   Offen: Mehrfachvergleichskorrektur über die Paar-Matrix, das
-  Retro-Fenster (1-h, OMNI2) als zweite Blatt-Zeile.
+  Retro-Fenster (1-h, OMNI2) als zweite Blatt-Zeile (Status-Matrix +
+  P366D-Schleife benannt, s. INTERMAGNET-Fanout-Zeile).
 - **LAIC-Pfeilrichtung** (`handover-2026-08-21-laic-pfeilrichtung.md`):
   Nadel Ⅳ verengt auf die Richtung — TE(Lithosphäre→Ionosphäre) gegen die
   Gegenrichtung im 72-h-Fenster vor M ≥ 6.0, Null-Ensemble zufälliger
@@ -1350,7 +1363,20 @@ Offen (Detail in phi/pipeline/ledger.φ):
   0.0=absent-Wire-Pad (Weiß); BP−RP=0 (A0V) kollidiert — die v8-Maske
   (Rats-Urteil-1-Muster) trägt den Farb-Slot als Bit (D2-Verdict).
 - INTERMAGNET-Fanout (154 Observatorien live): Ausbeute-Feintuning
-  offen (best-avail-Aktualität variiert je Observatorium)
+  offen (best-avail-Aktualität variiert je Observatorium). Status-Matrix
+  gemessen (2026-08-21, GIN-V1-Katalog, 3074 Datensätze): je Station
+  `definitive`/`quasi-def`/`reported`/`adjusted`/`best-avail` × PT1M/PT1S
+  × native/xyzf/hdzf/diff. `best-avail` ist der Status-Stapel —
+  definitiv →2021-12-31, quasi-def 2012→~1 Monat zurück, reported/
+  adjusted der letzte Monat; `definitive` reicht nur bis 2021,
+  `quasi-def` bis ~1 Monat zurück (P366D max je Request). Der
+  Auroral-Ring (|lat| ≥ 58°, 38 Observatorien, davon ~33 offen) wurde
+  vom Berlin-Zentrum (cap 40) systematisch ausgeschlossen — ein zweiter
+  Fanout-Block (Zentrum 66°N 20°E, cap 12) trägt den skandinavisch-
+  russischen Sektor; ABK erscheint doppelt (fester Block = Probe-Anker).
+  Die Retro-Blatt-Zeile läuft über `best-avail` mit benannten
+  Status-Grenzen ODER `quasi-def` (2012→, monatsverzögert) — Jahres-
+  Schleife im Retro-Atom.
 - Struktur-Reader: netCDF-3 (CDF-1 + CDF-2, std-only) in src/netcdf.rs
   lebt; CDF-5 bleibt pending (eigener Atom); offen: FITS-Binärtabellen,
   Parquet/Arrow, netCDF-4/HDF5, OPeNDAP, CDF, GRIB-2, GeoParquet,
