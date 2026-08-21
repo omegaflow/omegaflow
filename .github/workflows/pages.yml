@@ -46,7 +46,8 @@ jobs:
       with:
         target: ${{ matrix.target }}
     - run: cargo build --release --target ${{ matrix.target }}
-    - run: |
+    - shell: bash
+      run: |
         BIN="target/${{ matrix.target }}/release/omegaflow"
         if [ -f "$BIN" ]; then cp "$BIN" "${{ matrix.artifact }}"; fi
         if [ -f "$BIN.exe" ]; then cp "$BIN.exe" "${{ matrix.artifact }}"; fi

@@ -3989,7 +3989,8 @@ mod tests {
 
     #[test]
     fn window_state_round_trips() {
-        let path = "/tmp/opencode/window_state_roundtrip.φ";
+        let path = std::env::temp_dir().join("omegaflow_window_state_roundtrip.φ");
+        let path = path.to_str().unwrap();
         let grid = 1.4e6;
         let p = [1.5e11, -3.7e9, 2.2e8];
         let q = q_norm([0.9, 0.1, -0.2, 0.3]);
@@ -4003,7 +4004,8 @@ mod tests {
 
     #[test]
     fn window_state_missing_file_is_rest_state() {
-        let (g, p, q) = window_state_load("/tmp/opencode/window_state_absent.φ");
+        let path = std::env::temp_dir().join("omegaflow_window_state_absent.φ");
+        let (g, p, q) = window_state_load(path.to_str().unwrap());
         assert_eq!(g, GRID_INIT);
         assert_eq!(p, [0.0, 0.0, 0.0]);
         assert_eq!(q, [1.0, 0.0, 0.0, 0.0]);
@@ -4011,7 +4013,8 @@ mod tests {
 
     #[test]
     fn window_state_garbage_is_rest_state() {
-        let path = "/tmp/opencode/window_state_garbage.φ";
+        let path = std::env::temp_dir().join("omegaflow_window_state_garbage.φ");
+        let path = path.to_str().unwrap();
         let text = "grid_step nan\np 1 2\nq 0 0 0 0\nwat\n";
         let _ = std::fs::write(path, text);
         let (g, p, q) = window_state_load(path);
@@ -4023,7 +4026,8 @@ mod tests {
 
     #[test]
     fn window_state_partial_lines_keep_rest_fields() {
-        let path = "/tmp/opencode/window_state_partial.φ";
+        let path = std::env::temp_dir().join("omegaflow_window_state_partial.φ");
+        let path = path.to_str().unwrap();
         let _ = std::fs::write(path, "grid_step 1.0e8\n");
         let (g, p, q) = window_state_load(path);
         assert_eq!(g, 1.0e8);
