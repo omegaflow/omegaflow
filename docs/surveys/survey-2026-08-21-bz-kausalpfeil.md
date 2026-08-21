@@ -2,7 +2,7 @@
   title: Der kausale Treiber des geomagnetisch induzierten Stroms — das Bz-Blatt
   class: survey
   date: 2026-08-21
-  sha256: a6459444f0ff6ac0738d6c40f2d9e87a6cc2ab80f9bca0d2b074f52df332b2bc
+  sha256: af567ec2c1cc88a212087e0cea79716e24cb33239a3227f65fd4e37af2b6d2ab
   status: live
   see-also: docs/concepts/ein-blatt-ergebnis.md docs/reference/broken-null-control.md docs/handover/handover-2026-08-21-bz-paradoxon.md
 -->
@@ -28,6 +28,25 @@ die Familien-Schwelle** (fam 3.74e-1): im 22-h-Fenster ist er gerichtet
 (Bz→dB/dt, 60 min), nicht fam-signifikant. Das ist derselbe Kollaps, den der
 Broken-Null-Record beschreibt (naive Pfeile → still unter phasenrandomisierter
 + strenger Schwelle) — ein Befund, keine Fabrikation.
+
+## Das Blatt (Retro-Zeile — Sturm-Ensemble 1994–2026)
+
+```
+TE(Bz → dB/dt)    = 1.2525e-1 | Schwelle 1.3890e-1 (mean 1.287e-1, σ 5.08e-3) | Lag 0 d | n 3916 | still
+TE(Speed → dB/dt) = 9.7026e-2 | Schwelle 1.3548e-1 (mean 1.248e-1, σ 5.35e-3) | Lag 0 d | n 3914 | still
+fam               = 1.8948e-1 → alle sechs Paare family bound
+```
+
+Gemessen von `src/bin/bz_retro_probe.rs` (stride 3 — jeder dritte Tag des
+Tages-Rasters, benannt; Ernte-Cache `abk_dbdt_daily.tsv`, 11889 Tage):
+OMNI2-Tagesmittel (1963→2026, Compiler-Decimation 1440 min) × ABK daily-max
+|dB/dt| (1-min → Tagesmax, monatliche HAPI-Chunks — Jahres-Requests wurden
+vom Server zurückgesetzt). **Befund: still — das Tagesmittel von Bz trägt den
+Treiber nicht.** Die Südwärts-Exkursionen, die den Sturm treiben, mitteln sich
+im Tagesmittel weg; der Kausalpfeil lebt sub-täglich (Minuten/Stunden), nicht
+im Tages-Raster. 0 honored: die Absenz am Tages-Raster ist der physikalische
+Befund, kein Datenmangel (n 3916 über 32 Jahre, alle Stürme der Ära im
+Fenster).
 
 ## Die Bedingungen
 
@@ -68,24 +87,20 @@ kurz; der Retro-Weg trägt die Ring-Länge).
 
 ## Der Satz für den Netzbetreiber
 
-Bz ist der gerichtete Treiber — TE(Bz→dB/dt) schlägt bei 60 Minuten über der
-Surrogat-Schwelle aus, Speed und Density bleiben still; aber im 22-h-Fenster
-reicht der Pfeil nicht über die Familien-Schwelle (fam 3.74e-1). Der
-Tages-Ensemble über 60 Jahre (bz_retro_probe) ist die Entscheidung — der
-Minuten-Lag (60 min) steht als gerichteter Befund, das fam-signifikante
-Sturm-Ensemble steht noch aus.
+Der Pfeil ist in Richtung und Skala identifiziert: Bz trägt den Treiber bei
+60 Minuten (per-Lag signifikant im 1-min-Fenster) — und das Tagesmittel
+trägt ihn nicht (32-Jahre-Ensemble still, alle sechs Paare unter Schwelle
+und fam). Der Treiber ist die Südwärts-Exkursion im Minuten-/Stunden-Bereich;
+wer auf Tagesmittel schaut, sieht nichts. Die fam-signifikante Bestätigung
+des Minuten-Pfeils steht auf dem 1-h-Ensemble (OMNI2-Recompile 60 min ×
+stündliches INTERMAGNET) — der nächste Atom, nicht das Ende.
 
 ## Offen (im Register)
 
-- Sturm-Ensemble (bz_retro_probe, omni2-Tagesmittel × INTERMAGNET daily-max
-  |dB/dt|, 1994→2026, Familien-Schwelle) — gebaut, der Messlauf wartet auf
-  den freien Lib-Build (parallele Session, mathematikerin.rs).
-- Mehrfachvergleichskorrektur: die Familien-Schwelle (fam) lebt jetzt in
-  bz_blatt_probe — die Matrix-Werte oben tragen beide Schwelle (per-Lag + fam).
+- 1-h-Ensemble: OMNI2-Recompile `--decimate-min 60` × INTERMAGNET stündlich
+  (downsampled vom 1-min) — der fam-signifikante Minuten-Pfeil über Stürme.
 - GIC selbst (electric): kein Feed; das Blatt misst dB/dt, den
   induktiven Treiber.
-- Sturm-Gegenwart: das Fenster ist ruhig bis mäßig (Kp ≤ 3.33); die
-  Messung in einem Großsturm-Fenster steht auf dem Retro-Weg.
 - Datenstatus: `best-avail` ist der Status-Stapel (definitive →2021-12-31,
   quasi-def 2012→~1 Monat zurück, reported/adjusted der letzte Monat);
   die Status-Grenzen sind eine benannte Nicht-Stationarität der Reihe,

@@ -694,14 +694,18 @@ Maschine misst.
   trägt jetzt die Familien-Schwelle (fam = max Surrogat-TE der Runde,
   ENSO-Muster) und hat gemessen (2026-08-21, 22-h-Live-Fenster 1-min):
   Bz→dB/dt gerichtet bei lag 60 min (TE 2.18e-1 über Schwelle 2.08e-1),
-  aber fam 3.74e-1 hält alle sechs Paare — der Pfeil ist gerichtet,
+  aber   fam 3.74e-1 hält alle sechs Paare — der Pfeil ist gerichtet,
   nicht fam-signifikant (Broken-Null-Muster-Kollaps). Das Blatt:
   `docs/surveys/survey-2026-08-21-bz-kausalpfeil.md`. Der Sturm-Ensemble
   (`src/bin/bz_retro_probe.rs`, omni2-Tagesmittel × INTERMAGNET
-  daily-max |dB/dt|, 1994→2026, monatliche HAPI-Chunks — die Jahres-
-  Requests wurden vom Server zurückgesetzt) ist gebaut; der Messlauf
-  wartet auf den freien Lib-Build (parallele Session,
-  mathematikerin.rs E0308).
+  daily-max |dB/dt|, 1994→2026, monatliche HAPI-Chunks — Jahres-Requests
+  vom Server zurückgesetzt; Ernte-Cache abk_dbdt_daily.tsv) HAT
+  GEMESSEN (stride 3, n 3916): still — TE(Bz→dB/dt) 1.25e-1 unter
+  eigener Schwelle 1.39e-1 und fam 1.89e-1; das Tagesmittel trägt den
+  Treiber nicht, die Südwärts-Exkursion lebt sub-täglich (0 honored).
+  Offen: der fam-signifikante Minuten-Pfeil über Stürme braucht den
+  1-h-Ensemble (OMNI2-Recompile --decimate-min 60 × stündliches
+  INTERMAGNET).
 - **LAIC-Pfeilrichtung** (Blatt 1,
   `docs/surveys/survey-2026-08-21-laic-pfeilrichtung.md`):
   Nadel Ⅳ verengt auf die Richtung — Instrument B gebaut

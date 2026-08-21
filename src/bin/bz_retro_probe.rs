@@ -89,6 +89,28 @@ fn load_omni2() -> Vec<(f64, f64, u32)> {
     }
 }
 
+const CACHE: &str = "abk_dbdt_daily.tsv";
+
+fn load_cache() -> Option<Vec<(f64, f64)>> {
+    let body = std::fs::read_to_string(CACHE).ok()?;
+    let mut out = Vec::new();
+    for line in body.lines() {
+        let mut it = line.split_whitespace();
+        let t: f64 = it.next()?.parse().ok()?;
+        let v: f64 = it.next()?.parse().ok()?;
+        out.push((t, v));
+    }
+    Some(out)
+}
+
+fn write_cache(series: &[(f64, f64)]) {
+    let mut s = String::new();
+    for &(t, v) in series {
+        s.push_str(&format!("{t} {v}\n"));
+    }
+    let _ = std::fs::write(CACHE, s);
+}
+
 fn harvest_abk_year(year: i64) -> Vec<(f64, f64)> {
     let now = now_unix();
     let mut daily_max: Vec<(f64, f64)> = Vec::new();
@@ -282,6 +304,16 @@ fn row(from: &str, to: &str, to_s: &[f32], from_s: &[f32], lags: &[usize], fam: 
 }
 
 fn main() {
+    let args: Vec<String> = std::env::args().skip(1).collect();
+    let harvest_only = args.iter().any(|a| a == "--harvest-only");
+    let force_harvest = args.iter().any(|a| a == "--force-harvest");
+    let stride: usize = args
+        .iter()
+        .position(|a| a == "--stride")
+        .and_then(|i| args.get(i + 1))
+        .and_then(|v| v.parse().ok())
+        .unwrap_or(1)
+        .max(1);
     let now = now_unix();
     println!("=== Bz-Retro-Probe — der Treiber über 60 Jahre (Sturm-Ensemble) ===");
     println!("system time: {}", iso_utc(now));
@@ -310,18 +342,39 @@ fn main() {
         omni_density.len()
     );
 
-    let mut dbdt_daily: Vec<(f64, f64)> = Vec::new();
-    let this_year = 2026i64;
-    for y in FIRST_YEAR..=this_year {
-        let mut days = harvest_abk_year(y);
-        if days.is_empty() {
-            eprintln!("ABK {y}: no daily cells — das Jahr bleibt leer");
-            continue;
+    let mut dbdt_daily: Vec<(f64, f64)> = if !force_harvest {
+        match load_cache() {
+            Some(c) if !c.is_empty() => {
+                eprintln!(
+                    "cache {CACHE}: {} Tage geladen — die Ernte ist übersprungen",
+                    c.len()
+                );
+                c
+            }
+            _ => Vec::new(),
         }
-        eprintln!("ABK {y}: {} Tage geerntet (daily max |dB/dt|)", days.len());
-        dbdt_daily.append(&mut days);
+    } else {
+        Vec::new()
+    };
+    if dbdt_daily.is_empty() {
+        let this_year = 2026i64;
+        for y in FIRST_YEAR..=this_year {
+            let mut days = harvest_abk_year(y);
+            if days.is_empty() {
+                eprintln!("ABK {y}: no daily cells — das Jahr bleibt leer");
+                continue;
+            }
+            eprintln!("ABK {y}: {} Tage geerntet (daily max |dB/dt|)", days.len());
+            dbdt_daily.append(&mut days);
+        }
+        dbdt_daily.sort_by(|a, b| a.0.total_cmp(&b.0));
+        write_cache(&dbdt_daily);
+        eprintln!("cache {CACHE}: {} Tage geschrieben", dbdt_daily.len());
     }
-    dbdt_daily.sort_by(|a, b| a.0.total_cmp(&b.0));
+    if harvest_only {
+        println!("Ernte abgeschlossen — Cache {CACHE} steht; der Messlauf ohne --harvest-only.");
+        return;
+    }
     println!(
         "ABK daily max |dB/dt|: {} Tage ({} → {})",
         dbdt_daily.len(),
@@ -348,10 +401,19 @@ fn main() {
         n_days
     );
 
-    let bz = bin_day(&omni_bz, t0, n_days);
-    let speed = bin_day(&omni_speed, t0, n_days);
-    let density = bin_day(&omni_density, t0, n_days);
-    let dbdt = bin_day(&dbdt_daily, t0, n_days);
+    let mut bz = bin_day(&omni_bz, t0, n_days);
+    let mut speed = bin_day(&omni_speed, t0, n_days);
+    let mut density = bin_day(&omni_density, t0, n_days);
+    let mut dbdt = bin_day(&dbdt_daily, t0, n_days);
+    if stride > 1 {
+        bz = bz.into_iter().step_by(stride).collect();
+        speed = speed.into_iter().step_by(stride).collect();
+        density = density.into_iter().step_by(stride).collect();
+        dbdt = dbdt.into_iter().step_by(stride).collect();
+        println!(
+            "benanntes Subraster: jeder {stride}. Tag (lag 1 = {stride} Tage; lag 0 bleibt der Sturm-Tag)"
+        );
+    }
 
     let (dbdt_bz, bz_dbdt) = pair_cells(&dbdt, &bz);
     let (dbdt_speed, speed_dbdt) = pair_cells(&dbdt, &speed);
