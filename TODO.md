@@ -645,12 +645,20 @@ Maschine misst.
    thr 0.897). Gemessen: ptdy/vis/tide = 0 aus stdmet (Tiefsee-Bojen
    messen weder Sicht noch Tide; PTDY trägt nur realtime2), RAIN fehlt
    an den 37 Stationen — fehlt, kein Platzhalter. Offen (registriert):
-   die Solar-Kanäle als Matrix-Akteure (geteilter solar_rx-Drain +
-   6-h-Solar-Ringe — eigener Atom, der solar_tick-Ingest ist
-   Parallel-Sessions-Terrain), die Thermokline (kein Instrument an den
-   37 Punkten — PMEL-ERDDAP hourly nur TAO, Pacific 2024 eingestellt —
-   fehlt). Die sichtbare Membran stottert während der Proben (~1 s
-   Render-Stall je Zelle) — der Hidden-Lauf ist die Messweise.
+   der GLOBAL-AKTEUR-ATOM (Übergabe
+   handover-2026-08-21-global-akteure.md — der Kausalmaschinen-
+   Playground): sieben geteilte Ring-Kanäle (dst 1-h SWPC, kp 3-h GFZ
+   + historisch seit 1932, oulu 1-h, co2_mlo wöchentlich, mond/sonne
+   aus den eigenen Ephemeriden via body_barycenter_position +
+   WGCCRE + activestations.xml-Koordinaten, solar f107/xray/euv304
+   über den geteilten solar_rx-Drain — Parallel-Sessions-Terrain),
+   23–24 Kanäle → 253+ Paare → ~160 Tage je volle Matrix; die
+   GTX-970-Option: die Maschine ist wgpu/Vulkan-portabel, auf der
+   Karte die Hang-Grenze neu messen und ENSO_PROBE_MAX danach setzen.
+   Thermokline: kein Instrument an den 37 Punkten (PMEL-ERDDAP hourly
+   nur TAO, Pacific 2024 eingestellt — fehlt). Die sichtbare Membran
+   stottert während der Proben (~1 s Render-Stall je Zelle) — der
+   Hidden-Lauf ist die Messweise.
 - **Bz-Paradoxon** (`handover-2026-08-21-bz-paradoxon.md`):
   TE(RTSW-Bz→Bodenmagnetometer) gegen TE(Speed→Bodenmagnetometer), Lag
   0–120 min gegen die L1-Laufzeit. Oben lebt (sources.φ:102/108);
