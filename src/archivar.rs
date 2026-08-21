@@ -16380,8 +16380,9 @@ pub struct SolarCell {
 }
 
 pub const ENSO_GRID: u32 = 21600;
-const ENSO_RING_MAX: usize = 256;
+const ENSO_RING_MAX: usize = 1024;
 const ENSO_FETCH_TTL: u64 = 3600;
+const ENSO_BACKFILL_TTL: u64 = 604800;
 
 #[derive(Clone, Copy, PartialEq, Eq, Hash)]
 pub enum EnsoStation {
@@ -16795,10 +16796,7 @@ fn solar_harvest(
     }
 }
 
-fn enso_realtime2_parse(
-    body: &str,
-    lsk: &LeapSeconds,
-) -> Option<(Vec<(f64, f64)>, Vec<(f64, f64)>)> {
+fn enso_ndbc_parse(body: &str, lsk: &LeapSeconds) -> Option<(Vec<(f64, f64)>, Vec<(f64, f64)>)> {
     let header = body.lines().find(|l| l.starts_with('#'))?;
     let cols: Vec<&str> = header.split_whitespace().collect();
     let wspd = cols.iter().position(|&c| c == "WSPD")?;
@@ -16834,12 +16832,12 @@ fn enso_realtime2_parse(
             continue;
         };
         if let Ok(w) = p[wspd].parse::<f64>() {
-            if w.is_finite() {
+            if w.is_finite() && w > 0.0 && w < 99.0 {
                 wind.push((t, w));
             }
         }
         if let Ok(s) = p[wtmp].parse::<f64>() {
-            if s.is_finite() {
+            if s.is_finite() && s > 0.0 && s < 900.0 {
                 sst.push((t, s));
             }
         }
@@ -16916,23 +16914,30 @@ fn enso_send_bins(
 fn enso_harvest(tx: mpsc::Sender<EnsoCell>, time: Arc<Mutex<Option<LeapSeconds>>>) {
     let mut last_sent: HashMap<(EnsoStation, EnsoSeries), u64> = HashMap::new();
     let mut said: HashSet<String> = HashSet::new();
+    let mut backfilled: HashSet<EnsoStation> = HashSet::new();
     loop {
-        let lock = match time.lock() {
-            Ok(l) => l,
-            Err(_) => break,
-        };
-        let Some(lsk) = lock.as_ref() else {
-            drop(lock);
-            thread::sleep(std::time::Duration::from_secs(ENSO_FETCH_TTL));
-            continue;
+        let lsk = {
+            let lock = match time.lock() {
+                Ok(l) => l,
+                Err(_) => break,
+            };
+            let Some(lsk) = lock.as_ref() else {
+                drop(lock);
+                thread::sleep(std::time::Duration::from_secs(ENSO_FETCH_TTL));
+                continue;
+            };
+            lsk.clone()
         };
         for station in EnsoStation::ALL {
+            if backfilled.insert(station) {
+                enso_backfill(station, &lsk, &mut last_sent, &tx);
+            }
             let url = format!(
                 "https://www.ndbc.noaa.gov/data/realtime2/{}.txt",
                 station.id()
             );
             if let Some(body) = fetch_raw(&url, None, &[], ENSO_FETCH_TTL) {
-                match enso_realtime2_parse(&body, lsk) {
+                match enso_ndbc_parse(&body, &lsk) {
                     Some((wind, sst)) => {
                         enso_send_bins(&wind, station, EnsoSeries::Wind, &mut last_sent, &tx);
                         enso_send_bins(&sst, station, EnsoSeries::Sst, &mut last_sent, &tx);
@@ -16945,9 +16950,66 @@ fn enso_harvest(tx: mpsc::Sender<EnsoCell>, time: Arc<Mutex<Option<LeapSeconds>>
                 }
             }
         }
-        drop(lock);
         thread::sleep(std::time::Duration::from_secs(ENSO_FETCH_TTL));
     }
+}
+
+fn enso_backfill(
+    station: EnsoStation,
+    lsk: &LeapSeconds,
+    last_sent: &mut HashMap<(EnsoStation, EnsoSeries), u64>,
+    tx: &mpsc::Sender<EnsoCell>,
+) {
+    let now = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map(|d| d.as_secs())
+        .unwrap_or(0);
+    let year = 1970 + (now / 31556952) as i64;
+    for y in [year, year - 1] {
+        if y < 1970 {
+            continue;
+        }
+        let url = format!(
+            "https://www.ndbc.noaa.gov/view_text_file.php?filename={}h{}.txt.gz&dir=data/historical/stdmet/",
+            station.id(),
+            y
+        );
+        let cache = format!("/tmp/omegaflow_enso_cache/{}_{}.txt", station.id(), y);
+        let body = match std::fs::metadata(&cache) {
+            Ok(md) => {
+                let mtime = md
+                    .modified()
+                    .ok()
+                    .and_then(|m| m.duration_since(std::time::UNIX_EPOCH).ok())
+                    .map(|d| d.as_secs())
+                    .unwrap_or(0);
+                if now.saturating_sub(mtime) < ENSO_BACKFILL_TTL {
+                    std::fs::read_to_string(&cache).ok()
+                } else {
+                    enso_cache_fetch(&url, &cache)
+                }
+            }
+            Err(_) => enso_cache_fetch(&url, &cache),
+        };
+        if let Some(body) = body {
+            if let Some((wind, sst)) = enso_ndbc_parse(&body, lsk) {
+                enso_send_bins(&wind, station, EnsoSeries::Wind, last_sent, tx);
+                enso_send_bins(&sst, station, EnsoSeries::Sst, last_sent, tx);
+            }
+        }
+    }
+}
+
+fn enso_cache_fetch(url: &str, cache: &str) -> Option<String> {
+    let bytes = fetch_raw_bytes(url, 86400)?;
+    let text = if bytes.starts_with(&[0x1f, 0x8b]) {
+        crate::inflate::gunzip(&bytes).map(|b| String::from_utf8_lossy(&b).into_owned())?
+    } else {
+        String::from_utf8_lossy(&bytes).into_owned()
+    };
+    let _ = std::fs::create_dir_all("/tmp/omegaflow_enso_cache");
+    let _ = std::fs::write(cache, &text);
+    Some(text)
 }
 
 #[cfg(test)]
@@ -16957,9 +17019,9 @@ mod enso_parser_tests {
     const FIXTURE: &str = "#YY  MM DD hh mm WDIR WSPD GST  WVHT   DPD   APD MWD   PRES  ATMP  WTMP  DEWP  VIS PTDY  TIDE\n#yr  mo dy hr mn degT m/s  m/s     m   sec   sec degT   hPa  degC  degC  degC  nmi  hPa    ft\n2026 08 21 15 10 100  3.0  4.0    MM    MM    MM  MM 1013.5  26.0  26.7  23.1   MM   MM    MM\n2026 08 21 15 00 100   MM  4.0    MM    MM    MM  MM 1013.3  26.0  26.7  22.9   MM -0.7    MM\n2026 08 21 14 50 100  4.0  5.0   1.5     8   6.2 100 1013.2  26.1    MM  23.0   MM   MM    MM\n";
 
     #[test]
-    fn enso_realtime2_parse_splits_wind_and_sst_with_mm_skips() {
+    fn enso_ndbc_parse_splits_wind_and_sst_with_mm_skips() {
         let lsk = embedded_lsk().expect("embedded lsk");
-        let (wind, sst) = enso_realtime2_parse(FIXTURE, &lsk).expect("fixture parses");
+        let (wind, sst) = enso_ndbc_parse(FIXTURE, &lsk).expect("fixture parses");
         assert_eq!(wind.len(), 2);
         assert_eq!(sst.len(), 2);
         assert_eq!(wind[0].1, 3.0);
@@ -16971,17 +17033,30 @@ mod enso_parser_tests {
     }
 
     #[test]
-    fn enso_realtime2_parse_missing_wtmp_column_is_none() {
+    fn enso_ndbc_parse_skips_stdmet_sentinel_values() {
         let lsk = embedded_lsk().expect("embedded lsk");
-        let body = "#YY  MM DD hh mm WDIR WSPD GST\n2026 08 21 15 10 100  3.0  4.0\n";
-        assert!(enso_realtime2_parse(body, &lsk).is_none());
+        let body = "#YY  MM DD hh mm WDIR WSPD GST  WVHT   DPD   APD MWD   PRES  ATMP  WTMP  DEWP  VIS  TIDE\n#yr  mo dy hr mn degT m/s  m/s     m   sec   sec degT   hPa  degC  degC  degC  nmi  hPa    ft\n2026 01 01 00 00 115  2.6  3.9 99.00 99.00 99.00 999 1019.3  25.2  25.8  21.3 99.0 99.00\n2026 01 01 00 10 112 99.0  4.0  1.81 11.43  8.43 301 1019.3  25.2 999.0  21.3 99.0 99.00\n2026 01 01 00 20 118  3.2  4.5 99.00 99.00 99.00 999 1019.3  25.2  25.9  21.4 99.0 99.00\n";
+        let (wind, sst) = enso_ndbc_parse(body, &lsk).expect("stdmet parses");
+        assert_eq!(wind.len(), 2);
+        assert_eq!(sst.len(), 2);
+        assert_eq!(wind[0].1, 2.6);
+        assert_eq!(wind[1].1, 3.2);
+        assert_eq!(sst[0].1, 25.8);
+        assert_eq!(sst[1].1, 25.9);
     }
 
     #[test]
-    fn enso_realtime2_parse_all_missing_rows_is_none() {
+    fn enso_ndbc_parse_missing_wtmp_column_is_none() {
+        let lsk = embedded_lsk().expect("embedded lsk");
+        let body = "#YY  MM DD hh mm WDIR WSPD GST\n2026 08 21 15 10 100  3.0  4.0\n";
+        assert!(enso_ndbc_parse(body, &lsk).is_none());
+    }
+
+    #[test]
+    fn enso_ndbc_parse_all_missing_rows_is_none() {
         let lsk = embedded_lsk().expect("embedded lsk");
         let body = "#YY  MM DD hh mm WDIR WSPD GST  WVHT   DPD   APD MWD   PRES  ATMP  WTMP  DEWP  VIS PTDY  TIDE\n2026 08 21 15 10  MM   MM   MM    MM    MM    MM  MM    MM    MM    MM    MM   MM   MM    MM\n";
-        assert!(enso_realtime2_parse(body, &lsk).is_none());
+        assert!(enso_ndbc_parse(body, &lsk).is_none());
     }
 }
 

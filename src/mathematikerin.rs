@@ -380,7 +380,7 @@ struct HudVOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f };
 }
 "#;
 const TE_WGSL: &str = r#"
-const RING_MAX: u32 = 256u;
+const RING_MAX: u32 = 1024u;
 const SERIES_COUNT: u32 = 12u;
 const DIM: u32 = 3u;
 const ORDER: u32 = 3u;
@@ -848,7 +848,10 @@ const SOLAR_COARSE_PAIRS: [(SolarChannel, SolarChannel); 6] = [
 ];
 
 const ENSO_STATION_COUNT: usize = EnsoStation::ALL.len();
-const ENSO_RING_MAX: usize = 256;
+const ENSO_RING_MAX: usize = 1024;
+const ENSO_PROBE_MAX: usize = 512;
+const TE_SERIES_STRIDE: usize = 1024;
+const TE_SERIES_BYTES: u64 = (12 * TE_SERIES_STRIDE * 4) as u64;
 const ENSO_N_GATE: usize = 30;
 const ENSO_SCALES: [f32; 3] = [1.0, 0.5, 2.0];
 const ENSO_SCALE_NAMES: [&str; 3] = ["h", "h/2", "2h"];
@@ -1874,13 +1877,13 @@ impl NativeApp {
         let param_buf = self.te_param_buf.as_ref()?;
         let out_buf = self.te_out_buf.as_ref()?;
         let read_buf = self.te_read_buf.as_ref()?;
-        let mut data = vec![0f32; 12 * 256];
+        let mut data = vec![0f32; 12 * TE_SERIES_STRIDE];
         data[0..m].copy_from_slice(xs);
-        data[256..256 + m].copy_from_slice(ys);
+        data[TE_SERIES_STRIDE..TE_SERIES_STRIDE + m].copy_from_slice(ys);
         let mut rng = self.ring_gen.wrapping_add(0x9e3779b97f4a7c15);
         for s in 0..10 {
             let surr = crate::te::phase_randomized_surrogate(ys, &mut rng);
-            let off = (2 + s) * 256;
+            let off = (2 + s) * TE_SERIES_STRIDE;
             data[off..off + m].copy_from_slice(&surr);
         }
         queue.write_buffer(series_buf, 0, &le_bytes_f32(&data));
@@ -2046,13 +2049,13 @@ impl NativeApp {
         let Some(read_buf) = self.solar_te_read_buf.as_ref() else {
             return;
         };
-        let mut data = vec![0f32; 12 * 256];
-        data[0..m].copy_from_slice(xs);
-        data[256..256 + m].copy_from_slice(ys);
+        let mut data = vec![0f32; 12 * TE_SERIES_STRIDE];
+        data[0..m].copy_from_slice(&xs);
+        data[TE_SERIES_STRIDE..TE_SERIES_STRIDE + m].copy_from_slice(&ys);
         let mut rng = self.ring_gen.wrapping_add(0x9e3779b97f4a7c15);
         for s in 0..10 {
-            let surr = crate::te::phase_randomized_surrogate(ys, &mut rng);
-            let off = (2 + s) * 256;
+            let surr = crate::te::phase_randomized_surrogate(&ys, &mut rng);
+            let off = (2 + s) * TE_SERIES_STRIDE;
             data[off..off + m].copy_from_slice(&surr);
         }
         queue.write_buffer(series_buf, 0, &le_bytes_f32(&data));
@@ -2268,7 +2271,12 @@ impl NativeApp {
                 &self.enso_rings[station_idx][EnsoSeries::Wind.idx()],
             )
         };
-        let (ys, xs) = enso_shift_pair(driver, target, shift_bins);
+        let (mut ys, mut xs) = enso_shift_pair(driver, target, shift_bins);
+        if xs.len() > ENSO_PROBE_MAX {
+            let drop = xs.len() - ENSO_PROBE_MAX;
+            ys.drain(..drop);
+            xs.drain(..drop);
+        }
         if xs.len() < ENSO_N_GATE {
             self.enso_say(format!("{} n {} state no statement", label, xs.len()));
             return;
@@ -2298,13 +2306,13 @@ impl NativeApp {
             return;
         };
         let m = xs.len();
-        let mut data = vec![0f32; 12 * 256];
+        let mut data = vec![0f32; 12 * TE_SERIES_STRIDE];
         data[0..m].copy_from_slice(&xs);
-        data[256..256 + m].copy_from_slice(&ys);
+        data[TE_SERIES_STRIDE..TE_SERIES_STRIDE + m].copy_from_slice(&ys);
         let mut rng = self.ring_gen.wrapping_add(0x9e3779b97f4a7c15);
         for s in 0..10 {
             let surr = crate::te::phase_randomized_surrogate(&ys, &mut rng);
-            let off = (2 + s) * 256;
+            let off = (2 + s) * TE_SERIES_STRIDE;
             data[off..off + m].copy_from_slice(&surr);
         }
         queue.write_buffer(series_buf, 0, &le_bytes_f32(&data));
@@ -3553,7 +3561,7 @@ impl NativeApp {
         });
         let te_series_buf = device.create_buffer(&wgpu::BufferDescriptor {
             label: None,
-            size: 12288,
+            size: TE_SERIES_BYTES,
             usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
             mapped_at_creation: false,
         });
@@ -3601,7 +3609,7 @@ impl NativeApp {
         self.te_read_buf = Some(te_read_buf);
         let solar_te_series_buf = device.create_buffer(&wgpu::BufferDescriptor {
             label: None,
-            size: 12288,
+            size: TE_SERIES_BYTES,
             usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
             mapped_at_creation: false,
         });
@@ -3648,7 +3656,7 @@ impl NativeApp {
         self.solar_te_read_buf = Some(solar_te_read_buf);
         let enso_te_series_buf = device.create_buffer(&wgpu::BufferDescriptor {
             label: None,
-            size: 12288,
+            size: TE_SERIES_BYTES,
             usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
             mapped_at_creation: false,
         });
@@ -4636,7 +4644,7 @@ mod tests {
         });
         let series_buf = device.create_buffer(&wgpu::BufferDescriptor {
             label: None,
-            size: 12288,
+            size: TE_SERIES_BYTES,
             usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
             mapped_at_creation: false,
         });
@@ -4686,13 +4694,13 @@ mod tests {
             x[t + 1] = 0.5 * x[t] + 0.6 * y[t];
         }
         let seed = 42u64;
-        let mut data = vec![0f32; 12 * 256];
+        let mut data = vec![0f32; 12 * TE_SERIES_STRIDE];
         data[0..n].copy_from_slice(&x);
-        data[256..256 + n].copy_from_slice(&y);
+        data[TE_SERIES_STRIDE..TE_SERIES_STRIDE + n].copy_from_slice(&y);
         let mut rng = seed.wrapping_add(0x9e3779b97f4a7c15);
         for s in 0..10 {
             let surr = crate::te::phase_randomized_surrogate(&y, &mut rng);
-            let off = (2 + s) * 256;
+            let off = (2 + s) * TE_SERIES_STRIDE;
             data[off..off + n].copy_from_slice(&surr);
         }
         queue.write_buffer(&series_buf, 0, &le_bytes_f32(&data));

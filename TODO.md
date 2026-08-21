@@ -590,10 +590,23 @@ Maschine misst.
    42020/42040/44004/51003/51005), WTMP nur MM (51002/41112/42057/
    42092/42099/44014/44095/46006/46013/46027/46221/46283/46285/63115/
    13002/52216), Fenster zu kurz (44025 eine Woche; 45142/46036/46181/
-   46204/64045 ein Tag) — nicht benannt, kein Platzhalter. Ein voller
-   Zyklus (37 Runden × 366 Zellen) ≈ 7 h Wand — der Rotor läuft im
-   Hintergrund weiter; der eine Pfad entscheidet über den
-   delayed-only-Draft.
+   46204/64045 ein Tag) — nicht benannt, kein Platzhalter. Historische
+   Tiefe (2026-08-21): stdmet-Jahresdateien
+   (view_text_file.php?filename={id}h{jahr}.txt.gz — die Antwort kommt
+   als Klartext, der Kanal-Code nimmt beides, gz-Magic-gated) je Boje
+   für das laufende + Vorjahr beim Boot; Festplatten-Cache
+   /tmp/omegaflow_enso_cache (7-Tage-Gate, ~350 MB Erstboot, Folge-Boots
+   0) → 1024 Sechs-Stunden-Bins ≈ 8½ Monate je Ring. Der geteilte
+   WGSL-Ring wuchs 256→1024 (TE_SERIES_STRIDE — Presence/Solar speisen
+   ≤ 256, byte-identisch, der GPU-Crosscheck pinnt). Der Kernel ist
+   O(m² × Surrogate) und hängt die HD 520 ab m ≈ 1024 (Mesa-Reset,
+   gemessen 2026-08-21) → jede Zelle misst die neuesten 512 Bins
+   (ENSO_PROBE_MAX = 128 Tage, n ≥ 392 an allen Shifts); Zellkosten
+   ~1-2 s GPU + Readback-Rhythmus ≈ 4 s/Zelle, volle Runde ≈ 26 min,
+   37 Stationen ≈ 16 h/Zyklus; die sichtbare Membran stottert während
+   der Proben (~1 s Render-Stall je Zelle) — der Hidden-Lauf ist die
+   Messweise. Ein voller Zyklus läuft im Hintergrund; der eine Pfad
+   entscheidet über den delayed-only-Draft.
 - **Bz-Paradoxon** (`handover-2026-08-21-bz-paradoxon.md`):
   TE(RTSW-Bz→Bodenmagnetometer) gegen TE(Speed→Bodenmagnetometer), Lag
   0–120 min gegen die L1-Laufzeit. Oben lebt (sources.φ:102/108);
