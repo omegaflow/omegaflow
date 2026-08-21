@@ -22,7 +22,7 @@ scripts/__pycache__/
 .secrets.local
 .continue/
 server.log
-docs/funding_erkundung.md
+docs/surveys/survey-funding-erkundung.md
 /target
 /tmp/
 /out/
@@ -37,6 +37,18 @@ phi/pipeline/probe_survivors.φ
 phi/pipeline/probe_void.txt
 phi/pipeline/probe_drafts.φ
 phi/pipeline/probe_drafts_enriched.φ
+phi/pipeline/master_urls.txt
+phi/pipeline/netloc.txt
+phi/pipeline/netloc_per_datei.txt
+phi/pipeline/probe_url_candidates.txt
+phi/pipeline/provider_mengen.txt
+phi/pipeline/review_kandidaten.txt
+phi/pipeline/stage/master_converted.φ
+phi/pipeline/stage/staging_void_ledger.txt
+
+# Grind-Gewichte ohne physikalischen Kanal (Force-Gate: Dataverse = social science)
+phi/pipeline/weights_dataverse_harvard.txt
+phi/pipeline/weights_dataverse_borealis.txt
 
 # Compiler-Flat-jsons (gehen zum CDN, nicht ins Repo)
 phi/pipeline/*.json
