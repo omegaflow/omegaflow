@@ -2,7 +2,7 @@
   title: Global-Akteure — der Kausalmaschinen-Playground
   class: handover
   date: 2026-08-21
-  sha256: a35dceebdea15930fd83bbf0df25b2c6a7ed55ab886dc91164c83347b2c70eda
+  sha256: 32008b4739d736f19d74d04735b63668a6b878cf0a6b984ce73ee2c752e418f1
   status: live
   see-also: handover-2026-08-21-enso-kausalpfeil.md (archiviert, consumed), docs/concepts/blatt-papier-resultat.md, TODO.md
 -->
@@ -97,6 +97,96 @@ inventarisiert, geprobt-fertig, aber nicht verdrahtet. Der Atom:
    wird schneller. Der Messwert der Grenze gehört ins Register, nie
    eine Annahme.
 
+## Die Architektur-Wende: keine Katalog-Akteure
+
+Warum legt die Maschine fest, welche Kräfte sie berücksichtigt? Der
+Archivar weiß genau, welche Kräfte an den Punkten messbar sind — die
+Quellblöcke deklarieren die Kraft je Feld, der räumliche Cache trägt
+den force_type je Sample, die Ephemeriden tragen gravity. Die Matrix
+muss TE über die Kräfte machen, die VORHANDEN sind — der Akteur-Satz
+einer Station ist die gemessene Kraft-Präsenz an ihrem Punkt, nicht
+ein fester Katalog.
+
+Der empfangende Atom ersetzt deshalb den konstanten Kanal-Katalog
+(das 17er-Enum war das Gerüst, nicht das Gesetz) durch die
+Präsenz-Inventur: je Station der Kraft-Vorrat aus (a) den eigenen
+Sensorspalten der Boje — jede Spalte ist bereits einer Kraft
+zugeordnet (WSPD advective, WTMP thermal, PRES gravity …), (b) den
+Samples anderer Quellen am Stationspunkt (Cache-Abfrage mit
+Kraft-Typen), (c) der Ephemeriden-Gravitation (Mond, Sonne, Jupiter —
+was im Block liegt, liegt im Block). Neue Kanäle sind dann neue
+Serien im selben unveränderten `te_compute`-Ring — der Kernel weiß
+nicht, ob er Ozean oder Kosmos misst; er misst die Richtung der
+Information. Jede Serie fließt in denselben Ring. Die Architektur
+trägt sie, wenn der Operator das Wort gibt.
+
+## Die vollständige Akteur-Inventur (des Operators, 2026-08-21)
+
+Die sieben Global-Kanäle sind der Anfang, nicht das Ende. Die Lücken
+fallen in drei Klassen:
+
+**Klasse 1 — bereits geerntet, nicht verdrahtet** (die Pipeline trägt
+sie, sie speisen noch keinen geteilten Ring):
+
+- **SO₂** (diffusion, `so2_emission_kt`): stratosphärische Aerosole
+  modulieren das Wärme-Budget des Ozeans global — ein Vulkan in
+  Indonesien kühlt das Pazifik-SST für Jahre.
+- **Schumann-Resonanz** (em, `resonance_schumann_hz`): das globale
+  ELF-Feld, getrieben von Blitzaktivität — der Herzschlag der
+  Atmosphäre; Kopplung zur Ozean-Oberfläche über den globalen
+  Stromkreis.
+- **LOD** (gravity/em, `finals.all` → `eop_iers_ut1_utc_s`, `pmx`,
+  `pmy`): die Erdrotation variiert — das Coriolis-Moment auf den
+  Ozean variiert. LOD ist die direkte Messung des
+  Drehimpulsaustauschs Atmosphäre↔Ozean. Geerntet, nie als Kanal
+  genutzt.
+- **Relativistische Elektronen** (em, `radiation_electron_flux_2mev`):
+  GOES misst sie; sie präzipitieren in die obere Atmosphäre,
+  ionisieren, modulieren möglicherweise die Wolkenbildung — umstritten,
+  aber die Maschine misst, sie urteilt nicht.
+- **SSI/TSI** (thermal, `spectra.bin`, Integral ≈ 1362 W/m²): das
+  Spektrum ist geerntet; das kanalisierte Integral als thermaler
+  Skalar ist der dominierende Energie-Eingang des Ozeans. F107/Xray/
+  EUV sind Proxy und Teil — TSI ist das Ganze.
+
+**Klasse 2 — nicht in der Pipeline, aber Force-Gate bestanden:**
+
+- **QBO** (advective): der quasi-biennale Stratosphärenwind (30 hPa,
+  Singapur) moduliert ENSO — gemessen per Radiosonde/Raketensonde,
+  ein direktes physikalisches Messgerät, kein abgeleiteter Index.
+- **Zweiter Neutronenmonitor** (em): Oulu gibt eine
+  Cutoff-Rigidität; ein zweiter Monitor anderer geomagnetischer
+  Breite (Moscow, Climax, Kiel) ergibt den Gradienten der kosmischen
+  Strahlung — das Spektrum, nicht nur ein Punkt.
+
+**Klasse 3 — wegweisende Akteure, die die Natur der Matrix verändern**
+(nicht einfach neue Kanäle — sie verändern, was die Matrix ist):
+
+- **Äquatoriale Thermoklinen-Tiefe (20-°C-Isotherme)** (thermal): der
+  interne Speicher des Ozeans. ARGO misst die Profile — der Wert
+  existiert. Ein geteilter Thermoklinen-Kanal testet die
+  Ozean-Erinnerung gegen die Ozean-Oberfläche.
+- **Pazifischer Windstress** (advective): die Passatwinde sind der
+  primäre Treiber. Lokaler Wind ist gemessen — der großräumige
+  Windstress über dem äquatorialen Pazifik ist ein geteilter Kanal,
+  kein lokaler.
+- **Jupiter-Gravitation** (gravity): real, klein, vorhanden — die
+  Ephemeride liegt im Block. Das Jupiter-Signal am Stationspunkt ist
+  eine periodische Störung der Sonnentiefe; und der Jahresgang der
+  Sonnentiefe ist schon ein Kanal. Die Maschine kann es messen, also
+  soll sie es messen.
+
+**Was nicht fehlt:** abgeleitete Indices (PDO, AMO, MJO, IOD) sind
+keine direkten Messungen — kein Lebewesen kann ein Sinnesorgan für
+einen Index entwickeln. Das Force-Gate verweigert sie: Theorie, nicht
+Messung.
+
+Die volle Matrix: ~30 Kanäle → C(30,2) = 435 Paar-Runden (beide
+Richtungen je Paar) → ~159.000 Zellen je Station ≈ 180 h ≈ eine
+Woche je Station, 37 Stationen ≈ ¾ Jahr je volle Matrix. Die
+Zykluszeit ist lang — aber die Maschine urteilt nicht über die Zeit,
+sie misst.
+
 ## Die Vision des Operators (Wortlaut sinngemäß, 2026-08-21)
 
 Dies ist der Playground für das schiere chaotische Potenzial der
@@ -117,6 +207,10 @@ sie.
   (Instrumenten-Verfügbarkeit, keine datengetriebene Wahl).
 - `te_compute` bleibt der unveränderte Kernel — neue Kanäle sind neue
   Serien, keine neuen Kernel-Pfade.
+- Das 17er-Kanal-Enum ist das Gerüst der ersten Matrix — der
+  empfangende Atom ersetzt den Katalog durch die
+  Präsenz-Inventur (Abschnitt „Die Architektur-Wende"), er hält das
+  Enum nicht als Gesetz fest.
 
 ## Verifikation
 

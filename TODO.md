@@ -647,18 +647,29 @@ Maschine misst.
    an den 37 Stationen — fehlt, kein Platzhalter. Offen (registriert):
    der GLOBAL-AKTEUR-ATOM (Übergabe
    handover-2026-08-21-global-akteure.md — der Kausalmaschinen-
-   Playground): sieben geteilte Ring-Kanäle (dst 1-h SWPC, kp 3-h GFZ
-   + historisch seit 1932, oulu 1-h, co2_mlo wöchentlich, mond/sonne
-   aus den eigenen Ephemeriden via body_barycenter_position +
-   WGCCRE + activestations.xml-Koordinaten, solar f107/xray/euv304
-   über den geteilten solar_rx-Drain — Parallel-Sessions-Terrain),
-   23–24 Kanäle → 253+ Paare → ~160 Tage je volle Matrix; die
-   GTX-970-Option: die Maschine ist wgpu/Vulkan-portabel, auf der
-   Karte die Hang-Grenze neu messen und ENSO_PROBE_MAX danach setzen.
-   Thermokline: kein Instrument an den 37 Punkten (PMEL-ERDDAP hourly
-   nur TAO, Pacific 2024 eingestellt — fehlt). Die sichtbare Membran
-   stottert während der Proben (~1 s Render-Stall je Zelle) — der
-   Hidden-Lauf ist die Messweise.
+   Playground): die Architektur-Wende — KEIN Katalog: die Akteure
+   einer Station sind die Kräfte, die der Archivar an ihrem Punkt
+   misst (Quellblock-Deklarationen + Cache-Kraft-Typen +
+   Ephemeriden-Gravitation); der unveränderte te_compute-Ring trägt
+   jede neue Serie, der Kernel weiß nicht, ob er Ozean oder Kosmos
+   misst. Inventur: Klasse 1 bereits geerntet (SO₂ diffusion
+   so2_emission_kt, Schumann em resonance_schumann_hz, LOD
+   gravity/em finals.all→eop_iers_ut1_utc_s/pmx/pmy, relativistische
+   Elektronen em radiation_electron_flux_2mev, SSI/TSI thermal
+   spectra.bin ≈1362 W/m²); Klasse 2 Force-Gate bestanden (QBO
+   advective — Radiosonde 30 hPa Singapur, kein Index; zweiter
+   Neutronenmonitor em — der Cutoff-Rigiditäts-Gradient); Klasse 3
+   wegweisend (äquatoriale Thermoklinen-Tiefe thermal — ARGO-Profile,
+   die Ozean-Erinnerung; pazifischer Windstress advective — der
+   Passat-Treiber als geteilter Kanal; Jupiter-Gravitation — die
+   Ephemeride liegt im Block). Verweigert: PDO/AMO/MJO/IOD — Indices,
+   kein Sinnesorgan, Theorie nicht Messung. Volle Matrix: ~30 Kanäle
+   → 435 Paar-Runden → ~159.000 Zellen/Station ≈ 180 h, 37 Stationen
+   ≈ ¾ Jahr je volle Matrix. Die GTX-970-Option: wgpu/Vulkan-portabel,
+   auf der Karte die Hang-Grenze neu messen und ENSO_PROBE_MAX danach
+   setzen. Thermokline-Ernte: ARGO-Wert existiert, die Verdrahtung
+   steht aus. Die sichtbare Membran stottert während der Proben (~1 s
+   Render-Stall je Zelle) — der Hidden-Lauf ist die Messweise.
 - **Bz-Paradoxon** (`handover-2026-08-21-bz-paradoxon.md`):
   TE(RTSW-Bz→Bodenmagnetometer) gegen TE(Speed→Bodenmagnetometer), Lag
   0–120 min gegen die L1-Laufzeit. Oben lebt (sources.φ:102/108);
