@@ -211,6 +211,23 @@ uranus ≈ 2601 J, saturn ≈ 1900 J). Der Langbogen muss als CI-Job
 kompiliert und auf den CDN gehoben werden — Auftrag + CI-Auftrag im
 Handover.
 
+HDF5-Erntekarte (2026-08-21, Handover
+handover-2026-08-21-hdf5-fits-ernte.md): recherchiert — HDF5 gehört fast
+ausschließlich zur Erdbeobachtung + SSI + Gravitationswellen. Drei
+MUSS-Quellen (Auth-bereit, `EARTHDATA_EDL_TOKEN` liegt vor): Black Marble
+VNP46A1/VJ146A1 (em, Nachtradianz, LAADS; Suomi-NPP endet 1. Nov. 2026),
+VIIRS/MODIS Surface Reflectance VNP09/MOD09 (em, der echte Blue-Marble-
+Kanal), LIGO GWOSC Strain (gravity, HDF5, offen). Galaxie/Universum messen
+in FITS, nicht HDF5; deren HDF5 (IllustrisTNG/EAGLE/CAMELS/FLAMINGO) ist
+Simulation → decline no-physical-force (Eintrag mit verifizierter URL in
+der Ernte-Session). Ernte hängt am HDF5-Reader (paralleles Atom).
+
+FITS-Reader (2026-08-21, Handover handover-2026-08-21-hdf5-fits-ernte.md):
+pure Rust, std-only, Gold-Standard wie netcdf.rs/cdf.rs/hdf5.rs — der
+fehlende Schlüssel für Galaxie/Universum-Messungen (Gaia, SDSS, 2MASS,
+Pan-STARRS, DES, Planck, JWST). Header 80-Byte-Cards, HDU-Extensions,
+BINTABLE, BSCALE/BZERO, WCS. Crates nur als Format-Referenz.
+
 Fetch-Ketten-Atom (2026-08-20, Handover handover-fetchkette.md): die vier
 Regressionen sind geschlossen — und drei echte Pipeline-Bugs lagen darunter.
 Gate-Reparatur: der Fetch-Dispatch rechnet die physische Reichweite
