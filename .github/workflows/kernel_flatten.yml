@@ -756,6 +756,7 @@ jobs:
             --pattern wind_orbit.bin --clobber 2>/dev/null || \
             cargo run --release --bin wind_orbit_compiler -- \
               --lsk kernels/naif0012.tls --out wind_orbit.bin --ci-mode \
+              --fill-horizons \
               --window-start 1994-08-07 --window-end 2026-08-21 --jobs 8
       - name: Compile F10.7 Penticton 1947-2026 once and upload to CDN
         continue-on-error: true

@@ -143,6 +143,13 @@ toadd=128); src/cdf25.rs trägt jetzt beide Layouts (toadd 0/128),
 Tests gegen wi_or_pre_19970107_v01.cdf (2.4.13, cdflib-Kreuzcheck
 Epoch 852595200 / GCI_POS/GCI_VEL exakt). Bleiben nur 4 echte
 Listungs-Lücken (2023/2025) — benannt, nicht parser-bedingt.
+Diese 3 Lücken-Tage (2023-07-17, 2023-07-30, 2025-02-04) holt der
+Compiler seit 2026-08-21 aus JPL Horizons (Wind -8, geozentrisch
+ICRF, 10-min, KM-S; tracking-rekonstruiert, Quervergleich pre_or
+2023-07-18 vs Horizons: Δ|r| ≈ 5,7 km = exakt die TDB−UTC-
+Zeitverschiebung, nach Zeitangleich sub-km — gleiche Genauigkeit).
+--fill-horizons füllt nur „listing carries no file"-Tage, nicht
+fetch-voids; Stichprobe 2023-07-17: 144 Records, Roundtrip ✓.
 Befunde selbsttragend: phi/pipeline/research/agent_output/
 wind_frame_2026-08-21.φ.
 GONG L 31..200 (CI --lmax 200) +

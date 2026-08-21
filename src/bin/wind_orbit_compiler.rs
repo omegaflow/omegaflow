@@ -345,6 +345,70 @@ fn harvest_day(
         });
 }
 
+const J2000_JD: f64 = 2451545.0;
+
+fn dash(date: &str) -> String {
+    format!("{}-{}-{}", &date[0..4], &date[4..6], &date[6..8])
+}
+
+fn parse_horizons(text: &str) -> Vec<(f64, [f64; 3], [f64; 3])> {
+    let mut out = Vec::new();
+    let mut in_data = false;
+    for line in text.lines() {
+        if line.starts_with("$$SOE") {
+            in_data = true;
+            continue;
+        }
+        if line.starts_with("$$EOE") {
+            break;
+        }
+        if !in_data {
+            continue;
+        }
+        let cols: Vec<&str> = line.split(',').collect();
+        if cols.len() < 8 {
+            continue;
+        }
+        let jdt: f64 = cols[0].trim().parse().ok().unwrap_or(f64::NAN);
+        let x: f64 = cols[2].trim().parse().ok().unwrap_or(f64::NAN);
+        let y: f64 = cols[3].trim().parse().ok().unwrap_or(f64::NAN);
+        let z: f64 = cols[4].trim().parse().ok().unwrap_or(f64::NAN);
+        let vx: f64 = cols[5].trim().parse().ok().unwrap_or(f64::NAN);
+        let vy: f64 = cols[6].trim().parse().ok().unwrap_or(f64::NAN);
+        let vz: f64 = cols[7].trim().parse().ok().unwrap_or(f64::NAN);
+        let t_tdb = (jdt - J2000_JD) * 86400.0;
+        if !t_tdb.is_finite()
+            || [x, y, z, vx, vy, vz]
+                .iter()
+                .any(|v| !v.is_finite() || v.abs() >= 1.0e8)
+        {
+            continue;
+        }
+        out.push((
+            t_tdb,
+            [x * 1000.0, y * 1000.0, z * 1000.0],
+            [vx * 1000.0, vy * 1000.0, vz * 1000.0],
+        ));
+    }
+    out
+}
+
+fn fetch_horizons(date: &str) -> Option<Vec<(f64, [f64; 3], [f64; 3])>> {
+    let url = format!(
+        "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND=-8&OBJ_DATA=NO&MAKE_EPHEM=YES&EPHEM_TYPE=VECTORS&CENTER=500@399&REF_PLANE=FRAME&START_TIME={}T00:00&STOP_TIME={}T23:50&STEP_SIZE=10m&VEC_TABLE=2&OUT_UNITS=KM-S&CSV_FORMAT=YES",
+        dash(date),
+        dash(date),
+    );
+    let bytes = fetch(&url)?;
+    let text = String::from_utf8_lossy(&bytes);
+    let recs = parse_horizons(&text);
+    if recs.is_empty() {
+        None
+    } else {
+        Some(recs)
+    }
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     if let Some(path) = arg_value(&args, "--probe") {
@@ -352,6 +416,7 @@ fn main() {
         return;
     }
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
+    let fill_horizons = args.iter().any(|a| a == "--fill-horizons");
     let out = arg_value(&args, "--out").unwrap_or_else(|| "wind_orbit.bin".to_string());
     let jobs: usize = arg_value(&args, "--jobs")
         .and_then(|v| v.parse().ok())
@@ -449,11 +514,33 @@ fn main() {
         .ok()
         .and_then(|m| m.into_inner().ok())
         .unwrap_or_default();
+    let mut records = records;
+    if fill_horizons {
+        let mut filled = 0usize;
+        let mut emitted_fill = 0usize;
+        for o in &outcomes {
+            if o.note.as_deref() != Some("listing carries no file for this day") {
+                continue;
+            }
+            match fetch_horizons(&o.date) {
+                Some(recs) => {
+                    emitted_fill += recs.len();
+                    filled += 1;
+                    eprintln!("{}: {} Horizons records filled", o.date, recs.len());
+                    records.extend(recs);
+                }
+                None => eprintln!("{}: Horizons fill void — the day stays a gap", o.date),
+            }
+        }
+        eprintln!(
+            "{} days filled from Horizons (Wind -8, {} records)",
+            filled, emitted_fill
+        );
+    }
     if records.is_empty() {
         eprintln!("no records — the bin stays unwritten (0 honored)");
         std::process::exit(1);
     }
-    let mut records = records;
     records.sort_by(|a, b| a.0.total_cmp(&b.0));
     let bytes = write_bin(&records);
     if std::fs::write(&out, &bytes).is_err() {
@@ -471,5 +558,35 @@ fn main() {
     }
     if ci_mode && !upload_release(CDN_RELEASE, &out) {
         std::process::exit(1);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn parses_horizons_csv() {
+        let text = "API VERSION: 1.2\n$$SOE\n\
+2460142.500000000, A.D. 2023-Jul-17 00:00:00.0000, -6.298255498538257E+05,  1.412329293954745E+06,  7.064144245636598E+05, -7.470608417721109E-02, -2.760906889224624E-02, -1.419973463542988E-02,\n\
+$$EOE\n";
+        let recs = parse_horizons(text);
+        assert_eq!(recs.len(), 1);
+        let (t, p, v) = recs[0];
+        assert!((t - 742824000.0).abs() < 1.0e-6);
+        assert!((p[0] - (-629825549.8538)).abs() < 1.0);
+        assert!((p[1] - 1412329293.9547).abs() < 1.0);
+        assert!((v[0] - (-74.70608417721109)).abs() < 1.0e-9);
+    }
+
+    #[test]
+    fn dash_formats_dates() {
+        assert_eq!(dash("20230717"), "2023-07-17");
+        assert_eq!(dash("20250204"), "2025-02-04");
+    }
+
+    #[test]
+    fn rejects_garbage_before_soe() {
+        assert!(parse_horizons("no data here").is_empty());
     }
 }
