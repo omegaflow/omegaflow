@@ -192,6 +192,18 @@ Nicht-em-Farbtod (2026-08-21): die Membran ist keine Kamera — nur em
 Feld (lum, Transferentropie), sie leuchten nicht. `hsl_to_rgb` ist tot;
 der Objekt-Bias, der den Schirm gelb färbte, fällt.
 
+Asteroiden-Langbogen (2026-08-21, Handover
+handover-2026-08-21-asteroid-langbogen.md): vermessen — die 13 named
+Asteroiden + kleine Monde (ceres, vesta, eris, haumea, makemake, apophis,
+bennu, encke, himalia, janus, epimetheus, atlas, prometheus, pandora)
+tragen nur 13 Granulen = 2026,6–2027,6 (~1 Jahr) aus horizons_compiler
+(12 Monate voraus + 30 Tage zurück), NICHT den de441/de442-Langbogen
+(13201 v. Chr.–17191 n. Chr.), der im sources_index.φ liegt. Planeten/
+Mond tragen 1400–3156 Jahre (vermessen: sun/earth 1599,7–4755,4 ≈ 3156 J,
+uranus ≈ 2601 J, saturn ≈ 1900 J). Der Langbogen muss als CI-Job
+kompiliert und auf den CDN gehoben werden — Auftrag + CI-Auftrag im
+Handover.
+
 Fetch-Ketten-Atom (2026-08-20, Handover handover-fetchkette.md): die vier
 Regressionen sind geschlossen — und drei echte Pipeline-Bugs lagen darunter.
 Gate-Reparatur: der Fetch-Dispatch rechnet die physische Reichweite
