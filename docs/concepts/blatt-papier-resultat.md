@@ -2,7 +2,7 @@
   title: Das Blatt Papier — das axiomatische Messergebnis (BLATT_PAPIER_RESULTAT)
   class: concept
   date: 2026-08-21
-  sha256: 0331f8c6294afb0241b56df301414c7d363565cd48923d614caac2eefe981ac9
+  sha256: 5bbf583a94f18d808ade80550d85debce079425ca4ff4b796fa45de5ad623f47
   status: live
   see-also: docs/handover/handover-2026-08-21-enso-kausalpfeil.md docs/handover/handover-2026-08-21-bz-gic-kausalpfeil.md docs/handover/handover-2026-08-21-laic-pfeilrichtung.md
 -->
@@ -76,9 +76,12 @@ Verdikt: kein Befund — der Pfeil überlebt die Familien-Schwelle nicht
 (fam 0.669 > TE 0.377) und die Bandbreiten-Sensitivität nicht (1/3).
 ```
 
-Stille ist die Antwort (0 honored). Die übrigen vier Bojen-Paare
-(51001, 41001, 41002, 41043) misst der Rotor in den Folge-Runden —
-ihre Sheet-Zeilen sind die Ausgabe der Maschine, nicht dieser Session.
+Stille ist die Antwort (0 honored). Das benannte Set wuchs am selben
+Tag auf 37 Bojen-Paare (Auswahlregel: jede realtime2-Datei, die WSPD
+und WTMP am selben Stationspunkt mit ≥ 30 Nicht-MM-Paaren und ≥ 30
+Tagen Fenster trägt — live gemessen). Die übrigen 36 Paare misst der
+Rotor in den Folge-Runden — ihre Sheet-Zeilen sind die Ausgabe der
+Maschine, nicht dieser Session; ein voller Zyklus ≈ 7 h.
 
 
 ### Blatt 2 — Der kausale Treiber des geomagnetischen Sturms

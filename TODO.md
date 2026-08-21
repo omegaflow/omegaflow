@@ -521,11 +521,15 @@ Takens-TE-Maschine. Der Befund ist offen — die Blätter tragen, was die
 Maschine misst.
 
 - **ENSO-Kausalpfeil** (`handover-2026-08-21-enso-kausalpfeil.md`) —
-  ERLEDIGT (2026-08-21): die Maschine steht und hat gemessen. Fünf
-  benannte Bojen-Paare (51000/51001/41001/41002/41043 — je eine Boje,
-  zwei Serien: WSPD advective + WTMP thermal aus derselben
-  realtime2-Datei, live verifiziert 2026-08-21; 51002 führt WTMP nur
-  als MM und ist nicht benannt) fluten beim Boot ~45 Tage Historie
+  ERLEDIGT (2026-08-21): die Maschine steht und hat gemessen. 37
+  benannte Bojen-Paare — die Auswahlregel, live gemessen 2026-08-21:
+  jede realtime2-Datei, die WSPD (advective) UND WTMP (thermal) am
+  selben Stationspunkt mit ≥ 30 Nicht-MM-Paaren und ≥ 30 Tagen Fenster
+  trägt (51000/51001/41001/41002/41043/41010/41049/42001/42002/
+  42036/42055/44009/44013/45001/45161/45178/45186/45207/46001/46002/
+  46005/46012/46022/46025/46026/46029/46035/46047/46053/46054/46059/
+  46069/46071/46075/46086/51004/15006 — je eine Boje, zwei Serien aus
+  derselben Datei) fluten beim Boot ~45 Tage Historie
   (6-h-Bins, ENSO_GRID 21600, Ring 256 = 64 d) über `enso_harvest` →
   `EnsoCell`-Kanal → `enso_rings` in der Mathematikerin. Der
   Sweep-Rotor fährt je Runde 366 Zellen (61 Shifts −30…+30 d täglich
@@ -547,10 +551,10 @@ Maschine misst.
   te(sw) 0.377 thr 0.289, fam 0.669, p̂ 0.007, M 122, h 1/3 →
   family bound: kein Befund, die Stille ist die Antwort (0 honored);
   das Blatt trägt die Runde (blatt-papier-resultat.md).
-  Fehlt-Registratur: die NINO3.4-TAO-Stationen (51007…51311) tragen
-  keine realtime2-Dateien (404, gemessen 2026-08-21) — die
-  äquatoriale Region bleibt quellenlos, die Maschine misst die fünf
-  Tiefsee-Paare; 41001 trägt 105 Bins (~26 d). NINO3.4-Recherche
+   Fehlt-Registratur: die NINO3.4-TAO-Stationen (51007…51311) tragen
+   keine realtime2-Dateien (404, gemessen 2026-08-21) — die
+   äquatoriale Region bleibt quellenlos, die Maschine misst die 37
+   benannten Tiefsee-Paare (41001 trägt 105 Bins, ~26 d). NINO3.4-Recherche
   (2026-08-21, grind-pro — Befund selbsttragend:
   phi/pipeline/research/agent_output/nino34_quellen_2026-08-21.φ):
   kein LEBENDES hourly-Paar im Kasten — alle Realtime-Schienen tot
@@ -561,11 +565,17 @@ Maschine misst.
   ko-lokalisierte Wind+SST-Paar ist delayed-only (pmelTaoDyW +
   pmelTaoDySst, coastwatch ERDDAP, daily/5-day, 1977-present, ~7
   Wochen Lag, Force-Gate + Ko-Lokalisierung bestanden — Queue-Draft
-  im Befund, ERDDAP-Constraint-Parsing ist Parser-Gap). Die 24
-  TAO/TRITON-Messpunkte existieren — fehlt ist die hourly-Ernte,
-  nicht der Messpunkt (0 honored). Offen: die Folge-Runden der
-  übrigen vier Bojen (der Rotor läuft im Hintergrund weiter); der
-  eine Pfad entscheidet über den delayed-only-Draft.
+   im Befund, ERDDAP-Constraint-Parsing ist Parser-Gap). Die 24
+   TAO/TRITON-Messpunkte existieren — fehlt ist die hourly-Ernte,
+   nicht der Messpunkt (0 honored). Fehlt-Registratur der
+   Bojen-Prüfung (2026-08-21): 404 ohne realtime2-Datei (42003/42019/
+   42020/42040/44004/51003/51005), WTMP nur MM (51002/41112/42057/
+   42092/42099/44014/44095/46006/46013/46027/46221/46283/46285/63115/
+   13002/52216), Fenster zu kurz (44025 eine Woche; 45142/46036/46181/
+   46204/64045 ein Tag) — nicht benannt, kein Platzhalter. Ein voller
+   Zyklus (37 Runden × 366 Zellen) ≈ 7 h Wand — der Rotor läuft im
+   Hintergrund weiter; der eine Pfad entscheidet über den
+   delayed-only-Draft.
 - **Bz-Paradoxon** (`handover-2026-08-21-bz-paradoxon.md`):
   TE(RTSW-Bz→Bodenmagnetometer) gegen TE(Speed→Bodenmagnetometer), Lag
   0–120 min gegen die L1-Laufzeit. Oben lebt (sources.φ:102/108);
