@@ -499,6 +499,7 @@ pub(crate) fn cheby3_val_only(cx: &[f64], cy: &[f64], cz: &[f64], s: f64) -> [f6
     val
 }
 
+#[derive(Clone)]
 pub struct SpkFile {
     segments: Vec<SpkSegment>,
     index: HashMap<(i32, i32), Vec<usize>>,

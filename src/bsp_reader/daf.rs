@@ -93,7 +93,7 @@ impl DafFile {
         Self::from_data(data)
     }
 
-    fn from_data(data: Vec<u8>) -> Result<Self, DafError> {
+    pub fn from_data(data: Vec<u8>) -> Result<Self, DafError> {
         if data.len() < RECORD_BYTES {
             return Err(DafError::TooSmall(data.len()));
         }
