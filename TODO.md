@@ -174,6 +174,11 @@ so füllt sich der Probe-Ring auch headless mit ~1 Hz, und die
 Maschinenzeile `φ window:` (stderr, 1 Hz) trägt te/thr/tau/pe/state/focus/keys
 als lesbaren Zwilling des HUD.
 
+Nicht-em-Farbtod (2026-08-21): die Membran ist keine Kamera — nur em
+(Licht) trägt Farbe (`color_lut_rgb`); die anderen 8 Kräfte krümmen das
+Feld (lum, Transferentropie), sie leuchten nicht. `hsl_to_rgb` ist tot;
+der Objekt-Bias, der den Schirm gelb färbte, fällt.
+
 Fetch-Ketten-Atom (2026-08-20, Handover handover-fetchkette.md): die vier
 Regressionen sind geschlossen — und drei echte Pipeline-Bugs lagen darunter.
 Gate-Reparatur: der Fetch-Dispatch rechnet die physische Reichweite

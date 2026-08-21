@@ -88,21 +88,6 @@ struct VOut { @builtin(position) pos: vec4f, @location(0) uv: vec2f };
     return out;
 }
 
-fn hsl_to_rgb(h: f32, s: f32, l: f32) -> vec3f {
-    let hp = fract(h) * 6.0;
-    let c = (1.0 - abs(2.0 * l - 1.0)) * s;
-    let x = c * (1.0 - abs(hp % 2.0 - 1.0));
-    let m = l - c * 0.5;
-    var rgb01: vec3f;
-    if (hp < 1.0) { rgb01 = vec3f(c, x, 0.0); }
-    else if (hp < 2.0) { rgb01 = vec3f(x, c, 0.0); }
-    else if (hp < 3.0) { rgb01 = vec3f(0.0, c, x); }
-    else if (hp < 4.0) { rgb01 = vec3f(0.0, x, c); }
-    else if (hp < 5.0) { rgb01 = vec3f(x, 0.0, c); }
-    else { rgb01 = vec3f(c, 0.0, x); }
-    return rgb01 + vec3f(m);
-}
-
 fn erfc(x: f32) -> f32 {
     let xa = abs(x);
     let t = 1.0 / (1.0 + 0.3275911 * xa);
@@ -340,9 +325,10 @@ fn source_contrib(j: u32, pixel_rel: vec3f) -> vec4f {
             omega[f] += c.x;
             let ratio = lum_ratio(abs(c.x), ft_ref_floor(vp.ft_ref_a, vp.ft_ref_b, vp.ft_ref_c, f))
                 * scale * scale;
-            let lum = clamp((log2(1.0 + ratio) + vp.expose_ex.x) / 22.0, 0.0, 1.0);
-            if (f == 0u) { rgb += color_lut_rgb(c.z) * lum; }
-            else { rgb += hsl_to_rgb(f32(f) / 9.0, 1.0, 0.5) * lum; }
+            let lum = clamp((ratio + vp.expose_ex.x) / 22.0, 0.0, 1.0);
+            if (f == 0u) {
+                rgb += color_lut_rgb(c.z) * lum;
+            }
         }
     }
 
@@ -358,7 +344,7 @@ fn source_contrib(j: u32, pixel_rel: vec3f) -> vec4f {
         * scale * scale;
     if (omega_total < 1e-30) { discard; }
 
-    let olog = log2(omega_total);
+    let olog = log2(max(omega_total, 1e-30));
     let lum = clamp((olog + vp.expose_ex.x) / 22.0, 0.0, 1.0);
     let fade = clamp((olog - log2(1e-30)) / (-vp.expose_ex.x - log2(1e-30)), 0.0, 1.0);
     let noise = fract(sin(dot(in.pos.xy, vec2f(12.9898, 78.233))) * 43758.5453);
