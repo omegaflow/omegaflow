@@ -2,7 +2,7 @@
   title: Der kausale Treiber des geomagnetisch induzierten Stroms — das Bz-Blatt
   class: survey
   date: 2026-08-21
-  sha256: 1cac01efdce15ccbc22ce885eec8c253b25e8c7a1b7fc70990172ba15a22a9a7
+  sha256: 9eb1417b0a3a2334768d3078c83808bfb250466d95f76ae5a4930cf32d91cf9b
   status: live
   see-also: docs/concepts/ein-blatt-ergebnis.md docs/reference/broken-null-control.md docs/handover/handover-2026-08-21-bz-paradoxon.md
 -->
@@ -77,3 +77,8 @@ interplanetare Feld, eine Stunde bevor das Magnetometer ausschlägt.
   induktiven Treiber.
 - Sturm-Gegenwart: das Fenster ist ruhig bis mäßig (Kp ≤ 3.33); die
   Messung in einem Großsturm-Fenster steht auf dem Retro-Weg.
+- Datenstatus: `best-avail` ist der Status-Stapel (definitive →2021-12-31,
+  quasi-def 2012→~1 Monat zurück, reported/adjusted der letzte Monat);
+  die Status-Grenzen sind eine benannte Nicht-Stationarität der Reihe,
+  keine verschwiegene. Die Retro-Zeile trägt `quasi-def` oder die
+  benannten Grenzen.
