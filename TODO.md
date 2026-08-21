@@ -972,6 +972,13 @@ Offen (Detail in phi/pipeline/ledger.φ):
   alle `gh issue create --label health` waren stumm (kein einziges
   flatten-Issue im Register). Der Prepare-Schritt legt das Label jetzt
   an (kernel_flatten.yml).
+- ω-Loop-Fetch-Sturm (Befund 2026-08-21): der Live-Source-Zyklus fischt
+  ~200 Quellen kontinuierlich mit 4 Retries × 23 s und ttl/Φ-Backoff —
+  ein unbegrenzter Churn, der die Heimleitung bei jedem Membran-Lauf
+  sättigt (Neustart erzwungen). Budget-Messungen brauchen einen
+  begrenzten/drosselbaren Lauf statt des vollen Membran-Churns — der
+  Sturm selbst ist ein eigener Reparatur-Gegenstand (Retry-Exponent,
+  Pausen pro Quelle).
 - Sample-Budget des Feldes (kritisch, eigenes Atom): die Summe aller
   Katalog-Blöcke (Sterne 1.19 M + Asteroiden 1.56 M + NVSS 1.8 M +
   FIRST 1.1 M + Chandra 0.4 M + vier Chunks 1.4 M + …) liegt über

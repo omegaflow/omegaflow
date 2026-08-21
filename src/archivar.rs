@@ -11198,10 +11198,9 @@ fn spawn_ephemeris_bootstrap(
     if !anchor_items.is_empty() || !rest_items.is_empty() {
         let guard = guard.clone();
         thread::spawn(move || {
-            for (_, s, p) in anchor_items {
-                download_ephemeris_one(&s, &p);
-            }
-            download_ephemeris_batch(&rest_items);
+            let mut items = anchor_items;
+            items.extend(rest_items);
+            download_ephemeris_batch(&items);
             guard.store(false, std::sync::atomic::Ordering::SeqCst);
         });
     } else {
@@ -11262,40 +11261,6 @@ fn download_ephemeris_batch(items: &[(usize, SourceConfig, String)]) {
         for (_, part, _) in &pending {
             let _ = std::fs::remove_file(part);
         }
-    }
-}
-
-fn download_ephemeris_one(src: &SourceConfig, tmp_path: &str) {
-    let part = format!("{}.part", tmp_path);
-    if let Ok(data) = std::fs::read(&part) {
-        if parse_ephemeris_binary(&data).is_some() {
-            let _ = std::fs::rename(&part, tmp_path);
-            return;
-        }
-    }
-    let _ = std::fs::remove_file(&part);
-    let mut cmd = curl_base(src.ttl, 0);
-    cmd.arg("-o").arg(&part).arg(&src.url);
-    let output = match cmd.output() {
-        Ok(o) => o,
-        Err(_) => {
-            eprintln!("ephemeris {}: curl void", src.url);
-            let _ = std::fs::remove_file(&part);
-            return;
-        }
-    };
-    if output.status.success() {
-        if std::fs::rename(&part, tmp_path).is_err() {
-            let _ = std::fs::remove_file(&part);
-        }
-    } else {
-        eprintln!(
-            "ephemeris {}: curl returned {}: {}",
-            src.url,
-            output.status,
-            String::from_utf8_lossy(&output.stderr).trim()
-        );
-        let _ = std::fs::remove_file(&part);
     }
 }
 
@@ -15374,21 +15339,24 @@ pub fn main_flow() {
     let mut radiators: Vec<Box<dyn Radiator>> = Vec::new();
     #[cfg(feature = "browser_relay")]
     let presence_relay_tx = presence_tx.clone();
+    let hidden = std::env::var("OMEGAFLOW_HIDDEN").is_ok();
     let (acoustic_tx, acoustic_rx) = mpsc::channel::<crate::mathematikerin::PresenceFrame>();
     let (seismic_tx, seismic_rx) = mpsc::channel::<crate::mathematikerin::PresenceFrame>();
-    let mut kinetic: Vec<Box<dyn crate::mathematikerin::KineticRadiator>> = Vec::new();
-    if let Ok(port) = std::env::var("OMEGAFLOW_SERIAL_OUT") {
-        kinetic.push(Box::new(crate::mathematikerin::SeismicOscillator::new(
-            &port,
-        )));
-    }
-    thread::spawn(move || {
-        while let Ok(frame) = seismic_rx.recv() {
-            for s in kinetic.iter_mut() {
-                s.vibrate(&frame);
-            }
+    if !hidden {
+        let mut kinetic: Vec<Box<dyn crate::mathematikerin::KineticRadiator>> = Vec::new();
+        if let Ok(port) = std::env::var("OMEGAFLOW_SERIAL_OUT") {
+            kinetic.push(Box::new(crate::mathematikerin::SeismicOscillator::new(
+                &port,
+            )));
         }
-    });
+        thread::spawn(move || {
+            while let Ok(frame) = seismic_rx.recv() {
+                for s in kinetic.iter_mut() {
+                    s.vibrate(&frame);
+                }
+            }
+        });
+    }
     let boot_pt = time
         .lock()
         .ok()
@@ -15421,20 +15389,24 @@ pub fn main_flow() {
     };
     #[cfg(feature = "browser_relay")]
     {
-        let sr = crate::relay::TcpRadiator::new(
-            port,
-            body_names.clone(),
-            archive.field.clone(),
-            index_html.clone(),
-            constants_js.clone(),
-            sample_tx.clone(),
-            presence_relay_tx,
-            time.clone(),
-            consent.clone(),
-        );
-        radiators.push(Box::new(sr));
+        if !hidden {
+            let sr = crate::relay::TcpRadiator::new(
+                port,
+                body_names.clone(),
+                archive.field.clone(),
+                index_html.clone(),
+                constants_js.clone(),
+                sample_tx.clone(),
+                presence_relay_tx,
+                time.clone(),
+                consent.clone(),
+            );
+            radiators.push(Box::new(sr));
+        }
     }
-    let _acoustic = crate::mathematikerin::AcousticOscillator::new(acoustic_rx);
+    if !hidden {
+        let _acoustic = crate::mathematikerin::AcousticOscillator::new(acoustic_rx);
+    }
     radiators.push(Box::new(StderrRadiator {
         last_line: String::new(),
         interactive: std::io::stderr().is_terminal(),

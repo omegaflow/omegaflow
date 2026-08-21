@@ -1222,6 +1222,61 @@ fn q_axis_angle(axis: [f64; 3], angle: f64) -> [f64; 4] {
     [(angle / 2.0).cos(), axis[0] * s, axis[1] * s, axis[2] * s]
 }
 
+const WINDOW_STATE_PATH: &str = "/tmp/omegaflow_window_state.φ";
+
+fn window_state_load(path: &str) -> (f64, [f64; 3], [f64; 4]) {
+    let mut grid = GRID_INIT;
+    let mut p = [0.0f64; 3];
+    let mut q = [1.0, 0.0, 0.0, 0.0];
+    let Ok(text) = std::fs::read_to_string(path) else {
+        return (grid, p, q);
+    };
+    for line in text.lines() {
+        let mut toks = line.split_whitespace();
+        match toks.next() {
+            Some("grid_step") => {
+                if let Some(v) = toks.next().and_then(|s| s.parse::<f64>().ok()) {
+                    if v.is_finite() && v > 0.0 {
+                        grid = v;
+                    }
+                }
+            }
+            Some("p") => {
+                let vals: Option<Vec<f64>> = toks.map(|s| s.parse::<f64>().ok()).collect();
+                if let Some(vals) = vals {
+                    if vals.len() == 3 && vals.iter().all(|v| v.is_finite()) {
+                        p = [vals[0], vals[1], vals[2]];
+                    }
+                }
+            }
+            Some("q") => {
+                let vals: Option<Vec<f64>> = toks.map(|s| s.parse::<f64>().ok()).collect();
+                if let Some(vals) = vals {
+                    if vals.len() == 4
+                        && vals.iter().all(|v| v.is_finite())
+                        && vals.iter().any(|v| *v != 0.0)
+                    {
+                        q = q_norm([vals[0], vals[1], vals[2], vals[3]]);
+                    }
+                }
+            }
+            _ => {}
+        }
+    }
+    (grid, p, q)
+}
+
+fn window_state_save(path: &str, grid_step: f64, p: [f64; 3], q: [f64; 4]) {
+    let mut text = String::new();
+    text.push_str(&format!("grid_step {:.17e}\n", grid_step));
+    text.push_str(&format!("p {:.17e} {:.17e} {:.17e}\n", p[0], p[1], p[2]));
+    text.push_str(&format!(
+        "q {:.17e} {:.17e} {:.17e} {:.17e}\n",
+        q[0], q[1], q[2], q[3]
+    ));
+    let _ = std::fs::write(path, text);
+}
+
 fn le_bytes_f32(v: &[f32]) -> Vec<u8> {
     let mut out = Vec::with_capacity(v.len() * 4);
     for x in v {
@@ -1312,6 +1367,7 @@ struct NativeApp {
     consent: Arc<AtomicBool>,
     acoustic_tx: mpsc::Sender<PresenceFrame>,
     seismic_tx: mpsc::Sender<PresenceFrame>,
+    silent: bool,
 
     window: Option<Arc<Window>>,
     surface: Option<wgpu::Surface<'static>>,
@@ -1399,6 +1455,7 @@ struct NativeApp {
     size: (u32, u32),
     scale_factor: f64,
     last_sent: (f64, f64, f64, f64),
+    last_saved_state: (f64, [f64; 3], [f64; 4]),
     sensors: NativeSensors,
     frame_count: u64,
     frame_ms_max: f64,
@@ -1428,6 +1485,7 @@ impl NativeApp {
         acoustic_tx: mpsc::Sender<PresenceFrame>,
         seismic_tx: mpsc::Sender<PresenceFrame>,
     ) -> Self {
+        let (grid0, p0, q0) = window_state_load(WINDOW_STATE_PATH);
         Self {
             rx,
             req_tx,
@@ -1439,6 +1497,7 @@ impl NativeApp {
             consent,
             acoustic_tx,
             seismic_tx,
+            silent: std::env::var("OMEGAFLOW_HIDDEN").is_ok(),
             window: None,
             surface: None,
             config: None,
@@ -1474,12 +1533,12 @@ impl NativeApp {
             packed_meta: Vec::new(),
             packed_count: 0,
             last_response_epoch: 0.0,
-            p: [0.0, 0.0, 0.0],
+            p: p0,
             v: [0.0, 0.0, 0.0],
             t0: 0.0,
             t_presence: 0.0,
-            q: [1.0, 0.0, 0.0, 0.0],
-            grid_step: GRID_INIT,
+            q: q0,
+            grid_step: grid0,
             ssaa: 1.0,
             expose_offset: EXPOSE_OFFSET_BASE,
             field_dark: false,
@@ -1521,6 +1580,7 @@ impl NativeApp {
             size: (1280, 800),
             scale_factor: 1.0,
             last_sent: (0.0, 0.0, 0.0, 0.0),
+            last_saved_state: (grid0, p0, q0),
             sensors: NativeSensors {
                 oscs: HashMap::new(),
                 tx: sensor_tx,
@@ -1892,6 +1952,18 @@ impl NativeApp {
             .presence_tx
             .send(("native".to_string(), self.t_presence, x, y, z, range));
         self.sense();
+    }
+
+    fn consider_state_save(&mut self) {
+        let state = (self.grid_step, self.p, self.q);
+        if state.0 == self.last_saved_state.0
+            && state.1 == self.last_saved_state.1
+            && state.2 == self.last_saved_state.2
+        {
+            return;
+        }
+        self.last_saved_state = state;
+        window_state_save(WINDOW_STATE_PATH, state.0, state.1, state.2);
     }
 
     fn key_action(&mut self, code: KeyCode) {
@@ -2328,10 +2400,13 @@ impl NativeApp {
         if self.window.is_some() {
             return;
         }
-        let attrs = WindowAttributes::default()
+        let mut attrs = WindowAttributes::default()
             .with_title("omegaflow φ")
             .with_active(true)
             .with_fullscreen(Some(Fullscreen::Borderless(None)));
+        if std::env::var("OMEGAFLOW_HIDDEN").is_ok() {
+            attrs = attrs.with_visible(false);
+        }
         let window = match event_loop.create_window(attrs) {
             Ok(w) => w,
             Err(e) => {
@@ -2339,7 +2414,9 @@ impl NativeApp {
                 return;
             }
         };
-        let _ = window.focus_window();
+        if std::env::var("OMEGAFLOW_HIDDEN").is_err() {
+            let _ = window.focus_window();
+        }
         let (sw, sh) = match window.current_monitor() {
             Some(m) => {
                 let ms = m.size();
@@ -2832,6 +2909,7 @@ impl ApplicationHandler for NativeApp {
         self.last_tick = Some(now_i);
         self.stable_tick = self.stable_tick * (1.0 - EMA_FACTOR) + raw * EMA_FACTOR;
         self.expose_offset += (EXPOSE_OFFSET_BASE - self.expose_offset) * OFFSET_RELAX;
+        self.consider_state_save();
         if let Some(t) = system_now(&self.time) {
             if self.t_presence == 0.0 {
                 self.t_presence = t;
@@ -3142,8 +3220,10 @@ impl ApplicationHandler for NativeApp {
             let frame = PresenceFrame {
                 omega: self.probe_omega,
             };
-            let _ = self.acoustic_tx.send(frame);
-            let _ = self.seismic_tx.send(frame);
+            if !self.silent {
+                let _ = self.acoustic_tx.send(frame);
+                let _ = self.seismic_tx.send(frame);
+            }
             let [x, y, z] = self.pos();
             let fps = self.frame_count as f64;
             self.frame_count = 0;
@@ -3512,6 +3592,51 @@ mod tests {
         if let Err(e) = validator.validate(&module) {
             panic!("wgsl validate: {}", e.emit_to_string(FIELD_WGSL));
         }
+    }
+
+    #[test]
+    fn window_state_round_trips() {
+        let path = "/tmp/opencode/window_state_roundtrip.φ";
+        let grid = 1.4e6;
+        let p = [1.5e11, -3.7e9, 2.2e8];
+        let q = q_norm([0.9, 0.1, -0.2, 0.3]);
+        window_state_save(path, grid, p, q);
+        let (g, lp, lq) = window_state_load(path);
+        assert_eq!(g, grid);
+        assert_eq!(lp, p);
+        assert_eq!(lq, q);
+        let _ = std::fs::remove_file(path);
+    }
+
+    #[test]
+    fn window_state_missing_file_is_rest_state() {
+        let (g, p, q) = window_state_load("/tmp/opencode/window_state_absent.φ");
+        assert_eq!(g, GRID_INIT);
+        assert_eq!(p, [0.0, 0.0, 0.0]);
+        assert_eq!(q, [1.0, 0.0, 0.0, 0.0]);
+    }
+
+    #[test]
+    fn window_state_garbage_is_rest_state() {
+        let path = "/tmp/opencode/window_state_garbage.φ";
+        let text = "grid_step nan\np 1 2\nq 0 0 0 0\nwat\n";
+        let _ = std::fs::write(path, text);
+        let (g, p, q) = window_state_load(path);
+        assert_eq!(g, GRID_INIT);
+        assert_eq!(p, [0.0, 0.0, 0.0]);
+        assert_eq!(q, [1.0, 0.0, 0.0, 0.0]);
+        let _ = std::fs::remove_file(path);
+    }
+
+    #[test]
+    fn window_state_partial_lines_keep_rest_fields() {
+        let path = "/tmp/opencode/window_state_partial.φ";
+        let _ = std::fs::write(path, "grid_step 1.0e8\n");
+        let (g, p, q) = window_state_load(path);
+        assert_eq!(g, 1.0e8);
+        assert_eq!(p, [0.0, 0.0, 0.0]);
+        assert_eq!(q, [1.0, 0.0, 0.0, 0.0]);
+        let _ = std::fs::remove_file(path);
     }
 
     #[test]
