@@ -506,6 +506,7 @@ Maschine misst.
   Speed still; Density still (Nullkontrolle I hält); Ruhezeit: Bz und
   Density still, Speed bricht am Sweep-Rand (lag 120) — der Speed-Kanal
   trägt keinen gereinigten Pfeil; PE-Ring < 8 Segmente (kein Urteil).
+  Das Blatt: `docs/surveys/survey-2026-08-21-bz-kausalpfeil.md`.
   Offen: Mehrfachvergleichskorrektur über die Paar-Matrix, das
   Retro-Fenster (1-h, OMNI2) als zweite Blatt-Zeile.
 - **LAIC-Pfeilrichtung** (`handover-2026-08-21-laic-pfeilrichtung.md`):
@@ -1531,7 +1532,22 @@ Scroll #x,0,0,0,-4.0e7 φ-t −4.0e7; Stempel in Beobachter-Zeit
 (−39999991), null 2026-Render im gescrollten Lauf. Fünf Temporal-Tests
 gepinnt (URL trägt Beobachter-Epoche, prä-2000, Cache-Identität,
 Extract-Default-Epoche, Stempel-Gate).
-Offen: Atom 5 (Sprung-Fetch).
+Atom 5 (Sprung-Fetch) ERLEDIGT (2026-08-21): der Presence-Kanal trägt
+grid_step als 11. Feld (name + 10 f64; Browser grid_step = 0.0 — der
+Sensor-Träger trägt kein Gitter, fehlt als 0.0-Sentinel des Fixed-Stride,
+kein Fallback; Boot-Send grid_step = GRID_INIT). presence_gate rechnet die
+Ruhe-Grenze je Presence `signal_reach + max(body_radius, Φ·grid_step)` —
+der Term ersetzt dispatch_extent (gestorben; kernel_extent lebt für den
+Sensor-Oszillator), body_radius über frame_body_name → BodyProperties.
+radius_m (frameless → 0.0, null-echt, Φ·grid_step allein). Sprung-
+Erkennung: Δp ≥ 2²·JUMP_GRID und v = 0 (JUMP_GRID pub; Sprung, großes
+Schwenken und Home sind ein Snap — der Operator stimmt die Koordinate,
+Budget 2³ drosselt den Dispatch); der Marker `jump_epoch` (Option<f64> im
+Archive) zwingt in origin_stale `fetched < jump_epoch` stale — der
+Void-Backoff blockt den Sprung nicht (die Verweigerung war eine Messung an
+der alten Position), und eine voide Quelle bleibt void (ein Re-Versuch an
+der neuen Position, dann Backoff, 0 honored). Schwarz während der Latenz
+ist ehrliche Abwesenheit — die Daten sind pending, nicht null.
 
 Auftrag: docs/handover/handover-2026-08-21-4d-wahrheit.md — der
 Archivar lebt auf der Weltlinie des Beobachters; fünf Atome, eine
