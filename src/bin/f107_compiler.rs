@@ -11,13 +11,13 @@
 // Tagespräzision der Mittags-Messung und werden nicht hineingerechnet.
 // Binär: Magie "F107", u32 count, Records (days i64 LE, flux_w_m2_hz f64 LE).
 
+use omegaflow::archivar::f107::{parse_bin, write_bin};
 use omegaflow::archivar::fetch_raw;
 use omegaflow::cdn::upload_asset;
 use omegaflow::lsk::days_from_civil;
 use omegaflow::spectral::civil_from_days;
 
 const BASE: &str = "https://www.ngdc.noaa.gov/stp/space-weather/solar-data/solar-features/solar-radio/noontime-flux/penticton";
-const MAGIC: [u8; 4] = *b"F107";
 const FIRST_YEAR: i64 = 1947;
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
@@ -25,35 +25,6 @@ fn arg_value(args: &[String], name: &str) -> Option<String> {
         .position(|a| a == name)
         .and_then(|i| args.get(i + 1))
         .cloned()
-}
-
-fn write_bin(records: &[(i64, f64)]) -> Vec<u8> {
-    let mut buf = Vec::with_capacity(8 + records.len() * 16);
-    buf.extend_from_slice(&MAGIC);
-    buf.extend_from_slice(&(records.len() as u32).to_le_bytes());
-    for (d, v) in records {
-        buf.extend_from_slice(&d.to_le_bytes());
-        buf.extend_from_slice(&v.to_le_bytes());
-    }
-    buf
-}
-
-fn parse_bin(bytes: &[u8]) -> Option<Vec<(i64, f64)>> {
-    if bytes.len() < 8 || bytes[0..4] != MAGIC {
-        return None;
-    }
-    let n = u32::from_le_bytes([bytes[4], bytes[5], bytes[6], bytes[7]]) as usize;
-    if bytes.len() != 8 + n * 16 {
-        return None;
-    }
-    let mut out = Vec::with_capacity(n);
-    for i in 0..n {
-        let o = 8 + i * 16;
-        let d = i64::from_le_bytes(bytes[o..o + 8].try_into().ok()?);
-        let v = f64::from_le_bytes(bytes[o + 8..o + 16].try_into().ok()?);
-        out.push((d, v));
-    }
-    Some(out)
 }
 
 fn parse_line(line: &str, year: i64) -> Option<(i64, f64)> {

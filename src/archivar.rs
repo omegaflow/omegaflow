@@ -7,6 +7,7 @@ use std::collections::HashMap;
 use std::process::Command;
 use std::sync::{Arc, OnceLock};
 
+pub mod f107;
 pub mod goes;
 pub mod omni2;
 

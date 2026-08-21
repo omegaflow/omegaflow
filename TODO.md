@@ -227,9 +227,22 @@ der nächste CI-Lauf das CDN-Asset (die Serie gewinnt — keine
 --decimate-min 1440 --jobs 8 --ci-mode` — bis der Lauf manifestiert,
 trägt der Block die benannte Verweigerung (fetch void, 0 honored).
 Offen bleibt: der Lang-Fenster-Probe F10.7-Historie ×
-GOES-XRS-Historie über Jahre (die Übergabe
+GOES-XRS-Historie über Jahre — GEBAUT (2026-08-21, Einheit 2 der
+Übergabe): `src/bin/long_window_probe.rs` liest die beiden Bins direkt
+(goes::parse_bin + f107::parse_bin — der F107-Parse wanderte als
+Schritt 0 in die lib `src/archivar/f107.rs`, der Compiler teilt ihn),
+Tages-Zellen über das gemeinsame Fenster (TDB-Konstante und
+Mittag-/Mitternachts-Konvention liegen unter der Zellen-Weite), TE
+beide Richtungen F10.7 × XRSA/XRSB, lag 0..7 d, phasenrandomisierte +
+naive Schwelle (broken-null-control-Rekord), n < 30 → no statement.
+Vor den CDN-Manifesten (goes_xrs.bin + f107_penticton.bin tragen am
+2026-08-21 beide 404): benannte Verweigerung, 0 honored; der Lauf auf
+den echten Serien steht aus, sobald die CI-Läufe des sources-Repos
+beide Assets manifestieren. Die skalaren TE-Pfade (src/te.rs) blieben
+unberührt; die Übergabe
 docs/handover/handover-2026-08-21-omni2-serie-langfenster-probe.md
-trägt ihn; Quellen vermessen in
+ist mit beiden Einheiten verbraucht (Archivierung im selben Zug;
+Quellen vermessen in
 docs/surveys/survey-2026-08-21-sonnen-abdeckung.md).
 Luminositäts-Atom — benannte Grenzen (pending): die Ankerung
 modelliert Isotropie (die Röntgenemission ist richtungsabhängig —
