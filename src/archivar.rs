@@ -109,6 +109,7 @@ pub trait Radiator: Send + Sync {
 pub const Φ: f64 = 1.618033988749895;
 const FETCH_BUDGET: usize = 1 << 3;
 const FETCH_VOID_CAP: u32 = 1 << 2;
+const FETCH_DURATION_RING: usize = 1 << 4;
 pub const CHEBYSHEV_N: usize = 18;
 
 #[derive(Clone)]
@@ -624,6 +625,23 @@ pub fn chebyshev_eval_slice(coeffs: &[f64], tau: f64) -> f64 {
     b0 - tau * b1
 }
 
+pub fn chebyshev_evaluate_deriv(coeffs: &[f64; CHEBYSHEV_N], tau: f64) -> f64 {
+    let mut dc = [0.0_f64; CHEBYSHEV_N];
+    for k in (1..CHEBYSHEV_N).rev() {
+        if k + 2 < CHEBYSHEV_N {
+            dc[k] += dc[k + 2];
+        }
+        if k + 1 < CHEBYSHEV_N {
+            dc[k] += 2.0 * (k as f64 + 1.0) * coeffs[k + 1];
+        }
+    }
+    dc[0] += coeffs[1];
+    if CHEBYSHEV_N >= 3 {
+        dc[0] += 0.5 * dc[2];
+    }
+    chebyshev_evaluate(&dc, tau)
+}
+
 pub fn nutation_deltas_at(props: &BodyProperties, jd: f64) -> Option<(f64, f64, f64)> {
     let records = props.nutation.as_ref()?;
     let rec = records
@@ -694,6 +712,32 @@ pub fn body_barycenter_position(
                 chebyshev_evaluate(&g.cx, tau),
                 chebyshev_evaluate(&g.cy, tau),
                 chebyshev_evaluate(&g.cz, tau),
+            ]);
+        }
+    }
+    None
+}
+
+pub fn body_barycenter_velocity(
+    name: &str,
+    tdb: f64,
+    eph: &HashMap<String, BodyEphemeris>,
+) -> Option<[f64; 3]> {
+    let e = eph.get(name)?;
+    let jd = tdb / 86400.0 + J2000_EPOCH;
+    let idx = e.granules.partition_point(|g| g.t0_jd < jd);
+    for i in [idx.saturating_sub(1), idx] {
+        if i >= e.granules.len() {
+            continue;
+        }
+        let g = &e.granules[i];
+        let tau = (jd - g.t0_jd) / g.dt_jd;
+        if tau >= -1.0 && tau <= 1.0 {
+            let scale = 1.0 / (g.dt_jd * 86400.0);
+            return Some([
+                chebyshev_evaluate_deriv(&g.cx, tau) * scale,
+                chebyshev_evaluate_deriv(&g.cy, tau) * scale,
+                chebyshev_evaluate_deriv(&g.cz, tau) * scale,
             ]);
         }
     }
@@ -5849,6 +5893,206 @@ mod tests {
     }
 
     #[test]
+    fn test_render_source_url_carries_observer_epoch() {
+        let mut src = source_fixture("json", vec![]);
+        src.url = "https://example.com/field?start={week_ago}&end={today}".into();
+        let fixture_lsk = super::LeapSeconds {
+            delta_t_a: 32.184,
+            deltas: vec![(37.0, 1483228800.0)],
+        };
+        let past_tdb = 8.0e8;
+        let past = render_source_url(
+            &src,
+            0.0,
+            0.0,
+            0.0,
+            past_tdb,
+            1000.0,
+            &HashMap::new(),
+            &HashMap::new(),
+            &fixture_lsk,
+        )
+        .unwrap();
+        let past_unix = fixture_lsk.tdb_to_unix(past_tdb).unwrap() as u64;
+        let (ty, tm, td) = super::days_to_ymd(past_unix / 86400);
+        let (wy, wm, wd) = super::days_to_ymd(past_unix / 86400 - 7);
+        assert!(
+            past.contains(&format!("end={}-{:02}-{:02}", ty, tm, td)),
+            "past url {}",
+            past
+        );
+        assert!(
+            past.contains(&format!("start={}-{:02}-{:02}", wy, wm, wd)),
+            "past url {}",
+            past
+        );
+        let now_tdb = fixture_lsk.system_now_tdb().unwrap();
+        let present = render_source_url(
+            &src,
+            0.0,
+            0.0,
+            0.0,
+            now_tdb,
+            1000.0,
+            &HashMap::new(),
+            &HashMap::new(),
+            &fixture_lsk,
+        )
+        .unwrap();
+        let now_unix = fixture_lsk.tdb_to_unix(now_tdb).unwrap() as u64;
+        let (ny, nm, nd) = super::days_to_ymd(now_unix / 86400);
+        assert!(
+            present.contains(&format!("end={}-{:02}-{:02}", ny, nm, nd)),
+            "present url {}",
+            present
+        );
+        assert_ne!(
+            past, present,
+            "the rendered URL must follow the observer epoch, not the machine now"
+        );
+    }
+
+    #[test]
+    fn test_render_source_url_pre_2000_epoch() {
+        let mut src = source_fixture("json", vec![]);
+        src.url = "https://example.com/field?start={week_ago}&end={today}".into();
+        let lsk = super::embedded_lsk().expect("the embedded naif0012 table is program identity");
+        let pre_2000_tdb = -4.0e7;
+        let url = render_source_url(
+            &src,
+            0.0,
+            0.0,
+            0.0,
+            pre_2000_tdb,
+            0.0,
+            &HashMap::new(),
+            &HashMap::new(),
+            &lsk,
+        )
+        .unwrap();
+        let unix = lsk.tdb_to_unix(pre_2000_tdb).unwrap() as u64;
+        let (ty, tm, td) = super::days_to_ymd(unix / 86400);
+        assert!(
+            url.contains(&format!("end={}-{:02}-{:02}", ty, tm, td)),
+            "a pre-2000 observer epoch (negative TDB-J2000) must render its own dates: {}",
+            url
+        );
+        assert!(
+            !url.contains("2026"),
+            "a pre-2000 observer epoch must not render machine-now dates: {}",
+            url
+        );
+    }
+
+    #[test]
+    fn test_temporal_urls_carry_distinct_cache_identity() {
+        let mut src = source_fixture("json", vec![]);
+        src.url = "https://example.com/field?start={week_ago}&end={today}".into();
+        let fixture_lsk = super::LeapSeconds {
+            delta_t_a: 32.184,
+            deltas: vec![(37.0, 1483228800.0)],
+        };
+        let harvest_2005 = render_source_url(
+            &src,
+            0.0,
+            0.0,
+            0.0,
+            8.0e8,
+            0.0,
+            &HashMap::new(),
+            &HashMap::new(),
+            &fixture_lsk,
+        )
+        .unwrap();
+        let harvest_2026 = render_source_url(
+            &src,
+            0.0,
+            0.0,
+            0.0,
+            1.8e9,
+            0.0,
+            &HashMap::new(),
+            &HashMap::new(),
+            &fixture_lsk,
+        )
+        .unwrap();
+        assert_ne!(
+            source_name_from_url(&harvest_2005),
+            source_name_from_url(&harvest_2026),
+            "the 2005 harvest and the 2026 harvest are distinct cache identities — \
+             a scroll must never overwrite the other epoch's harvest"
+        );
+    }
+
+    #[test]
+    fn test_extract_default_epoch_is_observer_epoch() {
+        let mut fc = field_fixture("temp_c", 60.0);
+        fc.key = "temp_c".into();
+        let src = source_fixture(
+            "json",
+            vec![Extract::Map {
+                arr_path: "rows".into(),
+                lat_key: "lat".into(),
+                lon_key: "lon".into(),
+                alt_key: String::new(),
+                epoch_key: String::new(),
+                val_key: String::new(),
+                alt_scale: 1.0,
+                vel_key: String::new(),
+                vel_scale: 1.0,
+                trk_key: String::new(),
+                vr_key: String::new(),
+                fields: vec![fc],
+                lat_sign: None,
+                lon_sign: None,
+                epoch_scale: 1.0,
+                tau_key: String::new(),
+                mag_type_key: String::new(),
+            }],
+        );
+        let body = r#"{"rows":[{"lat":1.0,"lon":2.0,"temp_c":21.0}]}"#;
+        let scrolled = 8.0e8;
+        match extract(&src, body, scrolled, &fixture_lsk()) {
+            ExtractResult::Measurements(channels) => {
+                assert_eq!(channels.len(), 1);
+                assert!(
+                    (channels[0].0.epoch - scrolled).abs() < 1e-6,
+                    "an epoch-less row carries the observer's epoch, not the machine now"
+                );
+            }
+            _ => panic!("expected measurements"),
+        }
+    }
+
+    #[test]
+    fn test_epoch_stamp_gate_is_observer_time() {
+        let ttl = 3600u64;
+        let path = "/tmp/opencode/omegaflow_epoch_stamp_gate_test.json";
+        let stamp_path = format!("{}.epoch", path);
+        let _ = std::fs::remove_file(path);
+        let _ = std::fs::remove_file(&stamp_path);
+        assert!(
+            !cache_fresh_at(path, ttl, 8.0e8),
+            "an unstamped cache is never fresh"
+        );
+        write_epoch_stamp(path, 8.0e8);
+        assert!(
+            cache_fresh_at(path, ttl, 8.0e8 + 100.0),
+            "within the ttl the harvest serves"
+        );
+        assert!(
+            !cache_fresh_at(path, ttl, 8.0e8 + ttl as f64 + 100.0),
+            "beyond the ttl the harvest is stale"
+        );
+        assert!(
+            !cache_fresh_at(path, ttl, 8.0e8 - ttl as f64 - 100.0),
+            "a scroll before the stamp epoch is stale — no 2026 harvest at 2005"
+        );
+        let _ = std::fs::remove_file(path);
+        let _ = std::fs::remove_file(&stamp_path);
+    }
+
+    #[test]
     fn test_post_body_rendering() {
         let src = SourceConfig {
             ttl: 100,
@@ -8004,6 +8248,7 @@ field temp temp_c\n";
         eph.insert("mars".to_string(), mars_eph);
         let mut origin_state = super::OriginState {
             fetched: 0.0,
+            started: 0.0,
             prev_epoch: 0.0,
             prev_abs: [0.0, 0.0, 0.0],
             prev_motion: None,
@@ -8142,6 +8387,7 @@ field temp temp_c\n";
         eph.insert("mars".to_string(), mars_eph);
         let mut origin_state = super::OriginState {
             fetched: 0.0,
+            started: 0.0,
             prev_epoch: 0.0,
             prev_abs: [0.0, 0.0, 0.0],
             prev_motion: None,
@@ -8479,22 +8725,22 @@ field temp temp_c\n";
         let presences: Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64)> =
             vec![(8.0e8, 0.0, 0.0, 0.0, 1.0e12, 0.0, 0.0, 0.0, 0.0)];
         assert!(
-            super::presence_gate(&presences, (0.0, 0.0, 0.0), reach),
+            super::presence_gate(&presences, (0.0, 0.0, 0.0), reach, 0.0, None, None),
             "the em source at the presence anchor must be fetched"
         );
     }
 
     #[test]
-    fn test_fetch_dispatch_gate_window_anchor_passes_with_zero_reach() {
+    fn test_fetch_dispatch_gate_window_range_does_not_fetch() {
         let presences: Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64)> =
             vec![(8.0e8, 0.0, 0.0, 0.0, 100.0, 0.0, 0.0, 0.0, 0.0)];
         assert!(
-            super::presence_gate(&presences, (50.0, 0.0, 0.0), 0.0),
-            "an anchor inside the presence window passes on the window range alone"
+            !super::presence_gate(&presences, (50.0, 0.0, 0.0), 0.0, 0.0, None, None),
+            "the window range is not a fetch radius — an anchor 50 m out stays refused"
         );
         assert!(
-            !super::presence_gate(&presences, (1.0e6, 0.0, 0.0), 0.0),
-            "an anchor outside the window stays refused without a physical reach"
+            !super::presence_gate(&presences, (1.0e6, 0.0, 0.0), 0.0, 0.0, None, None),
+            "an anchor far outside the window stays refused without a physical reach"
         );
     }
 
@@ -8516,13 +8762,172 @@ field temp temp_c\n";
         let presences: Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64)> =
             vec![(8.0e8, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0)];
         assert!(
-            super::presence_gate(&presences, (10.0, 0.0, 0.0), reach),
+            super::presence_gate(&presences, (10.0, 0.0, 0.0), reach, 0.0, None, None),
             "the thermal front over the sample lifetime reaches 10 m"
         );
         assert!(
-            !super::presence_gate(&presences, (1.0e6, 0.0, 0.0), reach),
+            !super::presence_gate(&presences, (1.0e6, 0.0, 0.0), reach, 0.0, None, None),
             "a thermal anchor 1000 km away is out of physical reach"
         );
+    }
+
+    #[test]
+    fn test_fetch_gate_rest_rejects_out_of_reach_anchor() {
+        let presences: Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64)> =
+            vec![(8.0e8, 0.0, 0.0, 0.0, 1.0e9, 0.0, 0.0, 0.0, 0.0)];
+        assert!(
+            !super::presence_gate(&presences, (50.0, 0.0, 0.0), 10.0, 5.0, None, None),
+            "a resting presence fetches only within reach + extent"
+        );
+    }
+
+    #[test]
+    fn test_fetch_gate_thrust_anticipates_within_median_window() {
+        let presences: Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64)> =
+            vec![(8.0e8, 0.0, 0.0, 0.0, 1.0e9, 100.0, 0.0, 0.0, 0.0)];
+        assert!(
+            super::presence_gate(
+                &presences,
+                (1000.0, 0.0, 0.0),
+                0.0,
+                0.0,
+                Some([0.0, 0.0, 0.0]),
+                Some(20.0)
+            ),
+            "a presence closing at 100 m/s anticipates 10 s out when the median allows it"
+        );
+        assert!(
+            !super::presence_gate(
+                &presences,
+                (1000.0, 0.0, 0.0),
+                0.0,
+                0.0,
+                Some([0.0, 0.0, 0.0]),
+                Some(5.0)
+            ),
+            "the anticipation window scales with the median — too short a median stays refused"
+        );
+    }
+
+    #[test]
+    fn test_fetch_gate_thrust_without_anchor_velocity_rests() {
+        let presences: Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64)> =
+            vec![(8.0e8, 0.0, 0.0, 0.0, 1.0e9, 100.0, 0.0, 0.0, 0.0)];
+        assert!(
+            !super::presence_gate(&presences, (1000.0, 0.0, 0.0), 0.0, 0.0, None, Some(20.0)),
+            "a frameless anchor carries no velocity — only the rest gate applies"
+        );
+    }
+
+    #[test]
+    fn test_fetch_gate_thrust_without_median_rests() {
+        let presences: Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64)> =
+            vec![(8.0e8, 0.0, 0.0, 0.0, 1.0e9, 100.0, 0.0, 0.0, 0.0)];
+        assert!(
+            !super::presence_gate(
+                &presences,
+                (1000.0, 0.0, 0.0),
+                0.0,
+                0.0,
+                Some([0.0, 0.0, 0.0]),
+                None
+            ),
+            "without a measured median there is no anticipation — only the rest gate"
+        );
+    }
+
+    #[test]
+    fn test_fetch_gate_thrust_receding_rests() {
+        let presences: Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64)> =
+            vec![(8.0e8, 0.0, 0.0, 0.0, 1.0e9, -100.0, 0.0, 0.0, 0.0)];
+        assert!(
+            !super::presence_gate(
+                &presences,
+                (1000.0, 0.0, 0.0),
+                0.0,
+                0.0,
+                Some([0.0, 0.0, 0.0]),
+                Some(20.0)
+            ),
+            "a presence receding from the anchor never anticipates"
+        );
+    }
+
+    #[test]
+    fn test_fetch_duration_ring_median_and_wrap() {
+        let mut ring = [0.0_f64; super::FETCH_DURATION_RING];
+        let mut len = 0usize;
+        let mut idx = 0usize;
+        assert!(
+            super::median_fetch_duration(&ring, len).is_none(),
+            "an empty ring carries no median"
+        );
+        for d in [4.0, 2.0, 8.0, 6.0] {
+            super::record_fetch_duration(&mut ring, &mut len, &mut idx, d);
+        }
+        assert_eq!(len, 4);
+        let median =
+            super::median_fetch_duration(&ring, len).expect("four durations carry a median");
+        assert_eq!(median, 5.0, "the median of [4, 2, 8, 6] is 5");
+        for d in 0..20 {
+            super::record_fetch_duration(&mut ring, &mut len, &mut idx, 10.0 + d as f64);
+        }
+        assert_eq!(len, super::FETCH_DURATION_RING, "the ring caps at 2^4");
+        assert!(super::median_fetch_duration(&ring, len).is_some());
+    }
+
+    #[test]
+    fn test_chebyshev_evaluate_deriv_matches_basis_slopes() {
+        let mut c1 = [0.0_f64; super::CHEBYSHEV_N];
+        c1[1] = 1.0;
+        for tau in [-0.9, -0.3, 0.0, 0.5, 0.9] {
+            let d = super::chebyshev_evaluate_deriv(&c1, tau);
+            assert!((d - 1.0).abs() < 1e-12, "T1 = tau derives to 1, was {d}");
+        }
+        let mut c2 = [0.0_f64; super::CHEBYSHEV_N];
+        c2[2] = 1.0;
+        for tau in [-0.9, -0.3, 0.0, 0.5, 0.9] {
+            let d = super::chebyshev_evaluate_deriv(&c2, tau);
+            assert!(
+                (d - 4.0 * tau).abs() < 1e-12,
+                "T2 = 2tau^2-1 derives to 4tau, was {d}"
+            );
+        }
+    }
+
+    #[test]
+    fn test_body_barycenter_velocity_linear_granule() {
+        let now = 840511523.88;
+        let jd_now = super::J2000_EPOCH + now / 86400.0;
+        let mut eph = super::BodyEphemeris {
+            granules: Vec::new(),
+            rotation_matrices: Vec::new(),
+            props: None,
+            orbit: None,
+        };
+        for i in -1..=1 {
+            let t0 = jd_now + i as f64 * 16.0;
+            let mut cx = [0.0_f64; super::CHEBYSHEV_N];
+            cx[1] = 1.0e6;
+            eph.granules.push(super::ChebyshevGranule {
+                t0_jd: t0,
+                dt_jd: 16.0,
+                cx,
+                cy: [0.0; super::CHEBYSHEV_N],
+                cz: [0.0; super::CHEBYSHEV_N],
+            });
+        }
+        let mut eph_map = std::collections::HashMap::new();
+        eph_map.insert("earth".to_string(), eph);
+        let v = super::body_barycenter_velocity("earth", now, &eph_map).expect("earth velocity");
+        let expect = 1.0e6 / (16.0 * 86400.0);
+        assert!(
+            (v[0] - expect).abs() < 1e-6,
+            "a linear granule (cx[1] = 1e6 m per half-width) moves at 1e6/(16*86400) m/s, was {}",
+            v[0]
+        );
+        assert_eq!(v[1], 0.0);
+        assert_eq!(v[2], 0.0);
     }
 
     #[test]
@@ -8617,6 +9022,7 @@ field temp temp_c\n";
     fn origin_fixture(failures: u32, in_flight: bool) -> super::OriginState {
         super::OriginState {
             fetched: 0.0,
+            started: 0.0,
             prev_epoch: 0.0,
             prev_abs: [0.0, 0.0, 0.0],
             prev_motion: None,
@@ -10901,6 +11307,7 @@ pub fn system_now(time: &Arc<Mutex<Option<LeapSeconds>>>) -> Option<f64> {
 #[derive(Clone)]
 pub struct OriginState {
     fetched: f64,
+    started: f64,
     prev_epoch: f64,
     prev_abs: [f64; 3],
     prev_motion: Option<Motion>,
@@ -10928,6 +11335,7 @@ fn origin_stale(
 fn begin_fetch(origins: &mut HashMap<Origin, OriginState>, origin: Origin, now: f64) {
     let st = origins.entry(origin).or_insert(OriginState {
         fetched: now,
+        started: now,
         prev_epoch: now,
         prev_abs: [0.0, 0.0, 0.0],
         prev_motion: None,
@@ -10936,6 +11344,7 @@ fn begin_fetch(origins: &mut HashMap<Origin, OriginState>, origin: Origin, now: 
         failures: 0,
         in_flight: false,
     });
+    st.started = now;
     st.in_flight = true;
 }
 
@@ -10949,18 +11358,68 @@ fn settle_fetch(st: &mut OriginState, ok: bool, now: f64) {
     }
 }
 
+fn record_fetch_duration(
+    ring: &mut [f64; FETCH_DURATION_RING],
+    len: &mut usize,
+    idx: &mut usize,
+    d: f64,
+) {
+    ring[*idx] = d;
+    *idx = (*idx + 1) % FETCH_DURATION_RING;
+    *len = (*len + 1).min(FETCH_DURATION_RING);
+}
+
+fn median_fetch_duration(ring: &[f64; FETCH_DURATION_RING], len: usize) -> Option<f64> {
+    if len == 0 {
+        return None;
+    }
+    let mut vals: Vec<f64> = ring[..len].to_vec();
+    vals.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
+    let mid = len / 2;
+    if len % 2 == 1 {
+        Some(vals[mid])
+    } else {
+        Some((vals[mid - 1] + vals[mid]) / 2.0)
+    }
+}
+
 fn presence_gate(
     presences: &[(f64, f64, f64, f64, f64, f64, f64, f64, f64)],
     pos: (f64, f64, f64),
+    reach: f64,
     extent: f64,
+    v_anchor: Option<[f64; 3]>,
+    median_fetch: Option<f64>,
 ) -> bool {
-    presences.iter().any(|&(_, x, y, z, range, ..)| {
-        let reach = extent * Φ + range;
-        let dx = x - pos.0;
-        let dy = y - pos.1;
-        let dz = z - pos.2;
-        dx * dx + dy * dy + dz * dz <= reach * reach
-    })
+    let limit = reach + extent;
+    presences
+        .iter()
+        .any(|&(_, px, py, pz, _range, vx, vy, vz, _thrust)| {
+            let dx = pos.0 - px;
+            let dy = pos.1 - py;
+            let dz = pos.2 - pz;
+            let dist = (dx * dx + dy * dy + dz * dz).sqrt();
+            if dist <= limit {
+                return true;
+            }
+            if vx * vx + vy * vy + vz * vz == 0.0 {
+                return false;
+            }
+            let [ax, ay, az] = match v_anchor {
+                Some(a) => a,
+                None => return false,
+            };
+            let median = match median_fetch {
+                Some(m) => m,
+                None => return false,
+            };
+            let rel = [vx - ax, vy - ay, vz - az];
+            let closing = (rel[0] * dx + rel[1] * dy + rel[2] * dz) / dist;
+            if closing <= 0.0 {
+                return false;
+            }
+            (dist - limit) / closing < Φ * median
+        })
 }
 
 fn json_has_content(v: &JsonVal) -> bool {
@@ -11378,6 +11837,30 @@ fn dispatch_reach(fields: &[FieldConfig], src_ttl: f64) -> Option<f64> {
     reach
 }
 
+fn dispatch_extent(fields: &[FieldConfig], body_props: Option<&BodyProperties>) -> f64 {
+    let mut extent = 0.0_f64;
+    for fc in fields {
+        let e = kernel_extent(fc.force, fc.kernel, body_props, fc.tau);
+        if e.is_finite() {
+            extent = extent.max(e);
+        }
+    }
+    extent
+}
+
+fn anchor_velocity(
+    frame: &Frame,
+    now: f64,
+    eph: &HashMap<String, BodyEphemeris>,
+) -> Option<[f64; 3]> {
+    match frame {
+        Frame::Surface { body_name, .. } => body_barycenter_velocity(body_name, now, eph),
+        Frame::Barycenter { body_name, scale } => body_barycenter_velocity(body_name, now, eph)
+            .map(|[x, y, z]| [x * scale, y * scale, z * scale]),
+        Frame::Manifest => None,
+    }
+}
+
 fn propagation_speed(force_type: f64, advection: f64) -> Option<f64> {
     match force_type as u8 {
         0 | 1 | 8 => Some(C_LIGHT),
@@ -11563,6 +12046,9 @@ struct Archive {
     curves: Option<Arc<CurveSet>>,
     spectral: Vec<SpectralHash>,
     pending_channels: Vec<(Channel, FieldConfig, u32)>,
+    fetch_durations: [f64; FETCH_DURATION_RING],
+    fetch_duration_len: usize,
+    fetch_duration_idx: usize,
 }
 
 fn days_to_ymd(total_days: u64) -> (u32, u32, u32) {
@@ -16195,6 +16681,9 @@ pub fn main_flow() {
         curves: None,
         spectral: Vec::new(),
         pending_channels: Vec::new(),
+        fetch_durations: [0.0; FETCH_DURATION_RING],
+        fetch_duration_len: 0,
+        fetch_duration_idx: 0,
     };
     let body_names: Arc<Vec<String>> = {
         let mut names: Vec<String> = archive
@@ -16307,7 +16796,7 @@ pub fn main_flow() {
                 .insert(name, (pt, px, py, pz, pr, vx, vy, vz, tt));
         }
         let now = match archive.presence.get("native").map(|p| p.0) {
-            Some(t) if t.is_finite() && t > 0.0 => t,
+            Some(t) if t.is_finite() => t,
             _ => match system_now(&archive.time) {
                 Some(t) => t,
                 None => {
@@ -16435,6 +16924,7 @@ pub fn main_flow() {
                 .entry(res.source_idx as u32)
                 .or_insert(OriginState {
                     fetched: now,
+                    started: now,
                     prev_epoch: now,
                     prev_abs: [0.0, 0.0, 0.0],
                     prev_motion: None,
@@ -16443,7 +16933,16 @@ pub fn main_flow() {
                     failures: 0,
                     in_flight: false,
                 });
+            let fetch_duration = now - st.started;
             settle_fetch(st, res.fetch_ok, now);
+            if fetch_duration.is_finite() && fetch_duration > 0.0 {
+                record_fetch_duration(
+                    &mut archive.fetch_durations,
+                    &mut archive.fetch_duration_len,
+                    &mut archive.fetch_duration_idx,
+                    fetch_duration,
+                );
+            }
             if let Some((name, eph)) = res.eph_update {
                 let mut eph_map = (*archive.body_ephemerides).clone();
                 eph_map.insert(name, eph);
@@ -16578,6 +17077,8 @@ pub fn main_flow() {
                 }
             }
         }
+        let median_fetch =
+            median_fetch_duration(&archive.fetch_durations, archive.fetch_duration_len);
         for i in 0..archive.sources.len() {
             let origin = i as u32;
             if !origin_stale(&archive.origins, origin, archive.sources[i].ttl, now) {
@@ -17639,7 +18140,15 @@ pub fn main_flow() {
             };
             let presences: Vec<(f64, f64, f64, f64, f64, f64, f64, f64, f64)> =
                 archive.presence.values().cloned().collect();
-            if !presence_gate(&presences, pos, r) {
+            let anchor_body = frame_body_name(&archive.sources[i].frame);
+            let body_props = archive
+                .body_ephemerides
+                .get(anchor_body.as_str())
+                .and_then(|e| e.props.as_ref());
+            let extent = dispatch_extent(&fields, body_props);
+            let v_anchor =
+                anchor_velocity(&archive.sources[i].frame, now, &archive.body_ephemerides);
+            if !presence_gate(&presences, pos, r, extent, v_anchor, median_fetch) {
                 continue;
             }
             begin_fetch(&mut archive.origins, i as u32, now);

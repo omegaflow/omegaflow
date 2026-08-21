@@ -2,7 +2,7 @@
   title: Übergabe: 4D-Wahrheit & Kinematische Dilatation (das antizipierende Fetch-Gate)
   class: handover
   date: 2026-08-21
-  sha256: 5937d87411ee7e6c042d317d0bcdc84e0ecbdaeb7c2661528cf01724fffb9104
+  sha256: 0427ce990a1fb66b972b50461472d66d892e27be0b56d118ab9556fd7dd93e3b
   status: live
   see-also: docs/handover/handover-2026-08-21-offene-atome.md
 -->
@@ -109,7 +109,7 @@ darf sie nicht zurückbauen; ihre Tests bleiben grün.
 - Der Browser ist Sensor-Träger, kein Fetch-Maß — der Fetch folgt der
   nativen Presence.
 
-### Atom 3 — Ruhe-Gate & Kinematische Dilatation
+### Atom 3 — Ruhe-Gate & Kinematische Dilatation — ERLEDIGT (2026-08-21)
 
 - Der Fenster-Range-Term fliegt aus dem FETCH-Gate (range bleibt im
   Render-Gate). Fundort: archivar.rs:10836-10848 + Aufruf 17073.
@@ -127,7 +127,7 @@ darf sie nicht zurückbauen; ihre Tests bleiben grün.
 - Median-Fetchdauer: Ring 2⁴ in `settle_fetch` gemessen (live data);
   ohne Median keine Antizipation (pending, kein Default).
 
-### Atom 4 — Temporaler Fetch (kein Raum-Bias)
+### Atom 4 — Temporaler Fetch (kein Raum-Bias) — ERLEDIGT (2026-08-21)
 
 - `render_source_url`/`extract` erhalten t_presence statt
   Maschinen-now — die gerenderten URLs tragen die Epoche des
@@ -138,6 +138,12 @@ darf sie nicht zurückbauen; ihre Tests bleiben grün.
 - Quellen ohne epochenfähigen Endpunkt dienen ihre Ernte; außerhalb
   ihrer Epoche liefert der Extract nichts → schwarz (0 honored).
 - Die Antwort-Epoche bleibt Ernte-Epoche (Beschluss 4).
+- Bau-Befund: das ω-Loop-Gate verweigerte t ≤ 0 (TDB ist
+  J2000-relativ — prä-2000 ist negativ) und fiel still auf
+  Maschinen-now zurück; is_finite-Gate, die LSK-Domäne 1972+ gated
+  das Rendern ehrlich. Hidden-Lauf in zwei Zuständen verifiziert:
+  Gegenwart φ-t 840596983, Scroll #x,0,0,0,-4.0e7 φ-t −4.0e7,
+  Stempel in Beobachter-Zeit, null 2026-Render im gescrollten Lauf.
 
 ### Atom 5 — Sprung-Fetch (Snap-to-Truth)
 

@@ -1503,7 +1503,26 @@ nur Ruhe-Gate), closing = v_rel·r̂ (r̂ presence→Anker), closing ≤ 0 →
 keine Antizipation; Median-Fetchdauer als Ring 2⁴ in settle_fetch
 (record_fetch_duration/median_fetch_duration, ohne Median keine
 Antizipation — 0 honored).
-Offen: Atome 4–5 (temporaler Fetch, Sprung-Fetch).
+Atom 4 (Temporaler Fetch, kein Raum-Bias) ERLEDIGT (2026-08-21): die
+Fetch-Pfade (render_source_url/extract/render_source_body, netcdf,
+csv_zip, fanout, General) tragen den nativen t_presence — die
+gerenderten URLs tragen die Epoche des Beobachters; der
+Epochen-Stempel aus Atom 1 trennt die Ernten (Cache-Identität über
+die gerenderte Query: 1998- und 2026-Render sind verschiedene Dateien,
+ein Scroll überschreibt die andere Ernte nie — Test gepinnt); Quellen
+ohne epochenfähigen Endpunkt dienen ihre Ernte, außerhalb ihrer Epoche
+faltet der Client auf null (schwarz, 0 honored); die Antwort-Epoche
+bleibt Ernte-Epoche. Befund dieses Atoms: das ω-Loop-Gate verweigerte
+t ≤ 0 — TDB ist J2000-relativ, jede Epoche vor 2000 ist negativ — und
+fiel still auf Maschinen-now zurück; der Rest-Now-Bias ist getötet
+(is_finite-Gate, archivar.rs; die LSK-Domäne 1972+ gated das Rendern
+ehrlich: prä-1972 render void, benannt — keine Fabrikation).
+Hidden-Verifikation in zwei Zuständen: Gegenwart φ-t 840596983 und
+Scroll #x,0,0,0,-4.0e7 φ-t −4.0e7; Stempel in Beobachter-Zeit
+(−39999991), null 2026-Render im gescrollten Lauf. Fünf Temporal-Tests
+gepinnt (URL trägt Beobachter-Epoche, prä-2000, Cache-Identität,
+Extract-Default-Epoche, Stempel-Gate).
+Offen: Atom 5 (Sprung-Fetch).
 
 Auftrag: docs/handover/handover-2026-08-21-4d-wahrheit.md — der
 Archivar lebt auf der Weltlinie des Beobachters; fünf Atome, eine
@@ -1589,3 +1608,17 @@ wird erst auf das Wort des Operators; bis dahin pending (0 honored).
 
 Doku-Drift (behoben 2026-08-17): Alle `archeology/`-Referenzen zeigen
 heute auf den Bestand unter /home/johannes/projects/archive/archeology/.
+
+Doku-Drift (2026-08-21, offen — Konsolidierung ist ein Wort des
+Operators): die Ein-Blatt-Dokumentation liegt in mehreren parallelen
+Bäumen — Konzepte `ein-blatt-ergebnis.md`, `ein-blatt-papier.md`,
+`blatt-papier-beweis.md`, `blatt-papier-resultat.md`, `der-kausalpfeil.md`
+und Handover-Varianten je Rätsel (`*enso-kausalpfeil*`, `*bz-*`,
+`*laic-*` — drei bis vier Dateien je Rätsel, teils mit
+`sha256: pending`). Am 2026-08-21 auf Operator-Wort bias-frei gezogen:
+die illustrativen Zahlen (0.8/0.1, „Lag exakt X"), alle
+„Erwartung"-Zeilen und die „Form, nicht Messung"-Passagen sind aus dem
+gesamten Satz entfernt — die Blätter tragen `pending`, bis die Maschine
+misst; sha256 aller berührten Dateien neu gerechnet. Offen bleibt, welche
+Konzept- und Handover-Dateien kanonisch sind und welche archiviert
+werden.
